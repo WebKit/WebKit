@@ -35,13 +35,13 @@ const double kProbeBWCongestionWindowGain = 2.0f;
 // minus the IP and UDP headers. IPv6 has a 40 byte header, UDP adds an
 // additional 8 bytes.  This is a total overhead of 48 bytes.  Ethernet's
 // max packet size is 1500 bytes,  1500 - 48 = 1452.
-const int kMaxPacketSize = 1452;
+const DataSize kMaxPacketSize = DataSize::Bytes<1452>();
 
 // Default maximum packet size used in the Linux TCP implementation.
 // Used in QUIC for congestion window computations in bytes.
-const int kDefaultTCPMSS = 1460;
+constexpr DataSize kDefaultTCPMSS = DataSize::Bytes<1460>();
 // Constants based on TCP defaults.
-const int kMaxSegmentSize = kDefaultTCPMSS;
+constexpr DataSize kMaxSegmentSize = kDefaultTCPMSS;
 
 // The gain used for the slow start, equal to 2/ln(2).
 const double kHighGain = 2.885f;
@@ -90,13 +90,13 @@ BbrNetworkController::BbrControllerConfig::BbrControllerConfig(
                                  TimeDelta::PlusInfinity()),
       initial_congestion_window(
           "initial_cwin",
-          kInitialCongestionWindowPackets * DataSize::bytes(kDefaultTCPMSS)),
+          kInitialCongestionWindowPackets * kDefaultTCPMSS),
       min_congestion_window(
           "min_cwin",
-          kDefaultMinCongestionWindowPackets * DataSize::bytes(kDefaultTCPMSS)),
+          kDefaultMinCongestionWindowPackets * kDefaultTCPMSS),
       max_congestion_window(
           "max_cwin",
-          kDefaultMaxCongestionWindowPackets * DataSize::bytes(kDefaultTCPMSS)),
+          kDefaultMaxCongestionWindowPackets * kDefaultTCPMSS),
       probe_rtt_congestion_window_gain("probe_rtt_cwin_gain", 0.75),
       pacing_rate_as_target("pacing_rate_as_target", false),
       exit_startup_on_loss("exit_startup_on_loss", true),
@@ -155,7 +155,6 @@ BbrNetworkController::BbrControllerConfig::FromTrial() {
       webrtc::field_trial::FindFullName(kBbrConfigTrial));
 }
 
-
 BbrNetworkController::DebugState::DebugState(const BbrNetworkController& sender)
     : mode(sender.mode_),
       max_bandwidth(sender.max_bandwidth_.GetBest()),
@@ -193,7 +192,7 @@ BbrNetworkController::BbrNetworkController(NetworkControllerConfig config)
       max_aggregation_bytes_multiplier_(0),
       min_rtt_(TimeDelta::Zero()),
       last_rtt_(TimeDelta::Zero()),
-      min_rtt_timestamp_(Timestamp::ms(0)),
+      min_rtt_timestamp_(Timestamp::MinusInfinity()),
       congestion_window_(config_.initial_congestion_window),
       initial_congestion_window_(config_.initial_congestion_window),
       min_congestion_window_(config_.min_congestion_window),
@@ -203,7 +202,7 @@ BbrNetworkController::BbrNetworkController(NetworkControllerConfig config)
       congestion_window_gain_constant_(kProbeBWCongestionWindowGain),
       rtt_variance_weight_(kBbrRttVariationWeight),
       cycle_current_offset_(0),
-      last_cycle_start_(Timestamp::ms(0)),
+      last_cycle_start_(Timestamp::MinusInfinity()),
       is_at_full_bandwidth_(false),
       rounds_without_bandwidth_gain_(0),
       bandwidth_at_last_round_(DataRate::Zero()),
@@ -217,8 +216,8 @@ BbrNetworkController::BbrNetworkController(NetworkControllerConfig config)
       app_limited_since_last_probe_rtt_(false),
       min_rtt_since_last_probe_rtt_(TimeDelta::PlusInfinity()) {
   RTC_LOG(LS_INFO) << "Creating BBR controller";
-  if (config.starting_bandwidth.IsFinite())
-    default_bandwidth_ = config.starting_bandwidth;
+  if (config.constraints.starting_rate)
+    default_bandwidth_ = *config.constraints.starting_rate;
   constraints_ = config.constraints;
   Reset();
 }
@@ -311,8 +310,8 @@ NetworkControlUpdate BbrNetworkController::OnNetworkRouteChange(
     NetworkRouteChange msg) {
   constraints_ = msg.constraints;
   Reset();
-  if (msg.starting_rate)
-    default_bandwidth_ = *msg.starting_rate;
+  if (msg.constraints.starting_rate)
+    default_bandwidth_ = *msg.constraints.starting_rate;
 
   rtt_stats_.OnConnectionMigration();
   return CreateRateUpdate(msg.at_time);
@@ -324,6 +323,8 @@ NetworkControlUpdate BbrNetworkController::OnProcessInterval(
 }
 
 NetworkControlUpdate BbrNetworkController::OnStreamsConfig(StreamsConfig msg) {
+  // TODO(srte): Handle unacknowledged rate allocation.
+  RTC_DCHECK(msg.unacknowledged_rate_allocation.IsZero());
   return NetworkControlUpdate();
 }
 
@@ -725,7 +726,7 @@ void BbrNetworkController::MaybeEnterOrExitProbeRtt(
       // PROBE_RTT.  The CWND during PROBE_RTT is kMinimumCongestionWindow, but
       // we allow an extra packet since QUIC checks CWND before sending a
       // packet.
-      if (msg.data_in_flight < ProbeRttCongestionWindow() + DataSize::bytes(kMaxPacketSize)) {
+      if (msg.data_in_flight < ProbeRttCongestionWindow() + kMaxPacketSize) {
         exit_probe_rtt_at_ = msg.feedback_time + TimeDelta::ms(kProbeRttTimeMs);
         probe_rtt_round_passed_ = false;
       }
@@ -914,7 +915,7 @@ void BbrNetworkController::CalculateRecoveryWindow(DataSize bytes_acked,
   // integer underflow.
   recovery_window_ = recovery_window_ >= bytes_lost
                          ? recovery_window_ - bytes_lost
-                         : DataSize::bytes(kMaxSegmentSize);
+                         : kMaxSegmentSize;
 
   // In CONSERVATION mode, just subtracting losses is sufficient.  In GROWTH,
   // release additional |bytes_acked| to achieve a slow-start-like behavior.

@@ -52,7 +52,7 @@ class StunServer : public sigslot::has_slots<> {
   void SendResponse(const StunMessage& msg, const rtc::SocketAddress& addr);
 
   // A helper method to compose a STUN binding response.
-  void GetStunBindResponse(StunMessage* request,
+  void GetStunBindReqponse(StunMessage* request,
                            const rtc::SocketAddress& remote_addr,
                            StunMessage* response) const;
 

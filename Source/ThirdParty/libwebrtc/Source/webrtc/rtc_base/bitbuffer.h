@@ -43,7 +43,7 @@ class BitBuffer {
   bool ReadUInt32(uint32_t* val);
 
   // Reads bit-sized values from the buffer. Returns false if there isn't enough
-  // data left for the specified bit count..
+  // data left for the specified bit count.
   bool ReadBits(uint32_t* val, size_t bit_count);
 
   // Peeks bit-sized values from the buffer. Returns false if there isn't enough

@@ -8,9 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "modules/video_coding/codecs/multiplex/include/multiplex_encoded_image_packer.h"
+#include "modules/video_coding/codecs/multiplex/multiplex_encoded_image_packer.h"
 
 #include <cstring>
+#include <utility>
 
 #include "modules/rtp_rtcp/source/byte_io.h"
 
@@ -258,7 +259,7 @@ MultiplexImage MultiplexEncodedImagePacker::Unpack(
     image_component.codec_type = frame_headers[i].codec_type;
 
     EncodedImage encoded_image = combined_image;
-    encoded_image._timeStamp = combined_image._timeStamp;
+    encoded_image.SetTimestamp(combined_image.Timestamp());
     encoded_image._frameType = frame_headers[i].frame_type;
     encoded_image._size =
         static_cast<size_t>(frame_headers[i].bitstream_length);

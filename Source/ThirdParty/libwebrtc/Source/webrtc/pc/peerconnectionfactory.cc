@@ -331,23 +331,6 @@ void PeerConnectionFactory::StopAecDump() {
 
 rtc::scoped_refptr<PeerConnectionInterface>
 PeerConnectionFactory::CreatePeerConnection(
-    const PeerConnectionInterface::RTCConfiguration& configuration_in,
-    const MediaConstraintsInterface* constraints,
-    std::unique_ptr<cricket::PortAllocator> allocator,
-    std::unique_ptr<rtc::RTCCertificateGeneratorInterface> cert_generator,
-    PeerConnectionObserver* observer) {
-  RTC_DCHECK(signaling_thread_->IsCurrent());
-
-  // We merge constraints and configuration into a single configuration.
-  PeerConnectionInterface::RTCConfiguration configuration = configuration_in;
-  CopyConstraintsIntoRtcConfiguration(constraints, &configuration);
-
-  return CreatePeerConnection(configuration, std::move(allocator),
-                              std::move(cert_generator), observer);
-}
-
-rtc::scoped_refptr<PeerConnectionInterface>
-PeerConnectionFactory::CreatePeerConnection(
     const PeerConnectionInterface::RTCConfiguration& configuration,
     std::unique_ptr<cricket::PortAllocator> allocator,
     std::unique_ptr<rtc::RTCCertificateGeneratorInterface> cert_generator,

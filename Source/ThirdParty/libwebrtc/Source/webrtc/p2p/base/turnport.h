@@ -225,6 +225,8 @@ class TurnPort : public Port {
   bool CreateOrRefreshEntry(const rtc::SocketAddress& addr,
                             int channel_number);
 
+  rtc::DiffServCodePoint StunDscpValue() const override;
+
  private:
   enum {
     MSG_ALLOCATE_ERROR = MSG_FIRST_AVAILABLE,
@@ -315,6 +317,7 @@ class TurnPort : public Port {
   SocketOptionsMap socket_options_;
   rtc::AsyncResolverInterface* resolver_;
   int error_;
+  rtc::DiffServCodePoint stun_dscp_value_;
 
   StunRequestManager request_manager_;
   std::string realm_;       // From 401/438 response message.

@@ -12,6 +12,8 @@
 
 #include <string.h>
 
+#include "absl/container/inlined_vector.h"
+#include "absl/memory/memory.h"
 #include "common_audio/include/audio_util.h"
 #include "common_audio/resampler/include/resampler.h"
 #include "common_audio/resampler/push_sinc_resampler.h"
@@ -34,7 +36,6 @@ void CheckValidInitParams(int src_sample_rate_hz,
   RTC_DCHECK_GT(src_sample_rate_hz, 0);
   RTC_DCHECK_GT(dst_sample_rate_hz, 0);
   RTC_DCHECK_GT(num_channels, 0);
-  RTC_DCHECK_LE(num_channels, 2);
 #endif
 }
 
@@ -76,8 +77,7 @@ int PushResampler<T>::InitializeIfNeeded(int src_sample_rate_hz,
     return 0;
   }
 
-  if (src_sample_rate_hz <= 0 || dst_sample_rate_hz <= 0 || num_channels <= 0 ||
-      num_channels > 2) {
+  if (src_sample_rate_hz <= 0 || dst_sample_rate_hz <= 0 || num_channels <= 0) {
     return -1;
   }
 
@@ -89,15 +89,14 @@ int PushResampler<T>::InitializeIfNeeded(int src_sample_rate_hz,
       static_cast<size_t>(src_sample_rate_hz / 100);
   const size_t dst_size_10ms_mono =
       static_cast<size_t>(dst_sample_rate_hz / 100);
-  sinc_resampler_.reset(
-      new PushSincResampler(src_size_10ms_mono, dst_size_10ms_mono));
-  if (num_channels_ == 2) {
-    src_left_.reset(new T[src_size_10ms_mono]);
-    src_right_.reset(new T[src_size_10ms_mono]);
-    dst_left_.reset(new T[dst_size_10ms_mono]);
-    dst_right_.reset(new T[dst_size_10ms_mono]);
-    sinc_resampler_right_.reset(
-        new PushSincResampler(src_size_10ms_mono, dst_size_10ms_mono));
+  channel_resamplers_.clear();
+  for (size_t i = 0; i < num_channels; ++i) {
+    channel_resamplers_.push_back(ChannelResampler());
+    auto channel_resampler = channel_resamplers_.rbegin();
+    channel_resampler->resampler = absl::make_unique<PushSincResampler>(
+        src_size_10ms_mono, dst_size_10ms_mono);
+    channel_resampler->source.resize(src_size_10ms_mono);
+    channel_resampler->destination.resize(dst_size_10ms_mono);
   }
 
   return 0;
@@ -117,25 +116,32 @@ int PushResampler<T>::Resample(const T* src,
     memcpy(dst, src, src_length * sizeof(T));
     return static_cast<int>(src_length);
   }
-  if (num_channels_ == 2) {
-    const size_t src_length_mono = src_length / num_channels_;
-    const size_t dst_capacity_mono = dst_capacity / num_channels_;
-    T* deinterleaved[] = {src_left_.get(), src_right_.get()};
-    Deinterleave(src, src_length_mono, num_channels_, deinterleaved);
 
-    size_t dst_length_mono = sinc_resampler_->Resample(
-        src_left_.get(), src_length_mono, dst_left_.get(), dst_capacity_mono);
-    sinc_resampler_right_->Resample(src_right_.get(), src_length_mono,
-                                    dst_right_.get(), dst_capacity_mono);
+  const size_t src_length_mono = src_length / num_channels_;
+  const size_t dst_capacity_mono = dst_capacity / num_channels_;
 
-    deinterleaved[0] = dst_left_.get();
-    deinterleaved[1] = dst_right_.get();
-    Interleave(deinterleaved, dst_length_mono, num_channels_, dst);
-    return static_cast<int>(dst_length_mono * num_channels_);
-  } else {
-    return static_cast<int>(
-        sinc_resampler_->Resample(src, src_length, dst, dst_capacity));
+  absl::InlinedVector<T*, 8> source_pointers;
+  for (auto& resampler : channel_resamplers_) {
+    source_pointers.push_back(resampler.source.data());
   }
+
+  Deinterleave(src, src_length_mono, num_channels_, source_pointers.data());
+
+  size_t dst_length_mono = 0;
+
+  for (auto& resampler : channel_resamplers_) {
+    dst_length_mono = resampler.resampler->Resample(
+        resampler.source.data(), src_length_mono, resampler.destination.data(),
+        dst_capacity_mono);
+  }
+
+  absl::InlinedVector<T*, 8> destination_pointers;
+  for (auto& resampler : channel_resamplers_) {
+    destination_pointers.push_back(resampler.destination.data());
+  }
+
+  Interleave(destination_pointers.data(), dst_length_mono, num_channels_, dst);
+  return static_cast<int>(dst_length_mono * num_channels_);
 }
 
 // Explictly generate required instantiations.

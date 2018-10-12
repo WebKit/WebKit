@@ -90,7 +90,7 @@ FlexfecSender::FlexfecSender(
       rtp_header_extension_map_(
           RegisterSupportedExtensions(rtp_header_extensions)),
       header_extensions_size_(
-          rtp_header_extension_map_.GetTotalLengthInBytes(extension_sizes)) {
+          RtpHeaderExtensionSize(extension_sizes, rtp_header_extension_map_)) {
   // This object should not have been instantiated if FlexFEC is disabled.
   RTC_DCHECK_GE(payload_type, 0);
   RTC_DCHECK_LE(payload_type, 127);

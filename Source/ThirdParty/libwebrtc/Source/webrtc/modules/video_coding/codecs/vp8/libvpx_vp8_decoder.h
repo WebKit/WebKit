@@ -25,7 +25,7 @@
 
 namespace webrtc {
 
-class LibvpxVp8Decoder : public VP8Decoder {
+class LibvpxVp8Decoder : public VideoDecoder {
  public:
   LibvpxVp8Decoder();
   ~LibvpxVp8Decoder() override;

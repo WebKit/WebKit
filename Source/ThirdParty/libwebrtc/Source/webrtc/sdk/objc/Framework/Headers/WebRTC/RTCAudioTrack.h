@@ -8,22 +8,4 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#import <WebRTC/RTCMacros.h>
-#import <WebRTC/RTCMediaStreamTrack.h>
-
-NS_ASSUME_NONNULL_BEGIN
-
-@class RTCAudioSource;
-
-RTC_EXPORT
-__attribute__((objc_runtime_name("WK_RTCMediaStreamTrack")))
-@interface RTCAudioTrack : RTCMediaStreamTrack
-
-- (instancetype)init NS_UNAVAILABLE;
-
-/** The audio source for this audio track. */
-@property(nonatomic, readonly) RTCAudioSource *source;
-
-@end
-
-NS_ASSUME_NONNULL_END
+#import "api/peerconnection/RTCAudioTrack.h"

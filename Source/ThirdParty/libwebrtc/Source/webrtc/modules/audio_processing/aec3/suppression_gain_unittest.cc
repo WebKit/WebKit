@@ -28,17 +28,16 @@ namespace aec3 {
 TEST(SuppressionGain, NullOutputGains) {
   std::array<float, kFftLengthBy2Plus1> E2;
   std::array<float, kFftLengthBy2Plus1> R2;
+  std::array<float, kFftLengthBy2Plus1> S2;
   std::array<float, kFftLengthBy2Plus1> N2;
   FftData E;
-  FftData X;
   FftData Y;
   E2.fill(0.f);
   R2.fill(0.f);
+  S2.fill(0.1f);
   N2.fill(0.f);
   E.re.fill(0.f);
   E.im.fill(0.f);
-  X.re.fill(0.f);
-  X.im.fill(0.f);
   Y.re.fill(0.f);
   Y.im.fill(0.f);
 
@@ -46,7 +45,7 @@ TEST(SuppressionGain, NullOutputGains) {
   AecState aec_state(EchoCanceller3Config{});
   EXPECT_DEATH(
       SuppressionGain(EchoCanceller3Config{}, DetectOptimization(), 16000)
-          .GetGain(E2, R2, N2, E, X, Y,
+          .GetGain(E2, E2, S2, R2, N2, E, Y,
                    RenderSignalAnalyzer((EchoCanceller3Config{})), aec_state,
                    std::vector<std::vector<float>>(
                        3, std::vector<float>(kBlockSize, 0.f)),
@@ -63,6 +62,7 @@ TEST(SuppressionGain, BasicGainComputation) {
   RenderSignalAnalyzer analyzer(EchoCanceller3Config{});
   float high_bands_gain;
   std::array<float, kFftLengthBy2Plus1> E2;
+  std::array<float, kFftLengthBy2Plus1> S2;
   std::array<float, kFftLengthBy2Plus1> Y2;
   std::array<float, kFftLengthBy2Plus1> R2;
   std::array<float, kFftLengthBy2Plus1> N2;
@@ -70,7 +70,6 @@ TEST(SuppressionGain, BasicGainComputation) {
   SubtractorOutput output;
   std::array<float, kBlockSize> y;
   FftData E;
-  FftData X;
   FftData Y;
   std::vector<std::vector<float>> x(1, std::vector<float>(kBlockSize, 0.f));
   EchoCanceller3Config config;
@@ -85,13 +84,12 @@ TEST(SuppressionGain, BasicGainComputation) {
   E2.fill(10.f);
   Y2.fill(10.f);
   R2.fill(0.1f);
+  S2.fill(0.1f);
   N2.fill(100.f);
   output.Reset();
   y.fill(0.f);
   E.re.fill(sqrtf(E2[0]));
   E.im.fill(0.f);
-  X.re.fill(sqrtf(R2[0]));
-  X.im.fill(0.f);
   Y.re.fill(sqrtf(Y2[0]));
   Y.im.fill(0.f);
 
@@ -108,7 +106,7 @@ TEST(SuppressionGain, BasicGainComputation) {
                      subtractor.FilterImpulseResponse(),
                      *render_delay_buffer->GetRenderBuffer(), E2, Y2, output,
                      y);
-    suppression_gain.GetGain(E2, R2, N2, E, X, Y, analyzer, aec_state, x,
+    suppression_gain.GetGain(E2, E2, S2, R2, N2, E, Y, analyzer, aec_state, x,
                              &high_bands_gain, &g);
   }
   std::for_each(g.begin(), g.end(),
@@ -118,9 +116,9 @@ TEST(SuppressionGain, BasicGainComputation) {
   E2.fill(100.f);
   Y2.fill(100.f);
   R2.fill(0.1f);
+  S2.fill(0.1f);
   N2.fill(0.f);
   E.re.fill(sqrtf(E2[0]));
-  X.re.fill(sqrtf(R2[0]));
   Y.re.fill(sqrtf(Y2[0]));
 
   for (int k = 0; k < 100; ++k) {
@@ -128,7 +126,7 @@ TEST(SuppressionGain, BasicGainComputation) {
                      subtractor.FilterImpulseResponse(),
                      *render_delay_buffer->GetRenderBuffer(), E2, Y2, output,
                      y);
-    suppression_gain.GetGain(E2, R2, N2, E, X, Y, analyzer, aec_state, x,
+    suppression_gain.GetGain(E2, E2, S2, R2, N2, E, Y, analyzer, aec_state, x,
                              &high_bands_gain, &g);
   }
   std::for_each(g.begin(), g.end(),
@@ -138,10 +136,9 @@ TEST(SuppressionGain, BasicGainComputation) {
   E2.fill(1000000000.f);
   R2.fill(10000000000000.f);
   E.re.fill(sqrtf(E2[0]));
-  X.re.fill(sqrtf(R2[0]));
 
   for (int k = 0; k < 10; ++k) {
-    suppression_gain.GetGain(E2, R2, N2, E, X, Y, analyzer, aec_state, x,
+    suppression_gain.GetGain(E2, E2, S2, R2, N2, E, Y, analyzer, aec_state, x,
                              &high_bands_gain, &g);
   }
   std::for_each(g.begin(), g.end(),

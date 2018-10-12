@@ -12,14 +12,11 @@
 
 #if defined(_WIN32)
 #include <windows.h>
-#include "system_wrappers/source/event_timer_win.h"
 #elif defined(WEBRTC_MAC) && !defined(WEBRTC_IOS)
 #include <ApplicationServices/ApplicationServices.h>
 #include <pthread.h>
-#include "system_wrappers/source/event_timer_posix.h"
 #else
 #include <pthread.h>
-#include "system_wrappers/source/event_timer_posix.h"
 #endif
 
 #include "rtc_base/event.h"

@@ -133,15 +133,30 @@ absl::optional<SpsParser::SpsState> SpsParser::ParseSpsUpToVui(
       }
     }
   }
+  // log2_max_frame_num and log2_max_pic_order_cnt_lsb are used with
+  // BitBuffer::ReadBits, which can read at most 32 bits at a time. We also have
+  // to avoid overflow when adding 4 to the on-wire golomb value, e.g., for evil
+  // input data, ReadExponentialGolomb might return 0xfffc.
+  const uint32_t kMaxLog2Minus4 = 32 - 4;
+
   // log2_max_frame_num_minus4: ue(v)
-  RETURN_EMPTY_ON_FAIL(
-      buffer->ReadExponentialGolomb(&sps.log2_max_frame_num_minus4));
+  uint32_t log2_max_frame_num_minus4;
+  if (!buffer->ReadExponentialGolomb(&log2_max_frame_num_minus4) ||
+      log2_max_frame_num_minus4 > kMaxLog2Minus4) {
+    return OptionalSps();
+  }
+  sps.log2_max_frame_num = log2_max_frame_num_minus4 + 4;
+
   // pic_order_cnt_type: ue(v)
   RETURN_EMPTY_ON_FAIL(buffer->ReadExponentialGolomb(&sps.pic_order_cnt_type));
   if (sps.pic_order_cnt_type == 0) {
     // log2_max_pic_order_cnt_lsb_minus4: ue(v)
-    RETURN_EMPTY_ON_FAIL(
-        buffer->ReadExponentialGolomb(&sps.log2_max_pic_order_cnt_lsb_minus4));
+    uint32_t log2_max_pic_order_cnt_lsb_minus4;
+    if (!buffer->ReadExponentialGolomb(&log2_max_pic_order_cnt_lsb_minus4) ||
+        log2_max_pic_order_cnt_lsb_minus4 > kMaxLog2Minus4) {
+      return OptionalSps();
+    }
+    sps.log2_max_pic_order_cnt_lsb = log2_max_pic_order_cnt_lsb_minus4 + 4;
   } else if (sps.pic_order_cnt_type == 1) {
     // delta_pic_order_always_zero_flag: u(1)
     RETURN_EMPTY_ON_FAIL(

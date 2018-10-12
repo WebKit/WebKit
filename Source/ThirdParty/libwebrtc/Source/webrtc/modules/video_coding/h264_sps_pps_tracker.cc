@@ -29,6 +29,21 @@ namespace {
 const uint8_t start_code_h264[] = {0, 0, 0, 1};
 }  // namespace
 
+H264SpsPpsTracker::H264SpsPpsTracker() = default;
+H264SpsPpsTracker::~H264SpsPpsTracker() = default;
+
+H264SpsPpsTracker::PpsInfo::PpsInfo() = default;
+H264SpsPpsTracker::PpsInfo::PpsInfo(PpsInfo&& rhs) = default;
+H264SpsPpsTracker::PpsInfo& H264SpsPpsTracker::PpsInfo::operator=(
+    PpsInfo&& rhs) = default;
+H264SpsPpsTracker::PpsInfo::~PpsInfo() = default;
+
+H264SpsPpsTracker::SpsInfo::SpsInfo() = default;
+H264SpsPpsTracker::SpsInfo::SpsInfo(SpsInfo&& rhs) = default;
+H264SpsPpsTracker::SpsInfo& H264SpsPpsTracker::SpsInfo::operator=(
+    SpsInfo&& rhs) = default;
+H264SpsPpsTracker::SpsInfo::~SpsInfo() = default;
+
 H264SpsPpsTracker::PacketAction H264SpsPpsTracker::CopyAndFixBitstream(
     VCMPacket* packet) {
   RTC_DCHECK(packet->codec == kVideoCodecH264);

@@ -26,16 +26,18 @@ public interface VideoEncoder {
     public final int height;
     public final int startBitrate; // Kilobits per second.
     public final int maxFramerate;
+    public final int numberOfSimulcastStreams;
     public final boolean automaticResizeOn;
 
     @CalledByNative("Settings")
     public Settings(int numberOfCores, int width, int height, int startBitrate, int maxFramerate,
-        boolean automaticResizeOn) {
+        int numberOfSimulcastStreams, boolean automaticResizeOn) {
       this.numberOfCores = numberOfCores;
       this.width = width;
       this.height = height;
       this.startBitrate = startBitrate;
       this.maxFramerate = maxFramerate;
+      this.numberOfSimulcastStreams = numberOfSimulcastStreams;
       this.automaticResizeOn = automaticResizeOn;
     }
   }

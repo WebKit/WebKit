@@ -10,7 +10,6 @@
 
 #include "modules/audio_coding/neteq/dtmf_buffer.h"
 
-#include <assert.h>
 #include <algorithm>  // max
 
 #include "rtc_base/checks.h"

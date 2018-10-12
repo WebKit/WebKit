@@ -10,8 +10,6 @@
 
 #include "modules/audio_coding/test/opus_test.h"
 
-#include <assert.h>
-
 #include <string>
 
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"

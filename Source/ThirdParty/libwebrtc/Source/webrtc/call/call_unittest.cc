@@ -72,7 +72,9 @@ TEST(CallTest, CreateDestroy_AudioSendStream) {
 TEST(CallTest, CreateDestroy_AudioReceiveStream) {
   CallHelper call;
   AudioReceiveStream::Config config;
+  MockTransport rtcp_send_transport;
   config.rtp.remote_ssrc = 42;
+  config.rtcp_send_transport = &rtcp_send_transport;
   config.decoder_factory =
       new rtc::RefCountedObject<webrtc::MockAudioDecoderFactory>();
   AudioReceiveStream* stream = call->CreateAudioReceiveStream(config);
@@ -105,6 +107,8 @@ TEST(CallTest, CreateDestroy_AudioSendStreams) {
 TEST(CallTest, CreateDestroy_AudioReceiveStreams) {
   CallHelper call;
   AudioReceiveStream::Config config;
+  MockTransport rtcp_send_transport;
+  config.rtcp_send_transport = &rtcp_send_transport;
   config.decoder_factory =
       new rtc::RefCountedObject<webrtc::MockAudioDecoderFactory>();
   std::list<AudioReceiveStream*> streams;
@@ -129,8 +133,10 @@ TEST(CallTest, CreateDestroy_AudioReceiveStreams) {
 TEST(CallTest, CreateDestroy_AssociateAudioSendReceiveStreams_RecvFirst) {
   CallHelper call;
   AudioReceiveStream::Config recv_config;
+  MockTransport rtcp_send_transport;
   recv_config.rtp.remote_ssrc = 42;
   recv_config.rtp.local_ssrc = 777;
+  recv_config.rtcp_send_transport = &rtcp_send_transport;
   recv_config.decoder_factory =
       new rtc::RefCountedObject<webrtc::MockAudioDecoderFactory>();
   AudioReceiveStream* recv_stream = call->CreateAudioReceiveStream(recv_config);
@@ -160,8 +166,10 @@ TEST(CallTest, CreateDestroy_AssociateAudioSendReceiveStreams_SendFirst) {
   EXPECT_NE(send_stream, nullptr);
 
   AudioReceiveStream::Config recv_config;
+  MockTransport rtcp_send_transport;
   recv_config.rtp.remote_ssrc = 42;
   recv_config.rtp.local_ssrc = 777;
+  recv_config.rtcp_send_transport = &rtcp_send_transport;
   recv_config.decoder_factory =
       new rtc::RefCountedObject<webrtc::MockAudioDecoderFactory>();
   AudioReceiveStream* recv_stream = call->CreateAudioReceiveStream(recv_config);

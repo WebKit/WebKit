@@ -11,12 +11,11 @@
 #include <stdio.h>
 
 #include <memory>
-#include <sstream>
 
 #include "modules/remote_bitrate_estimator/tools/bwe_rtp.h"
 #include "modules/rtp_rtcp/include/rtp_header_parser.h"
-#include "modules/rtp_rtcp/include/rtp_payload_registry.h"
 #include "rtc_base/format_macros.h"
+#include "rtc_base/strings/string_builder.h"
 #include "test/rtp_file_reader.h"
 
 int main(int argc, char* argv[]) {
@@ -44,7 +43,7 @@ int main(int argc, char* argv[]) {
     if (header.extension.transmissionTimeOffset != 0)
       ++non_zero_ts_offsets;
     if (arrival_time_only) {
-      std::stringstream ss;
+      rtc::StringBuilder ss;
       ss << static_cast<int64_t>(packet.time_ms) * 1000000;
       fprintf(stdout, "%s\n", ss.str().c_str());
     } else {

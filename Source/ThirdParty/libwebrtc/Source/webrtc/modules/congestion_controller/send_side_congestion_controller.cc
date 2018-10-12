@@ -30,7 +30,6 @@
 #include "rtc_base/socket.h"
 #include "rtc_base/timeutils.h"
 #include "system_wrappers/include/field_trial.h"
-#include "system_wrappers/include/runtime_enabled_features.h"
 
 namespace webrtc {
 namespace {
@@ -115,10 +114,7 @@ void SortPacketFeedbackVector(
 }
 
 bool IsPacerPushbackExperimentEnabled() {
-  return webrtc::field_trial::IsEnabled(kPacerPushbackExperiment) ||
-         (!webrtc::field_trial::IsDisabled(kPacerPushbackExperiment) &&
-          webrtc::runtime_enabled_features::IsFeatureEnabled(
-              webrtc::runtime_enabled_features::kDualStreamModeFeatureName));
+  return webrtc::field_trial::IsEnabled(kPacerPushbackExperiment);
 }
 
 }  // namespace
@@ -261,10 +257,6 @@ void SendSideCongestionController::OnNetworkRouteChanged(
   MaybeTriggerOnNetworkChanged();
 }
 
-BitrateController* SendSideCongestionController::GetBitrateController() const {
-  return bitrate_controller_.get();
-}
-
 bool SendSideCongestionController::AvailableBandwidth(
     uint32_t* bandwidth) const {
   return bitrate_controller_->AvailableBandwidth(bandwidth);
@@ -272,15 +264,6 @@ bool SendSideCongestionController::AvailableBandwidth(
 
 RtcpBandwidthObserver* SendSideCongestionController::GetBandwidthObserver() {
   return bitrate_controller_.get();
-}
-
-RtcpBandwidthObserver* SendSideCongestionController::GetBandwidthObserver()
-    const {
-  return bitrate_controller_.get();
-}
-
-RateLimiter* SendSideCongestionController::GetRetransmissionRateLimiter() {
-  return retransmission_rate_limiter_.get();
 }
 
 void SendSideCongestionController::SetPerPacketFeedbackAvailable(
@@ -321,12 +304,6 @@ void SendSideCongestionController::SignalNetworkState(NetworkState state) {
     SendProbes(probe_controller_->OnNetworkAvailability(msg));
   }
   MaybeTriggerOnNetworkChanged();
-}
-
-void SendSideCongestionController::SetTransportOverhead(
-    size_t transport_overhead_bytes_per_packet) {
-  rtc::CritScope cs(&bwe_lock_);
-  transport_overhead_bytes_per_packet_ = transport_overhead_bytes_per_packet;
 }
 
 void SendSideCongestionController::OnSentPacket(
@@ -455,12 +432,6 @@ void SendSideCongestionController::LimitOutstandingBytes(
       std::max<size_t>((*min_rtt_ms + accepted_queue_ms_) *
                            last_reported_bitrate_bps_ / 1000 / 8,
                        kMinCwndBytes);
-  RTC_LOG(LS_INFO) << clock_->TimeInMilliseconds()
-                   << " Outstanding bytes: " << num_outstanding_bytes
-                   << " pacer queue: " << pacer_->QueueInMs()
-                   << " max outstanding: " << max_outstanding_bytes;
-  RTC_LOG(LS_INFO) << "Feedback rtt: " << *min_rtt_ms
-                   << " Bitrate: " << last_reported_bitrate_bps_;
   if (congestion_window_pushback_controller_) {
     congestion_window_pushback_controller_->UpdateOutstandingData(
         num_outstanding_bytes);

@@ -12,7 +12,7 @@
 
 #include "rtc_base/flags.h"
 #include "rtc_base/logging.h"
-#include "system_wrappers/include/field_trial_default.h"
+#include "system_wrappers/include/field_trial.h"
 #include "test/field_trial.h"
 #include "test/gtest.h"
 #include "test/run_test.h"
@@ -235,6 +235,8 @@ DEFINE_bool(logs, false, "print logs to stderr");
 
 DEFINE_bool(send_side_bwe, true, "Use send-side bandwidth estimation");
 
+DEFINE_bool(generic_descriptor, false, "Use the generic frame descriptor.");
+
 DEFINE_bool(allow_reordering, false, "Allow packet reordering to occur");
 
 DEFINE_bool(use_ulpfec, false, "Use RED+ULPFEC forward error correction.");
@@ -242,6 +244,10 @@ DEFINE_bool(use_ulpfec, false, "Use RED+ULPFEC forward error correction.");
 DEFINE_bool(use_flexfec, false, "Use FlexFEC forward error correction.");
 
 DEFINE_bool(audio, false, "Add audio stream");
+
+DEFINE_bool(use_real_adm,
+            false,
+            "Use real ADM instead of fake (no effect if audio is false)");
 
 DEFINE_bool(audio_video_sync,
             false,
@@ -273,7 +279,7 @@ DEFINE_bool(help, false, "prints this message");
 }  // namespace flags
 
 void Loopback() {
-  FakeNetworkPipe::Config pipe_config;
+  DefaultNetworkSimulationConfig pipe_config;
   pipe_config.loss_percent = flags::LossPercent();
   pipe_config.avg_burst_loss_length = flags::AvgBurstLossLength();
   pipe_config.link_capacity_kbps = flags::LinkCapacityKbps();
@@ -288,7 +294,8 @@ void Loopback() {
   call_bitrate_config.max_bitrate_bps = -1;  // Don't cap bandwidth estimate.
 
   VideoQualityTest::Params params;
-  params.call = {flags::FLAG_send_side_bwe, call_bitrate_config, 0};
+  params.call = {flags::FLAG_send_side_bwe, flags::FLAG_generic_descriptor,
+                 call_bitrate_config, 0};
   params.video[0] = {flags::FLAG_video,
                      flags::Width(),
                      flags::Height(),
@@ -307,7 +314,7 @@ void Loopback() {
                      flags::Clip(),
                      flags::GetCaptureDevice()};
   params.audio = {flags::FLAG_audio, flags::FLAG_audio_video_sync,
-                  flags::FLAG_audio_dtx};
+                  flags::FLAG_audio_dtx, flags::FLAG_use_real_adm};
   params.logging = {flags::FLAG_rtc_event_log_name, flags::FLAG_rtp_dump_name,
                     flags::FLAG_encoded_frame_path};
   params.screenshare[0].enabled = false;
@@ -317,7 +324,7 @@ void Loopback() {
                      flags::DurationSecs(),
                      flags::OutputFilename(),
                      flags::GraphTitle()};
-  params.pipe = pipe_config;
+  params.config = pipe_config;
 
   if (flags::NumStreams() > 1 && flags::Stream0().empty() &&
       flags::Stream1().empty()) {

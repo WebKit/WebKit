@@ -9,16 +9,17 @@
 import("../../webrtc.gni")
 
 rtc_static_library("pacing") {
+  # Client code SHOULD NOT USE THIS TARGET, but for now it needs to be public
+  # because there exists client code that uses it.
+  # TODO(bugs.webrtc.org/9808): Move to private visibility as soon as that
+  # client code gets updated.
+  visibility = [ "*" ]
   sources = [
     "bitrate_prober.cc",
     "bitrate_prober.h",
     "paced_sender.cc",
     "paced_sender.h",
     "pacer.h",
-    "packet_queue.cc",
-    "packet_queue.h",
-    "packet_queue_interface.cc",
-    "packet_queue_interface.h",
     "packet_router.cc",
     "packet_router.h",
     "round_robin_packet_queue.cc",
@@ -29,6 +30,7 @@ rtc_static_library("pacing") {
     ":interval_budget",
     "..:module_api",
     "../../:webrtc_common",
+    "../../api/transport:network_control",
     "../../logging:rtc_event_bwe",
     "../../logging:rtc_event_log_api",
     "../../logging:rtc_event_pacing",
@@ -36,8 +38,7 @@ rtc_static_library("pacing") {
     "../../rtc_base:rtc_base_approved",
     "../../rtc_base/experiments:alr_experiment",
     "../../system_wrappers",
-    "../../system_wrappers:field_trial_api",
-    "../../system_wrappers:runtime_enabled_features_api",
+    "../../system_wrappers:field_trial",
     "../congestion_controller/goog_cc:alr_detector",
     "../remote_bitrate_estimator",
     "../rtp_rtcp",
@@ -79,8 +80,7 @@ if (rtc_include_tests) {
       "../../rtc_base:rtc_base_tests_utils",
       "../../rtc_base/experiments:alr_experiment",
       "../../system_wrappers",
-      "../../system_wrappers:field_trial_api",
-      "../../system_wrappers:runtime_enabled_features_api",
+      "../../system_wrappers:field_trial",
       "../../test:field_trial",
       "../../test:test_support",
       "../rtp_rtcp",

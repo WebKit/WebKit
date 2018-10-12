@@ -18,9 +18,12 @@
 #include "rtc_base/socketaddress.h"
 #include "rtc_base/ssladapter.h"
 #include "rtc_base/virtualsocketserver.h"
+#include "test/gmock.h"
 
 using cricket::ServerAddresses;
 using rtc::SocketAddress;
+using ::testing::_;
+using ::testing::Return;
 
 static const SocketAddress kLocalAddr("127.0.0.1", 0);
 static const SocketAddress kStunAddr1("127.0.0.1", 5000);
@@ -57,6 +60,7 @@ class StunPortTestBase : public testing::Test, public sigslot::has_slots<> {
   }
 
   cricket::UDPPort* port() const { return stun_port_.get(); }
+  rtc::AsyncPacketSocket* socket() const { return socket_.get(); }
   bool done() const { return done_; }
   bool error() const { return error_; }
 
@@ -86,9 +90,14 @@ class StunPortTestBase : public testing::Test, public sigslot::has_slots<> {
     stun_port_->SignalPortError.connect(this, &StunPortTestBase::OnPortError);
   }
 
-  void CreateSharedUdpPort(const rtc::SocketAddress& server_addr) {
-    socket_.reset(socket_factory_.CreateUdpSocket(
-        rtc::SocketAddress(kLocalAddr.ipaddr(), 0), 0, 0));
+  void CreateSharedUdpPort(const rtc::SocketAddress& server_addr,
+                           rtc::AsyncPacketSocket* socket) {
+    if (socket) {
+      socket_.reset(socket);
+    } else {
+      socket_.reset(socket_factory_.CreateUdpSocket(
+          rtc::SocketAddress(kLocalAddr.ipaddr(), 0), 0, 0));
+    }
     ASSERT_TRUE(socket_ != NULL);
     socket_->SignalReadPacket.connect(this, &StunPortTestBase::OnReadPacket);
     stun_port_.reset(cricket::UDPPort::Create(
@@ -178,7 +187,7 @@ TEST_F(StunPortTest, TestCreateStunPort) {
 
 // Test that we can create a UDP port.
 TEST_F(StunPortTest, TestCreateUdpPort) {
-  CreateSharedUdpPort(kStunAddr1);
+  CreateSharedUdpPort(kStunAddr1, nullptr);
   EXPECT_EQ("local", port()->Type());
   EXPECT_EQ(0U, port()->Candidates().size());
 }
@@ -245,7 +254,7 @@ TEST_F(StunPortTest, TestKeepAliveResponse) {
 
 // Test that a local candidate can be generated using a shared socket.
 TEST_F(StunPortTest, TestSharedSocketPrepareAddress) {
-  CreateSharedUdpPort(kStunAddr1);
+  CreateSharedUdpPort(kStunAddr1, nullptr);
   PrepareAddress();
   EXPECT_TRUE_SIMULATED_WAIT(done(), kTimeoutMs, fake_clock);
   ASSERT_EQ(1U, port()->Candidates().size());
@@ -257,7 +266,7 @@ TEST_F(StunPortTest, TestSharedSocketPrepareAddress) {
 // resolved.
 TEST_F(StunPortTestWithRealClock,
        TestSharedSocketPrepareAddressInvalidHostname) {
-  CreateSharedUdpPort(kBadHostnameAddr);
+  CreateSharedUdpPort(kBadHostnameAddr, nullptr);
   PrepareAddress();
   EXPECT_TRUE_WAIT(done(), kTimeoutMs);
   ASSERT_EQ(1U, port()->Candidates().size());
@@ -339,7 +348,7 @@ TEST_F(StunPortTest, TestStunPortGetStunKeepaliveLifetime) {
 // if the network type changes.
 TEST_F(StunPortTest, TestUdpPortGetStunKeepaliveLifetime) {
   // Lifetime for the default (unknown) network type is |kInfiniteLifetime|.
-  CreateSharedUdpPort(kStunAddr1);
+  CreateSharedUdpPort(kStunAddr1, nullptr);
   EXPECT_EQ(kInfiniteLifetime, port()->stun_keepalive_lifetime());
   // Lifetime for the cellular network is |kHighCostPortKeepaliveLifetimeMs|.
   SetNetworkType(rtc::ADAPTER_TYPE_CELLULAR);
@@ -348,7 +357,7 @@ TEST_F(StunPortTest, TestUdpPortGetStunKeepaliveLifetime) {
 
   // Lifetime for the wifi network type is |kInfiniteLifetime|.
   SetNetworkType(rtc::ADAPTER_TYPE_WIFI);
-  CreateSharedUdpPort(kStunAddr2);
+  CreateSharedUdpPort(kStunAddr2, nullptr);
   EXPECT_EQ(kInfiniteLifetime, port()->stun_keepalive_lifetime());
 }
 
@@ -374,4 +383,53 @@ TEST_F(StunPortTest, TestStunBindingRequestLongLifetime) {
   EXPECT_TRUE_SIMULATED_WAIT(
       port()->HasPendingRequest(cricket::STUN_BINDING_REQUEST), 1000,
       fake_clock);
+}
+
+class MockAsyncPacketSocket : public rtc::AsyncPacketSocket {
+ public:
+  ~MockAsyncPacketSocket() = default;
+
+  MOCK_CONST_METHOD0(GetLocalAddress, SocketAddress());
+  MOCK_CONST_METHOD0(GetRemoteAddress, SocketAddress());
+  MOCK_METHOD3(Send,
+               int(const void* pv,
+                   size_t cb,
+                   const rtc::PacketOptions& options));
+
+  MOCK_METHOD4(SendTo,
+               int(const void* pv,
+                   size_t cb,
+                   const SocketAddress& addr,
+                   const rtc::PacketOptions& options));
+  MOCK_METHOD0(Close, int());
+  MOCK_CONST_METHOD0(GetState, State());
+  MOCK_METHOD2(GetOption, int(rtc::Socket::Option opt, int* value));
+  MOCK_METHOD2(SetOption, int(rtc::Socket::Option opt, int value));
+  MOCK_CONST_METHOD0(GetError, int());
+  MOCK_METHOD1(SetError, void(int error));
+};
+
+// Test that outbound packets inherit the dscp value assigned to the socket.
+TEST_F(StunPortTest, TestStunPacketsHaveDscpPacketOption) {
+  MockAsyncPacketSocket* socket = new MockAsyncPacketSocket();
+  CreateSharedUdpPort(kStunAddr1, socket);
+  EXPECT_CALL(*socket, GetLocalAddress()).WillRepeatedly(Return(kLocalAddr));
+  EXPECT_CALL(*socket, GetState())
+      .WillRepeatedly(Return(rtc::AsyncPacketSocket::STATE_BOUND));
+  EXPECT_CALL(*socket, SetOption(_, _)).WillRepeatedly(Return(0));
+
+  // If DSCP is not set on the socket, stun packets should have no value.
+  EXPECT_CALL(*socket, SendTo(_, _, _,
+                              testing::Field(&rtc::PacketOptions::dscp,
+                                             testing::Eq(rtc::DSCP_NO_CHANGE))))
+      .WillOnce(Return(100));
+  PrepareAddress();
+
+  // Once it is set transport wide, they should inherit that value.
+  port()->SetOption(rtc::Socket::OPT_DSCP, rtc::DSCP_AF41);
+  EXPECT_CALL(*socket, SendTo(_, _, _,
+                              testing::Field(&rtc::PacketOptions::dscp,
+                                             testing::Eq(rtc::DSCP_AF41))))
+      .WillRepeatedly(Return(100));
+  EXPECT_TRUE_SIMULATED_WAIT(done(), kTimeoutMs, fake_clock);
 }

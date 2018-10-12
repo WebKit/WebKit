@@ -15,7 +15,6 @@
 #include "api/rtcerror.h"
 #include "api/transport/network_control.h"
 #include "call/audio_state.h"
-#include "rtc_base/platform_file.h"
 
 namespace webrtc {
 
@@ -24,6 +23,7 @@ class RtcEventLog;
 
 struct CallConfig {
   explicit CallConfig(RtcEventLog* event_log);
+  CallConfig(const CallConfig&);
   ~CallConfig();
 
   RTC_DEPRECATED static constexpr int kDefaultStartBitrateBps = 300000;

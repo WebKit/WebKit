@@ -62,7 +62,9 @@ int VCMSessionInfo::PictureId() const {
   if (packets_.empty())
     return kNoPictureId;
   if (packets_.front().video_header.codec == kVideoCodecVP8) {
-    return packets_.front().video_header.vp8().pictureId;
+    return absl::get<RTPVideoHeaderVP8>(
+               packets_.front().video_header.video_type_header)
+        .pictureId;
   } else if (packets_.front().video_header.codec == kVideoCodecVP9) {
     return absl::get<RTPVideoHeaderVP9>(
                packets_.front().video_header.video_type_header)
@@ -76,7 +78,9 @@ int VCMSessionInfo::TemporalId() const {
   if (packets_.empty())
     return kNoTemporalIdx;
   if (packets_.front().video_header.codec == kVideoCodecVP8) {
-    return packets_.front().video_header.vp8().temporalIdx;
+    return absl::get<RTPVideoHeaderVP8>(
+               packets_.front().video_header.video_type_header)
+        .temporalIdx;
   } else if (packets_.front().video_header.codec == kVideoCodecVP9) {
     return absl::get<RTPVideoHeaderVP9>(
                packets_.front().video_header.video_type_header)
@@ -90,7 +94,9 @@ bool VCMSessionInfo::LayerSync() const {
   if (packets_.empty())
     return false;
   if (packets_.front().video_header.codec == kVideoCodecVP8) {
-    return packets_.front().video_header.vp8().layerSync;
+    return absl::get<RTPVideoHeaderVP8>(
+               packets_.front().video_header.video_type_header)
+        .layerSync;
   } else if (packets_.front().video_header.codec == kVideoCodecVP9) {
     return absl::get<RTPVideoHeaderVP9>(
                packets_.front().video_header.video_type_header)
@@ -104,7 +110,9 @@ int VCMSessionInfo::Tl0PicId() const {
   if (packets_.empty())
     return kNoTl0PicIdx;
   if (packets_.front().video_header.codec == kVideoCodecVP8) {
-    return packets_.front().video_header.vp8().tl0PicIdx;
+    return absl::get<RTPVideoHeaderVP8>(
+               packets_.front().video_header.video_type_header)
+        .tl0PicIdx;
   } else if (packets_.front().video_header.codec == kVideoCodecVP9) {
     return absl::get<RTPVideoHeaderVP9>(
                packets_.front().video_header.video_type_header)
@@ -347,7 +355,8 @@ size_t VCMSessionInfo::DeletePacketData(PacketIterator start,
 VCMSessionInfo::PacketIterator VCMSessionInfo::FindNextPartitionBeginning(
     PacketIterator it) const {
   while (it != packets_.end()) {
-    if ((*it).video_header.vp8().beginningOfPartition) {
+    if (absl::get<RTPVideoHeaderVP8>((*it).video_header.video_type_header)
+            .beginningOfPartition) {
       return it;
     }
     ++it;
@@ -359,10 +368,16 @@ VCMSessionInfo::PacketIterator VCMSessionInfo::FindPartitionEnd(
     PacketIterator it) const {
   assert((*it).codec == kVideoCodecVP8);
   PacketIterator prev_it = it;
-  const int partition_id = (*it).video_header.vp8().partitionId;
+  const int partition_id =
+      absl::get<RTPVideoHeaderVP8>((*it).video_header.video_type_header)
+          .partitionId;
   while (it != packets_.end()) {
-    bool beginning = (*it).video_header.vp8().beginningOfPartition;
-    int current_partition_id = (*it).video_header.vp8().partitionId;
+    bool beginning =
+        absl::get<RTPVideoHeaderVP8>((*it).video_header.video_type_header)
+            .beginningOfPartition;
+    int current_partition_id =
+        absl::get<RTPVideoHeaderVP8>((*it).video_header.video_type_header)
+            .partitionId;
     bool packet_loss_found = (!beginning && !InSequence(it, prev_it));
     if (packet_loss_found ||
         (beginning && current_partition_id != partition_id)) {

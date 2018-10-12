@@ -22,7 +22,6 @@ namespace webrtc {
 namespace {
 
 constexpr float kHErrorInitial = 10000.f;
-constexpr float kHErrorGainChange = 10000.f;
 constexpr int kPoorExcitationCounterInitial = 1000;
 
 }  // namespace
@@ -48,7 +47,7 @@ MainFilterUpdateGain::~MainFilterUpdateGain() {}
 void MainFilterUpdateGain::HandleEchoPathChange(
     const EchoPathVariability& echo_path_variability) {
   if (echo_path_variability.gain_change) {
-    H_error_.fill(kHErrorGainChange);
+    // TODO(bugs.webrtc.org/9526) Handle gain changes.
   }
 
   if (echo_path_variability.delay_change !=

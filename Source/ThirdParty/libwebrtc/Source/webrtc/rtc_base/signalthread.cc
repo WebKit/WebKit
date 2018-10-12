@@ -151,7 +151,7 @@ void SignalThread::OnMainThreadDestroyed() {
   main_ = nullptr;
 }
 
-bool SignalThread::Worker::IsProcessingMessages() {
+bool SignalThread::Worker::IsProcessingMessagesForTesting() {
   return false;
 }
 

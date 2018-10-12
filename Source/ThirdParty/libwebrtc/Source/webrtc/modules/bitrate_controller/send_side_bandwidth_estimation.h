@@ -17,6 +17,7 @@
 #include <utility>
 #include <vector>
 
+#include "absl/types/optional.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 
 namespace webrtc {
@@ -32,83 +33,86 @@ class SendSideBandwidthEstimation {
   void CurrentEstimate(int* bitrate, uint8_t* loss, int64_t* rtt) const;
 
   // Call periodically to update estimate.
-  void UpdateEstimate(int64_t now_ms);
+  void UpdateEstimate(Timestamp at_time);
 
   // Call when we receive a RTCP message with TMMBR or REMB.
-  void UpdateReceiverEstimate(int64_t now_ms, uint32_t bandwidth);
+  void UpdateReceiverEstimate(Timestamp at_time, DataRate bandwidth);
 
   // Call when a new delay-based estimate is available.
-  void UpdateDelayBasedEstimate(int64_t now_ms, uint32_t bitrate_bps);
+  void UpdateDelayBasedEstimate(Timestamp at_time, DataRate bitrate);
 
   // Call when we receive a RTCP message with a ReceiveBlock.
   void UpdateReceiverBlock(uint8_t fraction_loss,
-                           int64_t rtt_ms,
+                           TimeDelta rtt_ms,
                            int number_of_packets,
-                           int64_t now_ms);
+                           Timestamp at_time);
 
   // Call when we receive a RTCP message with a ReceiveBlock.
   void UpdatePacketsLost(int packets_lost,
                          int number_of_packets,
-                         int64_t now_ms);
+                         Timestamp at_time);
 
   // Call when we receive a RTCP message with a ReceiveBlock.
-  void UpdateRtt(int64_t rtt, int64_t now_ms);
+  void UpdateRtt(TimeDelta rtt, Timestamp at_time);
 
-  void SetBitrates(int send_bitrate, int min_bitrate, int max_bitrate);
-  void SetSendBitrate(int bitrate);
-  void SetMinMaxBitrate(int min_bitrate, int max_bitrate);
+  void SetBitrates(absl::optional<DataRate> send_bitrate,
+                   DataRate min_bitrate,
+                   DataRate max_bitrate,
+                   Timestamp at_time);
+  void SetSendBitrate(DataRate bitrate, Timestamp at_time);
+  void SetMinMaxBitrate(DataRate min_bitrate, DataRate max_bitrate);
   int GetMinBitrate() const;
 
  private:
   enum UmaState { kNoUpdate, kFirstDone, kDone };
 
-  bool IsInStartPhase(int64_t now_ms) const;
+  bool IsInStartPhase(Timestamp at_time) const;
 
-  void UpdateUmaStatsPacketsLost(int64_t now_ms, int packets_lost);
+  void UpdateUmaStatsPacketsLost(Timestamp at_time, int packets_lost);
 
   // Updates history of min bitrates.
   // After this method returns min_bitrate_history_.front().second contains the
   // min bitrate used during last kBweIncreaseIntervalMs.
-  void UpdateMinHistory(int64_t now_ms);
+  void UpdateMinHistory(Timestamp at_time);
 
-  // Cap |bitrate_bps| to [min_bitrate_configured_, max_bitrate_configured_] and
-  // set |current_bitrate_bps_| to the capped value and updates the event log.
-  void CapBitrateToThresholds(int64_t now_ms, uint32_t bitrate_bps);
+  // Cap |bitrate| to [min_bitrate_configured_, max_bitrate_configured_] and
+  // set |current_bitrate_| to the capped value and updates the event log.
+  void CapBitrateToThresholds(Timestamp at_time, DataRate bitrate);
 
-  std::deque<std::pair<int64_t, uint32_t> > min_bitrate_history_;
+  std::deque<std::pair<Timestamp, DataRate> > min_bitrate_history_;
 
   // incoming filters
   int lost_packets_since_last_loss_update_;
   int expected_packets_since_last_loss_update_;
 
-  uint32_t current_bitrate_bps_;
-  uint32_t min_bitrate_configured_;
-  uint32_t max_bitrate_configured_;
-  int64_t last_low_bitrate_log_ms_;
+  DataRate current_bitrate_;
+  DataRate min_bitrate_configured_;
+  DataRate max_bitrate_configured_;
+  Timestamp last_low_bitrate_log_;
 
   bool has_decreased_since_last_fraction_loss_;
-  int64_t last_feedback_ms_;
-  int64_t last_packet_report_ms_;
-  int64_t last_timeout_ms_;
+  Timestamp last_loss_feedback_;
+  Timestamp last_loss_packet_report_;
+  Timestamp last_timeout_;
   uint8_t last_fraction_loss_;
   uint8_t last_logged_fraction_loss_;
-  int64_t last_round_trip_time_ms_;
+  TimeDelta last_round_trip_time_;
 
-  uint32_t bwe_incoming_;
-  uint32_t delay_based_bitrate_bps_;
-  int64_t time_last_decrease_ms_;
-  int64_t first_report_time_ms_;
+  DataRate bwe_incoming_;
+  DataRate delay_based_bitrate_;
+  Timestamp time_last_decrease_;
+  Timestamp first_report_time_;
   int initially_lost_packets_;
-  int bitrate_at_2_seconds_kbps_;
+  DataRate bitrate_at_2_seconds_;
   UmaState uma_update_state_;
   UmaState uma_rtt_state_;
   std::vector<bool> rampup_uma_stats_updated_;
   RtcEventLog* event_log_;
-  int64_t last_rtc_event_log_ms_;
+  Timestamp last_rtc_event_log_;
   bool in_timeout_experiment_;
   float low_loss_threshold_;
   float high_loss_threshold_;
-  uint32_t bitrate_threshold_bps_;
+  DataRate bitrate_threshold_;
 };
 }  // namespace webrtc
 #endif  // MODULES_BITRATE_CONTROLLER_SEND_SIDE_BANDWIDTH_ESTIMATION_H_

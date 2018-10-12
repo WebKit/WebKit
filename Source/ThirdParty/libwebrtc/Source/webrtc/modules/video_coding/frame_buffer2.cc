@@ -117,7 +117,8 @@ FrameBuffer::ReturnReason FrameBuffer::NextFrame(
 
         next_frame_it_ = frame_it;
         if (frame->RenderTime() == -1)
-          frame->SetRenderTime(timing_->RenderTimeMs(frame->timestamp, now_ms));
+          frame->SetRenderTime(
+              timing_->RenderTimeMs(frame->Timestamp(), now_ms));
         wait_ms = timing_->MaxWaitingTime(frame->RenderTime(), now_ms);
 
         // This will cause the frame buffer to prefer high framerate rather
@@ -146,16 +147,20 @@ FrameBuffer::ReturnReason FrameBuffer::NextFrame(
       if (!frame->delayed_by_retransmission()) {
         int64_t frame_delay;
 
-        if (inter_frame_delay_.CalculateDelay(frame->timestamp, &frame_delay,
+        if (inter_frame_delay_.CalculateDelay(frame->Timestamp(), &frame_delay,
                                               frame->ReceivedTime())) {
           jitter_estimator_->UpdateEstimate(frame_delay, frame->size());
         }
 
         float rtt_mult = protection_mode_ == kProtectionNackFEC ? 0.0 : 1.0;
+        if (RttMultExperiment::RttMultEnabled()) {
+          rtt_mult = RttMultExperiment::GetRttMultValue();
+        }
         timing_->SetJitterDelay(jitter_estimator_->GetJitterEstimate(rtt_mult));
         timing_->UpdateCurrentDelay(frame->RenderTime(), now_ms);
       } else {
-        if (webrtc::field_trial::IsEnabled("WebRTC-AddRttToPlayoutDelay"))
+        if (RttMultExperiment::RttMultEnabled() ||
+            webrtc::field_trial::IsEnabled("WebRTC-AddRttToPlayoutDelay"))
           jitter_estimator_->FrameNacked();
       }
 
@@ -163,7 +168,7 @@ FrameBuffer::ReturnReason FrameBuffer::NextFrame(
       if (HasBadRenderTiming(*frame, now_ms)) {
         jitter_estimator_->Reset();
         timing_->Reset();
-        frame->SetRenderTime(timing_->RenderTimeMs(frame->timestamp, now_ms));
+        frame->SetRenderTime(timing_->RenderTimeMs(frame->Timestamp(), now_ms));
       }
 
       UpdateJitterDelay();
@@ -177,17 +182,17 @@ FrameBuffer::ReturnReason FrameBuffer::NextFrame(
         const VideoLayerFrameId& frame_key = next_frame_it_->first;
 
         const bool frame_is_higher_spatial_layer_of_last_decoded_frame =
-            last_decoded_frame_timestamp_ == frame->timestamp &&
+            last_decoded_frame_timestamp_ == frame->Timestamp() &&
             last_decoded_frame_key.picture_id == frame_key.picture_id &&
             last_decoded_frame_key.spatial_layer < frame_key.spatial_layer;
 
-        if (AheadOrAt(last_decoded_frame_timestamp_, frame->timestamp) &&
+        if (AheadOrAt(last_decoded_frame_timestamp_, frame->Timestamp()) &&
             !frame_is_higher_spatial_layer_of_last_decoded_frame) {
           // TODO(brandtr): Consider clearing the entire buffer when we hit
           // these conditions.
           RTC_LOG(LS_WARNING)
               << "Frame with (timestamp:picture_id:spatial_id) ("
-              << frame->timestamp << ":" << frame->id.picture_id << ":"
+              << frame->Timestamp() << ":" << frame->id.picture_id << ":"
               << static_cast<int>(frame->id.spatial_layer) << ")"
               << " sent to decoder after frame with"
               << " (timestamp:picture_id:spatial_id) ("
@@ -198,7 +203,7 @@ FrameBuffer::ReturnReason FrameBuffer::NextFrame(
       }
 
       AdvanceLastDecodedFrame(next_frame_it_);
-      last_decoded_frame_timestamp_ = frame->timestamp;
+      last_decoded_frame_timestamp_ = frame->Timestamp();
       *frame_out = std::move(frame);
       return kFrameFound;
     }
@@ -297,7 +302,7 @@ void FrameBuffer::UpdatePlayoutDelays(const EncodedFrame& frame) {
     timing_->set_max_playout_delay(playout_delay.max_ms);
 
   if (!frame.delayed_by_retransmission())
-    timing_->IncomingTimestamp(frame.timestamp, frame.ReceivedTime());
+    timing_->IncomingTimestamp(frame.Timestamp(), frame.ReceivedTime());
 }
 
 int64_t FrameBuffer::InsertFrame(std::unique_ptr<EncodedFrame> frame) {
@@ -343,7 +348,7 @@ int64_t FrameBuffer::InsertFrame(std::unique_ptr<EncodedFrame> frame) {
 
   if (last_decoded_frame_it_ != frames_.end() &&
       id <= last_decoded_frame_it_->first) {
-    if (AheadOf(frame->timestamp, last_decoded_frame_timestamp_) &&
+    if (AheadOf(frame->Timestamp(), last_decoded_frame_timestamp_) &&
         frame->is_keyframe()) {
       // If this frame has a newer timestamp but an earlier picture id then we
       // assume there has been a jump in the picture id due to some encoder

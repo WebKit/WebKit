@@ -131,7 +131,10 @@ class NetEqImpl : public webrtc::NetEq {
 
   void InsertEmptyPacket(const RTPHeader& rtp_header) override;
 
-  int GetAudio(AudioFrame* audio_frame, bool* muted) override;
+  int GetAudio(
+      AudioFrame* audio_frame,
+      bool* muted,
+      absl::optional<Operations> action_override = absl::nullopt) override;
 
   void SetCodecs(const std::map<int, SdpAudioFormat>& codecs) override;
 
@@ -157,10 +160,6 @@ class NetEqImpl : public webrtc::NetEq {
 
   bool SetMaximumDelay(int delay_ms) override;
 
-  int LeastRequiredDelayMs() const override;
-
-  int SetTargetDelay() override;
-
   int TargetDelayMs() const override;
 
   int CurrentDelayMs() const override;
@@ -176,6 +175,8 @@ class NetEqImpl : public webrtc::NetEq {
   void GetRtcpStatistics(RtcpStatistics* stats) override;
 
   NetEqLifetimeStatistics GetLifetimeStatistics() const override;
+
+  NetEqOperationsAndState GetOperationsAndState() const override;
 
   // Same as RtcpStatistics(), but does not reset anything.
   void GetRtcpStatisticsNoReset(RtcpStatistics* stats) override;
@@ -195,10 +196,6 @@ class NetEqImpl : public webrtc::NetEq {
 
   absl::optional<SdpAudioFormat> GetDecoderFormat(
       int payload_type) const override;
-
-  int SetTargetNumberOfChannels() override;
-
-  int SetTargetSampleRate() override;
 
   // Flushes both the packet buffer and the sync buffer.
   void FlushBuffers() override;
@@ -238,7 +235,9 @@ class NetEqImpl : public webrtc::NetEq {
 
   // Delivers 10 ms of audio data. The data is written to |audio_frame|.
   // Returns 0 on success, otherwise an error code.
-  int GetAudioInternal(AudioFrame* audio_frame, bool* muted)
+  int GetAudioInternal(AudioFrame* audio_frame,
+                       bool* muted,
+                       absl::optional<Operations> action_override)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
 
   // Provides a decision to the GetAudioInternal method. The decision what to
@@ -249,7 +248,9 @@ class NetEqImpl : public webrtc::NetEq {
   int GetDecision(Operations* operation,
                   PacketList* packet_list,
                   DtmfEvent* dtmf_event,
-                  bool* play_dtmf) RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
+                  bool* play_dtmf,
+                  absl::optional<Operations> action_override)
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
 
   // Decodes the speech packets in |packet_list|, and writes the results to
   // |decoded_buffer|, which is allocated to hold |decoded_buffer_length|
@@ -288,6 +289,8 @@ class NetEqImpl : public webrtc::NetEq {
                size_t decoded_length,
                AudioDecoder::SpeechType speech_type,
                bool play_dtmf) RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
+
+  bool DoCodecPlc() RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
 
   // Sub-method which calls the Expand class to perform the expand operation.
   int DoExpand(bool play_dtmf) RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
@@ -424,6 +427,7 @@ class NetEqImpl : public webrtc::NetEq {
   ExpandUmaLogger expand_uma_logger_ RTC_GUARDED_BY(crit_sect_);
   ExpandUmaLogger speech_expand_uma_logger_ RTC_GUARDED_BY(crit_sect_);
   bool no_time_stretching_ RTC_GUARDED_BY(crit_sect_);  // Only used for test.
+  rtc::BufferT<int16_t> concealment_audio_ RTC_GUARDED_BY(crit_sect_);
 
  private:
   RTC_DISALLOW_COPY_AND_ASSIGN(NetEqImpl);

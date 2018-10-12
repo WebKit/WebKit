@@ -22,6 +22,17 @@
 
 namespace webrtc {
 namespace {
+
+constexpr int kXBit = 0x80;
+constexpr int kNBit = 0x20;
+constexpr int kSBit = 0x10;
+constexpr int kKeyIdxField = 0x1F;
+constexpr int kIBit = 0x80;
+constexpr int kLBit = 0x40;
+constexpr int kTBit = 0x20;
+constexpr int kKBit = 0x10;
+constexpr int kYBit = 0x20;
+
 int ParseVP8PictureID(RTPVideoHeaderVP8* vp8,
                       const uint8_t** data,
                       size_t* data_length,
@@ -158,288 +169,109 @@ bool ValidateHeader(const RTPVideoHeaderVP8& hdr_info) {
 
 }  // namespace
 
-RtpPacketizerVp8::RtpPacketizerVp8(const RTPVideoHeaderVP8& hdr_info,
-                                   size_t max_payload_len,
-                                   size_t last_packet_reduction_len)
-    : payload_data_(NULL),
-      payload_size_(0),
-      vp8_fixed_payload_descriptor_bytes_(1),
-      hdr_info_(hdr_info),
-      max_payload_len_(max_payload_len),
-      last_packet_reduction_len_(last_packet_reduction_len) {
-  RTC_DCHECK(ValidateHeader(hdr_info));
+RtpPacketizerVp8::RtpPacketizerVp8(rtc::ArrayView<const uint8_t> payload,
+                                   PayloadSizeLimits limits,
+                                   const RTPVideoHeaderVP8& hdr_info)
+    : hdr_(BuildHeader(hdr_info)), remaining_payload_(payload) {
+  limits.max_payload_len -= hdr_.size();
+  payload_sizes_ = SplitAboutEqually(payload.size(), limits);
+  current_packet_ = payload_sizes_.begin();
 }
 
-RtpPacketizerVp8::~RtpPacketizerVp8() {}
+RtpPacketizerVp8::~RtpPacketizerVp8() = default;
 
-size_t RtpPacketizerVp8::SetPayloadData(
-    const uint8_t* payload_data,
-    size_t payload_size,
-    const RTPFragmentationHeader* /* fragmentation */) {
-  payload_data_ = payload_data;
-  payload_size_ = payload_size;
-  if (GeneratePackets() < 0) {
-    return 0;
-  }
-  return packets_.size();
+size_t RtpPacketizerVp8::NumPackets() const {
+  return payload_sizes_.end() - current_packet_;
 }
 
 bool RtpPacketizerVp8::NextPacket(RtpPacketToSend* packet) {
   RTC_DCHECK(packet);
-  if (packets_.empty()) {
+  if (current_packet_ == payload_sizes_.end()) {
     return false;
   }
-  InfoStruct packet_info = packets_.front();
-  packets_.pop();
 
-  uint8_t* buffer = packet->AllocatePayload(
-      packets_.empty() ? max_payload_len_ - last_packet_reduction_len_
-                       : max_payload_len_);
-  int bytes = WriteHeaderAndPayload(packet_info, buffer, max_payload_len_);
-  if (bytes < 0) {
-    return false;
-  }
-  packet->SetPayloadSize(bytes);
-  packet->SetMarker(packets_.empty());
+  size_t packet_payload_len = *current_packet_;
+  ++current_packet_;
+
+  uint8_t* buffer = packet->AllocatePayload(hdr_.size() + packet_payload_len);
+  RTC_CHECK(buffer);
+
+  memcpy(buffer, hdr_.data(), hdr_.size());
+  memcpy(buffer + hdr_.size(), remaining_payload_.data(), packet_payload_len);
+
+  remaining_payload_ = remaining_payload_.subview(packet_payload_len);
+  hdr_[0] &= (~kSBit);  //  Clear 'Start of partition' bit.
+  packet->SetMarker(current_packet_ == payload_sizes_.end());
   return true;
 }
 
-std::string RtpPacketizerVp8::ToString() {
-  return "RtpPacketizerVp8";
-}
+// Write the VP8 payload descriptor.
+//       0
+//       0 1 2 3 4 5 6 7 8
+//      +-+-+-+-+-+-+-+-+-+
+//      |X| |N|S| PART_ID |
+//      +-+-+-+-+-+-+-+-+-+
+// X:   |I|L|T|K|         | (mandatory if any of the below are used)
+//      +-+-+-+-+-+-+-+-+-+
+// I:   |PictureID   (16b)| (optional)
+//      +-+-+-+-+-+-+-+-+-+
+// L:   |   TL0PIC_IDX    | (optional)
+//      +-+-+-+-+-+-+-+-+-+
+// T/K: |TID:Y|  KEYIDX   | (optional)
+//      +-+-+-+-+-+-+-+-+-+
+RtpPacketizerVp8::RawHeader RtpPacketizerVp8::BuildHeader(
+    const RTPVideoHeaderVP8& header) {
+  RTC_DCHECK(ValidateHeader(header));
 
-int RtpPacketizerVp8::GeneratePackets() {
-  if (max_payload_len_ < vp8_fixed_payload_descriptor_bytes_ +
-                             PayloadDescriptorExtraLength() + 1 +
-                             last_packet_reduction_len_) {
-    // The provided payload length is not long enough for the payload
-    // descriptor and one payload byte in the last packet.
-    // Return an error.
-    return -1;
+  RawHeader result;
+  bool tid_present = header.temporalIdx != kNoTemporalIdx;
+  bool keyid_present = header.keyIdx != kNoKeyIdx;
+  bool tl0_pid_present = header.tl0PicIdx != kNoTl0PicIdx;
+  bool pid_present = header.pictureId != kNoPictureId;
+  uint8_t x_field = 0;
+  if (pid_present)
+    x_field |= kIBit;
+  if (tl0_pid_present)
+    x_field |= kLBit;
+  if (tid_present)
+    x_field |= kTBit;
+  if (keyid_present)
+    x_field |= kKBit;
+
+  uint8_t flags = 0;
+  if (x_field != 0)
+    flags |= kXBit;
+  if (header.nonReference)
+    flags |= kNBit;
+  // Create header as first packet in the frame. NextPacket() will clear it
+  // after first use.
+  flags |= kSBit;
+  result.push_back(flags);
+  if (x_field == 0) {
+    return result;
   }
-
-  size_t per_packet_capacity =
-      max_payload_len_ -
-      (vp8_fixed_payload_descriptor_bytes_ + PayloadDescriptorExtraLength());
-
-  GeneratePacketsSplitPayloadBalanced(payload_size_, per_packet_capacity);
-  return 0;
-}
-
-void RtpPacketizerVp8::GeneratePacketsSplitPayloadBalanced(size_t payload_len,
-                                                           size_t capacity) {
-  // Last packet of the last partition is smaller. Pretend that it's the same
-  // size, but we must write more payload to it.
-  size_t total_bytes = payload_len + last_packet_reduction_len_;
-  // Integer divisions with rounding up.
-  size_t num_packets_left = (total_bytes + capacity - 1) / capacity;
-  size_t bytes_per_packet = total_bytes / num_packets_left;
-  size_t num_larger_packets = total_bytes % num_packets_left;
-  size_t remaining_data = payload_len;
-  while (remaining_data > 0) {
-    // Last num_larger_packets are 1 byte wider than the rest. Increase
-    // per-packet payload size when needed.
-    if (num_packets_left == num_larger_packets)
-      ++bytes_per_packet;
-    size_t current_packet_bytes = bytes_per_packet;
-    if (current_packet_bytes > remaining_data) {
-      current_packet_bytes = remaining_data;
+  result.push_back(x_field);
+  if (pid_present) {
+    const uint16_t pic_id = static_cast<uint16_t>(header.pictureId);
+    result.push_back(0x80 | ((pic_id >> 8) & 0x7F));
+    result.push_back(pic_id & 0xFF);
+  }
+  if (tl0_pid_present) {
+    result.push_back(header.tl0PicIdx);
+  }
+  if (tid_present || keyid_present) {
+    uint8_t data_field = 0;
+    if (tid_present) {
+      data_field |= header.temporalIdx << 6;
+      if (header.layerSync)
+        data_field |= kYBit;
     }
-    // This is not the last packet in the whole payload, but there's no data
-    // left for the last packet. Leave at least one byte for the last packet.
-    if (num_packets_left == 2 && current_packet_bytes == remaining_data) {
-      --current_packet_bytes;
+    if (keyid_present) {
+      data_field |= (header.keyIdx & kKeyIdxField);
     }
-    QueuePacket(payload_len - remaining_data, current_packet_bytes,
-                remaining_data == payload_len);
-    remaining_data -= current_packet_bytes;
-    --num_packets_left;
+    result.push_back(data_field);
   }
-}
-
-void RtpPacketizerVp8::QueuePacket(size_t start_pos,
-                                   size_t packet_size,
-                                   bool first_packet) {
-  // Write info to packet info struct and store in packet info queue.
-  InfoStruct packet_info;
-  packet_info.payload_start_pos = start_pos;
-  packet_info.size = packet_size;
-  packet_info.first_packet = first_packet;
-  packets_.push(packet_info);
-}
-
-int RtpPacketizerVp8::WriteHeaderAndPayload(const InfoStruct& packet_info,
-                                            uint8_t* buffer,
-                                            size_t buffer_length) const {
-  // Write the VP8 payload descriptor.
-  //       0
-  //       0 1 2 3 4 5 6 7 8
-  //      +-+-+-+-+-+-+-+-+-+
-  //      |X| |N|S| PART_ID |
-  //      +-+-+-+-+-+-+-+-+-+
-  // X:   |I|L|T|K|         | (mandatory if any of the below are used)
-  //      +-+-+-+-+-+-+-+-+-+
-  // I:   |PictureID (8/16b)| (optional)
-  //      +-+-+-+-+-+-+-+-+-+
-  // L:   |   TL0PIC_IDX    | (optional)
-  //      +-+-+-+-+-+-+-+-+-+
-  // T/K: |TID:Y|  KEYIDX   | (optional)
-  //      +-+-+-+-+-+-+-+-+-+
-
-  RTC_DCHECK_GT(packet_info.size, 0);
-  buffer[0] = 0;
-  if (XFieldPresent())
-    buffer[0] |= kXBit;
-  if (hdr_info_.nonReference)
-    buffer[0] |= kNBit;
-  if (packet_info.first_packet)
-    buffer[0] |= kSBit;
-
-  const int extension_length = WriteExtensionFields(buffer, buffer_length);
-  if (extension_length < 0)
-    return -1;
-
-  memcpy(&buffer[vp8_fixed_payload_descriptor_bytes_ + extension_length],
-         &payload_data_[packet_info.payload_start_pos], packet_info.size);
-
-  // Return total length of written data.
-  return packet_info.size + vp8_fixed_payload_descriptor_bytes_ +
-         extension_length;
-}
-
-int RtpPacketizerVp8::WriteExtensionFields(uint8_t* buffer,
-                                           size_t buffer_length) const {
-  size_t extension_length = 0;
-  if (XFieldPresent()) {
-    uint8_t* x_field = buffer + vp8_fixed_payload_descriptor_bytes_;
-    *x_field = 0;
-    extension_length = 1;  // One octet for the X field.
-    if (PictureIdPresent()) {
-      if (WritePictureIDFields(x_field, buffer, buffer_length,
-                               &extension_length) < 0) {
-        return -1;
-      }
-    }
-    if (TL0PicIdxFieldPresent()) {
-      if (WriteTl0PicIdxFields(x_field, buffer, buffer_length,
-                               &extension_length) < 0) {
-        return -1;
-      }
-    }
-    if (TIDFieldPresent() || KeyIdxFieldPresent()) {
-      if (WriteTIDAndKeyIdxFields(x_field, buffer, buffer_length,
-                                  &extension_length) < 0) {
-        return -1;
-      }
-    }
-    RTC_DCHECK_EQ(extension_length, PayloadDescriptorExtraLength());
-  }
-  return static_cast<int>(extension_length);
-}
-
-int RtpPacketizerVp8::WritePictureIDFields(uint8_t* x_field,
-                                           uint8_t* buffer,
-                                           size_t buffer_length,
-                                           size_t* extension_length) const {
-  *x_field |= kIBit;
-  RTC_DCHECK_GE(buffer_length,
-                vp8_fixed_payload_descriptor_bytes_ + *extension_length);
-  const int pic_id_length = WritePictureID(
-      buffer + vp8_fixed_payload_descriptor_bytes_ + *extension_length,
-      buffer_length - vp8_fixed_payload_descriptor_bytes_ - *extension_length);
-  if (pic_id_length < 0)
-    return -1;
-  *extension_length += pic_id_length;
-  return 0;
-}
-
-int RtpPacketizerVp8::WritePictureID(uint8_t* buffer,
-                                     size_t buffer_length) const {
-  const uint16_t pic_id = static_cast<uint16_t>(hdr_info_.pictureId);
-  size_t picture_id_len = PictureIdLength();
-  if (picture_id_len > buffer_length)
-    return -1;
-  if (picture_id_len == 2) {
-    buffer[0] = 0x80 | ((pic_id >> 8) & 0x7F);
-    buffer[1] = pic_id & 0xFF;
-  } else if (picture_id_len == 1) {
-    buffer[0] = pic_id & 0x7F;
-  }
-  return static_cast<int>(picture_id_len);
-}
-
-int RtpPacketizerVp8::WriteTl0PicIdxFields(uint8_t* x_field,
-                                           uint8_t* buffer,
-                                           size_t buffer_length,
-                                           size_t* extension_length) const {
-  if (buffer_length <
-      vp8_fixed_payload_descriptor_bytes_ + *extension_length + 1) {
-    return -1;
-  }
-  *x_field |= kLBit;
-  buffer[vp8_fixed_payload_descriptor_bytes_ + *extension_length] =
-      hdr_info_.tl0PicIdx;
-  ++*extension_length;
-  return 0;
-}
-
-int RtpPacketizerVp8::WriteTIDAndKeyIdxFields(uint8_t* x_field,
-                                              uint8_t* buffer,
-                                              size_t buffer_length,
-                                              size_t* extension_length) const {
-  if (buffer_length <
-      vp8_fixed_payload_descriptor_bytes_ + *extension_length + 1) {
-    return -1;
-  }
-  uint8_t* data_field =
-      &buffer[vp8_fixed_payload_descriptor_bytes_ + *extension_length];
-  *data_field = 0;
-  if (TIDFieldPresent()) {
-    *x_field |= kTBit;
-    *data_field |= hdr_info_.temporalIdx << 6;
-    *data_field |= hdr_info_.layerSync ? kYBit : 0;
-  }
-  if (KeyIdxFieldPresent()) {
-    *x_field |= kKBit;
-    *data_field |= (hdr_info_.keyIdx & kKeyIdxField);
-  }
-  ++*extension_length;
-  return 0;
-}
-
-size_t RtpPacketizerVp8::PayloadDescriptorExtraLength() const {
-  size_t length_bytes = PictureIdLength();
-  if (TL0PicIdxFieldPresent())
-    ++length_bytes;
-  if (TIDFieldPresent() || KeyIdxFieldPresent())
-    ++length_bytes;
-  if (length_bytes > 0)
-    ++length_bytes;  // Include the extension field.
-  return length_bytes;
-}
-
-size_t RtpPacketizerVp8::PictureIdLength() const {
-  if (hdr_info_.pictureId == kNoPictureId) {
-    return 0;
-  }
-  return 2;
-}
-
-bool RtpPacketizerVp8::XFieldPresent() const {
-  return (TIDFieldPresent() || TL0PicIdxFieldPresent() || PictureIdPresent() ||
-          KeyIdxFieldPresent());
-}
-
-bool RtpPacketizerVp8::TIDFieldPresent() const {
-  return (hdr_info_.temporalIdx != kNoTemporalIdx);
-}
-
-bool RtpPacketizerVp8::KeyIdxFieldPresent() const {
-  return (hdr_info_.keyIdx != kNoKeyIdx);
-}
-
-bool RtpPacketizerVp8::TL0PicIdxFieldPresent() const {
-  return (hdr_info_.tl0PicIdx != kNoTl0PicIdx);
+  return result;
 }
 
 //
@@ -486,16 +318,16 @@ bool RtpDepacketizerVp8::Parse(ParsedPayload* parsed_payload,
       beginning_of_partition && (partition_id == 0);
   parsed_payload->video_header().simulcastIdx = 0;
   parsed_payload->video_header().codec = kVideoCodecVP8;
-  parsed_payload->video_header().vp8().nonReference =
-      (*payload_data & 0x20) ? true : false;  // N bit
-  parsed_payload->video_header().vp8().partitionId = partition_id;
-  parsed_payload->video_header().vp8().beginningOfPartition =
-      beginning_of_partition;
-  parsed_payload->video_header().vp8().pictureId = kNoPictureId;
-  parsed_payload->video_header().vp8().tl0PicIdx = kNoTl0PicIdx;
-  parsed_payload->video_header().vp8().temporalIdx = kNoTemporalIdx;
-  parsed_payload->video_header().vp8().layerSync = false;
-  parsed_payload->video_header().vp8().keyIdx = kNoKeyIdx;
+  auto& vp8_header = parsed_payload->video_header()
+                         .video_type_header.emplace<RTPVideoHeaderVP8>();
+  vp8_header.nonReference = (*payload_data & 0x20) ? true : false;  // N bit
+  vp8_header.partitionId = partition_id;
+  vp8_header.beginningOfPartition = beginning_of_partition;
+  vp8_header.pictureId = kNoPictureId;
+  vp8_header.tl0PicIdx = kNoTl0PicIdx;
+  vp8_header.temporalIdx = kNoTemporalIdx;
+  vp8_header.layerSync = false;
+  vp8_header.keyIdx = kNoKeyIdx;
 
   if (partition_id > 8) {
     // Weak check for corrupt payload_data: PartID MUST NOT be larger than 8.
@@ -512,8 +344,7 @@ bool RtpDepacketizerVp8::Parse(ParsedPayload* parsed_payload,
 
   if (extension) {
     const int parsed_bytes =
-        ParseVP8Extension(&parsed_payload->video_header().vp8(), payload_data,
-                          payload_data_length);
+        ParseVP8Extension(&vp8_header, payload_data, payload_data_length);
     if (parsed_bytes < 0)
       return false;
     payload_data += parsed_bytes;

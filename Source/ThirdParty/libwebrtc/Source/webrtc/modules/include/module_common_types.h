@@ -11,29 +11,16 @@
 #ifndef MODULES_INCLUDE_MODULE_COMMON_TYPES_H_
 #define MODULES_INCLUDE_MODULE_COMMON_TYPES_H_
 
-#include <assert.h>
-#include <string.h>  // memcpy
+#include <stddef.h>
+#include <stdint.h>
 
-#include <algorithm>
-#include <limits>
-
-#include "absl/types/optional.h"
 #include "api/rtp_headers.h"
-#include "api/transport/network_types.h"
-#include "api/video/video_rotation.h"
 #include "common_types.h"  // NOLINT(build/include)
 #include "modules/include/module_common_types_public.h"
 #include "modules/include/module_fec_types.h"
 #include "modules/rtp_rtcp/source/rtp_video_header.h"
-#include "rtc_base/constructormagic.h"
-#include "rtc_base/deprecation.h"
-#include "rtc_base/numerics/safe_conversions.h"
-#include "rtc_base/timeutils.h"
 
 namespace webrtc {
-
-// TODO(nisse): Deprecated, use webrtc::VideoCodecType instead.
-using RtpVideoCodecTypes = VideoCodecType;
 
 struct WebRtcRTPHeader {
   RTPVideoHeader& video_header() { return video; }
@@ -48,142 +35,29 @@ struct WebRtcRTPHeader {
 
 class RTPFragmentationHeader {
  public:
-  RTPFragmentationHeader()
-      : fragmentationVectorSize(0),
-        fragmentationOffset(NULL),
-        fragmentationLength(NULL),
-        fragmentationTimeDiff(NULL),
-        fragmentationPlType(NULL) {}
+  RTPFragmentationHeader();
+  RTPFragmentationHeader(const RTPFragmentationHeader&) = delete;
+  RTPFragmentationHeader(RTPFragmentationHeader&& other);
+  RTPFragmentationHeader& operator=(const RTPFragmentationHeader& other) =
+      delete;
+  RTPFragmentationHeader& operator=(RTPFragmentationHeader&& other);
+  ~RTPFragmentationHeader();
 
-  RTPFragmentationHeader(RTPFragmentationHeader&& other)
-      : RTPFragmentationHeader() {
-    std::swap(*this, other);
-  }
+  friend void swap(RTPFragmentationHeader& a, RTPFragmentationHeader& b);
 
-  ~RTPFragmentationHeader() {
-    delete[] fragmentationOffset;
-    delete[] fragmentationLength;
-    delete[] fragmentationTimeDiff;
-    delete[] fragmentationPlType;
-  }
+  void CopyFrom(const RTPFragmentationHeader& src);
+  void VerifyAndAllocateFragmentationHeader(size_t size) { Resize(size); }
 
-  void operator=(RTPFragmentationHeader&& other) { std::swap(*this, other); }
+  void Resize(size_t size);
+  size_t Size() const { return fragmentationVectorSize; }
 
-  friend void swap(RTPFragmentationHeader& a, RTPFragmentationHeader& b) {
-    using std::swap;
-    swap(a.fragmentationVectorSize, b.fragmentationVectorSize);
-    swap(a.fragmentationOffset, b.fragmentationOffset);
-    swap(a.fragmentationLength, b.fragmentationLength);
-    swap(a.fragmentationTimeDiff, b.fragmentationTimeDiff);
-    swap(a.fragmentationPlType, b.fragmentationPlType);
-  }
+  size_t Offset(size_t index) const { return fragmentationOffset[index]; }
+  size_t Length(size_t index) const { return fragmentationLength[index]; }
+  uint16_t TimeDiff(size_t index) const { return fragmentationTimeDiff[index]; }
+  int PayloadType(size_t index) const { return fragmentationPlType[index]; }
 
-  void CopyFrom(const RTPFragmentationHeader& src) {
-    if (this == &src) {
-      return;
-    }
-
-    if (src.fragmentationVectorSize != fragmentationVectorSize) {
-      // new size of vectors
-
-      // delete old
-      delete[] fragmentationOffset;
-      fragmentationOffset = NULL;
-      delete[] fragmentationLength;
-      fragmentationLength = NULL;
-      delete[] fragmentationTimeDiff;
-      fragmentationTimeDiff = NULL;
-      delete[] fragmentationPlType;
-      fragmentationPlType = NULL;
-
-      if (src.fragmentationVectorSize > 0) {
-        // allocate new
-        if (src.fragmentationOffset) {
-          fragmentationOffset = new size_t[src.fragmentationVectorSize];
-        }
-        if (src.fragmentationLength) {
-          fragmentationLength = new size_t[src.fragmentationVectorSize];
-        }
-        if (src.fragmentationTimeDiff) {
-          fragmentationTimeDiff = new uint16_t[src.fragmentationVectorSize];
-        }
-        if (src.fragmentationPlType) {
-          fragmentationPlType = new uint8_t[src.fragmentationVectorSize];
-        }
-      }
-      // set new size
-      fragmentationVectorSize = src.fragmentationVectorSize;
-    }
-
-    if (src.fragmentationVectorSize > 0) {
-      // copy values
-      if (src.fragmentationOffset) {
-        memcpy(fragmentationOffset, src.fragmentationOffset,
-               src.fragmentationVectorSize * sizeof(size_t));
-      }
-      if (src.fragmentationLength) {
-        memcpy(fragmentationLength, src.fragmentationLength,
-               src.fragmentationVectorSize * sizeof(size_t));
-      }
-      if (src.fragmentationTimeDiff) {
-        memcpy(fragmentationTimeDiff, src.fragmentationTimeDiff,
-               src.fragmentationVectorSize * sizeof(uint16_t));
-      }
-      if (src.fragmentationPlType) {
-        memcpy(fragmentationPlType, src.fragmentationPlType,
-               src.fragmentationVectorSize * sizeof(uint8_t));
-      }
-    }
-  }
-
-  void VerifyAndAllocateFragmentationHeader(const size_t size) {
-    assert(size <= std::numeric_limits<uint16_t>::max());
-    const uint16_t size16 = static_cast<uint16_t>(size);
-    if (fragmentationVectorSize < size16) {
-      uint16_t oldVectorSize = fragmentationVectorSize;
-      {
-        // offset
-        size_t* oldOffsets = fragmentationOffset;
-        fragmentationOffset = new size_t[size16];
-        memset(fragmentationOffset + oldVectorSize, 0,
-               sizeof(size_t) * (size16 - oldVectorSize));
-        // copy old values
-        memcpy(fragmentationOffset, oldOffsets, sizeof(size_t) * oldVectorSize);
-        delete[] oldOffsets;
-      }
-      // length
-      {
-        size_t* oldLengths = fragmentationLength;
-        fragmentationLength = new size_t[size16];
-        memset(fragmentationLength + oldVectorSize, 0,
-               sizeof(size_t) * (size16 - oldVectorSize));
-        memcpy(fragmentationLength, oldLengths, sizeof(size_t) * oldVectorSize);
-        delete[] oldLengths;
-      }
-      // time diff
-      {
-        uint16_t* oldTimeDiffs = fragmentationTimeDiff;
-        fragmentationTimeDiff = new uint16_t[size16];
-        memset(fragmentationTimeDiff + oldVectorSize, 0,
-               sizeof(uint16_t) * (size16 - oldVectorSize));
-        memcpy(fragmentationTimeDiff, oldTimeDiffs,
-               sizeof(uint16_t) * oldVectorSize);
-        delete[] oldTimeDiffs;
-      }
-      // payload type
-      {
-        uint8_t* oldTimePlTypes = fragmentationPlType;
-        fragmentationPlType = new uint8_t[size16];
-        memset(fragmentationPlType + oldVectorSize, 0,
-               sizeof(uint8_t) * (size16 - oldVectorSize));
-        memcpy(fragmentationPlType, oldTimePlTypes,
-               sizeof(uint8_t) * oldVectorSize);
-        delete[] oldTimePlTypes;
-      }
-      fragmentationVectorSize = size16;
-    }
-  }
-
+  // TODO(danilchap): Move all members to private section,
+  // simplify by replacing 4 raw arrays with single std::vector<Fragment>
   uint16_t fragmentationVectorSize;  // Number of fragmentations
   size_t* fragmentationOffset;       // Offset of pointer to data for each
                                      // fragmentation
@@ -191,33 +65,6 @@ class RTPFragmentationHeader {
   uint16_t* fragmentationTimeDiff;   // Timestamp difference relative "now" for
                                      // each fragmentation
   uint8_t* fragmentationPlType;      // Payload type of each fragmentation
-
- private:
-  RTC_DISALLOW_COPY_AND_ASSIGN(RTPFragmentationHeader);
-};
-
-struct RTCPVoIPMetric {
-  // RFC 3611 4.7
-  uint8_t lossRate;
-  uint8_t discardRate;
-  uint8_t burstDensity;
-  uint8_t gapDensity;
-  uint16_t burstDuration;
-  uint16_t gapDuration;
-  uint16_t roundTripDelay;
-  uint16_t endSystemDelay;
-  uint8_t signalLevel;
-  uint8_t noiseLevel;
-  uint8_t RERL;
-  uint8_t Gmin;
-  uint8_t Rfactor;
-  uint8_t extRfactor;
-  uint8_t MOSLQ;
-  uint8_t MOSCQ;
-  uint8_t RXconfig;
-  uint16_t JBnominal;
-  uint16_t JBmax;
-  uint16_t JBabsMax;
 };
 
 // Interface used by the CallStats class to distribute call statistics.

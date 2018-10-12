@@ -10,7 +10,7 @@
 
 #import "ARDFileCaptureController.h"
 
-#import "WebRTC/RTCFileVideoCapturer.h"
+#import <WebRTC/RTCFileVideoCapturer.h>
 
 @interface ARDFileCaptureController ()
 

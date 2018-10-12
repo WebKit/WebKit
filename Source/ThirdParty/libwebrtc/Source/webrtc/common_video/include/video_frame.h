@@ -37,6 +37,14 @@ class EncodedImage {
   EncodedImage(const EncodedImage&);
   EncodedImage(uint8_t* buffer, size_t length, size_t size);
 
+  // TODO(nisse): Change style to timestamp(), set_timestamp(), for consistency
+  // with the VideoFrame class.
+  // Set frame timestamp (90kHz).
+  void SetTimestamp(uint32_t timestamp) { timestamp_rtp_ = timestamp; }
+
+  // Get frame timestamp (90kHz).
+  uint32_t Timestamp() const { return timestamp_rtp_; }
+
   void SetEncodeTime(int64_t encode_start_ms, int64_t encode_finish_ms);
 
   absl::optional<int> SpatialIndex() const {
@@ -52,7 +60,6 @@ class EncodedImage {
 
   uint32_t _encodedWidth = 0;
   uint32_t _encodedHeight = 0;
-  uint32_t _timeStamp = 0;
   // NTP time of the capture time in local timebase in milliseconds.
   int64_t ntp_time_ms_ = 0;
   int64_t capture_time_ms_ = 0;
@@ -83,6 +90,7 @@ class EncodedImage {
   } timing_;
 
  private:
+  uint32_t timestamp_rtp_ = 0;
   // -1 means not set. Use a plain int rather than optional, to keep this class
   // copyable with memcpy.
   int spatial_index_ = -1;

@@ -64,6 +64,11 @@ public class HardwareVideoEncoderFactory implements VideoEncoderFactory {
   @Nullable
   @Override
   public VideoEncoder createEncoder(VideoCodecInfo input) {
+    // HW encoding is not supported below Android Kitkat.
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+      return null;
+    }
+
     VideoCodecType type = VideoCodecType.valueOf(input.name);
     MediaCodecInfo info = findCodecForType(type);
 
@@ -100,6 +105,11 @@ public class HardwareVideoEncoderFactory implements VideoEncoderFactory {
 
   @Override
   public VideoCodecInfo[] getSupportedCodecs() {
+    // HW encoding is not supported below Android Kitkat.
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+      return new VideoCodecInfo[0];
+    }
+
     List<VideoCodecInfo> supportedCodecInfos = new ArrayList<VideoCodecInfo>();
     // Generate a list of supported codecs in order of preference:
     // VP8, VP9, H264 (high profile), and H264 (baseline profile).

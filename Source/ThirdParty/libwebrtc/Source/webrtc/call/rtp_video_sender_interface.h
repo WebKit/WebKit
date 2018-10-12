@@ -40,21 +40,21 @@ class RtpVideoSenderInterface : public EncodedImageCallback {
   virtual std::map<uint32_t, RtpState> GetRtpStates() const = 0;
   virtual std::map<uint32_t, RtpPayloadState> GetRtpPayloadStates() const = 0;
 
-  virtual bool FecEnabled() const = 0;
-
-  virtual bool NackEnabled() const = 0;
-
   virtual void DeliverRtcp(const uint8_t* packet, size_t length) = 0;
 
-  virtual void ProtectionRequest(const FecProtectionParams* delta_params,
-                                 const FecProtectionParams* key_params,
-                                 uint32_t* sent_video_rate_bps,
-                                 uint32_t* sent_nack_rate_bps,
-                                 uint32_t* sent_fec_rate_bps) = 0;
-
-  virtual void SetMaxRtpPacketSize(size_t max_rtp_packet_size) = 0;
   virtual void OnBitrateAllocationUpdated(
       const VideoBitrateAllocation& bitrate) = 0;
+  virtual void OnBitrateUpdated(uint32_t bitrate_bps,
+                                uint8_t fraction_loss,
+                                int64_t rtt,
+                                int framerate) = 0;
+  virtual void OnTransportOverheadChanged(
+      size_t transport_overhead_bytes_per_packet) = 0;
+  virtual uint32_t GetPayloadBitrateBps() const = 0;
+  virtual uint32_t GetProtectionBitrateBps() const = 0;
+  virtual void SetEncodingData(size_t width,
+                               size_t height,
+                               size_t num_temporal_layers) = 0;
 };
 }  // namespace webrtc
 #endif  // CALL_RTP_VIDEO_SENDER_INTERFACE_H_

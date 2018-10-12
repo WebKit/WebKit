@@ -30,10 +30,10 @@ public class CaptureQualityController implements SeekBar.OnSeekBarChangeListener
   private static final int FRAMERATE_THRESHOLD = 15;
   private TextView captureFormatText;
   private CallFragment.OnCallEvents callEvents;
-  private int width = 0;
-  private int height = 0;
-  private int framerate = 0;
-  private double targetBandwidth = 0;
+  private int width;
+  private int height;
+  private int framerate;
+  private double targetBandwidth;
 
   public CaptureQualityController(
       TextView captureFormatText, CallFragment.OnCallEvents callEvents) {

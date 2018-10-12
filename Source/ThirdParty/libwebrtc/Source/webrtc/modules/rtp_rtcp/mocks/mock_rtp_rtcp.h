@@ -54,6 +54,8 @@ class MockRtpRtcp : public RtpRtcp {
   MOCK_METHOD1(DeRegisterSendPayload, int32_t(int8_t payload_type));
   MOCK_METHOD2(RegisterSendRtpHeaderExtension,
                int32_t(RTPExtensionType type, uint8_t id));
+  MOCK_METHOD2(RegisterRtpHeaderExtension,
+               bool(const std::string& uri, int id));
   MOCK_METHOD1(DeregisterSendRtpHeaderExtension,
                int32_t(RTPExtensionType type));
   MOCK_CONST_METHOD0(HasBweExtensions, bool());
@@ -146,7 +148,6 @@ class MockRtpRtcp : public RtpRtcp {
                        uint32_t name,
                        const uint8_t* data,
                        uint16_t length));
-  MOCK_METHOD1(SetRTCPVoIPMetrics, int32_t(const RTCPVoIPMetric* voip_metric));
   MOCK_METHOD1(SetRtcpXrRrtrStatus, void(bool enable));
   MOCK_CONST_METHOD0(RtcpXrRrtrStatus, bool());
   MOCK_METHOD2(SetRemb, void(int64_t bitrate, std::vector<uint32_t> ssrcs));

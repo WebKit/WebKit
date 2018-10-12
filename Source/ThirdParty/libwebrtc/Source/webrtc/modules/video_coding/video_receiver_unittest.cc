@@ -37,8 +37,7 @@ class TestVideoReceiver : public ::testing::Test {
 
   virtual void SetUp() {
     timing_.reset(new VCMTiming(&clock_));
-    receiver_.reset(
-        new VideoReceiver(&clock_, &event_factory_, nullptr, timing_.get()));
+    receiver_.reset(new VideoReceiver(&clock_, &event_factory_, timing_.get()));
     receiver_->RegisterExternalDecoder(&decoder_, kUnusedPayloadType);
     const size_t kMaxNackListSize = 250;
     const int kMaxPacketAgeToNack = 450;
@@ -129,6 +128,7 @@ TEST_F(TestVideoReceiver, PaddingOnlyFramesWithLosses) {
   header.header.ssrc = 1;
   header.header.headerLength = 12;
   header.video_header().codec = kVideoCodecVP8;
+  header.video_header().video_type_header.emplace<RTPVideoHeaderVP8>();
   // Insert one video frame to get one frame decoded.
   header.frameType = kVideoFrameKey;
   header.video_header().is_first_packet_in_frame = true;
@@ -180,8 +180,10 @@ TEST_F(TestVideoReceiver, PaddingOnlyAndVideo) {
   header.header.ssrc = 1;
   header.header.headerLength = 12;
   header.video_header().codec = kVideoCodecVP8;
-  header.video_header().vp8().pictureId = -1;
-  header.video_header().vp8().tl0PicIdx = -1;
+  auto& vp8_header =
+      header.video.video_type_header.emplace<RTPVideoHeaderVP8>();
+  vp8_header.pictureId = -1;
+  vp8_header.tl0PicIdx = -1;
   for (int i = 0; i < 3; ++i) {
     // Insert 2 video frames.
     for (int j = 0; j < 2; ++j) {

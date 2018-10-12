@@ -10,7 +10,9 @@
 
 #include "modules/audio_processing/test/debug_dump_replayer.h"
 
+#include "modules/audio_processing/echo_cancellation_impl.h"
 #include "modules/audio_processing/test/protobuf_utils.h"
+#include "modules/audio_processing/test/runtime_setting_util.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -73,8 +75,12 @@ bool DebugDumpReplayer::RunNextEvent() {
     case audioproc::Event::CONFIG:
       OnConfigEvent(next_event_.config());
       break;
+    case audioproc::Event::RUNTIME_SETTING:
+      OnRuntimeSettingEvent(next_event_.runtime_setting());
+      break;
     case audioproc::Event::UNKNOWN_EVENT:
       // We do not expect to receive UNKNOWN event.
+      RTC_CHECK(false);
       return false;
   }
   LoadNextMessage();
@@ -118,7 +124,6 @@ void DebugDumpReplayer::OnStreamEvent(const audioproc::Stream& msg) {
   RTC_CHECK_EQ(AudioProcessing::kNoError,
                apm_->set_stream_delay_ms(msg.delay()));
 
-  apm_->echo_cancellation()->set_stream_drift_samples(msg.drift());
   if (msg.has_keypress()) {
     apm_->set_stream_key_pressed(msg.keypress());
   } else {
@@ -167,6 +172,12 @@ void DebugDumpReplayer::OnConfigEvent(const audioproc::Config& msg) {
   ConfigureApm(msg);
 }
 
+void DebugDumpReplayer::OnRuntimeSettingEvent(
+    const audioproc::RuntimeSetting& msg) {
+  RTC_CHECK(apm_.get());
+  ReplayRuntimeSetting(apm_.get(), msg);
+}
+
 void DebugDumpReplayer::MaybeRecreateApm(const audioproc::Config& msg) {
   // These configurations cannot be changed on the fly.
   Config config;
@@ -186,10 +197,6 @@ void DebugDumpReplayer::MaybeRecreateApm(const audioproc::Config& msg) {
   config.Set<ExtendedFilter>(
       new ExtendedFilter(msg.aec_extended_filter_enabled()));
 
-  RTC_CHECK(msg.has_intelligibility_enhancer_enabled());
-  config.Set<Intelligibility>(
-      new Intelligibility(msg.intelligibility_enhancer_enabled()));
-
   // We only create APM once, since changes on these fields should not
   // happen in current implementation.
   if (!apm_.get()) {
@@ -200,37 +207,17 @@ void DebugDumpReplayer::MaybeRecreateApm(const audioproc::Config& msg) {
 void DebugDumpReplayer::ConfigureApm(const audioproc::Config& msg) {
   AudioProcessing::Config apm_config;
 
-  // AEC configs.
+  // AEC2/AECM configs.
   RTC_CHECK(msg.has_aec_enabled());
-  RTC_CHECK_EQ(AudioProcessing::kNoError,
-               apm_->echo_cancellation()->Enable(msg.aec_enabled()));
-
-  RTC_CHECK(msg.has_aec_drift_compensation_enabled());
-  RTC_CHECK_EQ(AudioProcessing::kNoError,
-               apm_->echo_cancellation()->enable_drift_compensation(
-                   msg.aec_drift_compensation_enabled()));
+  RTC_CHECK(msg.has_aecm_enabled());
+  apm_config.echo_canceller.enabled = msg.aec_enabled() || msg.aecm_enabled();
+  apm_config.echo_canceller.mobile_mode = msg.aecm_enabled();
 
   RTC_CHECK(msg.has_aec_suppression_level());
-  RTC_CHECK_EQ(AudioProcessing::kNoError,
-               apm_->echo_cancellation()->set_suppression_level(
-                   static_cast<EchoCancellation::SuppressionLevel>(
-                       msg.aec_suppression_level())));
-
-  // AECM configs.
-  RTC_CHECK(msg.has_aecm_enabled());
-  RTC_CHECK_EQ(AudioProcessing::kNoError,
-               apm_->echo_control_mobile()->Enable(msg.aecm_enabled()));
-
-  RTC_CHECK(msg.has_aecm_comfort_noise_enabled());
-  RTC_CHECK_EQ(AudioProcessing::kNoError,
-               apm_->echo_control_mobile()->enable_comfort_noise(
-                   msg.aecm_comfort_noise_enabled()));
-
-  RTC_CHECK(msg.has_aecm_routing_mode());
-  RTC_CHECK_EQ(AudioProcessing::kNoError,
-               apm_->echo_control_mobile()->set_routing_mode(
-                   static_cast<EchoControlMobile::RoutingMode>(
-                       msg.aecm_routing_mode())));
+  apm_config.echo_canceller.legacy_moderate_suppression_level =
+      static_cast<EchoCancellationImpl::SuppressionLevel>(
+          msg.aec_suppression_level()) ==
+      EchoCancellationImpl::SuppressionLevel::kModerateSuppression;
 
   // AGC configs.
   RTC_CHECK(msg.has_agc_enabled());
@@ -259,6 +246,11 @@ void DebugDumpReplayer::ConfigureApm(const audioproc::Config& msg) {
   RTC_CHECK_EQ(AudioProcessing::kNoError,
                apm_->noise_suppression()->set_level(
                    static_cast<NoiseSuppression::Level>(msg.ns_level())));
+
+  RTC_CHECK(msg.has_pre_amplifier_enabled());
+  apm_config.pre_amplifier.enabled = msg.pre_amplifier_enabled();
+  apm_config.pre_amplifier.fixed_gain_factor =
+      msg.pre_amplifier_fixed_gain_factor();
 
   apm_->ApplyConfig(apm_config);
 }

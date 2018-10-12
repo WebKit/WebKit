@@ -26,10 +26,11 @@ namespace video_coding {
 RtpFrameReferenceFinder::RtpFrameReferenceFinder(
     OnCompleteFrameCallback* frame_callback)
     : last_picture_id_(-1),
-      last_unwrap_(-1),
       current_ss_idx_(0),
       cleared_to_seq_num_(-1),
       frame_callback_(frame_callback) {}
+
+RtpFrameReferenceFinder::~RtpFrameReferenceFinder() = default;
 
 void RtpFrameReferenceFinder::ManageFrame(
     std::unique_ptr<RtpFrameObject> frame) {
@@ -83,13 +84,26 @@ void RtpFrameReferenceFinder::RetryStashedFrames() {
 
 RtpFrameReferenceFinder::FrameDecision
 RtpFrameReferenceFinder::ManageFrameInternal(RtpFrameObject* frame) {
+  absl::optional<RtpGenericFrameDescriptor> generic_descriptor =
+      frame->GetGenericFrameDescriptor();
+  if (generic_descriptor) {
+    return ManageFrameGeneric(frame, *generic_descriptor);
+  }
+
   switch (frame->codec_type()) {
     case kVideoCodecVP8:
       return ManageFrameVp8(frame);
     case kVideoCodecVP9:
       return ManageFrameVp9(frame);
-    default:
-      return ManageFrameGeneric(frame, kNoPictureId);
+    default: {
+      // Use 15 first bits of frame ID as picture ID if available.
+      absl::optional<RTPVideoHeader> video_header = frame->GetRtpVideoHeader();
+      int picture_id = kNoPictureId;
+      if (video_header && video_header->generic)
+        picture_id = video_header->generic->frame_id & 0x7fff;
+
+      return ManageFramePidOrSeqNum(frame, picture_id);
+    }
   }
 }
 
@@ -154,14 +168,32 @@ void RtpFrameReferenceFinder::UpdateLastPictureIdWithPadding(uint16_t seq_num) {
 }
 
 RtpFrameReferenceFinder::FrameDecision
-RtpFrameReferenceFinder::ManageFrameGeneric(RtpFrameObject* frame,
-                                            int picture_id) {
+RtpFrameReferenceFinder::ManageFrameGeneric(
+    RtpFrameObject* frame,
+    const RtpGenericFrameDescriptor& descriptor) {
+  int64_t frame_id = generic_frame_id_unwrapper_.Unwrap(descriptor.FrameId());
+  frame->id.picture_id = frame_id;
+  frame->id.spatial_layer = descriptor.SpatialLayer();
+
+  rtc::ArrayView<const uint16_t> diffs = descriptor.FrameDependenciesDiffs();
+  if (EncodedFrame::kMaxFrameReferences < diffs.size()) {
+    RTC_LOG(LS_WARNING) << "Too many dependencies in generic descriptor.";
+    return kDrop;
+  }
+
+  frame->num_references = diffs.size();
+  for (size_t i = 0; i < diffs.size(); ++i)
+    frame->references[i] = frame_id - diffs[i];
+
+  return kHandOff;
+}
+
+RtpFrameReferenceFinder::FrameDecision
+RtpFrameReferenceFinder::ManageFramePidOrSeqNum(RtpFrameObject* frame,
+                                                int picture_id) {
   // If |picture_id| is specified then we use that to set the frame references,
   // otherwise we use sequence number.
   if (picture_id != kNoPictureId) {
-    if (last_unwrap_ == -1)
-      last_unwrap_ = picture_id;
-
     frame->id.picture_id = unwrapper_.Unwrap(picture_id);
     frame->num_references = frame->frame_type() == kVideoFrameKey ? 0 : 1;
     frame->references[0] = frame->id.picture_id - 1;
@@ -215,7 +247,7 @@ RtpFrameReferenceFinder::ManageFrameGeneric(RtpFrameObject* frame,
   // picture id according to some incrementing counter.
   frame->id.picture_id = frame->last_seq_num();
   frame->num_references = frame->frame_type() == kVideoFrameDelta;
-  frame->references[0] = generic_unwrapper_.Unwrap(last_picture_id_gop);
+  frame->references[0] = rtp_seq_num_unwrapper_.Unwrap(last_picture_id_gop);
   if (AheadOf<uint16_t>(frame->id.picture_id, last_picture_id_gop)) {
     seq_num_it->second.first = frame->id.picture_id;
     seq_num_it->second.second = frame->id.picture_id;
@@ -223,32 +255,30 @@ RtpFrameReferenceFinder::ManageFrameGeneric(RtpFrameObject* frame,
 
   last_picture_id_ = frame->id.picture_id;
   UpdateLastPictureIdWithPadding(frame->id.picture_id);
-  frame->id.picture_id = generic_unwrapper_.Unwrap(frame->id.picture_id);
+  frame->id.picture_id = rtp_seq_num_unwrapper_.Unwrap(frame->id.picture_id);
   return kHandOff;
 }
 
 RtpFrameReferenceFinder::FrameDecision RtpFrameReferenceFinder::ManageFrameVp8(
     RtpFrameObject* frame) {
-  absl::optional<RTPVideoTypeHeader> rtp_codec_header = frame->GetCodecHeader();
-  if (!rtp_codec_header) {
+  absl::optional<RTPVideoHeader> video_header = frame->GetRtpVideoHeader();
+  if (!video_header) {
     RTC_LOG(LS_WARNING)
         << "Failed to get codec header from frame, dropping frame.";
     return kDrop;
   }
+  RTPVideoTypeHeader rtp_codec_header = video_header->video_type_header;
 
   const RTPVideoHeaderVP8& codec_header =
-      absl::get<RTPVideoHeaderVP8>(*rtp_codec_header);
+      absl::get<RTPVideoHeaderVP8>(rtp_codec_header);
 
   if (codec_header.pictureId == kNoPictureId ||
       codec_header.temporalIdx == kNoTemporalIdx ||
       codec_header.tl0PicIdx == kNoTl0PicIdx) {
-    return ManageFrameGeneric(std::move(frame), codec_header.pictureId);
+    return ManageFramePidOrSeqNum(std::move(frame), codec_header.pictureId);
   }
 
   frame->id.picture_id = codec_header.pictureId % kPicIdLength;
-
-  if (last_unwrap_ == -1)
-    last_unwrap_ = codec_header.pictureId;
 
   if (last_picture_id_ == -1)
     last_picture_id_ = frame->id.picture_id;
@@ -381,28 +411,25 @@ void RtpFrameReferenceFinder::UpdateLayerInfoVp8(RtpFrameObject* frame,
 
 RtpFrameReferenceFinder::FrameDecision RtpFrameReferenceFinder::ManageFrameVp9(
     RtpFrameObject* frame) {
-  absl::optional<RTPVideoTypeHeader> rtp_codec_header = frame->GetCodecHeader();
-  if (!rtp_codec_header) {
+  absl::optional<RTPVideoHeader> video_header = frame->GetRtpVideoHeader();
+  if (!video_header) {
     RTC_LOG(LS_WARNING)
         << "Failed to get codec header from frame, dropping frame.";
     return kDrop;
   }
+  RTPVideoTypeHeader rtp_codec_header = video_header->video_type_header;
 
   const RTPVideoHeaderVP9& codec_header =
-      absl::get<RTPVideoHeaderVP9>(*rtp_codec_header);
+      absl::get<RTPVideoHeaderVP9>(rtp_codec_header);
 
   if (codec_header.picture_id == kNoPictureId ||
-      codec_header.temporal_idx == kNoTemporalIdx ||
-      codec_header.tl0_pic_idx == kNoTl0PicIdx) {
-    return ManageFrameGeneric(std::move(frame), codec_header.picture_id);
+      codec_header.temporal_idx == kNoTemporalIdx) {
+    return ManageFramePidOrSeqNum(std::move(frame), codec_header.picture_id);
   }
 
   frame->id.spatial_layer = codec_header.spatial_idx;
   frame->inter_layer_predicted = codec_header.inter_layer_predicted;
   frame->id.picture_id = codec_header.picture_id % kPicIdLength;
-
-  if (last_unwrap_ == -1)
-    last_unwrap_ = codec_header.picture_id;
 
   if (last_picture_id_ == -1)
     last_picture_id_ = frame->id.picture_id;
@@ -418,6 +445,12 @@ RtpFrameReferenceFinder::FrameDecision RtpFrameReferenceFinder::ManageFrameVp9(
     return kHandOff;
   }
 
+  if (codec_header.tl0_pic_idx == kNoTl0PicIdx) {
+    RTC_LOG(LS_WARNING) << "TL0PICIDX is expected to be present in "
+                           "non-flexible mode.";
+    return kDrop;
+  }
+
   GofInfo* info;
   int64_t unwrapped_tl0 = tl0_unwrapper_.Unwrap(codec_header.tl0_pic_idx);
   if (codec_header.ss_data_available) {
@@ -425,13 +458,19 @@ RtpFrameReferenceFinder::FrameDecision RtpFrameReferenceFinder::ManageFrameVp9(
       RTC_LOG(LS_WARNING) << "Received scalability structure on a non base "
                              "layer frame. Scalability structure ignored.";
     } else {
-      current_ss_idx_ = Add<kMaxGofSaved>(current_ss_idx_, 1);
-      if (codec_header.gof.num_frames_in_gof == 0 ||
-          codec_header.gof.num_frames_in_gof > kMaxVp9FramesInGof) {
+      if (codec_header.gof.num_frames_in_gof > kMaxVp9FramesInGof) {
         return kDrop;
       }
 
-      scalability_structures_[current_ss_idx_] = codec_header.gof;
+      GofInfoVP9 gof = codec_header.gof;
+      if (gof.num_frames_in_gof == 0) {
+        RTC_LOG(LS_WARNING) << "Number of frames in GOF is zero. Assume "
+                               "that stream has only one temporal layer.";
+        gof.SetGofInfoVP9(kTemporalStructureMode1);
+      }
+
+      current_ss_idx_ = Add<kMaxGofSaved>(current_ss_idx_, 1);
+      scalability_structures_[current_ss_idx_] = gof;
       scalability_structures_[current_ss_idx_].pid_start = frame->id.picture_id;
       gof_info_.emplace(unwrapped_tl0,
                         GofInfo(&scalability_structures_[current_ss_idx_],

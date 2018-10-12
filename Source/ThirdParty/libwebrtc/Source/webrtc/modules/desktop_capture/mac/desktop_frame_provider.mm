@@ -32,16 +32,13 @@ std::unique_ptr<DesktopFrame> DesktopFrameProvider::TakeLatestFrameForDisplay(
     CGDirectDisplayID display_id) {
   RTC_DCHECK(thread_checker_.CalledOnValidThread());
 
-  if (!allow_iosurface_) {
-    // Regenerate a snapshot.
+  if (!allow_iosurface_ || !io_surfaces_[display_id]) {
+    // Regenerate a snapshot. If iosurface is on it will be empty until the
+    // stream handler is called.
     return DesktopFrameCGImage::CreateForDisplay(display_id);
   }
 
-  if (io_surfaces_[display_id]) {
-    return io_surfaces_[display_id]->Share();
-  }
-
-  return nullptr;
+  return io_surfaces_[display_id]->Share();
 }
 
 void DesktopFrameProvider::InvalidateIOSurface(CGDirectDisplayID display_id,

@@ -17,8 +17,6 @@
 // references, where appropriate.
 #include "modules/audio_coding/acm2/acm_codec_database.h"
 
-#include <assert.h>
-
 #include "rtc_base/checks.h"
 
 #if ((defined WEBRTC_CODEC_ISAC) && (defined WEBRTC_CODEC_ISACFX))

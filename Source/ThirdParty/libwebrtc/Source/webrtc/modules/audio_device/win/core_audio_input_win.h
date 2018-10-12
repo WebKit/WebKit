@@ -47,13 +47,19 @@ class CoreAudioInput final : public CoreAudioBase, public AudioInput {
   int StopRecording() override;
   bool Recording() override;
   int VolumeIsAvailable(bool* available) override;
+  int RestartRecording() override;
+  bool Restarting() const override;
+  int SetSampleRate(uint32_t sample_rate) override;
 
   CoreAudioInput(const CoreAudioInput&) = delete;
   CoreAudioInput& operator=(const CoreAudioInput&) = delete;
 
  private:
+  void ReleaseCOMObjects();
   bool OnDataCallback(uint64_t device_frequency);
+  bool OnErrorCallback(ErrorType error);
   absl::optional<int> EstimateLatencyMillis(uint64_t capture_time_100ns);
+  bool HandleStreamDisconnected();
 
   std::unique_ptr<FineAudioBuffer> fine_audio_buffer_;
   Microsoft::WRL::ComPtr<IAudioCaptureClient> audio_capture_client_;

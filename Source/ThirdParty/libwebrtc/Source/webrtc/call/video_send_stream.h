@@ -26,7 +26,6 @@
 #include "common_types.h"  // NOLINT(build/include)
 #include "common_video/include/frame_callback.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "rtc_base/platform_file.h"
 
 namespace webrtc {
 
@@ -177,22 +176,6 @@ class VideoSendStream {
   virtual void ReconfigureVideoEncoder(VideoEncoderConfig config) = 0;
 
   virtual Stats GetStats() = 0;
-
-  // Takes ownership of each file, is responsible for closing them later.
-  // Calling this method will close and finalize any current logs.
-  // Some codecs produce multiple streams (VP8 only at present), each of these
-  // streams will log to a separate file. kMaxSimulcastStreams in common_types.h
-  // gives the max number of such streams. If there is no file for a stream, or
-  // the file is rtc::kInvalidPlatformFileValue, frames from that stream will
-  // not be logged.
-  // If a frame to be written would make the log too large the write fails and
-  // the log is closed and finalized. A |byte_limit| of 0 means no limit.
-  virtual void EnableEncodedFrameRecording(
-      const std::vector<rtc::PlatformFile>& files,
-      size_t byte_limit) = 0;
-  inline void DisableEncodedFrameRecording() {
-    EnableEncodedFrameRecording(std::vector<rtc::PlatformFile>(), 0);
-  }
 
  protected:
   virtual ~VideoSendStream() {}

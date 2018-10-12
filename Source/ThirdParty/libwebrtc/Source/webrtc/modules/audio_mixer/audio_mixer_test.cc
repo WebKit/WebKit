@@ -17,6 +17,7 @@
 #include "modules/audio_mixer/audio_mixer_impl.h"
 #include "modules/audio_mixer/default_output_rate_calculator.h"
 #include "rtc_base/flags.h"
+#include "rtc_base/strings/string_builder.h"
 
 DEFINE_bool(help, false, "Prints this message");
 DEFINE_int(sampling_rate,
@@ -74,10 +75,10 @@ class FilePlayingSource : public AudioMixer::Source {
   bool FileHasEnded() const { return file_has_ended_; }
 
   std::string ToString() const {
-    std::stringstream ss;
+    rtc::StringBuilder ss;
     ss << "{rate: " << sample_rate_hz_ << ", channels: " << number_of_channels_
        << ", samples_tot: " << wav_reader_->num_samples() << "}";
-    return ss.str();
+    return ss.Release();
   }
 
  private:

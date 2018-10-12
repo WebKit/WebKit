@@ -12,7 +12,6 @@
 
 #include <algorithm>
 #include <memory>
-#include <sstream>
 #include <string>
 #include <vector>
 
@@ -23,21 +22,22 @@
 #include "modules/audio_processing/logging/apm_data_dumper.h"
 #include "modules/audio_processing/test/echo_canceller_test_tools.h"
 #include "rtc_base/random.h"
+#include "rtc_base/strings/string_builder.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 namespace {
 
 std::string ProduceDebugText(int sample_rate_hz) {
-  std::ostringstream ss;
+  rtc::StringBuilder ss;
   ss << "Sample rate: " << sample_rate_hz;
-  return ss.str();
+  return ss.Release();
 }
 
 std::string ProduceDebugText(int sample_rate_hz, size_t delay) {
-  std::ostringstream ss;
+  rtc::StringBuilder ss;
   ss << ProduceDebugText(sample_rate_hz) << ", Delay: " << delay;
-  return ss.str();
+  return ss.Release();
 }
 
 constexpr size_t kDownSamplingFactors[] = {2, 4, 8};

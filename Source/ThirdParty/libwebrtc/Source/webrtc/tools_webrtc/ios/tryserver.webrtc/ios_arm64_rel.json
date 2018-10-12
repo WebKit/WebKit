@@ -2,7 +2,7 @@
   "comments": [
     "Builder for 64-bit devices."
   ],
-  "xcode version": "8.0",
+  "xcode build version": "10l232m",
   "gn_args": [
     "goma_dir=\"$(goma_dir)\"",
     "dcheck_always_on=true",
@@ -16,7 +16,7 @@
   "use_analyze": false,
   "additional_compile_targets": [ "all" ],
   "configuration": "Release",
-  "sdk": "iphoneos10.0",
+  "sdk": "iphoneos10.3",
   "tests": [
   ]
 }

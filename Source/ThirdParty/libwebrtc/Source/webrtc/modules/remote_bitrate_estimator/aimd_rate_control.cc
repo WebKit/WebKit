@@ -268,7 +268,8 @@ uint32_t AimdRateControl::ChangeBitrate(uint32_t new_bitrate_bps,
       if (avg_max_bitrate_kbps_ >= 0 &&
           estimated_throughput_kbps >
               avg_max_bitrate_kbps_ + 3 * std_max_bit_rate) {
-        ChangeRegion(kRcMaxUnknown);
+        rate_control_region_ = kRcMaxUnknown;
+
         avg_max_bitrate_kbps_ = -1.0;
       }
       if (rate_control_region_ == kRcNearMax) {
@@ -297,7 +298,7 @@ uint32_t AimdRateControl::ChangeBitrate(uint32_t new_bitrate_bps,
         }
         new_bitrate_bps = std::min(new_bitrate_bps, current_bitrate_bps_);
       }
-      ChangeRegion(kRcNearMax);
+      rate_control_region_ = kRcNearMax;
 
       if (bitrate_is_initialized_ &&
           estimated_throughput_bps < current_bitrate_bps_) {
@@ -415,10 +416,6 @@ void AimdRateControl::ChangeState(const RateControlInput& input,
     default:
       assert(false);
   }
-}
-
-void AimdRateControl::ChangeRegion(RateControlRegion region) {
-  rate_control_region_ = region;
 }
 
 }  // namespace webrtc

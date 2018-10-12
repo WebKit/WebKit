@@ -2,7 +2,7 @@
   "comments": [
     "Tests for 64-bit iOS simulators."
   ],
-  "xcode version": "8.0",
+  "xcode build version": "10l232m",
   "gn_args": [
     "goma_dir=\"$(goma_dir)\"",
     "is_component_build=false",
@@ -18,7 +18,12 @@
     {
       "include": "common_tests.json",
       "device type": "iPhone 7",
-      "os": "11.0"
+      "os": "11.0",
+      "dimensions": [
+        { "os": "Mac-10.13.4", "pool": "Chrome" },
+        { "os": "Mac-10.13.5", "pool": "Chrome" },
+        { "os": "Mac-10.13.6", "pool": "Chrome" }
+      ]
     }
   ]
 }

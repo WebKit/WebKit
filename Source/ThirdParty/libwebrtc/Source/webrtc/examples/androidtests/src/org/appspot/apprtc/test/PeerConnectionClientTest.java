@@ -88,7 +88,7 @@ public class PeerConnectionClientTest implements PeerConnectionEvents {
   private static class MockSink implements VideoSink {
     // These are protected by 'this' since we gets called from worker threads.
     private String rendererName;
-    private boolean renderFrameCalled = false;
+    private boolean renderFrameCalled;
 
     // Thread-safe in itself.
     private CountDownLatch doneRendering;

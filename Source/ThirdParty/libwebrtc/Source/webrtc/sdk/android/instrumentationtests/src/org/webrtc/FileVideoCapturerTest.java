@@ -44,6 +44,7 @@ public class FileVideoCapturerTest {
     // TODO(bugs.webrtc.org/8491): Remove NoSynchronizedMethodCheck suppression.
     @SuppressWarnings("NoSynchronizedMethodCheck")
     public synchronized void onFrameCaptured(VideoFrame frame) {
+      frame.retain();
       frames.add(frame);
       notify();
     }
@@ -119,6 +120,7 @@ public class FileVideoCapturerTest {
 
       assertByteBufferContents(
           expectedFrames[i].getBytes(Charset.forName("US-ASCII")), frameContents);
+      frame.release();
     }
   }
 

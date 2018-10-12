@@ -15,16 +15,10 @@ rtc_static_library("common_audio") {
   sources = [
     "audio_converter.cc",
     "audio_converter.h",
-    "audio_ring_buffer.cc",
-    "audio_ring_buffer.h",
     "audio_util.cc",
-    "blocker.cc",
-    "blocker.h",
     "channel_buffer.cc",
     "channel_buffer.h",
     "include/audio_util.h",
-    "lapped_transform.cc",
-    "lapped_transform.h",
     "real_fourier.cc",
     "real_fourier.h",
     "real_fourier_ooura.cc",
@@ -63,6 +57,8 @@ rtc_static_library("common_audio") {
     "../system_wrappers",
     "../system_wrappers:cpu_features_api",
     "third_party/fft4g:fft4g",
+    "//third_party/abseil-cpp/absl/container:inlined_vector",
+    "//third_party/abseil-cpp/absl/memory:memory",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
 
@@ -349,12 +345,9 @@ if (rtc_include_tests) {
 
     sources = [
       "audio_converter_unittest.cc",
-      "audio_ring_buffer_unittest.cc",
       "audio_util_unittest.cc",
-      "blocker_unittest.cc",
       "channel_buffer_unittest.cc",
       "fir_filter_unittest.cc",
-      "lapped_transform_unittest.cc",
       "real_fourier_unittest.cc",
       "resampler/push_resampler_unittest.cc",
       "resampler/push_sinc_resampler_unittest.cc",

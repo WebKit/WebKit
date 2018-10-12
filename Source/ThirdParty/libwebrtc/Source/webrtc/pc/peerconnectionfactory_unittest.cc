@@ -178,7 +178,7 @@ TEST(PeerConnectionFactoryTestInternal, DISABLED_CreatePCUsingInternalModules) {
   std::unique_ptr<FakeRTCCertificateGenerator> cert_generator(
       new FakeRTCCertificateGenerator());
   rtc::scoped_refptr<PeerConnectionInterface> pc(factory->CreatePeerConnection(
-      config, nullptr, nullptr, std::move(cert_generator), &observer));
+      config, nullptr, std::move(cert_generator), &observer));
 
   EXPECT_TRUE(pc.get() != nullptr);
 }
@@ -264,9 +264,9 @@ TEST_F(PeerConnectionFactoryTest, CreatePCUsingIceServers) {
   config.servers.push_back(ice_server);
   std::unique_ptr<FakeRTCCertificateGenerator> cert_generator(
       new FakeRTCCertificateGenerator());
-  rtc::scoped_refptr<PeerConnectionInterface> pc(factory_->CreatePeerConnection(
-      config, nullptr, std::move(port_allocator_), std::move(cert_generator),
-      &observer_));
+  rtc::scoped_refptr<PeerConnectionInterface> pc(
+      factory_->CreatePeerConnection(config, std::move(port_allocator_),
+                                     std::move(cert_generator), &observer_));
   ASSERT_TRUE(pc.get() != NULL);
   cricket::ServerAddresses stun_servers;
   rtc::SocketAddress stun1("stun.l.google.com", 19302);
@@ -294,9 +294,9 @@ TEST_F(PeerConnectionFactoryTest, CreatePCUsingIceServersUrls) {
   config.servers.push_back(ice_server);
   std::unique_ptr<FakeRTCCertificateGenerator> cert_generator(
       new FakeRTCCertificateGenerator());
-  rtc::scoped_refptr<PeerConnectionInterface> pc(factory_->CreatePeerConnection(
-      config, nullptr, std::move(port_allocator_), std::move(cert_generator),
-      &observer_));
+  rtc::scoped_refptr<PeerConnectionInterface> pc(
+      factory_->CreatePeerConnection(config, std::move(port_allocator_),
+                                     std::move(cert_generator), &observer_));
   ASSERT_TRUE(pc.get() != NULL);
   cricket::ServerAddresses stun_servers;
   rtc::SocketAddress stun1("stun.l.google.com", 19302);
@@ -323,9 +323,9 @@ TEST_F(PeerConnectionFactoryTest, CreatePCUsingNoUsernameInUri) {
   config.servers.push_back(ice_server);
   std::unique_ptr<FakeRTCCertificateGenerator> cert_generator(
       new FakeRTCCertificateGenerator());
-  rtc::scoped_refptr<PeerConnectionInterface> pc(factory_->CreatePeerConnection(
-      config, nullptr, std::move(port_allocator_), std::move(cert_generator),
-      &observer_));
+  rtc::scoped_refptr<PeerConnectionInterface> pc(
+      factory_->CreatePeerConnection(config, std::move(port_allocator_),
+                                     std::move(cert_generator), &observer_));
   ASSERT_TRUE(pc.get() != NULL);
   std::vector<cricket::RelayServerConfig> turn_servers;
   cricket::RelayServerConfig turn("test.com", 1234, kTurnUsername,
@@ -344,9 +344,9 @@ TEST_F(PeerConnectionFactoryTest, CreatePCUsingTurnUrlWithTransportParam) {
   config.servers.push_back(ice_server);
   std::unique_ptr<FakeRTCCertificateGenerator> cert_generator(
       new FakeRTCCertificateGenerator());
-  rtc::scoped_refptr<PeerConnectionInterface> pc(factory_->CreatePeerConnection(
-      config, nullptr, std::move(port_allocator_), std::move(cert_generator),
-      &observer_));
+  rtc::scoped_refptr<PeerConnectionInterface> pc(
+      factory_->CreatePeerConnection(config, std::move(port_allocator_),
+                                     std::move(cert_generator), &observer_));
   ASSERT_TRUE(pc.get() != NULL);
   std::vector<cricket::RelayServerConfig> turn_servers;
   cricket::RelayServerConfig turn("hello.com", kDefaultStunPort, "test",
@@ -369,9 +369,9 @@ TEST_F(PeerConnectionFactoryTest, CreatePCUsingSecureTurnUrl) {
   config.servers.push_back(ice_server);
   std::unique_ptr<FakeRTCCertificateGenerator> cert_generator(
       new FakeRTCCertificateGenerator());
-  rtc::scoped_refptr<PeerConnectionInterface> pc(factory_->CreatePeerConnection(
-      config, nullptr, std::move(port_allocator_), std::move(cert_generator),
-      &observer_));
+  rtc::scoped_refptr<PeerConnectionInterface> pc(
+      factory_->CreatePeerConnection(config, std::move(port_allocator_),
+                                     std::move(cert_generator), &observer_));
   ASSERT_TRUE(pc.get() != NULL);
   std::vector<cricket::RelayServerConfig> turn_servers;
   cricket::RelayServerConfig turn1("hello.com", kDefaultStunTlsPort, "test",
@@ -404,9 +404,9 @@ TEST_F(PeerConnectionFactoryTest, CreatePCUsingIPLiteralAddress) {
   config.servers.push_back(ice_server);
   std::unique_ptr<FakeRTCCertificateGenerator> cert_generator(
       new FakeRTCCertificateGenerator());
-  rtc::scoped_refptr<PeerConnectionInterface> pc(factory_->CreatePeerConnection(
-      config, nullptr, std::move(port_allocator_), std::move(cert_generator),
-      &observer_));
+  rtc::scoped_refptr<PeerConnectionInterface> pc(
+      factory_->CreatePeerConnection(config, std::move(port_allocator_),
+                                     std::move(cert_generator), &observer_));
   ASSERT_TRUE(pc.get() != NULL);
   cricket::ServerAddresses stun_servers;
   rtc::SocketAddress stun1("1.2.3.4", 1234);

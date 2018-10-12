@@ -24,6 +24,7 @@
 #include "rtc_base/fakenetwork.h"
 #include "rtc_base/gunit.h"
 #include "rtc_base/system/arch.h"
+#include "rtc_base/timeutils.h"
 #include "rtc_base/virtualsocketserver.h"
 
 namespace {
@@ -224,9 +225,11 @@ class OrtcFactoryIntegrationTest : public testing::Test {
   rtc::scoped_refptr<webrtc::VideoTrackInterface>
   CreateLocalVideoTrackAndFakeSource(const std::string& id,
                                      OrtcFactoryInterface* ortc_factory) {
+    FakePeriodicVideoSource::Config config;
+    config.timestamp_offset_ms = rtc::TimeMillis();
     fake_video_track_sources_.emplace_back(
         new rtc::RefCountedObject<FakePeriodicVideoTrackSource>(
-            false /* remote */));
+            config, false /* remote */));
     return rtc::scoped_refptr<VideoTrackInterface>(
         ortc_factory->CreateVideoTrack(id, fake_video_track_sources_.back()));
   }

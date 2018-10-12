@@ -21,90 +21,85 @@
 // for the instructions on writing suppressions.
 char kLSanDefaultSuppressions[] =
 
-// ============ Leaks in third-party code shared with Chromium =============
-// These entries are copied from build/sanitizers/lsan_suppressions.cc in
-// Chromium. Please don't add new entries here unless they're present in there.
+    // ============ Leaks in third-party code shared with Chromium =============
+    // These entries are copied from build/sanitizers/lsan_suppressions.cc in
+    // Chromium. Please don't add new entries here unless they're present in
+    // there.
 
-// False positives in libfontconfig. http://crbug.com/39050
-"leak:libfontconfig\n"
+    // False positives in libfontconfig. http://crbug.com/39050
+    "leak:libfontconfig\n"
 
-// Leaks in Nvidia's libGL.
-"leak:libGL.so\n"
+    // Leaks in Nvidia's libGL.
+    "leak:libGL.so\n"
 
-// XRandR has several one time leaks.
-"leak:libxrandr\n"
+    // XRandR has several one time leaks.
+    "leak:libxrandr\n"
 
-// xrandr leak. http://crbug.com/119677
-"leak:XRRFindDisplay\n"
+    // xrandr leak. http://crbug.com/119677
+    "leak:XRRFindDisplay\n"
 
-// ========== Leaks in third-party code not shared with Chromium ===========
+    // ========== Leaks in third-party code not shared with Chromium ===========
 
-// None known so far.
+    // None known so far.
 
-// ================ Leaks in WebRTC code ================
-// PLEASE DO NOT ADD SUPPRESSIONS FOR NEW LEAKS.
-// Instead, commits that introduce memory leaks should be reverted. Suppressing
-// the leak is acceptable in some cases when reverting is impossible, i.e. when
-// enabling leak detection for the first time for a test target with
-// pre-existing leaks.
+    // ================ Leaks in WebRTC code ================
+    // PLEASE DO NOT ADD SUPPRESSIONS FOR NEW LEAKS.
+    // Instead, commits that introduce memory leaks should be reverted.
+    // Suppressing the leak is acceptable in some cases when reverting is
+    // impossible, i.e. when enabling leak detection for the first time for a
+    // test target with pre-existing leaks.
 
-// rtc_unittest
-// https://code.google.com/p/webrtc/issues/detail?id=3827 for details.
-"leak:rtc::unstarted_task_test_DoNotDeleteTask2_Test::TestBody\n"
-"leak:rtc::HttpServer::HandleConnection\n"
-"leak:rtc::HttpServer::Connection::onHttpHeaderComplete\n"
-"leak:rtc::HttpResponseData::set_success\n"
-"leak:rtc::HttpData::changeHeader\n"
-// https://code.google.com/p/webrtc/issues/detail?id=4149 for details.
-"leak:StartDNSLookup\n"
-// https://code.google.com/p/webrtc/issues/detail?id=2527
-"leak:HangoutPubSubClientTest::HangoutPubSubClientTest\n"
-"leak:MucRoomConfigTaskTest::SetUp\n"
-"leak:MucRoomDiscoveryTaskTest::SetUp\n"
-"leak:MucRoomLookupTaskTest::SetUp\n"
-"leak:MucRoomUniqueHangoutIdTaskTest::SetUp\n"
-"leak:PingTaskTest::SetUp\n"
-"leak:PingXmppClient::SendStanza\n"
-"leak:PubSubClientTest::PubSubClientTest\n"
-"leak:PubSubTasksTest::PubSubTasksTest\n"
+    // rtc_unittest
+    // https://code.google.com/p/webrtc/issues/detail?id=3827 for details.
+    "leak:rtc::unstarted_task_test_DoNotDeleteTask2_Test::TestBody\n"
+    "leak:rtc::HttpServer::HandleConnection\n"
+    "leak:rtc::HttpServer::Connection::onHttpHeaderComplete\n"
+    "leak:rtc::HttpResponseData::set_success\n"
+    "leak:rtc::HttpData::changeHeader\n"
+    // https://code.google.com/p/webrtc/issues/detail?id=4149 for details.
+    "leak:StartDNSLookup\n"
 
-// rtc_media_unittests
-"leak:cricket::FakeNetworkInterface::SetOption\n"
-"leak:CodecTest_TestCodecOperators_Test::TestBody\n"
-"leak:VideoEngineTest*::ConstrainNewCodecBody\n"
-"leak:VideoMediaChannelTest*::AddRemoveRecvStreams\n"
-"leak:WebRtcVideoCapturerTest_TestCapture_Test::TestBody\n"
-"leak:WebRtcVideoEngineTestFake_MultipleSendStreamsWithOneCapturer_Test::TestBody\n"
-"leak:WebRtcVideoEngineTestFake_SetBandwidthInConference_Test::TestBody\n"
-"leak:WebRtcVideoEngineTestFake_SetSendCodecsRejectBadFormat_Test::TestBody\n"
+    // rtc_media_unittests
+    "leak:cricket::FakeNetworkInterface::SetOption\n"
+    "leak:CodecTest_TestCodecOperators_Test::TestBody\n"
+    "leak:VideoEngineTest*::ConstrainNewCodecBody\n"
+    "leak:VideoMediaChannelTest*::AddRemoveRecvStreams\n"
+    "leak:WebRtcVideoCapturerTest_TestCapture_Test::TestBody\n"
+    "leak:WebRtcVideoEngineTestFake_MultipleSendStreamsWithOneCapturer_Test::"
+    "TestBody\n"
+    "leak:WebRtcVideoEngineTestFake_SetBandwidthInConference_Test::TestBody\n"
+    "leak:WebRtcVideoEngineTestFake_SetSendCodecsRejectBadFormat_Test::"
+    "TestBody\n"
 
-// peerconnection_unittests
-// https://code.google.com/p/webrtc/issues/detail?id=2528
-"leak:cricket::FakeVideoMediaChannel::~FakeVideoMediaChannel\n"
-"leak:cricket::MediaSessionDescriptionFactory::CreateAnswer\n"
-"leak:cricket::MediaSessionDescriptionFactory::CreateOffer\n"
-"leak:DtmfSenderTest_InsertEmptyTonesToCancelPreviousTask_Test::TestBody\n"
-"leak:sigslot::_signal_base2*::~_signal_base2\n"
-"leak:testing::internal::CmpHelperEQ\n"
-"leak:webrtc::AudioDeviceLinuxALSA::InitMicrophone\n"
-"leak:webrtc::AudioDeviceLinuxALSA::InitSpeaker\n"
-"leak:webrtc::CreateIceCandidate\n"
-"leak:webrtc::FakeConstraints::AddOptional\n"
-"leak:webrtc::WebRtcIdentityRequestObserver::OnSuccess\n"
-"leak:webrtc::WebRtcSessionDescriptionFactory::InternalCreateAnswer\n"
-"leak:webrtc::WebRtcSessionDescriptionFactory::InternalCreateOffer\n"
-"leak:PeerConnectionInterfaceTest_SsrcInOfferAnswer_Test::TestBody\n"
-"leak:PeerConnectionInterfaceTest_CloseAndTestMethods_Test::TestBody\n"
-"leak:WebRtcSdpTest::TestDeserializeRtcpFb\n"
-"leak:WebRtcSdpTest::TestSerialize\n"
-"leak:WebRtcSdpTest_SerializeSessionDescriptionWithDataChannelAndBandwidth_Test::TestBody\n"
-"leak:WebRtcSdpTest_SerializeSessionDescriptionWithBandwidth_Test::TestBody\n"
-"leak:WebRtcSessionTest::SetLocalDescriptionExpectError\n"
-"leak:WebRtcSessionTest_TestAVOfferWithAudioOnlyAnswer_Test::TestBody\n"
+    // peerconnection_unittests
+    // https://code.google.com/p/webrtc/issues/detail?id=2528
+    "leak:cricket::FakeVideoMediaChannel::~FakeVideoMediaChannel\n"
+    "leak:cricket::MediaSessionDescriptionFactory::CreateAnswer\n"
+    "leak:cricket::MediaSessionDescriptionFactory::CreateOffer\n"
+    "leak:DtmfSenderTest_InsertEmptyTonesToCancelPreviousTask_Test::TestBody\n"
+    "leak:sigslot::_signal_base2*::~_signal_base2\n"
+    "leak:testing::internal::CmpHelperEQ\n"
+    "leak:webrtc::AudioDeviceLinuxALSA::InitMicrophone\n"
+    "leak:webrtc::AudioDeviceLinuxALSA::InitSpeaker\n"
+    "leak:webrtc::CreateIceCandidate\n"
+    "leak:webrtc::FakeConstraints::AddOptional\n"
+    "leak:webrtc::WebRtcIdentityRequestObserver::OnSuccess\n"
+    "leak:webrtc::WebRtcSessionDescriptionFactory::InternalCreateAnswer\n"
+    "leak:webrtc::WebRtcSessionDescriptionFactory::InternalCreateOffer\n"
+    "leak:PeerConnectionInterfaceTest_SsrcInOfferAnswer_Test::TestBody\n"
+    "leak:PeerConnectionInterfaceTest_CloseAndTestMethods_Test::TestBody\n"
+    "leak:WebRtcSdpTest::TestDeserializeRtcpFb\n"
+    "leak:WebRtcSdpTest::TestSerialize\n"
+    "leak:WebRtcSdpTest_SerializeSessionDescriptionWithDataChannelAndBandwidth_"
+    "Test::TestBody\n"
+    "leak:WebRtcSdpTest_SerializeSessionDescriptionWithBandwidth_Test::"
+    "TestBody\n"
+    "leak:WebRtcSessionTest::SetLocalDescriptionExpectError\n"
+    "leak:WebRtcSessionTest_TestAVOfferWithAudioOnlyAnswer_Test::TestBody\n"
 
-// PLEASE READ ABOVE BEFORE ADDING NEW SUPPRESSIONS.
+    // PLEASE READ ABOVE BEFORE ADDING NEW SUPPRESSIONS.
 
-// End of suppressions.
-;  // Please keep this semicolon.
+    // End of suppressions.
+    ;  // Please keep this semicolon.
 
 #endif  // LEAK_SANITIZER

@@ -11,8 +11,6 @@
 #ifndef MODULES_AUDIO_CODING_NETEQ_PREEMPTIVE_EXPAND_H_
 #define MODULES_AUDIO_CODING_NETEQ_PREEMPTIVE_EXPAND_H_
 
-#include <assert.h>
-
 #include "modules/audio_coding/neteq/audio_multi_vector.h"
 #include "modules/audio_coding/neteq/time_stretch.h"
 #include "rtc_base/constructormagic.h"

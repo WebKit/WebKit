@@ -13,18 +13,17 @@
 
 namespace webrtc {
 
-VideoReceiveStream::Decoder::Decoder() = default;
+VideoReceiveStream::Decoder::Decoder() : video_format("Unset") {}
 VideoReceiveStream::Decoder::Decoder(const Decoder&) = default;
 VideoReceiveStream::Decoder::~Decoder() = default;
 
 std::string VideoReceiveStream::Decoder::ToString() const {
   char buf[1024];
   rtc::SimpleStringBuilder ss(buf);
-  ss << "{decoder: " << (decoder ? "(VideoDecoder)" : "nullptr");
-  ss << ", payload_type: " << payload_type;
-  ss << ", payload_name: " << payload_name;
+  ss << "{payload_type: " << payload_type;
+  ss << ", payload_name: " << video_format.name;
   ss << ", codec_params: {";
-  for (const auto& it : codec_params)
+  for (const auto& it : video_format.parameters)
     ss << it.first << ": " << it.second;
   ss << '}';
   ss << '}';

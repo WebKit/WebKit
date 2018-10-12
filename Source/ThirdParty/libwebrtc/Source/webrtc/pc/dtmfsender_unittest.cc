@@ -34,7 +34,15 @@ class FakeDtmfObserver : public DtmfSenderObserverInterface {
 
   // Implements DtmfSenderObserverInterface.
   void OnToneChange(const std::string& tone) override {
+    tones_from_single_argument_callback_.push_back(tone);
+    if (tone.empty()) {
+      completed_ = true;
+    }
+  }
+  void OnToneChange(const std::string& tone,
+                    const std::string& tone_buffer) override {
     tones_.push_back(tone);
+    tones_remaining_ = tone_buffer;
     if (tone.empty()) {
       completed_ = true;
     }
@@ -42,10 +50,16 @@ class FakeDtmfObserver : public DtmfSenderObserverInterface {
 
   // getters
   const std::vector<std::string>& tones() const { return tones_; }
+  const std::vector<std::string>& tones_from_single_argument_callback() const {
+    return tones_from_single_argument_callback_;
+  }
+  const std::string tones_remaining() { return tones_remaining_; }
   bool completed() const { return completed_; }
 
  private:
   std::vector<std::string> tones_;
+  std::vector<std::string> tones_from_single_argument_callback_;
+  std::string tones_remaining_;
   bool completed_;
 };
 
@@ -181,7 +195,10 @@ class DtmfSenderTest : public testing::Test {
     const std::vector<std::string>& tones = observer_->tones();
     // The observer will get an empty string at the end.
     EXPECT_EQ(tones_ref.size() + 1, tones.size());
+    EXPECT_EQ(observer_->tones(),
+              observer_->tones_from_single_argument_callback());
     EXPECT_TRUE(tones.back().empty());
+    EXPECT_TRUE(observer_->tones_remaining().empty());
     std::string::const_iterator it_ref = tones_ref.begin();
     std::vector<std::string>::const_iterator it = tones.begin();
     while (it_ref != tones_ref.end() && it != tones.end()) {

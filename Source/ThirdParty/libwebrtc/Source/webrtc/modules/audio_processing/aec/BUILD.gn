@@ -40,7 +40,7 @@ rtc_source_set("aec_core") {
     "../../../rtc_base:rtc_base_approved",
     "../../../rtc_base/system:arch",
     "../../../system_wrappers:cpu_features_api",
-    "../../../system_wrappers:metrics_api",
+    "../../../system_wrappers:metrics",
     "../utility:block_mean_calculator",
     "../utility:legacy_delay_estimator",
     "../utility:ooura_fft",

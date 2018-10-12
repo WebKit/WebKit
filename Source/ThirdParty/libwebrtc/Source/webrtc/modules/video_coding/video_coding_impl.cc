@@ -83,14 +83,12 @@ class VideoCodingModuleImpl : public VideoCodingModule {
   VideoCodingModuleImpl(Clock* clock,
                         EventFactory* event_factory,
                         NackSender* nack_sender,
-                        KeyFrameRequestSender* keyframe_request_sender,
-                        EncodedImageCallback* pre_decode_image_callback)
+                        KeyFrameRequestSender* keyframe_request_sender)
       : VideoCodingModule(),
         sender_(clock, &post_encode_callback_),
         timing_(new VCMTiming(clock)),
         receiver_(clock,
                   event_factory,
-                  pre_decode_image_callback,
                   timing_.get(),
                   nack_sender,
                   keyframe_request_sender) {}
@@ -227,8 +225,7 @@ VideoCodingModule* VideoCodingModule::Create(Clock* clock,
                                              EventFactory* event_factory) {
   RTC_DCHECK(clock);
   RTC_DCHECK(event_factory);
-  return new VideoCodingModuleImpl(clock, event_factory, nullptr, nullptr,
-                                   nullptr);
+  return new VideoCodingModuleImpl(clock, event_factory, nullptr, nullptr);
 }
 
 }  // namespace webrtc

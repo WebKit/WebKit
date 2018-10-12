@@ -10,9 +10,10 @@
 
 #import "ARDSettingsModel+Private.h"
 #import "ARDSettingsStore.h"
-#import "WebRTC/RTCCameraVideoCapturer.h"
-#import "WebRTC/RTCMediaConstraints.h"
-#import "WebRTC/RTCVideoCodecFactory.h"
+
+#import <WebRTC/RTCCameraVideoCapturer.h>
+#import <WebRTC/RTCDefaultVideoEncoderFactory.h>
+#import <WebRTC/RTCMediaConstraints.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

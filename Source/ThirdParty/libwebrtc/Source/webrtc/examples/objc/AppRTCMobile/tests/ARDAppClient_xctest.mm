@@ -15,8 +15,8 @@
 
 #include "rtc_base/ssladapter.h"
 
-#import "WebRTC/RTCMediaConstraints.h"
-#import "WebRTC/RTCPeerConnectionFactory.h"
+#import <WebRTC/RTCMediaConstraints.h>
+#import <WebRTC/RTCPeerConnectionFactory.h>
 
 #import "ARDAppClient+Internal.h"
 #import "ARDJoinResponse+Internal.h"
@@ -159,6 +159,8 @@
                                                delegate:delegate];
 }
 
+#pragma mark - Cases
+
 // Tests that an ICE connection is established between two ARDAppClient objects
 // where one is set up as a caller and the other the answerer. Network
 // components are mocked out and messages are relayed directly from object to
@@ -176,9 +178,9 @@
   NSString *answererId = @"testAnswererId";
 
   XCTestExpectation *callerConnectionExpectation =
-      [self expectationWithDescription:@"Caller PC connected."];
+      [self expectationWithDescription:@"Caller PC connected"];
   XCTestExpectation *answererConnectionExpectation =
-      [self expectationWithDescription:@"Answerer PC connected."];
+      [self expectationWithDescription:@"Answerer PC connected"];
 
   caller = [self createAppClientForRoomId:roomId
                                  clientId:callerId

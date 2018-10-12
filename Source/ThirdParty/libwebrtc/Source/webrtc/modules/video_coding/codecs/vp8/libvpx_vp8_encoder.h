@@ -18,8 +18,10 @@
 #include "api/video_codecs/video_encoder.h"
 #include "common_types.h"  // NOLINT(build/include)
 #include "common_video/include/video_frame.h"
+#include "modules/video_coding/codecs/vp8/include/temporal_layers_checker.h"
 #include "modules/video_coding/codecs/vp8/include/vp8.h"
-#include "modules/video_coding/codecs/vp8/temporal_layers.h"
+#include "modules/video_coding/codecs/vp8/include/vp8_temporal_layers.h"
+#include "modules/video_coding/codecs/vp8/libvpx_interface.h"
 #include "modules/video_coding/include/video_codec_interface.h"
 
 #include "vpx/vp8cx.h"
@@ -27,9 +29,10 @@
 
 namespace webrtc {
 
-class LibvpxVp8Encoder : public VP8Encoder {
+class LibvpxVp8Encoder : public VideoEncoder {
  public:
   LibvpxVp8Encoder();
+  explicit LibvpxVp8Encoder(std::unique_ptr<LibvpxInterface> interface);
   ~LibvpxVp8Encoder() override;
 
   int Release() override;
@@ -57,9 +60,7 @@ class LibvpxVp8Encoder : public VP8Encoder {
       const TemporalLayers::FrameConfig& references);
 
  private:
-  void SetupTemporalLayers(int num_streams,
-                           int num_temporal_layers,
-                           const VideoCodec& codec);
+  void SetupTemporalLayers(const VideoCodec& codec);
 
   // Set the cpu_speed setting for encoder based on resolution and/or platform.
   int SetCpuSpeed(int width, int height);
@@ -71,19 +72,21 @@ class LibvpxVp8Encoder : public VP8Encoder {
   int InitAndSetControlSettings();
 
   void PopulateCodecSpecific(CodecSpecificInfo* codec_specific,
-                             const TemporalLayers::FrameConfig& tl_config,
                              const vpx_codec_cx_pkt& pkt,
                              int stream_idx,
+                             int encoder_idx,
                              uint32_t timestamp);
 
-  int GetEncodedPartitions(const TemporalLayers::FrameConfig tl_configs[],
-                           const VideoFrame& input_image);
+  int GetEncodedPartitions(const VideoFrame& input_image);
 
   // Set the stream state for stream |stream_idx|.
   void SetStreamState(bool send_stream, int stream_idx);
 
   uint32_t MaxIntraTarget(uint32_t optimal_buffer_size);
 
+  uint32_t FrameDropThreshold(size_t spatial_idx) const;
+
+  const std::unique_ptr<LibvpxInterface> libvpx_;
   const bool use_gf_boost_;
 
   EncodedImageCallback* encoded_complete_callback_;

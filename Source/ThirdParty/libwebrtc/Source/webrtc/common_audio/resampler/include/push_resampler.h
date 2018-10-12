@@ -12,6 +12,7 @@
 #define COMMON_AUDIO_RESAMPLER_INCLUDE_PUSH_RESAMPLER_H_
 
 #include <memory>
+#include <vector>
 
 namespace webrtc {
 
@@ -36,17 +37,18 @@ class PushResampler {
   int Resample(const T* src, size_t src_length, T* dst, size_t dst_capacity);
 
  private:
-  std::unique_ptr<PushSincResampler> sinc_resampler_;
-  std::unique_ptr<PushSincResampler> sinc_resampler_right_;
   int src_sample_rate_hz_;
   int dst_sample_rate_hz_;
   size_t num_channels_;
-  std::unique_ptr<T[]> src_left_;
-  std::unique_ptr<T[]> src_right_;
-  std::unique_ptr<T[]> dst_left_;
-  std::unique_ptr<T[]> dst_right_;
-};
 
+  struct ChannelResampler {
+    std::unique_ptr<PushSincResampler> resampler;
+    std::vector<T> source;
+    std::vector<T> destination;
+  };
+
+  std::vector<ChannelResampler> channel_resamplers_;
+};
 }  // namespace webrtc
 
 #endif  // COMMON_AUDIO_RESAMPLER_INCLUDE_PUSH_RESAMPLER_H_

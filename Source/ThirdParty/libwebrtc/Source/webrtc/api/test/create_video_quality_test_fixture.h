@@ -24,6 +24,9 @@ std::unique_ptr<VideoQualityTestFixtureInterface>
 CreateVideoQualityTestFixture(
     std::unique_ptr<FecControllerFactoryInterface> fec_controller_factory);
 
-}
+std::unique_ptr<VideoQualityTestFixtureInterface> CreateVideoQualityTestFixture(
+    std::unique_ptr<VideoQualityTestFixtureInterface::InjectionComponents>
+        components);
+}  // namespace webrtc
 
 #endif  // API_TEST_CREATE_VIDEO_QUALITY_TEST_FIXTURE_H_

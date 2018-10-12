@@ -16,9 +16,9 @@ from . import echo_path_simulation
 
 class EchoPathSimulatorFactory(object):
 
-  # TODO(alessiob): Replace 5 ms delay (at 48 kHz sample rate) with a more
+  # TODO(alessiob): Replace 20 ms delay (at 48 kHz sample rate) with a more
   # realistic impulse response.
-  _LINEAR_ECHO_IMPULSE_RESPONSE = np.array([0.0]*(5 * 48) + [0.15])
+  _LINEAR_ECHO_IMPULSE_RESPONSE = np.array([0.0]*(20 * 48) + [0.15])
 
   def __init__(self):
     pass

@@ -31,7 +31,7 @@
 #include "rtc_base/refcountedobject.h"
 #include "rtc_base/scoped_ref_ptr.h"
 #include "rtc_base/thread.h"
-#include "system_wrappers/include/metrics_default.h"
+#include "system_wrappers/include/metrics.h"
 #include "test/gmock.h"
 
 // This file contains tests for RTP Media API-related behavior of
@@ -1374,6 +1374,132 @@ TEST_F(PeerConnectionRtpTestUnifiedPlan,
   caller->observer()->clear_negotiation_needed();
   transceiver->SetDirection(RtpTransceiverDirection::kInactive);
   EXPECT_FALSE(caller->observer()->negotiation_needed());
+}
+
+// Test that AddTransceiver fails if trying to use simulcast using
+// send_encodings as it isn't currently supported.
+TEST_F(PeerConnectionRtpTestUnifiedPlan, CheckForUnsupportedSimulcast) {
+  auto caller = CreatePeerConnection();
+
+  RtpTransceiverInit init;
+  init.send_encodings.emplace_back();
+  init.send_encodings.emplace_back();
+  auto result = caller->pc()->AddTransceiver(cricket::MEDIA_TYPE_VIDEO, init);
+  EXPECT_EQ(result.error().type(), RTCErrorType::UNSUPPORTED_PARAMETER);
+}
+
+// Test that AddTransceiver fails if trying to use unimplemented RTP encoding
+// parameters with the send_encodings parameters.
+TEST_F(PeerConnectionRtpTestUnifiedPlan,
+       CheckForUnsupportedEncodingParameters) {
+  auto caller = CreatePeerConnection();
+
+  RtpTransceiverInit init;
+  init.send_encodings.emplace_back();
+
+  auto default_send_encodings = init.send_encodings;
+
+  // Unimplemented RtpParameters: ssrc, codec_payload_type, fec, rtx, dtx,
+  // ptime, scale_resolution_down_by, scale_framerate_down_by, rid,
+  // dependency_rids.
+  init.send_encodings[0].ssrc = 1;
+  EXPECT_EQ(RTCErrorType::UNSUPPORTED_PARAMETER,
+            caller->pc()
+                ->AddTransceiver(cricket::MEDIA_TYPE_AUDIO, init)
+                .error()
+                .type());
+  init.send_encodings = default_send_encodings;
+
+  init.send_encodings[0].codec_payload_type = 1;
+  EXPECT_EQ(RTCErrorType::UNSUPPORTED_PARAMETER,
+            caller->pc()
+                ->AddTransceiver(cricket::MEDIA_TYPE_AUDIO, init)
+                .error()
+                .type());
+  init.send_encodings = default_send_encodings;
+
+  init.send_encodings[0].fec = RtpFecParameters();
+  EXPECT_EQ(RTCErrorType::UNSUPPORTED_PARAMETER,
+            caller->pc()
+                ->AddTransceiver(cricket::MEDIA_TYPE_AUDIO, init)
+                .error()
+                .type());
+  init.send_encodings = default_send_encodings;
+
+  init.send_encodings[0].rtx = RtpRtxParameters();
+  EXPECT_EQ(RTCErrorType::UNSUPPORTED_PARAMETER,
+            caller->pc()
+                ->AddTransceiver(cricket::MEDIA_TYPE_AUDIO, init)
+                .error()
+                .type());
+  init.send_encodings = default_send_encodings;
+
+  init.send_encodings[0].dtx = DtxStatus::ENABLED;
+  EXPECT_EQ(RTCErrorType::UNSUPPORTED_PARAMETER,
+            caller->pc()
+                ->AddTransceiver(cricket::MEDIA_TYPE_AUDIO, init)
+                .error()
+                .type());
+  init.send_encodings = default_send_encodings;
+
+  init.send_encodings[0].ptime = 1;
+  EXPECT_EQ(RTCErrorType::UNSUPPORTED_PARAMETER,
+            caller->pc()
+                ->AddTransceiver(cricket::MEDIA_TYPE_AUDIO, init)
+                .error()
+                .type());
+  init.send_encodings = default_send_encodings;
+
+  init.send_encodings[0].scale_resolution_down_by = 2.0;
+  EXPECT_EQ(RTCErrorType::UNSUPPORTED_PARAMETER,
+            caller->pc()
+                ->AddTransceiver(cricket::MEDIA_TYPE_AUDIO, init)
+                .error()
+                .type());
+  init.send_encodings = default_send_encodings;
+
+  init.send_encodings[0].rid = "dummy_rid";
+  EXPECT_EQ(RTCErrorType::UNSUPPORTED_PARAMETER,
+            caller->pc()
+                ->AddTransceiver(cricket::MEDIA_TYPE_AUDIO, init)
+                .error()
+                .type());
+  init.send_encodings = default_send_encodings;
+
+  init.send_encodings[0].dependency_rids.push_back("dummy_rid");
+  EXPECT_EQ(RTCErrorType::UNSUPPORTED_PARAMETER,
+            caller->pc()
+                ->AddTransceiver(cricket::MEDIA_TYPE_AUDIO, init)
+                .error()
+                .type());
+}
+
+// Test that AddTransceiver transfers the send_encodings to the sender and they
+// are retained after SetLocalDescription().
+TEST_F(PeerConnectionRtpTestUnifiedPlan, SendEncodingsPassedToSender) {
+  auto caller = CreatePeerConnection();
+
+  RtpTransceiverInit init;
+  init.send_encodings.emplace_back();
+  init.send_encodings[0].active = false;
+  init.send_encodings[0].max_bitrate_bps = 180000;
+
+  auto result = caller->pc()->AddTransceiver(cricket::MEDIA_TYPE_AUDIO, init);
+  ASSERT_TRUE(result.ok());
+
+  auto init_send_encodings = result.value()->sender()->init_send_encodings();
+  EXPECT_FALSE(init_send_encodings[0].active);
+  EXPECT_EQ(init_send_encodings[0].max_bitrate_bps, 180000);
+
+  auto parameters = result.value()->sender()->GetParameters();
+  EXPECT_FALSE(parameters.encodings[0].active);
+  EXPECT_EQ(parameters.encodings[0].max_bitrate_bps, 180000);
+
+  ASSERT_TRUE(caller->SetLocalDescription(caller->CreateOffer()));
+
+  parameters = result.value()->sender()->GetParameters();
+  EXPECT_FALSE(parameters.encodings[0].active);
+  EXPECT_EQ(parameters.encodings[0].max_bitrate_bps, 180000);
 }
 
 // Test MSID signaling between Unified Plan and Plan B endpoints. There are two

@@ -18,71 +18,9 @@
 #include "rtc_base/logging.h"
 #include "rtc_base/timeutils.h"
 #include "rtc_base/trace_event.h"
-#include "sdk/objc/Framework/Classes/Common/scoped_cftyperef.h"
+#include "sdk/objc/helpers/scoped_cftyperef.h"
 
 namespace webrtc {
-
-// CGDisplayStreamRefs need to be destroyed asynchronously after receiving a
-// kCGDisplayStreamFrameStatusStopped callback from CoreGraphics. This may
-// happen after the ScreenCapturerMac has been destroyed. DisplayStreamManager
-// is responsible for destroying all extant CGDisplayStreamRefs, and will
-// destroy itself once it's done.
-class DisplayStreamManager {
- public:
-  int GetUniqueId() { return ++unique_id_generator_; }
-  void DestroyStream(int unique_id) {
-    auto it = display_stream_wrappers_.find(unique_id);
-    RTC_CHECK(it != display_stream_wrappers_.end());
-    RTC_CHECK(!it->second.active);
-    CFRelease(it->second.stream);
-    display_stream_wrappers_.erase(it);
-
-    if (ready_for_self_destruction_ && display_stream_wrappers_.empty()) delete this;
-  }
-
-  void SaveStream(int unique_id, CGDisplayStreamRef stream) {
-    RTC_CHECK(unique_id <= unique_id_generator_);
-    DisplayStreamWrapper wrapper;
-    wrapper.stream = stream;
-    display_stream_wrappers_[unique_id] = wrapper;
-  }
-
-  void UnregisterActiveStreams() {
-    for (auto& pair : display_stream_wrappers_) {
-      DisplayStreamWrapper& wrapper = pair.second;
-      if (wrapper.active) {
-        wrapper.active = false;
-        CFRunLoopSourceRef source = CGDisplayStreamGetRunLoopSource(wrapper.stream);
-        CFRunLoopRemoveSource(CFRunLoopGetCurrent(), source, kCFRunLoopCommonModes);
-        CGDisplayStreamStop(wrapper.stream);
-      }
-    }
-  }
-
-  void PrepareForSelfDestruction() {
-    ready_for_self_destruction_ = true;
-
-    if (display_stream_wrappers_.empty()) delete this;
-  }
-
-  // Once the DisplayStreamManager is ready for destruction, the
-  // ScreenCapturerMac is no longer present. Any updates should be ignored.
-  bool ShouldIgnoreUpdates() { return ready_for_self_destruction_; }
-
- private:
-  struct DisplayStreamWrapper {
-    // The registered CGDisplayStreamRef.
-    CGDisplayStreamRef stream = nullptr;
-
-    // Set to false when the stream has been stopped. An asynchronous callback
-    // from CoreGraphics will let us destroy the CGDisplayStreamRef.
-    bool active = true;
-  };
-
-  std::map<int, DisplayStreamWrapper> display_stream_wrappers_;
-  int unique_id_generator_ = 0;
-  bool ready_for_self_destruction_ = false;
-};
 
 namespace {
 
@@ -217,15 +155,14 @@ ScreenCapturerMac::ScreenCapturerMac(
     : detect_updated_region_(detect_updated_region),
       desktop_config_monitor_(desktop_config_monitor),
       desktop_frame_provider_(allow_iosurface) {
-  display_stream_manager_ = new DisplayStreamManager;
-
   RTC_LOG(LS_INFO) << "Allow IOSurface: " << allow_iosurface;
+  thread_checker_.DetachFromThread();
 }
 
 ScreenCapturerMac::~ScreenCapturerMac() {
+  RTC_DCHECK(thread_checker_.CalledOnValidThread());
   ReleaseBuffers();
   UnregisterRefreshAndMoveHandlers();
-  display_stream_manager_->PrepareForSelfDestruction();
 }
 
 bool ScreenCapturerMac::Init() {
@@ -246,6 +183,7 @@ void ScreenCapturerMac::ReleaseBuffers() {
 }
 
 void ScreenCapturerMac::Start(Callback* callback) {
+  RTC_DCHECK(thread_checker_.CalledOnValidThread());
   RTC_DCHECK(!callback_);
   RTC_DCHECK(callback);
   TRACE_EVENT_INSTANT1(
@@ -262,6 +200,7 @@ void ScreenCapturerMac::Start(Callback* callback) {
 }
 
 void ScreenCapturerMac::CaptureFrame() {
+  RTC_DCHECK(thread_checker_.CalledOnValidThread());
   TRACE_EVENT0("webrtc", "creenCapturerMac::CaptureFrame");
   int64_t capture_start_time_nanos = rtc::TimeNanos();
 
@@ -501,14 +440,12 @@ void ScreenCapturerMac::ScreenConfigurationChanged() {
 }
 
 bool ScreenCapturerMac::RegisterRefreshAndMoveHandlers() {
+  RTC_DCHECK(thread_checker_.CalledOnValidThread());
   desktop_config_ = desktop_config_monitor_->desktop_configuration();
   for (const auto& config : desktop_config_.displays) {
     size_t pixel_width = config.pixel_bounds.width();
     size_t pixel_height = config.pixel_bounds.height();
     if (pixel_width == 0 || pixel_height == 0) continue;
-    // Using a local variable forces the block to capture the raw pointer.
-    DisplayStreamManager* manager = display_stream_manager_;
-    int unique_id = manager->GetUniqueId();
     CGDirectDisplayID display_id = config.id;
     DesktopVector display_origin = config.pixel_bounds.top_left();
 
@@ -516,12 +453,8 @@ bool ScreenCapturerMac::RegisterRefreshAndMoveHandlers() {
                                                      uint64_t display_time,
                                                      IOSurfaceRef frame_surface,
                                                      CGDisplayStreamUpdateRef updateRef) {
-      if (status == kCGDisplayStreamFrameStatusStopped) {
-        manager->DestroyStream(unique_id);
-        return;
-      }
-
-      if (manager->ShouldIgnoreUpdates()) return;
+      RTC_DCHECK(thread_checker_.CalledOnValidThread());
+      if (status == kCGDisplayStreamFrameStatusStopped) return;
 
       // Only pay attention to frame updates.
       if (status != kCGDisplayStreamFrameStatusFrameComplete) return;
@@ -553,7 +486,7 @@ bool ScreenCapturerMac::RegisterRefreshAndMoveHandlers() {
 
       CFRunLoopSourceRef source = CGDisplayStreamGetRunLoopSource(display_stream);
       CFRunLoopAddSource(CFRunLoopGetCurrent(), source, kCFRunLoopCommonModes);
-      display_stream_manager_->SaveStream(unique_id, display_stream);
+      display_streams_.push_back(display_stream);
     }
   }
 
@@ -561,7 +494,16 @@ bool ScreenCapturerMac::RegisterRefreshAndMoveHandlers() {
 }
 
 void ScreenCapturerMac::UnregisterRefreshAndMoveHandlers() {
-  display_stream_manager_->UnregisterActiveStreams();
+  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+
+  for (CGDisplayStreamRef stream : display_streams_) {
+    CFRunLoopSourceRef source = CGDisplayStreamGetRunLoopSource(stream);
+    CFRunLoopRemoveSource(CFRunLoopGetCurrent(), source, kCFRunLoopCommonModes);
+    CGDisplayStreamStop(stream);
+    CFRelease(stream);
+  }
+  display_streams_.clear();
+
   // Release obsolete io surfaces.
   desktop_frame_provider_.Release();
 }

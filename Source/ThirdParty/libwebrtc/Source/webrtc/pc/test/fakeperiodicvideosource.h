@@ -33,6 +33,7 @@ class FakePeriodicVideoSource final
     int height = kDefaultHeight;
     int frame_interval_ms = kDefaultFrameIntervalMs;
     VideoRotation rotation = kVideoRotation_0;
+    int64_t timestamp_offset_ms = 0;
   };
 
   FakePeriodicVideoSource() : FakePeriodicVideoSource(Config()) {}
@@ -67,7 +68,8 @@ class FakePeriodicVideoSource final
           frame_source_(
               config.width,
               config.height,
-              config.frame_interval_ms * rtc::kNumMicrosecsPerMillisec),
+              config.frame_interval_ms * rtc::kNumMicrosecsPerMillisec,
+              config.timestamp_offset_ms * rtc::kNumMicrosecsPerMillisec),
           broadcaster_(broadcaster) {
       frame_source_.SetRotation(config.rotation);
     }

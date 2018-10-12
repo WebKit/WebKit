@@ -33,29 +33,6 @@ const int64_t kRtpRtcpBitrateProcessTimeMs = 10;
 const int64_t kDefaultExpectedRetransmissionTimeMs = 125;
 }  // namespace
 
-RTPExtensionType StringToRtpExtensionType(const std::string& extension) {
-  if (extension == RtpExtension::kTimestampOffsetUri)
-    return kRtpExtensionTransmissionTimeOffset;
-  if (extension == RtpExtension::kAudioLevelUri)
-    return kRtpExtensionAudioLevel;
-  if (extension == RtpExtension::kAbsSendTimeUri)
-    return kRtpExtensionAbsoluteSendTime;
-  if (extension == RtpExtension::kVideoRotationUri)
-    return kRtpExtensionVideoRotation;
-  if (extension == RtpExtension::kTransportSequenceNumberUri)
-    return kRtpExtensionTransportSequenceNumber;
-  if (extension == RtpExtension::kPlayoutDelayUri)
-    return kRtpExtensionPlayoutDelay;
-  if (extension == RtpExtension::kVideoContentTypeUri)
-    return kRtpExtensionVideoContentType;
-  if (extension == RtpExtension::kVideoTimingUri)
-    return kRtpExtensionVideoTiming;
-  if (extension == RtpExtension::kMidUri)
-    return kRtpExtensionMid;
-  RTC_NOTREACHED() << "Looking up unsupported RTP extension.";
-  return kRtpExtensionNone;
-}
-
 RtpRtcp::Configuration::Configuration() = default;
 
 RtpRtcp* RtpRtcp::CreateRtpRtcp(const RtpRtcp::Configuration& configuration) {
@@ -103,8 +80,7 @@ ModuleRtpRtcpImpl::ModuleRtpRtcpImpl(const Configuration& configuration)
                          kRtpRtcpMaxIdleTimeProcessMs),
       next_keepalive_time_(-1),
       packet_overhead_(28),  // IPV4 UDP.
-      nack_last_time_sent_full_(0),
-      nack_last_time_sent_full_prev_(0),
+      nack_last_time_sent_full_ms_(0),
       nack_last_seq_number_sent_(0),
       key_frame_req_method_(kKeyFrameReqPliRtcp),
       remote_bitrate_(configuration.remote_bitrate_estimator),
@@ -550,12 +526,6 @@ int32_t ModuleRtpRtcpImpl::SetRTCPApplicationSpecificData(
   return rtcp_sender_.SetApplicationSpecificData(sub_type, name, data, length);
 }
 
-// (XR) VOIP metric.
-int32_t ModuleRtpRtcpImpl::SetRTCPVoIPMetrics(
-    const RTCPVoIPMetric* voip_metric) {
-  return rtcp_sender_.SetRTCPVoIPMetrics(voip_metric);
-}
-
 void ModuleRtpRtcpImpl::SetRtcpXrRrtrStatus(bool enable) {
   rtcp_receiver_.SetRtcpXrRrtrStatus(enable);
   rtcp_sender_.SendRtcpXrReceiverReferenceTime(enable);
@@ -640,6 +610,11 @@ int32_t ModuleRtpRtcpImpl::RegisterSendRtpHeaderExtension(
   return rtp_sender_->RegisterRtpHeaderExtension(type, id);
 }
 
+bool ModuleRtpRtcpImpl::RegisterRtpHeaderExtension(const std::string& uri,
+                                                   int id) {
+  return rtp_sender_->RegisterRtpHeaderExtension(uri, id);
+}
+
 int32_t ModuleRtpRtcpImpl::DeregisterSendRtpHeaderExtension(
     const RTPExtensionType type) {
   return rtp_sender_->DeregisterRtpHeaderExtension(type);
@@ -686,10 +661,9 @@ int32_t ModuleRtpRtcpImpl::SendNACK(const uint16_t* nack_list,
   }
   uint16_t nack_length = size;
   uint16_t start_id = 0;
-  int64_t now = clock_->TimeInMilliseconds();
-  if (TimeToSendFullNackList(now)) {
-    nack_last_time_sent_full_ = now;
-    nack_last_time_sent_full_prev_ = now;
+  int64_t now_ms = clock_->TimeInMilliseconds();
+  if (TimeToSendFullNackList(now_ms)) {
+    nack_last_time_sent_full_ms_ = now_ms;
   } else {
     // Only send extended list.
     if (nack_last_seq_number_sent_ == nack_list[size - 1]) {
@@ -737,10 +711,7 @@ bool ModuleRtpRtcpImpl::TimeToSendFullNackList(int64_t now) const {
   }
 
   // Send a full NACK list once within every |wait_time|.
-  if (rtt_stats_) {
-    return now - nack_last_time_sent_full_ > wait_time;
-  }
-  return now - nack_last_time_sent_full_prev_ > wait_time;
+  return now - nack_last_time_sent_full_ms_ > wait_time;
 }
 
 // Store the sent packets, needed to answer to Negative acknowledgment requests.

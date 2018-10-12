@@ -140,4 +140,62 @@ TEST(SimpleStringBuilder, BufferOverrunIntAlreadyFull) {
 
 #endif
 
+////////////////////////////////////////////////////////////////////////////////
+// StringBuilder.
+
+TEST(StringBuilder, Limit) {
+  StringBuilder sb;
+  EXPECT_EQ(0u, sb.str().size());
+
+  sb << "012345678";
+  EXPECT_EQ(sb.str(), "012345678");
+}
+
+TEST(StringBuilder, NumbersAndChars) {
+  StringBuilder sb;
+  sb << 1 << ":" << 2.1 << ":" << 2.2f << ":" << 78187493520ll << ":"
+     << 78187493520ul;
+  EXPECT_THAT(sb.str(),
+              testing::MatchesRegex("1:2.10*:2.20*:78187493520:78187493520"));
+}
+
+TEST(StringBuilder, Format) {
+  StringBuilder sb;
+  sb << "Here we go - ";
+  sb.AppendFormat("This is a hex formatted value: 0x%08llx", 3735928559ULL);
+  EXPECT_EQ(sb.str(), "Here we go - This is a hex formatted value: 0xdeadbeef");
+}
+
+TEST(StringBuilder, StdString) {
+  StringBuilder sb;
+  std::string str = "does this work?";
+  sb << str;
+  EXPECT_EQ(str, sb.str());
+}
+
+TEST(StringBuilder, Release) {
+  StringBuilder sb;
+  std::string str =
+      "This string has to be of a moderate length, or we might "
+      "run into problems with small object optimizations.";
+  EXPECT_LT(sizeof(str), str.size());
+  sb << str;
+  EXPECT_EQ(str, sb.str());
+  const char* original_buffer = sb.str().c_str();
+  std::string moved = sb.Release();
+  EXPECT_TRUE(sb.str().empty());
+  EXPECT_EQ(str, moved);
+  EXPECT_EQ(original_buffer, moved.c_str());
+}
+
+TEST(StringBuilder, Reset) {
+  StringBuilder sb("abc");
+  sb << "def";
+  EXPECT_EQ("abcdef", sb.str());
+  sb.Clear();
+  EXPECT_TRUE(sb.str().empty());
+  sb << 123 << "!";
+  EXPECT_EQ("123!", sb.str());
+}
+
 }  // namespace rtc

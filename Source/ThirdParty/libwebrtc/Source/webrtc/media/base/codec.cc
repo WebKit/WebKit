@@ -271,10 +271,8 @@ bool VideoCodec::Matches(const VideoCodec& other) const {
   if (CodecNamesEq(name.c_str(), kH264CodecName))
     return webrtc::H264::IsSameH264Profile(params, other.params) &&
            IsSameH264PacketizationMode(params, other.params);
-#if !defined(RTC_DISABLE_VP9)
   if (CodecNamesEq(name.c_str(), kVp9CodecName))
     return webrtc::IsSameVP9Profile(params, other.params);
-#endif
   return true;
 }
 
@@ -394,10 +392,8 @@ bool IsSameCodec(const std::string& name1,
   // For every format besides H264 and VP9, comparing names is enough.
   if (CodecNamesEq(name1.c_str(), kH264CodecName))
     return webrtc::H264::IsSameH264Profile(params1, params2);
-#if !defined(RTC_DISABLE_VP9)
   if (CodecNamesEq(name1.c_str(), kVp9CodecName))
     return webrtc::IsSameVP9Profile(params1, params2);
-#endif
   return true;
 }
 

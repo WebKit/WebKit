@@ -16,13 +16,18 @@
 #include "rtc_base/system/arch.h"
 #include "system_wrappers/include/event_wrapper.h"
 #include "system_wrappers/include/sleep.h"
-webrtc::adm_linux_alsa::AlsaSymbolTable AlsaSymbolTable;
+
+WebRTCAlsaSymbolTable* GetAlsaSymbolTable() {
+  static WebRTCAlsaSymbolTable* alsa_symbol_table = new WebRTCAlsaSymbolTable();
+  return alsa_symbol_table;
+}
 
 // Accesses ALSA functions through our late-binding symbol table instead of
 // directly. This way we don't have to link to libasound, which means our binary
 // will work on systems that don't have it.
-#define LATE(sym) \
-  LATESYM_GET(webrtc::adm_linux_alsa::AlsaSymbolTable, &AlsaSymbolTable, sym)
+#define LATE(sym)                                                            \
+  LATESYM_GET(webrtc::adm_linux_alsa::AlsaSymbolTable, GetAlsaSymbolTable(), \
+              sym)
 
 // Redefine these here to be able to do late-binding
 #undef snd_ctl_card_info_alloca
@@ -140,7 +145,7 @@ AudioDeviceGeneric::InitStatus AudioDeviceLinuxALSA::Init() {
   rtc::CritScope lock(&_critSect);
 
   // Load libasound
-  if (!AlsaSymbolTable.Load()) {
+  if (!GetAlsaSymbolTable()->Load()) {
     // Alsa is not installed on this system
     RTC_LOG(LS_ERROR) << "failed to load symbol table";
     return InitStatus::OTHER_ERROR;

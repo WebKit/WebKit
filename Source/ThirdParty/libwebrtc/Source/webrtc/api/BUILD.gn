@@ -52,6 +52,8 @@ rtc_static_library("libjingle_peerconnection_api") {
     "bitrate_constraints.h",
     "candidate.cc",
     "candidate.h",
+    "crypto/framedecryptorinterface.h",
+    "crypto/frameencryptorinterface.h",
     "cryptoparams.h",
     "datachannelinterface.cc",
     "datachannelinterface.h",
@@ -61,6 +63,7 @@ rtc_static_library("libjingle_peerconnection_api") {
     "jsepicecandidate.cc",
     "jsepicecandidate.h",
     "jsepsessiondescription.h",
+    "media_transport_interface.h",
     "mediaconstraintsinterface.cc",
     "mediaconstraintsinterface.h",
     "mediastreaminterface.cc",
@@ -84,6 +87,7 @@ rtc_static_library("libjingle_peerconnection_api") {
     "rtpparameters.h",
     "rtpreceiverinterface.cc",
     "rtpreceiverinterface.h",
+    "rtpsenderinterface.cc",
     "rtpsenderinterface.h",
     "rtptransceiverinterface.cc",
     "rtptransceiverinterface.h",
@@ -94,7 +98,6 @@ rtc_static_library("libjingle_peerconnection_api") {
     "umametrics.h",
     "videosourceproxy.h",
   ]
-
   deps = [
     ":array_view",
     ":audio_options_api",
@@ -136,6 +139,7 @@ rtc_source_set("video_quality_test_fixture_api") {
     "test/video_quality_test_fixture.h",
   ]
   deps = [
+    ":fec_controller_api",
     ":libjingle_peerconnection_api",
     ":simulated_network_api",
     "../call:fake_network",
@@ -143,6 +147,23 @@ rtc_source_set("video_quality_test_fixture_api") {
     "../test:test_common",
     "../test:video_test_common",
     "video_codecs:video_codecs_api",
+  ]
+  if (!build_with_chromium && is_clang) {
+    # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+    suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+  }
+}
+
+rtc_source_set("test_dependency_factory") {
+  visibility = [ "*" ]
+  testonly = true
+  sources = [
+    "test/test_dependency_factory.cc",
+    "test/test_dependency_factory.h",
+  ]
+  deps = [
+    ":video_quality_test_fixture_api",
+    "../rtc_base:thread_checker",
   ]
   if (!build_with_chromium && is_clang) {
     # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
@@ -236,7 +257,7 @@ rtc_source_set("audio_options_api") {
   ]
 
   deps = [
-    "../rtc_base:rtc_base_approved",
+    "../rtc_base:stringutils",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
@@ -307,6 +328,14 @@ rtc_source_set("libjingle_peerconnection_test_api") {
   ]
 }
 
+rtc_source_set("neteq_simulator_api") {
+  visibility = [ "*" ]
+  sources = [
+    "test/neteq_simulator.cc",
+    "test/neteq_simulator.h",
+  ]
+}
+
 if (rtc_include_tests) {
   if (rtc_enable_protobuf) {
     rtc_source_set("audioproc_f_api") {
@@ -320,6 +349,22 @@ if (rtc_include_tests) {
       deps = [
         "../modules/audio_processing:audio_processing",
         "../modules/audio_processing:audioproc_f_impl",
+      ]
+    }
+
+    rtc_source_set("neteq_simulator_factory") {
+      visibility = [ "*" ]
+      testonly = true
+      sources = [
+        "test/neteq_simulator_factory.cc",
+        "test/neteq_simulator_factory.h",
+      ]
+      deps = [
+        ":neteq_simulator_api",
+        "../modules/audio_coding:neteq_test_factory",
+        "../rtc_base:checks",
+        "../rtc_base:rtc_base_approved",
+        "//third_party/abseil-cpp/absl/memory",
       ]
     }
   }
@@ -363,6 +408,7 @@ if (rtc_include_tests) {
     deps = [
       "..:webrtc_common",
       "../modules/video_coding:video_codec_interface",
+      "../rtc_base:stringutils",
       "video_codecs:video_codecs_api",
     ]
   }
@@ -397,6 +443,23 @@ if (rtc_include_tests) {
     deps = [
       "../test:test_support",
       "audio:audio_mixer_api",
+    ]
+  }
+
+  rtc_source_set("fake_frame_crypto") {
+    testonly = true
+    sources = [
+      "test/fake_frame_decryptor.cc",
+      "test/fake_frame_decryptor.h",
+      "test/fake_frame_encryptor.cc",
+      "test/fake_frame_encryptor.h",
+    ]
+    deps = [
+      ":array_view",
+      ":libjingle_peerconnection_api",
+      "..:webrtc_common",
+      "../rtc_base:checks",
+      "../rtc_base:rtc_base_approved",
     ]
   }
 
@@ -469,7 +532,6 @@ if (rtc_include_tests) {
     deps = [
       ":array_view",
       ":libjingle_peerconnection_api",
-      ":libjingle_peerconnection_test_api",
       ":ortc_api",
       "../rtc_base:checks",
       "../rtc_base:rtc_base_approved",

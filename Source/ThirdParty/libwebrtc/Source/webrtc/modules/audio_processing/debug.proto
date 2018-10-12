@@ -47,7 +47,6 @@ message Stream {
 // Contains the configurations of various APM component. A Config message is
 // added when any of the fields are changed.
 message Config {
-  // Next field number 19.
   // Acoustic echo canceler.
   optional bool aec_enabled = 1;
   optional bool aec_delay_agnostic_enabled = 2;
@@ -56,8 +55,8 @@ message Config {
   optional int32 aec_suppression_level = 5;
   // Mobile AEC.
   optional bool aecm_enabled = 6;
-  optional bool aecm_comfort_noise_enabled = 7;
-  optional int32 aecm_routing_mode = 8;
+  optional bool aecm_comfort_noise_enabled = 7 [deprecated = true];
+  optional int32 aecm_routing_mode = 8 [deprecated = true];
   // Automatic gain controller.
   optional bool agc_enabled = 9;
   optional int32 agc_mode = 10;
@@ -73,11 +72,17 @@ message Config {
   // Semicolon-separated string containing experimental feature
   // descriptions.
   optional string experiments_description = 17;
-  // Intelligibility Enhancer.
-  optional bool intelligibility_enhancer_enabled = 18;
+  reserved 18;  // Intelligibility enhancer enabled (deprecated).
   // Pre amplifier.
   optional bool pre_amplifier_enabled = 19;
   optional float pre_amplifier_fixed_gain_factor = 20;
+
+  // Next field number 21.
+}
+
+message RuntimeSetting {
+  optional float capture_pre_gain = 1;
+  optional float custom_render_processing_setting = 2;
 }
 
 message Event {
@@ -87,6 +92,7 @@ message Event {
     STREAM = 2;
     CONFIG = 3;
     UNKNOWN_EVENT = 4;
+    RUNTIME_SETTING = 5;
   }
 
   required Type type = 1;
@@ -95,4 +101,5 @@ message Event {
   optional ReverseStream reverse_stream = 3;
   optional Stream stream = 4;
   optional Config config = 5;
+  optional RuntimeSetting runtime_setting = 6;
 }

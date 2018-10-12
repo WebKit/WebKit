@@ -22,6 +22,7 @@
 #include "modules/audio_coding/neteq/include/neteq.h"
 #include "modules/audio_coding/neteq/tools/input_audio_file.h"
 #include "modules/audio_coding/neteq/tools/rtp_generator.h"
+#include "rtc_base/strings/string_builder.h"
 #include "test/gtest.h"
 #include "test/testsupport/fileutils.h"
 
@@ -228,7 +229,7 @@ class NetEqStereoTest : public ::testing::TestWithParam<TestParameters> {
       EXPECT_EQ(num_channels_, output_multi_channel_.num_channels_);
       EXPECT_EQ(output_size_samples_,
                 output_multi_channel_.samples_per_channel_);
-      std::ostringstream ss;
+      rtc::StringBuilder ss;
       ss << "Lap number " << k << ".";
       SCOPED_TRACE(ss.str());  // Print out the parameter values on failure.
       // Compare mono and multi-channel.

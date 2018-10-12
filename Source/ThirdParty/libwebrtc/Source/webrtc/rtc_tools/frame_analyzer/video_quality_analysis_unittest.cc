@@ -22,6 +22,22 @@
 namespace webrtc {
 namespace test {
 
+namespace {
+
+void VerifyLogOutput(const std::string& log_filename,
+                     const std::vector<std::string>& expected_out) {
+  std::ifstream logf(log_filename);
+  std::string line;
+
+  std::size_t i;
+  for (i = 0; i < expected_out.size() && getline(logf, line); ++i) {
+    ASSERT_EQ(expected_out.at(i), line);
+  }
+  ASSERT_TRUE(i == expected_out.size()) << "Not enough input data";
+}
+
+}  // namespace
+
 // Setup a log file to write the output to instead of stdout because we don't
 // want those numbers to be picked up as perf numbers.
 class VideoQualityAnalysisTest : public ::testing::Test {
@@ -31,40 +47,10 @@ class VideoQualityAnalysisTest : public ::testing::Test {
                                             "VideoQualityAnalysisTest.log");
     logfile_ = fopen(log_filename.c_str(), "w");
     ASSERT_TRUE(logfile_ != NULL);
-
-    stats_filename_ref_ = TempFilename(OutputPath(), "stats-1.txt");
-    stats_filename_ = TempFilename(OutputPath(), "stats-2.txt");
   }
   void TearDown() { ASSERT_EQ(0, fclose(logfile_)); }
   FILE* logfile_;
-  std::string stats_filename_ref_;
-  std::string stats_filename_;
 };
-
-TEST_F(VideoQualityAnalysisTest, MatchExtractedY4mFrame) {
-  std::string video_file =
-      webrtc::test::ResourcePath("reference_less_video_test_file", "y4m");
-
-  std::string extracted_frame_from_video_file =
-      webrtc::test::ResourcePath("video_quality_analysis_frame", "txt");
-
-  int frame_height = 720, frame_width = 1280;
-  int frame_number = 2;
-  int size = GetI420FrameSize(frame_width, frame_height);
-  uint8_t* result_frame = new uint8_t[size];
-  uint8_t* expected_frame = new uint8_t[size];
-
-  FILE* input_file = fopen(extracted_frame_from_video_file.c_str(), "rb");
-  fread(expected_frame, 1, size, input_file);
-
-  ExtractFrameFromY4mFile(video_file.c_str(), frame_width, frame_height,
-                          frame_number, result_frame);
-
-  EXPECT_EQ(*expected_frame, *result_frame);
-  fclose(input_file);
-  delete[] result_frame;
-  delete[] expected_frame;
-}
 
 TEST_F(VideoQualityAnalysisTest, PrintAnalysisResultsEmpty) {
   ResultsContainer result;
@@ -85,92 +71,21 @@ TEST_F(VideoQualityAnalysisTest, PrintAnalysisResultsThreeFrames) {
   PrintAnalysisResults(logfile_, "ThreeFrames", &result);
 }
 
-TEST_F(VideoQualityAnalysisTest, GetMaxRepeatedAndSkippedFramesInvalidFile) {
-  ResultsContainer result;
-  remove(stats_filename_.c_str());
-  GetMaxRepeatedAndSkippedFrames(stats_filename_ref_, stats_filename_, &result);
-}
-
-TEST_F(VideoQualityAnalysisTest, GetMaxRepeatedAndSkippedFramesEmptyStatsFile) {
-  ResultsContainer result;
-  std::ofstream stats_file;
-  stats_file.open(stats_filename_ref_.c_str());
-  stats_file.close();
-  stats_file.open(stats_filename_.c_str());
-  stats_file.close();
-  GetMaxRepeatedAndSkippedFrames(stats_filename_ref_, stats_filename_, &result);
-}
-
-TEST_F(VideoQualityAnalysisTest, GetMaxRepeatedAndSkippedFramesNormalFile) {
-  ResultsContainer result;
-  std::ofstream stats_file;
-
-  stats_file.open(stats_filename_ref_.c_str());
-  stats_file << "frame_0001 0100\n";
-  stats_file << "frame_0002 0101\n";
-  stats_file << "frame_0003 0102\n";
-  stats_file << "frame_0004 0103\n";
-  stats_file << "frame_0005 0106\n";
-  stats_file << "frame_0006 0107\n";
-  stats_file << "frame_0007 0108\n";
-  stats_file.close();
-
-  stats_file.open(stats_filename_.c_str());
-  stats_file << "frame_0001 0100\n";
-  stats_file << "frame_0002 0101\n";
-  stats_file << "frame_0003 0101\n";
-  stats_file << "frame_0004 0106\n";
-  stats_file.close();
-
-  GetMaxRepeatedAndSkippedFrames(stats_filename_ref_, stats_filename_, &result);
-}
-
-namespace {
-void VerifyLogOutput(const std::string& log_filename,
-                     const std::vector<std::string>& expected_out) {
-  std::ifstream logf(log_filename);
-  std::string line;
-
-  std::size_t i;
-  for (i = 0; i < expected_out.size() && getline(logf, line); ++i) {
-    ASSERT_EQ(expected_out.at(i), line);
-  }
-  ASSERT_TRUE(i == expected_out.size()) << "Not enough input data";
-}
-}  // unnamed namespace
-
 TEST_F(VideoQualityAnalysisTest,
        PrintMaxRepeatedAndSkippedFramesSkippedFrames) {
   ResultsContainer result;
-  std::ofstream stats_file;
 
   std::string log_filename =
       TempFilename(webrtc::test::OutputPath(), "log.log");
   FILE* logfile = fopen(log_filename.c_str(), "w");
   ASSERT_TRUE(logfile != NULL);
-  stats_file.open(stats_filename_ref_.c_str());
-  stats_file << "frame_0001 0100\n";
-  stats_file << "frame_0002 0101\n";
-  stats_file << "frame_0002 0101\n";
-  stats_file << "frame_0003 0103\n";
-  stats_file << "frame_0004 0103\n";
-  stats_file << "frame_0005 0106\n";
-  stats_file << "frame_0006 0106\n";
-  stats_file << "frame_0007 0108\n";
-  stats_file << "frame_0008 0110\n";
-  stats_file << "frame_0009 0112\n";
-  stats_file.close();
 
-  stats_file.open(stats_filename_.c_str());
-  stats_file << "frame_0001 0101\n";
-  stats_file << "frame_0002 0101\n";
-  stats_file << "frame_0003 0101\n";
-  stats_file << "frame_0004 0108\n";
-  stats_file << "frame_0005 0108\n";
-  stats_file << "frame_0006 0112\n";
-  stats_file.close();
+  result.max_repeated_frames = 2;
+  result.max_skipped_frames = 2;
+  result.total_skipped_frames = 3;
+  result.decode_errors_ref = 0;
+  result.decode_errors_test = 0;
 
-  GetMaxRepeatedAndSkippedFrames(stats_filename_ref_, stats_filename_, &result);
   PrintAnalysisResults(logfile, "NormalStatsFile", &result);
   ASSERT_EQ(0, fclose(logfile));
 
@@ -186,35 +101,17 @@ TEST_F(VideoQualityAnalysisTest,
 TEST_F(VideoQualityAnalysisTest,
        PrintMaxRepeatedAndSkippedFramesDecodeErrorInTest) {
   ResultsContainer result;
-  std::ofstream stats_file;
 
   std::string log_filename =
       TempFilename(webrtc::test::OutputPath(), "log.log");
   FILE* logfile = fopen(log_filename.c_str(), "w");
   ASSERT_TRUE(logfile != NULL);
-  stats_file.open(stats_filename_ref_.c_str());
-  stats_file << "frame_0001 0100\n";
-  stats_file << "frame_0002 0100\n";
-  stats_file << "frame_0002 0101\n";
-  stats_file << "frame_0003 0103\n";
-  stats_file << "frame_0004 0103\n";
-  stats_file << "frame_0005 0106\n";
-  stats_file << "frame_0006 0107\n";
-  stats_file << "frame_0007 0107\n";
-  stats_file << "frame_0008 0110\n";
-  stats_file << "frame_0009 0112\n";
-  stats_file.close();
 
-  stats_file.open(stats_filename_.c_str());
-  stats_file << "frame_0001 0101\n";
-  stats_file << "frame_0002 Barcode error\n";
-  stats_file << "frame_0003 Barcode error\n";
-  stats_file << "frame_0004 Barcode error\n";
-  stats_file << "frame_0005 0107\n";
-  stats_file << "frame_0006 0110\n";
-  stats_file.close();
-
-  GetMaxRepeatedAndSkippedFrames(stats_filename_ref_, stats_filename_, &result);
+  result.max_repeated_frames = 1;
+  result.max_skipped_frames = 0;
+  result.total_skipped_frames = 0;
+  result.decode_errors_ref = 0;
+  result.decode_errors_test = 3;
   PrintAnalysisResults(logfile, "NormalStatsFile", &result);
   ASSERT_EQ(0, fclose(logfile));
 
@@ -228,113 +125,61 @@ TEST_F(VideoQualityAnalysisTest,
 }
 
 TEST_F(VideoQualityAnalysisTest, CalculateFrameClustersOneValue) {
-  std::ofstream stats_file;
+  const std::vector<Cluster> result = CalculateFrameClusters({1});
+  EXPECT_EQ(1u, result.size());
+  EXPECT_EQ(1u, result[0].index);
+  EXPECT_EQ(1, result[0].number_of_repeated_frames);
+}
 
-  stats_file.open(stats_filename_.c_str());
-  stats_file << "frame_0001 0101\n";
-  stats_file.close();
+TEST_F(VideoQualityAnalysisTest, GetMaxRepeatedFramesOneValue) {
+  EXPECT_EQ(1, GetMaxRepeatedFrames(CalculateFrameClusters({1})));
+}
 
-  FILE* stats_filef = fopen(stats_filename_.c_str(), "r");
-  ASSERT_TRUE(stats_filef != NULL);
+TEST_F(VideoQualityAnalysisTest, GetMaxSkippedFramesOneValue) {
+  EXPECT_EQ(0, GetMaxSkippedFrames(CalculateFrameClusters({1})));
+}
 
-  auto clusters = CalculateFrameClusters(stats_filef, nullptr);
-  ASSERT_EQ(0, fclose(stats_filef));
-  decltype(clusters) expected = {std::make_pair(101, 1)};
-  ASSERT_EQ(expected, clusters);
+TEST_F(VideoQualityAnalysisTest, GetTotalNumberOfSkippedFramesOneValue) {
+  EXPECT_EQ(0, GetTotalNumberOfSkippedFrames(CalculateFrameClusters({1})));
 }
 
 TEST_F(VideoQualityAnalysisTest, CalculateFrameClustersOneOneTwo) {
-  std::ofstream stats_file;
-
-  stats_file.open(stats_filename_.c_str());
-  stats_file << "frame_0001 0101\n";
-  stats_file << "frame_0002 0101\n";
-  stats_file << "frame_0003 0102\n";
-  stats_file.close();
-
-  FILE* stats_filef = fopen(stats_filename_.c_str(), "r");
-  ASSERT_TRUE(stats_filef != NULL);
-
-  auto clusters = CalculateFrameClusters(stats_filef, nullptr);
-  ASSERT_EQ(0, fclose(stats_filef));
-  decltype(clusters) expected = {std::make_pair(101, 2),
-                                 std::make_pair(102, 1)};
-  ASSERT_EQ(expected, clusters);
+  const std::vector<Cluster> result = CalculateFrameClusters({1, 1, 2});
+  EXPECT_EQ(2u, result.size());
+  EXPECT_EQ(1u, result[0].index);
+  EXPECT_EQ(2, result[0].number_of_repeated_frames);
+  EXPECT_EQ(2u, result[1].index);
+  EXPECT_EQ(1, result[1].number_of_repeated_frames);
 }
 
-TEST_F(VideoQualityAnalysisTest, CalculateFrameClustersOneOneErrErrThree) {
-  std::ofstream stats_file;
-
-  stats_file.open(stats_filename_.c_str());
-  stats_file << "frame_0001 0101\n";
-  stats_file << "frame_0002 0101\n";
-  stats_file << "frame_0003 Barcode error\n";
-  stats_file << "frame_0004 Barcode error\n";
-  stats_file << "frame_0005 0103\n";
-  stats_file.close();
-
-  FILE* stats_filef = fopen(stats_filename_.c_str(), "r");
-  ASSERT_TRUE(stats_filef != NULL);
-
-  auto clusters = CalculateFrameClusters(stats_filef, nullptr);
-  ASSERT_EQ(0, fclose(stats_filef));
-  decltype(clusters) expected = {std::make_pair(101, 2),
-                                 std::make_pair(DECODE_ERROR, 2),
-                                 std::make_pair(103, 1)};
-  ASSERT_EQ(expected, clusters);
+TEST_F(VideoQualityAnalysisTest, GetMaxRepeatedFramesOneOneTwo) {
+  EXPECT_EQ(2, GetMaxRepeatedFrames(CalculateFrameClusters({1, 1, 2})));
 }
 
-TEST_F(VideoQualityAnalysisTest, CalculateFrameClustersErrErr) {
-  std::ofstream stats_file;
-
-  stats_file.open(stats_filename_.c_str());
-  stats_file << "frame_0001 Barcode error\n";
-  stats_file << "frame_0002 Barcode error\n";
-  stats_file.close();
-
-  FILE* stats_filef = fopen(stats_filename_.c_str(), "r");
-  ASSERT_TRUE(stats_filef != NULL);
-
-  auto clusters = CalculateFrameClusters(stats_filef, nullptr);
-  ASSERT_EQ(0, fclose(stats_filef));
-  decltype(clusters) expected = {std::make_pair(DECODE_ERROR, 2)};
-  ASSERT_EQ(expected, clusters);
+TEST_F(VideoQualityAnalysisTest, GetMaxSkippedFramesOneOneTwo) {
+  EXPECT_EQ(0, GetMaxSkippedFrames(CalculateFrameClusters({1, 1, 2})));
 }
 
-TEST_F(VideoQualityAnalysisTest, CalculateFrameClustersOneOneErrErrOneOne) {
-  std::ofstream stats_file;
-
-  stats_file.open(stats_filename_.c_str());
-  stats_file << "frame_0001 0101\n";
-  stats_file << "frame_0002 0101\n";
-  stats_file << "frame_0003 Barcode error\n";
-  stats_file << "frame_0004 Barcode error\n";
-  stats_file << "frame_0005 0101\n";
-  stats_file << "frame_0006 0101\n";
-  stats_file.close();
-
-  FILE* stats_filef = fopen(stats_filename_.c_str(), "r");
-  ASSERT_TRUE(stats_filef != NULL);
-
-  auto clusters = CalculateFrameClusters(stats_filef, nullptr);
-  ASSERT_EQ(0, fclose(stats_filef));
-  decltype(clusters) expected = {std::make_pair(101, 6)};
-  ASSERT_EQ(expected, clusters);
+TEST_F(VideoQualityAnalysisTest, GetTotalNumberOfSkippedFramesOneOneTwo) {
+  EXPECT_EQ(0,
+            GetTotalNumberOfSkippedFrames(CalculateFrameClusters({1, 1, 2})));
 }
 
 TEST_F(VideoQualityAnalysisTest, CalculateFrameClustersEmpty) {
-  std::ofstream stats_file;
-
-  stats_file.open(stats_filename_.c_str());
-  stats_file.close();
-
-  FILE* stats_filef = fopen(stats_filename_.c_str(), "r");
-  ASSERT_TRUE(stats_filef != NULL);
-
-  auto clusters = CalculateFrameClusters(stats_filef, nullptr);
-  ASSERT_EQ(0, fclose(stats_filef));
-  decltype(clusters) expected;
-  ASSERT_EQ(expected, clusters);
+  EXPECT_TRUE(CalculateFrameClusters({}).empty());
 }
+
+TEST_F(VideoQualityAnalysisTest, GetMaxRepeatedFramesEmpty) {
+  EXPECT_EQ(0, GetMaxRepeatedFrames({}));
+}
+
+TEST_F(VideoQualityAnalysisTest, GetMaxSkippedFramesEmpty) {
+  EXPECT_EQ(0, GetMaxSkippedFrames({}));
+}
+
+TEST_F(VideoQualityAnalysisTest, GetTotalNumberOfSkippedFramesEmpty) {
+  EXPECT_EQ(0, GetTotalNumberOfSkippedFrames({}));
+}
+
 }  // namespace test
 }  // namespace webrtc

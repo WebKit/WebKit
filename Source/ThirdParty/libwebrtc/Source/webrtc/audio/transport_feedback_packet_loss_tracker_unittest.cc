@@ -116,8 +116,6 @@ class TransportFeedbackPacketLossTrackerTest
 
  private:
   int64_t time_ms_{0};
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(TransportFeedbackPacketLossTrackerTest);
 };
 
 }  // namespace

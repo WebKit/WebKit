@@ -11,6 +11,8 @@
 #include "audio/test/audio_bwe_integration_test.h"
 
 #include "absl/memory/memory.h"
+#include "call/fake_network_pipe.h"
+#include "call/simulated_network.h"
 #include "common_audio/wav_file.h"
 #include "system_wrappers/include/sleep.h"
 #include "test/field_trial.h"
@@ -53,14 +55,20 @@ test::PacketTransport* AudioBweTest::CreateSendTransport(
     Call* sender_call) {
   return new test::PacketTransport(
       task_queue, sender_call, this, test::PacketTransport::kSender,
-      test::CallTest::payload_type_map_, GetNetworkPipeConfig());
+      test::CallTest::payload_type_map_,
+      absl::make_unique<FakeNetworkPipe>(
+          Clock::GetRealTimeClock(),
+          absl::make_unique<SimulatedNetwork>(GetNetworkPipeConfig())));
 }
 
 test::PacketTransport* AudioBweTest::CreateReceiveTransport(
     SingleThreadedTaskQueueForTesting* task_queue) {
   return new test::PacketTransport(
       task_queue, nullptr, this, test::PacketTransport::kReceiver,
-      test::CallTest::payload_type_map_, GetNetworkPipeConfig());
+      test::CallTest::payload_type_map_,
+      absl::make_unique<FakeNetworkPipe>(
+          Clock::GetRealTimeClock(),
+          absl::make_unique<SimulatedNetwork>(GetNetworkPipeConfig())));
 }
 
 void AudioBweTest::PerformTest() {
@@ -115,8 +123,8 @@ class NoBandwidthDropAfterDtx : public AudioBweTest {
     return test::ResourcePath("voice_engine/audio_dtx16", "wav");
   }
 
-  FakeNetworkPipe::Config GetNetworkPipeConfig() override {
-    FakeNetworkPipe::Config pipe_config;
+  DefaultNetworkSimulationConfig GetNetworkPipeConfig() override {
+    DefaultNetworkSimulationConfig pipe_config;
     pipe_config.link_capacity_kbps = 50;
     pipe_config.queue_length_packets = 1500;
     pipe_config.queue_delay_ms = 300;
@@ -130,7 +138,7 @@ class NoBandwidthDropAfterDtx : public AudioBweTest {
   void PerformTest() override {
     stats_poller_.PostDelayedTask(
         std::unique_ptr<rtc::QueuedTask>(new StatsPollTask(sender_call_)), 100);
-    sender_call_->OnTransportOverheadChanged(webrtc::MediaType::AUDIO, 0);
+    sender_call_->OnAudioTransportOverheadChanged(0);
     AudioBweTest::PerformTest();
   }
 

@@ -109,6 +109,7 @@ class FakeNetworkInterface : public MediaChannel::NetworkInterface,
   int sendbuf_size() const { return sendbuf_size_; }
   int recvbuf_size() const { return recvbuf_size_; }
   rtc::DiffServCodePoint dscp() const { return dscp_; }
+  rtc::PacketOptions options() const { return options_; }
 
  protected:
   virtual bool SendPacket(rtc::CopyOnWriteBuffer* packet,
@@ -120,6 +121,7 @@ class FakeNetworkInterface : public MediaChannel::NetworkInterface,
       return false;
     }
     sent_ssrcs_[cur_ssrc]++;
+    options_ = options;
 
     rtp_packets_.push_back(*packet);
     if (conf_) {
@@ -139,6 +141,7 @@ class FakeNetworkInterface : public MediaChannel::NetworkInterface,
                         const rtc::PacketOptions& options) {
     rtc::CritScope cs(&crit_);
     rtcp_packets_.push_back(*packet);
+    options_ = options;
     if (!conf_) {
       // don't worry about RTCP in conf mode for now
       PostMessage(ST_RTCP, *packet);
@@ -215,6 +218,8 @@ class FakeNetworkInterface : public MediaChannel::NetworkInterface,
   int sendbuf_size_;
   int recvbuf_size_;
   rtc::DiffServCodePoint dscp_;
+  // Options of the most recently sent packet.
+  rtc::PacketOptions options_;
 };
 
 }  // namespace cricket

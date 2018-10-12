@@ -10,7 +10,6 @@
 
 #include "modules/audio_coding/neteq/tools/rtc_event_log_source.h"
 
-#include <assert.h>
 #include <string.h>
 #include <iostream>
 #include <limits>

@@ -26,6 +26,7 @@ class ReceiverReport : public RtcpPacket {
   static constexpr size_t kMaxNumberOfReportBlocks = 0x1f;
 
   ReceiverReport();
+  ReceiverReport(const ReceiverReport&);
   ~ReceiverReport() override;
 
   // Parse assumes header is already parsed and validated.

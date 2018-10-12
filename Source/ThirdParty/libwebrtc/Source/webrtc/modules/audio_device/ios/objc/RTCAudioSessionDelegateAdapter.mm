@@ -12,7 +12,7 @@
 
 #include "modules/audio_device/ios/audio_session_observer.h"
 
-#import "WebRTC/RTCLogging.h"
+#import "sdk/objc/base/RTCLogging.h"
 
 @implementation RTCAudioSessionDelegateAdapter {
   webrtc::AudioSessionObserver *_observer;

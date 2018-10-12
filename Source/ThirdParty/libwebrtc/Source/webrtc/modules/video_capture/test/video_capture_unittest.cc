@@ -64,7 +64,7 @@ class TestVideoCaptureCallback
         timing_warnings_(0),
         rotate_frame_(webrtc::kVideoRotation_0) {}
 
-  ~TestVideoCaptureCallback() {
+  ~TestVideoCaptureCallback() override {
     if (timing_warnings_ > 0)
       printf("No of timing warnings %d\n", timing_warnings_);
   }
@@ -146,7 +146,7 @@ class VideoCaptureTest : public testing::Test {
  public:
   VideoCaptureTest() : number_of_devices_(0) {}
 
-  void SetUp() {
+  void SetUp() override {
     device_info_.reset(VideoCaptureFactory::CreateDeviceInfo());
     assert(device_info_.get());
     number_of_devices_ = device_info_->NumberOfDevices();
@@ -348,7 +348,7 @@ TEST_F(VideoCaptureTest, DISABLED_TestTwoCameras) {
 // such as frame rate and picture alarm.
 class VideoCaptureExternalTest : public testing::Test {
  public:
-  void SetUp() {
+  void SetUp() override {
     capture_module_ = VideoCaptureFactory::Create(capture_input_interface_);
 
     VideoCaptureCapability capability;
@@ -374,7 +374,7 @@ class VideoCaptureExternalTest : public testing::Test {
     capture_module_->RegisterCaptureDataCallback(&capture_callback_);
   }
 
-  void TearDown() {}
+  void TearDown() override {}
 
   webrtc::VideoCaptureExternal* capture_input_interface_;
   rtc::scoped_refptr<VideoCaptureModule> capture_module_;

@@ -262,7 +262,8 @@ EventGenerator::NewRtcpPacketOutgoing() {
 }
 
 void EventGenerator::RandomizeRtpPacket(
-    size_t packet_size,
+    size_t payload_size,
+    size_t padding_size,
     uint32_t ssrc,
     const RtpHeaderExtensionMap& extension_map,
     RtpPacket* rtp_packet) {
@@ -291,27 +292,40 @@ void EventGenerator::RandomizeRtpPacket(
   if (extension_map.IsRegistered(TransportSequenceNumber::kId))
     rtp_packet->SetExtension<TransportSequenceNumber>(prng_.Rand<uint16_t>());
 
-  RTC_DCHECK_GE(packet_size, rtp_packet->headers_size());
-  size_t payload_size = packet_size - rtp_packet->headers_size();
   RTC_CHECK_LE(rtp_packet->headers_size() + payload_size, IP_PACKET_SIZE);
+
   uint8_t* payload = rtp_packet->AllocatePayload(payload_size);
   RTC_DCHECK(payload != nullptr);
   for (size_t i = 0; i < payload_size; i++) {
     payload[i] = prng_.Rand<uint8_t>();
   }
+  RTC_CHECK(rtp_packet->SetPadding(padding_size, &prng_));
 }
 
 std::unique_ptr<RtcEventRtpPacketIncoming> EventGenerator::NewRtpPacketIncoming(
     uint32_t ssrc,
     const RtpHeaderExtensionMap& extension_map) {
+  constexpr size_t kMaxPaddingLength = 224;
+  const bool padding = prng_.Rand(0, 9) == 0;  // Let padding be 10% probable.
+  const size_t padding_size = !padding ? 0u : prng_.Rand(0u, kMaxPaddingLength);
+
   // 12 bytes RTP header, 4 bytes for 0xBEDE + alignment, 4 bytes per CSRC.
   constexpr size_t kMaxHeaderSize =
       16 + 4 * kMaxCsrcs + kMaxExtensionSizeBytes * kMaxNumExtensions;
-  size_t packet_size =
-      prng_.Rand(kMaxHeaderSize, static_cast<uint32_t>(IP_PACKET_SIZE - 1));
+
+  // In principle, a packet can contain both padding and other payload.
+  // Currently, RTC eventlog encoder-parser can only maintain padding length if
+  // packet is full padding.
+  // TODO(webrtc:9730): Remove the deterministic logic for padding_size > 0.
+  size_t payload_size =
+      padding_size > 0 ? 0
+                       : prng_.Rand(0u, static_cast<uint32_t>(IP_PACKET_SIZE -
+                                                              1 - padding_size -
+                                                              kMaxHeaderSize));
 
   RtpPacketReceived rtp_packet(&extension_map);
-  RandomizeRtpPacket(packet_size, ssrc, extension_map, &rtp_packet);
+  RandomizeRtpPacket(payload_size, padding_size, ssrc, extension_map,
+                     &rtp_packet);
 
   return absl::make_unique<RtcEventRtpPacketIncoming>(rtp_packet);
 }
@@ -319,14 +333,28 @@ std::unique_ptr<RtcEventRtpPacketIncoming> EventGenerator::NewRtpPacketIncoming(
 std::unique_ptr<RtcEventRtpPacketOutgoing> EventGenerator::NewRtpPacketOutgoing(
     uint32_t ssrc,
     const RtpHeaderExtensionMap& extension_map) {
+  constexpr size_t kMaxPaddingLength = 224;
+  const bool padding = prng_.Rand(0, 9) == 0;  // Let padding be 10% probable.
+  const size_t padding_size = !padding ? 0u : prng_.Rand(0u, kMaxPaddingLength);
+
   // 12 bytes RTP header, 4 bytes for 0xBEDE + alignment, 4 bytes per CSRC.
   constexpr size_t kMaxHeaderSize =
       16 + 4 * kMaxCsrcs + kMaxExtensionSizeBytes * kMaxNumExtensions;
-  size_t packet_size =
-      prng_.Rand(kMaxHeaderSize, static_cast<uint32_t>(IP_PACKET_SIZE - 1));
 
-  RtpPacketToSend rtp_packet(&extension_map, packet_size);
-  RandomizeRtpPacket(packet_size, ssrc, extension_map, &rtp_packet);
+  // In principle,a packet can contain both padding and other payload.
+  // Currently, RTC eventlog encoder-parser can only maintain padding length if
+  // packet is full padding.
+  // TODO(webrtc:9730): Remove the deterministic logic for padding_size > 0.
+  size_t payload_size =
+      padding_size > 0 ? 0
+                       : prng_.Rand(0u, static_cast<uint32_t>(IP_PACKET_SIZE -
+                                                              1 - padding_size -
+                                                              kMaxHeaderSize));
+
+  RtpPacketToSend rtp_packet(&extension_map,
+                             kMaxHeaderSize + payload_size + padding_size);
+  RandomizeRtpPacket(payload_size, padding_size, ssrc, extension_map,
+                     &rtp_packet);
 
   int probe_cluster_id = prng_.Rand(0, 100000);
   return absl::make_unique<RtcEventRtpPacketOutgoing>(rtp_packet,
@@ -335,7 +363,8 @@ std::unique_ptr<RtcEventRtpPacketOutgoing> EventGenerator::NewRtpPacketOutgoing(
 
 RtpHeaderExtensionMap EventGenerator::NewRtpHeaderExtensionMap() {
   RtpHeaderExtensionMap extension_map;
-  std::vector<int> id(RtpExtension::kMaxId - RtpExtension::kMinId + 1);
+  std::vector<int> id(RtpExtension::kOneByteHeaderExtensionMaxId -
+                      RtpExtension::kMinId + 1);
   std::iota(id.begin(), id.end(), RtpExtension::kMinId);
   ShuffleInPlace(&prng_, rtc::ArrayView<int>(id));
 
@@ -619,8 +648,6 @@ bool VerifyLoggedRtpHeader(const RtpPacket& original_header,
       return false;
   }
 
-  if (original_header.padding_size() != logged_header.paddingLength)
-    return false;
   if (original_header.headers_size() != logged_header.headerLength)
     return false;
 
@@ -698,6 +725,16 @@ bool VerifyLoggedRtpPacketIncoming(
   if (original_event.packet_length_ != logged_event.rtp.total_length)
     return false;
 
+  if ((original_event.header_.data()[0] & 0x20) != 0 &&  // has padding
+      original_event.packet_length_ - original_event.header_.headers_size() !=
+          logged_event.rtp.header.paddingLength) {
+    // Currently, RTC eventlog encoder-parser can only maintain padding length
+    // if packet is full padding.
+    // TODO(webrtc:9730): Change the condition to something like
+    // original_event.padding_length_ != logged_event.rtp.header.paddingLength.
+    return false;
+  }
+
   if (!VerifyLoggedRtpHeader(original_event.header_, logged_event.rtp.header))
     return false;
 
@@ -715,6 +752,16 @@ bool VerifyLoggedRtpPacketOutgoing(
 
   if (original_event.packet_length_ != logged_event.rtp.total_length)
     return false;
+
+  if ((original_event.header_.data()[0] & 0x20) != 0 &&  // has padding
+      original_event.packet_length_ - original_event.header_.headers_size() !=
+          logged_event.rtp.header.paddingLength) {
+    // Currently, RTC eventlog encoder-parser can only maintain padding length
+    // if packet is full padding.
+    // TODO(webrtc:9730): Change the condition to something like
+    // original_event.padding_length_ != logged_event.rtp.header.paddingLength.
+    return false;
+  }
 
   // TODO(terelius): Probe cluster ID isn't parsed, used or tested. Unless
   // someone has a strong reason to keep it, it'll be removed.

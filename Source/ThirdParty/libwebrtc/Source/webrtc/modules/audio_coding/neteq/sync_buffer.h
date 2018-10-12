@@ -13,6 +13,7 @@
 
 #include "api/audio/audio_frame.h"
 #include "modules/audio_coding/neteq/audio_multi_vector.h"
+#include "rtc_base/buffer.h"
 #include "rtc_base/constructormagic.h"
 
 namespace webrtc {
@@ -33,6 +34,9 @@ class SyncBuffer : public AudioMultiVector {
   // maintain a constant buffer size. The |next_index_| is updated to reflect
   // the move of the beginning of "future" data.
   void PushBack(const AudioMultiVector& append_this) override;
+
+  // Like PushBack, but reads the samples channel-interleaved from the input.
+  void PushBackInterleaved(const rtc::BufferT<int16_t>& append_this);
 
   // Adds |length| zeros to the beginning of each channel. Removes
   // the same number of samples from the end of the SyncBuffer, to

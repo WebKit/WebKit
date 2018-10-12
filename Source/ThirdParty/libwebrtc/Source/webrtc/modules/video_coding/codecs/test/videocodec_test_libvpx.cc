@@ -218,11 +218,11 @@ TEST(VideoCodecTestLibvpx, HighBitrateVP8) {
   std::vector<RateControlThresholds> rc_thresholds = {
       {5, 1, 0, 0.1, 0.2, 0.1, 0, 1}};
 
-  // std::vector<QualityThresholds> quality_thresholds = {{37, 35, 0.93, 0.91}};
-  // TODO(webrtc:8757): ARM VP8 encoder's quality is significantly worse
-  // than quality of x86 version. Use lower thresholds for now.
+#if defined(WEBRTC_ARCH_ARM) || defined(WEBRTC_ARCH_ARM64)
   std::vector<QualityThresholds> quality_thresholds = {{35, 33, 0.91, 0.89}};
-
+#else
+  std::vector<QualityThresholds> quality_thresholds = {{37, 35, 0.93, 0.91}};
+#endif
   fixture->RunTest(rate_profiles, &rc_thresholds, &quality_thresholds, nullptr);
 }
 
@@ -259,13 +259,13 @@ TEST(VideoCodecTestLibvpx, MAYBE_ChangeBitrateVP8) {
       {15.5, 1, 0, 0.1, 0.2, 0.1, 0, 0},
       {15, 1, 0, 0.3, 0.2, 0.1, 0, 0}};
 
-  // std::vector<QualityThresholds> quality_thresholds = {
-  //     {33, 32, 0.89, 0.88}, {38, 36, 0.94, 0.93}, {35, 34, 0.92, 0.91}};
-  // TODO(webrtc:8757): ARM VP8 encoder's quality is significantly worse
-  // than quality of x86 version. Use lower thresholds for now.
+#if defined(WEBRTC_ARCH_ARM) || defined(WEBRTC_ARCH_ARM64)
   std::vector<QualityThresholds> quality_thresholds = {
       {31.8, 31, 0.86, 0.85}, {36, 34.8, 0.92, 0.90}, {33.5, 32, 0.90, 0.88}};
-
+#else
+  std::vector<QualityThresholds> quality_thresholds = {
+      {33, 32, 0.89, 0.88}, {38, 36, 0.94, 0.93}, {35, 34, 0.92, 0.91}};
+#endif
   fixture->RunTest(rate_profiles, &rc_thresholds, &quality_thresholds, nullptr);
 }
 
@@ -288,24 +288,25 @@ TEST(VideoCodecTestLibvpx, MAYBE_ChangeFramerateVP8) {
       {80, 15, 200},
       {80, 10, kNumFramesLong}};
 
-  // std::vector<RateControlThresholds> rc_thresholds = {
-  //     {10, 2, 20, 0.4, 0.3, 0.1, 0, 1},
-  //     {5, 2, 5, 0.3, 0.3, 0.1, 0, 0},
-  //     {4, 2, 1, 0.2, 0.3, 0.2, 0, 0}};
-  // TODO(webrtc:8757): ARM VP8 drops more frames than x86 version. Use lower
-  // thresholds for now.
+#if defined(WEBRTC_ARCH_ARM) || defined(WEBRTC_ARCH_ARM64)
   std::vector<RateControlThresholds> rc_thresholds = {
       {10, 2, 60, 0.5, 0.3, 0.3, 0, 1},
       {10, 2, 30, 0.3, 0.3, 0.3, 0, 0},
       {10, 2, 10, 0.2, 0.3, 0.2, 0, 0}};
+#else
+  std::vector<RateControlThresholds> rc_thresholds = {
+      {10, 2, 20, 0.4, 0.3, 0.1, 0, 1},
+      {5, 2, 5, 0.3, 0.3, 0.1, 0, 0},
+      {4, 2, 1, 0.2, 0.3, 0.2, 0, 0}};
+#endif
 
-  // std::vector<QualityThresholds> quality_thresholds = {
-  //     {31, 30, 0.87, 0.86}, {32, 31, 0.89, 0.86}, {32, 30, 0.87, 0.82}};
-  // TODO(webrtc:8757): ARM VP8 encoder's quality is significantly worse
-  // than quality of x86 version. Use lower thresholds for now.
+#if defined(WEBRTC_ARCH_ARM) || defined(WEBRTC_ARCH_ARM64)
   std::vector<QualityThresholds> quality_thresholds = {
       {31, 30, 0.85, 0.84}, {31.5, 30.5, 0.86, 0.84}, {30.5, 29, 0.83, 0.78}};
-
+#else
+  std::vector<QualityThresholds> quality_thresholds = {
+      {31, 30, 0.87, 0.86}, {32, 31, 0.89, 0.86}, {32, 30, 0.87, 0.82}};
+#endif
   fixture->RunTest(rate_profiles, &rc_thresholds, &quality_thresholds, nullptr);
 }
 
@@ -325,21 +326,21 @@ TEST(VideoCodecTestLibvpx, MAYBE_TemporalLayersVP8) {
   std::vector<RateProfile> rate_profiles = {{200, 30, 150},
                                             {400, 30, kNumFramesLong}};
 
-  // std::vector<RateControlThresholds> rc_thresholds = {
-  //     {5, 1, 0, 0.1, 0.2, 0.1, 0, 1}, {10, 2, 0, 0.1, 0.2, 0.1, 0, 1}};
-  // TODO(webrtc:8757): ARM VP8 drops more frames than x86 version. Use lower
-  // thresholds for now.
+#if defined(WEBRTC_ARCH_ARM) || defined(WEBRTC_ARCH_ARM64)
   std::vector<RateControlThresholds> rc_thresholds = {
       {10, 1, 2, 0.3, 0.2, 0.1, 0, 1}, {12, 2, 3, 0.1, 0.2, 0.1, 0, 1}};
-
-  // Min SSIM drops because of high motion scene with complex backgound (trees).
-  // std::vector<QualityThresholds> quality_thresholds = {{32, 30, 0.88, 0.85},
-  //                                                     {33, 30, 0.89, 0.83}};
-  // TODO(webrtc:8757): ARM VP8 encoder's quality is significantly worse
-  // than quality of x86 version. Use lower thresholds for now.
-  std::vector<QualityThresholds> quality_thresholds = {{31, 30, 0.85, 0.84},
+#else
+  std::vector<RateControlThresholds> rc_thresholds = {
+      {5, 1, 0, 0.1, 0.2, 0.1, 0, 1}, {10, 2, 0, 0.1, 0.2, 0.1, 0, 1}};
+#endif
+// Min SSIM drops because of high motion scene with complex backgound (trees).
+#if defined(WEBRTC_ARCH_ARM) || defined(WEBRTC_ARCH_ARM64)
+  std::vector<QualityThresholds> quality_thresholds = {{31, 30, 0.85, 0.83},
                                                        {31, 28, 0.85, 0.75}};
-
+#else
+  std::vector<QualityThresholds> quality_thresholds = {{32, 30, 0.88, 0.85},
+                                                       {33, 30, 0.89, 0.83}};
+#endif
   fixture->RunTest(rate_profiles, &rc_thresholds, &quality_thresholds, nullptr);
 }
 

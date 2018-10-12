@@ -15,6 +15,7 @@
 #include "absl/memory/memory.h"
 #include "p2p/base/fakeportallocator.h"
 #include "p2p/base/icetransportinternal.h"
+#include "p2p/base/mockasyncresolver.h"
 #include "p2p/base/p2ptransportchannel.h"
 #include "p2p/base/packettransportinternal.h"
 #include "p2p/base/testrelayserver.h"
@@ -36,11 +37,18 @@
 #include "rtc_base/ssladapter.h"
 #include "rtc_base/thread.h"
 #include "rtc_base/virtualsocketserver.h"
-#include "system_wrappers/include/metrics_default.h"
+#include "system_wrappers/include/metrics.h"
 
 namespace {
 
 using rtc::SocketAddress;
+using ::testing::_;
+using ::testing::DoAll;
+using ::testing::InSequence;
+using ::testing::InvokeWithoutArgs;
+using ::testing::NiceMock;
+using ::testing::Return;
+using ::testing::SetArgPointee;
 
 // Default timeout for tests in this file.
 // Should be large enough for slow buildbots to run the tests reliably.
@@ -52,7 +60,6 @@ static const int kOnlyLocalPorts = cricket::PORTALLOCATOR_DISABLE_STUN |
                                    cricket::PORTALLOCATOR_DISABLE_RELAY |
                                    cricket::PORTALLOCATOR_DISABLE_TCP;
 static const int LOW_RTT = 20;
-static const SocketAddress kAnyAddr("0.0.0.0", 0);
 // Addresses on the public internet.
 static const SocketAddress kPublicAddrs[2] = {SocketAddress("11.11.11.11", 0),
                                               SocketAddress("22.22.22.22", 0)};
@@ -318,6 +325,7 @@ class P2PTransportChannelTestBase : public testing::Test,
 
     rtc::FakeNetworkManager network_manager_;
     std::unique_ptr<BasicPortAllocator> allocator_;
+    webrtc::AsyncResolverFactory* async_resolver_factory_;
     ChannelData cd1_;
     ChannelData cd2_;
     IceRole role_;
@@ -374,7 +382,8 @@ class P2PTransportChannelTestBase : public testing::Test,
                                      const IceParameters& local_ice,
                                      const IceParameters& remote_ice) {
     P2PTransportChannel* channel = new P2PTransportChannel(
-        "test content name", component, GetAllocator(endpoint));
+        "test content name", component, GetAllocator(endpoint),
+        GetEndpoint(endpoint)->async_resolver_factory_);
     channel->SignalReadyToSend.connect(
         this, &P2PTransportChannelTestBase::OnReadyToSend);
     channel->SignalCandidateGathered.connect(
@@ -430,7 +439,6 @@ class P2PTransportChannelTestBase : public testing::Test,
 
   rtc::NATSocketServer* nat() { return nss_.get(); }
   rtc::FirewallSocketServer* fw() { return ss_.get(); }
-  rtc::VirtualSocketServer* vss() { return vss_.get(); }
 
   Endpoint* GetEndpoint(int endpoint) {
     if (endpoint == 0) {
@@ -1044,12 +1052,10 @@ class P2PTransportChannelTest : public P2PTransportChannelTestBase {
         AddAddress(endpoint, kPublicAddrs[endpoint]);
         // Block all UDP
         fw()->AddRule(false, rtc::FP_UDP, rtc::FD_ANY, kPublicAddrs[endpoint]);
-        fw()->AddRule(false, rtc::FP_UDP, rtc::FD_ANY, kAnyAddr);
         if (config == BLOCK_UDP_AND_INCOMING_TCP) {
           // Block TCP inbound to the endpoint
           fw()->AddRule(false, rtc::FP_TCP, SocketAddress(),
                         kPublicAddrs[endpoint]);
-          fw()->AddRule(false, rtc::FP_TCP, SocketAddress(), kAnyAddr);
         } else if (config == BLOCK_ALL_BUT_OUTGOING_HTTP) {
           // Block all TCP to/from the endpoint except 80/443 out
           fw()->AddRule(true, rtc::FP_TCP, kPublicAddrs[endpoint],
@@ -1058,14 +1064,12 @@ class P2PTransportChannelTest : public P2PTransportChannelTestBase {
                         SocketAddress(rtc::IPAddress(INADDR_ANY), 443));
           fw()->AddRule(false, rtc::FP_TCP, rtc::FD_ANY,
                         kPublicAddrs[endpoint]);
-          fw()->AddRule(false, rtc::FP_TCP, rtc::FD_ANY, kAnyAddr);
         } else if (config == PROXY_HTTPS) {
           // Block all TCP to/from the endpoint except to the proxy server
           fw()->AddRule(true, rtc::FP_TCP, kPublicAddrs[endpoint],
                         kHttpsProxyAddrs[endpoint]);
           fw()->AddRule(false, rtc::FP_TCP, rtc::FD_ANY,
                         kPublicAddrs[endpoint]);
-          fw()->AddRule(false, rtc::FP_TCP, rtc::FD_ANY, kAnyAddr);
           SetProxy(endpoint, rtc::PROXY_HTTPS);
         } else if (config == PROXY_SOCKS) {
           // Block all TCP to/from the endpoint except to the proxy server
@@ -1073,7 +1077,6 @@ class P2PTransportChannelTest : public P2PTransportChannelTestBase {
                         kSocksProxyAddrs[endpoint]);
           fw()->AddRule(false, rtc::FP_TCP, rtc::FD_ANY,
                         kPublicAddrs[endpoint]);
-          fw()->AddRule(false, rtc::FP_TCP, rtc::FD_ANY, kAnyAddr);
           SetProxy(endpoint, rtc::PROXY_SOCKS5);
         }
         break;
@@ -1713,8 +1716,16 @@ TEST_F(P2PTransportChannelTest, IncomingOnlyOpen) {
 // connections. This has been observed in some scenarios involving
 // VPNs/firewalls.
 TEST_F(P2PTransportChannelTest, CanOnlyMakeOutgoingTcpConnections) {
-  ConfigureEndpoints(OPEN, OPEN, kDefaultPortAllocatorFlags,
-                     kDefaultPortAllocatorFlags);
+  // The PORTALLOCATOR_ENABLE_ANY_ADDRESS_PORTS flag is required if the
+  // application needs this use case to work, since the application must accept
+  // the tradeoff that more candidates need to be allocated.
+  //
+  // TODO(deadbeef): Later, make this flag the default, and do more elegant
+  // things to ensure extra candidates don't waste resources?
+  ConfigureEndpoints(
+      OPEN, OPEN,
+      kDefaultPortAllocatorFlags | PORTALLOCATOR_ENABLE_ANY_ADDRESS_PORTS,
+      kDefaultPortAllocatorFlags);
   // In order to simulate nothing working but outgoing TCP connections, prevent
   // the endpoint from binding to its interface's address as well as the
   // "any" addresses. It can then only make a connection by using "Connect()".
@@ -3061,33 +3072,6 @@ TEST_F(P2PTransportChannelMultihomedTest, TestRestoreBackupConnection) {
               nullptr &&
           conn != ep1_ch1()->selected_connection() && conn->writable(),
       kDefaultTimeout, clock);
-
-  DestroyChannels();
-}
-
-// Test that when explicit binding to network interfaces is disallowed, we may
-// still establish a connection by using the any address fallback.
-TEST_F(P2PTransportChannelMultihomedTest,
-       BindingToAnyAddressRevealsViableRouteWhenExplicitBindingFails) {
-  rtc::ScopedFakeClock clock;
-  AddAddress(0, kPublicAddrs[0]);
-  AddAddress(1, kPublicAddrs[1]);
-  fw()->SetUnbindableIps({kPublicAddrs[0].ipaddr()});
-  // When bound to the any address, the port allocator should discover the
-  // alternative local address.
-  vss()->SetAlternativeLocalAddress(kAnyAddr.ipaddr(),
-                                    kAlternateAddrs[0].ipaddr());
-  SetAllocatorFlags(0, kOnlyLocalPorts);
-  SetAllocatorFlags(1, kOnlyLocalPorts);
-  IceConfig default_config;
-  CreateChannels(default_config, default_config);
-  EXPECT_TRUE_SIMULATED_WAIT(ep1_ch1()->receiving() && ep1_ch1()->writable() &&
-                                 ep2_ch1()->receiving() &&
-                                 ep2_ch1()->writable(),
-                             kMediumTimeout, clock);
-  EXPECT_TRUE(
-      ep1_ch1()->selected_connection() && ep2_ch1()->selected_connection() &&
-      LocalCandidate(ep1_ch1())->address().EqualIPs(kAlternateAddrs[0]));
 
   DestroyChannels();
 }
@@ -4575,6 +4559,214 @@ TEST_F(P2PTransportChannelMostLikelyToWorkFirstTest, TestTcpTurn) {
 
   // Finally, Local/Relay will be pinged.
   VerifyNextPingableConnection(LOCAL_PORT_TYPE, RELAY_PORT_TYPE);
+}
+
+// Test that a resolver is created, asked for a result, and destroyed
+// when the address is a hostname.
+TEST(P2PTransportChannelResolverTest, HostnameCandidateIsResolved) {
+  rtc::MockAsyncResolver mock_async_resolver;
+  EXPECT_CALL(mock_async_resolver, GetError()).WillOnce(Return(0));
+  EXPECT_CALL(mock_async_resolver, GetResolvedAddress(_, _))
+      .WillOnce(Return(true));
+  EXPECT_CALL(mock_async_resolver, Destroy(_));
+  webrtc::MockAsyncResolverFactory mock_async_resolver_factory;
+  EXPECT_CALL(mock_async_resolver_factory, Create())
+      .WillOnce(Return(&mock_async_resolver));
+
+  P2PTransportChannel channel("tn", 0, /*allocator*/ nullptr,
+                              &mock_async_resolver_factory);
+  Candidate hostname_candidate;
+  SocketAddress hostname_address("fake.test", 1000);
+  hostname_candidate.set_address(hostname_address);
+  channel.AddRemoteCandidate(hostname_candidate);
+
+  ASSERT_EQ_WAIT(1u, channel.remote_candidates().size(), kDefaultTimeout);
+  const RemoteCandidate& candidate = channel.remote_candidates()[0];
+  EXPECT_FALSE(candidate.address().IsUnresolvedIP());
+}
+
+// Test that if we signal a hostname candidate after the remote endpoint
+// discovers a prflx remote candidate with the same underlying IP address, the
+// prflx candidate is updated to a host candidate after the name resolution is
+// done.
+TEST_F(P2PTransportChannelTest,
+       PeerReflexiveCandidateBeforeSignalingWithMDnsName) {
+  rtc::MockAsyncResolver mock_async_resolver;
+  webrtc::MockAsyncResolverFactory mock_async_resolver_factory;
+  EXPECT_CALL(mock_async_resolver_factory, Create())
+      .WillOnce(Return(&mock_async_resolver));
+
+  // ep1 and ep2 will only gather host candidates with addresses
+  // kPublicAddrs[0] and kPublicAddrs[1], respectively.
+  ConfigureEndpoints(OPEN, OPEN, kOnlyLocalPorts, kOnlyLocalPorts);
+  // ICE parameter will be set up when creating the channels.
+  set_remote_ice_parameter_source(FROM_SETICEPARAMETERS);
+  GetEndpoint(0)->network_manager_.CreateMDnsResponder();
+  GetEndpoint(1)->async_resolver_factory_ = &mock_async_resolver_factory;
+  CreateChannels();
+  // Pause sending candidates from both endpoints until we find out what port
+  // number is assgined to ep1's host candidate.
+  PauseCandidates(0);
+  PauseCandidates(1);
+  ASSERT_EQ_WAIT(1u, GetEndpoint(0)->saved_candidates_.size(), kMediumTimeout);
+  ASSERT_EQ(1u, GetEndpoint(0)->saved_candidates_[0]->candidates.size());
+  const auto& local_candidate =
+      GetEndpoint(0)->saved_candidates_[0]->candidates[0];
+  // The IP address of ep1's host candidate should be obfuscated.
+  EXPECT_TRUE(local_candidate.address().IsUnresolvedIP());
+  // This is the underlying private IP address of the same candidate at ep1.
+  const auto local_address = rtc::SocketAddress(
+      kPublicAddrs[0].ipaddr(), local_candidate.address().port());
+  // Let ep2 signal its candidate to ep1. ep1 should form a candidate
+  // pair and start to ping. After receiving the ping, ep2 discovers a prflx
+  // remote candidate and form a candidate pair as well.
+  ResumeCandidates(1);
+  ASSERT_TRUE_WAIT(ep1_ch1()->selected_connection() != nullptr, kMediumTimeout);
+  // ep2 should have the selected connection connected to the prflx remote
+  // candidate.
+  const Connection* selected_connection = nullptr;
+  ASSERT_TRUE_WAIT(
+      (selected_connection = ep2_ch1()->selected_connection()) != nullptr,
+      kMediumTimeout);
+  EXPECT_EQ(PRFLX_PORT_TYPE, selected_connection->remote_candidate().type());
+  EXPECT_EQ(kIceUfrag[0], selected_connection->remote_candidate().username());
+  EXPECT_EQ(kIcePwd[0], selected_connection->remote_candidate().password());
+  // Set expectation before ep1 signals a hostname candidate.
+  {
+    InSequence sequencer;
+    EXPECT_CALL(mock_async_resolver, Start(_));
+    EXPECT_CALL(mock_async_resolver, GetError()).WillOnce(Return(0));
+    // Let the mock resolver of ep2 receives the correct resolution.
+    EXPECT_CALL(mock_async_resolver, GetResolvedAddress(_, _))
+        .WillOnce(DoAll(SetArgPointee<1>(local_address), Return(true)));
+  }
+  EXPECT_CALL(mock_async_resolver, Destroy(_));
+  ResumeCandidates(0);
+  // Verify ep2's selected connection is updated to use the 'local' candidate.
+  EXPECT_EQ_WAIT(LOCAL_PORT_TYPE,
+                 ep2_ch1()->selected_connection()->remote_candidate().type(),
+                 kMediumTimeout);
+  EXPECT_EQ(selected_connection, ep2_ch1()->selected_connection());
+
+  DestroyChannels();
+}
+
+// Test that if we discover a prflx candidate during the process of name
+// resolution for a remote hostname candidate, we update the prflx candidate to
+// a host candidate if the hostname candidate turns out to have the same IP
+// address after the resolution completes.
+TEST_F(P2PTransportChannelTest,
+       PeerReflexiveCandidateDuringResolvingHostCandidateWithMDnsName) {
+  NiceMock<rtc::MockAsyncResolver> mock_async_resolver;
+  webrtc::MockAsyncResolverFactory mock_async_resolver_factory;
+  EXPECT_CALL(mock_async_resolver_factory, Create())
+      .WillOnce(Return(&mock_async_resolver));
+
+  // ep1 and ep2 will only gather host candidates with addresses
+  // kPublicAddrs[0] and kPublicAddrs[1], respectively.
+  ConfigureEndpoints(OPEN, OPEN, kOnlyLocalPorts, kOnlyLocalPorts);
+  // ICE parameter will be set up when creating the channels.
+  set_remote_ice_parameter_source(FROM_SETICEPARAMETERS);
+  GetEndpoint(0)->network_manager_.CreateMDnsResponder();
+  GetEndpoint(1)->async_resolver_factory_ = &mock_async_resolver_factory;
+  CreateChannels();
+  // Pause sending candidates from both endpoints until we find out what port
+  // number is assgined to ep1's host candidate.
+  PauseCandidates(0);
+  PauseCandidates(1);
+  ASSERT_EQ_WAIT(1u, GetEndpoint(0)->saved_candidates_.size(), kMediumTimeout);
+  ASSERT_EQ(1u, GetEndpoint(0)->saved_candidates_[0]->candidates.size());
+  const auto& local_candidate =
+      GetEndpoint(0)->saved_candidates_[0]->candidates[0];
+  // The IP address of ep1's host candidate should be obfuscated.
+  EXPECT_TRUE(local_candidate.address().IsUnresolvedIP());
+  // This is the underlying private IP address of the same candidate at ep1.
+  const auto local_address = rtc::SocketAddress(
+      kPublicAddrs[0].ipaddr(), local_candidate.address().port());
+  bool mock_async_resolver_started = false;
+  // Not signaling done yet, and only make sure we are in the process of
+  // resolution.
+  EXPECT_CALL(mock_async_resolver, Start(_))
+      .WillOnce(InvokeWithoutArgs([&mock_async_resolver_started]() {
+        mock_async_resolver_started = true;
+      }));
+  // Let ep1 signal its hostname candidate to ep2.
+  ResumeCandidates(0);
+  EXPECT_TRUE_WAIT(mock_async_resolver_started, kMediumTimeout);
+  // Now that ep2 is in the process of resolving the hostname candidate signaled
+  // by ep1. Let ep2 signal its host candidate with an IP address to ep1, so
+  // that ep1 can form a candidate pair, select it and start to ping ep2.
+  ResumeCandidates(1);
+  ASSERT_TRUE_WAIT(ep1_ch1()->selected_connection() != nullptr, kMediumTimeout);
+  // Let the mock resolver of ep2 receives the correct resolution.
+  EXPECT_CALL(mock_async_resolver, GetResolvedAddress(_, _))
+      .WillOnce(DoAll(SetArgPointee<1>(local_address), Return(true)));
+  // Upon receiving a ping from ep1, ep2 adds a prflx candidate from the
+  // unknown address and establishes a connection.
+  //
+  // There is a caveat in our implementation associated with this expectation.
+  // See the big comment in P2PTransportChannel::OnUnknownAddress.
+  ASSERT_TRUE_WAIT(ep2_ch1()->selected_connection() != nullptr, kMediumTimeout);
+  EXPECT_EQ(PRFLX_PORT_TYPE,
+            ep2_ch1()->selected_connection()->remote_candidate().type());
+  // ep2 should also be able resolve the hostname candidate. The resolved remote
+  // host candidate should be merged with the prflx remote candidate.
+  mock_async_resolver.SignalDone(&mock_async_resolver);
+  EXPECT_EQ_WAIT(LOCAL_PORT_TYPE,
+                 ep2_ch1()->selected_connection()->remote_candidate().type(),
+                 kMediumTimeout);
+  EXPECT_EQ(1u, ep2_ch1()->remote_candidates().size());
+
+  DestroyChannels();
+}
+
+// Test that if we only gather and signal a host candidate, the IP address of
+// which is obfuscated by an mDNS name, and if the peer can complete the name
+// resolution with the correct IP address, we can have a p2p connection.
+TEST_F(P2PTransportChannelTest, CanConnectWithHostCandidateWithMDnsName) {
+  NiceMock<rtc::MockAsyncResolver> mock_async_resolver;
+  webrtc::MockAsyncResolverFactory mock_async_resolver_factory;
+  EXPECT_CALL(mock_async_resolver_factory, Create())
+      .WillOnce(Return(&mock_async_resolver));
+
+  // ep1 and ep2 will only gather host candidates with addresses
+  // kPublicAddrs[0] and kPublicAddrs[1], respectively.
+  ConfigureEndpoints(OPEN, OPEN, kOnlyLocalPorts, kOnlyLocalPorts);
+  // ICE parameter will be set up when creating the channels.
+  set_remote_ice_parameter_source(FROM_SETICEPARAMETERS);
+  GetEndpoint(0)->network_manager_.CreateMDnsResponder();
+  GetEndpoint(1)->async_resolver_factory_ = &mock_async_resolver_factory;
+  CreateChannels();
+  // Pause sending candidates from both endpoints until we find out what port
+  // number is assgined to ep1's host candidate.
+  PauseCandidates(0);
+  PauseCandidates(1);
+  ASSERT_EQ_WAIT(1u, GetEndpoint(0)->saved_candidates_.size(), kMediumTimeout);
+  ASSERT_EQ(1u, GetEndpoint(0)->saved_candidates_[0]->candidates.size());
+  const auto& local_candidate =
+      GetEndpoint(0)->saved_candidates_[0]->candidates[0];
+  // The IP address of ep1's host candidate should be obfuscated.
+  EXPECT_TRUE(local_candidate.address().IsUnresolvedIP());
+  // This is the underlying private IP address of the same candidate at ep1,
+  // and let the mock resolver of ep2 receives the correct resolution.
+  const auto local_address = rtc::SocketAddress(
+      kPublicAddrs[0].ipaddr(), local_candidate.address().port());
+
+  EXPECT_CALL(mock_async_resolver, GetResolvedAddress(_, _))
+      .WillOnce(DoAll(SetArgPointee<1>(local_address), Return(true)));
+  // Let ep1 signal its hostname candidate to ep2.
+  ResumeCandidates(0);
+
+  // We should be able to receive a ping from ep2 and establish a connection
+  // with a peer reflexive candidate from ep2.
+  ASSERT_TRUE_WAIT((ep1_ch1()->selected_connection()) != nullptr,
+                   kMediumTimeout);
+  EXPECT_EQ(LOCAL_PORT_TYPE,
+            ep1_ch1()->selected_connection()->local_candidate().type());
+  EXPECT_EQ(PRFLX_PORT_TYPE,
+            ep1_ch1()->selected_connection()->remote_candidate().type());
+
+  DestroyChannels();
 }
 
 }  // namespace cricket

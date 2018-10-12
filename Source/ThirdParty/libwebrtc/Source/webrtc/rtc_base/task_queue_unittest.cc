@@ -175,12 +175,17 @@ TEST(TaskQueueTest, PostMultipleDelayed) {
 
 TEST(TaskQueueTest, PostDelayedAfterDestruct) {
   static const char kQueueName[] = "PostDelayedAfterDestruct";
-  Event event(false, false);
+  Event run(false, false);
+  Event deleted(false, false);
   {
     TaskQueue queue(kQueueName);
-    queue.PostDelayedTask(Bind(&CheckCurrent, &event, &queue), 100);
+    queue.PostDelayedTask(
+        rtc::NewClosure([&run] { run.Set(); }, [&deleted] { deleted.Set(); }),
+        100);
   }
-  EXPECT_FALSE(event.Wait(200));  // Task should not run.
+  // Task might outlive the TaskQueue, but still should be deleted.
+  EXPECT_TRUE(deleted.Wait(200));
+  EXPECT_FALSE(run.Wait(0));  // and should not run.
 }
 
 TEST(TaskQueueTest, PostAndReply) {
@@ -369,6 +374,32 @@ TEST(TaskQueueTest, PostAndReplyDeadlock) {
   post_queue.PostTaskAndReply([&event]() { event.Set(); }, []() {},
                               &reply_queue);
   EXPECT_TRUE(event.Wait(1000));
+}
+
+// http://bugs.webrtc.org/9728
+#if defined(WEBRTC_WIN)
+#define MAYBE_DeleteTaskQueueAfterPostAndReply \
+  DISABLED_DeleteTaskQueueAfterPostAndReply
+#else
+#define MAYBE_DeleteTaskQueueAfterPostAndReply DeleteTaskQueueAfterPostAndReply
+#endif
+TEST(TaskQueueTest, MAYBE_DeleteTaskQueueAfterPostAndReply) {
+  Event task_deleted(false, false);
+  Event reply_deleted(false, false);
+  auto* task_queue = new TaskQueue("Queue");
+
+  task_queue->PostTaskAndReply(
+      /*task=*/rtc::NewClosure(
+          /*closure=*/[] {},
+          /*cleanup=*/[&task_deleted] { task_deleted.Set(); }),
+      /*reply=*/rtc::NewClosure(
+          /*closure=*/[] {},
+          /*cleanup=*/[&reply_deleted] { reply_deleted.Set(); }));
+
+  delete task_queue;
+
+  EXPECT_TRUE(task_deleted.Wait(1000));
+  EXPECT_TRUE(reply_deleted.Wait(1000));
 }
 
 void TestPostTaskAndReply(TaskQueue* work_queue, Event* event) {

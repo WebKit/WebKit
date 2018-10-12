@@ -25,18 +25,18 @@
 
 #include "WebKitUtilities.h"
 
-#include "Common/RTCUIApplicationStatusObserver.h"
+//#include "Common/RTCUIApplicationStatusObserver.h"
 #import "WebRTC/RTCVideoCodecH264.h"
 
 #include "api/video/video_frame.h"
 #include "third_party/libyuv/include/libyuv/convert_from.h"
-#include "webrtc/sdk/objc/Framework/Native/src/objc_frame_buffer.h"
-#include "webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoCodecFactory.h"
-#include "webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoFrame.h"
-#include "webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoFrameBuffer.h"
-#include "webrtc/sdk/objc/Framework/Native/api/video_decoder_factory.h"
-#include "webrtc/sdk/objc/Framework/Native/api/video_encoder_factory.h"
-
+#include "native/src/objc_frame_buffer.h"
+#include "Framework/Headers/WebRTC/RTCVideoCodecFactory.h"
+#include "Framework/Headers/WebRTC/RTCVideoFrame.h"
+#include "Framework/Headers/WebRTC/RTCVideoFrameBuffer.h"
+#include "Framework/Native/api/video_decoder_factory.h"
+#include "Framework/Native/api/video_encoder_factory.h"
+/*
 #if !defined(WEBRTC_IOS)
 __attribute__((objc_runtime_name("WK_RTCUIApplicationStatusObserver")))
 @interface RTCUIApplicationStatusObserver : NSObject
@@ -85,15 +85,17 @@ __attribute__((objc_runtime_name("WK_RTCUIApplicationStatusObserver")))
 }
 
 @end
-
+*/
 namespace webrtc {
 
 void setApplicationStatus(bool isActive)
 {
+/*
     if (isActive)
         [[RTCUIApplicationStatusObserver sharedInstance] setActive];
     else
         [[RTCUIApplicationStatusObserver sharedInstance] setInactive];
+ */
 }
 
 std::unique_ptr<webrtc::VideoEncoderFactory> createWebKitEncoderFactory(WebKitCodecSupport codecSupport)

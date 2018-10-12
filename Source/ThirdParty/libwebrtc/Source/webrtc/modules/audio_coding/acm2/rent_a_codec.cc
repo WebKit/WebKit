@@ -18,7 +18,7 @@
 #include "rtc_base/logging.h"
 #include "modules/audio_coding/codecs/g722/audio_encoder_g722.h"
 #ifdef WEBRTC_CODEC_ILBC
-#include "modules/audio_coding/codecs/ilbc/audio_encoder_ilbc.h"
+#include "modules/audio_coding/codecs/ilbc/audio_encoder_ilbc.h"  // nogncheck
 #endif
 #ifdef WEBRTC_CODEC_ISACFX
 #include "modules/audio_coding/codecs/isac/fix/include/audio_decoder_isacfix.h"  // nogncheck
@@ -33,7 +33,7 @@
 #endif
 #include "modules/audio_coding/codecs/pcm16b/audio_encoder_pcm16b.h"
 #ifdef WEBRTC_CODEC_RED
-#include "modules/audio_coding/codecs/red/audio_encoder_copy_red.h"
+#include "modules/audio_coding/codecs/red/audio_encoder_copy_red.h"  // nogncheck
 #endif
 #include "modules/audio_coding/acm2/acm_codec_database.h"
 
@@ -78,10 +78,6 @@ absl::optional<CodecInst> RentACodec::CodecInstByParams(
   ci->channels = channels;
 
   return ci;
-}
-
-bool RentACodec::IsCodecValid(const CodecInst& codec_inst) {
-  return ACMCodecDB::CodecNumber(codec_inst) >= 0;
 }
 
 absl::optional<bool> RentACodec::IsSupportedNumChannels(CodecId codec_id,

@@ -8,44 +8,4 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#import <Foundation/Foundation.h>
-
-#import "WebRTC/RTCVideoFrame.h"
-#import "WebRTC/RTCVideoRenderer.h"
-
-// Check if metal is supported in WebRTC.
-// NOTE: Currently arm64 == Metal.
-#if defined(__aarch64__)
-#define RTC_SUPPORTS_METAL
-#endif
-
-NS_ASSUME_NONNULL_BEGIN
-
-/**
- * RTCMTLVideoView is thin wrapper around MTKView.
- *
- * It has id<RTCVideoRenderer> property that renders video frames in the view's
- * bounds using Metal.
- * NOTE: always check if metal is available on the running device via
- * RTC_SUPPORTS_METAL macro before initializing this class.
- */
-NS_CLASS_AVAILABLE_IOS(9)
-
-RTC_EXPORT
-@interface RTCMTLVideoView : UIView<RTCVideoRenderer>
-
-@property(nonatomic, weak) id<RTCVideoViewDelegate> delegate;
-
-@property(nonatomic) UIViewContentMode videoContentMode;
-
-/** @abstract Enables/disables rendering.
- */
-@property(nonatomic, getter=isEnabled) BOOL enabled;
-
-/** @abstract Wrapped RTCVideoRotation, or nil.
- */
-@property(nonatomic, nullable) NSValue* rotationOverride;
-
-@end
-
-NS_ASSUME_NONNULL_END
+#import "components/renderer/metal/RTCMTLVideoView.h"

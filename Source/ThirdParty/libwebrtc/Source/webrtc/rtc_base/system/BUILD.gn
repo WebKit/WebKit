@@ -59,3 +59,9 @@ rtc_source_set("unused") {
     "unused.h",
   ]
 }
+
+rtc_source_set("rtc_export") {
+  sources = [
+    "rtc_export.h",
+  ]
+}

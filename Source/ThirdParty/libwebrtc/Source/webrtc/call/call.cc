@@ -114,7 +114,7 @@ std::unique_ptr<rtclog::StreamConfig> CreateRtcLogStreamConfig(
   for (const auto& d : config.decoders) {
     const int* search =
         FindKeyByValue(config.rtp.rtx_associated_payload_types, d.payload_type);
-    rtclog_config->codecs.emplace_back(d.payload_name, d.payload_type,
+    rtclog_config->codecs.emplace_back(d.video_format.name, d.payload_type,
                                        search ? *search : 0);
   }
   return rtclog_config;
@@ -170,7 +170,7 @@ class Call final : public webrtc::Call,
  public:
   Call(const Call::Config& config,
        std::unique_ptr<RtpTransportControllerSendInterface> transport_send);
-  virtual ~Call();
+  ~Call() override;
 
   // Implements webrtc::Call.
   PacketReceiver* Receiver() override;
@@ -221,8 +221,8 @@ class Call final : public webrtc::Call,
 
   void SignalChannelNetworkState(MediaType media, NetworkState state) override;
 
-  void OnTransportOverheadChanged(MediaType media,
-                                  int transport_overhead_per_packet) override;
+  void OnAudioTransportOverheadChanged(
+      int transport_overhead_per_packet) override;
 
   void OnSentPacket(const rtc::SentPacket& sent_packet) override;
 
@@ -233,6 +233,7 @@ class Call final : public webrtc::Call,
   void OnAllocationLimitsChanged(uint32_t min_send_bitrate_bps,
                                  uint32_t max_padding_bitrate_bps,
                                  uint32_t total_bitrate_bps,
+                                 uint32_t allocated_without_feedback_bps,
                                  bool has_packet_feedback) override;
 
  private:
@@ -996,27 +997,10 @@ void Call::SignalChannelNetworkState(MediaType media, NetworkState state) {
   }
 }
 
-void Call::OnTransportOverheadChanged(MediaType media,
-                                      int transport_overhead_per_packet) {
-  switch (media) {
-    case MediaType::AUDIO: {
-      ReadLockScoped read_lock(*send_crit_);
-      for (auto& kv : audio_send_ssrcs_) {
-        kv.second->SetTransportOverhead(transport_overhead_per_packet);
-      }
-      break;
-    }
-    case MediaType::VIDEO: {
-      ReadLockScoped read_lock(*send_crit_);
-      for (auto& kv : video_send_ssrcs_) {
-        kv.second->SetTransportOverhead(transport_overhead_per_packet);
-      }
-      break;
-    }
-    case MediaType::ANY:
-    case MediaType::DATA:
-      RTC_NOTREACHED();
-      break;
+void Call::OnAudioTransportOverheadChanged(int transport_overhead_per_packet) {
+  ReadLockScoped read_lock(*send_crit_);
+  for (auto& kv : audio_send_ssrcs_) {
+    kv.second->SetTransportOverhead(transport_overhead_per_packet);
   }
 }
 
@@ -1107,10 +1091,14 @@ void Call::OnTargetTransferRate(TargetTransferRate msg) {
 void Call::OnAllocationLimitsChanged(uint32_t min_send_bitrate_bps,
                                      uint32_t max_padding_bitrate_bps,
                                      uint32_t total_bitrate_bps,
+                                     uint32_t allocated_without_feedback_bps,
                                      bool has_packet_feedback) {
   transport_send_ptr_->SetAllocatedSendBitrateLimits(
       min_send_bitrate_bps, max_padding_bitrate_bps, total_bitrate_bps);
   transport_send_ptr_->SetPerPacketFeedbackAvailable(has_packet_feedback);
+  transport_send_ptr_->SetAllocatedBitrateWithoutFeedback(
+      allocated_without_feedback_bps);
+
   rtc::CritScope lock(&bitrate_crit_);
   min_allocated_send_bitrate_bps_ = min_send_bitrate_bps;
   configured_max_padding_bitrate_bps_ = max_padding_bitrate_bps;

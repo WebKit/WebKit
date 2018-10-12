@@ -20,7 +20,6 @@ rtc_source_set("call_interfaces") {
     "call_config.h",
     "flexfec_receive_stream.cc",
     "flexfec_receive_stream.h",
-    "packet_receiver.cc",
     "packet_receiver.h",
     "syncable.cc",
     "syncable.h",
@@ -51,6 +50,11 @@ rtc_source_set("call_interfaces") {
 # TODO(nisse): These RTP targets should be moved elsewhere
 # when interfaces have stabilized. See also TODO for |mock_rtp_interfaces|.
 rtc_source_set("rtp_interfaces") {
+  # Client code SHOULD NOT USE THIS TARGET, but for now it needs to be public
+  # because there exists client code that uses it.
+  # TODO(bugs.webrtc.org/9808): Move to private visibility as soon as that
+  # client code gets updated.
+  visibility = [ "*" ]
   sources = [
     "rtcp_packet_sink_interface.h",
     "rtp_config.cc",
@@ -61,6 +65,7 @@ rtc_source_set("rtp_interfaces") {
   ]
   deps = [
     "../api:array_view",
+    "../api:fec_controller_api",
     "../api:libjingle_peerconnection_api",
     "../api/transport:bitrate_settings",
     "../logging:rtc_event_log_api",
@@ -113,6 +118,7 @@ rtc_source_set("rtp_sender") {
     ":bitrate_configurator",
     ":rtp_interfaces",
     "..:webrtc_common",
+    "../api:fec_controller_api",
     "../api:transport_api",
     "../api/transport:network_control",
     "../api/video_codecs:video_codecs_api",
@@ -130,7 +136,7 @@ rtc_source_set("rtp_sender") {
     "../rtc_base:rtc_base",
     "../rtc_base:rtc_base_approved",
     "../rtc_base:rtc_task_queue",
-    "../system_wrappers:field_trial_api",
+    "../system_wrappers:field_trial",
     "//third_party/abseil-cpp/absl/memory",
   ]
 }
@@ -160,8 +166,8 @@ rtc_source_set("bitrate_allocator") {
     "../rtc_base:rtc_base_approved",
     "../rtc_base:sequenced_task_checker",
     "../system_wrappers",
-    "../system_wrappers:field_trial_api",
-    "../system_wrappers:metrics_api",
+    "../system_wrappers:field_trial",
+    "../system_wrappers:metrics",
   ]
 }
 
@@ -178,11 +184,6 @@ rtc_static_library("call") {
     "receive_time_calculator.h",
   ]
 
-  if (!build_with_chromium && is_clang) {
-    # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-    suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-  }
-
   deps = [
     ":bitrate_allocator",
     ":call_interfaces",
@@ -190,9 +191,11 @@ rtc_static_library("call") {
     ":rtp_interfaces",
     ":rtp_receiver",
     ":rtp_sender",
+    ":simulated_network",
     ":video_stream_api",
     "..:webrtc_common",
     "../api:callfactory_api",
+    "../api:simulated_network_api",
     "../api:transport_api",
     "../api/transport:network_control",
     "../audio",
@@ -216,8 +219,8 @@ rtc_static_library("call") {
     "../rtc_base:sequenced_task_checker",
     "../rtc_base/synchronization:rw_lock_wrapper",
     "../system_wrappers",
-    "../system_wrappers:field_trial_api",
-    "../system_wrappers:metrics_api",
+    "../system_wrappers:field_trial",
+    "../system_wrappers:metrics",
     "../video",
     "//third_party/abseil-cpp/absl/memory",
     "//third_party/abseil-cpp/absl/types:optional",
@@ -260,6 +263,17 @@ rtc_source_set("simulated_network") {
   ]
 }
 
+rtc_source_set("simulated_packet_receiver") {
+  sources = [
+    "simulated_packet_receiver.h",
+  ]
+  deps = [
+    ":call_interfaces",
+    "../api:simulated_network_api",
+    "../modules:module_api",
+  ]
+}
+
 rtc_source_set("fake_network") {
   sources = [
     "fake_network_pipe.cc",
@@ -268,6 +282,7 @@ rtc_source_set("fake_network") {
   deps = [
     ":call_interfaces",
     ":simulated_network",
+    ":simulated_packet_receiver",
     "..:webrtc_common",
     "../api:simulated_network_api",
     "../api:transport_api",
@@ -306,6 +321,7 @@ if (rtc_include_tests) {
       ":rtp_interfaces",
       ":rtp_receiver",
       ":rtp_sender",
+      ":simulated_network",
       "..:webrtc_common",
       "../api:array_view",
       "../api:libjingle_peerconnection_api",
@@ -327,17 +343,20 @@ if (rtc_include_tests) {
       "../modules/rtp_rtcp:rtp_rtcp_format",
       "../modules/utility:mock_process_thread",
       "../modules/video_coding:video_codec_interface",
+      "../modules/video_coding:video_coding",
       "../rtc_base:checks",
       "../rtc_base:rate_limiter",
       "../rtc_base:rtc_base_approved",
       "../system_wrappers",
       "../test:audio_codec_mocks",
       "../test:direct_transport",
+      "../test:fake_video_codecs",
       "../test:field_trial",
       "../test:test_common",
       "../test:test_support",
       "../test:video_test_common",
       "../video:video",
+      "//testing/gmock",
       "//testing/gtest",
       "//third_party/abseil-cpp/absl/memory",
     ]
@@ -357,8 +376,10 @@ if (rtc_include_tests) {
     ]
     deps = [
       ":call_interfaces",
+      ":simulated_network",
       ":video_stream_api",
       "..:webrtc_common",
+      "../api:simulated_network_api",
       "../api/audio_codecs:builtin_audio_encoder_factory",
       "../api/video:video_bitrate_allocation",
       "../api/video_codecs:video_codecs_api",
@@ -371,9 +392,9 @@ if (rtc_include_tests) {
       "../rtc_base:checks",
       "../rtc_base:rtc_base_approved",
       "../system_wrappers",
-      "../system_wrappers:metrics_default",
-      "../system_wrappers:runtime_enabled_features_default",
+      "../system_wrappers:metrics",
       "../test:direct_transport",
+      "../test:fake_video_codecs",
       "../test:field_trial",
       "../test:fileutils",
       "../test:perf_test",

@@ -102,12 +102,14 @@ class GlGenericDrawer implements RendererCommon.GlDrawer {
       stringBuilder.append("uniform sampler2D v_tex;\n");
 
       // Add separate function for sampling texture.
+      // yuv_to_rgb_mat is inverse of the matrix defined in YuvConverter.
       stringBuilder.append("vec4 sample(vec2 p) {\n");
-      stringBuilder.append("  float y = texture2D(y_tex, p).r;\n");
-      stringBuilder.append("  float u = texture2D(u_tex, p).r - 0.5;\n");
-      stringBuilder.append("  float v = texture2D(v_tex, p).r - 0.5;\n");
-      stringBuilder.append(
-          "  return vec4(y + 1.403 * v, y - 0.344 * u - 0.714 * v, y + 1.77 * u, 1);\n");
+      stringBuilder.append("  float y = texture2D(y_tex, p).r * 1.16438;\n");
+      stringBuilder.append("  float u = texture2D(u_tex, p).r;\n");
+      stringBuilder.append("  float v = texture2D(v_tex, p).r;\n");
+      stringBuilder.append("  return vec4(y + 1.59603 * v - 0.874202,\n");
+      stringBuilder.append("    y - 0.391762 * u - 0.812968 * v + 0.531668,\n");
+      stringBuilder.append("    y + 2.01723 * u - 1.08563, 1);\n");
       stringBuilder.append("}\n");
       stringBuilder.append(genericFragmentSource);
     } else {

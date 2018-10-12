@@ -19,7 +19,7 @@ namespace webrtc {
 // Absolute send time in RTP streams.
 //
 // The absolute send time is signaled to the receiver in-band using the
-// general mechanism for RTP header extensions [RFC5285]. The payload
+// general mechanism for RTP header extensions [RFC8285]. The payload
 // of this extension (the transmitted value) is a 24-bit unsigned integer
 // containing the sender's current time in seconds as a fixed point number
 // with 18 bits fractional part.
@@ -89,7 +89,7 @@ bool AudioLevel::Write(rtc::ArrayView<uint8_t> data,
 // From RFC 5450: Transmission Time Offsets in RTP Streams.
 //
 // The transmission time is signaled to the receiver in-band using the
-// general mechanism for RTP header extensions [RFC5285]. The payload
+// general mechanism for RTP header extensions [RFC8285]. The payload
 // of this extension (the transmitted value) is a 24-bit signed integer.
 // When added to the RTP timestamp of the packet, it represents the
 // "effective" RTP transmission time of the packet, on the RTP
@@ -350,6 +350,86 @@ bool VideoTimingExtension::Write(rtc::ArrayView<uint8_t> data,
   return true;
 }
 
+// Frame Marking.
+//
+// Meta-information about an RTP stream outside the encrypted media payload,
+// useful for an RTP switch to do codec-agnostic selective forwarding
+// without decrypting the payload.
+//
+// For non-scalable streams:
+//    0                   1
+//    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//   |  ID   | L = 0 |S|E|I|D|0 0 0 0|
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//
+// For scalable streams:
+//    0                   1                   2                   3
+//    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//   |  ID   | L = 2 |S|E|I|D|B| TID |      LID      |   TL0PICIDX   |
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+constexpr RTPExtensionType FrameMarkingExtension::kId;
+constexpr const char FrameMarkingExtension::kUri[];
+
+bool FrameMarkingExtension::IsScalable(uint8_t temporal_id, uint8_t layer_id) {
+  return temporal_id != kNoTemporalIdx || layer_id != kNoSpatialIdx;
+}
+
+bool FrameMarkingExtension::Parse(rtc::ArrayView<const uint8_t> data,
+                                  FrameMarking* frame_marking) {
+  RTC_DCHECK(frame_marking);
+
+  if (data.size() != 1 && data.size() != 3)
+    return false;
+
+  frame_marking->start_of_frame = (data[0] & 0x80) != 0;
+  frame_marking->end_of_frame = (data[0] & 0x40) != 0;
+  frame_marking->independent_frame = (data[0] & 0x20) != 0;
+  frame_marking->discardable_frame = (data[0] & 0x10) != 0;
+
+  if (data.size() == 3) {
+    frame_marking->base_layer_sync = (data[0] & 0x08) != 0;
+    frame_marking->temporal_id = data[0] & 0x7;
+    frame_marking->layer_id = data[1];
+    frame_marking->tl0_pic_idx = data[2];
+  } else {
+    // non-scalable
+    frame_marking->base_layer_sync = false;
+    frame_marking->temporal_id = kNoTemporalIdx;
+    frame_marking->layer_id = kNoSpatialIdx;
+    frame_marking->tl0_pic_idx = 0;
+  }
+  return true;
+}
+
+size_t FrameMarkingExtension::ValueSize(const FrameMarking& frame_marking) {
+  if (IsScalable(frame_marking.temporal_id, frame_marking.layer_id))
+    return 3;
+  else
+    return 1;
+}
+
+bool FrameMarkingExtension::Write(rtc::ArrayView<uint8_t> data,
+                                  const FrameMarking& frame_marking) {
+  RTC_DCHECK_GE(data.size(), 1);
+  RTC_CHECK_LE(frame_marking.temporal_id, 0x07);
+  data[0] = frame_marking.start_of_frame ? 0x80 : 0x00;
+  data[0] |= frame_marking.end_of_frame ? 0x40 : 0x00;
+  data[0] |= frame_marking.independent_frame ? 0x20 : 0x00;
+  data[0] |= frame_marking.discardable_frame ? 0x10 : 0x00;
+
+  if (IsScalable(frame_marking.temporal_id, frame_marking.layer_id)) {
+    RTC_DCHECK_EQ(data.size(), 3);
+    data[0] |= frame_marking.base_layer_sync ? 0x08 : 0x00;
+    data[0] |= frame_marking.temporal_id & 0x07;
+    data[1] = frame_marking.layer_id;
+    data[2] = frame_marking.tl0_pic_idx;
+  }
+  return true;
+}
+
 bool BaseRtpStringExtension::Parse(rtc::ArrayView<const uint8_t> data,
                                    StringRtpHeaderExtension* str) {
   if (data.empty() || data[0] == 0)  // Valid string extension can't be empty.
@@ -382,9 +462,11 @@ bool BaseRtpStringExtension::Parse(rtc::ArrayView<const uint8_t> data,
 
 bool BaseRtpStringExtension::Write(rtc::ArrayView<uint8_t> data,
                                    const std::string& str) {
+  if (str.size() > StringRtpHeaderExtension::kMaxSize) {
+    return false;
+  }
   RTC_DCHECK_EQ(data.size(), str.size());
   RTC_DCHECK_GE(str.size(), 1);
-  RTC_DCHECK_LE(str.size(), StringRtpHeaderExtension::kMaxSize);
   memcpy(data.data(), str.data(), str.size());
   return true;
 }

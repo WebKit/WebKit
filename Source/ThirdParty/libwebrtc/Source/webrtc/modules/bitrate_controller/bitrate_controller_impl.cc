@@ -20,7 +20,18 @@
 #include "rtc_base/logging.h"
 
 namespace webrtc {
-
+namespace {
+absl::optional<DataRate> ToOptionalDataRate(int start_bitrate_bps) {
+  if (start_bitrate_bps == -1)
+    return absl::nullopt;
+  return DataRate::bps(start_bitrate_bps);
+}
+DataRate MaxRate(int max_bitrate_bps) {
+  if (max_bitrate_bps == -1)
+    return DataRate::Infinity();
+  return DataRate::bps(max_bitrate_bps);
+}
+}  // namespace
 class BitrateControllerImpl::RtcpBandwidthObserverImpl
     : public RtcpBandwidthObserver {
  public:
@@ -63,11 +74,9 @@ BitrateControllerImpl::BitrateControllerImpl(const Clock* clock,
       last_bitrate_update_ms_(clock_->TimeInMilliseconds()),
       event_log_(event_log),
       bandwidth_estimation_(event_log),
-      reserved_bitrate_bps_(0),
       last_bitrate_bps_(0),
       last_fraction_loss_(0),
-      last_rtt_ms_(0),
-      last_reserved_bitrate_bps_(0) {
+      last_rtt_ms_(0) {
   // This calls the observer_ if set, which means that the observer provided by
   // the user must be ready to accept a bitrate update when it constructs the
   // controller. We do this to avoid having to keep synchronized initial values
@@ -82,7 +91,9 @@ RtcpBandwidthObserver* BitrateControllerImpl::CreateRtcpBandwidthObserver() {
 void BitrateControllerImpl::SetStartBitrate(int start_bitrate_bps) {
   {
     rtc::CritScope cs(&critsect_);
-    bandwidth_estimation_.SetSendBitrate(start_bitrate_bps);
+    bandwidth_estimation_.SetSendBitrate(
+        DataRate::bps(start_bitrate_bps),
+        Timestamp::ms(clock_->TimeInMilliseconds()));
   }
   MaybeTriggerOnNetworkChanged();
 }
@@ -91,7 +102,8 @@ void BitrateControllerImpl::SetMinMaxBitrate(int min_bitrate_bps,
                                              int max_bitrate_bps) {
   {
     rtc::CritScope cs(&critsect_);
-    bandwidth_estimation_.SetMinMaxBitrate(min_bitrate_bps, max_bitrate_bps);
+    bandwidth_estimation_.SetMinMaxBitrate(DataRate::bps(min_bitrate_bps),
+                                           DataRate::bps(max_bitrate_bps));
   }
   MaybeTriggerOnNetworkChanged();
 }
@@ -101,8 +113,9 @@ void BitrateControllerImpl::SetBitrates(int start_bitrate_bps,
                                         int max_bitrate_bps) {
   {
     rtc::CritScope cs(&critsect_);
-    bandwidth_estimation_.SetBitrates(start_bitrate_bps, min_bitrate_bps,
-                                      max_bitrate_bps);
+    bandwidth_estimation_.SetBitrates(
+        ToOptionalDataRate(start_bitrate_bps), DataRate::bps(min_bitrate_bps),
+        MaxRate(max_bitrate_bps), Timestamp::ms(clock_->TimeInMilliseconds()));
   }
   MaybeTriggerOnNetworkChanged();
 }
@@ -113,16 +126,9 @@ void BitrateControllerImpl::ResetBitrates(int bitrate_bps,
   {
     rtc::CritScope cs(&critsect_);
     bandwidth_estimation_ = SendSideBandwidthEstimation(event_log_);
-    bandwidth_estimation_.SetBitrates(bitrate_bps, min_bitrate_bps,
-                                      max_bitrate_bps);
-  }
-  MaybeTriggerOnNetworkChanged();
-}
-
-void BitrateControllerImpl::SetReservedBitrate(uint32_t reserved_bitrate_bps) {
-  {
-    rtc::CritScope cs(&critsect_);
-    reserved_bitrate_bps_ = reserved_bitrate_bps;
+    bandwidth_estimation_.SetBitrates(
+        ToOptionalDataRate(bitrate_bps), DataRate::bps(min_bitrate_bps),
+        MaxRate(max_bitrate_bps), Timestamp::ms(clock_->TimeInMilliseconds()));
   }
   MaybeTriggerOnNetworkChanged();
 }
@@ -131,8 +137,8 @@ void BitrateControllerImpl::SetReservedBitrate(uint32_t reserved_bitrate_bps) {
 void BitrateControllerImpl::OnReceivedEstimatedBitrate(uint32_t bitrate) {
   {
     rtc::CritScope cs(&critsect_);
-    bandwidth_estimation_.UpdateReceiverEstimate(clock_->TimeInMilliseconds(),
-                                                 bitrate);
+    bandwidth_estimation_.UpdateReceiverEstimate(
+        Timestamp::ms(clock_->TimeInMilliseconds()), DataRate::bps(bitrate));
     BWE_TEST_LOGGING_PLOT(1, "REMB_kbps", clock_->TimeInMilliseconds(),
                           bitrate / 1000);
   }
@@ -146,12 +152,15 @@ void BitrateControllerImpl::OnDelayBasedBweResult(
   {
     rtc::CritScope cs(&critsect_);
     if (result.probe) {
-      bandwidth_estimation_.SetSendBitrate(result.target_bitrate_bps);
+      bandwidth_estimation_.SetSendBitrate(
+          DataRate::bps(result.target_bitrate_bps),
+          Timestamp::ms(clock_->TimeInMilliseconds()));
     }
     // Since SetSendBitrate now resets the delay-based estimate, we have to call
     // UpdateDelayBasedEstimate after SetSendBitrate.
-    bandwidth_estimation_.UpdateDelayBasedEstimate(clock_->TimeInMilliseconds(),
-                                                   result.target_bitrate_bps);
+    bandwidth_estimation_.UpdateDelayBasedEstimate(
+        Timestamp::ms(clock_->TimeInMilliseconds()),
+        DataRate::bps(result.target_bitrate_bps));
   }
   MaybeTriggerOnNetworkChanged();
 }
@@ -168,7 +177,8 @@ int64_t BitrateControllerImpl::TimeUntilNextProcess() {
 void BitrateControllerImpl::Process() {
   {
     rtc::CritScope cs(&critsect_);
-    bandwidth_estimation_.UpdateEstimate(clock_->TimeInMilliseconds());
+    bandwidth_estimation_.UpdateEstimate(
+        Timestamp::ms(clock_->TimeInMilliseconds()));
   }
   MaybeTriggerOnNetworkChanged();
   last_bitrate_update_ms_ = clock_->TimeInMilliseconds();
@@ -223,8 +233,9 @@ void BitrateControllerImpl::OnReceivedRtcpReceiverReport(
 
     RTC_DCHECK_GE(total_number_of_packets, 0);
 
-    bandwidth_estimation_.UpdateReceiverBlock(fraction_lost_aggregate, rtt,
-                                              total_number_of_packets, now_ms);
+    bandwidth_estimation_.UpdateReceiverBlock(
+        fraction_lost_aggregate, TimeDelta::ms(rtt), total_number_of_packets,
+        Timestamp::ms(now_ms));
   }
   MaybeTriggerOnNetworkChanged();
 }
@@ -248,18 +259,15 @@ bool BitrateControllerImpl::GetNetworkParameters(uint32_t* bitrate,
   int current_bitrate;
   bandwidth_estimation_.CurrentEstimate(&current_bitrate, fraction_loss, rtt);
   *bitrate = current_bitrate;
-  *bitrate -= std::min(*bitrate, reserved_bitrate_bps_);
   *bitrate =
       std::max<uint32_t>(*bitrate, bandwidth_estimation_.GetMinBitrate());
 
   bool new_bitrate = false;
   if (*bitrate != last_bitrate_bps_ || *fraction_loss != last_fraction_loss_ ||
-      *rtt != last_rtt_ms_ ||
-      last_reserved_bitrate_bps_ != reserved_bitrate_bps_) {
+      *rtt != last_rtt_ms_) {
     last_bitrate_bps_ = *bitrate;
     last_fraction_loss_ = *fraction_loss;
     last_rtt_ms_ = *rtt;
-    last_reserved_bitrate_bps_ = reserved_bitrate_bps_;
     new_bitrate = true;
   }
 
@@ -280,7 +288,6 @@ bool BitrateControllerImpl::AvailableBandwidth(uint32_t* bandwidth) const {
   int64_t rtt;
   bandwidth_estimation_.CurrentEstimate(&bitrate, &fraction_loss, &rtt);
   if (bitrate > 0) {
-    bitrate = bitrate - std::min<int>(bitrate, reserved_bitrate_bps_);
     bitrate = std::max(bitrate, bandwidth_estimation_.GetMinBitrate());
     *bandwidth = bitrate;
     return true;

@@ -37,6 +37,7 @@ class VideoStreamEncoderObserver : public CpuOveruseMetricsObserver {
  public:
   // Number of resolution and framerate reductions (unset if disabled).
   struct AdaptationSteps {
+    AdaptationSteps();
     absl::optional<int> num_resolution_reductions = 0;
     absl::optional<int> num_framerate_reductions = 0;
   };
@@ -58,7 +59,7 @@ class VideoStreamEncoderObserver : public CpuOveruseMetricsObserver {
     kMediaOptimization
   };
 
-  virtual ~VideoStreamEncoderObserver() = default;
+  ~VideoStreamEncoderObserver() override = default;
 
   virtual void OnIncomingFrame(int width, int height) = 0;
 

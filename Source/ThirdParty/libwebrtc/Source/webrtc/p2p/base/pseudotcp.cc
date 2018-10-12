@@ -729,7 +729,7 @@ bool PseudoTcp::process(Segment& seg) {
                          << "  rto: " << m_rx_rto;
 #endif  // _DEBUGMSG
       } else {
-        RTC_NOTREACHED();
+        RTC_LOG(LS_WARNING) << "rtt < 0";
       }
     }
 

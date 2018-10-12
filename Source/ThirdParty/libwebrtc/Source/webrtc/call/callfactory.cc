@@ -30,7 +30,7 @@ bool ParseConfigParam(std::string exp_name, int* field) {
   return (sscanf(group.c_str(), "%d", field) == 1);
 }
 
-absl::optional<webrtc::FakeNetworkPipe::Config> ParseDegradationConfig(
+absl::optional<webrtc::DefaultNetworkSimulationConfig> ParseDegradationConfig(
     bool send) {
   std::string exp_prefix = "WebRTCFakeNetwork";
   if (send) {
@@ -39,7 +39,7 @@ absl::optional<webrtc::FakeNetworkPipe::Config> ParseDegradationConfig(
     exp_prefix += "Receive";
   }
 
-  webrtc::FakeNetworkPipe::Config config;
+  webrtc::DefaultNetworkSimulationConfig config;
   bool configured = false;
   configured |=
       ParseConfigParam(exp_prefix + "DelayMs", &config.queue_delay_ms);
@@ -62,16 +62,17 @@ absl::optional<webrtc::FakeNetworkPipe::Config> ParseDegradationConfig(
   }
   configured |= ParseConfigParam(exp_prefix + "AvgBurstLossLength",
                                  &config.avg_burst_loss_length);
-  return configured ? absl::optional<webrtc::FakeNetworkPipe::Config>(config)
-                    : absl::nullopt;
+  return configured
+             ? absl::optional<webrtc::DefaultNetworkSimulationConfig>(config)
+             : absl::nullopt;
 }
 }  // namespace
 
 Call* CallFactory::CreateCall(const Call::Config& config) {
-  absl::optional<webrtc::FakeNetworkPipe::Config> send_degradation_config =
-      ParseDegradationConfig(true);
-  absl::optional<webrtc::FakeNetworkPipe::Config> receive_degradation_config =
-      ParseDegradationConfig(false);
+  absl::optional<webrtc::DefaultNetworkSimulationConfig>
+      send_degradation_config = ParseDegradationConfig(true);
+  absl::optional<webrtc::DefaultNetworkSimulationConfig>
+      receive_degradation_config = ParseDegradationConfig(false);
 
   if (send_degradation_config || receive_degradation_config) {
     return new DegradedCall(std::unique_ptr<Call>(Call::Create(config)),

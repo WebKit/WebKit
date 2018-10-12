@@ -19,19 +19,20 @@
 #include "api/call/transport.h"
 #include "api/rtp_headers.h"
 #include "api/rtpparameters.h"
+#include "api/rtpreceiverinterface.h"
 #include "api/video/video_content_type.h"
 #include "api/video/video_sink_interface.h"
 #include "api/video/video_timing.h"
+#include "api/video_codecs/sdp_video_format.h"
 #include "call/rtp_config.h"
 #include "common_types.h"  // NOLINT(build/include)
 #include "common_video/include/frame_callback.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "rtc_base/platform_file.h"
 
 namespace webrtc {
 
 class RtpPacketSinkInterface;
-class VideoDecoder;
+class VideoDecoderFactory;
 
 class VideoReceiveStream {
  public:
@@ -43,21 +44,15 @@ class VideoReceiveStream {
     ~Decoder();
     std::string ToString() const;
 
-    // The actual decoder instance.
-    VideoDecoder* decoder = nullptr;
+    // Ownership stays with WebrtcVideoEngine (delegated from PeerConnection).
+    // TODO(nisse): Move one level out, to VideoReceiveStream::Config, and later
+    // to the configuration of VideoStreamDecoder.
+    VideoDecoderFactory* decoder_factory = nullptr;
+    SdpVideoFormat video_format;
 
     // Received RTP packets with this payload type will be sent to this decoder
     // instance.
     int payload_type = 0;
-
-    // Name of the decoded payload (such as VP8). Maps back to the depacketizer
-    // used to unpack incoming packets.
-    std::string payload_name;
-
-    // This map contains the codec specific parameters from SDP, i.e. the "fmtp"
-    // parameters. It is the same as cricket::CodecParameterMap used in
-    // cricket::VideoCodec.
-    std::map<std::string, std::string> codec_params;
   };
 
   struct Stats {
@@ -216,6 +211,10 @@ class VideoReceiveStream {
     // Target delay in milliseconds. A positive value indicates this stream is
     // used for streaming instead of a real-time call.
     int target_delay_ms = 0;
+
+    // TODO(nisse): Used with VideoDecoderFactory::LegacyCreateVideoDecoder.
+    // Delete when that method is retired.
+    std::string stream_id;
   };
 
   // Starts stream activity.
@@ -228,23 +227,14 @@ class VideoReceiveStream {
   // TODO(pbos): Add info on currently-received codec to Stats.
   virtual Stats GetStats() const = 0;
 
-  // Takes ownership of the file, is responsible for closing it later.
-  // Calling this method will close and finalize any current log.
-  // Giving rtc::kInvalidPlatformFileValue disables logging.
-  // If a frame to be written would make the log too large the write fails and
-  // the log is closed and finalized. A |byte_limit| of 0 means no limit.
-  virtual void EnableEncodedFrameRecording(rtc::PlatformFile file,
-                                           size_t byte_limit) = 0;
-  inline void DisableEncodedFrameRecording() {
-    EnableEncodedFrameRecording(rtc::kInvalidPlatformFileValue, 0);
-  }
-
   // RtpDemuxer only forwards a given RTP packet to one sink. However, some
   // sinks, such as FlexFEC, might wish to be informed of all of the packets
   // a given sink receives (or any set of sinks). They may do so by registering
   // themselves as secondary sinks.
   virtual void AddSecondarySink(RtpPacketSinkInterface* sink) = 0;
   virtual void RemoveSecondarySink(const RtpPacketSinkInterface* sink) = 0;
+
+  virtual std::vector<RtpSource> GetSources() const = 0;
 
  protected:
   virtual ~VideoReceiveStream() {}

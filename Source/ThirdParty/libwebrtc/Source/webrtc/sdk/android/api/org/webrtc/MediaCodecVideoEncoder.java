@@ -23,8 +23,8 @@ import android.os.Bundle;
 import android.view.Surface;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -164,9 +164,9 @@ public class MediaCodecVideoEncoder {
 
   // Active running encoder instance. Set in initEncode() (called from native code)
   // and reset to null in release() call.
-  @Nullable private static MediaCodecVideoEncoder runningInstance = null;
-  @Nullable private static MediaCodecVideoEncoderErrorCallback errorCallback = null;
-  private static int codecErrors = 0;
+  @Nullable private static MediaCodecVideoEncoder runningInstance;
+  @Nullable private static MediaCodecVideoEncoderErrorCallback errorCallback;
+  private static int codecErrors;
   // List of disabled codec types - can be set from application.
   private static Set<String> hwEncoderDisabledTypes = new HashSet<String>();
   @Nullable private static EglBase staticEglBase;
@@ -348,7 +348,7 @@ public class MediaCodecVideoEncoder {
   private long lastKeyFrameMs;
 
   // SPS and PPS NALs (Config frame) for H.264.
-  @Nullable private ByteBuffer configData = null;
+  @Nullable private ByteBuffer configData;
 
   // MediaCodec error handler - invoked when critical error happens which may prevent
   // further use of media codec API. Now it means that one of media codec instances

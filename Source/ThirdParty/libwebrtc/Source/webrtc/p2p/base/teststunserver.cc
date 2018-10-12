@@ -27,7 +27,7 @@ void TestStunServer::OnBindingRequest(StunMessage* msg,
     StunServer::OnBindingRequest(msg, remote_addr);
   } else {
     StunMessage response;
-    GetStunBindResponse(msg, fake_stun_addr_, &response);
+    GetStunBindReqponse(msg, fake_stun_addr_, &response);
     SendResponse(response, remote_addr);
   }
 }

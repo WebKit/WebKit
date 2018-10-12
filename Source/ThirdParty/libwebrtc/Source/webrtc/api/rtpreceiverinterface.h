@@ -17,6 +17,7 @@
 #include <string>
 #include <vector>
 
+#include "api/crypto/framedecryptorinterface.h"
 #include "api/mediastreaminterface.h"
 #include "api/mediatypes.h"
 #include "api/proxy.h"
@@ -124,6 +125,17 @@ class RtpReceiverInterface : public rtc::RefCountInterface {
   // content::FakeRtpReceiver in Chromium.
   virtual std::vector<RtpSource> GetSources() const;
 
+  // Sets a user defined frame decryptor that will decrypt the entire frame
+  // before it is sent across the network. This will decrypt the entire frame
+  // using the user provided decryption mechanism regardless of whether SRTP is
+  // enabled or not.
+  virtual void SetFrameDecryptor(
+      rtc::scoped_refptr<FrameDecryptorInterface> frame_decryptor);
+
+  // Returns a pointer to the frame decryptor set previously by the
+  // user. This can be used to update the state of the object.
+  virtual rtc::scoped_refptr<FrameDecryptorInterface> GetFrameDecryptor() const;
+
  protected:
   ~RtpReceiverInterface() override = default;
 };
@@ -142,6 +154,11 @@ PROXY_CONSTMETHOD0(RtpParameters, GetParameters);
 PROXY_METHOD1(bool, SetParameters, const RtpParameters&)
 PROXY_METHOD1(void, SetObserver, RtpReceiverObserverInterface*);
 PROXY_CONSTMETHOD0(std::vector<RtpSource>, GetSources);
+PROXY_METHOD1(void,
+              SetFrameDecryptor,
+              rtc::scoped_refptr<FrameDecryptorInterface>);
+PROXY_CONSTMETHOD0(rtc::scoped_refptr<FrameDecryptorInterface>,
+                   GetFrameDecryptor);
 END_PROXY_MAP()
 
 }  // namespace webrtc

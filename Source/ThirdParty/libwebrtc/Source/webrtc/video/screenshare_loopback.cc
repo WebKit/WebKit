@@ -13,7 +13,7 @@
 #include "rtc_base/flags.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/stringencode.h"
-#include "system_wrappers/include/field_trial_default.h"
+#include "system_wrappers/include/field_trial.h"
 #include "test/field_trial.h"
 #include "test/gtest.h"
 #include "test/run_test.h"
@@ -220,6 +220,8 @@ DEFINE_bool(logs, false, "print logs to stderr");
 
 DEFINE_bool(send_side_bwe, true, "Use send-side bandwidth estimation");
 
+DEFINE_bool(generic_descriptor, false, "Use the generic frame descriptor.");
+
 DEFINE_bool(allow_reordering, false, "Allow packet reordering to occur");
 
 DEFINE_string(
@@ -274,7 +276,7 @@ DEFINE_bool(help, false, "prints this message");
 }  // namespace flags
 
 void Loopback() {
-  FakeNetworkPipe::Config pipe_config;
+  DefaultNetworkSimulationConfig pipe_config;
   pipe_config.loss_percent = flags::LossPercent();
   pipe_config.link_capacity_kbps = flags::LinkCapacityKbps();
   pipe_config.queue_length_packets = flags::QueueSize();
@@ -288,7 +290,8 @@ void Loopback() {
   call_bitrate_config.max_bitrate_bps = -1;  // Don't cap bandwidth estimate.
 
   VideoQualityTest::Params params;
-  params.call = {flags::FLAG_send_side_bwe, call_bitrate_config};
+  params.call = {flags::FLAG_send_side_bwe, flags::FLAG_generic_descriptor,
+                 call_bitrate_config};
   params.video[0] = {true,
                      flags::Width(),
                      flags::Height(),
@@ -314,7 +317,7 @@ void Loopback() {
                      flags::DurationSecs(),
                      flags::OutputFilename(),
                      flags::GraphTitle()};
-  params.pipe = pipe_config;
+  params.config = pipe_config;
   params.logging = {flags::RtcEventLogName(), flags::RtpDumpName(),
                     flags::EncodedFramePath()};
 

@@ -16,6 +16,7 @@
 
 #include "common_audio/include/audio_util.h"
 #include "modules/audio_coding/neteq/audio_multi_vector.h"
+#include "rtc_base/strings/string_builder.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -33,7 +34,7 @@ class DtmfToneGeneratorTest : public ::testing::Test {
     AudioMultiVector signal(channels);
 
     for (int event = 0; event <= 15; ++event) {
-      std::ostringstream ss;
+      rtc::StringBuilder ss;
       ss << "Checking event " << event << " at sample rate " << fs_hz;
       SCOPED_TRACE(ss.str());
       const int kAttenuation = 0;
@@ -72,7 +73,7 @@ class DtmfToneGeneratorTest : public ::testing::Test {
       EXPECT_EQ(kNumSamples, tone_gen_.Generate(kNumSamples, &ref_signal));
       // Test every 5 steps (to save time).
       for (int attenuation = 1; attenuation <= 63; attenuation += 5) {
-        std::ostringstream ss;
+        rtc::StringBuilder ss;
         ss << "Checking event " << event << " at sample rate " << fs_hz;
         ss << "; attenuation " << attenuation;
         SCOPED_TRACE(ss.str());

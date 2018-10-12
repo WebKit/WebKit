@@ -140,7 +140,7 @@ VCMEncodedFrame* VCMReceiver::FrameForDecoding(uint16_t max_wait_time_ms,
       jitter_buffer_.NextCompleteFrame(max_wait_time_ms);
 
   if (found_frame) {
-    frame_timestamp = found_frame->TimeStamp();
+    frame_timestamp = found_frame->Timestamp();
     min_playout_delay_ms = found_frame->EncodedImage().playout_delay_.min_ms;
     max_playout_delay_ms = found_frame->EncodedImage().playout_delay_.max_ms;
   } else {
@@ -212,7 +212,7 @@ VCMEncodedFrame* VCMReceiver::FrameForDecoding(uint16_t max_wait_time_ms,
     return NULL;
   }
   frame->SetRenderTime(render_time_ms);
-  TRACE_EVENT_ASYNC_STEP1("webrtc", "Video", frame->TimeStamp(), "SetRenderTS",
+  TRACE_EVENT_ASYNC_STEP1("webrtc", "Video", frame->Timestamp(), "SetRenderTS",
                           "render_time", frame->RenderTimeMs());
   if (!frame->Complete()) {
     // Update stats for incomplete frames.

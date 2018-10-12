@@ -152,14 +152,12 @@ public class CallActivity extends Activity implements AppRTCClient.SignalingEven
 
   private final ProxyVideoSink remoteProxyRenderer = new ProxyVideoSink();
   private final ProxyVideoSink localProxyVideoSink = new ProxyVideoSink();
-  @Nullable
-  private PeerConnectionClient peerConnectionClient = null;
+  @Nullable private PeerConnectionClient peerConnectionClient;
   @Nullable
   private AppRTCClient appRtcClient;
   @Nullable
   private SignalingParameters signalingParameters;
-  @Nullable
-  private AppRTCAudioManager audioManager = null;
+  @Nullable private AppRTCAudioManager audioManager;
   @Nullable
   private SurfaceViewRenderer pipRenderer;
   @Nullable
@@ -176,9 +174,9 @@ public class CallActivity extends Activity implements AppRTCClient.SignalingEven
   private boolean iceConnected;
   private boolean isError;
   private boolean callControlFragmentVisible = true;
-  private long callStartedTimeMs = 0;
+  private long callStartedTimeMs;
   private boolean micEnabled = true;
-  private boolean screencaptureEnabled = false;
+  private boolean screencaptureEnabled;
   private static Intent mediaProjectionPermissionResultData;
   private static int mediaProjectionPermissionResultCode;
   // True if local view is in the fullscreen renderer.

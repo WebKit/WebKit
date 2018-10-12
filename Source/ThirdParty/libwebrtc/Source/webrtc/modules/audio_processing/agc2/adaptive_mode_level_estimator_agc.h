@@ -38,7 +38,7 @@ class AdaptiveModeLevelEstimatorAgc : public Agc {
 
  private:
   static constexpr int kTimeUntilConfidentMs = 700;
-  static constexpr int kDefaultLevelDbfs = 0;
+  static constexpr int kDefaultAgc2LevelHeadroomDbfs = -1;
   int32_t time_in_ms_since_last_estimate_ = 0;
   AdaptiveModeLevelEstimator level_estimator_;
   VadWithLevel agc2_vad_;

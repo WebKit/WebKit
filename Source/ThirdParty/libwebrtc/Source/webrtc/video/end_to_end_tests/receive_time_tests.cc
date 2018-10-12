@@ -8,6 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "api/test/simulated_network.h"
+#include "call/fake_network_pipe.h"
+#include "call/simulated_network.h"
 #include "rtc_base/criticalsection.h"
 #include "rtc_base/timeutils.h"
 #include "test/call_test.h"
@@ -83,7 +86,7 @@ class ReportedReceiveTimeTester : public test::EndToEndTest {
         return SEND_PACKET;
       }
       clock_offset_ms_ += jumps_.front().add_offset_ms;
-      send_transport_->SetClockOffset(clock_offset_ms_);
+      send_pipe_->SetClockOffset(clock_offset_ms_);
       jumps_.pop();
     }
     return SEND_PACKET;
@@ -91,9 +94,13 @@ class ReportedReceiveTimeTester : public test::EndToEndTest {
   test::PacketTransport* CreateSendTransport(
       test::SingleThreadedTaskQueueForTesting* task_queue,
       Call* sender_call) override {
+    auto pipe = absl::make_unique<FakeNetworkPipe>(
+        Clock::GetRealTimeClock(),
+        absl::make_unique<SimulatedNetwork>(DefaultNetworkSimulationConfig()));
+    send_pipe_ = pipe.get();
     return send_transport_ = new test::PacketTransport(
                task_queue, sender_call, this, test::PacketTransport::kSender,
-               test::CallTest::payload_type_map_, FakeNetworkPipe::Config());
+               test::CallTest::payload_type_map_, std::move(pipe));
   }
   void PerformTest() override {
     observation_complete_.Wait(test::CallTest::kDefaultTimeoutMs);
@@ -107,6 +114,7 @@ class ReportedReceiveTimeTester : public test::EndToEndTest {
   rtc::CriticalSection send_times_crit_;
   std::deque<int64_t> send_times_us_ RTC_GUARDED_BY(send_times_crit_);
   bool jump_in_reported_times_ = false;
+  FakeNetworkPipe* send_pipe_;
   test::PacketTransport* send_transport_;
   int64_t clock_offset_ms_ = 0;
   std::queue<TimeJump> jumps_;

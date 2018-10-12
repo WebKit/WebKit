@@ -24,20 +24,61 @@ namespace webrtc {
 
 class AudioBuffer;
 
-class EchoControlMobileImpl : public EchoControlMobile {
+// The acoustic echo control for mobile (AECM) component is a low complexity
+// robust option intended for use on mobile devices.
+class EchoControlMobileImpl {
  public:
   EchoControlMobileImpl(rtc::CriticalSection* crit_render,
                         rtc::CriticalSection* crit_capture);
 
-  ~EchoControlMobileImpl() override;
+  ~EchoControlMobileImpl();
+
+  int Enable(bool enable);
+  bool is_enabled() const;
+
+  // Recommended settings for particular audio routes. In general, the louder
+  // the echo is expected to be, the higher this value should be set. The
+  // preferred setting may vary from device to device.
+  enum RoutingMode {
+    kQuietEarpieceOrHeadset,
+    kEarpiece,
+    kLoudEarpiece,
+    kSpeakerphone,
+    kLoudSpeakerphone
+  };
+
+  // Sets echo control appropriate for the audio routing |mode| on the device.
+  // It can and should be updated during a call if the audio routing changes.
+  int set_routing_mode(RoutingMode mode);
+  RoutingMode routing_mode() const;
+
+  // Comfort noise replaces suppressed background noise to maintain a
+  // consistent signal level.
+  int enable_comfort_noise(bool enable);
+  bool is_comfort_noise_enabled() const;
+
+  // A typical use case is to initialize the component with an echo path from a
+  // previous call. The echo path is retrieved using |GetEchoPath()|, typically
+  // at the end of a call. The data can then be stored for later use as an
+  // initializer before the next call, using |SetEchoPath()|.
+  //
+  // Controlling the echo path this way requires the data |size_bytes| to match
+  // the internal echo path size. This size can be acquired using
+  // |echo_path_size_bytes()|. |SetEchoPath()| causes an entire reset, worth
+  // noting if it is to be called during an ongoing call.
+  //
+  // It is possible that version incompatibilities may result in a stored echo
+  // path of the incorrect size. In this case, the stored path should be
+  // discarded.
+  int SetEchoPath(const void* echo_path, size_t size_bytes);
+  int GetEchoPath(void* echo_path, size_t size_bytes) const;
+
+  // The returned path size is guaranteed not to change for the lifetime of
+  // the application.
+  static size_t echo_path_size_bytes();
 
   void ProcessRenderAudio(rtc::ArrayView<const int16_t> packed_render_audio);
   int ProcessCaptureAudio(AudioBuffer* audio, int stream_delay_ms);
-
-  // EchoControlMobile implementation.
-  bool is_enabled() const override;
-  RoutingMode routing_mode() const override;
-  bool is_comfort_noise_enabled() const override;
 
   void Initialize(int sample_rate_hz,
                   size_t num_reverse_channels,
@@ -54,13 +95,6 @@ class EchoControlMobileImpl : public EchoControlMobile {
  private:
   class Canceller;
   struct StreamProperties;
-
-  // EchoControlMobile implementation.
-  int Enable(bool enable) override;
-  int set_routing_mode(RoutingMode mode) override;
-  int enable_comfort_noise(bool enable) override;
-  int SetEchoPath(const void* echo_path, size_t size_bytes) override;
-  int GetEchoPath(void* echo_path, size_t size_bytes) const override;
 
   int Configure();
 

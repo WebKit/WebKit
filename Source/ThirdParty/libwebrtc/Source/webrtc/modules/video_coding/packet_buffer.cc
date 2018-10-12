@@ -107,7 +107,7 @@ bool PacketBuffer::InsertPacket(VCMPacket* packet) {
     }
 
     sequence_buffer_[index].frame_begin = packet->is_first_packet_in_frame;
-    sequence_buffer_[index].frame_end = packet->markerBit;
+    sequence_buffer_[index].frame_end = packet->is_last_packet_in_frame;
     sequence_buffer_[index].seq_num = packet->seqNum;
     sequence_buffer_[index].continuous = false;
     sequence_buffer_[index].frame_created = false;
@@ -398,8 +398,12 @@ void PacketBuffer::ReturnFrame(RtpFrameObject* frame) {
   size_t index = frame->first_seq_num() % size_;
   size_t end = (frame->last_seq_num() + 1) % size_;
   uint16_t seq_num = frame->first_seq_num();
+  uint32_t timestamp = frame->Timestamp();
   while (index != end) {
-    if (sequence_buffer_[index].seq_num == seq_num) {
+    // Check both seq_num and timestamp to handle the case when seq_num wraps
+    // around too quickly for high packet rates.
+    if (sequence_buffer_[index].seq_num == seq_num &&
+        data_buffer_[index].timestamp == timestamp) {
       delete[] data_buffer_[index].dataPtr;
       data_buffer_[index].dataPtr = nullptr;
       sequence_buffer_[index].used = false;
@@ -417,11 +421,15 @@ bool PacketBuffer::GetBitstream(const RtpFrameObject& frame,
   size_t index = frame.first_seq_num() % size_;
   size_t end = (frame.last_seq_num() + 1) % size_;
   uint16_t seq_num = frame.first_seq_num();
+  uint32_t timestamp = frame.Timestamp();
   uint8_t* destination_end = destination + frame.size();
 
   do {
+    // Check both seq_num and timestamp to handle the case when seq_num wraps
+    // around too quickly for high packet rates.
     if (!sequence_buffer_[index].used ||
-        sequence_buffer_[index].seq_num != seq_num) {
+        sequence_buffer_[index].seq_num != seq_num ||
+        data_buffer_[index].timestamp != timestamp) {
       return false;
     }
 

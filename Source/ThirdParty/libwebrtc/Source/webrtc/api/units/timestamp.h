@@ -11,6 +11,10 @@
 #ifndef API_UNITS_TIMESTAMP_H_
 #define API_UNITS_TIMESTAMP_H_
 
+#ifdef UNIT_TEST
+#include <ostream>  // no-presubmit-check TODO(webrtc:8982)
+#endif              // UNIT_TEST
+
 #include <stdint.h>
 #include <limits>
 #include <string>
@@ -32,8 +36,11 @@ constexpr int64_t kMinusInfinityVal = std::numeric_limits<int64_t>::min();
 class Timestamp {
  public:
   Timestamp() = delete;
-  static constexpr Timestamp Infinity() {
+  static constexpr Timestamp PlusInfinity() {
     return Timestamp(timestamp_impl::kPlusInfinityVal);
+  }
+  static constexpr Timestamp MinusInfinity() {
+    return Timestamp(timestamp_impl::kMinusInfinityVal);
   }
   template <int64_t seconds>
   static constexpr Timestamp Seconds() {
@@ -99,7 +106,9 @@ class Timestamp {
                 nullptr>
   static Timestamp us(T microseconds) {
     if (microseconds == std::numeric_limits<double>::infinity()) {
-      return Infinity();
+      return PlusInfinity();
+    } else if (microseconds == -std::numeric_limits<double>::infinity()) {
+      return MinusInfinity();
     } else {
       RTC_DCHECK(!std::isnan(microseconds));
       RTC_DCHECK_GE(microseconds, 0);
@@ -137,7 +146,10 @@ class Timestamp {
   template <typename T>
   constexpr typename std::enable_if<std::is_floating_point<T>::value, T>::type
   us() const {
-    return IsInfinite() ? std::numeric_limits<T>::infinity() : microseconds_;
+    return IsPlusInfinity()
+               ? std::numeric_limits<T>::infinity()
+               : IsMinusInfinity() ? -std::numeric_limits<T>::infinity()
+                                   : microseconds_;
   }
 
   constexpr int64_t seconds_or(int64_t fallback_value) const {
@@ -150,25 +162,59 @@ class Timestamp {
     return IsFinite() ? microseconds_ : fallback_value;
   }
 
-  constexpr bool IsInfinite() const {
-    return microseconds_ == timestamp_impl::kPlusInfinityVal;
-  }
   constexpr bool IsFinite() const { return !IsInfinite(); }
+  constexpr bool IsInfinite() const {
+    return microseconds_ == timedelta_impl::kPlusInfinityVal ||
+           microseconds_ == timedelta_impl::kMinusInfinityVal;
+  }
+  constexpr bool IsPlusInfinity() const {
+    return microseconds_ == timedelta_impl::kPlusInfinityVal;
+  }
+  constexpr bool IsMinusInfinity() const {
+    return microseconds_ == timedelta_impl::kMinusInfinityVal;
+  }
+  Timestamp operator+(const TimeDelta& other) const {
+    if (IsPlusInfinity() || other.IsPlusInfinity()) {
+      RTC_DCHECK(!IsMinusInfinity());
+      RTC_DCHECK(!other.IsMinusInfinity());
+      return PlusInfinity();
+    } else if (IsMinusInfinity() || other.IsMinusInfinity()) {
+      RTC_DCHECK(!IsPlusInfinity());
+      RTC_DCHECK(!other.IsPlusInfinity());
+      return MinusInfinity();
+    }
+    return Timestamp::us(us() + other.us());
+  }
+  Timestamp operator-(const TimeDelta& other) const {
+    if (IsPlusInfinity() || other.IsMinusInfinity()) {
+      RTC_DCHECK(!IsMinusInfinity());
+      RTC_DCHECK(!other.IsPlusInfinity());
+      return PlusInfinity();
+    } else if (IsMinusInfinity() || other.IsPlusInfinity()) {
+      RTC_DCHECK(!IsPlusInfinity());
+      RTC_DCHECK(!other.IsMinusInfinity());
+      return MinusInfinity();
+    }
+    return Timestamp::us(us() - other.us());
+  }
   TimeDelta operator-(const Timestamp& other) const {
+    if (IsPlusInfinity() || other.IsMinusInfinity()) {
+      RTC_DCHECK(!IsMinusInfinity());
+      RTC_DCHECK(!other.IsPlusInfinity());
+      return TimeDelta::PlusInfinity();
+    } else if (IsMinusInfinity() || other.IsPlusInfinity()) {
+      RTC_DCHECK(!IsPlusInfinity());
+      RTC_DCHECK(!other.IsMinusInfinity());
+      return TimeDelta::MinusInfinity();
+    }
     return TimeDelta::us(us() - other.us());
   }
-  Timestamp operator-(const TimeDelta& delta) const {
-    return Timestamp::us(us() - delta.us());
-  }
-  Timestamp operator+(const TimeDelta& delta) const {
-    return Timestamp::us(us() + delta.us());
-  }
   Timestamp& operator-=(const TimeDelta& other) {
-    microseconds_ -= other.us();
+    *this = *this - other;
     return *this;
   }
   Timestamp& operator+=(const TimeDelta& other) {
-    microseconds_ += other.us();
+    *this = *this + other;
     return *this;
   }
   constexpr bool operator==(const Timestamp& other) const {
@@ -202,6 +248,14 @@ class Timestamp {
 };
 
 std::string ToString(const Timestamp& value);
+
+#ifdef UNIT_TEST
+inline std::ostream& operator<<(  // no-presubmit-check TODO(webrtc:8982)
+    std::ostream& stream,         // no-presubmit-check TODO(webrtc:8982)
+    Timestamp value) {
+  return stream << ToString(value);
+}
+#endif  // UNIT_TEST
 
 }  // namespace webrtc
 

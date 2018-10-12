@@ -15,6 +15,7 @@
 #include <vector>
 
 #include "api/array_view.h"
+#include "api/audio/echo_canceller3_config.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
 #include "test/gtest.h"
@@ -31,8 +32,11 @@ TEST(MatchedFilterLagAggregator, MostAccurateLagChosen) {
   constexpr size_t kLag1 = 5;
   constexpr size_t kLag2 = 10;
   ApmDataDumper data_dumper(0);
+  EchoCanceller3Config config;
   std::vector<MatchedFilter::LagEstimate> lag_estimates(2);
-  MatchedFilterLagAggregator aggregator(&data_dumper, std::max(kLag1, kLag2));
+  MatchedFilterLagAggregator aggregator(
+      &data_dumper, std::max(kLag1, kLag2),
+      config.delay.delay_selection_thresholds);
   lag_estimates[0] = MatchedFilter::LagEstimate(1.f, true, kLag1, true);
   lag_estimates[1] = MatchedFilter::LagEstimate(0.5f, true, kLag2, true);
 
@@ -65,8 +69,10 @@ TEST(MatchedFilterLagAggregator, MostAccurateLagChosen) {
 TEST(MatchedFilterLagAggregator,
      LagEstimateInvarianceRequiredForAggregatedLag) {
   ApmDataDumper data_dumper(0);
+  EchoCanceller3Config config;
   std::vector<MatchedFilter::LagEstimate> lag_estimates(1);
-  MatchedFilterLagAggregator aggregator(&data_dumper, 100);
+  MatchedFilterLagAggregator aggregator(
+      &data_dumper, 100, config.delay.delay_selection_thresholds);
 
   absl::optional<DelayEstimate> aggregated_lag;
   for (size_t k = 0; k < kNumLagsBeforeDetection; ++k) {
@@ -94,8 +100,10 @@ TEST(MatchedFilterLagAggregator,
      DISABLED_LagEstimateUpdatesRequiredForAggregatedLag) {
   constexpr size_t kLag = 5;
   ApmDataDumper data_dumper(0);
+  EchoCanceller3Config config;
   std::vector<MatchedFilter::LagEstimate> lag_estimates(1);
-  MatchedFilterLagAggregator aggregator(&data_dumper, kLag);
+  MatchedFilterLagAggregator aggregator(
+      &data_dumper, kLag, config.delay.delay_selection_thresholds);
   for (size_t k = 0; k < kNumLagsBeforeDetection * 10; ++k) {
     lag_estimates[0] = MatchedFilter::LagEstimate(1.f, true, kLag, false);
     absl::optional<DelayEstimate> aggregated_lag =
@@ -112,8 +120,11 @@ TEST(MatchedFilterLagAggregator, DISABLED_PersistentAggregatedLag) {
   constexpr size_t kLag1 = 5;
   constexpr size_t kLag2 = 10;
   ApmDataDumper data_dumper(0);
+  EchoCanceller3Config config;
   std::vector<MatchedFilter::LagEstimate> lag_estimates(1);
-  MatchedFilterLagAggregator aggregator(&data_dumper, std::max(kLag1, kLag2));
+  MatchedFilterLagAggregator aggregator(
+      &data_dumper, std::max(kLag1, kLag2),
+      config.delay.delay_selection_thresholds);
   absl::optional<DelayEstimate> aggregated_lag;
   for (size_t k = 0; k < kNumLagsBeforeDetection; ++k) {
     lag_estimates[0] = MatchedFilter::LagEstimate(1.f, true, kLag1, true);
@@ -134,7 +145,10 @@ TEST(MatchedFilterLagAggregator, DISABLED_PersistentAggregatedLag) {
 
 // Verifies the check for non-null data dumper.
 TEST(MatchedFilterLagAggregator, NullDataDumper) {
-  EXPECT_DEATH(MatchedFilterLagAggregator(nullptr, 10), "");
+  EchoCanceller3Config config;
+  EXPECT_DEATH(MatchedFilterLagAggregator(
+                   nullptr, 10, config.delay.delay_selection_thresholds),
+               "");
 }
 
 #endif

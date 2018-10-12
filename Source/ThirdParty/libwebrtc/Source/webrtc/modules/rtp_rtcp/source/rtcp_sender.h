@@ -124,7 +124,6 @@ class RTCPSender {
                                      uint32_t name,
                                      const uint8_t* data,
                                      uint16_t length);
-  int32_t SetRTCPVoIPMetrics(const RTCPVoIPMetric* VoIPMetric);
 
   void SendRtcpXrReceiverReferenceTime(bool enable);
 
@@ -235,18 +234,19 @@ class RTCPSender {
   bool xr_send_receiver_reference_time_enabled_
       RTC_GUARDED_BY(critical_section_rtcp_sender_);
 
-  // XR VoIP metric
-  absl::optional<RTCPVoIPMetric> xr_voip_metric_
-      RTC_GUARDED_BY(critical_section_rtcp_sender_);
-
   RtcpPacketTypeCounterObserver* const packet_type_counter_observer_;
   RtcpPacketTypeCounter packet_type_counter_
       RTC_GUARDED_BY(critical_section_rtcp_sender_);
 
   RtcpNackStats nack_stats_ RTC_GUARDED_BY(critical_section_rtcp_sender_);
 
-  absl::optional<VideoBitrateAllocation> video_bitrate_allocation_
+  VideoBitrateAllocation video_bitrate_allocation_
       RTC_GUARDED_BY(critical_section_rtcp_sender_);
+  bool send_video_bitrate_allocation_
+      RTC_GUARDED_BY(critical_section_rtcp_sender_);
+  absl::optional<VideoBitrateAllocation> CheckAndUpdateLayerStructure(
+      const VideoBitrateAllocation& bitrate) const
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(critical_section_rtcp_sender_);
 
   void SetFlag(uint32_t type, bool is_volatile)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(critical_section_rtcp_sender_);

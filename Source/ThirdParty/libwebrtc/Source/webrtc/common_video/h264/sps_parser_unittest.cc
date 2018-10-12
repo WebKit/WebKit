@@ -43,6 +43,8 @@ static const size_t kSpsBufferMaxSize = 256;
 void GenerateFakeSps(uint16_t width,
                      uint16_t height,
                      int id,
+                     uint32_t log2_max_frame_num_minus4,
+                     uint32_t log2_max_pic_order_cnt_lsb_minus4,
                      rtc::Buffer* out_buffer) {
   uint8_t rbsp[kSpsBufferMaxSize] = {0};
   rtc::BitBufferWriter writer(rbsp, kSpsBufferMaxSize);
@@ -57,12 +59,12 @@ void GenerateFakeSps(uint16_t width,
   // Profile is not special, so we skip all the chroma format settings.
 
   // Now some bit magic.
-  // log2_max_frame_num_minus4: ue(v). 0 is fine.
-  writer.WriteExponentialGolomb(0);
+  // log2_max_frame_num_minus4: ue(v).
+  writer.WriteExponentialGolomb(log2_max_frame_num_minus4);
   // pic_order_cnt_type: ue(v). 0 is the type we want.
   writer.WriteExponentialGolomb(0);
   // log2_max_pic_order_cnt_lsb_minus4: ue(v). 0 is fine.
-  writer.WriteExponentialGolomb(0);
+  writer.WriteExponentialGolomb(log2_max_pic_order_cnt_lsb_minus4);
   // max_num_ref_frames: ue(v). 0 is fine.
   writer.WriteExponentialGolomb(0);
   // gaps_in_frame_num_value_allowed_flag: u(1).
@@ -104,9 +106,11 @@ void GenerateFakeSps(uint16_t width,
     byte_count++;
   }
 
+  out_buffer->Clear();
   H264::WriteRbsp(rbsp, byte_count, out_buffer);
 }
 
+// TODO(nisse): Delete test fixture.
 class H264SpsParserTest : public ::testing::Test {
  public:
   H264SpsParserTest() {}
@@ -153,7 +157,7 @@ TEST_F(H264SpsParserTest, TestSampleSPSWeirdResolution) {
 
 TEST_F(H264SpsParserTest, TestSyntheticSPSQvgaLandscape) {
   rtc::Buffer buffer;
-  GenerateFakeSps(320u, 180u, 1, &buffer);
+  GenerateFakeSps(320u, 180u, 1, 0, 0, &buffer);
   EXPECT_TRUE(static_cast<bool>(
       sps_ = SpsParser::ParseSps(buffer.data(), buffer.size())));
   EXPECT_EQ(320u, sps_->width);
@@ -163,7 +167,7 @@ TEST_F(H264SpsParserTest, TestSyntheticSPSQvgaLandscape) {
 
 TEST_F(H264SpsParserTest, TestSyntheticSPSWeirdResolution) {
   rtc::Buffer buffer;
-  GenerateFakeSps(156u, 122u, 2, &buffer);
+  GenerateFakeSps(156u, 122u, 2, 0, 0, &buffer);
   EXPECT_TRUE(static_cast<bool>(
       sps_ = SpsParser::ParseSps(buffer.data(), buffer.size())));
   EXPECT_EQ(156u, sps_->width);
@@ -182,6 +186,50 @@ TEST_F(H264SpsParserTest, TestSampleSPSWithScalingLists) {
       static_cast<bool>(sps_ = SpsParser::ParseSps(buffer, arraysize(buffer))));
   EXPECT_EQ(1920u, sps_->width);
   EXPECT_EQ(1080u, sps_->height);
+}
+
+TEST_F(H264SpsParserTest, TestLog2MaxFrameNumMinus4) {
+  rtc::Buffer buffer;
+  GenerateFakeSps(320u, 180u, 1, 0, 0, &buffer);
+  EXPECT_TRUE(static_cast<bool>(
+      sps_ = SpsParser::ParseSps(buffer.data(), buffer.size())));
+  EXPECT_EQ(320u, sps_->width);
+  EXPECT_EQ(180u, sps_->height);
+  EXPECT_EQ(1u, sps_->id);
+  EXPECT_EQ(4u, sps_->log2_max_frame_num);
+
+  GenerateFakeSps(320u, 180u, 1, 28, 0, &buffer);
+  EXPECT_TRUE(static_cast<bool>(
+      sps_ = SpsParser::ParseSps(buffer.data(), buffer.size())));
+  EXPECT_EQ(320u, sps_->width);
+  EXPECT_EQ(180u, sps_->height);
+  EXPECT_EQ(1u, sps_->id);
+  EXPECT_EQ(32u, sps_->log2_max_frame_num);
+
+  GenerateFakeSps(320u, 180u, 1, 29, 0, &buffer);
+  EXPECT_FALSE(SpsParser::ParseSps(buffer.data(), buffer.size()));
+}
+
+TEST_F(H264SpsParserTest, TestLog2MaxPicOrderCntMinus4) {
+  rtc::Buffer buffer;
+  GenerateFakeSps(320u, 180u, 1, 0, 0, &buffer);
+  EXPECT_TRUE(static_cast<bool>(
+      sps_ = SpsParser::ParseSps(buffer.data(), buffer.size())));
+  EXPECT_EQ(320u, sps_->width);
+  EXPECT_EQ(180u, sps_->height);
+  EXPECT_EQ(1u, sps_->id);
+  EXPECT_EQ(4u, sps_->log2_max_pic_order_cnt_lsb);
+
+  GenerateFakeSps(320u, 180u, 1, 0, 28, &buffer);
+  EXPECT_TRUE(static_cast<bool>(
+      sps_ = SpsParser::ParseSps(buffer.data(), buffer.size())));
+  EXPECT_EQ(320u, sps_->width);
+  EXPECT_EQ(180u, sps_->height);
+  EXPECT_EQ(1u, sps_->id);
+  EXPECT_EQ(32u, sps_->log2_max_pic_order_cnt_lsb);
+
+  GenerateFakeSps(320u, 180u, 1, 0, 29, &buffer);
+  EXPECT_FALSE(SpsParser::ParseSps(buffer.data(), buffer.size()));
 }
 
 }  // namespace webrtc

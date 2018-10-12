@@ -13,6 +13,7 @@
 #include <memory>
 #include <string>
 
+#include "api/test/simulated_network.h"
 #include "test/call_test.h"
 #include "test/single_threaded_task_queue.h"
 
@@ -26,7 +27,7 @@ class AudioBweTest : public test::EndToEndTest {
  protected:
   virtual std::string AudioInputFile() = 0;
 
-  virtual FakeNetworkPipe::Config GetNetworkPipeConfig() = 0;
+  virtual DefaultNetworkSimulationConfig GetNetworkPipeConfig() = 0;
 
   size_t GetNumVideoStreams() const override;
   size_t GetNumAudioStreams() const override;

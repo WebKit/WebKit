@@ -17,18 +17,19 @@
 #include <limits>
 #include <utility>
 
+#include "absl/strings/string_view.h"
 #include "modules/include/module_common_types.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
 namespace test {
 namespace {
-std::string kArrivalDelayX = "arrival_delay_x";
-std::string kArrivalDelayY = "arrival_delay_y";
-std::string kTargetDelayX = "target_delay_x";
-std::string kTargetDelayY = "target_delay_y";
-std::string kPlayoutDelayX = "playout_delay_x";
-std::string kPlayoutDelayY = "playout_delay_y";
+constexpr char kArrivalDelayX[] = "arrival_delay_x";
+constexpr char kArrivalDelayY[] = "arrival_delay_y";
+constexpr char kTargetDelayX[] = "target_delay_x";
+constexpr char kTargetDelayY[] = "target_delay_y";
+constexpr char kPlayoutDelayX[] = "playout_delay_x";
+constexpr char kPlayoutDelayY[] = "playout_delay_y";
 
 // Helper function for NetEqDelayAnalyzer::CreateGraphs. Returns the
 // interpolated value of a function at the point x. Vector x_vec contains the
@@ -64,8 +65,8 @@ double LinearInterpolate(double x,
 
 void PrintDelays(const NetEqDelayAnalyzer::Delays& delays,
                  int64_t ref_time_ms,
-                 const std::string& var_name_x,
-                 const std::string& var_name_y,
+                 absl::string_view var_name_x,
+                 absl::string_view var_name_y,
                  std::ofstream& output,
                  const std::string& terminator = "") {
   output << var_name_x << " = [ ";

@@ -25,18 +25,33 @@ public class MediaSource {
     }
   }
 
-  final long nativeSource; // Package-protected for PeerConnectionFactory.
+  private long nativeSource;
 
   public MediaSource(long nativeSource) {
     this.nativeSource = nativeSource;
   }
 
   public State state() {
+    checkMediaSourceExists();
     return nativeGetState(nativeSource);
   }
 
   public void dispose() {
+    checkMediaSourceExists();
     JniCommon.nativeReleaseRef(nativeSource);
+    nativeSource = 0;
+  }
+
+  /** Returns a pointer to webrtc::MediaSourceInterface. */
+  protected long getNativeMediaSource() {
+    checkMediaSourceExists();
+    return nativeSource;
+  }
+
+  private void checkMediaSourceExists() {
+    if (nativeSource == 0) {
+      throw new IllegalStateException("MediaSource has been disposed.");
+    }
   }
 
   private static native State nativeGetState(long pointer);

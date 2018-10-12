@@ -689,31 +689,6 @@ TEST_F(RtcpReceiverTest, ExtendedReportsPacketWithZeroReportBlocksIgnored) {
   InjectRtcpPacket(xr);
 }
 
-// VOiP reports are ignored.
-TEST_F(RtcpReceiverTest, InjectExtendedReportsVoipPacket) {
-  const uint8_t kLossRate = 123;
-  rtcp::VoipMetric voip_metric;
-  voip_metric.SetMediaSsrc(kReceiverMainSsrc);
-  RTCPVoIPMetric metric;
-  metric.lossRate = kLossRate;
-  voip_metric.SetVoipMetric(metric);
-  rtcp::ExtendedReports xr;
-  xr.SetSenderSsrc(kSenderSsrc);
-  xr.SetVoipMetric(voip_metric);
-
-  InjectRtcpPacket(xr);
-}
-
-TEST_F(RtcpReceiverTest, ExtendedReportsVoipPacketNotToUsIgnored) {
-  rtcp::VoipMetric voip_metric;
-  voip_metric.SetMediaSsrc(kNotToUsSsrc);
-  rtcp::ExtendedReports xr;
-  xr.SetSenderSsrc(kSenderSsrc);
-  xr.SetVoipMetric(voip_metric);
-
-  InjectRtcpPacket(xr);
-}
-
 TEST_F(RtcpReceiverTest, InjectExtendedReportsReceiverReferenceTimePacket) {
   const NtpTime kNtp(0x10203, 0x40506);
   rtcp::Rrtr rrtr;
@@ -792,13 +767,10 @@ TEST_F(RtcpReceiverTest, InjectExtendedReportsPacketWithMultipleReportBlocks) {
   rtcp_receiver_.SetRtcpXrRrtrStatus(true);
 
   rtcp::Rrtr rrtr;
-  rtcp::VoipMetric metric;
-  metric.SetMediaSsrc(kReceiverMainSsrc);
   rtcp::ExtendedReports xr;
   xr.SetSenderSsrc(kSenderSsrc);
   xr.SetRrtr(rrtr);
   xr.AddDlrrItem(ReceiveTimeInfo(kReceiverMainSsrc, 0x12345, 0x67890));
-  xr.SetVoipMetric(metric);
 
   InjectRtcpPacket(xr);
 
@@ -813,13 +785,10 @@ TEST_F(RtcpReceiverTest, InjectExtendedReportsPacketWithUnknownReportBlock) {
   rtcp_receiver_.SetRtcpXrRrtrStatus(true);
 
   rtcp::Rrtr rrtr;
-  rtcp::VoipMetric metric;
-  metric.SetMediaSsrc(kReceiverMainSsrc);
   rtcp::ExtendedReports xr;
   xr.SetSenderSsrc(kSenderSsrc);
   xr.SetRrtr(rrtr);
   xr.AddDlrrItem(ReceiveTimeInfo(kReceiverMainSsrc, 0x12345, 0x67890));
-  xr.SetVoipMetric(metric);
 
   rtc::Buffer packet = xr.Build();
   // Modify the DLRR block to have an unsupported block type, from 5 to 6.

@@ -21,6 +21,7 @@ namespace internal {
 class TransportAdapter : public Transport {
  public:
   explicit TransportAdapter(Transport* transport);
+  ~TransportAdapter() override;
 
   bool SendRtp(const uint8_t* packet,
                size_t length,

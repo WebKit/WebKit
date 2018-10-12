@@ -56,22 +56,17 @@ size_t GetMaxNaluSizeBytes(const EncodedImage& encoded_frame,
   return max_size;
 }
 
-void GetLayerIndices(const CodecSpecificInfo& codec_specific,
-                     size_t* spatial_idx,
-                     size_t* temporal_idx) {
+size_t GetTemporalLayerIndex(const CodecSpecificInfo& codec_specific) {
+  size_t temporal_idx = 0;
   if (codec_specific.codecType == kVideoCodecVP8) {
-    *spatial_idx = codec_specific.codecSpecific.VP8.simulcastIdx;
-    *temporal_idx = codec_specific.codecSpecific.VP8.temporalIdx;
+    temporal_idx = codec_specific.codecSpecific.VP8.temporalIdx;
   } else if (codec_specific.codecType == kVideoCodecVP9) {
-    *spatial_idx = codec_specific.codecSpecific.VP9.spatial_idx;
-    *temporal_idx = codec_specific.codecSpecific.VP9.temporal_idx;
+    temporal_idx = codec_specific.codecSpecific.VP9.temporal_idx;
   }
-  if (*spatial_idx == kNoSpatialIdx) {
-    *spatial_idx = 0;
+  if (temporal_idx == kNoTemporalIdx) {
+    temporal_idx = 0;
   }
-  if (*temporal_idx == kNoTemporalIdx) {
-    *temporal_idx = 0;
-  }
+  return temporal_idx;
 }
 
 int GetElapsedTimeMicroseconds(int64_t start_ns, int64_t stop_ns) {
@@ -280,7 +275,8 @@ void VideoProcessor::ProcessFrame() {
 
   // Create frame statistics object for all simulcast/spatial layers.
   for (size_t i = 0; i < num_simulcast_or_spatial_layers_; ++i) {
-    stats_->AddFrame(timestamp, i);
+    FrameStatistics frame_stat(frame_number, timestamp, i);
+    stats_->AddFrame(frame_stat);
   }
 
   // For the highest measurement accuracy of the encode time, the start/stop
@@ -347,12 +343,11 @@ void VideoProcessor::FrameEncoded(
   }
 
   // Layer metadata.
-  size_t spatial_idx = 0;
-  size_t temporal_idx = 0;
-  GetLayerIndices(codec_specific, &spatial_idx, &temporal_idx);
+  size_t spatial_idx = encoded_image.SpatialIndex().value_or(0);
+  size_t temporal_idx = GetTemporalLayerIndex(codec_specific);
 
   FrameStatistics* frame_stat =
-      stats_->GetFrameWithTimestamp(encoded_image._timeStamp, spatial_idx);
+      stats_->GetFrameWithTimestamp(encoded_image.Timestamp(), spatial_idx);
   const size_t frame_number = frame_stat->frame_number;
 
   // Ensure that the encode order is monotonically increasing, within this
@@ -383,7 +378,6 @@ void VideoProcessor::FrameEncoded(
   frame_stat->length_bytes = encoded_image._length;
   frame_stat->frame_type = encoded_image._frameType;
   frame_stat->temporal_idx = temporal_idx;
-  frame_stat->spatial_idx = spatial_idx;
   frame_stat->max_nalu_size_bytes = GetMaxNaluSizeBytes(encoded_image, config_);
   frame_stat->qp = encoded_image.qp_;
 
@@ -428,7 +422,7 @@ void VideoProcessor::FrameEncoded(
         if (!layer_dropped) {
           base_image = &merged_encoded_frames_[i];
           base_stat =
-              stats_->GetFrameWithTimestamp(encoded_image._timeStamp, i);
+              stats_->GetFrameWithTimestamp(encoded_image.Timestamp(), i);
         } else if (base_image && !base_stat->non_ref_for_inter_layer_pred) {
           DecodeFrame(*base_image, i);
         }
@@ -444,7 +438,7 @@ void VideoProcessor::FrameEncoded(
                                config_.codec_settings.codecType));
   }
 
-  if (!config_.IsAsyncCodec()) {
+  if (!config_.encode_in_real_time) {
     // To get pure encode time for next layers, measure time spent in encode
     // callback and subtract it from encode time of next layers.
     post_encode_time_ns_ += rtc::TimeNanos() - encode_stop_ns;
@@ -526,7 +520,7 @@ void VideoProcessor::DecodeFrame(const EncodedImage& encoded_image,
                                  size_t spatial_idx) {
   RTC_DCHECK_CALLED_SEQUENTIALLY(&sequence_checker_);
   FrameStatistics* frame_stat =
-      stats_->GetFrameWithTimestamp(encoded_image._timeStamp, spatial_idx);
+      stats_->GetFrameWithTimestamp(encoded_image.Timestamp(), spatial_idx);
 
   frame_stat->decode_start_ns = rtc::TimeNanos();
   frame_stat->decode_return_code =
@@ -551,7 +545,7 @@ const webrtc::EncodedImage* VideoProcessor::BuildAndStoreSuperframe(
     for (int base_idx = static_cast<int>(spatial_idx) - 1; base_idx >= 0;
          --base_idx) {
       EncodedImage lower_layer = merged_encoded_frames_.at(base_idx);
-      if (lower_layer._timeStamp == encoded_image._timeStamp) {
+      if (lower_layer.Timestamp() == encoded_image.Timestamp()) {
         base_image = lower_layer;
         break;
       }

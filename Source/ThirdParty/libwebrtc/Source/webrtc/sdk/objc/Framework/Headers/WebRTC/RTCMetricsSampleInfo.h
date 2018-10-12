@@ -8,42 +8,4 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#import <Foundation/Foundation.h>
-
-#import <WebRTC/RTCMacros.h>
-
-NS_ASSUME_NONNULL_BEGIN
-
-RTC_EXPORT
-__attribute__((objc_runtime_name("WK_RTCMetricsSampleInfo")))
-@interface RTCMetricsSampleInfo : NSObject
-
-/**
- * Example of RTCMetricsSampleInfo:
- * name: "WebRTC.Video.InputFramesPerSecond"
- * min: 1
- * max: 100
- * bucketCount: 50
- * samples: [29]:2 [30]:1
- */
-
-/** The name of the histogram. */
-@property(nonatomic, readonly) NSString *name;
-
-/** The minimum bucket value. */
-@property(nonatomic, readonly) int min;
-
-/** The maximum bucket value. */
-@property(nonatomic, readonly) int max;
-
-/** The number of buckets. */
-@property(nonatomic, readonly) int bucketCount;
-
-/** A dictionary holding the samples <value, # of events>. */
-@property(nonatomic, readonly) NSDictionary<NSNumber *, NSNumber *> *samples;
-
-- (instancetype)init NS_UNAVAILABLE;
-
-@end
-
-NS_ASSUME_NONNULL_END
+#import "api/peerconnection/RTCMetricsSampleInfo.h"

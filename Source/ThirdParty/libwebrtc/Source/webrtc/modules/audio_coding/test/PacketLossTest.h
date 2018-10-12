@@ -53,7 +53,7 @@ class SenderWithFEC : public Sender {
   int expected_loss_rate_;
 };
 
-class PacketLossTest : public ACMTest {
+class PacketLossTest {
  public:
   PacketLossTest(int channels,
                  int expected_loss_rate_,

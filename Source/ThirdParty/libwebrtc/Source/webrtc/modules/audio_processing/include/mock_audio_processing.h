@@ -21,43 +21,6 @@
 namespace webrtc {
 
 namespace test {
-
-class MockEchoCancellation : public EchoCancellation {
- public:
-  virtual ~MockEchoCancellation() {}
-  MOCK_METHOD1(Enable, int(bool enable));
-  MOCK_CONST_METHOD0(is_enabled, bool());
-  MOCK_METHOD1(enable_drift_compensation, int(bool enable));
-  MOCK_CONST_METHOD0(is_drift_compensation_enabled, bool());
-  MOCK_METHOD1(set_stream_drift_samples, void(int drift));
-  MOCK_CONST_METHOD0(stream_drift_samples, int());
-  MOCK_METHOD1(set_suppression_level, int(SuppressionLevel level));
-  MOCK_CONST_METHOD0(suppression_level, SuppressionLevel());
-  MOCK_CONST_METHOD0(stream_has_echo, bool());
-  MOCK_METHOD1(enable_metrics, int(bool enable));
-  MOCK_CONST_METHOD0(are_metrics_enabled, bool());
-  MOCK_METHOD1(GetMetrics, int(Metrics* metrics));
-  MOCK_METHOD1(enable_delay_logging, int(bool enable));
-  MOCK_CONST_METHOD0(is_delay_logging_enabled, bool());
-  MOCK_METHOD2(GetDelayMetrics, int(int* median, int* std));
-  MOCK_METHOD3(GetDelayMetrics,
-               int(int* median, int* std, float* fraction_poor_delays));
-  MOCK_CONST_METHOD0(aec_core, struct AecCore*());
-};
-
-class MockEchoControlMobile : public EchoControlMobile {
- public:
-  virtual ~MockEchoControlMobile() {}
-  MOCK_METHOD1(Enable, int(bool enable));
-  MOCK_CONST_METHOD0(is_enabled, bool());
-  MOCK_METHOD1(set_routing_mode, int(RoutingMode mode));
-  MOCK_CONST_METHOD0(routing_mode, RoutingMode());
-  MOCK_METHOD1(enable_comfort_noise, int(bool enable));
-  MOCK_CONST_METHOD0(is_comfort_noise_enabled, bool());
-  MOCK_METHOD2(SetEchoPath, int(const void* echo_path, size_t size_bytes));
-  MOCK_CONST_METHOD2(GetEchoPath, int(void* echo_path, size_t size_bytes));
-};
-
 class MockGainControl : public GainControl {
  public:
   virtual ~MockGainControl() {}
@@ -115,6 +78,14 @@ class MockCustomProcessing : public CustomProcessing {
   MOCK_CONST_METHOD0(ToString, std::string());
 };
 
+class MockCustomAudioAnalyzer : public CustomAudioAnalyzer {
+ public:
+  virtual ~MockCustomAudioAnalyzer() {}
+  MOCK_METHOD2(Initialize, void(int sample_rate_hz, int num_channels));
+  MOCK_METHOD1(Analyze, void(const AudioBuffer* audio));
+  MOCK_CONST_METHOD0(ToString, std::string());
+};
+
 class MockEchoControl : public EchoControl {
  public:
   virtual ~MockEchoControl() {}
@@ -142,9 +113,7 @@ class MockVoiceDetection : public VoiceDetection {
 class MockAudioProcessing : public testing::NiceMock<AudioProcessing> {
  public:
   MockAudioProcessing()
-      : echo_cancellation_(new testing::NiceMock<MockEchoCancellation>()),
-        echo_control_mobile_(new testing::NiceMock<MockEchoControlMobile>()),
-        gain_control_(new testing::NiceMock<MockGainControl>()),
+      : gain_control_(new testing::NiceMock<MockGainControl>()),
         high_pass_filter_(new testing::NiceMock<MockHighPassFilter>()),
         level_estimator_(new testing::NiceMock<MockLevelEstimator>()),
         noise_suppression_(new testing::NiceMock<MockNoiseSuppression>()),
@@ -213,12 +182,6 @@ class MockAudioProcessing : public testing::NiceMock<AudioProcessing> {
   MOCK_METHOD0(UpdateHistogramsOnCallEnd, void());
   MOCK_CONST_METHOD0(GetStatistics, AudioProcessingStatistics());
   MOCK_CONST_METHOD1(GetStatistics, AudioProcessingStats(bool));
-  virtual MockEchoCancellation* echo_cancellation() const {
-    return echo_cancellation_.get();
-  }
-  virtual MockEchoControlMobile* echo_control_mobile() const {
-    return echo_control_mobile_.get();
-  }
   virtual MockGainControl* gain_control() const { return gain_control_.get(); }
   virtual MockHighPassFilter* high_pass_filter() const {
     return high_pass_filter_.get();
@@ -236,8 +199,6 @@ class MockAudioProcessing : public testing::NiceMock<AudioProcessing> {
   MOCK_CONST_METHOD0(GetConfig, AudioProcessing::Config());
 
  private:
-  std::unique_ptr<MockEchoCancellation> echo_cancellation_;
-  std::unique_ptr<MockEchoControlMobile> echo_control_mobile_;
   std::unique_ptr<MockGainControl> gain_control_;
   std::unique_ptr<MockHighPassFilter> high_pass_filter_;
   std::unique_ptr<MockLevelEstimator> level_estimator_;

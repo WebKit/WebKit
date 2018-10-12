@@ -15,7 +15,7 @@ namespace webrtc {
 namespace test {
 TEST(TimestampTest, ConstExpr) {
   constexpr int64_t kValue = 12345;
-  constexpr Timestamp kTimestampInf = Timestamp::Infinity();
+  constexpr Timestamp kTimestampInf = Timestamp::PlusInfinity();
   static_assert(kTimestampInf.IsInfinite(), "");
   static_assert(kTimestampInf.ms_or(-1) == -1, "");
 
@@ -55,20 +55,28 @@ TEST(TimestampTest, GetDifferentPrefix) {
 TEST(TimestampTest, IdentityChecks) {
   const int64_t kValue = 3000;
 
-  EXPECT_TRUE(Timestamp::Infinity().IsInfinite());
+  EXPECT_TRUE(Timestamp::PlusInfinity().IsInfinite());
+  EXPECT_TRUE(Timestamp::MinusInfinity().IsInfinite());
   EXPECT_FALSE(Timestamp::ms(kValue).IsInfinite());
 
-  EXPECT_FALSE(Timestamp::Infinity().IsFinite());
+  EXPECT_FALSE(Timestamp::PlusInfinity().IsFinite());
+  EXPECT_FALSE(Timestamp::MinusInfinity().IsFinite());
   EXPECT_TRUE(Timestamp::ms(kValue).IsFinite());
+
+  EXPECT_TRUE(Timestamp::PlusInfinity().IsPlusInfinity());
+  EXPECT_FALSE(Timestamp::MinusInfinity().IsPlusInfinity());
+
+  EXPECT_TRUE(Timestamp::MinusInfinity().IsMinusInfinity());
+  EXPECT_FALSE(Timestamp::PlusInfinity().IsMinusInfinity());
 }
 
 TEST(TimestampTest, ComparisonOperators) {
   const int64_t kSmall = 450;
   const int64_t kLarge = 451;
 
-  EXPECT_EQ(Timestamp::Infinity(), Timestamp::Infinity());
-  EXPECT_GE(Timestamp::Infinity(), Timestamp::Infinity());
-  EXPECT_GT(Timestamp::Infinity(), Timestamp::ms(kLarge));
+  EXPECT_EQ(Timestamp::PlusInfinity(), Timestamp::PlusInfinity());
+  EXPECT_GE(Timestamp::PlusInfinity(), Timestamp::PlusInfinity());
+  EXPECT_GT(Timestamp::PlusInfinity(), Timestamp::ms(kLarge));
   EXPECT_EQ(Timestamp::ms(kSmall), Timestamp::ms(kSmall));
   EXPECT_LE(Timestamp::ms(kSmall), Timestamp::ms(kSmall));
   EXPECT_GE(Timestamp::ms(kSmall), Timestamp::ms(kSmall));
@@ -102,14 +110,21 @@ TEST(TimestampTest, ConvertsToAndFromDouble) {
   EXPECT_EQ(Timestamp::us(kMicrosDouble).us(), kMicros);
 
   const double kPlusInfinity = std::numeric_limits<double>::infinity();
+  const double kMinusInfinity = -kPlusInfinity;
 
-  EXPECT_EQ(Timestamp::Infinity().seconds<double>(), kPlusInfinity);
-  EXPECT_EQ(Timestamp::Infinity().ms<double>(), kPlusInfinity);
-  EXPECT_EQ(Timestamp::Infinity().us<double>(), kPlusInfinity);
+  EXPECT_EQ(Timestamp::PlusInfinity().seconds<double>(), kPlusInfinity);
+  EXPECT_EQ(Timestamp::MinusInfinity().seconds<double>(), kMinusInfinity);
+  EXPECT_EQ(Timestamp::PlusInfinity().ms<double>(), kPlusInfinity);
+  EXPECT_EQ(Timestamp::MinusInfinity().ms<double>(), kMinusInfinity);
+  EXPECT_EQ(Timestamp::PlusInfinity().us<double>(), kPlusInfinity);
+  EXPECT_EQ(Timestamp::MinusInfinity().us<double>(), kMinusInfinity);
 
-  EXPECT_TRUE(Timestamp::seconds(kPlusInfinity).IsInfinite());
-  EXPECT_TRUE(Timestamp::ms(kPlusInfinity).IsInfinite());
-  EXPECT_TRUE(Timestamp::us(kPlusInfinity).IsInfinite());
+  EXPECT_TRUE(Timestamp::seconds(kPlusInfinity).IsPlusInfinity());
+  EXPECT_TRUE(Timestamp::seconds(kMinusInfinity).IsMinusInfinity());
+  EXPECT_TRUE(Timestamp::ms(kPlusInfinity).IsPlusInfinity());
+  EXPECT_TRUE(Timestamp::ms(kMinusInfinity).IsMinusInfinity());
+  EXPECT_TRUE(Timestamp::us(kPlusInfinity).IsPlusInfinity());
+  EXPECT_TRUE(Timestamp::us(kMinusInfinity).IsMinusInfinity());
 }
 
 TEST(UnitConversionTest, TimestampAndTimeDeltaMath) {
@@ -118,10 +133,27 @@ TEST(UnitConversionTest, TimestampAndTimeDeltaMath) {
   const Timestamp time_a = Timestamp::ms(kValueA);
   const Timestamp time_b = Timestamp::ms(kValueB);
   const TimeDelta delta_a = TimeDelta::ms(kValueA);
+  const TimeDelta delta_b = TimeDelta::ms(kValueB);
 
   EXPECT_EQ((time_a - time_b), TimeDelta::ms(kValueA - kValueB));
   EXPECT_EQ((time_b - delta_a), Timestamp::ms(kValueB - kValueA));
   EXPECT_EQ((time_b + delta_a), Timestamp::ms(kValueB + kValueA));
+
+  Timestamp mutable_time = time_a;
+  mutable_time += delta_b;
+  EXPECT_EQ(mutable_time, time_a + delta_b);
+  mutable_time -= delta_b;
+  EXPECT_EQ(mutable_time, time_a);
+}
+
+TEST(UnitConversionTest, InfinityOperations) {
+  const int64_t kValue = 267;
+  const Timestamp finite_time = Timestamp::ms(kValue);
+  const TimeDelta finite_delta = TimeDelta::ms(kValue);
+  EXPECT_TRUE((Timestamp::PlusInfinity() + finite_delta).IsInfinite());
+  EXPECT_TRUE((Timestamp::PlusInfinity() - finite_delta).IsInfinite());
+  EXPECT_TRUE((finite_time + TimeDelta::PlusInfinity()).IsInfinite());
+  EXPECT_TRUE((finite_time - TimeDelta::MinusInfinity()).IsInfinite());
 }
 }  // namespace test
 }  // namespace webrtc

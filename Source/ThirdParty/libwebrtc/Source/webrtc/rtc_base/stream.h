@@ -118,12 +118,8 @@ class StreamInterface : public MessageHandler {
   // be used.
   //
   // Even though several of these operations are related, you should
-  // always use whichever operation is most relevant.  For example, you may
-  // be tempted to use GetSize() and GetPosition() to deduce the result of
-  // GetAvailable().  However, a stream which is read-once may support the
-  // latter operation but not the former.
+  // always use whichever operation is most relevant.
   //
-
   // The following four methods are used to avoid copying data multiple times.
 
   // GetReadData returns a pointer to a buffer which is owned by the stream.
@@ -177,10 +173,6 @@ class StreamInterface : public MessageHandler {
   // Get the byte length of the entire stream.  Returns false if the length
   // is not known.
   virtual bool GetSize(size_t* size) const;
-
-  // Return the number of Read()-able bytes remaining before end-of-stream.
-  // Returns false if not known.
-  virtual bool GetAvailable(size_t* size) const;
 
   // Return the number of Write()-able bytes remaining before end-of-stream.
   // Returns false if not known.
@@ -293,7 +285,6 @@ class StreamAdapterInterface : public StreamInterface,
   bool SetPosition(size_t position) override;
   bool GetPosition(size_t* position) const override;
   bool GetSize(size_t* size) const override;
-  bool GetAvailable(size_t* size) const override;
   bool GetWriteRemaining(size_t* size) const override;
   bool ReserveSize(size_t size) override;
   bool Flush() override;
@@ -349,7 +340,6 @@ class FileStream : public StreamInterface {
   bool SetPosition(size_t position) override;
   bool GetPosition(size_t* position) const override;
   bool GetSize(size_t* size) const override;
-  bool GetAvailable(size_t* size) const override;
   bool ReserveSize(size_t size) override;
 
   bool Flush() override;
@@ -385,7 +375,6 @@ class MemoryStreamBase : public StreamInterface {
   bool SetPosition(size_t position) override;
   bool GetPosition(size_t* position) const override;
   bool GetSize(size_t* size) const override;
-  bool GetAvailable(size_t* size) const override;
   bool ReserveSize(size_t size) override;
 
   char* GetBuffer() { return buffer_; }

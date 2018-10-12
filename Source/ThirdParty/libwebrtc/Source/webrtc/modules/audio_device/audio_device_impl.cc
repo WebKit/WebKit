@@ -68,8 +68,14 @@
 
 namespace webrtc {
 
-// static
 rtc::scoped_refptr<AudioDeviceModule> AudioDeviceModule::Create(
+    const AudioLayer audio_layer) {
+  RTC_LOG(INFO) << __FUNCTION__;
+  return AudioDeviceModule::CreateForTest(audio_layer);
+}
+
+// static
+rtc::scoped_refptr<AudioDeviceModuleForTest> AudioDeviceModule::CreateForTest(
     const AudioLayer audio_layer) {
   RTC_LOG(INFO) << __FUNCTION__;
 

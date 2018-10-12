@@ -113,8 +113,7 @@ class Call {
   virtual void SignalChannelNetworkState(MediaType media,
                                          NetworkState state) = 0;
 
-  virtual void OnTransportOverheadChanged(
-      MediaType media,
+  virtual void OnAudioTransportOverheadChanged(
       int transport_overhead_per_packet) = 0;
 
   virtual void OnSentPacket(const rtc::SentPacket& sent_packet) = 0;

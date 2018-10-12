@@ -8,6 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "modules/video_coding/frame_object.h"
 #include "modules/video_coding/packet_buffer.h"
 #include "system_wrappers/include/clock.h"
 #include "test/fuzzers/fuzz_data_helper.h"
@@ -34,10 +35,17 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
     memcpy(&video_header_backup, &packet.video_header,
            sizeof(packet.video_header));
 
+    uint8_t generic_descriptor_backup[sizeof(packet.generic_descriptor)];
+    memcpy(&generic_descriptor_backup, &packet.generic_descriptor,
+           sizeof(packet.generic_descriptor));
+
     helper.CopyTo(&packet);
 
     memcpy(&packet.video_header, &video_header_backup,
            sizeof(packet.video_header));
+
+    memcpy(&packet.generic_descriptor, &generic_descriptor_backup,
+           sizeof(packet.generic_descriptor));
 
     // The packet buffer owns the payload of the packet.
     uint8_t payload_size;

@@ -49,7 +49,6 @@ struct InternalAPMConfig {
   bool ns_enabled = false;
   int ns_level = 0;
   bool transient_suppression_enabled = false;
-  bool intelligibility_enhancer_enabled = false;
   bool noise_robust_agc_enabled = false;
   bool pre_amplifier_enabled = false;
   float pre_amplifier_fixed_gain_factor = 1.f;
@@ -98,6 +97,9 @@ class AecDump {
   virtual void WriteRenderStreamMessage(const AudioFrame& frame) = 0;
   virtual void WriteRenderStreamMessage(
       const AudioFrameView<const float>& src) = 0;
+
+  virtual void WriteRuntimeSetting(
+      const AudioProcessing::RuntimeSetting& runtime_setting) = 0;
 
   // Logs Event::Type CONFIG message.
   virtual void WriteConfig(const InternalAPMConfig& config) = 0;

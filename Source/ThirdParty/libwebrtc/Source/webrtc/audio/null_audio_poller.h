@@ -21,7 +21,7 @@ namespace internal {
 class NullAudioPoller final : public rtc::MessageHandler {
  public:
   explicit NullAudioPoller(AudioTransport* audio_transport);
-  ~NullAudioPoller();
+  ~NullAudioPoller() override;
 
  protected:
   void OnMessage(rtc::Message* msg) override;

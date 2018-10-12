@@ -26,14 +26,6 @@
 #include "test/gtest.h"
 #include "test/testsupport/perf_test.h"
 
-// Check to verify that the define for the intelligibility enhancer is properly
-// set.
-#if !defined(WEBRTC_INTELLIGIBILITY_ENHANCER) || \
-    (WEBRTC_INTELLIGIBILITY_ENHANCER != 0 &&     \
-     WEBRTC_INTELLIGIBILITY_ENHANCER != 1)
-#error "Set WEBRTC_INTELLIGIBILITY_ENHANCER to either 0 or 1"
-#endif
-
 namespace webrtc {
 
 namespace {
@@ -49,7 +41,6 @@ enum class ProcessorType { kRender, kCapture };
 enum class SettingsType {
   kDefaultApmDesktop,
   kDefaultApmMobile,
-  kDefaultApmDesktopAndIntelligibilityEnhancer,
   kAllSubmodulesTurnedOff,
   kDefaultApmDesktopWithoutDelayAgnostic,
   kDefaultApmDesktopWithoutExtendedFilter
@@ -99,20 +90,6 @@ struct SimulationConfig {
         simulation_configs.push_back(SimulationConfig(sample_rate, settings));
       }
     }
-
-#if WEBRTC_INTELLIGIBILITY_ENHANCER == 1
-    const SettingsType intelligibility_enhancer_settings[] = {
-        SettingsType::kDefaultApmDesktopAndIntelligibilityEnhancer};
-
-    const int intelligibility_enhancer_sample_rates[] = {8000, 16000, 32000,
-                                                         48000};
-
-    for (auto sample_rate : intelligibility_enhancer_sample_rates) {
-      for (auto settings : intelligibility_enhancer_settings) {
-        simulation_configs.push_back(SimulationConfig(sample_rate, settings));
-      }
-    }
-#endif
 #endif
 
     const SettingsType mobile_settings[] = {SettingsType::kDefaultApmMobile};
@@ -136,9 +113,6 @@ struct SimulationConfig {
         break;
       case SettingsType::kDefaultApmDesktop:
         description = "DefaultApmDesktop";
-        break;
-      case SettingsType::kDefaultApmDesktopAndIntelligibilityEnhancer:
-        description = "DefaultApmDesktopAndIntelligibilityEnhancer";
         break;
       case SettingsType::kAllSubmodulesTurnedOff:
         description = "AllSubmodulesOff";
@@ -478,11 +452,10 @@ class CallSimulator : public ::testing::TestWithParam<SimulationConfig> {
       ASSERT_EQ(apm->kNoError, apm->gain_control()->Enable(true));
       ASSERT_EQ(apm->kNoError, apm->noise_suppression()->Enable(true));
       ASSERT_EQ(apm->kNoError, apm->voice_detection()->Enable(true));
-      ASSERT_EQ(apm->kNoError, apm->echo_control_mobile()->Enable(false));
-      ASSERT_EQ(apm->kNoError, apm->echo_cancellation()->Enable(true));
-      ASSERT_EQ(apm->kNoError, apm->echo_cancellation()->enable_metrics(true));
-      ASSERT_EQ(apm->kNoError,
-                apm->echo_cancellation()->enable_delay_logging(true));
+      AudioProcessing::Config apm_config = apm->GetConfig();
+      apm_config.echo_canceller.enabled = true;
+      apm_config.echo_canceller.mobile_mode = false;
+      apm->ApplyConfig(apm_config);
     };
 
     // Lambda function for setting the default APM runtime settings for mobile.
@@ -494,8 +467,10 @@ class CallSimulator : public ::testing::TestWithParam<SimulationConfig> {
       ASSERT_EQ(apm->kNoError, apm->gain_control()->Enable(true));
       ASSERT_EQ(apm->kNoError, apm->noise_suppression()->Enable(true));
       ASSERT_EQ(apm->kNoError, apm->voice_detection()->Enable(true));
-      ASSERT_EQ(apm->kNoError, apm->echo_control_mobile()->Enable(true));
-      ASSERT_EQ(apm->kNoError, apm->echo_cancellation()->Enable(false));
+      AudioProcessing::Config apm_config = apm->GetConfig();
+      apm_config.echo_canceller.enabled = true;
+      apm_config.echo_canceller.mobile_mode = true;
+      apm->ApplyConfig(apm_config);
     };
 
     // Lambda function for turning off all of the APM runtime settings
@@ -508,11 +483,9 @@ class CallSimulator : public ::testing::TestWithParam<SimulationConfig> {
       ASSERT_EQ(apm->kNoError, apm->gain_control()->Enable(false));
       ASSERT_EQ(apm->kNoError, apm->noise_suppression()->Enable(false));
       ASSERT_EQ(apm->kNoError, apm->voice_detection()->Enable(false));
-      ASSERT_EQ(apm->kNoError, apm->echo_control_mobile()->Enable(false));
-      ASSERT_EQ(apm->kNoError, apm->echo_cancellation()->Enable(false));
-      ASSERT_EQ(apm->kNoError, apm->echo_cancellation()->enable_metrics(false));
-      ASSERT_EQ(apm->kNoError,
-                apm->echo_cancellation()->enable_delay_logging(false));
+      AudioProcessing::Config apm_config = apm->GetConfig();
+      apm_config.echo_canceller.enabled = false;
+      apm->ApplyConfig(apm_config);
     };
 
     // Lambda function for adding default desktop APM settings to a config.
@@ -531,16 +504,6 @@ class CallSimulator : public ::testing::TestWithParam<SimulationConfig> {
       }
       case SettingsType::kDefaultApmDesktop: {
         Config config;
-        add_default_desktop_config(&config);
-        apm_.reset(AudioProcessingBuilder().Create(config));
-        ASSERT_TRUE(!!apm_);
-        set_default_desktop_apm_runtime_settings(apm_.get());
-        apm_->SetExtraOptions(config);
-        break;
-      }
-      case SettingsType::kDefaultApmDesktopAndIntelligibilityEnhancer: {
-        Config config;
-        config.Set<Intelligibility>(new Intelligibility(true));
         add_default_desktop_config(&config);
         apm_.reset(AudioProcessingBuilder().Create(config));
         ASSERT_TRUE(!!apm_);

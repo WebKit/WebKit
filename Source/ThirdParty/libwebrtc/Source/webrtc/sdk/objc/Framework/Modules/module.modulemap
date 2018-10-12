@@ -1,6 +1,0 @@
-framework module WebRTC {
-  umbrella header "WebRTC.h"
-
-  export *
-  module * { export * }
-}

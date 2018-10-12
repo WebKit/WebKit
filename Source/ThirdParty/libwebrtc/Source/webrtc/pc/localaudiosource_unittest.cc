@@ -13,14 +13,11 @@
 #include <string>
 #include <vector>
 
-#include "api/test/fakeconstraints.h"
 #include "media/base/fakemediaengine.h"
 #include "media/base/fakevideorenderer.h"
 #include "rtc_base/gunit.h"
 
 using webrtc::LocalAudioSource;
-using webrtc::MediaConstraintsInterface;
-using webrtc::MediaSourceInterface;
 
 TEST(LocalAudioSourceTest, InitWithAudioOptions) {
   cricket::AudioOptions audio_options;

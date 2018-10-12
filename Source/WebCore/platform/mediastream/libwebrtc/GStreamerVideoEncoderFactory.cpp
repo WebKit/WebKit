@@ -242,7 +242,7 @@ public:
         m_encodedFrame._frameType = GST_BUFFER_FLAG_IS_SET(buffer, GST_BUFFER_FLAG_DELTA_UNIT) ? webrtc::kVideoFrameDelta : webrtc::kVideoFrameKey;
         m_encodedFrame._completeFrame = true;
         m_encodedFrame.capture_time_ms_ = GST_TIME_AS_MSECONDS(GST_BUFFER_PTS(buffer));
-        m_encodedFrame._timeStamp = GST_TIME_AS_MSECONDS(GST_BUFFER_DTS(buffer));
+        m_encodedFrame.SetTimestamp(GST_TIME_AS_MSECONDS(GST_BUFFER_DTS(buffer)));
         GST_LOG_OBJECT(m_pipeline.get(), "Got buffer TS: %" GST_TIME_FORMAT, GST_TIME_ARGS(GST_BUFFER_PTS(buffer)));
 
         webrtc::CodecSpecificInfo codecSpecifiInfos;
@@ -536,7 +536,6 @@ public:
         webrtc::CodecSpecificInfoVP8* vp8Info = &(codecSpecifiInfos->codecSpecific.VP8);
         vp8Info->temporalIdx = 0;
 
-        vp8Info->simulcastIdx = 0;
         vp8Info->keyIdx = webrtc::kNoKeyIdx;
         vp8Info->nonReference = GST_BUFFER_FLAG_IS_SET(buffer, GST_BUFFER_FLAG_DELTA_UNIT);
     }

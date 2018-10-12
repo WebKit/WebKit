@@ -40,53 +40,38 @@ class TestNackModule : public ::testing::Test,
 };
 
 TEST_F(TestNackModule, NackOnePacket) {
-  VCMPacket packet;
-  packet.seqNum = 1;
-  nack_module_.OnReceivedPacket(packet);
-  packet.seqNum = 3;
-  nack_module_.OnReceivedPacket(packet);
+  nack_module_.OnReceivedPacket(1, false);
+  nack_module_.OnReceivedPacket(3, false);
   EXPECT_EQ(1u, sent_nacks_.size());
   EXPECT_EQ(2, sent_nacks_[0]);
 }
 
 TEST_F(TestNackModule, WrappingSeqNum) {
-  VCMPacket packet;
-  packet.seqNum = 0xfffe;
-  nack_module_.OnReceivedPacket(packet);
-  packet.seqNum = 1;
-  nack_module_.OnReceivedPacket(packet);
+  nack_module_.OnReceivedPacket(0xfffe, false);
+  nack_module_.OnReceivedPacket(1, false);
   EXPECT_EQ(2u, sent_nacks_.size());
   EXPECT_EQ(0xffff, sent_nacks_[0]);
   EXPECT_EQ(0, sent_nacks_[1]);
 }
 
 TEST_F(TestNackModule, WrappingSeqNumClearToKeyframe) {
-  VCMPacket packet;
-  packet.seqNum = 0xfffe;
-  nack_module_.OnReceivedPacket(packet);
-  packet.seqNum = 1;
-  nack_module_.OnReceivedPacket(packet);
+  nack_module_.OnReceivedPacket(0xfffe, false);
+  nack_module_.OnReceivedPacket(1, false);
   EXPECT_EQ(2u, sent_nacks_.size());
   EXPECT_EQ(0xffff, sent_nacks_[0]);
   EXPECT_EQ(0, sent_nacks_[1]);
 
   sent_nacks_.clear();
-  packet.frameType = kVideoFrameKey;
-  packet.is_first_packet_in_frame = true;
-  packet.seqNum = 2;
-  nack_module_.OnReceivedPacket(packet);
+  nack_module_.OnReceivedPacket(2, true);
   EXPECT_EQ(0u, sent_nacks_.size());
 
-  packet.seqNum = 501;
-  nack_module_.OnReceivedPacket(packet);
+  nack_module_.OnReceivedPacket(501, true);
   EXPECT_EQ(498u, sent_nacks_.size());
   for (int seq_num = 3; seq_num < 501; ++seq_num)
     EXPECT_EQ(seq_num, sent_nacks_[seq_num - 3]);
 
   sent_nacks_.clear();
-  packet.frameType = kVideoFrameDelta;
-  packet.seqNum = 1001;
-  nack_module_.OnReceivedPacket(packet);
+  nack_module_.OnReceivedPacket(1001, false);
   EXPECT_EQ(499u, sent_nacks_.size());
   for (int seq_num = 502; seq_num < 1001; ++seq_num)
     EXPECT_EQ(seq_num, sent_nacks_[seq_num - 502]);
@@ -106,8 +91,7 @@ TEST_F(TestNackModule, WrappingSeqNumClearToKeyframe) {
   // It will then clear all nacks up to the next keyframe (seq num 2),
   // thus removing 0xffff and 0 from the nack list.
   sent_nacks_.clear();
-  packet.seqNum = 1004;
-  nack_module_.OnReceivedPacket(packet);
+  nack_module_.OnReceivedPacket(1004, false);
   EXPECT_EQ(2u, sent_nacks_.size());
   EXPECT_EQ(1002, sent_nacks_[0]);
   EXPECT_EQ(1003, sent_nacks_[1]);
@@ -123,8 +107,7 @@ TEST_F(TestNackModule, WrappingSeqNumClearToKeyframe) {
 
   // Adding packet 1007 will cause the nack module to overflow again, thus
   // clearing everything up to 501 which is the next keyframe.
-  packet.seqNum = 1007;
-  nack_module_.OnReceivedPacket(packet);
+  nack_module_.OnReceivedPacket(1007, false);
   sent_nacks_.clear();
   clock_->AdvanceTimeMilliseconds(100);
   nack_module_.Process();
@@ -163,11 +146,8 @@ TEST_F(TestNackModule, DontBurstOnTimeSkip) {
 }
 
 TEST_F(TestNackModule, ResendNack) {
-  VCMPacket packet;
-  packet.seqNum = 1;
-  nack_module_.OnReceivedPacket(packet);
-  packet.seqNum = 3;
-  nack_module_.OnReceivedPacket(packet);
+  nack_module_.OnReceivedPacket(1, false);
+  nack_module_.OnReceivedPacket(3, false);
   EXPECT_EQ(1u, sent_nacks_.size());
   EXPECT_EQ(2, sent_nacks_[0]);
 
@@ -189,19 +169,15 @@ TEST_F(TestNackModule, ResendNack) {
   nack_module_.Process();
   EXPECT_EQ(4u, sent_nacks_.size());
 
-  packet.seqNum = 2;
-  nack_module_.OnReceivedPacket(packet);
+  nack_module_.OnReceivedPacket(2, false);
   clock_->AdvanceTimeMilliseconds(50);
   nack_module_.Process();
   EXPECT_EQ(4u, sent_nacks_.size());
 }
 
 TEST_F(TestNackModule, ResendPacketMaxRetries) {
-  VCMPacket packet;
-  packet.seqNum = 1;
-  nack_module_.OnReceivedPacket(packet);
-  packet.seqNum = 3;
-  nack_module_.OnReceivedPacket(packet);
+  nack_module_.OnReceivedPacket(1, false);
+  nack_module_.OnReceivedPacket(3, false);
   EXPECT_EQ(1u, sent_nacks_.size());
   EXPECT_EQ(2, sent_nacks_[0]);
 
@@ -217,53 +193,35 @@ TEST_F(TestNackModule, ResendPacketMaxRetries) {
 }
 
 TEST_F(TestNackModule, TooLargeNackList) {
-  VCMPacket packet;
-  packet.seqNum = 0;
-  nack_module_.OnReceivedPacket(packet);
-  packet.seqNum = 1001;
-  nack_module_.OnReceivedPacket(packet);
+  nack_module_.OnReceivedPacket(0, false);
+  nack_module_.OnReceivedPacket(1001, false);
   EXPECT_EQ(1000u, sent_nacks_.size());
   EXPECT_EQ(0, keyframes_requested_);
-  packet.seqNum = 1003;
-  nack_module_.OnReceivedPacket(packet);
+  nack_module_.OnReceivedPacket(1003, false);
   EXPECT_EQ(1000u, sent_nacks_.size());
   EXPECT_EQ(1, keyframes_requested_);
-  packet.seqNum = 1004;
-  nack_module_.OnReceivedPacket(packet);
+  nack_module_.OnReceivedPacket(1004, false);
   EXPECT_EQ(1000u, sent_nacks_.size());
   EXPECT_EQ(1, keyframes_requested_);
 }
 
 TEST_F(TestNackModule, TooLargeNackListWithKeyFrame) {
-  VCMPacket packet;
-  packet.seqNum = 0;
-  nack_module_.OnReceivedPacket(packet);
-  packet.seqNum = 1;
-  packet.is_first_packet_in_frame = true;
-  packet.frameType = kVideoFrameKey;
-  nack_module_.OnReceivedPacket(packet);
-  packet.seqNum = 1001;
-  packet.is_first_packet_in_frame = false;
-  packet.frameType = kVideoFrameKey;
-  nack_module_.OnReceivedPacket(packet);
+  nack_module_.OnReceivedPacket(0, false);
+  nack_module_.OnReceivedPacket(1, true);
+  nack_module_.OnReceivedPacket(1001, false);
   EXPECT_EQ(999u, sent_nacks_.size());
   EXPECT_EQ(0, keyframes_requested_);
-  packet.seqNum = 1003;
-  nack_module_.OnReceivedPacket(packet);
+  nack_module_.OnReceivedPacket(1003, false);
   EXPECT_EQ(1000u, sent_nacks_.size());
   EXPECT_EQ(0, keyframes_requested_);
-  packet.seqNum = 1005;
-  nack_module_.OnReceivedPacket(packet);
+  nack_module_.OnReceivedPacket(1005, false);
   EXPECT_EQ(1000u, sent_nacks_.size());
   EXPECT_EQ(1, keyframes_requested_);
 }
 
 TEST_F(TestNackModule, ClearUpTo) {
-  VCMPacket packet;
-  packet.seqNum = 0;
-  nack_module_.OnReceivedPacket(packet);
-  packet.seqNum = 100;
-  nack_module_.OnReceivedPacket(packet);
+  nack_module_.OnReceivedPacket(0, false);
+  nack_module_.OnReceivedPacket(100, false);
   EXPECT_EQ(99u, sent_nacks_.size());
 
   sent_nacks_.clear();
@@ -275,11 +233,8 @@ TEST_F(TestNackModule, ClearUpTo) {
 }
 
 TEST_F(TestNackModule, ClearUpToWrap) {
-  VCMPacket packet;
-  packet.seqNum = 0xfff0;
-  nack_module_.OnReceivedPacket(packet);
-  packet.seqNum = 0xf;
-  nack_module_.OnReceivedPacket(packet);
+  nack_module_.OnReceivedPacket(0xfff0, false);
+  nack_module_.OnReceivedPacket(0xf, false);
   EXPECT_EQ(30u, sent_nacks_.size());
 
   sent_nacks_.clear();
@@ -291,27 +246,35 @@ TEST_F(TestNackModule, ClearUpToWrap) {
 }
 
 TEST_F(TestNackModule, PacketNackCount) {
-  VCMPacket packet;
-  packet.seqNum = 0;
-  EXPECT_EQ(0, nack_module_.OnReceivedPacket(packet));
-  packet.seqNum = 2;
-  EXPECT_EQ(0, nack_module_.OnReceivedPacket(packet));
-  packet.seqNum = 1;
-  EXPECT_EQ(1, nack_module_.OnReceivedPacket(packet));
+  EXPECT_EQ(0, nack_module_.OnReceivedPacket(0, false));
+  EXPECT_EQ(0, nack_module_.OnReceivedPacket(2, false));
+  EXPECT_EQ(1, nack_module_.OnReceivedPacket(1, false));
 
   sent_nacks_.clear();
   nack_module_.UpdateRtt(100);
-  packet.seqNum = 5;
-  EXPECT_EQ(0, nack_module_.OnReceivedPacket(packet));
+  EXPECT_EQ(0, nack_module_.OnReceivedPacket(5, false));
   clock_->AdvanceTimeMilliseconds(100);
   nack_module_.Process();
   clock_->AdvanceTimeMilliseconds(100);
   nack_module_.Process();
-  packet.seqNum = 3;
-  EXPECT_EQ(3, nack_module_.OnReceivedPacket(packet));
-  packet.seqNum = 4;
-  EXPECT_EQ(3, nack_module_.OnReceivedPacket(packet));
-  EXPECT_EQ(0, nack_module_.OnReceivedPacket(packet));
+  EXPECT_EQ(3, nack_module_.OnReceivedPacket(3, false));
+  EXPECT_EQ(3, nack_module_.OnReceivedPacket(4, false));
+  EXPECT_EQ(0, nack_module_.OnReceivedPacket(4, false));
+}
+
+TEST_F(TestNackModule, NackListFullAndNoOverlapWithKeyframes) {
+  const int kMaxNackPackets = 1000;
+  const unsigned int kFirstGap = kMaxNackPackets - 20;
+  const unsigned int kSecondGap = 200;
+  uint16_t seq_num = 0;
+  nack_module_.OnReceivedPacket(seq_num++, true);
+  seq_num += kFirstGap;
+  nack_module_.OnReceivedPacket(seq_num++, true);
+  EXPECT_EQ(kFirstGap, sent_nacks_.size());
+  sent_nacks_.clear();
+  seq_num += kSecondGap;
+  nack_module_.OnReceivedPacket(seq_num, true);
+  EXPECT_EQ(kSecondGap, sent_nacks_.size());
 }
 
 }  // namespace webrtc

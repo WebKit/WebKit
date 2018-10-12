@@ -8,27 +8,4 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#import "WebRTC/RTCPeerConnection.h"
-
-#include <memory>
-
-namespace rtc {
-class BitrateAllocationStrategy;
-}  // namespace rtc
-
-NS_ASSUME_NONNULL_BEGIN
-
-/**
- * This class extension exposes methods that work directly with injectable C++ components.
- */
-@interface RTCPeerConnection ()
-
-/** Sets current strategy. If not set default WebRTC allocator will be used. May be changed during
- *  an active session.
- */
-- (void)setBitrateAllocationStrategy:
-        (std::unique_ptr<rtc::BitrateAllocationStrategy>)bitrateAllocationStrategy;
-
-@end
-
-NS_ASSUME_NONNULL_END
+#import "api/peerconnection/RTCPeerConnection+Native.h"

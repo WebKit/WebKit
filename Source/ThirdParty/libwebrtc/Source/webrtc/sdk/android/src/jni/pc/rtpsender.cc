@@ -87,5 +87,14 @@ ScopedJavaLocalRef<jstring> JNI_RtpSender_GetId(JNIEnv* jni,
       jni, reinterpret_cast<RtpSenderInterface*>(j_rtp_sender_pointer)->id());
 }
 
+static void JNI_RtpSender_SetFrameEncryptor(JNIEnv* jni,
+                                            const JavaParamRef<jclass>&,
+                                            jlong j_rtp_sender_pointer,
+                                            jlong j_frame_encryptor_pointer) {
+  reinterpret_cast<RtpSenderInterface*>(j_rtp_sender_pointer)
+      ->SetFrameEncryptor(reinterpret_cast<FrameEncryptorInterface*>(
+          j_frame_encryptor_pointer));
+}
+
 }  // namespace jni
 }  // namespace webrtc

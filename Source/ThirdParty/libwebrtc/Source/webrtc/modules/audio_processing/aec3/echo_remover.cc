@@ -48,6 +48,10 @@ bool UseSmoothSignalTransitions() {
       "WebRTC-Aec3SmoothSignalTransitionsKillSwitch");
 }
 
+bool EnableBoundedNearend() {
+  return !field_trial::IsEnabled("WebRTC-Aec3BoundedNearendKillSwitch");
+}
+
 void LinearEchoPower(const FftData& E,
                      const FftData& Y,
                      std::array<float, kFftLengthBy2Plus1>* S2) {
@@ -62,15 +66,15 @@ void SignalTransition(rtc::ArrayView<const float> from,
                       rtc::ArrayView<const float> to,
                       rtc::ArrayView<float> out) {
   constexpr size_t kTransitionSize = 30;
-  constexpr float kOneByTransitionSize = 1.f / kTransitionSize;
+  constexpr float kOneByTransitionSizePlusOne = 1.f / (kTransitionSize + 1);
 
   RTC_DCHECK_EQ(from.size(), to.size());
   RTC_DCHECK_EQ(from.size(), out.size());
   RTC_DCHECK_LE(kTransitionSize, out.size());
 
   for (size_t k = 0; k < kTransitionSize; ++k) {
-    out[k] = k * kOneByTransitionSize * to[k];
-    out[k] += (kTransitionSize - k) * kOneByTransitionSize * to[k];
+    float a = (k + 1) * kOneByTransitionSizePlusOne;
+    out[k] = a * to[k] + (1.f - a) * from[k];
   }
 
   std::copy(to.begin() + kTransitionSize, to.end(),
@@ -132,6 +136,7 @@ class EchoRemoverImpl final : public EchoRemover {
   const int sample_rate_hz_;
   const bool use_shadow_filter_output_;
   const bool use_smooth_signal_transitions_;
+  const bool enable_bounded_nearend_;
   Subtractor subtractor_;
   SuppressionGain suppression_gain_;
   ComfortNoiseGenerator cng_;
@@ -141,7 +146,6 @@ class EchoRemoverImpl final : public EchoRemover {
   bool echo_leakage_detected_ = false;
   AecState aec_state_;
   EchoRemoverMetrics metrics_;
-  bool initial_state_ = true;
   std::array<float, kFftLengthBy2> e_old_;
   std::array<float, kFftLengthBy2> x_old_;
   std::array<float, kFftLengthBy2> y_old_;
@@ -163,8 +167,11 @@ EchoRemoverImpl::EchoRemoverImpl(const EchoCanceller3Config& config,
           new ApmDataDumper(rtc::AtomicOps::Increment(&instance_count_))),
       optimization_(DetectOptimization()),
       sample_rate_hz_(sample_rate_hz),
-      use_shadow_filter_output_(UseShadowFilterOutput()),
+      use_shadow_filter_output_(
+          UseShadowFilterOutput() &&
+          config_.filter.enable_shadow_filter_output_usage),
       use_smooth_signal_transitions_(UseSmoothSignalTransitions()),
+      enable_bounded_nearend_(EnableBoundedNearend()),
       subtractor_(config, data_dumper_.get(), optimization_),
       suppression_gain_(config_, optimization_, sample_rate_hz),
       cng_(optimization_),
@@ -184,7 +191,7 @@ void EchoRemoverImpl::GetMetrics(EchoControl::Metrics* metrics) const {
   // Echo return loss (ERL) is inverted to go from gain to attenuation.
   metrics->echo_return_loss = -10.0 * log10(aec_state_.ErlTimeDomain());
   metrics->echo_return_loss_enhancement =
-      Log2TodB(aec_state_.ErleTimeDomainLog2());
+      Log2TodB(aec_state_.FullBandErleLog2());
 }
 
 void EchoRemoverImpl::ProcessCapture(
@@ -233,7 +240,6 @@ void EchoRemoverImpl::ProcessCapture(
     if (echo_path_variability.delay_change !=
         EchoPathVariability::DelayAdjustment::kNone) {
       suppression_gain_.SetInitialState(true);
-      initial_state_ = true;
     }
   }
   if (gain_change_hangover_ > 0) {
@@ -257,10 +263,9 @@ void EchoRemoverImpl::ProcessCapture(
                                  aec_state_.FilterDelayBlocks());
 
   // Perform linear echo cancellation.
-  if (initial_state_ && !aec_state_.InitialState()) {
+  if (aec_state_.TransitionTriggered()) {
     subtractor_.ExitInitialState();
     suppression_gain_.SetInitialState(false);
-    initial_state_ = false;
   }
 
   // If the delay is known, use the echo subtractor.
@@ -280,17 +285,6 @@ void EchoRemoverImpl::ProcessCapture(
   aec_state_.Update(external_delay, subtractor_.FilterFrequencyResponse(),
                     subtractor_.FilterImpulseResponse(), *render_buffer, E2, Y2,
                     subtractor_output, y0);
-
-  // Compute spectra.
-  const bool suppression_gain_uses_ffts =
-      config_.suppressor.bands_with_reliable_coherence > 0;
-  FftData X;
-  if (suppression_gain_uses_ffts) {
-    auto& x_aligned = render_buffer->Block(-aec_state_.FilterDelayBlocks())[0];
-    WindowedPaddedFft(fft_, x_aligned, x_old_, &X);
-  } else {
-    X.Clear();
-  }
 
   // Choose the linear output.
   data_dumper_->DumpWav("aec3_output_linear2", kBlockSize, &e[0],
@@ -321,9 +315,20 @@ void EchoRemoverImpl::ProcessCapture(
   cng_.Compute(aec_state_, Y2, &comfort_noise, &high_band_comfort_noise);
 
   // Compute and apply the suppression gain.
-  suppression_gain_.GetGain(E2, R2, cng_.NoiseSpectrum(), E, X, Y,
-                            render_signal_analyzer_, aec_state_, x,
-                            &high_bands_gain, &G);
+  const auto& echo_spectrum =
+      aec_state_.UsableLinearEstimate() ? S2_linear : R2;
+
+  std::array<float, kFftLengthBy2Plus1> E2_bounded;
+  if (enable_bounded_nearend_) {
+    std::transform(E2.begin(), E2.end(), Y2.begin(), E2_bounded.begin(),
+                   [](float a, float b) { return std::min(a, b); });
+  } else {
+    std::copy(E2.begin(), E2.end(), E2_bounded.begin());
+  }
+
+  suppression_gain_.GetGain(E2, E2_bounded, echo_spectrum, R2,
+                            cng_.NoiseSpectrum(), E, Y, render_signal_analyzer_,
+                            aec_state_, x, &high_bands_gain, &G);
 
   suppression_filter_.ApplyGain(comfort_noise, high_band_comfort_noise, G,
                                 high_bands_gain, Y_fft, y);
@@ -366,9 +371,9 @@ void EchoRemoverImpl::FormLinearFilterOutput(
   RTC_DCHECK_EQ(subtractor_output.e_shadow.size(), output.size());
   bool use_main_output = true;
   if (use_shadow_filter_output_) {
-    // As the output of the main adaptive filter generally should be better than
-    // the shadow filter output, add a margin and threshold for when choosing
-    // the shadow filter output.
+    // As the output of the main adaptive filter generally should be better
+    // than the shadow filter output, add a margin and threshold for when
+    // choosing the shadow filter output.
     if (subtractor_output.e2_shadow < 0.9f * subtractor_output.e2_main &&
         subtractor_output.y2 > 30.f * 30.f * kBlockSize &&
         (subtractor_output.s2_main > 60.f * 60.f * kBlockSize ||

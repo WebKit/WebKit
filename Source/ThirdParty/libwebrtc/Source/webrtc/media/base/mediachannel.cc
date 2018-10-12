@@ -15,18 +15,37 @@ namespace cricket {
 VideoOptions::VideoOptions() = default;
 VideoOptions::~VideoOptions() = default;
 
+MediaChannel::MediaChannel(const MediaConfig& config)
+    : enable_dscp_(config.enable_dscp), network_interface_(NULL) {}
+
+MediaChannel::MediaChannel() : enable_dscp_(false), network_interface_(NULL) {}
+
+MediaChannel::~MediaChannel() {}
+
 void MediaChannel::SetInterface(NetworkInterface* iface) {
   rtc::CritScope cs(&network_interface_crit_);
   network_interface_ = iface;
   SetDscp(enable_dscp_ ? PreferredDscp() : rtc::DSCP_DEFAULT);
 }
 
+int MediaChannel::GetRtpSendTimeExtnId() const {
+  return -1;
+}
+
 rtc::DiffServCodePoint MediaChannel::PreferredDscp() const {
   return rtc::DSCP_DEFAULT;
 }
 
-int MediaChannel::GetRtpSendTimeExtnId() const {
-  return -1;
+void MediaChannel::SetFrameEncryptor(
+    uint32_t ssrc,
+    rtc::scoped_refptr<webrtc::FrameEncryptorInterface> frame_encryptor) {
+  // Placeholder should be pure virtual once internal supports it.
+}
+
+void MediaChannel::SetFrameDecryptor(
+    uint32_t ssrc,
+    rtc::scoped_refptr<webrtc::FrameDecryptorInterface> frame_decryptor) {
+  // Placeholder should be pure virtual once internal supports it.
 }
 
 MediaSenderInfo::MediaSenderInfo() = default;

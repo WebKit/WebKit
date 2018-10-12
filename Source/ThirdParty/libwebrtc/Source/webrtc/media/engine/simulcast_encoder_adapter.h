@@ -18,6 +18,7 @@
 #include <utility>
 #include <vector>
 
+#include "absl/types/optional.h"
 #include "media/engine/webrtcvideoencoderfactory.h"
 #include "modules/video_coding/include/video_codec_interface.h"
 #include "rtc_base/atomicops.h"
@@ -87,11 +88,11 @@ class SimulcastEncoderAdapter : public VideoEncoder {
   };
 
   // Populate the codec settings for each simulcast stream.
-  static void PopulateStreamCodec(const webrtc::VideoCodec& inst,
-                                  int stream_index,
-                                  uint32_t start_bitrate_kbps,
-                                  bool highest_resolution_stream,
-                                  webrtc::VideoCodec* stream_codec);
+  void PopulateStreamCodec(const webrtc::VideoCodec& inst,
+                           int stream_index,
+                           uint32_t start_bitrate_kbps,
+                           bool highest_resolution_stream,
+                           webrtc::VideoCodec* stream_codec);
 
   bool Initialized() const;
 
@@ -111,6 +112,8 @@ class SimulcastEncoderAdapter : public VideoEncoder {
   // Store encoders in between calls to Release and InitEncode, so they don't
   // have to be recreated. Remaining encoders are destroyed by the destructor.
   std::stack<std::unique_ptr<VideoEncoder>> stored_encoders_;
+
+  const absl::optional<unsigned int> experimental_boosted_screenshare_qp_;
 };
 
 }  // namespace webrtc

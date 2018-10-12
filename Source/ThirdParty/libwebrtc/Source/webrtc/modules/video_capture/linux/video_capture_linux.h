@@ -23,12 +23,12 @@ namespace videocapturemodule {
 class VideoCaptureModuleV4L2 : public VideoCaptureImpl {
  public:
   VideoCaptureModuleV4L2();
-  virtual ~VideoCaptureModuleV4L2();
-  virtual int32_t Init(const char* deviceUniqueId);
-  virtual int32_t StartCapture(const VideoCaptureCapability& capability);
-  virtual int32_t StopCapture();
-  virtual bool CaptureStarted();
-  virtual int32_t CaptureSettings(VideoCaptureCapability& settings);
+  ~VideoCaptureModuleV4L2() override;
+  int32_t Init(const char* deviceUniqueId);
+  int32_t StartCapture(const VideoCaptureCapability& capability) override;
+  int32_t StopCapture() override;
+  bool CaptureStarted() override;
+  int32_t CaptureSettings(VideoCaptureCapability& settings) override;
 
  private:
   enum { kNoOfV4L2Bufffers = 4 };

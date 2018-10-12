@@ -45,11 +45,16 @@ class FixedDigitalLevelEstimator {
   // value passed to the constructor. The class is not thread safe.
   void SetSampleRate(size_t sample_rate_hz);
 
+  // Resets the level estimator internal state.
+  void Reset();
+
+  float LastAudioLevel() const { return filter_state_level_; }
+
  private:
   void CheckParameterCombination();
 
   ApmDataDumper* const apm_data_dumper_ = nullptr;
-  float filter_state_level_ = 0.f;
+  float filter_state_level_;
   size_t samples_in_frame_;
   size_t samples_in_sub_frame_;
 

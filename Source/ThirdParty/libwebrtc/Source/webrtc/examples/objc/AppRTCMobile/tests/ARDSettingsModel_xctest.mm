@@ -12,7 +12,7 @@
 #import <OCMock/OCMock.h>
 #import <XCTest/XCTest.h>
 
-#import "WebRTC/RTCMediaConstraints.h"
+#import <WebRTC/RTCMediaConstraints.h>
 
 #import "ARDSettingsModel+Private.h"
 #import "ARDSettingsStore.h"

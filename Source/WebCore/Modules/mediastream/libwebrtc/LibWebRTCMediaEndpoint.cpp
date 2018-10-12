@@ -57,7 +57,7 @@
 #include <webrtc/p2p/base/basicpacketsocketfactory.h>
 #include <webrtc/p2p/client/basicportallocator.h>
 #include <webrtc/pc/peerconnectionfactory.h>
-#include <webrtc/system_wrappers/include/field_trial_default.h>
+#include <webrtc/system_wrappers/include/field_trial.h>
 #include <wtf/MainThread.h>
 
 namespace WebCore {
@@ -277,7 +277,7 @@ void LibWebRTCMediaEndpoint::doCreateAnswer()
     ASSERT(m_backend);
 
     m_isInitiator = false;
-    m_backend->CreateAnswer(&m_createSessionDescriptionObserver, nullptr);
+    m_backend->CreateAnswer(&m_createSessionDescriptionObserver, { });
 }
 
 void LibWebRTCMediaEndpoint::getStats(Ref<DeferredPromise>&& promise, WTF::Function<void(rtc::scoped_refptr<LibWebRTCStatsCollector>&&)>&& getStatsFunction)

@@ -23,18 +23,32 @@ class SampleCounter {
   ~SampleCounter();
   void Add(int sample);
   absl::optional<int> Avg(int64_t min_required_samples) const;
-  absl::optional<int64_t> Variance(int64_t min_required_samples) const;
   absl::optional<int> Max() const;
+  int64_t NumSamples() const;
   void Reset();
   // Adds all the samples from the |other| SampleCounter as if they were all
   // individually added using |Add(int)| method.
   void Add(const SampleCounter& other);
 
- private:
+ protected:
   int64_t sum_ = 0;
-  int64_t sum_squared_ = 0;
   int64_t num_samples_ = 0;
   absl::optional<int> max_;
+};
+
+class SampleCounterWithVariance : public SampleCounter {
+ public:
+  SampleCounterWithVariance();
+  ~SampleCounterWithVariance();
+  void Add(int sample);
+  absl::optional<int64_t> Variance(int64_t min_required_samples) const;
+  void Reset();
+  // Adds all the samples from the |other| SampleCounter as if they were all
+  // individually added using |Add(int)| method.
+  void Add(const SampleCounterWithVariance& other);
+
+ private:
+  int64_t sum_squared_ = 0;
 };
 
 }  // namespace rtc

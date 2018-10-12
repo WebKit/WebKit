@@ -20,11 +20,6 @@
 
 namespace webrtc {
 
-struct RtpExtensionSize {
-  RTPExtensionType type;
-  uint8_t value_size;
-};
-
 class RtpHeaderExtensionMap {
  public:
   static constexpr RTPExtensionType kInvalidType = kRtpExtensionNone;
@@ -44,11 +39,7 @@ class RtpHeaderExtensionMap {
     return GetId(type) != kInvalidId;
   }
   // Return kInvalidType if not found.
-  RTPExtensionType GetType(int id) const {
-    RTC_DCHECK_GE(id, kMinId);
-    RTC_DCHECK_LE(id, kMaxId);
-    return types_[id];
-  }
+  RTPExtensionType GetType(int id) const;
   // Return kInvalidId if not found.
   uint8_t GetId(RTPExtensionType type) const {
     RTC_DCHECK_GT(type, kRtpExtensionNone);
@@ -56,22 +47,24 @@ class RtpHeaderExtensionMap {
     return ids_[type];
   }
 
-  size_t GetTotalLengthInBytes(
-      rtc::ArrayView<const RtpExtensionSize> extensions) const;
-
   // TODO(danilchap): Remove use of the functions below.
   int32_t Register(RTPExtensionType type, int id) {
     return RegisterByType(id, type) ? 0 : -1;
   }
   int32_t Deregister(RTPExtensionType type);
 
+  bool IsMixedOneTwoByteHeaderSupported() const {
+    return mixed_one_two_byte_header_supported_;
+  }
+  void SetMixedOneTwoByteHeaderSupported(bool supported) {
+    mixed_one_two_byte_header_supported_ = supported;
+  }
+
  private:
-  static constexpr int kMinId = 1;
-  static constexpr int kMaxId = 14;
   bool Register(int id, RTPExtensionType type, const char* uri);
 
-  RTPExtensionType types_[kMaxId + 1];
   uint8_t ids_[kRtpExtensionNumberOfExtensions];
+  bool mixed_one_two_byte_header_supported_;
 };
 
 }  // namespace webrtc

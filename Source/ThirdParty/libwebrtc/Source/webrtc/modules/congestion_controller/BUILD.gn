@@ -44,9 +44,7 @@ rtc_static_library("congestion_controller") {
     "../../rtc_base:ptr_util",
     "../../rtc_base:rate_limiter",
     "../../system_wrappers",
-    "../../system_wrappers:field_trial_api",
-    "../../system_wrappers:metrics_api",
-    "../../system_wrappers:runtime_enabled_features_api",
+    "../../system_wrappers:field_trial",
     "../bitrate_controller",
     "../pacing",
     "../remote_bitrate_estimator",
@@ -70,6 +68,7 @@ rtc_static_library("transport_feedback") {
   ]
 
   deps = [
+    "../../api/transport:network_control",
     "../../modules:module_api",
     "../../rtc_base:checks",
     "../../rtc_base:rtc_base_approved",
@@ -125,6 +124,7 @@ if (rtc_include_tests) {
       "bbr:bbr_unittests",
       "goog_cc:estimators",
       "goog_cc:goog_cc_unittests",
+      "pcc:pcc_unittests",
       "rtp:congestion_controller_unittests",
     ]
     if (!build_with_chromium && is_clang) {

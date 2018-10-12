@@ -182,8 +182,7 @@ public class PeerConnectionClient {
   private RtcEventLog rtcEventLog;
   // Implements the WebRtcAudioRecordSamplesReadyCallback interface and writes
   // recorded audio samples to an output file.
-  @Nullable
-  private RecordedAudioToFileController saveRecordedAudioToFile = null;
+  @Nullable private RecordedAudioToFileController saveRecordedAudioToFile;
 
   /**
    * Peer connection parameters.

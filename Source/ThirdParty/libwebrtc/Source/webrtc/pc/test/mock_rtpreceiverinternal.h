@@ -34,6 +34,10 @@ class MockRtpReceiverInternal : public RtpReceiverInternal {
   MOCK_METHOD1(SetParameters, bool(const RtpParameters&));
   MOCK_METHOD1(SetObserver, void(RtpReceiverObserverInterface*));
   MOCK_CONST_METHOD0(GetSources, std::vector<RtpSource>());
+  MOCK_METHOD1(SetFrameDecryptor,
+               void(rtc::scoped_refptr<FrameDecryptorInterface>));
+  MOCK_CONST_METHOD0(GetFrameDecryptor,
+                     rtc::scoped_refptr<FrameDecryptorInterface>());
 
   // RtpReceiverInternal methods.
   MOCK_METHOD0(Stop, void());

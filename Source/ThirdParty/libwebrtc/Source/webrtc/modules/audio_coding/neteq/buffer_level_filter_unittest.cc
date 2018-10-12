@@ -14,6 +14,7 @@
 
 #include <math.h>  // Access to pow function.
 
+#include "rtc_base/strings/string_builder.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -30,7 +31,7 @@ TEST(BufferLevelFilter, ConvergenceTest) {
     for (int value = 100; value <= 200; value += 10) {
       filter.Reset();
       filter.SetTargetBufferLevel(1);  // Makes filter coefficient 251/256.
-      std::ostringstream ss;
+      rtc::StringBuilder ss;
       ss << "times = " << times << ", value = " << value;
       SCOPED_TRACE(ss.str());  // Print out the parameter values on failure.
       for (int i = 0; i < times; ++i) {

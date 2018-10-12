@@ -19,7 +19,10 @@ std::string ToString(const Timestamp& value) {
   if (value.IsInfinite()) {
     sb << "inf ms";
   } else {
-    sb << value.ms() << " ms";
+    if (value.ms() % 1000 == 0)
+      sb << value.seconds() << " s";
+    else
+      sb << value.ms() << " ms";
   }
   return sb.str();
 }

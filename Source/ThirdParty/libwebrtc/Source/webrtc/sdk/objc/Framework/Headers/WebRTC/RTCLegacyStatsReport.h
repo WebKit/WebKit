@@ -8,31 +8,4 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#import <Foundation/Foundation.h>
-
-#import <WebRTC/RTCMacros.h>
-
-NS_ASSUME_NONNULL_BEGIN
-
-/** This does not currently conform to the spec. */
-RTC_EXPORT
-__attribute__((objc_runtime_name("WK_RTCLegacyStatsReport")))
-@interface RTCLegacyStatsReport : NSObject
-
-/** Time since 1970-01-01T00:00:00Z in milliseconds. */
-@property(nonatomic, readonly) CFTimeInterval timestamp;
-
-/** The type of stats held by this object. */
-@property(nonatomic, readonly) NSString *type;
-
-/** The identifier for this object. */
-@property(nonatomic, readonly) NSString *reportId;
-
-/** A dictionary holding the actual stats. */
-@property(nonatomic, readonly) NSDictionary<NSString *, NSString *> *values;
-
-- (instancetype)init NS_UNAVAILABLE;
-
-@end
-
-NS_ASSUME_NONNULL_END
+#import "api/peerconnection/RTCLegacyStatsReport.h"

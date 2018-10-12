@@ -62,7 +62,7 @@ class VideoCaptureImpl : public VideoCaptureModule,
 
   int32_t SetCaptureRotation(VideoRotation rotation) override;
   bool SetApplyRotation(bool enable) override;
-  bool GetApplyRotation() override { return apply_rotation_; }
+  bool GetApplyRotation() override;
 
   const char* CurrentDeviceName() const override;
 
@@ -74,19 +74,14 @@ class VideoCaptureImpl : public VideoCaptureModule,
                         int64_t captureTime = 0) override;
 
   // Platform dependent
-  int32_t StartCapture(const VideoCaptureCapability& capability) override {
-    _requestedCapability = capability;
-    return -1;
-  }
-  int32_t StopCapture() override { return -1; }
-  bool CaptureStarted() override { return false; }
-  int32_t CaptureSettings(VideoCaptureCapability& /*settings*/) override {
-    return -1;
-  }
+  int32_t StartCapture(const VideoCaptureCapability& capability) override;
+  int32_t StopCapture() override;
+  bool CaptureStarted() override;
+  int32_t CaptureSettings(VideoCaptureCapability& /*settings*/) override;
 
  protected:
   VideoCaptureImpl();
-  virtual ~VideoCaptureImpl();
+  ~VideoCaptureImpl() override;
   int32_t DeliverCapturedFrame(VideoFrame& captureFrame);
 
   char* _deviceUniqueId;  // current Device unique name;

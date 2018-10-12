@@ -40,6 +40,10 @@ int GetSkewHysteresis(const EchoCanceller3Config& config) {
   return static_cast<int>(config.delay.skew_hysteresis_blocks);
 }
 
+bool UseOffsetBlocks() {
+  return field_trial::IsEnabled("WebRTC-Aec3UseOffsetBlocks");
+}
+
 constexpr int kSkewHistorySizeLog2 = 8;
 
 class RenderDelayControllerImpl final : public RenderDelayController {
@@ -63,6 +67,7 @@ class RenderDelayControllerImpl final : public RenderDelayController {
   const int hysteresis_limit_1_blocks_;
   const int hysteresis_limit_2_blocks_;
   const int skew_hysteresis_blocks_;
+  const bool use_offset_blocks_;
   absl::optional<DelayEstimate> delay_;
   EchoPathDelayEstimator delay_estimator_;
   std::vector<float> delay_buf_;
@@ -131,6 +136,7 @@ RenderDelayControllerImpl::RenderDelayControllerImpl(
       hysteresis_limit_2_blocks_(
           static_cast<int>(config.delay.hysteresis_limit_2_blocks)),
       skew_hysteresis_blocks_(GetSkewHysteresis(config)),
+      use_offset_blocks_(UseOffsetBlocks()),
       delay_estimator_(data_dumper_.get(), config),
       delay_buf_(kBlockSize * non_causal_offset, 0.f),
       skew_estimator_(kSkewHistorySizeLog2) {
@@ -237,6 +243,8 @@ absl::optional<DelayEstimate> RenderDelayControllerImpl::GetDelay(
       soft_reset_counter_ = 0;
     }
   }
+  if (!use_offset_blocks_)
+    offset_blocks = 0;
 
   // Log any changes in the skew.
   skew_shift_reporting_counter_ =

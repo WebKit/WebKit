@@ -108,12 +108,6 @@ int NackModule::OnReceivedPacket(uint16_t seq_num, bool is_keyframe) {
   return 0;
 }
 
-int NackModule::OnReceivedPacket(const VCMPacket& packet) {
-  return OnReceivedPacket(
-      packet.seqNum,
-      packet.is_first_packet_in_frame && packet.frameType == kVideoFrameKey);
-}
-
 void NackModule::ClearUpTo(uint16_t seq_num) {
   rtc::CritScope lock(&crit_);
   nack_list_.erase(nack_list_.begin(), nack_list_.lower_bound(seq_num));
@@ -170,7 +164,6 @@ bool NackModule::RemovePacketsUntilKeyFrame() {
     if (it != nack_list_.begin()) {
       // We have found a keyframe that actually is newer than at least one
       // packet in the nack list.
-      RTC_DCHECK(it != nack_list_.end());
       nack_list_.erase(nack_list_.begin(), it);
       return true;
     }

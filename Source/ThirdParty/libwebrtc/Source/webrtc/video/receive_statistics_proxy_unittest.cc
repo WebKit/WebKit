@@ -19,7 +19,6 @@
 #include "api/video/video_rotation.h"
 #include "modules/video_coding/include/video_codec_interface.h"
 #include "system_wrappers/include/metrics.h"
-#include "system_wrappers/include/metrics_default.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -579,13 +578,9 @@ TEST_F(ReceiveStatisticsProxyTest, RtpToNtpFrequencyOffsetHistogramIsUpdated) {
 
 TEST_F(ReceiveStatisticsProxyTest, Vp8QpHistogramIsUpdated) {
   const int kQp = 22;
-  EncodedImage encoded_image;
-  encoded_image.qp_ = kQp;
-  CodecSpecificInfo codec_info;
-  codec_info.codecType = kVideoCodecVP8;
 
   for (int i = 0; i < kMinRequiredSamples; ++i)
-    statistics_proxy_->OnPreDecode(encoded_image, &codec_info);
+    statistics_proxy_->OnPreDecode(kVideoCodecVP8, kQp);
 
   statistics_proxy_.reset();
   EXPECT_EQ(1, metrics::NumSamples("WebRTC.Video.Decoded.Vp8.Qp"));
@@ -593,25 +588,18 @@ TEST_F(ReceiveStatisticsProxyTest, Vp8QpHistogramIsUpdated) {
 }
 
 TEST_F(ReceiveStatisticsProxyTest, Vp8QpHistogramIsNotUpdatedForTooFewSamples) {
-  EncodedImage encoded_image;
-  encoded_image.qp_ = 22;
-  CodecSpecificInfo codec_info;
-  codec_info.codecType = kVideoCodecVP8;
+  const int kQp = 22;
 
   for (int i = 0; i < kMinRequiredSamples - 1; ++i)
-    statistics_proxy_->OnPreDecode(encoded_image, &codec_info);
+    statistics_proxy_->OnPreDecode(kVideoCodecVP8, kQp);
 
   statistics_proxy_.reset();
   EXPECT_EQ(0, metrics::NumSamples("WebRTC.Video.Decoded.Vp8.Qp"));
 }
 
 TEST_F(ReceiveStatisticsProxyTest, Vp8QpHistogramIsNotUpdatedIfNoQpValue) {
-  EncodedImage encoded_image;
-  CodecSpecificInfo codec_info;
-  codec_info.codecType = kVideoCodecVP8;
-
   for (int i = 0; i < kMinRequiredSamples; ++i)
-    statistics_proxy_->OnPreDecode(encoded_image, &codec_info);
+    statistics_proxy_->OnPreDecode(kVideoCodecVP8, -1);
 
   statistics_proxy_.reset();
   EXPECT_EQ(0, metrics::NumSamples("WebRTC.Video.Decoded.Vp8.Qp"));
@@ -1067,6 +1055,8 @@ TEST_P(ReceiveStatisticsProxyTest, FreezesAreReported) {
   const VideoContentType content_type = GetParam();
   const int kInterFrameDelayMs = 33;
   const int kFreezeDelayMs = 200;
+  const int kCallDurationMs =
+      kMinRequiredSamples * kInterFrameDelayMs + kFreezeDelayMs;
   for (int i = 0; i < kMinRequiredSamples; ++i) {
     statistics_proxy_->OnDecodedFrame(absl::nullopt, kWidth, kHeight,
                                       content_type);
@@ -1080,6 +1070,7 @@ TEST_P(ReceiveStatisticsProxyTest, FreezesAreReported) {
   statistics_proxy_.reset();
   const int kExpectedTimeBetweenFreezes =
       kInterFrameDelayMs * (kMinRequiredSamples - 1);
+  const int kExpectedNumberFreezesPerMinute = 60 * 1000 / kCallDurationMs;
   if (videocontenttypehelpers::IsScreenshare(content_type)) {
     EXPECT_EQ(
         kFreezeDelayMs + kInterFrameDelayMs,
@@ -1087,11 +1078,16 @@ TEST_P(ReceiveStatisticsProxyTest, FreezesAreReported) {
     EXPECT_EQ(kExpectedTimeBetweenFreezes,
               metrics::MinSample(
                   "WebRTC.Video.Screenshare.MeanTimeBetweenFreezesMs"));
+    EXPECT_EQ(
+        kExpectedNumberFreezesPerMinute,
+        metrics::MinSample("WebRTC.Video.Screenshare.NumberFreezesPerMinute"));
   } else {
     EXPECT_EQ(kFreezeDelayMs + kInterFrameDelayMs,
               metrics::MinSample("WebRTC.Video.MeanFreezeDurationMs"));
     EXPECT_EQ(kExpectedTimeBetweenFreezes,
               metrics::MinSample("WebRTC.Video.MeanTimeBetweenFreezesMs"));
+    EXPECT_EQ(kExpectedNumberFreezesPerMinute,
+              metrics::MinSample("WebRTC.Video.NumberFreezesPerMinute"));
   }
 }
 

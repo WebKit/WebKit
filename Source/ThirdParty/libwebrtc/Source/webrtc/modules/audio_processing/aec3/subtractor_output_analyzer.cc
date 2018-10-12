@@ -36,7 +36,7 @@ void SubtractorOutputAnalyzer::Update(
   constexpr float kConvergenceThreshold = 50 * 50 * kBlockSize;
   main_filter_converged_ = e2_main < 0.5f * y2 && y2 > kConvergenceThreshold;
   shadow_filter_converged_ =
-      e2_shadow < 0.05 * y2 && y2 > kConvergenceThreshold;
+      e2_shadow < 0.05f * y2 && y2 > kConvergenceThreshold;
   float min_e2 =
       strict_divergence_check_ ? std::min(e2_main, e2_shadow) : e2_main;
   filter_diverged_ = min_e2 > 1.5f * y2 && y2 > 30.f * 30.f * kBlockSize;

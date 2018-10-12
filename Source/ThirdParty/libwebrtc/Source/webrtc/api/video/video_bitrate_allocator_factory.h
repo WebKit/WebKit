@@ -13,7 +13,7 @@
 
 #include <memory>
 #include "api/video/video_bitrate_allocator.h"
-#include "media/base/codec.h"
+#include "api/video_codecs/video_codec.h"
 
 namespace webrtc {
 

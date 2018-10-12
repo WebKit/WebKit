@@ -235,7 +235,6 @@ void AAudioPlayer::HandleStreamDisconnected() {
   }
   // Perform a restart by first closing the disconnected stream and then start
   // a new stream; this time using the new (preferred) audio output device.
-  audio_device_buffer_->NativeAudioPlayoutInterrupted();
   StopPlayout();
   InitPlayout();
   StartPlayout();

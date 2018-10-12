@@ -10,11 +10,13 @@
 
 #include "api/test/videocodec_test_stats.h"
 
+#include "rtc_base/strings/string_builder.h"
+
 namespace webrtc {
 namespace test {
 
 std::string VideoCodecTestStats::FrameStatistics::ToString() const {
-  std::stringstream ss;
+  rtc::StringBuilder ss;
   ss << "frame_number " << frame_number;
   ss << " decoded_width " << decoded_width;
   ss << " decoded_height " << decoded_height;
@@ -34,7 +36,7 @@ std::string VideoCodecTestStats::FrameStatistics::ToString() const {
   ss << " decode_time_us " << decode_time_us;
   ss << " rtp_timestamp " << rtp_timestamp;
   ss << " target_bitrate_kbps " << target_bitrate_kbps;
-  return ss.str();
+  return ss.Release();
 }
 
 VideoCodecTestStats::VideoStatistics::VideoStatistics() = default;
@@ -43,7 +45,7 @@ VideoCodecTestStats::VideoStatistics::VideoStatistics(const VideoStatistics&) =
 
 std::string VideoCodecTestStats::VideoStatistics::ToString(
     std::string prefix) const {
-  std::stringstream ss;
+  rtc::StringBuilder ss;
   ss << prefix << "target_bitrate_kbps: " << target_bitrate_kbps;
   ss << "\n" << prefix << "input_framerate_fps: " << input_framerate_fps;
   ss << "\n" << prefix << "spatial_idx: " << spatial_idx;
@@ -81,12 +83,15 @@ std::string VideoCodecTestStats::VideoStatistics::ToString(
   ss << "\n" << prefix << "num_key_frames: " << num_key_frames;
   ss << "\n" << prefix << "num_spatial_resizes: " << num_spatial_resizes;
   ss << "\n" << prefix << "max_nalu_size_bytes: " << max_nalu_size_bytes;
-  return ss.str();
+  return ss.Release();
 }
 
 VideoCodecTestStats::FrameStatistics::FrameStatistics(size_t frame_number,
-                                                      size_t rtp_timestamp)
-    : frame_number(frame_number), rtp_timestamp(rtp_timestamp) {}
+                                                      size_t rtp_timestamp,
+                                                      size_t spatial_idx)
+    : frame_number(frame_number),
+      rtp_timestamp(rtp_timestamp),
+      spatial_idx(spatial_idx) {}
 
 VideoCodecTestStats::FrameStatistics::FrameStatistics(
     const FrameStatistics& rhs) = default;

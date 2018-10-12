@@ -8,38 +8,4 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#import <Foundation/Foundation.h>
-
-#import <WebRTC/RTCMacros.h>
-
-typedef NS_ENUM(NSInteger, RTCDispatcherQueueType) {
-  // Main dispatcher queue.
-  RTCDispatcherTypeMain,
-  // Used for starting/stopping AVCaptureSession, and assigning
-  // capture session to AVCaptureVideoPreviewLayer.
-  RTCDispatcherTypeCaptureSession,
-  // Used for operations on AVAudioSession.
-  RTCDispatcherTypeAudioSession,
-};
-
-/** Dispatcher that asynchronously dispatches blocks to a specific
- *  shared dispatch queue.
- */
-RTC_EXPORT
-__attribute__((objc_runtime_name("WK_RTCDispatcher")))
-@interface RTCDispatcher : NSObject
-
-- (instancetype)init NS_UNAVAILABLE;
-
-/** Dispatch the block asynchronously on the queue for dispatchType.
- *  @param dispatchType The queue type to dispatch on.
- *  @param block The block to dispatch asynchronously.
- */
-+ (void)dispatchAsyncOnType:(RTCDispatcherQueueType)dispatchType block:(dispatch_block_t)block;
-
-/** Returns YES if run on queue for the dispatchType otherwise NO.
- *  Useful for asserting that a method is run on a correct queue.
- */
-+ (BOOL)isOnQueueForType:(RTCDispatcherQueueType)dispatchType;
-
-@end
+#import "helpers/RTCDispatcher.h"

@@ -8,17 +8,4 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef SDK_OBJC_FRAMEWORK_NATIVE_API_AUDIO_DEVICE_MODULE_H_
-#define SDK_OBJC_FRAMEWORK_NATIVE_API_AUDIO_DEVICE_MODULE_H_
-
-#include <memory>
-
-#include "modules/audio_device/include/audio_device.h"
-
-namespace webrtc {
-
-rtc::scoped_refptr<AudioDeviceModule> CreateAudioDeviceModule();
-
-}  // namespace webrtc
-
-#endif  // SDK_OBJC_FRAMEWORK_NATIVE_API_AUDIO_DEVICE_MODULE_H_
+#import "native/api/audio_device_module.h"

@@ -19,20 +19,14 @@
 
 namespace webrtc {
 
-class VP8Encoder : public VideoEncoder {
+class VP8Encoder {
  public:
-  static std::unique_ptr<VP8Encoder> Create();
-  static bool IsSupported();
-
-  ~VP8Encoder() override {}
+  static std::unique_ptr<VideoEncoder> Create();
 };  // end of VP8Encoder class
 
-class VP8Decoder : public VideoDecoder {
+class VP8Decoder {
  public:
-  static std::unique_ptr<VP8Decoder> Create();
-  static bool IsSupported();
-
-  ~VP8Decoder() override {}
+  static std::unique_ptr<VideoDecoder> Create();
 };  // end of VP8Decoder class
 }  // namespace webrtc
 

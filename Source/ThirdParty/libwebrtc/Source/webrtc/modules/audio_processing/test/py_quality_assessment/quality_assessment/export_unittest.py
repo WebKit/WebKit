@@ -46,7 +46,9 @@ class TestExport(unittest.TestCase):
         evaluation_score_factory=(
           eval_scores_factory.EvaluationScoreWorkerFactory(
               polqa_tool_bin_path=os.path.join(
-                  os.path.dirname(os.path.abspath(__file__)), 'fake_polqa'))),
+                  os.path.dirname(os.path.abspath(__file__)), 'fake_polqa'),
+              echo_metric_tool_bin_path=None
+          )),
         ap_wrapper=audioproc_wrapper.AudioProcWrapper(
             audioproc_wrapper.AudioProcWrapper.DEFAULT_APM_SIMULATOR_BIN_PATH),
         evaluator=evaluation.ApmModuleEvaluator())

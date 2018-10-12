@@ -496,7 +496,7 @@ int32_t H264EncoderImpl::Encode(const VideoFrame& input_frame,
 
     encoded_images_[i]._encodedWidth = configurations_[i].width;
     encoded_images_[i]._encodedHeight = configurations_[i].height;
-    encoded_images_[i]._timeStamp = input_frame.timestamp();
+    encoded_images_[i].SetTimestamp(input_frame.timestamp());
     encoded_images_[i].ntp_time_ms_ = input_frame.ntp_time_ms();
     encoded_images_[i].capture_time_ms_ = input_frame.render_time_ms();
     encoded_images_[i].rotation_ = input_frame.rotation();
@@ -506,6 +506,7 @@ int32_t H264EncoderImpl::Encode(const VideoFrame& input_frame,
             : VideoContentType::UNSPECIFIED;
     encoded_images_[i].timing_.flags = VideoSendTiming::kInvalid;
     encoded_images_[i]._frameType = ConvertToVideoFrameType(info.eFrameType);
+    encoded_images_[i].SetSpatialIndex(configurations_[i].simulcast_idx);
 
     // Split encoded image up into fragments. This also updates
     // |encoded_image_|.
@@ -526,8 +527,6 @@ int32_t H264EncoderImpl::Encode(const VideoFrame& input_frame,
       codec_specific.codecType = kVideoCodecH264;
       codec_specific.codecSpecific.H264.packetization_mode =
           packetization_mode_;
-      codec_specific.codecSpecific.H264.simulcast_idx =
-          configurations_[i].simulcast_idx;
       encoded_image_callback_->OnEncodedImage(encoded_images_[i],
                                               &codec_specific, &frag_header);
     }

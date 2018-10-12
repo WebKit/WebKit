@@ -459,9 +459,9 @@ public class SurfaceTextureHelperTest {
     final int green[] = new int[] {66, 210, 162};
     final int blue[] = new int[] {161, 117, 158};
 
-    final int ref_y[] = new int[] {81, 180, 168};
-    final int ref_u[] = new int[] {173, 93, 122};
-    final int ref_v[] = new int[] {127, 103, 140};
+    final int ref_y[] = new int[] {85, 170, 161};
+    final int ref_u[] = new int[] {168, 97, 123};
+    final int ref_v[] = new int[] {127, 106, 138};
 
     // Draw three frames.
     for (int i = 0; i < 3; ++i) {

@@ -10,11 +10,14 @@
 
 #import "NADViewController.h"
 
-#import <WebRTC/RTCCameraPreviewView.h>
-#import <WebRTC/RTCCameraVideoCapturer.h>
-#import <WebRTC/RTCEAGLVideoView.h>
-#import <WebRTC/RTCMTLVideoView.h>
-#import <WebRTC/RTCVideoRenderer.h>
+#import "sdk/objc/base/RTCVideoRenderer.h"
+#import "sdk/objc/components/capturer/RTCCameraVideoCapturer.h"
+#if defined(RTC_SUPPORTS_METAL)
+#import "sdk/objc/components/renderer/metal/RTCMTLVideoView.h"  // nogncheck
+#endif
+#import "sdk/objc/components/renderer/opengl/RTCEAGLVideoView.h"
+#import "sdk/objc/helpers/RTCCameraPreviewView.h"
+
 #include <memory>
 
 #include "objccallclient.h"

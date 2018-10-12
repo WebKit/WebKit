@@ -58,8 +58,9 @@ class SaturationProtector {
 
   ApmDataDumper* apm_data_dumper_;
 
-  float last_margin_ = kInitialSaturationMarginDb;
+  float last_margin_;
   PeakEnveloper peak_enveloper_;
+  float extra_saturation_margin_db_;
 };
 
 }  // namespace webrtc

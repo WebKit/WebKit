@@ -79,9 +79,6 @@ void WavBasedSimulator::PrepareProcessStreamCall() {
                  ap_->set_stream_delay_ms(
                      settings_.stream_delay ? *settings_.stream_delay : 0));
   }
-
-  ap_->echo_cancellation()->set_stream_drift_samples(
-      settings_.stream_drift_samples ? *settings_.stream_drift_samples : 0);
 }
 
 void WavBasedSimulator::PrepareReverseProcessStreamCall() {

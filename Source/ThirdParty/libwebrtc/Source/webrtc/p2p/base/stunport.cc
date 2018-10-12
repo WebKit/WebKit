@@ -21,11 +21,16 @@
 #include "rtc_base/ipaddress.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/nethelpers.h"
+#include "rtc_base/strings/string_builder.h"
 
 namespace cricket {
 
 // TODO(?): Move these to a common place (used in relayport too)
 const int RETRY_TIMEOUT = 50 * 1000;  // 50 seconds
+
+// Stop logging errors in UDPPort::SendTo after we have logged
+// |kSendErrorLogLimit| messages. Start again after a successful send.
+const int kSendErrorLogLimit = 5;
 
 // Handles a binding request sent to the STUN server.
 class StunBindingRequest : public StunRequest {
@@ -168,6 +173,7 @@ UDPPort::UDPPort(rtc::Thread* thread,
       error_(0),
       ready_(false),
       stun_keepalive_delay_(STUN_KEEPALIVE_INTERVAL),
+      dscp_(rtc::DSCP_NO_CHANGE),
       emit_local_for_anyaddress_(emit_local_for_anyaddress) {
   requests_.set_origin(origin);
 }
@@ -194,6 +200,7 @@ UDPPort::UDPPort(rtc::Thread* thread,
       error_(0),
       ready_(false),
       stun_keepalive_delay_(STUN_KEEPALIVE_INTERVAL),
+      dscp_(rtc::DSCP_NO_CHANGE),
       emit_local_for_anyaddress_(emit_local_for_anyaddress) {
   requests_.set_origin(origin);
 }
@@ -270,8 +277,15 @@ int UDPPort::SendTo(const void* data,
   int sent = socket_->SendTo(data, size, addr, modified_options);
   if (sent < 0) {
     error_ = socket_->GetError();
-    RTC_LOG(LS_ERROR) << ToString() << ": UDP send of " << size
-                      << " bytes failed with error " << error_;
+    // Rate limiting added for crbug.com/856088.
+    // TODO(webrtc:9622): Use general rate limiting mechanism once it exists.
+    if (send_error_count_ < kSendErrorLogLimit) {
+      ++send_error_count_;
+      RTC_LOG(LS_ERROR) << ToString() << ": UDP send of " << size
+                        << " bytes failed with error " << error_;
+    }
+  } else {
+    send_error_count_ = 0;
   }
   return sent;
 }
@@ -281,7 +295,15 @@ void UDPPort::UpdateNetworkCost() {
   stun_keepalive_lifetime_ = GetStunKeepaliveLifetime();
 }
 
+rtc::DiffServCodePoint UDPPort::StunDscpValue() const {
+  return dscp_;
+}
+
 int UDPPort::SetOption(rtc::Socket::Option opt, int value) {
+  if (opt == rtc::Socket::OPT_DSCP) {
+    // Save value for future packets we instantiate.
+    dscp_ = static_cast<rtc::DiffServCodePoint>(value);
+  }
   return socket_->SetOption(opt, value);
 }
 
@@ -474,7 +496,7 @@ void UDPPort::OnStunBindingRequestSucceeded(
           rtc::EmptySocketAddressWithFamily(related_address.family());
     }
 
-    std::ostringstream url;
+    rtc::StringBuilder url;
     url << "stun:" << stun_server_addr.ipaddr().ToString() << ":"
         << stun_server_addr.port();
     AddAddress(stun_reflected_addr, socket_->GetLocalAddress(), related_address,
@@ -522,7 +544,7 @@ void UDPPort::MaybeSetPortCompleteOrError() {
 // TODO(?): merge this with SendTo above.
 void UDPPort::OnSendPacket(const void* data, size_t size, StunRequest* req) {
   StunBindingRequest* sreq = static_cast<StunBindingRequest*>(req);
-  rtc::PacketOptions options(DefaultDscpValue());
+  rtc::PacketOptions options(StunDscpValue());
   options.info_signaled_after_sent.packet_type = rtc::PacketType::kStunMessage;
   CopyPortInformationToPacketInfo(&options.info_signaled_after_sent);
   if (socket_->SendTo(data, size, sreq->server_addr(), options) < 0) {

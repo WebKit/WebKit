@@ -185,7 +185,7 @@ class ByteBufferReader : public ByteBuffer {
   // after this call.
   bool Consume(size_t size);
 
- private:
+ protected:
   void Construct(const char* bytes, size_t size);
 
   const char* bytes_;
@@ -193,6 +193,7 @@ class ByteBufferReader : public ByteBuffer {
   size_t start_;
   size_t end_;
 
+ private:
   RTC_DISALLOW_COPY_AND_ASSIGN(ByteBufferReader);
 };
 

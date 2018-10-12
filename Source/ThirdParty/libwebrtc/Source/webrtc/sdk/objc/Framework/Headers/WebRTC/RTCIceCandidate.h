@@ -8,43 +8,4 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#import <Foundation/Foundation.h>
-
-#import <WebRTC/RTCMacros.h>
-
-NS_ASSUME_NONNULL_BEGIN
-
-RTC_EXPORT
-__attribute__((objc_runtime_name("WK_RTCIceCandidate")))
-@interface RTCIceCandidate : NSObject
-
-/**
- * If present, the identifier of the "media stream identification" for the media
- * component this candidate is associated with.
- */
-@property(nonatomic, readonly, nullable) NSString *sdpMid;
-
-/**
- * The index (starting at zero) of the media description this candidate is
- * associated with in the SDP.
- */
-@property(nonatomic, readonly) int sdpMLineIndex;
-
-/** The SDP string for this candidate. */
-@property(nonatomic, readonly) NSString *sdp;
-
-/** The URL of the ICE server which this candidate is gathered from. */
-@property(nonatomic, readonly, nullable) NSString *serverUrl;
-
-- (instancetype)init NS_UNAVAILABLE;
-
-/**
- * Initialize an RTCIceCandidate from SDP.
- */
-- (instancetype)initWithSdp:(NSString *)sdp
-              sdpMLineIndex:(int)sdpMLineIndex
-                     sdpMid:(nullable NSString *)sdpMid NS_DESIGNATED_INITIALIZER;
-
-@end
-
-NS_ASSUME_NONNULL_END
+#import "api/peerconnection/RTCIceCandidate.h"

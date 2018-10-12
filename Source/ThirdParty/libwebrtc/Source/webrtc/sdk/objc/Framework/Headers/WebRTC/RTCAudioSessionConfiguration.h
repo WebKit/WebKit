@@ -8,42 +8,4 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#import <AVFoundation/AVFoundation.h>
-#import <Foundation/Foundation.h>
-
-#import "WebRTC/RTCMacros.h"
-
-NS_ASSUME_NONNULL_BEGIN
-
-extern const int kRTCAudioSessionPreferredNumberOfChannels;
-extern const double kRTCAudioSessionHighPerformanceSampleRate;
-extern const double kRTCAudioSessionLowComplexitySampleRate;
-extern const double kRTCAudioSessionHighPerformanceIOBufferDuration;
-extern const double kRTCAudioSessionLowComplexityIOBufferDuration;
-
-// Struct to hold configuration values.
-RTC_EXPORT
-__attribute__((objc_runtime_name("WK_RTCAudioSessionConfiguration")))
-@interface RTCAudioSessionConfiguration : NSObject
-
-@property(nonatomic, strong) NSString *category;
-@property(nonatomic, assign) AVAudioSessionCategoryOptions categoryOptions;
-@property(nonatomic, strong) NSString *mode;
-@property(nonatomic, assign) double sampleRate;
-@property(nonatomic, assign) NSTimeInterval ioBufferDuration;
-@property(nonatomic, assign) NSInteger inputNumberOfChannels;
-@property(nonatomic, assign) NSInteger outputNumberOfChannels;
-
-/** Initializes configuration to defaults. */
-- (instancetype)init NS_DESIGNATED_INITIALIZER;
-
-/** Returns the current configuration of the audio session. */
-+ (instancetype)currentConfiguration;
-/** Returns the configuration that WebRTC needs. */
-+ (instancetype)webRTCConfiguration;
-/** Provide a way to override the default configuration. */
-+ (void)setWebRTCConfiguration:(RTCAudioSessionConfiguration *)configuration;
-
-@end
-
-NS_ASSUME_NONNULL_END
+#import "components/audio/RTCAudioSessionConfiguration.h"

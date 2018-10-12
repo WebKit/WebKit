@@ -8,20 +8,4 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef SDK_OBJC_FRAMEWORK_NATIVE_API_VIDEO_DECODER_FACTORY_H_
-#define SDK_OBJC_FRAMEWORK_NATIVE_API_VIDEO_DECODER_FACTORY_H_
-
-#include <memory>
-
-#import "WebRTC/RTCVideoCodecFactory.h"
-
-#include "api/video_codecs/video_decoder_factory.h"
-
-namespace webrtc {
-
-std::unique_ptr<VideoDecoderFactory> ObjCToNativeVideoDecoderFactory(
-    id<RTCVideoDecoderFactory> objc_video_decoder_factory);
-
-}  // namespace webrtc
-
-#endif  // SDK_OBJC_FRAMEWORK_NATIVE_API_VIDEO_DECODER_FACTORY_H_
+#import "native/api/video_decoder_factory.h"

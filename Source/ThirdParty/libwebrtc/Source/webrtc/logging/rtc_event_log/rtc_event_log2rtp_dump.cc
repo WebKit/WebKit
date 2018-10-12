@@ -15,9 +15,14 @@
 #include <sstream>
 #include <string>
 
+#include "absl/memory/memory.h"
+#include "absl/types/optional.h"
 #include "logging/rtc_event_log/rtc_event_log.h"
 #include "logging/rtc_event_log/rtc_event_log_parser_new.h"
+#include "logging/rtc_event_log/rtc_event_processor.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
+#include "modules/rtp_rtcp/source/rtp_header_extensions.h"
+#include "modules/rtp_rtcp/source/rtp_packet.h"
 #include "modules/rtp_rtcp/source/rtp_utility.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/flags.h"
@@ -59,8 +64,9 @@ DEFINE_bool(help, false, "Prints this message.");
 // The empty string must be validated as true, because it is the default value
 // of the command-line flag. In this case, no value is written to the output
 // variable.
-bool ParseSsrc(std::string str, uint32_t* ssrc) {
+absl::optional<uint32_t> ParseSsrc(std::string str) {
   // If the input string starts with 0x or 0X it indicates a hexadecimal number.
+  uint32_t ssrc;
   auto read_mode = std::dec;
   if (str.size() > 2 &&
       (str.substr(0, 2) == "0x" || str.substr(0, 2) == "0X")) {
@@ -68,8 +74,79 @@ bool ParseSsrc(std::string str, uint32_t* ssrc) {
     str = str.substr(2);
   }
   std::stringstream ss(str);
-  ss >> read_mode >> *ssrc;
-  return str.empty() || (!ss.fail() && ss.eof());
+  ss >> read_mode >> ssrc;
+  if (str.empty() || (!ss.fail() && ss.eof()))
+    return ssrc;
+  return absl::nullopt;
+}
+
+bool ShouldSkipStream(MediaType media_type,
+                      uint32_t ssrc,
+                      absl::optional<uint32_t> ssrc_filter) {
+  if (!FLAG_audio && media_type == MediaType::AUDIO)
+    return true;
+  if (!FLAG_video && media_type == MediaType::VIDEO)
+    return true;
+  if (!FLAG_data && media_type == MediaType::DATA)
+    return true;
+  if (ssrc_filter.has_value() && ssrc != *ssrc_filter)
+    return true;
+  return false;
+}
+
+// Convert a LoggedRtpPacketIncoming to a test::RtpPacket. Header extension IDs
+// are allocated according to the provided extension map. This might not match
+// the extension map used in the actual call.
+void ConvertRtpPacket(const webrtc::LoggedRtpPacketIncoming& incoming,
+                      const webrtc::RtpHeaderExtensionMap default_extension_map,
+                      webrtc::test::RtpPacket* packet) {
+  webrtc::RtpPacket reconstructed_packet(&default_extension_map);
+
+  reconstructed_packet.SetMarker(incoming.rtp.header.markerBit);
+  reconstructed_packet.SetPayloadType(incoming.rtp.header.payloadType);
+  reconstructed_packet.SetSequenceNumber(incoming.rtp.header.sequenceNumber);
+  reconstructed_packet.SetTimestamp(incoming.rtp.header.timestamp);
+  reconstructed_packet.SetSsrc(incoming.rtp.header.ssrc);
+  if (incoming.rtp.header.numCSRCs > 0) {
+    reconstructed_packet.SetCsrcs(rtc::ArrayView<const uint32_t>(
+        incoming.rtp.header.arrOfCSRCs, incoming.rtp.header.numCSRCs));
+  }
+
+  // Set extensions.
+  if (incoming.rtp.header.extension.hasTransmissionTimeOffset)
+    reconstructed_packet.SetExtension<webrtc::TransmissionOffset>(
+        incoming.rtp.header.extension.transmissionTimeOffset);
+  if (incoming.rtp.header.extension.hasAbsoluteSendTime)
+    reconstructed_packet.SetExtension<webrtc::AbsoluteSendTime>(
+        incoming.rtp.header.extension.absoluteSendTime);
+  if (incoming.rtp.header.extension.hasTransportSequenceNumber)
+    reconstructed_packet.SetExtension<webrtc::TransportSequenceNumber>(
+        incoming.rtp.header.extension.transportSequenceNumber);
+  if (incoming.rtp.header.extension.hasAudioLevel)
+    reconstructed_packet.SetExtension<webrtc::AudioLevel>(
+        incoming.rtp.header.extension.voiceActivity,
+        incoming.rtp.header.extension.audioLevel);
+  if (incoming.rtp.header.extension.hasVideoRotation)
+    reconstructed_packet.SetExtension<webrtc::VideoOrientation>(
+        incoming.rtp.header.extension.videoRotation);
+  if (incoming.rtp.header.extension.hasVideoContentType)
+    reconstructed_packet.SetExtension<webrtc::VideoContentTypeExtension>(
+        incoming.rtp.header.extension.videoContentType);
+  if (incoming.rtp.header.extension.has_video_timing)
+    reconstructed_packet.SetExtension<webrtc::VideoTimingExtension>(
+        incoming.rtp.header.extension.video_timing);
+
+  RTC_DCHECK_EQ(reconstructed_packet.size(), incoming.rtp.header_length);
+  RTC_DCHECK_EQ(reconstructed_packet.headers_size(),
+                incoming.rtp.header_length);
+  memcpy(packet->data, reconstructed_packet.data(),
+         reconstructed_packet.headers_size());
+  packet->length = reconstructed_packet.headers_size();
+  packet->original_length = incoming.rtp.total_length;
+  packet->time_ms = incoming.log_time_ms();
+  // Set padding bit.
+  if (incoming.rtp.header.paddingLength > 0)
+    packet->data[0] = packet->data[0] | 0x20;
 }
 
 }  // namespace
@@ -97,10 +174,11 @@ int main(int argc, char* argv[]) {
   std::string input_file = argv[1];
   std::string output_file = argv[2];
 
-  uint32_t ssrc_filter = 0;
-  if (strlen(FLAG_ssrc) > 0)
-    RTC_CHECK(ParseSsrc(FLAG_ssrc, &ssrc_filter))
-        << "Flag verification has failed.";
+  absl::optional<uint32_t> ssrc_filter;
+  if (strlen(FLAG_ssrc) > 0) {
+    ssrc_filter = ParseSsrc(FLAG_ssrc);
+    RTC_CHECK(ssrc_filter.has_value()) << "Failed to read SSRC filter flag.";
+  }
 
   webrtc::ParsedRtcEventLogNew parsed_stream;
   if (!parsed_stream.ParseFile(input_file)) {
@@ -122,84 +200,57 @@ int main(int argc, char* argv[]) {
             << " events in the input file." << std::endl;
   int rtp_counter = 0, rtcp_counter = 0;
   bool header_only = false;
-  for (size_t i = 0; i < parsed_stream.GetNumberOfEvents(); i++) {
-    // The parsed_stream will assert if the protobuf event is missing
-    // some required fields and we attempt to access them. We could consider
-    // a softer failure option, but it does not seem useful to generate
-    // RTP dumps based on broken event logs.
-    if (FLAG_rtp && parsed_stream.GetEventType(i) ==
-                        webrtc::ParsedRtcEventLogNew::EventType::RTP_EVENT) {
-      webrtc::test::RtpPacket packet;
-      webrtc::PacketDirection direction;
-      parsed_stream.GetRtpHeader(i, &direction, packet.data, &packet.length,
-                                 &packet.original_length, nullptr);
-      if (packet.original_length > packet.length)
-        header_only = true;
-      packet.time_ms = parsed_stream.GetTimestamp(i) / 1000;
 
-      webrtc::RtpUtility::RtpHeaderParser rtp_parser(packet.data,
-                                                     packet.length);
+  webrtc::RtpHeaderExtensionMap default_extension_map =
+      webrtc::ParsedRtcEventLogNew::GetDefaultHeaderExtensionMap();
+  auto handle_rtp = [&default_extension_map, &rtp_writer, &rtp_counter](
+                        const webrtc::LoggedRtpPacketIncoming& incoming) {
+    webrtc::test::RtpPacket packet;
+    ConvertRtpPacket(incoming, default_extension_map, &packet);
 
-      // TODO(terelius): Maybe add a flag to dump outgoing traffic instead?
-      if (direction == webrtc::kOutgoingPacket)
-        continue;
+    rtp_writer->WritePacket(&packet);
+    rtp_counter++;
+  };
 
-      webrtc::RTPHeader parsed_header;
-      rtp_parser.Parse(&parsed_header);
-      MediaType media_type =
-          parsed_stream.GetMediaType(parsed_header.ssrc, direction);
-      if (!FLAG_audio && media_type == MediaType::AUDIO)
-        continue;
-      if (!FLAG_video && media_type == MediaType::VIDEO)
-        continue;
-      if (!FLAG_data && media_type == MediaType::DATA)
-        continue;
-      if (strlen(FLAG_ssrc) > 0) {
-        const uint32_t packet_ssrc =
-            webrtc::ByteReader<uint32_t>::ReadBigEndian(
-                reinterpret_cast<const uint8_t*>(packet.data + 8));
-        if (packet_ssrc != ssrc_filter)
-          continue;
-      }
+  auto handle_rtcp = [&rtp_writer, &rtcp_counter](
+                         const webrtc::LoggedRtcpPacketIncoming& incoming) {
+    webrtc::test::RtpPacket packet;
+    memcpy(packet.data, incoming.rtcp.raw_data.data(),
+           incoming.rtcp.raw_data.size());
+    packet.length = incoming.rtcp.raw_data.size();
+    // For RTCP packets the original_length should be set to 0 in the
+    // RTPdump format.
+    packet.original_length = 0;
+    packet.time_ms = incoming.log_time_ms();
 
-      rtp_writer->WritePacket(&packet);
-      rtp_counter++;
-    }
-    if (FLAG_rtcp && parsed_stream.GetEventType(i) ==
-                         webrtc::ParsedRtcEventLogNew::EventType::RTCP_EVENT) {
-      webrtc::test::RtpPacket packet;
-      webrtc::PacketDirection direction;
-      parsed_stream.GetRtcpPacket(i, &direction, packet.data, &packet.length);
-      // For RTCP packets the original_length should be set to 0 in the
-      // RTPdump format.
-      packet.original_length = 0;
-      packet.time_ms = parsed_stream.GetTimestamp(i) / 1000;
+    rtp_writer->WritePacket(&packet);
+    rtcp_counter++;
+  };
 
-      // TODO(terelius): Maybe add a flag to dump outgoing traffic instead?
-      if (direction == webrtc::kOutgoingPacket)
-        continue;
-
-      // Note that |packet_ssrc| is the sender SSRC. An RTCP message may contain
-      // report blocks for many streams, thus several SSRCs and they doen't
-      // necessarily have to be of the same media type.
-      const uint32_t packet_ssrc = webrtc::ByteReader<uint32_t>::ReadBigEndian(
-          reinterpret_cast<const uint8_t*>(packet.data + 4));
-      MediaType media_type = parsed_stream.GetMediaType(packet_ssrc, direction);
-      if (!FLAG_audio && media_type == MediaType::AUDIO)
-        continue;
-      if (!FLAG_video && media_type == MediaType::VIDEO)
-        continue;
-      if (!FLAG_data && media_type == MediaType::DATA)
-        continue;
-      if (strlen(FLAG_ssrc) > 0) {
-        if (packet_ssrc != ssrc_filter)
-          continue;
-      }
-
-      rtp_writer->WritePacket(&packet);
-      rtcp_counter++;
-    }
+  webrtc::RtcEventProcessor event_processor;
+  for (const auto& stream : parsed_stream.incoming_rtp_packets_by_ssrc()) {
+    MediaType media_type =
+        parsed_stream.GetMediaType(stream.ssrc, webrtc::kIncomingPacket);
+    if (ShouldSkipStream(media_type, stream.ssrc, ssrc_filter))
+      continue;
+    auto rtp_view = absl::make_unique<
+        webrtc::ProcessableEventList<webrtc::LoggedRtpPacketIncoming>>(
+        stream.incoming_packets.begin(), stream.incoming_packets.end(),
+        handle_rtp);
+    event_processor.AddEvents(std::move(rtp_view));
   }
+  // Note that |packet_ssrc| is the sender SSRC. An RTCP message may contain
+  // report blocks for many streams, thus several SSRCs and they don't
+  // necessarily have to be of the same media type. We therefore don't
+  // support filtering of RTCP based on SSRC and media type.
+  auto rtcp_view = absl::make_unique<
+      webrtc::ProcessableEventList<webrtc::LoggedRtcpPacketIncoming>>(
+      parsed_stream.incoming_rtcp_packets().begin(),
+      parsed_stream.incoming_rtcp_packets().end(), handle_rtcp);
+  event_processor.AddEvents(std::move(rtcp_view));
+
+  event_processor.ProcessEventsInOrder();
+
   std::cout << "Wrote " << rtp_counter << (header_only ? " header-only" : "")
             << " RTP packets and " << rtcp_counter << " RTCP packets to the "
             << "output file." << std::endl;

@@ -25,11 +25,14 @@ namespace test {
 // to find the project root.
 extern const char* kCannotFindProjectRootDir;
 
-// Creates and returns the absolute path to the output directory where log files
-// and other test artifacts should be put. The output directory is generally a
-// directory named "out" at the top-level of the project, i.e. a subfolder to
-// the path returned by ProjectRootPath(). The exception is Android where we use
-// /sdcard/ instead.
+// Returns the absolute path to the output directory where log files and other
+// test artifacts should be put. The output directory is generally a directory
+// named "out" at the project root. This root is assumed to be two levels above
+// where the test binary is located; this is because tests execute in a dir
+// out/Whatever relative to the project root. This convention is also followed
+// in Chromium.
+//
+// The exception is Android where we use /sdcard/ instead.
 //
 // If symbolic links occur in the path they will be resolved and the actual
 // directory will be returned.
@@ -100,6 +103,9 @@ bool FileExists(const std::string& file_name);
 // Checks if a directory exists.
 bool DirExists(const std::string& directory_name);
 
+// Strips the rightmost path segment from a path.
+std::string DirName(const std::string& path);
+
 // File size of the supplied file in bytes. Will return 0 if the file is
 // empty or if the file does not exist/is readable.
 size_t GetFileSize(const std::string& filename);
@@ -110,6 +116,7 @@ size_t GetFileSize(const std::string& filename);
 // the argv[0] being sent into the main function to make it possible for
 // fileutils.h to find the correct project paths even when the working directory
 // is outside the project tree (which happens in some cases).
+// TODO(bugs.webrtc.org/9792): Deprecated - going away soon.
 void SetExecutablePath(const std::string& path_to_executable);
 
 }  // namespace test

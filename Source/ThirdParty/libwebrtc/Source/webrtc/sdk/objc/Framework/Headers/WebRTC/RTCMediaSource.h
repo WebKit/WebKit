@@ -8,28 +8,4 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#import <Foundation/Foundation.h>
-
-#import <WebRTC/RTCMacros.h>
-
-typedef NS_ENUM(NSInteger, RTCSourceState) {
-  RTCSourceStateInitializing,
-  RTCSourceStateLive,
-  RTCSourceStateEnded,
-  RTCSourceStateMuted,
-};
-
-NS_ASSUME_NONNULL_BEGIN
-
-RTC_EXPORT
-__attribute__((objc_runtime_name("WK_RTCMediaSource")))
-@interface RTCMediaSource : NSObject
-
-/** The current state of the RTCMediaSource. */
-@property(nonatomic, readonly) RTCSourceState state;
-
-- (instancetype)init NS_UNAVAILABLE;
-
-@end
-
-NS_ASSUME_NONNULL_END
+#import "api/peerconnection/RTCMediaSource.h"

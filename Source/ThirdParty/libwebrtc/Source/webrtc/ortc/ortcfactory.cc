@@ -10,7 +10,6 @@
 
 #include "ortc/ortcfactory.h"
 
-#include <sstream>
 #include <utility>  // For std::move.
 #include <vector>
 
@@ -41,6 +40,7 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/helpers.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/strings/string_builder.h"
 
 namespace {
 
@@ -461,7 +461,7 @@ OrtcFactory::CreateUdpTransport(int family,
   RTC_LOG(LS_INFO) << "Created UDP socket with address "
                    << socket->GetLocalAddress().ToSensitiveString() << ".";
   // Make a unique debug name (for logging/diagnostics only).
-  std::ostringstream oss;
+  rtc::StringBuilder oss;
   static int udp_id = 0;
   oss << "udp" << udp_id++;
   return UdpTransportProxyWithInternal<cricket::UdpTransport>::Create(

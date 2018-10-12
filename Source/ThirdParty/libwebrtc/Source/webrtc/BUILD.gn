@@ -83,12 +83,21 @@ if (!build_with_chromium) {
   }
 }
 
+config("library_impl_config") {
+  # Build targets that contain WebRTC implementation need this macro to
+  # be defined in order to correctly export symbols when is_component_build
+  # is true.
+  # For more info see: rtc_base/build/rtc_export.h.
+  defines = [ "WEBRTC_LIBRARY_IMPL" ]
+}
+
 # Contains the defines and includes in common.gypi that are duplicated both as
 # target_defaults and direct_dependent_settings.
 config("common_inherited_config") {
   defines = []
   cflags = []
   ldflags = []
+
   if (build_with_mozilla) {
     defines += [ "WEBRTC_MOZILLA_BUILD" ]
   }
@@ -163,6 +172,32 @@ config("common_inherited_config") {
 
   if (is_ubsan) {
     cflags += [ "-fsanitize=float-cast-overflow" ]
+  }
+}
+
+# TODO(bugs.webrtc.org/9693): Remove the possibility to suppress this warning
+# as soon as WebRTC compiles without it.
+config("no_exit_time_destructors") {
+  if (is_clang) {
+    cflags = [ "-Wno-exit-time-destructors" ]
+  }
+}
+
+# TODO(bugs.webrtc.org/9693): Remove the possibility to suppress this warning
+# as soon as WebRTC compiles without it.
+config("no_global_constructors") {
+  if (is_clang) {
+    cflags = [ "-Wno-global-constructors" ]
+  }
+}
+
+config("rtc_prod_config") {
+  # Ideally, WebRTC production code (but not test code) should have these flags.
+  if (is_clang) {
+    cflags = [
+      "-Wexit-time-destructors",
+      "-Wglobal-constructors",
+    ]
   }
 }
 
@@ -320,6 +355,10 @@ config("common_config") {
 
 config("common_objc") {
   libs = [ "Foundation.framework" ]
+
+  if (rtc_use_metal_rendering) {
+    defines = [ "RTC_SUPPORTS_METAL" ]
+  }
 }
 
 if (!build_with_chromium) {
@@ -346,7 +385,6 @@ if (!build_with_chromium) {
       "ortc",
       "rtc_base",
       "sdk",
-      "system_wrappers:system_wrappers_default",
       "video",
     ]
 
@@ -362,11 +400,7 @@ if (!build_with_chromium) {
     ]
 
     if (build_with_mozilla) {
-      deps += [
-        "api/video:video_frame",
-        "system_wrappers:field_trial_default",
-        "system_wrappers:metrics_default",
-      ]
+      deps += [ "api/video:video_frame" ]
     } else {
       deps += [
         "api",
@@ -385,6 +419,11 @@ if (!build_with_chromium) {
 }
 
 rtc_source_set("webrtc_common") {
+  # Client code SHOULD NOT USE THIS TARGET, but for now it needs to be public
+  # because there exists client code that uses it.
+  # TODO(bugs.webrtc.org/9808): Move to private visibility as soon as that
+  # client code gets updated.
+  visibility = [ "*" ]
   sources = [
     "common_types.h",
   ]
@@ -430,14 +469,13 @@ if (rtc_include_tests) {
       "rtc_base:rtc_base_tests_main",
       "rtc_base:rtc_base_tests_utils",
       "rtc_base:rtc_base_unittests",
+      "rtc_base:rtc_json_unittests",
       "rtc_base:rtc_numerics_unittests",
       "rtc_base:rtc_task_queue_unittests",
       "rtc_base:sequenced_task_checker_unittests",
       "rtc_base:sigslot_unittest",
       "rtc_base:weak_ptr_unittests",
       "rtc_base/experiments:experiments_unittests",
-      "system_wrappers:metrics_default",
-      "system_wrappers:runtime_enabled_features_default",
     ]
 
     if (rtc_enable_protobuf) {
@@ -572,12 +610,12 @@ if (rtc_include_tests) {
         "examples/androidjunit/src/org/appspot/apprtc/BluetoothManagerTest.java",
         "examples/androidjunit/src/org/appspot/apprtc/DirectRTCClientTest.java",
         "examples/androidjunit/src/org/appspot/apprtc/TCPChannelClientTest.java",
+        "sdk/android/tests/src/org/webrtc/AndroidVideoDecoderTest.java",
         "sdk/android/tests/src/org/webrtc/CameraEnumerationTest.java",
         "sdk/android/tests/src/org/webrtc/CodecTestHelper.java",
         "sdk/android/tests/src/org/webrtc/FakeMediaCodecWrapper.java",
         "sdk/android/tests/src/org/webrtc/GlGenericDrawerTest.java",
         "sdk/android/tests/src/org/webrtc/HardwareVideoEncoderTest.java",
-        "sdk/android/tests/src/org/webrtc/HardwareVideoDecoderTest.java",
         "sdk/android/tests/src/org/webrtc/ScalingSettingsTest.java",
       ]
 

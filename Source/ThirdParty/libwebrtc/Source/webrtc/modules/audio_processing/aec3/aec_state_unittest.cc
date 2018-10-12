@@ -135,14 +135,16 @@ TEST(AecState, NormalUsage) {
   }
   ASSERT_TRUE(state.UsableLinearEstimate());
   {
+    // Note that the render spectrum is built so it does not have energy in the
+    // odd bands but just in the even bands.
     const auto& erle = state.Erle();
     EXPECT_EQ(erle[0], erle[1]);
     constexpr size_t kLowFrequencyLimit = 32;
-    for (size_t k = 1; k < kLowFrequencyLimit; ++k) {
-      EXPECT_NEAR(k % 2 == 0 ? 4.f : 1.f, erle[k], 0.1);
+    for (size_t k = 2; k < kLowFrequencyLimit; k = k + 2) {
+      EXPECT_NEAR(4.f, erle[k], 0.1);
     }
-    for (size_t k = kLowFrequencyLimit; k < erle.size() - 1; ++k) {
-      EXPECT_NEAR(k % 2 == 0 ? 1.5f : 1.f, erle[k], 0.1);
+    for (size_t k = kLowFrequencyLimit; k < erle.size() - 1; k = k + 2) {
+      EXPECT_NEAR(1.5f, erle[k], 0.1);
     }
     EXPECT_EQ(erle[erle.size() - 2], erle[erle.size() - 1]);
   }

@@ -35,6 +35,8 @@ VideoCodecTestFixture::Config CreateConfig() {
   config.num_frames = kForemanNumFrames;
   config.hw_encoder = true;
   config.hw_decoder = true;
+  // In order to not overwhelm the OpenMAX buffers in the Android MediaCodec.
+  config.encode_in_real_time = true;
   return config;
 }
 

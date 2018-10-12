@@ -36,7 +36,6 @@ def _GenerateDefaultOverridden(config_override):
   settings.use_bf = rtc::Optional<bool>(false);
   settings.use_ed = rtc::Optional<bool>(false);
   settings.use_hpf = rtc::Optional<bool>(true);
-  settings.use_ie = rtc::Optional<bool>(false);
   settings.use_le = rtc::Optional<bool>(true);
   settings.use_ns = rtc::Optional<bool>(true);
   settings.use_ts = rtc::Optional<bool>(true);
@@ -83,7 +82,6 @@ def _GenerateAllDefaultPlusOne():
       'with_drift_compensation': {'-drift_compensation': 1,},
       'with_residual_echo_detector': {'-ed': 1,},
       'with_AEC_extended_filter': {'-extended_filter': 1,},
-      'with_intelligibility_enhancer': {'-ie': 1,},
       'with_LC': {'-lc': 1,},
       'with_refined_adaptive_filter': {'-refined_adaptive_filter': 1,},
   }

@@ -20,8 +20,6 @@ enum EventTypeWrapper {
 
 #define WEBRTC_EVENT_INFINITE 0xffffffff
 
-class EventTimerWrapper;
-
 class EventWrapper {
  public:
   // Factory method. Constructor disabled.
@@ -48,20 +46,6 @@ class EventWrapper {
   // |max_time| is the maximum time to wait in milliseconds or
   // WEBRTC_EVENT_INFINITE to wait infinitely.
   virtual EventTypeWrapper Wait(unsigned long max_time) = 0;
-};
-
-class EventTimerWrapper : public EventWrapper {
- public:
-  static EventTimerWrapper* Create();
-
-  // Starts a timer that will call a non-sticky version of Set() either once
-  // or periodically. If the timer is periodic it ensures that there is no
-  // drift over time relative to the system clock.
-  //
-  // |time| is in milliseconds.
-  virtual bool StartTimer(bool periodic, unsigned long time) = 0;
-
-  virtual bool StopTimer() = 0;
 };
 
 }  // namespace webrtc

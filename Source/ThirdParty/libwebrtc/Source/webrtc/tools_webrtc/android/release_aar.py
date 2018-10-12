@@ -52,6 +52,8 @@ UPLOAD_TRIES = 3
 UPLOAD_RETRY_BASE_SLEEP_SECONDS = 2.0
 GRADLEW_BIN = os.path.join(CHECKOUT_ROOT,
                            'examples/androidtests/third_party/gradle/gradlew')
+ADB_BIN = os.path.join(CHECKOUT_ROOT,
+                       'third_party/android_tools/sdk/platform-tools/adb')
 AAR_PROJECT_DIR = os.path.join(CHECKOUT_ROOT, 'examples/aarproject')
 AAR_PROJECT_GRADLE = os.path.join(AAR_PROJECT_DIR, 'build.gradle')
 AAR_PROJECT_APP_GRADLE = os.path.join(AAR_PROJECT_DIR, 'app', 'build.gradle')
@@ -67,6 +69,9 @@ def _ParseArgs():
       help='Skips running the tests.')
   parser.add_argument('--publish', action='store_true', default=False,
       help='Automatically publishes the library if the tests pass.')
+  parser.add_argument('--build-dir', default=None,
+      help='Temporary directory to store the build files. If not specified, '
+           'a new directory will be created.')
   parser.add_argument('--verbose', action='store_true', default=False,
       help='Debug logging.')
   return parser.parse_args()
@@ -168,6 +173,12 @@ def _TestAAR(tmp_dir, username, password, version):
     with open(AAR_PROJECT_APP_GRADLE, 'w') as gradle_app_file:
       gradle_app_file.write(gradle_app)
 
+    # Uninstall any existing version of AppRTCMobile.
+    logging.info('Uninstalling previous AppRTCMobile versions. It is okay for '
+                 'these commands to fail if AppRTCMobile is not installed.')
+    subprocess.call([ADB_BIN, 'uninstall', 'org.appspot.apprtc'])
+    subprocess.call([ADB_BIN, 'uninstall', 'org.appspot.apprtc.test'])
+
     # Run tests.
     try:
       # First clean the project.
@@ -219,7 +230,7 @@ def _DeleteUnpublishedVersion(user, password, version):
     raise Exception('Failed to delete version. Response: %s' % response)
 
 
-def ReleaseAar(use_goma, skip_tests, publish):
+def ReleaseAar(use_goma, skip_tests, publish, build_dir):
   version = '1.0.' + _GetCommitPos()
   commit = _GetCommitHash()
   logging.info('Releasing AAR version %s with hash %s', version, commit)
@@ -230,18 +241,21 @@ def ReleaseAar(use_goma, skip_tests, publish):
     raise Exception('Environment variables BINTRAY_USER and BINTRAY_API_KEY '
                     'must be defined.')
 
-  tmp_dir = tempfile.mkdtemp()
+  # If build directory is not specified, create a temporary directory.
+  use_tmp_dir = not build_dir
+  if use_tmp_dir:
+    build_dir = tempfile.mkdtemp()
 
   try:
     base_name = ARTIFACT_ID + '-' + version
-    aar_file = os.path.join(tmp_dir, base_name + '.aar')
-    third_party_licenses_file = os.path.join(tmp_dir, 'LICENSE.md')
-    pom_file = os.path.join(tmp_dir, base_name + '.pom')
+    aar_file = os.path.join(build_dir, base_name + '.aar')
+    third_party_licenses_file = os.path.join(build_dir, 'LICENSE.md')
+    pom_file = os.path.join(build_dir, base_name + '.pom')
 
-    logging.info('Building at %s', tmp_dir)
+    logging.info('Building at %s', build_dir)
     BuildAar(ARCHS, aar_file,
              use_goma=use_goma,
-             ext_build_dir=os.path.join(tmp_dir, 'aar-build'))
+             ext_build_dir=os.path.join(build_dir, 'aar-build'))
     _GeneratePom(pom_file, version, commit)
 
     _UploadFile(user, api_key, aar_file, version, base_name + '.aar')
@@ -249,7 +263,7 @@ def ReleaseAar(use_goma, skip_tests, publish):
                 'THIRD_PARTY_LICENSES.md')
     _UploadFile(user, api_key, pom_file, version, base_name + '.pom')
 
-    tests_pass = skip_tests or _TestAAR(tmp_dir, user, api_key, version)
+    tests_pass = skip_tests or _TestAAR(build_dir, user, api_key, version)
     if not tests_pass:
       logging.info('Discarding library.')
       _PublishAAR(user, api_key, version, {'discard': True})
@@ -263,13 +277,14 @@ def ReleaseAar(use_goma, skip_tests, publish):
       logging.info('Note: The library has not not been published automatically.'
                    ' Please do so manually if desired.')
   finally:
-    shutil.rmtree(tmp_dir, True)
+    if use_tmp_dir:
+      shutil.rmtree(build_dir, True)
 
 
 def main():
   args = _ParseArgs()
   logging.basicConfig(level=logging.DEBUG if args.verbose else logging.INFO)
-  ReleaseAar(args.use_goma, args.skip_tests, args.publish)
+  ReleaseAar(args.use_goma, args.skip_tests, args.publish, args.build_dir)
 
 
 if __name__ == '__main__':

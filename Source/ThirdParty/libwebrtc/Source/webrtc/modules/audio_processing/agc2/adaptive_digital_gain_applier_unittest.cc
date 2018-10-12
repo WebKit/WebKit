@@ -23,6 +23,7 @@ namespace {
 // Constants used in place of estimated noise levels.
 constexpr float kNoNoiseDbfs = -90.f;
 constexpr float kWithNoiseDbfs = -20.f;
+constexpr VadWithLevel::LevelAndProbability kVadSpeech(1.f, -20.f, 0.f);
 
 // Runs gain applier and returns the applied gain in linear scale.
 float RunOnConstantLevel(int num_iterations,
@@ -33,14 +34,30 @@ float RunOnConstantLevel(int num_iterations,
 
   for (int i = 0; i < num_iterations; ++i) {
     VectorFloatFrame fake_audio(1, 1, 1.f);
-    gain_applier->Process(input_level_dbfs, kNoNoiseDbfs, vad_data,
-                          fake_audio.float_frame_view());
+    SignalWithLevels signal_with_levels(fake_audio.float_frame_view());
+    signal_with_levels.input_level_dbfs = input_level_dbfs;
+    signal_with_levels.input_noise_level_dbfs = kNoNoiseDbfs;
+    signal_with_levels.vad_result = vad_data;
+    signal_with_levels.limiter_audio_level_dbfs = -2.f;
+    signal_with_levels.estimate_is_confident = true;
+    gain_applier->Process(signal_with_levels);
     gain_linear = fake_audio.float_frame_view().channel(0)[0];
   }
   return gain_linear;
 }
 
-constexpr VadWithLevel::LevelAndProbability kVadSpeech(1.f, -20.f, 0.f);
+// Returns 'SignalWithLevels' for typical GainApplier behavior. Voice on, no
+// noise, low limiter, confident level.
+SignalWithLevels TestSignalWithLevel(AudioFrameView<float> float_frame) {
+  SignalWithLevels result(float_frame);
+  result.input_level_dbfs = -1;
+  result.input_noise_level_dbfs = kNoNoiseDbfs;
+  result.vad_result = kVadSpeech;
+  result.estimate_is_confident = true;
+  result.limiter_audio_level_dbfs = -2.f;
+  return result;
+}
+
 }  // namespace
 
 TEST(AutomaticGainController2AdaptiveGainApplier, GainApplierShouldNotCrash) {
@@ -52,8 +69,9 @@ TEST(AutomaticGainController2AdaptiveGainApplier, GainApplierShouldNotCrash) {
 
   // Make one call with reasonable audio level values and settings.
   VectorFloatFrame fake_audio(2, 480, 10000.f);
-  gain_applier.Process(-5.0, kNoNoiseDbfs, kVadSpeech,
-                       fake_audio.float_frame_view());
+  auto signal_with_level = TestSignalWithLevel(fake_audio.float_frame_view());
+  signal_with_level.input_level_dbfs = -5.0;
+  gain_applier.Process(signal_with_level);
 }
 
 // Check that the output is -kHeadroom dBFS.
@@ -103,8 +121,9 @@ TEST(AutomaticGainController2AdaptiveGainApplier, GainDoesNotChangeFast) {
   for (int i = 0; i < kNumFramesToAdapt; ++i) {
     SCOPED_TRACE(i);
     VectorFloatFrame fake_audio(1, 1, 1.f);
-    gain_applier.Process(initial_level_dbfs, kNoNoiseDbfs, kVadSpeech,
-                         fake_audio.float_frame_view());
+    auto signal_with_level = TestSignalWithLevel(fake_audio.float_frame_view());
+    signal_with_level.input_level_dbfs = initial_level_dbfs;
+    gain_applier.Process(signal_with_level);
     float current_gain_linear = fake_audio.float_frame_view().channel(0)[0];
     EXPECT_LE(std::abs(current_gain_linear - last_gain_linear),
               kMaxChangePerFrameLinear);
@@ -115,8 +134,9 @@ TEST(AutomaticGainController2AdaptiveGainApplier, GainDoesNotChangeFast) {
   for (int i = 0; i < kNumFramesToAdapt; ++i) {
     SCOPED_TRACE(i);
     VectorFloatFrame fake_audio(1, 1, 1.f);
-    gain_applier.Process(0.f, kNoNoiseDbfs, kVadSpeech,
-                         fake_audio.float_frame_view());
+    auto signal_with_level = TestSignalWithLevel(fake_audio.float_frame_view());
+    signal_with_level.input_level_dbfs = 0.f;
+    gain_applier.Process(signal_with_level);
     float current_gain_linear = fake_audio.float_frame_view().channel(0)[0];
     EXPECT_LE(std::abs(current_gain_linear - last_gain_linear),
               kMaxChangePerFrameLinear);
@@ -132,8 +152,9 @@ TEST(AutomaticGainController2AdaptiveGainApplier, GainIsRampedInAFrame) {
   constexpr int num_samples = 480;
 
   VectorFloatFrame fake_audio(1, num_samples, 1.f);
-  gain_applier.Process(initial_level_dbfs, kNoNoiseDbfs, kVadSpeech,
-                       fake_audio.float_frame_view());
+  auto signal_with_level = TestSignalWithLevel(fake_audio.float_frame_view());
+  signal_with_level.input_level_dbfs = initial_level_dbfs;
+  gain_applier.Process(signal_with_level);
   float maximal_difference = 0.f;
   float current_value = 1.f * DbToRatio(kInitialAdaptiveDigitalGainDb);
   for (const auto& x : fake_audio.float_frame_view().channel(0)) {
@@ -162,8 +183,10 @@ TEST(AutomaticGainController2AdaptiveGainApplier, NoiseLimitsGain) {
 
   for (int i = 0; i < num_initial_frames + num_frames; ++i) {
     VectorFloatFrame fake_audio(1, num_samples, 1.f);
-    gain_applier.Process(initial_level_dbfs, kWithNoiseDbfs, kVadSpeech,
-                         fake_audio.float_frame_view());
+    auto signal_with_level = TestSignalWithLevel(fake_audio.float_frame_view());
+    signal_with_level.input_level_dbfs = initial_level_dbfs;
+    signal_with_level.input_noise_level_dbfs = kWithNoiseDbfs;
+    gain_applier.Process(signal_with_level);
 
     // Wait so that the adaptive gain applier has time to lower the gain.
     if (i > num_initial_frames) {
@@ -182,7 +205,39 @@ TEST(AutomaticGainController2GainApplier, CanHandlePositiveSpeechLevels) {
 
   // Make one call with positive audio level values and settings.
   VectorFloatFrame fake_audio(2, 480, 10000.f);
-  gain_applier.Process(5.0f, kNoNoiseDbfs, kVadSpeech,
-                       fake_audio.float_frame_view());
+  auto signal_with_level = TestSignalWithLevel(fake_audio.float_frame_view());
+  signal_with_level.input_level_dbfs = 5.0f;
+  gain_applier.Process(signal_with_level);
+}
+
+TEST(AutomaticGainController2GainApplier, AudioLevelLimitsGain) {
+  ApmDataDumper apm_data_dumper(0);
+  AdaptiveDigitalGainApplier gain_applier(&apm_data_dumper);
+
+  constexpr float initial_level_dbfs = -25.f;
+  constexpr int num_samples = 480;
+  constexpr int num_initial_frames =
+      kInitialAdaptiveDigitalGainDb / kMaxGainChangePerFrameDb;
+  constexpr int num_frames = 50;
+
+  ASSERT_GT(kWithNoiseDbfs, kMaxNoiseLevelDbfs) << "kWithNoiseDbfs is too low";
+
+  for (int i = 0; i < num_initial_frames + num_frames; ++i) {
+    VectorFloatFrame fake_audio(1, num_samples, 1.f);
+    auto signal_with_level = TestSignalWithLevel(fake_audio.float_frame_view());
+    signal_with_level.input_level_dbfs = initial_level_dbfs;
+    signal_with_level.limiter_audio_level_dbfs = 1.f;
+    signal_with_level.estimate_is_confident = false;
+    gain_applier.Process(signal_with_level);
+
+    // Wait so that the adaptive gain applier has time to lower the gain.
+    if (i > num_initial_frames) {
+      const float maximal_ratio =
+          *std::max_element(fake_audio.float_frame_view().channel(0).begin(),
+                            fake_audio.float_frame_view().channel(0).end());
+
+      EXPECT_NEAR(maximal_ratio, 1.f, 0.001f);
+    }
+  }
 }
 }  // namespace webrtc

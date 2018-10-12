@@ -8,7 +8,6 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <assert.h>
 #include <math.h>
 #include <string.h>
 
@@ -44,23 +43,6 @@ NetworkPacket::NetworkPacket(rtc::CopyOnWriteBuffer packet,
       media_type_(media_type),
       packet_time_us_(packet_time_us) {}
 
-NetworkPacket::NetworkPacket(rtc::CopyOnWriteBuffer packet,
-                             int64_t send_time,
-                             int64_t arrival_time,
-                             absl::optional<PacketOptions> packet_options,
-                             bool is_rtcp,
-                             MediaType media_type,
-                             absl::optional<PacketTime> packet_time)
-    : NetworkPacket(packet,
-                    send_time,
-                    arrival_time,
-                    packet_options,
-                    is_rtcp,
-                    media_type,
-                    packet_time
-                        ? absl::optional<int64_t>(packet_time->timestamp)
-                        : absl::nullopt) {}
-
 NetworkPacket::NetworkPacket(NetworkPacket&& o)
     : packet_(std::move(o.packet_)),
       send_time_(o.send_time_),
@@ -84,62 +66,24 @@ NetworkPacket& NetworkPacket::operator=(NetworkPacket&& o) {
   return *this;
 }
 
-FakeNetworkPipe::FakeNetworkPipe(Clock* clock,
-                                 const FakeNetworkPipe::Config& config)
-    : FakeNetworkPipe(clock, config, nullptr, 1) {}
-
-FakeNetworkPipe::FakeNetworkPipe(Clock* clock,
-                                 const FakeNetworkPipe::Config& config,
-                                 PacketReceiver* receiver)
-    : FakeNetworkPipe(clock, config, receiver, 1) {}
-
-FakeNetworkPipe::FakeNetworkPipe(Clock* clock,
-                                 const FakeNetworkPipe::Config& config,
-                                 PacketReceiver* receiver,
-                                 uint64_t seed)
-    : clock_(clock),
-      network_simulation_(absl::make_unique<SimulatedNetwork>(config, seed)),
-      receiver_(receiver),
-      transport_(nullptr),
-      clock_offset_ms_(0),
-      dropped_packets_(0),
-      sent_packets_(0),
-      total_packet_delay_us_(0),
-      next_process_time_us_(clock_->TimeInMicroseconds()),
-      last_log_time_us_(clock_->TimeInMicroseconds()) {}
-
-FakeNetworkPipe::FakeNetworkPipe(Clock* clock,
-                                 const FakeNetworkPipe::Config& config,
-                                 Transport* transport)
-    : clock_(clock),
-      network_simulation_(absl::make_unique<SimulatedNetwork>(config, 1)),
-      receiver_(nullptr),
-      transport_(transport),
-      clock_offset_ms_(0),
-      dropped_packets_(0),
-      sent_packets_(0),
-      total_packet_delay_us_(0),
-      next_process_time_us_(clock_->TimeInMicroseconds()),
-      last_log_time_us_(clock_->TimeInMicroseconds()) {}
+FakeNetworkPipe::FakeNetworkPipe(
+    Clock* clock,
+    std::unique_ptr<NetworkBehaviorInterface> network_behavior)
+    : FakeNetworkPipe(clock, std::move(network_behavior), nullptr, 1) {}
 
 FakeNetworkPipe::FakeNetworkPipe(
     Clock* clock,
-    std::unique_ptr<NetworkSimulationInterface> network_simulation)
-    : FakeNetworkPipe(clock, std::move(network_simulation), nullptr, 1) {}
-
-FakeNetworkPipe::FakeNetworkPipe(
-    Clock* clock,
-    std::unique_ptr<NetworkSimulationInterface> network_simulation,
+    std::unique_ptr<NetworkBehaviorInterface> network_behavior,
     PacketReceiver* receiver)
-    : FakeNetworkPipe(clock, std::move(network_simulation), receiver, 1) {}
+    : FakeNetworkPipe(clock, std::move(network_behavior), receiver, 1) {}
 
 FakeNetworkPipe::FakeNetworkPipe(
     Clock* clock,
-    std::unique_ptr<NetworkSimulationInterface> network_simulation,
+    std::unique_ptr<NetworkBehaviorInterface> network_behavior,
     PacketReceiver* receiver,
     uint64_t seed)
     : clock_(clock),
-      network_simulation_(std::move(network_simulation)),
+      network_behavior_(std::move(network_behavior)),
       receiver_(receiver),
       transport_(nullptr),
       clock_offset_ms_(0),
@@ -151,10 +95,10 @@ FakeNetworkPipe::FakeNetworkPipe(
 
 FakeNetworkPipe::FakeNetworkPipe(
     Clock* clock,
-    std::unique_ptr<NetworkSimulationInterface> network_simulation,
+    std::unique_ptr<NetworkBehaviorInterface> network_behavior,
     Transport* transport)
     : clock_(clock),
-      network_simulation_(std::move(network_simulation)),
+      network_behavior_(std::move(network_behavior)),
       receiver_(nullptr),
       transport_(transport),
       clock_offset_ms_(0),
@@ -202,11 +146,6 @@ void FakeNetworkPipe::SetClockOffset(int64_t offset_ms) {
   clock_offset_ms_ = offset_ms;
 }
 
-void FakeNetworkPipe::SetConfig(const FakeNetworkPipe::Config& config) {
-  network_simulation_->SetConfig(config);
-}
-
-
 FakeNetworkPipe::StoredPacket::StoredPacket(NetworkPacket&& packet)
     : packet(std::move(packet)) {}
 
@@ -215,29 +154,15 @@ bool FakeNetworkPipe::EnqueuePacket(rtc::CopyOnWriteBuffer packet,
                                     bool is_rtcp,
                                     MediaType media_type,
                                     absl::optional<int64_t> packet_time_us) {
-  absl::optional<PacketTime> packet_time;
-  if (packet_time_us) {
-    packet_time = PacketTime(*packet_time_us, -1);
-  }
-  return EnqueuePacket(packet, options, is_rtcp, media_type, packet_time);
-}
-
-bool FakeNetworkPipe::EnqueuePacket(rtc::CopyOnWriteBuffer packet,
-                                    absl::optional<PacketOptions> options,
-                                    bool is_rtcp,
-                                    MediaType media_type,
-                                    absl::optional<PacketTime> packet_time) {
   int64_t time_now_us = clock_->TimeInMicroseconds();
   rtc::CritScope crit(&process_lock_);
   size_t packet_size = packet.size();
-  NetworkPacket net_packet(
-      std::move(packet), time_now_us, time_now_us, options, is_rtcp, media_type,
-      packet_time ? absl::optional<int64_t>(packet_time->timestamp)
-                  : absl::nullopt);
+  NetworkPacket net_packet(std::move(packet), time_now_us, time_now_us, options,
+                           is_rtcp, media_type, packet_time_us);
 
   packets_in_flight_.emplace_back(StoredPacket(std::move(net_packet)));
   int64_t packet_id = reinterpret_cast<uint64_t>(&packets_in_flight_.back());
-  bool sent = network_simulation_->EnqueuePacket(
+  bool sent = network_behavior_->EnqueuePacket(
       PacketInFlightInfo(packet_size, time_now_us, packet_id));
 
   if (!sent) {
@@ -292,7 +217,7 @@ void FakeNetworkPipe::Process() {
     }
 
     std::vector<PacketDeliveryInfo> delivery_infos =
-        network_simulation_->DequeueDeliverablePackets(time_now_us);
+        network_behavior_->DequeueDeliverablePackets(time_now_us);
     for (auto& delivery_info : delivery_infos) {
       // In the common case where no reordering happens, find will return early
       // as the first packet will be a match.
@@ -336,8 +261,7 @@ void FakeNetworkPipe::Process() {
     packets_to_deliver.pop();
     DeliverNetworkPacket(&packet);
   }
-  absl::optional<int64_t> delivery_us =
-      network_simulation_->NextDeliveryTimeUs();
+  absl::optional<int64_t> delivery_us = network_behavior_->NextDeliveryTimeUs();
   next_process_time_us_ = delivery_us
                               ? *delivery_us
                               : time_now_us + kDefaultProcessIntervalMs * 1000;

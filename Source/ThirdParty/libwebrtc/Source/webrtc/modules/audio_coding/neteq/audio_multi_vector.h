@@ -15,6 +15,7 @@
 
 #include <vector>
 
+#include "api/array_view.h"
 #include "modules/audio_coding/neteq/audio_vector.h"
 #include "rtc_base/constructormagic.h"
 
@@ -44,12 +45,11 @@ class AudioMultiVector {
   // number of channels.
   virtual void CopyTo(AudioMultiVector* copy_to) const;
 
-  // Appends the contents of array |append_this| to the end of this
-  // object. The array is assumed to be channel-interleaved. |length| must be
-  // an even multiple of this object's number of channels.
-  // The length of this object is increased with the |length| divided by the
-  // number of channels.
-  virtual void PushBackInterleaved(const int16_t* append_this, size_t length);
+  // Appends the contents of |append_this| to the end of this object. The array
+  // is assumed to be channel-interleaved. The length must be an even multiple
+  // of this object's number of channels. The length of this object is increased
+  // with the length of the array divided by the number of channels.
+  void PushBackInterleaved(rtc::ArrayView<const int16_t> append_this);
 
   // Appends the contents of AudioMultiVector |append_this| to this object. The
   // length of this object is increased with the length of |append_this|.

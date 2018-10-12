@@ -8,16 +8,4 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#import "WebRTC/RTCVideoViewShading.h"
-
-NS_ASSUME_NONNULL_BEGIN
-
-/** Default RTCVideoViewShading that will be used in RTCNSGLVideoView and
- *  RTCEAGLVideoView if no external shader is specified. This shader will render
- *  the video in a rectangle without any color or geometric transformations.
- */
-@interface RTCDefaultShader : NSObject<RTCVideoViewShading>
-
-@end
-
-NS_ASSUME_NONNULL_END
+#import "components/renderer/opengl/RTCDefaultShader.h"

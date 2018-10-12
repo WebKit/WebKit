@@ -12,11 +12,17 @@
 
 #include <assert.h>
 
-#ifdef WIN32
+#if defined(WEBRTC_POSIX)
+#include <unistd.h>
+#endif
+
+#if defined(WEBRTC_WIN)
 #include <direct.h>
 #include <tchar.h>
 #include <windows.h>
 #include <algorithm>
+#include <codecvt>
+#include <locale>
 
 #include "Shlwapi.h"
 #include "WinDef.h"
@@ -42,35 +48,34 @@
 #include <memory>
 #include <utility>
 
+#if defined(WEBRTC_IOS)
+#include "test/testsupport/iosfileutils.h"
+#endif
+
+#if defined(WEBRTC_MAC)
+#include "test/testsupport/macfileutils.h"
+#endif
+
+#include "rtc_base/arraysize.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/stringutils.h"
 
 namespace webrtc {
 namespace test {
 
-#if defined(WEBRTC_IOS)
-// Defined in iosfileutils.mm.  No header file to discourage use elsewhere.
-std::string IOSOutputPath();
-std::string IOSRootPath();
-std::string IOSResourcePath(std::string name, std::string extension);
-#endif
-
 namespace {
 
-#ifdef WIN32
+#if defined(WEBRTC_WIN)
 const char* kPathDelimiter = "\\";
 #else
 const char* kPathDelimiter = "/";
 #endif
 
-#ifdef WEBRTC_ANDROID
-const char* kRootDirName = "/sdcard/chromium_tests_root/";
-#else
-#if !defined(WEBRTC_IOS)
-const char* kOutputDirName = "out";
+#if defined(WEBRTC_ANDROID)
+// This is a special case in Chrome infrastructure. See
+// base/test/test_support_android.cc.
+const char* kAndroidChromiumTestsRoot = "/sdcard/chromium_tests_root/";
 #endif
-const char* kFallbackPath = "./";
-#endif  // !defined(WEBRTC_ANDROID)
 
 #if !defined(WEBRTC_IOS)
 const char* kResourcesDirName = "resources";
@@ -82,6 +87,19 @@ bool relative_dir_path_set = false;
 }  // namespace
 
 const char* kCannotFindProjectRootDir = "ERROR_CANNOT_FIND_PROJECT_ROOT_DIR";
+
+std::string DirName(const std::string& path) {
+  if (path.empty())
+    return "";
+  if (path == kPathDelimiter)
+    return path;
+
+  std::string result = path;
+  if (result.back() == *kPathDelimiter)
+    result.pop_back();  // Remove trailing separator.
+
+  return result.substr(0, result.find_last_of(kPathDelimiter));
+}
 
 void SetExecutablePath(const std::string& path) {
   std::string working_dir = WorkingDir();
@@ -99,7 +117,7 @@ void SetExecutablePath(const std::string& path) {
 #endif
 
   // Trim away the executable name; only store the relative dir path.
-  temp_path = temp_path.substr(0, temp_path.find_last_of(kPathDelimiter));
+  temp_path = DirName(temp_path);
   strncpy(relative_dir_path, temp_path.c_str(), FILENAME_MAX);
   relative_dir_path_set = true;
 }
@@ -115,77 +133,70 @@ bool DirExists(const std::string& directory_name) {
          S_ISDIR(directory_info.st_mode);
 }
 
-#ifdef WEBRTC_ANDROID
-
+// Finds the WebRTC src dir.
+// The returned path always ends with a path separator.
 std::string ProjectRootPath() {
-  return kRootDirName;
-}
-
-std::string OutputPath() {
-  return kRootDirName;
-}
-
-std::string WorkingDir() {
-  return kRootDirName;
-}
-
-#else  // WEBRTC_ANDROID
-
-std::string ProjectRootPath() {
-#if defined(WEBRTC_IOS)
+#if defined(WEBRTC_ANDROID)
+  return kAndroidChromiumTestsRoot;
+#elif defined WEBRTC_IOS
   return IOSRootPath();
-#else
-  std::string path = WorkingDir();
-  if (path == kFallbackPath) {
+#elif defined(WEBRTC_MAC)
+  std::string path;
+  GetNSExecutablePath(&path);
+  std::string exe_dir = DirName(path);
+  // On Mac, tests execute in out/Whatever, so src is two levels up except if
+  // the test is bundled (which our tests are not), in which case it's 5 levels.
+  return DirName(DirName(exe_dir)) + kPathDelimiter;
+#elif defined(WEBRTC_POSIX)
+  char buf[PATH_MAX];
+  ssize_t count = ::readlink("/proc/self/exe", buf, arraysize(buf));
+  if (count <= 0) {
+    RTC_NOTREACHED() << "Unable to resolve /proc/self/exe.";
     return kCannotFindProjectRootDir;
   }
-  if (relative_dir_path_set) {
-    path = path + kPathDelimiter + relative_dir_path;
-  }
-  path = path + kPathDelimiter + ".." + kPathDelimiter + "..";
-  char canonical_path[FILENAME_MAX];
-#ifdef WIN32
-  BOOL succeeded = PathCanonicalizeA(canonical_path, path.c_str());
-#else
-  bool succeeded = realpath(path.c_str(), canonical_path) != NULL;
-#endif
-  if (succeeded) {
-    path = std::string(canonical_path) + kPathDelimiter;
-    return path;
-  } else {
-    fprintf(stderr, "Cannot find project root directory!\n");
+  // On POSIX, tests execute in out/Whatever, so src is two levels up.
+  std::string exe_dir = DirName(std::string(buf, count));
+  return DirName(DirName(exe_dir)) + kPathDelimiter;
+#elif defined(WEBRTC_WIN)
+  wchar_t buf[MAX_PATH];
+  buf[0] = 0;
+  if (GetModuleFileName(NULL, buf, MAX_PATH) == 0)
     return kCannotFindProjectRootDir;
-  }
+
+  std::string exe_path = rtc::ToUtf8(std::wstring(buf));
+  std::string exe_dir = DirName(exe_path);
+  return DirName(DirName(exe_dir)) + kPathDelimiter;
 #endif
 }
 
 std::string OutputPath() {
 #if defined(WEBRTC_IOS)
   return IOSOutputPath();
+#elif defined(WEBRTC_ANDROID)
+  return kAndroidChromiumTestsRoot;
 #else
   std::string path = ProjectRootPath();
-  if (path == kCannotFindProjectRootDir) {
-    return kFallbackPath;
-  }
-  path += kOutputDirName;
+  RTC_DCHECK_NE(path, kCannotFindProjectRootDir);
+  path += "out";
   if (!CreateDir(path)) {
-    return kFallbackPath;
+    return "./";
   }
   return path + kPathDelimiter;
 #endif
 }
 
 std::string WorkingDir() {
+#if defined(WEBRTC_ANDROID)
+  return kAndroidChromiumTestsRoot;
+#endif
   char path_buffer[FILENAME_MAX];
   if (!GET_CURRENT_DIR(path_buffer, sizeof(path_buffer))) {
     fprintf(stderr, "Cannot get current directory!\n");
-    return kFallbackPath;
+    return "./";
   } else {
     return std::string(path_buffer);
   }
 }
-
-#endif  // !WEBRTC_ANDROID
 
 // Generate a temporary filename in a safe way.
 // Largely copied from talk/base/{unixfilesystem,win32filesystem}.cc.

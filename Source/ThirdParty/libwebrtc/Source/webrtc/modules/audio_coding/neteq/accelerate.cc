@@ -25,7 +25,8 @@ Accelerate::ReturnCodes Accelerate::Process(const int16_t* input,
       input_length / num_channels_ < (2 * k15ms - 1) * fs_mult_) {
     // Length of input data too short to do accelerate. Simply move all data
     // from input to output.
-    output->PushBackInterleaved(input, input_length);
+    output->PushBackInterleaved(
+        rtc::ArrayView<const int16_t>(input, input_length));
     return kError;
   }
   return TimeStretch::Process(input, input_length, fast_accelerate, output,
@@ -67,17 +68,18 @@ Accelerate::ReturnCodes Accelerate::CheckCriteriaAndStretch(
 
     assert(fs_mult_120 >= peak_index);  // Should be handled in Process().
     // Copy first part; 0 to 15 ms.
-    output->PushBackInterleaved(input, fs_mult_120 * num_channels_);
+    output->PushBackInterleaved(
+        rtc::ArrayView<const int16_t>(input, fs_mult_120 * num_channels_));
     // Copy the |peak_index| starting at 15 ms to |temp_vector|.
     AudioMultiVector temp_vector(num_channels_);
-    temp_vector.PushBackInterleaved(&input[fs_mult_120 * num_channels_],
-                                    peak_index * num_channels_);
+    temp_vector.PushBackInterleaved(rtc::ArrayView<const int16_t>(
+        &input[fs_mult_120 * num_channels_], peak_index * num_channels_));
     // Cross-fade |temp_vector| onto the end of |output|.
     output->CrossFade(temp_vector, peak_index);
     // Copy the last unmodified part, 15 ms + pitch period until the end.
-    output->PushBackInterleaved(
+    output->PushBackInterleaved(rtc::ArrayView<const int16_t>(
         &input[(fs_mult_120 + peak_index) * num_channels_],
-        input_length - (fs_mult_120 + peak_index) * num_channels_);
+        input_length - (fs_mult_120 + peak_index) * num_channels_));
 
     if (active_speech) {
       return kSuccess;
@@ -86,7 +88,8 @@ Accelerate::ReturnCodes Accelerate::CheckCriteriaAndStretch(
     }
   } else {
     // Accelerate not allowed. Simply move all data from decoded to outData.
-    output->PushBackInterleaved(input, input_length);
+    output->PushBackInterleaved(
+        rtc::ArrayView<const int16_t>(input, input_length));
     return kNoStretch;
   }
 }

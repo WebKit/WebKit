@@ -61,7 +61,7 @@ def main():
   snapshots = []
   while True:
     snapshot = GrabCpuSamples(sample_count)
-    if snapshot == None:
+    if snapshot is None:
       break
     snapshots.append(snapshot)
 

@@ -46,12 +46,24 @@ public class YuvConverter {
       + "}\n";
 
   private static class ShaderCallbacks implements GlGenericDrawer.ShaderCallbacks {
-    // Y'UV444 to RGB888, see https://en.wikipedia.org/wiki/YUV#Y.27UV444_to_RGB888_conversion. We
-    // use the ITU-R coefficients for U and V.
-    private static final float[] yCoeffs = new float[] {0.2987856f, 0.5871095f, 0.1141049f, 0.0f};
+    // Y'UV444 to RGB888, see https://en.wikipedia.org/wiki/YUV#Y%E2%80%B2UV444_to_RGB888_conversion
+    // We use the ITU-R BT.601 coefficients for Y, U and V.
+    // The values in Wikipedia are inaccurate, the accurate values derived from the spec are:
+    // Y = 0.299 * R + 0.587 * G + 0.114 * B
+    // U = -0.168736 * R - 0.331264 * G + 0.5 * B + 0.5
+    // V = 0.5 * R - 0.418688 * G - 0.0813124 * B + 0.5
+    // To map the Y-values to range [16-235] and U- and V-values to range [16-240], the matrix has
+    // been multiplied with matrix:
+    // {{219 / 255, 0, 0, 16 / 255},
+    // {0, 224 / 255, 0, 16 / 255},
+    // {0, 0, 224 / 255, 16 / 255},
+    // {0, 0, 0, 1}}
+    private static final float[] yCoeffs =
+        new float[] {0.256788f, 0.504129f, 0.0979059f, 0.0627451f};
     private static final float[] uCoeffs =
-        new float[] {-0.168805420f, -0.3317003f, 0.5005057f, 0.5f};
-    private static final float[] vCoeffs = new float[] {0.4997964f, -0.4184672f, -0.0813292f, 0.5f};
+        new float[] {-0.148223f, -0.290993f, 0.439216f, 0.501961f};
+    private static final float[] vCoeffs =
+        new float[] {0.439216f, -0.367788f, -0.0714274f, 0.501961f};
 
     private int xUnitLoc;
     private int coeffsLoc;

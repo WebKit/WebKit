@@ -21,63 +21,51 @@
 // for the instructions on writing suppressions.
 char kTSanDefaultSuppressions[] =
 
-// WebRTC specific suppressions.
+    // WebRTC specific suppressions.
 
-// Split up suppressions covered previously by thread.cc and messagequeue.cc.
-"race:vp8cx_remove_encoder_threads\n"
-"race:third_party/libvpx/source/libvpx/vp9/common/vp9_scan.h\n"
+    // Split up suppressions covered previously by thread.cc and
+    // messagequeue.cc.
+    "race:vp8cx_remove_encoder_threads\n"
+    "race:third_party/libvpx/source/libvpx/vp9/common/vp9_scan.h\n"
 
-// Race in pulse initialization.
-// https://code.google.com/p/webrtc/issues/detail?id=5152
-"race:webrtc::AudioDeviceLinuxPulse::Init\n"
+    // rtc_unittests
+    // https://code.google.com/p/webrtc/issues/detail?id=2080
+    "race:rtc_base/logging.cc\n"
+    "race:rtc_base/sharedexclusivelock_unittest.cc\n"
+    "race:rtc_base/signalthread_unittest.cc\n"
 
-// rtc_unittests
-// https://code.google.com/p/webrtc/issues/detail?id=3911 for details.
-"race:rtc::MessageQueueManager::Clear\n"
-"race:rtc::Thread::Clear\n"
-// https://code.google.com/p/webrtc/issues/detail?id=2080
-"race:rtc_base/logging.cc\n"
-"race:rtc_base/sharedexclusivelock_unittest.cc\n"
-"race:rtc_base/signalthread_unittest.cc\n"
-// https://code.google.com/p/webrtc/issues/detail?id=4456
-"deadlock:rtc::MessageQueueManager::Clear\n"
-"deadlock:rtc::MessageQueueManager::ClearInternal\n"
+    // rtc_pc_unittests
+    // https://code.google.com/p/webrtc/issues/detail?id=2079
+    "race:rtc_base/testclient.cc\n"
+    "race:rtc_base/virtualsocketserver.cc\n"
+    "race:talk/p2p/base/stunserver_unittest.cc\n"
 
-// rtc_pc_unittests
-// https://code.google.com/p/webrtc/issues/detail?id=2079
-"race:rtc_base/testclient.cc\n"
-"race:rtc_base/virtualsocketserver.cc\n"
-"race:talk/p2p/base/stunserver_unittest.cc\n"
+    // third_party/usrsctp
+    // TODO(jiayl): https://code.google.com/p/webrtc/issues/detail?id=3492
+    "race:user_sctp_timer_iterate\n"
 
-// third_party/usrsctp
-// TODO(jiayl): https://code.google.com/p/webrtc/issues/detail?id=3492
-"race:user_sctp_timer_iterate\n"
+    // https://code.google.com/p/webrtc/issues/detail?id=5151
+    "race:sctp_close\n"
 
-// https://code.google.com/p/webrtc/issues/detail?id=5151
-"race:sctp_close\n"
+    // Potential deadlocks detected after roll in r6516.
+    // https://code.google.com/p/webrtc/issues/detail?id=3509
+    "deadlock:webrtc::test::UdpSocketManagerPosixImpl::RemoveSocket\n"
 
-// Potential deadlocks detected after roll in r6516.
-// https://code.google.com/p/webrtc/issues/detail?id=3509
-"deadlock:webrtc::test::UdpSocketManagerPosixImpl::RemoveSocket\n"
+    // TODO(pbos): Trace events are racy due to lack of proper POD atomics.
+    // https://code.google.com/p/webrtc/issues/detail?id=2497
+    "race:*trace_event_unique_catstatic*\n"
 
-// TODO(pbos): Trace events are racy due to lack of proper POD atomics.
-// https://code.google.com/p/webrtc/issues/detail?id=2497
-"race:*trace_event_unique_catstatic*\n"
+    // Race between InitCpuFlags and TestCpuFlag in libyuv.
+    // https://code.google.com/p/libyuv/issues/detail?id=508
+    "race:InitCpuFlags\n"
 
-// https://code.google.com/p/webrtc/issues/detail?id=4719
-"race:webrtc::voe::TransmitMixer::PrepareDemux\n"
-"race:webrtc::voe::TransmitMixer::EnableStereoChannelSwapping\n"
+    // Test-only race due to PeerConnection::session() being virtual for
+    // testing. The stats collector may call session() before or after the
+    // destructor begins executing, which modifies the vtable.
+    "race:*RTCStatsIntegrationTest_GetsStatsWhileDestroyingPeerConnections_"
+    "Test::TestBody\n"
 
-// Race between InitCpuFlags and TestCpuFlag in libyuv.
-// https://code.google.com/p/libyuv/issues/detail?id=508
-"race:InitCpuFlags\n"
-
-// Test-only race due to PeerConnection::session() being virtual for testing.
-// The stats collector may call session() before or after the destructor begins
-// executing, which modifies the vtable.
-"race:*RTCStatsIntegrationTest_GetsStatsWhileDestroyingPeerConnections_Test::TestBody\n"
-
-// End of suppressions.
-;  // Please keep this semicolon.
+    // End of suppressions.
+    ;  // Please keep this semicolon.
 
 #endif  // THREAD_SANITIZER

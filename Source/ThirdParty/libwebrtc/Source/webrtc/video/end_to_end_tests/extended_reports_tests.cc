@@ -8,6 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "call/fake_network_pipe.h"
+#include "call/simulated_network.h"
 #include "test/call_test.h"
 #include "test/gtest.h"
 #include "test/rtcp_packet_parser.h"
@@ -30,7 +32,12 @@ class RtcpXrObserver : public test::EndToEndTest {
         sent_rtcp_rrtr_(0),
         sent_rtcp_target_bitrate_(false),
         sent_zero_rtcp_target_bitrate_(false),
-        sent_rtcp_dlrr_(0) {}
+        sent_rtcp_dlrr_(0),
+        send_simulated_network_(nullptr) {
+    forward_transport_config_.link_capacity_kbps = 500;
+    forward_transport_config_.queue_delay_ms = 0;
+    forward_transport_config_.loss_percent = 0;
+  }
 
  private:
   // Receive stream should send RR packets (and RRTR packets if enabled).
@@ -56,6 +63,14 @@ class RtcpXrObserver : public test::EndToEndTest {
     test::RtcpPacketParser parser;
     EXPECT_TRUE(parser.Parse(packet, length));
 
+    if (parser.sender_ssrc() == test::CallTest::kVideoSendSsrcs[1] &&
+        enable_zero_target_bitrate_) {
+      // Reduce bandwidth restriction to disable second stream after it was
+      // enabled for some time.
+      forward_transport_config_.link_capacity_kbps = 200;
+      send_simulated_network_->SetConfig(forward_transport_config_);
+    }
+
     sent_rtcp_sr_ += parser.sender_report()->num_packets();
     EXPECT_LE(parser.xr()->num_packets(), 1);
     if (parser.xr()->num_packets() > 0) {
@@ -64,8 +79,12 @@ class RtcpXrObserver : public test::EndToEndTest {
         ++sent_rtcp_dlrr_;
       if (parser.xr()->target_bitrate()) {
         sent_rtcp_target_bitrate_ = true;
-        for (const rtcp::TargetBitrate::BitrateItem& item :
-             parser.xr()->target_bitrate()->GetTargetBitrates()) {
+        auto target_bitrates =
+            parser.xr()->target_bitrate()->GetTargetBitrates();
+        if (target_bitrates.empty()) {
+          sent_zero_rtcp_target_bitrate_ = true;
+        }
+        for (const rtcp::TargetBitrate::BitrateItem& item : target_bitrates) {
           if (item.target_bitrate_kbps == 0) {
             sent_zero_rtcp_target_bitrate_ = true;
             break;
@@ -98,47 +117,32 @@ class RtcpXrObserver : public test::EndToEndTest {
     return enable_zero_target_bitrate_ ? 2 : 1;
   }
 
-  // This test uses VideoStream settings different from the the default one
-  // implemented in DefaultVideoStreamFactory, so it implements its own
-  // VideoEncoderConfig::VideoStreamFactoryInterface which is created
-  // in ModifyVideoConfigs.
-  class ZeroTargetVideoStreamFactory
-      : public VideoEncoderConfig::VideoStreamFactoryInterface {
-   public:
-    ZeroTargetVideoStreamFactory() {}
-
-   private:
-    std::vector<VideoStream> CreateEncoderStreams(
-        int width,
-        int height,
-        const VideoEncoderConfig& encoder_config) override {
-      std::vector<VideoStream> streams =
-          test::CreateVideoStreams(width, height, encoder_config);
-      // Set one of the streams' target bitrates to zero to test that a
-      // bitrate of 0 can be signalled.
-      streams[encoder_config.number_of_streams - 1].min_bitrate_bps = 0;
-      streams[encoder_config.number_of_streams - 1].target_bitrate_bps = 0;
-      streams[encoder_config.number_of_streams - 1].max_bitrate_bps = 0;
-      return streams;
-    }
-  };
+  test::PacketTransport* CreateSendTransport(
+      test::SingleThreadedTaskQueueForTesting* task_queue,
+      Call* sender_call) {
+    auto network =
+        absl::make_unique<SimulatedNetwork>(forward_transport_config_);
+    send_simulated_network_ = network.get();
+    return new test::PacketTransport(
+        task_queue, sender_call, this, test::PacketTransport::kSender,
+        test::CallTest::payload_type_map_,
+        absl::make_unique<FakeNetworkPipe>(Clock::GetRealTimeClock(),
+                                           std::move(network)));
+  }
 
   void ModifyVideoConfigs(
       VideoSendStream::Config* send_config,
       std::vector<VideoReceiveStream::Config>* receive_configs,
       VideoEncoderConfig* encoder_config) override {
     if (enable_zero_target_bitrate_) {
-      encoder_config->video_stream_factory =
-          new rtc::RefCountedObject<ZeroTargetVideoStreamFactory>();
-
       // Configure VP8 to be able to use simulcast.
       send_config->rtp.payload_name = "VP8";
       encoder_config->codec_type = kVideoCodecVP8;
       (*receive_configs)[0].decoders.resize(1);
       (*receive_configs)[0].decoders[0].payload_type =
           send_config->rtp.payload_type;
-      (*receive_configs)[0].decoders[0].payload_name =
-          send_config->rtp.payload_name;
+      (*receive_configs)[0].decoders[0].video_format =
+          SdpVideoFormat(send_config->rtp.payload_name);
     }
     if (enable_target_bitrate_) {
       // TargetBitrate only signaled for screensharing.
@@ -166,6 +170,8 @@ class RtcpXrObserver : public test::EndToEndTest {
   bool sent_rtcp_target_bitrate_ RTC_GUARDED_BY(&crit_);
   bool sent_zero_rtcp_target_bitrate_ RTC_GUARDED_BY(&crit_);
   int sent_rtcp_dlrr_;
+  DefaultNetworkSimulationConfig forward_transport_config_;
+  SimulatedNetwork* send_simulated_network_;
 };
 
 TEST_F(ExtendedReportsEndToEndTest,

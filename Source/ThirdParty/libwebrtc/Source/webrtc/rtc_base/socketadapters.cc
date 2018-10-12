@@ -31,6 +31,7 @@
 #include "rtc_base/logging.h"
 #include "rtc_base/socketadapters.h"
 #include "rtc_base/stringencode.h"
+#include "rtc_base/strings/string_builder.h"
 #include "rtc_base/stringutils.h"
 #include "rtc_base/zero_memory.h"
 
@@ -369,7 +370,7 @@ bool AsyncHttpsProxySocket::ShouldIssueConnect() const {
 }
 
 void AsyncHttpsProxySocket::SendRequest() {
-  std::stringstream ss;
+  rtc::StringBuilder ss;
   ss << "CONNECT " << dest_.ToString() << " HTTP/1.0\r\n";
   ss << "User-Agent: " << agent_ << "\r\n";
   ss << "Host: " << dest_.HostAsURIString() << "\r\n";

@@ -32,8 +32,6 @@
 namespace webrtc {
 namespace webrtc_win {
 
-static const int64_t kNumMicrosecsPerSec = webrtc::TimeDelta::seconds(1).us();
-
 // Utility class which registers a thread with MMCSS in the constructor and
 // deregisters MMCSS in the destructor. The task name is given by |task_name|.
 // The Multimedia Class Scheduler service (MMCSS) enables multimedia
@@ -42,6 +40,47 @@ static const int64_t kNumMicrosecsPerSec = webrtc::TimeDelta::seconds(1).us();
 // lower-priority applications.
 class ScopedMMCSSRegistration {
  public:
+  const char* PriorityClassToString(DWORD priority_class) {
+    switch (priority_class) {
+      case ABOVE_NORMAL_PRIORITY_CLASS:
+        return "ABOVE_NORMAL";
+      case BELOW_NORMAL_PRIORITY_CLASS:
+        return "BELOW_NORMAL";
+      case HIGH_PRIORITY_CLASS:
+        return "HIGH";
+      case IDLE_PRIORITY_CLASS:
+        return "IDLE";
+      case NORMAL_PRIORITY_CLASS:
+        return "NORMAL";
+      case REALTIME_PRIORITY_CLASS:
+        return "REALTIME";
+      default:
+        return "INVALID";
+    }
+  }
+
+  const char* PriorityToString(int priority) {
+    switch (priority) {
+      case THREAD_PRIORITY_ABOVE_NORMAL:
+        return "ABOVE_NORMAL";
+      case THREAD_PRIORITY_BELOW_NORMAL:
+        return "BELOW_NORMAL";
+      case THREAD_PRIORITY_HIGHEST:
+        return "HIGHEST";
+      case THREAD_PRIORITY_IDLE:
+        return "IDLE";
+      case THREAD_PRIORITY_LOWEST:
+        return "LOWEST";
+      case THREAD_PRIORITY_NORMAL:
+        return "NORMAL";
+      case THREAD_PRIORITY_TIME_CRITICAL:
+        return "TIME_CRITICAL";
+      default:
+        // Can happen in combination with REALTIME_PRIORITY_CLASS.
+        return "INVALID";
+    }
+  }
+
   explicit ScopedMMCSSRegistration(const TCHAR* task_name) {
     RTC_DLOG(INFO) << "ScopedMMCSSRegistration: " << rtc::ToUtf8(task_name);
     // Register the calling thread with MMCSS for the supplied |task_name|.
@@ -50,6 +89,14 @@ class ScopedMMCSSRegistration {
     if (mmcss_handle_ == nullptr) {
       RTC_LOG(LS_ERROR) << "Failed to enable MMCSS on this thread: "
                         << GetLastError();
+    } else {
+      const DWORD priority_class = GetPriorityClass(GetCurrentProcess());
+      const int priority = GetThreadPriority(GetCurrentThread());
+      RTC_DLOG(INFO) << "priority class: "
+                     << PriorityClassToString(priority_class) << "("
+                     << priority_class << ")";
+      RTC_DLOG(INFO) << "priority: " << PriorityToString(priority) << "("
+                     << priority << ")";
     }
   }
 
@@ -299,6 +346,11 @@ bool IsMMCSSSupported();
 // devices.
 int NumberOfActiveDevices(EDataFlow data_flow);
 
+// Returns 1, 2, or 3 depending on what version of IAudioClient the platform
+// supports.
+// Example: IAudioClient2 is supported on Windows 8 and higher => 2 is returned.
+uint32_t GetAudioClientVersion();
+
 // Creates an IMMDeviceEnumerator interface which provides methods for
 // enumerating audio endpoint devices.
 // TODO(henrika): IMMDeviceEnumerator::RegisterEndpointNotificationCallback.
@@ -367,15 +419,28 @@ int NumberOfActiveSessions(IMMDevice* device);
 Microsoft::WRL::ComPtr<IAudioClient> CreateClient(const std::string& device_id,
                                                   EDataFlow data_flow,
                                                   ERole role);
-
 Microsoft::WRL::ComPtr<IAudioClient2>
 CreateClient2(const std::string& device_id, EDataFlow data_flow, ERole role);
+Microsoft::WRL::ComPtr<IAudioClient3>
+CreateClient3(const std::string& device_id, EDataFlow data_flow, ERole role);
 
 // Sets the AudioCategory_Communications category. Should be called before
-// GetSharedModeMixFormat() and IsFormatSupported().
-// Minimum supported client: Windows 8.
+// GetSharedModeMixFormat() and IsFormatSupported(). The |client| argument must
+// be an IAudioClient2 or IAudioClient3 interface pointer, hence only supported
+// on Windows 8 and above.
 // TODO(henrika): evaluate effect (if any).
 HRESULT SetClientProperties(IAudioClient2* client);
+
+// Returns the buffer size limits of the hardware audio engine in
+// 100-nanosecond units given a specified |format|. Does not require prior
+// audio stream initialization. The |client| argument must be an IAudioClient2
+// or IAudioClient3 interface pointer, hence only supported on Windows 8 and
+// above.
+// TODO(henrika): always fails with AUDCLNT_E_OFFLOAD_MODE_ONLY.
+HRESULT GetBufferSizeLimits(IAudioClient2* client,
+                            const WAVEFORMATEXTENSIBLE* format,
+                            REFERENCE_TIME* min_buffer_duration,
+                            REFERENCE_TIME* max_buffer_duration);
 
 // Get the mix format that the audio engine uses internally for processing
 // of shared-mode streams. The client can call this method before calling
@@ -403,15 +468,35 @@ HRESULT GetDevicePeriod(IAudioClient* client,
                         AUDCLNT_SHAREMODE share_mode,
                         REFERENCE_TIME* device_period);
 
-// Get the preferred audio parameters for the given |device_id|. The acquired
-// values should only be utilized for shared mode streamed since there are no
-// preferred settings for an exclusive mode stream.
+// Returns the range of periodicities supported by the engine for the specified
+// stream |format|. The periodicity of the engine is the rate at which the
+// engine wakes an event-driven audio client to transfer audio data to or from
+// the engine. Can be used for low-latency support on some devices.
+// The |client| argument must be an IAudioClient3 interface pointer, hence only
+// supported on Windows 10 and above.
+HRESULT GetSharedModeEnginePeriod(IAudioClient3* client3,
+                                  const WAVEFORMATEXTENSIBLE* format,
+                                  uint32_t* default_period_in_frames,
+                                  uint32_t* fundamental_period_in_frames,
+                                  uint32_t* min_period_in_frames,
+                                  uint32_t* max_period_in_frames);
+
+// Get the preferred audio parameters for the given |device_id| or |client|
+// corresponding to the stream format that the audio engine uses for its
+// internal processing of shared-mode streams. The acquired values should only
+// be utilized for shared mode streamed since there are no preferred settings
+// for an exclusive mode stream.
 HRESULT GetPreferredAudioParameters(const std::string& device_id,
                                     bool is_output_device,
                                     webrtc::AudioParameters* params);
-
 HRESULT GetPreferredAudioParameters(IAudioClient* client,
                                     webrtc::AudioParameters* params);
+// As above but override the preferred sample rate and use |sample_rate|
+// instead. Intended mainly for testing purposes and in combination with rate
+// conversion.
+HRESULT GetPreferredAudioParameters(IAudioClient* client,
+                                    webrtc::AudioParameters* params,
+                                    uint32_t sample_rate);
 
 // After activating an IAudioClient interface on an audio endpoint device,
 // the client must initialize it once, and only once, to initialize the audio
@@ -419,18 +504,40 @@ HRESULT GetPreferredAudioParameters(IAudioClient* client,
 // connects indirectly through the audio engine which does the mixing.
 // If a valid event is provided in |event_handle|, the client will be
 // initialized for event-driven buffer handling. If |event_handle| is set to
-// nullptr, event-driven buffer handling is not utilized.
+// nullptr, event-driven buffer handling is not utilized. To achieve the
+// minimum stream latency between the client application and audio endpoint
+// device, set |buffer_duration| to 0. A client has the option of requesting a
+// buffer size that is larger than what is strictly necessary to make timing
+// glitches rare or nonexistent. Increasing the buffer size does not necessarily
+// increase the stream latency. Each unit of reference time is 100 nanoseconds.
+// The |auto_convert_pcm| parameter can be used for testing purposes to ensure
+// that the sample rate of the client side does not have to match the audio
+// engine mix format. If |auto_convert_pcm| is set to true, a rate converter
+// will be inserted to convert between the sample rate in |format| and the
+// preferred rate given by GetPreferredAudioParameters().
 // The output parameter |endpoint_buffer_size| contains the size of the
 // endpoint buffer and it is expressed as the number of audio frames the
 // buffer can hold.
-// TODO(henrika):
-// - use IAudioClient2::SetClientProperties before calling this method
-// - IAudioClient::Initialize(your_format, AUDCLNT_STREAMFLAGS_AUTOCONVERTPCM
-//                            AUDCLNT_STREAMFLAGS_SRC_DEFAULT_QUALITY)
 HRESULT SharedModeInitialize(IAudioClient* client,
                              const WAVEFORMATEXTENSIBLE* format,
                              HANDLE event_handle,
+                             REFERENCE_TIME buffer_duration,
+                             bool auto_convert_pcm,
                              uint32_t* endpoint_buffer_size);
+
+// Works as SharedModeInitialize() but adds support for using smaller engine
+// periods than the default period.
+// The |client| argument must be an IAudioClient3 interface pointer, hence only
+// supported on Windows 10 and above.
+// TODO(henrika): can probably be merged into SharedModeInitialize() to avoid
+// duplicating code. Keeping as separate method for now until decided if we
+// need low-latency support.
+HRESULT SharedModeInitializeLowLatency(IAudioClient3* client,
+                                       const WAVEFORMATEXTENSIBLE* format,
+                                       HANDLE event_handle,
+                                       uint32_t period_in_frames,
+                                       bool auto_convert_pcm,
+                                       uint32_t* endpoint_buffer_size);
 
 // Creates an IAudioRenderClient client for an existing IAudioClient given by
 // |client|. The IAudioRenderClient interface enables a client to write
@@ -451,6 +558,12 @@ Microsoft::WRL::ComPtr<IAudioCaptureClient> CreateCaptureClient(
 // data rate and the current position in the stream.
 Microsoft::WRL::ComPtr<IAudioClock> CreateAudioClock(IAudioClient* client);
 
+// Creates an AudioSessionControl interface for an existing IAudioClient given
+// by |client|. The IAudioControl interface enables a client to configure the
+// control parameters for an audio session and to monitor events in the session.
+Microsoft::WRL::ComPtr<IAudioSessionControl> CreateAudioSessionControl(
+    IAudioClient* client);
+
 // Creates an ISimpleAudioVolume interface for an existing IAudioClient given by
 // |client|. This interface enables a client to control the master volume level
 // of an active audio session.
@@ -468,6 +581,10 @@ std::string WaveFormatExToString(const WAVEFORMATEXTENSIBLE* format);
 // Converts Windows internal REFERENCE_TIME (100 nanosecond units) into
 // generic webrtc::TimeDelta which then can be converted to any time unit.
 webrtc::TimeDelta ReferenceTimeToTimeDelta(REFERENCE_TIME time);
+
+// Converts size expressed in number of audio frames, |num_frames|, into
+// milliseconds given a specified |sample_rate|.
+double FramesToMilliseconds(uint32_t num_frames, uint16_t sample_rate);
 
 // Converts a COM error into a human-readable string.
 std::string ErrorToString(const _com_error& error);

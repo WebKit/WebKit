@@ -40,7 +40,6 @@ RTC_NORETURN void rtc_FatalMessage(const char* file, int line, const char* msg);
 #ifdef __cplusplus
 // C++ version.
 
-#include <sstream>  // no-presubmit-check TODO(webrtc:8982)
 #include <string>
 
 #include "rtc_base/numerics/safe_compare.h"
@@ -351,7 +350,7 @@ class FatalLogCall final {
 // TODO(bugs.webrtc.org/8454): Add an RTC_ prefix or rename differently.
 #define RTC_FATAL()                                                    \
   rtc::webrtc_checks_impl::FatalLogCall<false>(__FILE__, __LINE__, \
-                                               "FATAL()") &        \
+                                               "RTC_FATAL()") &        \
       rtc::webrtc_checks_impl::LogStreamer<>()
 
 // Performs the integer division a/b and returns the result. CHECKs that the

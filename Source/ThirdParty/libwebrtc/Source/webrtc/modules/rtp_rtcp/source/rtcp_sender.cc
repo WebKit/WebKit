@@ -44,9 +44,9 @@
 namespace webrtc {
 
 namespace {
-const uint32_t kRtcpAnyExtendedReports =
-    kRtcpXrVoipMetric | kRtcpXrReceiverReferenceTime | kRtcpXrDlrrReportBlock |
-    kRtcpXrTargetBitrate;
+const uint32_t kRtcpAnyExtendedReports = kRtcpXrReceiverReferenceTime |
+                                         kRtcpXrDlrrReportBlock |
+                                         kRtcpXrTargetBitrate;
 }  // namespace
 
 RTCPSender::FeedbackState::FeedbackState()
@@ -150,7 +150,8 @@ RTCPSender::RTCPSender(
       app_length_(0),
 
       xr_send_receiver_reference_time_enabled_(false),
-      packet_type_counter_observer_(packet_type_counter_observer) {
+      packet_type_counter_observer_(packet_type_counter_observer),
+      send_video_bitrate_allocation_(false) {
   RTC_DCHECK(transport_ != nullptr);
 
   builders_[kRtcpSr] = &RTCPSender::BuildSR;
@@ -607,29 +608,20 @@ std::unique_ptr<rtcp::RtcpPacket> RTCPSender::BuildExtendedReports(
     xr->AddDlrrItem(rti);
   }
 
-  if (video_bitrate_allocation_) {
+  if (send_video_bitrate_allocation_) {
     rtcp::TargetBitrate target_bitrate;
 
     for (int sl = 0; sl < kMaxSpatialLayers; ++sl) {
       for (int tl = 0; tl < kMaxTemporalStreams; ++tl) {
-        if (video_bitrate_allocation_->HasBitrate(sl, tl)) {
+        if (video_bitrate_allocation_.HasBitrate(sl, tl)) {
           target_bitrate.AddTargetBitrate(
-              sl, tl, video_bitrate_allocation_->GetBitrate(sl, tl) / 1000);
+              sl, tl, video_bitrate_allocation_.GetBitrate(sl, tl) / 1000);
         }
       }
     }
 
     xr->SetTargetBitrate(target_bitrate);
-    video_bitrate_allocation_.reset();
-  }
-
-  if (xr_voip_metric_) {
-    rtcp::VoipMetric voip;
-    voip.SetMediaSsrc(remote_ssrc_);
-    voip.SetVoipMetric(*xr_voip_metric_);
-    xr_voip_metric_.reset();
-
-    xr->SetVoipMetric(voip);
+    send_video_bitrate_allocation_ = false;
   }
 
   return std::move(xr);
@@ -750,7 +742,8 @@ void RTCPSender::PrepareReport(const FeedbackState& feedback_state) {
 
   if (generate_report) {
     if ((!sending_ && xr_send_receiver_reference_time_enabled_) ||
-        !feedback_state.last_xr_rtis.empty() || video_bitrate_allocation_) {
+        !feedback_state.last_xr_rtis.empty() ||
+        send_video_bitrate_allocation_) {
       SetFlag(kRtcpAnyExtendedReports, true);
     }
 
@@ -841,15 +834,6 @@ int32_t RTCPSender::SetApplicationSpecificData(uint8_t subType,
   return 0;
 }
 
-// TODO(sprang): Remove support for VoIP metrics? (Not used in receiver.)
-int32_t RTCPSender::SetRTCPVoIPMetrics(const RTCPVoIPMetric* VoIPMetric) {
-  rtc::CritScope lock(&critical_section_rtcp_sender_);
-  xr_voip_metric_.emplace(*VoIPMetric);
-
-  SetFlag(kRtcpAnyExtendedReports, true);
-  return 0;
-}
-
 void RTCPSender::SendRtcpXrReceiverReferenceTime(bool enable) {
   rtc::CritScope lock(&critical_section_rtcp_sender_);
   xr_send_receiver_reference_time_enabled_ = enable;
@@ -904,8 +888,43 @@ bool RTCPSender::AllVolatileFlagsConsumed() const {
 void RTCPSender::SetVideoBitrateAllocation(
     const VideoBitrateAllocation& bitrate) {
   rtc::CritScope lock(&critical_section_rtcp_sender_);
-  video_bitrate_allocation_.emplace(bitrate);
+  // Check if this allocation is first ever, or has a different set of
+  // spatial/temporal layers signaled and enabled, if so trigger an rtcp report
+  // as soon as possible.
+  absl::optional<VideoBitrateAllocation> new_bitrate =
+      CheckAndUpdateLayerStructure(bitrate);
+  if (new_bitrate) {
+    video_bitrate_allocation_ = *new_bitrate;
+    next_time_to_send_rtcp_ = clock_->TimeInMilliseconds();
+  } else {
+    video_bitrate_allocation_ = bitrate;
+  }
+
+  send_video_bitrate_allocation_ = true;
   SetFlag(kRtcpAnyExtendedReports, true);
+}
+
+absl::optional<VideoBitrateAllocation> RTCPSender::CheckAndUpdateLayerStructure(
+    const VideoBitrateAllocation& bitrate) const {
+  absl::optional<VideoBitrateAllocation> updated_bitrate;
+  for (size_t si = 0; si < kMaxSpatialLayers; ++si) {
+    for (size_t ti = 0; ti < kMaxTemporalStreams; ++ti) {
+      if (!updated_bitrate &&
+          (bitrate.HasBitrate(si, ti) !=
+               video_bitrate_allocation_.HasBitrate(si, ti) ||
+           (bitrate.GetBitrate(si, ti) == 0) !=
+               (video_bitrate_allocation_.GetBitrate(si, ti) == 0))) {
+        updated_bitrate = bitrate;
+      }
+      if (video_bitrate_allocation_.GetBitrate(si, ti) > 0 &&
+          bitrate.GetBitrate(si, ti) == 0) {
+        // Make sure this stream disabling is explicitly signaled.
+        updated_bitrate->SetBitrate(si, ti, 0);
+      }
+    }
+  }
+
+  return updated_bitrate;
 }
 
 bool RTCPSender::SendFeedbackPacket(const rtcp::TransportFeedback& packet) {

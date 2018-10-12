@@ -40,7 +40,7 @@ class ReverbDecayEstimator {
   void Dump(ApmDataDumper* data_dumper) const;
 
  private:
-  void EstimateDecay(rtc::ArrayView<const float> filter);
+  void EstimateDecay(rtc::ArrayView<const float> filter, int peak_block);
   void AnalyzeFilter(rtc::ArrayView<const float> filter);
 
   void ResetDecayEstimation();
@@ -66,7 +66,9 @@ class ReverbDecayEstimator {
   };
 
   // Class for identifying the length of the early reverb from the linear
-  // filter.
+  // filter. For identifying the early reverberations, the impulse response is
+  // divided in sections and the tilt of each section is computed by a linear
+  // regressor.
   class EarlyReverbLengthEstimator {
    public:
     explicit EarlyReverbLengthEstimator(int max_blocks);
@@ -82,11 +84,11 @@ class ReverbDecayEstimator {
     void Dump(ApmDataDumper* data_dumper) const;
 
    private:
+    std::vector<float> numerators_smooth_;
     std::vector<float> numerators_;
-    std::vector<float> nz_;
-    std::vector<float> count_;
-    int section_ = 0;
-    int section_update_counter_ = 0;
+    int coefficients_counter_;
+    int block_counter_ = 0;
+    int n_sections_ = 0;
   };
 
   const int filter_length_blocks_;

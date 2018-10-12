@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-// Modified from the Chromium original:
+// Modified from the Chxsromium original:
 // src/base/strings/stringize_macros.h
 
 // This file defines preprocessor macros for stringizing preprocessor
@@ -21,7 +21,7 @@
 // This is not very useful as it does not expand defined symbols if
 // called directly. Use its counterpart without the _NO_EXPANSION
 // suffix, below.
-#define RTC_STRINGIZE_NO_EXPANSION(x) #x
+#define STRINGIZE_NO_EXPANSION(x) #x
 
 // Use this to quote the provided parameter, first expanding it if it
 // is a preprocessor symbol.
@@ -33,6 +33,6 @@
 // Then:
 //   STRINGIZE(A) produces "FOO"
 //   STRINGIZE(B(y)) produces "myobj->FunctionCall(y)"
-#define RTC_STRINGIZE(x) RTC_STRINGIZE_NO_EXPANSION(x)
+#define RTC_STRINGIZE(x) STRINGIZE_NO_EXPANSION(x)
 
 #endif  // RTC_BASE_STRINGIZE_MACROS_H_

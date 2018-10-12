@@ -14,6 +14,7 @@
 #include <type_traits>
 #include <utility>
 
+#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 
 namespace webrtc {
@@ -28,7 +29,10 @@ int FindOrEnd(std::string str, size_t start, char delimiter) {
 
 FieldTrialParameterInterface::FieldTrialParameterInterface(std::string key)
     : key_(key) {}
-FieldTrialParameterInterface::~FieldTrialParameterInterface() = default;
+FieldTrialParameterInterface::~FieldTrialParameterInterface() {
+  RTC_DCHECK(used_) << "Field trial parameter with key: '" << key_
+                    << "' never used.";
+}
 std::string FieldTrialParameterInterface::Key() const {
   return key_;
 }
@@ -38,6 +42,7 @@ void ParseFieldTrial(
     std::string trial_string) {
   std::map<std::string, FieldTrialParameterInterface*> field_map;
   for (FieldTrialParameterInterface* field : fields) {
+    field->MarkAsUsed();
     field_map[field->Key()] = field;
   }
   size_t i = 0;
@@ -77,7 +82,10 @@ absl::optional<bool> ParseTypedParameter<bool>(std::string str) {
 template <>
 absl::optional<double> ParseTypedParameter<double>(std::string str) {
   double value;
-  if (sscanf(str.c_str(), "%lf", &value) == 1) {
+  char unit[2]{0, 0};
+  if (sscanf(str.c_str(), "%lf%1s", &value, unit) >= 1) {
+    if (unit[0] == '%')
+      return value / 100;
     return value;
   } else {
     return absl::nullopt;
@@ -105,6 +113,10 @@ FieldTrialFlag::FieldTrialFlag(std::string key, bool default_value)
     : FieldTrialParameterInterface(key), value_(default_value) {}
 
 bool FieldTrialFlag::Get() const {
+  return value_;
+}
+
+webrtc::FieldTrialFlag::operator bool() const {
   return value_;
 }
 

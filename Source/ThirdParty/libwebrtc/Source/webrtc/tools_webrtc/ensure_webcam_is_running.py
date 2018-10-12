@@ -17,9 +17,7 @@ Prerequisites:
   launch ManyCam preconfigured to auto-play the test clip.
 * Mac: ManyCam must be installed in the default location and be preconfigured
   to auto-play the test clip.
-* Linux: The v4l2loopback kernel module must be compiled and loaded to the
-  kernel already and the v4l2_file_player application must be compiled and put
-  in the location specified below.
+* Linux: Not implemented
 
 NOTICE: When running this script as a buildbot step, make sure to set
 usePTY=False for the build step when adding it, or the subprocess will die as
@@ -29,22 +27,14 @@ If any command line arguments are passed to the script, it is executed as a
 command in a subprocess.
 """
 
-import os
 # psutil is not installed on non-Linux machines by default.
 import psutil  # pylint: disable=F0401
 import subprocess
 import sys
-import time
 
 
 WEBCAM_WIN = ('schtasks', '/run', '/tn', 'ManyCam')
 WEBCAM_MAC = ('open', '/Applications/ManyCam/ManyCam.app')
-E = os.path.expandvars
-WEBCAM_LINUX = (
-    E('$HOME/fake-webcam-driver/linux/v4l2_file_player/v4l2_file_player'),
-    E('$HOME/webrtc_video_quality/reference_video.yuv'),
-    '640', '480', '/dev/video0',
-)
 
 
 def IsWebCamRunning():
@@ -53,7 +43,10 @@ def IsWebCamRunning():
   elif sys.platform.startswith('darwin'):
     process_name = 'ManyCam'
   elif sys.platform.startswith('linux'):
-    process_name = 'v4l2_file_player'
+    # TODO(bugs.webrtc.org/9636): Currently a no-op on Linux: sw webcams no
+    # longer in use.
+    print 'Virtual webcam: no-op on Linux'
+    return True
   else:
     raise Exception('Unsupported platform: %s' % sys.platform)
   for p in psutil.process_iter():
@@ -76,21 +69,9 @@ def StartWebCam():
       subprocess.check_call(WEBCAM_MAC)
       print 'Successfully launched virtual webcam.'
     elif sys.platform.startswith('linux'):
-
-      # Must redirect stdout/stderr/stdin to avoid having the subprocess
-      # being killed when the parent shell dies (happens on the bots).
-      process = subprocess.Popen(WEBCAM_LINUX, stdout=subprocess.PIPE,
-                                 stderr=subprocess.PIPE,
-                                 stdin=subprocess.PIPE)
-      # If the v4l2loopback module is not loaded or incorrectly configured,
-      # the process will still launch but will die immediately.
-      # Wait for a second and then check for aliveness to catch such errors.
-      time.sleep(1)
-      if process.poll() is None:
-        print 'Successfully launched virtual webcam with PID %s' % process.pid
-      else:
-        print 'Failed to launch virtual webcam.'
-        return False
+      # TODO(bugs.webrtc.org/9636): Currently a no-op on Linux: sw webcams no
+      # longer in use.
+      print 'Not implemented on Linux'
 
   except Exception as e:
     print 'Failed to launch virtual webcam: %s' % e

@@ -40,6 +40,7 @@
 #include "rtc_base/socket.h"  // includes something that makes windows happy
 #include "rtc_base/stream.h"
 #include "rtc_base/stringencode.h"
+#include "rtc_base/strings/string_builder.h"
 #include "rtc_base/stringutils.h"
 #include "rtc_base/thread.h"
 
@@ -181,9 +182,9 @@ const int kPublicPort = 53;  // DNS port.
 std::string MakeNetworkKey(const std::string& name,
                            const IPAddress& prefix,
                            int prefix_length) {
-  std::ostringstream ost;
+  rtc::StringBuilder ost;
   ost << name << "%" << prefix.ToString() << "/" << prefix_length;
-  return ost.str();
+  return ost.Release();
 }
 // Test if the network name matches the type<number> pattern, e.g. eth0. The
 // matching is case-sensitive.
@@ -259,6 +260,10 @@ bool NetworkManager::GetDefaultLocalAddress(int family, IPAddress* addr) const {
   return false;
 }
 
+webrtc::MDnsResponderInterface* NetworkManager::GetMDnsResponder() const {
+  return nullptr;
+}
+
 NetworkManagerBase::NetworkManagerBase()
     : enumeration_permission_(NetworkManager::ENUMERATION_ALLOWED),
       ipv6_enabled_(true) {}
@@ -281,6 +286,7 @@ void NetworkManagerBase::GetAnyAddressNetworks(NetworkList* networks) {
         new rtc::Network("any", "any", ipv4_any_address, 0, ADAPTER_TYPE_ANY));
     ipv4_any_address_network_->set_default_local_address_provider(this);
     ipv4_any_address_network_->AddIP(ipv4_any_address);
+    ipv4_any_address_network_->SetMDnsResponder(GetMDnsResponder());
   }
   networks->push_back(ipv4_any_address_network_.get());
 
@@ -291,6 +297,7 @@ void NetworkManagerBase::GetAnyAddressNetworks(NetworkList* networks) {
           "any", "any", ipv6_any_address, 0, ADAPTER_TYPE_ANY));
       ipv6_any_address_network_->set_default_local_address_provider(this);
       ipv6_any_address_network_->AddIP(ipv6_any_address);
+      ipv6_any_address_network_->SetMDnsResponder(GetMDnsResponder());
     }
     networks->push_back(ipv6_any_address_network_.get());
   }
@@ -380,6 +387,7 @@ void NetworkManagerBase::MergeNetworkList(const NetworkList& new_networks,
         delete net;
       }
     }
+    networks_map_[key]->SetMDnsResponder(GetMDnsResponder());
   }
   // It may still happen that the merged list is a subset of |networks_|.
   // To detect this change, we compare their sizes.
@@ -1057,7 +1065,7 @@ uint16_t Network::GetCost() const {
 }
 
 std::string Network::ToString() const {
-  std::stringstream ss;
+  rtc::StringBuilder ss;
   // Print out the first space-terminated token of the network desc, plus
   // the IP address.
   ss << "Net[" << description_.substr(0, description_.find(' ')) << ":"
@@ -1067,7 +1075,7 @@ std::string Network::ToString() const {
     ss << "/" << AdapterTypeToString(underlying_type_for_vpn_);
   }
   ss << ":id=" << id_ << "]";
-  return ss.str();
+  return ss.Release();
 }
 
 }  // namespace rtc

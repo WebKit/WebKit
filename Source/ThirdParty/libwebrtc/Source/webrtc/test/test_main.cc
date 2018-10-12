@@ -8,15 +8,22 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <fstream>
+
 #include "rtc_base/flags.h"
 #include "rtc_base/logging.h"
-#include "system_wrappers/include/field_trial_default.h"
-#include "system_wrappers/include/metrics_default.h"
+#include "rtc_base/thread.h"
+#include "system_wrappers/include/field_trial.h"
+#include "system_wrappers/include/metrics.h"
 #include "test/field_trial.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/testsupport/fileutils.h"
 #include "test/testsupport/perf_test.h"
+
+#if defined(WEBRTC_WIN)
+#include "rtc_base/win32socketinit.h"
+#endif
 
 #if defined(WEBRTC_IOS)
 #include "test/ios/test_support.h"
@@ -37,9 +44,10 @@ DEFINE_bool(
 
 #else
 
-DEFINE_string(isolated_script_test_output,
-              "",
-              "Intentionally ignored flag intended for Chromium.");
+DEFINE_string(
+    isolated_script_test_output,
+    "",
+    "Path to output an empty JSON file which Chromium infra requires.");
 
 DEFINE_string(
     isolated_script_test_perf_output,
@@ -85,7 +93,20 @@ int main(int argc, char* argv[]) {
   webrtc::field_trial::InitFieldTrialsFromString(FLAG_force_fieldtrials);
   webrtc::metrics::Enable();
 
+#if defined(WEBRTC_WIN)
+  rtc::WinsockInitializer winsock_init;
+#endif
+
   rtc::LogMessage::SetLogToStderr(FLAG_logs);
+
+  // Ensure that main thread gets wrapped as an rtc::Thread.
+  // TODO(bugs.webrt.org/9714): It might be better to avoid wrapping the main
+  // thread, or leave it to individual tests that need it. But as long as we
+  // have automatic thread wrapping, we need this to avoid that some other
+  // random thread (which one depending on which tests are run) gets
+  // automatically wrapped.
+  rtc::ThreadManager::Instance()->WrapCurrentThread();
+  RTC_CHECK(rtc::Thread::Current());
 
 #if defined(WEBRTC_IOS)
 
@@ -100,6 +121,13 @@ int main(int argc, char* argv[]) {
   std::string chartjson_result_file = FLAG_isolated_script_test_perf_output;
   if (!chartjson_result_file.empty()) {
     webrtc::test::WritePerfResults(chartjson_result_file);
+  }
+
+  std::string result_filename = FLAG_isolated_script_test_output;
+  if (!result_filename.empty()) {
+    std::ofstream result_file(result_filename);
+    result_file << "{\"version\": 3}";
+    result_file.close();
   }
 
   return exit_code;

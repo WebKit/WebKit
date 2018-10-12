@@ -167,4 +167,9 @@ void FecControllerDefault::UpdateWithEncodedData(
     }
   }
 }
+
+bool FecControllerDefault::UseLossVectorMask() {
+  return false;
+}
+
 }  // namespace webrtc

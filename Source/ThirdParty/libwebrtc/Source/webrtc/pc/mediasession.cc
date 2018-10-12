@@ -122,7 +122,7 @@ static bool IsMediaContentOfType(const ContentInfo* content,
 
 static bool CreateCryptoParams(int tag,
                                const std::string& cipher,
-                               CryptoParams* out) {
+                               CryptoParams* crypto_out) {
   int key_len;
   int salt_len;
   if (!rtc::GetSrtpKeyAndSaltLengths(rtc::SrtpCryptoSuiteFromName(cipher),
@@ -139,35 +139,33 @@ static bool CreateCryptoParams(int tag,
   RTC_CHECK_EQ(master_key_len, master_key.size());
   std::string key = rtc::Base64::Encode(master_key);
 
-  out->tag = tag;
-  out->cipher_suite = cipher;
-  out->key_params = kInline;
-  out->key_params += key;
+  crypto_out->tag = tag;
+  crypto_out->cipher_suite = cipher;
+  crypto_out->key_params = kInline;
+  crypto_out->key_params += key;
   return true;
 }
 
 static bool AddCryptoParams(const std::string& cipher_suite,
-                            CryptoParamsVec* out) {
-  int size = static_cast<int>(out->size());
+                            CryptoParamsVec* cryptos_out) {
+  int size = static_cast<int>(cryptos_out->size());
 
-  out->resize(size + 1);
-  return CreateCryptoParams(size, cipher_suite, &out->at(size));
+  cryptos_out->resize(size + 1);
+  return CreateCryptoParams(size, cipher_suite, &cryptos_out->at(size));
 }
 
 void AddMediaCryptos(const CryptoParamsVec& cryptos,
                      MediaContentDescription* media) {
-  for (CryptoParamsVec::const_iterator crypto = cryptos.begin();
-       crypto != cryptos.end(); ++crypto) {
-    media->AddCrypto(*crypto);
+  for (const CryptoParams& crypto : cryptos) {
+    media->AddCrypto(crypto);
   }
 }
 
 bool CreateMediaCryptos(const std::vector<std::string>& crypto_suites,
                         MediaContentDescription* media) {
   CryptoParamsVec cryptos;
-  for (std::vector<std::string>::const_iterator it = crypto_suites.begin();
-       it != crypto_suites.end(); ++it) {
-    if (!AddCryptoParams(*it, &cryptos)) {
+  for (const std::string& crypto_suite : crypto_suites) {
+    if (!AddCryptoParams(crypto_suite, &cryptos)) {
       return false;
     }
   }
@@ -184,15 +182,15 @@ const CryptoParamsVec* GetCryptos(const ContentInfo* content) {
 
 bool FindMatchingCrypto(const CryptoParamsVec& cryptos,
                         const CryptoParams& crypto,
-                        CryptoParams* out) {
-  for (CryptoParamsVec::const_iterator it = cryptos.begin();
-       it != cryptos.end(); ++it) {
-    if (crypto.Matches(*it)) {
-      *out = *it;
-      return true;
-    }
+                        CryptoParams* crypto_out) {
+  auto it = std::find_if(
+      cryptos.begin(), cryptos.end(),
+      [&crypto](const CryptoParams& c) { return crypto.Matches(c); });
+  if (it == cryptos.end()) {
+    return false;
   }
-  return false;
+  *crypto_out = *it;
+  return true;
 }
 
 // For audio, HMAC 32 (if enabled) is prefered over HMAC 80 because of the
@@ -255,18 +253,17 @@ void GetSupportedDataSdesCryptoSuiteNames(
 static bool SelectCrypto(const MediaContentDescription* offer,
                          bool bundle,
                          const rtc::CryptoOptions& crypto_options,
-                         CryptoParams* crypto) {
+                         CryptoParams* crypto_out) {
   bool audio = offer->type() == MEDIA_TYPE_AUDIO;
   const CryptoParamsVec& cryptos = offer->cryptos();
 
-  for (CryptoParamsVec::const_iterator i = cryptos.begin(); i != cryptos.end();
-       ++i) {
+  for (const CryptoParams& crypto : cryptos) {
     if ((crypto_options.enable_gcm_crypto_suites &&
-         rtc::IsGcmCryptoSuiteName(i->cipher_suite)) ||
-        rtc::CS_AES_CM_128_HMAC_SHA1_80 == i->cipher_suite ||
-        (rtc::CS_AES_CM_128_HMAC_SHA1_32 == i->cipher_suite && audio &&
+         rtc::IsGcmCryptoSuiteName(crypto.cipher_suite)) ||
+        rtc::CS_AES_CM_128_HMAC_SHA1_80 == crypto.cipher_suite ||
+        (rtc::CS_AES_CM_128_HMAC_SHA1_32 == crypto.cipher_suite && audio &&
          !bundle && crypto_options.enable_aes128_sha1_32_crypto_cipher)) {
-      return CreateCryptoParams(i->tag, i->cipher_suite, crypto);
+      return CreateCryptoParams(crypto.tag, crypto.cipher_suite, crypto_out);
     }
   }
   return false;
@@ -310,14 +307,11 @@ void FilterDataCodecs(std::vector<DataCodec>* codecs, bool sctp) {
   // Filter RTP codec for SCTP and vice versa.
   const char* codec_name =
       sctp ? kGoogleRtpDataCodecName : kGoogleSctpDataCodecName;
-  for (std::vector<DataCodec>::iterator iter = codecs->begin();
-       iter != codecs->end();) {
-    if (CodecNamesEq(iter->name, codec_name)) {
-      iter = codecs->erase(iter);
-    } else {
-      ++iter;
-    }
-  }
+  codecs->erase(std::remove_if(codecs->begin(), codecs->end(),
+                               [&codec_name](const DataCodec& codec) {
+                                 return CodecNamesEq(codec.name, codec_name);
+                               }),
+                codecs->end());
 }
 
 template <typename IdStruct>
@@ -334,9 +328,8 @@ class UsedIds {
   // Note that typename Id must be a type of IdStruct.
   template <typename Id>
   void FindAndSetIdUsed(std::vector<Id>* ids) {
-    for (typename std::vector<Id>::iterator it = ids->begin(); it != ids->end();
-         ++it) {
-      FindAndSetIdUsed(&*it);
+    for (const Id& id : *ids) {
+      FindAndSetIdUsed(&id);
     }
   }
 
@@ -395,12 +388,16 @@ class UsedPayloadTypes : public UsedIds<Codec> {
 };
 
 // Helper class used for finding duplicate RTP Header extension ids among
-// audio and video extensions.
+// audio and video extensions. Only applies to one-byte header extensions at the
+// moment. ids > 14 will always be reported as available.
+// TODO(kron): This class needs to be refactored when we start to send two-byte
+// header extensions.
 class UsedRtpHeaderExtensionIds : public UsedIds<webrtc::RtpExtension> {
  public:
   UsedRtpHeaderExtensionIds()
-      : UsedIds<webrtc::RtpExtension>(webrtc::RtpExtension::kMinId,
-                                      webrtc::RtpExtension::kMaxId) {}
+      : UsedIds<webrtc::RtpExtension>(
+            webrtc::RtpExtension::kMinId,
+            webrtc::RtpExtension::kOneByteHeaderExtensionMaxId) {}
 
  private:
 };
@@ -512,13 +509,12 @@ static bool UpdateTransportInfoForBundle(const ContentGroup& bundle_group,
       selected_transport_info->description.ice_pwd;
   ConnectionRole selected_connection_role =
       selected_transport_info->description.connection_role;
-  for (TransportInfos::iterator it = sdesc->transport_infos().begin();
-       it != sdesc->transport_infos().end(); ++it) {
-    if (bundle_group.HasContentName(it->content_name) &&
-        it->content_name != selected_content_name) {
-      it->description.ice_ufrag = selected_ufrag;
-      it->description.ice_pwd = selected_pwd;
-      it->description.connection_role = selected_connection_role;
+  for (TransportInfo& transport_info : sdesc->transport_infos()) {
+    if (bundle_group.HasContentName(transport_info.content_name) &&
+        transport_info.content_name != selected_content_name) {
+      transport_info.description.ice_ufrag = selected_ufrag;
+      transport_info.description.ice_pwd = selected_pwd;
+      transport_info.description.connection_role = selected_connection_role;
     }
   }
   return true;
@@ -592,19 +588,20 @@ static bool UpdateCryptoParamsForBundle(const ContentGroup& bundle_group,
   // Get the common cryptos.
   const ContentNames& content_names = bundle_group.content_names();
   CryptoParamsVec common_cryptos;
-  for (ContentNames::const_iterator it = content_names.begin();
-       it != content_names.end(); ++it) {
-    if (!IsRtpContent(sdesc, *it)) {
+  bool first = true;
+  for (const std::string& content_name : content_names) {
+    if (!IsRtpContent(sdesc, content_name)) {
       continue;
     }
     // The common cryptos are needed if any of the content does not have DTLS
     // enabled.
-    if (!sdesc->GetTransportInfoByName(*it)->description.secure()) {
+    if (!sdesc->GetTransportInfoByName(content_name)->description.secure()) {
       common_cryptos_needed = true;
     }
-    if (it == content_names.begin()) {
+    if (first) {
+      first = false;
       // Initial the common_cryptos with the first content in the bundle group.
-      if (!GetCryptosByName(sdesc, *it, &common_cryptos)) {
+      if (!GetCryptosByName(sdesc, content_name, &common_cryptos)) {
         return false;
       }
       if (common_cryptos.empty()) {
@@ -613,7 +610,7 @@ static bool UpdateCryptoParamsForBundle(const ContentGroup& bundle_group,
       }
     } else {
       CryptoParamsVec cryptos;
-      if (!GetCryptosByName(sdesc, *it, &cryptos)) {
+      if (!GetCryptosByName(sdesc, content_name, &cryptos)) {
         return false;
       }
       PruneCryptos(cryptos, &common_cryptos);
@@ -625,12 +622,11 @@ static bool UpdateCryptoParamsForBundle(const ContentGroup& bundle_group,
   }
 
   // Update to use the common cryptos.
-  for (ContentNames::const_iterator it = content_names.begin();
-       it != content_names.end(); ++it) {
-    if (!IsRtpContent(sdesc, *it)) {
+  for (const std::string& content_name : content_names) {
+    if (!IsRtpContent(sdesc, content_name)) {
       continue;
     }
-    ContentInfo* content = sdesc->GetContentByName(*it);
+    ContentInfo* content = sdesc->GetContentByName(content_name);
     if (IsMediaContent(content)) {
       MediaContentDescription* media_desc = content->media_description();
       if (!media_desc) {
@@ -892,17 +888,21 @@ static void MergeCodecs(const std::vector<C>& reference_codecs,
 static bool FindByUriAndEncryption(const RtpHeaderExtensions& extensions,
                                    const webrtc::RtpExtension& ext_to_match,
                                    webrtc::RtpExtension* found_extension) {
-  for (RtpHeaderExtensions::const_iterator it = extensions.begin();
-       it != extensions.end(); ++it) {
-    // We assume that all URIs are given in a canonical format.
-    if (it->uri == ext_to_match.uri && it->encrypt == ext_to_match.encrypt) {
-      if (found_extension) {
-        *found_extension = *it;
-      }
-      return true;
-    }
+  auto it =
+      std::find_if(extensions.begin(), extensions.end(),
+                   [&ext_to_match](const webrtc::RtpExtension& extension) {
+                     // We assume that all URIs are given in a canonical
+                     // format.
+                     return extension.uri == ext_to_match.uri &&
+                            extension.encrypt == ext_to_match.encrypt;
+                   });
+  if (it == extensions.end()) {
+    return false;
   }
-  return false;
+  if (found_extension) {
+    *found_extension = *it;
+  }
+  return true;
 }
 
 static bool FindByUri(const RtpHeaderExtensions& extensions,
@@ -927,17 +927,16 @@ static bool FindByUriWithEncryptionPreference(
     bool encryption_preference,
     webrtc::RtpExtension* found_extension) {
   const webrtc::RtpExtension* unencrypted_extension = nullptr;
-  for (RtpHeaderExtensions::const_iterator it = extensions.begin();
-       it != extensions.end(); ++it) {
+  for (const webrtc::RtpExtension& extension : extensions) {
     // We assume that all URIs are given in a canonical format.
-    if (it->uri == ext_to_match.uri) {
-      if (!encryption_preference || it->encrypt) {
+    if (extension.uri == ext_to_match.uri) {
+      if (!encryption_preference || extension.encrypt) {
         if (found_extension) {
-          *found_extension = *it;
+          *found_extension = extension;
         }
         return true;
       }
-      unencrypted_extension = &(*it);
+      unencrypted_extension = &extension;
     }
   }
   if (unencrypted_extension) {
@@ -1025,12 +1024,10 @@ static void NegotiateRtpHeaderExtensions(
     const RtpHeaderExtensions& offered_extensions,
     bool enable_encrypted_rtp_header_extensions,
     RtpHeaderExtensions* negotiated_extenstions) {
-  RtpHeaderExtensions::const_iterator ours;
-  for (ours = local_extensions.begin(); ours != local_extensions.end();
-       ++ours) {
+  for (const webrtc::RtpExtension& ours : local_extensions) {
     webrtc::RtpExtension theirs;
     if (FindByUriWithEncryptionPreference(
-            offered_extensions, *ours, enable_encrypted_rtp_header_extensions,
+            offered_extensions, ours, enable_encrypted_rtp_header_extensions,
             &theirs)) {
       // We respond with their RTP header extension id.
       negotiated_extenstions->push_back(theirs);
@@ -1039,14 +1036,13 @@ static void NegotiateRtpHeaderExtensions(
 }
 
 static void StripCNCodecs(AudioCodecs* audio_codecs) {
-  AudioCodecs::iterator iter = audio_codecs->begin();
-  while (iter != audio_codecs->end()) {
-    if (STR_CASE_CMP(iter->name.c_str(), kComfortNoiseCodecName) == 0) {
-      iter = audio_codecs->erase(iter);
-    } else {
-      ++iter;
-    }
-  }
+  audio_codecs->erase(std::remove_if(audio_codecs->begin(), audio_codecs->end(),
+                                     [](const AudioCodec& codec) {
+                                       return STR_CASE_CMP(
+                                                  codec.name.c_str(),
+                                                  kComfortNoiseCodecName) == 0;
+                                     }),
+                      audio_codecs->end());
 }
 
 // Create a media content to be answered for the given |sender_options|

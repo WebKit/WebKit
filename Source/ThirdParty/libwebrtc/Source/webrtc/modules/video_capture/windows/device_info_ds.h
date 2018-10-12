@@ -33,31 +33,30 @@ class DeviceInfoDS : public DeviceInfoImpl {
   static DeviceInfoDS* Create();
 
   DeviceInfoDS();
-  virtual ~DeviceInfoDS();
+  ~DeviceInfoDS() override;
 
-  int32_t Init();
-  virtual uint32_t NumberOfDevices();
+  int32_t Init() override;
+  uint32_t NumberOfDevices() override;
 
   /*
    * Returns the available capture devices.
    */
-  virtual int32_t GetDeviceName(uint32_t deviceNumber,
-                                char* deviceNameUTF8,
-                                uint32_t deviceNameLength,
-                                char* deviceUniqueIdUTF8,
-                                uint32_t deviceUniqueIdUTF8Length,
-                                char* productUniqueIdUTF8,
-                                uint32_t productUniqueIdUTF8Length);
+  int32_t GetDeviceName(uint32_t deviceNumber,
+                        char* deviceNameUTF8,
+                        uint32_t deviceNameLength,
+                        char* deviceUniqueIdUTF8,
+                        uint32_t deviceUniqueIdUTF8Length,
+                        char* productUniqueIdUTF8,
+                        uint32_t productUniqueIdUTF8Length) override;
 
   /*
    * Display OS /capture device specific settings dialog
    */
-  virtual int32_t DisplayCaptureSettingsDialogBox(
-      const char* deviceUniqueIdUTF8,
-      const char* dialogTitleUTF8,
-      void* parentWindow,
-      uint32_t positionX,
-      uint32_t positionY);
+  int32_t DisplayCaptureSettingsDialogBox(const char* deviceUniqueIdUTF8,
+                                          const char* dialogTitleUTF8,
+                                          void* parentWindow,
+                                          uint32_t positionX,
+                                          uint32_t positionY) override;
 
   // Windows specific
 
@@ -86,7 +85,7 @@ class DeviceInfoDS : public DeviceInfoImpl {
                         char* productUniqueIdUTF8,
                         uint32_t productUniqueIdUTF8Length);
 
-  virtual int32_t CreateCapabilityMap(const char* deviceUniqueIdUTF8);
+  int32_t CreateCapabilityMap(const char* deviceUniqueIdUTF8) override;
 
  private:
   ICreateDevEnum* _dsDevEnum;

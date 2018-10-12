@@ -47,6 +47,7 @@ class GainController2 {
   AudioProcessing::Config::GainController2 config_;
   AdaptiveAgc adaptive_agc_;
   int analog_level_ = -1;
+  bool adaptive_digital_mode_ = true;
 
   RTC_DISALLOW_COPY_AND_ASSIGN(GainController2);
 };

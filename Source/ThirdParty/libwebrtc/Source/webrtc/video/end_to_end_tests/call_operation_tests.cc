@@ -8,6 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "api/test/simulated_network.h"
+#include "call/fake_network_pipe.h"
+#include "call/simulated_network.h"
 #include "system_wrappers/include/sleep.h"
 #include "test/call_test.h"
 #include "test/field_trial.h"
@@ -30,9 +33,8 @@ class CallOperationEndToEndTest
 INSTANTIATE_TEST_CASE_P(
     FieldTrials,
     CallOperationEndToEndTest,
-    ::testing::Values("WebRTC-RoundRobinPacing/Disabled/",
-                      "WebRTC-RoundRobinPacing/Enabled/",
-                      "WebRTC-TaskQueueCongestionControl/Enabled/"));
+    ::testing::Values("WebRTC-TaskQueueCongestionControl/Enabled/",
+                      "WebRTC-TaskQueueCongestionControl/Disabled/"));
 
 TEST_P(CallOperationEndToEndTest, ReceiverCanBeStartedTwice) {
   CreateCalls();
@@ -111,9 +113,17 @@ TEST_P(CallOperationEndToEndTest, RendersSingleDelayedFrame) {
     CreateCalls();
 
     sender_transport = absl::make_unique<test::DirectTransport>(
-        &task_queue_, sender_call_.get(), payload_type_map_);
+        &task_queue_,
+        absl::make_unique<FakeNetworkPipe>(
+            Clock::GetRealTimeClock(), absl::make_unique<SimulatedNetwork>(
+                                           DefaultNetworkSimulationConfig())),
+        sender_call_.get(), payload_type_map_);
     receiver_transport = absl::make_unique<test::DirectTransport>(
-        &task_queue_, receiver_call_.get(), payload_type_map_);
+        &task_queue_,
+        absl::make_unique<FakeNetworkPipe>(
+            Clock::GetRealTimeClock(), absl::make_unique<SimulatedNetwork>(
+                                           DefaultNetworkSimulationConfig())),
+        receiver_call_.get(), payload_type_map_);
     sender_transport->SetReceiver(receiver_call_->Receiver());
     receiver_transport->SetReceiver(sender_call_->Receiver());
 
@@ -171,9 +181,17 @@ TEST_P(CallOperationEndToEndTest, TransmitsFirstFrame) {
     CreateCalls();
 
     sender_transport = absl::make_unique<test::DirectTransport>(
-        &task_queue_, sender_call_.get(), payload_type_map_);
+        &task_queue_,
+        absl::make_unique<FakeNetworkPipe>(
+            Clock::GetRealTimeClock(), absl::make_unique<SimulatedNetwork>(
+                                           DefaultNetworkSimulationConfig())),
+        sender_call_.get(), payload_type_map_);
     receiver_transport = absl::make_unique<test::DirectTransport>(
-        &task_queue_, receiver_call_.get(), payload_type_map_);
+        &task_queue_,
+        absl::make_unique<FakeNetworkPipe>(
+            Clock::GetRealTimeClock(), absl::make_unique<SimulatedNetwork>(
+                                           DefaultNetworkSimulationConfig())),
+        receiver_call_.get(), payload_type_map_);
     sender_transport->SetReceiver(receiver_call_->Receiver());
     receiver_transport->SetReceiver(sender_call_->Receiver());
 
@@ -238,9 +256,17 @@ TEST_P(CallOperationEndToEndTest, ObserversEncodedFrames) {
     CreateCalls();
 
     sender_transport = absl::make_unique<test::DirectTransport>(
-        &task_queue_, sender_call_.get(), payload_type_map_);
+        &task_queue_,
+        absl::make_unique<FakeNetworkPipe>(
+            Clock::GetRealTimeClock(), absl::make_unique<SimulatedNetwork>(
+                                           DefaultNetworkSimulationConfig())),
+        sender_call_.get(), payload_type_map_);
     receiver_transport = absl::make_unique<test::DirectTransport>(
-        &task_queue_, receiver_call_.get(), payload_type_map_);
+        &task_queue_,
+        absl::make_unique<FakeNetworkPipe>(
+            Clock::GetRealTimeClock(), absl::make_unique<SimulatedNetwork>(
+                                           DefaultNetworkSimulationConfig())),
+        receiver_call_.get(), payload_type_map_);
     sender_transport->SetReceiver(receiver_call_->Receiver());
     receiver_transport->SetReceiver(sender_call_->Receiver());
 

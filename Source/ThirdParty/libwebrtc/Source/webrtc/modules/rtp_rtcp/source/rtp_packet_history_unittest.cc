@@ -16,6 +16,7 @@
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
 #include "system_wrappers/include/clock.h"
+#include "test/gmock.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -488,4 +489,92 @@ TEST_F(RtpPacketHistoryTest, GetBestFittingPacket) {
   EXPECT_EQ(target_packet_size,
             hist_.GetBestFittingPacket(target_packet_size)->size());
 }
+
+TEST_F(RtpPacketHistoryTest,
+       GetBestFittingPacketReturnsNextPacketWhenBestPacketHasBeenCulled) {
+  hist_.SetStorePacketsStatus(StorageMode::kStoreAndCull, 10);
+  std::unique_ptr<RtpPacketToSend> packet = CreateRtpPacket(kStartSeqNum);
+  packet->SetPayloadSize(50);
+  const size_t target_packet_size = packet->size();
+  hist_.PutRtpPacket(std::move(packet), kAllowRetransmission,
+                     fake_clock_.TimeInMilliseconds());
+
+  packet = hist_.GetBestFittingPacket(target_packet_size + 2);
+  ASSERT_THAT(packet, ::testing::NotNull());
+
+  // Send the packet and advance time past where packet expires.
+  ASSERT_THAT(hist_.GetPacketAndSetSendTime(kStartSeqNum, false),
+              ::testing::NotNull());
+  fake_clock_.AdvanceTimeMilliseconds(
+      RtpPacketHistory::kPacketCullingDelayFactor *
+      RtpPacketHistory::kMinPacketDurationMs);
+
+  packet = CreateRtpPacket(kStartSeqNum + 1);
+  packet->SetPayloadSize(100);
+  hist_.PutRtpPacket(std::move(packet), kAllowRetransmission,
+                     fake_clock_.TimeInMilliseconds());
+  ASSERT_FALSE(hist_.GetPacketState(kStartSeqNum, false));
+
+  auto best_packet = hist_.GetBestFittingPacket(target_packet_size + 2);
+  ASSERT_THAT(best_packet, ::testing::NotNull());
+  EXPECT_EQ(best_packet->SequenceNumber(), kStartSeqNum + 1);
+}
+
+TEST_F(RtpPacketHistoryTest, GetBestFittingPacketReturnLastPacketWhenSameSize) {
+  const size_t kTargetSize = 500;
+  hist_.SetStorePacketsStatus(StorageMode::kStore, 10);
+
+  // Add two packets of same size.
+  std::unique_ptr<RtpPacketToSend> packet = CreateRtpPacket(kStartSeqNum);
+  packet->SetPayloadSize(kTargetSize);
+  hist_.PutRtpPacket(std::move(packet), kAllowRetransmission,
+                     fake_clock_.TimeInMilliseconds());
+  packet = CreateRtpPacket(kStartSeqNum + 1);
+  packet->SetPayloadSize(kTargetSize);
+  hist_.PutRtpPacket(std::move(packet), kAllowRetransmission,
+                     fake_clock_.TimeInMilliseconds());
+
+  auto best_packet = hist_.GetBestFittingPacket(123);
+  ASSERT_THAT(best_packet, ::testing::NotNull());
+  EXPECT_EQ(best_packet->SequenceNumber(), kStartSeqNum + 1);
+}
+
+TEST_F(RtpPacketHistoryTest,
+       GetBestFittingPacketReturnsPacketWithSmallestDiff) {
+  const size_t kTargetSize = 500;
+  hist_.SetStorePacketsStatus(StorageMode::kStore, 10);
+
+  // Add two packets of very different size.
+  std::unique_ptr<RtpPacketToSend> small_packet = CreateRtpPacket(kStartSeqNum);
+  small_packet->SetPayloadSize(kTargetSize);
+  hist_.PutRtpPacket(std::move(small_packet), kAllowRetransmission,
+                     fake_clock_.TimeInMilliseconds());
+
+  auto large_packet = CreateRtpPacket(kStartSeqNum + 1);
+  large_packet->SetPayloadSize(kTargetSize * 2);
+  hist_.PutRtpPacket(std::move(large_packet), kAllowRetransmission,
+                     fake_clock_.TimeInMilliseconds());
+
+  ASSERT_THAT(hist_.GetBestFittingPacket(kTargetSize), ::testing::NotNull());
+  EXPECT_EQ(hist_.GetBestFittingPacket(kTargetSize)->SequenceNumber(),
+            kStartSeqNum);
+
+  ASSERT_THAT(hist_.GetBestFittingPacket(kTargetSize * 2),
+              ::testing::NotNull());
+  EXPECT_EQ(hist_.GetBestFittingPacket(kTargetSize * 2)->SequenceNumber(),
+            kStartSeqNum + 1);
+}
+
+TEST_F(RtpPacketHistoryTest,
+       GetBestFittingPacketIgnoresNoneRetransmitablePackets) {
+  hist_.SetStorePacketsStatus(StorageMode::kStoreAndCull, 10);
+  std::unique_ptr<RtpPacketToSend> packet = CreateRtpPacket(kStartSeqNum);
+  packet->SetPayloadSize(50);
+  hist_.PutRtpPacket(std::move(packet), kDontRetransmit,
+                     fake_clock_.TimeInMilliseconds());
+  EXPECT_THAT(hist_.GetBestFittingPacket(50), ::testing::IsNull());
+  EXPECT_THAT(hist_.GetPacketAndSetSendTime(kStartSeqNum, false),
+              ::testing::NotNull());
+}
+
 }  // namespace webrtc

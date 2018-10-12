@@ -38,6 +38,10 @@ class Call;
 
 namespace cricket {
 
+webrtc::RTCError ValidateRtpParameters(
+    const webrtc::RtpParameters& old_parameters,
+    const webrtc::RtpParameters& new_parameters);
+
 struct RtpCapabilities {
   RtpCapabilities();
   ~RtpCapabilities();

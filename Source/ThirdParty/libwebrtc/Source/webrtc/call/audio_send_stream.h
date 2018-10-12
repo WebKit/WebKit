@@ -21,6 +21,7 @@
 #include "api/audio_codecs/audio_encoder_factory.h"
 #include "api/audio_codecs/audio_format.h"
 #include "api/call/transport.h"
+#include "api/crypto/frameencryptorinterface.h"
 #include "api/rtpparameters.h"
 #include "call/rtp_config.h"
 #include "modules/audio_processing/include/audio_processing_statistics.h"
@@ -128,6 +129,11 @@ class AudioSendStream {
 
     // Track ID as specified during track creation.
     std::string track_id;
+
+    // An optional custom frame encryptor that allows the entire frame to be
+    // encryptor in whatever way the caller choses. This is not required by
+    // default.
+    rtc::scoped_refptr<webrtc::FrameEncryptorInterface> frame_encryptor;
   };
 
   virtual ~AudioSendStream() = default;

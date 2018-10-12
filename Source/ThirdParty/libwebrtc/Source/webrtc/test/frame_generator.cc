@@ -472,7 +472,7 @@ std::unique_ptr<FrameGenerator> FrameGenerator::CreateFromYuvFile(
   std::vector<FILE*> files;
   for (const std::string& filename : filenames) {
     FILE* file = fopen(filename.c_str(), "rb");
-    RTC_DCHECK(file != nullptr);
+    RTC_DCHECK(file != nullptr) << "Failed to open: '" << filename << "'\n";
     files.push_back(file);
   }
 

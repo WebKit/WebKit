@@ -129,6 +129,10 @@ bool PortAllocator::SetConfiguration(
     webrtc::TurnCustomizer* turn_customizer,
     const absl::optional<int>& stun_candidate_keepalive_interval) {
   CheckRunOnValidThreadIfInitialized();
+  // A positive candidate pool size would lead to the creation of a pooled
+  // allocator session and starting getting ports, which we should only do on
+  // the network thread.
+  RTC_DCHECK(candidate_pool_size == 0 || thread_checker_.CalledOnValidThread());
   bool ice_servers_changed =
       (stun_servers != stun_servers_ || turn_servers != turn_servers_);
   stun_servers_ = stun_servers;

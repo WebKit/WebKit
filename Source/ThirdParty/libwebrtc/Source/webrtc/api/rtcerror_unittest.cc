@@ -222,7 +222,8 @@ TEST(RTCErrorOrTest, MoveValue) {
 #if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
 
 TEST(RTCErrorOrDeathTest, ConstructWithOkError) {
-  EXPECT_DEATH(RTCErrorOr<int> err = RTCError::OK(), "");
+  RTCErrorOr<int> err;
+  EXPECT_DEATH(err = RTCError::OK(), "");
 }
 
 TEST(RTCErrorOrDeathTest, DereferenceErrorValue) {

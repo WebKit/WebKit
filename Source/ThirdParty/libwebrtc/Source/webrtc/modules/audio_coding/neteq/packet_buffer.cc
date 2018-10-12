@@ -91,6 +91,7 @@ int PacketBuffer::InsertPacket(Packet&& packet, StatisticsCalculator* stats) {
   if (buffer_.size() >= max_number_of_packets_) {
     // Buffer is full. Flush it.
     Flush();
+    stats->FlushedPacketBuffer();
     RTC_LOG(LS_WARNING) << "Packet buffer flushed";
     return_val = kFlushed;
   }

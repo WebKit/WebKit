@@ -44,6 +44,7 @@ rtc_source_set("module_api") {
   visibility = [ "*" ]
   sources = [
     "include/module.h",
+    "include/module_common_types.cc",
     "include/module_common_types.h",
   ]
   deps = [
@@ -51,14 +52,8 @@ rtc_source_set("module_api") {
     ":module_fec_api",
     "..:webrtc_common",
     "../api:libjingle_peerconnection_api",
-    "../api/transport:network_control",
-    "../api/video:video_frame",
-    "../api/video:video_frame_i420",
     "../modules/rtp_rtcp:rtp_video_header",
-    "../rtc_base:deprecation",
-    "../rtc_base:rtc_base_approved",
-    "video_coding:codec_globals_headers",
-    "//third_party/abseil-cpp/absl/types:optional",
+    "../rtc_base:safe_conversions",
   ]
 }
 

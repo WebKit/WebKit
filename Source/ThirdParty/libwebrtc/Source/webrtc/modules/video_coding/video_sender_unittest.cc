@@ -13,7 +13,7 @@
 
 #include "api/video/i420_buffer.h"
 #include "modules/video_coding/codecs/vp8/include/vp8.h"
-#include "modules/video_coding/codecs/vp8/temporal_layers.h"
+#include "modules/video_coding/codecs/vp8/include/vp8_temporal_layers.h"
 #include "modules/video_coding/include/mock/mock_vcm_callbacks.h"
 #include "modules/video_coding/include/mock/mock_video_codec_interface.h"
 #include "modules/video_coding/include/video_coding.h"
@@ -100,7 +100,7 @@ class EncodedImageCallbackImpl : public EncodedImageCallback {
     assert(codec_specific_info);
     frame_data_.push_back(
         FrameData(encoded_image._length, *codec_specific_info));
-    return Result(Result::OK, encoded_image._timeStamp);
+    return Result(Result::OK, encoded_image.Timestamp());
   }
 
   void Reset() {

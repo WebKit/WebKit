@@ -137,6 +137,40 @@ RtcpTransceiverConfig DefaultTestConfig() {
   return config;
 }
 
+TEST(RtcpTransceiverImplTest, CanDestroyOnTaskQueue) {
+  FakeRtcpTransport transport;
+  rtc::TaskQueue queue("rtcp");
+  RtcpTransceiverConfig config = DefaultTestConfig();
+  config.task_queue = &queue;
+  config.schedule_periodic_compound_packets = true;
+  config.outgoing_transport = &transport;
+  auto* rtcp_transceiver = new RtcpTransceiverImpl(config);
+  // Wait for a periodic packet.
+  EXPECT_TRUE(transport.WaitPacket());
+
+  rtc::Event done(false, false);
+  queue.PostTask([rtcp_transceiver, &done] {
+    delete rtcp_transceiver;
+    done.Set();
+  });
+  ASSERT_TRUE(done.Wait(/*milliseconds=*/1000));
+}
+
+TEST(RtcpTransceiverImplTest, CanDestroyAfterTaskQueue) {
+  FakeRtcpTransport transport;
+  auto* queue = new rtc::TaskQueue("rtcp");
+  RtcpTransceiverConfig config = DefaultTestConfig();
+  config.task_queue = queue;
+  config.schedule_periodic_compound_packets = true;
+  config.outgoing_transport = &transport;
+  auto* rtcp_transceiver = new RtcpTransceiverImpl(config);
+  // Wait for a periodic packet.
+  EXPECT_TRUE(transport.WaitPacket());
+
+  delete queue;
+  delete rtcp_transceiver;
+}
+
 TEST(RtcpTransceiverImplTest, DelaysSendingFirstCompondPacket) {
   rtc::TaskQueue queue("rtcp");
   FakeRtcpTransport transport;
@@ -290,7 +324,7 @@ TEST(RtcpTransceiverImplTest, SendsPeriodicRtcpWhenNetworkStateIsUp) {
   absl::optional<RtcpTransceiverImpl> rtcp_transceiver;
   rtcp_transceiver.emplace(config);
 
-  rtcp_transceiver->SetReadyToSend(true);
+  queue.PostTask([&] { rtcp_transceiver->SetReadyToSend(true); });
 
   EXPECT_TRUE(transport.WaitPacket());
 

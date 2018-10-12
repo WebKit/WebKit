@@ -39,6 +39,15 @@ AudioState::~AudioState() {
   RTC_DCHECK(sending_streams_.empty());
 }
 
+AudioProcessing* AudioState::audio_processing() {
+  RTC_DCHECK(config_.audio_processing);
+  return config_.audio_processing.get();
+}
+
+AudioTransport* AudioState::audio_transport() {
+  return &audio_transport_;
+}
+
 bool AudioState::typing_noise_detected() const {
   RTC_DCHECK(thread_checker_.CalledOnValidThread());
   return audio_transport_.typing_noise_detected();

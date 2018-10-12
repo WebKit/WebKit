@@ -16,6 +16,7 @@
 #include <memory>
 #include <vector>
 
+#include "absl/types/optional.h"
 #include "modules/audio_coding/neteq/tick_timer.h"
 #include "rtc_base/constructormagic.h"
 
@@ -109,22 +110,17 @@ class DelayManager {
   // Assuming |delay| is in valid range.
   virtual bool SetMinimumDelay(int delay_ms);
   virtual bool SetMaximumDelay(int delay_ms);
-  virtual int least_required_delay_ms() const;
   virtual int base_target_level() const;
   virtual void set_streaming_mode(bool value);
   virtual int last_pack_cng_or_dtmf() const;
   virtual void set_last_pack_cng_or_dtmf(int value);
 
- private:
-  static const int kLimitProbability = 53687091;         // 1/20 in Q30.
-  static const int kLimitProbabilityStreaming = 536871;  // 1/2000 in Q30.
-  static const int kMaxStreamingPeakPeriodMs = 600000;   // 10 minutes in ms.
-  static const int kCumulativeSumDrift = 2;  // Drift term for cumulative sum
-                                             // |iat_cumulative_sum_|.
-  // Steady-state forgetting factor for |iat_vector_|, 0.9993 in Q15.
-  static const int kIatFactor_ = 32745;
-  static const int kMaxIat = 64;  // Max inter-arrival time to register.
+  // This accessor is only intended for testing purposes.
+  const absl::optional<int>& forced_limit_probability_for_test() const {
+    return forced_limit_probability_;
+  }
 
+ private:
   // Sets |iat_vector_| to the default start distribution and sets the
   // |base_target_level_| and |target_level_| to the corresponding values.
   void ResetHistogram();
@@ -161,10 +157,6 @@ class DelayManager {
   uint16_t last_seq_no_;         // Sequence number for last received packet.
   uint32_t last_timestamp_;      // Timestamp for the last received packet.
   int minimum_delay_ms_;         // Externally set minimum delay.
-  int least_required_delay_ms_;  // Smallest preferred buffer level (same unit
-                                 // as |target_level_|), before applying
-                                 // |minimum_delay_ms_| and/or
-                                 // |maximum_delay_ms_|.
   int maximum_delay_ms_;         // Externally set maximum allowed delay.
   int iat_cumulative_sum_;       // Cumulative sum of delta inter-arrival times.
   int max_iat_cumulative_sum_;   // Max of |iat_cumulative_sum_|.
@@ -173,6 +165,7 @@ class DelayManager {
   DelayPeakDetector& peak_detector_;
   int last_pack_cng_or_dtmf_;
   const bool frame_length_change_experiment_;
+  const absl::optional<int> forced_limit_probability_;
 
   RTC_DISALLOW_COPY_AND_ASSIGN(DelayManager);
 };

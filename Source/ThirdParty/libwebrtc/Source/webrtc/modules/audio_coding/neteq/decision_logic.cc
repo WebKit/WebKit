@@ -21,7 +21,37 @@
 #include "modules/audio_coding/neteq/packet_buffer.h"
 #include "modules/audio_coding/neteq/sync_buffer.h"
 #include "modules/include/module_common_types.h"
+#include "rtc_base/logging.h"
 #include "system_wrappers/include/field_trial.h"
+
+namespace {
+constexpr char kPostponeDecodingFieldTrial[] =
+    "WebRTC-Audio-NetEqPostponeDecodingAfterExpand";
+
+int GetPostponeDecodingLevel() {
+  const bool enabled =
+      webrtc::field_trial::IsEnabled(kPostponeDecodingFieldTrial);
+  if (!enabled)
+    return 0;
+
+  constexpr int kDefaultPostponeDecodingLevel = 50;
+  const std::string field_trial_string =
+      webrtc::field_trial::FindFullName(kPostponeDecodingFieldTrial);
+  int value = -1;
+  if (sscanf(field_trial_string.c_str(), "Enabled-%d", &value) == 1) {
+    if (value >= 0 && value <= 100) {
+      return value;
+    } else {
+      RTC_LOG(LS_WARNING)
+          << "Wrong value (" << value
+          << ") for postpone decoding after expand, using default ("
+          << kDefaultPostponeDecodingLevel << ")";
+    }
+  }
+  return kDefaultPostponeDecodingLevel;
+}
+
+}  // namespace
 
 namespace webrtc {
 
@@ -59,8 +89,7 @@ DecisionLogic::DecisionLogic(int fs_hz,
       timescale_countdown_(
           tick_timer_->GetNewCountdown(kMinTimescaleInterval + 1)),
       num_consecutive_expands_(0),
-      postpone_decoding_after_expand_(field_trial::IsEnabled(
-          "WebRTC-Audio-NetEqPostponeDecodingAfterExpand")) {
+      postpone_decoding_level_(GetPostponeDecodingLevel()) {
   delay_manager_->set_streaming_mode(false);
   SetSampleRate(fs_hz, output_size_samples);
 }
@@ -164,11 +193,13 @@ Operations DecisionLogic::GetDecision(const SyncBuffer& sync_buffer,
   // if the mute factor is low enough (otherwise the expansion was short enough
   // to not be noticable).
   // Note that the MuteFactor is in Q14, so a value of 16384 corresponds to 1.
-  if (postpone_decoding_after_expand_ && prev_mode == kModeExpand &&
-      !packet_buffer_.ContainsDtxOrCngPacket(decoder_database_) &&
-      cur_size_samples<static_cast<size_t>(delay_manager_->TargetLevel() *
-                                           packet_length_samples_)>> 8 &&
-      expand.MuteFactor(0) < 16384 / 2) {
+  if ((prev_mode == kModeExpand || prev_mode == kModeCodecPlc) &&
+      expand.MuteFactor(0) < 16384 / 2 &&
+      cur_size_samples < static_cast<size_t>(
+              delay_manager_->TargetLevel() * packet_length_samples_ *
+              postpone_decoding_level_ / 100) >> 8 &&
+      !packet_buffer_.ContainsDtxOrCngPacket(decoder_database_)) {
+    RTC_DCHECK(webrtc::field_trial::IsEnabled(kPostponeDecodingFieldTrial));
     return kExpand;
   }
 
@@ -302,9 +333,9 @@ Operations DecisionLogic::FuturePacketAvailable(
   // Check if we should continue with an ongoing expand because the new packet
   // is too far into the future.
   uint32_t timestamp_leap = available_timestamp - target_timestamp;
-  if ((prev_mode == kModeExpand) && !ReinitAfterExpands(timestamp_leap) &&
-      !MaxWaitForPacket() && PacketTooEarly(timestamp_leap) &&
-      UnderTargetLevel()) {
+  if ((prev_mode == kModeExpand || prev_mode == kModeCodecPlc) &&
+      !ReinitAfterExpands(timestamp_leap) && !MaxWaitForPacket() &&
+      PacketTooEarly(timestamp_leap) && UnderTargetLevel()) {
     if (play_dtmf) {
       // Still have DTMF to play, so do not do expand.
       return kDtmf;
@@ -312,6 +343,10 @@ Operations DecisionLogic::FuturePacketAvailable(
       // Nothing to play.
       return kExpand;
     }
+  }
+
+  if (prev_mode == kModeCodecPlc) {
+    return kNormal;
   }
 
   const size_t samples_left =

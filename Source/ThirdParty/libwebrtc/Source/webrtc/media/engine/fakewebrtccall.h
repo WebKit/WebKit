@@ -143,9 +143,6 @@ class FakeVideoSendStream final
     return num_encoder_reconfigurations_;
   }
 
-  void EnableEncodedFrameRecording(const std::vector<rtc::PlatformFile>& files,
-                                   size_t byte_limit) override;
-
   bool resolution_scaling_enabled() const {
     return resolution_scaling_enabled_;
   }
@@ -204,14 +201,15 @@ class FakeVideoReceiveStream final : public webrtc::VideoReceiveStream {
 
   void SetStats(const webrtc::VideoReceiveStream::Stats& stats);
 
-  void EnableEncodedFrameRecording(rtc::PlatformFile file,
-                                   size_t byte_limit) override;
-
   void AddSecondarySink(webrtc::RtpPacketSinkInterface* sink) override;
   void RemoveSecondarySink(const webrtc::RtpPacketSinkInterface* sink) override;
 
   int GetNumAddedSecondarySinks() const;
   int GetNumRemovedSecondarySinks() const;
+
+  std::vector<webrtc::RtpSource> GetSources() const override {
+    return std::vector<webrtc::RtpSource>();
+  }
 
  private:
   // webrtc::VideoReceiveStream implementation.
@@ -319,8 +317,8 @@ class FakeCall final : public webrtc::Call, public webrtc::PacketReceiver {
 
   void SignalChannelNetworkState(webrtc::MediaType media,
                                  webrtc::NetworkState state) override;
-  void OnTransportOverheadChanged(webrtc::MediaType media,
-                                  int transport_overhead_per_packet) override;
+  void OnAudioTransportOverheadChanged(
+      int transport_overhead_per_packet) override;
   void OnSentPacket(const rtc::SentPacket& sent_packet) override;
 
   testing::NiceMock<webrtc::MockRtpTransportControllerSend>
@@ -340,9 +338,6 @@ class FakeCall final : public webrtc::Call, public webrtc::PacketReceiver {
 
   int num_created_send_streams_;
   int num_created_receive_streams_;
-
-  int audio_transport_overhead_;
-  int video_transport_overhead_;
 };
 
 }  // namespace cricket

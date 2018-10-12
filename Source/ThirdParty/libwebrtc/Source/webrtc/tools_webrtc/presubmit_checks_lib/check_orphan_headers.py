@@ -114,7 +114,6 @@ def GetHeadersInBuildGnFileSources(file_content, target_abs_path):
         source_file = source_file_match.group('source_file')
         if source_file.endswith('.h'):
           source_file_tokens = string.split(source_file, '/')
-          # pylint: disable=star-args
           headers_in_sources.add(os.path.join(target_abs_path,
                                               *source_file_tokens))
   return headers_in_sources

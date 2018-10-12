@@ -32,19 +32,19 @@ struct DummyExperiment {
 TEST(FieldTrialParserUnitsTest, FallsBackToDefaults) {
   DummyExperiment exp("");
   EXPECT_EQ(exp.target_rate.Get(), DataRate::kbps(100));
-  EXPECT_FALSE(exp.max_buffer.Get().has_value());
+  EXPECT_FALSE(exp.max_buffer.GetOptional().has_value());
   EXPECT_EQ(exp.period.Get(), TimeDelta::ms(100));
 }
 TEST(FieldTrialParserUnitsTest, ParsesUnitParameters) {
   DummyExperiment exp("t:300kbps,b:5bytes,p:300ms");
   EXPECT_EQ(exp.target_rate.Get(), DataRate::kbps(300));
-  EXPECT_EQ(*exp.max_buffer.Get(), DataSize::bytes(5));
+  EXPECT_EQ(*exp.max_buffer.GetOptional(), DataSize::bytes(5));
   EXPECT_EQ(exp.period.Get(), TimeDelta::ms(300));
 }
 TEST(FieldTrialParserUnitsTest, ParsesDefaultUnitParameters) {
   DummyExperiment exp("t:300,b:5,p:300");
   EXPECT_EQ(exp.target_rate.Get(), DataRate::kbps(300));
-  EXPECT_EQ(*exp.max_buffer.Get(), DataSize::bytes(5));
+  EXPECT_EQ(*exp.max_buffer.GetOptional(), DataSize::bytes(5));
   EXPECT_EQ(exp.period.Get(), TimeDelta::ms(300));
 }
 TEST(FieldTrialParserUnitsTest, ParsesInfinityParameter) {
@@ -55,7 +55,7 @@ TEST(FieldTrialParserUnitsTest, ParsesInfinityParameter) {
 TEST(FieldTrialParserUnitsTest, ParsesOtherUnitParameters) {
   DummyExperiment exp("t:300bps,p:0.3 seconds,b:8 bytes");
   EXPECT_EQ(exp.target_rate.Get(), DataRate::bps(300));
-  EXPECT_EQ(*exp.max_buffer.Get(), DataSize::bytes(8));
+  EXPECT_EQ(*exp.max_buffer.GetOptional(), DataSize::bytes(8));
   EXPECT_EQ(exp.period.Get(), TimeDelta::ms(300));
 }
 

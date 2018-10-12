@@ -18,29 +18,28 @@ namespace videocapturemodule {
 class ExternalDeviceInfo : public DeviceInfoImpl {
  public:
   ExternalDeviceInfo() {}
-  virtual ~ExternalDeviceInfo() {}
-  virtual uint32_t NumberOfDevices() { return 0; }
-  virtual int32_t DisplayCaptureSettingsDialogBox(
-      const char* /*deviceUniqueIdUTF8*/,
-      const char* /*dialogTitleUTF8*/,
-      void* /*parentWindow*/,
-      uint32_t /*positionX*/,
-      uint32_t /*positionY*/) {
+  ~ExternalDeviceInfo() override {}
+  uint32_t NumberOfDevices() override { return 0; }
+  int32_t DisplayCaptureSettingsDialogBox(const char* /*deviceUniqueIdUTF8*/,
+                                          const char* /*dialogTitleUTF8*/,
+                                          void* /*parentWindow*/,
+                                          uint32_t /*positionX*/,
+                                          uint32_t /*positionY*/) override {
     return -1;
   }
-  virtual int32_t GetDeviceName(uint32_t deviceNumber,
-                                char* deviceNameUTF8,
-                                uint32_t deviceNameLength,
-                                char* deviceUniqueIdUTF8,
-                                uint32_t deviceUniqueIdUTF8Length,
-                                char* productUniqueIdUTF8 = 0,
-                                uint32_t productUniqueIdUTF8Length = 0) {
+  int32_t GetDeviceName(uint32_t deviceNumber,
+                        char* deviceNameUTF8,
+                        uint32_t deviceNameLength,
+                        char* deviceUniqueIdUTF8,
+                        uint32_t deviceUniqueIdUTF8Length,
+                        char* productUniqueIdUTF8 = 0,
+                        uint32_t productUniqueIdUTF8Length = 0) override {
     return -1;
   }
-  virtual int32_t CreateCapabilityMap(const char* deviceUniqueIdUTF8) {
+  int32_t CreateCapabilityMap(const char* deviceUniqueIdUTF8) override {
     return 0;
   }
-  virtual int32_t Init() { return 0; }
+  int32_t Init() override { return 0; }
 };
 
 VideoCaptureModule::DeviceInfo* VideoCaptureImpl::CreateDeviceInfo() {

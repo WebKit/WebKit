@@ -72,8 +72,4 @@ const int CONNECTION_WRITE_TIMEOUT = 15 * 1000;         // 15 seconds
 // of increased memory, but in some networks (2G), we observe up to 60s RTTs.
 const int CONNECTION_RESPONSE_TIMEOUT = 60 * 1000;  // 60 seconds
 
-// TODO(qingsi): Review and calibrate the value (bugs.webrtc.org/9427).
-const int kMaxWaitMsBeforeSignalingAnyAddressPortsAndCandidates =
-    2.5 * 1000;  // 2.5 seconds
-
 }  // namespace cricket

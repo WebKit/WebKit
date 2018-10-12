@@ -181,15 +181,17 @@ public class GlRectDrawerTest {
     for (int y = 0; y < HEIGHT; ++y) {
       for (int x = 0; x < WIDTH; ++x) {
         // YUV color space. Y in [0, 1], UV in [-0.5, 0.5]. The constants are taken from the YUV
-        // fragment shader code in GlRectDrawer.
+        // fragment shader code in GlGenericDrawer.
         final float y_luma = normalizedByte(yuvPlanes[0].get());
-        final float u_chroma = normalizedByte(yuvPlanes[1].get()) - 0.5f;
-        final float v_chroma = normalizedByte(yuvPlanes[2].get()) - 0.5f;
+        final float u_chroma = normalizedByte(yuvPlanes[1].get());
+        final float v_chroma = normalizedByte(yuvPlanes[2].get());
         // Expected color in unrounded RGB [0.0f, 255.0f].
-        final float expectedRed = saturatedConvert(y_luma + 1.403f * v_chroma);
-        final float expectedGreen =
-            saturatedConvert(y_luma - 0.344f * u_chroma - 0.714f * v_chroma);
-        final float expectedBlue = saturatedConvert(y_luma + 1.77f * u_chroma);
+        final float expectedRed =
+            saturatedConvert(1.16438f * y_luma + 1.59603f * v_chroma - 0.874202f);
+        final float expectedGreen = saturatedConvert(
+            1.16438f * y_luma - 0.391762f * u_chroma - 0.812968f * v_chroma + 0.531668f);
+        final float expectedBlue =
+            saturatedConvert(1.16438f * y_luma + 2.01723f * u_chroma - 1.08563f);
 
         // Actual color in RGB8888.
         final int actualRed = data.get() & 0xFF;

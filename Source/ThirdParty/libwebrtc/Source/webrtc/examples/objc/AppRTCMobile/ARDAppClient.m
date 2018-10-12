@@ -10,22 +10,23 @@
 
 #import "ARDAppClient+Internal.h"
 
-#import "WebRTC/RTCAudioTrack.h"
-#import "WebRTC/RTCCameraVideoCapturer.h"
-#import "WebRTC/RTCConfiguration.h"
-#import "WebRTC/RTCFileLogger.h"
-#import "WebRTC/RTCFileVideoCapturer.h"
-#import "WebRTC/RTCIceServer.h"
-#import "WebRTC/RTCLogging.h"
-#import "WebRTC/RTCMediaConstraints.h"
-#import "WebRTC/RTCMediaStream.h"
-#import "WebRTC/RTCPeerConnectionFactory.h"
-#import "WebRTC/RTCRtpSender.h"
-#import "WebRTC/RTCRtpTransceiver.h"
-#import "WebRTC/RTCTracing.h"
-#import "WebRTC/RTCVideoCodecFactory.h"
-#import "WebRTC/RTCVideoSource.h"
-#import "WebRTC/RTCVideoTrack.h"
+#import <WebRTC/RTCAudioTrack.h>
+#import <WebRTC/RTCCameraVideoCapturer.h>
+#import <WebRTC/RTCConfiguration.h>
+#import <WebRTC/RTCDefaultVideoDecoderFactory.h>
+#import <WebRTC/RTCDefaultVideoEncoderFactory.h>
+#import <WebRTC/RTCFileLogger.h>
+#import <WebRTC/RTCFileVideoCapturer.h>
+#import <WebRTC/RTCIceServer.h>
+#import <WebRTC/RTCLogging.h>
+#import <WebRTC/RTCMediaConstraints.h>
+#import <WebRTC/RTCMediaStream.h>
+#import <WebRTC/RTCPeerConnectionFactory.h>
+#import <WebRTC/RTCRtpSender.h>
+#import <WebRTC/RTCRtpTransceiver.h>
+#import <WebRTC/RTCTracing.h>
+#import <WebRTC/RTCVideoSource.h>
+#import <WebRTC/RTCVideoTrack.h>
 
 #import "ARDAppEngineClient.h"
 #import "ARDExternalSampleCapturer.h"

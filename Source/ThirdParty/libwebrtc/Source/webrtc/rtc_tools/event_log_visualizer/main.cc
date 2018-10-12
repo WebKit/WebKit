@@ -14,8 +14,9 @@
 #include "rtc_base/flags.h"
 #include "rtc_tools/event_log_visualizer/analyzer.h"
 #include "rtc_tools/event_log_visualizer/plot_base.h"
+#include "rtc_tools/event_log_visualizer/plot_protobuf.h"
 #include "rtc_tools/event_log_visualizer/plot_python.h"
-#include "system_wrappers/include/field_trial_default.h"
+#include "system_wrappers/include/field_trial.h"
 #include "test/field_trial.h"
 #include "test/testsupport/fileutils.h"
 
@@ -161,6 +162,10 @@ DEFINE_bool(normalize_time,
             true,
             "Normalize the log timestamps so that the call starts at time 0.");
 
+DEFINE_bool(protobuf_output,
+            false,
+            "Output charts as protobuf instead of python code.");
+
 void SetAllPlotFlags(bool setting);
 
 int main(int argc, char* argv[]) {
@@ -237,8 +242,12 @@ int main(int argc, char* argv[]) {
   }
 
   webrtc::EventLogAnalyzer analyzer(parsed_log, FLAG_normalize_time);
-  std::unique_ptr<webrtc::PlotCollection> collection(
-      new webrtc::PythonPlotCollection());
+  std::unique_ptr<webrtc::PlotCollection> collection;
+  if (FLAG_protobuf_output) {
+    collection.reset(new webrtc::ProtobufPlotCollection());
+  } else {
+    collection.reset(new webrtc::PythonPlotCollection());
+  }
 
   if (FLAG_plot_incoming_packet_sizes) {
     analyzer.CreatePacketGraph(webrtc::kIncomingPacket,
@@ -343,11 +352,11 @@ int main(int argc, char* argv[]) {
     };
     analyzer.CreateSenderAndReceiverReportPlot(
         webrtc::kIncomingPacket, GetHighestSeqNumber,
-        "Highest sequence number (incoming RTCP)", "Seqence number",
+        "Highest sequence number (incoming RTCP)", "Sequence number",
         collection->AppendNewPlot());
     analyzer.CreateSenderAndReceiverReportPlot(
         webrtc::kOutgoingPacket, GetHighestSeqNumber,
-        "Highest sequence number (outgoing RTCP)", "Seqence number",
+        "Highest sequence number (outgoing RTCP)", "Sequence number",
         collection->AppendNewPlot());
 
     auto DelaySinceLastSr =

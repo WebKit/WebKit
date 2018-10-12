@@ -18,7 +18,6 @@
 #include "rtc_base/location.h"
 #include "rtc_base/task_queue.h"
 #include "system_wrappers/include/metrics.h"
-#include "system_wrappers/include/metrics_default.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 

@@ -21,13 +21,13 @@
 namespace webrtc {
 
 namespace {
-int16_t MapSetting(EchoCancellation::SuppressionLevel level) {
+int16_t MapSetting(EchoCancellationImpl::SuppressionLevel level) {
   switch (level) {
-    case EchoCancellation::kLowSuppression:
+    case EchoCancellationImpl::kLowSuppression:
       return kAecNlpConservative;
-    case EchoCancellation::kModerateSuppression:
+    case EchoCancellationImpl::kModerateSuppression:
       return kAecNlpModerate;
-    case EchoCancellation::kHighSuppression:
+    case EchoCancellationImpl::kHighSuppression:
       return kAecNlpAggressive;
   }
   RTC_NOTREACHED();
@@ -108,12 +108,12 @@ EchoCancellationImpl::EchoCancellationImpl(rtc::CriticalSection* crit_render,
     : crit_render_(crit_render),
       crit_capture_(crit_capture),
       drift_compensation_enabled_(false),
-      metrics_enabled_(false),
+      metrics_enabled_(true),
       suppression_level_(kHighSuppression),
       stream_drift_samples_(0),
       was_stream_drift_set_(false),
       stream_has_echo_(false),
-      delay_logging_enabled_(false),
+      delay_logging_enabled_(true),
       extended_filter_enabled_(false),
       delay_agnostic_enabled_(false),
       enforce_zero_stream_delay_(EnforceZeroStreamDelay()) {
@@ -242,7 +242,7 @@ int EchoCancellationImpl::set_suppression_level(SuppressionLevel level) {
   return Configure();
 }
 
-EchoCancellation::SuppressionLevel EchoCancellationImpl::suppression_level()
+EchoCancellationImpl::SuppressionLevel EchoCancellationImpl::suppression_level()
     const {
   rtc::CritScope cs(crit_capture_);
   return suppression_level_;

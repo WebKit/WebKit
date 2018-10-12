@@ -20,9 +20,13 @@ constexpr double kSmoothing = 0.0;
 constexpr double kGain = 1;
 constexpr int64_t kAvgTimeBetweenPackets = 10;
 constexpr size_t kPacketCount = 2 * kWindowSize + 1;
-
+class TrendlineEstimatorForTest : public TrendlineEstimator {
+ public:
+  using TrendlineEstimator::TrendlineEstimator;
+  using TrendlineEstimator::modified_trend;
+};
 void TestEstimator(double slope, double jitter_stddev, double tolerance) {
-  TrendlineEstimator estimator(kWindowSize, kSmoothing, kGain);
+  TrendlineEstimatorForTest estimator(kWindowSize, kSmoothing, kGain);
   Random random(0x1234567);
   int64_t send_times[kPacketCount];
   int64_t recv_times[kPacketCount];
@@ -39,9 +43,9 @@ void TestEstimator(double slope, double jitter_stddev, double tolerance) {
     double send_delta = send_times[i] - send_times[i - 1];
     estimator.Update(recv_delta, send_delta, recv_times[i]);
     if (i < kWindowSize)
-      EXPECT_NEAR(estimator.trendline_slope(), 0, 0.001);
+      EXPECT_NEAR(estimator.modified_trend(), 0, 0.001);
     else
-      EXPECT_NEAR(estimator.trendline_slope(), slope, tolerance);
+      EXPECT_NEAR(estimator.modified_trend(), slope, tolerance);
   }
 }
 }  // namespace

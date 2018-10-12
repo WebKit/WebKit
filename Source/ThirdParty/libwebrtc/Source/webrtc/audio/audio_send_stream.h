@@ -31,7 +31,7 @@ class RtcpRttStats;
 class RtpTransportControllerSendInterface;
 
 namespace voe {
-class ChannelProxy;
+class ChannelSendProxy;
 }  // namespace voe
 
 namespace internal {
@@ -61,7 +61,7 @@ class AudioSendStream final : public webrtc::AudioSendStream,
                   RtcpRttStats* rtcp_rtt_stats,
                   const absl::optional<RtpState>& suspended_rtp_state,
                   TimeInterval* overall_call_lifetime,
-                  std::unique_ptr<voe::ChannelProxy> channel_proxy);
+                  std::unique_ptr<voe::ChannelSendProxy> channel_proxy);
   ~AudioSendStream() override;
 
   // webrtc::AudioSendStream implementation.
@@ -96,7 +96,7 @@ class AudioSendStream final : public webrtc::AudioSendStream,
   void SetTransportOverhead(int transport_overhead_per_packet);
 
   RtpState GetRtpState() const;
-  const voe::ChannelProxy& GetChannelProxy() const;
+  const voe::ChannelSendProxy& GetChannelProxy() const;
 
  private:
   class TimedTransport;
@@ -133,7 +133,7 @@ class AudioSendStream final : public webrtc::AudioSendStream,
   rtc::TaskQueue* worker_queue_;
   webrtc::AudioSendStream::Config config_;
   rtc::scoped_refptr<webrtc::AudioState> audio_state_;
-  std::unique_ptr<voe::ChannelProxy> channel_proxy_;
+  std::unique_ptr<voe::ChannelSendProxy> channel_proxy_;
   RtcEventLog* const event_log_;
 
   int encoder_sample_rate_hz_ = 0;

@@ -108,6 +108,10 @@ bool BitBuffer::ReadUInt32(uint32_t* val) {
 }
 
 bool BitBuffer::PeekBits(uint32_t* val, size_t bit_count) {
+  // TODO(nisse): Could allow bit_count == 0 and always return success. But
+  // current code reads one byte beyond end of buffer in the case that
+  // RemainingBitCount() == 0 and bit_count == 0.
+  RTC_DCHECK(bit_count > 0);
   if (!val || bit_count > RemainingBitCount() || bit_count > 32) {
     return false;
   }

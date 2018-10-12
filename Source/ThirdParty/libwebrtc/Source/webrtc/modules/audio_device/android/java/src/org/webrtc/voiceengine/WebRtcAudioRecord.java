@@ -10,10 +10,10 @@
 
 package org.webrtc.voiceengine;
 
-import android.annotation.TargetApi;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder.AudioSource;
+import android.os.Build;
 import android.os.Process;
 import java.lang.System;
 import java.nio.ByteBuffer;
@@ -52,14 +52,14 @@ public class WebRtcAudioRecord {
 
   private final long nativeAudioRecord;
 
-  private @Nullable WebRtcAudioEffects effects = null;
+  private @Nullable WebRtcAudioEffects effects;
 
   private ByteBuffer byteBuffer;
 
-  private @Nullable AudioRecord audioRecord = null;
-  private @Nullable AudioRecordThread audioThread = null;
+  private @Nullable AudioRecord audioRecord;
+  private @Nullable AudioRecordThread audioThread;
 
-  private static volatile boolean microphoneMute = false;
+  private static volatile boolean microphoneMute;
   private byte[] emptyBytes;
 
   // Audio recording error handler functions.
@@ -74,7 +74,7 @@ public class WebRtcAudioRecord {
     void onWebRtcAudioRecordError(String errorMessage);
   }
 
-  private static @Nullable WebRtcAudioRecordErrorCallback errorCallback = null;
+  private static @Nullable WebRtcAudioRecordErrorCallback errorCallback;
 
   public static void setErrorCallback(WebRtcAudioRecordErrorCallback errorCallback) {
     Logging.d(TAG, "Set error callback");
@@ -124,7 +124,7 @@ public class WebRtcAudioRecord {
     void onWebRtcAudioRecordSamplesReady(AudioSamples samples);
   }
 
-  private static @Nullable WebRtcAudioRecordSamplesReadyCallback audioSamplesReadyCallback = null;
+  private static @Nullable WebRtcAudioRecordSamplesReadyCallback audioSamplesReadyCallback;
 
   public static void setOnAudioSamplesReady(WebRtcAudioRecordSamplesReadyCallback callback) {
     audioSamplesReadyCallback = callback;
@@ -332,9 +332,8 @@ public class WebRtcAudioRecord {
             + "sample rate: " + audioRecord.getSampleRate());
   }
 
-  @TargetApi(23)
   private void logMainParametersExtended() {
-    if (WebRtcAudioUtils.runningOnMarshmallowOrHigher()) {
+    if (Build.VERSION.SDK_INT >= 23) {
       Logging.d(TAG, "AudioRecord: "
               // The frame count of the native AudioRecord buffer.
               + "buffer size in frames: " + audioRecord.getBufferSizeInFrames());

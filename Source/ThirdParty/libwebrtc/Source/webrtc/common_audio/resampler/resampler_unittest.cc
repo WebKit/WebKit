@@ -11,6 +11,7 @@
 #include <array>
 
 #include "common_audio/resampler/include/resampler.h"
+#include "rtc_base/strings/string_builder.h"
 #include "test/gtest.h"
 
 // TODO(andrew): this is a work-in-progress. Many more tests are needed.
@@ -64,7 +65,7 @@ void ResamplerTest::TearDown() {}
 void ResamplerTest::ResetIfNeededAndPush(int in_rate,
                                          int out_rate,
                                          int num_channels) {
-  std::ostringstream ss;
+  rtc::StringBuilder ss;
   ss << "Input rate: " << in_rate << ", output rate: " << out_rate
      << ", channel count: " << num_channels;
   SCOPED_TRACE(ss.str());
@@ -90,7 +91,7 @@ TEST_F(ResamplerTest, Reset) {
   for (size_t i = 0; i < kRatesSize; ++i) {
     for (size_t j = 0; j < kRatesSize; ++j) {
       for (size_t k = 0; k < kNumChannelsSize; ++k) {
-        std::ostringstream ss;
+        rtc::StringBuilder ss;
         ss << "Input rate: " << kRates[i] << ", output rate: " << kRates[j]
            << ", channels: " << kNumChannels[k];
         SCOPED_TRACE(ss.str());
@@ -109,7 +110,7 @@ TEST_F(ResamplerTest, Mono) {
   const int kChannels = 1;
   for (size_t i = 0; i < kRatesSize; ++i) {
     for (size_t j = 0; j < kRatesSize; ++j) {
-      std::ostringstream ss;
+      rtc::StringBuilder ss;
       ss << "Input rate: " << kRates[i] << ", output rate: " << kRates[j];
       SCOPED_TRACE(ss.str());
 
@@ -131,7 +132,7 @@ TEST_F(ResamplerTest, Stereo) {
   const int kChannels = 2;
   for (size_t i = 0; i < kRatesSize; ++i) {
     for (size_t j = 0; j < kRatesSize; ++j) {
-      std::ostringstream ss;
+      rtc::StringBuilder ss;
       ss << "Input rate: " << kRates[i] << ", output rate: " << kRates[j];
       SCOPED_TRACE(ss.str());
 

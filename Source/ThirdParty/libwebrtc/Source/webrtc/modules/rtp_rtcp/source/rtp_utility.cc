@@ -197,7 +197,9 @@ bool RtpHeaderParser::Parse(
   header->timestamp = RTPTimestamp;
   header->ssrc = SSRC;
   header->numCSRCs = CC;
-  header->paddingLength = P ? *(_ptrRTPDataEnd - 1) : 0;
+  if (!P) {
+    header->paddingLength = 0;
+  }
 
   for (uint8_t i = 0; i < CC; ++i) {
     uint32_t CSRC = ByteReader<uint32_t>::ReadBigEndian(ptr);
@@ -236,6 +238,10 @@ bool RtpHeaderParser::Parse(
   header->extension.has_video_timing = false;
   header->extension.video_timing = {0u, 0u, 0u, 0u, 0u, 0u, false};
 
+  header->extension.has_frame_marking = false;
+  header->extension.frame_marking = {false, false, false, false, false,
+                                     kNoTemporalIdx, 0, 0};
+
   if (X) {
     /* RTP header extension, RFC 3550.
      0                   1                   2                   3
@@ -272,6 +278,21 @@ bool RtpHeaderParser::Parse(
     }
     header->headerLength += XLen;
   }
+  if (header->headerLength > static_cast<size_t>(length))
+    return false;
+
+  if (P) {
+    // Packet has padding.
+    if (header->headerLength != static_cast<size_t>(length)) {
+      // Packet is not header only. We can parse padding length now.
+      header->paddingLength = *(_ptrRTPDataEnd - 1);
+    } else {
+      RTC_LOG(LS_WARNING) << "Cannot parse padding length.";
+      // Packet is header only. We have no clue of the padding length.
+      return false;
+    }
+  }
+
   if (header->headerLength + header->paddingLength >
       static_cast<size_t>(length))
     return false;
@@ -452,6 +473,15 @@ void RtpHeaderParser::ParseOneByteExtensionHeader(
           header->extension.has_video_timing = true;
           VideoTimingExtension::Parse(rtc::MakeArrayView(ptr, len + 1),
                                       &header->extension.video_timing);
+          break;
+        }
+        case kRtpExtensionFrameMarking: {
+          if (!FrameMarkingExtension::Parse(rtc::MakeArrayView(ptr, len + 1),
+              &header->extension.frame_marking)) {
+            RTC_LOG(LS_WARNING) << "Incorrect frame marking len: " << len;
+            return;
+          }
+          header->extension.has_frame_marking = true;
           break;
         }
         case kRtpExtensionRtpStreamId: {

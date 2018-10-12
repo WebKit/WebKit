@@ -9,6 +9,10 @@
        "xctest": true
     },
     {
+       "app": "sdk_framework_unittests",
+       "xctest": true
+    },
+    {
       "app": "audio_decoder_unittests"
     },
     {
@@ -52,9 +56,6 @@
     },
     {
       "app": "video_engine_tests"
-    },
-    {
-      "app": "voice_engine_unittests"
     },
     {
       "app": "webrtc_nonparallel_tests"

@@ -11,11 +11,11 @@
 #include "modules/audio_processing/transient/transient_detector.h"
 
 #include <memory>
-#include <sstream>
 #include <string>
 
 #include "modules/audio_processing/transient/common.h"
 #include "modules/audio_processing/transient/file_utils.h"
+#include "rtc_base/strings/string_builder.h"
 #include "rtc_base/system/file_wrapper.h"
 #include "test/gtest.h"
 #include "test/testsupport/fileutils.h"
@@ -43,7 +43,7 @@ TEST(TransientDetectorTest, CorrectnessBasedOnFiles) {
     int sample_rate_hz = kSampleRatesHz[i];
 
     // Prepare detect file.
-    std::stringstream detect_file_name;
+    rtc::StringBuilder detect_file_name;
     detect_file_name << "audio_processing/transient/detect"
                      << (sample_rate_hz / 1000) << "kHz";
 
@@ -58,7 +58,7 @@ TEST(TransientDetectorTest, CorrectnessBasedOnFiles) {
                              << detect_file_name.str().c_str();
 
     // Prepare audio file.
-    std::stringstream audio_file_name;
+    rtc::StringBuilder audio_file_name;
     audio_file_name << "audio_processing/transient/audio"
                     << (sample_rate_hz / 1000) << "kHz";
 

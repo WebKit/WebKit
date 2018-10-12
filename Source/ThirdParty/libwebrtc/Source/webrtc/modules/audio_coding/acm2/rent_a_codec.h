@@ -128,7 +128,6 @@ class RentACodec {
   static absl::optional<CodecInst> CodecInstByParams(const char* payload_name,
                                                      int sampling_freq_hz,
                                                      size_t channels);
-  static bool IsCodecValid(const CodecInst& codec_inst);
 
   static inline bool IsPayloadTypeValid(int payload_type) {
     return payload_type >= 0 && payload_type <= 127;

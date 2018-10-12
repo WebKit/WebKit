@@ -88,10 +88,12 @@ class BitrateAllocator : public BitrateAllocatorInterface {
   // bitrate and max padding bitrate is changed.
   class LimitObserver {
    public:
-    virtual void OnAllocationLimitsChanged(uint32_t min_send_bitrate_bps,
-                                           uint32_t max_padding_bitrate_bps,
-                                           uint32_t total_bitrate_bps,
-                                           bool has_packet_feedback) = 0;
+    virtual void OnAllocationLimitsChanged(
+        uint32_t min_send_bitrate_bps,
+        uint32_t max_padding_bitrate_bps,
+        uint32_t total_bitrate_bps,
+        uint32_t allocated_without_feedback_bps,
+        bool has_packet_feedback) = 0;
 
    protected:
     virtual ~LimitObserver() = default;
@@ -242,6 +244,7 @@ class BitrateAllocator : public BitrateAllocatorInterface {
   uint32_t total_requested_padding_bitrate_ RTC_GUARDED_BY(&sequenced_checker_);
   uint32_t total_requested_min_bitrate_ RTC_GUARDED_BY(&sequenced_checker_);
   uint32_t total_requested_max_bitrate_ RTC_GUARDED_BY(&sequenced_checker_);
+  uint32_t allocated_without_feedback_ RTC_GUARDED_BY(&sequenced_checker_);
   bool has_packet_feedback_ RTC_GUARDED_BY(&sequenced_checker_);
   std::unique_ptr<rtc::BitrateAllocationStrategy> bitrate_allocation_strategy_
       RTC_GUARDED_BY(&sequenced_checker_);

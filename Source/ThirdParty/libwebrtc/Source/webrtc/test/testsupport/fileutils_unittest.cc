@@ -19,6 +19,7 @@
 
 #include "absl/types/optional.h"
 #include "rtc_base/checks.h"
+#include "test/gmock.h"
 #include "test/gtest.h"
 
 #ifdef WIN32
@@ -28,13 +29,18 @@ static const char* kPathDelimiter = "\\";
 static const char* kPathDelimiter = "/";
 #endif
 
-static const char kTestName[] = "fileutils_unittest";
-static const char kExtension[] = "tmp";
+using ::testing::EndsWith;
 
 namespace webrtc {
 namespace test {
 
 namespace {
+
+std::string Path(const std::string& path) {
+  std::string result = path;
+  std::replace(result.begin(), result.end(), '/', *kPathDelimiter);
+  return result;
+}
 
 // Remove files and directories in a directory non-recursively and writes the
 // number of deleted items in |num_deleted_entries|.
@@ -86,34 +92,34 @@ class FileUtilsTest : public testing::Test {
 
 std::string FileUtilsTest::original_working_dir_ = "";
 
-// Tests that the project output dir path is returned for the default working
-// directory that is automatically set when the test executable is launched.
-// The test is not fully testing the implementation, since we cannot be sure
-// of where the executable was launched from.
-#if defined(WEBRTC_ANDROID) || defined(WEBRTC_IOS)
-#define MAYBE_OutputPathFromUnchangedWorkingDir \
-  DISABLED_OutputPathFromUnchangedWorkingDir
+// The location will vary depending on where the webrtc checkout is on the
+// system, but it should end as described above and be an absolute path.
+std::string ExpectedRootDirByPlatform() {
+#if defined(WEBRTC_ANDROID)
+  return Path("chromium_tests_root/");
+#elif defined(WEBRTC_IOS)
+  return Path("tmp/");
 #else
-#define MAYBE_OutputPathFromUnchangedWorkingDir \
-  OutputPathFromUnchangedWorkingDir
+  return Path("out/");
 #endif
-TEST_F(FileUtilsTest, MAYBE_OutputPathFromUnchangedWorkingDir) {
-  std::string path = webrtc::test::OutputPath();
-  std::string expected_end = "out";
-  expected_end = kPathDelimiter + expected_end + kPathDelimiter;
-  ASSERT_EQ(path.length() - expected_end.length(), path.find(expected_end));
+}
+
+TEST_F(FileUtilsTest, OutputPathFromUnchangedWorkingDir) {
+  std::string expected_end = ExpectedRootDirByPlatform();
+  std::string result = webrtc::test::OutputPath();
+
+  ASSERT_THAT(result, EndsWith(expected_end));
 }
 
 // Tests with current working directory set to a directory higher up in the
 // directory tree than the project root dir.
-#if defined(WEBRTC_ANDROID) || defined(WIN32) || defined(WEBRTC_IOS)
-#define MAYBE_OutputPathFromRootWorkingDir DISABLED_OutputPathFromRootWorkingDir
-#else
-#define MAYBE_OutputPathFromRootWorkingDir OutputPathFromRootWorkingDir
-#endif
-TEST_F(FileUtilsTest, MAYBE_OutputPathFromRootWorkingDir) {
+TEST_F(FileUtilsTest, OutputPathFromRootWorkingDir) {
   ASSERT_EQ(0, chdir(kPathDelimiter));
-  ASSERT_EQ("./", webrtc::test::OutputPath());
+
+  std::string expected_end = ExpectedRootDirByPlatform();
+  std::string result = webrtc::test::OutputPath();
+
+  ASSERT_THAT(result, EndsWith(expected_end));
 }
 
 TEST_F(FileUtilsTest, TempFilename) {
@@ -152,30 +158,37 @@ TEST_F(FileUtilsTest, MAYBE_CreateDir) {
 }
 
 TEST_F(FileUtilsTest, WorkingDirReturnsValue) {
-  // Hard to cover all platforms. Just test that it returns something without
-  // crashing:
+  // This will obviously be different depending on where the webrtc checkout is,
+  // so just check something is returned.
   std::string working_dir = webrtc::test::WorkingDir();
   ASSERT_GT(working_dir.length(), 0u);
 }
 
-// Due to multiple platforms, it is hard to make a complete test for
-// ResourcePath. Manual testing has been performed by removing files and
-// verified the result confirms with the specified documentation for the
-// function.
-TEST_F(FileUtilsTest, ResourcePathReturnsValue) {
-  std::string resource = webrtc::test::ResourcePath(kTestName, kExtension);
-  ASSERT_GT(resource.find(kTestName), 0u);
-  ASSERT_GT(resource.find(kExtension), 0u);
+TEST_F(FileUtilsTest, ResourcePathReturnsCorrectPath) {
+  std::string result = webrtc::test::ResourcePath(
+      Path("video_coding/frame-ethernet-ii"), "pcap");
+#if defined(WEBRTC_IOS)
+  // iOS bundles resources straight into the bundle root.
+  std::string expected_end = Path("/frame-ethernet-ii.pcap");
+#else
+  // Other platforms: it's a separate dir.
+  std::string expected_end =
+      Path("resources/video_coding/frame-ethernet-ii.pcap");
+#endif
+
+  ASSERT_THAT(result, EndsWith(expected_end));
+  ASSERT_TRUE(FileExists(result)) << "Expected " << result << " to exist; did "
+                                  << "ResourcePath return an incorrect path?";
 }
 
 TEST_F(FileUtilsTest, ResourcePathFromRootWorkingDir) {
   ASSERT_EQ(0, chdir(kPathDelimiter));
-  std::string resource = webrtc::test::ResourcePath(kTestName, kExtension);
+  std::string resource = webrtc::test::ResourcePath("whatever", "ext");
 #if !defined(WEBRTC_IOS)
   ASSERT_NE(resource.find("resources"), std::string::npos);
 #endif
-  ASSERT_GT(resource.find(kTestName), 0u);
-  ASSERT_GT(resource.find(kExtension), 0u);
+  ASSERT_GT(resource.find("whatever"), 0u);
+  ASSERT_GT(resource.find("ext"), 0u);
 }
 
 TEST_F(FileUtilsTest, GetFileSizeExistingFile) {
@@ -220,7 +233,7 @@ TEST_F(FileUtilsTest, WriteReadDeleteFilesAndDirs) {
 
   // Create an empty temporary directory for this test.
   const std::string temp_directory =
-      OutputPath() + "TempFileUtilsTestReadDirectory" + kPathDelimiter;
+      OutputPath() + Path("TempFileUtilsTestReadDirectory/");
   CreateDir(temp_directory);
   EXPECT_NO_FATAL_FAILURE(CleanDir(temp_directory, &num_deleted_entries));
   EXPECT_TRUE(DirExists(temp_directory));
@@ -231,7 +244,7 @@ TEST_F(FileUtilsTest, WriteReadDeleteFilesAndDirs) {
   EXPECT_TRUE(FileExists(temp_filename));
 
   // Add an empty directory.
-  const std::string temp_subdir = temp_directory + "subdir" + kPathDelimiter;
+  const std::string temp_subdir = temp_directory + Path("subdir/");
   EXPECT_TRUE(CreateDir(temp_subdir));
   EXPECT_TRUE(DirExists(temp_subdir));
 
@@ -244,6 +257,22 @@ TEST_F(FileUtilsTest, WriteReadDeleteFilesAndDirs) {
   EXPECT_EQ(2u, num_deleted_entries);
   EXPECT_TRUE(RemoveDir(temp_directory));
   EXPECT_FALSE(DirExists(temp_directory));
+}
+
+TEST_F(FileUtilsTest, DirNameStripsFilename) {
+  EXPECT_EQ(Path("/some/path"), DirName(Path("/some/path/file.txt")));
+}
+
+TEST_F(FileUtilsTest, DirNameKeepsStrippingRightmostPathComponent) {
+  EXPECT_EQ(Path("/some"), DirName(DirName(Path("/some/path/file.txt"))));
+}
+
+TEST_F(FileUtilsTest, DirNameDoesntCareIfAPathEndsInPathSeparator) {
+  EXPECT_EQ(Path("/some"), DirName(Path("/some/path/")));
+}
+
+TEST_F(FileUtilsTest, DirNameStopsAtRoot) {
+  EXPECT_EQ(Path("/"), DirName(Path("/")));
 }
 
 }  // namespace test

@@ -266,6 +266,7 @@ if (rtc_enable_protobuf) {
       "rtc_event_log/rtc_event_log_parser.h",
       "rtc_event_log/rtc_event_log_parser_new.cc",
       "rtc_event_log/rtc_event_log_parser_new.h",
+      "rtc_event_log/rtc_event_processor.h",
     ]
 
     deps = [
@@ -279,6 +280,7 @@ if (rtc_enable_protobuf) {
       "../api:libjingle_peerconnection_api",
       "../call:video_stream_api",
       "../modules/audio_coding:audio_network_adaptor",
+      "../modules/congestion_controller:transport_feedback",
       "../modules/remote_bitrate_estimator:remote_bitrate_estimator",
       "../modules/rtp_rtcp",
       "../modules/rtp_rtcp:rtp_rtcp_format",
@@ -286,12 +288,8 @@ if (rtc_enable_protobuf) {
       "../rtc_base:protobuf_utils",
       "../rtc_base:rtc_base_approved",
       "//third_party/abseil-cpp/absl/memory",
+      "//third_party/abseil-cpp/absl/types:optional",
     ]
-
-    if (!build_with_chromium && is_clang) {
-      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-    }
   }
 
   if (rtc_include_tests) {
@@ -305,6 +303,7 @@ if (rtc_enable_protobuf) {
         "rtc_event_log/rtc_event_log_unittest.cc",
         "rtc_event_log/rtc_event_log_unittest_helper.cc",
         "rtc_event_log/rtc_event_log_unittest_helper.h",
+        "rtc_event_log/rtc_event_processor_unittest.cc",
       ]
       deps = [
         ":ice_log",
@@ -353,9 +352,9 @@ if (rtc_enable_protobuf) {
         "../rtc_base:checks",
         "../rtc_base:protobuf_utils",
         "../rtc_base:rtc_base_approved",
-        "../system_wrappers:field_trial_default",
-        "../system_wrappers:metrics_default",
         "../test:rtp_test_utils",
+        "//third_party/abseil-cpp/absl/memory:memory",
+        "//third_party/abseil-cpp/absl/types:optional",
       ]
       if (!build_with_chromium && is_clang) {
         # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).

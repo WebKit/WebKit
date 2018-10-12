@@ -25,6 +25,7 @@
 #include "rtc_base/gunit.h"
 #include "rtc_base/messagedigest.h"
 #include "rtc_base/ssladapter.h"
+#include "rtc_base/strings/string_builder.h"
 
 #define ASSERT_CRYPTO(cd, s, cs)      \
   ASSERT_EQ(s, cd->cryptos().size()); \
@@ -320,15 +321,15 @@ static void AttachSenderToMediaSection(
 static void DetachSenderFromMediaSection(const std::string& mid,
                                          const std::string& track_id,
                                          MediaSessionOptions* session_options) {
-  auto it = FindFirstMediaDescriptionByMid(mid, session_options);
-  auto sender_it = it->sender_options.begin();
-  for (; sender_it != it->sender_options.end(); ++sender_it) {
-    if (sender_it->track_id == track_id) {
-      it->sender_options.erase(sender_it);
-      return;
-    }
-  }
-  RTC_NOTREACHED();
+  std::vector<cricket::SenderOptions>& sender_options_list =
+      FindFirstMediaDescriptionByMid(mid, session_options)->sender_options;
+  auto sender_it =
+      std::find_if(sender_options_list.begin(), sender_options_list.end(),
+                   [track_id](const cricket::SenderOptions& sender_options) {
+                     return sender_options.track_id == track_id;
+                   });
+  RTC_DCHECK(sender_it != sender_options_list.end());
+  sender_options_list.erase(sender_it);
 }
 
 // Helper function used to create a default MediaSessionOptions for Plan B SDP.
@@ -2182,10 +2183,9 @@ TEST_F(MediaSessionDescriptionFactoryTest, RtxWithoutApt) {
   ASSERT_TRUE(media_desc);
   VideoContentDescription* desc = media_desc->as_video();
   std::vector<VideoCodec> codecs = desc->codecs();
-  for (std::vector<VideoCodec>::iterator iter = codecs.begin();
-       iter != codecs.end(); ++iter) {
-    if (iter->name.find(cricket::kRtxCodecName) == 0) {
-      iter->params.clear();
+  for (VideoCodec& codec : codecs) {
+    if (codec.name.find(cricket::kRtxCodecName) == 0) {
+      codec.params.clear();
     }
   }
   desc->set_codecs(codecs);
@@ -3703,7 +3703,7 @@ void TestAudioCodecsAnswer(RtpTransceiverDirection offer_direction,
     }
 
     auto format_codecs = [](const std::vector<AudioCodec>& codecs) {
-      std::stringstream os;
+      rtc::StringBuilder os;
       bool first = true;
       os << "{";
       for (const auto& c : codecs) {
@@ -3711,7 +3711,7 @@ void TestAudioCodecsAnswer(RtpTransceiverDirection offer_direction,
         first = false;
       }
       os << " }";
-      return os.str();
+      return os.Release();
     };
 
     EXPECT_TRUE(acd->codecs() == target_codecs)

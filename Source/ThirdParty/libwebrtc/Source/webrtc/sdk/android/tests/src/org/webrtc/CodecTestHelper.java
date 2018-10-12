@@ -15,11 +15,9 @@ import static com.google.common.truth.Truth.assertWithMessage;
 
 import java.nio.ByteBuffer;
 import java.util.Random;
-import org.webrtc.JavaI420Buffer;
-import org.webrtc.VideoFrame;
 
 /**
- * Helper methods for {@link HardwareVideoEncoderTest} and {@link HardwareVideoDecoderTest}.
+ * Helper methods for {@link HardwareVideoEncoderTest} and {@link AndroidVideoDecoderTest}.
  */
 class CodecTestHelper {
   static void assertEqualContents(byte[] expected, ByteBuffer actual, int offset, int size) {

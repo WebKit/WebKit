@@ -43,6 +43,8 @@ RtpStreamsSynchronizer::RtpStreamsSynchronizer(Syncable* syncable_video)
   process_thread_checker_.DetachFromThread();
 }
 
+RtpStreamsSynchronizer::~RtpStreamsSynchronizer() = default;
+
 void RtpStreamsSynchronizer::ConfigureSync(Syncable* syncable_audio) {
   rtc::CritScope lock(&crit_);
   if (syncable_audio == syncable_audio_) {

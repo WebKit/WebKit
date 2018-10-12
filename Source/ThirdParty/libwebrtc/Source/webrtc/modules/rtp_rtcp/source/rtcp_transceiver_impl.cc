@@ -29,6 +29,7 @@
 #include "modules/rtp_rtcp/source/rtcp_packet/sdes.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/sender_report.h"
 #include "modules/rtp_rtcp/source/time_util.h"
+#include "rtc_base/cancelable_periodic_task.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/task_queue.h"
@@ -87,15 +88,19 @@ class RtcpTransceiverImpl::PacketSender {
 };
 
 RtcpTransceiverImpl::RtcpTransceiverImpl(const RtcpTransceiverConfig& config)
-    : config_(config),
-      ready_to_send_(config.initial_ready_to_send),
-      ptr_factory_(this) {
+    : config_(config), ready_to_send_(config.initial_ready_to_send) {
   RTC_CHECK(config_.Validate());
   if (ready_to_send_ && config_.schedule_periodic_compound_packets)
     SchedulePeriodicCompoundPackets(config_.initial_report_delay_ms);
 }
 
-RtcpTransceiverImpl::~RtcpTransceiverImpl() = default;
+RtcpTransceiverImpl::~RtcpTransceiverImpl() {
+  // If RtcpTransceiverImpl is destroyed off task queue, assume it is destroyed
+  // after TaskQueue. In that case there is no need to Cancel periodic task.
+  if (config_.task_queue == rtc::TaskQueue::Current()) {
+    periodic_task_handle_.Cancel();
+  }
+}
 
 void RtcpTransceiverImpl::AddMediaReceiverRtcpObserver(
     uint32_t remote_ssrc,
@@ -120,8 +125,8 @@ void RtcpTransceiverImpl::RemoveMediaReceiverRtcpObserver(
 
 void RtcpTransceiverImpl::SetReadyToSend(bool ready) {
   if (config_.schedule_periodic_compound_packets) {
-    if (ready_to_send_ && !ready)  // Stop existent send task.
-      ptr_factory_.InvalidateWeakPtrs();
+    if (ready_to_send_ && !ready)
+      periodic_task_handle_.Cancel();
 
     if (!ready_to_send_ && ready)  // Restart periodic sending.
       SchedulePeriodicCompoundPackets(config_.report_period_ms / 2);
@@ -318,36 +323,20 @@ void RtcpTransceiverImpl::HandleTargetBitrate(
 void RtcpTransceiverImpl::ReschedulePeriodicCompoundPackets() {
   if (!config_.schedule_periodic_compound_packets)
     return;
-  // Stop existent send task.
-  ptr_factory_.InvalidateWeakPtrs();
+  periodic_task_handle_.Cancel();
+  RTC_DCHECK(ready_to_send_);
   SchedulePeriodicCompoundPackets(config_.report_period_ms);
 }
 
 void RtcpTransceiverImpl::SchedulePeriodicCompoundPackets(int64_t delay_ms) {
-  class SendPeriodicCompoundPacketTask : public rtc::QueuedTask {
-   public:
-    SendPeriodicCompoundPacketTask(rtc::TaskQueue* task_queue,
-                                   rtc::WeakPtr<RtcpTransceiverImpl> ptr)
-        : task_queue_(task_queue), ptr_(std::move(ptr)) {}
-    bool Run() override {
-      RTC_DCHECK(task_queue_->IsCurrent());
-      if (!ptr_)
-        return true;
-      ptr_->SendPeriodicCompoundPacket();
-      task_queue_->PostDelayedTask(absl::WrapUnique(this),
-                                   ptr_->config_.report_period_ms);
-      return false;
-    }
+  auto task = rtc::CreateCancelablePeriodicTask([this] {
+    RTC_DCHECK(config_.schedule_periodic_compound_packets);
+    RTC_DCHECK(ready_to_send_);
+    SendPeriodicCompoundPacket();
+    return config_.report_period_ms;
+  });
+  periodic_task_handle_ = task->GetCancellationHandle();
 
-   private:
-    rtc::TaskQueue* const task_queue_;
-    const rtc::WeakPtr<RtcpTransceiverImpl> ptr_;
-  };
-
-  RTC_DCHECK(config_.schedule_periodic_compound_packets);
-
-  auto task = absl::make_unique<SendPeriodicCompoundPacketTask>(
-      config_.task_queue, ptr_factory_.GetWeakPtr());
   if (delay_ms > 0)
     config_.task_queue->PostDelayedTask(std::move(task), delay_ms);
   else

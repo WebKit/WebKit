@@ -105,7 +105,7 @@ class SignalThread : public sigslot::has_slots<>, protected MessageHandler {
     explicit Worker(SignalThread* parent);
     ~Worker() override;
     void Run() override;
-    bool IsProcessingMessages() override;
+    bool IsProcessingMessagesForTesting() override;
 
    private:
     SignalThread* parent_;

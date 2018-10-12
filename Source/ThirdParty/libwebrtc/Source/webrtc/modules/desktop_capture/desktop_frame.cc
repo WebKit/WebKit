@@ -98,7 +98,7 @@ void DesktopFrame::MoveFrameInfoFrom(DesktopFrame* other) {
 BasicDesktopFrame::BasicDesktopFrame(DesktopSize size)
     : DesktopFrame(size,
                    kBytesPerPixel * size.width(),
-                   new uint8_t[kBytesPerPixel * size.width() * size.height()],
+                   new uint8_t[kBytesPerPixel * size.width() * size.height()](),
                    nullptr) {}
 
 BasicDesktopFrame::~BasicDesktopFrame() {

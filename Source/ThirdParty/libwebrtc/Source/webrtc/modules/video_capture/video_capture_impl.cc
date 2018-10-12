@@ -205,6 +205,25 @@ int32_t VideoCaptureImpl::IncomingFrame(uint8_t* videoFrame,
   return 0;
 }
 
+int32_t VideoCaptureImpl::StartCapture(
+    const VideoCaptureCapability& capability) {
+  _requestedCapability = capability;
+  return -1;
+}
+
+int32_t VideoCaptureImpl::StopCapture() {
+  return -1;
+}
+
+bool VideoCaptureImpl::CaptureStarted() {
+  return false;
+}
+
+int32_t VideoCaptureImpl::CaptureSettings(
+    VideoCaptureCapability& /*settings*/) {
+  return -1;
+}
+
 int32_t VideoCaptureImpl::SetCaptureRotation(VideoRotation rotation) {
   rtc::CritScope cs(&_apiCs);
   _rotateFrame = rotation;
@@ -217,6 +236,10 @@ bool VideoCaptureImpl::SetApplyRotation(bool enable) {
   // The effect of this is the last caller wins.
   apply_rotation_ = enable;
   return true;
+}
+
+bool VideoCaptureImpl::GetApplyRotation() {
+  return apply_rotation_;
 }
 
 void VideoCaptureImpl::UpdateFrameCount() {

@@ -11,6 +11,8 @@
 #include <algorithm>
 
 #include "audio/test/audio_end_to_end_test.h"
+#include "call/fake_network_pipe.h"
+#include "call/simulated_network.h"
 #include "system_wrappers/include/sleep.h"
 #include "test/gtest.h"
 
@@ -26,8 +28,8 @@ constexpr int kSampleRate = 48000;
 AudioEndToEndTest::AudioEndToEndTest()
     : EndToEndTest(CallTest::kDefaultTimeoutMs) {}
 
-FakeNetworkPipe::Config AudioEndToEndTest::GetNetworkPipeConfig() const {
-  return FakeNetworkPipe::Config();
+DefaultNetworkSimulationConfig AudioEndToEndTest::GetNetworkPipeConfig() const {
+  return DefaultNetworkSimulationConfig();
 }
 
 size_t AudioEndToEndTest::GetNumVideoStreams() const {
@@ -63,14 +65,20 @@ test::PacketTransport* AudioEndToEndTest::CreateSendTransport(
     Call* sender_call) {
   return new test::PacketTransport(
       task_queue, sender_call, this, test::PacketTransport::kSender,
-      test::CallTest::payload_type_map_, GetNetworkPipeConfig());
+      test::CallTest::payload_type_map_,
+      absl::make_unique<FakeNetworkPipe>(
+          Clock::GetRealTimeClock(),
+          absl::make_unique<SimulatedNetwork>(GetNetworkPipeConfig())));
 }
 
 test::PacketTransport* AudioEndToEndTest::CreateReceiveTransport(
     SingleThreadedTaskQueueForTesting* task_queue) {
   return new test::PacketTransport(
       task_queue, nullptr, this, test::PacketTransport::kReceiver,
-      test::CallTest::payload_type_map_, GetNetworkPipeConfig());
+      test::CallTest::payload_type_map_,
+      absl::make_unique<FakeNetworkPipe>(
+          Clock::GetRealTimeClock(),
+          absl::make_unique<SimulatedNetwork>(GetNetworkPipeConfig())));
 }
 
 void AudioEndToEndTest::ModifyAudioConfigs(

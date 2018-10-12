@@ -31,14 +31,13 @@ const int kMaxBitrateMismatchPercent = 20;
 VideoCodecTestStatsImpl::VideoCodecTestStatsImpl() = default;
 VideoCodecTestStatsImpl::~VideoCodecTestStatsImpl() = default;
 
-FrameStatistics* VideoCodecTestStatsImpl::AddFrame(size_t timestamp,
-                                                   size_t layer_idx) {
+void VideoCodecTestStatsImpl::AddFrame(const FrameStatistics& frame_stat) {
+  const size_t timestamp = frame_stat.rtp_timestamp;
+  const size_t layer_idx = frame_stat.spatial_idx;
   RTC_DCHECK(rtp_timestamp_to_frame_num_[layer_idx].find(timestamp) ==
              rtp_timestamp_to_frame_num_[layer_idx].end());
-  const size_t frame_num = layer_stats_[layer_idx].size();
-  rtp_timestamp_to_frame_num_[layer_idx][timestamp] = frame_num;
-  layer_stats_[layer_idx].emplace_back(frame_num, timestamp);
-  return &layer_stats_[layer_idx].back();
+  rtp_timestamp_to_frame_num_[layer_idx][timestamp] = frame_stat.frame_number;
+  layer_stats_[layer_idx].push_back(frame_stat);
 }
 
 FrameStatistics* VideoCodecTestStatsImpl::GetFrame(size_t frame_num,
@@ -188,7 +187,7 @@ VideoStatistics VideoCodecTestStatsImpl::SliceAndCalcVideoStatistic(
   size_t rtp_timestamp_first_frame = 0;
   size_t rtp_timestamp_prev_frame = 0;
 
-  FrameStatistics last_successfully_decoded_frame(0, 0);
+  FrameStatistics last_successfully_decoded_frame(0, 0, 0);
 
   const size_t target_bitrate_kbps =
       CalcLayerTargetBitrateKbps(first_frame_num, last_frame_num, spatial_idx,

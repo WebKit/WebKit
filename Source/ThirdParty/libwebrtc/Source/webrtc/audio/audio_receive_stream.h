@@ -32,7 +32,7 @@ class RtpStreamReceiverControllerInterface;
 class RtpStreamReceiverInterface;
 
 namespace voe {
-class ChannelProxy;
+class ChannelReceiveProxy;
 }  // namespace voe
 
 namespace internal {
@@ -54,7 +54,7 @@ class AudioReceiveStream final : public webrtc::AudioReceiveStream,
                      const webrtc::AudioReceiveStream::Config& config,
                      const rtc::scoped_refptr<webrtc::AudioState>& audio_state,
                      webrtc::RtcEventLog* event_log,
-                     std::unique_ptr<voe::ChannelProxy> channel_proxy);
+                     std::unique_ptr<voe::ChannelReceiveProxy> channel_proxy);
   ~AudioReceiveStream() override;
 
   // webrtc::AudioReceiveStream implementation.
@@ -101,7 +101,7 @@ class AudioReceiveStream final : public webrtc::AudioReceiveStream,
   rtc::ThreadChecker module_process_thread_checker_;
   webrtc::AudioReceiveStream::Config config_;
   rtc::scoped_refptr<webrtc::AudioState> audio_state_;
-  std::unique_ptr<voe::ChannelProxy> channel_proxy_;
+  std::unique_ptr<voe::ChannelReceiveProxy> channel_proxy_;
   AudioSendStream* associated_send_stream_ = nullptr;
 
   bool playing_ RTC_GUARDED_BY(worker_thread_checker_) = false;

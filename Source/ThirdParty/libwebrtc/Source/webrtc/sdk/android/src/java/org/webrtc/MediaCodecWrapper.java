@@ -19,7 +19,7 @@ import java.nio.ByteBuffer;
 
 /**
  * Subset of methods defined in {@link android.media.MediaCodec} needed by
- * {@link HardwareVideoEncoder} and {@link HardwareVideoDecoder}. This interface
+ * {@link HardwareVideoEncoder} and {@link AndroidVideoDecoder}. This interface
  * exists to allow mocking and using a fake implementation in tests.
  */
 interface MediaCodecWrapper {

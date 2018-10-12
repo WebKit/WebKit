@@ -10,7 +10,7 @@
 
 #import "APPRTCAppDelegate.h"
 #import "APPRTCViewController.h"
-#import "WebRTC/RTCSSLAdapter.h"
+#import <WebRTC/RTCSSLAdapter.h>
 
 @interface APPRTCAppDelegate () <NSWindowDelegate>
 @end

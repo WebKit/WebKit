@@ -139,7 +139,7 @@ class TaskQueue::Impl : public RefCountInterface {
 TaskQueue::Impl::Impl(const char* queue_name,
                       TaskQueue* task_queue,
                       Priority priority)
-    : queue_(dispatch_queue_create_with_target(queue_name, DISPATCH_QUEUE_SERIAL, dispatch_get_global_queue(TaskQueuePriorityToGCD(priority), 0))),
+    : queue_(dispatch_queue_create(queue_name, DISPATCH_QUEUE_SERIAL)),
       context_(new QueueContext(task_queue)) {
   RTC_DCHECK(queue_name);
   RTC_CHECK(queue_);
@@ -148,6 +148,9 @@ TaskQueue::Impl::Impl(const char* queue_name,
   // to the queue is released.  This may run after the TaskQueue object has
   // been deleted.
   dispatch_set_finalizer_f(queue_, &QueueContext::DeleteContext);
+
+  dispatch_set_target_queue(
+      queue_, dispatch_get_global_queue(TaskQueuePriorityToGCD(priority), 0));
 }
 
 TaskQueue::Impl::~Impl() {

@@ -18,13 +18,29 @@
 #include "api/video_codecs/video_encoder_factory.h"
 
 namespace webrtc {
-
+// Multiplex codec is a completely modular/optional codec that allows users to
+// send more than a frame's opaque content(RGB/YUV) over video channels.
+// - Allows sending Alpha channel over the wire iff input is
+// I420ABufferInterface. Users can expect to receive I420ABufferInterface as the
+// decoded video frame buffer. I420A data is split into YUV/AXX portions,
+// encoded/decoded seperately and bitstreams are concatanated.
+// - Allows sending augmenting data over the wire attached to the frame. This
+// attached data portion is not encoded in any way and sent as it is. Users can
+// input AugmentedVideoFrameBuffer and can expect the same interface as the
+// decoded video frame buffer.
+// - Showcases an example of how to add a custom codec in webrtc video channel.
+// How to use it end-to-end:
+// - Wrap your existing VideoEncoderFactory implemention with
+// MultiplexEncoderFactory and VideoDecoderFactory implemention with
+// MultiplexDecoderFactory below. For actual coding, multiplex creates encoder
+// and decoder instance(s) using these factories.
+// - Use Multiplex*coderFactory classes in CreatePeerConnectionFactory() calls.
+// - Select "multiplex" codec in SDP negotiation.
 class MultiplexEncoderFactory : public VideoEncoderFactory {
  public:
-  // supports_augmenting_data defines if the encoder would support augmenting
-  // data in that case the encoder expects video frame buffer of type
-  // AugmentedVideoFrameBuffer the encoder would encode the attached buffer and
-  // data together if the flag is not set any frame buffer can be passed in
+  // |supports_augmenting_data| defines if the encoder would support augmenting
+  // data. If set, the encoder expects to receive video frame buffers of type
+  // AugmentedVideoFrameBuffer.
   MultiplexEncoderFactory(std::unique_ptr<VideoEncoderFactory> factory,
                           bool supports_augmenting_data = false);
 
@@ -40,10 +56,9 @@ class MultiplexEncoderFactory : public VideoEncoderFactory {
 
 class MultiplexDecoderFactory : public VideoDecoderFactory {
  public:
-  // supports_augmenting_data defines if the decoder would support augmenting
-  // data in that case the decoder expects the encoded video frame to contain
-  // augmenting_data it is expected that the sender is using MultiplexEncoder
-  // with supports_augmenting_data set
+  // |supports_augmenting_data| defines if the decoder would support augmenting
+  // data. If set, the decoder is expected to output video frame buffers of type
+  // AugmentedVideoFrameBuffer.
   MultiplexDecoderFactory(std::unique_ptr<VideoDecoderFactory> factory,
                           bool supports_augmenting_data = false);
 

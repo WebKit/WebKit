@@ -129,5 +129,14 @@ static void JNI_RtpReceiver_UnsetObserver(JNIEnv* jni,
   }
 }
 
+static void JNI_RtpReceiver_SetFrameDecryptor(JNIEnv* jni,
+                                              const JavaParamRef<jclass>&,
+                                              jlong j_rtp_sender_pointer,
+                                              jlong j_frame_decryptor_pointer) {
+  reinterpret_cast<RtpReceiverInterface*>(j_rtp_sender_pointer)
+      ->SetFrameDecryptor(reinterpret_cast<FrameDecryptorInterface*>(
+          j_frame_decryptor_pointer));
+}
+
 }  // namespace jni
 }  // namespace webrtc

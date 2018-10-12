@@ -10,7 +10,7 @@
 
 #import "RTCIceCandidate+JSON.h"
 
-#import "WebRTC/RTCLogging.h"
+#import <WebRTC/RTCLogging.h>
 
 static NSString const *kRTCICECandidateTypeKey = @"type";
 static NSString const *kRTCICECandidateTypeValue = @"candidate";

@@ -11,6 +11,8 @@
 #ifndef MODULES_AUDIO_DEVICE_AUDIO_DEVICE_BUFFER_H_
 #define MODULES_AUDIO_DEVICE_AUDIO_DEVICE_BUFFER_H_
 
+#include <atomic>
+
 #include "modules/audio_device/include/audio_device.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/criticalsection.h"
@@ -83,8 +85,8 @@ class AudioDeviceBuffer {
 
   int32_t SetRecordingSampleRate(uint32_t fsHz);
   int32_t SetPlayoutSampleRate(uint32_t fsHz);
-  int32_t RecordingSampleRate() const;
-  int32_t PlayoutSampleRate() const;
+  uint32_t RecordingSampleRate() const;
+  uint32_t PlayoutSampleRate() const;
 
   int32_t SetRecordingChannels(size_t channels);
   int32_t SetPlayoutChannels(size_t channels);
@@ -101,13 +103,6 @@ class AudioDeviceBuffer {
   virtual int32_t GetPlayoutData(void* audio_buffer);
 
   int32_t SetTypingStatus(bool typing_status);
-
-  // Called on iOS and Android where the native audio layer can be interrupted
-  // by other audio applications. These methods can then be used to reset
-  // internal states and detach thread checkers to allow for new audio sessions
-  // where native callbacks may come from a new set of I/O threads.
-  void NativeAudioPlayoutInterrupted();
-  void NativeAudioRecordingInterrupted();
 
  private:
   // Starts/stops periodic logging of audio stats.
@@ -136,18 +131,12 @@ class AudioDeviceBuffer {
   // called on that same thread. When audio has started some methods will be
   // called on either a native audio thread for playout or a native thread for
   // recording. Some members are not annotated since they are "protected by
-  // design" and adding e.g. a race checker can cause failuries for very few
+  // design" and adding e.g. a race checker can cause failures for very few
   // edge cases and it is IMHO not worth the risk to use them in this class.
   // TODO(henrika): see if it is possible to refactor and annotate all members.
 
   // Main thread on which this object is created.
   rtc::ThreadChecker main_thread_checker_;
-
-  // Native (platform specific) audio thread driving the playout side.
-  rtc::ThreadChecker playout_thread_checker_;
-
-  // Native (platform specific) audio thread driving the recording side.
-  rtc::ThreadChecker recording_thread_checker_;
 
   rtc::CriticalSection lock_;
 
@@ -160,23 +149,17 @@ class AudioDeviceBuffer {
   // and it must outlive this object. It is not possible to change this member
   // while any media is active. It is possible to start media without calling
   // RegisterAudioCallback() but that will lead to ignored audio callbacks in
-  // both directions where native audio will be acive but no audio samples will
+  // both directions where native audio will be active but no audio samples will
   // be transported.
   AudioTransport* audio_transport_cb_;
 
-  // The members below that are not annotated are protected by design. They are
-  // all set on the main thread (verified by |main_thread_checker_|) and then
-  // read on either the playout or recording audio thread. But, media will never
-  // be active when the member is set; hence no conflict exists. It is too
-  // complex to ensure and verify that this is actually the case.
+  // Sample rate in Hertz. Accessed atomically.
+  std::atomic<uint32_t> rec_sample_rate_;
+  std::atomic<uint32_t> play_sample_rate_;
 
-  // Sample rate in Hertz.
-  uint32_t rec_sample_rate_;
-  uint32_t play_sample_rate_;
-
-  // Number of audio channels.
-  size_t rec_channels_;
-  size_t play_channels_;
+  // Number of audio channels. Accessed atomically.
+  std::atomic<size_t> rec_channels_;
+  std::atomic<size_t> play_channels_;
 
   // Keeps track of if playout/recording are active or not. A combination
   // of these states are used to determine when to start and stop the timer.
@@ -187,18 +170,18 @@ class AudioDeviceBuffer {
   // Buffer used for audio samples to be played out. Size can be changed
   // dynamically. The 16-bit samples are interleaved, hence the size is
   // proportional to the number of channels.
-  rtc::BufferT<int16_t> play_buffer_ RTC_GUARDED_BY(playout_thread_checker_);
+  rtc::BufferT<int16_t> play_buffer_;
 
   // Byte buffer used for recorded audio samples. Size can be changed
   // dynamically.
-  rtc::BufferT<int16_t> rec_buffer_ RTC_GUARDED_BY(recording_thread_checker_);
+  rtc::BufferT<int16_t> rec_buffer_;
 
   // Contains true of a key-press has been detected.
-  bool typing_status_ RTC_GUARDED_BY(recording_thread_checker_);
+  bool typing_status_;
 
   // Delay values used by the AEC.
-  int play_delay_ms_ RTC_GUARDED_BY(recording_thread_checker_);
-  int rec_delay_ms_ RTC_GUARDED_BY(recording_thread_checker_);
+  int play_delay_ms_;
+  int rec_delay_ms_;
 
   // Counts number of times LogStats() has been called.
   size_t num_stat_reports_ RTC_GUARDED_BY(task_queue_);
@@ -208,8 +191,8 @@ class AudioDeviceBuffer {
 
   // Counts number of audio callbacks modulo 50 to create a signal when
   // a new storage of audio stats shall be done.
-  int16_t rec_stat_count_ RTC_GUARDED_BY(recording_thread_checker_);
-  int16_t play_stat_count_ RTC_GUARDED_BY(playout_thread_checker_);
+  int16_t rec_stat_count_;
+  int16_t play_stat_count_;
 
   // Time stamps of when playout and recording starts.
   int64_t play_start_time_ RTC_GUARDED_BY(main_thread_checker_);
@@ -235,7 +218,7 @@ class AudioDeviceBuffer {
 // Should *never* be defined in production builds. Only used for testing.
 // When defined, the output signal will be replaced by a sinus tone at 440Hz.
 #ifdef AUDIO_DEVICE_PLAYS_SINUS_TONE
-  double phase_ RTC_GUARDED_BY(playout_thread_checker_);
+  double phase_;
 #endif
 };
 

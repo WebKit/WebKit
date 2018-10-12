@@ -35,6 +35,8 @@ constexpr size_t ReceiverReport::kMaxNumberOfReportBlocks;
 
 ReceiverReport::ReceiverReport() : sender_ssrc_(0) {}
 
+ReceiverReport::ReceiverReport(const ReceiverReport& rhs) = default;
+
 ReceiverReport::~ReceiverReport() = default;
 
 bool ReceiverReport::Parse(const CommonHeader& packet) {

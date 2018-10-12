@@ -10,7 +10,6 @@
 
 #include "modules/desktop_capture/mac/full_screen_chrome_window_detector.h"
 
-#include <assert.h>
 #include <libproc.h>
 #include <string>
 

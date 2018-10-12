@@ -15,8 +15,10 @@
 
 #include "absl/types/optional.h"
 #include "api/call/transport.h"
+#include "api/test/simulated_network.h"
 #include "call/call.h"
 #include "call/fake_network_pipe.h"
+#include "call/simulated_network.h"
 #include "modules/utility/include/process_thread.h"
 #include "system_wrappers/include/clock.h"
 
@@ -24,9 +26,10 @@ namespace webrtc {
 
 class DegradedCall : public Call, private Transport, private PacketReceiver {
  public:
-  explicit DegradedCall(std::unique_ptr<Call> call,
-                        absl::optional<FakeNetworkPipe::Config> send_config,
-                        absl::optional<FakeNetworkPipe::Config> receive_config);
+  explicit DegradedCall(
+      std::unique_ptr<Call> call,
+      absl::optional<DefaultNetworkSimulationConfig> send_config,
+      absl::optional<DefaultNetworkSimulationConfig> receive_config);
   ~DegradedCall() override;
 
   // Implements Call.
@@ -67,10 +70,8 @@ class DegradedCall : public Call, private Transport, private PacketReceiver {
           bitrate_allocation_strategy) override;
 
   void SignalChannelNetworkState(MediaType media, NetworkState state) override;
-
-  void OnTransportOverheadChanged(MediaType media,
-                                  int transport_overhead_per_packet) override;
-
+  void OnAudioTransportOverheadChanged(
+      int transport_overhead_per_packet) override;
   void OnSentPacket(const rtc::SentPacket& sent_packet) override;
 
  protected:
@@ -90,12 +91,14 @@ class DegradedCall : public Call, private Transport, private PacketReceiver {
   Clock* const clock_;
   const std::unique_ptr<Call> call_;
 
-  const absl::optional<FakeNetworkPipe::Config> send_config_;
+  const absl::optional<DefaultNetworkSimulationConfig> send_config_;
   const std::unique_ptr<ProcessThread> send_process_thread_;
+  SimulatedNetwork* send_simulated_network_;
   std::unique_ptr<FakeNetworkPipe> send_pipe_;
   size_t num_send_streams_;
 
-  const absl::optional<FakeNetworkPipe::Config> receive_config_;
+  const absl::optional<DefaultNetworkSimulationConfig> receive_config_;
+  SimulatedNetwork* receive_simulated_network_;
   std::unique_ptr<FakeNetworkPipe> receive_pipe_;
 };
 

@@ -12,7 +12,6 @@
 
 #include <algorithm>  // For std::find.
 #include <set>
-#include <sstream>
 #include <utility>  // For std::move.
 
 #include "absl/memory/memory.h"

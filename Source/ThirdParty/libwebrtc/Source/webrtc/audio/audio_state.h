@@ -35,11 +35,8 @@ class AudioState final : public webrtc::AudioState {
   explicit AudioState(const AudioState::Config& config);
   ~AudioState() override;
 
-  AudioProcessing* audio_processing() override {
-    RTC_DCHECK(config_.audio_processing);
-    return config_.audio_processing.get();
-  }
-  AudioTransport* audio_transport() override { return &audio_transport_; }
+  AudioProcessing* audio_processing() override;
+  AudioTransport* audio_transport() override;
 
   void SetPlayout(bool enabled) override;
   void SetRecording(bool enabled) override;

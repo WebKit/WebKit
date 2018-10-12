@@ -8,21 +8,4 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#import "WebRTC/RTCConfiguration.h"
-
-#include "api/peerconnectioninterface.h"
-
-NS_ASSUME_NONNULL_BEGIN
-
-@interface RTCConfiguration ()
-
-/** Optional TurnCustomizer.
- *  With this class one can modify outgoing TURN messages.
- *  The object passed in must remain valid until PeerConnection::Close() is
- * called.
- */
-@property(nonatomic, nullable) webrtc::TurnCustomizer* turnCustomizer;
-
-@end
-
-NS_ASSUME_NONNULL_END
+#import "api/peerconnection/RTCConfiguration+Native.h"

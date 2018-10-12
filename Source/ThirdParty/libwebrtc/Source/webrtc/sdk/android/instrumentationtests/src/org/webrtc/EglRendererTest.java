@@ -47,18 +47,18 @@ public class EglRendererTest {
   private final static byte[][][] TEST_FRAMES_DATA = {
       {
           new byte[] {
-              11, -12, 13, -14, -15, 16, -17, 18, 19, -110, 111, -112, -113, 114, -115, 116},
-          new byte[] {117, 118, 119, 120}, new byte[] {121, 122, 123, 124},
+              -99, -93, -88, -83, -78, -73, -68, -62, -56, -52, -46, -41, -36, -31, -26, -20},
+          new byte[] {110, 113, 116, 118}, new byte[] {31, 45, 59, 73},
       },
       {
-          new byte[] {-11, -12, -13, -14, -15, -16, -17, -18, -19, -110, -111, -112, -113, -114,
-              -115, -116},
-          new byte[] {-121, -122, -123, -124}, new byte[] {-117, -118, -119, -120},
+          new byte[] {
+              -108, -103, -98, -93, -87, -82, -77, -72, -67, -62, -56, -50, -45, -40, -35, -30},
+          new byte[] {120, 123, 125, -127}, new byte[] {87, 100, 114, 127},
       },
       {
-          new byte[] {-11, -12, -13, -14, -15, -16, -17, -18, -19, -110, -111, -112, -113, -114,
-              -115, -116},
-          new byte[] {117, 118, 119, 120}, new byte[] {121, 122, 123, 124},
+          new byte[] {
+              -117, -112, -107, -102, -97, -92, -87, -81, -75, -71, -65, -60, -55, -50, -44, -39},
+          new byte[] {113, 116, 118, 120}, new byte[] {45, 59, 73, 87},
       },
   };
   private final static ByteBuffer[][] TEST_FRAMES =
@@ -176,7 +176,7 @@ public class EglRendererTest {
     float highYValue = (plane.get(highIndexY * stride + lowIndexX) & 0xFF) * lowWeightX
         + (plane.get(highIndexY * stride + highIndexX) & 0xFF) * highWeightX;
 
-    return (lowWeightY * lowYValue + highWeightY * highYValue) / 255f;
+    return lowWeightY * lowYValue + highWeightY * highYValue;
   }
 
   private static byte saturatedFloatToByte(float c) {
@@ -200,15 +200,16 @@ public class EglRendererTest {
 
     for (int y = 0; y < TEST_FRAME_HEIGHT; y++) {
       for (int x = 0; x < TEST_FRAME_WIDTH; x++) {
-        final int x2 = x / 2;
-        final int y2 = y / 2;
-
-        final float yC = (yuvFrame[0].get(y * yStride + x) & 0xFF) / 255f;
-        final float uC = linearSample(yuvFrame[1], TEST_FRAME_WIDTH / 2, TEST_FRAME_HEIGHT / 2,
-                             (x + 0.5f) / TEST_FRAME_WIDTH, (y + 0.5f) / TEST_FRAME_HEIGHT)
+        final float yC = ((yuvFrame[0].get(y * yStride + x) & 0xFF) - 16f) / 219f;
+        final float uC = (linearSample(yuvFrame[1], TEST_FRAME_WIDTH / 2, TEST_FRAME_HEIGHT / 2,
+                              (x + 0.5f) / TEST_FRAME_WIDTH, (y + 0.5f) / TEST_FRAME_HEIGHT)
+                             - 16f)
+                / 224f
             - 0.5f;
-        final float vC = linearSample(yuvFrame[2], TEST_FRAME_WIDTH / 2, TEST_FRAME_HEIGHT / 2,
-                             (x + 0.5f) / TEST_FRAME_WIDTH, (y + 0.5f) / TEST_FRAME_HEIGHT)
+        final float vC = (linearSample(yuvFrame[2], TEST_FRAME_WIDTH / 2, TEST_FRAME_HEIGHT / 2,
+                              (x + 0.5f) / TEST_FRAME_WIDTH, (y + 0.5f) / TEST_FRAME_HEIGHT)
+                             - 16f)
+                / 224f
             - 0.5f;
         final float rC = yC + 1.403f * vC;
         final float gC = yC - 0.344f * uC - 0.714f * vC;

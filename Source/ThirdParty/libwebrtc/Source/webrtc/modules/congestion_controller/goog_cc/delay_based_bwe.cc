@@ -30,6 +30,7 @@
 #include "system_wrappers/include/metrics.h"
 
 namespace {
+static const int64_t kStreamTimeOutMs = 2000;
 constexpr int kTimestampGroupLengthMs = 5;
 constexpr int kAbsSendTimeFraction = 18;
 constexpr int kAbsSendTimeInterArrivalUpshift = 8;

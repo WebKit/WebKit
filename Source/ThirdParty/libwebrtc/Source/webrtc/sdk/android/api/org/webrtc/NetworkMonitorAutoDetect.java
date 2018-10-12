@@ -289,17 +289,21 @@ public class NetworkMonitorAutoDetect extends BroadcastReceiver {
       //
       // Note that getActiveNetwork and getActiveNetworkInfo return null if no default network is
       // currently active.
-      if (networkInfo.getType() == ConnectivityManager.TYPE_VPN
-          && network.equals(connectivityManager.getActiveNetwork())) {
-        // If a VPN network is in place, we can find the underlying network type via querying the
-        // active network info thanks to
-        // https://android.googlesource.com/platform/frameworks/base/+/d6a7980d
-        NetworkInfo underlyingActiveNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        // We use the NetworkInfo of the underlying network if it is not of TYPE_VPN itself.
-        if (underlyingActiveNetworkInfo.getType() != ConnectivityManager.TYPE_VPN) {
-          return new NetworkState(networkInfo.isConnected(), ConnectivityManager.TYPE_VPN, -1,
-              underlyingActiveNetworkInfo.getType(), underlyingActiveNetworkInfo.getSubtype());
+      if (networkInfo.getType() == ConnectivityManager.TYPE_VPN) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+            && network.equals(connectivityManager.getActiveNetwork())) {
+          // If a VPN network is in place, we can find the underlying network type via querying the
+          // active network info thanks to
+          // https://android.googlesource.com/platform/frameworks/base/+/d6a7980d
+          NetworkInfo underlyingActiveNetworkInfo = connectivityManager.getActiveNetworkInfo();
+          // We use the NetworkInfo of the underlying network if it is not of TYPE_VPN itself.
+          if (underlyingActiveNetworkInfo.getType() != ConnectivityManager.TYPE_VPN) {
+            return new NetworkState(networkInfo.isConnected(), ConnectivityManager.TYPE_VPN, -1,
+                underlyingActiveNetworkInfo.getType(), underlyingActiveNetworkInfo.getSubtype());
+          }
         }
+        return new NetworkState(
+            networkInfo.isConnected(), ConnectivityManager.TYPE_VPN, -1, -1, -1);
       }
 
       return getNetworkState(networkInfo);
@@ -526,7 +530,7 @@ public class NetworkMonitorAutoDetect extends BroadcastReceiver {
     private final Observer observer;
     // Network information about a WifiP2p (aka WiFi-Direct) network, or null if no such network is
     // connected.
-    @Nullable private NetworkInformation wifiP2pNetworkInfo = null;
+    @Nullable private NetworkInformation wifiP2pNetworkInfo;
 
     WifiDirectManagerDelegate(Observer observer, Context context) {
       this.context = context;

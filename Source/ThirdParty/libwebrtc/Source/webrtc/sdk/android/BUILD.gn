@@ -133,10 +133,7 @@ if (is_android) {
       ":native_api_jni",
       ":peerconnection_jni",
       "../../pc:peerconnection",
-      "../../system_wrappers:field_trial_default",
-      "../../system_wrappers:metrics_api",
-      "../../system_wrappers:metrics_default",
-      "../../system_wrappers:runtime_enabled_features_default",
+      "../../system_wrappers:metrics",
     ]
   }
 
@@ -282,6 +279,8 @@ if (is_android) {
       "api/org/webrtc/DataChannel.java",
       "api/org/webrtc/DtmfSender.java",
       "api/org/webrtc/FecControllerFactoryFactoryInterface.java",
+      "api/org/webrtc/FrameDecryptor.java",
+      "api/org/webrtc/FrameEncryptor.java",
       "api/org/webrtc/IceCandidate.java",
       "api/org/webrtc/MediaCodecVideoDecoder.java",
       "api/org/webrtc/MediaCodecVideoEncoder.java",
@@ -385,16 +384,18 @@ if (is_android) {
     java_files = [
       "api/org/webrtc/HardwareVideoDecoderFactory.java",
       "api/org/webrtc/HardwareVideoEncoderFactory.java",
+      "api/org/webrtc/PlatformSoftwareVideoDecoderFactory.java",
+      "src/java/org/webrtc/AndroidVideoDecoder.java",
       "src/java/org/webrtc/BaseBitrateAdjuster.java",
       "src/java/org/webrtc/BitrateAdjuster.java",
       "src/java/org/webrtc/DynamicBitrateAdjuster.java",
       "src/java/org/webrtc/FramerateBitrateAdjuster.java",
-      "src/java/org/webrtc/HardwareVideoDecoder.java",
       "src/java/org/webrtc/HardwareVideoEncoder.java",
+      "src/java/org/webrtc/MediaCodecUtils.java",
+      "src/java/org/webrtc/MediaCodecVideoDecoderFactory.java",
       "src/java/org/webrtc/MediaCodecWrapper.java",
       "src/java/org/webrtc/MediaCodecWrapperFactory.java",
       "src/java/org/webrtc/MediaCodecWrapperFactoryImpl.java",
-      "src/java/org/webrtc/MediaCodecUtils.java",
       "src/java/org/webrtc/NV12Buffer.java",
       "src/java/org/webrtc/VideoCodecType.java",
     ]
@@ -497,7 +498,7 @@ if (is_android) {
       "../../rtc_base:checks",
       "../../rtc_base:rtc_base",
       "../../rtc_base:rtc_base_approved",
-      "../../system_wrappers:metrics_api",
+      "../../system_wrappers:metrics",
       "//third_party/abseil-cpp/absl/memory",
       "//third_party/abseil-cpp/absl/types:optional",
     ]
@@ -519,7 +520,9 @@ if (is_android) {
 
   rtc_static_library("video_jni") {
     sources = []
-    deps = []
+    deps = [
+      "../../system_wrappers:field_trial",
+    ]
 
     sources += [
       "src/jni/androidmediacodeccommon.h",
@@ -577,7 +580,6 @@ if (is_android) {
       "../../media:rtc_h264_profile_id",
       "../../media:rtc_internal_video_codecs",
       "../../media:rtc_media_base",
-      "../../modules:module_api",
       "../../modules/utility:utility",
       "../../modules/video_coding:codec_globals_headers",
       "../../modules/video_coding:video_codec_interface",
@@ -589,7 +591,6 @@ if (is_android) {
       "../../rtc_base:sequenced_task_checker",
       "../../rtc_base:weak_ptr",
       "../../rtc_base/memory:aligned_malloc",
-      "../../system_wrappers:field_trial_api",
       "//third_party/libyuv",
     ]
   }
@@ -666,7 +667,7 @@ if (is_android) {
       "../../rtc_base:rtc_base_approved",
       "../../rtc_base:rtc_task_queue",
       "../../rtc_base:stringutils",
-      "../../system_wrappers:field_trial_api",
+      "../../system_wrappers:field_trial",
       "//third_party/abseil-cpp/absl/memory",
     ]
   }
@@ -756,7 +757,7 @@ if (is_android) {
       "../../rtc_base:checks",
       "../../rtc_base:rtc_base_approved",
       "../../system_wrappers",
-      "../../system_wrappers:metrics_api",
+      "../../system_wrappers:metrics",
       "//third_party/abseil-cpp/absl/memory",
     ]
     if (rtc_enable_android_aaudio) {
@@ -983,7 +984,7 @@ if (is_android) {
       "../../modules/audio_device:audio_device_buffer",
       "../../rtc_base:checks",
       "../../rtc_base:rtc_base_approved",
-      "../../system_wrappers:metrics_api",
+      "../../system_wrappers:metrics",
       "//third_party/abseil-cpp/absl/types:optional",
     ]
   }
@@ -1005,7 +1006,7 @@ if (is_android) {
       "../../modules/audio_device:audio_device_buffer",
       "../../rtc_base:checks",
       "../../rtc_base:rtc_base_approved",
-      "../../system_wrappers:metrics_api",
+      "../../system_wrappers:metrics",
       "//third_party/abseil-cpp/absl/types:optional",
     ]
   }
@@ -1253,17 +1254,15 @@ if (is_android) {
       android_manifest = "instrumentationtests/AndroidManifest.xml"
 
       java_files = [
+        "instrumentationtests/src/org/webrtc/AndroidVideoDecoderInstrumentationTest.java",
         "instrumentationtests/src/org/webrtc/Camera1CapturerUsingByteBufferTest.java",
         "instrumentationtests/src/org/webrtc/Camera1CapturerUsingTextureTest.java",
         "instrumentationtests/src/org/webrtc/Camera2CapturerTest.java",
         "instrumentationtests/src/org/webrtc/CameraVideoCapturerTestFixtures.java",
-        "instrumentationtests/src/org/webrtc/TestConstants.java",
         "instrumentationtests/src/org/webrtc/DefaultVideoEncoderFactoryTest.java",
         "instrumentationtests/src/org/webrtc/EglRendererTest.java",
         "instrumentationtests/src/org/webrtc/FileVideoCapturerTest.java",
         "instrumentationtests/src/org/webrtc/GlRectDrawerTest.java",
-        "instrumentationtests/src/org/webrtc/VideoFrameBufferTest.java",
-        "instrumentationtests/src/org/webrtc/HardwareVideoDecoderTest.java",
         "instrumentationtests/src/org/webrtc/HardwareVideoEncoderTest.java",
         "instrumentationtests/src/org/webrtc/LoggableTest.java",
         "instrumentationtests/src/org/webrtc/MediaCodecVideoEncoderTest.java",
@@ -1273,7 +1272,9 @@ if (is_android) {
         "instrumentationtests/src/org/webrtc/RendererCommonTest.java",
         "instrumentationtests/src/org/webrtc/SurfaceTextureHelperTest.java",
         "instrumentationtests/src/org/webrtc/SurfaceViewRendererOnMeasureTest.java",
+        "instrumentationtests/src/org/webrtc/TestConstants.java",
         "instrumentationtests/src/org/webrtc/VideoFileRendererTest.java",
+        "instrumentationtests/src/org/webrtc/VideoFrameBufferTest.java",
         "instrumentationtests/src/org/webrtc/WebRtcJniBootTest.java",
         "instrumentationtests/src/org/webrtc/YuvHelperTest.java",
       ]

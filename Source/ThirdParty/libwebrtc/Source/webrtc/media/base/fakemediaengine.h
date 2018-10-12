@@ -151,6 +151,11 @@ class RtpHelper : public Base {
       const webrtc::RtpParameters& parameters) {
     auto parameters_iterator = rtp_send_parameters_.find(ssrc);
     if (parameters_iterator != rtp_send_parameters_.end()) {
+      auto result =
+          ValidateRtpParameters(parameters_iterator->second, parameters);
+      if (!result.ok())
+        return result;
+
       parameters_iterator->second = parameters;
       return webrtc::RTCError::OK();
     }
@@ -600,6 +605,10 @@ class FakeVideoMediaChannel : public RtpHelper<VideoMediaChannel> {
 
   void FillBitrateInfo(BandwidthEstimationInfo* bwe_info) override {}
   bool GetStats(VideoMediaInfo* info) override { return false; }
+
+  std::vector<webrtc::RtpSource> GetSources(uint32_t ssrc) const override {
+    return {};
+  }
 
  private:
   bool SetRecvCodecs(const std::vector<VideoCodec>& codecs) {

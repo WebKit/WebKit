@@ -39,9 +39,9 @@ class CameraVideoCapturerTestFixtures {
 
   static private class RendererCallbacks implements VideoSink {
     private final Object frameLock = new Object();
-    private int framesRendered = 0;
-    private int width = 0;
-    private int height = 0;
+    private int framesRendered;
+    private int width;
+    private int height;
 
     @Override
     public void onFrame(VideoFrame frame) {
@@ -102,7 +102,7 @@ class CameraVideoCapturerTestFixtures {
   }
 
   static private class FakeCapturerObserver implements CapturerObserver {
-    private int framesCaptured = 0;
+    private int framesCaptured;
     private @Nullable VideoFrame videoFrame;
     final private Object frameLock = new Object();
     final private Object capturerStartLock = new Object();

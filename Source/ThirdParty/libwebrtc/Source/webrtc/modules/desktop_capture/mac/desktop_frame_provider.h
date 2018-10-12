@@ -19,7 +19,7 @@
 
 #include "modules/desktop_capture/shared_desktop_frame.h"
 #include "rtc_base/thread_checker.h"
-#include "sdk/objc/Framework/Classes/Common/scoped_cftyperef.h"
+#include "sdk/objc/helpers/scoped_cftyperef.h"
 
 namespace webrtc {
 

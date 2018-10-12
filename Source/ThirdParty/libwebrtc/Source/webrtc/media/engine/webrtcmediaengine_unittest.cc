@@ -29,7 +29,7 @@ std::vector<RtpExtension> MakeUniqueExtensions() {
   for (int i = 0; i < 7; ++i) {
     result.push_back(RtpExtension(name, 1 + i));
     name[0]++;
-    result.push_back(RtpExtension(name, 14 - i));
+    result.push_back(RtpExtension(name, 255 - i));
     name[0]++;
   }
   return result;
@@ -40,7 +40,7 @@ std::vector<RtpExtension> MakeRedundantExtensions() {
   char name[] = "a";
   for (int i = 0; i < 7; ++i) {
     result.push_back(RtpExtension(name, 1 + i));
-    result.push_back(RtpExtension(name, 14 - i));
+    result.push_back(RtpExtension(name, 255 - i));
     name[0]++;
   }
   return result;
@@ -84,7 +84,7 @@ TEST(WebRtcMediaEngineTest, ValidateRtpExtensions_OutOfRangeId_Low) {
 
 TEST(WebRtcMediaEngineTest, ValidateRtpExtensions_OutOfRangeId_High) {
   std::vector<RtpExtension> extensions = MakeUniqueExtensions();
-  extensions.push_back(RtpExtension("foo", 15));
+  extensions.push_back(RtpExtension("foo", 256));
   EXPECT_FALSE(ValidateRtpExtensions(extensions));
 }
 
@@ -96,7 +96,7 @@ TEST(WebRtcMediaEngineTest, ValidateRtpExtensions_OverlappingIds_StartOfSet) {
 
 TEST(WebRtcMediaEngineTest, ValidateRtpExtensions_OverlappingIds_EndOfSet) {
   std::vector<RtpExtension> extensions = MakeUniqueExtensions();
-  extensions.push_back(RtpExtension("foo", 14));
+  extensions.push_back(RtpExtension("foo", 255));
   EXPECT_FALSE(ValidateRtpExtensions(extensions));
 }
 

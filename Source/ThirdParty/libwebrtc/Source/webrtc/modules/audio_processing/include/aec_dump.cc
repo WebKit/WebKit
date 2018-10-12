@@ -32,8 +32,6 @@ bool InternalAPMConfig::operator==(const InternalAPMConfig& other) {
          hpf_enabled == other.hpf_enabled && ns_enabled == other.ns_enabled &&
          ns_level == other.ns_level &&
          transient_suppression_enabled == other.transient_suppression_enabled &&
-         intelligibility_enhancer_enabled ==
-             other.intelligibility_enhancer_enabled &&
          noise_robust_agc_enabled == other.noise_robust_agc_enabled &&
          pre_amplifier_enabled == other.pre_amplifier_enabled &&
          pre_amplifier_fixed_gain_factor ==

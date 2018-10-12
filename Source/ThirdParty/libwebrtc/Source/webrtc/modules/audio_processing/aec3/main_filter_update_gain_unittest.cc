@@ -24,6 +24,7 @@
 #include "modules/audio_processing/test/echo_canceller_test_tools.h"
 #include "rtc_base/numerics/safe_minmax.h"
 #include "rtc_base/random.h"
+#include "rtc_base/strings/string_builder.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -174,16 +175,16 @@ void RunFilterUpdateTest(int num_blocks_to_process,
 }
 
 std::string ProduceDebugText(int filter_length_blocks) {
-  std::ostringstream ss;
+  rtc::StringBuilder ss;
   ss << "Length: " << filter_length_blocks;
-  return ss.str();
+  return ss.Release();
 }
 
 std::string ProduceDebugText(size_t delay, int filter_length_blocks) {
-  std::ostringstream ss;
+  rtc::StringBuilder ss;
   ss << "Delay: " << delay << ", ";
   ss << ProduceDebugText(filter_length_blocks);
-  return ss.str();
+  return ss.Release();
 }
 
 }  // namespace

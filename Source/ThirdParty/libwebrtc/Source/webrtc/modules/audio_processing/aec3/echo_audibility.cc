@@ -20,7 +20,8 @@
 
 namespace webrtc {
 
-EchoAudibility::EchoAudibility() {
+EchoAudibility::EchoAudibility(bool use_render_stationarity_at_init)
+    : use_render_stationarity_at_init_(use_render_stationarity_at_init) {
   Reset();
 }
 
@@ -34,7 +35,7 @@ void EchoAudibility::Update(const RenderBuffer& render_buffer,
                              render_buffer.GetBlockBuffer(),
                              external_delay_seen);
 
-  if (external_delay_seen) {
+  if (external_delay_seen || use_render_stationarity_at_init_) {
     UpdateRenderStationarityFlags(render_buffer, delay_blocks, reverb_decay);
   }
 }

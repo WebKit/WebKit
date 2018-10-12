@@ -25,6 +25,12 @@ namespace webrtc {
 rtc::scoped_refptr<AudioDeviceModule>
 CreateWindowsCoreAudioAudioDeviceModule() {
   RTC_DLOG(INFO) << __FUNCTION__;
+  return CreateWindowsCoreAudioAudioDeviceModuleForTest();
+}
+
+rtc::scoped_refptr<AudioDeviceModuleForTest>
+CreateWindowsCoreAudioAudioDeviceModuleForTest() {
+  RTC_DLOG(INFO) << __FUNCTION__;
   // Returns NULL if Core Audio is not supported or if COM has not been
   // initialized correctly using webrtc_win::ScopedCOMInitializer.
   if (!webrtc_win::core_audio_utility::IsSupported()) {

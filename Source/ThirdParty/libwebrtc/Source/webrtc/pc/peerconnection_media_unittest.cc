@@ -273,6 +273,56 @@ TEST_F(PeerConnectionMediaTestPlanB, EmptyRemoteOfferRemovesRecvStreams) {
   EXPECT_EQ(0u, callee_video->recv_streams().size());
 }
 
+// Test enabling of simulcast with Plan B semantics.
+// This test creating an offer.
+TEST_F(PeerConnectionMediaTestPlanB, SimulcastOffer) {
+  auto caller = CreatePeerConnection();
+  auto caller_video_track = caller->AddVideoTrack("v");
+  RTCOfferAnswerOptions options;
+  options.num_simulcast_layers = 3;
+  auto offer = caller->CreateOffer(options);
+  auto* description = cricket::GetFirstMediaContent(
+      offer->description(),
+      cricket::MEDIA_TYPE_VIDEO)->media_description();
+  ASSERT_EQ(1u, description->streams().size());
+  ASSERT_TRUE(description->streams()[0].get_ssrc_group("SIM"));
+  EXPECT_EQ(3u, description->streams()[0].get_ssrc_group("SIM")->ssrcs.size());
+
+  // Check that it actually creates simulcast aswell.
+  caller->SetLocalDescription(std::move(offer));
+  auto senders = caller->pc()->GetSenders();
+  ASSERT_EQ(1u, senders.size());
+  EXPECT_EQ(cricket::MediaType::MEDIA_TYPE_VIDEO, senders[0]->media_type());
+  EXPECT_EQ(3u, senders[0]->GetParameters().encodings.size());
+}
+
+// Test enabling of simulcast with Plan B semantics.
+// This test creating an answer.
+TEST_F(PeerConnectionMediaTestPlanB, SimulcastAnswer) {
+  auto caller = CreatePeerConnection();
+  caller->AddVideoTrack("v0");
+  auto offer = caller->CreateOffer();
+  auto callee = CreatePeerConnection();
+  auto callee_video_track = callee->AddVideoTrack("v1");
+  ASSERT_TRUE(callee->SetRemoteDescription(std::move(offer)));
+  RTCOfferAnswerOptions options;
+  options.num_simulcast_layers = 3;
+  auto answer = callee->CreateAnswer(options);
+  auto* description = cricket::GetFirstMediaContent(
+      answer->description(),
+      cricket::MEDIA_TYPE_VIDEO)->media_description();
+  ASSERT_EQ(1u, description->streams().size());
+  ASSERT_TRUE(description->streams()[0].get_ssrc_group("SIM"));
+  EXPECT_EQ(3u, description->streams()[0].get_ssrc_group("SIM")->ssrcs.size());
+
+  // Check that it actually creates simulcast aswell.
+  callee->SetLocalDescription(std::move(answer));
+  auto senders = callee->pc()->GetSenders();
+  ASSERT_EQ(1u, senders.size());
+  EXPECT_EQ(cricket::MediaType::MEDIA_TYPE_VIDEO, senders[0]->media_type());
+  EXPECT_EQ(3u, senders[0]->GetParameters().encodings.size());
+}
+
 // Test that stopping the callee transceivers causes the media channels to be
 // destroyed on the callee after calling SetLocalDescription on the local
 // answer.

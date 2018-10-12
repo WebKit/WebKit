@@ -12,32 +12,43 @@
 
 #include <assert.h>
 
-#include "api/audio_codecs/builtin_audio_decoder_factory.h"
+#include "api/audio_codecs/L16/audio_decoder_L16.h"
+#include "api/audio_codecs/L16/audio_encoder_L16.h"
+#include "api/audio_codecs/audio_decoder_factory_template.h"
+#include "api/audio_codecs/audio_encoder_factory_template.h"
+#include "api/audio_codecs/g711/audio_decoder_g711.h"
+#include "api/audio_codecs/g711/audio_encoder_g711.h"
+#include "api/audio_codecs/g722/audio_decoder_g722.h"
+#include "api/audio_codecs/g722/audio_encoder_g722.h"
+#include "api/audio_codecs/isac/audio_decoder_isac_float.h"
+#include "api/audio_codecs/isac/audio_encoder_isac_float.h"
+#include "api/audio_codecs/opus/audio_decoder_opus.h"
+#include "api/audio_codecs/opus/audio_encoder_opus.h"
 #include "common_types.h"  // NOLINT(build/include)
-#include "modules/audio_coding/codecs/audio_format_conversion.h"
+#include "modules/audio_coding/codecs/cng/audio_encoder_cng.h"
+#include "modules/audio_coding/codecs/red/audio_encoder_copy_red.h"
 #include "modules/audio_coding/include/audio_coding_module_typedefs.h"
 #include "modules/audio_coding/test/utility.h"
+#include "rtc_base/strings/string_builder.h"
 #include "test/testsupport/fileutils.h"
 
 namespace webrtc {
 
-namespace {
-
-const char kNameL16[] = "L16";
-const char kNamePCMU[] = "PCMU";
-const char kNameCN[] = "CN";
-const char kNameRED[] = "RED";
-const char kNameISAC[] = "ISAC";
-const char kNameG722[] = "G722";
-const char kNameOPUS[] = "opus";
-
-}  // namespace
-
 TestRedFec::TestRedFec()
-    : _acmA(AudioCodingModule::Create(
-          AudioCodingModule::Config(CreateBuiltinAudioDecoderFactory()))),
+    : encoder_factory_(CreateAudioEncoderFactory<AudioEncoderG711,
+                                                 AudioEncoderG722,
+                                                 AudioEncoderIsacFloat,
+                                                 AudioEncoderL16,
+                                                 AudioEncoderOpus>()),
+      decoder_factory_(CreateAudioDecoderFactory<AudioDecoderG711,
+                                                 AudioDecoderG722,
+                                                 AudioDecoderIsacFloat,
+                                                 AudioDecoderL16,
+                                                 AudioDecoderOpus>()),
+      _acmA(AudioCodingModule::Create(
+          AudioCodingModule::Config(decoder_factory_))),
       _acmB(AudioCodingModule::Create(
-          AudioCodingModule::Config(CreateBuiltinAudioDecoderFactory()))),
+          AudioCodingModule::Config(decoder_factory_))),
       _channelA2B(NULL),
       _testCntr(0) {}
 
@@ -56,254 +67,136 @@ void TestRedFec::Perform() {
   ASSERT_EQ(0, _acmA->InitializeReceiver());
   ASSERT_EQ(0, _acmB->InitializeReceiver());
 
-  uint8_t numEncoders = _acmA->NumberOfCodecs();
-  CodecInst myCodecParam;
-  for (uint8_t n = 0; n < numEncoders; n++) {
-    EXPECT_EQ(0, _acmB->Codec(n, &myCodecParam));
-    // Default number of channels is 2 for opus, so we change to 1 in this test.
-    if (!strcmp(myCodecParam.plname, "opus")) {
-      myCodecParam.channels = 1;
-    }
-    EXPECT_EQ(true, _acmB->RegisterReceiveCodec(myCodecParam.pltype,
-                                                CodecInstToSdp(myCodecParam)));
-  }
-
   // Create and connect the channel
   _channelA2B = new Channel;
   _acmA->RegisterTransportCallback(_channelA2B);
   _channelA2B->RegisterReceiverACM(_acmB.get());
 
-  EXPECT_EQ(0, RegisterSendCodec('A', kNameL16, 8000));
-  EXPECT_EQ(0, RegisterSendCodec('A', kNameCN, 8000));
-  EXPECT_EQ(0, RegisterSendCodec('A', kNameRED));
-  EXPECT_EQ(0, SetVAD(true, true, VADAggr));
-  EXPECT_EQ(0, _acmA->SetREDStatus(true));
-  EXPECT_TRUE(_acmA->REDStatus());
+  RegisterSendCodec(_acmA, {"L16", 8000, 1}, Vad::kVadAggressive, true);
 
   OpenOutFile(_testCntr);
   Run();
   _outFileB.Close();
 
-  RegisterSendCodec('A', kNamePCMU, 8000);
-  // Switch to another 8 kHz codec, RED should remain switched on.
-  EXPECT_TRUE(_acmA->REDStatus());
+  // Switch to another 8 kHz codec; RED should remain switched on.
+  RegisterSendCodec(_acmA, {"PCMU", 8000, 1}, Vad::kVadAggressive, true);
   OpenOutFile(_testCntr);
   Run();
   _outFileB.Close();
 
-  EXPECT_EQ(0, RegisterSendCodec('A', kNameG722, 16000));
-  EXPECT_EQ(0, RegisterSendCodec('A', kNameCN, 16000));
-
-  // Switch to a 16 kHz codec, RED should have been switched off.
-  EXPECT_FALSE(_acmA->REDStatus());
+  // Switch to a 16 kHz codec; RED should be switched off.
+  RegisterSendCodec(_acmA, {"G722", 8000, 1}, Vad::kVadAggressive, false);
 
   OpenOutFile(_testCntr);
-  EXPECT_EQ(0, SetVAD(true, true, VADAggr));
-  EXPECT_EQ(0, _acmA->SetREDStatus(false));
-  EXPECT_FALSE(_acmA->REDStatus());
+  RegisterSendCodec(_acmA, {"G722", 8000, 1}, Vad::kVadAggressive, false);
   Run();
-  EXPECT_EQ(-1, _acmA->SetREDStatus(true));
-  EXPECT_FALSE(_acmA->REDStatus());
+  RegisterSendCodec(_acmA, {"G722", 8000, 1}, Vad::kVadAggressive, false);
   Run();
   _outFileB.Close();
 
-  RegisterSendCodec('A', kNameISAC, 16000);
-
-  EXPECT_FALSE(_acmA->REDStatus());
-
-  OpenOutFile(_testCntr);
-  EXPECT_EQ(0, SetVAD(true, true, VADVeryAggr));
-  EXPECT_EQ(0, _acmA->SetREDStatus(false));
-  EXPECT_FALSE(_acmA->REDStatus());
-  Run();
-  _outFileB.Close();
-
-  EXPECT_EQ(-1, _acmA->SetREDStatus(true));
-  EXPECT_FALSE(_acmA->REDStatus());
+  RegisterSendCodec(_acmA, {"ISAC", 16000, 1}, Vad::kVadVeryAggressive, false);
   OpenOutFile(_testCntr);
   Run();
   _outFileB.Close();
 
-  RegisterSendCodec('A', kNameISAC, 32000);
-
-  // Switch to a 32 kHz codec, RED should have been switched off.
-  EXPECT_FALSE(_acmA->REDStatus());
-
-  OpenOutFile(_testCntr);
-  EXPECT_EQ(0, SetVAD(true, true, VADVeryAggr));
-  EXPECT_EQ(0, _acmA->SetREDStatus(false));
-  EXPECT_FALSE(_acmA->REDStatus());
-  Run();
-  _outFileB.Close();
-
-  EXPECT_EQ(-1, _acmA->SetREDStatus(true));
-  EXPECT_FALSE(_acmA->REDStatus());
+  // Switch to a 32 kHz codec; RED should be switched off.
+  RegisterSendCodec(_acmA, {"ISAC", 32000, 1}, Vad::kVadVeryAggressive, false);
   OpenOutFile(_testCntr);
   Run();
   _outFileB.Close();
 
-  RegisterSendCodec('A', kNameISAC, 32000);
-  EXPECT_EQ(0, SetVAD(false, false, VADNormal));
-
-  EXPECT_EQ(-1, _acmA->SetREDStatus(true));
-  EXPECT_FALSE(_acmA->REDStatus());
+  RegisterSendCodec(_acmA, {"ISAC", 32000, 1}, absl::nullopt, false);
 
   _channelA2B->SetFECTestWithPacketLoss(true);
   // Following tests are under packet losses.
 
-  EXPECT_EQ(0, RegisterSendCodec('A', kNameG722));
-  EXPECT_EQ(0, RegisterSendCodec('A', kNameCN, 16000));
+  // Switch to a 16 kHz codec; RED should be switched off.
+  RegisterSendCodec(_acmA, {"G722", 8000, 1}, Vad::kVadAggressive, false);
+
+  OpenOutFile(_testCntr);
+  Run();
+  _outFileB.Close();
 
   // Switch to a 16 kHz codec, RED should have been switched off.
-  EXPECT_FALSE(_acmA->REDStatus());
+  RegisterSendCodec(_acmA, {"ISAC", 16000, 1}, Vad::kVadVeryAggressive, false);
 
-  OpenOutFile(_testCntr);
-  EXPECT_EQ(0, SetVAD(true, true, VADAggr));
-  EXPECT_EQ(0, _acmA->SetREDStatus(false));
-  EXPECT_FALSE(_acmA->REDStatus());
-  Run();
-  _outFileB.Close();
-
-  EXPECT_EQ(-1, _acmA->SetREDStatus(true));
-  EXPECT_FALSE(_acmA->REDStatus());
   OpenOutFile(_testCntr);
   Run();
   _outFileB.Close();
-
-  RegisterSendCodec('A', kNameISAC, 16000);
-
-  // Switch to a 16 kHz codec, RED should have been switched off.
-  EXPECT_FALSE(_acmA->REDStatus());
-
-  OpenOutFile(_testCntr);
-  EXPECT_EQ(0, SetVAD(true, true, VADVeryAggr));
-  EXPECT_EQ(0, _acmA->SetREDStatus(false));
-  EXPECT_FALSE(_acmA->REDStatus());
-  Run();
-  _outFileB.Close();
-  EXPECT_EQ(-1, _acmA->SetREDStatus(true));
-  EXPECT_FALSE(_acmA->REDStatus());
-  OpenOutFile(_testCntr);
-  Run();
-  _outFileB.Close();
-
-  RegisterSendCodec('A', kNameISAC, 32000);
 
   // Switch to a 32 kHz codec, RED should have been switched off.
-  EXPECT_FALSE(_acmA->REDStatus());
+  RegisterSendCodec(_acmA, {"ISAC", 32000, 1}, Vad::kVadVeryAggressive, false);
 
-  OpenOutFile(_testCntr);
-  EXPECT_EQ(0, SetVAD(true, true, VADVeryAggr));
-  EXPECT_EQ(0, _acmA->SetREDStatus(false));
-  EXPECT_FALSE(_acmA->REDStatus());
-  EXPECT_EQ(-1, _acmA->SetREDStatus(true));
-  EXPECT_FALSE(_acmA->REDStatus());
   OpenOutFile(_testCntr);
   Run();
   _outFileB.Close();
 
-  RegisterSendCodec('A', kNameISAC, 32000);
-  EXPECT_EQ(0, SetVAD(false, false, VADNormal));
-  EXPECT_EQ(-1, _acmA->SetREDStatus(true));
-  EXPECT_FALSE(_acmA->REDStatus());
+  RegisterSendCodec(_acmA, {"ISAC", 32000, 1}, absl::nullopt, false);
 
-#ifndef WEBRTC_CODEC_OPUS
-  EXPECT_TRUE(false);
-  printf("Opus needs to be activated to run this test\n");
-  return;
-#endif
-
-  RegisterSendCodec('A', kNameOPUS, 48000);
-
-  EXPECT_FALSE(_acmA->REDStatus());
+  RegisterSendCodec(_acmA, {"opus", 48000, 2}, absl::nullopt, false);
 
   // _channelA2B imposes 25% packet loss rate.
   EXPECT_EQ(0, _acmA->SetPacketLossRate(25));
 
-  EXPECT_EQ(-1, _acmA->SetREDStatus(true));
-  EXPECT_FALSE(_acmA->REDStatus());
-  EXPECT_EQ(0, _acmA->SetCodecFEC(true));
+  _acmA->ModifyEncoder([&](std::unique_ptr<AudioEncoder>* enc) {
+    EXPECT_EQ(true, (*enc)->SetFec(true));
+  });
 
-  EXPECT_TRUE(_acmA->CodecFEC());
   OpenOutFile(_testCntr);
   Run();
 
   // Switch to L16 with RED.
-  RegisterSendCodec('A', kNameL16, 8000);
-  EXPECT_EQ(0, SetVAD(false, false, VADNormal));
-
-  // L16 does not support FEC, so FEC should be turned off automatically.
-  EXPECT_FALSE(_acmA->CodecFEC());
-
-  EXPECT_EQ(0, _acmA->SetREDStatus(true));
-  EXPECT_TRUE(_acmA->REDStatus());
+  RegisterSendCodec(_acmA, {"L16", 8000, 1}, absl::nullopt, true);
   Run();
 
   // Switch to Opus again.
-  RegisterSendCodec('A', kNameOPUS, 48000);
-  EXPECT_FALSE(_acmA->REDStatus());
-  EXPECT_EQ(0, _acmA->SetREDStatus(false));
-  EXPECT_EQ(0, _acmA->SetCodecFEC(false));
+  RegisterSendCodec(_acmA, {"opus", 48000, 2}, absl::nullopt, false);
+  _acmA->ModifyEncoder([&](std::unique_ptr<AudioEncoder>* enc) {
+    EXPECT_EQ(true, (*enc)->SetFec(false));
+  });
   Run();
 
-  EXPECT_EQ(0, _acmA->SetCodecFEC(true));
+  _acmA->ModifyEncoder([&](std::unique_ptr<AudioEncoder>* enc) {
+    EXPECT_EQ(true, (*enc)->SetFec(true));
+  });
   _outFileB.Close();
-
-  // Codecs does not support internal FEC, cannot enable FEC.
-  RegisterSendCodec('A', kNameG722, 16000);
-  EXPECT_FALSE(_acmA->REDStatus());
-  EXPECT_EQ(-1, _acmA->SetCodecFEC(true));
-  EXPECT_FALSE(_acmA->CodecFEC());
-
-  RegisterSendCodec('A', kNameISAC, 16000);
-  EXPECT_FALSE(_acmA->REDStatus());
-  EXPECT_EQ(-1, _acmA->SetCodecFEC(true));
-  EXPECT_FALSE(_acmA->CodecFEC());
-
-  // Codecs does not support internal FEC, disable FEC does not trigger failure.
-  RegisterSendCodec('A', kNameG722, 16000);
-  EXPECT_FALSE(_acmA->REDStatus());
-  EXPECT_EQ(0, _acmA->SetCodecFEC(false));
-  EXPECT_FALSE(_acmA->CodecFEC());
-
-  RegisterSendCodec('A', kNameISAC, 16000);
-  EXPECT_FALSE(_acmA->REDStatus());
-  EXPECT_EQ(0, _acmA->SetCodecFEC(false));
-  EXPECT_FALSE(_acmA->CodecFEC());
 }
 
-int32_t TestRedFec::SetVAD(bool enableDTX, bool enableVAD, ACMVADMode vadMode) {
-  return _acmA->SetVAD(enableDTX, enableVAD, vadMode);
-}
+void TestRedFec::RegisterSendCodec(
+    const std::unique_ptr<AudioCodingModule>& acm,
+    const SdpAudioFormat& codec_format,
+    absl::optional<Vad::Aggressiveness> vad_mode,
+    bool use_red) {
+  constexpr int payload_type = 17, cn_payload_type = 27, red_payload_type = 37;
+  const auto& other_acm = &acm == &_acmA ? _acmB : _acmA;
 
-int16_t TestRedFec::RegisterSendCodec(char side, const char* codecName,
-                                      int32_t samplingFreqHz) {
-  std::cout << std::flush;
-  AudioCodingModule* myACM;
-  switch (side) {
-    case 'A': {
-      myACM = _acmA.get();
-      break;
+  auto encoder = encoder_factory_->MakeAudioEncoder(payload_type, codec_format,
+                                                    absl::nullopt);
+  EXPECT_NE(encoder, nullptr);
+  if (STR_CASE_CMP(codec_format.name.c_str(), "opus") != 0) {
+    if (vad_mode.has_value()) {
+      AudioEncoderCng::Config config;
+      config.speech_encoder = std::move(encoder);
+      config.num_channels = 1;
+      config.payload_type = cn_payload_type;
+      config.vad_mode = vad_mode.value();
+      encoder = absl::make_unique<AudioEncoderCng>(std::move(config));
+      EXPECT_EQ(true,
+                other_acm->RegisterReceiveCodec(
+                    cn_payload_type, {"CN", codec_format.clockrate_hz, 1}));
     }
-    case 'B': {
-      myACM = _acmB.get();
-      break;
+    if (use_red) {
+      AudioEncoderCopyRed::Config config;
+      config.payload_type = red_payload_type;
+      config.speech_encoder = std::move(encoder);
+      encoder = absl::make_unique<AudioEncoderCopyRed>(std::move(config));
+      EXPECT_EQ(true,
+                other_acm->RegisterReceiveCodec(
+                    red_payload_type, {"red", codec_format.clockrate_hz, 1}));
     }
-    default:
-      return -1;
   }
-
-  if (myACM == NULL) {
-    assert(false);
-    return -1;
-  }
-  CodecInst myCodecParam;
-  EXPECT_GT(AudioCodingModule::Codec(codecName, &myCodecParam,
-                                     samplingFreqHz, 1), -1);
-  EXPECT_GT(myACM->RegisterSendCodec(myCodecParam), -1);
-
-  // Initialization was successful.
-  return 0;
+  acm->SetEncoder(std::move(encoder));
+  EXPECT_EQ(true, other_acm->RegisterReceiveCodec(payload_type, codec_format));
 }
 
 void TestRedFec::Run() {
@@ -327,7 +220,7 @@ void TestRedFec::Run() {
 
 void TestRedFec::OpenOutFile(int16_t test_number) {
   std::string file_name;
-  std::stringstream file_stream;
+  rtc::StringBuilder file_stream;
   file_stream << webrtc::test::OutputPath();
   file_stream << "TestRedFec_outFile_";
   file_stream << test_number << ".pcm";

@@ -17,7 +17,6 @@
 
 #include "common_types.h"  // NOLINT(build/include)
 #include "modules/audio_coding/include/audio_coding_module.h"
-#include "modules/audio_coding/test/ACMTest.h"
 #include "modules/audio_coding/test/Channel.h"
 #include "modules/audio_coding/test/PCMFile.h"
 #include "modules/audio_coding/test/utility.h"
@@ -36,7 +35,7 @@ struct ACMTestISACConfig {
   bool enforceFrameSize;
 };
 
-class ISACTest : public ACMTest {
+class ISACTest {
  public:
   explicit ISACTest(int testMode);
   ~ISACTest();

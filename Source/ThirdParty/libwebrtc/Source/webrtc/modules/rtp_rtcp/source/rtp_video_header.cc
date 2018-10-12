@@ -16,4 +16,9 @@ RTPVideoHeader::RTPVideoHeader() : playout_delay(), video_timing() {}
 RTPVideoHeader::RTPVideoHeader(const RTPVideoHeader& other) = default;
 RTPVideoHeader::~RTPVideoHeader() = default;
 
+RTPVideoHeader::GenericDescriptorInfo::GenericDescriptorInfo() = default;
+RTPVideoHeader::GenericDescriptorInfo::GenericDescriptorInfo(
+    const GenericDescriptorInfo& other) = default;
+RTPVideoHeader::GenericDescriptorInfo::~GenericDescriptorInfo() = default;
+
 }  // namespace webrtc

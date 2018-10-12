@@ -71,7 +71,7 @@ class Camera2Session implements CameraSession {
 
   // State
   private SessionState state = SessionState.RUNNING;
-  private boolean firstFrameReported = false;
+  private boolean firstFrameReported;
 
   // Used only for stats. Only used on the camera thread.
   private final long constructionTimeNs; // Construction time of this class.

@@ -15,9 +15,11 @@
 #include <cstring>
 #include <string>
 
+#include "absl/strings/string_view.h"
 #include "api/array_view.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_minmax.h"
+#include "rtc_base/stringencode.h"
 #include "rtc_base/stringutils.h"
 
 namespace rtc {
@@ -80,6 +82,95 @@ class SimpleStringBuilder {
   // Represents the number of characters written to the buffer.
   // This does not include the terminating '\0'.
   size_t size_ = 0;
+};
+
+// A string builder that supports dynamic resizing while building a string.
+// The class is based around an instance of std::string and allows moving
+// ownership out of the class once the string has been built.
+// Note that this class uses the heap for allocations, so SimpleStringBuilder
+// might be more efficient for some use cases.
+class StringBuilder {
+ public:
+  StringBuilder() {}
+  explicit StringBuilder(absl::string_view s) : str_(s) {}
+
+  // TODO(tommi): Support construction from StringBuilder?
+  StringBuilder(const StringBuilder&) = delete;
+  StringBuilder& operator=(const StringBuilder&) = delete;
+
+  StringBuilder& operator<<(const absl::string_view str) {
+    str_.append(str.data(), str.length());
+    return *this;
+  }
+
+  StringBuilder& operator<<(char c) = delete;
+
+  StringBuilder& operator<<(int i) {
+    str_ += rtc::ToString(i);
+    return *this;
+  }
+
+  StringBuilder& operator<<(unsigned i) {
+    str_ += rtc::ToString(i);
+    return *this;
+  }
+
+  StringBuilder& operator<<(long i) {  // NOLINT
+    str_ += rtc::ToString(i);
+    return *this;
+  }
+
+  StringBuilder& operator<<(long long i) {  // NOLINT
+    str_ += rtc::ToString(i);
+    return *this;
+  }
+
+  StringBuilder& operator<<(unsigned long i) {  // NOLINT
+    str_ += rtc::ToString(i);
+    return *this;
+  }
+
+  StringBuilder& operator<<(unsigned long long i) {  // NOLINT
+    str_ += rtc::ToString(i);
+    return *this;
+  }
+
+  StringBuilder& operator<<(float f) {
+    str_ += rtc::ToString(f);
+    return *this;
+  }
+
+  StringBuilder& operator<<(double f) {
+    str_ += rtc::ToString(f);
+    return *this;
+  }
+
+  StringBuilder& operator<<(long double f) {
+    str_ += rtc::ToString(f);
+    return *this;
+  }
+
+  const std::string& str() const { return str_; }
+
+  void Clear() { str_.clear(); }
+
+  size_t size() const { return str_.size(); }
+
+  std::string Release() {
+    std::string ret = std::move(str_);
+    str_.clear();
+    return ret;
+  }
+
+  // Allows appending a printf style formatted string.
+  StringBuilder& AppendFormat(const char* fmt, ...)
+#if defined(__GNUC__)
+      __attribute__((__format__(__printf__, 2, 3)))
+#endif
+      ;
+
+ private:
+  std::string str_;
 };
 
 }  // namespace rtc

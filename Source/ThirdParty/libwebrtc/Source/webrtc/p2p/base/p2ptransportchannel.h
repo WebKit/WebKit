@@ -41,6 +41,7 @@
 #include "rtc_base/asyncinvoker.h"
 #include "rtc_base/asyncpacketsocket.h"
 #include "rtc_base/constructormagic.h"
+#include "rtc_base/strings/string_builder.h"
 #include "rtc_base/third_party/sigslot/sigslot.h"
 
 namespace webrtc {
@@ -105,6 +106,7 @@ class P2PTransportChannel : public IceTransportInternal {
   void Connect() {}
   void MaybeStartGathering() override;
   IceGatheringState gathering_state() const override;
+  void ResolveHostnameCandidate(const Candidate& candidate);
   void AddRemoteCandidate(const Candidate& candidate) override;
   void RemoveRemoteCandidate(const Candidate& candidate) override;
   // Sets the parameters in IceConfig. We do not set them blindly. Instead, we
@@ -170,12 +172,12 @@ class P2PTransportChannel : public IceTransportInternal {
   }
 
   std::string ToString() const {
-    const char RECEIVING_ABBREV[2] = {'_', 'R'};
-    const char WRITABLE_ABBREV[2] = {'_', 'W'};
-    std::stringstream ss;
+    const std::string RECEIVING_ABBREV[2] = {"_", "R"};
+    const std::string WRITABLE_ABBREV[2] = {"_", "W"};
+    rtc::StringBuilder ss;
     ss << "Channel[" << transport_name_ << "|" << component_ << "|"
        << RECEIVING_ABBREV[receiving_] << WRITABLE_ABBREV[writable_] << "]";
-    return ss.str();
+    return ss.Release();
   }
 
  private:
@@ -418,6 +420,19 @@ class P2PTransportChannel : public IceTransportInternal {
   rtc::AsyncInvoker invoker_;
   absl::optional<rtc::NetworkRoute> network_route_;
   webrtc::IceEventLog ice_event_log_;
+
+  struct CandidateAndResolver final {
+    CandidateAndResolver(const Candidate& candidate,
+                         rtc::AsyncResolverInterface* resolver);
+    ~CandidateAndResolver();
+    Candidate candidate_;
+    rtc::AsyncResolverInterface* resolver_;
+  };
+  std::vector<CandidateAndResolver> resolvers_;
+  void FinishAddingRemoteCandidate(const Candidate& new_remote_candidate);
+  void OnCandidateResolved(rtc::AsyncResolverInterface* resolver);
+  void AddRemoteCandidateWithResolver(Candidate candidate,
+                                      rtc::AsyncResolverInterface* resolver);
 
   RTC_DISALLOW_COPY_AND_ASSIGN(P2PTransportChannel);
 };

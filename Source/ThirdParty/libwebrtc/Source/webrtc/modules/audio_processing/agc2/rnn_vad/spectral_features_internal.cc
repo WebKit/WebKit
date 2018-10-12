@@ -20,11 +20,10 @@ namespace rnn_vad {
 namespace {
 
 // DCT scaling factor.
-float kDctScalingFactor()
-{
-    static const float kDctScalingFactor = std::sqrt(2.f / kNumBands);
-    return kDctScalingFactor;
-}
+static_assert(
+    kNumBands == 22,
+    "kNumBands changed! Please update the value of kDctScalingFactor");
+constexpr float kDctScalingFactor = 0.301511345f;  // sqrt(2 / kNumBands)
 
 }  // namespace
 
@@ -124,7 +123,7 @@ void ComputeDct(rtc::ArrayView<const float, kNumBands> in,
     for (size_t j = 0; j < in.size(); ++j) {
       out[i] += in[j] * dct_table[j * in.size() + i];
     }
-    out[i] *= kDctScalingFactor();
+    out[i] *= kDctScalingFactor;
   }
 }
 

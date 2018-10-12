@@ -28,7 +28,7 @@ class NativeLibrary {
   }
 
   private static Object lock = new Object();
-  private static boolean libraryLoaded = false;
+  private static boolean libraryLoaded;
 
   /**
    * Loads the native library. Clients should call PeerConnectionFactory.initialize. It will call

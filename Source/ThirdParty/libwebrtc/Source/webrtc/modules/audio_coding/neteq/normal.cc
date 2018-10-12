@@ -41,7 +41,7 @@ int Normal::Process(const int16_t* input,
     output->Clear();
     return 0;
   }
-  output->PushBackInterleaved(input, length);
+  output->PushBackInterleaved(rtc::ArrayView<const int16_t>(input, length));
 
   const int fs_mult = fs_hz_ / 8000;
   RTC_DCHECK_GT(fs_mult, 0);

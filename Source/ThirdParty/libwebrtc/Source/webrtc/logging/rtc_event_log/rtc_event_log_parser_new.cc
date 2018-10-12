@@ -21,10 +21,12 @@
 #include <utility>
 
 #include "absl/memory/memory.h"
+#include "absl/types/optional.h"
 #include "api/rtp_headers.h"
 #include "api/rtpparameters.h"
 #include "logging/rtc_event_log/rtc_event_log.h"
 #include "modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor.h"
+#include "modules/congestion_controller/transport_feedback_adapter.h"
 #include "modules/remote_bitrate_estimator/include/bwe_defines.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
@@ -210,12 +212,128 @@ IceCandidatePairEventType GetRuntimeIceCandidatePairEventType(
   return IceCandidatePairEventType::kCheckSent;
 }
 
+// Reads a VarInt from |stream| and returns it. Also writes the read bytes to
+// |buffer| starting |bytes_written| bytes into the buffer. |bytes_written| is
+// incremented for each written byte.
+absl::optional<uint64_t> ParseVarInt(
+    std::istream& stream,  // no-presubmit-check TODO(webrtc:8982)
+    char* buffer,
+    size_t* bytes_written) {
+  uint64_t varint = 0;
+  for (size_t bytes_read = 0; bytes_read < 10; ++bytes_read) {
+    // The most significant bit of each byte is 0 if it is the last byte in
+    // the varint and 1 otherwise. Thus, we take the 7 least significant bits
+    // of each byte and shift them 7 bits for each byte read previously to get
+    // the (unsigned) integer.
+    int byte = stream.get();
+    if (stream.eof()) {
+      return absl::nullopt;
+    }
+    RTC_DCHECK_GE(byte, 0);
+    RTC_DCHECK_LE(byte, 255);
+    varint |= static_cast<uint64_t>(byte & 0x7F) << (7 * bytes_read);
+    buffer[*bytes_written] = byte;
+    *bytes_written += 1;
+    if ((byte & 0x80) == 0) {
+      return varint;
+    }
+  }
+  return absl::nullopt;
+}
+
+void GetHeaderExtensions(std::vector<RtpExtension>* header_extensions,
+                         const RepeatedPtrField<rtclog::RtpHeaderExtension>&
+                             proto_header_extensions) {
+  header_extensions->clear();
+  for (auto& p : proto_header_extensions) {
+    RTC_CHECK(p.has_name());
+    RTC_CHECK(p.has_id());
+    const std::string& name = p.name();
+    int id = p.id();
+    header_extensions->push_back(RtpExtension(name, id));
+  }
+}
+
+void SortPacketFeedbackVectorWithLoss(std::vector<PacketFeedback>* vec) {
+  class LossHandlingPacketFeedbackComparator {
+   public:
+    inline bool operator()(const PacketFeedback& lhs,
+                           const PacketFeedback& rhs) {
+      if (lhs.arrival_time_ms != PacketFeedback::kNotReceived &&
+          rhs.arrival_time_ms != PacketFeedback::kNotReceived &&
+          lhs.arrival_time_ms != rhs.arrival_time_ms)
+        return lhs.arrival_time_ms < rhs.arrival_time_ms;
+      if (lhs.send_time_ms != rhs.send_time_ms)
+        return lhs.send_time_ms < rhs.send_time_ms;
+      return lhs.sequence_number < rhs.sequence_number;
+    }
+  };
+  std::sort(vec->begin(), vec->end(), LossHandlingPacketFeedbackComparator());
+}
+
+}  // namespace
+
+LoggedRtcpPacket::LoggedRtcpPacket(uint64_t timestamp_us,
+                                   const uint8_t* packet,
+                                   size_t total_length)
+    : timestamp_us(timestamp_us), raw_data(packet, packet + total_length) {}
+LoggedRtcpPacket::LoggedRtcpPacket(const LoggedRtcpPacket& rhs) = default;
+LoggedRtcpPacket::~LoggedRtcpPacket() = default;
+
+LoggedVideoSendConfig::LoggedVideoSendConfig(
+    int64_t timestamp_us,
+    const std::vector<rtclog::StreamConfig>& configs)
+    : timestamp_us(timestamp_us), configs(configs) {}
+LoggedVideoSendConfig::LoggedVideoSendConfig(const LoggedVideoSendConfig& rhs) =
+    default;
+LoggedVideoSendConfig::~LoggedVideoSendConfig() = default;
+
+ParsedRtcEventLogNew::~ParsedRtcEventLogNew() = default;
+
+ParsedRtcEventLogNew::LoggedRtpStreamIncoming::LoggedRtpStreamIncoming() =
+    default;
+ParsedRtcEventLogNew::LoggedRtpStreamIncoming::LoggedRtpStreamIncoming(
+    const LoggedRtpStreamIncoming& rhs) = default;
+ParsedRtcEventLogNew::LoggedRtpStreamIncoming::~LoggedRtpStreamIncoming() =
+    default;
+
+ParsedRtcEventLogNew::LoggedRtpStreamOutgoing::LoggedRtpStreamOutgoing() =
+    default;
+ParsedRtcEventLogNew::LoggedRtpStreamOutgoing::LoggedRtpStreamOutgoing(
+    const LoggedRtpStreamOutgoing& rhs) = default;
+ParsedRtcEventLogNew::LoggedRtpStreamOutgoing::~LoggedRtpStreamOutgoing() =
+    default;
+
+ParsedRtcEventLogNew::LoggedRtpStreamView::LoggedRtpStreamView(
+    uint32_t ssrc,
+    const LoggedRtpPacketIncoming* ptr,
+    size_t num_elements)
+    : ssrc(ssrc),
+      packet_view(PacketView<const LoggedRtpPacket>::Create(
+          ptr,
+          num_elements,
+          offsetof(LoggedRtpPacketIncoming, rtp))) {}
+
+ParsedRtcEventLogNew::LoggedRtpStreamView::LoggedRtpStreamView(
+    uint32_t ssrc,
+    const LoggedRtpPacketOutgoing* ptr,
+    size_t num_elements)
+    : ssrc(ssrc),
+      packet_view(PacketView<const LoggedRtpPacket>::Create(
+          ptr,
+          num_elements,
+          offsetof(LoggedRtpPacketOutgoing, rtp))) {}
+
+ParsedRtcEventLogNew::LoggedRtpStreamView::LoggedRtpStreamView(
+    const LoggedRtpStreamView&) = default;
+
 // Return default values for header extensions, to use on streams without stored
 // mapping data. Currently this only applies to audio streams, since the mapping
 // is not stored in the event log.
 // TODO(ivoc): Remove this once this mapping is stored in the event log for
 //             audio streams. Tracking bug: webrtc:6399
-webrtc::RtpHeaderExtensionMap GetDefaultHeaderExtensionMap() {
+webrtc::RtpHeaderExtensionMap
+ParsedRtcEventLogNew::GetDefaultHeaderExtensionMap() {
   webrtc::RtpHeaderExtensionMap default_map;
   default_map.Register<AudioLevel>(webrtc::RtpExtension::kAudioLevelDefaultId);
   default_map.Register<TransmissionOffset>(
@@ -234,43 +352,6 @@ webrtc::RtpHeaderExtensionMap GetDefaultHeaderExtensionMap() {
       webrtc::RtpExtension::kPlayoutDelayDefaultId);
   return default_map;
 }
-
-std::pair<uint64_t, bool> ParseVarInt(
-    std::istream& stream) {  // no-presubmit-check TODO(webrtc:8982)
-  uint64_t varint = 0;
-  for (size_t bytes_read = 0; bytes_read < 10; ++bytes_read) {
-    // The most significant bit of each byte is 0 if it is the last byte in
-    // the varint and 1 otherwise. Thus, we take the 7 least significant bits
-    // of each byte and shift them 7 bits for each byte read previously to get
-    // the (unsigned) integer.
-    int byte = stream.get();
-    if (stream.eof()) {
-      return std::make_pair(varint, false);
-    }
-    RTC_DCHECK_GE(byte, 0);
-    RTC_DCHECK_LE(byte, 255);
-    varint |= static_cast<uint64_t>(byte & 0x7F) << (7 * bytes_read);
-    if ((byte & 0x80) == 0) {
-      return std::make_pair(varint, true);
-    }
-  }
-  return std::make_pair(varint, false);
-}
-
-void GetHeaderExtensions(std::vector<RtpExtension>* header_extensions,
-                         const RepeatedPtrField<rtclog::RtpHeaderExtension>&
-                             proto_header_extensions) {
-  header_extensions->clear();
-  for (auto& p : proto_header_extensions) {
-    RTC_CHECK(p.has_name());
-    RTC_CHECK(p.has_id());
-    const std::string& name = p.name();
-    int id = p.id();
-    header_extensions->push_back(RtpExtension(name, id));
-  }
-}
-
-}  // namespace
 
 ParsedRtcEventLogNew::ParsedRtcEventLogNew(
     UnconfiguredHeaderExtensions parse_unconfigured_header_extensions)
@@ -398,10 +479,8 @@ bool ParsedRtcEventLogNew::ParseStream(
 bool ParsedRtcEventLogNew::ParseStreamInternal(
     std::istream& stream) {  // no-presubmit-check TODO(webrtc:8982)
   const size_t kMaxEventSize = (1u << 16) - 1;
-  std::vector<char> tmp_buffer(kMaxEventSize);
-  uint64_t tag;
-  uint64_t message_length;
-  bool success;
+  const size_t kMaxVarintSize = 10;
+  std::vector<char> buffer(kMaxEventSize + 2 * kMaxVarintSize);
 
   RTC_DCHECK(stream.good());
 
@@ -414,46 +493,50 @@ bool ParsedRtcEventLogNew::ParseStreamInternal(
 
     // Read the next message tag. The tag number is defined as
     // (fieldnumber << 3) | wire_type. In our case, the field number is
-    // supposed to be 1 and the wire type for an
-    // length-delimited field is 2.
-    const uint64_t kExpectedTag = (1 << 3) | 2;
-    std::tie(tag, success) = ParseVarInt(stream);
-    if (!success) {
+    // supposed to be 1 and the wire type for a length-delimited field is 2.
+    const uint64_t kExpectedV1Tag = (1 << 3) | 2;
+    size_t bytes_written = 0;
+    absl::optional<uint64_t> tag =
+        ParseVarInt(stream, buffer.data(), &bytes_written);
+    if (!tag) {
       RTC_LOG(LS_WARNING)
           << "Missing field tag from beginning of protobuf event.";
       return false;
-    } else if (tag != kExpectedTag) {
+    } else if (*tag != kExpectedV1Tag) {
       RTC_LOG(LS_WARNING)
           << "Unexpected field tag at beginning of protobuf event.";
       return false;
     }
 
     // Read the length field.
-    std::tie(message_length, success) = ParseVarInt(stream);
-    if (!success) {
+    absl::optional<uint64_t> message_length =
+        ParseVarInt(stream, buffer.data(), &bytes_written);
+    if (!message_length) {
       RTC_LOG(LS_WARNING) << "Missing message length after protobuf field tag.";
       return false;
-    } else if (message_length > kMaxEventSize) {
+    } else if (*message_length > kMaxEventSize) {
       RTC_LOG(LS_WARNING) << "Protobuf message length is too large.";
       return false;
     }
 
     // Read the next protobuf event to a temporary char buffer.
-    stream.read(tmp_buffer.data(), message_length);
-    if (stream.gcount() != static_cast<int>(message_length)) {
+    stream.read(buffer.data() + bytes_written, *message_length);
+    if (stream.gcount() != static_cast<int>(*message_length)) {
       RTC_LOG(LS_WARNING) << "Failed to read protobuf message from file.";
       return false;
     }
+    size_t buffer_size = bytes_written + *message_length;
 
     // Parse the protobuf event from the buffer.
-    rtclog::Event event;
-    if (!event.ParseFromArray(tmp_buffer.data(), message_length)) {
+    rtclog::EventStream event_stream;
+    if (!event_stream.ParseFromArray(buffer.data(), buffer_size)) {
       RTC_LOG(LS_WARNING) << "Failed to parse protobuf message.";
       return false;
     }
 
-    StoreParsedEvent(event);
-    events_.push_back(event);
+    RTC_CHECK_EQ(event_stream.stream_size(), 1);
+    StoreParsedEvent(event_stream.stream(0));
+    events_.push_back(event_stream.stream(0));
   }
   return true;
 }
@@ -528,6 +611,7 @@ void ParsedRtcEventLogNew::StoreParsedEvent(const rtclog::Event& event) {
           event, &direction, header, &header_length, &total_length, nullptr);
       RtpUtility::RtpHeaderParser rtp_parser(header, header_length);
       RTPHeader parsed_header;
+
       if (extension_map != nullptr) {
         rtp_parser.Parse(&parsed_header, extension_map);
       } else {
@@ -539,6 +623,15 @@ void ParsedRtcEventLogNew::StoreParsedEvent(const rtclog::Event& event) {
         //             Tracking bug: webrtc:6399
         rtp_parser.Parse(&parsed_header, &default_extension_map_);
       }
+
+      // Since we give the parser only a header, there is no way for it to know
+      // the padding length. The best solution would be to log the padding
+      // length in RTC event log. In absence of it, we assume the RTP packet to
+      // contain only padding, if the padding bit is set.
+      // TODO(webrtc:9730): Use a generic way to obtain padding length.
+      if ((header[0] & 0x20) != 0)
+        parsed_header.paddingLength = total_length - header_length;
+
       RTC_CHECK(event.has_timestamp_us());
       uint64_t timestamp_us = event.timestamp_us();
       if (direction == kIncomingPacket) {
@@ -1303,6 +1396,76 @@ ParsedRtcEventLogNew::MediaType ParsedRtcEventLogNew::GetMediaType(
     }
   }
   return MediaType::ANY;
+}
+
+const std::vector<MatchedSendArrivalTimes> GetNetworkTrace(
+    const ParsedRtcEventLogNew& parsed_log) {
+  using RtpPacketType = LoggedRtpPacketOutgoing;
+  using TransportFeedbackType = LoggedRtcpPacketTransportFeedback;
+
+  std::multimap<int64_t, const RtpPacketType*> outgoing_rtp;
+  for (const auto& stream : parsed_log.outgoing_rtp_packets_by_ssrc()) {
+    for (const RtpPacketType& rtp_packet : stream.outgoing_packets)
+      outgoing_rtp.insert(
+          std::make_pair(rtp_packet.rtp.log_time_us(), &rtp_packet));
+  }
+
+  const std::vector<TransportFeedbackType>& incoming_rtcp =
+      parsed_log.transport_feedbacks(kIncomingPacket);
+
+  SimulatedClock clock(0);
+  TransportFeedbackAdapter feedback_adapter(&clock);
+
+  auto rtp_iterator = outgoing_rtp.begin();
+  auto rtcp_iterator = incoming_rtcp.begin();
+
+  auto NextRtpTime = [&]() {
+    if (rtp_iterator != outgoing_rtp.end())
+      return static_cast<int64_t>(rtp_iterator->first);
+    return std::numeric_limits<int64_t>::max();
+  };
+
+  auto NextRtcpTime = [&]() {
+    if (rtcp_iterator != incoming_rtcp.end())
+      return static_cast<int64_t>(rtcp_iterator->log_time_us());
+    return std::numeric_limits<int64_t>::max();
+  };
+
+  int64_t time_us = std::min(NextRtpTime(), NextRtcpTime());
+
+  std::vector<MatchedSendArrivalTimes> rtp_rtcp_matched;
+  while (time_us != std::numeric_limits<int64_t>::max()) {
+    clock.AdvanceTimeMicroseconds(time_us - clock.TimeInMicroseconds());
+    if (clock.TimeInMicroseconds() >= NextRtcpTime()) {
+      RTC_DCHECK_EQ(clock.TimeInMicroseconds(), NextRtcpTime());
+      feedback_adapter.OnTransportFeedback(rtcp_iterator->transport_feedback);
+      std::vector<PacketFeedback> feedback =
+          feedback_adapter.GetTransportFeedbackVector();
+      SortPacketFeedbackVectorWithLoss(&feedback);
+      for (const PacketFeedback& packet : feedback) {
+        rtp_rtcp_matched.emplace_back(
+            clock.TimeInMilliseconds(), packet.send_time_ms,
+            packet.arrival_time_ms, packet.payload_size);
+      }
+      ++rtcp_iterator;
+    }
+    if (clock.TimeInMicroseconds() >= NextRtpTime()) {
+      RTC_DCHECK_EQ(clock.TimeInMicroseconds(), NextRtpTime());
+      const RtpPacketType& rtp_packet = *rtp_iterator->second;
+      if (rtp_packet.rtp.header.extension.hasTransportSequenceNumber) {
+        feedback_adapter.AddPacket(
+            rtp_packet.rtp.header.ssrc,
+            rtp_packet.rtp.header.extension.transportSequenceNumber,
+            rtp_packet.rtp.total_length, PacedPacketInfo());
+        feedback_adapter.OnSentPacket(
+            rtp_packet.rtp.header.extension.transportSequenceNumber,
+            rtp_packet.rtp.log_time_ms());
+      }
+      ++rtp_iterator;
+    }
+    time_us = std::min(NextRtpTime(), NextRtcpTime());
+  }
+  return rtp_rtcp_matched;
 }
 
 }  // namespace webrtc

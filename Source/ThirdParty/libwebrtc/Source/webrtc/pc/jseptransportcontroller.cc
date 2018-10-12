@@ -24,21 +24,6 @@ using webrtc::SdpType;
 
 namespace {
 
-enum {
-  MSG_ICECONNECTIONSTATE,
-  MSG_ICEGATHERINGSTATE,
-  MSG_ICECANDIDATESGATHERED,
-};
-
-struct CandidatesData : public rtc::MessageData {
-  CandidatesData(const std::string& transport_name,
-                 const cricket::Candidates& candidates)
-      : transport_name(transport_name), candidates(candidates) {}
-
-  std::string transport_name;
-  cricket::Candidates candidates;
-};
-
 webrtc::RTCError VerifyCandidate(const cricket::Candidate& cand) {
   // No address zero.
   if (cand.address().IsNil() || cand.address().IsAnyIP()) {
@@ -505,37 +490,6 @@ JsepTransportController::GetDtlsTransports() {
     }
   }
   return dtls_transports;
-}
-
-void JsepTransportController::OnMessage(rtc::Message* pmsg) {
-  RTC_DCHECK(signaling_thread_->IsCurrent());
-
-  switch (pmsg->message_id) {
-    case MSG_ICECONNECTIONSTATE: {
-      rtc::TypedMessageData<cricket::IceConnectionState>* data =
-          static_cast<rtc::TypedMessageData<cricket::IceConnectionState>*>(
-              pmsg->pdata);
-      SignalIceConnectionState(data->data());
-      delete data;
-      break;
-    }
-    case MSG_ICEGATHERINGSTATE: {
-      rtc::TypedMessageData<cricket::IceGatheringState>* data =
-          static_cast<rtc::TypedMessageData<cricket::IceGatheringState>*>(
-              pmsg->pdata);
-      SignalIceGatheringState(data->data());
-      delete data;
-      break;
-    }
-    case MSG_ICECANDIDATESGATHERED: {
-      CandidatesData* data = static_cast<CandidatesData*>(pmsg->pdata);
-      SignalIceCandidatesGathered(data->transport_name, data->candidates);
-      delete data;
-      break;
-    }
-    default:
-      RTC_NOTREACHED();
-  }
 }
 
 RTCError JsepTransportController::ApplyDescription_n(
@@ -1121,11 +1075,11 @@ void JsepTransportController::OnTransportCandidateGathered_n(
     RTC_NOTREACHED();
     return;
   }
-  std::vector<cricket::Candidate> candidates;
-  candidates.push_back(candidate);
-  CandidatesData* data =
-      new CandidatesData(transport->transport_name(), candidates);
-  signaling_thread_->Post(RTC_FROM_HERE, this, MSG_ICECANDIDATESGATHERED, data);
+  std::string transport_name = transport->transport_name();
+  invoker_.AsyncInvoke<void>(
+      RTC_FROM_HERE, signaling_thread_, [this, transport_name, candidate] {
+        SignalIceCandidatesGathered(transport_name, {candidate});
+      });
 }
 
 void JsepTransportController::OnTransportCandidatesRemoved_n(
@@ -1133,14 +1087,7 @@ void JsepTransportController::OnTransportCandidatesRemoved_n(
     const cricket::Candidates& candidates) {
   invoker_.AsyncInvoke<void>(
       RTC_FROM_HERE, signaling_thread_,
-      rtc::Bind(&JsepTransportController::OnTransportCandidatesRemoved, this,
-                candidates));
-}
-
-void JsepTransportController::OnTransportCandidatesRemoved(
-    const cricket::Candidates& candidates) {
-  RTC_DCHECK(signaling_thread_->IsCurrent());
-  SignalIceCandidatesRemoved(candidates);
+      [this, candidates] { SignalIceCandidatesRemoved(candidates); });
 }
 
 void JsepTransportController::OnTransportRoleConflict_n(
@@ -1207,10 +1154,10 @@ void JsepTransportController::UpdateAggregateStates_n() {
   }
   if (ice_connection_state_ != new_connection_state) {
     ice_connection_state_ = new_connection_state;
-    signaling_thread_->Post(
-        RTC_FROM_HERE, this, MSG_ICECONNECTIONSTATE,
-        new rtc::TypedMessageData<cricket::IceConnectionState>(
-            new_connection_state));
+    invoker_.AsyncInvoke<void>(RTC_FROM_HERE, signaling_thread_,
+                               [this, new_connection_state] {
+                                 SignalIceConnectionState(new_connection_state);
+                               });
   }
 
   if (all_done_gathering) {
@@ -1220,10 +1167,10 @@ void JsepTransportController::UpdateAggregateStates_n() {
   }
   if (ice_gathering_state_ != new_gathering_state) {
     ice_gathering_state_ = new_gathering_state;
-    signaling_thread_->Post(
-        RTC_FROM_HERE, this, MSG_ICEGATHERINGSTATE,
-        new rtc::TypedMessageData<cricket::IceGatheringState>(
-            new_gathering_state));
+    invoker_.AsyncInvoke<void>(RTC_FROM_HERE, signaling_thread_,
+                               [this, new_gathering_state] {
+                                 SignalIceGatheringState(new_gathering_state);
+                               });
   }
 }
 

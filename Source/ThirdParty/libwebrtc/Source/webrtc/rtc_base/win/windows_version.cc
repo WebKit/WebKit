@@ -261,6 +261,12 @@ OSInfo::OSInfo()
       architecture_(OTHER_ARCHITECTURE),
       wow64_status_(GetWOW64StatusForProcess(GetCurrentProcess())) {
   OSVERSIONINFOEX version_info = {sizeof version_info};
+  // Applications not manifested for Windows 8.1 or Windows 10 will return the
+  // Windows 8 OS version value (6.2). Once an application is manifested for a
+  // given operating system version, GetVersionEx() will always return the
+  // version that the application is manifested for in future releases.
+  // https://docs.microsoft.com/en-us/windows/desktop/SysInfo/targeting-your-application-at-windows-8-1.
+  // https://www.codeproject.com/Articles/678606/Part-Overcoming-Windows-s-deprecation-of-GetVe.
   ::GetVersionEx(reinterpret_cast<OSVERSIONINFO*>(&version_info));
   version_number_.major = version_info.dwMajorVersion;
   version_number_.minor = version_info.dwMinorVersion;

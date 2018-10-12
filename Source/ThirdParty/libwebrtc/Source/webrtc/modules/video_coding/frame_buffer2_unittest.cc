@@ -90,8 +90,6 @@ class FrameObjectFake : public EncodedFrame {
  public:
   bool GetBitstream(uint8_t* destination) const override { return true; }
 
-  uint32_t Timestamp() const override { return timestamp; }
-
   int64_t ReceivedTime() const override { return 0; }
 
   int64_t RenderTime() const override { return _renderTimeMs; }
@@ -165,7 +163,7 @@ class TestFrameBuffer2 : public ::testing::Test {
     std::unique_ptr<FrameObjectFake> frame(new FrameObjectFake());
     frame->id.picture_id = picture_id;
     frame->id.spatial_layer = spatial_layer;
-    frame->timestamp = ts_ms * 90;
+    frame->SetTimestamp(ts_ms * 90);
     frame->num_references = references.size();
     frame->inter_layer_predicted = inter_layer_predicted;
     for (size_t r = 0; r < references.size(); ++r)
@@ -520,7 +518,7 @@ TEST_F(TestFrameBuffer2, StatsCallback) {
     frame->SetSize(kFrameSize);
     frame->id.picture_id = pid;
     frame->id.spatial_layer = 0;
-    frame->timestamp = ts;
+    frame->SetTimestamp(ts);
     frame->num_references = 0;
     frame->inter_layer_predicted = false;
 

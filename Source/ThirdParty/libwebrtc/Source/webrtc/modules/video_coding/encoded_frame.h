@@ -64,10 +64,12 @@ class VCMEncodedFrame : protected EncodedImage {
    *   Get frame length
    */
   size_t Length() const { return _length; }
+
   /**
-   *   Get frame timestamp (90kHz)
+   *   Frame RTP timestamp (90kHz)
    */
-  uint32_t TimeStamp() const { return _timeStamp; }
+  using EncodedImage::Timestamp;
+  using EncodedImage::SetTimestamp;
   /**
    *   Get render time in milliseconds
    */

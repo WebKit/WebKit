@@ -13,12 +13,12 @@
 #include <utility>
 
 #include "common_video/h264/h264_common.h"
-#include "modules/include/module_common_types.h"
 #include "modules/video_coding/include/video_codec_interface.h"
 #include "modules/video_coding/include/video_error_codes.h"
 #include "modules/video_coding/utility/vp8_header_parser.h"
 #include "modules/video_coding/utility/vp9_uncompressed_header_parser.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/timeutils.h"
 #include "sdk/android/generated_video_jni/jni/VideoEncoderWrapper_jni.h"
 #include "sdk/android/generated_video_jni/jni/VideoEncoder_jni.h"
 #include "sdk/android/native_api/jni/class_loader.h"
@@ -70,7 +70,9 @@ int32_t VideoEncoderWrapper::InitEncodeInternal(JNIEnv* jni) {
   ScopedJavaLocalRef<jobject> settings = Java_Settings_Constructor(
       jni, number_of_cores_, codec_settings_.width, codec_settings_.height,
       static_cast<int>(codec_settings_.startBitrate),
-      static_cast<int>(codec_settings_.maxFramerate), automatic_resize_on);
+      static_cast<int>(codec_settings_.maxFramerate),
+      static_cast<int>(codec_settings_.numberOfSimulcastStreams),
+      automatic_resize_on);
 
   ScopedJavaLocalRef<jobject> callback =
       Java_VideoEncoderWrapper_createEncoderCallback(jni,
@@ -274,7 +276,7 @@ void VideoEncoderWrapper::OnEncodedFrame(JNIEnv* jni,
                          task_buffer.size(), task_buffer.size());
       frame._encodedWidth = encoded_width;
       frame._encodedHeight = encoded_height;
-      frame._timeStamp = frame_extra_info.timestamp_rtp;
+      frame.SetTimestamp(frame_extra_info.timestamp_rtp);
       frame.capture_time_ms_ = capture_time_ns / rtc::kNumNanosecsPerMillisec;
       frame._frameType = (FrameType)frame_type;
       frame.rotation_ = (VideoRotation)rotation;
@@ -388,7 +390,6 @@ CodecSpecificInfo VideoEncoderWrapper::ParseCodecSpecificInfo(
   switch (codec_settings_.codecType) {
     case kVideoCodecVP8:
       info.codecSpecific.VP8.nonReference = false;
-      info.codecSpecific.VP8.simulcastIdx = 0;
       info.codecSpecific.VP8.temporalIdx = kNoTemporalIdx;
       info.codecSpecific.VP8.layerSync = false;
       info.codecSpecific.VP8.keyIdx = kNoKeyIdx;
@@ -401,7 +402,6 @@ CodecSpecificInfo VideoEncoderWrapper::ParseCodecSpecificInfo(
       info.codecSpecific.VP9.flexible_mode = false;
       info.codecSpecific.VP9.ss_data_available = key_frame ? true : false;
       info.codecSpecific.VP9.temporal_idx = kNoTemporalIdx;
-      info.codecSpecific.VP9.spatial_idx = kNoSpatialIdx;
       info.codecSpecific.VP9.temporal_up_switch = true;
       info.codecSpecific.VP9.inter_layer_predicted = false;
       info.codecSpecific.VP9.gof_idx =

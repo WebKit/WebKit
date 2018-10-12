@@ -76,15 +76,9 @@ class SimulcastTestFixtureImpl::TestEncodedImageCallback
   virtual Result OnEncodedImage(const EncodedImage& encoded_image,
                                 const CodecSpecificInfo* codec_specific_info,
                                 const RTPFragmentationHeader* fragmentation) {
-    uint16_t simulcast_idx = 0;
     bool is_vp8 = (codec_specific_info->codecType == kVideoCodecVP8);
-    if (is_vp8) {
-      simulcast_idx = codec_specific_info->codecSpecific.VP8.simulcastIdx;
-    } else {
-      simulcast_idx = codec_specific_info->codecSpecific.H264.simulcast_idx;
-    }
     // Only store the base layer.
-    if (simulcast_idx) {
+    if (encoded_image.SpatialIndex().value_or(0) == 0) {
       if (encoded_image._frameType == kVideoFrameKey) {
         delete[] encoded_key_frame_._buffer;
         encoded_key_frame_._buffer = new uint8_t[encoded_image._size];
@@ -104,12 +98,12 @@ class SimulcastTestFixtureImpl::TestEncodedImageCallback
       }
     }
     if (is_vp8) {
-      layer_sync_[codec_specific_info->codecSpecific.VP8.simulcastIdx] =
+      layer_sync_[encoded_image.SpatialIndex().value_or(0)] =
           codec_specific_info->codecSpecific.VP8.layerSync;
-      temporal_layer_[codec_specific_info->codecSpecific.VP8.simulcastIdx] =
+      temporal_layer_[encoded_image.SpatialIndex().value_or(0)] =
           codec_specific_info->codecSpecific.VP8.temporalIdx;
     }
-    return Result(Result::OK, encoded_image._timeStamp);
+    return Result(Result::OK, encoded_image.Timestamp());
   }
   // This method only makes sense for VP8.
   void GetLastEncodedFrameInfo(int* temporal_layer,

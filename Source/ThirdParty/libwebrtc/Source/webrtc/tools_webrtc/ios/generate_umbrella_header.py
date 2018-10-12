@@ -8,7 +8,9 @@
 
 import argparse
 import datetime
+import os
 import sys
+import textwrap
 
 
 def GenerateUmbrellaHeader():
@@ -20,7 +22,8 @@ def GenerateUmbrellaHeader():
   args = parser.parse_args()
 
   with open(args.out, "w") as outfile:
-    outfile.write("""/*
+    outfile.write(textwrap.dedent("""\
+    /*
      *  Copyright %d The WebRTC project authors. All Rights Reserved.
      *
      *  Use of this source code is governed by a BSD-style license
@@ -28,10 +31,10 @@ def GenerateUmbrellaHeader():
      *  tree. An additional intellectual property rights grant can be found
      *  in the file PATENTS.  All contributing project authors may
      *  be found in the AUTHORS file in the root of the source tree.
-     */\n\n""" % datetime.datetime.now().year)
+     */\n\n""" % datetime.datetime.now().year))
 
     for s in args.sources:
-      outfile.write("#import <{}>\n".format(s))
+      outfile.write("#import <WebRTC/{}>\n".format(os.path.basename(s)))
 
   return 0
 

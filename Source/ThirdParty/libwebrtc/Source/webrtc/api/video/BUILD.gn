@@ -19,6 +19,7 @@ rtc_source_set("video_frame") {
     "video_frame.h",
     "video_frame_buffer.cc",
     "video_frame_buffer.h",
+    "video_frame_marking.h",
     "video_rotation.h",
     "video_sink_interface.h",
     "video_source_interface.cc",
@@ -108,7 +109,7 @@ rtc_source_set("video_bitrate_allocator_factory") {
   ]
   deps = [
     ":video_bitrate_allocator",
-    "../../media:rtc_media_base",
+    "../video_codecs:video_codecs_api",
   ]
 }
 
@@ -145,6 +146,7 @@ rtc_source_set("video_stream_encoder") {
   visibility = [ "*" ]
   sources = [
     "video_stream_encoder_interface.h",
+    "video_stream_encoder_observer.cc",
     "video_stream_encoder_observer.h",
     "video_stream_encoder_settings.h",
   ]

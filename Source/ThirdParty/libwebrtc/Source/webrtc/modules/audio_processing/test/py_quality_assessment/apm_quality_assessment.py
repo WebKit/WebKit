@@ -109,6 +109,11 @@ def _InstanceArgumentsParser():
                               AudioProcWrapper.  \
                               DEFAULT_APM_SIMULATOR_BIN_PATH)
 
+  parser.add_argument('--echo_metric_tool_bin_path', required=False,
+                      help=('path to the echo metric binary '
+                           '(required for the echo eval score)'),
+                      default=None)
+
   parser.add_argument('--copy_with_identity_generator', required=False,
                       help=('If true, the identity test data generator makes a '
                             'copy of the clean speech input file.'),
@@ -158,7 +163,9 @@ def main():
               noise_tracks_path=args.additive_noise_tracks_path,
               copy_with_identity=args.copy_with_identity_generator)),
       evaluation_score_factory=eval_scores_factory.EvaluationScoreWorkerFactory(
-          polqa_tool_bin_path=os.path.join(args.polqa_path, _POLQA_BIN_NAME)),
+          polqa_tool_bin_path=os.path.join(args.polqa_path, _POLQA_BIN_NAME),
+          echo_metric_tool_bin_path=args.echo_metric_tool_bin_path
+      ),
       ap_wrapper=audioproc_wrapper.AudioProcWrapper(args.apm_sim_path),
       evaluator=evaluation.ApmModuleEvaluator(),
       external_vads=external_vad.ExternalVad.ConstructVadDict(

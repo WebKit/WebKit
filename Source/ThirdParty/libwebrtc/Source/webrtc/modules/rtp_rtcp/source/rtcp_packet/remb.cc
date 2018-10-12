@@ -41,6 +41,8 @@ constexpr uint8_t Remb::kFeedbackMessageType;
 
 Remb::Remb() : bitrate_bps_(0) {}
 
+Remb::Remb(const Remb& rhs) = default;
+
 Remb::~Remb() = default;
 
 bool Remb::Parse(const CommonHeader& packet) {

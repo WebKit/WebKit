@@ -19,27 +19,20 @@ namespace {
 const size_t kTimestamp = 12345;
 }  // namespace
 
-TEST(StatsTest, AddFrame) {
+TEST(StatsTest, AddAndGetFrame) {
   VideoCodecTestStatsImpl stats;
-  FrameStatistics* frame_stat = stats.AddFrame(kTimestamp, 0);
-  EXPECT_EQ(0ull, frame_stat->frame_number);
-  EXPECT_EQ(kTimestamp, frame_stat->rtp_timestamp);
-  EXPECT_EQ(1u, stats.Size(0));
-}
-
-TEST(StatsTest, GetFrame) {
-  VideoCodecTestStatsImpl stats;
-  stats.AddFrame(kTimestamp, 0);
+  stats.AddFrame(FrameStatistics(0, kTimestamp, 0));
   FrameStatistics* frame_stat = stats.GetFrame(0u, 0);
   EXPECT_EQ(0u, frame_stat->frame_number);
   EXPECT_EQ(kTimestamp, frame_stat->rtp_timestamp);
 }
 
-TEST(StatsTest, AddFrames) {
+TEST(StatsTest, AddAndGetFrames) {
   VideoCodecTestStatsImpl stats;
   const size_t kNumFrames = 1000;
   for (size_t i = 0; i < kNumFrames; ++i) {
-    FrameStatistics* frame_stat = stats.AddFrame(kTimestamp + i, 0);
+    stats.AddFrame(FrameStatistics(i, kTimestamp + i, 0));
+    FrameStatistics* frame_stat = stats.GetFrame(i, 0);
     EXPECT_EQ(i, frame_stat->frame_number);
     EXPECT_EQ(kTimestamp + i, frame_stat->rtp_timestamp);
   }
@@ -54,7 +47,7 @@ TEST(StatsTest, AddFrames) {
 TEST(StatsTest, AddFrameLayering) {
   VideoCodecTestStatsImpl stats;
   for (size_t i = 0; i < 3; ++i) {
-    stats.AddFrame(kTimestamp + i, i);
+    stats.AddFrame(FrameStatistics(0, kTimestamp + i, i));
     FrameStatistics* frame_stat = stats.GetFrame(0u, i);
     EXPECT_EQ(0u, frame_stat->frame_number);
     EXPECT_EQ(kTimestamp, frame_stat->rtp_timestamp - i);

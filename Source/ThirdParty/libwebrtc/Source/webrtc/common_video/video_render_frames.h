@@ -46,6 +46,7 @@ class VideoRenderFrames {
   const uint32_t render_delay_ms_;
 
   int64_t last_render_time_ms_ = 0;
+  size_t frames_dropped_ = 0;
 };
 
 }  // namespace webrtc

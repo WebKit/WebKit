@@ -53,7 +53,7 @@ NetworkControllerConfig InitialConfig(
   config.constraints.at_time = kDefaultStartTime;
   config.constraints.min_data_rate = DataRate::kbps(min_data_rate_kbps);
   config.constraints.max_data_rate = DataRate::kbps(max_data_rate_kbps);
-  config.starting_bandwidth = DataRate::kbps(starting_bandwidth_kbps);
+  config.constraints.starting_rate = DataRate::kbps(starting_bandwidth_kbps);
   return config;
 }
 
@@ -72,7 +72,7 @@ NetworkRouteChange CreateRouteChange(Timestamp at_time,
   route_change.constraints.at_time = at_time;
   route_change.constraints.min_data_rate = min_rate;
   route_change.constraints.max_data_rate = max_rate;
-  route_change.starting_rate = start_rate;
+  route_change.constraints.starting_rate = start_rate;
   return route_change;
 }
 }  // namespace

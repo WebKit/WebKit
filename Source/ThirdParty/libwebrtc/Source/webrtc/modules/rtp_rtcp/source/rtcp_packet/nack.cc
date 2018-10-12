@@ -46,8 +46,9 @@ constexpr size_t Nack::kNackItemLength;
 //   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 //   |            PID                |             BLP               |
 //   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-Nack::Nack() {}
-Nack::~Nack() {}
+Nack::Nack() = default;
+Nack::Nack(const Nack& rhs) = default;
+Nack::~Nack() = default;
 
 bool Nack::Parse(const CommonHeader& packet) {
   RTC_DCHECK_EQ(packet.type(), kPacketType);

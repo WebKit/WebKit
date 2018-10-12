@@ -12,9 +12,9 @@
 
 #include <utility>
 
-#include "modules/include/module_common_types.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/timeutils.h"
+#include "system_wrappers/include/metrics.h"
 
 namespace webrtc {
 namespace {
@@ -38,7 +38,13 @@ uint32_t EnsureValidRenderDelay(uint32_t render_delay) {
 VideoRenderFrames::VideoRenderFrames(uint32_t render_delay_ms)
     : render_delay_ms_(EnsureValidRenderDelay(render_delay_ms)) {}
 
-VideoRenderFrames::~VideoRenderFrames() = default;
+VideoRenderFrames::~VideoRenderFrames() {
+  frames_dropped_ += incoming_frames_.size();
+  RTC_HISTOGRAM_COUNTS_1000("WebRTC.Video.DroppedFrames.RenderQueue",
+                            frames_dropped_);
+  RTC_LOG(LS_INFO) << "WebRTC.Video.DroppedFrames.RenderQueue "
+                   << frames_dropped_;
+}
 
 int32_t VideoRenderFrames::AddFrame(VideoFrame&& new_frame) {
   const int64_t time_now = rtc::TimeMillis();
@@ -48,12 +54,14 @@ int32_t VideoRenderFrames::AddFrame(VideoFrame&& new_frame) {
   if (!incoming_frames_.empty() &&
       new_frame.render_time_ms() + kOldRenderTimestampMS < time_now) {
     RTC_LOG(LS_WARNING) << "Too old frame, timestamp=" << new_frame.timestamp();
+    ++frames_dropped_;
     return -1;
   }
 
   if (new_frame.render_time_ms() > time_now + kFutureRenderTimestampMS) {
     RTC_LOG(LS_WARNING) << "Frame too long into the future, timestamp="
                         << new_frame.timestamp();
+    ++frames_dropped_;
     return -1;
   }
 
@@ -63,15 +71,17 @@ int32_t VideoRenderFrames::AddFrame(VideoFrame&& new_frame) {
                         << ", latest=" << last_render_time_ms_;
     // For more details, see bug:
     // https://bugs.chromium.org/p/webrtc/issues/detail?id=7253
+    ++frames_dropped_;
     return -1;
   }
 
   last_render_time_ms_ = new_frame.render_time_ms();
   incoming_frames_.emplace_back(std::move(new_frame));
 
-  if (incoming_frames_.size() > kMaxIncomingFramesBeforeLogged)
+  if (incoming_frames_.size() > kMaxIncomingFramesBeforeLogged) {
     RTC_LOG(LS_WARNING) << "Stored incoming frames: "
                         << incoming_frames_.size();
+  }
   return static_cast<int32_t>(incoming_frames_.size());
 }
 
@@ -79,6 +89,9 @@ absl::optional<VideoFrame> VideoRenderFrames::FrameToRender() {
   absl::optional<VideoFrame> render_frame;
   // Get the newest frame that can be released for rendering.
   while (!incoming_frames_.empty() && TimeToNextFrameRelease() <= 0) {
+    if (render_frame) {
+      ++frames_dropped_;
+    }
     render_frame = std::move(incoming_frames_.front());
     incoming_frames_.pop_front();
   }

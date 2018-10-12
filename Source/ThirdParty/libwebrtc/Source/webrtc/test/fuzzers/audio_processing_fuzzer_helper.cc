@@ -30,7 +30,7 @@ void GenerateFloatFrame(test::FuzzDataHelper* fuzz_data,
                         size_t num_channels,
                         float* const* float_frames) {
   const size_t samples_per_input_channel =
-      rtc::CheckedDivExact(input_rate, 100ul);
+      rtc::CheckedDivExact(input_rate, static_cast<size_t>(100));
   RTC_DCHECK_LE(samples_per_input_channel, 480);
   for (size_t i = 0; i < num_channels; ++i) {
     std::fill(float_frames[i], float_frames[i] + samples_per_input_channel, 0);
@@ -55,7 +55,7 @@ void GenerateFixedFrame(test::FuzzDataHelper* fuzz_data,
                         size_t num_channels,
                         AudioFrame* fixed_frame) {
   const size_t samples_per_input_channel =
-      rtc::CheckedDivExact(input_rate, 100ul);
+      rtc::CheckedDivExact(input_rate, static_cast<size_t>(100));
   fixed_frame->samples_per_channel_ = samples_per_input_channel;
   fixed_frame->sample_rate_hz_ = input_rate;
   fixed_frame->num_channels_ = num_channels;

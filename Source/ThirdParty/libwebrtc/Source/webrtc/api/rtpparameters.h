@@ -201,7 +201,7 @@ struct RtpCodecCapability {
 // redundant; if you call "RtpReceiver::GetCapabilities(MEDIA_TYPE_AUDIO)",
 // you know you're getting audio capabilities.
 struct RtpHeaderExtensionCapability {
-  // URI of this extension, as defined in RFC5285.
+  // URI of this extension, as defined in RFC8285.
   std::string uri;
 
   // Preferred value of ID that goes in the packet.
@@ -226,7 +226,7 @@ struct RtpHeaderExtensionCapability {
   }
 };
 
-// RTP header extension, see RFC 5285.
+// RTP header extension, see RFC8285.
 struct RtpExtension {
   RtpExtension();
   RtpExtension(const std::string& uri, int id);
@@ -282,6 +282,14 @@ struct RtpExtension {
   static const char kVideoTimingUri[];
   static const int kVideoTimingDefaultId;
 
+  // Header extension for video frame marking.
+  static const char kFrameMarkingUri[];
+  static const int kFrameMarkingDefaultId;
+
+  // Experimental codec agnostic frame descriptor.
+  static const char kGenericFrameDescriptorUri[];
+  static const int kGenericFrameDescriptorDefaultId;
+
   // Header extension for transport sequence number, see url for details:
   // http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions
   static const char kTransportSequenceNumberUri[];
@@ -299,9 +307,13 @@ struct RtpExtension {
   // https://tools.ietf.org/html/rfc6904
   static const char kEncryptHeaderExtensionsUri[];
 
-  // Inclusive min and max IDs for one-byte header extensions, per RFC5285.
-  static const int kMinId;
-  static const int kMaxId;
+  // Inclusive min and max IDs for two-byte header extensions and one-byte
+  // header extensions, per RFC8285 Section 4.2-4.3.
+  static constexpr int kMinId = 1;
+  static constexpr int kMaxId = 255;
+  static constexpr int kMaxValueSize = 255;
+  static constexpr int kOneByteHeaderExtensionMaxId = 14;
+  static constexpr int kOneByteHeaderExtensionMaxValueSize = 16;
 
   std::string uri;
   int id = 0;
@@ -417,8 +429,18 @@ struct RtpEncodingParameters {
   // TODO(asapersson): Not implemented for ORTC API.
   absl::optional<int> min_bitrate_bps;
 
-  // TODO(deadbeef): Not implemented.
+  // Specifies the maximum framerate in fps for video.
+  // TODO(asapersson): Different framerates are not supported per simulcast
+  // layer. If set, the maximum |max_framerate| is currently used.
+  // Not supported for screencast.
   absl::optional<int> max_framerate;
+
+  // Specifies the number of temporal layers for video (if the feature is
+  // supported by the codec implementation).
+  // TODO(asapersson): Different number of temporal layers are not supported
+  // per simulcast layer.
+  // Not supported for screencast.
+  absl::optional<int> num_temporal_layers;
 
   // For video, scale the resolution down by this factor.
   // TODO(deadbeef): Not implemented.
@@ -451,7 +473,9 @@ struct RtpEncodingParameters {
            fec == o.fec && rtx == o.rtx && dtx == o.dtx &&
            bitrate_priority == o.bitrate_priority && ptime == o.ptime &&
            max_bitrate_bps == o.max_bitrate_bps &&
+           min_bitrate_bps == o.min_bitrate_bps &&
            max_framerate == o.max_framerate &&
+           num_temporal_layers == o.num_temporal_layers &&
            scale_resolution_down_by == o.scale_resolution_down_by &&
            scale_framerate_down_by == o.scale_framerate_down_by &&
            active == o.active && rid == o.rid &&

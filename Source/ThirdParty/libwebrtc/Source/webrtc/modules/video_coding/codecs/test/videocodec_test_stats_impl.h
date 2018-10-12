@@ -28,7 +28,7 @@ class VideoCodecTestStatsImpl : public VideoCodecTestStats {
   ~VideoCodecTestStatsImpl() override;
 
   // Creates a FrameStatistics for the next frame to be processed.
-  FrameStatistics* AddFrame(size_t timestamp, size_t spatial_idx) override;
+  void AddFrame(const FrameStatistics& frame_stat) override;
 
   // Returns the FrameStatistics corresponding to |frame_number| or |timestamp|.
   FrameStatistics* GetFrame(size_t frame_number, size_t spatial_idx) override;

@@ -26,9 +26,9 @@ class DynamicBitrateAdjuster extends BaseBitrateAdjuster {
   private static final double BITS_PER_BYTE = 8.0;
 
   // How far the codec has deviated above (or below) the target bitrate (tracked in bytes).
-  private double deviationBytes = 0;
-  private double timeSinceLastAdjustmentMs = 0;
-  private int bitrateAdjustmentScaleExp = 0;
+  private double deviationBytes;
+  private double timeSinceLastAdjustmentMs;
+  private int bitrateAdjustmentScaleExp;
 
   @Override
   public void setTargets(int targetBitrateBps, int targetFps) {

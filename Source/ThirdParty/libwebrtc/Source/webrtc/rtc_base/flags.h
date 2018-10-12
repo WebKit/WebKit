@@ -152,24 +152,18 @@ class Flag {
 };
 
 // Internal use only.
-#define DEFINE_FLAG(type, c_type, name, default, comment)    \
-  static std::pair<std::reference_wrapper<c_type>, std::reference_wrapper<rtc::Flag>> name() { \
-    /* define and initialize the flag */                     \
-    static c_type FLAG_##name = (default);                   \
-    /* register the flag */                                  \
-    static rtc::Flag Flag_##name(__FILE__, #name, (comment), \
-      rtc::Flag::type, &FLAG_##name,                         \
-      rtc::FlagValue::New_##type(default));                  \
-    return std::make_pair<std::reference_wrapper<c_type>, std::reference_wrapper<rtc::Flag>>(FLAG_##name, Flag_##name); \
-  }                       \
-  c_type& FLAG_##name() { \
-    return name().first;  \
-  }
+#define DEFINE_FLAG(type, c_type, name, default, comment)                   \
+  /* define and initialize the flag */                                      \
+  c_type FLAG_##name = (default);                                           \
+  /* register the flag */                                                   \
+  static rtc::Flag Flag_##name(__FILE__, #name, (comment), rtc::Flag::type, \
+                               &FLAG_##name,                                \
+                               rtc::FlagValue::New_##type(default))
 
 // Internal use only.
 #define DECLARE_FLAG(c_type, name) \
-  /* declare the flag getter */  \
-  c_type& FLAG_##name();
+  /* declare the external flag */  \
+  extern c_type FLAG_##name
 
 // Use the following macros to define a new flag:
 #define DEFINE_bool(name, default, comment) \

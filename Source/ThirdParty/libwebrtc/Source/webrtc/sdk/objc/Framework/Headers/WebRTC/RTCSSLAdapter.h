@@ -8,13 +8,4 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#import <Foundation/Foundation.h>
-
-#import <WebRTC/RTCMacros.h>
-
-/**
- * Initialize and clean up the SSL library. Failure is fatal. These call the
- * corresponding functions in webrtc/rtc_base/ssladapter.h.
- */
-RTC_EXTERN BOOL RTCInitializeSSL(void);
-RTC_EXTERN BOOL RTCCleanupSSL(void);
+#import "api/peerconnection/RTCSSLAdapter.h"

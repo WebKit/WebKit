@@ -50,14 +50,8 @@ class AudioCodingModuleImpl final : public AudioCodingModule {
   void ModifyEncoder(rtc::FunctionView<void(std::unique_ptr<AudioEncoder>*)>
                          modifier) override;
 
-  void QueryEncoder(
-      rtc::FunctionView<void(const AudioEncoder*)> query) override;
-
   // Get current send codec.
   absl::optional<CodecInst> SendCodec() const override;
-
-  // Get current send frequency.
-  int SendFrequency() const override;
 
   // Sets the bitrate to the specified value in bits/sec. In case the codec does
   // not support the requested value it will choose an appropriate value
@@ -155,11 +149,6 @@ class AudioCodingModuleImpl final : public AudioCodingModule {
   // Maximum playout delay.
   int SetMaximumPlayoutDelay(int time_ms) override;
 
-  // Smallest latency NetEq will maintain.
-  int LeastRequiredDelayMs() const override;
-
-  RTC_DEPRECATED int32_t PlayoutTimestamp(uint32_t* timestamp) override;
-
   absl::optional<uint32_t> PlayoutTimestamp() override;
 
   int FilteredCurrentDelayMs() const override;
@@ -171,15 +160,12 @@ class AudioCodingModuleImpl final : public AudioCodingModule {
   int PlayoutData10Ms(int desired_freq_hz,
                       AudioFrame* audio_frame,
                       bool* muted) override;
-  int PlayoutData10Ms(int desired_freq_hz, AudioFrame* audio_frame) override;
 
   /////////////////////////////////////////
   //   Statistics
   //
 
   int GetNetworkStatistics(NetworkStatistics* statistics) override;
-
-  int SetOpusApplication(OpusApplicationMode application) override;
 
   // If current send codec is Opus, informs it about the maximum playback rate
   // the receiver will render.
@@ -598,12 +584,6 @@ void AudioCodingModuleImpl::ModifyEncoder(
   modifier(&encoder_stack_);
 }
 
-void AudioCodingModuleImpl::QueryEncoder(
-    rtc::FunctionView<void(const AudioEncoder*)> query) {
-  rtc::CritScope lock(&acm_crit_sect_);
-  query(encoder_stack_.get());
-}
-
 // Get current send codec.
 absl::optional<CodecInst> AudioCodingModuleImpl::SendCodec() const {
   rtc::CritScope lock(&acm_crit_sect_);
@@ -625,18 +605,6 @@ absl::optional<CodecInst> AudioCodingModuleImpl::SendCodec() const {
                      acm2::CodecManager::ForgeCodecInst(encoder_stack_.get()))
                : absl::nullopt;
   }
-}
-
-// Get current send frequency.
-int AudioCodingModuleImpl::SendFrequency() const {
-  rtc::CritScope lock(&acm_crit_sect_);
-
-  if (!encoder_stack_) {
-    RTC_LOG(LS_ERROR) << "SendFrequency Failed, no codec is registered";
-    return -1;
-  }
-
-  return encoder_stack_->SampleRateHz();
 }
 
 void AudioCodingModuleImpl::SetBitRate(int bitrate_bps) {
@@ -1109,14 +1077,6 @@ int AudioCodingModuleImpl::PlayoutData10Ms(int desired_freq_hz,
   return 0;
 }
 
-int AudioCodingModuleImpl::PlayoutData10Ms(int desired_freq_hz,
-                                           AudioFrame* audio_frame) {
-  bool muted;
-  int ret = PlayoutData10Ms(desired_freq_hz, audio_frame, &muted);
-  RTC_DCHECK(!muted);
-  return ret;
-}
-
 /////////////////////////////////////////
 //   Statistics
 //
@@ -1133,26 +1093,6 @@ int AudioCodingModuleImpl::RegisterVADCallback(ACMVADCallback* vad_callback) {
   rtc::CritScope lock(&callback_crit_sect_);
   vad_callback_ = vad_callback;
   return 0;
-}
-
-int AudioCodingModuleImpl::SetOpusApplication(OpusApplicationMode application) {
-  rtc::CritScope lock(&acm_crit_sect_);
-  if (!HaveValidEncoder("SetOpusApplication")) {
-    return -1;
-  }
-  AudioEncoder::Application app;
-  switch (application) {
-    case kVoip:
-      app = AudioEncoder::Application::kSpeech;
-      break;
-    case kAudio:
-      app = AudioEncoder::Application::kAudio;
-      break;
-    default:
-      RTC_FATAL();
-      return 0;
-  }
-  return encoder_stack_->SetApplication(app) ? 0 : -1;
 }
 
 // Informs Opus encoder of the maximum playback rate the receiver will render.
@@ -1179,14 +1119,6 @@ int AudioCodingModuleImpl::DisableOpusDtx() {
     return -1;
   }
   return encoder_stack_->SetDtx(false) ? 0 : -1;
-}
-
-int32_t AudioCodingModuleImpl::PlayoutTimestamp(uint32_t* timestamp) {
-  absl::optional<uint32_t> ts = PlayoutTimestamp();
-  if (!ts)
-    return -1;
-  *timestamp = *ts;
-  return 0;
 }
 
 absl::optional<uint32_t> AudioCodingModuleImpl::PlayoutTimestamp() {
@@ -1224,10 +1156,6 @@ void AudioCodingModuleImpl::DisableNack() {
 std::vector<uint16_t> AudioCodingModuleImpl::GetNackList(
     int64_t round_trip_time_ms) const {
   return receiver_.GetNackList(round_trip_time_ms);
-}
-
-int AudioCodingModuleImpl::LeastRequiredDelayMs() const {
-  return receiver_.LeastRequiredDelayMs();
 }
 
 void AudioCodingModuleImpl::GetDecodingCallStatistics(
@@ -1308,14 +1236,6 @@ int AudioCodingModule::Codec(const char* payload_name,
     return -1;
   absl::optional<int> i = acm2::RentACodec::CodecIndexFromId(*ci);
   return i ? *i : -1;
-}
-
-// Checks the validity of the parameters of the given codec
-bool AudioCodingModule::IsCodecValid(const CodecInst& codec) {
-  bool valid = acm2::RentACodec::IsCodecValid(codec);
-  if (!valid)
-    RTC_LOG(LS_ERROR) << "Invalid codec setting";
-  return valid;
 }
 
 }  // namespace webrtc

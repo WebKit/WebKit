@@ -1,3 +1,0 @@
-diff a/Source/ThirdParty/libwebrtc/Source/webrtc/tools_webrtc/presubmit_checks_lib/testdata/circular_dependency/.gn b/Source/ThirdParty/libwebrtc/Source/webrtc/tools_webrtc/presubmit_checks_lib/testdata/circular_dependency/.gn	(rejected hunks)
-@@ -0,0 +1 @@
-+buildconfig = "//BUILDCONFIG.gn"

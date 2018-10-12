@@ -31,8 +31,8 @@
 #include "test/gtest.h"
 #include "test/testsupport/fileutils.h"
 
-#import "sdk/objc/Framework/Classes/Audio/RTCAudioSession+Private.h"
-#import "sdk/objc/Framework/Headers/WebRTC/RTCAudioSession.h"
+#import "sdk/objc/components/audio/RTCAudioSession+Private.h"
+#import "sdk/objc/components/audio/RTCAudioSession.h"
 
 using std::cout;
 using std::endl;
@@ -858,7 +858,7 @@ TEST_F(AudioDeviceTest, testInterruptedAudioSession) {
   [session notifyDidBeginInterruption];
 
   // Wait for notification to propagate.
-  rtc::MessageQueueManager::ProcessAllMessageQueues();
+  rtc::MessageQueueManager::ProcessAllMessageQueuesForTesting();
   EXPECT_TRUE(audio_device->is_interrupted_);
 
   // Force it for testing.
@@ -869,7 +869,7 @@ TEST_F(AudioDeviceTest, testInterruptedAudioSession) {
 
   [session notifyDidEndInterruptionWithShouldResumeSession:YES];
   // Wait for notification to propagate.
-  rtc::MessageQueueManager::ProcessAllMessageQueues();
+  rtc::MessageQueueManager::ProcessAllMessageQueuesForTesting();
   EXPECT_TRUE(audio_device->is_interrupted_);
 
   audio_device->Init();

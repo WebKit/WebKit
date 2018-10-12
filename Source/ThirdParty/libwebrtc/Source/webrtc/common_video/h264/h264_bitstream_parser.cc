@@ -75,9 +75,9 @@ H264BitstreamParser::Result H264BitstreamParser::ParseNonParameterSetNalu(
     RETURN_INV_ON_FAIL(slice_reader.ReadBits(&bits_tmp, 2));
   }
   // frame_num: u(v)
-  // Represented by log2_max_frame_num_minus4 + 4 bits.
+  // Represented by log2_max_frame_num bits.
   RETURN_INV_ON_FAIL(
-      slice_reader.ReadBits(&bits_tmp, sps_->log2_max_frame_num_minus4 + 4));
+      slice_reader.ReadBits(&bits_tmp, sps_->log2_max_frame_num));
   uint32_t field_pic_flag = 0;
   if (sps_->frame_mbs_only_flag == 0) {
     // field_pic_flag: u(1)
@@ -92,10 +92,10 @@ H264BitstreamParser::Result H264BitstreamParser::ParseNonParameterSetNalu(
     RETURN_INV_ON_FAIL(slice_reader.ReadExponentialGolomb(&golomb_tmp));
   }
   // pic_order_cnt_lsb: u(v)
-  // Represented by sps_.log2_max_pic_order_cnt_lsb_minus4 + 4 bits.
+  // Represented by sps_.log2_max_pic_order_cnt_lsb bits.
   if (sps_->pic_order_cnt_type == 0) {
-    RETURN_INV_ON_FAIL(slice_reader.ReadBits(
-        &bits_tmp, sps_->log2_max_pic_order_cnt_lsb_minus4 + 4));
+    RETURN_INV_ON_FAIL(
+        slice_reader.ReadBits(&bits_tmp, sps_->log2_max_pic_order_cnt_lsb));
     if (pps_->bottom_field_pic_order_in_frame_present_flag &&
         field_pic_flag == 0) {
       // delta_pic_order_cnt_bottom: se(v)

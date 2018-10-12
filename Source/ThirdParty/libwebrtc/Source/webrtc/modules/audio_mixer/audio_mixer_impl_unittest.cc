@@ -12,7 +12,6 @@
 
 #include <limits>
 #include <memory>
-#include <sstream>
 #include <string>
 #include <utility>
 
@@ -21,6 +20,7 @@
 #include "modules/audio_mixer/default_output_rate_calculator.h"
 #include "rtc_base/bind.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/strings/string_builder.h"
 #include "rtc_base/task_queue_for_test.h"
 #include "test/gmock.h"
 
@@ -50,11 +50,11 @@ void ResetFrame(AudioFrame* frame) {
 std::string ProduceDebugText(int sample_rate_hz,
                              int number_of_channels,
                              int number_of_sources) {
-  std::ostringstream ss;
+  rtc::StringBuilder ss;
   ss << "Sample rate: " << sample_rate_hz << " ";
   ss << "Number of channels: " << number_of_channels << " ";
   ss << "Number of sources: " << number_of_sources;
-  return ss.str();
+  return ss.Release();
 }
 
 AudioFrame frame_for_mixing;

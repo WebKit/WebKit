@@ -81,7 +81,6 @@ class VideoCodecTestFixture {
 
     std::string ToString() const;
     std::string CodecName() const;
-    bool IsAsyncCodec() const;
 
     // Plain name of YUV file to process without file extension.
     std::string filename;
@@ -104,6 +103,9 @@ class VideoCodecTestFixture {
     // Should cpu usage be measured?
     // If set to true, the encoding will run in real-time.
     bool measure_cpu = false;
+
+    // Simulate frames arriving in real-time by adding delays between frames.
+    bool encode_in_real_time = false;
 
     // If > 0: forces the encoder to create a keyframe every Nth frame.
     size_t keyframe_interval = 0;

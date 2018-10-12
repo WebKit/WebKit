@@ -8,49 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#import <Foundation/Foundation.h>
-
-#import <WebRTC/RTCMacros.h>
-#import <WebRTC/RTCVideoCodec.h>
-
-NS_ASSUME_NONNULL_BEGIN
-
-/** RTCVideoEncoderFactory is an Objective-C version of webrtc::VideoEncoderFactory. */
-RTC_EXPORT
-@protocol RTCVideoEncoderFactory <NSObject>
-
-- (nullable id<RTCVideoEncoder>)createEncoder:(RTCVideoCodecInfo *)info;
-- (NSArray<RTCVideoCodecInfo *> *)supportedCodecs;  // TODO(andersc): "supportedFormats" instead?
-
-@end
-
-/** RTCVideoDecoderFactory is an Objective-C version of webrtc::VideoDecoderFactory. */
-RTC_EXPORT
-@protocol RTCVideoDecoderFactory <NSObject>
-
-- (nullable id<RTCVideoDecoder>)createDecoder:(RTCVideoCodecInfo *)info;
-- (NSArray<RTCVideoCodecInfo *> *)supportedCodecs;  // TODO(andersc): "supportedFormats" instead?
-
-@end
-
-#pragma mark - Default factories
-
-/** These codec factories include support for all codecs bundled with WebRTC. If using custom
- *  codecs, create custom implementations of RTCVideoEncoderFactory and RTCVideoDecoderFactory.
- */
-RTC_EXPORT
-__attribute__((objc_runtime_name("WK_RTCDefaultVideoEncoderFactory")))
-@interface RTCDefaultVideoEncoderFactory : NSObject <RTCVideoEncoderFactory>
-
-@property(nonatomic, retain) RTCVideoCodecInfo *preferredCodec;
-
-+ (NSArray<RTCVideoCodecInfo *> *)supportedCodecs;
-
-@end
-
-RTC_EXPORT
-__attribute__((objc_runtime_name("WK_RTCDefaultVideoDecoderFactory")))
-@interface RTCDefaultVideoDecoderFactory : NSObject <RTCVideoDecoderFactory>
-@end
-
-NS_ASSUME_NONNULL_END
+#import "base/RTCVideoDecoderFactory.h"
+#import "base/RTCVideoEncoderFactory.h"
+#import "components/video_codec/RTCDefaultVideoDecoderFactory.h"
+#import "components/video_codec/RTCDefaultVideoEncoderFactory.h"

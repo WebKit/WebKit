@@ -21,7 +21,7 @@ namespace videocapturemodule {
 class VideoCaptureIos : public VideoCaptureImpl {
  public:
   VideoCaptureIos();
-  virtual ~VideoCaptureIos();
+  ~VideoCaptureIos() override;
 
   static rtc::scoped_refptr<VideoCaptureModule> Create(
       const char* device_unique_id_utf8);

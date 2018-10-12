@@ -21,6 +21,7 @@ rtc_source_set("video_codecs_api") {
     "video_codec.h",
     "video_decoder.cc",
     "video_decoder.h",
+    "video_decoder_factory.cc",
     "video_decoder_factory.h",
     "video_encoder.cc",
     "video_encoder.h",
@@ -102,7 +103,7 @@ rtc_static_library("rtc_software_fallback_wrappers") {
     "../../rtc_base:checks",
     "../../rtc_base:rtc_base_approved",
     "../../rtc_base/system:fallthrough",
-    "../../system_wrappers:field_trial_api",
+    "../../system_wrappers:field_trial",
     "../video:video_bitrate_allocation",
     "//third_party/abseil-cpp/absl/memory",
   ]

@@ -42,7 +42,15 @@ absl::optional<int64_t> NetEqReplacementInput::NextOutputEventTime() const {
 
 std::unique_ptr<NetEqInput::PacketData> NetEqReplacementInput::PopPacket() {
   std::unique_ptr<PacketData> to_return = std::move(packet_);
-  packet_ = source_->PopPacket();
+  while (true) {
+    packet_ = source_->PopPacket();
+    if (!packet_)
+      break;
+    if (packet_->payload.size() > packet_->header.paddingLength) {
+      // Not padding only. Good to go. Skip this packet otherwise.
+      break;
+    }
+  }
   ReplacePacket();
   return to_return;
 }

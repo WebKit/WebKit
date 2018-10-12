@@ -21,7 +21,6 @@
 #include "common_types.h"  // NOLINT(build/include)
 #include "modules/audio_coding/include/audio_coding_module_typedefs.h"
 #include "modules/audio_coding/neteq/include/neteq.h"
-#include "rtc_base/deprecation.h"
 #include "rtc_base/function_view.h"
 #include "system_wrappers/include/clock.h"
 
@@ -152,20 +151,6 @@ class AudioCodingModule {
                    size_t channels);
 
   ///////////////////////////////////////////////////////////////////////////
-  // bool IsCodecValid()
-  // Checks the validity of the parameters of the given codec.
-  //
-  // Input:
-  //   -codec              : the structure which keeps the parameters of the
-  //                         codec.
-  //
-  // Return value:
-  //   true if the parameters are valid,
-  //   false if any parameter is not valid.
-  //
-  static bool IsCodecValid(const CodecInst& codec);
-
-  ///////////////////////////////////////////////////////////////////////////
   //   Sender
   //
 
@@ -211,11 +196,6 @@ class AudioCodingModule {
   virtual void ModifyEncoder(
       rtc::FunctionView<void(std::unique_ptr<AudioEncoder>*)> modifier) = 0;
 
-  // |modifier| is called exactly once with one argument: a const pointer to the
-  // current encoder (which is null if there is no current encoder).
-  virtual void QueryEncoder(
-      rtc::FunctionView<void(AudioEncoder const*)> query) = 0;
-
   // Utility method for simply replacing the existing encoder with a new one.
   void SetEncoder(std::unique_ptr<AudioEncoder> new_encoder) {
     ModifyEncoder([&](std::unique_ptr<AudioEncoder>* encoder) {
@@ -231,16 +211,6 @@ class AudioCodingModule {
   //   The send codec, or nothing if we don't have one
   //
   virtual absl::optional<CodecInst> SendCodec() const = 0;
-
-  ///////////////////////////////////////////////////////////////////////////
-  // int32_t SendFrequency()
-  // Get the sampling frequency of the current encoder in Hertz.
-  //
-  // Return value:
-  //   positive; sampling frequency [Hz] of the current encoder.
-  //   -1 if an error has happened.
-  //
-  virtual int32_t SendFrequency() const = 0;
 
   ///////////////////////////////////////////////////////////////////////////
   // Sets the bitrate to the specified value in bits/sec. If the value is not
@@ -603,29 +573,6 @@ class AudioCodingModule {
   //
   virtual int SetMaximumPlayoutDelay(int time_ms) = 0;
 
-  // TODO(kwiberg): Consider if this is needed anymore, now that voe::Channel
-  //                doesn't use it.
-  // The shortest latency, in milliseconds, required by jitter buffer. This
-  // is computed based on inter-arrival times and playout mode of NetEq. The
-  // actual delay is the maximum of least-required-delay and the minimum-delay
-  // specified by SetMinumumPlayoutDelay() API.
-  //
-  virtual int LeastRequiredDelayMs() const = 0;
-
-  // int32_t PlayoutTimestamp()
-  // The send timestamp of an RTP packet is associated with the decoded
-  // audio of the packet in question. This function returns the timestamp of
-  // the latest audio obtained by calling PlayoutData10ms().
-  //
-  // Input:
-  //   -timestamp          : a reference to a uint32_t to receive the
-  //                         timestamp.
-  // Return value:
-  //    0 if the output is a correct timestamp.
-  //   -1 if failed to output the correct timestamp.
-  //
-  RTC_DEPRECATED virtual int32_t PlayoutTimestamp(uint32_t* timestamp) = 0;
-
   ///////////////////////////////////////////////////////////////////////////
   // int32_t PlayoutTimestamp()
   // The send timestamp of an RTP packet is associated with the decoded
@@ -674,33 +621,9 @@ class AudioCodingModule {
                                   AudioFrame* audio_frame,
                                   bool* muted) = 0;
 
-  /////////////////////////////////////////////////////////////////////////////
-  // Same as above, but without the muted parameter. This methods should not be
-  // used if enable_fast_accelerate was set to true in NetEq::Config.
-  // TODO(henrik.lundin) Remove this method when downstream dependencies are
-  // ready.
-  virtual int32_t PlayoutData10Ms(int32_t desired_freq_hz,
-                                  AudioFrame* audio_frame) = 0;
-
   ///////////////////////////////////////////////////////////////////////////
   //   Codec specific
   //
-
-  ///////////////////////////////////////////////////////////////////////////
-  // int SetOpusApplication()
-  // Sets the intended application if current send codec is Opus. Opus uses this
-  // to optimize the encoding for applications like VOIP and music. Currently,
-  // two modes are supported: kVoip and kAudio.
-  //
-  // Input:
-  //   - application            : intended application.
-  //
-  // Return value:
-  //   -1 if current send codec is not Opus or error occurred in setting the
-  //      Opus application mode.
-  //    0 if the Opus application mode is successfully set.
-  //
-  virtual int SetOpusApplication(OpusApplicationMode application) = 0;
 
   ///////////////////////////////////////////////////////////////////////////
   // int SetOpusMaxPlaybackRate()

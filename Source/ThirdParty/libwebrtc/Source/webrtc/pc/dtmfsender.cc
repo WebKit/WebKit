@@ -20,10 +20,6 @@
 
 namespace webrtc {
 
-enum {
-  MSG_DO_INSERT_DTMF = 0,
-};
-
 // RFC4733
 //  +-------+--------+------+---------+
 //  | Event | Code   | Type | Volume? |
@@ -135,9 +131,9 @@ bool DtmfSender::InsertDtmf(const std::string& tones,
   duration_ = duration;
   inter_tone_gap_ = inter_tone_gap;
   // Clear the previous queue.
-  signaling_thread_->Clear(this, MSG_DO_INSERT_DTMF);
+  dtmf_driver_.Clear();
   // Kick off a new DTMF task queue.
-  signaling_thread_->PostDelayed(RTC_FROM_HERE, 1, this, MSG_DO_INSERT_DTMF);
+  QueueInsertDtmf(RTC_FROM_HERE, 1 /*ms*/);
   return true;
 }
 
@@ -153,17 +149,10 @@ int DtmfSender::inter_tone_gap() const {
   return inter_tone_gap_;
 }
 
-void DtmfSender::OnMessage(rtc::Message* msg) {
-  switch (msg->message_id) {
-    case MSG_DO_INSERT_DTMF: {
-      DoInsertDtmf();
-      break;
-    }
-    default: {
-      RTC_NOTREACHED();
-      break;
-    }
-  }
+void DtmfSender::QueueInsertDtmf(const rtc::Location& posted_from,
+                                 uint32_t delay_ms) {
+  dtmf_driver_.AsyncInvokeDelayed<void>(posted_from, signaling_thread_,
+                                        [this] { DoInsertDtmf(); }, delay_ms);
 }
 
 void DtmfSender::DoInsertDtmf() {
@@ -177,6 +166,7 @@ void DtmfSender::DoInsertDtmf() {
     tones_.clear();
     // Fire a “OnToneChange” event with an empty string and stop.
     if (observer_) {
+      observer_->OnToneChange(std::string(), tones_);
       observer_->OnToneChange(std::string());
     }
     return;
@@ -211,6 +201,8 @@ void DtmfSender::DoInsertDtmf() {
 
   // Fire a “OnToneChange” event with the tone that's just processed.
   if (observer_) {
+    observer_->OnToneChange(tones_.substr(first_tone_pos, 1),
+                            tones_.substr(first_tone_pos + 1));
     observer_->OnToneChange(tones_.substr(first_tone_pos, 1));
   }
 
@@ -218,8 +210,7 @@ void DtmfSender::DoInsertDtmf() {
   tones_.erase(0, first_tone_pos + 1);
 
   // Continue with the next tone.
-  signaling_thread_->PostDelayed(RTC_FROM_HERE, tone_gap, this,
-                                 MSG_DO_INSERT_DTMF);
+  QueueInsertDtmf(RTC_FROM_HERE, tone_gap);
 }
 
 void DtmfSender::OnProviderDestroyed() {
@@ -229,7 +220,7 @@ void DtmfSender::OnProviderDestroyed() {
 }
 
 void DtmfSender::StopSending() {
-  signaling_thread_->Clear(this);
+  dtmf_driver_.Clear();
 }
 
 }  // namespace webrtc

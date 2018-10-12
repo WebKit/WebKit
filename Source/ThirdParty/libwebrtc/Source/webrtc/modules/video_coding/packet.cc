@@ -10,8 +10,6 @@
 
 #include "modules/video_coding/packet.h"
 
-#include <assert.h>
-
 #include "modules/include/module_common_types.h"
 
 namespace webrtc {
@@ -28,6 +26,7 @@ VCMPacket::VCMPacket()
       frameType(kEmptyFrame),
       codec(kVideoCodecGeneric),
       is_first_packet_in_frame(false),
+      is_last_packet_in_frame(false),
       completeNALU(kNaluUnset),
       insertStartCode(false),
       width(0),
@@ -52,6 +51,7 @@ VCMPacket::VCMPacket(const uint8_t* ptr,
       codec(rtpHeader.video_header().codec),
       is_first_packet_in_frame(
           rtpHeader.video_header().is_first_packet_in_frame),
+      is_last_packet_in_frame(rtpHeader.video_header().is_last_packet_in_frame),
       completeNALU(kNaluIncomplete),
       insertStartCode(rtpHeader.video_header().codec == kVideoCodecH264 &&
                       rtpHeader.video_header().is_first_packet_in_frame),
@@ -78,5 +78,7 @@ VCMPacket::VCMPacket(const uint8_t* ptr,
     video_header.playout_delay = {-1, -1};
   }
 }
+
+VCMPacket::~VCMPacket() = default;
 
 }  // namespace webrtc

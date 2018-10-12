@@ -31,13 +31,6 @@ PROXY_SIGNALING_THREAD_DESTRUCTOR()
 // removed.
 using PeerConnectionFactoryInterface::CreateVideoSource;
 PROXY_METHOD1(void, SetOptions, const Options&)
-PROXY_METHOD5(rtc::scoped_refptr<PeerConnectionInterface>,
-              CreatePeerConnection,
-              const PeerConnectionInterface::RTCConfiguration&,
-              const MediaConstraintsInterface*,
-              std::unique_ptr<cricket::PortAllocator>,
-              std::unique_ptr<rtc::RTCCertificateGeneratorInterface>,
-              PeerConnectionObserver*);
 PROXY_METHOD4(rtc::scoped_refptr<PeerConnectionInterface>,
               CreatePeerConnection,
               const PeerConnectionInterface::RTCConfiguration&,

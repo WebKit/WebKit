@@ -192,6 +192,15 @@ int32_t DeviceInfoLinux::CreateCapabilityMap(const char* deviceUniqueIdUTF8) {
   return size;
 }
 
+int32_t DeviceInfoLinux::DisplayCaptureSettingsDialogBox(
+    const char* /*deviceUniqueIdUTF8*/,
+    const char* /*dialogTitleUTF8*/,
+    void* /*parentWindow*/,
+    uint32_t /*positionX*/,
+    uint32_t /*positionY*/) {
+  return -1;
+}
+
 bool DeviceInfoLinux::IsDeviceNameMatches(const char* name,
                                           const char* deviceUniqueIdUTF8) {
   if (strncmp(deviceUniqueIdUTF8, name, strlen(name)) == 0)
@@ -217,7 +226,6 @@ int32_t DeviceInfoLinux::FillCapabilities(int fd) {
                             {960, 720},  {1280, 720}, {1024, 768}, {1440, 1080},
                             {1920, 1080}};
 
-  int index = 0;
   for (int fmts = 0; fmts < totalFmts; fmts++) {
     for (int i = 0; i < sizes; i++) {
       video_fmt.fmt.pix.pixelformat = videoFormats[fmts];
@@ -249,7 +257,6 @@ int32_t DeviceInfoLinux::FillCapabilities(int fd) {
           }
 
           _captureCapabilities.push_back(cap);
-          index++;
           RTC_LOG(LS_VERBOSE) << "Camera capability, width:" << cap.width
                               << " height:" << cap.height
                               << " type:" << static_cast<int32_t>(cap.videoType)

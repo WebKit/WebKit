@@ -11,6 +11,7 @@
 
 #include "absl/memory/memory.h"
 #include "call/call.h"
+#include "call/fake_network_pipe.h"
 #include "modules/rtp_rtcp/include/rtp_header_parser.h"
 #include "system_wrappers/include/clock.h"
 #include "test/single_threaded_task_queue.h"
@@ -37,29 +38,7 @@ MediaType Demuxer::GetMediaType(const uint8_t* packet_data,
 
 DirectTransport::DirectTransport(
     SingleThreadedTaskQueueForTesting* task_queue,
-    Call* send_call,
-    const std::map<uint8_t, MediaType>& payload_type_map)
-    : DirectTransport(task_queue,
-                      FakeNetworkPipe::Config(),
-                      send_call,
-                      payload_type_map) {}
-
-DirectTransport::DirectTransport(
-    SingleThreadedTaskQueueForTesting* task_queue,
-    const FakeNetworkPipe::Config& config,
-    Call* send_call,
-    const std::map<uint8_t, MediaType>& payload_type_map)
-    : send_call_(send_call),
-      clock_(Clock::GetRealTimeClock()),
-      task_queue_(task_queue),
-      demuxer_(payload_type_map),
-      fake_network_(absl::make_unique<FakeNetworkPipe>(clock_, config)) {
-  Start();
-}
-
-DirectTransport::DirectTransport(
-    SingleThreadedTaskQueueForTesting* task_queue,
-    std::unique_ptr<FakeNetworkPipe> pipe,
+    std::unique_ptr<SimulatedPacketReceiverInterface> pipe,
     Call* send_call,
     const std::map<uint8_t, MediaType>& payload_type_map)
     : send_call_(send_call),
@@ -75,14 +54,6 @@ DirectTransport::~DirectTransport() {
   // Constructor updates |next_scheduled_task_|, so it's guaranteed to
   // be initialized.
   task_queue_->CancelTask(next_scheduled_task_);
-}
-
-void DirectTransport::SetClockOffset(int64_t offset_ms) {
-  fake_network_->SetClockOffset(offset_ms);
-}
-
-void DirectTransport::SetConfig(const FakeNetworkPipe::Config& config) {
-  fake_network_->SetConfig(config);
 }
 
 void DirectTransport::StopSending() {
@@ -101,6 +72,8 @@ bool DirectTransport::SendRtp(const uint8_t* data,
   if (send_call_) {
     rtc::SentPacket sent_packet(options.packet_id,
                                 clock_->TimeInMilliseconds());
+    sent_packet.info.packet_size_bytes = length;
+    sent_packet.info.packet_type = rtc::PacketType::kData;
     send_call_->OnSentPacket(sent_packet);
   }
   SendPacket(data, length);

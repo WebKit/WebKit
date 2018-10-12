@@ -11,8 +11,8 @@
 package org.webrtc;
 
 import android.graphics.SurfaceTexture;
-import javax.annotation.Nullable;
 import android.view.Surface;
+import javax.annotation.Nullable;
 import javax.microedition.khronos.egl.EGL10;
 
 /**
@@ -21,7 +21,15 @@ import javax.microedition.khronos.egl.EGL10;
  */
 public interface EglBase {
   // EGL wrapper for an actual EGLContext.
-  public interface Context { long getNativeEglContext(); }
+  public interface Context {
+    /**
+     * Returns an EGL context that can be used by native code. Returns 0 if the method is
+     * unsupported.
+     *
+     * @note This is currently only supported for EGL 1.4 and not for EGL 1.0.
+     */
+    long getNativeEglContext();
+  }
 
   // According to the documentation, EGL can be used from multiple threads at the same time if each
   // thread has its own EGLContext, but in practice it deadlocks on some devices when doing this.

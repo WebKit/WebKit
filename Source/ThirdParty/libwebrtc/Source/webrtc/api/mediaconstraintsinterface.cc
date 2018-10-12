@@ -104,8 +104,6 @@ const char MediaConstraintsInterface::kNoiseSuppression[] =
     "googNoiseSuppression";
 const char MediaConstraintsInterface::kExperimentalNoiseSuppression[] =
     "googNoiseSuppression2";
-const char MediaConstraintsInterface::kIntelligibilityEnhancer[] =
-    "intelligibilityEnhancer";
 const char MediaConstraintsInterface::kHighpassFilter[] = "googHighpassFilter";
 const char MediaConstraintsInterface::kTypingNoiseDetection[] =
     "googTypingNoiseDetection";
@@ -145,6 +143,9 @@ const char MediaConstraintsInterface::kScreencastMinBitrate[] =
 const char MediaConstraintsInterface::kCpuOveruseDetection[] =
     "googCpuOveruseDetection";
 const char MediaConstraintsInterface::kPayloadPadding[] = "googPayloadPadding";
+
+const char MediaConstraintsInterface::kNumSimulcastLayers[] =
+    "googNumSimulcastLayers";
 
 // Set |value| to the value associated with the first appearance of |key|, or
 // return false if |key| is not found.
@@ -238,9 +239,6 @@ void CopyConstraintsIntoAudioOptions(
   ConstraintToOptional<bool>(
       constraints, MediaConstraintsInterface::kExperimentalNoiseSuppression,
       &options->experimental_ns);
-  ConstraintToOptional<bool>(
-      constraints, MediaConstraintsInterface::kIntelligibilityEnhancer,
-      &options->intelligibility_enhancer);
   ConstraintToOptional<bool>(constraints,
                              MediaConstraintsInterface::kHighpassFilter,
                              &options->highpass_filter);
@@ -258,6 +256,57 @@ void CopyConstraintsIntoAudioOptions(
   if (options->audio_network_adaptor_config) {
     options->audio_network_adaptor = true;
   }
+}
+
+bool CopyConstraintsIntoOfferAnswerOptions(
+    const MediaConstraintsInterface* constraints,
+    PeerConnectionInterface::RTCOfferAnswerOptions* offer_answer_options) {
+  if (!constraints) {
+    return true;
+  }
+
+  bool value = false;
+  size_t mandatory_constraints_satisfied = 0;
+
+  if (FindConstraint(constraints,
+                     MediaConstraintsInterface::kOfferToReceiveAudio, &value,
+                     &mandatory_constraints_satisfied)) {
+    offer_answer_options->offer_to_receive_audio =
+        value ? PeerConnectionInterface::RTCOfferAnswerOptions::
+                    kOfferToReceiveMediaTrue
+              : 0;
+  }
+
+  if (FindConstraint(constraints,
+                     MediaConstraintsInterface::kOfferToReceiveVideo, &value,
+                     &mandatory_constraints_satisfied)) {
+    offer_answer_options->offer_to_receive_video =
+        value ? PeerConnectionInterface::RTCOfferAnswerOptions::
+                    kOfferToReceiveMediaTrue
+              : 0;
+  }
+  if (FindConstraint(constraints,
+                     MediaConstraintsInterface::kVoiceActivityDetection, &value,
+                     &mandatory_constraints_satisfied)) {
+    offer_answer_options->voice_activity_detection = value;
+  }
+  if (FindConstraint(constraints, MediaConstraintsInterface::kUseRtpMux, &value,
+                     &mandatory_constraints_satisfied)) {
+    offer_answer_options->use_rtp_mux = value;
+  }
+  if (FindConstraint(constraints, MediaConstraintsInterface::kIceRestart,
+                     &value, &mandatory_constraints_satisfied)) {
+    offer_answer_options->ice_restart = value;
+  }
+
+  int layers;
+  if (FindConstraint(constraints,
+                     MediaConstraintsInterface::kNumSimulcastLayers,
+                     &layers, &mandatory_constraints_satisfied)) {
+    offer_answer_options->num_simulcast_layers = layers;
+  }
+
+  return mandatory_constraints_satisfied == constraints->GetMandatory().size();
 }
 
 }  // namespace webrtc

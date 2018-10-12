@@ -23,6 +23,7 @@
 #include "modules/audio_coding/test/utility.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/stringencode.h"
+#include "rtc_base/strings/string_builder.h"
 #include "test/gtest.h"
 #include "test/testsupport/fileutils.h"
 
@@ -476,7 +477,7 @@ void TestAllCodecs::Run(TestPack* channel) {
 
 void TestAllCodecs::OpenOutFile(int test_number) {
   std::string filename = webrtc::test::OutputPath();
-  std::ostringstream test_number_str;
+  rtc::StringBuilder test_number_str;
   test_number_str << test_number;
   filename += "testallcodecs_out_";
   filename += test_number_str.str();

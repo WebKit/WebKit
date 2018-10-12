@@ -50,7 +50,6 @@
 #include "rtc_base/networkmonitor.h"
 #include "rtc_base/nullsocketserver.h"
 #include "rtc_base/timeutils.h"
-#include "rtc_base/win32socketinit.h"
 
 #if defined(WEBRTC_WIN)
 #define LAST_SYSTEM_ERROR (::GetLastError())
@@ -117,14 +116,6 @@ PhysicalSocket::PhysicalSocket(PhysicalSocketServer* ss, SOCKET s)
       error_(0),
       state_((s == INVALID_SOCKET) ? CS_CLOSED : CS_CONNECTED),
       resolver_(nullptr) {
-#if defined(WEBRTC_WIN)
-  // EnsureWinsockInit() ensures that winsock is initialized. The default
-  // version of this function doesn't do anything because winsock is
-  // initialized by constructor of a static object. If neccessary libjingle
-  // users can link it with a different version of this function by replacing
-  // win32socketinit.cc. See win32socketinit.cc for more details.
-  EnsureWinsockInit();
-#endif
   if (s_ != INVALID_SOCKET) {
     SetEnabledEvents(DE_READ | DE_WRITE);
 
@@ -605,7 +596,7 @@ bool SocketDispatcher::Initialize() {
 #elif defined(WEBRTC_POSIX)
   fcntl(s_, F_SETFL, fcntl(s_, F_GETFL, 0) | O_NONBLOCK);
 #endif
-#if defined(WEBRTC_IOS) || (defined(WEBRTC_MAC) && defined(WEBRTC_WEBKIT_BUILD))
+#if defined(WEBRTC_IOS)
   // iOS may kill sockets when the app is moved to the background
   // (specifically, if the app doesn't use the "voip" UIBackgroundMode). When
   // we attempt to write to such a socket, SIGPIPE will be raised, which by
@@ -1390,21 +1381,15 @@ bool PhysicalSocketServer::WaitSelect(int cmsWait, bool process_io) {
 
   struct timeval* ptvWait = nullptr;
   struct timeval tvWait;
-  struct timeval tvStop;
+  int64_t stop_us;
   if (cmsWait != kForever) {
     // Calculate wait timeval
     tvWait.tv_sec = cmsWait / 1000;
     tvWait.tv_usec = (cmsWait % 1000) * 1000;
     ptvWait = &tvWait;
 
-    // Calculate when to return in a timeval
-    gettimeofday(&tvStop, nullptr);
-    tvStop.tv_sec += tvWait.tv_sec;
-    tvStop.tv_usec += tvWait.tv_usec;
-    if (tvStop.tv_usec >= 1000000) {
-      tvStop.tv_usec -= 1000000;
-      tvStop.tv_sec += 1;
-    }
+    // Calculate when to return
+    stop_us = rtc::TimeMicros() + cmsWait * 1000;
   }
 
   // Zero all fd_sets. Don't need to do this inside the loop since
@@ -1501,17 +1486,10 @@ bool PhysicalSocketServer::WaitSelect(int cmsWait, bool process_io) {
     if (ptvWait) {
       ptvWait->tv_sec = 0;
       ptvWait->tv_usec = 0;
-      struct timeval tvT;
-      gettimeofday(&tvT, nullptr);
-      if ((tvStop.tv_sec > tvT.tv_sec) ||
-          ((tvStop.tv_sec == tvT.tv_sec) && (tvStop.tv_usec > tvT.tv_usec))) {
-        ptvWait->tv_sec = tvStop.tv_sec - tvT.tv_sec;
-        ptvWait->tv_usec = tvStop.tv_usec - tvT.tv_usec;
-        if (ptvWait->tv_usec < 0) {
-          RTC_DCHECK(ptvWait->tv_sec > 0);
-          ptvWait->tv_usec += 1000000;
-          ptvWait->tv_sec -= 1;
-        }
+      int64_t time_left_us = stop_us - rtc::TimeMicros();
+      if (time_left_us > 0) {
+        ptvWait->tv_sec = time_left_us / rtc::kNumMicrosecsPerSec;
+        ptvWait->tv_usec = time_left_us % rtc::kNumMicrosecsPerSec;
       }
     }
   }

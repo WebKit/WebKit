@@ -36,7 +36,6 @@
 #include "rtc_base/virtualsocketserver.h"
 
 using rtc::AsyncPacketSocket;
-using rtc::Buffer;
 using rtc::ByteBufferReader;
 using rtc::ByteBufferWriter;
 using rtc::NATType;
@@ -134,7 +133,7 @@ class TestPort : public Port {
 
   // The last StunMessage that was sent on this Port.
   // TODO(?): Make these const; requires changes to SendXXXXResponse.
-  Buffer* last_stun_buf() { return last_stun_buf_.get(); }
+  rtc::BufferT<uint8_t>* last_stun_buf() { return last_stun_buf_.get(); }
   IceMessage* last_stun_msg() { return last_stun_msg_.get(); }
   int last_stun_error_code() {
     int code = 0;
@@ -191,7 +190,8 @@ class TestPort : public Port {
                      bool payload) {
     if (!payload) {
       IceMessage* msg = new IceMessage;
-      Buffer* buf = new Buffer(static_cast<const char*>(data), size);
+      auto* buf =
+          new rtc::BufferT<uint8_t>(static_cast<const char*>(data), size);
       ByteBufferReader read_buf(*buf);
       if (!msg->Read(&read_buf)) {
         delete msg;
@@ -219,7 +219,7 @@ class TestPort : public Port {
                     const rtc::SentPacket& sent_packet) {
     PortInterface::SignalSentPacket(sent_packet);
   }
-  std::unique_ptr<Buffer> last_stun_buf_;
+  std::unique_ptr<rtc::BufferT<uint8_t>> last_stun_buf_;
   std::unique_ptr<IceMessage> last_stun_msg_;
   int type_preference_ = 0;
 };

@@ -91,6 +91,9 @@
     'system_wrappers': {
       'filepath': 'system_wrappers/.*',
     },
+    'pc': {
+      'filepath': 'pc/.*',
+    },
   },
 
   'WATCHLISTS': {
@@ -179,5 +182,6 @@
                         'mflodman@webrtc.org',
                         'peah@webrtc.org',
                         'zhengzhonghou@agora.io'],
+    'pc': ['steveanton@webrtc.org'],
   },
 }

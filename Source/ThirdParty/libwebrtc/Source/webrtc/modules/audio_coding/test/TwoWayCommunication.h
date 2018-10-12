@@ -13,25 +13,28 @@
 
 #include <memory>
 
+#include "api/audio_codecs/audio_encoder_factory.h"
+#include "api/audio_codecs/audio_format.h"
 #include "modules/audio_coding/include/audio_coding_module.h"
-#include "modules/audio_coding/test/ACMTest.h"
 #include "modules/audio_coding/test/Channel.h"
 #include "modules/audio_coding/test/PCMFile.h"
 #include "modules/audio_coding/test/utility.h"
 
 namespace webrtc {
 
-class TwoWayCommunication : public ACMTest {
+class TwoWayCommunication {
  public:
-  explicit TwoWayCommunication(int testMode);
+  TwoWayCommunication();
   ~TwoWayCommunication();
 
   void Perform();
 
  private:
-  void ChooseCodec(uint8_t* codecID_A, uint8_t* codecID_B);
-  void SetUp();
-  void SetUpAutotest();
+  void SetUpAutotest(AudioEncoderFactory* const encoder_factory,
+                     const SdpAudioFormat& format1,
+                     const int payload_type1,
+                     const SdpAudioFormat& format2,
+                     const int payload_type2);
 
   std::unique_ptr<AudioCodingModule> _acmA;
   std::unique_ptr<AudioCodingModule> _acmB;
@@ -53,8 +56,6 @@ class TwoWayCommunication : public ACMTest {
 
   PCMFile _outFileRefA;
   PCMFile _outFileRefB;
-
-  int _testMode;
 };
 
 }  // namespace webrtc

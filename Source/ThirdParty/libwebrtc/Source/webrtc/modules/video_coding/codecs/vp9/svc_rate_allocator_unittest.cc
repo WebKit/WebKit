@@ -29,7 +29,7 @@ static VideoCodec Configure(size_t width,
                                  : VideoCodecMode::kRealtimeVideo;
 
   std::vector<SpatialLayer> spatial_layers =
-      GetSvcConfig(width, height, num_spatial_layers, num_temporal_layers,
+      GetSvcConfig(width, height, 30, num_spatial_layers, num_temporal_layers,
                    is_screen_sharing);
   RTC_CHECK_LE(spatial_layers.size(), kMaxSpatialLayers);
 

@@ -16,11 +16,17 @@ rtc_static_library("webrtc_fuzzer_main") {
   ]
   deps = [
     "../../rtc_base:rtc_base_approved",
-    "../../system_wrappers:field_trial_default",
-    "../../system_wrappers:metrics_default",
-    "../../system_wrappers:runtime_enabled_features_default",
     "//testing/libfuzzer:libfuzzer_main",
   ]
+
+  # When WebRTC fuzzer tests are built on Chromium bots they need to link
+  # with Chromium's implementation of metrics and field trial.
+  if (build_with_chromium) {
+    deps += [
+      "../../../webrtc_overrides:field_trial",
+      "../../../webrtc_overrides:metrics",
+    ]
+  }
 }
 
 rtc_static_library("fuzz_data_helper") {
@@ -212,6 +218,7 @@ webrtc_fuzzer_test("rtcp_receiver_fuzzer") {
   ]
   deps = [
     "../../modules/rtp_rtcp",
+    "../../modules/rtp_rtcp:rtp_rtcp_format",
     "../../rtc_base:checks",
     "../../rtc_base:rtc_base_approved",
     "../../system_wrappers:system_wrappers",
@@ -438,6 +445,18 @@ webrtc_fuzzer_test("stun_validator_fuzzer") {
   dict = "corpora/stun.tokens"
 }
 
+webrtc_fuzzer_test("mdns_parser_fuzzer") {
+  sources = [
+    "mdns_parser_fuzzer.cc",
+  ]
+  deps = [
+    "../../p2p:rtc_p2p",
+    "../../rtc_base:rtc_base_approved",
+    "//third_party/abseil-cpp/absl/memory",
+  ]
+  seed_corpus = "corpora/mdns-corpus"
+}
+
 webrtc_fuzzer_test("pseudotcp_parser_fuzzer") {
   sources = [
     "pseudotcp_parser_fuzzer.cc",
@@ -487,7 +506,7 @@ webrtc_fuzzer_test("audio_processing_fuzzer") {
     "../../rtc_base:ptr_util",
     "../../rtc_base:rtc_base_approved",
     "../../rtc_base:safe_minmax",
-    "../../system_wrappers:field_trial_default",
+    "../../system_wrappers:field_trial",
     "//third_party/abseil-cpp/absl/memory",
   ]
   seed_corpus = "corpora/audio_processing-corpus"

@@ -330,7 +330,7 @@ void MockLibWebRTCPeerConnection::CreateOffer(webrtc::CreateSessionDescriptionOb
     });
 }
 
-void MockLibWebRTCPeerConnection::CreateAnswer(webrtc::CreateSessionDescriptionObserver* observer, const webrtc::MediaConstraintsInterface*)
+    void MockLibWebRTCPeerConnection::CreateAnswer(webrtc::CreateSessionDescriptionObserver* observer, const webrtc::PeerConnectionInterface::RTCOfferAnswerOptions&)
 {
     LibWebRTCProvider::callOnWebRTCSignalingThread([this, observer] {
         std::ostringstream sdp;

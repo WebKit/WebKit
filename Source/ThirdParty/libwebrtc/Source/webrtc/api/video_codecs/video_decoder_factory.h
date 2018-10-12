@@ -12,6 +12,7 @@
 #define API_VIDEO_CODECS_VIDEO_DECODER_FACTORY_H_
 
 #include <memory>
+#include <string>
 #include <vector>
 
 namespace webrtc {
@@ -30,6 +31,12 @@ class VideoDecoderFactory {
   // Creates a VideoDecoder for the specified format.
   virtual std::unique_ptr<VideoDecoder> CreateVideoDecoder(
       const SdpVideoFormat& format) = 0;
+
+  // Note: Do not call or override this method! This method is a legacy
+  // workaround and is scheduled for removal without notice.
+  virtual std::unique_ptr<VideoDecoder> LegacyCreateVideoDecoder(
+      const SdpVideoFormat& format,
+      const std::string& receive_stream_id);
 
   virtual ~VideoDecoderFactory() {}
 };

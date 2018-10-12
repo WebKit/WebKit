@@ -16,6 +16,7 @@ group("audio_mixer") {
 }
 
 rtc_static_library("audio_mixer_impl") {
+  visibility = [ "*" ]
   sources = [
     "audio_mixer_impl.cc",
     "audio_mixer_impl.h",
@@ -45,8 +46,7 @@ rtc_static_library("audio_mixer_impl") {
     "../../rtc_base:checks",
     "../../rtc_base:rtc_base_approved",
     "../../system_wrappers",
-    "../../system_wrappers:field_trial_api",
-    "../../system_wrappers:metrics_api",
+    "../../system_wrappers:metrics",
     "../audio_processing",
     "../audio_processing:apm_logging",
     "../audio_processing:audio_frame_view",
@@ -112,7 +112,6 @@ if (rtc_include_tests) {
       "../../api/audio:audio_mixer_api",
       "../../common_audio",
       "../../rtc_base:rtc_base_approved",
-      "../../system_wrappers:system_wrappers_default",
     ]
   }
 }

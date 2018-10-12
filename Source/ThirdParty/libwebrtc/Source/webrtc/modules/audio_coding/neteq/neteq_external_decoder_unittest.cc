@@ -19,6 +19,7 @@
 #include "modules/audio_coding/neteq/tools/input_audio_file.h"
 #include "modules/audio_coding/neteq/tools/neteq_external_decoder_test.h"
 #include "modules/audio_coding/neteq/tools/rtp_generator.h"
+#include "rtc_base/strings/string_builder.h"
 #include "test/gmock.h"
 #include "test/testsupport/fileutils.h"
 
@@ -122,7 +123,7 @@ class NetEqExternalDecoderUnitTest : public test::NetEqExternalDecoderTest {
         } while (Lost());  // If lost, immediately read the next packet.
       }
 
-      std::ostringstream ss;
+      rtc::StringBuilder ss;
       ss << "Lap number " << k << ".";
       SCOPED_TRACE(ss.str());  // Print out the parameter values on failure.
       // Compare mono and multi-channel.

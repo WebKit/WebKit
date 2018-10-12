@@ -46,7 +46,8 @@ class VideoAnalyzer : public PacketReceiver,
   ~VideoAnalyzer();
 
   virtual void SetReceiver(PacketReceiver* receiver);
-  void SetSource(test::VideoCapturer* video_capturer, bool respect_sink_wants);
+  void SetSource(test::TestVideoCapturer* video_capturer,
+                 bool respect_sink_wants);
   void SetCall(Call* call);
   void SetSendStream(VideoSendStream* stream);
   void SetReceiveStream(VideoReceiveStream* stream);
@@ -151,7 +152,7 @@ class VideoAnalyzer : public PacketReceiver,
                                  public rtc::VideoSourceInterface<VideoFrame> {
    public:
     explicit CapturedFrameForwarder(VideoAnalyzer* analyzer, Clock* clock);
-    void SetSource(test::VideoCapturer* video_capturer);
+    void SetSource(test::TestVideoCapturer* video_capturer);
 
    private:
     void OnFrame(const VideoFrame& video_frame) override;
@@ -167,7 +168,7 @@ class VideoAnalyzer : public PacketReceiver,
     rtc::CriticalSection crit_;
     rtc::VideoSinkInterface<VideoFrame>* send_stream_input_
         RTC_GUARDED_BY(crit_);
-    test::VideoCapturer* video_capturer_;
+    test::TestVideoCapturer* video_capturer_;
     Clock* clock_;
   };
 

@@ -8,26 +8,4 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#import <Foundation/Foundation.h>
-
-#import <WebRTC/RTCMacros.h>
-
-NS_ASSUME_NONNULL_BEGIN
-
-RTC_EXPORT
-@interface RTCRtpHeaderExtension : NSObject
-
-/** The URI of the RTP header extension, as defined in RFC5285. */
-@property(nonatomic, readonly, copy) NSString *uri;
-
-/** The value put in the RTP packet to identify the header extension. */
-@property(nonatomic, readonly) int id;
-
-/** Whether the header extension is encrypted or not. */
-@property(nonatomic, readonly, getter=isEncrypted) BOOL encrypted;
-
-- (instancetype)init NS_DESIGNATED_INITIALIZER;
-
-@end
-
-NS_ASSUME_NONNULL_END
+#import "api/peerconnection/RTCRtpHeaderExtension.h"

@@ -34,6 +34,8 @@ constexpr float kMaxGainChangePerFrameDb =
 constexpr float kHeadroomDbfs = 1.f;
 constexpr float kMaxGainDb = 30.f;
 constexpr float kInitialAdaptiveDigitalGainDb = 8.f;
+// At what limiter levels should we start decreasing the adaptive digital gain.
+constexpr float kLimiterThresholdForAgcGainDbfs = -kHeadroomDbfs;
 
 // This parameter must be tuned together with the noise estimator.
 constexpr float kMaxNoiseLevelDbfs = -50.f;
@@ -50,7 +52,8 @@ constexpr float kFullBufferLeakFactor = 1.f - 1.f / kFullBufferSizeMs;
 constexpr float kInitialSpeechLevelEstimateDbfs = -30.f;
 
 // Saturation Protector settings.
-constexpr float kInitialSaturationMarginDb = 17.f;
+float GetInitialSaturationMarginDb();
+float GetExtraSaturationMarginOffsetDb();
 
 constexpr size_t kPeakEnveloperSuperFrameLengthMs = 400;
 static_assert(kFullBufferSizeMs % kPeakEnveloperSuperFrameLengthMs == 0,

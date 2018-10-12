@@ -22,7 +22,8 @@ constexpr float kMaxErl = 1000.f;
 
 }  // namespace
 
-ErlEstimator::ErlEstimator() {
+ErlEstimator::ErlEstimator(size_t startup_phase_length_blocks_)
+    : startup_phase_length_blocks__(startup_phase_length_blocks_) {
   erl_.fill(kMaxErl);
   hold_counters_.fill(0);
   erl_time_domain_ = kMaxErl;
@@ -31,7 +32,12 @@ ErlEstimator::ErlEstimator() {
 
 ErlEstimator::~ErlEstimator() = default;
 
-void ErlEstimator::Update(rtc::ArrayView<const float> render_spectrum,
+void ErlEstimator::Reset() {
+  blocks_since_reset_ = 0;
+}
+
+void ErlEstimator::Update(bool converged_filter,
+                          rtc::ArrayView<const float> render_spectrum,
                           rtc::ArrayView<const float> capture_spectrum) {
   RTC_DCHECK_EQ(kFftLengthBy2Plus1, render_spectrum.size());
   RTC_DCHECK_EQ(kFftLengthBy2Plus1, capture_spectrum.size());
@@ -40,6 +46,11 @@ void ErlEstimator::Update(rtc::ArrayView<const float> render_spectrum,
 
   // Corresponds to WGN of power -46 dBFS.
   constexpr float kX2Min = 44015068.0f;
+
+  if (++blocks_since_reset_ < startup_phase_length_blocks__ ||
+      !converged_filter) {
+    return;
+  }
 
   // Update the estimates in a maximum statistics manner.
   for (size_t k = 1; k < kFftLengthBy2; ++k) {

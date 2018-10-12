@@ -17,7 +17,6 @@
 #include <emmintrin.h>
 #endif
 #include <algorithm>
-#include <sstream>
 #include <string>
 
 #include "modules/audio_processing/aec3/aec3_common.h"
@@ -26,6 +25,7 @@
 #include "modules/audio_processing/logging/apm_data_dumper.h"
 #include "modules/audio_processing/test/echo_canceller_test_tools.h"
 #include "rtc_base/random.h"
+#include "rtc_base/strings/string_builder.h"
 #include "system_wrappers/include/cpu_features_wrapper.h"
 #include "test/gtest.h"
 
@@ -34,10 +34,10 @@ namespace aec3 {
 namespace {
 
 std::string ProduceDebugText(size_t delay, size_t down_sampling_factor) {
-  std::ostringstream ss;
+  rtc::StringBuilder ss;
   ss << "Delay: " << delay;
   ss << ", Down sampling factor: " << down_sampling_factor;
-  return ss.str();
+  return ss.Release();
 }
 
 constexpr size_t kNumMatchedFilters = 10;
@@ -52,6 +52,7 @@ constexpr size_t kAlignmentShiftSubBlocks = kWindowSizeSubBlocks * 3 / 4;
 // counterparts.
 TEST(MatchedFilter, TestNeonOptimizations) {
   Random random_generator(42U);
+  constexpr float kSmoothing = 0.7f;
   for (auto down_sampling_factor : kDownSamplingFactors) {
     const size_t sub_block_size = kBlockSize / down_sampling_factor;
 
@@ -69,10 +70,10 @@ TEST(MatchedFilter, TestNeonOptimizations) {
       bool filters_updated_NEON = false;
       float error_sum_NEON = 0.f;
 
-      MatchedFilterCore_NEON(x_index, h.size() * 150.f * 150.f, x, y, h_NEON,
-                             &filters_updated_NEON, &error_sum_NEON);
+      MatchedFilterCore_NEON(x_index, h.size() * 150.f * 150.f, kSmoothing, x,
+                             y, h_NEON, &filters_updated_NEON, &error_sum_NEON);
 
-      MatchedFilterCore(x_index, h.size() * 150.f * 150.f, x, y, h,
+      MatchedFilterCore(x_index, h.size() * 150.f * 150.f, kSmoothing, x, y, h,
                         &filters_updated, &error_sum);
 
       EXPECT_EQ(filters_updated, filters_updated_NEON);
@@ -95,6 +96,7 @@ TEST(MatchedFilter, TestSse2Optimizations) {
   bool use_sse2 = (WebRtc_GetCPUInfo(kSSE2) != 0);
   if (use_sse2) {
     Random random_generator(42U);
+    constexpr float kSmoothing = 0.7f;
     for (auto down_sampling_factor : kDownSamplingFactors) {
       const size_t sub_block_size = kBlockSize / down_sampling_factor;
       std::vector<float> x(2000);
@@ -111,11 +113,12 @@ TEST(MatchedFilter, TestSse2Optimizations) {
         bool filters_updated_SSE2 = false;
         float error_sum_SSE2 = 0.f;
 
-        MatchedFilterCore_SSE2(x_index, h.size() * 150.f * 150.f, x, y, h_SSE2,
-                               &filters_updated_SSE2, &error_sum_SSE2);
+        MatchedFilterCore_SSE2(x_index, h.size() * 150.f * 150.f, kSmoothing, x,
+                               y, h_SSE2, &filters_updated_SSE2,
+                               &error_sum_SSE2);
 
-        MatchedFilterCore(x_index, h.size() * 150.f * 150.f, x, y, h,
-                          &filters_updated, &error_sum);
+        MatchedFilterCore(x_index, h.size() * 150.f * 150.f, kSmoothing, x, y,
+                          h, &filters_updated, &error_sum);
 
         EXPECT_EQ(filters_updated, filters_updated_SSE2);
         EXPECT_NEAR(error_sum, error_sum_SSE2, error_sum / 100000.f);
@@ -157,7 +160,9 @@ TEST(MatchedFilter, LagEstimation) {
                                              delay_samples);
       MatchedFilter filter(&data_dumper, DetectOptimization(), sub_block_size,
                            kWindowSizeSubBlocks, kNumMatchedFilters,
-                           kAlignmentShiftSubBlocks, 150);
+                           kAlignmentShiftSubBlocks, 150,
+                           config.delay.delay_estimate_smoothing,
+                           config.delay.delay_candidate_detection_threshold);
 
       std::unique_ptr<RenderDelayBuffer> render_delay_buffer(
           RenderDelayBuffer::Create(config, 3));
@@ -259,7 +264,9 @@ TEST(MatchedFilter, LagNotReliableForUncorrelatedRenderAndCapture) {
         RenderDelayBuffer::Create(config, 3));
     MatchedFilter filter(&data_dumper, DetectOptimization(), sub_block_size,
                          kWindowSizeSubBlocks, kNumMatchedFilters,
-                         kAlignmentShiftSubBlocks, 150);
+                         kAlignmentShiftSubBlocks, 150,
+                         config.delay.delay_estimate_smoothing,
+                         config.delay.delay_candidate_detection_threshold);
 
     // Analyze the correlation between render and capture.
     for (size_t k = 0; k < 100; ++k) {
@@ -292,11 +299,14 @@ TEST(MatchedFilter, LagNotUpdatedForLowLevelRender) {
     std::array<float, kBlockSize> capture;
     capture.fill(0.f);
     ApmDataDumper data_dumper(0);
+    EchoCanceller3Config config;
     MatchedFilter filter(&data_dumper, DetectOptimization(), sub_block_size,
                          kWindowSizeSubBlocks, kNumMatchedFilters,
-                         kAlignmentShiftSubBlocks, 150);
+                         kAlignmentShiftSubBlocks, 150,
+                         config.delay.delay_estimate_smoothing,
+                         config.delay.delay_candidate_detection_threshold);
     std::unique_ptr<RenderDelayBuffer> render_delay_buffer(
-        RenderDelayBuffer::Create(EchoCanceller3Config(), 3));
+        RenderDelayBuffer::Create(config, 3));
     Decimator capture_decimator(down_sampling_factor);
 
     // Analyze the correlation between render and capture.
@@ -331,12 +341,15 @@ TEST(MatchedFilter, LagNotUpdatedForLowLevelRender) {
 // number of alignment shifts.
 TEST(MatchedFilter, NumberOfLagEstimates) {
   ApmDataDumper data_dumper(0);
+  EchoCanceller3Config config;
   for (auto down_sampling_factor : kDownSamplingFactors) {
     const size_t sub_block_size = kBlockSize / down_sampling_factor;
     for (size_t num_matched_filters = 0; num_matched_filters < 10;
          ++num_matched_filters) {
       MatchedFilter filter(&data_dumper, DetectOptimization(), sub_block_size,
-                           32, num_matched_filters, 1, 150);
+                           32, num_matched_filters, 1, 150,
+                           config.delay.delay_estimate_smoothing,
+                           config.delay.delay_candidate_detection_threshold);
       EXPECT_EQ(num_matched_filters, filter.GetLagEstimates().size());
     }
   }
@@ -347,13 +360,19 @@ TEST(MatchedFilter, NumberOfLagEstimates) {
 // Verifies the check for non-zero windows size.
 TEST(MatchedFilter, ZeroWindowSize) {
   ApmDataDumper data_dumper(0);
-  EXPECT_DEATH(
-      MatchedFilter(&data_dumper, DetectOptimization(), 16, 0, 1, 1, 150), "");
+  EchoCanceller3Config config;
+  EXPECT_DEATH(MatchedFilter(&data_dumper, DetectOptimization(), 16, 0, 1, 1,
+                             150, config.delay.delay_estimate_smoothing,
+                             config.delay.delay_candidate_detection_threshold),
+               "");
 }
 
 // Verifies the check for non-null data dumper.
 TEST(MatchedFilter, NullDataDumper) {
-  EXPECT_DEATH(MatchedFilter(nullptr, DetectOptimization(), 16, 1, 1, 1, 150),
+  EchoCanceller3Config config;
+  EXPECT_DEATH(MatchedFilter(nullptr, DetectOptimization(), 16, 1, 1, 1, 150,
+                             config.delay.delay_estimate_smoothing,
+                             config.delay.delay_candidate_detection_threshold),
                "");
 }
 
@@ -361,8 +380,11 @@ TEST(MatchedFilter, NullDataDumper) {
 // TODO(peah): Activate the unittest once the required code has been landed.
 TEST(MatchedFilter, DISABLED_BlockSizeMultipleOf4) {
   ApmDataDumper data_dumper(0);
-  EXPECT_DEATH(
-      MatchedFilter(&data_dumper, DetectOptimization(), 15, 1, 1, 1, 150), "");
+  EchoCanceller3Config config;
+  EXPECT_DEATH(MatchedFilter(&data_dumper, DetectOptimization(), 15, 1, 1, 1,
+                             150, config.delay.delay_estimate_smoothing,
+                             config.delay.delay_candidate_detection_threshold),
+               "");
 }
 
 // Verifies the check for that there is an integer number of sub blocks that add
@@ -370,8 +392,11 @@ TEST(MatchedFilter, DISABLED_BlockSizeMultipleOf4) {
 // TODO(peah): Activate the unittest once the required code has been landed.
 TEST(MatchedFilter, DISABLED_SubBlockSizeAddsUpToBlockSize) {
   ApmDataDumper data_dumper(0);
-  EXPECT_DEATH(
-      MatchedFilter(&data_dumper, DetectOptimization(), 12, 1, 1, 1, 150), "");
+  EchoCanceller3Config config;
+  EXPECT_DEATH(MatchedFilter(&data_dumper, DetectOptimization(), 12, 1, 1, 1,
+                             150, config.delay.delay_estimate_smoothing,
+                             config.delay.delay_candidate_detection_threshold),
+               "");
 }
 
 #endif

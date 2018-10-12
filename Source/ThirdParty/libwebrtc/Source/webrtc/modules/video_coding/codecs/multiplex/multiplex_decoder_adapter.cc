@@ -16,6 +16,7 @@
 #include "common_video/include/video_frame_buffer.h"
 #include "common_video/libyuv/include/webrtc_libyuv.h"
 #include "modules/video_coding/codecs/multiplex/include/augmented_video_frame_buffer.h"
+#include "modules/video_coding/codecs/multiplex/multiplex_encoded_image_packer.h"
 #include "rtc_base/keep_ref_until_done.h"
 #include "rtc_base/logging.h"
 
@@ -130,19 +131,20 @@ int32_t MultiplexDecoderAdapter::Decode(
   MultiplexImage image = MultiplexEncodedImagePacker::Unpack(input_image);
 
   if (supports_augmenting_data_) {
-    RTC_DCHECK(decoded_augmenting_data_.find(input_image._timeStamp) ==
+    RTC_DCHECK(decoded_augmenting_data_.find(input_image.Timestamp()) ==
                decoded_augmenting_data_.end());
     decoded_augmenting_data_.emplace(
-        std::piecewise_construct, std::forward_as_tuple(input_image._timeStamp),
+        std::piecewise_construct,
+        std::forward_as_tuple(input_image.Timestamp()),
         std::forward_as_tuple(std::move(image.augmenting_data),
                               image.augmenting_data_size));
   }
 
   if (image.component_count == 1) {
-    RTC_DCHECK(decoded_data_.find(input_image._timeStamp) ==
+    RTC_DCHECK(decoded_data_.find(input_image.Timestamp()) ==
                decoded_data_.end());
     decoded_data_.emplace(std::piecewise_construct,
-                          std::forward_as_tuple(input_image._timeStamp),
+                          std::forward_as_tuple(input_image.Timestamp()),
                           std::forward_as_tuple(kAXXStream));
   }
   int32_t rv = 0;
@@ -181,14 +183,14 @@ void MultiplexDecoderAdapter::Decoded(AlphaCodecStream stream_idx,
       decoded_data_.find(decoded_image->timestamp());
   const auto& augmenting_data_it =
       decoded_augmenting_data_.find(decoded_image->timestamp());
+  const bool has_augmenting_data =
+      augmenting_data_it != decoded_augmenting_data_.end();
   if (other_decoded_data_it != decoded_data_.end()) {
     uint16_t augmenting_data_size =
-        augmenting_data_it == decoded_augmenting_data_.end()
-            ? 0
-            : augmenting_data_it->second.size_;
+        has_augmenting_data ? augmenting_data_it->second.size_ : 0;
     std::unique_ptr<uint8_t[]> augmenting_data =
-        augmenting_data_size == 0 ? NULL
-                                  : std::move(augmenting_data_it->second.data_);
+        has_augmenting_data ? std::move(augmenting_data_it->second.data_)
+                            : nullptr;
     auto& other_image_data = other_decoded_data_it->second;
     if (stream_idx == kYUVStream) {
       RTC_DCHECK_EQ(kAXXStream, other_image_data.stream_idx_);
@@ -205,7 +207,7 @@ void MultiplexDecoderAdapter::Decoded(AlphaCodecStream stream_idx,
                        std::move(augmenting_data), augmenting_data_size);
     }
     decoded_data_.erase(decoded_data_.begin(), other_decoded_data_it);
-    if (supports_augmenting_data_) {
+    if (has_augmenting_data) {
       decoded_augmenting_data_.erase(decoded_augmenting_data_.begin(),
                                      augmenting_data_it);
     }

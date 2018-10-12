@@ -109,4 +109,24 @@ SimpleStringBuilder& SimpleStringBuilder::Append(const char* str,
   return *this;
 }
 
+StringBuilder& StringBuilder::AppendFormat(const char* fmt, ...) {
+  va_list args, copy;
+  va_start(args, fmt);
+  va_copy(copy, args);
+  const int predicted_length = std::vsnprintf(nullptr, 0, fmt, copy);
+  va_end(copy);
+
+  RTC_DCHECK_GE(predicted_length, 0);
+  if (predicted_length > 0) {
+    const size_t size = str_.size();
+    str_.resize(size + predicted_length);
+    // Pass "+ 1" to vsnprintf to include space for the '\0'.
+    const int actual_length =
+        std::vsnprintf(&str_[size], predicted_length + 1, fmt, args);
+    RTC_DCHECK_GE(actual_length, 0);
+  }
+  va_end(args);
+  return *this;
+}
+
 }  // namespace rtc

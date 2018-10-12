@@ -341,6 +341,13 @@ int32_t MediaCodecVideoEncoder::InitEncode(const VideoCodec* codec_settings,
   ALOGD << "InitEncode request: " << init_width << " x " << init_height;
   ALOGD << "Encoder automatic resize " << (scale_ ? "enabled" : "disabled");
 
+  if (codec_settings->numberOfSimulcastStreams > 1) {
+    ALOGD << "Number of simulcast layers requested: "
+          << codec_settings->numberOfSimulcastStreams
+          << ". Requesting software fallback.";
+    return WEBRTC_VIDEO_CODEC_FALLBACK_SOFTWARE;
+  }
+
   // Check allowed H.264 profile
   profile_ = H264::Profile::kProfileBaseline;
   if (codec_type == kVideoCodecH264) {
@@ -987,7 +994,7 @@ bool MediaCodecVideoEncoder::DeliverPendingOutputs(JNIEnv* jni) {
           new EncodedImage(payload, payload_size, payload_size));
       image->_encodedWidth = width_;
       image->_encodedHeight = height_;
-      image->_timeStamp = output_timestamp_;
+      image->SetTimestamp(output_timestamp_);
       image->capture_time_ms_ = output_render_time_ms_;
       image->rotation_ = output_rotation_;
       image->content_type_ = (codec_mode_ == VideoCodecMode::kScreensharing)
@@ -1001,7 +1008,6 @@ bool MediaCodecVideoEncoder::DeliverPendingOutputs(JNIEnv* jni) {
       info.codecType = codec_type;
       if (codec_type == kVideoCodecVP8) {
         info.codecSpecific.VP8.nonReference = false;
-        info.codecSpecific.VP8.simulcastIdx = 0;
         info.codecSpecific.VP8.temporalIdx = kNoTemporalIdx;
         info.codecSpecific.VP8.layerSync = false;
         info.codecSpecific.VP8.keyIdx = kNoKeyIdx;
@@ -1013,7 +1019,6 @@ bool MediaCodecVideoEncoder::DeliverPendingOutputs(JNIEnv* jni) {
         info.codecSpecific.VP9.flexible_mode = false;
         info.codecSpecific.VP9.ss_data_available = key_frame ? true : false;
         info.codecSpecific.VP9.temporal_idx = kNoTemporalIdx;
-        info.codecSpecific.VP9.spatial_idx = kNoSpatialIdx;
         info.codecSpecific.VP9.temporal_up_switch = true;
         info.codecSpecific.VP9.inter_layer_predicted = false;
         info.codecSpecific.VP9.gof_idx =

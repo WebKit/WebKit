@@ -62,6 +62,7 @@ class RelayConnection : public sigslot::has_slots<> {
   rtc::AsyncPacketSocket* socket_;
   const ProtocolAddress* protocol_address_;
   StunRequestManager* request_manager_;
+  rtc::DiffServCodePoint dscp_;
 };
 
 // Manages a number of connections to the relayserver, one for each
@@ -407,7 +408,9 @@ void RelayPort::OnReadPacket(const char* data,
 RelayConnection::RelayConnection(const ProtocolAddress* protocol_address,
                                  rtc::AsyncPacketSocket* socket,
                                  rtc::Thread* thread)
-    : socket_(socket), protocol_address_(protocol_address) {
+    : socket_(socket),
+      protocol_address_(protocol_address),
+      dscp_(rtc::DSCP_NO_CHANGE) {
   request_manager_ = new StunRequestManager(thread);
   request_manager_->SignalSendPacket.connect(this,
                                              &RelayConnection::OnSendPacket);
@@ -419,6 +422,9 @@ RelayConnection::~RelayConnection() {
 }
 
 int RelayConnection::SetSocketOption(rtc::Socket::Option opt, int value) {
+  if (opt == rtc::Socket::OPT_DSCP) {
+    dscp_ = static_cast<rtc::DiffServCodePoint>(value);
+  }
   if (socket_) {
     return socket_->SetOption(opt, value);
   }
@@ -432,8 +438,7 @@ bool RelayConnection::CheckResponse(StunMessage* msg) {
 void RelayConnection::OnSendPacket(const void* data,
                                    size_t size,
                                    StunRequest* req) {
-  // TODO(mallinath) Find a way to get DSCP value from Port.
-  rtc::PacketOptions options;  // Default dscp set to NO_CHANGE.
+  rtc::PacketOptions options(dscp_);
   int sent = socket_->SendTo(data, size, GetAddress(), options);
   if (sent <= 0) {
     RTC_LOG(LS_VERBOSE) << "OnSendPacket: failed sending to "

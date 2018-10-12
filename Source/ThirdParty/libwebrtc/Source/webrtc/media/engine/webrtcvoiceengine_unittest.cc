@@ -168,7 +168,6 @@ class WebRtcVoiceEngineTestFake : public testing::Test {
       : apm_(new rtc::RefCountedObject<
              StrictMock<webrtc::test::MockAudioProcessing>>()),
         apm_gc_(*apm_->gain_control()),
-        apm_ec_(*apm_->echo_cancellation()),
         apm_ns_(*apm_->noise_suppression()),
         apm_vd_(*apm_->voice_detection()),
         call_(),
@@ -181,9 +180,6 @@ class WebRtcVoiceEngineTestFake : public testing::Test {
     EXPECT_CALL(*apm_, SetExtraOptions(testing::_));
     EXPECT_CALL(*apm_, DetachAecDump());
     // Default Options.
-    EXPECT_CALL(apm_ec_, Enable(true)).WillOnce(Return(0));
-    EXPECT_CALL(apm_ec_, enable_metrics(true)).WillOnce(Return(0));
-    EXPECT_CALL(apm_ec_, enable_drift_compensation(false)).WillOnce(Return(0));
     EXPECT_CALL(apm_gc_, set_mode(kDefaultAgcMode)).WillOnce(Return(0));
     EXPECT_CALL(apm_gc_, Enable(true)).WillOnce(Return(0));
     EXPECT_CALL(apm_gc_, set_analog_level_limits(0, 255)).WillOnce(Return(0));
@@ -208,6 +204,7 @@ class WebRtcVoiceEngineTestFake : public testing::Test {
     recv_parameters_.codecs.push_back(kPcmuCodec);
 
     // Default Options.
+    EXPECT_TRUE(IsEchoCancellationEnabled());
     EXPECT_TRUE(IsHighPassFilterEnabled());
   }
 
@@ -711,6 +708,10 @@ class WebRtcVoiceEngineTestFake : public testing::Test {
     }
   }
 
+  bool IsEchoCancellationEnabled() {
+    return engine_->GetApmConfigForTest().echo_canceller.enabled;
+  }
+
   bool IsHighPassFilterEnabled() {
     return engine_->GetApmConfigForTest().high_pass_filter.enabled;
   }
@@ -719,7 +720,6 @@ class WebRtcVoiceEngineTestFake : public testing::Test {
   StrictMock<webrtc::test::MockAudioDeviceModule> adm_;
   rtc::scoped_refptr<StrictMock<webrtc::test::MockAudioProcessing>> apm_;
   webrtc::test::MockGainControl& apm_gc_;
-  webrtc::test::MockEchoCancellation& apm_ec_;
   webrtc::test::MockNoiseSuppression& apm_ns_;
   webrtc::test::MockVoiceDetection& apm_vd_;
   cricket::FakeCall call_;
@@ -2818,63 +2818,55 @@ TEST_F(WebRtcVoiceEngineTestFake, SetAudioOptions) {
   // Nothing set in AudioOptions, so everything should be as default.
   send_parameters_.options = cricket::AudioOptions();
   SetSendParameters(send_parameters_);
+  EXPECT_TRUE(IsEchoCancellationEnabled());
   EXPECT_TRUE(IsHighPassFilterEnabled());
   EXPECT_EQ(50u, GetRecvStreamConfig(kSsrcY).jitter_buffer_max_packets);
   EXPECT_FALSE(GetRecvStreamConfig(kSsrcY).jitter_buffer_fast_accelerate);
 
   // Turn echo cancellation off
-  EXPECT_CALL(apm_ec_, Enable(false)).WillOnce(Return(0));
-  EXPECT_CALL(apm_ec_, enable_metrics(false)).WillOnce(Return(0));
   send_parameters_.options.echo_cancellation = false;
   SetSendParameters(send_parameters_);
+  EXPECT_FALSE(IsEchoCancellationEnabled());
 
   // Turn echo cancellation back on, with settings, and make sure
   // nothing else changed.
-  EXPECT_CALL(apm_ec_, Enable(true)).WillOnce(Return(0));
-  EXPECT_CALL(apm_ec_, enable_metrics(true)).WillOnce(Return(0));
   send_parameters_.options.echo_cancellation = true;
   SetSendParameters(send_parameters_);
+  EXPECT_TRUE(IsEchoCancellationEnabled());
 
   // Turn on delay agnostic aec and make sure nothing change w.r.t. echo
   // control.
-  EXPECT_CALL(apm_ec_, Enable(true)).WillOnce(Return(0));
-  EXPECT_CALL(apm_ec_, enable_metrics(true)).WillOnce(Return(0));
   send_parameters_.options.delay_agnostic_aec = true;
   SetSendParameters(send_parameters_);
+  EXPECT_TRUE(IsEchoCancellationEnabled());
 
   // Turn off echo cancellation and delay agnostic aec.
-  EXPECT_CALL(apm_ec_, Enable(false)).WillOnce(Return(0));
-  EXPECT_CALL(apm_ec_, enable_metrics(false)).WillOnce(Return(0));
   send_parameters_.options.delay_agnostic_aec = false;
   send_parameters_.options.extended_filter_aec = false;
   send_parameters_.options.echo_cancellation = false;
   SetSendParameters(send_parameters_);
+  EXPECT_FALSE(IsEchoCancellationEnabled());
 
   // Turning delay agnostic aec back on should also turn on echo cancellation.
-  EXPECT_CALL(apm_ec_, Enable(true)).WillOnce(Return(0));
-  EXPECT_CALL(apm_ec_, enable_metrics(true)).WillOnce(Return(0));
   send_parameters_.options.delay_agnostic_aec = true;
   SetSendParameters(send_parameters_);
+  EXPECT_TRUE(IsEchoCancellationEnabled());
 
   // Turn off AGC
-  EXPECT_CALL(apm_ec_, Enable(true)).WillOnce(Return(0));
-  EXPECT_CALL(apm_ec_, enable_metrics(true)).WillOnce(Return(0));
   EXPECT_CALL(apm_gc_, set_mode(kDefaultAgcMode)).WillOnce(Return(0));
   EXPECT_CALL(apm_gc_, Enable(false)).WillOnce(Return(0));
   send_parameters_.options.auto_gain_control = false;
   SetSendParameters(send_parameters_);
+  EXPECT_TRUE(IsEchoCancellationEnabled());
 
   // Turn AGC back on
-  EXPECT_CALL(apm_ec_, Enable(true)).WillOnce(Return(0));
-  EXPECT_CALL(apm_ec_, enable_metrics(true)).WillOnce(Return(0));
   EXPECT_CALL(apm_gc_, set_mode(kDefaultAgcMode)).WillOnce(Return(0));
   EXPECT_CALL(apm_gc_, Enable(true)).WillOnce(Return(0));
   send_parameters_.options.auto_gain_control = true;
   SetSendParameters(send_parameters_);
+  EXPECT_TRUE(IsEchoCancellationEnabled());
 
   // Turn off other options.
-  EXPECT_CALL(apm_ec_, Enable(true)).WillOnce(Return(0));
-  EXPECT_CALL(apm_ec_, enable_metrics(true)).WillOnce(Return(0));
   EXPECT_CALL(apm_gc_, set_mode(kDefaultAgcMode)).WillOnce(Return(0));
   EXPECT_CALL(apm_gc_, Enable(true)).WillOnce(Return(0));
   EXPECT_CALL(apm_ns_, set_level(kDefaultNsLevel)).WillOnce(Return(0));
@@ -2885,17 +2877,17 @@ TEST_F(WebRtcVoiceEngineTestFake, SetAudioOptions) {
   send_parameters_.options.typing_detection = false;
   send_parameters_.options.stereo_swapping = true;
   SetSendParameters(send_parameters_);
+  EXPECT_TRUE(IsEchoCancellationEnabled());
   EXPECT_FALSE(IsHighPassFilterEnabled());
 
   // Set options again to ensure it has no impact.
-  EXPECT_CALL(apm_ec_, Enable(true)).WillOnce(Return(0));
-  EXPECT_CALL(apm_ec_, enable_metrics(true)).WillOnce(Return(0));
   EXPECT_CALL(apm_gc_, set_mode(kDefaultAgcMode)).WillOnce(Return(0));
   EXPECT_CALL(apm_gc_, Enable(true)).WillOnce(Return(0));
   EXPECT_CALL(apm_ns_, set_level(kDefaultNsLevel)).WillOnce(Return(0));
   EXPECT_CALL(apm_ns_, Enable(false)).WillOnce(Return(0));
   EXPECT_CALL(apm_vd_, Enable(false)).WillOnce(Return(0));
   SetSendParameters(send_parameters_);
+  EXPECT_TRUE(IsEchoCancellationEnabled());
 }
 
 TEST_F(WebRtcVoiceEngineTestFake, SetOptionOverridesViaChannels) {
@@ -2916,10 +2908,8 @@ TEST_F(WebRtcVoiceEngineTestFake, SetOptionOverridesViaChannels) {
   EXPECT_CALL(adm_, InitRecording()).Times(2).WillRepeatedly(Return(0));
   webrtc::AudioProcessing::Config apm_config;
   EXPECT_CALL(*apm_, GetConfig())
-      .Times(10)
       .WillRepeatedly(ReturnPointee(&apm_config));
   EXPECT_CALL(*apm_, ApplyConfig(_))
-      .Times(10)
       .WillRepeatedly(SaveArg<0>(&apm_config));
   EXPECT_CALL(*apm_, SetExtraOptions(testing::_)).Times(10);
 
@@ -2943,27 +2933,26 @@ TEST_F(WebRtcVoiceEngineTestFake, SetOptionOverridesViaChannels) {
   parameters_options_all.options.echo_cancellation = true;
   parameters_options_all.options.auto_gain_control = true;
   parameters_options_all.options.noise_suppression = true;
-  EXPECT_CALL(apm_ec_, Enable(true)).Times(2).WillRepeatedly(Return(0));
-  EXPECT_CALL(apm_ec_, enable_metrics(true)).Times(2).WillRepeatedly(Return(0));
   EXPECT_CALL(apm_gc_, set_mode(kDefaultAgcMode)).Times(2).WillOnce(Return(0));
   EXPECT_CALL(apm_gc_, Enable(true)).Times(2).WillRepeatedly(Return(0));
   EXPECT_CALL(apm_ns_, set_level(kDefaultNsLevel)).Times(2).WillOnce(Return(0));
   EXPECT_CALL(apm_ns_, Enable(true)).Times(2).WillRepeatedly(Return(0));
   EXPECT_TRUE(channel1->SetSendParameters(parameters_options_all));
+  EXPECT_TRUE(IsEchoCancellationEnabled());
   EXPECT_EQ(parameters_options_all.options, channel1->options());
   EXPECT_TRUE(channel2->SetSendParameters(parameters_options_all));
+  EXPECT_TRUE(IsEchoCancellationEnabled());
   EXPECT_EQ(parameters_options_all.options, channel2->options());
 
   // unset NS
   cricket::AudioSendParameters parameters_options_no_ns = send_parameters_;
   parameters_options_no_ns.options.noise_suppression = false;
-  EXPECT_CALL(apm_ec_, Enable(true)).WillOnce(Return(0));
-  EXPECT_CALL(apm_ec_, enable_metrics(true)).WillOnce(Return(0));
   EXPECT_CALL(apm_gc_, set_mode(kDefaultAgcMode)).WillOnce(Return(0));
   EXPECT_CALL(apm_gc_, Enable(true)).WillOnce(Return(0));
   EXPECT_CALL(apm_ns_, set_level(kDefaultNsLevel)).WillOnce(Return(0));
   EXPECT_CALL(apm_ns_, Enable(false)).WillOnce(Return(0));
   EXPECT_TRUE(channel1->SetSendParameters(parameters_options_no_ns));
+  EXPECT_TRUE(IsEchoCancellationEnabled());
   cricket::AudioOptions expected_options = parameters_options_all.options;
   expected_options.echo_cancellation = true;
   expected_options.auto_gain_control = true;
@@ -2973,54 +2962,49 @@ TEST_F(WebRtcVoiceEngineTestFake, SetOptionOverridesViaChannels) {
   // unset AGC
   cricket::AudioSendParameters parameters_options_no_agc = send_parameters_;
   parameters_options_no_agc.options.auto_gain_control = false;
-  EXPECT_CALL(apm_ec_, Enable(true)).WillOnce(Return(0));
-  EXPECT_CALL(apm_ec_, enable_metrics(true)).WillOnce(Return(0));
   EXPECT_CALL(apm_gc_, set_mode(kDefaultAgcMode)).WillOnce(Return(0));
   EXPECT_CALL(apm_gc_, Enable(false)).WillOnce(Return(0));
   EXPECT_CALL(apm_ns_, set_level(kDefaultNsLevel)).WillOnce(Return(0));
   EXPECT_CALL(apm_ns_, Enable(true)).WillOnce(Return(0));
   EXPECT_TRUE(channel2->SetSendParameters(parameters_options_no_agc));
+  EXPECT_TRUE(IsEchoCancellationEnabled());
   expected_options.echo_cancellation = true;
   expected_options.auto_gain_control = false;
   expected_options.noise_suppression = true;
   EXPECT_EQ(expected_options, channel2->options());
 
-  EXPECT_CALL(apm_ec_, Enable(true)).WillOnce(Return(0));
-  EXPECT_CALL(apm_ec_, enable_metrics(true)).WillOnce(Return(0));
   EXPECT_CALL(apm_gc_, set_mode(kDefaultAgcMode)).WillOnce(Return(0));
   EXPECT_CALL(apm_gc_, Enable(true)).WillOnce(Return(0));
   EXPECT_CALL(apm_ns_, set_level(kDefaultNsLevel)).WillOnce(Return(0));
   EXPECT_CALL(apm_ns_, Enable(true)).WillOnce(Return(0));
   EXPECT_TRUE(channel_->SetSendParameters(parameters_options_all));
+  EXPECT_TRUE(IsEchoCancellationEnabled());
 
-  EXPECT_CALL(apm_ec_, Enable(true)).WillOnce(Return(0));
-  EXPECT_CALL(apm_ec_, enable_metrics(true)).WillOnce(Return(0));
   EXPECT_CALL(apm_gc_, set_mode(kDefaultAgcMode)).WillOnce(Return(0));
   EXPECT_CALL(apm_gc_, Enable(true)).WillOnce(Return(0));
   EXPECT_CALL(apm_ns_, set_level(kDefaultNsLevel)).WillOnce(Return(0));
   EXPECT_CALL(apm_ns_, Enable(false)).WillOnce(Return(0));
   channel1->SetSend(true);
+  EXPECT_TRUE(IsEchoCancellationEnabled());
 
-  EXPECT_CALL(apm_ec_, Enable(true)).WillOnce(Return(0));
-  EXPECT_CALL(apm_ec_, enable_metrics(true)).WillOnce(Return(0));
   EXPECT_CALL(apm_gc_, set_mode(kDefaultAgcMode)).WillOnce(Return(0));
   EXPECT_CALL(apm_gc_, Enable(false)).WillOnce(Return(0));
   EXPECT_CALL(apm_ns_, set_level(kDefaultNsLevel)).WillOnce(Return(0));
   EXPECT_CALL(apm_ns_, Enable(true)).WillOnce(Return(0));
   channel2->SetSend(true);
+  EXPECT_TRUE(IsEchoCancellationEnabled());
 
   // Make sure settings take effect while we are sending.
   cricket::AudioSendParameters parameters_options_no_agc_nor_ns =
       send_parameters_;
   parameters_options_no_agc_nor_ns.options.auto_gain_control = false;
   parameters_options_no_agc_nor_ns.options.noise_suppression = false;
-  EXPECT_CALL(apm_ec_, Enable(true)).WillOnce(Return(0));
-  EXPECT_CALL(apm_ec_, enable_metrics(true)).WillOnce(Return(0));
   EXPECT_CALL(apm_gc_, set_mode(kDefaultAgcMode)).WillOnce(Return(0));
   EXPECT_CALL(apm_gc_, Enable(false)).WillOnce(Return(0));
   EXPECT_CALL(apm_ns_, set_level(kDefaultNsLevel)).WillOnce(Return(0));
   EXPECT_CALL(apm_ns_, Enable(false)).WillOnce(Return(0));
   EXPECT_TRUE(channel2->SetSendParameters(parameters_options_no_agc_nor_ns));
+  EXPECT_TRUE(IsEchoCancellationEnabled());
   expected_options.echo_cancellation = true;
   expected_options.auto_gain_control = false;
   expected_options.noise_suppression = false;
@@ -3032,34 +3016,37 @@ TEST_F(WebRtcVoiceEngineTestFake, TestSetDscpOptions) {
   EXPECT_TRUE(SetupSendStream());
   cricket::FakeNetworkInterface network_interface;
   cricket::MediaConfig config;
-  std::unique_ptr<cricket::VoiceMediaChannel> channel;
+  std::unique_ptr<cricket::WebRtcVoiceMediaChannel> channel;
 
   webrtc::AudioProcessing::Config apm_config;
   EXPECT_CALL(*apm_, GetConfig())
-      .Times(3)
       .WillRepeatedly(ReturnPointee(&apm_config));
   EXPECT_CALL(*apm_, ApplyConfig(_))
-      .Times(3)
       .WillRepeatedly(SaveArg<0>(&apm_config));
   EXPECT_CALL(*apm_, SetExtraOptions(testing::_)).Times(3);
 
-  channel.reset(
-      engine_->CreateChannel(&call_, config, cricket::AudioOptions()));
+  channel.reset(static_cast<cricket::WebRtcVoiceMediaChannel*>(
+      engine_->CreateChannel(&call_, config, cricket::AudioOptions())));
   channel->SetInterface(&network_interface);
   // Default value when DSCP is disabled should be DSCP_DEFAULT.
   EXPECT_EQ(rtc::DSCP_DEFAULT, network_interface.dscp());
 
   config.enable_dscp = true;
-  channel.reset(
-      engine_->CreateChannel(&call_, config, cricket::AudioOptions()));
+  channel.reset(static_cast<cricket::WebRtcVoiceMediaChannel*>(
+      engine_->CreateChannel(&call_, config, cricket::AudioOptions())));
   channel->SetInterface(&network_interface);
   EXPECT_EQ(rtc::DSCP_EF, network_interface.dscp());
+
+  // Packets should also self-identify their dscp in PacketOptions.
+  const uint8_t kData[10] = {0};
+  EXPECT_TRUE(channel->SendRtcp(kData, sizeof(kData)));
+  EXPECT_EQ(rtc::DSCP_EF, network_interface.options().dscp);
 
   // Verify that setting the option to false resets the
   // DiffServCodePoint.
   config.enable_dscp = false;
-  channel.reset(
-      engine_->CreateChannel(&call_, config, cricket::AudioOptions()));
+  channel.reset(static_cast<cricket::WebRtcVoiceMediaChannel*>(
+      engine_->CreateChannel(&call_, config, cricket::AudioOptions())));
   channel->SetInterface(&network_interface);
   // Default value when DSCP is disabled should be DSCP_DEFAULT.
   EXPECT_EQ(rtc::DSCP_DEFAULT, network_interface.dscp());

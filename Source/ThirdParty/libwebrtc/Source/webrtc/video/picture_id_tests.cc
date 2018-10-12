@@ -7,6 +7,10 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
+
+#include "api/test/simulated_network.h"
+#include "call/fake_network_pipe.h"
+#include "call/simulated_network.h"
 #include "media/engine/internalencoderfactory.h"
 #include "media/engine/simulcast_encoder_adapter.h"
 #include "modules/rtp_rtcp/source/rtp_format.h"
@@ -96,11 +100,14 @@ class PictureIdObserver : public test::RtpRtcpObserver {
         &parsed_payload, &packet[header.headerLength], payload_length));
 
     switch (codec_type_) {
-      case kVideoCodecVP8:
-        parsed->picture_id = parsed_payload.video_header().vp8().pictureId;
-        parsed->tl0_pic_idx = parsed_payload.video_header().vp8().tl0PicIdx;
-        parsed->temporal_idx = parsed_payload.video_header().vp8().temporalIdx;
+      case kVideoCodecVP8: {
+        const auto& vp8_header = absl::get<RTPVideoHeaderVP8>(
+            parsed_payload.video_header().video_type_header);
+        parsed->picture_id = vp8_header.pictureId;
+        parsed->tl0_pic_idx = vp8_header.tl0PicIdx;
+        parsed->temporal_idx = vp8_header.temporalIdx;
         break;
+      }
       case kVideoCodecVP9: {
         const auto& vp9_header = absl::get<RTPVideoHeaderVP9>(
             parsed_payload.video_header().video_type_header);
@@ -290,7 +297,9 @@ void PictureIdTest::SetupEncoder(VideoEncoderFactory* encoder_factory,
     send_transport_.reset(new test::PacketTransport(
         &task_queue_, sender_call_.get(), observer_.get(),
         test::PacketTransport::kSender, payload_type_map_,
-        FakeNetworkPipe::Config()));
+        absl::make_unique<FakeNetworkPipe>(
+            Clock::GetRealTimeClock(), absl::make_unique<SimulatedNetwork>(
+                                           DefaultNetworkSimulationConfig()))));
 
     CreateSendConfig(kNumSimulcastStreams, 0, 0, send_transport_.get());
     GetVideoSendConfig()->encoder_settings.encoder_factory = encoder_factory;

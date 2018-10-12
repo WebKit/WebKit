@@ -29,7 +29,7 @@
 
 #include <WebCore/LibWebRTCMacros.h>
 #include <webrtc/rtc_base/network.h>
-#include <webrtc/rtc_base/sigslot.h>
+#include <webrtc/rtc_base/third_party/sigslot/sigslot.h>
 #include <webrtc/rtc_base/thread.h>
 
 namespace IPC {

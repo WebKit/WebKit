@@ -60,7 +60,6 @@ if (rtc_include_tests) {
       "../rtc_base:rtc_base_tests_main",
       "../rtc_base:rtc_base_tests_utils",
       "../rtc_base:rtc_json",
-      "../system_wrappers:metrics_default",
     ]
 
     if (is_android) {

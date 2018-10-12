@@ -21,7 +21,7 @@
 #include "rtc_base/thread.h"
 #include "rtc_base/thread_annotations.h"
 #include "rtc_base/thread_checker.h"
-#include "sdk/objc/Framework/Headers/WebRTC/RTCMacros.h"
+#include "sdk/objc/base/RTCMacros.h"
 
 RTC_FWD_DECL_OBJC_CLASS(RTCAudioSessionDelegateAdapter);
 

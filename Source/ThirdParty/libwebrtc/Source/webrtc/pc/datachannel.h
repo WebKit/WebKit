@@ -19,7 +19,7 @@
 #include "api/proxy.h"
 #include "media/base/mediachannel.h"
 #include "pc/channel.h"
-#include "rtc_base/messagehandler.h"
+#include "rtc_base/asyncinvoker.h"
 #include "rtc_base/scoped_ref_ptr.h"
 #include "rtc_base/third_party/sigslot/sigslot.h"
 
@@ -114,9 +114,7 @@ class SctpSidAllocator {
 // 5. Bob sends outgoing stream reset. 6. Alice receives incoming reset,
 //    Bob receives acknowledgement. Both receive OnClosingProcedureComplete
 //    callback and transition to kClosed.
-class DataChannel : public DataChannelInterface,
-                    public sigslot::has_slots<>,
-                    public rtc::MessageHandler {
+class DataChannel : public DataChannelInterface, public sigslot::has_slots<> {
  public:
   static rtc::scoped_refptr<DataChannel> Create(
       DataChannelProviderInterface* provider,
@@ -145,9 +143,6 @@ class DataChannel : public DataChannelInterface,
   virtual uint32_t messages_received() const { return messages_received_; }
   virtual uint64_t bytes_received() const { return bytes_received_; }
   virtual bool Send(const DataBuffer& buffer);
-
-  // rtc::MessageHandler override.
-  virtual void OnMessage(rtc::Message* msg);
 
   // Called when the channel's ready to use.  That can happen when the
   // underlying DataMediaChannel becomes ready, or when this channel is a new
@@ -291,6 +286,7 @@ class DataChannel : public DataChannelInterface,
   PacketQueue queued_control_data_;
   PacketQueue queued_received_data_;
   PacketQueue queued_send_data_;
+  rtc::AsyncInvoker invoker_;
 };
 
 // Define proxy for DataChannelInterface.

@@ -37,7 +37,7 @@ rtc_source_set("bbr_controller") {
     "../../../rtc_base:rtc_base_approved",
     "../../../rtc_base/experiments:field_trial_parser",
     "../../../rtc_base/system:fallthrough",
-    "../../../system_wrappers:field_trial_api",
+    "../../../system_wrappers:field_trial",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
 }

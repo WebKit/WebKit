@@ -15,7 +15,6 @@
 #include "modules/remote_bitrate_estimator/include/remote_bitrate_estimator.h"
 #include "modules/remote_bitrate_estimator/tools/bwe_rtp.h"
 #include "modules/rtp_rtcp/include/rtp_header_parser.h"
-#include "modules/rtp_rtcp/include/rtp_payload_registry.h"
 #include "rtc_base/format_macros.h"
 #include "test/rtp_file_reader.h"
 

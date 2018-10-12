@@ -21,7 +21,7 @@ sys.path.insert(0, os.path.join(CHECKOUT_ROOT, 'build'))
 import landmine_utils
 
 
-platform = landmine_utils.platform  # pylint: disable=invalid-name
+host_os = landmine_utils.host_os  # pylint: disable=invalid-name
 
 
 def print_landmines():  # pylint: disable=invalid-name
@@ -35,14 +35,7 @@ def print_landmines():  # pylint: disable=invalid-name
   # landmine.
   # See the Chromium version in src/build/get_landmines.py for usage examples.
   print 'Clobber to remove out/{Debug,Release}/args.gn (webrtc:5070)'
-  if platform() == 'android':
-    print ('Clobber to remove artifacts on Android causing lint errors after '
-           'rolling in https://codereview.webrtc.org/2293863002')
-    print ('Clobber to remove old AppRTCDemo artifacts after renaming to '
-           'AppRTCMobile in https://codereview.webrtc.org/2373443005')
-    print ('Clobber to fix Android x86/x64 builds after '
-           'https://codereview.webrtc.org/1414343008/')
-  if platform() == 'win':
+  if host_os() == 'win':
     print 'Clobber to resolve some issues with corrupt .pdb files on bots.'
     print 'Clobber due to corrupt .pdb files (after #14623)'
     print 'Clobber due to Win 64-bit Debug linking error (crbug.com/668961)'
@@ -50,9 +43,7 @@ def print_landmines():  # pylint: disable=invalid-name
            'https://codereview.webrtc.org/2786603002')
     print ('Clobber due to Win Debug linking errors in '
            'https://codereview.webrtc.org/2832063003/')
-  if platform() == 'mac':
-    # platform == 'ios' doesn't work since it assumes GYP_DEFINES is set, which
-    # is no longer the case.
+  if host_os() == 'mac':
     print 'Clobber due to iOS compile errors (crbug.com/694721)'
     print 'Clobber to unblock https://codereview.webrtc.org/2709573003'
     print ('Clobber to fix https://codereview.webrtc.org/2709573003 after '

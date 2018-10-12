@@ -39,14 +39,16 @@ TEST(AutomaticGainController2AdaptiveModeLevelEstimator, LevelShouldStabilize) {
   ApmDataDumper apm_data_dumper(0);
   AdaptiveModeLevelEstimator level_estimator(&apm_data_dumper);
 
-  constexpr float kSpeechRmsDbfs = -15.f;
-  RunOnConstantLevel(
-      100,
-      VadWithLevel::LevelAndProbability(
-          1.f, kSpeechRmsDbfs - kInitialSaturationMarginDb, kSpeechRmsDbfs),
-      &level_estimator);
+  constexpr float kSpeechPeakDbfs = -15.f;
+  RunOnConstantLevel(100,
+                     VadWithLevel::LevelAndProbability(
+                         1.f, kSpeechPeakDbfs - GetInitialSaturationMarginDb(),
+                         kSpeechPeakDbfs),
+                     &level_estimator);
 
-  EXPECT_NEAR(level_estimator.LatestLevelEstimate(), kSpeechRmsDbfs, 0.1f);
+  EXPECT_NEAR(level_estimator.LatestLevelEstimate() -
+                  GetExtraSaturationMarginOffsetDb(),
+              kSpeechPeakDbfs, 0.1f);
 }
 
 TEST(AutomaticGainController2AdaptiveModeLevelEstimator,
@@ -59,7 +61,7 @@ TEST(AutomaticGainController2AdaptiveModeLevelEstimator,
   RunOnConstantLevel(
       100,
       VadWithLevel::LevelAndProbability(
-          1.f, kSpeechRmsDbfs - kInitialSaturationMarginDb, kSpeechRmsDbfs),
+          1.f, kSpeechRmsDbfs - GetInitialSaturationMarginDb(), kSpeechRmsDbfs),
       &level_estimator);
 
   // Run for one more second, but mark as not speech.
@@ -69,7 +71,9 @@ TEST(AutomaticGainController2AdaptiveModeLevelEstimator,
       &level_estimator);
 
   // Level should not have changed.
-  EXPECT_NEAR(level_estimator.LatestLevelEstimate(), kSpeechRmsDbfs, 0.1f);
+  EXPECT_NEAR(level_estimator.LatestLevelEstimate() -
+                  GetExtraSaturationMarginOffsetDb(),
+              kSpeechRmsDbfs, 0.1f);
 }
 
 TEST(AutomaticGainController2AdaptiveModeLevelEstimator, TimeToAdapt) {
@@ -81,7 +85,7 @@ TEST(AutomaticGainController2AdaptiveModeLevelEstimator, TimeToAdapt) {
   RunOnConstantLevel(
       kFullBufferSizeMs / kFrameDurationMs,
       VadWithLevel::LevelAndProbability(
-          1.f, kInitialSpeechRmsDbfs - kInitialSaturationMarginDb,
+          1.f, kInitialSpeechRmsDbfs - GetInitialSaturationMarginDb(),
           kInitialSpeechRmsDbfs),
       &level_estimator);
 
@@ -94,7 +98,7 @@ TEST(AutomaticGainController2AdaptiveModeLevelEstimator, TimeToAdapt) {
   RunOnConstantLevel(
       static_cast<int>(kFullBufferSizeMs / kFrameDurationMs / 2),
       VadWithLevel::LevelAndProbability(
-          1.f, kDifferentSpeechRmsDbfs - kInitialSaturationMarginDb,
+          1.f, kDifferentSpeechRmsDbfs - GetInitialSaturationMarginDb(),
           kDifferentSpeechRmsDbfs),
       &level_estimator);
   EXPECT_GT(
@@ -105,11 +109,12 @@ TEST(AutomaticGainController2AdaptiveModeLevelEstimator, TimeToAdapt) {
   RunOnConstantLevel(
       static_cast<int>(3 * kFullBufferSizeMs / kFrameDurationMs),
       VadWithLevel::LevelAndProbability(
-          1.f, kDifferentSpeechRmsDbfs - kInitialSaturationMarginDb,
+          1.f, kDifferentSpeechRmsDbfs - GetInitialSaturationMarginDb(),
           kDifferentSpeechRmsDbfs),
       &level_estimator);
-  EXPECT_NEAR(level_estimator.LatestLevelEstimate(), kDifferentSpeechRmsDbfs,
-              kMaxDifferenceDb * 0.5f);
+  EXPECT_NEAR(level_estimator.LatestLevelEstimate() -
+                  GetExtraSaturationMarginOffsetDb(),
+              kDifferentSpeechRmsDbfs, kMaxDifferenceDb * 0.5f);
 }
 
 TEST(AutomaticGainController2AdaptiveModeLevelEstimator,
@@ -123,7 +128,7 @@ TEST(AutomaticGainController2AdaptiveModeLevelEstimator,
   RunOnConstantLevel(
       kFullBufferSizeMs / kFrameDurationMs,
       VadWithLevel::LevelAndProbability(
-          1.f, kInitialSpeechRmsDbfs - kInitialSaturationMarginDb,
+          1.f, kInitialSpeechRmsDbfs - GetInitialSaturationMarginDb(),
           kInitialSpeechRmsDbfs),
       &level_estimator);
 
@@ -134,16 +139,17 @@ TEST(AutomaticGainController2AdaptiveModeLevelEstimator,
   RunOnConstantLevel(
       kFullBufferSizeMs / kFrameDurationMs / 2,
       VadWithLevel::LevelAndProbability(
-          1.f, kDifferentSpeechRmsDbfs - kInitialSaturationMarginDb,
+          1.f, kDifferentSpeechRmsDbfs - GetInitialSaturationMarginDb(),
           kDifferentSpeechRmsDbfs),
       &level_estimator);
 
   // The level should be close to 'kDifferentSpeechRmsDbfs'.
   const float kMaxDifferenceDb =
       0.1f * std::abs(kDifferentSpeechRmsDbfs - kInitialSpeechRmsDbfs);
-  EXPECT_LT(
-      std::abs(kDifferentSpeechRmsDbfs - level_estimator.LatestLevelEstimate()),
-      kMaxDifferenceDb);
+  EXPECT_LT(std::abs(kDifferentSpeechRmsDbfs -
+                     (level_estimator.LatestLevelEstimate() -
+                      GetExtraSaturationMarginOffsetDb())),
+            kMaxDifferenceDb);
 }
 
 }  // namespace webrtc

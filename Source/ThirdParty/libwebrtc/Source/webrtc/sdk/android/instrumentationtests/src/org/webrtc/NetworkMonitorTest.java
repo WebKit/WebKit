@@ -58,7 +58,7 @@ public class NetworkMonitorTest {
    * Listens for alerts fired by the NetworkMonitor when network status changes.
    */
   private static class NetworkMonitorTestObserver implements NetworkMonitor.NetworkObserver {
-    private boolean receivedNotification = false;
+    private boolean receivedNotification;
 
     @Override
     public void onConnectionTypeChanged(ConnectionType connectionType) {
@@ -159,7 +159,7 @@ public class NetworkMonitorTest {
   }
 
   private static final Object lock = new Object();
-  private static @Nullable Handler uiThreadHandler = null;
+  private static @Nullable Handler uiThreadHandler;
 
   private NetworkMonitorAutoDetect receiver;
   private MockConnectivityManagerDelegate connectivityDelegate;

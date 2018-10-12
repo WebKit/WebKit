@@ -37,7 +37,6 @@
 #include "modules/congestion_controller/goog_cc/delay_based_bwe.h"
 #include "modules/congestion_controller/include/receive_side_congestion_controller.h"
 #include "modules/congestion_controller/include/send_side_congestion_controller.h"
-#include "modules/include/module_common_types.h"
 #include "modules/pacing/packet_router.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
@@ -55,6 +54,7 @@
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/sequence_number_util.h"
 #include "rtc_base/rate_statistics.h"
+#include "rtc_base/strings/string_builder.h"
 
 #ifndef BWE_TEST_LOGGING_COMPILE_TIME_ENABLE
 #define BWE_TEST_LOGGING_COMPILE_TIME_ENABLE 0
@@ -75,9 +75,9 @@ void SortPacketFeedbackVector(std::vector<PacketFeedback>* vec) {
 }
 
 std::string SsrcToString(uint32_t ssrc) {
-  std::stringstream ss;
+  rtc::StringBuilder ss;
   ss << "SSRC " << ssrc;
-  return ss.str();
+  return ss.Release();
 }
 
 // Checks whether an SSRC is contained in the list of desired SSRCs.
@@ -408,7 +408,7 @@ std::string GetCandidatePairLogDescriptionAsString(
   // represents a pair of a local server-reflexive candidate on a WiFi network
   // and a remote relay candidate using TCP as the relay protocol on a cell
   // network, when the candidate pair communicates over UDP using IPv4.
-  std::stringstream ss;
+  rtc::StringBuilder ss;
   std::string local_candidate_type =
       GetIceCandidateTypeAsString(config.local_candidate_type);
   std::string remote_candidate_type =
@@ -423,7 +423,7 @@ std::string GetCandidatePairLogDescriptionAsString(
      << remote_candidate_type << ":"
      << GetAddressFamilyAsString(config.remote_address_family) << "@"
      << GetProtocolAsString(config.candidate_pair_protocol);
-  return ss.str();
+  return ss.Release();
 }
 
 std::string GetDirectionAsString(PacketDirection direction) {
@@ -1275,83 +1275,27 @@ void EventLogAnalyzer::CreateReceiveSideBweSimulationGraph(Plot* plot) {
 }
 
 void EventLogAnalyzer::CreateNetworkDelayFeedbackGraph(Plot* plot) {
-  using RtpPacketType = LoggedRtpPacketOutgoing;
-  using TransportFeedbackType = LoggedRtcpPacketTransportFeedback;
-
-  // TODO(terelius): This could be provided by the parser.
-  std::multimap<int64_t, const RtpPacketType*> outgoing_rtp;
-  for (const auto& stream : parsed_log_.outgoing_rtp_packets_by_ssrc()) {
-    for (const RtpPacketType& rtp_packet : stream.outgoing_packets)
-      outgoing_rtp.insert(
-          std::make_pair(rtp_packet.rtp.log_time_us(), &rtp_packet));
-  }
-
-  const std::vector<TransportFeedbackType>& incoming_rtcp =
-      parsed_log_.transport_feedbacks(kIncomingPacket);
-
-  SimulatedClock clock(0);
-  TransportFeedbackAdapter feedback_adapter(&clock);
-
   TimeSeries late_feedback_series("Late feedback results.", LineStyle::kNone,
                                   PointStyle::kHighlight);
   TimeSeries time_series("Network Delay Change", LineStyle::kLine,
                          PointStyle::kHighlight);
   int64_t estimated_base_delay_ms = std::numeric_limits<int64_t>::max();
 
-  auto rtp_iterator = outgoing_rtp.begin();
-  auto rtcp_iterator = incoming_rtcp.begin();
-
-  auto NextRtpTime = [&]() {
-    if (rtp_iterator != outgoing_rtp.end())
-      return static_cast<int64_t>(rtp_iterator->first);
-    return std::numeric_limits<int64_t>::max();
-  };
-
-  auto NextRtcpTime = [&]() {
-    if (rtcp_iterator != incoming_rtcp.end())
-      return static_cast<int64_t>(rtcp_iterator->log_time_us());
-    return std::numeric_limits<int64_t>::max();
-  };
-
-  int64_t time_us = std::min(NextRtpTime(), NextRtcpTime());
   int64_t prev_y = 0;
-  while (time_us != std::numeric_limits<int64_t>::max()) {
-    clock.AdvanceTimeMicroseconds(time_us - clock.TimeInMicroseconds());
-    if (clock.TimeInMicroseconds() >= NextRtcpTime()) {
-      RTC_DCHECK_EQ(clock.TimeInMicroseconds(), NextRtcpTime());
-      feedback_adapter.OnTransportFeedback(rtcp_iterator->transport_feedback);
-      std::vector<PacketFeedback> feedback =
-          feedback_adapter.GetTransportFeedbackVector();
-      SortPacketFeedbackVector(&feedback);
-      for (const PacketFeedback& packet : feedback) {
-        float x = ToCallTimeSec(clock.TimeInMicroseconds());
-        if (packet.send_time_ms == PacketFeedback::kNoSendTime) {
-          late_feedback_series.points.emplace_back(x, prev_y);
-          continue;
-        }
-        int64_t y = packet.arrival_time_ms - packet.send_time_ms;
-        prev_y = y;
-        estimated_base_delay_ms = std::min(y, estimated_base_delay_ms);
-        time_series.points.emplace_back(x, y);
-      }
-      ++rtcp_iterator;
+  for (auto packet : GetNetworkTrace(parsed_log_)) {
+    if (packet.arrival_time_ms == PacketFeedback::kNotReceived)
+      continue;
+    float x = ToCallTimeSec(1000 * packet.feedback_arrival_time_ms);
+    if (packet.send_time_ms == PacketFeedback::kNoSendTime) {
+      late_feedback_series.points.emplace_back(x, prev_y);
+      continue;
     }
-    if (clock.TimeInMicroseconds() >= NextRtpTime()) {
-      RTC_DCHECK_EQ(clock.TimeInMicroseconds(), NextRtpTime());
-      const RtpPacketType& rtp_packet = *rtp_iterator->second;
-      if (rtp_packet.rtp.header.extension.hasTransportSequenceNumber) {
-        feedback_adapter.AddPacket(
-            rtp_packet.rtp.header.ssrc,
-            rtp_packet.rtp.header.extension.transportSequenceNumber,
-            rtp_packet.rtp.total_length, PacedPacketInfo());
-        feedback_adapter.OnSentPacket(
-            rtp_packet.rtp.header.extension.transportSequenceNumber,
-            rtp_packet.rtp.log_time_us() / 1000);
-      }
-      ++rtp_iterator;
-    }
-    time_us = std::min(NextRtpTime(), NextRtcpTime());
+    int64_t y = packet.arrival_time_ms - packet.send_time_ms;
+    prev_y = y;
+    estimated_base_delay_ms = std::min(y, estimated_base_delay_ms);
+    time_series.points.emplace_back(x, y);
   }
+
   // We assume that the base network delay (w/o queues) is the min delay
   // observed during the call.
   for (TimeSeriesPoint& point : time_series.points)

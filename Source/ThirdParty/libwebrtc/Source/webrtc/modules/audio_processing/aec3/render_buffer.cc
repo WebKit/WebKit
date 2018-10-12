@@ -11,6 +11,7 @@
 #include "modules/audio_processing/aec3/render_buffer.h"
 
 #include <algorithm>
+#include <functional>
 
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "rtc_base/checks.h"

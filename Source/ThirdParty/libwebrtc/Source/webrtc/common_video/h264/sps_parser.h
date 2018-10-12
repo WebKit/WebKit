@@ -34,8 +34,8 @@ class SpsParser {
     uint32_t delta_pic_order_always_zero_flag = 0;
     uint32_t separate_colour_plane_flag = 0;
     uint32_t frame_mbs_only_flag = 0;
-    uint32_t log2_max_frame_num_minus4 = 0;
-    uint32_t log2_max_pic_order_cnt_lsb_minus4 = 0;
+    uint32_t log2_max_frame_num = 4;          // Smallest valid value.
+    uint32_t log2_max_pic_order_cnt_lsb = 4;  // Smallest valid value.
     uint32_t pic_order_cnt_type = 0;
     uint32_t max_num_ref_frames = 0;
     uint32_t vui_params_present = 0;

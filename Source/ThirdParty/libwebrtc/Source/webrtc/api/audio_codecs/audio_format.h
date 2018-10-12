@@ -15,6 +15,7 @@
 #include <string>
 #include <utility>
 
+#include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
 #include "rtc_base/checks.h"
 
@@ -27,15 +28,8 @@ struct SdpAudioFormat {
 
   SdpAudioFormat(const SdpAudioFormat&);
   SdpAudioFormat(SdpAudioFormat&&);
-  SdpAudioFormat(const char* name, int clockrate_hz, size_t num_channels);
-  SdpAudioFormat(const std::string& name,
-                 int clockrate_hz,
-                 size_t num_channels);
-  SdpAudioFormat(const char* name,
-                 int clockrate_hz,
-                 size_t num_channels,
-                 const Parameters& param);
-  SdpAudioFormat(const std::string& name,
+  SdpAudioFormat(absl::string_view name, int clockrate_hz, size_t num_channels);
+  SdpAudioFormat(absl::string_view name,
                  int clockrate_hz,
                  size_t num_channels,
                  const Parameters& param);

@@ -48,6 +48,7 @@ class DebugDumpReplayer {
   void OnStreamEvent(const audioproc::Stream& msg);
   void OnReverseStreamEvent(const audioproc::ReverseStream& msg);
   void OnConfigEvent(const audioproc::Config& msg);
+  void OnRuntimeSettingEvent(const audioproc::RuntimeSetting& msg);
 
   void MaybeRecreateApm(const audioproc::Config& msg);
   void ConfigureApm(const audioproc::Config& msg);

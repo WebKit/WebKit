@@ -18,58 +18,38 @@
 #ifndef MODULES_RTP_RTCP_SOURCE_RTP_FORMAT_VP8_TEST_HELPER_H_
 #define MODULES_RTP_RTCP_SOURCE_RTP_FORMAT_VP8_TEST_HELPER_H_
 
-#include "modules/include/module_common_types.h"
+#include "api/array_view.h"
 #include "modules/rtp_rtcp/source/rtp_format_vp8.h"
-#include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
+#include "modules/video_coding/codecs/vp8/include/vp8_globals.h"
+#include "rtc_base/buffer.h"
 #include "rtc_base/constructormagic.h"
 
 namespace webrtc {
 
-namespace test {
-
 class RtpFormatVp8TestHelper {
  public:
-  explicit RtpFormatVp8TestHelper(const RTPVideoHeaderVP8* hdr);
+  RtpFormatVp8TestHelper(const RTPVideoHeaderVP8* hdr, size_t payload_len);
   ~RtpFormatVp8TestHelper();
-  bool Init(const size_t* partition_sizes, size_t num_partitions);
   void GetAllPacketsAndCheck(RtpPacketizerVp8* packetizer,
-                             const size_t* expected_sizes,
-                             const int* expected_part,
-                             const bool* expected_frag_start,
-                             size_t expected_num_packets);
+                             rtc::ArrayView<const size_t> expected_sizes);
 
-  uint8_t* payload_data() const { return payload_data_; }
-  size_t payload_size() const { return payload_size_; }
-  RTPFragmentationHeader* fragmentation() const { return fragmentation_; }
-  size_t buffer_size() const {
-    static constexpr size_t kVp8PayloadDescriptorMaxSize = 6;
-    return payload_size_ + kVp8PayloadDescriptorMaxSize;
-  }
-  void set_sloppy_partitioning(bool value) { sloppy_partitioning_ = value; }
+  rtc::ArrayView<const uint8_t> payload() const { return payload_; }
+  size_t payload_size() const { return payload_.size(); }
 
  private:
-  void CheckHeader(bool frag_start);
-  void CheckPictureID();
-  void CheckTl0PicIdx();
-  void CheckTIDAndKeyIdx();
-  void CheckPayload();
-  void CheckLast(bool last) const;
-  void CheckPacket(size_t expect_bytes, bool last, bool frag_start);
+  // Returns header size, i.e. payload offset.
+  int CheckHeader(rtc::ArrayView<const uint8_t> rtp_payload, bool first);
+  void CheckPictureID(rtc::ArrayView<const uint8_t> rtp_payload, int* offset);
+  void CheckTl0PicIdx(rtc::ArrayView<const uint8_t> rtp_payload, int* offset);
+  void CheckTIDAndKeyIdx(rtc::ArrayView<const uint8_t> rtp_payload,
+                         int* offset);
+  void CheckPayload(const uint8_t* data_ptr);
 
-  RtpPacketToSend packet_;
-  uint8_t* payload_data_;
-  uint8_t* data_ptr_;
-  RTPFragmentationHeader* fragmentation_;
-  const RTPVideoHeaderVP8* hdr_info_;
-  int payload_start_;
-  size_t payload_size_;
-  bool sloppy_partitioning_;
-  bool inited_;
+  const RTPVideoHeaderVP8* const hdr_info_;
+  rtc::Buffer payload_;
 
   RTC_DISALLOW_COPY_AND_ASSIGN(RtpFormatVp8TestHelper);
 };
-
-}  // namespace test
 
 }  // namespace webrtc
 

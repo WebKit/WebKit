@@ -69,7 +69,7 @@ private:
 
 protected:
     void SetRemoteDescription(webrtc::SetSessionDescriptionObserver*, webrtc::SessionDescriptionInterface*) final;
-    void CreateAnswer(webrtc::CreateSessionDescriptionObserver*, const webrtc::MediaConstraintsInterface*) final;
+    void CreateAnswer(webrtc::CreateSessionDescriptionObserver*, const webrtc::PeerConnectionInterface::RTCOfferAnswerOptions&) final;
     rtc::scoped_refptr<webrtc::DataChannelInterface> CreateDataChannel(const std::string&, const webrtc::DataChannelInit*) final;
     webrtc::RTCErrorOr<rtc::scoped_refptr<webrtc::RtpSenderInterface>> AddTrack(rtc::scoped_refptr<webrtc::MediaStreamTrackInterface>, const std::vector<std::string>& streams) final;
     bool RemoveTrack(webrtc::RtpSenderInterface*) final;
@@ -225,9 +225,9 @@ public:
     cricket::MediaType media_type() const { return cricket::MEDIA_TYPE_VIDEO; }
     std::string id() const { return ""; }
     std::vector<std::string> stream_ids() const { return { }; }
-    webrtc::RtpParameters GetParameters() { return { }; }
-    webrtc::RTCError SetParameters(const webrtc::RtpParameters&) { return { }; }
-    rtc::scoped_refptr<webrtc::DtmfSenderInterface> GetDtmfSender() const { return nullptr; }
+    webrtc::RtpParameters GetParameters() final { return { }; }
+    webrtc::RTCError SetParameters(const webrtc::RtpParameters&) final { return { }; }
+    rtc::scoped_refptr<webrtc::DtmfSenderInterface> GetDtmfSender() const final { return nullptr; }
 
 private:
     rtc::scoped_refptr<webrtc::MediaStreamTrackInterface> m_track;
@@ -241,8 +241,6 @@ protected:
     MockLibWebRTCPeerConnectionFactory(String&&);
 
 private:
-    rtc::scoped_refptr<webrtc::PeerConnectionInterface> CreatePeerConnection(const webrtc::PeerConnectionInterface::RTCConfiguration&, const webrtc::MediaConstraintsInterface*, std::unique_ptr<cricket::PortAllocator>, std::unique_ptr<rtc::RTCCertificateGeneratorInterface>, webrtc::PeerConnectionObserver*) final { return nullptr; }
-
     rtc::scoped_refptr<webrtc::PeerConnectionInterface> CreatePeerConnection(const webrtc::PeerConnectionInterface::RTCConfiguration&, std::unique_ptr<cricket::PortAllocator>, std::unique_ptr<rtc::RTCCertificateGeneratorInterface>, webrtc::PeerConnectionObserver*) final;
 
     rtc::scoped_refptr<webrtc::MediaStreamInterface> CreateLocalMediaStream(const std::string&) final;
@@ -251,7 +249,7 @@ private:
     rtc::scoped_refptr<webrtc::AudioSourceInterface> CreateAudioSource(const cricket::AudioOptions&) final { return nullptr; }
 
     rtc::scoped_refptr<webrtc::VideoTrackSourceInterface> CreateVideoSource(cricket::VideoCapturer*) final { return nullptr; }
-    rtc::scoped_refptr<webrtc::VideoTrackSourceInterface> CreateVideoSource(cricket::VideoCapturer*, const webrtc::MediaConstraintsInterface*) final { return nullptr; }
+    rtc::scoped_refptr<webrtc::VideoTrackSourceInterface> CreateVideoSource(std::unique_ptr<cricket::VideoCapturer>, const webrtc::MediaConstraintsInterface*) final { return nullptr; }
 
     rtc::scoped_refptr<webrtc::VideoTrackInterface> CreateVideoTrack(const std::string&, webrtc::VideoTrackSourceInterface*) final;
     rtc::scoped_refptr<webrtc::AudioTrackInterface> CreateAudioTrack(const std::string&, webrtc::AudioSourceInterface*) final;

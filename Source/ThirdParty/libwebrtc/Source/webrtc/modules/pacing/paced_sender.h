@@ -15,7 +15,7 @@
 
 #include "absl/types/optional.h"
 #include "modules/pacing/pacer.h"
-#include "modules/pacing/packet_queue_interface.h"
+#include "modules/pacing/round_robin_packet_queue.h"
 #include "rtc_base/criticalsection.h"
 #include "rtc_base/thread_annotations.h"
 
@@ -64,11 +64,6 @@ class PacedSender : public Pacer {
   PacedSender(const Clock* clock,
               PacketSender* packet_sender,
               RtcEventLog* event_log);
-
-  PacedSender(const Clock* clock,
-              PacketSender* packet_sender,
-              RtcEventLog* event_log,
-              std::unique_ptr<PacketQueueInterface> packets);
 
   ~PacedSender() override;
 
@@ -149,7 +144,7 @@ class PacedSender : public Pacer {
   void UpdateBudgetWithBytesSent(size_t bytes)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(critsect_);
 
-  bool SendPacket(const PacketQueueInterface::Packet& packet,
+  bool SendPacket(const RoundRobinPacketQueue::Packet& packet,
                   const PacedPacketInfo& cluster_info)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(critsect_);
   size_t SendPadding(size_t padding_needed, const PacedPacketInfo& cluster_info)
@@ -157,6 +152,7 @@ class PacedSender : public Pacer {
 
   void OnBytesSent(size_t bytes_sent) RTC_EXCLUSIVE_LOCKS_REQUIRED(critsect_);
   bool Congested() const RTC_EXCLUSIVE_LOCKS_REQUIRED(critsect_);
+  int64_t TimeMilliseconds() const RTC_EXCLUSIVE_LOCKS_REQUIRED(critsect_);
 
   const Clock* const clock_;
   PacketSender* const packet_sender_;
@@ -165,7 +161,11 @@ class PacedSender : public Pacer {
   const bool drain_large_queues_;
   const bool send_padding_if_silent_;
   const bool video_blocks_audio_;
+
   rtc::CriticalSection critsect_;
+  // TODO(webrtc:9716): Remove this when we are certain clocks are monotonic.
+  // The last millisecond timestamp returned by |clock_|.
+  mutable int64_t last_timestamp_ms_ RTC_GUARDED_BY(critsect_);
   bool paused_ RTC_GUARDED_BY(critsect_);
   // This is the media budget, keeping track of how many bits of media
   // we can pace out during the current interval.
@@ -190,8 +190,7 @@ class PacedSender : public Pacer {
   int64_t last_send_time_us_ RTC_GUARDED_BY(critsect_);
   int64_t first_sent_packet_ms_ RTC_GUARDED_BY(critsect_);
 
-  const std::unique_ptr<PacketQueueInterface> packets_
-      RTC_PT_GUARDED_BY(critsect_);
+  RoundRobinPacketQueue packets_ RTC_GUARDED_BY(critsect_);
   uint64_t packet_counter_ RTC_GUARDED_BY(critsect_);
 
   int64_t congestion_window_bytes_ RTC_GUARDED_BY(critsect_) =

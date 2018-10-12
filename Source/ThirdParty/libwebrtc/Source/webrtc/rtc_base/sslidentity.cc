@@ -20,6 +20,7 @@
 #include "rtc_base/logging.h"
 #include "rtc_base/opensslidentity.h"
 #include "rtc_base/sslfingerprint.h"
+#include "rtc_base/strings/string_builder.h"
 #include "rtc_base/third_party/base64/base64.h"
 
 namespace rtc {
@@ -116,7 +117,7 @@ bool SSLIdentity::PemToDer(const std::string& pem_type,
 std::string SSLIdentity::DerToPem(const std::string& pem_type,
                                   const unsigned char* data,
                                   size_t length) {
-  std::stringstream result;
+  rtc::StringBuilder result;
 
   result << "-----BEGIN " << pem_type << "-----\n";
 
@@ -135,7 +136,7 @@ std::string SSLIdentity::DerToPem(const std::string& pem_type,
 
   result << "-----END " << pem_type << "-----\n";
 
-  return result.str();
+  return result.Release();
 }
 
 // static

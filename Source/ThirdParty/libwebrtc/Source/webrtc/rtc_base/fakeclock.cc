@@ -28,7 +28,7 @@ void FakeClock::SetTimeNanos(int64_t nanos) {
   }
   // If message queues are waiting in a socket select() with a timeout provided
   // by the OS, they should wake up and dispatch all messages that are ready.
-  MessageQueueManager::ProcessAllMessageQueues();
+  MessageQueueManager::ProcessAllMessageQueuesForTesting();
 }
 
 void FakeClock::AdvanceTime(webrtc::TimeDelta delta) {
@@ -36,7 +36,7 @@ void FakeClock::AdvanceTime(webrtc::TimeDelta delta) {
     CritScope cs(&lock_);
     time_ += delta.ns();
   }
-  MessageQueueManager::ProcessAllMessageQueues();
+  MessageQueueManager::ProcessAllMessageQueuesForTesting();
 }
 
 ScopedFakeClock::ScopedFakeClock() {

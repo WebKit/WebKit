@@ -26,7 +26,14 @@ class DtmfSenderObserverInterface {
   // Triggered when DTMF |tone| is sent.
   // If |tone| is empty that means the DtmfSender has sent out all the given
   // tones.
-  virtual void OnToneChange(const std::string& tone) = 0;
+  // The callback includes the state of the tone buffer at the time when
+  // the tone finished playing.
+  virtual void OnToneChange(const std::string& tone,
+                            const std::string& tone_buffer) {}
+  // DEPRECATED: Older API without tone buffer.
+  // TODO(bugs.webrtc.org/9725): Remove old API and default implementation
+  // when old callers are gone.
+  virtual void OnToneChange(const std::string& tone) {}
 
  protected:
   virtual ~DtmfSenderObserverInterface() = default;

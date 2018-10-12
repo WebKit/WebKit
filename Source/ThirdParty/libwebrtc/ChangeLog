@@ -1,3 +1,18 @@
+2018-10-12  Youenn Fablet  <youenn@apple.com> and Alejandro G. Castro  <alex@igalia.com>
+
+        Refresh libwebrtc up to 343f4144be
+        https://bugs.webkit.org/show_bug.cgi?id=190361
+
+        Reviewed by Chris Dumez.
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+        * Configurations/libwebrtc.xcconfig:
+        * Source/webrtc: Resynced.
+        * WebKit/0001-Updating-webrtc.patch: Removed.
+        * libwebrtc.xcodeproj/project.pbxproj:
+
 2018-10-09  Youenn Fablet  <youenn@apple.com>
 
         Add support for IceCandidate stats

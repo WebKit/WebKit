@@ -42,8 +42,9 @@ class AcmSendTestOldApi : public AudioPacketizationCallback,
                      int payload_type,
                      int frame_size_samples);
 
-  // Registers an external send codec. Returns true on success, false otherwise.
-  bool RegisterExternalCodec(AudioEncoder* external_speech_encoder);
+  // Registers an external send codec.
+  void RegisterExternalCodec(
+      std::unique_ptr<AudioEncoder> external_speech_encoder);
 
   // Inherited from PacketSource.
   std::unique_ptr<Packet> NextPacket() override;

@@ -20,7 +20,6 @@
 #include "absl/memory/memory.h"
 #include "api/jsepicecandidate.h"
 #include "api/jsepsessiondescription.h"
-#include "api/mediaconstraintsinterface.h"
 #include "api/mediastreamproxy.h"
 #include "api/mediastreamtrackproxy.h"
 #include "call/call.h"
@@ -46,9 +45,9 @@
 #include "rtc_base/bind.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/never_destroyed.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/stringencode.h"
+#include "rtc_base/strings/string_builder.h"
 #include "rtc_base/stringutils.h"
 #include "rtc_base/trace_event.h"
 #include "system_wrappers/include/clock.h"
@@ -174,7 +173,8 @@ void AddRtpSenderOptions(
     const std::vector<rtc::scoped_refptr<
         RtpSenderProxyWithInternal<RtpSenderInternal>>>& senders,
     cricket::MediaDescriptionOptions* audio_media_description_options,
-    cricket::MediaDescriptionOptions* video_media_description_options) {
+    cricket::MediaDescriptionOptions* video_media_description_options,
+    int num_sim_layers) {
   for (const auto& sender : senders) {
     if (sender->media_type() == cricket::MEDIA_TYPE_AUDIO) {
       if (audio_media_description_options) {
@@ -185,7 +185,8 @@ void AddRtpSenderOptions(
       RTC_DCHECK(sender->media_type() == cricket::MEDIA_TYPE_VIDEO);
       if (video_media_description_options) {
         video_media_description_options->AddVideoSender(
-            sender->id(), sender->internal()->stream_ids(), 1);
+            sender->id(), sender->internal()->stream_ids(),
+            num_sim_layers);
       }
     }
   }
@@ -388,27 +389,37 @@ bool MediaSectionsHaveSameCount(const SessionDescription& desc1,
 
 void NoteKeyProtocolAndMedia(KeyExchangeProtocolType protocol_type,
                              cricket::MediaType media_type) {
+  // Array of structs needed to map {KeyExchangeProtocolType,
+  // cricket::MediaType} to KeyExchangeProtocolMedia without using std::map in
+  // order to avoid -Wglobal-constructors and -Wexit-time-destructors.
+  static constexpr struct {
+    KeyExchangeProtocolType protocol_type;
+    cricket::MediaType media_type;
+    KeyExchangeProtocolMedia protocol_media;
+  } kEnumCounterKeyProtocolMediaMap[] = {
+      {kEnumCounterKeyProtocolDtls, cricket::MEDIA_TYPE_AUDIO,
+       kEnumCounterKeyProtocolMediaTypeDtlsAudio},
+      {kEnumCounterKeyProtocolDtls, cricket::MEDIA_TYPE_VIDEO,
+       kEnumCounterKeyProtocolMediaTypeDtlsVideo},
+      {kEnumCounterKeyProtocolDtls, cricket::MEDIA_TYPE_DATA,
+       kEnumCounterKeyProtocolMediaTypeDtlsData},
+      {kEnumCounterKeyProtocolSdes, cricket::MEDIA_TYPE_AUDIO,
+       kEnumCounterKeyProtocolMediaTypeSdesAudio},
+      {kEnumCounterKeyProtocolSdes, cricket::MEDIA_TYPE_VIDEO,
+       kEnumCounterKeyProtocolMediaTypeSdesVideo},
+      {kEnumCounterKeyProtocolSdes, cricket::MEDIA_TYPE_DATA,
+       kEnumCounterKeyProtocolMediaTypeSdesData},
+  };
+
   RTC_HISTOGRAM_ENUMERATION("WebRTC.PeerConnection.KeyProtocol", protocol_type,
                             kEnumCounterKeyProtocolMax);
-    auto proto_media_counter_map = rtc::makeNeverDestroyed(std::map<std::pair<KeyExchangeProtocolType, cricket::MediaType>,
-                        KeyExchangeProtocolMedia> {
-          {{kEnumCounterKeyProtocolDtls, cricket::MEDIA_TYPE_AUDIO},
-           kEnumCounterKeyProtocolMediaTypeDtlsAudio},
-          {{kEnumCounterKeyProtocolDtls, cricket::MEDIA_TYPE_VIDEO},
-           kEnumCounterKeyProtocolMediaTypeDtlsVideo},
-          {{kEnumCounterKeyProtocolDtls, cricket::MEDIA_TYPE_DATA},
-           kEnumCounterKeyProtocolMediaTypeDtlsData},
-          {{kEnumCounterKeyProtocolSdes, cricket::MEDIA_TYPE_AUDIO},
-           kEnumCounterKeyProtocolMediaTypeSdesAudio},
-          {{kEnumCounterKeyProtocolSdes, cricket::MEDIA_TYPE_VIDEO},
-           kEnumCounterKeyProtocolMediaTypeSdesVideo},
-          {{kEnumCounterKeyProtocolSdes, cricket::MEDIA_TYPE_DATA},
-           kEnumCounterKeyProtocolMediaTypeSdesData}});
 
-  auto it = proto_media_counter_map.get().find({protocol_type, media_type});
-  if (it != proto_media_counter_map.get().end()) {
-    RTC_HISTOGRAM_ENUMERATION("WebRTC.PeerConnection.KeyProtocolByMedia",
-                              it->second, kEnumCounterKeyProtocolMediaTypeMax);
+  for (const auto& i : kEnumCounterKeyProtocolMediaMap) {
+    if (i.protocol_type == protocol_type && i.media_type == media_type) {
+      RTC_HISTOGRAM_ENUMERATION("WebRTC.PeerConnection.KeyProtocolByMedia",
+                                i.protocol_media,
+                                kEnumCounterKeyProtocolMediaTypeMax);
+    }
   }
 }
 
@@ -593,10 +604,10 @@ bool CheckForRemoteIceRestart(const SessionDescriptionInterface* old_desc,
 std::string GetSetDescriptionErrorMessage(cricket::ContentSource source,
                                           SdpType type,
                                           const RTCError& error) {
-  std::ostringstream oss;
+  rtc::StringBuilder oss;
   oss << "Failed to set " << (source == cricket::CS_LOCAL ? "local" : "remote")
       << " " << SdpTypeToString(type) << " sdp: " << error.message();
-  return oss.str();
+  return oss.Release();
 }
 
 std::string GetStreamIdsString(rtc::ArrayView<const std::string> stream_ids) {
@@ -771,50 +782,6 @@ void ExtractSharedMediaSessionOptions(
     cricket::MediaSessionOptions* session_options) {
   session_options->vad_enabled = rtc_options.voice_activity_detection;
   session_options->bundle_enabled = rtc_options.use_rtp_mux;
-}
-
-bool ConvertConstraintsToOfferAnswerOptions(
-    const MediaConstraintsInterface* constraints,
-    PeerConnectionInterface::RTCOfferAnswerOptions* offer_answer_options) {
-  if (!constraints) {
-    return true;
-  }
-
-  bool value = false;
-  size_t mandatory_constraints_satisfied = 0;
-
-  if (FindConstraint(constraints,
-                     MediaConstraintsInterface::kOfferToReceiveAudio, &value,
-                     &mandatory_constraints_satisfied)) {
-    offer_answer_options->offer_to_receive_audio =
-        value ? PeerConnectionInterface::RTCOfferAnswerOptions::
-                    kOfferToReceiveMediaTrue
-              : 0;
-  }
-
-  if (FindConstraint(constraints,
-                     MediaConstraintsInterface::kOfferToReceiveVideo, &value,
-                     &mandatory_constraints_satisfied)) {
-    offer_answer_options->offer_to_receive_video =
-        value ? PeerConnectionInterface::RTCOfferAnswerOptions::
-                    kOfferToReceiveMediaTrue
-              : 0;
-  }
-  if (FindConstraint(constraints,
-                     MediaConstraintsInterface::kVoiceActivityDetection, &value,
-                     &mandatory_constraints_satisfied)) {
-    offer_answer_options->voice_activity_detection = value;
-  }
-  if (FindConstraint(constraints, MediaConstraintsInterface::kUseRtpMux, &value,
-                     &mandatory_constraints_satisfied)) {
-    offer_answer_options->use_rtp_mux = value;
-  }
-  if (FindConstraint(constraints, MediaConstraintsInterface::kIceRestart,
-                     &value, &mandatory_constraints_satisfied)) {
-    offer_answer_options->ice_restart = value;
-  }
-
-  return mandatory_constraints_satisfied == constraints->GetMandatory().size();
 }
 
 PeerConnection::PeerConnection(PeerConnectionFactory* factory,
@@ -1214,7 +1181,7 @@ PeerConnection::AddTrackPlanB(
            ? cricket::MEDIA_TYPE_AUDIO
            : cricket::MEDIA_TYPE_VIDEO);
   auto new_sender =
-      CreateSender(media_type, track->id(), track, adjusted_stream_ids);
+      CreateSender(media_type, track->id(), track, adjusted_stream_ids, {});
   if (track->kind() == MediaStreamTrackInterface::kAudioKind) {
     new_sender->internal()->SetVoiceMediaChannel(voice_media_channel());
     GetAudioTransceiver()->internal()->AddSender(new_sender);
@@ -1270,7 +1237,7 @@ PeerConnection::AddTrackUnifiedPlan(
     if (FindSenderById(sender_id)) {
       sender_id = rtc::CreateRandomUuid();
     }
-    auto sender = CreateSender(media_type, sender_id, track, stream_ids);
+    auto sender = CreateSender(media_type, sender_id, track, stream_ids, {});
     auto receiver = CreateReceiver(media_type, rtc::CreateRandomUuid());
     transceiver = CreateAndAddTransceiver(sender, receiver);
     transceiver->internal()->set_created_by_addtrack(true);
@@ -1412,6 +1379,27 @@ PeerConnection::AddTransceiver(
   }
 
   // TODO(bugs.webrtc.org/7600): Verify init.
+  if (init.send_encodings.size() > 1) {
+    LOG_AND_RETURN_ERROR(
+        RTCErrorType::UNSUPPORTED_PARAMETER,
+        "Attempted to create an encoder with more than 1 encoding parameter.");
+  }
+
+  for (const auto& encoding : init.send_encodings) {
+    if (encoding.ssrc.has_value()) {
+      LOG_AND_RETURN_ERROR(
+          RTCErrorType::UNSUPPORTED_PARAMETER,
+          "Attempted to set an unimplemented parameter of RtpParameters.");
+    }
+  }
+
+  RtpParameters parameters;
+  parameters.encodings = init.send_encodings;
+  if (UnimplementedRtpParameterHasValue(parameters)) {
+    LOG_AND_RETURN_ERROR(
+        RTCErrorType::UNSUPPORTED_PARAMETER,
+        "Attempted to set an unimplemented parameter of RtpParameters.");
+  }
 
   RTC_LOG(LS_INFO) << "Adding " << cricket::MediaTypeToString(media_type)
                    << " transceiver in response to a call to AddTransceiver.";
@@ -1420,7 +1408,8 @@ PeerConnection::AddTransceiver(
   std::string sender_id =
       (track && !FindSenderById(track->id()) ? track->id()
                                              : rtc::CreateRandomUuid());
-  auto sender = CreateSender(media_type, sender_id, track, init.stream_ids);
+  auto sender = CreateSender(media_type, sender_id, track, init.stream_ids,
+                             init.send_encodings);
   auto receiver = CreateReceiver(media_type, rtc::CreateRandomUuid());
   auto transceiver = CreateAndAddTransceiver(sender, receiver);
   transceiver->internal()->set_direction(init.direction);
@@ -1437,7 +1426,8 @@ PeerConnection::CreateSender(
     cricket::MediaType media_type,
     const std::string& id,
     rtc::scoped_refptr<MediaStreamTrackInterface> track,
-    const std::vector<std::string>& stream_ids) {
+    const std::vector<std::string>& stream_ids,
+    const std::vector<RtpEncodingParameters>& send_encodings) {
   rtc::scoped_refptr<RtpSenderProxyWithInternal<RtpSenderInternal>> sender;
   if (media_type == cricket::MEDIA_TYPE_AUDIO) {
     RTC_DCHECK(!track ||
@@ -1457,6 +1447,7 @@ PeerConnection::CreateSender(
   bool set_track_succeeded = sender->SetTrack(track);
   RTC_DCHECK(set_track_succeeded);
   sender->internal()->set_stream_ids(stream_ids);
+  sender->internal()->set_init_send_encodings(send_encodings);
   return sender;
 }
 
@@ -1733,23 +1724,6 @@ rtc::scoped_refptr<DataChannelInterface> PeerConnection::CreateDataChannel(
 }
 
 void PeerConnection::CreateOffer(CreateSessionDescriptionObserver* observer,
-                                 const MediaConstraintsInterface* constraints) {
-  TRACE_EVENT0("webrtc", "PeerConnection::CreateOffer");
-
-  PeerConnectionInterface::RTCOfferAnswerOptions offer_answer_options;
-  // Always create an offer even if |ConvertConstraintsToOfferAnswerOptions|
-  // returns false for now. Because |ConvertConstraintsToOfferAnswerOptions|
-  // compares the mandatory fields parsed with the mandatory fields added in the
-  // |constraints| and some downstream applications might create offers with
-  // mandatory fields which would not be parsed in the helper method. For
-  // example, in Chromium/remoting, |kEnableDtlsSrtp| is added to the
-  // |constraints| as a mandatory field but it is not parsed.
-  ConvertConstraintsToOfferAnswerOptions(constraints, &offer_answer_options);
-
-  CreateOffer(observer, offer_answer_options);
-}
-
-void PeerConnection::CreateOffer(CreateSessionDescriptionObserver* observer,
                                  const RTCOfferAnswerOptions& options) {
   TRACE_EVENT0("webrtc", "PeerConnection::CreateOffer");
 
@@ -1859,29 +1833,6 @@ PeerConnection::GetReceivingTransceiversOfType(cricket::MediaType media_type) {
     }
   }
   return receiving_transceivers;
-}
-
-void PeerConnection::CreateAnswer(
-    CreateSessionDescriptionObserver* observer,
-    const MediaConstraintsInterface* constraints) {
-  TRACE_EVENT0("webrtc", "PeerConnection::CreateAnswer");
-
-  if (!observer) {
-    RTC_LOG(LS_ERROR) << "CreateAnswer - observer is NULL.";
-    return;
-  }
-
-  PeerConnectionInterface::RTCOfferAnswerOptions offer_answer_options;
-  if (!ConvertConstraintsToOfferAnswerOptions(constraints,
-                                              &offer_answer_options)) {
-    std::string error = "CreateAnswer called with invalid constraints.";
-    RTC_LOG(LS_ERROR) << error;
-    PostCreateSessionDescriptionFailure(
-        observer, RTCError(RTCErrorType::INVALID_PARAMETER, std::move(error)));
-    return;
-  }
-
-  CreateAnswer(observer, offer_answer_options);
 }
 
 void PeerConnection::CreateAnswer(CreateSessionDescriptionObserver* observer,
@@ -2806,7 +2757,8 @@ PeerConnection::AssociateTransceiver(cricket::ContentSource source,
                        << " at i=" << mline_index
                        << " in response to the remote description.";
       std::string sender_id = rtc::CreateRandomUuid();
-      auto sender = CreateSender(media_desc->type(), sender_id, nullptr, {});
+      auto sender =
+          CreateSender(media_desc->type(), sender_id, nullptr, {}, {});
       std::string receiver_id;
       if (!media_desc->streams().empty()) {
         receiver_id = media_desc->streams()[0].id;
@@ -3455,7 +3407,7 @@ void PeerConnection::AddAudioTrack(AudioTrackInterface* track,
 
   // Normal case; we've never seen this track before.
   auto new_sender = CreateSender(cricket::MEDIA_TYPE_AUDIO, track->id(), track,
-                                 {stream->id()});
+                                 {stream->id()}, {});
   new_sender->internal()->SetVoiceMediaChannel(voice_media_channel());
   GetAudioTransceiver()->internal()->AddSender(new_sender);
   // If the sender has already been configured in SDP, we call SetSsrc,
@@ -3500,7 +3452,7 @@ void PeerConnection::AddVideoTrack(VideoTrackInterface* track,
 
   // Normal case; we've never seen this track before.
   auto new_sender = CreateSender(cricket::MEDIA_TYPE_VIDEO, track->id(), track,
-                                 {stream->id()});
+                                 {stream->id()}, {});
   new_sender->internal()->SetVideoMediaChannel(video_media_channel());
   GetVideoTransceiver()->internal()->AddSender(new_sender);
   const RtpSenderInfo* sender_info =
@@ -3770,7 +3722,8 @@ void PeerConnection::GetOptionsForPlanBOffer(
                    : &session_options->media_description_options[*video_index];
 
   AddRtpSenderOptions(GetSendersInternal(), audio_media_description_options,
-                      video_media_description_options);
+                      video_media_description_options,
+                      offer_answer_options.num_simulcast_layers);
 }
 
 // Find a new MID that is not already in |used_mids|, then add it to |used_mids|
@@ -3811,9 +3764,10 @@ GetMediaDescriptionOptionsForTransceiver(
     cricket::SenderOptions sender_options;
     sender_options.track_id = transceiver->sender()->id();
     sender_options.stream_ids = transceiver->sender()->stream_ids();
-    // TODO(bugs.webrtc.org/7600): Set num_sim_layers to the number of encodings
-    // set in the RTP parameters when the transceiver was added.
-    sender_options.num_sim_layers = 1;
+    int num_send_encoding_layers =
+        transceiver->sender()->init_send_encodings().size();
+    sender_options.num_sim_layers =
+        !num_send_encoding_layers ? 1 : num_send_encoding_layers;
     media_description_options.sender_options.push_back(sender_options);
   }
   return media_description_options;
@@ -3994,7 +3948,8 @@ void PeerConnection::GetOptionsForPlanBAnswer(
                    : &session_options->media_description_options[*video_index];
 
   AddRtpSenderOptions(GetSendersInternal(), audio_media_description_options,
-                      video_media_description_options);
+                      video_media_description_options,
+                      offer_answer_options.num_simulcast_layers);
 }
 
 void PeerConnection::GetOptionsForUnifiedPlanAnswer(
@@ -5464,7 +5419,7 @@ bool PeerConnection::UseCandidate(const IceCandidateInterface* candidate) {
       SetIceConnectionState(PeerConnectionInterface::kIceConnectionChecking);
     }
     // TODO(bemasc): If state is Completed, go back to Connected.
-  } else if (error.message()) {
+  } else {
     RTC_LOG(LS_WARNING) << error.message();
   }
   return true;
@@ -5915,10 +5870,10 @@ const char* PeerConnection::SessionErrorToString(SessionError error) const {
 }
 
 std::string PeerConnection::GetSessionErrorMsg() {
-  std::ostringstream desc;
+  rtc::StringBuilder desc;
   desc << kSessionError << SessionErrorToString(session_error()) << ". ";
   desc << kSessionErrorDesc << session_error_desc() << ".";
-  return desc.str();
+  return desc.Release();
 }
 
 void PeerConnection::ReportSdpFormatReceived(

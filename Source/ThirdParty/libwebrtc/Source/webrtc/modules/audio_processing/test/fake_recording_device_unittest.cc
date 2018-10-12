@@ -10,13 +10,13 @@
 
 #include <cmath>
 #include <memory>
-#include <sstream>
 #include <string>
 #include <vector>
 
 #include "absl/memory/memory.h"
 #include "api/array_view.h"
 #include "modules/audio_processing/test/fake_recording_device.h"
+#include "rtc_base/strings/string_builder.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -98,15 +98,15 @@ void CheckSameSign(const ChannelBuffer<float>* src,
 }
 
 std::string FakeRecordingDeviceKindToString(int fake_rec_device_kind) {
-  std::ostringstream ss;
+  rtc::StringBuilder ss;
   ss << "fake recording device: " << fake_rec_device_kind;
-  return ss.str();
+  return ss.Release();
 }
 
 std::string AnalogLevelToString(int level) {
-  std::ostringstream ss;
+  rtc::StringBuilder ss;
   ss << "analog level: " << level;
-  return ss.str();
+  return ss.Release();
 }
 
 }  // namespace

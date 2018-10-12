@@ -58,7 +58,8 @@ size_t Merge::Process(int16_t* input,
 
   // Transfer input signal to an AudioMultiVector.
   AudioMultiVector input_vector(num_channels_);
-  input_vector.PushBackInterleaved(input, input_length);
+  input_vector.PushBackInterleaved(
+      rtc::ArrayView<const int16_t>(input, input_length));
   size_t input_length_per_channel = input_vector.Size();
   assert(input_length_per_channel == input_length / num_channels_);
 

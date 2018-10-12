@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "absl/types/optional.h"
+#include "api/audio/echo_canceller3_config.h"
 #include "modules/audio_processing/aec3/delay_estimate.h"
 #include "modules/audio_processing/aec3/matched_filter.h"
 #include "rtc_base/constructormagic.h"
@@ -26,7 +27,10 @@ class ApmDataDumper;
 // reliable combined lag estimate.
 class MatchedFilterLagAggregator {
  public:
-  MatchedFilterLagAggregator(ApmDataDumper* data_dumper, size_t max_filter_lag);
+  MatchedFilterLagAggregator(
+      ApmDataDumper* data_dumper,
+      size_t max_filter_lag,
+      const EchoCanceller3Config::Delay::DelaySelectionThresholds& thresholds);
   ~MatchedFilterLagAggregator();
 
   // Resets the aggregator.
@@ -42,6 +46,7 @@ class MatchedFilterLagAggregator {
   std::array<int, 250> histogram_data_;
   int histogram_data_index_ = 0;
   bool significant_candidate_found_ = false;
+  const EchoCanceller3Config::Delay::DelaySelectionThresholds thresholds_;
 
   RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(MatchedFilterLagAggregator);
 };

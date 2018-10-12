@@ -49,10 +49,9 @@ absl::optional<double> LinearFitSlope(
 constexpr double kMaxAdaptOffsetMs = 15.0;
 constexpr double kOverUsingTimeThreshold = 10;
 constexpr int kMinNumDeltas = 60;
+constexpr int kDeltaCounterMax = 1000;
 
 }  // namespace
-
-enum { kDeltaCounterMax = 1000 };
 
 TrendlineEstimator::TrendlineEstimator(size_t window_size,
                                        double smoothing_coef,
@@ -65,13 +64,13 @@ TrendlineEstimator::TrendlineEstimator(size_t window_size,
       accumulated_delay_(0),
       smoothed_delay_(0),
       delay_hist_(),
-      trendline_(0),
       k_up_(0.0087),
       k_down_(0.039),
       overusing_time_threshold_(kOverUsingTimeThreshold),
       threshold_(12.5),
+      prev_modified_trend_(NAN),
       last_update_ms_(-1),
-      prev_offset_(0.0),
+      prev_trend_(0.0),
       time_over_using_(-1),
       overuse_counter_(0),
       hypothesis_(BandwidthUsage::kBwNormal) {}
@@ -83,8 +82,7 @@ void TrendlineEstimator::Update(double recv_delta_ms,
                                 int64_t arrival_time_ms) {
   const double delta_ms = recv_delta_ms - send_delta_ms;
   ++num_of_deltas_;
-  if (num_of_deltas_ > kDeltaCounterMax)
-    num_of_deltas_ = kDeltaCounterMax;
+  num_of_deltas_ = std::min(num_of_deltas_, kDeltaCounterMax);
   if (first_arrival_time_ms_ == -1)
     first_arrival_time_ms_ = arrival_time_ms;
 
@@ -103,32 +101,36 @@ void TrendlineEstimator::Update(double recv_delta_ms,
       smoothed_delay_));
   if (delay_hist_.size() > window_size_)
     delay_hist_.pop_front();
+  double trend = prev_trend_;
   if (delay_hist_.size() == window_size_) {
-    // Only update trendline_ if it is possible to fit a line to the data.
-    trendline_ = LinearFitSlope(delay_hist_).value_or(trendline_);
+    // Update trend_ if it is possible to fit a line to the data. The delay
+    // trend can be seen as an estimate of (send_rate - capacity)/capacity.
+    // 0 < trend < 1   ->  the delay increases, queues are filling up
+    //   trend == 0    ->  the delay does not change
+    //   trend < 0     ->  the delay decreases, queues are being emptied
+    trend = LinearFitSlope(delay_hist_).value_or(trend);
   }
 
-  BWE_TEST_LOGGING_PLOT(1, "trendline_slope", arrival_time_ms, trendline_);
+  BWE_TEST_LOGGING_PLOT(1, "trendline_slope", arrival_time_ms, trend);
 
-  Detect(trendline_slope(), send_delta_ms, num_of_deltas(), arrival_time_ms);
+  Detect(trend, send_delta_ms, arrival_time_ms);
 }
 
 BandwidthUsage TrendlineEstimator::State() const {
   return hypothesis_;
 }
 
-void TrendlineEstimator::Detect(double offset,
-                                double ts_delta,
-                                int num_of_deltas,
-                                int64_t now_ms) {
-  if (num_of_deltas < 2) {
+void TrendlineEstimator::Detect(double trend, double ts_delta, int64_t now_ms) {
+  if (num_of_deltas_ < 2) {
     hypothesis_ = BandwidthUsage::kBwNormal;
     return;
   }
-  const double T = std::min(num_of_deltas, kMinNumDeltas) * offset;
-  BWE_TEST_LOGGING_PLOT(1, "T", now_ms, T);
+  const double modified_trend =
+      std::min(num_of_deltas_, kMinNumDeltas) * trend * threshold_gain_;
+  prev_modified_trend_ = modified_trend;
+  BWE_TEST_LOGGING_PLOT(1, "T", now_ms, modified_trend);
   BWE_TEST_LOGGING_PLOT(1, "threshold", now_ms, threshold_);
-  if (T > threshold_) {
+  if (modified_trend > threshold_) {
     if (time_over_using_ == -1) {
       // Initialize the timer. Assume that we've been
       // over-using half of the time since the previous
@@ -140,13 +142,13 @@ void TrendlineEstimator::Detect(double offset,
     }
     overuse_counter_++;
     if (time_over_using_ > overusing_time_threshold_ && overuse_counter_ > 1) {
-      if (offset >= prev_offset_) {
+      if (trend >= prev_trend_) {
         time_over_using_ = 0;
         overuse_counter_ = 0;
         hypothesis_ = BandwidthUsage::kBwOverusing;
       }
     }
-  } else if (T < -threshold_) {
+  } else if (modified_trend < -threshold_) {
     time_over_using_ = -1;
     overuse_counter_ = 0;
     hypothesis_ = BandwidthUsage::kBwUnderusing;
@@ -155,27 +157,26 @@ void TrendlineEstimator::Detect(double offset,
     overuse_counter_ = 0;
     hypothesis_ = BandwidthUsage::kBwNormal;
   }
-  prev_offset_ = offset;
-
-  UpdateThreshold(T, now_ms);
+  prev_trend_ = trend;
+  UpdateThreshold(modified_trend, now_ms);
 }
 
-void TrendlineEstimator::UpdateThreshold(double modified_offset,
+void TrendlineEstimator::UpdateThreshold(double modified_trend,
                                          int64_t now_ms) {
   if (last_update_ms_ == -1)
     last_update_ms_ = now_ms;
 
-  if (fabs(modified_offset) > threshold_ + kMaxAdaptOffsetMs) {
+  if (fabs(modified_trend) > threshold_ + kMaxAdaptOffsetMs) {
     // Avoid adapting the threshold to big latency spikes, caused e.g.,
     // by a sudden capacity drop.
     last_update_ms_ = now_ms;
     return;
   }
 
-  const double k = fabs(modified_offset) < threshold_ ? k_down_ : k_up_;
+  const double k = fabs(modified_trend) < threshold_ ? k_down_ : k_up_;
   const int64_t kMaxTimeDeltaMs = 100;
   int64_t time_delta_ms = std::min(now_ms - last_update_ms_, kMaxTimeDeltaMs);
-  threshold_ += k * (fabs(modified_offset) - threshold_) * time_delta_ms;
+  threshold_ += k * (fabs(modified_trend) - threshold_) * time_delta_ms;
   threshold_ = rtc::SafeClamp(threshold_, 6.f, 600.f);
   last_update_ms_ = now_ms;
 }

@@ -146,7 +146,8 @@ class SctpTransport : public SctpTransportInternal,
   // Track the data received from usrsctp between callbacks until the EOR bit
   // arrives.
   rtc::CopyOnWriteBuffer partial_message_;
-  int partial_message_sid_;
+  ReceiveDataParams partial_params_;
+  int partial_flags_;
 
   bool was_ever_writable_ = false;
   int local_port_ = kSctpDefaultPort;

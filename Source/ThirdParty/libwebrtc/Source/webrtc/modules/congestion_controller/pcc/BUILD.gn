@@ -1,0 +1,114 @@
+# Copyright (c) 2018 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+rtc_static_library("pcc") {
+  sources = [
+    "pcc_factory.cc",
+    "pcc_factory.h",
+  ]
+  deps = [
+    ":pcc_controller",
+    "../../../api/transport:network_control",
+    "../../../rtc_base:rtc_base_approved",
+    "//third_party/abseil-cpp/absl/memory:memory",
+  ]
+}
+
+rtc_static_library("pcc_controller") {
+  sources = [
+    "pcc_network_controller.cc",
+    "pcc_network_controller.h",
+  ]
+  deps = [
+    ":bitrate_controller",
+    ":monitor_interval",
+    ":rtt_tracker",
+    "../../../api/transport:network_control",
+    "../../../rtc_base:rtc_base_approved",
+    "//third_party/abseil-cpp/absl/memory:memory",
+  ]
+}
+
+rtc_static_library("monitor_interval") {
+  sources = [
+    "monitor_interval.cc",
+    "monitor_interval.h",
+  ]
+  deps = [
+    "../../../api/transport:network_control",
+    "../../../rtc_base:rtc_base_approved",
+  ]
+}
+
+rtc_static_library("rtt_tracker") {
+  sources = [
+    "rtt_tracker.cc",
+    "rtt_tracker.h",
+  ]
+  deps = [
+    "../../../api/transport:network_control",
+    "../../../rtc_base:rtc_base_approved",
+  ]
+}
+
+rtc_static_library("utility_function") {
+  sources = [
+    "utility_function.cc",
+    "utility_function.h",
+  ]
+  deps = [
+    ":monitor_interval",
+    "../../../api/transport:network_control",
+    "../../../rtc_base:rtc_base_approved",
+  ]
+}
+
+rtc_static_library("bitrate_controller") {
+  sources = [
+    "bitrate_controller.cc",
+    "bitrate_controller.h",
+  ]
+  deps = [
+    ":monitor_interval",
+    ":utility_function",
+    "../../../api/transport:network_control",
+    "../../../rtc_base:rtc_base_approved",
+    "//third_party/abseil-cpp/absl/memory:memory",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_source_set("pcc_unittests") {
+    testonly = true
+    sources = [
+      "bitrate_controller_unittest.cc",
+      "monitor_interval_unittest.cc",
+      "pcc_network_controller_unittest.cc",
+      "rtt_tracker_unittest.cc",
+      "utility_function_unittest.cc",
+    ]
+    deps = [
+      ":bitrate_controller",
+      ":monitor_interval",
+      ":pcc",
+      ":pcc_controller",
+      ":rtt_tracker",
+      ":utility_function",
+      "../../../api/transport:network_control_test",
+      "../../../api/units:data_rate",
+      "../../../api/units:time_delta",
+      "../../../api/units:timestamp",
+      "../../../rtc_base:rtc_base_approved",
+      "../../../test:test_support",
+      "//third_party/abseil-cpp/absl/memory:memory",
+    ]
+  }
+}

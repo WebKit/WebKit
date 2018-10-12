@@ -134,22 +134,6 @@ struct UnwrapMainThreadScope {
   bool rewrap_;
 };
 
-TEST(MessageQueueManager, Clear) {
-  UnwrapMainThreadScope s;
-  if (MessageQueueManager::IsInitialized()) {
-    RTC_LOG(LS_INFO)
-        << "Unable to run MessageQueueManager::Clear test, since the "
-        << "MessageQueueManager was already initialized by some "
-        << "other test in this run.";
-    return;
-  }
-  bool deleted = false;
-  DeletedMessageHandler* handler = new DeletedMessageHandler(&deleted);
-  delete handler;
-  EXPECT_TRUE(deleted);
-  EXPECT_FALSE(MessageQueueManager::IsInitialized());
-}
-
 // Ensure that ProcessAllMessageQueues does its essential function; process
 // all messages (both delayed and non delayed) up until the current time, on
 // all registered message queues.
@@ -182,7 +166,7 @@ TEST(MessageQueueManager, ProcessAllMessageQueues) {
   b->PostDelayed(RTC_FROM_HERE, 0, &incrementer);
   rtc::Thread::Current()->Post(RTC_FROM_HERE, &event_signaler);
 
-  MessageQueueManager::ProcessAllMessageQueues();
+  MessageQueueManager::ProcessAllMessageQueuesForTesting();
   EXPECT_EQ(4, AtomicOps::AcquireLoad(&messages_processed));
 }
 
@@ -191,7 +175,7 @@ TEST(MessageQueueManager, ProcessAllMessageQueuesWithQuittingThread) {
   auto t = Thread::CreateWithSocketServer();
   t->Start();
   t->Quit();
-  MessageQueueManager::ProcessAllMessageQueues();
+  MessageQueueManager::ProcessAllMessageQueuesForTesting();
 }
 
 // Test that ProcessAllMessageQueues doesn't hang if a queue clears its
@@ -218,7 +202,7 @@ TEST(MessageQueueManager, ProcessAllMessageQueuesWithClearedQueue) {
   // Post messages (both delayed and non delayed) to both threads.
   t->Post(RTC_FROM_HERE, &clearer);
   rtc::Thread::Current()->Post(RTC_FROM_HERE, &event_signaler);
-  MessageQueueManager::ProcessAllMessageQueues();
+  MessageQueueManager::ProcessAllMessageQueuesForTesting();
 }
 
 class RefCountedHandler : public MessageHandler, public rtc::RefCountInterface {

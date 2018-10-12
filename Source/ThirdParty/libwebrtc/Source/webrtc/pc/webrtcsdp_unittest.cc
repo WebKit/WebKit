@@ -3566,6 +3566,35 @@ TEST_F(WebRtcSdpTest, IceCredentialsInCandidateStringIgnored) {
   EXPECT_EQ("pwd_voice", c.password());
 }
 
+// Test that attribute lines "a=ice-ufrag-something"/"a=ice-pwd-something" are
+// ignored, and only the "a=ice-ufrag"/"a=ice-pwd" attributes are used.
+// Regression test for:
+// https://bugs.chromium.org/p/webrtc/issues/detail?id=9712
+TEST_F(WebRtcSdpTest, AttributeWithPartialMatchingNameIsIgnored) {
+  static const char kSdpWithFooIceCredentials[] =
+      "v=0\r\n"
+      "o=- 18446744069414584320 18446462598732840960 IN IP4 127.0.0.1\r\n"
+      "s=-\r\n"
+      "t=0 0\r\n"
+      "m=audio 9 RTP/SAVPF 111\r\n"
+      "c=IN IP4 0.0.0.0\r\n"
+      "a=rtcp:9 IN IP4 0.0.0.0\r\n"
+      "a=ice-ufrag-something:foo\r\na=ice-pwd-something:bar\r\n"
+      "a=ice-ufrag:ufrag_voice\r\na=ice-pwd:pwd_voice\r\n"
+      "a=rtpmap:111 opus/48000/2\r\n"
+      "a=candidate:a0+B/1 1 udp 2130706432 192.168.1.5 1234 typ host "
+      "generation 2\r\n";
+
+  JsepSessionDescription jdesc_output(kDummyType);
+  EXPECT_TRUE(SdpDeserialize(kSdpWithFooIceCredentials, &jdesc_output));
+  const IceCandidateCollection* candidates = jdesc_output.candidates(0);
+  ASSERT_NE(nullptr, candidates);
+  ASSERT_EQ(1U, candidates->count());
+  cricket::Candidate c = candidates->at(0)->candidate();
+  EXPECT_EQ("ufrag_voice", c.username());
+  EXPECT_EQ("pwd_voice", c.password());
+}
+
 // Test that SDP with an invalid port number in "a=candidate" lines is
 // rejected, without crashing.
 // Regression test for:

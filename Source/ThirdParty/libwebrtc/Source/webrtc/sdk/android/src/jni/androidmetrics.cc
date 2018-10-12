@@ -15,7 +15,6 @@
 #include "sdk/android/native_api/jni/java_types.h"
 #include "sdk/android/src/jni/jni_helpers.h"
 #include "system_wrappers/include/metrics.h"
-#include "system_wrappers/include/metrics_default.h"
 
 // Enables collection of native histograms and creating them.
 namespace webrtc {

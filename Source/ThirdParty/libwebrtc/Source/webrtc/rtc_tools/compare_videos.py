@@ -36,6 +36,14 @@ def _ParseArgs():
                           'video (YUV).'))
   parser.add_option('--frame_analyzer', type='string',
                     help='Path to the frame analyzer executable.')
+  parser.add_option('--aligned_output_file', type='string',
+                    help='Path for output aligned YUV or Y4M file.')
+  parser.add_option('--vmaf', type='string',
+                    help='Path to VMAF executable.')
+  parser.add_option('--vmaf_model', type='string',
+                    help='Path to VMAF model.')
+  parser.add_option('--vmaf_phone_model', action='store_true',
+                    help='Whether to use phone model in VMAF.')
   parser.add_option('--barcode_decoder', type='string',
                     help=('Path to the barcode decoder script. By default, we '
                           'will assume we can find it in barcode_tools/'
@@ -86,6 +94,10 @@ def _ParseArgs():
   if not os.path.exists(options.frame_analyzer):
     parser.error('Cannot find frame analyzer executable at %s!' %
                  options.frame_analyzer)
+
+  if options.vmaf and not options.vmaf_model:
+    parser.error('You must provide a path to a VMAF model to use VMAF.')
+
   return options
 
 def _DevNull():
@@ -123,14 +135,84 @@ def DecodeBarcodesInVideo(options, path_to_decoder, video, stat_file):
     return 1
   return 0
 
+
+def _RunFrameAnalyzer(options, yuv_directory=None):
+  """Run frame analyzer to compare the videos and print output."""
+  cmd = [
+    options.frame_analyzer,
+    '--label=%s' % options.label,
+    '--reference_file=%s' % options.ref_video,
+    '--test_file=%s' % options.test_video,
+    '--stats_file_ref=%s' % options.stats_file_ref,
+    '--stats_file_test=%s' % options.stats_file_test,
+    '--width=%d' % options.yuv_frame_width,
+    '--height=%d' % options.yuv_frame_height,
+  ]
+  if options.chartjson_result_file:
+    cmd.append('--chartjson_result_file=%s' % options.chartjson_result_file)
+  if options.aligned_output_file:
+    cmd.append('--aligned_output_file=%s' % options.aligned_output_file)
+  if yuv_directory:
+    cmd.append('--yuv_directory=%s' % yuv_directory)
+  frame_analyzer = subprocess.Popen(cmd, stdin=_DevNull(),
+                                    stdout=sys.stdout, stderr=sys.stderr)
+  frame_analyzer.wait()
+  if frame_analyzer.returncode != 0:
+    print 'Failed to run frame analyzer.'
+  return frame_analyzer.returncode
+
+
+def _RunVmaf(options, yuv_directory):
+  """ Run VMAF to compare videos and print output.
+
+  The provided vmaf directory is assumed to contain a c++ wrapper executable
+  and a model.
+
+  The yuv_directory is assumed to have been populated with a reference and test
+  video in .yuv format, with names according to the label.
+  """
+  cmd = [
+    options.vmaf,
+    'yuv420p',
+    str(options.yuv_frame_width),
+    str(options.yuv_frame_height),
+    os.path.join(yuv_directory, "ref.yuv"),
+    os.path.join(yuv_directory, "test.yuv"),
+    options.vmaf_model,
+  ]
+  if options.vmaf_phone_model:
+    cmd.append('--phone-model')
+
+  vmaf = subprocess.Popen(cmd, stdin=_DevNull(),
+                          stdout=subprocess.PIPE, stderr=sys.stderr)
+  vmaf.wait()
+  if vmaf.returncode != 0:
+    print 'Failed to run VMAF.'
+    return 1
+  output = vmaf.stdout.read()
+  # Extract score from VMAF output.
+  try:
+    score = float(output.split('\n')[2].split()[3])
+  except (ValueError, IndexError):
+    print 'Error in VMAF output (expected "VMAF score = [float]" on line 3):'
+    print output
+    return 1
+
+  print 'RESULT Vmaf: %s= %f' % (options.label, score)
+  return 0
+
+
 def main():
   """The main function.
 
   A simple invocation is:
-  ./webrtc/rtc_tools/barcode_tools/compare_videos.py
+  ./webrtc/rtc_tools/compare_videos.py
   --ref_video=<path_and_name_of_reference_video>
   --test_video=<path_and_name_of_test_video>
   --frame_analyzer=<path_and_name_of_the_frame_analyzer_executable>
+
+  Running vmaf requires the following arguments:
+  --vmaf, --vmaf_model, --yuv_frame_width, --yuv_frame_height
 
   Notice that the prerequisites for barcode_decoder.py also applies to this
   script. The means the following executables have to be available in the PATH:
@@ -152,25 +234,21 @@ def main():
                            options.test_video, options.stats_file_test) != 0:
     return 1
 
-  # Run frame analyzer to compare the videos and print output.
-  cmd = [
-    options.frame_analyzer,
-    '--label=%s' % options.label,
-    '--reference_file=%s' % options.ref_video,
-    '--test_file=%s' % options.test_video,
-    '--stats_file_ref=%s' % options.stats_file_ref,
-    '--stats_file_test=%s' % options.stats_file_test,
-    '--width=%d' % options.yuv_frame_width,
-    '--height=%d' % options.yuv_frame_height,
-  ]
-  if options.chartjson_result_file:
-    cmd.append('--chartjson_result_file=%s' % options.chartjson_result_file)
-  frame_analyzer = subprocess.Popen(cmd, stdin=_DevNull(),
-                                    stdout=sys.stdout, stderr=sys.stderr)
-  frame_analyzer.wait()
-  if frame_analyzer.returncode != 0:
-    print 'Failed to run frame analyzer.'
-    return 1
+  if options.vmaf:
+    try:
+      # Directory to save temporary YUV files for VMAF in frame_analyzer.
+      yuv_directory = tempfile.mkdtemp()
+
+      # Run frame analyzer to compare the videos and print output.
+      if _RunFrameAnalyzer(options, yuv_directory=yuv_directory) != 0:
+        return 1
+
+      # Run VMAF for further video comparison and print output.
+      return _RunVmaf(options, yuv_directory)
+    finally:
+      shutil.rmtree(yuv_directory)
+  else:
+    return _RunFrameAnalyzer(options)
 
   return 0
 

@@ -49,7 +49,7 @@ class Camera1Session implements CameraSession {
   private final long constructionTimeNs; // Construction time of this class.
 
   private SessionState state;
-  private boolean firstFrameReported = false;
+  private boolean firstFrameReported;
 
   // TODO(titovartem) make correct fix during webrtc:9175
   @SuppressWarnings("ByteBufferBackingArray")

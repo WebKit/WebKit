@@ -11,7 +11,6 @@
 #include "modules/audio_processing/aec3/echo_path_delay_estimator.h"
 
 #include <algorithm>
-#include <sstream>
 #include <string>
 
 #include "api/audio/echo_canceller3_config.h"
@@ -20,16 +19,17 @@
 #include "modules/audio_processing/logging/apm_data_dumper.h"
 #include "modules/audio_processing/test/echo_canceller_test_tools.h"
 #include "rtc_base/random.h"
+#include "rtc_base/strings/string_builder.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 namespace {
 
 std::string ProduceDebugText(size_t delay, size_t down_sampling_factor) {
-  std::ostringstream ss;
+  rtc::StringBuilder ss;
   ss << "Delay: " << delay;
   ss << ", Down sampling factor: " << down_sampling_factor;
-  return ss.str();
+  return ss.Release();
 }
 
 }  // namespace

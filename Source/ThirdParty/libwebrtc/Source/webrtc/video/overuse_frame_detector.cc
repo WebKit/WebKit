@@ -10,7 +10,6 @@
 
 #include "video/overuse_frame_detector.h"
 
-#include <assert.h>
 #include <math.h>
 #include <stdio.h>
 

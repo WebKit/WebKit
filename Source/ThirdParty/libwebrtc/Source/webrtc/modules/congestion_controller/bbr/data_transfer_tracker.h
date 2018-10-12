@@ -37,8 +37,8 @@ class DataTransferTracker {
 
  private:
   struct Sample {
-    Timestamp ack_time = Timestamp::Infinity();
-    Timestamp send_time = Timestamp::Infinity();
+    Timestamp ack_time = Timestamp::PlusInfinity();
+    Timestamp send_time = Timestamp::PlusInfinity();
     DataSize size_delta = DataSize::Zero();
     DataSize size_sum = DataSize::Zero();
   };

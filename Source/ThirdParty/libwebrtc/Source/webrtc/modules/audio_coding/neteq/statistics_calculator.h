@@ -83,6 +83,9 @@ class StatisticsCalculator {
   // Reports that |num_samples| samples were decoded from secondary packets.
   void SecondaryDecodedSamples(int num_samples);
 
+  // Rerport that the packet buffer was flushed.
+  void FlushedPacketBuffer();
+
   // Logs a delayed packet outage event of |outage_duration_ms|. A delayed
   // packet outage event is defined as an expand period caused not by an actual
   // packet loss, but by a delayed packet.
@@ -110,6 +113,8 @@ class StatisticsCalculator {
   // Returns a copy of this class's lifetime statistics. These statistics are
   // never reset.
   NetEqLifetimeStatistics GetLifetimeStatistics() const;
+
+  NetEqOperationsAndState GetOperationsAndState() const;
 
  private:
   static const int kMaxReportPeriod = 60;  // Seconds before auto-reset.
@@ -178,6 +183,7 @@ class StatisticsCalculator {
   static uint16_t CalculateQ14Ratio(size_t numerator, uint32_t denominator);
 
   NetEqLifetimeStatistics lifetime_stats_;
+  NetEqOperationsAndState operations_and_state_;
   size_t concealed_samples_correction_ = 0;
   size_t voice_concealed_samples_correction_ = 0;
   size_t preemptive_samples_;

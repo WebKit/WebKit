@@ -11,7 +11,6 @@
 #ifndef RTC_BASE_SOCKETADDRESS_H_
 #define RTC_BASE_SOCKETADDRESS_H_
 
-#include <iosfwd>
 #include <string>
 #ifdef UNIT_TEST
 #include <ostream>  // no-presubmit-check TODO(webrtc:8982)

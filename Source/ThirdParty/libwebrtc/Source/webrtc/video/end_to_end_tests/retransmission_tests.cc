@@ -8,6 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "api/test/simulated_network.h"
+#include "call/fake_network_pipe.h"
+#include "call/simulated_network.h"
 #include "modules/video_coding/codecs/vp8/include/vp8.h"
 #include "system_wrappers/include/sleep.h"
 #include "test/call_test.h"
@@ -17,27 +20,16 @@
 #include "test/rtcp_packet_parser.h"
 
 namespace webrtc {
-class RetransmissionEndToEndTest
-    : public test::CallTest,
-      public testing::WithParamInterface<std::string> {
+class RetransmissionEndToEndTest : public test::CallTest {
  public:
-  RetransmissionEndToEndTest() : field_trial_(GetParam()) {}
+  RetransmissionEndToEndTest() = default;
 
  protected:
   void DecodesRetransmittedFrame(bool enable_rtx, bool enable_red);
   void ReceivesPliAndRecovers(int rtp_history_ms);
-
- private:
- private:
-  test::ScopedFieldTrials field_trial_;
 };
 
-INSTANTIATE_TEST_CASE_P(RoundRobin,
-                        RetransmissionEndToEndTest,
-                        ::testing::Values("WebRTC-RoundRobinPacing/Disabled/",
-                                          "WebRTC-RoundRobinPacing/Enabled/"));
-
-TEST_P(RetransmissionEndToEndTest, ReceivesAndRetransmitsNack) {
+TEST_F(RetransmissionEndToEndTest, ReceivesAndRetransmitsNack) {
   static const int kNumberOfNacksToObserve = 2;
   static const int kLossBurstSize = 2;
   static const int kPacketsBetweenLossBursts = 9;
@@ -120,7 +112,7 @@ TEST_P(RetransmissionEndToEndTest, ReceivesAndRetransmitsNack) {
   RunBaseTest(&test);
 }
 
-TEST_P(RetransmissionEndToEndTest, ReceivesNackAndRetransmitsAudio) {
+TEST_F(RetransmissionEndToEndTest, ReceivesNackAndRetransmitsAudio) {
   class NackObserver : public test::EndToEndTest {
    public:
     NackObserver()
@@ -137,7 +129,11 @@ TEST_P(RetransmissionEndToEndTest, ReceivesNackAndRetransmitsAudio) {
         test::SingleThreadedTaskQueueForTesting* task_queue) override {
       test::PacketTransport* receive_transport = new test::PacketTransport(
           task_queue, nullptr, this, test::PacketTransport::kReceiver,
-          payload_type_map_, FakeNetworkPipe::Config());
+          payload_type_map_,
+          absl::make_unique<FakeNetworkPipe>(
+              Clock::GetRealTimeClock(),
+              absl::make_unique<SimulatedNetwork>(
+                  DefaultNetworkSimulationConfig())));
       receive_transport_ = receive_transport;
       return receive_transport;
     }
@@ -191,7 +187,7 @@ TEST_P(RetransmissionEndToEndTest, ReceivesNackAndRetransmitsAudio) {
   RunBaseTest(&test);
 }
 
-TEST_P(RetransmissionEndToEndTest,
+TEST_F(RetransmissionEndToEndTest,
        StopSendingKeyframeRequestsForInactiveStream) {
   class KeyframeRequestObserver : public test::EndToEndTest {
    public:
@@ -314,11 +310,11 @@ void RetransmissionEndToEndTest::ReceivesPliAndRecovers(int rtp_history_ms) {
   RunBaseTest(&test);
 }
 
-TEST_P(RetransmissionEndToEndTest, ReceivesPliAndRecoversWithNack) {
+TEST_F(RetransmissionEndToEndTest, ReceivesPliAndRecoversWithNack) {
   ReceivesPliAndRecovers(1000);
 }
 
-TEST_P(RetransmissionEndToEndTest, ReceivesPliAndRecoversWithoutNack) {
+TEST_F(RetransmissionEndToEndTest, ReceivesPliAndRecoversWithoutNack) {
   ReceivesPliAndRecovers(0);
 }
 // This test drops second RTP packet with a marker bit set, makes sure it's
@@ -436,7 +432,7 @@ void RetransmissionEndToEndTest::DecodesRetransmittedFrame(bool enable_rtx,
       send_config->encoder_settings.encoder_factory = &encoder_factory_;
       send_config->rtp.payload_name = "VP8";
       encoder_config->codec_type = kVideoCodecVP8;
-      (*receive_configs)[0].decoders[0].payload_name = "VP8";
+      (*receive_configs)[0].decoders[0].video_format = SdpVideoFormat("VP8");
     }
 
     void OnFrameGeneratorCapturerCreated(
@@ -475,19 +471,19 @@ void RetransmissionEndToEndTest::DecodesRetransmittedFrame(bool enable_rtx,
   RunBaseTest(&test);
 }
 
-TEST_P(RetransmissionEndToEndTest, DecodesRetransmittedFrame) {
+TEST_F(RetransmissionEndToEndTest, DecodesRetransmittedFrame) {
   DecodesRetransmittedFrame(false, false);
 }
 
-TEST_P(RetransmissionEndToEndTest, DecodesRetransmittedFrameOverRtx) {
+TEST_F(RetransmissionEndToEndTest, DecodesRetransmittedFrameOverRtx) {
   DecodesRetransmittedFrame(true, false);
 }
 
-TEST_P(RetransmissionEndToEndTest, DecodesRetransmittedFrameByRed) {
+TEST_F(RetransmissionEndToEndTest, DecodesRetransmittedFrameByRed) {
   DecodesRetransmittedFrame(false, true);
 }
 
-TEST_P(RetransmissionEndToEndTest, DecodesRetransmittedFrameByRedOverRtx) {
+TEST_F(RetransmissionEndToEndTest, DecodesRetransmittedFrameByRedOverRtx) {
   DecodesRetransmittedFrame(true, true);
 }
 

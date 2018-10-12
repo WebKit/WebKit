@@ -1,12 +1,8 @@
 include_rules = [
-  "+WebRTC",
-  "+Common",
-  "+Video",
-  "+Audio",
-  "+UI",
-  "+PeerConnection",
-  "+VideoToolbox",
-  "+Metal",
+  "+base",
+  "+components",
+  "+helpers",
+  "+sdk",
   "+api",
   "+common_video/h264",
   "+common_video/include",
@@ -17,5 +13,6 @@ include_rules = [
   "+system_wrappers",
   "+modules/audio_device",
   "+modules/audio_processing",
+  "+native",
   "+third_party/libyuv",
 ]

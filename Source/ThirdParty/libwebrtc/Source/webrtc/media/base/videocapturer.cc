@@ -17,7 +17,6 @@
 #include "api/video/i420_buffer.h"
 #include "api/video/video_frame.h"
 #include "rtc_base/logging.h"
-#include "system_wrappers/include/field_trial.h"
 
 namespace cricket {
 

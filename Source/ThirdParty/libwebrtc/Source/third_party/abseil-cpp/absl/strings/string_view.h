@@ -498,7 +498,7 @@ class string_view {
 #endif
 
   static constexpr size_type CheckLengthInternal(size_type len) {
-    return ABSL_ASSERT(len <= kMaxSize), len;
+    return len;
   }
 
   const char* ptr_;

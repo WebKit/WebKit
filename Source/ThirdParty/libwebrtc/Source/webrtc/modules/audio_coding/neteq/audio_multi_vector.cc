@@ -67,15 +67,15 @@ void AudioMultiVector::CopyTo(AudioMultiVector* copy_to) const {
   }
 }
 
-void AudioMultiVector::PushBackInterleaved(const int16_t* append_this,
-                                           size_t length) {
-  assert(length % num_channels_ == 0);
+void AudioMultiVector::PushBackInterleaved(
+    rtc::ArrayView<const int16_t> append_this) {
+  RTC_DCHECK_EQ(append_this.size() % num_channels_, 0);
   if (num_channels_ == 1) {
     // Special case to avoid extra allocation and data shuffling.
-    channels_[0]->PushBack(append_this, length);
+    channels_[0]->PushBack(append_this.data(), append_this.size());
     return;
   }
-  size_t length_per_channel = length / num_channels_;
+  size_t length_per_channel = append_this.size() / num_channels_;
   int16_t* temp_array = new int16_t[length_per_channel];  // Temporary storage.
   for (size_t channel = 0; channel < num_channels_; ++channel) {
     // Copy elements to |temp_array|.

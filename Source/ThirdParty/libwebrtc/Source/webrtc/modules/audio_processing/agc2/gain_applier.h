@@ -20,6 +20,7 @@ class GainApplier {
 
   void ApplyGain(AudioFrameView<float> signal);
   void SetGainFactor(float gain_factor);
+  float GetGainFactor() const { return current_gain_factor_; };
 
  private:
   void Initialize(size_t samples_per_channel);

@@ -24,10 +24,6 @@ namespace webrtc {
 static size_t kMaxQueuedReceivedDataBytes = 16 * 1024 * 1024;
 static size_t kMaxQueuedSendDataBytes = 16 * 1024 * 1024;
 
-enum {
-  MSG_CHANNELREADY,
-};
-
 bool SctpSidAllocator::AllocateSid(rtc::SSLRole role, int* sid) {
   int potential_sid = (role == rtc::SSL_CLIENT) ? 0 : 1;
   while (!IsSidAvailable(potential_sid)) {
@@ -187,7 +183,8 @@ bool DataChannel::Init(const InternalDataChannelInit& config) {
     // Chrome glue and WebKit) are not wired up properly until after this
     // function returns.
     if (provider_->ReadyToSendData()) {
-      rtc::Thread::Current()->Post(RTC_FROM_HERE, this, MSG_CHANNELREADY, NULL);
+      invoker_.AsyncInvoke<void>(RTC_FROM_HERE, rtc::Thread::Current(),
+                                 [this] { OnChannelReady(true); });
     }
   }
 
@@ -344,14 +341,6 @@ void DataChannel::SetSendSsrc(uint32_t send_ssrc) {
   send_ssrc_ = send_ssrc;
   send_ssrc_set_ = true;
   UpdateState();
-}
-
-void DataChannel::OnMessage(rtc::Message* msg) {
-  switch (msg->message_id) {
-    case MSG_CHANNELREADY:
-      OnChannelReady(true);
-      break;
-  }
 }
 
 void DataChannel::OnDataReceived(const cricket::ReceiveDataParams& params,

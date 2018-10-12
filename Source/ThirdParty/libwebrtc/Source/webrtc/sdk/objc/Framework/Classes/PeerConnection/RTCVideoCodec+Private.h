@@ -8,52 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#import "WebRTC/RTCVideoCodec.h"
-
-#import "WebRTC/RTCVideoCodecH264.h"
-
-#include "api/video_codecs/sdp_video_format.h"
-#include "common_video/include/video_frame.h"
-#include "media/base/codec.h"
-#include "modules/video_coding/include/video_codec_interface.h"
-
-NS_ASSUME_NONNULL_BEGIN
-
-/* Interfaces for converting to/from internal C++ formats. */
-@interface RTCEncodedImage ()
-
-- (instancetype)initWithNativeEncodedImage:(webrtc::EncodedImage)encodedImage;
-- (webrtc::EncodedImage)nativeEncodedImage;
-
-@end
-
-@interface RTCVideoEncoderSettings ()
-
-- (instancetype)initWithNativeVideoCodec:(const webrtc::VideoCodec *__nullable)videoCodec;
-
-@property(nonatomic, assign) webrtc::VideoCodec nativeVideoCodec;
-
-@end
-
-@interface RTCCodecSpecificInfoH264 ()
-
-- (webrtc::CodecSpecificInfo)nativeCodecSpecificInfo;
-
-@end
-
-@interface RTCRtpFragmentationHeader ()
-
-- (instancetype)initWithNativeFragmentationHeader:
-        (const webrtc::RTPFragmentationHeader *__nullable)fragmentationHeader;
-- (std::unique_ptr<webrtc::RTPFragmentationHeader>)createNativeFragmentationHeader;
-
-@end
-
-@interface RTCVideoCodecInfo ()
-
-- (instancetype)initWithNativeSdpVideoFormat:(webrtc::SdpVideoFormat)format;
-- (webrtc::SdpVideoFormat)nativeSdpVideoFormat;
-
-@end
-
-NS_ASSUME_NONNULL_END
+#import "api/peerconnection/RTCEncodedImage+Private.h"
+#import "api/peerconnection/RTCRtpFragmentationHeader+Private.h"
+#import "api/peerconnection/RTCVideoCodecInfo+Private.h"
+#import "api/peerconnection/RTCVideoEncoderSettings+Private.h"
+#import "components/video_codec/RTCCodecSpecificInfoH264+Private.h"

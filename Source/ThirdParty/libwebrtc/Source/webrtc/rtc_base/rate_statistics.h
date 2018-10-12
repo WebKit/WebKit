@@ -27,6 +27,11 @@ class RateStatistics {
   // scale = coefficient to convert counts/ms to desired unit
   //         ex: kBpsScale (8000) for bits/s if count represents bytes.
   RateStatistics(int64_t max_window_size_ms, float scale);
+
+  RateStatistics(const RateStatistics& other);
+
+  RateStatistics(RateStatistics&& other);
+
   ~RateStatistics();
 
   // Reset instance to original state.

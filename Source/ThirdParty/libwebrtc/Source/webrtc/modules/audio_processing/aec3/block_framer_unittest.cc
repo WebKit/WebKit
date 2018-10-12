@@ -10,11 +10,11 @@
 
 #include "modules/audio_processing/aec3/block_framer.h"
 
-#include <sstream>
 #include <string>
 #include <vector>
 
 #include "modules/audio_processing/aec3/aec3_common.h"
+#include "rtc_base/strings/string_builder.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -159,9 +159,9 @@ void RunWronglyInsertOrderTest(int sample_rate_hz,
 #endif
 
 std::string ProduceDebugText(int sample_rate_hz) {
-  std::ostringstream ss;
+  rtc::StringBuilder ss;
   ss << "Sample rate: " << sample_rate_hz;
-  return ss.str();
+  return ss.Release();
 }
 
 }  // namespace
@@ -229,7 +229,7 @@ TEST(BlockFramer, WrongNumberOfSamplesInBlockForInsertBlock) {
 TEST(BlockFramer, WrongNumberOfPreceedingApiCallsForInsertBlock) {
   for (auto rate : {8000, 16000, 32000, 48000}) {
     for (size_t num_calls = 0; num_calls < 4; ++num_calls) {
-      std::ostringstream ss;
+      rtc::StringBuilder ss;
       ss << "Sample rate: " << rate;
       ss << ", Num preceeding InsertBlockAndExtractSubFrame calls: "
          << num_calls;

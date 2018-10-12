@@ -18,6 +18,7 @@
 #include <string>
 
 #include "rtc_base/checks.h"
+#include "rtc_base/strings/string_builder.h"
 
 namespace rtc {
 
@@ -142,9 +143,9 @@ class IntervalRange {
   int max() const { return max_; }
 
   std::string ToString() const {
-    std::stringstream ss;
+    rtc::StringBuilder ss;
     ss << "[" << min_ << "," << max_ << "]";
-    return ss.str();
+    return ss.Release();
   }
 
   bool operator==(const IntervalRange& o) const {

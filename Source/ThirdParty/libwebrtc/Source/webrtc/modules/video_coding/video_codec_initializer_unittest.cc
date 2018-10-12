@@ -12,7 +12,7 @@
 #include "api/video/video_bitrate_allocator.h"
 #include "api/video_codecs/video_encoder.h"
 #include "common_types.h"  // NOLINT(build/include)
-#include "modules/video_coding/codecs/vp8/temporal_layers.h"
+#include "modules/video_coding/codecs/vp8/include/vp8_temporal_layers.h"
 #include "modules/video_coding/codecs/vp9/include/vp9_globals.h"
 #include "rtc_base/refcountedobject.h"
 #include "test/gtest.h"
@@ -86,8 +86,9 @@ class VideoCodecInitializerTest : public ::testing::Test {
     // Make sure temporal layers instances have been created.
     if (codec_out_.codecType == VideoCodecType::kVideoCodecVP8) {
       for (int i = 0; i < codec_out_.numberOfSimulcastStreams; ++i) {
-        temporal_layers_.emplace_back(
-            TemporalLayers::CreateTemporalLayers(codec_out_, i));
+        temporal_layers_.emplace_back(TemporalLayers::CreateTemporalLayers(
+            TemporalLayersType::kFixedPattern,
+            codec_out_.VP8()->numberOfTemporalLayers));
       }
     }
     return true;

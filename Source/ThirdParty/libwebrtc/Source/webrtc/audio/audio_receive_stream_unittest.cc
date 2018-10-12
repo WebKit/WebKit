@@ -25,6 +25,7 @@
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "test/gtest.h"
 #include "test/mock_audio_decoder_factory.h"
+#include "test/mock_transport.h"
 
 namespace webrtc {
 namespace test {
@@ -59,8 +60,8 @@ const unsigned int kSpeechOutputLevel = 99;
 const double kTotalOutputEnergy = 0.25;
 const double kTotalOutputDuration = 0.5;
 
-const CallStatistics kCallStats = {345,  678,  901, 234, -12,
-                                   3456, 7890, 567, 890, 123};
+const CallReceiveStatistics kCallStats = {345, 678, 901, 234,
+                                          -12, 567, 890, 123};
 const CodecInst kCodecInst = {123, "codec_name_recv", 96000, -187, 0, -103};
 const NetworkStatistics kNetworkStats = {
     123, 456, false, 789012, 3456, 123, 456, 0,  {}, 789, 12,
@@ -81,7 +82,7 @@ struct ConfigHelper {
         new rtc::RefCountedObject<testing::NiceMock<MockAudioDeviceModule>>();
     audio_state_ = AudioState::Create(config);
 
-    channel_proxy_ = new testing::StrictMock<MockVoEChannelProxy>();
+    channel_proxy_ = new testing::StrictMock<MockChannelReceiveProxy>();
     EXPECT_CALL(*channel_proxy_, SetLocalSSRC(kLocalSsrc)).Times(1);
     EXPECT_CALL(*channel_proxy_, SetNACKStatus(true, 15)).Times(1);
     EXPECT_CALL(*channel_proxy_,
@@ -89,7 +90,6 @@ struct ConfigHelper {
         .Times(1);
     EXPECT_CALL(*channel_proxy_, ResetReceiverCongestionControlObjects())
         .Times(1);
-    EXPECT_CALL(*channel_proxy_, RegisterTransport(nullptr)).Times(2);
     EXPECT_CALL(*channel_proxy_, DisassociateSendChannel()).Times(1);
     EXPECT_CALL(*channel_proxy_, SetReceiveCodecs(_))
         .WillRepeatedly(Invoke([](const std::map<int, SdpAudioFormat>& codecs) {
@@ -103,6 +103,7 @@ struct ConfigHelper {
         RtpExtension(RtpExtension::kAudioLevelUri, kAudioLevelId));
     stream_config_.rtp.extensions.push_back(RtpExtension(
         RtpExtension::kTransportSequenceNumberUri, kTransportSequenceNumberId));
+    stream_config_.rtcp_send_transport = &rtcp_send_transport_;
     stream_config_.decoder_factory =
         new rtc::RefCountedObject<MockAudioDecoderFactory>;
   }
@@ -112,12 +113,12 @@ struct ConfigHelper {
         new internal::AudioReceiveStream(
             &rtp_stream_receiver_controller_, &packet_router_, stream_config_,
             audio_state_, &event_log_,
-            std::unique_ptr<voe::ChannelProxy>(channel_proxy_)));
+            std::unique_ptr<voe::ChannelReceiveProxy>(channel_proxy_)));
   }
 
   AudioReceiveStream::Config& config() { return stream_config_; }
   rtc::scoped_refptr<MockAudioMixer> audio_mixer() { return audio_mixer_; }
-  MockVoEChannelProxy* channel_proxy() { return channel_proxy_; }
+  MockChannelReceiveProxy* channel_proxy() { return channel_proxy_; }
 
   void SetupMockForGetStats() {
     using testing::DoAll;
@@ -148,8 +149,9 @@ struct ConfigHelper {
   rtc::scoped_refptr<AudioState> audio_state_;
   rtc::scoped_refptr<MockAudioMixer> audio_mixer_;
   AudioReceiveStream::Config stream_config_;
-  testing::StrictMock<MockVoEChannelProxy>* channel_proxy_ = nullptr;
+  testing::StrictMock<MockChannelReceiveProxy>* channel_proxy_ = nullptr;
   RtpStreamReceiverController rtp_stream_receiver_controller_;
+  MockTransport rtcp_send_transport_;
 };
 
 void BuildOneByteExtension(std::vector<uint8_t>::iterator it,
@@ -364,7 +366,7 @@ TEST(AudioReceiveStreamTest, ReconfigureWithUpdatedConfig) {
                    kTransportSequenceNumberId + 1));
   new_config.decoder_map.emplace(1, SdpAudioFormat("foo", 8000, 1));
 
-  MockVoEChannelProxy& channel_proxy = *helper.channel_proxy();
+  MockChannelReceiveProxy& channel_proxy = *helper.channel_proxy();
   EXPECT_CALL(channel_proxy, SetLocalSSRC(kLocalSsrc + 1)).Times(1);
   EXPECT_CALL(channel_proxy, SetNACKStatus(true, 15 + 1)).Times(1);
   EXPECT_CALL(channel_proxy, SetReceiveCodecs(new_config.decoder_map));

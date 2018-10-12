@@ -478,6 +478,13 @@ std::string ToString(const double d) {
   return std::string(&buf[0], len);
 }
 
+std::string ToString(const long double d) {
+  char buf[32];
+  const int len = std::snprintf(&buf[0], arraysize(buf), "%Lg", d);
+  RTC_DCHECK_LE(len, arraysize(buf));
+  return std::string(&buf[0], len);
+}
+
 std::string ToString(const void* const p) {
   char buf[32];
   const int len = std::snprintf(&buf[0], arraysize(buf), "%p", p);

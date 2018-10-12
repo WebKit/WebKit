@@ -18,7 +18,6 @@
 #include <string>
 
 #include "system_wrappers/include/field_trial.h"
-#include "system_wrappers/include/field_trial_default.h"
 
 namespace webrtc {
 namespace {

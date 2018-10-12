@@ -30,7 +30,30 @@ if (is_ios) {
   import("//build/config/ios/rules.gni")
 }
 
+if (is_mac) {
+  import("//build/config/mac/rules.gni")
+}
+
 declare_args() {
+  # Setting this to true will define WEBRTC_EXCLUDE_FIELD_TRIAL_DEFAULT which
+  # will tell the pre-processor to remove the default definition of symbols
+  # needed to use field_trial. In that case a new implementation needs to be
+  # provided.
+  if (build_with_chromium) {
+    # When WebRTC is built as part of Chromium it should exclude the default
+    # implementation of field_trial unless it is building for NACL or
+    # Chromecast.
+    rtc_exclude_field_trial_default = !is_nacl && !is_chromecast
+  } else {
+    rtc_exclude_field_trial_default = false
+  }
+
+  # Setting this to true will define WEBRTC_EXCLUDE_METRICS_DEFAULT which
+  # will tell the pre-processor to remove the default definition of symbols
+  # needed to use metrics. In that case a new implementation needs to be
+  # provided.
+  rtc_exclude_metrics_default = build_with_chromium
+
   # Setting this to false will require the API user to pass in their own
   # SSLCertificateVerifier to verify the certificates presented from a
   # TLS-TURN server. In return disabling this saves around 100kb in the binary.
@@ -59,9 +82,6 @@ declare_args() {
 
   # Selects fixed-point code where possible.
   rtc_prefer_fixed_point = false
-
-  # Disable the code for the intelligibility enhancer by default.
-  rtc_enable_intelligibility_enhancer = false
 
   # Enable when an external authentication mechanism is used for performing
   # packet authentication for RTP packets instead of libsrtp.
@@ -145,6 +165,9 @@ declare_args() {
     # binary only running on iOS 11+, which is why it is disabled by default.
     rtc_apprtcmobile_broadcast_extension = false
   }
+
+  # Determines whether Metal is available on iOS/macOS.
+  rtc_use_metal_rendering = is_mac || (is_ios && current_cpu == "arm64")
 }
 
 if (!build_with_mozilla) {
@@ -220,7 +243,10 @@ webrtc_root = get_path_info(".", "abspath")
 # It sets defines, include paths and compilation warnings accordingly,
 # both for WebRTC stand-alone builds and for the scenario when WebRTC
 # native code is built as part of Chromium.
-rtc_common_configs = [ webrtc_root + ":common_config" ]
+rtc_common_configs = [
+  webrtc_root + ":common_config",
+  "//build/config/compiler:no_size_t_to_int_warning",
+]
 
 if (is_mac || is_ios) {
   rtc_common_configs += [ "//build/config/compiler:enable_arc" ]
@@ -236,6 +262,8 @@ rtc_common_inherited_config = webrtc_root + ":common_inherited_config"
 # Common configs to remove or add in all rtc targets.
 rtc_remove_configs = []
 rtc_add_configs = rtc_common_configs
+rtc_prod_configs = [ webrtc_root + ":rtc_prod_config" ]
+rtc_library_impl_config = [ webrtc_root + ":library_impl_config" ]
 
 set_defaults("rtc_test") {
   configs = rtc_add_configs
@@ -396,7 +424,12 @@ template("rtc_source_set") {
       }
     }
 
+    if (!defined(testonly) || !testonly) {
+      configs += rtc_prod_configs
+    }
+
     configs += invoker.configs
+    configs += rtc_library_impl_config
     configs -= rtc_remove_configs
     configs -= invoker.suppressed_configs
     public_configs = [
@@ -437,6 +470,12 @@ template("rtc_executable") {
     ]
     if (defined(invoker.public_configs)) {
       public_configs += invoker.public_configs
+    }
+    if (is_win) {
+      deps += [
+        # Give executables the default manifest on Windows (a no-op elsewhere).
+        "//build/win:default_exe_manifest",
+      ]
     }
   }
 }
@@ -494,7 +533,12 @@ template("rtc_static_library") {
       }
     }
 
+    if (!defined(testonly) || !testonly) {
+      configs += rtc_prod_configs
+    }
+
     configs += invoker.configs
+    configs += rtc_library_impl_config
     configs -= rtc_remove_configs
     configs -= invoker.suppressed_configs
     public_configs = [
@@ -628,7 +672,7 @@ if (is_ios) {
                "--out",
                rebase_path(umbrella_header_path, root_build_dir),
                "--sources",
-             ] + rebase_path(public_headers, "objc/Framework/Headers/")
+             ] + public_headers
     }
 
     copy("copy_umbrella_header_$target_name") {
@@ -647,6 +691,69 @@ if (is_ios) {
 
   set_defaults("ios_framework_bundle_with_umbrella_header") {
     configs = default_shared_library_configs
+  }
+}
+
+if (is_mac) {
+  template("mac_framework_bundle_with_umbrella_header") {
+    forward_variables_from(invoker, [ "output_name" ])
+    this_target_name = target_name
+    umbrella_header_path = "$target_gen_dir/umbrella_header/$output_name.h"
+
+    mac_framework_bundle(target_name) {
+      forward_variables_from(invoker, "*", [])
+
+      framework_version = "A"
+      framework_contents = [ "Headers" ]
+
+      ldflags = [
+        "-all_load",
+        "-install_name",
+        "@rpath/$output_name.framework/$output_name",
+      ]
+
+      deps += [
+        ":copy_framework_headers_$this_target_name",
+        ":copy_umbrella_header_$this_target_name",
+        ":umbrella_header_$this_target_name",
+      ]
+    }
+
+    bundle_data("copy_framework_headers_$this_target_name") {
+      forward_variables_from(invoker, [ "sources" ])
+
+      outputs = [
+        "{{bundle_contents_dir}}/Headers/{{source_file_part}}",
+      ]
+    }
+
+    action("umbrella_header_$this_target_name") {
+      forward_variables_from(invoker, [ "sources" ])
+
+      script = "//tools_webrtc/ios/generate_umbrella_header.py"
+
+      outputs = [
+        umbrella_header_path,
+      ]
+      args = [
+               "--out",
+               rebase_path(umbrella_header_path, root_build_dir),
+               "--sources",
+             ] + sources
+    }
+
+    bundle_data("copy_umbrella_header_$this_target_name") {
+      sources = [
+        umbrella_header_path,
+      ]
+      outputs = [
+        "{{bundle_contents_dir}}/Headers/$output_name.h",
+      ]
+
+      deps = [
+        ":umbrella_header_$this_target_name",
+      ]
+    }
   }
 }
 

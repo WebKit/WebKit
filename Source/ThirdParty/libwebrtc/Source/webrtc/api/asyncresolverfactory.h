@@ -23,8 +23,7 @@ class AsyncResolverFactory {
   AsyncResolverFactory() = default;
   virtual ~AsyncResolverFactory() = default;
 
-  // The returned object is responsible for deleting itself after address
-  // resolution has completed.
+  // The caller should call Destroy on the returned object to delete it.
   virtual rtc::AsyncResolverInterface* Create() = 0;
 };
 

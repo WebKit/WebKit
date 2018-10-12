@@ -295,14 +295,31 @@ class SctpTransport::UsrSctpWrapper {
     } else {
       ReceiveDataParams params;
 
-      // Expect only continuation messages belonging to the same sid, usrsctp
-      // ensures this.
-      RTC_CHECK(transport->partial_message_.size() == 0 ||
-                rcv.rcv_sid == transport->partial_message_sid_);
+      params.sid = rcv.rcv_sid;
+      params.seq_num = rcv.rcv_ssn;
+      params.timestamp = rcv.rcv_tsn;
+      params.type = type;
+
+      // Expect only continuation messages belonging to the same sid, the sctp
+      // stack should ensure this.
+      if ((transport->partial_message_.size() != 0) &&
+          (rcv.rcv_sid != transport->partial_params_.sid)) {
+        // A message with a new sid, but haven't seen the EOR for the
+        // previous message. Deliver the previous partial message to avoid
+        // merging messages from different sid's.
+        transport->invoker_.AsyncInvoke<void>(
+            RTC_FROM_HERE, transport->network_thread_,
+            rtc::Bind(&SctpTransport::OnInboundPacketFromSctpToTransport,
+                      transport, transport->partial_message_,
+                      transport->partial_params_, transport->partial_flags_));
+
+        transport->partial_message_.Clear();
+      }
 
       transport->partial_message_.AppendData(reinterpret_cast<uint8_t*>(data),
                                              length);
-      transport->partial_message_sid_ = rcv.rcv_sid;
+      transport->partial_params_ = params;
+      transport->partial_flags_ = flags;
 
       free(data);
 
@@ -314,11 +331,6 @@ class SctpTransport::UsrSctpWrapper {
           (transport->partial_message_.size() < kSendBufferSize)) {
         return 1;
       }
-
-      params.sid = rcv.rcv_sid;
-      params.seq_num = rcv.rcv_ssn;
-      params.timestamp = rcv.rcv_tsn;
-      params.type = type;
 
       // The ownership of the packet transfers to |invoker_|. Using
       // CopyOnWriteBuffer is the most convenient way to do this.

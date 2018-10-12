@@ -451,7 +451,9 @@ static void JNI_PeerConnection_CreateOffer(
   rtc::scoped_refptr<CreateSdpObserverJni> observer(
       new rtc::RefCountedObject<CreateSdpObserverJni>(jni, j_observer,
                                                       std::move(constraints)));
-  ExtractNativePC(jni, j_pc)->CreateOffer(observer, observer->constraints());
+  PeerConnectionInterface::RTCOfferAnswerOptions options;
+  CopyConstraintsIntoOfferAnswerOptions(observer->constraints(), &options);
+  ExtractNativePC(jni, j_pc)->CreateOffer(observer, options);
 }
 
 static void JNI_PeerConnection_CreateAnswer(
@@ -464,7 +466,9 @@ static void JNI_PeerConnection_CreateAnswer(
   rtc::scoped_refptr<CreateSdpObserverJni> observer(
       new rtc::RefCountedObject<CreateSdpObserverJni>(jni, j_observer,
                                                       std::move(constraints)));
-  ExtractNativePC(jni, j_pc)->CreateAnswer(observer, observer->constraints());
+  PeerConnectionInterface::RTCOfferAnswerOptions options;
+  CopyConstraintsIntoOfferAnswerOptions(observer->constraints(), &options);
+  ExtractNativePC(jni, j_pc)->CreateAnswer(observer, options);
 }
 
 static void JNI_PeerConnection_SetLocalDescription(

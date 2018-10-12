@@ -10,7 +10,6 @@
 
 #include <algorithm>
 #include <numeric>
-#include <sstream>
 #include <vector>
 
 #include "modules/audio_coding/codecs/isac/fix/include/audio_encoder_isacfix.h"
@@ -18,6 +17,7 @@
 #include "modules/audio_coding/neteq/tools/input_audio_file.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/numerics/safe_conversions.h"
+#include "rtc_base/strings/string_builder.h"
 #include "test/gtest.h"
 #include "test/testsupport/fileutils.h"
 
@@ -142,7 +142,7 @@ void TestGetSetBandwidthInfo(const int16_t* speech_data,
 
   int elapsed_time_ms = 0;
   for (int i = 0; elapsed_time_ms < 10000; ++i) {
-    std::ostringstream ss;
+    rtc::StringBuilder ss;
     ss << " i = " << i;
     SCOPED_TRACE(ss.str());
 

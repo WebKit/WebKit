@@ -55,7 +55,8 @@ class RtpTransportControllerSend final
       const RtcpConfig& rtcp_config,
       Transport* send_transport,
       const RtpSenderObservers& observers,
-      RtcEventLog* event_log) override;
+      RtcEventLog* event_log,
+      std::unique_ptr<FecController> fec_controller) override;
   void DestroyRtpVideoSender(
       RtpVideoSenderInterface* rtp_video_sender) override;
 
@@ -101,6 +102,9 @@ class RtpTransportControllerSend final
   void SetClientBitratePreferences(const BitrateSettings& preferences) override;
 
   void SetAllocatedBitrateWithoutFeedback(uint32_t bitrate_bps) override;
+
+  void OnTransportOverheadChanged(
+      size_t transport_overhead_per_packet) override;
 
  private:
   const Clock* const clock_;

@@ -9,7 +9,6 @@
  */
 
 #include "system_wrappers/include/metrics.h"
-#include "system_wrappers/include/metrics_default.h"
 #include "test/gtest.h"
 
 namespace webrtc {

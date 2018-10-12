@@ -54,9 +54,15 @@ void FixedGainController::SetGain(float gain_to_apply_db) {
   // The gain
   RTC_DCHECK_LE(-50.f, gain_to_apply_db);
   RTC_DCHECK_LE(gain_to_apply_db, 50.f);
+  const float previous_applied_gained = gain_to_apply_;
   gain_to_apply_ = DbToRatio(gain_to_apply_db);
   RTC_DCHECK_LT(0.f, gain_to_apply_);
   RTC_DLOG(LS_INFO) << "Gain to apply: " << gain_to_apply_db << " db.";
+  // Reset the gain curve applier to quickly react on abrupt level changes
+  // caused by large changes of the applied gain.
+  if (previous_applied_gained != gain_to_apply_) {
+    gain_curve_applier_.Reset();
+  }
 }
 
 void FixedGainController::SetSampleRate(size_t sample_rate_hz) {
@@ -91,5 +97,9 @@ void FixedGainController::Process(AudioFrameView<float> signal) {
       sample = rtc::SafeClamp(sample, kMinFloatS16Value, kMaxFloatS16Value);
     }
   }
+}
+
+float FixedGainController::LastAudioLevel() const {
+  return gain_curve_applier_.LastAudioLevel();
 }
 }  // namespace webrtc

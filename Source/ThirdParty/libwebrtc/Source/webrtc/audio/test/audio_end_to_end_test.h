@@ -14,6 +14,7 @@
 #include <string>
 #include <vector>
 
+#include "api/test/simulated_network.h"
 #include "test/call_test.h"
 
 namespace webrtc {
@@ -28,7 +29,7 @@ class AudioEndToEndTest : public test::EndToEndTest {
   const AudioSendStream* send_stream() const { return send_stream_; }
   const AudioReceiveStream* receive_stream() const { return receive_stream_; }
 
-  virtual FakeNetworkPipe::Config GetNetworkPipeConfig() const;
+  virtual DefaultNetworkSimulationConfig GetNetworkPipeConfig() const;
 
   size_t GetNumVideoStreams() const override;
   size_t GetNumAudioStreams() const override;

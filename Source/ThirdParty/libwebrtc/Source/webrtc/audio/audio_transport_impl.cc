@@ -50,8 +50,6 @@ void ProcessCaptureFrame(uint32_t delay_ms,
                          AudioFrame* audio_frame) {
   RTC_DCHECK(audio_processing);
   RTC_DCHECK(audio_frame);
-  RTC_DCHECK(
-      !audio_processing->echo_cancellation()->is_drift_compensation_enabled());
   audio_processing->set_stream_delay_ms(delay_ms);
   audio_processing->set_stream_key_pressed(key_pressed);
   int error = audio_processing->ProcessStream(audio_frame);

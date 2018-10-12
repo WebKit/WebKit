@@ -8,7 +8,6 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "system_wrappers/include/metrics_default.h"
 #include "system_wrappers/include/metrics.h"
 #include "test/gtest.h"
 

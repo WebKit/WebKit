@@ -17,12 +17,44 @@
 
 namespace webrtc {
 
-RoundRobinPacketQueue::Stream::Stream() : bytes(0) {}
+RoundRobinPacketQueue::Packet::Packet(RtpPacketSender::Priority priority,
+                                      uint32_t ssrc,
+                                      uint16_t seq_number,
+                                      int64_t capture_time_ms,
+                                      int64_t enqueue_time_ms,
+                                      size_t length_in_bytes,
+                                      bool retransmission,
+                                      uint64_t enqueue_order)
+    : priority(priority),
+      ssrc(ssrc),
+      sequence_number(seq_number),
+      capture_time_ms(capture_time_ms),
+      enqueue_time_ms(enqueue_time_ms),
+      sum_paused_ms(0),
+      bytes(length_in_bytes),
+      retransmission(retransmission),
+      enqueue_order(enqueue_order) {}
+
+RoundRobinPacketQueue::Packet::Packet(const Packet& other) = default;
+
+RoundRobinPacketQueue::Packet::~Packet() {}
+
+bool RoundRobinPacketQueue::Packet::operator<(
+    const RoundRobinPacketQueue::Packet& other) const {
+  if (priority != other.priority)
+    return priority > other.priority;
+  if (retransmission != other.retransmission)
+    return other.retransmission;
+
+  return enqueue_order > other.enqueue_order;
+}
+
+RoundRobinPacketQueue::Stream::Stream() : bytes(0), ssrc(0) {}
 RoundRobinPacketQueue::Stream::Stream(const Stream& stream) = default;
 RoundRobinPacketQueue::Stream::~Stream() {}
 
 RoundRobinPacketQueue::RoundRobinPacketQueue(const Clock* clock)
-    : clock_(clock), time_last_updated_(clock_->TimeInMilliseconds()) {}
+    : time_last_updated_(clock->TimeInMilliseconds()) {}
 
 RoundRobinPacketQueue::~RoundRobinPacketQueue() {}
 
@@ -69,7 +101,7 @@ void RoundRobinPacketQueue::Push(const Packet& packet_to_insert) {
   size_bytes_ += packet.bytes;
 }
 
-const PacketQueueInterface::Packet& RoundRobinPacketQueue::BeginPop() {
+const RoundRobinPacketQueue::Packet& RoundRobinPacketQueue::BeginPop() {
   RTC_CHECK(!pop_packet_ && !pop_stream_);
 
   Stream* stream = GetHighestPriorityStream();

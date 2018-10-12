@@ -28,6 +28,9 @@ class H264SpsPpsTracker {
  public:
   enum PacketAction { kInsert, kDrop, kRequestKeyframe };
 
+  H264SpsPpsTracker();
+  ~H264SpsPpsTracker();
+
   PacketAction CopyAndFixBitstream(VCMPacket* packet);
 
   void InsertSpsPpsNalus(const std::vector<uint8_t>& sps,
@@ -35,12 +38,22 @@ class H264SpsPpsTracker {
 
  private:
   struct PpsInfo {
+    PpsInfo();
+    PpsInfo(PpsInfo&& rhs);
+    PpsInfo& operator=(PpsInfo&& rhs);
+    ~PpsInfo();
+
     int sps_id = -1;
     size_t size = 0;
     std::unique_ptr<uint8_t[]> data;
   };
 
   struct SpsInfo {
+    SpsInfo();
+    SpsInfo(SpsInfo&& rhs);
+    SpsInfo& operator=(SpsInfo&& rhs);
+    ~SpsInfo();
+
     size_t size = 0;
     int width = -1;
     int height = -1;

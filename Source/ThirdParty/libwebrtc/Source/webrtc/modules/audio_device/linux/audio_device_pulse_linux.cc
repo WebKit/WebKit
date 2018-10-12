@@ -8,22 +8,24 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <assert.h>
-
 #include "modules/audio_device/audio_device_config.h"
 #include "modules/audio_device/linux/audio_device_pulse_linux.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "system_wrappers/include/event_wrapper.h"
 
-webrtc::adm_linux_pulse::PulseAudioSymbolTable PaSymbolTable;
+WebRTCPulseSymbolTable* GetPulseSymbolTable() {
+  static WebRTCPulseSymbolTable* pulse_symbol_table =
+      new WebRTCPulseSymbolTable();
+  return pulse_symbol_table;
+}
 
 // Accesses Pulse functions through our late-binding symbol table instead of
 // directly. This way we don't have to link to libpulse, which means our binary
 // will work on systems that don't have it.
-#define LATE(sym)                                                             \
-  LATESYM_GET(webrtc::adm_linux_pulse::PulseAudioSymbolTable, &PaSymbolTable, \
-              sym)
+#define LATE(sym)                                             \
+  LATESYM_GET(webrtc::adm_linux_pulse::PulseAudioSymbolTable, \
+              GetPulseSymbolTable(), sym)
 
 namespace webrtc {
 
@@ -1547,7 +1549,7 @@ int32_t AudioDeviceLinuxPulse::InitPulseAudio() {
   int retVal = 0;
 
   // Load libpulse
-  if (!PaSymbolTable.Load()) {
+  if (!GetPulseSymbolTable()->Load()) {
     // Most likely the Pulse library and sound server are not installed on
     // this system
     RTC_LOG(LS_ERROR) << "failed to load symbol table";
@@ -1658,7 +1660,7 @@ int32_t AudioDeviceLinuxPulse::InitPulseAudio() {
 
 int32_t AudioDeviceLinuxPulse::TerminatePulseAudio() {
   // Do nothing if the instance doesn't exist
-  // likely PaSymbolTable.Load() fails
+  // likely GetPulseSymbolTable.Load() fails
   if (!_paMainloop) {
     return 0;
   }

@@ -11,6 +11,7 @@
 #include "modules/rtp_rtcp/source/rtp_sender.h"
 
 #include <algorithm>
+#include <limits>
 #include <string>
 #include <utility>
 
@@ -21,6 +22,7 @@
 #include "modules/rtp_rtcp/include/rtp_cvo.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/playout_delay_oracle.h"
+#include "modules/rtp_rtcp/source/rtp_generic_frame_descriptor_extension.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
 #include "modules/rtp_rtcp/source/rtp_sender_audio.h"
@@ -73,6 +75,8 @@ constexpr RtpExtensionSize kVideoExtensionSizes[] = {
     CreateExtensionSize<VideoContentTypeExtension>(),
     CreateExtensionSize<VideoTimingExtension>(),
     {RtpMid::kId, RtpMid::kMaxValueSizeBytes},
+    {RtpGenericFrameDescriptorExtension::kId,
+     RtpGenericFrameDescriptorExtension::kMaxSizeBytes},
 };
 
 const char* FrameTypeToString(FrameType frame_type) {
@@ -136,6 +140,9 @@ RTPSender::RTPSender(
       packet_history_(clock),
       flexfec_packet_history_(clock),
       // Statistics
+      send_delays_(),
+      max_delay_it_(send_delays_.end()),
+      sum_delays_ms_(0),
       rtp_stats_callback_(nullptr),
       total_bitrate_sent_(kBitrateStatisticsWindowMs,
                           RateStatistics::kBpsScale),
@@ -160,7 +167,9 @@ RTPSender::RTPSender(
       overhead_observer_(overhead_observer),
       populate_network2_timestamp_(populate_network2_timestamp),
       send_side_bwe_with_overhead_(
-          webrtc::field_trial::IsEnabled("WebRTC-SendSideBwe-WithOverhead")) {
+          webrtc::field_trial::IsEnabled("WebRTC-SendSideBwe-WithOverhead")),
+      unlimited_retransmission_experiment_(
+          field_trial::IsEnabled("WebRTC-UnlimitedScreenshareRetransmission")) {
   // This random initialization is not intended to be cryptographic strong.
   timestamp_offset_ = random_.Rand<uint32_t>();
   // Random start, 16 bits. Can't be 0.
@@ -234,6 +243,11 @@ int32_t RTPSender::RegisterRtpHeaderExtension(RTPExtensionType type,
                                               uint8_t id) {
   rtc::CritScope lock(&send_critsect_);
   return rtp_header_extension_map_.RegisterByType(id, type) ? 0 : -1;
+}
+
+bool RTPSender::RegisterRtpHeaderExtension(const std::string& uri, int id) {
+  rtc::CritScope lock(&send_critsect_);
+  return rtp_header_extension_map_.RegisterByUri(id, uri);
 }
 
 bool RTPSender::IsRtpHeaderExtensionRegistered(RTPExtensionType type) const {
@@ -412,6 +426,11 @@ bool RTPSender::SendOutgoingData(FrameType frame_type,
       *transport_frame_id_out = rtp_timestamp;
     if (!sending_media_)
       return true;
+
+    // Cache video content type.
+    if (!audio_configured_ && rtp_header) {
+      video_content_type_ = rtp_header->content_type;
+    }
   }
   VideoCodecType video_type = kVideoCodecGeneric;
   if (CheckPayloadType(payload_type, &video_type) != 0) {
@@ -643,11 +662,24 @@ int32_t RTPSender::ReSendPacket(uint16_t packet_id) {
 
   const int32_t packet_size = static_cast<int32_t>(stored_packet->payload_size);
 
-  RTC_DCHECK(retransmission_rate_limiter_);
-  // Check if we're overusing retransmission bitrate.
-  // TODO(sprang): Add histograms for nack success or failure reasons.
-  if (!retransmission_rate_limiter_->TryUseRate(packet_size)) {
-    return -1;
+  // Skip retransmission rate check if not configured.
+  if (retransmission_rate_limiter_) {
+    // Skip retransmission rate check if sending screenshare and the experiment
+    // is on.
+    bool skip_retransmission_rate_limit = false;
+    if (unlimited_retransmission_experiment_) {
+      rtc::CritScope lock(&send_critsect_);
+      skip_retransmission_rate_limit =
+          video_content_type_ &&
+          videocontenttypehelpers::IsScreenshare(*video_content_type_);
+    }
+
+    // Check if we're overusing retransmission bitrate.
+    // TODO(sprang): Add histograms for nack success or failure reasons.
+    if (!skip_retransmission_rate_limit &&
+        !retransmission_rate_limiter_->TryUseRate(packet_size)) {
+      return -1;
+    }
   }
 
   if (paced_sender_) {
@@ -970,12 +1002,21 @@ bool RTPSender::SendToNetwork(std::unique_ptr<RtpPacketToSend> packet,
   return sent;
 }
 
+void RTPSender::RecomputeMaxSendDelay() {
+  max_delay_it_ = send_delays_.begin();
+  for (auto it = send_delays_.begin(); it != send_delays_.end(); ++it) {
+    if (it->second >= max_delay_it_->second) {
+      max_delay_it_ = it;
+    }
+  }
+}
+
 void RTPSender::UpdateDelayStatistics(int64_t capture_time_ms, int64_t now_ms) {
   if (!send_side_delay_observer_ || capture_time_ms <= 0)
     return;
 
   uint32_t ssrc;
-  int64_t avg_delay_ms = 0;
+  int avg_delay_ms = 0;
   int max_delay_ms = 0;
   {
     rtc::CritScope lock(&send_critsect_);
@@ -985,24 +1026,68 @@ void RTPSender::UpdateDelayStatistics(int64_t capture_time_ms, int64_t now_ms) {
   }
   {
     rtc::CritScope cs(&statistics_crit_);
-    // TODO(holmer): Compute this iteratively instead.
-    send_delays_[now_ms] = now_ms - capture_time_ms;
-    send_delays_.erase(
-        send_delays_.begin(),
-        send_delays_.lower_bound(now_ms - kSendSideDelayWindowMs));
-    int num_delays = 0;
-    for (auto it = send_delays_.upper_bound(now_ms - kSendSideDelayWindowMs);
-         it != send_delays_.end(); ++it) {
-      max_delay_ms = std::max(max_delay_ms, it->second);
-      avg_delay_ms += it->second;
-      ++num_delays;
+    // Compute the max and average of the recent capture-to-send delays.
+    // The time complexity of the current approach depends on the distribution
+    // of the delay values. This could be done more efficiently.
+
+    // Remove elements older than kSendSideDelayWindowMs.
+    auto lower_bound =
+        send_delays_.lower_bound(now_ms - kSendSideDelayWindowMs);
+    for (auto it = send_delays_.begin(); it != lower_bound; ++it) {
+      if (max_delay_it_ == it) {
+        max_delay_it_ = send_delays_.end();
+      }
+      sum_delays_ms_ -= it->second;
     }
-    if (num_delays == 0)
-      return;
-    avg_delay_ms = (avg_delay_ms + num_delays / 2) / num_delays;
+    send_delays_.erase(send_delays_.begin(), lower_bound);
+    if (max_delay_it_ == send_delays_.end()) {
+      // Removed the previous max. Need to recompute.
+      RecomputeMaxSendDelay();
+    }
+
+    // Add the new element.
+    RTC_DCHECK_GE(now_ms, static_cast<int64_t>(0));
+    RTC_DCHECK_LE(now_ms, std::numeric_limits<int64_t>::max() / 2);
+    RTC_DCHECK_GE(capture_time_ms, static_cast<int64_t>(0));
+    RTC_DCHECK_LE(capture_time_ms, std::numeric_limits<int64_t>::max() / 2);
+    int64_t diff_ms = now_ms - capture_time_ms;
+    RTC_DCHECK_GE(diff_ms, static_cast<int64_t>(0));
+    RTC_DCHECK_LE(diff_ms,
+                  static_cast<int64_t>(std::numeric_limits<int>::max()));
+    int new_send_delay = rtc::dchecked_cast<int>(now_ms - capture_time_ms);
+    SendDelayMap::iterator it;
+    bool inserted;
+    std::tie(it, inserted) =
+        send_delays_.insert(std::make_pair(now_ms, new_send_delay));
+    if (!inserted) {
+      // TODO(terelius): If we have multiple delay measurements during the same
+      // millisecond then we keep the most recent one. It is not clear that this
+      // is the right decision, but it preserves an earlier behavior.
+      int previous_send_delay = it->second;
+      sum_delays_ms_ -= previous_send_delay;
+      it->second = new_send_delay;
+      if (max_delay_it_ == it && new_send_delay < previous_send_delay) {
+        RecomputeMaxSendDelay();
+      }
+    }
+    if (max_delay_it_ == send_delays_.end() ||
+        it->second >= max_delay_it_->second) {
+      max_delay_it_ = it;
+    }
+    sum_delays_ms_ += new_send_delay;
+
+    size_t num_delays = send_delays_.size();
+    RTC_DCHECK(max_delay_it_ != send_delays_.end());
+    max_delay_ms = rtc::dchecked_cast<int>(max_delay_it_->second);
+    int64_t avg_ms = (sum_delays_ms_ + num_delays / 2) / num_delays;
+    RTC_DCHECK_GE(avg_ms, static_cast<int64_t>(0));
+    RTC_DCHECK_LE(avg_ms,
+                  static_cast<int64_t>(std::numeric_limits<int>::max()));
+    avg_delay_ms =
+        rtc::dchecked_cast<int>((sum_delays_ms_ + num_delays / 2) / num_delays);
   }
-  send_side_delay_observer_->SendSideDelayUpdated(
-      rtc::dchecked_cast<int>(avg_delay_ms), max_delay_ms, ssrc);
+  send_side_delay_observer_->SendSideDelayUpdated(avg_delay_ms, max_delay_ms,
+                                                  ssrc);
 }
 
 void RTPSender::UpdateOnSendPacket(int packet_id,
@@ -1035,8 +1120,8 @@ size_t RTPSender::RtpHeaderLength() const {
   rtc::CritScope lock(&send_critsect_);
   size_t rtp_header_length = kRtpHeaderLength;
   rtp_header_length += sizeof(uint32_t) * csrcs_.size();
-  rtp_header_length += rtp_header_extension_map_.GetTotalLengthInBytes(
-      kFecOrPaddingExtensionSizes);
+  rtp_header_length += RtpHeaderExtensionSize(kFecOrPaddingExtensionSizes,
+                                              rtp_header_extension_map_);
   return rtp_header_length;
 }
 

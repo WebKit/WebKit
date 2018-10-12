@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#import "WebRTC/RTCIceServer.h"
+#import <WebRTC/RTCIceServer.h>
 
 @interface RTCIceServer (JSON)
 

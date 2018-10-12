@@ -57,7 +57,6 @@ class FuzzyFrameObject : public video_coding::EncodedFrame {
   ~FuzzyFrameObject() {}
 
   bool GetBitstream(uint8_t* destination) const override { return false; }
-  uint32_t Timestamp() const override { return timestamp; }
   int64_t ReceivedTime() const override { return 0; }
   int64_t RenderTime() const override { return _renderTimeMs; }
 };
@@ -76,7 +75,7 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
       std::unique_ptr<FuzzyFrameObject> frame(new FuzzyFrameObject());
       frame->id.picture_id = reader.GetNum<int64_t>();
       frame->id.spatial_layer = reader.GetNum<uint8_t>();
-      frame->timestamp = reader.GetNum<uint32_t>();
+      frame->SetTimestamp(reader.GetNum<uint32_t>());
       frame->num_references = reader.GetNum<uint8_t>() %
                               video_coding::EncodedFrame::kMaxFrameReferences;
 

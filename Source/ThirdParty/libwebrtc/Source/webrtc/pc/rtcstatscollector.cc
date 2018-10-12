@@ -233,6 +233,7 @@ void SetInboundRTPStreamStatsFromVoiceReceiverInfo(
   SetInboundRTPStreamStatsFromMediaReceiverInfo(
       voice_receiver_info, inbound_audio);
   inbound_audio->media_type = "audio";
+  inbound_audio->kind = "audio";
   if (voice_receiver_info.codec_payload_type) {
     inbound_audio->codec_id = RTCCodecStatsIDFromMidDirectionAndPayload(
         mid, true, *voice_receiver_info.codec_payload_type);
@@ -251,6 +252,7 @@ void SetInboundRTPStreamStatsFromVideoReceiverInfo(
   SetInboundRTPStreamStatsFromMediaReceiverInfo(
       video_receiver_info, inbound_video);
   inbound_video->media_type = "video";
+  inbound_video->kind = "video";
   if (video_receiver_info.codec_payload_type) {
     inbound_video->codec_id = RTCCodecStatsIDFromMidDirectionAndPayload(
         mid, true, *video_receiver_info.codec_payload_type);
@@ -287,6 +289,7 @@ void SetOutboundRTPStreamStatsFromVoiceSenderInfo(
   SetOutboundRTPStreamStatsFromMediaSenderInfo(
       voice_sender_info, outbound_audio);
   outbound_audio->media_type = "audio";
+  outbound_audio->kind = "audio";
   if (voice_sender_info.codec_payload_type) {
     outbound_audio->codec_id = RTCCodecStatsIDFromMidDirectionAndPayload(
         mid, false, *voice_sender_info.codec_payload_type);
@@ -302,6 +305,7 @@ void SetOutboundRTPStreamStatsFromVideoSenderInfo(
   SetOutboundRTPStreamStatsFromMediaSenderInfo(
       video_sender_info, outbound_video);
   outbound_video->media_type = "video";
+  outbound_video->kind = "video";
   if (video_sender_info.codec_payload_type) {
     outbound_video->codec_id = RTCCodecStatsIDFromMidDirectionAndPayload(
         mid, false, *video_sender_info.codec_payload_type);
@@ -359,6 +363,13 @@ const std::string& ProduceIceCandidateStats(
     if (is_local) {
       candidate_stats->network_type =
           NetworkAdapterTypeToStatsType(candidate.network_type());
+      if (candidate.type() == cricket::RELAY_PORT_TYPE) {
+        std::string relay_protocol = candidate.relay_protocol();
+        RTC_DCHECK(relay_protocol.compare("udp") == 0 ||
+                   relay_protocol.compare("tcp") == 0 ||
+                   relay_protocol.compare("tls") == 0);
+        candidate_stats->relay_protocol = relay_protocol;
+      }
     } else {
       // We don't expect to know the adapter type of remote candidates.
       RTC_DCHECK_EQ(rtc::ADAPTER_TYPE_UNKNOWN, candidate.network_type());

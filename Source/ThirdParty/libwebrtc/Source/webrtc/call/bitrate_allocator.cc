@@ -60,6 +60,7 @@ BitrateAllocator::BitrateAllocator(LimitObserver* limit_observer)
       total_requested_padding_bitrate_(0),
       total_requested_min_bitrate_(0),
       total_requested_max_bitrate_(0),
+      allocated_without_feedback_(0),
       has_packet_feedback_(false),
       bitrate_allocation_strategy_(nullptr),
       transmission_max_bitrate_multiplier_(
@@ -191,6 +192,7 @@ void BitrateAllocator::UpdateAllocationLimits() {
   uint32_t total_requested_min_bitrate = 0;
   uint32_t total_requested_max_bitrate = 0;
   bool has_packet_feedback = false;
+  uint32_t allocated_without_feedback = 0;
   for (const auto& config : bitrate_observer_configs_) {
     uint32_t stream_padding = config.pad_up_bitrate_bps;
     if (config.enforce_min_bitrate) {
@@ -203,11 +205,16 @@ void BitrateAllocator::UpdateAllocationLimits() {
     total_requested_max_bitrate += config.max_bitrate_bps;
     if (config.allocated_bitrate_bps > 0 && config.has_packet_feedback)
       has_packet_feedback = true;
+    // TODO(srte): Remove field trial check.
+    if (!config.has_packet_feedback &&
+        field_trial::IsEnabled("WebRTC-Audio-ABWENoTWCC"))
+      allocated_without_feedback += config.allocated_bitrate_bps;
   }
 
   if (total_requested_padding_bitrate == total_requested_padding_bitrate_ &&
       total_requested_min_bitrate == total_requested_min_bitrate_ &&
       total_requested_max_bitrate == total_requested_max_bitrate_ &&
+      allocated_without_feedback == allocated_without_feedback_ &&
       has_packet_feedback == has_packet_feedback_) {
     return;
   }
@@ -215,6 +222,7 @@ void BitrateAllocator::UpdateAllocationLimits() {
   total_requested_min_bitrate_ = total_requested_min_bitrate;
   total_requested_padding_bitrate_ = total_requested_padding_bitrate;
   total_requested_max_bitrate_ = total_requested_max_bitrate;
+  allocated_without_feedback_ = allocated_without_feedback;
   has_packet_feedback_ = has_packet_feedback;
 
   RTC_LOG(LS_INFO) << "UpdateAllocationLimits : total_requested_min_bitrate: "
@@ -225,7 +233,8 @@ void BitrateAllocator::UpdateAllocationLimits() {
                    << total_requested_max_bitrate << "bps";
   limit_observer_->OnAllocationLimitsChanged(
       total_requested_min_bitrate, total_requested_padding_bitrate,
-      total_requested_max_bitrate, has_packet_feedback);
+      total_requested_max_bitrate, allocated_without_feedback,
+      has_packet_feedback);
 }
 
 void BitrateAllocator::RemoveObserver(BitrateAllocatorObserver* observer) {

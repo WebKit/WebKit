@@ -53,7 +53,7 @@ void EncodeNetEqInput::AdvanceOutputEvent() {
 }
 
 bool EncodeNetEqInput::ended() const {
-  return next_output_event_ms_ <= input_duration_ms_;
+  return next_output_event_ms_ > input_duration_ms_;
 }
 
 absl::optional<RTPHeader> EncodeNetEqInput::NextHeader() const {

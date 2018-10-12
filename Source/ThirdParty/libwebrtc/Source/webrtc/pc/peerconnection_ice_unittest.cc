@@ -27,8 +27,9 @@
 #include "pc/test/fakeaudiocapturemodule.h"
 #include "rtc_base/fakenetwork.h"
 #include "rtc_base/gunit.h"
+#include "rtc_base/strings/string_builder.h"
 #include "rtc_base/virtualsocketserver.h"
-#include "system_wrappers/include/metrics_default.h"
+#include "system_wrappers/include/metrics.h"
 
 namespace webrtc {
 
@@ -258,7 +259,7 @@ class PeerConnectionIceTest
                                                  const char* b_expr,
                                                  const cricket::Candidate& a,
                                                  const cricket::Candidate& b) {
-  std::stringstream failure_info;
+  rtc::StringBuilder failure_info;
   if (a.component() != b.component()) {
     failure_info << "\ncomponent: " << a.component() << " != " << b.component();
   }
@@ -593,7 +594,7 @@ TEST_P(PeerConnectionIceTest, VerifyUfragPwdLength) {
     const char* candidates_expr,
     const SocketAddress& address,
     const std::vector<IceCandidateInterface*> candidates) {
-  std::stringstream candidate_hosts;
+  rtc::StringBuilder candidate_hosts;
   for (const auto* candidate : candidates) {
     const auto& candidate_ip = candidate->candidate().address().ipaddr();
     if (candidate_ip == address.ipaddr()) {
@@ -975,9 +976,9 @@ class PeerConnectionIceConfigTest : public testing::Test {
         new cricket::FakePortAllocator(rtc::Thread::Current(), nullptr));
     port_allocator_ = port_allocator.get();
     rtc::scoped_refptr<PeerConnectionInterface> pc(
-        pc_factory_->CreatePeerConnection(
-            config, nullptr /* constraint */, std::move(port_allocator),
-            nullptr /* cert_generator */, &observer_));
+        pc_factory_->CreatePeerConnection(config, std::move(port_allocator),
+                                          nullptr /* cert_generator */,
+                                          &observer_));
     EXPECT_TRUE(pc.get());
     pc_ = std::move(pc.get());
   }

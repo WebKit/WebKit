@@ -12,6 +12,7 @@
 #define MODULES_REMOTE_BITRATE_ESTIMATOR_INCLUDE_BWE_DEFINES_H_
 
 #include "absl/types/optional.h"
+#include "api/units/data_rate.h"
 
 #define BWE_MAX(a, b) ((a) > (b) ? (a) : (b))
 #define BWE_MIN(a, b) ((a) < (b) ? (a) : (b))
@@ -20,6 +21,7 @@ namespace webrtc {
 
 namespace congestion_controller {
 int GetMinBitrateBps();
+DataRate GetMinBitrate();
 }  // namespace congestion_controller
 
 static const int64_t kBitrateWindowMs = 1000;

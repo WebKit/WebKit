@@ -10,6 +10,7 @@
 
 #include "modules/rtp_rtcp/source/rtcp_packet/sdes.h"
 
+#include "rtc_base/strings/string_builder.h"
 #include "test/gtest.h"
 #include "test/rtcp_packet_parser.h"
 
@@ -74,7 +75,7 @@ TEST(RtcpPacketSdesTest, CreateWithTooManyChunks) {
   Sdes sdes;
   for (size_t i = 0; i < kMaxChunks; ++i) {
     uint32_t ssrc = kSenderSsrc + i;
-    std::ostringstream oss;
+    rtc::StringBuilder oss;
     oss << "cname" << i;
     EXPECT_TRUE(sdes.AddCName(ssrc, oss.str()));
   }

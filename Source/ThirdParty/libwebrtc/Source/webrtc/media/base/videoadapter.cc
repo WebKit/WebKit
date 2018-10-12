@@ -116,17 +116,17 @@ VideoAdapter::~VideoAdapter() {}
 
 bool VideoAdapter::KeepFrame(int64_t in_timestamp_ns) {
   rtc::CritScope cs(&critical_section_);
-  if (max_framerate_request_ <= 0)
-    return false;
 
-  int64_t frame_interval_ns =
-      requested_format_ ? requested_format_->interval : 0;
+  int max_fps = max_framerate_request_;
+  if (max_fps_)
+    max_fps = std::min(max_fps, *max_fps_);
+
+  if (max_fps <= 0)
+    return false;
 
   // If |max_framerate_request_| is not set, it will default to maxint, which
   // will lead to a frame_interval_ns rounded to 0.
-  frame_interval_ns = std::max<int64_t>(
-      frame_interval_ns, rtc::kNumNanosecsPerSec / max_framerate_request_);
-
+  int64_t frame_interval_ns = rtc::kNumNanosecsPerSec / max_fps;
   if (frame_interval_ns <= 0) {
     // Frame rate throttling not enabled.
     return true;
@@ -166,12 +166,12 @@ bool VideoAdapter::AdaptFrameResolution(int in_width,
   ++frames_in_;
 
   // The max output pixel count is the minimum of the requests from
-  // OnOutputFormatRequest and OnResolutionRequest.
+  // OnOutputFormatRequest and OnResolutionFramerateRequest.
   int max_pixel_count = resolution_request_max_pixel_count_;
-  if (requested_format_) {
-    max_pixel_count = std::min(
-        max_pixel_count, requested_format_->width * requested_format_->height);
-  }
+
+  if (max_pixel_count_)
+    max_pixel_count = std::min(max_pixel_count, *max_pixel_count_);
+
   int target_pixel_count =
       std::min(resolution_request_target_pixel_count_, max_pixel_count);
 
@@ -185,8 +185,9 @@ bool VideoAdapter::AdaptFrameResolution(int in_width,
                        << " / out " << frames_out_ << " / in " << frames_in_
                        << " Changes: " << adaption_changes_
                        << " Input: " << in_width << "x" << in_height
-                       << " timestamp: " << in_timestamp_ns << " Output: i"
-                       << (requested_format_ ? requested_format_->interval : 0);
+                       << " timestamp: " << in_timestamp_ns
+                       << " Output fps: " << max_framerate_request_ << "/"
+                       << max_fps_.value_or(-1);
     }
 
     // Drop frame.
@@ -194,19 +195,19 @@ bool VideoAdapter::AdaptFrameResolution(int in_width,
   }
 
   // Calculate how the input should be cropped.
-  if (!requested_format_ || requested_format_->width == 0 ||
-      requested_format_->height == 0) {
+  if (!target_aspect_ratio_ || target_aspect_ratio_->first <= 0 ||
+      target_aspect_ratio_->second <= 0) {
     *cropped_width = in_width;
     *cropped_height = in_height;
   } else {
-    // Adjust |requested_format_| orientation to match input.
+    // Adjust |target_aspect_ratio_| orientation to match input.
     if ((in_width > in_height) !=
-        (requested_format_->width > requested_format_->height)) {
-      std::swap(requested_format_->width, requested_format_->height);
+        (target_aspect_ratio_->first > target_aspect_ratio_->second)) {
+      std::swap(target_aspect_ratio_->first, target_aspect_ratio_->second);
     }
     const float requested_aspect =
-        requested_format_->width /
-        static_cast<float>(requested_format_->height);
+        target_aspect_ratio_->first /
+        static_cast<float>(target_aspect_ratio_->second);
     *cropped_width =
         std::min(in_width, static_cast<int>(in_height * requested_aspect));
     *cropped_height =
@@ -245,8 +246,8 @@ bool VideoAdapter::AdaptFrameResolution(int in_width,
                      << " Input: " << in_width << "x" << in_height
                      << " Scale: " << scale.numerator << "/"
                      << scale.denominator << " Output: " << *out_width << "x"
-                     << *out_height << " i"
-                     << (requested_format_ ? requested_format_->interval : 0);
+                     << *out_height << " fps: " << max_framerate_request_ << "/"
+                     << max_fps_.value_or(-1);
   }
 
   previous_width_ = *out_width;
@@ -257,8 +258,26 @@ bool VideoAdapter::AdaptFrameResolution(int in_width,
 
 void VideoAdapter::OnOutputFormatRequest(
     const absl::optional<VideoFormat>& format) {
+  absl::optional<std::pair<int, int>> target_aspect_ratio;
+  absl::optional<int> max_pixel_count;
+  absl::optional<int> max_fps;
+  if (format) {
+    target_aspect_ratio = std::make_pair(format->width, format->height);
+    max_pixel_count = format->width * format->height;
+    if (format->interval > 0)
+      max_fps = rtc::kNumNanosecsPerSec / format->interval;
+  }
+  OnOutputFormatRequest(target_aspect_ratio, max_pixel_count, max_fps);
+}
+
+void VideoAdapter::OnOutputFormatRequest(
+    const absl::optional<std::pair<int, int>>& target_aspect_ratio,
+    const absl::optional<int>& max_pixel_count,
+    const absl::optional<int>& max_fps) {
   rtc::CritScope cs(&critical_section_);
-  requested_format_ = format;
+  target_aspect_ratio_ = target_aspect_ratio;
+  max_pixel_count_ = max_pixel_count;
+  max_fps_ = max_fps;
   next_frame_timestamp_ns_ = absl::nullopt;
 }
 

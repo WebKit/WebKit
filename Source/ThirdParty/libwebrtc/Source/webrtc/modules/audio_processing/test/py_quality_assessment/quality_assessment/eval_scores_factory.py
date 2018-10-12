@@ -22,9 +22,10 @@ class EvaluationScoreWorkerFactory(object):
   workers.
   """
 
-  def __init__(self, polqa_tool_bin_path):
+  def __init__(self, polqa_tool_bin_path, echo_metric_tool_bin_path):
     self._score_filename_prefix = None
     self._polqa_tool_bin_path = polqa_tool_bin_path
+    self._echo_metric_tool_bin_path = echo_metric_tool_bin_path
 
   def SetScoreFilenamePrefix(self, prefix):
     self._score_filename_prefix = prefix
@@ -47,5 +48,8 @@ class EvaluationScoreWorkerFactory(object):
     if evaluation_score_class == eval_scores.PolqaScore:
       return eval_scores.PolqaScore(
           self._score_filename_prefix, self._polqa_tool_bin_path)
+    elif evaluation_score_class == eval_scores.EchoMetric:
+      return eval_scores.EchoMetric(
+          self._score_filename_prefix, self._echo_metric_tool_bin_path)
     else:
       return evaluation_score_class(self._score_filename_prefix)

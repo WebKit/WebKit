@@ -33,11 +33,8 @@ class RateLimiter;
 class ReceiveStatisticsProvider;
 class RemoteBitrateEstimator;
 class RtcEventLog;
-class RtpReceiver;
 class Transport;
 class VideoBitrateAllocationObserver;
-
-RTPExtensionType StringToRtpExtensionType(const std::string& extension);
 
 namespace rtcp {
 class TransportFeedback;
@@ -143,6 +140,8 @@ class RtpRtcp : public Module, public RtcpFeedbackSenderInterface {
   // Returns -1 on failure else 0.
   virtual int32_t RegisterSendRtpHeaderExtension(RTPExtensionType type,
                                                  uint8_t id) = 0;
+  // Register extension by uri, returns false on failure.
+  virtual bool RegisterRtpHeaderExtension(const std::string& uri, int id) = 0;
 
   virtual int32_t DeregisterSendRtpHeaderExtension(RTPExtensionType type) = 0;
 
@@ -336,10 +335,6 @@ class RtpRtcp : public Module, public RtcpFeedbackSenderInterface {
                                                  uint32_t name,
                                                  const uint8_t* data,
                                                  uint16_t length) = 0;
-  // (XR) Sets VOIP metric.
-  // Returns -1 on failure else 0.
-  virtual int32_t SetRTCPVoIPMetrics(const RTCPVoIPMetric* VoIPMetric) = 0;
-
   // (XR) Sets Receiver Reference Time Report (RTTR) status.
   virtual void SetRtcpXrRrtrStatus(bool enable) = 0;
 

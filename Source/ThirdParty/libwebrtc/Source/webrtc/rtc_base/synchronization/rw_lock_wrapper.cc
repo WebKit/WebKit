@@ -10,8 +10,6 @@
 
 #include "rtc_base/synchronization/rw_lock_wrapper.h"
 
-#include <assert.h>
-
 #if defined(_WIN32)
 #include "rtc_base/synchronization/rw_lock_win.h"
 #else

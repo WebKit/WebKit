@@ -35,6 +35,7 @@
 #include "rtc_base/numerics/safe_minmax.h"
 #include "rtc_base/protobuf_utils.h"
 #include "rtc_base/refcountedobject.h"
+#include "rtc_base/strings/string_builder.h"
 #include "rtc_base/swap_queue.h"
 #include "rtc_base/system/arch.h"
 #include "rtc_base/task_queue.h"
@@ -178,25 +179,22 @@ bool FrameDataAreEqual(const AudioFrame& frame1, const AudioFrame& frame2) {
 }
 
 void EnableAllAPComponents(AudioProcessing* ap) {
+  AudioProcessing::Config apm_config = ap->GetConfig();
+  apm_config.echo_canceller.enabled = true;
 #if defined(WEBRTC_AUDIOPROC_FIXED_PROFILE)
-  EXPECT_NOERR(ap->echo_control_mobile()->Enable(true));
+  apm_config.echo_canceller.mobile_mode = true;
 
   EXPECT_NOERR(ap->gain_control()->set_mode(GainControl::kAdaptiveDigital));
   EXPECT_NOERR(ap->gain_control()->Enable(true));
 #elif defined(WEBRTC_AUDIOPROC_FLOAT_PROFILE)
-  EXPECT_NOERR(ap->echo_cancellation()->enable_drift_compensation(true));
-  EXPECT_NOERR(ap->echo_cancellation()->enable_metrics(true));
-  EXPECT_NOERR(ap->echo_cancellation()->enable_delay_logging(true));
-  EXPECT_NOERR(ap->echo_cancellation()->set_suppression_level(
-      EchoCancellation::SuppressionLevel::kModerateSuppression));
-  EXPECT_NOERR(ap->echo_cancellation()->Enable(true));
+  apm_config.echo_canceller.mobile_mode = false;
+  apm_config.echo_canceller.legacy_moderate_suppression_level = true;
 
   EXPECT_NOERR(ap->gain_control()->set_mode(GainControl::kAdaptiveAnalog));
   EXPECT_NOERR(ap->gain_control()->set_analog_level_limits(0, 255));
   EXPECT_NOERR(ap->gain_control()->Enable(true));
 #endif
 
-  AudioProcessing::Config apm_config;
   apm_config.high_pass_filter.enabled = true;
   ap->ApplyConfig(apm_config);
 
@@ -223,24 +221,6 @@ int16_t MaxAudioFrame(const AudioFrame& frame) {
   return max_data;
 }
 
-#if defined(WEBRTC_AUDIOPROC_FLOAT_PROFILE)
-void TestStats(const AudioProcessing::Statistic& test,
-               const audioproc::Test::Statistic& reference) {
-  EXPECT_EQ(reference.instant(), test.instant);
-  EXPECT_EQ(reference.average(), test.average);
-  EXPECT_EQ(reference.maximum(), test.maximum);
-  EXPECT_EQ(reference.minimum(), test.minimum);
-}
-
-void WriteStatsMessage(const AudioProcessing::Statistic& output,
-                       audioproc::Test::Statistic* msg) {
-  msg->set_instant(output.instant);
-  msg->set_average(output.average);
-  msg->set_maximum(output.maximum);
-  msg->set_minimum(output.minimum);
-}
-#endif
-
 void OpenFileAndWriteMessage(const std::string& filename,
                              const MessageLite& msg) {
   FILE* file = fopen(filename.c_str(), "wb");
@@ -258,7 +238,7 @@ void OpenFileAndWriteMessage(const std::string& filename,
 }
 
 std::string ResourceFilePath(const std::string& name, int sample_rate_hz) {
-  std::ostringstream ss;
+  rtc::StringBuilder ss;
   // Resource files are all stereo.
   ss << name << sample_rate_hz / 1000 << "_stereo";
   return test::ResourcePath(ss.str(), "pcm");
@@ -279,7 +259,7 @@ std::string OutputFilePath(const std::string& name,
                            size_t num_reverse_input_channels,
                            size_t num_reverse_output_channels,
                            StreamDirection file_direction) {
-  std::ostringstream ss;
+  rtc::StringBuilder ss;
   ss << name << "_i" << num_input_channels << "_" << input_rate / 1000 << "_ir"
      << num_reverse_input_channels << "_" << reverse_input_rate / 1000 << "_";
   if (num_output_channels == 1) {
@@ -596,7 +576,6 @@ void ApmTest::ReadFrameWithRewind(FILE* file, AudioFrame* frame) {
 
 void ApmTest::ProcessWithDefaultStreamParameters(AudioFrame* frame) {
   EXPECT_EQ(apm_->kNoError, apm_->set_stream_delay_ms(0));
-  apm_->echo_cancellation()->set_stream_drift_samples(0);
   EXPECT_EQ(apm_->kNoError,
       apm_->gain_control()->set_stream_analog_level(127));
   EXPECT_EQ(apm_->kNoError, apm_->ProcessStream(frame));
@@ -681,13 +660,8 @@ void ApmTest::ProcessDelayVerificationTest(int delay_ms, int system_delay_ms,
     delete frame;
 
     if (frame_count == 250) {
-      int median;
-      int std;
-      float poor_fraction;
       // Discard the first delay metrics to avoid convergence effects.
-      EXPECT_EQ(apm_->kNoError,
-                apm_->echo_cancellation()->GetDelayMetrics(&median, &std,
-                                                           &poor_fraction));
+      static_cast<void>(apm_->GetStatistics(true /* has_remote_tracks */));
     }
   }
 
@@ -710,12 +684,10 @@ void ApmTest::ProcessDelayVerificationTest(int delay_ms, int system_delay_ms,
       expected_median - rtc::dchecked_cast<int>(96 / samples_per_ms), delay_min,
       delay_max);
   // Verify delay metrics.
-  int median;
-  int std;
-  float poor_fraction;
-  EXPECT_EQ(apm_->kNoError,
-            apm_->echo_cancellation()->GetDelayMetrics(&median, &std,
-                                                       &poor_fraction));
+  AudioProcessingStats stats =
+      apm_->GetStatistics(true /* has_remote_tracks */);
+  ASSERT_TRUE(stats.delay_median_ms.has_value());
+  int32_t median = *stats.delay_median_ms;
   EXPECT_GE(expected_median_high, median);
   EXPECT_LE(expected_median_low, median);
 }
@@ -737,19 +709,16 @@ void ApmTest::StreamParametersTest(Format format) {
             ProcessStreamChooser(format));
 
   // Other stream parameters set correctly.
-  EXPECT_EQ(apm_->kNoError, apm_->echo_cancellation()->Enable(true));
-  EXPECT_EQ(apm_->kNoError,
-            apm_->echo_cancellation()->enable_drift_compensation(true));
+  AudioProcessing::Config apm_config = apm_->GetConfig();
+  apm_config.echo_canceller.enabled = true;
+  apm_config.echo_canceller.mobile_mode = false;
+  apm_->ApplyConfig(apm_config);
   EXPECT_EQ(apm_->kNoError, apm_->set_stream_delay_ms(100));
-  apm_->echo_cancellation()->set_stream_drift_samples(0);
   EXPECT_EQ(apm_->kStreamParameterNotSetError,
             ProcessStreamChooser(format));
   EXPECT_EQ(apm_->kNoError, apm_->gain_control()->Enable(false));
-  EXPECT_EQ(apm_->kNoError,
-            apm_->echo_cancellation()->enable_drift_compensation(false));
 
   // -- Missing delay --
-  EXPECT_EQ(apm_->kNoError, apm_->echo_cancellation()->Enable(true));
   EXPECT_EQ(apm_->kNoError, ProcessStreamChooser(format));
   EXPECT_EQ(apm_->kStreamParameterNotSetError,
             ProcessStreamChooser(format));
@@ -762,33 +731,11 @@ void ApmTest::StreamParametersTest(Format format) {
 
   // Other stream parameters set correctly.
   EXPECT_EQ(apm_->kNoError, apm_->gain_control()->Enable(true));
-  EXPECT_EQ(apm_->kNoError,
-            apm_->echo_cancellation()->enable_drift_compensation(true));
-  apm_->echo_cancellation()->set_stream_drift_samples(0);
   EXPECT_EQ(apm_->kNoError,
             apm_->gain_control()->set_stream_analog_level(127));
   EXPECT_EQ(apm_->kStreamParameterNotSetError,
             ProcessStreamChooser(format));
   EXPECT_EQ(apm_->kNoError, apm_->gain_control()->Enable(false));
-
-  // -- Missing drift --
-  EXPECT_EQ(apm_->kStreamParameterNotSetError,
-            ProcessStreamChooser(format));
-
-  // Resets after successful ProcessStream().
-  EXPECT_EQ(apm_->kNoError, apm_->set_stream_delay_ms(100));
-  apm_->echo_cancellation()->set_stream_drift_samples(0);
-  EXPECT_EQ(apm_->kNoError, ProcessStreamChooser(format));
-  EXPECT_EQ(apm_->kStreamParameterNotSetError,
-            ProcessStreamChooser(format));
-
-  // Other stream parameters set correctly.
-  EXPECT_EQ(apm_->kNoError, apm_->gain_control()->Enable(true));
-  EXPECT_EQ(apm_->kNoError, apm_->set_stream_delay_ms(100));
-  EXPECT_EQ(apm_->kNoError,
-            apm_->gain_control()->set_stream_analog_level(127));
-  EXPECT_EQ(apm_->kStreamParameterNotSetError,
-            ProcessStreamChooser(format));
 
   // -- No stream parameters --
   EXPECT_EQ(apm_->kNoError,
@@ -798,7 +745,6 @@ void ApmTest::StreamParametersTest(Format format) {
 
   // -- All there --
   EXPECT_EQ(apm_->kNoError, apm_->set_stream_delay_ms(100));
-  apm_->echo_cancellation()->set_stream_drift_samples(0);
   EXPECT_EQ(apm_->kNoError,
             apm_->gain_control()->set_stream_analog_level(127));
   EXPECT_EQ(apm_->kNoError, ProcessStreamChooser(format));
@@ -922,79 +868,13 @@ TEST_F(ApmTest, SampleRatesInt) {
   }
 }
 
-TEST_F(ApmTest, EchoCancellation) {
-  EXPECT_EQ(apm_->kNoError,
-            apm_->echo_cancellation()->enable_drift_compensation(true));
-  EXPECT_TRUE(apm_->echo_cancellation()->is_drift_compensation_enabled());
-  EXPECT_EQ(apm_->kNoError,
-            apm_->echo_cancellation()->enable_drift_compensation(false));
-  EXPECT_FALSE(apm_->echo_cancellation()->is_drift_compensation_enabled());
-
-  EchoCancellation::SuppressionLevel level[] = {
-    EchoCancellation::kLowSuppression,
-    EchoCancellation::kModerateSuppression,
-    EchoCancellation::kHighSuppression,
-  };
-  for (size_t i = 0; i < arraysize(level); i++) {
-    EXPECT_EQ(apm_->kNoError,
-        apm_->echo_cancellation()->set_suppression_level(level[i]));
-    EXPECT_EQ(level[i],
-        apm_->echo_cancellation()->suppression_level());
-  }
-
-  EchoCancellation::Metrics metrics;
-  EXPECT_EQ(apm_->kNotEnabledError,
-            apm_->echo_cancellation()->GetMetrics(&metrics));
-
-  EXPECT_EQ(apm_->kNoError, apm_->echo_cancellation()->Enable(true));
-  EXPECT_TRUE(apm_->echo_cancellation()->is_enabled());
-
-  EXPECT_EQ(apm_->kNoError,
-            apm_->echo_cancellation()->enable_metrics(true));
-  EXPECT_TRUE(apm_->echo_cancellation()->are_metrics_enabled());
-  EXPECT_EQ(apm_->kNoError,
-            apm_->echo_cancellation()->enable_metrics(false));
-  EXPECT_FALSE(apm_->echo_cancellation()->are_metrics_enabled());
-
-  EXPECT_EQ(apm_->kNoError,
-            apm_->echo_cancellation()->enable_delay_logging(true));
-  EXPECT_TRUE(apm_->echo_cancellation()->is_delay_logging_enabled());
-  EXPECT_EQ(apm_->kNoError,
-            apm_->echo_cancellation()->enable_delay_logging(false));
-  EXPECT_FALSE(apm_->echo_cancellation()->is_delay_logging_enabled());
-
-  EXPECT_EQ(apm_->kNoError, apm_->echo_cancellation()->Enable(false));
-  EXPECT_FALSE(apm_->echo_cancellation()->is_enabled());
-
-  int median = 0;
-  int std = 0;
-  float poor_fraction = 0;
-  EXPECT_EQ(apm_->kNotEnabledError, apm_->echo_cancellation()->GetDelayMetrics(
-                                        &median, &std, &poor_fraction));
-
-  EXPECT_EQ(apm_->kNoError, apm_->echo_cancellation()->Enable(true));
-  EXPECT_TRUE(apm_->echo_cancellation()->is_enabled());
-  EXPECT_EQ(apm_->kNoError, apm_->echo_cancellation()->Enable(false));
-  EXPECT_FALSE(apm_->echo_cancellation()->is_enabled());
-
-  EXPECT_EQ(apm_->kNoError, apm_->echo_cancellation()->Enable(true));
-  EXPECT_TRUE(apm_->echo_cancellation()->is_enabled());
-  EXPECT_TRUE(apm_->echo_cancellation()->aec_core() != NULL);
-  EXPECT_EQ(apm_->kNoError, apm_->echo_cancellation()->Enable(false));
-  EXPECT_FALSE(apm_->echo_cancellation()->is_enabled());
-  EXPECT_FALSE(apm_->echo_cancellation()->aec_core() != NULL);
-}
-
 TEST_F(ApmTest, DISABLED_EchoCancellationReportsCorrectDelays) {
   // TODO(bjornv): Fix this test to work with DA-AEC.
   // Enable AEC only.
-  EXPECT_EQ(apm_->kNoError,
-            apm_->echo_cancellation()->enable_drift_compensation(false));
-  EXPECT_EQ(apm_->kNoError,
-            apm_->echo_cancellation()->enable_metrics(false));
-  EXPECT_EQ(apm_->kNoError,
-            apm_->echo_cancellation()->enable_delay_logging(true));
-  EXPECT_EQ(apm_->kNoError, apm_->echo_cancellation()->Enable(true));
+  AudioProcessing::Config apm_config = apm_->GetConfig();
+  apm_config.echo_canceller.enabled = true;
+  apm_config.echo_canceller.mobile_mode = false;
+  apm_->ApplyConfig(apm_config);
   Config config;
   config.Set<DelayAgnostic>(new DelayAgnostic(false));
   apm_->SetExtraOptions(config);
@@ -1061,74 +941,6 @@ TEST_F(ApmTest, DISABLED_EchoCancellationReportsCorrectDelays) {
     ProcessDelayVerificationTest(delay_ms, kSystemDelayMs, delay_min_ms,
                                  delay_max_ms);
   }
-}
-
-TEST_F(ApmTest, EchoControlMobile) {
-  // Turn AECM on (and AEC off)
-  Init(16000, 16000, 16000, 2, 2, 2, false);
-  EXPECT_EQ(apm_->kNoError, apm_->echo_control_mobile()->Enable(true));
-  EXPECT_TRUE(apm_->echo_control_mobile()->is_enabled());
-
-  // Toggle routing modes
-  EchoControlMobile::RoutingMode mode[] = {
-      EchoControlMobile::kQuietEarpieceOrHeadset,
-      EchoControlMobile::kEarpiece,
-      EchoControlMobile::kLoudEarpiece,
-      EchoControlMobile::kSpeakerphone,
-      EchoControlMobile::kLoudSpeakerphone,
-  };
-  for (size_t i = 0; i < arraysize(mode); i++) {
-    EXPECT_EQ(apm_->kNoError,
-        apm_->echo_control_mobile()->set_routing_mode(mode[i]));
-    EXPECT_EQ(mode[i],
-        apm_->echo_control_mobile()->routing_mode());
-  }
-  // Turn comfort noise off/on
-  EXPECT_EQ(apm_->kNoError,
-      apm_->echo_control_mobile()->enable_comfort_noise(false));
-  EXPECT_FALSE(apm_->echo_control_mobile()->is_comfort_noise_enabled());
-  EXPECT_EQ(apm_->kNoError,
-      apm_->echo_control_mobile()->enable_comfort_noise(true));
-  EXPECT_TRUE(apm_->echo_control_mobile()->is_comfort_noise_enabled());
-  // Set and get echo path
-  const size_t echo_path_size =
-      apm_->echo_control_mobile()->echo_path_size_bytes();
-  std::unique_ptr<char[]> echo_path_in(new char[echo_path_size]);
-  std::unique_ptr<char[]> echo_path_out(new char[echo_path_size]);
-  EXPECT_EQ(apm_->kNullPointerError,
-            apm_->echo_control_mobile()->SetEchoPath(NULL, echo_path_size));
-  EXPECT_EQ(apm_->kNullPointerError,
-            apm_->echo_control_mobile()->GetEchoPath(NULL, echo_path_size));
-  EXPECT_EQ(apm_->kBadParameterError,
-            apm_->echo_control_mobile()->GetEchoPath(echo_path_out.get(), 1));
-  EXPECT_EQ(apm_->kNoError,
-            apm_->echo_control_mobile()->GetEchoPath(echo_path_out.get(),
-                                                     echo_path_size));
-  for (size_t i = 0; i < echo_path_size; i++) {
-    echo_path_in[i] = echo_path_out[i] + 1;
-  }
-  EXPECT_EQ(apm_->kBadParameterError,
-            apm_->echo_control_mobile()->SetEchoPath(echo_path_in.get(), 1));
-  EXPECT_EQ(apm_->kNoError,
-            apm_->echo_control_mobile()->SetEchoPath(echo_path_in.get(),
-                                                     echo_path_size));
-  EXPECT_EQ(apm_->kNoError,
-            apm_->echo_control_mobile()->GetEchoPath(echo_path_out.get(),
-                                                     echo_path_size));
-  for (size_t i = 0; i < echo_path_size; i++) {
-    EXPECT_EQ(echo_path_in[i], echo_path_out[i]);
-  }
-
-  // Process a few frames with NS in the default disabled state. This exercises
-  // a different codepath than with it enabled.
-  EXPECT_EQ(apm_->kNoError, apm_->set_stream_delay_ms(0));
-  EXPECT_EQ(apm_->kNoError, apm_->ProcessStream(frame_));
-  EXPECT_EQ(apm_->kNoError, apm_->set_stream_delay_ms(0));
-  EXPECT_EQ(apm_->kNoError, apm_->ProcessStream(frame_));
-
-  // Turn AECM off
-  EXPECT_EQ(apm_->kNoError, apm_->echo_control_mobile()->Enable(false));
-  EXPECT_FALSE(apm_->echo_control_mobile()->is_enabled());
 }
 
 TEST_F(ApmTest, GainControl) {
@@ -1462,8 +1274,9 @@ TEST_F(ApmTest, VoiceDetection) {
 }
 
 TEST_F(ApmTest, AllProcessingDisabledByDefault) {
-  EXPECT_FALSE(apm_->echo_cancellation()->is_enabled());
-  EXPECT_FALSE(apm_->echo_control_mobile()->is_enabled());
+  AudioProcessing::Config config = apm_->GetConfig();
+  EXPECT_FALSE(config.echo_canceller.enabled);
+  EXPECT_FALSE(config.high_pass_filter.enabled);
   EXPECT_FALSE(apm_->gain_control()->is_enabled());
   EXPECT_FALSE(apm_->high_pass_filter()->is_enabled());
   EXPECT_FALSE(apm_->level_estimator()->is_enabled());
@@ -1546,7 +1359,6 @@ TEST_F(ApmTest, IdenticalInputChannelsResultInIdenticalOutputChannels) {
       frame_->vad_activity_ = AudioFrame::kVadUnknown;
 
       ASSERT_EQ(kNoErr, apm_->set_stream_delay_ms(0));
-      apm_->echo_cancellation()->set_stream_drift_samples(0);
       ASSERT_EQ(kNoErr,
           apm_->gain_control()->set_stream_analog_level(analog_level));
       ASSERT_EQ(kNoErr, apm_->ProcessStream(frame_));
@@ -1598,39 +1410,18 @@ TEST_F(ApmTest, SplittingFilter) {
   EXPECT_EQ(apm_->kNoError, apm_->level_estimator()->Enable(false));
   EXPECT_EQ(apm_->kNoError, apm_->voice_detection()->Enable(false));
 
-  // 5. Not using super-wb.
-  frame_->samples_per_channel_ = 160;
-  frame_->num_channels_ = 2;
-  frame_->sample_rate_hz_ = 16000;
-  // Enable AEC, which would require the filter in super-wb. We rely on the
-  // first few frames of data being unaffected by the AEC.
-  // TODO(andrew): This test, and the one below, rely rather tenuously on the
-  // behavior of the AEC. Think of something more robust.
-  EXPECT_EQ(apm_->kNoError, apm_->echo_cancellation()->Enable(true));
-  // Make sure we have extended filter enabled. This makes sure nothing is
-  // touched until we have a farend frame.
-  Config config;
-  config.Set<ExtendedFilter>(new ExtendedFilter(true));
-  apm_->SetExtraOptions(config);
-  SetFrameTo(frame_, 1000);
-  frame_copy.CopyFrom(*frame_);
-  EXPECT_EQ(apm_->kNoError, apm_->set_stream_delay_ms(0));
-  apm_->echo_cancellation()->set_stream_drift_samples(0);
-  EXPECT_EQ(apm_->kNoError, apm_->ProcessStream(frame_));
-  EXPECT_EQ(apm_->kNoError, apm_->set_stream_delay_ms(0));
-  apm_->echo_cancellation()->set_stream_drift_samples(0);
-  EXPECT_EQ(apm_->kNoError, apm_->ProcessStream(frame_));
-  EXPECT_TRUE(FrameDataAreEqual(*frame_, frame_copy));
-
   // Check the test is valid. We should have distortion from the filter
   // when AEC is enabled (which won't affect the audio).
+  AudioProcessing::Config apm_config = apm_->GetConfig();
+  apm_config.echo_canceller.enabled = true;
+  apm_config.echo_canceller.mobile_mode = false;
+  apm_->ApplyConfig(apm_config);
   frame_->samples_per_channel_ = 320;
   frame_->num_channels_ = 2;
   frame_->sample_rate_hz_ = 32000;
   SetFrameTo(frame_, 1000);
   frame_copy.CopyFrom(*frame_);
   EXPECT_EQ(apm_->kNoError, apm_->set_stream_delay_ms(0));
-  apm_->echo_cancellation()->set_stream_drift_samples(0);
   EXPECT_EQ(apm_->kNoError, apm_->ProcessStream(frame_));
   EXPECT_FALSE(FrameDataAreEqual(*frame_, frame_copy));
 }
@@ -1702,7 +1493,6 @@ void ApmTest::ProcessDebugDump(const std::string& in_filename,
 
       EXPECT_NOERR(apm_->gain_control()->set_stream_analog_level(msg.level()));
       EXPECT_NOERR(apm_->set_stream_delay_ms(msg.delay()));
-      apm_->echo_cancellation()->set_stream_drift_samples(msg.drift());
       if (msg.has_keypress()) {
         apm_->set_stream_key_pressed(msg.keypress());
       } else {
@@ -1923,8 +1713,6 @@ TEST_F(ApmTest, FloatAndIntInterfacesGiveSimilarResults) {
 
       EXPECT_NOERR(apm_->set_stream_delay_ms(0));
       EXPECT_NOERR(fapm->set_stream_delay_ms(0));
-      apm_->echo_cancellation()->set_stream_drift_samples(0);
-      fapm->echo_cancellation()->set_stream_drift_samples(0);
       EXPECT_NOERR(apm_->gain_control()->set_stream_analog_level(analog_level));
       EXPECT_NOERR(fapm->gain_control()->set_stream_analog_level(analog_level));
 
@@ -1961,8 +1749,6 @@ TEST_F(ApmTest, FloatAndIntInterfacesGiveSimilarResults) {
       analog_level = fapm->gain_control()->stream_analog_level();
       EXPECT_EQ(apm_->gain_control()->stream_analog_level(),
                 fapm->gain_control()->stream_analog_level());
-      EXPECT_EQ(apm_->echo_cancellation()->stream_has_echo(),
-                fapm->echo_cancellation()->stream_has_echo());
       EXPECT_NEAR(apm_->noise_suppression()->speech_probability(),
                   fapm->noise_suppression()->speech_probability(),
                   0.01);
@@ -2045,7 +1831,6 @@ TEST_F(ApmTest, Process) {
          true);
 
     int frame_count = 0;
-    int has_echo_count = 0;
     int has_voice_count = 0;
     int is_saturated_count = 0;
     int analog_level = 127;
@@ -2062,7 +1847,6 @@ TEST_F(ApmTest, Process) {
       frame_->vad_activity_ = AudioFrame::kVadUnknown;
 
       EXPECT_EQ(apm_->kNoError, apm_->set_stream_delay_ms(0));
-      apm_->echo_cancellation()->set_stream_drift_samples(0);
       EXPECT_EQ(apm_->kNoError,
           apm_->gain_control()->set_stream_analog_level(analog_level));
 
@@ -2073,10 +1857,6 @@ TEST_F(ApmTest, Process) {
                 frame_->num_channels_);
 
       max_output_average += MaxAudioFrame(*frame_);
-
-      if (apm_->echo_cancellation()->stream_has_echo()) {
-        has_echo_count++;
-      }
 
       analog_level = apm_->gain_control()->stream_analog_level();
       analog_level_average += analog_level;
@@ -2106,18 +1886,25 @@ TEST_F(ApmTest, Process) {
 #if defined(WEBRTC_AUDIOPROC_FLOAT_PROFILE)
       const int kStatsAggregationFrameNum = 100;  // 1 second.
       if (frame_count % kStatsAggregationFrameNum == 0) {
-        // Get echo metrics.
-        EchoCancellation::Metrics echo_metrics;
-        EXPECT_EQ(apm_->kNoError,
-                  apm_->echo_cancellation()->GetMetrics(&echo_metrics));
+        // Get echo and delay metrics.
+        AudioProcessingStats stats =
+            apm_->GetStatistics(true /* has_remote_tracks */);
 
-        // Get delay metrics.
-        int median = 0;
-        int std = 0;
-        float fraction_poor_delays = 0;
-        EXPECT_EQ(apm_->kNoError,
-                  apm_->echo_cancellation()->GetDelayMetrics(
-                      &median, &std, &fraction_poor_delays));
+        // Echo metrics.
+        const float echo_return_loss = stats.echo_return_loss.value_or(-1.0f);
+        const float echo_return_loss_enhancement =
+            stats.echo_return_loss_enhancement.value_or(-1.0f);
+        const float divergent_filter_fraction =
+            stats.divergent_filter_fraction.value_or(-1.0f);
+        const float residual_echo_likelihood =
+            stats.residual_echo_likelihood.value_or(-1.0f);
+        const float residual_echo_likelihood_recent_max =
+            stats.residual_echo_likelihood_recent_max.value_or(-1.0f);
+
+        // Delay metrics.
+        const int32_t delay_median_ms = stats.delay_median_ms.value_or(-1.0);
+        const int32_t delay_standard_deviation_ms =
+            stats.delay_standard_deviation_ms.value_or(-1.0);
 
         // Get RMS.
         int rms_level = apm_->level_estimator()->RMS();
@@ -2127,46 +1914,40 @@ TEST_F(ApmTest, Process) {
         if (!write_ref_data) {
           const audioproc::Test::EchoMetrics& reference =
               test->echo_metrics(stats_index);
-          TestStats(echo_metrics.residual_echo_return_loss,
-                    reference.residual_echo_return_loss());
-          TestStats(echo_metrics.echo_return_loss,
-                    reference.echo_return_loss());
-          TestStats(echo_metrics.echo_return_loss_enhancement,
-                    reference.echo_return_loss_enhancement());
-          TestStats(echo_metrics.a_nlp,
-                    reference.a_nlp());
-          EXPECT_EQ(echo_metrics.divergent_filter_fraction,
-                    reference.divergent_filter_fraction());
+          constexpr float kEpsilon = 0.01;
+          EXPECT_NEAR(echo_return_loss, reference.echo_return_loss(), kEpsilon);
+          EXPECT_NEAR(echo_return_loss_enhancement,
+                      reference.echo_return_loss_enhancement(), kEpsilon);
+          EXPECT_NEAR(divergent_filter_fraction,
+                      reference.divergent_filter_fraction(), kEpsilon);
+          EXPECT_NEAR(residual_echo_likelihood,
+                      reference.residual_echo_likelihood(), kEpsilon);
+          EXPECT_NEAR(residual_echo_likelihood_recent_max,
+                      reference.residual_echo_likelihood_recent_max(),
+                      kEpsilon);
 
           const audioproc::Test::DelayMetrics& reference_delay =
               test->delay_metrics(stats_index);
-          EXPECT_EQ(reference_delay.median(), median);
-          EXPECT_EQ(reference_delay.std(), std);
-          EXPECT_EQ(reference_delay.fraction_poor_delays(),
-                    fraction_poor_delays);
+          EXPECT_EQ(reference_delay.median(), delay_median_ms);
+          EXPECT_EQ(reference_delay.std(), delay_standard_deviation_ms);
 
           EXPECT_EQ(test->rms_level(stats_index), rms_level);
 
           ++stats_index;
         } else {
-          audioproc::Test::EchoMetrics* message =
-              test->add_echo_metrics();
-          WriteStatsMessage(echo_metrics.residual_echo_return_loss,
-                            message->mutable_residual_echo_return_loss());
-          WriteStatsMessage(echo_metrics.echo_return_loss,
-                            message->mutable_echo_return_loss());
-          WriteStatsMessage(echo_metrics.echo_return_loss_enhancement,
-                            message->mutable_echo_return_loss_enhancement());
-          WriteStatsMessage(echo_metrics.a_nlp,
-                            message->mutable_a_nlp());
-          message->set_divergent_filter_fraction(
-              echo_metrics.divergent_filter_fraction);
-
+          audioproc::Test::EchoMetrics* message_echo = test->add_echo_metrics();
+          message_echo->set_echo_return_loss(echo_return_loss);
+          message_echo->set_echo_return_loss_enhancement(
+              echo_return_loss_enhancement);
+          message_echo->set_divergent_filter_fraction(
+              divergent_filter_fraction);
+          message_echo->set_residual_echo_likelihood(residual_echo_likelihood);
+          message_echo->set_residual_echo_likelihood_recent_max(
+              residual_echo_likelihood_recent_max);
           audioproc::Test::DelayMetrics* message_delay =
               test->add_delay_metrics();
-          message_delay->set_median(median);
-          message_delay->set_std(std);
-          message_delay->set_fraction_poor_delays(fraction_poor_delays);
+          message_delay->set_median(delay_median_ms);
+          message_delay->set_std(delay_standard_deviation_ms);
 
           test->add_rms_level(rms_level);
         }
@@ -2185,7 +1966,7 @@ TEST_F(ApmTest, Process) {
       // TODO(bjornv): If we start getting more of these offsets on Android we
       // should consider a different approach. Either using one slack for all,
       // or generate a separate android reference.
-#if defined(WEBRTC_ANDROID)
+#if defined(WEBRTC_ANDROID) || defined(WEBRTC_IOS)
       const int kHasVoiceCountOffset = 3;
       const int kHasVoiceCountNear = 8;
       const int kMaxOutputAverageOffset = 9;
@@ -2196,7 +1977,6 @@ TEST_F(ApmTest, Process) {
       const int kMaxOutputAverageOffset = 0;
       const int kMaxOutputAverageNear = kIntNear;
 #endif
-      EXPECT_NEAR(test->has_echo_count(), has_echo_count, kIntNear);
       EXPECT_NEAR(test->has_voice_count(),
                   has_voice_count - kHasVoiceCountOffset,
                   kHasVoiceCountNear);
@@ -2213,7 +1993,6 @@ TEST_F(ApmTest, Process) {
                   kFloatNear);
 #endif
     } else {
-      test->set_has_echo_count(has_echo_count);
       test->set_has_voice_count(has_voice_count);
       test->set_is_saturated_count(is_saturated_count);
 
@@ -2433,7 +2212,6 @@ class AudioProcessingTest
           processing_config.reverse_output_stream(), rev_out_cb.channels()));
 
       EXPECT_NOERR(ap->set_stream_delay_ms(0));
-      ap->echo_cancellation()->set_stream_drift_samples(0);
       EXPECT_NOERR(ap->gain_control()->set_stream_analog_level(analog_level));
 
       EXPECT_NOERR(ap->ProcessStream(
@@ -2801,6 +2579,25 @@ TEST(ApmConfiguration, EnablePreProcessing) {
   apm->ProcessReverseStream(&audio);
 }
 
+TEST(ApmConfiguration, EnableCaptureAnalyzer) {
+  // Verify that apm uses a capture analyzer if one is provided.
+  auto mock_capture_analyzer_ptr =
+      new testing::NiceMock<test::MockCustomAudioAnalyzer>();
+  auto mock_capture_analyzer =
+      std::unique_ptr<CustomAudioAnalyzer>(mock_capture_analyzer_ptr);
+  rtc::scoped_refptr<AudioProcessing> apm =
+      AudioProcessingBuilder()
+          .SetCaptureAnalyzer(std::move(mock_capture_analyzer))
+          .Create();
+
+  AudioFrame audio;
+  audio.num_channels_ = 1;
+  SetFrameSampleRate(&audio, AudioProcessing::NativeRate::kSampleRate16kHz);
+
+  EXPECT_CALL(*mock_capture_analyzer_ptr, Analyze(testing::_)).Times(1);
+  apm->ProcessStream(&audio);
+}
+
 TEST(ApmConfiguration, PreProcessingReceivesRuntimeSettings) {
   auto mock_pre_processor_ptr =
       new testing::NiceMock<test::MockCustomProcessing>();
@@ -2873,25 +2670,17 @@ std::unique_ptr<AudioProcessing> CreateApm(bool use_AEC2) {
   }
 
   // Disable all components except for an AEC and the residual echo detector.
-  AudioProcessing::Config config;
-  config.residual_echo_detector.enabled = true;
-  config.high_pass_filter.enabled = false;
-  config.gain_controller2.enabled = false;
-  apm->ApplyConfig(config);
+  AudioProcessing::Config apm_config;
+  apm_config.residual_echo_detector.enabled = true;
+  apm_config.high_pass_filter.enabled = false;
+  apm_config.gain_controller2.enabled = false;
+  apm_config.echo_canceller.enabled = true;
+  apm_config.echo_canceller.mobile_mode = !use_AEC2;
+  apm->ApplyConfig(apm_config);
   EXPECT_EQ(apm->gain_control()->Enable(false), 0);
   EXPECT_EQ(apm->level_estimator()->Enable(false), 0);
   EXPECT_EQ(apm->noise_suppression()->Enable(false), 0);
   EXPECT_EQ(apm->voice_detection()->Enable(false), 0);
-
-  if (use_AEC2) {
-    EXPECT_EQ(apm->echo_control_mobile()->Enable(false), 0);
-    EXPECT_EQ(apm->echo_cancellation()->enable_metrics(true), 0);
-    EXPECT_EQ(apm->echo_cancellation()->enable_delay_logging(true), 0);
-    EXPECT_EQ(apm->echo_cancellation()->Enable(true), 0);
-  } else {
-    EXPECT_EQ(apm->echo_cancellation()->Enable(false), 0);
-    EXPECT_EQ(apm->echo_control_mobile()->Enable(true), 0);
-  }
   return apm;
 }
 

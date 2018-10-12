@@ -359,7 +359,9 @@ class ApmModuleSimulator(object):
             apm_input_metadata=apm_input_metadata,
             apm_output_filepath=self._audioproc_wrapper.output_filepath,
             reference_input_filepath=reference_signal_filepath,
-            output_path=evaluation_output_path)
+            render_input_filepath=render_input_filepath,
+            output_path=evaluation_output_path,
+        )
 
         # Save simulation metadata.
         data_access.Metadata.SaveAudioTestDataPaths(
@@ -370,7 +372,9 @@ class ApmModuleSimulator(object):
             render_filepath=render_input_filepath,
             capture_filepath=apm_input_filepath,
             apm_output_filepath=self._audioproc_wrapper.output_filepath,
-            apm_reference_filepath=reference_signal_filepath)
+            apm_reference_filepath=reference_signal_filepath,
+            apm_config_filepath=config_filepath,
+        )
       except exceptions.EvaluationScoreException as e:
         logging.warning('the evaluation failed: %s', e.message)
         continue

@@ -30,9 +30,9 @@ enum class ConfigOptionID {
   kDelayAgnostic,
   kExperimentalAgc,
   kExperimentalNs,
-  kBeamforming,  // Deprecated
-  kIntelligibility,
-  kEchoCanceller3,  // Deprecated
+  kBeamforming,      // Deprecated
+  kIntelligibility,  // Deprecated
+  kEchoCanceller3,   // Deprecated
   kAecRefinedAdaptiveFilter,
   kLevelControl  // Deprecated
 };

@@ -20,6 +20,7 @@
 #include <vector>
 
 #include "rtc_base/ipaddress.h"
+#include "rtc_base/mdns_responder_interface.h"
 #include "rtc_base/messagehandler.h"
 #include "rtc_base/networkmonitor.h"
 #include "rtc_base/third_party/sigslot/sigslot.h"
@@ -111,7 +112,7 @@ class NetworkManager : public DefaultLocalAddressProvider {
   // include ignored networks.
   virtual void GetNetworks(NetworkList* networks) const = 0;
 
-  // return the current permission state of GetNetworks()
+  // Returns the current permission state of GetNetworks().
   virtual EnumerationPermission enumeration_permission() const;
 
   // "AnyAddressNetwork" is a network which only contains single "any address"
@@ -137,6 +138,10 @@ class NetworkManager : public DefaultLocalAddressProvider {
       ipv6_network_count = 0;
     }
   };
+
+  // Returns the mDNS responder that can be used to obfuscate the local IP
+  // addresses of ICE host candidates by mDNS hostnames.
+  virtual webrtc::MDnsResponderInterface* GetMDnsResponder() const;
 };
 
 // Base class for NetworkManager implementations.
@@ -356,6 +361,19 @@ class Network {
   const std::vector<InterfaceAddress>& GetIPs() const { return ips_; }
   // Clear the network's list of addresses.
   void ClearIPs() { ips_.clear(); }
+  // Sets the mDNS responder that can be used to obfuscate the local IP
+  // addresses of host candidates by mDNS names in ICE gathering. After a
+  // name-address mapping is created by the mDNS responder, queries for the
+  // created name will be resolved by the responder.
+  //
+  // The mDNS responder, if not null, should outlive this rtc::Network.
+  void SetMDnsResponder(webrtc::MDnsResponderInterface* mdns_responder) {
+    mdns_responder_ = mdns_responder;
+  }
+  // Returns the mDNS responder, which is null by default.
+  webrtc::MDnsResponderInterface* GetMDnsResponder() const {
+    return mdns_responder_;
+  }
 
   // Returns the scope-id of the network's address.
   // Should only be relevant for link-local IPv6 addresses.
@@ -428,6 +446,7 @@ class Network {
   int prefix_length_;
   std::string key_;
   std::vector<InterfaceAddress> ips_;
+  webrtc::MDnsResponderInterface* mdns_responder_ = nullptr;
   int scope_id_;
   bool ignored_;
   AdapterType type_;

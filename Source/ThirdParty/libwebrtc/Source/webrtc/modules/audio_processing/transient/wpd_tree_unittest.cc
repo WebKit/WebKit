@@ -11,11 +11,11 @@
 #include "modules/audio_processing/transient/wpd_tree.h"
 
 #include <memory>
-#include <sstream>
 #include <string>
 
 #include "modules/audio_processing/transient/daubechies_8_wavelet_coeffs.h"
 #include "modules/audio_processing/transient/file_utils.h"
+#include "rtc_base/strings/string_builder.h"
 #include "rtc_base/system/file_wrapper.h"
 #include "test/gtest.h"
 #include "test/testsupport/fileutils.h"
@@ -87,7 +87,7 @@ TEST(WPDTreeTest, CorrectnessBasedOnMatlabFiles) {
     // Matlab files.
     matlab_files_data[i].reset(FileWrapper::Create());
 
-    std::ostringstream matlab_stream;
+    rtc::StringBuilder matlab_stream;
     matlab_stream << "audio_processing/transient/wpd" << i;
     std::string matlab_string = test::ResourcePath(matlab_stream.str(), "dat");
     matlab_files_data[i]->OpenFile(matlab_string.c_str(), true);  // Read only.
@@ -98,7 +98,7 @@ TEST(WPDTreeTest, CorrectnessBasedOnMatlabFiles) {
     // Out files.
     out_files_data[i].reset(FileWrapper::Create());
 
-    std::ostringstream out_stream;
+    rtc::StringBuilder out_stream;
     out_stream << test::OutputPath() << "wpd_" << i << ".out";
     std::string out_string = out_stream.str();
 

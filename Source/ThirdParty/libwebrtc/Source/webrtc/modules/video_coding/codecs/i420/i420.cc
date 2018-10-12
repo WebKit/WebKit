@@ -84,7 +84,7 @@ int I420Encoder::Encode(const VideoFrame& inputImage,
   }
 
   _encodedImage._frameType = kVideoFrameKey;
-  _encodedImage._timeStamp = inputImage.timestamp();
+  _encodedImage.SetTimestamp(inputImage.timestamp());
   _encodedImage._encodedHeight = inputImage.height();
   _encodedImage._encodedWidth = inputImage.width();
 
@@ -200,7 +200,7 @@ int I420Decoder::Decode(const EncodedImage& inputImage,
     return WEBRTC_VIDEO_CODEC_MEMORY;
   }
 
-  VideoFrame decoded_image(frame_buffer, inputImage._timeStamp, 0,
+  VideoFrame decoded_image(frame_buffer, inputImage.Timestamp(), 0,
                            webrtc::kVideoRotation_0);
   _decodeCompleteCallback->Decoded(decoded_image);
   return WEBRTC_VIDEO_CODEC_OK;

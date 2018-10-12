@@ -32,8 +32,8 @@ class NoLossTest : public AudioEndToEndTest {
 
   NoLossTest() = default;
 
-  FakeNetworkPipe::Config GetNetworkPipeConfig() const override {
-    FakeNetworkPipe::Config pipe_config;
+  DefaultNetworkSimulationConfig GetNetworkPipeConfig() const override {
+    DefaultNetworkSimulationConfig pipe_config;
     pipe_config.queue_delay_ms = kRttMs / 2;
     return pipe_config;
   }

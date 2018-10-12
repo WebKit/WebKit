@@ -30,14 +30,8 @@ class WebRtcVideoDecoderFactory;
 std::unique_ptr<webrtc::VideoEncoderFactory> ConvertVideoEncoderFactory(
     std::unique_ptr<WebRtcVideoEncoderFactory> external_encoder_factory);
 
-std::unique_ptr<webrtc::VideoEncoderFactory> ConvertVideoEncoderFactory(
-    std::unique_ptr<webrtc::VideoEncoderFactory> external_encoder_factory);
-
 std::unique_ptr<webrtc::VideoDecoderFactory> ConvertVideoDecoderFactory(
     std::unique_ptr<WebRtcVideoDecoderFactory> external_decoder_factory);
-
-std::unique_ptr<webrtc::VideoDecoderFactory> ConvertVideoDecoderFactory(
-    std::unique_ptr<webrtc::VideoDecoderFactory> external_decoder_factory);
 
 }  // namespace cricket
 

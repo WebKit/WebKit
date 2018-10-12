@@ -16,6 +16,7 @@
 #include "modules/video_coding/codecs/test/video_codec_unittest.h"
 #include "modules/video_coding/codecs/vp9/include/vp9.h"
 #include "modules/video_coding/codecs/vp9/svc_config.h"
+#include "test/field_trial.h"
 #include "test/video_codec_settings.h"
 
 namespace webrtc {
@@ -50,15 +51,55 @@ class TestVp9Impl : public VideoCodecUnitTest {
     EXPECT_EQ(temporal_idx, codec_specific_info.codecSpecific.VP9.temporal_idx);
   }
 
+  void ExpectFrameWith(size_t num_spatial_layers,
+                       uint8_t temporal_idx,
+                       bool temporal_up_switch,
+                       uint8_t num_ref_pics,
+                       const std::vector<uint8_t>& p_diff) {
+    std::vector<EncodedImage> encoded_frame;
+    std::vector<CodecSpecificInfo> codec_specific;
+    ASSERT_TRUE(WaitForEncodedFrames(&encoded_frame, &codec_specific));
+    for (size_t spatial_idx = 0; spatial_idx < num_spatial_layers;
+         ++spatial_idx) {
+      const CodecSpecificInfoVP9& vp9 =
+          codec_specific[spatial_idx].codecSpecific.VP9;
+      if (vp9.temporal_idx == kNoTemporalIdx) {
+        EXPECT_EQ(temporal_idx, 0);
+      } else {
+        EXPECT_EQ(vp9.temporal_idx, temporal_idx);
+      }
+      if (num_spatial_layers == 1) {
+        EXPECT_FALSE(encoded_frame[spatial_idx].SpatialIndex());
+      } else {
+        EXPECT_EQ(encoded_frame[spatial_idx].SpatialIndex(),
+                  static_cast<int>(spatial_idx));
+      }
+      EXPECT_EQ(vp9.temporal_up_switch, temporal_up_switch);
+
+      // Ensure there are no duplicates in reference list.
+      std::vector<uint8_t> vp9_p_diff(vp9.p_diff,
+                                      vp9.p_diff + vp9.num_ref_pics);
+      std::sort(vp9_p_diff.begin(), vp9_p_diff.end());
+      EXPECT_EQ(std::unique(vp9_p_diff.begin(), vp9_p_diff.end()),
+                vp9_p_diff.end());
+
+      for (size_t ref_pic_num = 0; ref_pic_num < num_ref_pics; ++ref_pic_num) {
+        EXPECT_NE(
+            std::find(p_diff.begin(), p_diff.end(), vp9.p_diff[ref_pic_num]),
+            p_diff.end());
+      }
+    }
+  }
+
   void ConfigureSvc(size_t num_spatial_layers) {
     codec_settings_.VP9()->numberOfSpatialLayers =
         static_cast<unsigned char>(num_spatial_layers);
     codec_settings_.VP9()->numberOfTemporalLayers = 1;
     codec_settings_.VP9()->frameDroppingOn = false;
 
-    std::vector<SpatialLayer> layers =
-        GetSvcConfig(codec_settings_.width, codec_settings_.height,
-                     num_spatial_layers, 1, false);
+    std::vector<SpatialLayer> layers = GetSvcConfig(
+        codec_settings_.width, codec_settings_.height,
+        codec_settings_.maxFramerate, num_spatial_layers, 1, false);
     for (size_t i = 0; i < layers.size(); ++i) {
       codec_settings_.spatialLayers[i] = layers[i];
     }
@@ -108,6 +149,7 @@ TEST_F(TestVp9Impl, EncodedRotationEqualsInputRotation) {
   ASSERT_TRUE(WaitForEncodedFrame(&encoded_frame, &codec_specific_info));
   EXPECT_EQ(kVideoRotation_0, encoded_frame.rotation_);
 
+  input_frame = NextInputFrame();
   input_frame->set_rotation(kVideoRotation_90);
   EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
             encoder_->Encode(*input_frame, nullptr, nullptr));
@@ -178,6 +220,22 @@ TEST_F(TestVp9Impl, EncoderWith2TemporalLayers) {
   ExpectFrameWith(1);
 }
 
+TEST_F(TestVp9Impl, EncoderWith2SpatialLayers) {
+  codec_settings_.VP9()->numberOfSpatialLayers = 2;
+  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
+            encoder_->InitEncode(&codec_settings_, 1 /* number of cores */,
+                                 0 /* max payload size (unused) */));
+
+  SetWaitForEncodedFramesThreshold(2);
+  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
+            encoder_->Encode(*NextInputFrame(), nullptr, nullptr));
+  std::vector<EncodedImage> encoded_frame;
+  std::vector<CodecSpecificInfo> codec_info;
+  ASSERT_TRUE(WaitForEncodedFrames(&encoded_frame, &codec_info));
+  EXPECT_EQ(encoded_frame[0].SpatialIndex(), 0);
+  EXPECT_EQ(encoded_frame[1].SpatialIndex(), 1);
+}
+
 TEST_F(TestVp9Impl, EncoderExplicitLayering) {
   // Override default settings.
   codec_settings_.VP9()->numberOfTemporalLayers = 1;
@@ -200,8 +258,11 @@ TEST_F(TestVp9Impl, EncoderExplicitLayering) {
 
   codec_settings_.spatialLayers[0].width = codec_settings_.width / 2;
   codec_settings_.spatialLayers[0].height = codec_settings_.height / 2;
+  codec_settings_.spatialLayers[0].maxFramerate = codec_settings_.maxFramerate;
   codec_settings_.spatialLayers[1].width = codec_settings_.width;
   codec_settings_.spatialLayers[1].height = codec_settings_.height;
+  codec_settings_.spatialLayers[1].maxFramerate = codec_settings_.maxFramerate;
+
   EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
             encoder_->InitEncode(&codec_settings_, 1 /* number of cores */,
                                  0 /* max payload size (unused) */));
@@ -323,7 +384,7 @@ TEST_F(TestVp9Impl, EndOfPicture) {
             encoder_->Encode(*NextInputFrame(), nullptr, nullptr));
 
   ASSERT_TRUE(WaitForEncodedFrames(&frames, &codec_specific));
-  EXPECT_EQ(codec_specific[0].codecSpecific.VP9.spatial_idx, kNoSpatialIdx);
+  EXPECT_FALSE(frames[0].SpatialIndex());
   EXPECT_TRUE(codec_specific[0].codecSpecific.VP9.end_of_picture);
 }
 
@@ -362,7 +423,7 @@ TEST_F(TestVp9Impl, InterLayerPred) {
 
     // Key frame.
     EXPECT_FALSE(codec_specific[0].codecSpecific.VP9.inter_pic_predicted);
-    EXPECT_EQ(codec_specific[0].codecSpecific.VP9.spatial_idx, 0);
+    EXPECT_EQ(frames[0].SpatialIndex(), 0);
     EXPECT_EQ(codec_specific[0].codecSpecific.VP9.non_ref_for_inter_layer_pred,
               inter_layer_pred == InterLayerPredMode::kOff);
     EXPECT_TRUE(
@@ -375,7 +436,7 @@ TEST_F(TestVp9Impl, InterLayerPred) {
 
     // Delta frame.
     EXPECT_TRUE(codec_specific[0].codecSpecific.VP9.inter_pic_predicted);
-    EXPECT_EQ(codec_specific[0].codecSpecific.VP9.spatial_idx, 0);
+    EXPECT_EQ(frames[0].SpatialIndex(), 0);
     EXPECT_EQ(codec_specific[0].codecSpecific.VP9.non_ref_for_inter_layer_pred,
               inter_layer_pred == InterLayerPredMode::kOff ||
                   inter_layer_pred == InterLayerPredMode::kOnKeyPic);
@@ -439,6 +500,142 @@ TEST_F(TestVp9Impl,
   }
 }
 
+TEST_F(TestVp9Impl,
+       LowLayerMarkedAsRefIfHighLayerNotEncodedAndInterLayerPredIsEnabled) {
+  ConfigureSvc(3);
+  codec_settings_.VP9()->frameDroppingOn = false;
+  codec_settings_.VP9()->interLayerPred = InterLayerPredMode::kOn;
+
+  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
+            encoder_->InitEncode(&codec_settings_, 1 /* number of cores */,
+                                 0 /* max payload size (unused) */));
+
+  VideoBitrateAllocation bitrate_allocation;
+  bitrate_allocation.SetBitrate(
+      0, 0, codec_settings_.spatialLayers[0].targetBitrate * 1000);
+  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
+            encoder_->SetRateAllocation(bitrate_allocation,
+                                        codec_settings_.maxFramerate));
+  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
+            encoder_->Encode(*NextInputFrame(), nullptr, nullptr));
+  EncodedImage encoded_frame;
+  CodecSpecificInfo codec_info;
+  ASSERT_TRUE(WaitForEncodedFrame(&encoded_frame, &codec_info));
+  EXPECT_TRUE(codec_info.codecSpecific.VP9.ss_data_available);
+  EXPECT_FALSE(codec_info.codecSpecific.VP9.non_ref_for_inter_layer_pred);
+}
+
+TEST_F(TestVp9Impl, ScalabilityStructureIsAvailableInFlexibleMode) {
+  codec_settings_.VP9()->flexibleMode = true;
+  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
+            encoder_->InitEncode(&codec_settings_, 1 /* number of cores */,
+                                 0 /* max payload size (unused) */));
+
+  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
+            encoder_->Encode(*NextInputFrame(), nullptr, nullptr));
+  EncodedImage encoded_frame;
+  CodecSpecificInfo codec_specific_info;
+  ASSERT_TRUE(WaitForEncodedFrame(&encoded_frame, &codec_specific_info));
+  EXPECT_TRUE(codec_specific_info.codecSpecific.VP9.ss_data_available);
+}
+
+class TestVp9ImplWithLayering
+    : public TestVp9Impl,
+      public ::testing::WithParamInterface<::testing::tuple<uint8_t, uint8_t>> {
+ protected:
+  TestVp9ImplWithLayering()
+      : num_spatial_layers_(::testing::get<0>(GetParam())),
+        num_temporal_layers_(::testing::get<1>(GetParam())) {}
+
+  const uint8_t num_spatial_layers_;
+  const uint8_t num_temporal_layers_;
+};
+
+TEST_P(TestVp9ImplWithLayering, FlexibleMode) {
+  // In flexible mode encoder wrapper obtains actual list of references from
+  // encoder and writes it into RTP payload descriptor. Check that reference
+  // list in payload descriptor matches the predefined one, which is used
+  // in non-flexible mode.
+  codec_settings_.VP9()->flexibleMode = true;
+  codec_settings_.VP9()->frameDroppingOn = false;
+  codec_settings_.VP9()->numberOfSpatialLayers = num_spatial_layers_;
+  codec_settings_.VP9()->numberOfTemporalLayers = num_temporal_layers_;
+  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
+            encoder_->InitEncode(&codec_settings_, 1 /* number of cores */,
+                                 0 /* max payload size (unused) */));
+
+  GofInfoVP9 gof;
+  if (num_temporal_layers_ == 1) {
+    gof.SetGofInfoVP9(kTemporalStructureMode1);
+  } else if (num_temporal_layers_ == 2) {
+    gof.SetGofInfoVP9(kTemporalStructureMode2);
+  } else if (num_temporal_layers_ == 3) {
+    gof.SetGofInfoVP9(kTemporalStructureMode3);
+  }
+
+  // Encode at least (num_frames_in_gof + 1) frames to verify references
+  // of non-key frame with gof_idx = 0.
+  for (size_t frame_num = 0; frame_num < gof.num_frames_in_gof + 1;
+       ++frame_num) {
+    SetWaitForEncodedFramesThreshold(num_spatial_layers_);
+    EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
+              encoder_->Encode(*NextInputFrame(), nullptr, nullptr));
+
+    const bool is_key_frame = frame_num == 0;
+    const size_t gof_idx = frame_num % gof.num_frames_in_gof;
+    const std::vector<uint8_t> p_diff(std::begin(gof.pid_diff[gof_idx]),
+                                      std::end(gof.pid_diff[gof_idx]));
+
+    ExpectFrameWith(num_spatial_layers_, gof.temporal_idx[gof_idx],
+                    gof.temporal_up_switch[gof_idx],
+                    is_key_frame ? 0 : gof.num_ref_pics[gof_idx], p_diff);
+  }
+}
+
+TEST_P(TestVp9ImplWithLayering, ExternalRefControl) {
+  test::ScopedFieldTrials override_field_trials(
+      "WebRTC-Vp9ExternalRefCtrl/Enabled/");
+  codec_settings_.VP9()->flexibleMode = true;
+  codec_settings_.VP9()->frameDroppingOn = false;
+  codec_settings_.VP9()->numberOfSpatialLayers = num_spatial_layers_;
+  codec_settings_.VP9()->numberOfTemporalLayers = num_temporal_layers_;
+  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
+            encoder_->InitEncode(&codec_settings_, 1 /* number of cores */,
+                                 0 /* max payload size (unused) */));
+
+  GofInfoVP9 gof;
+  if (num_temporal_layers_ == 1) {
+    gof.SetGofInfoVP9(kTemporalStructureMode1);
+  } else if (num_temporal_layers_ == 2) {
+    gof.SetGofInfoVP9(kTemporalStructureMode2);
+  } else if (num_temporal_layers_ == 3) {
+    gof.SetGofInfoVP9(kTemporalStructureMode3);
+  }
+
+  // Encode at least (num_frames_in_gof + 1) frames to verify references
+  // of non-key frame with gof_idx = 0.
+  for (size_t frame_num = 0; frame_num < gof.num_frames_in_gof + 1;
+       ++frame_num) {
+    SetWaitForEncodedFramesThreshold(num_spatial_layers_);
+    EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
+              encoder_->Encode(*NextInputFrame(), nullptr, nullptr));
+
+    const bool is_key_frame = frame_num == 0;
+    const size_t gof_idx = frame_num % gof.num_frames_in_gof;
+    const std::vector<uint8_t> p_diff(std::begin(gof.pid_diff[gof_idx]),
+                                      std::end(gof.pid_diff[gof_idx]));
+
+    ExpectFrameWith(num_spatial_layers_, gof.temporal_idx[gof_idx],
+                    gof.temporal_up_switch[gof_idx],
+                    is_key_frame ? 0 : gof.num_ref_pics[gof_idx], p_diff);
+  }
+}
+
+INSTANTIATE_TEST_CASE_P(,
+                        TestVp9ImplWithLayering,
+                        ::testing::Combine(::testing::Values(1, 2, 3),
+                                           ::testing::Values(1, 2, 3)));
+
 class TestVp9ImplFrameDropping : public TestVp9Impl {
  protected:
   void ModifyCodecSettings(VideoCodec* codec_settings) override {
@@ -458,6 +655,11 @@ TEST_F(TestVp9ImplFrameDropping, PreEncodeFrameDropping) {
   const float expected_framerate_fps = 5.0f;
   const float max_abs_framerate_error_fps = expected_framerate_fps * 0.1f;
 
+  codec_settings_.maxFramerate = static_cast<uint32_t>(expected_framerate_fps);
+  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
+            encoder_->InitEncode(&codec_settings_, 1 /* number of cores */,
+                                 0 /* max payload size (unused) */));
+
   VideoFrame* input_frame = NextInputFrame();
   for (size_t frame_num = 0; frame_num < num_frames_to_encode; ++frame_num) {
     EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
@@ -471,6 +673,115 @@ TEST_F(TestVp9ImplFrameDropping, PreEncodeFrameDropping) {
   const float encoded_framerate_fps = num_encoded_frames / video_duration_secs;
   EXPECT_NEAR(encoded_framerate_fps, expected_framerate_fps,
               max_abs_framerate_error_fps);
+}
+
+TEST_F(TestVp9ImplFrameDropping, DifferentFrameratePerSpatialLayer) {
+  // Assign different frame rate to spatial layers and check that result frame
+  // rate is close to the assigned one.
+  const uint8_t num_spatial_layers = 3;
+  const float input_framerate_fps = 30.0;
+  const size_t video_duration_secs = 3;
+  const size_t num_input_frames = video_duration_secs * input_framerate_fps;
+
+  codec_settings_.VP9()->numberOfSpatialLayers = num_spatial_layers;
+  codec_settings_.VP9()->frameDroppingOn = false;
+
+  VideoBitrateAllocation bitrate_allocation;
+  for (uint8_t sl_idx = 0; sl_idx < num_spatial_layers; ++sl_idx) {
+    // Frame rate increases from low to high layer.
+    const uint32_t framerate_fps = 10 * (sl_idx + 1);
+
+    codec_settings_.spatialLayers[sl_idx].width = codec_settings_.width;
+    codec_settings_.spatialLayers[sl_idx].height = codec_settings_.height;
+    codec_settings_.spatialLayers[sl_idx].maxFramerate = framerate_fps;
+    codec_settings_.spatialLayers[sl_idx].minBitrate =
+        codec_settings_.startBitrate;
+    codec_settings_.spatialLayers[sl_idx].maxBitrate =
+        codec_settings_.startBitrate;
+    codec_settings_.spatialLayers[sl_idx].targetBitrate =
+        codec_settings_.startBitrate;
+
+    bitrate_allocation.SetBitrate(
+        sl_idx, 0, codec_settings_.spatialLayers[sl_idx].targetBitrate * 1000);
+  }
+
+  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
+            encoder_->InitEncode(&codec_settings_, 1 /* number of cores */,
+                                 0 /* max payload size (unused) */));
+
+  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
+            encoder_->SetRateAllocation(bitrate_allocation,
+                                        codec_settings_.maxFramerate));
+
+  VideoFrame* input_frame = NextInputFrame();
+  for (size_t frame_num = 0; frame_num < num_input_frames; ++frame_num) {
+    EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
+              encoder_->Encode(*input_frame, nullptr, nullptr));
+    const size_t timestamp = input_frame->timestamp() +
+                             kVideoPayloadTypeFrequency / input_framerate_fps;
+    input_frame->set_timestamp(static_cast<uint32_t>(timestamp));
+  }
+
+  std::vector<EncodedImage> encoded_frames;
+  std::vector<CodecSpecificInfo> codec_infos;
+  ASSERT_TRUE(WaitForEncodedFrames(&encoded_frames, &codec_infos));
+
+  std::vector<size_t> num_encoded_frames(num_spatial_layers, 0);
+  for (EncodedImage& encoded_frame : encoded_frames) {
+    ++num_encoded_frames[encoded_frame.SpatialIndex().value_or(0)];
+  }
+
+  for (uint8_t sl_idx = 0; sl_idx < num_spatial_layers; ++sl_idx) {
+    const float layer_target_framerate_fps =
+        codec_settings_.spatialLayers[sl_idx].maxFramerate;
+    const float layer_output_framerate_fps =
+        static_cast<float>(num_encoded_frames[sl_idx]) / video_duration_secs;
+    const float max_framerate_error_fps = layer_target_framerate_fps * 0.1f;
+    EXPECT_NEAR(layer_output_framerate_fps, layer_target_framerate_fps,
+                max_framerate_error_fps);
+  }
+}
+
+TEST_F(TestVp9ImplFrameDropping, LayerMaxFramerateIsCappedByCodecMaxFramerate) {
+  const float input_framerate_fps = 30.0;
+  const float layer_max_framerate_fps = 30.0;
+  const uint32_t codec_max_framerate_fps = layer_max_framerate_fps / 3;
+  const size_t video_duration_secs = 3;
+  const size_t num_input_frames = video_duration_secs * input_framerate_fps;
+
+  VideoBitrateAllocation bitrate_allocation;
+  codec_settings_.spatialLayers[0].width = codec_settings_.width;
+  codec_settings_.spatialLayers[0].height = codec_settings_.height;
+  codec_settings_.spatialLayers[0].maxFramerate = layer_max_framerate_fps;
+  codec_settings_.spatialLayers[0].minBitrate = codec_settings_.startBitrate;
+  codec_settings_.spatialLayers[0].maxBitrate = codec_settings_.startBitrate;
+  codec_settings_.spatialLayers[0].targetBitrate = codec_settings_.startBitrate;
+
+  bitrate_allocation.SetBitrate(
+      0, 0, codec_settings_.spatialLayers[0].targetBitrate * 1000);
+
+  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
+            encoder_->InitEncode(&codec_settings_, 1 /* number of cores */,
+                                 0 /* max payload size (unused) */));
+
+  EXPECT_EQ(
+      WEBRTC_VIDEO_CODEC_OK,
+      encoder_->SetRateAllocation(bitrate_allocation, codec_max_framerate_fps));
+
+  VideoFrame* input_frame = NextInputFrame();
+  for (size_t frame_num = 0; frame_num < num_input_frames; ++frame_num) {
+    EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
+              encoder_->Encode(*input_frame, nullptr, nullptr));
+    const size_t timestamp = input_frame->timestamp() +
+                             kVideoPayloadTypeFrequency / input_framerate_fps;
+    input_frame->set_timestamp(static_cast<uint32_t>(timestamp));
+  }
+
+  const size_t num_encoded_frames = GetNumEncodedFrames();
+  const float encoded_framerate_fps = num_encoded_frames / video_duration_secs;
+  const float max_framerate_error_fps = codec_max_framerate_fps * 0.1f;
+  EXPECT_NEAR(encoded_framerate_fps, codec_max_framerate_fps,
+              max_framerate_error_fps);
 }
 
 class TestVp9ImplProfile2 : public TestVp9Impl {

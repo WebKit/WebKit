@@ -47,6 +47,9 @@ TransportFeedbackPacketLossTracker::TransportFeedbackPacketLossTracker(
   Reset();
 }
 
+TransportFeedbackPacketLossTracker::~TransportFeedbackPacketLossTracker() =
+    default;
+
 void TransportFeedbackPacketLossTracker::Reset() {
   acked_packets_ = 0;
   plr_state_.Reset();

@@ -25,6 +25,10 @@ deps = {
       'condition': 'checkout_android',
       'dep_type': 'cipd',
   },
+
+  # Script expects to find these markers.
+  # === ANDROID_DEPS Generated Code Start ===
+  # === ANDROID_DEPS Generated Code End ===
 }
 
 deps_os = {

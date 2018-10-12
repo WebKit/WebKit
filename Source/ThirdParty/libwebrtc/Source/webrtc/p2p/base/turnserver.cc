@@ -25,6 +25,7 @@
 #include "rtc_base/messagedigest.h"
 #include "rtc_base/socketadapters.h"
 #include "rtc_base/stringencode.h"
+#include "rtc_base/strings/string_builder.h"
 #include "rtc_base/thread.h"
 
 namespace cricket {
@@ -597,9 +598,9 @@ std::string TurnServerConnection::ToString() const {
   const char* const kProtos[] = {
       "unknown", "udp", "tcp", "ssltcp"
   };
-  std::ostringstream ost;
+  rtc::StringBuilder ost;
   ost << src_.ToString() << "-" << dst_.ToString() << ":"<< kProtos[proto_];
-  return ost.str();
+  return ost.Release();
 }
 
 TurnServerAllocation::TurnServerAllocation(TurnServer* server,
@@ -630,9 +631,9 @@ TurnServerAllocation::~TurnServerAllocation() {
 }
 
 std::string TurnServerAllocation::ToString() const {
-  std::ostringstream ost;
+  rtc::StringBuilder ost;
   ost << "Alloc[" << conn_.ToString() << "]";
-  return ost.str();
+  return ost.Release();
 }
 
 void TurnServerAllocation::HandleTurnMessage(const TurnMessage* msg) {

@@ -15,10 +15,12 @@
 
 #include "api/audio_codecs/audio_encoder.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
+#include "api/audio_codecs/builtin_audio_encoder_factory.h"
 #include "api/audio_codecs/opus/audio_encoder_opus.h"
 #include "modules/audio_coding/acm2/acm_receive_test.h"
 #include "modules/audio_coding/acm2/acm_send_test.h"
 #include "modules/audio_coding/codecs/audio_format_conversion.h"
+#include "modules/audio_coding/codecs/cng/audio_encoder_cng.h"
 #include "modules/audio_coding/codecs/g711/audio_decoder_pcm.h"
 #include "modules/audio_coding/codecs/g711/audio_encoder_pcm.h"
 #include "modules/audio_coding/codecs/isac/main/include/audio_encoder_isac.h"
@@ -194,7 +196,8 @@ class AudioCodingModuleTestOldApi : public ::testing::Test {
 
   virtual void RegisterCodec() {
     EXPECT_EQ(true, acm_->RegisterReceiveCodec(kPayloadType, *audio_format_));
-    EXPECT_EQ(0, acm_->RegisterSendCodec(codec_));
+    acm_->SetEncoder(CreateBuiltinAudioEncoderFactory()->MakeAudioEncoder(
+        kPayloadType, *audio_format_, absl::nullopt));
   }
 
   virtual void InsertPacketAndPullAudio() {
@@ -341,6 +344,7 @@ TEST_F(AudioCodingModuleTestOldApi, FailOnZeroDesiredFrequency) {
 TEST_F(AudioCodingModuleTestOldApi, TransportCallbackIsInvokedForEachPacket) {
   const int k10MsBlocksPerPacket = 3;
   codec_.pacsize = k10MsBlocksPerPacket * kSampleRateHz / 100;
+  audio_format_->parameters["ptime"] = "30";
   RegisterCodec();
   const int kLoops = 10;
   for (int i = 0; i < kLoops; ++i) {
@@ -374,6 +378,7 @@ TEST_F(AudioCodingModuleTestOldApi, TimestampSeriesContinuesWhenCodecChanges) {
 
   // Change codec.
   ASSERT_EQ(0, AudioCodingModule::Codec("ISAC", &codec_, kSampleRateHz, 1));
+  audio_format_ = SdpAudioFormat("ISAC", kSampleRateHz, 1);
   RegisterCodec();
   blocks_per_packet = codec_.pacsize / (kSampleRateHz / 100);
   // Encode another 5 packets.
@@ -402,11 +407,14 @@ class AudioCodingModuleTestWithComfortNoiseOldApi
     EXPECT_EQ(true,
               acm_->RegisterReceiveCodec(
                   rtp_payload_type, SdpAudioFormat("cn", kSampleRateHz, 1)));
-
-    CodecInst codec;
-    EXPECT_EQ(0, AudioCodingModule::Codec("CN", &codec, kSampleRateHz, 1));
-    codec.pltype = rtp_payload_type;
-    EXPECT_EQ(0, acm_->RegisterSendCodec(codec));
+    acm_->ModifyEncoder([&](std::unique_ptr<AudioEncoder>* enc) {
+      AudioEncoderCng::Config config;
+      config.speech_encoder = std::move(*enc);
+      config.num_channels = 1;
+      config.payload_type = rtp_payload_type;
+      config.vad_mode = Vad::kVadNormal;
+      *enc = absl::make_unique<AudioEncoderCng>(std::move(config));
+    });
   }
 
   void VerifyEncoding() override {
@@ -450,27 +458,14 @@ class AudioCodingModuleTestWithComfortNoiseOldApi
 // Checks that the transport callback is invoked once per frame period of the
 // underlying speech encoder, even when comfort noise is produced.
 // Also checks that the frame type is kAudioFrameCN or kEmptyFrame.
-// This test and the next check the same thing, but differ in the order of
-// speech codec and CNG registration.
 TEST_F(AudioCodingModuleTestWithComfortNoiseOldApi,
        TransportCallbackTestForComfortNoiseRegisterCngLast) {
   const int k10MsBlocksPerPacket = 3;
   codec_.pacsize = k10MsBlocksPerPacket * kSampleRateHz / 100;
+  audio_format_->parameters["ptime"] = "30";
   RegisterCodec();
   const int kCngPayloadType = 105;
   RegisterCngCodec(kCngPayloadType);
-  ASSERT_EQ(0, acm_->SetVAD(true, true));
-  DoTest(k10MsBlocksPerPacket, kCngPayloadType);
-}
-
-TEST_F(AudioCodingModuleTestWithComfortNoiseOldApi,
-       TransportCallbackTestForComfortNoiseRegisterCngFirst) {
-  const int k10MsBlocksPerPacket = 3;
-  codec_.pacsize = k10MsBlocksPerPacket * kSampleRateHz / 100;
-  const int kCngPayloadType = 105;
-  RegisterCngCodec(kCngPayloadType);
-  RegisterCodec();
-  ASSERT_EQ(0, acm_->SetVAD(true, true));
   DoTest(k10MsBlocksPerPacket, kCngPayloadType);
 }
 
@@ -662,7 +657,8 @@ class AcmIsacMtTestOldApi : public AudioCodingModuleMtTestOldApi {
     // Register iSAC codec in ACM, effectively unregistering the PCM16B codec
     // registered in AudioCodingModuleTestOldApi::SetUp();
     EXPECT_EQ(true, acm_->RegisterReceiveCodec(kPayloadType, *audio_format_));
-    EXPECT_EQ(0, acm_->RegisterSendCodec(codec_));
+    acm_->SetEncoder(CreateBuiltinAudioEncoderFactory()->MakeAudioEncoder(
+        kPayloadType, *audio_format_, absl::nullopt));
   }
 
   void InsertPacket() override {
@@ -855,7 +851,8 @@ class AcmReRegisterIsacMtTestOldApi : public AudioCodingModuleTestOldApi {
     if (!codec_registered_ &&
         receive_packet_count_ > kRegisterAfterNumPackets) {
       // Register the iSAC encoder.
-      EXPECT_EQ(0, acm_->RegisterSendCodec(codec_));
+      acm_->SetEncoder(CreateBuiltinAudioEncoderFactory()->MakeAudioEncoder(
+          kPayloadType, *audio_format_, absl::nullopt));
       codec_registered_ = true;
     }
     if (codec_registered_ && receive_packet_count_ > kNumPackets) {
@@ -1148,13 +1145,14 @@ class AcmSenderBitExactnessOldApi : public ::testing::Test,
                                      payload_type, frame_size_samples);
   }
 
-  bool RegisterExternalSendCodec(AudioEncoder* external_speech_encoder,
-                                 int payload_type) {
+  void RegisterExternalSendCodec(
+      std::unique_ptr<AudioEncoder> external_speech_encoder,
+      int payload_type) {
     payload_type_ = payload_type;
     frame_size_rtp_timestamps_ = rtc::checked_cast<uint32_t>(
         external_speech_encoder->Num10MsFramesInNextPacket() *
         external_speech_encoder->RtpTimestampRateHz() / 100);
-    return send_test_->RegisterExternalCodec(external_speech_encoder);
+    send_test_->RegisterExternalCodec(std::move(external_speech_encoder));
   }
 
   // Runs the test. SetUpSender() and RegisterSendCodec() must have been called
@@ -1249,11 +1247,11 @@ class AcmSenderBitExactnessOldApi : public ::testing::Test,
                                   codec_frame_size_rtp_timestamps));
   }
 
-  void SetUpTestExternalEncoder(AudioEncoder* external_speech_encoder,
-                                int payload_type) {
+  void SetUpTestExternalEncoder(
+      std::unique_ptr<AudioEncoder> external_speech_encoder,
+      int payload_type) {
     ASSERT_TRUE(SetUpSender());
-    ASSERT_TRUE(
-        RegisterExternalSendCodec(external_speech_encoder, payload_type));
+    RegisterExternalSendCodec(std::move(external_speech_encoder), payload_type);
   }
 
   std::unique_ptr<test::AcmSendTestOldApi> send_test_;
@@ -1460,8 +1458,8 @@ TEST_F(AcmSenderBitExactnessOldApi, Opus_stereo_20ms) {
 TEST_F(AcmSenderBitExactnessNewApi, MAYBE_OpusFromFormat_stereo_20ms) {
   const auto config = AudioEncoderOpus::SdpToConfig(
       SdpAudioFormat("opus", 48000, 2, {{"stereo", "1"}}));
-  const auto encoder = AudioEncoderOpus::MakeAudioEncoder(*config, 120);
-  ASSERT_NO_FATAL_FAILURE(SetUpTestExternalEncoder(encoder.get(), 120));
+  ASSERT_NO_FATAL_FAILURE(SetUpTestExternalEncoder(
+      AudioEncoderOpus::MakeAudioEncoder(*config, 120), 120));
   Run(AcmReceiverBitExactnessOldApi::PlatformChecksum(
           "3e285b74510e62062fbd8142dacd16e9",
           "3e285b74510e62062fbd8142dacd16e9",
@@ -1477,32 +1475,13 @@ TEST_F(AcmSenderBitExactnessNewApi, MAYBE_OpusFromFormat_stereo_20ms) {
       50, test::AcmReceiveTestOldApi::kStereoOutput);
 }
 
-TEST_F(AcmSenderBitExactnessOldApi, Opus_stereo_20ms_voip) {
-  ASSERT_NO_FATAL_FAILURE(SetUpTest("opus", 48000, 2, 120, 960, 960));
-  // If not set, default will be kAudio in case of stereo.
-  EXPECT_EQ(0, send_test_->acm()->SetOpusApplication(kVoip));
-  Run(AcmReceiverBitExactnessOldApi::PlatformChecksum(
-          "b0325df4e8104f04e03af23c0b75800e",
-          "b0325df4e8104f04e03af23c0b75800e",
-          "1c81121f5d9286a5a865d01dbab22ce8",
-          "11d547f89142e9ef03f37d7ca7f32379",
-          "11d547f89142e9ef03f37d7ca7f32379"),
-      AcmReceiverBitExactnessOldApi::PlatformChecksum(
-          "4eab2259b6fe24c22dd242a113e0b3d9",
-          "4eab2259b6fe24c22dd242a113e0b3d9",
-          "839ea60399447268ee0f0262a50b75fd",
-          "1815fd5589cad0c6f6cf946c76b81aeb",
-          "1815fd5589cad0c6f6cf946c76b81aeb"),
-      50, test::AcmReceiveTestOldApi::kStereoOutput);
-}
-
 TEST_F(AcmSenderBitExactnessNewApi, OpusFromFormat_stereo_20ms_voip) {
-  const auto config = AudioEncoderOpus::SdpToConfig(
+  auto config = AudioEncoderOpus::SdpToConfig(
       SdpAudioFormat("opus", 48000, 2, {{"stereo", "1"}}));
-  const auto encoder = AudioEncoderOpus::MakeAudioEncoder(*config, 120);
-  ASSERT_NO_FATAL_FAILURE(SetUpTestExternalEncoder(encoder.get(), 120));
   // If not set, default will be kAudio in case of stereo.
-  EXPECT_EQ(0, send_test_->acm()->SetOpusApplication(kVoip));
+  config->application = AudioEncoderOpusConfig::ApplicationMode::kVoip;
+  ASSERT_NO_FATAL_FAILURE(SetUpTestExternalEncoder(
+      AudioEncoderOpus::MakeAudioEncoder(*config, 120), 120));
   Run(AcmReceiverBitExactnessOldApi::PlatformChecksum(
           "b0325df4e8104f04e03af23c0b75800e",
           "b0325df4e8104f04e03af23c0b75800e",
@@ -1550,9 +1529,10 @@ class AcmSetBitRateTest : public ::testing::Test {
                                      payload_type, frame_size_samples);
   }
 
-  bool RegisterExternalSendCodec(AudioEncoder* external_speech_encoder,
-                                 int payload_type) {
-    return send_test_->RegisterExternalCodec(external_speech_encoder);
+  void RegisterExternalSendCodec(
+      std::unique_ptr<AudioEncoder> external_speech_encoder,
+      int payload_type) {
+    send_test_->RegisterExternalCodec(std::move(external_speech_encoder));
   }
 
   void RunInner(int min_expected_total_bits, int max_expected_total_bits) {
@@ -1611,9 +1591,9 @@ TEST_F(AcmSetBitRateOldApi, Opus_48khz_20ms_10kbps) {
 TEST_F(AcmSetBitRateNewApi, OpusFromFormat_48khz_20ms_10kbps) {
   const auto config = AudioEncoderOpus::SdpToConfig(
       SdpAudioFormat("opus", 48000, 2, {{"maxaveragebitrate", "10000"}}));
-  const auto encoder = AudioEncoderOpus::MakeAudioEncoder(*config, 107);
   ASSERT_TRUE(SetUpSender());
-  ASSERT_TRUE(RegisterExternalSendCodec(encoder.get(), 107));
+  RegisterExternalSendCodec(AudioEncoderOpus::MakeAudioEncoder(*config, 107),
+                            107);
   RunInner(8000, 12000);
 }
 
@@ -1625,9 +1605,9 @@ TEST_F(AcmSetBitRateOldApi, Opus_48khz_20ms_50kbps) {
 TEST_F(AcmSetBitRateNewApi, OpusFromFormat_48khz_20ms_50kbps) {
   const auto config = AudioEncoderOpus::SdpToConfig(
       SdpAudioFormat("opus", 48000, 2, {{"maxaveragebitrate", "50000"}}));
-  const auto encoder = AudioEncoderOpus::MakeAudioEncoder(*config, 107);
   ASSERT_TRUE(SetUpSender());
-  ASSERT_TRUE(RegisterExternalSendCodec(encoder.get(), 107));
+  RegisterExternalSendCodec(AudioEncoderOpus::MakeAudioEncoder(*config, 107),
+                            107);
   RunInner(40000, 60000);
 }
 
@@ -1650,9 +1630,9 @@ TEST_F(AcmSetBitRateOldApi, MAYBE_Opus_48khz_20ms_100kbps) {
 TEST_F(AcmSetBitRateNewApi, MAYBE_OpusFromFormat_48khz_20ms_100kbps) {
   const auto config = AudioEncoderOpus::SdpToConfig(
       SdpAudioFormat("opus", 48000, 2, {{"maxaveragebitrate", "100000"}}));
-  const auto encoder = AudioEncoderOpus::MakeAudioEncoder(*config, 107);
   ASSERT_TRUE(SetUpSender());
-  ASSERT_TRUE(RegisterExternalSendCodec(encoder.get(), 107));
+  RegisterExternalSendCodec(AudioEncoderOpus::MakeAudioEncoder(*config, 107),
+                            107);
   RunInner(80000, 120000);
 }
 
@@ -1724,17 +1704,17 @@ class AcmChangeBitRateOldApi : public AcmSetBitRateOldApi {
 
 TEST_F(AcmChangeBitRateOldApi, Opus_48khz_20ms_10kbps_2) {
   ASSERT_NO_FATAL_FAILURE(SetUpTest("opus", 48000, 1, 107, 960, 960));
-  Run(10000, 32200, 5208);
+  Run(10000, 14096, 4232);
 }
 
 TEST_F(AcmChangeBitRateOldApi, Opus_48khz_20ms_50kbps_2) {
   ASSERT_NO_FATAL_FAILURE(SetUpTest("opus", 48000, 1, 107, 960, 960));
-  Run(50000, 32200, 23928);
+  Run(50000, 14096, 22552);
 }
 
 TEST_F(AcmChangeBitRateOldApi, Opus_48khz_20ms_100kbps_2) {
   ASSERT_NO_FATAL_FAILURE(SetUpTest("opus", 48000, 1, 107, 960, 960));
-  Run(100000, 32200, 50448);
+  Run(100000, 14096, 49472);
 }
 
 // These next 2 tests ensure that the SetBitRate function has no effect on PCM
@@ -1754,36 +1734,33 @@ TEST_F(AcmSenderBitExactnessOldApi, External_Pcmu_20ms) {
   codec_inst.pacsize = 160;
   codec_inst.pltype = 0;
   AudioEncoderPcmU encoder(codec_inst);
-  MockAudioEncoder mock_encoder;
+  auto mock_encoder = absl::make_unique<MockAudioEncoder>();
   // Set expectations on the mock encoder and also delegate the calls to the
   // real encoder.
-  EXPECT_CALL(mock_encoder, SampleRateHz())
+  EXPECT_CALL(*mock_encoder, SampleRateHz())
       .Times(AtLeast(1))
       .WillRepeatedly(Invoke(&encoder, &AudioEncoderPcmU::SampleRateHz));
-  EXPECT_CALL(mock_encoder, NumChannels())
+  EXPECT_CALL(*mock_encoder, NumChannels())
       .Times(AtLeast(1))
       .WillRepeatedly(Invoke(&encoder, &AudioEncoderPcmU::NumChannels));
-  EXPECT_CALL(mock_encoder, RtpTimestampRateHz())
+  EXPECT_CALL(*mock_encoder, RtpTimestampRateHz())
       .Times(AtLeast(1))
       .WillRepeatedly(Invoke(&encoder, &AudioEncoderPcmU::RtpTimestampRateHz));
-  EXPECT_CALL(mock_encoder, Num10MsFramesInNextPacket())
+  EXPECT_CALL(*mock_encoder, Num10MsFramesInNextPacket())
       .Times(AtLeast(1))
       .WillRepeatedly(
           Invoke(&encoder, &AudioEncoderPcmU::Num10MsFramesInNextPacket));
-  EXPECT_CALL(mock_encoder, GetTargetBitrate())
+  EXPECT_CALL(*mock_encoder, GetTargetBitrate())
       .Times(AtLeast(1))
       .WillRepeatedly(Invoke(&encoder, &AudioEncoderPcmU::GetTargetBitrate));
-  EXPECT_CALL(mock_encoder, EncodeImpl(_, _, _))
+  EXPECT_CALL(*mock_encoder, EncodeImpl(_, _, _))
       .Times(AtLeast(1))
       .WillRepeatedly(Invoke(
           &encoder, static_cast<AudioEncoder::EncodedInfo (AudioEncoder::*)(
                         uint32_t, rtc::ArrayView<const int16_t>, rtc::Buffer*)>(
                         &AudioEncoderPcmU::Encode)));
-  EXPECT_CALL(mock_encoder, SetFec(_))
-      .Times(AtLeast(1))
-      .WillRepeatedly(Invoke(&encoder, &AudioEncoderPcmU::SetFec));
   ASSERT_NO_FATAL_FAILURE(
-      SetUpTestExternalEncoder(&mock_encoder, codec_inst.pltype));
+      SetUpTestExternalEncoder(std::move(mock_encoder), codec_inst.pltype));
   Run("81a9d4c0bb72e9becc43aef124c981e9", "8f9b8750bd80fe26b6cbf6659b89f0f9",
       50, test::AcmReceiveTestOldApi::kMonoOutput);
 }

@@ -24,6 +24,7 @@
 #include "rtc_base/experiments/quality_scaling_experiment.h"
 #include "rtc_base/location.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/strings/string_builder.h"
 #include "rtc_base/system/fallthrough.h"
 #include "rtc_base/timeutils.h"
 #include "rtc_base/trace_event.h"
@@ -37,7 +38,6 @@ namespace {
 // Time interval for logging frame counts.
 const int64_t kFrameLogIntervalMs = 60000;
 const int kMinFramerateFps = 2;
-const int kMaxFramerateFps = 120;
 
 // Time to keep a single cached pending frame in paused state.
 const int64_t kPendingFrameTimeoutMs = 1000;
@@ -119,7 +119,8 @@ class VideoStreamEncoder::VideoSourceProxy {
   explicit VideoSourceProxy(VideoStreamEncoder* video_stream_encoder)
       : video_stream_encoder_(video_stream_encoder),
         degradation_preference_(DegradationPreference::DISABLED),
-        source_(nullptr) {}
+        source_(nullptr),
+        max_framerate_(std::numeric_limits<int>::max()) {}
 
   void SetSource(rtc::VideoSourceInterface<VideoFrame>* source,
                  const DegradationPreference& degradation_preference) {
@@ -146,11 +147,27 @@ class VideoStreamEncoder::VideoSourceProxy {
     source->AddOrUpdateSink(video_stream_encoder_, wants);
   }
 
+  void SetMaxFramerate(int max_framerate) {
+    RTC_DCHECK_GT(max_framerate, 0);
+    rtc::CritScope lock(&crit_);
+    if (max_framerate == max_framerate_)
+      return;
+
+    RTC_LOG(LS_INFO) << "Set max framerate: " << max_framerate;
+    max_framerate_ = max_framerate;
+    if (source_) {
+      source_->AddOrUpdateSink(video_stream_encoder_,
+                               GetActiveSinkWantsInternal());
+    }
+  }
+
   void SetWantsRotationApplied(bool rotation_applied) {
     rtc::CritScope lock(&crit_);
     sink_wants_.rotation_applied = rotation_applied;
-    if (source_)
-      source_->AddOrUpdateSink(video_stream_encoder_, sink_wants_);
+    if (source_) {
+      source_->AddOrUpdateSink(video_stream_encoder_,
+                               GetActiveSinkWantsInternal());
+    }
   }
 
   rtc::VideoSinkWants GetActiveSinkWants() {
@@ -164,7 +181,8 @@ class VideoStreamEncoder::VideoSourceProxy {
     sink_wants_.target_pixel_count.reset();
     sink_wants_.max_framerate_fps = std::numeric_limits<int>::max();
     if (source_)
-      source_->AddOrUpdateSink(video_stream_encoder_, sink_wants_);
+      source_->AddOrUpdateSink(video_stream_encoder_,
+                               GetActiveSinkWantsInternal());
   }
 
   bool RequestResolutionLowerThan(int pixel_count,
@@ -307,6 +325,8 @@ class VideoStreamEncoder::VideoSourceProxy {
         wants.target_pixel_count.reset();
         wants.max_framerate_fps = std::numeric_limits<int>::max();
     }
+    // Limit to configured max framerate.
+    wants.max_framerate_fps = std::min(max_framerate_, wants.max_framerate_fps);
     return wants;
   }
 
@@ -316,6 +336,7 @@ class VideoStreamEncoder::VideoSourceProxy {
   rtc::VideoSinkWants sink_wants_ RTC_GUARDED_BY(&crit_);
   DegradationPreference degradation_preference_ RTC_GUARDED_BY(&crit_);
   rtc::VideoSourceInterface<VideoFrame>* source_ RTC_GUARDED_BY(&crit_);
+  int max_framerate_ RTC_GUARDED_BY(&crit_);
 
   RTC_DISALLOW_COPY_AND_ASSIGN(VideoSourceProxy);
 };
@@ -542,7 +563,13 @@ void VideoStreamEncoder::ReconfigureEncoder() {
   codec.startBitrate = std::min(codec.startBitrate, codec.maxBitrate);
   codec.expect_encode_from_texture = last_frame_info_->is_texture;
   max_framerate_ = codec.maxFramerate;
-  RTC_DCHECK_LE(max_framerate_, kMaxFramerateFps);
+
+  // Inform source about max configured framerate.
+  int max_framerate = 0;
+  for (const auto& stream : streams) {
+    max_framerate = std::max(stream.max_framerate, max_framerate);
+  }
+  source_proxy_->SetMaxFramerate(max_framerate);
 
   // Keep the same encoder, as long as the video_format is unchanged.
   if (pending_encoder_creation_) {
@@ -887,7 +914,7 @@ EncodedImageCallback::Result VideoStreamEncoder::OnEncodedImage(
       sink_->OnEncodedImage(encoded_image, codec_specific_info, fragmentation);
 
   int64_t time_sent_us = rtc::TimeMicros();
-  uint32_t timestamp = encoded_image._timeStamp;
+  uint32_t timestamp = encoded_image.Timestamp();
   const int qp = encoded_image.qp_;
   int64_t capture_time_us =
       encoded_image.capture_time_ms_ * rtc::kNumMicrosecsPerMillisec;
@@ -1237,10 +1264,10 @@ VideoStreamEncoder::AdaptCounter::AdaptCounter() {
 VideoStreamEncoder::AdaptCounter::~AdaptCounter() {}
 
 std::string VideoStreamEncoder::AdaptCounter::ToString() const {
-  std::stringstream ss;
+  rtc::StringBuilder ss;
   ss << "Downgrade counts: fps: {" << ToString(fps_counters_);
   ss << "}, resolution: {" << ToString(resolution_counters_) << "}";
-  return ss.str();
+  return ss.Release();
 }
 
 VideoStreamEncoderObserver::AdaptationSteps
@@ -1330,11 +1357,11 @@ void VideoStreamEncoder::AdaptCounter::MoveCount(std::vector<int>* counters,
 
 std::string VideoStreamEncoder::AdaptCounter::ToString(
     const std::vector<int>& counters) const {
-  std::stringstream ss;
+  rtc::StringBuilder ss;
   for (size_t reason = 0; reason < kScaleReasonSize; ++reason) {
     ss << (reason ? " cpu" : "quality") << ":" << counters[reason];
   }
-  return ss.str();
+  return ss.Release();
 }
 
 }  // namespace webrtc

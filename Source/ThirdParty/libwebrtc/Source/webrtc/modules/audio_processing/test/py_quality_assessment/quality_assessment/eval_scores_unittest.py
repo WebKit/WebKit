@@ -53,7 +53,7 @@ class TestEvalScores(unittest.TestCase):
 
   def testRegisteredClasses(self):
     # Evaluation score names to exclude (tested separately).
-    exceptions = ['thd']
+    exceptions = ['thd', 'echo_metric']
 
     # Preliminary check.
     self.assertTrue(os.path.exists(self._output_path))
@@ -67,7 +67,9 @@ class TestEvalScores(unittest.TestCase):
     eval_score_workers_factory = (
         eval_scores_factory.EvaluationScoreWorkerFactory(
             polqa_tool_bin_path=os.path.join(
-                os.path.dirname(os.path.abspath(__file__)), 'fake_polqa')))
+                os.path.dirname(os.path.abspath(__file__)), 'fake_polqa'),
+            echo_metric_tool_bin_path=None
+        ))
     eval_score_workers_factory.SetScoreFilenamePrefix('scores-')
 
     # Try each registered evaluation score worker.

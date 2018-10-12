@@ -33,6 +33,7 @@ rtc_static_library("remote_bitrate_estimator") {
 
   if (rtc_enable_bwe_test_logging) {
     defines = [ "BWE_TEST_LOGGING_COMPILE_TIME_ENABLE=1" ]
+
     sources += [ "test/bwe_test_logging.cc" ]
   } else {
     defines = [ "BWE_TEST_LOGGING_COMPILE_TIME_ENABLE=0" ]
@@ -40,14 +41,15 @@ rtc_static_library("remote_bitrate_estimator") {
 
   deps = [
     "../..:webrtc_common",
+    "../../api/units:data_rate",
     "../../modules:module_api",
     "../../modules/rtp_rtcp:rtp_rtcp_format",
     "../../rtc_base:checks",
     "../../rtc_base:rtc_base_approved",
     "../../rtc_base:safe_minmax",
     "../../system_wrappers",
-    "../../system_wrappers:field_trial_api",
-    "../../system_wrappers:metrics_api",
+    "../../system_wrappers:field_trial",
+    "../../system_wrappers:metrics",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
@@ -132,7 +134,7 @@ if (rtc_include_tests) {
       "../../rtc_base/system:fallthrough",
       "../../rtc_base/system:unused",
       "../../system_wrappers",
-      "../../system_wrappers:field_trial_api",
+      "../../system_wrappers:field_trial",
       "../../test:fileutils",
       "../../test:perf_test",
       "../../test:test_support",

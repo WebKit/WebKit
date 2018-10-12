@@ -17,7 +17,7 @@
 #include "absl/memory/memory.h"
 
 #include "audio/audio_state.h"
-#include "audio/channel_proxy.h"
+#include "audio/channel_send_proxy.h"
 #include "audio/conversion.h"
 #include "call/rtp_transport_controller_send_interface.h"
 #include "modules/audio_coding/codecs/cng/audio_encoder_cng.h"
@@ -38,7 +38,7 @@ constexpr size_t kPacketLossTrackerMaxWindowSizeMs = 15000;
 constexpr size_t kPacketLossRateMinNumAckedPackets = 50;
 constexpr size_t kRecoverablePacketLossRateMinNumAckedPairs = 40;
 
-void CallEncoder(const std::unique_ptr<voe::ChannelProxy>& channel_proxy,
+void CallEncoder(const std::unique_ptr<voe::ChannelSendProxy>& channel_proxy,
                  rtc::FunctionView<void(AudioEncoder*)> lambda) {
   channel_proxy->ModifyEncoder([&](std::unique_ptr<AudioEncoder>* encoder_ptr) {
     RTC_DCHECK(encoder_ptr);
@@ -46,18 +46,16 @@ void CallEncoder(const std::unique_ptr<voe::ChannelProxy>& channel_proxy,
   });
 }
 
-std::unique_ptr<voe::ChannelProxy> CreateChannelAndProxy(
-    webrtc::AudioState* audio_state,
+std::unique_ptr<voe::ChannelSendProxy> CreateChannelAndProxy(
     rtc::TaskQueue* worker_queue,
     ProcessThread* module_process_thread,
     RtcpRttStats* rtcp_rtt_stats,
-    RtcEventLog* event_log) {
-  RTC_DCHECK(audio_state);
-  internal::AudioState* internal_audio_state =
-      static_cast<internal::AudioState*>(audio_state);
-  return absl::make_unique<voe::ChannelProxy>(absl::make_unique<voe::Channel>(
-      worker_queue, module_process_thread,
-      internal_audio_state->audio_device_module(), rtcp_rtt_stats, event_log));
+    RtcEventLog* event_log,
+    FrameEncryptorInterface* frame_encryptor) {
+  return absl::make_unique<voe::ChannelSendProxy>(
+      absl::make_unique<voe::ChannelSend>(worker_queue, module_process_thread,
+                                          rtcp_rtt_stats, event_log,
+                                          frame_encryptor));
 }
 }  // namespace
 
@@ -104,11 +102,11 @@ AudioSendStream::AudioSendStream(
                       rtcp_rtt_stats,
                       suspended_rtp_state,
                       overall_call_lifetime,
-                      CreateChannelAndProxy(audio_state.get(),
-                                            worker_queue,
+                      CreateChannelAndProxy(worker_queue,
                                             module_process_thread,
                                             rtcp_rtt_stats,
-                                            event_log)) {}
+                                            event_log,
+                                            config.frame_encryptor)) {}
 
 AudioSendStream::AudioSendStream(
     const webrtc::AudioSendStream::Config& config,
@@ -120,7 +118,7 @@ AudioSendStream::AudioSendStream(
     RtcpRttStats* rtcp_rtt_stats,
     const absl::optional<RtpState>& suspended_rtp_state,
     TimeInterval* overall_call_lifetime,
-    std::unique_ptr<voe::ChannelProxy> channel_proxy)
+    std::unique_ptr<voe::ChannelSendProxy> channel_proxy)
     : worker_queue_(worker_queue),
       config_(Config(nullptr)),
       audio_state_(audio_state),
@@ -230,6 +228,11 @@ void AudioSendStream::ConfigureStream(
     }
     channel_proxy->RegisterTransport(
         stream->timed_send_transport_adapter_.get());
+  }
+
+  // Enable the frame encryptor if a new frame encryptor has been provided.
+  if (first_time || new_config.frame_encryptor != old_config.frame_encryptor) {
+    channel_proxy->SetFrameEncryptor(new_config.frame_encryptor);
   }
 
   const ExtensionIds old_ids = FindExtensionIds(old_config.rtp.extensions);
@@ -350,7 +353,7 @@ webrtc::AudioSendStream::Stats AudioSendStream::GetStats(
   webrtc::AudioSendStream::Stats stats;
   stats.local_ssrc = config_.rtp.ssrc;
 
-  webrtc::CallStatistics call_stats = channel_proxy_->GetRTCPStatistics();
+  webrtc::CallSendStatistics call_stats = channel_proxy_->GetRTCPStatistics();
   stats.bytes_sent = call_stats.bytesSent;
   stats.packets_sent = call_stats.packetsSent;
   // RTT isn't known until a RTCP report is received. Until then, VoiceEngine
@@ -410,12 +413,6 @@ uint32_t AudioSendStream::OnBitrateUpdated(uint32_t bitrate_bps,
                                            uint8_t fraction_loss,
                                            int64_t rtt,
                                            int64_t bwe_period_ms) {
-  // Audio transport feedback will not be reported in this mode, instead update
-  // acknowledged bitrate estimator with the bitrate allocated for audio.
-  if (webrtc::field_trial::IsEnabled("WebRTC-Audio-ABWENoTWCC")) {
-    transport_->SetAllocatedBitrateWithoutFeedback(bitrate_bps);
-  }
-
   // A send stream may be allocated a bitrate of zero if the allocator decides
   // to disable it. For now we ignore this decision and keep sending on min
   // bitrate.
@@ -479,7 +476,7 @@ RtpState AudioSendStream::GetRtpState() const {
   return rtp_rtcp_module_->GetRtpState();
 }
 
-const voe::ChannelProxy& AudioSendStream::GetChannelProxy() const {
+const voe::ChannelSendProxy& AudioSendStream::GetChannelProxy() const {
   RTC_DCHECK(channel_proxy_.get());
   return *channel_proxy_.get();
 }

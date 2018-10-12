@@ -61,7 +61,11 @@ ProtobufPlotCollection::ProtobufPlotCollection() {}
 
 ProtobufPlotCollection::~ProtobufPlotCollection() {}
 
-void ProtobufPlotCollection::Draw() {}
+void ProtobufPlotCollection::Draw() {
+  webrtc::analytics::ChartCollection collection;
+  ExportProtobuf(&collection);
+  std::cout << collection.SerializeAsString();
+}
 
 void ProtobufPlotCollection::ExportProtobuf(
     webrtc::analytics::ChartCollection* collection) {

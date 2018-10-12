@@ -41,17 +41,10 @@ TEST(AudioCodingModuleTest, TestEncodeDecode) {
   webrtc::EncodeDecodeTest(ACM_TEST_MODE).Perform();
 }
 
-#if defined(WEBRTC_CODEC_RED)
-#if defined(WEBRTC_ANDROID)
-TEST(AudioCodingModuleTest, DISABLED_TestRedFec) {
-#else
 TEST(AudioCodingModuleTest, TestRedFec) {
-#endif
   webrtc::TestRedFec().Perform();
 }
-#endif
 
-#if defined(WEBRTC_CODEC_ISAC) || defined(WEBRTC_CODEC_ISACFX)
 #if defined(WEBRTC_ANDROID)
 TEST(AudioCodingModuleTest, DISABLED_TestIsac) {
 #else
@@ -59,7 +52,6 @@ TEST(AudioCodingModuleTest, TestIsac) {
 #endif
   webrtc::ISACTest(ACM_TEST_MODE).Perform();
 }
-#endif
 
 #if (defined(WEBRTC_CODEC_ISAC) || defined(WEBRTC_CODEC_ISACFX)) && \
     defined(WEBRTC_CODEC_ILBC)
@@ -68,7 +60,7 @@ TEST(AudioCodingModuleTest, DISABLED_TwoWayCommunication) {
 #else
 TEST(AudioCodingModuleTest, TwoWayCommunication) {
 #endif
-  webrtc::TwoWayCommunication(ACM_TEST_MODE).Perform();
+  webrtc::TwoWayCommunication().Perform();
 }
 #endif
 
@@ -81,12 +73,7 @@ TEST(AudioCodingModuleTest, TestStereo) {
   webrtc::TestStereo(ACM_TEST_MODE).Perform();
 }
 
-// Disabled on ios as flaky, see https://crbug.com/webrtc/7057
-#if defined(WEBRTC_ANDROID) || defined(WEBRTC_IOS)
-TEST(AudioCodingModuleTest, DISABLED_TestWebRtcVadDtx) {
-#else
 TEST(AudioCodingModuleTest, TestWebRtcVadDtx) {
-#endif
   webrtc::TestWebRtcVadDtx().Perform();
 }
 

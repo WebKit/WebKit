@@ -89,22 +89,32 @@ void VideoQualityObserver::UpdateHistograms() {
   if (call_duration_ms >= kMinCallDurationMs) {
     int time_spent_in_hd_percentage = static_cast<int>(
         time_in_resolution_ms_[Resolution::High] * 100 / call_duration_ms);
-    int time_with_blocky_video_percentage =
-        static_cast<int>(time_in_blocky_video_ms_ * 100 / call_duration_ms);
-
     RTC_HISTOGRAM_COUNTS_SPARSE_100(uma_prefix + ".TimeInHdPercentage",
                                     time_spent_in_hd_percentage);
     log_stream << uma_prefix << ".TimeInHdPercentage "
                << time_spent_in_hd_percentage << "\n";
+
+    int time_with_blocky_video_percentage =
+        static_cast<int>(time_in_blocky_video_ms_ * 100 / call_duration_ms);
     RTC_HISTOGRAM_COUNTS_SPARSE_100(uma_prefix + ".TimeInBlockyVideoPercentage",
                                     time_with_blocky_video_percentage);
     log_stream << uma_prefix << ".TimeInBlockyVideoPercentage "
                << time_with_blocky_video_percentage << "\n";
+
+    int num_resolution_downgrades_per_minute =
+        num_resolution_downgrades_ * 60000 / call_duration_ms;
     RTC_HISTOGRAM_COUNTS_SPARSE_100(
         uma_prefix + ".NumberResolutionDownswitchesPerMinute",
-        num_resolution_downgrades_ * 60000 / call_duration_ms);
+        num_resolution_downgrades_per_minute);
     log_stream << uma_prefix << ".NumberResolutionDownswitchesPerMinute "
-               << num_resolution_downgrades_ * 60000 / call_duration_ms << "\n";
+               << num_resolution_downgrades_per_minute << "\n";
+
+    int num_freezes_per_minute =
+        freezes_durations_.NumSamples() * 60000 / call_duration_ms;
+    RTC_HISTOGRAM_COUNTS_SPARSE_100(uma_prefix + ".NumberFreezesPerMinute",
+                                    num_freezes_per_minute);
+    log_stream << uma_prefix << ".NumberFreezesPerMinute "
+               << num_freezes_per_minute << "\n";
   }
   RTC_LOG(LS_INFO) << log_stream.str();
 }

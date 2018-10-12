@@ -451,6 +451,11 @@ void Thread::InvokeInternal(const Location& posted_from,
   Send(posted_from, handler);
 }
 
+bool Thread::IsProcessingMessagesForTesting() {
+  return (owned_ || IsCurrent()) &&
+         MessageQueue::IsProcessingMessagesForTesting();
+}
+
 void Thread::Clear(MessageHandler* phandler,
                    uint32_t id,
                    MessageList* removed) {
@@ -477,7 +482,7 @@ void Thread::Clear(MessageHandler* phandler,
     ++iter;
   }
 
-  MessageQueue::Clear(phandler, id, removed);
+  ClearInternal(phandler, id, removed);
 }
 
 #if !defined(WEBRTC_MAC)

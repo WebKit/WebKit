@@ -12,6 +12,7 @@
 #define CALL_TEST_MOCK_RTP_TRANSPORT_CONTROLLER_SEND_H_
 
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -29,7 +30,7 @@ namespace webrtc {
 class MockRtpTransportControllerSend
     : public RtpTransportControllerSendInterface {
  public:
-  MOCK_METHOD8(
+  MOCK_METHOD9(
       CreateRtpVideoSender,
       RtpVideoSenderInterface*(const std::vector<uint32_t>&,
                                std::map<uint32_t, RtpState>,
@@ -38,7 +39,8 @@ class MockRtpTransportControllerSend
                                const RtcpConfig&,
                                Transport*,
                                const RtpSenderObservers&,
-                               RtcEventLog*));
+                               RtcEventLog*,
+                               std::unique_ptr<FecController>));
   MOCK_METHOD1(DestroyRtpVideoSender, void(RtpVideoSenderInterface*));
   MOCK_METHOD0(GetWorkerQueue, rtc::TaskQueue*());
   MOCK_METHOD0(packet_router, PacketRouter*());
@@ -65,6 +67,7 @@ class MockRtpTransportControllerSend
   MOCK_METHOD1(SetSdpBitrateParameters, void(const BitrateConstraints&));
   MOCK_METHOD1(SetClientBitratePreferences, void(const BitrateSettings&));
   MOCK_METHOD1(SetAllocatedBitrateWithoutFeedback, void(uint32_t));
+  MOCK_METHOD1(OnTransportOverheadChanged, void(size_t));
 };
 }  // namespace webrtc
 #endif  // CALL_TEST_MOCK_RTP_TRANSPORT_CONTROLLER_SEND_H_

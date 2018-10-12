@@ -22,7 +22,7 @@ public class DataChannel {
     // Optional unsigned short in WebIDL, -1 means unspecified.
     public int maxRetransmits = -1;
     public String protocol = "";
-    public boolean negotiated = false;
+    public boolean negotiated;
     // Optional unsigned short in WebIDL, -1 means unspecified.
     public int id = -1;
 
@@ -102,7 +102,7 @@ public class DataChannel {
     }
   }
 
-  private final long nativeDataChannel;
+  private long nativeDataChannel;
   private long nativeObserver;
 
   @CalledByNative
@@ -112,6 +112,7 @@ public class DataChannel {
 
   /** Register |observer|, replacing any previously-registered observer. */
   public void registerObserver(Observer observer) {
+    checkDataChannelExists();
     if (nativeObserver != 0) {
       nativeUnregisterObserver(nativeObserver);
     }
@@ -120,18 +121,22 @@ public class DataChannel {
 
   /** Unregister the (only) observer. */
   public void unregisterObserver() {
+    checkDataChannelExists();
     nativeUnregisterObserver(nativeObserver);
   }
 
   public String label() {
+    checkDataChannelExists();
     return nativeLabel();
   }
 
   public int id() {
+    checkDataChannelExists();
     return nativeId();
   }
 
   public State state() {
+    checkDataChannelExists();
     return nativeState();
   }
 
@@ -141,16 +146,19 @@ public class DataChannel {
    * to the network.
    */
   public long bufferedAmount() {
+    checkDataChannelExists();
     return nativeBufferedAmount();
   }
 
   /** Close the channel. */
   public void close() {
+    checkDataChannelExists();
     nativeClose();
   }
 
   /** Send |data| to the remote peer; return success. */
   public boolean send(Buffer buffer) {
+    checkDataChannelExists();
     // TODO(fischman): this could be cleverer about avoiding copies if the
     // ByteBuffer is direct and/or is backed by an array.
     byte[] data = new byte[buffer.data.remaining()];
@@ -160,12 +168,20 @@ public class DataChannel {
 
   /** Dispose of native resources attached to this channel. */
   public void dispose() {
+    checkDataChannelExists();
     JniCommon.nativeReleaseRef(nativeDataChannel);
+    nativeDataChannel = 0;
   }
 
   @CalledByNative
   long getNativeDataChannel() {
     return nativeDataChannel;
+  }
+
+  private void checkDataChannelExists() {
+    if (nativeDataChannel == 0) {
+      throw new IllegalStateException("DataChannel has been disposed.");
+    }
   }
 
   private native long nativeRegisterObserver(Observer observer);

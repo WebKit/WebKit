@@ -13,7 +13,7 @@
 
 #if !defined(WEBRTC_WEBKIT_BUILD)
 #include <ctype.h>
-#endif // !defined(WEBRTC_WEBKIT_BUILD)
+#endif
 
 #include <stdarg.h>
 #include <stdio.h>
@@ -54,7 +54,6 @@ bool string_match(const char* target, const char* pattern);
 }  // namespace rtc
 
 #if !defined(WEBRTC_WEBKIT_BUILD)
-
 ///////////////////////////////////////////////////////////////////////////////
 // Rename a few common string functions so they are consistent across platforms.
 // tolowercase is like tolower, but not compatible with end-of-file value
@@ -66,6 +65,7 @@ bool string_match(const char* target, const char* pattern);
 inline char tolowercase(char c) {
   return static_cast<char>(tolower(c));
 }
+#endif // !defined(WEBRTC_WEBKIT_BUILD)
 
 #if defined(WEBRTC_WIN)
 
@@ -74,8 +74,6 @@ inline wchar_t tolowercase(wchar_t c) {
 }
 
 #endif  // WEBRTC_WIN
-
-#endif // !defined(WEBRTC_WEBKIT_BUILD)
 
 #if defined(WEBRTC_POSIX)
 
@@ -336,6 +334,9 @@ std::string string_trim(const std::string& s);
 
 // TODO(jonasolsson): replace with absl::Hex when that becomes available.
 std::string ToHex(const int i);
+
+std::string LeftPad(char padding, unsigned length, std::string s);
+
 }  // namespace rtc
 
 #endif  // RTC_BASE_STRINGUTILS_H_

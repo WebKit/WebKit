@@ -17,6 +17,7 @@
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtcp_packet.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/nack.h"
+#include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "modules/rtp_rtcp/source/rtp_rtcp_impl.h"
 #include "rtc_base/rate_limiter.h"
 #include "test/gmock.h"
@@ -37,7 +38,6 @@ const int64_t kOneWayNetworkDelayMs = 100;
 const uint8_t kBaseLayerTid = 0;
 const uint8_t kHigherLayerTid = 1;
 const uint16_t kSequenceNumber = 100;
-const int64_t kMaxRttMs = 1000;
 
 class RtcpRttStatsTestImpl : public RtcpRttStats {
  public:
@@ -116,7 +116,6 @@ class RtpRtcpModule : public RtcpPacketTypeCounterObserver {
   explicit RtpRtcpModule(SimulatedClock* clock)
       : receive_statistics_(ReceiveStatistics::Create(clock)),
         remote_ssrc_(0),
-        retransmission_rate_limiter_(clock, kMaxRttMs),
         clock_(clock) {
     CreateModuleImpl();
     transport_.SimulateNetworkDelay(kOneWayNetworkDelayMs, clock);
@@ -129,7 +128,6 @@ class RtpRtcpModule : public RtcpPacketTypeCounterObserver {
   RtcpRttStatsTestImpl rtt_stats_;
   std::unique_ptr<ModuleRtpRtcpImpl> impl_;
   uint32_t remote_ssrc_;
-  RateLimiter retransmission_rate_limiter_;
   RtpKeepAliveConfig keepalive_config_;
   RtcpIntervalConfig rtcp_interval_config_;
 
@@ -180,7 +178,6 @@ class RtpRtcpModule : public RtcpPacketTypeCounterObserver {
     config.receive_statistics = receive_statistics_.get();
     config.rtcp_packet_type_counter_observer = this;
     config.rtt_stats = &rtt_stats_;
-    config.retransmission_rate_limiter = &retransmission_rate_limiter_;
     config.keepalive_config = keepalive_config_;
     config.rtcp_interval_config = rtcp_interval_config_;
 
@@ -240,7 +237,7 @@ class RtpRtcpImplTest : public ::testing::Test {
     rtp_video_header.is_first_packet_in_frame = true;
     rtp_video_header.simulcastIdx = 0;
     rtp_video_header.codec = kVideoCodecVP8;
-    rtp_video_header.vp8() = vp8_header;
+    rtp_video_header.video_type_header = vp8_header;
     rtp_video_header.video_timing = {0u, 0u, 0u, 0u, 0u, 0u, false};
 
     const uint8_t payload[100] = {0};
@@ -322,12 +319,12 @@ TEST_F(RtpRtcpImplTest, SetSelectiveRetransmissions_HigherLayers) {
 }
 
 TEST_F(RtpRtcpImplTest, Rtt) {
-  RTPHeader header;
-  header.timestamp = 1;
-  header.sequenceNumber = 123;
-  header.ssrc = kSenderSsrc;
-  header.headerLength = 12;
-  receiver_.receive_statistics_->IncomingPacket(header, 100, false);
+  RtpPacketReceived packet;
+  packet.SetTimestamp(1);
+  packet.SetSequenceNumber(123);
+  packet.SetSsrc(kSenderSsrc);
+  packet.AllocatePayload(100 - 12);
+  receiver_.receive_statistics_->OnRtpPacket(packet);
 
   // Send Frame before sending an SR.
   SendFrame(&sender_, kBaseLayerTid);

@@ -17,7 +17,7 @@
 #include "rtc_base/criticalsection.h"
 #include "rtc_base/task_queue.h"
 #include "test/frame_generator.h"
-#include "test/video_capturer.h"
+#include "test/test_video_capturer.h"
 
 namespace webrtc {
 
@@ -25,7 +25,7 @@ namespace test {
 
 class FrameGenerator;
 
-class FrameGeneratorCapturer : public VideoCapturer {
+class FrameGeneratorCapturer : public TestVideoCapturer {
  public:
   class SinkWantsObserver {
    public:
@@ -64,6 +64,7 @@ class FrameGeneratorCapturer : public VideoCapturer {
   void Start() override;
   void Stop() override;
   void ChangeResolution(size_t width, size_t height);
+  void ChangeFramerate(int target_framerate);
 
   void SetSinkWantsObserver(SinkWantsObserver* observer);
 
@@ -96,7 +97,8 @@ class FrameGeneratorCapturer : public VideoCapturer {
   rtc::CriticalSection lock_;
   std::unique_ptr<FrameGenerator> frame_generator_;
 
-  int target_fps_ RTC_GUARDED_BY(&lock_);
+  int source_fps_ RTC_GUARDED_BY(&lock_);
+  int target_capture_fps_ RTC_GUARDED_BY(&lock_);
   absl::optional<int> wanted_fps_ RTC_GUARDED_BY(&lock_);
   VideoRotation fake_rotation_ = kVideoRotation_0;
 

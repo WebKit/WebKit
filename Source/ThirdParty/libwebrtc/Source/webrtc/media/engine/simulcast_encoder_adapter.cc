@@ -11,6 +11,8 @@
 #include "media/engine/simulcast_encoder_adapter.h"
 
 #include <algorithm>
+#include <string>
+#include <utility>
 
 #include "api/video/i420_buffer.h"
 #include "api/video/video_bitrate_allocation.h"
@@ -19,6 +21,7 @@
 #include "modules/video_coding/utility/simulcast_rate_allocator.h"
 #include "rtc_base/checks.h"
 #include "system_wrappers/include/clock.h"
+#include "system_wrappers/include/field_trial.h"
 #include "third_party/libyuv/include/libyuv/scale.h"
 
 namespace {
@@ -27,6 +30,17 @@ const unsigned int kDefaultMinQp = 2;
 const unsigned int kDefaultMaxQp = 56;
 // Max qp for lowest spatial resolution when doing simulcast.
 const unsigned int kLowestResMaxQp = 45;
+
+absl::optional<unsigned int> GetScreenshareBoostedQpValue() {
+  std::string experiment_group =
+      webrtc::field_trial::FindFullName("WebRTC-BoostedScreenshareQp");
+  unsigned int qp;
+  if (sscanf(experiment_group.c_str(), "%u", &qp) != 1)
+    return absl::nullopt;
+  qp = std::min(qp, 63u);
+  qp = std::max(qp, 1u);
+  return qp;
+}
 
 uint32_t SumStreamMaxBitrate(int streams, const webrtc::VideoCodec& codec) {
   uint32_t bitrate_sum = 0;
@@ -113,7 +127,8 @@ SimulcastEncoderAdapter::SimulcastEncoderAdapter(VideoEncoderFactory* factory,
       factory_(factory),
       video_format_(format),
       encoded_complete_callback_(nullptr),
-      implementation_name_("SimulcastEncoderAdapter") {
+      implementation_name_("SimulcastEncoderAdapter"),
+      experimental_boosted_screenshare_qp_(GetScreenshareBoostedQpValue()) {
   RTC_DCHECK(factory_);
 
   // The adapter is typically created on the worker thread, but operated on
@@ -193,12 +208,13 @@ int SimulcastEncoderAdapter::InitEncode(const VideoCodec* inst,
   for (int i = 0; i < number_of_streams; ++i) {
     VideoCodec stream_codec;
     uint32_t start_bitrate_kbps = start_bitrates[i];
+    const bool send_stream = start_bitrate_kbps > 0;
     if (!doing_simulcast) {
       stream_codec = codec_;
       stream_codec.numberOfSimulcastStreams = 1;
     } else {
       // Cap start bitrate to the min bitrate in order to avoid strange codec
-      // behavior. Since sending sending will be false, this should not matter.
+      // behavior. Since sending will be false, this should not matter.
       start_bitrate_kbps =
           std::max(codec_.simulcastStream[i].minBitrate, start_bitrate_kbps);
       bool highest_resolution_stream = (i == (number_of_streams - 1));
@@ -236,7 +252,7 @@ int SimulcastEncoderAdapter::InitEncode(const VideoCodec* inst,
     encoder->RegisterEncodeCompleteCallback(callback.get());
     streaminfos_.emplace_back(std::move(encoder), std::move(callback),
                               stream_codec.width, stream_codec.height,
-                              start_bitrate_kbps > 0);
+                              send_stream);
 
     if (i != 0) {
       implementation_name += ", ";
@@ -434,16 +450,14 @@ EncodedImageCallback::Result SimulcastEncoderAdapter::OnEncodedImage(
     const EncodedImage& encodedImage,
     const CodecSpecificInfo* codecSpecificInfo,
     const RTPFragmentationHeader* fragmentation) {
+  EncodedImage stream_image(encodedImage);
   CodecSpecificInfo stream_codec_specific = *codecSpecificInfo;
   stream_codec_specific.codec_name = implementation_name_.c_str();
-  if (stream_codec_specific.codecType == webrtc::kVideoCodecVP8) {
-    stream_codec_specific.codecSpecific.VP8.simulcastIdx = stream_idx;
-  } else if (stream_codec_specific.codecType == webrtc::kVideoCodecH264) {
-    stream_codec_specific.codecSpecific.H264.simulcast_idx = stream_idx;
-  }
+
+  stream_image.SetSpatialIndex(stream_idx);
 
   return encoded_complete_callback_->OnEncodedImage(
-      encodedImage, &stream_codec_specific, fragmentation);
+      stream_image, &stream_codec_specific, fragmentation);
 }
 
 void SimulcastEncoderAdapter::PopulateStreamCodec(
@@ -463,9 +477,15 @@ void SimulcastEncoderAdapter::PopulateStreamCodec(
   stream_codec->qpMax = inst.simulcastStream[stream_index].qpMax;
   // Settings that are based on stream/resolution.
   const bool lowest_resolution_stream = (stream_index == 0);
-  if (lowest_resolution_stream && inst.mode != VideoCodecMode::kScreensharing) {
+  if (lowest_resolution_stream) {
     // Settings for lowest spatial resolutions.
-    stream_codec->qpMax = kLowestResMaxQp;
+    if (inst.mode == VideoCodecMode::kScreensharing) {
+      if (experimental_boosted_screenshare_qp_) {
+        stream_codec->qpMax = *experimental_boosted_screenshare_qp_;
+      }
+    } else {
+      stream_codec->qpMax = kLowestResMaxQp;
+    }
   }
   if (inst.codecType == webrtc::kVideoCodecVP8) {
     stream_codec->VP8()->numberOfTemporalLayers =

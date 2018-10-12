@@ -54,9 +54,18 @@ bool EnableShadowFilterJumpstart() {
   return !field_trial::IsEnabled("WebRTC-Aec3ShadowFilterJumpstartKillSwitch");
 }
 
+bool EnableUnityInitialRampupGain() {
+  return field_trial::IsEnabled("WebRTC-Aec3EnableUnityInitialRampupGain");
+}
+
+bool EnableUnityNonZeroRampupGain() {
+  return field_trial::IsEnabled("WebRTC-Aec3EnableUnityNonZeroRampupGain");
+}
+
 // Method for adjusting config parameter dependencies..
 EchoCanceller3Config AdjustConfig(const EchoCanceller3Config& config) {
   EchoCanceller3Config adjusted_cfg = config;
+  const EchoCanceller3Config default_cfg;
 
   if (!EnableReverbModelling()) {
     adjusted_cfg.ep_strength.default_len = 0.f;
@@ -124,6 +133,18 @@ EchoCanceller3Config AdjustConfig(const EchoCanceller3Config& config) {
       adjusted_cfg.filter.main.leakage_diverged = 0.1f;
     }
     adjusted_cfg.filter.main.error_floor = 0.001f;
+  }
+
+  if (EnableUnityInitialRampupGain() &&
+      adjusted_cfg.echo_removal_control.gain_rampup.initial_gain ==
+          default_cfg.echo_removal_control.gain_rampup.initial_gain) {
+    adjusted_cfg.echo_removal_control.gain_rampup.initial_gain = 1.f;
+  }
+
+  if (EnableUnityNonZeroRampupGain() &&
+      adjusted_cfg.echo_removal_control.gain_rampup.first_non_zero_gain ==
+          default_cfg.echo_removal_control.gain_rampup.first_non_zero_gain) {
+    adjusted_cfg.echo_removal_control.gain_rampup.first_non_zero_gain = 1.f;
   }
 
   return adjusted_cfg;
@@ -321,6 +342,7 @@ EchoCanceller3::EchoCanceller3(const EchoCanceller3Config& config,
                                std::unique_ptr<BlockProcessor> block_processor)
     : data_dumper_(
           new ApmDataDumper(rtc::AtomicOps::Increment(&instance_count_))),
+      config_(config),
       sample_rate_hz_(sample_rate_hz),
       num_bands_(NumBandsForRate(sample_rate_hz_)),
       frame_length_(rtc::CheckedDivExact(LowestBandRate(sample_rate_hz_), 100)),
@@ -337,7 +359,10 @@ EchoCanceller3::EchoCanceller3(const EchoCanceller3Config& config,
       render_queue_output_frame_(num_bands_,
                                  std::vector<float>(frame_length_, 0.f)),
       block_(num_bands_, std::vector<float>(kBlockSize, 0.f)),
-      sub_frame_view_(num_bands_) {
+      sub_frame_view_(num_bands_),
+      block_delay_buffer_(num_bands_,
+                          frame_length_,
+                          config_.delay.fixed_capture_delay_samples) {
   RTC_DCHECK(ValidFullBandRate(sample_rate_hz_));
 
   std::unique_ptr<CascadedBiQuadFilter> render_highpass_filter;
@@ -399,6 +424,11 @@ void EchoCanceller3::ProcessCapture(AudioBuffer* capture, bool level_change) {
   RTC_DCHECK_EQ(frame_length_, capture->num_frames_per_band());
   data_dumper_->DumpRaw("aec3_call_order",
                         static_cast<int>(EchoCanceller3ApiCall::kCapture));
+
+  // Optionally delay the capture signal.
+  if (config_.delay.fixed_capture_delay_samples > 0) {
+    block_delay_buffer_.DelaySignal(capture);
+  }
 
   rtc::ArrayView<float> capture_lower_band =
       rtc::ArrayView<float>(&capture->split_bands_f(0)[0][0], frame_length_);

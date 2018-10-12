@@ -20,6 +20,8 @@ struct EchoCanceller3Config {
   EchoCanceller3Config();
   EchoCanceller3Config(const EchoCanceller3Config& e);
   struct Delay {
+    Delay();
+    Delay(const Delay& e);
     size_t default_delay = 5;
     size_t down_sampling_factor = 4;
     size_t num_filters = 6;
@@ -29,6 +31,13 @@ struct EchoCanceller3Config {
     size_t hysteresis_limit_1_blocks = 1;
     size_t hysteresis_limit_2_blocks = 1;
     size_t skew_hysteresis_blocks = 3;
+    size_t fixed_capture_delay_samples = 0;
+    float delay_estimate_smoothing = 0.7f;
+    float delay_candidate_detection_threshold = 0.2f;
+    struct DelaySelectionThresholds {
+      int initial;
+      int converged;
+    } delay_selection_thresholds = {25, 25};
   } delay;
 
   struct Filter {
@@ -53,12 +62,16 @@ struct EchoCanceller3Config {
     ShadowConfiguration shadow_initial = {12, 0.9f, 20075344.f};
 
     size_t config_change_duration_blocks = 250;
+    float initial_state_seconds = 2.5f;
+    bool conservative_initial_phase = false;
+    bool enable_shadow_filter_output_usage = true;
   } filter;
 
   struct Erle {
     float min = 1.f;
     float max_l = 4.f;
     float max_h = 1.5f;
+    bool onset_detection = true;
   } erle;
 
   struct EpStrength {
@@ -99,6 +112,7 @@ struct EchoCanceller3Config {
     float audibility_threshold_mf = 10;
     float audibility_threshold_hf = 10;
     bool use_stationary_properties = true;
+    bool use_stationarity_properties_at_init = false;
   } echo_audibility;
 
   struct RenderLevels {
@@ -106,27 +120,6 @@ struct EchoCanceller3Config {
     float poor_excitation_render_limit = 150.f;
     float poor_excitation_render_limit_ds8 = 20.f;
   } render_levels;
-
-  struct GainUpdates {
-    struct GainChanges {
-      float max_inc;
-      float max_dec;
-      float rate_inc;
-      float rate_dec;
-      float min_inc;
-      float min_dec;
-    };
-
-    GainChanges low_noise = {2.f, 2.f, 1.4f, 1.4f, 1.1f, 1.1f};
-    GainChanges initial = {2.f, 2.f, 1.5f, 1.5f, 1.2f, 1.2f};
-    GainChanges normal = {2.f, 2.f, 1.5f, 1.5f, 1.2f, 1.2f};
-    GainChanges saturation = {1.2f, 1.2f, 1.5f, 1.5f, 1.f, 1.f};
-    GainChanges nonlinear = {1.5f, 1.5f, 1.2f, 1.2f, 1.1f, 1.1f};
-
-    float max_inc_factor = 2.0f;
-    float max_dec_factor_lf = 0.25f;
-    float floor_first_increase = 0.00001f;
-  } gain_updates;
 
   struct EchoRemovalControl {
     struct GainRampup {
@@ -156,16 +149,57 @@ struct EchoCanceller3Config {
   } echo_model;
 
   struct Suppressor {
-    size_t bands_with_reliable_coherence = 5;
+    Suppressor();
+    Suppressor(const Suppressor& e);
+
     size_t nearend_average_blocks = 4;
 
     struct MaskingThresholds {
+      MaskingThresholds(float enr_transparent,
+                        float enr_suppress,
+                        float emr_transparent);
+      MaskingThresholds(const MaskingThresholds& e);
       float enr_transparent;
       float enr_suppress;
       float emr_transparent;
     };
-    MaskingThresholds mask_lf = {.2f, .3f, .3f};
-    MaskingThresholds mask_hf = {.07f, .1f, .3f};
+
+    struct Tuning {
+      Tuning(MaskingThresholds mask_lf,
+             MaskingThresholds mask_hf,
+             float max_inc_factor,
+             float max_dec_factor_lf);
+      Tuning(const Tuning& e);
+      MaskingThresholds mask_lf;
+      MaskingThresholds mask_hf;
+      float max_inc_factor;
+      float max_dec_factor_lf;
+    };
+
+    Tuning normal_tuning = Tuning(MaskingThresholds(.2f, .3f, .3f),
+                                  MaskingThresholds(.07f, .1f, .3f),
+                                  2.0f,
+                                  0.25f);
+    Tuning nearend_tuning = Tuning(MaskingThresholds(.2f, .3f, .3f),
+                                   MaskingThresholds(.07f, .1f, .3f),
+                                   2.0f,
+                                   0.25f);
+
+    struct DominantNearendDetection {
+      float enr_threshold = 10.f;
+      float snr_threshold = 10.f;
+      int hold_duration = 25;
+      int trigger_threshold = 15;
+    } dominant_nearend_detection;
+
+    struct HighBandsSuppression {
+      float enr_threshold = 1.f;
+      float max_gain_during_echo = 1.f;
+    } high_bands_suppression;
+
+    float floor_first_increase = 0.00001f;
+    bool enforce_transparent = false;
+    bool enforce_empty_higher_bands = false;
   } suppressor;
 };
 }  // namespace webrtc

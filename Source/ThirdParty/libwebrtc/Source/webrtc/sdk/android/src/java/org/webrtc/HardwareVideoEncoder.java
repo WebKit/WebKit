@@ -28,7 +28,11 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Nullable;
 import org.webrtc.ThreadUtils.ThreadChecker;
 
-/** Android hardware video encoder. */
+/**
+ * Android hardware video encoder.
+ *
+ * @note This class is only supported on Android Kitkat and above.
+ */
 @TargetApi(19)
 @SuppressWarnings("deprecation") // Cannot support API level 19 without using deprecated methods.
 class HardwareVideoEncoder implements VideoEncoder {
@@ -104,15 +108,15 @@ class HardwareVideoEncoder implements VideoEncoder {
 
   // --- Only accessed on the output thread.
   // Contents of the last observed config frame output by the MediaCodec. Used by H.264.
-  @Nullable private ByteBuffer configBuffer = null;
+  @Nullable private ByteBuffer configBuffer;
   private int adjustedBitrate;
 
   // Whether the encoder is running.  Volatile so that the output thread can watch this value and
   // exit when the encoder stops.
-  private volatile boolean running = false;
+  private volatile boolean running;
   // Any exception thrown during shutdown.  The output thread releases the MediaCodec and uses this
   // value to send exceptions thrown during release back to the encoder thread.
-  @Nullable private volatile Exception shutdownException = null;
+  @Nullable private volatile Exception shutdownException;
 
   /**
    * Creates a new HardwareVideoEncoder with the given codecName, codecType, colorFormat, key frame

@@ -27,7 +27,7 @@ class AdaptiveAgc {
   explicit AdaptiveAgc(ApmDataDumper* apm_data_dumper);
   ~AdaptiveAgc();
 
-  void Process(AudioFrameView<float> float_frame);
+  void Process(AudioFrameView<float> float_frame, float last_audio_level);
   void Reset();
 
  private:

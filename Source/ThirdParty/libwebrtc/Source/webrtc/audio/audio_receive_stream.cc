@@ -16,7 +16,7 @@
 #include "api/call/audio_sink.h"
 #include "audio/audio_send_stream.h"
 #include "audio/audio_state.h"
-#include "audio/channel_proxy.h"
+#include "audio/channel_receive_proxy.h"
 #include "audio/conversion.h"
 #include "call/rtp_stream_receiver_controller_interface.h"
 #include "modules/remote_bitrate_estimator/include/remote_bitrate_estimator.h"
@@ -62,7 +62,7 @@ std::string AudioReceiveStream::Config::ToString() const {
 
 namespace internal {
 namespace {
-std::unique_ptr<voe::ChannelProxy> CreateChannelAndProxy(
+std::unique_ptr<voe::ChannelReceiveProxy> CreateChannelAndProxy(
     webrtc::AudioState* audio_state,
     ProcessThread* module_process_thread,
     const webrtc::AudioReceiveStream::Config& config,
@@ -70,11 +70,13 @@ std::unique_ptr<voe::ChannelProxy> CreateChannelAndProxy(
   RTC_DCHECK(audio_state);
   internal::AudioState* internal_audio_state =
       static_cast<internal::AudioState*>(audio_state);
-  return absl::make_unique<voe::ChannelProxy>(absl::make_unique<voe::Channel>(
-      module_process_thread, internal_audio_state->audio_device_module(),
-      nullptr /* RtcpRttStats */, event_log, config.rtp.remote_ssrc,
-      config.jitter_buffer_max_packets, config.jitter_buffer_fast_accelerate,
-      config.decoder_factory, config.codec_pair_id));
+  return absl::make_unique<voe::ChannelReceiveProxy>(
+      absl::make_unique<voe::ChannelReceive>(
+          module_process_thread, internal_audio_state->audio_device_module(),
+          config.rtcp_send_transport, event_log, config.rtp.remote_ssrc,
+          config.jitter_buffer_max_packets,
+          config.jitter_buffer_fast_accelerate, config.decoder_factory,
+          config.codec_pair_id, config.frame_decryptor));
 }
 }  // namespace
 
@@ -101,18 +103,17 @@ AudioReceiveStream::AudioReceiveStream(
     const webrtc::AudioReceiveStream::Config& config,
     const rtc::scoped_refptr<webrtc::AudioState>& audio_state,
     webrtc::RtcEventLog* event_log,
-    std::unique_ptr<voe::ChannelProxy> channel_proxy)
+    std::unique_ptr<voe::ChannelReceiveProxy> channel_proxy)
     : audio_state_(audio_state), channel_proxy_(std::move(channel_proxy)) {
   RTC_LOG(LS_INFO) << "AudioReceiveStream: " << config.rtp.remote_ssrc;
   RTC_DCHECK(receiver_controller);
   RTC_DCHECK(packet_router);
   RTC_DCHECK(config.decoder_factory);
+  RTC_DCHECK(config.rtcp_send_transport);
   RTC_DCHECK(audio_state_);
   RTC_DCHECK(channel_proxy_);
 
   module_process_thread_checker_.DetachFromThread();
-
-  channel_proxy_->RegisterTransport(config.rtcp_send_transport);
 
   // Configure bandwidth estimation.
   channel_proxy_->RegisterReceiverCongestionControlObjects(packet_router);
@@ -129,7 +130,6 @@ AudioReceiveStream::~AudioReceiveStream() {
   RTC_LOG(LS_INFO) << "~AudioReceiveStream: " << config_.rtp.remote_ssrc;
   Stop();
   channel_proxy_->DisassociateSendChannel();
-  channel_proxy_->RegisterTransport(nullptr);
   channel_proxy_->ResetReceiverCongestionControlObjects();
 }
 
@@ -164,7 +164,8 @@ webrtc::AudioReceiveStream::Stats AudioReceiveStream::GetStats() const {
   webrtc::AudioReceiveStream::Stats stats;
   stats.remote_ssrc = config_.rtp.remote_ssrc;
 
-  webrtc::CallStatistics call_stats = channel_proxy_->GetRTCPStatistics();
+  webrtc::CallReceiveStatistics call_stats =
+      channel_proxy_->GetRTCPStatistics();
   // TODO(solenberg): Don't return here if we can't get the codec - return the
   //                  stats we *can* get.
   webrtc::CodecInst codec_inst = {0};

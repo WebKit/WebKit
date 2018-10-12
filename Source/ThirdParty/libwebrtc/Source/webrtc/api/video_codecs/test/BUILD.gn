@@ -26,7 +26,6 @@ if (rtc_include_tests) {
       "../../../modules/video_coding:webrtc_vp8",
       "../../../rtc_base:checks",
       "../../../rtc_base:rtc_base_tests_utils",
-      "../../../system_wrappers:metrics_default",
       "../../../test:field_trial",
       "../../../test:test_support",
       "../../video:video_bitrate_allocation",

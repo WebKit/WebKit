@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <WebRTC/RTCCameraVideoCapturer.h>
+#import <WebRTC/RTCCameraVideoCapturer.h>
 
 @class ARDSettingsModel;
 

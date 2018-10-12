@@ -15,7 +15,7 @@
 
 #include "rtc_base/checks.h"
 #include "rtc_base/gunit.h"
-#include "rtc_base/json.h"
+#include "rtc_base/strings/json.h"
 #include "stats/test/rtcteststats.h"
 
 namespace webrtc {

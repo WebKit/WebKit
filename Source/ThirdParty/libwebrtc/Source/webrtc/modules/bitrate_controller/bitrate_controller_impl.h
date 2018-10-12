@@ -54,8 +54,6 @@ class BitrateControllerImpl : public BitrateController {
                      int min_bitrate_bps,
                      int max_bitrate_bps) override;
 
-  void SetReservedBitrate(uint32_t reserved_bitrate_bps) override;
-
   // Returns true if the parameters have changed since the last call.
   bool GetNetworkParameters(uint32_t* bitrate,
                             uint8_t* fraction_loss,
@@ -94,12 +92,10 @@ class BitrateControllerImpl : public BitrateController {
   std::map<uint32_t, uint32_t> ssrc_to_last_received_extended_high_seq_num_
       RTC_GUARDED_BY(critsect_);
   SendSideBandwidthEstimation bandwidth_estimation_ RTC_GUARDED_BY(critsect_);
-  uint32_t reserved_bitrate_bps_ RTC_GUARDED_BY(critsect_);
 
   uint32_t last_bitrate_bps_ RTC_GUARDED_BY(critsect_);
   uint8_t last_fraction_loss_ RTC_GUARDED_BY(critsect_);
   int64_t last_rtt_ms_ RTC_GUARDED_BY(critsect_);
-  uint32_t last_reserved_bitrate_bps_ RTC_GUARDED_BY(critsect_);
 
   RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(BitrateControllerImpl);
 };

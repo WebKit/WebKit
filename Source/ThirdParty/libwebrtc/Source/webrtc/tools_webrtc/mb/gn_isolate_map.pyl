@@ -19,12 +19,12 @@
     "label": "//:All",
     "type": "additional_compile_target",
   },
-  "AppRTCMobileTest": {
-    "label": "//examples:AppRTCMobileTest",
+  "AppRTCMobile_test_apk": {
+    "label": "//examples:AppRTCMobile_test_apk",
     "type": "additional_compile_target",
   },
-  "AppRTCMobileTestStubbedVideoIO": {
-    "label": "//examples:AppRTCMobileTestStubbedVideoIO",
+  "AppRTCMobile_stubbed_video_io_test_apk": {
+    "label": "//examples:AppRTCMobile_stubbed_video_io_test_apk",
     "type": "additional_compile_target",
   },
   "android_junit_tests": {
@@ -55,8 +55,8 @@
       "isac_speech_and_misc_wb.pcm",
     ]
   },
-  "libjingle_peerconnection_android_unittest": {
-    "label": "//sdk/android:libjingle_peerconnection_android_unittest",
+  "android_instrumentation_test_apk": {
+    "label": "//sdk/android:android_instrumentation_test_apk",
     "type": "additional_compile_target",
   },
   "low_bandwidth_audio_test": {
@@ -67,7 +67,7 @@
     ],
   },
   "low_bandwidth_audio_perf_test": {
-    "label": "//audio:low_bandwidth_audio_test",
+    "label": "//audio:low_bandwidth_audio_perf_test",
     "type": "script",
     "script": "//audio/test/low_bandwidth_audio_test.py",
     "args": [
@@ -118,13 +118,21 @@
     "label": "//rtc_tools:tools_unittests",
     "type": "console_test_launcher",
   },
+  "video_capture_tests": {
+    "label": "//modules/video_capture:video_capture_tests",
+    "type": "non_parallel_console_test_launcher",
+    # TODO(bugs.webrtc.org/9292): remove use_webcam and the ensure script.
+    "use_webcam": True,
+  },
   "video_engine_tests": {
     "label": "//:video_engine_tests",
     "type": "console_test_launcher",
   },
-  "voice_engine_unittests": {
-    "label": "//voice_engine:voice_engine_unittests",
-    "type": "console_test_launcher",
+  "video_quality_loopback_test": {
+    "label": "//examples:video_quality_loopback_test",
+    "type": "script",
+    "script": "//examples/androidtests/video_quality_loopback_test.py",
+    "args": ["."],
   },
   "webrtc_nonparallel_tests": {
     "label": "//:webrtc_nonparallel_tests",
@@ -133,6 +141,6 @@
   "webrtc_perf_tests": {
     "label": "//:webrtc_perf_tests",
     "timeout": 3600,  # 1 hour
-    "type": "non_parallel_console_test_launcher",
+    "type": "raw",
   },
 }

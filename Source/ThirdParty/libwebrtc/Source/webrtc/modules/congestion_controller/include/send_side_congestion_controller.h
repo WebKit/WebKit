@@ -80,23 +80,13 @@ class SendSideCongestionController
                              int max_bitrate_bps) override;
   void SignalNetworkState(NetworkState state) override;
 
-  // Deprecated: Is updated by OnNetworkRouteChanged
-  RTC_DEPRECATED virtual void SetTransportOverhead(
-      size_t transport_overhead_bytes_per_packet);
-
-  // Deprecated: Use GetBandwidthObserver instead.
-  RTC_DEPRECATED virtual BitrateController* GetBitrateController() const;
-
   RtcpBandwidthObserver* GetBandwidthObserver() override;
-  RTC_DEPRECATED RtcpBandwidthObserver* GetBandwidthObserver() const;
 
   bool AvailableBandwidth(uint32_t* bandwidth) const override;
   virtual int64_t GetPacerQueuingDelayMs() const;
   virtual int64_t GetFirstPacketTimeMs() const;
 
   TransportFeedbackObserver* GetTransportFeedbackObserver() override;
-
-  RTC_DEPRECATED virtual RateLimiter* GetRetransmissionRateLimiter();
 
   void SetPerPacketFeedbackAvailable(bool available) override;
   void EnablePeriodicAlrProbing(bool enable) override;

@@ -8,46 +8,4 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#import <AvailabilityMacros.h>
-#import <Foundation/Foundation.h>
-
-#import <WebRTC/RTCMacros.h>
-
-NS_ASSUME_NONNULL_BEGIN
-
-RTC_EXPORT
-__attribute__((objc_runtime_name("WK_RTCDataChannelConfiguration")))
-@interface RTCDataChannelConfiguration : NSObject
-
-/** Set to YES if ordered delivery is required. */
-@property(nonatomic, assign) BOOL isOrdered;
-
-/** Deprecated. Use maxPacketLifeTime. */
-@property(nonatomic, assign) NSInteger maxRetransmitTimeMs DEPRECATED_ATTRIBUTE;
-
-/**
- * Max period in milliseconds in which retransmissions will be sent. After this
- * time, no more retransmissions will be sent. -1 if unset.
- */
-@property(nonatomic, assign) int maxPacketLifeTime;
-
-/** The max number of retransmissions. -1 if unset. */
-@property(nonatomic, assign) int maxRetransmits;
-
-/** Set to YES if the channel has been externally negotiated and we do not send
- * an in-band signalling in the form of an "open" message.
- */
-@property(nonatomic, assign) BOOL isNegotiated;
-
-/** Deprecated. Use channelId. */
-@property(nonatomic, assign) int streamId DEPRECATED_ATTRIBUTE;
-
-/** The id of the data channel. */
-@property(nonatomic, assign) int channelId;
-
-/** Set by the application and opaque to the WebRTC implementation. */
-@property(nonatomic) NSString* protocol;
-
-@end
-
-NS_ASSUME_NONNULL_END
+#import "api/peerconnection/RTCDataChannelConfiguration.h"

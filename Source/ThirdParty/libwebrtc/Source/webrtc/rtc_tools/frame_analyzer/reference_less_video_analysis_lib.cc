@@ -25,36 +25,6 @@
 #define strtok_r strtok_s
 #endif
 
-void get_height_width_fps(int* height,
-                          int* width,
-                          int* fps,
-                          const std::string& video_file) {
-  // File header looks like :
-  //  YUV4MPEG2 W1280 H720 F25:1 Ip A0:0 C420mpeg2 XYSCSS=420MPEG2.
-  char frame_header[STATS_LINE_LENGTH];
-  FILE* input_file = fopen(video_file.c_str(), "rb");
-
-  size_t bytes_read = fread(frame_header, 1, STATS_LINE_LENGTH - 1, input_file);
-
-  frame_header[bytes_read] = '\0';
-  std::string file_header_stats[5];
-  int no_of_stats = 0;
-  char* save_ptr;
-  char* token = strtok_r(frame_header, " ", &save_ptr);
-
-  while (token != NULL) {
-    file_header_stats[no_of_stats++] = token;
-    token = strtok_r(NULL, " ", &save_ptr);
-  }
-
-  *width = std::stoi(file_header_stats[1].erase(0, 1));
-  *height = std::stoi(file_header_stats[2].erase(0, 1));
-  *fps = std::stoi(file_header_stats[3].erase(0, 1));
-
-  printf("Height: %d Width: %d fps:%d \n", *height, *width, *fps);
-  fclose(input_file);
-}
-
 bool frozen_frame(std::vector<double> psnr_per_frame,
                   std::vector<double> ssim_per_frame,
                   size_t frame) {
@@ -135,60 +105,29 @@ void print_freezing_metrics(const std::vector<double>& psnr_per_frame,
   printf("\n");
 }
 
-void compute_metrics(const std::string& video_file_name,
+void compute_metrics(const rtc::scoped_refptr<webrtc::test::Video>& video,
                      std::vector<double>* psnr_per_frame,
                      std::vector<double>* ssim_per_frame) {
-  int height = 0, width = 0, fps = 0;
-  get_height_width_fps(&height, &width, &fps, video_file_name);
-
-  int no_of_frames = 0;
-  int size = webrtc::test::GetI420FrameSize(width, height);
-
-  // Allocate buffers for test and reference frames.
-  uint8_t* current_frame = new uint8_t[size];
-  uint8_t* next_frame = new uint8_t[size];
-
-  while (true) {
-    if (!(webrtc::test::ExtractFrameFromY4mFile(video_file_name.c_str(), width,
-                                                height, no_of_frames,
-                                                current_frame))) {
-      break;
-    }
-
-    if (!(webrtc::test::ExtractFrameFromY4mFile(video_file_name.c_str(), width,
-                                                height, no_of_frames + 1,
-                                                next_frame))) {
-      break;
-    }
-
-    double result_psnr = webrtc::test::CalculateMetrics(
-        webrtc::test::kPSNR, current_frame, next_frame, width, height);
-    double result_ssim = webrtc::test::CalculateMetrics(
-        webrtc::test::kSSIM, current_frame, next_frame, width, height);
+  for (size_t i = 0; i < video->number_of_frames() - 1; ++i) {
+    const rtc::scoped_refptr<webrtc::I420BufferInterface> current_frame =
+        video->GetFrame(i);
+    const rtc::scoped_refptr<webrtc::I420BufferInterface> next_frame =
+        video->GetFrame(i + 1);
+    double result_psnr = webrtc::test::Psnr(current_frame, next_frame);
+    double result_ssim = webrtc::test::Ssim(current_frame, next_frame);
 
     psnr_per_frame->push_back(result_psnr);
     ssim_per_frame->push_back(result_ssim);
-    no_of_frames++;
   }
-  // Cleanup.
-  delete[] current_frame;
-  delete[] next_frame;
-}
-
-bool check_file_extension(const std::string& video_file_name) {
-  if (video_file_name.substr(video_file_name.length() - 3, 3) != "y4m") {
-    printf("Only y4m video file format is supported. Given: %s\n",
-           video_file_name.c_str());
-    return false;
-  }
-  return true;
 }
 
 int run_analysis(const std::string& video_file) {
   std::vector<double> psnr_per_frame;
   std::vector<double> ssim_per_frame;
-  if (check_file_extension(video_file)) {
-    compute_metrics(video_file, &psnr_per_frame, &ssim_per_frame);
+  rtc::scoped_refptr<webrtc::test::Video> video =
+      webrtc::test::OpenY4mFile(video_file);
+  if (video) {
+    compute_metrics(video, &psnr_per_frame, &ssim_per_frame);
   } else {
     return -1;
   }

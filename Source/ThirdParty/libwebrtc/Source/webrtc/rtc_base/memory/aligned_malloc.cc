@@ -10,8 +10,8 @@
 
 #include "rtc_base/memory/aligned_malloc.h"
 
-#include <memory.h>
 #include <stdlib.h>
+#include <cstring>
 
 #ifdef _WIN32
 #include <windows.h>

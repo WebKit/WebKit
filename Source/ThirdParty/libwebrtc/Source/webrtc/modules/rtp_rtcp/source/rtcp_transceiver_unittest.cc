@@ -47,8 +47,8 @@ void WaitPostedTasks(rtc::TaskQueue* queue) {
 }
 
 TEST(RtcpTransceiverTest, SendsRtcpOnTaskQueueWhenCreatedOffTaskQueue) {
-  rtc::TaskQueue queue("rtcp");
   MockTransport outgoing_transport;
+  rtc::TaskQueue queue("rtcp");
   RtcpTransceiverConfig config;
   config.outgoing_transport = &outgoing_transport;
   config.task_queue = &queue;
@@ -64,8 +64,8 @@ TEST(RtcpTransceiverTest, SendsRtcpOnTaskQueueWhenCreatedOffTaskQueue) {
 }
 
 TEST(RtcpTransceiverTest, SendsRtcpOnTaskQueueWhenCreatedOnTaskQueue) {
-  rtc::TaskQueue queue("rtcp");
   MockTransport outgoing_transport;
+  rtc::TaskQueue queue("rtcp");
   RtcpTransceiverConfig config;
   config.outgoing_transport = &outgoing_transport;
   config.task_queue = &queue;
@@ -83,15 +83,59 @@ TEST(RtcpTransceiverTest, SendsRtcpOnTaskQueueWhenCreatedOnTaskQueue) {
   WaitPostedTasks(&queue);
 }
 
-TEST(RtcpTransceiverTest, CanBeDestoryedOnTaskQueue) {
-  rtc::TaskQueue queue("rtcp");
+TEST(RtcpTransceiverTest, CanBeDestroyedOnTaskQueue) {
   NiceMock<MockTransport> outgoing_transport;
+  rtc::TaskQueue queue("rtcp");
   RtcpTransceiverConfig config;
   config.outgoing_transport = &outgoing_transport;
   config.task_queue = &queue;
   auto rtcp_transceiver = absl::make_unique<RtcpTransceiver>(config);
 
-  queue.PostTask([&] { rtcp_transceiver.reset(); });
+  queue.PostTask([&] {
+    // Insert a packet just before destruction to test for races.
+    rtcp_transceiver->SendCompoundPacket();
+    rtcp_transceiver.reset();
+  });
+  WaitPostedTasks(&queue);
+}
+
+TEST(RtcpTransceiverTest, CanBeDestroyedWithoutBlocking) {
+  rtc::TaskQueue queue("rtcp");
+  NiceMock<MockTransport> outgoing_transport;
+  RtcpTransceiverConfig config;
+  config.outgoing_transport = &outgoing_transport;
+  config.task_queue = &queue;
+  auto* rtcp_transceiver = new RtcpTransceiver(config);
+  rtcp_transceiver->SendCompoundPacket();
+
+  rtc::Event done(false, false);
+  rtc::Event heavy_task(false, false);
+  queue.PostTask([&] {
+    EXPECT_TRUE(heavy_task.Wait(kTimeoutMs));
+    done.Set();
+  });
+  delete rtcp_transceiver;
+
+  heavy_task.Set();
+  EXPECT_TRUE(done.Wait(kTimeoutMs));
+}
+
+TEST(RtcpTransceiverTest, MaySendPacketsAfterDestructor) {  // i.e. Be careful!
+  NiceMock<MockTransport> outgoing_transport;  // Must outlive queue below.
+  rtc::TaskQueue queue("rtcp");
+  RtcpTransceiverConfig config;
+  config.outgoing_transport = &outgoing_transport;
+  config.task_queue = &queue;
+  auto* rtcp_transceiver = new RtcpTransceiver(config);
+
+  rtc::Event heavy_task(false, false);
+  queue.PostTask([&] { EXPECT_TRUE(heavy_task.Wait(kTimeoutMs)); });
+  rtcp_transceiver->SendCompoundPacket();
+  delete rtcp_transceiver;
+
+  EXPECT_CALL(outgoing_transport, SendRtcp);
+  heavy_task.Set();
+
   WaitPostedTasks(&queue);
 }
 
@@ -189,26 +233,23 @@ TEST(RtcpTransceiverTest, CanCallSendCompoundPacketFromAnyThread) {
   WaitPostedTasks(&queue);
 }
 
-TEST(RtcpTransceiverTest, DoesntSendPacketsAfterDestruction) {
-  MockTransport outgoing_transport;
+TEST(RtcpTransceiverTest, DoesntSendPacketsAfterStopCallback) {
+  NiceMock<MockTransport> outgoing_transport;
   rtc::TaskQueue queue("rtcp");
   RtcpTransceiverConfig config;
   config.outgoing_transport = &outgoing_transport;
   config.task_queue = &queue;
-  config.schedule_periodic_compound_packets = false;
-
-  EXPECT_CALL(outgoing_transport, SendRtcp(_, _)).Times(0);
+  config.schedule_periodic_compound_packets = true;
 
   auto rtcp_transceiver = absl::make_unique<RtcpTransceiver>(config);
-  rtc::Event pause(false, false);
-  queue.PostTask([&] {
-    pause.Wait(rtc::Event::kForever);
-    rtcp_transceiver.reset();
-  });
+  rtc::Event done(false, false);
   rtcp_transceiver->SendCompoundPacket();
-  pause.Set();
-  WaitPostedTasks(&queue);
-  EXPECT_FALSE(rtcp_transceiver);
+  rtcp_transceiver->Stop(rtc::NewClosure([&] {
+    EXPECT_CALL(outgoing_transport, SendRtcp).Times(0);
+    done.Set();
+  }));
+  rtcp_transceiver = nullptr;
+  EXPECT_TRUE(done.Wait(kTimeoutMs));
 }
 
 TEST(RtcpTransceiverTest, SendsTransportFeedbackOnTaskQueue) {

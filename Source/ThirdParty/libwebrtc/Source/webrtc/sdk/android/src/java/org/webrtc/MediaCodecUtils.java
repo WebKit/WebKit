@@ -14,12 +14,12 @@ import android.annotation.TargetApi;
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
 import android.media.MediaCodecInfo.CodecCapabilities;
+import android.os.Build;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.Nullable;
 
 /** Container class for static constants and helpers used with MediaCodec. */
-@TargetApi(18)
 // We are forced to use the old API because we want to support API level < 21.
 @SuppressWarnings("deprecation")
 class MediaCodecUtils {
@@ -30,6 +30,7 @@ class MediaCodecUtils {
   static final String INTEL_PREFIX = "OMX.Intel.";
   static final String NVIDIA_PREFIX = "OMX.Nvidia.";
   static final String QCOM_PREFIX = "OMX.qcom.";
+  static final String[] SOFTWARE_IMPLEMENTATION_PREFIXES = {"OMX.google.", "OMX.SEC."};
 
   // NV12 color format supported by QCOM codec, but not declared in MediaCodec -
   // see /hardware/qcom/media/mm-core/inc/OMX_QCOMExtns.h
@@ -55,7 +56,15 @@ class MediaCodecUtils {
       MediaCodecUtils.COLOR_QCOM_FORMATYUV420PackedSemiPlanar32m};
 
   // Color formats supported by texture mode encoding - in order of preference.
-  static final int[] TEXTURE_COLOR_FORMATS = {MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface};
+  static final int[] TEXTURE_COLOR_FORMATS = getTextureColorFormats();
+
+  private static int[] getTextureColorFormats() {
+    if (Build.VERSION.SDK_INT >= 18) {
+      return new int[] {MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface};
+    } else {
+      return new int[] {};
+    }
+  }
 
   static @Nullable Integer selectColorFormat(
       int[] supportedColorFormats, CodecCapabilities capabilities) {

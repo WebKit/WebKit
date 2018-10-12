@@ -60,10 +60,6 @@ int AcmReceiver::SetMaximumDelay(int delay_ms) {
   return -1;
 }
 
-int AcmReceiver::LeastRequiredDelayMs() const {
-  return neteq_->LeastRequiredDelayMs();
-}
-
 absl::optional<int> AcmReceiver::last_packet_sample_rate_hz() const {
   rtc::CritScope lock(&crit_sect_);
   return last_packet_sample_rate_hz_;
@@ -363,6 +359,12 @@ int AcmReceiver::DecoderByPayloadType(uint8_t payload_type,
                     << static_cast<int>(payload_type);
     return -1;
   }
+}
+
+absl::optional<SdpAudioFormat> AcmReceiver::DecoderByPayloadType(
+    int payload_type) const {
+  rtc::CritScope lock(&crit_sect_);
+  return neteq_->GetDecoderFormat(payload_type);
 }
 
 int AcmReceiver::EnableNack(size_t max_nack_list_size) {

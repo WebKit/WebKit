@@ -23,7 +23,7 @@ namespace webrtc {
 
 // This class provides fallback to SimulcastEncoderAdapter if default VP8Encoder
 // doesn't support simulcast for provided settings.
-class VP8EncoderSimulcastProxy : public VP8Encoder {
+class VP8EncoderSimulcastProxy : public VideoEncoder {
  public:
   VP8EncoderSimulcastProxy(VideoEncoderFactory* factory,
                            const SdpVideoFormat& format);

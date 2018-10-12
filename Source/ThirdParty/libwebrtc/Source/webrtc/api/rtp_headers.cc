@@ -34,7 +34,9 @@ RTPHeaderExtension::RTPHeaderExtension()
       videoRotation(kVideoRotation_0),
       hasVideoContentType(false),
       videoContentType(VideoContentType::UNSPECIFIED),
-      has_video_timing(false) {}
+      has_video_timing(false),
+      has_frame_marking(false),
+      frame_marking({false, false, false, false, false, 0xFF, 0, 0}) {}
 
 RTPHeaderExtension::RTPHeaderExtension(const RTPHeaderExtension& other) =
     default;

@@ -21,9 +21,9 @@ import android.os.SystemClock;
 import android.view.Surface;
 import java.nio.ByteBuffer;
 import java.util.ArrayDeque;
-import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Queue;
@@ -156,9 +156,9 @@ public class MediaCodecVideoDecoder {
   private static final int MAX_QUEUED_OUTPUTBUFFERS = 3;
   // Active running decoder instance. Set in initDecode() (called from native code)
   // and reset to null in release() call.
-  @Nullable private static MediaCodecVideoDecoder runningInstance = null;
-  @Nullable private static MediaCodecVideoDecoderErrorCallback errorCallback = null;
-  private static int codecErrors = 0;
+  @Nullable private static MediaCodecVideoDecoder runningInstance;
+  @Nullable private static MediaCodecVideoDecoderErrorCallback errorCallback;
+  private static int codecErrors;
   // List of disabled codec types - can be set from application.
   private static Set<String> hwDecoderDisabledTypes = new HashSet<String>();
   @Nullable private static EglBase eglBase;
@@ -228,7 +228,7 @@ public class MediaCodecVideoDecoder {
   // The below variables are only used when decoding to a Surface.
   @Nullable private TextureListener textureListener;
   private int droppedFrames;
-  @Nullable private Surface surface = null;
+  @Nullable private Surface surface;
   private final Queue<DecodedOutputBuffer> dequeuedSurfaceOutputBuffers =
       new ArrayDeque<DecodedOutputBuffer>();
 

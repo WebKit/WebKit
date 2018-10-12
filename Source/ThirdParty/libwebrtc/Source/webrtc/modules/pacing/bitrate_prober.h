@@ -13,6 +13,7 @@
 
 #include <queue>
 
+#include "api/transport/network_types.h"
 #include "modules/include/module_common_types.h"
 
 namespace webrtc {

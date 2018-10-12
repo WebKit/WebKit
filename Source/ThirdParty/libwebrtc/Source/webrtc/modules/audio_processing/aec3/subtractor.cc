@@ -153,8 +153,6 @@ void Subtractor::HandleEchoPathChange(
   }
 
   if (echo_path_variability.gain_change && enable_agc_gain_change_response_) {
-    RTC_LOG(LS_WARNING) << "Resetting main filter adaptation speed due to "
-                           "microphone gain change";
     G_main_.HandleEchoPathChange(echo_path_variability);
   }
 }

@@ -10,6 +10,8 @@
 
 #include "media/engine/webrtcvideodecoderfactory.h"
 
+#include "api/video_codecs/video_codec.h"
+
 namespace cricket {
 
 webrtc::VideoDecoder* WebRtcVideoDecoderFactory::CreateVideoDecoderWithParams(

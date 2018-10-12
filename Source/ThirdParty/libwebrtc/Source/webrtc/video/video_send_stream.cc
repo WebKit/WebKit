@@ -12,6 +12,7 @@
 #include <utility>
 
 #include "api/video/video_stream_encoder_create.h"
+#include "modules/rtp_rtcp/source/rtp_header_extension_size.h"
 #include "modules/rtp_rtcp/source/rtp_sender.h"
 #include "rtc_base/logging.h"
 #include "video/video_send_stream_impl.h"
@@ -26,10 +27,10 @@ size_t CalculateMaxHeaderSize(const RtpConfig& config) {
   size_t fec_extensions_size = 0;
   if (config.extensions.size() > 0) {
     RtpHeaderExtensionMap extensions_map(config.extensions);
-    extensions_size =
-        extensions_map.GetTotalLengthInBytes(RTPSender::VideoExtensionSizes());
+    extensions_size = RtpHeaderExtensionSize(RTPSender::VideoExtensionSizes(),
+                                             extensions_map);
     fec_extensions_size =
-        extensions_map.GetTotalLengthInBytes(RTPSender::FecExtensionSizes());
+        RtpHeaderExtensionSize(RTPSender::FecExtensionSizes(), extensions_map);
   }
   header_size += extensions_size;
   if (config.flexfec.payload_type >= 0) {
@@ -196,24 +197,9 @@ void VideoSendStream::StopPermanentlyAndGetRtpStates(
   thread_sync_event_.Wait(rtc::Event::kForever);
 }
 
-void VideoSendStream::SetTransportOverhead(
-    size_t transport_overhead_per_packet) {
-  RTC_DCHECK_RUN_ON(&thread_checker_);
-  VideoSendStreamImpl* send_stream = send_stream_.get();
-  worker_queue_->PostTask([send_stream, transport_overhead_per_packet] {
-    send_stream->SetTransportOverhead(transport_overhead_per_packet);
-  });
-}
-
 bool VideoSendStream::DeliverRtcp(const uint8_t* packet, size_t length) {
   // Called on a network thread.
   return send_stream_->DeliverRtcp(packet, length);
-}
-
-void VideoSendStream::EnableEncodedFrameRecording(
-    const std::vector<rtc::PlatformFile>& files,
-    size_t byte_limit) {
-  send_stream_->EnableEncodedFrameRecording(files, byte_limit);
 }
 
 }  // namespace internal

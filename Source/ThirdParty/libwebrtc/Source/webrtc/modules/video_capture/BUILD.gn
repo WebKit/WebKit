@@ -40,11 +40,6 @@ rtc_static_library("video_capture_module") {
     "../../system_wrappers",
     "//third_party/libyuv",
   ]
-
-  if (!build_with_chromium && is_clang) {
-    # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-    suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-  }
 }
 
 rtc_static_library("video_capture") {
@@ -59,11 +54,6 @@ rtc_static_library("video_capture") {
     "../../rtc_base:rtc_base_approved",
     "../../system_wrappers",
   ]
-
-  if (!build_with_chromium && is_clang) {
-    # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-    suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-  }
 }
 
 if (!build_with_chromium) {
@@ -99,11 +89,6 @@ if (!build_with_chromium) {
       ]
 
       all_dependent_configs = [ ":video_capture_internal_impl_config" ]
-
-      if (!build_with_chromium && is_clang) {
-        # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-        suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-      }
     }
   }
 
@@ -163,11 +148,6 @@ if (!build_with_chromium) {
 
     all_dependent_configs = [ ":video_capture_internal_impl_config" ]
 
-    if (!build_with_chromium && is_clang) {
-      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-    }
-
     if (build_with_mozilla && is_android) {
       include_dirs = [
         "/config/external/nspr",
@@ -210,17 +190,11 @@ if (!build_with_chromium) {
         "../../common_video:common_video",
         "../../rtc_base:rtc_base_approved",
         "../../system_wrappers:system_wrappers",
-        "../../system_wrappers:system_wrappers_default",
         "../../test:video_test_common",
         "../utility",
         "//testing/gtest",
       ]
       deps += [ "../../test:test_main" ]
-
-      if (!build_with_chromium && is_clang) {
-        # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-        suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-      }
     }
   }
 }

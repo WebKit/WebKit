@@ -94,9 +94,9 @@ std::vector<std::vector<FrameType>> GetTimingFrames(
       CodecSpecificInfo codec_specific;
       image._length = FrameSize(min_frame_size, max_frame_size, s, i);
       image.capture_time_ms_ = current_timestamp;
-      image._timeStamp = static_cast<uint32_t>(current_timestamp * 90);
+      image.SetTimestamp(static_cast<uint32_t>(current_timestamp * 90));
+      image.SetSpatialIndex(s);
       codec_specific.codecType = kVideoCodecGeneric;
-      codec_specific.codecSpecific.generic.simulcast_idx = s;
       callback.OnEncodeStarted(static_cast<uint32_t>(current_timestamp * 90),
                                current_timestamp, s);
       if (dropped) {
@@ -187,9 +187,8 @@ TEST(TestVCMEncodedFrameCallback, NoTimingFrameIfNoEncodeStartTime) {
   int64_t timestamp = 1;
   image._length = 500;
   image.capture_time_ms_ = timestamp;
-  image._timeStamp = static_cast<uint32_t>(timestamp * 90);
+  image.SetTimestamp(static_cast<uint32_t>(timestamp * 90));
   codec_specific.codecType = kVideoCodecGeneric;
-  codec_specific.codecSpecific.generic.simulcast_idx = 0;
   FakeEncodedImageCallback sink;
   VCMEncodedFrameCallback callback(&sink, nullptr);
   VideoCodec::TimingFrameTriggerThresholds thresholds;
@@ -204,7 +203,7 @@ TEST(TestVCMEncodedFrameCallback, NoTimingFrameIfNoEncodeStartTime) {
 
   // New frame, now skip OnEncodeStarted. Should not result in timing frame.
   image.capture_time_ms_ = ++timestamp;
-  image._timeStamp = static_cast<uint32_t>(timestamp * 90);
+  image.SetTimestamp(static_cast<uint32_t>(timestamp * 90));
   callback.OnEncodedImage(image, &codec_specific, nullptr);
   EXPECT_FALSE(sink.WasTimingFrame());
 }
@@ -219,9 +218,8 @@ TEST(TestVCMEncodedFrameCallback, AdjustsCaptureTimeForInternalSourceEncoder) {
   int64_t timestamp = 1;
   image._length = 500;
   image.capture_time_ms_ = timestamp;
-  image._timeStamp = static_cast<uint32_t>(timestamp * 90);
+  image.SetTimestamp(static_cast<uint32_t>(timestamp * 90));
   codec_specific.codecType = kVideoCodecGeneric;
-  codec_specific.codecSpecific.generic.simulcast_idx = 0;
   FakeEncodedImageCallback sink;
   VCMEncodedFrameCallback callback(&sink, nullptr);
   callback.SetInternalSource(true);
@@ -237,7 +235,7 @@ TEST(TestVCMEncodedFrameCallback, AdjustsCaptureTimeForInternalSourceEncoder) {
   // New frame, but this time with encode timestamps set in timing_.
   // This should be a timing frame.
   image.capture_time_ms_ = ++timestamp;
-  image._timeStamp = static_cast<uint32_t>(timestamp * 90);
+  image.SetTimestamp(static_cast<uint32_t>(timestamp * 90));
   image.timing_.encode_start_ms = timestamp + kEncodeStartDelayMs;
   image.timing_.encode_finish_ms = timestamp + kEncodeFinishDelayMs;
   callback.OnEncodedImage(image, &codec_specific, nullptr);
@@ -257,33 +255,32 @@ TEST(TestVCMEncodedFrameCallback, NotifiesAboutDroppedFrames) {
   const int64_t kTimestampMs3 = 47721860;
   const int64_t kTimestampMs4 = 47721870;
   codec_specific.codecType = kVideoCodecGeneric;
-  codec_specific.codecSpecific.generic.simulcast_idx = 0;
   FakeEncodedImageCallback sink;
   VCMEncodedFrameCallback callback(&sink, nullptr);
   // Any non-zero bitrate needed to be set before the first frame.
   callback.OnTargetBitrateChanged(500, 0);
   image.capture_time_ms_ = kTimestampMs1;
-  image._timeStamp = static_cast<uint32_t>(image.capture_time_ms_ * 90);
-  callback.OnEncodeStarted(image._timeStamp, image.capture_time_ms_, 0);
+  image.SetTimestamp(static_cast<uint32_t>(image.capture_time_ms_ * 90));
+  callback.OnEncodeStarted(image.Timestamp(), image.capture_time_ms_, 0);
   EXPECT_EQ(0u, sink.GetNumFramesDropped());
   callback.OnEncodedImage(image, &codec_specific, nullptr);
 
   image.capture_time_ms_ = kTimestampMs2;
-  image._timeStamp = static_cast<uint32_t>(image.capture_time_ms_ * 90);
-  callback.OnEncodeStarted(image._timeStamp, image.capture_time_ms_, 0);
+  image.SetTimestamp(static_cast<uint32_t>(image.capture_time_ms_ * 90));
+  callback.OnEncodeStarted(image.Timestamp(), image.capture_time_ms_, 0);
   // No OnEncodedImageCall for timestamp2. Yet, at this moment it's not known
   // that frame with timestamp2 was dropped.
   EXPECT_EQ(0u, sink.GetNumFramesDropped());
 
   image.capture_time_ms_ = kTimestampMs3;
-  image._timeStamp = static_cast<uint32_t>(image.capture_time_ms_ * 90);
-  callback.OnEncodeStarted(image._timeStamp, image.capture_time_ms_, 0);
+  image.SetTimestamp(static_cast<uint32_t>(image.capture_time_ms_ * 90));
+  callback.OnEncodeStarted(image.Timestamp(), image.capture_time_ms_, 0);
   callback.OnEncodedImage(image, &codec_specific, nullptr);
   EXPECT_EQ(1u, sink.GetNumFramesDropped());
 
   image.capture_time_ms_ = kTimestampMs4;
-  image._timeStamp = static_cast<uint32_t>(image.capture_time_ms_ * 90);
-  callback.OnEncodeStarted(image._timeStamp, image.capture_time_ms_, 0);
+  image.SetTimestamp(static_cast<uint32_t>(image.capture_time_ms_ * 90));
+  callback.OnEncodeStarted(image.Timestamp(), image.capture_time_ms_, 0);
   callback.OnEncodedImage(image, &codec_specific, nullptr);
   EXPECT_EQ(1u, sink.GetNumFramesDropped());
 }
@@ -293,14 +290,13 @@ TEST(TestVCMEncodedFrameCallback, RestoresCaptureTimestamps) {
   CodecSpecificInfo codec_specific;
   const int64_t kTimestampMs = 123456;
   codec_specific.codecType = kVideoCodecGeneric;
-  codec_specific.codecSpecific.generic.simulcast_idx = 0;
   FakeEncodedImageCallback sink;
   VCMEncodedFrameCallback callback(&sink, nullptr);
   // Any non-zero bitrate needed to be set before the first frame.
   callback.OnTargetBitrateChanged(500, 0);
   image.capture_time_ms_ = kTimestampMs;  // Incorrect timesetamp.
-  image._timeStamp = static_cast<uint32_t>(image.capture_time_ms_ * 90);
-  callback.OnEncodeStarted(image._timeStamp, image.capture_time_ms_, 0);
+  image.SetTimestamp(static_cast<uint32_t>(image.capture_time_ms_ * 90));
+  callback.OnEncodeStarted(image.Timestamp(), image.capture_time_ms_, 0);
   image.capture_time_ms_ = 0;  // Incorrect timesetamp.
   callback.OnEncodedImage(image, &codec_specific, nullptr);
   EXPECT_EQ(kTimestampMs, sink.GetLastCaptureTimestamp());

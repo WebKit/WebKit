@@ -16,6 +16,9 @@ FlexfecReceiveStream::Config::Config(Transport* rtcp_send_transport)
     : rtcp_send_transport(rtcp_send_transport) {
   RTC_DCHECK(rtcp_send_transport);
 }
+
+FlexfecReceiveStream::Config::Config(const Config& config) = default;
+
 FlexfecReceiveStream::Config::~Config() = default;
 
 }  // namespace webrtc

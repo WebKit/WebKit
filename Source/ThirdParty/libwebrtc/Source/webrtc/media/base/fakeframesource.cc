@@ -15,12 +15,25 @@
 
 namespace cricket {
 
-FakeFrameSource::FakeFrameSource(int width, int height, int interval_us)
-    : width_(width), height_(height), interval_us_(interval_us) {
+FakeFrameSource::FakeFrameSource(int width,
+                                 int height,
+                                 int interval_us,
+                                 int64_t timestamp_offset_us)
+    : width_(width),
+      height_(height),
+      interval_us_(interval_us),
+      next_timestamp_us_(timestamp_offset_us) {
   RTC_CHECK_GT(width_, 0);
   RTC_CHECK_GT(height_, 0);
   RTC_CHECK_GT(interval_us_, 0);
+  RTC_CHECK_GE(next_timestamp_us_, 0);
 }
+
+FakeFrameSource::FakeFrameSource(int width, int height, int interval_us)
+    : FakeFrameSource(width,
+                      height,
+                      interval_us,
+                      rtc::kNumMicrosecsPerMillisec) {}
 
 webrtc::VideoRotation FakeFrameSource::GetRotation() const {
   return rotation_;

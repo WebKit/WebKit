@@ -13,6 +13,7 @@
 #include <iterator>
 #include <map>
 #include <set>
+#include <sstream>  // no-presubmit-check TODO(webrtc:8982)
 #include <string>
 #include <utility>  // pair
 #include <vector>
@@ -48,6 +49,11 @@ namespace webrtc {
 enum class BandwidthUsage;
 struct AudioEncoderRuntimeConfig;
 
+// The different event types are deliberately POD. Analysis of large logs is
+// already resource intensive. The code simplifications that would be possible
+// possible by having a base class (containing e.g. the log time) are not
+// considered to outweigh the added memory and runtime overhead incurred by
+// adding a vptr.
 struct LoggedAlrStateEvent {
   int64_t timestamp_us;
   bool in_alr;
@@ -178,8 +184,9 @@ struct LoggedRtpPacketOutgoing {
 struct LoggedRtcpPacket {
   LoggedRtcpPacket(uint64_t timestamp_us,
                    const uint8_t* packet,
-                   size_t total_length)
-      : timestamp_us(timestamp_us), raw_data(packet, packet + total_length) {}
+                   size_t total_length);
+  LoggedRtcpPacket(const LoggedRtcpPacket&);
+  ~LoggedRtcpPacket();
   int64_t timestamp_us;
   std::vector<uint8_t> raw_data;
   int64_t log_time_us() const { return timestamp_us; }
@@ -242,7 +249,7 @@ struct LoggedRtcpPacketTransportFeedback {
 };
 
 struct LoggedStartEvent {
-  explicit LoggedStartEvent(uint64_t timestamp_us)
+  explicit LoggedStartEvent(int64_t timestamp_us)
       : timestamp_us(timestamp_us) {}
   int64_t timestamp_us;
   int64_t log_time_us() const { return timestamp_us; }
@@ -250,8 +257,7 @@ struct LoggedStartEvent {
 };
 
 struct LoggedStopEvent {
-  explicit LoggedStopEvent(uint64_t timestamp_us)
-      : timestamp_us(timestamp_us) {}
+  explicit LoggedStopEvent(int64_t timestamp_us) : timestamp_us(timestamp_us) {}
   int64_t timestamp_us;
   int64_t log_time_us() const { return timestamp_us; }
   int64_t log_time_ms() const { return timestamp_us / 1000; }
@@ -286,8 +292,9 @@ struct LoggedVideoRecvConfig {
 
 struct LoggedVideoSendConfig {
   LoggedVideoSendConfig(int64_t timestamp_us,
-                        const std::vector<rtclog::StreamConfig> configs)
-      : timestamp_us(timestamp_us), configs(configs) {}
+                        const std::vector<rtclog::StreamConfig>& configs);
+  LoggedVideoSendConfig(const LoggedVideoSendConfig&);
+  ~LoggedVideoSendConfig();
   int64_t timestamp_us;
   std::vector<rtclog::StreamConfig> configs;
   int64_t log_time_us() const { return timestamp_us; }
@@ -470,6 +477,8 @@ class ParsedRtcEventLogNew {
   friend class RtcEventLogTestHelper;
 
  public:
+  ~ParsedRtcEventLogNew();
+
   enum class EventType {
     UNKNOWN_EVENT = 0,
     LOG_START = 1,
@@ -499,11 +508,17 @@ class ParsedRtcEventLogNew {
   };
 
   struct LoggedRtpStreamIncoming {
+    LoggedRtpStreamIncoming();
+    LoggedRtpStreamIncoming(const LoggedRtpStreamIncoming&);
+    ~LoggedRtpStreamIncoming();
     uint32_t ssrc;
     std::vector<LoggedRtpPacketIncoming> incoming_packets;
   };
 
   struct LoggedRtpStreamOutgoing {
+    LoggedRtpStreamOutgoing();
+    LoggedRtpStreamOutgoing(const LoggedRtpStreamOutgoing&);
+    ~LoggedRtpStreamOutgoing();
     uint32_t ssrc;
     std::vector<LoggedRtpPacketOutgoing> outgoing_packets;
   };
@@ -511,23 +526,16 @@ class ParsedRtcEventLogNew {
   struct LoggedRtpStreamView {
     LoggedRtpStreamView(uint32_t ssrc,
                         const LoggedRtpPacketIncoming* ptr,
-                        size_t num_elements)
-        : ssrc(ssrc),
-          packet_view(PacketView<const LoggedRtpPacket>::Create(
-              ptr,
-              num_elements,
-              offsetof(LoggedRtpPacketIncoming, rtp))) {}
+                        size_t num_elements);
     LoggedRtpStreamView(uint32_t ssrc,
                         const LoggedRtpPacketOutgoing* ptr,
-                        size_t num_elements)
-        : ssrc(ssrc),
-          packet_view(PacketView<const LoggedRtpPacket>::Create(
-              ptr,
-              num_elements,
-              offsetof(LoggedRtpPacketOutgoing, rtp))) {}
+                        size_t num_elements);
+    LoggedRtpStreamView(const LoggedRtpStreamView&);
     uint32_t ssrc;
     PacketView<const LoggedRtpPacket> packet_view;
   };
+
+  static webrtc::RtpHeaderExtensionMap GetDefaultHeaderExtensionMap();
 
   explicit ParsedRtcEventLogNew(
       UnconfiguredHeaderExtensions parse_unconfigured_header_extensions =
@@ -976,6 +984,21 @@ class ParsedRtcEventLogNew {
   mutable std::map<uint32_t, webrtc::RtpHeaderExtensionMap>
       outgoing_rtp_extensions_maps_;
 };
+
+struct MatchedSendArrivalTimes {
+  MatchedSendArrivalTimes(int64_t fb, int64_t tx, int64_t rx, int64_t ps)
+      : feedback_arrival_time_ms(fb),
+        send_time_ms(tx),
+        arrival_time_ms(rx),
+        payload_size(ps) {}
+
+  int64_t feedback_arrival_time_ms;
+  int64_t send_time_ms;     // PacketFeedback::kNoSendTime for late feedback.
+  int64_t arrival_time_ms;  // PacketFeedback::kNotReceived for lost packets.
+  int64_t payload_size;
+};
+const std::vector<MatchedSendArrivalTimes> GetNetworkTrace(
+    const ParsedRtcEventLogNew& parsed_log);
 
 }  // namespace webrtc
 

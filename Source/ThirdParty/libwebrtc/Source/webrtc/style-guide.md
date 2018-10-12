@@ -31,6 +31,13 @@ WebRTC is written in C++11, but with some restrictions:
 
 [chromium-cpp11]: https://chromium-cpp.appspot.com/
 
+### Abseil
+
+You may use a subset of the utilities provided by the [Abseil][abseil]
+library when writing WebRTC C++ code. [Details](abseil-in-webrtc.md).
+
+[abseil]: https://abseil.io/about/
+
 ### <a name="h-cc-pairs"></a>`.h` and `.cc` files come in pairs
 
 `.h` and `.cc` files should come in pairs, with the same name (except

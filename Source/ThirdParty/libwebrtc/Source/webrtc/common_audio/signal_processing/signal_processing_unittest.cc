@@ -9,9 +9,9 @@
  */
 
 #include <algorithm>
-#include <sstream>
 
 #include "common_audio/signal_processing/include/signal_processing_library.h"
+#include "rtc_base/strings/string_builder.h"
 #include "test/gtest.h"
 
 static const size_t kVector16Size = 9;
@@ -134,7 +134,7 @@ TEST_F(SplTest, AddSubSatW32) {
           INT32_MIN, std::min<int64_t>(INT32_MAX, static_cast<int64_t>(a) + b));
       const int64_t diff = std::max<int64_t>(
           INT32_MIN, std::min<int64_t>(INT32_MAX, static_cast<int64_t>(a) - b));
-      std::ostringstream ss;
+      rtc::StringBuilder ss;
       ss << a << " +/- " << b << ": sum " << sum << ", diff " << diff;
       SCOPED_TRACE(ss.str());
       EXPECT_EQ(sum, WebRtcSpl_AddSatW32(a, b));

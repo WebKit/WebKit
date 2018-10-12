@@ -55,7 +55,6 @@
 /tools_webrtc/audio_quality/win/*.exe
 /tools_webrtc/audio_quality/win/*.dll
 /tools_webrtc/video_quality_toolchain/linux/ffmpeg
-/tools_webrtc/video_quality_toolchain/linux/frame_analyzer
 /tools_webrtc/video_quality_toolchain/linux/zxing
 /tools_webrtc/video_quality_toolchain/mac/ffmpeg
 /tools_webrtc/video_quality_toolchain/mac/zxing

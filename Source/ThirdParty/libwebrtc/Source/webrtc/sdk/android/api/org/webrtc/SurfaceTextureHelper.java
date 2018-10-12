@@ -34,18 +34,6 @@ import org.webrtc.VideoFrame.TextureBuffer;
 public class SurfaceTextureHelper {
   private static final String TAG = "SurfaceTextureHelper";
   /**
-   * Callback interface for being notified that a new texture frame is available. The calls will be
-   * made on the SurfaceTextureHelper handler thread, with a bound EGLContext. The callee is not
-   * allowed to make another EGLContext current on the calling thread.
-   *
-   * @deprecated Use a VideoSink as listener instead.
-   */
-  @Deprecated
-  public interface OnTextureFrameAvailableListener {
-    void onTextureFrameAvailable(int oesTextureId, float[] transformMatrix, long timestampNs);
-  }
-
-  /**
    * Construct a new SurfaceTextureHelper sharing OpenGL resources with |sharedContext|. A dedicated
    * thread and handler is created for handling the SurfaceTexture. May return null if EGL fails to
    * initialize a pixel buffer surface and make it current.
@@ -81,20 +69,17 @@ public class SurfaceTextureHelper {
   private final YuvConverter yuvConverter = new YuvConverter();
 
   // These variables are only accessed from the |handler| thread.
-  // The type of |listener| is either a VideoSink or the deprecated OnTextureFrameAvailableListener.
-  @Nullable private Object listener;
+  @Nullable private VideoSink listener;
   // The possible states of this class.
-  private boolean hasPendingTexture = false;
-  private volatile boolean isTextureInUse = false;
-  private boolean isQuitting = false;
+  private boolean hasPendingTexture;
+  private volatile boolean isTextureInUse;
+  private boolean isQuitting;
   private int frameRotation;
   private int textureWidth;
   private int textureHeight;
   // |pendingListener| is set in setListener() and the runnable is posted to the handler thread.
   // setListener() is not allowed to be called again before stopListening(), so this is thread safe.
-  // The type of |pendingListener| is either a VideoSink or the deprecated
-  // OnTextureFrameAvailableListener.
-  @Nullable private Object pendingListener;
+  @Nullable private VideoSink pendingListener;
   final Runnable setListenerRunnable = new Runnable() {
     @Override
     public void run() {
@@ -153,23 +138,8 @@ public class SurfaceTextureHelper {
   /**
    * Start to stream textures to the given |listener|. If you need to change listener, you need to
    * call stopListening() first.
-   *
-   * @deprecated Use a VideoSink as listener instead.
-   */
-  @Deprecated
-  public void startListening(final OnTextureFrameAvailableListener listener) {
-    startListeningInternal(listener);
-  }
-
-  /**
-   * Start to stream textures to the given |listener|. If you need to change listener, you need to
-   * call stopListening() first.
    */
   public void startListening(final VideoSink listener) {
-    startListeningInternal(listener);
-  }
-
-  private void startListeningInternal(Object listener) {
     if (this.listener != null || this.pendingListener != null) {
       throw new IllegalStateException("SurfaceTextureHelper listener has already been set.");
     }
@@ -179,7 +149,7 @@ public class SurfaceTextureHelper {
 
   /**
    * Stop listening. The listener set in startListening() is guaranteded to not receive any more
-   * onTextureFrameAvailable() callbacks after this function returns.
+   * onFrame() callbacks after this function returns.
    */
   public void stopListening() {
     Logging.d(TAG, "stopListening()");
@@ -222,23 +192,16 @@ public class SurfaceTextureHelper {
     return surfaceTexture;
   }
 
-  /**
-   * Retrieve the handler that calls onTextureFrameAvailable(). This handler is valid until
-   * dispose() is called.
-   */
+  /** Retrieve the handler that calls onFrame(). This handler is valid until dispose() is called. */
   public Handler getHandler() {
     return handler;
   }
 
   /**
-   * Call this function to signal that you are done with the frame received in
-   * onTextureFrameAvailable(). Only one texture frame can be in flight at once, so you must call
-   * this function in order to receive a new frame.
-   *
-   * @deprecated Use a VideoSink as listener instead.
+   * This function is called when the texture frame is released. Only one texture frame can be in
+   * flight at once, so this function must be called before a new frame is delivered.
    */
-  @Deprecated
-  public void returnTextureFrame() {
+  private void returnTextureFrame() {
     handler.post(() -> {
       isTextureInUse = false;
       if (isQuitting) {
@@ -255,8 +218,8 @@ public class SurfaceTextureHelper {
 
   /**
    * Call disconnect() to stop receiving frames. OpenGL resources are released and the handler is
-   * stopped when the texture frame has been returned by a call to returnTextureFrame(). You are
-   * guaranteed to not receive any more onTextureFrameAvailable() after this function returns.
+   * stopped when the texture frame has been released. You are guaranteed to not receive any more
+   * onFrame() after this function returns.
    */
   public void dispose() {
     Logging.d(TAG, "dispose()");
@@ -302,19 +265,16 @@ public class SurfaceTextureHelper {
     final float[] transformMatrix = new float[16];
     surfaceTexture.getTransformMatrix(transformMatrix);
     final long timestampNs = surfaceTexture.getTimestamp();
-    if (listener instanceof OnTextureFrameAvailableListener) {
-      ((OnTextureFrameAvailableListener) listener)
-          .onTextureFrameAvailable(oesTextureId, transformMatrix, timestampNs);
-    } else if (listener instanceof VideoSink) {
-      if (textureWidth == 0 || textureHeight == 0) {
-        throw new RuntimeException("Texture size has not been set.");
-      }
-      final VideoFrame.Buffer buffer = createTextureBuffer(textureWidth, textureHeight,
-          RendererCommon.convertMatrixToAndroidGraphicsMatrix(transformMatrix));
-      final VideoFrame frame = new VideoFrame(buffer, frameRotation, timestampNs);
-      ((VideoSink) listener).onFrame(frame);
-      frame.release();
+    if (textureWidth == 0 || textureHeight == 0) {
+      throw new RuntimeException("Texture size has not been set.");
     }
+    final VideoFrame.Buffer buffer =
+        new TextureBufferImpl(textureWidth, textureHeight, TextureBuffer.Type.OES, oesTextureId,
+            RendererCommon.convertMatrixToAndroidGraphicsMatrix(transformMatrix), handler,
+            yuvConverter, this ::returnTextureFrame);
+    final VideoFrame frame = new VideoFrame(buffer, frameRotation, timestampNs);
+    ((VideoSink) listener).onFrame(frame);
+    frame.release();
   }
 
   private void release() {
@@ -329,21 +289,5 @@ public class SurfaceTextureHelper {
     surfaceTexture.release();
     eglBase.release();
     handler.getLooper().quit();
-  }
-
-  /**
-   * Creates a VideoFrame buffer backed by this helper's texture. The |width| and |height| should
-   * match the dimensions of the data placed in the texture. The correct |transformMatrix| may be
-   * obtained from callbacks to OnTextureFrameAvailableListener.
-   *
-   * The returned TextureBuffer holds a reference to the SurfaceTextureHelper that created it. The
-   * buffer calls returnTextureFrame() when it is released.
-   *
-   * @deprecated Use a VideoSink as listener instead.
-   */
-  @Deprecated
-  public TextureBufferImpl createTextureBuffer(int width, int height, Matrix transformMatrix) {
-    return new TextureBufferImpl(width, height, TextureBuffer.Type.OES, oesTextureId,
-        transformMatrix, handler, yuvConverter, this ::returnTextureFrame);
   }
 }

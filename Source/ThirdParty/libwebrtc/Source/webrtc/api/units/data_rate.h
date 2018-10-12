@@ -10,7 +10,13 @@
 
 #ifndef API_UNITS_DATA_RATE_H_
 #define API_UNITS_DATA_RATE_H_
+
+#ifdef UNIT_TEST
+#include <ostream>  // no-presubmit-check TODO(webrtc:8982)
+#endif              // UNIT_TEST
+
 #include <stdint.h>
+#include <algorithm>
 #include <cmath>
 #include <limits>
 #include <string>
@@ -128,7 +134,26 @@ class DataRate {
     return bits_per_sec_ == data_rate_impl::kPlusInfinityVal;
   }
   constexpr bool IsFinite() const { return !IsInfinite(); }
-
+  DataRate Clamped(DataRate min_rate, DataRate max_rate) const {
+    return std::max(min_rate, std::min(*this, max_rate));
+  }
+  void Clamp(DataRate min_rate, DataRate max_rate) {
+    *this = Clamped(min_rate, max_rate);
+  }
+  DataRate operator-(const DataRate& other) const {
+    return DataRate::bps(bps() - other.bps());
+  }
+  DataRate operator+(const DataRate& other) const {
+    return DataRate::bps(bps() + other.bps());
+  }
+  DataRate& operator-=(const DataRate& other) {
+    *this = *this - other;
+    return *this;
+  }
+  DataRate& operator+=(const DataRate& other) {
+    *this = *this + other;
+    return *this;
+  }
   constexpr double operator/(const DataRate& other) const {
     return bps<double>() / other.bps<double>();
   }
@@ -196,6 +221,14 @@ inline DataSize operator*(const TimeDelta& duration, const DataRate& rate) {
 }
 
 std::string ToString(const DataRate& value);
+
+#ifdef UNIT_TEST
+inline std::ostream& operator<<(  // no-presubmit-check TODO(webrtc:8982)
+    std::ostream& stream,         // no-presubmit-check TODO(webrtc:8982)
+    DataRate value) {
+  return stream << ToString(value);
+}
+#endif  // UNIT_TEST
 
 }  // namespace webrtc
 

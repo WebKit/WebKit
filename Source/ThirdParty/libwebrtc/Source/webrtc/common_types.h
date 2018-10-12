@@ -340,20 +340,7 @@ enum VideoCodecType {
   kVideoCodecH264,
   kVideoCodecI420,
   kVideoCodecMultiplex,
-  // DEPRECATED. Do not use.
-  kVideoCodecUnknown,
-
-  // TODO(nisse): Deprecated aliases, for code expecting RtpVideoCodecTypes.
-  kRtpVideoNone = kVideoCodecGeneric,
-  kRtpVideoGeneric = kVideoCodecGeneric,
-  kRtpVideoVp8 = kVideoCodecVP8,
-  kRtpVideoVp9 = kVideoCodecVP9,
-  kRtpVideoH264 = kVideoCodecH264,
 };
-
-// Translates from name of codec to codec type and vice versa.
-const char* CodecTypeToPayloadString(VideoCodecType type);
-VideoCodecType PayloadStringToCodecType(const std::string& name);
 
 struct SpatialLayer {
   bool operator==(const SpatialLayer& other) const;
@@ -361,6 +348,7 @@ struct SpatialLayer {
 
   unsigned short width;
   unsigned short height;
+  float maxFramerate;  // fps.
   unsigned char numberOfTemporalLayers;
   unsigned int maxBitrate;     // kilobits/sec.
   unsigned int targetBitrate;  // kilobits/sec.
@@ -402,24 +390,6 @@ struct OverUseDetectorOptions {
   double initial_process_noise[2];
   double initial_avg_noise;
   double initial_var_noise;
-};
-
-// TODO(nisse): This struct is phased out, delete as soon as down stream code is
-// updated.
-
-// This structure will have the information about when packet is actually
-// received by socket.
-struct PacketTime {
-  PacketTime() : timestamp(-1), not_before(-1) {}
-  PacketTime(int64_t timestamp, int64_t not_before)
-      : timestamp(timestamp), not_before(not_before) {}
-
-  int64_t timestamp;   // Receive time after socket delivers the data.
-  int64_t not_before;  // Earliest possible time the data could have arrived,
-                       // indicating the potential error in the |timestamp|
-                       // value,in case the system is busy.
-                       // For example, the time of the last select() call.
-                       // If unknown, this value will be set to zero.
 };
 
 // Minimum and maximum playout delay values from capture to render.

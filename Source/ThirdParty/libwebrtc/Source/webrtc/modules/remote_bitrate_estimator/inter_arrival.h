@@ -54,13 +54,18 @@ class InterArrival {
  private:
   struct TimestampGroup {
     TimestampGroup()
-        : size(0), first_timestamp(0), timestamp(0), complete_time_ms(-1) {}
+        : size(0),
+          first_timestamp(0),
+          timestamp(0),
+          first_arrival_ms(-1),
+          complete_time_ms(-1) {}
 
     bool IsFirstPacket() const { return complete_time_ms == -1; }
 
     size_t size;
     uint32_t first_timestamp;
     uint32_t timestamp;
+    int64_t first_arrival_ms;
     int64_t complete_time_ms;
     int64_t last_system_time_ms;
   };

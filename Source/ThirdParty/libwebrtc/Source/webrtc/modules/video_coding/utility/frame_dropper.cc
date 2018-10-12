@@ -50,6 +50,8 @@ FrameDropper::FrameDropper()
   Reset();
 }
 
+FrameDropper::~FrameDropper() = default;
+
 void FrameDropper::Reset() {
   key_frame_ratio_.Reset(kDefaultKeyFrameRatioAlpha);
   key_frame_ratio_.Apply(1.0f, kDefaultKeyFrameRatioValue);

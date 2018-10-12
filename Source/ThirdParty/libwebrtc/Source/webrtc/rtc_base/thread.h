@@ -189,6 +189,7 @@ class RTC_LOCKABLE Thread : public MessageQueue {
   }
 
   // From MessageQueue
+  bool IsProcessingMessagesForTesting() override;
   void Clear(MessageHandler* phandler,
              uint32_t id = MQID_ANY,
              MessageList* removed = nullptr) override;

@@ -198,6 +198,7 @@ rtc_source_set("logging") {
     ":platform_thread_types",
     ":stringutils",
     ":timeutils",
+    "//third_party/abseil-cpp/absl/strings",
   ]
 
   if (build_with_chromium) {
@@ -208,6 +209,10 @@ rtc_source_set("logging") {
       "../../webrtc_overrides/rtc_base/logging.h",
     ]
   } else {
+    configs += [
+      "..:no_exit_time_destructors",
+      "..:no_global_constructors",
+    ]
     sources = [
       "logging.cc",
       "logging.h",
@@ -309,6 +314,7 @@ rtc_source_set("timeutils") {
   deps = [
     ":checks",
     ":safe_conversions",
+    ":stringutils",
   ]
 }
 
@@ -328,6 +334,7 @@ rtc_source_set("stringutils") {
     ":macromagic",
     ":safe_minmax",
     "../api:array_view",
+    "//third_party/abseil-cpp/absl/strings:strings",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
@@ -413,6 +420,7 @@ rtc_source_set("rtc_base_approved_generic") {
     "ignore_wundef.h",
     "location.cc",
     "location.h",
+    "message_buffer_reader.h",
     "numerics/histogram_percentile_counter.cc",
     "numerics/histogram_percentile_counter.h",
     "numerics/mod_ops.h",
@@ -444,6 +452,7 @@ rtc_source_set("rtc_base_approved_generic") {
   deps += [
     "..:webrtc_common",
     "../api:array_view",
+    "//third_party/abseil-cpp/absl/memory:memory",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
 
@@ -520,6 +529,26 @@ rtc_source_set("rtc_task_queue_api") {
   deps = [
     ":macromagic",
     ":ptr_util",
+    "//third_party/abseil-cpp/absl/memory",
+  ]
+}
+
+rtc_source_set("rtc_cancelable_task") {
+  sources = [
+    "cancelable_periodic_task.h",
+    "cancelable_task_handle.cc",
+    "cancelable_task_handle.h",
+  ]
+  deps = [
+    ":checks",
+    ":logging",
+    ":macromagic",
+    ":ptr_util",
+    ":refcount",
+    ":rtc_task_queue",
+    ":safe_conversions",
+    ":sequenced_task_checker",
+    ":thread_checker",
     "//third_party/abseil-cpp/absl/memory",
   ]
 }
@@ -654,11 +683,13 @@ rtc_static_library("rtc_numerics") {
 }
 
 rtc_source_set("rtc_json") {
-  testonly = true
   defines = []
   sources = [
-    "json.cc",
-    "json.h",
+    "strings/json.cc",
+    "strings/json.h",
+  ]
+  deps = [
+    ":stringutils",
   ]
   all_dependent_configs = [ "//third_party/jsoncpp:jsoncpp_config" ]
   if (rtc_build_json) {
@@ -755,12 +786,12 @@ rtc_static_library("rtc_base_generic") {
     "gunit_prod.h",
     "helpers.cc",
     "helpers.h",
-    "httpcommon-inl.h",
     "httpcommon.cc",
     "httpcommon.h",
     "ipaddress.cc",
     "ipaddress.h",
     "keep_ref_until_done.h",
+    "mdns_responder_interface.h",
     "messagedigest.cc",
     "messagedigest.h",
     "messagehandler.cc",
@@ -804,7 +835,6 @@ rtc_static_library("rtc_base_generic") {
     "rtccertificategenerator.h",
     "signalthread.cc",
     "signalthread.h",
-    "sigslot.h",
     "sigslotrepeater.h",
     "socket.cc",
     "socket.h",
@@ -840,9 +870,6 @@ rtc_static_library("rtc_base_generic") {
   ]
 
   if (build_with_chromium) {
-    if (is_win) {
-      sources += [ "../../webrtc_overrides/rtc_base/win32socketinit.cc" ]
-    }
     include_dirs = [ "../../boringssl/src/include" ]
     public_configs += [ ":rtc_base_chromium_config" ]
   } else {
@@ -859,7 +886,6 @@ rtc_static_library("rtc_base_generic") {
 
     if (is_win) {
       sources += [
-        "win32socketinit.cc",
         "win32socketinit.h",
         "win32socketserver.cc",
         "win32socketserver.h",
@@ -967,6 +993,7 @@ rtc_source_set("rtc_base_tests_utils") {
     # included by multiple targets below.
     "cpu_time.cc",
     "cpu_time.h",
+    "fake_mdns_responder.h",
     "fakeclock.cc",
     "fakeclock.h",
     "fakenetwork.h",
@@ -976,10 +1003,6 @@ rtc_source_set("rtc_base_tests_utils") {
     "firewallsocketserver.h",
     "gunit.cc",
     "gunit.h",
-    "httpbase.cc",
-    "httpbase.h",
-    "httpserver.cc",
-    "httpserver.h",
     "memory_usage.cc",
     "memory_usage.h",
     "natserver.cc",
@@ -1008,7 +1031,6 @@ rtc_source_set("rtc_base_tests_utils") {
     ":rtc_base",
     ":stringutils",
     "../api/units:time_delta",
-    "../test:field_trial",
     "../test:test_support",
     "system:fallthrough",
     "third_party/sigslot",
@@ -1056,8 +1078,8 @@ if (rtc_include_tests) {
       ":rtc_base",
       ":rtc_base_approved",
       ":rtc_base_tests_utils",
-      "../system_wrappers:field_trial_default",
-      "../system_wrappers:metrics_default",
+      "../system_wrappers:field_trial",
+      "../system_wrappers:metrics",
       "../test:field_trial",
       "../test:fileutils",
       "../test:test_support",
@@ -1177,12 +1199,14 @@ if (rtc_include_tests) {
     testonly = true
 
     sources = [
+      "cancelable_periodic_task_unittest.cc",
       "task_queue_unittest.cc",
     ]
     deps = [
       ":rtc_base_approved",
       ":rtc_base_tests_main",
       ":rtc_base_tests_utils",
+      ":rtc_cancelable_task",
       ":rtc_task_queue",
       ":rtc_task_queue_for_test",
       "../test:test_support",
@@ -1239,6 +1263,20 @@ if (rtc_include_tests) {
     ]
   }
 
+  rtc_source_set("rtc_json_unittests") {
+    testonly = true
+
+    sources = [
+      "strings/json_unittest.cc",
+    ]
+    deps = [
+      ":rtc_base_tests_main",
+      ":rtc_base_tests_utils",
+      ":rtc_json",
+      "../test:test_support",
+    ]
+  }
+
   rtc_source_set("rtc_base_unittests") {
     testonly = true
     defines = []
@@ -1248,9 +1286,6 @@ if (rtc_include_tests) {
       "crc32_unittest.cc",
       "data_rate_limiter_unittest.cc",
       "helpers_unittest.cc",
-      "httpbase_unittest.cc",
-      "httpcommon_unittest.cc",
-      "httpserver_unittest.cc",
       "ipaddress_unittest.cc",
       "memory_usage_unittest.cc",
       "messagedigest_unittest.cc",

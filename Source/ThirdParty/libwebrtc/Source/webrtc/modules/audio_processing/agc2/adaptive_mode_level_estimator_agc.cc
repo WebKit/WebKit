@@ -17,7 +17,7 @@ namespace webrtc {
 AdaptiveModeLevelEstimatorAgc::AdaptiveModeLevelEstimatorAgc(
     ApmDataDumper* apm_data_dumper)
     : level_estimator_(apm_data_dumper) {
-  set_target_level_dbfs(kDefaultLevelDbfs);
+  set_target_level_dbfs(kDefaultAgc2LevelHeadroomDbfs);
 }
 
 // |audio| must be mono; in a multi-channel stream, provide the first (usually

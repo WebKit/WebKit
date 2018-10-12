@@ -12,7 +12,6 @@
 
 #include <algorithm>  // For "remove", "find".
 #include <set>
-#include <sstream>
 #include <unordered_map>
 #include <utility>  // For std::move.
 
@@ -25,6 +24,7 @@
 #include "pc/rtpmediautils.h"
 #include "pc/rtpparametersconversion.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/strings/string_builder.h"
 
 namespace webrtc {
 
@@ -39,7 +39,7 @@ static RTCError CheckForIdConflicts(
     const std::vector<C2>& codecs_b,
     const cricket::RtpHeaderExtensions& extensions_b,
     const cricket::StreamParamsVec& streams_b) {
-  std::ostringstream oss;
+  rtc::StringBuilder oss;
   // Since it's assumed that C1 and C2 are different types, codecs_a and
   // codecs_b should never contain the same payload type, and thus we can just
   // use a set.
@@ -626,9 +626,8 @@ RtpTransportControllerAdapter::RtpTransportControllerAdapter(
   // currently reject empty lists of codecs. Note that these codecs will never
   // actually be used, because when parameters are set, the dummy codecs will
   // be replaced by actual codecs before any send/receive streams are created.
-  static const cricket::AudioCodec dummy_audio(0, cricket::kPcmuCodecName, 8000,
-                                               0, 1);
-  static const cricket::VideoCodec dummy_video(96, cricket::kVp8CodecName);
+  const cricket::AudioCodec dummy_audio(0, cricket::kPcmuCodecName, 8000, 0, 1);
+  const cricket::VideoCodec dummy_video(96, cricket::kVp8CodecName);
   local_audio_description_.AddCodec(dummy_audio);
   remote_audio_description_.AddCodec(dummy_audio);
   local_video_description_.AddCodec(dummy_video);

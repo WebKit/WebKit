@@ -30,6 +30,7 @@ namespace aec3 {
 // Filter core for the matched filter that is optimized for NEON.
 void MatchedFilterCore_NEON(size_t x_start_index,
                             float x2_sum_threshold,
+                            float smoothing,
                             rtc::ArrayView<const float> x,
                             rtc::ArrayView<const float> y,
                             rtc::ArrayView<float> h,
@@ -43,6 +44,7 @@ void MatchedFilterCore_NEON(size_t x_start_index,
 // Filter core for the matched filter that is optimized for SSE2.
 void MatchedFilterCore_SSE2(size_t x_start_index,
                             float x2_sum_threshold,
+                            float smoothing,
                             rtc::ArrayView<const float> x,
                             rtc::ArrayView<const float> y,
                             rtc::ArrayView<float> h,
@@ -54,6 +56,7 @@ void MatchedFilterCore_SSE2(size_t x_start_index,
 // Filter core for the matched filter.
 void MatchedFilterCore(size_t x_start_index,
                        float x2_sum_threshold,
+                       float smoothing,
                        rtc::ArrayView<const float> x,
                        rtc::ArrayView<const float> y,
                        rtc::ArrayView<float> h,
@@ -87,7 +90,9 @@ class MatchedFilter {
                 size_t window_size_sub_blocks,
                 int num_matched_filters,
                 size_t alignment_shift_sub_blocks,
-                float excitation_limit);
+                float excitation_limit,
+                float smoothing,
+                float matching_filter_threshold);
 
   ~MatchedFilter();
 
@@ -122,6 +127,8 @@ class MatchedFilter {
   std::vector<LagEstimate> lag_estimates_;
   std::vector<size_t> filters_offsets_;
   const float excitation_limit_;
+  const float smoothing_;
+  const float matching_filter_threshold_;
 
   RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(MatchedFilter);
 };

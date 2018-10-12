@@ -10,9 +10,10 @@
 
 #include "modules/video_coding/codecs/test/objc_codec_factory_helper.h"
 
-#import "WebRTC/RTCVideoCodecH264.h"
-#include "sdk/objc/Framework/Native/api/video_decoder_factory.h"
-#include "sdk/objc/Framework/Native/api/video_encoder_factory.h"
+#import "sdk/objc/components/video_codec/RTCVideoDecoderFactoryH264.h"
+#import "sdk/objc/components/video_codec/RTCVideoEncoderFactoryH264.h"
+#include "sdk/objc/native/api/video_decoder_factory.h"
+#include "sdk/objc/native/api/video_encoder_factory.h"
 
 namespace webrtc {
 namespace test {

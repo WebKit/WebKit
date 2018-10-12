@@ -29,15 +29,13 @@ class TargetTransferRateObserver {
 // optional to use for a network controller implementation.
 struct NetworkControllerConfig {
   // The initial constraints to start with, these can be changed at any later
-  // time by calls to OnTargetRateConstraints.
+  // time by calls to OnTargetRateConstraints. Note that the starting rate
+  // has to be set initially to provide a starting state for the network
+  // controller, even though the field is marked as optional.
   TargetRateConstraints constraints;
   // Initial stream specific configuration, these are changed at any later time
   // by calls to OnStreamsConfig.
   StreamsConfig stream_based_config;
-  // The initial bandwidth estimate to base target rate on. This should be used
-  // as the basis for initial OnTargetTransferRate and OnPacerConfig callbacks.
-  // Note that starting rate is only provided on construction.
-  DataRate starting_bandwidth = DataRate::Infinity();
 };
 
 // NetworkControllerInterface is implemented by network controllers. A network

@@ -92,8 +92,6 @@ class BitrateController : public Module, public RtcpBandwidthObserver {
   // this bandwidth excludes packet headers.
   virtual bool AvailableBandwidth(uint32_t* bandwidth) const = 0;
 
-  virtual void SetReservedBitrate(uint32_t reserved_bitrate_bps) = 0;
-
   virtual bool GetNetworkParameters(uint32_t* bitrate,
                                     uint8_t* fraction_loss,
                                     int64_t* rtt) = 0;

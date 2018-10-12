@@ -102,12 +102,7 @@ extern const int CONNECTION_RESPONSE_TIMEOUT;
 // The minimum time we will wait before destroying a connection after creating
 // it.
 extern const int MIN_CONNECTION_LIFETIME;
-// TODO(qingsi): Rename all constants to kConstant style.
-//
-// The maximum time in milliseconds we will wait before signaling any address
-// ports and candidates gathered from these ports, if the candidate allocation
-// is not done yet.
-extern const int kMaxWaitMsBeforeSignalingAnyAddressPortsAndCandidates;
+
 }  // namespace cricket
 
 #endif  // P2P_BASE_P2PCONSTANTS_H_

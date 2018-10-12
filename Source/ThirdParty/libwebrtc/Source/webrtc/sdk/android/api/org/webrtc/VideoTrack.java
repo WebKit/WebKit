@@ -10,8 +10,8 @@
 
 package org.webrtc;
 
-import java.util.IdentityHashMap;
 import java.util.ArrayList;
+import java.util.IdentityHashMap;
 import java.util.List;
 
 /** Java version of VideoTrackInterface. */
@@ -39,7 +39,7 @@ public class VideoTrack extends MediaStreamTrack {
     if (!sinks.containsKey(sink)) {
       final long nativeSink = nativeWrapSink(sink);
       sinks.put(sink, nativeSink);
-      nativeAddSink(nativeTrack, nativeSink);
+      nativeAddSink(getNativeMediaStreamTrack(), nativeSink);
     }
   }
 
@@ -51,7 +51,7 @@ public class VideoTrack extends MediaStreamTrack {
   public void removeSink(VideoSink sink) {
     final Long nativeSink = sinks.remove(sink);
     if (nativeSink != null) {
-      nativeRemoveSink(nativeTrack, nativeSink);
+      nativeRemoveSink(getNativeMediaStreamTrack(), nativeSink);
       nativeFreeSink(nativeSink);
     }
   }
@@ -59,11 +59,16 @@ public class VideoTrack extends MediaStreamTrack {
   @Override
   public void dispose() {
     for (long nativeSink : sinks.values()) {
-      nativeRemoveSink(nativeTrack, nativeSink);
+      nativeRemoveSink(getNativeMediaStreamTrack(), nativeSink);
       nativeFreeSink(nativeSink);
     }
     sinks.clear();
     super.dispose();
+  }
+
+  /** Returns a pointer to webrtc::VideoTrackInterface. */
+  long getNativeVideoTrack() {
+    return getNativeMediaStreamTrack();
   }
 
   private static native void nativeAddSink(long track, long nativeSink);

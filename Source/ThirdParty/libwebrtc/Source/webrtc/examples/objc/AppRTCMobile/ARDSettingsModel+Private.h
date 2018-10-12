@@ -9,6 +9,7 @@
  */
 
 #import <Foundation/Foundation.h>
+
 #import "ARDSettingsModel.h"
 
 @class ARDSettingsStore;

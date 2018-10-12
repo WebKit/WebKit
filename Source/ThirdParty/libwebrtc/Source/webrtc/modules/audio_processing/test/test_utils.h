@@ -15,6 +15,7 @@
 #include <iterator>
 #include <limits>
 #include <memory>
+#include <sstream>  // no-presubmit-check TODO(webrtc:8982)
 #include <string>
 #include <vector>
 

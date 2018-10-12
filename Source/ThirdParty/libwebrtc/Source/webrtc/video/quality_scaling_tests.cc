@@ -100,8 +100,8 @@ void QualityScalingTest::RunTest(VideoEncoderFactory* encoder_factory,
     // Called when FrameGeneratorCapturer::AddOrUpdateSink is called.
     void OnSinkWantsChanged(rtc::VideoSinkInterface<VideoFrame>* sink,
                             const rtc::VideoSinkWants& wants) override {
-      EXPECT_LT(wants.max_pixel_count, kWidth * kHeight) << "Not a downscale.";
-      observation_complete_.Set();
+      if (wants.max_pixel_count < kWidth * kHeight)
+        observation_complete_.Set();
     }
     void ModifySenderCallConfig(Call::Config* config) override {
       config->bitrate_config.start_bitrate_bps = start_bps_;

@@ -189,7 +189,7 @@ BandwidthSampler::ConnectionStateOnSentPacket::ConnectionStateOnSentPacket(
       is_app_limited(sampler.is_app_limited_) {}
 
 BandwidthSampler::ConnectionStateOnSentPacket::ConnectionStateOnSentPacket()
-    : sent_time(Timestamp::ms(0)),
+    : sent_time(Timestamp::MinusInfinity()),
       size(DataSize::Zero()),
       total_data_sent(DataSize::Zero()),
       total_data_sent_at_last_acked_packet(DataSize::Zero()),

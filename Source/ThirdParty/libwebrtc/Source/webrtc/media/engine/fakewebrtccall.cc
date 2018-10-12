@@ -17,7 +17,6 @@
 #include "media/base/rtputils.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/gunit.h"
-#include "rtc_base/platform_file.h"
 
 namespace cricket {
 FakeAudioSendStream::FakeAudioSendStream(
@@ -218,13 +217,6 @@ webrtc::VideoSendStream::Stats FakeVideoSendStream::GetStats() {
   return stats_;
 }
 
-void FakeVideoSendStream::EnableEncodedFrameRecording(
-    const std::vector<rtc::PlatformFile>& files,
-    size_t byte_limit) {
-  for (rtc::PlatformFile file : files)
-    rtc::ClosePlatformFile(file);
-}
-
 void FakeVideoSendStream::ReconfigureVideoEncoder(
     webrtc::VideoEncoderConfig config) {
   int width, height;
@@ -358,11 +350,6 @@ void FakeVideoReceiveStream::SetStats(
   stats_ = stats;
 }
 
-void FakeVideoReceiveStream::EnableEncodedFrameRecording(rtc::PlatformFile file,
-                                                         size_t byte_limit) {
-  rtc::ClosePlatformFile(file);
-}
-
 void FakeVideoReceiveStream::AddSecondarySink(
     webrtc::RtpPacketSinkInterface* sink) {
   ++num_added_secondary_sinks_;
@@ -403,9 +390,7 @@ FakeCall::FakeCall()
     : audio_network_state_(webrtc::kNetworkUp),
       video_network_state_(webrtc::kNetworkUp),
       num_created_send_streams_(0),
-      num_created_receive_streams_(0),
-      audio_transport_overhead_(0),
-      video_transport_overhead_(0) {}
+      num_created_receive_streams_(0) {}
 
 FakeCall::~FakeCall() {
   EXPECT_EQ(0u, video_send_streams_.size());
@@ -648,21 +633,8 @@ void FakeCall::SignalChannelNetworkState(webrtc::MediaType media,
   }
 }
 
-void FakeCall::OnTransportOverheadChanged(webrtc::MediaType media,
-                                          int transport_overhead_per_packet) {
-  switch (media) {
-    case webrtc::MediaType::AUDIO:
-      audio_transport_overhead_ = transport_overhead_per_packet;
-      break;
-    case webrtc::MediaType::VIDEO:
-      video_transport_overhead_ = transport_overhead_per_packet;
-      break;
-    case webrtc::MediaType::DATA:
-    case webrtc::MediaType::ANY:
-      ADD_FAILURE()
-          << "SignalChannelNetworkState called with unknown parameter.";
-  }
-}
+void FakeCall::OnAudioTransportOverheadChanged(
+    int transport_overhead_per_packet) {}
 
 void FakeCall::OnSentPacket(const rtc::SentPacket& sent_packet) {
   last_sent_packet_ = sent_packet;

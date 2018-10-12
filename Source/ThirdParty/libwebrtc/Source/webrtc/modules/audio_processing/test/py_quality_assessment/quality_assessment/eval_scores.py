@@ -41,6 +41,7 @@ class EvaluationScore(object):
     self._tested_signal_filepath = None
     self._output_filepath = None
     self._score = None
+    self._render_signal_filepath = None
 
   @classmethod
   def RegisterClass(cls, class_to_register):
@@ -87,6 +88,14 @@ class EvaluationScore(object):
       filepath: path to the test audio track.
     """
     self._tested_signal_filepath = filepath
+
+  def SetRenderSignalFilepath(self, filepath):
+    """Sets the path to the audio track used as render signal.
+
+    Args:
+      filepath: path to the test audio track.
+    """
+    self._render_signal_filepath = filepath
 
   def Run(self, output_path):
     """Extracts the score for the set test data pair.
@@ -182,6 +191,68 @@ class MeanAudioLevelScore(EvaluationScore):
     self._score = dbfs_diffs_sum / float(seconds)
     self._SaveScore()
 
+
+@EvaluationScore.RegisterClass
+class EchoMetric(EvaluationScore):
+  """Echo score.
+
+  Proportion of detected echo.
+
+  Unit: ratio
+  Ideal: 0
+  Worst case: 1
+  """
+
+  NAME = 'echo_metric'
+
+  def __init__(self, score_filename_prefix, echo_detector_bin_filepath):
+    EvaluationScore.__init__(self, score_filename_prefix)
+
+    # POLQA binary file path.
+    self._echo_detector_bin_filepath = echo_detector_bin_filepath
+    if not os.path.exists(self._echo_detector_bin_filepath):
+      logging.error('cannot find EchoMetric tool binary file')
+      raise exceptions.FileNotFoundError()
+
+    self._echo_detector_bin_path, _ = os.path.split(
+        self._echo_detector_bin_filepath)
+
+  def _Run(self, output_path):
+    echo_detector_out_filepath = os.path.join(output_path, 'echo_detector.out')
+    if os.path.exists(echo_detector_out_filepath):
+      os.unlink(echo_detector_out_filepath)
+
+    logging.debug("Render signal filepath: %s", self._render_signal_filepath)
+    if not os.path.exists(self._render_signal_filepath):
+      logging.error("Render input required for evaluating the echo metric.")
+
+    args = [
+        self._echo_detector_bin_filepath,
+        '--output_file', echo_detector_out_filepath,
+        '--',
+        '-i', self._tested_signal_filepath,
+        '-ri', self._render_signal_filepath
+    ]
+    logging.debug(' '.join(args))
+    subprocess.call(args, cwd=self._echo_detector_bin_path)
+
+    # Parse Echo detector tool output and extract the score.
+    self._score = self._ParseOutputFile(echo_detector_out_filepath)
+    self._SaveScore()
+
+  @classmethod
+  def _ParseOutputFile(cls, echo_metric_file_path):
+    """
+    Parses the POLQA tool output formatted as a table ('-t' option).
+
+    Args:
+      polqa_out_filepath: path to the POLQA tool output file.
+
+    Returns:
+      The score as a number in [0, 1].
+    """
+    with open(echo_metric_file_path) as f:
+      return float(f.read())
 
 @EvaluationScore.RegisterClass
 class PolqaScore(EvaluationScore):

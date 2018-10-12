@@ -17,6 +17,8 @@
 
 namespace webrtc {
 
+class AudioDeviceModuleForTest;
+
 class AudioDeviceModule : public rtc::RefCountInterface {
  public:
   // Deprecated.
@@ -46,8 +48,12 @@ class AudioDeviceModule : public rtc::RefCountInterface {
   enum ChannelType { kChannelLeft = 0, kChannelRight = 1, kChannelBoth = 2 };
 
  public:
-  // Creates an ADM.
+  // Creates a default ADM for usage in production code.
   static rtc::scoped_refptr<AudioDeviceModule> Create(
+      const AudioLayer audio_layer);
+  // Creates an ADM with support for extra test methods. Don't use this factory
+  // in production code.
+  static rtc::scoped_refptr<AudioDeviceModuleForTest> CreateForTest(
       const AudioLayer audio_layer);
   // TODO(bugs.webrtc.org/7306): deprecated (to be removed).
   static rtc::scoped_refptr<AudioDeviceModule> Create(
@@ -156,6 +162,20 @@ class AudioDeviceModule : public rtc::RefCountInterface {
 
  protected:
   ~AudioDeviceModule() override {}
+};
+
+// Extends the default ADM interface with some extra test methods.
+// Intended for usage in tests only and requires a unique factory method.
+class AudioDeviceModuleForTest : public AudioDeviceModule {
+ public:
+  // Triggers internal restart sequences of audio streaming. Can be used by
+  // tests to emulate events corresponding to e.g. removal of an active audio
+  // device or other actions which causes the stream to be disconnected.
+  virtual int RestartPlayoutInternally() = 0;
+  virtual int RestartRecordingInternally() = 0;
+
+  virtual int SetPlayoutSampleRate(uint32_t sample_rate) = 0;
+  virtual int SetRecordingSampleRate(uint32_t sample_rate) = 0;
 };
 
 }  // namespace webrtc

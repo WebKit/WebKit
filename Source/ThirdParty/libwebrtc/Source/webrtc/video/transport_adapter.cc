@@ -20,6 +20,8 @@ TransportAdapter::TransportAdapter(Transport* transport)
   RTC_DCHECK(nullptr != transport);
 }
 
+TransportAdapter::~TransportAdapter() = default;
+
 bool TransportAdapter::SendRtp(const uint8_t* packet,
                                size_t length,
                                const PacketOptions& options) {

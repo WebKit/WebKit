@@ -16,7 +16,6 @@
 
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
-#include "api/test/fakeconstraints.h"
 #include "api/video_codecs/builtin_video_decoder_factory.h"
 #include "api/video_codecs/builtin_video_encoder_factory.h"
 #include "examples/peerconnection/client/defaults.h"
@@ -25,8 +24,8 @@
 #include "modules/audio_processing/include/audio_processing.h"
 #include "modules/video_capture/video_capture_factory.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/json.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/strings/json.h"
 
 // Names used for a IceCandidate JSON object.
 const char kCandidateSdpMidName[] = "sdpMid";

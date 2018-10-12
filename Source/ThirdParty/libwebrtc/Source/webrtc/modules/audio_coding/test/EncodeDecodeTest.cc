@@ -13,13 +13,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <memory>
-#include <sstream>  // no-presubmit-check TODO(webrtc:8982)
 
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
+#include "api/audio_codecs/builtin_audio_encoder_factory.h"
 #include "common_types.h"  // NOLINT(build/include)
 #include "modules/audio_coding/codecs/audio_format_conversion.h"
 #include "modules/audio_coding/include/audio_coding_module.h"
 #include "modules/audio_coding/test/utility.h"
+#include "rtc_base/strings/string_builder.h"
 #include "test/gtest.h"
 #include "test/testsupport/fileutils.h"
 
@@ -74,7 +75,8 @@ void Sender::Setup(AudioCodingModule *acm, RTPStream *rtpStream,
 
   sendCodec.channels = channels;
 
-  EXPECT_EQ(0, acm->RegisterSendCodec(sendCodec));
+  acm->SetEncoder(CreateBuiltinAudioEncoderFactory()->MakeAudioEncoder(
+      sendCodec.pltype, CodecInstToSdp(sendCodec), absl::nullopt));
   _packetization = new TestPacketization(rtpStream, sendCodec.plfreq);
   EXPECT_EQ(0, acm->RegisterTransportCallback(_packetization));
 
@@ -131,7 +133,7 @@ void Receiver::Setup(AudioCodingModule *acm, RTPStream *rtpStream,
 
   int playSampFreq;
   std::string file_name;
-  std::stringstream file_stream;
+  rtc::StringBuilder file_stream;
   file_stream << webrtc::test::OutputPath() << out_file_name
       << static_cast<int>(codeId) << ".pcm";
   file_name = file_stream.str();

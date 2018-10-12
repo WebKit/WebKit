@@ -43,16 +43,13 @@ class MessageQueueManager {
   static void Remove(MessageQueue* message_queue);
   static void Clear(MessageHandler* handler);
 
-  // For testing purposes, we expose whether or not the MessageQueueManager
-  // instance has been initialized. It has no other use relative to the rest of
-  // the functions of this class, which auto-initialize the underlying
-  // MessageQueueManager instance when necessary.
-  static bool IsInitialized();
+  // TODO(nisse): Delete alias, as soon as downstream code is updated.
+  static void ProcessAllMessageQueues() { ProcessAllMessageQueuesForTesting(); }
 
-  // Mainly for testing purposes, for use with a simulated clock.
+  // For testing purposes, for use with a simulated clock.
   // Ensures that all message queues have processed delayed messages
   // up until the current point in time.
-  static void ProcessAllMessageQueues();
+  static void ProcessAllMessageQueuesForTesting();
 
  private:
   static MessageQueueManager* Instance();
@@ -65,7 +62,6 @@ class MessageQueueManager {
   void ClearInternal(MessageHandler* handler);
   void ProcessAllMessageQueuesInternal();
 
-  static MessageQueueManager* instance_;
   // This list contains all live MessageQueues.
   std::vector<MessageQueue*> message_queues_ RTC_GUARDED_BY(crit_);
 
@@ -226,7 +222,7 @@ class MessageQueue {
   // Not all message queues actually process messages (such as SignalThread).
   // In those cases, it's important to know, before posting, that it won't be
   // Processed.  Normally, this would be true until IsQuitting() is true.
-  virtual bool IsProcessingMessages();
+  virtual bool IsProcessingMessagesForTesting();
 
   // Get() will process I/O until:
   //  1) A message is available (returns true)
@@ -302,9 +298,15 @@ class MessageQueue {
   // if false was passed as init_queue to the MessageQueue constructor.
   void DoInit();
 
-  // Perform cleanup, subclasses that override Clear must call this from the
-  // destructor.
-  void DoDestroy();
+  // Does not take any lock. Must be called either while holding crit_, or by
+  // the destructor (by definition, the latter has exclusive access).
+  void ClearInternal(MessageHandler* phandler,
+                     uint32_t id,
+                     MessageList* removed) RTC_EXCLUSIVE_LOCKS_REQUIRED(&crit_);
+
+  // Perform cleanup; subclasses must call this from the destructor,
+  // and are not expected to actually hold the lock.
+  void DoDestroy() RTC_EXCLUSIVE_LOCKS_REQUIRED(&crit_);
 
   void WakeUpSocketServer();
 

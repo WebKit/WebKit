@@ -55,6 +55,7 @@ class AlrDetector {
   void UpdateBudgetWithBytesSent(size_t bytes_sent);
 
  private:
+  friend class GoogCcStatePrinter;
   int bandwidth_usage_percent_;
   int alr_start_budget_level_percent_;
   int alr_stop_budget_level_percent_;

@@ -14,8 +14,15 @@ import sys
 import tempfile
 
 
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-SRC_DIR = os.path.normpath(os.path.join(SCRIPT_DIR, os.pardir, os.pardir))
+def FindSrcDirPath():
+  """Returns the abs path to the src/ dir of the project."""
+  src_dir = os.path.dirname(os.path.abspath(__file__))
+  while os.path.basename(src_dir) != 'src':
+    src_dir = os.path.normpath(os.path.join(src_dir, os.pardir))
+  return src_dir
+
+
+SRC_DIR = FindSrcDirPath()
 sys.path.append(os.path.join(SRC_DIR, 'build'))
 import find_depot_tools
 

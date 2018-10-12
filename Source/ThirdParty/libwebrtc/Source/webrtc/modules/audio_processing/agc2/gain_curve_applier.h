@@ -39,6 +39,11 @@ class GainCurveApplier {
   //   per_sample_scaling_factors_ array.
   void SetSampleRate(size_t sample_rate_hz);
 
+  // Resets the internal state.
+  void Reset();
+
+  float LastAudioLevel() const;
+
  private:
   const InterpolatedGainCurve interp_gain_curve_;
   FixedDigitalLevelEstimator level_estimator_;

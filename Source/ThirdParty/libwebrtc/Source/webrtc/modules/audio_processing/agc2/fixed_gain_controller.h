@@ -29,6 +29,7 @@ class FixedGainController {
   // with any other method call).
   void SetGain(float gain_to_apply_db);
   void SetSampleRate(size_t sample_rate_hz);
+  float LastAudioLevel() const;
 
  private:
   float gain_to_apply_ = 1.f;

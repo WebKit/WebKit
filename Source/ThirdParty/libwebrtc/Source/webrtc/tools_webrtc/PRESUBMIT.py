@@ -6,6 +6,7 @@
 # in the file PATENTS.  All contributing project authors may
 # be found in the AUTHORS file in the root of the source tree.
 
+
 def _LicenseHeader(input_api):
   """Returns the license header regexp."""
   # Accept any year number from 2003 to the current year

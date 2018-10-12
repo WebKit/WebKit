@@ -13,6 +13,7 @@
 #include <memory>
 
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
+#include "rtc_base/strings/string_builder.h"
 #include "test/gtest.h"
 #include "test/testsupport/fileutils.h"
 
@@ -34,7 +35,7 @@ void ReceiverWithPacketLoss::Setup(AudioCodingModule* acm,
   loss_rate_ = loss_rate;
   burst_length_ = burst_length;
   burst_lost_counter_ = burst_length_;  // To prevent first packet gets lost.
-  std::stringstream ss;
+  rtc::StringBuilder ss;
   ss << out_file_name << "_" << loss_rate_ << "_" << burst_length_ << "_";
   Receiver::Setup(acm, rtpStream, ss.str(), channels);
 }
@@ -97,10 +98,13 @@ void SenderWithFEC::Setup(AudioCodingModule* acm,
 }
 
 bool SenderWithFEC::SetFEC(bool enable_fec) {
-  if (_acm->SetCodecFEC(enable_fec) == 0) {
-    return true;
-  }
-  return false;
+  bool success = false;
+  _acm->ModifyEncoder([&](std::unique_ptr<AudioEncoder>* enc) {
+    if (*enc && (*enc)->SetFec(enable_fec)) {
+      success = true;
+    }
+  });
+  return success;
 }
 
 bool SenderWithFEC::SetPacketLossRate(int expected_loss_rate) {

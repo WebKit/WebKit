@@ -20,6 +20,7 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/format_macros.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/timeutils.h"
 #include "system_wrappers/include/metrics.h"
 
@@ -66,8 +67,6 @@ AudioDeviceBuffer::AudioDeviceBuffer()
   RTC_LOG(WARNING) << "AUDIO_DEVICE_PLAYS_SINUS_TONE is defined!";
 #endif
   WebRtcSpl_Init();
-  playout_thread_checker_.DetachFromThread();
-  recording_thread_checker_.DetachFromThread();
 }
 
 AudioDeviceBuffer::~AudioDeviceBuffer() {
@@ -98,7 +97,6 @@ void AudioDeviceBuffer::StartPlayout() {
     return;
   }
   RTC_LOG(INFO) << __FUNCTION__;
-  playout_thread_checker_.DetachFromThread();
   // Clear members tracking playout stats and do it on the task queue.
   task_queue_.PostTask([this] { ResetPlayStats(); });
   // Start a periodic timer based on task queue if not already done by the
@@ -118,7 +116,6 @@ void AudioDeviceBuffer::StartRecording() {
     return;
   }
   RTC_LOG(INFO) << __FUNCTION__;
-  recording_thread_checker_.DetachFromThread();
   // Clear members tracking recording stats and do it on the task queue.
   task_queue_.PostTask([this] { ResetRecStats(); });
   // Start a periodic timer based on task queue if not already done by the
@@ -181,78 +178,57 @@ void AudioDeviceBuffer::StopRecording() {
 }
 
 int32_t AudioDeviceBuffer::SetRecordingSampleRate(uint32_t fsHz) {
-  RTC_DCHECK(main_thread_checker_.CalledOnValidThread());
   RTC_LOG(INFO) << "SetRecordingSampleRate(" << fsHz << ")";
   rec_sample_rate_ = fsHz;
   return 0;
 }
 
 int32_t AudioDeviceBuffer::SetPlayoutSampleRate(uint32_t fsHz) {
-  RTC_DCHECK(main_thread_checker_.CalledOnValidThread());
   RTC_LOG(INFO) << "SetPlayoutSampleRate(" << fsHz << ")";
   play_sample_rate_ = fsHz;
   return 0;
 }
 
-int32_t AudioDeviceBuffer::RecordingSampleRate() const {
-  RTC_DCHECK(main_thread_checker_.CalledOnValidThread());
+uint32_t AudioDeviceBuffer::RecordingSampleRate() const {
   return rec_sample_rate_;
 }
 
-int32_t AudioDeviceBuffer::PlayoutSampleRate() const {
-  RTC_DCHECK(main_thread_checker_.CalledOnValidThread());
+uint32_t AudioDeviceBuffer::PlayoutSampleRate() const {
   return play_sample_rate_;
 }
 
 int32_t AudioDeviceBuffer::SetRecordingChannels(size_t channels) {
-  RTC_DCHECK(main_thread_checker_.CalledOnValidThread());
   RTC_LOG(INFO) << "SetRecordingChannels(" << channels << ")";
   rec_channels_ = channels;
   return 0;
 }
 
 int32_t AudioDeviceBuffer::SetPlayoutChannels(size_t channels) {
-  RTC_DCHECK(main_thread_checker_.CalledOnValidThread());
   RTC_LOG(INFO) << "SetPlayoutChannels(" << channels << ")";
   play_channels_ = channels;
   return 0;
 }
 
 size_t AudioDeviceBuffer::RecordingChannels() const {
-  RTC_DCHECK(main_thread_checker_.CalledOnValidThread());
   return rec_channels_;
 }
 
 size_t AudioDeviceBuffer::PlayoutChannels() const {
-  RTC_DCHECK(main_thread_checker_.CalledOnValidThread());
   return play_channels_;
 }
 
 int32_t AudioDeviceBuffer::SetTypingStatus(bool typing_status) {
-  RTC_DCHECK_RUN_ON(&recording_thread_checker_);
   typing_status_ = typing_status;
   return 0;
 }
 
-void AudioDeviceBuffer::NativeAudioPlayoutInterrupted() {
-  RTC_DCHECK(main_thread_checker_.CalledOnValidThread());
-  playout_thread_checker_.DetachFromThread();
-}
-
-void AudioDeviceBuffer::NativeAudioRecordingInterrupted() {
-  RTC_DCHECK(main_thread_checker_.CalledOnValidThread());
-  recording_thread_checker_.DetachFromThread();
-}
-
 void AudioDeviceBuffer::SetVQEData(int play_delay_ms, int rec_delay_ms) {
-  RTC_DCHECK_RUN_ON(&recording_thread_checker_);
   play_delay_ms_ = play_delay_ms;
   rec_delay_ms_ = rec_delay_ms;
 }
 
 int32_t AudioDeviceBuffer::SetRecordedBuffer(const void* audio_buffer,
                                              size_t samples_per_channel) {
-  RTC_DCHECK_RUN_ON(&recording_thread_checker_);
   // Copy the complete input buffer to the local buffer.
   const size_t old_size = rec_buffer_.size();
   rec_buffer_.SetData(static_cast<const int16_t*>(audio_buffer),
@@ -284,7 +260,6 @@ int32_t AudioDeviceBuffer::SetRecordedBuffer(const void* audio_buffer,
 }
 
 int32_t AudioDeviceBuffer::DeliverRecordedData() {
-  RTC_DCHECK_RUN_ON(&recording_thread_checker_);
   if (!audio_transport_cb_) {
     RTC_LOG(LS_WARNING) << "Invalid audio transport";
     return 0;
@@ -304,7 +279,6 @@ int32_t AudioDeviceBuffer::DeliverRecordedData() {
 }
 
 int32_t AudioDeviceBuffer::RequestPlayoutData(size_t samples_per_channel) {
-  RTC_DCHECK_RUN_ON(&playout_thread_checker_);
   // The consumer can change the requested size on the fly and we therefore
   // resize the buffer accordingly. Also takes place at the first call to this
   // method.
@@ -349,7 +323,6 @@ int32_t AudioDeviceBuffer::RequestPlayoutData(size_t samples_per_channel) {
 }
 
 int32_t AudioDeviceBuffer::GetPlayoutData(void* audio_buffer) {
-  RTC_DCHECK_RUN_ON(&playout_thread_checker_);
   RTC_DCHECK_GT(play_buffer_.size(), 0);
 #ifdef AUDIO_DEVICE_PLAYS_SINUS_TONE
   const double phase_increment =
@@ -419,28 +392,53 @@ void AudioDeviceBuffer::LogStats(LogState state) {
     stats_.max_play_level = 0;
   }
 
-  // Log the latest statistics but skip the first round just after state was
-  // set to LOG_START. Hence, first printed log will be after ~10 seconds.
-  if (++num_stat_reports_ > 1 && time_since_last > 0) {
+  // Cache current sample rate from atomic members.
+  const uint32_t rec_sample_rate = rec_sample_rate_;
+  const uint32_t play_sample_rate = play_sample_rate_;
+
+  // Log the latest statistics but skip the first two rounds just after state
+  // was set to LOG_START to ensure that we have at least one full stable
+  // 10-second interval for sample-rate estimation. Hence, first printed log
+  // will be after ~20 seconds.
+  if (++num_stat_reports_ > 2 &&
+      static_cast<size_t>(time_since_last) > kTimerIntervalInMilliseconds / 2) {
     uint32_t diff_samples = stats.rec_samples - last_stats_.rec_samples;
     float rate = diff_samples / (static_cast<float>(time_since_last) / 1000.0);
-    RTC_LOG(INFO) << "[REC : " << time_since_last << "msec, "
-                  << rec_sample_rate_ / 1000 << "kHz] callbacks: "
-                  << stats.rec_callbacks - last_stats_.rec_callbacks << ", "
-                  << "samples: " << diff_samples << ", "
-                  << "rate: " << static_cast<int>(rate + 0.5) << ", "
-                  << "level: " << stats.max_rec_level;
+    uint32_t abs_diff_rate_in_percent = 0;
+    if (rec_sample_rate > 0 && rate > 0) {
+      abs_diff_rate_in_percent = static_cast<uint32_t>(
+          0.5f +
+          ((100.0f * std::abs(rate - rec_sample_rate)) / rec_sample_rate));
+      RTC_HISTOGRAM_PERCENTAGE("WebRTC.Audio.RecordSampleRateOffsetInPercent",
+                               abs_diff_rate_in_percent);
+      RTC_LOG(INFO) << "[REC : " << time_since_last << "msec, "
+                    << rec_sample_rate / 1000 << "kHz] callbacks: "
+                    << stats.rec_callbacks - last_stats_.rec_callbacks << ", "
+                    << "samples: " << diff_samples << ", "
+                    << "rate: " << static_cast<int>(rate + 0.5) << ", "
+                    << "rate diff: " << abs_diff_rate_in_percent << "%, "
+                    << "level: " << stats.max_rec_level;
+    }
 
     diff_samples = stats.play_samples - last_stats_.play_samples;
     rate = diff_samples / (static_cast<float>(time_since_last) / 1000.0);
-    RTC_LOG(INFO) << "[PLAY: " << time_since_last << "msec, "
-                  << play_sample_rate_ / 1000 << "kHz] callbacks: "
-                  << stats.play_callbacks - last_stats_.play_callbacks << ", "
-                  << "samples: " << diff_samples << ", "
-                  << "rate: " << static_cast<int>(rate + 0.5) << ", "
-                  << "level: " << stats.max_play_level;
-    last_stats_ = stats;
+    abs_diff_rate_in_percent = 0;
+    if (play_sample_rate > 0 && rate > 0) {
+      abs_diff_rate_in_percent = static_cast<uint32_t>(
+          0.5f +
+          ((100.0f * std::abs(rate - play_sample_rate)) / play_sample_rate));
+      RTC_HISTOGRAM_PERCENTAGE("WebRTC.Audio.PlayoutSampleRateOffsetInPercent",
+                               abs_diff_rate_in_percent);
+      RTC_LOG(INFO) << "[PLAY: " << time_since_last << "msec, "
+                    << play_sample_rate / 1000 << "kHz] callbacks: "
+                    << stats.play_callbacks - last_stats_.play_callbacks << ", "
+                    << "samples: " << diff_samples << ", "
+                    << "rate: " << static_cast<int>(rate + 0.5) << ", "
+                    << "rate diff: " << abs_diff_rate_in_percent << "%, "
+                    << "level: " << stats.max_play_level;
+    }
   }
+  last_stats_ = stats;
 
   int64_t time_to_wait_ms = next_callback_time - rtc::TimeMillis();
   RTC_DCHECK_GT(time_to_wait_ms, 0) << "Invalid timer interval";
@@ -467,7 +465,6 @@ void AudioDeviceBuffer::ResetPlayStats() {
 
 void AudioDeviceBuffer::UpdateRecStats(int16_t max_abs,
                                        size_t samples_per_channel) {
-  RTC_DCHECK_RUN_ON(&recording_thread_checker_);
   rtc::CritScope cs(&lock_);
   ++stats_.rec_callbacks;
   stats_.rec_samples += samples_per_channel;
@@ -478,7 +475,6 @@ void AudioDeviceBuffer::UpdateRecStats(int16_t max_abs,
 
 void AudioDeviceBuffer::UpdatePlayStats(int16_t max_abs,
                                         size_t samples_per_channel) {
-  RTC_DCHECK_RUN_ON(&playout_thread_checker_);
   rtc::CritScope cs(&lock_);
   ++stats_.play_callbacks;
   stats_.play_samples += samples_per_channel;

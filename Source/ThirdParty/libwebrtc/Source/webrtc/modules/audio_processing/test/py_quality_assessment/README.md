@@ -95,7 +95,7 @@ helps with that, producing plots similar to [this
 one](https://matplotlib.org/mpl_examples/pylab_examples/boxplot_demo_06.png).
 
 Suppose some scores come from running the APM simulator `audioproc_f` with
-or without the intelligibility enhancer: `--ie=1` or `--ie=0`. Then two boxplots
+or without the level controller: `--lc=1` or `--lc=0`. Then two boxplots
 side by side can be generated with
 
 ```
@@ -103,7 +103,7 @@ $ ./apm_quality_assessment_boxplot.py \
       -o /path/to/output
       -v <score_name>
       -n /path/to/dir/with/apm_configs
-      -z ie
+      -z lc
 ```
 
 ## Troubleshooting

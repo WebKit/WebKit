@@ -17,10 +17,8 @@
 
 #include "modules/rtp_rtcp/source/rtcp_transceiver_config.h"
 #include "modules/rtp_rtcp/source/rtcp_transceiver_impl.h"
-#include "rtc_base/constructormagic.h"
 #include "rtc_base/copyonwritebuffer.h"
 #include "rtc_base/task_queue.h"
-#include "rtc_base/weak_ptr.h"
 
 namespace webrtc {
 //
@@ -30,7 +28,21 @@ namespace webrtc {
 class RtcpTransceiver : public RtcpFeedbackSenderInterface {
  public:
   explicit RtcpTransceiver(const RtcpTransceiverConfig& config);
+  RtcpTransceiver(const RtcpTransceiver&) = delete;
+  RtcpTransceiver& operator=(const RtcpTransceiver&) = delete;
+  // Note that interfaces provided in constructor still might be used after the
+  // destructor. However they can only be used on the confic.task_queue.
+  // Use Stop function to get notified when they are no longer used or
+  // ensure those objects outlive the task queue.
   ~RtcpTransceiver() override;
+
+  // Start asynchronious destruction of the RtcpTransceiver.
+  // It is safe to call destructor right after Stop exits.
+  // No other methods can be called.
+  // Note that interfaces provided in constructor or registered with AddObserver
+  // still might be used by the transceiver on the task queue
+  // until |on_destroyed| runs.
+  void Stop(std::unique_ptr<rtc::QueuedTask> on_destroyed);
 
   // Registers observer to be notified about incoming rtcp packets.
   // Calls to observer will be done on the |config.task_queue|.
@@ -80,14 +92,6 @@ class RtcpTransceiver : public RtcpFeedbackSenderInterface {
  private:
   rtc::TaskQueue* const task_queue_;
   std::unique_ptr<RtcpTransceiverImpl> rtcp_transceiver_;
-  rtc::WeakPtrFactory<RtcpTransceiverImpl> ptr_factory_;
-  // TaskQueue, and thus tasks posted to it, may outlive this.
-  // Thus when Posting task class always pass copy of the weak_ptr to access
-  // the RtcpTransceiver and never guarantee it still will be alive when task
-  // runs.
-  rtc::WeakPtr<RtcpTransceiverImpl> ptr_;
-
-  RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(RtcpTransceiver);
 };
 
 }  // namespace webrtc

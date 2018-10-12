@@ -28,7 +28,6 @@
 #include "api/peerconnectioninterface.h"
 #include "api/peerconnectionproxy.h"
 #include "api/rtpreceiverinterface.h"
-#include "api/test/fakeconstraints.h"
 #include "api/video_codecs/builtin_video_decoder_factory.h"
 #include "api/video_codecs/builtin_video_encoder_factory.h"
 #include "api/video_codecs/sdp_video_format.h"
@@ -38,6 +37,7 @@
 #include "media/engine/fakewebrtcvideoengine.h"
 #include "media/engine/webrtcmediaengine.h"
 #include "modules/audio_processing/include/audio_processing.h"
+#include "p2p/base/mockasyncresolver.h"
 #include "p2p/base/p2pconstants.h"
 #include "p2p/base/portinterface.h"
 #include "p2p/base/teststunserver.h"
@@ -61,8 +61,9 @@
 #include "rtc_base/gunit.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/testcertificateverifier.h"
+#include "rtc_base/timeutils.h"
 #include "rtc_base/virtualsocketserver.h"
-#include "system_wrappers/include/metrics_default.h"
+#include "system_wrappers/include/metrics.h"
 #include "test/gmock.h"
 
 using cricket::ContentInfo;
@@ -75,15 +76,16 @@ using cricket::StreamParams;
 using rtc::SocketAddress;
 using ::testing::Combine;
 using ::testing::ElementsAre;
+using ::testing::Return;
+using ::testing::SetArgPointee;
 using ::testing::Values;
+using ::testing::_;
 using webrtc::DataBuffer;
 using webrtc::DataChannelInterface;
 using webrtc::DtmfSender;
 using webrtc::DtmfSenderInterface;
 using webrtc::DtmfSenderObserverInterface;
-using webrtc::FakeConstraints;
 using webrtc::FakeVideoTrackRenderer;
-using webrtc::MediaConstraintsInterface;
 using webrtc::MediaStreamInterface;
 using webrtc::MediaStreamTrackInterface;
 using webrtc::MockCreateSessionDescriptionObserver;
@@ -210,6 +212,17 @@ class MockRtpReceiverObserver : public webrtc::RtpReceiverObserverInterface {
   cricket::MediaType expected_media_type_;
 };
 
+// Used by PeerConnectionWrapper::OnIceCandidate to allow a test to modify an
+// ICE candidate before it is signaled.
+class IceCandidateReplacerInterface {
+ public:
+  virtual ~IceCandidateReplacerInterface() = default;
+  // Return nullptr to drop the candidate (it won't be signaled to the other
+  // side).
+  virtual std::unique_ptr<webrtc::IceCandidateInterface> ReplaceCandidate(
+      const webrtc::IceCandidateInterface*) = 0;
+};
+
 // Helper class that wraps a peer connection, observes it, and can accept
 // signaling messages from another wrapper.
 //
@@ -236,8 +249,8 @@ class PeerConnectionWrapper : public webrtc::PeerConnectionObserver,
     PeerConnectionWrapper* client(new PeerConnectionWrapper(debug_name));
     webrtc::PeerConnectionDependencies dependencies(nullptr);
     dependencies.cert_generator = std::move(cert_generator);
-    if (!client->Init(nullptr, nullptr, nullptr, std::move(dependencies),
-                      network_thread, worker_thread, nullptr)) {
+    if (!client->Init(nullptr, nullptr, std::move(dependencies), network_thread,
+                      worker_thread, nullptr)) {
       delete client;
       return nullptr;
     }
@@ -290,6 +303,11 @@ class PeerConnectionWrapper : public webrtc::PeerConnectionObserver,
     remote_offer_handler_ = std::move(handler);
   }
 
+  void SetLocalIceCandidateReplacer(
+      std::unique_ptr<IceCandidateReplacerInterface> replacer) {
+    local_ice_candidate_replacer_ = std::move(replacer);
+  }
+
   // Every ICE connection state in order that has been seen by the observer.
   std::vector<PeerConnectionInterface::IceConnectionState>
   ice_connection_state_history() const {
@@ -331,8 +349,9 @@ class PeerConnectionWrapper : public webrtc::PeerConnectionObserver,
   }
 
   rtc::scoped_refptr<webrtc::VideoTrackInterface> CreateLocalVideoTrack() {
-    return CreateLocalVideoTrackInternal(
-        webrtc::FakePeriodicVideoSource::Config());
+    webrtc::FakePeriodicVideoSource::Config config;
+    config.timestamp_offset_ms = rtc::TimeMillis();
+    return CreateLocalVideoTrackInternal(config);
   }
 
   rtc::scoped_refptr<webrtc::VideoTrackInterface>
@@ -345,6 +364,7 @@ class PeerConnectionWrapper : public webrtc::PeerConnectionObserver,
   CreateLocalVideoTrackWithRotation(webrtc::VideoRotation rotation) {
     webrtc::FakePeriodicVideoSource::Config config;
     config.rotation = rotation;
+    config.timestamp_offset_ms = rtc::TimeMillis();
     return CreateLocalVideoTrackInternal(config);
   }
 
@@ -561,8 +581,7 @@ class PeerConnectionWrapper : public webrtc::PeerConnectionObserver,
   explicit PeerConnectionWrapper(const std::string& debug_name)
       : debug_name_(debug_name) {}
 
-  bool Init(const MediaConstraintsInterface* constraints,
-            const PeerConnectionFactory::Options* options,
+  bool Init(const PeerConnectionFactory::Options* options,
             const PeerConnectionInterface::RTCConfiguration* config,
             webrtc::PeerConnectionDependencies dependencies,
             rtc::Thread* network_thread,
@@ -619,13 +638,11 @@ class PeerConnectionWrapper : public webrtc::PeerConnectionObserver,
     }
 
     dependencies.allocator = std::move(port_allocator);
-    peer_connection_ =
-        CreatePeerConnection(constraints, config, std::move(dependencies));
+    peer_connection_ = CreatePeerConnection(config, std::move(dependencies));
     return peer_connection_.get() != nullptr;
   }
 
   rtc::scoped_refptr<webrtc::PeerConnectionInterface> CreatePeerConnection(
-      const MediaConstraintsInterface* constraints,
       const PeerConnectionInterface::RTCConfiguration* config,
       webrtc::PeerConnectionDependencies dependencies) {
     PeerConnectionInterface::RTCConfiguration modified_config;
@@ -640,12 +657,6 @@ class PeerConnectionWrapper : public webrtc::PeerConnectionObserver,
     // ratios and not specific resolutions, is this even necessary?
     modified_config.set_cpu_adaptation(false);
 
-    // Use the legacy interface.
-    if (constraints != nullptr) {
-      return peer_connection_factory_->CreatePeerConnection(
-          modified_config, constraints, std::move(dependencies.allocator),
-          std::move(dependencies.cert_generator), this);
-    }
     dependencies.observer = this;
     return peer_connection_factory_->CreatePeerConnection(
         modified_config, std::move(dependencies));
@@ -907,16 +918,46 @@ class PeerConnectionWrapper : public webrtc::PeerConnectionObserver,
     EXPECT_EQ(pc()->ice_gathering_state(), new_state);
     ice_gathering_state_history_.push_back(new_state);
   }
+  std::unique_ptr<webrtc::IceCandidateInterface> ReplaceIceCandidate(
+      const webrtc::IceCandidateInterface* candidate) {
+    std::string candidate_string;
+    candidate->ToString(&candidate_string);
+
+    auto owned_candidate =
+        local_ice_candidate_replacer_->ReplaceCandidate(candidate);
+    if (!owned_candidate) {
+      RTC_LOG(LS_INFO) << "LocalIceCandidateReplacer dropped \""
+                       << candidate_string << "\"";
+      return nullptr;
+    }
+    std::string owned_candidate_string;
+    owned_candidate->ToString(&owned_candidate_string);
+    RTC_LOG(LS_INFO) << "LocalIceCandidateReplacer changed \""
+                     << candidate_string << "\" to \"" << owned_candidate_string
+                     << "\"";
+    return owned_candidate;
+  }
   void OnIceCandidate(const webrtc::IceCandidateInterface* candidate) override {
     RTC_LOG(LS_INFO) << debug_name_ << ": OnIceCandidate";
 
+    const webrtc::IceCandidateInterface* new_candidate = candidate;
+    std::unique_ptr<webrtc::IceCandidateInterface> owned_candidate;
+    if (local_ice_candidate_replacer_) {
+      owned_candidate = ReplaceIceCandidate(candidate);
+      if (!owned_candidate) {
+        return;  // The candidate was dropped.
+      }
+      new_candidate = owned_candidate.get();
+    }
+
     std::string ice_sdp;
-    EXPECT_TRUE(candidate->ToString(&ice_sdp));
+    EXPECT_TRUE(new_candidate->ToString(&ice_sdp));
     if (signaling_message_receiver_ == nullptr || !signal_ice_candidates_) {
       // Remote party may be deleted.
       return;
     }
-    SendIceMessage(candidate->sdp_mid(), candidate->sdp_mline_index(), ice_sdp);
+    SendIceMessage(new_candidate->sdp_mid(), new_candidate->sdp_mline_index(),
+                   ice_sdp);
   }
   void OnDataChannel(
       rtc::scoped_refptr<DataChannelInterface> data_channel) override {
@@ -960,7 +1001,7 @@ class PeerConnectionWrapper : public webrtc::PeerConnectionObserver,
   std::function<void(cricket::SessionDescription*)> received_sdp_munger_;
   std::function<void(cricket::SessionDescription*)> generated_sdp_munger_;
   std::function<void()> remote_offer_handler_;
-
+  std::unique_ptr<IceCandidateReplacerInterface> local_ice_candidate_replacer_;
   rtc::scoped_refptr<DataChannelInterface> data_channel_;
   std::unique_ptr<MockDataChannelObserver> data_observer_;
 
@@ -1154,7 +1195,6 @@ class PeerConnectionIntegrationBaseTest : public testing::Test {
   // log factory will be used.
   std::unique_ptr<PeerConnectionWrapper> CreatePeerConnectionWrapper(
       const std::string& debug_name,
-      const MediaConstraintsInterface* constraints,
       const PeerConnectionFactory::Options* options,
       const RTCConfiguration* config,
       webrtc::PeerConnectionDependencies dependencies,
@@ -1171,9 +1211,9 @@ class PeerConnectionIntegrationBaseTest : public testing::Test {
     std::unique_ptr<PeerConnectionWrapper> client(
         new PeerConnectionWrapper(debug_name));
 
-    if (!client->Init(constraints, options, &modified_config,
-                      std::move(dependencies), network_thread_.get(),
-                      worker_thread_.get(), std::move(event_log_factory))) {
+    if (!client->Init(options, &modified_config, std::move(dependencies),
+                      network_thread_.get(), worker_thread_.get(),
+                      std::move(event_log_factory))) {
       return nullptr;
     }
     return client;
@@ -1182,13 +1222,12 @@ class PeerConnectionIntegrationBaseTest : public testing::Test {
   std::unique_ptr<PeerConnectionWrapper>
   CreatePeerConnectionWrapperWithFakeRtcEventLog(
       const std::string& debug_name,
-      const MediaConstraintsInterface* constraints,
       const PeerConnectionFactory::Options* options,
       const RTCConfiguration* config,
       webrtc::PeerConnectionDependencies dependencies) {
     std::unique_ptr<webrtc::FakeRtcEventLogFactory> event_log_factory(
         new webrtc::FakeRtcEventLogFactory(rtc::Thread::Current()));
-    return CreatePeerConnectionWrapper(debug_name, constraints, options, config,
+    return CreatePeerConnectionWrapper(debug_name, options, config,
                                        std::move(dependencies),
                                        std::move(event_log_factory));
   }
@@ -1210,26 +1249,13 @@ class PeerConnectionIntegrationBaseTest : public testing::Test {
     SdpSemantics original_semantics = sdp_semantics_;
     sdp_semantics_ = caller_semantics;
     caller_ = CreatePeerConnectionWrapper(
-        "Caller", nullptr, nullptr, nullptr,
-        webrtc::PeerConnectionDependencies(nullptr), nullptr);
+        "Caller", nullptr, nullptr, webrtc::PeerConnectionDependencies(nullptr),
+        nullptr);
     sdp_semantics_ = callee_semantics;
     callee_ = CreatePeerConnectionWrapper(
-        "Callee", nullptr, nullptr, nullptr,
-        webrtc::PeerConnectionDependencies(nullptr), nullptr);
+        "Callee", nullptr, nullptr, webrtc::PeerConnectionDependencies(nullptr),
+        nullptr);
     sdp_semantics_ = original_semantics;
-    return caller_ && callee_;
-  }
-
-  bool CreatePeerConnectionWrappersWithConstraints(
-      MediaConstraintsInterface* caller_constraints,
-      MediaConstraintsInterface* callee_constraints) {
-    caller_ = CreatePeerConnectionWrapper(
-        "Caller", caller_constraints, nullptr, nullptr,
-        webrtc::PeerConnectionDependencies(nullptr), nullptr);
-    callee_ = CreatePeerConnectionWrapper(
-        "Callee", callee_constraints, nullptr, nullptr,
-        webrtc::PeerConnectionDependencies(nullptr), nullptr);
-
     return caller_ && callee_;
   }
 
@@ -1237,10 +1263,10 @@ class PeerConnectionIntegrationBaseTest : public testing::Test {
       const PeerConnectionInterface::RTCConfiguration& caller_config,
       const PeerConnectionInterface::RTCConfiguration& callee_config) {
     caller_ = CreatePeerConnectionWrapper(
-        "Caller", nullptr, nullptr, &caller_config,
+        "Caller", nullptr, &caller_config,
         webrtc::PeerConnectionDependencies(nullptr), nullptr);
     callee_ = CreatePeerConnectionWrapper(
-        "Callee", nullptr, nullptr, &callee_config,
+        "Callee", nullptr, &callee_config,
         webrtc::PeerConnectionDependencies(nullptr), nullptr);
     return caller_ && callee_;
   }
@@ -1251,10 +1277,10 @@ class PeerConnectionIntegrationBaseTest : public testing::Test {
       const PeerConnectionInterface::RTCConfiguration& callee_config,
       webrtc::PeerConnectionDependencies callee_dependencies) {
     caller_ =
-        CreatePeerConnectionWrapper("Caller", nullptr, nullptr, &caller_config,
+        CreatePeerConnectionWrapper("Caller", nullptr, &caller_config,
                                     std::move(caller_dependencies), nullptr);
     callee_ =
-        CreatePeerConnectionWrapper("Callee", nullptr, nullptr, &callee_config,
+        CreatePeerConnectionWrapper("Callee", nullptr, &callee_config,
                                     std::move(callee_dependencies), nullptr);
     return caller_ && callee_;
   }
@@ -1263,10 +1289,10 @@ class PeerConnectionIntegrationBaseTest : public testing::Test {
       const PeerConnectionFactory::Options& caller_options,
       const PeerConnectionFactory::Options& callee_options) {
     caller_ = CreatePeerConnectionWrapper(
-        "Caller", nullptr, &caller_options, nullptr,
+        "Caller", &caller_options, nullptr,
         webrtc::PeerConnectionDependencies(nullptr), nullptr);
     callee_ = CreatePeerConnectionWrapper(
-        "Callee", nullptr, &callee_options, nullptr,
+        "Callee", &callee_options, nullptr,
         webrtc::PeerConnectionDependencies(nullptr), nullptr);
     return caller_ && callee_;
   }
@@ -1274,10 +1300,10 @@ class PeerConnectionIntegrationBaseTest : public testing::Test {
   bool CreatePeerConnectionWrappersWithFakeRtcEventLog() {
     PeerConnectionInterface::RTCConfiguration default_config;
     caller_ = CreatePeerConnectionWrapperWithFakeRtcEventLog(
-        "Caller", nullptr, nullptr, &default_config,
+        "Caller", nullptr, &default_config,
         webrtc::PeerConnectionDependencies(nullptr));
     callee_ = CreatePeerConnectionWrapperWithFakeRtcEventLog(
-        "Callee", nullptr, nullptr, &default_config,
+        "Callee", nullptr, &default_config,
         webrtc::PeerConnectionDependencies(nullptr));
     return caller_ && callee_;
   }
@@ -1290,7 +1316,7 @@ class PeerConnectionIntegrationBaseTest : public testing::Test {
 
     webrtc::PeerConnectionDependencies dependencies(nullptr);
     dependencies.cert_generator = std::move(cert_generator);
-    return CreatePeerConnectionWrapper("New Peer", nullptr, nullptr, nullptr,
+    return CreatePeerConnectionWrapper("New Peer", nullptr, nullptr,
                                        std::move(dependencies), nullptr);
   }
 
@@ -1813,6 +1839,7 @@ TEST_P(PeerConnectionIntegrationTest,
   webrtc::FakePeriodicVideoSource::Config config;
   config.width = 1280;
   config.height = 720;
+  config.timestamp_offset_ms = rtc::TimeMillis();
   caller()->AddTrack(caller()->CreateLocalVideoTrackWithConfig(config));
   callee()->AddTrack(callee()->CreateLocalVideoTrackWithConfig(config));
 
@@ -2906,10 +2933,10 @@ TEST_P(PeerConnectionIntegrationTest, EndToEndCallWithGcmCipher) {
 // This test sets up a call between two parties with audio, video and an RTP
 // data channel.
 TEST_P(PeerConnectionIntegrationTest, EndToEndCallWithRtpDataChannel) {
-  FakeConstraints setup_constraints;
-  setup_constraints.SetAllowRtpDataChannels();
-  ASSERT_TRUE(CreatePeerConnectionWrappersWithConstraints(&setup_constraints,
-                                                          &setup_constraints));
+  PeerConnectionInterface::RTCConfiguration rtc_config;
+  rtc_config.enable_rtp_data_channel = true;
+  rtc_config.enable_dtls_srtp = false;
+  ASSERT_TRUE(CreatePeerConnectionWrappersWithConfig(rtc_config, rtc_config));
   ConnectFakeSignaling();
   // Expect that data channel created on caller side will show up for callee as
   // well.
@@ -2942,10 +2969,10 @@ TEST_P(PeerConnectionIntegrationTest, EndToEndCallWithRtpDataChannel) {
 TEST_P(PeerConnectionIntegrationTest,
        RtpDataChannelSignaledClosedInCalleeOffer) {
   // Same procedure as above test.
-  FakeConstraints setup_constraints;
-  setup_constraints.SetAllowRtpDataChannels();
-  ASSERT_TRUE(CreatePeerConnectionWrappersWithConstraints(&setup_constraints,
-                                                          &setup_constraints));
+  PeerConnectionInterface::RTCConfiguration rtc_config;
+  rtc_config.enable_rtp_data_channel = true;
+  rtc_config.enable_dtls_srtp = false;
+  ASSERT_TRUE(CreatePeerConnectionWrappersWithConfig(rtc_config, rtc_config));
   ConnectFakeSignaling();
   caller()->CreateDataChannel();
   caller()->AddAudioVideoTracks();
@@ -2984,10 +3011,10 @@ TEST_P(PeerConnectionIntegrationTest,
   virtual_socket_server()->set_delay_mean(5);  // 5 ms per hop.
   virtual_socket_server()->UpdateDelayDistribution();
 
-  FakeConstraints constraints;
-  constraints.SetAllowRtpDataChannels();
-  ASSERT_TRUE(
-      CreatePeerConnectionWrappersWithConstraints(&constraints, &constraints));
+  PeerConnectionInterface::RTCConfiguration rtc_config;
+  rtc_config.enable_rtp_data_channel = true;
+  rtc_config.enable_dtls_srtp = false;
+  ASSERT_TRUE(CreatePeerConnectionWrappersWithConfig(rtc_config, rtc_config));
   ConnectFakeSignaling();
   caller()->CreateDataChannel();
   caller()->CreateAndSetAndSignalOffer();
@@ -3023,16 +3050,15 @@ TEST_P(PeerConnectionIntegrationTest,
 // This test sets up a call between two parties with audio, video and but only
 // the caller client supports RTP data channels.
 TEST_P(PeerConnectionIntegrationTest, RtpDataChannelsRejectedByCallee) {
-  FakeConstraints setup_constraints_1;
-  setup_constraints_1.SetAllowRtpDataChannels();
+  PeerConnectionInterface::RTCConfiguration rtc_config_1;
+  rtc_config_1.enable_rtp_data_channel = true;
   // Must disable DTLS to make negotiation succeed.
-  setup_constraints_1.SetMandatory(MediaConstraintsInterface::kEnableDtlsSrtp,
-                                   false);
-  FakeConstraints setup_constraints_2;
-  setup_constraints_2.SetMandatory(MediaConstraintsInterface::kEnableDtlsSrtp,
-                                   false);
-  ASSERT_TRUE(CreatePeerConnectionWrappersWithConstraints(
-      &setup_constraints_1, &setup_constraints_2));
+  rtc_config_1.enable_dtls_srtp = false;
+  PeerConnectionInterface::RTCConfiguration rtc_config_2;
+  rtc_config_2.enable_dtls_srtp = false;
+  rtc_config_2.enable_dtls_srtp = false;
+  ASSERT_TRUE(
+      CreatePeerConnectionWrappersWithConfig(rtc_config_1, rtc_config_2));
   ConnectFakeSignaling();
   caller()->CreateDataChannel();
   caller()->AddAudioVideoTracks();
@@ -3049,10 +3075,10 @@ TEST_P(PeerConnectionIntegrationTest, RtpDataChannelsRejectedByCallee) {
 // This test sets up a call between two parties with audio, and video. When
 // audio and video is setup and flowing, an RTP data channel is negotiated.
 TEST_P(PeerConnectionIntegrationTest, AddRtpDataChannelInSubsequentOffer) {
-  FakeConstraints setup_constraints;
-  setup_constraints.SetAllowRtpDataChannels();
-  ASSERT_TRUE(CreatePeerConnectionWrappersWithConstraints(&setup_constraints,
-                                                          &setup_constraints));
+  PeerConnectionInterface::RTCConfiguration rtc_config;
+  rtc_config.enable_rtp_data_channel = true;
+  rtc_config.enable_dtls_srtp = false;
+  ASSERT_TRUE(CreatePeerConnectionWrappersWithConfig(rtc_config, rtc_config));
   ConnectFakeSignaling();
   // Do initial offer/answer with audio/video.
   caller()->AddAudioVideoTracks();
@@ -3322,6 +3348,93 @@ TEST_P(PeerConnectionIntegrationTest, IceStatesReachCompletion) {
   // TODO(deadbeef): Currently, the ICE "controlled" agent (the
   // answerer/"callee" by default) only reaches "connected". When this is
   // fixed, this test should be updated.
+  EXPECT_EQ_WAIT(webrtc::PeerConnectionInterface::kIceConnectionCompleted,
+                 caller()->ice_connection_state(), kDefaultTimeout);
+  EXPECT_EQ_WAIT(webrtc::PeerConnectionInterface::kIceConnectionConnected,
+                 callee()->ice_connection_state(), kDefaultTimeout);
+}
+
+// Replaces the first candidate with a static address and configures a
+// MockAsyncResolver to return the replaced address the first time the static
+// address is resolved. Candidates past the first will not be signaled.
+class ReplaceFirstCandidateAddressDropOthers final
+    : public IceCandidateReplacerInterface {
+ public:
+  ReplaceFirstCandidateAddressDropOthers(
+      const SocketAddress& new_address,
+      rtc::MockAsyncResolver* mock_async_resolver)
+      : mock_async_resolver_(mock_async_resolver), new_address_(new_address) {
+    RTC_DCHECK(mock_async_resolver);
+  }
+
+  std::unique_ptr<webrtc::IceCandidateInterface> ReplaceCandidate(
+      const webrtc::IceCandidateInterface* candidate) override {
+    if (replaced_candidate_) {
+      return nullptr;
+    }
+
+    replaced_candidate_ = true;
+    cricket::Candidate new_candidate(candidate->candidate());
+    new_candidate.set_address(new_address_);
+    EXPECT_CALL(*mock_async_resolver_, GetResolvedAddress(_, _))
+        .WillOnce(DoAll(SetArgPointee<1>(candidate->candidate().address()),
+                        Return(true)));
+    EXPECT_CALL(*mock_async_resolver_, Destroy(_));
+    return webrtc::CreateIceCandidate(
+        candidate->sdp_mid(), candidate->sdp_mline_index(), new_candidate);
+  }
+
+ private:
+  rtc::MockAsyncResolver* mock_async_resolver_;
+  SocketAddress new_address_;
+  bool replaced_candidate_ = false;
+};
+
+// Drops all candidates before they are signaled.
+class DropAllCandidates final : public IceCandidateReplacerInterface {
+ public:
+  std::unique_ptr<webrtc::IceCandidateInterface> ReplaceCandidate(
+      const webrtc::IceCandidateInterface*) override {
+    return nullptr;
+  }
+};
+
+// Replace the first caller ICE candidate IP with a fake hostname and drop the
+// other candidates. Drop all candidates on the callee side (to avoid a prflx
+// connection). Use a mock resolver to resolve the hostname back to the original
+// IP on the callee side and check that the ice connection connects.
+TEST_P(PeerConnectionIntegrationTest,
+       IceStatesReachCompletionWithRemoteHostname) {
+  webrtc::MockAsyncResolverFactory* callee_mock_async_resolver_factory;
+  {
+    auto resolver_factory =
+        absl::make_unique<webrtc::MockAsyncResolverFactory>();
+    callee_mock_async_resolver_factory = resolver_factory.get();
+    webrtc::PeerConnectionDependencies callee_deps(nullptr);
+    callee_deps.async_resolver_factory = std::move(resolver_factory);
+
+    ASSERT_TRUE(CreatePeerConnectionWrappersWithConfigAndDeps(
+        RTCConfiguration(), webrtc::PeerConnectionDependencies(nullptr),
+        RTCConfiguration(), std::move(callee_deps)));
+  }
+
+  rtc::MockAsyncResolver mock_async_resolver;
+
+  // This also verifies that the injected AsyncResolverFactory is used by
+  // P2PTransportChannel.
+  EXPECT_CALL(*callee_mock_async_resolver_factory, Create())
+      .WillOnce(Return(&mock_async_resolver));
+  caller()->SetLocalIceCandidateReplacer(
+      absl::make_unique<ReplaceFirstCandidateAddressDropOthers>(
+          SocketAddress("a.b", 10000), &mock_async_resolver));
+  callee()->SetLocalIceCandidateReplacer(
+      absl::make_unique<DropAllCandidates>());
+
+  ConnectFakeSignaling();
+  caller()->AddAudioVideoTracks();
+  callee()->AddAudioVideoTracks();
+  caller()->CreateAndSetAndSignalOffer();
+  ASSERT_TRUE_WAIT(SignalingStateStable(), kDefaultTimeout);
   EXPECT_EQ_WAIT(webrtc::PeerConnectionInterface::kIceConnectionCompleted,
                  caller()->ice_connection_state(), kDefaultTimeout);
   EXPECT_EQ_WAIT(webrtc::PeerConnectionInterface::kIceConnectionConnected,
@@ -4195,7 +4308,7 @@ TEST_P(PeerConnectionIntegrationTest, CodecNamesAreCaseInsensitive) {
   ASSERT_TRUE(ExpectNewFrames(media_expectations));
 }
 
-TEST_P(PeerConnectionIntegrationTest, GetSources) {
+TEST_P(PeerConnectionIntegrationTest, GetSourcesAudio) {
   ASSERT_TRUE(CreatePeerConnectionWrappers());
   ConnectFakeSignaling();
   caller()->AddAudioTrack();
@@ -4205,14 +4318,34 @@ TEST_P(PeerConnectionIntegrationTest, GetSources) {
   MediaExpectations media_expectations;
   media_expectations.CalleeExpectsSomeAudio(1);
   ASSERT_TRUE(ExpectNewFrames(media_expectations));
-  ASSERT_GT(callee()->pc()->GetReceivers().size(), 0u);
+  ASSERT_EQ(callee()->pc()->GetReceivers().size(), 1u);
   auto receiver = callee()->pc()->GetReceivers()[0];
   ASSERT_EQ(receiver->media_type(), cricket::MEDIA_TYPE_AUDIO);
-
-  auto contributing_sources = receiver->GetSources();
+  auto sources = receiver->GetSources();
   ASSERT_GT(receiver->GetParameters().encodings.size(), 0u);
   EXPECT_EQ(receiver->GetParameters().encodings[0].ssrc,
-            contributing_sources[0].source_id());
+            sources[0].source_id());
+  EXPECT_EQ(webrtc::RtpSourceType::SSRC, sources[0].source_type());
+}
+
+TEST_P(PeerConnectionIntegrationTest, GetSourcesVideo) {
+  ASSERT_TRUE(CreatePeerConnectionWrappers());
+  ConnectFakeSignaling();
+  caller()->AddVideoTrack();
+  caller()->CreateAndSetAndSignalOffer();
+  ASSERT_TRUE_WAIT(SignalingStateStable(), kDefaultTimeout);
+  // Wait for one video frame to be received by the callee.
+  MediaExpectations media_expectations;
+  media_expectations.CalleeExpectsSomeVideo(1);
+  ASSERT_TRUE(ExpectNewFrames(media_expectations));
+  ASSERT_EQ(callee()->pc()->GetReceivers().size(), 1u);
+  auto receiver = callee()->pc()->GetReceivers()[0];
+  ASSERT_EQ(receiver->media_type(), cricket::MEDIA_TYPE_VIDEO);
+  auto sources = receiver->GetSources();
+  ASSERT_GT(receiver->GetParameters().encodings.size(), 0u);
+  EXPECT_EQ(receiver->GetParameters().encodings[0].ssrc,
+            sources[0].source_id());
+  EXPECT_EQ(webrtc::RtpSourceType::SSRC, sources[0].source_type());
 }
 
 // Test that if a track is removed and added again with a different stream ID,

@@ -10,7 +10,6 @@
 
 #include "modules/audio_coding/neteq/tools/audio_loop.h"
 
-#include <assert.h>
 #include <stdio.h>
 #include <string.h>
 

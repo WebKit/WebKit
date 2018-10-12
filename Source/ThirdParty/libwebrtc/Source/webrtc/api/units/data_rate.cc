@@ -20,7 +20,11 @@ std::string ToString(const DataRate& value) {
   if (value.IsInfinite()) {
     sb << "inf bps";
   } else {
-    sb << value.bps() << " bps";
+    if (value.bps() == 0 || value.bps() % 1000 != 0) {
+      sb << value.bps() << " bps";
+    } else {
+      sb << value.kbps() << " kbps";
+    }
   }
   return sb.str();
 }

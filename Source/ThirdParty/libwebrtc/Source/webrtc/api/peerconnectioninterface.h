@@ -596,6 +596,9 @@ class PeerConnectionInterface : public rtc::RefCountInterface {
     // confused with RTCP mux (multiplexing RTP and RTCP together).
     bool use_rtp_mux = true;
 
+    // This will apply to all video tracks with a Plan B SDP offer/answer.
+    int num_simulcast_layers = 1;
+
     RTCOfferAnswerOptions() = default;
 
     RTCOfferAnswerOptions(int offer_to_receive_video,
@@ -846,22 +849,12 @@ class PeerConnectionInterface : public rtc::RefCountInterface {
   // Create a new offer.
   // The CreateSessionDescriptionObserver callback will be called when done.
   virtual void CreateOffer(CreateSessionDescriptionObserver* observer,
-                           const MediaConstraintsInterface* constraints) {}
-
-  // TODO(jiayl): remove the default impl and the old interface when chromium
-  // code is updated.
-  virtual void CreateOffer(CreateSessionDescriptionObserver* observer,
-                           const RTCOfferAnswerOptions& options) {}
+                           const RTCOfferAnswerOptions& options) = 0;
 
   // Create an answer to an offer.
   // The CreateSessionDescriptionObserver callback will be called when done.
   virtual void CreateAnswer(CreateSessionDescriptionObserver* observer,
-                            const RTCOfferAnswerOptions& options) {}
-  // Deprecated - use version above.
-  // TODO(hta): Remove and remove default implementations when all callers
-  // are updated.
-  virtual void CreateAnswer(CreateSessionDescriptionObserver* observer,
-                            const MediaConstraintsInterface* constraints) {}
+                            const RTCOfferAnswerOptions& options) = 0;
 
   // Sets the local session description.
   // The PeerConnection takes the ownership of |desc| even if it fails.
@@ -1240,15 +1233,6 @@ class PeerConnectionFactoryInterface : public rtc::RefCountInterface {
       std::unique_ptr<rtc::RTCCertificateGeneratorInterface> cert_generator,
       PeerConnectionObserver* observer);
 
-  // Deprecated; should use RTCConfiguration for everything that previously
-  // used constraints.
-  virtual rtc::scoped_refptr<PeerConnectionInterface> CreatePeerConnection(
-      const PeerConnectionInterface::RTCConfiguration& configuration,
-      const MediaConstraintsInterface* constraints,
-      std::unique_ptr<cricket::PortAllocator> allocator,
-      std::unique_ptr<rtc::RTCCertificateGeneratorInterface> cert_generator,
-      PeerConnectionObserver* observer);
-
   // Returns the capabilities of an RTP sender of type |kind|.
   // If for some reason you pass in MEDIA_TYPE_DATA, returns an empty structure.
   // TODO(orphis): Make pure virtual when all subclasses implement it.
@@ -1293,10 +1277,6 @@ class PeerConnectionFactoryInterface : public rtc::RefCountInterface {
   // TODO(deadbeef): Remove these once safe to do so.
   virtual rtc::scoped_refptr<VideoTrackSourceInterface> CreateVideoSource(
       cricket::VideoCapturer* capturer);
-  virtual rtc::scoped_refptr<VideoTrackSourceInterface> CreateVideoSource(
-      cricket::VideoCapturer* capturer,
-      const MediaConstraintsInterface* constraints);
-
   // Creates a new local VideoTrack. The same |source| can be used in several
   // tracks.
   virtual rtc::scoped_refptr<VideoTrackInterface> CreateVideoTrack(
@@ -1327,6 +1307,7 @@ class PeerConnectionFactoryInterface : public rtc::RefCountInterface {
   ~PeerConnectionFactoryInterface() override = default;
 };
 
+#if defined(USE_BUILTIN_SW_CODECS)
 // Create a new instance of PeerConnectionFactoryInterface.
 //
 // This method relies on the thread it's called on as the "signaling thread"
@@ -1403,6 +1384,7 @@ rtc::scoped_refptr<PeerConnectionFactoryInterface> CreatePeerConnectionFactory(
     std::unique_ptr<FecControllerFactoryInterface> fec_controller_factory,
     std::unique_ptr<NetworkControllerFactoryInterface>
         network_controller_factory = nullptr);
+#endif
 
 // Create a new instance of PeerConnectionFactoryInterface with optional video
 // codec factories. These video factories represents all video codecs, i.e. no
@@ -1421,6 +1403,7 @@ rtc::scoped_refptr<PeerConnectionFactoryInterface> CreatePeerConnectionFactory(
     rtc::scoped_refptr<AudioMixer> audio_mixer,
     rtc::scoped_refptr<AudioProcessing> audio_processing);
 
+#if defined(USE_BUILTIN_SW_CODECS)
 // Create a new instance of PeerConnectionFactoryInterface with external audio
 // mixer.
 //
@@ -1453,6 +1436,7 @@ CreatePeerConnectionFactory(
       default_adm, audio_encoder_factory, audio_decoder_factory,
       video_encoder_factory, video_decoder_factory);
 }
+#endif
 
 // This is a lower-level version of the CreatePeerConnectionFactory functions
 // above. It's implemented in the "peerconnection" build target, whereas the

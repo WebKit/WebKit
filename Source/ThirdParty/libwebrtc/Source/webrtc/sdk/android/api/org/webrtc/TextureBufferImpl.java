@@ -19,6 +19,12 @@ import android.os.Handler;
  * release callback. ToI420() is implemented by providing a Handler and a YuvConverter.
  */
 public class TextureBufferImpl implements VideoFrame.TextureBuffer {
+  // This is the full resolution the texture has in memory after applying the transformation matrix
+  // that might include cropping. This resolution is useful to know when sampling the texture to
+  // avoid downscaling artifacts.
+  private final int unscaledWidth;
+  private final int unscaledHeight;
+  // This is the resolution that has been applied after cropAndScale().
   private final int width;
   private final int height;
   private final Type type;
@@ -30,6 +36,23 @@ public class TextureBufferImpl implements VideoFrame.TextureBuffer {
 
   public TextureBufferImpl(int width, int height, Type type, int id, Matrix transformMatrix,
       Handler toI420Handler, YuvConverter yuvConverter, @Nullable Runnable releaseCallback) {
+    this.unscaledWidth = width;
+    this.unscaledHeight = height;
+    this.width = width;
+    this.height = height;
+    this.type = type;
+    this.id = id;
+    this.transformMatrix = transformMatrix;
+    this.toI420Handler = toI420Handler;
+    this.yuvConverter = yuvConverter;
+    this.refCountDelegate = new RefCountDelegate(releaseCallback);
+  }
+
+  private TextureBufferImpl(int unscaledWidth, int unscaledHeight, int width, int height, Type type,
+      int id, Matrix transformMatrix, Handler toI420Handler, YuvConverter yuvConverter,
+      @Nullable Runnable releaseCallback) {
+    this.unscaledWidth = unscaledWidth;
+    this.unscaledHeight = unscaledHeight;
     this.width = width;
     this.height = height;
     this.type = type;
@@ -91,7 +114,25 @@ public class TextureBufferImpl implements VideoFrame.TextureBuffer {
     cropAndScaleMatrix.preTranslate(cropX / (float) width, cropYFromBottom / (float) height);
     cropAndScaleMatrix.preScale(cropWidth / (float) width, cropHeight / (float) height);
 
-    return applyTransformMatrix(cropAndScaleMatrix, scaleWidth, scaleHeight);
+    return applyTransformMatrix(cropAndScaleMatrix,
+        (int) Math.round(unscaledWidth * cropWidth / (float) width),
+        (int) Math.round(unscaledHeight * cropHeight / (float) height), scaleWidth, scaleHeight);
+  }
+
+  /**
+   * Returns the width of the texture in memory. This should only be used for downscaling, and you
+   * should still respect the width from getWidth().
+   */
+  public int getUnscaledWidth() {
+    return unscaledWidth;
+  }
+
+  /**
+   * Returns the height of the texture in memory. This should only be used for downscaling, and you
+   * should still respect the height from getHeight().
+   */
+  public int getUnscaledHeight() {
+    return unscaledHeight;
   }
 
   /**
@@ -101,10 +142,17 @@ public class TextureBufferImpl implements VideoFrame.TextureBuffer {
    */
   public TextureBufferImpl applyTransformMatrix(
       Matrix transformMatrix, int newWidth, int newHeight) {
+    return applyTransformMatrix(transformMatrix, /* unscaledWidth= */ newWidth,
+        /* unscaledHeight= */ newHeight, /* scaledWidth= */ newWidth,
+        /* scaledHeight= */ newHeight);
+  }
+
+  private TextureBufferImpl applyTransformMatrix(Matrix transformMatrix, int unscaledWidth,
+      int unscaledHeight, int scaledWidth, int scaledHeight) {
     final Matrix newMatrix = new Matrix(this.transformMatrix);
     newMatrix.preConcat(transformMatrix);
     retain();
-    return new TextureBufferImpl(
-        newWidth, newHeight, type, id, newMatrix, toI420Handler, yuvConverter, this ::release);
+    return new TextureBufferImpl(unscaledWidth, unscaledHeight, scaledWidth, scaledHeight, type, id,
+        newMatrix, toI420Handler, yuvConverter, this ::release);
   }
 }

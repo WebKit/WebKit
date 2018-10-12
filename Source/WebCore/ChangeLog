@@ -1,3 +1,23 @@
+2018-10-12  Youenn Fablet  <youenn@apple.com> and Alejandro G. Castro  <alex@igalia.com>
+
+        Refresh libwebrtc up to 343f4144be
+        https://bugs.webkit.org/show_bug.cgi?id=190361
+
+        Reviewed by Chris Dumez.
+
+        This refresh should not change behavior but will allow us to implement better
+        mdns candidate support and simulcast activation surfacing through addTransceiver.
+        Covered by existing tests.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::doCreateAnswer):
+        * testing/MockLibWebRTCPeerConnection.cpp:
+        (WebCore::MockLibWebRTCPeerConnection::CreateAnswer):
+        * testing/MockLibWebRTCPeerConnection.h:
+        (WebCore::MockRtpSender::GetParameters): Deleted.
+        (WebCore::MockRtpSender::SetParameters): Deleted.
+        (WebCore::MockRtpSender::GetDtmfSender const): Deleted.
+
 2018-10-12  Alex Christensen  <achristensen@webkit.org>
 
         Allow encoding of small enum classes

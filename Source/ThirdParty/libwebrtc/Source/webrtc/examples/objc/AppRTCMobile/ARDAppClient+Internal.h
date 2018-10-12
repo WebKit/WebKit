@@ -10,7 +10,7 @@
 
 #import "ARDAppClient.h"
 
-#import "WebRTC/RTCPeerConnection.h"
+#import <WebRTC/RTCPeerConnection.h>
 
 #import "ARDRoomServerClient.h"
 #import "ARDSignalingChannel.h"

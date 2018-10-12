@@ -15,8 +15,6 @@ import static android.media.AudioManager.MODE_IN_COMMUNICATION;
 import static android.media.AudioManager.MODE_NORMAL;
 import static android.media.AudioManager.MODE_RINGTONE;
 
-import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.media.AudioDeviceInfo;
@@ -64,12 +62,12 @@ public final class WebRtcAudioUtils {
   private static final int DEFAULT_SAMPLE_RATE_HZ = 16000;
   private static int defaultSampleRateHz = DEFAULT_SAMPLE_RATE_HZ;
   // Set to true if setDefaultSampleRateHz() has been called.
-  private static boolean isDefaultSampleRateOverridden = false;
+  private static boolean isDefaultSampleRateOverridden;
 
   // By default, utilize hardware based audio effects for AEC and NS when
   // available.
-  private static boolean useWebRtcBasedAcousticEchoCanceler = false;
-  private static boolean useWebRtcBasedNoiseSuppressor = false;
+  private static boolean useWebRtcBasedAcousticEchoCanceler;
+  private static boolean useWebRtcBasedNoiseSuppressor;
 
   // Call these methods if any hardware based effect shall be replaced by a
   // software based version provided by the WebRTC stack instead.
@@ -166,41 +164,6 @@ public final class WebRtcAudioUtils {
     return Arrays.asList(WebRtcAudioUtils.BLACKLISTED_NS_MODELS);
   }
 
-  public static boolean runningOnJellyBeanMR1OrHigher() {
-    // November 2012: Android 4.2. API Level 17.
-    return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1;
-  }
-
-  public static boolean runningOnJellyBeanMR2OrHigher() {
-    // July 24, 2013: Android 4.3. API Level 18.
-    return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2;
-  }
-
-  public static boolean runningOnLollipopOrHigher() {
-    // API Level 21.
-    return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
-  }
-
-  public static boolean runningOnMarshmallowOrHigher() {
-    // API Level 23.
-    return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
-  }
-
-  public static boolean runningOnNougatOrHigher() {
-    // API Level 24.
-    return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N;
-  }
-
-  public static boolean runningOnOreoOrHigher() {
-    // API Level 26.
-    return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
-  }
-
-  public static boolean runningOnOreoMR1OrHigher() {
-    // API Level 27.
-    return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1;
-  }
-
   // Helper method for building a string of thread information.
   public static String getThreadInfo() {
     return "@[name=" + Thread.currentThread().getName() + ", id=" + Thread.currentThread().getId()
@@ -255,9 +218,13 @@ public final class WebRtcAudioUtils {
             + "BT SCO: " + audioManager.isBluetoothScoOn());
   }
 
-  // TODO(bugs.webrtc.org/8580): Call requires API level 21 (current min is 16):
-  // `android.media.AudioManager#isVolumeFixed`: NewApi [warning]
-  @SuppressLint("NewApi")
+  private static boolean isVolumeFixed(AudioManager audioManager) {
+    if (Build.VERSION.SDK_INT < 21) {
+      return false;
+    }
+    return audioManager.isVolumeFixed();
+  }
+
   // Adds volume information for all possible stream types.
   private static void logAudioStateVolume(String tag, AudioManager audioManager) {
     final int[] streams = {
@@ -269,12 +236,9 @@ public final class WebRtcAudioUtils {
         AudioManager.STREAM_SYSTEM
     };
     Logging.d(tag, "Audio State: ");
-    boolean fixedVolume = false;
-    if (WebRtcAudioUtils.runningOnLollipopOrHigher()) {
-      fixedVolume = audioManager.isVolumeFixed();
-      // Some devices may not have volume controls and might use a fixed volume.
-      Logging.d(tag, "  fixed volume=" + fixedVolume);
-    }
+    // Some devices may not have volume controls and might use a fixed volume.
+    boolean fixedVolume = isVolumeFixed(audioManager);
+    Logging.d(tag, "  fixed volume=" + fixedVolume);
     if (!fixedVolume) {
       for (int stream : streams) {
         StringBuilder info = new StringBuilder();
@@ -287,17 +251,15 @@ public final class WebRtcAudioUtils {
     }
   }
 
-  @TargetApi(23)
   private static void logIsStreamMute(
       String tag, AudioManager audioManager, int stream, StringBuilder info) {
-    if (WebRtcAudioUtils.runningOnMarshmallowOrHigher()) {
+    if (Build.VERSION.SDK_INT >= 23) {
       info.append(", muted=").append(audioManager.isStreamMute(stream));
     }
   }
 
-  @TargetApi(23)
   private static void logAudioDeviceInfo(String tag, AudioManager audioManager) {
-    if (!WebRtcAudioUtils.runningOnMarshmallowOrHigher()) {
+    if (Build.VERSION.SDK_INT < 23) {
       return;
     }
     final AudioDeviceInfo[] devices =

@@ -21,18 +21,17 @@ namespace videocapturemodule {
 class DeviceInfoImpl : public VideoCaptureModule::DeviceInfo {
  public:
   DeviceInfoImpl();
-  virtual ~DeviceInfoImpl(void);
-  virtual int32_t NumberOfCapabilities(const char* deviceUniqueIdUTF8);
-  virtual int32_t GetCapability(const char* deviceUniqueIdUTF8,
-                                const uint32_t deviceCapabilityNumber,
-                                VideoCaptureCapability& capability);
+  ~DeviceInfoImpl(void) override;
+  int32_t NumberOfCapabilities(const char* deviceUniqueIdUTF8) override;
+  int32_t GetCapability(const char* deviceUniqueIdUTF8,
+                        const uint32_t deviceCapabilityNumber,
+                        VideoCaptureCapability& capability) override;
 
-  virtual int32_t GetBestMatchedCapability(
-      const char* deviceUniqueIdUTF8,
-      const VideoCaptureCapability& requested,
-      VideoCaptureCapability& resulting);
-  virtual int32_t GetOrientation(const char* deviceUniqueIdUTF8,
-                                 VideoRotation& orientation);
+  int32_t GetBestMatchedCapability(const char* deviceUniqueIdUTF8,
+                                   const VideoCaptureCapability& requested,
+                                   VideoCaptureCapability& resulting) override;
+  int32_t GetOrientation(const char* deviceUniqueIdUTF8,
+                         VideoRotation& orientation) override;
 
  protected:
   /* Initialize this object*/

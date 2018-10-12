@@ -22,6 +22,7 @@
 #include "rtc_base/flags.h"
 #include "rtc_base/format_macros.h"
 #include "rtc_base/ignore_wundef.h"
+#include "rtc_base/strings/string_builder.h"
 
 RTC_PUSH_IGNORING_WUNDEF()
 #include "modules/audio_processing/debug.pb.h"
@@ -122,7 +123,7 @@ int do_main(int argc, char* argv[]) {
   std::unique_ptr<RawFile> input_raw_file;
   std::unique_ptr<RawFile> output_raw_file;
 
-  std::stringstream callorder_raw_name;
+  rtc::StringBuilder callorder_raw_name;
   callorder_raw_name << FLAG_callorder_file << ".char";
   FILE* callorder_char_file = OpenFile(callorder_raw_name.str(), "wb");
   FILE* settings_file = OpenFile(FLAG_settings_file, "wb");
@@ -289,7 +290,6 @@ int do_main(int argc, char* argv[]) {
       PRINT_CONFIG(ns_enabled);
       PRINT_CONFIG(ns_level);
       PRINT_CONFIG(transient_suppression_enabled);
-      PRINT_CONFIG(intelligibility_enhancer_enabled);
       PRINT_CONFIG(pre_amplifier_enabled);
       PRINT_CONFIG_FLOAT(pre_amplifier_fixed_gain_factor);
 
@@ -346,20 +346,20 @@ int do_main(int argc, char* argv[]) {
       if (!FLAG_raw) {
         // The WAV files need to be reset every time, because they cant change
         // their sample rate or number of channels.
-        std::stringstream reverse_name;
+        rtc::StringBuilder reverse_name;
         reverse_name << FLAG_reverse_file << frame_count << ".wav";
         reverse_wav_file.reset(new WavWriter(
             reverse_name.str(), reverse_sample_rate, num_reverse_channels));
-        std::stringstream input_name;
+        rtc::StringBuilder input_name;
         input_name << FLAG_input_file << frame_count << ".wav";
         input_wav_file.reset(new WavWriter(input_name.str(), input_sample_rate,
                                            num_input_channels));
-        std::stringstream output_name;
+        rtc::StringBuilder output_name;
         output_name << FLAG_output_file << frame_count << ".wav";
         output_wav_file.reset(new WavWriter(
             output_name.str(), output_sample_rate, num_output_channels));
 
-        std::stringstream callorder_name;
+        rtc::StringBuilder callorder_name;
         callorder_name << FLAG_callorder_file << frame_count << ".char";
         callorder_char_file = OpenFile(callorder_name.str(), "wb");
       }

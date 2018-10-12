@@ -24,12 +24,6 @@
 using namespace webrtc;
 using namespace videocapturemodule;
 
-static NSArray* camera_presets = @[
-  AVCaptureSessionPreset352x288,
-  AVCaptureSessionPreset640x480,
-  AVCaptureSessionPreset1280x720
-];
-
 #define IOS_UNSUPPORTED()                                                        \
   RTC_LOG(LS_ERROR) << __FUNCTION__ << " is not supported on the iOS platform."; \
   return -1;
@@ -47,6 +41,11 @@ DeviceInfoIos::~DeviceInfoIos() {}
 int32_t DeviceInfoIos::Init() {
   // Fill in all device capabilities.
 
+  const NSArray* camera_presets = @[
+    AVCaptureSessionPreset352x288,
+    AVCaptureSessionPreset640x480,
+    AVCaptureSessionPreset1280x720
+  ];
   int deviceCount = [DeviceInfoIosObjC captureDeviceCount];
 
   for (int i = 0; i < deviceCount; i++) {

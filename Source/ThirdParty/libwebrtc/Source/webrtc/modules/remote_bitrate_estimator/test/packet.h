@@ -19,6 +19,7 @@
 #include "common_types.h"  // NOLINT(build/include)
 #include "modules/remote_bitrate_estimator/include/remote_bitrate_estimator.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "modules/rtp_rtcp/source/rtp_packet_received.h"
 
 namespace webrtc {
 namespace testing {
@@ -77,6 +78,7 @@ class MediaPacket : public Packet {
   const RTPHeader& header() const { return header_; }
   Packet::Type GetPacketType() const override;
   uint16_t sequence_number() const { return header_.sequenceNumber; }
+  RtpPacketReceived GetRtpPacket() const;
 
  private:
   static const int kAbsSendTimeFraction = 18;

@@ -10,12 +10,12 @@
 
 package org.webrtc.audio;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioRecord;
 import android.media.MediaRecorder.AudioSource;
+import android.os.Build;
 import android.os.Process;
 import java.lang.System;
 import java.nio.ByteBuffer;
@@ -63,10 +63,10 @@ class WebRtcAudioRecord {
 
   private @Nullable ByteBuffer byteBuffer;
 
-  private @Nullable AudioRecord audioRecord = null;
-  private @Nullable AudioRecordThread audioThread = null;
+  private @Nullable AudioRecord audioRecord;
+  private @Nullable AudioRecordThread audioThread;
 
-  private volatile boolean microphoneMute = false;
+  private volatile boolean microphoneMute;
   private byte[] emptyBytes;
 
   private final @Nullable AudioRecordErrorCallback errorCallback;
@@ -299,9 +299,8 @@ class WebRtcAudioRecord {
             + "sample rate: " + audioRecord.getSampleRate());
   }
 
-  @TargetApi(23)
   private void logMainParametersExtended() {
-    if (WebRtcAudioUtils.runningOnMarshmallowOrHigher()) {
+    if (Build.VERSION.SDK_INT >= 23) {
       Logging.d(TAG,
           "AudioRecord: "
               // The frame count of the native AudioRecord buffer.

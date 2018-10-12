@@ -163,7 +163,9 @@ public class FileVideoCapturer implements VideoCapturer {
   }
 
   public void tick() {
-    capturerObserver.onFrameCaptured(videoReader.getNextFrame());
+    VideoFrame videoFrame = videoReader.getNextFrame();
+    capturerObserver.onFrameCaptured(videoFrame);
+    videoFrame.release();
   }
 
   @Override

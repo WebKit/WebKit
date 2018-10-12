@@ -15,30 +15,42 @@
 #include <string>
 #include <vector>
 
+#include "rtc_base/stringutils.h"
 #include "rtc_tools/frame_analyzer/video_quality_analysis.h"
+#include "rtc_tools/frame_analyzer/video_temporal_aligner.h"
 #include "rtc_tools/simple_command_line_parser.h"
+#include "rtc_tools/video_file_reader.h"
+#include "rtc_tools/video_file_writer.h"
 #include "test/testsupport/perf_test.h"
+
+namespace {
+
+#ifdef WIN32
+const char* const kPathDelimiter = "\\";
+#else
+const char* const kPathDelimiter = "/";
+#endif
+
+std::string JoinFilename(std::string directory, std::string filename) {
+  return directory + kPathDelimiter + filename;
+}
+
+}  // namespace
 
 /*
  * A command line tool running PSNR and SSIM on a reference video and a test
  * video. The test video is a record of the reference video which can start at
  * an arbitrary point. It is possible that there will be repeated frames or
- * skipped frames as well. In order to have a way to compare corresponding
- * frames from the two videos, two stats files should be provided. One for the
- * reference video and one for the test video. The stats file
- * is a text file assumed to be in the format:
- * frame_xxxx yyyy where xxxx is the frame number in and yyyy is the
- * corresponding barcode. The video files should be 1420 YUV videos.
- * The tool prints the result to standard output in the Chromium perf format:
+ * skipped frames as well. The video files should be I420 .y4m or .yuv videos.
+ * If both files are .y4m, it's not needed to specify width/height. The tool
+ * prints the result to standard output in the Chromium perf format:
  * RESULT <metric>:<label>= <values>
  *
  * The max value for PSNR is 48.0 (between equal frames), as for SSIM it is 1.0.
  *
  * Usage:
  * frame_analyzer --label=<test_label> --reference_file=<name_of_file>
- * --test_file_ref=<name_of_file> --stats_file_test=<name_of_file>
- * --stats_file=<name_of_file> --width=<frame_width>
- * --height=<frame_height>
+ * --test_file_ref=<name_of_file> --width=<frame_width> --height=<frame_height>
  */
 int main(int argc, char* argv[]) {
   std::string program_name = argv[0];
@@ -54,18 +66,17 @@ int main(int argc, char* argv[]) {
       " Default: -1\n"
       "  - label(string): The label to use for the perf output."
       " Default: MY_TEST\n"
-      "  - stats_file_ref(string): The path to the stats file that will be"
-      " produced for the reference video file."
-      " Default: stats_ref.txt\n"
-      "  - stats_file_test(string): The path to the stats file that will be"
-      " produced for the test video file."
-      " Default: stats_test.txt\n"
-      "  - reference_file(string): The reference YUV file to compare against."
       " Default: ref.yuv\n"
       "  - test_file(string): The test YUV file to run the analysis for."
       " Default: test_file.yuv\n"
       "  - chartjson_result_file: Where to store perf result in chartjson"
       " format. If not present, no perf result will be stored."
+      " Default: None\n"
+      "  - aligned_output_file: Where to write aligned YUV/Y4M output file."
+      " If not present, no file will be written."
+      " Default: None\n"
+      "  - yuv_directory: Where to write aligned YUV ref+test output files."
+      " If not present, no files will be written."
       " Default: None\n";
 
   webrtc::test::CommandLineParser parser;
@@ -77,10 +88,10 @@ int main(int argc, char* argv[]) {
   parser.SetFlag("width", "-1");
   parser.SetFlag("height", "-1");
   parser.SetFlag("label", "MY_TEST");
-  parser.SetFlag("stats_file_ref", "stats_ref.txt");
-  parser.SetFlag("stats_file_test", "stats_test.txt");
   parser.SetFlag("reference_file", "ref.yuv");
   parser.SetFlag("test_file", "test.yuv");
+  parser.SetFlag("aligned_output_file", "");
+  parser.SetFlag("yuv_directory", "");
   parser.SetFlag("chartjson_result_file", "");
   parser.SetFlag("help", "false");
 
@@ -91,30 +102,71 @@ int main(int argc, char* argv[]) {
   }
   parser.PrintEnteredFlags();
 
-  int width = strtol((parser.GetFlag("width")).c_str(), NULL, 10);
-  int height = strtol((parser.GetFlag("height")).c_str(), NULL, 10);
+  int width = strtol((parser.GetFlag("width")).c_str(), nullptr, 10);
+  int height = strtol((parser.GetFlag("height")).c_str(), nullptr, 10);
 
-  if (width <= 0 || height <= 0) {
-    fprintf(stderr, "Error: width or height cannot be <= 0!\n");
+  const std::string reference_file_name = parser.GetFlag("reference_file");
+  const std::string test_file_name = parser.GetFlag("test_file");
+
+  // .yuv files require explicit resolution.
+  if ((rtc::ends_with(reference_file_name.c_str(), ".yuv") ||
+       rtc::ends_with(test_file_name.c_str(), ".yuv")) &&
+      (width <= 0 || height <= 0)) {
+    fprintf(stderr,
+            "Error: You need to specify width and height when using .yuv "
+            "files\n");
     return -1;
   }
 
   webrtc::test::ResultsContainer results;
 
-  webrtc::test::RunAnalysis(parser.GetFlag("reference_file").c_str(),
-                            parser.GetFlag("test_file").c_str(),
-                            parser.GetFlag("stats_file_ref").c_str(),
-                            parser.GetFlag("stats_file_test").c_str(), width,
-                            height, &results);
-  webrtc::test::GetMaxRepeatedAndSkippedFrames(
-      parser.GetFlag("stats_file_ref"), parser.GetFlag("stats_file_test"),
-      &results);
+  rtc::scoped_refptr<webrtc::test::Video> reference_video =
+      webrtc::test::OpenYuvOrY4mFile(reference_file_name, width, height);
+  rtc::scoped_refptr<webrtc::test::Video> test_video =
+      webrtc::test::OpenYuvOrY4mFile(test_file_name, width, height);
+
+  if (!reference_video || !test_video) {
+    fprintf(stderr, "Error opening video files\n");
+    return 0;
+  }
+
+  const std::vector<size_t> matching_indices =
+      webrtc::test::FindMatchingFrameIndices(reference_video, test_video);
+
+  results.frames =
+      webrtc::test::RunAnalysis(reference_video, test_video, matching_indices);
+
+  const std::vector<webrtc::test::Cluster> clusters =
+      webrtc::test::CalculateFrameClusters(matching_indices);
+  results.max_repeated_frames = webrtc::test::GetMaxRepeatedFrames(clusters);
+  results.max_skipped_frames = webrtc::test::GetMaxSkippedFrames(clusters);
+  results.total_skipped_frames =
+      webrtc::test::GetTotalNumberOfSkippedFrames(clusters);
+  results.decode_errors_ref = 0;
+  results.decode_errors_test = 0;
 
   webrtc::test::PrintAnalysisResults(parser.GetFlag("label"), &results);
 
   std::string chartjson_result_file = parser.GetFlag("chartjson_result_file");
   if (!chartjson_result_file.empty()) {
     webrtc::test::WritePerfResults(chartjson_result_file);
+  }
+  rtc::scoped_refptr<webrtc::test::Video> reordered_video =
+      webrtc::test::GenerateAlignedReferenceVideo(reference_video,
+                                                  matching_indices);
+  std::string aligned_output_file = parser.GetFlag("aligned_output_file");
+  if (!aligned_output_file.empty()) {
+    webrtc::test::WriteVideoToFile(reordered_video, aligned_output_file,
+                                   /*fps=*/30);
+  }
+  std::string yuv_directory = parser.GetFlag("yuv_directory");
+  if (!yuv_directory.empty()) {
+    webrtc::test::WriteVideoToFile(reordered_video,
+                                   JoinFilename(yuv_directory, "ref.yuv"),
+                                   /*fps=*/30);
+    webrtc::test::WriteVideoToFile(test_video,
+                                   JoinFilename(yuv_directory, "test.yuv"),
+                                   /*fps=*/30);
   }
 
   return 0;

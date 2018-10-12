@@ -23,6 +23,7 @@ class Nack : public Rtpfb {
  public:
   static constexpr uint8_t kFeedbackMessageType = 1;
   Nack();
+  Nack(const Nack&);
   ~Nack() override;
 
   // Parse assumes header is already parsed and validated.

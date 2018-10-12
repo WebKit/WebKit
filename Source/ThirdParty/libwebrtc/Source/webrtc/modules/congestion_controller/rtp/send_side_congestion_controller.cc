@@ -30,7 +30,6 @@
 #include "rtc_base/socket.h"
 #include "rtc_base/timeutils.h"
 #include "system_wrappers/include/field_trial.h"
-#include "system_wrappers/include/runtime_enabled_features.h"
 
 using absl::make_unique;
 
@@ -52,10 +51,7 @@ const char kPacerPushbackExperiment[] = "WebRTC-PacerPushbackExperiment";
 const int64_t PacerQueueUpdateIntervalMs = 25;
 
 bool IsPacerPushbackExperimentEnabled() {
-  return webrtc::field_trial::IsEnabled(kPacerPushbackExperiment) ||
-         (!webrtc::field_trial::IsDisabled(kPacerPushbackExperiment) &&
-          webrtc::runtime_enabled_features::IsFeatureEnabled(
-              webrtc::runtime_enabled_features::kDualStreamModeFeatureName));
+  return webrtc::field_trial::IsEnabled(kPacerPushbackExperiment);
 }
 
 bool IsCongestionWindowPushbackExperimentEnabled() {
@@ -78,7 +74,7 @@ PacketResult NetworkPacketFeedbackFromRtpPacketFeedback(
     const webrtc::PacketFeedback& pf) {
   PacketResult feedback;
   if (pf.arrival_time_ms == webrtc::PacketFeedback::kNotReceived)
-    feedback.receive_time = Timestamp::Infinity();
+    feedback.receive_time = Timestamp::PlusInfinity();
   else
     feedback.receive_time = Timestamp::ms(pf.arrival_time_ms);
   if (pf.send_time_ms != webrtc::PacketFeedback::kNoSendTime) {
@@ -107,6 +103,7 @@ std::vector<PacketResult> PacketResultsFromRtpFeedbackVector(
 
 TargetRateConstraints ConvertConstraints(int min_bitrate_bps,
                                          int max_bitrate_bps,
+                                         int start_bitrate_bps,
                                          const Clock* clock) {
   TargetRateConstraints msg;
   msg.at_time = Timestamp::ms(clock->TimeInMilliseconds());
@@ -114,6 +111,8 @@ TargetRateConstraints ConvertConstraints(int min_bitrate_bps,
       min_bitrate_bps >= 0 ? DataRate::bps(min_bitrate_bps) : DataRate::Zero();
   msg.max_data_rate = max_bitrate_bps > 0 ? DataRate::bps(max_bitrate_bps)
                                           : DataRate::Infinity();
+  if (start_bitrate_bps > 0)
+    msg.starting_rate = DataRate::bps(start_bitrate_bps);
   return msg;
 }
 
@@ -366,10 +365,18 @@ SendSideCongestionController::SendSideCongestionController(
       pacer_queue_update_task_(nullptr),
       controller_task_(nullptr),
       task_queue_(task_queue) {
-  initial_config_.constraints =
-      ConvertConstraints(min_bitrate_bps, max_bitrate_bps, clock_);
+  initial_config_.constraints = ConvertConstraints(
+      min_bitrate_bps, max_bitrate_bps, start_bitrate_bps, clock_);
   RTC_DCHECK(start_bitrate_bps > 0);
-  initial_config_.starting_bandwidth = DataRate::bps(start_bitrate_bps);
+  // To be fully compatible with legacy SendSideCongestionController, make sure
+  // pacer is initialized even if there are no registered streams. This should
+  // not happen under normal circumstances, but some tests rely on it and there
+  // are no checks detecting when the legacy SendSideCongestionController is
+  // used. This way of setting the value has the drawback that it might be wrong
+  // compared to what the actual value from the congestion controller will be.
+  // TODO(srte): Remove this when the legacy SendSideCongestionController is
+  // removed.
+  pacer_->SetEstimatedBitrate(start_bitrate_bps);
 }
 
 // There is no point in having a network controller for a network that is not
@@ -417,6 +424,14 @@ void SendSideCongestionController::MaybeRecreateControllers() {
   RTC_DCHECK(controller_);
 }
 
+void SendSideCongestionController::UpdateInitialConstraints(
+    TargetRateConstraints new_contraints) {
+  if (!new_contraints.starting_rate)
+    new_contraints.starting_rate = initial_config_.constraints.starting_rate;
+  RTC_DCHECK(new_contraints.starting_rate);
+  initial_config_.constraints = new_contraints;
+}
+
 SendSideCongestionController::~SendSideCongestionController() = default;
 
 void SendSideCongestionController::RegisterPacketFeedbackObserver(
@@ -442,17 +457,15 @@ void SendSideCongestionController::RegisterNetworkObserver(
 void SendSideCongestionController::SetBweBitrates(int min_bitrate_bps,
                                                   int start_bitrate_bps,
                                                   int max_bitrate_bps) {
-  TargetRateConstraints constraints =
-      ConvertConstraints(min_bitrate_bps, max_bitrate_bps, clock_);
-  task_queue_->PostTask([this, constraints, start_bitrate_bps]() {
+  TargetRateConstraints constraints = ConvertConstraints(
+      min_bitrate_bps, max_bitrate_bps, start_bitrate_bps, clock_);
+  task_queue_->PostTask([this, constraints]() {
     RTC_DCHECK_RUN_ON(task_queue_);
     if (controller_) {
       control_handler_->PostUpdates(
           controller_->OnTargetRateConstraints(constraints));
     } else {
-      initial_config_.constraints = constraints;
-      if (start_bitrate_bps > 0)
-        initial_config_.starting_bandwidth = DataRate::bps(start_bitrate_bps);
+      UpdateInitialConstraints(constraints);
     }
   });
 }
@@ -461,15 +474,12 @@ void SendSideCongestionController::SetAllocatedSendBitrateLimits(
     int64_t min_send_bitrate_bps,
     int64_t max_padding_bitrate_bps,
     int64_t max_total_bitrate_bps) {
-  task_queue_->PostTask([this, min_send_bitrate_bps, max_padding_bitrate_bps,
-                         max_total_bitrate_bps]() {
-    RTC_DCHECK_RUN_ON(task_queue_);
-    streams_config_.min_pacing_rate = DataRate::bps(min_send_bitrate_bps);
-    streams_config_.max_padding_rate = DataRate::bps(max_padding_bitrate_bps);
-    streams_config_.max_total_allocated_bitrate =
-        DataRate::bps(max_total_bitrate_bps);
-    UpdateStreamsConfig();
-  });
+  RTC_DCHECK_RUN_ON(task_queue_);
+  streams_config_.min_pacing_rate = DataRate::bps(min_send_bitrate_bps);
+  streams_config_.max_padding_rate = DataRate::bps(max_padding_bitrate_bps);
+  streams_config_.max_total_allocated_bitrate =
+      DataRate::bps(max_total_bitrate_bps);
+  UpdateStreamsConfig();
 }
 
 // TODO(holmer): Split this up and use SetBweBitrates in combination with
@@ -485,18 +495,15 @@ void SendSideCongestionController::OnNetworkRouteChanged(
 
   NetworkRouteChange msg;
   msg.at_time = Timestamp::ms(clock_->TimeInMilliseconds());
-  msg.constraints =
-      ConvertConstraints(min_bitrate_bps, max_bitrate_bps, clock_);
-  if (start_bitrate_bps > 0)
-    msg.starting_rate = DataRate::bps(start_bitrate_bps);
+  msg.constraints = ConvertConstraints(min_bitrate_bps, max_bitrate_bps,
+                                       start_bitrate_bps, clock_);
+
   task_queue_->PostTask([this, msg]() {
     RTC_DCHECK_RUN_ON(task_queue_);
     if (controller_) {
       control_handler_->PostUpdates(controller_->OnNetworkRouteChange(msg));
     } else {
-      if (msg.starting_rate)
-        initial_config_.starting_bandwidth = *msg.starting_rate;
-      initial_config_.constraints = msg.constraints;
+      UpdateInitialConstraints(msg.constraints);
     }
     pacer_controller_->OnNetworkRouteChange(msg);
   });
@@ -529,11 +536,9 @@ RtcpBandwidthObserver* SendSideCongestionController::GetBandwidthObserver() {
 
 void SendSideCongestionController::SetPerPacketFeedbackAvailable(
     bool available) {
-  task_queue_->PostTask([this, available]() {
-    RTC_DCHECK_RUN_ON(task_queue_);
-    packet_feedback_available_ = available;
-    MaybeRecreateControllers();
-  });
+  RTC_DCHECK_RUN_ON(task_queue_);
+  packet_feedback_available_ = available;
+  MaybeRecreateControllers();
 }
 
 void SendSideCongestionController::EnablePeriodicAlrProbing(bool enable) {
@@ -741,15 +746,19 @@ void SendSideCongestionController::WaitOnTasksForTest() {
 }
 
 void SendSideCongestionController::SetPacingFactor(float pacing_factor) {
-  task_queue_->PostTask([this, pacing_factor]() {
-    RTC_DCHECK_RUN_ON(task_queue_);
-    streams_config_.pacing_factor = pacing_factor;
-    UpdateStreamsConfig();
-  });
+  RTC_DCHECK_RUN_ON(task_queue_);
+  streams_config_.pacing_factor = pacing_factor;
+  UpdateStreamsConfig();
 }
 
 void SendSideCongestionController::SetAllocatedBitrateWithoutFeedback(
-    uint32_t bitrate_bps) {}
+    uint32_t bitrate_bps) {
+  task_queue_->PostTask([this, bitrate_bps]() {
+    RTC_DCHECK_RUN_ON(task_queue_);
+    streams_config_.unacknowledged_rate_allocation = DataRate::bps(bitrate_bps);
+    UpdateStreamsConfig();
+  });
+}
 
 void SendSideCongestionController::DisablePeriodicTasks() {
   task_queue_->PostTask([this]() {

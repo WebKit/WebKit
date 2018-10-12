@@ -781,7 +781,7 @@ public class PeerConnection {
    * use addTrack instead.
    */
   public boolean addStream(MediaStream stream) {
-    boolean ret = nativeAddLocalStream(stream.nativeStream);
+    boolean ret = nativeAddLocalStream(stream.getNativeMediaStream());
     if (!ret) {
       return false;
     }
@@ -795,7 +795,7 @@ public class PeerConnection {
    * removeTrack instead.
    */
   public void removeStream(MediaStream stream) {
-    nativeRemoveLocalStream(stream.nativeStream);
+    nativeRemoveLocalStream(stream.getNativeMediaStream());
     localStreams.remove(stream);
   }
 
@@ -905,7 +905,7 @@ public class PeerConnection {
     if (track == null || streamIds == null) {
       throw new NullPointerException("No MediaStreamTrack specified in addTrack.");
     }
-    RtpSender newSender = nativeAddTrack(track.nativeTrack, streamIds);
+    RtpSender newSender = nativeAddTrack(track.getNativeMediaStreamTrack(), streamIds);
     if (newSender == null) {
       throw new IllegalStateException("C++ addTrack failed.");
     }
@@ -922,7 +922,7 @@ public class PeerConnection {
     if (sender == null) {
       throw new NullPointerException("No RtpSender specified for removeTrack.");
     }
-    return nativeRemoveTrack(sender.nativeRtpSender);
+    return nativeRemoveTrack(sender.getNativeRtpSender());
   }
 
   /**
@@ -962,7 +962,8 @@ public class PeerConnection {
     if (init == null) {
       init = new RtpTransceiver.RtpTransceiverInit();
     }
-    RtpTransceiver newTransceiver = nativeAddTransceiverWithTrack(track.nativeTrack, init);
+    RtpTransceiver newTransceiver =
+        nativeAddTransceiverWithTrack(track.getNativeMediaStreamTrack(), init);
     if (newTransceiver == null) {
       throw new IllegalStateException("C++ addTransceiver failed.");
     }
@@ -993,7 +994,7 @@ public class PeerConnection {
   // Older, non-standard implementation of getStats.
   @Deprecated
   public boolean getStats(StatsObserver observer, @Nullable MediaStreamTrack track) {
-    return nativeOldGetStats(observer, (track == null) ? 0 : track.nativeTrack);
+    return nativeOldGetStats(observer, (track == null) ? 0 : track.getNativeMediaStreamTrack());
   }
 
   /**
@@ -1070,7 +1071,7 @@ public class PeerConnection {
   public void dispose() {
     close();
     for (MediaStream stream : localStreams) {
-      nativeRemoveLocalStream(stream.nativeStream);
+      nativeRemoveLocalStream(stream.getNativeMediaStream());
       stream.dispose();
     }
     localStreams.clear();

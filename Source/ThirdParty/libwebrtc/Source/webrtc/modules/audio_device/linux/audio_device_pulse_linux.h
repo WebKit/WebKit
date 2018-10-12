@@ -92,6 +92,9 @@ const int32_t WEBRTC_PA_NO_LATENCY_REQUIREMENTS = -1;
 // calculation
 const uint32_t WEBRTC_PA_CAPTURE_BUFFER_LATENCY_ADJUSTMENT = 0;
 
+typedef webrtc::adm_linux_pulse::PulseAudioSymbolTable WebRTCPulseSymbolTable;
+WebRTCPulseSymbolTable* GetPulseSymbolTable();
+
 namespace webrtc {
 class EventWrapper;
 

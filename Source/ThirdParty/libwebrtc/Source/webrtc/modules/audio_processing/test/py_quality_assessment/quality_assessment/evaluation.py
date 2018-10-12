@@ -21,7 +21,8 @@ class ApmModuleEvaluator(object):
 
   @classmethod
   def Run(cls, evaluation_score_workers, apm_input_metadata,
-          apm_output_filepath, reference_input_filepath, output_path):
+          apm_output_filepath, reference_input_filepath,
+          render_input_filepath, output_path):
     """Runs the evaluation.
 
     Iterates over the given evaluation score workers.
@@ -46,6 +47,8 @@ class ApmModuleEvaluator(object):
           reference_input_filepath)
       evaluation_score_worker.SetTestedSignalFilepath(
           apm_output_filepath)
+      evaluation_score_worker.SetRenderSignalFilepath(
+          render_input_filepath)
 
       evaluation_score_worker.Run(output_path)
       scores[evaluation_score_worker.NAME] = evaluation_score_worker.score

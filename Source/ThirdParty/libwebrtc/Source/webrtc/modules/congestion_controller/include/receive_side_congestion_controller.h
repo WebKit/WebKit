@@ -33,7 +33,7 @@ class ReceiveSideCongestionController : public CallStatsObserver,
   ReceiveSideCongestionController(const Clock* clock,
                                   PacketRouter* packet_router);
 
-  virtual ~ReceiveSideCongestionController() {}
+  ~ReceiveSideCongestionController() override {}
 
   virtual void OnReceivedPacket(int64_t arrival_time_ms,
                                 size_t payload_size,
@@ -60,7 +60,7 @@ class ReceiveSideCongestionController : public CallStatsObserver,
     WrappingBitrateEstimator(RemoteBitrateObserver* observer,
                              const Clock* clock);
 
-    virtual ~WrappingBitrateEstimator() {}
+    ~WrappingBitrateEstimator() override;
 
     void IncomingPacket(int64_t arrival_time_ms,
                         size_t payload_size,

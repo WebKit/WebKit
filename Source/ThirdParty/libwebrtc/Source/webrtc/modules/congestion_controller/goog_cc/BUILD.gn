@@ -38,9 +38,9 @@ rtc_static_library("goog_cc") {
     "../../../rtc_base:checks",
     "../../../rtc_base:rtc_base_approved",
     "../../../rtc_base/experiments:alr_experiment",
+    "../../../rtc_base/experiments:field_trial_parser",
     "../../../system_wrappers",
-    "../../../system_wrappers:field_trial_api",
-    "../../../system_wrappers:metrics_api",
+    "../../../system_wrappers:field_trial",
     "../../bitrate_controller",
     "../../remote_bitrate_estimator",
     "../../rtp_rtcp:rtp_rtcp_format",
@@ -61,7 +61,7 @@ rtc_source_set("alr_detector") {
     "../../../rtc_base:checks",
     "../../../rtc_base:rtc_base_approved",
     "../../../rtc_base/experiments:alr_experiment",
-    "../../../system_wrappers:field_trial_api",
+    "../../../system_wrappers:field_trial",
     "../../pacing:interval_budget",
     "//third_party/abseil-cpp/absl/memory",
     "//third_party/abseil-cpp/absl/types:optional",
@@ -83,9 +83,6 @@ rtc_source_set("estimators") {
     "trendline_estimator.h",
   ]
 
-  # TODO(jschuh): Bug 1348: fix this warning.
-  configs += [ "//build/config/compiler:no_size_t_to_int_warning" ]
-
   deps = [
     "../../../logging:rtc_event_bwe",
     "../../../logging:rtc_event_log_api",
@@ -93,8 +90,7 @@ rtc_source_set("estimators") {
     "../../../rtc_base:rtc_base_approved",
     "../../../rtc_base:rtc_numerics",
     "../../../rtc_base:safe_minmax",
-    "../../../system_wrappers:field_trial_api",
-    "../../../system_wrappers:metrics_api",
+    "../../../system_wrappers:field_trial",
     "../../remote_bitrate_estimator",
     "../../rtp_rtcp:rtp_rtcp_format",
     "//third_party/abseil-cpp/absl/memory",
@@ -115,8 +111,8 @@ rtc_source_set("delay_based_bwe") {
     "../../../logging:rtc_event_log_api",
     "../../../rtc_base:checks",
     "../../../rtc_base:rtc_base_approved",
-    "../../../system_wrappers:field_trial_api",
-    "../../../system_wrappers:metrics_api",
+    "../../../system_wrappers:field_trial",
+    "../../../system_wrappers:metrics",
     "../../pacing",
     "../../remote_bitrate_estimator",
     "//third_party/abseil-cpp/absl/memory",
@@ -136,8 +132,8 @@ rtc_source_set("probe_controller") {
     "../../../rtc_base:checks",
     "../../../rtc_base:rtc_base_approved",
     "../../../rtc_base/system:unused",
-    "../../../system_wrappers:field_trial_api",
-    "../../../system_wrappers:metrics_api",
+    "../../../system_wrappers:field_trial",
+    "../../../system_wrappers:metrics",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
@@ -150,6 +146,7 @@ if (rtc_include_tests) {
       "test/goog_cc_printer.h",
     ]
     deps = [
+      ":estimators",
       ":goog_cc",
       "..:test_controller_printer",
     ]
@@ -163,11 +160,15 @@ if (rtc_include_tests) {
       "delay_based_bwe_unittest.cc",
       "delay_based_bwe_unittest_helper.cc",
       "delay_based_bwe_unittest_helper.h",
+      "goog_cc_network_control_unittest.cc",
       "median_slope_estimator_unittest.cc",
       "probe_bitrate_estimator_unittest.cc",
       "probe_controller_unittest.cc",
       "trendline_estimator_unittest.cc",
     ]
+    if (!build_with_chromium && is_clang) {
+      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
     deps = [
       ":alr_detector",
       ":delay_based_bwe",
@@ -176,17 +177,19 @@ if (rtc_include_tests) {
       ":probe_controller",
       "../../../api/transport:network_control",
       "../../../api/transport:network_control_test",
+      "../../../logging:mocks",
       "../../../rtc_base:checks",
       "../../../rtc_base:rtc_base_approved",
       "../../../rtc_base:rtc_base_tests_utils",
       "../../../rtc_base/experiments:alr_experiment",
       "../../../system_wrappers",
+      "../../../system_wrappers:field_trial",
       "../../../test:field_trial",
       "../../../test:test_support",
+      "../../../test/scenario",
       "../../pacing",
       "../../remote_bitrate_estimator",
       "../../rtp_rtcp:rtp_rtcp_format",
-      "//system_wrappers:field_trial_api",
       "//testing/gmock",
       "//third_party/abseil-cpp/absl/memory",
     ]

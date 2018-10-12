@@ -40,7 +40,7 @@ TESTS = [
 def main():
   cmd = ([sys.executable, 'tools/code_coverage/coverage.py'] + TESTS +
          ['-b out/coverage', '-o out/report'] +
-         ['-i=\'.*/out/.*|.*/third_party/.*\''] +
+         ['-i=\'.*/out/.*|.*/third_party/.*|.*test.*\''] +
          ['-c \'out/coverage/%s\'' % t for t in TESTS])
 
   def WithXvfb(binary):

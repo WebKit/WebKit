@@ -12,6 +12,8 @@
 
 #include <algorithm>  // Provide access to std::max.
 
+#include "rtc_base/numerics/safe_conversions.h"
+
 namespace webrtc {
 
 BufferLevelFilter::BufferLevelFilter() {
@@ -33,7 +35,7 @@ void BufferLevelFilter::Update(size_t buffer_size_packets,
   // |buffer_size_packets| is in Q0.
   filtered_current_level_ =
       ((level_factor_ * filtered_current_level_) >> 8) +
-      ((256 - level_factor_) * static_cast<int>(buffer_size_packets));
+      ((256 - level_factor_) * rtc::dchecked_cast<int>(buffer_size_packets));
 
   // Account for time-scale operations (accelerate and pre-emptive expand).
   if (time_stretched_samples && packet_len_samples > 0) {
@@ -41,9 +43,13 @@ void BufferLevelFilter::Update(size_t buffer_size_packets,
     // value of |time_stretched_samples| from |filtered_current_level_| after
     // converting |time_stretched_samples| from samples to packets in Q8.
     // Make sure that the filtered value remains non-negative.
-    filtered_current_level_ = std::max(
-        0, filtered_current_level_ - (time_stretched_samples * (1 << 8)) /
-                                         static_cast<int>(packet_len_samples));
+
+    int64_t time_stretched_packets =
+        (int64_t{time_stretched_samples} * (1 << 8)) /
+        rtc::dchecked_cast<int64_t>(packet_len_samples);
+
+    filtered_current_level_ = rtc::saturated_cast<int>(
+        std::max<int64_t>(0, filtered_current_level_ - time_stretched_packets));
   }
 }
 

@@ -11,13 +11,13 @@
 #include "modules/audio_mixer/frame_combiner.h"
 
 #include <numeric>
-#include <sstream>
 #include <string>
 
 #include "audio/utility/audio_frame_operations.h"
 #include "modules/audio_mixer/gain_change_calculator.h"
 #include "modules/audio_mixer/sine_wave_generator.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/strings/string_builder.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -34,20 +34,20 @@ struct FrameCombinerConfig {
 std::string ProduceDebugText(int sample_rate_hz,
                              int number_of_channels,
                              int number_of_sources) {
-  std::ostringstream ss;
+  rtc::StringBuilder ss;
   ss << "Sample rate: " << sample_rate_hz << " ,";
   ss << "number of channels: " << number_of_channels << " ,";
   ss << "number of sources: " << number_of_sources;
-  return ss.str();
+  return ss.Release();
 }
 
 std::string ProduceDebugText(const FrameCombinerConfig& config) {
-  std::ostringstream ss;
+  rtc::StringBuilder ss;
   ss << "Sample rate: " << config.sample_rate_hz << " ,";
   ss << "number of channels: " << config.number_of_channels << " ,";
   ss << "limiter active: " << (config.use_limiter ? "on" : "off") << " ,";
   ss << "wave frequency: " << config.wave_frequency << " ,";
-  return ss.str();
+  return ss.Release();
 }
 
 AudioFrame frame1;

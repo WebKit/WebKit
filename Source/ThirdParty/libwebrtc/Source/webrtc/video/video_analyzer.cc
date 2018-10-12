@@ -139,7 +139,7 @@ void VideoAnalyzer::SetReceiver(PacketReceiver* receiver) {
   receiver_ = receiver;
 }
 
-void VideoAnalyzer::SetSource(test::VideoCapturer* video_capturer,
+void VideoAnalyzer::SetSource(test::TestVideoCapturer* video_capturer,
                               bool respect_sink_wants) {
   if (respect_sink_wants)
     captured_frame_forwarder_.SetSource(video_capturer);
@@ -420,7 +420,9 @@ bool VideoAnalyzer::IsInSelectedSpatialAndTemporalLayer(
     int temporal_idx;
     int spatial_idx;
     if (is_vp8) {
-      temporal_idx = parsed_payload.video_header().vp8().temporalIdx;
+      temporal_idx = absl::get<RTPVideoHeaderVP8>(
+                         parsed_payload.video_header().video_type_header)
+                         .temporalIdx;
       spatial_idx = kNoTemporalIdx;
     } else {
       const auto& vp9_header = absl::get<RTPVideoHeaderVP9>(
@@ -855,7 +857,7 @@ VideoAnalyzer::CapturedFrameForwarder::CapturedFrameForwarder(
       clock_(clock) {}
 
 void VideoAnalyzer::CapturedFrameForwarder::SetSource(
-    test::VideoCapturer* video_capturer) {
+    test::TestVideoCapturer* video_capturer) {
   video_capturer_ = video_capturer;
 }
 

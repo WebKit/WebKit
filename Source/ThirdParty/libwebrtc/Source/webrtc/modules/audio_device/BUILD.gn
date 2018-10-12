@@ -69,9 +69,10 @@ if (rtc_include_internal_audio_device && is_ios) {
       "../../rtc_base:gtest_prod",
       "../../rtc_base:rtc_base",
       "../../rtc_base/system:fallthrough",
+      "../../sdk:audio_device",
       "../../sdk:audio_objc",
-      "../../sdk:common_objc",
-      "../../system_wrappers:metrics_api",
+      "../../sdk:base_objc",
+      "../../system_wrappers:metrics",
     ]
     if (!build_with_chromium && is_clang) {
       # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
@@ -114,7 +115,7 @@ rtc_source_set("audio_device_buffer") {
     "../../rtc_base:rtc_base_approved",
     "../../rtc_base:rtc_task_queue",
     "../../system_wrappers",
-    "../../system_wrappers:metrics_api",
+    "../../system_wrappers:metrics",
   ]
   if (!build_with_chromium && is_clang) {
     # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
@@ -167,8 +168,6 @@ rtc_source_set("windows_core_audio_utility") {
 # gradually phase out the old design.
 # TODO(henrika): currently only supported on Windows.
 rtc_source_set("audio_device_module_from_input_and_output") {
-  visibility = [ ":*" ]
-
   if (is_win && !build_with_chromium) {
     sources = [
       "include/audio_device_factory.cc",
@@ -211,12 +210,15 @@ rtc_source_set("audio_device_impl") {
     "../../common_audio:common_audio_c",
     "../../rtc_base:checks",
     "../../rtc_base:deprecation",
+    "../../rtc_base:rtc_base",
     "../../rtc_base:rtc_base_approved",
     "../../rtc_base:rtc_task_queue",
+    "../../rtc_base/system:arch",
     "../../rtc_base/system:file_wrapper",
     "../../system_wrappers",
-    "../../system_wrappers:metrics_api",
+    "../../system_wrappers:metrics",
     "../utility",
+    "//third_party/abseil-cpp/absl/memory",
   ]
   if (rtc_include_internal_audio_device && is_ios) {
     deps += [ ":audio_device_ios_objc" ]
@@ -248,8 +250,6 @@ rtc_source_set("audio_device_impl") {
     defines += [ "AUDIO_DEVICE_INCLUDE_ANDROID_AAUDIO" ]
   }
   if (rtc_include_internal_audio_device) {
-    # TODO(bugs.webrtc.org/8850): remove this when the circular dependency will be fixed.
-    check_includes = false
     sources += [
       "audio_device_data_observer.cc",
       "audio_device_impl.cc",

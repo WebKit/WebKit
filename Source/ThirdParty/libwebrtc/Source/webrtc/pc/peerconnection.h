@@ -157,14 +157,8 @@ class PeerConnection : public PeerConnectionInternal,
       const override;
 
   // JSEP01
-  // Deprecated, use version without constraints.
-  void CreateOffer(CreateSessionDescriptionObserver* observer,
-                   const MediaConstraintsInterface* constraints) override;
   void CreateOffer(CreateSessionDescriptionObserver* observer,
                    const RTCOfferAnswerOptions& options) override;
-  // Deprecated, use version without constraints.
-  void CreateAnswer(CreateSessionDescriptionObserver* observer,
-                    const MediaConstraintsInterface* constraints) override;
   void CreateAnswer(CreateSessionDescriptionObserver* observer,
                     const RTCOfferAnswerOptions& options) override;
   void SetLocalDescription(SetSessionDescriptionObserver* observer,
@@ -363,7 +357,8 @@ class PeerConnection : public PeerConnectionInternal,
   CreateSender(cricket::MediaType media_type,
                const std::string& id,
                rtc::scoped_refptr<MediaStreamTrackInterface> track,
-               const std::vector<std::string>& stream_ids);
+               const std::vector<std::string>& stream_ids,
+               const std::vector<RtpEncodingParameters>& send_encodings);
 
   rtc::scoped_refptr<RtpReceiverProxyWithInternal<RtpReceiverInternal>>
   CreateReceiver(cricket::MediaType media_type, const std::string& receiver_id);

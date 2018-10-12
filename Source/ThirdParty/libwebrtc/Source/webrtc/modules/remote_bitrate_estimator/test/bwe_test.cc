@@ -27,6 +27,10 @@ using std::vector;
 
 namespace {
 const int kQuickTestTimeoutMs = 500;
+
+double SafeDiv(double a, double b) {
+  return b ? a / b : 0;
+}
 }
 
 namespace webrtc {
@@ -217,12 +221,13 @@ void BweTest::PrintResults(double max_throughput_kbps,
                            Stats<double> throughput_kbps,
                            std::map<int, Stats<double>> flow_delay_ms,
                            std::map<int, Stats<double>> flow_throughput_kbps) {
-  double utilization = throughput_kbps.GetMean() / max_throughput_kbps;
+  double utilization = SafeDiv(throughput_kbps.GetMean(), max_throughput_kbps);
   webrtc::test::PrintResult("BwePerformance", GetTestName(), "Utilization",
                             utilization * 100.0, "%", false);
   webrtc::test::PrintResult(
       "BwePerformance", GetTestName(), "Utilization var coeff",
-      throughput_kbps.GetStdDev() / throughput_kbps.GetMean(), "", false);
+      SafeDiv(throughput_kbps.GetStdDev(), throughput_kbps.GetMean()), "",
+      false);
   std::stringstream ss;
   for (auto& kv : flow_throughput_kbps) {
     ss.str("");
@@ -246,8 +251,8 @@ void BweTest::PrintResults(double max_throughput_kbps,
       squared_bitrate_sum += kv.second.GetMean() * kv.second.GetMean();
       fairness_index += kv.second.GetMean();
     }
-    fairness_index *= fairness_index;
-    fairness_index /= flow_throughput_kbps.size() * squared_bitrate_sum;
+    fairness_index *= SafeDiv(
+        fairness_index, flow_throughput_kbps.size() * squared_bitrate_sum);
   }
   webrtc::test::PrintResult("BwePerformance", GetTestName(), "Fairness",
                             fairness_index * 100, "%", false);

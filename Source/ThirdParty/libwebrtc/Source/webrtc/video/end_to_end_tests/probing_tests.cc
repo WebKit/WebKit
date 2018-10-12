@@ -8,6 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "api/test/simulated_network.h"
+#include "call/fake_network_pipe.h"
+#include "call/simulated_network.h"
 #include "test/call_test.h"
 #include "test/field_trial.h"
 #include "test/gtest.h"
@@ -27,9 +30,8 @@ class ProbingEndToEndTest : public test::CallTest,
 INSTANTIATE_TEST_CASE_P(
     FieldTrials,
     ProbingEndToEndTest,
-    ::testing::Values("WebRTC-RoundRobinPacing/Disabled/",
-                      "WebRTC-RoundRobinPacing/Enabled/",
-                      "WebRTC-TaskQueueCongestionControl/Enabled/"));
+    ::testing::Values("WebRTC-TaskQueueCongestionControl/Enabled/",
+                      "WebRTC-TaskQueueCongestionControl/Disabled/"));
 
 class ProbingTest : public test::EndToEndTest {
  public:
@@ -218,10 +220,14 @@ TEST_P(ProbingEndToEndTest, ProbeOnVideoEncoderReconfiguration) {
     test::PacketTransport* CreateSendTransport(
         test::SingleThreadedTaskQueueForTesting* task_queue,
         Call* sender_call) override {
-      send_transport_ = new test::PacketTransport(
+      auto network =
+          absl::make_unique<SimulatedNetwork>(DefaultNetworkSimulationConfig());
+      send_simulated_network_ = network.get();
+      return new test::PacketTransport(
           task_queue, sender_call, this, test::PacketTransport::kSender,
-          CallTest::payload_type_map_, FakeNetworkPipe::Config());
-      return send_transport_;
+          CallTest::payload_type_map_,
+          absl::make_unique<FakeNetworkPipe>(Clock::GetRealTimeClock(),
+                                             std::move(network)));
     }
 
     void PerformTest() override {
@@ -239,9 +245,9 @@ TEST_P(ProbingEndToEndTest, ProbeOnVideoEncoderReconfiguration) {
             // bitrate).
             if (stats.send_bandwidth_bps >= 250000 &&
                 stats.send_bandwidth_bps <= 350000) {
-              FakeNetworkPipe::Config config;
+              DefaultNetworkSimulationConfig config;
               config.link_capacity_kbps = 200;
-              send_transport_->SetConfig(config);
+              send_simulated_network_->SetConfig(config);
 
               // In order to speed up the test we can interrupt exponential
               // probing by toggling the network availability. The alternative
@@ -254,9 +260,9 @@ TEST_P(ProbingEndToEndTest, ProbeOnVideoEncoderReconfiguration) {
             break;
           case 1:
             if (stats.send_bandwidth_bps <= 210000) {
-              FakeNetworkPipe::Config config;
+              DefaultNetworkSimulationConfig config;
               config.link_capacity_kbps = 5000;
-              send_transport_->SetConfig(config);
+              send_simulated_network_->SetConfig(config);
 
               encoder_config_->max_bitrate_bps = 2000000;
               encoder_config_->simulcast_layers[0].max_bitrate_bps = 1200000;
@@ -281,7 +287,7 @@ TEST_P(ProbingEndToEndTest, ProbeOnVideoEncoderReconfiguration) {
     const int kTimeoutMs = 3000;
     test::SingleThreadedTaskQueueForTesting* const task_queue_;
     bool* const success_;
-    test::PacketTransport* send_transport_;
+    SimulatedNetwork* send_simulated_network_;
     VideoSendStream* send_stream_;
     VideoEncoderConfig* encoder_config_;
     RtpTransportControllerSend* transport_controller_;

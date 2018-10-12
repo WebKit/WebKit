@@ -56,11 +56,9 @@ VideoCodecInitializer::CreateBitrateAllocator(const VideoCodec& codec) {
     case kVideoCodecH264:
       rate_allocator.reset(new SimulcastRateAllocator(codec));
       break;
-#if !defined(RTC_DISABLE_VP9)
     case kVideoCodecVP9:
       rate_allocator.reset(new SvcRateAllocator(codec));
       break;
-#endif
     default:
       rate_allocator.reset(new DefaultVideoBitrateAllocator(codec));
   }
@@ -128,6 +126,7 @@ VideoCodec VideoCodecInitializer::VideoEncoderConfigToVideoCodec(
 
     sim_stream->width = static_cast<uint16_t>(streams[i].width);
     sim_stream->height = static_cast<uint16_t>(streams[i].height);
+    sim_stream->maxFramerate = streams[i].max_framerate;
     sim_stream->minBitrate = streams[i].min_bitrate_bps / 1000;
     sim_stream->targetBitrate = streams[i].target_bitrate_bps / 1000;
     sim_stream->maxBitrate = streams[i].max_bitrate_bps / 1000;
@@ -179,7 +178,6 @@ VideoCodec VideoCodecInitializer::VideoEncoderConfigToVideoCodec(
 
       break;
     }
-#if !defined(RTC_DISABLE_VP9)
     case kVideoCodecVP9: {
       if (!config.encoder_specific_settings) {
         *video_codec.VP9() = VideoEncoder::GetDefaultVp9Settings();
@@ -201,11 +199,11 @@ VideoCodec VideoCodecInitializer::VideoEncoderConfigToVideoCodec(
         // Layering is set explicitly.
         spatial_layers = config.spatial_layers;
       } else {
-        spatial_layers =
-            GetSvcConfig(video_codec.width, video_codec.height,
-                         video_codec.VP9()->numberOfSpatialLayers,
-                         video_codec.VP9()->numberOfTemporalLayers,
-                         video_codec.mode == VideoCodecMode::kScreensharing);
+        spatial_layers = GetSvcConfig(
+            video_codec.width, video_codec.height, video_codec.maxFramerate,
+            video_codec.VP9()->numberOfSpatialLayers,
+            video_codec.VP9()->numberOfTemporalLayers,
+            video_codec.mode == VideoCodecMode::kScreensharing);
 
         const bool no_spatial_layering = (spatial_layers.size() == 1);
         if (no_spatial_layering) {
@@ -235,7 +233,6 @@ VideoCodec VideoCodecInitializer::VideoEncoderConfigToVideoCodec(
 
       break;
     }
-#endif
     case kVideoCodecH264: {
       if (!config.encoder_specific_settings)
         *video_codec.H264() = VideoEncoder::GetDefaultH264Settings();

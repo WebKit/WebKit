@@ -19,17 +19,36 @@ import subprocess
 import sys
 import urllib2
 
+def FindSrcDirPath():
+  """Returns the abs path to the src/ dir of the project."""
+  src_dir = os.path.dirname(os.path.abspath(__file__))
+  while os.path.basename(src_dir) != 'src':
+    src_dir = os.path.normpath(os.path.join(src_dir, os.pardir))
+  return src_dir
 
 # Skip these dependencies (list without solution name prefix).
 DONT_AUTOROLL_THESE = [
-  'src/third_party/winsdk_samples',
   'src/examples/androidtests/third_party/gradle',
+  'src/third_party/ffmpeg',
 ]
 
-# Run these CQ trybots in addition to the default ones in infra/config/cq.cfg.
-EXTRA_TRYBOTS = (
-    'master.internal.tryserver.corp.webrtc:linux_internal'
-)
+# These dependencies are missing in chromium/src/DEPS, either unused or already
+# in-tree. For instance, src/base is a part of the Chromium source git repo,
+# but we pull it through a subtree mirror, so therefore it isn't listed in
+# Chromium's deps but it is in ours.
+WEBRTC_ONLY_DEPS = [
+  'src/base',
+  'src/build',
+  'src/ios',
+  'src/testing',
+  'src/third_party',
+  'src/third_party/findbugs',
+  'src/third_party/gtest-parallel',
+  'src/third_party/winsdk_samples',
+  'src/third_party/yasm/binaries',
+  'src/tools',
+]
+
 
 WEBRTC_URL = 'https://webrtc.googlesource.com/src'
 CHROMIUM_SRC_URL = 'https://chromium.googlesource.com/chromium/src'
@@ -42,12 +61,19 @@ CLANG_REVISION_RE = re.compile(r'^CLANG_REVISION = \'(\d+)\'$')
 ROLL_BRANCH_NAME = 'roll_chromium_revision'
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-CHECKOUT_SRC_DIR = os.path.realpath(os.path.join(SCRIPT_DIR, os.pardir,
-                                                 os.pardir))
+CHECKOUT_SRC_DIR = FindSrcDirPath()
 CHECKOUT_ROOT_DIR = os.path.realpath(os.path.join(CHECKOUT_SRC_DIR, os.pardir))
+
+# Copied from tools/android/roll/android_deps/.../BuildConfigGenerator.groovy.
+ANDROID_DEPS_START = r'=== ANDROID_DEPS Generated Code Start ==='
+ANDROID_DEPS_END = r'=== ANDROID_DEPS Generated Code End ==='
+# Location of automically gathered android deps.
+ANDROID_DEPS_PATH = 'src/third_party/android_deps/'
+
 
 sys.path.append(os.path.join(CHECKOUT_SRC_DIR, 'build'))
 import find_depot_tools
+
 find_depot_tools.add_depot_tools_to_path()
 
 CLANG_UPDATE_SCRIPT_URL_PATH = 'tools/clang/scripts/update.py'
@@ -55,8 +81,16 @@ CLANG_UPDATE_SCRIPT_LOCAL_PATH = os.path.join(CHECKOUT_SRC_DIR, 'tools',
                                               'clang', 'scripts', 'update.py')
 
 DepsEntry = collections.namedtuple('DepsEntry', 'path url revision')
-ChangedDep = collections.namedtuple('ChangedDep',
-                                    'path url current_rev new_rev')
+ChangedDep = collections.namedtuple(
+    'ChangedDep', 'path url current_rev new_rev')
+CipdDepsEntry = collections.namedtuple('CipdDepsEntry', 'path packages')
+ChangedCipdPackage = collections.namedtuple(
+    'ChangedCipdPackage', 'path package current_version new_version')
+
+ChromiumRevisionUpdate = collections.namedtuple('ChromiumRevisionUpdate',
+                                                ('current_chromium_rev '
+                                                 'new_chromium_rev '))
+
 
 class RollError(Exception):
   pass
@@ -72,7 +106,7 @@ def ParseDepsDict(deps_content):
     'Var': VarLookup(local_scope),
     'deps_os': {},
   }
-  exec(deps_content, global_scope, local_scope)
+  exec (deps_content, global_scope, local_scope)
   return local_scope
 
 
@@ -82,23 +116,18 @@ def ParseLocalDepsFile(filename):
   return ParseDepsDict(deps_content)
 
 
-def ParseRemoteCrDepsFile(revision):
-  deps_content = ReadRemoteCrFile('DEPS', revision)
-  return ParseDepsDict(deps_content)
-
-
 def ParseCommitPosition(commit_message):
   for line in reversed(commit_message.splitlines()):
     m = COMMIT_POSITION_RE.match(line.strip())
     if m:
-      return m.group(1)
+      return int(m.group(1))
   logging.error('Failed to parse commit position id from:\n%s\n',
                 commit_message)
   sys.exit(-1)
 
 
 def _RunCommand(command, working_dir=None, ignore_exit_code=False,
-                extra_env=None):
+    extra_env=None, input_data=None):
   """Runs a command and returns the output from that command.
 
   If the command fails (exit code != 0), the function will exit the process.
@@ -110,15 +139,15 @@ def _RunCommand(command, working_dir=None, ignore_exit_code=False,
   logging.debug('CMD: %s CWD: %s', ' '.join(command), working_dir)
   env = os.environ.copy()
   if extra_env:
-    assert all(type(value) == str for value in extra_env.values())
+    assert all(isinstance(value, str) for value in extra_env.values())
     logging.debug('extra env: %s', extra_env)
     env.update(extra_env)
-  p = subprocess.Popen(command, stdout=subprocess.PIPE,
+  p = subprocess.Popen(command,
+                       stdin=subprocess.PIPE,
+                       stdout=subprocess.PIPE,
                        stderr=subprocess.PIPE, env=env,
                        cwd=working_dir, universal_newlines=True)
-  std_output = p.stdout.read()
-  err_output = p.stderr.read()
-  p.wait()
+  std_output, err_output = p.communicate(input_data)
   p.stdout.close()
   p.stderr.close()
   if not ignore_exit_code and p.returncode != 0:
@@ -207,18 +236,109 @@ def GetMatchingDepsEntries(depsentry_dict, dir_path):
 def BuildDepsentryDict(deps_dict):
   """Builds a dict of paths to DepsEntry objects from a raw parsed deps dict."""
   result = {}
+
   def AddDepsEntries(deps_subdict):
-    for path, deps_url in deps_subdict.iteritems():
-      if isinstance(deps_url, dict):
-        deps_url = deps_url['url']
-      if not result.has_key(path):
-        url, revision = deps_url.split('@') if deps_url else (None, None)
+    for path, dep in deps_subdict.iteritems():
+      if path in result:
+        continue
+      if not isinstance(dep, dict):
+        dep = {'url': dep}
+      if dep.get('dep_type') == 'cipd':
+        result[path] = CipdDepsEntry(path, dep['packages'])
+      else:
+        url, revision = dep['url'].split('@')
         result[path] = DepsEntry(path, url, revision)
 
   AddDepsEntries(deps_dict['deps'])
   for deps_os in ['win', 'mac', 'unix', 'android', 'ios', 'unix']:
     AddDepsEntries(deps_dict.get('deps_os', {}).get(deps_os, {}))
   return result
+
+
+def _FindChangedCipdPackages(path, old_pkgs, new_pkgs):
+  assert ({p['package'] for p in old_pkgs} ==
+          {p['package'] for p in new_pkgs})
+  for old_pkg in old_pkgs:
+    for new_pkg in new_pkgs:
+      old_version = old_pkg['version']
+      new_version = new_pkg['version']
+      if (old_pkg['package'] == new_pkg['package'] and
+          old_version != new_version):
+        logging.debug('Roll dependency %s to %s', path, new_version)
+        yield ChangedCipdPackage(path, old_pkg['package'],
+                                 old_version, new_version)
+
+
+def _FindNewDeps(old, new):
+  """ Gather dependencies only in |new| and return corresponding paths. """
+  old_entries = set(BuildDepsentryDict(old))
+  new_entries = set(BuildDepsentryDict(new))
+  return [path for path in new_entries - old_entries
+          if path not in DONT_AUTOROLL_THESE]
+
+
+def FindAddedDeps(webrtc_deps, new_cr_deps):
+  """
+  Calculate new deps entries of interest.
+
+  Ideally, that would mean: only appearing in chromium DEPS
+  but transitively used in WebRTC.
+
+  Since it's hard to compute, we restrict ourselves to a well defined subset:
+  deps sitting in |ANDROID_DEPS_PATH|.
+  Otherwise, assumes that's a Chromium-only dependency.
+
+  Args:
+    webrtc_deps: dict of deps as defined in the WebRTC DEPS file.
+    new_cr_deps: dict of deps as defined in the chromium DEPS file.
+
+  Caveat: Doesn't detect a new package in existing dep.
+
+  Returns:
+    A tuple consisting of:
+      A list of paths added dependencies sitting in |ANDROID_DEPS_PATH|.
+      A list of paths for other added dependencies.
+  """
+  all_added_deps = _FindNewDeps(webrtc_deps, new_cr_deps)
+  generated_android_deps = [path for path in all_added_deps
+                            if path.startswith(ANDROID_DEPS_PATH)]
+  other_deps = [path for path in all_added_deps
+                if path not in generated_android_deps]
+  return generated_android_deps, other_deps
+
+
+def FindRemovedDeps(webrtc_deps, new_cr_deps):
+  """
+  Calculate obsolete deps entries.
+
+  Ideally, that would mean: no more appearing in chromium DEPS
+  and not used in WebRTC.
+
+  Since it's hard to compute:
+   1/ We restrict ourselves to a well defined subset:
+      deps sitting in |ANDROID_DEPS_PATH|.
+   2/ We rely on existing behavior of CalculateChangeDeps.
+      I.e. Assumes non-CIPD dependencies are WebRTC-only, don't remove them.
+
+  Args:
+    webrtc_deps: dict of deps as defined in the WebRTC DEPS file.
+    new_cr_deps: dict of deps as defined in the chromium DEPS file.
+
+  Caveat: Doesn't detect a deleted package in existing dep.
+
+  Returns:
+    A tuple consisting of:
+      A list of paths of dependencies removed from |ANDROID_DEPS_PATH|.
+      A list of paths of unexpected disappearing dependencies.
+  """
+  all_removed_deps = _FindNewDeps(new_cr_deps, webrtc_deps)
+  generated_android_deps = [path for path in all_removed_deps
+                            if path.startswith(ANDROID_DEPS_PATH)]
+  # Webrtc-only dependencies are handled in CalculateChangedDeps.
+  other_deps = [path for path in all_removed_deps
+                if path not in generated_android_deps and
+                   path not in WEBRTC_ONLY_DEPS]
+  return generated_android_deps, other_deps
 
 
 def CalculateChangedDeps(webrtc_deps, new_cr_deps):
@@ -244,16 +364,28 @@ def CalculateChangedDeps(webrtc_deps, new_cr_deps):
       continue
     cr_deps_entry = new_cr_entries.get(path)
     if cr_deps_entry:
+      assert type(cr_deps_entry) is type(webrtc_deps_entry)
+
+      if isinstance(cr_deps_entry, CipdDepsEntry):
+        result.extend(_FindChangedCipdPackages(path, webrtc_deps_entry.packages,
+                                               cr_deps_entry.packages))
+        continue
+
       # Use the revision from Chromium's DEPS file.
       new_rev = cr_deps_entry.revision
       assert webrtc_deps_entry.url == cr_deps_entry.url, (
-        'WebRTC DEPS entry %s has a different URL (%s) than Chromium (%s).' %
-        (path, webrtc_deps_entry.url, cr_deps_entry.url))
+          'WebRTC DEPS entry %s has a different URL (%s) than Chromium (%s).' %
+          (path, webrtc_deps_entry.url, cr_deps_entry.url))
     else:
-      # Use the HEAD of the deps repo.
-      stdout, _ = _RunCommand(['git', 'ls-remote', webrtc_deps_entry.url,
-                               'HEAD'])
-      new_rev = stdout.strip().split('\t')[0]
+      if isinstance(webrtc_deps_entry, DepsEntry):
+        # Use the HEAD of the deps repo.
+        stdout, _ = _RunCommand(['git', 'ls-remote', webrtc_deps_entry.url,
+                                'HEAD'])
+        new_rev = stdout.strip().split('\t')[0]
+      else:
+        # The dependency has been removed from chromium.
+        # This is handled by FindRemovedDeps.
+        continue
 
     # Check if an update is necessary.
     if webrtc_deps_entry.revision != new_rev:
@@ -276,40 +408,64 @@ def CalculateChangedClang(new_cr_rev):
   current_rev = GetClangRev(current_lines)
 
   new_clang_update_py = ReadRemoteCrFile(CLANG_UPDATE_SCRIPT_URL_PATH,
-                                             new_cr_rev).splitlines()
+                                         new_cr_rev).splitlines()
   new_rev = GetClangRev(new_clang_update_py)
   return ChangedDep(CLANG_UPDATE_SCRIPT_LOCAL_PATH, None, current_rev, new_rev)
 
 
-def GenerateCommitMessage(current_cr_rev, new_cr_rev, current_commit_pos,
-                          new_commit_pos, changed_deps_list, clang_change):
-  current_cr_rev = current_cr_rev[0:10]
-  new_cr_rev = new_cr_rev[0:10]
+def GenerateCommitMessage(rev_update, current_commit_pos, new_commit_pos,
+                          changed_deps_list,
+                          added_deps_paths=None,
+                          removed_deps_paths=None,
+                          clang_change=None,
+                          ):
+  current_cr_rev = rev_update.current_chromium_rev[0:10]
+  new_cr_rev = rev_update.new_chromium_rev[0:10]
   rev_interval = '%s..%s' % (current_cr_rev, new_cr_rev)
   git_number_interval = '%s:%s' % (current_commit_pos, new_commit_pos)
 
   commit_msg = ['Roll chromium_revision %s (%s)\n' % (rev_interval,
-                                                    git_number_interval)]
-  commit_msg.append('Change log: %s' % (CHROMIUM_LOG_TEMPLATE % rev_interval))
-  commit_msg.append('Full diff: %s\n' % (CHROMIUM_COMMIT_TEMPLATE %
-                                         rev_interval))
+                                                      git_number_interval),
+                'Change log: %s' % (CHROMIUM_LOG_TEMPLATE % rev_interval),
+                'Full diff: %s\n' % (CHROMIUM_COMMIT_TEMPLATE %
+                                     rev_interval)]
+
+  def Section(adjective, deps):
+    noun = 'dependency' if len(deps) == 1 else 'dependencies'
+    commit_msg.append('%s %s' % (adjective, noun))
+
   tbr_authors = ''
   if changed_deps_list:
-    commit_msg.append('Changed dependencies:')
+    Section('Changed', changed_deps_list)
 
     for c in changed_deps_list:
-      commit_msg.append('* %s: %s/+log/%s..%s' % (c.path, c.url,
-                                                  c.current_rev[0:10],
-                                                  c.new_rev[0:10]))
+      if isinstance(c, ChangedCipdPackage):
+        commit_msg.append('* %s: %s..%s' % (c.path, c.current_version,
+                                            c.new_version))
+      else:
+        commit_msg.append('* %s: %s/+log/%s..%s' % (c.path, c.url,
+                                                    c.current_rev[0:10],
+                                                    c.new_rev[0:10]))
       if 'libvpx' in c.path:
         tbr_authors += 'marpan@webrtc.org, '
 
+  if added_deps_paths:
+    Section('Added', added_deps_paths)
+    commit_msg.extend('* %s' % p for p in added_deps_paths)
+
+  if removed_deps_paths:
+    Section('Removed', removed_deps_paths)
+    commit_msg.extend('* %s' % p for p in removed_deps_paths)
+
+  if any([changed_deps_list,
+          added_deps_paths,
+          removed_deps_paths]):
     change_url = CHROMIUM_FILE_TEMPLATE % (rev_interval, 'DEPS')
     commit_msg.append('DEPS diff: %s\n' % change_url)
   else:
     commit_msg.append('No dependencies changed.')
 
-  if clang_change.current_rev != clang_change.new_rev:
+  if clang_change and clang_change.current_rev != clang_change.new_rev:
     commit_msg.append('Clang version changed %s:%s' %
                       (clang_change.current_rev, clang_change.new_rev))
     change_url = CHROMIUM_FILE_TEMPLATE % (rev_interval,
@@ -325,18 +481,33 @@ def GenerateCommitMessage(current_cr_rev, new_cr_rev, current_commit_pos,
 
   commit_msg.append('TBR=%s' % tbr_authors)
   commit_msg.append('BUG=None')
-  commit_msg.append('CQ_INCLUDE_TRYBOTS=%s' % EXTRA_TRYBOTS)
   return '\n'.join(commit_msg)
 
 
-def UpdateDepsFile(deps_filename, old_cr_revision, new_cr_revision,
-                   changed_deps):
+def UpdateDepsFile(deps_filename, rev_update, changed_deps, new_cr_content):
   """Update the DEPS file with the new revision."""
 
-  # Update the chromium_revision variable.
   with open(deps_filename, 'rb') as deps_file:
     deps_content = deps_file.read()
-  deps_content = deps_content.replace(old_cr_revision, new_cr_revision)
+
+  # Update the chromium_revision variable.
+  deps_content = deps_content.replace(rev_update.current_chromium_rev,
+                                      rev_update.new_chromium_rev)
+
+  # Add and remove dependencies. For now: only generated android deps.
+  # Since gclient cannot add or remove deps, we on the fact that
+  # these android deps are located in one place we can copy/paste.
+  deps_re = re.compile(ANDROID_DEPS_START + '.*' + ANDROID_DEPS_END,
+                       re.DOTALL)
+  new_deps = deps_re.search(new_cr_content)
+  old_deps = deps_re.search(deps_content)
+  if not new_deps or not old_deps:
+    faulty = 'Chromium' if not new_deps else 'WebRTC'
+    raise RollError('Was expecting to find "%s" and "%s"\n'
+                    'in %s DEPS'
+                    % (ANDROID_DEPS_START, ANDROID_DEPS_END, faulty))
+  deps_content = deps_re.sub(new_deps.group(0), deps_content)
+
   with open(deps_filename, 'wb') as deps_file:
     deps_file.write(deps_content)
 
@@ -351,11 +522,13 @@ def UpdateDepsFile(deps_filename, old_cr_revision, new_cr_revision,
           'platforms in the target_os list, i.e.\n'
           'target_os = ["android", "unix", "mac", "ios", "win"];\n'
           'Then run "gclient sync" again.' % local_dep_dir)
-    _, stderr = _RunCommand(
-      ['roll-dep-svn', '--no-verify-revision', dep.path, dep.new_rev],
-      working_dir=CHECKOUT_SRC_DIR, ignore_exit_code=True)
-    if stderr:
-      logging.warning('roll-dep-svn: %s', stderr)
+    if isinstance(dep, ChangedCipdPackage):
+      package = dep.package.format()  # Eliminate double curly brackets
+      update = '%s:%s@%s' % (dep.path, package, dep.new_version)
+    else:
+      update = '%s@%s' % (dep.path, dep.new_rev)
+    _RunCommand(['gclient', 'setdep', '--revision', update],
+                working_dir=CHECKOUT_SRC_DIR)
 
 
 def _IsTreeClean():
@@ -403,14 +576,48 @@ def _LocalCommit(commit_msg, dry_run):
     _RunCommand(['git', 'commit', '-m', commit_msg])
 
 
-def _UploadCL(dry_run, skip_cq=False):
-  logging.info('Uploading CL...')
-  if not dry_run:
-    cmd = ['git', 'cl', 'upload', '-f', '--gerrit']
-    if not skip_cq:
-      logging.info('Sending the CL to the CQ...')
-      cmd.extend(['--use-commit-queue', '--send-mail'])
-    _RunCommand(cmd, extra_env={'EDITOR': 'true', 'SKIP_GCE_AUTH_FOR_GIT': '1'})
+def ChooseCQMode(skip_cq, cq_over, current_commit_pos, new_commit_pos):
+  if skip_cq:
+    return 0
+  if (new_commit_pos - current_commit_pos) < cq_over:
+    return 1
+  return 2
+
+
+def _UploadCL(commit_queue_mode):
+  """Upload the committed changes as a changelist to Gerrit.
+
+  commit_queue_mode:
+    - 2: Submit to commit queue.
+    - 1: Run trybots but do not submit to CQ.
+    - 0: Skip CQ, upload only.
+  """
+  cmd = ['git', 'cl', 'upload', '--force', '--bypass-hooks']
+  if commit_queue_mode >= 2:
+    logging.info('Sending the CL to the CQ...')
+    cmd.extend(['--use-commit-queue', '--send-mail'])
+  elif commit_queue_mode >= 1:
+    logging.info('Starting CQ dry run...')
+    cmd.extend(['--cq-dry-run'])
+  extra_env = {
+      'EDITOR': 'true',
+      'SKIP_GCE_AUTH_FOR_GIT': '1',
+  }
+  stdout, stderr = _RunCommand(cmd, extra_env=extra_env)
+  logging.debug('Output from "git cl upload":\nstdout:\n%s\n\nstderr:\n%s',
+      stdout, stderr)
+
+
+def GetRollRevisionRanges(opts, webrtc_deps):
+  current_cr_rev = webrtc_deps['vars']['chromium_revision']
+  new_cr_rev = opts.revision
+  if not new_cr_rev:
+    stdout, _ = _RunCommand(['git', 'ls-remote', CHROMIUM_SRC_URL, 'HEAD'])
+    head_rev = stdout.strip().split('\t')[0]
+    logging.info('No revision specified. Using HEAD: %s', head_rev)
+    new_cr_rev = head_rev
+
+  return ChromiumRevisionUpdate(current_cr_rev, new_cr_rev)
 
 
 def main():
@@ -420,10 +627,6 @@ def main():
   p.add_argument('-r', '--revision',
                  help=('Chromium Git revision to roll to. Defaults to the '
                        'Chromium HEAD revision if omitted.'))
-  p.add_argument('-u', '--rietveld-email',
-                 help=('E-mail address to use for creating the CL at Rietveld'
-                       'If omitted a previously cached one will be used or an '
-                       'error will be thrown during upload.'))
   p.add_argument('--dry-run', action='store_true', default=False,
                  help=('Calculate changes and modify DEPS, but don\'t create '
                        'any local branch, commit, upload CL or send any '
@@ -432,8 +635,12 @@ def main():
                  default=False,
                  help=('Ignore if the current branch is not master or if there '
                        'are uncommitted changes (default: %(default)s).'))
-  p.add_argument('--skip-cq', action='store_true', default=False,
-                 help='Skip sending the CL to the CQ (default: %(default)s)')
+  grp = p.add_mutually_exclusive_group()
+  grp.add_argument('--skip-cq', action='store_true', default=False,
+                   help='Skip sending the CL to the CQ (default: %(default)s)')
+  grp.add_argument('--cq-over', type=int, default=1,
+                   help=('Commit queue dry run if the revision difference '
+                         'is below this number (default: %(default)s)'))
   p.add_argument('-v', '--verbose', action='store_true', default=False,
                  help='Be extra verbose in printing of log messages.')
   opts = p.parse_args()
@@ -453,35 +660,46 @@ def main():
   if not opts.ignore_unclean_workdir:
     _EnsureUpdatedMasterBranch(opts.dry_run)
 
-  new_cr_rev = opts.revision
-  if not new_cr_rev:
-    stdout, _ = _RunCommand(['git', 'ls-remote', CHROMIUM_SRC_URL, 'HEAD'])
-    head_rev = stdout.strip().split('\t')[0]
-    logging.info('No revision specified. Using HEAD: %s', head_rev)
-    new_cr_rev = head_rev
-
   deps_filename = os.path.join(CHECKOUT_SRC_DIR, 'DEPS')
   webrtc_deps = ParseLocalDepsFile(deps_filename)
-  current_cr_rev = webrtc_deps['vars']['chromium_revision']
 
-  current_commit_pos = ParseCommitPosition(ReadRemoteCrCommit(current_cr_rev))
-  new_commit_pos = ParseCommitPosition(ReadRemoteCrCommit(new_cr_rev))
+  rev_update = GetRollRevisionRanges(opts, webrtc_deps)
 
-  new_cr_deps = ParseRemoteCrDepsFile(new_cr_rev)
+  current_commit_pos = ParseCommitPosition(
+      ReadRemoteCrCommit(rev_update.current_chromium_rev))
+  new_commit_pos = ParseCommitPosition(
+      ReadRemoteCrCommit(rev_update.new_chromium_rev))
+
+  new_cr_content = ReadRemoteCrFile('DEPS', rev_update.new_chromium_rev)
+  new_cr_deps = ParseDepsDict(new_cr_content)
   changed_deps = CalculateChangedDeps(webrtc_deps, new_cr_deps)
-  clang_change = CalculateChangedClang(new_cr_rev)
-  commit_msg = GenerateCommitMessage(current_cr_rev, new_cr_rev,
-                                     current_commit_pos, new_commit_pos,
-                                     changed_deps, clang_change)
+  # Discard other deps, assumed to be chromium-only dependencies.
+  new_generated_android_deps, _ = FindAddedDeps(webrtc_deps, new_cr_deps)
+  removed_generated_android_deps, other_deps = FindRemovedDeps(webrtc_deps,
+                                                               new_cr_deps)
+  if other_deps:
+    raise RollError('WebRTC DEPS entries are missing from Chromium: %s. '
+          'Remove them or add them to DONT_AUTOROLL_THESE.' % other_deps)
+  clang_change = CalculateChangedClang(rev_update.new_chromium_rev)
+  commit_msg = GenerateCommitMessage(
+      rev_update, current_commit_pos, new_commit_pos, changed_deps,
+      added_deps_paths=new_generated_android_deps,
+      removed_deps_paths=removed_generated_android_deps,
+      clang_change=clang_change)
   logging.debug('Commit message:\n%s', commit_msg)
 
   _CreateRollBranch(opts.dry_run)
-  UpdateDepsFile(deps_filename, current_cr_rev, new_cr_rev, changed_deps)
+  if not opts.dry_run:
+    UpdateDepsFile(deps_filename, rev_update, changed_deps, new_cr_content)
   if _IsTreeClean():
     logging.info("No DEPS changes detected, skipping CL creation.")
   else:
     _LocalCommit(commit_msg, opts.dry_run)
-    _UploadCL(opts.dry_run, opts.skip_cq)
+    commit_queue_mode = ChooseCQMode(opts.skip_cq, opts.cq_over,
+                                     current_commit_pos, new_commit_pos)
+    logging.info('Uploading CL...')
+    if not opts.dry_run:
+      _UploadCL(commit_queue_mode)
   return 0
 
 

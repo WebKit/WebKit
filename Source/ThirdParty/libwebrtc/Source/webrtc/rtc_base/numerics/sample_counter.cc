@@ -26,11 +26,6 @@ void SampleCounter::Add(int sample) {
     RTC_DCHECK_GE(sample, std::numeric_limits<int64_t>::min() - sum_);
   }
   sum_ += sample;
-  // Prevent overflow in squaring.
-  RTC_DCHECK_GT(sample, std::numeric_limits<int32_t>::min());
-  RTC_DCHECK_LE(int64_t{sample} * sample,
-                std::numeric_limits<int64_t>::max() - sum_squared_);
-  sum_squared_ += int64_t{sample} * sample;
   ++num_samples_;
   if (!max_ || sample > *max_) {
     max_ = sample;
@@ -44,9 +39,6 @@ void SampleCounter::Add(const SampleCounter& other) {
     RTC_DCHECK_GE(other.sum_, std::numeric_limits<int64_t>::min() - sum_);
   }
   sum_ += other.sum_;
-  RTC_DCHECK_LE(other.sum_squared_,
-                std::numeric_limits<int64_t>::max() - sum_squared_);
-  sum_squared_ += other.sum_squared_;
   RTC_DCHECK_LE(other.num_samples_,
                 std::numeric_limits<int64_t>::max() - num_samples_);
   num_samples_ += other.num_samples_;
@@ -61,7 +53,22 @@ absl::optional<int> SampleCounter::Avg(int64_t min_required_samples) const {
   return rtc::dchecked_cast<int>(sum_ / num_samples_);
 }
 
-absl::optional<int64_t> SampleCounter::Variance(
+absl::optional<int> SampleCounter::Max() const {
+  return max_;
+}
+
+int64_t SampleCounter::NumSamples() const {
+  return num_samples_;
+}
+
+void SampleCounter::Reset() {
+  *this = {};
+}
+
+SampleCounterWithVariance::SampleCounterWithVariance() = default;
+SampleCounterWithVariance::~SampleCounterWithVariance() = default;
+
+absl::optional<int64_t> SampleCounterWithVariance::Variance(
     int64_t min_required_samples) const {
   RTC_DCHECK_GT(min_required_samples, 0);
   if (num_samples_ < min_required_samples)
@@ -71,11 +78,23 @@ absl::optional<int64_t> SampleCounter::Variance(
   return sum_squared_ / num_samples_ - mean * mean;
 }
 
-absl::optional<int> SampleCounter::Max() const {
-  return max_;
+void SampleCounterWithVariance::Add(int sample) {
+  SampleCounter::Add(sample);
+  // Prevent overflow in squaring.
+  RTC_DCHECK_GT(sample, std::numeric_limits<int32_t>::min());
+  RTC_DCHECK_LE(int64_t{sample} * sample,
+                std::numeric_limits<int64_t>::max() - sum_squared_);
+  sum_squared_ += int64_t{sample} * sample;
 }
 
-void SampleCounter::Reset() {
+void SampleCounterWithVariance::Add(const SampleCounterWithVariance& other) {
+  SampleCounter::Add(other);
+  RTC_DCHECK_LE(other.sum_squared_,
+                std::numeric_limits<int64_t>::max() - sum_squared_);
+  sum_squared_ += other.sum_squared_;
+}
+
+void SampleCounterWithVariance::Reset() {
   *this = {};
 }
 

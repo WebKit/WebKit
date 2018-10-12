@@ -258,7 +258,8 @@ EncodedImageCallback::Result MultiplexEncoderAdapter::OnEncodedImage(
               encodedImage._length);
 
   rtc::CritScope cs(&crit_);
-  const auto& stashed_image_itr = stashed_images_.find(encodedImage._timeStamp);
+  const auto& stashed_image_itr =
+      stashed_images_.find(encodedImage.Timestamp());
   const auto& stashed_image_next_itr = std::next(stashed_image_itr, 1);
   RTC_DCHECK(stashed_image_itr != stashed_images_.end());
   MultiplexImage& stashed_image = stashed_image_itr->second;
@@ -284,7 +285,6 @@ EncodedImageCallback::Result MultiplexEncoderAdapter::OnEncodedImage(
 
       CodecSpecificInfo codec_info = *codecSpecificInfo;
       codec_info.codecType = kVideoCodecMultiplex;
-      codec_info.codecSpecific.generic.simulcast_idx = 0;
       encoded_complete_callback_->OnEncodedImage(combined_image_, &codec_info,
                                                  fragmentation);
     }

@@ -43,6 +43,19 @@ class GoogCcDebugFactory : public GoogCcNetworkControllerFactory {
   GoogCcStatePrinter* printer_;
   GoogCcNetworkController* controller_ = nullptr;
 };
+
+class GoogCcFeedbackDebugFactory
+    : public GoogCcFeedbackNetworkControllerFactory {
+ public:
+  GoogCcFeedbackDebugFactory(RtcEventLog* event_log,
+                             GoogCcStatePrinter* printer);
+  std::unique_ptr<NetworkControllerInterface> Create(
+      NetworkControllerConfig config) override;
+
+ private:
+  GoogCcStatePrinter* printer_;
+  GoogCcNetworkController* controller_ = nullptr;
+};
 }  // namespace webrtc
 
 #endif  // MODULES_CONGESTION_CONTROLLER_GOOG_CC_TEST_GOOG_CC_PRINTER_H_

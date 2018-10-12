@@ -22,6 +22,7 @@
 #include "rtc_base/constructormagic.h"
 #include "rtc_base/sslstreamadapter.h"
 #include "rtc_base/stream.h"
+#include "rtc_base/strings/string_builder.h"
 #include "rtc_base/thread_checker.h"
 
 namespace rtc {
@@ -180,12 +181,12 @@ class DtlsTransport : public DtlsTransportInternal {
   int SetOption(rtc::Socket::Option opt, int value) override;
 
   std::string ToString() const {
-    const char RECEIVING_ABBREV[2] = {'_', 'R'};
-    const char WRITABLE_ABBREV[2] = {'_', 'W'};
-    std::stringstream ss;
-    ss << "DtlsTransport[" << transport_name_ << "|" << component_ << "|"
+    const absl::string_view RECEIVING_ABBREV[2] = {"_", "R"};
+    const absl::string_view WRITABLE_ABBREV[2] = {"_", "W"};
+    rtc::StringBuilder sb;
+    sb << "DtlsTransport[" << transport_name_ << "|" << component_ << "|"
        << RECEIVING_ABBREV[receiving()] << WRITABLE_ABBREV[writable()] << "]";
-    return ss.str();
+    return sb.Release();
   }
 
  private:

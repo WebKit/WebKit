@@ -31,8 +31,8 @@
 #include "NetworkRTCMonitor.h"
 #include "RTCNetwork.h"
 #include <WebCore/LibWebRTCMacros.h>
-#include <webrtc/rtc_base/sigslot.h>
 #include <webrtc/p2p/base/basicpacketsocketfactory.h>
+#include <webrtc/rtc_base/third_party/sigslot/sigslot.h>
 #include <wtf/HashMap.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/UniqueRef.h>

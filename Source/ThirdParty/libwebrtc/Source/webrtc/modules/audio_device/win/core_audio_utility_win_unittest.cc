@@ -91,6 +91,12 @@ TEST_F(CoreAudioUtilityWinTest, NumberOfActiveDevices) {
   EXPECT_EQ(total_devices, render_devices + capture_devices);
 }
 
+TEST_F(CoreAudioUtilityWinTest, GetAudioClientVersion) {
+  uint32_t client_version = core_audio_utility::GetAudioClientVersion();
+  EXPECT_GE(client_version, 1u);
+  EXPECT_LE(client_version, 3u);
+}
+
 TEST_F(CoreAudioUtilityWinTest, CreateDeviceEnumerator) {
   ABORT_TEST_IF_NOT(DevicesAvailable());
   ComPtr<IMMDeviceEnumerator> enumerator =
@@ -338,27 +344,90 @@ TEST_F(CoreAudioUtilityWinTest, CreateClient) {
 
 TEST_F(CoreAudioUtilityWinTest, CreateClient2) {
   ABORT_TEST_IF_NOT(DevicesAvailable() &&
-                    rtc::rtc_win::GetVersion() >= rtc::rtc_win::VERSION_WIN10);
+                    core_audio_utility::GetAudioClientVersion() >= 2);
 
   EDataFlow data_flow[] = {eRender, eCapture};
 
   // Obtain reference to an IAudioClient2 interface for a default audio endpoint
   // device specified by two different data flows and the |eConsole| role.
   for (size_t i = 0; i < arraysize(data_flow); ++i) {
-    ComPtr<IAudioClient2> client = core_audio_utility::CreateClient2(
+    ComPtr<IAudioClient2> client2 = core_audio_utility::CreateClient2(
         AudioDeviceName::kDefaultDeviceId, data_flow[i], eConsole);
-    EXPECT_TRUE(client.Get());
+    EXPECT_TRUE(client2.Get());
+  }
+}
+
+TEST_F(CoreAudioUtilityWinTest, CreateClient3) {
+  ABORT_TEST_IF_NOT(DevicesAvailable() &&
+                    core_audio_utility::GetAudioClientVersion() >= 3);
+
+  EDataFlow data_flow[] = {eRender, eCapture};
+
+  // Obtain reference to an IAudioClient3 interface for a default audio endpoint
+  // device specified by two different data flows and the |eConsole| role.
+  for (size_t i = 0; i < arraysize(data_flow); ++i) {
+    ComPtr<IAudioClient3> client3 = core_audio_utility::CreateClient3(
+        AudioDeviceName::kDefaultDeviceId, data_flow[i], eConsole);
+    EXPECT_TRUE(client3.Get());
   }
 }
 
 TEST_F(CoreAudioUtilityWinTest, SetClientProperties) {
-  ABORT_TEST_IF_NOT(DevicesAvailable());
+  ABORT_TEST_IF_NOT(DevicesAvailable() &&
+                    core_audio_utility::GetAudioClientVersion() >= 2);
 
-  ComPtr<IAudioClient2> client = core_audio_utility::CreateClient2(
+  ComPtr<IAudioClient2> client2 = core_audio_utility::CreateClient2(
       AudioDeviceName::kDefaultDeviceId, eRender, eConsole);
-  EXPECT_TRUE(client.Get());
+  EXPECT_TRUE(client2.Get());
+  EXPECT_TRUE(
+      SUCCEEDED(core_audio_utility::SetClientProperties(client2.Get())));
 
-  EXPECT_TRUE(SUCCEEDED(core_audio_utility::SetClientProperties(client.Get())));
+  ComPtr<IAudioClient3> client3 = core_audio_utility::CreateClient3(
+      AudioDeviceName::kDefaultDeviceId, eRender, eConsole);
+  EXPECT_TRUE(client3.Get());
+  EXPECT_TRUE(
+      SUCCEEDED(core_audio_utility::SetClientProperties(client3.Get())));
+}
+
+TEST_F(CoreAudioUtilityWinTest, GetSharedModeEnginePeriod) {
+  ABORT_TEST_IF_NOT(DevicesAvailable() &&
+                    core_audio_utility::GetAudioClientVersion() >= 3);
+
+  ComPtr<IAudioClient3> client3 = core_audio_utility::CreateClient3(
+      AudioDeviceName::kDefaultDeviceId, eRender, eConsole);
+  EXPECT_TRUE(client3.Get());
+
+  WAVEFORMATPCMEX format;
+  EXPECT_TRUE(SUCCEEDED(
+      core_audio_utility::GetSharedModeMixFormat(client3.Get(), &format)));
+
+  uint32_t default_period = 0;
+  uint32_t fundamental_period = 0;
+  uint32_t min_period = 0;
+  uint32_t max_period = 0;
+  EXPECT_TRUE(SUCCEEDED(core_audio_utility::GetSharedModeEnginePeriod(
+      client3.Get(), &format, &default_period, &fundamental_period, &min_period,
+      &max_period)));
+}
+
+// TODO(henrika): figure out why usage of this API always reports
+// AUDCLNT_E_OFFLOAD_MODE_ONLY.
+TEST_F(CoreAudioUtilityWinTest, DISABLED_GetBufferSizeLimits) {
+  ABORT_TEST_IF_NOT(DevicesAvailable() &&
+                    core_audio_utility::GetAudioClientVersion() >= 2);
+
+  ComPtr<IAudioClient2> client2 = core_audio_utility::CreateClient2(
+      AudioDeviceName::kDefaultDeviceId, eRender, eConsole);
+  EXPECT_TRUE(client2.Get());
+
+  WAVEFORMATPCMEX format;
+  EXPECT_TRUE(SUCCEEDED(
+      core_audio_utility::GetSharedModeMixFormat(client2.Get(), &format)));
+
+  REFERENCE_TIME min_buffer_duration = 0;
+  REFERENCE_TIME max_buffer_duration = 0;
+  EXPECT_TRUE(SUCCEEDED(core_audio_utility::GetBufferSizeLimits(
+      client2.Get(), &format, &min_buffer_duration, &max_buffer_duration)));
 }
 
 TEST_F(CoreAudioUtilityWinTest, GetSharedModeMixFormat) {
@@ -468,13 +537,13 @@ TEST_F(CoreAudioUtilityWinTest, SharedModeInitialize) {
   // Perform a shared-mode initialization without event-driven buffer handling.
   uint32_t endpoint_buffer_size = 0;
   HRESULT hr = core_audio_utility::SharedModeInitialize(
-      client.Get(), &format, nullptr, &endpoint_buffer_size);
+      client.Get(), &format, nullptr, 0, false, &endpoint_buffer_size);
   EXPECT_TRUE(SUCCEEDED(hr));
   EXPECT_GT(endpoint_buffer_size, 0u);
 
   // It is only possible to create a client once.
-  hr = core_audio_utility::SharedModeInitialize(client.Get(), &format, nullptr,
-                                                &endpoint_buffer_size);
+  hr = core_audio_utility::SharedModeInitialize(
+      client.Get(), &format, nullptr, 0, false, &endpoint_buffer_size);
   EXPECT_FALSE(SUCCEEDED(hr));
   EXPECT_EQ(hr, AUDCLNT_E_ALREADY_INITIALIZED);
 
@@ -483,8 +552,8 @@ TEST_F(CoreAudioUtilityWinTest, SharedModeInitialize) {
   client = core_audio_utility::CreateClient(AudioDeviceName::kDefaultDeviceId,
                                             eRender, eConsole);
   EXPECT_TRUE(client.Get());
-  hr = core_audio_utility::SharedModeInitialize(client.Get(), &format, nullptr,
-                                                &endpoint_buffer_size);
+  hr = core_audio_utility::SharedModeInitialize(
+      client.Get(), &format, nullptr, 0, false, &endpoint_buffer_size);
   EXPECT_TRUE(SUCCEEDED(hr));
   EXPECT_GT(endpoint_buffer_size, 0u);
 
@@ -497,8 +566,8 @@ TEST_F(CoreAudioUtilityWinTest, SharedModeInitialize) {
   format.Format.nSamplesPerSec = format.Format.nSamplesPerSec + 1;
   EXPECT_FALSE(core_audio_utility::IsFormatSupported(
       client.Get(), AUDCLNT_SHAREMODE_SHARED, &format));
-  hr = core_audio_utility::SharedModeInitialize(client.Get(), &format, nullptr,
-                                                &endpoint_buffer_size);
+  hr = core_audio_utility::SharedModeInitialize(
+      client.Get(), &format, nullptr, 0, false, &endpoint_buffer_size);
   EXPECT_TRUE(FAILED(hr));
   EXPECT_EQ(hr, E_INVALIDARG);
 
@@ -515,9 +584,12 @@ TEST_F(CoreAudioUtilityWinTest, SharedModeInitialize) {
   EXPECT_TRUE(core_audio_utility::IsFormatSupported(
       client.Get(), AUDCLNT_SHAREMODE_SHARED, &format));
   hr = core_audio_utility::SharedModeInitialize(
-      client.Get(), &format, event_handle, &endpoint_buffer_size);
+      client.Get(), &format, event_handle, 0, false, &endpoint_buffer_size);
   EXPECT_TRUE(SUCCEEDED(hr));
   EXPECT_GT(endpoint_buffer_size, 0u);
+
+  // TODO(henrika): possibly add test for signature which overrides the default
+  // sample rate.
 }
 
 TEST_F(CoreAudioUtilityWinTest, CreateRenderAndCaptureClients) {
@@ -547,7 +619,7 @@ TEST_F(CoreAudioUtilityWinTest, CreateRenderAndCaptureClients) {
 
       // Do a proper initialization and verify that it works this time.
       core_audio_utility::SharedModeInitialize(client.Get(), &format, nullptr,
-                                               &endpoint_buffer_size);
+                                               0, false, &endpoint_buffer_size);
       render_client = core_audio_utility::CreateRenderClient(client.Get());
       EXPECT_TRUE(render_client.Get());
       EXPECT_GT(endpoint_buffer_size, 0u);
@@ -559,7 +631,7 @@ TEST_F(CoreAudioUtilityWinTest, CreateRenderAndCaptureClients) {
 
       // Do a proper initialization and verify that it works this time.
       core_audio_utility::SharedModeInitialize(client.Get(), &format, nullptr,
-                                               &endpoint_buffer_size);
+                                               0, false, &endpoint_buffer_size);
       capture_client = core_audio_utility::CreateCaptureClient(client.Get());
       EXPECT_TRUE(capture_client.Get());
       EXPECT_GT(endpoint_buffer_size, 0u);
@@ -592,8 +664,8 @@ TEST_F(CoreAudioUtilityWinTest, CreateAudioClock) {
     EXPECT_FALSE(audio_clock.Get());
 
     // Do a proper initialization and verify that it works this time.
-    core_audio_utility::SharedModeInitialize(client.Get(), &format, nullptr,
-                                             &endpoint_buffer_size);
+    core_audio_utility::SharedModeInitialize(client.Get(), &format, nullptr, 0,
+                                             false, &endpoint_buffer_size);
     audio_clock = core_audio_utility::CreateAudioClock(client.Get());
     EXPECT_TRUE(audio_clock.Get());
     EXPECT_GT(endpoint_buffer_size, 0u);
@@ -602,6 +674,51 @@ TEST_F(CoreAudioUtilityWinTest, CreateAudioClock) {
     UINT64 frequency = 0;
     EXPECT_TRUE(SUCCEEDED(audio_clock->GetFrequency(&frequency)));
     EXPECT_GT(frequency, 0u);
+  }
+}
+
+TEST_F(CoreAudioUtilityWinTest, CreateAudioSessionControl) {
+  ABORT_TEST_IF_NOT(DevicesAvailable());
+
+  EDataFlow data_flow[] = {eRender, eCapture};
+
+  WAVEFORMATPCMEX format;
+  uint32_t endpoint_buffer_size = 0;
+
+  for (size_t i = 0; i < arraysize(data_flow); ++i) {
+    ComPtr<IAudioClient> client;
+    ComPtr<IAudioSessionControl> audio_session_control;
+
+    // Create a default client for the given data-flow direction.
+    client = core_audio_utility::CreateClient(AudioDeviceName::kDefaultDeviceId,
+                                              data_flow[i], eConsole);
+    EXPECT_TRUE(client.Get());
+    EXPECT_TRUE(SUCCEEDED(
+        core_audio_utility::GetSharedModeMixFormat(client.Get(), &format)));
+
+    // It is not possible to create an audio session control using an
+    // unitialized client interface.
+    audio_session_control =
+        core_audio_utility::CreateAudioSessionControl(client.Get());
+    EXPECT_FALSE(audio_session_control.Get());
+
+    // Do a proper initialization and verify that it works this time.
+    core_audio_utility::SharedModeInitialize(client.Get(), &format, nullptr, 0,
+                                             false, &endpoint_buffer_size);
+    audio_session_control =
+        core_audio_utility::CreateAudioSessionControl(client.Get());
+    EXPECT_TRUE(audio_session_control.Get());
+    EXPECT_GT(endpoint_buffer_size, 0u);
+
+    // Use the audio session control and verify that the session state can be
+    // queried. When a client opens a session by assigning the first stream to
+    // the session (by calling the IAudioClient::Initialize method), the initial
+    // session state is inactive. The session state changes from inactive to
+    // active when a stream in the session begins running (because the client
+    // has called the IAudioClient::Start method).
+    AudioSessionState state;
+    EXPECT_TRUE(SUCCEEDED(audio_session_control->GetState(&state)));
+    EXPECT_EQ(state, AudioSessionStateInactive);
   }
 }
 
@@ -631,8 +748,8 @@ TEST_F(CoreAudioUtilityWinTest, CreateSimpleAudioVolume) {
     EXPECT_FALSE(simple_audio_volume.Get());
 
     // Do a proper initialization and verify that it works this time.
-    core_audio_utility::SharedModeInitialize(client.Get(), &format, nullptr,
-                                             &endpoint_buffer_size);
+    core_audio_utility::SharedModeInitialize(client.Get(), &format, nullptr, 0,
+                                             false, &endpoint_buffer_size);
     simple_audio_volume =
         core_audio_utility::CreateSimpleAudioVolume(client.Get());
     EXPECT_TRUE(simple_audio_volume.Get());
@@ -666,8 +783,8 @@ TEST_F(CoreAudioUtilityWinTest, FillRenderEndpointBufferWithSilence) {
   uint32_t endpoint_buffer_size = 0;
   EXPECT_TRUE(SUCCEEDED(
       core_audio_utility::GetSharedModeMixFormat(client.Get(), &format)));
-  core_audio_utility::SharedModeInitialize(client.Get(), &format, nullptr,
-                                           &endpoint_buffer_size);
+  core_audio_utility::SharedModeInitialize(client.Get(), &format, nullptr, 0,
+                                           false, &endpoint_buffer_size);
   EXPECT_GT(endpoint_buffer_size, 0u);
 
   ComPtr<IAudioRenderClient> render_client(

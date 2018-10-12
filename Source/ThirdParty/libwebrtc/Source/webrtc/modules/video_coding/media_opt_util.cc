@@ -505,8 +505,8 @@ VCMLossProtectionLogic::VCMLossProtectionLogic(int64_t nowMs)
       _shortMaxLossPr255(0),
       _packetsPerFrame(0.9999f),
       _packetsPerFrameKey(0.9999f),
-      _codecWidth(0),
-      _codecHeight(0),
+      _codecWidth(704),
+      _codecHeight(576),
       _numLayers(1) {
   Reset(nowMs);
 }

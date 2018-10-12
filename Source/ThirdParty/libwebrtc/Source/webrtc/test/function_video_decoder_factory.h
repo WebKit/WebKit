@@ -28,6 +28,10 @@ class FunctionVideoDecoderFactory final : public VideoDecoderFactory {
  public:
   explicit FunctionVideoDecoderFactory(
       std::function<std::unique_ptr<VideoDecoder>()> create)
+      : create_([create](const SdpVideoFormat&) { return create(); }) {}
+  explicit FunctionVideoDecoderFactory(
+      std::function<std::unique_ptr<VideoDecoder>(const SdpVideoFormat&)>
+          create)
       : create_(std::move(create)) {}
 
   // Unused by tests.
@@ -37,12 +41,13 @@ class FunctionVideoDecoderFactory final : public VideoDecoderFactory {
   }
 
   std::unique_ptr<VideoDecoder> CreateVideoDecoder(
-      const SdpVideoFormat& /* format */) override {
-    return create_();
+      const SdpVideoFormat& format) override {
+    return create_(format);
   }
 
  private:
-  const std::function<std::unique_ptr<VideoDecoder>()> create_;
+  const std::function<std::unique_ptr<VideoDecoder>(const SdpVideoFormat&)>
+      create_;
 };
 
 }  // namespace test

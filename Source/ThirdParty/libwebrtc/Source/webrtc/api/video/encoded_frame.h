@@ -58,10 +58,6 @@ class EncodedFrame : public webrtc::VCMEncodedFrame {
 
   virtual bool GetBitstream(uint8_t* destination) const = 0;
 
-  // The capture timestamp of this frame, using the 90 kHz RTP clock.
-  virtual uint32_t Timestamp() const;
-  virtual void SetTimestamp(uint32_t rtp_timestamp);
-
   // When this frame was received.
   virtual int64_t ReceivedTime() const = 0;
 
@@ -78,7 +74,6 @@ class EncodedFrame : public webrtc::VCMEncodedFrame {
   bool is_keyframe() const { return num_references == 0; }
 
   VideoLayerFrameId id;
-  uint32_t timestamp = 0;
 
   // TODO(philipel): Add simple modify/access functions to prevent adding too
   // many |references|.

@@ -143,13 +143,6 @@ class AcmReceiver {
   int SetMaximumDelay(int delay_ms);
 
   //
-  // Get least required delay computed based on channel conditions. Note that
-  // this is before applying any user-defined limits (specified by calling
-  // (SetMinimumDelay() and/or SetMaximumDelay()).
-  //
-  int LeastRequiredDelayMs() const;
-
-  //
   // Resets the initial delay to zero.
   //
   void ResetInitialDelay();
@@ -231,6 +224,7 @@ class AcmReceiver {
   //
   int DecoderByPayloadType(uint8_t payload_type,
                            CodecInst* codec) const;
+  absl::optional<SdpAudioFormat> DecoderByPayloadType(int payload_type) const;
 
   //
   // Enable NACK and set the maximum size of the NACK list. If NACK is already

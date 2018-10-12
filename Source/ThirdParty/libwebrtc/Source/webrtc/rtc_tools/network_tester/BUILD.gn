@@ -159,7 +159,6 @@ if (is_android) {
 
     deps = [
       ":network_tester",
-      "../../system_wrappers:field_trial_default",
     ]
 
     suppressed_configs += [ "//build/config/android:hide_all_but_jni_onload" ]

@@ -8,70 +8,42 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <map>
 #include <string>
-#include <vector>
 
 #include "rtc_tools/frame_analyzer/video_quality_analysis.h"
 #include "rtc_tools/simple_command_line_parser.h"
+#include "rtc_tools/video_file_reader.h"
 
-#define MAX_NUM_FRAMES_PER_FILE INT_MAX
-
-void CompareFiles(const char* reference_file_name,
-                  const char* test_file_name,
-                  const char* results_file_name,
-                  int width,
-                  int height) {
-  // Check if the reference_file_name ends with "y4m".
-  bool y4m_mode = false;
-  if (std::string(reference_file_name).find("y4m") != std::string::npos) {
-    y4m_mode = true;
-  }
-
+void CompareFiles(
+    const rtc::scoped_refptr<webrtc::test::Video>& reference_video,
+    const rtc::scoped_refptr<webrtc::test::Video>& test_video,
+    const char* results_file_name) {
   FILE* results_file = fopen(results_file_name, "w");
 
-  int size = webrtc::test::GetI420FrameSize(width, height);
-
-  // Allocate buffers for test and reference frames.
-  uint8_t* test_frame = new uint8_t[size];
-  uint8_t* ref_frame = new uint8_t[size];
-
-  bool read_result = true;
-  for (int frame_counter = 0; frame_counter < MAX_NUM_FRAMES_PER_FILE;
-       ++frame_counter) {
-    read_result &=
-        (y4m_mode)
-            ? webrtc::test::ExtractFrameFromY4mFile(
-                  reference_file_name, width, height, frame_counter, ref_frame)
-            : webrtc::test::ExtractFrameFromYuvFile(
-                  reference_file_name, width, height, frame_counter, ref_frame);
-    read_result &= webrtc::test::ExtractFrameFromYuvFile(
-        test_file_name, width, height, frame_counter, test_frame);
-
-    if (!read_result)
-      break;
+  const size_t num_frames = std::min(reference_video->number_of_frames(),
+                                     test_video->number_of_frames());
+  for (size_t i = 0; i < num_frames; ++i) {
+    const rtc::scoped_refptr<webrtc::I420BufferInterface> ref_buffer =
+        reference_video->GetFrame(i);
+    const rtc::scoped_refptr<webrtc::I420BufferInterface> test_buffer =
+        test_video->GetFrame(i);
 
     // Calculate the PSNR and SSIM.
-    double result_psnr = webrtc::test::CalculateMetrics(
-        webrtc::test::kPSNR, ref_frame, test_frame, width, height);
-    double result_ssim = webrtc::test::CalculateMetrics(
-        webrtc::test::kSSIM, ref_frame, test_frame, width, height);
-    fprintf(results_file, "Frame: %d, PSNR: %f, SSIM: %f\n", frame_counter,
-            result_psnr, result_ssim);
+    double result_psnr = webrtc::test::Psnr(ref_buffer, test_buffer);
+    double result_ssim = webrtc::test::Ssim(ref_buffer, test_buffer);
+    fprintf(results_file, "Frame: %zu, PSNR: %f, SSIM: %f\n", i, result_psnr,
+            result_ssim);
   }
-  delete[] test_frame;
-  delete[] ref_frame;
 
   fclose(results_file);
 }
 
 /*
  * A tool running PSNR and SSIM analysis on two videos - a reference video and a
- * test video. The two videos should be I420 YUV videos.
+ * test video. The two videos should be I420 Y4M videos.
  * The tool just runs PSNR and SSIM on the corresponding frames in the test and
  * the reference videos until either the first or the second video runs out of
  * frames. The result is written in a results text file in the format:
@@ -82,8 +54,7 @@ void CompareFiles(const char* reference_file_name,
  *
  * Usage:
  * psnr_ssim_analyzer --reference_file=<name_of_file> --test_file=<name_of_file>
- * --results_file=<name_of_file> --width=<width_of_frames>
- * --height=<height_of_frames>
+ * --results_file=<name_of_file>
  */
 int main(int argc, char* argv[]) {
   std::string program_name = argv[0];
@@ -93,12 +64,8 @@ int main(int argc, char* argv[]) {
       "Example usage:\n" +
       program_name +
       " --reference_file=ref.yuv "
-      "--test_file=test.yuv --results_file=results.txt --width=320 "
-      "--height=240\n"
+      "--test_file=test.yuv --results_file=results.txt\n"
       "Command line flags:\n"
-      "  - width(int): The width of the reference and test files. Default: -1\n"
-      "  - height(int): The height of the reference and test files. "
-      " Default: -1\n"
       "  - reference_file(string): The reference YUV file to compare against."
       " Default: ref.yuv\n"
       "  - test_file(string): The test YUV file to run the analysis for."
@@ -112,8 +79,6 @@ int main(int argc, char* argv[]) {
   parser.Init(argc, argv);
   parser.SetUsageMessage(usage);
 
-  parser.SetFlag("width", "-1");
-  parser.SetFlag("height", "-1");
   parser.SetFlag("results_file", "results.txt");
   parser.SetFlag("reference_file", "ref.yuv");
   parser.SetFlag("test_file", "test.yuv");
@@ -127,16 +92,26 @@ int main(int argc, char* argv[]) {
   }
   parser.PrintEnteredFlags();
 
-  int width = strtol((parser.GetFlag("width")).c_str(), NULL, 10);
-  int height = strtol((parser.GetFlag("height")).c_str(), NULL, 10);
+  rtc::scoped_refptr<webrtc::test::Video> reference_video =
+      webrtc::test::OpenY4mFile(parser.GetFlag("reference_file"));
+  rtc::scoped_refptr<webrtc::test::Video> test_video =
+      webrtc::test::OpenY4mFile(parser.GetFlag("test_file"));
 
-  if (width <= 0 || height <= 0) {
-    fprintf(stderr, "Error: width or height cannot be <= 0!\n");
-    return -1;
+  if (!reference_video || !test_video) {
+    fprintf(stderr, "Error opening video files\n");
+    return 0;
+  }
+  if (reference_video->width() != test_video->width() ||
+      reference_video->height() != test_video->height()) {
+    fprintf(stderr,
+            "Reference and test video files do not have same size: %dx%d "
+            "versus %dx%d\n",
+            reference_video->width(), reference_video->height(),
+            test_video->width(), test_video->height());
+    return 0;
   }
 
-  CompareFiles(parser.GetFlag("reference_file").c_str(),
-               parser.GetFlag("test_file").c_str(),
-               parser.GetFlag("results_file").c_str(), width, height);
+  CompareFiles(reference_video, test_video,
+               parser.GetFlag("results_file").c_str());
   return 0;
 }

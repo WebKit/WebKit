@@ -11,6 +11,7 @@
 #define LOGGING_RTC_EVENT_LOG_RTC_EVENT_LOG_PARSER_H_
 
 #include <map>
+#include <sstream>  // no-presubmit-check TODO(webrtc:8982)
 #include <string>
 #include <utility>  // pair
 #include <vector>
@@ -46,6 +47,9 @@ class ParsedRtcEventLog {
   friend class RtcEventLogTestHelper;
 
  public:
+  ParsedRtcEventLog();
+  ~ParsedRtcEventLog();
+
   struct BweProbeClusterCreatedEvent {
     uint64_t timestamp;
     uint32_t id;
@@ -55,6 +59,9 @@ class ParsedRtcEventLog {
   };
 
   struct BweProbeResultEvent {
+    BweProbeResultEvent();
+    BweProbeResultEvent(const BweProbeResultEvent&);
+
     uint64_t timestamp;
     uint32_t id;
     absl::optional<uint64_t> bitrate_bps;

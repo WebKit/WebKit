@@ -8,6 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <algorithm>
+
 #include "modules/video_coding/utility/simulcast_utility.h"
 
 namespace webrtc {
@@ -60,6 +62,31 @@ bool SimulcastUtility::ValidSimulcastTemporalLayers(const VideoCodec& codec,
       return false;
   }
   return true;
+}
+
+bool SimulcastUtility::IsConferenceModeScreenshare(const VideoCodec& codec) {
+  if (codec.mode != VideoCodecMode::kScreensharing ||
+      NumberOfTemporalLayers(codec, 0) != 2) {
+    return false;
+  }
+  // Fixed default bitrates for legacy screenshare layers mode.
+  return (codec.numberOfSimulcastStreams == 0 && codec.maxBitrate == 1000) ||
+         (codec.numberOfSimulcastStreams >= 1 &&
+          codec.simulcastStream[0].maxBitrate == 1000 &&
+          codec.simulcastStream[0].targetBitrate == 200);
+}
+
+int SimulcastUtility::NumberOfTemporalLayers(const VideoCodec& codec,
+                                             int spatial_id) {
+  uint8_t num_temporal_layers =
+      std::max<uint8_t>(1, codec.VP8().numberOfTemporalLayers);
+  if (codec.numberOfSimulcastStreams > 0) {
+    RTC_DCHECK_LT(spatial_id, codec.numberOfSimulcastStreams);
+    num_temporal_layers =
+        std::max(num_temporal_layers,
+                 codec.simulcastStream[spatial_id].numberOfTemporalLayers);
+  }
+  return num_temporal_layers;
 }
 
 }  // namespace webrtc

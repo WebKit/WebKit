@@ -20,7 +20,7 @@
 
 #include "media/base/vp9_profile.h"
 #include "modules/video_coding/codecs/vp9/vp9_frame_buffer_pool.h"
-#include "rtc_base/rate_statistics.h"
+#include "modules/video_coding/utility/framerate_controller.h"
 
 #include "vpx/vp8cx.h"
 #include "vpx/vpx_decoder.h"
@@ -61,6 +61,7 @@ class VP9EncoderImpl : public VP9Encoder {
   int InitAndSetControlSettings(const VideoCodec* inst);
 
   void PopulateCodecSpecific(CodecSpecificInfo* codec_specific,
+                             absl::optional<int>* spatial_idx,
                              const vpx_codec_cx_pkt& pkt,
                              uint32_t timestamp,
                              bool first_frame_in_picture);
@@ -70,6 +71,7 @@ class VP9EncoderImpl : public VP9Encoder {
                             CodecSpecificInfoVP9* vp9_info);
   void UpdateReferenceBuffers(const vpx_codec_cx_pkt& pkt,
                               const size_t pic_num);
+  vpx_svc_ref_frame_config_t SetReferences(bool is_key_pic);
 
   bool ExplicitlyConfiguredSpatialLayers() const;
   bool SetSvcRates(const VideoBitrateAllocation& bitrate_allocation);
@@ -82,7 +84,7 @@ class VP9EncoderImpl : public VP9Encoder {
 
   void DeliverBufferedFrame(bool end_of_picture);
 
-  bool DropFrame(uint32_t rtp_timestamp);
+  bool DropFrame(uint8_t spatial_idx, uint32_t rtp_timestamp);
 
   // Determine maximum target for Intra frames
   //
@@ -113,13 +115,12 @@ class VP9EncoderImpl : public VP9Encoder {
   uint8_t num_temporal_layers_;
   uint8_t num_spatial_layers_;         // Number of configured SLs
   uint8_t num_active_spatial_layers_;  // Number of actively encoded SLs
+  bool layer_deactivation_requires_key_frame_;
   bool is_svc_;
   InterLayerPredMode inter_layer_pred_;
+  bool external_ref_control_;
 
-  // Framerate controller.
-  absl::optional<float> target_framerate_fps_;
-  RateStatistics output_framerate_;
-  uint32_t last_encoded_frame_rtp_timestamp_;
+  std::vector<FramerateController> framerate_controller_;
 
   // Used for flexible mode.
   bool is_flexible_mode_;
@@ -131,6 +132,12 @@ class VP9EncoderImpl : public VP9Encoder {
           spatial_layer_id(spatial_layer_id),
           temporal_layer_id(temporal_layer_id) {}
     RefFrameBuffer() {}
+
+    bool operator==(const RefFrameBuffer& o) {
+      return pic_num == o.pic_num && spatial_layer_id == o.spatial_layer_id &&
+             temporal_layer_id == o.temporal_layer_id;
+    }
+
     size_t pic_num = 0;
     size_t spatial_layer_id = 0;
     size_t temporal_layer_id = 0;

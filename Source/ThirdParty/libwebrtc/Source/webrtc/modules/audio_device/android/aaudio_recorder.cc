@@ -212,7 +212,6 @@ void AAudioRecorder::HandleStreamDisconnected() {
   // TODO(henrika): resolve issue where a one restart attempt leads to a long
   // sequence of new calls to OnErrorCallback().
   // See b/73148976 for details.
-  audio_device_buffer_->NativeAudioRecordingInterrupted();
   StopRecording();
   InitRecording();
   StartRecording();

@@ -153,6 +153,22 @@ class VideoTimingExtension {
                     uint8_t idx);
 };
 
+class FrameMarkingExtension {
+ public:
+  static constexpr RTPExtensionType kId = kRtpExtensionFrameMarking;
+  static constexpr const char kUri[] =
+      "http://tools.ietf.org/html/draft-ietf-avtext-framemarking-07";
+
+  static bool Parse(rtc::ArrayView<const uint8_t> data,
+                    FrameMarking* frame_marking);
+  static size_t ValueSize(const FrameMarking& frame_marking);
+  static bool Write(rtc::ArrayView<uint8_t> data,
+                    const FrameMarking& frame_marking);
+
+ private:
+  static bool IsScalable(uint8_t temporal_id, uint8_t layer_id);
+};
+
 // Base extension class for RTP header extensions which are strings.
 // Subclasses must defined kId and kUri static constexpr members.
 class BaseRtpStringExtension {

@@ -29,8 +29,10 @@
 
 #if USE(LIBWEBRTC)
 
-#include <webrtc/sdk/WebKit/VideoToolBoxDecoderFactory.h>
-#include <webrtc/sdk/WebKit/VideoToolBoxEncoderFactory.h>
+namespace webrtc {
+class VideoDecoderFactory;
+class VideoEncoderFactory;
+}
 
 namespace WebCore {
 

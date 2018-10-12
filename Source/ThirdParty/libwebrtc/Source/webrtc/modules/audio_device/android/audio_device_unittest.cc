@@ -755,9 +755,9 @@ TEST_F(AudioDeviceTest, UsesCorrectDelayEstimateForLowLatencyOutputPath) {
 // correct set of parameters.
 TEST_F(AudioDeviceTest, VerifyAudioDeviceBufferParameters) {
   EXPECT_EQ(playout_parameters_.sample_rate(),
-            audio_device_buffer()->PlayoutSampleRate());
+            static_cast<int>(audio_device_buffer()->PlayoutSampleRate()));
   EXPECT_EQ(record_parameters_.sample_rate(),
-            audio_device_buffer()->RecordingSampleRate());
+            static_cast<int>(audio_device_buffer()->RecordingSampleRate()));
   EXPECT_EQ(playout_parameters_.channels(),
             audio_device_buffer()->PlayoutChannels());
   EXPECT_EQ(record_parameters_.channels(),

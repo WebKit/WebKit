@@ -17,6 +17,7 @@
 #include <string>
 #include <vector>
 
+#include "api/crypto/frameencryptorinterface.h"
 #include "api/dtmfsenderinterface.h"
 #include "api/mediastreaminterface.h"
 #include "api/mediatypes.h"
@@ -54,6 +55,12 @@ class RtpSenderInterface : public rtc::RefCountInterface {
   // tracks.
   virtual std::vector<std::string> stream_ids() const = 0;
 
+  // Returns the list of encoding parameters that will be applied when the SDP
+  // local description is set. These initial encoding parameters can be set by
+  // PeerConnection::AddTransceiver, and later updated with Get/SetParameters.
+  // TODO(orphis): Make it pure virtual once Chrome has updated
+  virtual std::vector<RtpEncodingParameters> init_send_encodings() const;
+
   virtual RtpParameters GetParameters() = 0;
   // Note that only a subset of the parameters can currently be changed. See
   // rtpparameters.h
@@ -62,6 +69,17 @@ class RtpSenderInterface : public rtc::RefCountInterface {
 
   // Returns null for a video sender.
   virtual rtc::scoped_refptr<DtmfSenderInterface> GetDtmfSender() const = 0;
+
+  // Sets a user defined frame encryptor that will encrypt the entire frame
+  // before it is sent across the network. This will encrypt the entire frame
+  // using the user provided encryption mechanism regardless of whether SRTP is
+  // enabled or not.
+  virtual void SetFrameEncryptor(
+      rtc::scoped_refptr<FrameEncryptorInterface> frame_encryptor);
+
+  // Returns a pointer to the frame encryptor set previously by the
+  // user. This can be used to update the state of the object.
+  virtual rtc::scoped_refptr<FrameEncryptorInterface> GetFrameEncryptor() const;
 
  protected:
   ~RtpSenderInterface() override = default;
@@ -78,9 +96,15 @@ PROXY_CONSTMETHOD0(uint32_t, ssrc)
 PROXY_CONSTMETHOD0(cricket::MediaType, media_type)
 PROXY_CONSTMETHOD0(std::string, id)
 PROXY_CONSTMETHOD0(std::vector<std::string>, stream_ids)
+PROXY_CONSTMETHOD0(std::vector<RtpEncodingParameters>, init_send_encodings)
 PROXY_METHOD0(RtpParameters, GetParameters);
 PROXY_METHOD1(RTCError, SetParameters, const RtpParameters&)
 PROXY_CONSTMETHOD0(rtc::scoped_refptr<DtmfSenderInterface>, GetDtmfSender);
+PROXY_METHOD1(void,
+              SetFrameEncryptor,
+              rtc::scoped_refptr<FrameEncryptorInterface>);
+PROXY_CONSTMETHOD0(rtc::scoped_refptr<FrameEncryptorInterface>,
+                   GetFrameEncryptor);
 END_PROXY_MAP()
 
 }  // namespace webrtc

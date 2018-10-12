@@ -22,11 +22,11 @@
 #include "pc/test/mockpeerconnectionobservers.h"
 #include "pc/test/peerconnectiontestwrapper.h"
 #include "rtc_base/gunit.h"
+#include "rtc_base/timeutils.h"
 
 using webrtc::FakeConstraints;
 using webrtc::FakeVideoTrackRenderer;
 using webrtc::IceCandidateInterface;
-using webrtc::MediaConstraintsInterface;
 using webrtc::MediaStreamInterface;
 using webrtc::MediaStreamTrackInterface;
 using webrtc::MockSetSessionDescriptionObserver;
@@ -69,7 +69,6 @@ PeerConnectionTestWrapper::PeerConnectionTestWrapper(
 PeerConnectionTestWrapper::~PeerConnectionTestWrapper() {}
 
 bool PeerConnectionTestWrapper::CreatePc(
-    const MediaConstraintsInterface* constraints,
     const webrtc::PeerConnectionInterface::RTCConfiguration& config,
     rtc::scoped_refptr<webrtc::AudioEncoderFactory> audio_encoder_factory,
     rtc::scoped_refptr<webrtc::AudioDecoderFactory> audio_decoder_factory) {
@@ -95,8 +94,7 @@ bool PeerConnectionTestWrapper::CreatePc(
   std::unique_ptr<rtc::RTCCertificateGeneratorInterface> cert_generator(
       new FakeRTCCertificateGenerator());
   peer_connection_ = peer_connection_factory_->CreatePeerConnection(
-      config, constraints, std::move(port_allocator), std::move(cert_generator),
-      this);
+      config, std::move(port_allocator), std::move(cert_generator), this);
 
   return peer_connection_.get() != NULL;
 }
@@ -153,21 +151,21 @@ void PeerConnectionTestWrapper::OnSuccess(SessionDescriptionInterface* desc) {
 }
 
 void PeerConnectionTestWrapper::CreateOffer(
-    const MediaConstraintsInterface* constraints) {
+    const webrtc::PeerConnectionInterface::RTCOfferAnswerOptions& options) {
   RTC_LOG(LS_INFO) << "PeerConnectionTestWrapper " << name_ << ": CreateOffer.";
-  peer_connection_->CreateOffer(this, constraints);
+  peer_connection_->CreateOffer(this, options);
 }
 
 void PeerConnectionTestWrapper::CreateAnswer(
-    const MediaConstraintsInterface* constraints) {
+    const webrtc::PeerConnectionInterface::RTCOfferAnswerOptions& options) {
   RTC_LOG(LS_INFO) << "PeerConnectionTestWrapper " << name_
                    << ": CreateAnswer.";
-  peer_connection_->CreateAnswer(this, constraints);
+  peer_connection_->CreateAnswer(this, options);
 }
 
 void PeerConnectionTestWrapper::ReceiveOfferSdp(const std::string& sdp) {
   SetRemoteDescription(SdpType::kOffer, sdp);
-  CreateAnswer(NULL);
+  CreateAnswer(webrtc::PeerConnectionInterface::RTCOfferAnswerOptions());
 }
 
 void PeerConnectionTestWrapper::ReceiveAnswerSdp(const std::string& sdp) {
@@ -290,6 +288,7 @@ PeerConnectionTestWrapper::GetUserMedia(
     // Set max frame rate to 10fps to reduce the risk of the tests to be flaky.
     webrtc::FakePeriodicVideoSource::Config config;
     config.frame_interval_ms = 100;
+    config.timestamp_offset_ms = rtc::TimeMillis();
 
     rtc::scoped_refptr<webrtc::VideoTrackSourceInterface> source =
         new rtc::RefCountedObject<webrtc::FakePeriodicVideoTrackSource>(

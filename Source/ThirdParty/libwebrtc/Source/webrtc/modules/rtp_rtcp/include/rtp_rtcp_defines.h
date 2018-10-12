@@ -18,6 +18,7 @@
 #include "absl/types/variant.h"
 #include "api/audio_codecs/audio_format.h"
 #include "api/rtp_headers.h"
+#include "api/transport/network_types.h"
 #include "common_types.h"  // NOLINT(build/include)
 #include "modules/include/module_common_types.h"
 #include "system_wrappers/include/clock.h"
@@ -93,7 +94,10 @@ enum ProtectionType { kUnprotectedPacket, kProtectedPacket };
 
 enum StorageType { kDontRetransmit, kAllowRetransmission };
 
-enum RTPExtensionType {
+// This enum must not have any gaps, i.e., all integers between
+// kRtpExtensionNone and kRtpExtensionNumberOfExtensions must be valid enum
+// entries.
+enum RTPExtensionType : int {
   kRtpExtensionNone,
   kRtpExtensionTransmissionTimeOffset,
   kRtpExtensionAudioLevel,
@@ -103,6 +107,7 @@ enum RTPExtensionType {
   kRtpExtensionPlayoutDelay,
   kRtpExtensionVideoContentType,
   kRtpExtensionVideoTiming,
+  kRtpExtensionFrameMarking,
   kRtpExtensionRtpStreamId,
   kRtpExtensionRepairedRtpStreamId,
   kRtpExtensionMid,
@@ -125,7 +130,6 @@ enum RTCPPacketType : uint32_t {
   kRtcpTmmbr = 0x0100,
   kRtcpTmmbn = 0x0200,
   kRtcpSrReq = 0x0400,
-  kRtcpXrVoipMetric = 0x0800,
   kRtcpApp = 0x1000,
   kRtcpRemb = 0x10000,
   kRtcpTransmissionTimeOffset = 0x20000,

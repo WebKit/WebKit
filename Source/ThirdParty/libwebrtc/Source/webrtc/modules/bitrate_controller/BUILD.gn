@@ -36,14 +36,15 @@ rtc_static_library("bitrate_controller") {
     "../../rtc_base:checks",
     "../../rtc_base:rtc_base_approved",
     "../../system_wrappers",
-    "../../system_wrappers:field_trial_api",
-    "../../system_wrappers:metrics_api",
+    "../../system_wrappers:field_trial",
+    "../../system_wrappers:metrics",
     "../congestion_controller/goog_cc:delay_based_bwe",
     "../pacing",
     "../remote_bitrate_estimator:remote_bitrate_estimator",
     "../rtp_rtcp",
     "../rtp_rtcp:rtp_rtcp_format",
     "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
 

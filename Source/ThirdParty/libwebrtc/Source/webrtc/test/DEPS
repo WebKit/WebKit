@@ -8,6 +8,7 @@ include_rules = [
   "+media/base",
   "+media/engine",
   "+modules/audio_coding",
+  "+modules/congestion_controller",
   "+modules/audio_device",
   "+modules/audio_mixer",
   "+modules/audio_processing",
@@ -31,6 +32,9 @@ specific_include_rules = {
     "+modules/congestion_controller/include/receive_side_congestion_controller.h",
     "+modules/pacing/packet_router.h",
     "+modules/remote_bitrate_estimator/include/remote_bitrate_estimator.h",
+  ],
+  ".*mdns_parser_fuzzer\.cc": [
+    "+p2p/base/mdns_message.h",
   ],
   ".*pseudotcp_parser_fuzzer\.cc": [
     "+p2p/base/pseudotcp.h",

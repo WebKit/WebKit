@@ -136,6 +136,7 @@ class RtpPacketHistory {
 
   // Map from rtp sequence numbers to stored packet.
   std::map<uint16_t, StoredPacket> packet_history_ RTC_GUARDED_BY(lock_);
+  std::map<size_t, uint16_t> packet_size_ RTC_GUARDED_BY(lock_);
 
   // The earliest packet in the history. This might not be the lowest sequence
   // number, in case there is a wraparound.

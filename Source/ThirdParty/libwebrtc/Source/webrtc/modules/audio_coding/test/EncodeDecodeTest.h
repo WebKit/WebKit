@@ -15,7 +15,6 @@
 #include <string.h>
 
 #include "modules/audio_coding/include/audio_coding_module.h"
-#include "modules/audio_coding/test/ACMTest.h"
 #include "modules/audio_coding/test/PCMFile.h"
 #include "modules/audio_coding/test/RTPFile.h"
 #include "modules/include/module_common_types.h"
@@ -95,10 +94,10 @@ class Receiver {
   uint32_t _nextTime;
 };
 
-class EncodeDecodeTest : public ACMTest {
+class EncodeDecodeTest {
  public:
   explicit EncodeDecodeTest(int test_mode);
-  void Perform() override;
+  void Perform();
 
   uint16_t _playoutFreq;
 

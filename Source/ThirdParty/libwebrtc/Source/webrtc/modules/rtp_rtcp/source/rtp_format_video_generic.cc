@@ -21,121 +21,70 @@ static const size_t kGenericHeaderLength = 1;
 static const size_t kExtendedHeaderLength = 2;
 
 RtpPacketizerGeneric::RtpPacketizerGeneric(
+    rtc::ArrayView<const uint8_t> payload,
+    PayloadSizeLimits limits,
     const RTPVideoHeader& rtp_video_header,
-    FrameType frame_type,
-    size_t max_payload_len,
-    size_t last_packet_reduction_len)
-    : picture_id_(
-          rtp_video_header.frame_id != kNoPictureId
-              ? absl::optional<uint16_t>(rtp_video_header.frame_id & 0x7FFF)
-              : absl::nullopt),
-      payload_data_(nullptr),
-      payload_size_(0),
-      max_payload_len_(max_payload_len - kGenericHeaderLength -
-                       (picture_id_.has_value() ? kExtendedHeaderLength : 0)),
-      last_packet_reduction_len_(last_packet_reduction_len),
-      frame_type_(frame_type),
-      num_packets_left_(0),
-      num_larger_packets_(0) {}
+    FrameType frame_type)
+    : remaining_payload_(payload) {
+  BuildHeader(rtp_video_header, frame_type);
 
-RtpPacketizerGeneric::~RtpPacketizerGeneric() {}
+  limits.max_payload_len -= header_size_;
+  payload_sizes_ = SplitAboutEqually(payload.size(), limits);
+  current_packet_ = payload_sizes_.begin();
+}
 
-size_t RtpPacketizerGeneric::SetPayloadData(
-    const uint8_t* payload_data,
-    size_t payload_size,
-    const RTPFragmentationHeader* fragmentation) {
-  payload_data_ = payload_data;
-  payload_size_ = payload_size;
+RtpPacketizerGeneric::~RtpPacketizerGeneric() = default;
 
-  // Fragment packets such that they are almost the same size, even accounting
-  // for larger header in the last packet.
-  // Since we are given how much extra space is occupied by the longer header
-  // in the last packet, we can pretend that RTP headers are the same, but
-  // there's last_packet_reduction_len_ virtual payload, to be put at the end of
-  // the last packet.
-  //
-  size_t total_bytes = payload_size_ + last_packet_reduction_len_;
-
-  // Minimum needed number of packets to fit payload and virtual payload in the
-  // last packet.
-  num_packets_left_ = (total_bytes + max_payload_len_ - 1) / max_payload_len_;
-  // Given number of packets, calculate average size rounded down.
-  payload_len_per_packet_ = total_bytes / num_packets_left_;
-  // If we can't divide everything perfectly evenly, we put 1 extra byte in some
-  // last packets: 14 bytes in 4 packets would be split as 3+3+4+4.
-  num_larger_packets_ = total_bytes % num_packets_left_;
-  RTC_DCHECK_LE(payload_len_per_packet_, max_payload_len_);
-
-  generic_header_ = RtpFormatVideoGeneric::kFirstPacketBit;
-  if (frame_type_ == kVideoFrameKey) {
-    generic_header_ |= RtpFormatVideoGeneric::kKeyFrameBit;
-  }
-  if (picture_id_.has_value()) {
-    generic_header_ |= RtpFormatVideoGeneric::kExtendedHeaderBit;
-  }
-
-  return num_packets_left_;
+size_t RtpPacketizerGeneric::NumPackets() const {
+  return payload_sizes_.end() - current_packet_;
 }
 
 bool RtpPacketizerGeneric::NextPacket(RtpPacketToSend* packet) {
   RTC_DCHECK(packet);
-  if (num_packets_left_ == 0)
+  if (current_packet_ == payload_sizes_.end())
     return false;
-  // Last larger_packets_ packets are 1 byte larger than previous packets.
-  // Increase per packet payload once needed.
-  if (num_packets_left_ == num_larger_packets_)
-    ++payload_len_per_packet_;
-  size_t next_packet_payload_len = payload_len_per_packet_;
-  if (payload_size_ <= next_packet_payload_len) {
-    // Whole payload fits into this packet.
-    next_packet_payload_len = payload_size_;
-    if (num_packets_left_ == 2) {
-      // This is the penultimate packet. Leave at least 1 payload byte for the
-      // last packet.
-      --next_packet_payload_len;
-      RTC_DCHECK_GT(next_packet_payload_len, 0);
-    }
-  }
-  RTC_DCHECK_LE(next_packet_payload_len, max_payload_len_);
 
-  size_t total_length = next_packet_payload_len + kGenericHeaderLength +
-                        (picture_id_.has_value() ? kExtendedHeaderLength : 0);
-  uint8_t* out_ptr = packet->AllocatePayload(total_length);
+  size_t next_packet_payload_len = *current_packet_;
 
-  // Put generic header in packet.
-  out_ptr[0] = generic_header_;
-  out_ptr += kGenericHeaderLength;
+  uint8_t* out_ptr =
+      packet->AllocatePayload(header_size_ + next_packet_payload_len);
+  RTC_CHECK(out_ptr);
 
-  if (picture_id_.has_value()) {
-    WriteExtendedHeader(out_ptr);
-    out_ptr += kExtendedHeaderLength;
-  }
+  memcpy(out_ptr, header_, header_size_);
+  memcpy(out_ptr + header_size_, remaining_payload_.data(),
+         next_packet_payload_len);
 
   // Remove first-packet bit, following packets are intermediate.
-  generic_header_ &= ~RtpFormatVideoGeneric::kFirstPacketBit;
+  header_[0] &= ~RtpFormatVideoGeneric::kFirstPacketBit;
 
-  // Put payload in packet.
-  memcpy(out_ptr, payload_data_, next_packet_payload_len);
-  payload_data_ += next_packet_payload_len;
-  payload_size_ -= next_packet_payload_len;
-  --num_packets_left_;
+  remaining_payload_ = remaining_payload_.subview(next_packet_payload_len);
+
+  ++current_packet_;
+
   // Packets left to produce and data left to split should end at the same time.
-  RTC_DCHECK_EQ(num_packets_left_ == 0, payload_size_ == 0);
+  RTC_DCHECK_EQ(current_packet_ == payload_sizes_.end(),
+                remaining_payload_.empty());
 
-  packet->SetMarker(payload_size_ == 0);
-
+  packet->SetMarker(remaining_payload_.empty());
   return true;
 }
 
-std::string RtpPacketizerGeneric::ToString() {
-  return "RtpPacketizerGeneric";
-}
-
-void RtpPacketizerGeneric::WriteExtendedHeader(uint8_t* out_ptr) {
-  // Store bottom 15 bits of the the sequence number. Only 15 bits are used for
-  // compatibility with other packetizer implemenetations that also use 15 bits.
-  out_ptr[0] = (*picture_id_ >> 8) & 0x7F;
-  out_ptr[1] = *picture_id_ & 0xFF;
+void RtpPacketizerGeneric::BuildHeader(const RTPVideoHeader& rtp_video_header,
+                                       FrameType frame_type) {
+  header_size_ = kGenericHeaderLength;
+  header_[0] = RtpFormatVideoGeneric::kFirstPacketBit;
+  if (frame_type == kVideoFrameKey) {
+    header_[0] |= RtpFormatVideoGeneric::kKeyFrameBit;
+  }
+  if (rtp_video_header.generic.has_value()) {
+    // Store bottom 15 bits of the the picture id. Only 15 bits are used for
+    // compatibility with other packetizer implemenetations.
+    uint16_t picture_id = rtp_video_header.generic->frame_id & 0x7FFF;
+    header_[0] |= RtpFormatVideoGeneric::kExtendedHeaderBit;
+    header_[1] = (picture_id >> 8) & 0x7F;
+    header_[2] = picture_id & 0xFF;
+    header_size_ += kExtendedHeaderLength;
+  }
 }
 
 RtpDepacketizerGeneric::~RtpDepacketizerGeneric() = default;
@@ -167,7 +116,8 @@ bool RtpDepacketizerGeneric::Parse(ParsedPayload* parsed_payload,
       RTC_LOG(LS_WARNING) << "Too short payload for generic header.";
       return false;
     }
-    parsed_payload->video_header().frame_id =
+    parsed_payload->video_header().generic.emplace();
+    parsed_payload->video_header().generic->frame_id =
         ((payload_data[0] & 0x7F) << 8) | payload_data[1];
     payload_data += kExtendedHeaderLength;
     payload_data_length -= kExtendedHeaderLength;

@@ -1,0 +1,123 @@
+# Copyright (c) 2018 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+
+if (rtc_include_tests) {
+  rtc_source_set("scenario") {
+    testonly = true
+    sources = [
+      "audio_stream.cc",
+      "audio_stream.h",
+      "call_client.cc",
+      "call_client.h",
+      "column_printer.cc",
+      "column_printer.h",
+      "hardware_codecs.cc",
+      "hardware_codecs.h",
+      "network_node.cc",
+      "network_node.h",
+      "scenario.cc",
+      "scenario.h",
+      "scenario_config.cc",
+      "scenario_config.h",
+      "simulated_time.cc",
+      "simulated_time.h",
+      "video_stream.cc",
+      "video_stream.h",
+    ]
+    deps = [
+      "../:fake_video_codecs",
+      "../:fileutils",
+      "../:test_common",
+      "../:test_support",
+      "../:video_test_common",
+      "../..:webrtc_common",
+      "../../api:libjingle_peerconnection_api",
+      "../../api:transport_api",
+      "../../api/audio_codecs:builtin_audio_decoder_factory",
+      "../../api/audio_codecs:builtin_audio_encoder_factory",
+      "../../api/units:data_rate",
+      "../../api/units:time_delta",
+      "../../api/units:timestamp",
+      "../../api/video:video_frame",
+      "../../api/video:video_frame_i420",
+      "../../api/video_codecs:video_codecs_api",
+      "../../audio",
+      "../../call",
+      "../../call:call_interfaces",
+      "../../call:rtp_sender",
+      "../../call:simulated_network",
+      "../../call:video_stream_api",
+      "../../common_video",
+      "../../logging:rtc_event_log_api",
+      "../../logging:rtc_event_log_impl_base",
+      "../../logging:rtc_event_log_impl_output",
+      "../../media:rtc_audio_video",
+      "../../media:rtc_internal_video_codecs",
+      "../../media:rtc_media_base",
+      "../../modules/audio_device",
+      "../../modules/audio_device:audio_device_impl",
+      "../../modules/audio_device:mock_audio_device",
+      "../../modules/audio_mixer:audio_mixer_impl",
+      "../../modules/audio_processing",
+      "../../modules/congestion_controller:test_controller_printer",
+      "../../modules/congestion_controller/bbr:test_bbr_printer",
+      "../../modules/congestion_controller/goog_cc:test_goog_cc_printer",
+      "../../modules/rtp_rtcp",
+      "../../modules/rtp_rtcp:mock_rtp_rtcp",
+      "../../modules/rtp_rtcp:rtp_rtcp_format",
+      "../../modules/video_coding:video_codec_interface",
+      "../../modules/video_coding:video_coding_utility",
+      "../../modules/video_coding:webrtc_h264",
+      "../../modules/video_coding:webrtc_multiplex",
+      "../../modules/video_coding:webrtc_vp8",
+      "../../modules/video_coding:webrtc_vp9",
+      "../../rtc_base:checks",
+      "../../rtc_base:rtc_base_approved",
+      "../../rtc_base:rtc_base_tests_utils",
+      "../../rtc_base:rtc_task_queue",
+      "../../rtc_base:sequenced_task_checker",
+      "../../rtc_base:stringutils",
+      "../../system_wrappers",
+      "../../system_wrappers:field_trial",
+      "../../video",
+      "//third_party/abseil-cpp/absl/types:optional",
+    ]
+    if (is_android) {
+      deps += [ "../../modules/video_coding:android_codec_factory_helper" ]
+    } else if (is_ios || is_mac) {
+      deps += [ "../../modules/video_coding:objc_codec_factory_helper" ]
+    }
+    if (!build_with_chromium && is_clang) {
+      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+  }
+  rtc_source_set("scenario_unittests") {
+    testonly = true
+    sources = [
+      "scenario_unittest.cc",
+    ]
+    if (!build_with_chromium && is_clang) {
+      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+    deps = [
+      ":scenario",
+      "../../logging:mocks",
+      "../../rtc_base:checks",
+      "../../rtc_base:rtc_base_approved",
+      "../../rtc_base:rtc_base_tests_utils",
+      "../../system_wrappers",
+      "../../test:field_trial",
+      "../../test:test_support",
+      "//system_wrappers:field_trial",
+      "//testing/gmock",
+      "//third_party/abseil-cpp/absl/memory",
+    ]
+  }
+}

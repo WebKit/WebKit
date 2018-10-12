@@ -16,12 +16,12 @@
 #include "modules/include/module_common_types.h"
 #include "modules/video_coding/include/video_coding.h"
 #include "modules/video_coding/media_opt_util.h"
+#include "modules/video_coding/utility/frame_dropper.h"
 #include "rtc_base/criticalsection.h"
 
 namespace webrtc {
 
 class Clock;
-class FrameDropper;
 
 namespace media_optimization {
 
@@ -29,10 +29,6 @@ class MediaOptimization {
  public:
   explicit MediaOptimization(Clock* clock);
   ~MediaOptimization();
-
-  // TODO(andresp): Can Reset and SetEncodingData be done at construction time
-  // only?
-  void Reset();
 
   // Informs media optimization of initial encoding state.
   // TODO(perkj): Deprecate SetEncodingData once its not used for stats in
@@ -71,7 +67,7 @@ class MediaOptimization {
   Clock* const clock_ RTC_GUARDED_BY(crit_sect_);
   int32_t max_bit_rate_ RTC_GUARDED_BY(crit_sect_);
   float max_frame_rate_ RTC_GUARDED_BY(crit_sect_);
-  std::unique_ptr<FrameDropper> frame_dropper_ RTC_GUARDED_BY(crit_sect_);
+  FrameDropper frame_dropper_ RTC_GUARDED_BY(crit_sect_);
   float incoming_frame_rate_ RTC_GUARDED_BY(crit_sect_);
   int64_t incoming_frame_times_[kFrameCountHistorySize] RTC_GUARDED_BY(
       crit_sect_);

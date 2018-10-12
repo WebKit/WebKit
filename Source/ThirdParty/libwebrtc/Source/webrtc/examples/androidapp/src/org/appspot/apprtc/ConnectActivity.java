@@ -45,7 +45,7 @@ public class ConnectActivity extends Activity {
   private static final String TAG = "ConnectActivity";
   private static final int CONNECTION_REQUEST = 1;
   private static final int REMOVE_FAVORITE_INDEX = 0;
-  private static boolean commandLineRun = false;
+  private static boolean commandLineRun;
 
   private ImageButton addFavoriteButton;
   private EditText roomEditText;

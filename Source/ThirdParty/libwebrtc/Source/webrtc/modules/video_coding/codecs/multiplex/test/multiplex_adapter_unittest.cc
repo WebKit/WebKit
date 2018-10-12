@@ -17,8 +17,8 @@
 #include "media/base/mediaconstants.h"
 #include "modules/video_coding/codecs/multiplex/include/augmented_video_frame_buffer.h"
 #include "modules/video_coding/codecs/multiplex/include/multiplex_decoder_adapter.h"
-#include "modules/video_coding/codecs/multiplex/include/multiplex_encoded_image_packer.h"
 #include "modules/video_coding/codecs/multiplex/include/multiplex_encoder_adapter.h"
+#include "modules/video_coding/codecs/multiplex/multiplex_encoded_image_packer.h"
 #include "modules/video_coding/codecs/test/video_codec_unittest.h"
 #include "modules/video_coding/codecs/vp9/include/vp9.h"
 #include "rtc_base/keep_ref_until_done.h"
@@ -232,7 +232,7 @@ TEST_P(TestMultiplexAdapter, CheckSingleFrameEncodedBitstream) {
   CodecSpecificInfo codec_specific_info;
   ASSERT_TRUE(WaitForEncodedFrame(&encoded_frame, &codec_specific_info));
   EXPECT_EQ(kVideoCodecMultiplex, codec_specific_info.codecType);
-  EXPECT_EQ(0, codec_specific_info.codecSpecific.generic.simulcast_idx);
+  EXPECT_FALSE(encoded_frame.SpatialIndex());
 
   const MultiplexImage& unpacked_frame =
       MultiplexEncodedImagePacker::Unpack(encoded_frame);
@@ -252,7 +252,7 @@ TEST_P(TestMultiplexAdapter, CheckDoubleFramesEncodedBitstream) {
   CodecSpecificInfo codec_specific_info;
   ASSERT_TRUE(WaitForEncodedFrame(&encoded_frame, &codec_specific_info));
   EXPECT_EQ(kVideoCodecMultiplex, codec_specific_info.codecType);
-  EXPECT_EQ(0, codec_specific_info.codecSpecific.generic.simulcast_idx);
+  EXPECT_FALSE(encoded_frame.SpatialIndex());
 
   const MultiplexImage& unpacked_frame =
       MultiplexEncodedImagePacker::Unpack(encoded_frame);

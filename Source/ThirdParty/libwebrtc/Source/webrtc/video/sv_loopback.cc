@@ -13,7 +13,7 @@
 #include "rtc_base/flags.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/stringencode.h"
-#include "system_wrappers/include/field_trial_default.h"
+#include "system_wrappers/include/field_trial.h"
 #include "test/field_trial.h"
 #include "test/gtest.h"
 #include "test/run_test.h"
@@ -419,6 +419,8 @@ DEFINE_bool(logs, false, "print logs to stderr");
 
 DEFINE_bool(send_side_bwe, true, "Use send-side bandwidth estimation");
 
+DEFINE_bool(generic_descriptor, false, "Use the generic frame descriptor.");
+
 DEFINE_bool(allow_reordering, false, "Allow packet reordering to occur");
 
 DEFINE_bool(use_ulpfec, false, "Use RED+ULPFEC forward error correction.");
@@ -473,7 +475,7 @@ void Loopback() {
     screenshare_idx = 0;
   }
 
-  FakeNetworkPipe::Config pipe_config;
+  DefaultNetworkSimulationConfig pipe_config;
   pipe_config.loss_percent = flags::LossPercent();
   pipe_config.avg_burst_loss_length = flags::AvgBurstLossLength();
   pipe_config.link_capacity_kbps = flags::LinkCapacityKbps();
@@ -492,7 +494,8 @@ void Loopback() {
       1000;
 
   VideoQualityTest::Params params, camera_params, screenshare_params;
-  params.call = {flags::FLAG_send_side_bwe, call_bitrate_config, 0};
+  params.call = {flags::FLAG_send_side_bwe, flags::FLAG_generic_descriptor,
+                 call_bitrate_config, 0};
   params.call.dual_video = true;
   params.video[screenshare_idx] = {
       true,
@@ -538,7 +541,7 @@ void Loopback() {
                      flags::DurationSecs(),
                      flags::OutputFilename(),
                      flags::GraphTitle()};
-  params.pipe = pipe_config;
+  params.config = pipe_config;
 
   params.screenshare[camera_idx].enabled = false;
   params.screenshare[screenshare_idx] = {
