@@ -554,28 +554,15 @@ describe("/api/report", function () {
         });
     });
 
-    it("should be able to compute the aggregation of differently aggregated values", async () => {
-        const reportWithDifferentAggregators = {
+    function makeReport(tests)
+    {
+        return {
             "buildNumber": "123",
             "buildTime": "2013-02-28T10:12:03.388304",
             "builderName": "someBuilder",
             "builderPassword": "somePassword",
             "platform": "Mountain Lion",
-            "tests": {
-                "DummyBenchmark": {
-                    "metrics": {"Time": ["Arithmetic"]},
-                    "tests": {
-                        "DOM": {
-                            "metrics": {"Time": ["Total"]},
-                            "tests": {
-                                "ModifyNodes": {"metrics": {"Time": { "current": [[1, 2], [3, 4]] }}},
-                                "TraverseNodes": {"metrics": {"Time": { "current": [[11, 12], [13, 14]] }}}
-                            }
-                        },
-                        "CSS": {"metrics": {"Time": { "current": [[21, 22], [23, 24]] }}}
-                    }
-                }
-            },
+            tests,
             "revisions": {
                 "macOS": {
                     "revision": "10.8.2 12C60"
@@ -584,7 +571,26 @@ describe("/api/report", function () {
                     "revision": "141977",
                     "timestamp": "2013-02-06T08:55:20.9Z"
                 }
-            }};
+            }
+        };
+    }
+
+    it("should be able to compute the aggregation of differently aggregated values", async () => {
+        const reportWithDifferentAggregators = makeReport({
+            "DummyBenchmark": {
+                "metrics": {"Time": ["Arithmetic"]},
+                "tests": {
+                    "DOM": {
+                        "metrics": {"Time": ["Total"]},
+                        "tests": {
+                            "ModifyNodes": {"metrics": {"Time": { "current": [[1, 2], [3, 4]] }}},
+                            "TraverseNodes": {"metrics": {"Time": { "current": [[11, 12], [13, 14]] }}}
+                        }
+                    },
+                    "CSS": {"metrics": {"Time": { "current": [[21, 22], [23, 24]] }}}
+                }
+            }
+        });
 
         await reportAfterAddingBuilderAndAggregators(reportWithDifferentAggregators);
         const result = await fetchTestRunIterationsForMetric('DummyBenchmark', 'Time');
@@ -608,7 +614,113 @@ describe("/api/report", function () {
         assert.equal(run['square_sum_cache'], squareSum);
     });
 
-    it("should reject a report when there are more than non-matching aggregators in a subtest", async () => {
+    it("should skip subtests without any metric during aggregation", async () => {
+        const reportWithSubtestMissingMatchingMetric = makeReport({
+            "DummyBenchmark": {
+                "metrics": {"Time": ["Arithmetic"]},
+                "tests": {
+                    "DOM": {
+                        "metrics": {"Time": ["Total"]},
+                        "tests": {
+                            "ModifyNodes": {"metrics": {"Time": { "current": [[1, 2], [3, 4]] }}},
+                            "TraverseNodes": {"metrics": {"Time": { "current": [[11, 12], [13, 14]] }}}
+                        }
+                    },
+                    "CSS": {"metrics": {"Time": { "current": [[21, 22], [23, 24]] }}},
+                    "AuxiliaryResult": {
+                        "tests": {
+                            "ASubTest": {
+                                "metrics": {"Time": {"current": [31, 32]}}
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        await reportAfterAddingBuilderAndAggregators(reportWithSubtestMissingMatchingMetric);
+        const benchmarkResult = await fetchTestRunIterationsForMetric('DummyBenchmark', 'Time');
+
+        let run = benchmarkResult.run.id;
+        assert.equal(benchmarkResult.iterations.length, 4);
+        assert.deepEqual(benchmarkResult.iterations[0], {run, order: 0, group: 0, value: ((1 + 11) + 21) / 2, relative_time: null});
+        assert.deepEqual(benchmarkResult.iterations[1], {run, order: 1, group: 0, value: ((2 + 12) + 22) / 2, relative_time: null});
+        assert.deepEqual(benchmarkResult.iterations[2], {run, order: 2, group: 1, value: ((3 + 13) + 23) / 2, relative_time: null});
+        assert.deepEqual(benchmarkResult.iterations[3], {run, order: 3, group: 1, value: ((4 + 14) + 24) / 2, relative_time: null});
+
+        const sum = benchmarkResult.iterations.reduce((total, row) => total + row.value, 0);
+        const squareSum = benchmarkResult.iterations.reduce((total, row) => total + row.value * row.value, 0);
+        assert.equal(benchmarkResult.run['mean_cache'], sum / 4);
+        assert.equal(benchmarkResult.run['sum_cache'], sum);
+        assert.equal(benchmarkResult.run['square_sum_cache'], squareSum);
+
+        const someTestResult = await fetchTestRunIterationsForMetric('ASubTest', 'Time');
+        run = someTestResult.run.id;
+        assert.deepEqual(someTestResult.iterations, [
+            {run, order: 0, group: null, value: 31, relative_time: null},
+            {run, order: 1, group: null, value: 32, relative_time: null},
+        ]);
+        assert.equal(someTestResult.run['mean_cache'], 31.5);
+        assert.equal(someTestResult.run['sum_cache'], 63);
+        assert.equal(someTestResult.run['square_sum_cache'], 31 * 31 + 32 * 32);
+    });
+
+    it("should skip subtests missing the matching metric during aggregation", async () => {
+        const reportWithSubtestMissingMatchingMetric = makeReport({
+            "DummyBenchmark": {
+                "metrics": {"Time": ["Arithmetic"]},
+                "tests": {
+                    "DOM": {
+                        "metrics": {"Time": ["Total"]},
+                        "tests": {
+                            "ModifyNodes": {"metrics": {"Time": { "current": [[1, 2], [3, 4]] }}},
+                            "TraverseNodes": {"metrics": {"Time": { "current": [[11, 12], [13, 14]] }}}
+                        }
+                    },
+                    "CSS": {"metrics": {"Time": { "current": [[21, 22], [23, 24]] }}},
+                    "AuxiliaryResult": {
+                        "metrics": {"Allocations": ["Total"]},
+                        "tests": {
+                            "SomeSubTest": {
+                                "metrics": {"Allocations": {"current": [31, 32]}}
+                            },
+                            "OtherSubTest": {
+                                "metrics": {"Allocations": {"current": [41, 42]}}
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        await reportAfterAddingBuilderAndAggregators(reportWithSubtestMissingMatchingMetric);
+        const benchmarkResult = await fetchTestRunIterationsForMetric('DummyBenchmark', 'Time');
+
+        let run = benchmarkResult.run.id;
+        assert.equal(benchmarkResult.iterations.length, 4);
+        assert.deepEqual(benchmarkResult.iterations[0], {run, order: 0, group: 0, value: ((1 + 11) + 21) / 2, relative_time: null});
+        assert.deepEqual(benchmarkResult.iterations[1], {run, order: 1, group: 0, value: ((2 + 12) + 22) / 2, relative_time: null});
+        assert.deepEqual(benchmarkResult.iterations[2], {run, order: 2, group: 1, value: ((3 + 13) + 23) / 2, relative_time: null});
+        assert.deepEqual(benchmarkResult.iterations[3], {run, order: 3, group: 1, value: ((4 + 14) + 24) / 2, relative_time: null});
+
+        const sum = benchmarkResult.iterations.reduce((total, row) => total + row.value, 0);
+        const squareSum = benchmarkResult.iterations.reduce((total, row) => total + row.value * row.value, 0);
+        assert.equal(benchmarkResult.run['mean_cache'], sum / 4);
+        assert.equal(benchmarkResult.run['sum_cache'], sum);
+        assert.equal(benchmarkResult.run['square_sum_cache'], squareSum);
+
+        const someTestResult = await fetchTestRunIterationsForMetric('AuxiliaryResult', 'Allocations');
+        run = someTestResult.run.id;
+        assert.deepEqual(someTestResult.iterations, [
+            {run, order: 0, group: null, value: 31 + 41, relative_time: null},
+            {run, order: 1, group: null, value: 32 + 42, relative_time: null},
+        ]);
+        assert.equal(someTestResult.run['mean_cache'], (31 + 41 + 32 + 42) / 2);
+        assert.equal(someTestResult.run['sum_cache'], 31 + 41 + 32 + 42);
+        assert.equal(someTestResult.run['square_sum_cache'], Math.pow(31 + 41, 2) + Math.pow(32 + 42, 2));
+    });
+
+    it("should reject a report when there are more than one non-matching aggregators in a subtest", async () => {
         const reportWithAmbigiousAggregators = {
             "buildNumber": "123",
             "buildTime": "2013-02-28T10:12:03.388304",

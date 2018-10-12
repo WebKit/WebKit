@@ -1,3 +1,17 @@
+2018-10-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Perf dashboard: add a test for aggregating subtests without a matching metric in /api/report
+        https://bugs.webkit.org/show_bug.cgi?id=190544
+
+        Rubber-stamped by Keith Miller and unofficially reviewed by Dewei Zhu.
+
+        Added tests for reporting results to /api/report where a test with aggregated metrics has a subtest
+        without a matching metric type. The aggregation should simply skip such a subtest instead of returning
+        an error or aggregating with a mismatching metric type.
+
+        * server-tests/api-report-tests.js:
+        (.makeReport): Extracted out of a test case.
+
 2018-10-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix after r236956. Use array_get to avoid warnings.
