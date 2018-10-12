@@ -506,6 +506,7 @@ set(webrtc_SOURCES
     Source/webrtc/api/rtp_headers.cc
     Source/webrtc/api/rtpparameters.cc
     Source/webrtc/api/rtpreceiverinterface.cc
+    Source/webrtc/api/rtpsenderinterface.cc
     Source/webrtc/api/rtptransceiverinterface.cc
     Source/webrtc/api/statstypes.cc
     Source/webrtc/api/transport/bitrate_settings.cc
