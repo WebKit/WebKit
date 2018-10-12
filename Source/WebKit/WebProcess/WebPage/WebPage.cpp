@@ -623,7 +623,7 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
 #endif
 
 #if PLATFORM(IOS)
-    setViewportConfigurationViewLayoutSize(parameters.viewportConfigurationViewLayoutSize);
+    setViewportConfigurationViewLayoutSize(parameters.viewportConfigurationViewLayoutSize, parameters.viewportConfigurationLayoutSizeScaleFactor);
     setMaximumUnobscuredSize(parameters.maximumUnobscuredSize);
 #endif
 }

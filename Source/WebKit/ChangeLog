@@ -1,3 +1,64 @@
+2018-10-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Allow SPI clients to lay out at arbitrarily scaled sizes and scale to fit the view
+        https://bugs.webkit.org/show_bug.cgi?id=190504
+        <rdar://problem/45117760>
+
+        Reviewed by Tim Horton.
+
+        Add support for _setViewScale: and _viewScale on iOS. While similar in concept to macOS, changing this property
+        on iOS uses viewport configurations to change the minimum layout size of the document and apply view scaling.
+        Setting the view scale on iOS to a value `s` multiplies the minimium layout size by a factor `1 / s`, but also
+        multiplies the initial, minimum and maximum scales by a factor of `s`. The net effect of applying this scale
+        causes the page to lay out at a larger width and shrink (or a smaller width and expand) to fit the viewport.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+
+        Send `viewportConfigurationLayoutSizeScaleFactor` alongside `viewportConfigurationViewLayoutSize`.
+
+        (-[WKWebView _dispatchSetViewLayoutSize:]):
+        (-[WKWebView _viewScale]):
+        (-[WKWebView _setViewScale:]):
+
+        Provide a different implementation of `_setViewScale:` on iOS, by scaling the effective minimum layout size.
+        (See above for more detail).
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
+        Add missing API availability annotations for the _viewScale property.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _setViewScale:]):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+
+        Both -[WKView _setViewScale:] and -[WKWebView _setViewScale:] throw Objective C exceptions upon receiving a bad
+        argument (e.g. scale <= 0). However, logic for throwing this exception is specific to iOS in WKWebView, and
+        handled in WebViewImpl on macOS. To make this less confusing, move the exception throwing code out of
+        !PLATFORM(MAC) in WKWebView, and move the path for raising this exception in WKView on macOS from WebViewImpl to
+        WKView.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::layoutSizeScaleFactor const):
+
+        Tie the notion of "view scale" on iOS to `layoutSizeScaleFactor`. As its name suggests, this is a scale factor
+        by which we transform the layout size.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::setViewportConfigurationViewLayoutSize):
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
+        Plumb the layout size scale factor over to the web process, along with the layout size.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::setViewportConfigurationViewLayoutSize):
+
 2018-10-12  Alex Christensen  <achristensen@webkit.org>
 
         Allow encoding of small enum classes

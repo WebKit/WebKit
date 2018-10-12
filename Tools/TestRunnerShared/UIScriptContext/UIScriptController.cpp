@@ -210,6 +210,10 @@ void UIScriptController::zoomToScale(double, JSValueRef)
 {
 }
 
+void UIScriptController::setViewScale(double)
+{
+}
+
 void UIScriptController::simulateAccessibilitySettingsChangeNotification(JSValueRef)
 {
 }

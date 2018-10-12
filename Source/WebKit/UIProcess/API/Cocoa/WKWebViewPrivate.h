@@ -177,7 +177,7 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 
 @property (nonatomic, setter=_setViewportSizeForCSSViewportUnits:) CGSize _viewportSizeForCSSViewportUnits WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 
-@property (nonatomic, setter=_setViewScale:) CGFloat _viewScale;
+@property (nonatomic, setter=_setViewScale:) CGFloat _viewScale WK_API_AVAILABLE(macosx(10.11), ios(9.0));
 
 @property (nonatomic, setter=_setBackgroundExtendsBeyondPage:) BOOL _backgroundExtendsBeyondPage WK_API_AVAILABLE(macosx(10.13.4), ios(8.0));
 

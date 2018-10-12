@@ -1430,6 +1430,9 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(NSUs
 
 - (void)_setViewScale:(CGFloat)viewScale
 {
+    if (viewScale <= 0 || isnan(viewScale) || isinf(viewScale))
+        [NSException raise:NSInvalidArgumentException format:@"View scale should be a positive number"];
+
     _data->_impl->setViewScale(viewScale);
 }
 

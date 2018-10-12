@@ -147,6 +147,7 @@ struct WebPageCreationParameters {
     float textAutosizingWidth;
     bool ignoresViewportScaleLimits;
     WebCore::FloatSize viewportConfigurationViewLayoutSize;
+    double viewportConfigurationLayoutSizeScaleFactor;
     WebCore::FloatSize viewportConfigurationViewSize;
     WebCore::FloatSize maximumUnobscuredSize;
 #endif

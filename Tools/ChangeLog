@@ -1,3 +1,33 @@
+2018-10-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Allow SPI clients to lay out at arbitrarily scaled sizes and scale to fit the view
+        https://bugs.webkit.org/show_bug.cgi?id=190504
+        <rdar://problem/45117760>
+
+        Reviewed by Tim Horton.
+
+        Teach UIScriptController to set WKWebView's view scale via a new `setViewScale` method, supported in WebKit2 on
+        macOS and iOS.
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::setViewScale):
+        * DumpRenderTree/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptController::setViewScale):
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::setViewScale):
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/UIScriptControllerCocoa.mm: Added.
+
+        Add a new file for UIScriptController methods on Cocoa platforms.
+
+        (WTR::UIScriptController::setViewScale):
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::cocoaResetStateToConsistentValues):
+
+        Ensure that _viewScale is reset to 1 after running a layout test.
+
 2018-10-12  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Rename iOS-11-Simulator-Tests-EWS to iOS-11-Simulator-WK2-Tests-EWS

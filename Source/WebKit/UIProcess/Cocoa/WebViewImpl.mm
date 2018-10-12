@@ -1886,9 +1886,6 @@ void WebViewImpl::setViewScale(CGFloat viewScale)
     if (!supportsArbitraryLayoutModes() && viewScale != 1)
         return;
 
-    if (viewScale <= 0 || isnan(viewScale) || isinf(viewScale))
-        [NSException raise:NSInvalidArgumentException format:@"View scale should be a positive number"];
-
     m_page->scaleView(viewScale);
     [m_layoutStrategy didChangeViewScale];
 }

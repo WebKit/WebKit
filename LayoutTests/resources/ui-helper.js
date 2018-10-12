@@ -339,4 +339,12 @@ window.UIHelper = class UIHelper {
             });
         });
     }
+
+    static setViewScale(scale)
+    {
+        if (!this.isWebKit2())
+            return Promise.resolve();
+
+        return new Promise(resolve => testRunner.runUIScript(`uiController.setViewScale(${scale})`, resolve));
+    }
 }

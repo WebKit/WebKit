@@ -1,3 +1,49 @@
+2018-10-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Allow SPI clients to lay out at arbitrarily scaled sizes and scale to fit the view
+        https://bugs.webkit.org/show_bug.cgi?id=190504
+        <rdar://problem/45117760>
+
+        Reviewed by Tim Horton.
+
+        Add support in ViewportConfiguration for applying a layout size scale factor to the viewport. See below for
+        more details.
+
+        Tests: fast/viewport/ios/constant-width-viewport-after-changing-view-scale.html
+               fast/viewport/ios/device-width-viewport-after-changing-view-scale.html
+
+        * page/ViewportConfiguration.cpp:
+        (WebCore::ViewportConfiguration::setViewLayoutSize):
+
+        The viewport's layout size may now be changed alongside the layout size scale factor. If either of these two
+        variables change, we recompute our minimum layout size and viewport configuration parameters.
+
+        (WebCore::ViewportConfiguration::shouldIgnoreHorizontalScalingConstraints const):
+        (WebCore::ViewportConfiguration::nativeWebpageParameters):
+        (WebCore::ViewportConfiguration::testingParameters):
+        (WebCore::ViewportConfiguration::updateConfiguration):
+
+        Multiply the minimum scale, initial scale, and maximum scale by the layout size scale factor. This allows us to
+        keep the document well-proportioned within the viewport, while still laying out at a different layout size.
+
+        (WebCore::ViewportConfiguration::updateMinimumLayoutSize):
+
+        Compute the minimum layout size by scaling the default layout size derived from our view's size.
+
+        (WebCore::ViewportConfiguration::layoutWidth const):
+        (WebCore::ViewportConfiguration::layoutHeight const):
+        * page/ViewportConfiguration.h:
+
+        Maintain the original initial scale, unaffected by the layout size scale factor. This is used when computing
+        layout width and height to prevent scaling by the layout size scale factor twice when computing layout sizes.
+
+        (WebCore::ViewportConfiguration::description const):
+
+        Include the layout size scale factor in ViewportConfiguration's description string.
+
+        (WebCore::ViewportConfiguration::Parameters::operator== const):
+        (WebCore::operator<<):
+
 2018-10-12  Youenn Fablet  <youenn@apple.com>
 
         Use downcast for use of RealtimeMediaSource in LibWebRTCMediaEndpoint

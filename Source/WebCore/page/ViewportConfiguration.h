@@ -49,6 +49,7 @@ public:
         double width { 0 };
         double height { 0 };
         double initialScale { 0 };
+        double initialScaleIgnoringLayoutScaleFactor { 0 };
         double minimumScale { 0 };
         double maximumScale { 0 };
         bool allowsUserScaling { false };
@@ -62,7 +63,7 @@ public:
         bool operator==(const Parameters& other) const
         {
             return width == other.width && height == other.height
-                && initialScale == other.initialScale && minimumScale == other.minimumScale && maximumScale == other.maximumScale
+                && initialScale == other.initialScale && initialScaleIgnoringLayoutScaleFactor == other.initialScaleIgnoringLayoutScaleFactor && minimumScale == other.minimumScale && maximumScale == other.maximumScale
                 && allowsUserScaling == other.allowsUserScaling && allowsShrinkToFit == other.allowsShrinkToFit && avoidsUnsafeArea == other.avoidsUnsafeArea
                 && widthIsSet == other.widthIsSet && heightIsSet == other.heightIsSet && initialScaleIsSet == other.initialScaleIsSet;
         }
@@ -79,7 +80,7 @@ public:
     const FloatSize& viewLayoutSize() const { return m_viewLayoutSize; }
 
     const FloatSize& minimumLayoutSize() const { return m_minimumLayoutSize; }
-    WEBCORE_EXPORT bool setViewLayoutSize(const FloatSize&);
+    WEBCORE_EXPORT bool setViewLayoutSize(const FloatSize&, std::optional<double>&& scaleFactor = std::nullopt);
 
     const OptionSet<DisabledAdaptations>& disabledAdaptations() const { return m_disabledAdaptations; }
     WEBCORE_EXPORT bool setDisabledAdaptations(const OptionSet<DisabledAdaptations>&);
@@ -137,6 +138,7 @@ private:
     ViewportArguments m_viewportArguments;
     OptionSet<DisabledAdaptations> m_disabledAdaptations;
 
+    double m_layoutSizeScaleFactor { 1 };
     bool m_canIgnoreScalingConstraints;
     bool m_forceAlwaysUserScalable;
 };

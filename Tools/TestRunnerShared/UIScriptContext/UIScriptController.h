@@ -66,6 +66,7 @@ public:
     void doAfterVisibleContentRectUpdate(JSValueRef callback);
 
     void zoomToScale(double scale, JSValueRef callback);
+    void setViewScale(double);
 
     void simulateAccessibilitySettingsChangeNotification(JSValueRef callback);
 

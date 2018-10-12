@@ -90,6 +90,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << textAutosizingWidth;
     encoder << ignoresViewportScaleLimits;
     encoder << viewportConfigurationViewLayoutSize;
+    encoder << viewportConfigurationLayoutSizeScaleFactor;
     encoder << viewportConfigurationViewSize;
     encoder << maximumUnobscuredSize;
 #endif
@@ -256,6 +257,8 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
     if (!decoder.decode(parameters.ignoresViewportScaleLimits))
         return std::nullopt;
     if (!decoder.decode(parameters.viewportConfigurationViewLayoutSize))
+        return std::nullopt;
+    if (!decoder.decode(parameters.viewportConfigurationLayoutSizeScaleFactor))
         return std::nullopt;
     if (!decoder.decode(parameters.viewportConfigurationViewSize))
         return std::nullopt;

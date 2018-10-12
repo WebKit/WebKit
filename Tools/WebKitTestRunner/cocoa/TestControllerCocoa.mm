@@ -215,8 +215,11 @@ void TestController::cocoaResetStateToConsistentValues()
     platformRunUntil(doneRemoving, noTimeout);
     [[_WKUserContentExtensionStore defaultStore] _removeAllContentExtensions];
 
-    if (PlatformWebView* webView = mainWebView())
-        [webView->platformView().configuration.userContentController _removeAllUserContentFilters];
+    if (auto* webView = mainWebView()) {
+        TestRunnerWKWebView *platformView = webView->platformView();
+        [platformView.configuration.userContentController _removeAllUserContentFilters];
+        platformView._viewScale = 1;
+    }
 #endif
 }
 

@@ -2518,10 +2518,10 @@ void WebPage::autofillLoginCredentials(const String& username, const String& pas
     }
 }
 
-void WebPage::setViewportConfigurationViewLayoutSize(const FloatSize& size)
+void WebPage::setViewportConfigurationViewLayoutSize(const FloatSize& size, double scaleFactor)
 {
-    LOG_WITH_STREAM(VisibleRects, stream << "WebPage " << m_pageID << " setViewportConfigurationViewLayoutSize " << size);
-    if (m_viewportConfiguration.setViewLayoutSize(size))
+    LOG_WITH_STREAM(VisibleRects, stream << "WebPage " << m_pageID << " setViewportConfigurationViewLayoutSize " << size << " scaleFactor " << scaleFactor);
+    if (m_viewportConfiguration.setViewLayoutSize(size, scaleFactor))
         viewportConfigurationChanged();
 }
 

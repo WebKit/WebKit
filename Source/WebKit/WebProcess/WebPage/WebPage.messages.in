@@ -45,7 +45,7 @@ messages -> WebPage LegacyReceiver {
     KeyEvent(WebKit::WebKeyboardEvent event)
     MouseEvent(WebKit::WebMouseEvent event)
 #if PLATFORM(IOS)
-    SetViewportConfigurationViewLayoutSize(WebCore::FloatSize size)
+    SetViewportConfigurationViewLayoutSize(WebCore::FloatSize size, double scaleFactor)
     SetMaximumUnobscuredSize(WebCore::FloatSize size)
     SetDeviceOrientation(int32_t deviceOrientation)
     SetOverrideViewportArguments(std::optional<WebCore::ViewportArguments> arguments)

@@ -1,3 +1,31 @@
+2018-10-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Allow SPI clients to lay out at arbitrarily scaled sizes and scale to fit the view
+        https://bugs.webkit.org/show_bug.cgi?id=190504
+        <rdar://problem/45117760>
+
+        Reviewed by Tim Horton.
+
+        Add two new layout tests on iOS that change WKWebView's view scale, and measure the resulting window sizes and
+        lengths of viewport units.
+
+        * fast/viewport/ios/constant-width-viewport-after-changing-view-scale-expected.txt: Added.
+        * fast/viewport/ios/constant-width-viewport-after-changing-view-scale.html: Added.
+
+        Add a test page with a viewport meta tag that has a constant width and an explicit initial scale of 0.5.
+
+        * fast/viewport/ios/device-width-viewport-after-changing-view-scale-expected.txt: Added.
+        * fast/viewport/ios/device-width-viewport-after-changing-view-scale.html: Added.
+
+        Add a test page with a viewport meta tag at device-width, with initial scale 1.
+
+        * resources/ui-helper.js:
+        (window.UIHelper.setViewScale):
+
+        Add a convenience function that wraps a UI script invocation of `setViewScale` in a promise.
+
+        (window.UIHelper):
+
 2018-10-12  Dawei Fenton  <realdawei@apple.com>
 
         [Mojave Wk2] Layout Test http/tests/cache/disk-cache/disk-cache-validation-attachment.html is flaky
