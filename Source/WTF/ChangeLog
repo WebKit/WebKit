@@ -1,3 +1,19 @@
+2018-10-11  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        Use currentStackPointer more
+        https://bugs.webkit.org/show_bug.cgi?id=190503
+
+        Reviewed by Saam Barati.
+
+        Use WTF::currentStackPointer more in WebKit to adopt ASAN detect_stack_use_after_return option.
+
+        * wtf/StackBounds.cpp:
+        (WTF::testStackDirection2):
+        (WTF::testStackDirection):
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::Thread::signalHandlerSuspendResume):
+        (WTF::getApproximateStackPointer): Deleted.
+
 2018-10-11  Ross Kirsling  <ross.kirsling@sony.com>
 
         [WTF] Semaphore.h conflicts with POSIX header

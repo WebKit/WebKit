@@ -109,19 +109,6 @@ static LazyNeverDestroyed<Semaphore> globalSemaphoreForSuspendResume;
 static constexpr const int SigThreadSuspendResume = SIGUSR1;
 static std::atomic<Thread*> targetThread { nullptr };
 
-IGNORE_GCC_WARNINGS_BEGIN("return-local-addr")
-IGNORE_CLANG_WARNINGS_BEGIN("return-stack-address")
-
-static NEVER_INLINE void* getApproximateStackPointer()
-{
-    volatile uintptr_t stackLocation;
-    stackLocation = bitwise_cast<uintptr_t>(&stackLocation);
-    return bitwise_cast<void*>(stackLocation);
-}
-
-IGNORE_CLANG_WARNINGS_END
-IGNORE_GCC_WARNINGS_END
-
 void Thread::signalHandlerSuspendResume(int, siginfo_t*, void* ucontext)
 {
     // Touching a global variable atomic types from signal handlers is allowed.
@@ -137,7 +124,7 @@ void Thread::signalHandlerSuspendResume(int, siginfo_t*, void* ucontext)
         return;
     }
 
-    void* approximateStackPointer = getApproximateStackPointer();
+    void* approximateStackPointer = currentStackPointer();
     if (!thread->m_stack.contains(approximateStackPointer)) {
         // This happens if we use an alternative signal stack.
         // 1. A user-defined signal handler is invoked with an alternative signal stack.

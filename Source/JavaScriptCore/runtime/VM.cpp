@@ -1157,8 +1157,8 @@ size_t VM::committedStackByteCount()
     // When using the C stack, we don't know how many stack pages are actually
     // committed. So, we use the current stack usage as an estimate.
     ASSERT(Thread::current().stack().isGrowingDownward());
-    int8_t* current = reinterpret_cast<int8_t*>(&current);
-    int8_t* high = reinterpret_cast<int8_t*>(Thread::current().stack().origin());
+    uint8_t* current = bitwise_cast<uint8_t*>(currentStackPointer());
+    uint8_t* high = bitwise_cast<uint8_t*>(Thread::current().stack().origin());
     return high - current;
 #else
     return CLoopStack::committedByteCount();

@@ -1,3 +1,13 @@
+2018-10-11  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        Use currentStackPointer more
+        https://bugs.webkit.org/show_bug.cgi?id=190503
+
+        Reviewed by Saam Barati.
+
+        * runtime/VM.cpp:
+        (JSC::VM::committedStackByteCount):
+
 2018-10-08  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] JSC should have "parseFunction" to optimize Function constructor

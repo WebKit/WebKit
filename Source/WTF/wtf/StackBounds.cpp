@@ -50,17 +50,17 @@ ALWAYS_INLINE StackBounds::StackDirection StackBounds::stackDirection()
     return StackDirection::Downward;
 }
 #else
-static NEVER_INLINE NOT_TAIL_CALLED StackBounds::StackDirection testStackDirection2(volatile const int* pointer)
+static NEVER_INLINE NOT_TAIL_CALLED StackBounds::StackDirection testStackDirection2(volatile const uint8_t* pointer)
 {
-    volatile int stackValue = 42;
-    return (pointer < &stackValue) ? StackBounds::StackDirection::Upward : StackBounds::StackDirection::Downward;
+    volatile uint8_t* stackValue = bitwise_cast<uint8_t*>(currentStackPointer());
+    return (pointer < stackValue) ? StackBounds::StackDirection::Upward : StackBounds::StackDirection::Downward;
 }
 
 static NEVER_INLINE NOT_TAIL_CALLED StackBounds::StackDirection testStackDirection()
 {
     NO_TAIL_CALLS();
-    volatile int stackValue = 42;
-    return testStackDirection2(&stackValue);
+    volatile uint8_t* stackValue = bitwise_cast<uint8_t*>(currentStackPointer());
+    return testStackDirection2(stackValue);
 }
 
 NEVER_INLINE StackBounds::StackDirection StackBounds::stackDirection()
