@@ -246,7 +246,7 @@ static Vector<double> doubleOperands()
 }
 
 
-static Vector<float> UNUSED_FUNCTION floatOperands()
+static Vector<float> floatOperands()
 {
     return Vector<float> {
         0,
@@ -747,9 +747,7 @@ void testProbeModifiesStackValues()
     CPUState originalState;
     void* originalSP { nullptr };
     void* newSP { nullptr };
-#if !(CPU(MIPS))
     uintptr_t modifiedFlags { 0 };
-#endif
     size_t numberOfExtraEntriesToWrite { 10 }; // ARM64 requires that this be 2 word aligned.
 
 #if CPU(X86) || CPU(X86_64)

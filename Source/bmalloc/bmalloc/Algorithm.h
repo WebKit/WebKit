@@ -30,7 +30,6 @@
 #include <algorithm>
 #include <cstdint>
 #include <cstddef>
-#include <cstring>
 #include <limits>
 #include <string.h>
 #include <type_traits>
@@ -180,23 +179,6 @@ bool findBitInWord(T word, size_t& index, size_t endIndex, bool value)
     
     index = endIndex;
     return false;
-}
-
-// Copied from WTF/wtf/StdLibExtras.h
-template<typename ToType, typename FromType>
-inline ToType bitwise_cast(FromType from)
-{
-    static_assert(sizeof(FromType) == sizeof(ToType), "bitwise_cast size of FromType and ToType must be equal!");
-#if defined(__has_feature)
-#if __has_feature(is_trivially_copyable)
-    // Not all recent STL implementations support the std::is_trivially_copyable type trait. Work around this by only checking on toolchains which have the equivalent compiler intrinsic.
-    static_assert(__is_trivially_copyable(ToType), "bitwise_cast of non-trivially-copyable type!");
-    static_assert(__is_trivially_copyable(FromType), "bitwise_cast of non-trivially-copyable type!");
-#endif
-#endif
-    typename std::remove_const<ToType>::type to { };
-    std::memcpy(static_cast<void*>(&to), static_cast<void*>(&from), sizeof(to));
-    return to;
 }
 
 } // namespace bmalloc

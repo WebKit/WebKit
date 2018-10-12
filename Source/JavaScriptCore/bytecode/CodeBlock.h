@@ -1048,7 +1048,7 @@ inline Register& ExecState::uncheckedR(VirtualRegister reg)
 }
 
 template <typename ExecutableType>
-std::optional<Exception*> ScriptExecutable::prepareForExecution(VM& vm, JSFunction* function, JSScope* scope, CodeSpecializationKind kind, CodeBlock*& resultCodeBlock)
+JSObject* ScriptExecutable::prepareForExecution(VM& vm, JSFunction* function, JSScope* scope, CodeSpecializationKind kind, CodeBlock*& resultCodeBlock)
 {
     if (hasJITCodeFor(kind)) {
         if (std::is_same<ExecutableType, EvalExecutable>::value)
@@ -1061,7 +1061,7 @@ std::optional<Exception*> ScriptExecutable::prepareForExecution(VM& vm, JSFuncti
             resultCodeBlock = jsCast<CodeBlock*>(jsCast<FunctionExecutable*>(this)->codeBlockFor(kind));
         else
             RELEASE_ASSERT_NOT_REACHED();
-        return std::nullopt;
+        return nullptr;
     }
     return prepareForExecutionImpl(vm, function, scope, kind, resultCodeBlock);
 }

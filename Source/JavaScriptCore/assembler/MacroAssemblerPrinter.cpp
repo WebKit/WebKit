@@ -131,9 +131,6 @@ void printMemory(PrintStream& out, Context& context)
     }
     }
 
-    // assuming memory is not malformed, it originally pointed to a value
-    // of the size with which we use it below, so the bitwise_casts should
-    // be safe, including regarding alignment.
     if (memory.dumpStyle == Memory::SingleWordDump) {
         if (memory.numBytes == sizeof(int8_t)) {
             auto p = reinterpret_cast<int8_t*>(ptr);
@@ -141,17 +138,17 @@ void printMemory(PrintStream& out, Context& context)
             return;
         }
         if (memory.numBytes == sizeof(int16_t)) {
-            auto p = bitwise_cast<int16_t*>(ptr);
+            auto p = reinterpret_cast<int16_t*>(ptr);
             out.printf("%p:<0x%04x %d>", p, *p, *p);
             return;
         }
         if (memory.numBytes == sizeof(int32_t)) {
-            auto p = bitwise_cast<int32_t*>(ptr);
+            auto p = reinterpret_cast<int32_t*>(ptr);
             out.printf("%p:<0x%08x %d>", p, *p, *p);
             return;
         }
         if (memory.numBytes == sizeof(int64_t)) {
-            auto p = bitwise_cast<int64_t*>(ptr);
+            auto p = reinterpret_cast<int64_t*>(ptr);
             out.printf("%p:<0x%016" PRIx64 " %" PRId64 ">", p, *p, *p);
             return;
         }

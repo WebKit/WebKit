@@ -1462,7 +1462,7 @@ static CodeBlock* codeBlockFromArg(ExecState* exec)
             else
                 candidateCodeBlock = func->jsExecutable()->eitherCodeBlock();
         } else
-            candidateCodeBlock = static_cast<CodeBlock*>(value.asCell());
+            candidateCodeBlock = reinterpret_cast<CodeBlock*>(value.asCell());
     }
 
     if (candidateCodeBlock && VMInspector::isValidCodeBlock(exec, candidateCodeBlock))

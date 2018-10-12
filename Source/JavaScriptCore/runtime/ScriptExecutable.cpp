@@ -29,7 +29,6 @@
 #include "CodeBlock.h"
 #include "Debugger.h"
 #include "EvalCodeBlock.h"
-#include "Exception.h"
 #include "FunctionCodeBlock.h"
 #include "IsoCellSetInlines.h"
 #include "JIT.h"
@@ -338,7 +337,7 @@ static void setupJIT(VM& vm, CodeBlock* codeBlock)
 #endif
 }
 
-std::optional<Exception*> ScriptExecutable::prepareForExecutionImpl(
+JSObject* ScriptExecutable::prepareForExecutionImpl(
     VM& vm, JSFunction* function, JSScope* scope, CodeSpecializationKind kind, CodeBlock*& resultCodeBlock)
 {
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -346,7 +345,7 @@ std::optional<Exception*> ScriptExecutable::prepareForExecutionImpl(
 
     if (vm.getAndClearFailNextNewCodeBlock()) {
         auto& state = *scope->globalObject(vm)->globalExec();
-        return static_cast<Exception*>(throwException(&state, throwScope, createError(&state, "Forced Failure"_s)));
+        return throwException(&state, throwScope, createError(&state, "Forced Failure"_s));
     }
 
     JSObject* exception = nullptr;
@@ -354,7 +353,7 @@ std::optional<Exception*> ScriptExecutable::prepareForExecutionImpl(
     resultCodeBlock = codeBlock;
     EXCEPTION_ASSERT(!!throwScope.exception() == !codeBlock);
     if (UNLIKELY(!codeBlock))
-        return static_cast<Exception*>(exception);
+        return exception;
     
     if (Options::validateBytecode())
         codeBlock->validate();
@@ -365,7 +364,7 @@ std::optional<Exception*> ScriptExecutable::prepareForExecutionImpl(
         setupJIT(vm, codeBlock);
     
     installCode(vm, codeBlock, codeBlock->codeType(), codeBlock->specializationKind());
-    return std::nullopt;
+    return nullptr;
 }
 
 CodeBlockHash ScriptExecutable::hashFor(CodeSpecializationKind kind) const
