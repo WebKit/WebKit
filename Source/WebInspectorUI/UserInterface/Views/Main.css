@@ -386,6 +386,10 @@ body[dir=rtl] .go-to-arrow {
         filter: invert();
     }
 
+    :focus .selected .go-to-arrow {
+        filter: unset;
+    }
+
     .resource-link,
     .go-to-link {
         color: var(--text-color-secondary);

@@ -1,3 +1,15 @@
+2018-10-12  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Dark Mode: wrong color used for "goto arrow" for selected DOM breakpoint tree element
+        https://bugs.webkit.org/show_bug.cgi?id=190180
+        <rdar://problem/44927654>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/Main.css:
+        (@media (prefers-dark-interface)):
+        (:focus .selected .go-to-arrow):
+
 2018-10-11  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Network: detail view reverts to "Response" when new requests are added
