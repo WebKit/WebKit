@@ -1,3 +1,15 @@
+2018-10-11  Don Olmstead  <don.olmstead@sony.com>
+
+        Add Houdini specs to features.json
+        https://bugs.webkit.org/show_bug.cgi?id=190494
+
+        Reviewed by Simon Fraser.
+
+        Add CSS Typed OM Level 1, CSS Layout API Level 1, CSS Animation
+        Worklet, and group them under a Houdini feature set.
+
+        * features.json:
+
 2018-10-11  Ross Kirsling  <ross.kirsling@sony.com>
 
         [WTF] Semaphore.h conflicts with POSIX header
