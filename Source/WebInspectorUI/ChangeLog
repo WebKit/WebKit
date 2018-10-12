@@ -1,3 +1,14 @@
+2018-10-11  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Network: detail view reverts to "Response" when new requests are added
+        https://bugs.webkit.org/show_bug.cgi?id=190443
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype._showDetailView):
+        Return early if we are already showing a detail view for the selected object.
+
 2018-10-11  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: remove unused  TreeOutline style .force-focus

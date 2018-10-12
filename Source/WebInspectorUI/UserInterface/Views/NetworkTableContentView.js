@@ -1240,6 +1240,9 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         let oldDetailView = this._detailView;
 
         this._detailView = this._detailViewMap.get(object);
+        if (this._detailView === oldDetailView)
+            return;
+
         if (!this._detailView) {
             if (object instanceof WI.Resource)
                 this._detailView = new WI.NetworkResourceDetailView(object, this);
