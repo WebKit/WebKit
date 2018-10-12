@@ -246,7 +246,7 @@ class ReportProcessor {
                     }
                 } else {
                     $metrics = $test_row ? array_get($test_row['metrics'], $metric_name) : NULL;
-                    $metric_id = $metrics ? $metrics[''] : NULL;
+                    $metric_id = $metrics ? array_get($metrics, '') : NULL;
                     if (!$metric_id)
                         $metric_id = $this->db->select_or_insert_row('test_metrics', 'metric', array('name' => $metric_name, 'test' => $test_id));
                     if (!$metric_id)

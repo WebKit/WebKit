@@ -1,3 +1,9 @@
+2018-10-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r236956. Use array_get to avoid warnings.
+
+        * public/include/report-processor.php:
+
 2018-10-09  Dewei Zhu  <dewei_zhu@apple.com>
 
         Performance dashboard should show added iterations due failed build requests.
