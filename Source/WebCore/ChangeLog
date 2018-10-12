@@ -1,3 +1,16 @@
+2018-10-12  Jer Noble  <jer.noble@apple.com>
+
+        Null-dereference in SourceBufferPrivateAVFObjC::outputObscuredDueToInsufficientExternalProtectionChanged
+        https://bugs.webkit.org/show_bug.cgi?id=190490
+        <rdar://problem/42213807>
+
+        Reviewed by Eric Carlson.
+
+        Crash analytics show a null dereference occurring, likely because m_mediaSource is null.
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::outputObscuredDueToInsufficientExternalProtectionChanged):
+
 2018-10-11  Don Olmstead  <don.olmstead@sony.com>
 
         Add Houdini specs to features.json
