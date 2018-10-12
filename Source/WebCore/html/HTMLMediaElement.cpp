@@ -2972,6 +2972,8 @@ bool HTMLMediaElement::supportsScanning() const
 
 void HTMLMediaElement::prepareToPlay()
 {
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+
     INFO_LOG(LOGIDENTIFIER);
     if (m_havePreparedToPlay || !document().hasBrowsingContext())
         return;

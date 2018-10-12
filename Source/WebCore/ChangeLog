@@ -1,5 +1,27 @@
 2018-10-12  Jer Noble  <jer.noble@apple.com>
 
+        CRASH in WebCore::MediaPlayerPrivateAVFoundation::setPreload
+        https://bugs.webkit.org/show_bug.cgi?id=190485
+        <rdar://problem/34613350>
+
+        Reviewed by Eric Carlson.
+
+        Crash analytics show that a pure-virtual function is called by MediaPlayerPrivateAVFoundation::setPreload(), and
+        the likely cause of that pure-virtual function call is that the MediaPlayerPrivateAVFoundation object itself has
+        been destroyed, likely as a side effect of calling MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL().
+        The usual suspect for this kind of crash is due to calling into JS (e.g., from a callback passed up to
+        HTMLMediaElement). Code inspection hasn't yielded any good hints about why this might be occurring, so we will
+        add a ScriptDisallowedScope assertion inside HTMLMediaElement::prepareToPlay(), to generate a good crashlog
+        showing exactly what callback is resulting in a JS call. But just in case the deallocation is not due to JS,
+        also add an explicit strong-ref inside MediaPlayer::prepareToPlay.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::prepareToPlay):
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::prepareToPlay):
+
+2018-10-12  Jer Noble  <jer.noble@apple.com>
+
         Null-dereference in SourceBufferPrivateAVFObjC::outputObscuredDueToInsufficientExternalProtectionChanged
         https://bugs.webkit.org/show_bug.cgi?id=190490
         <rdar://problem/42213807>
