@@ -56,12 +56,6 @@ static const char* serviceName(const ProcessLauncher::LaunchOptions& launchOptio
         return launchOptions.nonValidInjectedCodeAllowed ? "com.apple.WebKit.WebContent.Development" : "com.apple.WebKit.WebContent";
     case ProcessLauncher::ProcessType::Network:
         return "com.apple.WebKit.Networking";
-    case ProcessLauncher::ProcessType::Storage:
-#if PLATFORM(IOS) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV) && !PLATFORM(IOS_SIMULATOR) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110300
-        return "com.apple.WebKit.Databases";
-#else
-        return "com.apple.WebKit.Storage";
-#endif
 #if ENABLE(NETSCAPE_PLUGIN_API)
     case ProcessLauncher::ProcessType::Plugin32:
         return "com.apple.WebKit.Plugin.32";

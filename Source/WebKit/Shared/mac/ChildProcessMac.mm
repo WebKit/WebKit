@@ -224,8 +224,6 @@ constexpr const char* processStorageClass(ChildProcess::ProcessType type)
         return "WebKitWebContentSandbox";
     case ChildProcess::ProcessType::Network:
         return "WebKitNetworkingSandbox";
-    case ChildProcess::ProcessType::Storage:
-        return "WebKitStorageSandbox";
     case ChildProcess::ProcessType::Plugin:
         return "WebKitPluginSandbox";
     }
@@ -284,9 +282,6 @@ static String sandboxDirectory(ChildProcess::ProcessType processType, const Stri
         break;
     case ChildProcess::ProcessType::Network:
         directory.append("/com.apple.WebKit.Networking.Sandbox");
-        break;
-    case ChildProcess::ProcessType::Storage:
-        directory.append("/com.apple.WebKit.Storage.Sandbox");
         break;
     case ChildProcess::ProcessType::Plugin:
         directory.append("/com.apple.WebKit.Plugin.Sandbox");

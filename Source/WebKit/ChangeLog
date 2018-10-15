@@ -1,3 +1,22 @@
+2018-10-15  Patrick Griffis  <pgriffis@igalia.com>
+
+        Remove StorageProcess leftover
+        https://bugs.webkit.org/show_bug.cgi?id=190591
+
+        Reviewed by Michael Catanzaro.
+
+        The process was deleted.
+
+        * Shared/ChildProcess.h:
+        * Shared/mac/ChildProcessMac.mm:
+        (WebKit::processStorageClass):
+        (WebKit::sandboxDirectory):
+        * UIProcess/ChildProcessProxy.cpp:
+        (WebKit::ChildProcessProxy::getLaunchOptions):
+        * UIProcess/Launcher/ProcessLauncher.h:
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::serviceName):
+
 2018-10-15  Alex Christensen  <achristensen@webkit.org>
 
         Remove unused parameters of WebPageGroupData

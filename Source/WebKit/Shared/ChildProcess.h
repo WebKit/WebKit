@@ -48,7 +48,6 @@ public:
     enum class ProcessType : uint8_t {
         WebContent,
         Network,
-        Storage,
         Plugin
     };
 
