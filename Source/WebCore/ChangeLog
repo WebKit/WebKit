@@ -1,3 +1,30 @@
+2018-10-15  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] New shipping methods are ignored when updating after the shippingaddresschange event
+        https://bugs.webkit.org/show_bug.cgi?id=190560
+        <rdar://problem/44559075>
+
+        Reviewed by Youenn Fablet.
+
+        When a PaymentDetailsUpdate with shipping options was specified to updateWith() after the
+        shippingaddresschange event fires, ApplePayPaymentHandler needs to convert the shipping
+        options to ShippingMethods and add them to the ShippingContactUpdate so that the Apple Pay
+        UI renders the new options.
+
+        Added test cases to http/tests/ssl/applepay/ApplePayShippingAddressChangeEventErrors.https.html.
+
+        * Modules/applepay/ApplePayShippingMethod.idl:
+        * Modules/applepay/paymentrequest/ApplePayPaymentHandler.cpp:
+        (WebCore::ApplePayPaymentHandler::computeShippingMethods):
+        (WebCore::ApplePayPaymentHandler::shippingAddressUpdated):
+        * Modules/applepay/paymentrequest/ApplePayPaymentHandler.h:
+        * testing/MockPaymentCoordinator.cpp:
+        (WebCore::convert):
+        (WebCore::MockPaymentCoordinator::showPaymentUI):
+        (WebCore::MockPaymentCoordinator::completeShippingContactSelection):
+        * testing/MockPaymentCoordinator.h:
+        * testing/MockPaymentCoordinator.idl:
+
 2018-10-15  Youenn Fablet  <youenn@apple.com>
 
         RTCPeerConnection.generateCertificate is not a function

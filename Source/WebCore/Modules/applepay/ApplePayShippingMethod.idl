@@ -25,7 +25,8 @@
 
 [
     Conditional=APPLE_PAY,
-    JSGenerateToJSObject
+    ExportMacro=WEBCORE_EXPORT,
+    JSGenerateToJSObject,
 ] dictionary ApplePayShippingMethod {
     required DOMString label;
     required DOMString detail;

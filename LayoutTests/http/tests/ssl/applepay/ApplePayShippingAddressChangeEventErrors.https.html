@@ -34,6 +34,11 @@ async function runTests()
     }];
     await updateDetailsOnShippingAddressChange(validPaymentDetails(), { requestShipping: true }, detailsUpdate);
     shouldBe("internals.mockPaymentCoordinator.errors.length", "0");
+    shouldBe("internals.mockPaymentCoordinator.shippingMethods.length", "1");
+    shouldBe("internals.mockPaymentCoordinator.shippingMethods[0].label", "'option 1'");
+    shouldBe("internals.mockPaymentCoordinator.shippingMethods[0].detail", "''");
+    shouldBe("internals.mockPaymentCoordinator.shippingMethods[0].amount", "'1.00'");
+    shouldBe("internals.mockPaymentCoordinator.shippingMethods[0].identifier", "'option1'");
     debug("");
 
     debug("Testing PaymentDetailsUpdate with an empty error.");
@@ -137,6 +142,31 @@ async function runTests()
     shouldBe("internals.mockPaymentCoordinator.errors[2].code", "'shippingContactInvalid'");
     shouldBe("internals.mockPaymentCoordinator.errors[2].message", "'error'");
     shouldBe("internals.mockPaymentCoordinator.errors[2].contactField", "'phoneNumber'");
+    debug("");
+    
+    await new Promise((resolve, reject) => {
+        debug("Testing specifying an invalid shipping option in response to shippingaddresschange.");
+
+        paymentRequest = new PaymentRequest([validPaymentMethod()], validPaymentDetails(), { requestShipping: true });
+        paymentRequest.onshippingaddresschange = (event) => {
+            var detailsUpdate = validPaymentDetails();
+            detailsUpdate.shippingOptions = [{
+                id: "option1",
+                label: "option 1",
+                amount: {
+                    currency: "EUR",
+                    value: "1.00",
+                },
+            }];
+            event.updateWith(detailsUpdate);
+        };
+        paymentRequest.onmerchantvalidation = event => event.complete({});
+
+        activateThen(async () => {
+            await shouldReject("paymentRequest.show()");
+            resolve();
+        });
+    });
     debug("");
 
     finishJSTest();

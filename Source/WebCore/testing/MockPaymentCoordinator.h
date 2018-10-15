@@ -28,6 +28,7 @@
 #if ENABLE(APPLE_PAY)
 
 #include "ApplePayLineItem.h"
+#include "ApplePayShippingMethod.h"
 #include "MockPaymentAddress.h"
 #include "MockPaymentError.h"
 #include "PaymentCoordinatorClient.h"
@@ -52,6 +53,7 @@ public:
     const ApplePayLineItem& total() const { return m_total; }
     const Vector<ApplePayLineItem>& lineItems() const { return m_lineItems; }
     const Vector<MockPaymentError>& errors() const { return m_errors; }
+    const Vector<ApplePayShippingMethod>& shippingMethods() const { return m_shippingMethods; }
 
     void ref() const { }
     void deref() const { }
@@ -79,6 +81,7 @@ private:
     ApplePayLineItem m_total;
     Vector<ApplePayLineItem> m_lineItems;
     Vector<MockPaymentError> m_errors;
+    Vector<ApplePayShippingMethod> m_shippingMethods;
     HashSet<String, ASCIICaseInsensitiveHash> m_availablePaymentNetworks;
 };
 

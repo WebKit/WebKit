@@ -8,6 +8,11 @@ PASS internals.mockPaymentCoordinator.errors.length is 0
 
 Testing PaymentDetailsUpdate with an error and shipping options.
 PASS internals.mockPaymentCoordinator.errors.length is 0
+PASS internals.mockPaymentCoordinator.shippingMethods.length is 1
+PASS internals.mockPaymentCoordinator.shippingMethods[0].label is 'option 1'
+PASS internals.mockPaymentCoordinator.shippingMethods[0].detail is ''
+PASS internals.mockPaymentCoordinator.shippingMethods[0].amount is '1.00'
+PASS internals.mockPaymentCoordinator.shippingMethods[0].identifier is 'option1'
 
 Testing PaymentDetailsUpdate with an empty error.
 PASS internals.mockPaymentCoordinator.errors.length is 1
@@ -68,6 +73,9 @@ PASS internals.mockPaymentCoordinator.errors[1].contactField is 'emailAddress'
 PASS internals.mockPaymentCoordinator.errors[2].code is 'shippingContactInvalid'
 PASS internals.mockPaymentCoordinator.errors[2].message is 'error'
 PASS internals.mockPaymentCoordinator.errors[2].contactField is 'phoneNumber'
+
+Testing specifying an invalid shipping option in response to shippingaddresschange.
+PASS paymentRequest.show() rejected promise  with TypeError: "EUR" does not match the expected currency of "USD". Apple Pay requires all PaymentCurrencyAmounts to use the same currency code..
 
 PASS successfullyParsed is true
 

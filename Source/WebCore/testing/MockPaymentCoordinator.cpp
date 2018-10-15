@@ -106,10 +106,18 @@ static void dispatchIfShowing(Function<void()>&& function)
     });
 }
 
+static Vector<ApplePayShippingMethod> convert(const Vector<ApplePaySessionPaymentRequest::ShippingMethod>& shippingMethods)
+{
+    return WTF::map(shippingMethods, [] (auto& shippingMethod) {
+        return ApplePayShippingMethod { shippingMethod.label, shippingMethod.detail, shippingMethod.amount, shippingMethod.identifier };
+    });
+}
+
 bool MockPaymentCoordinator::showPaymentUI(const URL&, const Vector<URL>&, const ApplePaySessionPaymentRequest& request)
 {
     if (request.shippingContact().pkContact())
         m_shippingAddress = request.shippingContact().toApplePayPaymentContact(request.version());
+    m_shippingMethods = convert(request.shippingMethods());
 
     ASSERT(showCount == hideCount);
     ++showCount;
@@ -154,6 +162,7 @@ void MockPaymentCoordinator::completeShippingContactSelection(std::optional<Ship
     if (!shippingContactUpdate)
         return;
 
+    m_shippingMethods = convert(shippingContactUpdate->newShippingMethods);
     updateTotalAndLineItems(shippingContactUpdate->newTotalAndLineItems);
     m_errors = WTFMove(shippingContactUpdate->errors);
 }

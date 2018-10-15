@@ -1,3 +1,14 @@
+2018-10-15  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] New shipping methods are ignored when updating after the shippingaddresschange event
+        https://bugs.webkit.org/show_bug.cgi?id=190560
+        <rdar://problem/44559075>
+
+        Reviewed by Youenn Fablet.
+
+        * http/tests/ssl/applepay/ApplePayShippingAddressChangeEventErrors.https-expected.txt:
+        * http/tests/ssl/applepay/ApplePayShippingAddressChangeEventErrors.https.html:
+
 2018-10-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Can't select text after dismissing the keyboard when changing focus

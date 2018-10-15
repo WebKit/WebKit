@@ -36,4 +36,5 @@
     readonly attribute ApplePayLineItem total;
     readonly attribute sequence<ApplePayLineItem> lineItems;
     readonly attribute sequence<MockPaymentError> errors;
+    readonly attribute sequence<ApplePayShippingMethod> shippingMethods;
 };

@@ -203,15 +203,10 @@ ExceptionOr<void> ApplePayPaymentHandler::show()
     if (m_paymentRequest->paymentOptions().requestShipping)
         request.setShippingType(convert(m_paymentRequest->paymentOptions().shippingType));
 
-    Vector<ApplePaySessionPaymentRequest::ShippingMethod> shippingMethods;
-    shippingMethods.reserveInitialCapacity(m_paymentRequest->paymentDetails().shippingOptions.size());
-    for (auto& shippingOption : m_paymentRequest->paymentDetails().shippingOptions) {
-        auto convertedShippingOption = convertAndValidate(shippingOption, expectedCurrency);
-        if (convertedShippingOption.hasException())
-            return convertedShippingOption.releaseException();
-        shippingMethods.uncheckedAppend(convertedShippingOption.releaseReturnValue());
-    }
-    request.setShippingMethods(shippingMethods);
+    auto shippingMethods = computeShippingMethods();
+    if (shippingMethods.hasException())
+        return shippingMethods.releaseException();
+    request.setShippingMethods(shippingMethods.releaseReturnValue());
 
     auto exception = PaymentRequestValidator::validate(request);
     if (exception.hasException())
@@ -247,6 +242,25 @@ void ApplePayPaymentHandler::canMakePayment(Function<void(bool)>&& completionHan
     }
 
     paymentCoordinator().canMakePaymentsWithActiveCard(m_applePayRequest->merchantIdentifier, document().domain(), WTFMove(completionHandler));
+}
+    
+ExceptionOr<Vector<ApplePaySessionPaymentRequest::ShippingMethod>> ApplePayPaymentHandler::computeShippingMethods()
+{
+    auto& details = m_paymentRequest->paymentDetails();
+    auto& currency = details.total.amount.currency;
+    auto& shippingOptions = details.shippingOptions;
+
+    Vector<ApplePaySessionPaymentRequest::ShippingMethod> shippingMethods;
+    shippingMethods.reserveInitialCapacity(shippingOptions.size());
+
+    for (auto& shippingOption : shippingOptions) {
+        auto shippingMethod = convertAndValidate(shippingOption, currency);
+        if (shippingMethod.hasException())
+            return shippingMethod.releaseException();
+        shippingMethods.uncheckedAppend(shippingMethod.releaseReturnValue());
+    }
+
+    return WTFMove(shippingMethods);
 }
 
 ExceptionOr<ApplePaySessionPaymentRequest::TotalAndLineItems> ApplePayPaymentHandler::computeTotalAndLineItems()
@@ -407,6 +421,11 @@ ExceptionOr<void> ApplePayPaymentHandler::shippingAddressUpdated(Vector<PaymentE
 
     ShippingContactUpdate update;
     update.errors = WTFMove(errors);
+
+    auto newShippingMethods = computeShippingMethods();
+    if (newShippingMethods.hasException())
+        return newShippingMethods.releaseException();
+    update.newShippingMethods = newShippingMethods.releaseReturnValue();
 
     auto newTotalAndLineItems = computeTotalAndLineItems();
     if (newTotalAndLineItems.hasException())

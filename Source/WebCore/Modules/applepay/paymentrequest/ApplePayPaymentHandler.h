@@ -52,6 +52,7 @@ private:
     Document& document() const;
     PaymentCoordinator& paymentCoordinator() const;
 
+    ExceptionOr<Vector<ApplePaySessionPaymentRequest::ShippingMethod>> computeShippingMethods();
     ExceptionOr<ApplePaySessionPaymentRequest::TotalAndLineItems> computeTotalAndLineItems();
     Vector<PaymentError> computeErrors(String&& error, AddressErrors&&, PayerErrorFields&&, JSC::JSObject* paymentMethodErrors) const;
 
