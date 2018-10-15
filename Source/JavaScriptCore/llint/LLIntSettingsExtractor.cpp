@@ -26,6 +26,7 @@
 #include "config.h"
 
 #include "LLIntOfflineAsmConfig.h"
+#include <stdio.h>
 
 int main(int, char**)
 {

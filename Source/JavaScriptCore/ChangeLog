@@ -1,3 +1,11 @@
+2018-10-14  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r237084): JavaScriptCore fails to build on Linux
+        <https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=10949>
+
+        * llint/LLIntSettingsExtractor.cpp: Attempt to fix build by
+        including <stdio.h>.
+
 2018-10-15  Alex Christensen  <achristensen@webkit.org>
 
         Shrink more enum classes
