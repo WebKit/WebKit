@@ -118,6 +118,12 @@ else ()
     WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_RESOURCE_USAGE PRIVATE OFF)
 endif ()
 
+if (CMAKE_SYSTEM_NAME MATCHES "Linux" AND NOT EXISTS "/.flatpak-info")
+    WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_BUBBLEWRAP_SANDBOX PUBLIC ON)
+else ()
+    WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_BUBBLEWRAP_SANDBOX PRIVATE OFF)
+endif ()
+
 # Public options shared with other WebKit ports. Do not add any options here
 # without approval from a GTK+ reviewer. There must be strong reason to support
 # changing the value of the option.
@@ -199,6 +205,38 @@ if (ENABLE_ACCELERATED_2D_CANVAS)
     if (NOT CAIROGL_FOUND)
         message(FATAL_ERROR "CairoGL is needed for ENABLE_ACCELERATED_2D_CANVAS")
     endif ()
+endif ()
+
+if (ENABLE_BUBBLEWRAP_SANDBOX)
+    find_program(BWRAP_EXECUTABLE bwrap)
+    if (NOT BWRAP_EXECUTABLE)
+        message(FATAL_ERROR "bwrap executable is needed for ENABLE_BUBBLEWRAP_SANDBOX")
+    endif ()
+    add_definitions(-DBWRAP_EXECUTABLE="${BWRAP_EXECUTABLE}")
+
+    execute_process(
+        COMMAND "${BWRAP_EXECUTABLE}" --version
+        RESULT_VARIABLE BWRAP_RET
+        OUTPUT_VARIABLE BWRAP_OUTPUT
+    )
+    if (BWRAP_RET)
+        message(FATAL_ERROR "Failed to run ${BWRAP_EXECUTABLE}")
+    endif ()
+    string(REGEX MATCH "([0-9]+.[0-9]+.[0-9]+)" BWRAP_VERSION "${BWRAP_OUTPUT}")
+    if (NOT "${BWRAP_VERSION}" VERSION_GREATER_EQUAL "0.3.1")
+        message(FATAL_ERROR "bwrap must be >= 0.3.1 but ${BWRAP_VERSION} found")
+    endif ()
+
+    find_package(Libseccomp)
+    if (NOT LIBSECCOMP_FOUND)
+        message(FATAL_ERROR "libseccomp is needed for ENABLE_BUBBLEWRAP_SANDBOX")
+    endif ()
+
+    find_program(DBUS_PROXY_EXECUTABLE xdg-dbus-proxy)
+    if (NOT DBUS_PROXY_EXECUTABLE)
+        message(FATAL_ERROR "xdg-dbus-proxy not found and is needed for ENABLE_BUBBLEWRAP_SANDBOX")
+    endif ()
+    add_definitions(-DDBUS_PROXY_EXECUTABLE="${DBUS_PROXY_EXECUTABLE}")
 endif ()
 
 if (USE_LIBSECRET)

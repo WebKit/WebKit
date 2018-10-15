@@ -206,6 +206,12 @@ void WebProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOpt
     }
 }
 
+#if !PLATFORM(GTK) && !PLATFORM(WPE)
+void WebProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
+{
+}
+#endif
+
 void WebProcessProxy::connectionWillOpen(IPC::Connection& connection)
 {
     ASSERT(this->connection() == &connection);

@@ -27,7 +27,9 @@
 #include "config.h"
 #include "ProcessLauncher.h"
 
+#include "BubblewrapLauncher.h"
 #include "Connection.h"
+#include "FlatpakLauncher.h"
 #include "ProcessExecutablePath.h"
 #include <WebCore/FileSystem.h>
 #include <errno.h>
@@ -53,10 +55,27 @@ static void childSetupFunction(gpointer userData)
     close(socket);
 }
 
+#if OS(LINUX)
+static bool isInsideFlatpak()
+{
+    static int ret = -1;
+    if (ret != -1)
+        return ret;
+
+    GUniquePtr<GKeyFile> infoFile(g_key_file_new());
+    if (!g_key_file_load_from_file(infoFile.get(), "/.flatpak-info", G_KEY_FILE_NONE, nullptr)) {
+        ret = false;
+        return ret;
+    }
+
+    // If we are in a `flatpak build` session we cannot launch ourselves since we aren't installed.
+    ret = !g_key_file_get_boolean(infoFile.get(), "Instance", "build", nullptr);
+    return ret;
+}
+#endif
+
 void ProcessLauncher::launchProcess()
 {
-    GPid pid = 0;
-
     IPC::Connection::SocketPair socketPair = IPC::Connection::createPlatformConnection(IPC::Connection::ConnectionOptions::SetCloexecOnServer);
 
     String executablePath;
@@ -140,16 +159,39 @@ void ProcessLauncher::launchProcess()
 #endif
     argv[i++] = nullptr;
 
+    GRefPtr<GSubprocessLauncher> launcher = adoptGRef(g_subprocess_launcher_new(G_SUBPROCESS_FLAGS_INHERIT_FDS));
+    g_subprocess_launcher_set_child_setup(launcher.get(), childSetupFunction, GINT_TO_POINTER(socketPair.server), nullptr);
+    g_subprocess_launcher_take_fd(launcher.get(), socketPair.client, socketPair.client);
+
     GUniqueOutPtr<GError> error;
-    if (!g_spawn_async(nullptr, argv, nullptr, G_SPAWN_LEAVE_DESCRIPTORS_OPEN, childSetupFunction, GINT_TO_POINTER(socketPair.server), &pid, &error.outPtr()))
+    GRefPtr<GSubprocess> process;
+#if OS(LINUX)
+    const char* sandboxEnv = g_getenv("WEBKIT_FORCE_SANDBOX");
+    bool sandboxEnabled = m_launchOptions.extraInitializationData.get("enable-sandbox") == "true";
+
+    if (sandboxEnv)
+        sandboxEnabled = !strcmp(sandboxEnv, "1");
+
+    if (sandboxEnabled && isInsideFlatpak())
+        process = flatpakSpawn(launcher.get(), m_launchOptions, argv, &error.outPtr());
+#if ENABLE(BUBBLEWRAP_SANDBOX)
+    else if (sandboxEnabled)
+        process = bubblewrapSpawn(launcher.get(), m_launchOptions, argv, &error.outPtr());
+#endif
+    else
+#endif
+        process = adoptGRef(g_subprocess_launcher_spawnv(launcher.get(), argv, &error.outPtr()));
+
+    if (!process.get())
         g_error("Unable to fork a new child process: %s", error->message);
+
+    const char* processIdStr = g_subprocess_get_identifier(process.get());
+    m_processIdentifier = g_ascii_strtoll(processIdStr, nullptr, 0);
+    RELEASE_ASSERT(m_processIdentifier);
 
     // Don't expose the parent socket to potential future children.
     if (!setCloseOnExec(socketPair.client))
         RELEASE_ASSERT_NOT_REACHED();
-
-    close(socketPair.client);
-    m_processIdentifier = pid;
 
     // We've finished launching the process, message back to the main run loop.
     RunLoop::main().dispatch([protectedThis = makeRef(*this), this, serverSocket = socketPair.server] {

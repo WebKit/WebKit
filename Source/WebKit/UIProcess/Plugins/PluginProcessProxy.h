@@ -96,7 +96,7 @@ private:
     PluginProcessProxy(PluginProcessManager*, const PluginProcessAttributes&, uint64_t pluginProcessToken);
 
     void getLaunchOptions(ProcessLauncher::LaunchOptions&) override;
-    void platformGetLaunchOptions(ProcessLauncher::LaunchOptions&, const PluginProcessAttributes&);
+    void platformGetLaunchOptionsWithAttributes(ProcessLauncher::LaunchOptions&, const PluginProcessAttributes&);
     void processWillShutDown(IPC::Connection&) override;
 
     void pluginProcessCrashedOrFailedToLaunch();

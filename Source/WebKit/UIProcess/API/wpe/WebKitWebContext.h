@@ -297,6 +297,13 @@ WEBKIT_API WebKitProcessModel
 webkit_web_context_get_process_model                (WebKitWebContext              *context);
 
 WEBKIT_API void
+webkit_web_context_set_sandbox_enabled              (WebKitWebContext              *context,
+                                                     gboolean                       enabled);
+
+WEBKIT_API gboolean
+webkit_web_context_get_sandbox_enabled              (WebKitWebContext              *context);
+
+WEBKIT_API void
 webkit_web_context_initialize_notification_permissions
                                                     (WebKitWebContext              *context,
                                                      GList                         *allowed_origins,

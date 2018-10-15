@@ -60,7 +60,7 @@ namespace WebKit {
 using namespace WebCore;
 
     
-void PluginProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions, const PluginProcessAttributes& pluginProcessAttributes)
+void PluginProcessProxy::platformGetLaunchOptionsWithAttributes(ProcessLauncher::LaunchOptions& launchOptions, const PluginProcessAttributes& pluginProcessAttributes)
 {
     if (pluginProcessAttributes.moduleInfo.pluginArchitecture == CPU_TYPE_X86)
         launchOptions.processType = ProcessLauncher::ProcessType::Plugin32;

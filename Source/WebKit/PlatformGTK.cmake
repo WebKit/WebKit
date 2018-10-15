@@ -19,6 +19,7 @@ add_definitions(-DWEBKIT_DOM_USE_UNSTABLE_API)
 
 add_definitions(-DPKGLIBEXECDIR="${LIBEXEC_INSTALL_DIR}")
 add_definitions(-DLOCALEDIR="${CMAKE_INSTALL_FULL_LOCALEDIR}")
+add_definitions(-DDATADIR="${CMAKE_INSTALL_FULL_DATADIR}")
 add_definitions(-DLIBDIR="${LIB_INSTALL_DIR}")
 
 if (NOT DEVELOPER_MODE AND NOT CMAKE_SYSTEM_NAME MATCHES "Darwin")
@@ -624,6 +625,8 @@ if (ENABLE_PLUGIN_PROCESS_GTK2)
 
         UIProcess/Launcher/ProcessLauncher.cpp
 
+        UIProcess/Launcher/glib/BubblewrapLauncher.cpp
+        UIProcess/Launcher/glib/FlatpakLauncher.cpp
         UIProcess/Launcher/glib/ProcessLauncherGLib.cpp
 
         UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp

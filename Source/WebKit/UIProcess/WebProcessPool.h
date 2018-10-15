@@ -455,6 +455,11 @@ public:
 
     void sendDisplayConfigurationChangedMessageForTesting();
 
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    void setSandboxEnabled(bool enabled) { m_sandboxEnabled = enabled; };
+    bool sandboxEnabled() const { return m_sandboxEnabled; };
+#endif
+
 private:
     void platformInitialize();
 
@@ -702,6 +707,10 @@ private:
     HashMap<String, RefPtr<WebProcessProxy>> m_swappedProcessesPerRegistrableDomain;
 
     HashMap<String, std::unique_ptr<WebCore::PrewarmInformation>> m_prewarmInformationPerRegistrableDomain;
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    bool m_sandboxEnabled { false };
+#endif
 };
 
 template<typename T>

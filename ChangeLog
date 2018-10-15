@@ -1,3 +1,16 @@
+2018-10-15  Patrick Griffis  <pgriffis@igalia.com>
+
+        [GTK][WPE] Implement subprocess sandboxing
+        https://bugs.webkit.org/show_bug.cgi?id=188568
+
+        Reviewed by Michael Catanzaro.
+
+        Add ENABLE_BUBBLEWRAP_SANDBOX option for sandboxing.
+
+        * Source/cmake/FindLibseccomp.cmake: Added.
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+
 2018-10-14  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] Remove Option::useAsyncIterator

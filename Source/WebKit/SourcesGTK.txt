@@ -203,6 +203,8 @@ UIProcess/Automation/cairo/WebAutomationSessionCairo.cpp
 UIProcess/Automation/gtk/WebAutomationSessionGtk.cpp
 
 UIProcess/Launcher/glib/ProcessLauncherGLib.cpp @no-unify
+UIProcess/Launcher/glib/BubblewrapLauncher.cpp @no-unify
+UIProcess/Launcher/glib/FlatpakLauncher.cpp @no-unify
 
 UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.cpp
 
@@ -220,6 +222,7 @@ UIProcess/WebsiteData/unix/WebsiteDataStoreUnix.cpp
 UIProcess/cairo/BackingStoreCairo.cpp @no-unify
 
 UIProcess/glib/RemoteInspectorClient.cpp
+UIProcess/glib/WebProcessProxyGLib.cpp
 
 UIProcess/gstreamer/InstallMissingMediaPluginsPermissionRequest.cpp
 UIProcess/gstreamer/WebPageProxyGStreamer.cpp

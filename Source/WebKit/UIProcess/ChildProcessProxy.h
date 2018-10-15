@@ -93,6 +93,7 @@ protected:
     bool dispatchSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
     
     virtual void getLaunchOptions(ProcessLauncher::LaunchOptions&);
+    virtual void platformGetLaunchOptions(ProcessLauncher::LaunchOptions&) { };
 
 private:
     virtual void connectionWillOpen(IPC::Connection&);

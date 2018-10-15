@@ -1,3 +1,14 @@
+2018-10-15  Patrick Griffis  <pgriffis@igalia.com>
+
+        [GTK][WPE] Implement subprocess sandboxing
+        https://bugs.webkit.org/show_bug.cgi?id=188568
+
+        Reviewed by Michael Catanzaro.
+
+        Link against libseccomp.
+
+        * PlatformGTK.cmake:
+
 2018-10-15  YUHAN WU  <yuhan_wu@apple.com>
 
         Implement error handler of MediaRecorder

@@ -1,3 +1,102 @@
+2018-10-15  Patrick Griffis  <pgriffis@igalia.com>
+
+        [GTK][WPE] Implement subprocess sandboxing
+        https://bugs.webkit.org/show_bug.cgi?id=188568
+
+        Reviewed by Michael Catanzaro.
+
+        This implements sandboxing of WebKitWebProcesses.
+
+        The sandbox is opt-in at runtime as it is a behavior change.
+        See webkit_web_context_set_sandbox_enabled() and the
+        WEBKIT_FORCE_SANDBOX env var for developers.
+
+        This is Linux specific using Namespaces, Seccomp, and a DBus proxy service.
+        This introduces three new dependencies:
+
+        - bwrap executable
+        - libseccomp library
+        - xdg-dbus-proxy executable
+
+        The use of xdg-dbus-proxy will ideally be replaced once upstream DBus
+        gains the same filtering abilities which is a work in progress.
+
+        Currently the sandbox is not completed and there are a few large holes:
+
+        - Pulseaudio: The Pipewire project will solve this.
+        - DRI device access: No immediate solutions planned.
+        - Webcam device access: Pipewire will also solve this.
+        - Webprocess network access: Will require GStreamer changes.
+        - DConf access: Custom proxy planned.
+        - X11 access: Wayland solves this.
+
+        That is not an exhaustive list but are the noteworthy ones. Filesystem access
+        is still an evolving list as problems are found as is specific DBus name access.
+
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        (webkit_web_context_set_sandbox_enabled):
+        (webkit_web_context_get_sandbox_enabled):
+        * UIProcess/API/gtk/WebKitWebContext.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt:
+        * UIProcess/API/wpe/WebKitWebContext.h:
+        * UIProcess/ChildProcessProxy.cpp:
+        (WebKit::ChildProcessProxy::getLaunchOptions):
+        * UIProcess/ChildProcessProxy.h:
+        (WebKit::ChildProcessProxy::platformGetLaunchOptions):
+        * UIProcess/Launcher/ProcessLauncher.h:
+        * UIProcess/Launcher/glib/BubblewrapLauncher.cpp: Added.
+        (WebKit::memfd_create):
+        (WebKit::argsToFd):
+        (WebKit::XDGDBusProxyLauncher::setAddress):
+        (WebKit::XDGDBusProxyLauncher::isRunning const):
+        (WebKit::XDGDBusProxyLauncher::path const):
+        (WebKit::XDGDBusProxyLauncher::proxyPath const):
+        (WebKit::XDGDBusProxyLauncher::setPermissions):
+        (WebKit::XDGDBusProxyLauncher::launch):
+        (WebKit::XDGDBusProxyLauncher::childSetupFunc):
+        (WebKit::XDGDBusProxyLauncher::makeProxyPath):
+        (WebKit::XDGDBusProxyLauncher::dbusAddressToPath):
+        (WebKit::bindIfExists):
+        (WebKit::bindDBusSession):
+        (WebKit::bindX11):
+        (WebKit::bindDconf):
+        (WebKit::bindWayland):
+        (WebKit::bindPulse):
+        (WebKit::bindFonts):
+        (WebKit::bindGtkData):
+        (WebKit::bindA11y):
+        (WebKit::bindPathVar):
+        (WebKit::bindGStreamerData):
+        (WebKit::bindOpenGL):
+        (WebKit::bindV4l):
+        (WebKit::bindSymlinksRealPath):
+        (WebKit::setupSeccomp):
+        (WebKit::bubblewrapSpawn):
+        * UIProcess/Launcher/glib/BubblewrapLauncher.h: Added.
+        * UIProcess/Launcher/glib/FlatpakLauncher.cpp: Added.
+        (WebKit::flatpakSpawn):
+        * UIProcess/Launcher/glib/FlatpakLauncher.h: Added.
+        * UIProcess/Launcher/glib/ProcessLauncherGLib.cpp:
+        (WebKit::isInsideFlatpak):
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::getLaunchOptions):
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::PluginProcessProxy::platformGetLaunchOptionsWithAttributes):
+        * UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp:
+        (WebKit::PluginProcessProxy::platformGetLaunchOptionsWithAttributes):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::platformGetLaunchOptions):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/glib/WebProcessProxyGLib.cpp: Added.
+        (WebKit::WebProcessProxy::platformGetLaunchOptions):
+
 2018-10-15  Alex Christensen  <achristensen@webkit.org>
 
         Add a temporarily off by default preference for doing safe browsing checks

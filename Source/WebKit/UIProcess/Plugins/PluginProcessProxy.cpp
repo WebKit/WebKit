@@ -87,7 +87,7 @@ PluginProcessProxy::~PluginProcessProxy()
 
 void PluginProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
 {
-    platformGetLaunchOptions(launchOptions, m_pluginProcessAttributes);
+    platformGetLaunchOptionsWithAttributes(launchOptions, m_pluginProcessAttributes);
     ChildProcessProxy::getLaunchOptions(launchOptions);
 }
 
