@@ -1,3 +1,16 @@
+2018-10-15  Keith Miller  <keith_miller@apple.com>
+
+        BytecodeDumper should print all switch labels
+        https://bugs.webkit.org/show_bug.cgi?id=190596
+
+        Reviewed by Saam Barati.
+
+        Right now the bytecode dumper only prints the default target not any of the
+        non-default targets.
+
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::BytecodeDumper<Block>::dumpBytecode):
+
 2018-10-15  Saam barati  <sbarati@apple.com>
 
         Emit fjcvtzs on ARM64E on Darwin

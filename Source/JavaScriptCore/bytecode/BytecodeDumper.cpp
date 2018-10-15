@@ -1359,7 +1359,11 @@ void BytecodeDumper<Block>::dumpBytecode(PrintStream& out, const typename Block:
         int defaultTarget = (++it)->u.operand;
         int scrutineeRegister = (++it)->u.operand;
         printLocationAndOp(out, location, it, "switch_imm");
-        out.printf("%d, %d(->%d), %s", tableIndex, defaultTarget, location + defaultTarget, registerName(scrutineeRegister).data());
+        out.printf("%d, default:%d(->%d)", tableIndex, defaultTarget, location + defaultTarget);
+        const auto& table = block()->switchJumpTable(tableIndex);
+        for (unsigned i = 0; i < table.branchOffsets.size(); ++i)
+            out.printf(", %d:%d(->%d)", i, table.branchOffsets[i], location + table.branchOffsets[i]);
+        out.print(", ", registerName(scrutineeRegister).data());
         break;
     }
     case op_switch_char: {
@@ -1367,7 +1371,11 @@ void BytecodeDumper<Block>::dumpBytecode(PrintStream& out, const typename Block:
         int defaultTarget = (++it)->u.operand;
         int scrutineeRegister = (++it)->u.operand;
         printLocationAndOp(out, location, it, "switch_char");
-        out.printf("%d, %d(->%d), %s", tableIndex, defaultTarget, location + defaultTarget, registerName(scrutineeRegister).data());
+        out.printf("%d, default:%d(->%d)", tableIndex, defaultTarget, location + defaultTarget);
+        const auto& table = block()->switchJumpTable(tableIndex);
+        for (unsigned i = 0; i < table.branchOffsets.size(); ++i)
+            out.printf(", %c:%d(->%d)", i, table.branchOffsets[i], location + table.branchOffsets[i]);
+        out.print(", ", registerName(scrutineeRegister).data());
         break;
     }
     case op_switch_string: {
@@ -1375,7 +1383,13 @@ void BytecodeDumper<Block>::dumpBytecode(PrintStream& out, const typename Block:
         int defaultTarget = (++it)->u.operand;
         int scrutineeRegister = (++it)->u.operand;
         printLocationAndOp(out, location, it, "switch_string");
-        out.printf("%d, %d(->%d), %s", tableIndex, defaultTarget, location + defaultTarget, registerName(scrutineeRegister).data());
+        out.printf("%d, default:%d(->%d)", tableIndex, defaultTarget, location + defaultTarget);
+        const auto& table = block()->stringSwitchJumpTable(tableIndex);
+        for (const auto& offset : table.offsetTable) {
+            out.print(", ", Identifier::fromUid(vm(), static_cast<UniquedStringImpl*>(offset.key.get())));
+            out.printf(":%d(%d)", offset.value.branchOffset, location + offset.value.branchOffset);
+        }
+        out.print(", ", registerName(scrutineeRegister).data());
         break;
     }
     case op_new_func: {
