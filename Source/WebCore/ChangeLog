@@ -1,5 +1,38 @@
 2018-10-15  Andy Estes  <aestes@apple.com>
 
+        [Apple Pay] Payment authorization results with ApplePayErrors should never be considered final
+        https://bugs.webkit.org/show_bug.cgi?id=190559
+        <rdar://problem/37250908>
+
+        Reviewed by Anders Carlsson.
+
+        When PaymentCoordinator thinks a payment authorization result is final it releases the
+        active ApplePaySession. The Apple Pay UI is dismissed after a receiving a final result.
+
+        However, WebCore::isFinalStateResult had the wrong idea about what was a final state,
+        in some cases causing PaymentCoordinator to release the active session even when the UI is
+        still presented. If the user authorizes payment again, the website will not receive another
+        paymentauthorized event, and the Apple Pay UI will eventually time out waiting for a result.
+
+        Specifically, isFinalStateResult thought that:
+
+        (1) results with STATUS_SUCCESS were always final, even if they had errors
+        (2) errors with code "unknown" were final
+
+        Both of these assumptions are wrong. PassKit considers any result with errors to be
+        non-final, even if an error has code "unknown."
+
+        Fixed WebCore::isFinalStateResult to agree with what PassKit considers to be final results.
+
+        Test: http/tests/ssl/applepay/ApplePaySessionFinalState.https.html
+
+        * Modules/applepay/ApplePaySessionPaymentRequest.cpp:
+        (WebCore::isFinalStateResult):
+        * testing/MockPaymentCoordinator.cpp:
+        (WebCore::MockPaymentCoordinator::completePaymentSession):
+
+2018-10-15  Andy Estes  <aestes@apple.com>
+
         [Payment Request] PaymentResponse should be a ContextDestructionObserver
         https://bugs.webkit.org/show_bug.cgi?id=190558
 

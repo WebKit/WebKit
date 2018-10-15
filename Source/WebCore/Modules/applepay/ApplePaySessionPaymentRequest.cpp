@@ -44,21 +44,12 @@ bool isFinalStateResult(const std::optional<PaymentAuthorizationResult>& result)
 
     switch (result->status) {
     case PaymentAuthorizationStatus::Success:
-        return true;
+    case PaymentAuthorizationStatus::Failure:
+        return result->errors.isEmpty();
 
     case PaymentAuthorizationStatus::PINRequired:
     case PaymentAuthorizationStatus::PINIncorrect:
     case PaymentAuthorizationStatus::PINLockout:
-        return false;
-
-    case PaymentAuthorizationStatus::Failure:
-        if (result->errors.isEmpty())
-            return true;
-
-        for (auto& error : result->errors) {
-            if (error.code == PaymentError::Code::Unknown)
-                return true;
-        }
         return false;
     }
 }

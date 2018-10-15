@@ -198,8 +198,11 @@ void MockPaymentCoordinator::cancelPayment()
     });
 }
 
-void MockPaymentCoordinator::completePaymentSession(std::optional<PaymentAuthorizationResult>&&)
+void MockPaymentCoordinator::completePaymentSession(std::optional<PaymentAuthorizationResult>&& result)
 {
+    if (!isFinalStateResult(result))
+        return;
+
     ++hideCount;
     ASSERT(showCount == hideCount);
 }
