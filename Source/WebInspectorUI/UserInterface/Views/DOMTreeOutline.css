@@ -339,4 +339,8 @@ body[dir=rtl] .tree-outline.dom li.parent.shadow::after {
         /* FIXME: This should use a variable. */
         background-color: hsla(53, 83%, 53%, 0.8);
     }
+
+    .tree-outline.dom .html-pseudo-element {
+        color: hsl(0, 80%, 65%);
+    }
 }

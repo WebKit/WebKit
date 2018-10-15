@@ -1,3 +1,15 @@
+2018-10-15  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Dark Mode: pseudo elements in DOM tree are too dark
+        https://bugs.webkit.org/show_bug.cgi?id=190541
+        <rdar://problem/45238443>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/DOMTreeOutline.css:
+        (@media (prefers-dark-interface)):
+        (.tree-outline.dom .html-pseudo-element):
+
 2018-10-15  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: REGRESSION (r233824): execution highlight range missing/incorrect in pretty printed code
