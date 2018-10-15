@@ -1,5 +1,23 @@
 2018-10-15  Andy Estes  <aestes@apple.com>
 
+        [Payment Request] PaymentResponse should be a ContextDestructionObserver
+        https://bugs.webkit.org/show_bug.cgi?id=190558
+
+        Reviewed by Alex Christensen.
+
+        Make PaymentResponse a ContextDestructionObserver so it has a ScriptExecutionContext to
+        return for its override of EventTarget::scriptExecutionContext(). Do this instead of
+        downcasting m_request to an ActiveDOMObject to ask for its context.
+
+        * Modules/paymentrequest/PaymentRequest.cpp:
+        (WebCore::PaymentRequest::accept):
+        * Modules/paymentrequest/PaymentResponse.cpp:
+        (WebCore::PaymentResponse::PaymentResponse):
+        (WebCore::PaymentResponse::scriptExecutionContext const): Deleted.
+        * Modules/paymentrequest/PaymentResponse.h:
+
+2018-10-15  Andy Estes  <aestes@apple.com>
+
         [Payment Request] Use a PendingActivity token rather than calling (un)setPendingActivity
         https://bugs.webkit.org/show_bug.cgi?id=190557
 

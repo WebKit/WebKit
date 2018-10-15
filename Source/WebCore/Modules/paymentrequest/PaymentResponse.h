@@ -27,6 +27,7 @@
 
 #if ENABLE(PAYMENT_REQUEST)
 
+#include "ContextDestructionObserver.h"
 #include "EventTarget.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSValueInWrappedObject.h"
@@ -39,13 +40,13 @@ class Document;
 class PaymentRequest;
 struct PaymentValidationErrors;
 
-class PaymentResponse final : public RefCounted<PaymentResponse>, public EventTargetWithInlineData {
+class PaymentResponse final : public ContextDestructionObserver, public EventTargetWithInlineData, public RefCounted<PaymentResponse> {
 public:
     using DetailsFunction = Function<JSC::Strong<JSC::JSObject>(JSC::ExecState&)>;
 
-    static Ref<PaymentResponse> create(PaymentRequest& request, DetailsFunction&& detailsFunction)
+    static Ref<PaymentResponse> create(ScriptExecutionContext* context, PaymentRequest& request, DetailsFunction&& detailsFunction)
     {
-        return adoptRef(*new PaymentResponse(request, WTFMove(detailsFunction)));
+        return adoptRef(*new PaymentResponse(context, request, WTFMove(detailsFunction)));
     }
 
     ~PaymentResponse();
@@ -81,11 +82,11 @@ public:
     using RefCounted<PaymentResponse>::deref;
 
 private:
-    PaymentResponse(PaymentRequest&, DetailsFunction&&);
+    PaymentResponse(ScriptExecutionContext*, PaymentRequest&, DetailsFunction&&);
 
     // EventTarget
     EventTargetInterface eventTargetInterface() const final { return PaymentResponseEventTargetInterfaceType; }
-    ScriptExecutionContext* scriptExecutionContext() const final;
+    ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 

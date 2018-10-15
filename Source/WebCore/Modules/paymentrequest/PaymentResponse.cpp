@@ -34,8 +34,9 @@
 
 namespace WebCore {
 
-PaymentResponse::PaymentResponse(PaymentRequest& request, DetailsFunction&& detailsFunction)
-    : m_request { request }
+PaymentResponse::PaymentResponse(ScriptExecutionContext* context, PaymentRequest& request, DetailsFunction&& detailsFunction)
+    : ContextDestructionObserver { context }
+    , m_request { request }
     , m_detailsFunction { WTFMove(detailsFunction) }
 {
     ASSERT(m_detailsFunction);
@@ -59,11 +60,6 @@ void PaymentResponse::retry(PaymentValidationErrors&&, DOMPromiseDeferred<void>&
 {
     notImplemented();
     promise.reject(Exception { NotSupportedError });
-}
-
-ScriptExecutionContext* PaymentResponse::scriptExecutionContext() const
-{
-    return static_cast<ActiveDOMObject&>(m_request.get()).scriptExecutionContext();
 }
 
 } // namespace WebCore

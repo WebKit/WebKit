@@ -681,7 +681,7 @@ void PaymentRequest::accept(const String& methodName, PaymentResponse::DetailsFu
 {
     ASSERT(m_state == State::Interactive);
 
-    auto response = PaymentResponse::create(*this, WTFMove(detailsFunction));
+    auto response = PaymentResponse::create(scriptExecutionContext(), *this, WTFMove(detailsFunction));
     response->setRequestId(m_details.id);
     response->setMethodName(methodName);
 
