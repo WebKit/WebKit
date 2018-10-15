@@ -32,6 +32,7 @@
       <dep package="libgpg-error"/>
       <dep package="libgcrypt"/>
       <if condition-set="linux">
+          <dep package="xdg-dbus-proxy"/>
           <dep package="xserver"/>
           <dep package="mesa"/>
           <dep package="at-spi2-core"/>
@@ -517,5 +518,16 @@
       <dep package="ninja"/>
     </dependencies>
   </distutils>
+
+  <autotools id="xdg-dbus-proxy" autogen-sh="configure">
+    <branch repo="github-tarball"
+            version="0.1.0"
+            module="flatpak/xdg-dbus-proxy/releases/download/${version}/xdg-dbus-proxy-${version}.tar.xz"
+            checkoutdir="xdg-dbus-proxy-${version}"
+            hash="sha256:9eefd30fe66940c8daf0e8ce6479307694814edb8b636caeb5aa6d6a46a4bc14"/>
+    <dependencies>
+      <dep package="glib"/>
+    </dependencies>
+  </autotools>
 
 </moduleset>

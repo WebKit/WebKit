@@ -1,5 +1,14 @@
 2018-10-15  Patrick Griffis  <pgriffis@igalia.com>
 
+        [JHBuild] Add xdg-dbus-proxy module
+        https://bugs.webkit.org/show_bug.cgi?id=190589
+
+        Reviewed by Michael Catanzaro.
+
+        * gtk/jhbuild.modules:
+
+2018-10-15  Patrick Griffis  <pgriffis@igalia.com>
+
         [GTK] Add new sandboxing dependencies to install-dependencies
         https://bugs.webkit.org/show_bug.cgi?id=190588
 
