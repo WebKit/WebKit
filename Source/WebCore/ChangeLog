@@ -1,3 +1,18 @@
+2018-10-15  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Fix EME build for GStreamer 1.14.x
+        https://bugs.webkit.org/show_bug.cgi?id=190471
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.cpp:
+        (webkitMediaCommonEncryptionDecryptTransformCaps): The
+        GST_PROTECTION_UNSPECIFIED_SYSTEM_ID #define won't be shipped
+        until the GStreamer 1.16.0 release, so its use needs to be wrapped
+        between a version check.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::initializationDataEncountered): Ditto.
+
 2018-10-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Allow SPI clients to lay out at arbitrarily scaled sizes and scale to fit the view

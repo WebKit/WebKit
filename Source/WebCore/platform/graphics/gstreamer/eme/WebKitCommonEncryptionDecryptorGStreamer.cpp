@@ -159,8 +159,13 @@ static GstCaps* webkitMediaCommonEncryptionDecryptTransformCaps(GstBaseTransform
             gst_structure_set(outgoingStructure.get(), "protection-system", G_TYPE_STRING, klass->protectionSystemId,
                 "original-media-type", G_TYPE_STRING, gst_structure_get_name(incomingStructure), nullptr);
 
+            // GST_PROTECTION_UNSPECIFIED_SYSTEM_ID was added in the GStreamer
+            // developement git master which will ship as version 1.16.0.
             gst_structure_set_name(outgoingStructure.get(),
-                !g_strcmp0(klass->protectionSystemId, GST_PROTECTION_UNSPECIFIED_SYSTEM_ID) ? "application/x-webm-enc" : "application/x-cenc");
+#if GST_CHECK_VERSION(1, 15, 0)
+                !g_strcmp0(klass->protectionSystemId, GST_PROTECTION_UNSPECIFIED_SYSTEM_ID) ? "application/x-webm-enc" :
+#endif
+                "application/x-cenc");
         }
 
         bool duplicate = false;
