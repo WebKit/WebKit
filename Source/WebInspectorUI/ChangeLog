@@ -1,5 +1,17 @@
 2018-10-15  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: Dark Mode: unreadable text when hovering CSS properties while holding Command
+        https://bugs.webkit.org/show_bug.cgi?id=190548
+        <rdar://problem/45242098>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.css:
+        (.meta-key-pressed .spreadsheet-css-declaration:not(.locked) :matches(.name, .value):not(.editing):hover):
+        In the light mode the color remained the same.
+
+2018-10-15  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: Dark Mode: style editor warnings should not look like errors
         https://bugs.webkit.org/show_bug.cgi?id=190569
         <rdar://problem/45261689>

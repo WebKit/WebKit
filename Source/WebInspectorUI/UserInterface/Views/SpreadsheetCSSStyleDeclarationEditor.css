@@ -149,7 +149,7 @@
 }
 
 .meta-key-pressed .spreadsheet-css-declaration:not(.locked) :matches(.name, .value):not(.editing):hover {
-    color: blue !important;
+    color: var(--syntax-highlight-link-color) !important;
     text-decoration: underline !important;
     cursor: pointer !important;
     -webkit-text-stroke-width: 0 !important;
