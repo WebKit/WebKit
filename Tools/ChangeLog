@@ -1,3 +1,10 @@
+2018-10-15  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, fix JSC tests after WebGPUShadingLanguageRI directory was removed in r237115.
+
+        * Scripts/run-javascriptcore-tests:
+        (runJSCStressTests): Remove wsl-tests.yaml.
+
 2018-10-15  Christopher Reid  <chris.reid@sony.com>
 
         [Curl][WinCairo] Add Public Suffix support to WinCairo

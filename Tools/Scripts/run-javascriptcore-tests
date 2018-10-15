@@ -414,7 +414,6 @@ sub runJSCStressTests
             "PerformanceTests/JetStream/cdjs/cdjs-tests.yaml",
             "PerformanceTests/ARES-6/Air/airjs-tests.yaml",
             "PerformanceTests/ARES-6/Basic/basic-tests.yaml",
-            "Tools/WebGPUShadingLanguageRI/wsl-tests.yaml",
             "JSTests/executableAllocationFuzz.yaml",
             "JSTests/exceptionFuzz.yaml",
             "PerformanceTests/SunSpider/no-architecture-specific-optimizations.yaml",
