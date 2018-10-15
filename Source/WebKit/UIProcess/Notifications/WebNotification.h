@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebNotification_h
-#define WebNotification_h
+#pragma once
 
 #include "APIObject.h"
 #include "APISecurityOrigin.h"
@@ -32,7 +31,7 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-enum class NotificationDirection;
+enum class NotificationDirection : uint8_t;
 }
 
 namespace WebKit {
@@ -75,5 +74,3 @@ inline bool isNotificationIDValid(uint64_t id)
 }
 
 } // namespace WebKit
-
-#endif // WebNotification_h

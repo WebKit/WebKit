@@ -38,13 +38,13 @@ struct ServiceWorkerData;
 struct ServiceWorkerClientData;
 struct ServiceWorkerClientIdentifier;
 
-enum class ServiceWorkerRegistrationState {
+enum class ServiceWorkerRegistrationState : uint8_t {
     Installing = 0,
     Waiting = 1,
     Active = 2,
 };
 
-enum class ServiceWorkerState {
+enum class ServiceWorkerState : uint8_t {
     Installing,
     Installed,
     Activating,
@@ -59,7 +59,7 @@ enum class ServiceWorkerClientFrameType {
     None
 };
 
-enum class ShouldNotifyWhenResolved { No, Yes };
+enum class ShouldNotifyWhenResolved : bool { No, Yes };
 
 enum ServiceWorkerRegistrationIdentifierType { };
 using ServiceWorkerRegistrationIdentifier = ObjectIdentifier<ServiceWorkerRegistrationIdentifierType>;

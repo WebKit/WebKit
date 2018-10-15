@@ -50,7 +50,7 @@ class Download;
 class NetworkLoadParameters;
 class NetworkSession;
 class PendingDownload;
-enum class AuthenticationChallengeDisposition;
+enum class AuthenticationChallengeDisposition : uint8_t;
 
 using RedirectCompletionHandler = CompletionHandler<void(WebCore::ResourceRequest&&)>;
 using ChallengeCompletionHandler = CompletionHandler<void(AuthenticationChallengeDisposition, const WebCore::Credential&)>;

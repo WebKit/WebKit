@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-enum class ShouldSample { No, Yes };
+enum class ShouldSample : bool { No, Yes };
 
 class DiagnosticLoggingClient {
     WTF_MAKE_FAST_ALLOCATED;

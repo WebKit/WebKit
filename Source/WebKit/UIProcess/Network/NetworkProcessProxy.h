@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NetworkProcessProxy_h
-#define NetworkProcessProxy_h
+#pragma once
 
 #include "APIWebsiteDataStore.h"
 #include "ChildProcessProxy.h"
@@ -47,7 +46,7 @@ namespace WebCore {
 class AuthenticationChallenge;
 class ProtectionSpace;
 class ResourceRequest;
-enum class ShouldSample;
+enum class ShouldSample : bool;
 class SecurityOrigin;
 class URL;
 struct SecurityOriginData;
@@ -205,5 +204,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // NetworkProcessProxy_h

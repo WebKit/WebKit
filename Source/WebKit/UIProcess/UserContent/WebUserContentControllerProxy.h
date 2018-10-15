@@ -59,7 +59,7 @@ class WebProcessProxy;
 class WebScriptMessageHandler;
 struct FrameInfoData;
 struct WebPageCreationParameters;
-enum class InjectUserScriptImmediately;
+enum class InjectUserScriptImmediately : bool;
 
 class WebUserContentControllerProxy : public API::ObjectImpl<API::Object::Type::UserContentController>, private IPC::MessageReceiver {
 public:

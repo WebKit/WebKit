@@ -51,7 +51,7 @@ class Download;
 class DownloadID;
 class WebFrame;
 
-enum class AuthenticationChallengeDisposition;
+enum class AuthenticationChallengeDisposition : uint8_t;
 using ChallengeCompletionHandler = CompletionHandler<void(AuthenticationChallengeDisposition, const WebCore::Credential&)>;
 
 class AuthenticationManager : public NetworkProcessSupplement, public IPC::MessageReceiver, public CanMakeWeakPtr<AuthenticationManager> {

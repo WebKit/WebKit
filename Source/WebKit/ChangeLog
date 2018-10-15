@@ -1,3 +1,43 @@
+2018-10-15  Alex Christensen  <achristensen@webkit.org>
+
+        Shrink more enum classes
+        https://bugs.webkit.org/show_bug.cgi?id=190540
+
+        Reviewed by Chris Dumez.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkDataTask.h:
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * Shared/Authentication/AuthenticationChallengeDisposition.h:
+        * Shared/Authentication/AuthenticationManager.h:
+        * Shared/Authentication/AuthenticationManager.messages.in:
+        * Shared/DragControllerAction.h:
+        * Shared/LayerTreeContext.h:
+        * Shared/UndoOrRedo.h:
+        * UIProcess/Authentication/AuthenticationDecisionListener.h:
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/Notifications/WebNotification.h:
+        * UIProcess/Notifications/WebNotificationManagerProxy.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/UserContent/WebUserContentControllerProxy.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/forms/WKAirPlayRoutePicker.h:
+        * WebProcess/Automation/WebAutomationSessionProxy.messages.in:
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.h:
+        * WebProcess/Storage/WebSWClientConnection.messages.in:
+        * WebProcess/UserContent/InjectUserScriptImmediately.h:
+        * WebProcess/UserContent/WebUserContentController.h:
+        * WebProcess/UserContent/WebUserContentController.messages.in:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2018-10-15  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Add new files missing from previous commit.

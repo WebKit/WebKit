@@ -30,7 +30,7 @@
 #import <Foundation/Foundation.h>
 
 namespace WebCore {
-enum class RouteSharingPolicy;
+enum class RouteSharingPolicy : uint8_t;
 }
 
 @class UIView;

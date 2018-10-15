@@ -142,7 +142,7 @@ class WebPageProxy;
 class WebProcessPool;
 struct ColorSpaceData;
 struct WebHitTestResultData;
-enum class UndoOrRedo;
+enum class UndoOrRedo : bool;
 
 typedef id <NSValidatedUserInterfaceItem> ValidationItem;
 typedef Vector<RetainPtr<ValidationItem>> ValidationVector;

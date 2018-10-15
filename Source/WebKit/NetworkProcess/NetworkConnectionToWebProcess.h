@@ -48,7 +48,7 @@ class ResourceError;
 class ResourceRequest;
 struct SameSiteInfo;
 
-enum class IncludeSecureCookies;
+enum class IncludeSecureCookies : bool;
 }
 
 namespace WebKit {

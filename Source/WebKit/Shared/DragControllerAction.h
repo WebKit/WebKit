@@ -27,7 +27,7 @@
 
 namespace WebKit {
 
-enum class DragControllerAction {
+enum class DragControllerAction : uint8_t {
     Entered,
     Updated,
     Exited,

@@ -32,7 +32,7 @@ struct Cookie;
 struct CookieRequestHeaderFieldProxy;
 struct SameSiteInfo;
 
-enum class IncludeSecureCookies;
+enum class IncludeSecureCookies : bool;
 
 class CookieJarCurl {
 public:

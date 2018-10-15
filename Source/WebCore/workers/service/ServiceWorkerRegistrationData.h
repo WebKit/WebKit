@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-enum class ServiceWorkerUpdateViaCache;
+enum class ServiceWorkerUpdateViaCache : uint8_t;
 
 struct ServiceWorkerRegistrationData {
     ServiceWorkerRegistrationKey key;

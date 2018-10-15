@@ -64,7 +64,7 @@ ServiceWorker::ServiceWorker(ScriptExecutionContext& context, ServiceWorkerData&
     relaxAdoptionRequirement();
     updatePendingActivityForEventDispatch();
 
-    WORKER_RELEASE_LOG_IF_ALLOWED("ServiceWorker: ID: %llu, state: %u", identifier().toUInt64(), m_data.state);
+    WORKER_RELEASE_LOG_IF_ALLOWED("ServiceWorker: ID: %llu, state: %hhu", identifier().toUInt64(), m_data.state);
 }
 
 ServiceWorker::~ServiceWorker()
@@ -82,7 +82,7 @@ void ServiceWorker::scheduleTaskToUpdateState(State state)
     context->postTask([this, protectedThis = makeRef(*this), state](ScriptExecutionContext&) {
         ASSERT(this->state() != state);
 
-        WORKER_RELEASE_LOG_IF_ALLOWED("scheduleTaskToUpdateState: Updating service worker %llu state from %u to %u. Registration ID: %llu", identifier().toUInt64(), m_data.state, state, registrationIdentifier().toUInt64());
+        WORKER_RELEASE_LOG_IF_ALLOWED("scheduleTaskToUpdateState: Updating service worker %llu state from %hhu to %hhu. Registration ID: %llu", identifier().toUInt64(), m_data.state, state, registrationIdentifier().toUInt64());
         m_data.state = state;
         if (state != State::Installing && !m_isStopped) {
             ASSERT(m_pendingActivityForEventDispatch);

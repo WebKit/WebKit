@@ -40,7 +40,7 @@ class Frame;
 class HistoryItem;
 class SerializedScriptValue;
 
-enum class ShouldTreatAsContinuingLoad;
+enum class ShouldTreatAsContinuingLoad : bool;
 
 struct StringWithDirection;
 

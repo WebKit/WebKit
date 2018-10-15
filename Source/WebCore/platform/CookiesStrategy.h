@@ -37,7 +37,7 @@ class URL;
 struct Cookie;
 struct SameSiteInfo;
 
-enum class IncludeSecureCookies { No, Yes };
+enum class IncludeSecureCookies : bool { No, Yes };
 
 class CookiesStrategy {
 public:

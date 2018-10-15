@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-enum class ShouldSkipSafeBrowsingCheck { No, Yes };
+enum class ShouldSkipSafeBrowsingCheck : bool { No, Yes };
 
 }
 

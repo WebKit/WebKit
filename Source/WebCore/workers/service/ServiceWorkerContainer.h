@@ -45,7 +45,7 @@ class DeferredPromise;
 class NavigatorBase;
 class ServiceWorker;
 
-enum class ServiceWorkerUpdateViaCache;
+enum class ServiceWorkerUpdateViaCache : uint8_t;
 enum class WorkerType;
 
 class ServiceWorkerContainer final : public EventTargetWithInlineData, public ActiveDOMObject, public ServiceWorkerJobClient {

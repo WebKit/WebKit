@@ -162,8 +162,8 @@ enum class CompositingPolicy : uint8_t {
 
 enum class CanWrap : bool;
 enum class DidWrap : bool;
-enum class RouteSharingPolicy;
-enum class ShouldTreatAsContinuingLoad;
+enum class RouteSharingPolicy : uint8_t;
+enum class ShouldTreatAsContinuingLoad : bool;
 
 class Page : public Supplementable<Page> {
     WTF_MAKE_NONCOPYABLE(Page);

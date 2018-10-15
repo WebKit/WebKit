@@ -40,7 +40,7 @@ class DrawingAreaProxy;
 class WebPageNamespace;
 class WebView;
 
-enum class UndoOrRedo;
+enum class UndoOrRedo : bool;
 
 class PageClientImpl : public PageClient
 #if ENABLE(FULLSCREEN_API)

@@ -69,7 +69,7 @@ class IntSize;
 class SelectionRect;
 struct PromisedAttachmentInfo;
 struct ShareDataWithParsedURL;
-enum class RouteSharingPolicy;
+enum class RouteSharingPolicy : uint8_t;
 }
 
 #if ENABLE(DRAG_SUPPORT)

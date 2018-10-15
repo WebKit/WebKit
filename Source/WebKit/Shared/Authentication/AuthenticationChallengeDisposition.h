@@ -29,7 +29,7 @@
 
 namespace WebKit {
 
-enum class AuthenticationChallengeDisposition {
+enum class AuthenticationChallengeDisposition : uint8_t {
     UseCredential,
     PerformDefaultHandling,
     Cancel,

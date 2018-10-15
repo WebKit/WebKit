@@ -32,7 +32,7 @@
 
 namespace WebKit {
 
-enum class AuthenticationChallengeDisposition;
+enum class AuthenticationChallengeDisposition : uint8_t;
 class AuthenticationChallengeProxy;
 
 class AuthenticationDecisionListener : public API::ObjectImpl<API::Object::Type::AuthenticationDecisionListener> {

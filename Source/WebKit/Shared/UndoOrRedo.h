@@ -29,7 +29,7 @@
 
 namespace WebKit {
 
-enum class UndoOrRedo { Undo, Redo };
+enum class UndoOrRedo : bool { Undo, Redo };
 
 }
 

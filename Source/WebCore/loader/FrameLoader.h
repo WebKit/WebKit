@@ -84,7 +84,7 @@ class SubframeLoader;
 class SubstituteData;
 
 enum class ShouldContinue;
-enum class ShouldTreatAsContinuingLoad;
+enum class ShouldTreatAsContinuingLoad : bool;
 
 struct WindowFeatures;
 

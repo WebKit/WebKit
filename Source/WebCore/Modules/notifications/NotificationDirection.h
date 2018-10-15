@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-enum class NotificationDirection {
+enum class NotificationDirection : uint8_t {
     Auto,
     Ltr,
     Rtl

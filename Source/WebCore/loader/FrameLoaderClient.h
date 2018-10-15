@@ -104,7 +104,7 @@ class URL;
 class Widget;
 
 enum class PolicyDecisionMode;
-enum class ShouldSkipSafeBrowsingCheck;
+enum class ShouldSkipSafeBrowsingCheck : bool;
 
 struct StringWithDirection;
 

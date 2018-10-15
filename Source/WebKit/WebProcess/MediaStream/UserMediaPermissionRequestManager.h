@@ -17,8 +17,7 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef UserMediaPermissionRequestManager_h
-#define UserMediaPermissionRequestManager_h
+#pragma once
 
 #if ENABLE(MEDIA_STREAM)
 
@@ -38,7 +37,7 @@ namespace WebKit {
 
 class WebPage;
 
-enum class DeviceAccessState { NoAccess, SessionAccess, PersistentAccess };
+enum class DeviceAccessState : uint8_t { NoAccess, SessionAccess, PersistentAccess };
 
 class UserMediaPermissionRequestManager : public CanMakeWeakPtr<UserMediaPermissionRequestManager>, private WebCore::MediaCanStartListener, private WebCore::ActivityStateChangeObserver {
 public:
@@ -107,5 +106,3 @@ template<> struct EnumTraits<WebKit::DeviceAccessState> {
 } // namespace WTF
 
 #endif // ENABLE(MEDIA_STREAM)
-
-#endif // UserMediaPermissionRequestManager_h

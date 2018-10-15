@@ -47,7 +47,7 @@ namespace WebKit {
 class InjectedBundleScriptWorld;
 class WebCompiledContentRuleListData;
 class WebUserMessageHandlerDescriptorProxy;
-enum class InjectUserScriptImmediately;
+enum class InjectUserScriptImmediately : bool;
 
 class WebUserContentController final : public WebCore::UserContentProvider, private IPC::MessageReceiver {
 public:

@@ -29,7 +29,7 @@
 
 namespace WebKit {
     
-enum class InjectUserScriptImmediately { No, Yes };
+enum class InjectUserScriptImmediately : bool { No, Yes };
     
 }
 

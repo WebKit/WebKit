@@ -41,7 +41,7 @@ namespace WebKit {
 class DrawingAreaProxy;
 class WebPageNamespace;
 
-enum class UndoOrRedo;
+enum class UndoOrRedo : bool;
 
 class PageClientImpl : public PageClient
 #if ENABLE(FULLSCREEN_API)

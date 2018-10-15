@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-enum class AutoplayEvent {
+enum class AutoplayEvent : uint8_t {
     DidPreventMediaFromPlaying,
     DidPlayMediaPreventedFromPlaying,
     DidAutoplayMediaPastThresholdWithoutUserInterference,

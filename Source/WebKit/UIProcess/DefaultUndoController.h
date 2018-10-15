@@ -26,7 +26,7 @@
 
 namespace WebKit {
 
-enum class UndoOrRedo;
+enum class UndoOrRedo : bool;
 
 class DefaultUndoController {
 public:

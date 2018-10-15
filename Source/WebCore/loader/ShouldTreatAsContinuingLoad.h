@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-enum class ShouldTreatAsContinuingLoad { No, Yes };
+enum class ShouldTreatAsContinuingLoad : bool { No, Yes };
 
 } // namespace WebCore
 

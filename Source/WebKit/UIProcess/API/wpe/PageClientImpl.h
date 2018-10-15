@@ -38,7 +38,7 @@ namespace WebKit {
 
 class ScrollGestureController;
 
-enum class UndoOrRedo;
+enum class UndoOrRedo : bool;
 
 class PageClientImpl final : public PageClient
 #if ENABLE(FULLSCREEN_API)

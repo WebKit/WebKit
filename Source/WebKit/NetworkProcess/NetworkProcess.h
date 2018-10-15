@@ -66,7 +66,7 @@ class ResourceError;
 class SWServer;
 class SecurityOrigin;
 class URL;
-enum class StoredCredentialsPolicy;
+enum class StoredCredentialsPolicy : uint8_t;
 struct MessageWithMessagePorts;
 struct SecurityOriginData;
 struct SoupNetworkProxySettings;

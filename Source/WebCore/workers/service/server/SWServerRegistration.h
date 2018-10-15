@@ -39,8 +39,8 @@ namespace WebCore {
 
 class SWServer;
 class SWServerWorker;
-enum class ServiceWorkerRegistrationState;
-enum class ServiceWorkerState;
+enum class ServiceWorkerRegistrationState : uint8_t;
+enum class ServiceWorkerState : uint8_t;
 struct ExceptionData;
 struct ServiceWorkerContextData;
 struct ServiceWorkerFetchResult;

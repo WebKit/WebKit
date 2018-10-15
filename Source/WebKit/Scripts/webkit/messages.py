@@ -86,7 +86,7 @@ def function_parameter_type(type, kind):
     if type in builtin_types:
         return type
 
-    if kind.startswith('enum'):
+    if kind.startswith('enum:'):
         return type
 
     return 'const %s&' % type
@@ -151,8 +151,8 @@ def forward_declaration(namespace, kind_and_type):
     qualified_name = '%s::%s' % (namespace, type)
     if kind == 'struct':
         return 'struct %s' % type
-    elif kind.startswith('enum'):
-        return 'enum class %s %s' % (type, kind[4:])
+    elif kind.startswith('enum:'):
+        return 'enum class %s : %s' % (type, kind[5:])
     else:
         return 'class %s' % type
 
@@ -185,8 +185,6 @@ def forward_declarations_and_headers(receiver):
 
     no_forward_declaration_types = frozenset([
         'MachSendRight',
-        'MessageLevel',
-        'MessageSource',
         'String',
         'WebCore::DocumentIdentifier',
         'WebCore::FetchIdentifier',
@@ -371,8 +369,8 @@ def headers_for_type(type):
     special_cases = {
         'IPC::SharedBufferDataReference': ['"SharedBufferDataReference.h"', '"DataReference.h"'],
         'MachSendRight': ['<wtf/MachSendRight.h>'],
-        'MessageLevel': ['<JavaScriptCore/ConsoleTypes.h>'],
-        'MessageSource': ['<JavaScriptCore/ConsoleTypes.h>'],
+        'JSC::MessageLevel': ['<JavaScriptCore/ConsoleTypes.h>'],
+        'JSC::MessageSource': ['<JavaScriptCore/ConsoleTypes.h>'],
         'MonotonicTime': ['<wtf/MonotonicTime.h>'],
         'Seconds': ['<wtf/Seconds.h>'],
         'WallTime': ['<wtf/WallTime.h>'],

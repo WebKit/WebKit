@@ -202,7 +202,7 @@ template<typename> class ExceptionOr;
 enum CollectionType;
 enum class ShouldOpenExternalURLsPolicy : uint8_t;
 
-enum class RouteSharingPolicy;
+enum class RouteSharingPolicy : uint8_t;
 
 using PlatformDisplayID = uint32_t;
 

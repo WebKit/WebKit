@@ -36,7 +36,7 @@ namespace WebCore {
 
 class AudioSessionPrivate;
 
-enum class RouteSharingPolicy {
+enum class RouteSharingPolicy : uint8_t {
     Default,
     LongForm,
     Independent,

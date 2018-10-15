@@ -73,7 +73,7 @@ class Region;
 class TextIndicator;
 class WebMediaSessionManager;
 
-enum class RouteSharingPolicy;
+enum class RouteSharingPolicy : uint8_t;
 enum class ScrollbarStyle;
 enum class TextIndicatorWindowLifetime : uint8_t;
 enum class TextIndicatorWindowDismissalAnimation : uint8_t;
@@ -96,7 +96,7 @@ struct DragItem;
 
 namespace WebKit {
 
-enum class UndoOrRedo;
+enum class UndoOrRedo : bool;
 
 class ContextMenuContextData;
 class DownloadProxy;

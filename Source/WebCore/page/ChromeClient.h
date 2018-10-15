@@ -105,7 +105,7 @@ struct ShareDataWithParsedURL;
 struct ViewportArguments;
 struct WindowFeatures;
 
-enum class RouteSharingPolicy;
+enum class RouteSharingPolicy : uint8_t;
 
 class WEBCORE_EXPORT ChromeClient {
 public:

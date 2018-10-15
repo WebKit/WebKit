@@ -176,11 +176,11 @@ class ValidationBubble;
 
 enum SelectionDirection : uint8_t;
 
-enum class AutoplayEvent;
+enum class AutoplayEvent : uint8_t;
 enum class HasInsecureContent : uint8_t;
-enum class NotificationDirection;
-enum class ShouldSample;
-enum class ShouldTreatAsContinuingLoad;
+enum class NotificationDirection : uint8_t;
+enum class ShouldSample : bool;
+enum class ShouldTreatAsContinuingLoad : bool;
 
 struct ApplicationManifest;
 struct BackForwardItemIdentifier;
@@ -266,7 +266,7 @@ struct WebPopupItem;
 struct URLSchemeTaskParameters;
 
 enum class ProcessSwapRequestedByClient;
-enum class UndoOrRedo;
+enum class UndoOrRedo : bool;
 
 #if USE(QUICK_LOOK)
 class QuickLookDocumentData;

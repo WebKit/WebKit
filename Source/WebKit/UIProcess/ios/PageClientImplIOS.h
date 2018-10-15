@@ -40,7 +40,7 @@ struct PromisedAttachmentInfo;
 
 namespace WebKit {
 
-enum class UndoOrRedo;
+enum class UndoOrRedo : bool;
 
 class PageClientImpl : public PageClientImplCocoa
 #if ENABLE(FULLSCREEN_API)

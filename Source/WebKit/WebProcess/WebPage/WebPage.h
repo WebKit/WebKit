@@ -163,7 +163,7 @@ class URL;
 class VisiblePosition;
 
 enum SyntheticClickType : int8_t;
-enum class ShouldTreatAsContinuingLoad;
+enum class ShouldTreatAsContinuingLoad : bool;
 enum class TextIndicatorPresentationTransition : uint8_t;
 
 struct BackForwardItemIdentifier;
@@ -229,9 +229,9 @@ class WebWheelEvent;
 class WebTouchEvent;
 class RemoteLayerTreeTransaction;
 
-enum class DeviceAccessState;
+enum class DeviceAccessState : uint8_t;
 enum FindOptions : uint16_t;
-enum class DragControllerAction;
+enum class DragControllerAction : uint8_t;
 
 struct AssistedNodeInformation;
 struct AttributedString;

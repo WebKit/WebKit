@@ -29,7 +29,7 @@
 
 namespace JSC {
 
-enum class MessageSource {
+enum class MessageSource : uint8_t {
     XML,
     JS,
     Network,
@@ -61,7 +61,7 @@ enum class MessageType {
     ProfileEnd,
 };
 
-enum class MessageLevel {
+enum class MessageLevel : uint8_t {
     Log = 1,
     Warning = 2,
     Error = 3,

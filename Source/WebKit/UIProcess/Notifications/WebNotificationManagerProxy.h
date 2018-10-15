@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebNotificationManagerProxy_h
-#define WebNotificationManagerProxy_h
+#pragma once
 
 #include "APIObject.h"
 #include "MessageReceiver.h"
@@ -34,7 +33,7 @@
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
-enum class NotificationDirection;
+enum class NotificationDirection : uint8_t;
 }
 
 namespace API {
@@ -95,5 +94,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // WebNotificationManagerProxy_h
