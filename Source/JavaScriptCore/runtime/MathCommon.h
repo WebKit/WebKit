@@ -139,7 +139,13 @@ ALWAYS_INLINE int32_t toInt32Internal(double number)
 
 ALWAYS_INLINE int32_t toInt32(double number)
 {
+#if HAVE(FJCVTZS_INSTRUCTION)
+    int32_t result = 0;
+    __asm__ ("fjcvtzs %w0, %d1" : "=r" (result) : "w" (number) : "cc");
+    return result;
+#else
     return toInt32Internal<ToInt32Mode::Generic>(number);
+#endif
 }
 
 // This implements ToUInt32, defined in ECMA-262 9.6.

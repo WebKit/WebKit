@@ -2344,11 +2344,16 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
         SpeculateDoubleOperand op1(this, node->child1());
         FPRReg fpr = op1.fpr();
         GPRReg gpr = result.gpr();
-        JITCompiler::Jump notTruncatedToInteger = m_jit.branchTruncateDoubleToInt32(fpr, gpr, JITCompiler::BranchIfTruncateFailed);
-        
-        addSlowPathGenerator(slowPathCall(notTruncatedToInteger, this,
-            hasSensibleDoubleToInt() ? operationToInt32SensibleSlow : operationToInt32, NeedToSpill, ExceptionCheckRequirement::CheckNotNeeded, gpr, fpr));
-        
+#if CPU(ARM64)
+        if (MacroAssemblerARM64::supportsDoubleToInt32ConversionUsingJavaScriptSemantics())
+            m_jit.convertDoubleToInt32UsingJavaScriptSemantics(fpr, gpr);
+        else
+#endif
+        {
+            JITCompiler::Jump notTruncatedToInteger = m_jit.branchTruncateDoubleToInt32(fpr, gpr, JITCompiler::BranchIfTruncateFailed);
+            addSlowPathGenerator(slowPathCall(notTruncatedToInteger, this,
+                hasSensibleDoubleToInt() ? operationToInt32SensibleSlow : operationToInt32, NeedToSpill, ExceptionCheckRequirement::CheckNotNeeded, gpr, fpr));
+        }
         int32Result(gpr, node);
         return;
     }
@@ -2395,10 +2400,16 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
 
             // First, if we get here we have a double encoded as a JSValue
             unboxDouble(gpr, resultGpr, fpr);
-
-            silentSpillAllRegisters(resultGpr);
-            callOperation(operationToInt32, resultGpr, fpr);
-            silentFillAllRegisters();
+#if CPU(ARM64)
+            if (MacroAssemblerARM64::supportsDoubleToInt32ConversionUsingJavaScriptSemantics())
+                m_jit.convertDoubleToInt32UsingJavaScriptSemantics(fpr, resultGpr);
+            else
+#endif
+            {
+                silentSpillAllRegisters(resultGpr);
+                callOperation(operationToInt32, resultGpr, fpr);
+                silentFillAllRegisters();
+            }
 
             converted.append(m_jit.jump());
 

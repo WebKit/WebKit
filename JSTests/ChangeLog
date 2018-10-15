@@ -1,3 +1,14 @@
+2018-10-15  Saam barati  <sbarati@apple.com>
+
+        Emit fjcvtzs on ARM64E on Darwin
+        https://bugs.webkit.org/show_bug.cgi?id=184023
+
+        Reviewed by Yusuke Suzuki and Filip Pizlo.
+
+        * stress/double-to-int32-NaN.js: Added.
+        (assert):
+        (foo):
+
 2018-10-15  Saam Barati  <sbarati@apple.com>
 
         JSArray::shiftCountWithArrayStorage is wrong when an array has holes

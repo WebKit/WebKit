@@ -1,3 +1,35 @@
+2018-10-15  Saam barati  <sbarati@apple.com>
+
+        Emit fjcvtzs on ARM64E on Darwin
+        https://bugs.webkit.org/show_bug.cgi?id=184023
+
+        Reviewed by Yusuke Suzuki and Filip Pizlo.
+
+        ARMv8.3 introduced the fjcvtzs instruction which does double->int32
+        conversion using the semantics defined by JavaScript:
+        http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0801g/hko1477562192868.html
+        This patch teaches JSC to use that instruction when possible.
+
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::fjcvtzs):
+        (JSC::ARM64Assembler::fjcvtzsInsn):
+        * assembler/MacroAssemblerARM64.cpp:
+        (JSC::MacroAssemblerARM64::collectCPUFeatures):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::supportsDoubleToInt32ConversionUsingJavaScriptSemantics):
+        (JSC::MacroAssemblerARM64::convertDoubleToInt32UsingJavaScriptSemantics):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileValueToInt32):
+        * disassembler/ARM64/A64DOpcode.cpp:
+        * disassembler/ARM64/A64DOpcode.h:
+        (JSC::ARM64Disassembler::A64DOpcode::appendInstructionName):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::doubleToInt32):
+        * jit/JITRightShiftGenerator.cpp:
+        (JSC::JITRightShiftGenerator::generateFastPath):
+        * runtime/MathCommon.h:
+        (JSC::toInt32):
+
 2018-10-15  Saam Barati  <sbarati@apple.com>
 
         JSArray::shiftCountWithArrayStorage is wrong when an array has holes

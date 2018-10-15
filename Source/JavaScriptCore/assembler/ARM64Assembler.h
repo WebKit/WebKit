@@ -2533,6 +2533,11 @@ public:
         insn(floatingPointIntegerConversions(DATASIZE_OF(srcsize), DATASIZE_OF(dstsize), FPIntConvOp_UCVTF, rn, vd));
     }
 
+    ALWAYS_INLINE void fjcvtzs(RegisterID rd, FPRegisterID dn)
+    {
+        insn(fjcvtzsInsn(dn, rd));
+    }
+
     // Admin methods:
 
     AssemblerLabel labelIgnoringWatchpoints()
@@ -3744,7 +3749,12 @@ protected:
     {
         return 0x08007c00 | size << 30 | result << 16 | fence << 15 | dst << 5 | src;
     }
-    
+
+    static int fjcvtzsInsn(FPRegisterID dn, RegisterID rd)
+    {
+        return 0x1e7e0000 | (dn << 5) | rd;
+    }
+
     // Workaround for Cortex-A53 erratum (835769). Emit an extra nop if the
     // last instruction in the buffer is a load, store or prefetch. Needed
     // before 64-bit multiply-accumulate instructions.

@@ -533,9 +533,9 @@ void MacroAssembler::probe(Probe::Function function, void* arg)
 
 void MacroAssemblerARM64::collectCPUFeatures()
 {
+#if OS(LINUX)
     static std::once_flag onceKey;
     std::call_once(onceKey, [] {
-#if OS(LINUX)
         // A register for describing ARM64 CPU features are only accessible in kernel mode.
         // Thus, some kernel support is necessary to collect CPU features. In Linux, the
         // kernel passes CPU feature flags in AT_HWCAP auxiliary vector which is passed
@@ -551,10 +551,12 @@ void MacroAssemblerARM64::collectCPUFeatures()
 #endif
 
         s_jscvtCheckState = (hwcaps & HWCAP_JSCVT) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
-#else
-        s_jscvtCheckState = CPUIDCheckState::Clear;
-#endif
     });
+#elif HAVE(FJCVTZS_INSTRUCTION)
+    s_jscvtCheckState = CPUIDCheckState::Set;
+#else
+    s_jscvtCheckState = CPUIDCheckState::Clear;
+#endif
 }
 
 MacroAssemblerARM64::CPUIDCheckState MacroAssemblerARM64::s_jscvtCheckState = CPUIDCheckState::NotChecked;

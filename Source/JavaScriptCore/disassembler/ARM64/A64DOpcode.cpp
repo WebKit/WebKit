@@ -818,7 +818,7 @@ const char* const A64DOpcodeFloatingPointIntegerConversions::s_opNames[32] = {
     "fcvtns", "fcvtnu", "scvtf", "ucvtf", "fcvtas", "fcvtau", "fmov", "fmov",
     "fcvtps", "fcvtpu", 0, 0, 0, 0, "fmov", "fmov",
     "fcvtms", "fcvtmu", 0, 0, 0, 0, 0, 0,
-    "fcvtzs", "fcvtzu", 0, 0, 0, 0, 0, 0
+    "fcvtzs", "fcvtzu", 0, 0, 0, 0, "fjcvtzs", 0
 };
 
 const char* A64DOpcodeFloatingPointIntegerConversions::format()

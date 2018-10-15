@@ -115,7 +115,7 @@ protected:
 
     void appendInstructionName(const char* instructionName)
     {
-        bufferPrintf("   %-7.7s", instructionName);
+        bufferPrintf("   %-8.8s", instructionName);
     }
 
     void appendRegisterName(unsigned registerNumber, bool is64Bit = true);

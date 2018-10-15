@@ -3758,6 +3758,23 @@ public:
     {
         m_assembler.eor<64>(dest, src, src);
     }
+
+    ALWAYS_INLINE static bool supportsDoubleToInt32ConversionUsingJavaScriptSemantics()
+    {
+#if HAVE(FJCVTZS_INSTRUCTION)
+        return true;
+#else
+        if (s_jscvtCheckState == CPUIDCheckState::NotChecked)
+            collectCPUFeatures();
+
+        return s_jscvtCheckState == CPUIDCheckState::Set;
+#endif
+    }
+
+    void convertDoubleToInt32UsingJavaScriptSemantics(FPRegisterID src, RegisterID dest)
+    {
+        m_assembler.fjcvtzs(dest, src); // This zero extends.
+    }
     
 #if ENABLE(FAST_TLS_JIT)
     // This will use scratch registers if the offset is not legal.

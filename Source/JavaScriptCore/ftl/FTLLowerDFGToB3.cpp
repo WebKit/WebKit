@@ -14427,6 +14427,18 @@ private:
     
     LValue doubleToInt32(LValue doubleValue)
     {
+#if CPU(ARM64)
+        if (MacroAssemblerARM64::supportsDoubleToInt32ConversionUsingJavaScriptSemantics()) {
+            PatchpointValue* patchpoint = m_out.patchpoint(Int32);
+            patchpoint->append(ConstrainedValue(doubleValue, B3::ValueRep::SomeRegister));
+            patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                jit.convertDoubleToInt32UsingJavaScriptSemantics(params[1].fpr(), params[0].gpr());
+            });
+            patchpoint->effects = Effects::none();
+            return patchpoint;
+        }
+#endif
+
         if (hasSensibleDoubleToInt())
             return sensibleDoubleToInt32(doubleValue);
         
