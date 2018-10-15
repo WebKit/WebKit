@@ -25,7 +25,7 @@
 
 
 #include "config.h"
-#include "CString.h"
+#include <wtf/text/CString.h>
 
 #include <string.h>
 #include <wtf/text/StringHasher.h>

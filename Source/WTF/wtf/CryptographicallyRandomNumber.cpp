@@ -28,12 +28,12 @@
  */
 
 #include "config.h"
-#include "CryptographicallyRandomNumber.h"
+#include <wtf/CryptographicallyRandomNumber.h>
 
-#include "NeverDestroyed.h"
-#include "OSRandomSource.h"
 #include <mutex>
 #include <wtf/Lock.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/OSRandomSource.h>
 
 namespace WTF {
 

@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "WebCoreThread.h"
+#include <wtf/ios/WebCoreThread.h>
 
 #if USE(WEB_THREAD)
 WTF_EXPORT_PRIVATE bool (*WebCoreWebThreadIsLockedOrDisabled)(void);

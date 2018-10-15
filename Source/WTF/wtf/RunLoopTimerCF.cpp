@@ -30,9 +30,9 @@
 
 #if PLATFORM(COCOA) && HAVE(RUNLOOP_TIMER)
 
-#include "RunLoopTimer.h"
+#include <wtf/RunLoopTimer.h>
 
-#include "AutodrainedPool.h"
+#include <wtf/AutodrainedPool.h>
 
 namespace WTF {
 

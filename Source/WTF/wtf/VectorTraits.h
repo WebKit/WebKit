@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef WTF_VectorTraits_h
-#define WTF_VectorTraits_h
+#pragma once
 
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
@@ -92,5 +91,3 @@ namespace WTF {
 
 using WTF::VectorTraits;
 using WTF::SimpleClassVectorTraits;
-
-#endif // WTF_VectorTraits_h

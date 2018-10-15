@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "MachSendRight.h"
+#include <wtf/MachSendRight.h>
 
 #include <mach/mach_error.h>
 #include <mach/mach_init.h>

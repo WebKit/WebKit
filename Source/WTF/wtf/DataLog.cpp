@@ -24,7 +24,8 @@
  */
 
 #include "config.h"
-#include "DataLog.h"
+#include <wtf/DataLog.h>
+
 #include <stdarg.h>
 #include <string.h>
 #include <wtf/FilePrintStream.h>

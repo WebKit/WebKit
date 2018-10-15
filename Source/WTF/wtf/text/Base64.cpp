@@ -22,7 +22,7 @@
 */
 
 #include "config.h"
-#include "Base64.h"
+#include <wtf/text/Base64.h>
 
 #include <limits.h>
 #include <wtf/text/WTFString.h>

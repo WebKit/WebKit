@@ -19,8 +19,7 @@
  *
  */
 
-#ifndef StringHash_h
-#define StringHash_h
+#pragma once
 
 #include <wtf/HashTraits.h>
 #include <wtf/text/AtomicString.h>
@@ -200,5 +199,3 @@ using WTF::ASCIICaseInsensitiveHash;
 using WTF::ASCIICaseInsensitiveStringViewHashTranslator;
 using WTF::AlreadyHashed;
 using WTF::StringHash;
-
-#endif

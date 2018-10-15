@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WTF_StdLibExtras_h
-#define WTF_StdLibExtras_h
+#pragma once
 
 #include <cstring>
 #include <memory>
@@ -590,5 +589,3 @@ using WTF::mergeDeduplicatedSorted;
 using WTF::roundUpToMultipleOf;
 using WTF::safeCast;
 using WTF::tryBinarySearch;
-
-#endif // WTF_StdLibExtras_h

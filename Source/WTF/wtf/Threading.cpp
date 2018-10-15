@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "Threading.h"
+#include <wtf/Threading.h>
 
 #include <algorithm>
 #include <cmath>

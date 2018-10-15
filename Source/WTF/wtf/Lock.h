@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WTF_Lock_h
-#define WTF_Lock_h
+#pragma once
 
 #include <wtf/LockAlgorithm.h>
 #include <wtf/Locker.h>
@@ -138,6 +137,3 @@ using LockHolder = Locker<Lock>;
 
 using WTF::Lock;
 using WTF::LockHolder;
-
-#endif // WTF_Lock_h
-

@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "ClockType.h"
+#include <wtf/ClockType.h>
 
 #include <wtf/PrintStream.h>
 

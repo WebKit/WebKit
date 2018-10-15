@@ -1227,7 +1227,7 @@ static void runTest(const string& inputLine)
     if (webView && SUCCEEDED(webView->backForwardList(&bfList)))
         bfList->currentItem(&prevTestBFItem);
 
-    auto& workQueue = WorkQueue::singleton();
+    auto& workQueue = DRT::WorkQueue::singleton();
     workQueue.clear();
     workQueue.setFrozen(false);
 

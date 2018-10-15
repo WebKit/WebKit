@@ -23,10 +23,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// Since this is a shared header, with the same file name as a file in
-// WebCore we prefix this with WTF to make it unique.
-#ifndef WTF_WebCoreThread_h
-#define WTF_WebCoreThread_h
+#pragma once
 
 #ifdef __cplusplus
 extern "C" {
@@ -39,5 +36,3 @@ extern void (*WebCoreWebThreadRun)(void (^block)());
 #ifdef __cplusplus
 }
 #endif
-
-#endif // WTF_WebCoreThread_h

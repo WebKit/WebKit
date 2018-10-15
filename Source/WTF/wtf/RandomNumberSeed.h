@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WTF_RandomNumberSeed_h
-#define WTF_RandomNumberSeed_h
+#pragma once
 
 #include <stdlib.h>
 #include <time.h>
@@ -56,5 +55,3 @@ inline void initializeRandomNumberGenerator()
 }
 
 }
-
-#endif

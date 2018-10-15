@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MallocPtr_h
-#define MallocPtr_h
+#pragma once
 
 #include <wtf/FastMalloc.h>
 
@@ -137,5 +136,3 @@ template<typename U> MallocPtr<U> adoptMallocPtr(U* ptr)
 
 using WTF::MallocPtr;
 using WTF::adoptMallocPtr;
-
-#endif // MallocPtr_h

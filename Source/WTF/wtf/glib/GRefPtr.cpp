@@ -17,7 +17,7 @@
  */
 
 #include "config.h"
-#include "GRefPtr.h"
+#include <wtf/glib/GRefPtr.h>
 
 #if USE(GLIB)
 

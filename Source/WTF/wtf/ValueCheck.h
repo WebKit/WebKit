@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ValueCheck_h
-#define ValueCheck_h
+#pragma once
 
 #include <wtf/FastMalloc.h>
 
@@ -49,5 +48,3 @@ template<typename P> struct ValueCheck<P*> {
 #endif
 
 }
-
-#endif // ValueCheck_h

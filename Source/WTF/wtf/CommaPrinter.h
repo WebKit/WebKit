@@ -23,10 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CommaPrinter_h
-#define CommaPrinter_h
+#pragma once
 
-#include "PrintStream.h"
+#include <wtf/PrintStream.h>
 
 namespace WTF {
 
@@ -61,6 +60,3 @@ private:
 } // namespace WTF
 
 using WTF::CommaPrinter;
-
-#endif // CommaPrinter_h
-

@@ -25,7 +25,7 @@
  */
 
 #include "config.h"
-#include "WorkQueue.h"
+#include <wtf/WorkQueue.h>
 
 #include <wtf/MathExtras.h>
 #include <wtf/Threading.h>

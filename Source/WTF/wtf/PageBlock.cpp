@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "PageBlock.h"
+#include <wtf/PageBlock.h>
 
 #if OS(UNIX)
 #include <unistd.h>

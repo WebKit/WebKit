@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "CountingLock.h"
+#include <wtf/CountingLock.h>
 
 #include <wtf/LockAlgorithmInlines.h>
 

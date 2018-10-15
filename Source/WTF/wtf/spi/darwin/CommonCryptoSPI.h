@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CommonCryptoSPI_h
-#define CommonCryptoSPI_h
+#pragma once
 
 #if OS(DARWIN)
 
@@ -42,5 +41,3 @@ int CCRandomCopyBytes(CCRandomRef rnd, void *bytes, size_t count);
 WTF_EXTERN_C_END
 
 #endif // OS(DARWIN)
-
-#endif /* CommonCryptoSPI_h */

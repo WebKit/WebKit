@@ -18,7 +18,7 @@
  */
 
 #include "config.h"
-#include "GLibUtilities.h"
+#include <wtf/glib/GLibUtilities.h>
 
 #include <glib.h>
 #include <wtf/glib/GUniquePtr.h>

@@ -19,10 +19,10 @@
  */
 
 #include "config.h"
-#include "TextBreakIteratorInternalICU.h"
+#include <wtf/text/TextBreakIteratorInternalICU.h>
 
-#include "TextBreakIterator.h"
 #include <wtf/RetainPtr.h>
+#include <wtf/text/TextBreakIterator.h>
 
 namespace WTF {
 

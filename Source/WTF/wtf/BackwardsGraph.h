@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WTF_BackwardsGraph_h
-#define WTF_BackwardsGraph_h
+#pragma once
 
 #include <wtf/FastMalloc.h>
 #include <wtf/GraphNodeWorklist.h>
@@ -167,6 +166,3 @@ private:
 } // namespace WTF
 
 using WTF::BackwardsGraph;
-
-#endif // WTF_BackwardsGraph_h
-

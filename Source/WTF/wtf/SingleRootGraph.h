@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WTF_SingleRootGraph_h
-#define WTF_SingleRootGraph_h
+#pragma once
 
 #include <wtf/FastMalloc.h>
 #include <wtf/GraphNodeWorklist.h>
@@ -305,5 +304,3 @@ private:
 } // namespace WTF
 
 using WTF::SingleRootGraph;
-
-#endif // WTF_SingleRootGraph_h

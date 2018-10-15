@@ -22,8 +22,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WTF_ObjcRuntimeExtras_h
-#define WTF_ObjcRuntimeExtras_h
+#pragma once
 
 // FIXME: This file's name and function names refer to Objective-C as Objc with a lowercase C,
 // but it should be ObjC with an uppercase C.
@@ -45,5 +44,3 @@ inline ReturnType wtfCallIMP(IMP implementation, id target, SEL selector, Argume
 }
 
 #endif // __cplusplus
-
-#endif // WTF_ObjcRuntimeExtras_h

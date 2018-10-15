@@ -29,8 +29,8 @@
 
 #if ENABLE(THREADING_GENERIC)
 
-#include "ParallelJobs.h"
 #include <wtf/NumberOfCores.h>
+#include <wtf/ParallelJobs.h>
 
 namespace WTF {
 

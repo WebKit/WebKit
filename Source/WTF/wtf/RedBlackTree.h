@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RedBlackTree_h
-#define RedBlackTree_h
+#pragma once
 
 #include <wtf/Assertions.h>
 #include <wtf/Noncopyable.h>
@@ -569,6 +568,3 @@ private:
 };
 
 }
-
-#endif
-

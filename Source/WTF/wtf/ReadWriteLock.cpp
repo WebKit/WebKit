@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "ReadWriteLock.h"
+#include <wtf/ReadWriteLock.h>
 
 #include <wtf/Locker.h>
 

@@ -196,7 +196,7 @@ void FrameLoadDelegate::processWork()
         return;
 
     // if we finish all the commands, we're ready to dump state
-    if (WorkQueue::singleton().processWork() && !::gTestRunner->waitToDump())
+    if (DRT::WorkQueue::singleton().processWork() && !::gTestRunner->waitToDump())
         dump();
 }
 
@@ -233,7 +233,7 @@ void FrameLoadDelegate::locationChangeDone(IWebError*, IWebFrame* frame)
         return;
 
     topLoadingFrame = nullptr;
-    auto& workQueue = WorkQueue::singleton();
+    auto& workQueue = DRT::WorkQueue::singleton();
     workQueue.setFrozen(true);
 
     if (::gTestRunner->waitToDump())

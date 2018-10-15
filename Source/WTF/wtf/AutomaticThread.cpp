@@ -24,10 +24,10 @@
  */
 
 #include "config.h"
-#include "AutomaticThread.h"
+#include <wtf/AutomaticThread.h>
 
-#include "DataLog.h"
-#include "Threading.h"
+#include <wtf/DataLog.h>
+#include <wtf/Threading.h>
 
 namespace WTF {
 

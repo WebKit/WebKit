@@ -24,11 +24,11 @@
  */
 
 #include "config.h"
-#include "FastMalloc.h"
+#include <wtf/FastMalloc.h>
 
-#include "CheckedArithmetic.h"
 #include <limits>
 #include <string.h>
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/DataLog.h>
 
 #if OS(WINDOWS)

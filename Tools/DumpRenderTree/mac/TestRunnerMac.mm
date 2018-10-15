@@ -297,14 +297,14 @@ size_t TestRunner::webHistoryItemCount()
 
 void TestRunner::notifyDone()
 {
-    if (m_waitToDump && !topLoadingFrame && !WorkQueue::singleton().count())
+    if (m_waitToDump && !topLoadingFrame && !DRT::WorkQueue::singleton().count())
         dump();
     m_waitToDump = false;
 }
 
 void TestRunner::forceImmediateCompletion()
 {
-    if (m_waitToDump && !WorkQueue::singleton().count())
+    if (m_waitToDump && !DRT::WorkQueue::singleton().count())
         dump();
     m_waitToDump = false;
 }
@@ -382,7 +382,7 @@ void TestRunner::queueLoad(JSStringRef url, JSStringRef target)
     NSString *nsurlString = [nsurl absoluteString];
 
     auto absoluteURL = adopt(JSStringCreateWithUTF8CString([nsurlString UTF8String]));
-    WorkQueue::singleton().queue(new LoadItem(absoluteURL.get(), target));
+    DRT::WorkQueue::singleton().queue(new LoadItem(absoluteURL.get(), target));
 }
 
 void TestRunner::setAcceptsEditing(bool newAcceptsEditing)

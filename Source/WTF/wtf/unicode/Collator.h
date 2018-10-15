@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WTF_Collator_h
-#define WTF_Collator_h
+#pragma once
 
 #include <unicode/uconfig.h>
 #include <wtf/Noncopyable.h>
@@ -75,5 +74,3 @@ WTF_EXPORT_PRIVATE UCharIterator createIterator(StringView);
 }
 
 using WTF::Collator;
-
-#endif

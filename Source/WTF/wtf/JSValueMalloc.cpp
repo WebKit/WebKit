@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "JSValueMalloc.h"
+#include <wtf/JSValueMalloc.h>
 
 #include <wtf/DataLog.h>
 #include <wtf/FastMalloc.h>

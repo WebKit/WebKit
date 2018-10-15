@@ -148,7 +148,7 @@ IGNORE_WARNINGS_END
 #endif
 
     // if we finish all the commands, we're ready to dump state
-    if (WorkQueue::singleton().processWork() && !gTestRunner->waitToDump())
+    if (DRT::WorkQueue::singleton().processWork() && !gTestRunner->waitToDump())
         dump();
 }
 
@@ -161,7 +161,7 @@ IGNORE_WARNINGS_END
 {
     if ([dataSource webFrame] == topLoadingFrame) {
         topLoadingFrame = nil;
-        auto& workQueue = WorkQueue::singleton();
+        auto& workQueue = DRT::WorkQueue::singleton();
         workQueue.setFrozen(true); // first complete load freezes the queue for the rest of this test
         if (!gTestRunner->waitToDump()) {
             if (workQueue.count())

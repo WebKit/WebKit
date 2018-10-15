@@ -27,7 +27,7 @@
  */
 
 #include "config.h"
-#include "MetaAllocator.h"
+#include <wtf/MetaAllocator.h>
 
 #include <wtf/DataLog.h>
 #include <wtf/FastMalloc.h>

@@ -16,8 +16,8 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
-#ifndef Bitmap_h
-#define Bitmap_h
+
+#pragma once
 
 #include <array>
 #include <wtf/Atomics.h>
@@ -420,5 +420,3 @@ inline unsigned Bitmap<bitmapSize, WordType>::hash() const
 } // namespace WTF
 
 using WTF::Bitmap;
-
-#endif

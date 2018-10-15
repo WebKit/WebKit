@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ConcurrentVector_h
-#define ConcurrentVector_h
+#pragma once
 
 #include <wtf/ConcurrentBuffer.h>
 #include <wtf/Noncopyable.h>
@@ -265,5 +264,3 @@ private:
 } // namespace WTF
 
 using WTF::ConcurrentVector;
-
-#endif // ConcurrentVector_h

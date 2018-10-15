@@ -19,9 +19,9 @@
  */
 
 #include "config.h"
-#include "StackBounds.h"
 #include <mutex>
 #include <wtf/NoTailCalls.h>
+#include <wtf/StackBounds.h>
 
 #if OS(DARWIN)
 

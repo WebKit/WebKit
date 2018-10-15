@@ -24,9 +24,9 @@
  */
 
 #include "config.h"
-#include "PersistentEncoder.h"
+#include <wtf/persistence/PersistentEncoder.h>
 
-#include "SHA1.h"
+#include <wtf/SHA1.h>
 
 namespace WTF {
 namespace Persistence {

@@ -33,7 +33,7 @@
  */
 
 #include "config.h"
-#include "dtoa.h"
+#include <wtf/dtoa.h>
 
 #include <stdio.h>
 #include <wtf/Lock.h>

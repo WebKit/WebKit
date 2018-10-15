@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WTF_CryptographicUtilities_h
-#define WTF_CryptographicUtilities_h
+#pragma once
 
 namespace WTF {
 
@@ -34,5 +33,3 @@ WTF_EXPORT_PRIVATE int constantTimeMemcmp(const void*, const void*, size_t lengt
 }
 
 using WTF::constantTimeMemcmp;
-
-#endif

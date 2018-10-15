@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "CurrentProcessMemoryStatus.h"
+#include <wtf/linux/CurrentProcessMemoryStatus.h>
 
 #include <stdio.h>
 #include <stdlib.h>

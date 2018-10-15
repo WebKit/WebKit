@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Bag_h
-#define Bag_h
+#pragma once
 
 #include <wtf/DumbPtrTraits.h>
 #include <wtf/FastMalloc.h>
@@ -166,6 +165,3 @@ using PoisonedBag = Bag<T, PoisonedPtrTraits<Poison, Private::BagNode<T>>>;
 
 using WTF::Bag;
 using WTF::PoisonedBag;
-
-#endif // Bag_h
-

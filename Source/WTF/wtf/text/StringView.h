@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StringView_h
-#define StringView_h
+#pragma once
 
 #include <limits.h>
 #include <unicode/utypes.h>
@@ -1000,5 +999,3 @@ template<unsigned length> inline bool equalLettersIgnoringASCIICase(StringView s
 using WTF::append;
 using WTF::equal;
 using WTF::StringView;
-
-#endif

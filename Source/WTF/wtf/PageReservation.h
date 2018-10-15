@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PageReservation_h
-#define PageReservation_h
+#pragma once
 
 #include <wtf/PageAllocation.h>
 
@@ -144,5 +143,3 @@ private:
 }
 
 using WTF::PageReservation;
-
-#endif // PageReservation_h

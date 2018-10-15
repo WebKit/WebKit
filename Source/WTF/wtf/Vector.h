@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef WTF_Vector_h
-#define WTF_Vector_h
+#pragma once
 
 #include <initializer_list>
 #include <limits>
@@ -1708,5 +1707,3 @@ using WTF::copyToVector;
 using WTF::copyToVectorOf;
 using WTF::copyToVectorSpecialization;
 using WTF::removeRepeatedElements;
-
-#endif // WTF_Vector_h

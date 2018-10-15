@@ -30,7 +30,7 @@
  */
 
 #include "config.h"
-#include "LineEnding.h"
+#include <wtf/text/LineEnding.h>
 
 #include <wtf/Vector.h>
 

@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "Poisoned.h"
+#include <wtf/Poisoned.h>
 
 #include <wtf/CryptographicallyRandomNumber.h>
 

@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "ProcessPrivilege.h"
+#include <wtf/ProcessPrivilege.h>
 
 #include <wtf/OptionSet.h>
 

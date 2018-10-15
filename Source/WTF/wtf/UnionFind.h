@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef UnionFind_h
-#define UnionFind_h
+#pragma once
 
 #include <wtf/Assertions.h>
 
@@ -108,5 +107,3 @@ private:
 } // namespace WTF
 
 using WTF::UnionFind;
-
-#endif // UnionFind_h

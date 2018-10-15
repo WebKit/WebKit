@@ -1,3 +1,50 @@
+2018-10-15  Alex Christensen  <achristensen@webkit.org>
+
+        Use pragma once in WTF
+        https://bugs.webkit.org/show_bug.cgi?id=190527
+
+        Reviewed by Chris Dumez.
+
+        Put WorkQueue in namespace DRT so it does not conflict with WTF::WorkQueue.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (TestRunner::queueLoadHTMLString):
+        (TestRunner::queueLoadAlternateHTMLString):
+        (TestRunner::queueBackNavigation):
+        (TestRunner::queueForwardNavigation):
+        (TestRunner::queueLoadingScript):
+        (TestRunner::queueNonLoadingScript):
+        (TestRunner::queueReload):
+        * DumpRenderTree/WorkQueue.cpp:
+        (WorkQueue::singleton): Deleted.
+        (WorkQueue::WorkQueue): Deleted.
+        (WorkQueue::queue): Deleted.
+        (WorkQueue::dequeue): Deleted.
+        (WorkQueue::count): Deleted.
+        (WorkQueue::clear): Deleted.
+        (WorkQueue::processWork): Deleted.
+        * DumpRenderTree/WorkQueue.h:
+        (WorkQueue::setFrozen): Deleted.
+        * DumpRenderTree/WorkQueueItem.h:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (runTest):
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+        (-[FrameLoadDelegate processWork:]):
+        (-[FrameLoadDelegate webView:locationChangeDone:forDataSource:]):
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::notifyDone):
+        (TestRunner::forceImmediateCompletion):
+        (TestRunner::queueLoad):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (runTest):
+        * DumpRenderTree/win/FrameLoadDelegate.cpp:
+        (FrameLoadDelegate::processWork):
+        (FrameLoadDelegate::locationChangeDone):
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        (TestRunner::notifyDone):
+        (TestRunner::forceImmediateCompletion):
+        (TestRunner::queueLoad):
+
 2018-10-14  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] Remove Option::useAsyncIterator

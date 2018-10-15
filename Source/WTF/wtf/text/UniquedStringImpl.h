@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UniquedStringImpl_h
-#define UniquedStringImpl_h
+#pragma once
 
 #include <wtf/text/StringImpl.h>
 
@@ -61,5 +60,3 @@ ValueCheck<const UniquedStringImpl*> {
 } // namespace WTF
 
 using WTF::UniquedStringImpl;
-
-#endif // UniquedStringImpl_h

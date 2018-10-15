@@ -23,9 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef InlineASM_h
-#define InlineASM_h
+#pragma once
+
 #include <wtf/Platform.h>
+
 #if !CPU(UNKNOWN)
 
 /* asm directive helpers */ 
@@ -99,4 +100,3 @@
 #endif
 
 #endif // !CPU(UNKNOWN)
-#endif // InlineASM_h

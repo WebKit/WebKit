@@ -28,7 +28,7 @@
  */
 
 #include "config.h"
-#include "WorkQueue.h"
+#include <wtf/WorkQueue.h>
 
 #include <wtf/WallTime.h>
 #include <wtf/text/WTFString.h>

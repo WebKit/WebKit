@@ -24,12 +24,9 @@
  *
  */
 
-#ifndef LChar_h
-#define LChar_h
+#pragma once
 
 // A type to hold a single Latin-1 character.
 // This type complements the UChar type that we get from the ICU library.
 // To parallel that type, we put this one in the global namespace.
 typedef unsigned char LChar;
-
-#endif

@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WTF_MetaAllocatorHandle_h
-#define WTF_MetaAllocatorHandle_h
+#pragma once
 
 #include <wtf/Assertions.h>
 #include <wtf/MetaAllocatorPtr.h>
@@ -118,5 +117,3 @@ private:
 };
 
 }
-
-#endif

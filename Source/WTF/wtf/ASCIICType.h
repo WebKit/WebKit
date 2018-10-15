@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WTF_ASCIICType_h
-#define WTF_ASCIICType_h
+#pragma once
 
 #include <wtf/Assertions.h>
 #include <wtf/text/LChar.h>
@@ -275,5 +274,3 @@ using WTF::toASCIILowerUnchecked;
 using WTF::toASCIIUpper;
 using WTF::upperNibbleToASCIIHexDigit;
 using WTF::upperNibbleToLowercaseASCIIHexDigit;
-
-#endif

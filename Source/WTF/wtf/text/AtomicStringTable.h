@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef WTF_AtomicStringTable_h
-#define WTF_AtomicStringTable_h
+#pragma once
 
 #include <wtf/HashSet.h>
 #include <wtf/text/StringImpl.h>
@@ -43,5 +42,3 @@ private:
 
 }
 using WTF::AtomicStringTable;
-
-#endif

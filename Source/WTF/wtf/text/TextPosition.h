@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "OrdinalNumber.h"
+#include <wtf/text/OrdinalNumber.h>
 
 namespace WTF {
 

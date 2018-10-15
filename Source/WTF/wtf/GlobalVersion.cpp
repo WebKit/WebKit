@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "GlobalVersion.h"
+#include <wtf/GlobalVersion.h>
 
 #include <wtf/Atomics.h>
 

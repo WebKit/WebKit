@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SharedTask_h
-#define SharedTask_h
+#pragma once
 
 #include <wtf/Ref.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -128,6 +127,3 @@ Ref<SharedTask<FunctionType>> createSharedTask(Functor&& functor)
 using WTF::createSharedTask;
 using WTF::SharedTask;
 using WTF::SharedTaskFunctor;
-
-#endif // SharedTask_h
-

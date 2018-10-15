@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WTF_AutomaticThread_h
-#define WTF_AutomaticThread_h
+#pragma once
 
 #include <wtf/Box.h>
 #include <wtf/Condition.h>
@@ -195,6 +194,3 @@ private:
 
 using WTF::AutomaticThread;
 using WTF::AutomaticThreadCondition;
-
-#endif // WTF_AutomaticThread_h
-

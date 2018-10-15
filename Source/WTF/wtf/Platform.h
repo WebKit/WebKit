@@ -25,8 +25,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WTF_Platform_h
-#define WTF_Platform_h
+#pragma once
 
 /* Include compiler specific macros */
 #include <wtf/Compiler.h>
@@ -1370,5 +1369,3 @@
 #if PLATFORM(COCOA) && USE(CA) && !PLATFORM(IOS_FAMILY_SIMULATOR)
 #define USE_IOSURFACE_CANVAS_BACKING_STORE 1
 #endif
-
-#endif /* WTF_Platform_h */

@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "SymbolImpl.h"
+#include <wtf/text/SymbolImpl.h>
 
 namespace WTF {
 

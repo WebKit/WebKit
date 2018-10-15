@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef RetainPtr_h
-#define RetainPtr_h
+#pragma once
 
 #include <wtf/Platform.h>
 
@@ -382,5 +381,3 @@ using WTF::dynamic_objc_cast;
 #endif
 
 #endif // USE(CF) || defined(__OBJC__)
-
-#endif // WTF_RetainPtr_h

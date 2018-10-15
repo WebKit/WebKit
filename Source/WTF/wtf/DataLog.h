@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DataLog_h
-#define DataLog_h
+#pragma once
 
 #include <stdarg.h>
 #include <stdio.h>
@@ -74,6 +73,3 @@ using WTF::dataLogIf;
 using WTF::dataLogLnIf;
 using WTF::dataLogF;
 using WTF::dataLogFString;
-
-#endif // DataLog_h
-

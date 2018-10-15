@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StringBuffer_h
-#define StringBuffer_h
+#pragma once
 
 #include <limits>
 #include <unicode/utypes.h>
@@ -87,5 +86,3 @@ private:
 } // namespace WTF
 
 using WTF::StringBuffer;
-
-#endif // StringBuffer_h

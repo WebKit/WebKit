@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "CryptographicUtilities.h"
+#include <wtf/CryptographicUtilities.h>
 
 namespace WTF {
 

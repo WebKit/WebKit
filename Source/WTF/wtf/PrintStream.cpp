@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "PrintStream.h"
+#include <wtf/PrintStream.h>
 
 #include <stdio.h>
 #include <wtf/text/CString.h>

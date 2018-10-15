@@ -84,7 +84,7 @@
  */
 
 #include "config.h"
-#include "Threading.h"
+#include <wtf/Threading.h>
 
 #if OS(WINDOWS)
 

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WTF_WordLock_h
-#define WTF_WordLock_h
+#pragma once
 
 #include <wtf/Atomics.h>
 #include <wtf/Compiler.h>
@@ -107,6 +106,3 @@ using WordLockHolder = Locker<WordLock>;
 
 using WTF::WordLock;
 using WTF::WordLockHolder;
-
-#endif // WTF_WordLock_h
-

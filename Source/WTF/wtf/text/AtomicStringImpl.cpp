@@ -22,20 +22,20 @@
  */
 
 #include "config.h"
-#include "AtomicStringImpl.h"
+#include <wtf/text/AtomicStringImpl.h>
 
-#include "AtomicStringTable.h"
-#include "CommaPrinter.h"
-#include "DataLog.h"
-#include "HashSet.h"
-#include "IntegerToStringConversion.h"
-#include "StringHash.h"
-#include "StringPrintStream.h"
-#include "Threading.h"
+#include <wtf/CommaPrinter.h>
+#include <wtf/DataLog.h>
+#include <wtf/HashSet.h>
+#include <wtf/StringPrintStream.h>
+#include <wtf/Threading.h>
+#include <wtf/text/AtomicStringTable.h>
+#include <wtf/text/IntegerToStringConversion.h>
+#include <wtf/text/StringHash.h>
 #include <wtf/unicode/UTF8.h>
 
 #if USE(WEB_THREAD)
-#include "Lock.h"
+#include <wtf/Lock.h>
 #endif
 
 namespace WTF {

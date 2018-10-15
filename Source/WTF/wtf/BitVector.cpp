@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "BitVector.h"
+#include <wtf/BitVector.h>
 
 #include <algorithm>
 #include <string.h>

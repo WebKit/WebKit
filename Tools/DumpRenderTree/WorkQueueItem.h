@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WorkQueueItem_h
-#define WorkQueueItem_h
+#pragma once
 
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSBase.h>
@@ -145,5 +144,3 @@ public:
     {
     }
 };
-
-#endif // !defined(WorkQueueItem_h)

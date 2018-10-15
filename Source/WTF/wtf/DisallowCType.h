@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WTF_DisallowCType_h
-#define WTF_DisallowCType_h
+#pragma once
 
 // The behavior of many of the functions in the <ctype.h> header is dependent
 // on the current locale. But almost all uses of these functions are for
@@ -77,7 +76,5 @@
 #define toascii toascii_WTF_Please_use_ASCIICType_instead_of_ctype_see_comment_in_ASCIICType_h
 #define tolower tolower_WTF_Please_use_ASCIICType_instead_of_ctype_see_comment_in_ASCIICType_h
 #define toupper toupper_WTF_Please_use_ASCIICType_instead_of_ctype_see_comment_in_ASCIICType_h
-
-#endif
 
 #endif

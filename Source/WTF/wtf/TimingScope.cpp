@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "TimingScope.h"
+#include <wtf/TimingScope.h>
 
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>

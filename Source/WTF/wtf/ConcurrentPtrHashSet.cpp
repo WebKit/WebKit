@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "ConcurrentPtrHashSet.h"
+#include <wtf/ConcurrentPtrHashSet.h>
 
 #include <wtf/DataLog.h>
 

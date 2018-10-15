@@ -70,18 +70,17 @@
  */
 
 #include "config.h"
-#include "DateMath.h"
-
-#include "Assertions.h"
-#include "ASCIICType.h"
-#include "MathExtras.h"
-#include "StdLibExtras.h"
+#include <wtf/DateMath.h>
 
 #include <algorithm>
 #include <limits.h>
 #include <limits>
 #include <stdint.h>
 #include <time.h>
+#include <wtf/Assertions.h>
+#include <wtf/ASCIICType.h>
+#include <wtf/MathExtras.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
 
 #if OS(WINDOWS)

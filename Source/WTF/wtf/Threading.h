@@ -28,8 +28,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Threading_h
-#define Threading_h
+#pragma once
 
 #include <mutex>
 #include <stdint.h>
@@ -340,5 +339,3 @@ using WTF::ThreadIdentifier;
 using WTF::createThread;
 using WTF::waitForThreadCompletion;
 #endif
-
-#endif // Threading_h

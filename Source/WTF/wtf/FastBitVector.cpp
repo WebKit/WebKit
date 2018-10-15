@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "FastBitVector.h"
+#include <wtf/FastBitVector.h>
 
 namespace WTF {
 

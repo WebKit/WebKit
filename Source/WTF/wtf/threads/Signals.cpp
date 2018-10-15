@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "Signals.h"
+#include <wtf/threads/Signals.h>
 
 #if USE(PTHREADS) && HAVE(MACHINE_CONTEXT)
 

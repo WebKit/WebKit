@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "ThreadGroup.h"
+#include <wtf/ThreadGroup.h>
 
 #include <wtf/NeverDestroyed.h>
 

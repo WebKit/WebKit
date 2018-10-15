@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WTF_MonotonicTime_h
-#define WTF_MonotonicTime_h
+#pragma once
 
 #include <wtf/ClockType.h>
 #include <wtf/Seconds.h>
@@ -210,5 +209,3 @@ inline bool isfinite(WTF::MonotonicTime time)
 } // namespace std
 
 using WTF::MonotonicTime;
-
-#endif // WTF_MonotonicTime_h

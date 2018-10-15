@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef TextBreakIteratorInternalICU_h
-#define TextBreakIteratorInternalICU_h
+#pragma once
 
 // FIXME: Now that this handles locales for ICU, not just for text breaking,
 // this file and the various implementation files should be renamed.
@@ -33,5 +32,3 @@ WTF_EXPORT_PRIVATE const char* currentTextBreakLocaleID();
 
 using WTF::currentSearchLocaleID;
 using WTF::currentTextBreakLocaleID;
-
-#endif

@@ -23,11 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef StackStats_h
-#define StackStats_h
+#pragma once
 
-#include "ExportMacros.h"
 #include <mutex>
+#include <wtf/ExportMacros.h>
 
 
 // Define this flag to enable Stack stats collection. This feature is useful
@@ -143,5 +142,3 @@ private:
 } // namespace WTF
 
 using WTF::StackStats;
-
-#endif // StackStats_h

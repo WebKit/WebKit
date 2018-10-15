@@ -24,11 +24,11 @@
  */
 
 #include "config.h"
-#include "ParallelHelperPool.h"
+#include <wtf/ParallelHelperPool.h>
 
-#include "AutomaticThread.h"
-#include "DataLog.h"
-#include "StringPrintStream.h"
+#include <wtf/AutomaticThread.h>
+#include <wtf/DataLog.h>
+#include <wtf/StringPrintStream.h>
 
 namespace WTF {
 

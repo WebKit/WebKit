@@ -25,8 +25,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef Locker_h
-#define Locker_h
+
+#pragma once
 
 #include <wtf/Assertions.h>
 #include <wtf/Atomics.h>
@@ -144,5 +144,3 @@ using WTF::NoLockingNecessaryTag;
 using WTF::NoLockingNecessary;
 using WTF::holdLock;
 using WTF::holdLockIf;
-
-#endif

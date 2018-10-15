@@ -24,12 +24,12 @@
  */
 
 #include "config.h"
-#include "WordLock.h"
+#include <wtf/WordLock.h>
 
-#include "Threading.h"
 #include <condition_variable>
 #include <mutex>
 #include <thread>
+#include <wtf/Threading.h>
 
 namespace WTF {
 

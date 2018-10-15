@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WTF_WallTime_h
-#define WTF_WallTime_h
+#pragma once
 
 #include <wtf/ClockType.h>
 #include <wtf/Seconds.h>
@@ -181,5 +180,3 @@ inline bool isfinite(WTF::WallTime time)
 } // namespace std
 
 using WTF::WallTime;
-
-#endif // WTF_WallTime_h

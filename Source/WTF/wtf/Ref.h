@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WTF_Ref_h
-#define WTF_Ref_h
+#pragma once
 
 #include <wtf/Assertions.h>
 #include <wtf/DumbPtrTraits.h>
@@ -280,5 +279,3 @@ using WTF::Ref;
 using WTF::adoptRef;
 using WTF::makeRef;
 using WTF::static_reference_cast;
-
-#endif // WTF_Ref_h

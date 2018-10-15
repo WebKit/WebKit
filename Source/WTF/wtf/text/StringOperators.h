@@ -19,8 +19,7 @@
  *
  */
 
-#ifndef StringOperators_h
-#define StringOperators_h
+#pragma once
 
 namespace WTF {
 
@@ -164,5 +163,3 @@ StringAppend<StringAppend<U, V>, W> operator+(const StringAppend<U, V>& string1,
 }
 
 } // namespace WTF
-
-#endif // StringOperators_h

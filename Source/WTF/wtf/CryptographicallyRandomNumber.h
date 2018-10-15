@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WTF_CryptographicallyRandomNumber_h
-#define WTF_CryptographicallyRandomNumber_h
+#pragma once
 
 #include <stdint.h>
 
@@ -37,5 +36,3 @@ WTF_EXPORT_PRIVATE void cryptographicallyRandomValues(void* buffer, size_t lengt
 
 using WTF::cryptographicallyRandomNumber;
 using WTF::cryptographicallyRandomValues;
-
-#endif

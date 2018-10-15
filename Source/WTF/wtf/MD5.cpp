@@ -48,9 +48,9 @@
  */
 
 #include "config.h"
-#include "MD5.h"
+#include <wtf/MD5.h>
 
-#include "Assertions.h"
+#include <wtf/Assertions.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WTF {

@@ -24,8 +24,7 @@
  *
  */
 
-#ifndef StackBounds_h
-#define StackBounds_h
+#pragma once
 
 #include <algorithm>
 #include <wtf/StackPointer.h>
@@ -164,5 +163,3 @@ private:
 } // namespace WTF
 
 using WTF::StackBounds;
-
-#endif

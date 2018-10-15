@@ -30,10 +30,10 @@
  */
 
 #include "config.h"
-#include "SHA1.h"
+#include <wtf/SHA1.h>
 
-#include "Assertions.h"
-#include "text/CString.h"
+#include <wtf/Assertions.h>
+#include <wtf/text/CString.h>
 
 namespace WTF {
 

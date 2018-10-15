@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef TriState_h
-#define TriState_h
+#pragma once
 
 namespace WTF {
 
@@ -46,5 +45,3 @@ using WTF::FalseTriState;
 using WTF::TrueTriState;
 using WTF::MixedTriState;
 using WTF::triState;
-
-#endif // TriState_h

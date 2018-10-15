@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "Entitlements.h"
+#include <wtf/cocoa/Entitlements.h>
 
 #include <wtf/OSObjectPtr.h>
 #include <wtf/RetainPtr.h>

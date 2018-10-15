@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "MemoryPressureHandler.h"
+#import <wtf/MemoryPressureHandler.h>
 
 #import <mach/mach.h>
 #import <mach/task_info.h>

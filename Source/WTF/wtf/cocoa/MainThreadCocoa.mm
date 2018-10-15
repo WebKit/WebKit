@@ -27,7 +27,7 @@
  */
 
 #import "config.h"
-#import "MainThread.h"
+#import <wtf/MainThread.h>
 
 #import <CoreFoundation/CoreFoundation.h>
 #import <Foundation/NSThread.h>

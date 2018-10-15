@@ -26,15 +26,14 @@
  */
 
 #include "config.h"
-#include "RandomNumber.h"
-
-#include "CryptographicallyRandomNumber.h"
-#include "RandomNumberSeed.h"
+#include <wtf/RandomNumber.h>
 
 #include <limits>
 #include <limits.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <wtf/CryptographicallyRandomNumber.h>
+#include <wtf/RandomNumberSeed.h>
 
 namespace WTF {
 

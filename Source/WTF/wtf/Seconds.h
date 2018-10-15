@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WTF_Seconds_h
-#define WTF_Seconds_h
+#pragma once
 
 #include <wtf/MathExtras.h>
 #include <wtf/Optional.h>
@@ -356,5 +355,3 @@ inline bool isfinite(WTF::Seconds seconds)
 
 using namespace WTF::seconds_literals;
 using WTF::Seconds;
-
-#endif // WTF_Seconds_h

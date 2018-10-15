@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef WTF_HashSet_h
-#define WTF_HashSet_h
+#pragma once
 
 #include <initializer_list>
 #include <wtf/Forward.h>
@@ -384,5 +383,3 @@ void HashSet<T, U, V>::add(std::initializer_list<std::reference_wrapper<const Va
 } // namespace WTF
 
 using WTF::HashSet;
-
-#endif /* WTF_HashSet_h */

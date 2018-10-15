@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef AtomicString_h
-#define AtomicString_h
+#pragma once
 
 #include <utility>
 #include <wtf/NeverDestroyed.h>
@@ -363,5 +362,3 @@ using WTF::xmlnsAtom;
 #endif
 
 #include <wtf/text/StringConcatenate.h>
-
-#endif // AtomicString_h

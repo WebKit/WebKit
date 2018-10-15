@@ -24,14 +24,14 @@
  */
 
 #include "config.h"
-#include "TimeWithDynamicClockType.h"
+#include <wtf/TimeWithDynamicClockType.h>
 
-#include "Condition.h"
-#include "Lock.h"
-#include "PrintStream.h"
 #include <cfloat>
 #include <cmath>
+#include <wtf/Condition.h>
 #include <wtf/DataLog.h>
+#include <wtf/PrintStream.h>
+#include <wtf/Lock.h>
 
 namespace WTF {
 

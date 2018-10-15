@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "CompletionHandler.h"
-#include "MainThread.h"
-#include "ThreadSafeRefCounted.h"
+#include <wtf/CompletionHandler.h>
+#include <wtf/MainThread.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WTF {
 

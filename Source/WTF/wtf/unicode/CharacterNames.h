@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CharacterNames_h
-#define CharacterNames_h
+#pragma once
 
 #include <unicode/utypes.h>
 
@@ -167,5 +166,3 @@ using WTF::Unicode::zeroWidthJoiner;
 using WTF::Unicode::zeroWidthNoBreakSpace;
 using WTF::Unicode::zeroWidthNonJoiner;
 using WTF::Unicode::zeroWidthSpace;
-
-#endif // CharacterNames_h

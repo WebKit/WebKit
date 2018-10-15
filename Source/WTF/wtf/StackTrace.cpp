@@ -25,7 +25,7 @@
  */
 
 #include "config.h"
-#include "StackTrace.h"
+#include <wtf/StackTrace.h>
 
 #include <wtf/Assertions.h>
 #include <wtf/PrintStream.h>

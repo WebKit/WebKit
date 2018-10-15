@@ -23,8 +23,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Atomics_h
-#define Atomics_h
+#pragma once
 
 #include <atomic>
 #include <wtf/StdLibExtras.h>
@@ -452,5 +451,3 @@ using WTF::InputAndValue;
 using WTF::inputAndValue;
 using WTF::ensurePointer;
 using WTF::opaqueMixture;
-
-#endif // Atomics_h

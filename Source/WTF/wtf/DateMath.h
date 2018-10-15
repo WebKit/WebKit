@@ -40,8 +40,7 @@
  *
  */
 
-#ifndef DateMath_h
-#define DateMath_h
+#pragma once
 
 #include <math.h>
 #include <stdint.h>
@@ -154,5 +153,3 @@ using WTF::parseDateFromNullTerminatedCharacters;
 using WTF::makeRFC2822DateString;
 using WTF::LocalTimeOffset;
 using WTF::calculateLocalTimeOffset;
-
-#endif // DateMath_h

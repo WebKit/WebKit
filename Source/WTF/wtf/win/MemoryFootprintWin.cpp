@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "MemoryFootprint.h"
+#include <wtf/MemoryFootprint.h>
 
 #include <algorithm>
 #include <type_traits>

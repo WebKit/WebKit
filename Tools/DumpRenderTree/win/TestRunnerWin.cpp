@@ -288,7 +288,7 @@ size_t TestRunner::webHistoryItemCount()
 void TestRunner::notifyDone()
 {
     // Same as on mac.  This can be shared.
-    if (m_waitToDump && !topLoadingFrame && !WorkQueue::singleton().count())
+    if (m_waitToDump && !topLoadingFrame && !DRT::WorkQueue::singleton().count())
         dump();
     m_waitToDump = false;
 }
@@ -296,7 +296,7 @@ void TestRunner::notifyDone()
 void TestRunner::forceImmediateCompletion()
 {
     // Same as on mac. This can be shared.
-    if (m_waitToDump && !WorkQueue::singleton().count())
+    if (m_waitToDump && !DRT::WorkQueue::singleton().count())
         dump();
     m_waitToDump = false;
 }
@@ -350,7 +350,7 @@ void TestRunner::queueLoad(JSStringRef url, JSStringRef target)
     }
 
     auto jsAbsoluteURL = adopt(JSStringCreateWithCharacters(buffer.data(), bufferSize));
-    WorkQueue::singleton().queue(new LoadItem(jsAbsoluteURL.get(), target));
+    DRT::WorkQueue::singleton().queue(new LoadItem(jsAbsoluteURL.get(), target));
 }
 
 void TestRunner::setAcceptsEditing(bool acceptsEditing)

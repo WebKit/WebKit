@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef NoLock_h
-#define NoLock_h
+#pragma once
 
 #include <wtf/Locker.h>
 
@@ -43,6 +42,3 @@ typedef Locker<NoLock> NoLockLocker;
 
 using WTF::NoLock;
 using WTF::NoLockLocker;
-
-#endif // NoLock_h
-

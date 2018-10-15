@@ -23,19 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef StringConcatenate_h
-#define StringConcatenate_h
+#pragma once
 
 #include <string.h>
 #include <wtf/CheckedArithmetic.h>
-
-#ifndef AtomicString_h
 #include <wtf/text/AtomicString.h>
-#endif
-
-#ifndef StringView_h
 #include <wtf/text/StringView.h>
-#endif
 
 // This macro is helpful for testing how many intermediate Strings are created while evaluating an
 // expression containing operator+.
@@ -343,4 +336,3 @@ using WTF::makeString;
 using WTF::tryMakeString;
 
 #include <wtf/text/StringOperators.h>
-#endif

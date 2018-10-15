@@ -24,10 +24,10 @@
  */
 
 #include "config.h"
-#include "UTextProviderLatin1.h"
+#include <wtf/text/icu/UTextProviderLatin1.h>
 
-#include "UTextProvider.h"
 #include <wtf/text/StringImpl.h>
+#include <wtf/text/icu/UTextProvider.h>
 
 namespace WTF {
 

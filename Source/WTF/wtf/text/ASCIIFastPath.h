@@ -19,8 +19,7 @@
  *
  */
 
-#ifndef ASCIIFastPath_h
-#define ASCIIFastPath_h
+#pragma once
 
 #include <stdint.h>
 #include <unicode/utypes.h>
@@ -195,5 +194,3 @@ inline void copyLCharsFromUCharSource(LChar* destination, const UChar* source, s
 } // namespace WTF
 
 using WTF::charactersAreAllASCII;
-
-#endif // ASCIIFastPath_h

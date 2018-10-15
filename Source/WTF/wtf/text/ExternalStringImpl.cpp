@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "ExternalStringImpl.h"
+#include <wtf/text/ExternalStringImpl.h>
 
 namespace WTF {
 

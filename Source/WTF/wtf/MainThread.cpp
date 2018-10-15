@@ -27,17 +27,17 @@
  */
 
 #include "config.h"
-#include "MainThread.h"
+#include <wtf/MainThread.h>
 
-#include "Deque.h"
-#include "MonotonicTime.h"
-#include "StdLibExtras.h"
-#include "Threading.h"
 #include <mutex>
 #include <wtf/Condition.h>
+#include <wtf/Deque.h>
 #include <wtf/Lock.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/ThreadSpecific.h>
+#include <wtf/Threading.h>
 
 namespace WTF {
 

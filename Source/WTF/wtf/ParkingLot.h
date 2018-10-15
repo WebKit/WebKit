@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WTF_ParkingLot_h
-#define WTF_ParkingLot_h
+#pragma once
 
 #include <wtf/Atomics.h>
 #include <wtf/ScopedLambda.h>
@@ -177,6 +176,3 @@ private:
 } // namespace WTF
 
 using WTF::ParkingLot;
-
-#endif // WTF_ParkingLot_h
-

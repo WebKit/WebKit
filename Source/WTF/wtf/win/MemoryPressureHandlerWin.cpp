@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "MemoryPressureHandler.h"
+#include <wtf/MemoryPressureHandler.h>
 
 #include <psapi.h>
 #include <wtf/NeverDestroyed.h>

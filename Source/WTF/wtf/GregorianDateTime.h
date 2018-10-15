@@ -22,8 +22,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WTF_GregorianDateTime_h
-#define WTF_GregorianDateTime_h
+#pragma once
 
 #include <string.h>
 #include <time.h>
@@ -124,5 +123,3 @@ private:
 } // namespace WTF
 
 using WTF::GregorianDateTime;
-
-#endif // WTF_GregorianDateTime_h

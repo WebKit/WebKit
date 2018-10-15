@@ -26,7 +26,7 @@
  */
 
 #include "config.h"
-#include "MemoryPressureHandler.h"
+#include <wtf/MemoryPressureHandler.h>
 
 #include <malloc.h>
 #include <unistd.h>

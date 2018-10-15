@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef WTF_HashFunctions_h
-#define WTF_HashFunctions_h
+#pragma once
 
 #include <stdint.h>
 #include <tuple>
@@ -276,5 +275,3 @@ namespace WTF {
 using WTF::DefaultHash;
 using WTF::IntHash;
 using WTF::PtrHash;
-
-#endif // WTF_HashFunctions_h

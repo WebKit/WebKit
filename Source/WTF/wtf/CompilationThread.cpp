@@ -24,12 +24,12 @@
  */
 
 #include "config.h"
-#include "CompilationThread.h"
+#include <wtf/CompilationThread.h>
 
-#include "StdLibExtras.h"
-#include "ThreadSpecific.h"
-#include "Threading.h"
 #include <mutex>
+#include <wtf/StdLibExtras.h>
+#include <wtf/ThreadSpecific.h>
+#include <wtf/Threading.h>
 
 namespace WTF {
 

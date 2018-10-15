@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "WorkerPool.h"
+#include <wtf/WorkerPool.h>
 
 #include <wtf/NeverDestroyed.h>
 

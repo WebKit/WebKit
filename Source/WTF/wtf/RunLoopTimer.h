@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RunLoopTimer_h
-#define RunLoopTimer_h
+#pragma once
 
 #include <wtf/SchedulePair.h>
 #include <wtf/Seconds.h>
@@ -80,5 +79,3 @@ private:
 } // namespace WTF
 
 using WTF::RunLoopTimer;
-
-#endif

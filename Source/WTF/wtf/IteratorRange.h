@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WTF_IteratorRange_h
-#define WTF_IteratorRange_h
+#pragma once
 
 namespace WTF {
 
@@ -79,5 +78,3 @@ SizedIteratorRange<Container, Iterator> makeSizedIteratorRange(const Container& 
 }
 
 } // namespace WTF
-
-#endif // WTF_IteratorRange_h

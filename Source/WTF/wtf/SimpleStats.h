@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SimpleStats_h
-#define SimpleStats_h
+#pragma once
 
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
@@ -112,6 +111,3 @@ private:
 } // namespace WTF
 
 using WTF::SimpleStats;
-
-#endif // SimpleStats_h
-

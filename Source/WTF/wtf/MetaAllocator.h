@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WTF_MetaAllocator_h
-#define WTF_MetaAllocator_h
+#pragma once
 
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
@@ -208,6 +207,3 @@ private:
 };
 
 } // namespace WTF
-
-#endif // WTF_MetaAllocator_h
-

@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef AtomicStringImpl_h
-#define AtomicStringImpl_h
+#pragma once
 
 #include <wtf/text/UniquedStringImpl.h>
 
@@ -121,5 +120,3 @@ ValueCheck<const AtomicStringImpl*> {
 }
 
 using WTF::AtomicStringImpl;
-
-#endif

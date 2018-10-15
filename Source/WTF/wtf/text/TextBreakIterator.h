@@ -21,9 +21,9 @@
 
 #pragma once
 
-#include "StringView.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Variant.h>
+#include <wtf/text/StringView.h>
 #include <wtf/text/icu/TextBreakIteratorICU.h>
 
 #if PLATFORM(MAC) || PLATFORM(IOS)

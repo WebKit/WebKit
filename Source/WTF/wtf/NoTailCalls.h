@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "Atomics.h"
+#include <wtf/Atomics.h>
 
 namespace WTF {
 

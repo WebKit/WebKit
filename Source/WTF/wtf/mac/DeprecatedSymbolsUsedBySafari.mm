@@ -25,13 +25,13 @@
 
 #include "config.h"
 
-#include "HashMap.h"
-#include "HashSet.h"
-#include "Lock.h"
-#include "MainThread.h"
-#include "NeverDestroyed.h"
-#include "StdLibExtras.h"
 #include <stdint.h>
+#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
+#include <wtf/Lock.h>
+#include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/StdLibExtras.h>
 
 // This file contains deprecated symbols that the last released version of Safari uses.
 // Once Safari stops using them, we should remove them.

@@ -19,7 +19,7 @@
  */
 
 #include "config.h"
-#include "Language.h"
+#include <wtf/Language.h>
 
 #include <locale.h>
 #include <wtf/Vector.h>

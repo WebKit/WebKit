@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef WTF_FastMalloc_h
-#define WTF_FastMalloc_h
+#pragma once
 
 #include <new>
 #include <stdlib.h>
@@ -298,5 +297,3 @@ typedef int __thisIsHereToForceASemicolonAfterThisMacro
 #define WTF_MAKE_STRUCT_FAST_ALLOCATED \
     WTF_MAKE_FAST_ALLOCATED_IMPL \
 typedef int __thisIsHereToForceASemicolonAfterThisMacro
-
-#endif /* WTF_FastMalloc_h */

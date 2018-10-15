@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CheckedArithmetic_h
-#define CheckedArithmetic_h
+#pragma once
 
 #include <wtf/Assertions.h>
 
@@ -921,5 +920,3 @@ using WTF::checkedSum;
 using WTF::differenceOverflows;
 using WTF::productOverflows;
 using WTF::sumOverflows;
-
-#endif

@@ -10,9 +10,9 @@
  */
 
 #include "config.h"
-#include "StringBuilder.h"
+#include <wtf/text/StringBuilder.h>
 
-#include "WTFString.h"
+#include <wtf/text/WTFString.h>
 
 namespace WTF {
 

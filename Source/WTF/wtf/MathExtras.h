@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WTF_MathExtras_h
-#define WTF_MathExtras_h
+#pragma once
 
 #include <algorithm>
 #include <cmath>
@@ -617,5 +616,3 @@ using WTF::shuffleVector;
 using WTF::clz32;
 using WTF::clz64;
 using WTF::ctz32;
-
-#endif // #ifndef WTF_MathExtras_h

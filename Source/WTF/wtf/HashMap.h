@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef WTF_HashMap_h
-#define WTF_HashMap_h
+#pragma once
 
 #include <initializer_list>
 #include <wtf/Forward.h>
@@ -579,5 +578,3 @@ inline bool operator!=(const HashMap<T, U, V, W, X>& a, const HashMap<T, U, V, W
 } // namespace WTF
 
 using WTF::HashMap;
-
-#endif /* WTF_HashMap_h */

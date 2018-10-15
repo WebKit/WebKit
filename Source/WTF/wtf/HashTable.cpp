@@ -18,10 +18,10 @@
 */
 
 #include "config.h"
-#include "HashTable.h"
+#include <wtf/HashTable.h>
 
-#include "DataLog.h"
 #include <mutex>
+#include <wtf/DataLog.h>
 
 namespace WTF {
 

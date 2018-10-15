@@ -28,11 +28,11 @@
  */
 
 #include "config.h"
-#include "MainThread.h"
+#include <wtf/MainThread.h>
 
-#include "Assertions.h"
-#include "Threading.h"
-#include "WindowsExtras.h"
+#include <wtf/Assertions.h>
+#include <wtf/Threading.h>
+#include <wtf/WindowsExtras.h>
 
 namespace WTF {
 

@@ -24,14 +24,14 @@
  */
 
 #include "config.h"
-#include "OSAllocator.h"
+#include <wtf/OSAllocator.h>
 
 #if OS(UNIX)
 
-#include "PageAllocation.h"
 #include <errno.h>
 #include <sys/mman.h>
 #include <wtf/Assertions.h>
+#include <wtf/PageAllocation.h>
 
 namespace WTF {
 

@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "Language.h"
+#include <wtf/Language.h>
 
 #include <CoreFoundation/CoreFoundation.h>
 #include <mutex>

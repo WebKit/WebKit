@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WTF_RandomNumber_h
-#define WTF_RandomNumber_h
+#pragma once
 
 namespace WTF {
 
@@ -35,5 +34,3 @@ WTF_EXPORT_PRIVATE double randomNumber();
 }
 
 using WTF::randomNumber;
-
-#endif

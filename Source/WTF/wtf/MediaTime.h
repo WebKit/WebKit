@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WTF_MediaTime_h
-#define WTF_MediaTime_h
+#pragma once
 
 #include <wtf/FastMalloc.h>
 #include <wtf/text/WTFString.h>
@@ -178,5 +177,3 @@ bool MediaTime::decode(Decoder& decoder, MediaTime& time)
 using WTF::MediaTime;
 using WTF::MediaTimeRange;
 using WTF::abs;
-
-#endif

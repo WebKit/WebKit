@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "ASCIILiteral.h"
+#include <wtf/text/ASCIILiteral.h>
 
 #include <wtf/PrintStream.h>
 

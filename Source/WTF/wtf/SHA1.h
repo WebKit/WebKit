@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WTF_SHA1_h
-#define WTF_SHA1_h
+#pragma once
 
 #include <array>
 #include <wtf/Vector.h>
@@ -88,5 +87,3 @@ private:
 } // namespace WTF
 
 using WTF::SHA1;
-
-#endif // WTF_SHA1_h

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AppKitCompatibilityDeclarations_h
-#define AppKitCompatibilityDeclarations_h
+#pragma once
 
 #import <Availability.h>
 
@@ -45,5 +44,3 @@ static const NSLevelIndicatorStyle NSLevelIndicatorStyleDiscreteCapacity = NSDis
 static const NSLevelIndicatorStyle NSLevelIndicatorStyleRating = NSRatingLevelIndicatorStyle;
 
 #endif // __MAC_OS_X_VERSION_MAX_ALLOWED < 101300
-
-#endif // AppKitCompatibilityDeclarations_h

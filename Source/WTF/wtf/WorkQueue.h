@@ -25,8 +25,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WorkQueue_h
-#define WorkQueue_h
+#pragma once
 
 #include <wtf/Forward.h>
 #include <wtf/FunctionDispatcher.h>
@@ -112,5 +111,3 @@ private:
 }
 
 using WTF::WorkQueue;
-
-#endif

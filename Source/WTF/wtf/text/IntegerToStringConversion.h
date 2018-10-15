@@ -19,8 +19,7 @@
  *
  */
 
-#ifndef IntegerToStringConversion_h
-#define IntegerToStringConversion_h
+#pragma once
 
 #include <wtf/text/LChar.h>
 
@@ -126,5 +125,3 @@ inline unsigned lengthOfNumberAsStringUnsigned(UnsignedIntegerType number)
 }
 
 } // namespace WTF
-
-#endif // IntegerToStringConversion_h

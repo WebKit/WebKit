@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "MemoryFootprint.h"
+#include <wtf/MemoryFootprint.h>
 
 #include <mach/mach.h>
 #include <mach/task_info.h>

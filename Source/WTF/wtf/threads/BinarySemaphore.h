@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BinarySemaphore_h
-#define BinarySemaphore_h
+#pragma once
 
 #include <wtf/Condition.h>
 #include <wtf/Lock.h>
@@ -61,5 +60,3 @@ private:
 } // namespace WTF
 
 using WTF::BinarySemaphore;
-
-#endif // BinarySemaphore_h

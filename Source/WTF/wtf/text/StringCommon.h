@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StringCommon_h
-#define StringCommon_h
+#pragma once
 
 #include <algorithm>
 #include <unicode/uchar.h>
@@ -659,5 +658,3 @@ template<unsigned lowercaseLettersLength> inline bool equalLettersIgnoringASCIIC
 
 using WTF::equalIgnoringASCIICase;
 using WTF::equalLettersIgnoringASCIICase;
-
-#endif

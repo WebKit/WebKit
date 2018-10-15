@@ -32,9 +32,10 @@
  */
 
 #include "config.h"
-#include "MonotonicTime.h"
-#include "WallTime.h"
+#include <wtf/MonotonicTime.h>
+
 #include <time.h>
+#include <wtf/WallTime.h>
 
 #if OS(DARWIN)
 #include <mach/mach.h>

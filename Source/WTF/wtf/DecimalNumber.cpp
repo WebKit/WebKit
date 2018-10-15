@@ -24,7 +24,8 @@
  */
 
 #include "config.h"
-#include "DecimalNumber.h"
+#include <wtf/DecimalNumber.h>
+
 #include <math.h>
 #include <wtf/MathExtras.h>
 #include <wtf/text/WTFString.h>

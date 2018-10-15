@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FlipBytes_h
-#define FlipBytes_h
+#pragma once
 
 namespace WTF {
 
@@ -112,6 +111,3 @@ inline T flipBytesIfLittleEndian(T value, bool littleEndian)
 using WTF::needToFlipBytesIfLittleEndian;
 using WTF::flipBytes;
 using WTF::flipBytesIfLittleEndian;
-
-#endif // FlipBytes_h
-

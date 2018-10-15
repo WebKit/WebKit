@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "BinarySemaphore.h"
+#include <wtf/threads/BinarySemaphore.h>
 
 namespace WTF {
 

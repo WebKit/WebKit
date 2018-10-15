@@ -19,7 +19,7 @@
  */
 
 #include "config.h"
-#include "RefCountedLeakCounter.h"
+#include <wtf/RefCountedLeakCounter.h>
 
 #include <wtf/HashCountedSet.h>
 

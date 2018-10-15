@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WTF_UTF8_h
-#define WTF_UTF8_h
+#pragma once
 
 #include <unicode/utypes.h>
 #include <wtf/text/LChar.h>
@@ -83,5 +82,3 @@ namespace Unicode {
 
 } // namespace Unicode
 } // namespace WTF
-
-#endif // WTF_UTF8_h

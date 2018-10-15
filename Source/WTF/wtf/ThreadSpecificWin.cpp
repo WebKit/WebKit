@@ -20,7 +20,7 @@
  */
 
 #include "config.h"
-#include "ThreadSpecific.h"
+#include <wtf/ThreadSpecific.h>
 
 #if OS(WINDOWS)
 

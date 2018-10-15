@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WTF_Compiler_h
-#define WTF_Compiler_h
+#pragma once
 
 /* COMPILER() - the compiler being used to build the project */
 #define COMPILER(WTF_FEATURE) (defined WTF_COMPILER_##WTF_FEATURE  && WTF_COMPILER_##WTF_FEATURE)
@@ -464,5 +463,3 @@
 
 #define IGNORE_NULL_CHECK_WARNINGS_BEGIN IGNORE_WARNINGS_BEGIN("nonnull")
 #define IGNORE_NULL_CHECK_WARNINGS_END IGNORE_WARNINGS_END
-
-#endif /* WTF_Compiler_h */

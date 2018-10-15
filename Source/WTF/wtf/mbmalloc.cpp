@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "FastMalloc.h"
+#include <wtf/FastMalloc.h>
 
 #define EXPORT __attribute__((visibility("default")))
 

@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "Language.h"
+#include <wtf/Language.h>
 
 #include <mutex>
 #include <windows.h>

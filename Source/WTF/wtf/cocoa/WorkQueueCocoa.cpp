@@ -24,9 +24,10 @@
  */
 
 #include "config.h"
-#include "WorkQueue.h"
-#include "BlockPtr.h"
-#include "Ref.h"
+#include <wtf/WorkQueue.h>
+
+#include <wtf/BlockPtr.h>
+#include <wtf/Ref.h>
 
 namespace WTF {
 

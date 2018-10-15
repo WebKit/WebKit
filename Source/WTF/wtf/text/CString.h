@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CString_h
-#define CString_h
+#pragma once
 
 #include <wtf/HashFunctions.h>
 #include <wtf/HashTraits.h>
@@ -110,5 +109,3 @@ template<> struct HashTraits<CString> : SimpleClassHashTraits<CString> { };
 } // namespace WTF
 
 using WTF::CString;
-
-#endif // CString_h

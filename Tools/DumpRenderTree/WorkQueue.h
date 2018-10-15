@@ -26,12 +26,13 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WorkQueue_h
-#define WorkQueue_h
+#pragma once
 
 #include <wtf/Forward.h>
 
 class WorkQueueItem;
+
+namespace DRT {
 
 class WorkQueue {
 friend class WTF::NeverDestroyed<WorkQueue>;
@@ -54,4 +55,4 @@ private:
     bool m_frozen;
 };
 
-#endif // !defined(WorkQueue_h)
+}

@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WTF_WeakPtr_h
-#define WTF_WeakPtr_h
+#pragma once
 
 #include <wtf/Noncopyable.h>
 #include <wtf/Ref.h>
@@ -223,5 +222,3 @@ using WTF::WeakPtr;
 using WTF::WeakPtrFactory;
 using WTF::WeakReference;
 using WTF::makeWeakPtr;
-
-#endif

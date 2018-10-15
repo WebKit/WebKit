@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WTF_SymbolRegistry_h
-#define WTF_SymbolRegistry_h
+#pragma once
 
 #include <wtf/HashSet.h>
 #include <wtf/text/StringHash.h>
@@ -108,5 +107,3 @@ inline SymbolRegistryKey::SymbolRegistryKey(WTF::HashTableDeletedValueType)
 }
 
 }
-
-#endif

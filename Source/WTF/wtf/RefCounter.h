@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RefCounter_h
-#define RefCounter_h
+#pragma once
 
 #include <wtf/Function.h>
 #include <wtf/Noncopyable.h>
@@ -146,5 +145,3 @@ inline RefCounter<T>::~RefCounter()
 
 using WTF::RefCounter;
 using WTF::RefCounterEvent;
-
-#endif // RefCounter_h

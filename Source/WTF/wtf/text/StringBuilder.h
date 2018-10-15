@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef StringBuilder_h
-#define StringBuilder_h
+#pragma once
 
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/IntegerToStringConversion.h>
@@ -378,5 +377,3 @@ template<> struct IntegerToStringConversionTrait<StringBuilder> {
 } // namespace WTF
 
 using WTF::StringBuilder;
-
-#endif // StringBuilder_h

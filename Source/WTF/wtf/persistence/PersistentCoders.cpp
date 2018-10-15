@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "PersistentCoders.h"
+#include <wtf/persistence/PersistentCoders.h>
 
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>

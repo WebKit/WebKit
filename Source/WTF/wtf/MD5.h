@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WTF_MD5_h
-#define WTF_MD5_h
+#pragma once
 
 #include <array>
 #include <wtf/Vector.h>
@@ -72,5 +71,3 @@ private:
 } // namespace WTF
 
 using WTF::MD5;
-
-#endif // WTF_MD5_h

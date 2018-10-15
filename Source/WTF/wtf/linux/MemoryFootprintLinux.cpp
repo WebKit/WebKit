@@ -24,10 +24,10 @@
  */
 
 #include "config.h"
-#include "MemoryFootprint.h"
+#include <wtf/MemoryFootprint.h>
 
-#include "MonotonicTime.h"
 #include <stdio.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringView.h>
 

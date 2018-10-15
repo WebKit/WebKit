@@ -21,7 +21,7 @@
  */
 
 #include "config.h"
-#include "AtomicStringTable.h"
+#include <wtf/text/AtomicStringTable.h>
 
 #include <wtf/HashSet.h>
 #include <wtf/MainThread.h>

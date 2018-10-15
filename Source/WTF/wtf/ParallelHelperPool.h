@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ParallelHelperPool_h
-#define ParallelHelperPool_h
+#pragma once
 
 #include <wtf/Box.h>
 #include <wtf/Condition.h>
@@ -217,6 +216,3 @@ private:
 
 using WTF::ParallelHelperClient;
 using WTF::ParallelHelperPool;
-
-#endif // ParallelHelperPool_h
-

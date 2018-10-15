@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef BumpPointerAllocator_h
-#define BumpPointerAllocator_h
+#pragma once
 
 #include <algorithm>
 #include <wtf/PageAllocation.h>
@@ -248,5 +247,3 @@ private:
 }
 
 using WTF::BumpPointerAllocator;
-
-#endif // BumpPointerAllocator_h

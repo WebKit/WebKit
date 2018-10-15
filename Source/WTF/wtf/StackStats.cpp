@@ -24,12 +24,12 @@
  */
 
 #include "config.h"
-#include "StackStats.h"
+#include <wtf/StackStats.h>
 
 #if ENABLE(STACK_STATS) 
 
-#include "Assertions.h"
-#include "DataLog.h"
+#include <wtf/Assertions.h>
+#include <wtf/DataLog.h>
 
 // Define the following flag if you want to collect stats on every single
 // checkpoint. By default, we only log checkpoints that establish new

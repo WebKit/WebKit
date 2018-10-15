@@ -2275,37 +2275,37 @@ JSStaticFunction* TestRunner::staticFunctions()
 
 void TestRunner::queueLoadHTMLString(JSStringRef content, JSStringRef baseURL)
 {
-    WorkQueue::singleton().queue(new LoadHTMLStringItem(content, baseURL));
+    DRT::WorkQueue::singleton().queue(new LoadHTMLStringItem(content, baseURL));
 }
 
 void TestRunner::queueLoadAlternateHTMLString(JSStringRef content, JSStringRef baseURL, JSStringRef unreachableURL)
 {
-    WorkQueue::singleton().queue(new LoadHTMLStringItem(content, baseURL, unreachableURL));
+    DRT::WorkQueue::singleton().queue(new LoadHTMLStringItem(content, baseURL, unreachableURL));
 }
 
 void TestRunner::queueBackNavigation(int howFarBack)
 {
-    WorkQueue::singleton().queue(new BackItem(howFarBack));
+    DRT::WorkQueue::singleton().queue(new BackItem(howFarBack));
 }
 
 void TestRunner::queueForwardNavigation(int howFarForward)
 {
-    WorkQueue::singleton().queue(new ForwardItem(howFarForward));
+    DRT::WorkQueue::singleton().queue(new ForwardItem(howFarForward));
 }
 
 void TestRunner::queueLoadingScript(JSStringRef script)
 {
-    WorkQueue::singleton().queue(new LoadingScriptItem(script));
+    DRT::WorkQueue::singleton().queue(new LoadingScriptItem(script));
 }
 
 void TestRunner::queueNonLoadingScript(JSStringRef script)
 {
-    WorkQueue::singleton().queue(new NonLoadingScriptItem(script));
+    DRT::WorkQueue::singleton().queue(new NonLoadingScriptItem(script));
 }
 
 void TestRunner::queueReload()
 {
-    WorkQueue::singleton().queue(new ReloadItem);
+    DRT::WorkQueue::singleton().queue(new ReloadItem);
 }
 
 void TestRunner::ignoreLegacyWebNotificationPermissionRequests()

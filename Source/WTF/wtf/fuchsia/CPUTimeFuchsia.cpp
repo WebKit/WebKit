@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "CPUTime.h"
+#include <wtf/CPUTime.h>
 
 #include <zircon/syscalls.h>
 

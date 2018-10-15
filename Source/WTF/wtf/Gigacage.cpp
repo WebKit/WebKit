@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "Gigacage.h"
+#include <wtf/Gigacage.h>
 
 #include <wtf/Atomics.h>
 #include <wtf/PageBlock.h>

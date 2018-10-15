@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ProcessID_h
-#define ProcessID_h
+#pragma once
 
 #if OS(UNIX)
 #include <unistd.h>
@@ -55,6 +54,3 @@ inline ProcessID getCurrentProcessID()
 
 using WTF::getCurrentProcessID;
 using WTF::ProcessID;
-
-#endif // ProcessID_h
-

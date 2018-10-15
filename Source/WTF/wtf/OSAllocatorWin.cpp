@@ -24,12 +24,12 @@
  */
 
 #include "config.h"
-#include "OSAllocator.h"
+#include <wtf/OSAllocator.h>
 
 #if OS(WINDOWS)
 
-#include "windows.h"
 #include <wtf/Assertions.h>
+#include <windows.h>
 
 namespace WTF {
 

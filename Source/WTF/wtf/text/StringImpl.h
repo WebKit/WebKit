@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef StringImpl_h
-#define StringImpl_h
+#pragma once
 
 #include <limits.h>
 #include <unicode/ustring.h>
@@ -1217,5 +1216,3 @@ template<unsigned length> inline bool equalLettersIgnoringASCIICase(const String
 using WTF::StaticStringImpl;
 using WTF::StringImpl;
 using WTF::equal;
-
-#endif

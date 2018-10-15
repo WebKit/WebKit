@@ -27,7 +27,7 @@
  */
 
 #include "config.h"
-#include "MediaTime.h"
+#include <wtf/MediaTime.h>
 
 #include <algorithm>
 #include <cstdlib>

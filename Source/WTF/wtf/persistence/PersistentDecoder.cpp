@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "PersistentDecoder.h"
+#include <wtf/persistence/PersistentDecoder.h>
 
 #include <wtf/persistence/PersistentEncoder.h>
 

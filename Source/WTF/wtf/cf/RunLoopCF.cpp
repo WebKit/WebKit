@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "RunLoop.h"
+#include <wtf/RunLoop.h>
 
 #include <CoreFoundation/CoreFoundation.h>
 #include <dispatch/dispatch.h>

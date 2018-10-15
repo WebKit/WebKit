@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "SymbolRegistry.h"
+#include <wtf/text/SymbolRegistry.h>
 
 namespace WTF {
 

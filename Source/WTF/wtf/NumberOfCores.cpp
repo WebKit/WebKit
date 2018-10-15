@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "NumberOfCores.h"
+#include <wtf/NumberOfCores.h>
 
 #include <cstdio>
 

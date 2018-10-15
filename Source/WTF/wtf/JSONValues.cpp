@@ -31,7 +31,7 @@
  */
 
 #include "config.h"
-#include "JSONValues.h"
+#include <wtf/JSONValues.h>
 
 #include <wtf/DecimalNumber.h>
 #include <wtf/dtoa.h>

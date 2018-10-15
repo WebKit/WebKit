@@ -19,7 +19,7 @@
  */
 
 #include "config.h"
-#include "TextBreakIteratorInternalICU.h"
+#include <wtf/text/TextBreakIteratorInternalICU.h>
 
 namespace WTF {
 

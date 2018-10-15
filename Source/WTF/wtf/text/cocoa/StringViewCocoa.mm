@@ -24,9 +24,9 @@
  */
 
 #import "config.h"
-#import "StringView.h"
+#import <wtf/text/StringView.h>
 
-#import "RetainPtr.h"
+#import <wtf/RetainPtr.h>
 
 namespace WTF {
 

@@ -25,12 +25,12 @@
  */
 
 #include "config.h"
-#include "StringBuilder.h"
+#include <wtf/text/StringBuilder.h>
 
-#include "IntegerToStringConversion.h"
-#include "MathExtras.h"
-#include "WTFString.h"
 #include <wtf/dtoa.h>
+#include <wtf/MathExtras.h>
+#include <wtf/text/WTFString.h>
+#include <wtf/text/IntegerToStringConversion.h>
 
 namespace WTF {
 

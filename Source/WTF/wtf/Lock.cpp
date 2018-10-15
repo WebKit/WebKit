@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "Lock.h"
+#include <wtf/Lock.h>
 
 #include <wtf/LockAlgorithmInlines.h>
 #include <wtf/StackShotProfiler.h>

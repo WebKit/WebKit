@@ -27,8 +27,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WTF_Deque_h
-#define WTF_Deque_h
+#pragma once
 
 // FIXME: Could move what Vector and Deque share into a separate file.
 // Deque doesn't actually use Vector.
@@ -785,5 +784,3 @@ inline T* DequeIteratorBase<T, inlineCapacity>::before() const
 } // namespace WTF
 
 using WTF::Deque;
-
-#endif // WTF_Deque_h

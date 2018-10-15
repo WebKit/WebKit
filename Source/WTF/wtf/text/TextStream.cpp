@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "TextStream.h"
+#include <wtf/text/TextStream.h>
 
 #include <wtf/MathExtras.h>
 #include <wtf/text/WTFString.h>

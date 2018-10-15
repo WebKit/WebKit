@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WTF_PointerComparison_h
-#define WTF_PointerComparison_h
+#pragma once
 
 namespace WTF {
 
@@ -36,5 +35,3 @@ template<typename T> inline bool arePointingToEqualData(const T& a, const T& b)
 } // namespace WTF
 
 using WTF::arePointingToEqualData;
-
-#endif // WTF_PointerComparison_h

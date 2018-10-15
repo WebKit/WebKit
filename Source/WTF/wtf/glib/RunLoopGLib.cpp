@@ -25,7 +25,7 @@
  */
 
 #include "config.h"
-#include "RunLoop.h"
+#include <wtf/RunLoop.h>
 
 #include <glib.h>
 #include <wtf/MainThread.h>

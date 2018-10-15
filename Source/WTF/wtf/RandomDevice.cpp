@@ -25,7 +25,7 @@
  */
 
 #include "config.h"
-#include "RandomDevice.h"
+#include <wtf/RandomDevice.h>
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -42,7 +42,7 @@
 #endif
 
 #if OS(DARWIN)
-#include "CommonCryptoSPI.h"
+#include <wtf/spi/darwin/CommonCryptoSPI.h>
 #endif
 
 #if OS(FUCHSIA)

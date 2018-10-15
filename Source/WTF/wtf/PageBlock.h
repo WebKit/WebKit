@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PageBlock_h
-#define PageBlock_h
+#pragma once
 
 namespace WTF {
 
@@ -83,5 +82,3 @@ inline PageBlock::PageBlock(void* base, size_t size, bool hasGuardPages)
 using WTF::pageSize;
 using WTF::isPageAligned;
 using WTF::isPowerOfTwo;
-
-#endif // PageBlock_h

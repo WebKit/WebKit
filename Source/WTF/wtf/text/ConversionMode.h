@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ConversionMode_h
-#define ConversionMode_h
+#pragma once
 
 namespace WTF {
 
@@ -40,6 +39,3 @@ using WTF::ConversionMode;
 using WTF::LenientConversion;
 using WTF::StrictConversion;
 using WTF::StrictConversionReplacingUnpairedSurrogatesWithFFFD;
-
-#endif // ConversionMode_h
-

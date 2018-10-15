@@ -28,8 +28,7 @@
  *
  */
 
-#ifndef ThreadingPrimitives_h
-#define ThreadingPrimitives_h
+#pragma once
 
 #include <wtf/FastMalloc.h>
 #include <wtf/Locker.h>
@@ -110,5 +109,3 @@ private:
 using WTF::Mutex;
 using WTF::MutexLocker;
 using WTF::ThreadCondition;
-
-#endif // ThreadingPrimitives_h
