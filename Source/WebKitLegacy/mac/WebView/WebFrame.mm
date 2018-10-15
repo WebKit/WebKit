@@ -1061,38 +1061,6 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     return NO;
 }
 
-static WebFrameLoadType toWebFrameLoadType(FrameLoadType frameLoadType)
-{
-    switch (frameLoadType) {
-    case FrameLoadType::Standard:
-        return WebFrameLoadTypeStandard;
-    case FrameLoadType::Back:
-        return WebFrameLoadTypeBack;
-    case FrameLoadType::Forward:
-        return WebFrameLoadTypeForward;
-    case FrameLoadType::IndexedBackForward:
-        return WebFrameLoadTypeIndexedBackForward;
-    case FrameLoadType::Reload:
-        return WebFrameLoadTypeReload;
-    case FrameLoadType::Same:
-        return WebFrameLoadTypeSame;
-    case FrameLoadType::RedirectWithLockedBackForwardList:
-        return WebFrameLoadTypeInternal;
-    case FrameLoadType::Replace:
-        return WebFrameLoadTypeReplace;
-    case FrameLoadType::ReloadFromOrigin:
-        return WebFrameLoadTypeReloadFromOrigin;
-    case FrameLoadType::ReloadExpiredOnly:
-        ASSERT_NOT_REACHED();
-        return WebFrameLoadTypeReload;
-    }
-}
-
-- (WebFrameLoadType)_loadType
-{
-    return toWebFrameLoadType(_private->coreFrame->loader().loadType());
-}
-
 #if PLATFORM(IOS)
 - (BOOL)needsLayout
 {

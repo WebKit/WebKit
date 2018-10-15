@@ -67,19 +67,6 @@ extern NSString *WebFrameUsesGeolocation;
 extern NSString *WebFrameUsesApplicationCache;
 extern NSString *WebFrameCanSuspendActiveDOMObjects;
 
-typedef enum {
-    WebFrameLoadTypeStandard,
-    WebFrameLoadTypeBack,
-    WebFrameLoadTypeForward,
-    WebFrameLoadTypeIndexedBackForward, // a multi-item hop in the backforward list
-    WebFrameLoadTypeReload,
-    WebFrameLoadTypeReloadAllowingStaleData,
-    WebFrameLoadTypeSame,               // user loads same URL again (but not reload button)
-    WebFrameLoadTypeInternal,           // maps to WebCore::FrameLoadTypeRedirectWithLockedBackForwardList
-    WebFrameLoadTypeReplace,
-    WebFrameLoadTypeReloadFromOrigin,
-} WebFrameLoadType;
-
 @interface WebFrame (WebPrivate)
 
 - (BOOL)_isDescendantOfFrame:(WebFrame *)frame;
@@ -92,7 +79,6 @@ typedef enum {
 - (BOOL)_isFrameSet;
 - (BOOL)_firstLayoutDone;
 - (BOOL)_isVisuallyNonEmpty;
-- (WebFrameLoadType)_loadType;
 #if TARGET_OS_IPHONE
 - (BOOL)needsLayout; // Needed for Mail <rdar://problem/6228038>
 - (void)_setLoadsSynchronously:(BOOL)flag;
