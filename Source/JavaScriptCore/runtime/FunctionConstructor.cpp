@@ -94,48 +94,82 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(
         prefix = "async function ";
         break;
     case FunctionConstructionMode::AsyncGenerator:
-        prefix = "async function*";
+        prefix = "{async function*";
         break;
     }
+
+    auto checkBody = [&] (const String& body) {
+        // The spec mandates that the body parses a valid function body independent
+        // of the parameters.
+        String program = makeString("(", prefix, "(){\n", body, "\n})");
+        SourceCode source = makeSource(program, sourceOrigin, sourceURL, position);
+        JSValue exception;
+        checkSyntax(exec, source, &exception);
+        if (exception) {
+            scope.throwException(exec, exception);
+            return;
+        }
+    };
 
     // How we stringify functions is sometimes important for web compatibility.
     // See https://bugs.webkit.org/show_bug.cgi?id=24350.
     String program;
-    std::optional<int> functionConstructorParametersEndPosition = std::nullopt;
     if (args.isEmpty())
-        program = makeString(prefix, functionName.string(), "() {\n\n}");
+        program = makeString("{", prefix, functionName.string(), "() {\n\n}}");
     else if (args.size() == 1) {
         auto body = args.at(0).toWTFString(exec);
         RETURN_IF_EXCEPTION(scope, nullptr);
-        program = makeString(prefix, functionName.string(), "() {\n", body, "\n}");
+        checkBody(body);
+        RETURN_IF_EXCEPTION(scope, nullptr);
+        program = makeString("{", prefix, functionName.string(), "() {\n", body, "\n}}");
     } else {
         StringBuilder builder;
+        builder.append('{');
         builder.append(prefix);
         builder.append(functionName.string());
-
         builder.append('(');
+        StringBuilder parameterBuilder;
         auto viewWithString = args.at(0).toString(exec)->viewWithUnderlyingString(exec);
         RETURN_IF_EXCEPTION(scope, nullptr);
-        builder.append(viewWithString.view);
+        parameterBuilder.append(viewWithString.view);
         for (size_t i = 1; i < args.size() - 1; i++) {
-            builder.appendLiteral(", ");
+            parameterBuilder.appendLiteral(", ");
             auto viewWithString = args.at(i).toString(exec)->viewWithUnderlyingString(exec);
             RETURN_IF_EXCEPTION(scope, nullptr);
-            builder.append(viewWithString.view);
+            parameterBuilder.append(viewWithString.view);
         }
-        functionConstructorParametersEndPosition = builder.length() + 1;
-        builder.appendLiteral(") {\n");
-
-        auto body = args.at(args.size() - 1).toString(exec)->viewWithUnderlyingString(exec);
+        auto body = args.at(args.size() - 1).toWTFString(exec);
         RETURN_IF_EXCEPTION(scope, nullptr);
-        builder.append(body.view);
-        builder.appendLiteral("\n}");
+
+        {
+            // The spec mandates that the parameters parse as a valid parameter list
+            // independent of the function body.
+            String program = tryMakeString("(", prefix, "(", parameterBuilder.toString(), "){\n\n})");
+            if (UNLIKELY(!program)) {
+                throwOutOfMemoryError(exec, scope);
+                return nullptr;
+            }
+            SourceCode source = makeSource(program, sourceOrigin, sourceURL, position);
+            JSValue exception;
+            checkSyntax(exec, source, &exception);
+            if (exception) {
+                scope.throwException(exec, exception);
+                return nullptr;
+            }
+        }
+
+        builder.append(parameterBuilder);
+        builder.appendLiteral(") {\n");
+        checkBody(body);
+        RETURN_IF_EXCEPTION(scope, nullptr);
+        builder.append(body);
+        builder.appendLiteral("\n}}");
         program = builder.toString();
     }
 
     SourceCode source = makeSource(program, sourceOrigin, sourceURL, position);
     JSObject* exception = nullptr;
-    FunctionExecutable* function = FunctionExecutable::fromGlobalCode(functionName, *exec, source, exception, overrideLineNumber, functionConstructorParametersEndPosition);
+    FunctionExecutable* function = FunctionExecutable::fromGlobalCode(functionName, *exec, source, exception, overrideLineNumber);
     if (!function) {
         ASSERT(exception);
         return throwException(exec, scope, exception);

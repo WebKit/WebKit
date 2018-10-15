@@ -900,14 +900,14 @@ test/built-ins/Function/prototype/restricted-property-caller.js:
   default: "ReferenceError: Can't find variable: verifyNotEnumerable"
   strict mode: "ReferenceError: Can't find variable: verifyNotEnumerable"
 test/built-ins/Function/prototype/toString/AsyncFunction.js:
-  default: "SyntaxError: Unexpected token ';'. Expected a ')' or a ',' after a parameter declaration."
-  strict mode: "SyntaxError: Unexpected token ';'. Expected a ')' or a ',' after a parameter declaration."
+  default: "SyntaxError: Unexpected token '}'. Expected a ')' or a ',' after a parameter declaration."
+  strict mode: "SyntaxError: Unexpected token '}'. Expected a ')' or a ',' after a parameter declaration."
 test/built-ins/Function/prototype/toString/Function.js:
-  default: "SyntaxError: Unexpected token ';'. Expected a ')' or a ',' after a parameter declaration."
-  strict mode: "SyntaxError: Unexpected token ';'. Expected a ')' or a ',' after a parameter declaration."
+  default: "SyntaxError: Unexpected token '}'. Expected a ')' or a ',' after a parameter declaration."
+  strict mode: "SyntaxError: Unexpected token '}'. Expected a ')' or a ',' after a parameter declaration."
 test/built-ins/Function/prototype/toString/GeneratorFunction.js:
-  default: "SyntaxError: Unexpected keyword 'yield'. Expected a ')' or a ',' after a parameter declaration."
-  strict mode: "SyntaxError: Unexpected keyword 'yield'. Expected a ')' or a ',' after a parameter declaration."
+  default: "SyntaxError: Unexpected token '}'. Expected a ')' or a ',' after a parameter declaration."
+  strict mode: "SyntaxError: Unexpected token '}'. Expected a ')' or a ',' after a parameter declaration."
 test/built-ins/Function/prototype/toString/async-arrow-function.js:
   default: "Test262Error: Conforms to NativeFunction Syntax: 'async ( /* b */ a /* c */ , /* d */ b /* e */ ) /* f */ => /* g */ { /* h */ ; /* i */ }'.(async /* a */ ( /* b */ a /* c */ , /* d */ b /* e */ ) /* f */ => /* g */ { /* h */ ; /* i */ })"
   strict mode: "Test262Error: Conforms to NativeFunction Syntax: 'async ( /* b */ a /* c */ , /* d */ b /* e */ ) /* f */ => /* g */ { /* h */ ; /* i */ }'.(async /* a */ ( /* b */ a /* c */ , /* d */ b /* e */ ) /* f */ => /* g */ { /* h */ ; /* i */ })"

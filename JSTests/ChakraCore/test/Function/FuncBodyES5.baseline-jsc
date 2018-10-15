@@ -9,13 +9,13 @@ PASS: 7: new Function succeeded as expected
 PASS: 8: new Function succeeded as expected
 PASS: 9: new Function succeeded as expected
 PASS: 10: new Function succeeded as expected
-PASS: 100: new Function failed as expected. SyntaxError: Parser error
-PASS: 100: new Function failed as expected. SyntaxError: Parser error
-PASS: 101: new Function failed as expected. SyntaxError: Parser error
-PASS: 102: new Function failed as expected. SyntaxError: Parameters should match arguments offered as parameters in Function constructor.
-PASS: 103: new Function failed as expected. SyntaxError: Parser error
-PASS: 104: new Function failed as expected. SyntaxError: Parameters should match arguments offered as parameters in Function constructor.
-PASS: 105: new Function failed as expected. SyntaxError: Parser error
+PASS: 100: new Function failed as expected. SyntaxError: Unexpected token '{'. Expected ')' to end a compound expression.
+PASS: 100: new Function failed as expected. SyntaxError: Unexpected token '{'. Expected ')' to end a compound expression.
+PASS: 101: new Function failed as expected. SyntaxError: Unexpected keyword 'function'. Expected ')' to end a compound expression.
+PASS: 102: new Function failed as expected. SyntaxError: Unexpected keyword 'function'. Expected ')' to end a compound expression.
+PASS: 103: new Function failed as expected. SyntaxError: Unexpected keyword 'function'. Expected ')' to end a compound expression.
+PASS: 104: new Function failed as expected. SyntaxError: Unexpected token ';'. Expected ')' to end a compound expression.
+PASS: 105: new Function failed as expected. SyntaxError: Unexpected token ';'. Expected ')' to end a compound expression.
 PASS: 200: new Function failed as expected. SyntaxError: Unexpected token ','. Expected a parameter pattern or a ')' in parameter list.
 PASS: 200: new Function failed as expected. SyntaxError: Unexpected token ','. Expected a parameter pattern or a ')' in parameter list.
 PASS: 201: new Function failed as expected. SyntaxError: Unexpected token ','. Expected a parameter pattern or a ')' in parameter list.
