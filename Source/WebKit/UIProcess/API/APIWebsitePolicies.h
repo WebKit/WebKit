@@ -30,7 +30,6 @@
 #include "WebsiteAutoplayQuirk.h"
 #include "WebsitePopUpPolicy.h"
 #include <WebCore/HTTPHeaderField.h>
-#include <wtf/EnumTraits.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Optional.h>
 #include <wtf/Vector.h>

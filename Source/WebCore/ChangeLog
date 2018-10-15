@@ -1,5 +1,31 @@
 2018-10-15  Alex Christensen  <achristensen@webkit.org>
 
+        Include EnumTraits.h less
+        https://bugs.webkit.org/show_bug.cgi?id=190535
+
+        Reviewed by Chris Dumez.
+
+        * Modules/applepay/ApplePaySessionPaymentRequest.h:
+        * Modules/applepay/PaymentAuthorizationStatus.h:
+        * Modules/applicationmanifest/ApplicationManifest.h:
+        * Modules/fetch/FetchHeaders.h:
+        * Modules/webauthn/AuthenticatorTransport.h:
+        * Modules/webauthn/PublicKeyCredentialType.h:
+        * loader/ShouldSkipSafeBrowsingCheck.h:
+        * loader/ShouldTreatAsContinuingLoad.h:
+        * platform/Cookie.h:
+        * platform/audio/AudioSession.h:
+        * platform/mediastream/CaptureDevice.h:
+        * platform/mediastream/MediaStreamRequest.h:
+        * platform/mediastream/RealtimeMediaSourceSettings.h:
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.h:
+        * platform/network/NetworkLoadInformation.h:
+        * workers/service/ServiceWorkerClientType.h:
+        * workers/service/ServiceWorkerTypes.h:
+        * workers/service/ServiceWorkerUpdateViaCache.h:
+
+2018-10-15  Alex Christensen  <achristensen@webkit.org>
+
         Remove InjectedBundle processing of back/forward lists
         https://bugs.webkit.org/show_bug.cgi?id=190459
 

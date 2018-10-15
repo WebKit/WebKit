@@ -28,7 +28,6 @@
 #include "LibWebRTCMacros.h"
 #include <pal/SessionID.h>
 #include <wtf/CompletionHandler.h>
-#include <wtf/EnumTraits.h>
 #include <wtf/Expected.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/text/WTFString.h>

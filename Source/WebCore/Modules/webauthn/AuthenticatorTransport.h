@@ -27,7 +27,7 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include <wtf/EnumTraits.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 

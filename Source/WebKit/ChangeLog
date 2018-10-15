@@ -1,5 +1,22 @@
 2018-10-15  Alex Christensen  <achristensen@webkit.org>
 
+        Include EnumTraits.h less
+        https://bugs.webkit.org/show_bug.cgi?id=190535
+
+        Reviewed by Chris Dumez.
+
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+        * Shared/Authentication/AuthenticationChallengeDisposition.h:
+        * Shared/CoordinateSystem.h:
+        * Shared/LayerTreeContext.h:
+        * Shared/UndoOrRedo.h:
+        * Shared/WebsiteAutoplayPolicy.h:
+        * Shared/WebsitePopUpPolicy.h:
+        * UIProcess/API/APIWebsitePolicies.h:
+        * WebProcess/UserContent/InjectUserScriptImmediately.h:
+
+2018-10-15  Alex Christensen  <achristensen@webkit.org>
+
         Remove InjectedBundle processing of back/forward lists
         https://bugs.webkit.org/show_bug.cgi?id=190459
 

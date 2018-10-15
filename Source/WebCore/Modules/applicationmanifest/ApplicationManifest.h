@@ -28,7 +28,6 @@
 #if ENABLE(APPLICATION_MANIFEST)
 
 #include "URL.h"
-#include <wtf/EnumTraits.h>
 #include <wtf/Optional.h>
 
 namespace WebCore {

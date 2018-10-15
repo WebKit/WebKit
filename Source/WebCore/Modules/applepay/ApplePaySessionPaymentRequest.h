@@ -28,7 +28,6 @@
 #if ENABLE(APPLE_PAY)
 
 #include "PaymentContact.h"
-#include <wtf/EnumTraits.h>
 #include <wtf/Optional.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>

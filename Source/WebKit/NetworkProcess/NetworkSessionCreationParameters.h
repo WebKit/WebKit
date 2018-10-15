@@ -27,7 +27,6 @@
 
 #include "ArgumentCoders.h"
 #include <pal/SessionID.h>
-#include <wtf/EnumTraits.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)

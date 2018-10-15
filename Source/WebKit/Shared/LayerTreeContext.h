@@ -26,7 +26,7 @@
 #pragma once
 
 #include <stdint.h>
-#include <wtf/EnumTraits.h>
+#include <wtf/Forward.h>
 
 namespace IPC {
 class Decoder;

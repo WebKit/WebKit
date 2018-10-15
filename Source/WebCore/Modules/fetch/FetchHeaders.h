@@ -30,7 +30,6 @@
 
 #include "ExceptionOr.h"
 #include "HTTPHeaderMap.h"
-#include <wtf/EnumTraits.h>
 #include <wtf/HashTraits.h>
 #include <wtf/Variant.h>
 #include <wtf/Vector.h>

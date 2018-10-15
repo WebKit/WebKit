@@ -27,7 +27,6 @@
 #pragma once
 
 #include "URL.h"
-#include <wtf/EnumTraits.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 

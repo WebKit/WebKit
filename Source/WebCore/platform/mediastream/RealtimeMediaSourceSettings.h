@@ -23,13 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RealtimeMediaSourceSettings_h
-#define RealtimeMediaSourceSettings_h
+#pragma once
 
 #if ENABLE(MEDIA_STREAM)
 
 #include "RealtimeMediaSourceSupportedConstraints.h"
-#include <wtf/EnumTraits.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -209,7 +207,5 @@ template <> struct EnumTraits<WebCore::RealtimeMediaSourceSettings::VideoFacingM
 };
 
 }
-
-#endif // RealtimeMediaSourceSettings_h
 
 #endif

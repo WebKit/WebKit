@@ -23,13 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AudioSession_h
-#define AudioSession_h
+#pragma once
 
 #if USE(AUDIO_SESSION)
 
 #include <memory>
-#include <wtf/EnumTraits.h>
 #include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Noncopyable.h>
@@ -112,5 +110,3 @@ template<> struct EnumTraits<WebCore::RouteSharingPolicy> {
 }
 
 #endif // USE(AUDIO_SESSION)
-
-#endif // AudioSession_h

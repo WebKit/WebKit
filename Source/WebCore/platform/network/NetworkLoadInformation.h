@@ -28,7 +28,6 @@
 #include "NetworkLoadMetrics.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
-#include <wtf/EnumTraits.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

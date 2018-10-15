@@ -29,7 +29,6 @@
 
 #include "DocumentIdentifier.h"
 #include "ServiceWorkerIdentifier.h"
-#include <wtf/EnumTraits.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/Variant.h>
 
