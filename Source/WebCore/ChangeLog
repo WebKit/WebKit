@@ -1,3 +1,29 @@
+2018-10-15  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Use a PendingActivity token rather than calling (un)setPendingActivity
+        https://bugs.webkit.org/show_bug.cgi?id=190557
+
+        Reviewed by Alex Christensen.
+
+        PaymentRequest has pending activity whenever there is an active payment handler, since
+        user-initiated events can occur whenever the payment UI is displayed.
+
+        Rather than manually track the pending activity with setPendingActivity() and
+        unsetPendingActivity(), use a PendingActivity token tied to the lifetime of the active
+        payment handler. Also, rewrite canSuspendForDocumentSuspension() in terms of
+        hasPendingActivity().
+
+        * Modules/paymentrequest/PaymentRequest.cpp:
+        (WebCore::PaymentRequest::show):
+        (WebCore::PaymentRequest::abortWithException):
+        (WebCore::PaymentRequest::canSuspendForDocumentSuspension const):
+        (WebCore::PaymentRequest::paymentMethodChanged):
+        (WebCore::PaymentRequest::completeMerchantValidation):
+        (WebCore::PaymentRequest::settleDetailsPromise):
+        (WebCore::PaymentRequest::complete):
+        (WebCore::PaymentRequest::cancel):
+        * Modules/paymentrequest/PaymentRequest.h:
+
 2018-10-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Changing view scale should zoom to initial scale if the page is already at initial scale

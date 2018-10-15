@@ -434,8 +434,7 @@ void PaymentRequest::show(Document& document, RefPtr<DOMPromise>&& detailsPromis
     }
 
     ASSERT(!m_activePaymentHandler);
-    m_activePaymentHandler = WTFMove(selectedPaymentHandler);
-    setPendingActivity(this); // unsetPendingActivity() is called below in stop()
+    m_activePaymentHandler = PaymentHandlerWithPendingActivity { selectedPaymentHandler.releaseNonNull(), makePendingActivity(*this) };
 
     if (!detailsPromise)
         return;
@@ -449,10 +448,9 @@ void PaymentRequest::abortWithException(Exception&& exception)
     if (m_state != State::Interactive)
         return;
 
-    if (auto paymentHandler = std::exchange(m_activePaymentHandler, nullptr)) {
-        unsetPendingActivity(this);
+    if (auto paymentHandler = activePaymentHandler())
         paymentHandler->hide();
-    }
+    m_activePaymentHandler = std::nullopt;
 
     ASSERT(m_state == State::Interactive);
     m_state = State::Closed;
@@ -526,14 +524,7 @@ std::optional<PaymentShippingType> PaymentRequest::shippingType() const
 
 bool PaymentRequest::canSuspendForDocumentSuspension() const
 {
-    switch (m_state) {
-    case State::Created:
-        ASSERT(!m_activePaymentHandler);
-        return true;
-    case State::Interactive:
-    case State::Closed:
-        return !m_activePaymentHandler;
-    }
+    return !hasPendingActivity();
 }
 
 void PaymentRequest::shippingAddressChanged(Ref<PaymentAddress>&& shippingAddress)
@@ -559,7 +550,7 @@ void PaymentRequest::paymentMethodChanged(const String& methodName, PaymentMetho
         if (hasEventListeners(eventName))
             dispatchEvent(PaymentMethodChangeEvent::create(eventName, methodName, WTFMove(methodDetailsFunction)));
         else
-            m_activePaymentHandler->detailsUpdated(UpdateReason::PaymentMethodChanged, { }, { }, { }, { });
+            activePaymentHandler()->detailsUpdated(UpdateReason::PaymentMethodChanged, { }, { }, { }, { });
     });
 }
 
@@ -600,7 +591,7 @@ ExceptionOr<void> PaymentRequest::completeMerchantValidation(Event& event, Ref<D
             return;
         }
 
-        auto exception = m_activePaymentHandler->merchantValidationCompleted(m_merchantSessionPromise->result());
+        auto exception = activePaymentHandler()->merchantValidationCompleted(m_merchantSessionPromise->result());
         if (exception.hasException()) {
             abortWithException(exception.releaseException());
             return;
@@ -658,7 +649,7 @@ void PaymentRequest::settleDetailsPromise(UpdateReason reason)
     m_details.modifiers = WTFMove(detailsUpdate.modifiers);
     m_serializedModifierData = WTFMove(std::get<1>(shippingOptionAndModifierData));
 
-    auto result = m_activePaymentHandler->detailsUpdated(reason, WTFMove(detailsUpdate.error), WTFMove(detailsUpdate.shippingAddressErrors), WTFMove(detailsUpdate.payerErrors), detailsUpdate.paymentMethodErrors.get());
+    auto result = activePaymentHandler()->detailsUpdated(reason, WTFMove(detailsUpdate.error), WTFMove(detailsUpdate.shippingAddressErrors), WTFMove(detailsUpdate.payerErrors), detailsUpdate.paymentMethodErrors.get());
     if (result.hasException()) {
         abortWithException(result.releaseException());
         return;
@@ -715,7 +706,8 @@ void PaymentRequest::accept(const String& methodName, PaymentResponse::DetailsFu
 void PaymentRequest::complete(std::optional<PaymentComplete>&& result)
 {
     ASSERT(m_state == State::Closed);
-    std::exchange(m_activePaymentHandler, nullptr)->complete(WTFMove(result));
+    activePaymentHandler()->complete(WTFMove(result));
+    m_activePaymentHandler = std::nullopt;
 }
 
 void PaymentRequest::cancel()
@@ -723,7 +715,7 @@ void PaymentRequest::cancel()
     if (m_state != State::Interactive)
         return;
 
-    m_activePaymentHandler = nullptr;
+    m_activePaymentHandler = std::nullopt;
 
     if (m_isUpdating) {
         m_isCancelPending = true;

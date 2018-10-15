@@ -106,11 +106,17 @@ private:
         String serializedData;
     };
 
+    struct PaymentHandlerWithPendingActivity {
+        Ref<PaymentHandler> paymentHandler;
+        Ref<PendingActivity<PaymentRequest>> pendingActivity;
+    };
+
     PaymentRequest(Document&, PaymentOptions&&, PaymentDetailsInit&&, Vector<String>&& serializedModifierData, Vector<Method>&& serializedMethodData, String&& selectedShippingOption);
 
     void settleDetailsPromise(UpdateReason);
     void whenDetailsSettled(std::function<void()>&&);
     void abortWithException(Exception&&);
+    PaymentHandler* activePaymentHandler() { return m_activePaymentHandler ? m_activePaymentHandler->paymentHandler.ptr() : nullptr; }
 
     // ActiveDOMObject
     const char* activeDOMObjectName() const final { return "PaymentRequest"; }
@@ -132,7 +138,7 @@ private:
     RefPtr<PaymentAddress> m_shippingAddress;
     State m_state { State::Created };
     std::optional<ShowPromise> m_showPromise;
-    RefPtr<PaymentHandler> m_activePaymentHandler;
+    std::optional<PaymentHandlerWithPendingActivity> m_activePaymentHandler;
     RefPtr<DOMPromise> m_detailsPromise;
     RefPtr<DOMPromise> m_merchantSessionPromise;
     bool m_isUpdating { false };
