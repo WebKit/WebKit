@@ -1,3 +1,17 @@
+2018-10-15  Christopher Reid  <chris.reid@sony.com>
+
+        [Curl][WinCairo] Add Public Suffix support to WinCairo
+        https://bugs.webkit.org/show_bug.cgi?id=183060
+
+        Reviewed by Alex Christensen.
+
+        Share mac's PublicSuffix tests with all ports.
+
+        * TestWebKitAPI/PlatformWin.cmake:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/PublicSuffix.cpp:
+        * TestWebKitAPI/Tests/mac/PublicSuffix.mm: Removed.
+
 2018-10-15  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WHLSL] Migrated WebGPUShadingLanguageRI to the W3C

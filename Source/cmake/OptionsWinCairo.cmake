@@ -10,6 +10,7 @@ find_package(OpenSSL 2.0.0 REQUIRED)
 find_package(PNG 1.6.34 REQUIRED)
 find_package(Sqlite 3.23.1 REQUIRED)
 find_package(ZLIB 1.2.11 REQUIRED)
+find_package(LibPSL 0.20.2 REQUIRED)
 
 find_package(WebP 1.0.0)
 

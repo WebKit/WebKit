@@ -25,6 +25,7 @@ list(APPEND WebCore_SOURCES
     platform/network/curl/DNSResolveQueueCurl.cpp
     platform/network/curl/NetworkStorageSessionCurl.cpp
     platform/network/curl/ProxyServerCurl.cpp
+    platform/network/curl/PublicSuffixCurl.cpp
     platform/network/curl/ResourceErrorCurl.cpp
     platform/network/curl/ResourceHandleCurl.cpp
     platform/network/curl/ResourceResponseCurl.cpp
@@ -34,10 +35,12 @@ list(APPEND WebCore_SOURCES
 
 list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
     ${CURL_INCLUDE_DIRS}
+    ${LIBPSL_INCLUDE_DIR}
     ${OPENSSL_INCLUDE_DIR}
 )
 
 list(APPEND WebCore_LIBRARIES
     ${CURL_LIBRARIES}
+    ${LIBPSL_LIBRARIES}
     ${OPENSSL_LIBRARIES}
 )

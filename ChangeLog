@@ -1,3 +1,14 @@
+2018-10-15  Christopher Reid  <chris.reid@sony.com>
+
+        [Curl][WinCairo] Add Public Suffix support to WinCairo
+        https://bugs.webkit.org/show_bug.cgi?id=183060
+
+        Reviewed by Alex Christensen.
+
+        * Source/cmake/FindLibPSL.cmake: Added.
+        * Source/cmake/OptionsWin.cmake:
+        * Source/cmake/OptionsWinCairo.cmake:
+
 2018-10-15  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Add new files missing from previous commit.

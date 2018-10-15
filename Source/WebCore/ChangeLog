@@ -1,3 +1,22 @@
+2018-10-15  Christopher Reid  <chris.reid@sony.com>
+
+        [Curl][WinCairo] Add Public Suffix support to WinCairo
+        https://bugs.webkit.org/show_bug.cgi?id=183060
+
+        Reviewed by Alex Christensen.
+
+        Add Public Suffix support to WinCairo using LibPSL.
+        LibPSL has been added to WinCairoRequirements in v2018.10.09.
+
+        * platform/Curl.cmake:
+        * platform/network/curl/CookieJarDB.cpp:
+        (WebCore::CookieJarDB::searchCookies): Search for cookies using the topPrivatelyControlledDomain
+        (WebCore::CookieJarDB::setCookie): Prevent cookies from being added under TLDs
+        * platform/network/curl/PublicSuffixCurl.cpp: Added.
+        (WebCore::isPublicSuffix):
+        (WebCore::topPrivatelyControlledDomainInternal):
+        (WebCore::topPrivatelyControlledDomain):
+
 2018-10-15  Simon Fraser  <simon.fraser@apple.com>
 
         RenderLayer tree-related cleanup

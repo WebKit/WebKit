@@ -33,6 +33,10 @@
 
 #include <wtf/MonotonicTime.h>
 
+#if ENABLE(PUBLIC_SUFFIX_LIST)
+#include "PublicSuffix.h"
+#endif
+
 namespace WebCore {
 
 #define CORRUPT_MARKER_SUFFIX "-corrupted"
@@ -334,28 +338,35 @@ bool CookieJarDB::searchCookies(const String& requestUrl, const std::optional<bo
         "AND ((domain = ?) OR (domain GLOB ?)) "\
         "ORDER BY length(path) DESC, lastupdated";
 
-    std::unique_ptr<SQLiteStatement> pstmt = std::make_unique<SQLiteStatement>(m_database, sql);
+    auto pstmt = std::make_unique<SQLiteStatement>(m_database, sql);
+    if (!pstmt)
+        return false;
+
     pstmt->prepare();
     pstmt->bindInt(1, httpOnly ? *httpOnly : -1);
     pstmt->bindInt(2, secure ? *secure : -1);
     pstmt->bindInt(3, session ? *session : -1);
     pstmt->bindText(4, requestHost);
 
-    size_t topLevelSeparator = requestHost.reverseFind('.');
-    if (CookieUtil::isIPAddress(requestHost) || topLevelSeparator == notFound)
+    if (CookieUtil::isIPAddress(requestHost) || !requestHost.contains('.'))
         pstmt->bindNull(5);
     else {
-        /* FIXME: currently we currently do not have a public suffic list in wincairo
-           so right now we glob using just the second level domain e.g. *.DOMAIN.com
-           This will return too many cookies under multilevel tlds such as *.co.uk
-           but we filter those out later
-        */
-
+#if ENABLE(PUBLIC_SUFFIX_LIST)
+        String topPrivateDomain = topPrivatelyControlledDomain(requestHost);
+        if (!topPrivateDomain.isEmpty())
+            pstmt->bindText(5, String("*.") + topPrivateDomain);
+        else
+            pstmt->bindNull(5);
+#else
+        // Fallback to glob for cookies under the second level domain e.g. *.domain.com
+        // This will return too many cookies under multilevel tlds such as *.co.uk, but they will get filtered out later.
+        size_t topLevelSeparator = requestHost.reverseFind('.');
         size_t secondLevelSeparator = requestHost.reverseFind('.', topLevelSeparator-1);
         String localDomain = secondLevelSeparator == notFound ? requestHost : requestHost.substring(secondLevelSeparator+1);
 
         ASSERT(!localDomain.isEmpty());
         pstmt->bindText(5, String("*.") + localDomain);
+#endif
     }
 
     if (!pstmt)
@@ -468,7 +479,10 @@ int CookieJarDB::setCookie(const String& url, const String& cookie, bool fromJav
     if (cookieObj.path.isEmpty())
         cookieObj.path = CookieUtil::defaultPathForURL(urlObj);
 
-    // FIXME: Need to check that a domain doesn't a set cookie for a tld when wincairo supports PSL
+#if ENABLE(PUBLIC_SUFFIX_LIST)
+    if (isPublicSuffix(cookieObj.domain))
+        return -1;
+#endif
 
     if (fromJavaScript && cookieObj.httpOnly)
         return -1;
