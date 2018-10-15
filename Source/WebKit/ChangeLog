@@ -1,3 +1,9 @@
+2018-10-15  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Add new files missing from previous commit.
+
+        * Source/cmake/FindLibseccomp.cmake: Added.
+
 2018-10-15  Patrick Griffis  <pgriffis@igalia.com>
 
         [GTK][WPE] Implement subprocess sandboxing
