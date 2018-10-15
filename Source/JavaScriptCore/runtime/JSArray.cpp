@@ -803,7 +803,7 @@ bool JSArray::shiftCountWithArrayStorage(VM& vm, unsigned startIndex, unsigned c
     
     // If the array contains holes or is otherwise in an abnormal state,
     // use the generic algorithm in ArrayPrototype.
-    if ((storage->hasHoles() && this->structure(vm)->holesMustForwardToPrototype(vm, this)) 
+    if (storage->hasHoles() 
         || hasSparseMap() 
         || shouldUseSlowPut(indexingType())) {
         return false;
@@ -844,22 +844,9 @@ bool JSArray::shiftCountWithArrayStorage(VM& vm, unsigned startIndex, unsigned c
         // after the shift region, so we move the elements before to the right.
         if (numElementsBeforeShiftRegion) {
             RELEASE_ASSERT(count + startIndex <= vectorLength);
-            if (storage->hasHoles()) {
-                for (unsigned i = startIndex; i-- > 0;) {
-                    unsigned destinationIndex = count + i;
-                    JSValue source = storage->m_vector[i].get();
-                    JSValue dest = storage->m_vector[destinationIndex].get();
-                    // Any time we overwrite a hole we know we overcounted the number of values we removed 
-                    // when we subtracted count from m_numValuesInVector above.
-                    if (!dest && destinationIndex >= firstIndexAfterShiftRegion)
-                        storage->m_numValuesInVector++;
-                    storage->m_vector[count + i].setWithoutWriteBarrier(source);
-                }
-            } else {
-                memmove(storage->m_vector + count,
-                    storage->m_vector,
-                    sizeof(JSValue) * startIndex);
-            }
+            memmove(storage->m_vector + count,
+                storage->m_vector,
+                sizeof(JSValue) * startIndex);
         }
         // Adjust the Butterfly and the index bias. We only need to do this here because we're changing
         // the start of the Butterfly, which needs to point at the first indexed property in the used
@@ -875,22 +862,10 @@ bool JSArray::shiftCountWithArrayStorage(VM& vm, unsigned startIndex, unsigned c
     } else {
         // The number of elements before the shift region is greater than or equal to the number 
         // of elements after the shift region, so we move the elements after the shift region to the left.
-        if (storage->hasHoles()) {
-            for (unsigned i = 0; i < numElementsAfterShiftRegion; ++i) {
-                unsigned destinationIndex = startIndex + i;
-                JSValue source = storage->m_vector[firstIndexAfterShiftRegion + i].get();
-                JSValue dest = storage->m_vector[destinationIndex].get();
-                // Any time we overwrite a hole we know we overcounted the number of values we removed 
-                // when we subtracted count from m_numValuesInVector above.
-                if (!dest && destinationIndex < firstIndexAfterShiftRegion)
-                    storage->m_numValuesInVector++;
-                storage->m_vector[startIndex + i].setWithoutWriteBarrier(source);
-            }
-        } else {
-            memmove(storage->m_vector + startIndex,
-                storage->m_vector + firstIndexAfterShiftRegion,
-                sizeof(JSValue) * numElementsAfterShiftRegion);
-        }
+        memmove(storage->m_vector + startIndex,
+            storage->m_vector + firstIndexAfterShiftRegion,
+            sizeof(JSValue) * numElementsAfterShiftRegion);
+
         // Clear the slots of the elements we just moved.
         unsigned startOfEmptyVectorTail = usedVectorLength - count;
         for (unsigned i = startOfEmptyVectorTail; i < usedVectorLength; ++i)
