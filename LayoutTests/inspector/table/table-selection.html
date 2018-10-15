@@ -8,15 +8,12 @@ function test()
 {
     InspectorTest.redirectRequestAnimationFrame();
 
-    let suite = InspectorTest.createSyncSuite("Table");
-
-    // Import names.
-    let {createTable, cleanupTable} = InspectorTest;
+    let suite = InspectorTest.createSyncSuite("Table.RowSelection");
 
     suite.addTestCase({
         name: "Table.constructor",
         test() {
-            let table = createTable();
+            let table = InspectorTest.createTable();
 
             InspectorTest.expectThat(isNaN(table.selectedRow), "selectedRow should be NaN.");
             InspectorTest.expectEqual(table.selectedRows.length, 0, "Should have no selected rows.");
@@ -40,9 +37,9 @@ function test()
 
     suite.addTestCase({
         name: "Table.SelectRow",
-        description: "Select a row, then select another row causing the frist to become deselected.",
+        description: "Select a row, then select another row causing the first to become deselected.",
         test() {
-            let table = createTable();
+            let table = InspectorTest.createTable();
 
             triggerSelectRow(table, 0);
             InspectorTest.expectShallowEqual(table.selectedRows, [0], "selectedRows should be [0].");
@@ -57,7 +54,7 @@ function test()
         name: "Table.DeselectRow",
         description: "Deselect the selected row.",
         test() {
-            let table = createTable();
+            let table = InspectorTest.createTable();
 
             triggerSelectRow(table, 0);
             triggerDeselectRow(table, 0);
@@ -71,7 +68,7 @@ function test()
         name: "Table.AllowsMultipleSelection",
         description: "Should be able to enable multiple selection.",
         test() {
-            let table = createTable();
+            let table = InspectorTest.createTable();
 
             table.allowsMultipleSelection = true;
             InspectorTest.expectThat(table.allowsMultipleSelection, "allowsMultipleSelection enabled.");
@@ -85,7 +82,7 @@ function test()
         name: "Table.SelectMultipleRows.ExtendSelection",
         description: "Select multiple rows, extending the selection.",
         test() {
-            let table = createTable();
+            let table = InspectorTest.createTable();
             table.allowsMultipleSelection = true;
             InspectorTest.expectThat(table.allowsMultipleSelection, "allowsMultipleSelection enabled.");
 
@@ -104,7 +101,7 @@ function test()
         name: "Table.SelectMultipleRows.SelectTheSameRowTwice.ExtendSelection",
         description: "Select an already selected row, and extend the selection.",
         test() {
-            let table = createTable();
+            let table = InspectorTest.createTable();
             table.allowsMultipleSelection = true;
 
             const extendSelection = true;
@@ -122,7 +119,7 @@ function test()
         name: "Table.SelectMultipleRows.SelectTheSameRowTwice.NoExtendSelection",
         description: "Select an already selected row, and do not extend the selection.",
         test() {
-            let table = createTable();
+            let table = InspectorTest.createTable();
             table.allowsMultipleSelection = true;
 
             const extendSelection = true;

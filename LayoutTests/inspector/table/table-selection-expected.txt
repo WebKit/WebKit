@@ -1,7 +1,7 @@
 Tests for WI.Table.
 
 
-== Running test suite: Table
+== Running test suite: Table.RowSelection
 -- Running test case: Table.constructor
 PASS: selectedRow should be NaN.
 PASS: Should have no selected rows.

@@ -3,24 +3,22 @@ TestPage.registerInitializer(() => {
     {
         constructor(items)
         {
-            this._items = items;
+            this._items = items || [];
         }
 
         get items() { return this._items; }
-
-        // Table DataSource
 
         tableNumberOfRows(table)
         {
             return this._items.length;
         }
-    }
+    };
 
     InspectorTest.TableDelegate = class TableDelegate
     {
         constructor(items)
         {
-            this._items = items;
+            this.items = items || [];
         }
 
         tableSelectionDidChange(table)
@@ -30,35 +28,47 @@ TestPage.registerInitializer(() => {
 
         tablePopulateCell(table, cell, column, rowIndex)
         {
-            let item = this._items[rowIndex];
+            let item = this.items[rowIndex];
             InspectorTest.assert(item, "Should have an item for row " + rowIndex);
             InspectorTest.assert(item[column.identifier], "Should have data for column " + column.identifier);
             cell.textContent = item[column.identifier];
             return cell;
         }
+    };
+
+    function createDataSource() {
+        let items = [];
+        for (let i = 0; i < 10; ++i)
+            items.push({index: i, name: `Row ${i}`});
+
+        return new InspectorTest.TableDataSource(items);
     }
 
-    InspectorTest.createTable = function(delegate, dataSource) {
-        if (!dataSource) {
-            let items = [];
-            for (let i = 0; i < 10; ++i) {
-                items.push({
-                    index: i,
-                    name: "Row " + i,
-                });
-            }
-            dataSource = new InspectorTest.TableDataSource(items);
-        }
-
-        delegate = delegate || new InspectorTest.TableDelegate(dataSource.items);
+    function createTableInternal(dataSource, delegate) {
+        InspectorTest.assert(dataSource instanceof InspectorTest.TableDataSource);
+        InspectorTest.assert(delegate instanceof InspectorTest.TableDelegate);
 
         const rowHeight = 20;
         let table = new WI.Table("test", dataSource, delegate, rowHeight);
-        table.addColumn(new WI.TableColumn("index", WI.UIString("Index")));
-        table.addColumn(new WI.TableColumn("name", WI.UIString("Name")));
+        table.addColumn(new WI.TableColumn("index", "Index"));
+        table.addColumn(new WI.TableColumn("name", "Name"));
 
         table.updateLayout();
 
         return table;
     }
+
+    InspectorTest.createTable = function() {
+        let dataSource = createDataSource();
+        let delegate = new InspectorTest.TableDelegate(dataSource.items);
+        return createTableInternal(dataSource, delegate);
+    };
+
+    InspectorTest.createTableWithDelegate = function(delegate) {
+        InspectorTest.assert(delegate instanceof InspectorTest.TableDelegate);
+
+        let dataSource = createDataSource();
+        delegate.items = dataSource.items;
+        return createTableInternal(dataSource, delegate);
+    };
 });

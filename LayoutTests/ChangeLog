@@ -1,3 +1,32 @@
+2018-10-15  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Cleanup Table test utilities
+        https://bugs.webkit.org/show_bug.cgi?id=190538
+        <rdar://problem/45237730>
+
+        Reviewed by Joseph Pecoraro.
+
+        Cleanup Table test utilities by exposing removing the artificial dependency
+        between TableDelegate and TableDataSource, and exposing a cleaner set of
+        utility methods to InspectorTest. This patch changes `InspectorTest.createTable`
+        to take no parameters, and adds `InspectorTest.createTableWithDelegate` for
+        tests that need to supply a custom delegate.
+
+        * inspector/table/resources/table-utilities.js:
+        (TestPage.registerInitializer.InspectorTest.TableDataSource):
+        (TestPage.registerInitializer.InspectorTest.TableDelegate):
+        (TestPage.registerInitializer.InspectorTest.TableDelegate.prototype.tablePopulateCell):
+        (TestPage.registerInitializer.createDataSource):
+        (TestPage.registerInitializer.createTableInternal):
+        (TestPage.registerInitializer.InspectorTest.createTable):
+        (TestPage.registerInitializer.InspectorTest.createTableWithDelegate):
+        (TestPage.registerInitializer):
+
+        * inspector/table/table-selection-expected.txt:
+        Update with new test suite name.
+
+        * inspector/table/table-selection.html:
+
 2018-10-15  Charles Vazac  <cvazac@gmail.com>
 
         Web Inspector: Expose Server Timing Response Headers in Network Tab
