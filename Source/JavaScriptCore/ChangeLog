@@ -1,3 +1,28 @@
+2018-10-15  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r237084, r237088, r237098, and
+        r237114.
+        https://bugs.webkit.org/show_bug.cgi?id=190602
+
+        Breaks internal builds. (Requested by ryanhaddad on #webkit).
+
+        Reverted changesets:
+
+        "Separate configuration extraction from offset extraction"
+        https://bugs.webkit.org/show_bug.cgi?id=189708
+        https://trac.webkit.org/changeset/237084
+
+        "Gardening: Build fix after r237084."
+        https://bugs.webkit.org/show_bug.cgi?id=189708
+        https://trac.webkit.org/changeset/237088
+
+        "Gardening: Build fix after r237084."
+        https://bugs.webkit.org/show_bug.cgi?id=189708
+        https://trac.webkit.org/changeset/237098
+
+        "REGRESSION (r237084): JavaScriptCore fails to build on Linux"
+        https://trac.webkit.org/changeset/237114
+
 2018-10-15  Keith Miller  <keith_miller@apple.com>
 
         BytecodeDumper should print all switch labels
