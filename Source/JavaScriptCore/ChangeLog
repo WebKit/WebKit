@@ -1,3 +1,14 @@
+2018-10-15  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] Disable DOMJIT on 32bit architecture
+        https://bugs.webkit.org/show_bug.cgi?id=190387
+
+        Reviewed by Mark Lam.
+
+        We disable DOMJIT on 32bit architecture due to exhaustion of registers.
+
+        * runtime/Options.h:
+
 2018-10-15  Alex Christensen  <achristensen@webkit.org>
 
         Include EnumTraits.h less
