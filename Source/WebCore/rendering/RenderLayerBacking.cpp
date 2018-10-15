@@ -2080,7 +2080,7 @@ static LayerTraversal traverseVisibleNonCompositedDescendantLayers(RenderLayer& 
     parent.updateLayerListsIfNeeded();
 
 #if !ASSERT_DISABLED
-    LayerListMutationDetector mutationChecker(&parent);
+    LayerListMutationDetector mutationChecker(parent);
 #endif
 
     for (auto* childLayer : parent.normalFlowLayers()) {

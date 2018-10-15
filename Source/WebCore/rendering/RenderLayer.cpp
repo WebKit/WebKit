@@ -4407,7 +4407,7 @@ void RenderLayer::paintList(LayerList layerIterator, GraphicsContext& context, c
         return;
 
 #if !ASSERT_DISABLED
-    LayerListMutationDetector mutationChecker(this);
+    LayerListMutationDetector mutationChecker(*this);
 #endif
 
     for (auto* childLayer : layerIterator)
@@ -5008,7 +5008,7 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
     // This variable tracks which layer the mouse ends up being inside.
     RenderLayer* candidateLayer = nullptr;
 #if !ASSERT_DISABLED
-    LayerListMutationDetector mutationChecker(this);
+    LayerListMutationDetector mutationChecker(*this);
 #endif
 
     // Begin by walking our list of positive layers from highest z-index down to the lowest z-index.
@@ -5787,7 +5787,7 @@ LayoutRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, c
     ASSERT(isStackingContext() || !positiveZOrderLayers().size());
 
 #if !ASSERT_DISABLED
-    LayerListMutationDetector mutationChecker(const_cast<RenderLayer*>(this));
+    LayerListMutationDetector mutationChecker(const_cast<RenderLayer&>(*this));
 #endif
 
     auto computeLayersUnion = [this, &unionBounds, flags, descendantFlags] (const RenderLayer& childLayer) {

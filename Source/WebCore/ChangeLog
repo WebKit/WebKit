@@ -1,5 +1,32 @@
 2018-10-15  Simon Fraser  <simon.fraser@apple.com>
 
+        LayerListMutationDetector should take a reference
+        https://bugs.webkit.org/show_bug.cgi?id=190586
+
+        Reviewed by Zalan Bujtas.
+        
+        Change LayerListMutationDetector to take a RenderLayer&.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintList):
+        (WebCore::RenderLayer::hitTestLayer):
+        (WebCore::RenderLayer::calculateClipRects const):
+        * rendering/RenderLayer.h:
+        (WebCore::LayerListMutationDetector::LayerListMutationDetector):
+        (WebCore::LayerListMutationDetector::~LayerListMutationDetector):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::traverseVisibleNonCompositedDescendantLayers):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::addToOverlapMapRecursive):
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTree):
+        (WebCore::RenderLayerCompositor::updateLayerTreeGeometry):
+        (WebCore::RenderLayerCompositor::updateCompositingDescendantGeometry):
+        (WebCore::RenderLayerCompositor::recursiveRepaintLayer):
+        (WebCore::RenderLayerCompositor::layerHas3DContent const):
+
+2018-10-15  Simon Fraser  <simon.fraser@apple.com>
+
         Share some code to dirty z-order and normal flow lists when child layers are added or removed
         https://bugs.webkit.org/show_bug.cgi?id=190585
 

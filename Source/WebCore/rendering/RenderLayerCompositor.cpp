@@ -1265,7 +1265,7 @@ void RenderLayerCompositor::addToOverlapMapRecursive(OverlapMap& overlapMap, con
     addToOverlapMap(overlapMap, layer, layerExtent);
 
 #if !ASSERT_DISABLED
-    LayerListMutationDetector mutationChecker(const_cast<RenderLayer*>(&layer));
+    LayerListMutationDetector mutationChecker(const_cast<RenderLayer&>(layer));
 #endif
 
     for (auto* renderLayer : layer.negativeZOrderLayers())
@@ -1363,7 +1363,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     }
 
 #if !ASSERT_DISABLED
-    LayerListMutationDetector mutationChecker(&layer);
+    LayerListMutationDetector mutationChecker(layer);
 #endif
 
     bool anyDescendantHas3DTransform = false;
@@ -1562,7 +1562,7 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer& layer, Vect
     auto& childList = layerBacking ? layerChildren : childLayersOfEnclosingLayer;
 
 #if !ASSERT_DISABLED
-    LayerListMutationDetector mutationChecker(&layer);
+    LayerListMutationDetector mutationChecker(layer);
 #endif
 
     for (auto* renderLayer : layer.negativeZOrderLayers())
@@ -1810,7 +1810,7 @@ void RenderLayerCompositor::updateLayerTreeGeometry(RenderLayer& layer, int dept
     }
 
 #if !ASSERT_DISABLED
-    LayerListMutationDetector mutationChecker(&layer);
+    LayerListMutationDetector mutationChecker(layer);
 #endif
 
     for (auto* renderLayer : layer.negativeZOrderLayers())
@@ -1851,7 +1851,7 @@ void RenderLayerCompositor::updateCompositingDescendantGeometry(RenderLayer& com
         return;
 
 #if !ASSERT_DISABLED
-    LayerListMutationDetector mutationChecker(&layer);
+    LayerListMutationDetector mutationChecker(layer);
 #endif
     
     for (auto* renderLayer : layer.negativeZOrderLayers())
@@ -1881,7 +1881,7 @@ void RenderLayerCompositor::recursiveRepaintLayer(RenderLayer& layer)
         layer.setBackingNeedsRepaint();
 
 #if !ASSERT_DISABLED
-    LayerListMutationDetector mutationChecker(&layer);
+    LayerListMutationDetector mutationChecker(layer);
 #endif
 
     if (layer.hasCompositingDescendant()) {
@@ -3498,7 +3498,7 @@ bool RenderLayerCompositor::layerHas3DContent(const RenderLayer& layer) const
     const_cast<RenderLayer&>(layer).updateLayerListsIfNeeded();
 
 #if !ASSERT_DISABLED
-    LayerListMutationDetector mutationChecker(const_cast<RenderLayer*>(&layer));
+    LayerListMutationDetector mutationChecker(const_cast<RenderLayer&>(layer));
 #endif
 
     for (auto* renderLayer : layer.negativeZOrderLayers()) {

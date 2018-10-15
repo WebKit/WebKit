@@ -1195,20 +1195,20 @@ inline void RenderLayer::updateZOrderLists()
 #if !ASSERT_DISABLED
 class LayerListMutationDetector {
 public:
-    LayerListMutationDetector(RenderLayer* layer)
+    LayerListMutationDetector(RenderLayer& layer)
         : m_layer(layer)
-        , m_previousMutationAllowedState(layer->layerListMutationAllowed())
+        , m_previousMutationAllowedState(layer.layerListMutationAllowed())
     {
-        m_layer->setLayerListMutationAllowed(false);
+        m_layer.setLayerListMutationAllowed(false);
     }
     
     ~LayerListMutationDetector()
     {
-        m_layer->setLayerListMutationAllowed(m_previousMutationAllowedState);
+        m_layer.setLayerListMutationAllowed(m_previousMutationAllowedState);
     }
 
 private:
-    RenderLayer* m_layer;
+    RenderLayer& m_layer;
     bool m_previousMutationAllowedState;
 };
 #endif
