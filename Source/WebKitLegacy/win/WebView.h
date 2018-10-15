@@ -516,8 +516,6 @@ public:
 
     void setLastCursor(HCURSOR cursor) { m_lastSetCursor = cursor; }
 
-    void setGlobalHistoryItem(WebCore::HistoryItem*);
-
 #if ENABLE(FULLSCREEN_API)
     bool supportsFullScreenForElement(const WebCore::Element*, bool withKeyboard) const;
     bool isFullScreen() const;
@@ -716,8 +714,6 @@ protected:
     bool m_needsDisplay { false };
 
     HCURSOR m_lastSetCursor { nullptr };
-
-    RefPtr<WebCore::HistoryItem> m_globalHistoryItem;
 
 #if ENABLE(FULLSCREEN_API)
     RefPtr<WebCore::Element> m_fullScreenElement;

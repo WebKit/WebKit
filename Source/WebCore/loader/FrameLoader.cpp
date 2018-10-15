@@ -2437,7 +2437,6 @@ void FrameLoader::checkLoadCompleteForThisFrame()
             if (shouldReset && item)
                 if (Page* page = m_frame.page()) {
                     page->backForward().setCurrentItem(item.get());
-                    m_frame.loader().client().updateGlobalHistoryItemForPage();
                 }
             return;
         }
@@ -3301,10 +3300,8 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
         // we only do this when punting a navigation for the target frame or top-level frame.  
         if ((isTargetItem || m_frame.isMainFrame()) && isBackForwardLoadType(policyChecker().loadType())) {
             if (Page* page = m_frame.page()) {
-                if (HistoryItem* resetItem = m_frame.mainFrame().loader().history().currentItem()) {
+                if (HistoryItem* resetItem = m_frame.mainFrame().loader().history().currentItem())
                     page->backForward().setCurrentItem(resetItem);
-                    m_frame.loader().client().updateGlobalHistoryItemForPage();
-                }
             }
         }
         return;

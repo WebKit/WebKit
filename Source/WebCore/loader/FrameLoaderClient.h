@@ -221,7 +221,6 @@ public:
     virtual void updateGlobalHistoryRedirectLinks() = 0;
 
     virtual bool shouldGoToHistoryItem(HistoryItem&) const = 0;
-    virtual void updateGlobalHistoryItemForPage() { }
 
     // This frame has set its opener to null, disowning it for the lifetime of the frame.
     // See http://html.spec.whatwg.org/#dom-opener.

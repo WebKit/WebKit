@@ -137,7 +137,6 @@ public:
     void updateGlobalHistory() override;
     void updateGlobalHistoryRedirectLinks() override;
     bool shouldGoToHistoryItem(WebCore::HistoryItem&) const override;
-    void updateGlobalHistoryItemForPage() override;
 
     void didDisplayInsecureContent() override;
     void didRunInsecureContent(WebCore::SecurityOrigin&, const WebCore::URL&) override;

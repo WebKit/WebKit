@@ -357,8 +357,6 @@ private:
     std::unique_ptr<WebSelectionServiceController> _selectionServiceController;
 #endif
 
-    RefPtr<WebCore::HistoryItem> _globalHistoryItem;
-
     BOOL interactiveFormValidationEnabled;
     int validationMessageTimerMagnification;
 

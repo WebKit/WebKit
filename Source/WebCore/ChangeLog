@@ -1,3 +1,23 @@
+2018-10-15  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unused WebView._globalHistoryItem
+        https://bugs.webkit.org/show_bug.cgi?id=190601
+
+        Reviewed by Chris Dumez.
+
+        This was a hack to give the client a more reliable current back/forward item, but it hasn't been used for years
+        and it's adding unnecessary complexity to the history code.
+
+        * loader/EmptyFrameLoaderClient.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy):
+        * loader/FrameLoaderClient.h:
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::goToItem):
+        (WebCore::HistoryController::updateForStandardLoad):
+        (WebCore::HistoryController::updateForRedirectWithLockedBackForwardList):
+
 2018-10-15  Chris Dumez  <cdumez@apple.com>
 
         Experiment: target=_blank on anchors should imply rel=noopener

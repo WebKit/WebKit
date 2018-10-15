@@ -6741,15 +6741,6 @@ HRESULT WebView::globalHistoryItem(_COM_Outptr_opt_ IWebHistoryItem** item)
     if (!item)
         return E_POINTER;
     *item = nullptr;
-    if (!m_page)
-        return E_FAIL;
-
-    if (!m_globalHistoryItem) {
-        *item = nullptr;
-        return S_OK;
-    }
-
-    *item = WebHistoryItem::createInstance(m_globalHistoryItem.copyRef());
     return S_OK;
 }
 
@@ -7514,11 +7505,6 @@ HRESULT WebView::setHTTPPipeliningEnabled(BOOL enabled)
 {
     ResourceRequest::setHTTPPipeliningEnabled(enabled);
     return S_OK;
-}
-
-void WebView::setGlobalHistoryItem(HistoryItem* historyItem)
-{
-    m_globalHistoryItem = historyItem;
 }
 
 #if ENABLE(FULLSCREEN_API)

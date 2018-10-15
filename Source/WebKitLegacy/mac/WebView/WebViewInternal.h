@@ -53,7 +53,6 @@ class Event;
 class Frame;
 class HTMLMediaElement;
 class HTMLVideoElement;
-class HistoryItem;
 class KeyboardEvent;
 class Page;
 class RenderBox;
@@ -168,7 +167,6 @@ OBJC_CLASS NSTextAlternatives;
 
 #ifdef __cplusplus
 - (WebCore::Page*)page;
-- (void)_setGlobalHistoryItem:(WebCore::HistoryItem*)historyItem;
 - (WTF::String)_userAgentString;
 #endif
 

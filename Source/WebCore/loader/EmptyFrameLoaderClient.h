@@ -166,7 +166,6 @@ class WEBCORE_EXPORT EmptyFrameLoaderClient : public FrameLoaderClient {
     void updateGlobalHistory() final { }
     void updateGlobalHistoryRedirectLinks() final { }
     bool shouldGoToHistoryItem(HistoryItem&) const final { return false; }
-    void updateGlobalHistoryItemForPage() final { }
     void saveViewStateToItem(HistoryItem&) final { }
     bool canCachePage() const final { return false; }
     void didDisplayInsecureContent() final { }

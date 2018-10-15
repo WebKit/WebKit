@@ -721,8 +721,6 @@ Could be worth adding to the API.
 - (BOOL)usesPageCache;
 - (void)setUsesPageCache:(BOOL)usesPageCache;
 
-- (WebHistoryItem *)_globalHistoryItem;
-
 /*!
     @method textIteratorForRect:
     @param rect The rectangle of the document that we're interested in text from.

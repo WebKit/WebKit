@@ -1103,19 +1103,6 @@ bool WebFrameLoaderClient::shouldGoToHistoryItem(HistoryItem& item) const
     return [[view _policyDelegateForwarder] webView:view shouldGoToHistoryItem:kit(&item)];
 }
 
-void WebFrameLoaderClient::updateGlobalHistoryItemForPage()
-{
-    HistoryItem* historyItem = 0;
-
-    if (Page* page = core(m_webFrame.get())->page()) {
-        if (!page->sessionID().isEphemeral())
-            historyItem = page->backForward().currentItem();
-    }
-
-    WebView *webView = getWebView(m_webFrame.get());
-    [webView _setGlobalHistoryItem:historyItem];
-}
-
 void WebFrameLoaderClient::didDisplayInsecureContent()
 {
     WebView *webView = getWebView(m_webFrame.get());   
