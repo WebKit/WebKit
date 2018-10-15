@@ -32,6 +32,7 @@ namespace WebCore {
 
 class CSSValue;
 class StyleResolver;
+struct CSSRegisteredCustomProperty;
 
 class StyleBuilder {
 public:

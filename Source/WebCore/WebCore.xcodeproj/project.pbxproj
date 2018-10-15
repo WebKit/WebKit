@@ -7231,6 +7231,11 @@
 		41189EF71AD8232800B90A0D /* ReadableStreamDefaultController.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ReadableStreamDefaultController.idl; sourceTree = "<group>"; };
 		41189EF71AD8232800B93F64 /* ReadableByteStreamController.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ReadableByteStreamController.idl; sourceTree = "<group>"; };
 		41189EF71AD8232800B95672 /* ReadableStreamBYOBRequest.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ReadableStreamBYOBRequest.idl; sourceTree = "<group>"; };
+		41209E91216D593C00A73A12 /* RTCCertificate.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RTCCertificate.idl; sourceTree = "<group>"; };
+		41209E93216D5C7900A73A12 /* RTCCertificate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCCertificate.h; sourceTree = "<group>"; };
+		41209E94216EA69A00A73A12 /* RTCCertificate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTCCertificate.cpp; sourceTree = "<group>"; };
+		41209E95216EC34E00A73A12 /* LibWebRTCCertificateGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibWebRTCCertificateGenerator.h; path = libwebrtc/LibWebRTCCertificateGenerator.h; sourceTree = "<group>"; };
+		41209E96216EC34F00A73A12 /* LibWebRTCCertificateGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LibWebRTCCertificateGenerator.cpp; path = libwebrtc/LibWebRTCCertificateGenerator.cpp; sourceTree = "<group>"; };
 		4127D5360F8AAB1D00E424F5 /* ScriptState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptState.cpp; sourceTree = "<group>"; };
 		4129C9801F5861C7009D7403 /* ReadableStreamSink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReadableStreamSink.h; sourceTree = "<group>"; };
 		4129C9811F5861C7009D7403 /* ReadableStreamSink.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ReadableStreamSink.idl; sourceTree = "<group>"; };
@@ -15305,6 +15310,9 @@
 				5E2C434D1BCEE2E50001E2BC /* PeerConnectionBackend.h */,
 				316DCB2B1E78F3A9001B5F87 /* RTCAnswerOptions.h */,
 				316DCB2C1E78F3A9001B5F87 /* RTCAnswerOptions.idl */,
+				41209E94216EA69A00A73A12 /* RTCCertificate.cpp */,
+				41209E93216D5C7900A73A12 /* RTCCertificate.h */,
+				41209E91216D593C00A73A12 /* RTCCertificate.idl */,
 				07AB996518DA3C010018771E /* RTCConfiguration.h */,
 				07AB996618DA3C010018771E /* RTCConfiguration.idl */,
 				418205481E53EAAD00D62207 /* RTCController.cpp */,
@@ -17099,6 +17107,8 @@
 		417612AA1E3A992300C3D81D /* libwebrtc */ = {
 			isa = PBXGroup;
 			children = (
+				41209E96216EC34F00A73A12 /* LibWebRTCCertificateGenerator.cpp */,
+				41209E95216EC34E00A73A12 /* LibWebRTCCertificateGenerator.h */,
 				5CDD833F1E43253D00621E92 /* LibWebRTCDataChannelHandler.cpp */,
 				5CDD83401E43253D00621E92 /* LibWebRTCDataChannelHandler.h */,
 				417612AB1E3A993B00C3D81D /* LibWebRTCMediaEndpoint.cpp */,

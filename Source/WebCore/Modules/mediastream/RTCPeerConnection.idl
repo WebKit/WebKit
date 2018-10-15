@@ -47,6 +47,20 @@ typedef RTCRtpTransceiverDirection RtpTransceiverDirection;
 };
 
 [
+Conditional=WEB_RTC,
+EnabledAtRuntime=PeerConnection
+] dictionary RTCCertificateParameters {
+    DOMString name;
+    DOMString hash;
+    DOMString namedCurve;
+    unsigned long modulusLength;
+    Uint8Array publicExponent;
+    double expires;
+};
+
+typedef (object or DOMString) AlgorithmIdentifier;
+
+[
     Conditional=WEB_RTC,
     EnabledAtRuntime=PeerConnection,
     ImplementedAs=RTCRtpTransceiverInit
@@ -114,8 +128,7 @@ typedef RTCRtpTransceiverDirection RtpTransceiverDirection;
 
 
     // 4.11 Certificate management
-    // FIXME 169644: missing generateCertificate
-
+    [CallWith=ScriptState] static Promise<RTCCertificate> generateCertificate(AlgorithmIdentifier keygenAlgorithm);
 
     // 5.1 RTCPeerConnection extensions
     // RTP Media API extensions

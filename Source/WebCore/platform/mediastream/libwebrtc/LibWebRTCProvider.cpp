@@ -106,6 +106,7 @@ struct PeerConnectionFactoryAndThreads : public rtc::MessageHandler {
     std::unique_ptr<LibWebRTCAudioModule> audioDeviceModule;
     std::unique_ptr<rtc::NetworkManager> networkManager;
     std::unique_ptr<BasicPacketSocketFactory> packetSocketFactory;
+    std::unique_ptr<rtc::RTCCertificateGenerator> certificateGenerator;
 
 private:
     void OnMessage(rtc::Message*);
@@ -263,6 +264,15 @@ rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPee
         return nullptr;
 
     return m_factory->CreatePeerConnection(configuration, WTFMove(portAllocator), nullptr, &observer);
+}
+
+rtc::RTCCertificateGenerator& LibWebRTCProvider::certificateGenerator()
+{
+    auto& factoryAndThreads = getStaticFactoryAndThreads(m_useNetworkThreadWithSocketServer);
+    if (!factoryAndThreads.certificateGenerator)
+        factoryAndThreads.certificateGenerator = std::make_unique<rtc::RTCCertificateGenerator>(factoryAndThreads.signalingThread.get(), factoryAndThreads.networkThread.get());
+
+    return *factoryAndThreads.certificateGenerator;
 }
 
 #endif // USE(LIBWEBRTC)

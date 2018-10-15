@@ -1,0 +1,7 @@
+
+PASS generateCertificate() with algorithm as a string fails 
+PASS generateCertificate() with unsupported ECDSA curve 
+PASS generateCertificate() with unsupported RSA hash 
+PASS generateCertificate() with missing modulusLength should skip publicExponent 
+PASS generateCertificate() with missing exponent should skip modulusLength 
+

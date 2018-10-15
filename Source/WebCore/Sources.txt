@@ -167,6 +167,7 @@ Modules/mediastream/MediaStreamTrackEvent.cpp
 Modules/mediastream/MediaTrackConstraints.cpp
 Modules/mediastream/NavigatorMediaDevices.cpp
 Modules/mediastream/PeerConnectionBackend.cpp
+Modules/mediastream/RTCCertificate.cpp
 Modules/mediastream/RTCController.cpp
 Modules/mediastream/RTCDTMFSender.cpp
 Modules/mediastream/RTCDTMFToneChangeEvent.cpp
@@ -182,6 +183,8 @@ Modules/mediastream/RTCSessionDescription.cpp
 Modules/mediastream/RTCTrackEvent.cpp
 Modules/mediastream/UserMediaController.cpp
 Modules/mediastream/UserMediaRequest.cpp
+
+Modules/mediastream/libwebrtc/LibWebRTCCertificateGenerator.cpp
 
 Modules/navigatorcontentutils/NavigatorContentUtils.cpp
 
@@ -2879,6 +2882,7 @@ JSPublicKeyCredentialDescriptor.cpp
 JSPublicKeyCredentialRequestOptions.cpp
 JSPublicKeyCredentialType.cpp
 JSRTCAnswerOptions.cpp
+JSRTCCertificate.cpp
 JSRTCConfiguration.cpp
 JSRTCDTMFSender.cpp
 JSRTCDTMFToneChangeEvent.cpp

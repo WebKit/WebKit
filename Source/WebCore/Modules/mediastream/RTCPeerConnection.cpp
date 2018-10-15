@@ -40,6 +40,7 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "Frame.h"
+#include "JSRTCPeerConnection.h"
 #include "Logging.h"
 #include "MediaEndpointConfiguration.h"
 #include "MediaStream.h"
@@ -537,6 +538,63 @@ void RTCPeerConnection::dispatchEvent(Event& event)
 {
     DEBUG_LOG(LOGIDENTIFIER, "dispatching '", event.type(), "'");
     EventTarget::dispatchEvent(event);
+}
+
+static inline ExceptionOr<PeerConnectionBackend::CertificateInformation> certificateTypeFromAlgorithmIdentifier(JSC::ExecState& state, RTCPeerConnection::AlgorithmIdentifier&& algorithmIdentifier)
+{
+    if (WTF::holds_alternative<String>(algorithmIdentifier))
+        return Exception { NotSupportedError, "Algorithm is not supported"_s };
+
+    auto& value = WTF::get<JSC::Strong<JSC::JSObject>>(algorithmIdentifier);
+
+    JSC::VM& vm = state.vm();
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    auto parameters = convertDictionary<RTCPeerConnection::CertificateParameters>(state, value.get());
+    if (UNLIKELY(scope.exception())) {
+        scope.clearException();
+        return Exception { TypeError, "Unable to read certificate parameters"_s };
+    }
+
+    if (parameters.expires && *parameters.expires < 0)
+        return Exception { TypeError, "Expire value is invalid"_s };
+
+    if (parameters.name == "RSASSA-PKCS1-v1_5"_s) {
+        if (!parameters.hash.isNull() && parameters.hash != "SHA-256"_s)
+            return Exception { NotSupportedError, "Only SHA-256 is supported for RSASSA-PKCS1-v1_5"_s };
+
+        auto result = PeerConnectionBackend::CertificateInformation::RSASSA_PKCS1_v1_5();
+        if (parameters.modulusLength && parameters.publicExponent) {
+            int publicExponent = 0;
+            int value = 1;
+            for (unsigned counter = 0; counter < parameters.publicExponent->byteLength(); ++counter) {
+                publicExponent += parameters.publicExponent->data()[counter] * value;
+                value <<= 8;
+            }
+
+            result.rsaParameters = PeerConnectionBackend::CertificateInformation::RSA { *parameters.modulusLength, publicExponent };
+        }
+        result.expires = parameters.expires;
+        return WTFMove(result);
+    }
+    if (parameters.name == "ECDSA"_s && parameters.namedCurve == "P-256"_s) {
+        auto result = PeerConnectionBackend::CertificateInformation::ECDSA_P256();
+        result.expires = parameters.expires;
+        return WTFMove(result);
+    }
+
+    return Exception { NotSupportedError, "Algorithm is not supported"_s };
+}
+
+void RTCPeerConnection::generateCertificate(JSC::ExecState& state, AlgorithmIdentifier&& algorithmIdentifier, DOMPromiseDeferred<IDLInterface<RTCCertificate>>&& promise)
+{
+    auto parameters = certificateTypeFromAlgorithmIdentifier(state, WTFMove(algorithmIdentifier));
+    if (parameters.hasException()) {
+        promise.reject(parameters.releaseException());
+        return;
+    }
+    auto& document = downcast<Document>(*JSC::jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject())->scriptExecutionContext());
+    PeerConnectionBackend::generateCertificate(document, parameters.returnValue(), WTFMove(promise));
 }
 
 #if !RELEASE_LOG_DISABLED

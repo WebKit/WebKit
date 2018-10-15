@@ -28,7 +28,10 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#include "AuthenticatorAssertionResponse.h"
+#include "AuthenticatorAttestationResponse.h"
 #include "AuthenticatorCoordinator.h"
+#include "AuthenticatorResponse.h"
 #include "Document.h"
 #include "JSDOMPromiseDeferred.h"
 #include "Page.h"

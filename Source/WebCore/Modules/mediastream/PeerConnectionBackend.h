@@ -43,9 +43,11 @@
 
 namespace WebCore {
 
+class Document;
 class MediaStream;
 class MediaStreamTrack;
 class PeerConnectionBackend;
+class RTCCertificate;
 class RTCDataChannelHandler;
 class RTCIceCandidate;
 class RTCPeerConnection;
@@ -132,6 +134,35 @@ public:
     virtual bool isLocalDescriptionSet() const = 0;
 
     void finishedRegisteringMDNSName(const String& ipAddress, const String& name);
+
+    struct CertificateInformation {
+        enum class Type { RSASSAPKCS1v15, ECDSAP256 };
+        struct RSA {
+            unsigned modulusLength;
+            int publicExponent;
+        };
+
+        static CertificateInformation RSASSA_PKCS1_v1_5()
+        {
+            return CertificateInformation { Type::RSASSAPKCS1v15 };
+        }
+
+        static CertificateInformation ECDSA_P256()
+        {
+            return CertificateInformation { Type::ECDSAP256 };
+        }
+
+        explicit CertificateInformation(Type type)
+            : type(type)
+        {
+        }
+
+        Type type;
+        std::optional<double> expires;
+
+        std::optional<RSA> rsaParameters;
+    };
+    static void generateCertificate(Document&, const CertificateInformation&, DOMPromiseDeferred<IDLInterface<RTCCertificate>>&&);
 
 protected:
     void fireICECandidateEvent(RefPtr<RTCIceCandidate>&&, String&& url);

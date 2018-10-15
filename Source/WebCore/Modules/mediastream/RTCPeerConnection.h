@@ -45,6 +45,7 @@
 #include "RTCPeerConnectionState.h"
 #include "RTCRtpTransceiver.h"
 #include "RTCSignalingState.h"
+#include <JavaScriptCore/Uint8Array.h>
 #include <wtf/LoggerHelper.h>
 
 namespace WebCore {
@@ -79,6 +80,18 @@ public:
     using DataChannelInit = RTCDataChannelInit;
 
     ExceptionOr<void> initializeWith(Document&, RTCConfiguration&&);
+
+    struct CertificateParameters {
+        String name;
+        String hash;
+        String namedCurve;
+        std::optional<uint32_t> modulusLength;
+        RefPtr<Uint8Array> publicExponent;
+        std::optional<double> expires;
+    };
+
+    using AlgorithmIdentifier = Variant<JSC::Strong<JSC::JSObject>, String>;
+    static void generateCertificate(JSC::ExecState&, AlgorithmIdentifier&&, DOMPromiseDeferred<IDLInterface<RTCCertificate>>&&);
 
     // 4.3.2 RTCPeerConnection Interface
     void queuedCreateOffer(RTCOfferOptions&&, PeerConnection::SessionDescriptionPromise&&);

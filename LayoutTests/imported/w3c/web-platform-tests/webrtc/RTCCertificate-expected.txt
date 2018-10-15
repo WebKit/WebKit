@@ -1,23 +1,11 @@
 
-FAIL Constructing RTCPeerConnection with expired certificate should reject with InvalidAccessError RTCPeerConnection.generateCertificate is not a function. (In 'RTCPeerConnection.generateCertificate({
-      name: 'ECDSA',
-      namedCurve: 'P-256',
-      expires: 0
-    })', 'RTCPeerConnection.generateCertificate' is undefined)
-FAIL Calling setConfiguration with different set of certs should reject with InvalidModificationError RTCPeerConnection.generateCertificate is not a function. (In 'RTCPeerConnection.generateCertificate({
-      name: 'ECDSA',
-      namedCurve: 'P-256'
-    })', 'RTCPeerConnection.generateCertificate' is undefined)
-FAIL RTCCertificate should have at least one fingerprint RTCPeerConnection.generateCertificate is not a function. (In 'RTCPeerConnection.generateCertificate({
-      name: 'ECDSA',
-      namedCurve: 'P-256'
-    })', 'RTCPeerConnection.generateCertificate' is undefined)
-FAIL RTCPeerConnection({ certificates }) should generate offer SDP with fingerprint of provided certificate RTCPeerConnection.generateCertificate is not a function. (In 'RTCPeerConnection.generateCertificate({
-      name: 'ECDSA',
-      namedCurve: 'P-256'
-    })', 'RTCPeerConnection.generateCertificate' is undefined)
-FAIL RTCPeerConnection({ certificates }) should generate offer SDP with fingerprint of all provided certificates RTCPeerConnection.generateCertificate is not a function. (In 'RTCPeerConnection.generateCertificate({
-      name: 'ECDSA',
-      namedCurve: 'P-256'
-    })', 'RTCPeerConnection.generateCertificate' is undefined)
+FAIL Constructing RTCPeerConnection with expired certificate should reject with InvalidAccessError assert_throws: function "() =>
+        new RTCPeerConnection({ certificates: [cert] })" did not throw
+FAIL Calling setConfiguration with different set of certs should reject with InvalidModificationError assert_throws: function "() =>
+        pc.setConfiguration({
+          certificates: [cert2]
+        })" did not throw
+PASS RTCCertificate should have at least one fingerprint 
+FAIL RTCPeerConnection({ certificates }) should generate offer SDP with fingerprint of provided certificate assert_true: Expect fingerprint line to be found in SDP expected true got false
+FAIL RTCPeerConnection({ certificates }) should generate offer SDP with fingerprint of all provided certificates assert_true: Expect fingerprint line to be found in SDP expected true got false
 

@@ -1,3 +1,52 @@
+2018-10-15  Youenn Fablet  <youenn@apple.com>
+
+        RTCPeerConnection.generateCertificate is not a function
+        https://bugs.webkit.org/show_bug.cgi?id=173541
+        <rdar://problem/32638029>
+
+        Reviewed by Eric Carlson.
+
+        Add support for RTCCertificate generation through libwebrtc certificate generator.
+        Make generation in the webrtc network thread.
+        Support is as per spec (ECDSA and RSASSA_PKCS).
+
+        Partially covered by WPT tests.
+
+        * css/StyleBuilder.h: Fixing build.
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Modules/webauthn/PublicKeyCredential.cpp: Fixing build.
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        (WebCore::PeerConnectionBackend::generateCertificate):
+        * Modules/mediastream/PeerConnectionBackend.h:
+        (WebCore::PeerConnectionBackend::CertificateInformation::RSASSA_PKCS1_v1_5):
+        (WebCore::PeerConnectionBackend::CertificateInformation::ECDSA_P256):
+        (WebCore::PeerConnectionBackend::CertificateInformation::CertificateInformation):
+        * Modules/mediastream/RTCCertificate.cpp: Added.
+        (WebCore::RTCCertificate::create):
+        (WebCore::RTCCertificate::RTCCertificate):
+        * Modules/mediastream/RTCCertificate.h: Added.
+        (WebCore::RTCCertificate::expires const):
+        (WebCore::RTCCertificate::getFingerprints const):
+        * Modules/mediastream/RTCCertificate.idl: Added.
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::certificateTypeFromAlgorithmIdentifier):
+        (WebCore::RTCPeerConnection::generateCertificate):
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/RTCPeerConnection.idl:
+        * Modules/mediastream/libwebrtc/LibWebRTCCertificateGenerator.cpp: Added.
+        (WebCore::LibWebRTCCertificateGenerator::RTCCertificateGeneratorCallback::RTCCertificateGeneratorCallback):
+        (WebCore::LibWebRTCCertificateGenerator::RTCCertificateGeneratorCallback::~RTCCertificateGeneratorCallback):
+        (WebCore::LibWebRTCCertificateGenerator::keyParamsFromCertificateType):
+        (WebCore::LibWebRTCCertificateGenerator::generateCertificate):
+        * Modules/mediastream/libwebrtc/LibWebRTCCertificateGenerator.h: Added.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.cpp:
+        (WebCore::LibWebRTCProvider::certificateGenerator):
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.h:
+
 2018-10-15  Simon Fraser  <simon.fraser@apple.com>
 
         Add compact logging for the paint-order RenderLayer tree

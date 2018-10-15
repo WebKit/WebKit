@@ -1,31 +1,10 @@
 
-FAIL generateCertificate() with compulsary RSASSA-PKCS1-v1_5 parameters should succeed undefined is not a function (near '...RTCPeerConnection.generateCertificate...')
-FAIL generateCertificate() with compulsary ECDSA parameters should succeed RTCPeerConnection.generateCertificate is not a function. (In 'RTCPeerConnection.generateCertificate({
-      name: 'ECDSA',
-      namedCurve: 'P-256'
-    })', 'RTCPeerConnection.generateCertificate' is undefined)
-FAIL generateCertificate() with invalid string algorithm should reject with NotSupportedError RTCPeerConnection.generateCertificate is not a function. (In 'RTCPeerConnection.generateCertificate('invalid-algo')', 'RTCPeerConnection.generateCertificate' is undefined)
-FAIL generateCertificate() with invalid algorithm dict should reject with NotSupportedError RTCPeerConnection.generateCertificate is not a function. (In 'RTCPeerConnection.generateCertificate({
-        name: 'invalid-algo'
-      })', 'RTCPeerConnection.generateCertificate' is undefined)
-FAIL generateCertificate() with valid expires parameter should succeed RTCPeerConnection.generateCertificate is not a function. (In 'RTCPeerConnection.generateCertificate({
-      name: 'ECDSA',
-      namedCurve: 'P-256',
-      expires: 2000
-    })', 'RTCPeerConnection.generateCertificate' is undefined)
-FAIL generateCertificate() with 0 expires parameter should generate expired cert RTCPeerConnection.generateCertificate is not a function. (In 'RTCPeerConnection.generateCertificate({
-      name: 'ECDSA',
-      namedCurve: 'P-256',
-      expires: 0
-    })', 'RTCPeerConnection.generateCertificate' is undefined)
-FAIL generateCertificate() with invalid range for expires should reject with TypeError RTCPeerConnection.generateCertificate is not a function. (In 'RTCPeerConnection.generateCertificate({
-        name: 'ECDSA',
-        namedCurve: 'P-256',
-        expires: -1
-      })', 'RTCPeerConnection.generateCertificate' is undefined)
-FAIL generateCertificate() with invalid type for expires should reject with TypeError RTCPeerConnection.generateCertificate is not a function. (In 'RTCPeerConnection.generateCertificate({
-        name: 'ECDSA',
-        namedCurve: 'P-256',
-        expires: 'invalid'
-      })', 'RTCPeerConnection.generateCertificate' is undefined)
+PASS generateCertificate() with compulsary RSASSA-PKCS1-v1_5 parameters should succeed 
+PASS generateCertificate() with compulsary ECDSA parameters should succeed 
+PASS generateCertificate() with invalid string algorithm should reject with NotSupportedError 
+PASS generateCertificate() with invalid algorithm dict should reject with NotSupportedError 
+PASS generateCertificate() with valid expires parameter should succeed 
+PASS generateCertificate() with 0 expires parameter should generate expired cert 
+PASS generateCertificate() with invalid range for expires should reject with TypeError 
+PASS generateCertificate() with invalid type for expires should reject with TypeError 
 

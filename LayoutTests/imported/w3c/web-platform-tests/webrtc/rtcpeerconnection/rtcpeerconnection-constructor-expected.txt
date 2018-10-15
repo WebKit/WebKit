@@ -77,8 +77,10 @@ FAIL new RTCPeerConnection({ certificates: [undefined] }) assert_throws: functio
         eval(expr);
       }" did not throw
 PASS new RTCPeerConnection({ iceCandidatePoolSize: toNumberThrows }) 
-FAIL new RTCPeerConnection({ certificates: [certificate] }) RTCPeerConnection.generateCertificate is not a function. (In 'RTCPeerConnection.generateCertificate({ name: "ECDSA", namedCurve: "P-256" })', 'RTCPeerConnection.generateCertificate' is undefined)
-FAIL new RTCPeerConnection({ certificates: [expiredCertificate] }) RTCPeerConnection.generateCertificate is not a function. (In 'RTCPeerConnection.generateCertificate({ name: "ECDSA", namedCurve: "P-256", expires: 0 })', 'RTCPeerConnection.generateCertificate' is undefined)
+PASS new RTCPeerConnection({ certificates: [certificate] }) 
+FAIL new RTCPeerConnection({ certificates: [expiredCertificate] }) assert_throws: function "function () {
+          new RTCPeerConnection({ certificates: [certificate] });
+        }" did not throw
 PASS localDescription initial value 
 PASS currentLocalDescription initial value 
 PASS pendingLocalDescription initial value 

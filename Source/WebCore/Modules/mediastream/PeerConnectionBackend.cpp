@@ -36,6 +36,7 @@
 
 #include "EventNames.h"
 #include "JSRTCSessionDescription.h"
+#include "LibWebRTCCertificateGenerator.h"
 #include "Logging.h"
 #include "Page.h"
 #include "RTCIceCandidate.h"
@@ -543,6 +544,18 @@ ExceptionOr<Ref<RTCRtpTransceiver>> PeerConnectionBackend::addTransceiver(const 
 ExceptionOr<Ref<RTCRtpTransceiver>> PeerConnectionBackend::addTransceiver(Ref<MediaStreamTrack>&&, const RTCRtpTransceiverInit&)
 {
     return Exception { NotSupportedError, "Not implemented"_s };
+}
+
+void PeerConnectionBackend::generateCertificate(Document& document, const CertificateInformation& info, DOMPromiseDeferred<IDLInterface<RTCCertificate>>&& promise)
+{
+#if USE(LIBWEBRTC)
+    LibWebRTCCertificateGenerator::generateCertificate(document.page()->libWebRTCProvider(), info, WTFMove(promise));
+#else
+    UNUSED_PARAM(document);
+    UNUSED_PARAM(expires);
+    UNUSED_PARAM(type);
+    promise.reject(NotSupportedError);
+#endif
 }
 
 #if !RELEASE_LOG_DISABLED

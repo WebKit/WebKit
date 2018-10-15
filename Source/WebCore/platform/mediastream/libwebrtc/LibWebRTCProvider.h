@@ -47,6 +47,7 @@ namespace rtc {
 class NetworkManager;
 class PacketSocketFactory;
 class Thread;
+class RTCCertificateGenerator;
 }
 
 namespace webrtc {
@@ -110,6 +111,8 @@ public:
 
     void supportsVP8(bool value) { m_supportsVP8 = value; }
     virtual void disableNonLocalhostConnections() { m_disableNonLocalhostConnections = true; }
+
+    rtc::RTCCertificateGenerator& certificateGenerator();
 
 protected:
     LibWebRTCProvider() = default;

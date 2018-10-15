@@ -1,6 +1,6 @@
 
 PASS Main test driver 
-FAIL Test driver for asyncInitCertificate undefined is not a function (near '...RTCPeerConnection.generateCertificate...')
+PASS Test driver for asyncInitCertificate 
 FAIL Test driver for asyncInitTransports assert_unreached: Failed to run asyncInitTransports: ReferenceError: Can't find variable: RTCSctpTransport Reached unreachable code
 PASS Test driver for asyncInitMediaStreamTrack 
 PASS EventTarget interface: existence and properties of interface object 
