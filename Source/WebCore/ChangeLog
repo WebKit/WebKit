@@ -1,3 +1,15 @@
+2018-10-15  Charlie Turner  <cturner@igalia.com>
+
+        Fix build error with !LOG_DISABLED in Release mode
+        https://bugs.webkit.org/show_bug.cgi?id=190465
+
+        Reviewed by Michael Catanzaro.
+
+        No tests due to no new functionality.
+
+        * workers/service/ServiceWorkerRegistrationKey.cpp:
+        * workers/service/ServiceWorkerRegistrationKey.h:
+
 2018-10-15  Simon Fraser  <simon.fraser@apple.com>
 
         LayerListMutationDetector should take a reference

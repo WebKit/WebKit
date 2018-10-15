@@ -130,7 +130,7 @@ std::optional<ServiceWorkerRegistrationKey> ServiceWorkerRegistrationKey::fromDa
     return ServiceWorkerRegistrationKey { { key.substring(0, first), key.substring(first + 1, second - first - 1), shortPort }, WTFMove(scope) };
 }
 
-#ifndef NDEBUG
+#if !LOG_DISABLED
 String ServiceWorkerRegistrationKey::loggingString() const
 {
     return makeString(m_topOrigin.debugString(), "-", m_scope.string());

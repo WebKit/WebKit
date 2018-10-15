@@ -59,7 +59,7 @@ public:
     String toDatabaseKey() const;
     static std::optional<ServiceWorkerRegistrationKey> fromDatabaseKey(const String&);
 
-#ifndef NDEBUG
+#if !LOG_DISABLED
     String loggingString() const;
 #endif
 
