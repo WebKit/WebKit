@@ -1345,8 +1345,8 @@ WI.TextEditor = class TextEditor extends WI.View
                 end = {line: this._executionLineNumber};
             } else {
                 // Highlight the range.
-                start = range.startPosition;
-                end = range.endPosition;
+                start = range.startPosition.toCodeMirror();
+                end = range.endPosition.toCodeMirror();
             }
 
             // Ensure the marker is cleared in case there were multiple updates very quickly.

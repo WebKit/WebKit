@@ -1426,10 +1426,10 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
             return new WI.SourceCodePosition(position.lineNumber + startLine, columnNumber);
         }
 
-        // When returning offsets, convert to offsets within the SourceCode being viewed.
+        // When returning positions, convert to positions relative to the TextEditor content.
         let highlightSourceCodeRange = (startPosition, endPosition) => {
-            startPosition = fromInlineScriptPosition(startPosition).toCodeMirror();
-            endPosition = fromInlineScriptPosition(endPosition).toCodeMirror();
+            startPosition = this.originalPositionToCurrentPosition(fromInlineScriptPosition(startPosition));
+            endPosition = this.originalPositionToCurrentPosition(fromInlineScriptPosition(endPosition));
             callback({startPosition, endPosition});
         };
 

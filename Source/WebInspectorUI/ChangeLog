@@ -1,3 +1,21 @@
+2018-10-15  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: REGRESSION (r233824): execution highlight range missing/incorrect in pretty printed code
+        https://bugs.webkit.org/show_bug.cgi?id=188082
+        <rdar://problem/42640580>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WI.SourceCodeTextEditor.prototype.textEditorExecutionHighlightRange):
+        TextEditor expects positions returned by the delegate to be relative to
+        the editor's text content, not the original source code content.
+
+        * UserInterface/Views/TextEditor.js:
+        (WI.TextEditor.prototype._updateExecutionRangeHighlight):
+        Convert positions to CodeMirror format here rather than in the delegate
+        method, which is a layer removed from CodeMirror.
+
 2018-10-15  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Dark Mode: unreadable text when hovering CSS properties while holding Command
