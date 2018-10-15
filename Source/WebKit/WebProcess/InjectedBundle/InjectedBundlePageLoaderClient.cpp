@@ -48,7 +48,10 @@ using namespace WebCore;
 InjectedBundlePageLoaderClient::InjectedBundlePageLoaderClient(const WKBundlePageLoaderClientBase* client)
 {
     initialize(client);
+#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED > 101400
+    // Deprecated callbacks.
     ASSERT(!m_client.shouldGoToBackForwardListItem);
+#endif
 }
 
 void InjectedBundlePageLoaderClient::willLoadURLRequest(WebPage& page, const ResourceRequest& request, API::Object* userData)

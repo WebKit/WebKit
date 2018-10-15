@@ -1,5 +1,15 @@
 2018-10-15  Alex Christensen  <achristensen@webkit.org>
 
+        Fix assertion after r237102
+        https://bugs.webkit.org/show_bug.cgi?id=190459
+
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        (WebKit::InjectedBundlePageLoaderClient::InjectedBundlePageLoaderClient):
+        Shipping Safari still uses shouldGoToBackForwardListItem, so only assert on
+        newer platforms like we do in WKPageSetPageLoaderClient.
+
+2018-10-15  Alex Christensen  <achristensen@webkit.org>
+
         Shrink more enum classes
         https://bugs.webkit.org/show_bug.cgi?id=190540
 
