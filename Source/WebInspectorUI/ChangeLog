@@ -1,3 +1,36 @@
+2018-10-15  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Dark Mode: style editor warnings should not look like errors
+        https://bugs.webkit.org/show_bug.cgi?id=190569
+        <rdar://problem/45261689>
+
+        Reviewed by Matt Baker.
+
+        Make warnings in the style editor look the same as warnings in the content views.
+        Unify warning and error background color variables.
+
+        * UserInterface/Views/LogContentView.css:
+        (@media (prefers-dark-interface)):
+        (.console-error-level):
+        (.console-warning-level):
+        * UserInterface/Views/SourceCodeTextEditor.css:
+        (.source-code.text-editor > .CodeMirror .warning):
+        (.source-code.text-editor > .CodeMirror .error):
+        (.source-code.text-editor > .CodeMirror .issue-widget.warning):
+        (.source-code.text-editor > .CodeMirror .issue-widget.inline.warning):
+        (.source-code.text-editor > .CodeMirror .issue-widget.error):
+        (.source-code.text-editor > .CodeMirror .issue-widget.inline.error):
+        (@media (prefers-dark-interface)):
+        (.source-code.text-editor > .CodeMirror .issue-widget):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.css:
+        (.spreadsheet-style-declaration-editor .property.has-warning):
+        (.spreadsheet-style-declaration-editor .property.has-warning .warning):
+        (@media (prefers-dark-interface)):
+        (.spreadsheet-style-declaration-editor :matches(.name, .value).editing):
+        * UserInterface/Views/Variables.css:
+        (:root):
+        (@media (prefers-dark-interface)):
+
 2018-10-12  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Canvas: previews aren't removed when the parent view is hidden

@@ -100,7 +100,7 @@
 }
 
 .spreadsheet-style-declaration-editor .property.has-warning {
-    background-color: hsl(51, 87%, 93%);
+    background-color: var(--warning-background-color-secondary);
 }
 
 .spreadsheet-style-declaration-editor .property .warning {
@@ -115,7 +115,7 @@
     height: 13px;
 
     background-image: url(../Images/Warning.svg);
-    background-color: hsl(43, 97%, 84%);
+    background-color: var(--warning-background-color);
     background-repeat: no-repeat;
     background-size: 9px;
     background-position-y: center;
@@ -162,13 +162,5 @@
 @media (prefers-dark-interface) {
     .spreadsheet-style-declaration-editor :matches(.name, .value).editing {
         outline-color: var(--background-color-secondary) !important;
-    }
-
-    .spreadsheet-style-declaration-editor .property.has-warning {
-        background-color: hsl(2, 50%, 25%);
-    }
-
-    .spreadsheet-style-declaration-editor .property.has-warning .warning {
-        filter: invert(100%) hue-rotate(150deg);
     }
 }

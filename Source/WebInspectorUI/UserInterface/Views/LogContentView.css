@@ -290,7 +290,7 @@ body[dir=rtl] .log-scope-bar > li.unread::before {
     }
 
     .console-error-level {
-        background-color: var(--error-background-color);
+        background-color: var(--error-background-color-secondary);
         border-color: var(--border-color-error);
     }
 
@@ -299,7 +299,7 @@ body[dir=rtl] .log-scope-bar > li.unread::before {
     }
 
     .console-warning-level {
-        background-color: var(--warning-background-color);
+        background-color: var(--warning-background-color-secondary);
         border-color: var(--border-color-warning);
     }
 

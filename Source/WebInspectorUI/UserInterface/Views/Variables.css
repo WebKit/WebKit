@@ -66,6 +66,11 @@
     --panel-background-color: hsl(0, 0%, 93%);
     --panel-background-color-light: hsl(0, 0%, 96%);
 
+    --warning-background-color: hsl(43, 97%, 84%);
+    --warning-background-color-secondary: hsl(51, 87%, 93%);
+    --error-background-color: hsl(11, 100%, 80%);
+    --error-background-color-secondary: hsl(15, 100%, 90%);
+
     --console-secondary-text-color: hsla(0, 0%, 0%, 0.33);
     --console-prompt-min-height: 30px;
 
@@ -236,8 +241,10 @@ body.window-inactive * {
 
         --console-secondary-text-color: hsla(0, 0%, 100%, 0.45);
 
-        --warning-background-color: hsla(21, 100%, 51%, 0.12);
-        --error-background-color: hsla(0, 100%, 50%, 0.15);
+        --warning-background-color: hsl(43, 100%, 23%);
+        --warning-background-color-secondary: hsl(21, 18%, 25%);
+        --error-background-color: hsl(11, 70%, 32%);
+        --error-background-color-secondary: hsl(6, 23%, 25%);
 
         --network-header-color: hsl(204, 52%, 55%);
         --network-system-color: hsl(79, 95%, 50%);

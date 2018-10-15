@@ -30,11 +30,11 @@
 }
 
 .source-code.text-editor > .CodeMirror .warning {
-    background-color: hsl(51, 87%, 93%);
+    background-color: var(--warning-background-color-secondary);
 }
 
 .source-code.text-editor > .CodeMirror .error {
-    background-color: hsl(15, 100%, 90%);
+    background-color: var(--error-background-color-secondary);
 }
 
 .source-code.text-editor > .CodeMirror .thread-indicator {
@@ -88,19 +88,19 @@
 }
 
 .source-code.text-editor > .CodeMirror .issue-widget.warning {
-    background-color: hsl(51, 87%, 93%);
+    background-color: var(--warning-background-color-secondary);
 }
 
 .source-code.text-editor > .CodeMirror .issue-widget.inline.warning {
-    background-color: hsl(43, 97%, 84%);
+    background-color: var(--warning-background-color);
 }
 
 .source-code.text-editor > .CodeMirror .issue-widget.error {
-    background-color: hsl(15, 100%, 90%);
+    background-color: var(--error-background-color-secondary);
 }
 
 .source-code.text-editor > .CodeMirror .issue-widget.inline.error {
-    background-color: hsl(11, 100%, 80%);
+    background-color: var(--error-background-color);
 }
 
 .source-code.text-editor > .CodeMirror .thread-widget {
@@ -184,28 +184,8 @@
 }
 
 @media (prefers-dark-interface) {
-    .source-code.text-editor > .CodeMirror .error {
-        background-color: var(--error-background-color);
-    }
-
-    .source-code.text-editor > .CodeMirror .warning {
-        background-color: var(--warning-background-color);
-    }
-
     .source-code.text-editor > .CodeMirror .issue-widget {
         color: hsl(0, 0%, var(--foreground-lightness));
-        --warning-background-color: hsl(43, 100%, 23%);
-        --error-background-color: hsl(11, 70%, 32%);
-    }
-
-    .source-code.text-editor > .CodeMirror .issue-widget.warning,
-    .source-code.text-editor > .CodeMirror .issue-widget.inline.warning {
-        background-color: var(--warning-background-color);
-    }
-
-    .source-code.text-editor > .CodeMirror .issue-widget.error,
-    .source-code.text-editor > .CodeMirror .issue-widget.inline.error {
-        background-color: var(--error-background-color);
     }
 
     .source-code.text-editor > .CodeMirror .thread-widget.inline {
