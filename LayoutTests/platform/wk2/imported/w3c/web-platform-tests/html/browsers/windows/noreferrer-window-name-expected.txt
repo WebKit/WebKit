@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Unsafe JavaScript attempt to initiate navigation for frame with URL '' from frame with URL 'http://localhost:8800/html/browsers/windows/noreferrer-window-name.html'. The frame attempting navigation is neither same-origin with the target, nor is it the target's parent or opener.
-
 
 Harness Error (TIMEOUT), message = null
 

@@ -732,7 +732,7 @@ HRESULT WebFrame::findFrameNamed(_In_ BSTR name, _COM_Outptr_opt_ IWebFrame** fr
     if (!coreFrame)
         return E_UNEXPECTED;
 
-    Frame* foundFrame = coreFrame->tree().find(AtomicString(name, SysStringLen(name)));
+    Frame* foundFrame = coreFrame->tree().find(AtomicString(name, SysStringLen(name)), *coreFrame);
     if (!foundFrame)
         return S_OK;
 

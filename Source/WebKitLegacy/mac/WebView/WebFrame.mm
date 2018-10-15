@@ -2587,7 +2587,7 @@ static NSURL *createUniqueWebDataURL()
     Frame* coreFrame = _private->coreFrame;
     if (!coreFrame)
         return nil;
-    return kit(coreFrame->tree().find(name));
+    return kit(coreFrame->tree().find(name, *coreFrame));
 }
 
 - (WebFrame *)parentFrame

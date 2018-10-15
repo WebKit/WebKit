@@ -1,3 +1,13 @@
+2018-10-15  Chris Dumez  <cdumez@apple.com>
+
+        Restrict browsing context lookup by name to frames that are related to one another
+        https://bugs.webkit.org/show_bug.cgi?id=190475
+
+        Reviewed by Alex Christensen.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame findFrameNamed:]):
+
 2018-10-15  Alex Christensen  <achristensen@webkit.org>
 
         Remove InjectedBundle processing of back/forward lists

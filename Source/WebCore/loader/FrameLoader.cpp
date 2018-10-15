@@ -3540,11 +3540,11 @@ bool FrameLoader::shouldTreatURLAsSrcdocDocument(const URL& url) const
 
 Frame* FrameLoader::findFrameForNavigation(const AtomicString& name, Document* activeDocument)
 {
-    Frame* frame = m_frame.tree().find(name);
-
     // FIXME: Eventually all callers should supply the actual activeDocument so we can call canNavigate with the right document.
     if (!activeDocument)
         activeDocument = m_frame.document();
+
+    auto* frame = m_frame.tree().find(name, activeDocument->frame() ? *activeDocument->frame() : m_frame);
 
     if (!activeDocument->canNavigate(frame))
         return nullptr;

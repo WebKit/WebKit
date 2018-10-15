@@ -1,4 +1,5 @@
+CONSOLE MESSAGE: line 15: Referrer:
+CONSOLE MESSAGE: line 16: window.opener: 
 This tests behavior of "noreferrer" links in subframes. A referrer should not be sent and window.opener should remain null.
 Load subframe 
-Referrer:
-window.opener:
+

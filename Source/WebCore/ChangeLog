@@ -1,3 +1,37 @@
+2018-10-15  Chris Dumez  <cdumez@apple.com>
+
+        Restrict browsing context lookup by name to frames that are related to one another
+        https://bugs.webkit.org/show_bug.cgi?id=190475
+
+        Reviewed by Alex Christensen.
+
+        Update our frame lookup by name logic to take in the active / requesting frame and
+        only a return a frame that is related to it. By related to it, I mean:
+        - Ancestor <-> Descendant relationship
+        - Opener <-> Openee relationship
+
+        Being able to look up unrelated frames makes process swapping difficult so we need
+        to be stricter.
+
+        This change is being discussed at:
+        - https://github.com/whatwg/html/issues/313
+
+        Tests: http/tests/dom/new-window-can-target-opener.html
+               http/tests/dom/noopener-window-cannot-target-opener.html
+               http/tests/dom/noopener-window-not-targetable.html
+               http/tests/dom/noopener-window-not-targetable2.html
+               http/tests/dom/noreferrer-window-not-targetable.html
+               http/tests/dom/opened-window-not-targetable-after-disowning-opener.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::findFrameForNavigation):
+        * page/FrameTree.cpp:
+        (WebCore::isFrameFamiliarWith):
+        (WebCore::FrameTree::find const):
+        * page/FrameTree.h:
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::targetFrame const):
+
 2018-10-15  Alex Christensen  <achristensen@webkit.org>
 
         Shrink more enum classes

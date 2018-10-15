@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: line 17: PASS: New window should not have an opener
+CONSOLE MESSAGE: line 21: PASS: New window should have URL 'about:blank'
+Make sure that windows opened with 'noopener' via window.open cannot target their opener.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS w is null
+

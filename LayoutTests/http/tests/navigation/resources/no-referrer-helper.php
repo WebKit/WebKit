@@ -18,11 +18,8 @@ function log(msg)
     document.getElementById('console').appendChild(line);
 }
 
-    var consoleWindow = window.open("", "consoleWindow");
-    if (consoleWindow) {
-        consoleWindow.log(document.getElementById("referrer").innerText);
-        consoleWindow.log("window.opener: " + (window.opener ? window.opener.location : ""));
-    }
+    console.log(document.getElementById("referrer").innerText);
+    console.log("window.opener: " + (window.opener ? window.opener.location : ""));
     
     if (window.testRunner)
         testRunner.notifyDone();

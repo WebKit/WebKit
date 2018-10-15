@@ -75,7 +75,7 @@ public:
 
     Frame* child(unsigned index) const;
     Frame* child(const AtomicString& name) const;
-    WEBCORE_EXPORT Frame* find(const AtomicString& name) const;
+    WEBCORE_EXPORT Frame* find(const AtomicString& name, Frame& activeFrame) const;
     WEBCORE_EXPORT unsigned childCount() const;
     WEBCORE_EXPORT Frame& top() const;
 

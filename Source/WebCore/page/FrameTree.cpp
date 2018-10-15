@@ -208,7 +208,23 @@ Frame* FrameTree::child(const AtomicString& name) const
     return nullptr;
 }
 
-Frame* FrameTree::find(const AtomicString& name) const
+// FrameTree::find() only returns frames in pages that are related to the active
+// page by an opener <-> openee relationship.
+static bool isFrameFamiliarWith(Frame& frameA, Frame& frameB)
+{
+    if (frameA.page() == frameB.page())
+        return true;
+
+    if (auto* frameAOpener = frameA.mainFrame().loader().opener())
+        return isFrameFamiliarWith(*frameAOpener, frameB);
+
+    if (auto* frameBOpener = frameB.mainFrame().loader().opener())
+        return isFrameFamiliarWith(frameA, *frameBOpener);
+
+    return false;
+}
+
+Frame* FrameTree::find(const AtomicString& name, Frame& activeFrame) const
 {
     // FIXME: _current is not part of the HTML specification.
     if (equalIgnoringASCIICase(name, "_self") || name == "_current" || name.isEmpty())
@@ -245,8 +261,8 @@ Frame* FrameTree::find(const AtomicString& name) const
     for (auto* otherPage : page->group().pages()) {
         if (otherPage == page)
             continue;
-        for (Frame* frame = &otherPage->mainFrame(); frame; frame = frame->tree().traverseNext()) {
-            if (frame->tree().uniqueName() == name)
+        for (auto* frame = &otherPage->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+            if (frame->tree().uniqueName() == name && isFrameFamiliarWith(activeFrame, *frame))
                 return frame;
         }
     }

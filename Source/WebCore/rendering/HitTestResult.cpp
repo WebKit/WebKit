@@ -177,13 +177,13 @@ Frame* HitTestResult::innerNodeFrame() const
 Frame* HitTestResult::targetFrame() const
 {
     if (!m_innerURLElement)
-        return 0;
+        return nullptr;
 
     Frame* frame = m_innerURLElement->document().frame();
     if (!frame)
-        return 0;
+        return nullptr;
 
-    return frame->tree().find(m_innerURLElement->target());
+    return frame->tree().find(m_innerURLElement->target(), *frame);
 }
 
 bool HitTestResult::isSelected() const

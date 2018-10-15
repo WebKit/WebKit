@@ -5,11 +5,10 @@ if (window.testRunner) {
 }
 
 if (document.location.hash === "#new-window") {
-    var console = window.open("", "originalWindow").document.getElementById("console");
     if (window.opener)
-        console.innerText = "FAIL: window.opener is non-null";
+        console.log("FAIL: window.opener is non-null");
     else
-        console.innerText = "PASS: window.opener is null";
+        console.log("PASS: window.opener is null");
     testRunner.notifyDone();
 } else {
     window.name = "originalWindow";

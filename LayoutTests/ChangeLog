@@ -1,3 +1,35 @@
+2018-10-15  Chris Dumez  <cdumez@apple.com>
+
+        Restrict browsing context lookup by name to frames that are related to one another
+        https://bugs.webkit.org/show_bug.cgi?id=190475
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/dom/new-window-can-target-opener-expected.txt: Added.
+        * http/tests/dom/new-window-can-target-opener.html: Added.
+        * http/tests/dom/noopener-window-cannot-target-opener-expected.txt: Added.
+        * http/tests/dom/noopener-window-cannot-target-opener.html: Added.
+        * http/tests/dom/noopener-window-not-targetable-expected.txt: Added.
+        * http/tests/dom/noopener-window-not-targetable.html: Added.
+        * http/tests/dom/noopener-window-not-targetable2-expected.txt: Added.
+        * http/tests/dom/noopener-window-not-targetable2.html: Added.
+        * http/tests/dom/noreferrer-window-not-targetable-expected.txt: Added.
+        * http/tests/dom/noreferrer-window-not-targetable.html: Added.
+        * http/tests/dom/opened-window-not-targetable-after-disowning-opener-expected.txt: Added.
+        * http/tests/dom/opened-window-not-targetable-after-disowning-opener.html: Added.
+        * http/tests/dom/resources/new-window-can-target-opener-win.html: Added.
+        * http/tests/dom/resources/noopener-window-cannot-target-opener-win.html: Added.
+        Add layout test coverage.
+
+        * fast/dom/Window/a-rel-noopener-expected.txt:
+        * fast/dom/Window/area-rel-noopener-expected.txt:
+        * fast/dom/Window/resources/rel-noopener.js:
+        * http/tests/navigation/no-referrer-target-blank-expected.txt:
+        * http/tests/navigation/resources/no-referrer-helper.php:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/browsers/windows/noreferrer-window-name-expected.txt:
+        * platform/wk2/imported/w3c/web-platform-tests/html/browsers/windows/noreferrer-window-name-expected.txt:
+        Update / rebaseline existing tests to reflect behavior change.
+
 2018-10-15  YUHAN WU  <yuhan_wu@apple.com>
 
         Implement error handler of MediaRecorder

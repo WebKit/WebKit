@@ -1238,7 +1238,7 @@ void PluginView::performJavaScriptURLRequest(URLRequest* request)
 
     if (!request->target().isNull()) {
         // For security reasons, only allow JS requests to be made on the frame that contains the plug-in.
-        if (frame->tree().find(request->target()) != frame) {
+        if (frame->tree().find(request->target(), *frame) != frame) {
             // Let the plug-in know that its frame load failed.
             m_plugin->frameDidFail(request->requestID(), false);
             return;

@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 11: PASS: window.opener is null
 Test that window.opener is null when a new window is opened from an anchor element with rel='noopener'.
 
-PASS: window.opener is null
+
