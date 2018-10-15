@@ -251,6 +251,18 @@
     _inspectedPage->reload(WebCore::ReloadOption::FromOrigin);
 }
 
+- (void)inspectorWKWebView:(WKInspectorWKWebView *)webView willMoveToWindow:(NSWindow *)newWindow
+{
+    if (!!_delegate && [_delegate respondsToSelector:@selector(inspectorViewController:willMoveToWindow:)])
+        [_delegate inspectorViewController:self willMoveToWindow:newWindow];
+}
+
+- (void)inspectorWKWebViewDidMoveToWindow:(WKInspectorWKWebView *)webView
+{
+    if (!!_delegate && [_delegate respondsToSelector:@selector(inspectorViewControllerDidMoveToWindow:)])
+        [_delegate inspectorViewControllerDidMoveToWindow:self];
+}
+
 @end
 
 #endif // PLATFORM(MAC) && WK_API_ENABLED

@@ -114,6 +114,8 @@ public:
     void closeFrontendAfterInactivityTimerFired();
 
     void attachmentViewDidChange(NSView *oldView, NSView *newView);
+    void attachmentWillMoveFromWindow(NSWindow *oldWindow);
+    void attachmentDidMoveToWindow(NSWindow *newWindow);
 #endif
 
 #if PLATFORM(GTK)
@@ -252,6 +254,7 @@ private:
     HashMap<String, RetainPtr<NSURL>> m_suggestedToActualURLMap;
     RunLoop::Timer<WebInspectorProxy> m_closeFrontendAfterInactivityTimer;
     String m_urlString;
+    bool m_isObservingContentLayoutRect { false };
 #elif PLATFORM(GTK)
     std::unique_ptr<WebInspectorProxyClient> m_client;
     GtkWidget* m_inspectorView { nullptr };

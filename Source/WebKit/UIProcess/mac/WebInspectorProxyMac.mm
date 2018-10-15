@@ -50,6 +50,8 @@ static const NSUInteger windowStyleMask = NSWindowStyleMaskTitled | NSWindowStyl
 // Reusing the WebView improves start up time for people that jump in and out of the Inspector.
 static const Seconds webViewCloseTimeout { 1_min };
 
+static void* kWindowContentLayoutObserverContext = &kWindowContentLayoutObserverContext;
+
 @interface WKWebInspectorProxyObjCAdapter () <WKInspectorViewControllerDelegate>
 
 - (instancetype)initWithWebInspectorProxy:(WebKit::WebInspectorProxy*)inspectorProxy;
@@ -134,6 +136,24 @@ static const Seconds webViewCloseTimeout { 1_min };
     });
 }
 
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey, id> *)change context:(void *)context
+{
+    if (context != kWindowContentLayoutObserverContext) {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+        return;
+    }
+
+    NSWindow *window = object;
+    ASSERT([window isKindOfClass:[NSWindow class]]);
+    if (window.inLiveResize)
+        return;
+
+    dispatch_after(DISPATCH_TIME_NOW, dispatch_get_main_queue(), ^{
+        if (_inspectorProxy)
+            _inspectorProxy->inspectedViewFrameDidChange();
+    });
+}
+
 // MARK: WKInspectorViewControllerDelegate methods
 
 - (void)inspectorViewControllerInspectorDidCrash:(WKInspectorViewController *)inspectorViewController
@@ -145,6 +165,18 @@ static const Seconds webViewCloseTimeout { 1_min };
 - (BOOL)inspectorViewControllerInspectorIsUnderTest:(WKInspectorViewController *)inspectorViewController
 {
     return _inspectorProxy ? _inspectorProxy->isUnderTest() : false;
+}
+
+- (void)inspectorViewController:(WKInspectorViewController *)inspectorViewController willMoveToWindow:(NSWindow *)newWindow
+{
+    if (_inspectorProxy)
+        _inspectorProxy->attachmentWillMoveFromWindow(inspectorViewController.webView.window);
+}
+
+- (void)inspectorViewControllerDidMoveToWindow:(WKInspectorViewController *)inspectorViewController
+{
+    if (_inspectorProxy)
+        _inspectorProxy->attachmentDidMoveToWindow(inspectorViewController.webView.window);
 }
 
 @end
@@ -159,6 +191,23 @@ void WebInspectorProxy::attachmentViewDidChange(NSView *oldView, NSView *newView
 
     if (m_isAttached)
         attach(m_attachmentSide);
+}
+
+void WebInspectorProxy::attachmentWillMoveFromWindow(NSWindow *oldWindow)
+{
+    if (m_isObservingContentLayoutRect) {
+        m_isObservingContentLayoutRect = false;
+        [oldWindow removeObserver:m_objCAdapter.get() forKeyPath:@"contentLayoutRect" context:kWindowContentLayoutObserverContext];
+    }
+}
+
+void WebInspectorProxy::attachmentDidMoveToWindow(NSWindow *newWindow)
+{
+    if (m_isAttached && !!newWindow) {
+        m_isObservingContentLayoutRect = true;
+        [newWindow addObserver:m_objCAdapter.get() forKeyPath:@"contentLayoutRect" options:0 context:kWindowContentLayoutObserverContext];
+        inspectedViewFrameDidChange();
+    }
 }
 
 void WebInspectorProxy::setInspectorWindowFrame(WKRect& frame)
@@ -523,14 +572,12 @@ void WebInspectorProxy::inspectedViewFrameDidChange(CGFloat currentDimension)
         // Preserve the top position of the inspected view so banners in Safari still work. But don't use that
         // top position for the inspector view since the banners only stretch as wide as the inspected view.
         inspectedViewFrame = NSMakeRect(0, 0, parentWidth - inspectorWidth, inspectedViewTop);
-        CGFloat insetExcludingBanners = 0;
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        if ([inspectedView isKindOfClass:[WKView class]])
-            insetExcludingBanners = ((WKView *)inspectedView)._topContentInset - ((WKView *)inspectedView)._totalHeightOfBanners;
-        ALLOW_DEPRECATED_DECLARATIONS_END
-        if ([inspectedView isKindOfClass:[WKWebView class]])
-            insetExcludingBanners = ((WKWebView *)inspectedView)._topContentInset - ((WKWebView *)inspectedView)._totalHeightOfBanners;
-        newInspectorViewFrame = NSMakeRect(parentWidth - inspectorWidth, 0, inspectorWidth, NSHeight(parentBounds) - insetExcludingBanners);
+        newInspectorViewFrame = NSMakeRect(parentWidth - inspectorWidth, 0, inspectorWidth, NSHeight(parentBounds));
+
+        if (NSWindow *inspectorWindow = inspectorView.window) {
+            NSRect contentLayoutRect = [inspectedView.superview convertRect:inspectorWindow.contentLayoutRect fromView:nil];
+            newInspectorViewFrame = NSIntersectionRect(newInspectorViewFrame, contentLayoutRect);
+        }
         break;
     }
 
@@ -544,14 +591,12 @@ void WebInspectorProxy::inspectedViewFrameDidChange(CGFloat currentDimension)
         // Preserve the top position of the inspected view so banners in Safari still work. But don't use that
         // top position for the inspector view since the banners only stretch as wide as the inspected view.
         inspectedViewFrame = NSMakeRect(inspectorWidth, 0, parentWidth - inspectorWidth, inspectedViewTop);
-        CGFloat insetExcludingBanners = 0;
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        if ([inspectedView isKindOfClass:[WKView class]])
-            insetExcludingBanners = ((WKView *)inspectedView)._topContentInset - ((WKView *)inspectedView)._totalHeightOfBanners;
-        ALLOW_DEPRECATED_DECLARATIONS_END
-        if ([inspectedView isKindOfClass:[WKWebView class]])
-            insetExcludingBanners = ((WKWebView *)inspectedView)._topContentInset - ((WKWebView *)inspectedView)._totalHeightOfBanners;
-        newInspectorViewFrame = NSMakeRect(0, 0, inspectorWidth, NSHeight(parentBounds) - insetExcludingBanners);
+        newInspectorViewFrame = NSMakeRect(0, 0, inspectorWidth, NSHeight(parentBounds));
+
+        if (NSWindow *inspectorWindow = inspectorView.window) {
+            NSRect contentLayoutRect = [inspectedView.superview convertRect:inspectorWindow.contentLayoutRect fromView:nil];
+            newInspectorViewFrame = NSIntersectionRect(newInspectorViewFrame, contentLayoutRect);
+        }
         break;
     }
     }

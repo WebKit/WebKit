@@ -1,3 +1,43 @@
+2018-10-15  Remy Demarest  <rdemarest@apple.com>
+
+        Web Inspector: RDM: Toolbar hidden in when Inspector is docked to side.
+        https://bugs.webkit.org/show_bug.cgi?id=190545
+        rdar://problem/44674500
+
+        Reviewed by Brian Burg.
+
+        When the inspector is placed next to the web view it uses its _topContentInset and _totalHeightOfBanners
+        to lay out the inspector so it does not underlap the window toolbar, but this technique does not work when
+        in responsive design mode because of the different attachment view. This patch fixes the issue by using
+        -[NSWindow contentLayoutRect] to figure out the height of the inspector instead of relying on the content
+        insets of the web view. This requires observing -contentLayoutRect and ensure we only observe its changes
+        when the view is actually on the screen.
+
+        * UIProcess/WebInspectorProxy.h:
+        Declare helpers to add/remove observer on the attached inspector window.
+
+        * UIProcess/mac/WKInspectorViewController.h:
+        * UIProcess/mac/WKInspectorViewController.mm:
+        (-[WKInspectorViewController inspectorWKWebView:willMoveToWindow:]):
+        (-[WKInspectorViewController inspectorWKWebViewDidMoveToWindow:]):
+
+        * UIProcess/mac/WKInspectorWKWebView.h:
+        * UIProcess/mac/WKInspectorWKWebView.mm:
+        (-[WKInspectorWKWebView viewWillMoveToWindow:]):
+        (-[WKInspectorWKWebView viewDidMoveToWindow]):
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (-[WKWebInspectorProxyObjCAdapter observeValueForKeyPath:ofObject:change:context:]): Update inspector layout
+        whenever the contentLayoutRect changes. Except when live resizing since the attachment view also sends
+        notifications at the same time.
+        (-[WKWebInspectorProxyObjCAdapter inspectorViewController:willMoveToWindow:]):
+        (-[WKWebInspectorProxyObjCAdapter inspectorViewControllerDidMoveToWindow:]):
+        (WebKit::WebInspectorProxy::attachmentWillMoveFromWindow): Remove the observer only if we set it up before.
+        (WebKit::WebInspectorProxy::attachmentDidMoveToWindow): Set up the observer and immediately update the frame
+        of the inspector since it just moved to its final destination.
+        (WebKit::WebInspectorProxy::inspectedViewFrameDidChange): Adjust the frame of the attached inspector based
+        on the contentLayoutRect of the window rather than the topContentInset of the web view.
+
 2018-10-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Changing view scale should zoom to initial scale if the page is already at initial scale

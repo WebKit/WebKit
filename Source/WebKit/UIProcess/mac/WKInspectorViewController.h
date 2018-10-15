@@ -54,6 +54,8 @@ NS_ASSUME_NONNULL_BEGIN
 @optional
 - (void)inspectorViewControllerInspectorDidCrash:(WKInspectorViewController *)inspectorViewController;
 - (BOOL)inspectorViewControllerInspectorIsUnderTest:(WKInspectorViewController *)inspectorViewController;
+- (void)inspectorViewController:(WKInspectorViewController *)inspectorViewController willMoveToWindow:(NSWindow *)newWindow;
+- (void)inspectorViewControllerDidMoveToWindow:(WKInspectorViewController *)inspectorViewController;
 @end
 
 NS_ASSUME_NONNULL_END

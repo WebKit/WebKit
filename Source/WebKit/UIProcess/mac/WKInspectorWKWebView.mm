@@ -60,6 +60,18 @@
     [self.inspectorWKWebViewDelegate inspectorWKWebViewReloadFromOrigin:self];
 }
 
+- (void)viewWillMoveToWindow:(NSWindow *)newWindow
+{
+    [super viewWillMoveToWindow:newWindow];
+    [self.inspectorWKWebViewDelegate inspectorWKWebView:self willMoveToWindow:newWindow];
+}
+
+- (void)viewDidMoveToWindow
+{
+    [super viewDidMoveToWindow];
+    [self.inspectorWKWebViewDelegate inspectorWKWebViewDidMoveToWindow:self];
+}
+
 @end
 
 #endif

@@ -39,6 +39,8 @@
 @required
 - (void)inspectorWKWebViewReload:(WKInspectorWKWebView *)webView;
 - (void)inspectorWKWebViewReloadFromOrigin:(WKInspectorWKWebView *)webView;
+- (void)inspectorWKWebView:(WKInspectorWKWebView *)webView willMoveToWindow:(NSWindow *)newWindow;
+- (void)inspectorWKWebViewDidMoveToWindow:(WKInspectorWKWebView *)webView;
 @end
 
 #endif // PLATFORM(MAC) && WK_API_ENABLED
