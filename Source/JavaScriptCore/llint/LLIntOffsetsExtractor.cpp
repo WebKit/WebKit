@@ -60,6 +60,7 @@
 #include "VM.h"
 #include "ValueProfile.h"
 #include "Watchdog.h"
+#include <stdio.h>
 #include <wtf/text/StringImpl.h>
 
 namespace JSC {

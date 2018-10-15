@@ -1,3 +1,12 @@
+2018-10-14  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: Build fix after r237084.
+        https://bugs.webkit.org/show_bug.cgi?id=189708
+
+        Unreviewd.
+
+        * llint/LLIntOffsetsExtractor.cpp:
+
 2018-10-14  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] Remove Option::useAsyncIterator
