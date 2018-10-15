@@ -643,7 +643,7 @@ void RenderLayer::updateNormalFlowList()
 
     for (RenderLayer* child = firstChild(); child; child = child->nextSibling()) {
         // Ignore non-overflow layers and reflections.
-        if (child->isNormalFlowOnly() && (!m_reflection || reflectionLayer() != child)) {
+        if (child->isNormalFlowOnly() && !isReflectionLayer(*child)) {
             if (!m_normalFlowList)
                 m_normalFlowList = std::make_unique<Vector<RenderLayer*>>();
             m_normalFlowList->append(child);
@@ -665,7 +665,7 @@ void RenderLayer::rebuildZOrderLists(std::unique_ptr<Vector<RenderLayer*>>& posZ
 {
     bool includeHiddenLayers = compositor().inCompositingMode();
     for (RenderLayer* child = firstChild(); child; child = child->nextSibling()) {
-        if (!m_reflection || reflectionLayer() != child)
+        if (!isReflectionLayer(*child))
             child->collectLayers(includeHiddenLayers, posZOrderList, negZOrderList);
     }
 
@@ -700,7 +700,7 @@ void RenderLayer::collectLayers(bool includeHiddenLayers, std::unique_ptr<Vector
     if ((includeHiddenLayers || m_hasVisibleDescendant) && !isStacking) {
         for (RenderLayer* child = firstChild(); child; child = child->nextSibling()) {
             // Ignore reflections.
-            if (!m_reflection || reflectionLayer() != child)
+            if (!isReflectionLayer(*child))
                 child->collectLayers(includeHiddenLayers, positiveZOrderList, negativeZOrderList);
         }
     }
@@ -1850,7 +1850,7 @@ static void expandClipRectForDescendantsAndReflection(LayoutRect& clipRect, cons
         // Note: we don't have to walk z-order lists since transparent elements always establish
         // a stacking container. This means we can just walk the layer tree directly.
         for (RenderLayer* curr = layer.firstChild(); curr; curr = curr->nextSibling()) {
-            if (!layer.reflection() || layer.reflectionLayer() != curr)
+            if (!layer.isReflectionLayer(*curr))
                 clipRect.unite(transparencyClipBox(*curr, rootLayer, transparencyBehavior, DescendantsOfTransparencyClipBox, paintBehavior));
         }
     }
@@ -6420,6 +6420,11 @@ void RenderLayer::clearResizer()
 RenderLayer* RenderLayer::reflectionLayer() const
 {
     return m_reflection ? m_reflection->layer() : nullptr;
+}
+
+bool RenderLayer::isReflectionLayer(const RenderLayer& layer) const
+{
+    return m_reflection ? &layer == m_reflection->layer() : false;
 }
 
 void RenderLayer::createReflection()

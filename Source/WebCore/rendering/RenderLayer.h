@@ -265,6 +265,7 @@ public:
     bool isReflection() const { return renderer().isReplica(); }
     RenderReplica* reflection() const { return m_reflection.get(); }
     RenderLayer* reflectionLayer() const;
+    bool isReflectionLayer(const RenderLayer&) const;
 
     const LayoutPoint& location() const { return m_topLeft; }
     void setLocation(const LayoutPoint& p) { m_topLeft = p; }
