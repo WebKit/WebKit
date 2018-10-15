@@ -182,6 +182,9 @@ public:
     void dirtyZOrderLists();
     void dirtyStackingContextZOrderLists();
 
+    bool normalFlowListDirty() const { return m_normalFlowListDirty; }
+    bool zOrderListsDirty() const { return m_zOrderListsDirty; }
+
     class LayerList {
         friend class RenderLayer;
     public:
@@ -1224,5 +1227,6 @@ WTF::TextStream& operator<<(WTF::TextStream&, const RenderLayer&);
 #if ENABLE(TREE_DEBUGGING)
 // Outside the WebCore namespace for ease of invocation from lldb.
 void showLayerTree(const WebCore::RenderLayer*);
+void showPaintOrderTree(const WebCore::RenderLayer*);
 void showLayerTree(const WebCore::RenderObject*);
 #endif

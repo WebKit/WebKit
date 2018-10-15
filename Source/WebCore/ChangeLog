@@ -1,3 +1,20 @@
+2018-10-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Add compact logging for the paint-order RenderLayer tree
+        https://bugs.webkit.org/show_bug.cgi?id=190592
+
+        Reviewed by Zalan Bujtas.
+
+        Add a way to dump the RenderLayer tree in paint order, which will be extended in future
+        to show more dirty bit state.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::outputPaintOrderTreeLegend):
+        (WebCore::outputIdent):
+        (WebCore::outputPaintOrderTreeRecursive):
+        (WebCore::showPaintOrderTree):
+        * rendering/RenderLayer.h:
+
 2018-10-15  Alex Christensen  <achristensen@webkit.org>
 
         Remove unused parameters from FrameLoaderClient::createFrame

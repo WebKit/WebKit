@@ -6580,4 +6580,66 @@ void showLayerTree(const WebCore::RenderObject* renderer)
     showLayerTree(renderer->enclosingLayer());
 }
 
+static void outputPaintOrderTreeLegend(TextStream& stream)
+{
+    stream.nextLine();
+    stream << "(S)tacking Context, (N)ormal flow only, (O)verflow clip, (A)lpha (opacity or mask), (T)ransform-ish, (F)ilter, Fi(X)ed position, (C)omposited\n"
+        "Dirty (z)-lists, Dirty (n)ormal flow lists";
+    stream.nextLine();
+}
+
+static void outputIdent(TextStream& stream, unsigned depth)
+{
+    unsigned i = 0;
+    while (++i <= depth * 2)
+        stream << " ";
+}
+
+static void outputPaintOrderTreeRecursive(TextStream& stream, const WebCore::RenderLayer& layer, const char* prefix, unsigned depth = 0)
+{
+    stream << (layer.isStackingContext() ? "S" : "-");
+    stream << (layer.isNormalFlowOnly() ? "N" : "-");
+    stream << (layer.renderer().hasOverflowClip() ? "O" : "-");
+    stream << (layer.isTransparent() ? "A" : "-");
+    stream << (layer.renderer().hasTransformRelatedProperty() ? "T" : "-");
+    stream << (layer.hasFilter() ? "F" : "-");
+    stream << (layer.renderer().isFixedPositioned() ? "X" : "-");
+    stream << (layer.isComposited() ? "C" : "-");
+
+    stream << " ";
+
+    stream << (layer.zOrderListsDirty() ? "z" : "-");
+    stream << (layer.normalFlowListDirty() ? "n" : "-");
+
+    outputIdent(stream, depth);
+
+    stream << prefix;
+
+    auto layerRect = layer.rect();
+
+    stream << &layer << " " << layerRect;
+    stream.nextLine();
+
+    const_cast<WebCore::RenderLayer&>(layer).updateLayerListsIfNeeded();
+
+    for (auto* child : layer.negativeZOrderLayers())
+        outputPaintOrderTreeRecursive(stream, *child, "- ", depth + 1);
+
+    for (auto* child : layer.normalFlowLayers())
+        outputPaintOrderTreeRecursive(stream, *child, "n ", depth + 1);
+
+    for (auto* child : layer.positiveZOrderLayers())
+        outputPaintOrderTreeRecursive(stream, *child, "+ ", depth + 1);
+}
+
+void showPaintOrderTree(const WebCore::RenderLayer* layer)
+{
+    TextStream stream;
+    outputPaintOrderTreeLegend(stream);
+    if (layer)
+        outputPaintOrderTreeRecursive(stream, *layer, "");
+    
+    WTFLogAlways("%s", stream.release().utf8().data());
+}
+
 #endif
