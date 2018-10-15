@@ -341,6 +341,11 @@ void UIScriptController::applyAutocorrection(JSStringRef, JSStringRef, JSValueRe
 {
 }
 
+bool UIScriptController::isShowingKeyboard() const
+{
+    return false;
+}
+
 double UIScriptController::zoomScale() const
 {
     return 1;

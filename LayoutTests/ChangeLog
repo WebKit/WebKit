@@ -1,3 +1,26 @@
+2018-10-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Can't select text after dismissing the keyboard when changing focus
+        https://bugs.webkit.org/show_bug.cgi?id=190563
+        <rdar://problem/44613559>
+
+        Reviewed by Tim Horton.
+
+        Add a new layout test to check that the user can make a selection by long pressing after the keyboard is
+        dismissed due to changing the focused element.
+
+        * editing/selection/ios/select-text-after-changing-focus-expected.txt: Added.
+        * editing/selection/ios/select-text-after-changing-focus.html: Added.
+        * resources/ui-helper.js:
+
+        Also tweak the behavior of `UIHelper.waitForKeyboardToHide()`, so that it resolves immediately if the keyboard
+        is not shown. This allows us to ensure that tests which use `UIHelper.waitForKeyboardToHide()` are robust in the
+        case where they wait for another action to complete (e.g. a simulated tap) prior to registering a keyboard
+        hiding callback.
+
+        (window.UIHelper.waitForKeyboardToHide.return.new.Promise):
+        (window.UIHelper.waitForKeyboardToHide):
+
 2018-10-15  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Payment authorization results with ApplePayErrors should never be considered final

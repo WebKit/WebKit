@@ -469,6 +469,11 @@ void UIScriptController::keyboardAccessoryBarPrevious()
     [webView keyboardAccessoryBarPrevious];
 }
 
+bool UIScriptController::isShowingKeyboard() const
+{
+    return TestController::singleton().mainWebView()->platformView().showingKeyboard;
+}
+
 void UIScriptController::applyAutocorrection(JSStringRef newString, JSStringRef oldString, JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);

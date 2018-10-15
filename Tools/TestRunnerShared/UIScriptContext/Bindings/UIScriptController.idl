@@ -210,6 +210,7 @@ interface UIScriptController {
     // These callbacks also work for the form accessory views.
     attribute object didShowKeyboardCallback;
     attribute object didHideKeyboardCallback;
+    readonly attribute boolean isShowingKeyboard;
 
     attribute object willBeginZoomingCallback;
     attribute object didEndZoomingCallback;

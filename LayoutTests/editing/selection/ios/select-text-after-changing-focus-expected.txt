@@ -1,0 +1,4 @@
+
+WebKit
+The selected text is: "WebKit"
+This test verifies that it's possible to select text by long pressing after the keyboard is dismissed due to the focused element changing. To manually test, tap the input to show the keyboard then click the button to dismiss the keyboard, and finally try to select the word 'WebKit'.

@@ -135,7 +135,10 @@ window.UIHelper = class UIHelper {
         return new Promise(resolve => {
             testRunner.runUIScript(`
                 (function() {
-                    uiController.didHideKeyboardCallback = () => uiController.uiScriptComplete();
+                    if (uiController.isShowingKeyboard)
+                        uiController.didHideKeyboardCallback = () => uiController.uiScriptComplete();
+                    else
+                        uiController.uiScriptComplete();
                 })()`, resolve);
         });
     }

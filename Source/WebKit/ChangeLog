@@ -1,3 +1,79 @@
+2018-10-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Can't select text after dismissing the keyboard when changing focus
+        https://bugs.webkit.org/show_bug.cgi?id=190563
+        <rdar://problem/44613559>
+
+        Reviewed by Tim Horton.
+
+        In r230686, we switched from using UIWKSelectionAssistant to UIWKTextInteractionAssistant for handling selection
+        in non-editable content on iOS; as such, when an editable element loses focus, instead of switching from the
+        text interaction assistant to the web selection assistant as we've previously done, we now reset our text
+        interaction assistant by calling `-[UIWKTextInteractionAssistant setGestureRecognizers]`, which removes all of
+        the current text selection gesture recognizers from WKContentView and regenerates them by building up a tree of
+        `UITextInteraction`s and adding them to the assistant (see `-[UITextInteractionAssistant
+        addGestureRecognizersToView:]`). In particular, `_UITextSelectionForceGesture` is the gesture recognizer used to
+        trigger text selection when long pressing.
+
+        After dismissing the keyboard by tapping the "Done" button, the UITextInteractions and gesture recognizers on
+        the interaction assistant include:
+
+            <UITextInteraction>
+                …
+                <UITextIndirectNonEditableInteraction>
+                    <_UIKeyboardBasedNonEditableTextSelectionInteraction>
+                      ↳ "_UIKeyboardTextSelectionGestureForcePress" → <_UITextSelectionForceGesture>
+
+        However, after the keyboard dismisses due to an editable element losing focus, the UITextInteractions on the
+        interaction assistant look like this:
+
+            <UITextInteraction>
+                …
+                <UITextIndirectNonEditableInteraction>
+
+        Subsequently, the lack of a `_UIKeyboardBasedNonEditableTextSelectionInteraction` makes text selection by long
+        pressing impossible, since the `_UITextSelectionForceGesture` is never introduced to `WKContentView`. In UIKit,
+        `UITextIndirectNonEditableInteraction` only adds `_UIKeyboardBasedNonEditableTextSelectionInteraction` as a
+        child if the text input view — in our case, WKContentView — is missing an input delegate (see `-initWithView:`).
+        In the case where the Done button is used to dismiss the keyboard, WKContentView loses first responder, and the
+        input delegate of WKContentView is cleared out early on, before we call `-stopAssistingKeyboard`:
+
+            -[WKContentView(WKInteraction) setInputDelegate:]
+            -[UIKeyboardImpl setDelegate:force:]
+            -[UIPeripheralHost(UIKitInternal) _reloadInputViewsForResponder:]
+            -[UIResponder _finishResignFirstResponder]
+            -[UIResponder resignFirstResponder]
+            -[WKContentView(WKInteraction) resignFirstResponderForWebView]
+            -[UIKeyboardImpl dismissKeyboard]
+
+        However, in the case where the focused element is blurred, we end up clearing out the delegate in
+        `-_stopAssistingNode`, *after* we've already called `-setGestureRecognizers` on the interaction assistant. This
+        means UIKit will skip adding `_UIKeyboardBasedNonEditableTextSelectionInteraction` to the text interaction
+        assistant.
+
+            -[WKContentView(WKInteraction) setInputDelegate:]
+            -[UIKeyboardImpl setDelegate:force:]
+            -[UIPeripheralHost(UIKitInternal) _reloadInputViewsForResponder:]
+            -[UIResponder(UIResponderInputViewAdditions) reloadInputViews]
+            -[WKContentView(WKInteraction) _stopAssistingNode]
+
+        To fix this, we simply reset our `inputDelegate` earlier in `_stopAssistingKeyboard` instead of waiting until
+        we reload input views. This ensures that UIKit sets up the text interaction assistant's gestures when changing
+        focus in the same way as we would when the keyboard is dismissed via `-resignFirstResponder` (e.g. when pressing
+        the Done button).
+
+        Test: editing/selection/ios/select-text-after-changing-focus.html
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]):
+        (-[WKContentView setUpTextSelectionAssistant]):
+        (-[WKContentView _startAssistingKeyboard]):
+        (-[WKContentView _stopAssistingKeyboard]):
+        (-[WKContentView useSelectionAssistantWithGranularity:]): Deleted.
+
+        Additionally rename this to -setUpTextSelectionAssistant and remove the selection granularity argument. This was
+        previously used to switch between web and text interaction assistants.
+
 2018-10-15  Remy Demarest  <rdemarest@apple.com>
 
         Web Inspector: RDM: Toolbar hidden in when Inspector is docked to side.

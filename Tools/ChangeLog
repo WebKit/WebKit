@@ -1,3 +1,32 @@
+2018-10-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Can't select text after dismissing the keyboard when changing focus
+        https://bugs.webkit.org/show_bug.cgi?id=190563
+        <rdar://problem/44613559>
+
+        Reviewed by Tim Horton.
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::isShowingKeyboard const):
+
+        Add a new UIScriptController method that returns whether the keyboard is shown. See `ui-helper.js` for more
+        details.
+
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::isShowingKeyboard const):
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.h:
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+
+        Also rename the `isShowingKeyboard` Objective-C property to the more canonical `showingKeyboard`, with
+        `isShowingKeyboard` as the getter method.
+
+        (-[TestRunnerWKWebView _invokeShowKeyboardCallbackIfNecessary]):
+        (-[TestRunnerWKWebView _invokeHideKeyboardCallbackIfNecessary]):
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::isShowingKeyboard const):
+
 2018-10-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, fix JSC tests after WebGPUShadingLanguageRI directory was removed in r237115.

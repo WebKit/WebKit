@@ -234,6 +234,11 @@ void UIScriptController::applyAutocorrection(JSStringRef, JSStringRef, JSValueRe
 {
 }
 
+bool UIScriptController::isShowingKeyboard() const
+{
+    return false;
+}
+
 double UIScriptController::minimumZoomScale() const
 {
     return gWebScrollView.minimumZoomScale;

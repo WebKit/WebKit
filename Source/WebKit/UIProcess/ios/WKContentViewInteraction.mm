@@ -700,7 +700,7 @@ static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeI
     _showingTextStyleOptions = NO;
 
     // FIXME: This should be called when we get notified that loading has completed.
-    [self useSelectionAssistantWithGranularity:_webView._selectionGranularity];
+    [self setUpTextSelectionAssistant];
     
     _actionSheetAssistant = adoptNS([[WKActionSheetAssistant alloc] initWithView:self]);
     [_actionSheetAssistant setDelegate:self];
@@ -2021,14 +2021,12 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     _page->handleTap(location, _layerTreeTransactionIdAtLastTouchStart);
 }
 
-- (void)useSelectionAssistantWithGranularity:(WKSelectionGranularity)selectionGranularity
+- (void)setUpTextSelectionAssistant
 {
-    _webSelectionAssistant = nil;
-
     if (!_textSelectionAssistant)
         _textSelectionAssistant = adoptNS([[UIWKTextInteractionAssistant alloc] initWithView:self]);
     else {
-        // Reset the gesture recognizers in case editibility has changed.
+        // Reset the gesture recognizers in case editability has changed.
         [_textSelectionAssistant setGestureRecognizers];
     }
 }
@@ -4121,7 +4119,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 
 - (void)_startAssistingKeyboard
 {
-    [self useSelectionAssistantWithGranularity:WKSelectionGranularityCharacter];
+    [self setUpTextSelectionAssistant];
     
     if (self.isFirstResponder && !self.suppressAssistantSelectionView)
         [_textSelectionAssistant activateSelection];
@@ -4133,7 +4131,8 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 
 - (void)_stopAssistingKeyboard
 {
-    [self useSelectionAssistantWithGranularity:_webView._selectionGranularity];
+    self.inputDelegate = nil;
+    [self setUpTextSelectionAssistant];
     
     [_textSelectionAssistant deactivateSelection];
 }
