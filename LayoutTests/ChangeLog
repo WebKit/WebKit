@@ -1,3 +1,28 @@
+2018-10-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Changing view scale should zoom to initial scale if the page is already at initial scale
+        https://bugs.webkit.org/show_bug.cgi?id=190570
+        <rdar://problem/45261877>
+
+        Reviewed by Tim Horton.
+
+        * fast/viewport/ios/initial-scale-after-changing-view-scale-expected.txt: Added.
+        * fast/viewport/ios/initial-scale-after-changing-view-scale.html: Added.
+
+        Add a new layout test to verify that:
+        1.  Changing view scale before the page scale factor is changed by the user zooms to the new initial scale.
+        2.  Changing view scale after the user changes the page scale to something different than initial scale does not
+            cause the page to zoom to the new initial scale.
+        3.  Changing view scale after the user changes the page scale factor back to initial scale causes the page to
+            zoom to the new initial scale.
+
+        * resources/basic-gestures.js:
+
+        Make a small tweak in `doubleTapToZoomAtPoint` to ensure that both single taps as well as zooming are complete
+        before invoking UIScriptController completion.
+
+        (return.new.Promise):
+
 2018-10-15  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
 
         [Cairo] Incorrect rendering for 135-deg skews

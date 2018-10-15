@@ -1,0 +1,95 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+    #square {
+        position: absolute;
+        width: 80px;
+        height: 80px;
+        border: 2px solid black;
+        top: 0;
+        left: 0;
+    }
+
+    #output {
+        width: 100%;
+        height: 100%;
+        overflow: scroll;
+    }
+
+    #description {
+        margin-top: 100px;
+    }
+
+    body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+    }
+    </style>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script src="../../../resources/basic-gestures.js"></script>
+    <script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function pageScaleAfterSettingViewScale(scale)
+    {
+        return new Promise(async resolve => {
+            await UIHelper.setViewScale(scale);
+            await Promise.all([UIHelper.ensureVisibleContentRectUpdate(), UIHelper.ensurePresentationUpdate()]);
+            resolve(internals.pageScaleFactor().toFixed(2));
+        });
+    }
+
+    function pageScaleAfterDoubleTappingOnSquare()
+    {
+        return new Promise(async resolve => {
+            await doubleTapToZoomAtPoint(40, 40);
+            resolve(internals.pageScaleFactor().toFixed(2));
+        });
+    }
+
+    async function runTest()
+    {
+        const appendOutput = message => {
+            output.appendChild(document.createTextNode(message));
+            output.appendChild(document.createElement("br"));
+        };
+
+        appendOutput(`Initial page scale factor                   : ${internals.pageScaleFactor().toFixed(2)}`);
+        appendOutput(` - Page scale after setViewScale(1.25)      : ${await pageScaleAfterSettingViewScale(1.25)}`);
+        appendOutput(` - Page scale after setViewScale(0.75)      : ${await pageScaleAfterSettingViewScale(0.75)}`);
+        appendOutput(` - Page scale after setViewScale(1)         : ${await pageScaleAfterSettingViewScale(1)}`);
+        appendOutput("");
+        appendOutput(`Page scale after double tapping to zoom in  : ${await pageScaleAfterDoubleTappingOnSquare()}`);
+        appendOutput(` - Page scale after setViewScale(1.25)      : ${await pageScaleAfterSettingViewScale(1.25)}`);
+        appendOutput(` - Page scale after setViewScale(0.75)      : ${await pageScaleAfterSettingViewScale(0.75)}`);
+        appendOutput(` - Page scale after setViewScale(1)         : ${await pageScaleAfterSettingViewScale(1)}`);
+        appendOutput("");
+        appendOutput(`Page scale after double tapping to zoom out : ${await pageScaleAfterDoubleTappingOnSquare()}`);
+        appendOutput(` - Page scale after setViewScale(1.25)      : ${await pageScaleAfterSettingViewScale(1.25)}`);
+        appendOutput(` - Page scale after setViewScale(0.75)      : ${await pageScaleAfterSettingViewScale(0.75)}`);
+        appendOutput(` - Page scale after setViewScale(1)         : ${await pageScaleAfterSettingViewScale(1)}`);
+        appendOutput("");
+
+        testRunner.notifyDone();
+    }
+    </script>
+</head>
+
+<body onload="runTest()">
+    <div id="square"></div>
+    <pre id="output"></pre>
+    <p id="description">This test verifies that changing the view scale zooms the page to initial scale, but only if the
+        page was already at initial scale. To manually test, <strong>(1)</strong> change the zoom scale without changing
+        the page scale in any way, and check that the page zooms to initial scale; <strong>(2)</strong> now double tap
+        on the box to zoom in, and check that changing zoom levels does not change the page scale; <strong>(3)</strong>
+        finally, double tap on the box again to zoom back out to initial scale, and check that changing zoom levels
+        automatically zooms the page to initial scale once again.
+    </p>
+</body>
+</html>

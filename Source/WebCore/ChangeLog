@@ -1,3 +1,17 @@
+2018-10-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Changing view scale should zoom to initial scale if the page is already at initial scale
+        https://bugs.webkit.org/show_bug.cgi?id=190570
+        <rdar://problem/45261877>
+
+        Reviewed by Tim Horton.
+
+        Add a getter for ViewportConfiguration's layout size scale factor.
+        See Source/WebKit/ChangeLog for more details.
+
+        * page/ViewportConfiguration.h:
+        (WebCore::ViewportConfiguration::layoutSizeScaleFactor const):
+
 2018-10-15  Charlie Turner  <cturner@igalia.com>
 
         Fix build error with !LOG_DISABLED in Release mode

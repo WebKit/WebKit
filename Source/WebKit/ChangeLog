@@ -1,3 +1,37 @@
+2018-10-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Changing view scale should zoom to initial scale if the page is already at initial scale
+        https://bugs.webkit.org/show_bug.cgi?id=190570
+        <rdar://problem/45261877>
+
+        Reviewed by Tim Horton.
+
+        r237087 added support for changing the view scale on iOS, by making it possible to let the minimum layout size
+        be a factor of the view size; this allows internal clients to change page zoom levels on iOS. Currently,
+        changing the page zoom level automatically zooms to the new initial scale only if the user has not manually
+        scaled the page before, even if the page is already at initial scale (e.g. after the user double taps to zoom on
+        a small element, and double taps again to zoom back out to initial scale).
+
+        This patch makes some minor adjustments to automatically zoom to the new initial scale after changing the view
+        scale, as long as the page was at initial scale when changing zoom levels.
+
+        Test: fast/viewport/ios/initial-scale-after-changing-view-scale.html
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::areEssentiallyEqualAsFloat):
+
+        Move this function further up in the file, so that we can use it in `setViewportConfigurationViewLayoutSize`.
+
+        (WebKit::WebPage::setViewportConfigurationViewLayoutSize):
+
+        If the page is near initial scale and the zoom level changes, zoom to the new initial scale.
+
+        (WebKit::WebPage::viewportConfigurationChanged):
+
+        Make this take a new enum argument that determines whether we want to zoom to initial scale as a result of the
+        viewport configuration change (`No` by default).
+
 2018-10-15  Chris Dumez  <cdumez@apple.com>
 
         Restrict browsing context lookup by name to frames that are related to one another

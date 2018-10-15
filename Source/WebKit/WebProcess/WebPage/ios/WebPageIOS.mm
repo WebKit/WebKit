@@ -2518,11 +2518,23 @@ void WebPage::autofillLoginCredentials(const String& username, const String& pas
     }
 }
 
+// WebCore stores the page scale factor as float instead of double. When we get a scale from WebCore,
+// we need to ignore differences that are within a small rounding error on floats.
+static inline bool areEssentiallyEqualAsFloat(float a, float b)
+{
+    return WTF::areEssentiallyEqual(a, b);
+}
+
 void WebPage::setViewportConfigurationViewLayoutSize(const FloatSize& size, double scaleFactor)
 {
     LOG_WITH_STREAM(VisibleRects, stream << "WebPage " << m_pageID << " setViewportConfigurationViewLayoutSize " << size << " scaleFactor " << scaleFactor);
+
+    ZoomToInitialScale shouldZoomToInitialScale = ZoomToInitialScale::No;
+    if (m_viewportConfiguration.layoutSizeScaleFactor() != scaleFactor && areEssentiallyEqualAsFloat(m_viewportConfiguration.initialScale(), pageScaleFactor()))
+        shouldZoomToInitialScale = ZoomToInitialScale::Yes;
+
     if (m_viewportConfiguration.setViewLayoutSize(size, scaleFactor))
-        viewportConfigurationChanged();
+        viewportConfigurationChanged(shouldZoomToInitialScale);
 }
 
 void WebPage::setMaximumUnobscuredSize(const FloatSize& maximumUnobscuredSize)
@@ -2543,13 +2555,6 @@ void WebPage::setOverrideViewportArguments(const std::optional<WebCore::Viewport
 {
     if (auto* document = m_page->mainFrame().document())
         document->setOverrideViewportArguments(arguments);
-}
-
-// WebCore stores the page scale factor as float instead of double. When we get a scale from WebCore,
-// we need to ignore differences that are within a small rounding error on floats.
-static inline bool areEssentiallyEqualAsFloat(float a, float b)
-{
-    return WTF::areEssentiallyEqual(a, b);
 }
 
 void WebPage::resetTextAutosizing()
@@ -2776,14 +2781,14 @@ void WebPage::resetViewportDefaultConfiguration(WebFrame* frame, bool hasMobileD
         m_viewportConfiguration.setDefaultConfiguration(parametersForStandardFrame());
 }
 
-void WebPage::viewportConfigurationChanged()
+void WebPage::viewportConfigurationChanged(ZoomToInitialScale zoomToInitialScale)
 {
     if (setFixedLayoutSize(m_viewportConfiguration.layoutSize()))
         resetTextAutosizing();
 
     double initialScale = m_viewportConfiguration.initialScale();
     double scale;
-    if (m_userHasChangedPageScaleFactor)
+    if (m_userHasChangedPageScaleFactor && zoomToInitialScale == ZoomToInitialScale::No)
         scale = std::max(std::min(pageScaleFactor(), m_viewportConfiguration.maximumScale()), m_viewportConfiguration.minimumScale());
     else
         scale = initialScale;
