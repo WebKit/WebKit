@@ -1,3 +1,12 @@
+2018-10-15  Alex Christensen  <achristensen@webkit.org>
+
+        Garden WK2 tests after r237104
+        https://bugs.webkit.org/show_bug.cgi?id=190522
+
+        * platform/wk2/http/tests/navigation/keyboard-events-during-provisional-navigation-expected.txt: Removed.
+        I added  this wk2 expectation in r234658 after r234640.  r237104 effectively did the inverse of r234640,
+        so behavior is back to how it was before then.  This makes the expectations reflect such.
+
 2018-10-15  Chris Dumez  <cdumez@apple.com>
 
         Experiment: target=_blank on anchors should imply rel=noopener
