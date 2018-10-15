@@ -88,14 +88,12 @@ void ProcessWarming::prewarmGlobally()
 
 WebCore::PrewarmInformation ProcessWarming::collectPrewarmInformation()
 {
-    PrewarmInformation info;
-    info.font = FontCache::singleton().collectPrewarmInformation();
-    return info;
+    return { FontCache::singleton().collectPrewarmInformation() };
 }
 
 void ProcessWarming::prewarmWithInformation(const PrewarmInformation& prewarmInfo)
 {
-    FontCache::singleton().prewarm(prewarmInfo.font);
+    FontCache::singleton().prewarm(prewarmInfo.fontCache);
 }
 
 }

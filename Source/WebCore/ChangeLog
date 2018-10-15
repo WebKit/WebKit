@@ -1,3 +1,45 @@
+2018-10-15  Antti Koivisto  <antti@apple.com>
+
+        [PSON] Prewarm system fallback fonts
+        https://bugs.webkit.org/show_bug.cgi?id=190517
+
+        Reviewed by Ryosuke Niwa.
+
+        This seems to be ~2% progression in PSON PLT4 with large (40ms+) improvements on some pages
+        after process swaps.
+
+        * page/PrewarmInformation.h:
+        (WebCore::PrewarmInformation::encode const):
+        (WebCore::PrewarmInformation::decode):
+        * page/ProcessWarming.cpp:
+        (WebCore::ProcessWarming::collectPrewarmInformation):
+        (WebCore::ProcessWarming::prewarmWithInformation):
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontCache::collectPrewarmInformation const):
+        (WebCore::FontCache::prewarm):
+        * platform/graphics/FontCache.h:
+        (WebCore::FontCache::PrewarmInformation::isolatedCopy const):
+        (WebCore::FontCache::PrewarmInformation::encode const):
+        (WebCore::FontCache::PrewarmInformation::decode):
+
+        Make font cache prewarm information a struct with encode/decode support and move it into FontCache scope.
+
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::FontDatabase::collectionForFamily):
+        (WebCore::FontCache::systemFallbackForCharacters):
+
+        Collect the names of fonts that end up needing character specific system fallbacks.
+
+        (WebCore::FontCache::collectPrewarmInformation const):
+
+        Include them into prewarm information.
+
+        (WebCore::FontCache::prewarm):
+
+        Invoking CTFontCreateForCharactersWithLanguage for the correct named font seems sufficient to fully
+        prewarm it for fallbacks (independent of size, locale or other characteristics).
+        Any future calls to systemFallbackForCharacters are fast.
+
 2018-10-15  Chris Dumez  <cdumez@apple.com>
 
         Restrict browsing context lookup by name to frames that are related to one another

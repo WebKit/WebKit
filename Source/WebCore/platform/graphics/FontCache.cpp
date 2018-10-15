@@ -483,12 +483,12 @@ void FontCache::invalidate()
 
 #if !PLATFORM(COCOA)
 
-FontPrewarmInformation FontCache::collectPrewarmInformation() const
+FontCache::PrewarmInformation FontCache::collectPrewarmInformation() const
 {
     return { };
 }
 
-void FontCache::prewarm(const FontPrewarmInformation&)
+void FontCache::prewarm(const PrewarmInformation&)
 {
 }
 

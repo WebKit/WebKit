@@ -916,7 +916,7 @@ public:
         }();
 
         std::lock_guard<Lock> locker(m_familyNameToFontDescriptorsLock);
-        return m_familyNameToFontDescriptors.add(folded.isolatedCopy(), installedFontFamily).iterator->value;
+        return m_familyNameToFontDescriptors.add(folded.isolatedCopy(), WTFMove(installedFontFamily)).iterator->value;
     }
 
     const InstalledFont& fontForPostScriptName(const AtomicString& postScriptName)
@@ -1366,8 +1366,14 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
 #endif
 
     const FontPlatformData& platformData = originalFontData->platformData();
+
+    auto fullName = String(adoptCF(CTFontCopyFullName(platformData.font())).get());
+    if (!fullName.isEmpty())
+        m_fontNamesRequiringSystemFallbackForPrewarming.add(fullName);
+
     auto result = lookupFallbackFont(platformData.font(), description.weight(), description.locale(), characters, length);
     result = preparePlatformFont(result.get(), description, nullptr, nullptr, { }, description.computedSize());
+
     if (!result)
         return lastResortFallbackFont(description);
 
@@ -1519,18 +1525,14 @@ Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescripti
     return fontForPlatformData(platformData);
 }
 
-FontPrewarmInformation FontCache::collectPrewarmInformation() const
+FontCache::PrewarmInformation FontCache::collectPrewarmInformation() const
 {
-    FontPrewarmInformation fontPrewarmInformation;
-    fontPrewarmInformation = copyToVector(m_seenFamiliesForPrewarming);
-    return fontPrewarmInformation;
+    return { copyToVector(m_seenFamiliesForPrewarming), copyToVector(m_fontNamesRequiringSystemFallbackForPrewarming) };
 }
 
-void FontCache::prewarm(const FontPrewarmInformation& fontPrewarmInformation)
+void FontCache::prewarm(const PrewarmInformation& prewarmInformation)
 {
-    auto& families = fontPrewarmInformation;
-
-    if (families.isEmpty())
+    if (prewarmInformation.isEmpty())
         return;
 
     if (!m_prewarmQueue)
@@ -1538,9 +1540,19 @@ void FontCache::prewarm(const FontPrewarmInformation& fontPrewarmInformation)
 
     auto& database = FontDatabase::singletonDisallowingUserInstalledFonts();
 
-    m_prewarmQueue->dispatch([&database, families = families.isolatedCopy()] {
-        for (auto& family : families)
+    m_prewarmQueue->dispatch([&database, prewarmInformation = prewarmInformation.isolatedCopy()] {
+        for (auto& family : prewarmInformation.seenFamilies)
             database.collectionForFamily(family);
+
+        for (auto& fontName : prewarmInformation.fontNamesRequiringSystemFallback) {
+            auto cfFontName = fontName.createCFString();
+            if (auto warmingFont = adoptCF(CTFontCreateWithName(cfFontName.get(), 0, nullptr))) {
+                // This is sufficient to warm CoreText caches for language and character specific fallbacks.
+                CFIndex coveredLength = 0;
+                UChar character = ' ';
+                auto fallbackWarmingFont = adoptCF(CTFontCreateForCharactersWithLanguage(warmingFont.get(), &character, 1, nullptr, &coveredLength));
+            }
+        }
     });
 }
 

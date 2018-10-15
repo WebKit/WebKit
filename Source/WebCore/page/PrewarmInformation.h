@@ -32,7 +32,7 @@
 namespace WebCore {
 
 struct WEBCORE_EXPORT PrewarmInformation {
-    FontPrewarmInformation font;
+    FontCache::PrewarmInformation fontCache;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<PrewarmInformation> decode(Decoder&);
@@ -41,17 +41,18 @@ struct WEBCORE_EXPORT PrewarmInformation {
 template<class Encoder>
 void PrewarmInformation::encode(Encoder& encoder) const
 {
-    encoder << font;
+    encoder << fontCache;
 }
 
 template<class Decoder>
 std::optional<PrewarmInformation> PrewarmInformation::decode(Decoder& decoder)
 {
-    PrewarmInformation prewarmInfo;
-    if (!decoder.decode(prewarmInfo.font))
+    std::optional<FontCache::PrewarmInformation> fontCachePrewarmInformation;
+    decoder >> fontCachePrewarmInformation;
+    if (!fontCachePrewarmInformation)
         return { };
 
-    return prewarmInfo;
+    return PrewarmInformation { WTFMove(*fontCachePrewarmInformation) };
 }
 
 }
