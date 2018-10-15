@@ -341,7 +341,7 @@ Ref<WebPage> WebPage::create(uint64_t pageID, WebPageCreationParameters&& parame
 {
     Ref<WebPage> page = adoptRef(*new WebPage(pageID, WTFMove(parameters)));
 
-    if (page->pageGroup()->isVisibleToInjectedBundle() && WebProcess::singleton().injectedBundle())
+    if (WebProcess::singleton().injectedBundle())
         WebProcess::singleton().injectedBundle()->didCreatePage(page.ptr());
 
     return page;
@@ -1176,7 +1176,7 @@ void WebPage::close()
     if (!mainWebFrame()->url().isEmpty())
         reportUsedFeatures();
 
-    if (pageGroup()->isVisibleToInjectedBundle() && WebProcess::singleton().injectedBundle())
+    if (WebProcess::singleton().injectedBundle())
         WebProcess::singleton().injectedBundle()->willDestroyPage(this);
 
     if (m_inspector) {

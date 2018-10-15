@@ -1,3 +1,38 @@
+2018-10-15  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unused parameters of WebPageGroupData
+        https://bugs.webkit.org/show_bug.cgi?id=190600
+
+        Reviewed by Chris Dumez.
+
+        visibleToInjectedBundle and visibleToHistoryClient are both always true.
+        This removes a mysterious check in the history code.
+
+        * Shared/WebPageGroupData.cpp:
+        (WebKit::WebPageGroupData::encode const):
+        (WebKit::WebPageGroupData::decode):
+        * Shared/WebPageGroupData.h:
+        * UIProcess/WebPageGroup.cpp:
+        (WebKit::WebPageGroup::create):
+        (WebKit::pageGroupData):
+        (WebKit::WebPageGroup::WebPageGroup):
+        * UIProcess/WebPageGroup.h:
+        (WebKit::WebPageGroup::WebPageGroup):
+        (WebKit::WebPageGroup::create):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::updateGlobalHistory):
+        (WebKit::WebFrameLoaderClient::updateGlobalHistoryRedirectLinks):
+        (WebKit::WebFrameLoaderClient::setTitle):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::create):
+        (WebKit::WebPage::close):
+        * WebProcess/WebPage/WebPageGroupProxy.cpp:
+        (WebKit::WebPageGroupProxy::create):
+        * WebProcess/WebPage/WebPageGroupProxy.h:
+        (WebKit::WebPageGroupProxy::pageGroupID const):
+        (WebKit::WebPageGroupProxy::isVisibleToInjectedBundle const): Deleted.
+        (WebKit::WebPageGroupProxy::isVisibleToHistoryClient const): Deleted.
+
 2018-10-15  Chris Dumez  <cdumez@apple.com>
 
         Experiment: target=_blank on anchors should imply rel=noopener

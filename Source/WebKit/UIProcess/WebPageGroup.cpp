@@ -54,9 +54,9 @@ static WebPageGroupMap& webPageGroupMap()
     return map;
 }
 
-Ref<WebPageGroup> WebPageGroup::create(const String& identifier, bool visibleToInjectedBundle, bool visibleToHistoryClient)
+Ref<WebPageGroup> WebPageGroup::create(const String& identifier)
 {
-    return adoptRef(*new WebPageGroup(identifier, visibleToInjectedBundle, visibleToHistoryClient));
+    return adoptRef(*new WebPageGroup(identifier));
 }
 
 WebPageGroup* WebPageGroup::get(uint64_t pageGroupID)
@@ -64,7 +64,7 @@ WebPageGroup* WebPageGroup::get(uint64_t pageGroupID)
     return webPageGroupMap().get(pageGroupID);
 }
 
-static WebPageGroupData pageGroupData(const String& identifier, bool visibleToInjectedBundle, bool visibleToHistoryClient)
+static WebPageGroupData pageGroupData(const String& identifier)
 {
     WebPageGroupData data;
 
@@ -75,16 +75,13 @@ static WebPageGroupData pageGroupData(const String& identifier, bool visibleToIn
     else
         data.identifier = makeString("__uniquePageGroupID-", String::number(data.pageGroupID));
 
-    data.visibleToInjectedBundle = visibleToInjectedBundle;
-    data.visibleToHistoryClient = visibleToHistoryClient;
-
     return data;
 }
 
 // FIXME: Why does the WebPreferences object here use ".WebKit2" instead of "WebKit2." which all the other constructors use.
 // If it turns out that it's wrong, we can change it to to "WebKit2." and get rid of the globalDebugKeyPrefix from WebPreferences.
-WebPageGroup::WebPageGroup(const String& identifier, bool visibleToInjectedBundle, bool visibleToHistoryClient)
-    : m_data(pageGroupData(identifier, visibleToInjectedBundle, visibleToHistoryClient))
+WebPageGroup::WebPageGroup(const String& identifier)
+    : m_data(pageGroupData(identifier))
     , m_preferences(WebPreferences::createWithLegacyDefaults(m_data.identifier, ".WebKit2", "WebKit2."))
     , m_userContentController(WebUserContentControllerProxy::create())
 {

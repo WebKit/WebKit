@@ -39,7 +39,7 @@ Ref<WebPageGroupProxy> WebPageGroupProxy::create(const WebPageGroupData& data)
 {
     auto pageGroup = adoptRef(*new WebPageGroupProxy(data));
 
-    if (pageGroup->isVisibleToInjectedBundle() && WebProcess::singleton().injectedBundle())
+    if (WebProcess::singleton().injectedBundle())
         WebProcess::singleton().injectedBundle()->didInitializePageGroup(pageGroup.ptr());
 
     return pageGroup;

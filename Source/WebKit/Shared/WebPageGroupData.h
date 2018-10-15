@@ -41,8 +41,6 @@ struct WebPageGroupData {
 
     String identifier;
     uint64_t pageGroupID;
-    bool visibleToInjectedBundle;
-    bool visibleToHistoryClient;
 
     UserContentControllerIdentifier userContentControllerIdentifier;
 };

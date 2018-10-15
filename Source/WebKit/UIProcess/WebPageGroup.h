@@ -41,8 +41,8 @@ class WebUserContentControllerProxy;
 
 class WebPageGroup : public API::ObjectImpl<API::Object::Type::PageGroup> {
 public:
-    WebPageGroup(const String& identifier = String(), bool visibleToInjectedBundle = true, bool visibleToHistoryClient = true);
-    static Ref<WebPageGroup> create(const String& identifier = String(), bool visibleToInjectedBundle = true, bool visibleToHistoryClient = true);
+    explicit WebPageGroup(const String& identifier = { });
+    static Ref<WebPageGroup> create(const String& identifier = { });
 
     static WebPageGroup* get(uint64_t pageGroupID);
 
