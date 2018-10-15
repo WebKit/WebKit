@@ -1817,7 +1817,6 @@ private:
 
     ParserState m_parserState;
     
-    bool m_useObjectRestSpread;
     bool m_hasStackOverflow;
     String m_errorMessage;
     JSToken m_token;

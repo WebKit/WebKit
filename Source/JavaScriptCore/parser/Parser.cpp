@@ -147,7 +147,6 @@ Parser<LexerType>::Parser(VM* vm, const SourceCode& source, JSParserBuiltinMode 
     m_token.m_location.lineStartOffset = source.startOffset();
     m_functionCache = vm->addSourceProviderCache(source.provider());
     m_expressionErrorClassifier = nullptr;
-    m_useObjectRestSpread = Options::useObjectRestSpread();
 
     ScopeRef scope = pushScope();
     scope->setSourceParseMode(parseMode);
@@ -1174,7 +1173,7 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDe
             if (match(CLOSEBRACE))
                 break;
 
-            if (match(DOTDOTDOT) && m_useObjectRestSpread) {
+            if (match(DOTDOTDOT)) {
                 JSTokenLocation location = m_token.m_location;
                 next();
                 auto innerPattern = parseObjectRestBindingOrAssignmentElement(context, kind, exportType, duplicateIdentifier, bindingContext);
@@ -4046,17 +4045,14 @@ namedProperty:
         return context.createProperty(propertyName, node, static_cast<PropertyNode::Type>(PropertyNode::Constant | PropertyNode::Computed), PropertyNode::Unknown, complete, SuperBinding::NotNeeded, ClassElementTag::No);
     }
     case DOTDOTDOT: {
-        if (m_useObjectRestSpread) {
-            auto spreadLocation = m_token.m_location;
-            auto start = m_token.m_startPosition;
-            auto divot = m_token.m_endPosition;
-            next();
-            TreeExpression elem = parseAssignmentExpressionOrPropagateErrorClass(context);
-            failIfFalse(elem, "Cannot parse subject of a spread operation");
-            auto node = context.createObjectSpreadExpression(spreadLocation, elem, start, divot, m_lastTokenEndPosition);
-            return context.createProperty(node, PropertyNode::Spread, PropertyNode::Unknown, complete, SuperBinding::NotNeeded, ClassElementTag::No);
-        }
-        FALLTHROUGH;
+        auto spreadLocation = m_token.m_location;
+        auto start = m_token.m_startPosition;
+        auto divot = m_token.m_endPosition;
+        next();
+        TreeExpression elem = parseAssignmentExpressionOrPropagateErrorClass(context);
+        failIfFalse(elem, "Cannot parse subject of a spread operation");
+        auto node = context.createObjectSpreadExpression(spreadLocation, elem, start, divot, m_lastTokenEndPosition);
+        return context.createProperty(node, PropertyNode::Spread, PropertyNode::Unknown, complete, SuperBinding::NotNeeded, ClassElementTag::No);
     }
     default:
         failIfFalse(m_token.m_type & KeywordTokenFlag, "Expected a property name");

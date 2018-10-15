@@ -1,3 +1,20 @@
+2018-10-14  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] Remove Options::useObjectRestSpread
+        https://bugs.webkit.org/show_bug.cgi?id=190568
+
+        Reviewed by Saam Barati.
+
+        Options::useObjectRestSpread is enabled by default at 2017-06-27. It is already shipped in several releases,
+        and we can think that it is mature. Let's drop Options::useObjectRestSpread() flag.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::Parser):
+        (JSC::Parser<LexerType>::parseDestructuringPattern):
+        (JSC::Parser<LexerType>::parseProperty):
+        * parser/Parser.h:
+        * runtime/Options.h:
+
 2018-10-13  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] JSON.stringify can accept call-with-no-arguments

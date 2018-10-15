@@ -506,7 +506,6 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(bool, useWebAssemblyStreamingApi, enableWebAssemblyStreamingApi, Normal, "Allow to run WebAssembly's Streaming API") \
     v(bool, useCallICsForWebAssemblyToJSCalls, true, Normal, "If true, we will use CallLinkInfo to inline cache Wasm to JS calls.") \
     v(bool, useEagerWebAssemblyModuleHashing, false, Normal, "Unnamed WebAssembly modules are identified in backtraces through their hash, if available.") \
-    v(bool, useObjectRestSpread, true, Normal, "If true, we will enable Object Rest/Spread feature.") \
     v(bool, useBigInt, false, Normal, "If true, we will enable BigInt support.") \
     v(bool, useIntlNumberFormatToParts, enableIntlNumberFormatToParts, Normal, "If true, we will enable Intl.NumberFormat.prototype.formatToParts") \
     v(bool, useIntlPluralRules, enableIntlPluralRules, Normal, "If true, we will enable Intl.PluralRules.") \
