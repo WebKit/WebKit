@@ -149,6 +149,9 @@ svg/custom/manually-parsed-embedded-svg-allowed-in-dashboard.html [ Skip ]
 svg/custom/svg-allowed-in-dashboard-object.html [ Skip ]
 mathml/mathml-in-dashboard.html [ Skip ]
 
+# Dark mode not supported on Windows
+css-dark-mode [ Skip ]
+
 # TODO Accelerated overflow scrolling (ENABLE_ACCELERATED_OVERFLOW_SCROLLING) is not enabled.
 fast/repaint/overflow-scroll-touch-repaint.html [ Skip ]
 

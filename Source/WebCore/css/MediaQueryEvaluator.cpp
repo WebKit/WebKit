@@ -45,6 +45,7 @@
 #include "PlatformScreen.h"
 #include "RenderStyle.h"
 #include "RenderView.h"
+#include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
 #include "StyleResolver.h"
 #include "Theme.h"
@@ -712,7 +713,7 @@ static bool anyPointerEvaluate(CSSValue* value, const CSSToLengthConversionData&
 {
     return pointerEvaluate(value, cssToLengthConversionData, frame, prefix);
 }
-    
+
 static bool prefersDarkInterfaceEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame& frame, MediaFeaturePrefix)
 {
     bool prefersDarkInterface = false;
@@ -725,6 +726,30 @@ static bool prefersDarkInterfaceEvaluate(CSSValue* value, const CSSToLengthConve
 
     return downcast<CSSPrimitiveValue>(*value).valueID() == (prefersDarkInterface ? CSSValuePrefers : CSSValueNoPreference);
 }
+
+#if ENABLE(DARK_MODE_CSS)
+static bool prefersColorSchemeEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame& frame, MediaFeaturePrefix)
+{
+    ASSERT(RuntimeEnabledFeatures::sharedFeatures().darkModeCSSEnabled());
+
+    if (!is<CSSPrimitiveValue>(value))
+        return false;
+
+    auto keyword = downcast<CSSPrimitiveValue>(*value).valueID();
+    bool useDarkAppearance = frame.page()->useDarkAppearance();
+
+    switch (keyword) {
+    case CSSValueNoPreference:
+        return true;
+    case CSSValueDark:
+        return useDarkAppearance;
+    case CSSValueLight:
+        return !useDarkAppearance;
+    default:
+        return false;
+    }
+}
+#endif
 
 static bool prefersReducedMotionEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame& frame, MediaFeaturePrefix)
 {

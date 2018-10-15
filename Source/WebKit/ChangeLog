@@ -1,3 +1,14 @@
+2018-10-15  Timothy Hatcher  <timothy@apple.com>
+
+        Add support for prefers-color-scheme media query
+        https://bugs.webkit.org/show_bug.cgi?id=190499
+        rdar://problem/45212025
+
+        Reviewed by Dean Jackson.
+
+        * Configurations/FeatureDefines.xcconfig: Added ENABLE_DARK_MODE_CSS.
+        * Shared/WebPreferences.yaml: Added DarkModeCSSEnabled as experimental.
+
 2018-10-15  Patrick Griffis  <pgriffis@igalia.com>
 
         Remove StorageProcess leftover

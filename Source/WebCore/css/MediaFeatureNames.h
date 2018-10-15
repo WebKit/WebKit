@@ -29,6 +29,12 @@
 #define CSS_MEDIAQUERY_DISPLAY_MODE(macro)
 #endif
 
+#if ENABLE(DARK_MODE_CSS)
+#define CSS_MEDIAQUERY_PREFERS_COLOR_SCHEME(macro) macro(prefersColorScheme, "prefers-color-scheme")
+#else
+#define CSS_MEDIAQUERY_PREFERS_COLOR_SCHEME(macro)
+#endif
+
 #define CSS_MEDIAQUERY_NAMES_FOR_EACH_MEDIAFEATURE(macro) \
     macro(animation, "-webkit-animation") \
     macro(anyHover, "any-hover") \
@@ -79,6 +85,7 @@
     macro(videoPlayableInline, "-webkit-video-playable-inline") \
     macro(width, "width") \
     CSS_MEDIAQUERY_DISPLAY_MODE(macro) \
+    CSS_MEDIAQUERY_PREFERS_COLOR_SCHEME(macro) \
 
 // end of macro
 

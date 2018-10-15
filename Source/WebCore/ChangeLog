@@ -1,3 +1,29 @@
+2018-10-15  Timothy Hatcher  <timothy@apple.com>
+
+        Add support for prefers-color-scheme media query
+        https://bugs.webkit.org/show_bug.cgi?id=190499
+        rdar://problem/45212025
+
+        Reviewed by Dean Jackson.
+
+        Test: css-dark-mode/prefers-color-scheme.html
+
+        * Configurations/FeatureDefines.xcconfig: Added ENABLE_DARK_MODE_CSS.
+        * css/CSSValueKeywords.in: Added light and dark.
+        * css/MediaFeatureNames.h: Added prefers-color-scheme.
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::prefersColorSchemeEvaluate): Added.
+        * css/MediaQueryExpression.cpp:
+        (WebCore::featureWithValidIdent): Added prefers-color-scheme.
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setDarkModeCSSEnabled): Added.
+        (WebCore::RuntimeEnabledFeatures::darkModeCSSEnabled const): Added.
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::resetToConsistentState): Reset setUseDarkAppearance.
+        (WebCore::InternalSettings::setUseDarkAppearance): Added.
+        * testing/InternalSettings.h: Added setUseDarkAppearance.
+        * testing/InternalSettings.idl: Ditto.
+
 2018-10-15  Alex Christensen  <achristensen@webkit.org>
 
         Remove unused WebView._globalHistoryItem

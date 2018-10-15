@@ -84,6 +84,11 @@ public:
     void setDirectoryUploadEnabled(bool isEnabled) { m_isDirectoryUploadEnabled = isEnabled; }
     bool directoryUploadEnabled() const { return m_isDirectoryUploadEnabled; }
 
+#if ENABLE(DARK_MODE_CSS)
+    void setDarkModeCSSEnabled(bool isEnabled) { m_isDarkModeCSSEnabled = isEnabled; }
+    bool darkModeCSSEnabled() const { return m_isDarkModeCSSEnabled; }
+#endif
+
     void setDataTransferItemsEnabled(bool areEnabled) { m_areDataTransferItemsEnabled = areEnabled; }
     bool dataTransferItemsEnabled() const { return m_areDataTransferItemsEnabled; }
 
@@ -348,6 +353,10 @@ private:
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     bool m_isAttachmentElementEnabled { false };
+#endif
+
+#if ENABLE(DARK_MODE_CSS)
+    bool m_isDarkModeCSSEnabled { false };
 #endif
 
 #if ENABLE(INDEXED_DATABASE_IN_WORKERS)

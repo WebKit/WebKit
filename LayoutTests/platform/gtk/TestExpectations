@@ -765,6 +765,9 @@ Bug(GTK) plugins/quicktime-plugin-replacement.html [ Skip ]
 # ENABLE(CSS_SCROLL_SNAP) is disabled.
 css3/scroll-snap [ Skip ]
 
+# ENABLE(DARK_MODE_CSS) is disabled.
+css-dark-mode [ Skip ]
+
 # ENABLE(WEBVTT_REGIONS) is disabled
 webkit.org/b/109570 media/track/regions-webvtt [ Skip ]
 webkit.org/b/109570 media/track/w3c [ Skip ]

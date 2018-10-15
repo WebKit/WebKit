@@ -71,6 +71,7 @@ enum FontLoadTimingOverride { "Block", "Swap", "Failure" };
     [MayThrowException] void setPreferMIMETypeForImages(boolean preferMimeTypeForImage);
 
     // Other switches
+    [MayThrowException] void setUseDarkAppearance(boolean enabled);
     [MayThrowException] void setStorageBlockingPolicy(DOMString policy);
     [MayThrowException] void setImagesEnabled(boolean enabled);
     [MayThrowException] void setPDFImageCachingPolicy(DOMString policy);

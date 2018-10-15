@@ -408,6 +408,10 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 #define ENABLE_CUSTOM_SCHEME_HANDLER 0
 #endif
 
+#if !defined(ENABLE_DARK_MODE_CSS)
+#define ENABLE_DARK_MODE_CSS 0
+#endif
+
 #if !defined(ENABLE_DASHBOARD_SUPPORT)
 #define ENABLE_DASHBOARD_SUPPORT 0
 #endif

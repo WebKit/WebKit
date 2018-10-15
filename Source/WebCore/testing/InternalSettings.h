@@ -72,6 +72,7 @@ public:
     ExceptionOr<void> setPDFImageCachingPolicy(const String&);
     ExceptionOr<void> setShouldDisplayTrackKind(const String& kind, bool enabled);
     ExceptionOr<bool> shouldDisplayTrackKind(const String& kind);
+    ExceptionOr<void> setUseDarkAppearance(bool);
     ExceptionOr<void> setStorageBlockingPolicy(const String&);
     ExceptionOr<void> setImagesEnabled(bool);
     ExceptionOr<void> setMinimumTimerInterval(double intervalInSeconds);

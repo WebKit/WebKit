@@ -1467,6 +1467,9 @@ fast/css/sticky/sticky-top.html [ Pass ImageOnlyFailure ]
 
 css-custom-properties-api/ [ Failure ImageOnlyFailure ]
 
+# Dark mode not supported on Windows
+css-dark-mode [ Skip ]
+
 ################################################################################
 #################            End CSS Issues              #######################
 ################################################################################

@@ -33,6 +33,7 @@
 #include "CSSPropertyParserHelpers.h"
 #include "MediaFeatureNames.h"
 #include "MediaQueryParserContext.h"
+#include "RuntimeEnabledFeatures.h"
 #include <wtf/text/TextStream.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -52,6 +53,9 @@ static inline bool featureWithValidIdent(const AtomicString& mediaFeature, const
     || mediaFeature == MediaFeatureNames::pointer
 #if ENABLE(APPLICATION_MANIFEST)
     || mediaFeature == MediaFeatureNames::displayMode
+#endif
+#if ENABLE(DARK_MODE_CSS)
+    || (mediaFeature == MediaFeatureNames::prefersColorScheme && RuntimeEnabledFeatures::sharedFeatures().darkModeCSSEnabled())
 #endif
     || mediaFeature == MediaFeatureNames::prefersReducedMotion
     || (mediaFeature == MediaFeatureNames::prefersDarkInterface && (context.useSystemAppearance || isUASheetBehavior(context.mode)));

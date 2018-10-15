@@ -1294,6 +1294,15 @@ CSSCustomPropertiesAndValuesEnabled:
   webcoreBinding: RuntimeEnabledFeatures
   category: experimental
 
+DarkModeCSSEnabled:
+  type: bool
+  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
+  humanReadableName: "Dark Mode CSS Support"
+  humanReadableDescription: "Enable Dark Mode CSS Support"
+  webcoreBinding: RuntimeEnabledFeatures
+  category: experimental
+  condition: ENABLE(DARK_MODE_CSS)
+
 # For internal features:
 # The type should be boolean.
 # You must provide a humanReadableName and humanReadableDescription for all debug features. They

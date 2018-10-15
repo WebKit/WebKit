@@ -1,3 +1,13 @@
+2018-10-15  Timothy Hatcher  <timothy@apple.com>
+
+        Add support for prefers-color-scheme media query
+        https://bugs.webkit.org/show_bug.cgi?id=190499
+        rdar://problem/45212025
+
+        Reviewed by Dean Jackson.
+
+        * Configurations/FeatureDefines.xcconfig: Added ENABLE_DARK_MODE_CSS.
+
 2018-10-14  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] Remove Option::useAsyncIterator

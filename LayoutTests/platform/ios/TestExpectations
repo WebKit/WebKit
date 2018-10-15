@@ -1117,6 +1117,9 @@ fast/viewport/ios/viewport-fit-cover.html [ Pass ]
 fast/viewport/ios/viewport-fit-auto.html [ Pass ]
 fast/css/variables/env/ios [ Pass ]
 
+# Dark mode not supported on iOS
+css-dark-mode [ Skip ]
+
 ###
 # Known failures
 ##

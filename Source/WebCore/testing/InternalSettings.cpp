@@ -286,6 +286,7 @@ void InternalSettings::resetToConsistentState()
     m_page->setPageScaleFactor(1, { 0, 0 });
     m_page->mainFrame().setPageAndTextZoomFactors(1, 1);
     m_page->setCanStartMedia(true);
+    m_page->setUseDarkAppearance(false);
 
     settings().setForcePendingWebGLPolicy(false);
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -524,6 +525,14 @@ ExceptionOr<bool> InternalSettings::shouldDisplayTrackKind(const String& kind)
     UNUSED_PARAM(kind);
     return false;
 #endif
+}
+
+ExceptionOr<void> InternalSettings::setUseDarkAppearance(bool useDarkAppearance)
+{
+    if (!m_page)
+        return Exception { InvalidAccessError };
+    m_page->setUseDarkAppearance(useDarkAppearance);
+    return { };
 }
 
 ExceptionOr<void> InternalSettings::setStorageBlockingPolicy(const String& mode)

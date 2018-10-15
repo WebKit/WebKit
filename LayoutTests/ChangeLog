@@ -1,3 +1,20 @@
+2018-10-15  Timothy Hatcher  <timothy@apple.com>
+
+        Add support for prefers-color-scheme media query
+        https://bugs.webkit.org/show_bug.cgi?id=190499
+        rdar://problem/45212025
+
+        Reviewed by Dean Jackson.
+
+        * css-dark-mode/prefers-color-scheme-expected.txt: Added.
+        * css-dark-mode/prefers-color-scheme.html: Added.
+        * platform/gtk/TestExpectations: Skip css-dark-mode.
+        * platform/ios/TestExpectations: Skip css-dark-mode.
+        * platform/mac-wk1/TestExpectations: Skip css-dark-mode.
+        * platform/win/TestExpectations: Skip css-dark-mode.
+        * platform/wincairo/TestExpectations: Skip css-dark-mode.
+        * platform/wpe/TestExpectations: Skip css-dark-mode.
+
 2018-10-15  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Cleanup Table test utilities

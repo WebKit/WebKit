@@ -65,6 +65,7 @@ my (
     $customElementsSupport,
     $customSchemeHandlerSupport,
     $dataTransferItemsSupport,
+    $darkModeCSSSupport,
     $datalistElementSupport,
     $deviceOrientationSupport,
     $dom4EventsConstructor,
@@ -183,6 +184,9 @@ my @features = (
 
     { option => "custom-scheme-handler", desc => "Toggle Custom Scheme Handler support",
       define => "ENABLE_CUSTOM_SCHEME_HANDLER", value => \$customSchemeHandlerSupport },
+
+    { option => "dark-mode-css", desc => "Toggle Dark Mode CSS support",
+      define => "ENABLE_DARK_MODE_CSS", value => \$darkModeCSSSupport },
 
     { option => "data-transfer-items", desc => "Toggle Data Transfer Items support",
       define => "ENABLE_DATA_TRANSFER_ITEMS", value => \$dataTransferItemsSupport },
