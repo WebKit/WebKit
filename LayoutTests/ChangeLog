@@ -1,3 +1,15 @@
+2018-10-15  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
+
+        [Cairo] Incorrect rendering for 135-deg skews
+        https://bugs.webkit.org/show_bug.cgi?id=190513
+
+        Reviewed by Žan Doberšek.
+
+        * fast/transforms/skew-x-135deg-with-gradient-expected.html: Added.
+        * fast/transforms/skew-x-135deg-with-gradient.html: Added.
+        * fast/transforms/skew-y-135deg-with-gradient-expected.html: Added.
+        * fast/transforms/skew-y-135deg-with-gradient.html: Added.
+
 2018-10-15  Chris Dumez  <cdumez@apple.com>
 
         Restrict browsing context lookup by name to frames that are related to one another

@@ -1,3 +1,20 @@
+2018-10-15  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
+
+        [Cairo] Incorrect rendering for 135-deg skews
+        https://bugs.webkit.org/show_bug.cgi?id=190513
+
+        Compensation value to zero the the translation components
+        of the transformation matrix is incorrect if the matrix
+        has a shear factor.
+
+        Reviewed by Žan Doberšek.
+
+        Tests: fast/transforms/skew-x-135deg-with-gradient.html
+               fast/transforms/skew-y-135deg-with-gradient.html
+
+        * platform/graphics/cairo/CairoUtilities.cpp:
+        (WebCore::drawPatternToCairoContext):
+
 2018-10-15  Christopher Reid  <chris.reid@sony.com>
 
         [Curl][WinCairo] Add Public Suffix support to WinCairo
