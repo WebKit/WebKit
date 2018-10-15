@@ -1,3 +1,11 @@
+2018-10-15  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [WPE] Silence a unused-parameter warning
+
+        Unreviewed.
+        * MiniBrowser/wpe/main.cpp:
+        (decidePermissionRequest):
+
 2018-10-12  Guillaume Emont  <guijemont@igalia.com>
 
         [Tools][webkitpy] fix handling of JSCTESTS_OPTIONS

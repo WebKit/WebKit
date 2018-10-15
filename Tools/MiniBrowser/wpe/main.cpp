@@ -92,7 +92,7 @@ static void automationStartedCallback(WebKitWebContext*, WebKitAutomationSession
     g_signal_connect(session, "create-web-view", G_CALLBACK(createWebViewForAutomationCallback), view);
 }
 
-static gboolean decidePermissionRequest(WebKitWebView *webView, WebKitPermissionRequest *request, gpointer unused_udata)
+static gboolean decidePermissionRequest(WebKitWebView *, WebKitPermissionRequest *request, gpointer)
 {
     g_print("Accepting %s request\n", G_OBJECT_TYPE_NAME(request));
     webkit_permission_request_allow(request);
