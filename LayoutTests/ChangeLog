@@ -1,3 +1,13 @@
+2018-10-15  Charles Vazac  <cvazac@gmail.com>
+
+        Web Inspector: Expose Server Timing Response Headers in Network Tab
+        https://bugs.webkit.org/show_bug.cgi?id=190440
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/unit-tests/server-timing-entry-expected.txt:
+        * inspector/unit-tests/server-timing-entry.html:
+
 2018-10-15  Alex Christensen  <achristensen@webkit.org>
 
         Garden WK2 tests after r237104

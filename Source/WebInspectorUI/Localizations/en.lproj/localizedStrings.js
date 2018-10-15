@@ -748,6 +748,7 @@ localizedStrings["Selector Path"] = "Selector Path";
 localizedStrings["Self Size"] = "Self Size";
 localizedStrings["Self Time"] = "Self Time";
 localizedStrings["Semantic Issue"] = "Semantic Issue";
+localizedStrings["Server Timing:"] = "Server Timing:";
 localizedStrings["Service Worker"] = "Service Worker";
 localizedStrings["ServiceWorker"] = "ServiceWorker";
 localizedStrings["Session"] = "Session";

@@ -50,6 +50,7 @@ WI.Resource = class Resource extends WI.SourceCode
         this._responseHeaders = {};
         this._requestCookies = null;
         this._responseCookies = null;
+        this._serverTimingEntries = null;
         this._parentFrame = null;
         this._initiatorSourceCodeLocation = initiatorSourceCodeLocation || null;
         this._initiatorNode = initiatorNode || null;
@@ -606,6 +607,13 @@ WI.Resource = class Resource extends WI.SourceCode
         return this._scripts || [];
     }
 
+    get serverTiming()
+    {
+        if (!this._serverTimingEntries)
+            this._serverTimingEntries = WI.ServerTimingEntry.parseHeaders(this._responseHeaders.valueForCaseInsensitiveKey("Server-Timing"));
+        return this._serverTimingEntries;
+    }
+
     scriptForLocation(sourceCodeLocation)
     {
         console.assert(!(this instanceof WI.SourceMapResource));
@@ -689,6 +697,7 @@ WI.Resource = class Resource extends WI.SourceCode
         this._statusText = statusText;
         this._responseHeaders = responseHeaders || {};
         this._responseCookies = null;
+        this._serverTimingEntries = null;
         this._responseReceivedTimestamp = elapsedTime || NaN;
         this._timingData = WI.ResourceTimingData.fromPayload(timingData, this);
 
