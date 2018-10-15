@@ -172,7 +172,7 @@ class WEBCORE_EXPORT EmptyFrameLoaderClient : public FrameLoaderClient {
     void didDisplayInsecureContent() final { }
     void didRunInsecureContent(SecurityOrigin&, const URL&) final { }
     void didDetectXSS(const URL&, bool) final { }
-    RefPtr<Frame> createFrame(const URL&, const String&, HTMLFrameOwnerElement&, const String&, bool, int, int) final;
+    RefPtr<Frame> createFrame(const URL&, const String&, HTMLFrameOwnerElement&, const String&) final;
     RefPtr<Widget> createPlugin(const IntSize&, HTMLPlugInElement&, const URL&, const Vector<String>&, const Vector<String>&, const String&, bool) final;
     void recreatePlugin(Widget*) final;
     RefPtr<Widget> createJavaAppletWidget(const IntSize&, HTMLAppletElement&, const URL&, const Vector<String>&, const Vector<String>&) final;

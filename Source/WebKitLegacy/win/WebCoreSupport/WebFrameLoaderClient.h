@@ -186,7 +186,7 @@ public:
     bool canCachePage() const override;
 
     RefPtr<WebCore::Frame> createFrame(const WebCore::URL&, const WTF::String& name, WebCore::HTMLFrameOwnerElement&,
-        const WTF::String& referrer, bool allowsScrolling, int marginWidth, int marginHeight) override;
+        const WTF::String& referrer) override;
     RefPtr<WebCore::Widget> createPlugin(const WebCore::IntSize&, WebCore::HTMLPlugInElement&, const WebCore::URL&, const Vector<WTF::String>&, const Vector<WTF::String>&, const WTF::String&, bool loadManually) override;
     void recreatePlugin(WebCore::Widget*) override { }
     void redirectDataToPlugin(WebCore::Widget&) override;

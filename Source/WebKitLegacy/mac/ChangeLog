@@ -1,5 +1,16 @@
 2018-10-15  Alex Christensen  <achristensen@webkit.org>
 
+        Remove unused parameters from FrameLoaderClient::createFrame
+        https://bugs.webkit.org/show_bug.cgi?id=190587
+
+        Reviewed by Chris Dumez.
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::createFrame):
+
+2018-10-15  Alex Christensen  <achristensen@webkit.org>
+
         Remove unused WebFrame._loadType
         https://bugs.webkit.org/show_bug.cgi?id=190583
 

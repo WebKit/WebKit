@@ -1628,7 +1628,7 @@ bool WebFrameLoaderClient::canCachePage() const
 }
 
 RefPtr<Frame> WebFrameLoaderClient::createFrame(const URL& url, const String& name, HTMLFrameOwnerElement& ownerElement,
-    const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight)
+    const String& referrer)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     

@@ -308,17 +308,6 @@ Frame* SubframeLoader::loadOrRedirectSubframe(HTMLFrameOwnerElement& ownerElemen
 Frame* SubframeLoader::loadSubframe(HTMLFrameOwnerElement& ownerElement, const URL& url, const String& name, const String& referrer)
 {
     Ref<Frame> protect(m_frame);
-
-    bool allowsScrolling = true;
-    int marginWidth = -1;
-    int marginHeight = -1;
-    if (is<HTMLFrameElementBase>(ownerElement)) {
-        auto& frameElementBase = downcast<HTMLFrameElementBase>(ownerElement);
-        allowsScrolling = frameElementBase.scrollingMode() != ScrollbarAlwaysOff;
-        marginWidth = frameElementBase.marginWidth();
-        marginHeight = frameElementBase.marginHeight();
-    }
-
     auto document = makeRef(ownerElement.document());
 
     if (!document->securityOrigin().canDisplay(url)) {
@@ -334,7 +323,7 @@ Frame* SubframeLoader::loadSubframe(HTMLFrameOwnerElement& ownerElement, const U
     // Prevent initial empty document load from triggering load events.
     document->incrementLoadEventDelayCount();
 
-    auto frame = m_frame.loader().client().createFrame(url, name, ownerElement, referrerToUse, allowsScrolling, marginWidth, marginHeight);
+    auto frame = m_frame.loader().client().createFrame(url, name, ownerElement, referrerToUse);
 
     document->decrementLoadEventDelayCount();
 
