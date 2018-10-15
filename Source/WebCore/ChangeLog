@@ -1,5 +1,21 @@
 2018-10-15  Simon Fraser  <simon.fraser@apple.com>
 
+        Share some code to dirty z-order and normal flow lists when child layers are added or removed
+        https://bugs.webkit.org/show_bug.cgi?id=190585
+
+        Reviewed by Zalan Bujtas.
+
+        Factor code which dirties the normal flow list and child stacking context z-order lists
+        when a layer is added or removed.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::addChild):
+        (WebCore::RenderLayer::removeChild):
+        (WebCore::RenderLayer::dirtyPaintOrderListsOnChildChange):
+        * rendering/RenderLayer.h:
+
+2018-10-15  Simon Fraser  <simon.fraser@apple.com>
+
         Make a helper function to check for reflection layers
         https://bugs.webkit.org/show_bug.cgi?id=190584
 

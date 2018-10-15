@@ -394,15 +394,7 @@ void RenderLayer::addChild(RenderLayer& child, RenderLayer* beforeChild)
 
     child.setParent(this);
 
-    if (child.isNormalFlowOnly())
-        dirtyNormalFlowList();
-
-    if (!child.isNormalFlowOnly() || child.firstChild()) {
-        // Dirty the z-order list in which we are contained. The stackingContext() can be null in the
-        // case where we're building up generated content layers. This is ok, since the lists will start
-        // off dirty in that case anyway.
-        child.dirtyStackingContextZOrderLists();
-    }
+    dirtyPaintOrderListsOnChildChange(child);
 
     child.updateDescendantDependentFlags();
     if (child.m_hasVisibleContent || child.m_hasVisibleDescendant)
@@ -413,7 +405,7 @@ void RenderLayer::addChild(RenderLayer& child, RenderLayer* beforeChild)
 
 #if ENABLE(CSS_COMPOSITING)
     if (child.hasBlendMode() || (child.hasNotIsolatedBlendingDescendants() && !child.isolatesBlending()))
-        updateAncestorChainHasBlendingDescendants();
+        updateAncestorChainHasBlendingDescendants(); // Why not just dirty?
 #endif
 
     compositor().layerWasAdded(*this, child);
@@ -435,14 +427,7 @@ void RenderLayer::removeChild(RenderLayer& oldChild)
     if (m_last == &oldChild)
         m_last = oldChild.previousSibling();
 
-    if (oldChild.isNormalFlowOnly())
-        dirtyNormalFlowList();
-    if (!oldChild.isNormalFlowOnly() || oldChild.firstChild()) {
-        // Dirty the z-order list in which we are contained. When called via the
-        // reattachment process in removeOnlyThisLayer, the layer may already be disconnected
-        // from the main layer tree, so we need to null-check the |stackingContext| value.
-        oldChild.dirtyStackingContextZOrderLists();
-    }
+    dirtyPaintOrderListsOnChildChange(oldChild);
 
     oldChild.setPreviousSibling(nullptr);
     oldChild.setNextSibling(nullptr);
@@ -459,6 +444,19 @@ void RenderLayer::removeChild(RenderLayer& oldChild)
     if (oldChild.hasBlendMode() || (oldChild.hasNotIsolatedBlendingDescendants() && !oldChild.isolatesBlending()))
         dirtyAncestorChainHasBlendingDescendants();
 #endif
+}
+
+void RenderLayer::dirtyPaintOrderListsOnChildChange(RenderLayer& child)
+{
+    if (child.isNormalFlowOnly())
+        dirtyNormalFlowList();
+
+    if (!child.isNormalFlowOnly() || child.firstChild()) {
+        // Dirty the z-order list in which we are contained. The stackingContext() can be null in the
+        // case where we're building up generated content layers. This is ok, since the lists will start
+        // off dirty in that case anyway.
+        child.dirtyStackingContextZOrderLists();
+    }
 }
 
 void RenderLayer::insertOnlyThisLayer()
