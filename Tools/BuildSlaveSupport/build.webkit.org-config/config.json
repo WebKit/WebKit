@@ -329,13 +329,13 @@
                     {
                       "name": "GTK Linux 64-bit Release Debian Stable (Build)", "type": "Build", "builddir": "gtk-linux-64-release-debian",
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
-                      "additionalArguments": ["--no-experimental-features"],
+                      "additionalArguments": ["--no-experimental-features", "--no-media-source"],
                       "slavenames": ["gtk-linux-slave-10"]
                     },
                     {
                       "name": "GTK Linux 64-bit Release Ubuntu LTS (Build)", "type": "Build", "builddir": "gtk-linux-64-release-ubuntu",
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
-                      "additionalArguments": ["--no-experimental-features"],
+                      "additionalArguments": ["--no-experimental-features", "--no-media-source"],
                       "slavenames": ["gtk-linux-slave-11"]
                     },
                     {

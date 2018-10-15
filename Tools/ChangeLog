@@ -1,3 +1,15 @@
+2018-10-15  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] Disable MSE build support on Debian and Ubuntu LTS bots
+        https://bugs.webkit.org/show_bug.cgi?id=190581
+
+        Reviewed by Michael Catanzaro.
+
+        These bots don't use JHBuild and their host GStreamer version is
+        too old for the GStreamer MSE backend. Version 1.14 is needed at least.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2018-10-15  Alex Christensen  <achristensen@webkit.org>
 
         Use pragma once in WTF
