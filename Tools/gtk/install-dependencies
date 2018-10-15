@@ -94,6 +94,7 @@ function installDependenciesWithApt {
         autopoint \
         autotools-dev \
         bison \
+        bubblewrap \
         cmake \
         flex \
         gawk \
@@ -131,6 +132,7 @@ function installDependenciesWithApt {
         $(aptIfElse libpng-dev libpng12-dev) \
         libpulse-dev \
         librsvg2-dev \
+        libseccomp-dev \
         libsecret-1-dev \
         libsoup2.4-dev \
         libsqlite3-dev \
@@ -240,6 +242,7 @@ function installDependenciesWithPacman {
         autoconf \
         automake \
         bison \
+        bubblewrap \
         cmake \
         libedit \
         libffi \
@@ -291,6 +294,7 @@ function installDependenciesWithPacman {
         libpng \
         libpulse \
         librsvg \
+        libseccomp \
         libsecret \
         libsoup \
         libsrtp \
@@ -411,6 +415,7 @@ function installDependenciesWithDnf {
         autoconf \
         automake \
         bison \
+        bubblewrap \
         cairo-devel \
         cmake \
         enchant-devel \
@@ -441,6 +446,7 @@ function installDependenciesWithDnf {
         libmount-devel \
         libnotify-devel \
         libpng-devel \
+        libseccomp-devel \
         libsecret-devel \
         libsoup-devel \
         libsrtp-devel \
