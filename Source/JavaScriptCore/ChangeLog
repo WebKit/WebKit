@@ -1,3 +1,18 @@
+2018-10-13  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] JSON.stringify can accept call-with-no-arguments
+        https://bugs.webkit.org/show_bug.cgi?id=190343
+
+        Reviewed by Mark Lam.
+
+        JSON.stringify can accept `JSON.stringify()` call (call-with-no-arguments) according to the spec[1].
+        Instead of throwing an error, we should take the first argument as `undefined` if it is not given.
+
+        [1]: https://tc39.github.io/ecma262/#sec-json.stringify
+
+        * runtime/JSONObject.cpp:
+        (JSC::JSONProtoFuncStringify):
+
 2018-10-12  Tadeu Zagallo  <tzagallo@apple.com>
 
         Gardening: Build fix after r237084.

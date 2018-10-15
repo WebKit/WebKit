@@ -829,11 +829,9 @@ EncodedJSValue JSC_HOST_CALL JSONProtoFuncStringify(ExecState* exec)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (!exec->argumentCount())
-        return throwVMError(exec, scope, createError(exec, "No input to stringify"_s));
     Stringifier stringifier(exec, exec->argument(1), exec->argument(2));
     RETURN_IF_EXCEPTION(scope, { });
-    RELEASE_AND_RETURN(scope, JSValue::encode(stringifier.stringify(exec->uncheckedArgument(0))));
+    RELEASE_AND_RETURN(scope, JSValue::encode(stringifier.stringify(exec->argument(0))));
 }
 
 JSValue JSONParse(ExecState* exec, const String& json)

@@ -1,3 +1,13 @@
+2018-10-13  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] JSON.stringify can accept call-with-no-arguments
+        https://bugs.webkit.org/show_bug.cgi?id=190343
+
+        Reviewed by Mark Lam.
+
+        * stress/json-stringify-no-arguments.js: Added.
+        (shouldBe):
+
 2018-10-08  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] JSC should have "parseFunction" to optimize Function constructor
