@@ -250,12 +250,15 @@ void HTMLAnchorElement::parseAttribute(const QualifiedName& name, const AtomicSt
         // Update HTMLAnchorElement::relList() if more rel attributes values are supported.
         static NeverDestroyed<AtomicString> noReferrer("noreferrer", AtomicString::ConstructFromLiteral);
         static NeverDestroyed<AtomicString> noOpener("noopener", AtomicString::ConstructFromLiteral);
+        static NeverDestroyed<AtomicString> opener("opener", AtomicString::ConstructFromLiteral);
         const bool shouldFoldCase = true;
         SpaceSplitString relValue(value, shouldFoldCase);
         if (relValue.contains(noReferrer))
             m_linkRelations.add(Relation::NoReferrer);
         if (relValue.contains(noOpener))
             m_linkRelations.add(Relation::NoOpener);
+        if (relValue.contains(opener))
+            m_linkRelations.add(Relation::Opener);
         if (m_relList)
             m_relList->associatedAttributeValueChanged(value);
     }
@@ -427,10 +430,26 @@ void HTMLAnchorElement::handleClick(Event& event)
 #endif
 
     ShouldSendReferrer shouldSendReferrer = hasRel(Relation::NoReferrer) ? NeverSendReferrer : MaybeSendReferrer;
-    auto newFrameOpenerPolicy = hasRel(Relation::NoOpener) ? std::make_optional(NewFrameOpenerPolicy::Suppress) : std::nullopt;
-    frame->loader().urlSelected(completedURL, target(), &event, LockHistory::No, LockBackForwardList::No, shouldSendReferrer, document().shouldOpenExternalURLsPolicyToPropagate(), newFrameOpenerPolicy, downloadAttribute, systemPreviewInfo);
+
+    auto effectiveTarget = this->effectiveTarget();
+    std::optional<NewFrameOpenerPolicy> newFrameOpenerPolicy;
+    if (hasRel(Relation::Opener))
+        newFrameOpenerPolicy = NewFrameOpenerPolicy::Allow;
+    else if (hasRel(Relation::NoOpener) || (RuntimeEnabledFeatures::sharedFeatures().blankAnchorTargetImpliesNoOpenerEnabled() && equalIgnoringASCIICase(effectiveTarget, "_blank")))
+        newFrameOpenerPolicy = NewFrameOpenerPolicy::Suppress;
+
+    frame->loader().urlSelected(completedURL, effectiveTarget, &event, LockHistory::No, LockBackForwardList::No, shouldSendReferrer, document().shouldOpenExternalURLsPolicyToPropagate(), newFrameOpenerPolicy, downloadAttribute, systemPreviewInfo);
 
     sendPings(completedURL);
+}
+
+// Falls back to using <base> element's target if the anchor does not have one.
+String HTMLAnchorElement::effectiveTarget() const
+{
+    auto effectiveTarget = target();
+    if (effectiveTarget.isEmpty())
+        effectiveTarget = document().baseTarget();
+    return effectiveTarget;
 }
 
 HTMLAnchorElement::EventType HTMLAnchorElement::eventType(Event& event)

@@ -1,3 +1,15 @@
+2018-10-15  Chris Dumez  <cdumez@apple.com>
+
+        Experiment: target=_blank on anchors should imply rel=noopener
+        https://bugs.webkit.org/show_bug.cgi?id=190481
+
+        Reviewed by Alex Christensen.
+
+        Add API test coverage to make sure we can now swap process when target=_blank
+        is specified on an anchor but rel=noopener is not.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2018-10-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Can't select text after dismissing the keyboard when changing focus

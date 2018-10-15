@@ -1,3 +1,12 @@
+2018-10-15  Chris Dumez  <cdumez@apple.com>
+
+        Experiment: target=_blank on anchors should imply rel=noopener
+        https://bugs.webkit.org/show_bug.cgi?id=190481
+
+        Reviewed by Alex Christensen.
+
+        * Shared/WebPreferences.yaml:
+
 2018-10-15  Alex Christensen  <achristensen@webkit.org>
 
         Remove unused parameters from FrameLoaderClient::createFrame

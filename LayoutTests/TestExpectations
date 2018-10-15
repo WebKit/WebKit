@@ -2865,6 +2865,13 @@ webkit.org/b/185308 legacy-animation-engine/animations/combo-transform-translate
 # This newly imported test crashes in debug and flakily times out.
 webkit.org/b/189917 imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/contentType.window.html [ Skip ]
 
+# These tests started to time out or fail because of our experiment to have target=_blank on anchors imply rel=noopener (https://bugs.webkit.org/show_bug.cgi?id=190481).
+imported/w3c/web-platform-tests/html/browsers/windows/auxiliary-browsing-contexts/opener-closed.html [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/windows/browsing-context-names/002.html [ Failure ]
+imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_escaping-2.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_nonescaping-2.html [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/windows/browsing-context-names/choose-_blank-003.html [ Failure ]
+
 fast/gradients/conic-repeating.html [ Skip ]
 fast/gradients/conic.html [ Skip ]
 fast/gradients/conic-off-center.html [ Skip ]

@@ -1,3 +1,28 @@
+2018-10-15  Chris Dumez  <cdumez@apple.com>
+
+        Experiment: target=_blank on anchors should imply rel=noopener
+        https://bugs.webkit.org/show_bug.cgi?id=190481
+
+        Reviewed by Alex Christensen.
+
+        As an experiment, try and make it so that target=_blank on anchors implies `rel=noopener` for improved security.
+        WebContent can then request an opener relationship by using `rel=opener` instead.
+
+        This change was discussed at:
+        - https://github.com/whatwg/html/issues/4078
+
+        We want to attempt this change is STP to see if it is Web-compatible. Preliminary testing seems to indicate
+        that OAuth workflows still work.
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::parseAttribute):
+        (WebCore::HTMLAnchorElement::handleClick):
+        (WebCore::HTMLAnchorElement::effectiveTarget const):
+        * html/HTMLAnchorElement.h:
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setBlankAnchorTargetImpliesNoOpenerEnabled):
+        (WebCore::RuntimeEnabledFeatures::blankAnchorTargetImpliesNoOpenerEnabled const):
+
 2018-10-15  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] New shipping methods are ignored when updating after the shippingaddresschange event

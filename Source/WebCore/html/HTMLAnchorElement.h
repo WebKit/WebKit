@@ -37,6 +37,7 @@ class DOMTokenList;
 enum class Relation {
     NoReferrer = 1 << 0,
     NoOpener = 1 << 1,
+    Opener = 1 << 2,
 };
 
 class HTMLAnchorElement : public HTMLElement, public URLUtils<HTMLAnchorElement> {
@@ -89,6 +90,8 @@ private:
     String target() const override;
     int tabIndex() const final;
     bool draggable() const final;
+
+    String effectiveTarget() const;
 
     void sendPings(const URL& destinationURL);
 

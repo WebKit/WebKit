@@ -19,6 +19,6 @@ window.onload = function()
 </script>
 </head>
 <body>
-<a id="anchorLink" href="http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?test=/security/xssAuditor/link-opens-new-window.html&notifyDone=1&q=<script>alert(String.fromCharCode(0x58,0x53,0x53))</script>" target="_blank">Click me</a>
+<a id="anchorLink" href="http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?test=/security/xssAuditor/link-opens-new-window.html&notifyDone=1&q=<script>alert(String.fromCharCode(0x58,0x53,0x53))</script>" target="_blank" rel="opener">Click me</a>
 </body>
 </html>

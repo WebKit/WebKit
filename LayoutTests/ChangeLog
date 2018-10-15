@@ -1,3 +1,19 @@
+2018-10-15  Chris Dumez  <cdumez@apple.com>
+
+        Experiment: target=_blank on anchors should imply rel=noopener
+        https://bugs.webkit.org/show_bug.cgi?id=190481
+
+        Reviewed by Alex Christensen.
+
+        Update existing tests to reflect behavior change.
+
+        * TestExpectations:
+        * http/tests/navigation/no-referrer-reset.html:
+        * http/tests/security/resources/referrer-policy-redirect-link.html:
+        * http/tests/security/xss-DENIED-script-inject-into-inactive-window2-pson.html:
+        * http/tests/security/xss-DENIED-script-inject-into-inactive-window2.html:
+        * http/tests/security/xssAuditor/link-opens-new-window.html:
+
 2018-10-15  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] New shipping methods are ignored when updating after the shippingaddresschange event

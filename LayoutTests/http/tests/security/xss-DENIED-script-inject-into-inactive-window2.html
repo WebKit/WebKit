@@ -35,6 +35,7 @@ if (document.location.search.indexOf("?actually-attack") !== -1) {
     // Case: Initial load
     var link = document.createElement("a");
     link.target = "_blank";
+    link.rel = "opener";
     link.href = "?actually-attack";
     link.click(); // Open a new window.
 }

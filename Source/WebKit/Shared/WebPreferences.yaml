@@ -1,3 +1,11 @@
+BlankAnchorTargetImpliesNoOpenerEnabled:
+   type: bool
+   defaultValue: true
+   webcoreBinding: RuntimeEnabledFeatures
+   humanReadableName: "Blank anchor target implies rel=noopener"
+   humanReadableDescription: "target=_blank on anchor elements implies rel=noopener"
+   category: experimental
+
 JavaScriptEnabled:
   type: bool
   defaultValue: true

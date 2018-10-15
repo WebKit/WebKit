@@ -43,6 +43,9 @@ namespace WebCore {
 class RuntimeEnabledFeatures {
     WTF_MAKE_NONCOPYABLE(RuntimeEnabledFeatures);
 public:
+    void setBlankAnchorTargetImpliesNoOpenerEnabled(bool isEnabled) { m_blankAnchorTargetImpliesNoOpenerEnabled = isEnabled; }
+    bool blankAnchorTargetImpliesNoOpenerEnabled() const { return m_blankAnchorTargetImpliesNoOpenerEnabled; }
+
     void setDisplayContentsEnabled(bool isEnabled) { m_isDisplayContentsEnabled = isEnabled; }
     bool displayContentsEnabled() const { return m_isDisplayContentsEnabled; }
 
@@ -300,6 +303,7 @@ private:
     // Never instantiate.
     RuntimeEnabledFeatures();
 
+    bool m_blankAnchorTargetImpliesNoOpenerEnabled { true };
     bool m_areModernMediaControlsEnabled { false };
     bool m_isLinkPreloadEnabled { true };
     bool m_isLinkPrefetchEnabled { false };

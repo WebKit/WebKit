@@ -280,7 +280,16 @@ window.onload = function() {
 </script>
 )PSONRESOURCE";
 
-static const char* targetBlankCrossSiteWithOpenerTestBytes = R"PSONRESOURCE(
+static const char* targetBlankCrossSiteWithExplicitOpenerTestBytes = R"PSONRESOURCE(
+<a id="testLink" target="_blank" href="pson://www.apple.com/main.html" rel="opener">Link</a>
+<script>
+window.onload = function() {
+    testLink.click();
+}
+</script>
+)PSONRESOURCE";
+
+static const char* targetBlankCrossSiteWithImplicitNoOpenerTestBytes = R"PSONRESOURCE(
 <a id="testLink" target="_blank" href="pson://www.apple.com/main.html">Link</a>
 <script>
 window.onload = function() {
@@ -693,7 +702,7 @@ TEST(ProcessSwap, CrossSiteBlankTargetWithOpener)
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webViewConfiguration setProcessPool:processPool.get()];
     auto handler = adoptNS([[PSONScheme alloc] init]);
-    [handler addMappingFromURLString:@"pson://www.webkit.org/main.html" toData:targetBlankCrossSiteWithOpenerTestBytes];
+    [handler addMappingFromURLString:@"pson://www.webkit.org/main.html" toData:targetBlankCrossSiteWithExplicitOpenerTestBytes];
     [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
@@ -722,6 +731,46 @@ TEST(ProcessSwap, CrossSiteBlankTargetWithOpener)
     EXPECT_TRUE(!!pid2);
 
     EXPECT_EQ(pid1, pid2);
+}
+
+TEST(ProcessSwap, CrossSiteBlankTargetImplicitNoOpener)
+{
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [handler addMappingFromURLString:@"pson://www.webkit.org/main.html" toData:targetBlankCrossSiteWithImplicitNoOpenerTestBytes];
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    auto uiDelegate = adoptNS([[PSONUIDelegate alloc] initWithNavigationDelegate:navigationDelegate.get()]);
+    [webView setUIDelegate:uiDelegate.get()];
+
+    numberOfDecidePolicyCalls = 0;
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    TestWebKitAPI::Util::run(&didCreateWebView);
+    didCreateWebView = false;
+
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_EQ(3, numberOfDecidePolicyCalls);
+
+    auto pid1 = [webView _webProcessIdentifier];
+    EXPECT_TRUE(!!pid1);
+    auto pid2 = [createdWebView _webProcessIdentifier];
+    EXPECT_TRUE(!!pid2);
+
+    EXPECT_NE(pid1, pid2);
 }
 
 TEST(ProcessSwap, CrossSiteBlankTargetNoOpener)
