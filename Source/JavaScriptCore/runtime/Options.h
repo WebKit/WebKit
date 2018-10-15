@@ -106,12 +106,6 @@ typedef const char* optionString;
 #define MAXIMUM_NUMBER_OF_FTL_COMPILER_THREADS 8
 #endif
 
-#if ENABLE(JS_ASYNC_ITERATION)
-constexpr bool enableAsyncIteration = true;
-#else
-constexpr bool enableAsyncIteration = false;
-#endif
-
 #if ENABLE(EXPERIMENTAL_FEATURES)
 constexpr bool enableIntlNumberFormatToParts = true;
 #else
@@ -484,8 +478,6 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(bool, usePoisoning, true, Normal, "Poison is randomized at load time when true, and initialized to 0 if false which defeats some Spectre and type confusion mitigations, but allows tools such as leak detectors to function better.") \
     v(bool, zeroStackFrame, false, Normal, "Zero stack frame on entry to a function.") \
     \
-    v(bool, useAsyncIterator, enableAsyncIteration, Normal, "Allow to use Async Iterator in JS.") \
-    \
     v(bool, failToCompileWebAssemblyCode, false, Normal, "If true, no Wasm::Plan will sucessfully compile a function.") \
     v(size, webAssemblyPartialCompileLimit, 5000, Normal, "Limit on the number of bytes a Wasm::Plan::compile should attempt before checking for other work.") \
     v(unsigned, webAssemblyBBQOptimizationLevel, 1, Normal, "B3 Optimization level for BBQ Web Assembly module compilations.") \
@@ -554,7 +546,6 @@ enum OptionEquivalence {
     v(enableOSRExitFuzz, useOSRExitFuzz, SameOption) \
     v(enableDollarVM, useDollarVM, SameOption) \
     v(enableWebAssembly, useWebAssembly, SameOption) \
-    v(enableAsyncIterator, useAsyncIterator, SameOption) \
     v(verboseDFGByteCodeParsing, verboseDFGBytecodeParsing, SameOption) \
 
 

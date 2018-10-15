@@ -1306,7 +1306,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
     DepthManager statementDepth(&m_statementDepth);
     m_statementDepth++;
 
-    if (Options::useAsyncIterator() && match(AWAIT)) {
+    if (match(AWAIT)) {
         semanticFailIfFalse(currentScope()->isAsyncFunction(), "for-await-of can't be used only in async function or async generator.");
         isAwaitFor = true;
         next();
@@ -2697,7 +2697,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseAsyncFunction
     next();
     ParserFunctionInfo<TreeBuilder> functionInfo;
     SourceParseMode parseMode = SourceParseMode::AsyncFunctionMode;
-    if (Options::useAsyncIterator() && consume(TIMES))
+    if (consume(TIMES))
         parseMode = SourceParseMode::AsyncGeneratorWrapperFunctionMode;
 
     FunctionNameRequirements requirements = FunctionNameRequirements::Named;
@@ -2878,7 +2878,7 @@ parseMethod:
                     next();
                     if (match(OPENPAREN) || match(COLON) || match(EQUAL) || m_lexer->prevTerminator())
                         break;
-                    if (Options::useAsyncIterator() && UNLIKELY(consume(TIMES)))
+                    if (UNLIKELY(consume(TIMES)))
                         parseMode = SourceParseMode::AsyncGeneratorWrapperMethodMode;
                     else
                         parseMode = SourceParseMode::AsyncMethodMode;
@@ -3942,7 +3942,7 @@ parseProperty:
                 }
 
                 failIfTrue(m_lexer->prevTerminator(), "Expected a property name following keyword 'async'");
-                if (Options::useAsyncIterator() && UNLIKELY(consume(TIMES)))
+                if (UNLIKELY(consume(TIMES)))
                     parseMode = SourceParseMode::AsyncGeneratorWrapperMethodMode;
                 else
                     parseMode = SourceParseMode::AsyncMethodMode;
@@ -4372,7 +4372,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseAsyncFunctio
     next();
     SourceParseMode parseMode = SourceParseMode::AsyncFunctionMode;
 
-    if (Options::useAsyncIterator() && consume(TIMES))
+    if (consume(TIMES))
         parseMode = SourceParseMode::AsyncGeneratorWrapperFunctionMode;
 
     ParserFunctionInfo<TreeBuilder> functionInfo;

@@ -3313,7 +3313,6 @@ void BytecodeGenerator::emitNewFunctionExpressionCommon(RegisterID* dst, Functio
         break;
     case SourceParseMode::AsyncGeneratorWrapperFunctionMode:
     case SourceParseMode::AsyncGeneratorWrapperMethodMode:
-        ASSERT(Options::useAsyncIterator());
         opcodeID = op_new_async_generator_func_exp;
         break;
     default:
@@ -3370,10 +3369,9 @@ RegisterID* BytecodeGenerator::emitNewFunction(RegisterID* dst, FunctionMetadata
         emitOpcode(op_new_generator_func);
     else if (function->parseMode() == SourceParseMode::AsyncFunctionMode)
         emitOpcode(op_new_async_func);
-    else if (isAsyncGeneratorWrapperParseMode(function->parseMode())) {
-        ASSERT(Options::useAsyncIterator());
+    else if (isAsyncGeneratorWrapperParseMode(function->parseMode()))
         emitOpcode(op_new_async_generator_func);
-    } else
+    else
         emitOpcode(op_new_func);
     instructions().append(dst->index());
     instructions().append(scopeRegister()->index());

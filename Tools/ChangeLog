@@ -1,3 +1,12 @@
+2018-10-14  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] Remove Option::useAsyncIterator
+        https://bugs.webkit.org/show_bug.cgi?id=190567
+
+        Reviewed by Saam Barati.
+
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+
 2018-10-15  Claudio Saavedra  <csaavedra@igalia.com>
 
         [WPE] Silence a unused-parameter warning

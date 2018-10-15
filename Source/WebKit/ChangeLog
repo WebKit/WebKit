@@ -1,3 +1,12 @@
+2018-10-14  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] Remove Option::useAsyncIterator
+        https://bugs.webkit.org/show_bug.cgi?id=190567
+
+        Reviewed by Saam Barati.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2018-10-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Allow SPI clients to lay out at arbitrarily scaled sizes and scale to fit the view

@@ -1,5 +1,29 @@
 2018-10-14  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
+        [JSC] Remove Option::useAsyncIterator
+        https://bugs.webkit.org/show_bug.cgi?id=190567
+
+        Reviewed by Saam Barati.
+
+        Async iterator is enabled by default at 2017-08-09. It is already shipped in several releases,
+        and we can think that it is already mature. Let's drop the option `Option::useAsyncIterator`.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitNewFunctionExpressionCommon):
+        (JSC::BytecodeGenerator::emitNewFunction):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createFunctionMetadata):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseForStatement):
+        (JSC::Parser<LexerType>::parseAsyncFunctionDeclaration):
+        (JSC::Parser<LexerType>::parseClass):
+        (JSC::Parser<LexerType>::parseProperty):
+        (JSC::Parser<LexerType>::parseAsyncFunctionExpression):
+        * runtime/Options.h:
+
+2018-10-14  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
         [JSC] Remove Options::useObjectRestSpread
         https://bugs.webkit.org/show_bug.cgi?id=190568
 

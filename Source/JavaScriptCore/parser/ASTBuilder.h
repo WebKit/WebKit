@@ -446,8 +446,6 @@ public:
         unsigned parameterCount,
         SourceParseMode mode, bool isArrowFunctionBodyExpression)
     {
-        ASSERT(Options::useAsyncIterator() || !isAsyncGeneratorParseMode(mode));
-
         return new (m_parserArena) FunctionMetadataNode(
             m_parserArena, startLocation, endLocation, startColumn, endColumn, 
             functionKeywordStart, functionNameStart, parametersStart, 

@@ -1,3 +1,12 @@
+2018-10-14  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] Remove Option::useAsyncIterator
+        https://bugs.webkit.org/show_bug.cgi?id=190567
+
+        Reviewed by Saam Barati.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2018-10-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Cocoa] [WK2] Add support for text alignment and text lists in font attributes
