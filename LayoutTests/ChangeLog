@@ -1,3 +1,11 @@
+2018-10-15  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GStreamer] MediaStream test failing since r236877
+
+        Unreviewed gardening
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2018-10-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Allow SPI clients to lay out at arbitrarily scaled sizes and scale to fit the view

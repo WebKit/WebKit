@@ -116,6 +116,9 @@ webkit.org/b/169811 fast/mediastream/captureStream/ [ Failure ]
 webkit.org/b/169811 fast/mediastream/captureStream/canvas2d.html [ Crash Timeout ]
 webkit.org/b/169811 fast/mediastream/captureStream/canvas3d.html [ Crash Timeout ]
 
+webkit.org/b/190576 fast/mediastream/get-user-media-device-id.html [ Failure ]
+
+
 # Skip anything related to WebAuthN
 # ---------------------------------
 http/wpt/credential-management/ [ Skip ]
