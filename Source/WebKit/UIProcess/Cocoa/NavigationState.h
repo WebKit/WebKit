@@ -63,7 +63,7 @@ public:
     static NavigationState& fromWebPage(WebPageProxy&);
 
     UniqueRef<API::NavigationClient> createNavigationClient();
-    std::unique_ptr<API::HistoryClient> createHistoryClient();
+    UniqueRef<API::HistoryClient> createHistoryClient();
 
     RetainPtr<id <WKNavigationDelegate> > navigationDelegate();
     void setNavigationDelegate(id <WKNavigationDelegate>);

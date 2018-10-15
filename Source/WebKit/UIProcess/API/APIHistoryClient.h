@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIHistoryClient_h
-#define APIHistoryClient_h
+#pragma once
 
 #include <wtf/Forward.h>
 
@@ -46,5 +45,3 @@ public:
 };
 
 } // namespace API
-
-#endif // APIHistoryClient_h

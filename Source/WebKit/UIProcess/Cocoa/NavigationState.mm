@@ -127,9 +127,9 @@ UniqueRef<API::NavigationClient> NavigationState::createNavigationClient()
     return makeUniqueRef<NavigationClient>(*this);
 }
     
-std::unique_ptr<API::HistoryClient> NavigationState::createHistoryClient()
+UniqueRef<API::HistoryClient> NavigationState::createHistoryClient()
 {
-    return std::make_unique<HistoryClient>(*this);
+    return makeUniqueRef<HistoryClient>(*this);
 }
 
 RetainPtr<id <WKNavigationDelegate> > NavigationState::navigationDelegate()

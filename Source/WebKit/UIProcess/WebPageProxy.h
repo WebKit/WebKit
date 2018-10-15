@@ -428,7 +428,7 @@ public:
     void setDiagnosticLoggingClient(std::unique_ptr<API::DiagnosticLoggingClient>&&);
     void setFormClient(std::unique_ptr<API::FormClient>&&);
     void setNavigationClient(UniqueRef<API::NavigationClient>&&);
-    void setHistoryClient(std::unique_ptr<API::HistoryClient>&&);
+    void setHistoryClient(UniqueRef<API::HistoryClient>&&);
     void setLoaderClient(std::unique_ptr<API::LoaderClient>&&);
     void setPolicyClient(std::unique_ptr<API::PolicyClient>&&);
     void setInjectedBundleClient(const WKPageInjectedBundleClientBase*);
@@ -1861,7 +1861,7 @@ private:
     std::unique_ptr<API::LoaderClient> m_loaderClient;
     std::unique_ptr<API::PolicyClient> m_policyClient;
     UniqueRef<API::NavigationClient> m_navigationClient;
-    std::unique_ptr<API::HistoryClient> m_historyClient;
+    UniqueRef<API::HistoryClient> m_historyClient;
     std::unique_ptr<API::IconLoadingClient> m_iconLoadingClient;
     std::unique_ptr<API::FormClient> m_formClient;
     std::unique_ptr<API::UIClient> m_uiClient;

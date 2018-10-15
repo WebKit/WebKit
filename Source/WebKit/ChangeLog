@@ -1,5 +1,28 @@
 2018-10-15  Alex Christensen  <achristensen@webkit.org>
 
+        WebPageProxy should always have a HistoryClient
+        https://bugs.webkit.org/show_bug.cgi?id=190450
+
+        Reviewed by Chris Dumez.
+
+        This will make it so we don't forget to null check it.
+        No change in behavior because the default HistoryClient does nothing.
+
+        * UIProcess/API/APIHistoryClient.h:
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::createHistoryClient):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::setHistoryClient):
+        (WebKit::WebPageProxy::didNavigateWithNavigationData):
+        (WebKit::WebPageProxy::didPerformClientRedirect):
+        (WebKit::WebPageProxy::didPerformServerRedirect):
+        (WebKit::WebPageProxy::didUpdateHistoryTitle):
+        * UIProcess/WebPageProxy.h:
+
+2018-10-15  Alex Christensen  <achristensen@webkit.org>
+
         Use std::optional<size_t> for a WebBackForwardList's current index
         https://bugs.webkit.org/show_bug.cgi?id=190448
 

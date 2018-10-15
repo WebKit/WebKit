@@ -383,6 +383,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     : m_pageClient(makeWeakPtr(pageClient))
     , m_configuration(WTFMove(configuration))
     , m_navigationClient(makeUniqueRef<API::NavigationClient>())
+    , m_historyClient(makeUniqueRef<API::HistoryClient>())
     , m_iconLoadingClient(std::make_unique<API::IconLoadingClient>())
     , m_formClient(std::make_unique<API::FormClient>())
     , m_uiClient(std::make_unique<API::UIClient>())
@@ -563,7 +564,7 @@ void WebPageProxy::setPreferences(WebPreferences& preferences)
     preferencesDidChange();
 }
     
-void WebPageProxy::setHistoryClient(std::unique_ptr<API::HistoryClient>&& historyClient)
+void WebPageProxy::setHistoryClient(UniqueRef<API::HistoryClient>&& historyClient)
 {
     m_historyClient = WTFMove(historyClient);
 }
@@ -4270,7 +4271,7 @@ void WebPageProxy::didNavigateWithNavigationData(const WebNavigationDataStore& s
     MESSAGE_CHECK(frame);
     MESSAGE_CHECK(frame->page() == this);
 
-    if (m_historyClient && frame->isMainFrame())
+    if (frame->isMainFrame())
         m_historyClient->didNavigateWithNavigationData(*this, store);
     process().processPool().historyClient().didNavigateWithNavigationData(process().processPool(), *this, store, *frame);
 }
@@ -4289,7 +4290,7 @@ void WebPageProxy::didPerformClientRedirect(const String& sourceURLString, const
     MESSAGE_CHECK_URL(sourceURLString);
     MESSAGE_CHECK_URL(destinationURLString);
 
-    if (m_historyClient && frame->isMainFrame())
+    if (frame->isMainFrame())
         m_historyClient->didPerformClientRedirect(*this, sourceURLString, destinationURLString);
     process().processPool().historyClient().didPerformClientRedirect(process().processPool(), *this, sourceURLString, destinationURLString, *frame);
 }
@@ -4308,7 +4309,7 @@ void WebPageProxy::didPerformServerRedirect(const String& sourceURLString, const
     MESSAGE_CHECK_URL(sourceURLString);
     MESSAGE_CHECK_URL(destinationURLString);
 
-    if (m_historyClient && frame->isMainFrame())
+    if (frame->isMainFrame())
         m_historyClient->didPerformServerRedirect(*this, sourceURLString, destinationURLString);
     process().processPool().historyClient().didPerformServerRedirect(process().processPool(), *this, sourceURLString, destinationURLString, *frame);
 }
@@ -4323,7 +4324,7 @@ void WebPageProxy::didUpdateHistoryTitle(const String& title, const String& url,
 
     MESSAGE_CHECK_URL(url);
 
-    if (m_historyClient && frame->isMainFrame())
+    if (frame->isMainFrame())
         m_historyClient->didUpdateHistoryTitle(*this, title, url);
     process().processPool().historyClient().didUpdateHistoryTitle(process().processPool(), *this, title, url, *frame);
 }
