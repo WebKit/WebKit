@@ -1,3 +1,45 @@
+2018-10-15  Simon Fraser  <simon.fraser@apple.com>
+
+        RenderLayer tree-related cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=190572
+
+        Reviewed by Zalan Bujtas.
+
+        Move code around so that functions related to parent/child and z-order tree structure
+        are near the top of RenderLayer.cpp, since this is one of the primary functions of layers.
+        
+        Attempts to use inheritance or composition to separate out tree structure resulted in
+        unwieldy code and/or performance regressions.
+        
+        The only behavior change is to store a bit for m_isStackingContext so that we don't have
+        to consult the old style to know if it changed.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::addChild):
+        (WebCore::RenderLayer::removeChild):
+        (WebCore::RenderLayer::insertOnlyThisLayer):
+        (WebCore::RenderLayer::removeOnlyThisLayer):
+        (WebCore::canCreateStackingContext):
+        (WebCore::RenderLayer::shouldBeNormalFlowOnly const):
+        (WebCore::RenderLayer::shouldBeStackingContext const):
+        (WebCore::RenderLayer::setIsNormalFlowOnly):
+        (WebCore::RenderLayer::setIsStackingContext):
+        (WebCore::RenderLayer::setParent):
+        (WebCore::RenderLayer::dirtyZOrderLists):
+        (WebCore::RenderLayer::dirtyStackingContextZOrderLists):
+        (WebCore::RenderLayer::dirtyNormalFlowList):
+        (WebCore::RenderLayer::updateNormalFlowList):
+        (WebCore::RenderLayer::rebuildZOrderLists):
+        (WebCore::RenderLayer::collectLayers):
+        (WebCore::RenderLayer::updateLayerListsIfNeeded):
+        (WebCore::RenderLayer::beginTransparencyLayers):
+        (WebCore::RenderLayer::willBeDestroyed):
+        (WebCore::RenderLayer::isDescendantOf const):
+        (WebCore::RenderLayer::calculateClipRects const):
+        (WebCore::compareZIndex): Deleted.
+        * rendering/RenderLayer.h:
+
 2018-10-15  Antti Koivisto  <antti@apple.com>
 
         [PSON] Prewarm system fallback fonts
