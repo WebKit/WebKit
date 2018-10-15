@@ -60,7 +60,6 @@ public:
 
     const BackForwardListItemVector& entries() const { return m_entries; }
 
-    uint32_t currentIndex() const { return m_currentIndex; }
     int backListCount() const;
     int forwardListCount() const;
 
@@ -87,11 +86,7 @@ private:
 
     WebPageProxy* m_page;
     BackForwardListItemVector m_entries;
-    
-    // FIXME: m_currentIndex should be a std::optional<size_t>
-    bool m_hasCurrentIndex;
-    size_t m_currentIndex;
-    size_t m_capacity;
+    std::optional<size_t> m_currentIndex;
 };
 
 } // namespace WebKit

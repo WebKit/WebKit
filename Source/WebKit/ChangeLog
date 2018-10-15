@@ -1,3 +1,34 @@
+2018-10-15  Alex Christensen  <achristensen@webkit.org>
+
+        Use std::optional<size_t> for a WebBackForwardList's current index
+        https://bugs.webkit.org/show_bug.cgi?id=190448
+
+        Reviewed by Chris Dumez.
+
+        Also remove m_capacity, which was immutable.
+
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::WebBackForwardList):
+        (WebKit::WebBackForwardList::~WebBackForwardList):
+        (WebKit::WebBackForwardList::pageClosed):
+        (WebKit::WebBackForwardList::addItem):
+        (WebKit::WebBackForwardList::goToItem):
+        (WebKit::WebBackForwardList::currentItem const):
+        (WebKit::WebBackForwardList::backItem const):
+        (WebKit::WebBackForwardList::forwardItem const):
+        (WebKit::WebBackForwardList::itemAtIndex const):
+        (WebKit::WebBackForwardList::backListCount const):
+        (WebKit::WebBackForwardList::forwardListCount const):
+        (WebKit::WebBackForwardList::backListAsAPIArrayWithLimit const):
+        (WebKit::WebBackForwardList::forwardListAsAPIArrayWithLimit const):
+        (WebKit::WebBackForwardList::removeAllItems):
+        (WebKit::WebBackForwardList::clear):
+        (WebKit::WebBackForwardList::backForwardListState const):
+        (WebKit::WebBackForwardList::restoreFromState):
+        (WebKit::WebBackForwardList::loggingString):
+        * UIProcess/WebBackForwardList.h:
+        (WebKit::WebBackForwardList::currentIndex const): Deleted.
+
 2018-10-14  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] Remove Option::useAsyncIterator
