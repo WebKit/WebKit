@@ -1353,6 +1353,7 @@
 		4BDA40012151B6F500FD6604 /* CSSRegisteredCustomProperty.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BDA3FFB2151B6F400FD6604 /* CSSRegisteredCustomProperty.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4D3B00AB215D69A70076B983 /* MediaRecorder.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D3B00A9215D69A70076B983 /* MediaRecorder.h */; };
 		4D3B00AF215D6A690076B983 /* BlobEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D3B00AD215D6A690076B983 /* BlobEvent.h */; };
+		4DB7130D216ECB4D0096A4DD /* MediaRecorderErrorEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DB7130C216EC2BD0096A4DD /* MediaRecorderErrorEvent.h */; };
 		4E1959220A39DABA00220FE5 /* MediaFeatureNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E1959200A39DABA00220FE5 /* MediaFeatureNames.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4E19592A0A39DACC00220FE5 /* MediaQuery.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E1959240A39DACC00220FE5 /* MediaQuery.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4E19592C0A39DACC00220FE5 /* MediaQueryEvaluator.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E1959260A39DACC00220FE5 /* MediaQueryEvaluator.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7882,6 +7883,9 @@
 		4D3B00A8215D69A60076B983 /* MediaRecorder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaRecorder.cpp; sourceTree = "<group>"; };
 		4D3B00A9215D69A70076B983 /* MediaRecorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaRecorder.h; sourceTree = "<group>"; };
 		4D3B00AD215D6A690076B983 /* BlobEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlobEvent.h; sourceTree = "<group>"; };
+		4DB7130A216EC2BC0096A4DD /* MediaRecorderErrorEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaRecorderErrorEvent.idl; sourceTree = "<group>"; };
+		4DB7130C216EC2BD0096A4DD /* MediaRecorderErrorEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaRecorderErrorEvent.h; sourceTree = "<group>"; };
+		4DB7130E216EEBAE0096A4DD /* MediaRecorderErrorEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaRecorderErrorEvent.cpp; sourceTree = "<group>"; };
 		4E19591F0A39DABA00220FE5 /* MediaFeatureNames.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MediaFeatureNames.cpp; sourceTree = "<group>"; };
 		4E1959200A39DABA00220FE5 /* MediaFeatureNames.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MediaFeatureNames.h; sourceTree = "<group>"; };
 		4E1959230A39DACC00220FE5 /* MediaQuery.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MediaQuery.cpp; sourceTree = "<group>"; };
@@ -17948,6 +17952,9 @@
 				4D3B00A8215D69A60076B983 /* MediaRecorder.cpp */,
 				4D3B00A9215D69A70076B983 /* MediaRecorder.h */,
 				4D3B00A4215D61040076B983 /* MediaRecorder.idl */,
+				4DB7130E216EEBAE0096A4DD /* MediaRecorderErrorEvent.cpp */,
+				4DB7130C216EC2BD0096A4DD /* MediaRecorderErrorEvent.h */,
+				4DB7130A216EC2BC0096A4DD /* MediaRecorderErrorEvent.idl */,
 			);
 			path = mediarecorder;
 			sourceTree = "<group>";
@@ -27583,7 +27590,6 @@
 				A15D75161E68F7C800A35FBC /* BlobCallback.h in Headers */,
 				2EDEF1F4121B0EFC00726DB2 /* BlobData.h in Headers */,
 				E1D31CDD19196020001005A3 /* BlobDataFileReference.h in Headers */,
-				E4E8B4F5216B956500B8834D /* FontCascadeDescription.h in Headers */,
 				4D3B00AF215D6A690076B983 /* BlobEvent.h in Headers */,
 				7C77C3D71DEF850A00A50BFA /* BlobLineEndings.h in Headers */,
 				E1C94AF9191303F000D5A893 /* BlobPart.h in Headers */,
@@ -27676,7 +27682,6 @@
 				57303BBB2006C6EE00355965 /* CBORBinary.h in Headers */,
 				57303BC12006E00C00355965 /* CBORReader.h in Headers */,
 				57303BB92006C6EE00355965 /* CBORValue.h in Headers */,
-				E4E8B4EC216B79E500B8834D /* SystemFontDatabaseCoreText.h in Headers */,
 				57303BBA2006C6EE00355965 /* CBORWriter.h in Headers */,
 				6550B69E099DF0270090D781 /* CDATASection.h in Headers */,
 				CDF4B7161E00B7E500E235A2 /* CDM.h in Headers */,
@@ -27768,7 +27773,6 @@
 				CE799F981C6A46BC0097B518 /* ContentSecurityPolicySourceList.h in Headers */,
 				CE799FAC1C6A50660097B518 /* ContentSecurityPolicySourceListDirective.h in Headers */,
 				41D015CA0F4B5C71004A662F /* ContentType.h in Headers */,
-				E4605FEC2166480900E53046 /* PrewarmInformation.h in Headers */,
 				97627B8E14FB3CEE002CDCA1 /* ContextDestructionObserver.h in Headers */,
 				93B6A0E60B0BCA5C00F5027A /* ContextMenu.h in Headers */,
 				065AD4F50B0C2EDA005A2B1D /* ContextMenuClient.h in Headers */,
@@ -28321,6 +28325,7 @@
 				B2C3DA630D006CD600EF6F26 /* FontCache.h in Headers */,
 				C2458E631FE897B000594759 /* FontCacheCoreText.h in Headers */,
 				B2C3DA610D006CD600EF6F26 /* FontCascade.h in Headers */,
+				E4E8B4F5216B956500B8834D /* FontCascadeDescription.h in Headers */,
 				B2C3DA680D006CD600EF6F26 /* FontCascadeFonts.h in Headers */,
 				B2AFFC7E0D00A5C10030074D /* FontCustomPlatformData.h in Headers */,
 				B2C3DA660D006CD600EF6F26 /* FontDescription.h in Headers */,
@@ -29792,6 +29797,7 @@
 				9493B6C11D74B4120088E780 /* MediaQueryParser.h in Headers */,
 				4471710E205AF945000A116E /* MediaQueryParserContext.h in Headers */,
 				4D3B00AB215D69A70076B983 /* MediaRecorder.h in Headers */,
+				4DB7130D216ECB4D0096A4DD /* MediaRecorderErrorEvent.h in Headers */,
 				C90843D01B18E47D00B68564 /* MediaRemoteControls.h in Headers */,
 				CD8ACA8F1D23971900ECC59E /* MediaRemoteSoftLink.h in Headers */,
 				CEEFCD7A19DB31F7003876D7 /* MediaResourceLoader.h in Headers */,
@@ -30132,6 +30138,7 @@
 				A1C1507A1E3F2B3E0032C98C /* PreviewConverter.h in Headers */,
 				A185B42A1E8211A100DC9118 /* PreviewLoader.h in Headers */,
 				A10DBF4718F92317000D70C6 /* PreviewLoaderClient.h in Headers */,
+				E4605FEC2166480900E53046 /* PrewarmInformation.h in Headers */,
 				B71FE6DF11091CB300DAEF77 /* PrintContext.h in Headers */,
 				51F645D51FECDBCE00B54DED /* Process.h in Headers */,
 				A8EA7EBC0A1945D000A8EF5F /* ProcessingInstruction.h in Headers */,
@@ -31012,6 +31019,7 @@
 				5185430B1FB6784500478F95 /* SWServerToContextConnection.h in Headers */,
 				517A53461F50C17F00DCDC0A /* SWServerWorker.h in Headers */,
 				E180811716FCF9CB00B80D07 /* SynchronousLoaderClient.h in Headers */,
+				E4E8B4EC216B79E500B8834D /* SystemFontDatabaseCoreText.h in Headers */,
 				0F03C0741884695E00A5F8CA /* SystemMemory.h in Headers */,
 				5D5975B319635F1100D00878 /* SystemVersion.h in Headers */,
 				A8CFF0510A154F09000A4234 /* TableLayout.h in Headers */,

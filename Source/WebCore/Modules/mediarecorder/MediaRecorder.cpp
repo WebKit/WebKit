@@ -29,7 +29,8 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "Document.h"
-#include "MediaStream.h"
+#include "EventNames.h"
+#include "MediaRecorderErrorEvent.h"
 
 namespace WebCore {
 
@@ -45,6 +46,17 @@ MediaRecorder::MediaRecorder(Document& document, Ref<MediaStream>&& stream, Opti
     , m_options(WTFMove(option))
     , m_stream(WTFMove(stream))
 {
+    m_stream->addObserver(this);
+}
+
+MediaRecorder::~MediaRecorder()
+{
+    m_stream->removeObserver(this);
+}
+
+void MediaRecorder::stop()
+{
+    m_isActive = false;
 }
 
 const char* MediaRecorder::activeDOMObjectName() const
@@ -55,6 +67,46 @@ const char* MediaRecorder::activeDOMObjectName() const
 bool MediaRecorder::canSuspendForDocumentSuspension() const
 {
     return false; // FIXME: We should do better here as this prevents entering PageCache.
+}
+
+ExceptionOr<void> MediaRecorder::start(std::optional<int> timeslice)
+{
+    UNUSED_PARAM(timeslice);
+    if (state() != RecordingState::Inactive)
+        return Exception { InvalidStateError, "The MediaRecorder's state must be inactive in order to start recording"_s };
+    
+    m_state = RecordingState::Recording;
+    return { };
+}
+
+void MediaRecorder::didAddOrRemoveTrack()
+{
+    scheduleDeferredTask([this] {
+        if (!m_isActive || state() == RecordingState::Inactive)
+            return;
+        auto event = MediaRecorderErrorEvent::create(eventNames().errorEvent, Exception { UnknownError, "Track cannot be added to or removed from the MediaStream while recording is happening"_s });
+        setNewRecordingState(RecordingState::Inactive, WTFMove(event));
+    });
+}
+
+void MediaRecorder::setNewRecordingState(RecordingState newState, Ref<Event>&& event)
+{
+    m_state = newState;
+    dispatchEvent(WTFMove(event));
+}
+
+void MediaRecorder::scheduleDeferredTask(Function<void()>&& function)
+{
+    ASSERT(function);
+    auto* scriptExecutionContext = this->scriptExecutionContext();
+    if (!scriptExecutionContext)
+        return;
+    scriptExecutionContext->postTask([weakThis = makeWeakPtr(*this), function = WTFMove(function)] (auto&) {
+        if (!weakThis)
+            return;
+
+        function();
+    });
 }
 
 } // namespace WebCore

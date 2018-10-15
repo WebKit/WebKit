@@ -22,41 +22,15 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-enum RecordingState { "inactive", "recording", "paused" };
-
-[
-    ActiveDOMObject,
-    Conditional=MEDIA_STREAM,
-    Constructor(MediaStream stream, optional MediaRecorderOptions options),
-    ConstructorCallWith=Document,
-    EnabledAtRuntime=MediaRecorder,
-    Exposed=Window
-] interface MediaRecorder : EventTarget {
-    readonly attribute RecordingState state;
-    // FIXME: Implement these:
-    // readonly attribute MediaStream stream;
-    // readonly attribute DOMString mimeType;
-    // attribute EventHandler onstart;
-    // attribute EventHandler onstop;
-    // attribute EventHandler ondataavailable;
-    // attribute EventHandler onpause;
-    // attribute EventHandler onresume;
-    attribute EventHandler onerror;
-    // readonly attribute unsigned long videoBitsPerSecond;
-    // readonly attribute unsigned long audioBitsPerSecond;
-
-    [MayThrowException] void start(optional long timeslice);
-    // void stop();
-    // void pause();
-    // void resume();
-    // void requestData();
-
-    // static boolean isTypeSupported(DOMString type);
+dictionary MediaRecorderErrorEventInit : EventInit {
+    required DOMException error;
 };
 
-dictionary MediaRecorderOptions {
-    DOMString mimeType;
-    unsigned long audioBitsPerSecond;
-    unsigned long videoBitsPerSecond;
-    unsigned long bitsPerSecond;
+[
+    Conditional=MEDIA_STREAM,
+    Constructor(DOMString type, MediaRecorderErrorEventInit eventInitDict),
+    Exposed=Window,
+    EnabledAtRuntime=MediaRecorder
+] interface MediaRecorderErrorEvent : Event {
+    [SameObject] readonly attribute DOMException error;
 };

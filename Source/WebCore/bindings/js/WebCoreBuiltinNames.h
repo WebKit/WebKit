@@ -99,6 +99,7 @@ namespace WebCore {
     macro(MediaKeySystemAccess) \
     macro(MediaKeys) \
     macro(MediaRecorder) \
+    macro(MediaRecorderErrorEvent) \
     macro(MediaSource) \
     macro(MediaStream) \
     macro(MediaStreamTrack) \

@@ -205,6 +205,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/mediacontrols/MediaControlsHost.idl \
 	$(WebCore)/Modules/mediarecorder/BlobEvent.idl \
 	$(WebCore)/Modules/mediarecorder/MediaRecorder.idl \
+	$(WebCore)/Modules/mediarecorder/MediaRecorderErrorEvent.idl \
     $(WebCore)/Modules/mediasession/HTMLMediaElementMediaSession.idl \
     $(WebCore)/Modules/mediasession/MediaRemoteControls.idl \
     $(WebCore)/Modules/mediasession/MediaSession.idl \

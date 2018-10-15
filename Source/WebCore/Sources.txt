@@ -141,6 +141,7 @@ Modules/mediacapabilities/NavigatorMediaCapabilities.cpp
 Modules/mediacontrols/MediaControlsHost.cpp
 
 Modules/mediarecorder/MediaRecorder.cpp
+Modules/mediarecorder/MediaRecorderErrorEvent.cpp
 
 Modules/mediasession/HTMLMediaElementMediaSession.cpp
 Modules/mediasession/MediaRemoteControls.cpp
@@ -2772,6 +2773,7 @@ JSMediaList.cpp
 JSMediaQueryList.cpp
 JSMediaQueryListListener.cpp
 JSMediaRecorder.cpp
+JSMediaRecorderErrorEvent.cpp
 JSMediaRemoteControls.cpp
 JSMediaSession.cpp
 JSMediaSource.cpp

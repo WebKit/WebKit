@@ -281,6 +281,7 @@ set(WebCore_NON_SVG_IDL_FILES
 
     Modules/mediarecorder/BlobEvent.idl
     Modules/mediarecorder/MediaRecorder.idl
+    Modules/mediarecorder/MediaRecorderErrorEvent.idl
 
     Modules/mediasession/HTMLMediaElementMediaSession.idl
     Modules/mediasession/MediaRemoteControls.idl

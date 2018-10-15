@@ -22,41 +22,45 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-enum RecordingState { "inactive", "recording", "paused" };
 
-[
-    ActiveDOMObject,
-    Conditional=MEDIA_STREAM,
-    Constructor(MediaStream stream, optional MediaRecorderOptions options),
-    ConstructorCallWith=Document,
-    EnabledAtRuntime=MediaRecorder,
-    Exposed=Window
-] interface MediaRecorder : EventTarget {
-    readonly attribute RecordingState state;
-    // FIXME: Implement these:
-    // readonly attribute MediaStream stream;
-    // readonly attribute DOMString mimeType;
-    // attribute EventHandler onstart;
-    // attribute EventHandler onstop;
-    // attribute EventHandler ondataavailable;
-    // attribute EventHandler onpause;
-    // attribute EventHandler onresume;
-    attribute EventHandler onerror;
-    // readonly attribute unsigned long videoBitsPerSecond;
-    // readonly attribute unsigned long audioBitsPerSecond;
+#include "config.h"
+#include "MediaRecorderErrorEvent.h"
 
-    [MayThrowException] void start(optional long timeslice);
-    // void stop();
-    // void pause();
-    // void resume();
-    // void requestData();
+#if ENABLE(MEDIA_STREAM)
 
-    // static boolean isTypeSupported(DOMString type);
-};
+#include "DOMException.h"
 
-dictionary MediaRecorderOptions {
-    DOMString mimeType;
-    unsigned long audioBitsPerSecond;
-    unsigned long videoBitsPerSecond;
-    unsigned long bitsPerSecond;
-};
+namespace WebCore {
+
+
+Ref<MediaRecorderErrorEvent> MediaRecorderErrorEvent::create(const AtomicString& type, Exception&& exception)
+{
+    return adoptRef(*new MediaRecorderErrorEvent(type, WTFMove(exception)));
+}
+
+Ref<MediaRecorderErrorEvent> MediaRecorderErrorEvent::create(const AtomicString& type, Init&& init, IsTrusted isTrusted)
+{
+    auto domError = init.error.releaseNonNull();
+    return adoptRef(*new MediaRecorderErrorEvent(type, WTFMove(init), WTFMove(domError), isTrusted));
+}
+
+MediaRecorderErrorEvent::MediaRecorderErrorEvent(const AtomicString& type, Init&& init, Ref<DOMException>&& exception, IsTrusted isTrusted)
+    : Event(type, WTFMove(init), isTrusted)
+    , m_domError(WTFMove(exception))
+{
+}
+
+MediaRecorderErrorEvent::MediaRecorderErrorEvent(const AtomicString& type, Exception&& exception)
+    : Event(type, Event::CanBubble::No, Event::IsCancelable::No)
+    , m_domError(DOMException::create(exception))
+{
+}
+
+EventInterface MediaRecorderErrorEvent::eventInterface() const
+{
+    return MediaRecorderErrorEventInterfaceType;
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(MEDIA_STREAM)

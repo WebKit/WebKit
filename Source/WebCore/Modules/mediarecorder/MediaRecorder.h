@@ -27,13 +27,13 @@
 #if ENABLE(MEDIA_STREAM)
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
+#include "MediaStream.h"
 
 namespace WebCore {
 
 class Document;
-class MediaStream;
 
-class MediaRecorder final : public ActiveDOMObject, public RefCounted<MediaRecorder>, public EventTargetWithInlineData {
+class MediaRecorder final : public ActiveDOMObject, public RefCounted<MediaRecorder>, public EventTargetWithInlineData, public CanMakeWeakPtr<MediaRecorder>, private MediaStream::Observer {
 public:
     enum class RecordingState { Inactive, Recording, Paused };
     
@@ -44,6 +44,8 @@ public:
         unsigned bitsPerSecond;
     };
     
+    ~MediaRecorder();
+    
     static Ref<MediaRecorder> create(Document&, Ref<MediaStream>&&, Options&& = { });
     
     RecordingState state() const { return m_state; }
@@ -51,22 +53,33 @@ public:
     using RefCounted::ref;
     using RefCounted::deref;
     
+    ExceptionOr<void> start(std::optional<int>);
+    
 private:
     MediaRecorder(Document&, Ref<MediaStream>&&, Options&& = { });
     
     // EventTarget
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
-    EventTargetInterface eventTargetInterface() const final { return MediaStreamEventTargetInterfaceType; }
+    EventTargetInterface eventTargetInterface() const final { return MediaRecorderEventTargetInterfaceType; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
 
     // ActiveDOMObject API.
+    void stop() final;
     const char* activeDOMObjectName() const final;
     bool canSuspendForDocumentSuspension() const final;
+    
+    // MediaStream::Observer
+    void didAddOrRemoveTrack() final;
+    
+    void scheduleDeferredTask(Function<void()>&&);
+    void setNewRecordingState(RecordingState, Ref<Event>&&);
     
     Options m_options;
     Ref<MediaStream> m_stream;
     RecordingState m_state { RecordingState::Inactive };
+    
+    bool m_isActive { true };
 };
     
 } // namespace WebCore

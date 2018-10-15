@@ -1,3 +1,13 @@
+2018-10-15  YUHAN WU  <yuhan_wu@apple.com>
+
+        Implement error handler of MediaRecorder
+        https://bugs.webkit.org/show_bug.cgi?id=190438
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/mediacapture-record/MediaRecorder-error-expected.txt: Added.
+        * web-platform-tests/mediacapture-record/MediaRecorder-error.html: Added.
+
 2018-10-15  Chris Dumez  <cdumez@apple.com>
 
         Window's properties such as 'location' should not become null when it loses its browsing context

@@ -2897,3 +2897,8 @@ webkit.org/b/190032 imported/w3c/web-platform-tests/css/css-scoping/keyframes-00
 webkit.org/b/190032 imported/w3c/web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-context.html [ Failure ]
 webkit.org/b/190032 imported/w3c/web-platform-tests/web-animations/interfaces/Animatable/animate.html [ Failure ]
 webkit.org/b/190032 imported/w3c/web-platform-tests/web-animations/timing-model/animations/current-time.html [ Failure ]
+
+# FIXME: Need to implement MediaRecorder dataavailable event to support these testcases
+fast/mediacapturefromelement/CanvasCaptureMediaStream-imagebitmaprenderingcontext.html [ Skip ]
+fast/mediacapturefromelement/CanvasCaptureMediaStream-framerate-0.html [ Skip ]
+fast/mediacapturefromelement/CanvasCaptureMediaStream-capture-out-of-DOM-element.html [ Skip ]

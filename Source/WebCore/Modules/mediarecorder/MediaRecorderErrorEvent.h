@@ -22,41 +22,36 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-enum RecordingState { "inactive", "recording", "paused" };
+#pragma once
 
-[
-    ActiveDOMObject,
-    Conditional=MEDIA_STREAM,
-    Constructor(MediaStream stream, optional MediaRecorderOptions options),
-    ConstructorCallWith=Document,
-    EnabledAtRuntime=MediaRecorder,
-    Exposed=Window
-] interface MediaRecorder : EventTarget {
-    readonly attribute RecordingState state;
-    // FIXME: Implement these:
-    // readonly attribute MediaStream stream;
-    // readonly attribute DOMString mimeType;
-    // attribute EventHandler onstart;
-    // attribute EventHandler onstop;
-    // attribute EventHandler ondataavailable;
-    // attribute EventHandler onpause;
-    // attribute EventHandler onresume;
-    attribute EventHandler onerror;
-    // readonly attribute unsigned long videoBitsPerSecond;
-    // readonly attribute unsigned long audioBitsPerSecond;
+#if ENABLE(MEDIA_STREAM)
+#include "Event.h"
 
-    [MayThrowException] void start(optional long timeslice);
-    // void stop();
-    // void pause();
-    // void resume();
-    // void requestData();
+namespace WebCore {
 
-    // static boolean isTypeSupported(DOMString type);
+class DOMException;
+
+class MediaRecorderErrorEvent final : public Event {
+public:
+    struct Init : EventInit {
+        RefPtr<DOMException> error;
+    };
+    
+    static Ref<MediaRecorderErrorEvent> create(const AtomicString&, Init&&, IsTrusted = IsTrusted::No);
+    static Ref<MediaRecorderErrorEvent> create(const AtomicString&, Exception&&);
+    
+    DOMException& error() const { return m_domError.get(); }
+
+private:
+    MediaRecorderErrorEvent(const AtomicString&, Init&&, Ref<DOMException>&&, IsTrusted);
+    MediaRecorderErrorEvent(const AtomicString&, Exception&&);
+    
+    // Event
+    EventInterface eventInterface() const override;
+
+    Ref<DOMException> m_domError;
 };
+    
+} // namespace WebCore
 
-dictionary MediaRecorderOptions {
-    DOMString mimeType;
-    unsigned long audioBitsPerSecond;
-    unsigned long videoBitsPerSecond;
-    unsigned long bitsPerSecond;
-};
+#endif // ENABLE(MEDIA_STREAM)

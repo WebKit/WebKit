@@ -1,3 +1,38 @@
+2018-10-15  YUHAN WU  <yuhan_wu@apple.com>
+
+        Implement error handler of MediaRecorder
+        https://bugs.webkit.org/show_bug.cgi?id=190438
+
+        Reviewed by Youenn Fablet.
+
+        Test: imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-error.html
+
+        Implement error event handler (onerror) for MediaRecorder and basic architecture of start() function.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Modules/mediarecorder/MediaRecorder.cpp:
+        (WebCore::MediaRecorder::MediaRecorder):
+        (WebCore::MediaRecorder::~MediaRecorder):
+        (WebCore::MediaRecorder::stop):
+        (WebCore::MediaRecorder::start):
+        (WebCore::MediaRecorder::setNewRecordingState):
+        (WebCore::MediaRecorder::scheduleDeferredTask):
+        (WebCore::MediaRecorder::didAddOrRemoveTrack):
+        * Modules/mediarecorder/MediaRecorder.h:
+        * Modules/mediarecorder/MediaRecorder.idl:
+        * Modules/mediarecorder/MediaRecorderErrorEvent.cpp: Added.
+        (WebCore::MediaRecorderErrorEvent::create):
+        (WebCore::MediaRecorderErrorEvent::MediaRecorderErrorEvent):
+        (WebCore::MediaRecorderErrorEvent::eventInterface const):
+        * Modules/mediarecorder/MediaRecorderErrorEvent.h: Added.
+        * Modules/mediarecorder/MediaRecorderErrorEvent.idl: Added.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * dom/EventNames.in:
+        * dom/EventTargetFactory.in:
+
 2018-10-15  Chris Dumez  <cdumez@apple.com>
 
         Window's properties such as 'location' should not become null when it loses its browsing context
