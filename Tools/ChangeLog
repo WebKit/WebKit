@@ -1,3 +1,237 @@
+2018-10-15  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WHLSL] Migrated WebGPUShadingLanguageRI to the W3C
+        https://bugs.webkit.org/show_bug.cgi?id=190555
+
+        Unreviewed.
+
+        Migrated to https://github.com/gpuweb/WHLSL/tree/master/Source
+
+        * WebGPUShadingLanguageRI/AddressSpace.js: Removed.
+        * WebGPUShadingLanguageRI/All.js: Removed.
+        * WebGPUShadingLanguageRI/AllocateAtEntryPoints.js: Removed.
+        * WebGPUShadingLanguageRI/AnonymousVariable.js: Removed.
+        * WebGPUShadingLanguageRI/ArrayRefType.js: Removed.
+        * WebGPUShadingLanguageRI/ArrayType.js: Removed.
+        * WebGPUShadingLanguageRI/Assignment.js: Removed.
+        * WebGPUShadingLanguageRI/AutoWrapper.js: Removed.
+        * WebGPUShadingLanguageRI/Block.js: Removed.
+        * WebGPUShadingLanguageRI/BoolLiteral.js: Removed.
+        * WebGPUShadingLanguageRI/Break.js: Removed.
+        * WebGPUShadingLanguageRI/BuiltInSemantic.js: Removed.
+        * WebGPUShadingLanguageRI/BuiltinMatrixGetter.js: Removed.
+        * WebGPUShadingLanguageRI/BuiltinMatrixSetter.js: Removed.
+        * WebGPUShadingLanguageRI/BuiltinVectorGetter.js: Removed.
+        * WebGPUShadingLanguageRI/BuiltinVectorSetter.js: Removed.
+        * WebGPUShadingLanguageRI/CallExpression.js: Removed.
+        * WebGPUShadingLanguageRI/CallFunction.js: Removed.
+        * WebGPUShadingLanguageRI/Casts.js: Removed.
+        * WebGPUShadingLanguageRI/Check.js: Removed.
+        * WebGPUShadingLanguageRI/CheckLiteralTypes.js: Removed.
+        * WebGPUShadingLanguageRI/CheckLoops.js: Removed.
+        * WebGPUShadingLanguageRI/CheckNativeFuncStages.js: Removed.
+        * WebGPUShadingLanguageRI/CheckRecursion.js: Removed.
+        * WebGPUShadingLanguageRI/CheckRecursiveTypes.js: Removed.
+        * WebGPUShadingLanguageRI/CheckReturns.js: Removed.
+        * WebGPUShadingLanguageRI/CheckTypesWithArguments.js: Removed.
+        * WebGPUShadingLanguageRI/CheckUnreachableCode.js: Removed.
+        * WebGPUShadingLanguageRI/CheckWrapped.js: Removed.
+        * WebGPUShadingLanguageRI/Checker.js: Removed.
+        * WebGPUShadingLanguageRI/CloneProgram.js: Removed.
+        * WebGPUShadingLanguageRI/CommaExpression.js: Removed.
+        * WebGPUShadingLanguageRI/ConstexprFolder.js: Removed.
+        * WebGPUShadingLanguageRI/Continue.js: Removed.
+        * WebGPUShadingLanguageRI/ConvertPtrToArrayRefExpression.js: Removed.
+        * WebGPUShadingLanguageRI/CreateLiteral.js: Removed.
+        * WebGPUShadingLanguageRI/CreateLiteralType.js: Removed.
+        * WebGPUShadingLanguageRI/DereferenceExpression.js: Removed.
+        * WebGPUShadingLanguageRI/DoWhileLoop.js: Removed.
+        * WebGPUShadingLanguageRI/DotExpression.js: Removed.
+        * WebGPUShadingLanguageRI/EArrayRef.js: Removed.
+        * WebGPUShadingLanguageRI/EBuffer.js: Removed.
+        * WebGPUShadingLanguageRI/EBufferBuilder.js: Removed.
+        * WebGPUShadingLanguageRI/EPtr.js: Removed.
+        * WebGPUShadingLanguageRI/EnumLiteral.js: Removed.
+        * WebGPUShadingLanguageRI/EnumMember.js: Removed.
+        * WebGPUShadingLanguageRI/EnumType.js: Removed.
+        * WebGPUShadingLanguageRI/EvaluationCommon.js: Removed.
+        * WebGPUShadingLanguageRI/Evaluator.js: Removed.
+        * WebGPUShadingLanguageRI/Expression.js: Removed.
+        * WebGPUShadingLanguageRI/ExpressionFinder.js: Removed.
+        * WebGPUShadingLanguageRI/ExternalOrigin.js: Removed.
+        * WebGPUShadingLanguageRI/Field.js: Removed.
+        * WebGPUShadingLanguageRI/FindHighZombies.js: Removed.
+        * WebGPUShadingLanguageRI/FlattenedStructOffsetGatherer.js: Removed.
+        * WebGPUShadingLanguageRI/FloatLiteral.js: Removed.
+        * WebGPUShadingLanguageRI/FloatLiteralType.js: Removed.
+        * WebGPUShadingLanguageRI/FoldConstexprs.js: Removed.
+        * WebGPUShadingLanguageRI/ForLoop.js: Removed.
+        * WebGPUShadingLanguageRI/Func.js: Removed.
+        * WebGPUShadingLanguageRI/FuncAttribute.js: Removed.
+        * WebGPUShadingLanguageRI/FuncDef.js: Removed.
+        * WebGPUShadingLanguageRI/FuncNumThreadsAttribute.js: Removed.
+        * WebGPUShadingLanguageRI/FuncParameter.js: Removed.
+        * WebGPUShadingLanguageRI/FunctionLikeBlock.js: Removed.
+        * WebGPUShadingLanguageRI/HighZombieFinder.js: Removed.
+        * WebGPUShadingLanguageRI/IdentityExpression.js: Removed.
+        * WebGPUShadingLanguageRI/IfStatement.js: Removed.
+        * WebGPUShadingLanguageRI/IndexExpression.js: Removed.
+        * WebGPUShadingLanguageRI/InferTypesForCall.js: Removed.
+        * WebGPUShadingLanguageRI/Inline.js: Removed.
+        * WebGPUShadingLanguageRI/Inliner.js: Removed.
+        * WebGPUShadingLanguageRI/IntLiteral.js: Removed.
+        * WebGPUShadingLanguageRI/IntLiteralType.js: Removed.
+        * WebGPUShadingLanguageRI/Intrinsics.js: Removed.
+        * WebGPUShadingLanguageRI/LayoutBuffers.js: Removed.
+        * WebGPUShadingLanguageRI/Lexer.js: Removed.
+        * WebGPUShadingLanguageRI/LexerToken.js: Removed.
+        * WebGPUShadingLanguageRI/LiteralTypeChecker.js: Removed.
+        * WebGPUShadingLanguageRI/LogicalExpression.js: Removed.
+        * WebGPUShadingLanguageRI/LogicalNot.js: Removed.
+        * WebGPUShadingLanguageRI/LoopChecker.js: Removed.
+        * WebGPUShadingLanguageRI/MakeArrayRefExpression.js: Removed.
+        * WebGPUShadingLanguageRI/MakePtrExpression.js: Removed.
+        * WebGPUShadingLanguageRI/MatrixType.js: Removed.
+        * WebGPUShadingLanguageRI/Metal/MSLBackend.js: Removed.
+        * WebGPUShadingLanguageRI/Metal/MSLCodegenAll.js: Removed.
+        * WebGPUShadingLanguageRI/Metal/MSLCompileResult.js: Removed.
+        * WebGPUShadingLanguageRI/Metal/MSLConstexprEmitter.js: Removed.
+        * WebGPUShadingLanguageRI/Metal/MSLFunctionDeclaration.js: Removed.
+        * WebGPUShadingLanguageRI/Metal/MSLFunctionDefinition.js: Removed.
+        * WebGPUShadingLanguageRI/Metal/MSLFunctionForwardDeclaration.js: Removed.
+        * WebGPUShadingLanguageRI/Metal/MSLInsertTrapParameter.js: Removed.
+        * WebGPUShadingLanguageRI/Metal/MSLNameMangler.js: Removed.
+        * WebGPUShadingLanguageRI/Metal/MSLNativeFunctionCall.js: Removed.
+        * WebGPUShadingLanguageRI/Metal/MSLStatementEmitter.js: Removed.
+        * WebGPUShadingLanguageRI/Metal/MSLTypeAttributes.js: Removed.
+        * WebGPUShadingLanguageRI/Metal/MSLTypeAttributesMap.js: Removed.
+        * WebGPUShadingLanguageRI/Metal/MSLTypeUnifier.js: Removed.
+        * WebGPUShadingLanguageRI/Metal/TypeOf.js: Removed.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/.gitignore: Removed.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/AppDelegate.h: Removed.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/AppDelegate.m: Removed.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/Assets.xcassets/AppIcon.appiconset/Contents.json: Removed.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/Assets.xcassets/Contents.json: Removed.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/Base.lproj/Main.storyboard: Removed.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/CompileResult.h: Removed.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/CompileResult.m: Removed.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/Compiler.h: Removed.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/Compiler.m: Removed.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/CustomMetalView.h: Removed.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/CustomMetalView.m: Removed.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/Demo shaders/Default.whlsl: Removed.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/Demo shaders/Julia.whlsl: Removed.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/Demo shaders/Mandelbrot.whlsl: Removed.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/Info.plist: Removed.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/Renderer/OffscreenRenderer.h: Removed.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/Renderer/OffscreenRenderer.m: Removed.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/Renderer/OnscreenRenderer.h: Removed.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/Renderer/OnscreenRenderer.m: Removed.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/Renderer/Renderer.h: Removed.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/Renderer/Renderer.m: Removed.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/TestCallArgument.h: Removed.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/TestCallArgument.m: Removed.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/TestDescription.h: Removed.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/TestDescription.m: Removed.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/TestFamily.h: Removed.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/TestFamily.m: Removed.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/TestFamilyRunner.h: Removed.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/TestFamilyRunner.m: Removed.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/ViewController.h: Removed.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/ViewController.m: Removed.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/WHLSL.entitlements: Removed.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/_SharedMetal.txt: Removed.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/Core/main.m: Removed.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/WHLSL Tests.xcodeproj/project.pbxproj: Removed.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/WHLSL ToyTests/Info.plist: Removed.
+        * WebGPUShadingLanguageRI/Metal/WHLSL Tests/WHLSL ToyTests/WHLSL_ToyTests.m: Removed.
+        * WebGPUShadingLanguageRI/Metal/WhlslToMsl.html: Removed.
+        * WebGPUShadingLanguageRI/Metal/WhlslToMsl.js: Removed.
+        * WebGPUShadingLanguageRI/NameContext.js: Removed.
+        * WebGPUShadingLanguageRI/NameFinder.js: Removed.
+        * WebGPUShadingLanguageRI/NameResolver.js: Removed.
+        * WebGPUShadingLanguageRI/NativeFunc.js: Removed.
+        * WebGPUShadingLanguageRI/NativeType.js: Removed.
+        * WebGPUShadingLanguageRI/Node.js: Removed.
+        * WebGPUShadingLanguageRI/NormalUsePropertyResolver.js: Removed.
+        * WebGPUShadingLanguageRI/NullLiteral.js: Removed.
+        * WebGPUShadingLanguageRI/NullType.js: Removed.
+        * WebGPUShadingLanguageRI/OperatorAnderIndexer.js: Removed.
+        * WebGPUShadingLanguageRI/OperatorArrayRefLength.js: Removed.
+        * WebGPUShadingLanguageRI/OriginKind.js: Removed.
+        * WebGPUShadingLanguageRI/OverloadResolutionFailure.js: Removed.
+        * WebGPUShadingLanguageRI/Parse.js: Removed.
+        * WebGPUShadingLanguageRI/Prepare.js: Removed.
+        * WebGPUShadingLanguageRI/Program.js: Removed.
+        * WebGPUShadingLanguageRI/ProgramWithUnnecessaryThingsRemoved.js: Removed.
+        * WebGPUShadingLanguageRI/PropertyAccessExpression.js: Removed.
+        * WebGPUShadingLanguageRI/PropertyResolver.js: Removed.
+        * WebGPUShadingLanguageRI/PtrType.js: Removed.
+        * WebGPUShadingLanguageRI/ReadModifyWriteExpression.js: Removed.
+        * WebGPUShadingLanguageRI/RecursionChecker.js: Removed.
+        * WebGPUShadingLanguageRI/RecursiveTypeChecker.js: Removed.
+        * WebGPUShadingLanguageRI/ReferenceType.js: Removed.
+        * WebGPUShadingLanguageRI/ResolveNames.js: Removed.
+        * WebGPUShadingLanguageRI/ResolveOverloadImpl.js: Removed.
+        * WebGPUShadingLanguageRI/ResolveProperties.js: Removed.
+        * WebGPUShadingLanguageRI/ResolveTypeDefs.js: Removed.
+        * WebGPUShadingLanguageRI/ResourceSemantic.js: Removed.
+        * WebGPUShadingLanguageRI/Return.js: Removed.
+        * WebGPUShadingLanguageRI/ReturnChecker.js: Removed.
+        * WebGPUShadingLanguageRI/ReturnException.js: Removed.
+        * WebGPUShadingLanguageRI/Rewriter.js: Removed.
+        * WebGPUShadingLanguageRI/SPIR-V.js: Removed.
+        * WebGPUShadingLanguageRI/SPIRV.html: Removed.
+        * WebGPUShadingLanguageRI/SPIRVCodegen.js: Removed.
+        * WebGPUShadingLanguageRI/SPIRVTypeAnalyzer.js: Removed.
+        * WebGPUShadingLanguageRI/SPIRVVariableAnalyzer.js: Removed.
+        * WebGPUShadingLanguageRI/Sampler.js: Removed.
+        * WebGPUShadingLanguageRI/Semantic.js: Removed.
+        * WebGPUShadingLanguageRI/SpecializationConstantSemantic.js: Removed.
+        * WebGPUShadingLanguageRI/StageInOutSemantic.js: Removed.
+        * WebGPUShadingLanguageRI/StandardLibrary.js: Removed.
+        * WebGPUShadingLanguageRI/StatementCloner.js: Removed.
+        * WebGPUShadingLanguageRI/StructLayoutBuilder.js: Removed.
+        * WebGPUShadingLanguageRI/StructType.js: Removed.
+        * WebGPUShadingLanguageRI/SwitchCase.js: Removed.
+        * WebGPUShadingLanguageRI/SwitchStatement.js: Removed.
+        * WebGPUShadingLanguageRI/SynthesizeArrayOperatorLength.js: Removed.
+        * WebGPUShadingLanguageRI/SynthesizeCopyConstructorOperator.js: Removed.
+        * WebGPUShadingLanguageRI/SynthesizeDefaultConstructorOperator.js: Removed.
+        * WebGPUShadingLanguageRI/SynthesizeEnumFunctions.js: Removed.
+        * WebGPUShadingLanguageRI/SynthesizeStructAccessors.js: Removed.
+        * WebGPUShadingLanguageRI/TernaryExpression.js: Removed.
+        * WebGPUShadingLanguageRI/Test.html: Removed.
+        * WebGPUShadingLanguageRI/Test.js: Removed.
+        * WebGPUShadingLanguageRI/Texture.js: Removed.
+        * WebGPUShadingLanguageRI/TextureOperations.js: Removed.
+        * WebGPUShadingLanguageRI/TrapStatement.js: Removed.
+        * WebGPUShadingLanguageRI/Type.js: Removed.
+        * WebGPUShadingLanguageRI/TypeDef.js: Removed.
+        * WebGPUShadingLanguageRI/TypeDefResolver.js: Removed.
+        * WebGPUShadingLanguageRI/TypeOverloadResolutionFailure.js: Removed.
+        * WebGPUShadingLanguageRI/TypeRef.js: Removed.
+        * WebGPUShadingLanguageRI/TypedValue.js: Removed.
+        * WebGPUShadingLanguageRI/UintLiteral.js: Removed.
+        * WebGPUShadingLanguageRI/UintLiteralType.js: Removed.
+        * WebGPUShadingLanguageRI/UnificationContext.js: Removed.
+        * WebGPUShadingLanguageRI/UnreachableCodeChecker.js: Removed.
+        * WebGPUShadingLanguageRI/Value.js: Removed.
+        * WebGPUShadingLanguageRI/VariableDecl.js: Removed.
+        * WebGPUShadingLanguageRI/VariableRef.js: Removed.
+        * WebGPUShadingLanguageRI/VectorType.js: Removed.
+        * WebGPUShadingLanguageRI/VisitingSet.js: Removed.
+        * WebGPUShadingLanguageRI/Visitor.js: Removed.
+        * WebGPUShadingLanguageRI/WLexicalError.js: Removed.
+        * WebGPUShadingLanguageRI/WSyntaxError.js: Removed.
+        * WebGPUShadingLanguageRI/WTrapError.js: Removed.
+        * WebGPUShadingLanguageRI/WTypeError.js: Removed.
+        * WebGPUShadingLanguageRI/WhileLoop.js: Removed.
+        * WebGPUShadingLanguageRI/WrapChecker.js: Removed.
+        * WebGPUShadingLanguageRI/index.html: Removed.
+        * WebGPUShadingLanguageRI/spirv.core.grammar.json: Removed.
+        * WebGPUShadingLanguageRI/wsl-tests.yaml: Removed.
+
 2018-10-15  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] Disable MSE build support on Debian and Ubuntu LTS bots
