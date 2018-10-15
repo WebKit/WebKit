@@ -42,8 +42,8 @@
 
 namespace WebCore {
 
-Crypto::Crypto(ScriptExecutionContext& context)
-    : ContextDestructionObserver(&context)
+Crypto::Crypto(ScriptExecutionContext* context)
+    : ContextDestructionObserver(context)
 #if ENABLE(SUBTLE_CRYPTO)
     , m_subtle(SubtleCrypto::create(context))
 #endif

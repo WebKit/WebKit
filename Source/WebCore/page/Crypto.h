@@ -42,7 +42,7 @@ class SubtleCrypto;
 
 class Crypto : public ContextDestructionObserver, public RefCounted<Crypto> {
 public:
-    static Ref<Crypto> create(ScriptExecutionContext& context) { return adoptRef(*new Crypto(context)); }
+    static Ref<Crypto> create(ScriptExecutionContext* context) { return adoptRef(*new Crypto(context)); }
     virtual ~Crypto();
 
     ExceptionOr<void> getRandomValues(JSC::ArrayBufferView&);
@@ -52,7 +52,7 @@ public:
 #endif
 
 private:
-    Crypto(ScriptExecutionContext&);
+    Crypto(ScriptExecutionContext*);
 
 #if ENABLE(SUBTLE_CRYPTO)
     Ref<SubtleCrypto> m_subtle;

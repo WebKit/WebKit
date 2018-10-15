@@ -4777,7 +4777,7 @@ sub GenerateAttributeGetterBodyDefinition
         if ($interface->type->name eq "DOMWindow") {
             push(@$outputArray, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(&state, thisObject.wrapped(), ThrowSecurityError))\n");
         } else {
-            push(@$outputArray, "    if (!BindingSecurity::shouldAllowAccessToFrame(&state, thisObject.wrapped().frame(), ThrowSecurityError))\n");
+            push(@$outputArray, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(&state, thisObject.wrapped().window(), ThrowSecurityError))\n");
         }
         push(@$outputArray, "        return jsUndefined();\n");
     }
@@ -4905,7 +4905,7 @@ sub GenerateAttributeSetterBodyDefinition
         if ($interface->type->name eq "DOMWindow") {
             push(@$outputArray, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(&state, thisObject.wrapped(), ThrowSecurityError))\n");
         } else {
-            push(@$outputArray, "    if (!BindingSecurity::shouldAllowAccessToFrame(&state, thisObject.wrapped().frame(), ThrowSecurityError))\n");
+            push(@$outputArray, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(&state, thisObject.wrapped().window(), ThrowSecurityError))\n");
         }
         push(@$outputArray, "        return false;\n");
     }
@@ -5124,7 +5124,7 @@ sub GenerateOperationBodyDefinition
                 push(@$outputArray, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(state, castedThis->wrapped(), ThrowSecurityError))\n");
                 push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
             } else {
-                push(@$outputArray, "    if (!BindingSecurity::shouldAllowAccessToFrame(state, castedThis->wrapped().frame(), ThrowSecurityError))\n");
+                push(@$outputArray, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(state, castedThis->wrapped().window(), ThrowSecurityError))\n");
                 push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
             }
         }

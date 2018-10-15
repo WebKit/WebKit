@@ -1,0 +1,134 @@
+Validate the properties of a detached Window object.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+* Before GC
+PASS !!w.location is true
+PASS w.location.href is ""
+PASS w.location.protocol is ""
+PASS w.location.host is ""
+PASS w.location.hostname is ""
+PASS w.location.port is ""
+PASS w.location.pathname is ""
+PASS w.location.search is ""
+PASS w.location.hash is ""
+PASS w.location.origin is ""
+PASS w.location.assign('') did not throw exception.
+PASS w.location.replace('') did not throw exception.
+PASS w.location.reload('') did not throw exception.
+PASS !!w.screen is true
+PASS w.screen.height is 0
+PASS w.screen.width is 0
+PASS w.screen.colorDepth is 0
+PASS w.screen.pixelDepth is 0
+PASS w.screen.availLeft is 0
+PASS w.screen.availTop is 0
+PASS w.screen.availHeight is 0
+PASS w.screen.availWidth is 0
+PASS !!w.history is true
+PASS w.history.length is 0
+PASS w.history.state is null
+PASS w.history.back() did not throw exception.
+PASS w.history.forward() did not throw exception.
+PASS w.history.go(-1) did not throw exception.
+PASS w.history.pushState({}, null) did not throw exception.
+PASS w.history.replaceState({}, null) did not throw exception.
+PASS !!w.crypto is true
+PASS !!w.locationbar is true
+PASS w.locationbar.visible is false
+PASS !!w.menubar is true
+PASS w.menubar.visible is false
+PASS !!w.personalbar is true
+PASS w.personalbar.visible is false
+PASS !!w.scrollbars is true
+PASS w.scrollbars.visible is false
+PASS !!w.statusbar is true
+PASS w.statusbar.visible is false
+PASS !!w.toolbar is true
+PASS w.toolbar.visible is false
+PASS !!w.applicationCache is true
+PASS w.applicationCache.status is ApplicationCache.UNCACHED
+PASS w.applicationCache.update() threw exception InvalidStateError: The object is in an invalid state..
+PASS w.applicationCache.swapCache() threw exception InvalidStateError: The object is in an invalid state..
+PASS w.applicationCache.abort() did not throw exception.
+PASS !!w.visualViewport is true
+PASS w.visualViewport.offsetLeft is 0
+PASS w.visualViewport.offsetTop is 0
+PASS w.visualViewport.pageLeft is 0
+PASS w.visualViewport.pageTop is 0
+PASS w.visualViewport.width is 0
+PASS w.visualViewport.height is 0
+PASS w.visualViewport.scale is 1
+PASS !!w.styleMedia is true
+PASS w.styleMedia.type is ""
+PASS w.styleMedia.matchMedium('foo') is false
+PASS w.foo is undefined.
+PASS w.location.foo is undefined.
+
+* After GC
+PASS !!w.location is true
+PASS w.location.href is ""
+PASS w.location.protocol is ""
+PASS w.location.host is ""
+PASS w.location.hostname is ""
+PASS w.location.port is ""
+PASS w.location.pathname is ""
+PASS w.location.search is ""
+PASS w.location.hash is ""
+PASS w.location.origin is ""
+PASS w.location.assign('') did not throw exception.
+PASS w.location.replace('') did not throw exception.
+PASS w.location.reload('') did not throw exception.
+PASS !!w.screen is true
+PASS w.screen.height is 0
+PASS w.screen.width is 0
+PASS w.screen.colorDepth is 0
+PASS w.screen.pixelDepth is 0
+PASS w.screen.availLeft is 0
+PASS w.screen.availTop is 0
+PASS w.screen.availHeight is 0
+PASS w.screen.availWidth is 0
+PASS !!w.history is true
+PASS w.history.length is 0
+PASS w.history.state is null
+PASS w.history.back() did not throw exception.
+PASS w.history.forward() did not throw exception.
+PASS w.history.go(-1) did not throw exception.
+PASS w.history.pushState({}, null) did not throw exception.
+PASS w.history.replaceState({}, null) did not throw exception.
+PASS !!w.crypto is true
+PASS !!w.locationbar is true
+PASS w.locationbar.visible is false
+PASS !!w.menubar is true
+PASS w.menubar.visible is false
+PASS !!w.personalbar is true
+PASS w.personalbar.visible is false
+PASS !!w.scrollbars is true
+PASS w.scrollbars.visible is false
+PASS !!w.statusbar is true
+PASS w.statusbar.visible is false
+PASS !!w.toolbar is true
+PASS w.toolbar.visible is false
+PASS !!w.applicationCache is true
+PASS w.applicationCache.status is ApplicationCache.UNCACHED
+PASS w.applicationCache.update() threw exception InvalidStateError: The object is in an invalid state..
+PASS w.applicationCache.swapCache() threw exception InvalidStateError: The object is in an invalid state..
+PASS w.applicationCache.abort() did not throw exception.
+PASS !!w.visualViewport is true
+PASS w.visualViewport.offsetLeft is 0
+PASS w.visualViewport.offsetTop is 0
+PASS w.visualViewport.pageLeft is 0
+PASS w.visualViewport.pageTop is 0
+PASS w.visualViewport.width is 0
+PASS w.visualViewport.height is 0
+PASS w.visualViewport.scale is 1
+PASS !!w.styleMedia is true
+PASS w.styleMedia.type is ""
+PASS w.styleMedia.matchMedium('foo') is false
+PASS w.foo is undefined.
+PASS w.location.foo is undefined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

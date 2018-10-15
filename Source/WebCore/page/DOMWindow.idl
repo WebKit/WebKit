@@ -54,7 +54,7 @@ typedef USVString CSSOMString;
     [Replaceable, DoNotCheckSecurityOnGetter] readonly attribute WindowProxy self;
     [Unforgeable] readonly attribute Document document;
     attribute DOMString name;
-    [DoNotCheckSecurity, PutForwards=href, Unforgeable] readonly attribute Location? location; // FIXME: Should not be nullable.
+    [DoNotCheckSecurity, PutForwards=href, Unforgeable] readonly attribute Location location;
     readonly attribute History history;
     [EnabledAtRuntime=CustomElements, ImplementedAs=ensureCustomElementRegistry] readonly attribute CustomElementRegistry customElements;
     [Replaceable] readonly attribute BarProp locationbar;

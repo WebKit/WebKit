@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Validate the properties of a detached Window object.");
+jsTestIsAsync = true;
+
+function validateWindow(_w)
+{
+    w = _w;
+
+    try {
+    shouldBeTrue("!!w.location");
+    if (w.location) {
+        shouldBeEqualToString("w.location.href", "");
+        shouldBeEqualToString("w.location.protocol", "");
+        shouldBeEqualToString("w.location.host", "");
+        shouldBeEqualToString("w.location.hostname", "");
+        shouldBeEqualToString("w.location.port", "");
+        shouldBeEqualToString("w.location.pathname", "");
+        shouldBeEqualToString("w.location.search", "");
+        shouldBeEqualToString("w.location.hash", "");
+        shouldBeEqualToString("w.location.origin", "");
+        shouldNotThrow("w.location.assign('')");
+        shouldNotThrow("w.location.replace('')");
+        shouldNotThrow("w.location.reload('')");
+    }
+    } catch (e) {
+        debug(e);
+    }
+
+    try {
+    shouldBeTrue("!!w.screen");
+    if (w.screen) {
+        shouldBe("w.screen.height", "0");
+        shouldBe("w.screen.width", "0");
+        shouldBe("w.screen.colorDepth", "0");
+        shouldBe("w.screen.pixelDepth", "0");
+        shouldBe("w.screen.availLeft", "0");
+        shouldBe("w.screen.availTop", "0");
+        shouldBe("w.screen.availHeight", "0");
+        shouldBe("w.screen.availWidth", "0");
+    }
+    } catch (e) {
+        debug(e);
+    }
+
+    try {
+    shouldBeTrue("!!w.history");
+    if (w.history) {
+        shouldBe("w.history.length", "0");
+        shouldBeNull("w.history.state");
+        shouldNotThrow("w.history.back()");
+        shouldNotThrow("w.history.forward()");
+        shouldNotThrow("w.history.go(-1)");
+        shouldNotThrow("w.history.pushState({}, null)");
+        shouldNotThrow("w.history.replaceState({}, null)");
+    }
+    } catch (e) {
+        debug(e);
+    }
+
+    try {
+    shouldBeTrue("!!w.crypto");
+    } catch (e) {
+        debug(e);
+    }
+
+    let bars = ['locationbar', 'menubar', 'personalbar', 'scrollbars', 'statusbar', 'toolbar'];
+    for (let bar of bars) {
+        try {
+        shouldBeTrue("!!w." + bar);
+        if (w[bar]) {
+            shouldBeFalse("w." + bar + ".visible");
+        }
+        } catch (e) {
+            debug(e);
+        }
+    }
+
+    try {
+    shouldBeTrue("!!w.applicationCache");
+    if (w.applicationCache) {
+        shouldBe("w.applicationCache.status", "ApplicationCache.UNCACHED");
+        shouldThrowErrorName("w.applicationCache.update()", "InvalidStateError");
+        shouldThrowErrorName("w.applicationCache.swapCache()", "InvalidStateError");
+        shouldNotThrow("w.applicationCache.abort()");
+    }
+    } catch (e) {
+        debug(e);
+    }
+
+    try {
+    shouldBeTrue("!!w.visualViewport");
+    if (w.visualViewport) {
+        shouldBe("w.visualViewport.offsetLeft", "0");
+        shouldBe("w.visualViewport.offsetTop", "0");
+        shouldBe("w.visualViewport.pageLeft", "0");
+        shouldBe("w.visualViewport.pageTop", "0");
+        shouldBe("w.visualViewport.width", "0");
+        shouldBe("w.visualViewport.height", "0");
+        shouldBe("w.visualViewport.scale", "1");
+    }
+    } catch (e) {
+        debug(e);
+    }
+
+    try {
+    shouldBeTrue("!!w.styleMedia");
+    if (w.styleMedia) {
+        shouldBeEqualToString("w.styleMedia.type", "");
+        shouldBeFalse("w.styleMedia.matchMedium('foo')");
+    }
+    } catch (e) {
+        debug(e);
+    }
+
+    try {
+    shouldBeUndefined("w.foo");
+    shouldBeUndefined("w.location.foo");
+    } catch (e) {
+        debug(e);
+    }
+}
+
+onload = function() {
+    let f = document.createElement("iframe");
+    document.body.appendChild(f);
+    let w = f.contentWindow;
+    f.remove();
+    f = null;
+    debug("* Before GC");
+    validateWindow(w);
+    gc();
+    setTimeout(() => {
+        gc();
+        debug("");
+        debug("* After GC");
+        validateWindow(w);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

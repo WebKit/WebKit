@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Validate the properties of a detached Window object.");
+jsTestIsAsync = true;
+
+function validateWindow(_w)
+{
+    w = _w;
+
+    try {
+    shouldBeTrue("!!w.location");
+    if (w.location) {
+        shouldThrowErrorName("w.location.href", "SecurityError");
+        shouldThrowErrorName("w.location.protocol", "SecurityError");
+        shouldThrowErrorName("w.location.host", "SecurityError");
+        shouldThrowErrorName("w.location.hostname", "SecurityError");
+        shouldThrowErrorName("w.location.port", "SecurityError");
+        shouldThrowErrorName("w.location.pathname", "SecurityError");
+        shouldThrowErrorName("w.location.search", "SecurityError");
+        shouldThrowErrorName("w.location.hash", "SecurityError");
+        shouldThrowErrorName("w.location.origin", "SecurityError");
+        shouldThrowErrorName("w.location.assign('')", "SecurityError");
+        shouldNotThrow("w.location.replace('')");
+        shouldThrowErrorName("w.location.reload('')", "SecurityError");
+    }
+    } catch (e) {
+        debug(e);
+    }
+
+    shouldThrowErrorName("w.screen", "SecurityError");
+    shouldThrowErrorName("w.history", "SecurityError");
+    shouldThrowErrorName("w.crypto", "SecurityError");
+
+    let bars = ['locationbar', 'menubar', 'personalbar', 'scrollbars', 'statusbar', 'toolbar'];
+    for (let bar of bars) {
+        shouldThrowErrorName("w." + bar, "SecurityError");
+    }
+
+    shouldThrowErrorName("w.applicationCache", "SecurityError");
+    shouldThrowErrorName("w.visualViewport", "SecurityError");
+    shouldThrowErrorName("w.styleMedia", "SecurityError");
+
+    shouldThrowErrorName("w.foo", "SecurityError");
+    shouldThrowErrorName("w.location.foo", "SecurityError");
+}
+
+onmessage = function() {
+    let w = f.contentWindow;
+    f.remove();
+    f = null;
+
+    debug("* Before GC");
+    validateWindow(w);
+    gc();
+    setTimeout(() => {
+        gc();
+        debug("");
+        debug("* After GC");
+        validateWindow(w);
+        finishJSTest();
+    }, 0);
+}
+
+onload = function() {
+    f = document.createElement("iframe");
+    f.src = "http://localhost:8000/dom/resources/post-message-to-parent-when-loaded.html"; // Cross-origin.
+    document.body.appendChild(f);
+}
+</script>
+</body>
+</html>

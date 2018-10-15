@@ -39,11 +39,7 @@ static bool getOwnPropertySlotCommon(JSLocation& thisObject, ExecState& state, P
     VM& vm = state.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Frame* frame = thisObject.wrapped().frame();
-    if (!frame) {
-        slot.setUndefined();
-        return true;
-    }
+    auto* window = thisObject.wrapped().window();
 
     // When accessing Location cross-domain, functions are always the native built-in ones.
     // See JSDOMWindow::getOwnPropertySlotDelegate for additional details.
@@ -51,7 +47,7 @@ static bool getOwnPropertySlotCommon(JSLocation& thisObject, ExecState& state, P
     // Our custom code is only needed to implement the Window cross-domain scheme, so if access is
     // allowed, return false so the normal lookup will take place.
     String message;
-    if (BindingSecurity::shouldAllowAccessToFrame(state, *frame, message))
+    if (BindingSecurity::shouldAllowAccessToDOMWindow(state, window, message))
         return false;
 
     // https://html.spec.whatwg.org/#crossorigingetownpropertyhelper-(-o,-p-)
@@ -101,10 +97,6 @@ bool JSLocation::getOwnPropertySlotByIndex(JSObject* object, ExecState* state, u
 
 static bool putCommon(JSLocation& thisObject, ExecState& state, PropertyName propertyName)
 {
-    Frame* frame = thisObject.wrapped().frame();
-    if (!frame)
-        return true;
-
     VM& vm = state.vm();
     // Silently block access to toString and valueOf.
     if (propertyName == vm.propertyNames->toString || propertyName == vm.propertyNames->valueOf)
@@ -117,7 +109,7 @@ static bool putCommon(JSLocation& thisObject, ExecState& state, PropertyName pro
         return false;
 
     // Block access and throw if there is a security error.
-    if (!BindingSecurity::shouldAllowAccessToFrame(&state, frame, ThrowSecurityError))
+    if (!BindingSecurity::shouldAllowAccessToDOMWindow(&state, thisObject.wrapped().window(), ThrowSecurityError))
         return true;
 
     return false;
@@ -149,7 +141,7 @@ bool JSLocation::deleteProperty(JSCell* cell, ExecState* exec, PropertyName prop
 {
     JSLocation* thisObject = jsCast<JSLocation*>(cell);
     // Only allow deleting by frames in the same origin.
-    if (!BindingSecurity::shouldAllowAccessToFrame(exec, thisObject->wrapped().frame(), ThrowSecurityError))
+    if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, thisObject->wrapped().window(), ThrowSecurityError))
         return false;
     return Base::deleteProperty(thisObject, exec, propertyName);
 }
@@ -158,7 +150,7 @@ bool JSLocation::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned p
 {
     JSLocation* thisObject = jsCast<JSLocation*>(cell);
     // Only allow deleting by frames in the same origin.
-    if (!BindingSecurity::shouldAllowAccessToFrame(exec, thisObject->wrapped().frame(), ThrowSecurityError))
+    if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, thisObject->wrapped().window(), ThrowSecurityError))
         return false;
     return Base::deletePropertyByIndex(thisObject, exec, propertyName);
 }
@@ -166,7 +158,7 @@ bool JSLocation::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned p
 void JSLocation::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     JSLocation* thisObject = jsCast<JSLocation*>(object);
-    if (!BindingSecurity::shouldAllowAccessToFrame(exec, thisObject->wrapped().frame(), DoNotReportSecurityError)) {
+    if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, thisObject->wrapped().window(), DoNotReportSecurityError)) {
         if (mode.includeDontEnumProperties())
             addCrossOriginOwnPropertyNames<CrossOriginObject::Location>(*exec, propertyNames);
         return;
@@ -177,7 +169,7 @@ void JSLocation::getOwnPropertyNames(JSObject* object, ExecState* exec, Property
 bool JSLocation::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName propertyName, const PropertyDescriptor& descriptor, bool throwException)
 {
     JSLocation* thisObject = jsCast<JSLocation*>(object);
-    if (!BindingSecurity::shouldAllowAccessToFrame(exec, thisObject->wrapped().frame(), ThrowSecurityError))
+    if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, thisObject->wrapped().window(), ThrowSecurityError))
         return false;
 
     VM& vm = exec->vm();
@@ -189,7 +181,7 @@ bool JSLocation::defineOwnProperty(JSObject* object, ExecState* exec, PropertyNa
 JSValue JSLocation::getPrototype(JSObject* object, ExecState* exec)
 {
     JSLocation* thisObject = jsCast<JSLocation*>(object);
-    if (!BindingSecurity::shouldAllowAccessToFrame(exec, thisObject->wrapped().frame(), DoNotReportSecurityError))
+    if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, thisObject->wrapped().window(), DoNotReportSecurityError))
         return jsNull();
 
     return Base::getPrototype(object, exec);
@@ -206,7 +198,7 @@ bool JSLocation::preventExtensions(JSObject*, ExecState* exec)
 String JSLocation::toStringName(const JSObject* object, ExecState* exec)
 {
     auto* thisObject = jsCast<const JSLocation*>(object);
-    if (!BindingSecurity::shouldAllowAccessToFrame(exec, thisObject->wrapped().frame(), DoNotReportSecurityError))
+    if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, thisObject->wrapped().window(), DoNotReportSecurityError))
         return "Object"_s;
     return "Location"_s;
 }

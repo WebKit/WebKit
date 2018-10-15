@@ -24,7 +24,7 @@ frame.onload = function ()
 {
     debug("Lookup named element whose name corresponds to an element in the initial about:blank document:");
     shouldNotBe("frame.contentDocument.getElementById('A')", "elementAInInactiveDocument");
-    shouldThrowErrorName("elementAInDetachedWindowFunction()", "ReferenceError");
+    shouldBe("elementAInDetachedWindowFunction()", "elementAInInactiveDocument");
 
     debug("<br>Lookup named element whose name does not correspond to an element in the initial about:blank document:");
     shouldThrowErrorName("elementBInDetachedWindowFunction()", "ReferenceError");

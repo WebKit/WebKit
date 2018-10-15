@@ -1,3 +1,29 @@
+2018-10-15  Chris Dumez  <cdumez@apple.com>
+
+        Window's properties such as 'location' should not become null when it loses its browsing context
+        https://bugs.webkit.org/show_bug.cgi?id=190539
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/dom/cross-origin-detached-window-properties-expected.txt: Added.
+        * http/tests/dom/cross-origin-detached-window-properties.html: Added.
+        * http/tests/dom/resources/post-message-to-parent-when-loaded.html: Added.
+        * http/tests/dom/same-origin-detached-window-properties-expected.txt: Added.
+        * http/tests/dom/same-origin-detached-window-properties.html: Added.
+        Add layout test coverage.
+
+        * fast/frames/detached-frame-property-expected.txt:
+        * fast/frames/detached-frame-property.html:
+        * http/tests/security/named-window-property-from-same-origin-inactive-document-expected.txt:
+        * http/tests/security/named-window-property-from-same-origin-inactive-document.html:
+        * http/tests/security/xss-DENIED-named-window-property-from-cross-origin-inactive-document-expected.txt:
+        * http/tests/security/xss-DENIED-named-window-property-from-cross-origin-inactive-document.html:
+        * http/tests/security/xss-DENIED-script-inject-into-inactive-window.html:
+        * http/tests/security/xss-DENIED-script-inject-into-inactive-window2-pson.html:
+        * http/tests/security/xss-DENIED-script-inject-into-inactive-window2.html:
+        * http/tests/security/xss-DENIED-script-inject-into-inactive-window3.html:
+        Update existing layout tests to reflect behavior change.
+
 2018-10-15  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GStreamer] MediaStream test failing since r236877

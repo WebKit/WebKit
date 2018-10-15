@@ -9,12 +9,15 @@ onload = function()
     // Chrome and Firefox agree with us.
     shouldBeTrue("!!detachedWindow.postMessage");
     shouldBeTrue("!!detachedWindow.close");
+    shouldBeTrue("!!detachedWindow.locationbar");
+    shouldBeTrue("!!detachedWindow.history");
+    shouldBeTrue("!!detachedWindow.screen");
+    shouldBeTrue("!!detachedWindow.location");
     shouldBeTrue("detachedWindow.closed");
     shouldBeNull("detachedWindow.top");
     shouldBeNull("detachedWindow.opener");
     shouldBeNull("detachedWindow.parent");
     shouldBeNull("detachedWindow.frameElement"); // Technically, Chrome returns undefined here, not null.
-
     // Chrome agrees with us but Firefox returns the detachedWindow.
     shouldBeNull("detachedWindow.window");
     shouldBeNull("detachedWindow.frames");
@@ -22,20 +25,14 @@ onload = function()
 
     // Chrome returns undefined but Firefox has a valid object.
     shouldBeTrue("!detachedWindow.navigator");
-    shouldBeTrue("!detachedWindow.locationbar");
-    shouldBeTrue("!detachedWindow.history");
     shouldBeTrue("!detachedWindow.localStorage");
     shouldBeTrue("!!detachedWindow.document");
     shouldBeTrue("!!detachedWindow.XMLHttpRequest");
     shouldBeTrue("!!detachedWindow.getComputedStyle");
 
     // Chrome returns undefined but Firefox throws an exception.
-    shouldBeTrue("!detachedWindow.screen");
     shouldBe("detachedWindow.innerHeight", "0");
     shouldBe("detachedWindow.innerWidth", "0");
-
-    // Both Chrome and Firefox disagree with us and return a valid object.
-    shouldBeTrue("!detachedWindow.location");
 }
 </script>
 <iframe src="about:blank"></iframe>

@@ -41,26 +41,28 @@ using namespace JSC;
 
 const ClassInfo JSDOMWindowProperties::s_info = { "WindowProperties", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDOMWindowProperties) };
 
-static bool jsDOMWindowPropertiesGetOwnPropertySlotNamedItemGetter(JSDOMWindowProperties* thisObject, Frame& frame, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+static bool jsDOMWindowPropertiesGetOwnPropertySlotNamedItemGetter(JSDOMWindowProperties* thisObject, DOMWindow& window, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     // Check for child frames by name before built-in properties to match Mozilla. This does
     // not match IE, but some sites end up naming frames things that conflict with window
     // properties that are in Moz but not IE. Since we have some of these, we have to do it
     // the Moz way.
-    if (auto* scopedChild = frame.tree().scopedChild(propertyNameToAtomicString(propertyName))) {
-        slot.setValue(thisObject, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::DontEnum, toJS(exec, scopedChild->document()->domWindow()));
-        return true;
+    if (auto* frame = window.frame()) {
+        if (auto* scopedChild = frame->tree().scopedChild(propertyNameToAtomicString(propertyName))) {
+            slot.setValue(thisObject, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::DontEnum, toJS(exec, scopedChild->document()->domWindow()));
+            return true;
+        }
     }
 
-    if (!BindingSecurity::shouldAllowAccessToFrame(exec, &frame, ThrowSecurityError))
+    if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, window, ThrowSecurityError))
         return false;
 
     // FIXME: Search the whole frame hierarchy somewhere around here.
     // We need to test the correct priority order.
 
     // Allow shortcuts like 'Image1' instead of document.images.Image1
-    Document* document = frame.document();
-    if (is<HTMLDocument>(*document)) {
+    auto* document = window.document();
+    if (is<HTMLDocument>(document)) {
         auto& htmlDocument = downcast<HTMLDocument>(*document);
         auto* atomicPropertyName = propertyName.publicName();
         if (atomicPropertyName && htmlDocument.hasWindowNamedItem(*atomicPropertyName)) {
@@ -97,11 +99,7 @@ bool JSDOMWindowProperties::getOwnPropertySlot(JSObject* object, ExecState* stat
         return false;
 
     auto& window = jsWindow->wrapped();
-
-    if (auto* frame = window.frame())
-        return jsDOMWindowPropertiesGetOwnPropertySlotNamedItemGetter(thisObject, *frame, state, propertyName, slot);
-
-    return false;
+    return jsDOMWindowPropertiesGetOwnPropertySlotNamedItemGetter(thisObject, window, state, propertyName, slot);
 }
 
 bool JSDOMWindowProperties::getOwnPropertySlotByIndex(JSObject* object, ExecState* state, unsigned index, PropertySlot& slot)

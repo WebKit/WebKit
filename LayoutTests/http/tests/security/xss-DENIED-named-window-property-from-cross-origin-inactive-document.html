@@ -23,7 +23,7 @@ var elementBInDetachedWindowFunction = frame.contentWindow.Function("return B;")
 frame.onload = function ()
 {
     debug("Lookup named element whose name corresponds to an element in the initial about:blank document:")
-    shouldThrowErrorName("elementAInDetachedWindowFunction()", 'ReferenceError');
+    shouldBe("elementAInDetachedWindowFunction()", 'elementAInInactiveDocument');
 
     debug("<br>Lookup named element whose name does not correspond to an element in the initial about:blank document:");
     shouldThrowErrorName("elementBInDetachedWindowFunction()", 'ReferenceError');

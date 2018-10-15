@@ -1,3 +1,14 @@
+2018-10-15  Chris Dumez  <cdumez@apple.com>
+
+        Window's properties such as 'location' should not become null when it loses its browsing context
+        https://bugs.webkit.org/show_bug.cgi?id=190539
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline WPT test whose output has changed.
+
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/url.window-expected.txt:
+
 2018-10-08  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] JSC should have "parseFunction" to optimize Function constructor

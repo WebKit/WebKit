@@ -200,7 +200,7 @@ static inline JSValue jsTestActiveDOMObjectExcitingAttrGetter(ExecState& state, 
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    if (!BindingSecurity::shouldAllowAccessToFrame(&state, thisObject.wrapped().frame(), ThrowSecurityError))
+    if (!BindingSecurity::shouldAllowAccessToDOMWindow(&state, thisObject.wrapped().window(), ThrowSecurityError))
         return jsUndefined();
     auto& impl = thisObject.wrapped();
     JSValue result = toJS<IDLLong>(state, throwScope, impl.excitingAttr());
@@ -216,7 +216,7 @@ static inline JSC::EncodedJSValue jsTestActiveDOMObjectPrototypeFunctionExciting
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    if (!BindingSecurity::shouldAllowAccessToFrame(state, castedThis->wrapped().frame(), ThrowSecurityError))
+    if (!BindingSecurity::shouldAllowAccessToDOMWindow(state, castedThis->wrapped().window(), ThrowSecurityError))
         return JSValue::encode(jsUndefined());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))

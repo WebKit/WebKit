@@ -77,6 +77,11 @@ bool BindingSecurity::shouldAllowAccessToFrame(ExecState& state, Frame& frame, S
     return false;
 }
 
+bool BindingSecurity::shouldAllowAccessToDOMWindow(ExecState& state, DOMWindow* globalObject, String& message)
+{
+    return globalObject && shouldAllowAccessToDOMWindow(state, *globalObject, message);
+}
+
 bool BindingSecurity::shouldAllowAccessToDOMWindow(ExecState& state, DOMWindow& globalObject, String& message)
 {
     if (BindingSecurity::shouldAllowAccessToDOMWindow(&state, globalObject, DoNotReportSecurityError))
@@ -88,6 +93,11 @@ bool BindingSecurity::shouldAllowAccessToDOMWindow(ExecState& state, DOMWindow& 
 bool BindingSecurity::shouldAllowAccessToDOMWindow(JSC::ExecState* state, DOMWindow& target, SecurityReportingOption reportingOption)
 {
     return canAccessDocument(state, target.document(), reportingOption);
+}
+
+bool BindingSecurity::shouldAllowAccessToDOMWindow(JSC::ExecState* state, DOMWindow* target, SecurityReportingOption reportingOption)
+{
+    return target && shouldAllowAccessToDOMWindow(state, *target, reportingOption);
 }
 
 bool BindingSecurity::shouldAllowAccessToFrame(JSC::ExecState* state, Frame* target, SecurityReportingOption reportingOption)

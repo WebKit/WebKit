@@ -334,6 +334,7 @@ public:
     void enableSuddenTermination();
     void disableSuddenTermination();
 
+    void willDestroyDocumentInFrame();
     void frameDestroyed();
 
 private:
@@ -351,7 +352,6 @@ private:
     bool isInsecureScriptAccess(DOMWindow& activeWindow, const String& urlString);
 
     void resetDOMWindowProperties();
-    void willDestroyDocumentInFrame();
 
     bool isSameSecurityOriginAsMainFrame() const;
 

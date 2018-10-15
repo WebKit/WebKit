@@ -5,7 +5,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 Lookup named element whose name corresponds to an element in the initial about:blank document:
 PASS frame.contentDocument.getElementById('A') is not elementAInInactiveDocument
-PASS elementAInDetachedWindowFunction() threw exception ReferenceError: Can't find variable: A.
+PASS elementAInDetachedWindowFunction() is elementAInInactiveDocument
 
 Lookup named element whose name does not correspond to an element in the initial about:blank document:
 PASS elementBInDetachedWindowFunction() threw exception ReferenceError: Can't find variable: B.

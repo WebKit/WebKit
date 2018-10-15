@@ -421,7 +421,7 @@ bool WorkerGlobalScope::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vecto
 Crypto& WorkerGlobalScope::crypto()
 {
     if (!m_crypto)
-        m_crypto = Crypto::create(*this);
+        m_crypto = Crypto::create(this);
     return *m_crypto;
 }
 

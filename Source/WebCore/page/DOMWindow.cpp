@@ -418,36 +418,10 @@ void DOMWindow::didSecureTransitionTo(Document& document)
 
 DOMWindow::~DOMWindow()
 {
-#ifndef NDEBUG
-    if (!m_suspendedForDocumentSuspension) {
-        ASSERT(!m_screen);
-        ASSERT(!m_history);
-        ASSERT(!m_crypto);
-        ASSERT(!m_locationbar);
-        ASSERT(!m_menubar);
-        ASSERT(!m_personalbar);
-        ASSERT(!m_scrollbars);
-        ASSERT(!m_statusbar);
-        ASSERT(!m_toolbar);
-        ASSERT(!m_navigator);
-        ASSERT(!m_performance);
-        ASSERT(!m_location);
-        ASSERT(!m_media);
-        ASSERT(!m_sessionStorage);
-        ASSERT(!m_localStorage);
-        ASSERT(!m_applicationCache);
-        ASSERT(!m_visualViewport);
-    }
-#endif
-
     if (m_suspendedForDocumentSuspension)
         willDestroyCachedFrame();
     else
         willDestroyDocumentInFrame();
-
-    // As the ASSERTs above indicate, this reset should only be necessary if this DOMWindow is suspended for the page cache.
-    // But we don't want to risk any of these objects hanging around after we've been destroyed.
-    resetDOMWindowProperties();
 
     removeAllUnloadEventListeners(this);
     removeAllBeforeUnloadEventListeners(this);
@@ -475,7 +449,6 @@ void DOMWindow::frameDestroyed()
     Ref<DOMWindow> protectedThis(*this);
 
     willDestroyDocumentInFrame();
-    resetDOMWindowProperties();
     JSDOMWindowBase::fireFrameClearedWatchpointsForWindow(this);
 }
 
@@ -664,8 +637,6 @@ int DOMWindow::orientation() const
 
 Screen* DOMWindow::screen()
 {
-    if (!isCurrentlyDisplayedInFrame())
-        return nullptr;
     if (!m_screen)
         m_screen = Screen::create(*this);
     return m_screen.get();
@@ -673,8 +644,6 @@ Screen* DOMWindow::screen()
 
 History* DOMWindow::history()
 {
-    if (!isCurrentlyDisplayedInFrame())
-        return nullptr;
     if (!m_history)
         m_history = History::create(*this);
     return m_history.get();
@@ -682,18 +651,13 @@ History* DOMWindow::history()
 
 Crypto* DOMWindow::crypto() const
 {
-    // FIXME: Why is crypto not available when the window is not currently displayed in a frame?
-    if (!isCurrentlyDisplayedInFrame())
-        return nullptr;
     if (!m_crypto)
-        m_crypto = Crypto::create(*document());
+        m_crypto = Crypto::create(document());
     return m_crypto.get();
 }
 
 BarProp* DOMWindow::locationbar()
 {
-    if (!isCurrentlyDisplayedInFrame())
-        return nullptr;
     if (!m_locationbar)
         m_locationbar = BarProp::create(*this, BarProp::Locationbar);
     return m_locationbar.get();
@@ -701,8 +665,6 @@ BarProp* DOMWindow::locationbar()
 
 BarProp* DOMWindow::menubar()
 {
-    if (!isCurrentlyDisplayedInFrame())
-        return nullptr;
     if (!m_menubar)
         m_menubar = BarProp::create(*this, BarProp::Menubar);
     return m_menubar.get();
@@ -710,8 +672,6 @@ BarProp* DOMWindow::menubar()
 
 BarProp* DOMWindow::personalbar()
 {
-    if (!isCurrentlyDisplayedInFrame())
-        return nullptr;
     if (!m_personalbar)
         m_personalbar = BarProp::create(*this, BarProp::Personalbar);
     return m_personalbar.get();
@@ -719,8 +679,6 @@ BarProp* DOMWindow::personalbar()
 
 BarProp* DOMWindow::scrollbars()
 {
-    if (!isCurrentlyDisplayedInFrame())
-        return nullptr;
     if (!m_scrollbars)
         m_scrollbars = BarProp::create(*this, BarProp::Scrollbars);
     return m_scrollbars.get();
@@ -728,8 +686,6 @@ BarProp* DOMWindow::scrollbars()
 
 BarProp* DOMWindow::statusbar()
 {
-    if (!isCurrentlyDisplayedInFrame())
-        return nullptr;
     if (!m_statusbar)
         m_statusbar = BarProp::create(*this, BarProp::Statusbar);
     return m_statusbar.get();
@@ -737,8 +693,6 @@ BarProp* DOMWindow::statusbar()
 
 BarProp* DOMWindow::toolbar()
 {
-    if (!isCurrentlyDisplayedInFrame())
-        return nullptr;
     if (!m_toolbar)
         m_toolbar = BarProp::create(*this, BarProp::Toolbar);
     return m_toolbar.get();
@@ -746,6 +700,7 @@ BarProp* DOMWindow::toolbar()
 
 PageConsoleClient* DOMWindow::console() const
 {
+    // FIXME: This should not return nullptr when frameless.
     if (!isCurrentlyDisplayedInFrame())
         return nullptr;
     auto* frame = this->frame();
@@ -754,8 +709,6 @@ PageConsoleClient* DOMWindow::console() const
 
 DOMApplicationCache* DOMWindow::applicationCache()
 {
-    if (!isCurrentlyDisplayedInFrame())
-        return nullptr;
     if (!m_applicationCache)
         m_applicationCache = DOMApplicationCache::create(*this);
     return m_applicationCache.get();
@@ -763,6 +716,7 @@ DOMApplicationCache* DOMWindow::applicationCache()
 
 Navigator* DOMWindow::navigator()
 {
+    // FIXME: This should not return nullptr when frameless.
     if (!isCurrentlyDisplayedInFrame())
         return nullptr;
 
@@ -776,8 +730,10 @@ Navigator* DOMWindow::navigator()
 
 Performance* DOMWindow::performance() const
 {
+    // FIXME: This should not return nullptr when frameless.
     if (!isCurrentlyDisplayedInFrame())
         return nullptr;
+
     if (!m_performance) {
         MonotonicTime timeOrigin = document()->loader() ? document()->loader()->timing().referenceMonotonicTime() : MonotonicTime::now();
         m_performance = Performance::create(*document(), timeOrigin);
@@ -792,8 +748,6 @@ double DOMWindow::nowTimestamp() const
 
 Location* DOMWindow::location()
 {
-    if (!isCurrentlyDisplayedInFrame())
-        return nullptr;
     if (!m_location)
         m_location = Location::create(*this);
     return m_location.get();
@@ -801,9 +755,7 @@ Location* DOMWindow::location()
 
 VisualViewport* DOMWindow::visualViewport()
 {
-    if (!isCurrentlyDisplayedInFrame())
-        return nullptr;
-    if (!m_visualViewport && !m_suspendedForDocumentSuspension)
+    if (!m_visualViewport)
         m_visualViewport = VisualViewport::create(*this);
     return m_visualViewport.get();
 }
@@ -1493,8 +1445,6 @@ Document* DOMWindow::document() const
 
 RefPtr<StyleMedia> DOMWindow::styleMedia()
 {
-    if (!isCurrentlyDisplayedInFrame())
-        return nullptr;
     if (!m_media)
         m_media = StyleMedia::create(*this);
     return m_media;

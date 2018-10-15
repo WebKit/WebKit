@@ -1,3 +1,73 @@
+2018-10-15  Chris Dumez  <cdumez@apple.com>
+
+        Window's properties such as 'location' should not become null when it loses its browsing context
+        https://bugs.webkit.org/show_bug.cgi?id=190539
+
+        Reviewed by Alex Christensen.
+
+        Window's properties such as 'location' should not become null when it loses its browsing context.
+        This Webkit behavior is not standard and does not match other browsers so this patch makes it so
+        that those properties persist.
+
+        Tests: http/tests/dom/cross-origin-detached-window-properties.html
+               http/tests/dom/same-origin-detached-window-properties.html
+
+        * bindings/js/JSDOMBindingSecurity.cpp:
+        (WebCore::BindingSecurity::shouldAllowAccessToDOMWindow):
+        * bindings/js/JSDOMBindingSecurity.h:
+        * bindings/js/JSDOMWindowProperties.cpp:
+        (WebCore::jsDOMWindowPropertiesGetOwnPropertySlotNamedItemGetter):
+        (WebCore::JSDOMWindowProperties::getOwnPropertySlot):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::getOwnPropertySlotCommon):
+        (WebCore::putCommon):
+        (WebCore::JSLocation::deleteProperty):
+        (WebCore::JSLocation::deletePropertyByIndex):
+        (WebCore::JSLocation::getOwnPropertyNames):
+        (WebCore::JSLocation::defineOwnProperty):
+        (WebCore::JSLocation::getPrototype):
+        (WebCore::JSLocation::toStringName):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateAttributeGetterBodyDefinition):
+        (GenerateAttributeSetterBodyDefinition):
+        (GenerateOperationBodyDefinition):
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        (WebCore::jsTestActiveDOMObjectExcitingAttrGetter):
+        (WebCore::jsTestActiveDOMObjectPrototypeFunctionExcitingFunctionBody):
+        * crypto/SubtleCrypto.cpp:
+        (WebCore::SubtleCrypto::SubtleCrypto):
+        * crypto/SubtleCrypto.h:
+        (WebCore::SubtleCrypto::create):
+        * dom/Document.cpp:
+        (WebCore::Document::~Document):
+        * page/Crypto.cpp:
+        (WebCore::Crypto::Crypto):
+        * page/Crypto.h:
+        (WebCore::Crypto::create):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::~DOMWindow):
+        (WebCore::DOMWindow::frameDestroyed):
+        (WebCore::DOMWindow::screen):
+        (WebCore::DOMWindow::history):
+        (WebCore::DOMWindow::crypto):
+        (WebCore::DOMWindow::locationbar):
+        (WebCore::DOMWindow::menubar):
+        (WebCore::DOMWindow::personalbar):
+        (WebCore::DOMWindow::scrollbars):
+        (WebCore::DOMWindow::statusbar):
+        (WebCore::DOMWindow::toolbar):
+        (WebCore::DOMWindow::console const):
+        (WebCore::DOMWindow::applicationCache):
+        (WebCore::DOMWindow::navigator):
+        (WebCore::DOMWindow::performance const):
+        (WebCore::DOMWindow::location):
+        (WebCore::DOMWindow::visualViewport):
+        (WebCore::DOMWindow::styleMedia):
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::crypto):
+
 2018-10-15  Alex Christensen  <achristensen@webkit.org>
 
         Include EnumTraits.h less

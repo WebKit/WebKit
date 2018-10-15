@@ -49,6 +49,8 @@ template<typename T> ExceptionOr<T*> checkSecurityForNode(JSC::ExecState&, Excep
 
 bool shouldAllowAccessToDOMWindow(JSC::ExecState*, DOMWindow&, SecurityReportingOption = LogSecurityError);
 bool shouldAllowAccessToDOMWindow(JSC::ExecState&, DOMWindow&, String& message);
+bool shouldAllowAccessToDOMWindow(JSC::ExecState*, DOMWindow*, SecurityReportingOption = LogSecurityError);
+bool shouldAllowAccessToDOMWindow(JSC::ExecState&, DOMWindow*, String& message);
 bool shouldAllowAccessToFrame(JSC::ExecState*, Frame*, SecurityReportingOption = LogSecurityError);
 bool shouldAllowAccessToFrame(JSC::ExecState&, Frame&, String& message);
 bool shouldAllowAccessToNode(JSC::ExecState&, Node*);
