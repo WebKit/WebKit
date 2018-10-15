@@ -1,3 +1,23 @@
+2018-10-15  Simon Fraser  <simon.fraser@apple.com>
+
+        RenderLayer::addChild() and removeChild() should take references
+        https://bugs.webkit.org/show_bug.cgi?id=190582
+
+        Reviewed by Zalan Bujtas.
+
+        Pass the layer to be added or removed as a reference; it's never null.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::addLayers):
+        (WebCore::RenderElement::removeLayers):
+        (WebCore::RenderElement::moveLayers):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::addChild):
+        (WebCore::RenderLayer::removeChild):
+        (WebCore::RenderLayer::insertOnlyThisLayer):
+        (WebCore::RenderLayer::removeOnlyThisLayer):
+        * rendering/RenderLayer.h:
+
 2018-10-15  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
 
         [Cairo] Incorrect rendering for 135-deg skews

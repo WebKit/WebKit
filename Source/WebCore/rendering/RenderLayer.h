@@ -162,8 +162,8 @@ public:
         return curr;
     }
 
-    void addChild(RenderLayer* newChild, RenderLayer* beforeChild = nullptr);
-    RenderLayer* removeChild(RenderLayer*);
+    void addChild(RenderLayer& newChild, RenderLayer* beforeChild = nullptr);
+    void removeChild(RenderLayer&);
 
     void insertOnlyThisLayer();
     void removeOnlyThisLayer();

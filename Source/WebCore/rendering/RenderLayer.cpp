@@ -375,92 +375,90 @@ RenderLayer::~RenderLayer()
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(renderer().renderTreeBeingDestroyed() || !m_first);
 }
 
-void RenderLayer::addChild(RenderLayer* child, RenderLayer* beforeChild)
+void RenderLayer::addChild(RenderLayer& child, RenderLayer* beforeChild)
 {
     RenderLayer* prevSibling = beforeChild ? beforeChild->previousSibling() : lastChild();
     if (prevSibling) {
-        child->setPreviousSibling(prevSibling);
-        prevSibling->setNextSibling(child);
-        ASSERT(prevSibling != child);
+        child.setPreviousSibling(prevSibling);
+        prevSibling->setNextSibling(&child);
+        ASSERT(prevSibling != &child);
     } else
-        setFirstChild(child);
+        setFirstChild(&child);
 
     if (beforeChild) {
-        beforeChild->setPreviousSibling(child);
-        child->setNextSibling(beforeChild);
-        ASSERT(beforeChild != child);
+        beforeChild->setPreviousSibling(&child);
+        child.setNextSibling(beforeChild);
+        ASSERT(beforeChild != &child);
     } else
-        setLastChild(child);
+        setLastChild(&child);
 
-    child->setParent(this);
+    child.setParent(this);
 
-    if (child->isNormalFlowOnly())
+    if (child.isNormalFlowOnly())
         dirtyNormalFlowList();
 
-    if (!child->isNormalFlowOnly() || child->firstChild()) {
+    if (!child.isNormalFlowOnly() || child.firstChild()) {
         // Dirty the z-order list in which we are contained. The stackingContext() can be null in the
         // case where we're building up generated content layers. This is ok, since the lists will start
         // off dirty in that case anyway.
-        child->dirtyStackingContextZOrderLists();
+        child.dirtyStackingContextZOrderLists();
     }
 
-    child->updateDescendantDependentFlags();
-    if (child->m_hasVisibleContent || child->m_hasVisibleDescendant)
+    child.updateDescendantDependentFlags();
+    if (child.m_hasVisibleContent || child.m_hasVisibleDescendant)
         setAncestorChainHasVisibleDescendant();
 
-    if (child->isSelfPaintingLayer() || child->hasSelfPaintingLayerDescendant())
+    if (child.isSelfPaintingLayer() || child.hasSelfPaintingLayerDescendant())
         setAncestorChainHasSelfPaintingLayerDescendant();
 
 #if ENABLE(CSS_COMPOSITING)
-    if (child->hasBlendMode() || (child->hasNotIsolatedBlendingDescendants() && !child->isolatesBlending()))
+    if (child.hasBlendMode() || (child.hasNotIsolatedBlendingDescendants() && !child.isolatesBlending()))
         updateAncestorChainHasBlendingDescendants();
 #endif
 
-    compositor().layerWasAdded(*this, *child);
+    compositor().layerWasAdded(*this, child);
 }
 
-RenderLayer* RenderLayer::removeChild(RenderLayer* oldChild)
+void RenderLayer::removeChild(RenderLayer& oldChild)
 {
     if (!renderer().renderTreeBeingDestroyed())
-        compositor().layerWillBeRemoved(*this, *oldChild);
+        compositor().layerWillBeRemoved(*this, oldChild);
 
     // remove the child
-    if (oldChild->previousSibling())
-        oldChild->previousSibling()->setNextSibling(oldChild->nextSibling());
-    if (oldChild->nextSibling())
-        oldChild->nextSibling()->setPreviousSibling(oldChild->previousSibling());
+    if (oldChild.previousSibling())
+        oldChild.previousSibling()->setNextSibling(oldChild.nextSibling());
+    if (oldChild.nextSibling())
+        oldChild.nextSibling()->setPreviousSibling(oldChild.previousSibling());
 
-    if (m_first == oldChild)
-        m_first = oldChild->nextSibling();
-    if (m_last == oldChild)
-        m_last = oldChild->previousSibling();
+    if (m_first == &oldChild)
+        m_first = oldChild.nextSibling();
+    if (m_last == &oldChild)
+        m_last = oldChild.previousSibling();
 
-    if (oldChild->isNormalFlowOnly())
+    if (oldChild.isNormalFlowOnly())
         dirtyNormalFlowList();
-    if (!oldChild->isNormalFlowOnly() || oldChild->firstChild()) {
+    if (!oldChild.isNormalFlowOnly() || oldChild.firstChild()) {
         // Dirty the z-order list in which we are contained. When called via the
         // reattachment process in removeOnlyThisLayer, the layer may already be disconnected
         // from the main layer tree, so we need to null-check the |stackingContext| value.
-        oldChild->dirtyStackingContextZOrderLists();
+        oldChild.dirtyStackingContextZOrderLists();
     }
 
-    oldChild->setPreviousSibling(nullptr);
-    oldChild->setNextSibling(nullptr);
-    oldChild->setParent(nullptr);
+    oldChild.setPreviousSibling(nullptr);
+    oldChild.setNextSibling(nullptr);
+    oldChild.setParent(nullptr);
     
-    oldChild->updateDescendantDependentFlags();
-    if (oldChild->m_hasVisibleContent || oldChild->m_hasVisibleDescendant)
+    oldChild.updateDescendantDependentFlags();
+    if (oldChild.m_hasVisibleContent || oldChild.m_hasVisibleDescendant)
         dirtyAncestorChainVisibleDescendantStatus();
 
-    if (oldChild->isSelfPaintingLayer() || oldChild->hasSelfPaintingLayerDescendant())
+    if (oldChild.isSelfPaintingLayer() || oldChild.hasSelfPaintingLayerDescendant())
         dirtyAncestorChainHasSelfPaintingLayerDescendantStatus();
 
 #if ENABLE(CSS_COMPOSITING)
-    if (oldChild->hasBlendMode() || (oldChild->hasNotIsolatedBlendingDescendants() && !oldChild->isolatesBlending()))
+    if (oldChild.hasBlendMode() || (oldChild.hasNotIsolatedBlendingDescendants() && !oldChild.isolatesBlending()))
         dirtyAncestorChainHasBlendingDescendants();
 #endif
-
-    return oldChild;
 }
 
 void RenderLayer::insertOnlyThisLayer()
@@ -471,7 +469,7 @@ void RenderLayer::insertOnlyThisLayer()
         RenderLayer* parentLayer = renderer().parent()->enclosingLayer();
         ASSERT(parentLayer);
         RenderLayer* beforeChild = parentLayer->reflectionLayer() != this ? renderer().parent()->findNextLayer(parentLayer, &renderer()) : nullptr;
-        parentLayer->addChild(this, beforeChild);
+        parentLayer->addChild(*this, beforeChild);
     }
 
     // Remove all descendant layers from the hierarchy and add them to the new position.
@@ -501,20 +499,20 @@ void RenderLayer::removeOnlyThisLayer()
     // Remove the child reflection layer before moving other child layers.
     // The reflection layer should not be moved to the parent.
     if (reflection())
-        removeChild(reflectionLayer());
+        removeChild(*reflectionLayer());
 
     // Now walk our kids and reattach them to our parent.
     RenderLayer* current = m_first;
     while (current) {
         RenderLayer* next = current->nextSibling();
-        removeChild(current);
-        m_parent->addChild(current, nextSib);
+        removeChild(*current);
+        m_parent->addChild(*current, nextSib);
         current->setRepaintStatus(NeedsFullRepaint);
         current = next;
     }
 
     // Remove us from the parent.
-    m_parent->removeChild(this);
+    m_parent->removeChild(*this);
     renderer().destroyLayer();
 }
 
