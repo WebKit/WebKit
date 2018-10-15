@@ -1,5 +1,24 @@
 2018-10-15  Alex Christensen  <achristensen@webkit.org>
 
+        Add a temporarily off by default preference for doing safe browsing checks
+        https://bugs.webkit.org/show_bug.cgi?id=190522
+
+        Reviewed by Chris Dumez.
+
+        Safe browsing development has taken longer than anticipated.
+        To prevent the unused possible contacting the safe browsing provider for no benefit, make this off by default for now.
+        I'll make it on by default when it's actually used.
+
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _setSafeBrowsingEnabled:]):
+        (-[WKPreferences _safeBrowsingEnabled]):
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+
+2018-10-15  Alex Christensen  <achristensen@webkit.org>
+
         Include EnumTraits.h less
         https://bugs.webkit.org/show_bug.cgi?id=190535
 

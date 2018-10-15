@@ -121,6 +121,7 @@ typedef NS_ENUM(NSInteger, _WKEditableLinkBehavior) {
 @property (nonatomic, setter=_setICECandidateFilteringEnabled:) BOOL _iceCandidateFilteringEnabled WK_API_AVAILABLE(macosx(10.13.4), ios(11.3));
 @property (nonatomic, setter=_setWebRTCLegacyAPIEnabled:) BOOL _webRTCLegacyAPIEnabled WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 @property (nonatomic, setter=_setInactiveMediaCaptureSteamRepromptIntervalInMinutes:) double _inactiveMediaCaptureSteamRepromptIntervalInMinutes WK_API_AVAILABLE(macosx(10.13.4), ios(11.3));
+@property (nonatomic, setter=_setSafeBrowsingEnabled:) BOOL _safeBrowsingEnabled WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @property (nonatomic, setter=_setJavaScriptCanAccessClipboard:) BOOL _javaScriptCanAccessClipboard WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 @property (nonatomic, setter=_setDOMPasteAllowed:) BOOL _domPasteAllowed WK_API_AVAILABLE(macosx(10.13), ios(11.0));

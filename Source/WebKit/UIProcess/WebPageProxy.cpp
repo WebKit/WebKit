@@ -4114,6 +4114,9 @@ void WebPageProxy::decidePolicyForNavigationAction(WebFrameProxy& frame, const W
     UNUSED_PARAM(newNavigationID);
 #endif
 
+    if (!m_preferences->safeBrowsingEnabled())
+        shouldSkipSafeBrowsingCheck = ShouldSkipSafeBrowsingCheck::Yes;
+
     auto listener = makeRef(frame.setUpPolicyListenerProxy([this, protectedThis = makeRef(*this), frame = makeRef(frame), sender = WTFMove(sender), navigation] (WebCore::PolicyAction policyAction, API::WebsitePolicies* policies, ProcessSwapRequestedByClient processSwapRequestedByClient, Vector<Ref<SafeBrowsingResult>>&&) mutable {
         // FIXME: do something with the SafeBrowsingResults.
         receivedNavigationPolicyDecision(policyAction, navigation.get(), processSwapRequestedByClient, frame, policies, WTFMove(sender));
