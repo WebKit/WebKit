@@ -155,7 +155,7 @@ private:
     void updateGlobalHistory() final;
     void updateGlobalHistoryRedirectLinks() final;
 
-    bool shouldGoToHistoryItem(WebCore::HistoryItem*) const final;
+    bool shouldGoToHistoryItem(WebCore::HistoryItem&) const final;
     void updateGlobalHistoryItemForPage() final;
 
     void didDisplayInsecureContent() final;

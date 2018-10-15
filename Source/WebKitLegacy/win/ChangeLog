@@ -1,3 +1,14 @@
+2018-10-15  Alex Christensen  <achristensen@webkit.org>
+
+        Remove InjectedBundle processing of back/forward lists
+        https://bugs.webkit.org/show_bug.cgi?id=190459
+
+        Reviewed by Chris Dumez.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::shouldGoToHistoryItem const):
+        * WebCoreSupport/WebFrameLoaderClient.h:
+
 2018-10-02  Alex Christensen  <achristensen@webkit.org>
 
         Remove ParsedURLString

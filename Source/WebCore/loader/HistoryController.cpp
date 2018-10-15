@@ -304,7 +304,7 @@ void HistoryController::goToItem(HistoryItem& targetItem, FrameLoadType type, Sh
     Page* page = m_frame.page();
     if (!page)
         return;
-    if (!m_frame.loader().client().shouldGoToHistoryItem(&targetItem))
+    if (!m_frame.loader().client().shouldGoToHistoryItem(targetItem))
         return;
     if (m_defersLoading) {
         m_deferredItem = &targetItem;

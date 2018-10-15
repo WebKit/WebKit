@@ -1097,12 +1097,10 @@ void WebFrameLoaderClient::updateGlobalHistoryRedirectLinks()
     }
 }
 
-bool WebFrameLoaderClient::shouldGoToHistoryItem(HistoryItem* item) const
+bool WebFrameLoaderClient::shouldGoToHistoryItem(HistoryItem& item) const
 {
     WebView* view = getWebView(m_webFrame.get());
-    WebHistoryItem *webItem = kit(item);
-    
-    return [[view _policyDelegateForwarder] webView:view shouldGoToHistoryItem:webItem];
+    return [[view _policyDelegateForwarder] webView:view shouldGoToHistoryItem:kit(&item)];
 }
 
 void WebFrameLoaderClient::updateGlobalHistoryItemForPage()

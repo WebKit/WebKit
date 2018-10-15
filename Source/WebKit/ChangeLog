@@ -1,5 +1,41 @@
 2018-10-15  Alex Christensen  <achristensen@webkit.org>
 
+        Remove InjectedBundle processing of back/forward lists
+        https://bugs.webkit.org/show_bug.cgi?id=190459
+
+        Reviewed by Chris Dumez.
+
+        * Shared/API/c/WKDeprecated.h:
+        * UIProcess/API/APINavigationClient.h:
+        (API::NavigationClient::willGoToBackForwardListItem):
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::willGoToBackForwardListItem):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::willGoToBackForwardListItem):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/InjectedBundle/API/APIInjectedBundlePageLoaderClient.h:
+        (API::InjectedBundle::PageLoaderClient::shouldGoToBackForwardListItem): Deleted.
+        * WebProcess/InjectedBundle/API/c/WKBundleBackForwardListItem.cpp:
+        (WKBundleBackForwardListItemCopyOriginalURL):
+        (WKBundleBackForwardListItemCopyTitle):
+        (WKBundleBackForwardListItemIsTargetItem):
+        (WKBundleBackForwardListItemIsInPageCache):
+        (WKBundleBackForwardListItemHasCachedPageExpired):
+        * WebProcess/InjectedBundle/API/c/WKBundleBackForwardListItem.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleFileHandleRef.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        (WebKit::InjectedBundlePageLoaderClient::InjectedBundlePageLoaderClient):
+        (WebKit::InjectedBundlePageLoaderClient::shouldGoToBackForwardListItem): Deleted.
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::shouldGoToHistoryItem const):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
+2018-10-15  Alex Christensen  <achristensen@webkit.org>
+
         WebPageProxy should always have a HistoryClient
         https://bugs.webkit.org/show_bug.cgi?id=190450
 

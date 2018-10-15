@@ -765,7 +765,7 @@ void WebFrameLoaderClient::updateGlobalHistoryRedirectLinks()
     }
 }
 
-bool WebFrameLoaderClient::shouldGoToHistoryItem(HistoryItem*) const
+bool WebFrameLoaderClient::shouldGoToHistoryItem(HistoryItem&) const
 {
     return true;
 }

@@ -48,6 +48,7 @@ using namespace WebCore;
 InjectedBundlePageLoaderClient::InjectedBundlePageLoaderClient(const WKBundlePageLoaderClientBase* client)
 {
     initialize(client);
+    ASSERT(!m_client.shouldGoToBackForwardListItem);
 }
 
 void InjectedBundlePageLoaderClient::willLoadURLRequest(WebPage& page, const ResourceRequest& request, API::Object* userData)
@@ -76,18 +77,6 @@ void InjectedBundlePageLoaderClient::willLoadDataRequest(WebPage& page, const Re
     }
 
     m_client.willLoadDataRequest(toAPI(&page), toAPI(request), toAPI(data.get()), toAPI(MIMEType.impl()), toAPI(encodingName.impl()), toURLRef(unreachableURL.string().impl()), toAPI(userData), m_client.base.clientInfo);
-}
-
-bool InjectedBundlePageLoaderClient::shouldGoToBackForwardListItem(WebPage& page, InjectedBundleBackForwardListItem& item, RefPtr<API::Object>& userData)
-{
-    if (!m_client.shouldGoToBackForwardListItem)
-        return true;
-
-    WKTypeRef userDataToPass = nullptr;
-    bool result = m_client.shouldGoToBackForwardListItem(toAPI(&page), toAPI(&item), &userDataToPass, m_client.base.clientInfo);
-    userData = adoptRef(toImpl(userDataToPass));
-    
-    return result;
 }
 
 void InjectedBundlePageLoaderClient::didStartProvisionalLoadForFrame(WebPage& page, WebFrame& frame, RefPtr<API::Object>& userData)

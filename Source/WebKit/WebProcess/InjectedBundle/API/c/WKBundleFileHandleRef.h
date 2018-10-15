@@ -33,7 +33,7 @@
 extern "C" {
 #endif
 
-WK_EXPORT WKBundleFileHandleRef WKBundleFileHandleCreateWithPath(WKStringRef path) WK_C_API_DEPRECATED("No longer supported");
+WK_EXPORT WKBundleFileHandleRef WKBundleFileHandleCreateWithPath(WKStringRef path) WK_C_API_DEPRECATED;
 
 #ifdef __cplusplus
 }

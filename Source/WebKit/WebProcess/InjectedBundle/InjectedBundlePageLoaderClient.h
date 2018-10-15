@@ -50,7 +50,6 @@ public:
     void willLoadURLRequest(WebPage&, const WebCore::ResourceRequest&, API::Object*) override;
     void willLoadDataRequest(WebPage&, const WebCore::ResourceRequest&, WebCore::SharedBuffer*, const WTF::String&, const WTF::String&, const WebCore::URL&, API::Object*) override;
 
-    bool shouldGoToBackForwardListItem(WebPage&, InjectedBundleBackForwardListItem&, RefPtr<API::Object>&) override;
     void didStartProvisionalLoadForFrame(WebPage&, WebFrame&, RefPtr<API::Object>&) override;
     void didReceiveServerRedirectForProvisionalLoadForFrame(WebPage&, WebFrame&, RefPtr<API::Object>&) override;
     void didFailProvisionalLoadWithErrorForFrame(WebPage&, WebFrame&, const WebCore::ResourceError&, RefPtr<API::Object>&) override;

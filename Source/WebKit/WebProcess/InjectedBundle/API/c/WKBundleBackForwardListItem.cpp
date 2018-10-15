@@ -44,7 +44,7 @@ bool WKBundleBackForwardListItemIsSame(WKBundleBackForwardListItemRef itemRef1, 
 
 WKURLRef WKBundleBackForwardListItemCopyOriginalURL(WKBundleBackForwardListItemRef itemRef)
 {
-    return toCopiedURLAPI(toImpl(itemRef)->originalURL());
+    return nullptr;
 }
 
 WKURLRef WKBundleBackForwardListItemCopyURL(WKBundleBackForwardListItemRef itemRef)
@@ -54,7 +54,7 @@ WKURLRef WKBundleBackForwardListItemCopyURL(WKBundleBackForwardListItemRef itemR
 
 WKStringRef WKBundleBackForwardListItemCopyTitle(WKBundleBackForwardListItemRef itemRef)
 {
-    return toCopiedAPI(toImpl(itemRef)->title());
+    return nullptr;
 }
 
 WKStringRef WKBundleBackForwardListItemCopyTarget(WKBundleBackForwardListItemRef itemRef)
@@ -69,12 +69,12 @@ bool WKBundleBackForwardListItemIsTargetItem(WKBundleBackForwardListItemRef item
 
 bool WKBundleBackForwardListItemIsInPageCache(WKBundleBackForwardListItemRef itemRef)
 {
-    return toImpl(itemRef)->isInPageCache();
+    return false;
 }
 
 bool WKBundleBackForwardListItemHasCachedPageExpired(WKBundleBackForwardListItemRef itemRef)
 {
-    return toImpl(itemRef)->hasCachedPageExpired();
+    return false;
 }
 
 WKArrayRef WKBundleBackForwardListItemCopyChildren(WKBundleBackForwardListItemRef itemRef)
