@@ -1,3 +1,11 @@
+2018-10-15  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed Windows build fix after r237112.
+
+        * Plugins/PluginView.cpp:
+        (WebCore::PluginView::performRequest):
+        (WebCore::PluginView::load):
+
 2018-10-15  Alex Christensen  <achristensen@webkit.org>
 
         Remove InjectedBundle processing of back/forward lists
