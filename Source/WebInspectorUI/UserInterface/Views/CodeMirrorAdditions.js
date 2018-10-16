@@ -340,7 +340,8 @@
         codeMirror.on("scrollCursorIntoView", scrollCursorIntoView);
     });
 
-    const maximumNeighboringWhitespaceCharacters = 16;
+    let whitespaceStyleElement = null;
+    let whitespaceCountsWithStyling = new Set;
     CodeMirror.defineOption("showWhitespaceCharacters", false, function(cm, value, old) {
         if (!value || (old && old !== CodeMirror.Init)) {
             cm.removeOverlay("whitespace");
@@ -352,10 +353,27 @@
             token(stream) {
                 if (stream.peek() === " ") {
                     let count = 0;
-                    while (count < maximumNeighboringWhitespaceCharacters && stream.peek() === " ") {
+                    while (stream.peek() === " ") {
                         ++count;
                         stream.next();
                     }
+
+                    if (!whitespaceCountsWithStyling.has(count)) {
+                        whitespaceCountsWithStyling.add(count);
+
+                        if (!whitespaceStyleElement)
+                            whitespaceStyleElement = document.head.appendChild(document.createElement("style"));
+
+                        const middleDot = "\\00B7";
+
+                        let styleText = whitespaceStyleElement.textContent;
+                        styleText += `.show-whitespace-characters .CodeMirror .cm-whitespace-${count}::before {`;
+                        styleText += `content: "${middleDot.repeat(count)}";`;
+                        styleText += `}`;
+
+                        whitespaceStyleElement.textContent = styleText;
+                    }
+
                     return `whitespace whitespace-${count}`;
                 }
 
