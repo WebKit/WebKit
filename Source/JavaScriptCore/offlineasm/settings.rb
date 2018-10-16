@@ -165,7 +165,7 @@ end
 #
 
 def isASTErroneous(ast)
-    not ast.filter(Error).empty?
+    not ast.demacroify({}).filter(Error).empty?
 end
 
 #
@@ -203,7 +203,7 @@ def emitCodeInConfiguration(concreteSettings, ast, backend)
     end
     
     if isASTErroneous(ast)
-        $output.puts "#error \"Invalid configuration.\""
+        $output.puts "#error \"Invalid configuration. Error at: #{ast.filter(Error)[0].codeOrigin}\""
     elsif not WORKING_BACKENDS.include? backend
         $output.puts "#error \"This backend is not supported yet.\""
     else
