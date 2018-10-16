@@ -1,5 +1,17 @@
 2018-10-16  Keith Miller  <keith_miller@apple.com>
 
+        Unreviewed, reland https://bugs.webkit.org/show_bug.cgi?id=189708 with build fix.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * llint/LLIntOffsetsExtractor.cpp:
+        (JSC::LLIntOffsetsExtractor::dummy):
+        * offlineasm/generate_offset_extractor.rb:
+        * offlineasm/offsets.rb:
+        * offlineasm/settings.rb:
+
+2018-10-16  Keith Miller  <keith_miller@apple.com>
+
         Unreviewed, add missing include.
 
         * runtime/BasicBlockLocation.h:

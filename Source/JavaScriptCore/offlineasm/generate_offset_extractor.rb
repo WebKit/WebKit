@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-# Copyright (C) 2011 Apple Inc. All rights reserved.
+# Copyright (C) 2011-2018 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -37,10 +37,18 @@ require "transform"
 IncludeFile.processIncludeOptions()
 
 inputFlnm = ARGV.shift
+settingsFlnm = ARGV.shift
 outputFlnm = ARGV.shift
 
 validBackends = canonicalizeBackendNames(ARGV.shift.split(/[,\s]+/))
 includeOnlyBackends(validBackends)
+
+begin
+    configurationList = configurationIndices(settingsFlnm)
+rescue MissingMagicValuesException
+    $stderr.puts "OffsetExtractor: No magic values found. Skipping offsets extractor file generation."
+    exit 1
+end
 
 def emitMagicNumber
     OFFSET_MAGIC_NUMBERS.each {
@@ -49,121 +57,62 @@ def emitMagicNumber
     }
 end
 
-inputHash = "// offlineasm input hash: #{parseHash(inputFlnm)} #{selfHash}"
+configurationHash = Digest::SHA1.hexdigest(configurationList.join(' '))
+inputHash = "// OffsetExtractor input hash: #{parseHash(inputFlnm)} #{configurationHash} #{selfHash}"
 
 if FileTest.exist? outputFlnm
     File.open(outputFlnm, "r") {
         | inp |
         firstLine = inp.gets
         if firstLine and firstLine.chomp == inputHash
-            $stderr.puts "offlineasm: Nothing changed."
+            $stderr.puts "OffsetExtractor: Nothing changed."
             exit 0
         end
     }
 end
 
-originalAST = parse(inputFlnm)
-
-#
-# Optimize the AST to make configuration extraction faster. This reduces the AST to a form
-# that only contains the things that matter for our purposes: offsets, sizes, and if
-# statements.
-#
-
-class Node
-    def offsetsPruneTo(sequence)
-        children.each {
-            | child |
-            child.offsetsPruneTo(sequence)
-        }
-    end
-    
-    def offsetsPrune
-        result = Sequence.new(codeOrigin, [])
-        offsetsPruneTo(result)
-        result
-    end
-end
-
-class IfThenElse
-    def offsetsPruneTo(sequence)
-        ifThenElse = IfThenElse.new(codeOrigin, predicate, thenCase.offsetsPrune)
-        ifThenElse.elseCase = elseCase.offsetsPrune
-        sequence.list << ifThenElse
-    end
-end
-
-class StructOffset
-    def offsetsPruneTo(sequence)
-        sequence.list << self
-    end
-end
-
-class Sizeof
-    def offsetsPruneTo(sequence)
-        sequence.list << self
-    end
-end
-
-class ConstExpr
-    def offsetsPruneTo(sequence)
-        sequence.list << self
-    end
-end
-
-prunedAST = originalAST.offsetsPrune
+ast = parse(inputFlnm)
+settingsCombinations = computeSettingsCombinations(ast)
 
 File.open(outputFlnm, "w") {
     | outp |
     $output = outp
     outp.puts inputHash
-    length = 0
 
-    emitCodeInAllConfigurations(prunedAST) {
-        | settings, ast, backend, index |
-        constsList = ast.filter(ConstExpr).uniq.sort
+    outp.puts "static const int64_t offsetExtractorTable[] = {"
+    configurationList.each {
+        | configIndex |
+        forSettings(settingsCombinations[configIndex], ast) {
+            | concreteSettings, lowLevelAST, backend |
 
-        constsList.each_with_index {
-            | const, index |
-            outp.puts "constexpr int64_t constValue#{index} = static_cast<int64_t>(#{const.value});"
-        }
-    }
+            offsetsList = offsetsList(lowLevelAST)
+            sizesList = sizesList(lowLevelAST)
+            constsList = constsList(lowLevelAST)
 
-    emitCodeInAllConfigurations(prunedAST) {
-        | settings, ast, backend, index |
-        offsetsList = ast.filter(StructOffset).uniq.sort
-        sizesList = ast.filter(Sizeof).uniq.sort
-        constsList = ast.filter(ConstExpr).uniq.sort
-        length += OFFSET_HEADER_MAGIC_NUMBERS.size + (OFFSET_MAGIC_NUMBERS.size + 1) * (1 + offsetsList.size + sizesList.size + constsList.size)
-    }
-    outp.puts "static const int64_t extractorTable[#{length}] = {"
-    emitCodeInAllConfigurations(prunedAST) {
-        | settings, ast, backend, index |
-        OFFSET_HEADER_MAGIC_NUMBERS.each {
-            | number |
-            $output.puts "unsigned(#{number}),"
-        }
+            emitCodeInConfiguration(concreteSettings, lowLevelAST, backend) {
+                OFFSET_HEADER_MAGIC_NUMBERS.each {
+                    | number |
+                    outp.puts "unsigned(#{number}),"
+                }
 
-        offsetsList = ast.filter(StructOffset).uniq.sort
-        sizesList = ast.filter(Sizeof).uniq.sort
-        constsList = ast.filter(ConstExpr).uniq.sort
-
-        emitMagicNumber
-        outp.puts "#{index},"
-        offsetsList.each {
-            | offset |
-            emitMagicNumber
-            outp.puts "OFFLINE_ASM_OFFSETOF(#{offset.struct}, #{offset.field}),"
-        }
-        sizesList.each {
-            | sizeof |
-            emitMagicNumber
-            outp.puts "sizeof(#{sizeof.struct}),"
-        }
-        constsList.each_index {
-            | index |
-            emitMagicNumber
-            outp.puts "constValue#{index},"
+                emitMagicNumber
+                outp.puts "#{configIndex},"
+                offsetsList.each {
+                    | offset |
+                    emitMagicNumber
+                    outp.puts "OFFLINE_ASM_OFFSETOF(#{offset.struct}, #{offset.field}),"
+                }
+                sizesList.each {
+                    | sizeof |
+                    emitMagicNumber
+                    outp.puts "sizeof(#{sizeof.struct}),"
+                }
+                constsList.each {
+                    | const |
+                    emitMagicNumber
+                    outp.puts "static_cast<int64_t>(#{const.value}),"
+                }
+            }
         }
     }
     outp.puts "};"
