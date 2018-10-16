@@ -1,3 +1,19 @@
+2018-10-16  Rob Buis  <rbuis@igalia.com>
+
+        Remove superfluous VIDEO build guard
+        https://bugs.webkit.org/show_bug.cgi?id=190624
+
+        Reviewed by Michael Catanzaro.
+
+        Remove some instances where the VIDEO build guard is included within another VIDEO build guard.
+
+        No new tests. No change in behavior.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::buildMediaEnginesVector):
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+
 2018-10-16  Youenn Fablet  <youenn@apple.com>
 
         Support RTCConfiguration.certificates

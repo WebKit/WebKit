@@ -567,7 +567,7 @@ public:
     void applicationWillResignActive();
     void applicationDidBecomeActive();
 
-#if ENABLE(VIDEO) && USE(AVFOUNDATION)
+#if USE(AVFOUNDATION)
     WEBCORE_EXPORT AVPlayer *objCAVFoundationAVPlayer() const;
 #endif
 

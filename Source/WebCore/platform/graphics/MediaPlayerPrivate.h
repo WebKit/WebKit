@@ -278,7 +278,7 @@ public:
     virtual void applicationWillResignActive() { }
     virtual void applicationDidBecomeActive() { }
 
-#if ENABLE(VIDEO) && USE(AVFOUNDATION)
+#if USE(AVFOUNDATION)
     virtual AVPlayer *objCAVFoundationAVPlayer() const { return nullptr; }
 #endif
 };
