@@ -27,19 +27,20 @@
 #define WKBundleBackForwardList_h
 
 #include <WebKit/WKBase.h>
+#include <WebKit/WKDeprecated.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-WK_EXPORT WKTypeID WKBundleBackForwardListGetTypeID();
+WK_EXPORT WKTypeID WKBundleBackForwardListGetTypeID() WK_C_API_DEPRECATED;
 
-WK_EXPORT WKBundleBackForwardListItemRef WKBundleBackForwardListCopyItemAtIndex(WKBundleBackForwardListRef list, int index);
+WK_EXPORT WKBundleBackForwardListItemRef WKBundleBackForwardListCopyItemAtIndex(WKBundleBackForwardListRef list, int index) WK_C_API_DEPRECATED;
 
-WK_EXPORT unsigned WKBundleBackForwardListGetBackListCount(WKBundleBackForwardListRef list);
-WK_EXPORT unsigned WKBundleBackForwardListGetForwardListCount(WKBundleBackForwardListRef list);
+WK_EXPORT unsigned WKBundleBackForwardListGetBackListCount(WKBundleBackForwardListRef list) WK_C_API_DEPRECATED;
+WK_EXPORT unsigned WKBundleBackForwardListGetForwardListCount(WKBundleBackForwardListRef list) WK_C_API_DEPRECATED;
 
-WK_EXPORT void WKBundleBackForwardListClear(WKBundleBackForwardListRef list);
+WK_EXPORT void WKBundleBackForwardListClear(WKBundleBackForwardListRef list) WK_C_API_DEPRECATED;
 
 #ifdef __cplusplus
 }

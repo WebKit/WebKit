@@ -42,7 +42,6 @@
 #include "GeolocationPermissionRequestManager.h"
 #include "InjectUserScriptImmediately.h"
 #include "InjectedBundle.h"
-#include "InjectedBundleBackForwardList.h"
 #include "InjectedBundleScriptWorld.h"
 #include "LibWebRTCProvider.h"
 #include "LoadParameters.h"
@@ -701,9 +700,6 @@ void WebPage::updateUserActivity()
 
 WebPage::~WebPage()
 {
-    if (m_backForwardList)
-        m_backForwardList->detach();
-
     ASSERT(!m_page);
 
     auto& webProcess = WebProcess::singleton();
@@ -1613,6 +1609,74 @@ void WebPage::setPageZoomFactor(double zoomFactor)
     if (!frame)
         return;
     frame->setPageZoomFactor(static_cast<float>(zoomFactor));
+}
+
+static void dumpHistoryItem(HistoryItem& item, size_t indent, bool isCurrentItem, StringBuilder& stringBuilder, const String& directoryName)
+{
+    if (isCurrentItem)
+        stringBuilder.appendLiteral("curr->  ");
+    else {
+        for (size_t i = 0; i < indent; ++i)
+            stringBuilder.append(' ');
+    }
+
+    auto url = item.url();
+    if (url.protocolIs("file")) {
+        size_t start = url.string().find(directoryName);
+        if (start == WTF::notFound)
+            start = 0;
+        else
+            start += directoryName.length();
+        stringBuilder.appendLiteral("(file test):");
+        stringBuilder.append(url.string().substring(start));
+    } else
+        stringBuilder.append(url);
+    
+    auto& target = item.target();
+    if (target.length()) {
+        stringBuilder.appendLiteral(" (in frame \"");
+        stringBuilder.append(target);
+        stringBuilder.appendLiteral("\")");
+    }
+    
+    if (item.isTargetItem())
+        stringBuilder.appendLiteral("  **nav target**");
+    
+    stringBuilder.append('\n');
+    
+    Vector<Ref<HistoryItem>> children;
+    children.reserveInitialCapacity(item.children().size());
+    for (auto& child : item.children())
+        children.uncheckedAppend(child.copyRef());
+    std::stable_sort(children.begin(), children.end(), [] (auto& a, auto& b) {
+        return codePointCompare(a->target(), b->target()) < 0;
+    });
+    for (auto& child : children)
+        dumpHistoryItem(child, indent + 4, false, stringBuilder, directoryName);
+}
+
+String WebPage::dumpHistoryForTesting(const String& directory)
+{
+    if (!m_page)
+        return { };
+
+    auto& list = m_page->backForward();
+    
+    StringBuilder builder;
+    int begin = -list.backCount();
+    if (list.itemAtIndex(begin)->url() == blankURL())
+        ++begin;
+    for (int i = begin; i <= list.forwardCount(); ++i)
+        dumpHistoryItem(*list.itemAtIndex(i), 8, !i, builder, directory);
+    return builder.toString();
+}
+
+void WebPage::clearHistory()
+{
+    if (!m_page)
+        return;
+
+    static_cast<WebBackForwardListProxy&>(m_page->backForward().client()).clear();
 }
 
 void WebPage::setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor)
@@ -4076,13 +4140,6 @@ void WebPage::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decod
 void WebPage::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
 {   
     didReceiveSyncWebPageMessage(connection, decoder, replyEncoder);
-}
-    
-InjectedBundleBackForwardList* WebPage::backForwardList()
-{
-    if (!m_backForwardList)
-        m_backForwardList = InjectedBundleBackForwardList::create(this);
-    return m_backForwardList.get();
 }
 
 #if ENABLE(ASYNC_SCROLLING)

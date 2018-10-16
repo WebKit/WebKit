@@ -581,7 +581,7 @@ void InjectedBundle::dumpBackForwardListsForAllPages(StringBuilder& stringBuilde
 {
     size_t size = m_pages.size();
     for (size_t i = 0; i < size; ++i)
-        m_pages[i]->dumpBackForwardList(stringBuilder);
+        stringBuilder.append(m_pages[i]->dumpHistory());
 }
 
 void InjectedBundle::dumpToStdErr(const String& output)

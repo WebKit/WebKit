@@ -47,7 +47,7 @@ public:
     void prepare();
     void resetAfterTest();
 
-    void dumpBackForwardList(WTF::StringBuilder&);
+    String dumpHistory();
 
     static uint64_t responseHeaderCount(WKURLResponseRef);
 
@@ -179,7 +179,6 @@ private:
 
     WKBundlePageRef m_page;
     WKRetainPtr<WKBundleScriptWorldRef> m_world;
-    WKRetainPtr<WKBundleBackForwardListItemRef> m_previousTestBackForwardListItem;
 };
 
 } // namespace WTR

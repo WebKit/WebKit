@@ -413,8 +413,6 @@ WebProcess/Geolocation/GeolocationPermissionRequestManager.cpp
 WebProcess/Geolocation/WebGeolocationManager.cpp
 
 WebProcess/InjectedBundle/InjectedBundle.cpp
-WebProcess/InjectedBundle/InjectedBundleBackForwardList.cpp
-WebProcess/InjectedBundle/InjectedBundleBackForwardListItem.cpp
 WebProcess/InjectedBundle/InjectedBundleClient.cpp
 WebProcess/InjectedBundle/InjectedBundleDOMWindowExtension.cpp
 WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp

@@ -27,19 +27,18 @@
 #include "WKBundleBackForwardListItem.h"
 
 #include "APIArray.h"
-#include "InjectedBundleBackForwardListItem.h"
 #include "WKBundleAPICast.h"
 
 using namespace WebKit;
 
 WKTypeID WKBundleBackForwardListItemGetTypeID()
 {
-    return toAPI(InjectedBundleBackForwardListItem::APIType);
+    return toAPI(API::Object::Type::Null);
 }
 
 bool WKBundleBackForwardListItemIsSame(WKBundleBackForwardListItemRef itemRef1, WKBundleBackForwardListItemRef itemRef2)
 {
-    return toImpl(itemRef1)->item() == toImpl(itemRef2)->item();
+    return false;
 }
 
 WKURLRef WKBundleBackForwardListItemCopyOriginalURL(WKBundleBackForwardListItemRef itemRef)
@@ -49,7 +48,7 @@ WKURLRef WKBundleBackForwardListItemCopyOriginalURL(WKBundleBackForwardListItemR
 
 WKURLRef WKBundleBackForwardListItemCopyURL(WKBundleBackForwardListItemRef itemRef)
 {
-    return toCopiedURLAPI(toImpl(itemRef)->url());
+    return nullptr;
 }
 
 WKStringRef WKBundleBackForwardListItemCopyTitle(WKBundleBackForwardListItemRef itemRef)
@@ -59,12 +58,12 @@ WKStringRef WKBundleBackForwardListItemCopyTitle(WKBundleBackForwardListItemRef 
 
 WKStringRef WKBundleBackForwardListItemCopyTarget(WKBundleBackForwardListItemRef itemRef)
 {
-    return toCopiedAPI(toImpl(itemRef)->target());
+    return nullptr;
 }
 
 bool WKBundleBackForwardListItemIsTargetItem(WKBundleBackForwardListItemRef itemRef)
 {
-    return toImpl(itemRef)->isTargetItem();
+    return false;
 }
 
 bool WKBundleBackForwardListItemIsInPageCache(WKBundleBackForwardListItemRef itemRef)
@@ -79,6 +78,6 @@ bool WKBundleBackForwardListItemHasCachedPageExpired(WKBundleBackForwardListItem
 
 WKArrayRef WKBundleBackForwardListItemCopyChildren(WKBundleBackForwardListItemRef itemRef)
 {
-    return toAPI(&toImpl(itemRef)->children().leakRef());
+    return nullptr;
 }
 

@@ -31,7 +31,6 @@
 #include "APIError.h"
 #include "APIURL.h"
 #include "APIURLRequest.h"
-#include "InjectedBundleBackForwardListItem.h"
 #include "InjectedBundleDOMWindowExtension.h"
 #include "InjectedBundleScriptWorld.h"
 #include "WKAPICast.h"

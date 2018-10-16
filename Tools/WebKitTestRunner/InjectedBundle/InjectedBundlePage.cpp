@@ -58,11 +58,6 @@ using namespace std;
 
 namespace WTR {
 
-static bool hasPrefix(const WTF::String& searchString, const WTF::String& prefix)
-{
-    return searchString.length() >= prefix.length() && searchString.substring(0, prefix.length()) == prefix;
-}
-
 static JSValueRef propertyValue(JSContextRef context, JSObjectRef object, const char* propertyName)
 {
     if (!object)
@@ -416,8 +411,8 @@ void InjectedBundlePage::prepare()
 
     WKPoint origin = { 0, 0 };
     WKBundlePageSetScaleAtOrigin(m_page, 1, origin);
-
-    m_previousTestBackForwardListItem = adoptWK(WKBundleBackForwardListCopyItemAtIndex(WKBundlePageGetBackForwardList(m_page), 0));
+    
+    WKBundleClearHistoryForTesting(m_page);
 
     WKBundleFrameClearOpener(WKBundlePageGetMainFrame(m_page));
     
@@ -1944,93 +1939,13 @@ void InjectedBundlePage::closeFullScreen(WKBundlePageRef pageRef)
 }
 #endif
 
-static bool compareByTargetName(WKBundleBackForwardListItemRef item1, WKBundleBackForwardListItemRef item2)
+String InjectedBundlePage::dumpHistory()
 {
-    return toSTD(adoptWK(WKBundleBackForwardListItemCopyTarget(item1))) < toSTD(adoptWK(WKBundleBackForwardListItemCopyTarget(item2)));
-}
-
-static void dumpBackForwardListItem(WKBundleBackForwardListItemRef item, unsigned indent, bool isCurrentItem, StringBuilder& stringBuilder)
-{
-    unsigned column = 0;
-    if (isCurrentItem) {
-        stringBuilder.appendLiteral("curr->");
-        column = 6;
-    }
-    for (unsigned i = column; i < indent; i++)
-        stringBuilder.append(' ');
-
-    WTF::String url = toWTFString(adoptWK(WKURLCopyString(adoptWK(WKBundleBackForwardListItemCopyURL(item)).get())));
-    if (hasPrefix(url, "file:")) {
-        WTF::String directoryName = "/LayoutTests/";
-        size_t start = url.find(directoryName);
-        if (start == WTF::notFound)
-            start = 0;
-        else
-            start += directoryName.length();
-        stringBuilder.appendLiteral("(file test):");
-        stringBuilder.append(url.substring(start));
-    } else
-        stringBuilder.append(url);
-
-    WTF::String target = toWTFString(adoptWK(WKBundleBackForwardListItemCopyTarget(item)));
-    if (target.length()) {
-        stringBuilder.appendLiteral(" (in frame \"");
-        stringBuilder.append(target);
-        stringBuilder.appendLiteral("\")");
-    }
-
-    // FIXME: Need WKBackForwardListItemIsTargetItem.
-    if (WKBundleBackForwardListItemIsTargetItem(item))
-        stringBuilder.appendLiteral("  **nav target**");
-
-    stringBuilder.append('\n');
-
-    if (WKRetainPtr<WKArrayRef> kids = adoptWK(WKBundleBackForwardListItemCopyChildren(item))) {
-        // Sort to eliminate arbitrary result ordering which defeats reproducible testing.
-        size_t size = WKArrayGetSize(kids.get());
-        Vector<WKBundleBackForwardListItemRef> sortedKids(size);
-        for (size_t i = 0; i < size; ++i)
-            sortedKids[i] = static_cast<WKBundleBackForwardListItemRef>(WKArrayGetItemAtIndex(kids.get(), i));
-        stable_sort(sortedKids.begin(), sortedKids.end(), compareByTargetName);
-        for (size_t i = 0; i < size; ++i)
-            dumpBackForwardListItem(sortedKids[i], indent + 4, false, stringBuilder);
-    }
-}
-
-void InjectedBundlePage::dumpBackForwardList(StringBuilder& stringBuilder)
-{
-    stringBuilder.appendLiteral("\n============== Back Forward List ==============\n");
-
-    WKBundleBackForwardListRef list = WKBundlePageGetBackForwardList(m_page);
-
-    // Print out all items in the list after m_previousTestBackForwardListItem.
-    // Gather items from the end of the list, then print them out from oldest to newest.
-    Vector<WKRetainPtr<WKBundleBackForwardListItemRef> > itemsToPrint;
-    for (unsigned i = WKBundleBackForwardListGetForwardListCount(list); i; --i) {
-        WKRetainPtr<WKBundleBackForwardListItemRef> item = adoptWK(WKBundleBackForwardListCopyItemAtIndex(list, i));
-        // Something is wrong if the item from the last test is in the forward part of the list.
-        ASSERT(!m_previousTestBackForwardListItem || !WKBundleBackForwardListItemIsSame(item.get(), m_previousTestBackForwardListItem.get()));
-        itemsToPrint.append(item);
-    }
-
-    ASSERT(!m_previousTestBackForwardListItem || !WKBundleBackForwardListItemIsSame(adoptWK(WKBundleBackForwardListCopyItemAtIndex(list, 0)).get(), m_previousTestBackForwardListItem.get()));
-
-    itemsToPrint.append(adoptWK(WKBundleBackForwardListCopyItemAtIndex(list, 0)));
-
-    int currentItemIndex = itemsToPrint.size() - 1;
-
-    int backListCount = WKBundleBackForwardListGetBackListCount(list);
-    for (int i = -1; i >= -backListCount; --i) {
-        WKRetainPtr<WKBundleBackForwardListItemRef> item = adoptWK(WKBundleBackForwardListCopyItemAtIndex(list, i));
-        if (m_previousTestBackForwardListItem && WKBundleBackForwardListItemIsSame(item.get(), m_previousTestBackForwardListItem.get()))
-            break;
-        itemsToPrint.append(item);
-    }
-
-    for (int i = itemsToPrint.size() - 1; i >= 0; i--)
-        dumpBackForwardListItem(itemsToPrint[i].get(), 8, i == currentItemIndex, stringBuilder);
-
-    stringBuilder.appendLiteral("===============================================\n");
+    return makeString(
+        "\n============== Back Forward List ==============\n",
+        toWTFString(adoptWK(WKBundlePageDumpHistoryForTesting(m_page, toWK("/LayoutTests/").get())).get()),
+        "===============================================\n"
+    );
 }
 
 #if !PLATFORM(COCOA)

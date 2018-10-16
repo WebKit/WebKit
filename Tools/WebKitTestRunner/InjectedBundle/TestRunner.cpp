@@ -612,7 +612,7 @@ unsigned TestRunner::windowCount()
 
 void TestRunner::clearBackForwardList()
 {
-    WKBundleBackForwardListClear(WKBundlePageGetBackForwardList(InjectedBundle::singleton().page()->page()));
+    WKBundleClearHistoryForTesting(InjectedBundle::singleton().page()->page());
 }
 
 // Object Creation

@@ -1,3 +1,50 @@
+2018-10-16  Alex Christensen  <achristensen@webkit.org>
+
+        Remove InjectedBundleBackForwardList
+        https://bugs.webkit.org/show_bug.cgi?id=190640
+
+        Reviewed by Chris Dumez.
+
+        These objects are only used in testing now, so I made a replacement to be used for testing,
+        WKBundlePageDumpHistoryForTesting and WKBundleClearHistoryForTesting.
+        The existence of these objects is problematic with process swapping and the true back/forward list being in the UIProcess.
+
+        * Sources.txt:
+        * WebProcess/InjectedBundle/API/c/WKBundleBackForwardList.cpp:
+        (WKBundleBackForwardListGetTypeID):
+        (WKBundleBackForwardListCopyItemAtIndex):
+        (WKBundleBackForwardListGetBackListCount):
+        (WKBundleBackForwardListGetForwardListCount):
+        (WKBundleBackForwardListClear):
+        * WebProcess/InjectedBundle/API/c/WKBundleBackForwardList.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleBackForwardListItem.cpp:
+        (WKBundleBackForwardListItemGetTypeID):
+        (WKBundleBackForwardListItemIsSame):
+        (WKBundleBackForwardListItemCopyURL):
+        (WKBundleBackForwardListItemCopyTarget):
+        (WKBundleBackForwardListItemIsTargetItem):
+        (WKBundleBackForwardListItemCopyChildren):
+        * WebProcess/InjectedBundle/API/c/WKBundleBackForwardListItem.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageDumpHistoryForTesting):
+        (WKBundleClearHistoryForTesting):
+        (WKBundlePageGetBackForwardList):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/InjectedBundleBackForwardList.cpp: Removed.
+        * WebProcess/InjectedBundle/InjectedBundleBackForwardList.h: Removed.
+        * WebProcess/InjectedBundle/InjectedBundleBackForwardListItem.cpp: Removed.
+        * WebProcess/InjectedBundle/InjectedBundleBackForwardListItem.h: Removed.
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::~WebPage):
+        (WebKit::dumpHistoryItem):
+        (WebKit::WebPage::dumpHistoryForTesting):
+        (WebKit::WebPage::clearHistory):
+        (WebKit::WebPage::didReceiveSyncMessage):
+        (WebKit::WebPage::backForwardList): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+
 2018-10-16  Timothy Hatcher  <timothy@apple.com>
 
         Add <meta name="supported-color-schemes"> to control what color schemes the page supports

@@ -36,6 +36,7 @@
 #include <WebKit/WKBundlePagePolicyClient.h>
 #include <WebKit/WKBundlePageResourceLoadClient.h>
 #include <WebKit/WKBundlePageUIClient.h>
+#include <WebKit/WKDeprecated.h>
 #include <WebKit/WKFindOptions.h>
 #include <WebKit/WKImage.h>
 
@@ -69,7 +70,9 @@ WK_EXPORT WKBundlePageGroupRef WKBundlePageGetPageGroup(WKBundlePageRef page);
 WK_EXPORT WKBundleFrameRef WKBundlePageGetMainFrame(WKBundlePageRef page);
 WK_EXPORT WKFrameHandleRef WKBundleFrameCreateFrameHandle(WKBundleFrameRef);
 
-WK_EXPORT WKBundleBackForwardListRef WKBundlePageGetBackForwardList(WKBundlePageRef page);
+WK_EXPORT WKBundleBackForwardListRef WKBundlePageGetBackForwardList(WKBundlePageRef page) WK_C_API_DEPRECATED;
+WK_EXPORT WKStringRef WKBundlePageDumpHistoryForTesting(WKBundlePageRef page, WKStringRef directory);
+WK_EXPORT void WKBundleClearHistoryForTesting(WKBundlePageRef page);
 
 WK_EXPORT void WKBundlePageInstallPageOverlay(WKBundlePageRef page, WKBundlePageOverlayRef pageOverlay);
 WK_EXPORT void WKBundlePageUninstallPageOverlay(WKBundlePageRef page, WKBundlePageOverlayRef pageOverlay);

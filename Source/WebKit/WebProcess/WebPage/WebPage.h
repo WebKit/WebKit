@@ -190,7 +190,6 @@ class DownloadID;
 class FindController;
 class GamepadData;
 class GeolocationPermissionRequestManager;
-class InjectedBundleBackForwardList;
 class MediaDeviceSandboxExtensions;
 class NotificationPermissionRequestManager;
 class PDFPlugin;
@@ -270,8 +269,7 @@ public:
     void setSize(const WebCore::IntSize&);
     const WebCore::IntSize& size() const { return m_viewSize; }
     WebCore::IntRect bounds() const { return WebCore::IntRect(WebCore::IntPoint(), size()); }
-    
-    InjectedBundleBackForwardList* backForwardList();
+
     DrawingArea* drawingArea() const { return m_drawingArea.get(); }
 
 #if ENABLE(ASYNC_SCROLLING)
@@ -449,6 +447,8 @@ public:
     void setPageZoomFactor(double);
     void setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor);
     void windowScreenDidChange(uint32_t);
+    String dumpHistoryForTesting(const String& directory);
+    void clearHistory();
 
     void accessibilitySettingsDidChange();
 #if ENABLE(ACCESSIBILITY_EVENTS)
@@ -1439,7 +1439,6 @@ private:
 
     std::unique_ptr<WebCore::Page> m_page;
     RefPtr<WebFrame> m_mainFrame;
-    RefPtr<InjectedBundleBackForwardList> m_backForwardList;
 
     RefPtr<WebPageGroupProxy> m_pageGroup;
 

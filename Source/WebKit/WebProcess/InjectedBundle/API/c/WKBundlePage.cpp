@@ -32,7 +32,6 @@
 #include "APIString.h"
 #include "APIURL.h"
 #include "APIURLRequest.h"
-#include "InjectedBundleBackForwardList.h"
 #include "InjectedBundleNodeHandle.h"
 #include "InjectedBundlePageEditorClient.h"
 #include "InjectedBundlePageFormClient.h"
@@ -366,9 +365,19 @@ void WKBundlePageSetScaleAtOrigin(WKBundlePageRef pageRef, double scale, WKPoint
     toImpl(pageRef)->scalePage(scale, toIntPoint(origin));
 }
 
+WKStringRef WKBundlePageDumpHistoryForTesting(WKBundlePageRef page, WKStringRef directory)
+{
+    return toCopiedAPI(toImpl(page)->dumpHistoryForTesting(toWTFString(directory)));
+}
+
+void WKBundleClearHistoryForTesting(WKBundlePageRef page)
+{
+    toImpl(page)->clearHistory();
+}
+
 WKBundleBackForwardListRef WKBundlePageGetBackForwardList(WKBundlePageRef pageRef)
 {
-    return toAPI(toImpl(pageRef)->backForwardList());
+    return nullptr;
 }
 
 void WKBundlePageInstallPageOverlay(WKBundlePageRef pageRef, WKBundlePageOverlayRef pageOverlayRef)

@@ -1,3 +1,23 @@
+2018-10-16  Alex Christensen  <achristensen@webkit.org>
+
+        Remove InjectedBundleBackForwardList
+        https://bugs.webkit.org/show_bug.cgi?id=190640
+
+        Reviewed by Chris Dumez.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::dumpBackForwardListsForAllPages):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::prepare):
+        (WTR::InjectedBundlePage::dumpHistory):
+        (WTR::hasPrefix): Deleted.
+        (WTR::compareByTargetName): Deleted.
+        (WTR::dumpBackForwardListItem): Deleted.
+        (WTR::InjectedBundlePage::dumpBackForwardList): Deleted.
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.h:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::clearBackForwardList):
+
 2018-10-16  Dominik Infuehr  <dinfuehr@igalia.com>
 
         Unreviewed, added myself to contributors.json.

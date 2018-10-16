@@ -32,7 +32,6 @@
 #include "FindController.h"
 #include "FrameInfoData.h"
 #include "InjectedBundle.h"
-#include "InjectedBundleBackForwardListItem.h"
 #include "InjectedBundleDOMWindowExtension.h"
 #include "InjectedBundleNavigationAction.h"
 #include "Logging.h"

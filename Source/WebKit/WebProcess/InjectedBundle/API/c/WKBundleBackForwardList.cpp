@@ -26,33 +26,28 @@
 #include "config.h"
 #include "WKBundleBackForwardList.h"
 
-#include "InjectedBundleBackForwardList.h"
-#include "InjectedBundleBackForwardListItem.h"
 #include "WKBundleAPICast.h"
-
-using namespace WebKit;
 
 WKTypeID WKBundleBackForwardListGetTypeID()
 {
-    return toAPI(InjectedBundleBackForwardList::APIType);
+    return toAPI(API::Object::Type::Null);
 }
 
 WKBundleBackForwardListItemRef WKBundleBackForwardListCopyItemAtIndex(WKBundleBackForwardListRef listRef, int index)
 {
-    return toAPI(toImpl(listRef)->itemAtIndex(index).leakRef());
+    return nullptr;
 }
 
 unsigned WKBundleBackForwardListGetBackListCount(WKBundleBackForwardListRef listRef)
 {
-    return toImpl(listRef)->backListCount();
+    return 0;
 }
 
 unsigned WKBundleBackForwardListGetForwardListCount(WKBundleBackForwardListRef listRef)
 {
-    return toImpl(listRef)->forwardListCount();
+    return 0;
 }
 
 void WKBundleBackForwardListClear(WKBundleBackForwardListRef listRef)
 {
-    return toImpl(listRef)->clear();
 }
