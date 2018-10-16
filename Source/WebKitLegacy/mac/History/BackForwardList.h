@@ -45,7 +45,7 @@ public:
     void addItem(Ref<WebCore::HistoryItem>&&) override;
     void goBack();
     void goForward();
-    void goToItem(WebCore::HistoryItem*) override;
+    void goToItem(WebCore::HistoryItem&) override;
         
     WebCore::HistoryItem* backItem();
     WebCore::HistoryItem* currentItem();

@@ -109,7 +109,7 @@ static HistoryItemMap& historyItemWrappers()
     return historyItemWrappers;
 }
 
-void WKNotifyHistoryItemChanged(HistoryItem*)
+void WKNotifyHistoryItemChanged(HistoryItem&)
 {
 #if !PLATFORM(IOS)
     [[NSNotificationCenter defaultCenter]

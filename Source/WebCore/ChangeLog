@@ -1,5 +1,44 @@
 2018-10-16  Alex Christensen  <achristensen@webkit.org>
 
+        Replace HistoryItem* with HistoryItem& where possible
+        https://bugs.webkit.org/show_bug.cgi?id=190617
+
+        Reviewed by Chris Dumez.
+
+        * history/BackForwardClient.h:
+        * history/BackForwardController.cpp:
+        (WebCore::BackForwardController::setCurrentItem):
+        * history/BackForwardController.h:
+        * history/HistoryItem.cpp:
+        (WebCore::defaultNotifyHistoryItemChanged):
+        (WebCore::HistoryItem::setAlternateTitle):
+        (WebCore::HistoryItem::setURLString):
+        (WebCore::HistoryItem::setOriginalURLString):
+        (WebCore::HistoryItem::setReferrer):
+        (WebCore::HistoryItem::setTitle):
+        (WebCore::HistoryItem::setTarget):
+        (WebCore::HistoryItem::setShouldRestoreScrollPosition):
+        (WebCore::HistoryItem::setStateObject):
+        (WebCore::HistoryItem::notifyChanged):
+        * history/HistoryItem.h:
+        * loader/EmptyClients.cpp:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy):
+        (WebCore::FrameLoader::loadSameDocumentItem):
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::goToItem):
+        (WebCore::HistoryController::updateForCommit):
+        (WebCore::HistoryController::recursiveUpdateForCommit):
+        (WebCore::HistoryController::recursiveUpdateForSameDocumentNavigation):
+        (WebCore::HistoryController::setCurrentItem):
+        (WebCore::HistoryController::createItem):
+        (WebCore::HistoryController::itemsAreClones const):
+        (WebCore::HistoryController::currentFramesMatchItem const):
+        * loader/HistoryController.h:
+
+2018-10-16  Alex Christensen  <achristensen@webkit.org>
+
         Remove unused WebHistoryItem._transientPropertyForKey
         https://bugs.webkit.org/show_bug.cgi?id=190606
 

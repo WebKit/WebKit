@@ -56,7 +56,7 @@ private:
 
     void addItem(Ref<WebCore::HistoryItem>&&) override;
 
-    void goToItem(WebCore::HistoryItem*) override;
+    void goToItem(WebCore::HistoryItem&) override;
         
     WebCore::HistoryItem* itemAtIndex(int) override;
     int backListCount() const override;

@@ -83,7 +83,7 @@ class UserMessageHandlerDescriptor;
 
 class EmptyBackForwardClient final : public BackForwardClient {
     void addItem(Ref<HistoryItem>&&) final { }
-    void goToItem(HistoryItem*) final { }
+    void goToItem(HistoryItem&) final { }
     HistoryItem* itemAtIndex(int) final { return nullptr; }
     int backListCount() const final { return 0; }
     int forwardListCount() const final { return 0; }

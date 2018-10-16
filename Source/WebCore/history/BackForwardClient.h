@@ -42,7 +42,7 @@ public:
 
     virtual void addItem(Ref<HistoryItem>&&) = 0;
 
-    virtual void goToItem(HistoryItem*) = 0;
+    virtual void goToItem(HistoryItem&) = 0;
         
     virtual HistoryItem* itemAtIndex(int) = 0;
     virtual int backListCount() const = 0;

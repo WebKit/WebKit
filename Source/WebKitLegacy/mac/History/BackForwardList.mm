@@ -91,14 +91,14 @@ void BackForwardList::goForward()
         m_current++;
 }
 
-void BackForwardList::goToItem(HistoryItem* item)
+void BackForwardList::goToItem(HistoryItem& item)
 {
-    if (!m_entries.size() || !item)
+    if (!m_entries.size())
         return;
-        
+
     unsigned index = 0;
     for (; index < m_entries.size(); ++index) {
-        if (m_entries[index].ptr() == item)
+        if (m_entries[index].ptr() == &item)
             break;
     }
 

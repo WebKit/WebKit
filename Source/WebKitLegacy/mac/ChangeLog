@@ -1,5 +1,21 @@
 2018-10-16  Alex Christensen  <achristensen@webkit.org>
 
+        Replace HistoryItem* with HistoryItem& where possible
+        https://bugs.webkit.org/show_bug.cgi?id=190617
+
+        Reviewed by Chris Dumez.
+
+        * History/BackForwardList.h:
+        * History/BackForwardList.mm:
+        (BackForwardList::goToItem):
+        * History/WebBackForwardList.mm:
+        (-[WebBackForwardList goToItem:]):
+        * History/WebHistoryItem.mm:
+        (WKNotifyHistoryItemChanged):
+        * History/WebHistoryItemInternal.h:
+
+2018-10-16  Alex Christensen  <achristensen@webkit.org>
+
         Remove unused WebHistoryItem._transientPropertyForKey
         https://bugs.webkit.org/show_bug.cgi?id=190606
 

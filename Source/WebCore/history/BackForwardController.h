@@ -51,7 +51,7 @@ public:
     WEBCORE_EXPORT bool goForward();
 
     void addItem(Ref<HistoryItem>&&);
-    void setCurrentItem(HistoryItem*);
+    void setCurrentItem(HistoryItem&);
         
     int count() const;
     WEBCORE_EXPORT int backCount() const;

@@ -33,13 +33,13 @@
 #import <wtf/text/WTFString.h>
 
 namespace WebCore {
-    class HistoryItem;
+class HistoryItem;
 }
 
 WebCore::HistoryItem* core(WebHistoryItem *item);
 WebHistoryItem *kit(WebCore::HistoryItem* item);
 
-extern void WKNotifyHistoryItemChanged(WebCore::HistoryItem*);
+extern void WKNotifyHistoryItemChanged(WebCore::HistoryItem&);
 
 @interface WebHistoryItem ()
 

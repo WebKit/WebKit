@@ -316,7 +316,7 @@ void HistoryController::goToItem(HistoryItem& targetItem, FrameLoadType type, Sh
     // - plus, it only makes sense for the top level of the operation through the frame tree,
     // as opposed to happening for some/one of the page commits that might happen soon
     RefPtr<HistoryItem> currentItem = page->backForward().currentItem();
-    page->backForward().setCurrentItem(&targetItem);
+    page->backForward().setCurrentItem(targetItem);
 
     // First set the provisional item of any frames that are not actually navigating.
     // This must be done before trying to navigate the desired frame, because some
@@ -484,7 +484,8 @@ void HistoryController::updateForCommit()
         // Not having one leads to us not having a m_currentItem later, which is also a terrible known issue.
         // We should get to the bottom of this.
         ASSERT(m_provisionalItem);
-        setCurrentItem(m_provisionalItem.get());
+        if (m_provisionalItem)
+            setCurrentItem(*m_provisionalItem.get());
         m_provisionalItem = nullptr;
 
         // Tell all other frames in the tree to commit their provisional items and
@@ -525,7 +526,8 @@ void HistoryController::recursiveUpdateForCommit()
             view->setWasScrolledByUser(false);
 
         // Now commit the provisional item
-        setCurrentItem(m_provisionalItem.get());
+        if (m_provisionalItem)
+            setCurrentItem(*m_provisionalItem.get());
         m_provisionalItem = nullptr;
 
         // Restore form state (works from currentItem)
@@ -574,7 +576,8 @@ void HistoryController::recursiveUpdateForSameDocumentNavigation()
         return;
 
     // Commit the provisional item.
-    setCurrentItem(m_provisionalItem.get());
+    if (m_provisionalItem)
+        setCurrentItem(*m_provisionalItem.get());
     m_provisionalItem = nullptr;
 
     // Iterate over the rest of the tree.
@@ -590,11 +593,11 @@ void HistoryController::updateForFrameLoadCompleted()
     m_frameLoadComplete = true;
 }
 
-void HistoryController::setCurrentItem(HistoryItem* item)
+void HistoryController::setCurrentItem(HistoryItem& item)
 {
     m_frameLoadComplete = false;
     m_previousItem = m_currentItem;
-    m_currentItem = item;
+    m_currentItem = &item;
 }
 
 void HistoryController::setCurrentItemTitle(const StringWithDirection& title)
@@ -676,7 +679,7 @@ Ref<HistoryItem> HistoryController::createItem()
     initializeItem(item);
     
     // Set the item for which we will save document state
-    setCurrentItem(item.ptr());
+    setCurrentItem(item);
     
     return item;
 }
@@ -775,17 +778,17 @@ bool HistoryController::itemsAreClones(HistoryItem& item1, HistoryItem* item2) c
     return item2
         && &item1 != item2
         && item1.itemSequenceNumber() == item2->itemSequenceNumber()
-        && currentFramesMatchItem(&item1)
+        && currentFramesMatchItem(item1)
         && item2->hasSameFrames(item1);
 }
 
 // Helper method that determines whether the current frame tree matches given history item's.
-bool HistoryController::currentFramesMatchItem(HistoryItem* item) const
+bool HistoryController::currentFramesMatchItem(HistoryItem& item) const
 {
-    if ((!m_frame.tree().uniqueName().isEmpty() || !item->target().isEmpty()) && m_frame.tree().uniqueName() != item->target())
+    if ((!m_frame.tree().uniqueName().isEmpty() || !item.target().isEmpty()) && m_frame.tree().uniqueName() != item.target())
         return false;
-        
-    const auto& childItems = item->children();
+
+    const auto& childItems = item.children();
     if (childItems.size() != m_frame.tree().childCount())
         return false;
     

@@ -57,7 +57,7 @@ class ResourceRequest;
 class URL;
 enum class PruningReason;
 
-WEBCORE_EXPORT extern void (*notifyHistoryItemChanged)(HistoryItem*);
+WEBCORE_EXPORT extern void (*notifyHistoryItemChanged)(HistoryItem&);
 
 class HistoryItem : public RefCounted<HistoryItem> {
     friend class PageCache;

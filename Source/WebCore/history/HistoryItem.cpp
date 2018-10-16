@@ -49,11 +49,11 @@ int64_t HistoryItem::generateSequenceNumber()
     return ++next;
 }
 
-static void defaultNotifyHistoryItemChanged(HistoryItem*)
+static void defaultNotifyHistoryItemChanged(HistoryItem&)
 {
 }
 
-WEBCORE_EXPORT void (*notifyHistoryItemChanged)(HistoryItem*) = defaultNotifyHistoryItemChanged;
+void (*notifyHistoryItemChanged)(HistoryItem&) = defaultNotifyHistoryItemChanged;
 
 HistoryItem::HistoryItem()
     : HistoryItem({ }, { })
@@ -195,13 +195,13 @@ const String& HistoryItem::target() const
 void HistoryItem::setAlternateTitle(const String& alternateTitle)
 {
     m_displayTitle = alternateTitle;
-    notifyHistoryItemChanged(this);
+    notifyChanged();
 }
 
 void HistoryItem::setURLString(const String& urlString)
 {
     m_urlString = urlString;
-    notifyHistoryItemChanged(this);
+    notifyChanged();
 }
 
 void HistoryItem::setURL(const URL& url)
@@ -214,25 +214,25 @@ void HistoryItem::setURL(const URL& url)
 void HistoryItem::setOriginalURLString(const String& urlString)
 {
     m_originalURLString = urlString;
-    notifyHistoryItemChanged(this);
+    notifyChanged();
 }
 
 void HistoryItem::setReferrer(const String& referrer)
 {
     m_referrer = referrer;
-    notifyHistoryItemChanged(this);
+    notifyChanged();
 }
 
 void HistoryItem::setTitle(const String& title)
 {
     m_title = title;
-    notifyHistoryItemChanged(this);
+    notifyChanged();
 }
 
 void HistoryItem::setTarget(const String& target)
 {
     m_target = target;
-    notifyHistoryItemChanged(this);
+    notifyChanged();
 }
 
 const IntPoint& HistoryItem::scrollPosition() const
@@ -258,7 +258,7 @@ bool HistoryItem::shouldRestoreScrollPosition() const
 void HistoryItem::setShouldRestoreScrollPosition(bool shouldRestore)
 {
     m_shouldRestoreScrollPosition = shouldRestore;
-    notifyHistoryItemChanged(this);
+    notifyChanged();
 }
 
 float HistoryItem::pageScaleFactor() const
@@ -309,7 +309,7 @@ void HistoryItem::setIsTargetItem(bool flag)
 void HistoryItem::setStateObject(RefPtr<SerializedScriptValue>&& object)
 {
     m_stateObject = WTFMove(object);
-    notifyHistoryItemChanged(this);
+    notifyChanged();
 }
 
 void HistoryItem::addChildItem(Ref<HistoryItem>&& child)
@@ -465,7 +465,7 @@ bool HistoryItem::isCurrentDocument(Document& document) const
 
 void HistoryItem::notifyChanged()
 {
-    notifyHistoryItemChanged(this);
+    notifyHistoryItemChanged(*this);
 }
 
 #ifndef NDEBUG

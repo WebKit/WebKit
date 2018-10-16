@@ -62,9 +62,9 @@ void WebBackForwardListProxy::addItemFromUIProcess(const BackForwardItemIdentifi
     idToHistoryItemMap().set(itemID, item.ptr());
 }
 
-static void WK2NotifyHistoryItemChanged(HistoryItem* item)
+static void WK2NotifyHistoryItemChanged(HistoryItem& item)
 {
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::UpdateBackForwardItem(toBackForwardListItemState(*item)), 0);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::UpdateBackForwardItem(toBackForwardListItemState(item)), 0);
 }
 
 HistoryItem* WebBackForwardListProxy::itemForID(const BackForwardItemIdentifier& itemID)
@@ -100,13 +100,13 @@ void WebBackForwardListProxy::addItem(Ref<HistoryItem>&& item)
     m_page->send(Messages::WebPageProxy::BackForwardAddItem(toBackForwardListItemState(item.get())));
 }
 
-void WebBackForwardListProxy::goToItem(HistoryItem* item)
+void WebBackForwardListProxy::goToItem(HistoryItem& item)
 {
     if (!m_page)
         return;
 
     SandboxExtension::Handle sandboxExtensionHandle;
-    m_page->sendSync(Messages::WebPageProxy::BackForwardGoToItem(item->identifier()), Messages::WebPageProxy::BackForwardGoToItem::Reply(sandboxExtensionHandle));
+    m_page->sendSync(Messages::WebPageProxy::BackForwardGoToItem(item.identifier()), Messages::WebPageProxy::BackForwardGoToItem::Reply(sandboxExtensionHandle));
     m_page->sandboxExtensionTracker().beginLoad(m_page->mainWebFrame(), WTFMove(sandboxExtensionHandle));
 }
 

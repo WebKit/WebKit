@@ -2436,7 +2436,7 @@ void FrameLoader::checkLoadCompleteForThisFrame()
             }
             if (shouldReset && item)
                 if (Page* page = m_frame.page()) {
-                    page->backForward().setCurrentItem(item.get());
+                    page->backForward().setCurrentItem(*item);
                 }
             return;
         }
@@ -3301,7 +3301,7 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
         if ((isTargetItem || m_frame.isMainFrame()) && isBackForwardLoadType(policyChecker().loadType())) {
             if (Page* page = m_frame.page()) {
                 if (HistoryItem* resetItem = m_frame.mainFrame().loader().history().currentItem())
-                    page->backForward().setCurrentItem(resetItem);
+                    page->backForward().setCurrentItem(*resetItem);
             }
         }
         return;
@@ -3561,7 +3561,7 @@ void FrameLoader::loadSameDocumentItem(HistoryItem& item)
     if (FrameView* view = m_frame.view())
         view->setWasScrolledByUser(false);
 
-    history().setCurrentItem(&item);
+    history().setCurrentItem(item);
         
     // loadInSameDocument() actually changes the URL and notifies load delegates of a "fake" load
     loadInSameDocument(item.url(), item.stateObject(), false);

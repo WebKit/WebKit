@@ -219,7 +219,8 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
 
 - (void)goToItem:(WebHistoryItem *)item
 {
-    core(self)->goToItem(core(item));
+    if (item)
+        core(self)->goToItem(*core(item));
 }
 
 - (WebHistoryItem *)backItem

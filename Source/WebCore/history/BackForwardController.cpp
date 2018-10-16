@@ -98,7 +98,7 @@ void BackForwardController::addItem(Ref<HistoryItem>&& item)
     m_client->addItem(WTFMove(item));
 }
 
-void BackForwardController::setCurrentItem(HistoryItem* item)
+void BackForwardController::setCurrentItem(HistoryItem& item)
 {
     m_client->goToItem(item);
 }

@@ -1,3 +1,16 @@
+2018-10-16  Alex Christensen  <achristensen@webkit.org>
+
+        Replace HistoryItem* with HistoryItem& where possible
+        https://bugs.webkit.org/show_bug.cgi?id=190617
+
+        Reviewed by Chris Dumez.
+
+        * WebProcess/WebCoreSupport/SessionStateConversion.h:
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp:
+        (WebKit::WK2NotifyHistoryItemChanged):
+        (WebKit::WebBackForwardListProxy::goToItem):
+        * WebProcess/WebPage/WebBackForwardListProxy.h:
+
 2018-10-16  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, another GTK build fix after r237146

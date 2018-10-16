@@ -145,7 +145,9 @@ HRESULT WebBackForwardList::goToItem(_In_opt_ IWebHistoryItem* item)
     if (!item || FAILED(item->QueryInterface(&webHistoryItem)))
         return E_FAIL;
 
-    m_backForwardList->goToItem(webHistoryItem->historyItem());
+    if (auto item = webHistoryItem->historyItem())
+        m_backForwardList->goToItem(*item);
+
     return S_OK;
 }
 
