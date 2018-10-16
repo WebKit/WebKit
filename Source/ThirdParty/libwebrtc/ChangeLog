@@ -1,3 +1,19 @@
+2018-10-16  Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK][WPE] Make libwebrtc compile using the system opus library
+        https://bugs.webkit.org/show_bug.cgi?id=190573
+
+        Reviewed by Philippe Normand.
+
+        We found some situations where gstreamer gets confused when it
+        tries to use opus because it finds opus symbols compiled for
+        liwebrtc. We are going to try the option to use the system opus
+        library also for libwebrtc.
+
+        * CMakeLists.txt: Added opus dependency.
+        * cmake/FindOpus.cmake: Added the hints to find the opus library
+        in the compilation.
+
 2018-10-15  Youenn Fablet  <youenn@apple.com>
 
         RTCPeerConnection.generateCertificate is not a function

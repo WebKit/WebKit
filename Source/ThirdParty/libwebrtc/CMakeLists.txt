@@ -16,6 +16,11 @@ if (NOT ALSALIB_FOUND)
     message(FATAL_ERROR "alsa-lib is needed for USE_LIBWEBRTC.")
 endif ()
 
+find_package(Opus 1.3)
+if (NOT LIBOPUS_FOUND)
+    message(FATAL_ERROR "libopus is needed for USE_LIBWEBRTC.")
+endif ()
+
 set(webrtc_SOURCES
     Source/third_party/abseil-cpp/absl/base/dynamic_annotations.cc
     Source/third_party/abseil-cpp/absl/base/internal/raw_logging.cc
@@ -309,141 +314,6 @@ set(webrtc_SOURCES
     Source/third_party/libyuv/source/scale_common.cc
     Source/third_party/libyuv/source/scale_gcc.cc
     Source/third_party/libyuv/source/video_common.cc
-    Source/third_party/opus/src/celt/bands.c
-    Source/third_party/opus/src/celt/celt.c
-    Source/third_party/opus/src/celt/celt_decoder.c
-    Source/third_party/opus/src/celt/celt_encoder.c
-    Source/third_party/opus/src/celt/celt_lpc.c
-    Source/third_party/opus/src/celt/cwrs.c
-    Source/third_party/opus/src/celt/entcode.c
-    Source/third_party/opus/src/celt/entdec.c
-    Source/third_party/opus/src/celt/entenc.c
-    Source/third_party/opus/src/celt/kiss_fft.c
-    Source/third_party/opus/src/celt/laplace.c
-    Source/third_party/opus/src/celt/mathops.c
-    Source/third_party/opus/src/celt/mdct.c
-    Source/third_party/opus/src/celt/modes.c
-    Source/third_party/opus/src/celt/pitch.c
-    Source/third_party/opus/src/celt/quant_bands.c
-    Source/third_party/opus/src/celt/rate.c
-    Source/third_party/opus/src/celt/vq.c
-    Source/third_party/opus/src/silk/A2NLSF.c
-    Source/third_party/opus/src/silk/CNG.c
-    Source/third_party/opus/src/silk/HP_variable_cutoff.c
-    Source/third_party/opus/src/silk/LPC_analysis_filter.c
-    Source/third_party/opus/src/silk/LPC_inv_pred_gain.c
-    Source/third_party/opus/src/silk/LP_variable_cutoff.c
-    Source/third_party/opus/src/silk/NLSF2A.c
-    Source/third_party/opus/src/silk/NLSF_VQ.c
-    Source/third_party/opus/src/silk/NLSF_VQ_weights_laroia.c
-    Source/third_party/opus/src/silk/NLSF_decode.c
-    Source/third_party/opus/src/silk/NLSF_del_dec_quant.c
-    Source/third_party/opus/src/silk/NLSF_encode.c
-    Source/third_party/opus/src/silk/NLSF_stabilize.c
-    Source/third_party/opus/src/silk/NLSF_unpack.c
-    Source/third_party/opus/src/silk/NSQ.c
-    Source/third_party/opus/src/silk/NSQ_del_dec.c
-    Source/third_party/opus/src/silk/PLC.c
-    Source/third_party/opus/src/silk/VAD.c
-    Source/third_party/opus/src/silk/VQ_WMat_EC.c
-    Source/third_party/opus/src/silk/ana_filt_bank_1.c
-    Source/third_party/opus/src/silk/biquad_alt.c
-    Source/third_party/opus/src/silk/bwexpander.c
-    Source/third_party/opus/src/silk/bwexpander_32.c
-    Source/third_party/opus/src/silk/check_control_input.c
-    Source/third_party/opus/src/silk/code_signs.c
-    Source/third_party/opus/src/silk/control_SNR.c
-    Source/third_party/opus/src/silk/control_audio_bandwidth.c
-    Source/third_party/opus/src/silk/control_codec.c
-    Source/third_party/opus/src/silk/debug.c
-    Source/third_party/opus/src/silk/dec_API.c
-    Source/third_party/opus/src/silk/decode_core.c
-    Source/third_party/opus/src/silk/decode_frame.c
-    Source/third_party/opus/src/silk/decode_indices.c
-    Source/third_party/opus/src/silk/decode_parameters.c
-    Source/third_party/opus/src/silk/decode_pitch.c
-    Source/third_party/opus/src/silk/decode_pulses.c
-    Source/third_party/opus/src/silk/decoder_set_fs.c
-    Source/third_party/opus/src/silk/enc_API.c
-    Source/third_party/opus/src/silk/encode_indices.c
-    Source/third_party/opus/src/silk/encode_pulses.c
-    Source/third_party/opus/src/silk/float/LPC_analysis_filter_FLP.c
-    Source/third_party/opus/src/silk/float/LPC_inv_pred_gain_FLP.c
-    Source/third_party/opus/src/silk/float/LTP_analysis_filter_FLP.c
-    Source/third_party/opus/src/silk/float/LTP_scale_ctrl_FLP.c
-    Source/third_party/opus/src/silk/float/apply_sine_window_FLP.c
-    Source/third_party/opus/src/silk/float/autocorrelation_FLP.c
-    Source/third_party/opus/src/silk/float/burg_modified_FLP.c
-    Source/third_party/opus/src/silk/float/bwexpander_FLP.c
-    Source/third_party/opus/src/silk/float/corrMatrix_FLP.c
-    Source/third_party/opus/src/silk/float/encode_frame_FLP.c
-    Source/third_party/opus/src/silk/float/energy_FLP.c
-    Source/third_party/opus/src/silk/float/find_LPC_FLP.c
-    Source/third_party/opus/src/silk/float/find_LTP_FLP.c
-    Source/third_party/opus/src/silk/float/find_pitch_lags_FLP.c
-    Source/third_party/opus/src/silk/float/find_pred_coefs_FLP.c
-    Source/third_party/opus/src/silk/float/inner_product_FLP.c
-    Source/third_party/opus/src/silk/float/k2a_FLP.c
-    Source/third_party/opus/src/silk/float/levinsondurbin_FLP.c
-    Source/third_party/opus/src/silk/float/noise_shape_analysis_FLP.c
-    Source/third_party/opus/src/silk/float/pitch_analysis_core_FLP.c
-    Source/third_party/opus/src/silk/float/prefilter_FLP.c
-    Source/third_party/opus/src/silk/float/process_gains_FLP.c
-    Source/third_party/opus/src/silk/float/regularize_correlations_FLP.c
-    Source/third_party/opus/src/silk/float/residual_energy_FLP.c
-    Source/third_party/opus/src/silk/float/scale_copy_vector_FLP.c
-    Source/third_party/opus/src/silk/float/scale_vector_FLP.c
-    Source/third_party/opus/src/silk/float/schur_FLP.c
-    Source/third_party/opus/src/silk/float/solve_LS_FLP.c
-    Source/third_party/opus/src/silk/float/sort_FLP.c
-    Source/third_party/opus/src/silk/float/warped_autocorrelation_FLP.c
-    Source/third_party/opus/src/silk/float/wrappers_FLP.c
-    Source/third_party/opus/src/silk/gain_quant.c
-    Source/third_party/opus/src/silk/init_decoder.c
-    Source/third_party/opus/src/silk/init_encoder.c
-    Source/third_party/opus/src/silk/inner_prod_aligned.c
-    Source/third_party/opus/src/silk/interpolate.c
-    Source/third_party/opus/src/silk/lin2log.c
-    Source/third_party/opus/src/silk/log2lin.c
-    Source/third_party/opus/src/silk/pitch_est_tables.c
-    Source/third_party/opus/src/silk/process_NLSFs.c
-    Source/third_party/opus/src/silk/quant_LTP_gains.c
-    Source/third_party/opus/src/silk/resampler.c
-    Source/third_party/opus/src/silk/resampler_down2.c
-    Source/third_party/opus/src/silk/resampler_down2_3.c
-    Source/third_party/opus/src/silk/resampler_private_AR2.c
-    Source/third_party/opus/src/silk/resampler_private_IIR_FIR.c
-    Source/third_party/opus/src/silk/resampler_private_down_FIR.c
-    Source/third_party/opus/src/silk/resampler_private_up2_HQ.c
-    Source/third_party/opus/src/silk/resampler_rom.c
-    Source/third_party/opus/src/silk/shell_coder.c
-    Source/third_party/opus/src/silk/sigm_Q15.c
-    Source/third_party/opus/src/silk/sort.c
-    Source/third_party/opus/src/silk/stereo_LR_to_MS.c
-    Source/third_party/opus/src/silk/stereo_MS_to_LR.c
-    Source/third_party/opus/src/silk/stereo_decode_pred.c
-    Source/third_party/opus/src/silk/stereo_encode_pred.c
-    Source/third_party/opus/src/silk/stereo_find_predictor.c
-    Source/third_party/opus/src/silk/stereo_quant_pred.c
-    Source/third_party/opus/src/silk/sum_sqr_shift.c
-    Source/third_party/opus/src/silk/table_LSF_cos.c
-    Source/third_party/opus/src/silk/tables_LTP.c
-    Source/third_party/opus/src/silk/tables_NLSF_CB_NB_MB.c
-    Source/third_party/opus/src/silk/tables_NLSF_CB_WB.c
-    Source/third_party/opus/src/silk/tables_gain.c
-    Source/third_party/opus/src/silk/tables_other.c
-    Source/third_party/opus/src/silk/tables_pitch_lag.c
-    Source/third_party/opus/src/silk/tables_pulses_per_block.c
-    Source/third_party/opus/src/src/analysis.c
-    Source/third_party/opus/src/src/mlp.c
-    Source/third_party/opus/src/src/mlp_data.c
-    Source/third_party/opus/src/src/opus.c
-    Source/third_party/opus/src/src/opus_decoder.c
-    Source/third_party/opus/src/src/opus_encoder.c
-    Source/third_party/opus/src/src/opus_multistream.c
-    Source/third_party/opus/src/src/opus_multistream_decoder.c
-    Source/third_party/opus/src/src/opus_multistream_encoder.c
-    Source/third_party/opus/src/src/repacketizer.c
     Source/third_party/rnnoise/src/kiss_fft.cc
     Source/third_party/rnnoise/src/rnn_vad_weights.cc
     Source/third_party/usrsctp/usrsctplib/netinet/sctp_asconf.c
@@ -1541,6 +1411,8 @@ target_include_directories(webrtc PRIVATE
 target_link_libraries(webrtc ${VPX_LIBRARY})
 
 target_link_libraries(webrtc ${EVENT_LIBRARY})
+
+target_link_libraries(webrtc ${OPUS_LIBRARY})
 
 # libsrtp package compilation
 set(libsrtp_SOURCES
