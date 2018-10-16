@@ -199,7 +199,7 @@ WebPageProxy* WebInspectorProxy::platformCreateFrontendPage()
 #endif
     preferences->setAllowFileAccessFromFileURLs(true);
     preferences->setJavaScriptRuntimeFlags({ });
-    RefPtr<WebPageGroup> pageGroup = WebPageGroup::create(inspectorPageGroupIdentifierForPage(inspectedPage()), false, false);
+    RefPtr<WebPageGroup> pageGroup = WebPageGroup::create(inspectorPageGroupIdentifierForPage(inspectedPage()));
     auto pageConfiguration = API::PageConfiguration::create();
     pageConfiguration->setProcessPool(&inspectorProcessPool(inspectionLevel()));
     pageConfiguration->setPreferences(preferences.get());

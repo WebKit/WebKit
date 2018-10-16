@@ -1,3 +1,10 @@
+2018-10-15  Alex Christensen  <achristensen@webkit.org>
+
+        Fix WinCairo build after r237146
+
+        * UIProcess/win/WebInspectorProxyWin.cpp:
+        (WebKit::WebInspectorProxy::platformCreateFrontendPage):
+
 2018-10-15  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r236512): [ Mac WK2 ] Layout Test editing/undo/undo-smart-delete-word.html is flaky
