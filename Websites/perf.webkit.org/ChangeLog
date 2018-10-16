@@ -1,3 +1,17 @@
+2018-10-16  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Unreviewed, rolling out r236996.
+
+        Temporarily rollout to fix a manifest generation bug.
+        "lastModified" field for certain platform & metric configurations may be missing.
+
+        Reverted changeset:
+
+        "ManifestGenerator shouldn't need more than 1GB of memory or
+        run for 30 seconds"
+        https://bugs.webkit.org/show_bug.cgi?id=190393
+        https://trac.webkit.org/changeset/236996
+
 2018-10-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Perf dashboard: add a test for aggregating subtests without a matching metric in /api/report

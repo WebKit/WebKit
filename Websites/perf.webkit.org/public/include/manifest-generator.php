@@ -29,6 +29,7 @@ class ManifestGenerator {
         $tests = (object)$this->tests();
         $metrics = (object)$this->metrics();
         $platforms = (object)$this->platforms($platform_table, false);
+        $dashboard = (object)$this->platforms($platform_table, true);
         $repositories = (object)$this->repositories($repositories_table, $repositories_with_commit);
 
         $this->manifest = array(
@@ -36,7 +37,7 @@ class ManifestGenerator {
             'tests' => &$tests,
             'metrics' => &$metrics,
             'all' => &$platforms,
-            'dashboard' => (object)array(), // Only used by v1 UI.
+            'dashboard' => &$dashboard,
             'repositories' => &$repositories,
             'builders' => (object)$this->builders(),
             'bugTrackers' => (object)$this->bug_trackers($repositories_table),
@@ -63,11 +64,11 @@ class ManifestGenerator {
         $tests_table = $this->db->fetch_table('tests');
         if (!$tests_table)
             return $tests;
-        foreach ($tests_table as &$test_row) {
+        foreach ($tests_table as $test_row) {
             $tests[$test_row['test_id']] = array(
                 'name' => $test_row['test_name'],
                 'url' => $test_row['test_url'],
-                'parentId' => $test_row['test_parent'] ? intval($test_row['test_parent']) : NULL,
+                'parentId' => $test_row['test_parent'],
             );
         }
         return $tests;
@@ -78,64 +79,53 @@ class ManifestGenerator {
         $metrics_table = $this->db->query_and_fetch_all('SELECT * FROM test_metrics LEFT JOIN aggregators ON metric_aggregator = aggregator_id');
         if (!$metrics_table)
             return $metrics;
-        foreach ($metrics_table as &$row) {
+        foreach ($metrics_table as $row) {
             $metrics[$row['metric_id']] = array(
                 'name' => $row['metric_name'],
-                'test' => intval($row['metric_test']),
+                'test' => $row['metric_test'],
                 'aggregator' => $row['aggregator_name']);
         }
         return $metrics;
     }
 
-    private function platforms(&$platform_table, $is_dashboard) {
-        $config_query = $this->db->query('SELECT config_platform, config_metric,
-            extract(epoch from config_runs_last_modified at time zone \'utc\') * 1000 AS last_modified
-            FROM test_configurations');
+    private function platforms($platform_table, $is_dashboard) {
+        $metrics = $this->db->query_and_fetch_all('SELECT config_metric AS metric_id, config_platform AS platform_id,
+            extract(epoch from max(config_runs_last_modified) at time zone \'utc\') * 1000 AS last_modified, bool_or(config_is_in_dashboard) AS in_dashboard
+            FROM test_configurations GROUP BY config_metric, config_platform ORDER BY config_platform');
 
         $platform_metrics = array();
 
-        if ($config_query) {
+        if ($metrics) {
             $current_platform_entry = null;
-            $last_modified_map = array();
-            while (1) {
-                $config_row = $this->db->fetch_next_row($config_query);
-                if (!$config_row)
-                    break;
-
-                $platform_id = $config_row['config_platform'];
-                $metric_id = $config_row['config_metric'];
-                $last_modified = intval($config_row['last_modified']);
-
-                $key = $platform_id . '-' . $metric_id;
-                if (array_key_exists($key, $last_modified_map)) {
-                    $last_modified_map[$key] = max($last_modified_map[$key], $last_modified);
+            foreach ($metrics as $metric_row) {
+                if ($is_dashboard && !Database::is_true($metric_row['in_dashboard']))
                     continue;
-                }
-                $last_modified_map[$key] = $last_modified;
 
-                $current_platform_entry = &array_ensure_item_has_array($platform_metrics, $platform_id);
-                array_ensure_item_has_array($current_platform_entry, 'metrics');
-                array_push($current_platform_entry['metrics'], intval($metric_id));
+                $platform_id = $metric_row['platform_id'];
+                if (!$current_platform_entry || $current_platform_entry['id'] != $platform_id) {
+                    $current_platform_entry = &array_ensure_item_has_array($platform_metrics, $platform_id);
+                    $current_platform_entry['id'] = $platform_id;
+                    array_ensure_item_has_array($current_platform_entry, 'metrics');
+                    array_ensure_item_has_array($current_platform_entry, 'last_modified');
+                }
+
+                array_push($current_platform_entry['metrics'], $metric_row['metric_id']);
+                array_push($current_platform_entry['last_modified'], intval($metric_row['last_modified']));
             }
         }
         $configurations = array();
 
         $platforms = array();
         if ($platform_table) {
-            foreach ($platform_table as &$platform_row) {
+            foreach ($platform_table as $platform_row) {
                 if (Database::is_true($platform_row['platform_hidden']))
                     continue;
                 $id = $platform_row['platform_id'];
                 if (array_key_exists($id, $platform_metrics)) {
-                    $metrics = &$platform_metrics[$id]['metrics'];
-                    $last_modified = array();
-                    foreach ($metrics as $metric_id)
-                        array_push($last_modified, $last_modified_map[$id . '-' . $metric_id]);
                     $platforms[$id] = array(
-                        'name' => &$platform_row['platform_name'],
-                        'metrics' => &$metrics,
-                        'lastModified' => &$last_modified
-                    );
+                        'name' => $platform_row['platform_name'],
+                        'metrics' => $platform_metrics[$id]['metrics'],
+                        'lastModified' => $platform_metrics[$id]['last_modified']);
                 }
             }
         }
@@ -146,7 +136,7 @@ class ManifestGenerator {
         $repositories = array();
         if (!$repositories_table)
             return $repositories;
-        foreach ($repositories_table as &$row) {
+        foreach ($repositories_table as $row) {
             $repositories[$row['repository_id']] = array(
                 'name' => $row['repository_name'],
                 'url' => $row['repository_url'],
@@ -163,7 +153,7 @@ class ManifestGenerator {
         if (!$builders_table)
             return array();
         $builders = array();
-        foreach ($builders_table as &$row)
+        foreach ($builders_table as $row)
             $builders[$row['builder_id']] = array('name' => $row['builder_name'], 'buildUrl' => $row['builder_build_url']);
 
         return $builders;
@@ -182,7 +172,7 @@ class ManifestGenerator {
         $bug_trackers = array();
         $bug_trackers_table = $this->db->fetch_table('bug_trackers');
         if ($bug_trackers_table) {
-            foreach ($bug_trackers_table as &$row) {
+            foreach ($bug_trackers_table as $row) {
                 $bug_trackers[$row['tracker_id']] = array(
                     'name' => $row['tracker_name'],
                     'bugUrl' => $row['tracker_bug_url'],
@@ -226,7 +216,7 @@ class ManifestGenerator {
                 $group_id = $repository_row['trigrepo_group'];
                 array_ensure_item_has_array($repository_set_by_group, $group_id);
                 array_push($repository_set_by_group[$group_id], array(
-                    'repository' => intval($repository_row['trigrepo_repository']),
+                    'repository' => $repository_row['trigrepo_repository'],
                     'acceptsPatch' => Database::is_true($repository_row['trigrepo_accepts_patch'])));
             }
             foreach ($repository_groups as &$group_row) {
@@ -237,14 +227,14 @@ class ManifestGenerator {
                 $group_id = $group_row['repositorygroup_id'];
                 $repository_list = array_get($repository_set_by_group, $group_id, array());
                 array_push($triggerable['repositoryGroups'], array(
-                    'id' => intval($group_row['repositorygroup_id']),
+                    'id' => $group_row['repositorygroup_id'],
                     'name' => $group_row['repositorygroup_name'],
                     'description' => $group_row['repositorygroup_description'],
                     'hidden' => Database::is_true($group_row['repositorygroup_hidden']),
                     'acceptsCustomRoots' => Database::is_true($group_row['repositorygroup_accepts_roots']),
                     'repositories' => $repository_list));
                 // V2 UI compatibility.
-                foreach ($repository_list as &$repository_data) {
+                foreach ($repository_list as $repository_data) {
                     $repository_id = $repository_data['repository'];
                     $set = &$triggerable_id_to_repository_set[$triggerable_id];
                     if (array_key_exists($repository_id, $set))
@@ -263,7 +253,7 @@ class ManifestGenerator {
                 if (!array_key_exists($triggerable_id, $id_to_triggerable))
                     continue;
                 $triggerable = &$id_to_triggerable[$triggerable_id];
-                array_push($triggerable['configurations'], array(intval($row['trigconfig_test']), intval($row['trigconfig_platform'])));
+                array_push($triggerable['configurations'], array($row['trigconfig_test'], $row['trigconfig_platform']));
             }
         }
 
