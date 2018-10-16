@@ -1,3 +1,10 @@
+2018-10-16  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed attempt to fix the Windows build after r237112.
+
+        * Plugins/PluginView.cpp:
+        (WebCore::PluginView::performRequest):
+
 2018-10-16  Alex Christensen  <achristensen@webkit.org>
 
         Replace HistoryItem* with HistoryItem& where possible
