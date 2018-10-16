@@ -3394,7 +3394,7 @@ HRESULT WebView::backForwardList(_COM_Outptr_opt_ IWebBackForwardList** list)
     if (!m_useBackForwardList)
         return E_FAIL;
  
-    *list = WebBackForwardList::createInstance(makeRef(&static_cast<BackForwardList&>(m_page->backForward().client())));
+    *list = WebBackForwardList::createInstance(&static_cast<BackForwardList&>(m_page->backForward().client()));
 
     return S_OK;
 }

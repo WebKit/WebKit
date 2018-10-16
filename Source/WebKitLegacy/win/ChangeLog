@@ -1,5 +1,12 @@
 2018-10-15  Alex Christensen  <achristensen@webkit.org>
 
+        Fix WinCairo build.
+
+        * WebView.cpp:
+        (WebView::backForwardList):
+
+2018-10-15  Alex Christensen  <achristensen@webkit.org>
+
         Modernize BackForwardClient.h
         https://bugs.webkit.org/show_bug.cgi?id=190610
 
