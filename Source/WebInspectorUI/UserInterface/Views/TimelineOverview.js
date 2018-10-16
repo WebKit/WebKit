@@ -55,6 +55,7 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
         this._graphsContainerView.element.classList.add("graphs-container");
         this.addSubview(this._graphsContainerView);
 
+        this._selectedTimelineRecord = null;
         this._overviewGraphsByTypeMap = new Map;
 
         this._editInstrumentsButton = new WI.ActivateButtonNavigationItem("toggle-edit-instruments", WI.UIString("Edit configuration"), WI.UIString("Save configuration"));
@@ -371,6 +372,7 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
 
     reset()
     {
+        this._selectedTimelineRecord = null;
         for (let overviewGraph of this._overviewGraphsByTypeMap.values())
             overviewGraph.reset();
 
@@ -707,13 +709,41 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
 
     _recordSelected(event)
     {
+        let {record, recordBar} = event.data;
+        if (!record || record === this._selectedTimelineRecord)
+            return;
+
+        if (this._selectedTimelineRecord && this._selectedTimelineRecord.type !== record.type) {
+            let timelineOverviewGraph = this._overviewGraphsByTypeMap.get(this._selectedTimelineRecord.type);
+            console.assert(timelineOverviewGraph);
+            if (timelineOverviewGraph)
+                timelineOverviewGraph.selectedRecord = null;
+        }
+
+        this._selectedTimelineRecord = record;
+
+        if (this._selectedTimelineRecord) {
+            let firstRecord = this._selectedTimelineRecord;
+            let lastRecord = this._selectedTimelineRecord;
+            if (recordBar) {
+                firstRecord = recordBar.records[0];
+                lastRecord = recordBar.records.lastValue;
+            }
+
+            if (firstRecord.startTime < this.selectionStartTime || lastRecord.endTime > this.selectionStartTime + this.selectionDuration) {
+                let selectionPadding = this.secondsPerPixel * 10;
+                this.selectionStartTime = firstRecord.startTime - selectionPadding;
+                this.selectionDuration = lastRecord.endTime - firstRecord.startTime + (selectionPadding * 2);
+            }
+        }
+
         for (let [type, overviewGraph] of this._overviewGraphsByTypeMap) {
             if (overviewGraph !== event.target)
                 continue;
 
             let timeline = this._recording.timelines.get(type);
             console.assert(timeline, "Timeline recording missing timeline type", type);
-            this.dispatchEventToListeners(WI.TimelineOverview.Event.RecordSelected, {timeline, record: event.data.record});
+            this.dispatchEventToListeners(WI.TimelineOverview.Event.RecordSelected, {timeline, record: this._selectedTimelineRecord});
             return;
         }
     }

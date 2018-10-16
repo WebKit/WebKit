@@ -1,5 +1,54 @@
 2018-10-16  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Should be a way to go directly from an event in the overview view to the specialized timeline for that event
+        https://bugs.webkit.org/show_bug.cgi?id=135307
+        <rdar://problem/17273966>
+
+        Reviewed by Joseph Pecoraro.
+
+        When a `WI.TimelineRecordBar` is clicked, call up the delegate chain to the overview and
+        adjust the currently selected `WI.TimelineRecordBar` among the `WI.TimelineOverviewGraph`s.
+        Similarly, selecting a `WI.DataGridNode` in any `WI.TimelineView` subclass will use the same
+        logic to select the corresponding `WI.TimelineRecordBar`.
+
+        * UserInterface/Views/TimelineOverview.js:
+        (WI.TimelineOverview):
+        (WI.TimelineOverview.prototype.reset):
+        (WI.TimelineOverview.prototype._recordSelected):
+
+        * UserInterface/Views/TimelineOverviewGraph.js:
+        (WI.TimelineOverviewGraph):
+        (WI.TimelineOverviewGraph.prototype.set selectedRecord):
+        (WI.TimelineOverviewGraph.prototype.get selectedRecordBar): Added.
+        (WI.TimelineOverviewGraph.prototype.set selectedRecordBar): Added.
+        (WI.TimelineOverviewGraph.prototype.timelineRecordBarClicked): Added.
+        (WI.TimelineOverviewGraph.prototype._needsSelectedRecordLayout):
+
+        * UserInterface/Views/TimelineRecordBar.js:
+        (WI.TimelineRecordBar):
+        (WI.TimelineRecordBar.prototype.get selected): Added.
+        (WI.TimelineRecordBar.prototype.set selected): Added.
+        (WI.TimelineRecordBar.prototype._handleClick): Added.
+        * UserInterface/Views/TimelineRecordBar.css:
+        (.timeline-record-bar.selected > .segment): Added.
+        Add a `delegate` that is notified whenever the element is clicked.
+
+        * UserInterface/Views/TimelineDataGridNode.js:
+        (WI.TimelineDataGridNode.prototype.refreshGraph.createBar):
+        * UserInterface/Views/LayoutTimelineOverviewGraph.js:
+        (WI.LayoutTimelineOverviewGraph.prototype.updateSelectedRecord):
+        (WI.LayoutTimelineOverviewGraph.prototype._updateRowLayout.createBar):
+        * UserInterface/Views/NetworkTimelineOverviewGraph.js:
+        (WI.NetworkTimelineOverviewGraph.prototype.layout.createBar):
+        * UserInterface/Views/ScriptTimelineOverviewGraph.js:
+        (WI.ScriptTimelineOverviewGraph.prototype.layout.createBar):
+        (WI.ScriptTimelineOverviewGraph.prototype.updateSelectedRecord):
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WI.TimelineRecordingContentView.prototype.showTimelineViewForTimeline):
+
+2018-10-16  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: sequences of spaces longer than 16 don't show a dot
         https://bugs.webkit.org/show_bug.cgi?id=190528
 

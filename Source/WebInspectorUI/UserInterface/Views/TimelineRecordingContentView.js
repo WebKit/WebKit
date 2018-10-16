@@ -114,7 +114,13 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
         if (!this._timelineViewMap.has(timeline))
             return;
 
-        this._timelineContentBrowser.showContentView(this._timelineViewMap.get(timeline));
+        let contentView = this._timelineContentBrowser.showContentView(this._timelineViewMap.get(timeline));
+
+        // FIXME: `WI.HeapAllocationsTimelineView` relies on it's `_dataGrid` for determining what
+        // object is currently selected. If that `_dataGrid` hasn't yet called `layout()` when first
+        // shown, we will lose the selection.
+        if (!contentView.didInitialLayout)
+            contentView.updateLayout();
     }
 
     get supportsSplitContentBrowser()

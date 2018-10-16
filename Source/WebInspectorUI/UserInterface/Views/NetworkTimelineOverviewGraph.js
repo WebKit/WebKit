@@ -75,7 +75,7 @@ WI.NetworkTimelineOverviewGraph = class NetworkTimelineOverviewGraph extends WI.
         {
             let timelineRecordBar = rowRecordBars[recordBarIndex];
             if (!timelineRecordBar)
-                timelineRecordBar = rowRecordBars[recordBarIndex] = new WI.TimelineRecordBar(records, renderMode);
+                timelineRecordBar = rowRecordBars[recordBarIndex] = new WI.TimelineRecordBar(this, records, renderMode);
             else {
                 timelineRecordBar.renderMode = renderMode;
                 timelineRecordBar.records = records;

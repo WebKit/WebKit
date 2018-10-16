@@ -241,7 +241,7 @@ WI.TimelineDataGridNode = class TimelineDataGridNode extends WI.DataGridNode
         {
             var timelineRecordBar = this._timelineRecordBars[recordBarIndex];
             if (!timelineRecordBar)
-                timelineRecordBar = this._timelineRecordBars[recordBarIndex] = new WI.TimelineRecordBar(records, renderMode);
+                timelineRecordBar = this._timelineRecordBars[recordBarIndex] = new WI.TimelineRecordBar(this, records, renderMode);
             else {
                 timelineRecordBar.renderMode = renderMode;
                 timelineRecordBar.records = records;

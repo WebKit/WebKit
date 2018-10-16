@@ -25,13 +25,16 @@
 
 WI.TimelineRecordBar = class TimelineRecordBar extends WI.Object
 {
-    constructor(records, renderMode)
+    constructor(delegate, records, renderMode)
     {
         super();
+
+        this._delegate = delegate;
 
         this._element = document.createElement("div");
         this._element.classList.add("timeline-record-bar");
         this._element[WI.TimelineRecordBar.ElementReferenceSymbol] = this;
+        this._element.addEventListener("click", this._handleClick.bind(this));
 
         this.renderMode = renderMode;
         this.records = records;
@@ -177,6 +180,16 @@ WI.TimelineRecordBar = class TimelineRecordBar extends WI.Object
     get element()
     {
         return this._element;
+    }
+
+    get selected()
+    {
+        return this._element.classList.contains("selected");
+    }
+
+    set selected(selected)
+    {
+        this._element.classList.toggle("selected", !!selected);
     }
 
     get renderMode()
@@ -371,6 +384,12 @@ WI.TimelineRecordBar = class TimelineRecordBar extends WI.Object
         let currentPositionAprox = Math.round(parseFloat(element.style[property]) * 100);
         if (currentPositionAprox !== newPositionAprox)
             element.style[property] = (newPositionAprox / 100) + "%";
+    }
+
+    _handleClick(event)
+    {
+        if (this._delegate.timelineRecordBarClicked)
+            this._delegate.timelineRecordBarClicked(this);
     }
 };
 

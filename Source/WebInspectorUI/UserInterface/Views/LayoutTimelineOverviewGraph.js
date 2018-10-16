@@ -68,6 +68,22 @@ WI.LayoutTimelineOverviewGraph = class LayoutTimelineOverviewGraph extends WI.Ti
         this._updateRowLayout(this._timelineLayoutRecordRow);
     }
 
+    updateSelectedRecord()
+    {
+        super.updateSelectedRecord();
+
+        for (let recordRow of [this._timelineLayoutRecordRow, this._timelinePaintRecordRow]) {
+            for (let recordBar of recordRow.recordBars) {
+                if (recordBar.records.includes(this.selectedRecord)) {
+                    this.selectedRecordBar = recordBar;
+                    return;
+                }
+            }
+        }
+
+        this.selectedRecordBar = null;
+    }
+
     // Private
 
     _updateRowLayout(row)
@@ -79,7 +95,7 @@ WI.LayoutTimelineOverviewGraph = class LayoutTimelineOverviewGraph extends WI.Ti
         {
             var timelineRecordBar = row.recordBars[recordBarIndex];
             if (!timelineRecordBar)
-                timelineRecordBar = row.recordBars[recordBarIndex] = new WI.TimelineRecordBar(records, renderMode);
+                timelineRecordBar = row.recordBars[recordBarIndex] = new WI.TimelineRecordBar(this, records, renderMode);
             else {
                 timelineRecordBar.renderMode = renderMode;
                 timelineRecordBar.records = records;
