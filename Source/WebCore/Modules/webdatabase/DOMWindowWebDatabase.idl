@@ -24,6 +24,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+[
+    EnabledAtRuntime=WebSQL,
+]
 partial interface DOMWindow {
     [MayThrowException] Database? openDatabase(DOMString name, DOMString version, DOMString displayName, unsigned long estimatedSize, optional DatabaseCallback? creationCallback);
 };

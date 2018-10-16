@@ -1,3 +1,22 @@
+2018-10-16  Sihui Liu  <sihui_liu@apple.com>
+
+        Add a switch for Web SQL
+        https://bugs.webkit.org/show_bug.cgi?id=190271
+
+        Reviewed by Ryosuke Niwa.
+
+        Web SQL is still enabled by default.
+
+        * Modules/webdatabase/DOMWindowWebDatabase.idl:
+        * Modules/webdatabase/Database.idl:
+        * Modules/webdatabase/SQLError.idl:
+        * Modules/webdatabase/SQLResultSet.idl:
+        * Modules/webdatabase/SQLResultSetRowList.idl:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setWebSQLDisabled):
+        (WebCore::RuntimeEnabledFeatures::webSQLEnabled const):
+
 2018-10-16  Chris Dumez  <cdumez@apple.com>
 
         window.performance should not become null after the window loses its browsing context

@@ -812,6 +812,8 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
 
     WKPreferencesSetServerTimingEnabled(preferences, true);
 
+    WKPreferencesSetWebSQLDisabled(preferences, false);
+
     platformResetPreferencesToConsistentValues();
 }
 

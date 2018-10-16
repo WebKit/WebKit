@@ -183,6 +183,9 @@ public:
     bool cssPaintingAPIEnabled() const { return m_CSSPaintingAPIEnabled; }
 #endif
 
+    void setWebSQLDisabled(bool isDisabled) { m_webSQLEnabled = !isDisabled; }
+    bool webSQLEnabled() const { return m_webSQLEnabled; }
+
 #if ENABLE(ATTACHMENT_ELEMENT)
     void setAttachmentElementEnabled(bool areEnabled) { m_isAttachmentElementEnabled = areEnabled; }
     bool attachmentElementEnabled() const { return m_isAttachmentElementEnabled; }
@@ -360,6 +363,7 @@ private:
     bool m_webAPIStatisticsEnabled { false };
     bool m_CSSCustomPropertiesAndValuesEnabled { false };
     bool m_pointerEventsEnabled { false };
+    bool m_webSQLEnabled { true };
 
 #if ENABLE(CSS_PAINTING_API)
     bool m_CSSPaintingAPIEnabled { false };

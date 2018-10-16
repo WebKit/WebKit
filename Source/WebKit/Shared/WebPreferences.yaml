@@ -1321,6 +1321,14 @@ CSSPaintingAPIEnabled:
   category: experimental
   condition: ENABLE(CSS_PAINTING_API)
 
+WebSQLDisabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Disable Web SQL"
+  humanReadableDescription: "Disable Web SQL"
+  webcoreBinding: RuntimeEnabledFeatures
+  category: experimental
+
 # For internal features:
 # The type should be boolean.
 # You must provide a humanReadableName and humanReadableDescription for all debug features. They

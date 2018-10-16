@@ -2079,3 +2079,13 @@ bool WKPreferencesGetPunchOutWhiteBackgroundsInDarkMode(WKPreferencesRef prefere
 {
     return toImpl(preferencesRef)->punchOutWhiteBackgroundsInDarkMode();
 }
+
+void WKPreferencesSetWebSQLDisabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setWebSQLDisabled(flag);
+}
+
+bool WKPreferencesGetWebSQLDisabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->webSQLDisabled();
+}

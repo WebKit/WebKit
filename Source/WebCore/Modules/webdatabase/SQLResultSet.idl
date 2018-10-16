@@ -27,7 +27,8 @@
  */
 
 [
-    ImplementationLacksVTable
+    ImplementationLacksVTable,
+    EnabledAtRuntime=WebSQL,
 ] interface SQLResultSet {
     readonly attribute SQLResultSetRowList rows;
     readonly attribute long long insertId;

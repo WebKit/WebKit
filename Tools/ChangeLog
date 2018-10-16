@@ -1,3 +1,13 @@
+2018-10-16  Sihui Liu  <sihui_liu@apple.com>
+
+        Add a switch for Web SQL
+        https://bugs.webkit.org/show_bug.cgi?id=190271
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+
 2018-10-16  Alex Christensen  <achristensen@webkit.org>
 
         Remove InjectedBundleBackForwardList
