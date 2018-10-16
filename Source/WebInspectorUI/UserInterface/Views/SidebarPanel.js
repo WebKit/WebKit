@@ -94,7 +94,7 @@ WI.SidebarPanel = class SidebarPanel extends WI.View
 
     shown()
     {
-        this._contentView.element.scrollTop = this._savedScrollPosition;
+        this.scrollElement.scrollTop = this._savedScrollPosition;
 
         // FIXME: remove once <https://webkit.org/b/150741> is fixed.
         this.updateLayoutIfNeeded();
@@ -104,7 +104,7 @@ WI.SidebarPanel = class SidebarPanel extends WI.View
 
     hidden()
     {
-        this._savedScrollPosition = this._contentView.element.scrollTop;
+        this._savedScrollPosition = this.scrollElement.scrollTop;
 
         // Implemented by subclasses.
     }
@@ -112,5 +112,13 @@ WI.SidebarPanel = class SidebarPanel extends WI.View
     visibilityDidChange()
     {
         // Implemented by subclasses.
+    }
+
+    // Protected
+
+    get scrollElement()
+    {
+        // Overridden by sub-classes if needed.
+        return this.contentView.element;
     }
 };

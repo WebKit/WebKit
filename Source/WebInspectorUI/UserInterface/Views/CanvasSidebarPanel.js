@@ -222,6 +222,11 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
 
     // Protected
 
+    get scrollElement()
+    {
+        return this._recordingContentContainer;
+    }
+
     hasCustomFilters()
     {
         return true;

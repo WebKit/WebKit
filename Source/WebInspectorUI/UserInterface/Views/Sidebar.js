@@ -93,12 +93,12 @@ WI.Sidebar = class Sidebar extends WI.View
         if (!sidebarPanel)
             return;
 
-        sidebarPanel.selected = false;
-
         if (sidebarPanel.visible) {
             sidebarPanel.hidden();
             sidebarPanel.visibilityDidChange();
         }
+
+        sidebarPanel.selected = false;
 
         if (this._selectedSidebarPanel === sidebarPanel) {
             var index = this._sidebarPanels.indexOf(sidebarPanel);
@@ -126,14 +126,12 @@ WI.Sidebar = class Sidebar extends WI.View
             return;
 
         if (this._selectedSidebarPanel) {
-            var wasVisible = this._selectedSidebarPanel.visible;
-
-            this._selectedSidebarPanel.selected = false;
-
-            if (wasVisible) {
+            if (this._selectedSidebarPanel.visible) {
                 this._selectedSidebarPanel.hidden();
                 this._selectedSidebarPanel.visibilityDidChange();
             }
+
+            this._selectedSidebarPanel.selected = false;
         }
 
         this._selectedSidebarPanel = sidebarPanel || null;

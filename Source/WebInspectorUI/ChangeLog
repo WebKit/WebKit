@@ -1,5 +1,29 @@
 2018-10-16  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Canvas recording sidebar scroll position lost after switching tabs
+        https://bugs.webkit.org/show_bug.cgi?id=190482
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/Sidebar.js:
+        (WI.Sidebar.prototype.removeSidebarPanel):
+        (WI.Sidebar.prototype.set selectedSidebarPanel):
+        Call `hidden` before setting `selected` to `false`, as that sets `display: none;` on the
+        element, which sets the `scrollTop` to `0`.
+
+        * UserInterface/Views/SidebarPanel.js:
+        (WI.SidebarPanel.prototype.shown):
+        (WI.SidebarPanel.prototype.hidden):
+        (WI.SidebarPanel.prototype.get scrollElement): Added.
+        Allow subclasses to specify the scrolling element for saving/restoring the scroll position.
+
+        * UserInterface/Views/CanvasSidebarPanel.js:
+        (WI.CanvasSidebarPanel.prototype.get scrollElement): Added.
+        * UserInterface/Views/RecordingStateDetailsSidebarPanel.js:
+        (WI.RecordingStateDetailsSidebarPanel.prototype.get scrollElement): Added.
+
+2018-10-16  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Should be a way to go directly from an event in the overview view to the specialized timeline for that event
         https://bugs.webkit.org/show_bug.cgi?id=135307
         <rdar://problem/17273966>

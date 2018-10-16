@@ -74,6 +74,13 @@ WI.RecordingStateDetailsSidebarPanel = class RecordingStateDetailsSidebarPanel e
         this.updateLayoutIfNeeded();
     }
 
+    // Protected
+
+    get scrollElement()
+    {
+        return this._dataGrid.scrollContainer;
+    }
+
     // Private
 
     _generateDetailsCanvas2D(action)
