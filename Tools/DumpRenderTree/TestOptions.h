@@ -44,6 +44,7 @@ struct TestOptions {
     bool allowCrossOriginSubresourcesToAskForCredentials { false };
     bool enableColorFilter { false };
     bool enableSelectionAcrossShadowBoundaries { true };
+    bool enableWebGPU { false };
     std::string jscOptions;
 
     TestOptions(const std::string& pathOrURL, const std::string& absolutePath);

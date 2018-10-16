@@ -259,6 +259,11 @@ public:
     void setWebGL2Enabled(bool isEnabled) { m_isWebGL2Enabled = isEnabled; }
     bool webGL2Enabled() const { return m_isWebGL2Enabled; }
 #endif
+    
+#if ENABLE(WEBGPU)
+    void setWebGPUEnabled(bool isEnabled) { m_isWebGPUEnabled = isEnabled; }
+    bool webGPUEnabled() const { return m_isWebGPUEnabled; }
+#endif
 
 #if ENABLE(WEBMETAL)
     void setWebMetalEnabled(bool isEnabled) { m_isWebMetalEnabled = isEnabled; }
@@ -420,6 +425,10 @@ private:
 
 #if ENABLE(WEBGL2)
     bool m_isWebGL2Enabled { false };
+#endif
+    
+#if ENABLE(WEBGPU)
+    bool m_isWebGPUEnabled { false };
 #endif
 
 #if ENABLE(WEBMETAL)

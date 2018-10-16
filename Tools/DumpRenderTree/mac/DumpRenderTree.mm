@@ -1011,6 +1011,7 @@ static void setWebPreferencesForTestOptions(const TestOptions& options)
     preferences.webAnimationsCSSIntegrationEnabled = options.enableWebAnimationsCSSIntegration;
     preferences.colorFilterEnabled = options.enableColorFilter;
     preferences.selectionAcrossShadowBoundariesEnabled = options.enableSelectionAcrossShadowBoundaries;
+    preferences.webGPUEnabled = options.enableWebGPU;
 }
 
 // Called once on DumpRenderTree startup.

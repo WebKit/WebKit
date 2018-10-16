@@ -211,6 +211,11 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
         RuntimeEnabledFeatures::sharedFeatures().setWebGL2Enabled(enabled);
 #endif
 
+#if ENABLE(WEBGPU)
+    if (preference == "WebKitWebGPUEnabled")
+        RuntimeEnabledFeatures::sharedFeatures().setWebGPUEnabled(enabled);
+#endif
+
 #if ENABLE(WEBMETAL)
     if (preference == "WebKitWebMetalEnabled")
         RuntimeEnabledFeatures::sharedFeatures().setWebMetalEnabled(enabled);

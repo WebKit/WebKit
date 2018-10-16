@@ -1251,6 +1251,15 @@ WebGL2Enabled:
   webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(WEBGL2)
 
+WebGPUEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "WebGPU"
+  humanReadableDescription: "WebGPU Sketch prototype"
+  category: experimental
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(WEBGPU)
+
 WebMetalEnabled:
   type: bool
   defaultValue: false

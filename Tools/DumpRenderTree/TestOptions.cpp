@@ -107,6 +107,8 @@ TestOptions::TestOptions(const std::string& pathOrURL, const std::string& absolu
             enableColorFilter = parseBooleanTestHeaderValue(value);
         else if (key == "jscOptions")
             jscOptions = value;
+        else if (key == "experimental:WebGPUEnabled")
+            enableWebGPU = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
     }
 }
