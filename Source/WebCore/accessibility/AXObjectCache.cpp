@@ -106,10 +106,6 @@
 #include "MediaControlElements.h"
 #endif
 
-#if !(PLATFORM(IOS) || PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(WIN))
-#include "NotImplemented.h"
-#endif
-
 #if COMPILER(MSVC)
 // See https://msdn.microsoft.com/en-us/library/1wea5zwe.aspx
 #pragma warning(disable: 4701)
@@ -3037,45 +3033,6 @@ AXTextChange AXObjectCache::textChangeForEditType(AXTextEditType type)
     ASSERT_NOT_REACHED();
     return AXTextInserted;
 }
-#endif
-
-#if !(PLATFORM(IOS) || PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(WIN))
-
-void AXObjectCache::detachWrapper(AccessibilityObject*, AccessibilityDetachmentType)
-{
-    notImplemented();
-}
-
-void AXObjectCache::attachWrapper(AccessibilityObject*)
-{
-    notImplemented();
-}
-
-void AXObjectCache::postPlatformNotification(AccessibilityObject*, AXNotification)
-{
-    notImplemented();
-}
-
-void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject*, AXTextChange, unsigned, const String&)
-{
-    notImplemented();
-}
-
-void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject*, AXLoadingEvent)
-{
-    notImplemented();
-}
-
-void AXObjectCache::platformHandleFocusedUIElementChanged(Node*, Node*)
-{
-    notImplemented();
-}
-
-void AXObjectCache::handleScrolledToAnchor(const Node*)
-{
-    notImplemented();
-}
-
 #endif
     
 } // namespace WebCore
