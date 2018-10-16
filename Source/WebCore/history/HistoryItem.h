@@ -169,11 +169,6 @@ public:
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT id viewState() const;
     WEBCORE_EXPORT void setViewState(id);
-    
-    // Transient properties may be of any ObjC type.  They are intended to be used to store state per back/forward list entry.
-    // The properties will not be persisted; when the history item is removed, the properties will be lost.
-    WEBCORE_EXPORT id getTransientProperty(const String&) const;
-    WEBCORE_EXPORT void setTransientProperty(const String&, id);
 #endif
 
 #ifndef NDEBUG
@@ -286,7 +281,6 @@ private:
 
 #if PLATFORM(COCOA)
     RetainPtr<id> m_viewState;
-    std::unique_ptr<HashMap<String, RetainPtr<id>>> m_transientProperties;
 #endif
 
     BackForwardItemIdentifier m_identifier;

@@ -42,26 +42,4 @@ void HistoryItem::setViewState(id statePList)
     [newState release];
 }
 
-id HistoryItem::getTransientProperty(const String& key) const
-{
-    if (!m_transientProperties)
-        return nil;
-    return m_transientProperties->get(key).get();
-}
-
-void HistoryItem::setTransientProperty(const String& key, id value)
-{
-    if (!value) {
-        if (m_transientProperties) {
-            m_transientProperties->remove(key);
-            if (m_transientProperties->isEmpty())
-                m_transientProperties = nullptr;
-        }
-    } else {
-        if (!m_transientProperties)
-            m_transientProperties = std::make_unique<HashMap<String, RetainPtr<id>>>();
-        m_transientProperties->set(key, value);
-    }
-}
-
 } // namespace WebCore
