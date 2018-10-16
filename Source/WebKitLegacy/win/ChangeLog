@@ -1,5 +1,12 @@
 2018-10-15  Alex Christensen  <achristensen@webkit.org>
 
+        Fix Windows build.
+
+        * WebView.cpp:
+        (WebView::loadBackForwardListFromOtherView):
+
+2018-10-15  Alex Christensen  <achristensen@webkit.org>
+
         Fix WinCairo build.
 
         * WebView.cpp:

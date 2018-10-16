@@ -1,5 +1,12 @@
 2018-10-15  Alex Christensen  <achristensen@webkit.org>
 
+        Fix GTK build, even though bots are not working right now.
+
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::platformCreateFrontendPage):
+
+2018-10-15  Alex Christensen  <achristensen@webkit.org>
+
         Fix WinCairo build after r237146
 
         * UIProcess/win/WebInspectorProxyWin.cpp:
