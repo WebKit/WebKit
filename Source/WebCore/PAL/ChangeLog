@@ -1,3 +1,12 @@
+2018-10-15  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [CG] Adopt CG SPI for non-even cornered rounded rects
+        https://bugs.webkit.org/show_bug.cgi?id=190155
+
+        Reviewed by Simon Fraser.
+
+        * pal/spi/cg/CoreGraphicsSPI.h:
+
 2018-10-15  Timothy Hatcher  <timothy@apple.com>
 
         Add support for prefers-color-scheme media query
