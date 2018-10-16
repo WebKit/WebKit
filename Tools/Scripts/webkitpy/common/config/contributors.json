@@ -1819,6 +1819,15 @@
       ],
       "status" : "committer"
    },
+   "Dominik Infuehr" : {
+      "emails" : [
+         "dinfuehr@igalia.com"
+      ],
+      "nicks" : [
+         "dinfuehr"
+      ],
+      "status" : "committer"
+   },
    "Dominik R\u00f6ttsches" : {
       "emails" : [
          "d-r@roettsches.de",

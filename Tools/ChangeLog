@@ -1,3 +1,9 @@
+2018-10-16  Dominik Infuehr  <dinfuehr@igalia.com>
+
+        Unreviewed, added myself to contributors.json.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2018-10-16  Justin Michaud  <justin_michaud@apple.com>
 
         Implement feature flag and bindings for CSS Painting API
