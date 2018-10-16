@@ -1,3 +1,16 @@
+2018-10-15  Sihui Liu  <sihui_liu@apple.com>
+
+        HSTS cache entries cannot be removed by origin
+        https://bugs.webkit.org/show_bug.cgi?id=190455
+        <rdar://problem/45181322>
+
+        Reviewed by Chris Dumez.
+
+        The SPI _CFNetworkResetHSTS does not recognize url without protocol, so we need to add protocol manually.
+
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::deleteHSTSCacheForHostNames):
+
 2018-10-15  Alex Christensen  <achristensen@webkit.org>
 
         Fix GTK build, even though bots are not working right now.

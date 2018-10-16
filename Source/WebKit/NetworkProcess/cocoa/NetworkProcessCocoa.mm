@@ -161,8 +161,8 @@ void NetworkProcess::getHostNamesWithHSTSCache(WebCore::NetworkStorageSession& s
 void NetworkProcess::deleteHSTSCacheForHostNames(WebCore::NetworkStorageSession& session, const Vector<String>& hostNames)
 {
     for (auto& hostName : hostNames) {
-        auto url = adoptCF(CFURLCreateWithString(kCFAllocatorDefault, hostName.createCFString().get(), NULL));
-        _CFNetworkResetHSTS(url.get(), session.platformSession());
+        auto url = WebCore::URL({ }, makeString("https://", hostName));
+        _CFNetworkResetHSTS(url.createCFURL().get(), session.platformSession());
     }
 }
 
