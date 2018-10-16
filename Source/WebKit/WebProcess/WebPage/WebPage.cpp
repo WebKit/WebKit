@@ -408,7 +408,8 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
         makeUniqueRef<WebEditorClient>(this),
         WebSocketProvider::create(),
         makeUniqueRef<WebKit::LibWebRTCProvider>(),
-        WebProcess::singleton().cacheStorageProvider()
+        WebProcess::singleton().cacheStorageProvider(),
+        WebBackForwardListProxy::create(*this)
     );
     pageConfiguration.chromeClient = new WebChromeClient(*this);
 #if ENABLE(CONTEXT_MENUS)
@@ -417,7 +418,6 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
 #if ENABLE(DRAG_SUPPORT)
     pageConfiguration.dragClient = new WebDragClient(this);
 #endif
-    pageConfiguration.backForwardClient = WebBackForwardListProxy::create(this);
     pageConfiguration.inspectorClient = new WebInspectorClient(this);
 #if USE(AUTOCORRECTION_PANEL)
     pageConfiguration.alternativeTextClient = new WebAlternativeTextClient(this);
@@ -2527,7 +2527,7 @@ void WebPage::restoreSessionInternal(const Vector<BackForwardListItemState>& ite
     for (const auto& itemState : itemStates) {
         auto historyItem = toHistoryItem(itemState);
         historyItem->setWasRestoredFromSession(restoredByAPIRequest == WasRestoredByAPIRequest::Yes);
-        static_cast<WebBackForwardListProxy*>(corePage()->backForward().client())->addItemFromUIProcess(itemState.identifier, WTFMove(historyItem), m_pageID, overwrite);
+        static_cast<WebBackForwardListProxy&>(corePage()->backForward().client()).addItemFromUIProcess(itemState.identifier, WTFMove(historyItem), m_pageID, overwrite);
     }
 }
 

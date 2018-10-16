@@ -3109,9 +3109,9 @@ HRESULT WebView::initWithFrame(RECT frame, _In_ BSTR frameName, _In_ BSTR groupN
         makeUniqueRef<WebEditorClient>(this),
         SocketProvider::create(),
         makeUniqueRef<LibWebRTCProvider>(),
-        WebCore::CacheStorageProvider::create()
+        WebCore::CacheStorageProvider::create(),
+        BackForwardList::create()
     );
-    configuration.backForwardClient = BackForwardList::create();
     configuration.chromeClient = new WebChromeClient(this);
     configuration.contextMenuClient = new WebContextMenuClient(this);
     configuration.dragClient = new WebDragClient(this);
@@ -3394,7 +3394,7 @@ HRESULT WebView::backForwardList(_COM_Outptr_opt_ IWebBackForwardList** list)
     if (!m_useBackForwardList)
         return E_FAIL;
  
-    *list = WebBackForwardList::createInstance(static_cast<BackForwardList*>(m_page->backForward().client()));
+    *list = WebBackForwardList::createInstance(makeRef(&static_cast<BackForwardList&>(m_page->backForward().client())));
 
     return S_OK;
 }

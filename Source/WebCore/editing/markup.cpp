@@ -174,9 +174,7 @@ void removeSubresourceURLAttributes(Ref<DocumentFragment>&& fragment, WTF::Funct
 
 std::unique_ptr<Page> createPageForSanitizingWebContent()
 {
-    PageConfiguration pageConfiguration(createEmptyEditorClient(), SocketProvider::create(), LibWebRTCProvider::create(), CacheStorageProvider::create());
-
-    fillWithEmptyClients(pageConfiguration);
+    auto pageConfiguration = pageConfigurationWithEmptyClients();
     
     auto page = std::make_unique<Page>(WTFMove(pageConfiguration));
     page->settings().setMediaEnabled(false);

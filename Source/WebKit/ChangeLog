@@ -1,3 +1,26 @@
+2018-10-15  Alex Christensen  <achristensen@webkit.org>
+
+        Modernize BackForwardClient.h
+        https://bugs.webkit.org/show_bug.cgi?id=190610
+
+        Reviewed by Chris Dumez.
+
+        * WebProcess/InjectedBundle/InjectedBundleBackForwardList.cpp:
+        (WebKit::InjectedBundleBackForwardList::clear):
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::installServiceWorker):
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp:
+        (WebKit::WebBackForwardListProxy::WebBackForwardListProxy):
+        (WebKit::WebBackForwardListProxy::backListCount const):
+        (WebKit::WebBackForwardListProxy::forwardListCount const):
+        (WebKit::WebBackForwardListProxy::backListCount): Deleted.
+        (WebKit::WebBackForwardListProxy::forwardListCount): Deleted.
+        * WebProcess/WebPage/WebBackForwardListProxy.h:
+        (WebKit::WebBackForwardListProxy::create):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_cpuLimit):
+        (WebKit::WebPage::restoreSessionInternal):
+
 2018-10-15  Timothy Hatcher  <timothy@apple.com>
 
         Add support for prefers-color-scheme media query

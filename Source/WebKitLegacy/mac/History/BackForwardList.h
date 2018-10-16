@@ -59,8 +59,8 @@ public:
     void setCapacity(int);
     bool enabled();
     void setEnabled(bool);
-    int backListCount() override;
-    int forwardListCount() override;
+    int backListCount() const override;
+    int forwardListCount() const override;
     bool containsItem(WebCore::HistoryItem&);
 
     void close() override;

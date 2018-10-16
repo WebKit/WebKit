@@ -910,7 +910,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     int index, count;
     BOOL callSuper = YES;
     Frame* coreFrame = [self _web_frame];
-    BOOL maintainsBackForwardList = coreFrame && static_cast<BackForwardList*>(coreFrame->page()->backForward().client())->enabled() ? YES : NO;
+    BOOL maintainsBackForwardList = coreFrame && static_cast<BackForwardList&>(coreFrame->page()->backForward().client()).enabled() ? YES : NO;
 
     count = [characters length];
     for (index = 0; index < count; ++index) {

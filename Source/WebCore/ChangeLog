@@ -1,3 +1,32 @@
+2018-10-15  Alex Christensen  <achristensen@webkit.org>
+
+        Modernize BackForwardClient.h
+        https://bugs.webkit.org/show_bug.cgi?id=190610
+
+        Reviewed by Chris Dumez.
+
+        * editing/markup.cpp:
+        (WebCore::createPageForSanitizingWebContent):
+        * history/BackForwardClient.h:
+        * history/BackForwardController.h:
+        (WebCore::BackForwardController::client):
+        (WebCore::BackForwardController::client const):
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::InspectorOverlay::overlayPage):
+        * loader/EmptyClients.cpp:
+        (WebCore::pageConfigurationWithEmptyClients):
+        (WebCore::createEmptyFrameNetworkingContext): Deleted.
+        (WebCore::fillWithEmptyClients): Deleted.
+        (WebCore::createEmptyEditorClient): Deleted.
+        * loader/EmptyClients.h:
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        * page/PageConfiguration.cpp:
+        (WebCore::PageConfiguration::PageConfiguration):
+        * page/PageConfiguration.h:
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::dataChanged):
+
 2018-10-15  Timothy Hatcher  <timothy@apple.com>
 
         Add support for prefers-color-scheme media query

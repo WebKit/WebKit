@@ -1,3 +1,31 @@
+2018-10-15  Alex Christensen  <achristensen@webkit.org>
+
+        Modernize BackForwardClient.h
+        https://bugs.webkit.org/show_bug.cgi?id=190610
+
+        Reviewed by Chris Dumez.
+
+        * History/BackForwardList.h:
+        * History/BackForwardList.mm:
+        (BackForwardList::backListCount const):
+        (BackForwardList::forwardListCount const):
+        (BackForwardList::backListCount): Deleted.
+        (BackForwardList::forwardListCount): Deleted.
+        * History/WebBackForwardList.mm:
+        (-[WebBackForwardList init]):
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::canCachePage const):
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView keyDown:keyDown:]):
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (-[WebView initSimpleHTMLDocumentWithStyle:frame:preferences:groupName:]):
+        (-[WebView _loadBackForwardListFromOtherView:]):
+        (-[WebView initWithCoder:]):
+        (-[WebView encodeWithCoder:]):
+        (-[WebView backForwardList]):
+        (-[WebView setMaintainsBackForwardList:]):
+
 2018-10-15  Timothy Hatcher  <timothy@apple.com>
 
         Add support for prefers-color-scheme media query

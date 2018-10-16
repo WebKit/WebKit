@@ -139,14 +139,7 @@ void WebSWContextManagerConnection::installServiceWorker(const ServiceWorkerCont
 {
     LOG(ServiceWorker, "WebSWContextManagerConnection::installServiceWorker for worker %s", data.serviceWorkerIdentifier.loggingString().utf8().data());
 
-    PageConfiguration pageConfiguration {
-        createEmptyEditorClient(),
-        WebSocketProvider::create(),
-        WebCore::LibWebRTCProvider::create(),
-        WebProcess::singleton().cacheStorageProvider()
-    };
-
-    fillWithEmptyClients(pageConfiguration);
+    auto pageConfiguration = pageConfigurationWithEmptyClients();
 
 #if ENABLE(INDEXED_DATABASE)
     pageConfiguration.databaseProvider = WebDatabaseProvider::getOrCreate(m_pageGroupID);

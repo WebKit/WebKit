@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebBackForwardListProxy_h
-#define WebBackForwardListProxy_h
+#pragma once
 
 #include <WebCore/BackForwardClient.h>
 #include <wtf/HashSet.h>
@@ -39,7 +38,7 @@ class WebPage;
 
 class WebBackForwardListProxy : public WebCore::BackForwardClient {
 public: 
-    static Ref<WebBackForwardListProxy> create(WebPage* page) { return adoptRef(*new WebBackForwardListProxy(page)); }
+    static Ref<WebBackForwardListProxy> create(WebPage& page) { return adoptRef(*new WebBackForwardListProxy(page)); }
 
     static WebCore::HistoryItem* itemForID(const WebCore::BackForwardItemIdentifier&);
     static void removeItem(const WebCore::BackForwardItemIdentifier&);
@@ -53,15 +52,15 @@ public:
     void clear();
 
 private:
-    WebBackForwardListProxy(WebPage*);
+    WebBackForwardListProxy(WebPage&);
 
     void addItem(Ref<WebCore::HistoryItem>&&) override;
 
     void goToItem(WebCore::HistoryItem*) override;
         
     WebCore::HistoryItem* itemAtIndex(int) override;
-    int backListCount() override;
-    int forwardListCount() override;
+    int backListCount() const override;
+    int forwardListCount() const override;
 
     void close() override;
 
@@ -69,5 +68,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // WebBackForwardListProxy_h

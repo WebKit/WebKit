@@ -1,5 +1,22 @@
 2018-10-15  Alex Christensen  <achristensen@webkit.org>
 
+        Modernize BackForwardClient.h
+        https://bugs.webkit.org/show_bug.cgi?id=190610
+
+        Reviewed by Chris Dumez.
+
+        * BackForwardList.cpp:
+        (BackForwardList::backListCount const):
+        (BackForwardList::forwardListCount const):
+        (BackForwardList::backListCount): Deleted.
+        (BackForwardList::forwardListCount): Deleted.
+        * BackForwardList.h:
+        * WebView.cpp:
+        (WebView::initWithFrame):
+        (WebView::backForwardList):
+
+2018-10-15  Alex Christensen  <achristensen@webkit.org>
+
         Remove unused WebView._globalHistoryItem
         https://bugs.webkit.org/show_bug.cgi?id=190601
 

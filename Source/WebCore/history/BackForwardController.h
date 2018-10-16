@@ -41,7 +41,8 @@ public:
     BackForwardController(Page&, Ref<BackForwardClient>&&);
     ~BackForwardController();
 
-    BackForwardClient* client() const { return m_client.get(); }
+    BackForwardClient& client() { return m_client.get(); }
+    const BackForwardClient& client() const { return m_client.get(); }
 
     WEBCORE_EXPORT bool canGoBackOrForward(int distance) const;
     void goBackOrForward(int distance);
@@ -66,7 +67,7 @@ public:
 
 private:
     Page& m_page;
-    RefPtr<BackForwardClient> m_client;
+    Ref<BackForwardClient> m_client;
 };
 
 } // namespace WebCore

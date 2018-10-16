@@ -30,6 +30,7 @@
 
 #include "ApplicationCacheStorage.h"
 #include "BackForwardClient.h"
+#include "CacheStorageProvider.h"
 #include "ColorChooser.h"
 #include "ContextMenuClient.h"
 #include "DataListSuggestionPicker.h"
@@ -48,6 +49,7 @@
 #include "HTMLFormElement.h"
 #include "InProcessIDBServer.h"
 #include "InspectorClient.h"
+#include "LibWebRTCProvider.h"
 #include "NetworkStorageSession.h"
 #include "Page.h"
 #include "PageConfiguration.h"
@@ -55,6 +57,7 @@
 #include "PluginInfoProvider.h"
 #include "ProgressTrackerClient.h"
 #include "SecurityOriginData.h"
+#include "SocketProvider.h"
 #include "StorageArea.h"
 #include "StorageNamespace.h"
 #include "StorageNamespaceProvider.h"
@@ -82,8 +85,8 @@ class EmptyBackForwardClient final : public BackForwardClient {
     void addItem(Ref<HistoryItem>&&) final { }
     void goToItem(HistoryItem*) final { }
     HistoryItem* itemAtIndex(int) final { return nullptr; }
-    int backListCount() final { return 0; }
-    int forwardListCount() final { return 0; }
+    int backListCount() const final { return 0; }
+    int forwardListCount() const final { return 0; }
     void close() final { }
 };
 
@@ -497,11 +500,6 @@ Ref<FrameNetworkingContext> EmptyFrameLoaderClient::createNetworkingContext()
     return EmptyFrameNetworkingContext::create();
 }
 
-Ref<FrameNetworkingContext> createEmptyFrameNetworkingContext()
-{
-    return EmptyFrameNetworkingContext::create();
-}
-
 void EmptyEditorClient::EmptyTextCheckerClient::requestCheckingOfString(TextCheckingRequest&, const VisibleSelection&)
 {
 }
@@ -534,8 +532,16 @@ RefPtr<StorageNamespace> EmptyStorageNamespaceProvider::createTransientLocalStor
     return adoptRef(*new EmptyStorageNamespace);
 }
 
-void fillWithEmptyClients(PageConfiguration& pageConfiguration)
+PageConfiguration pageConfigurationWithEmptyClients()
 {
+    PageConfiguration pageConfiguration {
+        makeUniqueRef<EmptyEditorClient>(),
+        SocketProvider::create(),
+        LibWebRTCProvider::create(),
+        CacheStorageProvider::create(),
+        adoptRef(*new EmptyBackForwardClient)
+    };
+
     static NeverDestroyed<EmptyChromeClient> dummyChromeClient;
     pageConfiguration.chromeClient = &dummyChromeClient.get();
 
@@ -563,7 +569,6 @@ void fillWithEmptyClients(PageConfiguration& pageConfiguration)
     static NeverDestroyed<EmptyProgressTrackerClient> dummyProgressTrackerClient;
     pageConfiguration.progressTrackerClient = &dummyProgressTrackerClient.get();
 
-    pageConfiguration.backForwardClient = adoptRef(*new EmptyBackForwardClient);
     pageConfiguration.diagnosticLoggingClient = std::make_unique<EmptyDiagnosticLoggingClient>();
 
     pageConfiguration.applicationCacheStorage = ApplicationCacheStorage::create({ }, { });
@@ -572,11 +577,8 @@ void fillWithEmptyClients(PageConfiguration& pageConfiguration)
     pageConfiguration.storageNamespaceProvider = adoptRef(*new EmptyStorageNamespaceProvider);
     pageConfiguration.userContentProvider = adoptRef(*new EmptyUserContentProvider);
     pageConfiguration.visitedLinkStore = adoptRef(*new EmptyVisitedLinkStore);
-}
-
-UniqueRef<EditorClient> createEmptyEditorClient()
-{
-    return makeUniqueRef<EmptyEditorClient>();
+    
+    return pageConfiguration;
 }
 
 DiagnosticLoggingClient& emptyDiagnosticLoggingClient()

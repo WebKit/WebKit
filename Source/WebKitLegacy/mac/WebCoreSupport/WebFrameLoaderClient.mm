@@ -1604,11 +1604,11 @@ bool WebFrameLoaderClient::canCachePage() const
     if (!page)
         return false;
     
-    BackForwardList *backForwardList = static_cast<BackForwardList*>(page->backForward().client());
-    if (!backForwardList->enabled())
+    BackForwardList& backForwardList = static_cast<BackForwardList&>(page->backForward().client());
+    if (!backForwardList.enabled())
         return false;
     
-    if (!backForwardList->capacity())
+    if (!backForwardList.capacity())
         return false;
     
     return true;

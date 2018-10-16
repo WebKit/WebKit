@@ -65,8 +65,9 @@ class WebGLStateTracker;
 class PageConfiguration {
     WTF_MAKE_NONCOPYABLE(PageConfiguration); WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT PageConfiguration(UniqueRef<EditorClient>&&, Ref<SocketProvider>&&, UniqueRef<LibWebRTCProvider>&&, Ref<CacheStorageProvider>&&);
+    WEBCORE_EXPORT PageConfiguration(UniqueRef<EditorClient>&&, Ref<SocketProvider>&&, UniqueRef<LibWebRTCProvider>&&, Ref<CacheStorageProvider>&&, Ref<BackForwardClient>&&);
     WEBCORE_EXPORT ~PageConfiguration();
+    PageConfiguration(PageConfiguration&&);
 
     AlternativeTextClient* alternativeTextClient { nullptr };
     ChromeClient* chromeClient { nullptr };
@@ -93,7 +94,7 @@ public:
 
     PlugInClient* plugInClient { nullptr };
     ProgressTrackerClient* progressTrackerClient { nullptr };
-    RefPtr<BackForwardClient> backForwardClient;
+    Ref<BackForwardClient> backForwardClient;
     std::unique_ptr<ValidationMessageClient> validationMessageClient;
     FrameLoaderClient* loaderClientForMainFrame { nullptr };
     std::unique_ptr<DiagnosticLoggingClient> diagnosticLoggingClient;

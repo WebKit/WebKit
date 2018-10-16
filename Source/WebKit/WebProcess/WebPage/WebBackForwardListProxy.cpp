@@ -82,8 +82,8 @@ void WebBackForwardListProxy::removeItem(const BackForwardItemIdentifier& itemID
     WebCore::Page::clearPreviousItemFromAllPages(item.get());
 }
 
-WebBackForwardListProxy::WebBackForwardListProxy(WebPage* page)
-    : m_page(page)
+WebBackForwardListProxy::WebBackForwardListProxy(WebPage& page)
+    : m_page(&page)
 {
     WebCore::notifyHistoryItemChanged = WK2NotifyHistoryItemChanged;
 }
@@ -125,7 +125,7 @@ HistoryItem* WebBackForwardListProxy::itemAtIndex(int itemIndex)
     return idToHistoryItemMap().get(*itemID);
 }
 
-int WebBackForwardListProxy::backListCount()
+int WebBackForwardListProxy::backListCount() const
 {
     if (!m_page)
         return 0;
@@ -137,7 +137,7 @@ int WebBackForwardListProxy::backListCount()
     return backListCount;
 }
 
-int WebBackForwardListProxy::forwardListCount()
+int WebBackForwardListProxy::forwardListCount() const
 {
     if (!m_page)
         return 0;

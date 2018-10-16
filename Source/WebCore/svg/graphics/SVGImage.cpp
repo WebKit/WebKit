@@ -453,13 +453,7 @@ EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
         return EncodedDataStatus::Complete;
 
     if (allDataReceived) {
-        PageConfiguration pageConfiguration(
-            createEmptyEditorClient(),
-            SocketProvider::create(),
-            LibWebRTCProvider::create(),
-            CacheStorageProvider::create()
-        );
-        fillWithEmptyClients(pageConfiguration);
+        auto pageConfiguration = pageConfigurationWithEmptyClients();
         m_chromeClient = std::make_unique<SVGImageChromeClient>(this);
         pageConfiguration.chromeClient = m_chromeClient.get();
 

@@ -107,7 +107,7 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
 
 - (id)init
 {
-    return [self initWithBackForwardList:BackForwardList::create(0)];
+    return [self initWithBackForwardList:BackForwardList::create(nullptr)];
 }
 
 - (void)dealloc

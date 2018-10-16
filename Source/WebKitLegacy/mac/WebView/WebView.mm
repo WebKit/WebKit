@@ -1437,7 +1437,8 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         makeUniqueRef<WebEditorClient>(self),
         SocketProvider::create(),
         LibWebRTCProvider::create(),
-        WebCore::CacheStorageProvider::create()
+        WebCore::CacheStorageProvider::create(),
+        BackForwardList::create(self)
     );
 #if !PLATFORM(IOS)
     pageConfiguration.chromeClient = new WebChromeClient(self);
@@ -1453,8 +1454,6 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 #if ENABLE(DRAG_SUPPORT)
     pageConfiguration.dragClient = new WebDragClient(self);
 #endif
-
-    pageConfiguration.backForwardClient = BackForwardList::create(self);
 
 #if ENABLE(APPLE_PAY)
     pageConfiguration.paymentCoordinatorClient = new WebPaymentCoordinatorClient();
@@ -1703,7 +1702,8 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         makeUniqueRef<WebEditorClient>(self),
         SocketProvider::create(),
         LibWebRTCProvider::create(),
-        WebCore::CacheStorageProvider::create()
+        WebCore::CacheStorageProvider::create(),
+        makeUniqueRef<BackForwardList>(),
     );
     pageConfiguration.chromeClient = new WebChromeClientIOS(self);
 #if ENABLE(DRAG_SUPPORT)
@@ -1714,7 +1714,6 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     pageConfiguration.paymentCoordinatorClient = new WebPaymentCoordinatorClient();
 #endif
 
-    pageConfiguration.backForwardClient = BackForwardList::create(self);
     pageConfiguration.inspectorClient = new WebInspectorClient(self);
     pageConfiguration.loaderClientForMainFrame = new WebFrameLoaderClient;
     pageConfiguration.progressTrackerClient = new WebProgressTrackerClient(self);
@@ -2641,7 +2640,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         Ref<HistoryItem> newItem = otherBackForward.itemAtIndex(i)->copy();
         if (i == 0) 
             newItemToGoTo = newItem.ptr();
-        backForward.client()->addItem(WTFMove(newItem));
+        backForward.client().addItem(WTFMove(newItem));
     }
 
     ASSERT(newItemToGoTo);
@@ -5876,7 +5875,7 @@ static bool needsWebViewInitThreadWorkaround()
 
         LOG(Encoding, "FrameName = %@, GroupName = %@, useBackForwardList = %d\n", frameName, groupName, (int)useBackForwardList);
         [result _commonInitializationWithFrameName:frameName groupName:groupName];
-        static_cast<BackForwardList*>([result page]->backForward().client())->setEnabled(useBackForwardList);
+        static_cast<BackForwardList&>([result page]->backForward().client()).setEnabled(useBackForwardList);
         result->_private->allowsUndo = allowsUndo;
         if (preferences)
             [result setPreferences:preferences];
@@ -5904,7 +5903,7 @@ static bool needsWebViewInitThreadWorkaround()
     _subviews = originalSubviews;
     ALLOW_DEPRECATED_DECLARATIONS_END
 
-    BOOL useBackForwardList = _private->page && static_cast<BackForwardList*>(_private->page->backForward().client())->enabled();
+    BOOL useBackForwardList = _private->page && static_cast<BackForwardList&>(_private->page->backForward().client()).enabled();
     if ([encoder allowsKeyedCoding]) {
         [encoder encodeObject:[[self mainFrame] name] forKey:@"FrameName"];
         [encoder encodeObject:[self groupName] forKey:@"GroupName"];
@@ -6386,17 +6385,17 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 {
     if (!_private->page)
         return nil;
-    BackForwardList* list = static_cast<BackForwardList*>(_private->page->backForward().client());
-    if (!list->enabled())
+    BackForwardList& list = static_cast<BackForwardList&>(_private->page->backForward().client());
+    if (!list.enabled())
         return nil;
-    return kit(list);
+    return kit(&list);
 }
 
 - (void)setMaintainsBackForwardList:(BOOL)flag
 {
     if (!_private->page)
         return;
-    static_cast<BackForwardList*>(_private->page->backForward().client())->setEnabled(flag);
+    static_cast<BackForwardList&>(_private->page->backForward().client()).setEnabled(flag);
 }
 
 - (BOOL)goBack

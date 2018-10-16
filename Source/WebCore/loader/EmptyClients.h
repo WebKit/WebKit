@@ -203,11 +203,7 @@ class EmptyChromeClient : public ChromeClient {
     RefPtr<Icon> createIconForFiles(const Vector<String>& /* filenames */) final { return nullptr; }
 };
 
-WEBCORE_EXPORT void fillWithEmptyClients(PageConfiguration&);
-WEBCORE_EXPORT UniqueRef<EditorClient> createEmptyEditorClient();
 DiagnosticLoggingClient& emptyDiagnosticLoggingClient();
-
-class EmptyFrameNetworkingContext;
-WEBCORE_EXPORT Ref<FrameNetworkingContext> createEmptyFrameNetworkingContext();
+WEBCORE_EXPORT PageConfiguration pageConfigurationWithEmptyClients();
 
 }

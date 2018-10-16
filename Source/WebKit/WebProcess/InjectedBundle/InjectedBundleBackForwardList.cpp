@@ -72,7 +72,7 @@ void InjectedBundleBackForwardList::clear()
     Page* page = m_page->corePage();
     if (!page)
         return;
-    static_cast<WebBackForwardListProxy*>(page->backForward().client())->clear();
+    static_cast<WebBackForwardListProxy&>(page->backForward().client()).clear();
 }
 
 } // namespace WebKit
