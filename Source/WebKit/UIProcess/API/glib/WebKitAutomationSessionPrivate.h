@@ -24,7 +24,10 @@
 #include "WebKitWebContext.h"
 #include <JavaScriptCore/RemoteInspector.h>
 
+#if ENABLE(REMOTE_INSPECTOR)
 WebKitAutomationSession* webkitAutomationSessionCreate(WebKitWebContext*, const char* sessionID, const Inspector::RemoteInspector::Client::SessionCapabilities&);
+#endif
+
 WebKit::WebAutomationSession& webkitAutomationSessionGetSession(WebKitAutomationSession*);
 String webkitAutomationSessionGetBrowserName(WebKitAutomationSession*);
 String webkitAutomationSessionGetBrowserVersion(WebKitAutomationSession*);

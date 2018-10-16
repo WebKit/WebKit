@@ -1,3 +1,17 @@
+2018-10-16  Philippe Normand  <pnormand@igalia.com>
+
+        [GLib] Build error with RemoteInspector disabled
+        https://bugs.webkit.org/show_bug.cgi?id=190623
+
+        Reviewed by Michael Catanzaro.
+
+        Compilation guards added to ensure the build still works when the
+        Remote WebInspector has been disabled.
+
+        * UIProcess/API/glib/WebKitAutomationSession.cpp:
+        * UIProcess/API/glib/WebKitAutomationSessionPrivate.h:
+        * UIProcess/RemoteWebInspectorProxy.cpp:
+
 2018-10-16  Patrick Griffis  <pgriffis@igalia.com>
 
         [GTK][WPE] Fix sandbox on distros with suid bubblewrap
