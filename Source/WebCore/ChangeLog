@@ -1,3 +1,67 @@
+2018-10-16  Jer Noble  <jer.noble@apple.com>
+
+        Refactoring: Convert HTMLMediaElement::scheduleDelayedAction() to individually schedulable & cancelable tasks
+        https://bugs.webkit.org/show_bug.cgi?id=188208
+
+        Reviewed by Eric Carlson.
+
+        Rather than have a single, monolithic, zero-duration-timer based dispatch for
+        a bunch of methods to be performed in a future run-loop, convert them all to
+        use a DeferrableTask, which in turn is a kind of GenericTaskQueue which can
+        enqueue only a single task at a time. Convert some other zero-duration-timer
+        and GenericTaskQueue dispatches to this new DeferrableTask.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::finishParsingChildren):
+        (WebCore::HTMLMediaElement::scheduleCheckPlaybackTargetCompatability):
+        (WebCore::HTMLMediaElement::checkPlaybackTargetCompatablity):
+        (WebCore::HTMLMediaElement::prepareForLoad):
+        (WebCore::HTMLMediaElement::setReadyState):
+        (WebCore::HTMLMediaElement::seekWithTolerance):
+        (WebCore::HTMLMediaElement::setMuted):
+        (WebCore::HTMLMediaElement::mediaPlayerDidAddTextTrack):
+        (WebCore::HTMLMediaElement::didAddTextTrack):
+        (WebCore::HTMLMediaElement::scheduleConfigureTextTracks):
+        (WebCore::HTMLMediaElement::mediaPlayerTimeChanged):
+        (WebCore::HTMLMediaElement::scheduleMediaEngineWasUpdated):
+        (WebCore::HTMLMediaElement::mediaEngineWasUpdated):
+        (WebCore::HTMLMediaElement::mediaPlayerEngineUpdated):
+        (WebCore::HTMLMediaElement::scheduleUpdatePlayState):
+        (WebCore::HTMLMediaElement::updatePlayState):
+        (WebCore::HTMLMediaElement::setPlaying):
+        (WebCore::HTMLMediaElement::setPausedInternal):
+        (WebCore::HTMLMediaElement::cancelPendingTasks):
+        (WebCore::HTMLMediaElement::userCancelledLoad):
+        (WebCore::HTMLMediaElement::clearMediaPlayer):
+        (WebCore::HTMLMediaElement::contextDestroyed):
+        (WebCore::HTMLMediaElement::stop):
+        (WebCore::HTMLMediaElement::suspend):
+        (WebCore::HTMLMediaElement::resume):
+        (WebCore::HTMLMediaElement::mediaPlayerCurrentPlaybackTargetIsWirelessChanged):
+        (WebCore::HTMLMediaElement::dispatchEvent):
+        (WebCore::HTMLMediaElement::removeEventListener):
+        (WebCore::HTMLMediaElement::enqueuePlaybackTargetAvailabilityChangedEvent):
+        (WebCore::HTMLMediaElement::didBecomeFullscreenElement):
+        (WebCore::HTMLMediaElement::markCaptionAndSubtitleTracksAsUnconfigured):
+        (WebCore::HTMLMediaElement::scheduleUpdateMediaState):
+        (WebCore::HTMLMediaElement::updateMediaState):
+        (WebCore::HTMLMediaElement::playbackControlsManagerBehaviorRestrictionsTimerFired):
+        (WebCore::setFlags): Deleted.
+        (WebCore::clearFlags): Deleted.
+        (WebCore::actionName): Deleted.
+        (WebCore::HTMLMediaElement::scheduleDelayedAction): Deleted.
+        (WebCore::HTMLMediaElement::pendingActionTimerFired): Deleted.
+        * html/HTMLMediaElement.h:
+        * html/HTMLMediaElementEnums.h:
+        * platform/DeferrableTask.h: Added.
+        (WebCore::DeferrableTask::DeferrableTask):
+        (WebCore::DeferrableTask::scheduleTask):
+        (WebCore::DeferrableTask::close):
+        (WebCore::DeferrableTask::cancelTask):
+        (WebCore::DeferrableTask::hasPendingTask const):
+
 2018-10-16  Timothy Hatcher  <timothy@apple.com>
 
         Add <meta name="supported-color-schemes"> to control what color schemes the page supports

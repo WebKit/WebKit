@@ -30,8 +30,8 @@
 #include "ActiveDOMObject.h"
 #include "ApplicationStateChangeListener.h"
 #include "AutoplayEvent.h"
+#include "DeferrableTask.h"
 #include "GenericEventQueue.h"
-#include "GenericTaskQueue.h"
 #include "HTMLElement.h"
 #include "HTMLMediaElementEnums.h"
 #include "MediaCanStartListener.h"
@@ -185,8 +185,8 @@ public:
     MediaPlayerEnums::VideoGravity videoFullscreenGravity() const { return m_videoFullscreenGravity; }
 #endif
 
-    using HTMLMediaElementEnums::DelayedActionType;
-    void scheduleDelayedAction(DelayedActionType);
+    void scheduleCheckPlaybackTargetCompatability();
+    void checkPlaybackTargetCompatablity();
     void scheduleResolvePendingPlayPromises();
     void scheduleRejectPendingPlayPromises(Ref<DOMException>&&);
     using PlayPromiseVector = Vector<DOMPromiseDeferred<void>>;
@@ -367,6 +367,7 @@ public:
 
     struct TrackGroup;
     void configureTextTrackGroupForLanguage(const TrackGroup&) const;
+    void scheduleConfigureTextTracks();
     void configureTextTracks();
     void configureTextTrackGroup(const TrackGroup&);
 
@@ -658,6 +659,8 @@ private:
     void mediaPlayerRenderingModeChanged(MediaPlayer*) override;
     bool mediaPlayerAcceleratedCompositingEnabled() override;
     void mediaPlayerEngineUpdated(MediaPlayer*) override;
+
+    void scheduleMediaEngineWasUpdated();
     void mediaEngineWasUpdated();
 
     void mediaPlayerFirstVideoFrameAvailable(MediaPlayer*) override;
@@ -750,6 +753,8 @@ private:
     void startPlaybackProgressTimer();
     void startProgressEventTimer();
     void stopPeriodicTimers();
+    void cancelPendingTasks();
+    void closeTaskQueues();
 
     void seek(const MediaTime&);
     void seekInternal(const MediaTime&);
@@ -767,7 +772,7 @@ private:
     void scheduleNextSourceChild();
     void loadNextSourceChild();
     void userCancelledLoad();
-    void clearMediaPlayer(DelayedActionType flags);
+    void clearMediaPlayer();
     bool havePotentialSourceChild();
     void noneSupported();
     void cancelPendingEventsAndCallbacks();
@@ -800,9 +805,9 @@ private:
     void beginProcessingMediaPlayerCallback() { ++m_processingMediaPlayerCallback; }
     void endProcessingMediaPlayerCallback() { ASSERT(m_processingMediaPlayerCallback); --m_processingMediaPlayerCallback; }
 
-    enum class UpdateState { Asynchronously, Synchronously };
+    void scheduleUpdatePlayState();
+    void updatePlayState();
 
-    void updatePlayState(UpdateState updateState = UpdateState::Synchronously);
     void updateVolume();
     void setPlaying(bool);
     bool potentiallyPlaying() const;
@@ -898,7 +903,8 @@ private:
     void prepareForDocumentSuspension() final;
     void resumeFromDocumentSuspension() final;
 
-    void updateMediaState(UpdateState updateState = UpdateState::Synchronously);
+    void scheduleUpdateMediaState();
+    void updateMediaState();
     bool hasPlaybackTargetAvailabilityListeners() const { return m_hasPlaybackTargetAvailabilityListeners; }
 #endif
 
@@ -932,18 +938,21 @@ private:
     const Logger& mediaPlayerLogger() final { return logger(); }
 #endif
 
-    Timer m_pendingActionTimer;
     Timer m_progressEventTimer;
     Timer m_playbackProgressTimer;
     Timer m_scanTimer;
     Timer m_playbackControlsManagerBehaviorRestrictionsTimer;
     Timer m_seekToPlaybackPositionEndedTimer;
-    GenericTaskQueue<Timer> m_resumeTaskQueue;
-    GenericTaskQueue<Timer> m_seekTaskQueue;
-    GenericTaskQueue<Timer> m_shadowDOMTaskQueue;
+    DeferrableTask<Timer> m_configureTextTracksTask;
+    DeferrableTask<Timer> m_checkPlaybackTargetCompatablityTask;
+    DeferrableTask<Timer> m_updateMediaStateTask;
+    DeferrableTask<Timer> m_mediaEngineUpdatedTask;
+    DeferrableTask<Timer> m_updatePlayStateTask;
+    DeferrableTask<Timer> m_resumeTaskQueue;
+    DeferrableTask<Timer> m_seekTaskQueue;
+    DeferrableTask<Timer> m_playbackControlsManagerBehaviorRestrictionsQueue;
     GenericTaskQueue<Timer> m_promiseTaskQueue;
     GenericTaskQueue<Timer> m_pauseAfterDetachedTaskQueue;
-    GenericTaskQueue<Timer> m_playbackControlsManagerBehaviorRestrictionsQueue;
     GenericTaskQueue<Timer> m_resourceSelectionTaskQueue;
     GenericTaskQueue<Timer> m_visibilityChangeTaskQueue;
     RefPtr<TimeRanges> m_playedTimeRanges;

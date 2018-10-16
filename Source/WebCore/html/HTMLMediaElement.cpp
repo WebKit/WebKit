@@ -199,47 +199,7 @@ static const double SeekTime = 0.2;
 static const Seconds ScanRepeatDelay { 1.5_s };
 static const double ScanMaximumRate = 8;
 static const double AutoplayInterferenceTimeThreshold = 10;
-
 static const Seconds hideMediaControlsAfterEndedDelay { 6_s };
-
-static void setFlags(unsigned& value, unsigned flags)
-{
-    value |= flags;
-}
-
-static void clearFlags(unsigned& value, unsigned flags)
-{
-    value &= ~flags;
-}
-
-#if !RELEASE_LOG_DISABLED
-static String actionName(HTMLMediaElementEnums::DelayedActionType action)
-{
-    StringBuilder actionBuilder;
-
-#define ACTION(_actionType) \
-    if (action & (HTMLMediaElementEnums::_actionType)) { \
-        if (!actionBuilder.isEmpty()) \
-        actionBuilder.appendLiteral(", "); \
-        actionBuilder.append(#_actionType); \
-    } \
-
-    ACTION(LoadMediaResource);
-    ACTION(ConfigureTextTracks);
-    ACTION(TextTrackChangesNotification);
-    ACTION(ConfigureTextTrackDisplay);
-    ACTION(CheckPlaybackTargetCompatablity);
-    ACTION(CheckMediaState);
-    ACTION(MediaEngineUpdated);
-    ACTION(UpdatePlayState);
-
-#undef ACTION
-
-    String name = actionBuilder.toString();
-    ASSERT(!name.isEmpty());
-    return name;
-}
-#endif
 
 #ifndef LOG_CACHED_TIME_WARNINGS
 // Default to not logging warnings about excessive drift in the cached media time because it adds a
@@ -466,7 +426,6 @@ static uint64_t nextLogIdentifier()
 HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& document, bool createdByParser)
     : HTMLElement(tagName, document)
     , ActiveDOMObject(&document)
-    , m_pendingActionTimer(*this, &HTMLMediaElement::pendingActionTimerFired)
     , m_progressEventTimer(*this, &HTMLMediaElement::progressEventTimerFired)
     , m_playbackProgressTimer(*this, &HTMLMediaElement::playbackProgressTimerFired)
     , m_scanTimer(*this, &HTMLMediaElement::scanTimerFired)
@@ -914,7 +873,7 @@ void HTMLMediaElement::finishParsingChildren()
 
 #if ENABLE(VIDEO_TRACK)
     if (childrenOfType<HTMLTrackElement>(*this).first())
-        scheduleDelayedAction(ConfigureTextTracks);
+        scheduleConfigureTextTracks();
 #endif
 }
 
@@ -1052,33 +1011,6 @@ void HTMLMediaElement::didRecalcStyle(Style::Change)
     updateRenderer();
 }
 
-void HTMLMediaElement::scheduleDelayedAction(DelayedActionType actionType)
-{
-    if (!(actionType & m_pendingActionFlags))
-        ALWAYS_LOG(LOGIDENTIFIER, "setting ", actionName(actionType), " flag");
-
-#if ENABLE(VIDEO_TRACK)
-    if (actionType & ConfigureTextTracks)
-        setFlags(m_pendingActionFlags, ConfigureTextTracks);
-#endif
-
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    if (actionType & CheckPlaybackTargetCompatablity)
-        setFlags(m_pendingActionFlags, CheckPlaybackTargetCompatablity);
-#endif
-
-    if (actionType & CheckMediaState)
-        setFlags(m_pendingActionFlags, CheckMediaState);
-
-    if (actionType & MediaEngineUpdated)
-        setFlags(m_pendingActionFlags, MediaEngineUpdated);
-
-    if (actionType & UpdatePlayState)
-        setFlags(m_pendingActionFlags, UpdatePlayState);
-
-    m_pendingActionTimer.startOneShot(0_s);
-}
-
 void HTMLMediaElement::scheduleNextSourceChild()
 {
     // Schedule the timer to try the next <source> element WITHOUT resetting state ala prepareForLoad.
@@ -1152,38 +1084,29 @@ bool HTMLMediaElement::hasEverNotifiedAboutPlaying() const
     return m_hasEverNotifiedAboutPlaying;
 }
 
-void HTMLMediaElement::pendingActionTimerFired()
+void HTMLMediaElement::scheduleCheckPlaybackTargetCompatability()
 {
-    Ref<HTMLMediaElement> protectedThis(*this); // loadNextSourceChild may fire 'beforeload', which can make arbitrary DOM mutations.
-    PendingActionFlags pendingActions = m_pendingActionFlags;
-    m_pendingActionFlags = 0;
-
-    if (!pendingActions)
+    if (m_checkPlaybackTargetCompatablityTask.hasPendingTask())
         return;
 
-    ALWAYS_LOG(LOGIDENTIFIER, "processing ", actionName(static_cast<DelayedActionType>(pendingActions)), " flag");
+    auto logSiteIdentifier = LOGIDENTIFIER;
+    ALWAYS_LOG(logSiteIdentifier, "task scheduled");
+    m_checkPlaybackTargetCompatablityTask.scheduleTask([this, logSiteIdentifier] {
+        UNUSED_PARAM(logSiteIdentifier);
+        ALWAYS_LOG(logSiteIdentifier, "- lambda(), task fired");
+        checkPlaybackTargetCompatablity();
+    });
+}
 
-#if ENABLE(VIDEO_TRACK)
-    if (pendingActions & ConfigureTextTracks)
-        configureTextTracks();
-#endif
-
+void HTMLMediaElement::checkPlaybackTargetCompatablity()
+{
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    if (pendingActions & CheckPlaybackTargetCompatablity && m_isPlayingToWirelessTarget && !m_player->canPlayToWirelessPlaybackTarget()) {
+    if (m_isPlayingToWirelessTarget && !m_player->canPlayToWirelessPlaybackTarget()) {
         INFO_LOG(LOGIDENTIFIER, "calling setShouldPlayToPlaybackTarget(false)");
         m_failedToPlayToWirelessTarget = true;
         m_player->setShouldPlayToPlaybackTarget(false);
     }
-
-    if (pendingActions & CheckMediaState)
-        updateMediaState();
 #endif
-
-    if (pendingActions & MediaEngineUpdated)
-        mediaEngineWasUpdated();
-
-    if (pendingActions & UpdatePlayState)
-        updatePlayState();
 }
 
 MediaError* HTMLMediaElement::error() const
@@ -1285,7 +1208,6 @@ void HTMLMediaElement::prepareForLoad()
     // 1 - Abort any already-running instance of the resource selection algorithm for this element.
     // Perform the cleanup required for the resource load algorithm to run.
     stopPeriodicTimers();
-    m_pendingActionTimer.stop();
     m_resourceSelectionTaskQueue.cancelAllTasks();
     // FIXME: Figure out appropriate place to reset LoadTextTrackResource if necessary and set m_pendingActionFlags to 0 here.
     m_sentEndEvent = false;
@@ -2543,7 +2465,7 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
         logMediaLoadRequest(document().page(), m_player->engineDescription(), String(), true);
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-        updateMediaState(UpdateState::Asynchronously);
+        scheduleUpdateMediaState();
 #endif
 
         m_mediaSession->clientCharacteristicsChanged();
@@ -3038,9 +2960,9 @@ void HTMLMediaElement::seekWithTolerance(const MediaTime& inTime, const MediaTim
     // 3 - If the element's seeking IDL attribute is true, then another instance of this algorithm is
     // already running. Abort that other instance of the algorithm without waiting for the step that
     // it is running to complete.
-    if (m_seekTaskQueue.hasPendingTasks()) {
+    if (m_seekTaskQueue.hasPendingTask()) {
         INFO_LOG(LOGIDENTIFIER, "cancelling pending seeks");
-        m_seekTaskQueue.cancelAllTasks();
+        m_seekTaskQueue.cancelTask();
         if (m_pendingSeek) {
             now = m_pendingSeek->now;
             m_pendingSeek = nullptr;
@@ -3062,7 +2984,7 @@ void HTMLMediaElement::seekWithTolerance(const MediaTime& inTime, const MediaTim
     m_pendingSeek = std::make_unique<PendingSeek>(now, time, negativeTolerance, positiveTolerance);
     if (fromDOM) {
         INFO_LOG(LOGIDENTIFIER, "enqueuing seek from ", now, " to ", time);
-        m_seekTaskQueue.enqueueTask(std::bind(&HTMLMediaElement::seekTask, this));
+        m_seekTaskQueue.scheduleTask(std::bind(&HTMLMediaElement::seekTask, this));
     } else
         seekTask();
 
@@ -3819,7 +3741,7 @@ void HTMLMediaElement::setMuted(bool muted)
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-        updateMediaState(UpdateState::Asynchronously);
+        scheduleUpdateMediaState();
 #endif
         m_mediaSession->canProduceAudioChanged();
     }
@@ -4067,7 +3989,7 @@ void HTMLMediaElement::mediaPlayerDidAddTextTrack(InbandTextTrackPrivate& track)
     // 7. Set the new text track's mode to the mode consistent with the user's preferences and the requirements of
     // the relevant specification for the data.
     //  - This will happen in configureTextTracks()
-    scheduleDelayedAction(ConfigureTextTracks);
+    scheduleConfigureTextTracks();
 
     // 8. Add the new text track to the media element's list of text tracks.
     // 9. Fire an event with the name addtrack, that does not bubble and is not cancelable, and that uses the TrackEvent
@@ -4239,7 +4161,7 @@ void HTMLMediaElement::didAddTextTrack(HTMLTrackElement& trackElement)
     // Do not schedule the track loading until parsing finishes so we don't start before all tracks
     // in the markup have been added.
     if (!m_parsingInProgress)
-        scheduleDelayedAction(ConfigureTextTracks);
+        scheduleConfigureTextTracks();
 
     if (hasMediaControls())
         mediaControls()->closedCaptionTracksChanged();
@@ -4541,6 +4463,20 @@ void HTMLMediaElement::setSelectedTextTrack(TextTrack* trackToSelect)
     }
 
     captionPreferences.setCaptionDisplayMode(displayMode);
+}
+
+void HTMLMediaElement::scheduleConfigureTextTracks()
+{
+    if (m_configureTextTracksTask.hasPendingTask())
+        return;
+
+    auto logSiteIdentifier = LOGIDENTIFIER;
+    ALWAYS_LOG(logSiteIdentifier, "task scheduled");
+    m_configureTextTracksTask.scheduleTask([this, logSiteIdentifier] {
+        UNUSED_PARAM(logSiteIdentifier);
+        ALWAYS_LOG(logSiteIdentifier, "- lambda(), task fired");
+        configureTextTracks();
+    });
 }
 
 void HTMLMediaElement::configureTextTracks()
@@ -4883,7 +4819,7 @@ void HTMLMediaElement::mediaPlayerTimeChanged(MediaPlayer*)
         m_sentEndEvent = false;
     }
 
-    updatePlayState(UpdateState::Asynchronously);
+    scheduleUpdatePlayState();
     endProcessingMediaPlayerCallback();
 }
 
@@ -5082,6 +5018,20 @@ GraphicsDeviceAdapter* HTMLMediaElement::mediaPlayerGraphicsDeviceAdapter(const 
 
 #endif
 
+void HTMLMediaElement::scheduleMediaEngineWasUpdated()
+{
+    if (m_mediaEngineUpdatedTask.hasPendingTask())
+        return;
+
+    auto logSiteIdentifier = LOGIDENTIFIER;
+    ALWAYS_LOG(logSiteIdentifier, "task scheduled");
+    m_mediaEngineUpdatedTask.scheduleTask([this, logSiteIdentifier] {
+        UNUSED_PARAM(logSiteIdentifier);
+        ALWAYS_LOG(logSiteIdentifier, "- lambda(), task fired");
+        mediaEngineWasUpdated();
+    });
+}
+
 void HTMLMediaElement::mediaEngineWasUpdated()
 {
     INFO_LOG(LOGIDENTIFIER);
@@ -5113,7 +5063,7 @@ void HTMLMediaElement::mediaEngineWasUpdated()
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    updateMediaState(UpdateState::Asynchronously);
+    scheduleUpdateMediaState();
 #endif
 }
 
@@ -5127,7 +5077,7 @@ void HTMLMediaElement::mediaPlayerEngineUpdated(MediaPlayer*)
 
     m_havePreparedToPlay = false;
 
-    scheduleDelayedAction(MediaEngineUpdated);
+    scheduleMediaEngineWasUpdated();
 }
 
 void HTMLMediaElement::mediaPlayerFirstVideoFrameAvailable(MediaPlayer*)
@@ -5373,13 +5323,22 @@ void HTMLMediaElement::updateVolume()
 #endif
 }
 
-void HTMLMediaElement::updatePlayState(UpdateState updateState)
+void HTMLMediaElement::scheduleUpdatePlayState()
 {
-    if (updateState == UpdateState::Asynchronously) {
-        scheduleDelayedAction(UpdatePlayState);
+    if (m_updatePlayStateTask.hasPendingTask())
         return;
-    }
 
+    auto logSiteIdentifier = LOGIDENTIFIER;
+    ALWAYS_LOG(logSiteIdentifier, "task scheduled");
+    m_updatePlayStateTask.scheduleTask([this, logSiteIdentifier] {
+        UNUSED_PARAM(logSiteIdentifier);
+        ALWAYS_LOG(logSiteIdentifier, "- lambda(), task fired");
+        updatePlayState();
+    });
+}
+
+void HTMLMediaElement::updatePlayState()
+{
     if (!m_player)
         return;
 
@@ -5484,20 +5443,29 @@ void HTMLMediaElement::setPlaying(bool playing)
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    updateMediaState(UpdateState::Asynchronously);
+    scheduleUpdateMediaState();
 #endif
 }
 
 void HTMLMediaElement::setPausedInternal(bool b)
 {
     m_pausedInternal = b;
-    updatePlayState(UpdateState::Asynchronously);
+    scheduleUpdatePlayState();
 }
 
 void HTMLMediaElement::stopPeriodicTimers()
 {
     m_progressEventTimer.stop();
     m_playbackProgressTimer.stop();
+}
+
+void HTMLMediaElement::cancelPendingTasks()
+{
+    m_configureTextTracksTask.cancelTask();
+    m_checkPlaybackTargetCompatablityTask.cancelTask();
+    m_updateMediaStateTask.cancelTask();
+    m_mediaEngineUpdatedTask.cancelTask();
+    m_updatePlayStateTask.cancelTask();
 }
 
 void HTMLMediaElement::userCancelledLoad()
@@ -5516,7 +5484,7 @@ void HTMLMediaElement::userCancelledLoad()
     // If the media data fetching process is aborted by the user:
 
     // 1 - The user agent should cancel the fetching process.
-    clearMediaPlayer(EveryDelayedAction);
+    clearMediaPlayer();
 
     // 2 - Set the error attribute to a new MediaError object whose code attribute is set to MEDIA_ERR_ABORTED.
     m_error = MediaError::create(MediaError::MEDIA_ERR_ABORTED);
@@ -5558,10 +5526,8 @@ void HTMLMediaElement::userCancelledLoad()
 #endif
 }
 
-void HTMLMediaElement::clearMediaPlayer(DelayedActionType flags)
+void HTMLMediaElement::clearMediaPlayer()
 {
-    INFO_LOG(LOGIDENTIFIER, "flags = ", actionName(flags));
-
 #if ENABLE(MEDIA_STREAM)
     if (!m_settingMediaStreamSrcObject)
         m_mediaStreamSrcObject = nullptr;
@@ -5605,9 +5571,8 @@ void HTMLMediaElement::clearMediaPlayer(DelayedActionType flags)
     schedulePlaybackControlsManagerUpdate();
 
     stopPeriodicTimers();
-    m_pendingActionTimer.stop();
+    cancelPendingTasks();
 
-    clearFlags(m_pendingActionFlags, flags);
     m_loadState = WaitingForSource;
 
 #if ENABLE(VIDEO_TRACK)
@@ -5661,17 +5626,31 @@ void HTMLMediaElement::stopWithoutDestroyingMediaPlayer()
     updateSleepDisabling();
 }
 
-void HTMLMediaElement::contextDestroyed()
+void HTMLMediaElement::closeTaskQueues()
 {
+    m_configureTextTracksTask.close();
+    m_checkPlaybackTargetCompatablityTask.close();
+    m_updateMediaStateTask.close();
+    m_mediaEngineUpdatedTask.close();
+    m_updatePlayStateTask.close();
+    m_resumeTaskQueue.close();
+    m_seekTaskQueue.close();
+    m_playbackControlsManagerBehaviorRestrictionsQueue.close();
     m_seekTaskQueue.close();
     m_resumeTaskQueue.close();
-    m_shadowDOMTaskQueue.close();
     m_promiseTaskQueue.close();
     m_pauseAfterDetachedTaskQueue.close();
+    m_resourceSelectionTaskQueue.close();
+    m_visibilityChangeTaskQueue.close();
 #if ENABLE(ENCRYPTED_MEDIA)
     m_encryptedMediaQueue.close();
 #endif
+    m_asyncEventQueue.close();
+}
 
+void HTMLMediaElement::contextDestroyed()
+{
+    closeTaskQueues();
     m_pendingPlayPromises.clear();
 
     ActiveDOMObject::contextDestroyed();
@@ -5683,17 +5662,13 @@ void HTMLMediaElement::stop()
 
     Ref<HTMLMediaElement> protectedThis(*this);
     stopWithoutDestroyingMediaPlayer();
-
-    m_asyncEventQueue.close();
-    m_promiseTaskQueue.close();
-    m_resourceSelectionTaskQueue.close();
-    m_resumeTaskQueue.cancelAllTasks();
+    closeTaskQueues();
 
     // Once an active DOM object has been stopped it can not be restarted, so we can deallocate
     // the media player now. Note that userCancelledLoad will already called clearMediaPlayer
     // if the media was not fully loaded, but we need the same cleanup if the file was completely
     // loaded and calling it again won't cause any problems.
-    clearMediaPlayer(EveryDelayedAction);
+    clearMediaPlayer();
 
     m_mediaSession->stopSession();
 }
@@ -5703,7 +5678,7 @@ void HTMLMediaElement::suspend(ReasonForSuspension reason)
     INFO_LOG(LOGIDENTIFIER);
     Ref<HTMLMediaElement> protectedThis(*this);
 
-    m_resumeTaskQueue.cancelAllTasks();
+    m_resumeTaskQueue.cancelTask();
 
     switch (reason) {
     case ReasonForSuspension::PageCache:
@@ -5747,13 +5722,13 @@ void HTMLMediaElement::resume()
 
     m_mediaSession->removeBehaviorRestriction(MediaElementSession::RequirePageConsentToResumeMedia);
 
-    if (m_error && m_error->code() == MediaError::MEDIA_ERR_ABORTED && !m_resumeTaskQueue.hasPendingTasks()) {
+    if (m_error && m_error->code() == MediaError::MEDIA_ERR_ABORTED && !m_resumeTaskQueue.hasPendingTask()) {
         // Restart the load if it was aborted in the middle by moving the document to the page cache.
         // m_error is only left at MEDIA_ERR_ABORTED when the document becomes inactive (it is set to
         //  MEDIA_ERR_ABORTED while the abortEvent is being sent, but cleared immediately afterwards).
         // This behavior is not specified but it seems like a sensible thing to do.
         // As it is not safe to immedately start loading now, let's schedule a load.
-        m_resumeTaskQueue.enqueueTask(std::bind(&HTMLMediaElement::prepareForLoad, this));
+        m_resumeTaskQueue.scheduleTask(std::bind(&HTMLMediaElement::prepareForLoad, this));
     }
 
     updateRenderer();
@@ -5839,7 +5814,7 @@ void HTMLMediaElement::mediaPlayerCurrentPlaybackTargetIsWirelessChanged(MediaPl
     scheduleEvent(eventNames().webkitcurrentplaybacktargetiswirelesschangedEvent);
     m_mediaSession->isPlayingToWirelessPlaybackTargetChanged(m_isPlayingToWirelessTarget);
     m_mediaSession->canProduceAudioChanged();
-    updateMediaState(UpdateState::Asynchronously);
+    scheduleUpdateMediaState();
     updateSleepDisabling();
 }
 
@@ -5847,7 +5822,7 @@ void HTMLMediaElement::dispatchEvent(Event& event)
 {
     if (event.type() == eventNames().webkitcurrentplaybacktargetiswirelesschangedEvent) {
         m_failedToPlayToWirelessTarget = false;
-        scheduleDelayedAction(CheckPlaybackTargetCompatablity);
+        scheduleCheckPlaybackTargetCompatability();
     }
 
     DEBUG_LOG(LOGIDENTIFIER, "dispatching '", event.type(), "'");
@@ -5888,7 +5863,7 @@ bool HTMLMediaElement::removeEventListener(const AtomicString& eventType, EventL
     if (didRemoveLastAvailabilityChangedListener) {
         m_hasPlaybackTargetAvailabilityListeners = false;
         m_mediaSession->setHasPlaybackTargetAvailabilityListeners(false);
-        updateMediaState(UpdateState::Asynchronously);
+        scheduleUpdateMediaState();
     }
 
     return true;
@@ -5901,7 +5876,7 @@ void HTMLMediaElement::enqueuePlaybackTargetAvailabilityChangedEvent()
     auto event = WebKitPlaybackTargetAvailabilityEvent::create(eventNames().webkitplaybacktargetavailabilitychangedEvent, hasTargets);
     event->setTarget(this);
     m_asyncEventQueue.enqueueEvent(WTFMove(event));
-    updateMediaState(UpdateState::Asynchronously);
+    scheduleUpdateMediaState();
 }
 
 void HTMLMediaElement::setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&& device)
@@ -5929,7 +5904,7 @@ void HTMLMediaElement::setPlayingOnSecondScreen(bool value)
     m_playingOnSecondScreen = value;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    updateMediaState(UpdateState::Asynchronously);
+    scheduleUpdateMediaState();
 #endif
 }
 
@@ -6119,7 +6094,7 @@ void HTMLMediaElement::didBecomeFullscreenElement()
     m_waitingToEnterFullscreen = false;
     if (hasMediaControls())
         mediaControls()->enteredFullscreen();
-    updatePlayState(UpdateState::Asynchronously);
+    scheduleUpdatePlayState();
 }
 
 void HTMLMediaElement::willStopBeingFullscreenElement()
@@ -6589,11 +6564,11 @@ void HTMLMediaElement::markCaptionAndSubtitleTracksAsUnconfigured(ReconfigureMod
     }
 
     m_processingPreferenceChange = true;
-    clearFlags(m_pendingActionFlags, ConfigureTextTracks);
+    m_configureTextTracksTask.cancelTask();
     if (mode == Immediately)
         configureTextTracks();
     else
-        scheduleDelayedAction(ConfigureTextTracks);
+        scheduleConfigureTextTracks();
 }
 
 #endif
@@ -7663,13 +7638,22 @@ bool HTMLMediaElement::processingUserGestureForMedia() const
 }
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
-void HTMLMediaElement::updateMediaState(UpdateState updateState)
+void HTMLMediaElement::scheduleUpdateMediaState()
 {
-    if (updateState == UpdateState::Asynchronously) {
-        scheduleDelayedAction(CheckMediaState);
+    if (m_updateMediaStateTask.hasPendingTask())
         return;
-    }
 
+    auto logSiteIdentifier = LOGIDENTIFIER;
+    ALWAYS_LOG(logSiteIdentifier, "task scheduled");
+    m_updateMediaStateTask.scheduleTask([this, logSiteIdentifier] {
+        UNUSED_PARAM(logSiteIdentifier);
+        ALWAYS_LOG(logSiteIdentifier, "- lambda(), task fired");
+        updateMediaState();
+    });
+}
+
+void HTMLMediaElement::updateMediaState()
+{
     MediaProducer::MediaStateFlags state = mediaState();
     if (m_mediaState == state)
         return;
@@ -7976,14 +7960,14 @@ void HTMLMediaElement::schedulePlaybackControlsManagerUpdate()
 
 void HTMLMediaElement::playbackControlsManagerBehaviorRestrictionsTimerFired()
 {
-    if (m_playbackControlsManagerBehaviorRestrictionsQueue.hasPendingTasks())
+    if (m_playbackControlsManagerBehaviorRestrictionsQueue.hasPendingTask())
         return;
 
     if (!m_mediaSession->hasBehaviorRestriction(MediaElementSession::RequireUserGestureToControlControlsManager))
         return;
 
     RefPtr<HTMLMediaElement> protectedThis(this);
-    m_playbackControlsManagerBehaviorRestrictionsQueue.enqueueTask([protectedThis] () {
+    m_playbackControlsManagerBehaviorRestrictionsQueue.scheduleTask([protectedThis] () {
         MediaElementSession* mediaElementSession = protectedThis->m_mediaSession.get();
         if (protectedThis->isPlaying() || mediaElementSession->state() == PlatformMediaSession::Autoplaying || mediaElementSession->state() == PlatformMediaSession::Playing)
             return;
