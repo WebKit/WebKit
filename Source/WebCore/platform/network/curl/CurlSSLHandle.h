@@ -103,7 +103,7 @@ private:
     };
 #endif
 
-    String getCACertPathEnv();
+    void platformInitialize();
 
     String m_cipherList;
     String m_signatureAlgorithmsList;

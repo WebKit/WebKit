@@ -24,6 +24,8 @@ list(APPEND WebCore_SOURCES
     platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp
     platform/graphics/win/SimpleFontDataCairoWin.cpp
 
+    platform/network/win/CurlSSLHandleWin.cpp
+
     platform/text/win/LocaleWin.cpp
 
     platform/win/DelayLoadedModulesEnumerator.cpp
