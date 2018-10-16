@@ -1,3 +1,18 @@
+2018-10-16  Alicia Boya García  <aboya@igalia.com>
+
+        [Media] Use nanoseconds as MaximumTimeScale
+        https://bugs.webkit.org/show_bug.cgi?id=190631
+
+        1e9 is a much more useful timescale than the previous one 2^31-1.
+        Unlike 2^31-1, which is a prime number, nanosecond scale is pretty
+        common among some formats like WebM and frameworks like GStreamer
+        where base 10 timescale is common... and it's those big timescales the
+        ones that are usually scaled up to MaximumTimeScale.
+
+        Reviewed by Jer Noble.
+
+        * wtf/MediaTime.cpp:
+
 2018-10-15  Keith Miller  <keith_miller@apple.com>
 
         Support arm64 CPUs with a 32-bit address space
