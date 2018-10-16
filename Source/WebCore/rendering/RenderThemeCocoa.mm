@@ -56,7 +56,7 @@ void RenderThemeCocoa::drawLineForDocumentMarker(const RenderText& renderer, Gra
     if (context.paintingDisabled())
         return;
 
-    auto circleColor = colorForMarkerLineStyle(style, renderer.page().useSystemAppearance() && renderer.page().useDarkAppearance());
+    auto circleColor = colorForMarkerLineStyle(style, renderer.document().useDarkAppearance());
 
     // Center the underline and ensure we only draw entire dots.
     FloatPoint offsetPoint = origin;

@@ -572,8 +572,8 @@ public:
 
     float deviceScaleFactor() const;
 
-    bool useSystemAppearance() const;
-    bool useDarkAppearance() const;
+    WEBCORE_EXPORT bool useSystemAppearance() const;
+    WEBCORE_EXPORT bool useDarkAppearance() const;
 
     OptionSet<StyleColor::Options> styleColorOptions() const;
 
@@ -894,6 +894,15 @@ public:
     void processDisabledAdaptations(const String& adaptations);
     void updateViewportArguments();
     void processReferrerPolicy(const String& policy, ReferrerPolicySource);
+
+#if ENABLE(DARK_MODE_CSS)
+    enum class ColorSchemes : uint8_t {
+        Light = 1 << 0,
+        Dark = 1 << 1
+    };
+
+    void processSupportedColorSchemes(const String& colorSchemes);
+#endif
 
     // Returns the owning element in the parent document.
     // Returns 0 if this is the top level document.
@@ -1750,6 +1759,10 @@ private:
 
     std::unique_ptr<SVGDocumentExtensions> m_svgExtensions;
     HashSet<SVGUseElement*> m_svgUseElements;
+
+#if ENABLE(DARK_MODE_CSS)
+    OptionSet<ColorSchemes> m_supportedColorSchemes { ColorSchemes::Light };
+#endif
 
 #if ENABLE(DASHBOARD_SUPPORT)
     Vector<AnnotatedRegionValue> m_annotatedRegions;

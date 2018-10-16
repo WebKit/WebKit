@@ -556,11 +556,8 @@ static NSString *linkDestinationName(PDFDocument *document, PDFDestination *dest
 
     ASSERT(_printOperation == [NSPrintOperation currentOperation]);
 
-    auto* page = _webFrame->page();
-    if (!page)
-        return;
-
-    WebCore::LocalDefaultSystemAppearance localAppearance(page->useSystemAppearance(), page->useDarkAppearance());
+    // Always use the light appearance when printing.
+    WebCore::LocalDefaultSystemAppearance localAppearance(false);
 
     if ([self _isPrintingPreview]) {
         [self _drawPreview:nsRect];

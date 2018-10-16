@@ -1,0 +1,23 @@
+
+PASS Element colors are correct in light color scheme with only light supported color scheme 
+PASS Dark color scheme enabled 
+PASS Element colors are correct in dark color scheme with only light supported color scheme 
+PASS Light color scheme enabled 
+PASS Supported color schemes changed to light and dark 
+PASS Element colors are correct in light color scheme with light and dark supported color scheme 
+PASS Dark color scheme enabled 
+FAIL Element colors are correct in dark color scheme with light and dark supported color scheme assert_equals: expected "rgb(255, 255, 255)" but got "rgb(0, 0, 0)"
+PASS Light color scheme enabled 
+PASS Supported color schemes changed to dark 
+FAIL Element colors are correct in light color scheme with only dark supported color scheme assert_equals: expected "rgb(255, 255, 255)" but got "rgb(0, 0, 0)"
+PASS Dark color scheme enabled 
+FAIL Element colors are correct in dark color scheme with only dark supported color scheme assert_equals: expected "rgb(255, 255, 255)" but got "rgb(0, 0, 0)"
+PASS Supported color schemes changed to light and a bogus value 
+PASS Element colors are correct in dark color scheme with only light supported color scheme 
+PASS Supported color schemes changed to empty value 
+PASS Element colors are correct in dark color scheme with implicit light supported color scheme 
+PASS Supported color schemes changed to light and dark 
+FAIL Element colors are correct in dark color scheme with light and dark supported color scheme assert_equals: expected "rgb(255, 255, 255)" but got "rgb(0, 0, 0)"
+PASS Supported color schemes changed to a bogus value and dark 
+FAIL Element colors are correct in dark color scheme with dark supported color scheme assert_equals: expected "rgb(255, 255, 255)" but got "rgb(0, 0, 0)"
+

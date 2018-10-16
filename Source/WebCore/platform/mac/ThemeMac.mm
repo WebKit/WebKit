@@ -907,7 +907,9 @@ void ThemeMac::inflateControlPaintRect(ControlPart part, const ControlStates& st
 
 void ThemeMac::paint(ControlPart part, ControlStates& states, GraphicsContext& context, const FloatRect& zoomedRect, float zoomFactor, ScrollView* scrollView, float deviceScaleFactor, float pageScaleFactor, bool useSystemAppearance, bool useDarkAppearance)
 {
-    LocalDefaultSystemAppearance localAppearance(useSystemAppearance, useDarkAppearance);
+    UNUSED_PARAM(useSystemAppearance);
+
+    LocalDefaultSystemAppearance localAppearance(useDarkAppearance);
 
     switch (part) {
         case CheckboxPart:

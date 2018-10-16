@@ -132,8 +132,7 @@ static FragmentAndResources createFragment(Frame& frame, NSAttributedString *str
     Document& document = *frame.document();
 
 #if PLATFORM(MAC)
-    auto* page = frame.page();
-    LocalDefaultSystemAppearance localAppearance(page->useSystemAppearance(), page->useDarkAppearance());
+    LocalDefaultSystemAppearance localAppearance(document.useDarkAppearance());
 #endif
 
     NSArray *subresources = nil;

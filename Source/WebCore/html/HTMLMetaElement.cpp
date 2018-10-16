@@ -91,6 +91,10 @@ void HTMLMetaElement::process()
         document().processViewport(contentValue, ViewportArguments::ViewportMeta);
     else if (RuntimeEnabledFeatures::sharedFeatures().disabledAdaptationsMetaTagEnabled() && equalLettersIgnoringASCIICase(name(), "disabled-adaptations"))
         document().processDisabledAdaptations(contentValue);
+#if ENABLE(DARK_MODE_CSS)
+    else if (RuntimeEnabledFeatures::sharedFeatures().darkModeCSSEnabled() && equalLettersIgnoringASCIICase(name(), "supported-color-schemes"))
+        document().processSupportedColorSchemes(contentValue);
+#endif
 #if PLATFORM(IOS)
     else if (equalLettersIgnoringASCIICase(name(), "format-detection"))
         document().processFormatDetection(contentValue);

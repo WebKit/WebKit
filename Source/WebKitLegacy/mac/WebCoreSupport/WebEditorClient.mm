@@ -478,8 +478,7 @@ static NSDictionary *attributesForAttributedStringConversion()
 void _WebCreateFragment(Document& document, NSAttributedString *string, FragmentAndResources& result)
 {
 #if PLATFORM(MAC)
-    auto* page = document.page();
-    LocalDefaultSystemAppearance localAppearance(page->useSystemAppearance(), page->useDarkAppearance());
+    LocalDefaultSystemAppearance localAppearance(document.useDarkAppearance());
 #endif
 
     static NSDictionary *documentAttributes = [attributesForAttributedStringConversion() retain];

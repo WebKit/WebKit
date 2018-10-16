@@ -3556,6 +3556,54 @@ void Document::updateViewportArguments()
     }
 }
 
+#if ENABLE(DARK_MODE_CSS)
+static bool isColorSchemeSeparator(UChar character)
+{
+    return isASCIISpace(character) || character == ',';
+}
+
+static void processColorSchemes(StringView colorSchemes, const WTF::Function<void(StringView key)>& callback)
+{
+    unsigned length = colorSchemes.length();
+    for (unsigned i = 0; i < length; ) {
+        // Skip to first non-separator.
+        while (i < length && isColorSchemeSeparator(colorSchemes[i]))
+            ++i;
+        unsigned keyBegin = i;
+
+        // Skip to first separator.
+        while (i < length && !isColorSchemeSeparator(colorSchemes[i]))
+            ++i;
+        unsigned keyEnd = i;
+
+        if (keyBegin == keyEnd)
+            continue;
+
+        callback(colorSchemes.substring(keyBegin, keyEnd - keyBegin));
+    }
+}
+
+void Document::processSupportedColorSchemes(const String& colorSchemes)
+{
+    OptionSet<ColorSchemes> supportedColorSchemes;
+
+    processColorSchemes(colorSchemes, [&supportedColorSchemes](StringView key) {
+        if (equalLettersIgnoringASCIICase(key, "light"))
+            supportedColorSchemes.add(ColorSchemes::Light);
+        else if (equalLettersIgnoringASCIICase(key, "dark"))
+            supportedColorSchemes.add(ColorSchemes::Dark);
+    });
+
+    if (supportedColorSchemes.isEmpty())
+        supportedColorSchemes.add(ColorSchemes::Light);
+
+    m_supportedColorSchemes = supportedColorSchemes;
+
+    if (auto* page = this->page())
+        page->updateStyleAfterChangeInEnvironment();
+}
+#endif
+
 #if PLATFORM(IOS)
 
 void Document::processFormatDetection(const String& features)
@@ -7211,10 +7259,26 @@ bool Document::useSystemAppearance() const
 
 bool Document::useDarkAppearance() const
 {
-    bool useDarkAppearance = false;
+#if ENABLE(DARK_MODE_CSS)
+    if (m_supportedColorSchemes.contains(ColorSchemes::Dark) && !m_supportedColorSchemes.contains(ColorSchemes::Light))
+        return true;
+#endif
+
+    bool pageUsesDarkAppearance = false;
     if (Page* documentPage = page())
-        useDarkAppearance = documentPage->useDarkAppearance();
-    return useDarkAppearance;
+        pageUsesDarkAppearance = documentPage->useDarkAppearance();
+
+    if (useSystemAppearance())
+        return pageUsesDarkAppearance;
+
+#if ENABLE(DARK_MODE_CSS)
+    if (m_supportedColorSchemes.contains(ColorSchemes::Dark))
+        return pageUsesDarkAppearance;
+
+    ASSERT(m_supportedColorSchemes.contains(ColorSchemes::Light));
+#endif
+
+    return false;
 }
 
 OptionSet<StyleColor::Options> Document::styleColorOptions() const

@@ -181,7 +181,7 @@ void InspectorOverlay::paint(GraphicsContext& context)
         return;
 
 #if PLATFORM(MAC)
-    LocalDefaultSystemAppearance localAppearance(m_page.useSystemAppearance(), m_page.useDarkAppearance());
+    LocalDefaultSystemAppearance localAppearance(m_page.mainFrame().document()->useDarkAppearance());
 #endif
 
     GraphicsContextStateSaver stateSaver(context);

@@ -40,7 +40,7 @@ class LocalDefaultSystemAppearance {
     WTF_MAKE_NONCOPYABLE(LocalDefaultSystemAppearance);
 
 public:
-    WEBCORE_EXPORT LocalDefaultSystemAppearance(bool useSystemAppearance, bool useDarkAppearance);
+    WEBCORE_EXPORT LocalDefaultSystemAppearance(bool useDarkAppearance);
     WEBCORE_EXPORT ~LocalDefaultSystemAppearance();
 
     bool usingDarkAppearance() const

@@ -1,3 +1,63 @@
+2018-10-16  Timothy Hatcher  <timothy@apple.com>
+
+        Add <meta name="supported-color-schemes"> to control what color schemes the page supports
+        https://bugs.webkit.org/show_bug.cgi?id=190526
+        rdar://problem/45230140
+
+        Reviewed by Dean Jackson.
+
+        Test: css-dark-mode/supported-color-schemes.html
+
+        * dom/Document.cpp:
+        (WebCore::isColorSchemeSeparator): Added.
+        (WebCore::processColorSchemes): Added.
+        (WebCore::Document::processSupportedColorSchemes): Added.
+        (WebCore::Document::useDarkAppearance const): Take system appearance and document's
+        suppoerted color shcemes into account.
+        * dom/Document.h:
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::createFragment): Update use of LocalDefaultSystemAppearance.
+        * html/HTMLMetaElement.cpp:
+        (WebCore::HTMLMetaElement::process): Added supported-color-schemes behind runtime feature check.
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::InspectorOverlay::paint): Update use of LocalDefaultSystemAppearance.
+        * platform/mac/DragImageMac.mm:
+        (WebCore::createDragImageForLink): Update use of LocalDefaultSystemAppearance.
+        * platform/mac/LocalDefaultSystemAppearance.h:
+        * platform/mac/LocalDefaultSystemAppearance.mm:
+        (WebCore::LocalDefaultSystemAppearance::LocalDefaultSystemAppearance):
+        Drop the need for useSystemAppearance. This is accounted for in Document::useDarkAppearance.
+        * platform/mac/ThemeMac.mm:
+        (WebCore::ThemeMac::paint): Update use of LocalDefaultSystemAppearance.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintContents): Update use of LocalDefaultSystemAppearance.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::paintContents): Update use of LocalDefaultSystemAppearance.
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::paint): Use document instead of page.
+        * rendering/RenderThemeCocoa.mm:
+        (WebCore::RenderThemeCocoa::drawLineForDocumentMarker): Update use of LocalDefaultSystemAppearance.
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::documentViewFor const): Update use of LocalDefaultSystemAppearance.
+        (WebCore::RenderThemeMac::platformActiveSelectionBackgroundColor const): Ditto.
+        (WebCore::RenderThemeMac::platformInactiveSelectionBackgroundColor const): Ditto.
+        (WebCore::RenderThemeMac::transformSelectionBackgroundColor const): Ditto.
+        (WebCore::RenderThemeMac::supportsSelectionForegroundColors const): Ditto.
+        (WebCore::RenderThemeMac::platformActiveSelectionForegroundColor const): Ditto.
+        (WebCore::RenderThemeMac::platformInactiveSelectionForegroundColor const): Ditto.
+        (WebCore::RenderThemeMac::platformActiveListBoxSelectionBackgroundColor const): Ditto.
+        (WebCore::RenderThemeMac::platformInactiveListBoxSelectionBackgroundColor const): Ditto.
+        (WebCore::RenderThemeMac::platformActiveListBoxSelectionForegroundColor const): Ditto.
+        (WebCore::RenderThemeMac::platformInactiveListBoxSelectionForegroundColor const): Ditto.
+        (WebCore::RenderThemeMac::platformActiveTextSearchHighlightColor const): Ditto.
+        (WebCore::RenderThemeMac::colorCache const): Ditto.
+        (WebCore::RenderThemeMac::systemColor const): Ditto.
+        (WebCore::RenderThemeMac::paintCellAndSetFocusedElementNeedsRepaintIfNecessary): Ditto.
+        (WebCore::RenderThemeMac::paintSliderThumb): Ditto.
+        (WebCore::RenderThemeMac::usingDarkAppearance const): No need to limit to macOS here.
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::draw): Update use of LocalDefaultSystemAppearance.
+
 2018-10-16  Rob Buis  <rbuis@igalia.com>
 
         Remove superfluous VIDEO build guard
