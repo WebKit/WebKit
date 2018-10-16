@@ -67,10 +67,8 @@ typedef WebAccessibilityObjectWrapper AccessibilityObjectWrapper;
 #elif PLATFORM(GTK)
 typedef struct _AtkObject AtkObject;
 typedef struct _AtkObject AccessibilityObjectWrapper;
-#elif PLATFORM(WPE)
-class AccessibilityObjectWrapper : public RefCounted<AccessibilityObjectWrapper> { };
 #else
-class AccessibilityObjectWrapper;
+class AccessibilityObjectWrapper : public RefCounted<AccessibilityObjectWrapper> { };
 #endif
 
 namespace WebCore {
@@ -1197,7 +1195,7 @@ protected:
     COMPtr<AccessibilityObjectWrapper> m_wrapper;
 #elif PLATFORM(GTK)
     AtkObject* m_wrapper { nullptr };
-#elif PLATFORM(WPE)
+#else
     RefPtr<AccessibilityObjectWrapper> m_wrapper;
 #endif
 };

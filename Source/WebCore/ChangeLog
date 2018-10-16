@@ -1,3 +1,31 @@
+2018-10-15  Don Olmstead  <don.olmstead@sony.com>
+
+        Add stub implementation for accessibility objects
+        https://bugs.webkit.org/show_bug.cgi?id=190608
+
+        Reviewed by Michael Catanzaro.
+
+        No new tests. No change in behavior.
+
+        Add default implementation to associated cpp file. Removes the WPE
+        specific stubs.
+
+        * SourcesWPE.txt:
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::detachWrapper):
+        (WebCore::AXObjectCache::attachWrapper):
+        (WebCore::AXObjectCache::postPlatformNotification):
+        (WebCore::AXObjectCache::nodeTextChangePlatformNotification):
+        (WebCore::AXObjectCache::frameLoadingEventPlatformNotification):
+        (WebCore::AXObjectCache::platformHandleFocusedUIElementChanged):
+        (WebCore::AXObjectCache::handleScrolledToAnchor):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::accessibilityIgnoreAttachment const):
+        (WebCore::AccessibilityObject::accessibilityPlatformIncludesObject const):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/wpe/AXObjectCacheWPE.cpp: Removed.
+        * accessibility/wpe/AccessibilityObjectWPE.cpp: Removed.
+
 2018-10-15  Alex Christensen  <achristensen@webkit.org>
 
         Modernize BackForwardClient.h

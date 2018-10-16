@@ -83,6 +83,10 @@
 #include <wtf/text/WTFString.h>
 #include <wtf/unicode/CharacterNames.h>
 
+#if HAVE(ACCESSIBILITY) && !(PLATFORM(IOS) || PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(WIN))
+#include "NotImplemented.h"
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -3624,5 +3628,21 @@ void AccessibilityObject::setIsIgnoredFromParentDataForChild(AccessibilityObject
     
     child->setIsIgnoredFromParentData(result);
 }
+
+#if HAVE(ACCESSIBILITY) && !(PLATFORM(IOS) || PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(WIN))
+
+bool AccessibilityObject::accessibilityIgnoreAttachment() const
+{
+    notImplemented();
+    return false;
+}
+
+AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesObject() const
+{
+    notImplemented();
+    return AccessibilityObjectInclusion::DefaultBehavior;
+}
+
+#endif
 
 } // namespace WebCore
