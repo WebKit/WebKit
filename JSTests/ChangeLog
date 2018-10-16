@@ -1,3 +1,17 @@
+2018-10-16  Dominik Infuehr  <dinfuehr@igalia.com>
+
+        [JSC] stress/array-prototype-concat-of-long-spliced-arrays2.js times out on arm and mips
+        https://bugs.webkit.org/show_bug.cgi?id=190611
+
+        Reviewed by Saam Barati.
+
+        Reduce array length just like in array-prototype-concat-of-long-spliced-arrays.js
+        to improve test runtime. On ARM/MIPS this test even timed out when running all
+        tests.
+
+        * stress/array-prototype-concat-of-long-spliced-arrays2.js:
+        (test):
+
 2018-10-15  Guillaume Emont  <guijemont@igalia.com>
 
         Skip stress/array-prototype-concat-of-long-spliced-arrays2.js on arm and mips/linux
