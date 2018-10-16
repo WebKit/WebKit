@@ -75,7 +75,7 @@
 
 namespace WebCore {
 
-NavigatorBase::NavigatorBase(ScriptExecutionContext& context)
+NavigatorBase::NavigatorBase(ScriptExecutionContext* context)
 #if ENABLE(SERVICE_WORKER)
     : m_serviceWorkerContainer(makeUniqueRef<ServiceWorkerContainer>(context, *this))
 #endif

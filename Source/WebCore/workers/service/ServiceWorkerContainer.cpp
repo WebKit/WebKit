@@ -57,8 +57,8 @@
 
 namespace WebCore {
 
-ServiceWorkerContainer::ServiceWorkerContainer(ScriptExecutionContext& context, NavigatorBase& navigator)
-    : ActiveDOMObject(&context)
+ServiceWorkerContainer::ServiceWorkerContainer(ScriptExecutionContext* context, NavigatorBase& navigator)
+    : ActiveDOMObject(context)
     , m_navigator(navigator)
 {
     suspendIfNeeded();

@@ -52,7 +52,7 @@ class ServiceWorkerContainer final : public EventTargetWithInlineData, public Ac
     WTF_MAKE_NONCOPYABLE(ServiceWorkerContainer);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ServiceWorkerContainer(ScriptExecutionContext&, NavigatorBase&);
+    ServiceWorkerContainer(ScriptExecutionContext*, NavigatorBase&);
     ~ServiceWorkerContainer();
 
     ServiceWorker* controller() const;

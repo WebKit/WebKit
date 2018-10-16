@@ -33,7 +33,7 @@ class DOMPluginArray;
 
 class Navigator final : public NavigatorBase, public ScriptWrappable, public DOMWindowProperty, public Supplementable<Navigator> {
 public:
-    static Ref<Navigator> create(ScriptExecutionContext& context, DOMWindow& window) { return adoptRef(*new Navigator(context, window)); }
+    static Ref<Navigator> create(ScriptExecutionContext* context, DOMWindow& window) { return adoptRef(*new Navigator(context, window)); }
     virtual ~Navigator();
 
     String appVersion() const;
@@ -53,7 +53,7 @@ public:
     void getStorageUpdates();
 
 private:
-    explicit Navigator(ScriptExecutionContext&, DOMWindow&);
+    explicit Navigator(ScriptExecutionContext*, DOMWindow&);
 
     mutable RefPtr<DOMPluginArray> m_plugins;
     mutable RefPtr<DOMMimeTypeArray> m_mimeTypes;

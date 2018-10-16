@@ -1,3 +1,31 @@
+2018-10-16  Chris Dumez  <cdumez@apple.com>
+
+        window.navigator should not become null after the window loses its browsing context
+        https://bugs.webkit.org/show_bug.cgi?id=190595
+
+        Reviewed by Ryosuke Niwa.
+
+        window.navigator should not become null after the window loses its browsing context.
+        This does not match the HTML specification or the behavior of other browsers.
+
+        No new tests, updated existing tests.
+
+        * Modules/geolocation/NavigatorGeolocation.cpp:
+        (WebCore::NavigatorGeolocation::geolocation const):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::navigator):
+        * page/Navigator.cpp:
+        (WebCore::Navigator::Navigator):
+        * page/Navigator.h:
+        * page/NavigatorBase.cpp:
+        (WebCore::NavigatorBase::NavigatorBase):
+        * page/NavigatorBase.h:
+        * page/WorkerNavigator.cpp:
+        (WebCore::WorkerNavigator::WorkerNavigator):
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::ServiceWorkerContainer):
+        * workers/service/ServiceWorkerContainer.h:
+
 2018-10-16  Alex Christensen  <achristensen@webkit.org>
 
         Replace HistoryItem* with HistoryItem& where possible

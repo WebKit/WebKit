@@ -29,6 +29,7 @@ PASS w.toolbar threw exception SecurityError: Blocked a frame with origin "http:
 PASS w.applicationCache threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match..
 PASS w.visualViewport threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match..
 PASS w.styleMedia threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match..
+PASS w.navigator threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match..
 PASS w.foo threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match..
 PASS w.location.foo threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match..
 
@@ -58,6 +59,7 @@ PASS w.toolbar threw exception SecurityError: Blocked a frame with origin "http:
 PASS w.applicationCache threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match..
 PASS w.visualViewport threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match..
 PASS w.styleMedia threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match..
+PASS w.navigator threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match..
 PASS w.foo threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match..
 PASS w.location.foo threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match..
 PASS successfullyParsed is true

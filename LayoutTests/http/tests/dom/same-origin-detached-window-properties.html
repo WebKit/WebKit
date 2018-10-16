@@ -119,6 +119,24 @@ function validateWindow(_w)
     }
 
     try {
+    shouldBeTrue("!!w.navigator");
+    if (w.navigator) {
+        shouldBeEqualToString("w.navigator.appCodeName", "Mozilla");
+        shouldBeEqualToString("w.navigator.appName", "Netscape");
+        shouldBeEqualToString("w.navigator.appVersion", "");
+        shouldBeFalse("w.navigator.cookieEnabled");
+        shouldBeFalse("w.navigator.javaEnabled()");
+        shouldBeEqualToString("w.navigator.product", "Gecko");
+        shouldBeEqualToString("w.navigator.userAgent", "");
+        shouldBe("w.navigator.plugins.length", "0");
+        shouldBe("w.navigator.mimeTypes.length", "0");
+        shouldBeTrue("!!w.navigator.geolocation");
+    }
+    } catch (e) {
+        debug(e);
+    }
+
+    try {
     shouldBeUndefined("w.foo");
     shouldBeUndefined("w.location.foo");
     } catch (e) {

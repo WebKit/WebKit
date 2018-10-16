@@ -63,6 +63,17 @@ PASS w.visualViewport.scale is 1
 PASS !!w.styleMedia is true
 PASS w.styleMedia.type is ""
 PASS w.styleMedia.matchMedium('foo') is false
+PASS !!w.navigator is true
+PASS w.navigator.appCodeName is "Mozilla"
+PASS w.navigator.appName is "Netscape"
+PASS w.navigator.appVersion is ""
+PASS w.navigator.cookieEnabled is false
+PASS w.navigator.javaEnabled() is false
+PASS w.navigator.product is "Gecko"
+PASS w.navigator.userAgent is ""
+PASS w.navigator.plugins.length is 0
+PASS w.navigator.mimeTypes.length is 0
+PASS !!w.navigator.geolocation is true
 PASS w.foo is undefined.
 PASS w.location.foo is undefined.
 
@@ -126,6 +137,17 @@ PASS w.visualViewport.scale is 1
 PASS !!w.styleMedia is true
 PASS w.styleMedia.type is ""
 PASS w.styleMedia.matchMedium('foo') is false
+PASS !!w.navigator is true
+PASS w.navigator.appCodeName is "Mozilla"
+PASS w.navigator.appName is "Netscape"
+PASS w.navigator.appVersion is ""
+PASS w.navigator.cookieEnabled is false
+PASS w.navigator.javaEnabled() is false
+PASS w.navigator.product is "Gecko"
+PASS w.navigator.userAgent is ""
+PASS w.navigator.plugins.length is 0
+PASS w.navigator.mimeTypes.length is 0
+PASS !!w.navigator.geolocation is true
 PASS w.foo is undefined.
 PASS w.location.foo is undefined.
 PASS successfullyParsed is true

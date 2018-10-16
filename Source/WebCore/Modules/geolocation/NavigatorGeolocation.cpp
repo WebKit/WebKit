@@ -26,6 +26,7 @@
 
 #include "NavigatorGeolocation.h"
 
+#include "DOMWindow.h"
 #include "Document.h"
 #include "Frame.h"
 #include "Geolocation.h"
@@ -71,8 +72,8 @@ Geolocation* NavigatorGeolocation::geolocation(Navigator& navigator)
 
 Geolocation* NavigatorGeolocation::geolocation() const
 {
-    if (!m_geolocation && frame())
-        m_geolocation = Geolocation::create(frame()->document());
+    if (!m_geolocation)
+        m_geolocation = Geolocation::create(window() ? window()->document() : nullptr);
     return m_geolocation.get();
 }
 

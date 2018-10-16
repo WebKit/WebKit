@@ -13,6 +13,7 @@ onload = function()
     shouldBeTrue("!!detachedWindow.history");
     shouldBeTrue("!!detachedWindow.screen");
     shouldBeTrue("!!detachedWindow.location");
+    shouldBeTrue("!!detachedWindow.navigator");
     shouldBeTrue("detachedWindow.closed");
     shouldBeNull("detachedWindow.top");
     shouldBeNull("detachedWindow.opener");
@@ -24,7 +25,6 @@ onload = function()
     shouldBeNull("detachedWindow.self");
 
     // Chrome returns undefined but Firefox has a valid object.
-    shouldBeTrue("!detachedWindow.navigator");
     shouldBeTrue("!detachedWindow.localStorage");
     shouldBeTrue("!!detachedWindow.document");
     shouldBeTrue("!!detachedWindow.XMLHttpRequest");

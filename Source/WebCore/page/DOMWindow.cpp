@@ -716,14 +716,8 @@ DOMApplicationCache* DOMWindow::applicationCache()
 
 Navigator* DOMWindow::navigator()
 {
-    // FIXME: This should not return nullptr when frameless.
-    if (!isCurrentlyDisplayedInFrame())
-        return nullptr;
-
-    if (!m_navigator) {
-        ASSERT(scriptExecutionContext());
-        m_navigator = Navigator::create(*scriptExecutionContext(), *this);
-    }
+    if (!m_navigator)
+        m_navigator = Navigator::create(scriptExecutionContext(), *this);
 
     return m_navigator.get();
 }

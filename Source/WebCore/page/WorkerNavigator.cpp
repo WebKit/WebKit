@@ -30,7 +30,7 @@
 namespace WebCore {
 
 WorkerNavigator::WorkerNavigator(ScriptExecutionContext& context, const String& userAgent, bool isOnline)
-    : NavigatorBase(context)
+    : NavigatorBase(&context)
     , m_userAgent(userAgent)
     , m_isOnline(isOnline)
 {

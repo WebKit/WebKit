@@ -49,7 +49,7 @@
 namespace WebCore {
 using namespace WTF;
 
-Navigator::Navigator(ScriptExecutionContext& context, DOMWindow& window)
+Navigator::Navigator(ScriptExecutionContext* context, DOMWindow& window)
     : NavigatorBase(context)
     , DOMWindowProperty(&window)
 {

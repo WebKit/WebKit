@@ -9,6 +9,7 @@ PASS !!detachedWindow.locationbar is true
 PASS !!detachedWindow.history is true
 PASS !!detachedWindow.screen is true
 PASS !!detachedWindow.location is true
+PASS !!detachedWindow.navigator is true
 PASS detachedWindow.closed is true
 PASS detachedWindow.top is null
 PASS detachedWindow.opener is null
@@ -17,7 +18,6 @@ PASS detachedWindow.frameElement is null
 PASS detachedWindow.window is null
 PASS detachedWindow.frames is null
 PASS detachedWindow.self is null
-PASS !detachedWindow.navigator is true
 PASS !detachedWindow.localStorage is true
 PASS !!detachedWindow.document is true
 PASS !!detachedWindow.XMLHttpRequest is true

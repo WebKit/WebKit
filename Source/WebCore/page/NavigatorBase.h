@@ -57,7 +57,7 @@ public:
     static Vector<String> languages();
 
 protected:
-    explicit NavigatorBase(ScriptExecutionContext&);
+    explicit NavigatorBase(ScriptExecutionContext*);
 
 #if ENABLE(SERVICE_WORKER)
 public:

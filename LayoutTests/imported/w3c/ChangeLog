@@ -1,3 +1,19 @@
+2018-10-16  Chris Dumez  <cdumez@apple.com>
+
+        window.navigator should not become null after the window loses its browsing context
+        https://bugs.webkit.org/show_bug.cgi?id=190595
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline test which is not failing differently. The last check of this test is checking that
+        navigator.serviceWorker returns null after the frame has been detached. The test has been written
+        this way because this is how Chromium behaves. However, Firefox keeps returning the
+        ServiceWorkerContainer, as we do. Also, the specification indicates the the attribute cannot
+        return null (since the attribute is not nullable):
+        - https://w3c.github.io/ServiceWorker/#navigator-serviceworker
+
+        * web-platform-tests/service-workers/service-worker/detached-context.https-expected.txt:
+
 2018-10-16  Charlie Turner  <cturner@igalia.com>
 
         [EME] Add some ClearKey baselines for passing tests

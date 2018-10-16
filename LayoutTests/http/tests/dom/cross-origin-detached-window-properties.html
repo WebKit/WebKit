@@ -44,6 +44,7 @@ function validateWindow(_w)
     shouldThrowErrorName("w.applicationCache", "SecurityError");
     shouldThrowErrorName("w.visualViewport", "SecurityError");
     shouldThrowErrorName("w.styleMedia", "SecurityError");
+    shouldThrowErrorName("w.navigator", "SecurityError");
 
     shouldThrowErrorName("w.foo", "SecurityError");
     shouldThrowErrorName("w.location.foo", "SecurityError");
