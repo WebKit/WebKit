@@ -1,3 +1,138 @@
+2018-10-15  Keith Miller  <keith_miller@apple.com>
+
+        Support arm64 CPUs with a 32-bit address space
+        https://bugs.webkit.org/show_bug.cgi?id=190273
+
+        Reviewed by Michael Saboff.
+
+        This patch adds support for arm64_32 in the LLInt. In order to
+        make this work we needed to add a new type that reflects the size
+        of a cpu register. This type is called CPURegister or UCPURegister
+        for the unsigned version. Most places that used void* or intptr_t
+        to refer to a register have been changed to use this new type.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/ARM64Assembler.h:
+        (JSC::isInt):
+        (JSC::is4ByteAligned):
+        (JSC::PairPostIndex::PairPostIndex):
+        (JSC::PairPreIndex::PairPreIndex):
+        (JSC::ARM64Assembler::readPointer):
+        (JSC::ARM64Assembler::readCallTarget):
+        (JSC::ARM64Assembler::computeJumpType):
+        (JSC::ARM64Assembler::linkCompareAndBranch):
+        (JSC::ARM64Assembler::linkConditionalBranch):
+        (JSC::ARM64Assembler::linkTestAndBranch):
+        (JSC::ARM64Assembler::loadRegisterLiteral):
+        (JSC::ARM64Assembler::loadStoreRegisterPairPostIndex):
+        (JSC::ARM64Assembler::loadStoreRegisterPairPreIndex):
+        (JSC::ARM64Assembler::loadStoreRegisterPairOffset):
+        (JSC::ARM64Assembler::loadStoreRegisterPairNonTemporal):
+        (JSC::isInt7): Deleted.
+        (JSC::isInt11): Deleted.
+        * assembler/CPU.h:
+        (JSC::isAddress64Bit):
+        (JSC::isAddress32Bit):
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::shouldBlind):
+        * assembler/MacroAssemblerARM64.cpp:
+        (JSC::MacroAssemblerARM64::collectCPUFeatures):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::load):
+        (JSC::MacroAssemblerARM64::store):
+        (JSC::MacroAssemblerARM64::isInIntRange): Deleted.
+        * assembler/Printer.h:
+        * assembler/ProbeContext.h:
+        (JSC::Probe::CPUState::gpr):
+        (JSC::Probe::CPUState::spr):
+        (JSC::Probe::Context::gpr):
+        (JSC::Probe::Context::spr):
+        * b3/B3ConstPtrValue.h:
+        * b3/B3StackmapSpecial.cpp:
+        (JSC::B3::StackmapSpecial::isArgValidForRep):
+        * b3/air/AirArg.h:
+        (JSC::B3::Air::Arg::stackSlot const):
+        (JSC::B3::Air::Arg::special const):
+        * b3/air/testair.cpp:
+        * b3/testb3.cpp:
+        (JSC::B3::testStoreConstantPtr):
+        (JSC::B3::testInterpreter):
+        (JSC::B3::testAddShl32):
+        (JSC::B3::testLoadBaseIndexShift32):
+        * bindings/ScriptFunctionCall.cpp:
+        (Deprecated::ScriptCallArgumentHandler::appendArgument):
+        * bindings/ScriptFunctionCall.h:
+        * bytecode/CodeBlock.cpp:
+        (JSC::roundCalleeSaveSpaceAsVirtualRegisters):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::restoreCalleeSavesFor):
+        (JSC::DFG::saveCalleeSavesFor):
+        (JSC::DFG::restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer):
+        (JSC::DFG::copyCalleeSavesToVMEntryFrameCalleeSavesBuffer):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::reifyInlinedCallFrames):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * disassembler/UDis86Disassembler.cpp:
+        (JSC::tryToDisassembleWithUDis86):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileWeakMapGet):
+        * heap/MachineStackMarker.cpp:
+        (JSC::copyMemory):
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::returnPC const):
+        (JSC::ExecState::hasReturnPC const):
+        (JSC::ExecState::clearReturnPC):
+        (JSC::ExecState::returnPCOffset):
+        (JSC::ExecState::isGlobalExec const):
+        (JSC::ExecState::setReturnPC):
+        * interpreter/CalleeBits.h:
+        (JSC::CalleeBits::boxWasm):
+        (JSC::CalleeBits::isWasm const):
+        (JSC::CalleeBits::asWasmCallee const):
+        * interpreter/Interpreter.cpp:
+        (JSC::UnwindFunctor::copyCalleeSavesToEntryFrameCalleeSavesBuffer const):
+        * interpreter/VMEntryRecord.h:
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::clearStackFrame):
+        * jit/RegisterAtOffset.h:
+        (JSC::RegisterAtOffset::offsetAsIndex const):
+        * jit/RegisterAtOffsetList.cpp:
+        (JSC::RegisterAtOffsetList::RegisterAtOffsetList):
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LLIntOfflineAsmConfig.h:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * offlineasm/arm64.rb:
+        * offlineasm/asm.rb:
+        * offlineasm/ast.rb:
+        * offlineasm/backends.rb:
+        * offlineasm/parser.rb:
+        * offlineasm/x86.rb:
+        * runtime/BasicBlockLocation.cpp:
+        (JSC::BasicBlockLocation::dumpData const):
+        (JSC::BasicBlockLocation::emitExecuteCode const):
+        * runtime/BasicBlockLocation.h:
+        * runtime/HasOwnPropertyCache.h:
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::inplaceMultiplyAdd):
+        (JSC::JSBigInt::digitDiv):
+        * runtime/JSBigInt.h:
+        * runtime/JSObject.h:
+        * runtime/Options.cpp:
+        (JSC::jitEnabledByDefault):
+        * runtime/Options.h:
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::printTraceData):
+        * runtime/SamplingProfiler.cpp:
+        (JSC::CFrameWalker::walk):
+        * runtime/SlowPathReturnType.h:
+        (JSC::encodeResult):
+        (JSC::decodeResult):
+        * tools/SigillCrashAnalyzer.cpp:
+        (JSC::SigillCrashAnalyzer::dumpCodeBlock):
+
 2018-10-15  Justin Fan  <justin_fan@apple.com>
 
         Add WebGPU 2018 feature flag and experimental feature flag

@@ -811,12 +811,16 @@ class BaseIndex < Node
         @base = base
         @index = index
         @scale = scale
-        raise unless [1, 2, 4, 8].member? @scale
         @offset = offset
     end
-    
+
+    def scaleValue
+        raise unless [1, 2, 4, 8].member? scale.value
+        scale.value
+    end
+
     def scaleShift
-        case scale
+        case scaleValue
         when 1
             0
         when 2
@@ -826,7 +830,7 @@ class BaseIndex < Node
         when 8
             3
         else
-            raise "Bad scale at #{codeOriginString}"
+            raise "Bad scale: #{scale.value} at #{codeOriginString}"
         end
     end
     
@@ -839,11 +843,11 @@ class BaseIndex < Node
     end
     
     def mapChildren
-        BaseIndex.new(codeOrigin, (yield @base), (yield @index), @scale, (yield @offset))
+        BaseIndex.new(codeOrigin, (yield @base), (yield @index), (yield @scale), (yield @offset))
     end
     
     def dump
-        "#{offset.dump}[#{base.dump}, #{index.dump}, #{scale}]"
+        "#{offset.dump}[#{base.dump}, #{index.dump}, #{scale.value}]"
     end
     
     def address?

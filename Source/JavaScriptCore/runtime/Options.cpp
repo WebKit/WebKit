@@ -219,6 +219,11 @@ static int32_t computePriorityDeltaOfWorkerThreads(int32_t twoCorePriorityDelta,
     return multiCorePriorityDelta;
 }
 
+static bool jitEnabledByDefault()
+{
+    return is32Bit() || isAddress64Bit();
+}
+
 static unsigned computeNumberOfGCMarkers(unsigned maxNumberOfGCMarkers)
 {
     return computeNumberOfWorkerThreads(maxNumberOfGCMarkers);

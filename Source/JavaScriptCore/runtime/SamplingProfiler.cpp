@@ -228,7 +228,7 @@ public:
 
             if (isCFrame()) {
                 RELEASE_ASSERT(!LLInt::isLLIntPC(frame()->callerFrame));
-                stackTrace[m_depth] = UnprocessedStackFrame(frame()->pc);
+                stackTrace[m_depth] = UnprocessedStackFrame(frame()->returnPC);
                 m_depth++;
             } else
                 recordJSFrame(stackTrace);

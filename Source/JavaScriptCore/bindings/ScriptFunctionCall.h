@@ -51,7 +51,7 @@ public:
     void appendArgument(long);
     void appendArgument(long long);
     void appendArgument(unsigned int);
-    void appendArgument(unsigned long);
+    void appendArgument(uint64_t);
     void appendArgument(int);
     void appendArgument(bool);
 

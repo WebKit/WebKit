@@ -41,8 +41,8 @@ struct CPUState {
     static inline const char* gprName(RegisterID id) { return MacroAssembler::gprName(id); }
     static inline const char* sprName(SPRegisterID id) { return MacroAssembler::sprName(id); }
     static inline const char* fprName(FPRegisterID id) { return MacroAssembler::fprName(id); }
-    inline uintptr_t& gpr(RegisterID);
-    inline uintptr_t& spr(SPRegisterID);
+    inline UCPURegister& gpr(RegisterID);
+    inline UCPURegister& spr(SPRegisterID);
     inline double& fpr(FPRegisterID);
 
     template<typename T> T gpr(RegisterID) const;
@@ -56,18 +56,18 @@ struct CPUState {
     template<typename T> T fp() const;
     template<typename T> T sp() const;
 
-    uintptr_t gprs[MacroAssembler::numberOfRegisters()];
-    uintptr_t sprs[MacroAssembler::numberOfSPRegisters()];
+    UCPURegister gprs[MacroAssembler::numberOfRegisters()];
+    UCPURegister sprs[MacroAssembler::numberOfSPRegisters()];
     double fprs[MacroAssembler::numberOfFPRegisters()];
 };
 
-inline uintptr_t& CPUState::gpr(RegisterID id)
+inline UCPURegister& CPUState::gpr(RegisterID id)
 {
     ASSERT(id >= MacroAssembler::firstRegister() && id <= MacroAssembler::lastRegister());
     return gprs[id];
 }
 
-inline uintptr_t& CPUState::spr(SPRegisterID id)
+inline UCPURegister& CPUState::spr(SPRegisterID id)
 {
     ASSERT(id >= MacroAssembler::firstSPRegister() && id <= MacroAssembler::lastSPRegister());
     return sprs[id];
@@ -198,8 +198,8 @@ public:
     template<typename T>
     T arg() { return reinterpret_cast<T>(m_state->arg); }
 
-    uintptr_t& gpr(RegisterID id) { return cpu.gpr(id); }
-    uintptr_t& spr(SPRegisterID id) { return cpu.spr(id); }
+    UCPURegister& gpr(RegisterID id) { return cpu.gpr(id); }
+    UCPURegister& spr(SPRegisterID id) { return cpu.spr(id); }
     double& fpr(FPRegisterID id) { return cpu.fpr(id); }
     const char* gprName(RegisterID id) { return cpu.gprName(id); }
     const char* sprName(SPRegisterID id) { return cpu.sprName(id); }

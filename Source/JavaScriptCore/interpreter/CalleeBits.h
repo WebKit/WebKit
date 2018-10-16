@@ -51,7 +51,7 @@ public:
 #if ENABLE(WEBASSEMBLY)
     static void* boxWasm(Wasm::Callee* callee)
     {
-        CalleeBits result(bitwise_cast<void*>(bitwise_cast<uintptr_t>(callee) | TagBitsWasm));
+        CalleeBits result(reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(callee) | TagBitsWasm));
         ASSERT(result.isWasm());
         return result.rawPtr();
     }
@@ -60,7 +60,7 @@ public:
     bool isWasm() const
     {
 #if ENABLE(WEBASSEMBLY)
-        return (bitwise_cast<uintptr_t>(m_ptr) & TagWasmMask) == TagBitsWasm;
+        return (reinterpret_cast<uintptr_t>(m_ptr) & TagWasmMask) == TagBitsWasm;
 #else
         return false;
 #endif
@@ -77,7 +77,7 @@ public:
     Wasm::Callee* asWasmCallee() const
     {
         ASSERT(isWasm());
-        return bitwise_cast<Wasm::Callee*>(bitwise_cast<uintptr_t>(m_ptr) & ~TagBitsWasm);
+        return reinterpret_cast<Wasm::Callee*>(reinterpret_cast<uintptr_t>(m_ptr) & ~TagBitsWasm);
     }
 #endif
 

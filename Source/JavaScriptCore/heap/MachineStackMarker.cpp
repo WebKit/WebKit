@@ -87,13 +87,13 @@ static void copyMemory(void* dst, const void* src, size_t size)
 {
     size_t dstAsSize = reinterpret_cast<size_t>(dst);
     size_t srcAsSize = reinterpret_cast<size_t>(src);
-    RELEASE_ASSERT(dstAsSize == WTF::roundUpToMultipleOf<sizeof(intptr_t)>(dstAsSize));
-    RELEASE_ASSERT(srcAsSize == WTF::roundUpToMultipleOf<sizeof(intptr_t)>(srcAsSize));
-    RELEASE_ASSERT(size == WTF::roundUpToMultipleOf<sizeof(intptr_t)>(size));
+    RELEASE_ASSERT(dstAsSize == WTF::roundUpToMultipleOf<sizeof(CPURegister)>(dstAsSize));
+    RELEASE_ASSERT(srcAsSize == WTF::roundUpToMultipleOf<sizeof(CPURegister)>(srcAsSize));
+    RELEASE_ASSERT(size == WTF::roundUpToMultipleOf<sizeof(CPURegister)>(size));
 
-    intptr_t* dstPtr = reinterpret_cast<intptr_t*>(dst);
-    const intptr_t* srcPtr = reinterpret_cast<const intptr_t*>(src);
-    size /= sizeof(intptr_t);
+    CPURegister* dstPtr = reinterpret_cast<CPURegister*>(dst);
+    const CPURegister* srcPtr = reinterpret_cast<const CPURegister*>(src);
+    size /= sizeof(CPURegister);
     while (size--)
         *dstPtr++ = *srcPtr++;
 }

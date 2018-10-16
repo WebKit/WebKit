@@ -5473,10 +5473,11 @@ void testStoreConstantPtr(intptr_t value)
     Procedure proc;
     BasicBlock* root = proc.addBlock();
     intptr_t slot;
-    if (is64Bit())
-        slot = (static_cast<intptr_t>(0xbaadbeef) << 32) + static_cast<intptr_t>(0xbaadbeef);
-    else
-        slot = 0xbaadbeef;
+#if CPU(ADDRESS64)
+    slot = (static_cast<intptr_t>(0xbaadbeef) << 32) + static_cast<intptr_t>(0xbaadbeef);
+#else
+    slot = 0xbaadbeef;
+#endif
     root->appendNew<MemoryValue>(
         proc, Store, Origin(),
         root->appendNew<ConstPtrValue>(proc, Origin(), value),
@@ -13194,9 +13195,9 @@ void testInterpreter()
     
     auto interpreter = compileProc(proc);
     
-    Vector<intptr_t> data;
-    Vector<intptr_t> code;
-    Vector<intptr_t> stream;
+    Vector<uintptr_t> data;
+    Vector<uintptr_t> code;
+    Vector<uintptr_t> stream;
     
     data.append(1);
     data.append(0);
@@ -14497,7 +14498,7 @@ void testAddShl32()
     root->appendNew<Value>(proc, Return, Origin(), result);
     
     auto code = compileProc(proc);
-    CHECK_EQ(invoke<intptr_t>(*code, 1, 2), 1 + (static_cast<intptr_t>(2) << static_cast<intptr_t>(32)));
+    CHECK_EQ(invoke<int64_t>(*code, 1, 2), 1 + (static_cast<int64_t>(2) << static_cast<int64_t>(32)));
 }
 
 void testAddShl64()
@@ -14607,6 +14608,7 @@ void testLoadBaseIndexShift2()
 
 void testLoadBaseIndexShift32()
 {
+#if CPU(ADDRESS64)
     Procedure proc;
     BasicBlock* root = proc.addBlock();
     root->appendNew<Value>(
@@ -14625,6 +14627,7 @@ void testLoadBaseIndexShift32()
     char* ptr = bitwise_cast<char*>(&value);
     for (unsigned i = 0; i < 10; ++i)
         CHECK_EQ(invoke<int32_t>(*code, ptr - (static_cast<intptr_t>(1) << static_cast<intptr_t>(32)) * i, i), 12341234);
+#endif
 }
 
 void testOptimizeMaterialization()

@@ -494,10 +494,10 @@ void RegExp::matchCompareWithInterpreter(const String& s, int startOffset, int* 
             snprintf(jit8BitMatchAddr, jitAddrSize, "fallback    ");
             snprintf(jit16BitMatchAddr, jitAddrSize, "----      ");
         } else {
-            snprintf(jit8BitMatchOnlyAddr, jitAddrSize, "0x%014lx", reinterpret_cast<unsigned long int>(codeBlock.get8BitMatchOnlyAddr()));
-            snprintf(jit16BitMatchOnlyAddr, jitAddrSize, "0x%014lx", reinterpret_cast<unsigned long int>(codeBlock.get16BitMatchOnlyAddr()));
-            snprintf(jit8BitMatchAddr, jitAddrSize, "0x%014lx", reinterpret_cast<unsigned long int>(codeBlock.get8BitMatchAddr()));
-            snprintf(jit16BitMatchAddr, jitAddrSize, "0x%014lx", reinterpret_cast<unsigned long int>(codeBlock.get16BitMatchAddr()));
+            snprintf(jit8BitMatchOnlyAddr, jitAddrSize, "0x%014lx", reinterpret_cast<uintptr_t>(codeBlock.get8BitMatchOnlyAddr()));
+            snprintf(jit16BitMatchOnlyAddr, jitAddrSize, "0x%014lx", reinterpret_cast<uintptr_t>(codeBlock.get16BitMatchOnlyAddr()));
+            snprintf(jit8BitMatchAddr, jitAddrSize, "0x%014lx", reinterpret_cast<uintptr_t>(codeBlock.get8BitMatchAddr()));
+            snprintf(jit16BitMatchAddr, jitAddrSize, "0x%014lx", reinterpret_cast<uintptr_t>(codeBlock.get16BitMatchAddr()));
         }
 #else
         const char* jit8BitMatchOnlyAddr = "JIT Off";

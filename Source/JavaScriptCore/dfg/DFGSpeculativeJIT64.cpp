@@ -4407,8 +4407,10 @@ void SpeculativeJIT::compile(Node* node)
         m_jit.load32(MacroAssembler::Address(objectGPR, JSCell::structureIDOffset()), structureIDGPR);
         m_jit.add32(structureIDGPR, hashGPR);
         m_jit.and32(TrustedImm32(HasOwnPropertyCache::mask), hashGPR);
-        static_assert(sizeof(HasOwnPropertyCache::Entry) == 16, "Strong assumption of that here.");
-        m_jit.lshift32(TrustedImm32(4), hashGPR);
+        if (hasOneBitSet(sizeof(HasOwnPropertyCache::Entry))) // is a power of 2
+            m_jit.lshift32(TrustedImm32(getLSBSet(sizeof(HasOwnPropertyCache::Entry))), hashGPR);
+        else
+            m_jit.mul32(TrustedImm32(sizeof(HasOwnPropertyCache::Entry)), hashGPR, hashGPR);
         ASSERT(m_jit.vm()->hasOwnPropertyCache());
         m_jit.move(TrustedImmPtr(m_jit.vm()->hasOwnPropertyCache()), tempGPR);
         slowPath.append(m_jit.branchPtr(MacroAssembler::NotEqual, 

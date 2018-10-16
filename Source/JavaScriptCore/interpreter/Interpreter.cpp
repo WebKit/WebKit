@@ -569,7 +569,7 @@ private:
 
         RegisterAtOffsetList* allCalleeSaves = RegisterSet::vmCalleeSaveRegisterOffsets();
         RegisterSet dontCopyRegisters = RegisterSet::stackRegisters();
-        intptr_t* frame = reinterpret_cast<intptr_t*>(m_callFrame->registers());
+        CPURegister* frame = reinterpret_cast<CPURegister*>(m_callFrame->registers());
 
         unsigned registerCount = currentCalleeSaves->size();
         VMEntryRecord* record = vmEntryRecord(m_vm.topEntryFrame);

@@ -24,7 +24,7 @@
 
 # Utilities.
 macro jumpToInstruction()
-    jmp [PB, PC, 8], BytecodePtrTag
+    jmp [PB, PC, PtrSize], BytecodePtrTag
 end
 
 macro dispatch(advance)
@@ -38,7 +38,7 @@ macro dispatchInt(advance)
 end
 
 macro dispatchIntIndirect(offset)
-    dispatchInt(offset * 8[PB, PC, 8])
+    dispatchInt(offset * PtrSize[PB, PC, PtrSize])
 end
 
 macro dispatchAfterCall()
@@ -300,13 +300,13 @@ _handleUncaughtException:
 
 
 macro prepareStateForCCall()
-    leap [PB, PC, 8], PC
+    leap [PB, PC, PtrSize], PC
 end
 
 macro restoreStateAfterCCall()
     move r0, PC
     subp PB, PC
-    rshiftp 3, PC
+    rshiftp constexpr (getLSBSet(sizeof(void*))), PC
 end
 
 macro callSlowPath(slowPath)
@@ -487,7 +487,7 @@ macro structureIDToStructureWithScratch(structureIDThenStructure, scratch, scrat
     loadp CodeBlock::m_poisonedVM[scratch], scratch
     unpoison(_g_CodeBlockPoison, scratch, scratch2)
     loadp VM::heap + Heap::m_structureIDTable + StructureIDTable::m_table[scratch], scratch
-    loadp [scratch, structureIDThenStructure, 8], structureIDThenStructure
+    loadp [scratch, structureIDThenStructure, PtrSize], structureIDThenStructure
 end
 
 macro loadStructureWithScratch(cell, structure, scratch, scratch2)
@@ -549,7 +549,8 @@ macro functionArityCheck(doneLabel, slowPath)
     subp CalleeSaveSpaceAsVirtualRegisters * 8, t3
     addi CalleeSaveSpaceAsVirtualRegisters, t2
     move t1, t0
-    lshiftp 3, t0
+    # Adds to sp are always 64-bit on arm64 so we need maintain t0's high bits.
+    lshiftq 3, t0
     addp t0, cfr
     addp t0, sp
 .copyLoop:
@@ -588,7 +589,7 @@ macro branchIfException(label)
     loadp Callee[cfr], t3
     andp MarkedBlockMask, t3
     loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[t3], t3
-    btqz VM::m_exception[t3], .noException
+    btpz VM::m_exception[t3], .noException
     jmp label
 .noException:
 end
@@ -1547,7 +1548,7 @@ _llint_op_put_by_id:
     loadi JSCell::m_structureID[t2], t2
     # Now, t1 has the Structure* and t2 has the StructureID that we want that Structure* to have.
     bineq t2, Structure::m_blob + StructureIDBlob::u.fields.structureID[t1], .opPutByIdSlow
-    addp 8, t3
+    addp PtrSize, t3
     loadq Structure::m_prototype[t1], t2
     bqneq t2, ValueNull, .opPutByIdTransitionChainLoop
 
@@ -1746,7 +1747,7 @@ macro contiguousPutByVal(storeCallback)
 
 .outOfBounds:
     biaeq t3, -sizeof IndexingHeader + IndexingHeader::u.lengths.vectorLength[t0], .opPutByValOutOfBounds
-    loadp 32[PB, PC, 8], t2
+    loadpFromInstruction(4, t2)
     storeb 1, ArrayProfile::m_mayStoreToHole[t2]
     addi 1, t3, t2
     storei t2, -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t0]
@@ -1770,8 +1771,8 @@ macro putByVal(slowPath)
     contiguousPutByVal(
         macro (operand, scratch, address)
             loadConstantOrVariable(operand, scratch)
-            bpb scratch, tagTypeNumber, .opPutByValSlow
-            storep scratch, address
+            bqb scratch, tagTypeNumber, .opPutByValSlow
+            storeq scratch, address
             writeBarrierOnOperands(1, 3)
         end)
 
@@ -1784,7 +1785,7 @@ macro putByVal(slowPath)
             ci2d scratch, ft0
             jmp .ready
         .notInt:
-            addp tagTypeNumber, scratch
+            addq tagTypeNumber, scratch
             fq2d scratch, ft0
             bdnequn ft0, ft0, .opPutByValSlow
         .ready:
@@ -1797,7 +1798,7 @@ macro putByVal(slowPath)
     contiguousPutByVal(
         macro (operand, scratch, address)
             loadConstantOrVariable(operand, scratch)
-            storep scratch, address
+            storeq scratch, address
             writeBarrierOnOperands(1, 3)
         end)
 
@@ -1906,12 +1907,12 @@ _llint_op_jneq_ptr:
     loadisFromInstruction(2, t1)
     loadp CodeBlock[cfr], t2
     loadp CodeBlock::m_globalObject[t2], t2
-    loadp JSGlobalObject::m_specialPointers[t2, t1, 8], t1
+    loadp JSGlobalObject::m_specialPointers[t2, t1, PtrSize], t1
     bpneq t1, [cfr, t0, 8], .opJneqPtrTarget
     dispatch(5)
 
 .opJneqPtrTarget:
-    storei 1, 32[PB, PC, 8]
+    storeisToInstruction(1, 4)
     dispatchIntIndirect(3)
 
 
@@ -2134,7 +2135,7 @@ _llint_op_catch:
     unpoison(_g_CodeBlockPoison, PB, t2)
     loadp VM::targetInterpreterPCForThrow[t3], PC
     subp PB, PC
-    rshiftp 3, PC
+    rshiftp constexpr (getLSBSet(sizeof(void*))), PC
 
     callSlowPath(_llint_slow_path_check_if_exception_is_uncatchable_and_notify_profiler)
     bpeq r1, 0, .isCatchableException
@@ -2145,8 +2146,8 @@ _llint_op_catch:
     andp MarkedBlockMask, t3
     loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[t3], t3
 
-    loadq VM::m_exception[t3], t0
-    storeq 0, VM::m_exception[t3]
+    loadp VM::m_exception[t3], t0
+    storep 0, VM::m_exception[t3]
     loadisFromInstruction(1, t2)
     storeq t0, [cfr, t2, 8]
 
@@ -2228,7 +2229,7 @@ macro nativeCallTrampoline(executableOffsetToFunction)
     andp MarkedBlockMask, t3
     loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[t3], t3
 
-    btqnz VM::m_exception[t3], .handleException
+    btpnz VM::m_exception[t3], .handleException
 
     functionEpilogue()
     ret
@@ -2271,7 +2272,7 @@ macro internalFunctionCallTrampoline(offsetOfFunction)
     andp MarkedBlockMask, t3
     loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[t3], t3
 
-    btqnz VM::m_exception[t3], .handleException
+    btpnz VM::m_exception[t3], .handleException
 
     functionEpilogue()
     ret
@@ -2297,7 +2298,7 @@ end
 macro resolveScope()
     loadisFromInstruction(5, t2)
     loadisFromInstruction(2, t0)
-    loadp [cfr, t0, 8], t0
+    loadq [cfr, t0, 8], t0
     btiz t2, .resolveScopeLoopEnd
 
 .resolveScopeLoop:
@@ -2593,7 +2594,7 @@ _llint_op_put_to_scope:
 _llint_op_get_from_arguments:
     traceExecution()
     loadVariable(2, t0)
-    loadi 24[PB, PC, 8], t1
+    loadi 3 * PtrSize[PB, PC, PtrSize], t1
     loadq DirectArguments_storage[t0, t1, 8], t0
     valueProfile(t0, 4, t1)
     loadisFromInstruction(1, t1)
@@ -2604,7 +2605,7 @@ _llint_op_get_from_arguments:
 _llint_op_put_to_arguments:
     traceExecution()
     loadVariable(1, t0)
-    loadi 16[PB, PC, 8], t1
+    loadi 2 * PtrSize[PB, PC, PtrSize], t1
     loadisFromInstruction(3, t3)
     loadConstantOrVariable(t3, t2)
     storeq t2, DirectArguments_storage[t0, t1, 8]

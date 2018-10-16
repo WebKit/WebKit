@@ -29,6 +29,14 @@
 
 namespace JSC {
 
+#if USE(JSVALUE64)
+using CPURegister = int64_t;
+using UCPURegister = uint64_t;
+#else
+using CPURegister = int32_t;
+using UCPURegister = uint32_t;
+#endif
+
 constexpr bool isARMv7IDIVSupported()
 {
 #if HAVE(ARM_IDIV_INSTRUCTIONS)
@@ -77,6 +85,16 @@ constexpr bool is64Bit()
 constexpr bool is32Bit()
 {
     return !is64Bit();
+}
+
+constexpr bool isAddress64Bit()
+{
+    return sizeof(void*) == 8;
+}
+
+constexpr bool isAddress32Bit()
+{
+    return !isAddress64Bit();
 }
 
 constexpr bool isMIPS()

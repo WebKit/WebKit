@@ -74,15 +74,17 @@ Vector<std::pair<int, int>> BasicBlockLocation::getExecutedRanges() const
 void BasicBlockLocation::dumpData() const
 {
     Vector<Gap> executedRanges = getExecutedRanges();
-    for (Gap gap : executedRanges)
-        dataLogF("\tBasicBlock: [%d, %d] hasExecuted: %s, executionCount:%zu\n", gap.first, gap.second, hasExecuted() ? "true" : "false", m_executionCount);
+    for (Gap gap : executedRanges) {
+        dataLogF("\tBasicBlock: [%d, %d] hasExecuted: %s, executionCount:", gap.first, gap.second, hasExecuted() ? "true" : "false");
+        dataLogLn(m_executionCount);
+    }
 }
 
 #if ENABLE(JIT)
 #if USE(JSVALUE64)
 void BasicBlockLocation::emitExecuteCode(CCallHelpers& jit) const
 {
-    static_assert(sizeof(size_t) == 8, "Assuming size_t is 64 bits on 64 bit platforms.");
+    static_assert(sizeof(UCPURegister) == 8, "Assuming size_t is 64 bits on 64 bit platforms.");
     jit.add64(CCallHelpers::TrustedImm32(1), CCallHelpers::AbsoluteAddress(&m_executionCount));
 }
 #else

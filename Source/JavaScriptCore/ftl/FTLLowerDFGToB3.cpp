@@ -9663,12 +9663,13 @@ private:
         LValue index = m_out.bitAnd(mask, unmaskedIndex);
 
         LValue bucket;
+
         if (m_node->child1().useKind() == WeakMapObjectUse) {
-            static_assert(sizeof(WeakMapBucket<WeakMapBucketDataKeyValue>) == 16, "");
-            bucket = m_out.add(buffer, m_out.shl(m_out.zeroExt(index, Int64), m_out.constInt32(4)));
+            static_assert(hasOneBitSet(sizeof(WeakMapBucket<WeakMapBucketDataKeyValue>)), "Should be a power of 2");
+            bucket = m_out.add(buffer, m_out.shl(m_out.zeroExt(index, Int64), m_out.constInt32(getLSBSet(sizeof(WeakMapBucket<WeakMapBucketDataKeyValue>)))));
         } else {
-            static_assert(sizeof(WeakMapBucket<WeakMapBucketDataKey>) == 8, "");
-            bucket = m_out.add(buffer, m_out.shl(m_out.zeroExt(index, Int64), m_out.constInt32(3)));
+            static_assert(hasOneBitSet(sizeof(WeakMapBucket<WeakMapBucketDataKey>)), "Should be a power of 2");
+            bucket = m_out.add(buffer, m_out.shl(m_out.zeroExt(index, Int64), m_out.constInt32(getLSBSet(sizeof(WeakMapBucket<WeakMapBucketDataKey>)))));
         }
 
         LValue bucketKey = m_out.load64(bucket, m_heaps.WeakMapBucket_key);

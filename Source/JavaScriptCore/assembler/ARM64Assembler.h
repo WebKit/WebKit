@@ -29,6 +29,7 @@
 
 #include "AssemblerBuffer.h"
 #include "AssemblerCommon.h"
+#include "CPU.h"
 #include "JSCPtrTag.h"
 #include <limits.h>
 #include <wtf/Assertions.h>
@@ -54,14 +55,17 @@
 
 namespace JSC {
 
-ALWAYS_INLINE bool isInt7(int32_t value)
+template<size_t bits, typename Type>
+ALWAYS_INLINE constexpr bool isInt(Type t)
 {
-    return value == ((value << 25) >> 25);
+    constexpr size_t shift = sizeof(Type) * CHAR_BIT - bits;
+    static_assert(sizeof(Type) * CHAR_BIT > shift, "shift is larger than the size of the value");
+    return ((t << shift) >> shift) == t;
 }
 
-ALWAYS_INLINE bool isInt11(int32_t value)
+static ALWAYS_INLINE bool is4ByteAligned(const void* ptr)
 {
-    return value == ((value << 21) >> 21);
+    return !(reinterpret_cast<intptr_t>(ptr) & 0x3);
 }
 
 ALWAYS_INLINE bool isUInt5(int32_t value)
@@ -130,7 +134,7 @@ public:
     explicit PairPostIndex(int value)
         : m_value(value)
     {
-        ASSERT(isInt11(value));
+        ASSERT(isInt<11>(value));
     }
 
     operator int() { return m_value; }
@@ -144,7 +148,7 @@ public:
     explicit PairPreIndex(int value)
         : m_value(value)
     {
-        ASSERT(isInt11(value));
+        ASSERT(isInt<11>(value));
     }
 
     operator int() { return m_value; }
@@ -460,8 +464,8 @@ public:
     private:
         union {
             struct RealTypes {
-                intptr_t m_from : 48;
-                intptr_t m_to : 48;
+                int64_t m_from;
+                int64_t m_to;
                 JumpType m_type : 8;
                 JumpLinkType m_linkType : 8;
                 Condition m_condition : 4;
@@ -2805,16 +2809,18 @@ public:
         ASSERT_UNUSED(expected, expected && sf && opc == MoveWideOp_K && hw == 1 && rd == rdFirst);
         result |= static_cast<uintptr_t>(imm16) << 16;
 
+#if CPU(ADDRESS64)
         expected = disassembleMoveWideImediate(address + 2, sf, opc, hw, imm16, rd);
         ASSERT_UNUSED(expected, expected && sf && opc == MoveWideOp_K && hw == 2 && rd == rdFirst);
         result |= static_cast<uintptr_t>(imm16) << 32;
+#endif
 
         return reinterpret_cast<void*>(result);
     }
 
     static void* readCallTarget(void* from)
     {
-        return readPointer(reinterpret_cast<int*>(from) - 4);
+        return readPointer(reinterpret_cast<int*>(from) - (isAddress64Bit() ? 4 : 3));
     }
 
     // The static relink, repatch, and replace methods can use can
@@ -2931,31 +2937,31 @@ public:
         case JumpNoCondition:
             return LinkJumpNoCondition;
         case JumpCondition: {
-            ASSERT(!(reinterpret_cast<intptr_t>(from) & 0x3));
-            ASSERT(!(reinterpret_cast<intptr_t>(to) & 0x3));
+            ASSERT(is4ByteAligned(from));
+            ASSERT(is4ByteAligned(to));
             intptr_t relative = reinterpret_cast<intptr_t>(to) - (reinterpret_cast<intptr_t>(from));
 
-            if (((relative << 43) >> 43) == relative)
+            if (isInt<21>(relative))
                 return LinkJumpConditionDirect;
 
             return LinkJumpCondition;
             }
         case JumpCompareAndBranch:  {
-            ASSERT(!(reinterpret_cast<intptr_t>(from) & 0x3));
-            ASSERT(!(reinterpret_cast<intptr_t>(to) & 0x3));
+            ASSERT(is4ByteAligned(from));
+            ASSERT(is4ByteAligned(to));
             intptr_t relative = reinterpret_cast<intptr_t>(to) - (reinterpret_cast<intptr_t>(from));
 
-            if (((relative << 43) >> 43) == relative)
+            if (isInt<21>(relative))
                 return LinkJumpCompareAndBranchDirect;
 
             return LinkJumpCompareAndBranch;
         }
         case JumpTestBit:   {
-            ASSERT(!(reinterpret_cast<intptr_t>(from) & 0x3));
-            ASSERT(!(reinterpret_cast<intptr_t>(to) & 0x3));
+            ASSERT(is4ByteAligned(from));
+            ASSERT(is4ByteAligned(to));
             intptr_t relative = reinterpret_cast<intptr_t>(to) - (reinterpret_cast<intptr_t>(from));
 
-            if (((relative << 50) >> 50) == relative)
+            if (isInt<14>(relative))
                 return LinkJumpTestBitDirect;
 
             return LinkJumpTestBit;
@@ -3073,9 +3079,9 @@ protected:
         ASSERT(!(reinterpret_cast<intptr_t>(from) & 3));
         ASSERT(!(reinterpret_cast<intptr_t>(to) & 3));
         intptr_t offset = (reinterpret_cast<intptr_t>(to) - reinterpret_cast<intptr_t>(fromInstruction)) >> 2;
-        ASSERT(((offset << 38) >> 38) == offset);
+        ASSERT(isInt<26>(offset));
 
-        bool useDirect = ((offset << 45) >> 45) == offset; // Fits in 19 bits
+        bool useDirect = isInt<19>(offset);
         ASSERT(!isDirect || useDirect);
 
         if (useDirect || isDirect) {
@@ -3101,9 +3107,9 @@ protected:
         ASSERT(!(reinterpret_cast<intptr_t>(from) & 3));
         ASSERT(!(reinterpret_cast<intptr_t>(to) & 3));
         intptr_t offset = (reinterpret_cast<intptr_t>(to) - reinterpret_cast<intptr_t>(fromInstruction)) >> 2;
-        ASSERT(((offset << 38) >> 38) == offset);
+        ASSERT(isInt<26>(offset));
 
-        bool useDirect = ((offset << 45) >> 45) == offset; // Fits in 19 bits
+        bool useDirect = isInt<19>(offset);
         ASSERT(!isDirect || useDirect);
 
         if (useDirect || isDirect) {
@@ -3130,9 +3136,9 @@ protected:
         ASSERT(!(reinterpret_cast<intptr_t>(to) & 3));
         intptr_t offset = (reinterpret_cast<intptr_t>(to) - reinterpret_cast<intptr_t>(fromInstruction)) >> 2;
         ASSERT(static_cast<int>(offset) == offset);
-        ASSERT(((offset << 38) >> 38) == offset);
+        ASSERT(isInt<26>(offset));
 
-        bool useDirect = ((offset << 50) >> 50) == offset; // Fits in 14 bits
+        bool useDirect = isInt<14>(offset);
         ASSERT(!isDirect || useDirect);
 
         if (useDirect || isDirect) {
@@ -3511,7 +3517,7 @@ protected:
     // 'V' means vector
     ALWAYS_INLINE static int loadRegisterLiteral(LdrLiteralOp opc, bool V, int imm19, FPRegisterID rt)
     {
-        ASSERT(((imm19 << 13) >> 13) == imm19);
+        ASSERT(isInt<19>(imm19));
         return (0x18000000 | opc << 30 | V << 26 | (imm19 & 0x7ffff) << 5 | rt);
     }
 
@@ -3542,7 +3548,7 @@ protected:
         ASSERT(V || (size != MemPairOp_LoadSigned_32) || (opc == MemOp_LOAD)); // There isn't an integer store signed.
         unsigned immedShiftAmount = memPairOffsetShift(V, size);
         int imm7 = immediate >> immedShiftAmount;
-        ASSERT((imm7 << immedShiftAmount) == immediate && isInt7(imm7));
+        ASSERT((imm7 << immedShiftAmount) == immediate && isInt<7>(imm7));
         return (0x28800000 | size << 30 | V << 26 | opc << 22 | (imm7 & 0x7f) << 15 | rt2 << 10 | xOrSp(rn) << 5 | rt);
     }
 
@@ -3573,7 +3579,7 @@ protected:
         ASSERT(V || (size != MemPairOp_LoadSigned_32) || (opc == MemOp_LOAD)); // There isn't an integer store signed.
         unsigned immedShiftAmount = memPairOffsetShift(V, size);
         int imm7 = immediate >> immedShiftAmount;
-        ASSERT((imm7 << immedShiftAmount) == immediate && isInt7(imm7));
+        ASSERT((imm7 << immedShiftAmount) == immediate && isInt<7>(imm7));
         return (0x29800000 | size << 30 | V << 26 | opc << 22 | (imm7 & 0x7f) << 15 | rt2 << 10 | xOrSp(rn) << 5 | rt);
     }
 
@@ -3590,7 +3596,7 @@ protected:
         ASSERT(V || (size != MemPairOp_LoadSigned_32) || (opc == MemOp_LOAD)); // There isn't an integer store signed.
         unsigned immedShiftAmount = memPairOffsetShift(V, size);
         int imm7 = immediate >> immedShiftAmount;
-        ASSERT((imm7 << immedShiftAmount) == immediate && isInt7(imm7));
+        ASSERT((imm7 << immedShiftAmount) == immediate && isInt<7>(imm7));
         return (0x29000000 | size << 30 | V << 26 | opc << 22 | (imm7 & 0x7f) << 15 | rt2 << 10 | xOrSp(rn) << 5 | rt);
     }
 
@@ -3607,7 +3613,7 @@ protected:
         ASSERT(V || (size != MemPairOp_LoadSigned_32) || (opc == MemOp_LOAD)); // There isn't an integer store signed.
         unsigned immedShiftAmount = memPairOffsetShift(V, size);
         int imm7 = immediate >> immedShiftAmount;
-        ASSERT((imm7 << immedShiftAmount) == immediate && isInt7(imm7));
+        ASSERT((imm7 << immedShiftAmount) == immediate && isInt<7>(imm7));
         return (0x28000000 | size << 30 | V << 26 | opc << 22 | (imm7 & 0x7f) << 15 | rt2 << 10 | xOrSp(rn) << 5 | rt);
     }
 

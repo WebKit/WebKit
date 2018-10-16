@@ -321,10 +321,10 @@ void SigillCrashAnalyzer::dumpCodeBlock(CodeBlock* codeBlock, void* machinePC)
     while (byteCount) {
         char pcString[24];
         if (currentPC == machinePC) {
-            snprintf(pcString, sizeof(pcString), "* 0x%lx", reinterpret_cast<unsigned long>(currentPC));
+            snprintf(pcString, sizeof(pcString), "* 0x%lx", reinterpret_cast<uintptr_t>(currentPC));
             log("%20s: %s    <=========================", pcString, m_arm64Opcode.disassemble(currentPC));
         } else {
-            snprintf(pcString, sizeof(pcString), "0x%lx", reinterpret_cast<unsigned long>(currentPC));
+            snprintf(pcString, sizeof(pcString), "0x%lx", reinterpret_cast<uintptr_t>(currentPC));
             log("%20s: %s", pcString, m_arm64Opcode.disassemble(currentPC));
         }
         currentPC++;

@@ -49,7 +49,7 @@ public:
     
     Reg reg() const { return m_reg; }
     ptrdiff_t offset() const { return m_offset; }
-    int offsetAsIndex() const { return offset() / sizeof(void*); }
+    int offsetAsIndex() const { ASSERT(!(offset() % sizeof(CPURegister))); return offset() / static_cast<int>(sizeof(CPURegister)); }
     
     bool operator==(const RegisterAtOffset& other) const
     {
@@ -69,7 +69,7 @@ public:
 
 private:
     Reg m_reg;
-    ptrdiff_t m_offset : sizeof(ptrdiff_t) * 8 - sizeof(Reg) * 8;
+    ptrdiff_t m_offset : (sizeof(ptrdiff_t) - sizeof(Reg)) * CHAR_BIT;
 };
 
 } // namespace JSC

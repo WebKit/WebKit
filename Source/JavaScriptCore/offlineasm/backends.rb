@@ -86,6 +86,7 @@ def canonicalizeBackendNames(backendNames)
         backendName = backendName.upcase
         if backendName =~ /ARM.*/
             backendName.sub!(/ARMV7(S?)(.*)/) { | _ | 'ARMv7' + $1.downcase + $2 }
+            backendName = "ARM64" if backendName == "ARM64_32"
         end
         backendName = "X86" if backendName == "I386"
         newBackendNames << backendName

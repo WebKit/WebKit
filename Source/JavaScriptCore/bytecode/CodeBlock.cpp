@@ -2160,8 +2160,8 @@ void CodeBlock::setCalleeSaveRegisters(std::unique_ptr<RegisterAtOffsetList> reg
     
 static size_t roundCalleeSaveSpaceAsVirtualRegisters(size_t calleeSaveRegisters)
 {
-    static const unsigned cpuRegisterSize = sizeof(void*);
-    return (WTF::roundUpToMultipleOf(sizeof(Register), calleeSaveRegisters * cpuRegisterSize) / sizeof(Register));
+
+    return (WTF::roundUpToMultipleOf(sizeof(Register), calleeSaveRegisters * sizeof(CPURegister)) / sizeof(Register));
 
 }
 

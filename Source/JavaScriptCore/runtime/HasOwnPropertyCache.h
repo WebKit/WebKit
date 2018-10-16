@@ -33,7 +33,7 @@ namespace JSC {
 
 class HasOwnPropertyCache {
     static const uint32_t size = 2 * 1024;
-    static_assert(!(size & (size - 1)), "size should be a power of two.");
+    static_assert(hasOneBitSet(size), "size should be a power of two.");
 public:
     static const uint32_t mask = size - 1;
 

@@ -226,11 +226,8 @@ inline bool JSBigInt::isZero()
 }
 
 // Multiplies {this} with {factor} and adds {summand} to the result.
-inline void JSBigInt::inplaceMultiplyAdd(uintptr_t factor, uintptr_t summand)
+void JSBigInt::inplaceMultiplyAdd(Digit factor, Digit summand)
 {
-    STATIC_ASSERT(sizeof(factor) == sizeof(Digit));
-    STATIC_ASSERT(sizeof(summand) == sizeof(Digit));
-
     internalMultiplyAdd(this, factor, summand, length(), this);
 }
 
@@ -563,8 +560,8 @@ inline JSBigInt::Digit JSBigInt::digitDiv(Digit high, Digit low, Digit divisor, 
     // left operand". We mask the right operand of the shift by {shiftMask} (`digitBits - 1`), which makes `digitBits - 0` zero.
     // This shifting produces a value which covers 0 < {s} <= (digitBits - 1) cases. {s} == digitBits never happen as we asserted.
     // Since {sZeroMask} clears the value in the case of {s} == 0, {s} == 0 case is also covered.
-    STATIC_ASSERT(sizeof(intptr_t) == sizeof(Digit));
-    Digit sZeroMask = static_cast<Digit>((-static_cast<intptr_t>(s)) >> (digitBits - 1));
+    STATIC_ASSERT(sizeof(CPURegister) == sizeof(Digit));
+    Digit sZeroMask = static_cast<Digit>((-static_cast<CPURegister>(s)) >> (digitBits - 1));
     static constexpr unsigned shiftMask = digitBits - 1;
     Digit un32 = (high << s) | ((low >> ((digitBits - s) & shiftMask)) & sZeroMask);
 

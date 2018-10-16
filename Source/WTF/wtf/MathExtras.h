@@ -206,7 +206,7 @@ template<typename T> constexpr bool hasTwoOrMoreBitsSet(T value)
     return !hasZeroOrOneBitsSet(value);
 }
 
-template <typename T> inline unsigned getLSBSet(T value)
+template <typename T> constexpr unsigned getLSBSet(T value)
 {
     typedef typename std::make_unsigned<T>::type UnsignedT;
     unsigned result = 0;

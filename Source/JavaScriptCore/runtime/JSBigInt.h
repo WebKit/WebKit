@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CPU.h"
 #include "ExceptionHelpers.h"
 #include "JSObject.h"
 #include "ParseInt.h"
@@ -118,7 +119,7 @@ public:
 
 private:
 
-    using Digit = uintptr_t;
+    using Digit = UCPURegister;
     static constexpr unsigned bitsPerByte = 8;
     static constexpr unsigned digitBits = sizeof(Digit) * bitsPerByte;
     static constexpr unsigned halfDigitBits = digitBits / 2;

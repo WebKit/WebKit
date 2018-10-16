@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CPU.h"
 #include <wtf/StdLibExtras.h>
 
 namespace JSC {
@@ -34,22 +35,23 @@ namespace JSC {
 // 'extern "C"') needs to be POD; hence putting any constructors into it could cause either compiler
 // warnings, or worse, a change in the ABI used to return these types.
 struct SlowPathReturnType {
-    void* a;
-    void* b;
+    CPURegister a;
+    CPURegister b;
 };
+static_assert(sizeof(SlowPathReturnType) >= sizeof(void*) * 2, "SlowPathReturnType should fit in two machine registers");
 
 inline SlowPathReturnType encodeResult(void* a, void* b)
 {
     SlowPathReturnType result;
-    result.a = a;
-    result.b = b;
+    result.a = reinterpret_cast<CPURegister>(a);
+    result.b = reinterpret_cast<CPURegister>(b);
     return result;
 }
 
 inline void decodeResult(SlowPathReturnType result, void*& a, void*& b)
 {
-    a = result.a;
-    b = result.b;
+    a = reinterpret_cast<void*>(result.a);
+    b = reinterpret_cast<void*>(result.b);
 }
 
 #else // USE(JSVALUE32_64)

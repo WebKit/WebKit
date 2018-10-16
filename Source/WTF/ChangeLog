@@ -1,3 +1,16 @@
+2018-10-15  Keith Miller  <keith_miller@apple.com>
+
+        Support arm64 CPUs with a 32-bit address space
+        https://bugs.webkit.org/show_bug.cgi?id=190273
+
+        Reviewed by Michael Saboff.
+
+        Use WTF_CPU_ADDRESS64/32 to decide if the system is running on arm64_32.
+
+        * wtf/MathExtras.h:
+        (getLSBSet):
+        * wtf/Platform.h:
+
 2018-10-15  Timothy Hatcher  <timothy@apple.com>
 
         Add support for prefers-color-scheme media query

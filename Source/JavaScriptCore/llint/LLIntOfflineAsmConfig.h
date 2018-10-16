@@ -145,6 +145,12 @@
 #define OFFLINE_ASM_JSVALUE64 0
 #endif
 
+#if CPU(ADDRESS64)
+#define OFFLINE_ASM_ADDRESS64 1
+#else
+#define OFFLINE_ASM_ADDRESS64 0
+#endif
+
 #if ENABLE(POISON)
 #define OFFLINE_ASM_POISON 1
 #else

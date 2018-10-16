@@ -75,7 +75,7 @@ void ScriptCallArgumentHandler::appendArgument(unsigned int argument)
     m_arguments.append(jsNumber(argument));
 }
 
-void ScriptCallArgumentHandler::appendArgument(unsigned long argument)
+void ScriptCallArgumentHandler::appendArgument(uint64_t argument)
 {
     JSLockHolder lock(m_exec);
     m_arguments.append(jsNumber(argument));

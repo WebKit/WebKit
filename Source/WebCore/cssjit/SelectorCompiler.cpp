@@ -2232,7 +2232,7 @@ void SelectorCodeGenerator::generateAddStyleRelation(Assembler::RegisterID check
         static_assert(1 << 4 == 16, "");
         m_assembler.lshiftPtr(Assembler::TrustedImm32(4), sizeAndTarget);
 #else
-        m_assembler.mul32(TrustedImm32(sizeof(Style::Relation)), sizeAndTarget, sizeAndTarget);
+        m_assembler.mul32(Assembler::TrustedImm32(sizeof(Style::Relation)), sizeAndTarget, sizeAndTarget);
 #endif
         m_assembler.addPtr(dataAddress, sizeAndTarget);
     };

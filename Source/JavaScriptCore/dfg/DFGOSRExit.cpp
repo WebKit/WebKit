@@ -86,7 +86,7 @@ static void restoreCalleeSavesFor(Context& context, CodeBlock* codeBlock)
     RegisterSet dontRestoreRegisters = RegisterSet(RegisterSet::stackRegisters(), RegisterSet::allFPRs());
     unsigned registerCount = calleeSaves->size();
 
-    uintptr_t* physicalStackFrame = context.fp<uintptr_t*>();
+    UCPURegister* physicalStackFrame = context.fp<UCPURegister*>();
     for (unsigned i = 0; i < registerCount; i++) {
         RegisterAtOffset entry = calleeSaves->at(i);
         if (dontRestoreRegisters.get(entry.reg()))
@@ -94,8 +94,8 @@ static void restoreCalleeSavesFor(Context& context, CodeBlock* codeBlock)
         // The callee saved values come from the original stack, not the recovered stack.
         // Hence, we read the values directly from the physical stack memory instead of
         // going through context.stack().
-        ASSERT(!(entry.offset() % sizeof(uintptr_t)));
-        context.gpr(entry.reg().gpr()) = physicalStackFrame[entry.offset() / sizeof(uintptr_t)];
+        ASSERT(!(entry.offset() % sizeof(UCPURegister)));
+        context.gpr(entry.reg().gpr()) = physicalStackFrame[entry.offset() / sizeof(UCPURegister)];
     }
 }
 
@@ -113,7 +113,7 @@ static void saveCalleeSavesFor(Context& context, CodeBlock* codeBlock)
         RegisterAtOffset entry = calleeSaves->at(i);
         if (dontSaveRegisters.get(entry.reg()))
             continue;
-        stack.set(context.fp(), entry.offset(), context.gpr<uintptr_t>(entry.reg().gpr()));
+        stack.set(context.fp(), entry.offset(), context.gpr<UCPURegister>(entry.reg().gpr()));
     }
 }
 
@@ -127,14 +127,14 @@ static void restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(Context& context
     unsigned registerCount = allCalleeSaves->size();
 
     VMEntryRecord* entryRecord = vmEntryRecord(vm.topEntryFrame);
-    uintptr_t* calleeSaveBuffer = reinterpret_cast<uintptr_t*>(entryRecord->calleeSaveRegistersBuffer);
+    UCPURegister* calleeSaveBuffer = reinterpret_cast<UCPURegister*>(entryRecord->calleeSaveRegistersBuffer);
 
     // Restore all callee saves.
     for (unsigned i = 0; i < registerCount; i++) {
         RegisterAtOffset entry = allCalleeSaves->at(i);
         if (dontRestoreRegisters.get(entry.reg()))
             continue;
-        size_t uintptrOffset = entry.offset() / sizeof(uintptr_t);
+        size_t uintptrOffset = entry.offset() / sizeof(UCPURegister);
         if (entry.reg().isGPR())
             context.gpr(entry.reg().gpr()) = calleeSaveBuffer[uintptrOffset];
         else
@@ -160,9 +160,9 @@ static void copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(Context& context)
         if (dontCopyRegisters.get(entry.reg()))
             continue;
         if (entry.reg().isGPR())
-            stack.set(calleeSaveBuffer, entry.offset(), context.gpr<uintptr_t>(entry.reg().gpr()));
+            stack.set(calleeSaveBuffer, entry.offset(), context.gpr<UCPURegister>(entry.reg().gpr()));
         else
-            stack.set(calleeSaveBuffer, entry.offset(), context.fpr<uintptr_t>(entry.reg().fpr()));
+            stack.set(calleeSaveBuffer, entry.offset(), context.fpr<UCPURegister>(entry.reg().fpr()));
     }
 }
 

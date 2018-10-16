@@ -1074,7 +1074,7 @@ private:
     PropertyOffset prepareToPutDirectWithoutTransition(VM&, PropertyName, unsigned attributes, StructureID, Structure*);
 
     AuxiliaryBarrier<Butterfly*> m_butterfly;
-#if USE(JSVALUE32_64)
+#if CPU(ADDRESS32)
     unsigned m_32BitPadding;
 #endif
 };

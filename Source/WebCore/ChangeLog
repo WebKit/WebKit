@@ -1,3 +1,15 @@
+2018-10-15  Keith Miller  <keith_miller@apple.com>
+
+        Support arm64 CPUs with a 32-bit address space
+        https://bugs.webkit.org/show_bug.cgi?id=190273
+
+        Reviewed by Michael Saboff.
+
+        Fix missing namespace annotation.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateAddStyleRelation):
+
 2018-10-15  Justin Fan  <justin_fan@apple.com>
 
         Add WebGPU 2018 feature flag and experimental feature flag

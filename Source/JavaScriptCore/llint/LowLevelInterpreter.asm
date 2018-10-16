@@ -157,9 +157,11 @@ const PtrSize = constexpr (sizeof(void*))
 
 if JSVALUE64
     const CallFrameHeaderSlots = 5
+    const MachineRegisterSize = 8
 else
     const CallFrameHeaderSlots = 4
     const CallFrameAlignSlots = 1
+    const MachineRegisterSize = 4
 end
 const SlotSize = 8
 
@@ -170,11 +172,11 @@ const StackAlignment = 16
 const StackAlignmentSlots = 2
 const StackAlignmentMask = StackAlignment - 1
 
-const CallerFrameAndPCSize = 2 * PtrSize
+const CallerFrameAndPCSize = constexpr (sizeof(CallerFrameAndPC))
 
 const CallerFrame = 0
-const ReturnPC = CallerFrame + PtrSize
-const CodeBlock = ReturnPC + PtrSize
+const ReturnPC = CallerFrame + MachineRegisterSize
+const CodeBlock = ReturnPC + MachineRegisterSize
 const Callee = CodeBlock + SlotSize
 const ArgumentCount = Callee + SlotSize
 const ThisArgumentOffset = ArgumentCount + SlotSize
@@ -294,35 +296,35 @@ if JSVALUE64
     end
 
     macro loadisFromInstruction(offset, dest)
-        loadis offset * 8[PB, PC, 8], dest
+        loadis offset * PtrSize[PB, PC, PtrSize], dest
     end
     
     macro loadpFromInstruction(offset, dest)
-        loadp offset * 8[PB, PC, 8], dest
+        loadp offset * PtrSize[PB, PC, PtrSize], dest
     end
 
     macro loadisFromStruct(offset, dest)
-        loadis offset[PB, PC, 8], dest
+        loadis offset[PB, PC, PtrSize], dest
     end
 
     macro loadpFromStruct(offset, dest)
-        loadp offset[PB, PC, 8], dest
+        loadp offset[PB, PC, PtrSize], dest
     end
 
     macro storeisToInstruction(value, offset)
-        storei value, offset * 8[PB, PC, 8]
+        storei value, offset * PtrSize[PB, PC, PtrSize]
     end
 
     macro storepToInstruction(value, offset)
-        storep value, offset * 8[PB, PC, 8]
+        storep value, offset * PtrSize[PB, PC, PtrSize]
     end
 
     macro storeisFromStruct(value, offset)
-        storei value, offset[PB, PC, 8]
+        storei value, offset[PB, PC, PtrSize]
     end
 
     macro storepFromStruct(value, offset)
-        storep value, offset[PB, PC, 8]
+        storep value, offset[PB, PC, PtrSize]
     end
 
 else
@@ -574,7 +576,7 @@ elsif X86 or X86_WIN
     const CalleeSaveRegisterCount = 3
 end
 
-const CalleeRegisterSaveSize = CalleeSaveRegisterCount * PtrSize
+const CalleeRegisterSaveSize = CalleeSaveRegisterCount * MachineRegisterSize
 
 # VMEntryTotalFrameSize includes the space for struct VMEntryRecord and the
 # callee save registers rounded up to keep the stack aligned
@@ -697,16 +699,16 @@ macro copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(vm, temp)
         vmEntryRecord(temp, temp)
         leap VMEntryRecord::calleeSaveRegistersBuffer[temp], temp
         if ARM64 or ARM64E
-            storep csr0, [temp]
-            storep csr1, 8[temp]
-            storep csr2, 16[temp]
-            storep csr3, 24[temp]
-            storep csr4, 32[temp]
-            storep csr5, 40[temp]
-            storep csr6, 48[temp]
-            storep csr7, 56[temp]
-            storep csr8, 64[temp]
-            storep csr9, 72[temp]
+            storeq csr0, [temp]
+            storeq csr1, 8[temp]
+            storeq csr2, 16[temp]
+            storeq csr3, 24[temp]
+            storeq csr4, 32[temp]
+            storeq csr5, 40[temp]
+            storeq csr6, 48[temp]
+            storeq csr7, 56[temp]
+            storeq csr8, 64[temp]
+            storeq csr9, 72[temp]
             stored csfr0, 80[temp]
             stored csfr1, 88[temp]
             stored csfr2, 96[temp]
@@ -716,19 +718,19 @@ macro copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(vm, temp)
             stored csfr6, 128[temp]
             stored csfr7, 136[temp]
         elsif X86_64
-            storep csr0, [temp]
-            storep csr1, 8[temp]
-            storep csr2, 16[temp]
-            storep csr3, 24[temp]
-            storep csr4, 32[temp]
+            storeq csr0, [temp]
+            storeq csr1, 8[temp]
+            storeq csr2, 16[temp]
+            storeq csr3, 24[temp]
+            storeq csr4, 32[temp]
         elsif X86_64_WIN
-            storep csr0, [temp]
-            storep csr1, 8[temp]
-            storep csr2, 16[temp]
-            storep csr3, 24[temp]
-            storep csr4, 32[temp]
-            storep csr5, 40[temp]
-            storep csr6, 48[temp]
+            storeq csr0, [temp]
+            storeq csr1, 8[temp]
+            storeq csr2, 16[temp]
+            storeq csr3, 24[temp]
+            storeq csr4, 32[temp]
+            storeq csr5, 40[temp]
+            storeq csr6, 48[temp]
         end
     end
 end
@@ -739,16 +741,16 @@ macro restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(vm, temp)
         vmEntryRecord(temp, temp)
         leap VMEntryRecord::calleeSaveRegistersBuffer[temp], temp
         if ARM64 or ARM64E
-            loadp [temp], csr0
-            loadp 8[temp], csr1
-            loadp 16[temp], csr2
-            loadp 24[temp], csr3
-            loadp 32[temp], csr4
-            loadp 40[temp], csr5
-            loadp 48[temp], csr6
-            loadp 56[temp], csr7
-            loadp 64[temp], csr8
-            loadp 72[temp], csr9
+            loadq [temp], csr0
+            loadq 8[temp], csr1
+            loadq 16[temp], csr2
+            loadq 24[temp], csr3
+            loadq 32[temp], csr4
+            loadq 40[temp], csr5
+            loadq 48[temp], csr6
+            loadq 56[temp], csr7
+            loadq 64[temp], csr8
+            loadq 72[temp], csr9
             loadd 80[temp], csfr0
             loadd 88[temp], csfr1
             loadd 96[temp], csfr2
@@ -758,19 +760,19 @@ macro restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(vm, temp)
             loadd 128[temp], csfr6
             loadd 136[temp], csfr7
         elsif X86_64
-            loadp [temp], csr0
-            loadp 8[temp], csr1
-            loadp 16[temp], csr2
-            loadp 24[temp], csr3
-            loadp 32[temp], csr4
+            loadq [temp], csr0
+            loadq 8[temp], csr1
+            loadq 16[temp], csr2
+            loadq 24[temp], csr3
+            loadq 32[temp], csr4
         elsif X86_64_WIN
-            loadp [temp], csr0
-            loadp 8[temp], csr1
-            loadp 16[temp], csr2
-            loadp 24[temp], csr3
-            loadp 32[temp], csr4
-            loadp 40[temp], csr5
-            loadp 48[temp], csr6
+            loadq [temp], csr0
+            loadq 8[temp], csr1
+            loadq 16[temp], csr2
+            loadq 24[temp], csr3
+            loadq 32[temp], csr4
+            loadq 40[temp], csr5
+            loadq 48[temp], csr6
         end
     end
 end
@@ -884,9 +886,9 @@ macro prepareForTailCall(callee, temp1, temp2, temp3, callPtrTag)
     andi ~StackAlignmentMask, temp2
 
     if ARM or ARMv7_TRADITIONAL or ARMv7 or ARM64 or ARM64E or C_LOOP or MIPS
-        addp 2 * PtrSize, sp
-        subi 2 * PtrSize, temp2
-        loadp PtrSize[cfr], lr
+        addp CallerFrameAndPCSize, sp
+        subi CallerFrameAndPCSize, temp2
+        loadp CallerFrameAndPC::returnPC[cfr], lr
     else
         addp PtrSize, sp
         subi PtrSize, temp2
@@ -903,10 +905,17 @@ macro prepareForTailCall(callee, temp1, temp2, temp3, callPtrTag)
     loadp [cfr], cfr
 
 .copyLoop:
-    subi PtrSize, temp2
-    loadp [sp, temp2, 1], temp3
-    storep temp3, [temp1, temp2, 1]
-    btinz temp2, .copyLoop
+    if ARM64 and not ADDRESS64
+        subi MachineRegisterSize, temp2
+        loadq [sp, temp2, 1], temp3
+        storeq temp3, [temp1, temp2, 1]
+        btinz temp2, .copyLoop
+    else
+        subi PtrSize, temp2
+        loadp [sp, temp2, 1], temp3
+        storep temp3, [temp1, temp2, 1]
+        btinz temp2, .copyLoop
+    end
 
     move temp1, sp
     jmp callee, callPtrTag
@@ -1109,7 +1118,7 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
 
     if JSVALUE64
         move TagTypeNumber, tagTypeNumber
-        addp TagBitTypeOther, tagTypeNumber, tagMask
+        addq TagBitTypeOther, tagTypeNumber, tagMask
     end
 end
 
@@ -1263,7 +1272,7 @@ macro setEntryAddress(index, label)
     elsif ARM64 or ARM64E
         pcrtoaddr label, t1
         move index, t4
-        storep t1, [a0, t4, 8]
+        storep t1, [a0, t4, PtrSize]
     elsif ARM or ARMv7 or ARMv7_TRADITIONAL
         mvlbl (label - _relativePCBase), t4
         addp t4, t1, t4

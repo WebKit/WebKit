@@ -67,10 +67,11 @@ namespace JSC  {
         uint32_t m_bits;
     };
 
+    // arm64_32 expects caller frame and return pc to use 8 bytes 
     struct CallerFrameAndPC {
-        CallFrame* callerFrame;
-        Instruction* pc;
-        static const int sizeInRegisters = 2 * sizeof(void*) / sizeof(Register);
+        alignas(CPURegister) CallFrame* callerFrame;
+        alignas(CPURegister) Instruction* returnPC;
+        static const int sizeInRegisters = 2 * sizeof(CPURegister) / sizeof(Register);
     };
     static_assert(CallerFrameAndPC::sizeInRegisters == sizeof(CallerFrameAndPC) / sizeof(Register), "CallerFrameAndPC::sizeInRegisters is incorrect.");
 
@@ -147,10 +148,10 @@ namespace JSC  {
 
         static ptrdiff_t callerFrameOffset() { return OBJECT_OFFSETOF(CallerFrameAndPC, callerFrame); }
 
-        ReturnAddressPtr returnPC() const { return ReturnAddressPtr(callerFrameAndPC().pc); }
-        bool hasReturnPC() const { return !!callerFrameAndPC().pc; }
-        void clearReturnPC() { callerFrameAndPC().pc = 0; }
-        static ptrdiff_t returnPCOffset() { return OBJECT_OFFSETOF(CallerFrameAndPC, pc); }
+        ReturnAddressPtr returnPC() const { return ReturnAddressPtr(callerFrameAndPC().returnPC); }
+        bool hasReturnPC() const { return !!callerFrameAndPC().returnPC; }
+        void clearReturnPC() { callerFrameAndPC().returnPC = 0; }
+        static ptrdiff_t returnPCOffset() { return OBJECT_OFFSETOF(CallerFrameAndPC, returnPC); }
         AbstractPC abstractReturnPC(VM& vm) { return AbstractPC(vm, this); }
 
         bool callSiteBitsAreBytecodeOffset() const;
@@ -253,7 +254,7 @@ namespace JSC  {
         static CallFrame* noCaller() { return nullptr; }
         bool isGlobalExec() const
         {
-            return callerFrameAndPC().callerFrame == noCaller() && callerFrameAndPC().pc == nullptr;
+            return callerFrameAndPC().callerFrame == noCaller() && callerFrameAndPC().returnPC == nullptr;
         }
 
         void convertToStackOverflowFrame(VM&);
@@ -263,7 +264,7 @@ namespace JSC  {
         void setArgumentCountIncludingThis(int count) { static_cast<Register*>(this)[CallFrameSlot::argumentCount].payload() = count; }
         void setCallee(JSObject* callee) { static_cast<Register*>(this)[CallFrameSlot::callee] = callee; }
         void setCodeBlock(CodeBlock* codeBlock) { static_cast<Register*>(this)[CallFrameSlot::codeBlock] = codeBlock; }
-        void setReturnPC(void* value) { callerFrameAndPC().pc = reinterpret_cast<Instruction*>(value); }
+        void setReturnPC(void* value) { callerFrameAndPC().returnPC = reinterpret_cast<Instruction*>(value); }
 
         String friendlyFunctionName();
 

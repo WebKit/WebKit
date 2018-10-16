@@ -736,7 +736,7 @@
 #endif
 
 #if !defined(USE_JSVALUE64) && !defined(USE_JSVALUE32_64)
-#if CPU(ADDRESS64)
+#if CPU(ADDRESS64) || CPU(ARM64)
 #define USE_JSVALUE64 1
 #else
 #define USE_JSVALUE32_64 1
@@ -745,7 +745,7 @@
 
 /* The JIT is enabled by default on all x86, x86-64, ARM & MIPS platforms except ARMv7k. */
 #if !defined(ENABLE_JIT) \
-    && (CPU(X86) || CPU(X86_64) || CPU(ARM) || (CPU(ARM64) && !defined(__ILP32__)) || CPU(MIPS)) \
+    && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(MIPS)) \
     && !CPU(APPLE_ARMV7K)
 #define ENABLE_JIT 1
 #endif
@@ -865,7 +865,7 @@
 #endif
 
 #if !defined(ENABLE_WEBASSEMBLY)
-#if ENABLE(B3_JIT) && PLATFORM(COCOA)
+#if ENABLE(B3_JIT) && PLATFORM(COCOA) && CPU(ADDRESS64)
 #define ENABLE_WEBASSEMBLY 1
 #else
 #define ENABLE_WEBASSEMBLY 0

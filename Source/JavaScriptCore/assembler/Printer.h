@@ -79,9 +79,9 @@ union Data {
     uintptr_t value;
     const void* pointer;
 #if USE(JSVALUE64)
-    uintptr_t buffer[4];
+    UCPURegister buffer[4];
 #elif USE(JSVALUE32_64)
-    uintptr_t buffer[6];
+    UCPURegister buffer[6];
 #endif
 };
 

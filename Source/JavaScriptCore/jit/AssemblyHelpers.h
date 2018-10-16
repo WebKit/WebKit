@@ -461,11 +461,11 @@ public:
     {
         ASSERT(frameSize % stackAlignmentBytes() == 0);
         if (frameSize <= 128) {
-            for (unsigned offset = 0; offset < frameSize; offset += sizeof(intptr_t))
+            for (unsigned offset = 0; offset < frameSize; offset += sizeof(CPURegister))
                 storePtr(TrustedImm32(0), Address(currentTop, -8 - offset));
         } else {
             constexpr unsigned storeBytesPerIteration = stackAlignmentBytes();
-            constexpr unsigned storesPerIteration = storeBytesPerIteration / sizeof(intptr_t);
+            constexpr unsigned storesPerIteration = storeBytesPerIteration / sizeof(CPURegister);
 
             move(currentTop, temp);
             Label zeroLoop = label();
@@ -475,7 +475,7 @@ public:
             storePair64(ARM64Registers::zr, ARM64Registers::zr, temp);
 #else
             for (unsigned i = storesPerIteration; i-- != 0;)
-                storePtr(TrustedImm32(0), Address(temp, sizeof(intptr_t) * i));
+                storePtr(TrustedImm32(0), Address(temp, sizeof(CPURegister) * i));
 #endif
             branchPtr(NotEqual, temp, newTop).linkTo(zeroLoop, this);
         }

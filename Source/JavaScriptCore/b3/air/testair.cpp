@@ -138,9 +138,10 @@ void loadConstantImpl(BasicBlock* block, T value, B3::Air::Opcode move, Tmp tmp,
     block->append(move, nullptr, Arg::addr(scratch), tmp);
 }
 
-void loadConstant(BasicBlock* block, intptr_t value, Tmp tmp)
+template<typename T>
+void loadConstant(BasicBlock* block, T value, Tmp tmp)
 {
-    loadConstantImpl<intptr_t>(block, value, Move, tmp, tmp);
+    loadConstantImpl(block, value, Move, tmp, tmp);
 }
 
 void loadDoubleConstant(BasicBlock* block, double value, Tmp tmp, Tmp scratch)

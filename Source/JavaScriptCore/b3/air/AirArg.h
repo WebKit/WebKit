@@ -973,7 +973,7 @@ public:
     StackSlot* stackSlot() const
     {
         ASSERT(kind() == Stack);
-        return bitwise_cast<StackSlot*>(m_offset);
+        return bitwise_cast<StackSlot*>(static_cast<uintptr_t>(m_offset));
     }
 
     Air::Tmp index() const
@@ -996,7 +996,7 @@ public:
     Air::Special* special() const
     {
         ASSERT(kind() == Special);
-        return bitwise_cast<Air::Special*>(m_offset);
+        return bitwise_cast<Air::Special*>(static_cast<uintptr_t>(m_offset));
     }
 
     Width width() const
