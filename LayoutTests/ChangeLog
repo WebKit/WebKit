@@ -1,3 +1,12 @@
+2018-10-16  Charlie Turner  <cturner@igalia.com>
+
+        [EME] Multiple ClearKey tests crashing in gst_qtdemux_request_protection_context
+        https://bugs.webkit.org/show_bug.cgi?id=190577
+
+        Reviewed by Michael Catanzaro.
+
+        * platform/gtk/TestExpectations:
+
 2018-10-15  Timothy Hatcher  <timothy@apple.com>
 
         Add support for prefers-color-scheme media query

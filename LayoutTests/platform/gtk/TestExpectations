@@ -242,9 +242,6 @@ webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-tra
 # We don't support multiple streams per sourcebuffer nor dynamic type changes (audio/video/text)
 webkit.org/b/165394 media/media-source/media-source-seek-detach-crash.html [ Skip ]
 
-# Encrypted Media Extensions are not enabled.
-webkit.org/b/99024 media/encrypted-media [ Skip ]
-
 # CSS filters related failures
 webkit.org/b/99026 css3/filters/effect-brightness.html [ Failure ]
 webkit.org/b/99026 css3/filters/effect-brightness-hw.html [ Failure ]
@@ -1068,8 +1065,6 @@ webkit.org/b/162815 legacy-animation-engine/animations/font-variations/ [ Skip ]
 
 webkit.org/b/169531 fast/text/font-selection-font-face-parse.html [ Skip ]
 
-webkit.org/b/158836 imported/w3c/web-platform-tests/encrypted-media [ Skip ]
-
 # CSS image-orientation is not yet enabled.
 webkit.org/b/89052 fast/css/image-orientation [ Skip ]
 
@@ -1214,6 +1209,32 @@ editing/spelling/text-replacement-after-typing-to-word.html [ Skip ]
 
 # Depends on mac-specific code in TestController.
 webkit.org/b/187550 http/tests/plugins/plugin-allow-then-reload.html [ Failure ]
+
+webkit.org/b/190577 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-destroy-persistent-license.https.html [ Crash ]
+webkit.org/b/190577 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-persistent-license-events.https.html [ Crash ]
+webkit.org/b/190577 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-persistent-license.https.html [ Crash ]
+webkit.org/b/190577 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-destroy-persistent-license.https.html [ Crash ]
+webkit.org/b/190577 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-persistent-license.https.html [ Crash ]
+webkit.org/b/190577 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-clear-encrypted.https.html [ Crash ]
+webkit.org/b/190577 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-encrypted-clear-sources.https.html [ Crash ]
+webkit.org/b/190577 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-encrypted-clear.https.html [ Crash ]
+webkit.org/b/190577 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-events.https.html [ Crash ]
+webkit.org/b/190577 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey-sequential-readyState.https.html [ Crash ]
+webkit.org/b/190577 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey-sequential.https.html [ Crash ]
+webkit.org/b/190577 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey.https.html [ Crash ]
+webkit.org/b/190577 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multisession.https.html [ Crash ]
+webkit.org/b/190577 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-after-src.https.html [ Crash ]
+webkit.org/b/190577 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-after-update.https.html [ Crash ]
+webkit.org/b/190577 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-immediately.https.html [ Crash ]
+webkit.org/b/190577 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-onencrypted.https.html [ Crash ]
+webkit.org/b/190577 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-two-videos.https.html [ Crash ]
+webkit.org/b/190577 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-waitingforkey.https.html [ Crash ]
+webkit.org/b/190577 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary.https.html [ Crash ]
+webkit.org/b/190577 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-reset-src-after-setmediakeys.https.html [ Crash ]
+webkit.org/b/190577 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-again-after-playback.https.html [ Crash ]
+webkit.org/b/190577 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-again-after-resetting-src.https.html [ Crash ]
+webkit.org/b/190577 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-multiple-times-with-different-mediakeys.https.html [ Crash ]
+webkit.org/b/190577 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-waiting-for-a-key.https.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
@@ -1376,15 +1397,6 @@ webkit.org/b/104809 media/adopt-node-crash.html [ Crash Timeout Pass ]
 webkit.org/b/104809 media/encrypted-media/encrypted-media-not-loaded.html [ Failure Timeout Crash ]
 webkit.org/b/104809 media/encrypted-media/encrypted-media-syntax.html [ Failure Timeout ]
 webkit.org/b/104809 media/track/track-cues-pause-on-exit.html [ Timeout Pass ]
-
-webkit.org/b/180430 media/encrypted-media/clearKey/clearKey-encrypted-cenc-event.html [ Skip ]
-webkit.org/b/180430 media/encrypted-media/clearKey/clearKey-encrypted-cenc-event-mse.html [ Skip ]
-webkit.org/b/189196 media/encrypted-media/clearKey/clearKey-encrypted-webm-event-mse.html [ Skip ]
-webkit.org/b/180928 media/encrypted-media/clearKey/clearKey-message-cenc-event.html [ Skip ]
-webkit.org/b/180928 media/encrypted-media/clearKey/clearKey-message-cenc-event-mse.html [ Skip ]
-webkit.org/b/181594 media/encrypted-media/clearKey/clearKey-cenc-audio-playback-mse.html [ Skip ]
-webkit.org/b/181594 media/encrypted-media/clearKey/clearKey-cenc-video-playback-mse.html [ Skip ]
-webkit.org/b/189200 media/encrypted-media/clearKey/clearKey-webm-video-playback-mse.html [ Skip ]
 
 # This test also crashes after the FTL merge
 webkit.org/b/106415 webkit.org/b/119255 fast/workers/worker-close-more.html [ Timeout Crash Pass ]
