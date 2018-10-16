@@ -54,7 +54,7 @@ class UserTiming;
 
 class Performance final : public RefCounted<Performance>, public ContextDestructionObserver, public EventTargetWithInlineData {
 public:
-    static Ref<Performance> create(ScriptExecutionContext& context, MonotonicTime timeOrigin) { return adoptRef(*new Performance(context, timeOrigin)); }
+    static Ref<Performance> create(ScriptExecutionContext* context, MonotonicTime timeOrigin) { return adoptRef(*new Performance(context, timeOrigin)); }
     ~Performance();
 
     DOMHighResTimeStamp now() const;
@@ -91,7 +91,7 @@ public:
     using RefCounted::deref;
 
 private:
-    Performance(ScriptExecutionContext&, MonotonicTime timeOrigin);
+    Performance(ScriptExecutionContext*, MonotonicTime timeOrigin);
 
     void contextDestroyed() override;
 

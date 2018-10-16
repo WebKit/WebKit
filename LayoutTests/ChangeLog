@@ -1,3 +1,17 @@
+2018-10-16  Chris Dumez  <cdumez@apple.com>
+
+        window.performance should not become null after the window loses its browsing context
+        https://bugs.webkit.org/show_bug.cgi?id=190636
+
+        Reviewed by Ryosuke Niwa.
+
+        Extend layout test coverage.
+
+        * http/tests/dom/cross-origin-detached-window-properties-expected.txt:
+        * http/tests/dom/cross-origin-detached-window-properties.html:
+        * http/tests/dom/same-origin-detached-window-properties-expected.txt:
+        * http/tests/dom/same-origin-detached-window-properties.html:
+
 2018-10-16  Timothy Hatcher  <timothy@apple.com>
 
         Add <meta name="supported-color-schemes"> to control what color schemes the page supports

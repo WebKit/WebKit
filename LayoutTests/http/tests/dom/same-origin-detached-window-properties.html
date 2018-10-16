@@ -137,6 +137,12 @@ function validateWindow(_w)
     }
 
     try {
+    shouldBeTrue("!!w.performance");
+    } catch (e) {
+        debug(e);
+    }
+
+    try {
     shouldBeUndefined("w.foo");
     shouldBeUndefined("w.location.foo");
     } catch (e) {

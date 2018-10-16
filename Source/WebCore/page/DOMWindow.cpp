@@ -724,13 +724,9 @@ Navigator* DOMWindow::navigator()
 
 Performance* DOMWindow::performance() const
 {
-    // FIXME: This should not return nullptr when frameless.
-    if (!isCurrentlyDisplayedInFrame())
-        return nullptr;
-
     if (!m_performance) {
-        MonotonicTime timeOrigin = document()->loader() ? document()->loader()->timing().referenceMonotonicTime() : MonotonicTime::now();
-        m_performance = Performance::create(*document(), timeOrigin);
+        MonotonicTime timeOrigin = document() && document()->loader() ? document()->loader()->timing().referenceMonotonicTime() : MonotonicTime::now();
+        m_performance = Performance::create(document(), timeOrigin);
     }
     return m_performance.get();
 }

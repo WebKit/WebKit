@@ -70,7 +70,7 @@ WorkerGlobalScope::WorkerGlobalScope(const URL& url, Ref<SecurityOrigin>&& origi
     , m_connectionProxy(connectionProxy)
 #endif
     , m_socketProvider(socketProvider)
-    , m_performance(Performance::create(*this, timeOrigin))
+    , m_performance(Performance::create(this, timeOrigin))
     , m_sessionID(sessionID)
 {
 #if !ENABLE(INDEXED_DATABASE)

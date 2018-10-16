@@ -49,13 +49,14 @@
 
 namespace WebCore {
 
-Performance::Performance(ScriptExecutionContext& context, MonotonicTime timeOrigin)
-    : ContextDestructionObserver(&context)
+Performance::Performance(ScriptExecutionContext* context, MonotonicTime timeOrigin)
+    : ContextDestructionObserver(context)
     , m_resourceTimingBufferFullTimer(*this, &Performance::resourceTimingBufferFullTimerFired)
     , m_timeOrigin(timeOrigin)
     , m_performanceTimelineTaskQueue(context)
 {
     ASSERT(m_timeOrigin);
+    ASSERT(context || m_performanceTimelineTaskQueue.isClosed());
 }
 
 Performance::~Performance() = default;

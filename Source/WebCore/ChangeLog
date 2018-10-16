@@ -1,3 +1,31 @@
+2018-10-16  Chris Dumez  <cdumez@apple.com>
+
+        window.performance should not become null after the window loses its browsing context
+        https://bugs.webkit.org/show_bug.cgi?id=190636
+
+        Reviewed by Ryosuke Niwa.
+
+        window.performance should not become null after the window loses its browsing context. This
+        WebKit behavior does not match the HTML specification nor the behavior of other browsers.
+
+        Also note that the attribute is not nullable in the specification:
+        - https://www.w3.org/TR/navigation-timing/#sec-window.performance-attribute
+
+        No new tests, updated existing test.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::performance const):
+        * page/Performance.cpp:
+        (WebCore::Performance::Performance):
+        * page/Performance.h:
+        * platform/GenericTaskQueue.h:
+        (WebCore::TaskDispatcher::TaskDispatcher):
+        (WebCore::TaskDispatcher::postTask):
+        (WebCore::GenericTaskQueue::GenericTaskQueue):
+        (WebCore::GenericTaskQueue::isClosed const):
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::WorkerGlobalScope):
+
 2018-10-16  Jer Noble  <jer.noble@apple.com>
 
         Refactoring: Convert HTMLMediaElement::scheduleDelayedAction() to individually schedulable & cancelable tasks
