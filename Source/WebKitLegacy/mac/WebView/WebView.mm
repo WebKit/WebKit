@@ -1703,7 +1703,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         SocketProvider::create(),
         LibWebRTCProvider::create(),
         WebCore::CacheStorageProvider::create(),
-        makeUniqueRef<BackForwardList>(),
+        BackForwardList::create(self)
     );
     pageConfiguration.chromeClient = new WebChromeClientIOS(self);
 #if ENABLE(DRAG_SUPPORT)
