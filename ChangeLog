@@ -1,3 +1,10 @@
+2018-10-16  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK bots build fix
+
+        * Source/cmake/OptionsGTK.cmake: Disable Sandbox support until the
+        bots have all the needed dependencies installed.
+
 2018-10-15  Justin Fan  <justin_fan@apple.com>
 
         Add WebGPU 2018 feature flag and experimental feature flag
