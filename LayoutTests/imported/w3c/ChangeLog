@@ -1,3 +1,25 @@
+2018-10-16  Charlie Turner  <cturner@igalia.com>
+
+        [EME] Add some ClearKey baselines for passing tests
+        https://bugs.webkit.org/show_bug.cgi?id=190579
+
+        Reviewed by Unreviewed test gardening.
+
+        * web-platform-tests/encrypted-media/clearkey-check-initdata-type.https-expected.txt: Added.
+        * web-platform-tests/encrypted-media/clearkey-events-session-closed-event.https-expected.txt: Added.
+        * web-platform-tests/encrypted-media/clearkey-events.https-expected.txt: Added.
+        * web-platform-tests/encrypted-media/clearkey-invalid-license.https-expected.txt: Added.
+        * web-platform-tests/encrypted-media/clearkey-keystatuses-multiple-sessions.https-expected.txt: Added.
+        * web-platform-tests/encrypted-media/clearkey-keystatuses.https-expected.txt: Added.
+        * web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-at-same-time.https-expected.txt: Added.
+        * web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-multiple-times-with-the-same-mediakeys.https-expected.txt: Added.
+        * web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-to-multiple-video-elements.https-expected.txt: Added.
+        * web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys.https-expected.txt: Added.
+        * web-platform-tests/encrypted-media/clearkey-mp4-syntax-mediakeysession.https-expected.txt: Added.
+        * web-platform-tests/encrypted-media/clearkey-mp4-syntax-mediakeysystemaccess.https-expected.txt: Added.
+        * web-platform-tests/encrypted-media/clearkey-not-callable-after-createsession.https-expected.txt: Added.
+        * web-platform-tests/encrypted-media/clearkey-update-non-ascii-input.https-expected.txt: Added.
+
 2018-10-15  Youenn Fablet  <youenn@apple.com>
 
         RTCPeerConnection.generateCertificate is not a function

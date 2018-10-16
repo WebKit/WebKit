@@ -1,0 +1,5 @@
+
+PASS org.w3.clearkey, temporary, update() immediately after createSession() 
+PASS org.w3.clearkey, temporary, close() immediately after createSession() 
+PASS org.w3.clearkey, temporary, remove() immediately after createSession() 
+

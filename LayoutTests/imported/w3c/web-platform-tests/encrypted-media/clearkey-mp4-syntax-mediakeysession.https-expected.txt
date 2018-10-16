@@ -1,0 +1,9 @@
+
+PASS org.w3.clearkey test MediaKeySession generateRequest() exceptions. 
+PASS org.w3.clearkey test MediaKeySession load() exceptions. 
+PASS org.w3.clearkey test if MediaKeySession generateRequest() resolves for various sessions 
+PASS org.w3.clearkey test MediaKeySession update() exceptions. 
+PASS org.w3.clearkey test MediaKeySession close() exceptions. 
+PASS org.w3.clearkey test MediaKeySession remove() exceptions. 
+PASS org.w3.clearkey test MediaKeySession attribute syntax. 
+
