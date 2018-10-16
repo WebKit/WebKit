@@ -1,3 +1,11 @@
+2018-10-15  Alex Christensen  <achristensen@webkit.org>
+
+        Fix API tests after r237146
+
+        * Shared/WebPageGroupData.cpp:
+        (WebKit::WebPageGroupData::decode):
+        I accidentally changed the decoder.
+
 2018-10-15  Sihui Liu  <sihui_liu@apple.com>
 
         HSTS cache entries cannot be removed by origin

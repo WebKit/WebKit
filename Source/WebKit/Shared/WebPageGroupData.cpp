@@ -49,12 +49,12 @@ std::optional<WebPageGroupData> WebPageGroupData::decode(IPC::Decoder& decoder)
     if (!pageGroupID)
         return std::nullopt;
     
-    std::optional<UserContentControllerIdentifier> userContentControllerIdentifier;
+    std::optional<uint64_t> userContentControllerIdentifier;
     decoder >> userContentControllerIdentifier;
     if (!userContentControllerIdentifier)
         return std::nullopt;
     
-    return {{ WTFMove(*identifier), WTFMove(*pageGroupID), WTFMove(*userContentControllerIdentifier) }};
+    return {{ WTFMove(*identifier), WTFMove(*pageGroupID), makeObjectIdentifier<UserContentControllerIdentifierType>(*userContentControllerIdentifier) }};
 }
 
 } // namespace WebKit
