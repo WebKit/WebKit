@@ -1,3 +1,13 @@
+2018-10-16  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK][JHBuild] Disable libmount support in glib
+
+        Rubber-stamped by Alejandro G. Castro.
+
+        This feature doesn't seem required for our setup.
+
+        * gtk/jhbuild.modules:
+
 2018-10-15  Justin Fan  <justin_fan@apple.com>
 
         Add WebGPU 2018 feature flag and experimental feature flag

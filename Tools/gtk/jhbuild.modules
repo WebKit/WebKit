@@ -210,7 +210,7 @@
 
   <autotools id="glib"
              autogen-sh="configure"
-             autogenargs="--disable-dtrace">
+             autogenargs="--disable-dtrace --disable-libmount">
     <dependencies>
       <dep package="libffi"/>
     </dependencies>
