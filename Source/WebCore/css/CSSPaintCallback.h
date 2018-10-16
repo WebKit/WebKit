@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "JSWebMetalRenderPassAttachmentDescriptor.h"
+#pragma once
 
-#if ENABLE(WEBMETAL)
+#if ENABLE(CSS_PAINTING_API)
 
-#include "JSDOMBinding.h"
-#include "JSWebMetalRenderPassColorAttachmentDescriptor.h"
-#include "JSWebMetalRenderPassDepthAttachmentDescriptor.h"
-#include "WebMetalRenderPassColorAttachmentDescriptor.h"
-#include "WebMetalRenderPassDepthAttachmentDescriptor.h"
+#include "ActiveDOMCallback.h"
+#include "CallbackResult.h"
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
-using namespace JSC;
 
-JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<WebMetalRenderPassAttachmentDescriptor>&& object)
-{
-    if (object->isColorAttachmentDescriptor())
-        return createWrapper<WebMetalRenderPassColorAttachmentDescriptor>(globalObject, WTFMove(object));
-    return createWrapper<WebMetalRenderPassDepthAttachmentDescriptor>(globalObject, WTFMove(object));
-}
+class CSSPaintCallback : public RefCounted<CSSPaintCallback>, public ActiveDOMCallback {
+public:
+    using ActiveDOMCallback::ActiveDOMCallback;
 
-JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, WebMetalRenderPassAttachmentDescriptor& object)
-{
-    return wrap(state, globalObject, object);
-}
+    virtual CallbackResult<void> handleEvent() = 0;
 
-}
+    virtual ~CSSPaintCallback()
+    {
+    }
+};
 
+} // namespace WebCore
 #endif

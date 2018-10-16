@@ -51,6 +51,7 @@ namespace WebCore {
     macro(Credential) \
     macro(CredentialsContainer) \
     macro(CSSAnimation) \
+    macro(CSSPaintWorkletGlobalScope) \
     macro(CSSTransition) \
     macro(CustomElementRegistry) \
     macro(DataTransferItem) \

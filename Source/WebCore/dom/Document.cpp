@@ -35,6 +35,7 @@
 #include "CDATASection.h"
 #include "CSSAnimationController.h"
 #include "CSSFontSelector.h"
+#include "CSSPaintWorkletGlobalScope.h"
 #include "CSSStyleDeclaration.h"
 #include "CSSStyleSheet.h"
 #include "CachedCSSStyleSheet.h"
@@ -8279,5 +8280,14 @@ void Document::frameWasDisconnectedFromOwner()
 
     detachFromFrame();
 }
+
+#if ENABLE(CSS_PAINTING_API)
+CSSPaintWorkletGlobalScope& Document::ensureCSSPaintWorkletGlobalScope()
+{
+    if (!m_CSSPaintWorkletGlobalScope)
+        m_CSSPaintWorkletGlobalScope = CSSPaintWorkletGlobalScope::create();
+    return *m_CSSPaintWorkletGlobalScope;
+}
+#endif
 
 } // namespace WebCore

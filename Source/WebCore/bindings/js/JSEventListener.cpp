@@ -22,6 +22,7 @@
 
 #include "BeforeUnloadEvent.h"
 #include "ContentSecurityPolicy.h"
+#include "EventNames.h"
 #include "Frame.h"
 #include "HTMLElement.h"
 #include "JSDOMConvertNullable.h"

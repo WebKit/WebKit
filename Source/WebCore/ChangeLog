@@ -1,3 +1,59 @@
+2018-10-16  Justin Michaud  <justin_michaud@apple.com>
+
+        Implement feature flag and bindings for CSS Painting API
+        https://bugs.webkit.org/show_bug.cgi?id=190237
+
+        Reviewed by Ryosuke Niwa.
+
+        Add feature flag and bindings for CSS Painting API. This adds a new property,
+        CSS.paintWorkletGlobalScope, which will be a temporary way to access the paint
+        worklet global scope untill CSS.paintWorklet is implemented.
+
+        There are a few small changes, mostly adding headers and "using" declarations,
+        that were required to get this to build. This is probably related to unified sources.
+
+        Tests: fast/css-custom-paint/basic.html
+               fast/css-custom-paint/registerPaintBindings.html
+
+        * CMakeLists.txt:
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCSSPaintWorkletGlobalScopeCustom.cpp: Added.
+        (WebCore::throwInvalidModificationError):
+        (WebCore::JSCSSPaintWorkletGlobalScope::registerPaint):
+        * bindings/js/JSEventListener.cpp:
+        * bindings/js/JSRemoteDOMWindowCustom.cpp:
+        * bindings/js/JSWebMetalRenderPassAttachmentDescriptorCustom.cpp:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * css/CSSPaintCallback.h: Copied from Source/WebCore/css/MediaQueryParserContext.cpp.
+        (WebCore::CSSPaintCallback::~CSSPaintCallback):
+        * css/CSSPaintCallback.idl: Added.
+        * css/CSSPaintWorkletGlobalScope.cpp: Copied from Source/WebCore/css/MediaQueryParserContext.cpp.
+        (WebCore::CSSPaintWorkletGlobalScope::create):
+        (WebCore::CSSPaintWorkletGlobalScope::CSSPaintWorkletGlobalScope):
+        (WebCore::CSSPaintWorkletGlobalScope::devicePixelRatio):
+        (WebCore::CSSPaintWorkletGlobalScope::addRegisteredPaint):
+        * css/CSSPaintWorkletGlobalScope.h: Copied from Source/WebCore/css/MediaQueryParserContext.cpp.
+        (WebCore::CSSPaintWorkletGlobalScope::paintDefinitionMap):
+        * css/CSSPaintWorkletGlobalScope.idl: Added.
+        * css/DOMCSSPaintWorklet.cpp: Copied from Source/WebCore/css/MediaQueryParserContext.cpp.
+        (WebCore::DOMCSSPaintWorklet::ensurePaintWorkletGlobalScope):
+        (WebCore::DOMCSSPaintWorklet::from):
+        (WebCore::DOMCSSPaintWorklet::supplementName):
+        * css/DOMCSSPaintWorklet.h: Copied from Source/WebCore/css/MediaQueryParserContext.cpp.
+        * css/DOMCSSPaintWorklet.idl: Added.
+        * css/MediaQueryParserContext.cpp:
+        * css/StyleBuilder.h:
+        * dom/Document.cpp:
+        (WebCore::Document::ensureCSSPaintWorkletGlobalScope):
+        * dom/Document.h:
+        * features.json:
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setCSSPaintingAPIEnabled):
+        (WebCore::RuntimeEnabledFeatures::cssPaintingAPIEnabled const):
+
 2018-10-16  Per Arne Vollan  <pvollan@apple.com>
 
         [WebVTT] Support inline WebVTT styles

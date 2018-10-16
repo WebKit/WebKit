@@ -256,6 +256,11 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
     if (preference == "CSSCustomPropertiesAndValuesEnabled")
         RuntimeEnabledFeatures::sharedFeatures().setCSSCustomPropertiesAndValuesEnabled(enabled);
 
+#if ENABLE(CSS_PAINTING_API)
+    if (preference == "CSSPaintingAPIEnabled")
+        RuntimeEnabledFeatures::sharedFeatures().setCSSPaintingAPIEnabled(enabled);
+#endif
+
     // Map the names used in LayoutTests with the names used in WebCore::Settings and WebPreferencesStore.
 #define FOR_EACH_OVERRIDE_BOOL_PREFERENCE(macro) \
     macro(WebKitJavaEnabled, JavaEnabled, javaEnabled) \

@@ -1,3 +1,21 @@
+2018-10-16  Justin Michaud  <justin_michaud@apple.com>
+
+        Implement feature flag and bindings for CSS Painting API
+        https://bugs.webkit.org/show_bug.cgi?id=190237
+
+        Reviewed by Ryosuke Niwa.
+
+        Add basic tests for the CSS Painting API registerPaint function,
+        and test the custom bindings.
+
+        * fast/css-custom-paint/basic-expected.txt: Added.
+        * fast/css-custom-paint/basic.html: Added.
+        * fast/css-custom-paint/registerPaintBindings-expected.txt: Added.
+        * fast/css-custom-paint/registerPaintBindings.html: Added.
+        * platform/ios-wk1/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+
 2018-10-16  Per Arne Vollan  <pvollan@apple.com>
 
         [WebVTT] Support inline WebVTT styles

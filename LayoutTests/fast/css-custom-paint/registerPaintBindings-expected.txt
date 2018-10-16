@@ -1,0 +1,13 @@
+
+PASS registerPaint must be a method 
+PASS must get "prototype" property of the constructor 
+PASS must rethrow an exception thrown while getting "inputProperties" property of the constructor 
+PASS must rethrow an exception thrown while getting "prototype" property of the constructor 
+PASS must throw when "prototype" property of the constructor is not an object 
+PASS must get paint callback of the constructor prototype 
+PASS must rethrow an exception thrown while getting paint callback on the constructor prototype 
+PASS must rethrow an exception thrown while converting paint callback value to Function callback type 
+PASS must rethrow an exception thrown while converting the value of inputArguments to sequence<DOMString> 
+PASS must rethrow an exception thrown while iterating over inputArguments to sequence<DOMString> 
+PASS must rethrow an exception thrown while retrieving Symbol.iterator on inputArguments 
+

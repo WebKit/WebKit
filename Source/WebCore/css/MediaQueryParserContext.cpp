@@ -26,6 +26,7 @@
 #include "config.h"
 #include "MediaQueryParserContext.h"
 
+#include "CSSParserContext.h"
 #include "Document.h"
 #include "Page.h"
 

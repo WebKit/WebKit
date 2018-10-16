@@ -1,0 +1,8 @@
+
+PASS test that registerPaint runs 
+PASS test that registerPaint runs without inputProperties 
+PASS test that registerPaint runs with inputArguments 
+PASS test that registerPaint runs with contextOptions 
+PASS test that registerPaint runs with predefined class 
+PASS test that registerPaint accepts only a string and a class constructor 
+

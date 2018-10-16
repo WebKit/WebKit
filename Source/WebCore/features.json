@@ -134,10 +134,11 @@
     {
         "name": "CSS Painting API Level 1",
         "status": {
-            "status": "Under Consideration"
+            "status": "Under Development"
         },
-        "url": "https://drafts.css-houdini.org/css-paint-api/",
+        "url": "https://drafts.css-houdini.org/css-paint-api-1/",
         "keywords": ["css", "houdini", "worklet"],
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=190217",
         "category": "css"
     },
     {

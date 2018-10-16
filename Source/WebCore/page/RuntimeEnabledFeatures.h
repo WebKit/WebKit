@@ -178,6 +178,11 @@ public:
     void setPointerEventsEnabled(bool isEnabled) { m_pointerEventsEnabled = isEnabled; }
     bool pointerEventsEnabled() const { return m_pointerEventsEnabled; }
 
+#if ENABLE(CSS_PAINTING_API)
+    void setCSSPaintingAPIEnabled(bool isEnabled) { m_CSSPaintingAPIEnabled = isEnabled; }
+    bool cssPaintingAPIEnabled() const { return m_CSSPaintingAPIEnabled; }
+#endif
+
 #if ENABLE(ATTACHMENT_ELEMENT)
     void setAttachmentElementEnabled(bool areEnabled) { m_isAttachmentElementEnabled = areEnabled; }
     bool attachmentElementEnabled() const { return m_isAttachmentElementEnabled; }
@@ -355,6 +360,10 @@ private:
     bool m_webAPIStatisticsEnabled { false };
     bool m_CSSCustomPropertiesAndValuesEnabled { false };
     bool m_pointerEventsEnabled { false };
+
+#if ENABLE(CSS_PAINTING_API)
+    bool m_CSSPaintingAPIEnabled { false };
+#endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     bool m_isAttachmentElementEnabled { false };

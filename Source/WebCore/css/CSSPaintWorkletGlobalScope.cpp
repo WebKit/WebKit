@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,31 +24,31 @@
  */
 
 #include "config.h"
-#include "JSWebMetalRenderPassAttachmentDescriptor.h"
+#include "CSSPaintWorkletGlobalScope.h"
 
-#if ENABLE(WEBMETAL)
-
-#include "JSDOMBinding.h"
-#include "JSWebMetalRenderPassColorAttachmentDescriptor.h"
-#include "JSWebMetalRenderPassDepthAttachmentDescriptor.h"
-#include "WebMetalRenderPassColorAttachmentDescriptor.h"
-#include "WebMetalRenderPassDepthAttachmentDescriptor.h"
+#if ENABLE(CSS_PAINTING_API)
 
 namespace WebCore {
-using namespace JSC;
 
-JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<WebMetalRenderPassAttachmentDescriptor>&& object)
+Ref<CSSPaintWorkletGlobalScope> CSSPaintWorkletGlobalScope::create()
 {
-    if (object->isColorAttachmentDescriptor())
-        return createWrapper<WebMetalRenderPassColorAttachmentDescriptor>(globalObject, WTFMove(object));
-    return createWrapper<WebMetalRenderPassDepthAttachmentDescriptor>(globalObject, WTFMove(object));
+    return adoptRef(*new CSSPaintWorkletGlobalScope());
 }
 
-JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, WebMetalRenderPassAttachmentDescriptor& object)
+CSSPaintWorkletGlobalScope::CSSPaintWorkletGlobalScope()
 {
-    return wrap(state, globalObject, object);
 }
 
+double CSSPaintWorkletGlobalScope::devicePixelRatio()
+{
+    return 1.0;
 }
+
+ExceptionOr<void> CSSPaintWorkletGlobalScope::addRegisteredPaint()
+{
+    return { };
+}
+
+} // namespace WebCore
 
 #endif

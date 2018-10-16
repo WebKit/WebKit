@@ -30,6 +30,7 @@
 #include "WebCoreJSClientData.h"
 
 namespace WebCore {
+using namespace JSC;
 
 bool JSRemoteDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* state, PropertyName propertyName, PropertySlot& slot)
 {

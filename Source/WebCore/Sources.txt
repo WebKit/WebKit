@@ -378,6 +378,7 @@ bindings/js/JSDOMConvertStrings.cpp
 bindings/js/JSDOMConvertWebGL.cpp
 bindings/js/JSDOMIterator.cpp
 bindings/js/JSDeprecatedCSSOMValueCustom.cpp
+bindings/js/JSCSSPaintWorkletGlobalScopeCustom.cpp
 bindings/js/JSCallbackData.cpp
 bindings/js/JSCanvasRenderingContext2DCustom.cpp
 bindings/js/JSCustomElementInterface.cpp
@@ -603,6 +604,7 @@ css/CSSMediaRule.cpp
 css/CSSNamedImageValue.cpp
 css/CSSNamespaceRule.cpp
 css/CSSPageRule.cpp
+css/CSSPaintWorkletGlobalScope.cpp
 css/CSSPendingSubstitutionValue.cpp
 css/CSSPrimitiveValue.cpp
 css/CSSProperty.cpp
@@ -632,6 +634,7 @@ css/CSSVariableData.cpp
 css/CSSVariableReferenceValue.cpp
 css/DOMCSSNamespace.cpp
 css/DOMCSSRegisterCustomProperty.cpp
+css/DOMCSSPaintWorklet.cpp
 css/DOMMatrix.cpp
 css/DOMMatrixReadOnly.cpp
 css/DeprecatedCSSOMPrimitiveValue.cpp
@@ -2461,6 +2464,8 @@ JSCSSKeyframeRule.cpp
 JSCSSKeyframesRule.cpp
 JSCSSMediaRule.cpp
 JSCSSNamespaceRule.cpp
+JSCSSPaintCallback.cpp
+JSCSSPaintWorkletGlobalScope.cpp
 JSCSSPageRule.cpp
 JSCSSRule.cpp
 JSCSSRuleList.cpp
@@ -2533,6 +2538,7 @@ JSDocumentTimelineOptions.cpp
 JSDOMApplicationCache.cpp
 JSDOMCSSNamespace.cpp
 JSDOMCSSRegisterCustomProperty.cpp
+JSDOMCSSPaintWorklet.cpp
 JSDOMCSSCustomPropertyDescriptor.cpp
 JSDOMCache.cpp
 JSDOMCacheStorage.cpp

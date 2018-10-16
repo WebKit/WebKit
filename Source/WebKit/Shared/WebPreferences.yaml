@@ -1312,6 +1312,15 @@ DarkModeCSSEnabled:
   category: experimental
   condition: ENABLE(DARK_MODE_CSS)
 
+CSSPaintingAPIEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "CSS Painting API"
+  humanReadableDescription: "Enable the CSS Painting API"
+  webcoreBinding: RuntimeEnabledFeatures
+  category: experimental
+  condition: ENABLE(CSS_PAINTING_API)
+
 # For internal features:
 # The type should be boolean.
 # You must provide a humanReadableName and humanReadableDescription for all debug features. They

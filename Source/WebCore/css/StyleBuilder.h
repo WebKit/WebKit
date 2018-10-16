@@ -30,6 +30,7 @@
 
 namespace WebCore {
 
+struct CSSRegisteredCustomProperty;
 class CSSValue;
 class StyleResolver;
 struct CSSRegisteredCustomProperty;

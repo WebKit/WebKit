@@ -525,6 +525,8 @@ set(WebCore_NON_SVG_IDL_FILES
     css/CSSKeyframesRule.idl
     css/CSSMediaRule.idl
     css/CSSNamespaceRule.idl
+    css/CSSPaintCallback.idl
+    css/CSSPaintWorkletGlobalScope.idl
     css/CSSPageRule.idl
     css/CSSRule.idl
     css/CSSRuleList.idl
@@ -535,6 +537,7 @@ set(WebCore_NON_SVG_IDL_FILES
     css/CSSUnknownRule.idl
     css/DOMCSSCustomPropertyDescriptor.idl
     css/DOMCSSNamespace.idl
+    css/DOMCSSPaintWorklet.idl
     css/DOMCSSRegisterCustomProperty.idl
     css/DOMMatrix.idl
     css/DOMMatrix2DInit.idl

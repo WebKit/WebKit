@@ -1346,6 +1346,9 @@
 		4B2708C70AF19EE40065127F /* Pasteboard.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B2708C50AF19EE40065127F /* Pasteboard.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4B3043CD0AE0373B00A82647 /* Editor.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B3043CB0AE0373B00A82647 /* Editor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4B3480940EEF50D400AC1B41 /* ImageSourceCG.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B3480920EEF50D400AC1B41 /* ImageSourceCG.h */; };
+		4B5BDD9B21658A1500DD4262 /* CSSPaintCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B5BDD9A21658A1500DD4262 /* CSSPaintCallback.h */; };
+		4B6B5CBD21640EFF00603817 /* DOMCSSPaintWorklet.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B6B5CB82163EC0700603817 /* DOMCSSPaintWorklet.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4B6B5CC02164386400603817 /* CSSPaintWorkletGlobalScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B6B5CBF2164386400603817 /* CSSPaintWorkletGlobalScope.h */; };
 		4B6FA6F40C39E48C00087011 /* SmartReplace.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B6FA6F20C39E48C00087011 /* SmartReplace.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4BAE95B10B2FA9CE00AED8A0 /* EditorDeleteAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BAE95B00B2FA9CE00AED8A0 /* EditorDeleteAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4BDA3FFE2151B6F500FD6604 /* DOMCSSCustomPropertyDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BDA3FF82151B6F200FD6604 /* DOMCSSCustomPropertyDescriptor.h */; };
@@ -7874,6 +7877,15 @@
 		4B3043CB0AE0373B00A82647 /* Editor.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Editor.h; sourceTree = "<group>"; };
 		4B3480910EEF50D400AC1B41 /* ImageSourceCGMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ImageSourceCGMac.mm; sourceTree = "<group>"; };
 		4B3480920EEF50D400AC1B41 /* ImageSourceCG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageSourceCG.h; sourceTree = "<group>"; };
+		4B5BDD99216588E500DD4262 /* CSSPaintCallback.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CSSPaintCallback.idl; sourceTree = "<group>"; };
+		4B5BDD9A21658A1500DD4262 /* CSSPaintCallback.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSPaintCallback.h; sourceTree = "<group>"; };
+		4B6B5CB62163DC1A00603817 /* DOMCSSPaintWorklet.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = DOMCSSPaintWorklet.idl; sourceTree = "<group>"; };
+		4B6B5CB82163EC0700603817 /* DOMCSSPaintWorklet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DOMCSSPaintWorklet.h; sourceTree = "<group>"; };
+		4B6B5CB92163ED3200603817 /* DOMCSSPaintWorklet.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DOMCSSPaintWorklet.cpp; sourceTree = "<group>"; };
+		4B6B5CBE216434FB00603817 /* JSCSSPaintWorkletGlobalScopeCustom.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSPaintWorkletGlobalScopeCustom.cpp; sourceTree = "<group>"; };
+		4B6B5CBF2164386400603817 /* CSSPaintWorkletGlobalScope.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSPaintWorkletGlobalScope.h; sourceTree = "<group>"; };
+		4B6B5CC1216439CF00603817 /* CSSPaintWorkletGlobalScope.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSPaintWorkletGlobalScope.cpp; sourceTree = "<group>"; };
+		4B6B5CC321643A8E00603817 /* CSSPaintWorkletGlobalScope.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CSSPaintWorkletGlobalScope.idl; sourceTree = "<group>"; };
 		4B6FA6F20C39E48C00087011 /* SmartReplace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmartReplace.h; sourceTree = "<group>"; };
 		4B6FA6F60C39E4A100087011 /* SmartReplaceCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SmartReplaceCF.cpp; sourceTree = "<group>"; };
 		4BAE95B00B2FA9CE00AED8A0 /* EditorDeleteAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditorDeleteAction.h; sourceTree = "<group>"; };
@@ -24372,6 +24384,7 @@
 			children = (
 				7CD3441B1F32DE30000DCD49 /* Cached Attributes w/ Invalidation */,
 				7C3D8EE41E08BABE0023B084 /* GC / Wrapping Only */,
+				4B6B5CBE216434FB00603817 /* JSCSSPaintWorkletGlobalScopeCustom.cpp */,
 				9BC5F9DF1D5AAF6A002B749D /* JSCustomElementRegistryCustom.cpp */,
 				BCD9C25E0C17AA67005C90A2 /* JSDOMWindowCustom.cpp */,
 				652FBBBB0DE27CB60001D386 /* JSDOMWindowCustom.h */,
@@ -25935,6 +25948,11 @@
 				A80E6CCB0A1989CA007FB8C5 /* CSSPageRule.cpp */,
 				A80E6CD60A1989CA007FB8C5 /* CSSPageRule.h */,
 				85C56CA60AA89D5F00D95755 /* CSSPageRule.idl */,
+				4B5BDD9A21658A1500DD4262 /* CSSPaintCallback.h */,
+				4B5BDD99216588E500DD4262 /* CSSPaintCallback.idl */,
+				4B6B5CC1216439CF00603817 /* CSSPaintWorkletGlobalScope.cpp */,
+				4B6B5CBF2164386400603817 /* CSSPaintWorkletGlobalScope.h */,
+				4B6B5CC321643A8E00603817 /* CSSPaintWorkletGlobalScope.idl */,
 				9418278C1D8CAE9500492764 /* CSSPendingSubstitutionValue.cpp */,
 				9418278D1D8CAE9500492764 /* CSSPendingSubstitutionValue.h */,
 				A80E6CDB0A1989CA007FB8C5 /* CSSPrimitiveValue.cpp */,
@@ -26024,6 +26042,9 @@
 				FD677735195CAB200072E0D3 /* DOMCSSNamespace.cpp */,
 				FC9A0F72164094CF003D6B8D /* DOMCSSNamespace.h */,
 				FC9A0F73164094CF003D6B8D /* DOMCSSNamespace.idl */,
+				4B6B5CB92163ED3200603817 /* DOMCSSPaintWorklet.cpp */,
+				4B6B5CB82163EC0700603817 /* DOMCSSPaintWorklet.h */,
+				4B6B5CB62163DC1A00603817 /* DOMCSSPaintWorklet.idl */,
 				4BDA3FF72151B6F100FD6604 /* DOMCSSRegisterCustomProperty.cpp */,
 				4BDA3FF92151B6F300FD6604 /* DOMCSSRegisterCustomProperty.h */,
 				4BDA3FF52151B6F000FD6604 /* DOMCSSRegisterCustomProperty.idl */,
@@ -27930,6 +27951,8 @@
 				314BE3A11B30F6B700141982 /* CSSNamedImageValue.h in Headers */,
 				94E839511DFB2A0E007BC6A7 /* CSSNamespaceRule.h in Headers */,
 				A80E6D000A1989CA007FB8C5 /* CSSPageRule.h in Headers */,
+				4B5BDD9B21658A1500DD4262 /* CSSPaintCallback.h in Headers */,
+				4B6B5CC02164386400603817 /* CSSPaintWorkletGlobalScope.h in Headers */,
 				946D372E1D6CB2940077084F /* CSSParser.h in Headers */,
 				E4A7995220EE4B1400C19568 /* CSSParserContext.h in Headers */,
 				949C77011D6E1D9800C0DE4F /* CSSParserFastPaths.h in Headers */,
@@ -28116,6 +28139,7 @@
 				41380C291F3436AC00155FDA /* DOMCacheStorage.h in Headers */,
 				4BDA3FFE2151B6F500FD6604 /* DOMCSSCustomPropertyDescriptor.h in Headers */,
 				FC9A0F75164094CF003D6B8D /* DOMCSSNamespace.h in Headers */,
+				4B6B5CBD21640EFF00603817 /* DOMCSSPaintWorklet.h in Headers */,
 				4BDA3FFF2151B6F500FD6604 /* DOMCSSRegisterCustomProperty.h in Headers */,
 				7AABA25A14BC613300AA9A11 /* DOMEditor.h in Headers */,
 				BC60D6E90D28D83400B9918F /* DOMException.h in Headers */,

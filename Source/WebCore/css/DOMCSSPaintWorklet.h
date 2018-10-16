@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "JSWebMetalRenderPassAttachmentDescriptor.h"
+#pragma once
 
-#if ENABLE(WEBMETAL)
+#if ENABLE(CSS_PAINTING_API)
 
-#include "JSDOMBinding.h"
-#include "JSWebMetalRenderPassColorAttachmentDescriptor.h"
-#include "JSWebMetalRenderPassDepthAttachmentDescriptor.h"
-#include "WebMetalRenderPassColorAttachmentDescriptor.h"
-#include "WebMetalRenderPassDepthAttachmentDescriptor.h"
+#include "Supplementable.h"
+
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
-using namespace JSC;
 
-JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<WebMetalRenderPassAttachmentDescriptor>&& object)
-{
-    if (object->isColorAttachmentDescriptor())
-        return createWrapper<WebMetalRenderPassColorAttachmentDescriptor>(globalObject, WTFMove(object));
-    return createWrapper<WebMetalRenderPassDepthAttachmentDescriptor>(globalObject, WTFMove(object));
-}
+class Document;
+class CSSPaintWorkletGlobalScope;
+class DOMCSSNamespace;
 
-JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, WebMetalRenderPassAttachmentDescriptor& object)
-{
-    return wrap(state, globalObject, object);
-}
+class DOMCSSPaintWorklet final : public Supplement<DOMCSSNamespace> {
+public:
+    explicit DOMCSSPaintWorklet(DOMCSSNamespace&) { }
 
-}
+    static CSSPaintWorkletGlobalScope& ensurePaintWorkletGlobalScope(Document&);
 
+private:
+    static DOMCSSPaintWorklet* from(DOMCSSNamespace&);
+    static const char* supplementName();
+};
+
+} // namespace WebCore
 #endif

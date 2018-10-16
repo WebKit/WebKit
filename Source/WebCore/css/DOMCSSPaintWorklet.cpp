@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,31 +24,37 @@
  */
 
 #include "config.h"
-#include "JSWebMetalRenderPassAttachmentDescriptor.h"
+#include "DOMCSSPaintWorklet.h"
 
-#if ENABLE(WEBMETAL)
+#if ENABLE(CSS_PAINTING_API)
 
-#include "JSDOMBinding.h"
-#include "JSWebMetalRenderPassColorAttachmentDescriptor.h"
-#include "JSWebMetalRenderPassDepthAttachmentDescriptor.h"
-#include "WebMetalRenderPassColorAttachmentDescriptor.h"
-#include "WebMetalRenderPassDepthAttachmentDescriptor.h"
+#include "CSSPaintWorkletGlobalScope.h"
+#include "DOMCSSNamespace.h"
+#include "Document.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
-using namespace JSC;
 
-JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<WebMetalRenderPassAttachmentDescriptor>&& object)
+CSSPaintWorkletGlobalScope& DOMCSSPaintWorklet::ensurePaintWorkletGlobalScope(Document& document)
 {
-    if (object->isColorAttachmentDescriptor())
-        return createWrapper<WebMetalRenderPassColorAttachmentDescriptor>(globalObject, WTFMove(object));
-    return createWrapper<WebMetalRenderPassDepthAttachmentDescriptor>(globalObject, WTFMove(object));
+    return document.ensureCSSPaintWorkletGlobalScope();
 }
 
-JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, WebMetalRenderPassAttachmentDescriptor& object)
+DOMCSSPaintWorklet* DOMCSSPaintWorklet::from(DOMCSSNamespace& css)
 {
-    return wrap(state, globalObject, object);
+    auto* supplement = static_cast<DOMCSSPaintWorklet*>(Supplement<DOMCSSNamespace>::from(&css, supplementName()));
+    if (!supplement) {
+        auto newSupplement = std::make_unique<DOMCSSPaintWorklet>(css);
+        supplement = newSupplement.get();
+        provideTo(&css, supplementName(), WTFMove(newSupplement));
+    }
+    return supplement;
+}
+
+const char* DOMCSSPaintWorklet::supplementName()
+{
+    return "DOMCSSPaintWorklet";
 }
 
 }
-
 #endif

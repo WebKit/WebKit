@@ -88,6 +88,7 @@ class Attr;
 class CDATASection;
 class CSSCustomPropertyValue;
 class CSSFontSelector;
+class CSSPaintWorkletGlobalScope;
 class CSSStyleDeclaration;
 class CSSStyleSheet;
 class CachedCSSStyleSheet;
@@ -1502,6 +1503,10 @@ public:
     const CSSRegisteredCustomPropertySet& getCSSRegisteredCustomPropertySet() const { return m_CSSRegisteredPropertySet; }
     bool registerCSSProperty(CSSRegisteredCustomProperty&&);
 
+#if ENABLE(CSS_PAINTING_API)
+    CSSPaintWorkletGlobalScope& ensureCSSPaintWorkletGlobalScope();
+#endif
+
     void setAsRunningUserScripts() { m_isRunningUserScripts = true; }
     bool isRunningUserScripts() const { return m_isRunningUserScripts; }
 
@@ -2040,6 +2045,10 @@ private:
     std::unique_ptr<UserGestureIndicator> m_temporaryUserGesture;
 
     CSSRegisteredCustomPropertySet m_CSSRegisteredPropertySet;
+
+#if ENABLE(CSS_PAINTING_API)
+    RefPtr<CSSPaintWorkletGlobalScope> m_CSSPaintWorkletGlobalScope;
+#endif
 
     bool m_isRunningUserScripts { false };
 };

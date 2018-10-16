@@ -441,6 +441,8 @@ JS_BINDING_IDLS = \
     $(WebCore)/css/CSSMediaRule.idl \
     $(WebCore)/css/CSSNamespaceRule.idl \
     $(WebCore)/css/CSSPageRule.idl \
+    $(WebCore)/css/CSSPaintCallback.idl \
+    $(WebCore)/css/CSSPaintWorkletGlobalScope.idl \
     $(WebCore)/css/CSSRule.idl \
     $(WebCore)/css/CSSRuleList.idl \
     $(WebCore)/css/CSSStyleDeclaration.idl \
@@ -461,6 +463,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/css/DOMCSSCustomPropertyDescriptor.idl \
     $(WebCore)/css/DOMCSSNamespace.idl \
     $(WebCore)/css/DOMCSSRegisterCustomProperty.idl \
+    $(WebCore)/css/DOMCSSPaintWorklet.idl \
     $(WebCore)/css/ElementCSSInlineStyle.idl \
     $(WebCore)/css/FontFace.idl \
     $(WebCore)/css/FontFaceSet.idl \

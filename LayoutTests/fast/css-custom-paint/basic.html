@@ -1,0 +1,54 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:CSSPaintingAPIEnabled=true ] -->
+<meta name="author" title="Justin Michaud" href="mailto:justin_michaud@webkit.org">
+<meta name="assert" content="registerPaint can be called with the correct arguments">
+<link rel="help" content="https://drafts.css-houdini.org/css-paint-api-1/">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+test(function() {
+  CSS.paintWorkletGlobalScope.registerPaint('test1', class {
+    static get inputProperties() { return ["--test"]; }
+    paint() { }
+  });
+}, 'test that registerPaint runs');
+
+test(function() {
+  CSS.paintWorkletGlobalScope.registerPaint('test2', class {
+    paint() { }
+  });
+}, 'test that registerPaint runs without inputProperties');
+
+test(function() {
+  CSS.paintWorkletGlobalScope.registerPaint('test3', class {
+    static get inputArguments() { return ["<length>"]; }
+    paint() { }
+  });
+}, 'test that registerPaint runs with inputArguments');
+
+test(function() {
+  CSS.paintWorkletGlobalScope.registerPaint('test4', class {
+    static get contextOptions() { return { alpha: true }; }
+    paint() { }
+  });
+}, 'test that registerPaint runs with contextOptions');
+
+class MyPaint {
+  paint() { }
+}
+
+test(function() {
+  CSS.paintWorkletGlobalScope.registerPaint('test5', MyPaint);
+  assert_throws({'name': 'InvalidModificationError'}, () => CSS.paintWorkletGlobalScope.registerPaint('test5', MyPaint));
+  CSS.paintWorkletGlobalScope.registerPaint('test6', class extends MyPaint { });
+}, 'test that registerPaint runs with predefined class');
+
+test(function() {
+  assert_throws({'name': 'InvalidModificationError'}, () => CSS.paintWorkletGlobalScope.registerPaint('test6', 'test'));
+  assert_throws(new TypeError(), () => CSS.paintWorkletGlobalScope.registerPaint('test7'));
+  assert_throws(new TypeError(), () => CSS.paintWorkletGlobalScope.registerPaint('test8', []));
+  assert_throws(new TypeError(), () => CSS.paintWorkletGlobalScope.registerPaint('test9', {}));
+  assert_throws(new TypeError(), () => CSS.paintWorkletGlobalScope.registerPaint('test10', 5));
+  assert_throws(new TypeError(), () => CSS.paintWorkletGlobalScope.registerPaint('', 5));
+}, 'test that registerPaint accepts only a string and a class constructor');
+
+</script>
