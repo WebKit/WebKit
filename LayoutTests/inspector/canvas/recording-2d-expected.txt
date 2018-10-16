@@ -7,28 +7,29 @@ initialState:
   attributes:
     width: 2
     height: 2
-    setTransform: [1,0,0,1,0,0]
+  current state:
+    setTransform: [[1,0,0,1,0,0]]
     globalAlpha: 1
-    globalCompositeOperation: 0
+    globalCompositeOperation: "source-over"
     lineWidth: 1
-    lineCap: 1
-    lineJoin: 2
+    lineCap: "butt"
+    lineJoin: "miter"
     miterLimit: 10
     shadowOffsetX: 0
     shadowOffsetY: 0
     shadowBlur: 0
-    shadowColor: 3
+    shadowColor: "rgba(0, 0, 0, 0)"
     setLineDash: [[]]
     lineDashOffset: 0
-    font: 4
-    textAlign: 5
-    textBaseline: 6
-    direction: 7
-    strokeStyle: 8
-    fillStyle: 8
+    font: "10px sans-serif"
+    textAlign: "start"
+    textBaseline: "alphabetic"
+    direction: "ltr"
+    strokeStyle: "#000000"
+    fillStyle: "#000000"
     imageSmoothingEnabled: true
-    imageSmoothingQuality: 9
-    setPath: [10]
+    imageSmoothingQuality: "low"
+    setPath: [{}]
   parameters:
   content: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAAAtJREFUCB1jYEAHAAASAAGAFMrMAAAAAElFTkSuQmCC"
 frames:
@@ -65,28 +66,29 @@ initialState:
   attributes:
     width: 2
     height: 2
-    setTransform: [1,0,0,1,0,0]
+  current state:
+    setTransform: [[1,0,0,1,0,0]]
     globalAlpha: 1
-    globalCompositeOperation: 0
+    globalCompositeOperation: "source-over"
     lineWidth: 1
-    lineCap: 1
-    lineJoin: 2
+    lineCap: "butt"
+    lineJoin: "miter"
     miterLimit: 10
     shadowOffsetX: 0
     shadowOffsetY: 0
     shadowBlur: 0
-    shadowColor: 3
+    shadowColor: "rgba(0, 0, 0, 0)"
     setLineDash: [[]]
     lineDashOffset: 0
-    font: 4
-    textAlign: 5
-    textBaseline: 6
-    direction: 7
-    strokeStyle: 8
-    fillStyle: 8
+    font: "10px sans-serif"
+    textAlign: "start"
+    textBaseline: "alphabetic"
+    direction: "ltr"
+    strokeStyle: "#000000"
+    fillStyle: "#000000"
     imageSmoothingEnabled: true
-    imageSmoothingQuality: 9
-    setPath: [10]
+    imageSmoothingQuality: "low"
+    setPath: [{}]
   parameters:
   content: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAAAtJREFUCB1jYEAHAAASAAGAFMrMAAAAAElFTkSuQmCC"
 frames:
@@ -1071,28 +1073,29 @@ initialState:
   attributes:
     width: 2
     height: 2
-    setTransform: [1,0,0,1,0,0]
+  current state:
+    setTransform: [[1,0,0,1,0,0]]
     globalAlpha: 1
-    globalCompositeOperation: 0
+    globalCompositeOperation: "source-over"
     lineWidth: 1
-    lineCap: 1
-    lineJoin: 2
+    lineCap: "butt"
+    lineJoin: "miter"
     miterLimit: 10
     shadowOffsetX: 0
     shadowOffsetY: 0
     shadowBlur: 0
-    shadowColor: 3
+    shadowColor: "rgba(0, 0, 0, 0)"
     setLineDash: [[]]
     lineDashOffset: 0
-    font: 4
-    textAlign: 5
-    textBaseline: 6
-    direction: 7
-    strokeStyle: 8
-    fillStyle: 8
+    font: "10px sans-serif"
+    textAlign: "start"
+    textBaseline: "alphabetic"
+    direction: "ltr"
+    strokeStyle: "#000000"
+    fillStyle: "#000000"
     imageSmoothingEnabled: true
-    imageSmoothingQuality: 9
-    setPath: [10]
+    imageSmoothingQuality: "low"
+    setPath: [{}]
   parameters:
   content: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAAAtJREFUCB1jYEAHAAASAAGAFMrMAAAAAElFTkSuQmCC"
 frames:
@@ -1121,6 +1124,13 @@ PASS: The recording should have 1 frame.
 PASS: The first frame should have 1 action.
 PASS: The action should have 1 parameter.
 PASS: The parameter should be null.
+
+-- Running test case: Canvas.recording2D.ExistingSaves
+PASS: There should be 4 existing states.
+PASS: State 0 should match expected fillStyle value.
+PASS: State 1 should match expected fillStyle value.
+PASS: State 2 should match expected fillStyle value.
+PASS: State 3 should match expected fillStyle value.
 
 -- Running test case: Canvas.recording2D.NoActions
 PASS: A recording should have been started and stopped once.

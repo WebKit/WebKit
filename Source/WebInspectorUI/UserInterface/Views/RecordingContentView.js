@@ -246,22 +246,27 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
                 snapshot.context.drawImage(snapshot.content, 0, 0);
             }
 
-            for (let name in snapshot.state) {
-                if (!(name in snapshot.context))
-                    continue;
+            for (let state of snapshot.states) {
+                for (let name in state) {
+                    if (!(name in snapshot.context))
+                        continue;
 
-                // Skip internal state used for path debugging.
-                if (name === "currentX" || name === "currentY")
-                    continue;
+                    // Skip internal state used for path debugging.
+                    if (name === "currentX" || name === "currentY")
+                        continue;
 
-                try {
-                    if (WI.RecordingAction.isFunctionForType(this.representedObject.type, name))
-                        snapshot.context[name](...snapshot.state[name]);
-                    else
-                        snapshot.context[name] = snapshot.state[name];
-                } catch {
-                    delete snapshot.state[name];
+                    try {
+                        if (WI.RecordingAction.isFunctionForType(this.representedObject.type, name))
+                            snapshot.context[name](...state[name]);
+                        else
+                            snapshot.context[name] = state[name];
+                    } catch {
+                        delete state[name];
+                    }
                 }
+
+                ++saveCount;
+                snapshot.context.save();
             }
 
             let shouldDrawCanvasPath = showCanvasPath && indexOfLastBeginPathAction <= to;
@@ -291,7 +296,6 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
                 else if (actions[i].name === "restore") {
                     if (!saveCount) // Only attempt to restore if save has been called.
                         continue;
-                    --saveCount;
                 }
 
                 actions[i].apply(snapshot.context);
@@ -353,16 +357,16 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
             let startIndex = 0;
             if (lastSnapshotIndex < 0) {
                 snapshot.content = this._initialContent;
-                snapshot.state = actions[0].state;
+                snapshot.states = actions[0].states;
             } else {
                 snapshot.content = this._snapshots[lastSnapshotIndex].content;
-                snapshot.state = this._snapshots[lastSnapshotIndex].state;
+                snapshot.states = this._snapshots[lastSnapshotIndex].states;
                 startIndex = this._snapshots[lastSnapshotIndex].index;
             }
 
             applyActions(startIndex, snapshot.index - 1);
             if (snapshot.index > 0)
-                snapshot.state = actions[snapshot.index - 1].state;
+                snapshot.states = actions[snapshot.index - 1].states;
 
             snapshot.content = new Image;
             snapshot.content.src = snapshot.element.toDataURL();

@@ -1,3 +1,25 @@
+2018-10-16  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Canvas: capture previously saved states and add them to the recording payload
+        https://bugs.webkit.org/show_bug.cgi?id=190473
+
+        Reviewed by Joseph Pecoraro.
+
+        Updated existing tests: inspector/canvas/recording-2d.html
+                                inspector/model/recording.html
+
+        Instead of sending a single object of the current state of the context, send an array of
+        objects, one for each restore point.
+
+        * html/canvas/CanvasRenderingContext2DBase.h:
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::CanvasRenderingContext2DBase::stateStack): Added.
+
+        * inspector/InspectorCanvas.h:
+        * inspector/InspectorCanvas.cpp:
+        (WebCore::InspectorCanvas::stringIndexForKey): Added.
+        (WebCore::InspectorCanvas::buildInitialState):
+
 2018-10-16  Justin Michaud  <justin_michaud@apple.com>
 
         Implement feature flag and bindings for CSS Painting API

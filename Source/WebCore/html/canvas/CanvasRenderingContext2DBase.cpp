@@ -2063,6 +2063,12 @@ String CanvasRenderingContext2DBase::replayDisplayListAsText(DisplayList::AsText
     return displayList->asText(flags);
 }
 
+const Vector<CanvasRenderingContext2DBase::State, 1>& CanvasRenderingContext2DBase::stateStack()
+{
+    realizeSaves();
+    return m_stateStack;
+}
+
 void CanvasRenderingContext2DBase::paintRenderingResultsToCanvas()
 {
     if (UNLIKELY(m_usesDisplayListDrawing)) {

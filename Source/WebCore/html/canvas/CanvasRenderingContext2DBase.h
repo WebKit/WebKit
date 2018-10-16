@@ -274,6 +274,7 @@ public:
     };
 
     const State& state() const { return m_stateStack.last(); }
+    const Vector<State, 1>& stateStack();
 
 protected:
     static const int DefaultFontSize;

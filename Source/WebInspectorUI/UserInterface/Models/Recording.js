@@ -42,6 +42,7 @@ WI.Recording = class Recording extends WI.Object
         this._source = null;
 
         this._processContext = null;
+        this._processStates = [];
         this._processing = false;
     }
 
@@ -73,6 +74,16 @@ WI.Recording = class Recording extends WI.Object
             payload.initialState = {};
         if (typeof payload.initialState.attributes !== "object" || payload.initialState.attributes === null)
             payload.initialState.attributes = {};
+        if (!Array.isArray(payload.initialState.states) || payload.initialState.states.some((item) => typeof item !== "object" || item === null)) {
+            payload.initialState.states = [];
+
+            // COMPATIBILITY (iOS 12.0): Recording.InitialState.states did not exist yet
+            if (!isEmptyObject(payload.initialState.attributes)) {
+                let {width, height, ...state} = payload.initialState.attributes;
+                if (!isEmptyObject(state))
+                    payload.initialState.states.push(state);
+            }
+        }
         if (!Array.isArray(payload.initialState.parameters))
             payload.initialState.parameters = [];
         if (typeof payload.initialState.content !== "string")
@@ -337,6 +348,8 @@ WI.Recording = class Recording extends WI.Object
         let initialState = {};
         if (!isEmptyObject(this._initialState.attributes))
             initialState.attributes = this._initialState.attributes;
+        if (this._initialState.states.length)
+            initialState.states = this._initialState.states;
         if (this._initialState.parameters.length)
             initialState.parameters = this._initialState.parameters;
         if (this._initialState.content && this._initialState.content.length)
@@ -362,54 +375,22 @@ WI.Recording = class Recording extends WI.Object
                 let initialContent = await WI.ImageUtilities.promisifyLoad(this._initialState.content);
                 this._processContext.drawImage(initialContent, 0, 0);
 
-                for (let [key, value] of Object.entries(this._initialState.attributes)) {
-                    switch (key) {
-                    case "setTransform":
-                        value = [await this.swizzle(value, WI.Recording.Swizzle.DOMMatrix)];
-                        break;
-
-                    case "fillStyle":
-                    case "strokeStyle":
-                            let [gradient, pattern, string] = await Promise.all([
-                                this.swizzle(value, WI.Recording.Swizzle.CanvasGradient),
-                                this.swizzle(value, WI.Recording.Swizzle.CanvasPattern),
-                                this.swizzle(value, WI.Recording.Swizzle.String),
-                            ]);
-                            if (gradient && !pattern)
-                                value = gradient;
-                            else if (pattern && !gradient)
-                                value = pattern;
+                for (let state of this._initialState.states) {
+                    let swizzledState = await this._swizzleState(state);
+                    for (let [key, value] of Object.entries(swizzledState)) {
+                        try {
+                            if (WI.RecordingAction.isFunctionForType(this._type, key))
+                                this._processContext[key](...value);
                             else
-                                value = string;
-                        break;
-
-                    case "direction":
-                    case "font":
-                    case "globalCompositeOperation":
-                    case "imageSmoothingEnabled":
-                    case "imageSmoothingQuality":
-                    case "lineCap":
-                    case "lineJoin":
-                    case "shadowColor":
-                    case "textAlign":
-                    case "textBaseline":
-                        value = await this.swizzle(value, WI.Recording.Swizzle.String);
-                        break;
-
-                    case "setPath":
-                        value = [await this.swizzle(value[0], WI.Recording.Swizzle.Path2D)];
-                        break;
+                                this._processContext[key] = value;
+                        } catch { }
                     }
 
-                    if (value === undefined || (Array.isArray(value) && value.includes(undefined)))
-                        continue;
-
-                    try {
-                        if (WI.RecordingAction.isFunctionForType(this._type, key))
-                            this._processContext[key](...value);
-                        else
-                            this._processContext[key] = value;
-                    } catch { }
+                    // The last state represents the current state, which should not be saved.
+                    if (state !== this._initialState.states.lastValue) {
+                        this._processContext.save();
+                        this._processStates.push(WI.RecordingAction.deriveCurrentState(this._type, this._processContext));
+                    }
                 }
             }
         }
@@ -417,7 +398,7 @@ WI.Recording = class Recording extends WI.Object
         // The first action is always a WI.RecordingInitialStateAction, which doesn't need to swizzle().
         // Since it is not associated with a WI.RecordingFrame, it has to manually process().
         if (!this._actions[0].ready) {
-            this._actions[0].process(this, this._processContext);
+            this._actions[0].process(this, this._processContext, this._processStates);
             this.dispatchEventToListeners(WI.Recording.Event.ProcessedAction, {action: this._actions[0], index: 0});
         }
 
@@ -425,11 +406,13 @@ WI.Recording = class Recording extends WI.Object
         let startTime = Date.now();
 
         let cumulativeActionIndex = 0;
+        let lastAction = this._actions[cumulativeActionIndex];
         for (let frameIndex = 0; frameIndex < this._frames.length; ++frameIndex) {
             let frame = this._frames[frameIndex];
 
             if (frame.actions.lastValue.ready) {
                 cumulativeActionIndex += frame.actions.length;
+                lastAction = frame.actions.lastValue;
                 continue;
             }
 
@@ -437,12 +420,14 @@ WI.Recording = class Recording extends WI.Object
                 ++cumulativeActionIndex;
 
                 let action = frame.actions[actionIndex];
-                if (action.ready)
+                if (action.ready) {
+                    lastAction = action;
                     continue;
+                }
 
                 await action.swizzle(this);
 
-                action.process(this, this._processContext);
+                action.process(this, this._processContext, this._processStates, {lastAction});
 
                 if (action.isVisual)
                     this._visualActionIndexes.push(cumulativeActionIndex);
@@ -458,6 +443,8 @@ WI.Recording = class Recording extends WI.Object
                     startTime = Date.now();
                 }
 
+                lastAction = action;
+
                 if (!this._processing)
                     return;
             }
@@ -468,6 +455,72 @@ WI.Recording = class Recording extends WI.Object
 
         this._processContext = null;
         this._processing = false;
+    }
+
+    async _swizzleState(state)
+    {
+        let swizzledState = {};
+
+        for (let [key, value] of Object.entries(state)) {
+            // COMPATIBILITY (iOS 12.0): Recording.InitialState.states did not exist yet
+            let keyIndex = parseInt(key);
+            if (!isNaN(keyIndex))
+                key = await this.swizzle(keyIndex, WI.Recording.Swizzle.String);
+
+            switch (key) {
+            case "setTransform":
+                value = [await this.swizzle(value, WI.Recording.Swizzle.DOMMatrix)];
+                break;
+
+            case "fillStyle":
+            case "strokeStyle":
+                    let [gradient, pattern, string] = await Promise.all([
+                        this.swizzle(value, WI.Recording.Swizzle.CanvasGradient),
+                        this.swizzle(value, WI.Recording.Swizzle.CanvasPattern),
+                        this.swizzle(value, WI.Recording.Swizzle.String),
+                    ]);
+                    if (gradient && !pattern)
+                        value = gradient;
+                    else if (pattern && !gradient)
+                        value = pattern;
+                    else
+                        value = string;
+                break;
+
+            case "direction":
+            case "font":
+            case "globalCompositeOperation":
+            case "imageSmoothingQuality":
+            case "lineCap":
+            case "lineJoin":
+            case "shadowColor":
+            case "textAlign":
+            case "textBaseline":
+                value = await this.swizzle(value, WI.Recording.Swizzle.String);
+                break;
+
+            case "globalAlpha":
+            case "lineWidth":
+            case "miterLimit":
+            case "shadowOffsetX":
+            case "shadowOffsetY":
+            case "shadowBlur":
+            case "lineDashOffset":
+                value = await this.swizzle(value, WI.Recording.Swizzle.Number);
+                break;
+
+            case "setPath":
+                value = [await this.swizzle(value[0], WI.Recording.Swizzle.Path2D)];
+                break;
+            }
+
+            if (value === undefined || (Array.isArray(value) && value.includes(undefined)))
+                continue;
+
+            swizzledState[key] = value;
+        }
+
+        return swizzledState;
     }
 };
 

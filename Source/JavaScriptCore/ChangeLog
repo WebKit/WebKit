@@ -1,3 +1,13 @@
+2018-10-16  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Canvas: capture previously saved states and add them to the recording payload
+        https://bugs.webkit.org/show_bug.cgi?id=190473
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/protocol/Recording.json:
+        Add `states` key to `InitialState` object.
+
 2018-10-16  Keith Miller  <keith_miller@apple.com>
 
         isASTErroneous in offlineasm should de-macroify before looking for Errors

@@ -37,6 +37,11 @@ null
     "attributes": {
       "test": "test"
     },
+    "states": [
+      {
+        "test": "test"
+      }
+    ],
     "parameters": [
       "test"
     ],
@@ -60,6 +65,11 @@ null
     "attributes": {
       "test": "test"
     },
+    "states": [
+      {
+        "test": "test"
+      }
+    ],
     "parameters": [
       "test"
     ],
@@ -92,6 +102,11 @@ null
     "attributes": {
       "test": "test"
     },
+    "states": [
+      {
+        "test": "test"
+      }
+    ],
     "parameters": [
       "test"
     ],
@@ -124,6 +139,11 @@ null
     "attributes": {
       "test": "test"
     },
+    "states": [
+      {
+        "test": "test"
+      }
+    ],
     "parameters": [
       "test"
     ],

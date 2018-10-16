@@ -1,5 +1,52 @@
 2018-10-16  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Canvas: capture previously saved states and add them to the recording payload
+        https://bugs.webkit.org/show_bug.cgi?id=190473
+
+        Reviewed by Joseph Pecoraro.
+
+        Instead of sending a single object of the current state of the context, send an array of
+        objects, one for each restore point. When replaying, recreate each restore point before
+        applying the selected action(s).
+
+        * UserInterface/Models/Recording.js:
+        (WI.Recording):
+        (WI.Recording.fromPayload):
+        (WI.Recording.prototype.toJSON):
+        (WI.Recording.prototype.async._process):
+        (WI.Recording.prototype.async._swizzleState): Added.
+        * UserInterface/Models/RecordingAction.js:
+        (WI.RecordingAction):
+        (WI.RecordingAction.deriveCurrentState): Added.
+        (WI.RecordingAction.prototype.get states): Added.
+        (WI.RecordingAction.prototype.process):
+        (WI.RecordingAction.prototype.get state): Deleted.
+        Drive-by: when `process`ing, also check to see if any values in the current state changed
+        outside of those expected in `_stateModifiers` (e.g. `restore` may modify some state values).
+
+        * UserInterface/Views/RecordingContentView.js:
+        (WI.RecordingContentView.prototype._generateContentCanvas2D):
+
+        * UserInterface/Views/RecordingStateDetailsSidebarPanel.js:
+        (WI.RecordingStateDetailsSidebarPanel.prototype._generateDetailsCanvas2D):
+        Default to showing the most recent (current) state.
+
+        * UserInterface/Views/CanvasTabContentView.js:
+        (WI.CanvasTabContentView.prototype.initialLayout): Added.
+        (WI.CanvasTabContentView.prototype._addCanvas):
+        (WI.CanvasTabContentView.prototype._removeCanvas):
+        (WI.CanvasTabContentView.prototype._addRecording): Added.
+        (WI.CanvasTabContentView.prototype._recordingImportedOrStopped):
+        (WI.CanvasTabContentView.prototype._recordingAdded): Deleted.
+        * UserInterface/Controllers/CanvasManager.js:
+        (WI.CanvasManager):
+        (WI.CanvasManager.prototype.get importedRecordings): Added.
+        (WI.CanvasManager.prototype.importRecording):
+        Drive-by: store imported recordings on `WI.CanvasManager` so that if the Canvas tab is
+        closed we can still show the list of imported recordings.
+
+2018-10-16  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Canvas recording sidebar scroll position lost after switching tabs
         https://bugs.webkit.org/show_bug.cgi?id=190482
 

@@ -406,6 +406,11 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
     return static_cast<int>(index);
 }
 
+String InspectorCanvas::stringIndexForKey(const String& key)
+{
+    return String::number(indexForData(key));
+}
+
 static Ref<JSON::ArrayOf<double>> buildArrayForAffineTransform(const AffineTransform& affineTransform)
 {
     auto array = JSON::ArrayOf<double>::create();
@@ -428,92 +433,101 @@ template<typename T> static Ref<JSON::ArrayOf<JSON::Value>> buildArrayForVector(
 
 Ref<Inspector::Protocol::Recording::InitialState> InspectorCanvas::buildInitialState()
 {
-    auto initialState = Inspector::Protocol::Recording::InitialState::create().release();
+    auto initialStatePayload = Inspector::Protocol::Recording::InitialState::create().release();
 
-    auto attributes = JSON::Object::create();
-    attributes->setInteger("width"_s, m_context.canvasBase().width());
-    attributes->setInteger("height"_s, m_context.canvasBase().height());
+    auto attributesPayload = JSON::Object::create();
+    attributesPayload->setInteger("width"_s, m_context.canvasBase().width());
+    attributesPayload->setInteger("height"_s, m_context.canvasBase().height());
 
-    auto parameters = JSON::ArrayOf<JSON::Value>::create();
+    auto statesPayload = JSON::ArrayOf<JSON::Object>::create();
+
+    auto parametersPayload = JSON::ArrayOf<JSON::Value>::create();
 
     if (is<CanvasRenderingContext2D>(m_context)) {
         auto& context2d = downcast<CanvasRenderingContext2D>(m_context);
-        auto& state = context2d.state();
+        for (auto& state : context2d.stateStack()) {
+            RefPtr<JSON::Object> statePayload = JSON::Object::create();
 
-        attributes->setArray("setTransform"_s, buildArrayForAffineTransform(state.transform));
-        attributes->setDouble("globalAlpha"_s, context2d.globalAlpha());
-        attributes->setInteger("globalCompositeOperation"_s, indexForData(context2d.globalCompositeOperation()));
-        attributes->setDouble("lineWidth"_s, context2d.lineWidth());
-        attributes->setInteger("lineCap"_s, indexForData(convertEnumerationToString(context2d.lineCap())));
-        attributes->setInteger("lineJoin"_s, indexForData(convertEnumerationToString(context2d.lineJoin())));
-        attributes->setDouble("miterLimit"_s, context2d.miterLimit());
-        attributes->setDouble("shadowOffsetX"_s, context2d.shadowOffsetX());
-        attributes->setDouble("shadowOffsetY"_s, context2d.shadowOffsetY());
-        attributes->setDouble("shadowBlur"_s, context2d.shadowBlur());
-        attributes->setInteger("shadowColor"_s, indexForData(context2d.shadowColor()));
+            statePayload->setArray(stringIndexForKey("setTransform"_s), buildArrayForAffineTransform(state.transform));
+            statePayload->setDouble(stringIndexForKey("globalAlpha"_s), context2d.globalAlpha());
+            statePayload->setInteger(stringIndexForKey("globalCompositeOperation"_s), indexForData(context2d.globalCompositeOperation()));
+            statePayload->setDouble(stringIndexForKey("lineWidth"_s), context2d.lineWidth());
+            statePayload->setInteger(stringIndexForKey("lineCap"_s), indexForData(convertEnumerationToString(context2d.lineCap())));
+            statePayload->setInteger(stringIndexForKey("lineJoin"_s), indexForData(convertEnumerationToString(context2d.lineJoin())));
+            statePayload->setDouble(stringIndexForKey("miterLimit"_s), context2d.miterLimit());
+            statePayload->setDouble(stringIndexForKey("shadowOffsetX"_s), context2d.shadowOffsetX());
+            statePayload->setDouble(stringIndexForKey("shadowOffsetY"_s), context2d.shadowOffsetY());
+            statePayload->setDouble(stringIndexForKey("shadowBlur"_s), context2d.shadowBlur());
+            statePayload->setInteger(stringIndexForKey("shadowColor"_s), indexForData(context2d.shadowColor()));
 
-        // The parameter to `setLineDash` is itself an array, so we need to wrap the parameters
-        // list in an array to allow spreading.
-        auto setLineDash = JSON::ArrayOf<JSON::Value>::create();
-        setLineDash->addItem(buildArrayForVector(state.lineDash));
-        attributes->setArray("setLineDash"_s, WTFMove(setLineDash));
+            // The parameter to `setLineDash` is itself an array, so we need to wrap the parameters
+            // list in an array to allow spreading.
+            auto setLineDash = JSON::ArrayOf<JSON::Value>::create();
+            setLineDash->addItem(buildArrayForVector(state.lineDash));
+            statePayload->setArray(stringIndexForKey("setLineDash"_s), WTFMove(setLineDash));
 
-        attributes->setDouble("lineDashOffset"_s, context2d.lineDashOffset());
-        attributes->setInteger("font"_s, indexForData(context2d.font()));
-        attributes->setInteger("textAlign"_s, indexForData(convertEnumerationToString(context2d.textAlign())));
-        attributes->setInteger("textBaseline"_s, indexForData(convertEnumerationToString(context2d.textBaseline())));
-        attributes->setInteger("direction"_s, indexForData(convertEnumerationToString(context2d.direction())));
+            statePayload->setDouble(stringIndexForKey("lineDashOffset"_s), context2d.lineDashOffset());
+            statePayload->setInteger(stringIndexForKey("font"_s), indexForData(context2d.font()));
+            statePayload->setInteger(stringIndexForKey("textAlign"_s), indexForData(convertEnumerationToString(context2d.textAlign())));
+            statePayload->setInteger(stringIndexForKey("textBaseline"_s), indexForData(convertEnumerationToString(context2d.textBaseline())));
+            statePayload->setInteger(stringIndexForKey("direction"_s), indexForData(convertEnumerationToString(context2d.direction())));
 
-        int strokeStyleIndex;
-        if (auto canvasGradient = state.strokeStyle.canvasGradient())
-            strokeStyleIndex = indexForData(canvasGradient.get());
-        else if (auto canvasPattern = state.strokeStyle.canvasPattern())
-            strokeStyleIndex = indexForData(canvasPattern.get());
-        else
-            strokeStyleIndex = indexForData(state.strokeStyle.color());
-        attributes->setInteger("strokeStyle"_s, strokeStyleIndex);
+            int strokeStyleIndex;
+            if (auto canvasGradient = state.strokeStyle.canvasGradient())
+                strokeStyleIndex = indexForData(canvasGradient.get());
+            else if (auto canvasPattern = state.strokeStyle.canvasPattern())
+                strokeStyleIndex = indexForData(canvasPattern.get());
+            else
+                strokeStyleIndex = indexForData(state.strokeStyle.color());
+            statePayload->setInteger(stringIndexForKey("strokeStyle"_s), strokeStyleIndex);
 
-        int fillStyleIndex;
-        if (auto canvasGradient = state.fillStyle.canvasGradient())
-            fillStyleIndex = indexForData(canvasGradient.get());
-        else if (auto canvasPattern = state.fillStyle.canvasPattern())
-            fillStyleIndex = indexForData(canvasPattern.get());
-        else
-            fillStyleIndex = indexForData(state.fillStyle.color());
-        attributes->setInteger("fillStyle"_s, fillStyleIndex);
+            int fillStyleIndex;
+            if (auto canvasGradient = state.fillStyle.canvasGradient())
+                fillStyleIndex = indexForData(canvasGradient.get());
+            else if (auto canvasPattern = state.fillStyle.canvasPattern())
+                fillStyleIndex = indexForData(canvasPattern.get());
+            else
+                fillStyleIndex = indexForData(state.fillStyle.color());
+            statePayload->setInteger(stringIndexForKey("fillStyle"_s), fillStyleIndex);
 
-        attributes->setBoolean("imageSmoothingEnabled"_s, context2d.imageSmoothingEnabled());
-        attributes->setInteger("imageSmoothingQuality"_s, indexForData(convertEnumerationToString(context2d.imageSmoothingQuality())));
+            statePayload->setBoolean(stringIndexForKey("imageSmoothingEnabled"_s), context2d.imageSmoothingEnabled());
+            statePayload->setInteger(stringIndexForKey("imageSmoothingQuality"_s), indexForData(convertEnumerationToString(context2d.imageSmoothingQuality())));
 
-        auto setPath = JSON::ArrayOf<JSON::Value>::create();
-        setPath->addItem(indexForData(buildStringFromPath(context2d.getPath()->path())));
-        attributes->setArray("setPath"_s, WTFMove(setPath));
+            auto setPath = JSON::ArrayOf<JSON::Value>::create();
+            setPath->addItem(indexForData(buildStringFromPath(context2d.getPath()->path())));
+            statePayload->setArray(stringIndexForKey("setPath"_s), WTFMove(setPath));
+
+            statesPayload->addItem(WTFMove(statePayload));
+        }
     }
 #if ENABLE(WEBGL)
     else if (is<WebGLRenderingContextBase>(m_context)) {
         WebGLRenderingContextBase& contextWebGLBase = downcast<WebGLRenderingContextBase>(m_context);
-        if (std::optional<WebGLContextAttributes> attributes = contextWebGLBase.getContextAttributes()) {
-            RefPtr<JSON::Object> contextAttributes = JSON::Object::create();
-            contextAttributes->setBoolean("alpha"_s, attributes->alpha);
-            contextAttributes->setBoolean("depth"_s, attributes->depth);
-            contextAttributes->setBoolean("stencil"_s, attributes->stencil);
-            contextAttributes->setBoolean("antialias"_s, attributes->antialias);
-            contextAttributes->setBoolean("premultipliedAlpha"_s, attributes->premultipliedAlpha);
-            contextAttributes->setBoolean("preserveDrawingBuffer"_s, attributes->preserveDrawingBuffer);
-            contextAttributes->setBoolean("failIfMajorPerformanceCaveat"_s, attributes->failIfMajorPerformanceCaveat);
-            parameters->addItem(WTFMove(contextAttributes));
+        if (std::optional<WebGLContextAttributes> webGLContextAttributes = contextWebGLBase.getContextAttributes()) {
+            RefPtr<JSON::Object> webGLContextAttributesPayload = JSON::Object::create();
+            webGLContextAttributesPayload->setBoolean("alpha"_s, webGLContextAttributes->alpha);
+            webGLContextAttributesPayload->setBoolean("depth"_s, webGLContextAttributes->depth);
+            webGLContextAttributesPayload->setBoolean("stencil"_s, webGLContextAttributes->stencil);
+            webGLContextAttributesPayload->setBoolean("antialias"_s, webGLContextAttributes->antialias);
+            webGLContextAttributesPayload->setBoolean("premultipliedAlpha"_s, webGLContextAttributes->premultipliedAlpha);
+            webGLContextAttributesPayload->setBoolean("preserveDrawingBuffer"_s, webGLContextAttributes->preserveDrawingBuffer);
+            webGLContextAttributesPayload->setBoolean("failIfMajorPerformanceCaveat"_s, webGLContextAttributes->failIfMajorPerformanceCaveat);
+            parametersPayload->addItem(WTFMove(webGLContextAttributesPayload));
         }
     }
 #endif
 
-    initialState->setAttributes(WTFMove(attributes));
+    initialStatePayload->setAttributes(WTFMove(attributesPayload));
 
-    if (parameters->length())
-        initialState->setParameters(WTFMove(parameters));
+    if (statesPayload->length())
+        initialStatePayload->setStates(WTFMove(statesPayload));
 
-    initialState->setContent(getCanvasContentAsDataURL());
+    if (parametersPayload->length())
+        initialStatePayload->setParameters(WTFMove(parametersPayload));
 
-    return initialState;
+    initialStatePayload->setContent(getCanvasContentAsDataURL());
+
+    return initialStatePayload;
 }
 
 Ref<JSON::ArrayOf<JSON::Value>> InspectorCanvas::buildAction(const String& name, Vector<RecordCanvasActionVariant>&& parameters)

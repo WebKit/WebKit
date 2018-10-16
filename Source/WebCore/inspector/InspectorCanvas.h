@@ -96,6 +96,7 @@ private:
     >;
 
     int indexForData(DuplicateDataVariant);
+    String stringIndexForKey(const String&);
     Ref<Inspector::Protocol::Recording::InitialState> buildInitialState();
     Ref<JSON::ArrayOf<JSON::Value>> buildAction(const String&, Vector<RecordCanvasActionVariant>&& = { });
     Ref<JSON::ArrayOf<JSON::Value>> buildArrayForCanvasGradient(const CanvasGradient&);

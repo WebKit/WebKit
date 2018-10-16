@@ -46,7 +46,7 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         this._isVisual = false;
         this._hasVisibleEffect = undefined;
 
-        this._state = null;
+        this._states = [];
         this._stateModifiers = new Set;
 
         this._swizzled = false;
@@ -130,6 +130,49 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         return null;
     }
 
+    static deriveCurrentState(type, context)
+    {
+        if (type === WI.Recording.Type.Canvas2D) {
+            let matrix = context.getTransform();
+
+            let state = {
+                currentX: context.currentX,
+                currentY: context.currentY,
+                direction: context.direction,
+                fillStyle: context.fillStyle,
+                font: context.font,
+                globalAlpha: context.globalAlpha,
+                globalCompositeOperation: context.globalCompositeOperation,
+                imageSmoothingEnabled: context.imageSmoothingEnabled,
+                imageSmoothingQuality: context.imageSmoothingQuality,
+                lineCap: context.lineCap,
+                lineDash: context.getLineDash(),
+                lineDashOffset: context.lineDashOffset,
+                lineJoin: context.lineJoin,
+                lineWidth: context.lineWidth,
+                miterLimit: context.miterLimit,
+                shadowBlur: context.shadowBlur,
+                shadowColor: context.shadowColor,
+                shadowOffsetX: context.shadowOffsetX,
+                shadowOffsetY: context.shadowOffsetY,
+                strokeStyle: context.strokeStyle,
+                textAlign: context.textAlign,
+                textBaseline: context.textBaseline,
+                transform: [matrix.a, matrix.b, matrix.c, matrix.d, matrix.e, matrix.f],
+                webkitImageSmoothingEnabled: context.webkitImageSmoothingEnabled,
+                webkitLineDash: context.webkitLineDash,
+                webkitLineDashOffset: context.webkitLineDashOffset,
+            };
+
+            if (WI.ImageUtilities.supportsCanvasPathDebugging())
+                state.setPath = [context.getPath()];
+
+            return state;
+        }
+
+        return null;
+    }
+
     static _prototypeForType(type)
     {
         if (type === WI.Recording.Type.Canvas2D)
@@ -153,7 +196,7 @@ WI.RecordingAction = class RecordingAction extends WI.Object
     get isGetter() { return this._isGetter; }
     get isVisual() { return this._isVisual; }
     get hasVisibleEffect() { return this._hasVisibleEffect; }
-    get state() { return this._state; }
+    get states() { return this._states; }
     get stateModifiers() { return this._stateModifiers; }
 
     get ready()
@@ -161,7 +204,7 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         return this._swizzled && this._processed;
     }
 
-    process(recording, context)
+    process(recording, context, states, {lastAction} = {})
     {
         console.assert(this._swizzled, "You must swizzle() before you can process().");
         console.assert(!this._processed, "You should only process() once.");
@@ -205,43 +248,28 @@ WI.RecordingAction = class RecordingAction extends WI.Object
             this._hasVisibleEffect = !Array.shallowEqual(contentBefore, getContent());
 
         if (recording.type === WI.Recording.Type.Canvas2D) {
-            let matrix = context.getTransform();
+            let currentState = WI.RecordingAction.deriveCurrentState(recording.type, context);
+            console.assert(currentState);
 
-            this._state = {
-                currentX: context.currentX,
-                currentY: context.currentY,
-                direction: context.direction,
-                fillStyle: context.fillStyle,
-                font: context.font,
-                globalAlpha: context.globalAlpha,
-                globalCompositeOperation: context.globalCompositeOperation,
-                imageSmoothingEnabled: context.imageSmoothingEnabled,
-                imageSmoothingQuality: context.imageSmoothingQuality,
-                lineCap: context.lineCap,
-                lineDash: context.getLineDash(),
-                lineDashOffset: context.lineDashOffset,
-                lineJoin: context.lineJoin,
-                lineWidth: context.lineWidth,
-                miterLimit: context.miterLimit,
-                shadowBlur: context.shadowBlur,
-                shadowColor: context.shadowColor,
-                shadowOffsetX: context.shadowOffsetX,
-                shadowOffsetY: context.shadowOffsetY,
-                strokeStyle: context.strokeStyle,
-                textAlign: context.textAlign,
-                textBaseline: context.textBaseline,
-                transform: [matrix.a, matrix.b, matrix.c, matrix.d, matrix.e, matrix.f],
-                webkitImageSmoothingEnabled: context.webkitImageSmoothingEnabled,
-                webkitLineDash: context.webkitLineDash,
-                webkitLineDashOffset: context.webkitLineDashOffset,
-            };
+            if (this.name === "save")
+                states.push(currentState);
+            else if (this.name === "restore")
+                states.pop();
 
-            if (WI.ImageUtilities.supportsCanvasPathDebugging())
-                this._state.setPath = [context.getPath()];
+            this._states = states.slice();
+            this._states.push(currentState);
+
+            if (lastAction) {
+                let lastState = lastAction.states.lastValue;
+                for (let key in currentState) {
+                    if (!(key in lastState) || (currentState[key] !== lastState[key] && !Object.shallowEqual(currentState[key], lastState[key])))
+                        this._stateModifiers.add(key);
+                }
+            }
         }
     }
 
-    async swizzle(recording)
+    async swizzle(recording, lastAction)
     {
         console.assert(!this._swizzled, "You should only swizzle() once.");
 

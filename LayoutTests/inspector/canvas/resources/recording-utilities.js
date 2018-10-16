@@ -4,15 +4,24 @@ TestPage.registerInitializer(() => {
             let value = object[key];
             if (typeof value === "string")
                 value = sanitizeURL(value);
+            else if (Array.isArray(value) && value[0] instanceof DOMMatrix)
+                value[0] = [value[0].a, value[0].b, value[0].c, value[0].d, value[0].e, value[0].f];
             InspectorTest.log(indent + key + ": " + JSON.stringify(value));
         }
     }
 
-    function logRecording(recording) {
+    async function logRecording(recording) {
         InspectorTest.log("initialState:");
 
         InspectorTest.log("  attributes:");
         log(recording.initialState.attributes, "    ");
+
+        let currentState = recording.initialState.states.lastValue;
+        if (currentState) {
+            InspectorTest.log("  current state:");
+            let swizzledState = await recording._swizzleState(currentState);
+            log(swizzledState, "    ");
+        }
 
         InspectorTest.log("  parameters:");
         log(recording.initialState.parameters, "    ");
@@ -92,10 +101,11 @@ TestPage.registerInitializer(() => {
             if (!stopped)
                 CanvasAgent.stopRecording(canvas.identifier).catch(reject);
             else {
-                InspectorTest.evaluateInPage(`cancelActions()`).catch(reject);
-
-                if (swizzled)
-                    resolve();
+                InspectorTest.evaluateInPage(`cancelActions()`)
+                .then(() => {
+                    if (swizzled)
+                        resolve();
+                }, reject);
             }
         });
 
@@ -124,12 +134,13 @@ TestPage.registerInitializer(() => {
             Promise.all(recording.actions.map((action) => action.swizzle(recording))).then(() => {
                 swizzled = true;
 
-                logRecording(recording, type);
-
-                if (lastFrame) {
-                    InspectorTest.evaluateInPage(`cancelActions()`)
-                    .then(resolve, reject);
-                }
+                logRecording(recording, type)
+                .then(() => {
+                    if (lastFrame) {
+                        InspectorTest.evaluateInPage(`cancelActions()`)
+                        .then(resolve, reject);
+                    }
+                }, reject);
             });
         });
 

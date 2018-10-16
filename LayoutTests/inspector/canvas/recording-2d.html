@@ -42,7 +42,7 @@ async function load() {
     document.body.appendChild(canvas);
 
     ctx.save();
-    ctx.save(); // This matches the `restore` call in `performActions`.
+    cancelActions();
 
     runTest();
 }
@@ -54,25 +54,23 @@ function ignoreException(func){
 }
 
 let timeoutID = NaN;
-let restoreCalled = false;
+let saveCount = 1;
 
 function cancelActions() {
-    if (!isNaN(timeoutID)) {
+    for (let i = 0; i < saveCount; ++i)
         ctx.restore();
-        if (!restoreCalled)
-            ctx.restore();
-    }
+    ctx.restore(); // Ensures the state is reset between test cases.
 
     clearTimeout(timeoutID);
     timeoutID = NaN;
 
-    ctx.save();
-    ctx.save();
+    ctx.save(); // Ensures the state is reset between test cases.
+    ctx.save(); // This matches the `restore` call in `performActions`.
+    saveCount = 1;
+
     ctx.resetTransform();
     ctx.beginPath();
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-
-    restoreCalled = false;
 }
 
 function performActions() {
@@ -257,14 +255,14 @@ function performActions() {
         },
         () => {
             ctx.restore();
-
-            restoreCalled = true;
+            --saveCount;
         },
         () => {
             ctx.rotate(1);
         },
         () => {
             ctx.save();
+            ++saveCount;
         },
         () => {
             ctx.scale(1, 2);
@@ -408,6 +406,25 @@ function performConsoleActions() {
     ctx.stroke();
 }
 
+function performSavePreActions() {
+    cancelActions();
+    ctx.restore();
+    ctx.restore();
+
+    function saveFillStyle(value) {
+        ctx.save();
+        ctx.fillStyle = value;
+    }
+
+    saveFillStyle("#ff0000");
+    saveFillStyle("#00ff00");
+    saveFillStyle("#0000ff");
+}
+
+function performSavePostActions() {
+    ctx.fill();
+}
+
 function performNaNActions() {
     ctx.globalAlpha = NaN;
 }
@@ -479,6 +496,51 @@ function test() {
             const singleFrame = true;
             CanvasAgent.startRecording(canvas.identifier, singleFrame)
             .catch(reject);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Canvas.recording2D.ExistingSaves",
+        description: "Check that existing save calls are sent to the frontend.",
+        test(resolve, reject) {
+            let canvas = getCanvas(WI.Canvas.ContextType.Canvas2D);
+            if (!canvas) {
+                reject("Missing 2D canvas.");
+                return;
+            }
+
+            async function logStates(recording) {
+                async function compare(index, expected) {
+                    let swizzledState = await recording._swizzleState(recording.initialState.states[index]);
+                    InspectorTest.expectEqual(swizzledState["fillStyle"], expected, `State ${index} should match expected fillStyle value.`)
+                }
+
+                await compare(0, "#000000");
+                await compare(1, "#ff0000");
+                await compare(2, "#00ff00");
+                await compare(3, "#0000ff");
+            }
+
+            canvas.awaitEvent(WI.Canvas.Event.RecordingStopped)
+            .then((event) => {
+                let {recording} = event.data;
+
+                InspectorTest.expectEqual(recording.initialState.states.length, 4, "There should be 4 existing states.");
+
+                logStates(recording)
+                .then(resolve, reject);
+            });
+
+            canvas.awaitEvent(WI.Canvas.Event.RecordingStarted)
+            .then((event) => {
+                InspectorTest.evaluateInPage(`performSavePostActions()`).catch(reject);
+            });
+
+            InspectorTest.evaluateInPage(`performSavePreActions()`)
+            .then(() => {
+                const singleFrame = true;
+                CanvasAgent.startRecording(canvas.identifier, singleFrame).catch(reject);
+            }, reject);
         },
     });
 
