@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "CPU.h"
 #include "MacroAssembler.h"
 #include <wtf/Vector.h>
 
