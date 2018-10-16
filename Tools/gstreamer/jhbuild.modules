@@ -38,7 +38,7 @@
   </autotools>
 
   <autotools id="libvpx"
-    autogen-template="%(srcdir)s/configure --prefix=%(prefix)s --enable-pic --as=yasm --disable-unit-tests --size-limit=16384x16384 --enable-postproc --enable-multi-res-encoding --enable-temporal-denoising --enable-vp9-temporal-denoising --enable-vp9-postproc --enable-shared">
+    autogen-template="%(srcdir)s/configure --prefix=%(prefix)s --enable-pic --as=yasm --disable-unit-tests --size-limit=16384x16384 --enable-postproc --enable-multi-res-encoding --enable-temporal-denoising --enable-vp9-temporal-denoising --enable-vp9-postproc --enable-shared --disable-avx512">
     <branch repo="chromium.googlesource.com" checkoutdir="libvpx" tag="v1.7.0"/>
   </autotools>
 

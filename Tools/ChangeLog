@@ -1,5 +1,11 @@
 2018-10-16  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, GTK Ubuntu LTS Jhbuild prospective build fix
+
+        * gstreamer/jhbuild.modules:
+
+2018-10-16  Philippe Normand  <pnormand@igalia.com>
+
         [GTK][JHBuild] Disable libmount support in glib
 
         Rubber-stamped by Alejandro G. Castro.
