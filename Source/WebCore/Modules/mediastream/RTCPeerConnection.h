@@ -218,6 +218,7 @@ private:
 
     RTCConfiguration m_configuration;
     RTCController* m_controller { nullptr };
+    Vector<RefPtr<RTCCertificate>> m_certificates;
 };
 
 } // namespace WebCore

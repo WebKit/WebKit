@@ -65,22 +65,14 @@ FAIL new RTCPeerConnection({ rtcpMuxPolicy: "invalid" }) assert_throws: function
 FAIL new RTCPeerConnection({ peerIdentity: toStringThrows }) assert_throws: function "function () {
         eval(expr);
       }" did not throw
-FAIL new RTCPeerConnection({ certificates: null }) assert_throws: function "function () {
-        eval(expr);
-      }" did not throw
+PASS new RTCPeerConnection({ certificates: null }) 
 PASS new RTCPeerConnection({ certificates: undefined }) 
 PASS new RTCPeerConnection({ certificates: [] }) 
-FAIL new RTCPeerConnection({ certificates: [null] }) assert_throws: function "function () {
-        eval(expr);
-      }" did not throw
-FAIL new RTCPeerConnection({ certificates: [undefined] }) assert_throws: function "function () {
-        eval(expr);
-      }" did not throw
+PASS new RTCPeerConnection({ certificates: [null] }) 
+PASS new RTCPeerConnection({ certificates: [undefined] }) 
 PASS new RTCPeerConnection({ iceCandidatePoolSize: toNumberThrows }) 
 PASS new RTCPeerConnection({ certificates: [certificate] }) 
-FAIL new RTCPeerConnection({ certificates: [expiredCertificate] }) assert_throws: function "function () {
-          new RTCPeerConnection({ certificates: [certificate] });
-        }" did not throw
+PASS new RTCPeerConnection({ certificates: [expiredCertificate] }) 
 PASS localDescription initial value 
 PASS currentLocalDescription initial value 
 PASS pendingLocalDescription initial value 

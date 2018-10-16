@@ -1,3 +1,14 @@
+2018-10-16  Youenn Fablet  <youenn@apple.com>
+
+        Support RTCConfiguration.certificates
+        https://bugs.webkit.org/show_bug.cgi?id=190603
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/webrtc/RTCCertificate-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-constructor-expected.txt:
+        * web-platform-tests/webrtc/rtcpeerconnection/rtcpeerconnection-constructor-expected.txt:
+
 2018-10-16  Chris Dumez  <cdumez@apple.com>
 
         window.navigator should not become null after the window loses its browsing context

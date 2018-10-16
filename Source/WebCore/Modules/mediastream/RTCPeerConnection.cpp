@@ -294,6 +294,20 @@ static inline ExceptionOr<Vector<MediaEndpointConfiguration::IceServerInfo>> ice
     return WTFMove(servers);
 }
 
+static inline ExceptionOr<Vector<MediaEndpointConfiguration::CertificatePEM>> certificatesFromConfiguration(const RTCConfiguration& configuration)
+{
+    std::optional<Exception> exception;
+    auto currentMilliSeconds = WallTime::now().secondsSinceEpoch().milliseconds();
+    auto result = WTF::map(configuration.certificates, [&](const auto& certificate) {
+        if (!exception && currentMilliSeconds > certificate->expires())
+            exception = Exception { InvalidAccessError, "Certificate has expired"_s };
+        return MediaEndpointConfiguration::CertificatePEM { certificate->pemCertificate(), certificate->pemPrivateKey(), };
+    });
+    if (exception)
+        return WTFMove(*exception);
+    return WTFMove(result);
+}
+
 ExceptionOr<void> RTCPeerConnection::initializeConfiguration(RTCConfiguration&& configuration)
 {
     INFO_LOG(LOGIDENTIFIER);
@@ -302,7 +316,11 @@ ExceptionOr<void> RTCPeerConnection::initializeConfiguration(RTCConfiguration&& 
     if (servers.hasException())
         return servers.releaseException();
 
-    if (!m_backend->setConfiguration({ servers.releaseReturnValue(), configuration.iceTransportPolicy, configuration.bundlePolicy, configuration.iceCandidatePoolSize }))
+    auto certificates = certificatesFromConfiguration(configuration);
+    if (certificates.hasException())
+        return certificates.releaseException();
+
+    if (!m_backend->setConfiguration({ servers.releaseReturnValue(), configuration.iceTransportPolicy, configuration.bundlePolicy, configuration.iceCandidatePoolSize, certificates.releaseReturnValue() }))
         return Exception { InvalidAccessError, "Bad Configuration Parameters" };
 
     m_configuration = WTFMove(configuration);
@@ -320,7 +338,20 @@ ExceptionOr<void> RTCPeerConnection::setConfiguration(RTCConfiguration&& configu
     if (servers.hasException())
         return servers.releaseException();
 
-    if (!m_backend->setConfiguration({ servers.releaseReturnValue(), configuration.iceTransportPolicy, configuration.bundlePolicy, configuration.iceCandidatePoolSize }))
+    if (configuration.certificates.size()) {
+        if (configuration.certificates.size() != m_configuration.certificates.size())
+            return Exception { InvalidModificationError, "Certificates parameters are different" };
+
+        for (auto& certificate : configuration.certificates) {
+            bool isThere = m_configuration.certificates.findMatching([&certificate](const auto& item) {
+                return item.get() == certificate.get();
+            }) != notFound;
+            if (!isThere)
+                return Exception { InvalidModificationError, "A certificate given in constructor is not present" };
+        }
+    }
+
+    if (!m_backend->setConfiguration({ servers.releaseReturnValue(), configuration.iceTransportPolicy, configuration.bundlePolicy, configuration.iceCandidatePoolSize, { } }))
         return Exception { InvalidAccessError, "Bad Configuration Parameters" };
 
     m_configuration = WTFMove(configuration);

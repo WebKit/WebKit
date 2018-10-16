@@ -121,6 +121,12 @@ static webrtc::PeerConnectionInterface::RTCConfiguration configurationFromMediaE
     // FIXME: Activate ice candidate pool size once it no longer bothers test bots.
     // rtcConfiguration.ice_candidate_pool_size = configuration.iceCandidatePoolSize;
 
+    for (auto& pem : configuration.certificates) {
+        rtcConfiguration.certificates.push_back(rtc::RTCCertificate::FromPEM(rtc::RTCCertificatePEM {
+            pem.privateKey.utf8().data(), pem.certificate.utf8().data()
+        }));
+    }
+
     return rtcConfiguration;
 }
 

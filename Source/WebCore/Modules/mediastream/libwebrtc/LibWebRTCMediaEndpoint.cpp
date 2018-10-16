@@ -89,6 +89,8 @@ bool LibWebRTCMediaEndpoint::setConfiguration(LibWebRTCProvider& client, webrtc:
         m_backend = client.createPeerConnection(*this, WTFMove(configuration));
         return !!m_backend;
     }
+    auto oldConfiguration = m_backend->GetConfiguration();
+    configuration.certificates = oldConfiguration.certificates;
     return m_backend->SetConfiguration(WTFMove(configuration));
 }
 

@@ -7,17 +7,11 @@ PASS new RTCPeerConnection({})
 FAIL new RTCPeerConnection({ peerIdentity: toStringThrows }) assert_throws: function "function () {
         eval(expr);
       }" did not throw
-FAIL new RTCPeerConnection({ certificates: null }) assert_throws: function "function () {
-        eval(expr);
-      }" did not throw
+PASS new RTCPeerConnection({ certificates: null }) 
 PASS new RTCPeerConnection({ certificates: undefined }) 
 PASS new RTCPeerConnection({ certificates: [] }) 
-FAIL new RTCPeerConnection({ certificates: [null] }) assert_throws: function "function () {
-        eval(expr);
-      }" did not throw
-FAIL new RTCPeerConnection({ certificates: [undefined] }) assert_throws: function "function () {
-        eval(expr);
-      }" did not throw
+PASS new RTCPeerConnection({ certificates: [null] }) 
+PASS new RTCPeerConnection({ certificates: [undefined] }) 
 PASS new RTCPeerConnection({ iceCandidatePoolSize: toNumberThrows }) 
 PASS localDescription initial value 
 PASS currentLocalDescription initial value 

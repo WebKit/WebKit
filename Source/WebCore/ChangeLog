@@ -1,3 +1,35 @@
+2018-10-16  Youenn Fablet  <youenn@apple.com>
+
+        Support RTCConfiguration.certificates
+        https://bugs.webkit.org/show_bug.cgi?id=190603
+
+        Reviewed by Eric Carlson.
+
+        Update RTCConfiguration to have a certificates member.
+        Add the conversion from RTCCertificate to libwebrtc certificates.
+        Add check to ensure that certificates are not expired.
+        Add check to ensure that certificates passed to setConfiguration were
+        the same as the ones passed to RTCPeerConnection constructor.
+        Once these checks are done, we reuse the certificates created at
+        RCPeerConnection creation time when setting the configuration again.
+
+        Covered by rebased WPT test.
+
+        * Modules/mediastream/RTCConfiguration.h:
+        * Modules/mediastream/RTCConfiguration.idl:
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::certificatesFromConfiguration):
+        (WebCore::RTCPeerConnection::initializeConfiguration):
+        (WebCore::RTCPeerConnection::setConfiguration):
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::setConfiguration):
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        (WebCore::configurationFromMediaEndpointConfiguration):
+        * platform/mediastream/MediaEndpointConfiguration.cpp:
+        (WebCore::MediaEndpointConfiguration::MediaEndpointConfiguration):
+        * platform/mediastream/MediaEndpointConfiguration.h:
+
 2018-10-16  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r237163.

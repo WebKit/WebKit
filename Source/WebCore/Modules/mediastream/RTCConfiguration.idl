@@ -52,6 +52,6 @@
     RTCBundlePolicy bundlePolicy = "balanced";
     // FIXME 169662: missing rtcpMuxPolicy
     // FIXME 169662: missing peerIdentity
-    // FIXME 169662: missing certificates
+    sequence<RTCCertificate> certificates;
     [EnforceRange] octet iceCandidatePoolSize = 0;
 };

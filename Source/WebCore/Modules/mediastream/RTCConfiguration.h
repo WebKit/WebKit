@@ -34,6 +34,7 @@
 #if ENABLE(WEB_RTC)
 
 #include "RTCBundlePolicy.h"
+#include "RTCCertificate.h"
 #include "RTCIceServer.h"
 #include "RTCIceTransportPolicy.h"
 
@@ -44,6 +45,7 @@ struct RTCConfiguration {
     RTCIceTransportPolicy iceTransportPolicy;
     RTCBundlePolicy bundlePolicy;
     unsigned short iceCandidatePoolSize;
+    Vector<RefPtr<RTCCertificate>> certificates;
 };
 
 } // namespace WebCore
