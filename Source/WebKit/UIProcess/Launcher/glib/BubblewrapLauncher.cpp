@@ -666,6 +666,15 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
     // We would have to parse ld config files for more info.
     bindPathVar(sandboxArgs, "LD_LIBRARY_PATH");
 
+    const char* libraryPath = g_getenv("LD_LIBRARY_PATH");
+    if (libraryPath && libraryPath[0]) {
+        // On distros using a suid bwrap it drops this env var
+        // so we have to pass it through to the children.
+        sandboxArgs.appendVector(Vector<CString>({
+            "--setenv", "LD_LIBRARY_PATH", libraryPath,
+        }));
+    }
+
     bindSymlinksRealPath(sandboxArgs, "/etc/resolv.conf");
     bindSymlinksRealPath(sandboxArgs, "/etc/localtime");
 
