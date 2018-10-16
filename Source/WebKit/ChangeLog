@@ -1,3 +1,31 @@
+2018-10-15  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r236512): [ Mac WK2 ] Layout Test editing/undo/undo-smart-delete-word.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=190375
+        <rdar://problem/45177807>
+
+        Reviewed by Ryosuke Niwa.
+
+        The test is doing the following:
+        > document.execCommand("Delete"); document.execCommand("Undo");
+
+        Both operation are synchronous and rely on synchronous IPC from the WebProcess to the UIProcess.
+        However, for the undo operation to succeed, the first command need to have been registered with
+        with the UIProcess via the WebPageProxy::RegisterEditCommandForUndo IPC to the UIProcess, which
+        is asynchronous.
+
+        After r236512, the UIProcess no longer processes incoming sync / async IPC in order and thus,
+        it is possible for the WebPageProxy::ExecuteUndoRedo synchronous IPC to get processed by the
+        UIProcess *before* the WebPageProxy::RegisterEditCommandForUndo asynchronous IPC for the
+        previous "Delete" command. As a result, canUndo would return false and we would fail to undo.
+
+        To address the issue, use SendOption::DispatchMessageEvenWhenWaitingForSyncReply flag when sending
+        the WebPageProxy::RegisterEditCommandForUndo IPC, so that it gets processed in order with regards
+        to surrounding synchronous IPC.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::registerUndoStep):
+
 2018-10-15  Alex Christensen  <achristensen@webkit.org>
 
         Modernize BackForwardClient.h
