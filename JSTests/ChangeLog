@@ -1,3 +1,11 @@
+2018-10-15  Guillaume Emont  <guijemont@igalia.com>
+
+        Skip stress/array-prototype-concat-of-long-spliced-arrays2.js on arm and mips/linux
+
+        Unreviewed gardening.
+
+        * stress/array-prototype-concat-of-long-spliced-arrays2.js:
+
 2018-10-15  Saam barati  <sbarati@apple.com>
 
         Emit fjcvtzs on ARM64E on Darwin
