@@ -44,9 +44,9 @@
                     { "name": "bot219", "platform": "mac-sierra" },
                     { "name": "bot603", "platform": "mac-sierra" },
                     { "name": "bot632", "platform": "mac-sierra" },
-                    { "name": "bot439", "platform": "mac-sierra" },
-                    { "name": "bot443", "platform": "mac-sierra" },
                     { "name": "bot600", "platform": "mac-sierra" },
+                    { "name": "bot601", "platform": "mac-sierra" },
+                    { "name": "bot609", "platform": "mac-sierra" },
                     { "name": "bot698", "platform": "mac-sierra" },
                     { "name": "bot699", "platform": "mac-sierra" },
 
@@ -187,7 +187,7 @@
                     { "name": "Apple Sierra Debug (Build)", "type": "Build", "builddir": "sierra-debug",
                       "platform": "mac-sierra", "configuration": "debug", "architectures": ["x86_64"],
                       "triggers": ["sierra-debug-tests-wk1", "sierra-debug-tests-wk2", "sierra-debug-tests-test262"],
-                      "slavenames": ["bot439", "bot698"]
+                      "slavenames": ["bot609", "bot698"]
                     },
                     { "name": "Apple Sierra Debug WK1 (Tests)", "type": "TestWebKit1AllButJSC", "builddir": "sierra-debug-tests-wk1",
                       "platform": "mac-sierra", "configuration": "debug", "architectures": ["x86_64"],
@@ -202,7 +202,7 @@
                     { "name": "Apple Sierra Release (Build)", "type": "Build", "builddir": "sierra-release",
                       "platform": "mac-sierra", "configuration": "release", "architectures": ["x86_64"],
                       "triggers": ["sierra-release-tests-wk1", "sierra-release-tests-wk2", "sierra-release-tests-test262", "sierra-release-perf-tests"],
-                      "slavenames": ["bot443", "bot699"]
+                      "slavenames": ["bot601", "bot699"]
                     },
                     { "name": "Apple Sierra Release WK1 (Tests)", "type": "TestWebKit1AllButJSC", "builddir": "sierra-release-tests-wk1",
                       "platform": "mac-sierra", "configuration": "release", "architectures": ["x86_64"],

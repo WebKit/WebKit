@@ -1,3 +1,12 @@
+2018-10-15  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Update bot configuration for Sierra archive queues
+        https://bugs.webkit.org/show_bug.cgi?id=190605
+
+        Reviewed by Aakash Jain.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2018-10-15  Timothy Hatcher  <timothy@apple.com>
 
         Add support for prefers-color-scheme media query
