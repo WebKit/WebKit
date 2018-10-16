@@ -1,3 +1,44 @@
+2018-10-16  Per Arne Vollan  <pvollan@apple.com>
+
+        [WebVTT] Support inline WebVTT styles
+        https://bugs.webkit.org/show_bug.cgi?id=190369
+
+        Reviewed by Eric Carlson.
+
+        Add support for inline WebVTT styles, see https://w3c.github.io/webvtt/#styling. The parsed
+        style strings from the VTT file are added to an optional vector of style strings in the
+        TextTrack class. These styles are then added as HTMLStyleElement children to the parent of
+        the cue span element.
+
+        Test: media/track/track-cue-css.html
+
+        * html/track/InbandGenericTextTrack.cpp:
+        (WebCore::InbandGenericTextTrack::newStyleSheetsParsed):
+        * html/track/InbandGenericTextTrack.h:
+        * html/track/InbandWebVTTTextTrack.cpp:
+        (WebCore::InbandWebVTTTextTrack::newStyleSheetsParsed):
+        * html/track/InbandWebVTTTextTrack.h:
+        * html/track/LoadableTextTrack.cpp:
+        (WebCore::LoadableTextTrack::newStyleSheetsAvailable):
+        * html/track/LoadableTextTrack.h:
+        * html/track/TextTrack.h:
+        (WebCore::TextTrack::styleSheets const):
+        * html/track/VTTCue.cpp:
+        (WebCore::VTTCue::getDisplayTree):
+        * html/track/WebVTTParser.cpp:
+        (WebCore::WebVTTParser::getNewCues):
+        (WebCore::WebVTTParser::getStyleSheets):
+        (WebCore::WebVTTParser::parse):
+        (WebCore::WebVTTParser::collectWebVTTBlock):
+        (WebCore::WebVTTParser::collectStyleSheet):
+        (WebCore::WebVTTParser::checkStyleSheet):
+        (WebCore::WebVTTParser::checkAndStoreStyleSheet):
+        * html/track/WebVTTParser.h:
+        * loader/TextTrackLoader.cpp:
+        (WebCore::TextTrackLoader::newStyleSheetsParsed):
+        (WebCore::TextTrackLoader::getNewStyleSheets):
+        * loader/TextTrackLoader.h:
+
 2018-10-16  Chris Dumez  <cdumez@apple.com>
 
         window.navigator should not become null after the window loses its browsing context

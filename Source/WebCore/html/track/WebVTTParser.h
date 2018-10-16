@@ -57,6 +57,7 @@ public:
 
     virtual void newCuesParsed() = 0;
     virtual void newRegionsParsed() = 0;
+    virtual void newStyleSheetsParsed() = 0;
     virtual void fileFailedToParse() = 0;
 };
 
@@ -104,6 +105,7 @@ public:
         TimingsAndSettings,
         CueText,
         Region,
+        Style,
         BadCue,
         Finished
     };
@@ -150,6 +152,8 @@ public:
     void getNewCues(Vector<RefPtr<WebVTTCueData>>&);
     void getNewRegions(Vector<RefPtr<VTTRegion>>&);
 
+    Vector<String> getStyleSheets();
+    
     // Create the DocumentFragment representation of the WebVTT cue text.
     static Ref<DocumentFragment> createDocumentFragmentFromCueText(Document&, const String&);
 
@@ -169,9 +173,12 @@ private:
     ParseState collectRegionSettings(const String&);
     ParseState collectWebVTTBlock(const String&);
     ParseState checkAndRecoverCue(const String& line);
+    ParseState collectStyleSheet(const String&);
     bool checkAndCreateRegion(const String& line);
     bool checkAndStoreRegion(const String& line);
-    
+    bool checkStyleSheet(const String& line);
+    bool checkAndStoreStyleSheet(const String& line);
+
     void createNewCue();
     void resetCueValues();
 
@@ -186,11 +193,13 @@ private:
     String m_previousLine;
     String m_currentSettings;
     RefPtr<VTTRegion> m_currentRegion;
+    String m_currentStyleSheet;
     
     WebVTTParserClient* m_client;
 
     Vector<RefPtr<WebVTTCueData>> m_cuelist;
     Vector<RefPtr<VTTRegion>> m_regionList;
+    Vector<String> m_styleSheets;
 };
 
 } // namespace WebCore

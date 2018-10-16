@@ -92,6 +92,10 @@ void InbandWebVTTTextTrack::newRegionsParsed()
     }
 }
 
+void InbandWebVTTTextTrack::newStyleSheetsParsed()
+{
+}
+
 void InbandWebVTTTextTrack::fileFailedToParse()
 {
     ERROR_LOG(LOGIDENTIFIER, "Error parsing WebVTT stream.");

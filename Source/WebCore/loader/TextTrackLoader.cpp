@@ -181,6 +181,11 @@ void TextTrackLoader::newRegionsParsed()
     m_client.newRegionsAvailable(this);
 }
 
+void TextTrackLoader::newStyleSheetsParsed()
+{
+    m_client.newStyleSheetsAvailable(*this);
+}
+
 void TextTrackLoader::fileFailedToParse()
 {
     LOG(Media, "TextTrackLoader::fileFailedToParse");
@@ -210,6 +215,14 @@ void TextTrackLoader::getNewRegions(Vector<RefPtr<VTTRegion>>& outputRegions)
     ASSERT(m_cueParser);
     if (m_cueParser)
         m_cueParser->getNewRegions(outputRegions);
+}
+
+Vector<String> TextTrackLoader::getNewStyleSheets()
+{
+    ASSERT(m_cueParser);
+    if (m_cueParser)
+        return m_cueParser->getStyleSheets();
+    return Vector<String>();
 }
 
 }

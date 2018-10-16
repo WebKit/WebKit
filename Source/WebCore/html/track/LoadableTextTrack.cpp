@@ -131,6 +131,12 @@ void LoadableTextTrack::newRegionsAvailable(TextTrackLoader* loader)
     }
 }
 
+void LoadableTextTrack::newStyleSheetsAvailable(TextTrackLoader& loader)
+{
+    ASSERT_UNUSED(loader, m_loader.get() == &loader);
+    m_styleSheets = m_loader->getNewStyleSheets();
+}
+
 AtomicString LoadableTextTrack::id() const
 {
     if (!m_trackElement)

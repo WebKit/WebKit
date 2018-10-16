@@ -144,6 +144,8 @@ public:
     using RefCounted<TrackBase>::ref;
     using RefCounted<TrackBase>::deref;
 
+    const std::optional<Vector<String>>& styleSheets() const { return m_styleSheets; }
+
 protected:
     TextTrack(ScriptExecutionContext*, TextTrackClient*, const AtomicString& kind, const AtomicString& id, const AtomicString& label, const AtomicString& language, TextTrackType);
 
@@ -152,6 +154,7 @@ protected:
 #endif
 
     RefPtr<TextTrackCueList> m_cues;
+    std::optional<Vector<String>> m_styleSheets;
 
 private:
     bool enabled() const override;

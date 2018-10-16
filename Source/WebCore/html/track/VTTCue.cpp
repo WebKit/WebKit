@@ -40,6 +40,7 @@
 #include "Event.h"
 #include "HTMLDivElement.h"
 #include "HTMLSpanElement.h"
+#include "HTMLStyleElement.h"
 #include "Logging.h"
 #include "NodeTraversal.h"
 #include "RenderVTTCue.h"
@@ -892,6 +893,15 @@ VTTCueBox& VTTCue::getDisplayTree(const IntSize& videoSize, int fontSize)
 
     displayTree->setFontSizeFromCaptionUserPrefs(fontSize);
     displayTree->applyCSSProperties(videoSize);
+
+    const auto& styleSheets = track()->styleSheets();
+    if (styleSheets) {
+        for (const auto& cssString : *styleSheets) {
+            auto style = HTMLStyleElement::create(HTMLNames::styleTag, m_cueBackdropBox->document(), false);
+            style->setTextContent(cssString);
+            m_cueBackdropBox->appendChild(style);
+        }
+    }
 
     m_displayTreeShouldChange = false;
 

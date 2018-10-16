@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script>var requirePixelDump = true;</script>
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script src=../media-controls.js></script>
+        <script>
+        function loaded()
+        {
+            consoleWrite("Test that CSS in VTT file is applied correctly.");
+            findMediaElement();
+            video.src = findMediaFile('video', '../content/test');
+            waitForEvent('seeked', endTest);
+            waitForEvent('canplaythrough', function() { video.currentTime = .5; });
+        }
+
+        setCaptionDisplayMode('Automatic');
+        </script>
+    </head>
+    <body onload="loaded()">
+        <video controls >
+            <track src="captions-webvtt/css-styling.vtt" kind="captions" default>
+        </video>
+    </body>
+</html>

@@ -52,6 +52,7 @@ const double secondsPerMillisecond = 0.001;
 const char* fileIdentifier = "WEBVTT";
 const unsigned fileIdentifierLength = 6;
 const unsigned regionIdentifierLength = 6;
+const unsigned styleIdentifierLength = 5;
 
 bool WebVTTParser::parseFloatPercentageValue(VTTScanner& valueScanner, float& percentage)
 {
@@ -96,13 +97,17 @@ WebVTTParser::WebVTTParser(WebVTTParserClient* client, ScriptExecutionContext* c
 
 void WebVTTParser::getNewCues(Vector<RefPtr<WebVTTCueData>>& outputCues)
 {
-    outputCues = m_cuelist;
-    m_cuelist.clear();
+    outputCues = WTFMove(m_cuelist);
 }
 
 void WebVTTParser::getNewRegions(Vector<RefPtr<VTTRegion>>& outputRegions)
 {
     outputRegions = WTFMove(m_regionList);
+}
+
+Vector<String> WebVTTParser::getStyleSheets()
+{
+    return WTFMove(m_styleSheets);
 }
 
 void WebVTTParser::parseFileHeader(String&& data)
@@ -172,6 +177,10 @@ void WebVTTParser::parse()
 
         case Region:
             m_state = collectRegionSettings(*line);
+            break;
+
+        case Style:
+            m_state = collectStyleSheet(*line);
             break;
 
         case Id:
@@ -258,11 +267,18 @@ WebVTTParser::ParseState WebVTTParser::collectWebVTTBlock(const String& line)
     if (checkAndCreateRegion(line))
         return Region;
     
+    if (checkStyleSheet(line))
+        return Style;
+
     // Handle cue block.
     ParseState state = checkAndRecoverCue(line);
     if (state != Header) {
-        if (m_client && !m_regionList.isEmpty())
-            m_client->newRegionsParsed();
+        if (m_client) {
+            if (!m_regionList.isEmpty())
+                m_client->newRegionsParsed();
+            if (!m_styleSheets.isEmpty())
+                m_client->newStyleSheetsParsed();
+        }
         if (!m_previousLine.isEmpty() && !m_previousLine.contains("-->"))
             m_currentId = m_previousLine;
         
@@ -288,6 +304,16 @@ WebVTTParser::ParseState WebVTTParser::checkAndRecoverCue(const String& line)
             return state;
     }
     return Header;
+}
+
+WebVTTParser::ParseState WebVTTParser::collectStyleSheet(const String& line)
+{
+    // End of style block
+    if (checkAndStoreStyleSheet(line))
+        return checkAndRecoverCue(line);
+
+    m_currentStyleSheet.append(line);
+    return Style;
 }
 
 bool WebVTTParser::checkAndCreateRegion(const String& line)
@@ -323,7 +349,29 @@ bool WebVTTParser::checkAndStoreRegion(const String& line)
     m_currentRegion = nullptr;
     return true;
 }
+
+bool WebVTTParser::checkStyleSheet(const String& line)
+{
+    if (m_previousLine.contains("-->"))
+        return false;
+    // line starts with the substring "STYLE" and remaining characters
+    // zero or more U+0020 SPACE characters or U+0009 CHARACTER TABULATION
+    // (tab) characters expected other than these charecters it is invalid.
+    if (line.startsWith("STYLE") && line.substring(styleIdentifierLength).isAllSpecialCharacters<isASpace>())
+        return true;
+
+    return false;
+}
+
+bool WebVTTParser::checkAndStoreStyleSheet(const String& line)
+{
+    if (!line.isEmpty() && !line.contains("-->"))
+        return false;
     
+    m_styleSheets.append(WTFMove(m_currentStyleSheet));
+    return true;
+}
+
 WebVTTParser::ParseState WebVTTParser::collectCueId(const String& line)
 {
     if (line.contains("-->"))

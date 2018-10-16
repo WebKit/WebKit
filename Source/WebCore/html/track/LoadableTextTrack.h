@@ -56,6 +56,7 @@ private:
     void newCuesAvailable(TextTrackLoader*) final;
     void cueLoadingCompleted(TextTrackLoader*, bool loadingFailed) final;
     void newRegionsAvailable(TextTrackLoader*) final;
+    void newStyleSheetsAvailable(TextTrackLoader&) final;
 
     AtomicString id() const final;
     bool isDefault() const final { return m_isDefault; }

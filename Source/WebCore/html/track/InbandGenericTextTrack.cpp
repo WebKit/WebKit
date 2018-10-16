@@ -215,6 +215,10 @@ void InbandGenericTextTrack::newRegionsParsed()
     }
 }
 
+void InbandGenericTextTrack::newStyleSheetsParsed()
+{
+}
+
 void InbandGenericTextTrack::fileFailedToParse()
 {
     ERROR_LOG(LOGIDENTIFIER);

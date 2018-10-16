@@ -1,0 +1,16 @@
+WEBVTT
+
+STYLE
+::cue {
+background-image: linear-gradient(to bottom, dimgray, lightgray);
+}
+
+STYLE
+::cue(b) {
+color: red;
+font-size: 15px;
+}
+
+hello
+00:00:00.000 --> 00:00:10.000
+<b>Hello</b>.

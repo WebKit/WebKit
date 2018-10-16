@@ -1,3 +1,15 @@
+2018-10-16  Per Arne Vollan  <pvollan@apple.com>
+
+        [WebVTT] Support inline WebVTT styles
+        https://bugs.webkit.org/show_bug.cgi?id=190369
+
+        Reviewed by Eric Carlson.
+
+        * media/track/captions-webvtt/css-styling.vtt: Added.
+        * media/track/captions-webvtt/no-css-styling.vtt: Added.
+        * media/track/track-cue-css-expected.html: Added.
+        * media/track/track-cue-css.html: Added.
+
 2018-10-16  Chris Dumez  <cdumez@apple.com>
 
         window.navigator should not become null after the window loses its browsing context

@@ -72,6 +72,7 @@ private:
 
     void newCuesParsed() final;
     void newRegionsParsed() final;
+    void newStyleSheetsParsed() final;
     void fileFailedToParse() final;
 
 #if !RELEASE_LOG_DISABLED
