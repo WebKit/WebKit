@@ -1,3 +1,18 @@
+2018-10-16  Mark Lam  <mark.lam@apple.com>
+
+        GetIndexedPropertyStorage can GC.
+        https://bugs.webkit.org/show_bug.cgi?id=190625
+        <rdar://problem/45309366>
+
+        Reviewed by Saam Barati.
+
+        This is because if the ArrayMode type is String, the DFG and FTL will be emitting
+        a call to operationResolveRope, and operationResolveRope can GC.  This patch
+        updates doesGC() to reflect this.
+
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+
 2018-10-16  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Unreviewed, rolling out r237188, r237189, and r237197.
