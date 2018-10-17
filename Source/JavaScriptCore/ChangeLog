@@ -1,3 +1,9 @@
+2018-10-17  Keith Miller  <keith_miller@apple.com>
+
+        Unreviewed, fix windows build.
+
+        * offlineasm/generate_offset_extractor.rb:
+
 2018-10-17  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] More aggressively use `constexpr` in LowLevelInterpreter.asm for constant values
