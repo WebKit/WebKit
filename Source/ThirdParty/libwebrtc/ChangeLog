@@ -1,5 +1,15 @@
 2018-10-17  Youenn Fablet  <youenn@apple.com>
 
+        Remove unneeded .rej files from libwebrtc
+        https://bugs.webkit.org/show_bug.cgi?id=190670
+
+        Reviewed by Mark Lam.
+
+        * Source/third_party/boringssl/src/.github/PULL_REQUEST_TEMPLATE.rej: Removed.
+        * Source/third_party/boringssl/src/third_party/googletest/.gitignore.rej: Removed.
+
+2018-10-17  Youenn Fablet  <youenn@apple.com>
+
         REGRESSION (r237075): webrtc/video-replace-muted-track.html is Crashing
         https://bugs.webkit.org/show_bug.cgi?id=190646
 

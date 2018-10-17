@@ -1,4 +1,0 @@
-diff a/Source/ThirdParty/libwebrtc/Source/third_party/boringssl/src/third_party/googletest/.gitignore b/Source/ThirdParty/libwebrtc/Source/third_party/boringssl/src/third_party/googletest/.gitignore	(rejected hunks)
-@@ -0,0 +1,2 @@
-+# python
-+*.pyc

@@ -1,9 +1,0 @@
-diff a/Source/ThirdParty/libwebrtc/Source/third_party/boringssl/src/.github/PULL_REQUEST_TEMPLATE b/Source/ThirdParty/libwebrtc/Source/third_party/boringssl/src/.github/PULL_REQUEST_TEMPLATE	(rejected hunks)
-@@ -0,0 +1,7 @@
-+Please do not send pull requests to the BoringSSL repository.
-+
-+We do, however, take contributions gladly.
-+
-+See https://boringssl.googlesource.com/boringssl/+/master/CONTRIBUTING.md
-+
-+Thanks!
