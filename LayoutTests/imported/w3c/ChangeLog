@@ -1,3 +1,13 @@
+2018-10-17  Charlie Turner  <cturner@igalia.com>
+
+        [EME] Sanity check key ID length in the keyids init data format
+        https://bugs.webkit.org/show_bug.cgi?id=190629
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * web-platform-tests/encrypted-media/clearkey-generate-request-disallowed-input.https-expected.txt:
+        Added new baseline.
+
 2018-10-16  Youenn Fablet  <youenn@apple.com>
 
         Support RTCConfiguration.certificates

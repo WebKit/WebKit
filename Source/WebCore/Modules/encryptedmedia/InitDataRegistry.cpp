@@ -45,6 +45,8 @@ namespace {
     // as per spec the size of the ContentEncKeyID is encoded on 16 bits.
     // https://matroska.org/technical/specs/index.html#ContentEncKeyID/
     const uint32_t kWebMMaxContentEncKeyIDSize = 64 * KB; // 2^16
+    const uint32_t kKeyIdsMinKeyIdSizeInBytes = 1;
+    const uint32_t kKeyIdsMaxKeyIdSizeInBytes = 512;
 }
 
 static std::optional<Vector<Ref<SharedBuffer>>> extractKeyIDsKeyids(const SharedBuffer& buffer)
@@ -76,6 +78,9 @@ static std::optional<Vector<Ref<SharedBuffer>>> extractKeyIDsKeyids(const Shared
         Vector<char> keyIDData;
         if (!WTF::base64URLDecode(keyID, { keyIDData }))
             continue;
+
+        if (keyIDData.size() < kKeyIdsMinKeyIdSizeInBytes || keyIDData.size() > kKeyIdsMaxKeyIdSizeInBytes)
+            return std::nullopt;
 
         Ref<SharedBuffer> keyIDBuffer = SharedBuffer::create(WTFMove(keyIDData));
         keyIDs.append(WTFMove(keyIDBuffer));
