@@ -2314,16 +2314,18 @@ void Document::didBecomeCurrentDocumentInFrame()
     // be out of sync if the DOM suspension state changed while the document was not in the frame (possibly in the
     // page cache, or simply newly created).
     if (m_frame->activeDOMObjectsAndAnimationsSuspended()) {
-        if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled())
-            timeline().suspendAnimations();
-        else
+        if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
+            if (auto* timeline = existingTimeline())
+                timeline->suspendAnimations();
+        } else
             m_frame->animation().suspendAnimationsForDocument(this);
         suspendScheduledTasks(ReasonForSuspension::PageWillBeSuspended);
     } else {
         resumeScheduledTasks(ReasonForSuspension::PageWillBeSuspended);
-        if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled())
-            timeline().resumeAnimations();
-        else
+        if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
+            if (auto* timeline = existingTimeline())
+                timeline->resumeAnimations();
+        } else
             m_frame->animation().resumeAnimationsForDocument(this);
     }
 }
@@ -5089,9 +5091,10 @@ void Document::resume(ReasonForSuspension reason)
     ASSERT(m_frame);
     m_frame->loader().client().dispatchDidBecomeFrameset(isFrameSet());
 
-    if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled())
-        timeline().resumeAnimations();
-    else
+    if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
+        if (auto* timeline = existingTimeline())
+            timeline->resumeAnimations();  
+    } else
         m_frame->animation().resumeAnimationsForDocument(this);
 
     resumeScheduledTasks(reason);

@@ -1735,7 +1735,8 @@ void Page::setIsVisibleInternal(bool isVisible)
         if (m_settings->hiddenPageCSSAnimationSuspensionEnabled()) {
             if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
                 forEachDocument([&] (Document& document) {
-                    document.timeline().resumeAnimations();
+                    if (auto* timeline = document.existingTimeline())
+                        timeline->resumeAnimations();
                 });
             } else
                 mainFrame().animation().resumeAnimations();
@@ -1755,7 +1756,8 @@ void Page::setIsVisibleInternal(bool isVisible)
         if (m_settings->hiddenPageCSSAnimationSuspensionEnabled()) {
             if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
                 forEachDocument([&] (Document& document) {
-                    document.timeline().suspendAnimations();
+                    if (auto* timeline = document.existingTimeline())
+                        timeline->suspendAnimations();
                 });
             } else
                 mainFrame().animation().suspendAnimations();
@@ -2113,10 +2115,12 @@ void Page::hiddenPageCSSAnimationSuspensionStateChanged()
     if (!isVisible()) {
         if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
             forEachDocument([&] (Document& document) {
-                if (m_settings->hiddenPageCSSAnimationSuspensionEnabled())
-                    document.timeline().suspendAnimations();
-                else
-                    document.timeline().resumeAnimations();
+                if (auto* timeline = document.existingTimeline()) {
+                    if (m_settings->hiddenPageCSSAnimationSuspensionEnabled())
+                        timeline->suspendAnimations();
+                    else
+                        timeline->resumeAnimations();
+                }
             });
         } else {
             if (m_settings->hiddenPageCSSAnimationSuspensionEnabled())

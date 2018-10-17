@@ -1,3 +1,27 @@
+2018-10-17  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Do not create a DocumentTimeline to suspend or resume animations
+        https://bugs.webkit.org/show_bug.cgi?id=190660
+
+        Reviewed by Dean Jackson.
+
+        We check that there is an existing timeline before trying to suspend or resume its animations, otherwise
+        we're creating a DocumentTimeline when nothing requires for it to exist. We also have to check that we
+        suspend animations when a DocumentTimeline is created while the page is not visible.
+
+        No new tests as there is no change in behavior here.
+
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::DocumentTimeline):
+        * dom/Document.cpp:
+        (WebCore::Document::didBecomeCurrentDocumentInFrame):
+        (WebCore::Document::resume):
+        * page/Frame.cpp:
+        (WebCore::Frame::clearTimers):
+        * page/Page.cpp:
+        (WebCore::Page::setIsVisibleInternal):
+        (WebCore::Page::hiddenPageCSSAnimationSuspensionStateChanged):
+
 2018-10-17  Antti Koivisto  <antti@apple.com>
 
         Tiling CSS gradients is slow

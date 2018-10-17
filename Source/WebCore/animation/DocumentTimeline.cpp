@@ -63,6 +63,8 @@ DocumentTimeline::DocumentTimeline(Document& document, Seconds originTime)
     , m_animationResolutionTimer(*this, &DocumentTimeline::animationResolutionTimerFired)
 #endif
 {
+    if (m_document && m_document->page() && !m_document->page()->isVisible())
+        suspendAnimations();
 }
 
 DocumentTimeline::~DocumentTimeline() = default;
