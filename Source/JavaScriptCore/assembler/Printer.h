@@ -25,8 +25,6 @@
 
 #pragma once
 
-#include "CPU.h"
-
 #include <wtf/PrintStream.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/Vector.h>
