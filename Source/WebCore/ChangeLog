@@ -1,3 +1,25 @@
+2018-10-17  Antti Koivisto  <antti@apple.com>
+
+        Tiling CSS gradients is slow
+        https://bugs.webkit.org/show_bug.cgi?id=190615
+
+        Reviewed by Tim Horton.
+
+        Painting blocks the main thread on CG rendering queue to make a copy of the backing store.
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::drawPattern):
+
+        Also use sinkIntoImage for bitmap image pattern drawing.
+
+        * platform/graphics/GradientImage.cpp:
+        (WebCore::GradientImage::drawPattern):
+
+        Sink the gradient into an Image after generating it. Unlike ImageBuffer, painting it doesn't involve inefficient copies.
+        Previous isCompatibleWithContext test is replaced with an equivalent scale factor test.
+
+        * platform/graphics/GradientImage.h:
+
 2018-10-17  Chris Dumez  <cdumez@apple.com>
 
         Update more DOMWindow getters to return references instead of raw pointers

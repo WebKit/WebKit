@@ -70,25 +70,29 @@ void GradientImage::drawPattern(GraphicsContext& destContext, const FloatRect& d
 
     unsigned generatorHash = m_gradient->hash();
 
-    if (!m_cachedImageBuffer || m_cachedGeneratorHash != generatorHash || m_cachedAdjustedSize != adjustedSize || !m_cachedImageBuffer->isCompatibleWithContext(destContext)) {
-        m_cachedImageBuffer = ImageBuffer::createCompatibleBuffer(adjustedSize, ColorSpaceSRGB, destContext);
-        if (!m_cachedImageBuffer)
+    if (!m_cachedImage || m_cachedGeneratorHash != generatorHash || m_cachedAdjustedSize != adjustedSize || !areEssentiallyEqual(destContext.scaleFactor(), m_cachedScaleFactor)) {
+        auto imageBuffer = ImageBuffer::createCompatibleBuffer(adjustedSize, ColorSpaceSRGB, destContext);
+        if (!imageBuffer)
             return;
 
         // Fill with the generated image.
-        m_cachedImageBuffer->context().fillRect(FloatRect(FloatPoint(), adjustedSize), m_gradient.get());
+        imageBuffer->context().fillRect(FloatRect(FloatPoint(), adjustedSize), m_gradient.get());
 
         m_cachedGeneratorHash = generatorHash;
         m_cachedAdjustedSize = adjustedSize;
+        m_cachedScaleFactor = destContext.scaleFactor();
 
         if (destContext.drawLuminanceMask())
-            m_cachedImageBuffer->convertToLuminanceMask();
+            imageBuffer->convertToLuminanceMask();
+
+        m_cachedImage = ImageBuffer::sinkIntoImage(WTFMove(imageBuffer), PreserveResolution::Yes);
     }
 
     destContext.setDrawLuminanceMask(false);
 
     // Tile the image buffer into the context.
-    m_cachedImageBuffer->drawPattern(destContext, destRect, adjustedSrcRect, adjustedPatternCTM, phase, spacing, compositeOp, blendMode);
+    m_cachedImage->drawPattern(destContext, destRect, adjustedSrcRect, adjustedPatternCTM, phase, spacing, compositeOp, blendMode);
+
 }
 
 void GradientImage::dump(WTF::TextStream& ts) const
