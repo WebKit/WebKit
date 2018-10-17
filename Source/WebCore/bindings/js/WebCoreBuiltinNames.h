@@ -172,6 +172,10 @@ namespace WebCore {
     macro(VisualViewport) \
     macro(WebGL2RenderingContext) \
     macro(WebGLVertexArrayObject) \
+    macro(WebGPU) \
+    macro(WebGPUAdapter) \
+    macro(WebGPUAdapterDescriptor) \
+    macro(WebGPUDevice) \
     macro(WebMetalBuffer) \
     macro(WebMetalCommandBuffer) \
     macro(WebMetalCommandQueue) \
@@ -318,6 +322,7 @@ namespace WebCore {
     macro(webkitIDBRequest) \
     macro(webkitIDBTransaction) \
     macro(webkitIndexedDB) \
+    macro(webgpu) \
     macro(window) \
     macro(writing)
 

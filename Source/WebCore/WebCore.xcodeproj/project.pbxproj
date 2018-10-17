@@ -13637,6 +13637,20 @@
 		D000EBA111BDAFD400C47726 /* FrameLoaderStateMachine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameLoaderStateMachine.h; sourceTree = "<group>"; };
 		D000ED2511C1B9CD00C47726 /* SubframeLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SubframeLoader.cpp; sourceTree = "<group>"; };
 		D000ED2611C1B9CD00C47726 /* SubframeLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubframeLoader.h; sourceTree = "<group>"; };
+		D00F5940216ECC7A000D71DB /* DOMWindowWebGPU.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DOMWindowWebGPU.h; sourceTree = "<group>"; };
+		D00F5941216ECC7A000D71DB /* DOMWindowWebGPU.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindowWebGPU.cpp; sourceTree = "<group>"; };
+		D00F5942216ECC7A000D71DB /* DOMWindowWebGPU.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = DOMWindowWebGPU.idl; sourceTree = "<group>"; };
+		D00F5946216EFE54000D71DB /* WebGPU.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPU.h; sourceTree = "<group>"; };
+		D00F5947216EFE54000D71DB /* WebGPU.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPU.cpp; sourceTree = "<group>"; };
+		D00F5948216EFE54000D71DB /* WebGPU.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPU.idl; sourceTree = "<group>"; };
+		D00F594C216FDF8E000D71DB /* WebGPUAdapterDescriptor.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUAdapterDescriptor.idl; sourceTree = "<group>"; };
+		D00F594E216FF6F0000D71DB /* WebGPUAdapterDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUAdapterDescriptor.h; sourceTree = "<group>"; };
+		D00F594F216FFAC2000D71DB /* WebGPUAdapter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUAdapter.h; sourceTree = "<group>"; };
+		D00F5950216FFAC2000D71DB /* WebGPUAdapter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUAdapter.cpp; sourceTree = "<group>"; };
+		D00F5951216FFAC2000D71DB /* WebGPUAdapter.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUAdapter.idl; sourceTree = "<group>"; };
+		D00F595221701D8C000D71DB /* WebGPUDevice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUDevice.h; sourceTree = "<group>"; };
+		D00F595321701D8C000D71DB /* WebGPUDevice.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUDevice.cpp; sourceTree = "<group>"; };
+		D00F595421701D8C000D71DB /* WebGPUDevice.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUDevice.idl; sourceTree = "<group>"; };
 		D01A27AB10C9BFD800026A42 /* SpaceSplitString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpaceSplitString.cpp; sourceTree = "<group>"; };
 		D01A27AC10C9BFD800026A42 /* SpaceSplitString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpaceSplitString.h; sourceTree = "<group>"; };
 		D02F854E21682A4A0088EE74 /* WebMetalCommandQueue.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebMetalCommandQueue.idl; sourceTree = "<group>"; };
@@ -21243,6 +21257,7 @@
 				57D8462A1FEAF57F00CA3682 /* webauthn */,
 				97BC69D51505F054001B74AC /* webdatabase */,
 				996E59DA1DF00D45006612B9 /* webdriver */,
+				D00F593E216ECC43000D71DB /* webgpu */,
 				97AABCF714FA09B5007457AE /* websockets */,
 				2DDE1CAB1F57475900D1A365 /* webvr */,
 			);
@@ -25293,6 +25308,27 @@
 				A1DE712B18612AC100734192 /* TouchEvents.cpp */,
 			);
 			path = ios;
+			sourceTree = "<group>";
+		};
+		D00F593E216ECC43000D71DB /* webgpu */ = {
+			isa = PBXGroup;
+			children = (
+				D00F5941216ECC7A000D71DB /* DOMWindowWebGPU.cpp */,
+				D00F5940216ECC7A000D71DB /* DOMWindowWebGPU.h */,
+				D00F5942216ECC7A000D71DB /* DOMWindowWebGPU.idl */,
+				D00F5947216EFE54000D71DB /* WebGPU.cpp */,
+				D00F5946216EFE54000D71DB /* WebGPU.h */,
+				D00F5948216EFE54000D71DB /* WebGPU.idl */,
+				D00F5950216FFAC2000D71DB /* WebGPUAdapter.cpp */,
+				D00F594F216FFAC2000D71DB /* WebGPUAdapter.h */,
+				D00F5951216FFAC2000D71DB /* WebGPUAdapter.idl */,
+				D00F594E216FF6F0000D71DB /* WebGPUAdapterDescriptor.h */,
+				D00F594C216FDF8E000D71DB /* WebGPUAdapterDescriptor.idl */,
+				D00F595321701D8C000D71DB /* WebGPUDevice.cpp */,
+				D00F595221701D8C000D71DB /* WebGPUDevice.h */,
+				D00F595421701D8C000D71DB /* WebGPUDevice.idl */,
+			);
+			path = webgpu;
 			sourceTree = "<group>";
 		};
 		DF9AFD6F13FC31B00015FEB7 /* objc */ = {

@@ -1,3 +1,49 @@
+2018-10-17  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Implement WebGPU bindings up through WebGPUDevice creation
+        https://bugs.webkit.org/show_bug.cgi?id=190653
+
+        Reviewed by Dean Jackson.
+
+        Test: webgpu/webgpu-enabled.html
+
+        Add WebGPU Sketch bindings for window.webgpu, WebGPUAdapter, WebGPUAdapterDescriptor,
+        and WebGPUDevice creation. Based off IDL commit version b6c61ee. 
+        https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Modules/webgpu/DOMWindowWebGPU.cpp: Added.
+        (WebCore::DOMWindowWebGPU::DOMWindowWebGPU):
+        (WebCore::DOMWindowWebGPU::supplementName):
+        (WebCore::DOMWindowWebGPU::from):
+        (WebCore::DOMWindowWebGPU::webgpu):
+        (WebCore::DOMWindowWebGPU::webgpu const):
+        * Modules/webgpu/DOMWindowWebGPU.h: Added.
+        * Modules/webgpu/DOMWindowWebGPU.idl: Added.
+        * Modules/webgpu/WebGPU.cpp: Added.
+        (WebCore::WebGPU::create):
+        (WebCore::WebGPU::requestAdapter const):
+        * Modules/webgpu/WebGPU.h: Added.
+        * Modules/webgpu/WebGPU.idl: Added.
+        * Modules/webgpu/WebGPUAdapter.cpp: Added.
+        (WebCore::WebGPUAdapter::create):
+        (WebCore::WebGPUAdapter::WebGPUAdapter):
+        (WebCore::WebGPUAdapter::createDevice):
+        * Modules/webgpu/WebGPUAdapter.h: Added.
+        * Modules/webgpu/WebGPUAdapter.idl: Added.
+        * Modules/webgpu/WebGPUAdapterDescriptor.h: Added.
+        * Modules/webgpu/WebGPUAdapterDescriptor.idl: Added.
+        * Modules/webgpu/WebGPUDevice.cpp: Added.
+        (WebCore::WebGPUDevice::create):
+        (WebCore::WebGPUDevice::WebGPUDevice):
+        * Modules/webgpu/WebGPUDevice.h: Added.
+        (WebCore::WebGPUDevice::adapter const):
+        * Modules/webgpu/WebGPUDevice.idl: Added.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+
 2018-10-17  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Increment the API version to 5

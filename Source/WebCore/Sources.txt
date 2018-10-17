@@ -295,6 +295,11 @@ Modules/websockets/WebSocketFrame.cpp
 Modules/websockets/WebSocketHandshake.cpp
 Modules/websockets/WorkerThreadableWebSocketChannel.cpp
 
+Modules/webgpu/DOMWindowWebGPU.cpp
+Modules/webgpu/WebGPU.cpp
+Modules/webgpu/WebGPUAdapter.cpp
+Modules/webgpu/WebGPUDevice.cpp
+
 Modules/webvr/NavigatorWebVR.cpp
 Modules/webvr/VRDisplay.cpp
 Modules/webvr/VRDisplayEvent.cpp
@@ -2576,6 +2581,7 @@ JSDOMWindowFetch.cpp
 JSDOMWindowIndexedDatabase.cpp
 JSDOMWindowSpeechSynthesis.cpp
 JSDOMWindowWebDatabase.cpp
+JSDOMWindowWebGPU.cpp
 JSDOMWindowWebVR.cpp
 JSDataTransfer.cpp
 JSDataTransferItem.cpp
@@ -3160,6 +3166,10 @@ JSVisualViewport.cpp
 JSVoidCallback.cpp
 JSWaveShaperNode.cpp
 JSWebAnimation.cpp
+JSWebGPU.cpp
+JSWebGPUAdapter.cpp
+JSWebGPUAdapterDescriptor.cpp
+JSWebGPUDevice.cpp
 JSWebMetalBuffer.cpp
 JSWebMetalCommandBuffer.cpp
 JSWebMetalCommandQueue.cpp

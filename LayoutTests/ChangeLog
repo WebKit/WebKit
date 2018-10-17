@@ -1,3 +1,14 @@
+2018-10-17  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Implement WebGPU bindings up through WebGPUDevice creation
+        https://bugs.webkit.org/show_bug.cgi?id=190653
+
+        Reviewed by Dean Jackson.
+
+        Small test to validate creation of a WebGPUDevice when WebGPU is enabled.
+
+        * webgpu/webgpu-enabled.html: Added.
+
 2018-10-17  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Increment the API version to 5

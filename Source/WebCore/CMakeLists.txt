@@ -51,6 +51,7 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/webauthn"
     "${WEBCORE_DIR}/Modules/webdatabase"
     "${WEBCORE_DIR}/Modules/webdriver"
+    "${WEBCORE_DIR}/Modules/webgpu"
     "${WEBCORE_DIR}/Modules/websockets"
     "${WEBCORE_DIR}/Modules/webvr"
     "${WEBCORE_DIR}/accessibility"
@@ -187,6 +188,7 @@ set(WebCore_IDL_INCLUDES
     Modules/streams
     Modules/webaudio
     Modules/webdatabase
+    Modules/webgpu
     Modules/websockets
     Modules/webvr
 
@@ -443,6 +445,12 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webdatabase/SQLTransactionErrorCallback.idl
 
     Modules/webdriver/NavigatorWebDriver.idl
+
+    Modules/webgpu/DOMWindowWebGPU.idl
+    Modules/webgpu/WebGPU.idl
+    Modules/webgpu/WebGPUAdapter.idl
+    Modules/webgpu/WebGPUAdapterDescriptor.idl
+    Modules/webgpu/WebGPUDevice.idl
 
     Modules/websockets/CloseEvent.idl
     Modules/websockets/WebSocket.idl

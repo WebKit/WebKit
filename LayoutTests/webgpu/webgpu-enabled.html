@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<script src="../resources/js-test-pre.js"></script>
+
+<script>
+if (window.testRunner)
+    window.testRunner.dumpAsText();
+
+function runTest() {
+    shouldBeDefined(window.webgpu);
+    window.webgpu.requestAdapter({ powerPreference: "default" }).then(adapter => {
+        shouldBeDefined(adapter);
+        let defaultDevice = adapter.createDevice();
+        shouldBeDefined(defaultDevice);
+    }).catch(error => {
+        testFailed(error);
+    });
+}
+
+runTest();
+
+var successfullyParsed = true;
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</html>
