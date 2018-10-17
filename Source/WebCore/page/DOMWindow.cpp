@@ -635,67 +635,67 @@ int DOMWindow::orientation() const
 
 #endif
 
-Screen* DOMWindow::screen()
+Screen& DOMWindow::screen()
 {
     if (!m_screen)
         m_screen = Screen::create(*this);
-    return m_screen.get();
+    return *m_screen;
 }
 
-History* DOMWindow::history()
+History& DOMWindow::history()
 {
     if (!m_history)
         m_history = History::create(*this);
-    return m_history.get();
+    return *m_history;
 }
 
-Crypto* DOMWindow::crypto() const
+Crypto& DOMWindow::crypto() const
 {
     if (!m_crypto)
         m_crypto = Crypto::create(document());
-    return m_crypto.get();
+    return *m_crypto;
 }
 
-BarProp* DOMWindow::locationbar()
+BarProp& DOMWindow::locationbar()
 {
     if (!m_locationbar)
         m_locationbar = BarProp::create(*this, BarProp::Locationbar);
-    return m_locationbar.get();
+    return *m_locationbar;
 }
 
-BarProp* DOMWindow::menubar()
+BarProp& DOMWindow::menubar()
 {
     if (!m_menubar)
         m_menubar = BarProp::create(*this, BarProp::Menubar);
-    return m_menubar.get();
+    return *m_menubar;
 }
 
-BarProp* DOMWindow::personalbar()
+BarProp& DOMWindow::personalbar()
 {
     if (!m_personalbar)
         m_personalbar = BarProp::create(*this, BarProp::Personalbar);
-    return m_personalbar.get();
+    return *m_personalbar;
 }
 
-BarProp* DOMWindow::scrollbars()
+BarProp& DOMWindow::scrollbars()
 {
     if (!m_scrollbars)
         m_scrollbars = BarProp::create(*this, BarProp::Scrollbars);
-    return m_scrollbars.get();
+    return *m_scrollbars;
 }
 
-BarProp* DOMWindow::statusbar()
+BarProp& DOMWindow::statusbar()
 {
     if (!m_statusbar)
         m_statusbar = BarProp::create(*this, BarProp::Statusbar);
-    return m_statusbar.get();
+    return *m_statusbar;
 }
 
-BarProp* DOMWindow::toolbar()
+BarProp& DOMWindow::toolbar()
 {
     if (!m_toolbar)
         m_toolbar = BarProp::create(*this, BarProp::Toolbar);
-    return m_toolbar.get();
+    return *m_toolbar;
 }
 
 PageConsoleClient* DOMWindow::console() const
@@ -707,47 +707,47 @@ PageConsoleClient* DOMWindow::console() const
     return frame->page() ? &frame->page()->console() : nullptr;
 }
 
-DOMApplicationCache* DOMWindow::applicationCache()
+DOMApplicationCache& DOMWindow::applicationCache()
 {
     if (!m_applicationCache)
         m_applicationCache = DOMApplicationCache::create(*this);
-    return m_applicationCache.get();
+    return *m_applicationCache;
 }
 
-Navigator* DOMWindow::navigator()
+Navigator& DOMWindow::navigator()
 {
     if (!m_navigator)
         m_navigator = Navigator::create(scriptExecutionContext(), *this);
 
-    return m_navigator.get();
+    return *m_navigator;
 }
 
-Performance* DOMWindow::performance() const
+Performance& DOMWindow::performance() const
 {
     if (!m_performance) {
         MonotonicTime timeOrigin = document() && document()->loader() ? document()->loader()->timing().referenceMonotonicTime() : MonotonicTime::now();
         m_performance = Performance::create(document(), timeOrigin);
     }
-    return m_performance.get();
+    return *m_performance;
 }
 
 double DOMWindow::nowTimestamp() const
 {
-    return performance() ? performance()->now() / 1000 : 0;
+    return performance().now() / 1000.;
 }
 
-Location* DOMWindow::location()
+Location& DOMWindow::location()
 {
     if (!m_location)
         m_location = Location::create(*this);
-    return m_location.get();
+    return *m_location;
 }
 
-VisualViewport* DOMWindow::visualViewport()
+VisualViewport& DOMWindow::visualViewport()
 {
     if (!m_visualViewport)
         m_visualViewport = VisualViewport::create(*this);
-    return m_visualViewport.get();
+    return *m_visualViewport;
 }
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
@@ -1433,11 +1433,11 @@ Document* DOMWindow::document() const
     return downcast<Document>(ContextDestructionObserver::scriptExecutionContext());
 }
 
-RefPtr<StyleMedia> DOMWindow::styleMedia()
+StyleMedia& DOMWindow::styleMedia()
 {
     if (!m_media)
         m_media = StyleMedia::create(*this);
-    return m_media;
+    return *m_media;
 }
 
 Ref<CSSStyleDeclaration> DOMWindow::getComputedStyle(Element& element, const String& pseudoElt) const

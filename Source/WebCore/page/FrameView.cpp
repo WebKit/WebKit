@@ -1711,10 +1711,8 @@ void FrameView::updateLayoutViewport()
             setLayoutViewportOverrideRect(LayoutRect(newOrigin, m_layoutViewportOverrideRect.value().size()));
         }
         if (frame().settings().visualViewportAPIEnabled()) {
-            if (Document* document = frame().document()) {
-                if (VisualViewport* visualViewport = document->domWindow()->visualViewport())
-                    visualViewport->update();
-            }
+            if (auto* window = frame().window())
+                window->visualViewport().update();
         }
         return;
     }
@@ -1725,10 +1723,8 @@ void FrameView::updateLayoutViewport()
         LOG_WITH_STREAM(Scrolling, stream << "layoutViewport changed to " << layoutViewportRect());
     }
     if (frame().settings().visualViewportAPIEnabled()) {
-        if (Document* document = frame().document()) {
-            if (VisualViewport* visualViewport = document->domWindow()->visualViewport())
-                visualViewport->update();
-        }
+        if (auto* window = frame().window())
+            window->visualViewport().update();
     }
 }
 

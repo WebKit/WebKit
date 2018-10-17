@@ -150,10 +150,8 @@ void VideoFullscreenModelVideoElement::requestFullscreenMode(HTMLMediaElementEnu
 
     if (m_videoElement && finishedWithMedia && mode == MediaPlayerEnums::VideoFullscreenModeNone) {
         if (m_videoElement->document().isMediaDocument()) {
-            if (DOMWindow* window = m_videoElement->document().domWindow()) {
-                if (History* history = window->history())
-                    history->back();
-            }
+            if (auto* window = m_videoElement->document().domWindow())
+                window->history().back();
         }
     }
 }

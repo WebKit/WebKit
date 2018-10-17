@@ -208,23 +208,19 @@ ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data
     if (!allowSandboxException && !documentSecurityOrigin.canRequest(fullURL) && (fullURL.path() != documentURL.path() || fullURL.query() != documentURL.query()))
         return createBlockedURLSecurityErrorWithMessageSuffix("Paths and fragments must match for a sandboxed document.");
 
-    Document* mainDocument = frame->page()->mainFrame().document();
-    History* mainHistory = nullptr;
-    if (mainDocument) {
-        if (auto* mainDOMWindow = mainDocument->domWindow())
-            mainHistory = mainDOMWindow->history();
-    }
-
-    if (!mainHistory)
+    auto* mainWindow = frame->page()->mainFrame().window();
+    if (!mainWindow)
         return { };
 
+    auto& mainHistory = mainWindow->history();
+
     WallTime currentTimestamp = WallTime::now();
-    if (currentTimestamp - mainHistory->m_currentStateObjectTimeSpanStart > stateObjectTimeSpan) {
-        mainHistory->m_currentStateObjectTimeSpanStart = currentTimestamp;
-        mainHistory->m_currentStateObjectTimeSpanObjectsAdded = 0;
+    if (currentTimestamp - mainHistory.m_currentStateObjectTimeSpanStart > stateObjectTimeSpan) {
+        mainHistory.m_currentStateObjectTimeSpanStart = currentTimestamp;
+        mainHistory.m_currentStateObjectTimeSpanObjectsAdded = 0;
     }
     
-    if (mainHistory->m_currentStateObjectTimeSpanObjectsAdded >= perStateObjectTimeSpanLimit) {
+    if (mainHistory.m_currentStateObjectTimeSpanObjectsAdded >= perStateObjectTimeSpanLimit) {
         if (stateObjectType == StateObjectType::Replace)
             return Exception { SecurityError, String::format("Attempt to use history.replaceState() more than %u times per %f seconds", perStateObjectTimeSpanLimit, stateObjectTimeSpan.seconds()) };
         return Exception { SecurityError, String::format("Attempt to use history.pushState() more than %u times per %f seconds", perStateObjectTimeSpanLimit, stateObjectTimeSpan.seconds()) };
@@ -240,7 +236,7 @@ ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data
     payloadSize += urlSize;
     payloadSize += data ? data->data().size() : 0;
 
-    Checked<uint64_t> newTotalUsage = mainHistory->m_totalStateObjectUsage;
+    Checked<uint64_t> newTotalUsage = mainHistory.m_totalStateObjectUsage;
 
     if (stateObjectType == StateObjectType::Replace)
         newTotalUsage -= m_mostRecentStateObjectUsage;
@@ -254,8 +250,8 @@ ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data
 
     m_mostRecentStateObjectUsage = payloadSize.unsafeGet();
 
-    mainHistory->m_totalStateObjectUsage = newTotalUsage.unsafeGet();
-    ++mainHistory->m_currentStateObjectTimeSpanObjectsAdded;
+    mainHistory.m_totalStateObjectUsage = newTotalUsage.unsafeGet();
+    ++mainHistory.m_currentStateObjectTimeSpanObjectsAdded;
 
     if (!urlString.isEmpty())
         frame->document()->updateURLForPushOrReplaceState(fullURL);

@@ -312,8 +312,8 @@ bool JSDOMWindow::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned 
 void JSDOMWindow::heapSnapshot(JSCell* cell, HeapSnapshotBuilder& builder)
 {
     JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(cell);
-    if (auto* location = thisObject->wrapped().location())
-        builder.setLabelForCell(cell, location->href());
+    auto& location = thisObject->wrapped().location();
+    builder.setLabelForCell(cell, location.href());
 
     Base::heapSnapshot(cell, builder);
 }

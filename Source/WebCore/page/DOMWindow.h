@@ -131,20 +131,20 @@ public:
     static bool canShowModalDialog(const Frame&);
     WEBCORE_EXPORT void setCanShowModalDialogOverride(bool);
 
-    Screen* screen();
-    History* history();
-    Crypto* crypto() const;
-    BarProp* locationbar();
-    BarProp* menubar();
-    BarProp* personalbar();
-    BarProp* scrollbars();
-    BarProp* statusbar();
-    BarProp* toolbar();
-    Navigator* navigator();
+    Screen& screen();
+    History& history();
+    Crypto& crypto() const;
+    BarProp& locationbar();
+    BarProp& menubar();
+    BarProp& personalbar();
+    BarProp& scrollbars();
+    BarProp& statusbar();
+    BarProp& toolbar();
+    Navigator& navigator();
     Navigator* optionalNavigator() const { return m_navigator.get(); }
-    Navigator* clientInformation() { return navigator(); }
+    Navigator& clientInformation() { return navigator(); }
 
-    Location* location();
+    Location& location();
     void setLocation(DOMWindow& activeWindow, DOMWindow& firstWindow, const String& location, SetLocationLocking = LockHistoryBasedOnGestureState);
 
     DOMSelection* getSelection();
@@ -209,7 +209,7 @@ public:
 
     // CSSOM View Module
 
-    RefPtr<StyleMedia> styleMedia();
+    StyleMedia& styleMedia();
 
     // DOM Level 2 Style Interface
 
@@ -245,7 +245,7 @@ public:
     void resizeBy(float x, float y) const;
     void resizeTo(float width, float height) const;
 
-    VisualViewport* visualViewport();
+    VisualViewport& visualViewport();
 
     // Timers
     ExceptionOr<int> setTimeout(JSC::ExecState&, std::unique_ptr<ScheduledAction>, int timeout, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
@@ -286,7 +286,7 @@ public:
     Storage* optionalSessionStorage() const { return m_sessionStorage.get(); }
     Storage* optionalLocalStorage() const { return m_localStorage.get(); }
 
-    DOMApplicationCache* applicationCache();
+    DOMApplicationCache& applicationCache();
     DOMApplicationCache* optionalApplicationCache() const { return m_applicationCache.get(); }
 
     CustomElementRegistry* customElementRegistry() { return m_customElementRegistry.get(); }
@@ -302,7 +302,7 @@ public:
     int orientation() const;
 #endif
 
-    Performance* performance() const;
+    Performance& performance() const;
     WEBCORE_EXPORT double nowTimestamp() const;
 
 #if PLATFORM(IOS)

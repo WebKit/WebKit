@@ -40,7 +40,7 @@ PerformanceObserver::PerformanceObserver(ScriptExecutionContext& scriptExecution
     if (is<Document>(scriptExecutionContext)) {
         auto& document = downcast<Document>(scriptExecutionContext);
         if (DOMWindow* window = document.domWindow())
-            m_performance = window->performance();
+            m_performance = &window->performance();
     } else if (is<WorkerGlobalScope>(scriptExecutionContext)) {
         auto& workerGlobalScope = downcast<WorkerGlobalScope>(scriptExecutionContext);
         m_performance = &workerGlobalScope.performance();

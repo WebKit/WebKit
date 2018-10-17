@@ -236,10 +236,8 @@ bool IntersectionObserver::createTimestamp(DOMHighResTimeStamp& timestamp) const
     ASSERT(context->isDocument());
     auto& document = downcast<Document>(*context);
     if (auto* window = document.domWindow()) {
-        if (auto* performance = window->performance()) {
-            timestamp = performance->now();
-            return true;
-        }
+        timestamp =  window->performance().now();
+        return true;
     }
     return false;
 }

@@ -623,8 +623,8 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
         if (options().initiatorContext == InitiatorContext::Worker)
             finishedTimingForWorkerLoad(resourceTiming);
         else {
-            if (document().domWindow() && document().domWindow()->performance())
-                document().domWindow()->performance()->addResourceTiming(WTFMove(resourceTiming));
+            if (auto* window = document().domWindow())
+                window->performance().addResourceTiming(WTFMove(resourceTiming));
         }
     }
 

@@ -1,3 +1,55 @@
+2018-10-17  Chris Dumez  <cdumez@apple.com>
+
+        Update more DOMWindow getters to return references instead of raw pointers
+        https://bugs.webkit.org/show_bug.cgi?id=190654
+
+        Reviewed by Youenn Fablet.
+
+        Update more DOMWindow getters to return references instead of raw pointers, since they
+        can no longer return null after recent refactoring.
+
+        * Modules/gamepad/GamepadManager.cpp:
+        (WebCore::navigatorGamepadFromDOMWindow):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::heapSnapshot):
+        * dom/Document.cpp:
+        (WebCore::Document::location const):
+        (WebCore::Document::dispatchPopstateEvent):
+        * dom/Event.cpp:
+        (WebCore::Event::timeStampForBindings const):
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::loadRequest):
+        * loader/ResourceTimingInformation.cpp:
+        (WebCore::ResourceTimingInformation::addResourceTiming):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::screen):
+        (WebCore::DOMWindow::history):
+        (WebCore::DOMWindow::crypto const):
+        (WebCore::DOMWindow::locationbar):
+        (WebCore::DOMWindow::menubar):
+        (WebCore::DOMWindow::personalbar):
+        (WebCore::DOMWindow::scrollbars):
+        (WebCore::DOMWindow::statusbar):
+        (WebCore::DOMWindow::toolbar):
+        (WebCore::DOMWindow::applicationCache):
+        (WebCore::DOMWindow::navigator):
+        (WebCore::DOMWindow::performance const):
+        (WebCore::DOMWindow::nowTimestamp const):
+        (WebCore::DOMWindow::location):
+        (WebCore::DOMWindow::visualViewport):
+        (WebCore::DOMWindow::styleMedia):
+        * page/DOMWindow.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateLayoutViewport):
+        * page/History.cpp:
+        (WebCore::History::stateObjectAdded):
+        * page/IntersectionObserver.cpp:
+        (WebCore::IntersectionObserver::createTimestamp const):
+        * page/PerformanceObserver.cpp:
+        (WebCore::PerformanceObserver::PerformanceObserver):
+        * platform/cocoa/VideoFullscreenModelVideoElement.mm:
+        (WebCore::VideoFullscreenModelVideoElement::requestFullscreenMode):
+
 2018-10-17  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Certain tags should identify their context to iOS API
