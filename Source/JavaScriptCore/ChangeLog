@@ -1,3 +1,89 @@
+2018-10-17  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] More aggressively use `constexpr` in LowLevelInterpreter.asm for constant values
+        https://bugs.webkit.org/show_bug.cgi?id=190659
+
+        Reviewed by Keith Miller.
+
+        Asking the actual constant value to the JSC binary is always the best way to get the correct value.
+        The value is correctly updated once the original value is changed. We would like to encourage this
+        approach more in LowLevelInterpreter.asm.
+
+        This patch expands the coverage of this approach. We make ObservedType, ResultType, and ArithProfile
+        constexpr-friendly to produce the magic value used in LowLevelInterpreter.asm at compiling time.
+        This change allows us to easily extend ArithProfile in the future to adopt BigInt efficiently.
+
+        We additionally use `constexpr` for several constant values in LowLevelInterpreter.asm.
+
+        * assembler/MaxFrameExtentForSlowPathCall.h:
+        Use this value in LowLevelInterpreter.asm directly. We also make them constexpr. And we add CPU(ARM64E).
+
+        * bytecode/ArithProfile.h:
+        (JSC::ObservedType::ObservedType):
+        (JSC::ObservedType::sawInt32 const):
+        (JSC::ObservedType::isOnlyInt32 const):
+        (JSC::ObservedType::sawNumber const):
+        (JSC::ObservedType::isOnlyNumber const):
+        (JSC::ObservedType::sawNonNumber const):
+        (JSC::ObservedType::isOnlyNonNumber const):
+        (JSC::ObservedType::isEmpty const):
+        (JSC::ObservedType::bits const):
+        (JSC::ObservedType::withInt32 const):
+        (JSC::ObservedType::withNumber const):
+        (JSC::ObservedType::withNonNumber const):
+        (JSC::ObservedType::withoutNonNumber const):
+        (JSC::ObservedType::operator== const):
+        (JSC::ArithProfile::ArithProfile):
+        (JSC::ArithProfile::fromInt):
+        (JSC::ArithProfile::observedUnaryInt):
+        (JSC::ArithProfile::observedUnaryNumber):
+        (JSC::ArithProfile::observedBinaryIntInt):
+        (JSC::ArithProfile::observedBinaryNumberInt):
+        (JSC::ArithProfile::observedBinaryIntNumber):
+        (JSC::ArithProfile::observedBinaryNumberNumber):
+        (JSC::ArithProfile::lhsObservedType const):
+        (JSC::ArithProfile::rhsObservedType const):
+        (JSC::ArithProfile::bits const):
+        Make ObservedType and ArithProfile constexpr-friendly.
+
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        Make several ASSERTs to STATIC_ASSERTs. Remove some unnecessary checks.
+        * llint/LLIntOffsetsExtractor.cpp:
+        * llint/LowLevelInterpreter.asm:
+        Remove unused constant values. Use constexpr more and more aggressively.
+
+        * parser/ResultType.h:
+        (JSC::ResultType::ResultType):
+        (JSC::ResultType::isInt32 const):
+        (JSC::ResultType::definitelyIsNumber const):
+        (JSC::ResultType::definitelyIsString const):
+        (JSC::ResultType::definitelyIsBoolean const):
+        (JSC::ResultType::definitelyIsBigInt const):
+        (JSC::ResultType::mightBeNumber const):
+        (JSC::ResultType::isNotNumber const):
+        (JSC::ResultType::mightBeBigInt const):
+        (JSC::ResultType::isNotBigInt const):
+        (JSC::ResultType::nullType):
+        (JSC::ResultType::booleanType):
+        (JSC::ResultType::numberType):
+        (JSC::ResultType::numberTypeIsInt32):
+        (JSC::ResultType::stringOrNumberType):
+        (JSC::ResultType::addResultType):
+        (JSC::ResultType::stringType):
+        (JSC::ResultType::bigIntType):
+        (JSC::ResultType::unknownType):
+        (JSC::ResultType::forAdd):
+        (JSC::ResultType::forLogicalOp):
+        (JSC::ResultType::forBitOp):
+        (JSC::ResultType::bits const):
+        Make ResultType constexpr-friendly.
+
+        * runtime/JSCJSValue.h:
+        Use offsetof instead of OBJECT_OFFSETOF. It is OK since EncodedValueDescriptor is POD.
+        This change makes TagOffset and PayloadOffset macros constexpr-friendly while OBJECT_OFFSETOF
+        cannot be used in constexpr since it uses reinterpret_cast.
+
 2018-10-17  Keith Miller  <keith_miller@apple.com>
 
         Unreviewed revert Fujii's revert in r237214 with new WinCairo build fix.

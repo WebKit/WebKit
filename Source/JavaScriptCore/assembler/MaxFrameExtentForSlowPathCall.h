@@ -36,44 +36,44 @@ namespace JSC {
 // from JS code.
 
 #if !ENABLE(ASSEMBLER)
-static const size_t maxFrameExtentForSlowPathCall = 0;
+static constexpr size_t maxFrameExtentForSlowPathCall = 0;
 
 #elif CPU(X86_64) && OS(WINDOWS)
 // 4 args in registers, but stack space needs to be allocated for all args.
-static const size_t maxFrameExtentForSlowPathCall = 64;
+static constexpr size_t maxFrameExtentForSlowPathCall = 64;
 
 #elif CPU(X86_64)
 // All args in registers.
-static const size_t maxFrameExtentForSlowPathCall = 0;
+static constexpr size_t maxFrameExtentForSlowPathCall = 0;
 
 #elif CPU(X86)
 // 7 args on stack (28 bytes).
-static const size_t maxFrameExtentForSlowPathCall = 40;
+static constexpr size_t maxFrameExtentForSlowPathCall = 40;
 
-#elif CPU(ARM64)
+#elif CPU(ARM64) || CPU(ARM64E)
 // All args in registers.
-static const size_t maxFrameExtentForSlowPathCall = 0;
+static constexpr size_t maxFrameExtentForSlowPathCall = 0;
 
 #elif CPU(ARM)
 // First four args in registers, remaining 4 args on stack.
-static const size_t maxFrameExtentForSlowPathCall = 24;
+static constexpr size_t maxFrameExtentForSlowPathCall = 24;
 
 #elif CPU(MIPS)
 // Though args are in registers, there need to be space on the stack for all args.
-static const size_t maxFrameExtentForSlowPathCall = 40;
+static constexpr size_t maxFrameExtentForSlowPathCall = 40;
 
 #else
 #error "Unsupported CPU: need value for maxFrameExtentForSlowPathCall"
 
 #endif
 
-COMPILE_ASSERT(!(maxFrameExtentForSlowPathCall % sizeof(Register)), extent_must_be_in_multiples_of_registers);
+static_assert(!(maxFrameExtentForSlowPathCall % sizeof(Register)), "Extent must be in multiples of registers");
 
 #if ENABLE(ASSEMBLER)
 // Make sure that cfr - maxFrameExtentForSlowPathCall bytes will make the stack pointer aligned
-COMPILE_ASSERT((maxFrameExtentForSlowPathCall % 16) == 16 - sizeof(CallerFrameAndPC), extent_must_align_stack_from_callframe_pointer);
+static_assert((maxFrameExtentForSlowPathCall % 16) == 16 - sizeof(CallerFrameAndPC), "Extent must align stack from callframe pointer");
 #endif
 
-static const size_t maxFrameExtentForSlowPathCallInRegisters = maxFrameExtentForSlowPathCall / sizeof(Register);
+static constexpr size_t maxFrameExtentForSlowPathCallInRegisters = maxFrameExtentForSlowPathCall / sizeof(Register);
 
 } // namespace JSC

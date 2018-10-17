@@ -25,6 +25,7 @@
 
 #include "config.h"
 
+#include "ArithProfile.h"
 #include "ArrayProfile.h"
 #include "BytecodeStructs.h"
 #include "CodeBlock.h"
@@ -50,6 +51,7 @@
 #include "JumpTable.h"
 #include "LLIntOfflineAsmConfig.h"
 #include "MarkedSpace.h"
+#include "MaxFrameExtentForSlowPathCall.h"
 #include "NativeExecutable.h"
 #include "ProtoCallFrame.h"
 #include "ShadowChicken.h"

@@ -154,22 +154,21 @@ end
 # These declarations must match interpreter/JSStack.h.
 
 const PtrSize = constexpr (sizeof(void*))
+const MachineRegisterSize = constexpr (sizeof(CPURegister))
+const SlotSize = constexpr (sizeof(Register))
 
 if JSVALUE64
     const CallFrameHeaderSlots = 5
-    const MachineRegisterSize = 8
 else
     const CallFrameHeaderSlots = 4
     const CallFrameAlignSlots = 1
-    const MachineRegisterSize = 4
 end
-const SlotSize = 8
 
 const JSLexicalEnvironment_variables = (sizeof JSLexicalEnvironment + SlotSize - 1) & ~(SlotSize - 1)
 const DirectArguments_storage = (sizeof DirectArguments + SlotSize - 1) & ~(SlotSize - 1)
 
-const StackAlignment = 16
-const StackAlignmentSlots = 2
+const StackAlignment = constexpr (stackAlignmentBytes())
+const StackAlignmentSlots = constexpr (stackAlignmentRegisters())
 const StackAlignmentMask = StackAlignment - 1
 
 const CallerFrameAndPCSize = constexpr (sizeof(CallerFrameAndPC))
@@ -185,25 +184,25 @@ const CallFrameHeaderSize = ThisArgumentOffset
 
 # Some value representation constants.
 if JSVALUE64
-    const TagBitTypeOther = 0x2
-    const TagBitBool      = 0x4
-    const TagBitUndefined = 0x8
-    const ValueEmpty      = 0x0
-    const ValueFalse      = TagBitTypeOther | TagBitBool
-    const ValueTrue       = TagBitTypeOther | TagBitBool | 1
-    const ValueUndefined  = TagBitTypeOther | TagBitUndefined
-    const ValueNull       = TagBitTypeOther
-    const TagTypeNumber   = 0xffff000000000000
-    const TagMask         = TagTypeNumber | TagBitTypeOther
+    const TagBitTypeOther = constexpr TagBitTypeOther
+    const TagBitBool      = constexpr TagBitBool
+    const TagBitUndefined = constexpr TagBitUndefined
+    const ValueEmpty      = constexpr ValueEmpty
+    const ValueFalse      = constexpr ValueFalse
+    const ValueTrue       = constexpr ValueTrue
+    const ValueUndefined  = constexpr ValueUndefined
+    const ValueNull       = constexpr ValueNull
+    const TagTypeNumber   = constexpr TagTypeNumber
+    const TagMask         = constexpr TagMask
 else
-    const Int32Tag = -1
-    const BooleanTag = -2
-    const NullTag = -3
-    const UndefinedTag = -4
-    const CellTag = -5
-    const EmptyValueTag = -6
-    const DeletedValueTag = -7
-    const LowestTag = DeletedValueTag
+    const Int32Tag = constexpr JSValue::Int32Tag
+    const BooleanTag = constexpr JSValue::BooleanTag
+    const NullTag = constexpr JSValue::NullTag
+    const UndefinedTag = constexpr JSValue::UndefinedTag
+    const CellTag = constexpr JSValue::CellTag
+    const EmptyValueTag = constexpr JSValue::EmptyValueTag
+    const DeletedValueTag = constexpr JSValue::DeletedValueTag
+    const LowestTag = constexpr JSValue::LowestTag
 end
 
 # PutByIdFlags data
@@ -223,19 +222,9 @@ const PutByIdSecondaryTypeObject = constexpr PutByIdSecondaryTypeObject
 const PutByIdSecondaryTypeObjectOrOther = constexpr PutByIdSecondaryTypeObjectOrOther
 const PutByIdSecondaryTypeTop = constexpr PutByIdSecondaryTypeTop
 
-const CallOpCodeSize = 9
+const CallOpCodeSize = constexpr op_call_length
 
-if X86_64 or ARM64 or ARM64E or C_LOOP
-    const maxFrameExtentForSlowPathCall = 0
-elsif ARM or ARMv7_TRADITIONAL or ARMv7
-    const maxFrameExtentForSlowPathCall = 24
-elsif X86 or X86_WIN
-    const maxFrameExtentForSlowPathCall = 40
-elsif MIPS
-    const maxFrameExtentForSlowPathCall = 40
-elsif X86_64_WIN
-    const maxFrameExtentForSlowPathCall = 64
-end
+const maxFrameExtentForSlowPathCall = constexpr maxFrameExtentForSlowPathCall
 
 if X86_64 or X86_64_WIN or ARM64 or ARM64E
     const CalleeSaveSpaceAsVirtualRegisters = 3
@@ -255,12 +244,12 @@ const IsInvalidated = constexpr IsInvalidated
 const ShadowChickenTailMarker = constexpr ShadowChicken::Packet::tailMarkerValue
 
 # ArithProfile data
-const ArithProfileInt = 0x400000
-const ArithProfileIntInt = 0x480000
-const ArithProfileNumber = 0x800000
-const ArithProfileNumberInt = 0x880000
-const ArithProfileNumberNumber = 0x900000
-const ArithProfileIntNumber = 0x500000
+const ArithProfileInt = constexpr (ArithProfile::observedUnaryInt().bits())
+const ArithProfileNumber = constexpr (ArithProfile::observedUnaryNumber().bits())
+const ArithProfileIntInt = constexpr (ArithProfile::observedBinaryIntInt().bits())
+const ArithProfileNumberInt = constexpr (ArithProfile::observedBinaryNumberInt().bits())
+const ArithProfileIntNumber = constexpr (ArithProfile::observedBinaryIntNumber().bits())
+const ArithProfileNumberNumber = constexpr (ArithProfile::observedBinaryNumberNumber().bits())
 
 # Pointer Tags
 const BytecodePtrTag = constexpr BytecodePtrTag
@@ -361,13 +350,8 @@ else
 end
 
 # Constants for reasoning about value representation.
-if BIG_ENDIAN
-    const TagOffset = 0
-    const PayloadOffset = 4
-else
-    const TagOffset = 4
-    const PayloadOffset = 0
-end
+const TagOffset = constexpr TagOffset
+const PayloadOffset = constexpr PayloadOffset
 
 # Constant for reasoning about butterflies.
 const IsArray                  = constexpr IsArray
@@ -422,10 +406,10 @@ const ModuleCode = constexpr ModuleCode
 const LLIntReturnPC = ArgumentCount + TagOffset
 
 # String flags.
-const HashFlags8BitBuffer = 8
+const HashFlags8BitBuffer = constexpr StringImpl::s_hashFlag8BitBuffer
 
 # Copied from PropertyOffset.h
-const firstOutOfLineOffset = 100
+const firstOutOfLineOffset = constexpr firstOutOfLineOffset
 
 # ResolveType
 const GlobalProperty = constexpr GlobalProperty
@@ -449,13 +433,6 @@ const MarkedBlockMask = ~(MarkedBlockSize - 1)
 const MarkedBlockFooterOffset = constexpr MarkedBlock::offsetOfFooter
 
 const BlackThreshold = constexpr blackThreshold
-
-# Allocation constants
-if JSVALUE64
-    const JSFinalObjectSizeClassIndex = 1
-else
-    const JSFinalObjectSizeClassIndex = 3
-end
 
 # This must match wtf/Vector.h
 const VectorBufferOffset = 0

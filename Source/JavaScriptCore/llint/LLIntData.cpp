@@ -98,11 +98,11 @@ void Data::performAssertions(VM& vm)
     ASSERT(CallFrame::argumentOffsetIncludingThis(0) == CallFrameSlot::thisArgument);
 
 #if CPU(BIG_ENDIAN)
-    ASSERT(OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag) == 0);
-    ASSERT(OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload) == 4);
+    STATIC_ASSERT(TagOffset == 0);
+    STATIC_ASSERT(PayloadOffset == 4);
 #else
-    ASSERT(OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag) == 4);
-    ASSERT(OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload) == 0);
+    STATIC_ASSERT(TagOffset == 4);
+    STATIC_ASSERT(PayloadOffset == 0);
 #endif
 #if USE(JSVALUE32_64)
     STATIC_ASSERT(JSValue::Int32Tag == static_cast<unsigned>(-1));
@@ -123,15 +123,6 @@ void Data::performAssertions(VM& vm)
     STATIC_ASSERT(ValueUndefined == (TagBitTypeOther | TagBitUndefined));
     STATIC_ASSERT(ValueNull == TagBitTypeOther);
 #endif
-#if (CPU(X86_64) && !OS(WINDOWS)) || CPU(ARM64) || !ENABLE(ASSEMBLER)
-    STATIC_ASSERT(!maxFrameExtentForSlowPathCall);
-#elif CPU(ARM)
-    STATIC_ASSERT(maxFrameExtentForSlowPathCall == 24);
-#elif CPU(X86) || CPU(MIPS)
-    STATIC_ASSERT(maxFrameExtentForSlowPathCall == 40);
-#elif CPU(X86_64) && OS(WINDOWS)
-    STATIC_ASSERT(maxFrameExtentForSlowPathCall == 64);
-#endif
 
 #if ENABLE(C_LOOP) || USE(JSVALUE32_64)
     ASSERT(!CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters());
@@ -151,47 +142,37 @@ void Data::performAssertions(VM& vm)
     ASSERT(bitwise_cast<int**>(&testVector)[0] == testVector.begin());
 #endif
 
-    ASSERT(StringImpl::s_hashFlag8BitBuffer == 8);
-
     {
-        uint32_t bits = 0x480000;
-        UNUSED_PARAM(bits);
         ArithProfile arithProfile;
         arithProfile.lhsSawInt32();
         arithProfile.rhsSawInt32();
-        ASSERT(arithProfile.bits() == bits);
-        ASSERT(ArithProfile::fromInt(bits).lhsObservedType().isOnlyInt32());
-        ASSERT(ArithProfile::fromInt(bits).rhsObservedType().isOnlyInt32());
+        ASSERT(arithProfile.bits() == ArithProfile::observedBinaryIntInt().bits());
+        STATIC_ASSERT(ArithProfile::observedBinaryIntInt().lhsObservedType().isOnlyInt32());
+        STATIC_ASSERT(ArithProfile::observedBinaryIntInt().rhsObservedType().isOnlyInt32());
     }
     {
-        uint32_t bits = 0x880000;
-        UNUSED_PARAM(bits);
         ArithProfile arithProfile;
         arithProfile.lhsSawNumber();
         arithProfile.rhsSawInt32();
-        ASSERT(arithProfile.bits() == bits);
-        ASSERT(ArithProfile::fromInt(bits).lhsObservedType().isOnlyNumber());
-        ASSERT(ArithProfile::fromInt(bits).rhsObservedType().isOnlyInt32());
+        ASSERT(arithProfile.bits() == ArithProfile::observedBinaryNumberInt().bits());
+        STATIC_ASSERT(ArithProfile::observedBinaryNumberInt().lhsObservedType().isOnlyNumber());
+        STATIC_ASSERT(ArithProfile::observedBinaryNumberInt().rhsObservedType().isOnlyInt32());
     }
     {
-        uint32_t bits = 0x900000;
-        UNUSED_PARAM(bits);
         ArithProfile arithProfile;
         arithProfile.lhsSawNumber();
         arithProfile.rhsSawNumber();
-        ASSERT(arithProfile.bits() == bits);
-        ASSERT(ArithProfile::fromInt(bits).lhsObservedType().isOnlyNumber());
-        ASSERT(ArithProfile::fromInt(bits).rhsObservedType().isOnlyNumber());
+        ASSERT(arithProfile.bits() == ArithProfile::observedBinaryNumberNumber().bits());
+        STATIC_ASSERT(ArithProfile::observedBinaryNumberNumber().lhsObservedType().isOnlyNumber());
+        STATIC_ASSERT(ArithProfile::observedBinaryNumberNumber().rhsObservedType().isOnlyNumber());
     }
     {
-        uint32_t bits = 0x500000;
-        UNUSED_PARAM(bits);
         ArithProfile arithProfile;
         arithProfile.lhsSawInt32();
         arithProfile.rhsSawNumber();
-        ASSERT(arithProfile.bits() == bits);
-        ASSERT(ArithProfile::fromInt(bits).lhsObservedType().isOnlyInt32());
-        ASSERT(ArithProfile::fromInt(bits).rhsObservedType().isOnlyNumber());
+        ASSERT(arithProfile.bits() == ArithProfile::observedBinaryIntNumber().bits());
+        STATIC_ASSERT(ArithProfile::observedBinaryIntNumber().lhsObservedType().isOnlyInt32());
+        STATIC_ASSERT(ArithProfile::observedBinaryIntNumber().rhsObservedType().isOnlyNumber());
     }
 }
 IGNORE_CLANG_WARNINGS_END

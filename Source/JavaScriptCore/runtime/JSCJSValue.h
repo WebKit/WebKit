@@ -108,8 +108,8 @@ union EncodedValueDescriptor {
 #endif
 };
 
-#define TagOffset (OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag))
-#define PayloadOffset (OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload))
+#define TagOffset (offsetof(EncodedValueDescriptor, asBits.tag))
+#define PayloadOffset (offsetof(EncodedValueDescriptor, asBits.payload))
 
 #if USE(JSVALUE64)
 #define CellPayloadOffset 0
