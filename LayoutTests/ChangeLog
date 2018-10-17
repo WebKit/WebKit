@@ -1,5 +1,18 @@
 2018-10-16  Chris Dumez  <cdumez@apple.com>
 
+        Regression(r236795) Check boxes are sometimes checked when they should not be
+        https://bugs.webkit.org/show_bug.cgi?id=190651
+        <rdar://problem/45319934>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add layout test coverage.
+
+        * fast/dom/HTMLInputElement/checkbox-dirty-checkedness-flag-expected.txt: Added.
+        * fast/dom/HTMLInputElement/checkbox-dirty-checkedness-flag.html: Added.
+
+2018-10-16  Chris Dumez  <cdumez@apple.com>
+
         window.performance should not become null after the window loses its browsing context
         https://bugs.webkit.org/show_bug.cgi?id=190636
 

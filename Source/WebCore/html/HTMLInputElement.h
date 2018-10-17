@@ -460,7 +460,7 @@ private:
     unsigned m_size;
     short m_maxResults { -1 };
     bool m_isChecked : 1;
-    bool m_reflectsCheckedAttribute : 1;
+    bool m_dirtyCheckednessFlag : 1;
     bool m_isIndeterminate : 1;
     bool m_hasType : 1;
     bool m_isActivatedSubmit : 1;

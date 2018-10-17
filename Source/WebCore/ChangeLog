@@ -1,3 +1,32 @@
+2018-10-16  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r236795) Check boxes are sometimes checked when they should not be
+        https://bugs.webkit.org/show_bug.cgi?id=190651
+        <rdar://problem/45319934>
+
+        Reviewed by Ryosuke Niwa.
+
+        r236795 mistakenly dropped the statement resetting m_reflectsCheckedAttribute to true
+        in HTMLInputElement::parseAttribute() because it looked like a no-op given that we
+        made sure it was true a couple of line above. However, I overlooked that calling
+        HTMLInputElement::setChecked() sets m_reflectsCheckedAttribute to false.
+
+        This patch thus re-introduces the statement. It also renames m_reflectsCheckedAttribute
+        to m_dirtyCheckednessFlag and reverses its value in order to match the specification
+        more closely:
+        - https://html.spec.whatwg.org/#concept-input-checked-dirty-flag
+
+        Test: fast/dom/HTMLInputElement/checkbox-dirty-checkedness-flag.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::HTMLInputElement):
+        (WebCore::HTMLInputElement::parseAttribute):
+        (WebCore::HTMLInputElement::finishParsingChildren):
+        (WebCore::HTMLInputElement::reset):
+        (WebCore::HTMLInputElement::setChecked):
+        (WebCore::HTMLInputElement::copyNonAttributePropertiesFromElement):
+        * html/HTMLInputElement.h:
+
 2018-10-16  Sihui Liu  <sihui_liu@apple.com>
 
         Add a switch for Web SQL

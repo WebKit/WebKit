@@ -104,7 +104,7 @@ HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document& docum
     : HTMLTextFormControlElement(tagName, document, form)
     , m_size(defaultSize)
     , m_isChecked(false)
-    , m_reflectsCheckedAttribute(true)
+    , m_dirtyCheckednessFlag(false)
     , m_isIndeterminate(false)
     , m_hasType(false)
     , m_isActivatedSubmit(false)
@@ -744,8 +744,11 @@ void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomicStr
         // restore. We shouldn't call setChecked() even if this has the checked
         // attribute. So, delay the setChecked() call until
         // finishParsingChildren() is called if parsing is in progress.
-        if ((!m_parsingInProgress || !document().formController().hasFormStateToRestore()) && m_reflectsCheckedAttribute)
+        if ((!m_parsingInProgress || !document().formController().hasFormStateToRestore()) && !m_dirtyCheckednessFlag) {
             setChecked(!value.isNull());
+            // setChecked() above sets the dirty checkedness flag so we need to reset it.
+            m_dirtyCheckednessFlag = false;
+        }
     } else if (name == maxlengthAttr)
         maxLengthAttributeChanged(value);
     else if (name == minlengthAttr)
@@ -803,7 +806,7 @@ void HTMLInputElement::finishParsingChildren()
         bool checked = hasAttributeWithoutSynchronization(checkedAttr);
         if (checked)
             setChecked(checked);
-        m_reflectsCheckedAttribute = true;
+        m_dirtyCheckednessFlag = false;
     }
 }
 
@@ -897,7 +900,7 @@ void HTMLInputElement::reset()
     setAutoFilled(false);
     setShowAutoFillButton(AutoFillButtonType::None);
     setChecked(hasAttributeWithoutSynchronization(checkedAttr));
-    m_reflectsCheckedAttribute = true;
+    m_dirtyCheckednessFlag = false;
 }
 
 bool HTMLInputElement::isTextField() const
@@ -915,7 +918,7 @@ void HTMLInputElement::setChecked(bool nowChecked)
     if (checked() == nowChecked)
         return;
 
-    m_reflectsCheckedAttribute = false;
+    m_dirtyCheckednessFlag = true;
     m_isChecked = nowChecked;
     invalidateStyleForSubtree();
 
@@ -971,7 +974,7 @@ void HTMLInputElement::copyNonAttributePropertiesFromElement(const Element& sour
     m_valueIfDirty = sourceElement.m_valueIfDirty;
     m_wasModifiedByUser = false;
     setChecked(sourceElement.m_isChecked);
-    m_reflectsCheckedAttribute = sourceElement.m_reflectsCheckedAttribute;
+    m_dirtyCheckednessFlag = sourceElement.m_dirtyCheckednessFlag;
     m_isIndeterminate = sourceElement.m_isIndeterminate;
 
     HTMLTextFormControlElement::copyNonAttributePropertiesFromElement(source);
