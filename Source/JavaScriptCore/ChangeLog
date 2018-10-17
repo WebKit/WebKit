@@ -1,3 +1,14 @@
+2018-10-17  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] Use WTF::Function instead of std::function
+        https://bugs.webkit.org/show_bug.cgi?id=190665
+
+        Reviewed by Keith Miller.
+
+        We should use WTF::Function as much as possible. It allocates memory from bmalloc instead of standard malloc.
+
+        * runtime/JSNativeStdFunction.h:
+
 2018-10-17  Keith Miller  <keith_miller@apple.com>
 
         Remove debug logging from generate_offsets_extractor.rb
