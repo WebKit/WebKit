@@ -2703,9 +2703,8 @@ WI.assumingMainTarget = function()
 
 // OpenResourceDialog delegate
 
-WI.dialogWasDismissed = function(dialog)
+WI.dialogWasDismissedWithRepresentedObject = function(dialog, representedObject)
 {
-    let representedObject = dialog.representedObject;
     if (!representedObject)
         return;
 

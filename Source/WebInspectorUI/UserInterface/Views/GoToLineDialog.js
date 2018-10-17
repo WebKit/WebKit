@@ -89,9 +89,10 @@ WI.GoToLineDialog = class GoToLineDialog extends WI.Dialog
     _handleKeydownEvent(event)
     {
         if (event.keyCode === WI.KeyboardShortcut.Key.Escape.keyCode) {
-            if (this._input.value === "")
+            if (this._input.value === "") {
                 this.dismiss();
-            else
+                event.preventDefault();
+            } else
                 this._clear();
 
             event.preventDefault();
@@ -100,10 +101,11 @@ WI.GoToLineDialog = class GoToLineDialog extends WI.Dialog
 
             if (this.representedObjectIsValid(value)) {
                 this.dismiss(value);
+                event.preventDefault();
                 return;
             }
 
-            this._inputElement.select();
+            this._input.select();
 
             InspectorFrontendHost.beep();
         }

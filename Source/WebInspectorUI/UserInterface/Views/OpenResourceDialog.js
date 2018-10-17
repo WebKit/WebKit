@@ -163,9 +163,10 @@ WI.OpenResourceDialog = class OpenResourceDialog extends WI.Dialog
     _handleKeydownEvent(event)
     {
         if (event.keyCode === WI.KeyboardShortcut.Key.Escape.keyCode) {
-            if (this._inputElement.value === "")
+            if (this._inputElement.value === "") {
                 this.dismiss();
-            else
+                event.preventDefault();
+            } else
                 this._clear();
 
             event.preventDefault();

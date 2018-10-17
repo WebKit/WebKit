@@ -275,9 +275,8 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
         return !isNaN(lineNumber) && lineNumber > 0 && lineNumber <= this.lineCount;
     }
 
-    dialogWasDismissed(goToLineDialog)
+    dialogWasDismissedWithRepresentedObject(goToLineDialog, lineNumber)
     {
-        let lineNumber = goToLineDialog.representedObject;
         let position = new WI.SourceCodePosition(lineNumber - 1, 0);
         let range = new WI.TextRange(lineNumber - 1, 0, lineNumber, 0);
 
