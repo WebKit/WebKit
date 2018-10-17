@@ -1,3 +1,14 @@
+2018-10-17  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Consolidate all image conversion and resizing into one class
+        https://bugs.webkit.org/show_bug.cgi?id=190519
+        <rdar://problem/45224307>
+
+        Try to fix the iOSMac build after r237236.
+
+        * platform/graphics/cv/ImageTransferSessionVT.h:
+        * platform/graphics/cv/ImageTransferSessionVT.mm:
+
 2018-10-17  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Implement WebGPU bindings up through WebGPUDevice creation
