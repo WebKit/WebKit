@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,7 +49,7 @@ OBJC_CLASS WebCoreAVVideoCaptureSourceObserver;
 namespace WebCore {
 
 class AVVideoPreset;
-class PixelBufferResizer;
+class ImageTransferSessionVT;
 
 class AVVideoCaptureSource : public RealtimeVideoSource, private OrientationNotifier::Observer {
 public:
@@ -103,13 +103,14 @@ private:
 
     bool setFrameRateConstraint(double minFrameRate, double maxFrameRate);
 
-    void processNewFrame(RetainPtr<CMSampleBufferRef>, RetainPtr<AVCaptureConnection>);
+    void processNewFrame(Ref<MediaSample>&&);
     IntSize sizeForPreset(NSString*);
 
     AVCaptureDevice* device() const { return m_device.get(); }
 
-    RetainPtr<CMSampleBufferRef> m_buffer;
+    RefPtr<MediaSample> m_buffer;
     RetainPtr<AVCaptureVideoDataOutput> m_videoOutput;
+    std::unique_ptr<ImageTransferSessionVT> m_imageTransferSession;
 
     IntSize m_requestedSize;
     int32_t m_width { 0 };
@@ -118,7 +119,6 @@ private:
     int m_deviceOrientation { 0 };
     MediaSample::VideoRotation m_sampleRotation { MediaSample::VideoRotation::None };
 
-    std::unique_ptr<PixelBufferResizer> m_pixelBufferResizer;
     std::optional<RealtimeMediaSourceSettings> m_currentSettings;
     std::optional<RealtimeMediaSourceCapabilities> m_capabilities;
     RetainPtr<WebCoreAVVideoCaptureSourceObserver> m_objcObserver;

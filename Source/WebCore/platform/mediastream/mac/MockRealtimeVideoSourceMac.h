@@ -43,7 +43,7 @@ typedef struct __CVPixelBufferPool *CVPixelBufferPoolRef;
 
 namespace WebCore {
 
-class PixelBufferResizer;
+class ImageTransferSessionVT;
 
 class MockRealtimeVideoSourceMac final : public MockRealtimeVideoSource, private OrientationNotifier::Observer {
 public:
@@ -53,22 +53,15 @@ private:
     friend class MockRealtimeVideoSource;
     MockRealtimeVideoSourceMac(String&& deviceID, String&& name, String&& hashSalt);
 
-    RetainPtr<CMSampleBufferRef> CMSampleBufferFromPixelBuffer(CVPixelBufferRef);
-    RetainPtr<CVPixelBufferRef> pixelBufferFromCGImage(CGImageRef) const;
-
     PlatformLayer* platformLayer() const;
     void updateSampleBuffer() final;
-    void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) final;
     bool canResizeVideoFrames() const final { return true; }
-    void setSizeAndFrameRateWithPreset(IntSize, double, RefPtr<VideoPreset>) final;
 
     void orientationChanged(int orientation) final;
     void monitorOrientation(OrientationNotifier&) final;
 
-    mutable RetainPtr<CVPixelBufferPoolRef> m_bufferPool;
     MediaSample::VideoRotation m_deviceOrientation { MediaSample::VideoRotation::None };
-    std::unique_ptr<PixelBufferConformerCV> m_pixelBufferConformer;
-    std::unique_ptr<PixelBufferResizer> m_pixelBufferResizer;
+    std::unique_ptr<ImageTransferSessionVT> m_imageTransferSession;
     IntSize m_presetSize;
 };
 

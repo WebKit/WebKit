@@ -200,7 +200,7 @@ protected:
 private:
     virtual void startProducingData() { }
     virtual void stopProducingData() { }
-    virtual void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>);
+    virtual void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) { }
 
 
     void forEachObserver(const WTF::Function<void(Observer&)>&) const;

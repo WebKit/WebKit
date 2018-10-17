@@ -49,11 +49,10 @@ private:
     WindowDisplayCaptureSourceMac(uint32_t, String&&);
     virtual ~WindowDisplayCaptureSourceMac() = default;
 
-    RetainPtr<CVPixelBufferRef> generateFrame() final;
+    DisplayCaptureSourceCocoa::DisplayFrameType generateFrame() final;
     RealtimeMediaSourceSettings::DisplaySurfaceType surfaceType() const final { return RealtimeMediaSourceSettings::DisplaySurfaceType::Window; }
 
     RetainPtr<CGImageRef> windowImage();
-    RetainPtr<CVPixelBufferRef> pixelBufferFromCGImage(CGImageRef);
 
     IntSize m_windowSize;
     CGWindowID m_windowID { 0 };

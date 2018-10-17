@@ -113,6 +113,12 @@ PlatformSample MediaSampleAVFObjC::platformSample()
     return sample;
 }
 
+uint32_t MediaSampleAVFObjC::videoPixelFormat() const
+{
+    auto pixelBuffer = static_cast<CVPixelBufferRef>(CMSampleBufferGetImageBuffer(m_sample.get()));
+    return CVPixelBufferGetPixelFormatType(pixelBuffer);
+}
+
 static bool CMSampleBufferIsRandomAccess(CMSampleBufferRef sample)
 {
     CFArrayRef attachments = CMSampleBufferGetSampleAttachmentsArray(sample, false);

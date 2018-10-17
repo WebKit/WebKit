@@ -36,6 +36,7 @@
 #include "NotImplemented.h"
 #include "PlatformLayer.h"
 #include "RealtimeMediaSourceSettings.h"
+#include "RealtimeVideoUtilities.h"
 
 #include "CoreVideoSoftLink.h"
 
@@ -166,7 +167,7 @@ bool ScreenDisplayCaptureSourceMac::createDisplayStream()
         });
 
         auto size = frameSize();
-        m_displayStream = adoptCF(CGDisplayStreamCreateWithDispatchQueue(m_displayID, size.width(), size.height(), kCVPixelFormatType_420YpCbCr8Planar, streamOptions.get(), m_captureQueue.get(), m_frameAvailableBlock));
+        m_displayStream = adoptCF(CGDisplayStreamCreateWithDispatchQueue(m_displayID, size.width(), size.height(), preferedPixelBufferFormat(), streamOptions.get(), m_captureQueue.get(), m_frameAvailableBlock));
         if (!m_displayStream) {
             RELEASE_LOG(Media, "ScreenDisplayCaptureSourceMac::createDisplayStream: CGDisplayStreamCreate failed");
             captureFailed();
@@ -205,18 +206,15 @@ void ScreenDisplayCaptureSourceMac::stopProducingData()
     m_isRunning = false;
 }
 
-RetainPtr<CVPixelBufferRef> ScreenDisplayCaptureSourceMac::generateFrame()
+DisplayCaptureSourceCocoa::DisplayFrameType ScreenDisplayCaptureSourceMac::generateFrame()
 {
-    if (!m_currentFrame.ioSurface())
-        return nullptr;
-
     DisplaySurface currentFrame;
     {
         LockHolder lock(m_currentFrameMutex);
         currentFrame = m_currentFrame.ioSurface();
     }
 
-    return pixelBufferFromIOSurface(currentFrame.ioSurface());
+    return DisplayCaptureSourceCocoa::DisplayFrameType { RetainPtr<IOSurfaceRef> { currentFrame.ioSurface() } };
 }
 
 void ScreenDisplayCaptureSourceMac::startDisplayStream()

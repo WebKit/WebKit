@@ -139,69 +139,9 @@ RetainPtr<CGImageRef> WindowDisplayCaptureSourceMac::windowImage()
     return image;
 }
 
-RetainPtr<CVPixelBufferRef> WindowDisplayCaptureSourceMac::generateFrame()
+DisplayCaptureSourceCocoa::DisplayFrameType WindowDisplayCaptureSourceMac::generateFrame()
 {
-    auto image = windowImage();
-    if (!image)
-        return nullptr;
-
-    if (m_lastImage && m_lastPixelBuffer && CFEqual(m_lastImage.get(), image.get()))
-        return m_lastPixelBuffer.get();
-
-    m_lastImage = WTFMove(image);
-    return pixelBufferFromCGImage(m_lastImage.get());
-}
-
-RetainPtr<CVPixelBufferRef> WindowDisplayCaptureSourceMac::pixelBufferFromCGImage(CGImageRef image)
-{
-    static CGColorSpaceRef sRGBColorSpace = sRGBColorSpaceRef();
-
-    auto imageSize = IntSize(CGImageGetWidth(image), CGImageGetHeight(image));
-    if (imageSize != intrinsicSize()) {
-        m_bufferPool = nullptr;
-        m_lastImage = nullptr;
-        m_lastPixelBuffer = nullptr;
-    }
-
-    if (!m_bufferPool) {
-        CVPixelBufferPoolRef bufferPool;
-        CFDictionaryRef sourcePixelBufferOptions = (__bridge CFDictionaryRef) @{
-        (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32ARGB),
-        (__bridge NSString *)kCVPixelBufferWidthKey : @(imageSize.width()),
-        (__bridge NSString *)kCVPixelBufferHeightKey : @(imageSize.height()),
-#if PLATFORM(IOS)
-        (__bridge NSString *)kCVPixelFormatOpenGLESCompatibility : @(YES),
-#else
-        (__bridge NSString *)kCVPixelBufferOpenGLCompatibilityKey : @(YES),
-#endif
-        (__bridge NSString *)kCVPixelBufferIOSurfacePropertiesKey : @{ /*empty dictionary*/ }
-    };
-
-        CFDictionaryRef pixelBufferPoolOptions = (__bridge CFDictionaryRef) @{
-            (__bridge NSString *)kCVPixelBufferPoolMinimumBufferCountKey : @(3)
-        };
-
-        CVReturn status = CVPixelBufferPoolCreate(kCFAllocatorDefault, pixelBufferPoolOptions, sourcePixelBufferOptions, &bufferPool);
-        if (status != kCVReturnSuccess)
-            return nullptr;
-
-        m_bufferPool = adoptCF(bufferPool);
-        setIntrinsicSize(imageSize);
-    }
-
-    CVPixelBufferRef pixelBuffer;
-    CVReturn status = CVPixelBufferPoolCreatePixelBuffer(nullptr, m_bufferPool.get(), &pixelBuffer);
-    if (status != kCVReturnSuccess)
-        return nullptr;
-
-    CVPixelBufferLockBaseAddress(pixelBuffer, 0);
-    void* data = CVPixelBufferGetBaseAddress(pixelBuffer);
-    auto context = adoptCF(CGBitmapContextCreate(data, imageSize.width(), imageSize.height(), 8, CVPixelBufferGetBytesPerRow(pixelBuffer), sRGBColorSpace, (CGBitmapInfo) kCGImageAlphaNoneSkipFirst));
-    CGContextDrawImage(context.get(), CGRectMake(0, 0, CGImageGetWidth(image), CGImageGetHeight(image)), image);
-    CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
-
-    m_lastPixelBuffer = adoptCF(pixelBuffer);
-    return m_lastPixelBuffer;
+    return DisplayCaptureSourceCocoa::DisplayFrameType { RetainPtr<CGImageRef> { windowImage() } };
 }
 
 std::optional<CaptureDevice> WindowDisplayCaptureSourceMac::windowCaptureDeviceWithPersistentID(const String& idString)

@@ -314,8 +314,8 @@ platform/graphics/cocoa/WebGLLayer.mm
 platform/graphics/cocoa/WebMetalLayer.mm
 platform/graphics/cocoa/TextTrackRepresentationCocoa.mm
 
+platform/graphics/cv/ImageTransferSessionVT.mm
 platform/graphics/cv/PixelBufferConformerCV.cpp
-platform/graphics/cv/PixelBufferResizer.mm
 platform/graphics/cv/TextureCacheCV.mm
 platform/graphics/cv/VideoTextureCopierCV.cpp
 

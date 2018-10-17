@@ -56,7 +56,7 @@ private:
 
     void frameAvailable(CGDisplayStreamFrameStatus, uint64_t, IOSurfaceRef, CGDisplayStreamUpdateRef);
 
-    RetainPtr<CVPixelBufferRef> generateFrame() final;
+    DisplayCaptureSourceCocoa::DisplayFrameType generateFrame() final;
     RealtimeMediaSourceSettings::DisplaySurfaceType surfaceType() const final { return RealtimeMediaSourceSettings::DisplaySurfaceType::Monitor; }
 
     void startProducingData() final;

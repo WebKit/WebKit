@@ -29,11 +29,11 @@
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
 #import "ImageBuffer.h"
+#import "ImageTransferSessionVT.h"
 #import "IntRect.h"
 #import "Logging.h"
 #import "MediaConstraints.h"
 #import "MediaSampleAVFObjC.h"
-#import "PixelBufferResizer.h"
 #import "PlatformLayer.h"
 #import "RealtimeMediaSourceCenterMac.h"
 #import "RealtimeMediaSourceSettings.h"
@@ -299,7 +299,7 @@ const RealtimeMediaSourceCapabilities& AVVideoCaptureSource::capabilities()
 bool AVVideoCaptureSource::prefersPreset(VideoPreset& preset)
 {
 #if PLATFORM(IOS)
-    return ![static_cast<AVVideoPreset*>(&preset)->format.get() isVideoBinned];
+    return [static_cast<AVVideoPreset*>(&preset)->format.get() isVideoBinned];
 #else
     UNUSED_PARAM(preset);
 #endif
@@ -519,27 +519,23 @@ void AVVideoCaptureSource::computeSampleRotation()
     }
 }
 
-void AVVideoCaptureSource::processNewFrame(RetainPtr<CMSampleBufferRef> sampleBuffer, RetainPtr<AVCaptureConnectionType> connection)
+void AVVideoCaptureSource::processNewFrame(Ref<MediaSample>&& sample)
 {
     if (!isProducingData() || muted())
         return;
 
-    CMFormatDescriptionRef formatDescription = CMSampleBufferGetFormatDescription(sampleBuffer.get());
-    if (!formatDescription)
-        return;
-
-    m_buffer = sampleBuffer;
-    CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions(formatDescription);
+    m_buffer = &sample.get();
+    auto dimensions = roundedIntSize(sample->presentationSize());
     if (m_sampleRotation == MediaSample::VideoRotation::Left || m_sampleRotation == MediaSample::VideoRotation::Right)
-        std::swap(dimensions.width, dimensions.height);
+        dimensions = { dimensions.height(), dimensions.width() };
 
-    if (dimensions.width != m_width || dimensions.height != m_height) {
-        m_width = dimensions.width;
-        m_height = dimensions.height;
-        setSize({ dimensions.width, dimensions.height });
+    if (dimensions.width() != m_width || dimensions.height() != m_height) {
+        m_width = dimensions.width();
+        m_height = dimensions.height();
+        setSize(dimensions);
     }
 
-    videoSampleAvailable(MediaSampleAVFObjC::create(m_buffer.get(), m_sampleRotation, [connection isVideoMirrored]));
+    dispatchMediaSampleToObservers(WTFMove(sample));
 }
 
 void AVVideoCaptureSource::captureOutputDidOutputSampleBufferFromConnection(AVCaptureOutputType*, CMSampleBufferRef sampleBuffer, AVCaptureConnectionType* captureConnection)
@@ -549,24 +545,22 @@ void AVVideoCaptureSource::captureOutputDidOutputSampleBufferFromConnection(AVCa
         return;
 
     CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions(formatDescription);
+    RefPtr<MediaSample> sample;
     if (dimensions.width != m_requestedSize.width() || dimensions.height != m_requestedSize.height()) {
-        if (m_pixelBufferResizer && !m_pixelBufferResizer->canResizeTo(m_requestedSize))
-            m_pixelBufferResizer = nullptr;
 
-        if (!m_pixelBufferResizer)
-            m_pixelBufferResizer = std::make_unique<PixelBufferResizer>(m_requestedSize, avVideoCapturePixelBufferFormat());
-    } else
-        m_pixelBufferResizer = nullptr;
+        if (!m_imageTransferSession)
+            m_imageTransferSession = ImageTransferSessionVT::create(avVideoCapturePixelBufferFormat());
 
-    auto buffer = retainPtr(sampleBuffer);
-    if (m_pixelBufferResizer) {
-        buffer = m_pixelBufferResizer->resize(sampleBuffer);
-        if (!buffer)
+        sample = m_imageTransferSession->createMediaSample(sampleBuffer, m_requestedSize, m_sampleRotation, [captureConnection isVideoMirrored]);
+        if (!sample) {
+            ASSERT_NOT_REACHED();
             return;
-    }
+        }
+    } else
+        sample = MediaSampleAVFObjC::create(sampleBuffer, m_sampleRotation, [captureConnection isVideoMirrored]);
 
-    scheduleDeferredTask([this, buffer, connection = retainPtr(captureConnection)] {
-        this->processNewFrame(buffer, connection);
+    scheduleDeferredTask([this, sample = WTFMove(sample)] () mutable {
+        processNewFrame(sample.releaseNonNull());
     });
 }
 

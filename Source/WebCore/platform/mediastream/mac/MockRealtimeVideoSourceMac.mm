@@ -34,10 +34,10 @@
 #if ENABLE(MEDIA_STREAM)
 #import "GraphicsContextCG.h"
 #import "ImageBuffer.h"
+#import "ImageTransferSessionVT.h"
 #import "MediaConstraints.h"
 #import "MediaSampleAVFObjC.h"
 #import "NotImplemented.h"
-#import "PixelBufferResizer.h"
 #import "PlatformLayer.h"
 #import "RealtimeMediaSourceSettings.h"
 #import "RealtimeVideoUtilities.h"
@@ -50,8 +50,6 @@
 
 namespace WebCore {
 using namespace PAL;
-
-static const int videoSampleRate = 90000;
 
 CaptureSourceOrError MockRealtimeVideoSource::create(String&& deviceID, String&& name, String&& hashSalt, const MediaConstraints* constraints)
 {
@@ -75,105 +73,22 @@ MockRealtimeVideoSourceMac::MockRealtimeVideoSourceMac(String&& deviceID, String
 {
 }
 
-RetainPtr<CMSampleBufferRef> MockRealtimeVideoSourceMac::CMSampleBufferFromPixelBuffer(CVPixelBufferRef pixelBuffer)
-{
-    if (!pixelBuffer)
-        return nullptr;
-    
-    CMTime sampleTime = CMTimeMake(((elapsedTime() + 100_ms) * videoSampleRate).seconds(), videoSampleRate);
-    CMSampleTimingInfo timingInfo = { kCMTimeInvalid, sampleTime, sampleTime };
-
-    CMVideoFormatDescriptionRef formatDescription = nullptr;
-    OSStatus status = CMVideoFormatDescriptionCreateForImageBuffer(kCFAllocatorDefault, (CVImageBufferRef)pixelBuffer, &formatDescription);
-    if (status != noErr) {
-        LOG_ERROR("Failed to initialize CMVideoFormatDescription with error code: %d", status);
-        return nullptr;
-    }
-
-    CMSampleBufferRef sampleBuffer;
-    status = CMSampleBufferCreateReadyWithImageBuffer(kCFAllocatorDefault, (CVImageBufferRef)pixelBuffer, formatDescription, &timingInfo, &sampleBuffer);
-    CFRelease(formatDescription);
-    if (status != noErr) {
-        LOG_ERROR("Failed to initialize CMSampleBuffer with error code: %d", status);
-        return nullptr;
-    }
-
-    return adoptCF(sampleBuffer);
-}
-
-RetainPtr<CVPixelBufferRef> MockRealtimeVideoSourceMac::pixelBufferFromCGImage(CGImageRef image) const
-{
-    static CGColorSpaceRef sRGBColorSpace = sRGBColorSpaceRef();
-
-    CGSize imageSize = CGSizeMake(CGImageGetWidth(image), CGImageGetHeight(image));
-    if (!m_bufferPool) {
-        CVPixelBufferPoolRef bufferPool;
-        CFDictionaryRef sourcePixelBufferOptions = (__bridge CFDictionaryRef) @{
-            (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32ARGB),
-            (__bridge NSString *)kCVPixelBufferWidthKey : @(imageSize.width),
-            (__bridge NSString *)kCVPixelBufferHeightKey : @(imageSize.height),
-#if PLATFORM(IOS)
-            (__bridge NSString *)kCVPixelFormatOpenGLESCompatibility : @(YES),
-#else
-            (__bridge NSString *)kCVPixelBufferOpenGLCompatibilityKey : @(YES),
-#endif
-            (__bridge NSString *)kCVPixelBufferIOSurfacePropertiesKey : @{/*empty dictionary*/}
-        };
-
-        CFDictionaryRef pixelBufferPoolOptions = (__bridge CFDictionaryRef) @{
-           (__bridge NSString *)kCVPixelBufferPoolMinimumBufferCountKey : @(4)
-        };
-
-        CVReturn status = CVPixelBufferPoolCreate(kCFAllocatorDefault, pixelBufferPoolOptions, sourcePixelBufferOptions, &bufferPool);
-        if (status != kCVReturnSuccess)
-            return nullptr;
-
-        m_bufferPool = adoptCF(bufferPool);
-    }
-
-    CVPixelBufferRef pixelBuffer;
-    CVReturn status = CVPixelBufferPoolCreatePixelBuffer(nullptr, m_bufferPool.get(), &pixelBuffer);
-    if (status != kCVReturnSuccess)
-        return nullptr;
-
-    CVPixelBufferLockBaseAddress(pixelBuffer, 0);
-    void* data = CVPixelBufferGetBaseAddress(pixelBuffer);
-    auto context = adoptCF(CGBitmapContextCreate(data, imageSize.width, imageSize.height, 8, CVPixelBufferGetBytesPerRow(pixelBuffer), sRGBColorSpace, (CGBitmapInfo) kCGImageAlphaNoneSkipFirst));
-    CGContextDrawImage(context.get(), CGRectMake(0, 0, CGImageGetWidth(image), CGImageGetHeight(image)), image);
-    CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
-
-    return adoptCF(pixelBuffer);
-}
-
 void MockRealtimeVideoSourceMac::updateSampleBuffer()
 {
     auto imageBuffer = this->imageBuffer();
     if (!imageBuffer)
         return;
 
-    auto pixelBuffer = pixelBufferFromCGImage(imageBuffer->copyImage()->nativeImage().get());
-    if (m_pixelBufferResizer)
-        pixelBuffer = m_pixelBufferResizer->resize(pixelBuffer.get());
-    else {
-        if (!m_pixelBufferConformer) {
-            m_pixelBufferConformer = std::make_unique<PixelBufferConformerCV>((__bridge CFDictionaryRef)@{
-                (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(preferedPixelBufferFormat())
-            });
-        }
+    if (!m_imageTransferSession)
+        m_imageTransferSession = ImageTransferSessionVT::create(preferedPixelBufferFormat());
 
-        pixelBuffer = m_pixelBufferConformer->convert(pixelBuffer.get());
-    }
-    auto sampleBuffer = CMSampleBufferFromPixelBuffer(pixelBuffer.get());
+    auto sampleTime = MediaTime::createWithDouble((elapsedTime() + 100_ms).seconds());
+    auto sampleBuffer = m_imageTransferSession->createMediaSample(imageBuffer->copyImage()->nativeImage().get(), sampleTime, size(), m_deviceOrientation);
+    if (!sampleBuffer)
+        return;
 
     // We use m_deviceOrientation to emulate sensor orientation
-    dispatchMediaSampleToObservers(MediaSampleAVFObjC::create(sampleBuffer.get(), m_deviceOrientation));
-}
-
-void MockRealtimeVideoSourceMac::settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag> settings)
-{
-    if (settings.containsAny({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height }))
-        m_bufferPool = nullptr;
-    MockRealtimeVideoSource::settingsDidChange(settings);
+    dispatchMediaSampleToObservers(*sampleBuffer);
 }
 
 void MockRealtimeVideoSourceMac::orientationChanged(int orientation)
@@ -201,21 +116,6 @@ void MockRealtimeVideoSourceMac::monitorOrientation(OrientationNotifier& notifie
 {
     notifier.addObserver(*this);
     orientationChanged(notifier.orientation());
-}
-
-void MockRealtimeVideoSourceMac::setSizeAndFrameRateWithPreset(IntSize requestedSize, double, RefPtr<VideoPreset> preset)
-{
-    if (!preset)
-        return;
-
-    if (preset->size != requestedSize) {
-        if (m_pixelBufferResizer && !m_pixelBufferResizer->canResizeTo(requestedSize))
-            m_pixelBufferResizer = nullptr;
-
-        if (!m_pixelBufferResizer)
-            m_pixelBufferResizer = std::make_unique<PixelBufferResizer>(requestedSize, preferedPixelBufferFormat());
-    } else
-        m_pixelBufferResizer = nullptr;
 }
 
 } // namespace WebCore

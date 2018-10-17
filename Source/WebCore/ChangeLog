@@ -1,5 +1,82 @@
 2018-10-17  Eric Carlson  <eric.carlson@apple.com>
 
+        [MediaStream] Consolidate all image conversion and resizing into one class
+        https://bugs.webkit.org/show_bug.cgi?id=190519
+        <rdar://problem/45224307>
+
+        Reviewed by Youenn Fablet.
+
+        No new tests, no functional change.
+
+        * SourcesCocoa.txt: Add ImageTransferSessionVT.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * platform/MediaSample.h:
+        (WebCore::MediaSample::videoPixelFormat const): New.
+
+        * platform/cocoa/VideoToolboxSoftLink.cpp: Add new kVTPixelTransferProperty keys.
+        * platform/cocoa/VideoToolboxSoftLink.h:
+
+        * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.h:
+        (WebCore::MediaSampleAVFObjC::create): Remove unimplemented variant.
+        * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm:
+        (WebCore::MediaSampleAVFObjC::videoPixelFormat const): New.
+
+        * platform/graphics/cv/ImageTransferSessionVT.h: Added.
+        (WebCore::ImageTransferSessionVT::create):
+        * platform/graphics/cv/ImageTransferSessionVT.mm: Added.
+        (WebCore::ImageTransferSessionVT::ImageTransferSessionVT):
+        (WebCore::ImageTransferSessionVT::~ImageTransferSessionVT):
+        (WebCore::ImageTransferSessionVT::setSize):
+        (WebCore::ImageTransferSessionVT::createPixelBuffer):
+        (WebCore::ImageTransferSessionVT::createCMSampleBuffer):
+        (WebCore::roundUpToMacroblockMultiple):
+        (WebCore::ImageTransferSessionVT::ioSurfacePixelBufferCreationOptions):
+        (WebCore::ImageTransferSessionVT::createMediaSample):
+
+        * platform/graphics/cv/PixelBufferResizer.h: Removed.
+        * platform/graphics/cv/PixelBufferResizer.mm: Removed.
+
+        * platform/mediastream/mac/AVVideoCaptureSource.h:
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::prefersPreset):
+        (WebCore::AVVideoCaptureSource::captureOutputDidOutputSampleBufferFromConnection): Remove
+        the resizing logic, it is handled by the base class.
+
+        * platform/mediastream/mac/DisplayCaptureSourceCocoa.cpp:
+        (WebCore::DisplayCaptureSourceCocoa::capabilities):
+        (WebCore::DisplayCaptureSourceCocoa::settingsDidChange):
+        (WebCore::DisplayCaptureSourceCocoa::setIntrinsicSize):
+        (WebCore::DisplayCaptureSourceCocoa::emitFrame): Remove resizing logic, just use a transfer
+        session to create an image from the capture source native output format.
+        (WebCore::DisplayCaptureSourceCocoa::sampleBufferFromPixelBuffer): Deleted.
+        (WebCore::roundUpToMacroblockMultiple): Deleted.
+        (WebCore::DisplayCaptureSourceCocoa::pixelBufferFromIOSurface): Deleted.
+        * platform/mediastream/mac/DisplayCaptureSourceCocoa.h:
+
+        * platform/mediastream/mac/MockRealtimeVideoSourceMac.h:
+        * platform/mediastream/mac/MockRealtimeVideoSourceMac.mm:
+        (WebCore::MockRealtimeVideoSourceMac::updateSampleBuffer): Use image transfer session.
+        (WebCore::MockRealtimeVideoSourceMac::CMSampleBufferFromPixelBuffer): Deleted.
+        (WebCore::MockRealtimeVideoSourceMac::pixelBufferFromCGImage const): Deleted.
+        (WebCore::MockRealtimeVideoSourceMac::setSizeAndFrameRateWithPreset): Deleted.
+
+        * platform/mediastream/mac/ScreenDisplayCaptureSourceMac.h:
+        * platform/mediastream/mac/ScreenDisplayCaptureSourceMac.mm:
+        (WebCore::ScreenDisplayCaptureSourceMac::createDisplayStream):
+        (WebCore::ScreenDisplayCaptureSourceMac::generateFrame): Return the IOSurface directly.
+
+        * platform/mediastream/mac/WindowDisplayCaptureSourceMac.h:
+        * platform/mediastream/mac/WindowDisplayCaptureSourceMac.mm:
+        (WebCore::WindowDisplayCaptureSourceMac::generateFrame): Return the CGImage directly.
+        (WebCore::WindowDisplayCaptureSourceMac::pixelBufferFromCGImage): Deleted.
+
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::capabilities): Only the camera supports device ID.
+        (WebCore::MockRealtimeVideoSource::settings): Ditto.
+
+2018-10-17  Eric Carlson  <eric.carlson@apple.com>
+
         [MediaStream] Clean up capture source factory management
         https://bugs.webkit.org/show_bug.cgi?id=190502
         <rdar://problem/45212447>

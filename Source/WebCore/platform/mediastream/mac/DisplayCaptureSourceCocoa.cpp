@@ -31,7 +31,6 @@
 #include "Logging.h"
 #include "MediaSampleAVFObjC.h"
 #include "PixelBufferConformerCV.h"
-#include "PixelBufferResizer.h"
 #include "RealtimeMediaSource.h"
 #include "RealtimeMediaSourceCenter.h"
 #include "RealtimeMediaSourceSettings.h"
@@ -42,6 +41,8 @@
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
 #include <pal/cf/CoreMediaSoftLink.h>
 #include <pal/spi/cf/CoreAudioSPI.h>
+#include <pal/spi/cg/CoreGraphicsSPI.h>
+#include <pal/spi/cocoa/IOSurfaceSPI.h>
 #include <sys/time.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
@@ -72,7 +73,7 @@ const RealtimeMediaSourceCapabilities& DisplayCaptureSourceCocoa::capabilities()
         // FIXME: what should these be?
         capabilities.setWidth(CapabilityValueOrRange(72, 2880));
         capabilities.setHeight(CapabilityValueOrRange(45, 1800));
-        capabilities.setFrameRate(CapabilityValueOrRange(.01, 60.0));
+        capabilities.setFrameRate(CapabilityValueOrRange(.01, 30.0));
 
         m_capabilities = WTFMove(capabilities);
     }
@@ -111,10 +112,8 @@ void DisplayCaptureSourceCocoa::settingsDidChange(OptionSet<RealtimeMediaSourceS
     if (settings.contains(RealtimeMediaSourceSettings::Flag::FrameRate) && m_timer.isActive())
         m_timer.startRepeating(1_s / frameRate());
 
-    if (settings.containsAny({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height })) {
+    if (settings.containsAny({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height }))
         m_bufferAttributes = nullptr;
-        m_lastSampleBuffer = nullptr;
-    }
 
     m_currentSettings = { };
 }
@@ -159,132 +158,50 @@ void DisplayCaptureSourceCocoa::setIntrinsicSize(const IntSize& size)
         return;
 
     m_intrinsicSize = size;
-    m_lastSampleBuffer = nullptr;
+    notifySettingsDidChangeObservers({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height });
+
 }
 
 void DisplayCaptureSourceCocoa::emitFrame()
 {
+#if PLATFORM(COCOA) && !PLATFORM(IOS_FAMILY_SIMULATOR)
     if (muted())
         return;
 
-    auto pixelBuffer = generateFrame();
-    if (!pixelBuffer)
-        return;
+    if (!m_imageTransferSession)
+        m_imageTransferSession = ImageTransferSessionVT::create(preferedPixelBufferFormat());
 
-    if (m_lastSampleBuffer && m_lastFullSizedPixelBuffer && CFEqual(m_lastFullSizedPixelBuffer.get(), pixelBuffer.get())) {
-        videoSampleAvailable(MediaSampleAVFObjC::create(m_lastSampleBuffer.get()));
-        return;
-    }
+    auto sampleTime = MediaTime::createWithDouble((elapsedTime() + 100_ms).seconds());
+    auto frame = generateFrame();
+    IntSize imageSize;
+    RefPtr<MediaSample> sample = WTF::switchOn(frame,
+        [this, sampleTime, &imageSize](RetainPtr<IOSurfaceRef> surface) -> RefPtr<MediaSample> {
+            if (!surface)
+                return nullptr;
 
-    m_lastFullSizedPixelBuffer = pixelBuffer;
+            imageSize = IntSize(IOSurfaceGetWidth(surface.get()), IOSurfaceGetHeight(surface.get()));
+            return m_imageTransferSession->createMediaSample(surface.get(), sampleTime, imageSize);
+        },
+        [this, sampleTime, &imageSize](RetainPtr<CGImageRef> image) -> RefPtr<MediaSample> {
+            if (!image)
+                return nullptr;
 
-    int width = WTF::safeCast<int>(CVPixelBufferGetWidth(pixelBuffer.get()));
-    int height = WTF::safeCast<int>(CVPixelBufferGetHeight(pixelBuffer.get()));
-    auto requestedSize = frameSize();
-    if (width != requestedSize.width() || height != requestedSize.height()) {
-        if (m_pixelBufferResizer && !m_pixelBufferResizer->canResizeTo(requestedSize))
-            m_pixelBufferResizer = nullptr;
-
-        if (!m_pixelBufferResizer)
-            m_pixelBufferResizer = std::make_unique<PixelBufferResizer>(requestedSize, preferedPixelBufferFormat());
-
-        pixelBuffer = m_pixelBufferResizer->resize(pixelBuffer.get());
-    } else {
-        m_pixelBufferResizer = nullptr;
-
-        auto pixelFormatType = CVPixelBufferGetPixelFormatType(pixelBuffer.get());
-        if (pixelFormatType != preferedPixelBufferFormat()) {
-            if (!m_pixelBufferConformer) {
-                auto preferredFromat = preferedPixelBufferFormat();
-                auto conformerAttributes = adoptCF(CFDictionaryCreateMutable(nullptr, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-                auto videoType = adoptCF(CFNumberCreate(nullptr,  kCFNumberSInt32Type,  &preferredFromat));
-                CFDictionarySetValue(conformerAttributes.get(), kCVPixelBufferPixelFormatTypeKey, videoType.get());
-
-                m_pixelBufferConformer = std::make_unique<PixelBufferConformerCV>(conformerAttributes.get());
-            }
-
-            pixelBuffer = m_pixelBufferConformer->convert(pixelBuffer.get());
+            imageSize = IntSize(CGImageGetWidth(image.get()), CGImageGetHeight(image.get()));
+            return m_imageTransferSession->createMediaSample(image.get(), sampleTime, imageSize);
         }
-    }
-    if (!pixelBuffer)
+    );
+
+    if (!sample) {
+        ASSERT_NOT_REACHED();
         return;
-
-    m_lastSampleBuffer = sampleBufferFromPixelBuffer(pixelBuffer.get());
-    if (!m_lastSampleBuffer)
-        return;
-
-    videoSampleAvailable(MediaSampleAVFObjC::create(m_lastSampleBuffer.get()));
-}
-
-RetainPtr<CMSampleBufferRef> DisplayCaptureSourceCocoa::sampleBufferFromPixelBuffer(CVPixelBufferRef pixelBuffer)
-{
-    if (!pixelBuffer)
-        return nullptr;
-
-    CMTime sampleTime = CMTimeMake(((elapsedTime() + 100_ms) * 100).seconds(), 100);
-    CMSampleTimingInfo timingInfo = { kCMTimeInvalid, sampleTime, sampleTime };
-
-    CMVideoFormatDescriptionRef formatDescription = nullptr;
-    auto status = CMVideoFormatDescriptionCreateForImageBuffer(kCFAllocatorDefault, (CVImageBufferRef)pixelBuffer, &formatDescription);
-    if (status) {
-        RELEASE_LOG(Media, "Failed to initialize CMVideoFormatDescription with error code: %d", static_cast<int>(status));
-        return nullptr;
     }
 
-    CMSampleBufferRef sampleBuffer;
-    status = CMSampleBufferCreateReadyWithImageBuffer(kCFAllocatorDefault, (CVImageBufferRef)pixelBuffer, formatDescription, &timingInfo, &sampleBuffer);
-    CFRelease(formatDescription);
-    if (status) {
-        RELEASE_LOG(Media, "Failed to initialize CMSampleBuffer with error code: %d", static_cast<int>(status));
-        return nullptr;
-    }
+    if (m_intrinsicSize != imageSize)
+        setIntrinsicSize(imageSize);
 
-    return adoptCF(sampleBuffer);
-}
-
-#if HAVE(IOSURFACE) && PLATFORM(MAC)
-static int32_t roundUpToMacroblockMultiple(int32_t size)
-{
-    return (size + 15) & ~15;
-}
-
-RetainPtr<CVPixelBufferRef> DisplayCaptureSourceCocoa::pixelBufferFromIOSurface(IOSurfaceRef surface)
-{
-    if (!m_bufferAttributes) {
-        m_bufferAttributes = adoptCF(CFDictionaryCreateMutable(nullptr, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-
-        auto format = IOSurfaceGetPixelFormat(surface);
-        if (format == kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange || format == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange) {
-
-            // If the width x height isn't a multiple of 16 x 16 and the surface has extra memory in the planes, set pixel buffer attributes to reflect it.
-            auto width = IOSurfaceGetWidth(surface);
-            auto height = IOSurfaceGetHeight(surface);
-            int32_t extendedRight = roundUpToMacroblockMultiple(width) - width;
-            int32_t extendedBottom = roundUpToMacroblockMultiple(height) - height;
-
-            if ((IOSurfaceGetBytesPerRowOfPlane(surface, 0) >= width + extendedRight)
-                && (IOSurfaceGetBytesPerRowOfPlane(surface, 1) >= width + extendedRight)
-                && (IOSurfaceGetAllocSize(surface) >= (height + extendedBottom) * IOSurfaceGetBytesPerRowOfPlane(surface, 0) * 3 / 2)) {
-                auto cfInt = adoptCF(CFNumberCreate(nullptr,  kCFNumberIntType,  &extendedRight));
-                CFDictionarySetValue(m_bufferAttributes.get(), kCVPixelBufferExtendedPixelsRightKey, cfInt.get());
-                cfInt = adoptCF(CFNumberCreate(nullptr,  kCFNumberIntType,  &extendedBottom));
-                CFDictionarySetValue(m_bufferAttributes.get(), kCVPixelBufferExtendedPixelsBottomKey, cfInt.get());
-            }
-        }
-
-        CFDictionarySetValue(m_bufferAttributes.get(), kCVPixelBufferOpenGLCompatibilityKey, kCFBooleanTrue);
-    }
-
-    CVPixelBufferRef pixelBuffer;
-    auto status = CVPixelBufferCreateWithIOSurface(kCFAllocatorDefault, surface, m_bufferAttributes.get(), &pixelBuffer);
-    if (status) {
-        RELEASE_LOG(Media, "CVPixelBufferCreateWithIOSurface failed with error code: %d", static_cast<int>(status));
-        return nullptr;
-    }
-
-    return adoptCF(pixelBuffer);
-}
+    videoSampleAvailable(*sample.get());
 #endif
+}
 
 } // namespace WebCore
 

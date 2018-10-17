@@ -31,13 +31,12 @@
 #include <wtf/Forward.h>
 
 namespace WebCore {
-    
+
 class MediaSampleAVFObjC : public MediaSample {
 public:
     static Ref<MediaSampleAVFObjC> create(CMSampleBufferRef sample, int trackID) { return adoptRef(*new MediaSampleAVFObjC(sample, trackID)); }
     static Ref<MediaSampleAVFObjC> create(CMSampleBufferRef sample, AtomicString trackID) { return adoptRef(*new MediaSampleAVFObjC(sample, trackID)); }
     static Ref<MediaSampleAVFObjC> create(CMSampleBufferRef sample, VideoRotation rotation = VideoRotation::None, bool mirrored = false) { return adoptRef(*new MediaSampleAVFObjC(sample, rotation, mirrored)); }
-    static RefPtr<MediaSampleAVFObjC> createImageSample(Ref<JSC::Uint8ClampedArray>&&, unsigned long width, unsigned long height);
     static RefPtr<MediaSampleAVFObjC> createImageSample(Vector<uint8_t>&&, unsigned long width, unsigned long height);
 
     RefPtr<JSC::Uint8ClampedArray> getRGBAImageData() const override;
@@ -65,6 +64,7 @@ public:
 
     VideoRotation videoRotation() const override { return m_rotation; }
     bool videoMirrored() const override { return m_mirrored; }
+    uint32_t videoPixelFormat() const;
 
     CMSampleBufferRef sampleBuffer() const { return m_sample.get(); }
 

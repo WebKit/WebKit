@@ -28,6 +28,7 @@
 
 #include "FloatSize.h"
 #include <JavaScriptCore/TypedArrays.h>
+#include <wtf/EnumTraits.h>
 #include <wtf/MediaTime.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/AtomicString.h>
@@ -100,6 +101,20 @@ public:
     virtual void dump(PrintStream&) const = 0;
 };
 
-}
+} // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::MediaSample::VideoRotation> {
+    using values = EnumValues<
+        WebCore::MediaSample::VideoRotation,
+        WebCore::MediaSample::VideoRotation::None,
+        WebCore::MediaSample::VideoRotation::UpsideDown,
+        WebCore::MediaSample::VideoRotation::Right,
+        WebCore::MediaSample::VideoRotation::Left
+    >;
+};
+
+} // namespace WTF
 
 #endif

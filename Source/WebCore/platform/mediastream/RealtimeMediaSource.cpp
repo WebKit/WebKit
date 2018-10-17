@@ -133,10 +133,6 @@ void RealtimeMediaSource::notifyMutedObservers() const
     });
 }
 
-void RealtimeMediaSource::settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>)
-{
-}
-
 void RealtimeMediaSource::notifySettingsDidChangeObservers(OptionSet<RealtimeMediaSourceSettings::Flag> flags)
 {
     ASSERT(isMainThread());
