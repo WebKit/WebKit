@@ -279,9 +279,7 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
     {
         let position = new WI.SourceCodePosition(lineNumber - 1, 0);
         let range = new WI.TextRange(lineNumber - 1, 0, lineNumber, 0);
-
         this.revealPosition(position, range, false, true);
-        this.focus();
     }
 
     contentDidChange(replacedRanges, newRanges)
