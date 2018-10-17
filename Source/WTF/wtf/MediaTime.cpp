@@ -61,7 +61,7 @@ static int64_t signum(int64_t val)
     return (0 < val) - (val < 0);
 }
 
-const uint32_t MediaTime::MaximumTimeScale = 1000000000;
+const uint32_t MediaTime::MaximumTimeScale = 0x7fffffffL;
 
 MediaTime::MediaTime()
     : m_timeValue(0)
