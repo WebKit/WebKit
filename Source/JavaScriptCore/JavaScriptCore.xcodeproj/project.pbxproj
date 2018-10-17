@@ -15,8 +15,21 @@
 			);
 			dependencies = (
 				65442D5018EBB744007AF92F /* PBXTargetDependency */,
+				14BD68992151916D0050DAFF /* PBXTargetDependency */,
 			);
 			name = "LLInt Offsets";
+			productName = "Derived Sources";
+		};
+		14BD688F215191450050DAFF /* LLInt Settings */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 14BD6893215191450050DAFF /* Build configuration list for PBXAggregateTarget "LLInt Settings" */;
+			buildPhases = (
+				14BD6892215191450050DAFF /* Generate Derived Sources */,
+			);
+			dependencies = (
+				14BD6890215191450050DAFF /* PBXTargetDependency */,
+			);
+			name = "LLInt Settings";
 			productName = "Derived Sources";
 		};
 		53B4BD041F68AF8900D2BEA3 /* Generate Unified Sources */ = {
@@ -798,6 +811,7 @@
 		14BA78F113AAB88F005B7C2C /* SlotVisitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 14BA78F013AAB88F005B7C2C /* SlotVisitor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14BA7A9813AADFF8005B7C2C /* Heap.h in Headers */ = {isa = PBXBuildFile; fileRef = 14BA7A9613AADFF8005B7C2C /* Heap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14BD59C50A3E8F9F00BAF59C /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */; };
+		14BD689D215191C10050DAFF /* LLIntSettingsExtractor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14BD689C215191B30050DAFF /* LLIntSettingsExtractor.cpp */; };
 		14BE7D3317135CF400D1807A /* WeakInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 14BE7D3217135CF400D1807A /* WeakInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14BFCE6910CDB1FC00364CCE /* WeakGCMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 14BFCE6810CDB1FC00364CCE /* WeakGCMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14CA958B16AB50DE00938A06 /* StaticPropertyAnalyzer.h in Headers */ = {isa = PBXBuildFile; fileRef = 14CA958A16AB50DE00938A06 /* StaticPropertyAnalyzer.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1845,6 +1859,34 @@
 			proxyType = 1;
 			remoteGlobalIDString = 0F4680A914BA7FD900BFE272;
 			remoteInfo = "LLInt Offsets";
+		};
+		14BD6883215191310050DAFF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 65FB3F6609D11E9100F49DEB;
+			remoteInfo = "Derived Sources";
+		};
+		14BD6891215191450050DAFF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 65FB3F6609D11E9100F49DEB;
+			remoteInfo = "Derived Sources";
+		};
+		14BD68982151916D0050DAFF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 14BD6881215191310050DAFF;
+			remoteInfo = JSCLLIntSettingsExtractor;
+		};
+		14BD689A215191740050DAFF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 14BD688F215191450050DAFF;
+			remoteInfo = "LLInt Settings";
 		};
 		53B4BD131F68C2AA00D2BEA3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -3180,6 +3222,8 @@
 		14BD5A2A0A3E91F600BAF59C /* JSContextRef.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSContextRef.h; sourceTree = "<group>"; };
 		14BD5A2B0A3E91F600BAF59C /* JSValueRef.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSValueRef.cpp; sourceTree = "<group>"; };
 		14BD5A2D0A3E91F600BAF59C /* testapi.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = testapi.c; path = API/tests/testapi.c; sourceTree = "<group>"; };
+		14BD688E215191310050DAFF /* JSCLLIntSettingsExtractor */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = JSCLLIntSettingsExtractor; sourceTree = BUILT_PRODUCTS_DIR; };
+		14BD689C215191B30050DAFF /* LLIntSettingsExtractor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LLIntSettingsExtractor.cpp; path = llint/LLIntSettingsExtractor.cpp; sourceTree = "<group>"; };
 		14BE7D3217135CF400D1807A /* WeakInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakInlines.h; sourceTree = "<group>"; };
 		14BFCE6810CDB1FC00364CCE /* WeakGCMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakGCMap.h; sourceTree = "<group>"; };
 		14CA958A16AB50DE00938A06 /* StaticPropertyAnalyzer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StaticPropertyAnalyzer.h; sourceTree = "<group>"; };
@@ -3533,7 +3577,6 @@
 		5C4E8E951DBEBDA20036F1FC /* JSONParseTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSONParseTest.h; path = API/tests/JSONParseTest.h; sourceTree = "<group>"; };
 		5D5D8AD00E0D0EBE00F9C692 /* libedit.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libedit.dylib; path = /usr/lib/libedit.dylib; sourceTree = "<absolute>"; };
 		5DAFD6CB146B686300FBEFB4 /* JSC.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = JSC.xcconfig; sourceTree = "<group>"; };
-		5DDDF44614FEE72200B4FB4D /* LLIntDesiredOffsets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LLIntDesiredOffsets.h; path = LLIntOffsets/LLIntDesiredOffsets.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		5DE3D0F40DD8DDFB00468714 /* WebKitAvailability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitAvailability.h; sourceTree = "<group>"; };
 		623A37EB1B87A7BD00754209 /* RegisterMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegisterMap.h; sourceTree = "<group>"; };
 		627673211B680C1E00FD9F2E /* CallMode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallMode.cpp; sourceTree = "<group>"; };
@@ -4870,6 +4913,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		14BD6888215191310050DAFF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		651122FC14046A4C002B101D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -4929,6 +4979,7 @@
 				0F9327591C20BCBA00CF6564 /* dynbench */,
 				932F5BE10822A1C700736975 /* jsc */,
 				0FF922CF14F46B130041A24E /* JSCLLIntOffsetsExtractor */,
+				14BD688E215191310050DAFF /* JSCLLIntSettingsExtractor */,
 				141211200A48793C00480255 /* minidom */,
 				0F6183431C45F62A0072450B /* testair */,
 				14BD59BF0A3E8F9000BAF59C /* testapi */,
@@ -5020,7 +5071,6 @@
 				0F4680C514BBB16900BFE272 /* LLIntCommon.h */,
 				0F4680CE14BBB3D100BFE272 /* LLIntData.cpp */,
 				0F4680CF14BBB3D100BFE272 /* LLIntData.h */,
-				5DDDF44614FEE72200B4FB4D /* LLIntDesiredOffsets.h */,
 				0F38B00F17CF077F00B144D3 /* LLIntEntrypoint.cpp */,
 				0F38B01017CF077F00B144D3 /* LLIntEntrypoint.h */,
 				0F46809D14BA7F8200BFE272 /* LLIntExceptions.cpp */,
@@ -5029,6 +5079,7 @@
 				0F4680A114BA7F8200BFE272 /* LLIntOffsetsExtractor.cpp */,
 				FED287B115EC9A5700DA8161 /* LLIntOpcode.h */,
 				79CFC6EF1C33B10000C768EA /* LLIntPCRanges.h */,
+				14BD689C215191B30050DAFF /* LLIntSettingsExtractor.cpp */,
 				0F46809F14BA7F8200BFE272 /* LLIntSlowPaths.cpp */,
 				0F4680A014BA7F8200BFE272 /* LLIntSlowPaths.h */,
 				0F0B839714BCF45A00885B4F /* LLIntThunks.cpp */,
@@ -9807,6 +9858,25 @@
 			productReference = 14BD59BF0A3E8F9000BAF59C /* testapi */;
 			productType = "com.apple.product-type.tool";
 		};
+		14BD6881215191310050DAFF /* JSCLLIntSettingsExtractor */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 14BD6889215191310050DAFF /* Build configuration list for PBXNativeTarget "JSCLLIntSettingsExtractor" */;
+			buildPhases = (
+				14BD6886215191310050DAFF /* Sources */,
+				14BD6888215191310050DAFF /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				14BD6882215191310050DAFF /* PBXTargetDependency */,
+				14BD689B215191740050DAFF /* PBXTargetDependency */,
+			);
+			name = JSCLLIntSettingsExtractor;
+			productInstallPath = /usr/local/bin;
+			productName = jsc;
+			productReference = 14BD688E215191310050DAFF /* JSCLLIntSettingsExtractor */;
+			productType = "com.apple.product-type.tool";
+		};
 		651122F714046A4C002B101D /* testRegExp */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6511230014046A4C002B101D /* Build configuration list for PBXNativeTarget "testRegExp" */;
@@ -9929,8 +9999,10 @@
 			targets = (
 				932F5BE30822A1C700736975 /* All */,
 				932F5B3E0822A1C700736975 /* JavaScriptCore */,
-				0F4680A914BA7FD900BFE272 /* LLInt Offsets */,
 				65FB3F6609D11E9100F49DEB /* Derived Sources */,
+				14BD688F215191450050DAFF /* LLInt Settings */,
+				14BD6881215191310050DAFF /* JSCLLIntSettingsExtractor */,
+				0F4680A914BA7FD900BFE272 /* LLInt Offsets */,
 				0FF922C314F46B130041A24E /* JSCLLIntOffsetsExtractor */,
 				65788A9D18B409EB00C189FF /* Offline Assembler */,
 				53B4BD041F68AF8900D2BEA3 /* Generate Unified Sources */,
@@ -9972,7 +10044,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\n\nmkdir -p \"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${ARCHS}\"\n\n/usr/bin/env ruby \"${SRCROOT}/offlineasm/generate_offset_extractor.rb\" \"-I${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\" \"${SRCROOT}/llint/LowLevelInterpreter.asm\" \"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${ARCHS}/LLIntDesiredOffsets.h\" \"${ARCHS} C_LOOP\"\n";
+			shellScript = "set -e\n\nmkdir -p \"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${ARCHS}\"\n\n/usr/bin/env ruby \"${SRCROOT}/offlineasm/generate_offset_extractor.rb\" \"-I${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\" \"${SRCROOT}/llint/LowLevelInterpreter.asm\"  \"${BUILT_PRODUCTS_DIR}/JSCLLIntSettingsExtractor\" \"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${ARCHS}/LLIntDesiredOffsets.h\" \"${ARCHS} C_LOOP\"\n";
+		};
+		14BD6892215191450050DAFF /* Generate Derived Sources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Generate Derived Sources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\n\nmkdir -p \"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${ARCHS}\"\n\n/usr/bin/env ruby \"${SRCROOT}/offlineasm/generate_settings_extractor.rb\" \"-I${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\" \"${SRCROOT}/llint/LowLevelInterpreter.asm\" \"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${ARCHS}/LLIntDesiredSettings.h\" \"${ARCHS} C_LOOP\"\n";
 		};
 		1A02D9A81B34A882000D1522 /* Add Symlink in /System/Library/PrivateFrameworks */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -10246,6 +10332,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		14BD6886215191310050DAFF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				14BD689D215191C10050DAFF /* LLIntSettingsExtractor.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		651122FA14046A4C002B101D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -10469,6 +10563,26 @@
 			isa = PBXTargetDependency;
 			target = 0F4680A914BA7FD900BFE272 /* LLInt Offsets */;
 			targetProxy = 0FF922D214F46B2F0041A24E /* PBXContainerItemProxy */;
+		};
+		14BD6882215191310050DAFF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 65FB3F6609D11E9100F49DEB /* Derived Sources */;
+			targetProxy = 14BD6883215191310050DAFF /* PBXContainerItemProxy */;
+		};
+		14BD6890215191450050DAFF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 65FB3F6609D11E9100F49DEB /* Derived Sources */;
+			targetProxy = 14BD6891215191450050DAFF /* PBXContainerItemProxy */;
+		};
+		14BD68992151916D0050DAFF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 14BD6881215191310050DAFF /* JSCLLIntSettingsExtractor */;
+			targetProxy = 14BD68982151916D0050DAFF /* PBXContainerItemProxy */;
+		};
+		14BD689B215191740050DAFF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 14BD688F215191450050DAFF /* LLInt Settings */;
+			targetProxy = 14BD689A215191740050DAFF /* PBXContainerItemProxy */;
 		};
 		53B4BD141F68C2AA00D2BEA3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -10856,6 +10970,90 @@
 			};
 			name = Production;
 		};
+		14BD688A215191310050DAFF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					"\"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\"",
+					"\"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${ARCHS}\"",
+					"\"$(JAVASCRIPTCORE_FRAMEWORKS_DIR)/JavaScriptCore.framework/PrivateHeaders\"",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		14BD688B215191310050DAFF /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					"\"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\"",
+					"\"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${ARCHS}\"",
+					"\"$(JAVASCRIPTCORE_FRAMEWORKS_DIR)/JavaScriptCore.framework/PrivateHeaders\"",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		14BD688C215191310050DAFF /* Profiling */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					"\"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\"",
+					"\"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${ARCHS}\"",
+					"\"$(JAVASCRIPTCORE_FRAMEWORKS_DIR)/JavaScriptCore.framework/PrivateHeaders\"",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Profiling;
+		};
+		14BD688D215191310050DAFF /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					"\"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\"",
+					"\"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${ARCHS}\"",
+					"\"$(JAVASCRIPTCORE_FRAMEWORKS_DIR)/JavaScriptCore.framework/PrivateHeaders\"",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Production;
+		};
+		14BD6894215191450050DAFF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		14BD6895215191450050DAFF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		14BD6896215191450050DAFF /* Profiling */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Profiling;
+		};
+		14BD6897215191450050DAFF /* Production */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Production;
+		};
 		53B4BD0B1F68AF8900D2BEA3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -11239,6 +11437,28 @@
 				14BD59D80A3E8FC900BAF59C /* Release */,
 				A76148420E6402F700E357FA /* Profiling */,
 				14BD59D90A3E8FC900BAF59C /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		14BD6889215191310050DAFF /* Build configuration list for PBXNativeTarget "JSCLLIntSettingsExtractor" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				14BD688A215191310050DAFF /* Debug */,
+				14BD688B215191310050DAFF /* Release */,
+				14BD688C215191310050DAFF /* Profiling */,
+				14BD688D215191310050DAFF /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		14BD6893215191450050DAFF /* Build configuration list for PBXAggregateTarget "LLInt Settings" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				14BD6894215191450050DAFF /* Debug */,
+				14BD6895215191450050DAFF /* Release */,
+				14BD6896215191450050DAFF /* Profiling */,
+				14BD6897215191450050DAFF /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

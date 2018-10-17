@@ -1,3 +1,7 @@
+2018-10-17  Keith Miller  <keith_miller@apple.com>
+
+        Unreviewed revert Fujii's revert in r237214 with new WinCairo build fix.
+
 2018-10-16  Mark Lam  <mark.lam@apple.com>
 
         GetIndexedPropertyStorage can GC.
