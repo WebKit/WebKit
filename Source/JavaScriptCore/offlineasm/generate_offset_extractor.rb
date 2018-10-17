@@ -121,8 +121,6 @@ File.open(outputFlnm, "w") {
         }
     }
 
-    puts configurationList.size
-    puts configurationList.display
     outp.puts "static const int64_t offsetExtractorTable[] = { };" if not configurationList.size
 
 }

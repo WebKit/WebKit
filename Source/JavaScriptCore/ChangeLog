@@ -1,5 +1,14 @@
 2018-10-17  Keith Miller  <keith_miller@apple.com>
 
+        Remove debug logging from generate_offsets_extractor.rb
+        https://bugs.webkit.org/show_bug.cgi?id=190667
+
+        Reviewed by Mark Lam.
+
+        * offlineasm/generate_offset_extractor.rb:
+
+2018-10-17  Keith Miller  <keith_miller@apple.com>
+
         Unreviewed, fix windows build.
 
         * offlineasm/generate_offset_extractor.rb:
