@@ -310,19 +310,19 @@ Vector<CaptureDevice>& MockRealtimeMediaSourceCenter::displayDevices()
     return displayDevices;
 }
 
-AudioCaptureFactory& MockRealtimeMediaSourceCenter::audioFactory()
+AudioCaptureFactory& MockRealtimeMediaSourceCenter::audioFactoryPrivate()
 {
     static NeverDestroyed<MockRealtimeAudioSourceFactory> factory;
     return factory.get();
 }
 
-VideoCaptureFactory& MockRealtimeMediaSourceCenter::videoFactory()
+VideoCaptureFactory& MockRealtimeMediaSourceCenter::videoFactoryPrivate()
 {
     static NeverDestroyed<MockRealtimeVideoSourceFactory> factory;
     return factory.get();
 }
 
-DisplayCaptureFactory& MockRealtimeMediaSourceCenter::displayCaptureFactory()
+DisplayCaptureFactory& MockRealtimeMediaSourceCenter::displayCaptureFactoryPrivate()
 {
     static NeverDestroyed<MockRealtimeDisplaySourceFactory> factory;
     return factory.get();

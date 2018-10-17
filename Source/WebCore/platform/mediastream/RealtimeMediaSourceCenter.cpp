@@ -333,6 +333,54 @@ std::optional<CaptureDevice> RealtimeMediaSourceCenter::captureDeviceWithPersist
     return std::nullopt;
 }
 
+static AudioCaptureFactory* audioFactoryOverride;
+void RealtimeMediaSourceCenter::setAudioFactory(AudioCaptureFactory& factory)
+{
+    audioFactoryOverride = &factory;
+}
+void RealtimeMediaSourceCenter::unsetAudioFactory(AudioCaptureFactory& oldOverride)
+{
+    ASSERT_UNUSED(oldOverride, audioFactoryOverride == &oldOverride);
+    audioFactoryOverride = nullptr;
+}
+
+AudioCaptureFactory& RealtimeMediaSourceCenter::audioFactory()
+{
+    return audioFactoryOverride ? *audioFactoryOverride : RealtimeMediaSourceCenter::singleton().audioFactoryPrivate();
+}
+
+static VideoCaptureFactory* videoFactoryOverride;
+void RealtimeMediaSourceCenter::setVideoFactory(VideoCaptureFactory& factory)
+{
+    videoFactoryOverride = &factory;
+}
+void RealtimeMediaSourceCenter::unsetVideoFactory(VideoCaptureFactory& oldOverride)
+{
+    ASSERT_UNUSED(oldOverride, videoFactoryOverride == &oldOverride);
+    videoFactoryOverride = nullptr;
+}
+
+VideoCaptureFactory& RealtimeMediaSourceCenter::videoFactory()
+{
+    return videoFactoryOverride ? *videoFactoryOverride : RealtimeMediaSourceCenter::singleton().videoFactoryPrivate();
+}
+
+static DisplayCaptureFactory* displayCaptureFactoryOverride;
+void RealtimeMediaSourceCenter::setDisplayCaptureFactory(DisplayCaptureFactory& factory)
+{
+    displayCaptureFactoryOverride = &factory;
+}
+void RealtimeMediaSourceCenter::unsetDisplayCaptureFactory(DisplayCaptureFactory& oldOverride)
+{
+    ASSERT_UNUSED(oldOverride, displayCaptureFactoryOverride == &oldOverride);
+    displayCaptureFactoryOverride = nullptr;
+}
+
+DisplayCaptureFactory& RealtimeMediaSourceCenter::displayCaptureFactory()
+{
+    return displayCaptureFactoryOverride ? *displayCaptureFactoryOverride : RealtimeMediaSourceCenter::singleton().displayCaptureFactoryPrivate();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)

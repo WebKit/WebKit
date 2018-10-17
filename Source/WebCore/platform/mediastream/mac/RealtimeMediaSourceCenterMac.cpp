@@ -95,23 +95,6 @@ public:
     }
 };
 
-VideoCaptureFactory& RealtimeMediaSourceCenterMac::videoCaptureSourceFactory()
-{
-    static NeverDestroyed<VideoCaptureSourceFactoryMac> factory;
-    return factory.get();
-}
-
-DisplayCaptureFactory& RealtimeMediaSourceCenterMac::displayCaptureSourceFactory()
-{
-    static NeverDestroyed<DisplayCaptureSourceFactoryMac> factory;
-    return factory.get();
-}
-
-AudioCaptureFactory& RealtimeMediaSourceCenterMac::audioCaptureSourceFactory()
-{
-    return RealtimeMediaSourceCenterMac::singleton().audioFactory();
-}
-
 RealtimeMediaSourceCenterMac& RealtimeMediaSourceCenterMac::singleton()
 {
     ASSERT(isMainThread());
@@ -129,22 +112,21 @@ RealtimeMediaSourceCenterMac::RealtimeMediaSourceCenterMac() = default;
 RealtimeMediaSourceCenterMac::~RealtimeMediaSourceCenterMac() = default;
 
 
-AudioCaptureFactory& RealtimeMediaSourceCenterMac::audioFactory()
+AudioCaptureFactory& RealtimeMediaSourceCenterMac::audioFactoryPrivate()
 {
-    if (m_audioFactoryOverride)
-        return *m_audioFactoryOverride;
-
     return CoreAudioCaptureSource::factory();
 }
 
-VideoCaptureFactory& RealtimeMediaSourceCenterMac::videoFactory()
+VideoCaptureFactory& RealtimeMediaSourceCenterMac::videoFactoryPrivate()
 {
-    return videoCaptureSourceFactory();
+    static NeverDestroyed<VideoCaptureSourceFactoryMac> factory;
+    return factory.get();
 }
 
-DisplayCaptureFactory& RealtimeMediaSourceCenterMac::displayCaptureFactory()
+DisplayCaptureFactory& RealtimeMediaSourceCenterMac::displayCaptureFactoryPrivate()
 {
-    return displayCaptureSourceFactory();
+    static NeverDestroyed<DisplayCaptureSourceFactoryMac> factory;
+    return factory.get();
 }
 
 CaptureDeviceManager& RealtimeMediaSourceCenterMac::audioCaptureDeviceManager()

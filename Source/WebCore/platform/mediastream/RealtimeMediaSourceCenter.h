@@ -72,13 +72,17 @@ public:
     
     const RealtimeMediaSourceSupportedConstraints& supportedConstraints() { return m_supportedConstraints; }
 
-    virtual void setAudioFactory(AudioCaptureFactory&) { }
-    virtual void unsetAudioFactory(AudioCaptureFactory&) { }
-    WEBCORE_EXPORT virtual AudioCaptureFactory& audioFactory() = 0;
+    WEBCORE_EXPORT static AudioCaptureFactory& audioFactory();
+    WEBCORE_EXPORT static void setAudioFactory(AudioCaptureFactory&);
+    WEBCORE_EXPORT static void unsetAudioFactory(AudioCaptureFactory&);
 
-    virtual VideoCaptureFactory& videoFactory() = 0;
+    WEBCORE_EXPORT static VideoCaptureFactory& videoFactory();
+    WEBCORE_EXPORT static void setVideoFactory(VideoCaptureFactory&);
+    WEBCORE_EXPORT static void unsetVideoFactory(VideoCaptureFactory&);
 
-    virtual DisplayCaptureFactory& displayCaptureFactory() = 0;
+    WEBCORE_EXPORT static DisplayCaptureFactory& displayCaptureFactory();
+    WEBCORE_EXPORT static void setDisplayCaptureFactory(DisplayCaptureFactory&);
+    WEBCORE_EXPORT static void unsetDisplayCaptureFactory(DisplayCaptureFactory&);
 
     virtual CaptureDeviceManager& audioCaptureDeviceManager() = 0;
     virtual CaptureDeviceManager& videoCaptureDeviceManager() = 0;
@@ -100,8 +104,9 @@ protected:
     static RealtimeMediaSourceCenter& platformCenter();
     RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
 
-    CaptureDeviceManager* m_audioCaptureDeviceManager { nullptr };
-    CaptureDeviceManager* m_videoCaptureDeviceManager { nullptr };
+    WEBCORE_EXPORT virtual AudioCaptureFactory& audioFactoryPrivate() = 0;
+    WEBCORE_EXPORT virtual VideoCaptureFactory& videoFactoryPrivate() = 0;
+    WEBCORE_EXPORT virtual DisplayCaptureFactory& displayCaptureFactoryPrivate() = 0;
 
 private:
     struct DeviceInfo {

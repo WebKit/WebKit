@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple, Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,21 +44,14 @@ class RealtimeMediaSourceCenterMac final : public RealtimeMediaSourceCenter {
 public:
     WEBCORE_EXPORT static RealtimeMediaSourceCenterMac& singleton();
 
-    static VideoCaptureFactory& videoCaptureSourceFactory();
-    static AudioCaptureFactory& audioCaptureSourceFactory();
-    static DisplayCaptureFactory& displayCaptureSourceFactory();
-
 private:
     friend class NeverDestroyed<RealtimeMediaSourceCenterMac>;
     RealtimeMediaSourceCenterMac();
     ~RealtimeMediaSourceCenterMac();
 
-    void setAudioFactory(AudioCaptureFactory& factory) final { m_audioFactoryOverride = &factory; }
-    void unsetAudioFactory(AudioCaptureFactory&) final { m_audioFactoryOverride = nullptr; }
-
-    AudioCaptureFactory& audioFactory() final;
-    VideoCaptureFactory& videoFactory() final;
-    DisplayCaptureFactory& displayCaptureFactory() final;
+    AudioCaptureFactory& audioFactoryPrivate() final;
+    VideoCaptureFactory& videoFactoryPrivate() final;
+    DisplayCaptureFactory& displayCaptureFactoryPrivate() final;
 
     CaptureDeviceManager& audioCaptureDeviceManager() final;
     CaptureDeviceManager& videoCaptureDeviceManager() final;

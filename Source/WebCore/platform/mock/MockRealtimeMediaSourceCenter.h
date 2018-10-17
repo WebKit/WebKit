@@ -58,9 +58,9 @@ private:
 
     static MockRealtimeMediaSourceCenter& singleton();
 
-    AudioCaptureFactory& audioFactory() final;
-    VideoCaptureFactory& videoFactory() final;
-    DisplayCaptureFactory& displayCaptureFactory() final;
+    AudioCaptureFactory& audioFactoryPrivate() final;
+    VideoCaptureFactory& videoFactoryPrivate() final;
+    DisplayCaptureFactory& displayCaptureFactoryPrivate() final;
 
     CaptureDeviceManager& audioCaptureDeviceManager() final { return m_audioCaptureDeviceManager; }
     CaptureDeviceManager& videoCaptureDeviceManager() final { return m_videoCaptureDeviceManager; }

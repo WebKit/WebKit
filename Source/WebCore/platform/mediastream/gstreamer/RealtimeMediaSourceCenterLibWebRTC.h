@@ -38,20 +38,14 @@ class RealtimeMediaSourceCenterLibWebRTC final : public RealtimeMediaSourceCente
 public:
     WEBCORE_EXPORT static RealtimeMediaSourceCenterLibWebRTC& singleton();
 
-    static VideoCaptureFactory& videoCaptureSourceFactory();
-    static AudioCaptureFactory& audioCaptureSourceFactory();
-
 private:
     friend class NeverDestroyed<RealtimeMediaSourceCenterLibWebRTC>;
     RealtimeMediaSourceCenterLibWebRTC();
     ~RealtimeMediaSourceCenterLibWebRTC();
 
-    void setAudioFactory(AudioCaptureFactory& factory) final { m_audioFactoryOverride = &factory; }
-    void unsetAudioFactory(AudioCaptureFactory&) final { m_audioFactoryOverride = nullptr; }
-
-    AudioCaptureFactory& audioFactory() final;
-    VideoCaptureFactory& videoFactory() final;
-    DisplayCaptureFactory& displayCaptureFactory() final;
+    AudioCaptureFactory& audioFactoryPrivate() final;
+    VideoCaptureFactory& videoFactoryPrivate() final;
+    DisplayCaptureFactory& displayCaptureFactoryPrivate() final;
 
     CaptureDeviceManager& audioCaptureDeviceManager() final;
     CaptureDeviceManager& videoCaptureDeviceManager() final;
