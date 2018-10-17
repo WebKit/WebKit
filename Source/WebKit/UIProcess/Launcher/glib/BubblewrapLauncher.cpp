@@ -40,6 +40,42 @@ static int memfd_create(const char* name, unsigned flags)
 
 #define MFD_ALLOW_SEALING 2U
 
+static int createSealedMemFdWithData(const char* name, gconstpointer data, size_t size)
+{
+    int fd = memfd_create(name, MFD_ALLOW_SEALING);
+    if (fd == -1) {
+        g_warning("memfd_create failed: %s", g_strerror(errno));
+        return -1;
+    }
+
+    ssize_t bytesWritten = write(fd, data, size);
+    if (bytesWritten < 0) {
+        g_warning("Writing args to memfd failed: %s", g_strerror(errno));
+        close(fd);
+        return -1;
+    }
+
+    if (static_cast<size_t>(bytesWritten) != size) {
+        g_warning("Failed to write all args to memfd");
+        close(fd);
+        return -1;
+    }
+
+    if (lseek(fd, 0, SEEK_SET) == -1) {
+        g_warning("lseek failed: %s", g_strerror(errno));
+        close(fd);
+        return -1;
+    }
+
+    if (fcntl(fd, F_ADD_SEALS, F_SEAL_SHRINK | F_SEAL_GROW | F_SEAL_WRITE | F_SEAL_SEAL) == -1) {
+        g_warning("Failed to seal memfd: %s", g_strerror(errno));
+        close(fd);
+        return -1;
+    }
+
+    return fd;
+}
+
 static int
 argsToFd(const Vector<CString>& args, const char *name)
 {
@@ -50,25 +86,12 @@ argsToFd(const Vector<CString>& args, const char *name)
 
     GRefPtr<GBytes> bytes = adoptGRef(g_string_free_to_bytes(buffer));
 
-    int memfd = memfd_create(name, MFD_ALLOW_SEALING);
-    if (memfd == -1)
-        g_error("memfd_create failed: %s", g_strerror(errno));
-
     size_t size;
     gconstpointer data = g_bytes_get_data(bytes.get(), &size);
 
-    ssize_t bytesWritten = write(memfd, data, size);
-    if (bytesWritten < 0)
-        g_error("Writing args to memfd failed: %s", g_strerror(errno));
-
-    if (static_cast<size_t>(bytesWritten) != size)
-        g_error("Failed to write all args to memfd");
-
-    if (lseek(memfd, 0, SEEK_SET) == -1)
-        g_error("lseek failed: %s", g_strerror(errno));
-
-    if (fcntl(memfd, F_ADD_SEALS, F_SEAL_SHRINK | F_SEAL_GROW | F_SEAL_WRITE | F_SEAL_SEAL) == -1)
-        g_error("Failed to seal memfd: %s", g_strerror(errno));
+    int memfd = createSealedMemFdWithData(name, data, size);
+    if (memfd == -1)
+        g_error("Failed to write memfd");
 
     return memfd;
 }
@@ -608,6 +631,33 @@ static int setupSeccomp()
     return tmpfd;
 }
 
+static int createFlatpakInfo()
+{
+    GUniquePtr<GKeyFile> keyFile(g_key_file_new());
+
+    const char* sharedPermissions[] = { "network" };
+    g_key_file_set_string_list(keyFile.get(), "Context", "shared", sharedPermissions, sizeof(sharedPermissions));
+
+    // xdg-desktop-portal relates your name to certain permissions so we want
+    // them to be application unique which is best done via GApplication.
+    GApplication* app = g_application_get_default();
+    if (!app) {
+        g_warning("GApplication is required for xdg-desktop-portal access in the WebKit sandbox. Actions that require xdg-desktop-portal will be broken.");
+        return -1;
+    }
+    g_key_file_set_string(keyFile.get(), "Application", "name", g_application_get_application_id(app));
+
+    size_t size;
+    GUniqueOutPtr<GError> error;
+    GUniquePtr<char> data(g_key_file_to_data(keyFile.get(), &size, &error.outPtr()));
+    if (error.get()) {
+        g_warning("%s", error->message);
+        return -1;
+    }
+
+    return createSealedMemFdWithData("flatpak-info", data.get(), size);
+}
+
 GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const ProcessLauncher::LaunchOptions& launchOptions, char** argv, GError **error)
 {
     ASSERT(launcher);
@@ -660,8 +710,6 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
         "--ro-bind-try", "/usr/local/lib64", "/usr/local/lib64",
 
         "--ro-bind-try", PKGLIBEXECDIR, PKGLIBEXECDIR,
-
-        "--setenv", "GTK_USE_PORTAL", "1",
     };
     // We would have to parse ld config files for more info.
     bindPathVar(sandboxArgs, "LD_LIBRARY_PATH");
@@ -677,6 +725,20 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
 
     bindSymlinksRealPath(sandboxArgs, "/etc/resolv.conf");
     bindSymlinksRealPath(sandboxArgs, "/etc/localtime");
+
+    // xdg-desktop-portal defaults to assuming you are host application with
+    // full permissions unless it can identify you as a snap or flatpak.
+    // The easiest method is for us to pretend to be a flatpak and if that
+    // fails just blocking portals entirely as it just becomes a sandbox escape.
+    int flatpakInfoFd = createFlatpakInfo();
+    if (flatpakInfoFd != -1) {
+        g_subprocess_launcher_take_fd(launcher, flatpakInfoFd, flatpakInfoFd);
+        GUniquePtr<char> flatpakInfoFdStr(g_strdup_printf("%d", flatpakInfoFd));
+
+        sandboxArgs.appendVector(Vector<CString>({
+            "--ro-bind-data", flatpakInfoFdStr.get(), "/.flatpak-info"
+        }));
+    }
 
     // NOTE: This has network access for HLS via GStreamer.
     if (launchOptions.processType == ProcessLauncher::ProcessType::Web) {
@@ -723,19 +785,20 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
         bindGtkData(sandboxArgs);
 #endif
 
-    if (!proxy.isRunning()) {
-        proxy.setPermissions({
-            // FIXME: Used by GTK on Wayland.
-            "--talk=ca.desrt.dconf",
-            // xdg-desktop-portal used by GTK and us.
-            "--talk=org.freedesktop.portal.Desktop",
-            // GStreamers plugin install helper.
-            "--call=org.freedesktop.PackageKit=org.freedesktop.PackageKit.Modify2.InstallGStreamerResources@/org/freedesktop/PackageKit"
-        });
-        proxy.launch();
-    }
-
-
+        if (!proxy.isRunning()) {
+            Vector<CString> permissions = {
+                // FIXME: Used by GTK on Wayland.
+                "--talk=ca.desrt.dconf",
+                // GStreamers plugin install helper.
+                "--call=org.freedesktop.PackageKit=org.freedesktop.PackageKit.Modify2.InstallGStreamerResources@/org/freedesktop/PackageKit"
+            };
+            if (flatpakInfoFd != -1) {
+                // xdg-desktop-portal used by GTK and us.
+                permissions.append("--talk=org.freedesktop.portal.Desktop");
+            }
+            proxy.setPermissions(WTFMove(permissions));
+            proxy.launch();
+        }
     } else {
         // Only X11 users need this for XShm which is only the Web process.
         sandboxArgs.append("--unshare-ipc");

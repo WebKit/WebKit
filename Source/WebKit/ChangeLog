@@ -1,3 +1,20 @@
+2018-10-16  Patrick Griffis  <pgriffis@igalia.com>
+
+        [GTK][WPE] Fix xdg-desktop-portal permissions from a sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=190619
+
+        Reviewed by Michael Catanzaro.
+
+        We have to generate a /.flatpak-info file for xdg-desktop-portal
+        to properly treat us as a sandboxed application.
+
+        * UIProcess/Launcher/glib/BubblewrapLauncher.cpp:
+        (WebKit::createSealedMemFdWithData):
+        (WebKit::argsToFd):
+        (WebKit::XDGDBusProxyLauncher::setPermissions):
+        (WebKit::createFlatpakInfo):
+        (WebKit::bubblewrapSpawn):
+
 2018-10-16  Sihui Liu  <sihui_liu@apple.com>
 
         Add a switch for Web SQL
