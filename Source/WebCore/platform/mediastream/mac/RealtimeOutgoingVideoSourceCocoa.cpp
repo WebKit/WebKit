@@ -43,39 +43,6 @@ ALLOW_UNUSED_PARAMETERS_END
 #include <pal/cf/CoreMediaSoftLink.h>
 #include "CoreVideoSoftLink.h"
 
-namespace libyuv {
-extern "C" {
-typedef enum RotationMode {
-  kRotate0 = 0,      // No rotation.
-  kRotate90 = 90,    // Rotate 90 degrees clockwise.
-  kRotate180 = 180,  // Rotate 180 degrees.
-  kRotate270 = 270,  // Rotate 270 degrees clockwise.
-
-  // Deprecated.
-  kRotateNone = 0,
-  kRotateClockwise = 90,
-  kRotateCounterClockwise = 270,
-} RotationModeEnum;
-
-int ConvertToI420(webrtc::VideoType src_video_type,
-                  const uint8_t* src_frame,
-                  size_t src_size,
-                  uint8_t* dst_y,
-                  int dst_stride_y,
-                  uint8_t* dst_u,
-                  int dst_stride_u,
-                  uint8_t* dst_v,
-                  int dst_stride_v,
-                  int crop_x,
-                  int crop_y,
-                  int src_width,
-                  int src_height,
-                  int crop_width,
-                  int crop_height,
-                  RotationMode rotation);
-}
-}
-
 namespace WebCore {
 using namespace PAL;
 
