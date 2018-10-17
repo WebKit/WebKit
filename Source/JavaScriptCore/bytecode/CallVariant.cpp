@@ -88,7 +88,12 @@ void CallVariant::dump(PrintStream& out) const
         return;
     }
     
-    out.print("Executable: ", *executable());
+    if (ExecutableBase* executable = this->executable()) {
+        out.print("(Executable: ", *executable, ")");
+        return;
+    }
+
+    out.print("Non-executable callee: ", *nonExecutableCallee());
 }
 
 CallVariantList variantListWithVariant(const CallVariantList& list, CallVariant variantToAdd)
