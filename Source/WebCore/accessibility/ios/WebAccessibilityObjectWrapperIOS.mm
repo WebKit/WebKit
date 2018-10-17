@@ -118,6 +118,9 @@ static NSString * const UIAccessibilityTokenUnderline = @"UIAccessibilityTokenUn
 static NSString * const UIAccessibilityTokenLanguage = @"UIAccessibilityTokenLanguage";
 static NSString * const UIAccessibilityTokenAttachment = @"UIAccessibilityTokenAttachment";
 
+static NSString * const UIAccessibilityTextAttributeContext = @"UIAccessibilityTextAttributeContext";
+static NSString * const UIAccessibilityTextualContextSourceCode = @"UIAccessibilityTextualContextSourceCode";
+
 static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityObjectWrapper *wrapper)
 {
     while (wrapper && ![wrapper isAccessibilityElement]) {
@@ -1889,6 +1892,17 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     return m_object->isAttachment();
 }
 
+- (NSString *)accessibilityTextualContext
+{
+    if (![self _prepareAccessibilityCall])
+        return nil;
+
+    if (m_object->node() && m_object->node()->hasTagName(codeTag))
+        return UIAccessibilityTextualContextSourceCode;
+    
+    return nil;
+}
+
 - (void)_accessibilityActivate
 {
     if (![self _prepareAccessibilityCall])
@@ -2256,6 +2270,15 @@ static void AXAttributeStringSetStyle(NSMutableAttributedString* attrString, Ren
     auto decor = style.textDecorationsInEffect();
     if (decor & TextDecoration::Underline)
         AXAttributeStringSetNumber(attrString, UIAccessibilityTokenUnderline, @YES, range);
+
+    // Add code context if this node is within a <code> block.
+    AccessibilityObject* axObject = renderer->document().axObjectCache()->getOrCreate(renderer);
+    auto matchFunc = [] (const AccessibilityObject& object) {
+        return object.node() && object.node()->hasTagName(codeTag);
+    };
+    
+    if (const AccessibilityObject* parent = AccessibilityObject::matchedParent(*axObject, true, WTFMove(matchFunc)))
+        [attrString addAttribute:UIAccessibilityTextAttributeContext value:UIAccessibilityTextualContextSourceCode range:range];
 }
 
 static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, Node* node, NSString *text)

@@ -1,3 +1,16 @@
+2018-10-17  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Certain tags should identify their context to iOS API
+        https://bugs.webkit.org/show_bug.cgi?id=190622
+        <rdar://problem/45308194>
+
+        Reviewed by Zalan Bujtas.
+
+        * DumpRenderTree/ios/AccessibilityUIElementIOS.mm:
+        (AccessibilityUIElement::stringAttributeValue):
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::stringAttributeValue):
+
 2018-10-16  Sihui Liu  <sihui_liu@apple.com>
 
         Add a switch for Web SQL

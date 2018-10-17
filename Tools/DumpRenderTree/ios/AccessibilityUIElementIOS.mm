@@ -102,6 +102,7 @@ AccessibilityUIElement::~AccessibilityUIElement()
 - (NSArray *)accessibilityFindMatchingObjects:(NSDictionary *)parameters;
 - (NSArray *)accessibilitySpeechHint;
 - (BOOL)_accessibilityIsStrongPasswordField;
+- (NSString *)accessibilityTextualContext;
 
 // TextMarker related
 - (NSArray *)textMarkerRange;
@@ -700,6 +701,9 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringAttributeValue(JSStringRe
     
     if (JSStringIsEqualToUTF8CString(attribute, "AXSortDirection"))
         return [[m_element accessibilitySortDirection] createJSStringRef];
+    
+    if (JSStringIsEqualToUTF8CString(attribute, "AXTextualContext"))
+        return [[m_element accessibilityTextualContext] createJSStringRef];
     
     return createEmptyJSString();
 }

@@ -81,6 +81,7 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (NSArray<NSString *> *)accessibilitySpeechHint;
 - (BOOL)_accessibilityIsStrongPasswordField;
 - (CGRect)accessibilityVisibleContentRect;
+- (NSString *)accessibilityTextualContext;
 
 // TextMarker related
 - (NSArray *)textMarkerRange;
@@ -367,6 +368,9 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringAttributeValue(JSStringRe
         return [rectStr createJSStringRef];
     }
 
+    if (JSStringIsEqualToUTF8CString(attribute, "AXTextualContext"))
+        return [[m_element accessibilityTextualContext] createJSStringRef];
+    
     return createEmptyJSString();
 }
 

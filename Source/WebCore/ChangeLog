@@ -1,3 +1,19 @@
+2018-10-17  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Certain tags should identify their context to iOS API
+        https://bugs.webkit.org/show_bug.cgi?id=190622
+        <rdar://problem/45308194>
+
+        Reviewed by Zalan Bujtas.
+
+        Convey the semantic meaning of <code> tag to the iOS API so VoiceOver can make use of it.
+
+        Tests: accessibility/ios-simulator/text-context-attributes.html
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityTextualContext]):
+        (AXAttributeStringSetStyle):
+
 2018-10-17  Youenn Fablet  <youenn@apple.com>
 
         Remove unused code from RealtimeOutgoingVideoSourceCocoa

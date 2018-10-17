@@ -1,3 +1,14 @@
+2018-10-17  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Certain tags should identify their context to iOS API
+        https://bugs.webkit.org/show_bug.cgi?id=190622
+        <rdar://problem/45308194>
+
+        Reviewed by Zalan Bujtas.
+
+        * accessibility/ios-simulator/text-context-attributes.html: Added.
+        * accessibility/ios-simulator/text-context-attributes-expcted.txt: Added.
+
 2018-10-17  Ali Juma  <ajuma@chromium.org>
 
         Flaky IntersectionObserver web platform tests involving style updates
