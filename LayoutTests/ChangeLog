@@ -1,3 +1,17 @@
+2018-10-17  Ali Juma  <ajuma@chromium.org>
+
+        Flaky IntersectionObserver web platform tests involving style updates
+        https://bugs.webkit.org/show_bug.cgi?id=189091
+
+        Reviewed by Simon Fraser.
+
+        Remove expectation for tests that are no longer flaky.
+
+        Skip IntersectionObserver tests on WK1.
+
+        * TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+
 2018-10-17  Charlie Turner  <cturner@igalia.com>
 
         [EME] media/encrypted-media/mock-MediaKeySystemAccess.html crashes in CDM::createInstance

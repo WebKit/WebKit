@@ -419,6 +419,7 @@ bool TiledCoreAnimationDrawingArea::flushLayers()
 
         m_webPage.layoutIfNeeded();
         m_webPage.flushPendingEditorStateUpdate();
+        m_webPage.willDisplayPage();
 
         updateIntrinsicContentSizeIfNeeded();
 

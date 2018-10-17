@@ -242,6 +242,9 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_storageNamespaceProvider(*WTFMove(pageConfiguration.storageNamespaceProvider))
     , m_userContentProvider(*WTFMove(pageConfiguration.userContentProvider))
     , m_visitedLinkStore(*WTFMove(pageConfiguration.visitedLinkStore))
+#if ENABLE(INTERSECTION_OBSERVER)
+    , m_intersectionObservationUpdateTimer(*this, &Page::updateIntersectionObservations)
+#endif
     , m_sessionID(PAL::SessionID::defaultSessionID())
 #if ENABLE(VIDEO)
     , m_playbackControlsManagerUpdateTimer(*this, &Page::playbackControlsManagerUpdateTimerFired)
@@ -979,6 +982,13 @@ void Page::didFinishLoad()
         m_performanceMonitor->didFinishLoad();
 }
 
+void Page::willDisplayPage()
+{
+#if ENABLE(INTERSECTION_OBSERVER)
+    updateIntersectionObservations();
+#endif
+}
+
 bool Page::isOnlyNonUtilityPage() const
 {
     return !isUtilityPage() && nonUtilityPageCount == 1;
@@ -1119,6 +1129,32 @@ void Page::removeActivityStateChangeObserver(ActivityStateChangeObserver& observ
 {
     m_activityStateChangeObservers.remove(&observer);
 }
+
+#if ENABLE(INTERSECTION_OBSERVER)
+void Page::addDocumentNeedingIntersectionObservationUpdate(Document& document)
+{
+    if (m_documentsNeedingIntersectionObservationUpdate.find(&document) == notFound)
+        m_documentsNeedingIntersectionObservationUpdate.append(makeWeakPtr(document));
+}
+
+void Page::updateIntersectionObservations()
+{
+    m_intersectionObservationUpdateTimer.stop();
+    for (auto document : m_documentsNeedingIntersectionObservationUpdate) {
+        if (document)
+            document->updateIntersectionObservations();
+    }
+    m_documentsNeedingIntersectionObservationUpdate.clear();
+}
+
+void Page::scheduleForcedIntersectionObservationUpdate(Document& document)
+{
+    addDocumentNeedingIntersectionObservationUpdate(document);
+    if (m_intersectionObservationUpdateTimer.isActive())
+        return;
+    m_intersectionObservationUpdateTimer.startOneShot(0_s);
+}
+#endif
 
 void Page::suspendScriptedAnimations()
 {

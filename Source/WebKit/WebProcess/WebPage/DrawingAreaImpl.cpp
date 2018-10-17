@@ -406,6 +406,7 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
     if (m_layerTreeHost)
         return;
 
+    m_webPage.willDisplayPage();
     updateInfo.viewSize = m_webPage.size();
     updateInfo.deviceScaleFactor = m_webPage.corePage()->deviceScaleFactor();
 

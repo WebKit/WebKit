@@ -289,6 +289,8 @@ public:
     void didFlushLayerTreeAtTime(MonotonicTime);
 #endif
 
+    void willDisplayPage();
+
     enum class LazyCreationPolicy { UseExistingOnly, CreateIfNeeded };
 
     WebInspector* inspector(LazyCreationPolicy = LazyCreationPolicy::CreateIfNeeded);

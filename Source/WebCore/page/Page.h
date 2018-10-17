@@ -22,6 +22,7 @@
 
 #include "ActivityState.h"
 #include "DisabledAdaptations.h"
+#include "Document.h"
 #include "FindOptions.h"
 #include "FrameLoaderTypes.h"
 #include "LayoutMilestones.h"
@@ -325,6 +326,8 @@ public:
     void didStartProvisionalLoad();
     void didFinishLoad(); // Called when the load has been committed in the main frame.
 
+    WEBCORE_EXPORT void willDisplayPage();
+
     // The view scale factor is multiplied into the page scale factor by all
     // callers of setPageScaleFactor.
     WEBCORE_EXPORT void setViewScaleFactor(float);
@@ -444,6 +447,12 @@ public:
 
     WEBCORE_EXPORT void addActivityStateChangeObserver(ActivityStateChangeObserver&);
     WEBCORE_EXPORT void removeActivityStateChangeObserver(ActivityStateChangeObserver&);
+
+#if ENABLE(INTERSECTION_OBSERVER)
+    void addDocumentNeedingIntersectionObservationUpdate(Document&);
+    void scheduleForcedIntersectionObservationUpdate(Document&);
+    void updateIntersectionObservations();
+#endif
 
     WEBCORE_EXPORT void suspendScriptedAnimations();
     WEBCORE_EXPORT void resumeScriptedAnimations();
@@ -864,6 +873,14 @@ private:
     RefPtr<WheelEventTestTrigger> m_testTrigger;
 
     HashSet<ActivityStateChangeObserver*> m_activityStateChangeObservers;
+
+#if ENABLE(INTERSECTION_OBSERVER)
+    Vector<WeakPtr<Document>> m_documentsNeedingIntersectionObservationUpdate;
+
+    // FIXME: Schedule intersection observation updates in a way that fits into the HTML
+    // EventLoop. See https://bugs.webkit.org/show_bug.cgi?id=160711.
+    Timer m_intersectionObservationUpdateTimer;
+#endif
 
 #if ENABLE(RESOURCE_USAGE)
     std::unique_ptr<ResourceUsageOverlay> m_resourceUsageOverlay;

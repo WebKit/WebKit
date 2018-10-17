@@ -1,3 +1,48 @@
+2018-10-17  Ali Juma  <ajuma@chromium.org>
+
+        Flaky IntersectionObserver web platform tests involving style updates
+        https://bugs.webkit.org/show_bug.cgi?id=189091
+
+        Reviewed by Simon Fraser.
+
+        Update intersection observations when flushing layers from the WebProcess
+        to the UIProcess to make the timing of these updates more predictable, and
+        more consistent with the IntersectionObserver spec, since the spec expects
+        these updates to happen as part of the "Update the rendering" step in the
+        HTML EventLoop.
+
+        Getting a similar approach to work with WK1 seems to add more complexity than it's
+        worth, since flushes don't happen for scrolls handled by platform widgets, and
+        flushes for other invalidations only happen when in compositing mode.
+
+        The only remaining timer-driven intersection observation update is for handling
+        the initial observation on a newly added target, which needs to happen even if
+        there are no changes triggering a flush.
+
+        Tested by the following tests no longer being flaky:
+            imported/w3c/web-platform-tests/intersection-observer/bounding-box.html
+            imported/w3c/web-platform-tests/intersection-observer/display-none.html
+            imported/w3c/web-platform-tests/intersection-observer/containing-block.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::resolveStyle):
+        (WebCore::Document::updateIntersectionObservations):
+        (WebCore::Document::scheduleForcedIntersectionObservationUpdate):
+        (WebCore::Document::scheduleIntersectionObservationUpdate): Deleted.
+        * dom/Document.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::flushCompositingStateForThisFrame):
+        (WebCore::FrameView::viewportContentsChanged):
+        * page/IntersectionObserver.cpp:
+        (WebCore::IntersectionObserver::observe):
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::willDisplayPage):
+        (WebCore::Page::addDocumentNeedingIntersectionObservationUpdate):
+        (WebCore::Page::updateIntersectionObservations):
+        (WebCore::Page::scheduleForcedIntersectionObservationUpdate):
+        * page/Page.h:
+
 2018-10-17  Charlie Turner  <cturner@igalia.com>
 
         [EME] Sanity check key ID length in the keyids init data format

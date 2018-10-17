@@ -1000,6 +1000,7 @@ bool FrameView::flushCompositingStateForThisFrame(const Frame& rootFrameForFlush
 #endif
 
     renderView->compositor().flushPendingLayerChanges(&rootFrameForFlush == m_frame.ptr());
+
     return true;
 }
 
@@ -2008,8 +2009,12 @@ void FrameView::viewportContentsChanged()
     });
 
 #if ENABLE(INTERSECTION_OBSERVER)
-    if (auto* document = frame().document())
-        document->scheduleIntersectionObservationUpdate();
+    if (auto* document = frame().document()) {
+        if (document->numberOfIntersectionObservers()) {
+            if (auto* page = frame().page())
+                page->addDocumentNeedingIntersectionObservationUpdate(*document);
+        }
+    }
 #endif
 }
 

@@ -334,6 +334,7 @@ void RemoteLayerTreeDrawingArea::flushLayers()
     backingStoreCollection.willFlushLayers();
 
     m_webPage.layoutIfNeeded();
+    m_webPage.willDisplayPage();
 
     FloatRect visibleRect(FloatPoint(), m_viewSize);
     if (m_scrolledViewExposedRect)

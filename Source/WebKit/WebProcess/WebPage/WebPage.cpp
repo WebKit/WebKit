@@ -3392,6 +3392,11 @@ void WebPage::didFlushLayerTreeAtTime(MonotonicTime timestamp)
 }
 #endif
 
+void WebPage::willDisplayPage()
+{
+    m_page->willDisplayPage();
+}
+
 WebInspector* WebPage::inspector(LazyCreationPolicy behavior)
 {
     if (m_isClosed)

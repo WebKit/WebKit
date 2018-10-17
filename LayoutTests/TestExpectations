@@ -2842,10 +2842,6 @@ webkit.org/b/175609 imported/w3c/web-platform-tests/IndexedDB/idbcursor-continue
 webkit.org/b/175609 imported/w3c/web-platform-tests/IndexedDB/idbdatabase-deleteObjectStore-exception-order.htm [ Pass Failure ]
 webkit.org/b/175609 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_getAllKeys.html [ Pass Failure ]
 
-webkit.org/b/189091 imported/w3c/web-platform-tests/intersection-observer/bounding-box.html [ Pass Failure ]
-webkit.org/b/189091 imported/w3c/web-platform-tests/intersection-observer/display-none.html [ Pass Failure ]
-webkit.org/b/189091 imported/w3c/web-platform-tests/intersection-observer/containing-block.html [ Pass Failure ]
-
 webkit.org/b/186848 imported/w3c/web-platform-tests/FileAPI/blob/Blob-slice.html [ Pass Failure ]
 webkit.org/b/179176 svg/wicd/test-rightsizing-a.xhtml [ Pass Failure ]
 

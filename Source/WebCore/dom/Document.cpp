@@ -510,7 +510,6 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_documentClasses(documentClasses)
     , m_eventQueue(*this)
 #if ENABLE(INTERSECTION_OBSERVER)
-    , m_intersectionObservationUpdateTimer(*this, &Document::updateIntersectionObservations)
     , m_intersectionObserversNotifyTimer(*this, &Document::notifyIntersectionObserversTimerFired)
 #endif
     , m_loadEventDelayTimer(*this, &Document::loadEventDelayTimerFired)
@@ -1929,8 +1928,8 @@ void Document::resolveStyle(ResolveStyleType type)
         // Usually this is handled by post-layout.
         if (!frameView.needsLayout()) {
             frameView.frame().selection().scheduleAppearanceUpdateAfterStyleChange();
-            if (m_needsIntersectionObservationUpdate)
-                scheduleIntersectionObservationUpdate();
+            if (m_needsForcedIntersectionObservationUpdate)
+                page()->scheduleForcedIntersectionObservationUpdate(*this);
         }
 
         // As a result of the style recalculation, the currently hovered element might have been
@@ -7645,7 +7644,6 @@ static void computeIntersectionRects(FrameView& frameView, IntersectionObserver&
 
 void Document::updateIntersectionObservations()
 {
-    ASSERT(m_needsIntersectionObservationUpdate);
     auto* frameView = view();
     if (!frameView)
         return;
@@ -7654,7 +7652,7 @@ void Document::updateIntersectionObservations()
     if (needsLayout || hasPendingStyleRecalc())
         return;
 
-    m_needsIntersectionObservationUpdate = false;
+    m_needsForcedIntersectionObservationUpdate = false;
 
     for (auto observer : m_intersectionObservers) {
         bool needNotify = false;
@@ -7719,13 +7717,15 @@ void Document::updateIntersectionObservations()
         m_intersectionObserversNotifyTimer.startOneShot(0_s);
 }
 
-void Document::scheduleIntersectionObservationUpdate()
+void Document::scheduleForcedIntersectionObservationUpdate()
 {
-    if (m_intersectionObservers.isEmpty() || m_intersectionObservationUpdateTimer.isActive())
+    ASSERT(!m_intersectionObservers.isEmpty());
+    if (m_needsForcedIntersectionObservationUpdate)
         return;
 
-    m_needsIntersectionObservationUpdate = true;
-    m_intersectionObservationUpdateTimer.startOneShot(0_s);
+    m_needsForcedIntersectionObservationUpdate = true;
+    if (auto* page = this->page())
+        page->scheduleForcedIntersectionObservationUpdate(*this);
 }
 
 void Document::notifyIntersectionObserversTimerFired()

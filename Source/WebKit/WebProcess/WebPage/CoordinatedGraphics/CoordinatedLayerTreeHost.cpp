@@ -189,6 +189,7 @@ void CoordinatedLayerTreeHost::layerFlushTimerFired()
 
     m_coordinator.syncDisplayState();
     m_webPage.flushPendingEditorStateUpdate();
+    m_webPage.willDisplayPage();
 
     if (!m_isValid || !m_coordinator.rootCompositingLayer())
         return;

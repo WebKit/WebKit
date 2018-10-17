@@ -1394,8 +1394,8 @@ public:
     void addIntersectionObserver(IntersectionObserver&);
     void removeIntersectionObserver(IntersectionObserver&);
     unsigned numberOfIntersectionObservers() const { return m_intersectionObservers.size(); }
+    void scheduleForcedIntersectionObservationUpdate();
     void updateIntersectionObservations();
-    void scheduleIntersectionObservationUpdate();
 #endif
 
 #if ENABLE(MEDIA_STREAM)
@@ -1825,10 +1825,6 @@ private:
 #if ENABLE(INTERSECTION_OBSERVER)
     Vector<WeakPtr<IntersectionObserver>> m_intersectionObservers;
     Vector<WeakPtr<IntersectionObserver>> m_intersectionObserversWithPendingNotifications;
-
-    // FIXME: Schedule intersection observation updates in a way that fits into the HTML
-    // EventLoop. See https://bugs.webkit.org/show_bug.cgi?id=160711.
-    Timer m_intersectionObservationUpdateTimer;
     Timer m_intersectionObserversNotifyTimer;
 #endif
 
@@ -2017,7 +2013,7 @@ private:
 #endif
 
 #if ENABLE(INTERSECTION_OBSERVER)
-    bool m_needsIntersectionObservationUpdate { false };
+    bool m_needsForcedIntersectionObservationUpdate { false };
 #endif
 
 #if ENABLE(MEDIA_STREAM)
