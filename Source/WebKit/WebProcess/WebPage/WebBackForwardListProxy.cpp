@@ -110,7 +110,7 @@ void WebBackForwardListProxy::goToItem(HistoryItem& item)
     m_page->sandboxExtensionTracker().beginLoad(m_page->mainWebFrame(), WTFMove(sandboxExtensionHandle));
 }
 
-HistoryItem* WebBackForwardListProxy::itemAtIndex(int itemIndex)
+RefPtr<HistoryItem> WebBackForwardListProxy::itemAtIndex(int itemIndex)
 {
     if (!m_page)
         return nullptr;
@@ -125,24 +125,24 @@ HistoryItem* WebBackForwardListProxy::itemAtIndex(int itemIndex)
     return idToHistoryItemMap().get(*itemID);
 }
 
-int WebBackForwardListProxy::backListCount() const
+unsigned WebBackForwardListProxy::backListCount() const
 {
     if (!m_page)
         return 0;
 
-    int backListCount = 0;
+    unsigned backListCount = 0;
     if (!WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::BackForwardBackListCount(), Messages::WebPageProxy::BackForwardBackListCount::Reply(backListCount), m_page->pageID()))
         return 0;
 
     return backListCount;
 }
 
-int WebBackForwardListProxy::forwardListCount() const
+unsigned WebBackForwardListProxy::forwardListCount() const
 {
     if (!m_page)
         return 0;
 
-    int forwardListCount = 0;
+    unsigned forwardListCount = 0;
     if (!WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::BackForwardForwardListCount(), Messages::WebPageProxy::BackForwardForwardListCount::Reply(forwardListCount), m_page->pageID()))
         return 0;
 

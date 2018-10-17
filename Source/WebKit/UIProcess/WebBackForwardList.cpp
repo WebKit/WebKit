@@ -249,23 +249,23 @@ WebBackForwardListItem* WebBackForwardList::itemAtIndex(int index) const
         return nullptr;
     
     // Do range checks without doing math on index to avoid overflow.
-    if (index < -backListCount())
+    if (index < 0 && static_cast<unsigned>(-index) > backListCount())
         return nullptr;
     
-    if (index > forwardListCount())
+    if (index > 0 && static_cast<unsigned>(index) > forwardListCount())
         return nullptr;
-        
+
     return m_entries[index + *m_currentIndex].ptr();
 }
 
-int WebBackForwardList::backListCount() const
+unsigned WebBackForwardList::backListCount() const
 {
     ASSERT(!m_currentIndex || *m_currentIndex < m_entries.size());
 
     return m_page && m_currentIndex ? *m_currentIndex : 0;
 }
 
-int WebBackForwardList::forwardListCount() const
+unsigned WebBackForwardList::forwardListCount() const
 {
     ASSERT(!m_currentIndex || *m_currentIndex < m_entries.size());
 

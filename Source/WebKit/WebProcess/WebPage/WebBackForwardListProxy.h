@@ -58,9 +58,9 @@ private:
 
     void goToItem(WebCore::HistoryItem&) override;
         
-    WebCore::HistoryItem* itemAtIndex(int) override;
-    int backListCount() const override;
-    int forwardListCount() const override;
+    RefPtr<WebCore::HistoryItem> itemAtIndex(int) override;
+    unsigned backListCount() const override;
+    unsigned forwardListCount() const override;
 
     void close() override;
 

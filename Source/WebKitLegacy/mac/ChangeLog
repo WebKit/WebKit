@@ -1,3 +1,24 @@
+2018-10-17  Alex Christensen  <achristensen@webkit.org>
+
+        BackForwardClient needs to be able to support UIProcess-only back/forward lists
+        https://bugs.webkit.org/show_bug.cgi?id=190675
+
+        Reviewed by Chris Dumez.
+
+        * History/BackForwardList.h:
+        * History/BackForwardList.mm:
+        (BackForwardList::backItem):
+        (BackForwardList::currentItem):
+        (BackForwardList::forwardItem):
+        (BackForwardList::backListCount const):
+        (BackForwardList::forwardListCount const):
+        (BackForwardList::itemAtIndex):
+        * History/WebBackForwardList.mm:
+        (-[WebBackForwardList backItem]):
+        (-[WebBackForwardList currentItem]):
+        (-[WebBackForwardList forwardItem]):
+        (-[WebBackForwardList itemAtIndex:]):
+
 2018-10-16  Timothy Hatcher  <timothy@apple.com>
 
         Add <meta name="supported-color-schemes"> to control what color schemes the page supports

@@ -44,9 +44,9 @@ public:
 
     virtual void goToItem(HistoryItem&) = 0;
         
-    virtual HistoryItem* itemAtIndex(int) = 0;
-    virtual int backListCount() const = 0;
-    virtual int forwardListCount() const = 0;
+    virtual RefPtr<HistoryItem> itemAtIndex(int) = 0;
+    virtual unsigned backListCount() const = 0;
+    virtual unsigned forwardListCount() const = 0;
 
     virtual void close() = 0;
 };

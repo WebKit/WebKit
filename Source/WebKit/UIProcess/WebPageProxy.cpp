@@ -4986,12 +4986,12 @@ void WebPageProxy::backForwardItemAtIndex(int32_t index, std::optional<BackForwa
         itemID = std::nullopt;
 }
 
-void WebPageProxy::backForwardBackListCount(int32_t& count)
+void WebPageProxy::backForwardBackListCount(uint32_t& count)
 {
     count = m_backForwardList->backListCount();
 }
 
-void WebPageProxy::backForwardForwardListCount(int32_t& count)
+void WebPageProxy::backForwardForwardListCount(uint32_t& count)
 {
     count = m_backForwardList->forwardListCount();
 }

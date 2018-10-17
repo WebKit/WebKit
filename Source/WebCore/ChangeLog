@@ -1,3 +1,35 @@
+2018-10-17  Alex Christensen  <achristensen@webkit.org>
+
+        BackForwardClient needs to be able to support UIProcess-only back/forward lists
+        https://bugs.webkit.org/show_bug.cgi?id=190675
+
+        Reviewed by Chris Dumez.
+
+        Return a RefPtr<HistoryItem> instead of a HistoryItem so that we will be able to return a
+        HistoryItem that has been created instead of a pointer to a HistoryItem that is owned by something else.
+        Also use unsigned for the back and forward list counts because they can never be negative.
+
+        * history/BackForwardClient.h:
+        * history/BackForwardController.cpp:
+        (WebCore::BackForwardController::backItem):
+        (WebCore::BackForwardController::currentItem):
+        (WebCore::BackForwardController::forwardItem):
+        (WebCore::BackForwardController::canGoBackOrForward const):
+        (WebCore::BackForwardController::goBackOrForward):
+        (WebCore::BackForwardController::goBack):
+        (WebCore::BackForwardController::goForward):
+        (WebCore::BackForwardController::count const):
+        (WebCore::BackForwardController::backCount const):
+        (WebCore::BackForwardController::forwardCount const):
+        (WebCore::BackForwardController::itemAtIndex):
+        * history/BackForwardController.h:
+        (WebCore::BackForwardController::backItem): Deleted.
+        (WebCore::BackForwardController::currentItem): Deleted.
+        (WebCore::BackForwardController::forwardItem): Deleted.
+        * loader/EmptyClients.cpp:
+        * loader/NavigationScheduler.cpp:
+        (WebCore::NavigationScheduler::scheduleHistoryNavigation):
+
 2018-10-17  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Do not create a DocumentTimeline to suspend or resume animations

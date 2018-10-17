@@ -113,24 +113,24 @@ void BackForwardList::goToItem(HistoryItem& item)
     }
 }
 
-HistoryItem* BackForwardList::backItem()
+RefPtr<HistoryItem> BackForwardList::backItem()
 {
     if (m_current && m_current != NoCurrentItemIndex)
-        return m_entries[m_current - 1].ptr();
+        return m_entries[m_current - 1].copyRef();
     return nullptr;
 }
 
-HistoryItem* BackForwardList::currentItem()
+RefPtr<HistoryItem> BackForwardList::currentItem()
 {
     if (m_current != NoCurrentItemIndex)
-        return m_entries[m_current].ptr();
+        return m_entries[m_current].copyRef();
     return nullptr;
 }
 
-HistoryItem* BackForwardList::forwardItem()
+RefPtr<HistoryItem> BackForwardList::forwardItem()
 {
     if (m_entries.size() && m_current < m_entries.size() - 1)
-        return m_entries[m_current + 1].ptr();
+        return m_entries[m_current + 1].copyRef();
     return nullptr;
 }
 
@@ -196,26 +196,26 @@ void BackForwardList::setEnabled(bool enabled)
     }
 }
 
-int BackForwardList::backListCount() const
+unsigned BackForwardList::backListCount() const
 {
     return m_current == NoCurrentItemIndex ? 0 : m_current;
 }
 
-int BackForwardList::forwardListCount() const
+unsigned BackForwardList::forwardListCount() const
 {
-    return m_current == NoCurrentItemIndex ? 0 : (int)m_entries.size() - (m_current + 1);
+    return m_current == NoCurrentItemIndex ? 0 : m_entries.size() - m_current - 1;
 }
 
-HistoryItem* BackForwardList::itemAtIndex(int index)
+RefPtr<HistoryItem> BackForwardList::itemAtIndex(int index)
 {
     // Do range checks without doing math on index to avoid overflow.
     if (index < -static_cast<int>(m_current))
         return nullptr;
     
-    if (index > forwardListCount())
+    if (index > static_cast<int>(forwardListCount()))
         return nullptr;
-        
-    return m_entries[index + m_current].ptr();
+
+    return m_entries[index + m_current].copyRef();
 }
 
 Vector<Ref<HistoryItem>>& BackForwardList::entries()

@@ -1666,7 +1666,7 @@ String WebPage::dumpHistoryForTesting(const String& directory)
     int begin = -list.backCount();
     if (list.itemAtIndex(begin)->url() == blankURL())
         ++begin;
-    for (int i = begin; i <= list.forwardCount(); ++i)
+    for (int i = begin; i <= static_cast<int>(list.forwardCount()); ++i)
         dumpHistoryItem(*list.itemAtIndex(i), 8, !i, builder, directory);
     return builder.toString();
 }

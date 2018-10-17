@@ -1,3 +1,28 @@
+2018-10-17  Alex Christensen  <achristensen@webkit.org>
+
+        BackForwardClient needs to be able to support UIProcess-only back/forward lists
+        https://bugs.webkit.org/show_bug.cgi?id=190675
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::itemAtIndex const):
+        (WebKit::WebBackForwardList::backListCount const):
+        (WebKit::WebBackForwardList::forwardListCount const):
+        * UIProcess/WebBackForwardList.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::backForwardBackListCount):
+        (WebKit::WebPageProxy::backForwardForwardListCount):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp:
+        (WebKit::WebBackForwardListProxy::itemAtIndex):
+        (WebKit::WebBackForwardListProxy::backListCount const):
+        (WebKit::WebBackForwardListProxy::forwardListCount const):
+        * WebProcess/WebPage/WebBackForwardListProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::dumpHistoryForTesting):
+
 2018-10-17  Ali Juma  <ajuma@chromium.org>
 
         Flaky IntersectionObserver web platform tests involving style updates

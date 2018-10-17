@@ -1567,8 +1567,8 @@ private:
     void backForwardAddItem(BackForwardListItemState&&);
     void backForwardGoToItem(const WebCore::BackForwardItemIdentifier&, SandboxExtension::Handle&);
     void backForwardItemAtIndex(int32_t index, std::optional<WebCore::BackForwardItemIdentifier>&);
-    void backForwardBackListCount(int32_t& count);
-    void backForwardForwardListCount(int32_t& count);
+    void backForwardBackListCount(uint32_t& count);
+    void backForwardForwardListCount(uint32_t& count);
     void backForwardClear();
 
     // Undo management

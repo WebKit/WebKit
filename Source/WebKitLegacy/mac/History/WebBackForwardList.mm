@@ -225,17 +225,17 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
 
 - (WebHistoryItem *)backItem
 {
-    return [[kit(core(self)->backItem()) retain] autorelease];
+    return [[kit(core(self)->backItem().get()) retain] autorelease];
 }
 
 - (WebHistoryItem *)currentItem
 {
-    return [[kit(core(self)->currentItem()) retain] autorelease];
+    return [[kit(core(self)->currentItem().get()) retain] autorelease];
 }
 
 - (WebHistoryItem *)forwardItem
 {
-    return [[kit(core(self)->forwardItem()) retain] autorelease];
+    return [[kit(core(self)->forwardItem().get()) retain] autorelease];
 }
 
 static NSArray* vectorToNSArray(Vector<Ref<HistoryItem>>& list)
@@ -357,7 +357,7 @@ static bool bumperCarBackForwardHackNeeded()
 
 - (WebHistoryItem *)itemAtIndex:(int)index
 {
-    return [[kit(core(self)->itemAtIndex(index)) retain] autorelease];
+    return [[kit(core(self)->itemAtIndex(index).get()) retain] autorelease];
 }
 
 @end

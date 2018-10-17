@@ -47,6 +47,7 @@
 #include "FrameLoaderClient.h"
 #include "FrameNetworkingContext.h"
 #include "HTMLFormElement.h"
+#include "HistoryItem.h"
 #include "InProcessIDBServer.h"
 #include "InspectorClient.h"
 #include "LibWebRTCProvider.h"
@@ -84,9 +85,9 @@ class UserMessageHandlerDescriptor;
 class EmptyBackForwardClient final : public BackForwardClient {
     void addItem(Ref<HistoryItem>&&) final { }
     void goToItem(HistoryItem&) final { }
-    HistoryItem* itemAtIndex(int) final { return nullptr; }
-    int backListCount() const final { return 0; }
-    int forwardListCount() const final { return 0; }
+    RefPtr<HistoryItem> itemAtIndex(int) final { return nullptr; }
+    unsigned backListCount() const final { return 0; }
+    unsigned forwardListCount() const final { return 0; }
     void close() final { }
 };
 

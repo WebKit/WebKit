@@ -477,7 +477,8 @@ void NavigationScheduler::scheduleHistoryNavigation(int steps)
     // Invalid history navigations (such as history.forward() during a new load) have the side effect of cancelling any scheduled
     // redirects. We also avoid the possibility of cancelling the current load by avoiding the scheduled redirection altogether.
     BackForwardController& backForward = m_frame.page()->backForward();
-    if (steps > backForward.forwardCount() || -steps > backForward.backCount()) {
+    if ((steps > 0 && static_cast<unsigned>(steps) > backForward.forwardCount())
+        || (steps < 0 && static_cast<unsigned>(-steps) > backForward.backCount())) {
         cancel();
         return;
     }

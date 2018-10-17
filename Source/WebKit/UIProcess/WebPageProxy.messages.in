@@ -230,8 +230,8 @@ messages -> WebPageProxy {
     BackForwardAddItem(struct WebKit::BackForwardListItemState itemState)
     BackForwardGoToItem(struct WebCore::BackForwardItemIdentifier itemID) -> (WebKit::SandboxExtension::Handle sandboxExtensionHandle)
     BackForwardItemAtIndex(int32_t itemIndex) -> (std::optional<WebCore::BackForwardItemIdentifier> itemID)
-    BackForwardBackListCount() -> (int32_t count)
-    BackForwardForwardListCount() -> (int32_t count)
+    BackForwardBackListCount() -> (uint32_t count)
+    BackForwardForwardListCount() -> (uint32_t count)
     BackForwardClear()
     WillGoToBackForwardListItem(struct WebCore::BackForwardItemIdentifier itemID, bool inPageCache)
 

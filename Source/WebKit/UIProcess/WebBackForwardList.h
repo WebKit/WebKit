@@ -60,8 +60,8 @@ public:
 
     const BackForwardListItemVector& entries() const { return m_entries; }
 
-    int backListCount() const;
-    int forwardListCount() const;
+    unsigned backListCount() const;
+    unsigned forwardListCount() const;
 
     Ref<API::Array> backList() const;
     Ref<API::Array> forwardList() const;
