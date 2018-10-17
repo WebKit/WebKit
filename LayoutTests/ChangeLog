@@ -1,3 +1,12 @@
+2018-10-17  Charlie Turner  <cturner@igalia.com>
+
+        [EME] media/encrypted-media/mock-MediaKeySystemAccess.html crashes in CDM::createInstance
+        https://bugs.webkit.org/show_bug.cgi?id=190578
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * platform/gtk/TestExpectations:
+
 2018-10-16  Chris Dumez  <cdumez@apple.com>
 
         Regression(r236795) Check boxes are sometimes checked when they should not be

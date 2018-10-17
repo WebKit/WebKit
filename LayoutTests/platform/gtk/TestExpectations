@@ -1236,6 +1236,8 @@ webkit.org/b/190577 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4
 webkit.org/b/190577 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-multiple-times-with-different-mediakeys.https.html [ Crash ]
 webkit.org/b/190577 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-waiting-for-a-key.https.html [ Crash ]
 
+webkit.org/b/190578 media/encrypted-media/mock-MediaKeySystemAccess.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #
