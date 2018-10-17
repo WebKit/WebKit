@@ -1,3 +1,14 @@
+2018-10-17  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] Increment the API version to 5
+        https://bugs.webkit.org/show_bug.cgi?id=190686
+        <rdar://problem/45348523>
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/ApplePay/WebPaymentCoordinator.cpp:
+        (WebKit::WebPaymentCoordinator::supportsVersion):
+
 2018-10-17  Alex Christensen  <achristensen@webkit.org>
 
         BackForwardClient needs to be able to support UIProcess-only back/forward lists

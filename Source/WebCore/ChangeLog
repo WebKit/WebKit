@@ -1,3 +1,16 @@
+2018-10-17  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] Increment the API version to 5
+        https://bugs.webkit.org/show_bug.cgi?id=190686
+        <rdar://problem/45348523>
+
+        Reviewed by Simon Fraser.
+
+        Test: http/tests/ssl/applepay/ApplePaySessionV5.html
+
+        * testing/MockPaymentCoordinator.cpp:
+        (WebCore::MockPaymentCoordinator::supportsVersion):
+
 2018-10-17  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Consolidate all image conversion and resizing into one class

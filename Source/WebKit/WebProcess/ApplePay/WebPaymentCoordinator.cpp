@@ -60,7 +60,7 @@ bool WebPaymentCoordinator::supportsVersion(unsigned version)
 #elif !ENABLE(APPLE_PAY_SESSION_V4)
     static const unsigned currentVersion = 3;
 #else
-    static const unsigned currentVersion = 4;
+    static const unsigned currentVersion = 5;
 #endif
 
     return version <= currentVersion;
