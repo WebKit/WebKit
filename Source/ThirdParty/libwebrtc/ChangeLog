@@ -1,3 +1,18 @@
+2018-10-17  Youenn Fablet  <youenn@apple.com>
+
+        REGRESSION (r237075): webrtc/video-replace-muted-track.html is Crashing
+        https://bugs.webkit.org/show_bug.cgi?id=190646
+
+        Reviewed by Eric Carlson.
+
+        Do not use VCP pixel buffer pool at all.
+        RealtimeOutgoingVideoSource makes sure to send the frame in the right format.
+        Tested by ensuring test no longer crashes.
+
+        * Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderH264.mm:
+        (-[RTCSingleVideoEncoderH264 resetCompressionSessionIfNeededWithFrame:]):
+        (-[RTCSingleVideoEncoderH264 resetCompressionSessionWithPixelFormat:]):
+
 2018-10-16  Youenn Fablet  <youenn@apple.com>
 
         Support RTCConfiguration.certificates

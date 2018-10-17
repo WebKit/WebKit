@@ -541,6 +541,11 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
   OSType framePixelFormat = [self pixelFormatOfFrame:frame];
 
   if (_compressionSession) {
+#if defined(WEBRTC_WEBKIT_BUILD)
+    if (!_pixelBufferPool) {
+      return NO;
+    }
+#endif
     // The pool attribute `kCVPixelBufferPixelFormatTypeKey` can contain either an array of pixel
     // formats or a single pixel format.
     NSDictionary *poolAttributes =
@@ -734,10 +739,11 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
 #endif
   [self configureCompressionSession];
 
+#if !defined(WEBRTC_WEBKIT_BUILD)
   // The pixel buffer pool is dependent on the compression session so if the session is reset, the
   // pool should be reset as well.
   _pixelBufferPool = CompressionSessionGetPixelBufferPool(_compressionSession);
-
+#endif
   return WEBRTC_VIDEO_CODEC_OK;
 }
 
