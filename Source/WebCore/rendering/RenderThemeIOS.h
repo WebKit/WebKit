@@ -145,6 +145,14 @@ private:
     String extraDefaultStyleSheet() final;
 #endif
 
+#if ENABLE(INPUT_TYPE_COLOR)
+    bool platformUsesColorWellAppearance() const final
+    {
+        // FIXME: Support -webkit-appearance: color-well; for drawing color inputs on iOS.
+        return false;
+    }
+#endif
+
     const Color& shadowColor() const;
     FloatRect addRoundedBorderClip(const RenderObject& box, GraphicsContext&, const IntRect&);
 

@@ -119,10 +119,6 @@ private:
     String imageControlsStyleSheet() const final;
 #endif
 
-#if ENABLE(INPUT_TYPE_COLOR)
-    String platformColorInputStyleSheet() const final;
-#endif
-
     bool paintTextField(const RenderObject&, const PaintInfo&, const FloatRect&) final;
     void adjustTextFieldStyle(StyleResolver&, RenderStyle&, const Element*) const final;
 

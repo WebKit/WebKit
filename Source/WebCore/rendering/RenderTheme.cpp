@@ -1039,7 +1039,10 @@ bool RenderTheme::paintAttachment(const RenderObject&, const PaintInfo&, const I
 String RenderTheme::colorInputStyleSheet() const
 {
     ASSERT(RuntimeEnabledFeatures::sharedFeatures().inputTypeColorEnabled());
-    return makeString(platformColorInputStyleSheet(), " input[type=\"color\"] { width: 44px; height: 23px; outline: none; }"_s);
+    auto colorWellAppearanceStyle = emptyString();
+    if (platformUsesColorWellAppearance())
+        colorWellAppearanceStyle = "-webkit-appearance: color-well; "_s;
+    return makeString("input[type=\"color\"] { "_s, WTFMove(colorWellAppearanceStyle), "width: 44px; height: 23px; outline: none; }"_s);
 }
 
 #endif // ENABLE(INPUT_TYPE_COLOR)

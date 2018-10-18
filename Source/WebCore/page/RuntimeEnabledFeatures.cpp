@@ -46,6 +46,9 @@ RuntimeEnabledFeatures::RuntimeEnabledFeatures()
 #if PLATFORM(WATCHOS)
     m_isWebSocketEnabled = false;
 #endif
+#if PLATFORM(GTK) && ENABLE(INPUT_TYPE_COLOR)
+    m_isInputTypeColorEnabled = true;
+#endif
 }
 
 RuntimeEnabledFeatures& RuntimeEnabledFeatures::sharedFeatures()

@@ -1,3 +1,30 @@
+2018-10-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [GTK] fast/css/pseudo-visited-background-color-on-input.html is failing since r237425
+        https://bugs.webkit.org/show_bug.cgi?id=190712
+
+        Reviewed by Tim Horton.
+
+        Ensure that color inputs are enabled by default on GTK, and that color inputs have a `-webkit-appearance` of
+        `color-well` by default. Fixes fast/css/pseudo-visited-background-color-on-input.html on GTK.
+
+        * page/RuntimeEnabledFeatures.cpp:
+        (WebCore::RuntimeEnabledFeatures::RuntimeEnabledFeatures):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::colorInputStyleSheet const):
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::platformUsesColorWellAppearance const):
+        (WebCore::RenderTheme::platformColorInputStyleSheet const): Deleted.
+
+        Replace this with a platform hook that determines whether we want to use `-webkit-appearance: color-well;` by
+        default for inputs of type color. For now, only iOS overrides this to return false; in the future, we should
+        support `-webkit-appearance: color-well;` on iOS, and remove this platform hook entirely.
+
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::platformColorInputStyleSheet const): Deleted.
+
 2018-10-18  Youenn Fablet  <youenn@apple.com>
 
         Handle MDNS resolution of candidates through libwebrtc directly

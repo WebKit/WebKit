@@ -350,7 +350,7 @@ protected:
 #endif
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    virtual String platformColorInputStyleSheet() const { return { }; }
+    virtual bool platformUsesColorWellAppearance() const { return true; }
 #endif
 
     virtual void adjustProgressBarStyle(StyleResolver&, RenderStyle&, const Element*) const;

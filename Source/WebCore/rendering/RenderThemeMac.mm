@@ -340,11 +340,6 @@ void RenderThemeMac::purgeCaches()
     RenderTheme::purgeCaches();
 }
 
-String RenderThemeMac::platformColorInputStyleSheet() const
-{
-    return "input[type=\"color\"] { -webkit-appearance: color-well; }"_s;
-}
-
 String RenderThemeMac::mediaControlsScript()
 {
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
