@@ -20,6 +20,10 @@ function shouldBeSyntaxError(str) {
     shouldThrow(str);
     shouldThrow("(function(){" + str + "})");
 }
+function shouldNotBeSyntaxError(str) {
+    shouldNotThrow(str);
+    shouldNotThrow("(function(){" + str + "})");
+}
 function testLineContinuation() {
     "use stric\
 t";
@@ -148,9 +152,9 @@ shouldBeSyntaxError("'use strict'; function f() { ++(1, arguments) }");
 shouldBeSyntaxError("'use strict'; function f() { (1, arguments)++ }");
 shouldBeSyntaxError("'use strict'; function f() { --(1, arguments) }");
 shouldBeSyntaxError("'use strict'; function f() { (1, arguments)-- }");
-shouldBeSyntaxError("'use strict'; if (0) delete +a.b");
-shouldBeSyntaxError("'use strict'; if (0) delete ++a.b");
-shouldBeSyntaxError("'use strict'; if (0) delete void a.b");
+shouldNotBeSyntaxError("'use strict'; if (0) delete +a.b");
+shouldNotBeSyntaxError("'use strict'; if (0) delete ++a.b");
+shouldNotBeSyntaxError("'use strict'; if (0) delete void a.b");
 
 shouldBeTrue("(function (a){'use strict'; a = false; return a !== arguments[0]; })(true)");
 shouldBeTrue("(function (a){'use strict'; arguments[0] = false; return a !== arguments[0]; })(true)");

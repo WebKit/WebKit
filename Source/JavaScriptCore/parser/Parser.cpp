@@ -4943,10 +4943,6 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseUnaryExpress
                 modifiesExpr = true;
                 requiresLExpr = true;
                 break;
-            case DELETETOKEN:
-                semanticFailIfTrue(requiresLExpr, "The ", operatorString(true, lastOperator), " operator requires a reference expression");
-                requiresLExpr = true;
-                break;
             default:
                 semanticFailIfTrue(requiresLExpr, "The ", operatorString(true, lastOperator), " operator requires a reference expression");
                 break;

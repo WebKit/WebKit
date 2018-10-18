@@ -1,3 +1,14 @@
+2018-10-18  Ross Kirsling  <ross.kirsling@sony.com>
+
+        delete expression should not throw without a reference
+        https://bugs.webkit.org/show_bug.cgi?id=190637
+
+        Reviewed by Yusuke Suzuki.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseUnaryExpression):
+        Eliminate non-spec-compliant switch case.
+
 2018-10-18  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] JSC should have "parseFunction" to optimize Function constructor
