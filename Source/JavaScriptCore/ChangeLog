@@ -1,3 +1,17 @@
+2018-10-18  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r237242.
+        https://bugs.webkit.org/show_bug.cgi?id=190701
+
+        it breaks "stress/sampling-profiler-basic.js" (Requested by
+        caiolima on #webkit).
+
+        Reverted changeset:
+
+        "[BigInt] Add ValueSub into DFG"
+        https://bugs.webkit.org/show_bug.cgi?id=186176
+        https://trac.webkit.org/changeset/237242
+
 2018-10-18  Takafumi Kubota  <takafumi.kubota1012@sslab.ics.keio.ac.jp>
 
         Missing #pragma once in WasmOpcodeOrigin.h

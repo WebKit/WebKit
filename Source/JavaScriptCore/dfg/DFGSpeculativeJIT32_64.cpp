@@ -2029,10 +2029,6 @@ void SpeculativeJIT::compile(Node* node)
         compileValueAdd(node);
         break;
 
-    case ValueSub:
-        compileValueSub(node);
-        break;
-
     case StrCat: {
         compileStrCat(node);
         break;

@@ -246,33 +246,6 @@ private:
             break;
         }
 
-        case ValueSub: {
-            SpeculatedType left = node->child1()->prediction();
-            SpeculatedType right = node->child2()->prediction();
-
-            if (left && right) {
-                if (isFullNumberOrBooleanSpeculationExpectingDefined(left)
-                    && isFullNumberOrBooleanSpeculationExpectingDefined(right)) {
-                    if (m_graph.addSpeculationMode(node, m_pass) != DontSpeculateInt32)
-                        changed |= mergePrediction(SpecInt32Only);
-                    else if (m_graph.addShouldSpeculateAnyInt(node))
-                        changed |= mergePrediction(SpecInt52Only);
-                    else
-                        changed |= mergePrediction(speculatedDoubleTypeForPredictions(left, right));
-                } else if (isBigIntSpeculation(left) && isBigIntSpeculation(right))
-                    changed |= mergePrediction(SpecBigInt);
-                else {
-                    changed |= mergePrediction(SpecInt32Only);
-                    if (node->mayHaveDoubleResult())
-                        changed |= mergePrediction(SpecBytecodeDouble);
-                    if (node->mayHaveNonNumberResult())
-                        changed |= mergePrediction(SpecBigInt);
-                }
-            }
-
-            break;
-        }
-
         case ValueBitOr:
         case ValueBitAnd: {
             if (node->child1()->shouldSpeculateBigInt() && node->child2()->shouldSpeculateBigInt())
@@ -548,7 +521,6 @@ private:
         
         switch (node->op()) {
         case ValueAdd:
-        case ValueSub:
         case ArithAdd:
         case ArithSub: {
             SpeculatedType left = node->child1()->prediction();
@@ -1096,7 +1068,6 @@ private:
         case ValueBitAnd:
         case ValueNegate:
         case ValueAdd:
-        case ValueSub:
         case ArithAdd:
         case ArithSub:
         case ArithNegate:

@@ -3871,51 +3871,6 @@ void SpeculativeJIT::compileValueAdd(Node* node)
     compileMathIC(node, addIC, needsScratchGPRReg, needsScratchFPRReg, repatchingFunction, nonRepatchingFunction);
 }
 
-void SpeculativeJIT::compileValueSub(Node* node)
-{
-    Edge& leftChild = node->child1();
-    Edge& rightChild = node->child2();
-
-    if (node->binaryUseKind() == UntypedUse) {
-#if USE(JSVALUE64)
-        bool needsScratchGPRReg = true;
-        bool needsScratchFPRReg = false;
-#else
-        bool needsScratchGPRReg = true;
-        bool needsScratchFPRReg = true;
-#endif
-
-        CodeBlock* baselineCodeBlock = m_jit.graph().baselineCodeBlockFor(node->origin.semantic);
-        ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex);
-        Instruction* instruction = &baselineCodeBlock->instructions()[node->origin.semantic.bytecodeIndex];
-        JITSubIC* subIC = m_jit.codeBlock()->addJITSubIC(arithProfile, instruction);
-        auto repatchingFunction = operationValueSubOptimize;
-        auto nonRepatchingFunction = operationValueSub;
-
-        compileMathIC(node, subIC, needsScratchGPRReg, needsScratchFPRReg, repatchingFunction, nonRepatchingFunction);
-        return;
-    }
-
-    ASSERT(leftChild.useKind() == BigIntUse && rightChild.useKind() == BigIntUse);
-
-    SpeculateCellOperand left(this, node->child1());
-    SpeculateCellOperand right(this, node->child2());
-    GPRReg leftGPR = left.gpr();
-    GPRReg rightGPR = right.gpr();
-
-    speculateBigInt(leftChild, leftGPR);
-    speculateBigInt(rightChild, rightGPR);
-
-    flushRegisters();
-    GPRFlushedCallResult result(this);
-    GPRReg resultGPR = result.gpr();
-
-    callOperation(operationSubBigInt, resultGPR, leftGPR, rightGPR);
-
-    m_jit.exceptionCheck();
-    cellResult(resultGPR, node);
-}
-
 template <typename Generator, typename RepatchingFunction, typename NonRepatchingFunction>
 void SpeculativeJIT::compileMathIC(Node* node, JITBinaryMathIC<Generator>* mathIC, bool needsScratchGPRReg, bool needsScratchFPRReg, RepatchingFunction repatchingFunction, NonRepatchingFunction nonRepatchingFunction)
 {
@@ -4548,6 +4503,26 @@ void SpeculativeJIT::compileArithSub(Node* node)
         m_jit.subDouble(reg1, reg2, result.fpr());
 
         doubleResult(result.fpr(), node);
+        return;
+    }
+
+    case UntypedUse: {
+#if USE(JSVALUE64)
+        bool needsScratchGPRReg = true;
+        bool needsScratchFPRReg = false;
+#else
+        bool needsScratchGPRReg = true;
+        bool needsScratchFPRReg = true;
+#endif
+
+        CodeBlock* baselineCodeBlock = m_jit.graph().baselineCodeBlockFor(node->origin.semantic);
+        ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex);
+        Instruction* instruction = &baselineCodeBlock->instructions()[node->origin.semantic.bytecodeIndex];
+        JITSubIC* subIC = m_jit.codeBlock()->addJITSubIC(arithProfile, instruction);
+        auto repatchingFunction = operationValueSubOptimize;
+        auto nonRepatchingFunction = operationValueSub;
+        
+        compileMathIC(node, subIC, needsScratchGPRReg, needsScratchFPRReg, repatchingFunction, nonRepatchingFunction);
         return;
     }
 

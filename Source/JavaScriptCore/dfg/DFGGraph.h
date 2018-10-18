@@ -238,7 +238,7 @@ public:
 
     AddSpeculationMode addSpeculationMode(Node* add, bool leftShouldSpeculateInt32, bool rightShouldSpeculateInt32, PredictionPass pass)
     {
-        ASSERT(add->op() == ValueAdd || add->op() == ValueSub || add->op() == ArithAdd || add->op() == ArithSub);
+        ASSERT(add->op() == ValueAdd || add->op() == ArithAdd || add->op() == ArithSub);
         
         RareCaseProfilingSource source = add->sourceFor(pass);
         

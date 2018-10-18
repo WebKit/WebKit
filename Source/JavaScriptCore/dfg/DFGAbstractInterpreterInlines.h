@@ -589,15 +589,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         forNode(node).fixTypeForRepresentation(m_graph, node);
         break;
     }
-
-    case ValueSub:
+        
     case ValueAdd: {
-        DFG_ASSERT(m_graph, node, node->binaryUseKind() == UntypedUse || node->binaryUseKind() == BigIntUse);
+        ASSERT(node->binaryUseKind() == UntypedUse);
         clobberWorld();
-        if (node->binaryUseKind() == BigIntUse)
-            setTypeForNode(node, SpecBigInt);
-        else
-            setTypeForNode(node, SpecString | SpecBytecodeNumber | SpecBigInt);
+        setTypeForNode(node, SpecString | SpecBytecodeNumber);
         break;
     }
 

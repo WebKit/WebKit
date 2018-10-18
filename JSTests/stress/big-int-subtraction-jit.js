@@ -8,12 +8,12 @@ let assert = {
 }
 
 function bigIntAddition(x, y) {
-    return x - y - 1n;
+    return x - y;
 }
 noInline(bigIntAddition);
 
 for (let i = 0; i < 10000; i++) {
     let r = bigIntAddition(3n, 10n);
-    assert.sameValue(r, -8n, 3n + " - " + 10n + " - 1 = " + r);
+    assert.sameValue(r, -7n, 3n + " - " + 10n + " = " + r);
 }
 

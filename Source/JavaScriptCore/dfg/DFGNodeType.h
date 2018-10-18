@@ -171,8 +171,6 @@ namespace JSC { namespace DFG {
     /* Add of values may either be arithmetic, or result in string concatenation. */\
     macro(ValueAdd, NodeResultJS | NodeMustGenerate) \
     \
-    macro(ValueSub, NodeResultJS | NodeMustGenerate) \
-    \
     /* Add of values that always convers its inputs to strings. May have two or three kids. */\
     macro(StrCat, NodeResultJS | NodeMustGenerate) \
     \
