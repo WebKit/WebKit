@@ -1,3 +1,18 @@
+2018-10-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [GTK] fast/selectors/read-only-read-write-input-basics.html failing since r237245
+        https://bugs.webkit.org/show_bug.cgi?id=190711
+
+        Unreviewed test gardening.
+
+        Adjust layout test baselines after r237245. Make fast/selectors/read-only-read-write-input-basics-expected.txt
+        contain PASS expectations for color inputs, and remove port-specific iOS/macOS WebKit2 expectations. Since color
+        inputs are disabled in legacy WebKit, move the layout test expectation in platform/mac to platform/mac-wk1.
+
+        * fast/selectors/read-only-read-write-input-basics-expected.txt:
+        * platform/ios-wk2/fast/selectors/read-only-read-write-input-basics-expected.txt: Removed.
+        * platform/mac-wk2/fast/selectors/read-only-read-write-input-basics-expected.txt: Removed.
+
 2018-10-18  Miguel Gomez  <magomez@igalia.com>
 
         Unreviewed GTK+ gardening after r237249.
