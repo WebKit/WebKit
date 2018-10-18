@@ -1,3 +1,26 @@
+2018-10-18  Youenn Fablet  <youenn@apple.com>
+
+        Handle MDNS resolution of candidates through libwebrtc directly
+        https://bugs.webkit.org/show_bug.cgi?id=190681
+
+        Reviewed by Eric Carlson.
+
+        Add support for AsyncResolver to resolve MDNS.
+        This basically reuse the code path used to resolve STUN server addresses.
+        Removed MDNS specific resolution.
+        Use existing CFHost resolution mechanism to do the actual resolution.
+
+        * NetworkProcess/webrtc/NetworkMDNSRegister.cpp:
+        (WebKit::NetworkMDNSRegister::registerMDNSName):
+        * NetworkProcess/webrtc/NetworkMDNSRegister.messages.in:
+        * WebProcess/Network/webrtc/LibWebRTCProvider.cpp:
+        (WebKit::LibWebRTCProvider::createPeerConnection):
+        * WebProcess/Network/webrtc/LibWebRTCProvider.h:
+        * WebProcess/Network/webrtc/LibWebRTCSocketFactory.h:
+        * WebProcess/Network/webrtc/WebMDNSRegister.cpp:
+        * WebProcess/Network/webrtc/WebMDNSRegister.h:
+        * WebProcess/Network/webrtc/WebMDNSRegister.messages.in:
+
 2018-10-18  Chris Dumez  <cdumez@apple.com>
 
         [PSON] Cap number of SuspendedPageProxy objects and allow a WebPageProxy to have more than one

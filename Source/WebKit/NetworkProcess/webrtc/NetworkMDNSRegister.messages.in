@@ -25,7 +25,6 @@
 messages -> NetworkMDNSRegister {
     UnregisterMDNSNames(WebCore::DocumentIdentifier documentIdentifier)
     RegisterMDNSName(uint64_t requestIdentifier, PAL::SessionID sessionID, WebCore::DocumentIdentifier documentIdentifier, String ipAddress)
-    ResolveMDNSName(uint64_t requestIdentifier, PAL::SessionID sessionID, String name)
 }
 
 #endif // ENABLE(WEB_RTC)
