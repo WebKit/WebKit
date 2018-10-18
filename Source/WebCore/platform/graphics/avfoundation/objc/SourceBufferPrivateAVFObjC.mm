@@ -241,7 +241,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotific
 @end
 
 @interface WebAVSampleBufferErrorListener : NSObject {
-    WebCore::SourceBufferPrivateAVFObjC* _parent;
+    WeakPtr<WebCore::SourceBufferPrivateAVFObjC> _parent;
     Vector<RetainPtr<AVSampleBufferDisplayLayer>> _layers;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunknown-pragmas"
@@ -250,7 +250,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotific
 #pragma clang diagnostic pop
 }
 
-- (id)initWithParent:(WebCore::SourceBufferPrivateAVFObjC*)parent;
+- (id)initWithParent:(WeakPtr<WebCore::SourceBufferPrivateAVFObjC>&&)parent;
 - (void)invalidate;
 - (void)beginObservingLayer:(AVSampleBufferDisplayLayer *)layer;
 - (void)stopObservingLayer:(AVSampleBufferDisplayLayer *)layer;
@@ -264,12 +264,12 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotific
 
 @implementation WebAVSampleBufferErrorListener
 
-- (id)initWithParent:(WebCore::SourceBufferPrivateAVFObjC*)parent
+- (id)initWithParent:(WeakPtr<WebCore::SourceBufferPrivateAVFObjC>&&)parent
 {
     if (!(self = [super init]))
         return nil;
 
-    _parent = parent;
+    _parent = WTFMove(parent);
     return self;
 }
 
@@ -354,19 +354,20 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotific
     UNUSED_PARAM(keyPath);
     ASSERT(_parent);
 
-    RetainPtr<WebAVSampleBufferErrorListener> protectedSelf = self;
     if ([object isKindOfClass:getAVSampleBufferDisplayLayerClass()]) {
         RetainPtr<AVSampleBufferDisplayLayer> layer = (AVSampleBufferDisplayLayer *)object;
         ASSERT(_layers.contains(layer.get()));
 
         if ([keyPath isEqualTo:@"error"]) {
             RetainPtr<NSError> error = [change valueForKey:NSKeyValueChangeNewKey];
-            callOnMainThread([protectedSelf = WTFMove(protectedSelf), layer = WTFMove(layer), error = WTFMove(error)] {
-                protectedSelf->_parent->layerDidReceiveError(layer.get(), error.get());
+            callOnMainThread([parent = _parent, layer = WTFMove(layer), error = WTFMove(error)] {
+                if (parent)
+                    parent->layerDidReceiveError(layer.get(), error.get());
             });
         } else if ([keyPath isEqualTo:@"outputObscuredDueToInsufficientExternalProtection"]) {
-            callOnMainThread([protectedSelf = WTFMove(protectedSelf), obscured = [[change valueForKey:NSKeyValueChangeNewKey] boolValue]] {
-                protectedSelf->_parent->outputObscuredDueToInsufficientExternalProtectionChanged(obscured);
+            callOnMainThread([parent = _parent, obscured = [[change valueForKey:NSKeyValueChangeNewKey] boolValue]] {
+                if (parent)
+                    parent->outputObscuredDueToInsufficientExternalProtectionChanged(obscured);
             });
         } else
             ASSERT_NOT_REACHED();
@@ -382,8 +383,9 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotific
         ASSERT(_renderers.contains(renderer.get()));
         ASSERT([keyPath isEqualTo:@"error"]);
 
-        callOnMainThread([protectedSelf = WTFMove(protectedSelf), renderer = WTFMove(renderer), error = WTFMove(error)] {
-            protectedSelf->_parent->rendererDidReceiveError(renderer.get(), error.get());
+        callOnMainThread([parent = _parent, renderer = WTFMove(renderer), error = WTFMove(error)] {
+            if (parent)
+                parent->rendererDidReceiveError(renderer.get(), error.get());
         });
     } else
         ASSERT_NOT_REACHED();
@@ -392,13 +394,12 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotific
 - (void)layerFailedToDecode:(NSNotification*)note
 {
     RetainPtr<AVSampleBufferDisplayLayer> layer = (AVSampleBufferDisplayLayer *)[note object];
-    RetainPtr<NSError> error = [[note userInfo] valueForKey:AVSampleBufferDisplayLayerFailedToDecodeNotificationErrorKey];
+    if (!_layers.contains(layer.get()))
+        return;
 
-    RetainPtr<WebAVSampleBufferErrorListener> protectedSelf = self;
-    callOnMainThread([protectedSelf = WTFMove(protectedSelf), layer = WTFMove(layer), error = WTFMove(error)] {
-        if (!protectedSelf->_parent || !protectedSelf->_layers.contains(layer.get()))
-            return;
-        protectedSelf->_parent->layerDidReceiveError(layer.get(), error.get());
+    callOnMainThread([parent = _parent, layer = WTFMove(layer), error = retainPtr([[note userInfo] valueForKey:AVSampleBufferDisplayLayerFailedToDecodeNotificationErrorKey])] {
+        if (parent)
+            parent->layerDidReceiveError(layer.get(), error.get());
     });
 }
 @end
@@ -497,7 +498,7 @@ RefPtr<SourceBufferPrivateAVFObjC> SourceBufferPrivateAVFObjC::create(MediaSourc
 SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC* parent)
     : m_parser(adoptNS([allocAVStreamDataParserInstance() init]))
     , m_delegate(adoptNS([[WebAVStreamDataParserListener alloc] initWithParser:m_parser.get() parent:createWeakPtr()]))
-    , m_errorListener(adoptNS([[WebAVSampleBufferErrorListener alloc] initWithParent:this]))
+    , m_errorListener(adoptNS([[WebAVSampleBufferErrorListener alloc] initWithParent:createWeakPtr()]))
     , m_isAppendingGroup(adoptOSObject(dispatch_group_create()))
     , m_mediaSource(parent)
 {
@@ -779,6 +780,9 @@ void SourceBufferPrivateAVFObjC::destroyRenderers()
         [renderer stopRequestingMediaData];
         [m_errorListener stopObservingRenderer:renderer.get()];
     }
+
+    [m_errorListener invalidate];
+    m_errorListener = nullptr;
 
     m_audioRenderers.clear();
 }
