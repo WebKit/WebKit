@@ -1,3 +1,40 @@
+2018-10-18  Babak Shafiei  <bshafiei@apple.com>
+
+        Cherry-pick r236820. rdar://problem/45285653
+
+    [WebCrypto] ECDSA could not deal with invalid signature inputs
+    https://bugs.webkit.org/show_bug.cgi?id=189879
+    <rdar://problem/44701276>
+    
+    Reviewed by Brent Fulgham.
+    
+    Source/WebCore:
+    
+    Add some guards over detections of the start positions of r/s.
+    
+    Covered by improved existing tests.
+    
+    * crypto/mac/CryptoAlgorithmECDSAMac.cpp:
+    (WebCore::verifyECDSA):
+    
+    LayoutTests:
+    
+    * crypto/subtle/ecdsa-verify-malformed-parameters-expected.txt:
+    * crypto/subtle/ecdsa-verify-malformed-parameters.html:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@236820 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-09-28  Jiewen Tan  <jiewen_tan@apple.com>
+
+            [WebCrypto] ECDSA could not deal with invalid signature inputs
+            https://bugs.webkit.org/show_bug.cgi?id=189879
+            <rdar://problem/44701276>
+
+            Reviewed by Brent Fulgham.
+
+            * crypto/subtle/ecdsa-verify-malformed-parameters-expected.txt:
+            * crypto/subtle/ecdsa-verify-malformed-parameters.html:
+
 2018-09-28  Babak Shafiei  <bshafiei@apple.com>
 
         Cherry-pick r236615. rdar://problem/44883290
