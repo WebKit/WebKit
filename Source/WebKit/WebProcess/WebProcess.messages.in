@@ -129,6 +129,7 @@ messages -> WebProcess LegacyReceiver {
     MessagesAvailableForPort(struct WebCore::MessagePortIdentifier port)
 
     UpdateActivePages()
+    GetActivePagesOriginsForTesting() -> (Vector<String> activeOrigins)
 
 #if PLATFORM(MAC)
     SetScreenProperties(struct WebCore::ScreenProperties screenProperties)

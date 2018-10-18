@@ -574,6 +574,16 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
     return wrapper(_processPool->resumeDownload(API::Data::createWithoutCopying(resumeData).ptr(), path));
 }
 
+- (NSArray<NSString *> *)_getActivePagesOriginsInWebProcessForTesting:(pid_t)pid
+{
+    auto activePagesOrigins = _processPool->activePagesOriginsInWebProcessForTesting(pid);
+
+    NSMutableArray<NSString *> *array = [[NSMutableArray alloc] initWithCapacity:activePagesOrigins.size()];
+    for (auto& origin : activePagesOrigins)
+        [array addObject:(NSString *)origin];
+    return [array autorelease];
+}
+
 @end
 
 #endif // WK_API_ENABLED

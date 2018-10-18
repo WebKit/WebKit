@@ -54,6 +54,8 @@
 #import <WebCore/FileSystem.h>
 #import <WebCore/FontCache.h>
 #import <WebCore/FontCascade.h>
+#import <WebCore/HistoryController.h>
+#import <WebCore/HistoryItem.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/LogInitialization.h>
 #import <WebCore/MemoryRelease.h>
@@ -409,7 +411,15 @@ static NSURL *origin(WebPage& page)
     if (!mainFrame)
         return nil;
 
-    URL mainFrameURL(URL(), mainFrame->url());
+    URL mainFrameURL = { URL(), mainFrame->url() };
+    if (page.isSuspended()) {
+        // Suspended page are navigated to about:blank upon suspension so we really want to report the previous URL.
+        if (auto* coreFrame = mainFrame->coreFrame()) {
+            if (auto* backHistoryItem = coreFrame->loader().history().previousItem())
+                mainFrameURL = { URL(), backHistoryItem->urlString() };
+        }
+    }
+
     Ref<SecurityOrigin> mainFrameOrigin = SecurityOrigin::create(mainFrameURL);
     String mainFrameOriginString;
     if (!mainFrameOrigin->isUnique())
@@ -426,22 +436,43 @@ static NSURL *origin(WebPage& page)
 
 #endif
 
-void WebProcess::updateActivePages()
-{
 #if PLATFORM(MAC)
-    auto activePageURLs = adoptNS([[NSMutableArray alloc] init]);
+static RetainPtr<NSArray<NSString *>> activePagesOrigins(const HashMap<uint64_t, RefPtr<WebPage>>& pageMap)
+{
+    RetainPtr<NSMutableArray<NSString *>> activeOrigins = adoptNS([[NSMutableArray alloc] init]);
 
-    for (auto& page : m_pageMap.values()) {
-        if (page->usesEphemeralSession() || page->isSuspended())
+    for (auto& page : pageMap.values()) {
+        if (page->usesEphemeralSession())
             continue;
 
         if (NSURL *originAsURL = origin(*page))
-            [activePageURLs addObject:userVisibleString(originAsURL)];
+            [activeOrigins addObject:userVisibleString(originAsURL)];
     }
 
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [activePageURLs] {
-        _LSSetApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), CFSTR("LSActivePageUserVisibleOriginsKey"), (__bridge CFArrayRef)activePageURLs.get(), nullptr);
+    return activeOrigins;
+}
+#endif
+
+void WebProcess::updateActivePages()
+{
+#if PLATFORM(MAC)
+    auto activeOrigins = activePagesOrigins(m_pageMap);
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [activeOrigins = WTFMove(activeOrigins)] {
+        _LSSetApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), CFSTR("LSActivePageUserVisibleOriginsKey"), (__bridge CFArrayRef)activeOrigins.get(), nullptr);
     });
+#endif
+}
+
+void WebProcess::getActivePagesOriginsForTesting(Vector<String>& activeOrigins)
+{
+#if PLATFORM(MAC)
+    auto activeOriginsAsNSStrings = activePagesOrigins(m_pageMap);
+    activeOrigins.reserveCapacity([activeOriginsAsNSStrings count]);
+    for (NSString* activeOrigin in activeOriginsAsNSStrings.get())
+        activeOrigins.uncheckedAppend(activeOrigin);
+#else
+    UNUSED_PARAM(activeOrigins);
 #endif
 }
 

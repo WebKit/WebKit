@@ -1328,6 +1328,10 @@ void WebProcess::updateActivePages()
 {
 }
 
+void WebProcess::getActivePagesOriginsForTesting(Vector<String>&)
+{
+}
+
 void WebProcess::updateCPULimit()
 {
 }

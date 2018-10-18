@@ -1404,6 +1404,13 @@ void WebProcessProxy::didCollectPrewarmInformation(const String& domain, const W
     processPool().didCollectPrewarmInformation(domain, prewarmInformation);
 }
 
+Vector<String> WebProcessProxy::activePagesDomainsForTesting()
+{
+    Vector<String> activeDomains;
+    sendSync(Messages::WebProcess::GetActivePagesOriginsForTesting(), Messages::WebProcess::GetActivePagesOriginsForTesting::Reply(activeDomains), 0);
+    return activeDomains;
+}
+
 #if PLATFORM(WATCHOS)
 
 void WebProcessProxy::takeBackgroundActivityTokenForFullscreenInput()

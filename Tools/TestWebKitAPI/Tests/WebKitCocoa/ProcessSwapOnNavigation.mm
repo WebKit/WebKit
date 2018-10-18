@@ -516,6 +516,75 @@ TEST(ProcessSwap, Back)
     EXPECT_EQ(4u, seenPIDs.size());
 }
 
+#if PLATFORM(MAC)
+TEST(ProcessSwap, SuspendedPagesInActivityMonitor)
+{
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [handler addMappingFromURLString:@"pson://www.webkit.org/main.html" toData:testBytes];
+    [handler addMappingFromURLString:@"pson://www.google.com/main.html" toData:testBytes];
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    RetainPtr<PSONMessageHandler> messageHandler = adoptNS([[PSONMessageHandler alloc] init]);
+    [[webViewConfiguration userContentController] addScriptMessageHandler:messageHandler.get() name:@"pson"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto webkitPID = [webView _webProcessIdentifier];
+    auto* activeDomains = [processPool _getActivePagesOriginsInWebProcessForTesting:webkitPID];
+    EXPECT_EQ(1u, activeDomains.count);
+    EXPECT_WK_STREQ(@"pson://www.webkit.org", activeDomains[0]);
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.google.com/main.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto googlePID = [webView _webProcessIdentifier];
+    EXPECT_NE(webkitPID, googlePID);
+
+    activeDomains = [processPool _getActivePagesOriginsInWebProcessForTesting:googlePID];
+    EXPECT_EQ(1u, activeDomains.count);
+    EXPECT_WK_STREQ(@"pson://www.google.com", activeDomains[0]);
+
+    activeDomains = [processPool _getActivePagesOriginsInWebProcessForTesting:webkitPID];
+    EXPECT_EQ(1u, activeDomains.count);
+    EXPECT_WK_STREQ(@"pson://www.webkit.org", activeDomains[0]);
+
+    [webView goBack]; // Back to webkit.org.
+
+    TestWebKitAPI::Util::run(&receivedMessage);
+    receivedMessage = false;
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto pidAfterBackNavigation = [webView _webProcessIdentifier];
+    EXPECT_EQ(webkitPID, pidAfterBackNavigation);
+
+    activeDomains = [processPool _getActivePagesOriginsInWebProcessForTesting:googlePID];
+    EXPECT_EQ(1u, activeDomains.count);
+    EXPECT_WK_STREQ(@"pson://www.google.com", activeDomains[0]);
+
+    activeDomains = [processPool _getActivePagesOriginsInWebProcessForTesting:webkitPID];
+    EXPECT_EQ(1u, activeDomains.count);
+    EXPECT_WK_STREQ(@"pson://www.webkit.org", activeDomains[0]);
+}
+#endif // PLATFORM(MAC)
+
 TEST(ProcessSwap, BackWithoutSuspendedPage)
 {
     auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);

@@ -215,6 +215,7 @@ public:
     void clearSupportedPlugins();
 
     ProcessID networkProcessIdentifier();
+    Vector<String> activePagesOriginsInWebProcessForTesting(ProcessID);
 
     WebPageGroup& defaultPageGroup() { return m_defaultPageGroup.get(); }
 
