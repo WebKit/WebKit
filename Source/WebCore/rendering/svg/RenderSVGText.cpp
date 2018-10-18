@@ -92,14 +92,17 @@ LayoutRect RenderSVGText::clippedOverflowRectForRepaint(const RenderLayerModelOb
     return SVGRenderSupport::clippedOverflowRectForRepaint(*this, repaintContainer);
 }
 
-LayoutRect RenderSVGText::computeRectForRepaint(const LayoutRect& rect, const RenderLayerModelObject* repaintContainer, RepaintContext context) const
+std::optional<LayoutRect> RenderSVGText::computeVisibleRectInContainer(const LayoutRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const
 {
-    return enclosingLayoutRect(computeFloatRectForRepaint(rect, repaintContainer, context.m_hasPositionFixedDescendant));
+    std::optional<FloatRect> adjustedRect = computeFloatVisibleRectInContainer(rect, container, context);
+    if (adjustedRect)
+        return enclosingLayoutRect(*adjustedRect);
+    return std::nullopt;
 }
 
-FloatRect RenderSVGText::computeFloatRectForRepaint(const FloatRect& repaintRect, const RenderLayerModelObject* repaintContainer, bool fixed) const
+std::optional<FloatRect> RenderSVGText::computeFloatVisibleRectInContainer(const FloatRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const
 {
-    return SVGRenderSupport::computeFloatRectForRepaint(*this, repaintRect, repaintContainer, fixed);
+    return SVGRenderSupport::computeFloatVisibleRectInContainer(*this, rect, container, context);
 }
 
 void RenderSVGText::mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState& transformState, MapCoordinatesFlags, bool* wasFixed) const

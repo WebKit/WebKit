@@ -970,23 +970,32 @@ LayoutSize RenderBox::cachedSizeForOverflowClip() const
     return layer()->size();
 }
 
-void RenderBox::applyCachedClipAndScrollPositionForRepaint(LayoutRect& paintRect) const
+bool RenderBox::applyCachedClipAndScrollPosition(LayoutRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const
 {
-    flipForWritingMode(paintRect);
-    paintRect.moveBy(-scrollPosition()); // For overflow:auto/scroll/hidden.
+    flipForWritingMode(rect);
+
+    if (context.m_options.contains(VisibleRectContextOption::ApplyCompositedContainerScrolls) || this != container || !usesCompositedScrolling())
+        rect.moveBy(-scrollPosition()); // For overflow:auto/scroll/hidden.
 
     // Do not clip scroll layer contents to reduce the number of repaints while scrolling.
-    if (usesCompositedScrolling()) {
-        flipForWritingMode(paintRect);
-        return;
+    if (!context.m_options.contains(VisibleRectContextOption::ApplyCompositedClips) && usesCompositedScrolling()) {
+        flipForWritingMode(rect);
+        return true;
     }
 
     // height() is inaccurate if we're in the middle of a layout of this RenderBox, so use the
     // layer's size instead. Even if the layer's size is wrong, the layer itself will repaint
     // anyway if its size does change.
     LayoutRect clipRect(LayoutPoint(), cachedSizeForOverflowClip());
-    paintRect = intersection(paintRect, clipRect);
-    flipForWritingMode(paintRect);
+    bool intersects;
+    if (context.m_options.contains(VisibleRectContextOption::UseEdgeInclusiveIntersection))
+        intersects = rect.edgeInclusiveIntersect(clipRect);
+    else {
+        rect.intersect(clipRect);
+        intersects = !rect.isEmpty();
+    }
+    flipForWritingMode(rect);
+    return intersects;
 }
 
 void RenderBox::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
@@ -2126,61 +2135,53 @@ LayoutRect RenderBox::clippedOverflowRectForRepaint(const RenderLayerModelObject
     return computeRectForRepaint(r, repaintContainer);
 }
 
-bool RenderBox::shouldApplyClipAndScrollPositionForRepaint(const RenderLayerModelObject* repaintContainer) const
+LayoutRect RenderBox::computeVisibleRectUsingPaintOffset(const LayoutRect& rect) const
 {
-#if PLATFORM(IOS)
-    if (!repaintContainer || repaintContainer != this)
-        return true;
+    LayoutRect adjustedRect = rect;
+    auto* layoutState = view().frameView().layoutContext().layoutState();
 
-    return !hasLayer() || !layer()->usesCompositedScrolling();
-#else
-    UNUSED_PARAM(repaintContainer);
-    return true;
-#endif
+    if (layer() && layer()->transform())
+        adjustedRect = LayoutRect(encloseRectToDevicePixels(layer()->transform()->mapRect(adjustedRect), document().deviceScaleFactor()));
+
+    // We can't trust the bits on RenderObject, because this might be called while re-resolving style.
+    if (style().hasInFlowPosition() && layer())
+        adjustedRect.move(layer()->offsetForInFlowPosition());
+
+    adjustedRect.moveBy(location());
+    adjustedRect.move(layoutState->paintOffset());
+    if (layoutState->isClipped())
+        adjustedRect.intersect(layoutState->clipRect());
+    return adjustedRect;
 }
 
-LayoutRect RenderBox::computeRectForRepaint(const LayoutRect& rect, const RenderLayerModelObject* repaintContainer, RepaintContext context) const
+std::optional<LayoutRect> RenderBox::computeVisibleRectInContainer(const LayoutRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const
 {
     // The rect we compute at each step is shifted by our x/y offset in the parent container's coordinate space.
     // Only when we cross a writing mode boundary will we have to possibly flipForWritingMode (to convert into a more appropriate
     // offset corner for the enclosing container).  This allows for a fully RL or BT document to repaint
     // properly even during layout, since the rect remains flipped all the way until the end.
     //
-    // RenderView::computeRectForRepaint then converts the rect to physical coordinates.  We also convert to
-    // physical when we hit a repaintContainer boundary.  Therefore the final rect returned is always in the
-    // physical coordinate space of the repaintContainer.
-    LayoutRect adjustedRect = rect;
+    // RenderView::computeVisibleRectInContainer then converts the rect to physical coordinates. We also convert to
+    // physical when we hit a repaint container boundary. Therefore the final rect returned is always in the
+    // physical coordinate space of the container.
     const RenderStyle& styleToUse = style();
     // Paint offset cache is only valid for root-relative, non-fixed position repainting
-    if (view().frameView().layoutContext().isPaintOffsetCacheEnabled() && !repaintContainer && styleToUse.position() != PositionType::Fixed) {
-        auto* layoutState = view().frameView().layoutContext().layoutState();
+    if (view().frameView().layoutContext().isPaintOffsetCacheEnabled() && !container && styleToUse.position() != PositionType::Fixed && !context.m_options.contains(VisibleRectContextOption::UseEdgeInclusiveIntersection))
+        return computeVisibleRectUsingPaintOffset(rect);
 
-        if (layer() && layer()->transform())
-            adjustedRect = LayoutRect(encloseRectToDevicePixels(layer()->transform()->mapRect(adjustedRect), document().deviceScaleFactor()));
-
-        // We can't trust the bits on RenderObject, because this might be called while re-resolving style.
-        if (styleToUse.hasInFlowPosition() && layer())
-            adjustedRect.move(layer()->offsetForInFlowPosition());
-
-        adjustedRect.moveBy(location());
-        adjustedRect.move(layoutState->paintOffset());
-        if (layoutState->isClipped())
-            adjustedRect.intersect(layoutState->clipRect());
-        return adjustedRect;
-    }
-
+    LayoutRect adjustedRect = rect;
     if (hasReflection())
         adjustedRect.unite(reflectedRect(adjustedRect));
 
-    if (repaintContainer == this) {
-        if (repaintContainer->style().isFlippedBlocksWritingMode())
+    if (container == this) {
+        if (container->style().isFlippedBlocksWritingMode())
             flipForWritingMode(adjustedRect);
         return adjustedRect;
     }
 
-    bool repaintContainerIsSkipped;
-    auto* container = this->container(repaintContainer, repaintContainerIsSkipped);
-    if (!container)
+    bool containerIsSkipped;
+    auto* localContainer = this->container(container, containerIsSkipped);
+    if (!localContainer)
         return adjustedRect;
     
     // This code isn't necessary for in-flow RenderFragmentedFlows.
@@ -2191,10 +2192,10 @@ LayoutRect RenderBox::computeRectForRepaint(const LayoutRect& rect, const Render
     // The same logic applies for elements flowed directly into the flow thread. Their topLeft member
     // will already contain the portion rect of the fragment.
     auto position = styleToUse.position();
-    if (container->isOutOfFlowRenderFragmentedFlow() && position != PositionType::Absolute && containingBlock() != enclosingFragmentedFlow()) {
+    if (localContainer->isOutOfFlowRenderFragmentedFlow() && position != PositionType::Absolute && containingBlock() != enclosingFragmentedFlow()) {
         RenderFragmentContainer* firstFragment = nullptr;
         RenderFragmentContainer* lastFragment = nullptr;
-        if (downcast<RenderFragmentedFlow>(*container).getFragmentRangeForBox(this, firstFragment, lastFragment))
+        if (downcast<RenderFragmentedFlow>(*localContainer).getFragmentRangeForBox(this, firstFragment, lastFragment))
             adjustedRect.moveBy(firstFragment->fragmentedFlowPortionRect().location());
     }
 
@@ -2214,8 +2215,8 @@ LayoutRect RenderBox::computeRectForRepaint(const LayoutRect& rect, const Render
     }
 
     if (is<RenderMultiColumnFlow>(this)) {
-        // We won't normally run this code. Only when the repaintContainer is null (i.e., we're trying
-        // to get the rect in view coordinates) will we come in here, since normally repaintContainer
+        // We won't normally run this code. Only when the container is null (i.e., we're trying
+        // to get the rect in view coordinates) will we come in here, since normally container
         // will be set and we'll stop at the flow thread. This case is mainly hit by the check for whether
         // or not images should animate.
         // FIXME: Just as with offsetFromContainer, we aren't really handling objects that span
@@ -2223,7 +2224,7 @@ LayoutRect RenderBox::computeRectForRepaint(const LayoutRect& rect, const Render
         LayoutPoint physicalPoint(flipForWritingMode(adjustedRect.location()));
         if (auto* fragment = downcast<RenderMultiColumnFlow>(*this).physicalTranslationFromFlowToFragment((physicalPoint))) {
             adjustedRect.setLocation(fragment->flipForWritingMode(physicalPoint));
-            return fragment->computeRectForRepaint(adjustedRect, repaintContainer, context);
+            return fragment->computeVisibleRectInContainer(adjustedRect, container, context);
         }
     }
 
@@ -2240,8 +2241,8 @@ LayoutRect RenderBox::computeRectForRepaint(const LayoutRect& rect, const Render
     } else if (position == PositionType::Fixed)
         context.m_hasPositionFixedDescendant = true;
 
-    if (position == PositionType::Absolute && container->isInFlowPositioned() && is<RenderInline>(*container))
-        topLeft += downcast<RenderInline>(*container).offsetForInFlowPositionedInline(this);
+    if (position == PositionType::Absolute && localContainer->isInFlowPositioned() && is<RenderInline>(*localContainer))
+        topLeft += downcast<RenderInline>(*localContainer).offsetForInFlowPositionedInline(this);
     else if (styleToUse.hasInFlowPosition() && layer()) {
         // Apply the relative position offset when invalidating a rectangle.  The layer
         // is translated, but the render box isn't, so we need to do this to get the
@@ -2253,22 +2254,23 @@ LayoutRect RenderBox::computeRectForRepaint(const LayoutRect& rect, const Render
     // FIXME: We ignore the lightweight clipping rect that controls use, since if |o| is in mid-layout,
     // its controlClipRect will be wrong. For overflow clip we use the values cached by the layer.
     adjustedRect.setLocation(topLeft);
-    if (container->hasOverflowClip()) {
-        RenderBox& containerBox = downcast<RenderBox>(*container);
-        if (containerBox.shouldApplyClipAndScrollPositionForRepaint(repaintContainer)) {
-            containerBox.applyCachedClipAndScrollPositionForRepaint(adjustedRect);
-            if (adjustedRect.isEmpty())
-                return adjustedRect;
+    if (localContainer->hasOverflowClip()) {
+        RenderBox& containerBox = downcast<RenderBox>(*localContainer);
+        bool isEmpty = !containerBox.applyCachedClipAndScrollPosition(adjustedRect, container, context);
+        if (isEmpty) {
+            if (context.m_options.contains(VisibleRectContextOption::UseEdgeInclusiveIntersection))
+                return std::nullopt;
+            return adjustedRect;
         }
     }
 
-    if (repaintContainerIsSkipped) {
-        // If the repaintContainer is below container, then we need to map the rect into repaintContainer's coordinates.
-        LayoutSize containerOffset = repaintContainer->offsetFromAncestorContainer(*container);
+    if (containerIsSkipped) {
+        // If the container is below localContainer, then we need to map the rect into container's coordinates.
+        LayoutSize containerOffset = container->offsetFromAncestorContainer(*localContainer);
         adjustedRect.move(-containerOffset);
         return adjustedRect;
     }
-    return container->computeRectForRepaint(adjustedRect, repaintContainer, context);
+    return localContainer->computeVisibleRectInContainer(adjustedRect, container, context);
 }
 
 void RenderBox::repaintDuringLayoutIfMoved(const LayoutRect& oldRect)

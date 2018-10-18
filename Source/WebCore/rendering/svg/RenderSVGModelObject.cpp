@@ -53,9 +53,9 @@ LayoutRect RenderSVGModelObject::clippedOverflowRectForRepaint(const RenderLayer
     return SVGRenderSupport::clippedOverflowRectForRepaint(*this, repaintContainer);
 }
 
-FloatRect RenderSVGModelObject::computeFloatRectForRepaint(const FloatRect& repaintRect, const RenderLayerModelObject* repaintContainer, bool fixed) const
+std::optional<FloatRect> RenderSVGModelObject::computeFloatVisibleRectInContainer(const FloatRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const
 {
-    return SVGRenderSupport::computeFloatRectForRepaint(*this, repaintRect, repaintContainer, fixed);
+    return SVGRenderSupport::computeFloatVisibleRectInContainer(*this, rect, container, context);
 }
 
 void RenderSVGModelObject::mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState& transformState, MapCoordinatesFlags, bool* wasFixed) const

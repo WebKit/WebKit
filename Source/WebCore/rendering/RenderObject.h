@@ -671,23 +671,36 @@ public:
 
     // Given a rect in the object's coordinate space, compute a rect suitable for repainting
     // that rect in view coordinates.
-    LayoutRect computeAbsoluteRepaintRect(const LayoutRect& r, bool fixed = false) const
+    LayoutRect computeAbsoluteRepaintRect(const LayoutRect& r) const
     {
-        return computeRectForRepaint(r, nullptr, { fixed, false });
+        return computeRectForRepaint(r, nullptr);
     }
     // Given a rect in the object's coordinate space, compute a rect suitable for repainting
     // that rect in the coordinate space of repaintContainer.
-    struct RepaintContext {
-        RepaintContext(bool hasPositionFixedDescendant = false, bool dirtyRectIsFlipped = false)
+    LayoutRect computeRectForRepaint(const LayoutRect&, const RenderLayerModelObject* repaintContainer) const;
+    FloatRect computeFloatRectForRepaint(const FloatRect&, const RenderLayerModelObject* repaintContainer) const;
+
+    // Given a rect in the object's coordinate space, compute the location in container space where this rect is visible,
+    // when clipping and scrolling as specified by the context. When using edge-inclusive intersection, return std::nullopt
+    // rather than an empty rect if the rect is completely clipped out in container space.
+    enum class VisibleRectContextOption {
+        UseEdgeInclusiveIntersection = 1 << 0,
+        ApplyCompositedClips = 1 << 1,
+        ApplyCompositedContainerScrolls  = 1 << 2,
+    };
+    struct VisibleRectContext {
+        VisibleRectContext(bool hasPositionFixedDescendant = false, bool dirtyRectIsFlipped = false, OptionSet<VisibleRectContextOption> options = { })
             : m_hasPositionFixedDescendant(hasPositionFixedDescendant)
             , m_dirtyRectIsFlipped(dirtyRectIsFlipped)
+            , m_options(options)
             {
             }
         bool m_hasPositionFixedDescendant;
         bool m_dirtyRectIsFlipped;
+        OptionSet<VisibleRectContextOption> m_options;
     };
-    virtual LayoutRect computeRectForRepaint(const LayoutRect&, const RenderLayerModelObject* repaintContainer, RepaintContext = { }) const;
-    virtual FloatRect computeFloatRectForRepaint(const FloatRect&, const RenderLayerModelObject* repaintContainer, bool fixed = false) const;
+    virtual std::optional<LayoutRect> computeVisibleRectInContainer(const LayoutRect&, const RenderLayerModelObject* repaintContainer, VisibleRectContext) const;
+    virtual std::optional<FloatRect> computeFloatVisibleRectInContainer(const FloatRect&, const RenderLayerModelObject* repaintContainer, VisibleRectContext) const;
 
     virtual unsigned int length() const { return 1; }
 
@@ -804,6 +817,10 @@ protected:
     static void calculateBorderStyleColor(const BorderStyle&, const BoxSide&, Color&);
 
     static FragmentedFlowState computedFragmentedFlowState(const RenderObject&);
+
+    static bool shouldApplyCompositedContainerScrollsForRepaint();
+
+    static VisibleRectContext visibleRectContextForRepaint();
 
 private:
 #ifndef NDEBUG

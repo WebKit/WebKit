@@ -47,7 +47,7 @@ class RenderSVGModelObject : public RenderElement {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGModelObject);
 public:
     LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const override;
-    FloatRect computeFloatRectForRepaint(const FloatRect&, const RenderLayerModelObject* repaintContainer, bool fixed = false) const final;
+    std::optional<FloatRect> computeFloatVisibleRectInContainer(const FloatRect&, const RenderLayerModelObject* container, VisibleRectContext) const final;
     LayoutRect outlineBoundsForRepaint(const RenderLayerModelObject* repaintContainer, const RenderGeometryMap*) const final;
 
     void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const final;

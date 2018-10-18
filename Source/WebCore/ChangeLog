@@ -1,3 +1,92 @@
+2018-10-18  Ali Juma  <ajuma@chromium.org>
+
+        [IntersectionObserver] Factor out rect mapping and clipping logic from computeRectForRepaint
+        https://bugs.webkit.org/show_bug.cgi?id=189833
+
+        Reviewed by Simon Fraser.
+
+        Factor out the rect mapping and clipping logic from computeRectForRepaint to a new
+        computeVisibleRectInContainer method that computeRectForRepaint now calls. Make
+        computeVisibleRectInContainer take a VisibleRectContext with options to use
+        edge-inclusive intersection and to apply all clips and scrolls rather than only
+        the clips and scrolls that are currently applied by the repaint logic. These
+        options will be used by IntersectionObserver in a future patch.
+
+        No new tests, no change in behavior.
+
+        * platform/graphics/FloatRect.cpp:
+        (WebCore::FloatRect::edgeInclusiveIntersect):
+        * platform/graphics/FloatRect.h:
+        * platform/graphics/LayoutRect.cpp:
+        (WebCore::LayoutRect::edgeInclusiveIntersect):
+        * platform/graphics/LayoutRect.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::applyCachedClipAndScrollPosition const):
+        (WebCore::RenderBox::computeVisibleRectUsingPaintOffset const):
+        (WebCore::RenderBox::computeVisibleRectInContainer const):
+        (WebCore::RenderBox::applyCachedClipAndScrollPositionForRepaint const): Deleted.
+        (WebCore::RenderBox::shouldApplyClipAndScrollPositionForRepaint const): Deleted.
+        The iOS-specific logic in this method has moved to RenderObject::shouldApplyCompositedContainerScrollsForRepaint.
+        (WebCore::RenderBox::computeRectForRepaint const): Deleted.
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::computeRectForRepaint): Deleted.
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::clippedOverflowRectForRepaint const):
+        (WebCore::RenderInline::computeVisibleRectUsingPaintOffset const):
+        (WebCore::RenderInline::computeVisibleRectInContainer const):
+        (WebCore::RenderInline::computeRectForRepaint const): Deleted.
+        * rendering/RenderInline.h:
+        (WebCore::RenderInline::computeRectForRepaint): Deleted.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::shouldApplyCompositedContainerScrollsForRepaint):
+        (WebCore::RenderObject::visibleRectContextForRepaint):
+        (WebCore::RenderObject::computeRectForRepaint const):
+        (WebCore::RenderObject::computeFloatRectForRepaint const):
+        (WebCore::RenderObject::computeVisibleRectInContainer const):
+        (WebCore::RenderObject::computeFloatVisibleRectInContainer const):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::computeAbsoluteRepaintRect const):
+        (WebCore::RenderObject::VisibleRectContext::VisibleRectContext):
+        (WebCore::RenderObject::RepaintContext::RepaintContext): Deleted.
+        (WebCore::RenderObject::computeRectForRepaint): Deleted.
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::computeVisibleRectInContainer const):
+        (WebCore::RenderTableCell::computeRectForRepaint const): Deleted.
+        * rendering/RenderTableCell.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::computeVisibleRectInContainer const):
+        (WebCore::RenderView::computeRectForRepaint const): Deleted.
+        * rendering/RenderView.h:
+        * rendering/svg/RenderSVGForeignObject.cpp:
+        (WebCore::RenderSVGForeignObject::computeFloatVisibleRectInContainer const):
+        (WebCore::RenderSVGForeignObject::computeVisibleRectInContainer const):
+        (WebCore::RenderSVGForeignObject::computeFloatRectForRepaint const): Deleted.
+        (WebCore::RenderSVGForeignObject::computeRectForRepaint const): Deleted.
+        * rendering/svg/RenderSVGForeignObject.h:
+        * rendering/svg/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::computeFloatVisibleRectInContainer const):
+        (WebCore::RenderSVGInline::computeFloatRectForRepaint const): Deleted.
+        * rendering/svg/RenderSVGInline.h:
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::computeFloatVisibleRectInContainer const):
+        (WebCore::RenderSVGModelObject::computeFloatRectForRepaint const): Deleted.
+        * rendering/svg/RenderSVGModelObject.h:
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::computeFloatVisibleRectInContainer const):
+        (WebCore::RenderSVGRoot::computeFloatRectForRepaint const): Deleted.
+        * rendering/svg/RenderSVGRoot.h:
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::computeVisibleRectInContainer const):
+        (WebCore::RenderSVGText::computeFloatVisibleRectInContainer const):
+        (WebCore::RenderSVGText::computeRectForRepaint const): Deleted.
+        (WebCore::RenderSVGText::computeFloatRectForRepaint const): Deleted.
+        * rendering/svg/RenderSVGText.h:
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::clippedOverflowRectForRepaint):
+        (WebCore::SVGRenderSupport::computeFloatVisibleRectInContainer):
+        (WebCore::SVGRenderSupport::computeFloatRectForRepaint): Deleted.
+        * rendering/svg/SVGRenderSupport.h:
+
 2018-10-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Enable the datalist element by default on iOS and macOS

@@ -371,7 +371,8 @@ public:
     void deleteLineBoxWrapper();
 
     LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const override;
-    LayoutRect computeRectForRepaint(const LayoutRect&, const RenderLayerModelObject* repaintContainer, RepaintContext context = { false, false }) const override;
+    std::optional<LayoutRect> computeVisibleRectInContainer(const LayoutRect&, const RenderLayerModelObject* container, VisibleRectContext) const
+override;
     void repaintDuringLayoutIfMoved(const LayoutRect&);
     virtual void repaintOverhangingFloats(bool paintAllDescendants);
 
@@ -571,8 +572,9 @@ public:
     ScrollPosition scrollPosition() const;
     LayoutSize cachedSizeForOverflowClip() const;
 
-    bool shouldApplyClipAndScrollPositionForRepaint(const RenderLayerModelObject* repaintContainer) const;
-    void applyCachedClipAndScrollPositionForRepaint(LayoutRect& paintRect) const;
+    // Returns false if the rect has no intersection with the applied clip rect. When the context specifies edge-inclusive
+    // intersection, this return value allows distinguishing between no intersection and zero-area intersection.
+    bool applyCachedClipAndScrollPosition(LayoutRect&, const RenderLayerModelObject* container, VisibleRectContext) const;
 
     virtual bool hasRelativeDimensions() const;
     virtual bool hasRelativeLogicalHeight() const;
@@ -713,6 +715,8 @@ private:
     virtual void computePreferredLogicalWidths() { setPreferredLogicalWidthsDirty(false); }
 
     LayoutRect frameRectForStickyPositioning() const final { return frameRect(); }
+
+    LayoutRect computeVisibleRectUsingPaintOffset(const LayoutRect&) const;
     
     void applyTopLeftLocationOffsetWithFlipping(LayoutPoint&) const;
 

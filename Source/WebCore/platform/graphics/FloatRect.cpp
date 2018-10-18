@@ -93,6 +93,25 @@ void FloatRect::intersect(const FloatRect& other)
     setLocationAndSizeFromEdges(l, t, r, b);
 }
 
+bool FloatRect::edgeInclusiveIntersect(const FloatRect& other)
+{
+    FloatPoint newLocation(std::max(x(), other.x()), std::max(y(), other.y()));
+    FloatPoint newMaxPoint(std::min(maxX(), other.maxX()), std::min(maxY(), other.maxY()));
+
+    bool intersects = true;
+
+    // Return a clean empty rectangle for non-intersecting cases.
+    if (newLocation.x() > newMaxPoint.x() || newLocation.y() > newMaxPoint.y()) {
+        newLocation = { };
+        newMaxPoint = { };
+        intersects = false;
+    }
+
+    m_location = newLocation;
+    m_size = newMaxPoint - newLocation;
+    return intersects;
+}
+
 void FloatRect::unite(const FloatRect& other)
 {
     // Handle empty special cases first.

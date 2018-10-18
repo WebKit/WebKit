@@ -342,19 +342,24 @@ LayoutRect RenderSVGRoot::clippedOverflowRectForRepaint(const RenderLayerModelOb
     return RenderReplaced::computeRectForRepaint(enclosingIntRect(repaintRect), repaintContainer);
 }
 
-FloatRect RenderSVGRoot::computeFloatRectForRepaint(const FloatRect& repaintRect, const RenderLayerModelObject* repaintContainer, bool fixed) const
+std::optional<FloatRect> RenderSVGRoot::computeFloatVisibleRectInContainer(const FloatRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const
 {
     // Apply our local transforms (except for x/y translation), then our shadow, 
     // and then call RenderBox's method to handle all the normal CSS Box model bits
-    FloatRect adjustedRect = m_localToBorderBoxTransform.mapRect(repaintRect);
+    FloatRect adjustedRect = m_localToBorderBoxTransform.mapRect(rect);
 
     const SVGRenderStyle& svgStyle = style().svgStyle();
     if (const ShadowData* shadow = svgStyle.shadow())
         shadow->adjustRectForShadow(adjustedRect);
 
     // Apply initial viewport clip
-    if (shouldApplyViewportClip())
-        adjustedRect.intersect(snappedIntRect(borderBoxRect()));
+    if (shouldApplyViewportClip()) {
+        if (context.m_options.contains(VisibleRectContextOption::UseEdgeInclusiveIntersection)) {
+            if (!adjustedRect.edgeInclusiveIntersect(snappedIntRect(borderBoxRect())))
+                return std::nullopt;
+        } else
+            adjustedRect.intersect(snappedIntRect(borderBoxRect()));
+    }
 
     if (m_hasBoxDecorations || hasRenderOverflow()) {
         // The selectionRect can project outside of the overflowRect, so take their union
@@ -362,7 +367,10 @@ FloatRect RenderSVGRoot::computeFloatRectForRepaint(const FloatRect& repaintRect
         LayoutRect decoratedRepaintRect = unionRect(localSelectionRect(false), visualOverflowRect());
         adjustedRect.unite(decoratedRepaintRect);
     }
-    return RenderReplaced::computeRectForRepaint(enclosingIntRect(adjustedRect), repaintContainer, {fixed, false});
+
+    if (std::optional<LayoutRect> rectInContainer = RenderReplaced::computeVisibleRectInContainer(enclosingIntRect(adjustedRect), container, context))
+        return FloatRect(*rectInContainer);
+    return std::nullopt;
 }
 
 // This method expects local CSS box coordinates.

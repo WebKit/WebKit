@@ -151,6 +151,7 @@ public:
     WEBCORE_EXPORT bool contains(const FloatPoint&, ContainsMode = InsideOrOnStroke) const;
 
     WEBCORE_EXPORT void intersect(const FloatRect&);
+    bool edgeInclusiveIntersect(const FloatRect&);
     WEBCORE_EXPORT void unite(const FloatRect&);
     void uniteEvenIfEmpty(const FloatRect&);
     void uniteIfNonZero(const FloatRect&);

@@ -395,14 +395,14 @@ LayoutRect RenderTableCell::clippedOverflowRectForRepaint(const RenderLayerModel
     return computeRectForRepaint(r, repaintContainer);
 }
 
-LayoutRect RenderTableCell::computeRectForRepaint(const LayoutRect& rect, const RenderLayerModelObject* repaintContainer, RepaintContext context) const
+std::optional<LayoutRect> RenderTableCell::computeVisibleRectInContainer(const LayoutRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const
 {
-    if (repaintContainer == this)
+    if (container == this)
         return rect;
     LayoutRect adjustedRect = rect;
-    if ((!view().frameView().layoutContext().isPaintOffsetCacheEnabled() || repaintContainer) && parent())
+    if ((!view().frameView().layoutContext().isPaintOffsetCacheEnabled() || container || context.m_options.contains(VisibleRectContextOption::UseEdgeInclusiveIntersection)) && parent())
         adjustedRect.moveBy(-parentBox()->location()); // Rows are in the same coordinate space, so don't add their offset in.
-    return RenderBlockFlow::computeRectForRepaint(adjustedRect, repaintContainer, context);
+    return RenderBlockFlow::computeVisibleRectInContainer(adjustedRect, container, context);
 }
 
 LayoutUnit RenderTableCell::cellBaselinePosition() const

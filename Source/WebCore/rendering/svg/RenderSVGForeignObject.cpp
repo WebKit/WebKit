@@ -98,14 +98,17 @@ LayoutRect RenderSVGForeignObject::clippedOverflowRectForRepaint(const RenderLay
     return SVGRenderSupport::clippedOverflowRectForRepaint(*this, repaintContainer);
 }
 
-FloatRect RenderSVGForeignObject::computeFloatRectForRepaint(const FloatRect& repaintRect, const RenderLayerModelObject* repaintContainer, bool fixed) const
+std::optional<FloatRect> RenderSVGForeignObject::computeFloatVisibleRectInContainer(const FloatRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const
 {
-    return SVGRenderSupport::computeFloatRectForRepaint(*this, repaintRect, repaintContainer, fixed);
+    return SVGRenderSupport::computeFloatVisibleRectInContainer(*this, rect, container, context);
 }
 
-LayoutRect RenderSVGForeignObject::computeRectForRepaint(const LayoutRect& repaintRect, const RenderLayerModelObject* repaintContainer, RepaintContext context) const
+std::optional<LayoutRect> RenderSVGForeignObject::computeVisibleRectInContainer(const LayoutRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const
 {
-    return enclosingLayoutRect(computeFloatRectForRepaint(repaintRect, repaintContainer, context.m_hasPositionFixedDescendant));
+    std::optional<FloatRect> adjustedRect = computeFloatVisibleRectInContainer(rect, container, context);
+    if (adjustedRect)
+        return enclosingLayoutRect(*adjustedRect);
+    return std::nullopt;
 }
 
 const AffineTransform& RenderSVGForeignObject::localToParentTransform() const

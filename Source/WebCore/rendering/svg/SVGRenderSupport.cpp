@@ -63,7 +63,7 @@ LayoutRect SVGRenderSupport::clippedOverflowRectForRepaint(const RenderElement& 
     if (renderer.style().visibility() != Visibility::Visible && !renderer.enclosingLayer()->hasVisibleContent())
         return LayoutRect();
 
-    // Pass our local paint rect to computeRectForRepaint() which will
+    // Pass our local paint rect to computeFloatVisibleRectInContainer() which will
     // map to parent coords and recurse up the parent chain.
     FloatRect repaintRect = repaintRectForRendererInLocalCoordinatesExcludingSVGShadow(renderer);
     const SVGRenderStyle& svgStyle = renderer.style().svgStyle();
@@ -72,17 +72,17 @@ LayoutRect SVGRenderSupport::clippedOverflowRectForRepaint(const RenderElement& 
     return enclosingLayoutRect(renderer.computeFloatRectForRepaint(repaintRect, repaintContainer));
 }
 
-FloatRect SVGRenderSupport::computeFloatRectForRepaint(const RenderElement& renderer, const FloatRect& repaintRect, const RenderLayerModelObject* repaintContainer, bool fixed)
+std::optional<FloatRect> SVGRenderSupport::computeFloatVisibleRectInContainer(const RenderElement& renderer, const FloatRect& rect, const RenderLayerModelObject* container, RenderObject::VisibleRectContext context)
 {
-    FloatRect adjustedRect = repaintRect;
+    FloatRect adjustedRect = rect;
     const SVGRenderStyle& svgStyle = renderer.style().svgStyle();
     if (const ShadowData* shadow = svgStyle.shadow())
         shadow->adjustRectForShadow(adjustedRect);
     adjustedRect.inflate(renderer.style().outlineWidth());
 
-    // Translate to coords in our parent renderer, and then call computeFloatRectForRepaint() on our parent.
+    // Translate to coords in our parent renderer, and then call computeFloatVisibleRectInContainer() on our parent.
     adjustedRect = renderer.localToParentTransform().mapRect(adjustedRect);
-    return renderer.parent()->computeFloatRectForRepaint(adjustedRect, repaintContainer, fixed);
+    return renderer.parent()->computeFloatVisibleRectInContainer(adjustedRect, container, context);
 }
 
 const RenderElement& SVGRenderSupport::localToParentTransform(const RenderElement& renderer, AffineTransform &transform)
