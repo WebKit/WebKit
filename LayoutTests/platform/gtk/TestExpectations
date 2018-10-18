@@ -222,8 +222,6 @@ webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-buf
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-changetype.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-a-bitrate.html [ Failure ]
-webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-av-framesize.html [ Failure ]
-webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framerate.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framesize.html [ Failure Pass ]
 # Crash is webkit.org/b/176020
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-duration.html [ Failure Crash ]
@@ -272,7 +270,6 @@ webkit.org/b/169916 css3/blending/blend-mode-with-composited-descendant-should-h
 webkit.org/b/169916 css3/blending/isolation-parsing.html [ Failure ]
 webkit.org/b/169916 css3/blending/repaint/blend-mode-isolate-stacking-context.html [ Failure ]
 webkit.org/b/169916 css3/blending/repaint/blend-mode-turn-off-isolation.html [ Failure ]
-webkit.org/b/169916 css3/blending/background-blend-mode-body-transparent-color-and-image.html [ ImageOnlyFailure ]
 webkit.org/b/169916 css3/blending/background-blend-mode-crossfade-image.html [ ImageOnlyFailure ]
 webkit.org/b/169916 css3/blending/background-blend-mode-tiled-layers.html [ ImageOnlyFailure ]
 webkit.org/b/169916 css3/blending/blend-mode-accelerated-parent-overflow-hidden.html [ ImageOnlyFailure ]
@@ -360,11 +357,7 @@ webkit.org/b/169918 compositing/overflow/ancestor-overflow.html [ Failure ]
 webkit.org/b/169918 compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants.html [ Failure ]
 webkit.org/b/169918 compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants2.html [ Failure ]
 webkit.org/b/169918 compositing/overflow/overflow-auto-with-touch-toggle.html [ Failure ]
-webkit.org/b/169918 compositing/overflow/overflow-auto-with-touch.html [ Failure ]
-webkit.org/b/169918 compositing/overflow/overflow-overlay-with-touch.html [ Failure ]
-webkit.org/b/169918 compositing/overflow/scrolling-content-clip-to-viewport.html [ Failure ]
 webkit.org/b/169918 compositing/overflow/scrolling-without-painting.html [ Failure ]
-webkit.org/b/169918 compositing/overflow/textarea-scroll-touch.html [ Failure ]
 webkit.org/b/169918 compositing/overflow/updating-scrolling-content.html [ Failure ]
 webkit.org/b/169918 compositing/plugins/no-backing-store.html [ Failure ]
 webkit.org/b/169918 compositing/plugins/small-to-large-composited-plugin.html [ Failure ]
@@ -1138,6 +1131,8 @@ webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/service-work
 webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/service-worker/skip-waiting-without-client.https.html [ Skip ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/service-worker/skip-waiting-without-using-registration.https.html [ Skip ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/service-worker/skip-waiting.https.html [ Skip ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/cache-storage/window/cache-storage-match.https.html [ Skip ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/cache-storage/worker/cache-storage-match.https.html [ Skip ]
 
 # Skip anything related to WebAuthN
 http/wpt/credential-management/ [ Skip ]
@@ -1178,6 +1173,7 @@ webkit.org/b/177633 http/tests/security/clipboard/copy-paste-html-cross-origin-i
 webkit.org/b/177633 http/tests/security/clipboard/copy-paste-html-across-origin-sanitizes-html.html [ Failure ]
 webkit.org/b/177633 http/tests/security/clipboard/copy-paste-url-across-origin-sanitizes-url.html [ Failure ]
 webkit.org/b/177633 http/tests/security/clipboard/copy-paste-html-across-origin-strips-mso-list.html [ Failure ]
+webkit.org/b/177633 editing/pasteboard/copy-paste-across-shadow-boundaries-with-style-2.html [ Crash ]
 
 webkit.org/b/180062 fast/text/user-installed-fonts [ Skip ]
 
@@ -2054,6 +2050,9 @@ webkit.org/b/189339 compositing/filters/opacity-change-on-filtered-paints-into-a
 
 webkit.org/b/190001 transitions/start-transform-transition.html [ Pass Failure ]
 
+webkit.org/b/190703 inspector/worker/console-basic.html [ Failure Pass ]
+webkit.org/b/190703 inspector/worker/debugger-pause.html [ Failure Pass Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2384,6 +2383,7 @@ webkit.org/b/186253 [ Release ] http/tests/media/remove-while-loading.html [ Tim
 webkit.org/b/186253 [ Release ] http/tests/security/contentSecurityPolicy/media-src-allowed.html [ Timeout ]
 
 webkit.org/b/186341 fast/animation/css-animation-resuming-when-visible-with-style-change.html [ Timeout Failure Pass ]
+webkit.org/b/186341 fast/animation/css-animation-resuming-when-visible-with-style-change2.html [ Failure Pass ]
 webkit.org/b/186252 legacy-animation-engine/css3/filters/backdrop/animation.html [ Timeout ]
 
 webkit.org/b/187266 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-api-texttracks.html [ Pass Timeout ]
@@ -3418,11 +3418,6 @@ webkit.org/b/183611 media/context-menu-actions.html [ Failure ]
 
 webkit.org/b/183902 fast/dom/frame-loading-via-document-write.html [ Failure ]
 
-webkit.org/b/184080 animations/animation-direction-normal.html [ Failure ]
-webkit.org/b/184080 animations/animation-direction-reverse.html [ Failure ]
-webkit.org/b/184080 animations/play-state-in-shorthand.html [ Failure ]
-webkit.org/b/184080 animations/transform-non-accelerated.html [ Failure ]
-
 webkit.org/b/184086 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property.html [ Failure ]
 webkit.org/b/184086 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property.html [ Failure ]
 
@@ -3552,6 +3547,26 @@ webkit.org/b/189999 legacy-animation-engine/animations/transform-non-accelerated
 webkit.org/b/189999 legacy-animation-engine/transitions/start-transform-transition.html [ Failure ]
 
 webkit.org/b/190000 svg/W3C-SVG-1.1-SE/svgdom-over-01-f.svg [ Failure ]
+
+webkit.org/b/190704 compositing/debug-borders-dynamic.html [ ImageOnlyFailure ]
+
+webkit.org/b/190705 editing/selection/selection-across-shadow-boundaries-mixed-editability-5.html [ ImageOnlyFailure ]
+webkit.org/b/190705 editing/selection/selection-across-shadow-boundaries-user-select-all-1.html [ ImageOnlyFailure ]
+
+webkit.org/b/190706 compositing/overflow/composited-scrolling-paint-phases.html [ Failure ]
+
+webkit.org/b/190707 css-custom-properties-api/length2.html [ Failure ]
+
+webkit.org/b/190708 css3/blending/repaint/blend-mode-turn-off-isolation-no-effect.html [ Failure ]
+
+webkit.org/b/190709 editing/pasteboard/emacs-ctrl-a-k-y.html [ Failure ]
+
+webkit.org/b/190710 fast/css-custom-paint/basic.html [ Failure ]
+webkit.org/b/190710 fast/css-custom-paint/registerPaintBindings.html [ Failure ]
+
+webkit.org/b/190711 fast/selectors/read-only-read-write-input-basics.html [ Failure ]
+
+webkit.org/b/190712 fast/css/pseudo-visited-background-color-on-input.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing

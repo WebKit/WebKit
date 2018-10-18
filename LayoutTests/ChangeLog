@@ -1,3 +1,10 @@
+2018-10-18  Miguel Gomez  <magomez@igalia.com>
+
+        Unreviewed GTK+ gardening after r237249.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/forms/fieldset/fieldset-elements-htmlcollection-expected.txt: Added.
+
 2018-10-18  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] JSC should have "parseFunction" to optimize Function constructor
