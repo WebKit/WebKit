@@ -34,7 +34,6 @@ import sys
 from webkitpy.common.checkout import Checkout
 from webkitpy.common.checkout.scm.detection import SCMDetector
 from webkitpy.common.memoized import memoized
-from webkitpy.common.net import bugzilla, buildbot, web
 from webkitpy.common.system.systemhost import SystemHost
 from webkitpy.common.watchlist.watchlistparser import WatchListParser
 from webkitpy.port.factory import PortFactory
@@ -46,13 +45,7 @@ _log = logging.getLogger(__name__)
 class Host(SystemHost):
     def __init__(self):
         SystemHost.__init__(self)
-        self.web = web.Web()
-
         self._checkout = None
-
-        # Everything below this line is WebKit-specific and belongs on a higher-level object.
-        self.bugs = bugzilla.Bugzilla()
-        self.buildbot = buildbot.BuildBot()
 
         # FIXME: Unfortunately Port objects are currently the central-dispatch objects of the NRWT world.
         # In order to instantiate a port correctly, we have to pass it at least an executive, user, scm, and filesystem
@@ -61,6 +54,24 @@ class Host(SystemHost):
         self.port_factory = PortFactory(self)
 
         self._engage_awesome_locale_hacks()
+
+    @property
+    @memoized
+    def bugs(self):
+        from webkitpy.common.net import bugzilla
+        return bugzilla.Bugzilla()
+
+    @property
+    @memoized
+    def bugzilla(self):
+        from webkitpy.common.net import buildbot
+        return buildbot.BuildBot()
+
+    @property
+    @memoized
+    def web(self):
+        from webkitpy.common.net import web
+        return web.Web()
 
     # We call this from the Host constructor, as it's one of the
     # earliest calls made for all webkitpy-based programs.

@@ -1,3 +1,17 @@
+2018-10-18  Dean Johnson  <dean_johnson@apple.com>
+
+        clean-webkit pulls in many unnecessary dependencies in webkitpy
+        https://bugs.webkit.org/show_bug.cgi?id=190732
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/common/host.py:
+        (Host.__init__): Split out 'bugs', 'bugzilla', and 'web' to only be created when used.
+        (Host):
+        (Host.bugs):
+        (Host.bugzilla):
+        (Host.web):
+
 2018-10-18  Chris Dumez  <cdumez@apple.com>
 
         [PSON] SuspendedPages do not report meaningful domains in Activity Monitor
