@@ -1,3 +1,50 @@
+2018-10-18  Babak Shafiei  <bshafiei@apple.com>
+
+        Cherry-pick r237129. rdar://problem/45285646
+
+    JSArray::shiftCountWithArrayStorage is wrong when an array has holes
+    https://bugs.webkit.org/show_bug.cgi?id=190262
+    <rdar://problem/44986241>
+    
+    Reviewed by Mark Lam.
+    
+    JSTests:
+    
+    * stress/array-prototype-concat-of-long-spliced-arrays.js:
+    (test):
+    * stress/slice-array-storage-with-holes.js: Added.
+    (main):
+    
+    Source/JavaScriptCore:
+    
+    We would take the fast path for shiftCountWithArrayStorage when the array
+    hasHoles(). However, the code for this was wrong. It'd incorrectly update
+    ArrayStorage::m_numValuesInVector. Since the hasHoles() for ArrayStorage
+    path is never taken in JetStream 2, this patch just removes that from
+    the fast path. Instead, we just fallback to the slow path when hasHoles().
+    If we find evidence that this matters for real use cases, we can
+    figure out a way to make the fast path work.
+    
+    * runtime/JSArray.cpp:
+    (JSC::JSArray::shiftCountWithArrayStorage):
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@237129 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-10-15  Saam Barati  <sbarati@apple.com>
+
+            JSArray::shiftCountWithArrayStorage is wrong when an array has holes
+            https://bugs.webkit.org/show_bug.cgi?id=190262
+            <rdar://problem/44986241>
+
+            Reviewed by Mark Lam.
+
+            * stress/array-prototype-concat-of-long-spliced-arrays.js:
+            (test):
+            * stress/slice-array-storage-with-holes.js: Added.
+            (main):
+
 2018-09-21  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r236223. rdar://problem/44682814
