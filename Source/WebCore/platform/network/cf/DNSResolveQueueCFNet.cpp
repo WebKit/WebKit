@@ -41,7 +41,7 @@
 #include "LoaderRunLoopCF.h"
 #endif
 
-#if PLATFORM(WIN) || PLATFORM(IOS)
+#if PLATFORM(WIN) || PLATFORM(IOS_FAMILY)
 #include <CFNetwork/CFNetwork.h>
 #endif
 

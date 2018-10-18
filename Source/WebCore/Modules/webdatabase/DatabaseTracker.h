@@ -94,7 +94,7 @@ public:
     WEBCORE_EXPORT bool deleteOrigin(const SecurityOriginData&);
     WEBCORE_EXPORT bool deleteDatabase(const SecurityOriginData&, const String& name);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     WEBCORE_EXPORT void removeDeletedOpenedDatabases();
     WEBCORE_EXPORT static bool deleteDatabaseFileIfEmpty(const String&);
 
@@ -140,7 +140,7 @@ private:
 
     enum class DeletionMode {
         Immediate,
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         // Deferred deletion is currently only supported on iOS
         // (see removeDeletedOpenedDatabases etc, above).
         Deferred,

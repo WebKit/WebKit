@@ -203,7 +203,7 @@ void FindController::findString(const String& string, FindOptions options, unsig
     // iOS will reveal the selection through a different mechanism, and
     // we need to avoid sending the non-painted selection change to the UI process
     // so that it does not clear the selection out from under us.
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     coreOptions.add(DoNotRevealSelection);
 #endif
 
@@ -317,7 +317,7 @@ void FindController::hideFindUI()
     hideFindIndicator();
 }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 
 bool FindController::updateFindIndicator(Frame& selectedFrame, bool isShowingOverlay, bool shouldAnimate)
 {

@@ -114,7 +114,7 @@ static size_t thresholdForPolicy(MemoryUsagePolicy policy)
 {
     const size_t baseThresholdForPolicy = std::min(3 * GB, ramSize());
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     const double conservativeThresholdFraction = 0.5;
     const double strictThresholdFraction = 0.65;
 #else

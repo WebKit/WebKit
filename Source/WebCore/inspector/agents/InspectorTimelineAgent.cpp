@@ -52,7 +52,7 @@
 #include <JavaScriptCore/ScriptBreakpoint.h>
 #include <wtf/Stopwatch.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "RuntimeApplicationChecks.h"
 #include "WebCoreThreadInternal.h"
 #endif
@@ -69,7 +69,7 @@ using namespace Inspector;
 #if PLATFORM(COCOA)
 static CFRunLoopRef currentRunLoop()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // A race condition during WebView deallocation can lead to a crash if the layer sync run loop
     // observer is added to the main run loop <rdar://problem/9798550>. However, for responsiveness,
     // we still allow this, see <rdar://problem/7403328>. Since the race condition and subsequent

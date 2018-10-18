@@ -50,7 +50,7 @@ public:
     explicit LocaleMac(NSLocale*);
     ~LocaleMac();
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     String formatDateTime(const DateComponents&, FormatType = FormatTypeUnspecified) override;
 #endif
 

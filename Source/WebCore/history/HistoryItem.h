@@ -37,7 +37,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "ViewportArguments.h"
 #endif
 
@@ -176,7 +176,7 @@ public:
     int showTreeWithIndent(unsigned indentLevel) const;
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     FloatRect exposedContentRect() const { return m_exposedContentRect; }
     void setExposedContentRect(FloatRect exposedContentRect) { m_exposedContentRect = exposedContentRect; }
 
@@ -268,7 +268,7 @@ private:
     std::unique_ptr<CachedPage> m_cachedPage;
     PruningReason m_pruningReason;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     FloatRect m_exposedContentRect;
     IntRect m_unobscuredContentRect;
     FloatSize m_minimumLayoutSizeInScrollViewCoordinates;

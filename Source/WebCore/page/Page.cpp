@@ -1725,7 +1725,7 @@ void Page::setIsVisibleInternal(bool isVisible)
         m_isPrerender = false;
 
         resumeScriptedAnimations();
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         resumeDeviceMotionAndOrientationUpdates();
 #endif
 
@@ -1765,7 +1765,7 @@ void Page::setIsVisibleInternal(bool isVisible)
 
         setSVGAnimationsState(*this, SVGAnimationsState::Paused);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         suspendDeviceMotionAndOrientationUpdates();
 #endif
 
@@ -2307,7 +2307,7 @@ void Page::removePlaybackTargetPickerClient(uint64_t contextId)
 
 void Page::showPlaybackTargetPicker(uint64_t contextId, const WebCore::IntPoint& location, bool isVideo, RouteSharingPolicy routeSharingPolicy, const String& routingContextUID)
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // FIXME: refactor iOS implementation.
     UNUSED_PARAM(contextId);
     UNUSED_PARAM(location);

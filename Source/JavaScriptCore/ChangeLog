@@ -1,3 +1,42 @@
+2018-10-18  Alexey Proskuryakov  <ap@apple.com>
+
+        Switch from PLATFORM(IOS) to PLATFORM(IOS_FAMILY)
+        https://bugs.webkit.org/show_bug.cgi?id=190729
+
+        Reviewed by Tim Horton.
+
+        * API/JSBase.cpp:
+        * API/JSWrapperMap.mm:
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::cacheFlush):
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::cacheFlush):
+        * assembler/AssemblerCommon.h:
+        (JSC::isIOS):
+        * heap/FullGCActivityCallback.cpp:
+        (JSC::FullGCActivityCallback::doCollection):
+        * heap/Heap.cpp:
+        (JSC::Heap::overCriticalMemoryThreshold):
+        (JSC::Heap::updateAllocationLimits):
+        (JSC::Heap::collectIfNecessaryOrDefer):
+        * heap/Heap.h:
+        * inspector/remote/cocoa/RemoteConnectionToTargetCocoa.mm:
+        (Inspector::RemoteConnectionToTarget::dispatchAsyncOnTarget):
+        * jit/ExecutableAllocator.cpp:
+        (JSC::allowJIT):
+        * jit/ExecutableAllocator.h:
+        * jit/RegisterSet.cpp:
+        (JSC::RegisterSet::reservedHardwareRegisters):
+        (JSC::RegisterSet::calleeSaveRegisters):
+        * jit/ThunkGenerators.cpp:
+        * jsc.cpp:
+        (main):
+        * runtime/MathCommon.cpp:
+        * runtime/Options.cpp:
+        (JSC::overrideDefaults):
+        (JSC::recomputeDependentOptions):
+        * runtime/Options.h:
+
 2018-10-18  Ross Kirsling  <ross.kirsling@sony.com>
 
         delete expression should not throw without a reference

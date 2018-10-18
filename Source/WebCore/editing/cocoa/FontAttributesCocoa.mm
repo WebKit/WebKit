@@ -29,7 +29,7 @@
 #import "ColorCocoa.h"
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import <pal/ios/UIKitSoftLink.h>
 #endif
 

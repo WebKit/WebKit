@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WebChromeClient.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "DrawingArea.h"
 #import "UIKitSPI.h"
@@ -161,4 +161,4 @@ RefPtr<Icon> WebChromeClient::createIconForFiles(const Vector<String>& filenames
 
 } // namespace WebKit
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

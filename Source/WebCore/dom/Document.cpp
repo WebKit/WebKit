@@ -253,7 +253,7 @@
 #include "IDBOpenDBRequest.h"
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "CSSFontSelector.h"
 #include "DeviceMotionClientIOS.h"
 #include "DeviceMotionController.h"
@@ -513,7 +513,7 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_intersectionObserversNotifyTimer(*this, &Document::notifyIntersectionObserversTimerFired)
 #endif
     , m_loadEventDelayTimer(*this, &Document::loadEventDelayTimerFired)
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #if ENABLE(DEVICE_ORIENTATION)
     , m_deviceMotionClient(std::make_unique<DeviceMotionClientIOS>())
     , m_deviceMotionController(std::make_unique<DeviceMotionController>(m_deviceMotionClient.get()))
@@ -599,7 +599,7 @@ Document::~Document()
     ASSERT(!m_disabledFieldsetElementsCount);
     ASSERT(m_inDocumentShadowRoots.isEmpty());
 
-#if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS)
+#if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
     m_deviceMotionClient->deviceMotionControllerDestroyed();
     m_deviceOrientationClient->deviceOrientationControllerDestroyed();
 #endif
@@ -2554,7 +2554,7 @@ void Document::suspendDeviceMotionAndOrientationUpdates()
     if (m_areDeviceMotionAndOrientationUpdatesSuspended)
         return;
     m_areDeviceMotionAndOrientationUpdatesSuspended = true;
-#if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS)
+#if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
     if (m_deviceMotionController)
         m_deviceMotionController->suspendUpdates();
     if (m_deviceOrientationController)
@@ -2567,7 +2567,7 @@ void Document::resumeDeviceMotionAndOrientationUpdates()
     if (!m_areDeviceMotionAndOrientationUpdatesSuspended)
         return;
     m_areDeviceMotionAndOrientationUpdatesSuspended = false;
-#if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS)
+#if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
     if (m_deviceMotionController)
         m_deviceMotionController->resumeUpdates();
     if (m_deviceOrientationController)
@@ -2584,7 +2584,7 @@ bool Document::shouldBypassMainWorldContentSecurityPolicy() const
 
 void Document::platformSuspendOrStopActiveDOMObjects()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (WebThreadCountOfObservedContentModifiers() > 0) {
         if (auto* frame = this->frame()) {
             if (auto* page = frame->page())
@@ -3602,7 +3602,7 @@ void Document::processSupportedColorSchemes(const String& colorSchemes)
 }
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 void Document::processFormatDetection(const String& features)
 {
@@ -6130,7 +6130,7 @@ MediaCanStartListener* Document::takeAnyMediaCanStartListener()
     return m_mediaCanStartListeners.takeAny();
 }
 
-#if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS)
+#if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
 
 DeviceMotionController* Document::deviceMotionController() const
 {

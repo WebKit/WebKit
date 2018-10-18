@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(FULLSCREEN_API) && PLATFORM(IOS)
+#if ENABLE(FULLSCREEN_API) && PLATFORM(IOS_FAMILY)
 #include "WKFullscreenStackView.h"
 
 #import "UIKitSPI.h"
@@ -84,4 +84,4 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, AVBackgroundView)
 
 @end
 
-#endif // ENABLE(FULLSCREEN_API) && PLATFORM(IOS)
+#endif // ENABLE(FULLSCREEN_API) && PLATFORM(IOS_FAMILY)

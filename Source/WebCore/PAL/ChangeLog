@@ -1,3 +1,34 @@
+2018-10-18  Alexey Proskuryakov  <ap@apple.com>
+
+        Switch from PLATFORM(IOS) to PLATFORM(IOS_FAMILY)
+        https://bugs.webkit.org/show_bug.cgi?id=190729
+
+        Reviewed by Tim Horton.
+
+        * pal/cf/CoreMediaSoftLink.cpp:
+        * pal/cf/CoreMediaSoftLink.h:
+        * pal/ios/UIKitSoftLink.h:
+        * pal/ios/UIKitSoftLink.mm:
+        * pal/spi/cf/CFNetworkSPI.h:
+        * pal/spi/cocoa/AVKitSPI.h:
+        * pal/spi/cocoa/CFNSURLConnectionSPI.h:
+        * pal/spi/cocoa/CoreTextSPI.h:
+        * pal/spi/cocoa/DataDetectorsCoreSPI.h:
+        * pal/spi/cocoa/IOSurfaceSPI.h:
+        * pal/spi/cocoa/LaunchServicesSPI.h:
+        * pal/spi/cocoa/NEFilterSourceSPI.h:
+        * pal/spi/cocoa/NSAttributedStringSPI.h:
+        * pal/spi/cocoa/NSKeyedArchiverSPI.h:
+        * pal/spi/cocoa/PassKitSPI.h:
+        * pal/spi/cocoa/QuartzCoreSPI.h:
+        * pal/spi/ios/DataDetectorsUISPI.h:
+        * pal/spi/ios/GraphicsServicesSPI.h:
+        * pal/spi/ios/MediaPlayerSPI.h:
+        * pal/spi/ios/MobileGestaltSPI.h:
+        * pal/spi/mac/AVFoundationSPI.h:
+        * pal/system/mac/ClockCM.mm:
+        (ClockCM::ClockCM):
+
 2018-10-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Enable the datalist element by default on iOS and macOS

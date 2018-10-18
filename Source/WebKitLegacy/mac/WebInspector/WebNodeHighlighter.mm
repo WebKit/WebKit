@@ -58,7 +58,7 @@
 
 - (void)highlight
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     // The scrollview's content view stays around between page navigations, so target it.
     NSView *view = [[[[[_inspectedWebView mainFrame] frameView] documentView] enclosingScrollView] contentView];
 #else
@@ -72,7 +72,7 @@
         [_currentHighlight setDelegate:self];
         [_currentHighlight attach];
     } else {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
         [[_currentHighlight highlightView] setNeedsDisplay:YES];
 #else
         [_currentHighlight setNeedsDisplay];

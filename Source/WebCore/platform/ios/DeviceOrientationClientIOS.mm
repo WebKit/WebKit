@@ -29,7 +29,7 @@
 
 #import "WebCoreMotionManager.h"
 
-#if PLATFORM(IOS) && ENABLE(DEVICE_ORIENTATION)
+#if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
 
 namespace WebCore {
 
@@ -82,7 +82,7 @@ void DeviceOrientationClientIOS::orientationChanged(double alpha, double beta, d
     if (!m_updating)
         return;
 
-#if PLATFORM(IOS_SIMULATOR)
+#if PLATFORM(IOS_FAMILY_SIMULATOR)
     UNUSED_PARAM(alpha);
     UNUSED_PARAM(beta);
     UNUSED_PARAM(gamma);
@@ -98,4 +98,4 @@ void DeviceOrientationClientIOS::orientationChanged(double alpha, double beta, d
 
 } // namespace WebCore
 
-#endif // PLATFORM(IOS) && ENABLE(DEVICE_ORIENTATION)
+#endif // PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)

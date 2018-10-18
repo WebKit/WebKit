@@ -69,7 +69,7 @@ public:
     void removeItem(WebCore::HistoryItem&);
     const Vector<Ref<WebCore::HistoryItem>>& entries() const { return m_entries; }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     unsigned current();
     void setCurrent(unsigned newCurrent);
 #endif

@@ -565,7 +565,7 @@ void ScrollableArea::serviceScrollAnimations()
         scrollAnimator->serviceScrollAnimations();
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 bool ScrollableArea::isPinnedInBothDirections(const IntSize& scrollDelta) const
 {
     return isPinnedHorizontallyInDirection(scrollDelta.width()) && isPinnedVerticallyInDirection(scrollDelta.height());
@@ -588,7 +588,7 @@ bool ScrollableArea::isPinnedVerticallyInDirection(int verticalScrollDelta) cons
         return true;
     return false;
 }
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 int ScrollableArea::horizontalScrollbarIntrusion() const
 {

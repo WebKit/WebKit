@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WAKAppKitStubs.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 id NSApp = nil;
 
@@ -37,4 +37,4 @@ id NSApp = nil;
 }
 @end
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

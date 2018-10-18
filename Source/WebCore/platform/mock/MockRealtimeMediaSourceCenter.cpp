@@ -94,7 +94,7 @@ public:
         return MockRealtimeVideoSource::create(String { device.persistentId() }, String { device.label() }, WTFMove(hashSalt), constraints);
     }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 private:
     void setVideoCapturePageState(bool interrupted, bool pageMuted)
     {

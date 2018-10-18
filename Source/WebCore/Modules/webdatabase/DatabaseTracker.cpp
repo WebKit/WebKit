@@ -50,7 +50,7 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "WebCoreThread.h"
 #endif
 
@@ -1136,7 +1136,7 @@ bool DatabaseTracker::deleteDatabaseFile(const SecurityOriginData& origin, const
     for (auto& database : deletedDatabases)
         database->markAsDeletedAndClose();
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (deletionMode == DeletionMode::Deferred) {
         // Other background processes may still be accessing this database. Deleting the database directly
         // would nuke the POSIX file locks, potentially causing Safari/WebApp to corrupt the new db if it's running in the background.
@@ -1155,7 +1155,7 @@ bool DatabaseTracker::deleteDatabaseFile(const SecurityOriginData& origin, const
     return SQLiteFileSystem::deleteDatabaseFile(fullPath);
 }
     
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 void DatabaseTracker::removeDeletedOpenedDatabases()
 {

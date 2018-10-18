@@ -339,7 +339,7 @@ static std::optional<LayoutPoint> absolutePointIfNotClipped(Document& document, 
     absolutePoint.moveBy(view->contentsScrollPosition());
 
     LayoutRect visibleRect;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     visibleRect = view->unobscuredContentRect();
 #else
     visibleRect = view->visibleContentRect();

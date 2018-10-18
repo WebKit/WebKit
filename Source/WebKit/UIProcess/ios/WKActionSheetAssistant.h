@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "GestureTypes.h"
 #import "WKActionSheet.h"
@@ -82,4 +82,4 @@ struct InteractionInformationAtPosition;
 - (NSArray *)currentAvailableActionTitles;
 @end
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

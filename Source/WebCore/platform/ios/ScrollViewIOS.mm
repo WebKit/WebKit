@@ -26,7 +26,7 @@
 #import "config.h"
 #import "ScrollView.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "FloatRect.h"
 #import "IntRect.h"
@@ -227,7 +227,7 @@ void ScrollView::platformSetContentsSize()
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     int w = m_contentsSize.width();
     int h = m_contentsSize.height();
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     LOG(Frames, "%p %@ at w %d h %d\n", documentView(), [(id)[documentView() class] className], w, h);            
 #else
     LOG(Frames, "%p %@ at w %d h %d\n", documentView(), NSStringFromClass([documentView() class]), w, h);
@@ -318,4 +318,4 @@ void ScrollView::platformSetScrollOrigin(const IntPoint& origin, bool updatePosi
 
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

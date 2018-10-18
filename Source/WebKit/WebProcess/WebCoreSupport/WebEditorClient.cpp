@@ -405,7 +405,7 @@ void WebEditorClient::textDidChangeInTextArea(Element* element)
     m_page->injectedBundleFormClient().textDidChangeInTextArea(m_page, downcast<HTMLTextAreaElement>(element), webFrame);
 }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 void WebEditorClient::overflowScrollPositionChanged()
 {
     notImplemented();

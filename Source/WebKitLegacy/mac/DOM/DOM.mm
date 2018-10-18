@@ -63,7 +63,7 @@
 #import <WebCore/WebScriptObjectPrivate.h>
 #import <wtf/HashMap.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import <WebCore/WAKAppKitStubs.h>
 #import <WebCore/WAKWindow.h>
 #import <WebCore/WebCoreThreadMessage.h>
@@ -188,7 +188,7 @@ static NSArray *kit(const Vector<IntRect>& rects)
     return array;
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 static WKQuad wkQuadFromFloatQuad(const FloatQuad& inQuad)
 {
@@ -308,7 +308,7 @@ id <DOMEventTarget> kit(EventTarget* target)
 
 @implementation DOMNode (DOMNodeExtensions)
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 - (CGRect)boundingBox
 #else
 - (NSRect)boundingBox
@@ -318,7 +318,7 @@ id <DOMEventTarget> kit(EventTarget* target)
     node.document().updateLayoutIgnorePendingStylesheets();
     auto* renderer = node.renderer();
     if (!renderer)
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         return CGRectZero;
 #else
         return NSZeroRect;
@@ -331,7 +331,7 @@ id <DOMEventTarget> kit(EventTarget* target)
     return [self textRects];
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 // quad in page coordinates, taking transforms into account. c.f. - (NSRect)boundingBox;
 - (WKQuad)absoluteQuad
@@ -492,7 +492,7 @@ id <DOMEventTarget> kit(EventTarget* target)
     return kit(page->focusController().previousFocusableElement(*core(self)));
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 @end
 
@@ -595,7 +595,7 @@ id <DOMEventTarget> kit(EventTarget* target)
 
 @implementation DOMRange (DOMRangeExtensions)
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 - (CGRect)boundingBox
 #else
 - (NSRect)boundingBox
@@ -712,7 +712,7 @@ id <DOMEventTarget> kit(EventTarget* target)
 
 @end
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 @implementation DOMHTMLLinkElement (WebPrivate)
 

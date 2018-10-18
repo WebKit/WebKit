@@ -33,7 +33,7 @@
 #import <WebKit/_WKActivatedElementInfo.h>
 #import <wtf/RetainPtr.h>
 
-#if WK_API_ENABLED && PLATFORM(IOS)
+#if WK_API_ENABLED && PLATFORM(IOS_FAMILY)
 
 namespace TestWebKitAPI {
 

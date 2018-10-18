@@ -66,7 +66,7 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
 
 + (void)initialize
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
     RunLoop::initializeMainRunLoop();
@@ -83,7 +83,7 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
     addLookupKey(WebElementDOMNodeKey, @selector(_domNode));
     addLookupKey(WebElementFrameKey, @selector(_webFrame));
     addLookupKey(WebElementImageAltStringKey, @selector(_altDisplayString));
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     addLookupKey(WebElementImageKey, @selector(_image));
     addLookupKey(WebElementImageRectKey, @selector(_imageRect));
 #endif
@@ -199,7 +199,7 @@ static NSString* NSStringOrNil(String coreString)
     return NSStringOrNil(_result->spellingToolTip(dir));
 }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 
 - (NSImage *)_image
 {

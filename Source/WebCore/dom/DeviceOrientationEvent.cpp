@@ -58,7 +58,7 @@ std::optional<double> DeviceOrientationEvent::gamma() const
     return m_orientation->gamma();
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 std::optional<double> DeviceOrientationEvent::compassHeading() const
 {

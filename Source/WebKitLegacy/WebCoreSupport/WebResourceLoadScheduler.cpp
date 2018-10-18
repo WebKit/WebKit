@@ -40,13 +40,13 @@
 #include <wtf/SetForScope.h>
 #include <wtf/text/CString.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include <WebCore/RuntimeApplicationChecks.h>
 #endif
 
 // Match the parallel connection count used by the networking layer.
 static unsigned maxRequestsInFlightPerHost;
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 static const unsigned maxRequestsInFlightForNonHTTPProtocols = 20;
 #else
 // Limiting this seems to regress performance in some local cases so let's just make it large.
@@ -93,7 +93,7 @@ void WebResourceLoadScheduler::loadResource(Frame& frame, CachedResource& resour
     SubresourceLoader::create(frame, resource, WTFMove(request), options, [this, completionHandler = WTFMove(completionHandler)] (RefPtr<WebCore::SubresourceLoader>&& loader) mutable {
         if (loader)
             scheduleLoad(loader.get());
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         // Since we defer loader initialization until scheduling on iOS, the frame
         // load delegate that would be called in SubresourceLoader::create() on
         // other ports might be called in scheduleLoad() instead. Our contract to
@@ -128,7 +128,7 @@ void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader)
 {
     ASSERT(resourceLoader);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // If there's a web archive resource for this URL, we don't need to schedule the load since it will never touch the network.
     if (!isSuspendingPendingRequests() && resourceLoader->documentLoader()->archiveResourceForURL(resourceLoader->iOSOriginalRequest().url())) {
         resourceLoader->startLoading();
@@ -141,7 +141,7 @@ void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader)
     }
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     HostInformation* host = hostForURL(resourceLoader->iOSOriginalRequest().url(), CreateIfNotFound);
 #else
     HostInformation* host = hostForURL(resourceLoader->url(), CreateIfNotFound);
@@ -161,7 +161,7 @@ void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader)
     }
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if ((priority > ResourceLoadPriority::Low || !resourceLoader->iOSOriginalRequest().url().protocolIsInHTTPFamily() || (priority == ResourceLoadPriority::Low && !hadRequests)) && !isSuspendingPendingRequests()) {
         // Try to request important resources immediately.
         servePendingRequests(host, priority);
@@ -187,7 +187,7 @@ void WebResourceLoadScheduler::remove(ResourceLoader* resourceLoader)
     HostInformation* host = hostForURL(resourceLoader->url());
     if (host)
         host->remove(resourceLoader);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // ResourceLoader::url() doesn't start returning the correct value until the load starts. If we get canceled before that, we need to look for originalRequest url instead.
     // FIXME: ResourceLoader::url() should be made to return a sensible value at all times.
     if (!resourceLoader->iOSOriginalRequest().isNull()) {
@@ -258,7 +258,7 @@ void WebResourceLoadScheduler::servePendingRequests(HostInformation* host, Resou
 
             requestsPending.removeFirst();
             host->addLoadInProgress(resourceLoader.get());
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
             if (!IOSApplication::isWebProcess()) {
                 resourceLoader->startLoading();
                 return;

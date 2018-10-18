@@ -448,7 +448,7 @@ bool RenderTheme::paintBorderOnly(const RenderBox& box, const PaintInfo& paintIn
     if (paintInfo.context().paintingDisabled())
         return false;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     UNUSED_PARAM(rect);
     return box.style().appearance() != NoControlPart;
 #else

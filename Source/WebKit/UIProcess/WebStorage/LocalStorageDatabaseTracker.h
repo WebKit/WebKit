@@ -75,7 +75,7 @@ private:
     RefPtr<WorkQueue> m_queue;
     String m_localStorageDirectory;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void platformMaybeExcludeFromBackup() const;
 
     mutable bool m_hasExcludedFromBackup { false };

@@ -52,7 +52,7 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import "WebCoreThreadRun.h"
 #endif
 
@@ -97,7 +97,7 @@ namespace WebCore {
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 static void userCaptionPreferencesChangedNotificationCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void *, CFDictionaryRef)
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     static_cast<CaptionUserPreferencesMediaAF*>(observer)->captionPreferencesChanged();
 #else
     WebThreadRun(^{

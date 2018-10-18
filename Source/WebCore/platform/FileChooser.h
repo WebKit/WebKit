@@ -88,9 +88,9 @@ public:
 
     WEBCORE_EXPORT void chooseFile(const String& path);
     WEBCORE_EXPORT void chooseFiles(const Vector<String>& paths);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // FIXME: This function is almost identical to FileChooser::chooseFiles(). We should merge this
-    // function with FileChooser::chooseFiles() and hence remove the PLATFORM(IOS)-guard.
+    // function with FileChooser::chooseFiles() and hence remove the PLATFORM(IOS_FAMILY)-guard.
     WEBCORE_EXPORT void chooseMediaFiles(const Vector<String>& paths, const String& displayString, Icon*);
 #endif
 

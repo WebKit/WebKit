@@ -39,7 +39,7 @@ messages -> WebPageProxy {
 #endif // ENABLE(WEBGL)
     DidChangeViewportProperties(struct WebCore::ViewportAttributes attributes)
     DidReceiveEvent(uint32_t type, bool handled)
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     SetCursor(WebCore::Cursor cursor)
     SetCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
 #endif
@@ -68,7 +68,7 @@ messages -> WebPageProxy {
     HideValidationMessage()
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     AccessibilityScreenToRootView(WebCore::IntPoint screenPoint) -> (WebCore::IntPoint windowPoint)
     RootViewToAccessibilityScreen(WebCore::IntRect rect) -> (WebCore::IntRect screenFrame)
 #endif
@@ -187,7 +187,7 @@ messages -> WebPageProxy {
     FontAtSelectionCallback(String fontName, double fontSize, bool selectioHasMultipleFonts, WebKit::CallbackID callbackID)
 #endif
     FontAttributesCallback(struct WebCore::FontAttributes attributes, WebKit::CallbackID callbackID)
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     GestureCallback(WebCore::IntPoint point, uint32_t gestureType, uint32_t gestureState, uint32_t flags, WebKit::CallbackID callbackID)
     TouchesCallback(WebCore::IntPoint point, uint32_t touches, uint32_t flags, WebKit::CallbackID callbackID)
     AutocorrectionDataCallback(Vector<WebCore::FloatRect> textRects, String fontName, double fontSize, uint64_t traits, WebKit::CallbackID callbackID)
@@ -400,7 +400,7 @@ messages -> WebPageProxy {
     WindowedPluginVisibilityDidChange(bool isVisible, uint64_t windowID)
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     CouldNotRestorePageState()
     RestorePageState(std::optional<WebCore::FloatPoint> scrollPosition, WebCore::FloatPoint scrollOrigin, WebCore::RectEdges<float> obscuredInsetsOnSave, double scale)
     RestorePageCenterAndScale(std::optional<WebCore::FloatPoint> unobscuredCenter, double scale)
@@ -489,7 +489,7 @@ messages -> WebPageProxy {
 
     ContentRuleListNotification(WebCore::URL url, Vector<String> identifiers, Vector<String> notifications)
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
     AddPlaybackTargetPickerClient(uint64_t contextId)
     RemovePlaybackTargetPickerClient(uint64_t contextId)
     ShowPlaybackTargetPicker(uint64_t clientId, WebCore::FloatRect pickerLocation, bool hasVideo)

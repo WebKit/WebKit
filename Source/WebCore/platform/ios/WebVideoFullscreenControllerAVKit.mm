@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "WebVideoFullscreenControllerAVKit.h"
 
@@ -223,7 +223,7 @@ private:
 
 void VideoFullscreenControllerContext::requestUpdateInlineRect()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     ASSERT(isUIThread());
     WebThreadRun([protectedThis = makeRefPtr(this), this] () mutable {
         IntRect clientRect = elementRectInWindow(m_videoElement.get());
@@ -238,7 +238,7 @@ void VideoFullscreenControllerContext::requestUpdateInlineRect()
 
 void VideoFullscreenControllerContext::requestVideoContentLayer()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     ASSERT(isUIThread());
     WebThreadRun([protectedThis = makeRefPtr(this), this, videoFullscreenLayer = retainPtr([m_videoFullscreenView layer])] () mutable {
         [videoFullscreenLayer setBackgroundColor:cachedCGColor(WebCore::Color::transparent)];
@@ -255,7 +255,7 @@ void VideoFullscreenControllerContext::requestVideoContentLayer()
 
 void VideoFullscreenControllerContext::returnVideoContentLayer()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     ASSERT(isUIThread());
     WebThreadRun([protectedThis = makeRefPtr(this), this, videoFullscreenLayer = retainPtr([m_videoFullscreenView layer])] () mutable {
         [videoFullscreenLayer setBackgroundColor:cachedCGColor(WebCore::Color::transparent)];
@@ -273,7 +273,7 @@ void VideoFullscreenControllerContext::returnVideoContentLayer()
 void VideoFullscreenControllerContext::didSetupFullscreen()
 {
     ASSERT(isUIThread());
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     dispatch_async(dispatch_get_main_queue(), [protectedThis = makeRefPtr(this), this] {
         m_interface->enterFullscreen();
     });
@@ -302,7 +302,7 @@ void VideoFullscreenControllerContext::willExitFullscreen()
 void VideoFullscreenControllerContext::didExitFullscreen()
 {
     ASSERT(isUIThread());
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     dispatch_async(dispatch_get_main_queue(), [protectedThis = makeRefPtr(this), this] {
         m_interface->cleanupFullscreen();
     });
@@ -1049,4 +1049,4 @@ void VideoFullscreenControllerContext::requestHideAndExitFullscreen()
 
 #endif // !HAVE(AVKIT)
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

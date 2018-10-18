@@ -32,7 +32,7 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/TextStream.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "PlatformScreen.h"
 #endif
 
@@ -322,7 +322,7 @@ ViewportConfiguration::Parameters ViewportConfiguration::textDocumentParameters(
 {
     Parameters parameters;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     parameters.width = static_cast<int>(screenSize().width());
 #else
     // FIXME: this needs to be unified with ViewportArguments on all ports.

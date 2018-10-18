@@ -55,7 +55,7 @@
 #include <wtf/text/TextStream.h>
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "SystemMemory.h"
 #include "WebCoreThread.h"
 #endif
@@ -80,7 +80,7 @@ namespace WebCore {
 // The threshold width or height above which a tiled layer will be used. This should be
 // large enough to avoid tiled layers for most GraphicsLayers, but less than the OpenGL
 // texture size limit on all supported hardware.
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 static const int cMaxPixelDimension = 1280;
 static const int cMaxPixelDimensionLowMemory = 1024;
 static const int cMemoryLevelToUseSmallerPixelDimension = 35;
@@ -1168,7 +1168,7 @@ void GraphicsLayerCA::setContentsToPlatformLayer(PlatformLayer* platformLayer, C
     noteLayerPropertyChanged(ContentsPlatformLayerChanged);
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 PlatformLayer* GraphicsLayerCA::contentsLayerForMedia() const
 {
     return m_contentsLayerPurpose == ContentsLayerPurpose::Media ? m_contentsLayer->platformLayer() : nullptr;
@@ -1220,7 +1220,7 @@ void GraphicsLayerCA::flushCompositingState(const FloatRect& visibleRect)
     commitState.ancestorHadChanges = visibleRect != m_previousCommittedVisibleRect;
     m_previousCommittedVisibleRect = visibleRect;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // In WK1, UIKit may be changing layer bounds behind our back in overflow-scroll layers, so disable the optimization.
     // See the similar test in computeVisibleAndCoverageRect().
     if (m_layer->isPlatformCALayerCocoa())
@@ -1359,7 +1359,7 @@ GraphicsLayerCA::VisibleAndCoverageRects GraphicsLayerCA::computeVisibleAndCover
     bool mapWasClamped;
     FloatRect clipRectForChildren = state.mappedQuad(&mapWasClamped).boundingBox();
     FloatPoint boundsOrigin = m_boundsOrigin;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // In WK1, UIKit may be changing layer bounds behind our back in overflow-scroll layers, so use the layer's origin.
     if (m_layer->isPlatformCALayerCocoa())
         boundsOrigin = m_layer->bounds().location();
@@ -3748,7 +3748,7 @@ bool GraphicsLayerCA::requiresTiledLayer(float pageScaleFactor) const
         return false;
 
     // FIXME: catch zero-size height or width here (or earlier)?
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     int maxPixelDimension = systemMemoryLevel() < cMemoryLevelToUseSmallerPixelDimension ? cMaxPixelDimensionLowMemory : cMaxPixelDimension;
     return m_size.width() * pageScaleFactor > maxPixelDimension || m_size.height() * pageScaleFactor > maxPixelDimension;
 #else
@@ -3827,7 +3827,7 @@ GraphicsLayer::CompositingCoordinatesOrientation GraphicsLayerCA::defaultContent
 void GraphicsLayerCA::setupContentsLayer(PlatformCALayer* contentsLayer)
 {
     // Turn off implicit animations on the inner layer.
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     contentsLayer->setMasksToBounds(true);
 #endif
 

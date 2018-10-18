@@ -2653,7 +2653,7 @@ void Element::focus(bool restorePreviousSelection, FocusDirection direction)
     }
 
     SelectionRevealMode revealMode = SelectionRevealMode::Reveal;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // Focusing a form element triggers animation in UIKit to scroll to the right position.
     // Calling updateFocusAppearance() would generate an unnecessary call to ScrollView::setScrollPosition(),
     // which would jump us around during this animation. See <rdar://problem/6699741>.

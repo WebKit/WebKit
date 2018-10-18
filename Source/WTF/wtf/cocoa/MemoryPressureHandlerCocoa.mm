@@ -58,7 +58,7 @@ static int notifyTokens[3];
 // These value seems reasonable and testing verifies that it throttles frequent
 // low memory events, greatly reducing CPU usage.
 static const Seconds s_minimumHoldOffTime { 5_s };
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 static const unsigned s_holdOffMultiplier = 20;
 #endif
 
@@ -68,7 +68,7 @@ void MemoryPressureHandler::install()
         return;
 
     dispatch_async(dispatch_get_main_queue(), ^{
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         auto memoryStatusFlags = DISPATCH_MEMORYPRESSURE_NORMAL | DISPATCH_MEMORYPRESSURE_WARN | DISPATCH_MEMORYPRESSURE_CRITICAL | DISPATCH_MEMORYPRESSURE_PROC_LIMIT_WARN | DISPATCH_MEMORYPRESSURE_PROC_LIMIT_CRITICAL;
 #else // PLATFORM(MAC)
         auto memoryStatusFlags = DISPATCH_MEMORYPRESSURE_CRITICAL;
@@ -77,7 +77,7 @@ void MemoryPressureHandler::install()
 
         dispatch_source_set_event_handler(memoryPressureEventSource, ^{
             auto status = dispatch_source_get_data(memoryPressureEventSource);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
             switch (status) {
             // VM pressure events.
             case DISPATCH_MEMORYPRESSURE_NORMAL:
@@ -183,14 +183,14 @@ void MemoryPressureHandler::holdOff(Seconds seconds)
 
 void MemoryPressureHandler::respondToMemoryPressure(Critical critical, Synchronous synchronous)
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     uninstall();
     MonotonicTime startTime = MonotonicTime::now();
 #endif
 
     releaseMemory(critical, synchronous);
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     Seconds holdOffTime = (MonotonicTime::now() - startTime) * s_holdOffMultiplier;
     holdOff(std::max(holdOffTime, s_minimumHoldOffTime));
 #endif

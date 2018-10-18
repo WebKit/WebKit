@@ -90,7 +90,7 @@ public:
     virtual bool handleTouchEvent(const PlatformTouchEvent&);
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     virtual void didStartScroll() { }
     virtual void didEndScroll() { }
     virtual void didUpdateScroll() { }
@@ -225,7 +225,7 @@ public:
     enum VisibleContentRectIncludesScrollbars { ExcludeScrollbars, IncludeScrollbars };
     enum VisibleContentRectBehavior {
         ContentsVisibleRect,
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         LegacyIOSDocumentViewRect,
         LegacyIOSDocumentVisibleRect = LegacyIOSDocumentViewRect
 #else
@@ -284,7 +284,7 @@ public:
     virtual bool scheduleAnimation() { return false; }
     void serviceScrollAnimations();
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     bool isHorizontalScrollerPinnedToMinimumPosition() const { return !horizontalScrollbar() || scrollOffset(HorizontalScrollbar) <= 0; }
     bool isHorizontalScrollerPinnedToMaximumPosition() const { return !horizontalScrollbar() || scrollOffset(HorizontalScrollbar) >= maximumScrollOffset().x(); }
     bool isVerticalScrollerPinnedToMinimumPosition() const { return !verticalScrollbar() || scrollOffset(VerticalScrollbar) <= 0; }

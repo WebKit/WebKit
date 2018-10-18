@@ -63,7 +63,7 @@ UIScriptController::UIScriptController(UIScriptContext& context)
 {
 }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 void UIScriptController::checkForOutstandingCallbacks()
 {
 }
@@ -229,7 +229,7 @@ void UIScriptController::playBackEventStream(JSStringRef stream, JSValueRef call
     platformPlayBackEventStream(stream, callback);
 }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 void UIScriptController::touchDownAtPoint(long x, long y, long touchCount, JSValueRef)
 {
 }

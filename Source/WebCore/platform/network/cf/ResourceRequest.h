@@ -119,7 +119,7 @@ inline bool ResourceRequest::resourcePrioritiesEnabled()
 {
 #if PLATFORM(MAC)
     return true;
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS_FAMILY)
     return true;
 #elif PLATFORM(WIN)
     return false;

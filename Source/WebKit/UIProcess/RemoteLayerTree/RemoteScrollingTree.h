@@ -57,7 +57,7 @@ private:
     void handleWheelEventPhase(WebCore::PlatformWheelEventPhase) override;
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     WebCore::FloatRect fixedPositionRect() override;
     void scrollingTreeNodeWillStartPanGesture() override;
     void scrollingTreeNodeWillStartScroll() override;

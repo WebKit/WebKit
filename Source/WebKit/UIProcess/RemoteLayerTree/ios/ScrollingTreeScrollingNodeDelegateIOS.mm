@@ -26,7 +26,7 @@
 #import "config.h"
 #import "ScrollingTreeScrollingNodeDelegateIOS.h"
 
-#if PLATFORM(IOS) && ENABLE(ASYNC_SCROLLING)
+#if PLATFORM(IOS_FAMILY) && ENABLE(ASYNC_SCROLLING)
 
 #import <QuartzCore/QuartzCore.h>
 #import <UIKit/UIPanGestureRecognizer.h>
@@ -289,4 +289,4 @@ void ScrollingTreeScrollingNodeDelegateIOS::currentSnapPointIndicesDidChange(uns
 
 } // namespace WebKit
 
-#endif // PLATFORM(IOS) && ENABLE(ASYNC_SCROLLING)
+#endif // PLATFORM(IOS_FAMILY) && ENABLE(ASYNC_SCROLLING)

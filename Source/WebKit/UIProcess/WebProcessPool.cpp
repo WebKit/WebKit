@@ -245,7 +245,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     , m_hiddenPageThrottlingAutoIncreasesCounter([this](RefCounterEvent) { m_hiddenPageThrottlingTimer.startOneShot(0_s); })
     , m_hiddenPageThrottlingTimer(RunLoop::main(), this, &WebProcessPool::updateHiddenPageThrottlingAutoIncreaseLimit)
     , m_serviceWorkerProcessesTerminationTimer(RunLoop::main(), this, &WebProcessPool::terminateServiceWorkerProcesses)
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     , m_foregroundWebProcessCounter([this](RefCounterEvent) { updateProcessAssertions(); })
     , m_backgroundWebProcessCounter([this](RefCounterEvent) { updateProcessAssertions(); })
 #endif
@@ -498,7 +498,7 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     parameters.shouldEnableNetworkCacheSpeculativeRevalidation = m_configuration->diskCacheSpeculativeValidationEnabled();
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     String cookieStorageDirectory = this->cookieStorageDirectory();
     if (!cookieStorageDirectory.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(cookieStorageDirectory, parameters.cookieStorageDirectoryExtensionHandle);
@@ -833,7 +833,7 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
     if (!parameters.mediaKeyStorageDirectory.isEmpty())
         SandboxExtension::createHandleWithoutResolvingPath(parameters.mediaKeyStorageDirectory, SandboxExtension::Type::ReadWrite, parameters.mediaKeyStorageDirectoryExtensionHandle);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     setJavaScriptConfigurationFileEnabledFromDefaults();
 #endif
 
@@ -1941,7 +1941,7 @@ void WebProcessPool::reportWebContentCPUTime(Seconds cpuTime, uint64_t activityS
 
 void WebProcessPool::updateProcessAssertions()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #if ENABLE(SERVICE_WORKER)
     auto updateServiceWorkerProcessAssertion = [&] {
         if (!m_serviceWorkerProcesses.isEmpty() && m_foregroundWebProcessCounter.value()) {
@@ -2010,7 +2010,7 @@ void WebProcessPool::postMessageToServiceWorker(ServiceWorkerIdentifier destinat
 
 void WebProcessPool::reinstateNetworkProcessAssertionState(NetworkProcessProxy& newNetworkProcessProxy)
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // The network process crashed; take new tokens for the new network process.
     if (m_backgroundTokenForNetworkProcess)
         m_backgroundTokenForNetworkProcess = newNetworkProcessProxy.throttler().backgroundActivityToken();

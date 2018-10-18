@@ -26,7 +26,7 @@
 #ifndef WKAccessibilityWebPageObjectIOS_h
 #define WKAccessibilityWebPageObjectIOS_h
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #include "WKAccessibilityWebPageObjectBase.h"
 
@@ -36,6 +36,6 @@
 
 @end
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 #endif // WKAccessibilityWebPageObjectIOS_h

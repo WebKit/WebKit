@@ -217,7 +217,7 @@ void RenderTextControl::layoutExcludedChildren(bool relayoutChildren)
     }
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 bool RenderTextControl::canScroll() const
 {
     auto innerText = innerTextElement();

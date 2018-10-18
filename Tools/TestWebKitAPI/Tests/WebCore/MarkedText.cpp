@@ -40,8 +40,8 @@ std::ostream& operator<<(std::ostream& os, MarkedText::Type type)
         return os << "Correction";
     case MarkedText::DictationAlternatives:
         return os << "DictationAlternatives";
-#if PLATFORM(IOS)
-    // FIXME: See <rdar://problem/8933352>. Also, remove the PLATFORM(IOS)-guard.
+#if PLATFORM(IOS_FAMILY)
+    // FIXME: See <rdar://problem/8933352>. Also, remove the PLATFORM(IOS_FAMILY)-guard.
     case MarkedText::DictationPhraseWithAlternatives:
         return os << "DictationPhraseWithAlternatives";
 #endif

@@ -35,7 +35,7 @@
 #include "VisiblePosition.h"
 #include <wtf/IsoMallocInlines.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "SelectionRect.h"
 #endif
 
@@ -229,7 +229,7 @@ void RenderLineBreak::updateFromStyle()
     m_cachedLineHeight = invalidLineHeight;
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 void RenderLineBreak::collectSelectionRects(Vector<SelectionRect>& rects, unsigned, unsigned)
 {
     ensureLineBoxes();

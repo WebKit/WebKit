@@ -26,7 +26,7 @@
 #import "config.h"
 #import "MediaPlaybackTargetMac.h"
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 
 #import <objc/runtime.h>
 #import <pal/spi/mac/AVFoundationSPI.h>
@@ -84,4 +84,4 @@ const MediaPlaybackTargetMac* toMediaPlaybackTargetMac(const MediaPlaybackTarget
 
 } // namespace WebCore
 
-#endif // ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+#endif // ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)

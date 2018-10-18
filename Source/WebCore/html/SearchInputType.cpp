@@ -52,7 +52,7 @@ SearchInputType::SearchInputType(HTMLInputElement& element)
 
 void SearchInputType::addSearchResult()
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     // Normally we've got the correct renderer by the time we get here. However when the input type changes
     // we don't update the associated renderers until after the next tree update, so we could actually end up here
     // with a mismatched renderer (e.g. through form submission).

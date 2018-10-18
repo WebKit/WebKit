@@ -69,13 +69,13 @@ class SelectionRangeData;
 class TransformState;
 class VisiblePosition;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 class SelectionRect;
 #endif
 
 struct PaintInfo;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 const int caretWidth = 2; // This value should be kept in sync with UIKit. See <rdar://problem/15580601>.
 #else
 const int caretWidth = 1;
@@ -607,7 +607,7 @@ public:
     // Return the offset from an object up the container() chain. Asserts that none of the intermediate objects have transforms.
     LayoutSize offsetFromAncestorContainer(RenderElement&) const;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     virtual void collectSelectionRects(Vector<SelectionRect>&, unsigned startOffset = 0, unsigned endOffset = std::numeric_limits<unsigned>::max());
     virtual void absoluteQuadsForSelection(Vector<FloatQuad>& quads) const { absoluteQuads(quads); }
 #endif

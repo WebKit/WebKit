@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKInspectorHighlightView.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import <WebCore/FloatQuad.h>
 #import <WebCore/GeometryUtilities.h>

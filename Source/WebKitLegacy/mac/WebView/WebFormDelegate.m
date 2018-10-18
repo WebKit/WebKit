@@ -69,7 +69,7 @@ static WebFormDelegate *sharedDelegate = nil;
     return NO;
 }
 
-#if !PLATFORM(IOS)    
+#if !PLATFORM(IOS_FAMILY)    
 - (BOOL)textField:(DOMHTMLInputElement *)element shouldHandleEvent:(NSEvent *)event inFrame:(WebFrame *)frame
 {
     return NO;

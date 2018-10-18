@@ -25,7 +25,7 @@
 #include "config.h"
 #include "SSLKeyGenerator.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 namespace WebCore {
 
@@ -42,4 +42,4 @@ String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String& ch
 
 } // namespace WebCore
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

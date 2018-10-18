@@ -30,7 +30,7 @@
 #import "TestWKWebView.h"
 #import <WebKit/WKWebViewPrivate.h>
 
-#if WK_API_ENABLED && PLATFORM(IOS)
+#if WK_API_ENABLED && PLATFORM(IOS_FAMILY)
 
 using namespace TestWebKitAPI;
 
@@ -76,5 +76,5 @@ TEST(SynchronousTimeoutTests, UnresponsivePageDoesNotCausePositionInformationToH
     
 } // namespace TestWebKitAPI
 
-#endif // WK_API_ENABLED && PLATFORM(IOS)
+#endif // WK_API_ENABLED && PLATFORM(IOS_FAMILY)
 

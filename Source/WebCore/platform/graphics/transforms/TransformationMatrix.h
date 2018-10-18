@@ -73,7 +73,7 @@ class TransformationMatrix {
     WTF_MAKE_FAST_ALLOCATED;
 public:
 
-#if (PLATFORM(IOS) && CPU(ARM_THUMB2)) || defined(TRANSFORMATION_MATRIX_USE_X86_64_SSE2)
+#if (PLATFORM(IOS_FAMILY) && CPU(ARM_THUMB2)) || defined(TRANSFORMATION_MATRIX_USE_X86_64_SSE2)
 #if COMPILER(MSVC)
     __declspec(align(16)) typedef double Matrix4[4][4];
 #else

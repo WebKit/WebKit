@@ -100,7 +100,7 @@ static bool hasPrefix(const char* string, unsigned length, const char* prefix)
     return false;
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 void cssPropertyNameIOSAliasing(const char* propertyName, const char*& propertyNameAlias, unsigned& newLength)
 {
     if (!strcmp(propertyName, "-webkit-hyphenate-locale")) {
@@ -137,7 +137,7 @@ static CSSPropertyID cssPropertyID(const CharacterType* propertyName, unsigned l
             ++length;
         }
 #endif
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         cssPropertyNameIOSAliasing(buffer, name, length);
 #endif
     }
@@ -3856,7 +3856,7 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         // whether isTextAutosizingEnabled() is true. We want to enable this property on iOS, when simulating
         // a iOS device in Safari's responsive design mode and when optionally enabled in DRT/WTR. Otherwise,
         // this property should be disabled by default.
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
         if (!m_context.textAutosizingEnabled)
             return nullptr;
 #endif

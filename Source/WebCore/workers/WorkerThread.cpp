@@ -42,7 +42,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "FloatingPointEnvironment.h"
 #include "WebCoreThread.h"
 #endif
@@ -154,7 +154,7 @@ void WorkerThread::workerThread()
     auto protectedThis = makeRef(*this);
 
     // Propagate the mainThread's fenv to workers.
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     FloatingPointEnvironment::singleton().propagateMainThreadEnvironment();
 #endif
 

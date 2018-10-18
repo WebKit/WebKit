@@ -42,7 +42,7 @@
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "RenderThemeIOS.h"
 #endif
 
@@ -194,7 +194,7 @@ void RenderTextControlSingleLine::layout()
             computeOverflow(clientLogicalBottom());
     }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // FIXME: We should not be adjusting styles during layout. <rdar://problem/7675493>
     if (inputElement().isSearchField())
         RenderThemeIOS::adjustRoundBorderRadius(mutableStyle(), *this);
@@ -269,7 +269,7 @@ LayoutRect RenderTextControlSingleLine::controlClipRect(const LayoutPoint& addit
 
 float RenderTextControlSingleLine::getAverageCharWidth()
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     // Since Lucida Grande is the default font, we want this to match the width
     // of MS Shell Dlg, the default font for textareas in Firefox, Safari Win and
     // IE for some encodings (in IE, the default font is encoding specific).
@@ -292,7 +292,7 @@ LayoutUnit RenderTextControlSingleLine::preferredContentLogicalWidth(float charW
 
     float maxCharWidth = 0.f;
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     const AtomicString& family = style().fontCascade().firstFamily();
     // Since Lucida Grande is the default font, we want this to match the width
     // of MS Shell Dlg, the default font for textareas in Firefox, Safari Win and

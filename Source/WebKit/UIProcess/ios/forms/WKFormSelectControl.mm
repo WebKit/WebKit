@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKFormSelectControl.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "UIKitSPI.h"
 #import "WKContentView.h"
@@ -121,4 +121,4 @@ CGFloat adjustedFontSize(CGFloat textWidth, UIFont *font, CGFloat initialFontSiz
 
 @end
 
-#endif  // PLATFORM(IOS)
+#endif  // PLATFORM(IOS_FAMILY)

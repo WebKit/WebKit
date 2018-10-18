@@ -579,7 +579,7 @@ LayoutUnit RootInlineBox::selectionTop() const
     if (renderer().style().isFlippedLinesWritingMode())
         return selectionTop;
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     // See rdar://problem/19692206 ... don't want to do this adjustment for iOS where overlap is ok and handled.
     if (renderer().isRubyBase()) {
         // The ruby base selection should avoid intruding into the ruby text. This is only the case if there is an actual ruby text above us.
@@ -697,7 +697,7 @@ LayoutUnit RootInlineBox::selectionBottom() const
     if (!renderer().style().isFlippedLinesWritingMode() || !nextRootBox())
         return selectionBottom;
     
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     // See rdar://problem/19692206 ... don't want to do this adjustment for iOS where overlap is ok and handled.
     if (renderer().isRubyBase()) {
         // The ruby base selection should avoid intruding into the ruby text. This is only the case if there is an actual ruby text below us.

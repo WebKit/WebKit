@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WAKViewInternal.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "GraphicsContext.h"
 #import "WAKClipView.h"
@@ -779,4 +779,4 @@ static CGInterpolationQuality toCGInterpolationQuality(WebCore::InterpolationQua
 
 @end
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

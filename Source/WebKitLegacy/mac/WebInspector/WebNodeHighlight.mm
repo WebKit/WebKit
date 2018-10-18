@@ -33,7 +33,7 @@
 #import <WebCore/InspectorController.h>
 #import <wtf/Assertions.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import "WebFramePrivate.h"
 #import "WebHTMLView.h"
 #import "WebView.h"
@@ -43,14 +43,14 @@
 
 using namespace WebCore;
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 @interface WebNodeHighlight (FileInternal)
 - (NSRect)_computeHighlightWindowFrame;
 - (void)_repositionHighlightWindow;
 @end
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 @implementation WebHighlightLayer
 
 - (id)initWithHighlightView:(WebNodeHighlightView *)view webView:(WebView *)webView
@@ -90,7 +90,7 @@ using namespace WebCore;
     _targetView = [targetView retain];
     _inspectorController = inspectorController;
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     int styleMask = NSWindowStyleMaskBorderless;
     NSRect contentRect = [NSWindow contentRectForFrameRect:[self _computeHighlightWindowFrame] styleMask:styleMask];
     _highlightWindow = [[NSWindow alloc] initWithContentRect:contentRect styleMask:styleMask backing:NSBackingStoreBuffered defer:NO];
@@ -117,7 +117,7 @@ using namespace WebCore;
 
 - (void)dealloc
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     ASSERT(!_highlightWindow);
 #else
     ASSERT(!_highlightLayer);
@@ -133,7 +133,7 @@ using namespace WebCore;
     ASSERT(_targetView);
     ASSERT([_targetView window]);
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     ASSERT(_highlightWindow);
 
     if (!_highlightWindow || !_targetView || ![_targetView window])
@@ -169,7 +169,7 @@ using namespace WebCore;
 
 - (void)detach
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     if (!_highlightWindow) {
 #else
     if (!_highlightLayer) {
@@ -181,7 +181,7 @@ using namespace WebCore;
     if (_delegate && [_delegate respondsToSelector:@selector(willDetachWebNodeHighlight:)])
         [_delegate willDetachWebNodeHighlight:self];
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
     [notificationCenter removeObserver:self name:NSViewFrameDidChangeNotification object:nil];
     [notificationCenter removeObserver:self name:NSViewBoundsDidChangeNotification object:nil];
@@ -203,7 +203,7 @@ using namespace WebCore;
     // We didn't retain _highlightView, but we do need to tell it to forget about us, so it doesn't
     // try to send our delegate messages after we've been dealloc'ed, e.g.
     [_highlightView detachFromWebNodeHighlight];
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // iOS did retain the highlightView, and we should release it here.
     [_highlightView release];
 #endif
@@ -221,7 +221,7 @@ using namespace WebCore;
     _delegate = delegate;
 }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 - (void)setNeedsUpdateInTargetViewRect:(NSRect)rect
 {
     ASSERT(_targetView);
@@ -257,7 +257,7 @@ using namespace WebCore;
 
 @end
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 @implementation WebNodeHighlight (FileInternal)
 
 - (NSRect)_computeHighlightWindowFrame

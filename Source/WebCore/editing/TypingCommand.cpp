@@ -327,7 +327,7 @@ void TypingCommand::closeTyping(Frame* frame)
         lastTypingCommand->closeTyping();
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 void TypingCommand::ensureLastEditCommandHasCurrentSelectionIfOpenForMoreTyping(Frame* frame, const VisibleSelection& newSelection)
 {
     if (RefPtr<TypingCommand> lastTypingCommand = lastTypingCommandIfStillOpenForTyping(*frame)) {
@@ -458,7 +458,7 @@ void TypingCommand::markMisspellingsAfterTyping(ETypingCommand commandType)
     VisiblePosition start(endingSelection().start(), endingSelection().affinity());
     VisiblePosition previous = start.previous();
     if (previous.isNotNull()) {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
         VisiblePosition p1 = startOfWord(previous, LeftWordIfOnBoundary);
         VisiblePosition p2 = startOfWord(start, LeftWordIfOnBoundary);
         if (p1 != p2) {
@@ -471,7 +471,7 @@ void TypingCommand::markMisspellingsAfterTyping(ETypingCommand commandType)
             frame.editor().startAlternativeTextUITimer();
 #else
         UNUSED_PARAM(commandType);
-        // If this bug gets fixed, this PLATFORM(IOS) code could be removed:
+        // If this bug gets fixed, this PLATFORM(IOS_FAMILY) code could be removed:
         // <rdar://problem/7259611> Word boundary code on iPhone gives different results than desktop
         EWordSide startWordSide = LeftWordIfOnBoundary;
         UChar32 c = previous.characterAfter();
@@ -484,7 +484,7 @@ void TypingCommand::markMisspellingsAfterTyping(ETypingCommand commandType)
         VisiblePosition p2 = startOfWord(start, startWordSide);
         if (p1 != p2)
             frame.editor().markMisspellingsAfterTypingToWord(p1, endingSelection(), false);
-#endif // !PLATFORM(IOS)
+#endif // !PLATFORM(IOS_FAMILY)
     }
 }
 
@@ -735,7 +735,7 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool shouldAdd
     
     ASSERT(!selectionToDelete.isNone());
     if (selectionToDelete.isNone()) {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         // Workaround for this bug:
         // <rdar://problem/4653755> UIKit text widgets should use WebKit editing API to manipulate text
         setEndingSelection(frame.selection().selection());
@@ -842,7 +842,7 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool sh
     
     ASSERT(!selectionToDelete.isNone());
     if (selectionToDelete.isNone()) {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         // Workaround for this bug:
         // <rdar://problem/4653755> UIKit text widgets should use WebKit editing API to manipulate text
         setEndingSelection(frame.selection().selection());
@@ -878,7 +878,7 @@ void TypingCommand::deleteSelection(bool smartDelete)
     typingAddedToOpenCommand(DeleteSelection);
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 class FriendlyEditCommand : public EditCommand {
 public:
     void setEndingSelection(const VisibleSelection& selection)

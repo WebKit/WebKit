@@ -40,8 +40,8 @@ struct MarkedText {
         SpellingError,
         TextMatch,
         DictationAlternatives,
-#if PLATFORM(IOS)
-        // FIXME: See <rdar://problem/8933352>. Also, remove the PLATFORM(IOS)-guard.
+#if PLATFORM(IOS_FAMILY)
+        // FIXME: See <rdar://problem/8933352>. Also, remove the PLATFORM(IOS_FAMILY)-guard.
         DictationPhraseWithAlternatives,
 #endif
         Selection,

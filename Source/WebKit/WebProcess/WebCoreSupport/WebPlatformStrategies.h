@@ -56,7 +56,7 @@ private:
     void deleteCookie(const WebCore::NetworkStorageSession&, const WebCore::URL&, const String&) override;
 
     // WebCore::PasteboardStrategy
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void writeToPasteboard(const WebCore::PasteboardWebContent&, const String& pasteboardName) override;
     void writeToPasteboard(const WebCore:: PasteboardURL&, const String& pasteboardName) override;
     void writeToPasteboard(const WebCore::PasteboardImage&, const String& pasteboardName) override;

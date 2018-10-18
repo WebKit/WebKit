@@ -26,7 +26,7 @@
 #import "config.h"
 #import "NetworkStateNotifier.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "DeprecatedGlobalSettings.h"
 #import "WebCoreThreadRun.h"
@@ -92,4 +92,4 @@ void NetworkStateNotifier::startObserving()
 
 } // namespace WebCore
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

@@ -31,7 +31,7 @@
 #import <wtf/ASCIICType.h>
 #import <wtf/text/WTFString.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import "KeyEventCodesIOS.h"
 #endif
 

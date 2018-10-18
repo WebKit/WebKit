@@ -77,7 +77,7 @@ WebView *kit(WebCore::Page*);
 WebCore::EditableLinkBehavior core(WebKitEditableLinkBehavior);
 WebCore::TextDirectionSubmenuInclusionBehavior core(WebTextDirectionSubmenuInclusionBehavior);
 
-#if defined(__cplusplus) && PLATFORM(IOS)
+#if defined(__cplusplus) && PLATFORM(IOS_FAMILY)
 Vector<Vector<String>> vectorForDictationPhrasesArray(NSArray *);
 #endif
 
@@ -93,7 +93,7 @@ WebView *getWebView(WebFrame *webFrame);
     BOOL includedInWebKitStatistics;
     RetainPtr<NSString> url;
     RetainPtr<NSString> provisionalURL;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     BOOL isCommitting;
 #endif
 }
@@ -133,7 +133,7 @@ WebView *getWebView(WebFrame *webFrame);
 // should be used instead.
 - (WebDataSource *)_dataSource;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 + (void)_createMainFrameWithSimpleHTMLDocumentWithPage:(WebCore::Page*)page frameView:(WebFrameView *)frameView style:(NSString *)style;
 
 - (BOOL)_isCommitting;
@@ -156,11 +156,11 @@ WebView *getWebView(WebFrame *webFrame);
 - (NSRect)_caretRectAtPosition:(const WebCore::Position&)pos affinity:(NSSelectionAffinity)affinity;
 - (NSRect)_firstRectForDOMRange:(DOMRange *)range;
 - (void)_scrollDOMRangeToVisible:(DOMRange *)range;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 - (void)_scrollDOMRangeToVisible:(DOMRange *)range withInset:(CGFloat)inset;
 #endif
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 - (DOMRange *)_rangeByAlteringCurrentSelection:(WebCore::FrameSelection::EAlteration)alteration direction:(WebCore::SelectionDirection)direction granularity:(WebCore::TextGranularity)granularity;
 #endif
 - (NSRange)_convertToNSRange:(WebCore::Range*)range;

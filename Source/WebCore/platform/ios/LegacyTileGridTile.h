@@ -26,7 +26,7 @@
 #ifndef LegacyTileGridTile_h
 #define LegacyTileGridTile_h
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #include "IntRect.h"
 #include <wtf/RefCounted.h>
@@ -64,5 +64,5 @@ private:
 
 } // namespace WebCore
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 #endif // LegacyTileGridTile_h

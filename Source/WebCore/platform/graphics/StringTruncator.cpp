@@ -69,8 +69,8 @@ static unsigned centerTruncateToBuffer(const String& string, unsigned length, un
     unsigned omitEnd = boundedTextBreakFollowing(it, omitStart + (length - keepCount) - 1, length);
     omitStart = textBreakAtOrPreceding(it, omitStart);
 
-#if PLATFORM(IOS)
-    // FIXME: We should guard this code behind an editing behavior. Then we can remove the PLATFORM(IOS)-guard.
+#if PLATFORM(IOS_FAMILY)
+    // FIXME: We should guard this code behind an editing behavior. Then we can remove the PLATFORM(IOS_FAMILY)-guard.
     // Or just turn it on for all platforms. It seems like good behavior everywhere. Might be better to generalize
     // it to handle all whitespace, not just "space".
 
@@ -105,8 +105,8 @@ static unsigned rightTruncateToBuffer(const String& string, unsigned length, uns
     ASSERT_WITH_SECURITY_IMPLICATION(keepCount < length);
     ASSERT_WITH_SECURITY_IMPLICATION(keepCount < STRING_BUFFER_SIZE);
 
-#if PLATFORM(IOS)
-    // FIXME: We should guard this code behind an editing behavior. Then we can remove the PLATFORM(IOS)-guard.
+#if PLATFORM(IOS_FAMILY)
+    // FIXME: We should guard this code behind an editing behavior. Then we can remove the PLATFORM(IOS_FAMILY)-guard.
     // Or just turn it on for all platforms. It seems like good behavior everywhere. Might be better to generalize
     // it to handle all whitespace, not just "space".
 
@@ -151,8 +151,8 @@ static unsigned rightClipToWordBuffer(const String& string, unsigned length, uns
     unsigned keepLength = textBreakAtOrPreceding(it, keepCount);
     StringView(string).substring(0, keepLength).getCharactersWithUpconvert(buffer);
 
-#if PLATFORM(IOS)
-    // FIXME: We should guard this code behind an editing behavior. Then we can remove the PLATFORM(IOS)-guard.
+#if PLATFORM(IOS_FAMILY)
+    // FIXME: We should guard this code behind an editing behavior. Then we can remove the PLATFORM(IOS_FAMILY)-guard.
     // Or just turn it on for all platforms. It seems like good behavior everywhere. Might be better to generalize
     // it to handle all whitespace, not just "space".
 

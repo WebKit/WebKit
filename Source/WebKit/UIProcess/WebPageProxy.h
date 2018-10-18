@@ -121,7 +121,7 @@ OBJC_CLASS _WKRemoteObjectRegistry;
 #include "ArgumentCodersGtk.h"
 #endif
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 #include <WebCore/MediaPlaybackTargetPicker.h>
 #include <WebCore/WebMediaSessionManagerClient.h>
 #endif
@@ -306,7 +306,7 @@ typedef GenericCallback<const AttributedString&, const EditingRange&> Attributed
 typedef GenericCallback<const String&, double, bool> FontAtSelectionCallback;
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 typedef GenericCallback<const WebCore::IntPoint&, uint32_t, uint32_t, uint32_t> GestureCallback;
 typedef GenericCallback<const WebCore::IntPoint&, uint32_t, uint32_t> TouchesCallback;
 typedef GenericCallback<const Vector<WebCore::SelectionRect>&> SelectionRectsCallback;
@@ -336,7 +336,7 @@ class WebPageProxy : public API::ObjectImpl<API::Object::Type::Page>
 #if ENABLE(DATALIST_ELEMENT)
     , public WebDataListSuggestionsDropdown::Client
 #endif
-#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
     , public WebCore::WebMediaSessionManagerClient
 #endif
     , public WebPopupMenuProxy::Client
@@ -403,12 +403,12 @@ public:
     API::FullscreenClient& fullscreenClient() const { return *m_fullscreenClient; }
     void setFullscreenClient(std::unique_ptr<API::FullscreenClient>&&);
 #endif
-#if (PLATFORM(IOS) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if (PLATFORM(IOS_FAMILY) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     PlaybackSessionManagerProxy* playbackSessionManager();
     VideoFullscreenManagerProxy* videoFullscreenManager();
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     bool allowsMediaDocumentInlinePlayback() const;
     void setAllowsMediaDocumentInlinePlayback(bool);
 #endif
@@ -565,7 +565,7 @@ public:
     void requestFontAttributesAtSelectionStart(Function<void(const WebCore::FontAttributes&, CallbackBase::Error)>&&);
     void fontAttributesCallback(const WebCore::FontAttributes&, CallbackID);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     double displayedContentScale() const { return m_lastVisibleContentRectUpdate.scale(); }
     const WebCore::FloatRect& exposedContentRect() const { return m_lastVisibleContentRectUpdate.exposedContentRect(); }
     const WebCore::FloatRect& unobscuredContentRect() const { return m_lastVisibleContentRectUpdate.unobscuredContentRect(); }
@@ -970,7 +970,7 @@ public:
     void willChangeProcessIsResponsive();
     void didChangeProcessIsResponsive();
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void processWillBecomeSuspended();
     void processWillBecomeForeground();
 #endif
@@ -1020,7 +1020,7 @@ public:
 #endif
 
     // Called by the WebOpenPanelResultListenerProxy.
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void didChooseFilesForOpenPanelWithDisplayStringAndIcon(const Vector<String>&, const String& displayString, const API::Data* iconData);
 #endif
     void didChooseFilesForOpenPanel(const Vector<String>&);
@@ -1056,7 +1056,7 @@ public:
 #if PLATFORM(COCOA)
     void drawRectToImage(WebFrameProxy*, const PrintInfo&, const WebCore::IntRect&, const WebCore::IntSize&, Ref<ImageCallback>&&);
     void drawPagesToPDF(WebFrameProxy*, const PrintInfo&, uint32_t first, uint32_t count, Ref<DataCallback>&&);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     uint32_t computePagesForPrintingAndDrawToPDF(uint64_t frameID, const PrintInfo&, DrawToPDFCallback::CallbackFunction&&);
     void drawToPDFCallback(const IPC::DataReference& pdfData, WebKit::CallbackID);
 #endif
@@ -1112,7 +1112,7 @@ public:
     void setSuppressVisibilityUpdates(bool flag);
     bool suppressVisibilityUpdates() { return m_suppressVisibilityUpdates; }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void willStartUserTriggeredZooming();
 
     void potentialTapAtPosition(const WebCore::FloatPoint&, uint64_t& requestID);
@@ -1263,11 +1263,11 @@ public:
     WebCore::ValidationBubble* validationBubble() const { return m_validationBubble.get(); } // For testing.
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void setIsKeyboardAnimatingIn(bool isKeyboardAnimatingIn) { m_isKeyboardAnimatingIn = isKeyboardAnimatingIn; }
 #endif
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
     void addPlaybackTargetPickerClient(uint64_t);
     void removePlaybackTargetPickerClient(uint64_t);
     void showPlaybackTargetPicker(uint64_t, const WebCore::FloatRect&, bool hasVideo);
@@ -1490,7 +1490,7 @@ private:
     void setIsResizable(bool isResizable);
     void screenToRootView(const WebCore::IntPoint& screenPoint, Messages::WebPageProxy::ScreenToRootView::DelayedReply&&);
     void rootViewToScreen(const WebCore::IntRect& viewRect, Messages::WebPageProxy::RootViewToScreen::DelayedReply&&);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void accessibilityScreenToRootView(const WebCore::IntPoint& screenPoint, WebCore::IntPoint& windowPoint);
     void rootViewToAccessibilityScreen(const WebCore::IntRect& viewRect, WebCore::IntRect& result);
 #endif
@@ -1667,7 +1667,7 @@ private:
     void attributedStringForCharacterRangeCallback(const AttributedString&, const EditingRange&, CallbackID);
     void fontAtSelectionCallback(const String&, double, bool, CallbackID);
 #endif
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void gestureCallback(const WebCore::IntPoint&, uint32_t gestureType, uint32_t gestureState, uint32_t flags, CallbackID);
     void touchesCallback(const WebCore::IntPoint&, uint32_t touches, uint32_t flags, CallbackID);
     void autocorrectionDataCallback(const Vector<WebCore::FloatRect>&, const String& fontName, float fontSize, uint64_t fontTraits, CallbackID);
@@ -1717,7 +1717,7 @@ private:
     void setEditableElementIsFocused(bool);
 #endif // PLATFORM(MAC)
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     WebCore::FloatSize screenSize();
     WebCore::FloatSize availableScreenSize();
     WebCore::FloatSize overrideScreenSize();
@@ -1741,7 +1741,7 @@ private:
     void enableInspectorNodeSearch();
     void disableInspectorNodeSearch();
     void assistedNodeInformationCallback(const AssistedNodeInformation&, CallbackID);
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 #if ENABLE(DATA_DETECTION)
     RetainPtr<NSArray> m_dataDetectionResults;
@@ -1915,12 +1915,12 @@ private:
     std::unique_ptr<API::FullscreenClient> m_fullscreenClient;
 #endif
 
-#if (PLATFORM(IOS) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if (PLATFORM(IOS_FAMILY) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     RefPtr<PlaybackSessionManagerProxy> m_playbackSessionManager;
     RefPtr<VideoFullscreenManagerProxy> m_videoFullscreenManager;
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     VisibleContentRectUpdateInfo m_lastVisibleContentRectUpdate;
     uint64_t m_firstLayerTreeTransactionIdAfterDidCommitLoad { 0 };
     int32_t m_deviceOrientation { 0 };
@@ -1972,7 +1972,7 @@ private:
 
     OptionSet<WebCore::ActivityState::Flag> m_activityState;
     bool m_viewWasEverInWindow { false };
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     bool m_allowsMediaDocumentInlinePlayback { false };
     bool m_alwaysRunsAtForegroundPriority { false };
     ProcessThrottler::ForegroundActivityToken m_activityToken;
@@ -2221,11 +2221,11 @@ private:
     bool m_hasMediaSessionWithActiveMediaElements { false };
 #endif
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
     bool m_requiresTargetMonitoring { false };
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     std::unique_ptr<NodeAssistanceArguments> m_deferredNodeAssistanceArguments;
     bool m_forceAlwaysUserScalable { false };
     WebCore::FloatSize m_viewportConfigurationViewLayoutSize;

@@ -36,7 +36,7 @@
 #import <wtf/WeakPtr.h>
 #import <wtf/text/StringView.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import <WebCore/WAKAppKitStubs.h>
 #endif
 
@@ -137,7 +137,7 @@ private:
     void textDidChangeInTextArea(WebCore::Element*) final;
     void overflowScrollPositionChanged() final { };
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void startDelayingAndCoalescingContentChangeNotifications() final;
     void stopDelayingAndCoalescingContentChangeNotifications() final;
     bool hasRichlyEditableSelection() final;
@@ -178,7 +178,7 @@ private:
     bool m_haveUndoRedoOperations { false };
     RefPtr<WebCore::TextCheckingRequest> m_textCheckingRequest;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     bool m_delayingContentChangeNotifications { false };
     bool m_hasDelayedContentChangeNotification { false };
 #endif
@@ -219,7 +219,7 @@ inline WebCore::EAffinity core(NSSelectionAffinity affinity)
     return WebCore::EAffinity::UPSTREAM;
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 inline bool WebEditorClient::isGrammarCheckingEnabled()
 {

@@ -31,7 +31,7 @@
 #include <CoreFoundation/CFURL.h>
 #include <wtf/text/CString.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "RuntimeApplicationChecks.h"
 #endif
 

@@ -28,7 +28,7 @@
 #import "WebFramePrivate.h"
 #import "WebViewInternal.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import <WebCore/WebCoreThreadMessage.h>
 #endif
 
@@ -44,7 +44,7 @@ void WebProgressTrackerClient::progressTrackerDestroyed()
     delete this;
 }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 void WebProgressTrackerClient::willChangeEstimatedProgress()
 {
     [m_webView _willChangeValueForKey:_WebEstimatedProgressKey];
@@ -58,7 +58,7 @@ void WebProgressTrackerClient::didChangeEstimatedProgress()
 
 void WebProgressTrackerClient::progressStarted(WebCore::Frame& originatingProgressFrame)
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     [[NSNotificationCenter defaultCenter] postNotificationName:WebViewProgressStartedNotification object:m_webView];
 #else
     WebThreadPostNotification(WebViewProgressStartedNotification, m_webView, nil);
@@ -67,7 +67,7 @@ void WebProgressTrackerClient::progressStarted(WebCore::Frame& originatingProgre
 
 void WebProgressTrackerClient::progressEstimateChanged(WebCore::Frame&)
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     [[NSNotificationCenter defaultCenter] postNotificationName:WebViewProgressEstimateChangedNotification object:m_webView];
 #else
     NSNumber *progress = [NSNumber numberWithFloat:[m_webView estimatedProgress]];
@@ -87,7 +87,7 @@ void WebProgressTrackerClient::progressEstimateChanged(WebCore::Frame&)
 
 void WebProgressTrackerClient::progressFinished(Frame&)
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     [[NSNotificationCenter defaultCenter] postNotificationName:WebViewProgressFinishedNotification object:m_webView];
 #endif
 }

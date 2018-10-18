@@ -82,7 +82,7 @@ public:
     bool propagatesMainFrameScrolls() const { return m_propagatesMainFrameScrolls; }
     bool hasFixedOrSticky() const { return m_scrollingTree->hasFixedOrSticky(); }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     WebCore::FloatRect customFixedPositionRect() const;
     void scrollingTreeNodeWillStartPanGesture();
     void scrollingTreeNodeWillStartScroll();

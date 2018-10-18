@@ -42,11 +42,11 @@
 #import <wtf/MainThread.h>
 #import <wtf/RunLoop.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import "WebGeolocationProviderIOS.h"
 #endif
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 #import "WebMediaPlaybackTargetPicker.h"
 #endif
 
@@ -124,7 +124,7 @@ WebViewLayerFlushScheduler::WebViewLayerFlushScheduler(LayerFlushController* flu
 
 + (void)initialize
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
     RunLoop::initializeMainRunLoop();
@@ -156,7 +156,7 @@ WebViewLayerFlushScheduler::WebViewLayerFlushScheduler(LayerFlushController* flu
     dashboardBehaviorAllowWheelScrolling = YES;
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     isStopping = NO;
     _geolocationProvider = [WebGeolocationProviderIOS sharedGeolocationProvider];
 #endif
@@ -176,7 +176,7 @@ WebViewLayerFlushScheduler::WebViewLayerFlushScheduler(LayerFlushController* flu
 {    
     ASSERT(applicationIsTerminating || !page);
     ASSERT(applicationIsTerminating || !preferences);
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     ASSERT(!insertionPasteboard);
 #endif
 #if ENABLE(VIDEO)
@@ -184,7 +184,7 @@ WebViewLayerFlushScheduler::WebViewLayerFlushScheduler(LayerFlushController* flu
 #endif
 
     [applicationNameForUserAgent release];
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     [backgroundColor release];
 #else
     CGColorRelease(backgroundColor);
@@ -202,12 +202,12 @@ WebViewLayerFlushScheduler::WebViewLayerFlushScheduler(LayerFlushController* flu
     [mediaStyle release];
 
 #if ENABLE(REMOTE_INSPECTOR)
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     [indicateLayer release];
 #endif
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     [UIKitDelegateForwarder release];
     [formDelegateForwarder release];
     [_caretChangeListeners release];

@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if ENABLE(FULLSCREEN_API) && !PLATFORM(IOS)
+#if ENABLE(FULLSCREEN_API) && !PLATFORM(IOS_FAMILY)
 
 #import "WebCoreFullScreenWindow.h"
 

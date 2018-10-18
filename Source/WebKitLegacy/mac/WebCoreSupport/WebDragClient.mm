@@ -206,7 +206,7 @@ void WebDragClient::declareAndWriteDragImage(const String&, Element&, const URL&
 
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 bool WebDragClient::useLegacyDragClient()
 {
@@ -247,7 +247,7 @@ void WebDragClient::didConcludeEditDrag()
     [m_webView _didConcludeEditDataInteraction];
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 void WebDragClient::dragControllerDestroyed() 
 {

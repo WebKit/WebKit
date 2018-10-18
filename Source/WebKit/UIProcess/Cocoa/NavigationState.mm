@@ -96,7 +96,7 @@ NavigationState::NavigationState(WKWebView *webView)
     : m_webView(webView)
     , m_navigationDelegateMethods()
     , m_historyDelegateMethods()
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     , m_releaseActivityTimer(RunLoop::current(), this, &NavigationState::releaseNetworkActivityTokenAfterLoadCompletion)
 #endif
 {
@@ -1068,7 +1068,7 @@ void NavigationState::willChangeIsLoading()
     [m_webView willChangeValueForKey:@"loading"];
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 void NavigationState::releaseNetworkActivityToken(NetworkActivityTokenReleaseReason reason)
 {
     if (!m_activityToken)
@@ -1089,7 +1089,7 @@ void NavigationState::releaseNetworkActivityToken(NetworkActivityTokenReleaseRea
 
 void NavigationState::didChangeIsLoading()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (m_webView->_page->pageLoadState().isLoading()) {
         // We do not take a network activity token if a load starts after the screen has been locked.
         if ([UIApp isSuspendedUnderLock])

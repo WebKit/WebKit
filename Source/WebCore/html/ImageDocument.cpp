@@ -56,7 +56,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(ImageDocument);
 
 using namespace HTMLNames;
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 class ImageEventListener final : public EventListener {
 public:
     static Ref<ImageEventListener> create(ImageDocument& document) { return adoptRef(*new ImageEventListener(document)); }
@@ -199,7 +199,7 @@ ImageDocument::ImageDocument(Frame& frame, const URL& url)
     : HTMLDocument(&frame, url, ImageDocumentClass)
     , m_imageElement(nullptr)
     , m_imageSizeIsKnown(false)
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     , m_didShrinkImage(false)
 #endif
     , m_shouldShrinkImage(frame.settings().shrinksStandaloneImagesToFit() && frame.isMainFrame())
@@ -242,7 +242,7 @@ void ImageDocument::createDocumentStructure()
     body->appendChild(imageElement);
     
     if (m_shouldShrinkImage) {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         // Set the viewport to be in device pixels (rather than the default of 980).
         processViewport("width=device-width,viewport-fit=cover"_s, ViewportArguments::ImageDocument);
 #else
@@ -270,7 +270,7 @@ void ImageDocument::imageUpdated()
     m_imageSizeIsKnown = true;
 
     if (m_shouldShrinkImage) {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         FloatSize screenSize = page()->chrome().screenSize();
         if (imageSize.width() > screenSize.width())
             processViewport(String::format("width=%u,viewport-fit=cover", static_cast<unsigned>(imageSize.width().toInt())), ViewportArguments::ImageDocument);
@@ -284,7 +284,7 @@ void ImageDocument::imageUpdated()
     }
 }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 float ImageDocument::scale()
 {
     if (!m_imageElement)

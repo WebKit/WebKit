@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "WebPDFViewIOS.h"
 #import "WebDataSourceInternal.h"
@@ -396,4 +396,4 @@ static int comparePageRects(const void *key, const void *array)
     return CGRectGetMinY(*keyRect) > CGRectGetMaxY(*arrayRect) ? 1 : -1;
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

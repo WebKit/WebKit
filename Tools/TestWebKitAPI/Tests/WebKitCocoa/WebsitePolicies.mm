@@ -42,7 +42,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/text/WTFString.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #endif
 
@@ -240,7 +240,7 @@ TEST(WebKit, WebsitePoliciesAutoplayEnabled)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     [configuration setAllowsInlineMediaPlayback:YES];
 #endif
 

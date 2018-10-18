@@ -68,7 +68,7 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) override;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void getPasteboardTypesByFidelityForItemAtIndex(uint64_t index, const String& pasteboardName, Vector<String>& types);
     void writeURLToPasteboard(const WebCore::PasteboardURL&, const String& pasteboardName);
     void writeWebContentToPasteboard(const WebCore::PasteboardWebContent&, const String& pasteboardName);

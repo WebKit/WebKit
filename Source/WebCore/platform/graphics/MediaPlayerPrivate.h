@@ -50,7 +50,7 @@ public:
     virtual void prepareToPlay() { }
     virtual PlatformLayer* platformLayer() const { return 0; }
 
-#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     virtual void setVideoFullscreenLayer(PlatformLayer*, WTF::Function<void()>&& completionHandler) { completionHandler(); }
     virtual void updateVideoFullscreenInlineImage() { }
     virtual void setVideoFullscreenFrame(FloatRect) { }
@@ -58,7 +58,7 @@ public:
     virtual void setVideoFullscreenMode(MediaPlayer::VideoFullscreenMode) { }
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     virtual NSArray *timedMetadata() const { return 0; }
     virtual String accessLog() const { return emptyString(); }
     virtual String errorLog() const { return emptyString(); }
@@ -113,7 +113,7 @@ public:
 
     virtual void setVolume(float) { }
     virtual void setVolumeDouble(double volume) { return setVolume(volume); }
-#if PLATFORM(IOS) || USE(GSTREAMER)
+#if PLATFORM(IOS_FAMILY) || USE(GSTREAMER)
     virtual float volume() const { return 1; }
 #endif
 

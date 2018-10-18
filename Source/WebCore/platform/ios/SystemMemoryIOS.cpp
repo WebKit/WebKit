@@ -29,7 +29,7 @@
 #include "config.h"
 #include "SystemMemory.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #include <sys/sysctl.h>
 #include <wtf/Assertions.h>
@@ -39,7 +39,7 @@ namespace WebCore {
 
 int systemMemoryLevel()
 {
-#if PLATFORM(IOS_SIMULATOR)
+#if PLATFORM(IOS_FAMILY_SIMULATOR)
     return 35;
 #else
     static int memoryFreeLevel = -1;
@@ -56,4 +56,4 @@ int systemMemoryLevel()
 
 } // namespace WebCore
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

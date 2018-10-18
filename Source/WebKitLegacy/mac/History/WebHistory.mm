@@ -38,7 +38,7 @@
 #import <WebCore/PageGroup.h>
 #import <pal/spi/cocoa/NSCalendarDateSPI.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import <WebCore/WebCoreThreadMessage.h>
 #endif
 
@@ -321,7 +321,7 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
 
     NSString *URLString = [entry URLString];
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     WebHistoryItem *oldEntry = [_entriesByURL objectForKey:URLString];
     if (oldEntry) {
         if (discardDuplicate)
@@ -728,7 +728,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)_sendNotification:(NSString *)name entries:(NSArray *)entries
 {
     NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:entries, WebHistoryItemsKey, nil];
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     WebThreadPostNotification(name, self, userInfo);
 #else    
     [[NSNotificationCenter defaultCenter]
@@ -796,7 +796,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return NO;
     }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     WebThreadPostNotification(WebHistoryLoadedNotification, self, nil);
 #else        
     [[NSNotificationCenter defaultCenter]
@@ -815,7 +815,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     if (![_historyPrivate saveToURL:URL error:error])
         return NO;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     WebThreadPostNotification(WebHistorySavedNotification, self, nil);
 #else        
     [[NSNotificationCenter defaultCenter]

@@ -115,7 +115,7 @@ void HTMLAppletElement::updateWidget(CreatePlugins createPlugins)
         return;
     }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     UNUSED_PARAM(createPlugins);
 #else
     // FIXME: It's sadness that we have this special case here.
@@ -178,7 +178,7 @@ void HTMLAppletElement::updateWidget(CreatePlugins createPlugins)
     ASSERT(frame);
 
     renderer->setWidget(frame->loader().subframeLoader().createJavaAppletWidget(roundedIntSize(LayoutSize(contentWidth, contentHeight)), *this, paramNames, paramValues));
-#endif // !PLATFORM(IOS)
+#endif // !PLATFORM(IOS_FAMILY)
 }
 
 bool HTMLAppletElement::canEmbedJava() const

@@ -46,7 +46,7 @@
 #include "TextIterator.h"
 #include "TextPaintStyle.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "SelectionRect.h"
 #endif
 
@@ -77,7 +77,7 @@ RefPtr<TextIndicator> TextIndicator::createWithRange(const Range& range, TextInd
 
     VisibleSelection oldSelection = frame->selection().selection();
     OptionSet<TemporarySelectionOption> temporarySelectionOptions;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     temporarySelectionOptions.add(TemporarySelectionOptionIgnoreSelectionChanges);
     temporarySelectionOptions.add(TemporarySelectionOptionEnableAppearanceUpdates);
 #endif
@@ -181,7 +181,7 @@ static bool takeSnapshots(TextIndicatorData& data, Frame& frame, IntRect snapsho
     return true;
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 static void getSelectionRectsForRange(Vector<FloatRect>& resultingRects, const Range& range)
 {
@@ -304,7 +304,7 @@ static bool initializeIndicator(TextIndicatorData& data, Frame& frame, const Ran
 
     if ((data.options & TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges) && (hasNonInlineOrReplacedElements(range) || treatRangeAsComplexDueToIllegibleTextColors))
         data.options |= TextIndicatorOptionPaintAllContent;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     else if (data.options & TextIndicatorOptionUseSelectionRectForSizing)
         getSelectionRectsForRange(textRects, range);
 #endif
@@ -324,7 +324,7 @@ static bool initializeIndicator(TextIndicatorData& data, Frame& frame, const Ran
 
     // Use the exposedContentRect/viewExposedRect instead of visibleContentRect to avoid creating a huge indicator for a large view inside a scroll view.
     IntRect contentsClipRect;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     contentsClipRect = enclosingIntRect(frameView->exposedContentRect());
 #else
     if (auto viewExposedRect = frameView->viewExposedRect())

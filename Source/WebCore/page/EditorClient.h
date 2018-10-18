@@ -124,7 +124,7 @@ public:
     virtual void textDidChangeInTextArea(Element*) = 0;
     virtual void overflowScrollPositionChanged() = 0;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     virtual void startDelayingAndCoalescingContentChangeNotifications() = 0;
     virtual void stopDelayingAndCoalescingContentChangeNotifications() = 0;
     virtual bool hasRichlyEditableSelection() = 0;

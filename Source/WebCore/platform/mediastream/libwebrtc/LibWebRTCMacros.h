@@ -30,7 +30,7 @@
 
 #if USE(LIBWEBRTC)
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #define WEBRTC_IOS
 #endif
 

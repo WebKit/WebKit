@@ -68,7 +68,7 @@
 #include <stdio.h>
 #include <wtf/text/CString.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Color.h"
@@ -135,7 +135,7 @@ FrameSelection::FrameSelection(Frame* frame)
     , m_shouldShowBlockCursor(false)
     , m_pendingSelectionUpdate(false)
     , m_alwaysAlignCursorOnScrollWhenRevealingSelection(false)
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     , m_updateAppearanceEnabled(false)
     , m_caretBlinks(true)
 #endif
@@ -436,7 +436,7 @@ void FrameSelection::updateAndRevealSelection(const AXTextStateChangeIntent& int
 
 void FrameSelection::updateDataDetectorsForSelection()
 {
-#if ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS)
+#if ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS_FAMILY)
     m_frame->editor().scanSelectionForTelephoneNumbers();
 #endif
 }
@@ -1987,7 +1987,7 @@ bool FrameSelection::setSelectedRange(Range* range, EAffinity affinity, bool clo
 
     VisibleSelection newSelection(*range, affinity);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // FIXME: Why do we need this check only in iOS?
     if (newSelection.isNone())
         return false;
@@ -2076,7 +2076,7 @@ inline static bool shouldStopBlinkingDueToTypingCommand(Frame* frame)
 
 void FrameSelection::updateAppearance()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (!m_updateAppearanceEnabled)
         return;
 #endif
@@ -2253,7 +2253,7 @@ RefPtr<MutableStyleProperties> FrameSelection::copyTypingStyle() const
 
 bool FrameSelection::shouldDeleteSelection(const VisibleSelection& selection) const
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (m_frame->selectionChangeCallbacksDisabled())
         return true;
 #endif
@@ -2370,7 +2370,7 @@ void FrameSelection::revealSelection(SelectionRevealMode revealMode, const Scrol
     Position start = m_selection.start();
     ASSERT(start.deprecatedNode());
     if (start.deprecatedNode() && start.deprecatedNode()->renderer()) {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         if (RenderLayer* layer = start.deprecatedNode()->renderer()->enclosingLayer()) {
             if (!m_scrollingSuppressCount) {
                 layer->setAdjustForIOSCaretWhenScrolling(true);
@@ -2397,7 +2397,7 @@ void FrameSelection::setSelectionFromNone()
     // entire WebView is editable or designMode is on for this document).
 
     Document* document = m_frame->document();
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     bool caretBrowsing = m_frame->settings().caretBrowsingEnabled();
     if (!isNone() || !(document->hasEditableStyle() || caretBrowsing))
         return;
@@ -2412,7 +2412,7 @@ void FrameSelection::setSelectionFromNone()
 
 bool FrameSelection::shouldChangeSelection(const VisibleSelection& newSelection) const
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (m_frame->selectionChangeCallbacksDisabled())
         return true;
 #endif
@@ -2480,7 +2480,7 @@ void FrameSelection::showTreeForThis() const
 
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 void FrameSelection::expandSelectionToElementContainingCaretSelection()
 {
     RefPtr<Range> range = elementRangeContainingCaretSelection();
@@ -2894,7 +2894,7 @@ void FrameSelection::setCaretColor(const Color& caretColor)
             invalidateCaretRect();
     }
 }
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 }
 

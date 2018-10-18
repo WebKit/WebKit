@@ -33,7 +33,7 @@
 #include <unistd.h>
 #endif
 
-#if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
 OBJC_CLASS BKSProcessAssertion;
@@ -54,7 +54,7 @@ public:
 };
 
 class ProcessAssertion
-#if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)
     : public CanMakeWeakPtr<ProcessAssertion>
 #endif
 {
@@ -68,14 +68,14 @@ public:
     AssertionState state() const { return m_assertionState; }
     virtual void setState(AssertionState);
 
-#if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)
 protected:
     enum class Validity { No, Yes, Unset };
     Validity validity() const { return m_validity; }
 #endif
 
 private:
-#if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)
     void markAsInvalidated();
 
     RetainPtr<BKSProcessAssertion> m_assertion;
@@ -95,7 +95,7 @@ public:
 
     void setState(AssertionState) final;
 
-#if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)
 private:
     void updateRunInBackgroundCount();
 

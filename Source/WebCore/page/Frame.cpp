@@ -107,7 +107,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "WKContentObservation.h"
 #endif
 
@@ -115,7 +115,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 static const Seconds scrollFrequency { 1000_s / 60. };
 #endif
 
@@ -156,7 +156,7 @@ Frame::Frame(Page& page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient&
     , m_editor(makeUniqueRef<Editor>(*this))
     , m_selection(makeUniqueRef<FrameSelection>(this))
     , m_animationController(makeUniqueRef<CSSAnimationController>(*this))
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     , m_overflowAutoScrollTimer(*this, &Frame::overflowAutoScrollTimerFired)
     , m_selectionChangeCallbacksDisabled(false)
 #endif
@@ -503,7 +503,7 @@ String Frame::matchLabelsAgainstElement(const Vector<String>& labels, Element* e
     return matchLabelsAgainstString(labels, element->attributeWithoutSynchronization(idAttr));
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 void Frame::scrollOverflowLayer(RenderLayer* layer, const IntRect& visibleRect, const IntRect& exposeRect)
 {
     if (!layer)
@@ -657,7 +657,7 @@ bool Frame::selectionChangeCallbacksDisabled() const
 {
     return m_selectionChangeCallbacksDisabled;
 }
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 void Frame::setPrinting(bool printing, const FloatSize& pageSize, const FloatSize& originalPageSize, float maximumShrinkRatio, AdjustViewSizeOrNot shouldAdjustViewSize)
 {
@@ -804,7 +804,7 @@ void Frame::willDetachPage()
     if (page() && page()->scrollingCoordinator() && m_view)
         page()->scrollingCoordinator()->willDestroyScrollableArea(*m_view);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (WebThreadCountOfObservedContentModifiers() > 0 && m_page)
         m_page->chrome().client().clearContentChangeObservers(*this);
 #endif

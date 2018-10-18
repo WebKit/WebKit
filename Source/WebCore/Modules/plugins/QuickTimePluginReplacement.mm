@@ -66,7 +66,7 @@ SOFT_LINK_CLASS(AVFoundation, AVMetadataItem)
 namespace WebCore {
 using namespace PAL;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 static JSValue *jsValueWithValueInContext(id, JSContext *);
 static JSValue *jsValueWithAVMetadataItemInContext(AVMetadataItemType *, JSContext *);
 #endif
@@ -254,7 +254,7 @@ void QuickTimePluginReplacement::postEvent(const String& eventName)
     m_parentElement->dispatchEvent(event);
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 static JSValue *jsValueWithDataInContext(NSData *data, const String& mimeType, JSContext *context)
 {
@@ -372,7 +372,7 @@ static JSValue *jsValueWithAVMetadataItemInContext(AVMetadataItemType *item, JSC
 
 JSC::JSValue JSQuickTimePluginReplacement::timedMetaData(JSC::ExecState& state) const
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     HTMLVideoElement* parent = wrapped().parentElement();
     if (!parent || !parent->player())
         return JSC::jsNull();
@@ -397,7 +397,7 @@ JSC::JSValue JSQuickTimePluginReplacement::timedMetaData(JSC::ExecState& state) 
 
 JSC::JSValue JSQuickTimePluginReplacement::accessLog(JSC::ExecState& state) const
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     HTMLVideoElement* parent = wrapped().parentElement();
     if (!parent || !parent->player())
         return JSC::jsNull();
@@ -419,7 +419,7 @@ JSC::JSValue JSQuickTimePluginReplacement::accessLog(JSC::ExecState& state) cons
 
 JSC::JSValue JSQuickTimePluginReplacement::errorLog(JSC::ExecState& state) const
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     HTMLVideoElement* parent = wrapped().parentElement();
     if (!parent || !parent->player())
         return JSC::jsNull();

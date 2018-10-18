@@ -127,7 +127,7 @@ using FloatBoxExtent = RectEdges<float>;
 struct KeypressCommand;
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 class FloatQuad;
 class SelectionRect;
 struct Highlight;
@@ -258,7 +258,7 @@ template<> struct ArgumentCoder<WebCore::FloatRoundedRect> {
     static bool decode(Decoder&, WebCore::FloatRoundedRect&);
 };
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 template<> struct ArgumentCoder<WebCore::FloatQuad> {
     static void encode(Encoder&, const WebCore::FloatQuad&);
     static std::optional<WebCore::FloatQuad> decode(Decoder&);
@@ -269,7 +269,7 @@ template<> struct ArgumentCoder<WebCore::ViewportArguments> {
     static bool decode(Decoder&, WebCore::ViewportArguments&);
     static std::optional<WebCore::ViewportArguments> decode(Decoder&);
 };
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 template<> struct ArgumentCoder<WebCore::IntPoint> {
     static void encode(Encoder&, const WebCore::IntPoint&);
@@ -399,7 +399,7 @@ template<> struct ArgumentCoder<WebCore::KeypressCommand> {
 };
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 template<> struct ArgumentCoder<WebCore::SelectionRect> {
     static void encode(Encoder&, const WebCore::SelectionRect&);
     static std::optional<WebCore::SelectionRect> decode(Decoder&);

@@ -385,7 +385,7 @@ void AsyncScrollingCoordinator::reconcileScrollingState(FrameView& frameView, co
             layoutViewportRect = overrideRect;
             if (visualViewportEnabled && viewportRectStability != ViewportRectStability::ChangingObscuredInsetsInteractively)
                 frameView.setLayoutViewportOverrideRect(LayoutRect(overrideRect.value()), viewportRectStability == ViewportRectStability::Stable ? FrameView::TriggerLayoutOrNot::Yes : FrameView::TriggerLayoutOrNot::No);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
             else if (viewportRectStability == ViewportRectStability::Stable)
                 frameView.setCustomFixedPositionLayoutRect(enclosingIntRect(overrideRect.value()));
 #endif

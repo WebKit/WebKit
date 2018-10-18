@@ -88,7 +88,7 @@
 #include "GStreamerCommon.h"
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "ScriptController.h"
 #include "Settings.h"
 #endif

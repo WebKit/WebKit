@@ -30,7 +30,7 @@
 #include "IntPoint.h"
 #include <wtf/MathExtras.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include <CoreGraphics/CoreGraphics.h>
 #endif
 

@@ -28,7 +28,7 @@
 
 #if PLATFORM(COCOA)
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include <ImageIO/CGImageDestination.h>
 #include <MobileCoreServices/UTCoreTypes.h>
 #include <WebCore/KeyEventCodesIOS.h>

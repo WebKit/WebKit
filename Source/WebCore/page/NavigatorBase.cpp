@@ -39,12 +39,12 @@
 #include <wtf/StdLibExtras.h>
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "Device.h"
 #endif
 
 #ifndef WEBCORE_NAVIGATOR_PLATFORM
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #define WEBCORE_NAVIGATOR_PLATFORM deviceName()
 #elif OS(MAC_OS_X) && (CPU(PPC) || CPU(PPC64))
 #define WEBCORE_NAVIGATOR_PLATFORM "MacPPC"_s

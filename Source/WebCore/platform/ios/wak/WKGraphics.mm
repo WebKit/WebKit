@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKGraphics.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "WebCoreThreadInternal.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
@@ -71,4 +71,4 @@ CGContextRef WKGetCurrentGraphicsContext(void)
     return threadContext->currentCGContext;
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

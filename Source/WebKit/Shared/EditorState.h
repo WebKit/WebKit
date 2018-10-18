@@ -31,7 +31,7 @@
 #include <WebCore/IntRect.h>
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include <WebCore/SelectionRect.h>
 #endif
 
@@ -75,7 +75,7 @@ struct EditorState {
     bool hasComposition { false };
     bool isMissingPostLayoutData { false };
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     WebCore::IntRect firstMarkedRect;
     WebCore::IntRect lastMarkedRect;
     String markedText;
@@ -85,17 +85,17 @@ struct EditorState {
 
     struct PostLayoutData {
         uint32_t typingAttributes { AttributeNone };
-#if PLATFORM(IOS) || PLATFORM(GTK)
+#if PLATFORM(IOS_FAMILY) || PLATFORM(GTK)
         WebCore::IntRect caretRectAtStart;
 #endif
-#if PLATFORM(IOS) || PLATFORM(MAC)
+#if PLATFORM(IOS_FAMILY) || PLATFORM(MAC)
         WebCore::IntRect selectionClipRect;
         uint64_t selectedTextLength { 0 };
         uint32_t textAlignment { NoAlignment };
         WebCore::Color textColor { WebCore::Color::black };
         uint32_t enclosingListType { NoList };
 #endif
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         WebCore::IntRect caretRectAtEnd;
         Vector<WebCore::SelectionRect> selectionRects;
         String wordAtSelection;

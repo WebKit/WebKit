@@ -348,7 +348,7 @@ public:
     const FloatBoxExtent& unobscuredSafeAreaInsets() const { return m_unobscuredSafeAreaInsets; }
     WEBCORE_EXPORT void setUnobscuredSafeAreaInsets(const FloatBoxExtent&);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     bool enclosedInScrollableAncestorView() const { return m_enclosedInScrollableAncestorView; }
     void setEnclosedInScrollableAncestorView(bool f) { m_enclosedInScrollableAncestorView = f; }
 #endif
@@ -784,7 +784,7 @@ private:
     FloatBoxExtent m_fullscreenInsets;
     Seconds m_fullscreenAutoHideDuration { 0_s };
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     bool m_enclosedInScrollableAncestorView { false };
 #endif
     

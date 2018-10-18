@@ -39,7 +39,7 @@ NSString *WebLocalizedString(WebLocalizableStringsBundle *stringsBundle, const c
     // and its use of [NSBundle localizedStringForKey:::], which is not guaranteed to be thread-safe. If
     // we decide we need to use this on background threads, we'll need to add locking here and make sure
     // it doesn't affect performance.
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     ASSERT(isMainThread());
 #endif
 

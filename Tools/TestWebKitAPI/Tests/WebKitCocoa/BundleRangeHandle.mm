@@ -74,7 +74,7 @@ TEST(WebKit, DISABLED_WKWebProcessPlugInRangeHandle)
     [webView loadHTMLString:@"Visit webkit.org   <em>  or</em> email webkit-dev@lists.webkit.org." baseURL:nil];
 
     TestWebKitAPI::Util::run(&didGetTextFromBodyRange);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     TestWebKitAPI::Util::run(&didGetBodyInnerHTMLAfterDetectingData);
 #endif
 }

@@ -129,7 +129,7 @@
 #import "WKDataDetectorTypesInternal.h"
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import "InteractionInformationAtPosition.h"
 #import "InteractionInformationRequest.h"
 #import "ProcessThrottler.h"
@@ -168,9 +168,9 @@
 - (UIViewController *)_viewControllerForSupportedInterfaceOrientations;
 @end
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 static const uint32_t firstSDKVersionWithLinkPreviewEnabledByDefault = 0xA0000;
 static const Seconds delayBeforeNoVisibleContentsRectsLogging = 1_s;
 #endif
@@ -265,7 +265,7 @@ static std::optional<WebCore::ScrollbarOverlayStyle> toCoreScrollbarStyle(_WKOve
 
     std::optional<BOOL> _resolutionForShareSheetImmediateCompletionForTesting;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     RetainPtr<_WKRemoteObjectRegistry> _remoteObjectRegistry;
 
     RetainPtr<WKScrollView> _scrollView;
@@ -382,7 +382,7 @@ static std::optional<WebCore::ScrollbarOverlayStyle> toCoreScrollbarStyle(_WKOve
     return _page && _page->isValid();
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 static int32_t deviceOrientationForUIInterfaceOrientation(UIInterfaceOrientation orientation)
 {
     switch (orientation) {
@@ -468,7 +468,7 @@ static bool shouldAllowSettingAnyXHRHeaderFromFileURLs()
 
 static bool shouldRequireUserGestureToLoadVideo()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     static bool shouldRequireUserGestureToLoadVideo = dyld_get_program_sdk_version() >= DYLD_IOS_VERSION_10_0;
     return shouldRequireUserGestureToLoadVideo;
 #else
@@ -518,7 +518,7 @@ static void validate(WKWebViewConfiguration *configuration)
     if (!configuration._visitedLinkStore)
         [NSException raise:NSInvalidArgumentException format:@"configuration._visitedLinkStore is nil"];
     
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (!configuration._contentProviderRegistry)
         [NSException raise:NSInvalidArgumentException format:@"configuration._contentProviderRegistry is nil"];
 #endif
@@ -595,7 +595,7 @@ static void validate(WKWebViewConfiguration *configuration)
     pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::systemLayoutDirectionKey(), WebKit::WebPreferencesStore::Value(convertSystemLayoutDirection(self.userInterfaceLayoutDirection)));
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::allowsInlineMediaPlaybackKey(), WebKit::WebPreferencesStore::Value(!![_configuration allowsInlineMediaPlayback]));
     pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::allowsInlineMediaPlaybackAfterFullscreenKey(), WebKit::WebPreferencesStore::Value(!![_configuration _allowsInlineMediaPlaybackAfterFullscreen]));
     pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::inlineMediaPlaybackRequiresPlaysInlineAttributeKey(), WebKit::WebPreferencesStore::Value(!![_configuration _inlineMediaPlaybackRequiresPlaysInlineAttribute]));
@@ -617,7 +617,7 @@ static void validate(WKWebViewConfiguration *configuration)
     pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::mediaDataLoadsAutomaticallyKey(), WebKit::WebPreferencesStore::Value(!![_configuration _mediaDataLoadsAutomatically]));
     pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::attachmentElementEnabledKey(), WebKit::WebPreferencesStore::Value(!![_configuration _attachmentElementEnabled]));
 
-#if ENABLE(DATA_DETECTION) && PLATFORM(IOS)
+#if ENABLE(DATA_DETECTION) && PLATFORM(IOS_FAMILY)
     pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::dataDetectorTypesKey(), WebKit::WebPreferencesStore::Value(static_cast<uint32_t>(fromWKDataDetectorTypes([_configuration dataDetectorTypes]))));
 #endif
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -638,12 +638,12 @@ static void validate(WKWebViewConfiguration *configuration)
     pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::legacyEncryptedMediaAPIEnabledKey(), WebKit::WebPreferencesStore::Value(!![_configuration _legacyEncryptedMediaAPIEnabled]));
 #endif
 
-#if PLATFORM(IOS) && ENABLE(SERVICE_WORKER)
+#if PLATFORM(IOS_FAMILY) && ENABLE(SERVICE_WORKER)
     if (!WTF::processHasEntitlement("com.apple.developer.WebKit.ServiceWorkers"))
         pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::serviceWorkersEnabledKey(), WebKit::WebPreferencesStore::Value(false));
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     CGRect bounds = self.bounds;
     _scrollView = adoptNS([[WKScrollView alloc] initWithFrame:bounds]);
     [_scrollView setInternalDelegate:self];
@@ -731,7 +731,7 @@ static void validate(WKWebViewConfiguration *configuration)
 
     _iconLoadingDelegate = std::make_unique<WebKit::IconLoadingDelegate>(self);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     [self _setUpSQLiteDatabaseTrackerClient];
 #endif
 
@@ -740,7 +740,7 @@ static void validate(WKWebViewConfiguration *configuration)
 
     pageToViewMap().add(_page.get(), self);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     _dragInteractionPolicy = _WKDragInteractionPolicyDefault;
 
     _timeOfRequestForVisibleContentRectUpdate = MonotonicTime::now();
@@ -750,12 +750,12 @@ static void validate(WKWebViewConfiguration *configuration)
 #else
     _allowsViewportShrinkToFit = NO;
 #endif
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 }
 
 - (void)_setUpSQLiteDatabaseTrackerClient
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     WebBackgroundTaskController *controller = [WebBackgroundTaskController sharedController];
     if (controller.backgroundTaskStartBlock)
         return;
@@ -826,7 +826,7 @@ static void validate(WKWebViewConfiguration *configuration)
     [_textFinderClient willDestroyView:self];
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     [_contentView _webViewDestroyed];
 
     if (_remoteObjectRegistry)
@@ -835,7 +835,7 @@ static void validate(WKWebViewConfiguration *configuration)
 
     _page->close();
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     [_remoteObjectRegistry _invalidate];
     [[_configuration _contentProviderRegistry] removePage:*_page];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -1125,7 +1125,7 @@ static WKErrorCode callbackErrorCode(WebKit::CallbackBase::Error error)
     });
 }
 
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS_FAMILY)
 - (void)takeSnapshotWithConfiguration:(WKSnapshotConfiguration *)snapshotConfiguration completionHandler:(void(^)(UIImage *, NSError *))completionHandler
 {
     CGRect rectInViewCoordinates = snapshotConfiguration && !CGRectIsNull(snapshotConfiguration.rect) ? snapshotConfiguration.rect : self.bounds;
@@ -1176,7 +1176,7 @@ static WKErrorCode callbackErrorCode(WebKit::CallbackBase::Error error)
 {
 #if PLATFORM(MAC)
     return _impl->allowsLinkPreview();
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS_FAMILY)
     return _allowsLinkPreview;
 #endif
 }
@@ -1186,7 +1186,7 @@ static WKErrorCode callbackErrorCode(WebKit::CallbackBase::Error error)
 #if PLATFORM(MAC)
     _impl->setAllowsLinkPreview(allowsLinkPreview);
     return;
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS_FAMILY)
     if (_allowsLinkPreview == allowsLinkPreview)
         return;
 
@@ -1198,7 +1198,7 @@ static WKErrorCode callbackErrorCode(WebKit::CallbackBase::Error error)
     else
         [_contentView _unregisterPreview];
 #endif // HAVE(LINK_PREVIEW)
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 }
 
 - (CGSize)_viewportSizeForCSSViewportUnits
@@ -1280,7 +1280,7 @@ static NSDictionary *dictionaryRepresentationForEditorState(const WebKit::Editor
 
 #pragma mark iOS-specific methods
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 - (_WKDragInteractionPolicy)_dragInteractionPolicy
 {
@@ -3225,7 +3225,7 @@ static int32_t activeOrientation(WKWebView *webView)
     return _haveSetObscuredInsets;
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 #if ENABLE(ACCESSIBILITY_EVENTS)
 
@@ -4476,7 +4476,7 @@ IGNORE_WARNINGS_END
 }
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 - (void (^)(void))_retainActiveFocusedState
 {
     ++_activeFocusedStateRetainCount;
@@ -4954,7 +4954,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
 - (void)_countStringMatches:(NSString *)string options:(_WKFindOptions)options maxCount:(NSUInteger)maxCount
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (_customContentView) {
         [_customContentView web_countStringMatches:string options:options maxCount:maxCount];
         return;
@@ -4965,7 +4965,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
 - (void)_findString:(NSString *)string options:(_WKFindOptions)options maxCount:(NSUInteger)maxCount
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (_customContentView) {
         [_customContentView web_findString:string options:options maxCount:maxCount];
         return;
@@ -4976,7 +4976,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
 - (void)_hideFindUI
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (_customContentView) {
         [_customContentView web_hideFindUI];
         return;
@@ -5186,7 +5186,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
 - (NSArray *)_scrollPerformanceData
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (WebKit::RemoteLayerTreeScrollingPerformanceData* scrollPerfData = _page->scrollingPerformanceData())
         return scrollPerfData->data();
 #endif
@@ -5197,7 +5197,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
 - (BOOL)_allowsMediaDocumentInlinePlayback
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     return _page->allowsMediaDocumentInlinePlayback();
 #else
     return NO;
@@ -5206,7 +5206,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
 - (void)_setAllowsMediaDocumentInlinePlayback:(BOOL)flag
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     _page->setAllowsMediaDocumentInlinePlayback(flag);
 #endif
 }
@@ -5271,7 +5271,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
 #pragma mark iOS-specific methods
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #if ENABLE(FULLSCREEN_API)
 - (void)removeFromSuperview
@@ -5737,7 +5737,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     _page->setUserInterfaceLayoutDirection(toUserInterfaceLayoutDirection(contentAttribute));
 }
 
-#else // #if PLATFORM(IOS)
+#else // #if PLATFORM(IOS_FAMILY)
 
 #pragma mark - OS X-specific methods
 
@@ -6014,14 +6014,14 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
         return @{ userInterfaceItem: @{ @"message": (NSString *)message, @"fontSize": [NSNumber numberWithDouble:fontSize] } };
     }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     return [_contentView _contentsOfUserInterfaceItem:(NSString *)userInterfaceItem];
 #else
     return nil;
 #endif
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 - (void)_requestActivatedElementAtPosition:(CGPoint)position completionBlock:(void (^)(_WKActivatedElementInfo *))block
 {
     auto infoRequest = WebKit::InteractionInformationRequest(WebCore::roundedIntPoint(position));
@@ -6286,7 +6286,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     };
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 #if PLATFORM(MAC)
 - (WKPageRef)_pageRefForTransitionToWKWebView
@@ -6528,7 +6528,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 
 - (void)_internalDoAfterNextPresentationUpdate:(void (^)(void))updateBlock withoutWaitingForPainting:(BOOL)withoutWaitingForPainting withoutWaitingForAnimatedResize:(BOOL)withoutWaitingForAnimatedResize
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (![self usesStandardContentView]) {
         dispatch_async(dispatch_get_main_queue(), updateBlock);
         return;
@@ -6545,7 +6545,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
         if (!updateBlockCopy)
             return;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         if (!withoutWaitingForAnimatedResize && strongSelf->_dynamicViewportUpdateMode != WebKit::DynamicViewportUpdateMode::NotResizing) {
             strongSelf->_callbacksDeferredDuringResize.append([updateBlockCopy] {
                 updateBlockCopy();
@@ -6579,7 +6579,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 
 - (void)_doAfterNextVisibleContentRectUpdate:(void (^)(void))updateBlock
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     _visibleContentRectUpdateCallbacks.append(makeBlockPtr(updateBlock));
     [self _scheduleVisibleContentRectUpdate];
 #else
@@ -6600,7 +6600,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     });
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 - (CGRect)_dragCaretRect
 {
@@ -6621,7 +6621,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     [_contentView _simulateTextEntered:text];
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 - (BOOL)_beginBackSwipeForTesting
 {
@@ -6678,7 +6678,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 @end
 
 
-#if ENABLE(FULLSCREEN_API) && PLATFORM(IOS)
+#if ENABLE(FULLSCREEN_API) && PLATFORM(IOS_FAMILY)
 
 @implementation WKWebView (FullScreenAPI)
 
@@ -6705,7 +6705,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 }
 
 @end
-#endif // ENABLE(FULLSCREEN_API) && PLATFORM(IOS)
+#endif // ENABLE(FULLSCREEN_API) && PLATFORM(IOS_FAMILY)
 
 #if PLATFORM(MAC)
 
@@ -6763,7 +6763,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 
 #endif // PLATFORM(MAC)
 
-#if PLATFORM(IOS) && !PLATFORM(IOSMAC)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOSMAC)
 @implementation WKWebView (_WKWebViewPrintFormatter)
 
 - (Class)_printFormatterClass

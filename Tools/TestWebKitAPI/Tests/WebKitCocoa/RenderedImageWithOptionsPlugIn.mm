@@ -64,7 +64,7 @@
     JSContext *context = [_frame jsContextForWorld:[WKWebProcessPlugInScriptWorld normalWorld]];
     JSValue *containerValue = [context evaluateScript:@"document.querySelector('.container')"];
     WKWebProcessPlugInNodeHandle *containerNode = [WKWebProcessPlugInNodeHandle nodeHandleWithJSValue:containerValue inContext:context];
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     UIImage *image = [containerNode renderedImageWithOptions:kWKSnapshotOptionsExcludeOverflow width:width];
 #elif PLATFORM(MAC)
     NSImage *image = [containerNode renderedImageWithOptions:kWKSnapshotOptionsExcludeOverflow width:width];

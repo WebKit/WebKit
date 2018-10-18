@@ -58,7 +58,7 @@ static WKNavigationType toWKNavigationType(WebCore::NavigationType navigationTyp
     return WKNavigationTypeOther;
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 static WKSyntheticClickType toWKSyntheticClickType(WebKit::WebMouseEvent::SyntheticClickType syntheticClickType)
 {
     switch (syntheticClickType) {
@@ -127,7 +127,7 @@ static NSInteger toNSButtonNumber(WebKit::WebMouseEvent::Button mouseButton)
 {
     return [NSString stringWithFormat:@"<%@: %p; navigationType = %ld; syntheticClickType = %ld; position x = %.2f y = %.2f request = %@; sourceFrame = %@; targetFrame = %@>", NSStringFromClass(self.class), self,
         (long)self.navigationType,
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         (long)self._syntheticClickType, self._clickLocationInRootViewCoordinates.x, self._clickLocationInRootViewCoordinates.y,
 #else
         0L, 0.0, 0.0,
@@ -155,7 +155,7 @@ static NSInteger toNSButtonNumber(WebKit::WebMouseEvent::Button mouseButton)
     return _navigationAction->request().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody);
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 - (WKSyntheticClickType)_syntheticClickType
 {
     return toWKSyntheticClickType(_navigationAction->syntheticClickType());

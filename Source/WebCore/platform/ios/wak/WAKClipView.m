@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WAKClipView.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "WAKViewInternal.h"
 #import <wtf/Assertions.h>
@@ -71,4 +71,4 @@
 
 @end
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

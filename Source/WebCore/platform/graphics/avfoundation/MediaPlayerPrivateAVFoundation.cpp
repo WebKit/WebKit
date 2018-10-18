@@ -470,7 +470,7 @@ bool MediaPlayerPrivateAVFoundation::supportsFullscreen() const
     return true;
 #else
     // FIXME: WebVideoFullscreenController assumes a QTKit/QuickTime media engine
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (DeprecatedGlobalSettings::avKitEnabled())
         return true;
 #endif
@@ -627,7 +627,7 @@ void MediaPlayerPrivateAVFoundation::metadataLoaded()
 void MediaPlayerPrivateAVFoundation::rateChanged()
 {
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET) && PLATFORM(IOS)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && PLATFORM(IOS_FAMILY)
     if (isCurrentPlaybackTargetWireless() && playerItemStatus() >= MediaPlayerAVPlayerItemStatusPlaybackBufferFull) {
         double rate = this->rate();
         if (rate != requestedRate()) {

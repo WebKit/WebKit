@@ -34,7 +34,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "FindIndicatorOverlayClientIOS.h"
 #endif
 
@@ -100,7 +100,7 @@ private:
     // Index value is -1 if not found or if number of matches exceeds provided maximum.
     int m_foundStringMatchIndex { -1 };
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     RefPtr<WebCore::PageOverlay> m_findIndicatorOverlay;
     std::unique_ptr<FindIndicatorOverlayClientIOS> m_findIndicatorOverlayClient;
 #endif

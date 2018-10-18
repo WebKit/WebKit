@@ -305,7 +305,7 @@ public:
     Performance& performance() const;
     WEBCORE_EXPORT double nowTimestamp() const;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void incrementScrollEventListenersCount();
     void decrementScrollEventListenersCount();
     unsigned scrollEventListenerCount() const { return m_scrollEventListenerCount; }
@@ -387,7 +387,7 @@ private:
     enum class PageStatus { None, Shown, Hidden };
     PageStatus m_lastPageStatus { PageStatus::None };
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     unsigned m_scrollEventListenerCount { 0 };
 #endif
 

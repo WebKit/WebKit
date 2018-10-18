@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "LowPowerModeNotifier.h"
 
@@ -102,4 +102,4 @@ void notifyLowPowerModeChanged(LowPowerModeNotifier& notifier, bool enabled)
 
 } // namespace WebCore
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

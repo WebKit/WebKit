@@ -37,7 +37,7 @@
 #include <algorithm>
 #include <wtf/MathExtras.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "ScriptController.h"
 #endif
 

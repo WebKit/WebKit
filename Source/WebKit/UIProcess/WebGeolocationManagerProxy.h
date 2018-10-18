@@ -51,7 +51,7 @@ public:
 
     void providerDidChangePosition(WebGeolocationPosition*);
     void providerDidFailToDeterminePosition(const String& errorMessage = String());
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void resetPermissions();
 #endif
 

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "MediaSessionManagerIOS.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "Logging.h"
 #import "MediaPlayer.h"
@@ -412,4 +412,4 @@ void MediaSessionManageriOS::externalOutputDeviceAvailableDidChange()
 }
 @end
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

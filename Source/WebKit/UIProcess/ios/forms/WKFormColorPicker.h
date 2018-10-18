@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(INPUT_TYPE_COLOR) && PLATFORM(IOS)
+#if ENABLE(INPUT_TYPE_COLOR) && PLATFORM(IOS_FAMILY)
 
 #import "WKFormPeripheral.h"
 
@@ -41,4 +41,4 @@ OBJC_CLASS WKContentView;
 - (instancetype)initWithView:(WKContentView *)view;
 @end
 
-#endif // ENABLE(INPUT_TYPE_COLOR) && PLATFORM(IOS)
+#endif // ENABLE(INPUT_TYPE_COLOR) && PLATFORM(IOS_FAMILY)

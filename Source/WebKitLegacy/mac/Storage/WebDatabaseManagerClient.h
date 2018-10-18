@@ -33,7 +33,7 @@ public:
     void dispatchDidModifyOrigin(const WebCore::SecurityOriginData&) final;
     void dispatchDidModifyDatabase(const WebCore::SecurityOriginData&, const WTF::String& databaseIdentifier) final;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void dispatchDidAddNewOrigin() final;
     void dispatchDidDeleteDatabase() final;
     void dispatchDidDeleteDatabaseOrigin() final;
@@ -45,7 +45,7 @@ public:
 private:
     WebDatabaseManagerClient();
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void databaseOriginsDidChange();
 
     bool m_isHandlingNewDatabaseOriginNotification { false };

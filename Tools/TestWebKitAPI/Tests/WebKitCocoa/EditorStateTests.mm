@@ -32,7 +32,7 @@
 #import "TestWKWebView.h"
 #import <WebKit/WKWebViewPrivate.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import "UIKitSPI.h"
 #import <UIKit/UIKit.h>
 #endif
@@ -234,7 +234,7 @@ TEST(EditorStateTests, TypingAttributeLinkColor)
     EXPECT_WK_STREQ("https://www.apple.com/", [[testHarness webView] stringByEvaluatingJavaScript:@"document.querySelector('a').href"]);
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 static void checkContentViewHasTextWithFailureDescription(TestWKWebView *webView, BOOL expectedToHaveText, NSString *description)
 {

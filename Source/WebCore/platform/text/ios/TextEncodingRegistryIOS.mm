@@ -26,7 +26,7 @@
 #import "config.h"
 #import "TextEncodingRegistry.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 namespace WebCore {
 
@@ -68,4 +68,4 @@ CFStringEncoding webDefaultCFStringEncoding()
 
 } // namespace WebCore
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

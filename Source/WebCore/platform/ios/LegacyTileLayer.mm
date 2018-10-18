@@ -26,7 +26,7 @@
 #include "config.h"
 #include "LegacyTileLayer.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #include "LegacyTileCache.h"
 #include "LegacyTileGrid.h"
@@ -125,4 +125,4 @@ using WebCore::LegacyTileCache;
 
 @end
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

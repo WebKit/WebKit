@@ -32,7 +32,7 @@
 #import <WebCore/SecurityOrigin.h>
 #import <wtf/RetainPtr.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SQLiteDatabaseTracker.h>
 #import <WebCore/WebSQLiteDatabaseTrackerClient.h>
@@ -42,7 +42,7 @@ using namespace WebCore;
 
 @implementation WebApplicationCache
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 static NSString *overrideBundleIdentifier;
 
 // FIXME: This will be removed when WebKitInitializeApplicationCachePathIfNecessary()
@@ -65,7 +65,7 @@ static NSString *overrideBundleIdentifier;
 
 static NSString *applicationCacheBundleIdentifier()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (overrideBundleIdentifier)
         return overrideBundleIdentifier;
     if (WebCore::IOSApplication::isMobileSafari() || WebCore::IOSApplication::isWebApp())

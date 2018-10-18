@@ -62,7 +62,7 @@ typedef CF_OPTIONS(CFOptionFlags, CTFontFallbackOption) {
     kCTFontFallbackOptionDefault = kCTFontFallbackOptionSystem | kCTFontFallbackOptionUserInstalled,
 };
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED == 101400) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED == 120000)
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED == 101400) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED == 120000)
 extern const CFStringRef kCTTypesetterOptionAllowUnboundedLayout;
 #endif
 

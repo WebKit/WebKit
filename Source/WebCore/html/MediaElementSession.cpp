@@ -48,7 +48,7 @@
 #include "SourceBuffer.h"
 #include <wtf/text/StringBuilder.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "AudioSession.h"
 #include "RuntimeApplicationChecks.h"
 #include <wtf/spi/darwin/dyldSPI.h>
@@ -197,7 +197,7 @@ void MediaElementSession::clientDataBufferingTimerFired()
 
     updateClientDataBuffering();
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     PlatformMediaSessionManager::sharedManager().configureWireLessTargetMonitoring();
 #endif
 
@@ -549,7 +549,7 @@ void MediaElementSession::showPlaybackTargetPicker()
         return;
     }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     if (m_element.readyState() < HTMLMediaElementEnums::HAVE_METADATA) {
         INFO_LOG(LOGIDENTIFIER, "returning early because element is not playable");
         return;
@@ -579,7 +579,7 @@ bool MediaElementSession::wirelessVideoPlaybackDisabled() const
         return true;
     }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     auto& legacyAirplayAttributeValue = m_element.attributeWithoutSynchronization(HTMLNames::webkitairplayAttr);
     if (equalLettersIgnoringASCIICase(legacyAirplayAttributeValue, "deny")) {
         INFO_LOG(LOGIDENTIFIER, "returning TRUE because of legacy attribute");
@@ -620,7 +620,7 @@ void MediaElementSession::setHasPlaybackTargetAvailabilityListeners(bool hasList
 {
     INFO_LOG(LOGIDENTIFIER, hasListeners);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     m_hasPlaybackTargetAvailabilityListeners = hasListeners;
     PlatformMediaSessionManager::sharedManager().configureWireLessTargetMonitoring();
 #else
@@ -653,7 +653,7 @@ void MediaElementSession::externalOutputDeviceAvailableDidChange(bool hasTargets
 
 bool MediaElementSession::isPlayingToWirelessPlaybackTarget() const
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     if (!m_playbackTarget || !m_playbackTarget->hasActiveRoute())
         return false;
 #endif
@@ -716,7 +716,7 @@ bool MediaElementSession::requiresFullscreenForVideoPlayback() const
     if (!m_element.document().settings().inlineMediaPlaybackRequiresPlaysInlineAttribute())
         return false;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (IOSApplication::isIBooks())
         return !m_element.hasAttributeWithoutSynchronization(HTMLNames::webkit_playsinlineAttr) && !m_element.hasAttributeWithoutSynchronization(HTMLNames::playsinlineAttr);
     if (dyld_get_program_sdk_version() < DYLD_IOS_VERSION_10_0)
@@ -766,7 +766,7 @@ bool MediaElementSession::allowsPictureInPicture() const
     return m_element.document().settings().allowsPictureInPictureMediaPlayback() && !m_element.webkitCurrentPlaybackTargetIsWireless();
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 bool MediaElementSession::requiresPlaybackTargetRouteMonitoring() const
 {
     return m_hasPlaybackTargetAvailabilityListeners && !m_element.elementIsHidden();

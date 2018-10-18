@@ -48,7 +48,7 @@ ClockCM::ClockCM()
     , m_running(false)
 {
     CMClockRef rawClockPtr = 0;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     CMAudioClockCreate(kCFAllocatorDefault, &rawClockPtr);
 #else
     CMAudioDeviceClockCreate(kCFAllocatorDefault, NULL, &rawClockPtr);

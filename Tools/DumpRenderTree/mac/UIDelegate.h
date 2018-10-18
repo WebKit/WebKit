@@ -28,7 +28,7 @@
 
 #import "TestOptions.h"
  
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 #import <Cocoa/Cocoa.h>
 #else
 #import <WebKit/WAKView.h>

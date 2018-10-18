@@ -26,7 +26,7 @@
 #include "config.h"
 #include "TileControllerMemoryHandlerIOS.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #include "TileController.h"
 #include <wtf/MemoryPressureHandler.h>
@@ -88,4 +88,4 @@ TileControllerMemoryHandler& tileControllerMemoryHandler()
 
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

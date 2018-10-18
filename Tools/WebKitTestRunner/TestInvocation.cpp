@@ -46,7 +46,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC) && !PLATFORM(IOS_FAMILY)
 #include <Carbon/Carbon.h>
 #endif
 
@@ -182,10 +182,10 @@ void TestInvocation::invoke()
     dumpResults();
 
 end:
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     if (m_gotInitialResponse)
         WKInspectorClose(WKPageGetInspector(TestController::singleton().mainWebView()->page()));
-#endif // !PLATFORM(IOS)
+#endif // !PLATFORM(IOS_FAMILY)
 
     if (TestController::singleton().resetStateToConsistentValues(m_options, TestController::ResetStage::AfterTest))
         return;
@@ -852,7 +852,7 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "SecureEventInputIsEnabled")) {
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC) && !PLATFORM(IOS_FAMILY)
         WKRetainPtr<WKBooleanRef> result(AdoptWK, WKBooleanCreate(IsSecureEventInputEnabled()));
 #else
         WKRetainPtr<WKBooleanRef> result(AdoptWK, WKBooleanCreate(false));

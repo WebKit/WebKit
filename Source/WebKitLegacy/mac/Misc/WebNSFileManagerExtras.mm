@@ -38,7 +38,7 @@
 
 @implementation NSFileManager (WebNSFileManagerExtras)
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 
 - (void)_webkit_setMetadataURL:(NSString *)URLString referrer:(NSString *)referrer atPath:(NSString *)path
 {
@@ -47,7 +47,7 @@
     WebCore::FileSystem::setMetadataURL(path, URLString, referrer);
 }
 
-#endif // !PLATFORM(IOS)
+#endif // !PLATFORM(IOS_FAMILY)
 
 // -[NSFileManager fileExistsAtPath:] returns NO if there is a broken symlink at the path.
 // So we use this function instead, which returns YES if there is anything there, including
@@ -90,7 +90,7 @@ static BOOL fileExists(NSString *path)
     return path;
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 - (NSString *)_webkit_createTemporaryDirectoryWithTemplatePrefix:(NSString *)prefix
 {
     return WebCore::FileSystem::createTemporaryDirectory(prefix);

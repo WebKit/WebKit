@@ -72,7 +72,7 @@ static std::optional<double> convert(bool canProvide, double value)
     self = [super init];
     if (!self)
         return nil;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // We don't use this API, but make sure that it compiles with the new
     // compass parameters.
     m_internal = [[WebDeviceOrientationInternal alloc] initWithCoreDeviceOrientation:DeviceOrientationData::create(convert(canProvideAlpha, alpha), convert(canProvideBeta, beta), convert(canProvideGamma, gamma), std::nullopt, std::nullopt)];

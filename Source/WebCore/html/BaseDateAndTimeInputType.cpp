@@ -194,7 +194,7 @@ bool BaseDateAndTimeInputType::valueMissing(const String& value) const
     return element()->isRequired() && value.isEmpty();
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 bool BaseDateAndTimeInputType::isKeyboardFocusable(KeyboardEvent*) const
 {
     ASSERT(element());

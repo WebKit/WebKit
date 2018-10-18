@@ -46,7 +46,7 @@ Ref<SpeechSynthesis> SpeechSynthesis::create()
 SpeechSynthesis::SpeechSynthesis()
     : m_currentSpeechUtterance(nullptr)
     , m_isPaused(false)
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     , m_restrictions(RequireUserGestureForSpeechStartRestriction)
 #endif
 {
@@ -121,7 +121,7 @@ void SpeechSynthesis::startSpeakingImmediately(SpeechSynthesisUtterance& utteran
 void SpeechSynthesis::speak(SpeechSynthesisUtterance& utterance)
 {
     // Like Audio, we should require that the user interact to start a speech synthesis session.
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (UserGestureIndicator::processingUserGesture())
         removeBehaviorRestriction(RequireUserGestureForSpeechStartRestriction);
     else if (userGestureRequiredForSpeechStart())

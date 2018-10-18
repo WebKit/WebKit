@@ -31,7 +31,7 @@
 #import <wtf/Assertions.h>
 #import <wtf/RetainPtr.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import "UIKitTestSPI.h"
 #import <WebKit/WKWebViewPrivate.h>
 @interface WKWebView ()
@@ -70,7 +70,7 @@ IGNORE_WARNINGS_END
 }
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 - (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration
 {
     if (self = [super initWithFrame:frame configuration:configuration]) {
@@ -258,7 +258,7 @@ IGNORE_WARNINGS_END
     [self _invokeHideKeyboardCallbackIfNecessary];
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 @end
 

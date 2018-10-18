@@ -45,7 +45,7 @@ using namespace PAL;
 
 static inline CFStringRef cvPixelFormatOpenGLKey()
 {
-#if PLATFORM(IOS) && !PLATFORM(IOSMAC)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOSMAC)
     return kCVPixelFormatOpenGLESCompatibility;
 #else
     return kCVPixelBufferOpenGLCompatibilityKey;
@@ -71,7 +71,7 @@ ImageTransferSessionVT::ImageTransferSessionVT(uint32_t pixelFormat)
     if (status != kCVReturnSuccess)
         RELEASE_LOG(Media, "ImageTransferSessionVT::ImageTransferSessionVT: VTSessionSetProperty(kVTPixelTransferPropertyKey_RealTime) failed with error %d", static_cast<int>(status));
 
-#if PLATFORM(IOS) && !PLATFORM(IOSMAC)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOSMAC)
     status = VTSessionSetProperty(transferSession, kVTPixelTransferPropertyKey_EnableHardwareAcceleratedTransfer, @(YES));
     if (status != kCVReturnSuccess)
         RELEASE_LOG(Media, "ImageTransferSessionVT::ImageTransferSessionVT: VTSessionSetProperty(kVTPixelTransferPropertyKey_EnableHardwareAcceleratedTransfer) failed with error %d", static_cast<int>(status));

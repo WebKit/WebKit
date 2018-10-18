@@ -1,3 +1,544 @@
+2018-10-18  Alexey Proskuryakov  <ap@apple.com>
+
+        Switch from PLATFORM(IOS) to PLATFORM(IOS_FAMILY)
+        https://bugs.webkit.org/show_bug.cgi?id=190729
+
+        Reviewed by Tim Horton.
+
+        * DerivedSources.make:
+        * NetworkProcess/Downloads/cocoa/DownloadCocoa.mm:
+        (WebKit::Download::resume):
+        * NetworkProcess/NetworkActivityTracker.h:
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/cache/NetworkCacheFileSystem.cpp:
+        (WebKit::NetworkCache::isSafeToUseMemoryMapForPath):
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::updateTaskWithFirstPartyForSameSiteCookies):
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+        (WebKit::NetworkProcess::sourceApplicationAuditData const):
+        (WebKit::NetworkProcess::platformSyncAllCookies):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:didFinishCollectingMetrics:]):
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        * NetworkProcess/ios/NetworkProcessIOS.mm:
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::ConnectionTerminationWatchdog::ConnectionTerminationWatchdog):
+        (IPC::Connection::receiveSourceEventHandler):
+        (IPC::AccessibilityProcessSuspendedNotification):
+        * Platform/ios/AccessibilityIOS.mm:
+        * Platform/mac/LayerHostingContext.mm:
+        (WebKit::LayerHostingContext::createForExternalHostingProcess):
+        * Platform/spi/Cocoa/DeviceIdentitySPI.h:
+        * Platform/spi/ios/CelestialSPI.h:
+        * Platform/spi/ios/FrontBoardServicesSPI.h:
+        * PluginProcess/mac/PluginProcessShim.mm:
+        * Shared/API/Cocoa/WKDataDetectorTypesInternal.h:
+        * Shared/API/Cocoa/WebKit.m:
+        * Shared/AssistedNodeInformation.cpp:
+        * Shared/AssistedNodeInformation.h:
+        * Shared/CacheModel.cpp:
+        (WebKit::calculateURLCacheSizes):
+        * Shared/ChildProcess.cpp:
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+        * Shared/Cocoa/WebKit2InitializeCocoa.mm:
+        (WebKit::runInitializationCode):
+        * Shared/DrawingAreaInfo.h:
+        * Shared/EditorState.cpp:
+        (WebKit::EditorState::encode const):
+        (WebKit::EditorState::decode):
+        (WebKit::EditorState::PostLayoutData::encode const):
+        (WebKit::EditorState::PostLayoutData::decode):
+        (WebKit::operator<<):
+        * Shared/EditorState.h:
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.mm:
+        (WebKit::XPCServiceInitializerDelegate::checkEntitlements):
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceMain.mm:
+        (WebKit::XPCServiceMain):
+        * Shared/NativeWebKeyboardEvent.h:
+        * Shared/NativeWebMouseEvent.h:
+        * Shared/NativeWebTouchEvent.h:
+        * Shared/PrintInfo.cpp:
+        (WebKit::PrintInfo::encode const):
+        (WebKit::PrintInfo::decode):
+        * Shared/PrintInfo.h:
+        * Shared/RemoteLayerTree/RemoteLayerTreePropertyApplier.h:
+        * Shared/RemoteLayerTree/RemoteLayerTreePropertyApplier.mm:
+        (WebKit::RemoteLayerTreePropertyApplier::applyProperties):
+        * Shared/SessionState.cpp:
+        (WebKit::FrameState::encode const):
+        (WebKit::FrameState::decode):
+        * Shared/SessionState.h:
+        * Shared/WebCoreArgumentCoders.cpp:
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/WebEvent.h:
+        * Shared/WebEventConversion.cpp:
+        (WebKit::WebKit2PlatformTouchEvent::WebKit2PlatformTouchEvent):
+        * Shared/WebKeyboardEvent.cpp:
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * Shared/WebPlatformTouchPoint.cpp:
+        * Shared/WebPreferences.yaml:
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (defaultPassiveTouchListenersAsDefaultOnDocument):
+        (defaultCustomPasteboardDataEnabled):
+        * Shared/WebPreferencesDefaultValues.h:
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * Shared/WebTouchEvent.cpp:
+        * Shared/cf/ArgumentCodersCF.cpp:
+        (IPC::encode):
+        (IPC::decode):
+        * Shared/cf/ArgumentCodersCF.h:
+        * Shared/ios/ChildProcessIOS.mm:
+        * Shared/ios/InteractionInformationAtPosition.h:
+        * Shared/ios/InteractionInformationAtPosition.mm:
+        * Shared/ios/InteractionInformationRequest.cpp:
+        * Shared/ios/InteractionInformationRequest.h:
+        * Shared/ios/NativeWebKeyboardEventIOS.mm:
+        * Shared/ios/NativeWebMouseEventIOS.mm:
+        * Shared/ios/NativeWebTouchEventIOS.mm:
+        * Shared/ios/WebIOSEventFactory.h:
+        * Shared/ios/WebIOSEventFactory.mm:
+        * Shared/ios/WebIconUtilities.h:
+        * Shared/ios/WebIconUtilities.mm:
+        * Shared/mac/ArgumentCodersMac.h:
+        * Shared/mac/ArgumentCodersMac.mm:
+        * Shared/mac/SandboxExtensionMac.mm:
+        * Shared/mac/SecItemShim.cpp:
+        (WebKit::initializeSecItemShim):
+        * UIProcess/API/APIPageConfiguration.cpp:
+        (API::PageConfiguration::copy const):
+        * UIProcess/API/APIPageConfiguration.h:
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/APIUIClient.h:
+        * UIProcess/API/C/WKInspector.cpp:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetIgnoresViewportScaleLimits):
+        * UIProcess/API/C/mac/WKContextPrivateMac.mm:
+        (WKContextIsPlugInUpdateAvailable):
+        * UIProcess/API/Cocoa/APIAttachmentCocoa.mm:
+        * UIProcess/API/Cocoa/APIWebsiteDataStoreCocoa.mm:
+        (API::WebsiteDataStore::defaultApplicationCacheDirectory):
+        (API::WebsiteDataStore::legacyDefaultApplicationCacheDirectory):
+        (API::WebsiteDataStore::legacyDefaultJavaScriptConfigurationDirectory):
+        * UIProcess/API/Cocoa/WKNavigationAction.mm:
+        (-[WKNavigationAction description]):
+        * UIProcess/API/Cocoa/WKPreviewActionItemIdentifiers.mm:
+        * UIProcess/API/Cocoa/WKPreviewElementInfo.mm:
+        * UIProcess/API/Cocoa/WKProcessGroup.mm:
+        (IGNORE_WARNINGS_BEGIN):
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _pluginProcessCount]):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (shouldRequireUserGestureToLoadVideo):
+        (validate):
+        (-[WKWebView _initializeWithConfiguration:]):
+        (-[WKWebView _setUpSQLiteDatabaseTrackerClient]):
+        (-[WKWebView dealloc]):
+        (-[WKWebView allowsLinkPreview]):
+        (-[WKWebView setAllowsLinkPreview:]):
+        (-[WKWebView _countStringMatches:options:maxCount:]):
+        (-[WKWebView _findString:options:maxCount:]):
+        (-[WKWebView _hideFindUI]):
+        (-[WKWebView _scrollPerformanceData]):
+        (-[WKWebView _allowsMediaDocumentInlinePlayback]):
+        (-[WKWebView _setAllowsMediaDocumentInlinePlayback:]):
+        (-[WKWebView _contentsOfUserInterfaceItem:]):
+        (-[WKWebView _internalDoAfterNextPresentationUpdate:withoutWaitingForPainting:withoutWaitingForAnimatedResize:]):
+        (-[WKWebView _doAfterNextVisibleContentRectUpdate:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+        (-[WKWebViewConfiguration encodeWithCoder:]):
+        (-[WKWebViewConfiguration initWithCoder:]):
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (defaultApplicationNameForUserAgent):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationInternal.h:
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/Cocoa/_WKActivatedElementInfo.mm:
+        (-[_WKActivatedElementInfo _initWithType:URL:location:title:ID:rect:image:userInfo:]):
+        * UIProcess/API/Cocoa/_WKActivatedElementInfoInternal.h:
+        * UIProcess/API/Cocoa/_WKAttachment.mm:
+        * UIProcess/API/Cocoa/_WKContextMenuElementInfo.mm:
+        * UIProcess/API/Cocoa/_WKElementAction.mm:
+        * UIProcess/API/Cocoa/_WKElementActionInternal.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.h:
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (-[WKPaymentAuthorizationViewControllerDelegate invalidate]):
+        (-[WKPaymentAuthorizationViewControllerDelegate paymentAuthorizationViewController:didAuthorizePayment:handler:]):
+        (-[WKPaymentAuthorizationViewControllerDelegate paymentAuthorizationViewController:didSelectPaymentMethod:handler:]):
+        (-[WKPaymentAuthorizationViewControllerDelegate paymentAuthorizationViewController:didSelectShippingMethod:handler:]):
+        (-[WKPaymentAuthorizationViewControllerDelegate paymentAuthorizationViewController:didSelectShippingContact:handler:]):
+        (WebKit::WebPaymentCoordinatorProxy::platformCanMakePaymentsWithActiveCard):
+        (WebKit::toPKPaymentRequest):
+        (WebKit::WebPaymentCoordinatorProxy::platformCompletePaymentSession):
+        (WebKit::WebPaymentCoordinatorProxy::platformCompleteShippingMethodSelection):
+        (WebKit::WebPaymentCoordinatorProxy::platformCompleteShippingContactSelection):
+        (WebKit::WebPaymentCoordinatorProxy::platformCompletePaymentMethodSelection):
+        * UIProcess/ApplePay/ios/WebPaymentCoordinatorProxyIOS.mm:
+        * UIProcess/ApplicationStateTracker.h:
+        * UIProcess/ApplicationStateTracker.mm:
+        * UIProcess/Automation/cocoa/WebAutomationSessionCocoa.mm:
+        * UIProcess/Automation/ios/WebAutomationSessionIOS.mm:
+        * UIProcess/BackgroundProcessResponsivenessTimer.cpp:
+        (WebKit::BackgroundProcessResponsivenessTimer::shouldBeActive const):
+        * UIProcess/ChildProcessProxy.cpp:
+        (WebKit::ChildProcessProxy::shutDownProcess):
+        * UIProcess/Cocoa/DownloadClient.h:
+        * UIProcess/Cocoa/DownloadClient.mm:
+        (WebKit::DownloadClient::takeActivityToken):
+        (WebKit::DownloadClient::releaseActivityTokenIfNecessary):
+        * UIProcess/Cocoa/LayerRepresentation.h:
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationState):
+        (WebKit::NavigationState::didChangeIsLoading):
+        * UIProcess/Cocoa/PlaybackSessionManagerProxy.h:
+        * UIProcess/Cocoa/PlaybackSessionManagerProxy.messages.in:
+        * UIProcess/Cocoa/PlaybackSessionManagerProxy.mm:
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::setDelegate):
+        (WebKit::UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest):
+        * UIProcess/Cocoa/VersionChecks.h:
+        * UIProcess/Cocoa/VersionChecks.mm:
+        (WebKit::linkedOnOrAfter):
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.h:
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.messages.in:
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        (WebKit::VideoFullscreenManagerProxy::setupFullscreenWithID):
+        (WebKit::VideoFullscreenManagerProxy::exitFullscreen):
+        (WebKit::VideoFullscreenManagerProxy::preparedToReturnToInline):
+        (WebKit::VideoFullscreenManagerProxy::setVideoLayerFrame):
+        * UIProcess/Cocoa/ViewGestureController.h:
+        * UIProcess/Cocoa/WKShareSheet.mm:
+        (-[WKShareSheet presentWithParameters:completionHandler:]):
+        * UIProcess/Cocoa/WKWebViewContentProvider.h:
+        * UIProcess/Cocoa/WKWebViewContentProviderRegistry.h:
+        * UIProcess/Cocoa/WKWebViewContentProviderRegistry.mm:
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformResolvePathsForSandboxExtensions):
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+        (WebKit::WebProcessPool::registerNotificationObservers):
+        (WebKit::WebProcessPool::unregisterNotificationObservers):
+        * UIProcess/Gamepad/cocoa/UIGamepadProviderCocoa.mm:
+        (WebKit::UIGamepadProvider::platformSetDefaultGamepadProvider):
+        * UIProcess/Gamepad/ios/UIGamepadProviderIOS.mm:
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::shouldLeakBoost):
+        (WebKit::systemDirectoryPath):
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didFinishLaunching):
+        * UIProcess/PageClient.h:
+        * UIProcess/ProcessAssertion.cpp:
+        * UIProcess/ProcessAssertion.h:
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.h:
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::~RemoteLayerTreeDrawingAreaProxy):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::indicatorLocation const):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::updateDebugIndicator):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::waitForDidUpdateActivityState):
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::clearLayers):
+        (WebKit::RemoteLayerTreeHost::detachRootLayer):
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidScroll):
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.h:
+        * UIProcess/RemoteLayerTree/RemoteScrollingTree.cpp:
+        (WebKit::RemoteScrollingTree::createScrollingTreeNode):
+        * UIProcess/RemoteLayerTree/RemoteScrollingTree.h:
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeHostIOS.mm:
+        * UIProcess/RemoteLayerTree/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeOverflowScrollingNodeIOS.h:
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeOverflowScrollingNodeIOS.mm:
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.h:
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.mm:
+        * UIProcess/ResourceLoadStatisticsPersistentStorage.cpp:
+        * UIProcess/WKImagePreviewViewController.h:
+        * UIProcess/WKImagePreviewViewController.mm:
+        * UIProcess/WKInspectorHighlightView.h:
+        * UIProcess/WKInspectorHighlightView.mm:
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+        (WebKit::LocalAuthenticatorInternal::buildAuthData):
+        (WebKit::LocalAuthenticator::makeCredential):
+        (WebKit::LocalAuthenticator::continueMakeCredentialAfterUserConsented):
+        (WebKit::LocalAuthenticator::continueMakeCredentialAfterAttested):
+        (WebKit::LocalAuthenticator::getAssertion):
+        (WebKit::LocalAuthenticator::continueGetAssertionAfterUserConsented):
+        * UIProcess/WebAuthentication/Cocoa/LocalConnection.mm:
+        (WebKit::LocalConnection::getUserConsent const):
+        (WebKit::LocalConnection::getAttestation const):
+        * UIProcess/WebAuthentication/Cocoa/LocalService.mm:
+        (WebKit::LocalService::isAvailable):
+        * UIProcess/WebFullScreenManagerProxy.cpp:
+        (WebKit::WebFullScreenManagerProxy::supportsFullScreen):
+        * UIProcess/WebGeolocationManagerProxy.cpp:
+        * UIProcess/WebGeolocationManagerProxy.h:
+        * UIProcess/WebInspectorProxy.cpp:
+        * UIProcess/WebOpenPanelResultListenerProxy.cpp:
+        * UIProcess/WebOpenPanelResultListenerProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::m_resetRecentCrashCountTimer):
+        (WebKit::WebPageProxy::finishAttachingToWebProcess):
+        (WebKit::WebPageProxy::initializeWebPage):
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::viewDidLeaveWindow):
+        (WebKit::WebPageProxy::updateThrottleState):
+        (WebKit::WebPageProxy::waitForDidUpdateActivityState):
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        (WebKit::WebPageProxy::exitFullscreenImmediately):
+        (WebKit::WebPageProxy::runJavaScriptAlert):
+        (WebKit::WebPageProxy::runJavaScriptConfirm):
+        (WebKit::WebPageProxy::runJavaScriptPrompt):
+        (WebKit::WebPageProxy::pageDidScroll):
+        (WebKit::WebPageProxy::processDidTerminate):
+        (WebKit::WebPageProxy::resetState):
+        (WebKit::WebPageProxy::resetStateAfterProcessExited):
+        (WebKit::WebPageProxy::creationParameters):
+        (WebKit::WebPageProxy::requestGeolocationPermissionForFrame):
+        (WebKit::WebPageProxy::hasActiveVideoForControlsManager const):
+        (WebKit::WebPageProxy::requestControlledElementID const):
+        (WebKit::WebPageProxy::isPlayingVideoInEnhancedFullscreen const):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebPasteboardProxy.h:
+        * UIProcess/WebPasteboardProxy.messages.in:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        (WebKit::WebProcessPool::initializeNewWebProcess):
+        (WebKit::WebProcessPool::updateProcessAssertions):
+        (WebKit::WebProcessPool::reinstateNetworkProcessAssertionState):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::isMainThreadOrCheckDisabled):
+        (WebKit::WebProcessProxy::didFinishLaunching):
+        (WebKit::WebProcessProxy::didSetAssertionState):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebStorage/LocalStorageDatabaseTracker.cpp:
+        (WebKit::LocalStorageDatabaseTracker::databasePath const):
+        * UIProcess/WebStorage/LocalStorageDatabaseTracker.h:
+        * UIProcess/WebStorage/ios/LocalStorageDatabaseTrackerIOS.mm:
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        * UIProcess/_WKWebViewPrintFormatter.mm:
+        * UIProcess/_WKWebViewPrintFormatterInternal.h:
+        * UIProcess/ios/DragDropInteractionState.h:
+        * UIProcess/ios/DragDropInteractionState.mm:
+        * UIProcess/ios/InputViewUpdateDeferrer.h:
+        * UIProcess/ios/InputViewUpdateDeferrer.mm:
+        * UIProcess/ios/LayerRepresentation.mm:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        * UIProcess/ios/ResourceLoadStatisticsPersistentStorageIOS.mm:
+        * UIProcess/ios/SmartMagnificationController.h:
+        * UIProcess/ios/SmartMagnificationController.messages.in:
+        * UIProcess/ios/SmartMagnificationController.mm:
+        * UIProcess/ios/TextCheckerIOS.mm:
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        * UIProcess/ios/WKActionSheet.h:
+        * UIProcess/ios/WKActionSheet.mm:
+        * UIProcess/ios/WKActionSheetAssistant.h:
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        * UIProcess/ios/WKApplicationStateTrackingView.h:
+        * UIProcess/ios/WKApplicationStateTrackingView.mm:
+        * UIProcess/ios/WKContentView.mm:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        * UIProcess/ios/WKGeolocationProviderIOS.h:
+        * UIProcess/ios/WKGeolocationProviderIOS.mm:
+        * UIProcess/ios/WKGeolocationProviderIOSObjCSecurityOrigin.mm:
+        * UIProcess/ios/WKInspectorNodeSearchGestureRecognizer.h:
+        * UIProcess/ios/WKInspectorNodeSearchGestureRecognizer.mm:
+        * UIProcess/ios/WKKeyboardScrollingAnimator.h:
+        * UIProcess/ios/WKKeyboardScrollingAnimator.mm:
+        * UIProcess/ios/WKPDFPageNumberIndicator.h:
+        * UIProcess/ios/WKPDFPageNumberIndicator.mm:
+        * UIProcess/ios/WKPasswordView.h:
+        * UIProcess/ios/WKPasswordView.mm:
+        * UIProcess/ios/WKScrollView.h:
+        * UIProcess/ios/WKScrollView.mm:
+        * UIProcess/ios/WKSyntheticClickTapGestureRecognizer.h:
+        * UIProcess/ios/WKSyntheticClickTapGestureRecognizer.m:
+        * UIProcess/ios/WKWebEvent.h:
+        * UIProcess/ios/WKWebEvent.mm:
+        * UIProcess/ios/WebDataListSuggestionsDropdownIOS.h:
+        * UIProcess/ios/WebDataListSuggestionsDropdownIOS.mm:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        * UIProcess/ios/WebProcessProxyIOS.mm:
+        * UIProcess/ios/forms/WKAirPlayRoutePicker.h:
+        * UIProcess/ios/forms/WKAirPlayRoutePicker.mm:
+        * UIProcess/ios/forms/WKFileUploadPanel.h:
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        * UIProcess/ios/forms/WKFormColorControl.h:
+        * UIProcess/ios/forms/WKFormColorControl.mm:
+        * UIProcess/ios/forms/WKFormColorPicker.h:
+        * UIProcess/ios/forms/WKFormColorPicker.mm:
+        * UIProcess/ios/forms/WKFormInputControl.h:
+        * UIProcess/ios/forms/WKFormInputControl.mm:
+        * UIProcess/ios/forms/WKFormPopover.h:
+        * UIProcess/ios/forms/WKFormPopover.mm:
+        * UIProcess/ios/forms/WKFormSelectControl.h:
+        * UIProcess/ios/forms/WKFormSelectControl.mm:
+        * UIProcess/ios/forms/WKFormSelectPicker.h:
+        * UIProcess/ios/forms/WKFormSelectPicker.mm:
+        * UIProcess/ios/forms/WKFormSelectPopover.h:
+        * UIProcess/ios/forms/WKFormSelectPopover.mm:
+        * UIProcess/ios/fullscreen/FullscreenTouchSecheuristic.cpp:
+        * UIProcess/ios/fullscreen/FullscreenTouchSecheuristic.h:
+        * UIProcess/ios/fullscreen/WKFullScreenViewController.h:
+        * UIProcess/ios/fullscreen/WKFullScreenViewController.mm:
+        * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.h:
+        * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm:
+        * UIProcess/ios/fullscreen/WKFullscreenStackView.h:
+        * UIProcess/ios/fullscreen/WKFullscreenStackView.mm:
+        * UIProcess/mac/LegacySessionStateCoding.cpp:
+        (WebKit::encodeFrameStateNode):
+        (WebKit::decodeBackForwardTreeNode):
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.h:
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm:
+        * UIProcess/mac/ViewSnapshotStore.mm:
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        * WebProcess/EntryPoint/mac/XPCService/WebContentServiceEntryPoint.mm:
+        (WebContentServiceInitializer):
+        * WebProcess/FullScreen/WebFullScreenManager.cpp:
+        (WebKit::WebFullScreenManager::videoControlsManagerDidChange):
+        (WebKit::WebFullScreenManager::willEnterFullScreen):
+        (WebKit::WebFullScreenManager::didEnterFullScreen):
+        (WebKit::WebFullScreenManager::willExitFullScreen):
+        * WebProcess/Geolocation/WebGeolocationManager.cpp:
+        * WebProcess/Geolocation/WebGeolocationManager.h:
+        * WebProcess/Geolocation/WebGeolocationManager.messages.in:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandle.mm:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        * WebProcess/InjectedBundle/API/c/mac/WKBundlePageBannerMac.mm:
+        * WebProcess/InjectedBundle/API/mac/WKDOMInternals.mm:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (-[WKWebProcessPlugInBrowserContextController _setEditingDelegate:]):
+        * WebProcess/WebCoreSupport/SessionStateConversion.cpp:
+        (WebKit::toFrameState):
+        (WebKit::applyFrameState):
+        * WebProcess/WebCoreSupport/WebAlternativeTextClient.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::windowRect):
+        (WebKit::WebChromeClient::enterVideoFullscreenForVideoElement):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidLayout):
+        (WebKit::WebFrameLoaderClient::saveViewStateToItem):
+        (WebKit::WebFrameLoaderClient::restoreViewState):
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+        (WebKit::WebFrameLoaderClient::objectContentType):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        (WebKit::WebInspectorClient::highlight):
+        (WebKit::WebInspectorClient::hideHighlight):
+        * WebProcess/WebCoreSupport/WebInspectorClient.h:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+        * WebProcess/WebCoreSupport/ios/WebChromeClientIOS.mm:
+        * WebProcess/WebCoreSupport/ios/WebEditorClientIOS.mm:
+        * WebProcess/WebCoreSupport/ios/WebFrameLoaderClientIOS.mm:
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        * WebProcess/WebPage/DrawingArea.cpp:
+        (WebKit::DrawingArea::create):
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::findString):
+        * WebProcess/WebPage/FindController.h:
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemoteCustom.mm:
+        (WebKit::PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom):
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea):
+        (WebKit::RemoteLayerTreeDrawingArea::updateScrolledExposedRect):
+        * WebProcess/WebPage/ViewGestureGeometryCollector.cpp:
+        (WebKit::ViewGestureGeometryCollector::dispatchDidCollectGeometryForSmartMagnificationGesture):
+        (WebKit::ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture):
+        (WebKit::ViewGestureGeometryCollector::mainFrameDidLayout):
+        * WebProcess/WebPage/ViewGestureGeometryCollector.h:
+        * WebProcess/WebPage/ViewGestureGeometryCollector.messages.in:
+        * WebProcess/WebPage/ViewUpdateDispatcher.cpp:
+        * WebProcess/WebPage/WKAccessibilityWebPageObjectIOS.h:
+        * WebProcess/WebPage/WKAccessibilityWebPageObjectIOS.mm:
+        * WebProcess/WebPage/WebFrame.h:
+        * WebProcess/WebPage/WebOpenPanelResultListener.cpp:
+        * WebProcess/WebPage/WebOpenPanelResultListener.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_cpuLimit):
+        (WebKit::WebPage::~WebPage):
+        (WebKit::WebPage::scalePage):
+        (WebKit::WebPage::setUseFixedLayout):
+        (WebKit::WebPage::disabledAdaptationsDidChange):
+        (WebKit::WebPage::viewportPropertiesDidChange):
+        (WebKit::WebPage::pageDidScroll):
+        (WebKit::WebPage::mouseEvent):
+        (WebKit::WebPage::updatePreferences):
+        (WebKit::WebPage::willCommitLayerTree):
+        (WebKit::WebPage::didFlushLayerTreeAtTime):
+        (WebKit::WebPage::mainFrameDidLayout):
+        (WebKit::WebPage::resetAssistedNodeForFrame):
+        (WebKit::WebPage::elementDidFocus):
+        (WebKit::WebPage::elementDidBlur):
+        (WebKit::WebPage::willReplaceMultipartContent):
+        (WebKit::WebPage::didReplaceMultipartContent):
+        (WebKit::WebPage::didCommitLoad):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/FindControllerIOS.mm:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::updateScrolledExposedRect):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        (WebKit::WebProcess::initializeConnection):
+        (WebKit::WebProcess::initializeWebProcess):
+        (WebKit::WebProcess::actualPrepareToSuspend):
+        (WebKit::WebProcess::cancelPrepareToSuspend):
+        (WebKit::WebProcess::processDidResume):
+        * WebProcess/WebProcess.h:
+        * WebProcess/cocoa/PlaybackSessionManager.h:
+        * WebProcess/cocoa/PlaybackSessionManager.messages.in:
+        * WebProcess/cocoa/PlaybackSessionManager.mm:
+        * WebProcess/cocoa/VideoFullscreenManager.h:
+        * WebProcess/cocoa/VideoFullscreenManager.messages.in:
+        * WebProcess/cocoa/VideoFullscreenManager.mm:
+        (WebKit::VideoFullscreenManager::supportsVideoFullscreen const):
+        (WebKit::VideoFullscreenManager::supportsVideoFullscreenStandby const):
+        (WebKit::VideoFullscreenManager::didSetupFullscreen):
+        (WebKit::VideoFullscreenManager::didExitFullscreen):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        (WebKit::WebProcess::initializeProcessName):
+        (WebKit::registerWithAccessibility):
+        (WebKit::WebProcess::sourceApplicationAuditData const):
+        (WebKit::WebProcess::initializeSandbox):
+        * WebProcess/mac/SecItemShimLibrary.mm:
+        * config.h:
+
 2018-10-18  Alex Christensen  <achristensen@webkit.org>
 
         Clean up FrameLoader two-state enums

@@ -37,7 +37,7 @@
     NSTimeInterval lastClick;
     int eventNumber;
     double timeOffset;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     NSMutableArray* touches;
     unsigned currentTouchIdentifier;
     unsigned nextEventFlags;

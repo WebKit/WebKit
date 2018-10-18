@@ -26,7 +26,7 @@
 #ifndef OutOfBandTextTrackPrivateAVF_h
 #define OutOfBandTextTrackPrivateAVF_h
 
-#if ENABLE(VIDEO) && (USE(AVFOUNDATION) || PLATFORM(IOS)) && ENABLE(AVF_CAPTIONS)
+#if ENABLE(VIDEO) && (USE(AVFOUNDATION) || PLATFORM(IOS_FAMILY)) && ENABLE(AVF_CAPTIONS)
 
 #include "InbandTextTrackPrivateAVF.h"
 

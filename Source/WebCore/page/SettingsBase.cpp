@@ -87,7 +87,7 @@ float SettingsBase::defaultMinimumZoomFontSize()
 #endif
 }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 bool SettingsBase::defaultTextAutosizingEnabled()
 {
     return false;

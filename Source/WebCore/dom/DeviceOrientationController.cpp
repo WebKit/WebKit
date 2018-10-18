@@ -38,7 +38,7 @@ namespace WebCore {
 DeviceOrientationController::DeviceOrientationController(DeviceOrientationClient* client)
     : DeviceController(client)
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // FIXME: Temporarily avoid asserting while OpenSource is using a different design.
     // We should reconcile the differences between OpenSource and iOS so that we can
     // remove this code path.
@@ -60,9 +60,9 @@ DeviceOrientationClient* DeviceOrientationController::deviceOrientationClient()
     return static_cast<DeviceOrientationClient*>(m_client);
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 // FIXME: We should look to reconcile the iOS and OpenSource differences with this class
-// so that we can either remove these methods or remove the PLATFORM(IOS)-guard.
+// so that we can either remove these methods or remove the PLATFORM(IOS_FAMILY)-guard.
 void DeviceOrientationController::suspendUpdates()
 {
     if (m_client)
@@ -84,7 +84,7 @@ RefPtr<Event> DeviceOrientationController::getLastEvent()
 {
     return DeviceOrientationEvent::create(eventNames().deviceorientationEvent, deviceOrientationClient()->lastOrientation());
 }
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 const char* DeviceOrientationController::supplementName()
 {

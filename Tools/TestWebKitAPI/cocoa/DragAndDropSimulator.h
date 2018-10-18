@@ -32,12 +32,12 @@
 #import <WebKit/_WKInputDelegate.h>
 #import <wtf/BlockPtr.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import "UIKitSPI.h"
 #import <UIKit/NSItemProvider+UIKitAdditions.h>
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 typedef NS_ENUM(NSInteger, DragAndDropPhase) {
     DragAndDropPhaseCancelled = 0,
@@ -71,7 +71,7 @@ typedef NSDictionary<NSNumber *, NSValue *> *ProgressToCGPointValueMap;
 - (UIDragInteraction *)dragInteraction;
 @end
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 @interface DragAndDropSimulator : NSObject<WKUIDelegatePrivate, _WKInputDelegate>
 
@@ -85,7 +85,7 @@ typedef NSDictionary<NSNumber *, NSValue *> *ProgressToCGPointValueMap;
 @property (nonatomic, readonly) NSArray<_WKAttachment *> *removedAttachments;
 @property (nonatomic, readonly) TestWKWebView *webView;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 - (instancetype)initWithWebView:(TestWKWebView *)webView;
 - (void)runFrom:(CGPoint)startLocation to:(CGPoint)endLocation additionalItemRequestLocations:(ProgressToCGPointValueMap)additionalItemRequestLocations;
@@ -108,7 +108,7 @@ typedef NSDictionary<NSNumber *, NSValue *> *ProgressToCGPointValueMap;
 @property (nonatomic, readonly) CGRect lastKnownDragCaretRect;
 @property (nonatomic, readonly) NSArray<UITargetedDragPreview *> *liftPreviews;
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 #if PLATFORM(MAC)
 

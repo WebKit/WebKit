@@ -100,7 +100,7 @@ private:
 typedef OptionRange optionRange;
 typedef const char* optionString;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #define MAXIMUM_NUMBER_OF_FTL_COMPILER_THREADS 2
 #else
 #define MAXIMUM_NUMBER_OF_FTL_COMPILER_THREADS 8

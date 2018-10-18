@@ -39,7 +39,7 @@
 #import <wtf/MainThread.h>
 #import <wtf/RunLoop.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import "MemoryMeasure.h"
 #import "WebFrameInternal.h"
 #import <WebCore/CachedImage.h>
@@ -52,7 +52,7 @@
 
 + (void)initialize
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
     RunLoop::initializeMainRunLoop();
@@ -121,7 +121,7 @@
     WebCore::CrossOriginPreflightResultCache::singleton().clear();
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 + (void)emptyInMemoryResources
 {
     // This method gets called from MobileSafari after it calls [WebView
@@ -194,7 +194,7 @@
     return cachedImage.image()->nativeImage().get();
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 + (void)setDisabled:(BOOL)disabled
 {

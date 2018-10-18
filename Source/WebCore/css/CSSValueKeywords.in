@@ -35,7 +35,7 @@ small-caption
 -webkit-small-control
 -webkit-control
 
-#if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
 -apple-system-headline
 -apple-system-body
 -apple-system-subheadline

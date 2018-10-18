@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(MEDIA_STREAM) && PLATFORM(IOS)
+#if ENABLE(MEDIA_STREAM) && PLATFORM(IOS_FAMILY)
 
 #include "CaptureDevice.h"
 #include <wtf/RetainPtr.h>
@@ -47,4 +47,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM) && PLATFORM(IOS)
+#endif // ENABLE(MEDIA_STREAM) && PLATFORM(IOS_FAMILY)

@@ -27,7 +27,7 @@
 #include "config.h"
 #include "FloatPoint.h"
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 
 namespace WebCore {
 
@@ -46,4 +46,4 @@ FloatPoint::operator NSPoint() const
 
 }
 
-#endif // !PLATFORM(IOS)
+#endif // !PLATFORM(IOS_FAMILY)

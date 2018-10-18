@@ -36,7 +36,7 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/ProcessPrivilege.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIApplication.h>
 #endif
 

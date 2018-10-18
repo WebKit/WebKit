@@ -95,7 +95,7 @@ using namespace JSC;
     return [webArchive autorelease];
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 - (BOOL)isHorizontalWritingMode
 {
     Node* node = core(self);
@@ -241,7 +241,7 @@ using namespace JSC;
 
 @end
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 static NSEventPhase toNSEventPhase(PlatformWheelEventPhase platformPhase)
 {
     uint32_t phase = PlatformWheelEventPhaseNone; 

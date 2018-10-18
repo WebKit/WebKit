@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebMediaSessionManagerMac.h"
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 
 #include "MediaPlaybackTargetPickerMac.h"
 #include <wtf/NeverDestroyed.h>
@@ -56,4 +56,4 @@ WebCore::MediaPlaybackTargetPicker& WebMediaSessionManagerMac::platformPicker()
 
 } // namespace WebCore
 
-#endif // ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+#endif // ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)

@@ -95,7 +95,7 @@ void HTMLMetaElement::process()
     else if (RuntimeEnabledFeatures::sharedFeatures().darkModeCSSEnabled() && equalLettersIgnoringASCIICase(name(), "supported-color-schemes"))
         document().processSupportedColorSchemes(contentValue);
 #endif
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     else if (equalLettersIgnoringASCIICase(name(), "format-detection"))
         document().processFormatDetection(contentValue);
     else if (equalLettersIgnoringASCIICase(name(), "apple-mobile-web-app-orientations"))

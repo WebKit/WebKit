@@ -26,7 +26,7 @@
 #import "config.h"
 #import "RemoteCommandListenerIOS.h"
 
-#if PLATFORM(IOS) && HAVE(MEDIA_PLAYER)
+#if PLATFORM(IOS_FAMILY) && HAVE(MEDIA_PLAYER)
 
 #import <MediaPlayer/MPRemoteCommand.h>
 #import <MediaPlayer/MPRemoteCommandCenter.h>
@@ -151,4 +151,4 @@ void RemoteCommandListenerIOS::updateSupportedCommands()
 
 }
 
-#endif // PLATFORM(IOS) && HAVE(MEDIA_PLAYER)
+#endif // PLATFORM(IOS_FAMILY) && HAVE(MEDIA_PLAYER)

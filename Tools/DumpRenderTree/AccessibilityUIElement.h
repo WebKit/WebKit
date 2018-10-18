@@ -218,7 +218,7 @@ public:
     unsigned uiElementCountForSearchPredicate(JSContextRef, AccessibilityUIElement* startElement, bool isDirectionNext, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly);
     AccessibilityUIElement uiElementForSearchPredicate(JSContextRef, AccessibilityUIElement* startElement, bool isDirectionNext, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly);
     JSRetainPtr<JSStringRef> selectTextWithCriteria(JSContextRef, JSStringRef ambiguityResolution, JSValueRef searchStrings, JSStringRef replacementString, JSStringRef activity);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void elementsForRange(unsigned location, unsigned length, Vector<AccessibilityUIElement>& elements);
     JSRetainPtr<JSStringRef> stringForSelection();
     void increaseTextSelection();
@@ -297,7 +297,7 @@ public:
     // Make sure you call remove, because you can't rely on objects being deallocated in a timely fashion.
     void removeNotificationListener();
     
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     JSRetainPtr<JSStringRef> traits();
     JSRetainPtr<JSStringRef> identifier();
     int elementTextPosition();
@@ -311,9 +311,9 @@ public:
     
     AccessibilityTextMarkerRange textMarkerRangeMatchesTextNearMarkers(JSStringRef, AccessibilityTextMarker*, AccessibilityTextMarker*);
     
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC) && !PLATFORM(IOS_FAMILY)
     // Returns an ordered list of supported actions for an element.
     JSRetainPtr<JSStringRef> supportedActions();
     

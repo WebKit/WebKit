@@ -26,7 +26,7 @@
 #import "config.h"
 #import "PageClientImplIOS.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "APIData.h"
 #import "DataReference.h"
@@ -844,6 +844,6 @@ void PageClientImpl::requestPasswordForQuickLookDocument(const String& fileName,
 
 } // namespace WebKit
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 #undef MESSAGE_CHECK

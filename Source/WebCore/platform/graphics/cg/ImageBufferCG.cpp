@@ -56,7 +56,7 @@
 #endif
 
 // CA uses ARGB32 for textures and ARGB32 -> ARGB32 resampling is optimized.
-#define USE_ARGB32 PLATFORM(IOS)
+#define USE_ARGB32 PLATFORM(IOS_FAMILY)
 
 namespace WebCore {
 
@@ -439,7 +439,7 @@ void ImageBuffer::putByteArray(const Uint8ClampedArray& source, AlphaPremultipli
 
 static inline CFStringRef jpegUTI()
 {
-#if PLATFORM(IOS) || PLATFORM(WIN)
+#if PLATFORM(IOS_FAMILY) || PLATFORM(WIN)
     static const CFStringRef kUTTypeJPEG = CFSTR("public.jpeg");
 #endif
     return kUTTypeJPEG;

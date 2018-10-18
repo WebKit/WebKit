@@ -67,7 +67,7 @@ static const char* serviceName(const ProcessLauncher::LaunchOptions& launchOptio
 
 static bool shouldLeakBoost(const ProcessLauncher::LaunchOptions& launchOptions)
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // On iOS, leak a boost onto all child processes
     UNUSED_PARAM(launchOptions);
     return true;
@@ -80,7 +80,7 @@ static bool shouldLeakBoost(const ProcessLauncher::LaunchOptions& launchOptions)
 static NSString *systemDirectoryPath()
 {
     static NSString *path = [^{
-#if PLATFORM(IOS_SIMULATOR)
+#if PLATFORM(IOS_FAMILY_SIMULATOR)
         char *simulatorRoot = getenv("SIMULATOR_ROOT");
         return simulatorRoot ? [NSString stringWithFormat:@"%s/System/", simulatorRoot] : @"/System/";
 #else
@@ -113,7 +113,7 @@ void ProcessLauncher::launchProcess()
     // 2. When AppleLanguages is passed as command line argument for UI process, or set in its preferences, we should respect it in child processes.
     auto initializationMessage = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
     _CFBundleSetupXPCBootstrap(initializationMessage.get());
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // Clients that set these environment variables explicitly do not have the values automatically forwarded by libxpc.
     auto containerEnvironmentVariables = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
     if (const char* environmentHOME = getenv("HOME"))

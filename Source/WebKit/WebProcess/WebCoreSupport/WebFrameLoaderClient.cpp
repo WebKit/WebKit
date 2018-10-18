@@ -686,7 +686,7 @@ void WebFrameLoaderClient::dispatchDidLayout()
 
     webPage->recomputeShortCircuitHorizontalWheelEventsState();
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     webPage->updateSelectionAppearance();
 #endif
 
@@ -1268,7 +1268,7 @@ void WebFrameLoaderClient::frameLoadCompleted()
 
 void WebFrameLoaderClient::saveViewStateToItem(HistoryItem& historyItem)
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (m_frame->isMainFrame())
         m_frame->page()->savePageState(historyItem);
 #else
@@ -1278,7 +1278,7 @@ void WebFrameLoaderClient::saveViewStateToItem(HistoryItem& historyItem)
 
 void WebFrameLoaderClient::restoreViewState()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     Frame& frame = *m_frame->coreFrame();
     HistoryItem* currentItem = frame.loader().history().currentItem();
     if (FrameView* view = frame.view()) {
@@ -1434,7 +1434,7 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     if (webPage->drawingArea())
         m_frame->coreFrame()->view()->setViewExposedRect(webPage->drawingArea()->viewExposedRect());
 #endif
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     m_frame->coreFrame()->view()->setDelegatesScrolling(true);
 #endif
 
@@ -1652,7 +1652,7 @@ ObjectContentType WebFrameLoaderClient::objectContentType(const URL& url, const 
     if (MIMETypeRegistry::isSupportedNonImageMIMEType(mimeType))
         return ObjectContentType::Frame;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // iOS can render PDF in <object>/<embed> via PDFDocumentImage.
     if (MIMETypeRegistry::isPDFOrPostScriptMIMEType(mimeType))
         return ObjectContentType::Image;

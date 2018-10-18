@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKKeyboardScrollingAnimator.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "UIKitSPI.h"
 #import <QuartzCore/CADisplayLink.h>
@@ -639,4 +639,4 @@ static WebCore::FloatPoint farthestPointInDirection(WebCore::FloatPoint a, WebCo
 
 @end
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

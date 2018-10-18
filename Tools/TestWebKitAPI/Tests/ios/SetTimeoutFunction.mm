@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "PlatformUtilities.h"
 #import <UIKit/UIKit.h>
@@ -95,4 +95,4 @@ TEST(WebKitLegacy, SetTimeoutFunction)
 
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

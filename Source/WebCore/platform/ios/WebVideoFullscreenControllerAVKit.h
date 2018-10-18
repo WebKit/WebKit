@@ -26,7 +26,7 @@
 
 #pragma once
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import <WebCore/HTMLMediaElementEnums.h>
 

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKFileUploadPanel.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "APIArray.h"
 #import "APIData.h"
@@ -723,4 +723,4 @@ IGNORE_WARNINGS_END
 
 ALLOW_DEPRECATED_DECLARATIONS_END
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

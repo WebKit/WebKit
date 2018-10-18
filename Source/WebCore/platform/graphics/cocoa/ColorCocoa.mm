@@ -28,7 +28,7 @@
 
 #import "ColorMac.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import <pal/ios/UIKitSoftLink.h>
 #import <pal/spi/ios/UIKitSPI.h>
 #endif
@@ -44,7 +44,7 @@ NSColor *platformColor(const Color& color)
 
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 UIColor *platformColor(const Color& color)
 {

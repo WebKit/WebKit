@@ -26,7 +26,7 @@
 #import "config.h"
 #import "InputViewUpdateDeferrer.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "UIKitSPI.h"
 
@@ -45,4 +45,4 @@ InputViewUpdateDeferrer::~InputViewUpdateDeferrer()
     
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

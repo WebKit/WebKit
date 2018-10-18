@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ProcessAssertion.h"
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 
 namespace WebKit {
 
@@ -68,4 +68,4 @@ void ProcessAndUIAssertion::setClient(ProcessAssertionClient& client)
 
 }
 
-#endif // !PLATFORM(IOS)
+#endif // !PLATFORM(IOS_FAMILY)

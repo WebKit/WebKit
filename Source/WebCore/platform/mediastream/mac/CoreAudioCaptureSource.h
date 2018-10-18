@@ -117,7 +117,7 @@ public:
     void endInterruption();
     void scheduleReconfiguration();
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void setCoreAudioActiveSource(CoreAudioCaptureSource& source) { setActiveSource(source); }
     void unsetCoreAudioActiveSource(CoreAudioCaptureSource& source) { unsetActiveSource(source); }
     CoreAudioCaptureSource* coreAudioActiveSource() { return static_cast<CoreAudioCaptureSource*>(activeSource()); }

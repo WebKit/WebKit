@@ -85,7 +85,7 @@
 #include <wtf/SimpleStats.h>
 #include <wtf/Threading.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include <bmalloc/bmalloc.h>
 #endif
 
@@ -126,7 +126,7 @@ size_t proportionalHeapSize(size_t heapSize, size_t ramSize)
     if (VM::isInMiniMode())
         return Options::miniVMHeapGrowthFactor() * heapSize;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     size_t memoryFootprint = bmalloc::api::memoryFootprint();
     if (memoryFootprint < ramSize * Options::smallHeapRAMFraction())
         return Options::smallHeapGrowthFactor() * heapSize;
@@ -515,7 +515,7 @@ void Heap::deprecatedReportExtraMemorySlowCase(size_t size)
 
 bool Heap::overCriticalMemoryThreshold(MemoryThresholdCallType memoryThresholdCallType)
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (memoryThresholdCallType == MemoryThresholdCallType::Direct || ++m_precentAvailableMemoryCachedCallCount >= 100) {
         m_overCriticalMemoryThreshold = bmalloc::api::percentAvailableMemoryInUse() > Options::criticalGCMemoryThreshold();
         m_precentAvailableMemoryCachedCallCount = 0;
@@ -2276,7 +2276,7 @@ void Heap::updateAllocationLimits()
         }
     }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // Get critical memory threshold for next cycle.
     overCriticalMemoryThreshold(MemoryThresholdCallType::Direct);
 #endif
@@ -2568,7 +2568,7 @@ void Heap::collectIfNecessaryOrDefer(GCDeferralContext* deferralContext)
     } else {
         size_t bytesAllowedThisCycle = m_maxEdenSize;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         if (overCriticalMemoryThreshold())
             bytesAllowedThisCycle = std::min(m_maxEdenSizeWhenCritical, bytesAllowedThisCycle);
 #endif

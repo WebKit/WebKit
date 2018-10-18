@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 
 #import "SecItemShimLibrary.h"
 
@@ -70,4 +70,4 @@ void WebKitSecItemShimInitialize(const SecItemShimCallbacks& callbacks)
 
 } // namespace WebKit
 
-#endif // !PLATFORM(IOS)
+#endif // !PLATFORM(IOS_FAMILY)

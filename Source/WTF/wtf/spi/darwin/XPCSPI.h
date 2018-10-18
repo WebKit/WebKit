@@ -56,7 +56,7 @@ typedef void* xpc_connection_t;
 
 typedef const struct _xpc_type_s* xpc_type_t;
 
-#if PLATFORM(IOS) && __has_attribute(noescape)
+#if PLATFORM(IOS_FAMILY) && __has_attribute(noescape)
 #define XPC_NOESCAPE __attribute__((__noescape__))
 #endif
 

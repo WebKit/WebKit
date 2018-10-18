@@ -34,7 +34,7 @@ namespace WebCore {
 class GPUDevice;
 }
 
-#if !PLATFORM(IOS_SIMULATOR)
+#if !PLATFORM(IOS_FAMILY_SIMULATOR)
 @interface WebMetalLayer : CAMetalLayer {
 #else
 @interface WebMetalLayer : CALayer { // FIXME: WebMetal - Disable WebMetal on iOS simulator?

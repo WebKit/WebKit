@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #include <QuartzCore/CALayer.h>
 
@@ -49,5 +49,5 @@ class LegacyTileGrid;
 - (id)initWithTileGrid:(WebCore::LegacyTileGrid*)tileGrid;
 @end
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 

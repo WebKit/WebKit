@@ -80,7 +80,7 @@ static void runUntilTasksInFlight(size_t count)
 
 auto e = EPERM;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 // This test is sometimes timing out on iOS (rdar://problem/33665676).
 TEST(URLSchemeHandler, DISABLED_Leaks1)
 #else

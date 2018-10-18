@@ -181,7 +181,7 @@ static bool canUseFastRenderer(const UniChar* buffer, unsigned length)
     NSString *cacheDirectory = [[NSUserDefaults standardUserDefaults] objectForKey:WebKitLocalCacheDefaultsKey];
 
     if (!cacheDirectory || ![cacheDirectory isKindOfClass:[NSString class]]) {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         cacheDirectory = [NSHomeDirectory() stringByAppendingPathComponent:@"Library/Caches"];
 #endif
 #if PLATFORM(MAC)

@@ -26,7 +26,7 @@
 #ifndef LegacyTileCache_h
 #define LegacyTileCache_h
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #include "Color.h"
 #include "FloatRect.h"
@@ -221,6 +221,6 @@ private:
 
 } // namespace WebCore
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 #endif // TileCache_h

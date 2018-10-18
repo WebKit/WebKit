@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "PlatformUtilities.h"
 #import "Test.h"
@@ -233,4 +233,4 @@ TEST(QuickLook, LegacyQuickLookContent)
     EXPECT_NULL(mainFrame.dataSource._quickLookContent);
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

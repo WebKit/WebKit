@@ -119,12 +119,12 @@ extern "C" void _ReadWriteBarrier(void);
 #define WTF_ATTRIBUTE_PRINTF(formatStringArgument, extraArguments)
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 /* For a project that uses WTF but has no config.h, we need to explicitly set the export defines here. */
 #ifndef WTF_EXPORT_PRIVATE
 #define WTF_EXPORT_PRIVATE
 #endif
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 /* These helper functions are always declared, but not necessarily always defined if the corresponding function is disabled. */
 

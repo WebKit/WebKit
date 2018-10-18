@@ -258,7 +258,7 @@ static RetainPtr<NSArray> newArrayWithStrings(const HashSet<String, ASCIICaseIns
     return [[_private->dataSource webFrame] DOMDocument];
 }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 - (NSAttributedString *)attributedText
 {
     // FIXME: Implement

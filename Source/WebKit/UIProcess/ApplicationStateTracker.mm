@@ -26,7 +26,7 @@
 #import "config.h"
 #import "ApplicationStateTracker.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "AssertionServicesSPI.h"
 #import "SandboxUtilities.h"

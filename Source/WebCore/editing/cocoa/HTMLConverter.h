@@ -34,7 +34,7 @@ class Range;
 enum class IncludeImagesInAttributedString { Yes, No };
     
 WEBCORE_EXPORT NSAttributedString *attributedStringFromRange(Range&);
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 WEBCORE_EXPORT NSAttributedString *editingAttributedStringFromRange(Range&, IncludeImagesInAttributedString = IncludeImagesInAttributedString::Yes);
 #endif
 

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WAKResponder.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "WAKViewInternal.h"
 #import "WKViewPrivate.h"
@@ -168,4 +168,4 @@
 
 @end
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

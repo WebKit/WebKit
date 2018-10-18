@@ -26,7 +26,7 @@
 #import "config.h"
 #import "AccessibilityObject.h"
 
-#if HAVE(ACCESSIBILITY) && PLATFORM(IOS)
+#if HAVE(ACCESSIBILITY) && PLATFORM(IOS_FAMILY)
 
 #import "AccessibilityRenderObject.h"
 #import "EventNames.h"
@@ -96,4 +96,4 @@ bool AccessibilityObject::isInputTypePopupButton() const
 
 } // WebCore
 
-#endif // HAVE(ACCESSIBILITY) && PLATFORM(IOS)
+#endif // HAVE(ACCESSIBILITY) && PLATFORM(IOS_FAMILY)

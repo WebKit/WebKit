@@ -56,7 +56,7 @@
 #import <wtf/StdLibExtras.h>
 #import <wtf/text/WTFString.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import <WebCore/WebCoreThreadMessage.h>
 
 NSString *WebViewportInitialScaleKey = @"initial-scale";
@@ -111,7 +111,7 @@ static HistoryItemMap& historyItemWrappers()
 
 void WKNotifyHistoryItemChanged(HistoryItem&)
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     [[NSNotificationCenter defaultCenter]
         postNotificationName:WebHistoryItemChangedNotification object:nil userInfo:nil];
 #else
@@ -123,7 +123,7 @@ void WKNotifyHistoryItemChanged(HistoryItem&)
 
 + (void)initialize
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
     RunLoop::initializeMainRunLoop();
@@ -196,7 +196,7 @@ void WKNotifyHistoryItemChanged(HistoryItem&)
     return nsStringNilIfEmpty(core(_private)->alternateTitle());
 }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 - (NSImage *)icon
 {
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -370,7 +370,7 @@ WebHistoryItem *kit(HistoryItem* item)
         }
     }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     NSNumber *scaleValue = [dict objectForKey:scaleKey];
     NSNumber *scaleIsInitialValue = [dict objectForKey:scaleIsInitialKey];
     if (scaleValue && scaleIsInitialValue)
@@ -409,7 +409,7 @@ WebHistoryItem *kit(HistoryItem* item)
 }
 
 // FIXME: The only iOS difference here should be whether YES or NO is passed to dictionaryRepresentationIncludingChildren:
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 - (NSDictionary *)dictionaryRepresentation
 {
     return [self dictionaryRepresentationIncludingChildren:YES];
@@ -447,7 +447,7 @@ WebHistoryItem *kit(HistoryItem* item)
         [result release];
     }
     
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (includesChildren && coreItem->children().size()) {
 #else
     if (coreItem->children().size()) {
@@ -460,7 +460,7 @@ WebHistoryItem *kit(HistoryItem* item)
         [dict setObject: childDicts forKey:childrenKey];
     }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     [dict setObject:[NSNumber numberWithFloat:core(_private)->scale()] forKey:scaleKey];
     [dict setObject:[NSNumber numberWithBool:core(_private)->scaleIsInitial()] forKey:scaleIsInitialKey];
 
@@ -519,7 +519,7 @@ WebHistoryItem *kit(HistoryItem* item)
     return url;
 }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 + (void)_releaseAllPendingPageCaches
 {
 }
@@ -544,7 +544,7 @@ WebHistoryItem *kit(HistoryItem* item)
     return [result autorelease];
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 - (void)_setScale:(float)scale isInitial:(BOOL)aFlag
 {
     core(_private)->setScale(scale, aFlag);
@@ -597,7 +597,7 @@ WebHistoryItem *kit(HistoryItem* item)
     core(_private)->setScrollPosition(IntPoint(scrollPoint));
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 - (BOOL)_isInPageCache
 {

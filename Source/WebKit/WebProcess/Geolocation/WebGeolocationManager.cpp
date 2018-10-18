@@ -117,11 +117,11 @@ void WebGeolocationManager::didFailToDeterminePosition(const String& errorMessag
 #endif // ENABLE(GEOLOCATION)
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 void WebGeolocationManager::resetPermissions()
 {
     m_process.resetAllGeolocationPermissions();
 }
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 } // namespace WebKit

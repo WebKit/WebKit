@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKActionSheet.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "UIKitSPI.h"
 #import <wtf/RetainPtr.h>
@@ -259,4 +259,4 @@
 
 @end
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

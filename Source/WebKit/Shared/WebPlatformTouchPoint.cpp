@@ -27,7 +27,7 @@
 #include "config.h"
 #include "WebEvent.h"
 
-#if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
+#if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS_FAMILY)
 
 #include "WebCoreArgumentCoders.h"
 
@@ -88,4 +88,4 @@ std::optional<WebPlatformTouchPoint> WebPlatformTouchPoint::decode(IPC::Decoder&
 
 } // namespace WebKit
 
-#endif // ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
+#endif // ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS_FAMILY)

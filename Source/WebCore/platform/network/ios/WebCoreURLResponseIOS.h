@@ -28,7 +28,7 @@
 
 #pragma once
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #ifdef __OBJC__
 #include "WebCoreURLResponse.h"
@@ -61,4 +61,4 @@ inline bool shouldUseQuickLookForMIMEType(const WTF::String& mimeType)
 
 } // namespace WebCore
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

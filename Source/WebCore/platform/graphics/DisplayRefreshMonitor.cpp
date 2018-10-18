@@ -32,7 +32,7 @@
 #include "DisplayRefreshMonitorManager.h"
 #include "Logging.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "DisplayRefreshMonitorIOS.h"
 #elif PLATFORM(MAC)
 #include "DisplayRefreshMonitorMac.h"
@@ -47,7 +47,7 @@ RefPtr<DisplayRefreshMonitor> DisplayRefreshMonitor::createDefaultDisplayRefresh
 #if PLATFORM(MAC)
     return DisplayRefreshMonitorMac::create(displayID);
 #endif
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     return DisplayRefreshMonitorIOS::create(displayID);
 #endif
 #if PLATFORM(GTK)

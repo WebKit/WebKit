@@ -32,7 +32,7 @@
 #include <WebCore/FloatRect.h>
 #include <wtf/CompletionHandler.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 OBJC_CLASS NSArray;
 OBJC_CLASS _WKActivatedElementInfo;
 OBJC_CLASS UIViewController;
@@ -156,7 +156,7 @@ public:
     virtual void mediaSessionMetadataDidChange(WebKit::WebPageProxy&, WebKit::WebMediaSessionMetadata*) { }
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #if HAVE(APP_LINKS)
     virtual bool shouldIncludeAppLinkActionsForElement(_WKActivatedElementInfo *) { return true; }
 #endif

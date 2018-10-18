@@ -34,7 +34,7 @@
 // The SPI header should define which CFNetwork features *exist* in the underlying system, but not
 // policy about what WebKit should do. Accordingly, we should move this somewhere else or rename it
 // to be about CFNetwork capabilities (HAVE) rather than about WebKit policy (USE).
-#if ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101302 && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110200) || (PLATFORM(WATCHOS) && __WATCH_OS_VERSION_MIN_REQUIRED >= 40200) || (PLATFORM(TVOS) && __TV_OS_VERSION_MIN_REQUIRED >= 110200))
+#if ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101302 && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110200) || (PLATFORM(WATCHOS) && __WATCH_OS_VERSION_MIN_REQUIRED >= 40200) || (PLATFORM(TVOS) && __TV_OS_VERSION_MIN_REQUIRED >= 110200))
 #define USE_CFNETWORK_IGNORE_HSTS 1
 #endif
 
@@ -175,10 +175,10 @@ typedef NS_ENUM(NSInteger, NSURLSessionCompanionProxyPreference) {
 @property (nullable, copy) NSString *_sourceApplicationBundleIdentifier;
 @property (nullable, copy) NSString *_sourceApplicationSecondaryIdentifier;
 @property BOOL _shouldSkipPreferredClientCertificateLookup NS_AVAILABLE(10_10, 8_0);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 @property (nullable, copy) NSString *_CTDataConnectionServiceType;
 #endif
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
 @property (nullable, copy) NSSet *_suppressedAutoAddedHTTPHeaders;
 #endif
 #if PLATFORM(WATCHOS) && __WATCH_OS_VERSION_MAX_ALLOWED >= 60000
@@ -192,12 +192,12 @@ typedef NS_ENUM(NSInteger, NSURLSessionCompanionProxyPreference) {
 @property (copy) NSString *_storagePartitionIdentifier;
 @property (nullable, readwrite, retain) NSURL *_siteForCookies;
 @property (readwrite) BOOL _isTopLevelNavigation;
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
 @property (nonatomic, assign) BOOL _preconnect;
 #endif
 @end
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
 @interface NSURLSessionTaskTransactionMetrics ()
 @property (copy, readonly) NSString* _remoteAddressAndPort;
 @property (copy, readonly) NSUUID* _connectionIdentifier;
@@ -358,7 +358,7 @@ WTF_EXTERN_C_END
 @end
 
 @interface NSURLSessionConfiguration ()
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
 // FIXME: Remove this once rdar://problem/40650244 is in a build.
 @property (copy) NSDictionary *_socketStreamProperties;
 #endif

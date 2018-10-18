@@ -33,7 +33,7 @@
 #include <WebCore/ScrollingTreeFixedNode.h>
 #include <WebCore/ScrollingTreeStickyNode.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "ScrollingTreeOverflowScrollingNodeIOS.h"
 #include <WebCore/ScrollingTreeFrameScrollingNodeIOS.h>
 #else
@@ -76,7 +76,7 @@ void RemoteScrollingTree::handleWheelEventPhase(PlatformWheelEventPhase phase)
 }
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 WebCore::FloatRect RemoteScrollingTree::fixedPositionRect()
 {
     return m_scrollingCoordinatorProxy.customFixedPositionRect();
@@ -114,13 +114,13 @@ Ref<ScrollingTreeNode> RemoteScrollingTree::createScrollingTreeNode(ScrollingNod
     switch (nodeType) {
     case MainFrameScrollingNode:
     case SubframeScrollingNode:
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         return ScrollingTreeFrameScrollingNodeIOS::create(*this, nodeType, nodeID);
 #else
         return ScrollingTreeFrameScrollingNodeMac::create(*this, nodeType, nodeID);
 #endif
     case OverflowScrollingNode:
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         return ScrollingTreeOverflowScrollingNodeIOS::create(*this, nodeID);
 #else
         ASSERT_NOT_REACHED();

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKUtilities.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import <wtf/Assertions.h>
 
@@ -126,4 +126,4 @@ WKClassInfo *WKGetClassInfo (WKObjectRef object)
     return object->classInfo;
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

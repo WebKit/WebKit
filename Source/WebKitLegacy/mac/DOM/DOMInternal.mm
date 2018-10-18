@@ -36,7 +36,7 @@
 #import <wtf/Lock.h>
 #import <wtf/NeverDestroyed.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #define NEEDS_WRAPPER_CACHE_LOCK 1
 #endif
 

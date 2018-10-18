@@ -41,7 +41,7 @@ void FrameSelection::notifyAccessibilityForSelectionChange(const AXTextStateChan
             cache->postTextStateChangeNotification(m_selection.start(), intent, m_selection);
     }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     // if zoom feature is enabled, insertion point changes should update the zoom
     if (!UAZoomEnabled() || !m_selection.isCaret())
         return;
@@ -66,7 +66,7 @@ void FrameSelection::notifyAccessibilityForSelectionChange(const AXTextStateChan
     CGRect cgViewRect = NSRectToCGRect(nsViewRect);
 
     UAZoomChangeFocus(&cgViewRect, &cgCaretRect, kUAZoomFocusTypeInsertionPoint);
-#endif // !PLATFORM(IOS)
+#endif // !PLATFORM(IOS_FAMILY)
 }
 
 } // namespace WebCore

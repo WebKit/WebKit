@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WebProcessProxy.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import <WebCore/NotImplemented.h>
 
@@ -42,4 +42,4 @@ bool WebProcessProxy::fullKeyboardAccessEnabled()
 
 } // namespace WebKit
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

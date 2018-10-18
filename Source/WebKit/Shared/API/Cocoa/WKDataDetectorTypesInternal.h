@@ -27,7 +27,7 @@
 
 #if WK_API_ENABLED
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import <WebCore/DataDetection.h>
 

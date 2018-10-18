@@ -44,7 +44,7 @@
 
 bool WKContextIsPlugInUpdateAvailable(WKContextRef contextRef, WKStringRef plugInBundleIdentifierRef)
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     return false;
 #else
     return WebCore::PluginBlacklist::isPluginUpdateAvailable((__bridge NSString *)adoptCF(WKStringCopyCFString(kCFAllocatorDefault, plugInBundleIdentifierRef)).get());

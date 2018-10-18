@@ -90,7 +90,7 @@ public:
     static Ref<SearchFieldResultsButtonElement> create(Document&);
 
     void defaultEventHandler(Event&) override;
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     bool willRespondToMouseClickEvents() override;
 #endif
 
@@ -105,7 +105,7 @@ public:
     static Ref<SearchFieldCancelButtonElement> create(Document&);
 
     void defaultEventHandler(Event&) override;
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     bool willRespondToMouseClickEvents() override;
 #endif
 

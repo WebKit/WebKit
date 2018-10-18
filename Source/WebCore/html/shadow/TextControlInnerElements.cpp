@@ -225,7 +225,7 @@ void SearchFieldResultsButtonElement::defaultEventHandler(Event& event)
     if (input && event.type() == eventNames().mousedownEvent && is<MouseEvent>(event) && downcast<MouseEvent>(event).button() == LeftButton) {
         input->focus();
         input->select();
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
         if (auto* renderer = input->renderer()) {
             auto& searchFieldRenderer = downcast<RenderSearchField>(*renderer);
             if (searchFieldRenderer.popupIsVisible())
@@ -241,7 +241,7 @@ void SearchFieldResultsButtonElement::defaultEventHandler(Event& event)
         HTMLDivElement::defaultEventHandler(event);
 }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 bool SearchFieldResultsButtonElement::willRespondToMouseClickEvents()
 {
     return true;
@@ -254,7 +254,7 @@ inline SearchFieldCancelButtonElement::SearchFieldCancelButtonElement(Document& 
     : HTMLDivElement(divTag, document)
 {
     setPseudo(AtomicString("-webkit-search-cancel-button", AtomicString::ConstructFromLiteral));
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     setAttributeWithoutSynchronization(aria_labelAttr, AXSearchFieldCancelButtonText());
 #endif
     setAttributeWithoutSynchronization(roleAttr, AtomicString("button", AtomicString::ConstructFromLiteral));
@@ -290,7 +290,7 @@ void SearchFieldCancelButtonElement::defaultEventHandler(Event& event)
         HTMLDivElement::defaultEventHandler(event);
 }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 bool SearchFieldCancelButtonElement::willRespondToMouseClickEvents()
 {
     const RefPtr<HTMLInputElement> input = downcast<HTMLInputElement>(shadowHost());

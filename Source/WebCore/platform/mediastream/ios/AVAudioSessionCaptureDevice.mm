@@ -26,7 +26,7 @@
 #include "config.h"
 #include "AVAudioSessionCaptureDevice.h"
 
-#if ENABLE(MEDIA_STREAM) && PLATFORM(IOS)
+#if ENABLE(MEDIA_STREAM) && PLATFORM(IOS_FAMILY)
 
 #include <AVFoundation/AVAudioSession.h>
 
@@ -49,4 +49,4 @@ AVAudioSessionCaptureDevice::AVAudioSessionCaptureDevice(AVAudioSessionPortDescr
 
 }
 
-#endif // ENABLE(MEDIA_STREAM) && PLATFORM(IOS)
+#endif // ENABLE(MEDIA_STREAM) && PLATFORM(IOS_FAMILY)

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "PlaybackSessionModelMediaElement.h"
 
-#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
 #import "AudioTrackList.h"
 #import "Event.h"

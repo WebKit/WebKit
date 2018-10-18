@@ -98,7 +98,7 @@ FontCascade::FontCascade(const FontPlatformData& fontData, FontSmoothingMode fon
     , m_requiresShaping(computeRequiresShaping())
 {
     m_fontDescription.setFontSmoothing(fontSmoothingMode);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     m_fontDescription.setSpecifiedSize(CTFontGetSize(fontData.font()));
     m_fontDescription.setComputedSize(CTFontGetSize(fontData.font()));
     m_fontDescription.setIsItalic(CTFontGetSymbolicTraits(fontData.font()) & kCTFontTraitItalic);

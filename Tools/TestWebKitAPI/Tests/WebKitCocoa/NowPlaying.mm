@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if WK_API_ENABLED && USE(MEDIAREMOTE) && !PLATFORM(IOS_SIMULATOR) && (PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101304))
+#if WK_API_ENABLED && USE(MEDIAREMOTE) && !PLATFORM(IOS_FAMILY_SIMULATOR) && (PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101304))
 
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
@@ -90,7 +90,7 @@ public:
 
         _configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
         [_configuration setMediaTypesRequiringUserActionForPlayback:WKAudiovisualMediaTypeAudio];
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         [_configuration setAllowsInlineMediaPlayback:YES];
         [_configuration _setInlineMediaPlaybackRequiresPlaysInlineAttribute:NO];
 #endif
@@ -276,4 +276,4 @@ TEST_F(NowPlayingTest, VideoElementWithoutAudioPlayWithUserGesture)
     ASSERT_NE(webViewPid(), getNowPlayingClientPid());
 }
 
-#endif // WK_API_ENABLED && USE(MEDIAREMOTE) && (PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101304))
+#endif // WK_API_ENABLED && USE(MEDIAREMOTE) && (PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101304))

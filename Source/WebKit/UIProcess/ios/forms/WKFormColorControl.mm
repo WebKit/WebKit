@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKFormColorControl.h"
 
-#if ENABLE(INPUT_TYPE_COLOR) && PLATFORM(IOS)
+#if ENABLE(INPUT_TYPE_COLOR) && PLATFORM(IOS_FAMILY)
 
 #import "UIKitSPI.h"
 #import "WKContentView.h"
@@ -126,4 +126,4 @@ static const CGFloat colorPopoverCornerRadius = 9;
 
 @end
 
-#endif // ENABLE(INPUT_TYPE_COLOR) && PLATFORM(IOS)
+#endif // ENABLE(INPUT_TYPE_COLOR) && PLATFORM(IOS_FAMILY)

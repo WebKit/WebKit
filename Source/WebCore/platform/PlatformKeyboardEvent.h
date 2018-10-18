@@ -36,7 +36,7 @@
 OBJC_CLASS NSEvent;
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 OBJC_CLASS WebEvent;
 #endif
 
@@ -139,7 +139,7 @@ namespace WebCore {
         static void getCurrentModifierState(bool& shiftKey, bool& ctrlKey, bool& altKey, bool& metaKey);
 
 #if PLATFORM(COCOA)
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
         NSEvent* macEvent() const { return m_macEvent.get(); }
 #else
         ::WebEvent *event() const { return m_Event.get(); }
@@ -196,7 +196,7 @@ namespace WebCore {
         bool m_isSystemKey;
 
 #if PLATFORM(COCOA)
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
         RetainPtr<NSEvent> m_macEvent;
 #else
         RetainPtr<::WebEvent> m_Event;

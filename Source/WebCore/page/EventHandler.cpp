@@ -337,7 +337,7 @@ static inline bool handleWheelEventInAppropriateEnclosingBox(Node* startNode, Wh
     return false;
 }
 
-#if (ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS))
+#if (ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS_FAMILY))
 static inline bool shouldGesturesTriggerActive()
 {
     // If the platform we're on supports GestureTapDown and GestureTapCancel then we'll
@@ -683,7 +683,7 @@ bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestR
     VisibleSelection newSelection = m_frame.selection().selection();
     TextGranularity granularity = CharacterGranularity;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // The text selection assistant will handle selection in the case where we are already editing the node
     if (newSelection.rootEditableElement() == targetNode->rootEditableElement())
         return true;
@@ -1056,7 +1056,7 @@ bool EventHandler::handleMouseReleaseEvent(const MouseEventWithHitTestResults& e
         if (node && node->renderer() && (caretBrowsing || node->hasEditableStyle())) {
             VisiblePosition pos = node->renderer()->positionForPoint(event.localPoint(), nullptr);
             newSelection = VisibleSelection(pos);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
             // On iOS, selection changes are triggered using platform-specific text interaction gestures rather than
             // default behavior on click or mouseup. As such, the only time we should allow click events to change the
             // selection on iOS is when we focus a different editable element, in which case the text interaction
@@ -1093,7 +1093,7 @@ void EventHandler::didPanScrollStop()
 
 void EventHandler::startPanScrolling(RenderElement& renderer)
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     if (!is<RenderBox>(renderer))
         return;
     m_autoscrollController->startPanScrolling(&downcast<RenderBox>(renderer), lastKnownMousePosition());
@@ -1926,7 +1926,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& platformMouseE
         return !dispatchMouseEvent(eventNames().mousemoveEvent, m_frameSetBeingResized.get(), false, 0, platformMouseEvent, false);
 
     // On iOS, our scrollbars are managed by UIKit.
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     // Send events right to a scrollbar if the mouse is pressed.
     if (m_lastScrollbarUnderMouse && m_mousePressed)
         return m_lastScrollbarUnderMouse->mouseMoved(platformMouseEvent);
@@ -1960,7 +1960,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& platformMouseE
         updateLastScrollbarUnderMouse(scrollbar, m_mousePressed ? SetOrClearLastScrollbar::Clear : SetOrClearLastScrollbar::Set);
 
         // On iOS, our scrollbars are managed by UIKit.
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
         if (!m_mousePressed && scrollbar)
             scrollbar->mouseMoved(platformMouseEvent); // Handle hover effects on platforms that support visual feedback on scrollbar hovering.
 #endif
@@ -2687,25 +2687,25 @@ void EventHandler::clearOrScheduleClearingLatchedStateIfNeeded(const PlatformWhe
     clearLatchedState();
 }
     
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     
 IntPoint EventHandler::targetPositionInWindowForSelectionAutoscroll() const
 {
     return m_lastKnownMousePosition;
 }
     
-#endif // !PLATFORM(IOS)
+#endif // !PLATFORM(IOS_FAMILY)
     
 #endif // !PLATFORM(MAC)
     
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     
 bool EventHandler::shouldUpdateAutoscroll()
 {
     return mousePressed();
 }
     
-#endif // !PLATFORM(IOS)
+#endif // !PLATFORM(IOS_FAMILY)
 
 Widget* EventHandler::widgetForEventTarget(Element* eventTarget)
 {

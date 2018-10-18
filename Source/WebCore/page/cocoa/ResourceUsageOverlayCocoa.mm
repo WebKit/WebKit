@@ -257,7 +257,7 @@ static void showText(CGContextRef context, float x, float y, CGColorRef color, c
     CGContextSetFillColorWithColor(context, color);
 
     auto matrix = CGAffineTransformMakeScale(1, -1);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     CFStringRef fontName = CFSTR("Courier");
     CGFloat fontSize = 10;
 #else

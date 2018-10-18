@@ -104,7 +104,7 @@ inline static bool deviceIsAvailable(AVCaptureDeviceTypedef *device)
     if (![device isConnected])
         return false;
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     if ([device isSuspended] || [device isInUseByAnotherApplication])
         return false;
 #endif

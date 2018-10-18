@@ -346,7 +346,7 @@ bool SecurityOrigin::canDisplay(const URL& url) const
     if (m_universalAccess)
         return true;
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     if (m_data.protocol == "file" && url.isLocalFile() && !FileSystem::filesHaveSameVolume(m_filePath, url.fileSystemPath()))
         return false;
 #endif

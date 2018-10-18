@@ -28,7 +28,7 @@
 #import <pal/spi/cocoa/CoreTextSPI.h>
 #import <wtf/text/WTFString.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import <CoreText/CoreText.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #endif
@@ -48,7 +48,7 @@ FontPlatformData::FontPlatformData(CTFontRef font, float size, bool syntheticBol
     auto variations = adoptCF(static_cast<CFDictionaryRef>(CTFontCopyAttribute(font, kCTFontVariationAttribute)));
     m_hasVariations = variations && CFDictionaryGetCount(variations.get());
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     m_isEmoji = CTFontIsAppleColorEmoji(m_font.get());
 #endif
 }
@@ -124,7 +124,7 @@ static CFDictionaryRef cascadeToLastResortAttributesDictionary()
 static RetainPtr<CTFontDescriptorRef> cascadeToLastResortAndVariationsFontDescriptor(CTFontRef originalFont)
 {
 // FIXME: Remove this when <rdar://problem/28449441> is fixed.
-#define WORKAROUND_CORETEXT_VARIATIONS_WITH_FALLBACK_LIST_BUG (ENABLE(VARIATION_FONTS) && ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110000)))
+#define WORKAROUND_CORETEXT_VARIATIONS_WITH_FALLBACK_LIST_BUG (ENABLE(VARIATION_FONTS) && ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110000)))
 
     CFDictionaryRef attributes = cascadeToLastResortAttributesDictionary();
 #if WORKAROUND_CORETEXT_VARIATIONS_WITH_FALLBACK_LIST_BUG

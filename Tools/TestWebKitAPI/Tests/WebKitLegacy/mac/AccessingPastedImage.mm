@@ -30,7 +30,7 @@
 #import <WebKit/DOM.h>
 #import <WebKit/WebViewPrivate.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include <MobileCoreServices/MobileCoreServices.h>
 #endif
 

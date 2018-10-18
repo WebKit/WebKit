@@ -26,7 +26,7 @@
 #include "config.h"
 #include "DragDropInteractionState.h"
 
-#if ENABLE(DRAG_SUPPORT) && PLATFORM(IOS)
+#if ENABLE(DRAG_SUPPORT) && PLATFORM(IOS_FAMILY)
 
 #import <WebCore/DragItem.h>
 #import <WebCore/Image.h>
@@ -312,4 +312,4 @@ void DragDropInteractionState::updatePreviewsForActiveDragSources()
 
 } // namespace WebKit
 
-#endif // ENABLE(DRAG_SUPPORT) && PLATFORM(IOS)
+#endif // ENABLE(DRAG_SUPPORT) && PLATFORM(IOS_FAMILY)

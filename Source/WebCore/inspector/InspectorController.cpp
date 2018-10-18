@@ -432,7 +432,7 @@ Node* InspectorController::highlightedNode() const
 
 void InspectorController::setIndicating(bool indicating)
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     m_overlay->setIndicating(indicating);
 #else
     if (indicating)

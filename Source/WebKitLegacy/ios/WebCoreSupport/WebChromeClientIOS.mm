@@ -25,7 +25,7 @@
 
 #import "WebChromeClientIOS.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "DOMNodeInternal.h"
 #import "PopupMenuIOS.h"
@@ -395,4 +395,4 @@ int WebChromeClientIOS::deviceOrientation() const
 }
 #endif
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

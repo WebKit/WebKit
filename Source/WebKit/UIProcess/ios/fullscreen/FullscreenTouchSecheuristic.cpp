@@ -26,7 +26,7 @@
 #include "config.h"
 #include "FullscreenTouchSecheuristic.h"
 
-#if ENABLE(FULLSCREEN_API) && PLATFORM(IOS)
+#if ENABLE(FULLSCREEN_API) && PLATFORM(IOS_FAMILY)
 
 #include <wtf/MonotonicTime.h>
 
@@ -83,4 +83,4 @@ double FullscreenTouchSecheuristic::attenuationFactor(Seconds delta)
 
 }
 
-#endif // ENABLE(FULLSCREEN_API) && PLATFORM(IOS)
+#endif // ENABLE(FULLSCREEN_API) && PLATFORM(IOS_FAMILY)

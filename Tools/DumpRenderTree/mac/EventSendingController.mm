@@ -43,14 +43,14 @@
 #import <functional>
 #import <wtf/RetainPtr.h>
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 #import <Carbon/Carbon.h> // for GetCurrentEventTime()
 #import <WebKit/WebHTMLView.h>
 #import <objc/runtime.h>
 #import <wtf/mac/AppKitCompatibilityDeclarations.h>
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIKit.h>
 #import <WebKit/KeyEventCodesIOS.h>
 #import <WebKit/WAKWindow.h>
@@ -58,7 +58,7 @@
 #import <pal/spi/ios/GraphicsServicesSPI.h> // for GSCurrentEventTimestamp()
 #endif
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 extern "C" void _NSNewKillRingSequence();
 
 @interface NSApplication ()
@@ -95,7 +95,7 @@ NSMutableArray *savedMouseEvents; // mouse events sent between mouseDown and mou
 BOOL replayingSavedEvents;
 
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 @interface SyntheticTouch : NSObject {
 @public
     CGPoint _location;
@@ -134,7 +134,7 @@ BOOL replayingSavedEvents;
 @end // SyntheticTouch
 #endif
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 @interface WebView (WebViewInternalForTesting)
 - (WebCore::Frame*)_mainCoreFrame;
 @end
@@ -259,7 +259,7 @@ static NSDraggingSession *drt_WebHTMLView_beginDraggingSessionWithItemsEventSour
             || aSelector == @selector(beginDragWithFiles:)
             || aSelector == @selector(beginDragWithFilePromises:)
 #endif
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
             || aSelector == @selector(addTouchAtX:y:)
             || aSelector == @selector(updateTouchAtIndex:x:y:)
             || aSelector == @selector(cancelTouchAtIndex:)
@@ -322,7 +322,7 @@ static NSDraggingSession *drt_WebHTMLView_beginDraggingSessionWithItemsEventSour
         return @"monitorWheelEvents";
     if (aSelector == @selector(callAfterScrollingCompletes:))
         return @"callAfterScrollingCompletes";
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (aSelector == @selector(addTouchAtX:y:))
         return @"addTouchPoint";
     if (aSelector == @selector(updateTouchAtIndex:x:y:))
@@ -359,7 +359,7 @@ static NSDraggingSession *drt_WebHTMLView_beginDraggingSessionWithItemsEventSour
 
 - (void)dealloc
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     [touches release];
 #endif
     [super dealloc];
@@ -367,7 +367,7 @@ static NSDraggingSession *drt_WebHTMLView_beginDraggingSessionWithItemsEventSour
 
 - (double)currentEventTime
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     return GetCurrentEventTime() + timeOffset;
 #else
     return GSCurrentEventTimestamp() + timeOffset;
@@ -392,12 +392,12 @@ static NSDraggingSession *drt_WebHTMLView_beginDraggingSessionWithItemsEventSour
 
 - (void)clearKillRing
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     _NSNewKillRingSequence();
 #endif
 }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 static NSEventType eventTypeForMouseButtonAndAction(int button, MouseAction action)
 {
     switch (button) {
@@ -503,7 +503,7 @@ static NSEventType eventTypeForMouseButtonAndAction(int button, MouseAction acti
     dragMode = NO;
     leftMouseButtonDown = YES;
 }
-#endif // !PLATFORM(IOS)
+#endif // !PLATFORM(IOS_FAMILY)
 
 - (void)updateClickCountForButton:(int)buttonNumber
 {
@@ -518,7 +518,7 @@ static NSEventType eventTypeForMouseButtonAndAction(int button, MouseAction acti
 
 static int modifierFlags(const NSString* modifierName)
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     const int controlKeyMask = NSEventModifierFlagControl;
     const int shiftKeyMask = NSEventModifierFlagShift;
     const int alternateKeyMask = NSEventModifierFlagOption;
@@ -566,7 +566,7 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
     [[[mainFrame frameView] documentView] layout];
     [self updateClickCountForButton:buttonNumber];
     
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     NSEventType eventType = eventTypeForMouseButtonAndAction(buttonNumber, MouseDown);
     NSEvent *event = [NSEvent mouseEventWithType:eventType
                                         location:lastMousePosition 
@@ -585,18 +585,18 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
 
     NSView *subView = [[mainFrame webView] hitTest:[event locationInWindow]];
     if (subView) {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
         [NSApp _setCurrentEvent:event];
 #endif
         [subView mouseDown:event];
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
         [NSApp _setCurrentEvent:nil];
 #endif
         if (buttonNumber == LeftMouseButton)
             leftMouseButtonDown = YES;
     }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     [event release];
 #endif
 }
@@ -628,7 +628,7 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
 
 - (void)scalePageBy:(float)scale atX:(float)x andY:(float)y
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     // -[WebView _scaleWebView:] is Mac-specific API, and calls functions that
     // assert to not be used in iOS.
     [[mainFrame webView] _scaleWebView:scale atOrigin:NSMakePoint(x, y)];
@@ -651,7 +651,7 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
     }
 
     [[[mainFrame frameView] documentView] layout];
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     NSEventType eventType = eventTypeForMouseButtonAndAction(buttonNumber, MouseUp);
     NSEvent *event = [NSEvent mouseEventWithType:eventType
                                         location:lastMousePosition 
@@ -674,18 +674,18 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
     // instead of rolling our own algorithm for selecting an event target.
     targetView = targetView ? targetView : [[mainFrame frameView] documentView];
     assert(targetView);
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     [NSApp _setCurrentEvent:event];
 #endif
     [targetView mouseUp:event];
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     [NSApp _setCurrentEvent:nil];
 #endif
     if (buttonNumber == LeftMouseButton)
         leftMouseButtonDown = NO;
     lastClick = [event timestamp];
     lastClickPosition = lastMousePosition;
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     if (draggingInfo) {
         WebView *webView = [mainFrame webView];
         
@@ -703,7 +703,7 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
     }
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     [event release];
 #endif
 }
@@ -727,7 +727,7 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
     }
 
     NSView *view = [mainFrame webView];
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     NSPoint newMousePosition = [view convertPoint:NSMakePoint(x, [view frame].size.height - y) toView:nil];
     NSEvent *event = [NSEvent mouseEventWithType:(leftMouseButtonDown ? NSEventTypeLeftMouseDragged : NSEventTypeMouseMoved)
                                         location:newMousePosition
@@ -748,15 +748,15 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
     WebEvent *event = [[WebEvent alloc] initWithMouseEventType:WebEventMouseMoved
                                                      timeStamp:[self currentEventTime]
                                                       location:lastMousePosition];
-#endif // !PLATFORM(IOS)
+#endif // !PLATFORM(IOS_FAMILY)
 
     NSView *subView = [[mainFrame webView] hitTest:[event locationInWindow]];
     if (subView) {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
         [NSApp _setCurrentEvent:event];
 #endif
         if (leftMouseButtonDown) {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
             if (draggingInfo) {
                 // Per NSDragging.h: draggingSources may not implement draggedImage:movedTo:
                 if ([[draggingInfo draggingSource] respondsToSelector:@selector(draggedImage:movedTo:)])
@@ -767,19 +767,19 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
 #endif
         } else
             [subView mouseMoved:event];
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
         [NSApp _setCurrentEvent:nil];
 #endif
     }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     [event release];
 #endif
 }
 
 - (void)mouseScrollByX:(int)x andY:(int)y continuously:(BOOL)continuously
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     CGScrollEventUnit unit = continuously ? kCGScrollEventUnitPixel : kCGScrollEventUnitLine;
     CGEventRef cgScrollEvent = CGEventCreateScrollWheelEvent(NULL, unit, 2, y, x);
     
@@ -1107,7 +1107,7 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
     int modifierFlags = 0;
 
     if ([character length] == 1 && [character characterAtIndex:0] >= 'A' && [character characterAtIndex:0] <= 'Z') {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
         modifierFlags |= NSEventModifierFlagShift;
 #else
         modifierFlags |= WebEventFlagMaskAlphaShift;
@@ -1122,7 +1122,7 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
 
     [[[mainFrame frameView] documentView] layout];
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     NSEvent *event = [NSEvent keyEventWithType:NSEventTypeKeyDown
                         location:NSMakePoint(5, 5)
                         modifierFlags:modifierFlags
@@ -1146,15 +1146,15 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
                         characterSet:WebEventCharacterSetASCII];
 #endif
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     [NSApp _setCurrentEvent:event];
 #endif
     [[[[mainFrame webView] window] firstResponder] keyDown:event];
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     [NSApp _setCurrentEvent:nil];
 #endif
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     event = [NSEvent keyEventWithType:NSEventTypeKeyUp
                         location:NSMakePoint(5, 5)
                         modifierFlags:modifierFlags
@@ -1179,15 +1179,15 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
                         characterSet:WebEventCharacterSetASCII];
 #endif
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     [NSApp _setCurrentEvent:event];
 #endif
     [[[[mainFrame webView] window] firstResponder] keyUp:event];
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     [NSApp _setCurrentEvent:nil];
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     [event release];
 #endif
 }
@@ -1388,7 +1388,7 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
 #endif
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 - (void)addTouchAtX:(int)x y:(int)y
 {
     if (!touches)

@@ -155,7 +155,7 @@
 #import <pal/spi/mac/NSMenuSPI.h>
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import "WebUIKitDelegate.h"
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/KeyEventCodesIOS.h>
@@ -171,7 +171,7 @@ using namespace WebCore;
 using namespace HTMLNames;
 using namespace WTF;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 @interface NSObject (Accessibility)
 - (id)accessibilityHitTest:(NSPoint)point;
@@ -728,7 +728,7 @@ extern "C" NSString *NSTextInputReplacementRangeAttributeName;
 #endif
 #endif
 - (void)_setDrawsOwnDescendants:(BOOL)drawsOwnDescendants;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 - (void)centerSelectionInVisibleArea:(id)sender;
 #endif
 @end
@@ -812,7 +812,7 @@ static CachedImageClient& promisedDataClient()
 
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 static NSString * const WebMarkedTextUpdatedNotification = @"WebMarkedTextUpdated";
 #endif
 
@@ -887,7 +887,7 @@ static NSString * const WebMarkedTextUpdatedNotification = @"WebMarkedTextUpdate
 - (void)_updateSecureInputState;
 - (void)_updateSelectionForInputManager;
 #endif
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 - (void)setMarkedText:(id)string selectedRange:(NSRange)newSelRange;
 - (void)doCommandBySelector:(SEL)selector;
 #endif
@@ -1468,7 +1468,7 @@ static NSControlStateValue kit(TriState state)
     return [WebHTMLRepresentation unsupportedTextMIMETypes];
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 - (void)mouseMoved:(WebEvent *)event
 {
@@ -1749,7 +1749,7 @@ static BOOL isQuickLookEvent(NSEvent *event)
     if (_private->closed)
         return nil;
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     BOOL captureHitsOnSubviews;
     if (forceNSViewHitTest)
         captureHitsOnSubviews = NO;
@@ -1771,7 +1771,7 @@ static BOOL isQuickLookEvent(NSEvent *event)
             hitView = self;
         return hitView;
     }
-#endif // !PLATFORM(IOS)
+#endif // !PLATFORM(IOS_FAMILY)
 
     if ([[self superview] mouse:point inRect:[self frame]])
         return self;
@@ -2032,7 +2032,7 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
 
 #endif // PLATFORM(MAC)
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 // WAKView override.
 - (void)layoutIfNeeded
@@ -2550,7 +2550,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return newBottom;
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 - (id)accessibilityRootElement
 {
@@ -2606,7 +2606,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     _private->pluginController = adoptNS([[WebPluginController alloc] initWithDocumentView:self]);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     [[NSNotificationCenter defaultCenter] 
             addObserver:self selector:@selector(markedTextUpdate:) 
                    name:WebMarkedTextUpdatedNotification object:nil];
@@ -2624,7 +2624,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (WebCoreObjCScheduleDeallocateOnMainThread([WebHTMLView class], self))
         return;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     [[NSNotificationCenter defaultCenter] removeObserver:self name:WebMarkedTextUpdatedNotification object:nil];
 #endif
 
@@ -2819,7 +2819,7 @@ WEBCORE_COMMAND(unscript)
 WEBCORE_COMMAND(yank)
 WEBCORE_COMMAND(yankAndSelect)
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 WEBCORE_COMMAND(clearText)
 WEBCORE_COMMAND(toggleBold)
 WEBCORE_COMMAND(toggleItalic)
@@ -3299,7 +3299,7 @@ IGNORE_WARNINGS_END
 
     if ([WebPluginController isPlugInView:view]) {
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         WebView *webView = [self _webView];
         [[webView _UIKitDelegateForwarder] webView:webView willAddPlugInView:view];
 #endif
@@ -4204,7 +4204,7 @@ static BOOL currentScrollIsBlit(NSView *clipView)
     // Record the mouse down position so we can determine drag hysteresis.
     [self _setMouseDownEvent:event];
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // TEXTINPUT: if there is marked text and the current input
     // manager wants to handle mouse events, we need to make sure to
     // pass it to them. If not, then we need to notify the input
@@ -4465,7 +4465,7 @@ IGNORE_WARNINGS_END
     [self _stopAutoscrollTimer];
     if (Frame* frame = core([self _frame])) {
         if (Page* page = frame->page()) {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
             page->mainFrame().eventHandler().mouseUp(event);
 #else
             page->mainFrame().eventHandler().mouseUp(event, [[self _webView] _pressureEvent]);
@@ -4629,7 +4629,7 @@ static RefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
         if (!coreFrame)
             return resign;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         if (Document* document = coreFrame->document()) {
             document->markers().removeMarkers(DocumentMarker::DictationPhraseWithAlternatives);
             document->markers().removeMarkers(DocumentMarker::DictationResult);
@@ -5035,7 +5035,7 @@ IGNORE_WARNINGS_END
 {
     id accTree = [[self _frame] accessibilityRoot];
     if (accTree) {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         return [accTree accessibilityHitTest:point];
 #else
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -5682,7 +5682,7 @@ static BOOL writingDirectionKeyBindingsEnabled()
 
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 - (void)markedTextUpdate:(NSNotification *)notification
 {
     NSString *text = [notification object];
@@ -6048,7 +6048,7 @@ static BOOL writingDirectionKeyBindingsEnabled()
 
 #endif // PLATFORM(MAC)
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     
 #define kWebEnterKey         0x0003
 #define kWebBackspaceKey     0x0008
@@ -6099,7 +6099,7 @@ static BOOL writingDirectionKeyBindingsEnabled()
     }
     return NO;
 }
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 #if PLATFORM(MAC)
 
@@ -6844,7 +6844,7 @@ IGNORE_WARNINGS_END
     return self;
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 static CGImageRef imageFromRect(Frame* frame, CGRect rect)
 {
@@ -6922,7 +6922,7 @@ static CGImageRef selectionImage(Frame* frame, bool forceBlackText)
     return result;
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 #if PLATFORM(MAC)
 - (NSImage *)selectionImageForcingBlackText:(BOOL)forceBlackText
@@ -6937,7 +6937,7 @@ static CGImageRef selectionImage(Frame* frame, bool forceBlackText)
     if (!coreFrame)
         return nil;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     return selectionImage(coreFrame, forceBlackText);
 #else
     TextIndicatorData textIndicator;

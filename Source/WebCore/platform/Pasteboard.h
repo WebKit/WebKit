@@ -34,7 +34,7 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 OBJC_CLASS NSString;
 #endif
 
@@ -248,7 +248,7 @@ public:
     static std::unique_ptr<Pasteboard> createForGlobalSelection();
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     explicit Pasteboard(long changeCount);
     explicit Pasteboard(const String& pasteboardName);
 
@@ -278,7 +278,7 @@ public:
 #endif
 
 private:
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     bool respectsUTIFidelities() const;
     void readRespectingUTIFidelities(PasteboardWebContentReader&, WebContentReadingPolicy);
 
@@ -331,7 +331,7 @@ private:
 #endif
 };
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 extern NSString *WebArchivePboardType;
 extern NSString *UIColorPboardType;
 #endif

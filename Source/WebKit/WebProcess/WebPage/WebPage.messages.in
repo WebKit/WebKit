@@ -44,7 +44,7 @@ messages -> WebPage LegacyReceiver {
     ExecuteEditCommandWithCallback(String name, String argument, WebKit::CallbackID callbackID)
     KeyEvent(WebKit::WebKeyboardEvent event)
     MouseEvent(WebKit::WebMouseEvent event)
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     SetViewportConfigurationViewLayoutSize(WebCore::FloatSize size, double scaleFactor)
     SetMaximumUnobscuredSize(WebCore::FloatSize size)
     SetDeviceOrientation(int32_t deviceOrientation)
@@ -291,7 +291,7 @@ messages -> WebPage LegacyReceiver {
 #endif
 
     # Open panel.
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     DidChooseFilesForOpenPanelWithDisplayStringAndIcon(Vector<String> fileURLs, String displayString, IPC::DataReference iconData)
 #endif
     DidChooseFilesForOpenPanel(Vector<String> fileURLs)
@@ -351,7 +351,7 @@ messages -> WebPage LegacyReceiver {
 #if PLATFORM(COCOA)
     DrawRectToImage(uint64_t frameID, struct WebKit::PrintInfo printInfo, WebCore::IntRect rect, WebCore::IntSize imageSize, WebKit::CallbackID callbackID)
     DrawPagesToPDF(uint64_t frameID, struct WebKit::PrintInfo printInfo, uint32_t first, uint32_t count, WebKit::CallbackID callbackID)
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     ComputePagesForPrintingAndDrawToPDF(uint64_t frameID, struct WebKit::PrintInfo printInfo, WebKit::CallbackID callbackID) -> (uint32_t pageCount) Delayed
 #endif
 #endif
@@ -430,7 +430,7 @@ messages -> WebPage LegacyReceiver {
     HandleAlternativeTextUIResult(String result)
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     WillStartUserTriggeredZooming();
 #endif
 
@@ -467,7 +467,7 @@ messages -> WebPage LegacyReceiver {
 
     SetShouldDispatchFakeMouseMoveEvents(bool shouldDispatchFakeMouseMoveEvents)
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
     PlaybackTargetSelected(uint64_t contextId, WebCore::MediaPlaybackTargetContext target)
     PlaybackTargetAvailabilityDidChange(uint64_t contextId, bool available)
     SetShouldPlayToPlaybackTarget(uint64_t contextId, bool shouldPlay)

@@ -40,7 +40,7 @@
 #import <wtf/RunLoop.h>
 #import <wtf/spi/darwin/XPCSPI.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import "ProcessAssertion.h"
 #import <UIKit/UIAccessibility.h>
 
@@ -92,7 +92,7 @@ private:
     ConnectionTerminationWatchdog(OSObjectPtr<xpc_connection_t>& xpcConnection, Seconds interval)
         : m_xpcConnection(xpcConnection)
         , m_watchdogTimer(RunLoop::main(), this, &ConnectionTerminationWatchdog::watchdogTimerFired)
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         , m_assertion(std::make_unique<WebKit::ProcessAndUIAssertion>(xpc_connection_get_pid(m_xpcConnection.get()), WebKit::AssertionState::Background))
 #endif
     {
@@ -107,7 +107,7 @@ private:
 
     OSObjectPtr<xpc_connection_t> m_xpcConnection;
     RunLoop::Timer<ConnectionTerminationWatchdog> m_watchdogTimer;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     std::unique_ptr<WebKit::ProcessAndUIAssertion> m_assertion;
 #endif
 };
@@ -594,7 +594,7 @@ void Connection::receiveSourceEventHandler()
         return;
     }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     if (decoder->messageReceiverName() == "IPC" && decoder->messageName() == "SetExceptionPort") {
         if (m_isServer) {
             // Server connections aren't supposed to have their exception ports overridden. Treat this as an invalid message.
@@ -649,7 +649,7 @@ static void AccessibilityProcessSuspendedNotification(bool suspended)
 {
 #if PLATFORM(MAC)
     _AXUIElementNotifyProcessSuspendStatus(suspended ? AXSuspendStatusSuspended : AXSuspendStatusRunning);
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS_FAMILY)
     UIAccessibilityPostNotification(kAXPidStatusChangedNotification, @{ @"pid" : @(getpid()), @"suspended" : @(suspended) });
 #else
     UNUSED_PARAM(suspended);

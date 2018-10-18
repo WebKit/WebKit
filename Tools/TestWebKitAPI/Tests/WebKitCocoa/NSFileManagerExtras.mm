@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "PlatformUtilities.h"
 #import "Test.h"
@@ -58,4 +58,4 @@ TEST(WebKit, _WKNSFileManagerExtras)
     [fileManager removeItemAtPath:filePath error:nil];
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

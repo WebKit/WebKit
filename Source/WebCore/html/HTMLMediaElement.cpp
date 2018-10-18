@@ -120,7 +120,7 @@
 #include "MediaElementAudioSourceNode.h"
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "RuntimeApplicationChecks.h"
 #include "VideoFullscreenInterfaceAVKit.h"
 #endif
@@ -164,7 +164,7 @@
 #include "NotImplemented.h"
 #endif
 
-#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 #include "VideoFullscreenModel.h"
 #endif
 
@@ -534,7 +534,7 @@ void HTMLMediaElement::finishInitialization()
             m_mediaSession->addBehaviorRestriction(MediaElementSession::OverrideUserGestureRequirementForMainContent);
     }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (!document.settings().videoPlaybackRequiresUserGesture() && !document.settings().audioPlaybackRequiresUserGesture()) {
         // Relax RequireUserGestureForFullscreen when videoPlaybackRequiresUserGesture and audioPlaybackRequiresUserGesture is not set:
         m_mediaSession->removeBehaviorRestriction(MediaElementSession::RequireUserGestureForFullscreen);
@@ -706,7 +706,7 @@ void HTMLMediaElement::registerWithDocument(Document& document)
     if (m_isWaitingUntilMediaCanStart)
         document.addMediaCanStartListener(this);
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     document.registerForMediaVolumeCallbacks(this);
     document.registerForPrivateBrowsingStateChangedCallbacks(this);
 #endif
@@ -747,7 +747,7 @@ void HTMLMediaElement::unregisterWithDocument(Document& document)
     if (m_isWaitingUntilMediaCanStart)
         document.removeMediaCanStartListener(this);
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     document.unregisterForMediaVolumeCallbacks(this);
     document.unregisterForPrivateBrowsingStateChangedCallbacks(this);
 #endif
@@ -3679,7 +3679,7 @@ ExceptionOr<void> HTMLMediaElement::setVolume(double volume)
     if (!(volume >= 0 && volume <= 1))
         return Exception { IndexSizeError };
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     if (m_volume == volume)
         return { };
 
@@ -3846,7 +3846,7 @@ double HTMLMediaElement::nextScanRate()
     double rate = std::min(ScanMaximumRate, fabs(playbackRate() * 2));
     if (m_scanDirection == Backward)
         rate *= -1;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     rate = std::min(std::max(rate, minFastReverseRate()), maxFastForwardRate());
 #endif
     return rate;
@@ -4683,7 +4683,7 @@ void HTMLMediaElement::sourceWasAdded(HTMLSourceElement& source)
     // the media element's resource selection algorithm.
     if (m_networkState == NETWORK_EMPTY) {
         m_nextChildNodeToConsider = &source;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         if (m_mediaSession->dataLoadingPermitted())
 #endif
             selectMediaResource();
@@ -5054,7 +5054,7 @@ void HTMLMediaElement::mediaEngineWasUpdated()
         m_player->cdmInstanceAttached(m_mediaKeys->cdmInstance());
 #endif
 
-#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     if (!m_player)
         return;
     m_player->setVideoFullscreenFrame(m_videoFullscreenFrame);
@@ -5284,7 +5284,7 @@ void HTMLMediaElement::updateVolume()
 {
     if (!m_player)
         return;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // Only the user can change audio volume so update the cached volume and post the changed event.
     float volume = m_player->volume();
     if (m_volume != volume) {
@@ -5473,7 +5473,7 @@ void HTMLMediaElement::userCancelledLoad()
     INFO_LOG(LOGIDENTIFIER);
 
     // FIXME: We should look to reconcile the iOS and non-iOS code (below).
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (m_networkState == NETWORK_EMPTY || m_readyState >= HAVE_METADATA)
         return;
 #else
@@ -6131,7 +6131,7 @@ void HTMLMediaElement::waitForPreparedForInlineThen(WTF::Function<void()>&& comp
     m_preparedForInlineCompletionHandler = WTFMove(completionHandler);
 }
 
-#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
 void HTMLMediaElement::willExitFullscreen()
 {
@@ -7032,7 +7032,7 @@ Vector<String> HTMLMediaElement::mediaPlayerPreferredAudioCharacteristics() cons
     return Vector<String>();
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 String HTMLMediaElement::mediaPlayerNetworkInterfaceName() const
 {
     return DeprecatedGlobalSettings::networkInterfaceName();
@@ -7539,7 +7539,7 @@ String HTMLMediaElement::mediaSessionTitle() const
         return title;
 
     title = m_currentSrc.host().toString();
-#if PLATFORM(MAC) || PLATFORM(IOS)
+#if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
     if (!title.isEmpty())
         title = decodeHostName(title);
 #endif
@@ -7796,7 +7796,7 @@ void HTMLMediaElement::setShouldBufferData(bool shouldBuffer)
 
 void HTMLMediaElement::purgeBufferedDataIfPossible()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (!MemoryPressureHandler::singleton().isUnderMemoryPressure() && m_mediaSession->dataBufferingPermitted())
         return;
 

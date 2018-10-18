@@ -47,7 +47,7 @@ void PrintInfo::encode(IPC::Encoder& encoder) const
     encoder.encodeEnum(printMode);
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     encoder << snapshotFirstPage;
 #endif
 }
@@ -70,7 +70,7 @@ bool PrintInfo::decode(IPC::Decoder& decoder, PrintInfo& info)
         return false;
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (!decoder.decode(info.snapshotFirstPage))
         return false;
 #endif

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(DATALIST_ELEMENT) && PLATFORM(IOS)
+#if ENABLE(DATALIST_ELEMENT) && PLATFORM(IOS_FAMILY)
 
 #import "UIKitSPI.h"
 #import "WebDataListSuggestionsDropdown.h"
@@ -59,4 +59,4 @@ private:
 
 } // namespace WebKit
 
-#endif // ENABLE(DATALIST_ELEMENT) && PLATFORM(IOS)
+#endif // ENABLE(DATALIST_ELEMENT) && PLATFORM(IOS_FAMILY)

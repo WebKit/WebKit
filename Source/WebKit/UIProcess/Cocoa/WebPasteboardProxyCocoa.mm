@@ -178,7 +178,7 @@ void WebPasteboardProxy::writeCustomData(const WebCore::PasteboardCustomData& da
     newChangeCount = PlatformPasteboard(pasteboardName).write(data);
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 void WebPasteboardProxy::getPasteboardTypesByFidelityForItemAtIndex(uint64_t index, const String& pasteboardName, Vector<String>& types)
 {
     PlatformPasteboard(pasteboardName).getTypesByFidelityForItemAtIndex(types, index);

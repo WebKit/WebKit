@@ -74,7 +74,7 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
     WebCore::setApplicationBundleIdentifier(parameters.uiProcessBundleIdentifier);
     WebCore::setApplicationSDKVersion(parameters.uiProcessSDKVersion);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     SandboxExtension::consumePermanently(parameters.cookieStorageDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.containerCachesDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.parentBundleDirectoryExtensionHandle);
@@ -88,7 +88,7 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
     NetworkSessionCocoa::setSourceApplicationAuditTokenData(sourceApplicationAuditData());
     NetworkSessionCocoa::setSourceApplicationBundleIdentifier(parameters.sourceApplicationBundleIdentifier);
     NetworkSessionCocoa::setSourceApplicationSecondaryIdentifier(parameters.sourceApplicationSecondaryIdentifier);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     NetworkSessionCocoa::setCTDataConnectionServiceType(parameters.ctDataConnectionServiceType);
 #endif
 
@@ -133,7 +133,7 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
 
 RetainPtr<CFDataRef> NetworkProcess::sourceApplicationAuditData() const
 {
-#if PLATFORM(IOS) && !PLATFORM(IOSMAC)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOSMAC)
     audit_token_t auditToken;
     ASSERT(parentProcessConnection());
     if (!parentProcessConnection() || !parentProcessConnection()->getAuditToken(auditToken))
@@ -208,7 +208,7 @@ void NetworkProcess::syncAllCookies()
     });
 }
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
 static void saveCookies(NSHTTPCookieStorage *cookieStorage, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
@@ -225,7 +225,7 @@ void NetworkProcess::platformSyncAllCookies(CompletionHandler<void()>&& completi
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
     RefPtr<CallbackAggregator> callbackAggregator = CallbackAggregator::create(WTFMove(completionHander));
     WebCore::NetworkStorageSession::forEach([&] (auto& networkStorageSession) {
         saveCookies(networkStorageSession.nsCookieStorage(), [callbackAggregator] { });

@@ -38,7 +38,7 @@
 
 OBJC_CLASS CALayer;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 OBJC_CLASS UIGestureRecognizer;
 OBJC_CLASS UIView;
 OBJC_CLASS WKSwipeTransitionController;

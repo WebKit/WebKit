@@ -264,7 +264,7 @@ DOMElement *kit(WebCore::Element* value)
     return unwrap(*self).childElementCount();
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 - (CGRect)boundsInRootViewSpace
 {
     WebCore::JSMainThreadNullState state;

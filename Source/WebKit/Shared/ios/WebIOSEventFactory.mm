@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WebIOSEventFactory.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import <WebCore/KeyEventCodesIOS.h>
 #import <WebCore/PlatformEventFactoryIOS.h>
@@ -108,4 +108,4 @@ WebKit::WebMouseEvent WebIOSEventFactory::createWebMouseEvent(::WebEvent *event)
     return WebKit::WebMouseEvent(type, button, buttons, position, position, deltaX, deltaY, deltaZ, clickCount, modifiers, WallTime::fromRawSeconds(timestamp));
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

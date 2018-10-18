@@ -72,18 +72,18 @@
 #import <pal/spi/mac/NSApplicationSPI.h>
 #import <stdio.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import "WKAccessibilityWebPageObjectIOS.h"
 #import <UIKit/UIAccessibility.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
 #endif
 
-#if PLATFORM(IOS) && USE(APPLE_INTERNAL_SDK)
+#if PLATFORM(IOS_FAMILY) && USE(APPLE_INTERNAL_SDK)
 #import <AXRuntime/AXDefines.h>
 #import <AXRuntime/AXNotificationConstants.h>
 #endif
 
-#if PLATFORM(IOS) && !USE(APPLE_INTERNAL_SDK)
+#if PLATFORM(IOS_FAMILY) && !USE(APPLE_INTERNAL_SDK)
 #define kAXPidStatusChangedNotification 0
 #endif
 
@@ -143,7 +143,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& par
 #if ENABLE(MEDIA_STREAM)
     SandboxExtension::consumePermanently(parameters.audioCaptureExtensionHandle);
 #endif
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     SandboxExtension::consumePermanently(parameters.cookieStorageDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.containerCachesDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.containerTemporaryDirectoryExtensionHandle);
@@ -210,7 +210,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& par
 
 void WebProcess::initializeProcessName(const ChildProcessInitializationParameters& parameters)
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     NSString *applicationName;
     if (parameters.extraInitializationData.get("inspector-process"_s) == "1")
         applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Web Inspector", "Visible name of Web Inspector's web process. The argument is the application name."), (NSString *)parameters.uiProcessName];
@@ -229,7 +229,7 @@ static void registerWithAccessibility()
 #if USE(APPKIT)
     [NSAccessibilityRemoteUIElement setRemoteUIApp:YES];
 #endif
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     NSString *accessibilityBundlePath = [(NSString *)GSSystemRootDirectory() stringByAppendingString:@"/System/Library/AccessibilityBundles/WebProcessLoader.axbundle"];
     NSError *error = nil;
     if (![[NSBundle bundleWithPath:accessibilityBundlePath] loadAndReturnError:&error])
@@ -367,7 +367,7 @@ void WebProcess::platformTerminate()
 
 RetainPtr<CFDataRef> WebProcess::sourceApplicationAuditData() const
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     audit_token_t auditToken;
     ASSERT(parentProcessConnection());
     if (!parentProcessConnection() || !parentProcessConnection()->getAuditToken(auditToken))
@@ -388,7 +388,7 @@ void WebProcess::initializeSandbox(const ChildProcessInitializationParameters& p
 #else
     NSBundle *webKit2Bundle = [NSBundle bundleForClass:NSClassFromString(@"WKView")];
 #endif
-#if PLATFORM(IOS) && !PLATFORM(IOSMAC)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOSMAC)
     sandboxParameters.setOverrideSandboxProfilePath([webKit2Bundle pathForResource:@"com.apple.WebKit.WebContent" ofType:@"sb"]);
 #else
     sandboxParameters.setOverrideSandboxProfilePath([webKit2Bundle pathForResource:@"com.apple.WebProcess" ofType:@"sb"]);
@@ -594,7 +594,7 @@ void _WKSetCrashReportApplicationSpecificInformation(NSString *infoString)
     return setCrashReportApplicationSpecificInformation((__bridge CFStringRef)infoString);
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 void WebProcess::accessibilityProcessSuspendedNotification(bool suspended)
 {
     UIAccessibilityPostNotification(kAXPidStatusChangedNotification, @{ @"pid" : @(getpid()), @"suspended" : @(suspended) });

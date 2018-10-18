@@ -25,7 +25,7 @@
 
 #import "WebMediaPlaybackTargetPicker.h"
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 
 #import <WebCore/MediaPlaybackTarget.h>
 #import <WebCore/Page.h>

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "RemoteLayerTreeHost.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "UIKitSPI.h"
 #import <UIKit/UIScrollView.h>
@@ -241,4 +241,4 @@ LayerOrView *RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::
 
 } // namespace WebKit
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

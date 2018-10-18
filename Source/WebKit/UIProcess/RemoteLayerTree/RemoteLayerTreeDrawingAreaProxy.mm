@@ -42,7 +42,7 @@
 
 // FIXME: Mac will need something similar; we should figure out how to share this with DisplayRefreshMonitor without
 // breaking WebKit1 behavior or WebKit2-WebKit1 coexistence.
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 @interface WKOneShotDisplayLinkHandler : NSObject {
     WebKit::RemoteLayerTreeDrawingAreaProxy* _drawingAreaProxy;
     CADisplayLink *_displayLink;
@@ -126,7 +126,7 @@ RemoteLayerTreeDrawingAreaProxy::~RemoteLayerTreeDrawingAreaProxy()
     m_callbacks.invalidate(CallbackBase::Error::OwnerWasInvalidated);
     m_webPageProxy.process().removeMessageReceiver(Messages::RemoteLayerTreeDrawingAreaProxy::messageReceiverName(), m_webPageProxy.pageID());
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     [m_displayLinkHandler invalidate];
 #endif
 }
@@ -139,7 +139,7 @@ std::unique_ptr<RemoteLayerTreeHost> RemoteLayerTreeDrawingAreaProxy::detachRemo
 }
 
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 WKOneShotDisplayLinkHandler *RemoteLayerTreeDrawingAreaProxy::displayLinkHandler()
 {
     if (!m_displayLinkHandler)
@@ -217,7 +217,7 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
     m_webPageProxy.didCommitLayerTree(layerTreeTransaction);
 
 #if ENABLE(ASYNC_SCROLLING)
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (m_webPageProxy.scrollingCoordinatorProxy()->hasFixedOrSticky()) {
         // If we got a new layer for a fixed or sticky node, its position from the WebProcess is probably stale. We need to re-run the "viewport" changed logic to udpate it with our UI-side state.
         FloatRect customFixedPositionRect = m_webPageProxy.computeCustomFixedPositionRect(m_webPageProxy.unobscuredContentRect(), m_webPageProxy.unobscuredContentRectRespectingInputViewBounds(), m_webPageProxy.customFixedPositionRect(), m_webPageProxy.displayedContentScale(), FrameView::LayoutViewportConstraint::Unconstrained, m_webPageProxy.scrollingCoordinatorProxy()->visualViewportEnabled());
@@ -244,7 +244,7 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
 
     m_webPageProxy.layerTreeCommitComplete();
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (std::exchange(m_didUpdateMessageState, NeedsDidUpdate) == MissedCommit)
         didRefreshDisplay();
     [displayLinkHandler() schedule];
@@ -285,7 +285,7 @@ void RemoteLayerTreeDrawingAreaProxy::setViewExposedRect(std::optional<WebCore::
 FloatPoint RemoteLayerTreeDrawingAreaProxy::indicatorLocation() const
 {
     if (m_webPageProxy.delegatesScrolling()) {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         FloatPoint tiledMapLocation = m_webPageProxy.unobscuredContentRect().location().expandedTo(FloatPoint());
         tiledMapLocation = tiledMapLocation.expandedTo(m_webPageProxy.exposedContentRect().location());
 
@@ -361,7 +361,7 @@ void RemoteLayerTreeDrawingAreaProxy::updateDebugIndicator(IntSize contentsSize,
 
     if (m_webPageProxy.delegatesScrolling()) {
         FloatRect scaledExposedRect;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         scaledExposedRect = m_webPageProxy.exposedContentRect();
 #else
         if (viewExposedRect())
@@ -419,7 +419,7 @@ void RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay()
 
     if (m_didUpdateMessageState != NeedsDidUpdate) {
         m_didUpdateMessageState = MissedCommit;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         [displayLinkHandler() pause];
 #endif
         return;
@@ -450,7 +450,7 @@ void RemoteLayerTreeDrawingAreaProxy::waitForDidUpdateActivityState(ActivityStat
         if (id value = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitOverrideActivityStateUpdateTimeout"])
             return Seconds([value doubleValue]);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         return Seconds::fromMilliseconds(500);
 #else
         return Seconds::fromMilliseconds(250);

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKFormInputControl.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "UIKitSPI.h"
 #import "WKContentView.h"
@@ -365,4 +365,4 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
 
 @end
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

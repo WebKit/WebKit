@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if PLATFORM(IOS) && ENABLE(FULLSCREEN_API)
+#if PLATFORM(IOS_FAMILY) && ENABLE(FULLSCREEN_API)
 #import "WKFullScreenWindowControllerIOS.h"
 
 #import "UIKitSPI.h"
@@ -1043,4 +1043,4 @@ static const NSTimeInterval kAnimationDuration = 0.2;
 
 @end
 
-#endif // PLATFORM(IOS) && ENABLE(FULLSCREEN_API)
+#endif // PLATFORM(IOS_FAMILY) && ENABLE(FULLSCREEN_API)

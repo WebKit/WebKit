@@ -50,13 +50,13 @@
 #include <dwrite.h>
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include <wtf/Lock.h>
 #include <wtf/RecursiveLockAdapter.h>
 
 static RecursiveLock fontLock;
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 
 namespace WebCore {
@@ -206,7 +206,7 @@ const AtomicString& FontCache::alternateFamilyName(const AtomicString& familyNam
 FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fontDescription, const AtomicString& passedFamilyName,
     const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, FontSelectionSpecifiedCapabilities fontFaceCapabilities, bool checkingAlternateName)
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     auto locker = holdLock(fontLock);
 #endif
     
@@ -309,7 +309,7 @@ RefPtr<OpenTypeVerticalData> FontCache::verticalData(const FontPlatformData& pla
 }
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 const unsigned cMaxInactiveFontData = 120;
 const unsigned cTargetInactiveFontData = 100;
 #else
@@ -333,7 +333,7 @@ RefPtr<Font> FontCache::fontForFamily(const FontDescription& fontDescription, co
 
 Ref<Font> FontCache::fontForPlatformData(const FontPlatformData& platformData)
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     auto locker = holdLock(fontLock);
 #endif
     
@@ -370,7 +370,7 @@ void FontCache::purgeInactiveFontData(unsigned purgeCount)
     pruneUnreferencedEntriesFromFontCascadeCache();
     pruneSystemFallbackFonts();
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     auto locker = holdLock(fontLock);
 #endif
 
@@ -418,7 +418,7 @@ size_t FontCache::fontCount()
 
 size_t FontCache::inactiveFontCount()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     auto locker = holdLock(fontLock);
 #endif
     unsigned count = 0;

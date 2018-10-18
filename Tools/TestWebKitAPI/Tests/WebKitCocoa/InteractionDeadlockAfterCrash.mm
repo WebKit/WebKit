@@ -38,7 +38,7 @@
 
 @end
 
-#if PLATFORM(IOS) && WK_API_ENABLED
+#if PLATFORM(IOS_FAMILY) && WK_API_ENABLED
 
 static UIGestureRecognizer *recursiveFindHighlightLongPressRecognizer(UIView *view)
 {

@@ -51,7 +51,7 @@
 #import <WebCore/WebCoreNSURLExtras.h>
 #import <wtf/StdLibExtras.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import "UIKitSPI.h"
 #endif
 
@@ -171,7 +171,7 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Eleme
 
 #endif // PLATFORM(MAC)
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 static RefPtr<ShareableBitmap> convertCGImageToBitmap(CGImageRef image, const IntSize& size, Frame& frame)
 {
@@ -213,7 +213,7 @@ void WebDragClient::didConcludeEditDrag()
     m_page->didConcludeEditDataInteraction();
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 } // namespace WebKit
 

@@ -55,7 +55,7 @@ public:
     HTMLMapElement* imageMap() const;
     void areaElementFocusChanged(HTMLAreaElement*);
     
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void collectSelectionRects(Vector<SelectionRect>&, unsigned, unsigned) override;
 #endif
 

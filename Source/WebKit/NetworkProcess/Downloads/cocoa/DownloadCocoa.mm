@@ -48,7 +48,7 @@ void Download::resume(const IPC::DataReference& resumeData, const String& path, 
     auto nsData = adoptNS([[NSData alloc] initWithBytes:resumeData.data() length:resumeData.size()]);
 
     // FIXME: This is a temporary workaround for <rdar://problem/34745171>.
-#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400)
+#if (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400)
     static NSSet<Class> *plistClasses = nil;
     static dispatch_once_t onceToken;
 

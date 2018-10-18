@@ -26,7 +26,7 @@
 #ifndef WebMediaSessionManagerMac_h
 #define WebMediaSessionManagerMac_h
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 
 #include "WebMediaSessionManager.h"
 

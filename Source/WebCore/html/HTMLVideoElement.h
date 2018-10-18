@@ -61,7 +61,7 @@ public:
     unsigned webkitDroppedFrameCount() const;
 #endif
 
-#if ENABLE(FULLSCREEN_API) && PLATFORM(IOS)
+#if ENABLE(FULLSCREEN_API) && PLATFORM(IOS_FAMILY)
     void webkitRequestFullscreen() override;
 #endif
 

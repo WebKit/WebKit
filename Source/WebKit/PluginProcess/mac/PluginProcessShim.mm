@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 
 #import <wtf/Platform.h>
 #import "PluginProcessShim.h"
@@ -347,4 +347,4 @@ void WebKitPluginProcessShimInitialize(const PluginProcessShimCallbacks& callbac
 
 } // namespace WebKit
 
-#endif // !PLATFORM(IOS)
+#endif // !PLATFORM(IOS_FAMILY)

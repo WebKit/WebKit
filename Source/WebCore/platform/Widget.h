@@ -26,7 +26,7 @@
 
 #pragma once
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #ifndef NSView
 #define NSView WAKView
 #endif
@@ -177,7 +177,7 @@ public:
 
     void removeFromSuperview();
 #endif
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void addToSuperview(NSView*);
 #endif
 

@@ -28,7 +28,7 @@
 
 #import "WebInspectorClient.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "WebFrameInternal.h"
 #import "WebInspector.h"
@@ -134,4 +134,4 @@ void WebInspectorFrontendClient::updateWindowTitle() const { }
 void WebInspectorFrontendClient::save(const String&, const String&, bool, bool) { }
 void WebInspectorFrontendClient::append(const String&, const String&) { }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

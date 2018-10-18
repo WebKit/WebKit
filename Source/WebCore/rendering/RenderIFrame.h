@@ -50,7 +50,7 @@ private:
 
     bool isRenderIFrame() const override { return true; }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // FIXME: Do we still need this workaround to avoid breaking layout tests?
     const char* renderName() const override { return "RenderPartObject"; }
 #else

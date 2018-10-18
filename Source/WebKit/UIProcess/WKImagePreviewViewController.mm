@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKImagePreviewViewController.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import <UIKitSPI.h>
 #import <WebCore/IntSize.h>

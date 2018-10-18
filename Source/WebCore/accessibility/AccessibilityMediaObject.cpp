@@ -28,7 +28,7 @@
 
 #include "config.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "AccessibilityMediaObject.h"
 
 #include "HTMLMediaElement.h"
@@ -188,4 +188,4 @@ void AccessibilityMediaObject::enterFullscreen() const
     
 } // namespace WebCore
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

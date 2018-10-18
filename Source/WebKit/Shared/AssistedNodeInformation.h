@@ -60,7 +60,7 @@ enum class InputType {
 #endif
 };
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 struct OptionItem {
     OptionItem() { }
 

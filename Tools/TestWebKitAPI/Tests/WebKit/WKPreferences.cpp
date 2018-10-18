@@ -60,7 +60,7 @@ TEST(WebKit, WKPreferencesDefaults)
     static const char* expectedCursiveFontFamily = "Apple Chancery";
     static const char* expectedFantasyFontFamily = "Papyrus";
     static const char* expectedPictographFontFamily = "Apple Color Emoji";
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS_FAMILY)
     static const char* expectedStandardFontFamily = "Times";
     static const char* expectedFixedFontFamily = "Courier";
     static const char* expectedSerifFontFamily = "Times";

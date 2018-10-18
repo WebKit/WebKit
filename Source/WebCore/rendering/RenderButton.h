@@ -54,7 +54,7 @@ public:
     void setText(const String&);
     String text() const;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void layout() override;
 #endif
 

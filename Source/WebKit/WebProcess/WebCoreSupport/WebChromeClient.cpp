@@ -79,7 +79,7 @@
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/Settings.h>
 
-#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 #include "PlaybackSessionManager.h"
 #include "VideoFullscreenManager.h"
 #endif
@@ -164,7 +164,7 @@ void WebChromeClient::setWindowRect(const FloatRect& windowFrame)
 
 FloatRect WebChromeClient::windowRect()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     return FloatRect();
 #else
 #if PLATFORM(MAC)
@@ -562,7 +562,7 @@ IntRect WebChromeClient::rootViewToScreen(const IntRect& rect) const
     return m_page.rootViewToScreen(rect);
 }
     
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 IntPoint WebChromeClient::accessibilityScreenToRootView(const IntPoint& point) const
 {
     return m_page.accessibilityScreenToRootView(point);
@@ -817,7 +817,7 @@ void WebChromeClient::loadIconForFiles(const Vector<String>& filenames, FileIcon
     loader.iconLoaded(createIconForFiles(filenames));
 }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 
 void WebChromeClient::setCursor(const Cursor& cursor)
 {
@@ -950,7 +950,7 @@ RefPtr<ScrollingCoordinator> WebChromeClient::createScrollingCoordinator(Page& p
 
 #endif
 
-#if (PLATFORM(IOS) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if (PLATFORM(IOS_FAMILY) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
 bool WebChromeClient::supportsVideoFullscreen(HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
@@ -974,7 +974,7 @@ void WebChromeClient::clearPlaybackControlsManager()
 
 void WebChromeClient::enterVideoFullscreenForVideoElement(HTMLVideoElement& videoElement, HTMLMediaElementEnums::VideoFullscreenMode mode, bool standby)
 {
-#if ENABLE(FULLSCREEN_API) && PLATFORM(IOS)
+#if ENABLE(FULLSCREEN_API) && PLATFORM(IOS_FAMILY)
     ASSERT(standby || mode != HTMLMediaElementEnums::VideoFullscreenModeNone);
 #else
     ASSERT(mode != HTMLMediaElementEnums::VideoFullscreenModeNone);
@@ -1017,7 +1017,7 @@ void WebChromeClient::exitFullScreenForElement(Element* element)
 
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 FloatSize WebChromeClient::screenSize() const
 {
@@ -1244,7 +1244,7 @@ void WebChromeClient::inputElementDidResignStrongPasswordAppearance(HTMLInputEle
     m_page.send(Messages::WebPageProxy::DidResignInputElementStrongPasswordAppearance { UserData { WebProcess::singleton().transformObjectsToHandles(userData.get()).get() } });
 }
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 
 void WebChromeClient::addPlaybackTargetPickerClient(uint64_t contextId)
 {

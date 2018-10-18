@@ -27,7 +27,7 @@
 
 #import <wtf/SoftLinking.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import <UIKit/NSAttributedString.h>
 
@@ -105,9 +105,9 @@ static NSString *const NSSuperscriptAttributeName = @"NSSuperscript";
 - (BOOL)containsAttachments;
 @end
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
-#if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED < 101300)
+#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED < 101300)
 static NSString *const NSTextListMarkerCircle = @"{circle}";
 static NSString *const NSTextListMarkerDisc = @"{disc}";
 static NSString *const NSTextListMarkerSquare = @"{square}";
@@ -121,4 +121,4 @@ static NSString *const NSTextListMarkerUppercaseLatin = @"{upper-latin}";
 static NSString *const NSTextListMarkerLowercaseRoman = @"{lower-roman}";
 static NSString *const NSTextListMarkerUppercaseRoman = @"{upper-roman}";
 static NSString *const NSTextListMarkerDecimal = @"{decimal}";
-#endif // PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED < 101300)
+#endif // PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED < 101300)

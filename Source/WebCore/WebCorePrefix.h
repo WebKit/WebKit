@@ -138,7 +138,7 @@
 #include <windows.h>
 #endif // OS(WINDOWS)
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include <MobileCoreServices/MobileCoreServices.h>
 #endif
 
@@ -149,14 +149,14 @@
 #endif
 
 #ifdef __OBJC__
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import <Foundation/Foundation.h>
 #else
 #if USE(APPKIT)
 #import <Cocoa/Cocoa.h>
 #import <wtf/mac/AppKitCompatibilityDeclarations.h>
 #endif
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 #endif
 
 #ifdef __cplusplus

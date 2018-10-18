@@ -53,7 +53,7 @@ bool AccessibilityUIElement::isValid() const
 }
 
 // iOS specific methods
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 JSRetainPtr<JSStringRef> AccessibilityUIElement::identifier() { return nullptr; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::traits() { return nullptr; }
 int AccessibilityUIElement::elementTextPosition() { return 0; }

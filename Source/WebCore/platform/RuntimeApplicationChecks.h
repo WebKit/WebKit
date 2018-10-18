@@ -72,7 +72,7 @@ WEBCORE_EXPORT bool isIAdProducer();
 
 #endif // PLATFORM(MAC)
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 namespace IOSApplication {
 
@@ -94,7 +94,7 @@ bool isMoviStarPlus();
 
 } // IOSApplication
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 #endif // PLATFORM(COCOA)
 

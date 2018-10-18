@@ -45,7 +45,7 @@
 #import <pal/spi/cocoa/NSURLFileTypeMappingsSPI.h>
 #import <wtf/Assertions.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import "WebUIKitSupport.h"
 #endif
 
@@ -386,7 +386,7 @@ static NSArray *additionalWebPlugInPaths;
 
 + (NSArray *)_defaultPlugInPaths
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     // Plug-ins are found in order of precedence.
     // If there are duplicates, the first found plug-in is used.
     // For example, if there is a QuickTime.plugin in the users's home directory
@@ -399,7 +399,7 @@ static NSArray *additionalWebPlugInPaths;
         nil];
 #else
     // iOS plug-ins are all located in /System/Library/Internet Plug-Ins
-#if !PLATFORM(IOS_SIMULATOR)
+#if !PLATFORM(IOS_FAMILY_SIMULATOR)
     NSArray *systemLibrary = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSSystemDomainMask, YES);
     if (!systemLibrary || [systemLibrary count] == 0)
         return nil;

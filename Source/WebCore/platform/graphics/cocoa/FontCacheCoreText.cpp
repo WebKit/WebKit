@@ -36,8 +36,8 @@
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 
-#define HAS_CORE_TEXT_WIDTH_ATTRIBUTE ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000))
-#define CAN_DISALLOW_USER_INSTALLED_FONTS ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000))
+#define HAS_CORE_TEXT_WIDTH_ATTRIBUTE ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000))
+#define CAN_DISALLOW_USER_INSTALLED_FONTS ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000))
 
 namespace WebCore {
 
@@ -671,7 +671,7 @@ RefPtr<Font> FontCache::similarFont(const FontDescription& description, const At
     if (family.isEmpty())
         return nullptr;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // Substitute the default monospace font for well-known monospace fonts.
     if (equalLettersIgnoringASCIICase(family, "monaco") || equalLettersIgnoringASCIICase(family, "menlo")) {
         static NeverDestroyed<AtomicString> courier("courier", AtomicString::ConstructFromLiteral);
@@ -769,7 +769,7 @@ static CTFontSymbolicTraits computeTraits(const FontDescription& fontDescription
 
 SynthesisPair computeNecessarySynthesis(CTFontRef font, const FontDescription& fontDescription, bool isPlatformFont)
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (CTFontIsAppleColorEmoji(font))
         return SynthesisPair(false, false);
 #endif
@@ -924,7 +924,7 @@ public:
         const auto& folded = FontCascadeDescription::foldedFamilyName(postScriptName);
         return m_postScriptNameToFontDescriptors.ensure(folded, [&] {
             auto postScriptNameString = folded.createCFString();
-#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300)
+#if (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300)
             CFStringRef nameAttribute = kCTFontPostScriptNameAttribute;
 #else
             CFStringRef nameAttribute = kCTFontNameAttribute;
@@ -1023,7 +1023,7 @@ static VariationCapabilities variationCapabilitiesForFontDescriptor(CTFontDescri
     }
 
     bool optOutFromGXNormalization = false;
-#if ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000))
+#if ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000))
     optOutFromGXNormalization = CTFontDescriptorIsSystemUIFont(fontDescriptor);
 #endif
 
@@ -1305,7 +1305,7 @@ void FontCache::platformPurgeInactiveFontData()
         fallbackDedupSet().remove(font);
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 static inline bool isArabicCharacter(UChar character)
 {
     return character >= 0x0600 && character <= 0x06FF;
@@ -1317,7 +1317,7 @@ static RetainPtr<CTFontRef> lookupFallbackFont(CTFontRef font, FontSelectionValu
     ASSERT(length > 0);
 
     RetainPtr<CFStringRef> localeString;
-#if (PLATFORM(IOS) && TARGET_OS_IOS) || PLATFORM(MAC)
+#if (PLATFORM(IOS_FAMILY) && TARGET_OS_IOS) || PLATFORM(MAC)
     if (!locale.isNull())
         localeString = locale.string().createCFString();
 #else
@@ -1326,13 +1326,13 @@ static RetainPtr<CTFontRef> lookupFallbackFont(CTFontRef font, FontSelectionValu
 
     CFIndex coveredLength = 0;
     RetainPtr<CTFontRef> result;
-#if !USE_PLATFORM_SYSTEM_FALLBACK_LIST && (PLATFORM(MAC) || (PLATFORM(IOS) && TARGET_OS_IOS))
+#if !USE_PLATFORM_SYSTEM_FALLBACK_LIST && (PLATFORM(MAC) || (PLATFORM(IOS_FAMILY) && TARGET_OS_IOS))
     result = adoptCF(CTFontCreatePhysicalFontForCharactersWithLanguage(font, characters, length, localeString.get(), &coveredLength));
 #else
     result = adoptCF(CTFontCreateForCharactersWithLanguage(font, characters, length, localeString.get(), &coveredLength));
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // Callers of this function won't include multiple code points. "Length" is to know how many code units
     // are in the code point.
     UChar firstCharacter = characters[0];
@@ -1356,7 +1356,7 @@ static RetainPtr<CTFontRef> lookupFallbackFont(CTFontRef font, FontSelectionValu
 
 RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& description, const Font* originalFontData, bool isPlatformFont, const UChar* characters, unsigned length)
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (length && requiresCustomFallbackFont(*characters)) {
         auto* fallback = getCustomFallbackFont(*characters, description);
         if (!fallback)
@@ -1511,7 +1511,7 @@ Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescripti
         return *result;
 
     // LastResort is guaranteed to be non-null.
-#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300)
+#if (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300)
     auto fontDescriptor = adoptCF(CTFontDescriptorCreateLastResort());
     auto font = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), fontDescription.computedPixelSize(), nullptr));
 #else

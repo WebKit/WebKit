@@ -25,7 +25,7 @@
 
 #import <config.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "FindController.h"
 #import "FindIndicatorOverlayClientIOS.h"

@@ -43,7 +43,7 @@
 #import <wtf/ThreadingPrimitives.h>
 #import <wtf/text/WTFString.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import "WebCaretChangeListener.h"
 #endif
 
@@ -77,17 +77,17 @@ class PlaybackSessionModelMediaElement;
 #if ENABLE(FULLSCREEN_API)
 @class WebFullScreenController;
 #endif
-#if ENABLE(REMOTE_INSPECTOR) && PLATFORM(IOS)
+#if ENABLE(REMOTE_INSPECTOR) && PLATFORM(IOS_FAMILY)
 @class WebIndicateLayer;
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 @class WAKWindow;
 @class WebEvent;
 @class WebFixedPositionContent;
 #endif
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 class WebMediaPlaybackTargetPicker;
 #endif
 
@@ -171,7 +171,7 @@ private:
     id editingDelegateForwarder;
     id scriptDebugDelegate;
     id historyDelegate;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     id resourceProgressDelegateForwarder;
     id formDelegateForwarder;
 #endif
@@ -230,7 +230,7 @@ private:
     
     WebPreferences *preferences;
     BOOL useSiteSpecificSpoofing;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     NSURL *userStyleSheetLocation;
 #endif
 
@@ -244,7 +244,7 @@ private:
     WebHistoryDelegateImplementationCache historyDelegateImplementations;
 
     BOOL closed;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     BOOL closing;
 #if ENABLE(ORIENTATION_EVENTS)
     NSUInteger deviceOrientation;
@@ -258,7 +258,7 @@ private:
     BOOL becomingFirstResponderFromOutside;
     BOOL usesPageCache;
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     NSColor *backgroundColor;
 #else
     CGColorRef backgroundColor;
@@ -276,7 +276,7 @@ private:
     BOOL dashboardBehaviorAllowWheelScrolling;
 #endif
     
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     BOOL isStopping;
 
     id UIKitDelegate;
@@ -305,7 +305,7 @@ private:
 #endif
 
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     // WebKit has both a global plug-in database and a separate, per WebView plug-in database. Dashboard uses the per WebView database.
     WebPluginDatabase *pluginDatabase;
 #endif
@@ -323,7 +323,7 @@ private:
     BOOL postsAcceleratedCompositingNotifications;
     RefPtr<LayerFlushController> layerFlushController;
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     NSPasteboard *insertionPasteboard;
     RetainPtr<NSImage> _mainFrameIcon;
 #endif
@@ -344,7 +344,7 @@ private:
 #endif
 
 #if ENABLE(REMOTE_INSPECTOR)
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     WebIndicateLayer *indicateLayer;
 #endif
 #endif
@@ -361,7 +361,7 @@ private:
     int validationMessageTimerMagnification;
 
     float customDeviceScaleFactor;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     WebFixedPositionContent* _fixedPositionContent;
 #endif
 
@@ -373,7 +373,7 @@ private:
 
     BOOL _didPerformFirstNavigation;
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
     std::unique_ptr<WebMediaPlaybackTargetPicker> m_playbackTargetPicker;
 #endif
 }

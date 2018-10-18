@@ -103,7 +103,7 @@ static void releaseCriticalMemory(Synchronous synchronous)
     if (synchronous == Synchronous::Yes) {
         GCController::singleton().garbageCollectNow();
     } else {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         GCController::singleton().garbageCollectNowIfNotDoneRecently();
 #else
         GCController::singleton().garbageCollectSoon();
@@ -128,7 +128,7 @@ void releaseMemory(Critical critical, Synchronous synchronous)
     if (synchronous == Synchronous::Yes) {
         // FastMalloc has lock-free thread specific caches that can only be cleared from the thread itself.
         WorkerThread::releaseFastMallocFreeMemoryInAllThreads();
-#if ENABLE(ASYNC_SCROLLING) && !PLATFORM(IOS)
+#if ENABLE(ASYNC_SCROLLING) && !PLATFORM(IOS_FAMILY)
         ScrollingThread::dispatch(WTF::releaseFastMallocFreeMemory);
 #endif
         WTF::releaseFastMallocFreeMemory();

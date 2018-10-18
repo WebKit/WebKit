@@ -73,7 +73,7 @@ void encode(Encoder&, NSFont *);
 bool decode(Decoder&, RetainPtr<NSFont>&);
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 void encode(Encoder&, UIFont *);
 bool decode(Decoder&, RetainPtr<UIFont>&);
 #endif

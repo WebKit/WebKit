@@ -98,7 +98,7 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
 
 + (void)initialize
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
     RunLoop::initializeMainRunLoop();
@@ -150,7 +150,7 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
     core(self)->removeItem(*core(item));
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 // FIXME: Move into WebCore the code that deals directly with WebCore::BackForwardList.
 
@@ -197,7 +197,7 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
         currentIndex = listSize - 1;
     coreBFList->setCurrent(currentIndex);
 }
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 - (BOOL)containsItem:(WebHistoryItem *)item
 {
@@ -250,7 +250,7 @@ static NSArray* vectorToNSArray(Vector<Ref<HistoryItem>>& list)
 
 static bool bumperCarBackForwardHackNeeded() 
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     static bool hackNeeded = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.freeverse.bumpercar"] && 
         !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_BUMPERCAR_BACK_FORWARD_QUIRK);
 

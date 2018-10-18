@@ -37,7 +37,7 @@ FloatingPointEnvironment& FloatingPointEnvironment::singleton()
     return floatingPointEnvironment;
 }
 
-#if PLATFORM(IOS) && (CPU(ARM) || CPU(ARM64))
+#if PLATFORM(IOS_FAMILY) && (CPU(ARM) || CPU(ARM64))
 
 FloatingPointEnvironment::FloatingPointEnvironment()
     : m_isInitialized(false)
@@ -71,6 +71,6 @@ void FloatingPointEnvironment::propagateMainThreadEnvironment()
     fesetenv(&m_mainThreadEnvironment);
 }
 
-#endif // PLATFORM(IOS) && (CPU(ARM) || CPU(ARM64))
+#endif // PLATFORM(IOS_FAMILY) && (CPU(ARM) || CPU(ARM64))
 
 } // namespace WebCore

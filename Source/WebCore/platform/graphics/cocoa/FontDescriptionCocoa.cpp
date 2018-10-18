@@ -40,7 +40,7 @@ static inline bool isSystemFontString(const AtomicString& string)
         || equalLettersIgnoringASCIICase(string, "system-ui");
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 template<typename T, typename U, std::size_t size, std::size_t... indices> std::array<T, size> convertArray(U (&array)[size], std::index_sequence<indices...>)
 {
@@ -94,7 +94,7 @@ unsigned FontCascadeDescription::effectiveFamilyCount() const
         const auto& cssFamily = familyAt(i);
         if (isSystemFontString(cssFamily))
             result += systemFontCascadeList(*this, cssFamily, SystemFontDatabaseCoreText::ClientUse::ForSystemUI, shouldAllowUserInstalledFonts()).size();
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         else if (isUIFontTextStyle(cssFamily))
             result += systemFontCascadeList(*this, cssFamily, SystemFontDatabaseCoreText::ClientUse::ForTextStyle, shouldAllowUserInstalledFonts()).size();
 #endif
@@ -121,7 +121,7 @@ FontFamilySpecification FontCascadeDescription::effectiveFamilyAt(unsigned index
                 return FontFamilySpecification(cascadeList[index].get());
             index -= cascadeList.size();
         }
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         else if (isUIFontTextStyle(cssFamily)) {
             auto cascadeList = systemFontCascadeList(*this, cssFamily, SystemFontDatabaseCoreText::ClientUse::ForTextStyle, shouldAllowUserInstalledFonts());
             if (index < cascadeList.size())

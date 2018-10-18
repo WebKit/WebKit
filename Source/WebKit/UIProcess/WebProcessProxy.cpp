@@ -86,7 +86,7 @@ using namespace WebCore;
 
 static bool isMainThreadOrCheckDisabled()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     return LIKELY(RunLoop::isMain()) || !linkedOnOrAfter(SDKVersion::FirstWithMainThreadReleaseAssertionInWebPageProxy);
 #elif PLATFORM(MAC)
     return LIKELY(RunLoop::isMain()) || !linkedOnOrAfter(SDKVersion::FirstWithMainThreadReleaseAssertionInWebPageProxy);
@@ -777,7 +777,7 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
 
     m_processPool->processDidFinishLaunching(this);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (connection()) {
         if (xpc_connection_t xpcConnection = connection()->xpcConnection())
             m_throttler.didConnectToProcess(xpc_connection_get_pid(xpcConnection));
@@ -1148,7 +1148,7 @@ void WebProcessProxy::didCancelProcessSuspension()
 
 void WebProcessProxy::didSetAssertionState(AssertionState state)
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (isServiceWorkerProcess())
         return;
 

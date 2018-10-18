@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if ENABLE(FULLSCREEN_API) && PLATFORM(IOS)
+#if ENABLE(FULLSCREEN_API) && PLATFORM(IOS_FAMILY)
 #import "WKFullScreenViewController.h"
 
 #import "FullscreenTouchSecheuristic.h"
@@ -581,4 +581,4 @@ private:
 
 @end
 
-#endif // ENABLE(FULLSCREEN_API) && PLATFORM(IOS)
+#endif // ENABLE(FULLSCREEN_API) && PLATFORM(IOS_FAMILY)

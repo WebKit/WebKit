@@ -30,7 +30,7 @@
 #include "config.h"
 #include "AudioFileReaderIOS.h"
 
-#if ENABLE(WEB_AUDIO) && PLATFORM(IOS)
+#if ENABLE(WEB_AUDIO) && PLATFORM(IOS_FAMILY)
 
 #include "AudioBus.h"
 #include "AudioFileReader.h"
@@ -245,4 +245,4 @@ RefPtr<AudioBus> createBusFromInMemoryAudioFile(const void* data, size_t dataSiz
 
 } // WebCore
 
-#endif // ENABLE(WEB_AUDIO) && PLATFORM(IOS)
+#endif // ENABLE(WEB_AUDIO) && PLATFORM(IOS_FAMILY)

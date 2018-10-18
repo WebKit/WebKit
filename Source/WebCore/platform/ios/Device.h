@@ -26,7 +26,7 @@
 #ifndef Device_h
 #define Device_h
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #include <wtf/Forward.h>
 #include <pal/spi/ios/MobileGestaltSPI.h>
@@ -41,6 +41,6 @@ bool deviceHasIPadCapability();
 
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 #endif // Device_h

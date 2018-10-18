@@ -141,7 +141,7 @@ typedef enum {
 @interface CATransaction ()
 + (void)addCommitHandler:(void(^)(void))block forPhase:(CATransactionPhase)phase;
 
-#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+#if PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
 + (CATransactionPhase)currentPhase;
 #endif
 
@@ -237,7 +237,7 @@ extern NSString * const kCAContextDisplayId;
 extern NSString * const kCAContextIgnoresHitTest;
 extern NSString * const kCAContextPortNumber;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 extern NSString * const kCAContentsFormatRGBA10XR;
 #endif
 

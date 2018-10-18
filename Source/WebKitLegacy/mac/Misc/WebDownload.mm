@@ -91,7 +91,7 @@ using namespace WebCore;
 
 - (void)download:(NSURLDownload *)download didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     // Try previously stored credential first.
     if (![challenge previousFailureCount]) {
         NSURLCredential *credential = CredentialStorage::defaultCredentialStorage().get(emptyString(), ProtectionSpace([challenge protectionSpace])).nsCredential();

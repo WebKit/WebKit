@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebCoreThreadRun.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #include "WebCoreThreadInternal.h"
 #include <mutex>
@@ -183,4 +183,4 @@ void WebThreadInitRunQueue()
 
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "Test.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "ClassMethodSwizzler.h"
 #import "InstanceMethodSwizzler.h"
@@ -368,4 +368,4 @@ TEST(ActionSheetTests, CopyLinkWritesURLAndPlainText)
 
 } // namespace TestWebKitAPI
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

@@ -31,7 +31,7 @@
 
 #import "config.h"
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 
 #import <AppKit/AppKit.h>
 #import <ApplicationServices/ApplicationServices.h>
@@ -298,9 +298,9 @@ int main(int argc, char* argv[])
     return 0;
 }
 
-#endif // !PLATFORM(IOS)
+#endif // !PLATFORM(IOS_FAMILY)
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 int main(int argc, char* argv[])
 {
     return 0;

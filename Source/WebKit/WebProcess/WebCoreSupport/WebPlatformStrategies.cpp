@@ -301,7 +301,7 @@ int WebPlatformStrategies::getNumberOfFiles(const String& pasteboardName)
     return numberOfFiles;
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 void WebPlatformStrategies::getTypesByFidelityForItemAtIndex(Vector<String>& types, uint64_t index, const String& pasteboardName)
 {
     WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::GetPasteboardTypesByFidelityForItemAtIndex(index, pasteboardName), Messages::WebPasteboardProxy::GetPasteboardTypesByFidelityForItemAtIndex::Reply(types), 0);
@@ -377,7 +377,7 @@ String WebPlatformStrategies::readStringFromPasteboard(int index, const String& 
     WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::ReadStringFromPasteboard(index, pasteboardType, pasteboardName), Messages::WebPasteboardProxy::ReadStringFromPasteboard::Reply(value), 0);
     return value;
 }
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 #endif // PLATFORM(COCOA)
 

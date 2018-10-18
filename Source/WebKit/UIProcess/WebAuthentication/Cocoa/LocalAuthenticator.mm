@@ -60,7 +60,7 @@ const union {
 const size_t ES256KeySizeInBytes = 32;
 const size_t authDataPrefixFixedSize = 37; // hash(32) + flags(1) + counter(4)
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 // https://www.w3.org/TR/webauthn/#sec-authenticator-data
 static Vector<uint8_t> buildAuthData(const String& rpId, const uint8_t flags, uint32_t counter, const Vector<uint8_t>& optionalAttestedCredentialData)
 {
@@ -116,7 +116,7 @@ static inline Vector<uint8_t> toVector(NSData *data)
     result.append(reinterpret_cast<const uint8_t*>(data.bytes), data.length);
     return result;
 }
-#endif // !PLATFORM(IOS)
+#endif // !PLATFORM(IOS_FAMILY)
 
 } // LocalAuthenticatorInternal
 
@@ -132,7 +132,7 @@ void LocalAuthenticator::makeCredential()
     ASSERT(m_state == State::Init);
     m_state = State::RequestReceived;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // The following implements https://www.w3.org/TR/webauthn/#op-make-cred as of 5 December 2017.
     // Skip Step 4-5 as requireResidentKey and requireUserVerification are enforced.
     // Skip Step 9 as extensions are not supported yet.
@@ -192,7 +192,7 @@ void LocalAuthenticator::makeCredential()
     m_connection->getUserConsent(
         String::format("Allow %s to create a public key credential for %s", requestData().creationOptions.rp.id.utf8().data(), requestData().creationOptions.user.name.utf8().data()),
         WTFMove(callback));
-#endif // !PLATFORM(IOS)
+#endif // !PLATFORM(IOS_FAMILY)
 }
 
 void LocalAuthenticator::continueMakeCredentialAfterUserConsented(LocalConnection::UserConsent consent)
@@ -201,7 +201,7 @@ void LocalAuthenticator::continueMakeCredentialAfterUserConsented(LocalConnectio
     ASSERT(m_state == State::RequestReceived);
     m_state = State::UserConsented;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (consent == LocalConnection::UserConsent::No) {
         receiveRespond(ExceptionData { NotAllowedError, "Couldn't get user consent."_s });
         return;
@@ -230,7 +230,7 @@ void LocalAuthenticator::continueMakeCredentialAfterUserConsented(LocalConnectio
         weakThis->continueMakeCredentialAfterAttested(privateKey, certificates, error);
     };
     m_connection->getAttestation(requestData().creationOptions.rp.id, requestData().creationOptions.user.name, requestData().hash, WTFMove(callback));
-#endif // !PLATFORM(IOS)
+#endif // !PLATFORM(IOS_FAMILY)
 }
 
 void LocalAuthenticator::continueMakeCredentialAfterAttested(SecKeyRef privateKey, NSArray *certificates, NSError *error)
@@ -241,7 +241,7 @@ void LocalAuthenticator::continueMakeCredentialAfterAttested(SecKeyRef privateKe
     ASSERT(m_state == State::UserConsented);
     m_state = State::Attested;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (error) {
         LOG_ERROR("Couldn't attest: %@", error);
         receiveRespond(ExceptionData { UnknownError, "Unknown internal error."_s });
@@ -398,7 +398,7 @@ void LocalAuthenticator::continueMakeCredentialAfterAttested(SecKeyRef privateKe
     }
 
     receiveRespond(PublicKeyCredentialData { ArrayBuffer::create(credentialId.data(), credentialId.size()), true, nullptr, ArrayBuffer::create(attestationObject.value().data(), attestationObject.value().size()), nullptr, nullptr, nullptr });
-#endif // !PLATFORM(IOS)
+#endif // !PLATFORM(IOS_FAMILY)
 }
 
 void LocalAuthenticator::getAssertion()
@@ -408,7 +408,7 @@ void LocalAuthenticator::getAssertion()
     ASSERT(m_state == State::Init);
     m_state = State::RequestReceived;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // The following implements https://www.w3.org/TR/webauthn/#op-get-assertion as of 5 December 2017.
     // Skip Step 2 as requireUserVerification is enforced.
     // Skip Step 8 as extensions are not supported yet.
@@ -475,7 +475,7 @@ void LocalAuthenticator::getAssertion()
         String::format("Log into %s with %s.", requestData().requestOptions.rpId.utf8().data(), selectedCredentialAttributes[(id)kSecAttrApplicationTag]),
         (__bridge SecAccessControlRef)selectedCredentialAttributes[(id)kSecAttrAccessControl],
         WTFMove(callback));
-#endif // !PLATFORM(IOS)
+#endif // !PLATFORM(IOS_FAMILY)
 }
 
 void LocalAuthenticator::continueGetAssertionAfterUserConsented(LocalConnection::UserConsent consent, LAContext *context, const Vector<uint8_t>& credentialId, const Vector<uint8_t>& userhandle)
@@ -485,7 +485,7 @@ void LocalAuthenticator::continueGetAssertionAfterUserConsented(LocalConnection:
     ASSERT(m_state == State::RequestReceived);
     m_state = State::UserConsented;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (consent == LocalConnection::UserConsent::No) {
         receiveRespond(ExceptionData { NotAllowedError, "Couldn't get user consent."_s });
         return;
@@ -533,7 +533,7 @@ void LocalAuthenticator::continueGetAssertionAfterUserConsented(LocalConnection:
 
     // Step 13.
     receiveRespond(PublicKeyCredentialData { ArrayBuffer::create(credentialId.data(), credentialId.size()), false, nullptr, nullptr, ArrayBuffer::create(authData.data(), authData.size()), ArrayBuffer::create(signature.data(), signature.size()), ArrayBuffer::create(userhandle.data(), userhandle.size()) });
-#endif // !PLATFORM(IOS)
+#endif // !PLATFORM(IOS_FAMILY)
 }
 
 } // namespace WebKit

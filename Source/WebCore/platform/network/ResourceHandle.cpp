@@ -46,7 +46,7 @@ static bool shouldForceContentSniffing;
 typedef HashMap<AtomicString, ResourceHandle::BuiltinConstructor> BuiltinResourceHandleConstructorMap;
 static BuiltinResourceHandleConstructorMap& builtinResourceHandleConstructorMap()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     ASSERT(WebThreadIsLockedOrDisabled());
 #else
     ASSERT(isMainThread());

@@ -37,7 +37,7 @@
 #import <wtf/Optional.h>
 #import <wtf/Vector.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import <pal/spi/ios/UIKitSPI.h>
 #endif
 

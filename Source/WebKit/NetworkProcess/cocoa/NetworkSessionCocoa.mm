@@ -440,7 +440,7 @@ static NSURLRequest* updateIgnoreStrictTransportSecuritySettingIfNecessary(NSURL
         if (networkDataTask->shouldCaptureExtraNetworkLoadMetrics()) {
             networkLoadMetrics.priority = toNetworkLoadPriority(task.priority);
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
             networkLoadMetrics.remoteAddress = String(m._remoteAddressAndPort);
             networkLoadMetrics.connectionIdentifier = String([m._connectionIdentifier UUIDString]);
 #endif
@@ -451,7 +451,7 @@ static NSURLRequest* updateIgnoreStrictTransportSecuritySettingIfNecessary(NSURL
             }];
             networkLoadMetrics.requestHeaders = WTFMove(requestHeaders);
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
             uint64_t requestHeaderBytesSent = 0;
             uint64_t responseHeaderBytesReceived = 0;
             uint64_t responseBodyBytesReceived = 0;
@@ -601,7 +601,7 @@ static String& globalSourceApplicationSecondaryIdentifier()
     return sourceApplicationSecondaryIdentifier.get();
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 static String& globalCTDataConnectionServiceType()
 {
     static NeverDestroyed<String> ctDataConnectionServiceType;
@@ -627,7 +627,7 @@ void NetworkSessionCocoa::setSourceApplicationSecondaryIdentifier(const String& 
     globalSourceApplicationSecondaryIdentifier() = identifier;
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 void NetworkSessionCocoa::setCTDataConnectionServiceType(const String& type)
 {
     ASSERT(!sessionsCreated);
@@ -655,7 +655,7 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkSessionCreationParameters&& para
 
     NSURLSessionConfiguration *configuration = configurationForSessionID(m_sessionID);
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
     // Without this, CFNetwork would sometimes add a Content-Type header to our requests (rdar://problem/34748470).
     if ([configuration respondsToSelector:@selector(_suppressedAutoAddedHTTPHeaders)])
         configuration._suppressedAutoAddedHTTPHeaders = [NSSet setWithObject:@"Content-Type"];
@@ -685,7 +685,7 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkSessionCreationParameters&& para
     else if (!sourceApplicationSecondaryIdentifier.isEmpty())
         configuration._sourceApplicationSecondaryIdentifier = sourceApplicationSecondaryIdentifier;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     auto& ctDataConnectionServiceType = globalCTDataConnectionServiceType();
     if (!ctDataConnectionServiceType.isEmpty())
         configuration._CTDataConnectionServiceType = ctDataConnectionServiceType;
@@ -701,7 +701,7 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkSessionCreationParameters&& para
     setCollectsTimingData();
 #endif
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
     // FIXME: Replace @"kCFStreamPropertyAutoErrorOnSystemChange" with a constant from the SDK once rdar://problem/40650244 is in a build.
     if (NetworkProcess::singleton().suppressesConnectionTerminationOnSystemChange())
         configuration._socketStreamProperties = @{ @"kCFStreamPropertyAutoErrorOnSystemChange" : @(NO) };

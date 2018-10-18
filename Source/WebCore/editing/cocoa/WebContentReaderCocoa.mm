@@ -67,23 +67,23 @@
 #include "LocalDefaultSystemAppearance.h"
 #endif
 
-#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300)
+#if (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300)
 @interface NSAttributedString ()
 - (NSString *)_htmlDocumentFragmentString:(NSRange)range documentAttributes:(NSDictionary *)dict subresources:(NSArray **)subresources;
 @end
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS_FAMILY)
 SOFT_LINK_PRIVATE_FRAMEWORK(WebKitLegacy)
 #elif PLATFORM(MAC)
 SOFT_LINK_FRAMEWORK_IN_UMBRELLA(WebKit, WebKitLegacy)
 #endif
 
-#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300)
+#if (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300)
 SOFT_LINK(WebKitLegacy, _WebCreateFragment, void, (WebCore::Document& document, NSAttributedString *string, WebCore::FragmentAndResources& result), (document, string, result))
 #endif
 
 namespace WebCore {
 
-#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300)
+#if (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300)
 
 static NSDictionary *attributesForAttributedStringConversion()
 {
@@ -108,7 +108,7 @@ static NSDictionary *attributesForAttributedStringConversion()
         [excludedElements addObject:@"object"];
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     static NSString * const NSExcludedElementsDocumentAttribute = @"ExcludedElements";
 #endif
 
@@ -740,7 +740,7 @@ bool WebContentReader::readURL(const URL& url, const String& title)
     if (url.isEmpty())
         return false;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // FIXME: This code shouldn't be accessing selection and changing the behavior.
     if (!frame.editor().client()->hasRichlyEditableSelection()) {
         if (readPlainText([(NSURL *)url absoluteString]))
@@ -749,7 +749,7 @@ bool WebContentReader::readURL(const URL& url, const String& title)
 
     if ([(NSURL *)url isFileURL])
         return false;
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
     auto document = makeRef(*frame.document());
     auto anchor = HTMLAnchorElement::create(document.get());

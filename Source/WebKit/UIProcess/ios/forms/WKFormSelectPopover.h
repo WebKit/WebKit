@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "WKFormPeripheral.h"
 #import "WKFormPopover.h"
@@ -37,4 +37,4 @@
 @property (nonatomic, readonly) UITableViewController *tableViewController;
 @end
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

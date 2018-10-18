@@ -719,7 +719,7 @@ public:
     Color tapHighlightColor() const { return m_rareInheritedData->tapHighlightColor; }
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     bool touchCalloutEnabled() const { return m_rareInheritedData->touchCalloutEnabled; }
 #endif
 
@@ -1228,7 +1228,7 @@ public:
     void setTapHighlightColor(const Color& c) { SET_VAR(m_rareInheritedData, tapHighlightColor, c); }
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void setTouchCalloutEnabled(bool v) { SET_VAR(m_rareInheritedData, touchCalloutEnabled, v); }
 #endif
 
@@ -1650,7 +1650,7 @@ public:
     static LineClampValue initialLineClamp() { return LineClampValue(); }
     static TextSecurity initialTextSecurity() { return TextSecurity::None; }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     static bool initialTouchCalloutEnabled() { return true; }
 #endif
 

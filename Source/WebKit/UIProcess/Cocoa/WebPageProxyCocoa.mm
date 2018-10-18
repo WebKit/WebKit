@@ -139,7 +139,7 @@ void WebPageProxy::startDrag(const DragItem& dragItem, const ShareableBitmap::Ha
     pageClient().startDrag(dragItem, dragImageHandle);
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 void WebPageProxy::setPromisedDataForImage(const String&, const SharedMemory::Handle&, uint64_t, const String&, const String&, const String&, const String&, const String&, const SharedMemory::Handle&, uint64_t)
 {
@@ -156,7 +156,7 @@ void WebPageProxy::setDragCaretRect(const IntRect& dragCaretRect)
     pageClient().didChangeDataInteractionCaretRect(previousRect, dragCaretRect);
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 #endif // ENABLE(DRAG_SUPPORT)
 

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
 #include "MessageReceiver.h"
 #include <WebCore/GraphicsLayer.h>
@@ -39,13 +39,13 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include <WebCore/PlaybackSessionInterfaceAVKit.h>
 #else
 #include <WebCore/PlaybackSessionInterfaceMac.h>
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 typedef WebCore::PlaybackSessionInterfaceAVKit PlatformPlaybackSessionInterface;
 #else
 typedef WebCore::PlaybackSessionInterfaceMac PlatformPlaybackSessionInterface;
@@ -245,4 +245,4 @@ private:
 
 } // namespace WebKit
 
-#endif // PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#endif // PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))

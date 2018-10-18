@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "WebMIMETypeRegistry.h"
 
@@ -55,4 +55,4 @@ using WebCore::MIMETypeRegistry;
 
 @end
 
-#endif  // PLATFORM(IOS)
+#endif  // PLATFORM(IOS_FAMILY)

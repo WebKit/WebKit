@@ -1,3 +1,37 @@
+2018-10-18  Alexey Proskuryakov  <ap@apple.com>
+
+        Switch from PLATFORM(IOS) to PLATFORM(IOS_FAMILY)
+        https://bugs.webkit.org/show_bug.cgi?id=190729
+
+        Reviewed by Tim Horton.
+
+        * DefaultDelegates/WebDefaultFormDelegate.m:
+        * DefaultDelegates/WebDefaultFrameLoadDelegate.m:
+        * DefaultDelegates/WebDefaultResourceLoadDelegate.m:
+        * DefaultDelegates/WebDefaultUIKitDelegate.m:
+        * Misc/MemoryMeasure.mm:
+        * Misc/WebGeolocationCoreLocationProvider.mm:
+        * Misc/WebGeolocationProviderIOS.mm:
+        * Misc/WebNSStringExtrasIOS.m:
+        * Misc/WebUIKitSupport.mm:
+        (WebKitPlatformSystemRootDirectory):
+        * WebCoreSupport/PopupMenuIOS.mm:
+        * WebCoreSupport/SearchPopupMenuIOS.cpp:
+        * WebCoreSupport/WebChromeClientIOS.h:
+        * WebCoreSupport/WebChromeClientIOS.mm:
+        * WebCoreSupport/WebFixedPositionContent.mm:
+        * WebCoreSupport/WebFrameIOS.mm:
+        * WebCoreSupport/WebGeolocation.mm:
+        * WebCoreSupport/WebInspectorClientIOS.mm:
+        * WebCoreSupport/WebMIMETypeRegistry.mm:
+        * WebCoreSupport/WebSelectionRect.m:
+        * WebCoreSupport/WebVisiblePosition.mm:
+        * WebView/WebFrameViewWAKCompatibility.m:
+        * WebView/WebPDFViewIOS.mm:
+        * WebView/WebPDFViewPlaceholder.mm:
+        * WebView/WebPlainWhiteView.h:
+        * WebView/WebPlainWhiteView.mm:
+
 2018-10-10  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] Rename createXXX to tryCreateXXX if it can return RefPtr

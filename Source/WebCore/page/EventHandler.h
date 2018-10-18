@@ -47,7 +47,7 @@
 OBJC_CLASS NSView;
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 OBJC_CLASS WebEvent;
 #endif
 
@@ -55,7 +55,7 @@ OBJC_CLASS WebEvent;
 OBJC_CLASS NSEvent;
 #endif
 
-#if PLATFORM(IOS) && defined(__OBJC__)
+#if PLATFORM(IOS_FAMILY) && defined(__OBJC__)
 #include "WAKAppKitStubs.h"
 #endif
 
@@ -239,7 +239,7 @@ public:
     WEBCORE_EXPORT bool handleGestureEvent(const PlatformGestureEvent&);
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void defaultTouchEventHandler(Node&, TouchEvent&);
 #endif
 
@@ -285,7 +285,7 @@ public:
     WEBCORE_EXPORT bool wheelEvent(NSEvent *);
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     WEBCORE_EXPORT void mouseDown(WebEvent *);
     WEBCORE_EXPORT void mouseUp(WebEvent *);
     WEBCORE_EXPORT void mouseMoved(WebEvent *);
@@ -308,7 +308,7 @@ public:
     static NSEvent *correspondingPressureEvent();
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     static WebEvent *currentEvent();
 
     void invalidateClick();
@@ -332,7 +332,7 @@ public:
     WEBCORE_EXPORT bool tryToBeginDataInteractionAtPoint(const IntPoint& clientPosition, const IntPoint& globalPosition);
 #endif
     
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     WEBCORE_EXPORT void startSelectionAutoscroll(RenderObject* renderer, const FloatPoint& positionInWindow);
     WEBCORE_EXPORT void cancelSelectionAutoscroll();
     IntPoint m_targetAutoscrollPositionInWindow;
@@ -397,7 +397,7 @@ private:
     bool dispatchSyntheticTouchEventIfEnabled(const PlatformMouseEvent&);
 #endif
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     void invalidateClick();
 #endif
 

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKAccessibilityWebPageObjectIOS.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "WebFrame.h"
 #import "WebPage.h"
@@ -81,5 +81,5 @@
 
 @end
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 

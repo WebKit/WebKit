@@ -164,7 +164,7 @@ private:
     bool shouldShowUnicodeMenu() final;
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void startDelayingAndCoalescingContentChangeNotifications() final;
     void stopDelayingAndCoalescingContentChangeNotifications() final;
     bool hasRichlyEditableSelection() final;

@@ -30,7 +30,7 @@
 #import <WebKitLegacy/WebHTMLView.h>
 #import <WebKitLegacy/WebViewPrivate.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #if !defined(IBAction)
 #define IBAction void
 #endif

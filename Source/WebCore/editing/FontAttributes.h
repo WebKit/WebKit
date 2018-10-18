@@ -84,7 +84,7 @@ struct FontAttributes {
 
 #if PLATFORM(MAC)
     RetainPtr<NSFont> font;
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS_FAMILY)
     RetainPtr<UIFont> font;
 #endif
     Color backgroundColor;

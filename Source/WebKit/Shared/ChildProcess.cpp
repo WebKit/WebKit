@@ -174,7 +174,7 @@ void ChildProcess::stopRunLoop()
     platformStopRunLoop();
 }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 void ChildProcess::platformStopRunLoop()
 {
     RunLoop::main().stop();

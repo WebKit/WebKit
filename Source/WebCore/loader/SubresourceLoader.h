@@ -53,7 +53,7 @@ public:
     WEBCORE_EXPORT const HTTPHeaderMap* originalHeaders() const;
 
     SecurityOrigin* origin() { return m_origin.get(); }
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void startLoading() override;
 
     // FIXME: What is an "iOS" original request? Why is it necessary?
@@ -107,7 +107,7 @@ private:
         Uninitialized,
         Initialized,
         Finishing,
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         CancelledWhileInitializing
 #endif
     };
@@ -124,7 +124,7 @@ private:
         const CachedResource& m_resource;
     };
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     ResourceRequest m_iOSOriginalRequest;
 #endif
     CachedResource* m_resource;

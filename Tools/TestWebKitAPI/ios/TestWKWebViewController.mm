@@ -26,7 +26,7 @@
 #import "config.h"
 #import "TestWKWebViewController.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import <wtf/BlockPtr.h>
 
@@ -94,4 +94,4 @@
 
 @end
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

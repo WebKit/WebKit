@@ -26,7 +26,7 @@
 #ifndef LayerRepresentation_h
 #define LayerRepresentation_h
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 OBJC_CLASS CALayer;
 OBJC_CLASS UIView;

@@ -221,7 +221,7 @@ private:
     bool m_animationFinished { false };
 
     // The default value of m_allowSubsampling should be the same as defaultImageSubsamplingEnabled in Settings.cpp
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     bool m_allowSubsampling { true };
 #else
     bool m_allowSubsampling { false };

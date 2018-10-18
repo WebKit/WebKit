@@ -27,7 +27,7 @@
 #import "ArgumentCodersMac.h"
 
 #import <CoreText/CoreText.h>
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIKit.h>
 #endif
 
@@ -423,7 +423,7 @@ bool decode(Decoder& decoder, RetainPtr<NSFont>& result)
 }
 #endif // USE(APPKIT)
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 void encode(Encoder& encoder, UIFont *font)
 {
@@ -442,7 +442,7 @@ bool decode(Decoder& decoder, RetainPtr<UIFont>& result)
     return result;
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 void encode(Encoder& encoder, NSNumber *number)
 {

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebIconUtilities.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "UIKitSPI.h"
 #import <AVFoundation/AVFoundation.h>

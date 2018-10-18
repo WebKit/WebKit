@@ -106,7 +106,7 @@ public:
     static std::optional<float> convertPerspective(StyleResolver&, const CSSValue&);
     static std::optional<Length> convertMarqueeIncrement(StyleResolver&, const CSSValue&);
     static std::optional<FilterOperations> convertFilterOperations(StyleResolver&, const CSSValue&);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     static bool convertTouchCallout(StyleResolver&, const CSSValue&);
 #endif
 #if ENABLE(TOUCH_EVENTS)
@@ -1255,7 +1255,7 @@ inline FontVariationSettings StyleBuilderConverter::convertFontVariationSettings
 }
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 inline bool StyleBuilderConverter::convertTouchCallout(StyleResolver&, const CSSValue& value)
 {
     return !equalLettersIgnoringASCIICase(downcast<CSSPrimitiveValue>(value).stringValue(), "none");

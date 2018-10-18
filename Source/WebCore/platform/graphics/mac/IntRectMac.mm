@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 #ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 
 IntRect::operator NSRect() const

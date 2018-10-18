@@ -42,7 +42,7 @@
 #include <WebCore/RenderView.h>
 #include <WebCore/TextIterator.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "SmartMagnificationControllerMessages.h"
 #endif
 
@@ -53,7 +53,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 static const double minimumScaleDifferenceForZooming = 0.3;
 #endif
 
@@ -76,7 +76,7 @@ void ViewGestureGeometryCollector::dispatchDidCollectGeometryForSmartMagnificati
 #if PLATFORM(MAC)
     m_webPage.send(Messages::ViewGestureController::DidCollectGeometryForSmartMagnificationGesture(origin, targetRect, visibleContentRect, fitEntireRect, viewportMinimumScale, viewportMaximumScale));
 #endif
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     m_webPage.send(Messages::SmartMagnificationController::DidCollectGeometryForSmartMagnificationGesture(origin, targetRect, visibleContentRect, fitEntireRect, viewportMinimumScale, viewportMaximumScale));
 #endif
 }
@@ -91,7 +91,7 @@ void ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture(F
     double viewportMinimumScale;
     double viewportMaximumScale;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (m_webPage.platformPrefersTextLegibilityBasedZoomScaling()) {
         auto textLegibilityScales = computeTextLegibilityScales(viewportMinimumScale, viewportMaximumScale);
         if (!textLegibilityScales) {
@@ -112,7 +112,7 @@ void ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture(F
         dispatchDidCollectGeometryForSmartMagnificationGesture(origin, targetRectInContentCoordinates, visibleContentRect, true, viewportMinimumScale, viewportMaximumScale);
         return;
     }
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
     IntPoint originInContentsSpace = m_webPage.mainFrameView()->windowToContents(roundedIntPoint(origin));
     HitTestResult hitTestResult = HitTestResult(originInContentsSpace);
@@ -131,7 +131,7 @@ void ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture(F
     dispatchDidCollectGeometryForSmartMagnificationGesture(origin, renderRect, visibleContentRect, isReplaced, viewportMinimumScale, viewportMaximumScale);
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 struct FontSizeAndCount {
     unsigned fontSize;
@@ -213,7 +213,7 @@ std::optional<std::pair<double, double>> ViewGestureGeometryCollector::computeTe
     return m_cachedTextLegibilityScales;
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 void ViewGestureGeometryCollector::computeZoomInformationForNode(Node& node, FloatPoint& origin, FloatRect& renderRect, bool& isReplaced, double& viewportMinimumScale, double& viewportMaximumScale)
 {
@@ -257,7 +257,7 @@ void ViewGestureGeometryCollector::collectGeometryForMagnificationGesture()
 
 void ViewGestureGeometryCollector::mainFrameDidLayout()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     m_cachedTextLegibilityScales.reset();
 #endif
 #if PLATFORM(MAC)

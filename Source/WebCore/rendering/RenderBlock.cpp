@@ -1092,7 +1092,7 @@ void RenderBlock::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         flipForWritingMode(overflowBox);
         overflowBox.moveBy(adjustedPaintOffset);
         if (!overflowBox.intersects(paintInfo.rect)
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
             // FIXME: This may be applicable to non-iOS ports.
             && (!hasLayer() || !layer()->isComposited())
 #endif

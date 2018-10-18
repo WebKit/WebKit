@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKInspectorNodeSearchGestureRecognizer.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import <UIKit/UIGestureRecognizerSubclass.h>
 #import <wtf/RetainPtr.h>

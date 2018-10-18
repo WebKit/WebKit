@@ -203,7 +203,7 @@ static bool canCachePage(Page& page)
         logPageCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::isDisabledKey());
         isCacheable = false;
     }
-#if ENABLE(DEVICE_ORIENTATION) && !PLATFORM(IOS)
+#if ENABLE(DEVICE_ORIENTATION) && !PLATFORM(IOS_FAMILY)
     if (DeviceMotionController::isActiveAt(&page)) {
         PCLOG("   -Page is using DeviceMotion");
         logPageCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::deviceMotionKey());

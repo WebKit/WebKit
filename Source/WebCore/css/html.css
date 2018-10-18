@@ -105,7 +105,7 @@ hr {
 
 video {
     object-fit: contain;
-#if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     -webkit-tap-highlight-color: transparent;
 #endif
 }
@@ -359,7 +359,7 @@ input, textarea, keygen, select, button, meter, progress {
 
 input, textarea, keygen, select, button {
     margin: 0__qem;
-#if !(defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS)
+#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
     font: -webkit-small-control;
 #endif
     color: initial;
@@ -377,7 +377,7 @@ input[type="hidden"] {
     display: none;
 }
 
-#if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
 textarea,
 input[type="range"],
 #endif
@@ -390,7 +390,7 @@ input:matches([type="password"], [type="search"]) {
 #else
     background-color: white;
 #endif
-#if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     border-radius: 5px;
     font: 11px Helvetica, -webkit-pictograph;
     border: 1px solid #4c4c4c;
@@ -467,7 +467,7 @@ input[type="date"] {
     -webkit-appearance: menulist-button;
     display: -webkit-inline-flex;
     overflow: hidden;
-#if !(defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS)
+#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
     width: 10em;
 #endif
 }
@@ -478,7 +478,7 @@ input[type="datetime"] {
     -webkit-appearance: menulist-button;
     display: -webkit-inline-flex;
     overflow: hidden;
-#if !(defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS)
+#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
     width: 10em;
 #endif
 }
@@ -489,7 +489,7 @@ input[type="datetime-local"] {
     -webkit-appearance: menulist-button;
     display: -webkit-inline-flex;
     overflow: hidden;
-#if !(defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS)
+#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
     width: 10em;
 #endif
 }
@@ -500,7 +500,7 @@ input[type="month"] {
     -webkit-appearance: menulist-button;
     display: -webkit-inline-flex;
     overflow: hidden;
-#if !(defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS)
+#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
     width: 10em;
 #endif
 }
@@ -511,13 +511,13 @@ input[type="time"] {
     -webkit-appearance: menulist-button;
     display: -webkit-inline-flex;
     overflow: hidden;
-#if !(defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS)
+#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
     width: 10em;
 #endif
 }
 #endif
 #if defined(ENABLE_INPUT_TYPE_WEEK) && ENABLE_INPUT_TYPE_WEEK
-#if !(defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS)
+#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
 input[type="week"] {
     align-items: center;
     -webkit-appearance: menulist-button;
@@ -529,7 +529,7 @@ input[type="week"] {
 #endif
 
 input::-webkit-date-and-time-value {
-#if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     margin-right: 18px;
 #else
     margin: 1px 24px 1px 4px;
@@ -620,7 +620,7 @@ input::-webkit-list-button {
     flex: none;
     -webkit-user-select: none;
     width: 16px;
-#if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     content: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" stroke="black" fill="black" width="16" height="16"><polygon points="8 11.031, 4.5 4.969, 11.5 4.969"/></svg>');
     /* Make it easier to hit the button on iOS */
     padding: 7px;
@@ -641,7 +641,7 @@ keygen::-webkit-keygen-select {
 
 textarea {
     -webkit-appearance: textarea;
-#if !(defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS)
+#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
 #if defined(WTF_PLATFORM_MAC) && WTF_PLATFORM_MAC
     color: text;
     background-color: -apple-system-control-background;
@@ -707,7 +707,7 @@ input:-webkit-autofill, input:-webkit-autofill-strong-password {
 
 input:matches([type="radio"], [type="checkbox"]) {
     margin: 3px 2px;
-#if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     border: 1px solid #4c4c4c;
     box-sizing: border-box;
 #else
@@ -734,7 +734,7 @@ input:matches([type="button"], [type="submit"], [type="reset"]), input[type="fil
     text-align: center;
     cursor: default;
     color: ButtonText;
-#if !(defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS)
+#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
     padding: 2px 6px 3px 6px;
     border: 2px outset ButtonFace;
     background-color: ButtonFace;
@@ -779,14 +779,14 @@ input[type="range"]::-webkit-slider-thumb, input[type="range"]::-webkit-media-sl
     -webkit-appearance: sliderthumb-horizontal;
     box-sizing: border-box;
     display: block;
-#if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     background-color: white;
     border: 1px solid rgb(66, 66, 66);
     padding: 0px;
 #endif
 }
 
-#if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
 input[type="range"]::-webkit-slider-thumb:active {
     background-color: black;
 }
@@ -811,7 +811,7 @@ select[disabled]>option {
     color: GrayText;
 }
 
-#if !(defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS)
+#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
 input:matches([type="button"], [type="submit"], [type="reset"]):active, input[type="file"]:active::-webkit-file-upload-button, button:active {
     border-style: inset;
 }
@@ -828,7 +828,7 @@ area, param {
 
 input[type="checkbox"] {
     -webkit-appearance: checkbox;
-#if !(defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS)
+#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
     box-sizing: border-box;
 #else
     border-radius: 5px;
@@ -840,7 +840,7 @@ input[type="checkbox"] {
 #endif
 }
 
-#if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
 input[type="radio"] {
     -webkit-appearance: radio;
     border-radius: 50%;
@@ -871,14 +871,14 @@ input:matches([type="checkbox"], [type="radio"]):checked:disabled {
 }
 #endif
 
-#if !(defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS)
+#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
 input[type="radio"] {
     -webkit-appearance: radio;
     box-sizing: border-box;
 }
 #endif
 
-#if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
 select:focus {
     border-color: rgb(17, 46, 135);
 }
@@ -904,7 +904,7 @@ input[type="color"]::-webkit-color-swatch {
 
 select {
     box-sizing: border-box;
-#if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     -webkit-appearance: menulist-button;
     letter-spacing: normal;
     word-spacing: normal;
@@ -931,7 +931,7 @@ select {
     cursor: default;
 }
 
-#if !(defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS)
+#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
 select:matches([size], [multiple], [size][multiple]) {
     -webkit-appearance: listbox;
     align-items: flex-start;
@@ -1226,7 +1226,7 @@ slot {
     display: contents;
 }
 
-#if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
 applet, embed, object, img {
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
@@ -1238,7 +1238,7 @@ applet, embed, object, img {
 #if defined(ENABLE_ATTACHMENT_ELEMENT) && ENABLE_ATTACHMENT_ELEMENT
 attachment {
     -webkit-appearance: attachment;
-#if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     color: -apple-system-blue;
 #endif
 }

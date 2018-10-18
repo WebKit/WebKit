@@ -31,7 +31,7 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 
-#if WK_API_ENABLED && (PLATFORM(IOS) || __MAC_OS_X_VERSION_MAX_ALLOWED >= 101201)
+#if WK_API_ENABLED && (PLATFORM(IOS_FAMILY) || __MAC_OS_X_VERSION_MAX_ALLOWED >= 101201)
 
 @interface NowPlayingTestWebView : TestWKWebView
 @property (nonatomic, readonly) BOOL hasActiveNowPlayingSession;
@@ -219,7 +219,7 @@ TEST(NowPlayingControlsTests, NowPlayingControlsCheckRegistered)
 
 #endif // PLATFORM(MAC)
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 // FIXME: Re-enable this test once <webkit.org/b/175204> is resolved.
 TEST(NowPlayingControlsTests, DISABLED_NowPlayingControlsIOS)
 {
@@ -238,4 +238,4 @@ TEST(NowPlayingControlsTests, DISABLED_NowPlayingControlsIOS)
 
 } // namespace TestWebKitAPI
 
-#endif // WK_API_ENABLED && (PLATFORM(IOS) || __MAC_OS_X_VERSION_MAX_ALLOWED >= 101201)
+#endif // WK_API_ENABLED && (PLATFORM(IOS_FAMILY) || __MAC_OS_X_VERSION_MAX_ALLOWED >= 101201)

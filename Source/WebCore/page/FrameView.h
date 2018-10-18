@@ -125,7 +125,7 @@ public:
 
     void scheduleSelectionUpdate();
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     bool useCustomFixedPositionLayoutRect() const;
     IntRect customFixedPositionLayoutRect() const { return m_customFixedPositionLayoutRect; }
     WEBCORE_EXPORT void setCustomFixedPositionLayoutRect(const IntRect&);
@@ -321,7 +321,7 @@ public:
     static float yPositionForHeaderLayer(const FloatPoint& scrollPosition, float topContentInset);
     static float yPositionForFooterLayer(const FloatPoint& scrollPosition, float topContentInset, float totalContentsHeight, float footerHeight);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     WEBCORE_EXPORT LayoutRect viewportConstrainedObjectsRect() const;
     // Static function can be called from another thread.
     WEBCORE_EXPORT static LayoutRect rectForViewportConstrainedObjects(const LayoutRect& visibleContentRect, const LayoutSize& totalContentsSize, float frameScaleFactor, bool fixedElementsLayoutRelativeToFrame, ScrollBehaviorForFixedElements);
@@ -363,7 +363,7 @@ public:
     void willPaintContents(GraphicsContext&, const IntRect& dirtyRect, PaintingState&);
     void didPaintContents(GraphicsContext&, const IntRect& dirtyRect, PaintingState&);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     WEBCORE_EXPORT void didReplaceMultipartContent();
 #endif
 
@@ -727,7 +727,7 @@ private:
 #endif
     void contentsResized() final;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void unobscuredContentSizeChanged() final;
 #endif
 
@@ -880,7 +880,7 @@ private:
     bool m_speculativeTilingEnabled;
     Timer m_speculativeTilingEnableTimer;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     bool m_useCustomFixedPositionLayoutRect;
     IntRect m_customFixedPositionLayoutRect;
 

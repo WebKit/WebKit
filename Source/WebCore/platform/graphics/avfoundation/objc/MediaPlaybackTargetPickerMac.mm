@@ -26,7 +26,7 @@
 #import "config.h"
 #import "MediaPlaybackTargetPickerMac.h"
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 
 #import "Logging.h"
 #import <WebCore/FloatRect.h>

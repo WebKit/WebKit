@@ -29,7 +29,7 @@
 
 #import "WebCoreMotionManager.h"
 
-#if PLATFORM(IOS) && ENABLE(DEVICE_ORIENTATION)
+#if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
 
 namespace WebCore {
 
@@ -82,7 +82,7 @@ void DeviceMotionClientIOS::motionChanged(double xAcceleration, double yAccelera
     if (!m_updating)
         return;
 
-#if PLATFORM(IOS_SIMULATOR)
+#if PLATFORM(IOS_FAMILY_SIMULATOR)
     UNUSED_PARAM(xAcceleration);
     UNUSED_PARAM(yAcceleration);
     UNUSED_PARAM(zAcceleration);
@@ -105,7 +105,7 @@ void DeviceMotionClientIOS::motionChanged(double xAcceleration, double yAccelera
         acceleration = DeviceMotionData::Acceleration::create(xAcceleration, yAcceleration, zAcceleration);
         rotationRate = DeviceMotionData::RotationRate::create(xRotationRate, yRotationRate, zRotationRate);
     }
-#endif // PLATFORM(IOS_SIMULATOR)
+#endif // PLATFORM(IOS_FAMILY_SIMULATOR)
 
     m_currentDeviceMotionData = DeviceMotionData::create(WTFMove(acceleration), WTFMove(accelerationIncludingGravity), WTFMove(rotationRate), kMotionUpdateInterval);
     m_controller->didChangeDeviceMotion(m_currentDeviceMotionData.get());
@@ -113,4 +113,4 @@ void DeviceMotionClientIOS::motionChanged(double xAcceleration, double yAccelera
 
 } // namespace WebCore
 
-#endif // PLATFORM(IOS) && ENABLE(DEVICE_ORIENTATION)
+#endif // PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)

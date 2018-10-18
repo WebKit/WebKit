@@ -896,7 +896,7 @@ void MediaControlTimelineElement::defaultEventHandler(Event& event)
         m_controls->updateCurrentTimeDisplay();
 }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 bool MediaControlTimelineElement::willRespondToMouseClickEvents()
 {
     if (!renderer())
@@ -904,7 +904,7 @@ bool MediaControlTimelineElement::willRespondToMouseClickEvents()
 
     return true;
 }
-#endif // !PLATFORM(IOS)
+#endif // !PLATFORM(IOS_FAMILY)
 
 void MediaControlTimelineElement::setPosition(double currentTime)
 {

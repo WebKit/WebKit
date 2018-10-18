@@ -111,7 +111,7 @@ IntRect Chrome::rootViewToScreen(const IntRect& rect) const
     return m_client.rootViewToScreen(rect);
 }
     
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 IntPoint Chrome::accessibilityScreenToRootView(const IntPoint& point) const
 {
@@ -425,7 +425,7 @@ void Chrome::disableSuddenTermination()
 
 std::unique_ptr<ColorChooser> Chrome::createColorChooser(ColorChooserClient& client, const Color& initialColor)
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     return nullptr;
 #endif
     notifyPopupOpeningObservers();
@@ -482,7 +482,7 @@ void Chrome::dispatchDisabledAdaptationsDidChange(const OptionSet<DisabledAdapta
 
 void Chrome::dispatchViewportPropertiesDidChange(const ViewportArguments& arguments) const
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (m_isDispatchViewportDataDidChangeSuppressed)
         return;
 #endif
@@ -575,7 +575,7 @@ bool Chrome::requiresFullscreenForVideoPlayback()
 
 void Chrome::didReceiveDocType(Frame& frame)
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     UNUSED_PARAM(frame);
 #else
     if (!frame.isMainFrame())

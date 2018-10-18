@@ -149,7 +149,7 @@ public:
     const URL& originalURL() const;
     const URL& responseURL() const;
     const String& responseMIMEType() const;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // FIXME: This method seems to violate the encapsulation of this class.
     WEBCORE_EXPORT void setResponseMIMEType(const String&);
 #endif

@@ -89,7 +89,7 @@ public:
     // fileName - The file name.
     WEBCORE_EXPORT static bool deleteDatabaseFile(const String& fileName);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // Truncates a database file. Used when MobileSafariSettings deletes a database file,
     // since deleting the file nukes the POSIX file locks which would potentially cause Safari
     // to corrupt the new db if it's running in the background.

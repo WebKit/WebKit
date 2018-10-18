@@ -887,7 +887,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::readyStateChanged(MediaStreamTrackPri
 
 bool MediaPlayerPrivateMediaStreamAVFObjC::supportsPictureInPicture() const
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     for (const auto& track : m_videoTrackMap.values()) {
         if (track->streamTrack().isCaptureTrack())
             return false;

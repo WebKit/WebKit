@@ -172,7 +172,7 @@ public:
     void setShouldReportResourceTimingToParentFrame(bool value) { m_shouldReportResourceTimingToParentFrame = value; }
     bool shouldReportResourceTimingToParentFrame() { return m_shouldReportResourceTimingToParentFrame; };
     
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     RetainPtr<CFDictionaryRef> connectionProperties(ResourceLoader*);
 #endif
     const ResourceRequest& originalRequest() const;

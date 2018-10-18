@@ -34,7 +34,7 @@
 #import <WebFrame.h>
 #import <WebPage.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import <WebCore/NotImplemented.h>
 
@@ -80,4 +80,4 @@ RefPtr<PreviewLoaderClient> WebFrameLoaderClient::createPreviewLoaderClient(cons
 
 } // namespace WebKit
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

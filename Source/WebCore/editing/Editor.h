@@ -118,7 +118,7 @@ private:
     Ref<Frame> m_frame;
     OptionSet<TemporarySelectionOption> m_options;
     bool m_wasIgnoringSelectionChanges;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     bool m_appearanceUpdatesWereEnabled;
 #endif
     std::optional<VisibleSelection> m_selectionToRestore;
@@ -171,7 +171,7 @@ public:
     WEBCORE_EXPORT void copyURL(const URL&, const String& title);
     void copyURL(const URL&, const String& title, Pasteboard&);
     PasteboardWriterData::URL pasteboardWriterURL(const URL&, const String& title);
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     WEBCORE_EXPORT void copyImage(const HitTestResult&);
 #endif
 
@@ -206,14 +206,14 @@ public:
     void removeFormattingAndStyle();
 
     void clearLastEditCommand();
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     WEBCORE_EXPORT void ensureLastEditCommandHasCurrentSelectionIfOpenForMoreTyping();
 #endif
 
     WEBCORE_EXPORT bool deleteWithDirection(SelectionDirection, TextGranularity, bool killRing, bool isTypingAction);
     WEBCORE_EXPORT void deleteSelectionWithSmartDelete(bool smartDelete, EditAction = EditAction::Delete);
     void clearText();
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     WEBCORE_EXPORT void removeUnchangeableStyles();
 #endif
 
@@ -297,12 +297,12 @@ public:
     WEBCORE_EXPORT void toggleOverwriteModeEnabled();
 
     void markAllMisspellingsAndBadGrammarInRanges(OptionSet<TextCheckingType>, RefPtr<Range>&& spellingRange, RefPtr<Range>&& automaticReplacementRange, RefPtr<Range>&& grammarRange);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     NO_RETURN_DUE_TO_ASSERT
 #endif
     void changeBackToReplacedString(const String& replacedString);
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     WEBCORE_EXPORT void advanceToNextMisspelling(bool startBeforeSelection = false);
 #endif
     void showSpellingGuessPanel();
@@ -370,7 +370,7 @@ public:
 
     RefPtr<Range> selectedRange();
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     WEBCORE_EXPORT void confirmMarkedText();
     WEBCORE_EXPORT void setTextAsChildOfElement(const String&, Element&);
     WEBCORE_EXPORT void setTextAlignmentForChangedBaseWritingDirection(WritingDirection);
@@ -475,13 +475,13 @@ public:
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT String stringSelectionForPasteboard();
     String stringSelectionForPasteboardWithImageAltText();
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     bool canCopyExcludingStandaloneImages();
     void takeFindStringFromSelection();
     WEBCORE_EXPORT void readSelectionFromPasteboard(const String& pasteboardName);
     WEBCORE_EXPORT void replaceNodeFromPasteboard(Node*, const String& pasteboardName);
     WEBCORE_EXPORT RefPtr<SharedBuffer> dataSelectionForPasteboard(const String& pasteboardName);
-#endif // !PLATFORM(IOS)
+#endif // !PLATFORM(IOS_FAMILY)
     WEBCORE_EXPORT void replaceSelectionWithAttributedString(NSAttributedString *, MailBlockquoteHandling = MailBlockquoteHandling::RespectBlockquote);
 #endif
 
@@ -493,7 +493,7 @@ public:
     void writeSelection(PasteboardWriterData&);
 #endif
 
-#if ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS)
+#if ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS_FAMILY)
     void scanSelectionForTelephoneNumbers();
     const Vector<RefPtr<Range>>& detectedTelephoneNumberRanges() const { return m_detectedTelephoneNumberRanges; }
 #endif
@@ -602,7 +602,7 @@ private:
     bool m_editorUIUpdateTimerWasTriggeredByDictation { false };
     bool m_isHandlingAcceptedCandidate { false };
 
-#if ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS)
+#if ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS_FAMILY)
     bool shouldDetectTelephoneNumbers();
     void scanRangeForTelephoneNumbers(Range&, const StringView&, Vector<RefPtr<Range>>& markedRanges);
 

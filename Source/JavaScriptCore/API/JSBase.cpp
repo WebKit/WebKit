@@ -181,7 +181,7 @@ void JSDisableGCTimer(void)
     GCActivityCallback::s_shouldCreateGCTimer = false;
 }
 
-#if PLATFORM(IOS) && TARGET_OS_IOS
+#if PLATFORM(IOS_FAMILY) && TARGET_OS_IOS
 // FIXME: Expose symbols to tell dyld where to find JavaScriptCore on older versions of
 // iOS (< 7.0). We should remove these symbols once we no longer need to support such
 // versions of iOS. See <rdar://problem/13696872> for more details.

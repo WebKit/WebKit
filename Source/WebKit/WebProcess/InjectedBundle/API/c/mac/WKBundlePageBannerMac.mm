@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WKBundlePageBannerMac.h"
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 
 #include "APIClient.h"
 #include "PageBanner.h"
@@ -112,4 +112,4 @@ CALayer *WKBundlePageBannerGetLayer(WKBundlePageBannerRef pageBanner)
     return WebKit::toImpl(pageBanner)->layer();
 }
 
-#endif // !PLATFORM(IOS)
+#endif // !PLATFORM(IOS_FAMILY)

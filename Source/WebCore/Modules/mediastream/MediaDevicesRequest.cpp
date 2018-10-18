@@ -81,7 +81,7 @@ void MediaDevicesRequest::contextDestroyed()
 
 void MediaDevicesRequest::filterDeviceList(Vector<Ref<MediaDeviceInfo>>& devices)
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     static const int defaultCameraCount = 2;
 #else
     static const int defaultCameraCount = 1;

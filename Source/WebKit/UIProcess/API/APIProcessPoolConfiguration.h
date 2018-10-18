@@ -133,7 +133,7 @@ public:
     bool shouldCaptureAudioInUIProcess() const { return m_shouldCaptureAudioInUIProcess; }
     void setShouldCaptureAudioInUIProcess(bool shouldCaptureAudioInUIProcess) { m_shouldCaptureAudioInUIProcess = shouldCaptureAudioInUIProcess; }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     const WTF::String& ctDataConnectionServiceType() const { return m_ctDataConnectionServiceType; }
     void setCTDataConnectionServiceType(const WTF::String& ctDataConnectionServiceType) { m_ctDataConnectionServiceType = ctDataConnectionServiceType; }
 #endif
@@ -201,7 +201,7 @@ private:
     bool m_isAutomaticProcessWarmingEnabled { false };
     WTF::String m_customWebContentServiceBundleIdentifier;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     WTF::String m_ctDataConnectionServiceType;
 #endif
 

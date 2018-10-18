@@ -26,7 +26,7 @@
 #include "config.h"
 #include "LocalStorageDatabaseTracker.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #include "VersionChecks.h"
 

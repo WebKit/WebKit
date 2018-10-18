@@ -29,7 +29,7 @@
 #include "Timer.h"
 #include <wtf/RefPtr.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "WebCoreThread.h"
 #endif
 
@@ -65,7 +65,7 @@ public:
 
     bool shouldYieldBeforeToken(PumpSession& session)
     {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         if (WebThreadShouldYield())
             return true;
 #endif

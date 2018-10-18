@@ -1563,7 +1563,7 @@ URL DocumentLoader::documentURL() const
     return url;
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 // FIXME: This method seems to violate the encapsulation of this class.
 void DocumentLoader::setResponseMIMEType(const String& responseMimeType)

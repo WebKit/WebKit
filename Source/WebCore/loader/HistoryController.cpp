@@ -79,7 +79,7 @@ void HistoryController::saveScrollPositionAndViewStateToItem(HistoryItem* item)
     else
         item->setScrollPosition(frameView->scrollPosition());
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     item->setExposedContentRect(frameView->exposedContentRect());
     item->setUnobscuredContentRect(frameView->unobscuredContentRect());
 #endif
@@ -87,7 +87,7 @@ void HistoryController::saveScrollPositionAndViewStateToItem(HistoryItem* item)
     Page* page = m_frame.page();
     if (page && m_frame.isMainFrame()) {
         item->setPageScaleFactor(page->pageScaleFactor() / page->viewScaleFactor());
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         item->setObscuredInsets(page->obscuredInsets());
 #endif
     }
@@ -153,7 +153,7 @@ void HistoryController::restoreScrollPositionAndViewState()
     // through to the client.
     m_frame.loader().client().restoreViewState();
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     // Don't restore scroll point on iOS as FrameLoaderClient::restoreViewState() does that.
     if (view && !view->wasScrolledByUser()) {
         view->scrollToFocusedElementImmediatelyIfNeeded();

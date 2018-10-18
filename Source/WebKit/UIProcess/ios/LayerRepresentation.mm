@@ -26,7 +26,7 @@
 #import "config.h"
 #import "LayerRepresentation.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIView.h>
 CALayer *asLayer(LayerOrView *view)
 {

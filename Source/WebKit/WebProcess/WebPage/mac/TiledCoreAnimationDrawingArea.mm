@@ -26,7 +26,7 @@
 #import "config.h"
 #import "TiledCoreAnimationDrawingArea.h"
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 
 #import "ColorSpaceData.h"
 #import "DrawingAreaProxyMessages.h"
@@ -532,7 +532,7 @@ void TiledCoreAnimationDrawingArea::updateScrolledExposedRect()
 
     m_scrolledViewExposedRect = m_viewExposedRect;
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     if (m_viewExposedRect) {
         ScrollOffset scrollOffset = frameView->scrollOffsetFromPosition(frameView->scrollPosition());
         m_scrolledViewExposedRect.value().moveBy(scrollOffset);
@@ -888,4 +888,4 @@ bool TiledCoreAnimationDrawingArea::dispatchDidReachLayoutMilestone(WebCore::Lay
 
 } // namespace WebKit
 
-#endif // !PLATFORM(IOS)
+#endif // !PLATFORM(IOS_FAMILY)

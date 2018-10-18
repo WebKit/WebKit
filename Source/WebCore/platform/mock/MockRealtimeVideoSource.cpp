@@ -48,7 +48,7 @@
 
 namespace WebCore {
 
-#if !PLATFORM(MAC) && !PLATFORM(IOS) && !(USE(GSTREAMER) && USE(LIBWEBRTC))
+#if !PLATFORM(MAC) && !PLATFORM(IOS_FAMILY) && !(USE(GSTREAMER) && USE(LIBWEBRTC))
 CaptureSourceOrError MockRealtimeVideoSource::create(String&& deviceID, String&& name, String&& hashSalt, const MediaConstraints* constraints)
 {
 #ifndef NDEBUG

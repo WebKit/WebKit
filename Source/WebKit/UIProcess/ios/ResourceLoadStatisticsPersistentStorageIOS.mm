@@ -26,7 +26,7 @@
 #import "config.h"
 #import "ResourceLoadStatisticsPersistentStorage.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 namespace WebKit {
 

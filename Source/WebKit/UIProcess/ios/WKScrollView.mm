@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKScrollView.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "UIKitSPI.h"
 #import "VersionChecks.h"
@@ -385,4 +385,4 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
 
 @end
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

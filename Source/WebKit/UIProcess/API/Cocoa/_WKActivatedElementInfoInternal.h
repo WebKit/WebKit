@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import "InteractionInformationAtPosition.h"
 #endif
 #import "_WKActivatedElementInfo.h"
@@ -36,7 +36,7 @@ namespace WebKit {
 
 @interface _WKActivatedElementInfo ()
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 + (instancetype)activatedElementInfoWithInteractionInformationAtPosition:(const WebKit::InteractionInformationAtPosition&)information;
 - (instancetype)_initWithInteractionInformationAtPosition:(const WebKit::InteractionInformationAtPosition&)information;
 #endif

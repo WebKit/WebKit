@@ -26,7 +26,7 @@
 #import "config.h"
 #import "EventHandler.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "AXObjectCache.h"
 #import "AutoscrollController.h"
@@ -691,4 +691,4 @@ bool EventHandler::tryToBeginDataInteractionAtPoint(const IntPoint& clientPositi
 
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

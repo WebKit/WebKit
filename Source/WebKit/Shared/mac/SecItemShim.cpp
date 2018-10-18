@@ -138,7 +138,7 @@ void initializeSecItemShim(ChildProcess& process)
 {
     sharedProcess = &process;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     struct _CFNFrameworksStubs stubs = {
         .version = 0,
         .SecItem_stub_CopyMatching = webSecItemCopyMatching,

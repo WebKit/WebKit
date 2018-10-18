@@ -30,7 +30,7 @@
 
 @class _WKProcessPoolConfiguration;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 @class _WKActivatedElementInfo;
 @protocol UITextInputMultiDocument;
 #endif
@@ -70,7 +70,7 @@
 - (void)collapseToEnd;
 @end
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 @interface TestWKWebView (IOSOnly)
 @property (nonatomic, readonly) UIView <UITextInput, UITextInputMultiDocument> *textInputContentView;
 @property (nonatomic, readonly) RetainPtr<NSArray> selectionRectsAfterPresentationUpdate;

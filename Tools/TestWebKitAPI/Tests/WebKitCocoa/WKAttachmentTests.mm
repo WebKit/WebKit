@@ -36,11 +36,11 @@
 #import <WebKit/WebKitPrivate.h>
 #import <wtf/RetainPtr.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import <MobileCoreServices/MobileCoreServices.h>
 #endif
 
-#define USES_MODERN_ATTRIBUTED_STRING_CONVERSION ((PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300))
+#define USES_MODERN_ATTRIBUTED_STRING_CONVERSION ((PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300))
 
 #if WK_API_ENABLED && !PLATFORM(WATCHOS) && !PLATFORM(TVOS)
 
@@ -454,7 +454,7 @@ BOOL isCompletelyTransparent(NSImage *image)
 
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 typedef void(^ItemProviderDataLoadHandler)(NSData *, NSError *);
 
@@ -492,7 +492,7 @@ typedef void(^ItemProviderDataLoadHandler)(NSData *, NSError *);
 
 @end
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 void platformCopyRichTextWithMultipleAttachments()
 {
@@ -509,7 +509,7 @@ void platformCopyRichTextWithMultipleAttachments()
     NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
     [pasteboard clearContents];
     [pasteboard writeObjects:@[ richText.get() ]];
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS_FAMILY)
     auto item = adoptNS([[NSItemProvider alloc] init]);
     [item registerObject:richText.get() visibility:NSItemProviderRepresentationVisibilityAll];
     [UIPasteboard generalPasteboard].itemProviders = @[ item.get() ];
@@ -529,7 +529,7 @@ void platformCopyRichTextWithImage()
     NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
     [pasteboard clearContents];
     [pasteboard writeObjects:@[ richText.get() ]];
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS_FAMILY)
     auto item = adoptNS([[NSItemProvider alloc] init]);
     [item registerObject:richText.get() visibility:NSItemProviderRepresentationVisibilityAll];
     [UIPasteboard generalPasteboard].itemProviders = @[ item.get() ];
@@ -542,7 +542,7 @@ void platformCopyPNG()
     NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
     [pasteboard declareTypes:@[NSPasteboardTypePNG] owner:nil];
     [pasteboard setData:testImageData() forType:NSPasteboardTypePNG];
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS_FAMILY)
     UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
     auto item = adoptNS([[UIItemProvider alloc] init]);
     [item setPreferredPresentationStyle:UIPreferredPresentationStyleAttachment];
@@ -1566,7 +1566,7 @@ TEST(WKAttachmentTestsMac, DragAttachmentAsFilePromise)
 
 #endif // PLATFORM(MAC)
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 TEST(WKAttachmentTestsIOS, InsertDroppedImageAsAttachment)
 {
@@ -1775,7 +1775,7 @@ TEST(WKAttachmentTestsIOS, DragAttachmentInsertedAsData)
     [dragAndDropSimulator endDataTransfer];
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 } // namespace TestWebKitAPI
 

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKGeolocationProviderIOS.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "UIKitSPI.h"
 #import <Foundation/NSURL.h>
@@ -56,4 +56,4 @@ void decidePolicyForGeolocationRequestFromOrigin(WebCore::SecurityOrigin* origin
 
 } // namespace WebKit
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

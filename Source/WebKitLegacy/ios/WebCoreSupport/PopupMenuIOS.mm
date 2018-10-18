@@ -25,7 +25,7 @@
 
 #import "PopupMenuIOS.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 using namespace WebCore;
 
@@ -51,4 +51,4 @@ void PopupMenuIOS::disconnectClient()
     m_popupClient = 0;
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

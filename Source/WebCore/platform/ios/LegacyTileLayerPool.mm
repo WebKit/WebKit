@@ -26,7 +26,7 @@
 #include "config.h"
 #include "LegacyTileLayerPool.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #include "LegacyTileLayer.h"
 #include "LegacyTileGrid.h"
@@ -169,4 +169,4 @@ void LegacyTileLayerPool::drain()
 
 } // namespace WebCore
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

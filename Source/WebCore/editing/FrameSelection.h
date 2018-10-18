@@ -36,7 +36,7 @@
 #include "VisibleSelection.h"
 #include <wtf/Noncopyable.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "Color.h"
 #endif
 
@@ -218,7 +218,7 @@ public:
     void showTreeForThis() const;
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 public:
     WEBCORE_EXPORT void expandSelectionToElementContainingCaretSelection();
     WEBCORE_EXPORT RefPtr<Range> elementRangeContainingCaretSelection() const;
@@ -362,7 +362,7 @@ private:
     bool m_pendingSelectionUpdate : 1;
     bool m_alwaysAlignCursorOnScrollWhenRevealingSelection : 1;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     bool m_updateAppearanceEnabled : 1;
     bool m_caretBlinks : 1;
     Color m_caretColor;

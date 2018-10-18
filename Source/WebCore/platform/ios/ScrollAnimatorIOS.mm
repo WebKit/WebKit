@@ -26,7 +26,7 @@
 #import "config.h"
 #import "ScrollAnimatorIOS.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "Frame.h"
 #import "RenderLayer.h"
@@ -188,4 +188,4 @@ void ScrollAnimatorIOS::determineScrollableAreaForTouchSequence(const IntSize& s
 
 } // namespace WebCore
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

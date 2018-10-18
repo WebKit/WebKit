@@ -89,7 +89,7 @@
 #include "WebPrintOperationGtk.h"
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "GestureTypes.h"
 #include "WebPageMessages.h"
 #include <WebCore/IntPointHash.h>
@@ -300,13 +300,13 @@ public:
 
     void inspectorFrontendCountChanged(unsigned);
 
-#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     PlaybackSessionManager& playbackSessionManager();
     VideoFullscreenManager& videoFullscreenManager();
     void videoControlsManagerDidChange();
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void setAllowsMediaDocumentInlinePlayback(bool);
     bool allowsMediaDocumentInlinePlayback() const { return m_allowsMediaDocumentInlinePlayback; }
 #endif
@@ -530,7 +530,7 @@ public:
     bool windowIsFocused() const;
     bool windowAndWebPageAreFocused() const;
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     void setHeaderPageBanner(PageBanner*);
     PageBanner* headerPageBanner();
     void setFooterPageBanner(PageBanner*);
@@ -546,7 +546,7 @@ public:
     WebCore::IntPoint screenToRootView(const WebCore::IntPoint&);
     WebCore::IntRect rootViewToScreen(const WebCore::IntRect&);
     
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     WebCore::IntPoint accessibilityScreenToRootView(const WebCore::IntPoint&);
     WebCore::IntRect rootViewToAccessibilityScreen(const WebCore::IntRect&);
 #endif
@@ -561,7 +561,7 @@ public:
     GeolocationPermissionRequestManager& geolocationPermissionRequestManager() { return m_geolocationPermissionRequestManager.get(); }
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void savePageState(WebCore::HistoryItem&);
     void restorePageState(const WebCore::HistoryItem&);
 #endif
@@ -580,7 +580,7 @@ public:
     void viewportPropertiesDidChange(const WebCore::ViewportArguments&);
     void executeEditCommandWithCallback(const String&, const String& argument, CallbackID);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     WebCore::FloatSize screenSize() const;
     WebCore::FloatSize availableScreenSize() const;
     WebCore::FloatSize overrideScreenSize() const;
@@ -668,7 +668,7 @@ public:
     void setForceAlwaysUserScalable(bool);
 #endif
 
-#if PLATFORM(IOS) && ENABLE(IOS_TOUCH_EVENTS)
+#if PLATFORM(IOS_FAMILY) && ENABLE(IOS_TOUCH_EVENTS)
     void dispatchAsynchronousTouchEvents(const Vector<WebTouchEvent, 1>& queue);
 #endif
 
@@ -825,7 +825,7 @@ public:
     void drawPagesToPDFImpl(uint64_t frameID, const PrintInfo&, uint32_t first, uint32_t count, RetainPtr<CFMutableDataRef>& pdfPageData);
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void computePagesForPrintingAndDrawToPDF(uint64_t frameID, const PrintInfo&, CallbackID, Messages::WebPage::ComputePagesForPrintingAndDrawToPDF::DelayedReply&&);
 #endif
 
@@ -894,7 +894,7 @@ public:
 
     void updateVisibilityState(bool isInitialState = false);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void setViewportConfigurationViewLayoutSize(const WebCore::FloatSize&, double scaleFactor);
     void setMaximumUnobscuredSize(const WebCore::FloatSize&);
     void setDeviceOrientation(int32_t);
@@ -1123,7 +1123,7 @@ private:
 
     void didReceiveSyncWebPageMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void resetViewportDefaultConfiguration(WebFrame* mainFrame, bool hasMobileDocType = false);
     enum class ZoomToInitialScale { No, Yes };
     void viewportConfigurationChanged(ZoomToInitialScale = ZoomToInitialScale::No);
@@ -1141,7 +1141,7 @@ private:
     RefPtr<WebCore::Range> rangeForGranularityAtPoint(WebCore::Frame&, const WebCore::IntPoint&, uint32_t granularity, bool isInteractingWithAssistedNode);
 #endif
 
-#if PLATFORM(IOS) && ENABLE(DATA_INTERACTION)
+#if PLATFORM(IOS_FAMILY) && ENABLE(DATA_INTERACTION)
     void requestStartDataInteraction(const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition);
     void requestAdditionalItemsForDragSession(const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition);
 #endif
@@ -1248,7 +1248,7 @@ private:
     void updatePreferences(const WebPreferencesStore&);
     void updatePreferencesGenerated(const WebPreferencesStore&);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     bool parentProcessHasServiceWorkerEntitlement() const;
 #else
     bool parentProcessHasServiceWorkerEntitlement() const { return true; }
@@ -1305,7 +1305,7 @@ private:
     void didChooseFilesForOpenPanel(const Vector<String>&);
     void didCancelForOpenPanel();
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void didChooseFilesForOpenPanelWithDisplayStringAndIcon(const Vector<String>&, const String& displayString, const IPC::DataReference& iconData);
 #endif
 
@@ -1388,7 +1388,7 @@ private:
 
     void setShouldDispatchFakeMouseMoveEvents(bool dispatch) { m_shouldDispatchFakeMouseMoveEvents = dispatch; }
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
     void playbackTargetSelected(uint64_t, const WebCore::MediaPlaybackTargetContext& outputDevice) const;
     void playbackTargetAvailabilityDidChange(uint64_t, bool);
     void setShouldPlayToPlaybackTarget(uint64_t, bool);
@@ -1472,7 +1472,7 @@ private:
     bool m_alwaysShowsHorizontalScroller { false };
     bool m_alwaysShowsVerticalScroller { false };
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     bool m_ignoreViewportScalingConstraints { false };
 #endif
 
@@ -1521,7 +1521,7 @@ private:
     uint64_t m_nativeWindowHandle { 0 };
 #endif
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     RefPtr<PageBanner> m_headerBanner;
     RefPtr<PageBanner> m_footerBanner;
 #endif
@@ -1550,12 +1550,12 @@ private:
     RefPtr<WebInspectorUI> m_inspectorUI;
     RefPtr<RemoteWebInspectorUI> m_remoteInspectorUI;
 
-#if (PLATFORM(IOS) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if (PLATFORM(IOS_FAMILY) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     RefPtr<PlaybackSessionManager> m_playbackSessionManager;
     RefPtr<VideoFullscreenManager> m_videoFullscreenManager;
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     bool m_allowsMediaDocumentInlinePlayback { false };
     RefPtr<WebCore::Range> m_startingGestureRange;
 #endif
@@ -1642,7 +1642,7 @@ private:
     bool m_hasPendingBlurNotification { false };
     bool m_hasPendingEditorStateUpdate { false };
     
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     RefPtr<WebCore::Range> m_currentWordRange;
     RefPtr<WebCore::Node> m_interactionNode;
     WebCore::IntPoint m_lastInteractionLocation;

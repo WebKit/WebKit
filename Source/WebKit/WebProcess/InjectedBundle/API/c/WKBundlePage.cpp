@@ -420,7 +420,7 @@ void WKBundlePageSetBottomOverhangImage(WKBundlePageRef pageRef, WKImageRef imag
 #endif
 }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 void WKBundlePageSetHeaderBanner(WKBundlePageRef pageRef, WKBundlePageBannerRef bannerRef)
 {
     toImpl(pageRef)->setHeaderPageBanner(toImpl(bannerRef));
@@ -430,7 +430,7 @@ void WKBundlePageSetFooterBanner(WKBundlePageRef pageRef, WKBundlePageBannerRef 
 {
     toImpl(pageRef)->setFooterPageBanner(toImpl(bannerRef));
 }
-#endif // !PLATFORM(IOS)
+#endif // !PLATFORM(IOS_FAMILY)
 
 bool WKBundlePageHasLocalDataForURL(WKBundlePageRef pageRef, WKURLRef urlRef)
 {

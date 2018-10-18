@@ -1021,7 +1021,7 @@ DisableScreenSizeOverride:
   type: bool
   defaultValue: false
   category: debug
-  condition: PLATFORM(IOS)
+  condition: PLATFORM(IOS_FAMILY)
 
 SimpleLineLayoutDebugBordersEnabled:
   type: bool
@@ -1043,14 +1043,14 @@ IgnoreViewportScalingConstraints:
   defaultValue: true
   category: debug
   webcoreBinding: none
-  condition: PLATFORM(IOS)
+  condition: PLATFORM(IOS_FAMILY)
 
 ForceAlwaysUserScalable:
   type: bool
   defaultValue: false
   category: debug
   webcoreBinding: none
-  condition: PLATFORM(IOS)
+  condition: PLATFORM(IOS_FAMILY)
 
 ResourceUsageOverlayVisible:
   type: bool

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKSyntheticClickTapGestureRecognizer.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import <UIKit/UIGestureRecognizerSubclass.h>
 

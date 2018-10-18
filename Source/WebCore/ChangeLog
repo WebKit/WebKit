@@ -1,3 +1,1113 @@
+2018-10-18  Alexey Proskuryakov  <ap@apple.com>
+
+        Switch from PLATFORM(IOS) to PLATFORM(IOS_FAMILY)
+        https://bugs.webkit.org/show_bug.cgi?id=190729
+
+        Reviewed by Tim Horton.
+
+        * DerivedSources.make:
+        * Modules/applepay/cocoa/PaymentContactCocoa.mm:
+        (WebCore::subLocality):
+        (WebCore::setSubLocality):
+        (WebCore::subAdministrativeArea):
+        (WebCore::setSubAdministrativeArea):
+        * Modules/encryptedmedia/legacy/LegacyCDMPrivateMediaPlayer.cpp:
+        * Modules/geolocation/Geolocation.cpp:
+        (WebCore::isRequestFromIBooks):
+        * Modules/geolocation/GeolocationPosition.h:
+        * Modules/geolocation/NavigatorGeolocation.cpp:
+        * Modules/geolocation/NavigatorGeolocation.h:
+        * Modules/geolocation/ios/GeolocationPositionIOS.mm:
+        * Modules/mediasession/WebMediaSessionManager.cpp:
+        * Modules/mediasession/WebMediaSessionManager.h:
+        * Modules/mediastream/MediaDevicesRequest.cpp:
+        (WebCore::MediaDevicesRequest::filterDeviceList):
+        * Modules/plugins/QuickTimePluginReplacement.mm:
+        (WebCore::JSQuickTimePluginReplacement::timedMetaData const):
+        (WebCore::JSQuickTimePluginReplacement::accessLog const):
+        (WebCore::JSQuickTimePluginReplacement::errorLog const):
+        * Modules/speech/SpeechSynthesis.cpp:
+        (WebCore::SpeechSynthesis::SpeechSynthesis):
+        (WebCore::SpeechSynthesis::speak):
+        * Modules/speech/SpeechSynthesis.h:
+        * Modules/webaudio/AudioContext.cpp:
+        * Modules/webaudio/AudioScheduledSourceNode.cpp:
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::Database::performOpenAndVerify):
+        * Modules/webdatabase/DatabaseContext.h:
+        * Modules/webdatabase/DatabaseManagerClient.h:
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::deleteDatabaseFile):
+        * Modules/webdatabase/DatabaseTracker.h:
+        * WebCorePrefix.h:
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::createFromRenderer):
+        * accessibility/AccessibilityMediaObject.cpp:
+        * accessibility/AccessibilityMediaObject.h:
+        * accessibility/AccessibilityMenuList.cpp:
+        (WebCore::AccessibilityMenuList::press):
+        (WebCore::AccessibilityMenuList::isCollapsed const):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::isAccessibilityObjectSearchMatchAtIndex):
+        (WebCore::AccessibilityObject::press):
+        (WebCore::AccessibilityObject::actionVerb const):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::stringValue const):
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+        (WebCore::AccessibilityRenderObject::actionVerb const):
+        * accessibility/AccessibilityTableColumn.cpp:
+        (WebCore::AccessibilityTableColumn::computeAccessibilityIsIgnored const):
+        * accessibility/AccessibilityTableHeaderContainer.cpp:
+        (WebCore::AccessibilityTableHeaderContainer::computeAccessibilityIsIgnored const):
+        * accessibility/ios/AXObjectCacheIOS.mm:
+        * accessibility/ios/AccessibilityObjectIOS.mm:
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.h:
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        * bindings/js/CommonVM.cpp:
+        (WebCore::commonVMSlow):
+        * bindings/js/JSCallbackData.h:
+        (WebCore::JSCallbackData::~JSCallbackData):
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::shouldInterruptScriptBeforeTimeout):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::initializeThreading):
+        * bridge/objc/objc_class.mm:
+        (JSC::Bindings::ObjcClass::fieldNamed const):
+        * crypto/CommonCryptoUtilities.h:
+        * crypto/mac/CryptoKeyRSAMac.cpp:
+        * crypto/mac/SerializedCryptoKeyWrapMac.mm:
+        (WebCore::masterKeyAccountNameForCurrentApplication):
+        (WebCore::createAndStoreMasterKey):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyinStyle):
+        * css/CSSProperties.json:
+        * css/CSSStyleDeclaration.cpp:
+        * css/CSSValueKeywords.in:
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::prefersReducedMotionEvaluate):
+        * css/StyleBuilderConverter.h:
+        * css/html.css:
+        (video):
+        (input, textarea, keygen, select, button):
+        (#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY):
+        (#if defined(ENABLE_INPUT_TYPE_DATE) && ENABLE_INPUT_TYPE_DATE):
+        (#endif):
+        (#if defined(ENABLE_DATALIST_ELEMENT) && ENABLE_DATALIST_ELEMENT):
+        (textarea):
+        (input:matches([type="radio"], [type="checkbox"])):
+        (input:matches([type="button"], [type="submit"], [type="reset"]), input[type="file"]::-webkit-file-upload-button, button):
+        (input[type="range"]::-webkit-slider-thumb, input[type="range"]::-webkit-media-slider-thumb):
+        (#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)):
+        (input[type="checkbox"]):
+        (#endif // defined(ENABLE_INPUT_TYPE_COLOR) && ENABLE_INPUT_TYPE_COLOR):
+        (#if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS): Deleted.
+        (#if !(defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS)): Deleted.
+        * css/parser/CSSParserContext.cpp:
+        (WebCore::CSSParserContext::CSSParserContext):
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+        (WebCore::CSSParserFastPaths::isKeywordPropertyID):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::cssPropertyID):
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        * css/parser/CSSPropertyParser.h:
+        * css/svg.css:
+        (#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY):
+        (#if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS): Deleted.
+        * dom/DeviceMotionController.cpp:
+        * dom/DeviceMotionController.h:
+        * dom/DeviceOrientationController.cpp:
+        (WebCore::DeviceOrientationController::DeviceOrientationController):
+        * dom/DeviceOrientationController.h:
+        * dom/DeviceOrientationData.cpp:
+        * dom/DeviceOrientationData.h:
+        * dom/DeviceOrientationEvent.cpp:
+        * dom/DeviceOrientationEvent.h:
+        * dom/DeviceOrientationEvent.idl:
+        * dom/Document.cpp:
+        (WebCore::Document::~Document):
+        (WebCore::Document::suspendDeviceMotionAndOrientationUpdates):
+        (WebCore::Document::resumeDeviceMotionAndOrientationUpdates):
+        (WebCore::Document::platformSuspendOrStopActiveDOMObjects):
+        * dom/Document.h:
+        * dom/DocumentMarker.h:
+        (WebCore::DocumentMarker::allMarkers):
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::shouldInsertAsSeparateMarker):
+        (WebCore::DocumentMarkerController::shiftMarkers):
+        * dom/DocumentMarkerController.h:
+        * dom/Element.cpp:
+        (WebCore::Element::focus):
+        * dom/Node.cpp:
+        (WebCore::Node::~Node):
+        (WebCore::Node::willBeDeletedFrom):
+        (WebCore::Node::moveNodeToNewDocument):
+        (WebCore::tryAddEventListener):
+        (WebCore::tryRemoveEventListener):
+        (WebCore::Node::defaultEventHandler):
+        (WebCore::Node::willRespondToMouseMoveEvents):
+        (WebCore::Node::willRespondToMouseClickEvents):
+        * dom/Range.cpp:
+        * dom/Range.h:
+        * dom/TreeScope.cpp:
+        (WebCore::absolutePointIfNotClipped):
+        * dom/ViewportArguments.cpp:
+        (WebCore::setViewportFeature):
+        * dom/ViewportArguments.h:
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::EditCommandComposition::unapply):
+        (WebCore::CompositeEditCommand::replaceTextInNodePreservingMarkers):
+        (WebCore::CompositeEditCommand::moveParagraphs):
+        * editing/Editor.cpp:
+        (WebCore::TemporarySelectionChange::TemporarySelectionChange):
+        (WebCore::TemporarySelectionChange::~TemporarySelectionChange):
+        (WebCore::Editor::handleTextEvent):
+        (WebCore::Editor::Editor):
+        (WebCore::Editor::clear):
+        (WebCore::Editor::insertTextWithoutSendingTextEvent):
+        (WebCore::Editor::setBaseWritingDirection):
+        (WebCore::Editor::setComposition):
+        (WebCore::Editor::showSpellingGuessPanel):
+        (WebCore::Editor::markMisspellingsAfterTypingToWord):
+        (WebCore::Editor::markMisspellingsOrBadGrammar):
+        (WebCore::Editor::changeBackToReplacedString):
+        (WebCore::Editor::updateMarkersForWordsAffectedByEditing):
+        (WebCore::Editor::revealSelectionAfterEditingOperation):
+        (WebCore::Editor::setIgnoreSelectionChanges):
+        (WebCore::Editor::changeSelectionAfterCommand):
+        (WebCore::Editor::shouldChangeSelection const):
+        (WebCore::Editor::respondToChangedSelection):
+        (WebCore::Editor::editorUIUpdateTimerFired):
+        (WebCore::Editor::resolveTextCheckingTypeMask):
+        * editing/Editor.h:
+        * editing/FontAttributes.h:
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::FrameSelection):
+        (WebCore::FrameSelection::updateDataDetectorsForSelection):
+        (WebCore::FrameSelection::setSelectedRange):
+        (WebCore::FrameSelection::updateAppearance):
+        (WebCore::FrameSelection::shouldDeleteSelection const):
+        (WebCore::FrameSelection::revealSelection):
+        (WebCore::FrameSelection::setSelectionFromNone):
+        (WebCore::FrameSelection::shouldChangeSelection const):
+        * editing/FrameSelection.h:
+        * editing/InsertIntoTextNodeCommand.cpp:
+        * editing/InsertIntoTextNodeCommand.h:
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::markMisspellingsAfterTyping):
+        (WebCore::TypingCommand::deleteKeyPressed):
+        (WebCore::TypingCommand::forwardDeleteKeyPressed):
+        * editing/TypingCommand.h:
+        * editing/cocoa/DataDetection.h:
+        * editing/cocoa/DataDetection.mm:
+        * editing/cocoa/FontAttributesCocoa.mm:
+        * editing/cocoa/FontShadowCocoa.mm:
+        (WebCore::FontShadow::createShadow const):
+        * editing/cocoa/HTMLConverter.h:
+        * editing/cocoa/HTMLConverter.mm:
+        (_fontForNameAndSize):
+        (_shadowForShadowStyle):
+        (HTMLConverter::computedAttributesForElement):
+        (HTMLConverter::_addAttachmentForElement):
+        (HTMLConverter::_processMetaElementWithName):
+        (HTMLConverter::_processElement):
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::attributesForAttributedStringConversion):
+        (WebCore::WebContentReader::readURL):
+        * editing/ios/DictationCommandIOS.cpp:
+        * editing/ios/DictationCommandIOS.h:
+        * editing/ios/EditorIOS.mm:
+        * editing/mac/FrameSelectionMac.mm:
+        (WebCore::FrameSelection::notifyAccessibilityForSelectionChange):
+        * fileapi/FileCocoa.mm:
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrameBase::restore):
+        (WebCore::CachedFrame::CachedFrame):
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::restore):
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::HistoryItem):
+        * history/HistoryItem.h:
+        * history/PageCache.cpp:
+        (WebCore::canCachePage):
+        * html/BaseDateAndTimeInputType.cpp:
+        * html/BaseDateAndTimeInputType.h:
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::isKeyboardFocusable const):
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::updateWidget):
+        * html/HTMLAttachmentElement.h:
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::maxActivePixelMemory):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::collectStyleForPresentationAttribute):
+        * html/HTMLIFrameElement.h:
+        * html/HTMLImageElement.cpp:
+        * html/HTMLImageElement.h:
+        * html/HTMLInputElement.cpp:
+        * html/HTMLInputElement.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::finishInitialization):
+        (WebCore::HTMLMediaElement::registerWithDocument):
+        (WebCore::HTMLMediaElement::unregisterWithDocument):
+        (WebCore::HTMLMediaElement::setVolume):
+        (WebCore::HTMLMediaElement::nextScanRate):
+        (WebCore::HTMLMediaElement::sourceWasAdded):
+        (WebCore::HTMLMediaElement::mediaEngineWasUpdated):
+        (WebCore::HTMLMediaElement::updateVolume):
+        (WebCore::HTMLMediaElement::userCancelledLoad):
+        (WebCore::HTMLMediaElement::mediaSessionTitle const):
+        (WebCore::HTMLMediaElement::purgeBufferedDataIfPossible):
+        * html/HTMLMediaElement.h:
+        * html/HTMLMetaElement.cpp:
+        (WebCore::HTMLMetaElement::process):
+        * html/HTMLObjectElement.cpp:
+        * html/HTMLPlugInElement.h:
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::usesMenuList const):
+        (WebCore::HTMLSelectElement::createElementRenderer):
+        (WebCore::HTMLSelectElement::childShouldCreateRenderer const):
+        (WebCore::HTMLSelectElement::willRespondToMouseClickEvents):
+        (WebCore::HTMLSelectElement::updateListBoxSelection):
+        (WebCore::HTMLSelectElement::scrollToSelection):
+        (WebCore::HTMLSelectElement::setOptionsChangedOnRenderer):
+        (WebCore::HTMLSelectElement::menuListDefaultEventHandler):
+        (WebCore::HTMLSelectElement::defaultEventHandler):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::createInnerTextStyle):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::select):
+        (WebCore::HTMLTextFormControlElement::adjustInnerTextStyle const):
+        * html/HTMLTextFormControlElement.h:
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::parseAttribute):
+        (WebCore::HTMLVideoElement::supportsFullscreen const):
+        * html/HTMLVideoElement.h:
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocument::ImageDocument):
+        (WebCore::ImageDocument::createDocumentStructure):
+        (WebCore::ImageDocument::imageUpdated):
+        * html/ImageDocument.h:
+        * html/InputType.cpp:
+        * html/InputType.h:
+        * html/MediaDocument.cpp:
+        (WebCore::MediaDocumentParser::createDocumentStructure):
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::clientDataBufferingTimerFired):
+        (WebCore::MediaElementSession::showPlaybackTargetPicker):
+        (WebCore::MediaElementSession::wirelessVideoPlaybackDisabled const):
+        (WebCore::MediaElementSession::setHasPlaybackTargetAvailabilityListeners):
+        (WebCore::MediaElementSession::isPlayingToWirelessPlaybackTarget const):
+        (WebCore::MediaElementSession::requiresFullscreenForVideoPlayback const):
+        * html/MediaElementSession.h:
+        * html/PluginDocument.cpp:
+        (WebCore::PluginDocumentParser::createDocumentStructure):
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::handleTouchEvent):
+        * html/RangeInputType.h:
+        * html/SearchInputType.cpp:
+        (WebCore::SearchInputType::addSearchResult):
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::isKeyboardFocusable const):
+        (WebCore::TextFieldInputType::handleFocusEvent):
+        (WebCore::TextFieldInputType::handleBlurEvent):
+        (WebCore::TextFieldInputType::didSetValueByUserEdit):
+        (WebCore::TextFieldInputType::listAttributeTargetChanged):
+        * html/parser/HTMLParserScheduler.h:
+        (WebCore::HTMLParserScheduler::shouldYieldBeforeToken):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processCharacterBufferForInBody):
+        * html/parser/HTMLTreeBuilder.h:
+        * html/shadow/MediaControlElements.cpp:
+        * html/shadow/MediaControlElements.h:
+        * html/shadow/MediaControls.h:
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::dragFrom):
+        * html/shadow/SliderThumbElement.h:
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::SearchFieldResultsButtonElement::defaultEventHandler):
+        (WebCore::SearchFieldCancelButtonElement::SearchFieldCancelButtonElement):
+        * html/shadow/TextControlInnerElements.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::setIndicating):
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::platform):
+        * inspector/PageScriptDebugServer.cpp:
+        (WebCore::PageScriptDebugServer::runEventLoopWhilePaused):
+        * inspector/agents/InspectorTimelineAgent.cpp:
+        (WebCore::currentRunLoop):
+        * loader/DocumentLoader.cpp:
+        * loader/DocumentLoader.h:
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::makeCrossOriginAccessRequest):
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::createDocument):
+        * loader/EmptyClients.cpp:
+        * loader/EmptyClients.h:
+        * loader/EmptyFrameLoaderClient.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkCompleted):
+        (WebCore::FrameLoader::willLoadMediaElementURL):
+        (WebCore::FrameLoader::stopForUserCancel):
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        (WebCore::FrameLoader::didFirstLayout):
+        (WebCore::createWindow):
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderClient.h:
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::saveScrollPositionAndViewStateToItem):
+        (WebCore::HistoryController::restoreScrollPositionAndViewState):
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::init):
+        (WebCore::ResourceLoader::willSendRequestInternal):
+        * loader/ResourceLoader.h:
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::loadPlugin):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::create):
+        (WebCore::SubresourceLoader::willCancel):
+        (WebCore::SubresourceLoader::notifyDone):
+        (WebCore::SubresourceLoader::releaseResources):
+        * loader/SubresourceLoader.h:
+        * loader/cache/CachedImage.cpp:
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::userCaptionPreferencesChangedNotificationCallback):
+        * page/Chrome.cpp:
+        (WebCore::Chrome::createColorChooser):
+        (WebCore::Chrome::dispatchViewportPropertiesDidChange const):
+        (WebCore::Chrome::didReceiveDocType):
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::install):
+        (WebCore::DOMTimer::fired):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::outerHeight const):
+        (WebCore::DOMWindow::outerWidth const):
+        (WebCore::DOMWindow::clearTimeout):
+        (WebCore::DOMWindow::addEventListener):
+        (WebCore::DOMWindow::resetAllGeolocationPermission):
+        (WebCore::DOMWindow::removeEventListener):
+        (WebCore::DOMWindow::removeAllEventListeners):
+        * page/DOMWindow.h:
+        * page/DeprecatedGlobalSettings.cpp:
+        (WebCore::DeprecatedGlobalSettings::globalConstRedeclarationShouldThrow):
+        * page/DeprecatedGlobalSettings.h:
+        * page/DragController.cpp:
+        * page/EditorClient.h:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEventSingleClick):
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+        (WebCore::EventHandler::startPanScrolling):
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        * page/EventHandler.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+        (WebCore::Frame::willDetachPage):
+        * page/Frame.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        (WebCore::FrameView::clear):
+        (WebCore::FrameView::effectiveFrameFlattening const):
+        (WebCore::FrameView::flushCompositingStateForThisFrame):
+        (WebCore::FrameView::scrollPositionRespectingCustomFixedPosition const):
+        (WebCore::FrameView::viewportConstrainedVisibleContentRect const):
+        (WebCore::FrameView::updateContentsSize):
+        (WebCore::FrameView::computeScrollability const):
+        (WebCore::FrameView::adjustTiledBackingCoverage):
+        (WebCore::FrameView::calculateExtendedBackgroundMode const):
+        (WebCore::FrameView::performPostLayoutTasks):
+        (WebCore::FrameView::sizeForResizeEvent const):
+        (WebCore::FrameView::sendResizeEventIfNeeded):
+        * page/FrameView.h:
+        * page/FrameViewLayoutContext.cpp:
+        (WebCore::FrameViewLayoutContext::layout):
+        * page/MemoryRelease.cpp:
+        (WebCore::releaseCriticalMemory):
+        (WebCore::releaseMemory):
+        * page/Navigator.cpp:
+        * page/Navigator.h:
+        * page/NavigatorBase.cpp:
+        * page/Page.cpp:
+        (WebCore::Page::setIsVisibleInternal):
+        (WebCore::Page::showPlaybackTargetPicker):
+        * page/Page.h:
+        * page/PerformanceMonitor.cpp:
+        (WebCore::PerformanceMonitor::measurePostLoadMemoryUsage):
+        * page/ResourceUsageOverlay.cpp:
+        (WebCore::ResourceUsageOverlay::initialize):
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::canDisplay const):
+        * page/SettingsBase.cpp:
+        * page/SettingsBase.h:
+        * page/SettingsDefaultValues.h:
+        (WebCore::editingBehaviorTypeForPlatform):
+        * page/TextIndicator.cpp:
+        (WebCore::TextIndicator::createWithRange):
+        (WebCore::initializeIndicator):
+        * page/ViewportConfiguration.cpp:
+        (WebCore::ViewportConfiguration::textDocumentParameters):
+        * page/cocoa/MemoryReleaseCocoa.mm:
+        (WebCore::platformReleaseMemory):
+        (WebCore::jettisonExpensiveObjectsOnTopLevelNavigation):
+        * page/cocoa/ResourceUsageOverlayCocoa.mm:
+        (WebCore::showText):
+        * page/cocoa/ResourceUsageThreadCocoa.mm:
+        (WebCore::vmPageSize):
+        * page/cocoa/SettingsBaseCocoa.mm:
+        * page/ios/EventHandlerIOS.mm:
+        * page/ios/FrameIOS.mm:
+        * page/mac/ChromeMac.mm:
+        * page/mac/PageMac.mm:
+        (WebCore::Page::platformInitialize):
+        * page/mac/WebCoreFrameView.h:
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::reconcileScrollingState):
+        * page/scrolling/ScrollingTree.h:
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        * page/scrolling/ScrollingTreeScrollingNodeDelegate.cpp:
+        * page/scrolling/ScrollingTreeScrollingNodeDelegate.h:
+        * page/scrolling/ios/ScrollingCoordinatorIOS.h:
+        * page/scrolling/ios/ScrollingCoordinatorIOS.mm:
+        * page/scrolling/ios/ScrollingTreeFrameScrollingNodeIOS.h:
+        * page/scrolling/ios/ScrollingTreeFrameScrollingNodeIOS.mm:
+        * page/scrolling/ios/ScrollingTreeIOS.cpp:
+        * page/scrolling/ios/ScrollingTreeIOS.h:
+        * platform/ContentFilterUnblockHandler.h:
+        * platform/Cursor.cpp:
+        * platform/Cursor.h:
+        * platform/DragImage.cpp:
+        * platform/DragImage.h:
+        * platform/FileChooser.cpp:
+        * platform/FileChooser.h:
+        * platform/HostWindow.h:
+        * platform/LocalizedStrings.cpp:
+        * platform/LocalizedStrings.h:
+        * platform/LowPowerModeNotifier.cpp:
+        * platform/LowPowerModeNotifier.h:
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::initializeSupportedImageMIMETypes):
+        (WebCore::initializeSupportedNonImageMimeTypes):
+        (WebCore::initializeUnsupportedTextMIMETypes):
+        * platform/Pasteboard.h:
+        * platform/PasteboardStrategy.h:
+        * platform/PlatformKeyboardEvent.h:
+        * platform/PlatformPasteboard.h:
+        * platform/PlatformScreen.h:
+        * platform/RemoteCommandListener.cpp:
+        * platform/RuntimeApplicationChecks.h:
+        * platform/ScrollAnimator.cpp:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::contentsScrollPosition const):
+        (WebCore::ScrollView::setContentsScrollPosition):
+        (WebCore::ScrollView::visibleContentRectInternal const):
+        * platform/ScrollView.h:
+        * platform/ScrollableArea.cpp:
+        * platform/ScrollableArea.h:
+        * platform/Scrollbar.cpp:
+        * platform/Scrollbar.h:
+        * platform/ThreadTimers.cpp:
+        * platform/Timer.cpp:
+        (WebCore::shouldSuppressThreadSafetyCheck):
+        * platform/Timer.h:
+        (WebCore::TimerBase::isActive const):
+        * platform/ValidationBubble.h:
+        * platform/Widget.h:
+        * platform/audio/AudioHardwareListener.cpp:
+        (WebCore::AudioHardwareListener::AudioHardwareListener):
+        * platform/audio/PlatformMediaSession.h:
+        * platform/audio/PlatformMediaSessionManager.h:
+        * platform/audio/ios/AudioDestinationIOS.cpp:
+        * platform/audio/ios/AudioDestinationIOS.h:
+        * platform/audio/ios/AudioFileReaderIOS.cpp:
+        * platform/audio/ios/AudioFileReaderIOS.h:
+        * platform/audio/ios/AudioSessionIOS.mm:
+        (WebCore::AudioSession::setCategory):
+        (WebCore::AudioSession::routingContextUID const):
+        * platform/audio/ios/MediaSessionManagerIOS.h:
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        * platform/cf/MainThreadSharedTimerCF.cpp:
+        (WebCore::setupPowerObserver):
+        (WebCore::MainThreadSharedTimer::setFireInterval):
+        * platform/cf/URLCF.cpp:
+        * platform/cocoa/ContentFilterUnblockHandlerCocoa.mm:
+        (WebCore::ContentFilterUnblockHandler::wrapWithDecisionHandler):
+        (WebCore::ContentFilterUnblockHandler::needsUIProcess const):
+        (WebCore::ContentFilterUnblockHandler::encode const):
+        (WebCore::ContentFilterUnblockHandler::decode):
+        (WebCore::ContentFilterUnblockHandler::canHandleRequest const):
+        (WebCore::dispatchToMainThread):
+        (WebCore::ContentFilterUnblockHandler::requestUnblockAsync const):
+        * platform/cocoa/DataDetectorsCoreSoftLink.h:
+        * platform/cocoa/DataDetectorsCoreSoftLink.mm:
+        * platform/cocoa/KeyEventCocoa.mm:
+        * platform/cocoa/LocalizedStringsCocoa.mm:
+        (WebCore::localizedNSString):
+        * platform/cocoa/NetworkExtensionContentFilter.mm:
+        (WebCore::NetworkExtensionContentFilter::initialize):
+        * platform/cocoa/ParentalControlsContentFilter.mm:
+        (WebCore::ParentalControlsContentFilter::unblockHandler const):
+        * platform/cocoa/PasteboardCocoa.mm:
+        (WebCore::Pasteboard::fileContentState):
+        * platform/cocoa/PlatformView.h:
+        * platform/cocoa/PlaybackSessionInterface.h:
+        * platform/cocoa/PlaybackSessionModel.h:
+        * platform/cocoa/PlaybackSessionModelMediaElement.h:
+        * platform/cocoa/PlaybackSessionModelMediaElement.mm:
+        * platform/cocoa/RuntimeApplicationChecksCocoa.mm:
+        * platform/cocoa/SystemVersion.mm:
+        (WebCore::createSystemMarketingVersion):
+        * platform/cocoa/VideoFullscreenChangeObserver.h:
+        * platform/cocoa/VideoFullscreenModel.h:
+        * platform/cocoa/VideoFullscreenModelVideoElement.h:
+        * platform/cocoa/VideoFullscreenModelVideoElement.mm:
+        * platform/gamepad/cocoa/GameControllerGamepad.h:
+        * platform/gamepad/cocoa/GameControllerGamepad.mm:
+        * platform/gamepad/cocoa/GameControllerGamepadProvider.h:
+        * platform/gamepad/cocoa/GameControllerGamepadProvider.mm:
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/Color.h:
+        * platform/graphics/ComplexTextController.cpp:
+        * platform/graphics/DisplayRefreshMonitor.cpp:
+        (WebCore::DisplayRefreshMonitor::createDefaultDisplayRefreshMonitor):
+        * platform/graphics/FloatSize.h:
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::Font):
+        (WebCore::createAndFillGlyphPage):
+        * platform/graphics/Font.h:
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontCache::getCachedFontPlatformData):
+        (WebCore::FontCache::fontForPlatformData):
+        (WebCore::FontCache::purgeInactiveFontData):
+        (WebCore::FontCache::inactiveFontCount):
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::FontCascade):
+        * platform/graphics/FontCascadeFonts.h:
+        * platform/graphics/FontDescription.h:
+        * platform/graphics/FontPlatformData.h:
+        (WebCore::FontPlatformData::isEmoji const):
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawImage):
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/GraphicsLayer.h:
+        * platform/graphics/Icon.h:
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::drawTiled):
+        (WebCore::Image::computeIntrinsicDimensions):
+        * platform/graphics/Image.h:
+        * platform/graphics/IntPoint.h:
+        * platform/graphics/IntRect.h:
+        * platform/graphics/IntSize.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::isAvailable):
+        (WebCore::MediaPlayer::volumeChanged):
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        * platform/graphics/NamedImageGeneratedImage.cpp:
+        (WebCore::NamedImageGeneratedImage::draw):
+        * platform/graphics/StringTruncator.cpp:
+        (WebCore::centerTruncateToBuffer):
+        (WebCore::rightTruncateToBuffer):
+        (WebCore::rightClipToWordBuffer):
+        * platform/graphics/TextTrackRepresentation.cpp:
+        * platform/graphics/avfoundation/InbandMetadataTextTrackPrivateAVF.cpp:
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp:
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.h:
+        * platform/graphics/avfoundation/MediaPlaybackTargetMac.mm:
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::supportsFullscreen const):
+        (WebCore::MediaPlayerPrivateAVFoundation::rateChanged):
+        * platform/graphics/avfoundation/WebMediaSessionManagerMac.cpp:
+        * platform/graphics/avfoundation/WebMediaSessionManagerMac.h:
+        * platform/graphics/avfoundation/cf/InbandTextTrackPrivateLegacyAVCF.cpp:
+        * platform/graphics/avfoundation/cf/InbandTextTrackPrivateLegacyAVCF.h:
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm:
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::supportsPersistentKeys):
+        * platform/graphics/avfoundation/objc/InbandTextTrackPrivateLegacyAVFObjC.h:
+        * platform/graphics/avfoundation/objc/InbandTextTrackPrivateLegacyAVFObjC.mm:
+        * platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.h:
+        * platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.mm:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenMode):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setVolume):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::seekableTimeRangesLastModifiedTime const):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::liveUpdateInterval const):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::maximumDurationToCacheMediaTime const):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::didPassCORSAccessCheck const):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::wouldTaintOrigin const):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::isCurrentPlaybackTargetWireless const):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::wirelessPlaybackTargetType const):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::wirelessPlaybackTargetName const):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::updateDisableExternalPlayback):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setShouldDisableSleep):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::supportsPictureInPicture const):
+        * platform/graphics/avfoundation/objc/OutOfBandTextTrackPrivateAVF.h:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::flushCompositingState):
+        (WebCore::GraphicsLayerCA::computeVisibleAndCoverageRect const):
+        (WebCore::GraphicsLayerCA::createTransformAnimationsFromKeyframes):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/graphics/ca/TileController.cpp:
+        (WebCore::TileController::~TileController):
+        (WebCore::TileController::adjustTileCoverageRect const):
+        * platform/graphics/ca/TileController.h:
+        * platform/graphics/ca/TileGrid.cpp:
+        (WebCore::TileGrid::startedNewCohort):
+        (WebCore::TileGrid::platformCALayerPaintContents):
+        * platform/graphics/ca/TileGrid.h:
+        * platform/graphics/ca/cocoa/LayerFlushSchedulerMac.cpp:
+        (WebCore::currentRunLoop):
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (-[WebAnimationDelegate animationDidStart:]):
+        (-[WebAnimationDelegate animationDidStop:finished:]):
+        (WebCore::PlatformCALayerCocoa::setContentsScale):
+        (WebCore::layerContentsFormat):
+        (WebCore::PlatformCALayer::drawLayerContents):
+        (WebCore::PlatformCALayerCocoa::backingStoreBytesPerPixel const):
+        * platform/graphics/cg/GradientCG.cpp:
+        (WebCore::Gradient::paint):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::displayP3ColorSpaceRef):
+        (WebCore::GraphicsContext::drawNativeImage):
+        (WebCore::drawPatternCallback):
+        (WebCore::GraphicsContext::drawPattern):
+        (WebCore::GraphicsContext::drawLine):
+        (WebCore::applyShadowOffsetWorkaroundIfNeeded):
+        (WebCore::GraphicsContext::setURLForRect):
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::jpegUTI):
+        * platform/graphics/cg/ImageBufferDataCG.cpp:
+        * platform/graphics/cg/ImageDecoderCG.cpp:
+        (WebCore::ImageDecoderCG::createFrameImageAtIndex):
+        * platform/graphics/cg/ImageSourceCGMac.mm:
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        * platform/graphics/cocoa/ColorCocoa.h:
+        * platform/graphics/cocoa/ColorCocoa.mm:
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::FontCache::similarFont):
+        (WebCore::computeNecessarySynthesis):
+        (WebCore::FontDatabase::fontForPostScriptName):
+        (WebCore::variationCapabilitiesForFontDescriptor):
+        (WebCore::lookupFallbackFont):
+        (WebCore::FontCache::systemFallbackForCharacters):
+        (WebCore::FontCache::lastResortFallbackFont):
+        * platform/graphics/cocoa/FontCascadeCocoa.mm:
+        (WebCore::FontCascade::drawGlyphs):
+        (WebCore::FontCascade::fontForCombiningCharacterSequence const):
+        * platform/graphics/cocoa/FontCocoa.mm:
+        (WebCore::Font::platformInit):
+        (WebCore::Font::variantCapsSupportsCharacterForSynthesis const):
+        (WebCore::Font::determinePitch):
+        * platform/graphics/cocoa/FontDescriptionCocoa.cpp:
+        (WebCore::FontCascadeDescription::effectiveFamilyCount const):
+        (WebCore::FontCascadeDescription::effectiveFamilyAt const):
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::cascadeToLastResortAndVariationsFontDescriptor):
+        * platform/graphics/cocoa/GraphicsContext3DCocoa.mm:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        (WebCore::GraphicsContext3D::texImageIOSurface2D):
+        * platform/graphics/cocoa/GraphicsContextCocoa.mm:
+        * platform/graphics/cocoa/IOSurface.mm:
+        (WebCore::optionsForBiplanarSurface):
+        (WebCore::optionsFor32BitSurface):
+        (WebCore::IOSurface::maximumSize):
+        (WebCore::IOSurface::surfaceID const):
+        * platform/graphics/cocoa/SystemFontDatabaseCoreText.cpp:
+        (WebCore::SystemFontDatabaseCoreText::cascadeList):
+        * platform/graphics/cocoa/TextTrackRepresentationCocoa.h:
+        * platform/graphics/cocoa/TextTrackRepresentationCocoa.mm:
+        (-[WebCoreTextTrackRepresentationCocoaHelper observeValueForKeyPath:ofObject:change:context:]):
+        * platform/graphics/cocoa/WebMetalLayer.h:
+        * platform/graphics/cv/ImageTransferSessionVT.mm:
+        (WebCore::cvPixelFormatOpenGLKey):
+        (WebCore::ImageTransferSessionVT::ImageTransferSessionVT):
+        * platform/graphics/cv/VideoTextureCopierCV.h:
+        * platform/graphics/ios/DisplayRefreshMonitorIOS.h:
+        * platform/graphics/ios/DisplayRefreshMonitorIOS.mm:
+        * platform/graphics/ios/FontAntialiasingStateSaver.h:
+        (WebCore::FontAntialiasingStateSaver::FontAntialiasingStateSaver):
+        (WebCore::FontAntialiasingStateSaver::setup):
+        (WebCore::FontAntialiasingStateSaver::restore):
+        * platform/graphics/ios/FontCacheIOS.mm:
+        * platform/graphics/ios/IconIOS.mm:
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharacters):
+        * platform/graphics/mac/FloatPointMac.mm:
+        * platform/graphics/mac/FloatRectMac.mm:
+        * platform/graphics/mac/FloatSizeMac.mm:
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        (WebCore::createFontCustomPlatformData):
+        * platform/graphics/mac/ImageMac.mm:
+        * platform/graphics/mac/IntPointMac.mm:
+        * platform/graphics/mac/IntRectMac.mm:
+        * platform/graphics/mac/IntSizeMac.mm:
+        * platform/graphics/mac/WebKitNSImageExtras.h:
+        * platform/graphics/mac/WebKitNSImageExtras.mm:
+        * platform/graphics/mac/WebLayer.mm:
+        (-[WebSimpleLayer display]):
+        (-[WebSimpleLayer drawInContext:]):
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp:
+        (WebCore::Extensions3DOpenGL::supportsExtension):
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        * platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp:
+        * platform/graphics/transforms/TransformationMatrix.cpp:
+        (WebCore::TransformationMatrix::multiply):
+        * platform/graphics/transforms/TransformationMatrix.h:
+        * platform/ios/CursorIOS.cpp:
+        * platform/ios/Device.cpp:
+        * platform/ios/Device.h:
+        * platform/ios/DeviceMotionClientIOS.h:
+        * platform/ios/DeviceMotionClientIOS.mm:
+        (WebCore::DeviceMotionClientIOS::motionChanged):
+        * platform/ios/DeviceOrientationClientIOS.h:
+        * platform/ios/DeviceOrientationClientIOS.mm:
+        (WebCore::DeviceOrientationClientIOS::orientationChanged):
+        * platform/ios/DragImageIOS.mm:
+        * platform/ios/EventLoopIOS.mm:
+        * platform/ios/KeyEventIOS.mm:
+        * platform/ios/LegacyTileCache.h:
+        * platform/ios/LegacyTileCache.mm:
+        * platform/ios/LegacyTileGrid.h:
+        * platform/ios/LegacyTileGrid.mm:
+        * platform/ios/LegacyTileGridTile.h:
+        * platform/ios/LegacyTileGridTile.mm:
+        * platform/ios/LegacyTileLayer.h:
+        * platform/ios/LegacyTileLayer.mm:
+        * platform/ios/LegacyTileLayerPool.h:
+        * platform/ios/LegacyTileLayerPool.mm:
+        * platform/ios/LowPowerModeNotifierIOS.mm:
+        * platform/ios/PasteboardIOS.mm:
+        * platform/ios/PlatformEventFactoryIOS.h:
+        * platform/ios/PlatformEventFactoryIOS.mm:
+        * platform/ios/PlatformPasteboardIOS.mm:
+        * platform/ios/PlatformScreenIOS.mm:
+        * platform/ios/PlatformSpeechSynthesizerIOS.mm:
+        * platform/ios/PlaybackSessionInterfaceAVKit.h:
+        * platform/ios/PlaybackSessionInterfaceAVKit.mm:
+        * platform/ios/RemoteCommandListenerIOS.h:
+        * platform/ios/RemoteCommandListenerIOS.mm:
+        * platform/ios/SSLKeyGeneratorIOS.cpp:
+        * platform/ios/ScrollAnimatorIOS.h:
+        * platform/ios/ScrollAnimatorIOS.mm:
+        * platform/ios/ScrollViewIOS.mm:
+        (WebCore::ScrollView::platformSetContentsSize):
+        * platform/ios/ScrollbarThemeIOS.h:
+        * platform/ios/ScrollbarThemeIOS.mm:
+        * platform/ios/SystemMemoryIOS.cpp:
+        (WebCore::systemMemoryLevel):
+        * platform/ios/ThemeIOS.h:
+        * platform/ios/ThemeIOS.mm:
+        * platform/ios/TileControllerMemoryHandlerIOS.cpp:
+        * platform/ios/TileControllerMemoryHandlerIOS.h:
+        * platform/ios/UserAgentIOS.mm:
+        (WebCore::deviceNameForUserAgent):
+        * platform/ios/ValidationBubbleIOS.mm:
+        * platform/ios/VideoFullscreenInterfaceAVKit.h:
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        (WebCore::supportsPictureInPicture):
+        * platform/ios/WebAVPlayerController.h:
+        * platform/ios/WebAVPlayerController.mm:
+        * platform/ios/WebBackgroundTaskController.h:
+        * platform/ios/WebBackgroundTaskController.mm:
+        * platform/ios/WebCoreMotionManager.h:
+        * platform/ios/WebCoreMotionManager.mm:
+        * platform/ios/WebEvent.h:
+        * platform/ios/WebEvent.mm:
+        * platform/ios/WebSQLiteDatabaseTrackerClient.h:
+        * platform/ios/WebSQLiteDatabaseTrackerClient.mm:
+        * platform/ios/WebVideoFullscreenControllerAVKit.h:
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        (VideoFullscreenControllerContext::requestUpdateInlineRect):
+        (VideoFullscreenControllerContext::requestVideoContentLayer):
+        (VideoFullscreenControllerContext::returnVideoContentLayer):
+        (VideoFullscreenControllerContext::didSetupFullscreen):
+        (VideoFullscreenControllerContext::didExitFullscreen):
+        * platform/ios/WidgetIOS.mm:
+        * platform/ios/wak/FloatingPointEnvironment.cpp:
+        * platform/ios/wak/FloatingPointEnvironment.h:
+        * platform/ios/wak/WAKAppKitStubs.m:
+        * platform/ios/wak/WAKClipView.m:
+        * platform/ios/wak/WAKResponder.m:
+        * platform/ios/wak/WAKScrollView.mm:
+        * platform/ios/wak/WAKView.mm:
+        * platform/ios/wak/WAKWindow.mm:
+        * platform/ios/wak/WKContentObservation.cpp:
+        * platform/ios/wak/WKGraphics.mm:
+        * platform/ios/wak/WKUtilities.c:
+        * platform/ios/wak/WKView.mm:
+        * platform/ios/wak/WebCoreThread.mm:
+        * platform/ios/wak/WebCoreThreadRun.cpp:
+        * platform/ios/wak/WebCoreThreadSystemInterface.cpp:
+        * platform/mac/DragDataMac.mm:
+        (WebCore::rtfPasteboardType):
+        (WebCore::rtfdPasteboardType):
+        (WebCore::stringPasteboardType):
+        (WebCore::urlPasteboardType):
+        (WebCore::htmlPasteboardType):
+        (WebCore::colorPasteboardType):
+        (WebCore::pdfPasteboardType):
+        (WebCore::tiffPasteboardType):
+        (WebCore::DragData::containsURL const):
+        * platform/mac/MediaRemoteSoftLink.cpp:
+        * platform/mac/MediaRemoteSoftLink.h:
+        * platform/mac/SuddenTermination.mm:
+        * platform/mac/WebCoreFullScreenPlaceholderView.mm:
+        * platform/mac/WebCoreFullScreenWarningView.h:
+        * platform/mac/WebCoreFullScreenWarningView.mm:
+        * platform/mac/WebCoreFullScreenWindow.h:
+        * platform/mac/WebCoreFullScreenWindow.mm:
+        * platform/mac/WebNSAttributedStringExtras.mm:
+        * platform/mediastream/RealtimeMediaSourceFactory.h:
+        * platform/mediastream/RealtimeVideoSource.cpp:
+        (WebCore::RealtimeVideoSource::~RealtimeVideoSource):
+        (WebCore::RealtimeVideoSource::prepareToProduceData):
+        * platform/mediastream/ios/AVAudioSessionCaptureDevice.h:
+        * platform/mediastream/ios/AVAudioSessionCaptureDevice.mm:
+        * platform/mediastream/ios/AVAudioSessionCaptureDeviceManager.h:
+        * platform/mediastream/ios/AVAudioSessionCaptureDeviceManager.mm:
+        * platform/mediastream/ios/CoreAudioCaptureSourceIOS.h:
+        * platform/mediastream/ios/CoreAudioCaptureSourceIOS.mm:
+        * platform/mediastream/libwebrtc/LibWebRTCMacros.h:
+        * platform/mediastream/mac/AVCaptureDeviceManager.mm:
+        (WebCore::deviceIsAvailable):
+        * platform/mediastream/mac/AVMediaCaptureSource.mm:
+        (WebCore::AVMediaCaptureSource::AVMediaCaptureSource):
+        (WebCore::AVMediaCaptureSource::stopProducingData):
+        (-[WebCoreAVMediaCaptureSourceObserver addNotificationObservers]):
+        (-[WebCoreAVMediaCaptureSourceObserver removeNotificationObservers]):
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::AVVideoCaptureSource):
+        (WebCore::AVVideoCaptureSource::~AVVideoCaptureSource):
+        (WebCore::AVVideoCaptureSource::stopProducingData):
+        (WebCore::AVVideoCaptureSource::prefersPreset):
+        (WebCore::sensorOrientation):
+        (WebCore::AVVideoCaptureSource::setupCaptureSession):
+        (WebCore::AVVideoCaptureSource::monitorOrientation):
+        (-[WebCoreAVVideoCaptureSourceObserver addNotificationObservers]):
+        (-[WebCoreAVVideoCaptureSourceObserver removeNotificationObservers]):
+        * platform/mediastream/mac/AudioTrackPrivateMediaStreamCocoa.cpp:
+        (WebCore::AudioTrackPrivateMediaStreamCocoa::createAudioUnit):
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioSharedUnit::setupAudioUnit):
+        (WebCore::CoreAudioCaptureSource::create):
+        (WebCore::CoreAudioCaptureSource::CoreAudioCaptureSource):
+        (WebCore::CoreAudioCaptureSource::~CoreAudioCaptureSource):
+        (WebCore::CoreAudioCaptureSource::startProducingData):
+        * platform/mediastream/mac/CoreAudioCaptureSource.h:
+        * platform/mediastream/mac/DisplayCaptureSourceCocoa.cpp:
+        (WebCore::DisplayCaptureSourceCocoa::~DisplayCaptureSourceCocoa):
+        (WebCore::DisplayCaptureSourceCocoa::startProducingData):
+        * platform/mediastream/mac/RealtimeIncomingVideoSourceCocoa.mm:
+        (WebCore::RealtimeIncomingVideoSourceCocoa::pixelBufferPool):
+        * platform/mediastream/mac/RealtimeMediaSourceCenterMac.cpp:
+        * platform/mock/MediaPlaybackTargetMock.cpp:
+        * platform/mock/MediaPlaybackTargetMock.h:
+        * platform/mock/MediaPlaybackTargetPickerMock.cpp:
+        * platform/mock/MediaPlaybackTargetPickerMock.h:
+        * platform/mock/MockRealtimeAudioSource.cpp:
+        (WebCore::MockRealtimeAudioSource::~MockRealtimeAudioSource):
+        (WebCore::MockRealtimeAudioSource::startProducingData):
+        * platform/mock/MockRealtimeMediaSourceCenter.cpp:
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        * platform/network/CredentialStorage.cpp:
+        * platform/network/NetworkStateNotifier.h:
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::builtinResourceHandleConstructorMap):
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleClient.h:
+        * platform/network/ResourceRequestBase.cpp:
+        * platform/network/ResourceRequestBase.h:
+        * platform/network/cf/DNSResolveQueueCFNet.cpp:
+        * platform/network/cf/ProxyServerCFNet.cpp:
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::createCFURLConnection):
+        * platform/network/cf/ResourceRequest.h:
+        (WebCore::ResourceRequest::resourcePrioritiesEnabled):
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        (WebCore::ResourceRequest::doUpdateResourceRequest):
+        * platform/network/cf/SocketStreamHandleImplCFNet.cpp:
+        (WebCore::callbacksRunLoop):
+        (WebCore::copyCONNECTProxyResponse):
+        * platform/network/cocoa/CookieCocoa.mm:
+        (WebCore::Cookie::operator NSHTTPCookie * _Nullable  const):
+        * platform/network/cocoa/NetworkStorageSessionCocoa.mm:
+        (WebCore::cookiesForURL):
+        (WebCore::setHTTPCookiesForURL):
+        * platform/network/cocoa/ResourceRequestCocoa.mm:
+        (WebCore::ResourceRequest::doUpdateResourceRequest):
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        * platform/network/ios/NetworkStateNotifierIOS.mm:
+        * platform/network/ios/WebCoreURLResponseIOS.h:
+        * platform/network/ios/WebCoreURLResponseIOS.mm:
+        * platform/network/mac/ResourceErrorMac.mm:
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::createNSURLConnection):
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::platformLoadResourceSynchronously):
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge):
+        * platform/network/mac/UTIUtilities.mm:
+        * platform/sql/SQLiteDatabase.h:
+        (WebCore::SQLiteDatabase::sqlite3Handle const):
+        * platform/sql/SQLiteFileSystem.cpp:
+        * platform/sql/SQLiteFileSystem.h:
+        * platform/sql/SQLiteTransaction.cpp:
+        (WebCore::SQLiteTransaction::begin):
+        (WebCore::SQLiteTransaction::commit):
+        (WebCore::SQLiteTransaction::rollback):
+        (WebCore::SQLiteTransaction::stop):
+        * platform/text/PlatformLocale.cpp:
+        * platform/text/PlatformLocale.h:
+        * platform/text/ios/LocalizedDateCache.h:
+        * platform/text/ios/LocalizedDateCache.mm:
+        * platform/text/ios/TextEncodingRegistryIOS.mm:
+        * platform/text/mac/LocaleMac.h:
+        * platform/text/mac/LocaleMac.mm:
+        * plugins/PluginViewBase.h:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintPlatformDocumentMarker):
+        (WebCore::InlineTextBox::resolveStyleForMarkedText):
+        (WebCore::InlineTextBox::collectMarkedTextsForDocumentMarkers):
+        * rendering/MarkedText.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paint):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintBoxDecorations):
+        (WebCore::allowMinMaxPercentagesInAutoHeightBlocksQuirk):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::decodingModeForImageDraw const):
+        * rendering/RenderButton.cpp:
+        * rendering/RenderButton.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::styleWillChange):
+        (WebCore::RenderElement::styleDidChange):
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::allowsAcceleratedCompositing const):
+        (WebCore::RenderEmbeddedObject::setPluginUnavailabilityReason):
+        (WebCore::RenderEmbeddedObject::setPluginUnavailabilityReasonWithDescription):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::maxFilenameWidth const):
+        (WebCore::RenderFileUploadControl::paintObject):
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::positionFrames):
+        * rendering/RenderIFrame.h:
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintAreaElementFocusRing):
+        * rendering/RenderImage.h:
+        * rendering/RenderInline.cpp:
+        * rendering/RenderInline.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::canCreateStackingContext):
+        (WebCore::RenderLayer::canUseAcceleratedTouchScrolling const):
+        (WebCore::RenderLayer::scrollTo):
+        (WebCore::RenderLayer::scrollRectToVisible):
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout):
+        (WebCore::RenderLayer::showsOverflowControls const):
+        (WebCore::RenderLayer::calculateClipRects const):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::createPrimaryGraphicsLayer):
+        (WebCore::RenderLayerBacking::shouldClipCompositedBounds const):
+        (WebCore::RenderLayerBacking::updateConfiguration):
+        (WebCore::RenderLayerBacking::computeParentGraphicsLayerRect const):
+        (WebCore::RenderLayerBacking::updateGeometry):
+        (WebCore::RenderLayerBacking::paintsIntoWindow const):
+        (WebCore::RenderLayerBacking::setContentsNeedDisplayInRect):
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::visibleRectForLayerFlushing const):
+        (WebCore::RenderLayerCompositor::flushPendingLayerChanges):
+        (WebCore::RenderLayerCompositor::updateCustomLayersAfterFlush):
+        (WebCore::RenderLayerCompositor::didFlushChangesForLayer):
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+        (WebCore::RenderLayerCompositor::setIsInWindow):
+        (WebCore::RenderLayerCompositor::requiresCompositingForScrollableFrame const):
+        (WebCore::RenderLayerCompositor::isAsyncScrollableStickyLayer const):
+        (WebCore::RenderLayerCompositor::requiresCompositingForOverflowScrolling const):
+        (WebCore::RenderLayerCompositor::contentsScaleMultiplierForNewTiles const):
+        (WebCore::RenderLayerCompositor::ensureRootLayer):
+        (WebCore::RenderLayerCompositor::computeStickyViewportConstraints const):
+        (WebCore::RenderLayerCompositor::willRemoveScrollingLayerWithBacking):
+        (WebCore::RenderLayerCompositor::didAddScrollingLayer):
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderLayerModelObject.cpp:
+        (WebCore::RenderLayerModelObject::shouldPlaceBlockDirectionScrollbarOnLeft const):
+        * rendering/RenderLineBreak.cpp:
+        * rendering/RenderLineBreak.h:
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::RenderMenuList):
+        (WebCore::RenderMenuList::willBeDestroyed):
+        (WebCore::RenderMenuList::adjustInnerStyle):
+        (RenderMenuList::updateFromElement):
+        (RenderMenuList::setTextFromOption):
+        (RenderMenuList::hidePopup):
+        (RenderMenuList::popupDidHide):
+        * rendering/RenderMenuList.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::shouldApplyCompositedContainerScrollsForRepaint):
+        (WebCore::RenderObject::destroy):
+        * rendering/RenderObject.h:
+        * rendering/RenderSearchField.cpp:
+        (WebCore::RenderSearchField::itemText const):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::setRenderedText):
+        * rendering/RenderText.h:
+        * rendering/RenderTextControl.cpp:
+        * rendering/RenderTextControl.h:
+        * rendering/RenderTextControlMultiLine.cpp:
+        (WebCore::RenderTextControlMultiLine::getAverageCharWidth):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::layout):
+        (WebCore::RenderTextControlSingleLine::getAverageCharWidth):
+        (WebCore::RenderTextControlSingleLine::preferredContentLogicalWidth const):
+        * rendering/RenderTextLineBoxes.cpp:
+        (WebCore::lineDirectionPointFitsInBox):
+        (WebCore::RenderTextLineBoxes::positionForPoint const):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::paintBorderOnly):
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::arKitBundle):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::availableLogicalHeight const):
+        (WebCore::RenderView::clientLogicalWidthForFixedPosition const):
+        (WebCore::RenderView::clientLogicalHeightForFixedPosition const):
+        (WebCore::RenderView::repaintViewRectangle const):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::willBeDestroyed):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::selectionTop const):
+        (WebCore::RootInlineBox::selectionBottom const):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator== const):
+        * rendering/style/StyleRareInheritedData.h:
+        * rendering/updating/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::updateElementRenderer):
+        * style/StyleResolveForDocument.cpp:
+        (WebCore::Style::resolveForDocument):
+        * testing/Internals.cpp:
+        (WebCore::Internals::getCurrentCursorInfo):
+        (WebCore::Internals::isSelectPopupVisible):
+        (WebCore::Internals::setQuickLookPassword):
+        * testing/Internals.mm:
+        (WebCore::Internals::userPrefersReducedMotion const):
+        * testing/js/WebCoreTestSupportPrefix.h:
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::workerThread):
+
 2018-10-18  Per Arne Vollan  <pvollan@apple.com>
 
         [WebVTT] The TextTrackLoader parameter in TextTrackLoaderClient virtual methods should be a reference

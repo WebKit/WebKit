@@ -88,7 +88,7 @@ public:
     
     WEBCORE_EXPORT void decode(Ref<DeferredPromise>&&);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     bool willRespondToMouseClickEvents() override;
 #endif
 

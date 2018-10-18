@@ -38,7 +38,7 @@
 #include <wtf/ProcessPrivilege.h>
 #include <wtf/RetainPtr.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #define USE_KEYCHAIN_ACCESS_CONTROL_LISTS 0
 #else
 #define USE_KEYCHAIN_ACCESS_CONTROL_LISTS 1
@@ -69,7 +69,7 @@ inline Vector<uint8_t> vectorFromNSData(NSData* data)
 
 static NSString* masterKeyAccountNameForCurrentApplication()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
 #else
     NSString *bundleIdentifier = [[NSRunningApplication currentApplication] bundleIdentifier];
@@ -87,7 +87,7 @@ static bool createAndStoreMasterKey(Vector<uint8_t>& masterKeyData)
     int rc = CCRandomCopyBytes(kCCRandomDefault, masterKeyData.data(), masterKeyData.size());
     RELEASE_ASSERT(rc == kCCSuccess);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     NSBundle *mainBundle = [NSBundle mainBundle];
     NSString *applicationName = [mainBundle objectForInfoDictionaryKey:@"CFBundleDisplayName"];
     if (!applicationName)

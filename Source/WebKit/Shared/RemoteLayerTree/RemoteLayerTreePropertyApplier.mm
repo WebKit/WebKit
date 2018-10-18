@@ -35,12 +35,12 @@
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIView.h>
 #import <UIKitSPI.h>
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 @interface UIView (WKUIViewUtilities)
 - (void)_web_setSubviews:(NSArray *)subviews;
 @end
@@ -273,7 +273,7 @@ void RemoteLayerTreePropertyApplier::applyProperties(CALayer *layer, RemoteLayer
         if (!properties.maskLayerID)
             layer.mask = nullptr;
         else {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
             UIView *maskView = (__bridge UIView *)relatedLayers.get(properties.maskLayerID);
             // FIXME: need to check that the mask view is kept alive.
             ASSERT(!maskView.layer.superlayer);
@@ -290,7 +290,7 @@ void RemoteLayerTreePropertyApplier::applyProperties(CALayer *layer, RemoteLayer
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 void RemoteLayerTreePropertyApplier::applyProperties(UIView *view, RemoteLayerTreeHost* layerTreeHost, const RemoteLayerTreeTransaction::LayerProperties& properties, const RelatedLayerMap& relatedLayers, RemoteLayerBackingStore::LayerContentsType layerContentsType)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;

@@ -199,7 +199,7 @@ void ScrollView::setDelegatesScrolling(bool delegatesScrolling)
 
 IntPoint ScrollView::contentsScrollPosition() const
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (platformWidget())
         return actualScrollPosition();
 #endif
@@ -208,14 +208,14 @@ IntPoint ScrollView::contentsScrollPosition() const
 
 void ScrollView::setContentsScrollPosition(const IntPoint& position)
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (platformWidget())
         setActualScrollPosition(position);
 #endif
     setScrollPosition(position);
 }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 IntRect ScrollView::unobscuredContentRect(VisibleContentRectIncludesScrollbars scrollbarInclusion) const
 {
     return unobscuredContentRectInternal(scrollbarInclusion);
@@ -264,7 +264,7 @@ IntSize ScrollView::sizeForUnobscuredContent(VisibleContentRectIncludesScrollbar
 
 IntRect ScrollView::visibleContentRectInternal(VisibleContentRectIncludesScrollbars scrollbarInclusion, VisibleContentRectBehavior visibleContentRectBehavior) const
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (visibleContentRectBehavior == LegacyIOSDocumentViewRect) {
         if (platformWidget())
             return platformVisibleContentRect(scrollbarInclusion == IncludeScrollbars);

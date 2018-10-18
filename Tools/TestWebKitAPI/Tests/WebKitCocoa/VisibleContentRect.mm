@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED && PLATFORM(IOS)
+#if WK_API_ENABLED && PLATFORM(IOS_FAMILY)
 
 #import "TestWKWebView.h"
 #import <WebKit/WKWebViewPrivate.h>
@@ -119,5 +119,5 @@ TEST(WebKit, VisibleContentRect_ClippedBoundsWhenClippedByEnclosingView)
 
 } // namespace TestWebKitAPI
 
-#endif // WK_API_ENABLED && PLATFORM(IOS)
+#endif // WK_API_ENABLED && PLATFORM(IOS_FAMILY)
 

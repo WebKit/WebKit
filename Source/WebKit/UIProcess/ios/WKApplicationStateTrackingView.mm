@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKApplicationStateTrackingView.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "ApplicationStateTracker.h"
 #import "WKWebViewInternal.h"
@@ -104,4 +104,4 @@
 
 @end
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

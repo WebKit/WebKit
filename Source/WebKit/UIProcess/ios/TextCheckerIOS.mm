@@ -26,7 +26,7 @@
 #import "config.h"
 #import "TextChecker.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "TextCheckerState.h"
 #import "UIKitSPI.h"
@@ -275,4 +275,4 @@ void TextChecker::requestCheckingOfString(Ref<TextCheckerCompletion>&&, int32_t)
 
 } // namespace WebKit
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

@@ -40,7 +40,7 @@ typedef struct _NSRect NSRect;
 #endif
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #ifndef NSRect
 #define NSRect CGRect
 #endif

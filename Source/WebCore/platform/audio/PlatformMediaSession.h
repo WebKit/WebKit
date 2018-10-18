@@ -162,7 +162,7 @@ public:
     void setShouldPlayToPlaybackTarget(bool) override { }
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     virtual bool requiresPlaybackTargetRouteMonitoring() const { return false; }
 #endif
 

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if (PLATFORM(IOS) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if (PLATFORM(IOS_FAMILY) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
 #include "MessageReceiver.h"
 #include <WebCore/GraphicsLayer.h>
@@ -37,13 +37,13 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include <WebCore/VideoFullscreenInterfaceAVKit.h>
 #else
 #include <WebCore/VideoFullscreenInterfaceMac.h>
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 typedef WebCore::VideoFullscreenInterfaceAVKit PlatformVideoFullscreenInterface;
 #else
 typedef WebCore::VideoFullscreenInterfaceMac PlatformVideoFullscreenInterface;
@@ -84,7 +84,7 @@ private:
     void fullscreenModeChanged(WebCore::HTMLMediaElementEnums::VideoFullscreenMode) override;
     bool hasVideo() const override { return m_hasVideo; }
     WebCore::FloatSize videoDimensions() const override { return m_videoDimensions; }
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     UIViewController *presentingViewController() final;
     UIViewController *createVideoFullscreenViewController(AVPlayerViewController*) final;
 #endif
@@ -186,5 +186,5 @@ private:
     
 } // namespace WebKit
 
-#endif // PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#endif // PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 

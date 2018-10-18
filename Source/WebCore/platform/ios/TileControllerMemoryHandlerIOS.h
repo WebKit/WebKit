@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #include <wtf/ListHashSet.h>
 #include <wtf/NeverDestroyed.h>
@@ -54,4 +54,4 @@ private:
 WEBCORE_EXPORT TileControllerMemoryHandler& tileControllerMemoryHandler();
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

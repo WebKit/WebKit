@@ -95,7 +95,7 @@ static WebDefaultEditingDelegate *sharedDelegate = nil;
     return NO;
 }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 - (void)webView:(WebView *)webView didWriteSelectionToPasteboard:(NSPasteboard *)pasteboard
 {
 }

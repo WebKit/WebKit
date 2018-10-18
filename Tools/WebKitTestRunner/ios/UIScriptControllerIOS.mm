@@ -26,7 +26,7 @@
 #import "config.h"
 #import "UIScriptController.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "HIDEventGenerator.h"
 #import "PlatformWebView.h"
@@ -786,4 +786,4 @@ void UIScriptController::completeBackSwipe(JSValueRef callback)
 
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

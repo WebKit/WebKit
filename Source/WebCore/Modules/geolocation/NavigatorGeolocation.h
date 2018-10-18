@@ -39,9 +39,9 @@ public:
     static Geolocation* geolocation(Navigator&);
     Geolocation* geolocation() const;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void resetAllGeolocationPermission();
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 private:
     static const char* supplementName();

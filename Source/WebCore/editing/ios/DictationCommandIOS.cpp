@@ -26,7 +26,7 @@
 #include "config.h"
 #include "DictationCommandIOS.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #include "Document.h"
 #include "DocumentMarkerController.h"
@@ -79,4 +79,4 @@ void DictationCommandIOS::doApply()
 
 } // namespace WebCore
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

@@ -30,7 +30,7 @@
 namespace WebKit {
 
 enum class SDKVersion : uint32_t {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     FirstWithNetworkCache = DYLD_IOS_VERSION_9_0,
     FirstWithMediaTypesRequiringUserActionForPlayback = DYLD_IOS_VERSION_10_0,
     FirstWithExceptionsForDuplicateCompletionHandlerCalls = DYLD_IOS_VERSION_11_0,

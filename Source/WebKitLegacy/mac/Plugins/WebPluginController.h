@@ -34,7 +34,7 @@
 @class WebPluginPackage;
 @class WebView;
 @class WebDataSource;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 @class CALayer;
 #endif
 
@@ -57,7 +57,7 @@
 - (void)addPlugin:(NSView *)view;
 - (void)destroyPlugin:(NSView *)view;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 + (void)addPlugInView:(NSView *)view;
 - (BOOL)plugInsAreRunning;
 - (CALayer *)superlayerForPluginView:(NSView *)view;
@@ -65,7 +65,7 @@
 - (void)startAllPlugins;
 - (void)stopAllPlugins;
 - (void)destroyAllPlugins;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 - (void)stopPluginsForPageCache;
 - (void)restorePluginsFromCache;
 #endif

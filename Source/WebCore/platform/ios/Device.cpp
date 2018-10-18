@@ -26,7 +26,7 @@
 #include "config.h"
 #include "Device.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RetainPtr.h>
@@ -72,4 +72,4 @@ bool deviceHasIPadCapability()
 
 } // namespace WebCore
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

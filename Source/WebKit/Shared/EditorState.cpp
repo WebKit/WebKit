@@ -48,7 +48,7 @@ void EditorState::encode(IPC::Encoder& encoder) const
     if (!isMissingPostLayoutData)
         m_postLayoutData.encode(encoder);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     encoder << firstMarkedRect;
     encoder << lastMarkedRect;
     encoder << markedText;
@@ -91,7 +91,7 @@ bool EditorState::decode(IPC::Decoder& decoder, EditorState& result)
             return false;
     }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (!decoder.decode(result.firstMarkedRect))
         return false;
     if (!decoder.decode(result.lastMarkedRect))
@@ -109,17 +109,17 @@ bool EditorState::decode(IPC::Decoder& decoder, EditorState& result)
 void EditorState::PostLayoutData::encode(IPC::Encoder& encoder) const
 {
     encoder << typingAttributes;
-#if PLATFORM(IOS) || PLATFORM(GTK)
+#if PLATFORM(IOS_FAMILY) || PLATFORM(GTK)
     encoder << caretRectAtStart;
 #endif
-#if PLATFORM(IOS) || PLATFORM(MAC)
+#if PLATFORM(IOS_FAMILY) || PLATFORM(MAC)
     encoder << selectionClipRect;
     encoder << selectedTextLength;
     encoder << textAlignment;
     encoder << textColor;
     encoder << enclosingListType;
 #endif
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     encoder << caretRectAtEnd;
     encoder << selectionRects;
     encoder << wordAtSelection;
@@ -148,11 +148,11 @@ bool EditorState::PostLayoutData::decode(IPC::Decoder& decoder, PostLayoutData& 
 {
     if (!decoder.decode(result.typingAttributes))
         return false;
-#if PLATFORM(IOS) || PLATFORM(GTK)
+#if PLATFORM(IOS_FAMILY) || PLATFORM(GTK)
     if (!decoder.decode(result.caretRectAtStart))
         return false;
 #endif
-#if PLATFORM(IOS) || PLATFORM(MAC)
+#if PLATFORM(IOS_FAMILY) || PLATFORM(MAC)
     if (!decoder.decode(result.selectionClipRect))
         return false;
     if (!decoder.decode(result.selectedTextLength))
@@ -164,7 +164,7 @@ bool EditorState::PostLayoutData::decode(IPC::Decoder& decoder, PostLayoutData& 
     if (!decoder.decode(result.enclosingListType))
         return false;
 #endif
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (!decoder.decode(result.caretRectAtEnd))
         return false;
     if (!decoder.decode(result.selectionRects))
@@ -220,7 +220,7 @@ bool EditorState::PostLayoutData::decode(IPC::Decoder& decoder, PostLayoutData& 
 
 TextStream& operator<<(TextStream& ts, const EditorState& editorState)
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (editorState.firstMarkedRect != IntRect())
         ts.dumpProperty("firstMarkedRect", editorState.firstMarkedRect);
     if (editorState.lastMarkedRect != IntRect())
@@ -255,11 +255,11 @@ TextStream& operator<<(TextStream& ts, const EditorState& editorState)
     ts << "postLayoutData";
     if (editorState.postLayoutData().typingAttributes != AttributeNone)
         ts.dumpProperty("typingAttributes", editorState.postLayoutData().typingAttributes);
-#if PLATFORM(IOS) || PLATFORM(GTK)
+#if PLATFORM(IOS_FAMILY) || PLATFORM(GTK)
     if (editorState.postLayoutData().caretRectAtStart != IntRect())
         ts.dumpProperty("caretRectAtStart", editorState.postLayoutData().caretRectAtStart);
 #endif
-#if PLATFORM(IOS) || PLATFORM(MAC)
+#if PLATFORM(IOS_FAMILY) || PLATFORM(MAC)
     if (editorState.postLayoutData().selectionClipRect != IntRect())
         ts.dumpProperty("selectionClipRect", editorState.postLayoutData().selectionClipRect);
     if (editorState.postLayoutData().selectedTextLength)
@@ -271,7 +271,7 @@ TextStream& operator<<(TextStream& ts, const EditorState& editorState)
     if (editorState.postLayoutData().enclosingListType != NoList)
         ts.dumpProperty("enclosingListType", editorState.postLayoutData().enclosingListType);
 #endif
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (editorState.postLayoutData().caretRectAtEnd != IntRect())
         ts.dumpProperty("caretRectAtEnd", editorState.postLayoutData().caretRectAtEnd);
     if (editorState.postLayoutData().selectionRects.size())

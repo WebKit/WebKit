@@ -98,7 +98,7 @@
 #import <AVFoundation/AVPlayerLayer.h>
 #import <AVFoundation/AVTime.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import "WAKAppKitStubs.h"
 #import <CoreImage/CoreImage.h>
 #import <UIKit/UIDevice.h>
@@ -284,7 +284,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVMetadataKeySpaceID3, NSString *)
 
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 SOFT_LINK_CONSTANT(AVFoundation, AVURLAssetBoundNetworkInterfaceName, NSString *)
 SOFT_LINK_CONSTANT_MAY_FAIL(AVFoundation, AVURLAssetClientBundleIdentifierKey, NSString *)
@@ -301,7 +301,7 @@ SOFT_LINK_CONSTANT_MAY_FAIL(AVFoundation, AVURLAssetRequiresCustomURLLoadingKey,
 SOFT_LINK_FRAMEWORK(MediaToolbox)
 SOFT_LINK_OPTIONAL(MediaToolbox, MTEnableCaption2015Behavior, Boolean, (), ())
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #if HAVE(CELESTIAL)
 
@@ -319,7 +319,7 @@ SOFT_LINK_FRAMEWORK(UIKit)
 SOFT_LINK_CLASS(UIKit, UIDevice)
 #define UIDevice getUIDeviceClass()
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 using namespace WebCore;
 
@@ -715,7 +715,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer()
 
     m_videoFullscreenLayerManager->setVideoLayer(m_videoLayer.get(), defaultSize);
 
-#if PLATFORM(IOS) && !PLATFORM(WATCHOS)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(WATCHOS)
     if ([m_videoLayer respondsToSelector:@selector(setPIPModeEnabled:)])
         [m_videoLayer setPIPModeEnabled:(player()->fullscreenMode() & MediaPlayer::VideoFullscreenModePictureInPicture)];
 #endif
@@ -841,7 +841,7 @@ static NSURL *canonicalURL(const URL& url)
     return [canonicalRequest URL];
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 static NSHTTPCookie* toNSHTTPCookie(const Cookie& cookie)
 {
     RetainPtr<NSMutableDictionary> properties = adoptNS([[NSMutableDictionary alloc] init]);
@@ -892,7 +892,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url)
 
     if (canLoadAVURLAssetUseClientURLLoadingExclusively())
         [options setObject:@YES forKey:AVURLAssetUseClientURLLoadingExclusively];
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     else if (canLoadAVURLAssetRequiresCustomURLLoadingKey())
         [options setObject:@YES forKey:AVURLAssetRequiresCustomURLLoadingKey];
     // FIXME: rdar://problem/20354688
@@ -934,13 +934,13 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url)
     }
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     String networkInterfaceName = player()->mediaPlayerNetworkInterfaceName();
     if (!networkInterfaceName.isEmpty())
         [options setObject:networkInterfaceName forKey:AVURLAssetBoundNetworkInterfaceName];
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     Vector<Cookie> cookies;
     if (player()->getRawCookies(url, cookies)) {
         RetainPtr<NSMutableArray> nsCookies = adoptNS([[NSMutableArray alloc] initWithCapacity:cookies.size()]);
@@ -965,7 +965,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url)
     AVAssetResourceLoader *resourceLoader = m_avAsset.get().resourceLoader;
     [resourceLoader setDelegate:m_loaderDelegate.get() queue:globalLoaderDelegateQueue()];
 
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED > 101100
+#if PLATFORM(IOS_FAMILY) || __MAC_OS_X_VERSION_MIN_REQUIRED > 101100
     if (DeprecatedGlobalSettings::isAVFoundationNSURLSessionEnabled()
         && [resourceLoader respondsToSelector:@selector(setURLSession:)]
         && [resourceLoader respondsToSelector:@selector(URLSessionDataDelegate)]
@@ -1022,7 +1022,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
     [m_avPlayer.get() setAllowsExternalPlayback:m_allowsWirelessVideoPlayback];
 #endif
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
     if (m_shouldPlayToPlaybackTarget) {
         // Clear m_shouldPlayToPlaybackTarget so doesn't return without doing anything.
         m_shouldPlayToPlaybackTarget = false;
@@ -1030,7 +1030,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
     }
 #endif
 
-#if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR) && !PLATFORM(IOSMAC)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(IOSMAC)
     setShouldDisableSleep(player()->shouldDisableSleep());
 #endif
 
@@ -1220,7 +1220,7 @@ void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenGravity(MediaPlayer::
 
 void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenMode(MediaPlayer::VideoFullscreenMode mode)
 {
-#if PLATFORM(IOS) && !PLATFORM(WATCHOS)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(WATCHOS)
     if ([m_videoLayer respondsToSelector:@selector(setPIPModeEnabled:)])
         [m_videoLayer setPIPModeEnabled:(mode & MediaPlayer::VideoFullscreenModePictureInPicture)];
     updateDisableExternalPlayback();
@@ -1229,7 +1229,7 @@ void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenMode(MediaPlayer::Vid
 #endif
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 NSArray *MediaPlayerPrivateAVFoundationObjC::timedMetadata() const
 {
     if (m_currentMetaData)
@@ -1363,7 +1363,7 @@ void MediaPlayerPrivateAVFoundationObjC::seekToTime(const MediaTime& time, const
 
 void MediaPlayerPrivateAVFoundationObjC::setVolume(float volume)
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     UNUSED_PARAM(volume);
     return;
 #else
@@ -1417,7 +1417,7 @@ double MediaPlayerPrivateAVFoundationObjC::rate() const
 
 double MediaPlayerPrivateAVFoundationObjC::seekableTimeRangesLastModifiedTime() const
 {
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
     return [m_avPlayerItem seekableTimeRangesLastModifiedTime];
 #else
     return 0;
@@ -1426,7 +1426,7 @@ double MediaPlayerPrivateAVFoundationObjC::seekableTimeRangesLastModifiedTime() 
 
 double MediaPlayerPrivateAVFoundationObjC::liveUpdateInterval() const
 {
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
     return [m_avPlayerItem liveUpdateInterval];
 #else
     return 0;
@@ -1850,7 +1850,7 @@ MediaTime MediaPlayerPrivateAVFoundationObjC::mediaTimeForTimeValue(const MediaT
 
 double MediaPlayerPrivateAVFoundationObjC::maximumDurationToCacheMediaTime() const
 {
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1010
+#if PLATFORM(IOS_FAMILY) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1010
     return 0;
 #else
     return 5;
@@ -2203,7 +2203,7 @@ void MediaPlayerPrivateAVFoundationObjC::resolvedURLChanged()
 
 bool MediaPlayerPrivateAVFoundationObjC::didPassCORSAccessCheck() const
 {
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED > 101100
+#if PLATFORM(IOS_FAMILY) || __MAC_OS_X_VERSION_MIN_REQUIRED > 101100
     AVAssetResourceLoader *resourceLoader = m_avAsset.get().resourceLoader;
     if (!DeprecatedGlobalSettings::isAVFoundationNSURLSessionEnabled()
         || ![resourceLoader respondsToSelector:@selector(URLSession)])
@@ -2218,7 +2218,7 @@ bool MediaPlayerPrivateAVFoundationObjC::didPassCORSAccessCheck() const
 
 std::optional<bool> MediaPlayerPrivateAVFoundationObjC::wouldTaintOrigin(const SecurityOrigin& origin) const
 {
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED > 101100
+#if PLATFORM(IOS_FAMILY) || __MAC_OS_X_VERSION_MIN_REQUIRED > 101100
     AVAssetResourceLoader *resourceLoader = m_avAsset.get().resourceLoader;
     if (!DeprecatedGlobalSettings::isAVFoundationNSURLSessionEnabled()
         || ![resourceLoader respondsToSelector:@selector(URLSession)])
@@ -2768,7 +2768,7 @@ bool MediaPlayerPrivateAVFoundationObjC::isCurrentPlaybackTargetWireless() const
 {
     bool wirelessTarget = false;
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     if (m_playbackTarget) {
         if (m_playbackTarget->targetType() == MediaPlaybackTarget::AVFoundation)
             wirelessTarget = m_avPlayer && m_avPlayer.get().externalPlaybackActive;
@@ -2789,7 +2789,7 @@ MediaPlayer::WirelessPlaybackTargetType MediaPlayerPrivateAVFoundationObjC::wire
     if (!m_avPlayer)
         return MediaPlayer::TargetTypeNone;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (!AVFoundationLibrary())
         return MediaPlayer::TargetTypeNone;
 
@@ -2810,7 +2810,7 @@ MediaPlayer::WirelessPlaybackTargetType MediaPlayerPrivateAVFoundationObjC::wire
 #endif
 }
     
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 static NSString *exernalDeviceDisplayNameForPlayer(AVPlayerType *player)
 {
 #if HAVE(CELESTIAL)
@@ -2893,7 +2893,7 @@ String MediaPlayerPrivateAVFoundationObjC::wirelessPlaybackTargetName() const
         return emptyString();
 
     String wirelessTargetName;
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     if (m_playbackTarget)
         wirelessTargetName = m_playbackTarget->deviceName();
 #else
@@ -2926,7 +2926,7 @@ void MediaPlayerPrivateAVFoundationObjC::setWirelessVideoPlaybackDisabled(bool d
     setDelayCallbacks(false);
 }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 
 void MediaPlayerPrivateAVFoundationObjC::setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&& target)
 {
@@ -2981,11 +2981,11 @@ void MediaPlayerPrivateAVFoundationObjC::setShouldPlayToPlaybackTarget(bool shou
     setDelayCallbacks(false);
 }
 
-#endif // !PLATFORM(IOS)
+#endif // !PLATFORM(IOS_FAMILY)
 
 void MediaPlayerPrivateAVFoundationObjC::updateDisableExternalPlayback()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (!m_avPlayer)
         return;
 
@@ -3249,7 +3249,7 @@ void MediaPlayerPrivateAVFoundationObjC::canPlayFastReverseDidChange(bool newVal
 
 void MediaPlayerPrivateAVFoundationObjC::setShouldDisableSleep(bool flag)
 {
-#if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR) && !PLATFORM(IOSMAC)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(IOSMAC)
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [m_avPlayer _setPreventsSleepDuringVideoPlayback:flag];
     ALLOW_DEPRECATED_DECLARATIONS_END

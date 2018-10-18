@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WebPageProxy.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "APIUIClient.h"
 #import "DataReference.h"
@@ -1145,4 +1145,4 @@ void WebPageProxy::didRequestPasswordForQuickLookDocumentInMainFrame(const Strin
 
 } // namespace WebKit
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

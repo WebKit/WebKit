@@ -25,7 +25,7 @@
 
 #import <Foundation/NSMapTable.h>
 
-#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED < 120000
+#if PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MAX_ALLOWED < 120000
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <Foundation/NSMapTablePriv.h>

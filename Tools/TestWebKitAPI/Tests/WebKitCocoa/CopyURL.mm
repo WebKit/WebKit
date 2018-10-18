@@ -33,7 +33,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/text/WTFString.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import "UIKitSPI.h"
 #include <MobileCoreServices/MobileCoreServices.h>
 #endif
@@ -60,7 +60,7 @@ NSString *readURLFromPasteboard()
 
 static RetainPtr<TestWKWebView> createWebViewWithCustomPasteboardDataEnabled()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     UIApplicationInitialize();
 #endif
 

@@ -51,7 +51,7 @@ void WebOpenPanelResultListener::didChooseFiles(const Vector<String>& files)
     m_fileChooser->chooseFiles(files);
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 void WebOpenPanelResultListener::didChooseFilesWithDisplayStringAndIcon(const Vector<String>& files, const String& displayString, WebCore::Icon* displayIcon)
 {
     m_fileChooser->chooseMediaFiles(files, displayString, displayIcon);

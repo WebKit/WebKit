@@ -98,7 +98,7 @@ const int defaultHeight = 150;
 // Firefox limits width/height to 32767 pixels, but slows down dramatically before it
 // reaches that limit. We limit by area instead, giving us larger maximum dimensions,
 // in exchange for a smaller maximum canvas size. The maximum canvas size is in device pixels.
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 const unsigned maxCanvasArea = 4096 * 4096;
 #else
 const unsigned maxCanvasArea = 16384 * 16384;
@@ -198,7 +198,7 @@ static inline size_t maxActivePixelMemory()
     static size_t maxPixelMemory;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         maxPixelMemory = ramSize() / 4;
 #else
         maxPixelMemory = std::max(ramSize() / 4, 2151 * MB);

@@ -99,7 +99,7 @@ Ref<SharedBuffer> ParentalControlsContentFilter::replacementData() const
 #if ENABLE(CONTENT_FILTERING)
 ContentFilterUnblockHandler ParentalControlsContentFilter::unblockHandler() const
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     return ContentFilterUnblockHandler { "unblock"_s, m_webFilterEvaluator };
 #else
     return { };

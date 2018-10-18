@@ -32,7 +32,7 @@
 #include <Foundation/Foundation.h>
 #include <WebCore/FileSystem.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import <WebCore/RuntimeApplicationChecks.h>
 #endif
 
@@ -45,7 +45,7 @@ NSString *WebKitMediaKeysStorageDirectoryDefaultsKey = @"WebKitMediaKeysStorageD
 
 WTF::String WebsiteDataStore::defaultApplicationCacheDirectory()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // This quirk used to make these apps share application cache storage, but doesn't accomplish that any more.
     // Preserving it avoids the need to migrate data when upgrading.
     // FIXME: Ideally we should just have Safari, WebApp, and webbookmarksd create a data store with
@@ -115,7 +115,7 @@ WTF::String WebsiteDataStore::legacyDefaultApplicationCacheDirectory()
     NSString *appName = [[NSBundle mainBundle] bundleIdentifier];
     if (!appName)
         appName = [[NSProcessInfo processInfo] processName];
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // This quirk used to make these apps share application cache storage, but doesn't accomplish that any more.
     // Preserving it avoids the need to migrate data when upgrading.
     if (WebCore::IOSApplication::isMobileSafari() || WebCore::IOSApplication::isWebApp())
@@ -124,7 +124,7 @@ WTF::String WebsiteDataStore::legacyDefaultApplicationCacheDirectory()
     
     ASSERT(appName);
     
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     NSString *cacheDir = [NSHomeDirectory() stringByAppendingPathComponent:@"Library/Caches"];
 #else
     char cacheDirectory[MAXPATHLEN];
@@ -201,7 +201,7 @@ WTF::String WebsiteDataStore::legacyDefaultMediaKeysStorageDirectory()
 
 WTF::String WebsiteDataStore::legacyDefaultJavaScriptConfigurationDirectory()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     WTF::String path = WebKit::pathForProcessContainer();
     if (path.isEmpty())
         path = NSHomeDirectory();

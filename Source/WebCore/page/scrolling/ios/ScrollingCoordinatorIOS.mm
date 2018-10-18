@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(ASYNC_SCROLLING) && PLATFORM(IOS)
+#if ENABLE(ASYNC_SCROLLING) && PLATFORM(IOS_FAMILY)
 
 #import "ScrollingCoordinatorIOS.h"
 
@@ -100,4 +100,4 @@ void ScrollingCoordinatorIOS::commitTreeState()
 
 } // namespace WebCore
 
-#endif // ENABLE(ASYNC_SCROLLING) && PLATFORM(IOS)
+#endif // ENABLE(ASYNC_SCROLLING) && PLATFORM(IOS_FAMILY)

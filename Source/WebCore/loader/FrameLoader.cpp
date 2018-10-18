@@ -140,7 +140,7 @@
 #include "DataDetection.h"
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "DocumentType.h"
 #include "ResourceLoader.h"
 #include "RuntimeApplicationChecks.h"
@@ -876,7 +876,7 @@ void FrameLoader::checkCompleted()
     m_requestedHistoryItem = nullptr;
     m_frame.document()->setReadyState(Document::Complete);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (m_frame.document()->url().isEmpty()) {
         // We need to update the document URL of a PDF document to be non-empty so that both back/forward history navigation
         // between PDF pages and fragment navigation works. See <rdar://problem/9544769> for more details.
@@ -1648,7 +1648,7 @@ const ResourceRequest& FrameLoader::initialRequest() const
 
 bool FrameLoader::willLoadMediaElementURL(URL& url, Node& initiatorNode)
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // MobileStore depends on the iOS 4.0 era client delegate method because webView:resource:willSendRequest:redirectResponse:fromDataSource
     // doesn't let them tell when a load request is coming from a media element. See <rdar://problem/8266916> for more details.
     if (IOSApplication::isMobileStore())
@@ -1818,7 +1818,7 @@ void FrameLoader::stopForUserCancel(bool deferCheckLoadComplete)
 
     stopAllLoaders();
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // Lay out immediately when stopping to immediately clear the old page if we just committed this one
     // but haven't laid out/painted yet.
     // FIXME: Is this behavior specific to iOS? Or should we expose a setting to toggle this behavior?
@@ -1973,7 +1973,7 @@ void FrameLoader::commitProvisionalLoad()
         clientRedirectCancelledOrFinished(NewLoadInProgress::No);
     
     if (cachedPage && cachedPage->document()) {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         // FIXME: CachedPage::restore() would dispatch viewport change notification. However UIKit expects load
         // commit to happen before any changes to viewport arguments and dealing with this there is difficult.
         m_frame.page()->chrome().setDispatchViewportDataDidChangeSuppressed(true);
@@ -1995,7 +1995,7 @@ void FrameLoader::commitProvisionalLoad()
 
         dispatchDidCommitLoad(hasInsecureContent);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         m_frame.page()->chrome().setDispatchViewportDataDidChangeSuppressed(false);
         m_frame.page()->chrome().dispatchViewportPropertiesDidChange(m_frame.page()->viewportArguments());
 #endif
@@ -2026,7 +2026,7 @@ void FrameLoader::commitProvisionalLoad()
         m_frame.document()->resume(ReasonForSuspension::PageCache);
 
         // Force a layout to update view size and thereby update scrollbars.
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         if (!m_client.forceLayoutOnRestoreFromPageCache())
             m_frame.view()->forceLayout();
 #else
@@ -2556,7 +2556,7 @@ void FrameLoader::didReachLayoutMilestone(LayoutMilestones milestones)
 
 void FrameLoader::didFirstLayout()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // Only send layout-related delegate callbacks synchronously for the main frame to
     // avoid reentering layout for the main frame while delivering a layout-related delegate
     // callback for a subframe.
@@ -3738,7 +3738,7 @@ ResourceError FrameLoader::blockedByContentFilterError(const ResourceRequest& re
 }
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 RetainPtr<CFDictionaryRef> FrameLoader::connectionProperties(ResourceLoader* loader)
 {
     return m_client.connectionProperties(loader->documentLoader(), loader->identifier());
@@ -3975,7 +3975,7 @@ RefPtr<Frame> createWindow(Frame& openerFrame, Frame& lookupFrame, FrameLoadRequ
     // for the difference between the window size and the viewport size.
 
     // FIXME: We should reconcile the initialization of viewport arguments between iOS and non-IOS.
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     FloatSize viewportSize = page->chrome().pageRect().size();
     FloatRect windowRect = page->chrome().windowRect();
     if (features.x)

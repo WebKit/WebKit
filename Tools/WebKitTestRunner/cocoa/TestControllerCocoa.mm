@@ -66,7 +66,7 @@ void initializeWebViewConfiguration(const char* libraryPath, WKStringRef injecte
     globalWebViewConfiguration._allowUniversalAccessFromFileURLs = YES;
     globalWebViewConfiguration._applePayEnabled = YES;
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || PLATFORM(IOS)
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || PLATFORM(IOS_FAMILY)
     WKCookieManagerSetStorageAccessAPIEnabled(WKContextGetCookieManager(context), true);
 #endif
 
@@ -83,7 +83,7 @@ void initializeWebViewConfiguration(const char* libraryPath, WKStringRef injecte
     [globalWebViewConfiguration.websiteDataStore _setResourceLoadStatisticsEnabled:YES];
     [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsSetShouldSubmitTelemetry:NO];
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     globalWebViewConfiguration.allowsInlineMediaPlayback = YES;
     globalWebViewConfiguration._inlineMediaPlaybackRequiresPlaysInlineAttribute = NO;
     globalWebViewConfiguration._invisibleAutoplayNotPermitted = NO;
@@ -144,7 +144,7 @@ void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOpt
 #if WK_API_ENABLED
     RetainPtr<WKWebViewConfiguration> copiedConfiguration = adoptNS([globalWebViewConfiguration copy]);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (options.useDataDetection)
         [copiedConfiguration setDataDetectorTypes:WKDataDetectorTypeAll];
     if (options.ignoresViewportScaleLimits)
@@ -236,7 +236,7 @@ unsigned TestController::imageCountInGeneralPasteboard() const
 {
 #if PLATFORM(MAC)
     NSData *data = [[NSPasteboard generalPasteboard] dataForType:WebArchivePboardType];
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS_FAMILY)
     NSData *data = [[UIPasteboard generalPasteboard] valueForPasteboardType:WebArchivePboardType];
 #endif
     if (!data)
@@ -298,7 +298,7 @@ void TestController::injectUserScript(WKStringRef script)
 void TestController::addTestKeyToKeychain(const String& privateKeyBase64, const String& attrLabel, const String& applicationTagBase64)
 {
     // FIXME(182772)
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     NSDictionary* options = @{
         (id)kSecAttrKeyType: (id)kSecAttrKeyTypeECSECPrimeRandom,
         (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
@@ -326,7 +326,7 @@ void TestController::addTestKeyToKeychain(const String& privateKeyBase64, const 
 void TestController::cleanUpKeychain(const String& attrLabel)
 {
     // FIXME(182772)
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     NSDictionary* deleteQuery = @{
         (id)kSecClass: (id)kSecClassKey,
         (id)kSecAttrLabel: attrLabel
@@ -338,7 +338,7 @@ void TestController::cleanUpKeychain(const String& attrLabel)
 bool TestController::keyExistsInKeychain(const String& attrLabel, const String& applicationTagBase64)
 {
     // FIXME(182772)
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     NSDictionary *query = @{
         (id)kSecClass: (id)kSecClassKey,
         (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,

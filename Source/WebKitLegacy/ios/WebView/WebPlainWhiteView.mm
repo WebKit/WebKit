@@ -28,7 +28,7 @@
 
 #import "WebPlainWhiteView.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import <WebCore/Color.h>
 #import <WebCore/GraphicsContext.h>
@@ -81,4 +81,4 @@ using namespace WebCore;
 
 @end
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

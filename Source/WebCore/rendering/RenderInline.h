@@ -73,7 +73,7 @@ public:
     InlineBox* firstLineBoxIncludingCulling() const { return alwaysCreateLineBoxes() ? firstLineBox() : culledInlineFirstLineBox(); }
     InlineBox* lastLineBoxIncludingCulling() const { return alwaysCreateLineBoxes() ? lastLineBox() : culledInlineLastLineBox(); }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void absoluteQuadsForSelection(Vector<FloatQuad>& quads) const override;
 #endif
 

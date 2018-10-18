@@ -163,7 +163,7 @@ RetainPtr<DDActionContext> DataDetection::detectItemAroundHitTestResult(const Hi
 }
 #endif // PLATFORM(MAC)
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 bool DataDetection::canBePresentedByDataDetectors(const URL& url)
 {

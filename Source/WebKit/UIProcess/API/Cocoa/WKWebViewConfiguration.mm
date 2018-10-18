@@ -48,7 +48,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import "UIKitSPI.h"
 #import <WebCore/Device.h>
 #endif
@@ -90,7 +90,7 @@ private:
     T m_value;
 };
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
 {
@@ -122,7 +122,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     BOOL _allowsMetaRefresh;
     BOOL _allowUniversalAccessFromFileURLs;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     LazyInitialized<RetainPtr<WKWebViewContentProviderRegistry>> _contentProviderRegistry;
     BOOL _allowsInlineMediaPlayback;
     BOOL _inlineMediaPlaybackRequiresPlaysInlineAttribute;
@@ -172,7 +172,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
 
     _pageConfiguration = API::PageConfiguration::create();
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #if !PLATFORM(WATCHOS)
     _allowsPictureInPictureMediaPlayback = YES;
 #endif
@@ -198,7 +198,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     _invisibleAutoplayNotPermitted = NO;
     _attachmentElementEnabled = NO;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     _respectsImageOrientation = YES;
     _printsBackgrounds = YES;
 #endif
@@ -224,7 +224,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     _allowUniversalAccessFromFileURLs = NO;
     _needsStorageAccessFromFileURLsQuirk = YES;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     _selectionGranularity = WKSelectionGranularityDynamic;
     _dragLiftDelay = toDragLiftDelay([[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitDebugDragLiftDelay"]);
 #if PLATFORM(WATCHOS)
@@ -235,7 +235,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     _longPressActionsEnabled = YES;
 #endif
     _systemPreviewEnabled = NO;
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
     _mediaContentTypesRequiringHardwareSupport = WebCore::Settings::defaultMediaContentTypesRequiringHardwareSupport();
     _allowMediaContentTypesRequiringHardwareSupportAsFallback = YES;
@@ -271,7 +271,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
 
     [coder encodeBool:self._drawsBackground forKey:@"drawsBackground"];
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     [coder encodeInteger:self.dataDetectorTypes forKey:@"dataDetectorTypes"];
     [coder encodeBool:self.allowsInlineMediaPlayback forKey:@"allowsInlineMediaPlayback"];
     [coder encodeBool:self._allowsInlineMediaPlaybackAfterFullscreen forKey:@"allowsInlineMediaPlaybackAfterFullscreen"];
@@ -305,7 +305,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     if ([coder containsValueForKey:@"drawsBackground"])
         self._drawsBackground = [coder decodeBoolForKey:@"drawsBackground"];
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     self.dataDetectorTypes = [coder decodeIntegerForKey:@"dataDetectorTypes"];
     self.allowsInlineMediaPlayback = [coder decodeBoolForKey:@"allowsInlineMediaPlayback"];
     self._allowsInlineMediaPlaybackAfterFullscreen = [coder decodeBoolForKey:@"allowsInlineMediaPlaybackAfterFullscreen"];
@@ -338,7 +338,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     configuration._visitedLinkStore = self._visitedLinkStore;
     configuration._relatedWebView = _relatedWebView.get().get();
     configuration._alternateWebViewForNavigationGestures = _alternateWebViewForNavigationGestures.get().get();
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     configuration._contentProviderRegistry = self._contentProviderRegistry;
 #endif
 
@@ -362,7 +362,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     configuration->_waitsForPaintAfterViewDidMoveToWindow = self->_waitsForPaintAfterViewDidMoveToWindow;
     configuration->_controlledByAutomation = self->_controlledByAutomation;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     configuration->_allowsInlineMediaPlayback = self->_allowsInlineMediaPlayback;
     configuration->_allowsInlineMediaPlaybackAfterFullscreen = self->_allowsInlineMediaPlaybackAfterFullscreen;
     configuration->_inlineMediaPlaybackRequiresPlaysInlineAttribute = self->_inlineMediaPlaybackRequiresPlaysInlineAttribute;
@@ -382,7 +382,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     configuration->_requiresUserActionForEditingControlsManager = self->_requiresUserActionForEditingControlsManager;
     configuration->_pageGroup = self._pageGroup;
 #endif
-#if ENABLE(DATA_DETECTION) && PLATFORM(IOS)
+#if ENABLE(DATA_DETECTION) && PLATFORM(IOS_FAMILY)
     configuration->_dataDetectorTypes = self->_dataDetectorTypes;
 #endif
 #if ENABLE(WIRELESS_TARGET_PLAYBACK)
@@ -448,7 +448,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
 
 static NSString *defaultApplicationNameForUserAgent()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     return [@"Mobile/" stringByAppendingString:[UIDevice currentDevice].buildVersion];
 #else
     return nil;
@@ -518,7 +518,7 @@ IGNORE_WARNINGS_END
 
 ALLOW_DEPRECATED_DECLARATIONS_END
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 - (WKWebViewContentProviderRegistry *)_contentProviderRegistry
 {
     return _contentProviderRegistry.get([self] { return adoptNS([[WKWebViewContentProviderRegistry alloc] initWithConfiguration:self]); });
@@ -649,7 +649,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _allowsMetaRefresh = allowsMetaRefresh;
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 - (BOOL)_alwaysRunsAtForegroundPriority
 {
     return _pageConfiguration->alwaysRunsAtForegroundPriority();
@@ -720,7 +720,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _systemPreviewEnabled = enabled;
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 - (BOOL)_invisibleAutoplayNotPermitted
 {
@@ -1014,7 +1014,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 @implementation WKWebViewConfiguration (WKDeprecated)
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 - (BOOL)mediaPlaybackAllowsAirPlay
 {
     return self.allowsAirPlayForMediaPlayback;
@@ -1045,7 +1045,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     self.mediaTypesRequiringUserActionForPlayback = requiresUserActionForMediaPlayback ? WKAudiovisualMediaTypeAll : WKAudiovisualMediaTypeNone;
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 @end
 

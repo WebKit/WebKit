@@ -49,7 +49,7 @@
 #include "SecItemShimProxy.h"
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include <wtf/spi/darwin/XPCSPI.h>
 #endif
 
@@ -355,7 +355,7 @@ void NetworkProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Con
         setProcessSuppressionEnabled(true);
 #endif
     
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (xpc_connection_t connection = this->connection()->xpcConnection())
         m_throttler.didConnectToProcess(xpc_connection_get_pid(connection));
 #endif

@@ -64,7 +64,7 @@ private:
     void computeZoomInformationForNode(WebCore::Node&, WebCore::FloatPoint& origin, WebCore::FloatRect& renderRect, bool& isReplaced, double& viewportMinimumScale, double& viewportMaximumScale);
     void computeMinimumAndMaximumViewportScales(double& viewportMinimumScale, double& viewportMaximumScale) const;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     std::optional<std::pair<double, double>> computeTextLegibilityScales(double& viewportMinimumScale, double& viewportMaximumScale);
 #endif
 
@@ -73,7 +73,7 @@ private:
 #if PLATFORM(MAC)
     uint64_t m_renderTreeSizeNotificationThreshold;
 #endif
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     std::optional<std::pair<double, double>> m_cachedTextLegibilityScales;
 #endif
 };

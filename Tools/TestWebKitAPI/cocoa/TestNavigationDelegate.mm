@@ -116,7 +116,7 @@
 
     self.navigationDelegate = nil;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     __block bool presentationUpdateHappened = false;
     [self _doAfterNextPresentationUpdateWithoutWaitingForAnimatedResizeForTesting:^{
         presentationUpdateHappened = true;

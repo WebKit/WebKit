@@ -25,7 +25,7 @@
 
 #import <wtf/Platform.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
@@ -103,4 +103,4 @@ NS_ASSUME_NONNULL_END
 
 #endif
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

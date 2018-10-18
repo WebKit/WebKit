@@ -30,7 +30,7 @@
 
 #include "GraphicsContext3D.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "GraphicsContext3DIOS.h"
 #endif
 #include "Extensions3DOpenGL.h"

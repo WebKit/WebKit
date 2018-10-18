@@ -30,7 +30,7 @@
 #import <CoreLocation/CoreLocation.h>
 #import <wtf/HashCountedSet.h>
 
-#if PLATFORM(IOS) && ENABLE(DEVICE_ORIENTATION)
+#if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
 
 #import <CoreMotion/CoreMotion.h>
 
@@ -56,4 +56,4 @@ const float kMotionUpdateInterval = 1.0f / 60.0f;
 - (BOOL)headingAvailable;
 @end
 
-#endif // PLATFORM(IOS) && ENABLE(DEVICE_ORIENTATION)
+#endif // PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)

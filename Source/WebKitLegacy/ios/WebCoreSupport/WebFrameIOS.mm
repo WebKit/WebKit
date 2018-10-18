@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "WebFrameIOS.h"
 
@@ -950,4 +950,4 @@ static VisiblePosition SimpleSmartExtendEnd(const VisiblePosition& start, const 
 
 @end
 
-#endif  // PLATFORM(IOS)
+#endif  // PLATFORM(IOS_FAMILY)

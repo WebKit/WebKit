@@ -56,7 +56,7 @@
     return WebKit::wrapper(_nodeHandle->htmlIFrameElementContentFrame());
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 - (UIImage *)renderedImageWithOptions:(WKSnapshotOptions)options
 {
     return [self renderedImageWithOptions:options width:nil];

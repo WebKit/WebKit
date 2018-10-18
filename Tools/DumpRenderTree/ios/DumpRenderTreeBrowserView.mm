@@ -26,7 +26,7 @@
 #import "config.h"
 #import "DumpRenderTreeBrowserView.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import <WebCore/WebCoreThreadRun.h>
 #import <WebKit/WebCoreThread.h>
@@ -173,4 +173,4 @@
 
 @end
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

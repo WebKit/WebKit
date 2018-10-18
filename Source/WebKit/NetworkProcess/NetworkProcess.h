@@ -213,7 +213,7 @@ public:
     void connectionToContextProcessWasClosed(Ref<WebSWServerToContextConnection>&&);
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     bool parentProcessHasServiceWorkerEntitlement() const;
 #else
     bool parentProcessHasServiceWorkerEntitlement() const { return true; }

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ViewUpdateDispatcher.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #include "ViewUpdateDispatcherMessages.h"
 #include "WebPage.h"
@@ -89,4 +89,4 @@ void ViewUpdateDispatcher::dispatchVisibleContentRectUpdate()
 
 } // namespace WebKit
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

@@ -25,7 +25,7 @@
 
 #import "TestWKWebView.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import <UIKit/UIKit.h>
 
@@ -42,4 +42,4 @@
 
 @end
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

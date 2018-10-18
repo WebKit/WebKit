@@ -28,7 +28,7 @@
 
 #if WK_API_ENABLED
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "WKLegacyPDFView.h"
 #import "WKPDFView.h"
@@ -107,6 +107,6 @@
 
 @end
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 #endif // WK_API_ENABLED

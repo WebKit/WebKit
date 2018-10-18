@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> WebPasteboardProxy {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     WriteURLToPasteboard(struct WebCore::PasteboardURL url, String pasteboardName)
     WriteWebContentToPasteboard(struct WebCore::PasteboardWebContent content, String pasteboardName)
     WriteImageToPasteboard(struct WebCore::PasteboardImage pasteboardImage, String pasteboardName)

@@ -42,7 +42,7 @@ struct PasteboardCustomData;
 
 class PasteboardStrategy {
 public:
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     virtual void writeToPasteboard(const PasteboardURL&, const String& pasteboardName) = 0;
     virtual void writeToPasteboard(const PasteboardWebContent&, const String& pasteboardName) = 0;
     virtual void writeToPasteboard(const PasteboardImage&, const String& pasteboardName) = 0;
@@ -55,7 +55,7 @@ public:
     virtual PasteboardItemInfo informationForItemAtIndex(int index, const String& pasteboardName) = 0;
     virtual void updateSupportedTypeIdentifiers(const Vector<String>& identifiers, const String& pasteboardName) = 0;
     virtual void getTypesByFidelityForItemAtIndex(Vector<String>& types, uint64_t index, const String& pasteboardName) = 0;
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 #if PLATFORM(COCOA)
     virtual void getTypes(Vector<String>& types, const String& pasteboardName) = 0;
     virtual RefPtr<SharedBuffer> bufferForType(const String& pasteboardType, const String& pasteboardName) = 0;

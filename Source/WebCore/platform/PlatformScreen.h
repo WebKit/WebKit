@@ -43,7 +43,7 @@ typedef struct _NSPoint NSPoint;
 #endif
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 OBJC_CLASS UIScreen;
 #endif
 
@@ -112,7 +112,7 @@ IORegistryGPUID gpuIDForDisplayMask(uint32_t);
 
 #endif // !PLATFORM(MAC)
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 float screenPPIFactor();
 WEBCORE_EXPORT FloatSize screenSize();

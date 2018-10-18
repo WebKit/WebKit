@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "WebUIKitSupport.h"
 
@@ -103,7 +103,7 @@ int WebKitGetLastLineBreakInBuffer(UChar *characters, int position, int length)
 
 const char *WebKitPlatformSystemRootDirectory(void)
 {
-#if PLATFORM(IOS_SIMULATOR)
+#if PLATFORM(IOS_FAMILY_SIMULATOR)
     static const char *platformSystemRootDirectory = nil;
     if (!platformSystemRootDirectory) {
         char *simulatorRoot = getenv("IPHONE_SIMULATOR_ROOT");
@@ -154,4 +154,4 @@ CGPathRef WebKitCreatePathWithShrinkWrappedRects(NSArray* cgRects, CGFloat radiu
     return CGPathRetain(PathUtilities::pathWithShrinkWrappedRects(rects, radius).platformPath());
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

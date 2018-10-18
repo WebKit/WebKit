@@ -182,7 +182,7 @@ void Gradient::paint(CGContextRef platformContext)
                 CGContextRestoreGState(platformContext);
         },
         [&] (const ConicData& data) {
-#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || PLATFORM(WATCHOS)
+#if (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || PLATFORM(WATCHOS)
             CGContextSaveGState(platformContext);
             CGContextTranslateCTM(platformContext, data.point0.x(), data.point0.y());
             CGContextRotateCTM(platformContext, (CGFloat)-M_PI_2);

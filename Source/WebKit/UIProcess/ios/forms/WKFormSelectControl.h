@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "AssistedNodeInformation.h"
 #import "UIKitSPI.h"
@@ -49,4 +49,4 @@ CGFloat adjustedFontSize(CGFloat textWidth, UIFont *, CGFloat initialFontSize, c
 - (void)selectRow:(NSInteger)rowIndex inComponent:(NSInteger)componentIndex extendingSelection:(BOOL)extendingSelection;
 @end
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

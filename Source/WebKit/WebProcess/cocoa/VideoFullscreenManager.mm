@@ -25,7 +25,7 @@
 #import "config.h"
 #import "VideoFullscreenManager.h"
 
-#if (PLATFORM(IOS) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if (PLATFORM(IOS_FAMILY) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
 #import "Attachment.h"
 #import "Logging.h"
@@ -223,7 +223,7 @@ void VideoFullscreenManager::removeClientForContext(uint64_t contextId)
 
 bool VideoFullscreenManager::supportsVideoFullscreen(WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode) const
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     UNUSED_PARAM(mode);
     return DeprecatedGlobalSettings::avKitEnabled();
 #else
@@ -233,7 +233,7 @@ bool VideoFullscreenManager::supportsVideoFullscreen(WebCore::HTMLMediaElementEn
 
 bool VideoFullscreenManager::supportsVideoFullscreenStandby() const
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     return true;
 #else
     return false;
@@ -411,7 +411,7 @@ void VideoFullscreenManager::didSetupFullscreen(uint64_t contextId)
     RefPtr<VideoFullscreenInterfaceContext> interface;
     std::tie(model, interface) = ensureModelAndInterface(contextId);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     dispatch_async(dispatch_get_main_queue(), [protectedThis = makeRefPtr(this), this, contextId] {
         if (protectedThis->m_page)
             m_page->send(Messages::VideoFullscreenManagerProxy::EnterFullscreen(contextId), protectedThis->m_page->pageID());
@@ -484,7 +484,7 @@ void VideoFullscreenManager::didExitFullscreen(uint64_t contextId)
     RefPtr<VideoFullscreenInterfaceContext> interface;
     std::tie(model, interface) = ensureModelAndInterface(contextId);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     dispatch_async(dispatch_get_main_queue(), [protectedThis = makeRefPtr(this), contextId, interface] {
         if (protectedThis->m_page)
             protectedThis->m_page->send(Messages::VideoFullscreenManagerProxy::CleanupFullscreen(contextId), protectedThis->m_page->pageID());
@@ -585,4 +585,4 @@ void VideoFullscreenManager::setVideoLayerFrameFenced(uint64_t contextId, WebCor
 
 } // namespace WebKit
 
-#endif // PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#endif // PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))

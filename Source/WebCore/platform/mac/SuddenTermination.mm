@@ -26,7 +26,7 @@
 #import "config.h"
 #import "SuddenTermination.h"
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 
 namespace WebCore {
 

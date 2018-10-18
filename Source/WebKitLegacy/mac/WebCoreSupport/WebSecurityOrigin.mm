@@ -74,7 +74,7 @@ using namespace WebCore;
     return reinterpret_cast<SecurityOrigin*>(_private)->data().databaseIdentifier();
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 - (NSString *)toString
 {
     return reinterpret_cast<SecurityOrigin*>(_private)->toString();

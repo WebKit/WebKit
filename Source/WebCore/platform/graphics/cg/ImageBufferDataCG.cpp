@@ -47,7 +47,7 @@
 #endif
 
 // CA uses ARGB32 for textures and ARGB32 -> ARGB32 resampling is optimized.
-#define USE_ARGB32 PLATFORM(IOS)
+#define USE_ARGB32 PLATFORM(IOS_FAMILY)
 
 namespace WebCore {
 

@@ -46,11 +46,11 @@ RegisterSet RegisterSet::stackRegisters()
 RegisterSet RegisterSet::reservedHardwareRegisters()
 {
 #if CPU(ARM64)
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     return RegisterSet(ARM64Registers::x18, ARM64Registers::lr);
 #else
     return RegisterSet(ARM64Registers::lr);
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 #elif CPU(ARM_THUMB2) || CPU(ARM_TRADITIONAL)
     return RegisterSet(ARMRegisters::lr, ARMRegisters::pc);
 #else
@@ -132,7 +132,7 @@ RegisterSet RegisterSet::calleeSaveRegisters()
     result.set(ARMRegisters::r5);
     result.set(ARMRegisters::r6);
     result.set(ARMRegisters::r8);
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     result.set(ARMRegisters::r9);
 #endif
     result.set(ARMRegisters::r10);

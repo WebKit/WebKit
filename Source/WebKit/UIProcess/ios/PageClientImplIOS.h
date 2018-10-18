@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "PageClientImplCocoa.h"
 #import "WebFullScreenManagerProxy.h"
@@ -228,4 +228,4 @@ private:
 };
 } // namespace WebKit
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

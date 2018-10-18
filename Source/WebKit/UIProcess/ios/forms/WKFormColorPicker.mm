@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WKFormColorPicker.h"
 
-#if ENABLE(INPUT_TYPE_COLOR) && PLATFORM(IOS)
+#if ENABLE(INPUT_TYPE_COLOR) && PLATFORM(IOS_FAMILY)
 
 #import "AssistedNodeInformation.h"
 #import "UIKitSPI.h"
@@ -316,4 +316,4 @@ using namespace WebKit;
 
 @end
 
-#endif // ENABLE(INPUT_TYPE_COLOR) && PLATFORM(IOS)
+#endif // ENABLE(INPUT_TYPE_COLOR) && PLATFORM(IOS_FAMILY)

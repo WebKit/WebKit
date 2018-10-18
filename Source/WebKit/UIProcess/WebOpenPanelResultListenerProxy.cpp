@@ -44,7 +44,7 @@ WebOpenPanelResultListenerProxy::~WebOpenPanelResultListenerProxy()
 {
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 void WebOpenPanelResultListenerProxy::chooseFiles(const Vector<WTF::String>& filenames, const String& displayString, const API::Data* iconImageData)
 {
     if (!m_page)

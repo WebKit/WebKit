@@ -26,7 +26,7 @@
 #import "config.h"
 #import "Icon.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "BitmapImage.h"
 #import "GraphicsContext.h"
@@ -73,4 +73,4 @@ void Icon::paint(GraphicsContext& context, const FloatRect& destRect)
 
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

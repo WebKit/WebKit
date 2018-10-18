@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(FULLSCREEN_API) && !PLATFORM(IOS)
+#if ENABLE(FULLSCREEN_API) && !PLATFORM(IOS_FAMILY)
 
 #import <WebCore/IntPoint.h>
 #import <wtf/RefPtr.h>
@@ -74,4 +74,4 @@ class EventListener;
 - (void)close;
 @end
 
-#endif // ENABLE(FULLSCREEN_API) && !PLATFORM(IOS)
+#endif // ENABLE(FULLSCREEN_API) && !PLATFORM(IOS_FAMILY)

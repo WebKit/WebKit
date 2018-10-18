@@ -26,7 +26,7 @@
 #import "ScrollTypes.h"
 #import <wtf/Platform.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import "WAKAppKitStubs.h"
 #endif
 

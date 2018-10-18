@@ -23,12 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 @class PDFDocument;
 #endif
 
 NSArray *allScriptsInPDFDocument(CGPDFDocumentRef);
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 NSArray *allScriptsInPDFDocument(PDFDocument *);
 #endif

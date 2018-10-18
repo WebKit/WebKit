@@ -135,7 +135,7 @@ bool RangeInputType::isSteppable() const
     return true;
 }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 
 void RangeInputType::handleMouseDownEvent(MouseEvent& event)
 {
@@ -160,7 +160,7 @@ void RangeInputType::handleMouseDownEvent(MouseEvent& event)
 #if ENABLE(TOUCH_EVENTS)
 void RangeInputType::handleTouchEvent(TouchEvent& event)
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     typedSliderThumbElement().handleTouchEvent(event);
 #elif ENABLE(TOUCH_SLIDER)
     ASSERT(element());

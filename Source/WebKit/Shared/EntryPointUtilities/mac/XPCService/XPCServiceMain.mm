@@ -105,7 +105,7 @@ int XPCServiceMain(int, const char**)
 #endif
 
     auto bootstrap = adoptOSObject(xpc_copy_bootstrap());
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     auto containerEnvironmentVariables = xpc_dictionary_get_value(bootstrap.get(), "ContainerEnvironmentVariables");
     xpc_dictionary_apply(containerEnvironmentVariables, ^(const char *key, xpc_object_t value) {
         setenv(key, xpc_string_get_string_ptr(value), 1);

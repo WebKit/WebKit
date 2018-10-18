@@ -37,7 +37,7 @@ public:
     virtual void dispatchDidModifyOrigin(const SecurityOriginData&) = 0;
     virtual void dispatchDidModifyDatabase(const SecurityOriginData&, const String& databaseName) = 0;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     virtual void dispatchDidAddNewOrigin() = 0;
     virtual void dispatchDidDeleteDatabase() = 0;
     virtual void dispatchDidDeleteDatabaseOrigin() = 0;

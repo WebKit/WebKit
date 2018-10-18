@@ -26,7 +26,7 @@
 #import "config.h"
 #import "ProcessAssertion.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "AssertionServicesSPI.h"
 #import "Logging.h"
@@ -35,7 +35,7 @@
 #import <wtf/RunLoop.h>
 #import <wtf/Vector.h>
 
-#if !PLATFORM(IOS_SIMULATOR)
+#if !PLATFORM(IOS_FAMILY_SIMULATOR)
 
 using WebKit::ProcessAssertionClient;
 
@@ -258,7 +258,7 @@ void ProcessAndUIAssertion::setClient(ProcessAssertionClient& newClient)
 
 } // namespace WebKit
 
-#else // PLATFORM(IOS_SIMULATOR)
+#else // PLATFORM(IOS_FAMILY_SIMULATOR)
 
 namespace WebKit {
 
@@ -297,6 +297,6 @@ void ProcessAndUIAssertion::setClient(ProcessAssertionClient& newClient)
 
 } // namespace WebKit
 
-#endif // PLATFORM(IOS_SIMULATOR)
+#endif // PLATFORM(IOS_FAMILY_SIMULATOR)
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

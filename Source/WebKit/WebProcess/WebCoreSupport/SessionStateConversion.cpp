@@ -91,7 +91,7 @@ static FrameState toFrameState(const HistoryItem& historyItem)
         frameState.httpBody = WTFMove(httpBody);
     }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     frameState.exposedContentRect = historyItem.exposedContentRect();
     frameState.unobscuredContentRect = historyItem.unobscuredContentRect();
     frameState.minimumLayoutSizeInScrollViewCoordinates = historyItem.minimumLayoutSizeInScrollViewCoordinates();
@@ -168,7 +168,7 @@ static void applyFrameState(HistoryItem& historyItem, const FrameState& frameSta
         historyItem.setFormData(toFormData(httpBody));
     }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     historyItem.setExposedContentRect(frameState.exposedContentRect);
     historyItem.setUnobscuredContentRect(frameState.unobscuredContentRect);
     historyItem.setMinimumLayoutSizeInScrollViewCoordinates(frameState.minimumLayoutSizeInScrollViewCoordinates);

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if PLATFORM(IOS) && ENABLE(ASYNC_SCROLLING)
+#if PLATFORM(IOS_FAMILY) && ENABLE(ASYNC_SCROLLING)
 
 namespace WebCore {
 
@@ -55,4 +55,4 @@ private:
 
 } // namespace WebCore
 
-#endif // PLATFORM(IOS) && ENABLE(ASYNC_SCROLLING)
+#endif // PLATFORM(IOS_FAMILY) && ENABLE(ASYNC_SCROLLING)

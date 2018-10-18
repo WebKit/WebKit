@@ -31,7 +31,7 @@
 #import "WebTypesInternal.h"
 #import <JavaScriptCore/JSBase.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import <WebKitLegacy/WAKAppKitStubs.h>
 #endif
 
@@ -43,7 +43,7 @@ struct WebResourceDelegateImplementationCache {
     IMP canAuthenticateAgainstProtectionSpaceFunc;
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     IMP connectionPropertiesFunc;
     IMP webThreadDidFinishLoadingFromDataSourceFunc;
     IMP webThreadDidFailLoadingWithErrorFromDataSourceFunc;
@@ -100,7 +100,7 @@ struct WebFrameLoadDelegateImplementationCache {
     IMP didRunInsecureContentFunc;
     IMP didDetectXSSFunc;
     IMP didRemoveFrameFromHierarchyFunc;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     IMP webThreadDidLayoutFunc;
 #endif
 };
@@ -145,7 +145,7 @@ BOOL CallUIDelegateReturningBoolean(BOOL, WebView *, SEL, id);
 BOOL CallUIDelegateReturningBoolean(BOOL, WebView *, SEL, id, id);
 BOOL CallUIDelegateReturningBoolean(BOOL, WebView *, SEL, id, BOOL);
 BOOL CallUIDelegateReturningBoolean(BOOL, WebView *, SEL, id, BOOL, id);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 BOOL CallUIDelegateReturningBoolean(BOOL, WebView *, SEL, id, id, BOOL);
 #endif
 
@@ -156,7 +156,7 @@ id CallFrameLoadDelegate(IMP, WebView *, SEL, id, id);
 id CallFrameLoadDelegate(IMP, WebView *, SEL, id, id, id);
 id CallFrameLoadDelegate(IMP, WebView *, SEL, id, id, id, id);
 id CallFrameLoadDelegate(IMP, WebView *, SEL, id, NSTimeInterval, id, id);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 id CallFrameLoadDelegate(IMP, WebView *, SEL, id, double);
 id CallFrameLoadDelegateInWebThread(IMP, WebView *, SEL, NSUInteger);
 #endif
@@ -168,7 +168,7 @@ id CallResourceLoadDelegate(IMP, WebView *, SEL, id, id, id);
 id CallResourceLoadDelegate(IMP, WebView *, SEL, id, id, id, id);
 id CallResourceLoadDelegate(IMP, WebView *, SEL, id, NSInteger, id);
 id CallResourceLoadDelegate(IMP, WebView *, SEL, id, id, NSInteger, id);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 id CallResourceLoadDelegateInWebThread(IMP, WebView *, SEL, id, id);
 id CallResourceLoadDelegateInWebThread(IMP, WebView *, SEL, id, id, id);
 id CallResourceLoadDelegateInWebThread(IMP, WebView *, SEL, id, id, id, id);

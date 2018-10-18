@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import <QuartzCore/CAShapeLayer.h>
 #import <WebKitLegacy/WAKAppKitStubs.h>
 #import <WebKitLegacy/WAKView.h>
@@ -36,7 +36,7 @@
 
 @interface WebNodeHighlightView : NSView {
     WebNodeHighlight *_webNodeHighlight;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     NSMutableArray *_layers; // CAShapeLayers.
 #endif
 }
@@ -45,7 +45,7 @@
 - (WebNodeHighlight *)webNodeHighlight;
 - (void)detachFromWebNodeHighlight;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 - (void)layoutSublayers:(CALayer *)parentLayer;
 #endif
 @end

@@ -37,7 +37,7 @@
 #import "TestRunner.h"
 #import <WebKit/WebViewPrivate.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import <QuartzCore/CALayer.h>
 #endif
 
@@ -53,7 +53,7 @@ static CFArrayCallBacks NonRetainingArrayCallbacks = {
 
 @implementation DumpRenderTreeWindow
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 @synthesize uiWindow = _uiWindow;
 @synthesize browserView = _browserView;
 #endif
@@ -71,7 +71,7 @@ static CFArrayCallBacks NonRetainingArrayCallbacks = {
     CFArrayAppendValue(openWindowsRef, (__bridge CFTypeRef)self);
 }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 - (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)styleMask backing:(NSBackingStoreType)bufferingType defer:(BOOL)deferCreation
 {
     if ((self = [super initWithContentRect:contentRect styleMask:styleMask backing:bufferingType defer:deferCreation]))
@@ -108,7 +108,7 @@ static CFArrayCallBacks NonRetainingArrayCallbacks = {
 
     [super close];
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // By default, NSWindows are released when closed. On iOS we do
     // it manually, and release the UIWindow and UIWebBrowserView.
     if (_uiWindow) {
@@ -131,7 +131,7 @@ static CFArrayCallBacks NonRetainingArrayCallbacks = {
     return [self isKeyWindow];
 }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 - (void)keyDown:(NSEvent *)event
 {
     // Do nothing, avoiding the beep we'd otherwise get from NSResponder,
@@ -141,7 +141,7 @@ static CFArrayCallBacks NonRetainingArrayCallbacks = {
 
 - (WebView *)webView
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     NSView *firstView = nil;
     if ([[[self contentView] subviews] count] > 0) {
         firstView = [[[self contentView] subviews] objectAtIndex:0];
@@ -164,7 +164,7 @@ static CFArrayCallBacks NonRetainingArrayCallbacks = {
 
 - (void)webViewStartedAcceleratedCompositing:(NSNotification *)notification
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     // If the WebView has gone into compositing mode, turn on window autodisplay. This is necessary for CA
     // to update layers and start animations.
     // We only ever turn autodisplay on here, because we turn it off before every test.

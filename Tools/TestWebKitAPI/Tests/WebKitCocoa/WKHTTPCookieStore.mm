@@ -348,7 +348,7 @@ TEST(WebKit, WKHTTPCookieStoreHttpOnly)
     [cookies release];
 }
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
 TEST(WebKit, WKHTTPCookieStoreCreationTime) 
 {   
     auto dataStore = [WKWebsiteDataStore defaultDataStore];
@@ -402,10 +402,10 @@ TEST(WebKit, WKHTTPCookieStoreCreationTime)
     TestWebKitAPI::Util::run(&gotFlag);
     gotFlag = false;
 }
-#endif // (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
+#endif // (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
 
 // FIXME: This should be removed once <rdar://problem/35344202> is resolved and bots are updated.
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED <= 101301) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED <= 110102)
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED <= 101301) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MAX_ALLOWED <= 110102)
 TEST(WebKit, WKHTTPCookieStoreNonPersistent)
 {
     RetainPtr<WKWebsiteDataStore> nonPersistentDataStore;
@@ -434,7 +434,7 @@ TEST(WebKit, WKHTTPCookieStoreCustom)
     auto customDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
     runTestWithWebsiteDataStore(customDataStore.get());
 }
-#endif // (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED <= 101301) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED <= 110102)
+#endif // (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED <= 101301) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MAX_ALLOWED <= 110102)
 
 TEST(WebKit, CookieObserverCrash)
 {

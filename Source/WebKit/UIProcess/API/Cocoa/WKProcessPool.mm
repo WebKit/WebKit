@@ -52,7 +52,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import <WebCore/WebCoreThreadSystemInterface.h>
 #import "WKGeolocationProviderIOS.h"
 #endif
@@ -64,10 +64,10 @@ static WKProcessPool *sharedProcessPool;
     WeakObjCPtr<id <_WKDownloadDelegate>> _downloadDelegate;
 
     RetainPtr<_WKAutomationSession> _automationSession;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     RetainPtr<WKGeolocationProviderIOS> _geolocationProvider;
     RetainPtr<id <_WKGeolocationCoreLocationProvider>> _coreLocationProvider;
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 }
 
 - (instancetype)_initWithConfiguration:(_WKProcessPoolConfiguration *)configuration
@@ -134,14 +134,14 @@ static WKProcessPool *sharedProcessPool;
     return *_processPool;
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 - (WKGeolocationProviderIOS *)_geolocationProvider
 {
     if (!_geolocationProvider)
         _geolocationProvider = adoptNS([[WKGeolocationProviderIOS alloc] initWithProcessPool:*_processPool]);
     return _geolocationProvider.get();
 }
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 @end
 
@@ -499,7 +499,7 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
 
 - (size_t)_pluginProcessCount
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     return WebKit::PluginProcessManager::singleton().pluginProcesses().size();
 #else
     return 0;
@@ -549,7 +549,7 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
 #endif
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 - (id <_WKGeolocationCoreLocationProvider>)_coreLocationProvider
 {
     return _coreLocationProvider.get();
@@ -562,7 +562,7 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
 
     _coreLocationProvider = coreLocationProvider;
 }
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 - (_WKDownload *)_downloadURLRequest:(NSURLRequest *)request
 {

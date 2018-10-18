@@ -76,18 +76,18 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/WallTime.h>
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 #import <wtf/SoftLinking.h>
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import "UIKitSPI.h"
 #import <WebKit/WebCoreThread.h>
 #import <WebKit/WebCoreThreadMessage.h>
 #import <WebKit/WebDOMOperationsPrivate.h>
 #endif
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 SOFT_LINK_STAGED_FRAMEWORK(WebInspectorUI, PrivateFrameworks, A)
 
 @interface CommandValidationTarget : NSObject <NSValidatedUserInterfaceItem>
@@ -498,7 +498,7 @@ void TestRunner::setIconDatabaseEnabled(bool iconDatabaseEnabled)
 
 void TestRunner::setMainFrameIsFirstResponder(bool flag)
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     NSView *documentView = [[mainFrame frameView] documentView];
     
     NSResponder *firstResponder = flag ? documentView : nil;
@@ -553,7 +553,7 @@ void TestRunner::setJavaScriptCanAccessClipboard(bool enabled)
 
 void TestRunner::setAutomaticLinkDetectionEnabled(bool enabled)
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     [[mainFrame webView] setAutomaticLinkDetectionEnabled:enabled];
 #endif
 }
@@ -563,7 +563,7 @@ void TestRunner::setTabKeyCyclesThroughElements(bool cycles)
     [[mainFrame webView] setTabKeyCyclesThroughElements:cycles];
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 void TestRunner::setTelephoneNumberParsingEnabled(bool enabled)
 {
     [[[mainFrame webView] preferences] _setTelephoneNumberParsingEnabled:enabled];
@@ -577,7 +577,7 @@ void TestRunner::setPagePaused(bool paused)
 
 void TestRunner::setUseDashboardCompatibilityMode(bool flag)
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     [[mainFrame webView] _setDashboardBehavior:WebDashboardBehaviorUseBackwardCompatibilityMode to:flag];
 #endif
 }
@@ -718,7 +718,7 @@ void TestRunner::setCacheModel(int cacheModel)
 
 bool TestRunner::isCommandEnabled(JSStringRef name)
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     RetainPtr<CFStringRef> nameCF = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, name));
     NSString *nameNS = (__bridge NSString *)nameCF.get();
 
@@ -816,7 +816,7 @@ void TestRunner::evaluateInWebInspector(JSStringRef script)
 
 JSRetainPtr<JSStringRef> TestRunner::inspectorTestStubURL()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     return nullptr;
 #else
     // Call the soft link framework function to dlopen it, then CFBundleGetBundleWithIdentifier will work.
@@ -917,7 +917,7 @@ void TestRunner::evaluateScriptInIsolatedWorld(unsigned worldID, JSObjectRef glo
 
 @end
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 @interface APITestDelegateIPhone : NSObject <WebFrameLoadDelegate>
 {
@@ -1004,7 +1004,7 @@ void TestRunner::evaluateScriptInIsolatedWorld(unsigned worldID, JSObjectRef glo
 
 void TestRunner::apiTestNewWindowDataLoadBaseURL(JSStringRef utf8Data, JSStringRef baseURL)
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // On iOS this gets called via JavaScript on the WebThread. But since it creates
     // and closes a WebView, it should be run on the main thread. Make the switch
     // from the web thread to the main thread and make the test asynchronous.
@@ -1034,7 +1034,7 @@ void TestRunner::apiTestNewWindowDataLoadBaseURL(JSStringRef utf8Data, JSStringR
             }
         }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         [(DumpRenderTree *)[UIApplication sharedApplication] _waitForWebThread];
 #endif
 
@@ -1142,7 +1142,7 @@ void TestRunner::authenticateSession(JSStringRef url, JSStringRef username, JSSt
 
 void TestRunner::abortModal()
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     [NSApp abortModal];
 #endif
 }
@@ -1154,7 +1154,7 @@ void TestRunner::setSerializeHTTPLoads(bool serialize)
 
 void TestRunner::setTextDirection(JSStringRef directionName)
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     if (JSStringIsEqualToUTF8CString(directionName, "ltr"))
         [[mainFrame webView] makeBaseWritingDirectionLeftToRight:0];
     else if (JSStringIsEqualToUTF8CString(directionName, "rtl"))
@@ -1166,7 +1166,7 @@ void TestRunner::setTextDirection(JSStringRef directionName)
 
 void TestRunner::addChromeInputField()
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     NSTextField *textField = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 100, 20)];
     textField.tag = 1;
     [[[[mainFrame webView] window] contentView] addSubview:textField];
@@ -1179,7 +1179,7 @@ void TestRunner::addChromeInputField()
 
 void TestRunner::removeChromeInputField()
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     NSView* textField = [[[[mainFrame webView] window] contentView] viewWithTag:1];
     if (textField) {
         [textField removeFromSuperview];
@@ -1190,14 +1190,14 @@ void TestRunner::removeChromeInputField()
 
 void TestRunner::focusWebView()
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     [[[mainFrame webView] window] makeFirstResponder:[mainFrame webView]];
 #endif
 }
 
 void TestRunner::setBackingScaleFactor(double backingScaleFactor)
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     [[mainFrame webView] _setCustomBackingScaleFactor:backingScaleFactor];
 #endif
 }
@@ -1267,7 +1267,7 @@ unsigned TestRunner::imageCountInGeneralPasteboard() const
 {
 #if PLATFORM(MAC)
     NSData *data = [[NSPasteboard generalPasteboard] dataForType:WebArchivePboardType];
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS_FAMILY)
     NSData *data = [[UIPasteboard generalPasteboard] valueForPasteboardType:WebArchivePboardType];
 #endif
     if (!data)

@@ -66,7 +66,7 @@
 #include <wtf/SetForScope.h>
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "RuntimeApplicationChecks.h"
 #endif
 
@@ -363,7 +363,7 @@ DecodingMode RenderBoxModelObject::decodingModeForImageDraw(const Image& image, 
     }
 
     // Large image case.
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (IOSApplication::isIBooksStorytime())
         return DecodingMode::Synchronous;
 #endif

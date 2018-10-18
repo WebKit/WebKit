@@ -25,7 +25,7 @@
 
 #import <wtf/Noncopyable.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 namespace WebKit {
 
@@ -38,4 +38,4 @@ public:
 
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

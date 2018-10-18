@@ -28,7 +28,7 @@
 #import <WebCore/FileChooser.h>
 #import <wtf/RefPtr.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import <WebCore/Icon.h>
 #endif
 
@@ -72,7 +72,7 @@ using namespace WebCore;
     _chooser = nullptr;
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 - (void)chooseFilename:(NSString *)filename displayString:(NSString *)displayString iconImage:(CGImageRef)imageRef
 {

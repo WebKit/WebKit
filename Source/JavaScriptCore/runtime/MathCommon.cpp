@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-#if PLATFORM(IOS) && CPU(ARM_THUMB2)
+#if PLATFORM(IOS_FAMILY) && CPU(ARM_THUMB2)
 
 // The following code is taken from netlib.org:
 //   http://www.netlib.org/fdlibm/fdlibm.h

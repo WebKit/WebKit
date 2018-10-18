@@ -1035,7 +1035,7 @@ void TestController::reattachPageToWebProcess()
 const char* TestController::webProcessName()
 {
     // FIXME: Find a way to not hardcode the process name.
-#if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)
     return "com.apple.WebKit.WebContent";
 #elif PLATFORM(COCOA)
     return "com.apple.WebKit.WebContent.Development";
@@ -1051,7 +1051,7 @@ const char* TestController::webProcessName()
 const char* TestController::networkProcessName()
 {
     // FIXME: Find a way to not hardcode the process name.
-#if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)
     return "com.apple.WebKit.Networking";
 #elif PLATFORM(COCOA)
     return "com.apple.WebKit.Networking.Development";

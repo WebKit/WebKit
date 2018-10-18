@@ -23,7 +23,7 @@
 messages -> ViewGestureGeometryCollector {
     CollectGeometryForSmartMagnificationGesture(WebCore::FloatPoint origin)
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     CollectGeometryForMagnificationGesture()
 
     SetRenderTreeSizeNotificationThreshold(uint64_t size)

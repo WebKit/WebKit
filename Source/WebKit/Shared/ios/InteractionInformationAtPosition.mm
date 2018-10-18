@@ -37,7 +37,7 @@ SOFT_LINK_CLASS(DataDetectorsCore, DDScannerResult)
 
 namespace WebKit {
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 void InteractionInformationAtPosition::encode(IPC::Encoder& encoder) const
 {
@@ -209,6 +209,6 @@ void InteractionInformationAtPosition::mergeCompatibleOptionalInformation(const 
         linkIndicator = oldInformation.linkIndicator;
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 }

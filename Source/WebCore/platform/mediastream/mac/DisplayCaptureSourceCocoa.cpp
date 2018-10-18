@@ -60,7 +60,7 @@ DisplayCaptureSourceCocoa::DisplayCaptureSourceCocoa(String&& name)
 
 DisplayCaptureSourceCocoa::~DisplayCaptureSourceCocoa()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     RealtimeMediaSourceCenter::singleton().videoFactory().unsetActiveSource(*this);
 #endif
 }
@@ -120,7 +120,7 @@ void DisplayCaptureSourceCocoa::settingsDidChange(OptionSet<RealtimeMediaSourceS
 
 void DisplayCaptureSourceCocoa::startProducingData()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     RealtimeMediaSourceCenter::singleton().videoFactory().setActiveSource(*this);
 #endif
 

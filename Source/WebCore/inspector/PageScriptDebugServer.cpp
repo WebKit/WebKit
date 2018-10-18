@@ -45,7 +45,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "WebCoreThreadInternal.h"
 #endif
 
@@ -90,7 +90,7 @@ void PageScriptDebugServer::didContinue(JSGlobalObject*)
 
 void PageScriptDebugServer::runEventLoopWhilePaused()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // On iOS, running an EventLoop causes us to run a nested WebRunLoop.
     // Since the WebThread is autoreleased at the end of run loop iterations
     // we need to gracefully handle releasing and reacquiring the lock.

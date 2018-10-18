@@ -40,7 +40,7 @@ namespace WebCore {
 
 size_t vmPageSize()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     return vm_kernel_page_size;
 #else
     static size_t cached = sysconf(_SC_PAGESIZE);

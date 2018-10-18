@@ -165,7 +165,7 @@ void calculateURLCacheSizes(CacheModel cacheModel, uint64_t diskFreeSize, unsign
     case CacheModelPrimaryWebBrowser: {
         uint64_t memorySize = ramSize() / MB;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         if (memorySize >= 1024)
             urlCacheMemoryCapacity = 16 * MB;
         else

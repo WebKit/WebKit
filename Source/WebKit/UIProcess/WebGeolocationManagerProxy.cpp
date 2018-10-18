@@ -102,7 +102,7 @@ void WebGeolocationManagerProxy::providerDidFailToDeterminePosition(const String
     processPool()->sendToAllProcesses(Messages::WebGeolocationManager::DidFailToDeterminePosition(errorMessage));
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 void WebGeolocationManagerProxy::resetPermissions()
 {
     processPool()->sendToAllProcesses(Messages::WebGeolocationManager::ResetPermissions());

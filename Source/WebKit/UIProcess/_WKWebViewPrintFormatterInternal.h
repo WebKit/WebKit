@@ -25,7 +25,7 @@
 
 #import "_WKWebViewPrintFormatter.h"
 
-#if PLATFORM(IOS) && !PLATFORM(IOSMAC)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOSMAC)
 
 @interface UIPrintFormatter ()
 - (CGRect)_pageContentRect:(BOOL)firstPage;
@@ -41,4 +41,4 @@
 @property (nonatomic, readonly) CGPDFDocumentRef _wk_printedDocument;
 @end
 
-#endif // PLATFORM(IOS) && !PLATFORM(IOSMAC)
+#endif // PLATFORM(IOS_FAMILY) && !PLATFORM(IOSMAC)

@@ -208,7 +208,7 @@ private:
     void textDidChangeInTextArea(Element*) final { }
     void overflowScrollPositionChanged() final { }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void startDelayingAndCoalescingContentChangeNotifications() final { }
     void stopDelayingAndCoalescingContentChangeNotifications() final { }
     bool hasRichlyEditableSelection() final { return false; }

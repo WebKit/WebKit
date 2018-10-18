@@ -99,7 +99,7 @@ void WebFullScreenManagerProxy::requestExitFullScreen()
 
 void WebFullScreenManagerProxy::supportsFullScreen(bool withKeyboard, bool& supports)
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     supports = !withKeyboard;
 #else
     supports = true;

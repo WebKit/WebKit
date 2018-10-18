@@ -36,7 +36,7 @@
 #import <pal/SessionID.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import <WebCore/WebCoreThread.h>
 #import <WebKitLegacy/WebFrameLoadDelegate.h>
 #endif

@@ -284,7 +284,7 @@ public:
     void willRemoveScrollingLayerWithBacking(RenderLayer&, RenderLayerBacking&);
     void didAddScrollingLayer(RenderLayer&);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void registerAllViewportConstrainedLayers();
     void unregisterAllViewportConstrainedLayers();
 
@@ -518,7 +518,7 @@ private:
     RefPtr<GraphicsLayer> m_clipLayer;
     RefPtr<GraphicsLayer> m_scrollLayer;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     HashSet<RenderLayer*> m_scrollingLayers;
     HashSet<RenderLayer*> m_scrollingLayersNeedingUpdate;
 #endif

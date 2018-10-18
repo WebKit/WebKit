@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKFormSelectPicker.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "UIKitSPI.h"
 #import "WKContentView.h"
@@ -452,4 +452,4 @@ static const float GroupOptionTextColorAlpha = 0.5;
 
 @end
 
-#endif  // PLATFORM(IOS)
+#endif  // PLATFORM(IOS_FAMILY)

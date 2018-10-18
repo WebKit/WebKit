@@ -51,13 +51,13 @@ protected:
     virtual bool setMillisecondToDateComponents(double, DateComponents*) const = 0;
     String visibleValue() const override;
     void attributeChanged(const QualifiedName&) override;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     bool isKeyboardFocusable(KeyboardEvent*) const override;
 #endif
 
 private:
     virtual bool parseToDateComponentsInternal(const UChar*, unsigned length, DateComponents*) const = 0;
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     virtual DateComponents::Type dateType() const = 0;
 #endif
     double valueAsDate() const override;

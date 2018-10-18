@@ -49,7 +49,7 @@ public:
     std::optional<double> beta() const;
     std::optional<double> gamma() const;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     std::optional<double> compassHeading() const;
     std::optional<double> compassAccuracy() const;
 

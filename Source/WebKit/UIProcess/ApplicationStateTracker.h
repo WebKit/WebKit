@@ -26,7 +26,7 @@
 #ifndef ApplicationStateTracker_h
 #define ApplicationStateTracker_h
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import <wtf/Forward.h>
 #import <wtf/WeakObjCPtr.h>

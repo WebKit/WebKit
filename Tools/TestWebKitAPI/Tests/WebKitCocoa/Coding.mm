@@ -50,7 +50,7 @@ TEST(Coding, WKPreferences)
     // Change all defaults to something else.
     [a setMinimumFontSize:10];
     [a setJavaScriptEnabled:NO];
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     [a setJavaScriptCanOpenWindowsAutomatically:YES];
 #else
     [a setJavaScriptCanOpenWindowsAutomatically:NO];
@@ -105,7 +105,7 @@ TEST(Coding, WKWebViewConfiguration)
     [a setApplicationNameForUserAgent:@"Application Name"];
     [a setAllowsAirPlayForMediaPlayback:NO];
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     [a setDataDetectorTypes:WKDataDetectorTypeAll];
     [a setAllowsInlineMediaPlayback:YES];
     [a setRequiresUserActionForMediaPlayback:NO];
@@ -119,7 +119,7 @@ TEST(Coding, WKWebViewConfiguration)
     EXPECT_TRUE([[a applicationNameForUserAgent] isEqualToString:[b applicationNameForUserAgent]]);
     EXPECT_EQ([a allowsAirPlayForMediaPlayback], [b allowsAirPlayForMediaPlayback]);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     EXPECT_EQ([a dataDetectorTypes], [b dataDetectorTypes]);
     EXPECT_EQ([a allowsInlineMediaPlayback], [b allowsInlineMediaPlayback]);
     EXPECT_EQ([a requiresUserActionForMediaPlayback], [b requiresUserActionForMediaPlayback]);
@@ -136,7 +136,7 @@ TEST(Coding, WKWebView)
     [a setAllowsBackForwardNavigationGestures:YES];
     [a setCustomUserAgent:@"CustomUserAgent"];
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     [a setAllowsLinkPreview:YES];
 #else
     [a setAllowsLinkPreview:NO];

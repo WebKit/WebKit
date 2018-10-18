@@ -130,7 +130,7 @@ public:
 
     Cursor() = default;
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 
     WEBCORE_EXPORT static const Cursor& fromType(Cursor::Type);
 
@@ -172,7 +172,7 @@ private:
     mutable RetainPtr<NSCursor> m_platformCursor;
 #endif
 
-#endif // !PLATFORM(IOS)
+#endif // !PLATFORM(IOS_FAMILY)
 };
 
 IntPoint determineHotSpot(Image*, const IntPoint& specifiedHotSpot);
@@ -221,7 +221,7 @@ const Cursor& noneCursor();
 const Cursor& grabCursor();
 const Cursor& grabbingCursor();
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 
 inline Cursor::Type Cursor::type() const
 {

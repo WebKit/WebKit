@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "ValidationBubble.h"
 
@@ -177,4 +177,4 @@ void ValidationBubble::setAnchorRect(const IntRect& anchorRect, UIViewController
 
 } // namespace WebCore
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

@@ -303,7 +303,7 @@
     _processPoolConfiguration->setSuppressesConnectionTerminationOnSystemChange(suppressesConnectionTerminationOnSystemChange);
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 - (NSString *)CTDataConnectionServiceType
 {
     return _processPoolConfiguration->ctDataConnectionServiceType();

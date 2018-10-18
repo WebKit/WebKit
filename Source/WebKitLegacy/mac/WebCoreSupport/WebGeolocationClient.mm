@@ -38,14 +38,14 @@
 #import <WebCore/Geolocation.h>
 #import <wtf/BlockObjCExceptions.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import <WebCore/WAKResponder.h>
 #import <WebKitLegacy/WebCoreThreadRun.h>
 #endif
 
 using namespace WebCore;
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 @interface WebGeolocationPolicyListener : NSObject <WebAllowDenyPolicyListener>
 {
     RefPtr<Geolocation> _geolocation;
@@ -62,7 +62,7 @@ using namespace WebCore;
 @end
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 @interface WebGeolocationProviderInitializationListener : NSObject <WebGeolocationProviderInitializationListener> {
 @private
     RefPtr<Geolocation> m_geolocation;
@@ -91,7 +91,7 @@ void WebGeolocationClient::stopUpdating()
     [[m_webView _geolocationProvider] unregisterWebView:m_webView];
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 void WebGeolocationClient::setEnableHighAccuracy(bool wantsHighAccuracy)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -110,7 +110,7 @@ void WebGeolocationClient::requestPermission(Geolocation& geolocation)
         return;
     }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     Frame *frame = geolocation.frame();
 
     if (!frame) {
@@ -137,7 +137,7 @@ std::optional<GeolocationPosition> WebGeolocationClient::lastPosition()
     return core([[m_webView _geolocationProvider] lastPosition]);
 }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 @implementation WebGeolocationPolicyListener
 
 - (id)initWithGeolocation:(Geolocation&)geolocation
@@ -236,6 +236,6 @@ std::optional<GeolocationPosition> WebGeolocationClient::lastPosition()
     m_geolocation->setIsAllowed(false);
 }
 @end
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 #endif // ENABLE(GEOLOCATION)

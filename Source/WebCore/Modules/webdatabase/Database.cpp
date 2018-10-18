@@ -339,7 +339,7 @@ ExceptionOr<void> Database::performOpenAndVerify(bool shouldSetVersionInNewDatab
 
     const int maxSqliteBusyWaitTime = 30000;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     {
         // Make sure we wait till the background removal of the empty database files finished before trying to open any database.
         auto locker = holdLock(DatabaseTracker::openDatabaseMutex());

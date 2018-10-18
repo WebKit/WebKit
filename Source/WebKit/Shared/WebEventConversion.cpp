@@ -238,7 +238,7 @@ WebCore::PlatformKeyboardEvent platform(const WebKeyboardEvent& webEvent)
 
 #if ENABLE(TOUCH_EVENTS)
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 static WebCore::PlatformTouchPoint::TouchPhaseType touchEventType(const WebPlatformTouchPoint& webTouchPoint)
 {
@@ -314,7 +314,7 @@ public:
         m_rotationAngle = webTouchPoint.rotationAngle();
     }
 };
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 class WebKit2PlatformTouchEvent : public WebCore::PlatformTouchEvent {
 public:
@@ -351,7 +351,7 @@ public:
 
         m_timestamp = webEvent.timestamp();
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         unsigned touchCount = webEvent.touchPoints().size();
         m_touchPoints.reserveInitialCapacity(touchCount);
         for (unsigned i = 0; i < touchCount; ++i)
@@ -368,7 +368,7 @@ public:
         // PlatformTouchEvent
         for (size_t i = 0; i < webEvent.touchPoints().size(); ++i)
             m_touchPoints.append(WebKit2PlatformTouchPoint(webEvent.touchPoints().at(i)));
-#endif //PLATFORM(IOS)
+#endif //PLATFORM(IOS_FAMILY)
     }
 };
 

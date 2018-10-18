@@ -92,14 +92,14 @@ TEST(WebKit, WKWebProcessPlugInEditingDelegate)
     NSString *copiedString = nil;
 #if PLATFORM(MAC)
     copiedString = [[NSPasteboard generalPasteboard] stringForType:@"org.webkit.data"];
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS_FAMILY)
     copiedString = [[[NSString alloc] initWithData:[[UIPasteboard generalPasteboard] dataForPasteboardType:@"org.webkit.data"] encoding:NSUTF8StringEncoding] autorelease];
 #endif
     EXPECT_WK_STREQ("hello", copiedString);
 
 #if PLATFORM(MAC)
     [[NSPasteboard generalPasteboard] setString:copiedString forType:@"public.utf8-plain-text"];
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS_FAMILY)
     [[UIPasteboard generalPasteboard] setValue:copiedString forPasteboardType:@"public.utf8-plain-text"];
 #endif
     [webView performSelector:@selector(paste:) withObject:nil];

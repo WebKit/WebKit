@@ -35,7 +35,7 @@
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import "UIKitSPI.h"
 #import "WKContentView.h"
 #import "WKContentViewInteraction.h"
@@ -44,7 +44,7 @@
 #import <WebCore/LengthBox.h>
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #define WK_WEB_VIEW_PROTOCOLS <UIScrollViewDelegate>
 #endif
 
@@ -80,7 +80,7 @@ struct PrintInfo;
     RefPtr<WebKit::WebPageProxy> _page;
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 - (void)_processDidExit;
 - (void)_processWillSwap;
 - (void)_didRelaunchProcess;
@@ -180,15 +180,15 @@ struct PrintInfo;
 
 WKWebView* fromWebPageProxy(WebKit::WebPageProxy&);
 
-#if ENABLE(FULLSCREEN_API) && PLATFORM(IOS)
+#if ENABLE(FULLSCREEN_API) && PLATFORM(IOS_FAMILY)
 @interface WKWebView (FullScreenAPI)
 -(BOOL)hasFullScreenWindowController;
 -(WKFullScreenWindowController *)fullScreenWindowController;
 -(void)closeFullScreenWindowController;
 @end
-#endif // ENABLE(FULLSCREEN_API) && PLATFORM(IOS)
+#endif // ENABLE(FULLSCREEN_API) && PLATFORM(IOS_FAMILY)
 
-#if PLATFORM(IOS) && !PLATFORM(IOSMAC)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOSMAC)
 @interface WKWebView (_WKWebViewPrintFormatter)
 @property (nonatomic, readonly) id <_WKWebViewPrintProvider> _printProvider;
 @end

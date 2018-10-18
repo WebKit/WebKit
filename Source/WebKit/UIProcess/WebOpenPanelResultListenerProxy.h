@@ -47,7 +47,7 @@ public:
 
     virtual ~WebOpenPanelResultListenerProxy();
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void chooseFiles(const Vector<String>& filenames, const String& displayString, const API::Data* iconImageData);
 #endif
     void chooseFiles(const Vector<String>& filenames);

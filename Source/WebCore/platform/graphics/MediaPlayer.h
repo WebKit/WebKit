@@ -213,7 +213,7 @@ public:
     virtual Vector<RefPtr<PlatformTextTrack>> outOfBandTrackSources() { return { }; }
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     virtual String mediaPlayerNetworkInterfaceName() const { return String(); }
     virtual bool mediaPlayerGetRawCookies(const URL&, Vector<Cookie>&) const { return false; }
 #endif
@@ -269,7 +269,7 @@ public:
     bool doesHaveAttribute(const AtomicString&, AtomicString* value = nullptr) const;
     PlatformLayer* platformLayer() const;
 
-#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     void setVideoFullscreenLayer(PlatformLayer*, WTF::Function<void()>&& completionHandler = [] { });
     void setVideoFullscreenFrame(FloatRect);
     void updateVideoFullscreenInlineImage();
@@ -279,7 +279,7 @@ public:
     VideoFullscreenMode fullscreenMode() const;
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     NSArray *timedMetadata() const;
     String accessLog() const;
     String errorLog() const;
@@ -521,7 +521,7 @@ public:
     Vector<RefPtr<PlatformTextTrack>> outOfBandTrackSources();
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     String mediaPlayerNetworkInterfaceName() const;
     bool getRawCookies(const URL&, Vector<Cookie>&) const;
 #endif

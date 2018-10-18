@@ -705,7 +705,7 @@ private:
     Ref<AutomaticThreadCondition> m_threadCondition; // The mutator must not wait on this. It would cause a deadlock.
     RefPtr<AutomaticThread> m_thread;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     unsigned m_precentAvailableMemoryCachedCallCount;
     bool m_overCriticalMemoryThreshold;
 #endif

@@ -1,3 +1,378 @@
+2018-10-18  Alexey Proskuryakov  <ap@apple.com>
+
+        Switch from PLATFORM(IOS) to PLATFORM(IOS_FAMILY)
+        https://bugs.webkit.org/show_bug.cgi?id=190729
+
+        Reviewed by Tim Horton.
+
+        * DOM/DOM.mm:
+        (-[DOMNode boundingBox]):
+        * DOM/DOMElement.mm:
+        * DOM/DOMHTML.mm:
+        * DOM/DOMInternal.mm:
+        * DOM/DOMUIKitExtensions.mm:
+        * DOM/WebDOMOperations.mm:
+        * DefaultDelegates/WebDefaultContextMenuDelegate.mm:
+        * DefaultDelegates/WebDefaultEditingDelegate.m:
+        * DefaultDelegates/WebDefaultPolicyDelegate.m:
+        (-[WebDefaultPolicyDelegate webView:decidePolicyForNavigationAction:request:frame:decisionListener:]):
+        * DefaultDelegates/WebDefaultUIDelegate.h:
+        * DefaultDelegates/WebDefaultUIDelegate.mm:
+        (-[WebDefaultUIDelegate webViewClose:]):
+        (-[WebDefaultUIDelegate webViewFocus:]):
+        (-[WebDefaultUIDelegate webViewUnfocus:]):
+        (-[WebDefaultUIDelegate webViewIsResizable:]):
+        (-[WebDefaultUIDelegate webView:setResizable:]):
+        (-[WebDefaultUIDelegate webView:setFrame:]):
+        (-[WebDefaultUIDelegate webView:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:]):
+        * History/BackForwardList.h:
+        * History/BackForwardList.mm:
+        * History/WebBackForwardList.mm:
+        (+[WebBackForwardList initialize]):
+        (bumperCarBackForwardHackNeeded):
+        * History/WebHistory.mm:
+        (-[WebHistoryPrivate addItem:discardDuplicate:]):
+        (-[WebHistory _sendNotification:entries:]):
+        (-[WebHistory loadFromURL:error:]):
+        (-[WebHistory saveToURL:error:]):
+        * History/WebHistoryItem.mm:
+        (WKNotifyHistoryItemChanged):
+        (+[WebHistoryItem initialize]):
+        (-[WebHistoryItem initFromDictionaryRepresentation:]):
+        * History/WebURLsWithTitles.m:
+        * Misc/WebCache.mm:
+        (+[WebCache initialize]):
+        * Misc/WebDownload.mm:
+        (-[WebDownloadInternal download:didReceiveAuthenticationChallenge:]):
+        * Misc/WebElementDictionary.mm:
+        (+[WebElementDictionary initialize]):
+        (+[WebElementDictionary initializeLookupTable]):
+        * Misc/WebIconDatabase.mm:
+        * Misc/WebKitNSStringExtras.mm:
+        (+[NSString _webkit_localCacheDirectoryWithBundleIdentifier:]):
+        * Misc/WebKitVersionChecks.h:
+        * Misc/WebKitVersionChecks.mm:
+        (WebKitLinkedOnOrAfter):
+        (WebKitLinkTimeVersion):
+        * Misc/WebLocalizableStrings.mm:
+        * Misc/WebNSControlExtras.h:
+        * Misc/WebNSControlExtras.m:
+        * Misc/WebNSEventExtras.m:
+        * Misc/WebNSFileManagerExtras.mm:
+        * Misc/WebNSImageExtras.h:
+        * Misc/WebNSImageExtras.m:
+        * Misc/WebNSPasteboardExtras.mm:
+        * Misc/WebNSPrintOperationExtras.h:
+        * Misc/WebNSPrintOperationExtras.m:
+        * Misc/WebNSViewExtras.m:
+        * Misc/WebNSWindowExtras.m:
+        * Panels/WebAuthenticationPanel.h:
+        * Panels/WebAuthenticationPanel.m:
+        * Panels/WebPanelAuthenticationHandler.m:
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (+[WebHostedNetscapePluginView initialize]):
+        * Plugins/WebBasePluginPackage.h:
+        * Plugins/WebBasePluginPackage.mm:
+        * Plugins/WebJavaPlugIn.h:
+        * Plugins/WebPluginContainerCheck.mm:
+        * Plugins/WebPluginController.h:
+        * Plugins/WebPluginController.mm:
+        (-[WebPluginController plugInViewWithArguments:fromPluginPackage:]):
+        (-[WebPluginController addPlugin:]):
+        (-[WebPluginController destroyPlugin:]):
+        (-[WebPluginController destroyAllPlugins]):
+        * Plugins/WebPluginDatabase.mm:
+        (+[WebPluginDatabase _defaultPlugInPaths]):
+        * Plugins/WebPluginPackage.mm:
+        (-[WebPluginPackage initWithPath:]):
+        * Storage/WebDatabaseManager.mm:
+        (-[WebDatabaseManager deleteAllDatabases]):
+        * Storage/WebDatabaseManagerClient.h:
+        * Storage/WebDatabaseManagerClient.mm:
+        (WebDatabaseManagerClient::WebDatabaseManagerClient):
+        (WebDatabaseManagerClient::~WebDatabaseManagerClient):
+        * Storage/WebStorageManager.mm:
+        (-[WebStorageManager deleteAllOrigins]):
+        (WebKitInitializeStorageIfNecessary):
+        * WebCoreSupport/WebAlternativeTextClient.h:
+        * WebCoreSupport/WebApplicationCache.mm:
+        (applicationCacheBundleIdentifier):
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::setWindowRect):
+        (WebChromeClient::windowRect):
+        (WebChromeClient::takeFocus):
+        (WebChromeClient::addMessageToConsole):
+        (WebChromeClient::enableSuddenTermination):
+        (WebChromeClient::disableSuddenTermination):
+        (WebChromeClient::createPopupMenu const):
+        (WebChromeClient::createSearchPopupMenu const):
+        (WebChromeClient::shouldPaintEntireContents const):
+        (WebChromeClient::supportsVideoFullscreen):
+        (WebChromeClient::supportsFullScreenForElement):
+        (WebChromeClient::enterFullScreenForElement):
+        (WebChromeClient::exitFullScreenForElement):
+        * WebCoreSupport/WebContextMenuClient.mm:
+        * WebCoreSupport/WebDragClient.mm:
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm:
+        (+[WebUndoStep initialize]):
+        (updateFontPanel):
+        (WebEditorClient::didBeginEditing):
+        (WebEditorClient::respondToChangedContents):
+        (WebEditorClient::respondToChangedSelection):
+        (WebEditorClient::canceledComposition):
+        (WebEditorClient::didEndEditing):
+        (WebEditorClient::didWriteSelectionToPasteboard):
+        (attributesForAttributedStringConversion):
+        (WebEditorClient::setInsertionPasteboard):
+        (WebEditorClient::registerUndoOrRedoStep):
+        (WebEditorClient::handleKeyboardEvent):
+        (WebEditorClient::handleInputMethodKeydown):
+        (WebEditorClient::textDidChangeInTextField):
+        (WebEditorClient::requestCheckingOfString):
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::detachedFromParent2):
+        (WebFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache):
+        (WebFrameLoaderClient::assignIdentifierToInitialRequest):
+        (WebFrameLoaderClient::dispatchWillSendRequest):
+        (WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge):
+        (WebFrameLoaderClient::dispatchDidReceiveResponse):
+        (WebFrameLoaderClient::willCacheResponse const):
+        (WebFrameLoaderClient::dispatchDidReceiveContentLength):
+        (WebFrameLoaderClient::dispatchDidFinishLoading):
+        (WebFrameLoaderClient::dispatchDidFailLoading):
+        (WebFrameLoaderClient::dispatchDidChangeLocationWithinPage):
+        (WebFrameLoaderClient::dispatchWillClose):
+        (WebFrameLoaderClient::dispatchDidStartProvisionalLoad):
+        (WebFrameLoaderClient::dispatchDidCommitLoad):
+        (WebFrameLoaderClient::dispatchDidFailProvisionalLoad):
+        (WebFrameLoaderClient::dispatchDidFailLoad):
+        (WebFrameLoaderClient::dispatchDidFinishDocumentLoad):
+        (WebFrameLoaderClient::dispatchDidFinishLoad):
+        (WebFrameLoaderClient::dispatchDidReachLayoutMilestone):
+        (WebFrameLoaderClient::willChangeTitle):
+        (WebFrameLoaderClient::didChangeTitle):
+        (WebFrameLoaderClient::didReplaceMultipartContent):
+        (WebFrameLoaderClient::updateGlobalHistory):
+        (WebFrameLoaderClient::saveViewStateToItem):
+        (WebFrameLoaderClient::restoreViewState):
+        (WebFrameLoaderClient::provisionalLoadStarted):
+        (WebFrameLoaderClient::prepareForDataSourceReplacement):
+        (WebFrameLoaderClient::setTitle):
+        (WebFrameLoaderClient::savePlatformDataToCachedFrame):
+        (WebFrameLoaderClient::transitionToCommittedFromCachedFrame):
+        (WebFrameLoaderClient::transitionToCommittedForNewPage):
+        (WebFrameLoaderClient::didRestoreFromPageCache):
+        (WebFrameLoaderClient::actionDictionary const):
+        (WebFrameLoaderClient::createPlugin):
+        (WebFrameLoaderClient::getLoadDecisionForIcons):
+        (WebFrameLoaderClient::finishedLoadingIcon):
+        (+[WebFramePolicyListener initialize]):
+        * WebCoreSupport/WebFrameNetworkingContext.mm:
+        * WebCoreSupport/WebGeolocationClient.h:
+        * WebCoreSupport/WebGeolocationClient.mm:
+        (WebGeolocationClient::requestPermission):
+        * WebCoreSupport/WebInspectorClient.h:
+        * WebCoreSupport/WebJavaScriptTextInputPanel.m:
+        * WebCoreSupport/WebNotificationClient.mm:
+        * WebCoreSupport/WebOpenPanelResultListener.mm:
+        * WebCoreSupport/WebPlatformStrategies.h:
+        * WebCoreSupport/WebPlatformStrategies.mm:
+        * WebCoreSupport/WebProgressTrackerClient.h:
+        * WebCoreSupport/WebProgressTrackerClient.mm:
+        (WebProgressTrackerClient::progressStarted):
+        (WebProgressTrackerClient::progressEstimateChanged):
+        (WebProgressTrackerClient::progressFinished):
+        * WebCoreSupport/WebSecurityOrigin.mm:
+        * WebInspector/WebNodeHighlight.h:
+        * WebInspector/WebNodeHighlight.mm:
+        (-[WebNodeHighlight initWithTargetView:inspectorController:]):
+        (-[WebNodeHighlight dealloc]):
+        (-[WebNodeHighlight attach]):
+        * WebInspector/WebNodeHighlightView.h:
+        * WebInspector/WebNodeHighlightView.mm:
+        (-[WebNodeHighlightView initWithWebNodeHighlight:]):
+        (-[WebNodeHighlightView dealloc]):
+        * WebInspector/WebNodeHighlighter.mm:
+        (-[WebNodeHighlighter highlight]):
+        * WebView/WebArchive.mm:
+        (+[WebArchivePrivate initialize]):
+        * WebView/WebClipView.h:
+        * WebView/WebDataSource.mm:
+        (WebDataSourcePrivate::WebDataSourcePrivate):
+        (+[WebDataSource initialize]):
+        (+[WebDataSource _repTypesAllowImageTypeOmission:]):
+        (-[WebDataSource _makeRepresentation]):
+        * WebView/WebDelegateImplementationCaching.h:
+        * WebView/WebDelegateImplementationCaching.mm:
+        (CallDelegate):
+        (CallDelegateReturningFloat):
+        (CallDelegateReturningBoolean):
+        (CallUIDelegate):
+        (CallUIDelegateReturningFloat):
+        (CallUIDelegateReturningBoolean):
+        (CallFrameLoadDelegate):
+        (CallFrameLoadDelegateReturningBoolean):
+        (CallResourceLoadDelegate):
+        (CallScriptDebugDelegate):
+        (CallFormDelegate):
+        (CallFormDelegateReturningBoolean):
+        * WebView/WebDeviceOrientation.mm:
+        (-[WebDeviceOrientation initWithCanProvideAlpha:alpha:canProvideBeta:beta:canProvideGamma:gamma:]):
+        * WebView/WebDocumentInternal.h:
+        * WebView/WebDocumentLoaderMac.mm:
+        (needsDataLoadWorkaround):
+        * WebView/WebDynamicScrollBarsViewInternal.h:
+        * WebView/WebFormDelegate.m:
+        * WebView/WebFrame.mm:
+        (-[WebFrame _updateBackgroundAndUpdatesWhileOffscreen]):
+        (-[WebFrame _unmarkAllMisspellings]):
+        (-[WebFrame _paintBehaviorForDestinationContext:]):
+        (-[WebFrame _drawRect:contentsOnly:]):
+        (-[WebFrame _stringByEvaluatingJavaScriptFromString:forceUserGesture:]):
+        (-[WebFrame _scrollDOMRangeToVisible:]):
+        (-[WebFrame _bodyBackgroundColor]):
+        (-[WebFrame accessibilityRoot]):
+        (needsMicrosoftMessengerDOMDocumentWorkaround):
+        * WebView/WebFrameInternal.h:
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView _setDocumentView:]):
+        (+[WebFrameView _viewTypesAllowImageTypeOmission:]):
+        (-[WebFrameView _viewClassForMIMEType:]):
+        (-[WebFrameView initWithFrame:]):
+        (-[WebFrameView drawRect:]):
+        (-[WebFrameView _firstResponderIsFormControl]):
+        (-[WebFrameView keyDown:keyDown:]):
+        (-[WebFrameView _isScrollable]):
+        * WebView/WebFullScreenController.h:
+        * WebView/WebFullScreenController.mm:
+        * WebView/WebHTMLRepresentation.mm:
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView hitTest:]):
+        (-[WebHTMLView initWithFrame:]):
+        (-[WebHTMLView dealloc]):
+        (-[WebHTMLView addSubview:]):
+        (-[WebHTMLView mouseDown:]):
+        (-[WebHTMLView mouseUp:]):
+        (-[WebHTMLView resignFirstResponder]):
+        (-[WebHTMLView accessibilityHitTest:]):
+        (-[WebHTMLView selectionImageForcingBlackText:selectionImageForcingBlackText:]):
+        * WebView/WebHTMLViewInternal.h:
+        * WebView/WebIndicateLayer.h:
+        * WebView/WebIndicateLayer.mm:
+        * WebView/WebMediaPlaybackTargetPicker.h:
+        * WebView/WebMediaPlaybackTargetPicker.mm:
+        * WebView/WebPDFDocumentExtras.h:
+        * WebView/WebPDFDocumentExtras.mm:
+        * WebView/WebPDFRepresentation.h:
+        * WebView/WebPDFRepresentation.mm:
+        * WebView/WebPDFView.h:
+        * WebView/WebPreferences.mm:
+        (cacheModelForMainBundle):
+        (WebPreferencesPrivate::WebPreferencesPrivate):
+        (-[WebPreferences initWithIdentifier:sendChangeNotification:initWithIdentifier:]):
+        (-[WebPreferences encodeWithCoder:]):
+        (+[WebPreferences standardPreferences]):
+        (+[WebPreferences initialize]):
+        (-[WebPreferences _valueForKey:]):
+        (-[WebPreferences _setStringValue:forKey:]):
+        (-[WebPreferences _setIntegerValue:forKey:]):
+        (-[WebPreferences _setUnsignedIntValue:forKey:]):
+        (-[WebPreferences _setFloatValue:forKey:]):
+        (-[WebPreferences _setBoolValue:forKey:]):
+        (-[WebPreferences _setLongLongValue:forKey:]):
+        (-[WebPreferences _setUnsignedLongLongValue:forKey:]):
+        (-[WebPreferences _postCacheModelChangedNotification]):
+        (-[WebPreferences _postPreferencesChangedNotification]):
+        (+[WebPreferences _switchNetworkLoaderToNewTestingSession]):
+        (-[WebPreferences setStorageBlockingPolicy:]):
+        * WebView/WebResource.mm:
+        (+[WebResourcePrivate initialize]):
+        * WebView/WebTextCompletionController.h:
+        * WebView/WebTextIterator.mm:
+        (+[WebTextIteratorPrivate initialize]):
+        * WebView/WebView.mm:
+        (shouldEnableLoadDeferring):
+        (shouldRestrictWindowFocus):
+        (shouldRespectPriorityInCSSAttributeSetters):
+        (shouldUseLegacyBackgroundSizeShorthandBehavior):
+        (shouldAllowPictureInPictureMediaPlayback):
+        (shouldAllowContentSecurityPolicySourceStarToMatchAnyProtocol):
+        (shouldAllowWindowOpenWithoutUserGesture):
+        (shouldConvertInvalidURLsToBlank):
+        (shouldRequireUserGestureToLoadVideo):
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (+[WebView _viewClass:andRepresentationClass:forMIMEType:allowingPlugins:]):
+        (-[WebView _viewClass:andRepresentationClass:forMIMEType:]):
+        (-[WebView _closePluginDatabases]):
+        (-[WebView _closeWithFastTeardown]):
+        (-[WebView _close]):
+        (+[WebView _MIMETypeForFile:]):
+        (-[WebView setShowingInspectorIndication:]):
+        (-[WebView _setFormDelegate:]):
+        (-[WebView _needsPreHTML5ParserQuirks]):
+        (-[WebView _preferencesChangedNotification:]):
+        (-[WebView _preferencesChanged:]):
+        (-[WebView _cacheResourceLoadDelegateImplementations]):
+        (-[WebView _cacheFrameLoadDelegateImplementations]):
+        (-[WebView _policyDelegateForwarder]):
+        (-[WebView _UIDelegateForwarder]):
+        (-[WebView _editingDelegateForwarder]):
+        (-[WebView _updateActiveState]):
+        (-[_WebSafeForwarder forwardInvocation:]):
+        (+[WebView initialize]):
+        (-[WebView _pluginForMIMEType:]):
+        (-[WebView _pluginForExtension:]):
+        (-[WebView _isMIMETypeRegisteredAsPlugin:]):
+        (+[WebView canShowMIMETypeAsHTML:]):
+        (-[WebView _initWithArguments:]):
+        (-[WebView initWithFrame:frameName:groupName:]):
+        (-[WebView dealloc]):
+        (-[WebView close]):
+        (-[WebView viewDidMoveToWindow]):
+        (-[WebView setUIDelegate:]):
+        (-[WebView setResourceLoadDelegate:]):
+        (-[WebView setPolicyDelegate:]):
+        (-[WebView setFrameLoadDelegate:]):
+        (-[WebView goBack]):
+        (-[WebView goForward]):
+        (-[WebView stringByEvaluatingJavaScriptFromString:]):
+        (-[WebView setHostWindow:]):
+        (-[WebView becomeFirstResponder]):
+        (+[WebView _cacheModelChangedNotification:]):
+        (-[WebView _frameViewAtWindowPoint:]):
+        (+[WebView _preflightSpellCheckerNow:]):
+        (+[WebView _preflightSpellChecker]):
+        (-[WebView canGoBack]):
+        (-[WebView canGoForward]):
+        (-[WebView stopLoading:]):
+        (-[WebView reload:]):
+        (-[WebView setMainFrameDocumentReady:]):
+        (-[WebView _shouldChangeSelectedDOMRange:toDOMRange:affinity:stillSelecting:]):
+        (-[WebView setContinuousSpellCheckingEnabled:]):
+        (-[WebView undoManager]):
+        (-[WebView isAutomaticQuoteSubstitutionEnabled]):
+        (-[WebView isAutomaticLinkDetectionEnabled]):
+        (-[WebView isAutomaticDashSubstitutionEnabled]):
+        (-[WebView isAutomaticTextReplacementEnabled]):
+        (-[WebView isAutomaticSpellingCorrectionEnabled]):
+        (+[WebView _setCacheModel:]):
+        (-[WebView _retrieveKeyboardUIModeFromPreferences:]):
+        (-[WebView _keyboardUIMode]):
+        (LayerFlushController::flushLayers):
+        (-[WebView _scheduleCompositingLayerFlush]):
+        (-[WebView _enterVideoFullscreenForVideoElement:mode:]):
+        (-[WebView fullScreenPlaceholderView]):
+        (WebInstallMemoryPressureHandler):
+        * WebView/WebViewData.h:
+        * WebView/WebViewData.mm:
+        (+[WebViewPrivate initialize]):
+        (-[WebViewPrivate init]):
+        (-[WebViewPrivate dealloc]):
+        * WebView/WebViewInternal.h:
+
 2018-10-18  Alex Christensen  <achristensen@webkit.org>
 
         Clean up FrameLoader two-state enums

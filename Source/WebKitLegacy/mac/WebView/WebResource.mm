@@ -66,7 +66,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 
 + (void)initialize
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
     RunLoop::initializeMainRunLoop();
@@ -334,7 +334,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
     return suggestedFilename;
 }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 - (NSFileWrapper *)_fileWrapperRepresentation
 {
     NSFileWrapper *wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:[self data]] autorelease];

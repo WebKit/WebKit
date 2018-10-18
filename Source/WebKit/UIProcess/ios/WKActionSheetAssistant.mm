@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKActionSheetAssistant.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "APIUIClient.h"
 #import "TCCSPI.h"
@@ -636,4 +636,4 @@ static const CGFloat presentationElementRectPadding = 15;
 
 @end
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

@@ -81,7 +81,7 @@ enum PDFImageCachingPolicy {
     PDFImageCachingBelowMemoryLimit,
     PDFImageCachingDisabled,
     PDFImageCachingClipBoundsOnly,
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     PDFImageCachingDefault = PDFImageCachingBelowMemoryLimit
 #else
     PDFImageCachingDefault = PDFImageCachingEnabled

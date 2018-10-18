@@ -28,7 +28,7 @@
 #if ENABLE(GRAPHICS_CONTEXT_3D)
 #import "GraphicsContext3D.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import "GraphicsContext3DIOS.h"
 #endif
 
@@ -246,7 +246,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
     : m_attrs(attrs)
     , m_private(std::make_unique<GraphicsContext3DPrivate>(this))
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (m_attrs.isWebGL2)
         m_compiler = ANGLEWebKitBridge(SH_ESSL_OUTPUT, SH_WEBGL2_SPEC);
     else
@@ -565,7 +565,7 @@ bool GraphicsContext3D::texImageIOSurface2D(GC3Denum target, GC3Denum internalFo
 {
 #if USE(OPENGL)
     return kCGLNoError == CGLTexImageIOSurface2D(platformGraphicsContext3D(), target, internalFormat, width, height, format, type, surface, plane);
-#elif USE(OPENGL_ES) && !PLATFORM(IOS_SIMULATOR)
+#elif USE(OPENGL_ES) && !PLATFORM(IOS_FAMILY_SIMULATOR)
     return [platformGraphicsContext3D() texImageIOSurface:surface target:target internalFormat:internalFormat width:width height:height format:format type:type plane:plane];
 #else
     UNUSED_PARAM(target);

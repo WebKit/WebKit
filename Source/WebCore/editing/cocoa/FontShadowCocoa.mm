@@ -29,7 +29,7 @@
 #import "ColorCocoa.h"
 #import "ColorMac.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import <pal/ios/UIKitSoftLink.h>
 #endif
 
@@ -39,7 +39,7 @@ RetainPtr<NSShadow> FontShadow::createShadow() const
 {
 #if USE(APPKIT)
     auto shadow = adoptNS([NSShadow new]);
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS_FAMILY)
     auto shadow = adoptNS([PAL::get_UIKit_NSShadowClass() new]);
 #endif
     [shadow setShadowColor:platformColor(color)];

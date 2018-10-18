@@ -59,7 +59,7 @@ public:
     explicit RenderLayerBacking(RenderLayer&);
     ~RenderLayerBacking();
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void layerWillBeDestroyed();
 #endif
 
@@ -222,7 +222,7 @@ public:
 
     LayoutSize subpixelOffsetFromRenderer() const { return m_subpixelOffsetFromRenderer; }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     bool needsIOSDumpRenderTreeMainFrameRenderViewLayerIsAlwaysOpaqueHack(const GraphicsLayer&) const override;
 #endif
 

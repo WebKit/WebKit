@@ -26,7 +26,7 @@
 #import "config.h"
 #import "RenderThemeIOS.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "BitmapImage.h"
 #import "CSSPrimitiveValue.h"
@@ -1856,7 +1856,7 @@ String RenderThemeIOS::extraDefaultStyleSheet()
 static NSBundle *arKitBundle()
 {
     static NSBundle *arKitBundle = []() {
-#if PLATFORM(IOS_SIMULATOR)
+#if PLATFORM(IOS_FAMILY_SIMULATOR)
         dlopen("/System/Library/PrivateFrameworks/AssetViewer.framework/AssetViewer", RTLD_NOW);
         return [NSBundle bundleForClass:NSClassFromString(@"ASVThumbnailView")];
 #else
@@ -2038,4 +2038,4 @@ void RenderThemeIOS::paintSystemPreviewBadge(Image& image, const PaintInfo& pain
 
 } // namespace WebCore
 
-#endif //PLATFORM(IOS)
+#endif //PLATFORM(IOS_FAMILY)

@@ -57,7 +57,7 @@
 #include <wtf/Language.h>
 #include <wtf/MainThread.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "ChromeClient.h"
 #endif
 
@@ -188,7 +188,7 @@ bool JSDOMWindowBase::shouldInterruptScriptBeforeTimeout(const JSGlobalObject* o
     if (shouldInterruptScriptToPreventInfiniteRecursionWhenClosingPage(page))
         return true;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (page->chrome().client().isStopping())
         return true;
 #endif

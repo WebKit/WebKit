@@ -55,7 +55,7 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << uiProcessCookieStorageIdentifier;
 #endif
     encoder << defaultSessionPendingCookies;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     encoder << cookieStorageDirectoryExtensionHandle;
     encoder << containerCachesDirectoryExtensionHandle;
     encoder << parentBundleDirectoryExtensionHandle;
@@ -70,7 +70,7 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << uiProcessSDKVersion;
     encoder << sourceApplicationBundleIdentifier;
     encoder << sourceApplicationSecondaryIdentifier;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     encoder << ctDataConnectionServiceType;
 #endif
     encoder << httpProxy;
@@ -150,7 +150,7 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
 #endif
     if (!decoder.decode(result.defaultSessionPendingCookies))
         return false;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     std::optional<SandboxExtension::Handle> cookieStorageDirectoryExtensionHandle;
     decoder >> cookieStorageDirectoryExtensionHandle;
     if (!cookieStorageDirectoryExtensionHandle)
@@ -188,7 +188,7 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
         return false;
     if (!decoder.decode(result.sourceApplicationSecondaryIdentifier))
         return false;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (!decoder.decode(result.ctDataConnectionServiceType))
         return false;
 #endif

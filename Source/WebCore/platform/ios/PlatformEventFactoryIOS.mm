@@ -26,7 +26,7 @@
 #import "config.h"
 #import "PlatformEventFactoryIOS.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "IntPoint.h"
 #import "KeyEventCocoa.h"
@@ -526,4 +526,4 @@ PlatformTouchEvent PlatformEventFactory::createPlatformSimulatedTouchEvent(Platf
 
 } // namespace WebCore
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

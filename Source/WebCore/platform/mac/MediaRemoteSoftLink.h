@@ -73,7 +73,7 @@ SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, MediaRemote, kMRMediaRemoteNowPlayingInfo
 
 #endif // USE(MEDIAREMOTE)
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, MediaRemote, MRMediaRemoteCopyPickableRoutes, CFArrayRef, (), ())
 #define MRMediaRemoteCopyPickableRoutes softLink_MediaRemote_MRMediaRemoteCopyPickableRoutes
 #endif

@@ -1,3 +1,231 @@
+2018-10-18  Alexey Proskuryakov  <ap@apple.com>
+
+        Switch from PLATFORM(IOS) to PLATFORM(IOS_FAMILY)
+        https://bugs.webkit.org/show_bug.cgi?id=190729
+
+        Reviewed by Tim Horton.
+
+        * DumpRenderTree/AccessibilityController.h:
+        * DumpRenderTree/AccessibilityTextMarker.h:
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/DumpRenderTreeFileDraggingSource.h:
+        * DumpRenderTree/TestRunner.cpp:
+        (getSecureEventInputIsEnabledCallback):
+        (TestRunner::staticFunctions):
+        (TestRunner::callUIScriptCallback):
+        * DumpRenderTree/TestRunner.h:
+        * DumpRenderTree/cg/PixelDumpSupportCG.cpp:
+        * DumpRenderTree/ios/AccessibilityTextMarkerIOS.mm:
+        * DumpRenderTree/ios/AccessibilityUIElementIOS.mm:
+        * DumpRenderTree/ios/DumpRenderTreeAppMain.mm:
+        * DumpRenderTree/ios/DumpRenderTreeBrowserView.mm:
+        * DumpRenderTree/ios/TextInputControllerIOS.m:
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        * DumpRenderTree/mac/AppleScriptController.m:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (createWebViewAndOffscreenWindow):
+        (destroyWebViewAndOffscreenWindow):
+        (resetWebPreferencesToConsistentValues):
+        (setDefaultsToConsistentValuesForTesting):
+        (allocateGlobalControllers):
+        (releaseGlobalControllers):
+        (addTestPluginsToPluginSearchPath):
+        (prepareConsistentTestingEnvironment):
+        (dumpRenderTree):
+        (DumpRenderTreeMain):
+        (dumpFrameAsPDF):
+        (dumpBackForwardListForAllWindows):
+        (updateDisplay):
+        (dump):
+        (resetWebViewToConsistentStateBeforeTesting):
+        (runTest):
+        (displayWebView):
+        (displayAndTrackRepaintsWebView):
+        * DumpRenderTree/mac/DumpRenderTreeDraggingInfo.h:
+        * DumpRenderTree/mac/DumpRenderTreeDraggingInfo.mm:
+        * DumpRenderTree/mac/DumpRenderTreeMac.h:
+        * DumpRenderTree/mac/DumpRenderTreePasteboard.h:
+        * DumpRenderTree/mac/DumpRenderTreeWindow.h:
+        * DumpRenderTree/mac/DumpRenderTreeWindow.mm:
+        (-[DumpRenderTreeWindow close]):
+        (-[DumpRenderTreeWindow webView]):
+        (-[DumpRenderTreeWindow webViewStartedAcceleratedCompositing:]):
+        * DumpRenderTree/mac/EventSendingController.h:
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (+[EventSendingController isSelectorExcludedFromWebScript:]):
+        (+[EventSendingController webScriptNameForSelector:]):
+        (-[EventSendingController dealloc]):
+        (-[EventSendingController currentEventTime]):
+        (-[EventSendingController clearKillRing]):
+        (modifierFlags):
+        (-[EventSendingController mouseDown:withModifiers:]):
+        (-[EventSendingController scalePageBy:atX:andY:]):
+        (-[EventSendingController mouseUp:withModifiers:]):
+        (-[EventSendingController mouseMoveToX:Y:]):
+        (-[EventSendingController mouseScrollByX:andY:continuously:]):
+        (-[EventSendingController keyDown:withModifiers:withLocation:]):
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+        (-[FrameLoadDelegate init]):
+        (-[FrameLoadDelegate dealloc]):
+        (-[FrameLoadDelegate processWork:]):
+        (-[FrameLoadDelegate webView:didStartProvisionalLoadForFrame:]):
+        (-[FrameLoadDelegate webView:didCommitLoadForFrame:]):
+        (-[FrameLoadDelegate didClearWindowObjectInStandardWorldForFrame:]):
+        * DumpRenderTree/mac/LayoutTestHelper.m:
+        * DumpRenderTree/mac/MockGeolocationProvider.mm:
+        (-[MockGeolocationProvider timerFired]):
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::setMainFrameIsFirstResponder):
+        (TestRunner::setAutomaticLinkDetectionEnabled):
+        (TestRunner::setUseDashboardCompatibilityMode):
+        (TestRunner::isCommandEnabled):
+        (TestRunner::inspectorTestStubURL):
+        (TestRunner::apiTestNewWindowDataLoadBaseURL):
+        (TestRunner::abortModal):
+        (TestRunner::setTextDirection):
+        (TestRunner::addChromeInputField):
+        (TestRunner::removeChromeInputField):
+        (TestRunner::focusWebView):
+        (TestRunner::setBackingScaleFactor):
+        (TestRunner::imageCountInGeneralPasteboard const):
+        * DumpRenderTree/mac/UIDelegate.h:
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate modalWindowWillClose:]):
+        (-[UIDelegate webViewRunModal:]):
+        (-[UIDelegate webView:supportsFullScreenForElement:withKeyboard:]):
+        (-[UIDelegate dealloc]):
+        * Scripts/check-for-inappropriate-objc-class-names:
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        * TestRunnerShared/spi/UIKitTestSPI.h:
+        * TestWebKitAPI/Tests/WTF/darwin/WeakLinking.cpp:
+        * TestWebKitAPI/Tests/WebCore/MarkedText.cpp:
+        (WebCore::operator<<):
+        * TestWebKitAPI/Tests/WebCore/cocoa/DatabaseTrackerTest.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/cocoa/WebCoreNSURLSession.mm:
+        (TestWebKitAPI::WebCoreNSURLSessionTest::SetUp):
+        * TestWebKitAPI/Tests/WebCore/ios/PreviewLoader.cpp:
+        * TestWebKitAPI/Tests/WebKit/NoHistoryItemScrollToFragment.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/WKPreferences.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/AdditionalReadAccessAllowedURLs.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/AnimatedResize.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/BundleEditingDelegate.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/BundleRangeHandle.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/BundleRangeHandlePlugIn.mm:
+        (-[BundleRangeHandlePlugIn webProcessPlugInBrowserContextController:didFinishDocumentLoadForFrame:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/Coding.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/CopyHTML.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/CopyURL.mm:
+        (createWebViewWithCustomPasteboardDataEnabled):
+        * TestWebKitAPI/Tests/WebKitCocoa/Copying.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/DataDetection.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/DoAfterNextPresentationUpdateAfterCrash.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/EditorStateTests.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/ExitFullscreenOnEnterPiP.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/FindInPage.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/FixedLayoutSize.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/FontAttributes.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/Geolocation.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/InteractionDeadlockAfterCrash.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/LocalStorageClear.mm:
+        (defaultWebsiteCacheDirectory):
+        (defaultApplicationCacheDirectory):
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/NSFileManagerExtras.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/NowPlaying.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/NowPlayingControlsTests.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/PasteHTML.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/PasteImage.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/PasteMixedContent.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/PasteRTFD.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/QuickLook.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/RenderedImageWithOptions.mm:
+        (runTestWithWidth):
+        * TestWebKitAPI/Tests/WebKitCocoa/RenderedImageWithOptionsPlugIn.mm:
+        (-[RenderedImageWithOptionsPlugIn renderImageWithWidth:completionHandler:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/SafeBrowsing.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/ShrinkToFit.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/UserContentController.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/VisibleContentRect.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (platformCopyRichTextWithMultipleAttachments):
+        (platformCopyRichTextWithImage):
+        (platformCopyPNG):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKContentViewEditingActions.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKContentViewTargetForAction.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKHTTPCookieStore.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKPDFViewStablePresentationUpdateCallback.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKRequestActivatedElementInfo.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKURLSchemeHandler-leaks.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewSnapshot.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsitePolicies.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKInputDelegate.mm:
+        * TestWebKitAPI/Tests/WebKitLegacy/ios/AudioSessionCategoryIOS.mm:
+        * TestWebKitAPI/Tests/WebKitLegacy/ios/SnapshotViaRenderInContext.mm:
+        * TestWebKitAPI/Tests/WebKitLegacy/mac/AccessingPastedImage.mm:
+        * TestWebKitAPI/Tests/ios/AccessibilityTestsIOS.mm:
+        * TestWebKitAPI/Tests/ios/ActionSheetTests.mm:
+        * TestWebKitAPI/Tests/ios/DragAndDropTestsIOS.mm:
+        * TestWebKitAPI/Tests/ios/FocusPreservationTests.mm:
+        * TestWebKitAPI/Tests/ios/KeyboardInputTestsIOS.mm:
+        * TestWebKitAPI/Tests/ios/RenderingProgressTests.mm:
+        * TestWebKitAPI/Tests/ios/ScrollViewInsetTests.mm:
+        * TestWebKitAPI/Tests/ios/SetTimeoutFunction.mm:
+        * TestWebKitAPI/Tests/ios/SynchronousTimeoutTests.mm:
+        * TestWebKitAPI/Tests/ios/TestInputDelegate.h:
+        * TestWebKitAPI/Tests/ios/TestInputDelegate.mm:
+        * TestWebKitAPI/Tests/ios/TextAutosizingBoost.mm:
+        * TestWebKitAPI/Tests/ios/UIPasteboardTests.mm:
+        * TestWebKitAPI/Tests/ios/WKScrollViewDelegate.mm:
+        * TestWebKitAPI/Tests/ios/WKScrollViewTests.mm:
+        * TestWebKitAPI/Tests/ios/WKWebViewAutofillTests.mm:
+        * TestWebKitAPI/Tests/ios/WKWebViewEditActions.mm:
+        * TestWebKitAPI/cocoa/DragAndDropSimulator.h:
+        * TestWebKitAPI/cocoa/TestNavigationDelegate.mm:
+        (-[WKWebView _test_waitForDidFinishNavigation]):
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        * TestWebKitAPI/config.h:
+        * TestWebKitAPI/ios/DragAndDropSimulatorIOS.mm:
+        * TestWebKitAPI/ios/TestWKWebViewController.h:
+        * TestWebKitAPI/ios/TestWKWebViewController.mm:
+        * TestWebKitAPI/ios/UIKitSPI.h:
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::beginTesting):
+        * WebKitTestRunner/InjectedBundle/mac/TestRunnerMac.mm:
+        (WTR::TestRunner::inspectorTestStubURL):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::webProcessName):
+        (WTR::TestController::networkProcessName):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::invoke):
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+        * WebKitTestRunner/cg/TestInvocationCG.cpp:
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::initializeWebViewConfiguration):
+        (WTR::TestController::platformCreateWebView):
+        (WTR::TestController::imageCountInGeneralPasteboard const):
+        (WTR::TestController::addTestKeyToKeychain):
+        (WTR::TestController::cleanUpKeychain):
+        (WTR::TestController::keyExistsInKeychain):
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.h:
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+
 2018-10-18  Chris Dumez  <cdumez@apple.com>
 
         [PSON] Cap number of SuspendedPageProxy objects and allow a WebPageProxy to have more than one

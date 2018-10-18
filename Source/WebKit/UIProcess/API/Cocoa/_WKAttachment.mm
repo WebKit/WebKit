@@ -35,7 +35,7 @@
 #import <WebCore/SharedBuffer.h>
 #import <wtf/BlockPtr.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import <MobileCoreServices/MobileCoreServices.h>
 #endif
 

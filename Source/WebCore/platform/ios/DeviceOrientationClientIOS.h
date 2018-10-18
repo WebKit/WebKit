@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if PLATFORM(IOS) && ENABLE(DEVICE_ORIENTATION)
+#if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
 
 #include "DeviceOrientationClient.h"
 #include "DeviceOrientationController.h"
@@ -57,4 +57,4 @@ private:
 
 } // namespace WebCore
 
-#endif // PLATFORM(IOS) && ENABLE(DEVICE_ORIENTATION)
+#endif // PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)

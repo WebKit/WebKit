@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WebNSAttributedStringExtras.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 enum {
     NSAttachmentCharacter = 0xfffc    /* To denote attachments. */
 };

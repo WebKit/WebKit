@@ -702,7 +702,7 @@ ImageDrawResult GraphicsContext::drawImage(Image& image, const FloatPoint& desti
 
 ImageDrawResult GraphicsContext::drawImage(Image& image, const FloatRect& destination, const ImagePaintingOptions& imagePaintingOptions)
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     FloatRect srcRect(FloatPoint(), image.originalSize());
 #else
     FloatRect srcRect(FloatPoint(), image.size());

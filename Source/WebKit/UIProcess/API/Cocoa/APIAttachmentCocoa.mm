@@ -28,7 +28,7 @@
 
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/SharedBuffer.h>
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import <MobileCoreServices/MobileCoreServices.h>
 #else
 #import <CoreServices/CoreServices.h>

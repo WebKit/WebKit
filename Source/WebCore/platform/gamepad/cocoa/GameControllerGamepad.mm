@@ -25,7 +25,7 @@
 #include "config.h"
 #include "GameControllerGamepad.h"
 
-#if ENABLE(GAMEPAD) && (defined(__LP64__) || PLATFORM(IOS))
+#if ENABLE(GAMEPAD) && (defined(__LP64__) || PLATFORM(IOS_FAMILY))
 #include "GameControllerGamepadProvider.h"
 #include <GameController/GameController.h>
 
@@ -206,4 +206,4 @@ void GameControllerGamepad::setupAsGamepad()
 
 } // namespace WebCore
 
-#endif // ENABLE(GAMEPAD) && (defined(__LP64__) || PLATFORM(IOS))
+#endif // ENABLE(GAMEPAD) && (defined(__LP64__) || PLATFORM(IOS_FAMILY))

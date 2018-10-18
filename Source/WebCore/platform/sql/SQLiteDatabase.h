@@ -102,7 +102,7 @@ public:
     
     sqlite3* sqlite3Handle() const
     {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
         ASSERT(m_sharable || m_openingThread == &Thread::current() || !m_db);
 #endif
         return m_db;

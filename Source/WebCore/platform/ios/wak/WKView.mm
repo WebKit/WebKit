@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKViewPrivate.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "WAKViewInternal.h"
 #import "WAKWindow.h"
@@ -745,4 +745,4 @@ void WKViewSetAutoresizingMask (WKViewRef view, unsigned int mask)
     view->autoresizingMask = mask;
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "Cursor.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #include <wtf/NeverDestroyed.h>
 
@@ -260,4 +260,4 @@ IntPoint determineHotSpot(Image*, const IntPoint&)
 
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

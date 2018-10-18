@@ -704,7 +704,7 @@ bool HTMLImageElement::childShouldCreateRenderer(const Node& child) const
 }
 #endif // ENABLE(SERVICE_CONTROLS)
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 // FIXME: This is a workaround for <rdar://problem/7725158>. We should find a better place for the touchCalloutEnabled() logic.
 bool HTMLImageElement::willRespondToMouseClickEvents()
 {

@@ -159,7 +159,7 @@ ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRec
 
     ASSERT(!isBitmapImage() || notSolidColor());
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     FloatSize intrinsicTileSize = originalSize();
 #else
     FloatSize intrinsicTileSize = size();
@@ -187,7 +187,7 @@ ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRec
         return draw(ctxt, destRect, visibleSrcRect, op, blendMode, decodingMode, ImageOrientationDescription());
     }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // When using accelerated drawing on iOS, it's faster to stretch an image than to tile it.
     if (ctxt.isAcceleratedContext()) {
         if (size().width() == 1 && intersection(oneTileRect, destRect).height() == destRect.height()) {
@@ -213,7 +213,7 @@ ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRec
     // tile size is large (<rdar://problem/4691859>, <rdar://problem/6239505>).
     // Memory consumption depends on the transformed tile size which can get
     // larger than the original tile if user zooms in enough.
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     const float maxPatternTilePixels = 512 * 512;
 #else
     const float maxPatternTilePixels = 2048 * 2048;
@@ -337,7 +337,7 @@ ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& dstRect
 
 void Image::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio)
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     intrinsicRatio = originalSize();
 #else
     intrinsicRatio = size();

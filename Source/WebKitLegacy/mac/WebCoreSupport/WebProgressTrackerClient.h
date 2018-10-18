@@ -37,7 +37,7 @@ public:
 private:
     void progressTrackerDestroyed() override;
     
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     void willChangeEstimatedProgress() override;
     void didChangeEstimatedProgress() override;
 #endif

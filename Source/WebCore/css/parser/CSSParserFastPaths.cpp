@@ -783,7 +783,7 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         return valueID == CSSValueNormal || valueID == CSSValueSpace;
     case CSSPropertyWebkitTextZoom:
         return valueID == CSSValueNormal || valueID == CSSValueReset;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // Apple specific property. These will never be standardized and is purely to
     // support custom WebKit-based Apple applications.
     case CSSPropertyWebkitTouchCallout:
@@ -957,7 +957,7 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyWebkitTextAlignLast:
     case CSSPropertyWebkitTextJustify:
 #endif
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // Apple specific property. This will never be standardized and is purely to
     // support custom WebKit-based Apple applications.
     case CSSPropertyWebkitTouchCallout:

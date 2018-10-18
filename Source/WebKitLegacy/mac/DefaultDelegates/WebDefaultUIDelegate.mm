@@ -32,17 +32,17 @@
 #import "WebUIDelegatePrivate.h"
 #import "WebView.h"
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 #import "WebJavaScriptTextInputPanel.h"
 #import "WebKitVersionChecks.h"
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import <WebCore/WAKWindow.h>
 #import <WebCore/WKViewPrivate.h>
 #endif
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 @interface NSApplication (DeclarationStolenFromAppKit)
 - (void)_cycleWindowsReversed:(BOOL)reversed;
 @end
@@ -73,7 +73,7 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
     return nil;
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 - (WebView *)webView:(WebView *)sender createWebViewWithRequest:(NSURLRequest *)request userGesture:(BOOL)userGesture
 {
     return nil;
@@ -86,21 +86,21 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
 
 - (void)webViewClose: (WebView *)wv
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     [[wv window] close];
 #endif
 }
 
 - (void)webViewFocus: (WebView *)wv
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     [[wv window] makeKeyAndOrderFront:wv];
 #endif
 }
 
 - (void)webViewUnfocus: (WebView *)wv
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     if ([[wv window] isKeyWindow] || [[[wv window] attachedSheet] isKeyWindow])
         [NSApp _cycleWindowsReversed:FALSE];
 #endif
@@ -149,7 +149,7 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
 
 - (BOOL)webViewIsResizable: (WebView *)wv
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     return NO;
 #else
     return [[wv window] showsResizeIndicator];
@@ -158,7 +158,7 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
 
 - (void)webView: (WebView *)wv setResizable:(BOOL)resizable
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     // FIXME: This doesn't actually change the resizability of the window,
     // only visibility of the indicator.
     [[wv window] setShowsResizeIndicator:resizable];
@@ -167,7 +167,7 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
 
 - (void)webView: (WebView *)wv setFrame:(NSRect)frame
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     [[wv window] setFrame:frame display:YES];
 #endif
 }
@@ -191,7 +191,7 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
 
 - (NSString *)webView: (WebView *)wv runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText initiatedByFrame:(WebFrame *)frame
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     WebJavaScriptTextInputPanel *panel = [[WebJavaScriptTextInputPanel alloc] initWithPrompt:prompt text:defaultText];
     [panel showWindow:nil];
     NSString *result;
@@ -217,7 +217,7 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
 }
 
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 - (NSUInteger)webView:(WebView *)webView dragDestinationActionMaskForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
 {
     if (!linkedOnOrAfter(SDKVersion::FirstWithDropToNavigateDisallowedByDefault))
@@ -266,7 +266,7 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
     return nil;
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 - (void)webViewSupportedOrientationsUpdated:(WebView *)sender
 {
 }

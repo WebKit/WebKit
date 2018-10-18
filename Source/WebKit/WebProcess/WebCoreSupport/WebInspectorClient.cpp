@@ -35,7 +35,7 @@
 #include <WebCore/PageOverlayController.h>
 #include <WebCore/Settings.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include <WebCore/InspectorOverlay.h>
 #endif
 
@@ -112,7 +112,7 @@ void WebInspectorClient::highlight()
     if (!m_page->corePage()->settings().acceleratedCompositingEnabled())
         return;
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     if (!m_highlightOverlay) {
         auto highlightOverlay = PageOverlay::create(*this);
         m_highlightOverlay = highlightOverlay.ptr();
@@ -131,7 +131,7 @@ void WebInspectorClient::highlight()
 
 void WebInspectorClient::hideHighlight()
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     if (m_highlightOverlay)
         m_page->corePage()->pageOverlayController().uninstallPageOverlay(*m_highlightOverlay, PageOverlay::FadeMode::Fade);
 #else
@@ -184,7 +184,7 @@ void WebInspectorClient::animationEndedForLayer(const GraphicsLayer* layer)
     m_paintRectLayers.remove(*nonConstLayer);
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 void WebInspectorClient::showInspectorIndication()
 {
     m_page->showInspectorIndication();

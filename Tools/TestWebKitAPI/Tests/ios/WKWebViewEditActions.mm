@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if PLATFORM(IOS) && WK_API_ENABLED
+#if PLATFORM(IOS_FAMILY) && WK_API_ENABLED
 
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
@@ -192,4 +192,4 @@ TEST(WKWebViewEditActions, SetFontFamily)
 
 } // namespace TestWebKitAPI
 
-#endif // PLATFORM(IOS) && WK_API_ENABLED
+#endif // PLATFORM(IOS_FAMILY) && WK_API_ENABLED

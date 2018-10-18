@@ -26,7 +26,7 @@
 
 #pragma once
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #include "EventListener.h"
 #include "HTMLMediaElementEnums.h"
@@ -150,7 +150,7 @@ public:
     void clearMode(HTMLMediaElementEnums::VideoFullscreenMode);
     bool hasMode(HTMLMediaElementEnums::VideoFullscreenMode mode) const { return m_currentMode.hasMode(mode); }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     UIViewController *presentingViewController();
     UIViewController *fullscreenViewController() const { return m_viewController.get(); }
     WebAVPlayerLayerView* playerLayerView() const { return m_playerLayerView.get(); }
@@ -219,5 +219,5 @@ protected:
 
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 

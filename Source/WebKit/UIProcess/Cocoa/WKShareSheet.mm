@@ -34,7 +34,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import "UIKitSPI.h"
 #import "WKContentViewInteraction.h"
 #else
@@ -77,7 +77,7 @@
     
     if (data.url) {
         NSURL *url = (NSURL *)data.url.value();
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         if (!data.shareData.title.isEmpty())
             url._title = data.shareData.title;
 #endif

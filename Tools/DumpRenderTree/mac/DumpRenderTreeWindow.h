@@ -28,7 +28,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 #import <AppKit/AppKit.h>
 #else
 #import "UIKitSPI.h"
@@ -47,7 +47,7 @@
 {
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 @property (nonatomic, retain) UIWindow *uiWindow;
 @property (nonatomic, retain) UIWebBrowserView *browserView;
 #endif

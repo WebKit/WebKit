@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(FULLSCREEN_API) && PLATFORM(IOS)
+#if ENABLE(FULLSCREEN_API) && PLATFORM(IOS_FAMILY)
 
 #include <wtf/Seconds.h>
 
@@ -63,4 +63,4 @@ private:
 
 }
 
-#endif // ENABLE(FULLSCREEN_API) && PLATFORM(IOS)
+#endif // ENABLE(FULLSCREEN_API) && PLATFORM(IOS_FAMILY)

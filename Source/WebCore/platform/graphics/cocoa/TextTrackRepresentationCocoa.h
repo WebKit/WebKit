@@ -26,7 +26,7 @@
 #ifndef TextTrackRepresentationCocoa_h
 #define TextTrackRepresentationCocoa_h
 
-#if (PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))) && ENABLE(VIDEO_TRACK)
+#if (PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))) && ENABLE(VIDEO_TRACK)
 
 #import "TextTrackRepresentation.h"
 #import <QuartzCore/CALayer.h>
@@ -57,6 +57,6 @@ private:
 
 }
 
-#endif // (PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))) && ENABLE(VIDEO_TRACK)
+#endif // (PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))) && ENABLE(VIDEO_TRACK)
 
 #endif // TextTrackRepresentationCocoa_h

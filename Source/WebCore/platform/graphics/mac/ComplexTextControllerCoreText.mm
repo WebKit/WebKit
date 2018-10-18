@@ -144,7 +144,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
     if (!m_mayUseNaturalWritingDirection || m_run.directionalOverride()) {
         const short ltrForcedEmbeddingLevelValue = 0;
         const short rtlForcedEmbeddingLevelValue = 1;
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED == 101400) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED == 120000)
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED == 101400) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED == 120000)
         static const void* optionKeys[] = { kCTTypesetterOptionForcedEmbeddingLevel, kCTTypesetterOptionAllowUnboundedLayout };
         static const void* ltrOptionValues[] = { CFNumberCreate(kCFAllocatorDefault, kCFNumberShortType, &ltrForcedEmbeddingLevelValue), kCFBooleanTrue };
         static const void* rtlOptionValues[] = { CFNumberCreate(kCFAllocatorDefault, kCFNumberShortType, &rtlForcedEmbeddingLevelValue), kCFBooleanTrue };

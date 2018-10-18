@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 
 #import "WebDynamicScrollBarsView.h"
 #import <WebCore/WebCoreFrameView.h>
@@ -65,4 +65,4 @@
 - (BOOL)inProgrammaticScroll;
 @end
 
-#endif // !PLATFORM(IOS)
+#endif // !PLATFORM(IOS_FAMILY)

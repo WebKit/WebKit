@@ -486,7 +486,7 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings, BegingTestingMode te
     WKBundleSetPopupBlockingEnabled(m_bundle, m_pageGroup, false);
     WKBundleSetAllowStorageAccessFromFileURLS(m_bundle, m_pageGroup, false);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     WKBundlePageSetUseTestingViewportConfiguration(page()->page(), !booleanForKey(settings, "UseFlexibleViewport"));
 #endif
 

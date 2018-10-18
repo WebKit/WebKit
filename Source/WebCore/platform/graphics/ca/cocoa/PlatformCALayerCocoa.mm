@@ -53,7 +53,7 @@
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/RetainPtr.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import "FontAntialiasingStateSaver.h"
 #import "WAKWindow.h"
 #import "WKGraphics.h"
@@ -114,7 +114,7 @@ static MonotonicTime mediaTimeToCurrentTime(CFTimeInterval t)
 - (void)animationDidStart:(CAAnimation *)animation
 {
     using namespace WebCore;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     WebThreadLock();
 #endif
     if (!m_owner)
@@ -145,7 +145,7 @@ static MonotonicTime mediaTimeToCurrentTime(CFTimeInterval t)
 - (void)animationDidStop:(CAAnimation *)animation finished:(BOOL)finished
 {
     using namespace WebCore;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     WebThreadLock();
 #endif
     UNUSED_PARAM(finished);
@@ -905,7 +905,7 @@ void PlatformCALayerCocoa::setContentsScale(float value)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer setContentsScale:value];
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     [m_layer setRasterizationScale:value];
 #endif
     END_BLOCK_OBJC_EXCEPTIONS
@@ -1026,7 +1026,7 @@ void PlatformCALayerCocoa::updateCustomAppearance(GraphicsLayer::CustomAppearanc
 
 static NSString *layerContentsFormat(bool acceleratesDrawing, bool wantsDeepColor, bool supportsSubpixelAntialiasedFonts)
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (wantsDeepColor)
         return kCAContentsFormatRGBA10XR;
 #else
@@ -1063,7 +1063,7 @@ TiledBacking* PlatformCALayerCocoa::tiledBacking()
     return [tiledBackingLayer tiledBacking];
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 bool PlatformCALayer::isWebLayer()
 {
     BOOL result = NO;
@@ -1103,7 +1103,7 @@ void PlatformCALayer::setAnchorPointOnMainThread(FloatPoint3D value)
         END_BLOCK_OBJC_EXCEPTIONS
     });
 }
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 PlatformCALayer::RepaintRectList PlatformCALayer::collectRectsToPaint(CGContextRef context, PlatformCALayer* platformCALayer)
 {
@@ -1139,7 +1139,7 @@ void PlatformCALayer::drawLayerContents(CGContextRef context, WebCore::PlatformC
     if (!layerContents->platformCALayerRepaintCount(platformCALayer))
         layerPaintBehavior |= GraphicsLayerPaintFirstTilePaint;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     WKSetCurrentGraphicsContext(context);
 #endif
     
@@ -1148,7 +1148,7 @@ void PlatformCALayer::drawLayerContents(CGContextRef context, WebCore::PlatformC
     // We never use CompositingCoordinatesOrientation::BottomUp on Mac.
     ASSERT(layerContents->platformCALayerContentsOrientation() == GraphicsLayer::CompositingCoordinatesOrientation::TopDown);
     
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     FontAntialiasingStateSaver fontAntialiasingState(context, [platformCALayer->platformLayer() isOpaque]);
     fontAntialiasingState.setup([WAKWindow hasLandscapeOrientation]);
 #else
@@ -1185,7 +1185,7 @@ void PlatformCALayer::drawLayerContents(CGContextRef context, WebCore::PlatformC
             layerContents->platformCALayerPaintContents(platformCALayer, graphicsContext, rect, layerPaintBehavior);
         }
         
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         fontAntialiasingState.restore();
 #else
         ThemeMac::setFocusRingClipRect(FloatRect());
@@ -1239,7 +1239,7 @@ void PlatformCALayerCocoa::enumerateRectsBeingDrawn(CGContextRef context, void (
 
 unsigned PlatformCALayerCocoa::backingStoreBytesPerPixel() const
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (wantsDeepColorBackingStore())
         return isOpaque() ? 4 : 5;
 #endif

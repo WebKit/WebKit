@@ -75,7 +75,7 @@
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/text/TextStream.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "SelectionRect.h"
 #endif
 
@@ -661,7 +661,7 @@ void RenderObject::addPDFURLRect(PaintInfo& paintInfo, const LayoutPoint& paintO
 
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 // This function is similar in spirit to RenderText::absoluteRectsForRange, but returns rectangles
 // which are annotated with additional state which helps iOS draw selections in its unique way.
 // No annotations are added in this class.
@@ -964,7 +964,7 @@ LayoutRect RenderObject::clippedOverflowRectForRepaint(const RenderLayerModelObj
 
 bool RenderObject::shouldApplyCompositedContainerScrollsForRepaint()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     return false;
 #else
     return true;
@@ -1500,7 +1500,7 @@ void RenderObject::destroy()
 
     m_bitfields.setBeingDestroyed(true);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (hasLayer())
         downcast<RenderBoxModelObject>(*this).layer()->willBeDestroyed();
 #endif

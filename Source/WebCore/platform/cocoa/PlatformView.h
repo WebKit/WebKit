@@ -28,7 +28,7 @@
 
 #if PLATFORM(COCOA)
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 OBJC_CLASS UIView;
 typedef UIView PlatformView;
 #else

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "LegacyTileCache.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #include "FontAntialiasingStateSaver.h"
 #include "LegacyTileGrid.h"
@@ -823,4 +823,4 @@ void LegacyTileCache::dumpTiles()
 
 } // namespace WebCore
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

@@ -65,7 +65,7 @@ Font::Font(const FontPlatformData& platformData, Origin origin, Interstitial int
     , m_isBrokenIdeographFallback(false)
     , m_hasVerticalGlyphs(false)
     , m_isUsedInSystemFallbackCache(false)
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     , m_shouldNotBeUsedForArabic(false)
 #endif
 {
@@ -265,7 +265,7 @@ static std::optional<size_t> codePointSupportIndex(UChar32 codePoint)
 
 static RefPtr<GlyphPage> createAndFillGlyphPage(unsigned pageNumber, const Font& font)
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // FIXME: Times New Roman contains Arabic glyphs, but Core Text doesn't know how to shape them. See <rdar://problem/9823975>.
     // Once we have the fix for <rdar://problem/9823975> then remove this code together with Font::shouldNotBeUsedForArabic()
     // in <rdar://problem/12096835>.

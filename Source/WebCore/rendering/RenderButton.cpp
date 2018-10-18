@@ -31,7 +31,7 @@
 #include "StyleInheritedData.h"
 #include <wtf/IsoMallocInlines.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "RenderThemeIOS.h"
 #endif
 
@@ -143,7 +143,7 @@ LayoutRect RenderButton::controlClipRect(const LayoutPoint& additionalOffset) co
     return LayoutRect(additionalOffset.x() + borderLeft(), additionalOffset.y() + borderTop(), width() - borderLeft() - borderRight(), height() - borderTop() - borderBottom());
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 void RenderButton::layout()
 {
     RenderFlexibleBox::layout();

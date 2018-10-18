@@ -45,7 +45,7 @@ SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVContentKeyResponse);
 SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVURLAsset);
 SOFT_LINK_CONSTANT_MAY_FAIL(AVFoundation, AVContentKeySystemFairPlayStreaming, NSString*)
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVPersistableContentKeyRequest);
 #endif
 
@@ -85,7 +85,7 @@ static const NSString *PlaybackSessionIdKey = @"PlaybackSessionID";
         _parent->didProvideRenewingRequest(keyRequest);
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 - (void)contentKeySession:(AVContentKeySession *)session didProvidePersistableContentKeyRequest:(AVPersistableContentKeyRequest *)keyRequest
 {
     UNUSED_PARAM(session);
@@ -151,7 +151,7 @@ bool CDMInstanceFairPlayStreamingAVFObjC::supportsPersistableState()
 
 bool CDMInstanceFairPlayStreamingAVFObjC::supportsPersistentKeys()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     return getAVPersistableContentKeyRequestClass();
 #else
     return false;

@@ -27,7 +27,7 @@
 #import "config.h"
 #import "PlaybackSessionInterfaceAVKit.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #if HAVE(AVKIT)
 
 #import "Logging.h"
@@ -214,4 +214,4 @@ void PlaybackSessionInterfaceAVKit::invalidate()
 }
 
 #endif // HAVE(AVKIT)
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

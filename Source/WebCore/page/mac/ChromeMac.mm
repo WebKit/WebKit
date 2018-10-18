@@ -23,7 +23,7 @@
 #import "ChromeClient.h"
 #import <wtf/BlockObjCExceptions.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "WAKResponder.h"
 #include "WAKView.h"
 #endif

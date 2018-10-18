@@ -124,7 +124,7 @@ public:
     void setXSSAuditorEnabled(bool flag);
     void setSpatialNavigationEnabled(bool);
     void setScrollbarPolicy(JSStringRef orientation, JSStringRef policy);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void setTelephoneNumberParsingEnabled(bool enable);
     void setPagePaused(bool paused);
 #endif

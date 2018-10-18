@@ -49,14 +49,14 @@
 #include "StyleTreeResolver.h"
 #include <wtf/SystemTracing.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "WKContentObservation.h"
 #include "WKContentObservationInternal.h"
 #endif
 
 namespace WebCore {
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 class CheckForVisibilityChange {
 public:
     CheckForVisibilityChange(const Element&);
@@ -68,7 +68,7 @@ private:
     Visibility m_previousVisibility;
     Visibility m_previousImplicitVisibility;
 };
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 RenderTreeUpdater::Parent::Parent(ContainerNode& root)
     : element(is<Document>(root) ? nullptr : downcast<Element>(&root))
@@ -307,7 +307,7 @@ void RenderTreeUpdater::updateRendererStyle(RenderElement& renderer, RenderStyle
 
 void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::ElementUpdate& update)
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     CheckForVisibilityChange checkForVisibilityChange(element);
 #endif
 
@@ -645,7 +645,7 @@ RenderView& RenderTreeUpdater::renderView()
     return *m_document.renderView();
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 static Visibility elementImplicitVisibility(const Element& element)
 {
     auto* renderer = element.renderer();

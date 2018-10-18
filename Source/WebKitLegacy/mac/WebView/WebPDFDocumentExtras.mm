@@ -29,7 +29,7 @@
 #import <wtf/Vector.h>
 #import <wtf/RetainPtr.h>
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 #import <PDFKit/PDFDocument.h>
 #endif
 
@@ -130,7 +130,7 @@ NSArray *allScriptsInPDFDocument(CGPDFDocumentRef pdfDocument)
     return scripts;
 }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 NSArray *allScriptsInPDFDocument(PDFDocument *document)
 {
     return allScriptsInPDFDocument([document documentRef]);

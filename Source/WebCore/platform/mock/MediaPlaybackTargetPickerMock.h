@@ -26,7 +26,7 @@
 #ifndef MediaPlaybackTargetPickerMock_h
 #define MediaPlaybackTargetPickerMock_h
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 
 #include "MediaPlaybackTargetContext.h"
 #include "MediaPlaybackTargetPicker.h"
@@ -62,6 +62,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+#endif // ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 
 #endif // WebContextMenuProxyMac_h

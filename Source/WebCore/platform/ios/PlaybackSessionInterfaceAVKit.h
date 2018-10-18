@@ -26,7 +26,7 @@
 
 #pragma once
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #include "EventListener.h"
 #include "HTMLMediaElementEnums.h"

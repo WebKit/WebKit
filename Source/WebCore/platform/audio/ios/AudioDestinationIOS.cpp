@@ -29,7 +29,7 @@
 
 #include "config.h"
 
-#if ENABLE(WEB_AUDIO) && PLATFORM(IOS)
+#if ENABLE(WEB_AUDIO) && PLATFORM(IOS_FAMILY)
 
 #include "AudioDestinationIOS.h"
 
@@ -274,5 +274,5 @@ void AudioDestinationIOS::frameSizeChangedProc(void *inRefCon, AudioUnit, AudioU
 
 } // namespace WebCore
 
-#endif // ENABLE(WEB_AUDIO) && PLATFORM(IOS)
+#endif // ENABLE(WEB_AUDIO) && PLATFORM(IOS_FAMILY)
 

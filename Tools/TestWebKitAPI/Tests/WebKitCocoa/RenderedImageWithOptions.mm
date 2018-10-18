@@ -52,7 +52,7 @@ static void runTestWithWidth(NSNumber *width, CGSize expectedSize)
 
     __block bool testFinished = false;
     [remoteObject renderImageWithWidth:width completionHandler:^(CGSize imageSize) {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         CGFloat scale = [UIScreen mainScreen].scale;
 #elif PLATFORM(MAC)
         CGFloat scale = [NSScreen mainScreen].backingScaleFactor;

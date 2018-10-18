@@ -94,7 +94,7 @@ void RemoteScrollingCoordinatorProxy::commitScrollingTreeState(const RemoteScrol
     m_requestedScrollInfo = nullptr;
 }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 void RemoteScrollingCoordinatorProxy::connectStateNodeLayers(ScrollingStateTree& stateTree, const RemoteLayerTreeHost& layerTreeHost)
 {
     for (auto& currNode : stateTree.nodeMap().values()) {
@@ -170,7 +170,7 @@ void RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidScroll(ScrollingNodeID
     if (!m_propagatesMainFrameScrolls && scrolledNodeID == rootScrollingNodeID())
         return;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     m_webPageProxy.scrollingNodeScrollViewDidScroll();
 #endif
     m_webPageProxy.send(Messages::RemoteScrollingCoordinator::ScrollPositionChangedForNode(scrolledNodeID, newScrollPosition, scrollingLayerPositionAction == ScrollingLayerPositionAction::Sync));

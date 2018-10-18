@@ -56,7 +56,7 @@ protected:
     
     ~JSCallbackData()
     {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
         ASSERT(m_thread.ptr() == &Thread::current());
 #endif
     }

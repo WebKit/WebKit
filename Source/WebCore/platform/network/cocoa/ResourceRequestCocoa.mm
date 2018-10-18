@@ -87,7 +87,7 @@ void ResourceRequest::doUpdateResourceRequest()
     m_timeoutInterval = [m_nsRequest.get() timeoutInterval];
     m_firstPartyForCookies = [m_nsRequest.get() mainDocumentURL];
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
     URL siteForCookies { [m_nsRequest.get() _propertyForKey:@"_kCFHTTPCookiePolicyPropertySiteForCookies"] };
     m_sameSiteDisposition = siteForCookies.isNull() ? SameSiteDisposition::Unspecified : (registrableDomainsAreEqual(siteForCookies, m_url) ? SameSiteDisposition::SameSite : SameSiteDisposition::CrossSite);
 
@@ -136,7 +136,7 @@ void ResourceRequest::doUpdateResourceHTTPBody()
     }
 }
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
 static NSURL *siteForCookies(ResourceRequest::SameSiteDisposition disposition, NSURL *url)
 {
     switch (disposition) {
@@ -184,7 +184,7 @@ void ResourceRequest::doUpdatePlatformRequest()
         [nsRequest setHTTPMethod:httpMethod()];
     [nsRequest setHTTPShouldHandleCookies:allowCookies()];
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
     [nsRequest _setProperty:siteForCookies(m_sameSiteDisposition, nsRequest.URL) forKey:@"_kCFHTTPCookiePolicyPropertySiteForCookies"];
     [nsRequest _setProperty:[NSNumber numberWithBool:m_isTopSite] forKey:@"_kCFHTTPCookiePolicyPropertyIsTopLevelNavigation"];
 #endif

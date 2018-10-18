@@ -40,7 +40,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "DateComponents.h"
 #endif
 
@@ -305,7 +305,7 @@ public:
     virtual bool receiveDroppedFiles(const DragData&);
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     virtual DateComponents::Type dateType() const;
 #endif
     virtual String displayString() const;

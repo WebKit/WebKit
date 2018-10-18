@@ -55,7 +55,7 @@
 #import <WebCore/URL.h>
 #import <wtf/BlockPtr.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import <AVFoundation/AVCaptureDevice.h>
 #import <AVFoundation/AVMediaFormat.h>
 #import <wtf/SoftLinking.h>
@@ -142,7 +142,7 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.webViewFullscreenMayReturnToInline = [delegate respondsToSelector:@selector(_webViewFullscreenMayReturnToInline:)];
     m_delegateMethods.webViewDidEnterFullscreen = [delegate respondsToSelector:@selector(_webViewDidEnterFullscreen:)];
     m_delegateMethods.webViewDidExitFullscreen = [delegate respondsToSelector:@selector(_webViewDidExitFullscreen:)];
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #if HAVE(APP_LINKS)
     m_delegateMethods.webViewShouldIncludeAppLinkActionsForElement = [delegate respondsToSelector:@selector(_webView:shouldIncludeAppLinkActionsForElement:)];
 #endif
@@ -911,7 +911,7 @@ bool UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebPageProx
         return true;
     }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     bool usingMockCaptureDevices = page.preferences().mockCaptureDevicesEnabled();
     auto requestCameraAuthorization = BlockPtr<void()>::fromCallable([this, &frame, protectedRequest = makeRef(request), webView = RetainPtr<WKWebView>(m_uiDelegate.m_webView), usingMockCaptureDevices]() {
 
@@ -1109,7 +1109,7 @@ void UIDelegate::UIClient::didExitFullscreen(WebPageProxy*)
     [(id <WKUIDelegatePrivate>)delegate _webViewDidExitFullscreen:m_uiDelegate.m_webView];
 }
     
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #if HAVE(APP_LINKS)
 bool UIDelegate::UIClient::shouldIncludeAppLinkActionsForElement(_WKActivatedElementInfo *elementInfo)
 {

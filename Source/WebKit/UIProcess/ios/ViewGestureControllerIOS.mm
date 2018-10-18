@@ -26,7 +26,7 @@
 #import "config.h"
 #import "ViewGestureController.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "APINavigation.h"
 #import "DrawingAreaProxy.h"
@@ -394,4 +394,4 @@ bool ViewGestureController::completeSimulatedSwipeInDirectionForTesting(SwipeDir
 
 } // namespace WebKit
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

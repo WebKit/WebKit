@@ -66,7 +66,7 @@ struct NetworkProcessCreationParameters {
     Vector<uint8_t> uiProcessCookieStorageIdentifier;
 #endif
     Vector<WebCore::Cookie> defaultSessionPendingCookies;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     SandboxExtension::Handle cookieStorageDirectoryExtensionHandle;
     SandboxExtension::Handle containerCachesDirectoryExtensionHandle;
     SandboxExtension::Handle parentBundleDirectoryExtensionHandle;
@@ -83,7 +83,7 @@ struct NetworkProcessCreationParameters {
     uint32_t uiProcessSDKVersion { 0 };
     String sourceApplicationBundleIdentifier;
     String sourceApplicationSecondaryIdentifier;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     String ctDataConnectionServiceType;
 #endif
     String httpProxy;

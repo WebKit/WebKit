@@ -35,7 +35,7 @@
 typedef void (*BP_CreatePluginMIMETypesPreferencesFuncPtr)(void);
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import <WebCore/WAKAppKitStubs.h>
 #endif
 

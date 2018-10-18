@@ -204,7 +204,7 @@ uint64_t WebNotificationClient::notificationIDForTesting(WebCore::Notification* 
         _callback->handleEvent(NotificationClient::Permission::Denied);
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 - (void)denyOnlyThisRequest
 {
     ASSERT_NOT_REACHED();

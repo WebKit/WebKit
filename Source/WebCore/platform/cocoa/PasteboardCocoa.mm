@@ -34,7 +34,7 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/text/StringHash.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include <MobileCoreServices/MobileCoreServices.h>
 #endif
 
@@ -138,7 +138,7 @@ Pasteboard::FileContentState Pasteboard::fileContentState()
 {
     bool mayContainFilePaths = platformStrategies()->pasteboardStrategy()->getNumberOfFiles(m_pasteboardName);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (mayContainFilePaths) {
         // On iOS, files are not written to the pasteboard using file URLs, so we need a heuristic to determine
         // whether or not the pasteboard contains items that represent files. An example of when this gets tricky

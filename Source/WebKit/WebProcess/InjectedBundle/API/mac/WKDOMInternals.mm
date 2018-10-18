@@ -40,7 +40,7 @@
 #import "WKDOMDocument.h"
 #import "WKDOMText.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import <WebCore/WAKAppKitStubs.h>
 #endif
 

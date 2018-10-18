@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(ASYNC_SCROLLING) && PLATFORM(IOS)
+#if ENABLE(ASYNC_SCROLLING) && PLATFORM(IOS_FAMILY)
 
 #include "ScrollingStateTree.h"
 #include "ScrollingTree.h"
@@ -62,4 +62,4 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_SCROLLING_TREE(WebCore::ScrollingTreeIOS, isScrollingTreeIOS())
 
-#endif // ENABLE(ASYNC_SCROLLING) && PLATFORM(IOS)
+#endif // ENABLE(ASYNC_SCROLLING) && PLATFORM(IOS_FAMILY)

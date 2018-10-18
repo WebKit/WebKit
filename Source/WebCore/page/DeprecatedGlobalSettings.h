@@ -78,7 +78,7 @@ public:
     static bool resourceLoadStatisticsEnabled() { return gResourceLoadStatisticsEnabledEnabled; }
     WEBCORE_EXPORT static void setResourceLoadStatisticsEnabled(bool);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     WEBCORE_EXPORT static void setAudioSessionCategoryOverride(unsigned);
     static unsigned audioSessionCategoryOverride();
 
@@ -133,7 +133,7 @@ private:
     static bool gShouldUseHighResolutionTimers;
 #endif
     static bool gShouldRespectPriorityInCSSAttributeSetters;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     static bool gNetworkDataUsageTrackingEnabled;
     WEBCORE_EXPORT static bool gAVKitEnabled;
     WEBCORE_EXPORT static bool gShouldOptOutOfNetworkStateObservation;

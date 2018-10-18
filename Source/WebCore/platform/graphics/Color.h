@@ -284,7 +284,7 @@ public:
     static const RGBA32 cyan = 0xFF00FFFF;
     static const RGBA32 yellow = 0xFFFFFF00;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     static const RGBA32 compositionFill = 0x3CAFC0E3;
 #else
     static const RGBA32 compositionFill = 0xFFE1DD55;

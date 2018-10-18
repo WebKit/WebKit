@@ -175,7 +175,7 @@ public:
     bool isVideoLayerInline();
     void setPreparedToReturnVideoLayerToInline(bool);
     void waitForPreparedForInlineThen(WTF::Function<void()>&& completionHandler = [] { });
-#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     void setVideoFullscreenLayer(PlatformLayer*, WTF::Function<void()>&& completionHandler = [] { });
 #ifdef __OBJC__
     PlatformLayer* videoFullscreenLayer() const { return m_videoFullscreenLayer.get(); }
@@ -727,7 +727,7 @@ private:
     String mediaPlayerSourceApplicationIdentifier() const override { return sourceApplicationIdentifier(); }
     Vector<String> mediaPlayerPreferredAudioCharacteristics() const override;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     String mediaPlayerNetworkInterfaceName() const override;
     bool mediaPlayerGetRawCookies(const URL&, Vector<Cookie>&) const override;
 #endif
@@ -1013,7 +1013,7 @@ private:
 
     bool m_temporarilyAllowingInlinePlaybackAfterFullscreen { false };
 
-#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     RetainPtr<PlatformLayer> m_videoFullscreenLayer;
     FloatRect m_videoFullscreenFrame;
     MediaPlayerEnums::VideoGravity m_videoFullscreenGravity { MediaPlayer::VideoGravityResizeAspect };

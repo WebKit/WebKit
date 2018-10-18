@@ -279,7 +279,7 @@ static bool lineDirectionPointFitsInBox(int pointLineDirection, const InlineText
         return true;
     }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     // and the x coordinate is to the left of the right edge of this box
     // check to see if position goes in this box
     if (pointLineDirection < box.logicalRight()) {
@@ -416,7 +416,7 @@ VisiblePosition RenderTextLineBoxes::positionForPoint(const RenderText& renderer
 
             if (pointBlockDirection < bottom || (blocksAreFlipped && pointBlockDirection == bottom)) {
                 ShouldAffinityBeDownstream shouldAffinityBeDownstream;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
                 if (pointLineDirection != box->logicalLeft() && point.x() < box->x() + box->logicalWidth()) {
                     int half = box->x() + box->logicalWidth() / 2;
                     EAffinity affinity = point.x() < half ? DOWNSTREAM : VP_UPSTREAM_IF_POSSIBLE;

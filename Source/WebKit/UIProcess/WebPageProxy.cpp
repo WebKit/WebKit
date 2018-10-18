@@ -197,7 +197,7 @@
 #include <WebCore/CairoUtilities.h>
 #endif
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 #include <WebCore/MediaPlaybackTarget.h>
 #include <WebCore/WebMediaSessionManager.h>
 #endif
@@ -208,7 +208,7 @@
 #include <WebCore/MediaSessionMetadata.h>
 #endif
 
-#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 #include "PlaybackSessionManagerProxy.h"
 #endif
 
@@ -407,7 +407,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
 #endif
     , m_geolocationPermissionRequestManager(*this)
     , m_notificationPermissionRequestManager(*this)
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     , m_alwaysRunsAtForegroundPriority(m_configuration->alwaysRunsAtForegroundPriority())
 #endif
     , m_initialCapitalizationEnabled(m_configuration->initialCapitalizationEnabled())
@@ -450,7 +450,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
 #if ENABLE(FULLSCREEN_API)
     m_fullScreenManager = std::make_unique<WebFullScreenManagerProxy>(*this, WebPageProxy::pageClient().fullScreenManagerProxyClient());
 #endif
-#if PLATFORM(IOS) && HAVE(AVKIT) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if PLATFORM(IOS_FAMILY) && HAVE(AVKIT) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     m_playbackSessionManager = PlaybackSessionManagerProxy::create(*this);
     m_videoFullscreenManager = VideoFullscreenManagerProxy::create(*this, *m_playbackSessionManager);
 #endif
@@ -469,7 +469,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
 
     m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID, *this);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     DeprecatedGlobalSettings::setDisableScreenSizeOverride(preferencesStore().getBoolValueForKey(WebPreferencesKey::disableScreenSizeOverrideKey()));
 #endif
 
@@ -783,7 +783,7 @@ void WebPageProxy::finishAttachingToWebProcess()
 #if ENABLE(FULLSCREEN_API)
     m_fullScreenManager = std::make_unique<WebFullScreenManagerProxy>(*this, pageClient().fullScreenManagerProxyClient());
 #endif
-#if PLATFORM(IOS) && HAVE(AVKIT) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if PLATFORM(IOS_FAMILY) && HAVE(AVKIT) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     m_playbackSessionManager = PlaybackSessionManagerProxy::create(*this);
     m_videoFullscreenManager = VideoFullscreenManagerProxy::create(*this, *m_playbackSessionManager);
 #endif
@@ -855,7 +855,7 @@ void WebPageProxy::initializeWebPage()
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(COCOA)
     if (m_drawingArea->type() == DrawingAreaTypeRemoteLayerTree) {
         m_scrollingCoordinatorProxy = std::make_unique<RemoteScrollingCoordinatorProxy>(*this);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         // On iOS, main frame scrolls are sent in terms of visible rect updates.
         m_scrollingCoordinatorProxy->setPropagatesMainFrameScrolls(false);
 #endif
@@ -941,7 +941,7 @@ void WebPageProxy::close()
     // Null out related WebPageProxy to avoid leaks.
     m_configuration->setRelatedPage(nullptr);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // Make sure we don't hold a process assertion after getting closed.
     m_activityToken = nullptr;
 #endif
@@ -1510,7 +1510,7 @@ void WebPageProxy::activityStateDidChange(OptionSet<ActivityState::Flag> mayHave
 void WebPageProxy::viewDidLeaveWindow()
 {
     closeOverlayedViews();
-#if PLATFORM(IOS) && HAVE(AVKIT) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if PLATFORM(IOS_FAMILY) && HAVE(AVKIT) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     // When leaving the current page, close the video fullscreen.
     if (m_videoFullscreenManager)
         m_videoFullscreenManager->requestHideAndExitFullscreen();
@@ -1631,7 +1631,7 @@ void WebPageProxy::updateThrottleState()
     else if (!m_pageIsUserObservableCount)
         m_pageIsUserObservableCount = m_process->processPool().userObservablePageCount();
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     bool isCapturingMedia = m_activityState.contains(ActivityState::IsCapturingMedia);
     bool isAudible = m_activityState.contains(ActivityState::IsAudible);
     if (!isViewVisible() && !m_alwaysRunsAtForegroundPriority && !isCapturingMedia && !isAudible) {
@@ -1686,7 +1686,7 @@ void WebPageProxy::waitForDidUpdateActivityState(ActivityStateChangeID activityS
     if (m_waitingForDidUpdateActivityState)
         return;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // Hail Mary check. Should not be possible (dispatchActivityStateChange should force async if not visible,
     // and if visible we should be holding an assertion) - but we should never block on a suspended process.
     if (!m_activityToken) {
@@ -1850,7 +1850,7 @@ void WebPageProxy::activateMediaStreamCaptureInPage()
     setMuted(m_mutedState & ~WebCore::MediaProducer::CaptureDevicesAreMuted);
 }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 void WebPageProxy::didCommitLayerTree(const RemoteLayerTreeTransaction&)
 {
 }
@@ -3719,7 +3719,7 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID
     m_hasCommittedAnyProvisionalLoads = true;
     m_process->didCommitProvisionalLoad();
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (frame->isMainFrame()) {
         m_hasReceivedLayerTreeTransactionAfterDidCommitLoad = false;
         m_firstLayerTreeTransactionIdAfterDidCommitLoad = downcast<RemoteLayerTreeDrawingAreaProxy>(*drawingArea()).nextLayerTreeTransactionID();
@@ -4373,7 +4373,7 @@ void WebPageProxy::exitFullscreenImmediately()
         fullScreenManager()->close();
 #endif
 
-#if (PLATFORM(IOS) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if (PLATFORM(IOS_FAMILY) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     if (videoFullscreenManager())
         videoFullscreenManager()->requestHideAndExitFullscreen();
 #endif
@@ -4408,7 +4408,7 @@ void WebPageProxy::runJavaScriptAlert(uint64_t frameID, const SecurityOriginData
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     exitFullscreenImmediately();
 #endif
 
@@ -4427,7 +4427,7 @@ void WebPageProxy::runJavaScriptConfirm(uint64_t frameID, const SecurityOriginDa
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     exitFullscreenImmediately();
 #endif
 
@@ -4447,7 +4447,7 @@ void WebPageProxy::runJavaScriptPrompt(uint64_t frameID, const SecurityOriginDat
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     exitFullscreenImmediately();
 #endif
     // Since runJavaScriptPrompt() can spin a nested run loop we need to turn off the responsiveness timer.
@@ -4610,7 +4610,7 @@ IntRect WebPageProxy::syncRootViewToScreen(const IntRect& viewRect)
     return pageClient().rootViewToScreen(viewRect);
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 void WebPageProxy::accessibilityScreenToRootView(const IntPoint& screenPoint, IntPoint& windowPoint)
 {
     windowPoint = pageClient().accessibilityScreenToRootView(screenPoint);
@@ -4651,13 +4651,13 @@ void WebPageProxy::pageDidScroll()
 {
     m_uiClient->pageDidScroll(this);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // Do not hide the validation message if the scrolling was caused by the keyboard showing up.
     if (m_isKeyboardAnimatingIn)
         return;
 #endif
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     closeOverlayedViews();
 #endif
 }
@@ -4920,7 +4920,7 @@ void WebPageProxy::setFullscreenClient(std::unique_ptr<API::FullscreenClient>&& 
 }
 #endif
     
-#if (PLATFORM(IOS) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if (PLATFORM(IOS_FAMILY) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 PlaybackSessionManagerProxy* WebPageProxy::playbackSessionManager()
 {
     return m_playbackSessionManager.get();
@@ -4932,7 +4932,7 @@ VideoFullscreenManagerProxy* WebPageProxy::videoFullscreenManager()
 }
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 bool WebPageProxy::allowsMediaDocumentInlinePlayback() const
 {
     return m_allowsMediaDocumentInlinePlayback;
@@ -5303,7 +5303,7 @@ void WebPageProxy::handleContextMenuKeyEvent()
 }
 #endif // ENABLE(CONTEXT_MENUS)
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 void WebPageProxy::didChooseFilesForOpenPanelWithDisplayStringAndIcon(const Vector<String>& fileURLs, const String& displayString, const API::Data* iconData)
 {
     if (!isValid())
@@ -5980,7 +5980,7 @@ void WebPageProxy::processDidTerminate(ProcessTerminationReason reason)
 
     ASSERT(m_isValid);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (m_process->isUnderMemoryPressure()) {
         String domain = WebCore::topPrivatelyControlledDomain(WebCore::URL({ }, currentURL()).host().toString());
         if (!domain.isEmpty())
@@ -6070,7 +6070,7 @@ void WebPageProxy::stopAllURLSchemeTasks()
         handler->stopAllTasksForPage(*this);
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 void WebPageProxy::processWillBecomeSuspended()
 {
     if (!isValid())
@@ -6154,7 +6154,7 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 
     m_visibleScrollerThumbRect = IntRect();
 
-#if (PLATFORM(IOS) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if (PLATFORM(IOS_FAMILY) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     if (m_playbackSessionManager) {
         m_playbackSessionManager->invalidate();
         m_playbackSessionManager = nullptr;
@@ -6165,7 +6165,7 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     }
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     m_firstLayerTreeTransactionIdAfterDidCommitLoad = 0;
     m_lastVisibleContentRectUpdate = VisibleContentRectUpdateInfo();
     m_hasNetworkRequestsOnSuspended = false;
@@ -6173,7 +6173,7 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     m_isScrollingOrZooming = false;
 #endif
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
     pageClient().mediaSessionManager().removeAllPlaybackTargetPickerClients(*this);
 #endif
 
@@ -6231,7 +6231,7 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
         ASSERT(m_process->state() == WebProcessProxy::State::Launching || m_process->state() == WebProcessProxy::State::Terminated);
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     m_activityToken = nullptr;
 #endif
 
@@ -6340,7 +6340,7 @@ WebPageCreationParameters WebPageProxy::creationParameters()
     parameters.useSystemAppearance = m_useSystemAppearance;
     parameters.useDarkAppearance = useDarkAppearance();
 #endif
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     parameters.screenSize = screenSize();
     parameters.availableScreenSize = availableScreenSize();
     parameters.overrideScreenSize = overrideScreenSize();
@@ -6494,7 +6494,7 @@ void WebPageProxy::requestGeolocationPermissionForFrame(uint64_t geolocationID, 
     // if there is no delegate instead of returning the completionHandler
     // for other code paths to try.
     m_uiClient->decidePolicyForGeolocationPermissionRequest(*this, *frame, origin.get(), completionHandler);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (completionHandler)
         pageClient().decidePolicyForGeolocationPermissionRequest(*frame, origin.get(), completionHandler);
 #endif
@@ -7306,7 +7306,7 @@ void WebPageProxy::videoControlsManagerDidChange()
 
 bool WebPageProxy::hasActiveVideoForControlsManager() const
 {
-#if (PLATFORM(IOS) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if (PLATFORM(IOS_FAMILY) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     return m_playbackSessionManager && m_playbackSessionManager->controlsManagerInterface();
 #else
     return false;
@@ -7315,7 +7315,7 @@ bool WebPageProxy::hasActiveVideoForControlsManager() const
 
 void WebPageProxy::requestControlledElementID() const
 {
-#if (PLATFORM(IOS) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if (PLATFORM(IOS_FAMILY) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     if (m_playbackSessionManager)
         m_playbackSessionManager->requestControlledElementID();
 #endif
@@ -7330,7 +7330,7 @@ void WebPageProxy::handleControlledElementIDResponse(const String& identifier) c
 
 bool WebPageProxy::isPlayingVideoInEnhancedFullscreen() const
 {
-#if (PLATFORM(IOS) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if (PLATFORM(IOS_FAMILY) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     return m_videoFullscreenManager && m_videoFullscreenManager->isPlayingVideoInEnhancedFullscreen();
 #else
     return false;
@@ -7495,7 +7495,7 @@ void WebPageProxy::didResignInputElementStrongPasswordAppearance(const UserData&
     m_uiClient->didResignInputElementStrongPasswordAppearance(*this, m_process->transformHandlesToObjects(userData.object()).get());
 }
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 void WebPageProxy::addPlaybackTargetPickerClient(uint64_t contextId)
 {
     pageClient().mediaSessionManager().addPlaybackTargetPickerClient(*this, contextId);

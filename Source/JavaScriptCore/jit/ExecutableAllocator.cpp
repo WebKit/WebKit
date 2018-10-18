@@ -38,7 +38,7 @@
 #include <sys/mman.h>
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include <wtf/cocoa/Entitlements.h>
 #endif
 
@@ -50,7 +50,7 @@
 #endif
 
 #if HAVE(REMAP_JIT)
-#if CPU(ARM64) && PLATFORM(IOS)
+#if CPU(ARM64) && PLATFORM(IOS_FAMILY)
 #define USE_EXECUTE_ONLY_JIT_WRITE_FUNCTION 1
 #endif
 #endif
@@ -115,7 +115,7 @@ static uintptr_t startOfFixedWritableMemoryPool;
 
 static bool allowJIT()
 {
-#if PLATFORM(IOS) && (CPU(ARM64) || CPU(ARM))
+#if PLATFORM(IOS_FAMILY) && (CPU(ARM64) || CPU(ARM))
     return processHasEntitlement("dynamic-codesigning");
 #else
     return true;

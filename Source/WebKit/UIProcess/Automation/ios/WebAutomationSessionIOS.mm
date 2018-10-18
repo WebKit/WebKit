@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WebAutomationSession.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "NativeWebKeyboardEvent.h"
 #import "WebAutomationSessionMacros.h"
@@ -172,4 +172,4 @@ void WebAutomationSession::platformSimulateKeySequence(WebPageProxy& page, const
 
 } // namespace WebKit
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

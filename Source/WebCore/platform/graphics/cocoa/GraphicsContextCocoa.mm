@@ -38,7 +38,7 @@
 #import <AppKit/AppKit.h>
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import "Color.h"
 #import "WKGraphics.h"
 #endif

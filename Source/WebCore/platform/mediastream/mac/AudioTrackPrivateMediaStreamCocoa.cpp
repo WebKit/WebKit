@@ -106,7 +106,7 @@ AudioComponentInstance AudioTrackPrivateMediaStreamCocoa::createAudioUnit(CAAudi
     AudioComponentInstance remoteIOUnit { nullptr };
 
     AudioComponentDescription ioUnitDescription { kAudioUnitType_Output, 0, kAudioUnitManufacturer_Apple, 0, 0 };
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     ioUnitDescription.componentSubType = kAudioUnitSubType_RemoteIO;
 #else
     ioUnitDescription.componentSubType = kAudioUnitSubType_DefaultOutput;
@@ -125,7 +125,7 @@ AudioComponentInstance AudioTrackPrivateMediaStreamCocoa::createAudioUnit(CAAudi
         return nullptr;
     }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     UInt32 param = 1;
     err = AudioUnitSetProperty(remoteIOUnit, kAudioOutputUnitProperty_EnableIO, kAudioUnitScope_Output, 0, &param, sizeof(param));
     if (err) {

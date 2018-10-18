@@ -36,7 +36,7 @@
 #include "SQLiteStatement.h"
 #include <sqlite3.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include <pal/spi/ios/SQLite3SPI.h>
 #endif
 
@@ -95,7 +95,7 @@ bool SQLiteFileSystem::deleteDatabaseFile(const String& fileName)
     return !FileSystem::fileExists(fileName) && !FileSystem::fileExists(walFileName) && !FileSystem::fileExists(shmFileName);
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 bool SQLiteFileSystem::truncateDatabaseFile(sqlite3* database)
 {
     return sqlite3_file_control(database, 0, SQLITE_TRUNCATE_DATABASE, 0) == SQLITE_OK;

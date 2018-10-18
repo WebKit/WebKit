@@ -27,7 +27,7 @@
 #import "LocalizedDateCache.h"
 
 // FIXME: Rename this file to LocalizedDataCacheIOS.mm and consider removing this guard.
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "FontCascade.h"
 #import <CoreFoundation/CFNotificationCenter.h>
@@ -185,4 +185,4 @@ float LocalizedDateCache::calculateMaximumWidth(DateComponents::Type type, const
 
 } // namespace WebCore
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

@@ -132,7 +132,7 @@ public:
     unsigned rubyPosition : 2; // RubyPosition
     unsigned textZoom: 1; // TextZoom
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     unsigned touchCalloutEnabled : 1;
 #endif
 

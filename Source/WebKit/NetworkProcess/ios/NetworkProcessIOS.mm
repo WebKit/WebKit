@@ -26,7 +26,7 @@
 #import "config.h"
 #import "NetworkProcess.h"
 
-#if PLATFORM(IOS) && !PLATFORM(IOSMAC)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOSMAC)
 
 #import "NetworkCache.h"
 #import "NetworkProcessCreationParameters.h"
@@ -105,4 +105,4 @@ bool NetworkProcess::parentProcessHasServiceWorkerEntitlement() const
 
 } // namespace WebKit
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

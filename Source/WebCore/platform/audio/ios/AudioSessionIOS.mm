@@ -26,7 +26,7 @@
 #import "config.h"
 #import "AudioSession.h"
 
-#if USE(AUDIO_SESSION) && PLATFORM(IOS)
+#if USE(AUDIO_SESSION) && PLATFORM(IOS_FAMILY)
 
 #import "Logging.h"
 #import <AVFoundation/AVAudioSession.h>
@@ -141,7 +141,7 @@ void AudioSession::setCategory(CategoryType newCategory)
 
     NSError *error = nil;
     [[AVAudioSession sharedInstance] setCategory:categoryString mode:categoryMode routeSharingPolicy:policy options:options error:&error];
-#if !PLATFORM(IOS_SIMULATOR) && !PLATFORM(IOSMAC)
+#if !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(IOSMAC)
     ASSERT(!error);
 #endif
 }
@@ -177,7 +177,7 @@ RouteSharingPolicy AudioSession::routeSharingPolicy() const
 
 String AudioSession::routingContextUID() const
 {
-#if !PLATFORM(IOS_SIMULATOR) && !PLATFORM(IOSMAC) && !PLATFORM(WATCHOS)
+#if !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(IOSMAC) && !PLATFORM(WATCHOS)
     return [[AVAudioSession sharedInstance] routingContextUID];
 #else
     return emptyString();
@@ -235,4 +235,4 @@ void AudioSession::setPreferredBufferSize(size_t bufferSize)
 
 }
 
-#endif // USE(AUDIO_SESSION) && PLATFORM(IOS)
+#endif // USE(AUDIO_SESSION) && PLATFORM(IOS_FAMILY)

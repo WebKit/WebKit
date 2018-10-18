@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "WebFixedPositionContent.h"
 #import "WebFixedPositionContentInternal.h"
@@ -195,4 +195,4 @@ WebFixedPositionContentData::~WebFixedPositionContentData()
 
 @end
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

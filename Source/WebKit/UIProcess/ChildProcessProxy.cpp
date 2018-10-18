@@ -189,7 +189,7 @@ void ChildProcessProxy::shutDownProcess()
         m_processLauncher = nullptr;
         break;
     case State::Running:
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         // On iOS deploy a watchdog in the UI process, since the child process may be suspended.
         // If 30s is insufficient for any outstanding activity to complete cleanly, then it will be killed.
         ASSERT(m_connection);

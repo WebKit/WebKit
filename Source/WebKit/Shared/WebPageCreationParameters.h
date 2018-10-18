@@ -140,7 +140,7 @@ struct WebPageCreationParameters {
     bool useSystemAppearance;
     bool useDarkAppearance;
 #endif
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     WebCore::FloatSize screenSize;
     WebCore::FloatSize availableScreenSize;
     WebCore::FloatSize overrideScreenSize;

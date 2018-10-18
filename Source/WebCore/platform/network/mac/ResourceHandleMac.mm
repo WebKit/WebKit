@@ -56,7 +56,7 @@
 #import <wtf/text/Base64.h>
 #import <wtf/text/CString.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import "RuntimeApplicationChecks.h"
 #import "WebCoreThreadRun.h"
 #endif
@@ -95,7 +95,7 @@ ResourceHandle::~ResourceHandle()
     LOG(Network, "Handle %p destroyed", this);
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 static bool synchronousWillSendRequestEnabled()
 {
@@ -132,7 +132,7 @@ NSURLRequest *ResourceHandle::applySniffingPoliciesIfNeeded(NSURLRequest *reques
 
 #endif
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredentialStorage, bool shouldContentSniff, bool shouldContentEncodingSniff, SchedulingBehavior schedulingBehavior)
 #else
 void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredentialStorage, bool shouldContentSniff, bool shouldContentEncodingSniff, SchedulingBehavior schedulingBehavior, NSDictionary *connectionProperties)
@@ -176,7 +176,7 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
 
     ASSERT([NSURLConnection instancesRespondToSelector:@selector(_initWithRequest:delegate:usesCache:maxContentLength:startImmediately:connectionProperties:)]);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // FIXME: This code is different from iOS code in ResourceHandleCFNet.cpp in that here we respect stream properties that were present in client properties.
     NSDictionary *streamPropertiesFromClient = [connectionProperties objectForKey:@"kCFURLConnectionSocketStreamProperties"];
     NSMutableDictionary *streamProperties = streamPropertiesFromClient ? [[streamPropertiesFromClient mutableCopy] autorelease] : [NSMutableDictionary dictionary];
@@ -202,7 +202,7 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
     if (sourceApplicationAuditData)
         [streamProperties setObject:(__bridge NSData *)sourceApplicationAuditData.get() forKey:@"kCFStreamPropertySourceApplication"];
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     NSMutableDictionary *propertyDictionary = [NSMutableDictionary dictionaryWithDictionary:connectionProperties];
     [propertyDictionary setObject:streamProperties forKey:@"kCFURLConnectionSocketStreamProperties"];
     const bool usesCache = false;
@@ -244,7 +244,7 @@ bool ResourceHandle::start()
 
     SchedulingBehavior schedulingBehavior = client() && client()->loadingSynchronousXHR() ? SchedulingBehavior::Synchronous : SchedulingBehavior::Asynchronous;
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     createNSURLConnection(
         ResourceHandle::makeDelegate(shouldUseCredentialStorage, nullptr),
         shouldUseCredentialStorage,
@@ -372,7 +372,7 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
     }
 
     bool shouldUseCredentialStorage = storedCredentialsPolicy == StoredCredentialsPolicy::Use;
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     handle->createNSURLConnection(
         handle->makeDelegate(shouldUseCredentialStorage, &client.messageQueue()),
         shouldUseCredentialStorage,
@@ -482,7 +482,7 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
     if (tryHandlePasswordBasedAuthentication(challenge))
         return;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // If the challenge is for a proxy protection space, look for default credentials in
     // the keychain.  CFNetwork used to handle this until WebCore was changed to always
     // return NO to -connectionShouldUseCredentialStorage: for <rdar://problem/7704943>.
@@ -494,7 +494,7 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
             return;
         }
     }
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
     d->m_currentMacChallenge = challenge.nsURLAuthenticationChallenge();
     d->m_currentWebChallenge = core(d->m_currentMacChallenge);

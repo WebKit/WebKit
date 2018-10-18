@@ -34,7 +34,7 @@
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "WebCoreThread.h"
 #endif
 
@@ -136,12 +136,12 @@ private:
 
 inline bool TimerBase::isActive() const
 {
-    // FIXME: Write this in terms of USE(WEB_THREAD) instead of PLATFORM(IOS).
-#if !PLATFORM(IOS)
+    // FIXME: Write this in terms of USE(WEB_THREAD) instead of PLATFORM(IOS_FAMILY).
+#if !PLATFORM(IOS_FAMILY)
     ASSERT(m_thread.ptr() == &Thread::current());
 #else
     ASSERT(WebThreadIsCurrent() || pthread_main_np() || m_thread.ptr() == &Thread::current());
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
     return static_cast<bool>(m_nextFireTime);
 }
 

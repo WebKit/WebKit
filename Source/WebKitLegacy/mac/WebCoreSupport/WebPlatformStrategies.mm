@@ -198,7 +198,7 @@ long WebPlatformStrategies::writeCustomData(const WebCore::PasteboardCustomData&
     return PlatformPasteboard(pasteboardName).write(data);
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 void WebPlatformStrategies::getTypesByFidelityForItemAtIndex(Vector<String>& types, uint64_t index, const String& pasteboardName)
 {
     PlatformPasteboard(pasteboardName).getTypesByFidelityForItemAtIndex(types, index);
@@ -258,4 +258,4 @@ WebCore::PasteboardItemInfo WebPlatformStrategies::informationForItemAtIndex(int
 {
     return PlatformPasteboard(pasteboardName).informationForItemAtIndex(index);
 }
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

@@ -58,7 +58,7 @@
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "LogicalSelectionOffsetCaches.h"
 #include "SelectionRect.h"
 #endif
@@ -72,7 +72,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderImage);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 // FIXME: This doesn't behave correctly for floating or positioned images, but WebCore doesn't handle those well
 // during selection creation yet anyway.
 // FIXME: We can't tell whether or not we contain the start or end of the selected Range using only the offsets
@@ -532,7 +532,7 @@ void RenderImage::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     
 void RenderImage::paintAreaElementFocusRing(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     UNUSED_PARAM(paintInfo);
     UNUSED_PARAM(paintOffset);
 #else

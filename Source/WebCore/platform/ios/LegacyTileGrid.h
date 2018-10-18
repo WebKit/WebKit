@@ -26,7 +26,7 @@
 #ifndef LegacyTileGrid_h
 #define LegacyTileGrid_h
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #include "IntPoint.h"
 #include "IntPointHash.h"
@@ -132,5 +132,5 @@ static inline IntPoint bottomRight(const IntRect& rect)
 
 } // namespace WebCore
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 #endif // TileGrid_h

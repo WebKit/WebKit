@@ -78,7 +78,7 @@ if (!defined $executablePathAge || !defined $buildTimestampAge || $executablePat
     }
     close NM;
 
-    # begin PLATFORM(IOS)
+    # begin PLATFORM(IOS_FAMILY)
     # On iOS put exceptions in place for existing bad names. Future bad names will
     # be caught and should be fixed immediately. Fixing these is covered by:
     # <rdar://problem/10365008> Fix Inappropriate Objective-C Class Names found by build phase
@@ -100,7 +100,7 @@ if (!defined $executablePathAge || !defined $buildTimestampAge || $executablePat
         push(@realBadNames, $className) unless exists($exceptions{$className});
     }
     @badNames = @realBadNames;
-    # end PLATFORM(IOS)
+    # end PLATFORM(IOS_FAMILY)
 
     if (@badNames) {
 

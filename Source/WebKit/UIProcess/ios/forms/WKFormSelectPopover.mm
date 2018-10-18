@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKFormSelectPopover.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "UIKitSPI.h"
 #import "WKContentView.h"
@@ -463,4 +463,4 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 @end
 
-#endif  // PLATFORM(IOS)
+#endif  // PLATFORM(IOS_FAMILY)

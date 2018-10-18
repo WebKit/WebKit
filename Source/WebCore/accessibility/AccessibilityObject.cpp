@@ -201,7 +201,7 @@ bool AccessibilityObject::isAccessibilityObjectSearchMatchAtIndex(AccessibilityO
         
     case AccessibilitySearchKey::Link: {
         bool isLink = axObject->isLink();
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         if (!isLink)
             isLink = axObject->isDescendantOfRole(AccessibilityRole::WebCoreLink);
 #endif
@@ -1006,7 +1006,7 @@ bool AccessibilityObject::press()
     UserGestureIndicator gestureIndicator(ProcessingUserGesture, document);
     
     bool dispatchedTouchEvent = false;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (hasTouchEventListener())
         dispatchedTouchEvent = dispatchTouchEvent();
 #endif
@@ -1955,7 +1955,7 @@ const String AccessibilityObject::defaultLiveRegionStatusForRole(AccessibilityRo
 #if HAVE(ACCESSIBILITY)
 const String& AccessibilityObject::actionVerb() const
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     // FIXME: Need to add verbs for select elements.
     static NeverDestroyed<const String> buttonAction(AXButtonActionVerb());
     static NeverDestroyed<const String> textFieldAction(AXTextFieldActionVerb());

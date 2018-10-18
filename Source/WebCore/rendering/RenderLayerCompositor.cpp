@@ -66,7 +66,7 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextStream.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "LegacyTileCache.h"
 #include "RenderScrollbar.h"
 #endif
@@ -84,7 +84,7 @@
 WEBCORE_EXPORT bool WebCoreHas3DRendering = true;
 #endif
 
-#if !PLATFORM(MAC) && !PLATFORM(IOS)
+#if !PLATFORM(MAC) && !PLATFORM(IOS_FAMILY)
 #define USE_COMPOSITING_FOR_SMALL_CANVASES 1
 #endif
 
@@ -94,7 +94,7 @@ namespace WebCore {
 static const int canvasAreaThresholdRequiringCompositing = 50 * 100;
 #endif
 // During page loading delay layer flushes up to this many seconds to allow them coalesce, reducing workload.
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 static const Seconds throttledLayerFlushInitialDelay { 500_ms };
 static const Seconds throttledLayerFlushDelay { 1.5_s };
 #else
@@ -448,7 +448,7 @@ void RenderLayerCompositor::scheduleLayerFlush(bool canThrottle)
 FloatRect RenderLayerCompositor::visibleRectForLayerFlushing() const
 {
     const FrameView& frameView = m_renderView.frameView();
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     return frameView.exposedContentRect();
 #else
     // Having a m_clipLayer indicates that we're doing scrolling via GraphicsLayers.
@@ -471,7 +471,7 @@ void RenderLayerCompositor::flushPendingLayerChanges(bool isFlushRoot)
         return;
     
     if (rootLayerAttachment() == RootLayerUnattached) {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         startLayerFlushTimerIfNeeded();
 #endif
         m_shouldFlushOnReattach = true;
@@ -496,7 +496,7 @@ void RenderLayerCompositor::flushPendingLayerChanges(bool isFlushRoot)
 
     updateScrollCoordinatedLayersAfterFlushIncludingSubframes();
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (isFlushRoot)
         page().chrome().client().didFlushCompositingLayers();
 #endif
@@ -530,7 +530,7 @@ void RenderLayerCompositor::updateScrollCoordinatedLayersAfterFlush()
         updateScrollCoordinatedStatus(*layer, ScrollingNodeChangeFlags::Layer);
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 static bool scrollbarHasDisplayNone(Scrollbar* scrollbar)
 {
     if (!scrollbar || !scrollbar->isCustomScrollbar())
@@ -555,7 +555,7 @@ static void updateScrollingLayerWithClient(RenderLayer& layer, ChromeClient& cli
 
 void RenderLayerCompositor::updateCustomLayersAfterFlush()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     registerAllViewportConstrainedLayers();
 
     if (!m_scrollingLayersNeedingUpdate.isEmpty()) {
@@ -572,7 +572,7 @@ void RenderLayerCompositor::didFlushChangesForLayer(RenderLayer& layer, const Gr
     if (m_scrollCoordinatedLayers.contains(&layer))
         m_scrollCoordinatedLayersNeedingUpdate.add(&layer);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (m_scrollingLayers.contains(&layer))
         m_scrollingLayersNeedingUpdate.add(&layer);
 #endif
@@ -1467,7 +1467,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     // if there are composited layers that we didn't hit in our traversal (e.g. because of visibility:hidden).
     if (layer.isRenderViewLayer() && !childState.subtreeIsCompositing && !requiresCompositingLayer(layer) && !m_forceCompositingMode && !hasAnyAdditionalCompositedLayers(layer)) {
         // Don't drop out of compositing on iOS, because we may flash. See <rdar://problem/8348337>.
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
         enableCompositingMode(false);
         willBeComposited = false;
 #endif
@@ -1927,7 +1927,7 @@ void RenderLayerCompositor::setIsInWindow(bool isInWindow)
 
         RootLayerAttachment attachment = isMainFrameCompositor() ? RootLayerAttachedViaChromeClient : RootLayerAttachedViaEnclosingFrame;
         attachRootLayer(attachment);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         registerAllViewportConstrainedLayers();
         registerAllScrollingLayers();
 #endif
@@ -1936,7 +1936,7 @@ void RenderLayerCompositor::setIsInWindow(bool isInWindow)
             return;
 
         detachRootLayer();
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         unregisterAllViewportConstrainedLayers();
         unregisterAllScrollingLayers();
 #endif
@@ -2328,7 +2328,7 @@ bool RenderLayerCompositor::requiresCompositingForScrollableFrame() const
     if (isMainFrameCompositor())
         return false;
 
-#if PLATFORM(MAC) || PLATFORM(IOS)
+#if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
     if (!m_renderView.settings().asyncFrameScrollingEnabled())
         return false;
 #endif
@@ -2582,7 +2582,7 @@ bool RenderLayerCompositor::isAsyncScrollableStickyLayer(const RenderLayer& laye
 
     auto* enclosingOverflowLayer = layer.enclosingOverflowClipLayer(ExcludeSelf);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (enclosingOverflowLayer && enclosingOverflowLayer->hasTouchScrollableOverflow()) {
         if (enclosingAcceleratedOverflowLayer)
             *enclosingAcceleratedOverflowLayer = enclosingOverflowLayer;
@@ -2599,7 +2599,7 @@ bool RenderLayerCompositor::isAsyncScrollableStickyLayer(const RenderLayer& laye
     if (hasCoordinatedScrolling())
         return true;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // iOS WK1 has fixed/sticky support in the main frame via WebFixedPositionContent.
     return isMainFrameCompositor();
 #else
@@ -2713,7 +2713,7 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderLayerModelObjec
 
 bool RenderLayerCompositor::requiresCompositingForOverflowScrolling(const RenderLayer& layer) const
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (!layer.canUseAcceleratedTouchScrolling())
         return false;
 
@@ -2857,7 +2857,7 @@ float RenderLayerCompositor::zoomedOutPageScaleFactor() const
 
 float RenderLayerCompositor::contentsScaleMultiplierForNewTiles(const GraphicsLayer*) const
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     LegacyTileCache* tileCache = nullptr;
     if (auto* frameView = page().mainFrame().view())
         tileCache = frameView->legacyTileCache();
@@ -3279,7 +3279,7 @@ void RenderLayerCompositor::ensureRootLayer()
         m_rootContentLayer->setSize(FloatSize(overflowRect.maxX(), overflowRect.maxY()));
         m_rootContentLayer->setPosition(FloatPoint());
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         // Page scale is applied above this on iOS, so we'll just say that our root layer applies it.
         auto& frame = m_renderView.frameView().frame();
         if (frame.isMainFrame())
@@ -3604,7 +3604,7 @@ FixedPositionViewportConstraints RenderLayerCompositor::computeFixedViewportCons
 StickyPositionViewportConstraints RenderLayerCompositor::computeStickyViewportConstraints(RenderLayer& layer) const
 {
     ASSERT(layer.isComposited());
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     // We should never get here for stickies constrained by an enclosing clipping layer.
     // FIXME: Why does this assertion fail on iOS?
     ASSERT(!layer.enclosingOverflowClipLayer(ExcludeSelf));
@@ -3859,7 +3859,7 @@ ScrollableArea* RenderLayerCompositor::scrollableAreaForScrollLayerID(ScrollingN
     return m_scrollingNodeToLayerMap.get(nodeID);
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 typedef HashMap<PlatformLayer*, std::unique_ptr<ViewportConstraints>> LayerMap;
 typedef HashMap<PlatformLayer*, PlatformLayer*> StickyContainerMap;
 
@@ -3937,7 +3937,7 @@ void RenderLayerCompositor::willRemoveScrollingLayerWithBacking(RenderLayer& lay
         return;
     }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     m_scrollingLayersNeedingUpdate.remove(&layer);
     m_scrollingLayers.remove(&layer);
 
@@ -3960,7 +3960,7 @@ void RenderLayerCompositor::didAddScrollingLayer(RenderLayer& layer)
         return;
     }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     ASSERT(m_renderView.document().pageCacheState() == Document::NotInPageCache);
     m_scrollingLayers.add(&layer);
 #endif

@@ -224,7 +224,7 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
         changeFontSmoothing = true;
     }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     bool originalShouldUseFontSmoothing = false;
     if (changeFontSmoothing) {
         originalShouldUseFontSmoothing = CGContextGetShouldSmoothFonts(cgContext);
@@ -296,7 +296,7 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
     if (hasSimpleShadow)
         context.setShadow(shadowOffset, shadowBlur, shadowColor);
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     if (changeFontSmoothing)
         CGContextSetShouldSmoothFonts(cgContext, originalShouldUseFontSmoothing);
 #endif
@@ -511,7 +511,7 @@ const Font* FontCascade::fontForCombiningCharacterSequence(const UChar* characte
         const Font* font = fallbackRangesAt(i).fontForCharacter(baseCharacter);
         if (!font)
             continue;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         if (baseCharacter >= 0x0600 && baseCharacter <= 0x06ff && font->shouldNotBeUsedForArabic())
             continue;
 #endif

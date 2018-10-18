@@ -65,9 +65,9 @@ private:
 
     void didChangePosition(const WebCore::GeolocationPosition&);
     void didFailToDeterminePosition(const String& errorMessage);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void resetPermissions();
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
     WebProcess& m_process;
     HashSet<WebPage*> m_pageSet;

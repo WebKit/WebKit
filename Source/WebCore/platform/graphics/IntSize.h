@@ -44,7 +44,7 @@ typedef struct _NSSize NSSize;
 #endif
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #ifndef NSSize
 #define NSSize CGSize
 #endif

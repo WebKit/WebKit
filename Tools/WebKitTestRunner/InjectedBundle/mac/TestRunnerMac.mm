@@ -30,7 +30,7 @@
 #import "InjectedBundle.h"
 #import <JavaScriptCore/JSStringRefCF.h>
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 #import <wtf/SoftLinking.h>
 
 SOFT_LINK_STAGED_FRAMEWORK(WebInspectorUI, PrivateFrameworks, A)
@@ -73,7 +73,7 @@ JSRetainPtr<JSStringRef> TestRunner::pathToLocalResource(JSStringRef url)
 
 JSRetainPtr<JSStringRef> TestRunner::inspectorTestStubURL()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     return nullptr;
 #else
     // Call the soft link framework function to dlopen it, then CFBundleGetBundleWithIdentifier will work.

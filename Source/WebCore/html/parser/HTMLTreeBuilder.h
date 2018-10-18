@@ -104,7 +104,7 @@ private:
 
     bool isParsingFragmentOrTemplateContents() const;
 
-#if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(IOS)
+#if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(IOS_FAMILY)
     void insertPhoneNumberLink(const String&);
     void linkifyPhoneNumbers(const String&);
 #endif

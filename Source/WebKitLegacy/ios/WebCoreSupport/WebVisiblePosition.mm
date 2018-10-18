@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "WebVisiblePosition.h"
 #import "WebVisiblePositionInternal.h"
@@ -622,4 +622,4 @@ static inline SelectionDirection toSelectionDirection(WebTextAdjustmentDirection
 
 @end
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

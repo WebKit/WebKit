@@ -31,7 +31,7 @@ static NSString *createSystemMarketingVersion()
 {
     // Can't use -[NSProcessInfo operatingSystemVersionString] because it has too much stuff we don't want.
     NSString *systemLibraryPath = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSSystemDomainMask, YES) objectAtIndex:0];
-#if PLATFORM(IOS_SIMULATOR)
+#if PLATFORM(IOS_FAMILY_SIMULATOR)
     if (char *simulatorRoot = getenv("SIMULATOR_ROOT"))
         systemLibraryPath = [NSString stringWithFormat:@"%s/%@", simulatorRoot, systemLibraryPath];
 #endif

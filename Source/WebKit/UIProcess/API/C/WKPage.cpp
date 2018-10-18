@@ -2676,7 +2676,7 @@ void WKPageSetResourceCachingDisabled(WKPageRef page, bool disabled)
 
 void WKPageSetIgnoresViewportScaleLimits(WKPageRef page, bool ignoresViewportScaleLimits)
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     toImpl(page)->setForceAlwaysUserScalable(ignoresViewportScaleLimits);
 #endif
 }

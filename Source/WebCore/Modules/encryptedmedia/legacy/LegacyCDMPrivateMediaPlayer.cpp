@@ -33,7 +33,7 @@
 #include "ContentType.h"
 #include "MediaPlayer.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include <wtf/SoftLinking.h>
 #endif
 

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #include "SQLiteDatabaseTrackerClient.h"
 #include <pal/HysteresisActivity.h>

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKPDFPageNumberIndicator.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "UIKitSPI.h"
 #import <WebCore/LocalizedStrings.h>
@@ -211,4 +211,4 @@ const NSTimeInterval indicatorMoveDuration = 0.3;
 
 @end
 
-#endif /* PLATFORM(IOS) */
+#endif /* PLATFORM(IOS_FAMILY) */

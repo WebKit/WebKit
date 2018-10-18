@@ -72,7 +72,7 @@ private:
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
     bool shouldSelectOnMouseDown() final {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         return false;
 #else
         return true;

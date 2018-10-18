@@ -70,7 +70,7 @@ Ref<PageConfiguration> PageConfiguration::copy() const
     copy->m_websiteDataStore = this->m_websiteDataStore;
     copy->m_sessionID = this->m_sessionID;
     copy->m_treatsSHA1SignedCertificatesAsInsecure = this->m_treatsSHA1SignedCertificatesAsInsecure;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     copy->m_alwaysRunsAtForegroundPriority = this->m_alwaysRunsAtForegroundPriority;
 #endif
     copy->m_initialCapitalizationEnabled = this->m_initialCapitalizationEnabled;

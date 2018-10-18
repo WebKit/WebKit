@@ -81,7 +81,7 @@ struct WebNavigationDataStore;
 struct WebPageCreationParameters;
 struct WebsiteData;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 enum ForegroundWebProcessCounterType { };
 typedef RefCounter<ForegroundWebProcessCounterType> ForegroundWebProcessCounter;
 typedef ForegroundWebProcessCounter::Token ForegroundWebProcessToken;
@@ -365,7 +365,7 @@ private:
     int m_numberOfTimesSuddenTerminationWasDisabled;
     ProcessThrottler m_throttler;
     ProcessThrottler::BackgroundActivityToken m_tokenForHoldingLockedFiles;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     ForegroundWebProcessToken m_foregroundToken;
     BackgroundWebProcessToken m_backgroundToken;
 #endif

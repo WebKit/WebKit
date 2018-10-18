@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "WebPDFViewPlaceholder.h"
 
@@ -476,4 +476,4 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
 
 @end
 
-#endif /* PLATFORM(IOS) */
+#endif /* PLATFORM(IOS_FAMILY) */

@@ -30,7 +30,7 @@
 
 #include "WebEvent.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 struct _UIWebTouchEvent;
 #elif PLATFORM(GTK)
 #include <WebCore/GUniquePtrGtk.h>
@@ -42,7 +42,7 @@ namespace WebKit {
 
 class NativeWebTouchEvent : public WebTouchEvent {
 public:
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     explicit NativeWebTouchEvent(const _UIWebTouchEvent*);
 #elif PLATFORM(GTK)
     NativeWebTouchEvent(GdkEvent*, Vector<WebPlatformTouchPoint>&&);
@@ -56,7 +56,7 @@ public:
 #endif
 
 private:
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     Vector<WebPlatformTouchPoint> extractWebTouchPoint(const _UIWebTouchEvent*);
 #endif
 

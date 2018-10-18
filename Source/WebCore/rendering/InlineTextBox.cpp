@@ -708,9 +708,9 @@ void InlineTextBox::paintPlatformDocumentMarker(GraphicsContext& context, const 
             return DocumentMarkerLineStyle::AutocorrectionReplacement;
         case MarkedText::DictationAlternatives:
             return DocumentMarkerLineStyle::DictationAlternatives;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         case MarkedText::DictationPhraseWithAlternatives:
-            // FIXME: Rename DocumentMarkerLineStyle::TextCheckingDictationPhraseWithAlternatives and remove the PLATFORM(IOS)-guard.
+            // FIXME: Rename DocumentMarkerLineStyle::TextCheckingDictationPhraseWithAlternatives and remove the PLATFORM(IOS_FAMILY)-guard.
             return DocumentMarkerLineStyle::TextCheckingDictationPhraseWithAlternatives;
 #endif
         default:
@@ -762,8 +762,8 @@ auto InlineTextBox::resolveStyleForMarkedText(const MarkedText& markedText, cons
     switch (markedText.type) {
     case MarkedText::Correction:
     case MarkedText::DictationAlternatives:
-#if PLATFORM(IOS)
-    // FIXME: See <rdar://problem/8933352>. Also, remove the PLATFORM(IOS)-guard.
+#if PLATFORM(IOS_FAMILY)
+    // FIXME: See <rdar://problem/8933352>. Also, remove the PLATFORM(IOS_FAMILY)-guard.
     case MarkedText::DictationPhraseWithAlternatives:
 #endif
     case MarkedText::GrammarError:
@@ -879,7 +879,7 @@ Vector<MarkedText> InlineTextBox::collectMarkedTextsForDocumentMarkers(TextPaint
             return MarkedText::TextMatch;
         case DocumentMarker::DictationAlternatives:
             return MarkedText::DictationAlternatives;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         case DocumentMarker::DictationPhraseWithAlternatives:
             return MarkedText::DictationPhraseWithAlternatives;
 #endif
@@ -901,8 +901,8 @@ Vector<MarkedText> InlineTextBox::collectMarkedTextsForDocumentMarkers(TextPaint
         case DocumentMarker::CorrectionIndicator:
         case DocumentMarker::Replacement:
         case DocumentMarker::DictationAlternatives:
-#if PLATFORM(IOS)
-        // FIXME: Remove the PLATFORM(IOS)-guard.
+#if PLATFORM(IOS_FAMILY)
+        // FIXME: Remove the PLATFORM(IOS_FAMILY)-guard.
         case DocumentMarker::DictationPhraseWithAlternatives:
 #endif
             if (phase != TextPaintPhase::Decoration)
@@ -943,8 +943,8 @@ Vector<MarkedText> InlineTextBox::collectMarkedTextsForDocumentMarkers(TextPaint
         case DocumentMarker::CorrectionIndicator:
         case DocumentMarker::DictationAlternatives:
         case DocumentMarker::Grammar:
-#if PLATFORM(IOS)
-        // FIXME: See <rdar://problem/8933352>. Also, remove the PLATFORM(IOS)-guard.
+#if PLATFORM(IOS_FAMILY)
+        // FIXME: See <rdar://problem/8933352>. Also, remove the PLATFORM(IOS_FAMILY)-guard.
         case DocumentMarker::DictationPhraseWithAlternatives:
 #endif
         case DocumentMarker::TextMatch:

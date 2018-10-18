@@ -52,7 +52,7 @@
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "RuntimeApplicationChecks.h"
 #include <wtf/spi/darwin/dyldSPI.h>
 #endif

@@ -42,7 +42,7 @@
 
 namespace WebCore {
 
-#if !PLATFORM(MAC) && !PLATFORM(IOS) && !(USE(GSTREAMER) && USE(LIBWEBRTC))
+#if !PLATFORM(MAC) && !PLATFORM(IOS_FAMILY) && !(USE(GSTREAMER) && USE(LIBWEBRTC))
 CaptureSourceOrError MockRealtimeAudioSource::create(String&& deviceID, String&& name, String&& hashSalt, const MediaConstraints* constraints)
 {
 #ifndef NDEBUG
@@ -71,7 +71,7 @@ MockRealtimeAudioSource::MockRealtimeAudioSource(String&& deviceID, String&& nam
 
 MockRealtimeAudioSource::~MockRealtimeAudioSource()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     RealtimeMediaSourceCenter::singleton().audioFactory().unsetActiveSource(*this);
 #endif
 }
@@ -119,7 +119,7 @@ void MockRealtimeAudioSource::settingsDidChange(OptionSet<RealtimeMediaSourceSet
 
 void MockRealtimeAudioSource::startProducingData()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     RealtimeMediaSourceCenter::singleton().audioFactory().setActiveSource(*this);
 #endif
 

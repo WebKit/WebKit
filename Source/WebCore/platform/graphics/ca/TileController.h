@@ -95,7 +95,7 @@ public:
     unsigned blankPixelCount() const;
     static unsigned blankPixelCountForTiles(const PlatformLayerList&, const FloatRect&, const IntPoint&);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     unsigned numberOfUnparentedTiles() const;
     void removeUnparentedTilesNow();
 #endif

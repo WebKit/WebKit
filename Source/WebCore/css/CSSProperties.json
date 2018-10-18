@@ -6635,7 +6635,7 @@
             "codegen-properties": {
                 "name-for-methods": "TouchCalloutEnabled",
                 "converter": "TouchCallout",
-                "enable-if": "WTF_PLATFORM_IOS"
+                "enable-if": "WTF_PLATFORM_IOS_FAMILY"
             },
             "status": "non-standard"
         },

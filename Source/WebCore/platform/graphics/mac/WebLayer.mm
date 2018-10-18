@@ -33,7 +33,7 @@
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/SetForScope.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import "WKGraphics.h"
 #import "WAKWindow.h"
 #import "WebCoreThread.h"
@@ -41,7 +41,7 @@
 
 using namespace WebCore;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 @interface WebLayer(Private)
 - (void)drawScaledContentsInContext:(CGContextRef)context;
 @end
@@ -109,7 +109,7 @@ using namespace WebCore;
 
 - (void)display
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (pthread_main_np())
         WebThreadLock();
 #endif
@@ -122,7 +122,7 @@ using namespace WebCore;
 
 - (void)drawInContext:(CGContextRef)context
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (pthread_main_np())
         WebThreadLock();
 #endif

@@ -37,7 +37,7 @@
 #define SYMBOL_STRING(name) #name
 #endif
 
-#if OS(IOS)
+#if OS(IOS_FAMILY)
 #define THUMB_FUNC_PARAM(name) SYMBOL_STRING(name)
 #else
 #define THUMB_FUNC_PARAM(name)

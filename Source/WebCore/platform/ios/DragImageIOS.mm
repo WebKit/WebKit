@@ -26,7 +26,7 @@
 #import "config.h"
 #import "DragImage.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "Document.h"
 #import "Element.h"
@@ -300,4 +300,4 @@ DragImageRef createDragImageForRange(Frame&, Range&, bool)
 
 } // namespace WebCore
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

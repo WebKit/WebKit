@@ -42,7 +42,7 @@
 
 #if PLATFORM(WIN)
 #include "MD5.h"
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS_FAMILY)
 #include <MobileCoreServices/UTCoreTypes.h>
 #define COMMON_DIGEST_FOR_OPENSSL
 #include <CommonCrypto/CommonDigest.h>

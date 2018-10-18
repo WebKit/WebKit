@@ -46,7 +46,7 @@ public:
     bool onLine() const final;
     void share(ScriptExecutionContext&, ShareData, Ref<DeferredPromise>&&);
     
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     bool standalone() const;
 #endif
 

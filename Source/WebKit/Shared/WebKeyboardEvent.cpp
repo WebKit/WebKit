@@ -81,7 +81,7 @@ WebKeyboardEvent::WebKeyboardEvent(Type type, const String& text, const String& 
     ASSERT(isKeyboardEventType(type));
 }
 
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS_FAMILY)
 
 WebKeyboardEvent::WebKeyboardEvent(Type type, const String& text, const String& unmodifiedText, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, int macCharCode, bool isAutoRepeat, bool isKeypad, bool isSystemKey, Modifiers modifiers, WallTime timestamp)
     : WebEvent(type, modifiers, timestamp)

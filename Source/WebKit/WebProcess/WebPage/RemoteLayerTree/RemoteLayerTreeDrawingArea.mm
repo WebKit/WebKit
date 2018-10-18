@@ -60,7 +60,7 @@ RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage& webPage, const W
     , m_layerFlushTimer(*this, &RemoteLayerTreeDrawingArea::flushLayers)
 {
     webPage.corePage()->settings().setForceCompositingMode(true);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     webPage.corePage()->settings().setDelegatesPageScaling(true);
 #endif
     m_rootLayer->setName("drawing area root");
@@ -169,7 +169,7 @@ void RemoteLayerTreeDrawingArea::updatePreferences(const WebPreferencesStore&)
     DebugPageOverlays::settingsChanged(*m_webPage.corePage());
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 void RemoteLayerTreeDrawingArea::setDeviceScaleFactor(float deviceScaleFactor)
 {
     m_webPage.setDeviceScaleFactor(deviceScaleFactor);
@@ -221,7 +221,7 @@ void RemoteLayerTreeDrawingArea::setViewExposedRect(std::optional<WebCore::Float
     updateScrolledExposedRect();
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 WebCore::FloatRect RemoteLayerTreeDrawingArea::exposedContentRect() const
 {
     FrameView* frameView = m_webPage.mainFrameView();
@@ -252,7 +252,7 @@ void RemoteLayerTreeDrawingArea::updateScrolledExposedRect()
 
     m_scrolledViewExposedRect = m_viewExposedRect;
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     if (m_viewExposedRect) {
         ScrollOffset scrollOffset = frameView->scrollOffsetFromPosition(frameView->scrollPosition());
         m_scrolledViewExposedRect.value().moveBy(scrollOffset);

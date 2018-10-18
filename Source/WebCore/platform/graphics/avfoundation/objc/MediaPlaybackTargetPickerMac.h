@@ -26,7 +26,7 @@
 #ifndef MediaPlaybackTargetPickerMac_h
 #define MediaPlaybackTargetPickerMac_h
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 
 #include "MediaPlaybackTargetPicker.h"
 #include <wtf/RetainPtr.h>

@@ -35,7 +35,7 @@ static int overriddenWebKitLinkTimeVersion;
 
 BOOL WebKitLinkedOnOrAfter(int version)
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     return (WebKitLinkTimeVersion() >= version);
 #else
     int32_t linkTimeVersion = WebKitLinkTimeVersion();
@@ -59,7 +59,7 @@ static int WebKitLinkTimeVersion(void)
     if (overriddenWebKitLinkTimeVersion)
         return overriddenWebKitLinkTimeVersion;
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     return NSVersionOfLinkTimeLibrary("WebKit");
 #else
     // <rdar://problem/6627758> Need to implement WebKitLinkedOnOrAfter

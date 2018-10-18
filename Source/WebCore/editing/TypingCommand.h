@@ -66,7 +66,7 @@ public:
     static void insertParagraphSeparator(Document&, Options);
     static void insertParagraphSeparatorInQuotedContent(Document&);
     static void closeTyping(Frame*);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     static void ensureLastEditCommandHasCurrentSelectionIfOpenForMoreTyping(Frame*, const VisibleSelection&);
 #endif
 
@@ -81,7 +81,7 @@ public:
     void setCompositionType(TextCompositionType type) { m_compositionType = type; }
     void setIsAutocompletion(bool isAutocompletion) { m_isAutocompletion = isAutocompletion; }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void setEndingSelectionOnLastInsertCommand(const VisibleSelection& selection);
 #endif
 

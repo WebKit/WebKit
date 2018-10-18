@@ -29,7 +29,7 @@
 #import "config.h"
 #import "DumpRenderTreeDraggingInfo.h"
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 
 #import "DumpRenderTree.h"
 #import "DumpRenderTreeFileDraggingSource.h"
@@ -297,4 +297,4 @@ static NSMutableArray<NSFilePromiseReceiver *> *allFilePromiseReceivers()
 
 @end
 
-#endif // !PLATFORM(IOS)
+#endif // !PLATFORM(IOS_FAMILY)

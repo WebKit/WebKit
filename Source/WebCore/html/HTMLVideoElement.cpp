@@ -141,7 +141,7 @@ void HTMLVideoElement::parseAttribute(const QualifiedName& name, const AtomicStr
     else {
         HTMLMediaElement::parseAttribute(name, value);    
 
-#if PLATFORM(IOS) && ENABLE(WIRELESS_PLAYBACK_TARGET)
+#if PLATFORM(IOS_FAMILY) && ENABLE(WIRELESS_PLAYBACK_TARGET)
         if (name == webkitairplayAttr) {
             bool disabled = false;
             if (equalLettersIgnoringASCIICase(attributeWithoutSynchronization(HTMLNames::webkitairplayAttr), "deny"))
@@ -172,7 +172,7 @@ bool HTMLVideoElement::supportsFullscreen(HTMLMediaElementEnums::VideoFullscreen
     if (!player()->supportsFullscreen())
         return false;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     UNUSED_PARAM(videoFullscreenMode);
     // Fullscreen implemented by player.
     return true;
@@ -188,11 +188,11 @@ bool HTMLVideoElement::supportsFullscreen(HTMLMediaElementEnums::VideoFullscreen
         return false;
 
     return page->chrome().client().supportsVideoFullscreen(videoFullscreenMode);
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 }
 
 
-#if ENABLE(FULLSCREEN_API) && PLATFORM(IOS)
+#if ENABLE(FULLSCREEN_API) && PLATFORM(IOS_FAMILY)
 void HTMLVideoElement::webkitRequestFullscreen()
 {
     webkitSetPresentationMode(HTMLVideoElement::VideoPresentationMode::Fullscreen);

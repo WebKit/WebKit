@@ -26,14 +26,14 @@
 
 #pragma once
 
-#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
 #include "FloatRect.h"
 #include "HTMLMediaElementEnums.h"
 #include "MediaPlayerEnums.h"
 #include "PlaybackSessionModel.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 OBJC_CLASS AVPlayerViewController;
 OBJC_CLASS UIViewController;
 #endif
@@ -62,7 +62,7 @@ public:
     virtual void willExitPictureInPicture() = 0;
     virtual void didExitPictureInPicture() = 0;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     virtual UIViewController *presentingViewController() { return nullptr; }
     virtual UIViewController *createVideoFullscreenViewController(AVPlayerViewController *) { return nullptr; }
 #endif

@@ -68,7 +68,7 @@
 #include "TiledBacking.h"
 #include <wtf/text/TextStream.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "RuntimeApplicationChecks.h"
 #endif
 
@@ -404,7 +404,7 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
         m_graphicsLayer->addChild(*m_childContainmentLayer);
     }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     if (m_isMainFrameRenderViewLayer) {
         // Page scale is applied above the RenderView on iOS.
         m_graphicsLayer->setContentsOpaque(!compositor().viewHasTransparentBackground());
@@ -432,7 +432,7 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
     updateCustomAppearance(renderer().style());
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 void RenderLayerBacking::layerWillBeDestroyed()
 {
     auto& renderer = this->renderer();
@@ -569,7 +569,7 @@ static bool layerOrAncestorIsTransformedOrUsingCompositedScrolling(RenderLayer& 
 
 bool RenderLayerBacking::shouldClipCompositedBounds() const
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     // Scrollbar layers use this layer for relative positioning, so don't clip.
     if (layerForHorizontalScrollbar() || layerForVerticalScrollbar())
         return false;
@@ -738,7 +738,7 @@ bool RenderLayerBacking::updateConfiguration()
 
     if (is<RenderEmbeddedObject>(renderer()) && downcast<RenderEmbeddedObject>(renderer()).allowsAcceleratedCompositing()) {
         auto* pluginViewBase = downcast<PluginViewBase>(downcast<RenderWidget>(renderer()).widget());
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         if (pluginViewBase && !m_graphicsLayer->contentsLayerForMedia()) {
             pluginViewBase->detachPluginLayer();
             pluginViewBase->attachPluginLayer();
@@ -915,7 +915,7 @@ LayoutRect RenderLayerBacking::computeParentGraphicsLayerRect(RenderLayer* compo
         parentGraphicsLayerRect = snappedGraphicsLayer(clippingBoxOffset, clippingBox.size(), deviceScaleFactor()).m_snappedRect;
     }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (compositedAncestor->hasTouchScrollableOverflow()) {
         LayoutRect ancestorCompositedBounds = ancestorBackingLayer->compositedBounds();
         auto& renderBox = downcast<RenderBox>(compositedAncestor->renderer());
@@ -1151,7 +1151,7 @@ void RenderLayerBacking::updateGeometry()
         m_scrollingLayer->setPosition(FloatPoint(paddingBox.location() - compositedBounds().location()));
 
         m_scrollingLayer->setSize(roundedIntSize(LayoutSize(renderBox.clientWidth(), renderBox.clientHeight())));
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         FloatSize oldScrollingLayerOffset = m_scrollingLayer->offsetFromRenderer();
         m_scrollingLayer->setOffsetFromRenderer(FloatPoint() - paddingBox.location());
         bool paddingBoxOffsetChanged = oldScrollingLayerOffset != m_scrollingLayer->offsetFromRenderer();
@@ -2363,7 +2363,7 @@ bool RenderLayerBacking::paintsIntoWindow() const
         return false;
 
     if (m_owningLayer.isRenderViewLayer()) {
-#if PLATFORM(IOS) || USE(COORDINATED_GRAPHICS)
+#if PLATFORM(IOS_FAMILY) || USE(COORDINATED_GRAPHICS)
         if (compositor().inForcedCompositingMode())
             return false;
 #endif
@@ -2466,7 +2466,7 @@ void RenderLayerBacking::setContentsNeedDisplayInRect(const LayoutRect& r, Graph
     if (m_scrollingContentsLayer && m_scrollingContentsLayer->drawsContent()) {
         FloatRect layerDirtyRect = pixelSnappedRectForPainting;
         layerDirtyRect.move(-m_scrollingContentsLayer->offsetFromRenderer() - m_subpixelOffsetFromRenderer);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         // Account for the fact that RenderLayerBacking::updateGeometry() bakes scrollOffset into offsetFromRenderer on iOS,
         // but the repaint rect is computed without taking the scroll position into account (see shouldApplyClipAndScrollPositionForRepaint()).
         layerDirtyRect.moveBy(-m_owningLayer.scrollPosition());
@@ -2480,7 +2480,7 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
     OptionSet<PaintBehavior> paintBehavior, GraphicsLayerPaintingPhase paintingPhase)
 {
     if ((paintsIntoWindow() || paintsIntoCompositedAncestor()) && paintingPhase != GraphicsLayerPaintChildClippingMask) {
-#if !PLATFORM(IOS) && !OS(WINDOWS)
+#if !PLATFORM(IOS_FAMILY) && !OS(WINDOWS)
         // FIXME: Looks like the CALayer tree is out of sync with the GraphicsLayer heirarchy
         // when pages are restored from the PageCache.
         // <rdar://problem/8712587> ASSERT: When Going Back to Page with Plugins in PageCache

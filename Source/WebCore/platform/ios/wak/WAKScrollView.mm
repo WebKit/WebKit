@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WAKScrollView.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "WAKAppKitStubs.h"
 #import "WAKClipView.h"
@@ -436,4 +436,4 @@ static BOOL scrollViewToPoint(WAKScrollView *scrollView, CGPoint point)
 
 @end
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

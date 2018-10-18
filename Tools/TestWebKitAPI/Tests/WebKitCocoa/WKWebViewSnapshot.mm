@@ -97,7 +97,7 @@ TEST(WKWebView, SnapshotImageBaseCase)
     window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);
     [[window contentView] addSubview:webView.get()];
     backingScaleFactor = [window backingScaleFactor];
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS_FAMILY)
     window = adoptNS([[UIWindow alloc] initWithFrame:[webView frame]]);
     [window addSubview:webView.get()];
     backingScaleFactor = [[window screen] scale];

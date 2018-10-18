@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300)
+#if (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300)
 inline uint8_t* castDataArgumentToCCRSACryptorCreateFromDataIfNeeded(const uint8_t* value)
 {
     return const_cast<uint8_t*>(value);

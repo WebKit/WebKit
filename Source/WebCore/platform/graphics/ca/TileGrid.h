@@ -88,7 +88,7 @@ public:
     void drawTileMapContents(CGContextRef, CGRect layerBounds) const;
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     unsigned numberOfUnparentedTiles() const { return m_cohortList.size(); }
     void removeUnparentedTilesNow();
 #endif

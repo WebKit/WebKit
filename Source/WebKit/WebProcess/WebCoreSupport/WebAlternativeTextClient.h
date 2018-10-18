@@ -50,11 +50,11 @@ public:
     Vector<String> dictationAlternatives(uint64_t dictationContext) override;
 #endif
 private:
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     IGNORE_CLANG_WARNINGS_BEGIN("unused-private-field")
 #endif
     WebPage *m_page;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     IGNORE_CLANG_WARNINGS_END
 #endif
 };

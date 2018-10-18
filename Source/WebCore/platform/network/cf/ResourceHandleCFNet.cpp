@@ -166,7 +166,7 @@ void ResourceHandle::createCFURLConnection(bool shouldUseCredentialStorage, bool
 
     RetainPtr<CFMutableDictionaryRef> sslProps;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     sslProps = adoptCF(ResourceHandle::createSSLPropertiesFromNSURLRequest(firstRequest()));
 #else
     if (allowsAnyHTTPSCertificateHosts().contains(firstRequest().url().host().toString())) {
@@ -189,7 +189,7 @@ void ResourceHandle::createCFURLConnection(bool shouldUseCredentialStorage, bool
         wkSetClientCertificateInSSLProperties(sslProps.get(), (clientCert->value).get());
 #endif
     }
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
     if (sslProps)
         CFURLRequestSetSSLProperties(request.get(), sslProps.get());

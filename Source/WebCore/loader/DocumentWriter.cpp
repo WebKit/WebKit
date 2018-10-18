@@ -117,7 +117,7 @@ Ref<Document> DocumentWriter::createDocument(const URL& url)
 {
     if (!m_frame->loader().stateMachine().isDisplayingInitialEmptyDocument() && m_frame->loader().client().shouldAlwaysUsePluginDocument(m_mimeType))
         return PluginDocument::create(m_frame, url);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (MIMETypeRegistry::isPDFMIMEType(m_mimeType) && (m_frame->isMainFrame() || !m_frame->settings().useImageDocumentForSubframePDF()))
         return SinkDocument::create(m_frame, url);
 #endif

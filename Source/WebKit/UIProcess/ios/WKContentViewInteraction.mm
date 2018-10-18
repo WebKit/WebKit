@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKContentViewInteraction.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "APIUIClient.h"
 #import "EditingRange.h"
@@ -6553,4 +6553,4 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 @end
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

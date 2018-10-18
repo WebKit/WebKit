@@ -69,7 +69,7 @@ private:
 
     void makeRepresentation(WebCore::DocumentLoader*) final;
     bool hasHTMLView() const final;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     bool forceLayoutOnRestoreFromPageCache() final;
 #endif
     void forceLayoutForNonHTML() final;
@@ -90,7 +90,7 @@ private:
     bool canAuthenticateAgainstProtectionSpace(WebCore::DocumentLoader*, unsigned long identifier, const WebCore::ProtectionSpace&) final;
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     RetainPtr<CFDictionaryRef> connectionProperties(WebCore::DocumentLoader*, unsigned long identifier) final;
 #endif
 
@@ -180,7 +180,7 @@ private:
     
     void savePlatformDataToCachedFrame(WebCore::CachedFrame*) final;
     void transitionToCommittedFromCachedFrame(WebCore::CachedFrame*) final;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void didRestoreFrameHierarchyForCachedFrame() final;
 #endif
     void transitionToCommittedForNewPage() final;
@@ -227,7 +227,7 @@ private:
     
     void dispatchDidClearWindowObjectInWorld(WebCore::DOMWrapperWorld&) final;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     bool shouldLoadMediaElementURL(const WebCore::URL&) const final;
 #endif
 

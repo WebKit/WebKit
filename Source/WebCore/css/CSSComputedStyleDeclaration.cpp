@@ -386,7 +386,7 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyPerspectiveOrigin,
     CSSPropertyWebkitPrintColorAdjust,
     CSSPropertyWebkitRtlOrdering,
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     CSSPropertyWebkitTouchCallout,
 #endif
 #if ENABLE(TOUCH_EVENTS)
@@ -3707,7 +3707,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyinStyle(const RenderSty
         case CSSPropertyTouchAction:
             return cssValuePool.createValue(style.touchAction());
 #endif
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         case CSSPropertyWebkitTouchCallout:
             return cssValuePool.createIdentifierValue(style.touchCalloutEnabled() ? CSSValueDefault : CSSValueNone);
 #endif

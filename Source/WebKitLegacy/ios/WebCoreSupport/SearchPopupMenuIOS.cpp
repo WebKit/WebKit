@@ -21,7 +21,7 @@
 
 #include <wtf/text/AtomicString.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 using namespace WebCore;
 
@@ -48,4 +48,4 @@ bool SearchPopupMenuIOS::enabled()
     return false;
 }
 
-#endif // !PLATFORM(IOS)
+#endif // !PLATFORM(IOS_FAMILY)

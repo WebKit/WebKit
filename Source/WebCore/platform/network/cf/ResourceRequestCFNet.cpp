@@ -55,7 +55,7 @@ WTF_DECLARE_CF_TYPE_TRAIT(CFURL);
 namespace WebCore {
 
 // FIXME: Make this a NetworkingContext property.
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 bool ResourceRequest::s_httpPipeliningEnabled = true;
 #else
 bool ResourceRequest::s_httpPipeliningEnabled = false;
@@ -160,7 +160,7 @@ static inline ResourceRequestCachePolicy fromPlatformRequestCachePolicy(CFURLReq
     }
 }
 
-#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000
+#if PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000
 static CFURLRef siteForCookies(ResourceRequest::SameSiteDisposition disposition, CFURLRef url)
 {
     switch (disposition) {
@@ -203,7 +203,7 @@ void ResourceRequest::doUpdatePlatformRequest()
 
     CFURLRequestSetShouldHandleHTTPCookies(cfRequest, allowCookies());
 
-#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000
+#if PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000
     _CFURLRequestSetProtocolProperty(cfRequest, CFSTR("_kCFHTTPCookiePolicyPropertySiteForCookies"), siteForCookies(m_sameSiteDisposition, url.get()));
 
     int isTopSite = m_isTopSite;
@@ -288,7 +288,7 @@ void ResourceRequest::doUpdateResourceRequest()
     if (resourcePrioritiesEnabled())
         m_priority = toResourceLoadPriority(CFURLRequestGetRequestPriority(m_cfRequest.get()));
 
-#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000
+#if PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000
     RetainPtr<CFURLRef> siteForCookies = adoptCF(checked_cf_cast<CFURLRef>(_CFURLRequestCopyProtocolPropertyForKey(m_cfRequest.get(), CFSTR("_kCFHTTPCookiePolicyPropertySiteForCookies"))));
     m_sameSiteDisposition = !siteForCookies ? SameSiteDisposition::Unspecified : (registrableDomainsAreEqual(siteForCookies.get(), m_url) ? SameSiteDisposition::SameSite : SameSiteDisposition::CrossSite);
 
@@ -421,7 +421,7 @@ unsigned initializeMaximumHTTPConnectionCountPerHost()
     return unlimitedRequestCount;
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 void initializeHTTPConnectionSettingsOnStartup()
 {
     // This need to be called from WebKitInitialize so the calls happen early enough, before any requests are made. <rdar://problem/9691871>

@@ -77,7 +77,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVMediaTypeVideo, NSString *)
 #define AVMediaTypeMuxed getAVMediaTypeMuxed()
 #define AVMediaTypeVideo getAVMediaTypeVideo()
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVCaptureSessionRuntimeErrorNotification, NSString *)
 SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVCaptureSessionWasInterruptedNotification, NSString *)
 SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVCaptureSessionInterruptionEndedNotification, NSString *)
@@ -104,7 +104,7 @@ using namespace WebCore;
 -(void)removeNotificationObservers;
 -(void)captureOutput:(AVCaptureOutputType*)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnectionType*)connection;
 -(void)observeValueForKeyPath:keyPath ofObject:(id)object change:(NSDictionary*)change context:(void*)context;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 -(void)sessionRuntimeError:(NSNotification*)notification;
 -(void)beginSessionInterrupted:(NSNotification*)notification;
 -(void)endSessionInterrupted:(NSNotification*)notification;
@@ -140,7 +140,7 @@ AVMediaCaptureSource::AVMediaCaptureSource(AVCaptureDeviceTypedef* device, const
     , m_objcObserver(adoptNS([[WebCoreAVMediaCaptureSourceObserver alloc] initWithCallback:this]))
     , m_device(device)
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     static_assert(static_cast<int>(InterruptionReason::VideoNotAllowedInBackground) == static_cast<int>(AVCaptureSessionInterruptionReasonVideoDeviceNotAvailableInBackground), "InterruptionReason::VideoNotAllowedInBackground is not AVCaptureSessionInterruptionReasonVideoDeviceNotAvailableInBackground as expected");
     static_assert(static_cast<int>(InterruptionReason::VideoNotAllowedInSideBySide) == AVCaptureSessionInterruptionReasonVideoDeviceNotAvailableWithMultipleForegroundApps, "InterruptionReason::VideoNotAllowedInSideBySide is not AVCaptureSessionInterruptionReasonVideoDeviceNotAvailableWithMultipleForegroundApps as expected");
     static_assert(static_cast<int>(InterruptionReason::VideoInUse) == AVCaptureSessionInterruptionReasonVideoDeviceInUseByAnotherClient, "InterruptionReason::VideoInUse is not AVCaptureSessionInterruptionReasonVideoDeviceInUseByAnotherClient as expected");
@@ -190,7 +190,7 @@ void AVMediaCaptureSource::stopProducingData()
         [m_session stopRunning];
 
     m_interruption = InterruptionReason::None;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     m_session = nullptr;
 #endif
 }
@@ -278,7 +278,7 @@ void AVMediaCaptureSource::captureSessionIsRunningDidChange(bool state)
     });
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 void AVMediaCaptureSource::captureSessionRuntimeError(RetainPtr<NSError> error)
 {
     if (!m_isRunning || error.get().code != AVErrorMediaServicesWereReset)
@@ -355,7 +355,7 @@ NSArray<NSString*>* sessionKVOProperties()
 
 - (void)addNotificationObservers
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     ASSERT(m_callback);
 
     NSNotificationCenter* center = [NSNotificationCenter defaultCenter];
@@ -369,7 +369,7 @@ NSArray<NSString*>* sessionKVOProperties()
 
 - (void)removeNotificationObservers
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 #endif
 }
@@ -407,7 +407,7 @@ NSArray<NSString*>* sessionKVOProperties()
         m_callback->captureSessionIsRunningDidChange([newValue boolValue]);
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 - (void)sessionRuntimeError:(NSNotification*)notification
 {
     NSError *error = notification.userInfo[AVCaptureSessionErrorKey];

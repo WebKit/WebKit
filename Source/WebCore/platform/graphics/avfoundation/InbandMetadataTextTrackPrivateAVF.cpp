@@ -26,7 +26,7 @@
 #include "config.h"
 #include "InbandMetadataTextTrackPrivateAVF.h"
 
-#if ENABLE(VIDEO) && ENABLE(DATACUE_VALUE) && (USE(AVFOUNDATION) || PLATFORM(IOS))
+#if ENABLE(VIDEO) && ENABLE(DATACUE_VALUE) && (USE(AVFOUNDATION) || PLATFORM(IOS_FAMILY))
 
 #include "InbandTextTrackPrivateClient.h"
 #include "Logging.h"
@@ -104,4 +104,4 @@ void InbandMetadataTextTrackPrivateAVF::flushPartialCues()
 
 } // namespace WebCore
 
-#endif // ENABLE(VIDEO) && (USE(AVFOUNDATION) || PLATFORM(IOS))
+#endif // ENABLE(VIDEO) && (USE(AVFOUNDATION) || PLATFORM(IOS_FAMILY))

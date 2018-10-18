@@ -211,7 +211,7 @@ RefPtr<HistoryItem> BackForwardList::itemAtIndex(int index)
     return m_entries[index + m_current].copyRef();
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 unsigned BackForwardList::current()
 {
     return m_current;

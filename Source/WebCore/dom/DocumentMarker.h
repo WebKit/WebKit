@@ -27,7 +27,7 @@
 #include <wtf/Variant.h>
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import <wtf/RetainPtr.h>
 typedef struct objc_object *id;
 #endif
@@ -71,7 +71,7 @@ public:
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
         TelephoneNumber = 1 << 10,
 #endif
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         // FIXME: iOS should share the same dictation mark system with the other platforms <rdar://problem/9431249>.
         DictationPhraseWithAlternatives = 1 << 11,
         DictationResult = 1 << 12,
@@ -91,7 +91,7 @@ public:
         String originalText;
     };
     struct DictationAlternativesData {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         Vector<String> alternatives;
         RetainPtr<id> metadata;
 #endif
@@ -104,7 +104,7 @@ public:
     DocumentMarker(unsigned startOffset, unsigned endOffset, bool isActiveMatch);
     DocumentMarker(MarkerType, unsigned startOffset, unsigned endOffset, const String& description = String());
     DocumentMarker(MarkerType, unsigned startOffset, unsigned endOffset, Data&&);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     DocumentMarker(MarkerType, unsigned startOffset, unsigned endOffset, const String& description, const Vector<String>& alternatives, RetainPtr<id> metadata);
 #endif
 
@@ -126,7 +126,7 @@ public:
     void setEndOffset(unsigned offset) { m_endOffset = offset; }
     void shiftOffsets(int delta);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     bool isDictation() const;
     const Vector<String>& alternatives() const;
     void setAlternative(const String&, size_t index);
@@ -159,7 +159,7 @@ inline auto DocumentMarker::allMarkers() -> OptionSet<MarkerType>
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
         TelephoneNumber,
 #endif
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         DictationPhraseWithAlternatives,
         DictationResult,
 #endif
@@ -213,7 +213,7 @@ inline void DocumentMarker::setActiveMatch(bool isActiveMatch)
     m_data = isActiveMatch;
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 // FIXME: iOS should share the same dictation mark system with the other platforms <rdar://problem/9431249>.
 

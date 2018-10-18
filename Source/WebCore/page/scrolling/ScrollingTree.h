@@ -96,7 +96,7 @@ public:
 
     FloatPoint mainFrameScrollPosition();
     
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     virtual FloatRect fixedPositionRect() = 0;
     virtual void scrollingTreeNodeWillStartPanGesture() { }
     virtual void scrollingTreeNodeWillStartScroll() { }

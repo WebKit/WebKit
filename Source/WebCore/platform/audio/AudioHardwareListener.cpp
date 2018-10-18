@@ -40,7 +40,7 @@ AudioHardwareListener::AudioHardwareListener(Client& client)
     , m_activity(AudioHardwareActivityType::Unknown)
     , m_outputDeviceSupportsLowPowerMode(false)
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     m_outputDeviceSupportsLowPowerMode = true;
 #endif
 }

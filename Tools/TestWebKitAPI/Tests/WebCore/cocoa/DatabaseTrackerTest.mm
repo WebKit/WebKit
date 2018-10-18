@@ -36,7 +36,7 @@ using namespace WebCore;
 
 namespace TestWebKitAPI {
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 TEST(DatabaseTracker, DeleteDatabaseFileIfEmpty)
 {
@@ -57,7 +57,7 @@ TEST(DatabaseTracker, DeleteDatabaseFileIfEmpty)
         FileSystem::deleteFile(databaseFilePath);
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 #if PLATFORM(COCOA)
 
@@ -126,7 +126,7 @@ TEST(DatabaseTracker, DeleteOrigin)
     EXPECT_TRUE(databaseTracker->origins().isEmpty());
     EXPECT_TRUE(databaseTracker->databaseNames(origin).isEmpty());
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     EXPECT_TRUE(DatabaseTracker::deleteDatabaseFileIfEmpty(fullWebDatabasePath));
     EXPECT_TRUE(FileSystem::deleteEmptyDirectory(originPath));
 #else
@@ -203,7 +203,7 @@ TEST(DatabaseTracker, DeleteOriginWhenDeletingADatabaseFails)
 
     chmod(fullWebDatabasePath.utf8().data(), 555);
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     chflags(fullWebDatabasePath.utf8().data(), UF_IMMUTABLE);
 #endif
 
@@ -217,7 +217,7 @@ TEST(DatabaseTracker, DeleteOriginWhenDeletingADatabaseFails)
 
     chmod(fullWebDatabasePath.utf8().data(), 666);
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     chflags(fullWebDatabasePath.utf8().data(), 0);
 #endif
 
@@ -298,7 +298,7 @@ TEST(DatabaseTracker, DeleteDatabase)
     EXPECT_TRUE(databaseTracker->deleteDatabase(origin, webDatabaseName));
     EXPECT_TRUE(databaseTracker->databaseNames(origin).isEmpty());
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     EXPECT_TRUE(DatabaseTracker::deleteDatabaseFileIfEmpty(fullWebDatabasePath));
 #else
     EXPECT_FALSE(FileSystem::fileExists(fullWebDatabasePath));

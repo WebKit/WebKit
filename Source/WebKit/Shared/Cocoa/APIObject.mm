@@ -227,7 +227,7 @@ void* Object::newObject(size_t size, Type type)
         wrapper = [WKFrameInfo alloc];
         break;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     case Type::GeolocationPosition:
         wrapper = [_WKGeolocationPosition alloc];
         break;

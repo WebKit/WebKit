@@ -29,7 +29,7 @@
 #import "config.h"
 #import "FontCache.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "FontCascade.h"
 #import "RenderThemeIOS.h"
@@ -167,4 +167,4 @@ RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomicString& famil
 
 } // namespace WebCore
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

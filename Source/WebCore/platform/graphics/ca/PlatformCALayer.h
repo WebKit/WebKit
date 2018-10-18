@@ -251,7 +251,7 @@ public:
     virtual String layerTreeAsString() const = 0;
 #endif // PLATFORM(WIN)
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     bool isWebLayer();
     void setBoundsOnMainThread(CGRect);
     void setPositionOnMainThread(CGPoint);

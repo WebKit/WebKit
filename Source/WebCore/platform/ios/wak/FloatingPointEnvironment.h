@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-#if PLATFORM(IOS) && (CPU(ARM) || CPU(ARM64))
+#if PLATFORM(IOS_FAMILY) && (CPU(ARM) || CPU(ARM64))
 
 class FloatingPointEnvironment {
 public:
@@ -48,7 +48,7 @@ private:
     bool m_isInitialized;
 };
 
-#else // not PLATFORM(IOS) && (CPU(ARM) || CPU(ARM64))
+#else // not PLATFORM(IOS_FAMILY) && (CPU(ARM) || CPU(ARM64))
 
 class FloatingPointEnvironment {
 public:
@@ -59,7 +59,7 @@ public:
     WEBCORE_EXPORT static FloatingPointEnvironment& singleton();
 };
 
-#endif // PLATFORM(IOS) && (CPU(ARM) || CPU(ARM64))
+#endif // PLATFORM(IOS_FAMILY) && (CPU(ARM) || CPU(ARM64))
 
 } // namespace WebCore
 

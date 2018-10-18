@@ -40,7 +40,7 @@ namespace WebKit {
 void LocalConnection::getUserConsent(const String& reason, UserConsentCallback&& completionHandler) const
 {
     // FIXME(182772)
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     auto context = adoptNS([allocLAContextInstance() init]);
     auto reply = BlockPtr<void(BOOL, NSError *)>::fromCallable([completionHandler = WTFMove(completionHandler)] (BOOL success, NSError *error) mutable {
         ASSERT(!RunLoop::isMain());
@@ -61,7 +61,7 @@ void LocalConnection::getUserConsent(const String& reason, UserConsentCallback&&
 void LocalConnection::getUserConsent(const String& reason, SecAccessControlRef accessControl, UserConsentContextCallback&& completionHandler) const
 {
     // FIXME(182772)
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     auto context = adoptNS([allocLAContextInstance() init]);
     auto reply = BlockPtr<void(BOOL, NSError *)>::fromCallable([context, completionHandler = WTFMove(completionHandler)] (BOOL success, NSError *error) mutable {
         ASSERT(!RunLoop::isMain());
@@ -82,7 +82,7 @@ void LocalConnection::getUserConsent(const String& reason, SecAccessControlRef a
 void LocalConnection::getAttestation(const String& rpId, const String& username, const Vector<uint8_t>& hash, AttestationCallback&& completionHandler) const
 {
     // DeviceIdentity.Framework is not avaliable in iOS simulator.
-#if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)
     // Apple Attestation
     ASSERT(hash.size() <= 32);
 

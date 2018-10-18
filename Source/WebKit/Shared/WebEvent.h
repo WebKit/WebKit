@@ -256,7 +256,7 @@ public:
     WebKeyboardEvent(Type, const String& text, const String& unmodifiedText, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, int macCharCode, bool handledByInputMethod, const Vector<WebCore::KeypressCommand>&, bool isAutoRepeat, bool isKeypad, bool isSystemKey, Modifiers, WallTime timestamp);
 #elif PLATFORM(GTK)
     WebKeyboardEvent(Type, const String& text, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, bool handledByInputMethod, Vector<String>&& commands, bool isKeypad, Modifiers, WallTime timestamp);
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS_FAMILY)
     WebKeyboardEvent(Type, const String& text, const String& unmodifiedText, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, int macCharCode, bool isAutoRepeat, bool isKeypad, bool isSystemKey, Modifiers, WallTime timestamp);
 #elif PLATFORM(WPE)
     WebKeyboardEvent(Type, const String& text, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, bool isKeypad, Modifiers, WallTime timestamp);
@@ -320,7 +320,7 @@ private:
 };
 
 #if ENABLE(TOUCH_EVENTS)
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 class WebPlatformTouchPoint {
 public:
     enum TouchPointState {
@@ -491,7 +491,7 @@ private:
     Vector<WebPlatformTouchPoint> m_touchPoints;
 };
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 #endif // ENABLE(TOUCH_EVENTS)
 
 } // namespace WebKit

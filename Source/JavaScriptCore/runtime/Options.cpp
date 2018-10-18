@@ -339,7 +339,7 @@ static void scaleJITPolicy()
 
 static void overrideDefaults()
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     if (WTF::numberOfProcessorCores() < 4)
 #endif
     {
@@ -353,7 +353,7 @@ static void overrideDefaults()
             Options::gcIncrementScale() = 0;
     }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // On iOS, we control heap growth using process memory footprint. Therefore these values can be agressive.
     Options::smallHeapRAMFraction() = 0.8;
     Options::mediumHeapRAMFraction() = 0.9;
@@ -468,7 +468,7 @@ static void recomputeDependentOptions()
         Options::useOSREntryToFTL() = false;
     }
     
-#if PLATFORM(IOS) && CPU(ARM64) && !CPU(ARM64E)
+#if PLATFORM(IOS_FAMILY) && CPU(ARM64) && !CPU(ARM64E)
     // Override globally for now. Longer term we'll just make the default
     // be to have this option enabled, and have platforms that don't support
     // it just silently use a single mapping.

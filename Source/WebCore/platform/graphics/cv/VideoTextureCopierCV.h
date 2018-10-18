@@ -44,7 +44,7 @@ public:
     VideoTextureCopierCV(GraphicsContext3D&);
     ~VideoTextureCopierCV();
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     typedef CVOpenGLESTextureRef TextureType;
 #else
     typedef CVOpenGLTextureRef TextureType;

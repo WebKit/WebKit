@@ -43,7 +43,7 @@
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "FrameSelection.h"
 #endif
 
@@ -128,7 +128,7 @@ void CachedPage::restore(Page& page)
     // FIXME: Right now we don't support pages w/ frames in the b/f cache.  This may need to be tweaked when we add support for that.
     Document* focusedDocument = page.focusController().focusedOrMainFrame().document();
     if (Element* element = focusedDocument->focusedElement()) {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         // We don't want focused nodes changing scroll position when restoring from the cache
         // as it can cause ugly jumps before we manage to restore the cached position.
         page.mainFrame().selection().suppressScrolling();
@@ -141,7 +141,7 @@ void CachedPage::restore(Page& page)
         }
 #endif
         element->updateFocusAppearance(SelectionRestorationMode::Restore);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         if (frameView)
             frameView->setProhibitsScrolling(hadProhibitsScrolling);
         page.mainFrame().selection().restoreScrolling();

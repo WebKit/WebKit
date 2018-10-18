@@ -76,7 +76,7 @@ static bool fontHasVerticalGlyphs(CTFontRef ctFont)
     return false;
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 bool fontFamilyShouldNotBeUsedForArabic(CFStringRef fontFamilyName)
 {
     if (!fontFamilyName)
@@ -115,7 +115,7 @@ static bool needsAscentAdjustment(CFStringRef familyName)
 
 void Font::platformInit()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     m_syntheticBoldOffset = m_platformData.syntheticBold() ? ceilf(m_platformData.size() / 24.0f) : 0.f;
 #else
     m_syntheticBoldOffset = m_platformData.syntheticBold() ? 1.0f : 0.f;
@@ -166,7 +166,7 @@ void Font::platformInit()
     if (platformData().orientation() == FontOrientation::Vertical && !isTextOrientationFallback())
         m_hasVerticalGlyphs = fontHasVerticalGlyphs(m_platformData.ctFont());
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     CGFloat adjustment = shouldUseAdjustment(m_platformData.font()) ? ceil((ascent + descent) * kLineHeightAdjustment) : 0;
 
     lineGap = ceilf(lineGap);
@@ -233,7 +233,7 @@ void Font::platformDestroy()
 
 bool Font::variantCapsSupportsCharacterForSynthesis(FontVariantCaps fontVariantCaps, UChar32 character) const
 {
-#if (PLATFORM(IOS) && TARGET_OS_IOS) || PLATFORM(MAC)
+#if (PLATFORM(IOS_FAMILY) && TARGET_OS_IOS) || PLATFORM(MAC)
     Glyph glyph = glyphForCharacter(character);
     if (!glyph)
         return false;
@@ -275,7 +275,7 @@ bool Font::variantCapsSupportsCharacterForSynthesis(FontVariantCaps fontVariantC
 #endif
 }
 
-#if (PLATFORM(IOS) && TARGET_OS_IOS) || PLATFORM(MAC)
+#if (PLATFORM(IOS_FAMILY) && TARGET_OS_IOS) || PLATFORM(MAC)
 static RetainPtr<CFDictionaryRef> smallCapsOpenTypeDictionary(CFStringRef key, int rawValue)
 {
     RetainPtr<CFNumberRef> value = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &rawValue));
@@ -561,7 +561,7 @@ void Font::determinePitch()
 
     int fixedPitch = extractNumber(adoptCF(static_cast<CFNumberRef>(CTFontCopyAttribute(m_platformData.font(), kCTFontFixedAdvanceAttribute))).get());
     m_treatAsFixedPitch = (CTFontGetSymbolicTraits(ctFont) & kCTFontMonoSpaceTrait) || fixedPitch || (caseInsensitiveCompare(fullName.get(), CFSTR("Osaka-Mono")) || caseInsensitiveCompare(fullName.get(), CFSTR("MS-PGothic")) || caseInsensitiveCompare(fullName.get(), CFSTR("MonotypeCorsiva")));
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (familyName && caseInsensitiveCompare(familyName.get(), CFSTR("Courier New"))) {
         // Special case Courier New to not be treated as fixed pitch, as this will make use of a hacked space width which is undesireable for iPhone (see rdar://6269783).
         m_treatAsFixedPitch = false;

@@ -40,7 +40,7 @@ bool linkedOnOrAfter(SDKVersion sdkVersion)
      static std::once_flag once;
      std::call_once(once, [] {
         bool isSafari = false;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         if (WebCore::IOSApplication::isMobileSafari())
             isSafari = true;
 #elif PLATFORM(MAC)

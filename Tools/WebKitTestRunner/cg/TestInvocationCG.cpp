@@ -34,11 +34,11 @@
 #include <wtf/MD5.h>
 #include <wtf/RetainPtr.h>
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC) && !PLATFORM(IOS_FAMILY)
 #include <LaunchServices/UTCoreTypes.h>
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 // FIXME: get kUTTypePNG from MobileCoreServices on iOS
 static const CFStringRef kUTTypePNG = CFSTR("public.png");
 #endif

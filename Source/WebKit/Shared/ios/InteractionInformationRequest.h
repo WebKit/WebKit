@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #include "ArgumentCoders.h"
 #include "ShareableBitmap.h"
@@ -57,4 +57,4 @@ struct InteractionInformationRequest {
 
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

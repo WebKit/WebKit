@@ -26,7 +26,7 @@
 #import "config.h"
 #import "NativeWebMouseEvent.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "WebIOSEventFactory.h"
 
@@ -40,4 +40,4 @@ NativeWebMouseEvent::NativeWebMouseEvent(::WebEvent *event)
 
 } // namespace WebKit
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

@@ -766,7 +766,7 @@ String AccessibilityRenderObject::stringValue() const
     if (isTextControl())
         return text();
     
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (isInputTypePopupButton())
         return textUnderElement();
 #endif
@@ -2714,7 +2714,7 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
         if (input.isTextButton())
             return buttonRoleType();
         // On iOS, the date field and time field are popup buttons. On other platforms they are text fields.
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         if (input.isDateField() || input.isTimeField())
             return AccessibilityRole::PopUpButton;
 #endif
@@ -3490,7 +3490,7 @@ void AccessibilityRenderObject::tabChildren(AccessibilityChildrenVector& result)
     
 const String& AccessibilityRenderObject::actionVerb() const
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     // FIXME: Need to add verbs for select elements.
     static NeverDestroyed<const String> buttonAction(AXButtonActionVerb());
     static NeverDestroyed<const String> textFieldAction(AXTextFieldActionVerb());

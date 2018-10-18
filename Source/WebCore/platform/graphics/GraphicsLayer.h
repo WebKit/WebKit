@@ -466,7 +466,7 @@ public:
     // Layer contents
     virtual void setContentsToImage(Image*) { }
     virtual bool shouldDirectlyCompositeImage(Image*) const { return true; }
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     virtual PlatformLayer* contentsLayerForMedia() const { return 0; }
 #endif
 

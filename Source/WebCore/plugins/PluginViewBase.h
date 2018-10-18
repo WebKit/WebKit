@@ -50,7 +50,7 @@ class Scrollbar;
 class PluginViewBase : public Widget {
 public:
     virtual PlatformLayer* platformLayer() const { return 0; }
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     virtual bool willProvidePluginLayer() const { return false; }
     virtual void attachPluginLayer() { }
     virtual void detachPluginLayer() { }

@@ -90,7 +90,7 @@ bool ColorInputType::isMouseFocusable() const
 bool ColorInputType::isKeyboardFocusable(KeyboardEvent*) const
 {
     ASSERT(element());
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (element()->isReadOnly())
         return false;
 

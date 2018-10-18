@@ -361,7 +361,7 @@ Node::~Node()
 
     document().decrementReferencingNodeCount();
 
-#if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS) && (!ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS))
+#if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY) && (!ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS))
     for (auto* document : Document::allDocuments()) {
         ASSERT_WITH_SECURITY_IMPLICATION(!document->touchEventListenersContain(*this));
         ASSERT_WITH_SECURITY_IMPLICATION(!document->touchEventHandlersContain(*this));
@@ -375,14 +375,14 @@ void Node::willBeDeletedFrom(Document& document)
     if (hasEventTargetData()) {
         document.didRemoveWheelEventHandler(*this, EventHandlerRemoval::All);
 #if ENABLE(TOUCH_EVENTS)
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         document.removeTouchEventListener(*this, EventHandlerRemoval::All);
 #endif
         document.didRemoveTouchEventHandler(*this, EventHandlerRemoval::All);
 #endif
     }
 
-#if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS)
+#if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
     document.removeTouchEventHandler(*this, EventHandlerRemoval::All);
 #endif
 
@@ -2083,7 +2083,7 @@ void Node::moveNodeToNewDocument(Document& oldDocument, Document& newDocument)
         for (unsigned i = 0; i < numTouchEventListeners; ++i) {
             oldDocument.didRemoveTouchEventHandler(*this);
             newDocument.didAddTouchEventHandler(*this);
-#if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS)
+#if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
             oldDocument.removeTouchEventListener(*this);
             newDocument.addTouchEventListener(*this);
 #endif
@@ -2102,7 +2102,7 @@ void Node::moveNodeToNewDocument(Document& oldDocument, Document& newDocument)
     }
 
 #if !ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS)
-#if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS)
+#if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
     ASSERT_WITH_SECURITY_IMPLICATION(!oldDocument.touchEventListenersContain(*this));
     ASSERT_WITH_SECURITY_IMPLICATION(!oldDocument.touchEventHandlersContain(*this));
 #endif
@@ -2126,7 +2126,7 @@ static inline bool tryAddEventListener(Node* targetNode, const AtomicString& eve
     else if (eventNames().isTouchEventType(eventType))
         targetNode->document().didAddTouchEventHandler(*targetNode);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (targetNode == &targetNode->document() && eventType == eventNames().scrollEvent)
         targetNode->document().domWindow()->incrementScrollEventListenersCount();
 
@@ -2141,7 +2141,7 @@ static inline bool tryAddEventListener(Node* targetNode, const AtomicString& eve
     if (eventNames().isTouchEventType(eventType))
         targetNode->document().addTouchEventListener(*targetNode);
 #endif
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 #if ENABLE(IOS_GESTURE_EVENTS) && ENABLE(TOUCH_EVENTS)
     if (eventNames().isGestureEventType(eventType))
@@ -2168,7 +2168,7 @@ static inline bool tryRemoveEventListener(Node* targetNode, const AtomicString& 
     else if (eventNames().isTouchEventType(eventType))
         targetNode->document().didRemoveTouchEventHandler(*targetNode);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (targetNode == &targetNode->document() && eventType == eventNames().scrollEvent)
         targetNode->document().domWindow()->decrementScrollEventListenersCount();
 
@@ -2182,7 +2182,7 @@ static inline bool tryRemoveEventListener(Node* targetNode, const AtomicString& 
     if (eventNames().isTouchEventType(eventType))
         targetNode->document().removeTouchEventListener(*targetNode);
 #endif
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 #if ENABLE(IOS_GESTURE_EVENTS) && ENABLE(TOUCH_EVENTS)
     if (eventNames().isGestureEventType(eventType))
@@ -2474,7 +2474,7 @@ void Node::defaultEventHandler(Event& event)
         if (startNode && startNode->renderer())
             if (Frame* frame = document().frame())
                 frame->eventHandler().defaultWheelEventHandler(startNode, downcast<WheelEvent>(event));
-#if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS)
+#if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
     } else if (is<TouchEvent>(event) && eventNames().isTouchEventType(eventType)) {
         RenderObject* renderer = this->renderer();
         while (renderer && (!is<RenderBox>(*renderer) || !downcast<RenderBox>(*renderer).canBeScrolledAndHasScrollableArea()))
@@ -2491,7 +2491,7 @@ void Node::defaultEventHandler(Event& event)
 bool Node::willRespondToMouseMoveEvents()
 {
     // FIXME: Why is the iOS code path different from the non-iOS code path?
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     if (!is<Element>(*this))
         return false;
     if (downcast<Element>(*this).isDisabledFormControl())
@@ -2503,7 +2503,7 @@ bool Node::willRespondToMouseMoveEvents()
 bool Node::willRespondToMouseClickEvents()
 {
     // FIXME: Why is the iOS code path different from the non-iOS code path?
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     return isContentEditable() || hasEventListeners(eventNames().mouseupEvent) || hasEventListeners(eventNames().mousedownEvent) || hasEventListeners(eventNames().clickEvent);
 #else
     if (!is<Element>(*this))

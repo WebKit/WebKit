@@ -189,7 +189,7 @@ bool MacApplication::isSolidStateNetworksDownloader()
 
 #endif // PLATFORM(MAC)
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 bool IOSApplication::isMobileMail()
 {

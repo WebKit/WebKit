@@ -1257,7 +1257,7 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
     paintRect.moveBy(paintOffset);
     adjustBorderBoxRectForPainting(paintRect);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // Workaround for <rdar://problem/6209763>. Force the painting bounds of checkboxes and radio controls to be square.
     if (style().appearance() == CheckboxPart || style().appearance() == RadioPart) {
         int width = std::min(paintRect.width(), paintRect.height());
@@ -3020,7 +3020,7 @@ static bool allowMinMaxPercentagesInAutoHeightBlocksQuirk()
 {
 #if PLATFORM(MAC)
     return MacApplication::isIBooks();
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS_FAMILY)
     return IOSApplication::isIBooks();
 #endif
     return false;

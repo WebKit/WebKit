@@ -43,7 +43,7 @@ LocalService::LocalService(Observer& observer)
 bool LocalService::isAvailable()
 {
 // FIXME(182772)
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     return false;
 #else
     auto context = adoptNS([allocLAContextInstance() init]);

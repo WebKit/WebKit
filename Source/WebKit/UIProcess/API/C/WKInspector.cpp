@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WKInspector.h"
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 
 #include "WKAPICast.h"
 #include "WebInspectorProxy.h"
@@ -131,4 +131,4 @@ void WKInspectorToggleElementSelection(WKInspectorRef inspectorRef)
     toImpl(inspectorRef)->toggleElementSelection();
 }
 
-#endif // !PLATFORM(IOS)
+#endif // !PLATFORM(IOS_FAMILY)

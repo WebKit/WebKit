@@ -34,7 +34,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Optional.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include <wtf/RetainPtr.h>
 typedef struct CGImage *CGImageRef;
 #elif PLATFORM(MAC)
@@ -59,7 +59,7 @@ class Node;
 class Range;
 class URL;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 typedef RetainPtr<CGImageRef> DragImageRef;
 #elif PLATFORM(MAC)
 typedef RetainPtr<NSImage> DragImageRef;

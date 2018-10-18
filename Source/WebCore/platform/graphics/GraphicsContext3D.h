@@ -1327,7 +1327,7 @@ private:
     void readRenderingResults(unsigned char* pixels, int pixelsSize);
     void readPixelsAndConvertToBGRAIfNecessary(int x, int y, int width, int height, unsigned char* pixels);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void setRenderbufferStorageFromDrawable(GC3Dsizei width, GC3Dsizei height);
 #endif
 

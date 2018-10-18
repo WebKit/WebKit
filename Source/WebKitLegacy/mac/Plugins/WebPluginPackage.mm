@@ -61,7 +61,7 @@ NSString *WebPlugInContainingElementKey =       @"WebPlugInContainingElementKey"
         }
     }
     
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     NSFileHandle *executableFile = [NSFileHandle fileHandleForReadingAtPath:[nsBundle executablePath]];
     NSData *data = [executableFile readDataOfLength:512];
     [executableFile closeFile];

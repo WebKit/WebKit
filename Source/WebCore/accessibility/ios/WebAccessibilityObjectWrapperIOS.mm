@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WebAccessibilityObjectWrapperIOS.h"
 
-#if HAVE(ACCESSIBILITY) && PLATFORM(IOS)
+#if HAVE(ACCESSIBILITY) && PLATFORM(IOS_FAMILY)
 
 #import "AccessibilityAttachment.h"
 #import "AccessibilityMediaObject.h"
@@ -3244,4 +3244,4 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
 
 @end
 
-#endif // HAVE(ACCESSIBILITY) && PLATFORM(IOS)
+#endif // HAVE(ACCESSIBILITY) && PLATFORM(IOS_FAMILY)

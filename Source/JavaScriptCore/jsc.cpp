@@ -124,7 +124,7 @@
 #include <windows.h>
 #endif
 
-#if PLATFORM(IOS) && CPU(ARM_THUMB2)
+#if PLATFORM(IOS_FAMILY) && CPU(ARM_THUMB2)
 #include <fenv.h>
 #include <arm/arch.h>
 #endif
@@ -2221,7 +2221,7 @@ static void startTimeoutThreadIfNeeded()
 
 int main(int argc, char** argv)
 {
-#if PLATFORM(IOS) && CPU(ARM_THUMB2)
+#if PLATFORM(IOS_FAMILY) && CPU(ARM_THUMB2)
     // Enabled IEEE754 denormal support.
     fenv_t env;
     fegetenv( &env );
@@ -2260,7 +2260,7 @@ int main(int argc, char** argv)
     // have a chance to parse options.
     WTF::initializeThreading();
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     Options::crashIfCantAllocateJITMemory() = true;
 #endif
 

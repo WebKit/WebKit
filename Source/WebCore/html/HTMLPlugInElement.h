@@ -74,7 +74,7 @@ public:
 
     bool canProcessDrag() const;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     bool willRespondToMouseMoveEvents() override { return false; }
 #endif
     bool willRespondToMouseClickEvents() override;

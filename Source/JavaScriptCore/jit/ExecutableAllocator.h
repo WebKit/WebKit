@@ -34,11 +34,11 @@
 #include <wtf/MetaAllocatorHandle.h>
 #include <wtf/MetaAllocator.h>
 
-#if OS(IOS)
+#if OS(IOS_FAMILY)
 #include <libkern/OSCacheControl.h>
 #endif
 
-#if OS(IOS)
+#if OS(IOS_FAMILY)
 #include <sys/mman.h>
 #endif
 

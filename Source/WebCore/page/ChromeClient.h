@@ -51,7 +51,7 @@
 #include "MediaPlaybackTargetContext.h"
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "PlatformLayer.h"
 #define NSResponder WAKResponder
 #ifndef __OBJC__
@@ -173,7 +173,7 @@ public:
     virtual IntPoint screenToRootView(const IntPoint&) const = 0;
     virtual IntRect rootViewToScreen(const IntRect&) const = 0;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     virtual IntPoint accessibilityScreenToRootView(const IntPoint&) const = 0;
     virtual IntRect rootViewToAccessibilityScreen(const IntRect&) const = 0;
 #endif    
@@ -239,7 +239,7 @@ public:
 
     virtual Seconds eventThrottlingDelay() { return 0_s; };
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     virtual void didReceiveMobileDocType(bool) = 0;
     virtual void setNeedsScrollNotifications(Frame&, bool) = 0;
     virtual void observedContentChange(Frame&) = 0;
@@ -374,7 +374,7 @@ public:
     virtual void assistiveTechnologyMakeFirstResponder() { }
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // FIXME: Come up with a more descriptive name for this function and make it platform independent (if possible).
     virtual bool isStopping() = 0;
 #endif

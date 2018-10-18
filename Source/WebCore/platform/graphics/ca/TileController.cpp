@@ -42,7 +42,7 @@
 #include "IOSurface.h"
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "TileControllerMemoryHandlerIOS.h"
 #include <wtf/MemoryPressureHandler.h>
 #endif
@@ -75,7 +75,7 @@ TileController::~TileController()
 {
     ASSERT(isMainThread());
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     tileControllerMemoryHandler().removeTileController(this);
 #endif
 }
@@ -359,7 +359,7 @@ IntRect TileController::boundsAtLastRevalidateWithoutMargin() const
     return boundsWithoutMargin;
 }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 // Return 'rect' padded evenly on all sides to achieve 'newSize', but make the padding uneven to contain within constrainingRect.
 static FloatRect expandRectWithinRect(const FloatRect& rect, const FloatSize& newSize, const FloatRect& constrainingRect)
 {
@@ -393,7 +393,7 @@ void TileController::adjustTileCoverageRect(FloatRect& coverageRect, const Float
         return;
     }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // FIXME: unify the iOS and Mac code.
     UNUSED_PARAM(previousVisibleRect);
     
@@ -759,7 +759,7 @@ Vector<RefPtr<PlatformCALayer>> TileController::containerLayers()
     return layerList;
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 unsigned TileController::numberOfUnparentedTiles() const
 {
     unsigned count = tileGrid().numberOfUnparentedTiles();

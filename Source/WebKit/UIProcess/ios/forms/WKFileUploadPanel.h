@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import <UIKit/UIViewController.h>
 
@@ -50,4 +50,4 @@ class WebOpenPanelResultListenerProxy;
 - (void)fileUploadPanelDidDismiss:(WKFileUploadPanel *)fileUploadPanel;
 @end
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

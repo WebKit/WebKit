@@ -31,7 +31,7 @@
 
 #if PLATFORM(MAC)
 #import <LaunchServices/LaunchServicesPriv.h>
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS_FAMILY)
 #import <MobileCoreServices/LSAppLinkPriv.h>
 #endif
 

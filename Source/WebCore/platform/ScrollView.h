@@ -35,7 +35,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/WeakPtr.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 OBJC_CLASS WAKScrollView;
 OBJC_CLASS WAKView;
@@ -48,7 +48,7 @@ OBJC_CLASS WAKView;
 #define NSView WAKView
 #endif
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 #if PLATFORM(COCOA) && defined __OBJC__
 @class NSScrollView;
@@ -177,13 +177,13 @@ public:
     // contribute to painting but not to the scrollable area.
     // The unobscuredContentRect is the area that is not covered by UI elements.
     WEBCORE_EXPORT IntRect unobscuredContentRect(VisibleContentRectIncludesScrollbars = ExcludeScrollbars) const;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     IntRect unobscuredContentRectIncludingScrollbars() const { return unobscuredContentRect(IncludeScrollbars); }
 #else
     IntRect unobscuredContentRectIncludingScrollbars() const { return visibleContentRectIncludingScrollbars(); }
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // This is the area that is partially or fully exposed, and may extend under overlapping UI elements.
     WEBCORE_EXPORT FloatRect exposedContentRect() const;
 
@@ -235,7 +235,7 @@ public:
     IntPoint contentsScrollPosition() const;
     void setContentsScrollPosition(const IntPoint&);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     int actualScrollX() const { return unobscuredContentRect().x(); }
     int actualScrollY() const { return unobscuredContentRect().y(); }
     // FIXME: maybe fix scrollPosition() on iOS to return the actual scroll position.
@@ -417,7 +417,7 @@ protected:
 
     virtual void scrollOffsetChangedViaPlatformWidgetImpl(const ScrollOffset&, const ScrollOffset&) = 0;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     virtual void unobscuredContentSizeChanged() = 0;
 #endif
 
@@ -441,7 +441,7 @@ private:
     ScrollbarMode m_horizontalScrollbarMode { ScrollbarAuto };
     ScrollbarMode m_verticalScrollbarMode { ScrollbarAuto };
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // FIXME: exposedContentRect is a very similar concept to fixedVisibleContentRect except it does not differentiate
     // between exposed and unobscured areas. The two attributes should eventually be merged.
     FloatRect m_exposedContentRect;

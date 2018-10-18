@@ -60,7 +60,7 @@ static const CFStringRef sessionHistoryEntryShouldOpenExternalURLsPolicyKey = CF
 const uint32_t sessionHistoryEntryDataVersion = 2;
 
 // Maximum size for subframe session data.
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 static const uint32_t maximumSessionStateDataSize = 2 * 1024 * 1024;
 #else
 static const uint32_t maximumSessionStateDataSize = std::numeric_limits<uint32_t>::max();
@@ -146,7 +146,7 @@ public:
         return *this;
     }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     HistoryEntryDataEncoder& operator<<(WebCore::FloatRect value)
     {
         *this << value.x();
@@ -354,7 +354,7 @@ static void encodeFrameStateNode(HistoryEntryDataEncoder& encoder, const FrameSt
 
     encoder << frameState.target;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // FIXME: iOS should not use the legacy session state encoder.
     encoder << frameState.exposedContentRect;
     encoder << frameState.unobscuredContentRect;
@@ -633,7 +633,7 @@ public:
         return *this;
     }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     HistoryEntryDataDecoder& operator>>(WebCore::FloatRect& value)
     {
         value = WebCore::FloatRect();
@@ -942,7 +942,7 @@ static void decodeBackForwardTreeNode(HistoryEntryDataDecoder& decoder, FrameSta
 
     decoder >> frameState.target;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // FIXME: iOS should not use the legacy session state decoder.
     decoder >> frameState.exposedContentRect;
     decoder >> frameState.unobscuredContentRect;

@@ -186,7 +186,7 @@ static RefPtr<DocumentFragment> documentFragmentFromDragData(const DragData& dra
     return nullptr;
 }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 
 DragOperation DragController::platformGenericDragOperation()
 {

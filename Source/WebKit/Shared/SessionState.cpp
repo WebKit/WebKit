@@ -123,7 +123,7 @@ void FrameState::encode(IPC::Encoder& encoder) const
 
     encoder << httpBody;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     encoder << exposedContentRect;
     encoder << unobscuredContentRect;
     encoder << minimumLayoutSizeInScrollViewCoordinates;
@@ -166,7 +166,7 @@ std::optional<FrameState> FrameState::decode(IPC::Decoder& decoder)
     if (!decoder.decode(result.httpBody))
         return std::nullopt;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (!decoder.decode(result.exposedContentRect))
         return std::nullopt;
     if (!decoder.decode(result.unobscuredContentRect))

@@ -172,7 +172,7 @@ void FrameViewLayoutContext::layout()
     if (m_firstLayout && !frame().ownerElement())
         LOG(Layout, "FrameView %p elapsed time before first layout: %.3fs", this, document()->timeSinceDocumentCreation().value());
 #endif
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (view().updateFixedPositionLayoutRect() && subtreeLayoutRoot())
         convertSubtreeLayoutToFullLayout();
 #endif

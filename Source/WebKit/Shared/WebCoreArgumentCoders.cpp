@@ -90,12 +90,12 @@
 #include "ArgumentCodersMac.h"
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include <WebCore/FloatQuad.h>
 #include <WebCore/InspectorOverlay.h>
 #include <WebCore/SelectionRect.h>
 #include <WebCore/SharedBuffer.h>
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 #include <WebCore/MediaPlaybackTargetContext.h>
@@ -619,7 +619,7 @@ bool ArgumentCoder<FloatRoundedRect>::decode(Decoder& decoder, FloatRoundedRect&
     return SimpleArgumentCoder<FloatRoundedRect>::decode(decoder, roundedRect);
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 void ArgumentCoder<FloatQuad>::encode(Encoder& encoder, const FloatQuad& floatQuad)
 {
     SimpleArgumentCoder<FloatQuad>::encode(encoder, floatQuad);
@@ -650,7 +650,7 @@ std::optional<ViewportArguments> ArgumentCoder<ViewportArguments>::decode(Decode
         return std::nullopt;
     return WTFMove(viewportArguments);
 }
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 
 void ArgumentCoder<IntPoint>::encode(Encoder& encoder, const IntPoint& intPoint)
@@ -1160,7 +1160,7 @@ static bool decodeOptionalImage(Decoder& decoder, RefPtr<Image>& image)
     return decodeImage(decoder, image);
 }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 void ArgumentCoder<Cursor>::encode(Encoder& encoder, const Cursor& cursor)
 {
     encoder.encodeEnum(cursor.type());
@@ -1316,7 +1316,7 @@ bool ArgumentCoder<ResourceError>::decode(Decoder& decoder, ResourceError& resou
     return true;
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 void ArgumentCoder<SelectionRect>::encode(Encoder& encoder, const SelectionRect& selectionRect)
 {
@@ -1712,7 +1712,7 @@ bool ArgumentCoder<PasteboardURL>::decode(Decoder& decoder, PasteboardURL& conte
     return true;
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 void ArgumentCoder<Highlight>::encode(Encoder& encoder, const Highlight& highlight)
 {

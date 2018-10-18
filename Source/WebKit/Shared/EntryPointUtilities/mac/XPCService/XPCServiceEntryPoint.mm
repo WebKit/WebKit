@@ -50,7 +50,7 @@ bool XPCServiceInitializerDelegate::checkEntitlements()
         return false;
     }
 #endif
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     auto value = adoptOSObject(xpc_connection_copy_entitlement_value(m_connection.get(), "keychain-access-groups"));
     if (value && xpc_get_type(value.get()) == XPC_TYPE_ARRAY) {
         xpc_array_apply(value.get(), ^bool(size_t index, xpc_object_t object) {

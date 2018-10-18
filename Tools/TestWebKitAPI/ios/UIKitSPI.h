@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import <UIKit/UITextInputTraits.h>
 
@@ -168,4 +168,4 @@ WTF_EXTERN_C_END
 + (BOOL)isInHardwareKeyboardMode;
 @end
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

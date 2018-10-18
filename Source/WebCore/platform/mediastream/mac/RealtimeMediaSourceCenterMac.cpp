@@ -55,7 +55,7 @@ public:
         return AVVideoCaptureSource::create(String { device.persistentId() }, WTFMove(hashSalt), constraints);
     }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 private:
     void setVideoCapturePageState(bool interrupted, bool pageMuted)
     {
@@ -69,7 +69,7 @@ class DisplayCaptureSourceFactoryMac final : public DisplayCaptureFactory {
 public:
     CaptureSourceOrError createDisplayCaptureSource(const CaptureDevice& device, const MediaConstraints* constraints) final
     {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         UNUSED_PARAM(device);
         UNUSED_PARAM(constraints);
 #endif

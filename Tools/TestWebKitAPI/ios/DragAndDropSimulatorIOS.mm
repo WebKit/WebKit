@@ -26,7 +26,7 @@
 #include "config.h"
 #include "DragAndDropSimulator.h"
 
-#if ENABLE(DRAG_SUPPORT) && PLATFORM(IOS) && WK_API_ENABLED
+#if ENABLE(DRAG_SUPPORT) && PLATFORM(IOS_FAMILY) && WK_API_ENABLED
 
 #import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
@@ -709,4 +709,4 @@ static NSArray *dragAndDropEventNames()
 
 @end
 
-#endif // ENABLE(DRAG_SUPPORT) && PLATFORM(IOS) && WK_API_ENABLED
+#endif // ENABLE(DRAG_SUPPORT) && PLATFORM(IOS_FAMILY) && WK_API_ENABLED

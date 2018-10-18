@@ -47,7 +47,7 @@
 
 using namespace WebCore;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 @interface WebPluginController (SecretsIKnow)
 - (WebFrame *)webFrame; // FIXME: This file calls -[WebPluginController webFrame], which is not declared in WebPluginController.h.  Merge issue?  Are the plug-in files out of date?
 @end

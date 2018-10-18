@@ -26,7 +26,7 @@
 #include "config.h"
 #include "MediaPlaybackTargetMock.h"
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 
 namespace WebCore {
 
@@ -63,4 +63,4 @@ const MediaPlaybackTargetMock* toMediaPlaybackTargetMock(const MediaPlaybackTarg
 
 } // namespace WebCore
 
-#endif // ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+#endif // ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)

@@ -51,7 +51,7 @@ static bool testDone;
 @end
 
 #endif
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 @interface DidScrollToFragmentScrollViewDelegate : NSObject <UIScrollViewDelegate>
 
@@ -81,7 +81,7 @@ TEST(WebKit, NoHistoryItemScrollToFragment)
     auto delegate = adoptNS([[DidScrollToFragmentDelegate alloc] init]);
     [webView setUIDelegate:delegate.get()];
 #endif
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     auto delegateForScrollView = adoptNS([[DidScrollToFragmentScrollViewDelegate alloc] init]);
     [webView scrollView].delegate = delegateForScrollView.get();
 #endif

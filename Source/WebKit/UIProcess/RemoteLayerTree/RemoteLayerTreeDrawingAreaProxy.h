@@ -73,7 +73,7 @@ private:
     void setViewExposedRect(std::optional<WebCore::FloatRect>) override;
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     WKOneShotDisplayLinkHandler *displayLinkHandler();
 #endif
 

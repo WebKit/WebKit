@@ -26,7 +26,7 @@
 #import "config.h"
 #import "Widget.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "Cursor.h"
 #import "Document.h"
@@ -276,4 +276,4 @@ void Widget::setPlatformWidget(NSView *widget)
 
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

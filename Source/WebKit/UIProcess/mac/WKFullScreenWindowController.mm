@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if ENABLE(FULLSCREEN_API) && !PLATFORM(IOS)
+#if ENABLE(FULLSCREEN_API) && !PLATFORM(IOS_FAMILY)
 
 #import "WKFullScreenWindowController.h"
 
@@ -762,4 +762,4 @@ static CAAnimation *fadeAnimation(CFTimeInterval duration, AnimationDirection di
 
 @end
 
-#endif // ENABLE(FULLSCREEN_API) && !PLATFORM(IOS)
+#endif // ENABLE(FULLSCREEN_API) && !PLATFORM(IOS_FAMILY)

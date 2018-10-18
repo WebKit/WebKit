@@ -37,7 +37,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/text/AtomicString.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "WebCoreThreadInternal.h"
 #endif
 
@@ -58,7 +58,7 @@ JSC::VM& commonVMSlow()
 
     vm.heap.acquireAccess(); // At any time, we may do things that affect the GC.
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     vm.setRunLoop(WebThreadRunLoop());
     vm.heap.machineThreads().addCurrentThread();
 #endif

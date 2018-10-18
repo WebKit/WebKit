@@ -3095,7 +3095,7 @@ unsigned Internals::layoutCount() const
     return document->view()->layoutContext().layoutCount();
 }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 static const char* cursorTypeToString(Cursor::Type cursorType)
 {
     switch (cursorType) {
@@ -3156,7 +3156,7 @@ ExceptionOr<String> Internals::getCurrentCursorInfo()
     if (!document || !document->frame())
         return Exception { InvalidAccessError };
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     Cursor cursor = document->frame()->eventHandler().currentMouseCursor();
 
     StringBuilder result;
@@ -3347,7 +3347,7 @@ bool Internals::isSelectPopupVisible(HTMLSelectElement& element)
     if (!is<RenderMenuList>(renderer))
         return false;
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     return downcast<RenderMenuList>(*renderer).popupIsVisible();
 #else
     return false;
@@ -4342,7 +4342,7 @@ Vector<String> Internals::accessKeyModifiers() const
 
 void Internals::setQuickLookPassword(const String& password)
 {
-#if PLATFORM(IOS) && USE(QUICK_LOOK)
+#if PLATFORM(IOS_FAMILY) && USE(QUICK_LOOK)
     auto& quickLookHandleClient = MockPreviewLoaderClient::singleton();
     PreviewLoader::setClientForTesting(&quickLookHandleClient);
     quickLookHandleClient.setPassword(password);

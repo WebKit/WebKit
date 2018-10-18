@@ -26,7 +26,7 @@
 #import "config.h"
 #import "PlatformPasteboard.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "Color.h"
 #import "Image.h"
@@ -46,7 +46,7 @@
 #import <wtf/SoftLinking.h>
 #import <wtf/text/StringHash.h>
 
-#define PASTEBOARD_SUPPORTS_ITEM_PROVIDERS (PLATFORM(IOS) && !(PLATFORM(WATCHOS) || PLATFORM(APPLETV)))
+#define PASTEBOARD_SUPPORTS_ITEM_PROVIDERS (PLATFORM(IOS_FAMILY) && !(PLATFORM(WATCHOS) || PLATFORM(APPLETV)))
 #define NSURL_SUPPORTS_TITLE (!PLATFORM(IOSMAC))
 
 SOFT_LINK_FRAMEWORK(UIKit)
@@ -694,4 +694,4 @@ void PlatformPasteboard::updateSupportedTypeIdentifiers(const Vector<String>& ty
 
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

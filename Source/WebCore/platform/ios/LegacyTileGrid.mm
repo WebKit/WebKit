@@ -26,7 +26,7 @@
 #include "config.h"
 #include "LegacyTileGrid.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #include "LegacyTileGridTile.h"
 #include "LegacyTileLayer.h"
@@ -563,4 +563,4 @@ void LegacyTileGrid::dumpTiles()
 
 } // namespace WebCore
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

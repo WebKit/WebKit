@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CoreAudioCaptureSourceIOS.h"
 
-#if ENABLE(MEDIA_STREAM) && PLATFORM(IOS)
+#if ENABLE(MEDIA_STREAM) && PLATFORM(IOS_FAMILY)
 
 #import "Logging.h"
 #import <AVFoundation/AVAudioSession.h>
@@ -141,4 +141,4 @@ CoreAudioCaptureSourceFactory& CoreAudioCaptureSourceFactory::singleton()
 
 }
 
-#endif // ENABLE(MEDIA_STREAM) && PLATFORM(IOS)
+#endif // ENABLE(MEDIA_STREAM) && PLATFORM(IOS_FAMILY)

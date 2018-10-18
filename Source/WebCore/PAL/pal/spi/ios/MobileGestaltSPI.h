@@ -27,7 +27,7 @@
 
 #import <wtf/Platform.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #include <CoreFoundation/CoreFoundation.h>
 

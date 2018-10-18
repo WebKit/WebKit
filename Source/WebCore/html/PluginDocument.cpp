@@ -75,7 +75,7 @@ void PluginDocumentParser::createDocumentStructure()
     if (document.frame())
         document.frame()->injectUserScripts(InjectAtDocumentStart);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // Should not be able to zoom into standalone plug-in documents.
     document.processViewport("user-scalable=no"_s, ViewportArguments::PluginDocument);
 #endif
@@ -83,7 +83,7 @@ void PluginDocumentParser::createDocumentStructure()
     auto body = HTMLBodyElement::create(document);
     body->setAttributeWithoutSynchronization(marginwidthAttr, AtomicString("0", AtomicString::ConstructFromLiteral));
     body->setAttributeWithoutSynchronization(marginheightAttr, AtomicString("0", AtomicString::ConstructFromLiteral));
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     body->setAttribute(styleAttr, AtomicString("background-color: rgb(217,224,233)", AtomicString::ConstructFromLiteral));
 #else
     body->setAttribute(styleAttr, AtomicString("background-color: rgb(38,38,38)", AtomicString::ConstructFromLiteral));

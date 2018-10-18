@@ -115,7 +115,7 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::copy()
     copy->m_alwaysRunsAtBackgroundPriority = this->m_alwaysRunsAtBackgroundPriority;
     copy->m_shouldTakeUIBackgroundAssertion = this->m_shouldTakeUIBackgroundAssertion;
     copy->m_shouldCaptureAudioInUIProcess = this->m_shouldCaptureAudioInUIProcess;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     copy->m_ctDataConnectionServiceType = this->m_ctDataConnectionServiceType;
 #endif
     copy->m_presentingApplicationPID = this->m_presentingApplicationPID;

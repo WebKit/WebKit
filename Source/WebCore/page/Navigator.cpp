@@ -205,7 +205,7 @@ bool Navigator::javaEnabled() const
     return true;
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 bool Navigator::standalone() const
 {

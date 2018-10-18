@@ -30,7 +30,7 @@
 
 @interface WebDefaultUIDelegate : NSObject <WebUIDelegate>
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     IBOutlet NSMenu *defaultMenu;
 #endif
 }

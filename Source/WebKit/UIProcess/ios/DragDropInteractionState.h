@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(DRAG_SUPPORT) && PLATFORM(IOS)
+#if ENABLE(DRAG_SUPPORT) && PLATFORM(IOS_FAMILY)
 
 #import "UIKitSPI.h"
 #import <WebCore/DragActions.h>
@@ -112,4 +112,4 @@ private:
 
 } // namespace WebKit
 
-#endif // ENABLE(DRAG_SUPPORT) && PLATFORM(IOS)
+#endif // ENABLE(DRAG_SUPPORT) && PLATFORM(IOS_FAMILY)

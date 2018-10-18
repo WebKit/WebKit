@@ -68,7 +68,7 @@ bool DeprecatedGlobalSettings::gLowPowerVideoAudioBufferSizeEnabled = false;
 bool DeprecatedGlobalSettings::gResourceLoadStatisticsEnabledEnabled = false;
 bool DeprecatedGlobalSettings::gAllowsAnySSLCertificate = false;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 bool DeprecatedGlobalSettings::gNetworkDataUsageTrackingEnabled = false;
 bool DeprecatedGlobalSettings::gAVKitEnabled = false;
 bool DeprecatedGlobalSettings::gShouldOptOutOfNetworkStateObservation = false;
@@ -195,7 +195,7 @@ void DeprecatedGlobalSettings::setResourceLoadStatisticsEnabled(bool flag)
     gResourceLoadStatisticsEnabledEnabled = flag;
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 void DeprecatedGlobalSettings::setAudioSessionCategoryOverride(unsigned sessionCategory)
 {
     AudioSession::sharedSession().setCategoryOverride(static_cast<AudioSession::CategoryType>(sessionCategory));
@@ -237,7 +237,7 @@ bool DeprecatedGlobalSettings::globalConstRedeclarationShouldThrow()
 {
 #if PLATFORM(MAC)
     return !MacApplication::isIBooks();
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS_FAMILY)
     return !IOSApplication::isIBooks();
 #else
     return true;

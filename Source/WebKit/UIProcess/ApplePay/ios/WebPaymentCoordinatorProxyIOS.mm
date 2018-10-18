@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WebPaymentCoordinatorProxy.h"
 
-#if PLATFORM(IOS) && ENABLE(APPLE_PAY)
+#if PLATFORM(IOS_FAMILY) && ENABLE(APPLE_PAY)
 
 #import "APIUIClient.h"
 #import "WebPageProxy.h"

@@ -39,7 +39,7 @@
 #import "SVGDocument.h"
 #import <pal/Logging.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import "WebCoreThreadInternal.h"
 #endif
 
@@ -47,7 +47,7 @@ namespace WebCore {
 
 void Page::platformInitialize()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     addSchedulePair(SchedulePair::create(WebThreadNSRunLoop(), kCFRunLoopCommonModes));
 #else
     addSchedulePair(SchedulePair::create([[NSRunLoop currentRunLoop] getCFRunLoop], kCFRunLoopCommonModes));

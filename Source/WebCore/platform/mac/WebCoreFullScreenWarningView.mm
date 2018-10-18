@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 
 #include "WebCoreFullScreenWarningView.h"
 
@@ -106,4 +106,4 @@ static const CGFloat WarningViewShadowRadius = 5;
 }
 @end
 
-#endif // !PLATFORM(IOS)
+#endif // !PLATFORM(IOS_FAMILY)

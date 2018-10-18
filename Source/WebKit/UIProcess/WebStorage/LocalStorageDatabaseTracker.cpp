@@ -154,7 +154,7 @@ String LocalStorageDatabaseTracker::databasePath(const String& filename) const
         return String();
     }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     platformMaybeExcludeFromBackup();
 #endif
 

@@ -25,7 +25,7 @@
 #import "config.h"
 #import "Frame.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "CSSAnimationController.h"
 #import "CommonVM.h"
@@ -751,4 +751,4 @@ void Frame::resetAllGeolocationPermission()
 
 } // namespace WebCore
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

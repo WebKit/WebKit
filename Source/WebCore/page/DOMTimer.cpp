@@ -41,7 +41,7 @@
 #include <wtf/RandomNumber.h>
 #include <wtf/StdLibExtras.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Frame.h"
@@ -219,7 +219,7 @@ int DOMTimer::install(ScriptExecutionContext& context, std::unique_ptr<Scheduled
     // This reference will be released automatically when a one-shot timer fires, when the context
     // is destroyed, or if explicitly cancelled by removeById. 
     DOMTimer* timer = new DOMTimer(context, WTFMove(action), timeout, singleShot);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (is<Document>(context)) {
         bool didDeferTimeout = context.activeDOMObjectsAreSuspended();
         if (!didDeferTimeout && timeout <= 100_ms && singleShot) {
@@ -340,7 +340,7 @@ void DOMTimer::fired()
 
     context.removeTimeout(m_timeoutId);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     bool shouldReportLackOfChanges;
     bool shouldBeginObservingChanges;
     if (is<Document>(context)) {
@@ -364,7 +364,7 @@ void DOMTimer::fired()
 
     m_action->execute(context);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (shouldBeginObservingChanges) {
         WKStopObservingContentChanges();
 

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "SmartMagnificationController.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "SmartMagnificationControllerMessages.h"
 #import "ViewGestureGeometryCollectorMessages.h"
@@ -130,4 +130,4 @@ void SmartMagnificationController::magnify(FloatPoint origin, FloatRect targetRe
 
 } // namespace WebKit
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

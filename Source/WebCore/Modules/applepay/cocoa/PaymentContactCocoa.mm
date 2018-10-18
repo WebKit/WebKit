@@ -50,7 +50,7 @@ namespace WebCore {
 
 static NSString *subLocality(CNPostalAddress *address)
 {
-#if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101204)
+#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101204)
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
     if (![address respondsToSelector:@selector(subLocality)])
         return nil;
@@ -64,7 +64,7 @@ static NSString *subLocality(CNPostalAddress *address)
 
 static void setSubLocality(CNMutablePostalAddress *address, NSString *subLocality)
 {
-#if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101204)
+#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101204)
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
     if (![address respondsToSelector:@selector(setSubLocality:)])
         return;
@@ -78,7 +78,7 @@ static void setSubLocality(CNMutablePostalAddress *address, NSString *subLocalit
 
 static NSString *subAdministrativeArea(CNPostalAddress *address)
 {
-#if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101204)
+#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101204)
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
     if (![address respondsToSelector:@selector(subAdministrativeArea)])
         return nil;
@@ -92,7 +92,7 @@ static NSString *subAdministrativeArea(CNPostalAddress *address)
 
 static void setSubAdministrativeArea(CNMutablePostalAddress *address, NSString *subAdministrativeArea)
 {
-#if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101204)
+#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101204)
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
     if (![address respondsToSelector:@selector(setSubAdministrativeArea:)])
         return;

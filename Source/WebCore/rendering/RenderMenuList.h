@@ -47,7 +47,7 @@ public:
 
     HTMLSelectElement& selectElement() const;
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     bool popupIsVisible() const { return m_popupIsVisible; }
 #endif
     void showPopup();
@@ -149,7 +149,7 @@ private:
 
     std::unique_ptr<RenderStyle> m_optionStyle;
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     RefPtr<PopupMenu> m_popup;
     bool m_popupIsVisible;
 #endif

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "AVAudioSessionCaptureDeviceManager.h"
 
-#if ENABLE(MEDIA_STREAM) && PLATFORM(IOS)
+#if ENABLE(MEDIA_STREAM) && PLATFORM(IOS_FAMILY)
 
 #include "AVAudioSessionCaptureDevice.h"
 #include "RealtimeMediaSourceCenter.h"

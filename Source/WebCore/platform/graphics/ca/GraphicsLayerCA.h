@@ -133,7 +133,7 @@ public:
     WEBCORE_EXPORT void removeAnimation(const String& animationName) override;
 
     WEBCORE_EXPORT void setContentsToImage(Image*) override;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     WEBCORE_EXPORT PlatformLayer* contentsLayerForMedia() const override;
 #endif
     WEBCORE_EXPORT void setContentsToPlatformLayer(PlatformLayer*, ContentsLayerPurpose) override;

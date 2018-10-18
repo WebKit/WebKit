@@ -88,7 +88,7 @@ public:
     virtual void enteredFullscreen();
     virtual void exitedFullscreen();
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     bool willRespondToMouseMoveEvents() override { return true; }
 #endif
 

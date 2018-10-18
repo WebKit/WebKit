@@ -348,7 +348,7 @@ static bool isRequestFromIBooks()
 {
 #if PLATFORM(MAC)
     return MacApplication::isIBooks();
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS_FAMILY)
     return IOSApplication::isIBooks();
 #endif
     return false;

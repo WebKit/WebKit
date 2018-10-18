@@ -33,7 +33,7 @@
 #include "Timer.h"
 #include <wtf/MainThread.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "WebCoreThread.h"
 #endif
 

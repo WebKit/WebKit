@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WebCoreThread.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "CommonVM.h"
 #import "FloatingPointEnvironment.h"
@@ -890,4 +890,4 @@ bool WebThreadNotCurrent(void)
     return webThreadStarted && !pthread_equal(webThread, pthread_self());
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

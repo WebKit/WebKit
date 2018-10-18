@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/SoftLinking.h>

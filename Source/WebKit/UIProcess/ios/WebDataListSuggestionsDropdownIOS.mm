@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebDataListSuggestionsDropdownIOS.h"
 
-#if ENABLE(DATALIST_ELEMENT) && PLATFORM(IOS)
+#if ENABLE(DATALIST_ELEMENT) && PLATFORM(IOS_FAMILY)
 
 #import "WKContentView.h"
 #import "WKContentViewInteraction.h"
@@ -373,4 +373,4 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 @end
 
-#endif // ENABLE(DATALIST_ELEMENT) && PLATFORM(IOS)
+#endif // ENABLE(DATALIST_ELEMENT) && PLATFORM(IOS_FAMILY)

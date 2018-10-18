@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: Rename this file to WebEventIOS.mm after we upstream the iOS port and remove the PLATFORM(IOS)-guard.
+// FIXME: Rename this file to WebEventIOS.mm after we upstream the iOS port and remove the PLATFORM(IOS_FAMILY)-guard.
 
 #import "config.h"
 #import "WebEvent.h"
@@ -31,7 +31,7 @@
 #import "KeyEventCocoa.h"
 #import <wtf/Assertions.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "KeyEventCodesIOS.h"
 #import "WAKAppKitStubs.h"
@@ -503,4 +503,4 @@ static NSString* normalizedStringWithAppKitCompatibilityMapping(NSString *charac
 
 @end
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

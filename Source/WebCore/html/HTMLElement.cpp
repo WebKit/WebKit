@@ -187,7 +187,7 @@ void HTMLElement::collectStyleForPresentationAttribute(const QualifiedName& name
             addPropertyToPresentationAttributeStyle(style, CSSPropertyWordWrap, CSSValueBreakWord);
             addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitNbspMode, CSSValueSpace);
             addPropertyToPresentationAttributeStyle(style, CSSPropertyLineBreak, CSSValueAfterWhiteSpace);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
             addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitTextSizeAdjust, CSSValueNone);
 #endif
             break;

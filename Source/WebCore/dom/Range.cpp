@@ -53,7 +53,7 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "SelectionRect.h"
 #endif
 
@@ -1245,7 +1245,7 @@ void Range::absoluteTextQuads(Vector<FloatQuad>& quads, bool useSelectionHeight,
         *inFixed = allFixed ? EntirelyFixedPosition : (someFixed ? PartiallyFixedPosition : NotFixedPosition);
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 static bool intervalsSufficientlyOverlap(int startA, int endA, int startB, int endB)
 {
     if (endA <= startA || endB <= startB)

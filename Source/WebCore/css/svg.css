@@ -60,7 +60,7 @@ text, tspan, textPath {
    white-space: nowrap
 }
 
-#if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
 text, tspan, tref {
    -webkit-text-size-adjust: none;
 }

@@ -28,13 +28,13 @@
 
 #include <wtf/NeverDestroyed.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "Device.h"
 #include <pal/spi/ios/UIKitSPI.h>
 #include <wtf/SoftLinking.h>
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 SOFT_LINK_FRAMEWORK(UIKit)
 SOFT_LINK_CLASS(UIKit, UIApplication)
 #endif

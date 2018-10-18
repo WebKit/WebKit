@@ -38,7 +38,7 @@
 #import <wtf/Language.h>
 #import <wtf/RetainPtr.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import "LocalizedDateCache.h"
 #endif
 
@@ -103,7 +103,7 @@ RetainPtr<NSDateFormatter> LocaleMac::shortDateFormatter()
     return createDateTimeFormatter(m_locale.get(), m_gregorianCalendar.get(), NSDateFormatterShortStyle, NSDateFormatterNoStyle);
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 String LocaleMac::formatDateTime(const DateComponents& dateComponents, FormatType)
 {
     double msec = dateComponents.millisecondsSinceEpoch();

@@ -31,7 +31,7 @@
 #if ENABLE(GRAPHICS_CONTEXT_3D)
 
 #include "GraphicsContext3D.h"
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "GraphicsContext3DIOS.h"
 #endif
 
@@ -551,7 +551,7 @@ void GraphicsContext3D::bufferSubData(GC3Denum target, GC3Dintptr offset, GC3Dsi
     ::glBufferSubData(target, offset, size, data);
 }
 
-#if PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(WPE)
+#if PLATFORM(MAC) || PLATFORM(IOS_FAMILY) || PLATFORM(WPE)
 void* GraphicsContext3D::mapBufferRange(GC3Denum target, GC3Dintptr offset, GC3Dsizeiptr length, GC3Dbitfield access)
 {
     makeContextCurrent();

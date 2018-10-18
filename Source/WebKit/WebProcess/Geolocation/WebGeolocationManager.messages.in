@@ -23,7 +23,7 @@
 messages -> WebGeolocationManager {
     DidChangePosition(WebCore::GeolocationPosition position);
     DidFailToDeterminePosition(String errorMessage);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     ResetPermissions();
 #endif
 }

@@ -88,7 +88,7 @@ public:
     bool treatsSHA1SignedCertificatesAsInsecure() { return m_treatsSHA1SignedCertificatesAsInsecure; }
     void setTreatsSHA1SignedCertificatesAsInsecure(bool treatsSHA1SignedCertificatesAsInsecure) { m_treatsSHA1SignedCertificatesAsInsecure = treatsSHA1SignedCertificatesAsInsecure; } 
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     bool alwaysRunsAtForegroundPriority() { return m_alwaysRunsAtForegroundPriority; }
     void setAlwaysRunsAtForegroundPriority(bool alwaysRunsAtForegroundPriority) { m_alwaysRunsAtForegroundPriority = alwaysRunsAtForegroundPriority; } 
 #endif
@@ -135,7 +135,7 @@ private:
     PAL::SessionID m_sessionID;
 
     bool m_treatsSHA1SignedCertificatesAsInsecure { true };
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     bool m_alwaysRunsAtForegroundPriority { false };
 #endif
     bool m_initialCapitalizationEnabled { true };

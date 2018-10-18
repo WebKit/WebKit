@@ -30,7 +30,7 @@
 
 namespace WebKit {
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 void OptionItem::encode(IPC::Encoder& encoder) const
 {
     encoder << text;

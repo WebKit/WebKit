@@ -56,12 +56,12 @@
 #include <wtf/WallTime.h>
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include <WebCore/WebCoreThreadRun.h>
 #include <wtf/BlockPtr.h>
 #endif
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC) && !PLATFORM(IOS_FAMILY)
 #include <Carbon/Carbon.h>
 #endif
 
@@ -1258,7 +1258,7 @@ static JSValueRef setTabKeyCyclesThroughElementsCallback(JSContextRef context, J
     return JSValueMakeUndefined(context);
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 static JSValueRef setTelephoneNumberParsingEnabledCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     if (argumentCount < 1)
@@ -1844,7 +1844,7 @@ static JSValueRef getWebHistoryItemCountCallback(JSContextRef context, JSObjectR
 
 static JSValueRef getSecureEventInputIsEnabledCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC) && !PLATFORM(IOS_FAMILY)
     return JSValueMakeBoolean(context, IsSecureEventInputEnabled());
 #else
     return JSValueMakeBoolean(context, false);
@@ -2216,7 +2216,7 @@ JSStaticFunction* TestRunner::staticFunctions()
         { "setSpatialNavigationEnabled", setSpatialNavigationEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setStopProvisionalFrameLoads", setStopProvisionalFrameLoadsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setTabKeyCyclesThroughElements", setTabKeyCyclesThroughElementsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         { "setTelephoneNumberParsingEnabled", setTelephoneNumberParsingEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setPagePaused", setPagePausedCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
 #endif
@@ -2444,7 +2444,7 @@ void TestRunner::runUIScript(JSContextRef context, JSStringRef script, JSValueRe
 void TestRunner::callUIScriptCallback(unsigned callbackID, JSStringRef result)
 {
     JSRetainPtr<JSStringRef> protectedResult(result);
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     RunLoop::main().dispatch([protectedThis = makeRef(*this), callbackID, protectedResult]() mutable {
         JSContextRef context = protectedThis->mainFrameJSContext();
         JSValueRef resultValue = JSValueMakeString(context, protectedResult.get());

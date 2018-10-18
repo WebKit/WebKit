@@ -27,7 +27,7 @@
 #import "AccessibilityIOS.h"
 #import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 namespace WebKit {
 
@@ -40,4 +40,4 @@ NSData *newAccessibilityRemoteToken(NSUUID *uuid)
 
 } // namespace WebKit
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

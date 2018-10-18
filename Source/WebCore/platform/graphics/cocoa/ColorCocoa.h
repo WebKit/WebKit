@@ -36,7 +36,7 @@ class Color;
 NSColor *platformColor(const Color&);
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 UIColor *platformColor(const Color&);
 #endif
 

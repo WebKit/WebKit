@@ -170,7 +170,7 @@ WebProcess& WebProcess::singleton()
 
 WebProcess::WebProcess()
     : m_eventDispatcher(EventDispatcher::create())
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     , m_viewUpdateDispatcher(ViewUpdateDispatcher::create())
 #endif
     , m_webInspectorInterruptDispatcher(WebInspectorInterruptDispatcher::create())
@@ -245,9 +245,9 @@ void WebProcess::initializeConnection(IPC::Connection* connection)
 #endif
 
     m_eventDispatcher->initializeConnection(connection);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     m_viewUpdateDispatcher->initializeConnection(connection);
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
     m_webInspectorInterruptDispatcher->initializeConnection(connection);
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -317,7 +317,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 
     // FIXME: This should be constructed per data store, not per process.
     m_applicationCacheStorage = ApplicationCacheStorage::create(parameters.applicationCacheDirectory, parameters.applicationCacheFlatFileSubdirectoryName);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     m_applicationCacheStorage->setDefaultOriginQuota(25ULL * 1024 * 1024);
 #endif
 
@@ -1344,7 +1344,7 @@ void WebProcess::pageActivityStateDidChange(uint64_t, OptionSet<WebCore::Activit
         updateCPUMonitorState(CPUMonitorUpdateReason::VisibilityHasChanged);
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 void WebProcess::resetAllGeolocationPermissions()
 {
     for (auto& page : m_pageMap.values()) {
@@ -1365,7 +1365,7 @@ void WebProcess::actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend shou
     destroyRenderingResources();
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     accessibilityProcessSuspendedNotification(true);
 #endif
 
@@ -1409,7 +1409,7 @@ void WebProcess::cancelPrepareToSuspend()
     RELEASE_LOG(ProcessSuspension, "%p - WebProcess::cancelPrepareToSuspend()", this);
     setAllLayerTreeStatesFrozen(false);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     accessibilityProcessSuspendedNotification(false);
 #endif
     
@@ -1468,7 +1468,7 @@ void WebProcess::processDidResume()
     cancelMarkAllLayersVolatile();
     setAllLayerTreeStatesFrozen(false);
     
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     accessibilityProcessSuspendedNotification(false);
 #endif
 }

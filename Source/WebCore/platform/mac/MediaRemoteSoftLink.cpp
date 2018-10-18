@@ -54,6 +54,6 @@ SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, MediaRemote, kMRMediaRemoteNowPlayingInfo
 
 #endif // USE(MEDIAREMOTE)
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, MediaRemote, MRMediaRemoteCopyPickableRoutes, CFArrayRef, (), ());
 #endif

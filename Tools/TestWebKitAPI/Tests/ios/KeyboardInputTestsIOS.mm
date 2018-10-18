@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if WK_API_ENABLED && PLATFORM(IOS)
+#if WK_API_ENABLED && PLATFORM(IOS_FAMILY)
 
 #import "PlatformUtilities.h"
 #import "TestInputDelegate.h"
@@ -261,4 +261,4 @@ TEST(KeyboardInputTests, KeyboardTypeForInput)
 
 } // namespace TestWebKitAPI
 
-#endif // WK_API_ENABLED && PLATFORM(IOS)
+#endif // WK_API_ENABLED && PLATFORM(IOS_FAMILY)

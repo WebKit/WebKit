@@ -198,11 +198,11 @@ TemporarySelectionChange::TemporarySelectionChange(Frame& frame, std::optional<V
     : m_frame(frame)
     , m_options(options)
     , m_wasIgnoringSelectionChanges(frame.editor().ignoreSelectionChanges())
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     , m_appearanceUpdatesWereEnabled(frame.selection().isUpdateAppearanceEnabled())
 #endif
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (options & TemporarySelectionOptionEnableAppearanceUpdates)
         frame.selection().setUpdateAppearanceEnabled(true);
 #endif
@@ -226,7 +226,7 @@ TemporarySelectionChange::~TemporarySelectionChange()
         m_frame->editor().setIgnoreSelectionChanges(m_wasIgnoringSelectionChanges, revealSelection);
     }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (m_options & TemporarySelectionOptionEnableAppearanceUpdates)
         m_frame->selection().setUpdateAppearanceEnabled(m_appearanceUpdatesWereEnabled);
 #endif
@@ -295,7 +295,7 @@ bool Editor::handleTextEvent(TextEvent& event)
 
     if (event.isPaste()) {
         if (event.pastingFragment()) {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
             if (client()->performsTwoStepPaste(event.pastingFragment()))
                 return true;
 #endif
@@ -1163,7 +1163,7 @@ Editor::Editor(Frame& frame)
     , m_spellChecker(std::make_unique<SpellChecker>(frame))
     , m_alternativeTextController(std::make_unique<AlternativeTextController>(frame))
     , m_editorUIUpdateTimer(*this, &Editor::editorUIUpdateTimerFired)
-#if ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS)
+#if ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS_FAMILY)
     , m_telephoneNumberDetectionUpdateTimer(*this, &Editor::scanSelectionForTelephoneNumbers)
 #endif
 {
@@ -1186,7 +1186,7 @@ void Editor::clear()
     m_oldSelectionForEditorUIUpdate = { };
     m_editorUIUpdateTimer.stop();
 
-#if ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS)
+#if ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS_FAMILY)
     m_telephoneNumberDetectionUpdateTimer.stop();
     m_detectedTelephoneNumberRanges.clear();
 #endif
@@ -1256,7 +1256,7 @@ bool Editor::insertTextWithoutSendingTextEvent(const String& text, bool selectIn
             // Reveal the current selection
             if (Frame* editedFrame = document->frame())
                 if (Page* page = editedFrame->page()) {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
                     SelectionRevealMode revealMode = SelectionRevealMode::RevealUpToMainFrame;
 #else
                     SelectionRevealMode revealMode = SelectionRevealMode::Reveal;
@@ -1523,7 +1523,7 @@ PasteboardWriterData::URL Editor::pasteboardWriterURL(const URL& url, const Stri
     return result;
 }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 
 void Editor::copyImage(const HitTestResult& result)
 {
@@ -1754,7 +1754,7 @@ void Editor::toggleUnderline()
 
 void Editor::setBaseWritingDirection(WritingDirection direction)
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (inSameParagraph(m_frame.selection().selection().visibleStart(), m_frame.selection().selection().visibleEnd()) && 
         baseWritingDirectionForSelectionStart() == direction)
         return;
@@ -1933,7 +1933,7 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
         }
     }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     client()->startDelayingAndCoalescingContentChangeNotifications();
 #endif
 
@@ -2010,7 +2010,7 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
         }
     }
 
-#if PLATFORM(IOS)        
+#if PLATFORM(IOS_FAMILY)        
     client()->stopDelayingAndCoalescingContentChangeNotifications();
 #endif
 }
@@ -2045,7 +2045,7 @@ void Editor::learnSpelling()
     textChecker()->learnWord(text);
 }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 
 void Editor::advanceToNextMisspelling(bool startBeforeSelection)
 {
@@ -2225,7 +2225,7 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
     }
 }
 
-#endif // !PLATFORM(IOS)
+#endif // !PLATFORM(IOS_FAMILY)
 
 String Editor::misspelledWordAtCaretOrRange(Node* clickedNode) const
 {
@@ -2343,7 +2343,7 @@ void Editor::showSpellingGuessPanel()
         return;
     }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     advanceToNextMisspelling(true);
 #endif
     client()->showSpellingUI(true);
@@ -2374,7 +2374,7 @@ void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition &wordStart,
 {
     Ref<Frame> protection(m_frame);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     UNUSED_PARAM(selectionAfterTyping);
     UNUSED_PARAM(doReplacement);
     OptionSet<TextCheckingType> textCheckingOptions;
@@ -2517,7 +2517,7 @@ void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition &wordStart,
     
 void Editor::markMisspellingsOrBadGrammar(const VisibleSelection& selection, bool checkSpelling, RefPtr<Range>& firstMisspellingRange)
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     // This function is called with a selection already expanded to word boundaries.
     // Might be nice to assert that here.
     
@@ -2557,7 +2557,7 @@ void Editor::markMisspellingsOrBadGrammar(const VisibleSelection& selection, boo
         UNUSED_PARAM(selection);
         UNUSED_PARAM(checkSpelling);
         UNUSED_PARAM(firstMisspellingRange);
-#endif // !PLATFORM(IOS)
+#endif // !PLATFORM(IOS_FAMILY)
 }
 
 bool Editor::isSpellCheckingEnabledFor(Node* node) const
@@ -2846,7 +2846,7 @@ void Editor::markAndReplaceFor(const SpellCheckRequest& request, const Vector<Te
 
 void Editor::changeBackToReplacedString(const String& replacedString)
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     ASSERT(unifiedTextCheckerEnabled());
 
     if (replacedString.isEmpty())
@@ -2865,7 +2865,7 @@ void Editor::changeBackToReplacedString(const String& replacedString)
 #else
     ASSERT_NOT_REACHED();
     UNUSED_PARAM(replacedString);
-#endif // !PLATFORM(IOS)
+#endif // !PLATFORM(IOS_FAMILY)
 }
 
 
@@ -2972,7 +2972,7 @@ void Editor::updateMarkersForWordsAffectedByEditing(bool doNotRemoveIfSelectionA
         DocumentMarker::DictationAlternatives,
         DocumentMarker::SpellCheckingExemption,
         DocumentMarker::Spelling,
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
         DocumentMarker::Grammar,
 #endif
     };
@@ -3007,7 +3007,7 @@ void Editor::revealSelectionAfterEditingOperation(const ScrollAlignment& alignme
     if (m_ignoreSelectionChanges)
         return;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     SelectionRevealMode revealMode = SelectionRevealMode::RevealUpToMainFrame;
 #else
     SelectionRevealMode revealMode = SelectionRevealMode::Reveal;
@@ -3022,7 +3022,7 @@ void Editor::setIgnoreSelectionChanges(bool ignore, RevealSelection shouldReveal
         return;
 
     m_ignoreSelectionChanges = ignore;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // FIXME: Should suppress selection change notifications during a composition change <https://webkit.org/b/38830> 
     if (!ignore)
         respondToChangedSelection(m_frame.selection().selection(), { });
@@ -3171,7 +3171,7 @@ void Editor::changeSelectionAfterCommand(const VisibleSelection& newSelection, O
     // change the caret's DOM position (["hello", 0]). In these situations the above FrameSelection::setSelection call
     // does not call EditorClient::respondToChangedSelection(), which, on the Mac, sends selection change notifications and
     // starts a new kill ring sequence, but we want to do these things (matches AppKit).
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // FIXME: Should suppress selection change notifications during a composition change <https://webkit.org/b/38830>
     if (m_ignoreSelectionChanges)
         return;
@@ -3249,7 +3249,7 @@ IntRect Editor::firstRectForRange(Range* range) const
 
 bool Editor::shouldChangeSelection(const VisibleSelection& oldSelection, const VisibleSelection& newSelection, EAffinity affinity, bool stillSelecting) const
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (m_frame.selectionChangeCallbacksDisabled())
         return true;
 #endif
@@ -3520,7 +3520,7 @@ void Editor::selectionWillChange()
 
 void Editor::respondToChangedSelection(const VisibleSelection&, OptionSet<FrameSelection::SetSelectionOption> options)
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // FIXME: Should suppress selection change notifications during a composition change <https://webkit.org/b/38830> 
     if (m_ignoreSelectionChanges)
         return;
@@ -3529,7 +3529,7 @@ void Editor::respondToChangedSelection(const VisibleSelection&, OptionSet<FrameS
     if (client())
         client()->respondToChangedSelection(&m_frame);
 
-#if ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS)
+#if ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS_FAMILY)
     if (shouldDetectTelephoneNumbers())
         m_telephoneNumberDetectionUpdateTimer.startOneShot(0_s);
 #endif
@@ -3545,7 +3545,7 @@ void Editor::respondToChangedSelection(const VisibleSelection&, OptionSet<FrameS
     scheduleEditorUIUpdate();
 }
 
-#if ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS)
+#if ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS_FAMILY)
 
 bool Editor::shouldDetectTelephoneNumbers()
 {
@@ -3641,7 +3641,7 @@ void Editor::scanRangeForTelephoneNumbers(Range& range, const StringView& string
     }
 }
 
-#endif // ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS)
+#endif // ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS_FAMILY)
 
 void Editor::updateEditorUINowIfScheduled()
 {
@@ -3665,10 +3665,10 @@ void Editor::editorUIUpdateTimerFired()
         bool caretBrowsing = m_frame.settings().caretBrowsingEnabled();
         if (m_frame.selection().selection().isContentEditable() || caretBrowsing) {
             VisiblePosition newStart(m_frame.selection().selection().visibleStart());
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
             newAdjacentWords = VisibleSelection(startOfWord(newStart, LeftWordIfOnBoundary), endOfWord(newStart, RightWordIfOnBoundary));
 #else
-            // If this bug gets fixed, this PLATFORM(IOS) code could be removed:
+            // If this bug gets fixed, this PLATFORM(IOS_FAMILY) code could be removed:
             // <rdar://problem/7259611> Word boundary code on iPhone gives different results than desktop
             EWordSide startWordSide = LeftWordIfOnBoundary;
             UChar32 c = newStart.characterBefore();
@@ -3678,7 +3678,7 @@ void Editor::editorUIUpdateTimerFired()
                 startWordSide = RightWordIfOnBoundary;
             }
             newAdjacentWords = VisibleSelection(startOfWord(newStart, startWordSide), endOfWord(newStart, RightWordIfOnBoundary));
-#endif // !PLATFORM(IOS)
+#endif // !PLATFORM(IOS_FAMILY)
             if (isContinuousGrammarCheckingEnabled)
                 newSelectedSentence = VisibleSelection(startOfSentence(newStart), endOfSentence(newStart));
         }
@@ -3761,7 +3761,7 @@ bool Editor::selectionStartHasMarkerFor(DocumentMarker::MarkerType markerType, i
 
 OptionSet<TextCheckingType> Editor::resolveTextCheckingTypeMask(const Node& rootEditableElement, OptionSet<TextCheckingType> textCheckingOptions)
 {
-#if USE(AUTOMATIC_TEXT_REPLACEMENT) && !PLATFORM(IOS)
+#if USE(AUTOMATIC_TEXT_REPLACEMENT) && !PLATFORM(IOS_FAMILY)
     bool onlyAllowsTextReplacement = false;
     if (auto* host = rootEditableElement.shadowHost())
         onlyAllowsTextReplacement = is<HTMLInputElement>(host) && downcast<HTMLInputElement>(*host).isSpellcheckDisabledExceptTextReplacement();
@@ -3773,7 +3773,7 @@ OptionSet<TextCheckingType> Editor::resolveTextCheckingTypeMask(const Node& root
 
     bool shouldMarkSpelling = textCheckingOptions.contains(TextCheckingType::Spelling);
     bool shouldMarkGrammar = textCheckingOptions.contains(TextCheckingType::Grammar);
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     bool shouldShowCorrectionPanel = textCheckingOptions.contains(TextCheckingType::ShowCorrectionPanel);
     bool shouldCheckForCorrection = shouldShowCorrectionPanel || textCheckingOptions.contains(TextCheckingType::Correction);
 #endif
@@ -3783,7 +3783,7 @@ OptionSet<TextCheckingType> Editor::resolveTextCheckingTypeMask(const Node& root
         checkingTypes.add(TextCheckingType::Spelling);
     if (shouldMarkGrammar)
         checkingTypes.add(TextCheckingType::Grammar);
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     if (shouldCheckForCorrection)
         checkingTypes.add(TextCheckingType::Correction);
     if (shouldShowCorrectionPanel)
@@ -3806,7 +3806,7 @@ OptionSet<TextCheckingType> Editor::resolveTextCheckingTypeMask(const Node& root
             checkingTypes.add(TextCheckingType::Replacement);
     }
 #endif
-#endif // !PLATFORM(IOS)
+#endif // !PLATFORM(IOS_FAMILY)
 
     return checkingTypes;
 }

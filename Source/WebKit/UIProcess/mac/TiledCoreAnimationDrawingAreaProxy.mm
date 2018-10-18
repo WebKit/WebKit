@@ -26,7 +26,7 @@
 #import "config.h"
 #import "TiledCoreAnimationDrawingAreaProxy.h"
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 
 #import "ColorSpaceData.h"
 #import "DrawingAreaMessages.h"
@@ -220,4 +220,4 @@ void TiledCoreAnimationDrawingAreaProxy::dispatchPresentationCallbacksAfterFlush
 
 } // namespace WebKit
 
-#endif // !PLATFORM(IOS)
+#endif // !PLATFORM(IOS_FAMILY)

@@ -32,7 +32,7 @@
 
     // FIXME: Consider defining an ENABLE macro for iOS device orientation code and/or modifying
     // the bindings scripts to support generating more complicated conditional code.
-#if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     [ImplementedAs=compassHeading] readonly attribute unrestricted double? webkitCompassHeading;
     [ImplementedAs=compassAccuracy] readonly attribute unrestricted double? webkitCompassAccuracy;
     void initDeviceOrientationEvent(optional DOMString type = "",

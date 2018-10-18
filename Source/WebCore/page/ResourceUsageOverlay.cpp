@@ -66,7 +66,7 @@ void ResourceUsageOverlay::initialize()
 
     IntRect initialRect(frameView.width() / 2 - normalWidth / 2, frameView.height() - normalHeight - 20, normalWidth, normalHeight);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // FIXME: The overlay should be stuck to the viewport instead of moving along with the page.
     initialRect.setY(20);
 #endif

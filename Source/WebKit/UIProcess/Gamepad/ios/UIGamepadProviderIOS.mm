@@ -26,7 +26,7 @@
 #import "config.h"
 #import "UIGamepadProvider.h"
 
-#if ENABLE(GAMEPAD) && PLATFORM(IOS)
+#if ENABLE(GAMEPAD) && PLATFORM(IOS_FAMILY)
 
 #import "UIKitSPI.h"
 #import "WKWebViewInternal.h"
@@ -45,4 +45,4 @@ WebPageProxy* UIGamepadProvider::platformWebPageProxyForGamepadInput()
 
 }
 
-#endif // ENABLE(GAMEPAD) && PLATFORM(IOS)
+#endif // ENABLE(GAMEPAD) && PLATFORM(IOS_FAMILY)

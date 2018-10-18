@@ -35,10 +35,10 @@ typedef struct __DDResult *DDResultRef;
 #import <DataDetectorsCore/DDScannerResult.h>
 #import <DataDetectorsCore/DataDetectorsCore.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import <DataDetectorsCore/DDOptionalSource.h>
 #import <DataDetectorsCore/DDURLifier.h>
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 #else // !USE(APPLE_INTERNAL_SDK)
 

@@ -40,7 +40,7 @@ public:
     void geolocationDestroyed() override;
     void startUpdating() override;
     void stopUpdating() override;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // FIXME: unify this with Mac on OpenSource.
     void setEnableHighAccuracy(bool) override;
 #else

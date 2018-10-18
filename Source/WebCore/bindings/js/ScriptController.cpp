@@ -74,7 +74,7 @@ using namespace JSC;
 
 void ScriptController::initializeThreading()
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     JSC::initializeThreading();
     WTF::initializeMainThread();
 #endif

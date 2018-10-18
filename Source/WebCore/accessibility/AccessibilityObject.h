@@ -1120,7 +1120,7 @@ public:
     AccessibilityObjectInclusion accessibilityPlatformIncludesObject() const { return AccessibilityObjectInclusion::DefaultBehavior; }
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     int accessibilityPasswordFieldLength();
     bool hasTouchEventListener() const;
     bool isInputTypePopupButton() const;
@@ -1136,7 +1136,7 @@ public:
     void setPreventKeyboardDOMEventDispatch(bool);
 #endif
     
-#if PLATFORM(COCOA) && !PLATFORM(IOS)
+#if PLATFORM(COCOA) && !PLATFORM(IOS_FAMILY)
     bool caretBrowsingEnabled() const;
     void setCaretBrowsingEnabled(bool);
 #endif

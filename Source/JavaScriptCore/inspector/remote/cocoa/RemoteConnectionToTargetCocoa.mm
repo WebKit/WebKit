@@ -35,7 +35,7 @@
 #import <dispatch/dispatch.h>
 #import <wtf/Optional.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import <wtf/ios/WebCoreThread.h>
 #endif
 
@@ -142,7 +142,7 @@ void RemoteConnectionToTarget::dispatchAsyncOnTarget(void (^block)())
         return;
     }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (WebCoreWebThreadIsEnabled && WebCoreWebThreadIsEnabled()) {
         WebCoreWebThreadRun(block);
         return;

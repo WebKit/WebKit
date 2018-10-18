@@ -31,7 +31,7 @@
 #import "ShareableBitmap.h"
 #import <wtf/RetainPtr.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIImage.h>
 #endif
 
@@ -45,7 +45,7 @@
     CGPoint _interactionLocation;
     RetainPtr<NSString> _ID;
     RefPtr<WebKit::ShareableBitmap> _image;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     RetainPtr<UIImage> _uiImage;
     RetainPtr<NSDictionary> _userInfo;
 #endif
@@ -54,7 +54,7 @@
 #endif
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 + (instancetype)activatedElementInfoWithInteractionInformationAtPosition:(const WebKit::InteractionInformationAtPosition&)information
 {
     return [[[self alloc] _initWithInteractionInformationAtPosition:information] autorelease];
@@ -103,7 +103,7 @@
     _type = type;
     _image = image;
     _ID = ID;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     _userInfo = adoptNS([userInfo copy]);
 #endif
 
@@ -130,7 +130,7 @@
     return _interactionLocation;
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 - (NSDictionary *)userInfo
 {
     return _userInfo.get();

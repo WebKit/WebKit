@@ -35,7 +35,7 @@
 #import "WebCoreNSURLExtras.h"
 #import <wtf/SoftLinking.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 SOFT_LINK_FRAMEWORK(UIKit)
 SOFT_LINK(UIKit, UIAccessibilityIsReduceMotionEnabled, BOOL, (void), ())
 #endif
@@ -49,7 +49,7 @@ String Internals::userVisibleString(const DOMURL& url)
 
 bool Internals::userPrefersReducedMotion() const
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     return UIAccessibilityIsReduceMotionEnabled();
 #else
     return [[NSWorkspace sharedWorkspace] accessibilityDisplayShouldReduceMotion];

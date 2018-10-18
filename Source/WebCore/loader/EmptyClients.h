@@ -109,7 +109,7 @@ class EmptyChromeClient : public ChromeClient {
     IntPoint screenToRootView(const IntPoint& p) const final { return p; }
     IntRect rootViewToScreen(const IntRect& r) const final { return r; }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     IntPoint accessibilityScreenToRootView(const IntPoint& p) const final { return p; };
     IntRect rootViewToAccessibilityScreen(const IntRect& r) const final { return r; };
 #endif
@@ -143,7 +143,7 @@ class EmptyChromeClient : public ChromeClient {
     void elementDidFocus(Element&) final { }
     void elementDidBlur(Element&) final { }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     void setCursor(const Cursor&) final { }
     void setCursorHiddenUntilMouseMoves(bool) final { }
 #endif
@@ -165,7 +165,7 @@ class EmptyChromeClient : public ChromeClient {
     void didPreventDefaultForEvent() final { }
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void didReceiveMobileDocType(bool) final { }
     void setNeedsScrollNotifications(Frame&, bool) final { }
     void observedContentChange(Frame&) final { }
@@ -183,13 +183,13 @@ class EmptyChromeClient : public ChromeClient {
 
     void webAppOrientationsUpdated() final { };
     void showPlaybackTargetPicker(bool, RouteSharingPolicy, const String&) final { };
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 #if ENABLE(ORIENTATION_EVENTS)
     int deviceOrientation() const final { return 0; }
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     bool isStopping() final { return false; }
 #endif
 

@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import <UIKit/UIPopoverController.h>
 
@@ -55,4 +55,4 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)accessoryDone;
 @end
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

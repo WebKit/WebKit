@@ -33,7 +33,7 @@
 #import <WebCore/InspectorController.h>
 #import <wtf/Assertions.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import <CoreGraphics/CoreGraphics.h>
 #import <WebCore/FloatQuad.h>
 #import <WebCore/GeometryUtilities.h>
@@ -45,7 +45,7 @@ using namespace WebCore;
 
 @implementation WebNodeHighlightView
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 - (void)_removeAllLayers
 {
     for (CAShapeLayer *layer in _layers)
@@ -62,7 +62,7 @@ using namespace WebCore;
 
     _webNodeHighlight = [webNodeHighlight retain];
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     _layers = [[NSMutableArray alloc] init];
 #endif
 
@@ -72,7 +72,7 @@ using namespace WebCore;
 - (void)dealloc
 {
     [self detachFromWebNodeHighlight];
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     [self _removeAllLayers];
     [_layers release];
 #endif
@@ -90,7 +90,7 @@ using namespace WebCore;
     return YES;
 }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 - (void)drawRect:(NSRect)rect 
 {
     if (_webNodeHighlight) {

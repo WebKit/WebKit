@@ -153,7 +153,7 @@ static NSDictionary *optionsForBiplanarSurface(IntSize size, unsigned pixelForma
         (id)kIOSurfaceHeight: @(height),
         (id)kIOSurfacePixelFormat: @(pixelFormat),
         (id)kIOSurfaceAllocSize: @(totalBytes),
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         (id)kIOSurfaceCacheMode: @(kIOMapWriteCombineCache),
 #endif
         (id)kIOSurfacePlaneInfo: planeInfo,
@@ -181,7 +181,7 @@ static NSDictionary *optionsFor32BitSurface(IntSize size, unsigned pixelFormat)
         (id)kIOSurfaceBytesPerElement: @(bytesPerElement),
         (id)kIOSurfaceBytesPerRow: @(bytesPerRow),
         (id)kIOSurfaceAllocSize: @(totalBytes),
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         (id)kIOSurfaceCacheMode: @(kIOMapWriteCombineCache),
 #endif
         (id)kIOSurfaceElementHeight: @(1)
@@ -237,7 +237,7 @@ IntSize IOSurface::maximumSize()
     // Protect against maxSize being { 0, 0 }.
     const int iOSMaxSurfaceDimensionLowerBound = 1024;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // Match limits imposed by Core Animation. FIXME: should have API for this <rdar://problem/25454148>
     const int iOSMaxSurfaceDimension = 8 * 1024;
 #else
@@ -377,7 +377,7 @@ IOSurface::Format IOSurface::format() const
 
 IOSurfaceID IOSurface::surfaceID() const
 {
-#if PLATFORM(IOS) && (!USE(APPLE_INTERNAL_SDK) || __IPHONE_OS_VERSION_MIN_REQUIRED < 110000)
+#if PLATFORM(IOS_FAMILY) && (!USE(APPLE_INTERNAL_SDK) || __IPHONE_OS_VERSION_MIN_REQUIRED < 110000)
     return 0;
 #else
     return IOSurfaceGetID(m_surface.get());

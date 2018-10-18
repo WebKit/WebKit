@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WebSQLiteDatabaseTrackerClient.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "WebBackgroundTaskController.h"
 #import <WebCore/DatabaseTracker.h>
@@ -139,4 +139,4 @@ static NSUInteger getTransactionBackgroundTaskIdentifier()
 
 @end
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

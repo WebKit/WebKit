@@ -26,7 +26,7 @@
 #ifndef WebIOSEventFactory_h
 #define WebIOSEventFactory_h
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "WebEvent.h"
 #import <WebCore/WebEvent.h>
@@ -37,6 +37,6 @@ public:
     static WebKit::WebMouseEvent createWebMouseEvent(::WebEvent *);
 };
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 #endif // WebIOSEventFactory_h

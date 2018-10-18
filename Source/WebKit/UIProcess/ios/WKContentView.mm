@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKContentViewInteraction.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "APIPageConfiguration.h"
 #import "AccessibilityIOS.h"
@@ -710,4 +710,4 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 
 #endif // !PLATFORM(IOSMAC)
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

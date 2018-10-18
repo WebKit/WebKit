@@ -31,7 +31,7 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/text/CString.h>
 
-#if PLATFORM(IOS) || PLATFORM(WIN)
+#if PLATFORM(IOS_FAMILY) || PLATFORM(WIN)
 #include <CFNetwork/CFNetwork.h>
 #endif
 

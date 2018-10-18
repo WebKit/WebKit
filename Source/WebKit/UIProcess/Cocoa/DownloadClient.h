@@ -67,7 +67,7 @@ private:
 
     WeakObjCPtr<id <_WKDownloadDelegate>> m_delegate;
 
-#if PLATFORM(IOS) && USE(SYSTEM_PREVIEW)
+#if PLATFORM(IOS_FAMILY) && USE(SYSTEM_PREVIEW)
     ProcessThrottler::BackgroundActivityToken m_activityToken { nullptr };
 #endif
 

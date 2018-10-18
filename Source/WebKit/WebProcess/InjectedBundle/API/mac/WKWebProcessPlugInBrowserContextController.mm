@@ -595,7 +595,7 @@ static inline WKEditorInsertAction toWK(WebCore::EditorInsertAction action)
 
             auto apiFromRange = fromRange ? adoptNS([[WKDOMRange alloc] _initWithImpl:fromRange]) : nil;
             auto apiToRange = toRange ? adoptNS([[WKDOMRange alloc] _initWithImpl:toRange]) : nil;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
             UITextStorageDirection apiAffinity = affinity == WebCore::UPSTREAM ? UITextStorageDirectionBackward : UITextStorageDirectionForward;
 #else
             NSSelectionAffinity apiAffinity = affinity == WebCore::UPSTREAM ? NSSelectionAffinityUpstream : NSSelectionAffinityDownstream;

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "NativeWebTouchEvent.h"
 
-#if PLATFORM(IOS) && ENABLE(TOUCH_EVENTS)
+#if PLATFORM(IOS_FAMILY) && ENABLE(TOUCH_EVENTS)
 
 #import "UIKitSPI.h"
 #import "WebEvent.h"
@@ -137,4 +137,4 @@ NativeWebTouchEvent::NativeWebTouchEvent(const _UIWebTouchEvent* event)
 
 } // namespace WebKit
 
-#endif // PLATFORM(IOS) && ENABLE(TOUCH_EVENTS)
+#endif // PLATFORM(IOS_FAMILY) && ENABLE(TOUCH_EVENTS)

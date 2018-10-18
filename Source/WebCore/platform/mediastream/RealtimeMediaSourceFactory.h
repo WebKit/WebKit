@@ -48,7 +48,7 @@ private:
 };
 
 class AudioCaptureFactory
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     : public SingleSourceFactory
 #endif
 {
@@ -61,7 +61,7 @@ protected:
 };
 
 class VideoCaptureFactory
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     : public SingleSourceFactory
 #endif
 {

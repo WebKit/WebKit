@@ -36,12 +36,12 @@
 #import <WebKitLegacy/WebNSURLExtras.h>
 #import <WebKitLegacy/WebView.h>
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 #import <WebKitLegacy/WebNSPasteboardExtras.h>
 #import <wtf/mac/AppKitCompatibilityDeclarations.h>
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import <WebCore/WAKWindow.h>
 #endif
 
@@ -67,7 +67,7 @@
     return (WebFrameView *)[self _web_superviewOfClass:[WebFrameView class]];
 }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 // FIXME: Mail is the only client of _webView, remove this method once no versions of Mail need it.
 - (WebView *)_webView
 {
@@ -160,7 +160,7 @@
     return NSDragOperationNone;
 }
 
-#endif // !PLATFORM(IOS)
+#endif // !PLATFORM(IOS_FAMILY)
 
 - (BOOL)_web_firstResponderIsSelfOrDescendantView
 {
@@ -172,7 +172,7 @@
 
 @end
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 @implementation NSView (WebDocumentViewExtras)
 
 - (WebFrame *)_frame

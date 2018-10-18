@@ -44,7 +44,7 @@
 #import <wtf/mac/AppKitCompatibilityDeclarations.h>
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import "UIKitSPI.h"
 #import <wtf/SoftLinking.h>
 SOFT_LINK_FRAMEWORK(UIKit)
@@ -339,7 +339,7 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
 
 @end
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 @implementation TestWKWebView (IOSOnly)
 

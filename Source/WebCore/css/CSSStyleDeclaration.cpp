@@ -235,7 +235,7 @@ static CSSPropertyInfo parseJavaScriptCSSPropertyName(const AtomicString& proper
     *bufferPtr = '\0';
 
     unsigned outputLength = bufferPtr - buffer;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     cssPropertyNameIOSAliasing(buffer, name, outputLength);
 #endif
 

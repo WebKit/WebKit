@@ -25,7 +25,7 @@
  */
 
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "DOMUIKitExtensions.h"
 

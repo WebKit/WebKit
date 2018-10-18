@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKGeolocationProviderIOS.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "APIFrameInfo.h"
 #import "APISecurityOrigin.h"
@@ -355,4 +355,4 @@ static void setEnableHighAccuracy(WKGeolocationManagerRef geolocationManager, bo
 
 ALLOW_DEPRECATED_DECLARATIONS_END
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

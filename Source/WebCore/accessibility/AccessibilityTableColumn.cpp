@@ -176,7 +176,7 @@ bool AccessibilityTableColumn::computeAccessibilityIsIgnored() const
     if (!m_parent)
         return true;
     
-#if PLATFORM(IOS) || PLATFORM(GTK)
+#if PLATFORM(IOS_FAMILY) || PLATFORM(GTK)
     return true;
 #endif
     

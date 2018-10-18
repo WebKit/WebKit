@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if WK_API_ENABLED && PLATFORM(IOS)
+#if WK_API_ENABLED && PLATFORM(IOS_FAMILY)
 
 #import "ClassMethodSwizzler.h"
 #import "PlatformUtilities.h"
@@ -186,4 +186,4 @@ TEST(WKWebViewAutofillTests, AutofillRequiresInputSession)
 
 } // namespace TestWebKitAPI
 
-#endif // WK_API_ENABLED && PLATFORM(IOS)
+#endif // WK_API_ENABLED && PLATFORM(IOS_FAMILY)

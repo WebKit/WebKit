@@ -533,7 +533,7 @@ String InputType::serialize(const Decimal&) const
     return String();
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 DateComponents::Type InputType::dateType() const
 {
     return DateComponents::Invalid;

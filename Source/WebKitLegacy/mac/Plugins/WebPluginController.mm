@@ -63,7 +63,7 @@
 #import <objc/runtime.h>
 #import <wtf/text/WTFString.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import "DOMElementInternal.h"
 #import "WebUIKitDelegate.h"
 #import <WebCore/AudioSession.h>
@@ -81,7 +81,7 @@ using namespace HTMLNames;
 - (void)setContainingWindow:(NSWindow *)w;
 @end
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 // For compatibility only.
 @interface NSObject (OldPluginAPI)
 + (NSView *)pluginViewWithArguments:(NSDictionary *)arguments;
@@ -95,7 +95,7 @@ using namespace HTMLNames;
 - (void)pluginDestroy;
 @end
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 static bool isKindOfClass(id, NSString* className);
 static void installFlip4MacPlugInWorkaroundIfNecessary();
 #endif
@@ -103,7 +103,7 @@ static void installFlip4MacPlugInWorkaroundIfNecessary();
 
 static NSMutableSet *pluginViews = nil;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 static void initializeAudioSession()
 {
     static bool wasAudioSessionInitialized;
@@ -122,7 +122,7 @@ static void initializeAudioSession()
 
 - (NSView *)plugInViewWithArguments:(NSDictionary *)arguments fromPluginPackage:(WebPluginPackage *)pluginPackage
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     initializeAudioSession();
 #endif
 
@@ -130,7 +130,7 @@ static void initializeAudioSession()
 
     NSView *view = nil;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     {
         WebView *webView = [_documentView _webView];
         JSC::JSLock::DropAllLocks dropAllLocks(commonVM());
@@ -159,7 +159,7 @@ static void initializeAudioSession()
     return view;
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 + (void)addPlugInView:(NSView *)view
 {
     if (pluginViews == nil)
@@ -199,7 +199,7 @@ static void initializeAudioSession()
     [super dealloc];
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 - (BOOL)plugInsAreRunning
 {
     NSUInteger pluginViewCount = [_views count];
@@ -233,7 +233,7 @@ static void initializeAudioSession()
     }
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 - (void)stopOnePluginForPageCache:(NSView *)view
 {
     if ([view respondsToSelector:@selector(webPlugInStopForPageCache)]) {
@@ -293,7 +293,7 @@ static void initializeAudioSession()
     _started = NO;
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 - (void)stopPluginsForPageCache
 {
     if (!_started)
@@ -320,7 +320,7 @@ static void initializeAudioSession()
     for (NSUInteger i = 0; i < viewsCount; ++i)
         [[webView _UIKitDelegateForwarder] webView:webView willAddPlugInView:[_views objectAtIndex:i]];
 }
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 - (void)addPlugin:(NSView *)view
 {
@@ -331,11 +331,11 @@ static void initializeAudioSession()
     
     if (![_views containsObject:view]) {
         [_views addObject:view];
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
         [[_documentView _webView] addPluginInstanceView:view];
 #endif
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
         BOOL oldDefersCallbacks = [[self webView] defersCallbacks];
         if (!oldDefersCallbacks)
             [[self webView] setDefersCallbacks:YES];
@@ -353,7 +353,7 @@ static void initializeAudioSession()
             [view pluginInitialize];
         }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
         if (!oldDefersCallbacks)
             [[self webView] setDefersCallbacks:NO];
 #endif
@@ -389,7 +389,7 @@ static void initializeAudioSession()
 #endif
         
         [pluginViews removeObject:view];
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
         [[_documentView _webView] removePluginInstanceView:view];
 #endif
         [_views removeObject:view];
@@ -437,12 +437,12 @@ static void cancelOutstandingCheck(const void *item, void *context)
 #endif
         
         [pluginViews removeObject:aView];
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
         [[_documentView _webView] removePluginInstanceView:aView];
 #endif
     }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     [_views makeObjectsPerformSelector:@selector(removeFromSuperviewWithoutNeedingDisplay)];
 #else
     [_views makeObjectsPerformSelector:@selector(removeFromSuperview)];
@@ -453,7 +453,7 @@ static void cancelOutstandingCheck(const void *item, void *context)
     _documentView = nil;
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 - (BOOL)processingUserGesture
 {
     return UserGestureIndicator::processingUserGesture();
@@ -506,7 +506,7 @@ static void cancelOutstandingCheck(const void *item, void *context)
     }
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 - (void)webPlugInContainerWillShowFullScreenForView:(id)plugInView
 {
     WebView *webView = [_dataSource _webView];
@@ -535,7 +535,7 @@ static void cancelOutstandingCheck(const void *item, void *context)
     [self webPlugInContainerShowStatus:message];
 }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 - (NSColor *)webPlugInContainerSelectionColor
 {
     bool primary = true;
@@ -605,7 +605,7 @@ static void cancelOutstandingCheck(const void *item, void *context)
 
 @end
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 static bool isKindOfClass(id object, NSString *className)
 {
     Class cls = NSClassFromString(className);
@@ -695,4 +695,4 @@ IGNORE_WARNINGS_END
         hasInstalledFlip4MacPlugInWorkaround = true;
     }
 }
-#endif // !PLATFORM(IOS)
+#endif // !PLATFORM(IOS_FAMILY)

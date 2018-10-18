@@ -26,7 +26,7 @@
 #ifndef WebCoreFullScreenWindow_h
 #define WebCoreFullScreenWindow_h
 
-#if ENABLE(FULLSCREEN_API) && !PLATFORM(IOS)
+#if ENABLE(FULLSCREEN_API) && !PLATFORM(IOS_FAMILY)
 
 WEBCORE_EXPORT @interface WebCoreFullScreenWindow : NSWindow
 @end

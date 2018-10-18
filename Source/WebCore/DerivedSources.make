@@ -1058,10 +1058,10 @@ ifeq ($(USE_LLVM_TARGET_TRIPLES_FOR_CLANG),YES)
 	TARGET_TRIPLE_FLAGS=-target $(WK_CURRENT_ARCH)-$(LLVM_TARGET_TRIPLE_VENDOR)-$(LLVM_TARGET_TRIPLE_OS_VERSION)$(LLVM_TARGET_TRIPLE_SUFFIX)
 endif
 
-ifeq ($(shell $(CC) -std=gnu++14 -x c++ -E -P -dM $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep ' WTF_PLATFORM_IOS ' | cut -d' ' -f3), 1)
-    WTF_PLATFORM_IOS = 1
+ifeq ($(shell $(CC) -std=gnu++14 -x c++ -E -P -dM $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep ' WTF_PLATFORM_IOS_FAMILY ' | cut -d' ' -f3), 1)
+    WTF_PLATFORM_IOS_FAMILY = 1
 else
-    WTF_PLATFORM_IOS = 0
+    WTF_PLATFORM_IOS_FAMILY = 0
 endif
 
 ifeq ($(shell $(CC) -std=gnu++14 -x c++ -E -P -dM $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep ' WTF_PLATFORM_MAC ' | cut -d' ' -f3), 1)
@@ -1080,8 +1080,8 @@ ifeq ($(shell $(CC) -std=gnu++14 -x c++ -E -P -dM $(SDK_FLAGS) $(TARGET_TRIPLE_F
     ENABLE_ORIENTATION_EVENTS = 1
 endif
 
-ifeq ($(WTF_PLATFORM_IOS), 1)
-FEATURE_AND_PLATFORM_DEFINES = $(FEATURE_DEFINES) WTF_PLATFORM_IOS
+ifeq ($(WTF_PLATFORM_IOS_FAMILY), 1)
+FEATURE_AND_PLATFORM_DEFINES = $(FEATURE_DEFINES) WTF_PLATFORM_IOS_FAMILY
 else ifeq ($(WTF_PLATFORM_MAC), 1)
 FEATURE_AND_PLATFORM_DEFINES = $(FEATURE_DEFINES) WTF_PLATFORM_MAC
 else
@@ -1105,7 +1105,7 @@ ifeq ($(findstring ENABLE_IOS_GESTURE_EVENTS,$(FEATURE_DEFINES)), ENABLE_IOS_GES
 ADDITIONAL_BINDING_IDLS += GestureEvent.idl
 endif
 
-ifeq ($(WTF_PLATFORM_IOS), 1)
+ifeq ($(WTF_PLATFORM_IOS_FAMILY), 1)
 ifeq ($(findstring ENABLE_IOS_TOUCH_EVENTS,$(FEATURE_DEFINES)), ENABLE_IOS_TOUCH_EVENTS)
 ADDITIONAL_BINDING_IDLS += \
     DocumentTouch.idl \
@@ -1131,7 +1131,7 @@ $(ADDITIONAL_BINDING_IDLS) : % : WebKitAdditions/%
 
 endif # MACOS
 
-ifneq ($(WTF_PLATFORM_IOS), 1)
+ifneq ($(WTF_PLATFORM_IOS_FAMILY), 1)
 JS_BINDING_IDLS += \
     $(WebCore)/dom/DocumentTouch.idl \
     $(WebCore)/dom/Touch.idl \

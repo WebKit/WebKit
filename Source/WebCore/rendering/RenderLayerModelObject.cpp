@@ -238,7 +238,7 @@ void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderSt
 bool RenderLayerModelObject::shouldPlaceBlockDirectionScrollbarOnLeft() const
 {
 // RTL Scrollbars require some system support, and this system support does not exist on certain versions of OS X. iOS uses a separate mechanism.
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     return false;
 #else
     switch (settings().userInterfaceDirectionPolicy()) {

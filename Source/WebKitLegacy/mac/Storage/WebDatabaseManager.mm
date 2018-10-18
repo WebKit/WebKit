@@ -40,7 +40,7 @@
 #import "WebDatabaseProvider.h"
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import "WebDatabaseManagerInternal.h"
 #import <WebCore/DatabaseTracker.h>
 #import <WebCore/WebCoreThread.h>
@@ -58,7 +58,7 @@ NSString *WebDatabaseDidModifyOriginNotification = @"WebDatabaseDidModifyOriginN
 NSString *WebDatabaseDidModifyDatabaseNotification = @"WebDatabaseDidModifyDatabaseNotification";
 NSString *WebDatabaseIdentifierKey = @"WebDatabaseIdentifierKey";
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 CFStringRef WebDatabaseOriginsDidChangeNotification = CFSTR("WebDatabaseOriginsDidChangeNotification");
 #endif
 
@@ -132,7 +132,7 @@ static NSString *databasesDirectoryPath();
 - (void)deleteAllDatabases
 {
     DatabaseTracker::singleton().deleteAllDatabasesImmediately();
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // FIXME: This needs to be removed once DatabaseTrackers in multiple processes
     // are in sync: <rdar://problem/9567500> Remove Website Data pane is not kept in sync with Safari
     [[NSFileManager defaultManager] removeItemAtPath:databasesDirectoryPath() error:NULL];
@@ -157,7 +157,7 @@ static NSString *databasesDirectoryPath();
 #endif
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 static bool isFileHidden(NSString *file)
 {
@@ -228,7 +228,7 @@ static bool isFileHidden(NSString *file)
     });
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 @end
 

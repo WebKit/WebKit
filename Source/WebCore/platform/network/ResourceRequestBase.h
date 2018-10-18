@@ -276,7 +276,7 @@ inline bool operator==(const ResourceRequest& a, const ResourceRequest& b) { ret
 inline bool operator!=(ResourceRequest& a, const ResourceRequest& b) { return !(a == b); }
 
 WEBCORE_EXPORT unsigned initializeMaximumHTTPConnectionCountPerHost();
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 WEBCORE_EXPORT void initializeHTTPConnectionSettingsOnStartup();
 #endif
 

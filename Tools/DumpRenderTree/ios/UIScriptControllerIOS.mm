@@ -26,7 +26,7 @@
 #import "config.h"
 #import "UIScriptController.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "DumpRenderTreeBrowserView.h"
 #import "UIScriptContext.h"
@@ -387,4 +387,4 @@ JSObjectRef UIScriptController::selectionEndGrabberViewRect() const
 
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

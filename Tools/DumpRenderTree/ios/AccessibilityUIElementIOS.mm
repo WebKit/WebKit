@@ -452,7 +452,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::pathDescription() const
     return [result createJSStringRef];
 }
 
-#if SUPPORTS_AX_TEXTMARKERS && PLATFORM(IOS)
+#if SUPPORTS_AX_TEXTMARKERS && PLATFORM(IOS_FAMILY)
 
 // Text markers
 
@@ -656,7 +656,7 @@ AccessibilityTextMarkerRange AccessibilityUIElement::textMarkerRangeMatchesTextN
 }
 
 
-#endif // SUPPORTS_AX_TEXTMARKERS && PLATFORM(IOS)
+#endif // SUPPORTS_AX_TEXTMARKERS && PLATFORM(IOS_FAMILY)
 
 #pragma mark Unused
 

@@ -34,7 +34,7 @@
 
 @interface WKWebViewConfiguration ()
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 @property (nonatomic, setter=_setContentProviderRegistry:) WKWebViewContentProviderRegistry *_contentProviderRegistry;
 #endif
 

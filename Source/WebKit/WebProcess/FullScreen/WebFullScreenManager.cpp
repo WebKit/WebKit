@@ -46,7 +46,7 @@
 #include <WebCore/Settings.h>
 #include <WebCore/TypedElementDescendantIterator.h>
 
-#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 #include "PlaybackSessionManager.h"
 #endif
 
@@ -86,7 +86,7 @@ WebCore::Element* WebFullScreenManager::element()
 
 void WebFullScreenManager::videoControlsManagerDidChange()
 {
-#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     LOG(Fullscreen, "WebFullScreenManager %p videoControlsManagerDidChange()", this);
 
     auto* currentPlaybackControlsElement = m_page->playbackSessionManager().currentPlaybackControlsElement();
@@ -151,7 +151,7 @@ void WebFullScreenManager::willEnterFullScreen()
     LOG(Fullscreen, "WebFullScreenManager %p willEnterFullScreen() - element %p", this, m_element.get());
 
     m_element->document().webkitWillEnterFullScreenForElement(m_element.get());
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     m_page->hidePageBanners();
 #endif
     m_element->document().updateLayout();
@@ -166,7 +166,7 @@ void WebFullScreenManager::didEnterFullScreen()
 
     m_element->document().webkitDidEnterFullScreenForElement(m_element.get());
 
-#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     auto* currentPlaybackControlsElement = m_page->playbackSessionManager().currentPlaybackControlsElement();
     setPIPStandbyElement(is<HTMLVideoElement>(currentPlaybackControlsElement) ? downcast<HTMLVideoElement>(currentPlaybackControlsElement) : nullptr);
 #endif
@@ -183,7 +183,7 @@ void WebFullScreenManager::willExitFullScreen()
 
     m_finalFrame = screenRectOfContents(m_element.get());
     m_element->document().webkitWillExitFullScreenForElement(m_element.get());
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     m_page->showPageBanners();
 #endif
     m_page->injectedBundleFullScreenClient().beganExitFullScreen(m_page.get(), m_finalFrame, m_initialFrame);

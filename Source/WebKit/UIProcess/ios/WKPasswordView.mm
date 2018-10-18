@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKPasswordView.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "UIKitSPI.h"
 #import "WKContentView.h"
@@ -187,4 +187,4 @@ const CGFloat passwordEntryFieldPadding = 10;
 
 @end
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

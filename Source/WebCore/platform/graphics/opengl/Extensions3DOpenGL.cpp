@@ -39,7 +39,7 @@
 #include <OpenGL/gl.h>
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "GraphicsContext3DIOS.h"
 #endif
 
@@ -157,7 +157,7 @@ bool Extensions3DOpenGL::supportsExtension(const String& name)
     if (name == "GL_ANGLE_framebuffer_blit")
         return m_availableExtensions.contains("GL_EXT_framebuffer_blit");
     if (name == "GL_ANGLE_framebuffer_multisample")
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         return m_availableExtensions.contains("GL_APPLE_framebuffer_multisample");
 #else
         return m_availableExtensions.contains("GL_EXT_framebuffer_multisample");
@@ -169,7 +169,7 @@ bool Extensions3DOpenGL::supportsExtension(const String& name)
     }
 
     if (name == "GL_EXT_sRGB")
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         return m_availableExtensions.contains("GL_EXT_sRGB");
 #else
         return m_availableExtensions.contains("GL_EXT_texture_sRGB") && (m_availableExtensions.contains("GL_EXT_framebuffer_sRGB") || m_availableExtensions.contains("GL_ARB_framebuffer_sRGB"));
@@ -195,7 +195,7 @@ bool Extensions3DOpenGL::supportsExtension(const String& name)
     if (name == "GL_OES_vertex_array_object") {
 #if (PLATFORM(GTK))
         return m_availableExtensions.contains("GL_ARB_vertex_array_object");
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS_FAMILY)
         return m_availableExtensions.contains("GL_OES_vertex_array_object");
 #else
         return m_availableExtensions.contains("GL_APPLE_vertex_array_object");
@@ -217,7 +217,7 @@ bool Extensions3DOpenGL::supportsExtension(const String& name)
         return m_availableExtensions.contains("GL_EXT_texture_filter_anisotropic");
 
     if (name == "GL_EXT_draw_buffers") {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         return m_availableExtensions.contains(name);
 #elif PLATFORM(MAC) || PLATFORM(GTK)
         return m_availableExtensions.contains("GL_ARB_draw_buffers");
@@ -227,7 +227,7 @@ bool Extensions3DOpenGL::supportsExtension(const String& name)
 #endif
     }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (name == "GL_EXT_packed_depth_stencil")
         return m_availableExtensions.contains("GL_OES_packed_depth_stencil");
 #endif

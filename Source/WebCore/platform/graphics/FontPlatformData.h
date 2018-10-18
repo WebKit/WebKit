@@ -188,7 +188,7 @@ public:
 
     bool isEmoji() const
     {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         return m_isEmoji;
 #else
         return false;
@@ -260,7 +260,7 @@ private:
     bool m_hasVariations { false };
     // The values above are common to all ports
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     bool m_isEmoji { false };
 #endif
 

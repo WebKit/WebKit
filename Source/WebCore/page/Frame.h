@@ -35,7 +35,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/UniqueRef.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "Timer.h"
 #include "ViewportArguments.h"
 #include "VisibleSelection.h"
@@ -93,7 +93,7 @@ class URL;
 class VisiblePosition;
 class Widget;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 enum {
     OverflowScrollNone = 0,
     OverflowScrollLeft = 1 << 0,
@@ -124,7 +124,7 @@ public:
     WEBCORE_EXPORT static Ref<Frame> create(Page*, HTMLFrameOwnerElement*, FrameLoaderClient*);
 
     WEBCORE_EXPORT void init();
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // Creates <html><body style="..."></body></html> doing minimal amount of work.
     WEBCORE_EXPORT void initWithSimpleHTMLDocument(const String& style, const URL&);
 #endif
@@ -207,7 +207,7 @@ public:
     NSArray *dataDetectionResults() const { return m_dataDetectionResults.get(); }
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     const ViewportArguments& viewportArguments() const;
     WEBCORE_EXPORT void setViewportArguments(const ViewportArguments&);
 
@@ -251,7 +251,7 @@ public:
     String searchForLabelsBeforeElement(const Vector<String>& labels, Element*, size_t* resultDistance, bool* resultIsInCellAbove);
     String matchLabelsAgainstElement(const Vector<String>& labels, Element*);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // Scroll the selection in an overflow layer.
     void scrollOverflowLayer(RenderLayer*, const IntRect& visibleRect, const IntRect& exposeRect);
 
@@ -322,7 +322,7 @@ private:
 #if ENABLE(DATA_DETECTION)
     RetainPtr<NSArray> m_dataDetectionResults;
 #endif
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void betterApproximateNode(const IntPoint& testPoint, const NodeQualifier&, Node*& best, Node* failedNode, IntPoint& bestPoint, IntRect& bestRect, const IntRect& testRect);
     bool hitTestResultAtViewportLocation(const FloatPoint& viewportLocation, HitTestResult&, IntPoint& center);
     Node* qualifyingNodeAtViewportLocation(const FloatPoint& viewportLocation, FloatPoint& adjustedViewportLocation, const NodeQualifier&, bool shouldApproximate);

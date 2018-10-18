@@ -35,7 +35,7 @@
 
 OBJC_CLASS NSCoder;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 OBJC_CLASS WebFilterEvaluator;
 #endif
 
@@ -50,7 +50,7 @@ public:
 
     ContentFilterUnblockHandler() = default;
     WEBCORE_EXPORT ContentFilterUnblockHandler(String unblockURLHost, UnblockRequesterFunction);
-#if HAVE(PARENTAL_CONTROLS) && PLATFORM(IOS)
+#if HAVE(PARENTAL_CONTROLS) && PLATFORM(IOS_FAMILY)
     ContentFilterUnblockHandler(String unblockURLHost, RetainPtr<WebFilterEvaluator>);
 #endif
 
@@ -69,7 +69,7 @@ private:
     String m_unblockURLHost;
     URL m_unreachableURL;
     UnblockRequesterFunction m_unblockRequester;
-#if HAVE(PARENTAL_CONTROLS) && PLATFORM(IOS)
+#if HAVE(PARENTAL_CONTROLS) && PLATFORM(IOS_FAMILY)
     RetainPtr<WebFilterEvaluator> m_webFilterEvaluator;
 #endif
 };

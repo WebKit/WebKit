@@ -33,7 +33,7 @@
 #include "ScrollingCoordinator.h"
 #include "ScrollingTreeNode.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 class ScrollingTreeScrollingNodeDelegate;
 #endif
 
@@ -43,7 +43,7 @@ class ScrollingTree;
 class ScrollingStateScrollingNode;
 
 class ScrollingTreeScrollingNode : public ScrollingTreeNode {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     friend class ScrollingTreeScrollingNodeDelegate;
 #endif
 

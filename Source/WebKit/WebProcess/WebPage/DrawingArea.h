@@ -98,7 +98,7 @@ public:
     virtual void acceleratedAnimationDidEnd(uint64_t /*layerID*/, const String& /*key*/) { }
     virtual void addFence(const WTF::MachSendRight&) { }
 #endif
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     virtual WebCore::FloatRect exposedContentRect() const = 0;
     virtual void setExposedContentRect(const WebCore::FloatRect&) = 0;
 #endif

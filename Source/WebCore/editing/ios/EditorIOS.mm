@@ -26,7 +26,7 @@
 #import "config.h"
 #import "Editor.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "CSSComputedStyleDeclaration.h"
 #import "CSSPrimitiveValueMappings.h"
@@ -390,4 +390,4 @@ void Editor::ensureLastEditCommandHasCurrentSelectionIfOpenForMoreTyping()
 
 } // namespace WebCore
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

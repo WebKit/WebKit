@@ -26,7 +26,7 @@
 #import "config.h"
 #import "RemoteScrollingCoordinatorProxy.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #if ENABLE(ASYNC_SCROLLING)
 
 #import "LayerRepresentation.h"
@@ -217,4 +217,4 @@ CGPoint RemoteScrollingCoordinatorProxy::nearestActiveContentInsetAdjustedSnapPo
 
 
 #endif // ENABLE(ASYNC_SCROLLING)
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

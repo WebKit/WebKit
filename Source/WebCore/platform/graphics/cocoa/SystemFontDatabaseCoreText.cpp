@@ -31,7 +31,7 @@
 #include "FontCache.h"
 #include "FontCascadeDescription.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "RenderThemeIOS.h"
 #endif
 
@@ -59,7 +59,7 @@ Vector<RetainPtr<CTFontDescriptorRef>> SystemFontDatabaseCoreText::cascadeList(c
             // FIXME: Use applyWeightItalicsAndFallbackBehavior() in both cases once <rdar://problem/33046041> is fixed.
             systemFont = applyWeightItalicsAndFallbackBehavior(systemFont.get(), parameters.weight, parameters.italic, parameters.size, parameters.allowUserInstalledFonts);
         } else {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
             ASSERT(clientUse == ClientUse::ForTextStyle);
             auto fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(parameters.fontName.string().createCFString().get(), RenderThemeIOS::contentSizeCategory(), nullptr));
             CTFontSymbolicTraits traits = (parameters.weight >= kCTFontWeightSemibold ? kCTFontTraitBold : 0) | (parameters.italic ? kCTFontTraitItalic : 0);

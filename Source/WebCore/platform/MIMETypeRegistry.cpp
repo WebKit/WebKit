@@ -100,7 +100,7 @@ static void initializeSupportedImageMIMETypes()
     supportedImageMIMETypes->add("image/pjpeg");
     supportedImageResourceMIMETypes->add("image/pjpeg");
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // Add malformed image mimetype for compatibility with Mail and to handle malformed mimetypes from the net
     // These were removed for <rdar://problem/6564538> Re-enable UTI code in WebCore now that MobileCoreServices exists
     // But Mail relies on at least image/tif reported as being supported (should be image/tiff).
@@ -234,7 +234,7 @@ static void initializeSupportedNonImageMimeTypes()
         "text/",
         "application/xml",
         "application/xhtml+xml",
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
         "application/vnd.wap.xhtml+xml",
         "application/rss+xml",
         "application/atom+xml",
@@ -415,7 +415,7 @@ static void initializeUnsupportedTextMIMETypes()
         "text/x-qif"_s,
         "text/x-csv"_s,
         "text/x-vcf"_s,
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
         "text/rtf"_s,
 #else
         "text/vnd.sun.j2me.app-descriptor"_s,

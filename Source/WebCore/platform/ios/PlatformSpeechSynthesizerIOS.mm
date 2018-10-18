@@ -25,7 +25,7 @@
 #import "config.h"
 #import "PlatformSpeechSynthesizer.h"
 
-#if ENABLE(SPEECH_SYNTHESIS) && PLATFORM(IOS)
+#if ENABLE(SPEECH_SYNTHESIS) && PLATFORM(IOS_FAMILY)
 
 #import "PlatformSpeechSynthesisUtterance.h"
 #import "PlatformSpeechSynthesisVoice.h"
@@ -279,4 +279,4 @@ void PlatformSpeechSynthesizer::cancel()
 
 } // namespace WebCore
 
-#endif // ENABLE(SPEECH_SYNTHESIS) && PLATFORM(IOS)
+#endif // ENABLE(SPEECH_SYNTHESIS) && PLATFORM(IOS_FAMILY)

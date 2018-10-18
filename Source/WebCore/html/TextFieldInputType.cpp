@@ -85,7 +85,7 @@ TextFieldInputType::~TextFieldInputType()
 bool TextFieldInputType::isKeyboardFocusable(KeyboardEvent*) const
 {
     ASSERT(element());
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (element()->isReadOnly())
         return false;
 #endif
@@ -263,7 +263,7 @@ void TextFieldInputType::handleFocusEvent(Node* oldFocusedNode, FocusDirection)
     ASSERT_UNUSED(oldFocusedNode, oldFocusedNode != element());
     if (RefPtr<Frame> frame = element()->document().frame()) {
         frame->editor().textFieldDidBeginEditing(element());
-#if ENABLE(DATALIST_ELEMENT) && PLATFORM(IOS)
+#if ENABLE(DATALIST_ELEMENT) && PLATFORM(IOS_FAMILY)
         if (element()->list() && m_dataListDropdownIndicator)
             m_dataListDropdownIndicator->setInlineStyleProperty(CSSPropertyDisplay, suggestions().size() ? CSSValueBlock : CSSValueNone, true);
 #endif
@@ -275,7 +275,7 @@ void TextFieldInputType::handleBlurEvent()
     InputType::handleBlurEvent();
     ASSERT(element());
     element()->endEditing();
-#if ENABLE(DATALIST_ELEMENT) && PLATFORM(IOS)
+#if ENABLE(DATALIST_ELEMENT) && PLATFORM(IOS_FAMILY)
     if (element()->list() && m_dataListDropdownIndicator)
         m_dataListDropdownIndicator->setInlineStyleProperty(CSSPropertyDisplay, CSSValueNone, true);
 #endif
@@ -658,7 +658,7 @@ void TextFieldInputType::didSetValueByUserEdit()
     if (RefPtr<Frame> frame = element()->document().frame())
         frame->editor().textDidChangeInTextField(element());
 #if ENABLE(DATALIST_ELEMENT)
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (element()->list() && m_dataListDropdownIndicator)
         m_dataListDropdownIndicator->setInlineStyleProperty(CSSPropertyDisplay, suggestions().size() ? CSSValueBlock : CSSValueNone, true);
 #endif
@@ -818,7 +818,7 @@ void TextFieldInputType::listAttributeTargetChanged()
     if (!m_dataListDropdownIndicator)
         return;
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     m_dataListDropdownIndicator->setInlineStyleProperty(CSSPropertyDisplay, element()->list() ? CSSValueBlock : CSSValueNone, true);
 #endif
 }

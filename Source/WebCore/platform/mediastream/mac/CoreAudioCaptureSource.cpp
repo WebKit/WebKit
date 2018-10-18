@@ -282,7 +282,7 @@ OSStatus CoreAudioSharedUnit::setupAudioUnit()
         }
     }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     uint32_t param = 1;
     err = AudioUnitSetProperty(m_ioUnit, kAudioOutputUnitProperty_EnableIO, kAudioUnitScope_Input, inputBus, &param, sizeof(param));
     if (err) {
@@ -702,7 +702,7 @@ CaptureSourceOrError CoreAudioCaptureSource::create(String&& deviceID, String&& 
         return { };
 
     auto source = adoptRef(*new CoreAudioCaptureSource(WTFMove(deviceID), String { device->label() }, WTFMove(hashSalt), device->deviceID()));
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS_FAMILY)
     auto device = AVAudioSessionCaptureDeviceManager::singleton().audioSessionDeviceWithUID(WTFMove(deviceID));
     if (!device)
         return { };
@@ -787,7 +787,7 @@ CoreAudioCaptureSource::CoreAudioCaptureSource(String&& deviceID, String&& label
 
     unit.addClient(*this);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // We ensure that we unsuspend ourselves on the constructor as a capture source
     // is created when getUserMedia grants access which only happens when the process is foregrounded.
     if (unit.isSuspended())
@@ -797,7 +797,7 @@ CoreAudioCaptureSource::CoreAudioCaptureSource(String&& deviceID, String&& label
 
 CoreAudioCaptureSource::~CoreAudioCaptureSource()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     CoreAudioCaptureSourceFactory::singleton().unsetCoreAudioActiveSource(*this);
 #endif
 
@@ -816,7 +816,7 @@ void CoreAudioCaptureSource::removeEchoCancellationSource(AudioSampleDataSource&
 
 void CoreAudioCaptureSource::startProducingData()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     CoreAudioCaptureSourceFactory::singleton().setCoreAudioActiveSource(*this);
 #endif
 

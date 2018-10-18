@@ -136,7 +136,7 @@ public:
     explicit RenderLayer(RenderLayerModelObject&);
     virtual ~RenderLayer();
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // Called before the renderer's widget (if any) has been nulled out.
     void willBeDestroyed();
 #endif
@@ -327,7 +327,7 @@ public:
     void updateSnapOffsets() override;
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #if ENABLE(IOS_TOUCH_EVENTS)
     bool handleTouchEvent(const PlatformTouchEvent&) override;
 #endif
@@ -615,7 +615,7 @@ public:
     void setStaticInlinePosition(LayoutUnit position) { m_staticInlinePosition = position; }
     void setStaticBlockPosition(LayoutUnit position) { m_staticBlockPosition = position; }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     bool adjustForIOSCaretWhenScrolling() const { return m_adjustForIOSCaretWhenScrolling; }
     void setAdjustForIOSCaretWhenScrolling(bool adjustForIOSCaretWhenScrolling) { m_adjustForIOSCaretWhenScrolling = adjustForIOSCaretWhenScrolling; }
 #endif
@@ -1082,7 +1082,7 @@ private:
     unsigned m_indirectCompositingReason : 3;
     unsigned m_viewportConstrainedNotCompositedReason : 2;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     bool m_adjustForIOSCaretWhenScrolling : 1;
 #if ENABLE(IOS_TOUCH_EVENTS)
     bool m_registeredAsTouchEventListenerForScrolling : 1;

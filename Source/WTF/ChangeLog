@@ -1,3 +1,27 @@
+2018-10-18  Alexey Proskuryakov  <ap@apple.com>
+
+        Switch from PLATFORM(IOS) to PLATFORM(IOS_FAMILY)
+        https://bugs.webkit.org/show_bug.cgi?id=190729
+
+        Reviewed by Tim Horton.
+
+        * wtf/Assertions.h:
+        * wtf/FeatureDefines.h:
+        * wtf/InlineASM.h:
+        * wtf/MemoryPressureHandler.cpp:
+        (WTF::thresholdForPolicy):
+        * wtf/Platform.h:
+        * wtf/cocoa/MemoryPressureHandlerCocoa.mm:
+        (WTF::MemoryPressureHandler::install):
+        (WTF::MemoryPressureHandler::respondToMemoryPressure):
+        * wtf/spi/cocoa/NSMapTableSPI.h:
+        * wtf/spi/darwin/XPCSPI.h:
+        * wtf/text/StringCommon.h:
+        * wtf/text/TextBreakIterator.cpp:
+        * wtf/text/TextBreakIterator.h:
+        * wtf/unicode/icu/CollatorICU.cpp:
+        (WTF::copyDefaultLocale):
+
 2018-10-18  Alex Christensen  <achristensen@webkit.org>
 
         Clean up FrameLoader two-state enums

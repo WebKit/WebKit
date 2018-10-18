@@ -91,7 +91,7 @@ static WebDefaultPolicyDelegate *sharedDelegate = nil;
         // A file URL shouldn't fall through to here, but if it did,
         // it would be a security risk to open it.
         if (![[request URL] isFileURL]) {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
             [[NSWorkspace sharedWorkspace] openURL:[request URL]];
 #endif
         }

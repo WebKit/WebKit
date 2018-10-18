@@ -59,7 +59,7 @@ struct PrintInfo {
     float pageSetupScaleFactor { 0 };
     float availablePaperWidth { 0 };
     float availablePaperHeight { 0 };
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     bool snapshotFirstPage { false };
 #endif
 

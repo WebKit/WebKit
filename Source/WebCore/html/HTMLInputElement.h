@@ -30,7 +30,7 @@
 #include <memory>
 #include <wtf/WeakPtr.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "DateComponents.h"
 #endif
 
@@ -132,7 +132,7 @@ public:
     WEBCORE_EXPORT bool isTimeField() const;
     WEBCORE_EXPORT bool isWeekField() const;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     DateComponents::Type dateType() const;
 #endif
 

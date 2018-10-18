@@ -47,7 +47,7 @@
 #if PLATFORM(APPLETV)
 #else
 static const int32_t firstJavaScriptCoreVersionWithInitConstructorSupport = 0x21A0400; // 538.4.0
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 static const uint32_t firstSDKVersionWithInitConstructorSupport = DYLD_IOS_VERSION_10_0;
 #elif PLATFORM(MAC)
 static const uint32_t firstSDKVersionWithInitConstructorSupport = 0xA0A00; // OSX 10.10.0

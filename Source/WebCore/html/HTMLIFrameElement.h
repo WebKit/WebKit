@@ -43,7 +43,7 @@ public:
 private:
     HTMLIFrameElement(const QualifiedName&, Document&);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     bool isKeyboardFocusable(KeyboardEvent*) const final { return false; }
 #endif
 

@@ -90,7 +90,7 @@ RenderWidget::RenderWidget(HTMLFrameOwnerElement& element, RenderStyle&& style)
 
 void RenderWidget::willBeDestroyed()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (hasLayer())
         layer()->willBeDestroyed();
 #endif

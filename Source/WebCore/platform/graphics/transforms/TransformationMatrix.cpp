@@ -1216,7 +1216,7 @@ TransformationMatrix& TransformationMatrix::multiply(const TransformationMatrix&
         : [leftMatrix]"+r"(leftMatrix), [rightMatrix]"+r"(rightMatrix)
         :
         : "memory", "r3", "d0", "d1", "d2", "d3", "d4", "d5", "d6", "d7", "d16", "d17", "d18", "d19", "d20", "d21", "d22", "d23", "d24", "d25", "d26", "d27", "d28", "d29", "d30", "d31");
-#elif CPU(ARM_VFP) && PLATFORM(IOS)
+#elif CPU(ARM_VFP) && PLATFORM(IOS_FAMILY)
 
 #define MATRIX_MULTIPLY_ONE_LINE \
     "vldmia.64  %[rightMatrix]!, { d0-d3}\n\t" \

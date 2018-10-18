@@ -89,14 +89,14 @@ private:
     void acceleratedAnimationDidStart(uint64_t layerID, const String& key, MonotonicTime startTime) override;
     void acceleratedAnimationDidEnd(uint64_t layerID, const String& key) override;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     WebCore::FloatRect exposedContentRect() const override;
     void setExposedContentRect(const WebCore::FloatRect&) override;
 #endif
 
     void didUpdate() override;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void setDeviceScaleFactor(float) override;
 #endif
 

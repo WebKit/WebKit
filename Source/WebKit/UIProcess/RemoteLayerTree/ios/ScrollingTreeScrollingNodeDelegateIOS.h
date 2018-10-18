@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if PLATFORM(IOS) && ENABLE(ASYNC_SCROLLING)
+#if PLATFORM(IOS_FAMILY) && ENABLE(ASYNC_SCROLLING)
 
 #include <UIKit/UIScrollView.h>
 #include <WebCore/ScrollingCoordinator.h>
@@ -85,4 +85,4 @@ private:
 
 @end
 
-#endif // PLATFORM(IOS) && ENABLE(ASYNC_SCROLLING)
+#endif // PLATFORM(IOS_FAMILY) && ENABLE(ASYNC_SCROLLING)

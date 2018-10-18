@@ -61,7 +61,7 @@ public:
     void highlight() override;
     void hideHighlight() override;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void showInspectorIndication() override;
     void hideInspectorIndication() override;
 
@@ -128,7 +128,7 @@ private:
     void save(const String& url, const String& content, bool forceSaveAs, bool base64Encoded) override;
     void append(const String& url, const String& content) override;
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     WebView *m_inspectedWebView;
     RetainPtr<WebInspectorWindowController> m_frontendWindowController;
     String m_inspectedURL;

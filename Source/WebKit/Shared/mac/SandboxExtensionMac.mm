@@ -62,7 +62,7 @@ public:
     bool consume() WARN_UNUSED_RETURN
     {
         m_handle = sandbox_extension_consume(m_token);
-#if PLATFORM(IOS_SIMULATOR)
+#if PLATFORM(IOS_FAMILY_SIMULATOR)
         return !sandbox_check(getpid(), 0, SANDBOX_FILTER_NONE);
 #else
         return m_handle;

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "PlatformScreen.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "DeprecatedGlobalSettings.h"
 #import "Device.h"
@@ -160,4 +160,4 @@ float screenScaleFactor(UIScreen *screen)
 
 } // namespace WebCore
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

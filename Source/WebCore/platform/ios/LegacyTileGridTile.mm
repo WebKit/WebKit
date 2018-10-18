@@ -26,7 +26,7 @@
 #include "config.h"
 #include "LegacyTileGridTile.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #include "Color.h"
 #include "LegacyTileCache.h"
@@ -131,4 +131,4 @@ void LegacyTileGridTile::showBorder(bool flag)
 
 } // namespace WebCore
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

@@ -157,7 +157,7 @@ struct ScopedFrameSelectionState {
     std::optional<SelectionRangeData::Context> selection;
 };
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 
 DragImageRef createDragImageForRange(Frame& frame, Range& range, bool forceBlackText)
 {

@@ -101,7 +101,7 @@ void encode(Encoder&, SecTrustRef);
 bool decode(Decoder&, RetainPtr<SecTrustRef>&);
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 void setAllowsDecodingSecKeyRef(bool);
 #endif
 

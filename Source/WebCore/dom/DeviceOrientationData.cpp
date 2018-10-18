@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 // FIXME: We should reconcile the iOS and OpenSource differences.
 Ref<DeviceOrientationData> DeviceOrientationData::create(std::optional<double> alpha, std::optional<double> beta, std::optional<double> gamma, std::optional<double> compassHeading, std::optional<double> compassAccuracy)

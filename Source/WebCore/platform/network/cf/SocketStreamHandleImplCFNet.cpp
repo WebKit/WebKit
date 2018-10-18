@@ -53,11 +53,11 @@
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "WebCoreThreadInternal.h"
 #endif
 
-#if PLATFORM(IOS) || PLATFORM(MAC)
+#if PLATFORM(IOS_FAMILY) || PLATFORM(MAC)
 extern "C" const CFStringRef kCFStreamPropertySourceApplication;
 extern "C" const CFStringRef _kCFStreamSocketSetNoDelay;
 #endif
@@ -79,7 +79,7 @@ static inline CFRunLoopRef callbacksRunLoop()
 {
 #if PLATFORM(WIN)
     return loaderRunLoop();
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS_FAMILY)
     return WebThreadRunLoop();
 #else
     return CFRunLoopGetMain();
@@ -496,7 +496,7 @@ void SocketStreamHandleImpl::writeStreamCallback(CFWriteStreamRef stream, CFStre
     });
 }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 static void setResponseProxyURL(CFHTTPMessageRef message, CFURLRef proxyURL)
 {
 #if PLATFORM(WIN)
@@ -515,7 +515,7 @@ static RetainPtr<CFHTTPMessageRef> copyCONNECTProxyResponse(CFReadStreamRef stre
     // This is set by CFNetwork internally for normal HTTP responses, but not for proxies.
     _CFHTTPMessageSetResponseURL(message.get(), responseURL);
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     // Ditto for proxy URL.
     auto proxyURLString = adoptCF(CFStringCreateWithFormat(kCFAllocatorDefault, nullptr, CFSTR("https://%@:%@"), proxyHost, proxyPort));
     auto proxyURL = adoptCF(CFURLCreateWithString(kCFAllocatorDefault, proxyURLString.get(), nullptr));

@@ -46,7 +46,7 @@ protected:
 private:
     void doApply() override;
     void doUnapply() override;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void doReapply() override;
 #endif
     

@@ -50,7 +50,7 @@ struct GreaterThanOrSameSizeAsStyleRareInheritedData : public RefCounted<Greater
     unsigned unsigneds[1];
     short hyphenationShorts[3];
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     Color compositionColor; // FIXME: this has gone.
 #endif
 #if ENABLE(TEXT_AUTOSIZING)
@@ -119,7 +119,7 @@ StyleRareInheritedData::StyleRareInheritedData()
     , textUnderlinePosition(RenderStyle::initialTextUnderlinePosition().toRaw())
     , rubyPosition(static_cast<unsigned>(RenderStyle::initialRubyPosition()))
     , textZoom(static_cast<unsigned>(RenderStyle::initialTextZoom()))
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     , touchCalloutEnabled(RenderStyle::initialTouchCalloutEnabled())
 #endif
 #if ENABLE(CSS_TRAILING_WORD)
@@ -212,7 +212,7 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , textUnderlinePosition(o.textUnderlinePosition)
     , rubyPosition(o.rubyPosition)
     , textZoom(o.textZoom)
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     , touchCalloutEnabled(o.touchCalloutEnabled)
 #endif
 #if ENABLE(CSS_TRAILING_WORD)
@@ -304,7 +304,7 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && textIndentType == o.textIndentType
 #endif
         && lineBoxContain == o.lineBoxContain
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         && touchCalloutEnabled == o.touchCalloutEnabled
 #endif
         && hyphenationString == o.hyphenationString

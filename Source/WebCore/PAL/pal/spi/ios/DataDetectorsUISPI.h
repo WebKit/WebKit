@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS) && ENABLE(DATA_DETECTION)
+#if PLATFORM(IOS_FAMILY) && ENABLE(DATA_DETECTION)
 
 #import <UIKit/UIKit.h>
 #import <wtf/SoftLinking.h>

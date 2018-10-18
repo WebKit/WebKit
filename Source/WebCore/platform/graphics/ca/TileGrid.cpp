@@ -38,7 +38,7 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/TextStream.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "TileControllerMemoryHandlerIOS.h"
 #endif
 
@@ -505,7 +505,7 @@ TileGrid::TileCohort TileGrid::nextTileCohort() const
 void TileGrid::startedNewCohort(TileCohort cohort)
 {
     m_cohortList.append(TileCohortInfo(cohort, MonotonicTime::now()));
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (!m_controller.isInWindow())
         tileControllerMemoryHandler().tileControllerGainedUnparentedTiles(&m_controller);
 #endif
@@ -714,7 +714,7 @@ void TileGrid::drawTileMapContents(CGContextRef context, CGRect layerBounds) con
 
 void TileGrid::platformCALayerPaintContents(PlatformCALayer* platformCALayer, GraphicsContext& context, const FloatRect&, GraphicsLayerPaintBehavior layerPaintBehavior)
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (pthread_main_np())
         WebThreadLock();
 #endif
@@ -789,7 +789,7 @@ int TileGrid::platformCALayerIncrementRepaintCount(PlatformCALayer* platformCALa
     return repaintCount;
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 void TileGrid::removeUnparentedTilesNow()
 {
     while (!m_cohortList.isEmpty()) {

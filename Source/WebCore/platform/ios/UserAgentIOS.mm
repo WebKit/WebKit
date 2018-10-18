@@ -26,7 +26,7 @@
 #import "config.h"
 #import "UserAgent.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "Device.h"
 #import "SystemVersion.h"
@@ -71,7 +71,7 @@ static inline NSString *deviceNameForUserAgent()
     }
 
     NSString *name = deviceName();
-#if PLATFORM(IOS_SIMULATOR)
+#if PLATFORM(IOS_FAMILY_SIMULATOR)
     NSUInteger location = [name rangeOfString:@" Simulator" options:NSBackwardsSearch].location;
     if (location != NSNotFound && location > 0)
         return [name substringToIndex:location];
@@ -99,4 +99,4 @@ String standardUserAgentWithApplicationName(const String& applicationName)
 
 } // namespace WebCore.
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

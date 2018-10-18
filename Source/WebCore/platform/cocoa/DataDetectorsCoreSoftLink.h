@@ -30,7 +30,7 @@
 #include <pal/spi/cocoa/DataDetectorsCoreSPI.h>
 #include <wtf/SoftLinking.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 SOFT_LINK_CLASS_FOR_HEADER(WebCore, DataDetectorsCore, DDScannerResult)
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, DataDetectorsCore, DDScannerCreate, DDScannerRef, (DDScannerType type, DDScannerOptions options, CFErrorRef * errorRef), (type, options, errorRef))
@@ -66,6 +66,6 @@ SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, DataDetectorsCore, DDScannerCopyResultsOp
 
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, DataDetectorsCore, DDScannerEnableOptionalSource, void, (DDScannerRef scanner, DDScannerSource source, Boolean enable), (scanner, source, enable))
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 #endif

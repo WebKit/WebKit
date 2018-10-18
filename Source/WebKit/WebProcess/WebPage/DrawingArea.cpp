@@ -50,7 +50,7 @@ std::unique_ptr<DrawingArea> DrawingArea::create(WebPage& webPage, const WebPage
 {
     switch (parameters.drawingAreaType) {
 #if PLATFORM(COCOA)
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     case DrawingAreaTypeTiledCoreAnimation:
         return std::make_unique<TiledCoreAnimationDrawingArea>(webPage, parameters);
 #endif

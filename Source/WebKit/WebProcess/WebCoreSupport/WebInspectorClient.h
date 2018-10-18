@@ -59,7 +59,7 @@ private:
     void highlight() override;
     void hideHighlight() override;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void showInspectorIndication() override;
     void hideInspectorIndication() override;
 

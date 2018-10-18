@@ -27,7 +27,7 @@
 
 #import <wtf/Platform.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import <UIKit/UIKit.h>
 
@@ -94,5 +94,5 @@
 @end
 #endif
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 

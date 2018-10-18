@@ -27,7 +27,7 @@
 #include "WKContentObservation.h"
 #include "WKContentObservationInternal.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #include "JSDOMBinding.h"
 #include "WebCoreThread.h"
@@ -108,4 +108,4 @@ void WebThreadRemoveObservedContentModifier(void * aContentModifier)
     WebThreadGetObservedContentModifiers()->remove(aContentModifier);
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

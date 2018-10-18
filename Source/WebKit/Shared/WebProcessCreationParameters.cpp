@@ -60,7 +60,7 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #if PLATFORM(MAC)
     encoder << uiProcessCookieStorageIdentifier;
 #endif
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     encoder << cookieStorageDirectoryExtensionHandle;
     encoder << containerCachesDirectoryExtensionHandle;
     encoder << containerTemporaryDirectoryExtensionHandle;
@@ -220,7 +220,7 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     if (!decoder.decode(parameters.uiProcessCookieStorageIdentifier))
         return false;
 #endif
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     
     std::optional<SandboxExtension::Handle> cookieStorageDirectoryExtensionHandle;
     decoder >> cookieStorageDirectoryExtensionHandle;

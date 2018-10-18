@@ -26,7 +26,7 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 
-#if PLATFORM(IOS) && defined(__OBJC__)
+#if PLATFORM(IOS_FAMILY) && defined(__OBJC__)
 #import <UIKit/UIKit.h>
 #endif
 
@@ -48,7 +48,7 @@ extern NavigationController* gNavigationController;
 extern PolicyDelegate* policyDelegate;
 extern DefaultPolicyDelegate *defaultPolicyDelegate;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 OBJC_CLASS UIWindow;
 extern UIWindow *mainWindow;
 #else
@@ -68,7 +68,7 @@ void setPersistentUserStyleSheetLocation(CFStringRef);
 unsigned worldIDForWorld(WebScriptWorld *);
 
 
-#if PLATFORM(IOS) && defined(__OBJC__)
+#if PLATFORM(IOS_FAMILY) && defined(__OBJC__)
 @interface DumpRenderTree : UIApplication {
     BOOL _hasFlushedWebThreadRunQueue;
     UIBackgroundTaskIdentifier backgroundTaskIdentifier;

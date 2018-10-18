@@ -26,7 +26,7 @@
 #include "config.h"
 #include "Cursor.h"
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 
 #include "Image.h"
 #include "IntRect.h"
@@ -451,5 +451,5 @@ const Cursor& grabbingCursor()
 
 } // namespace WebCore
 
-#endif // !PLATFORM(IOS)
+#endif // !PLATFORM(IOS_FAMILY)
 

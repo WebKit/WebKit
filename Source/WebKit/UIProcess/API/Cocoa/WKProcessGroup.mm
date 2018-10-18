@@ -46,7 +46,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import "WKAPICast.h"
 #import "WKGeolocationProviderIOS.h"
 #import <WebCore/WebCoreThreadSystemInterface.h>
@@ -59,9 +59,9 @@ IGNORE_WARNINGS_END
 
     WeakObjCPtr<id <WKProcessGroupDelegate>> _delegate;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     RetainPtr<WKGeolocationProviderIOS> _geolocationProvider;
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 }
 
 static void didCreateConnection(WKContextRef, WKConnectionRef connectionRef, const void* clientInfo)
@@ -236,14 +236,14 @@ IGNORE_WARNINGS_END
     _processPool->allowSpecificHTTPSCertificateForHost(WebKit::WebCertificateInfo::create(WebCore::CertificateInfo((__bridge CFArrayRef)certificateChain)).ptr(), host);
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 - (WKGeolocationProviderIOS *)_geolocationProvider
 {
     if (!_geolocationProvider)
         _geolocationProvider = adoptNS([[WKGeolocationProviderIOS alloc] initWithProcessPool:*_processPool.get()]);
     return _geolocationProvider.get();
 }
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 @end
 ALLOW_DEPRECATED_DECLARATIONS_END

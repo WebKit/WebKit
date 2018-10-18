@@ -289,7 +289,7 @@ static JSValueRef indexOfChildCallback(JSContextRef context, JSObjectRef functio
     return JSValueMakeNumber(context, (double)toAXElement(thisObject)->indexOfChild(childElement));
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 static JSValueRef headerElementAtIndexCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
@@ -1465,7 +1465,7 @@ static JSValueRef sentenceAtOffsetCallback(JSContextRef context, JSObjectRef fun
     return JSValueMakeString(context, sentenceAtOffset.get());
 }
 
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS_FAMILY)
 
 static JSValueRef getIsSearchFieldCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
@@ -1528,9 +1528,9 @@ static JSValueRef textMarkerRangeMatchesTextNearMarkersCallback(JSContextRef con
     return result;
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC) && !PLATFORM(IOS_FAMILY)
 static JSValueRef supportedActionsCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
     auto valueString = toAXElement(thisObject)->supportedActions();
@@ -1554,7 +1554,7 @@ static JSValueRef mathPrescriptsDescriptionCallback(JSContextRef context, JSObje
 // Implementation
 
 // Unsupported methods on various platforms.
-#if !PLATFORM(MAC) || PLATFORM(IOS)
+#if !PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
 JSRetainPtr<JSStringRef> AccessibilityUIElement::rangeForLine(int line) { return 0; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::rangeForPosition(int, int) { return 0; }
 void AccessibilityUIElement::setSelectedChild(AccessibilityUIElement*) const { }
@@ -1565,7 +1565,7 @@ AccessibilityUIElement AccessibilityUIElement::verticalScrollbar() const { retur
 AccessibilityUIElement AccessibilityUIElement::uiElementAttributeValue(JSStringRef) const { return { nullptr }; }
 #endif
 
-#if !PLATFORM(MAC) && !PLATFORM(IOS)
+#if !PLATFORM(MAC) && !PLATFORM(IOS_FAMILY)
 JSRetainPtr<JSStringRef> AccessibilityUIElement::speakAs() { return nullptr; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::pathDescription() const { return 0; }
 void AccessibilityUIElement::setValue(JSStringRef) { }
@@ -1759,7 +1759,7 @@ AccessibilityTextMarker AccessibilityUIElement::nextSentenceEndTextMarkerForText
     return nullptr;
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 AccessibilityTextMarkerRange AccessibilityUIElement::textMarkerRangeMatchesTextNearMarkers(JSStringRef, AccessibilityTextMarker*, AccessibilityTextMarker*)
 {
     return nullptr;
@@ -1845,7 +1845,7 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "verticalScrollbar", verticalScrollbarCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "startTextMarker", startTextMarkerCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "endTextMarker", endTextMarkerCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         { "identifier", getIdentifierCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "traits", getTraitsCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "elementTextPosition", getElementTextPositionCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
@@ -1854,8 +1854,8 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "hasContainedByFieldsetTrait", hasContainedByFieldsetTraitCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "isSearchField", getIsSearchFieldCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "isTextArea", getIsTextAreaCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-#endif // PLATFORM(IOS)
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
+#if PLATFORM(MAC) && !PLATFORM(IOS_FAMILY)
         { "supportedActions", supportedActionsCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "mathPostscriptsDescription", mathPostscriptsDescriptionCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "mathPrescriptsDescription", mathPrescriptsDescriptionCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
@@ -1972,7 +1972,7 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "wordAtOffset", wordAtOffsetCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "lineAtOffset", lineAtOffsetCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "sentenceAtOffset", sentenceAtOffsetCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS_FAMILY)
         { "linkedElement", linkedElementCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "headerElementAtIndex", headerElementAtIndexCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "elementsForRange", elementsForRangeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

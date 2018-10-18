@@ -54,7 +54,7 @@
 #include <wtf/SystemTracing.h>
 #include <wtf/text/CString.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include <RuntimeApplicationChecks.h>
 #endif
 
@@ -109,7 +109,7 @@ SubresourceLoader::~SubresourceLoader()
 void SubresourceLoader::create(Frame& frame, CachedResource& resource, ResourceRequest&& request, const ResourceLoaderOptions& options, CompletionHandler<void(RefPtr<SubresourceLoader>&&)>&& completionHandler)
 {
     auto subloader(adoptRef(*new SubresourceLoader(frame, resource, options)));
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (!IOSApplication::isWebProcess()) {
         // On iOS, do not invoke synchronous resource load delegates while resource load scheduling
         // is disabled to avoid re-entering style selection from a different thread (see <rdar://problem/9121719>).
@@ -125,7 +125,7 @@ void SubresourceLoader::create(Frame& frame, CachedResource& resource, ResourceR
     });
 }
     
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 void SubresourceLoader::startLoading()
 {
     // FIXME: this should probably be removed.
@@ -684,7 +684,7 @@ void SubresourceLoader::didFail(const ResourceError& error)
 
 void SubresourceLoader::willCancel(const ResourceError& error)
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // Since we defer initialization to scheduling time on iOS but
     // CachedResourceLoader stores resources in the memory cache immediately,
     // m_resource might be cached despite its loader not being initialized.
@@ -697,7 +697,7 @@ void SubresourceLoader::willCancel(const ResourceError& error)
     LOG(ResourceLoading, "Cancelled load of '%s'.\n", m_resource->url().string().latin1().data());
 
     Ref<SubresourceLoader> protectedThis(*this);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     m_state = m_state == Uninitialized ? CancelledWhileInitializing : Finishing;
 #else
     m_state = Finishing;
@@ -735,7 +735,7 @@ void SubresourceLoader::notifyDone(LoadCompletionType type)
 
     m_requestCountTracker = std::nullopt;
     bool shouldPerformPostLoadActions = true;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (m_state == CancelledWhileInitializing)
         shouldPerformPostLoadActions = false;
 #endif
@@ -748,7 +748,7 @@ void SubresourceLoader::notifyDone(LoadCompletionType type)
 void SubresourceLoader::releaseResources()
 {
     ASSERT(!reachedTerminalState());
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (m_state != Uninitialized && m_state != CancelledWhileInitializing)
 #else
     if (m_state != Uninitialized)

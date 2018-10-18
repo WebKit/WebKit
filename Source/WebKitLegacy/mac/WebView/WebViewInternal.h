@@ -62,7 +62,7 @@ struct DictationAlternative;
 struct DictionaryPopupInfo;
 }
 
-#if PLATFORM(IOS) && ENABLE(DRAG_SUPPORT)
+#if PLATFORM(IOS_FAMILY) && ENABLE(DRAG_SUPPORT)
 namespace WebCore {
 struct DragItem;
 }
@@ -71,7 +71,7 @@ struct DragItem;
 class WebMediaPlaybackTargetPicker;
 class WebSelectionServiceController;
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 #import <WebCore/MediaPlaybackTargetContext.h>
 #import <WebCore/MediaProducer.h>
 #endif
@@ -153,7 +153,7 @@ OBJC_CLASS NSTextAlternatives;
 
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 @interface NSObject (WebSafeForwarder)
 - (id)asyncForwarder;
 @end
@@ -170,23 +170,23 @@ OBJC_CLASS NSTextAlternatives;
 - (WTF::String)_userAgentString;
 #endif
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 - (NSMenu *)_menuForElement:(NSDictionary *)element defaultItems:(NSArray *)items;
 #endif
 - (id)_UIDelegateForwarder;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 - (id)_UIDelegateForSelector:(SEL)selector;
 #endif
 - (id)_editingDelegateForwarder;
 - (id)_policyDelegateForwarder;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 - (id)_frameLoadDelegateForwarder;
 - (id)_resourceLoadDelegateForwarder;
 - (id)_UIKitDelegateForwarder;
 #endif
 - (void)_pushPerformingProgrammaticFocus;
 - (void)_popPerformingProgrammaticFocus;
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 - (void)_didStartProvisionalLoadForFrame:(WebFrame *)frame;
 #endif
 + (BOOL)_viewClass:(Class *)vClass andRepresentationClass:(Class *)rClass forMIMEType:(NSString *)MIMEType allowingPlugins:(BOOL)allowPlugins;
@@ -202,7 +202,7 @@ OBJC_CLASS NSTextAlternatives;
 - (BOOL)_isPerformingProgrammaticFocus;
 - (void)_mouseDidMoveOverElement:(NSDictionary *)dictionary modifierFlags:(NSUInteger)modifierFlags;
 - (WebView *)_openNewWindowWithRequest:(NSURLRequest *)request;
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 - (void)_writeImageForElement:(NSDictionary *)element withPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard;
 - (void)_writeLinkElement:(NSDictionary *)element withPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard;
 - (void)_openFrameInNewWindowFromMenu:(NSMenuItem *)sender;
@@ -211,7 +211,7 @@ OBJC_CLASS NSTextAlternatives;
 #endif
 - (void)_progressCompleted:(WebFrame *)frame;
 - (void)_didCommitLoadForFrame:(WebFrame *)frame;
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 - (void)_didFinishLoadForFrame:(WebFrame *)frame;
 - (void)_didFailLoadWithError:(NSError *)error forFrame:(WebFrame *)frame;
 - (void)_didFailProvisionalLoadWithError:(NSError *)error forFrame:(WebFrame *)frame;
@@ -224,7 +224,7 @@ OBJC_CLASS NSTextAlternatives;
 - (void)setCurrentNodeHighlight:(WebNodeHighlight *)nodeHighlight;
 - (WebNodeHighlight *)currentNodeHighlight;
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 - (void)addPluginInstanceView:(NSView *)view;
 - (void)removePluginInstanceView:(NSView *)view;
 - (void)removePluginInstanceViewsFor:(WebFrame*)webFrame;
@@ -247,11 +247,11 @@ OBJC_CLASS NSTextAlternatives;
 
 + (BOOL)_canHandleRequest:(NSURLRequest *)request forMainFrame:(BOOL)forMainFrame;
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 - (void)_setInsertionPasteboard:(NSPasteboard *)pasteboard;
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 - (BOOL)_isStopping;
 - (BOOL)_isClosing;
 
@@ -281,7 +281,7 @@ OBJC_CLASS NSTextAlternatives;
 #endif
 #endif
 
-#if ENABLE(FULLSCREEN_API) && !PLATFORM(IOS) && defined(__cplusplus)
+#if ENABLE(FULLSCREEN_API) && !PLATFORM(IOS_FAMILY) && defined(__cplusplus)
 - (BOOL)_supportsFullScreenForElement:(WebCore::Element*)element withKeyboard:(BOOL)withKeyboard;
 - (void)_enterFullScreenForElement:(WebCore::Element*)element;
 - (void)_exitFullScreenForElement:(WebCore::Element*)element;
@@ -305,7 +305,7 @@ OBJC_CLASS NSTextAlternatives;
 - (void)_setPressureEvent:(NSEvent *)event;
 #endif
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS) && defined(__cplusplus)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY) && defined(__cplusplus)
 - (WebMediaPlaybackTargetPicker *) _devicePicker;
 - (void)_addPlaybackTargetPickerClient:(uint64_t)clientId;
 - (void)_removePlaybackTargetPickerClient:(uint64_t)contextId;
@@ -324,7 +324,7 @@ OBJC_CLASS NSTextAlternatives;
 - (void)showFormValidationMessage:(NSString *)message withAnchorRect:(NSRect)anchorRect;
 - (void)hideFormValidationMessage;
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 - (void)_setMainFrameIcon:(NSImage *)icon;
 #endif
 @end

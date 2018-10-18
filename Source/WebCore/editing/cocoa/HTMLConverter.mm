@@ -67,7 +67,7 @@
 #import <wtf/SoftLinking.h>
 #import <wtf/text/StringBuilder.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "WAKAppKitStubs.h"
 
@@ -119,7 +119,7 @@ SOFT_LINK_CLASS(UIFoundation, NSTextTab)
 using namespace WebCore;
 using namespace HTMLNames;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 typedef enum {
     UIFontTraitPlain       = 0x00000000,
@@ -281,7 +281,7 @@ typedef NSUInteger NSTextTabType;
 
 @interface NSTextAttachment : NSObject
 - (id)initWithFileWrapper:(NSFileWrapper *)fileWrapper;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 - (void)setBounds:(CGRect)bounds;
 @property(retain, nonatomic) NSFileWrapper *fileWrapper;
 #endif
@@ -496,7 +496,7 @@ NSAttributedString *HTMLConverter::convert()
     return [[_attrStr retain] autorelease];
 }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 // Returns the font to be used if the NSFontAttributeName doesn't exist
 static NSFont *WebDefaultFont()
 {
@@ -516,7 +516,7 @@ static NSFont *WebDefaultFont()
 static PlatformFont *_fontForNameAndSize(NSString *fontName, CGFloat size, NSMutableDictionary *cache)
 {
     PlatformFont *font = [cache objectForKey:fontName];
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (font)
         return [font fontWithSize:size];
 
@@ -530,7 +530,7 @@ static PlatformFont *_fontForNameAndSize(NSString *fontName, CGFloat size, NSMut
     font = [fontManager fontWithFamily:fontName traits:0 weight:0 size:size];
 #endif
     if (!font) {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         NSArray *availableFamilyNames = [PlatformFontClass familyNames];
 #else
         NSArray *availableFamilyNames = [fontManager availableFontFamilies];
@@ -543,7 +543,7 @@ static PlatformFont *_fontForNameAndSize(NSString *fontName, CGFloat size, NSMut
         while (dividingRange.length > 0) {
             NSString *familyName = [fontName substringToIndex:dividingRange.location];
             if ([availableFamilyNames containsObject:familyName]) {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
                 NSString *faceName = [fontName substringFromIndex:(dividingRange.location + dividingRange.length)];
                 NSArray *familyMemberFaceNames = [PlatformFontClass fontNamesForFamilyName:familyName];
                 for (NSString *familyMemberFaceName in familyMemberFaceNames) {
@@ -585,7 +585,7 @@ static PlatformFont *_fontForNameAndSize(NSString *fontName, CGFloat size, NSMut
             }
         }
     }
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (!font)
         font = [PlatformFontClass systemFontOfSize:size];
 #else
@@ -843,7 +843,7 @@ bool HTMLConverterCaches::floatPropertyValueForNode(Node& node, CSSPropertyID pr
     return false;
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 static NSString *_NSFirstPathForDirectoriesInDomains(NSSearchPathDirectory directory, NSSearchPathDomainMask domainMask, BOOL expandTilde)
 {
     NSArray *array = NSSearchPathForDirectoriesInDomains(directory, domainMask, expandTilde);
@@ -900,7 +900,7 @@ static inline NSShadow *_shadowForShadowStyle(NSString *shadowStyle)
                     spaceRange = NSMakeRange(0, 0);
                 CGFloat shadowHeight = [[shadowStyle substringWithRange:NSMakeRange(NSMaxRange(spaceRange), secondRange.location - NSMaxRange(spaceRange))] floatValue];
                 // I don't know why we have this difference between the two platforms.
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
                 shadowOffset.height = shadowHeight;
 #else
                 shadowOffset.height = -shadowHeight;
@@ -1029,7 +1029,7 @@ static PlatformFont *_font(Element& element)
 NSDictionary *HTMLConverter::computedAttributesForElement(Element& element)
 {
     NSMutableDictionary *attrs = [NSMutableDictionary dictionary];
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     NSFontManager *fontManager = [NSFontManager sharedFontManager];
 #endif
 
@@ -1052,7 +1052,7 @@ NSDictionary *HTMLConverter::computedAttributesForElement(Element& element)
     if (fontSize <= 0.0)
         fontSize = defaultFontSize;
     
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (actualFont)
         font = [actualFont fontWithSize:fontSize];
 #else
@@ -1069,7 +1069,7 @@ NSDictionary *HTMLConverter::computedAttributesForElement(Element& element)
         String fontStyle = _caches->propertyValueForNode(element, CSSPropertyFontStyle);
         if (fontStyle == "italic" || fontStyle == "oblique") {
             PlatformFont *originalFont = font;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
             font = [PlatformFontClass fontWithFamilyName:[font familyName] traits:UIFontTraitItalic size:[font pointSize]];
 #else
             font = [fontManager convertFont:font toHaveTrait:NSItalicFontMask];
@@ -1082,7 +1082,7 @@ NSDictionary *HTMLConverter::computedAttributesForElement(Element& element)
         if (fontWeight.startsWith("bold") || fontWeight.toInt() >= 700) {
             // ??? handle weight properly using NSFontManager
             PlatformFont *originalFont = font;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
             font = [PlatformFontClass fontWithFamilyName:[font familyName] traits:UIFontTraitBold size:[font pointSize]];
 #else
             font = [fontManager convertFont:font toHaveTrait:NSBoldFontMask];
@@ -1090,7 +1090,7 @@ NSDictionary *HTMLConverter::computedAttributesForElement(Element& element)
             if (!font)
                 font = originalFont;
         }
-#if !PLATFORM(IOS) // IJB: No small caps support on iOS
+#if !PLATFORM(IOS_FAMILY) // IJB: No small caps support on iOS
         if (_caches->propertyValueForNode(element, CSSPropertyFontVariantCaps) == "small-caps") {
             // ??? synthesize small-caps if [font isEqual:originalFont]
             NSFont *originalFont = font;
@@ -1385,7 +1385,7 @@ BOOL HTMLConverter::_addAttachmentForElement(Element& element, NSURL *url, BOOL 
             [fileWrapper setPreferredFilename:suggestedFilenameWithMIMEType(url, mimeType)];
         }
     }
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     if (!fileWrapper && !notFound) {
         fileWrapper = fileWrapperForURL(dataSource, url);
         if (usePlaceholder && fileWrapper && [[[[fileWrapper preferredFilename] pathExtension] lowercaseString] hasPrefix:@"htm"])
@@ -1416,7 +1416,7 @@ BOOL HTMLConverter::_addAttachmentForElement(Element& element, NSURL *url, BOOL 
     if (fileWrapper || usePlaceholder) {
         NSUInteger textLength = [_attrStr length];
         RetainPtr<NSTextAttachment> attachment = adoptNS([[PlatformNSTextAttachment alloc] initWithFileWrapper:fileWrapper]);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         float verticalAlign = 0.0;
         _caches->floatPropertyValueForNode(element, CSSPropertyVerticalAlign, verticalAlign);
         attachment.get().bounds = CGRectMake(0, (verticalAlign / 100) * element.clientHeight(), element.clientWidth(), element.clientHeight());
@@ -1425,12 +1425,12 @@ BOOL HTMLConverter::_addAttachmentForElement(Element& element, NSURL *url, BOOL 
         NSRange rangeToReplace = NSMakeRange(textLength, 0);
         NSDictionary *attrs;
         if (fileWrapper) {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
             if (ignoreOrientation)
                 [attachment setIgnoresOrientation:YES];
 #endif
         } else {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
             [attachment release];
             NSURL *missingImageURL = [_webKitBundle() URLForResource:@"missing_image" withExtension:@"tiff"];
             ASSERT_WITH_MESSAGE(missingImageURL != nil, "Unable to find missing_image.tiff!");
@@ -1645,7 +1645,7 @@ void HTMLConverter::_processMetaElementWithName(NSString *name, NSString *conten
             [_documentAttrs removeObjectForKey:NSConvertedDocumentAttribute];
             [_documentAttrs setObject:[NSNumber numberWithDouble:versionNumber] forKey:NSCocoaVersionDocumentAttribute];
         }
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     } else if (NSOrderedSame == [@"Generator" compare:name options:NSCaseInsensitiveSearch]) {
         key = NSGeneratorDocumentAttribute;
 #endif
@@ -1686,7 +1686,7 @@ void HTMLConverter::_processMetaElementWithName(NSString *name, NSString *conten
                 [_documentAttrs setObject:date forKey:NSModificationTimeDocumentAttribute];
         }
     }
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     else if (NSOrderedSame == [@"DisplayName" compare:name options:NSCaseInsensitiveSearch] || NSOrderedSame == [@"IndexTitle" compare:name options:NSCaseInsensitiveSearch])
         key = NSDisplayNameDocumentAttribute;
     else if (NSOrderedSame == [@"robots" compare:name options:NSCaseInsensitiveSearch]) {
@@ -1880,7 +1880,7 @@ BOOL HTMLConverter::_processElement(Element& element, NSInteger depth)
             NSURL *url = element.document().completeURL(stripLeadingAndTrailingHTMLSpaces(urlString));
             if (!url)
                 url = [NSURL _web_URLWithString:[urlString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] relativeToURL:_baseURL];
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
             BOOL usePlaceholderImage = NO;
 #else
             BOOL usePlaceholderImage = YES;
@@ -2394,7 +2394,7 @@ Node* HTMLConverterCaches::cacheAncestorsOfStartToBeConverted(const Range& range
     return commonAncestor;
 }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 
 static NSFileWrapper *fileWrapperForURL(DocumentLoader* dataSource, NSURL *URL)
 {
@@ -2457,7 +2457,7 @@ NSAttributedString *attributedStringFromRange(Range& range)
     return converter.convert();
 }
     
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 
 // This function uses TextIterator, which makes offsets in its result compatible with HTML editing.
 NSAttributedString *editingAttributedStringFromRange(Range& range, IncludeImagesInAttributedString includeOrSkipImages)

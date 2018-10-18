@@ -26,7 +26,7 @@
 #ifndef SmartMagnificationController_h
 #define SmartMagnificationController_h
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #include "MessageReceiver.h"
 #include <WebCore/FloatRect.h>
@@ -62,6 +62,6 @@ private:
     
 } // namespace WebKit
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 #endif // SmartMagnificationController_h

@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if PLATFORM(IOS) && !PLATFORM(IOSMAC)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOSMAC)
 
 #import "ChildProcess.h"
 

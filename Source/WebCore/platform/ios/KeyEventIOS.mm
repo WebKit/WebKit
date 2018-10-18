@@ -26,7 +26,7 @@
 #import "config.h"
 #import "PlatformKeyboardEvent.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "KeyEventCocoa.h"
 #import "KeyEventCodesIOS.h"
@@ -329,4 +329,4 @@ void PlatformKeyboardEvent::getCurrentModifierState(bool& shiftKey, bool& ctrlKe
 
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

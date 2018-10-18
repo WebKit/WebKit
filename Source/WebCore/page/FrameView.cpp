@@ -113,7 +113,7 @@
 #include "AxisScrollSnapOffsets.h"
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #include "DocumentLoader.h"
 #include "LegacyTileCache.h"
 #endif
@@ -193,7 +193,7 @@ FrameView::FrameView(Frame& frame)
     , m_shouldUpdateWhileOffscreen(true)
     , m_speculativeTilingEnabled(false)
     , m_speculativeTilingEnableTimer(*this, &FrameView::speculativeTilingEnableTimerFired)
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     , m_useCustomFixedPositionLayoutRect(false)
     , m_useCustomSizeForResizeEvent(false)
 #endif
@@ -416,7 +416,7 @@ void FrameView::clear()
 
     setScrollbarsSuppressed(true);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // To avoid flashes of white, disable tile updates immediately when view is cleared at the beginning of a page load.
     // Tiling will be re-enabled from UIKit via [WAKWindow setTilingMode:] when we have content to draw.
     if (LegacyTileCache* tileCache = legacyTileCache())
@@ -424,7 +424,7 @@ void FrameView::clear()
 #endif
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 void FrameView::didReplaceMultipartContent()
 {
     // Re-enable tile updates that were disabled in clear().
@@ -501,7 +501,7 @@ void FrameView::setMarginHeight(LayoutUnit h)
 
 FrameFlattening FrameView::effectiveFrameFlattening() const
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // On iOS when async frame scrolling is enabled, it does not make sense to use full frame flattening.
     // In that case, we just consider that frame flattening is disabled. This allows people to test
     // frame scrolling on iOS by enabling "Async Frame Scrolling" via the Safari menu.
@@ -994,7 +994,7 @@ bool FrameView::flushCompositingStateForThisFrame(const Frame& rootFrameForFlush
     if (needsLayout())
         return false;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (LegacyTileCache* tileCache = legacyTileCache())
         tileCache->doPendingRepaints();
 #endif
@@ -1066,7 +1066,7 @@ LayoutRect FrameView::fixedScrollableAreaBoundsInflatedForScrolling(const Layout
 
 LayoutPoint FrameView::scrollPositionRespectingCustomFixedPosition() const
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (!frame().settings().visualViewportEnabled())
         return useCustomFixedPositionLayoutRect() ? customFixedPositionLayoutRect().location() : scrollPosition();
 #endif
@@ -1792,7 +1792,7 @@ LayoutRect FrameView::viewportConstrainedVisibleContentRect() const
 {
     ASSERT(!frame().settings().visualViewportEnabled());
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (useCustomFixedPositionLayoutRect())
         return customFixedPositionLayoutRect();
 #endif
@@ -1883,7 +1883,7 @@ FloatPoint FrameView::positionForRootContentLayer() const
     return positionForRootContentLayer(scrollPosition(), scrollOrigin(), topContentInset(), headerHeight());
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 LayoutRect FrameView::rectForViewportConstrainedObjects(const LayoutRect& visibleContentRect, const LayoutSize& totalContentsSize, float frameScaleFactor, bool fixedElementsLayoutRelativeToFrame, ScrollBehaviorForFixedElements scrollBehavior)
 {
     if (fixedElementsLayoutRelativeToFrame)
@@ -2664,7 +2664,7 @@ void FrameView::updateContentsSize()
     if (!frame().view())
         return;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (RenderView* root = m_frame->contentRenderer()) {
         if (useCustomFixedPositionLayoutRect() && hasViewportConstrainedObjects()) {
             setViewportConstrainedObjectsNeedLayout();
@@ -2707,7 +2707,7 @@ TiledBacking::Scrollability FrameView::computeScrollability() const
     bool verticallyScrollable;
     bool clippedByAncestorView = static_cast<bool>(m_viewExposedRect);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (page)
         clippedByAncestorView |= page->enclosedInScrollableAncestorView();
 #endif
@@ -2742,7 +2742,7 @@ void FrameView::updateTiledBackingAdaptiveSizing()
     tiledBacking->setScrollability(computeScrollability());
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 void FrameView::unobscuredContentSizeChanged()
 {
@@ -2814,7 +2814,7 @@ void FrameView::adjustTiledBackingCoverage()
     RenderView* renderView = this->renderView();
     if (renderView && renderView->layer() && renderView->layer()->backing())
         renderView->layer()->backing()->adjustTiledBackingCoverage();
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (LegacyTileCache* tileCache = legacyTileCache())
         tileCache->setSpeculativeTileCreationEnabled(m_speculativeTilingEnabled);
 #endif
@@ -2973,7 +2973,7 @@ void FrameView::updateExtendBackgroundIfNecessary()
 
 FrameView::ExtendedBackgroundMode FrameView::calculateExtendedBackgroundMode() const
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // <rdar://problem/16201373>
     return ExtendedBackgroundModeNone;
 #else
@@ -3240,7 +3240,7 @@ void FrameView::performPostLayoutTasks()
     if (!layoutContext().isLayoutNested() && frame().document()->documentElement())
         fireLayoutRelatedMilestonesIfNeeded();
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // Only send layout-related delegate callbacks synchronously for the main frame to
     // avoid re-entering layout for the main frame while delivering a layout-related delegate
     // callback for a subframe.
@@ -3286,7 +3286,7 @@ void FrameView::performPostLayoutTasks()
 
 IntSize FrameView::sizeForResizeEvent() const
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     if (m_useCustomSizeForResizeEvent)
         return m_customSizeForResizeEvent;
 #endif
@@ -3319,7 +3319,7 @@ void FrameView::sendResizeEventIfNeeded()
     if (!layoutContext().didFirstLayout())
         return;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // Don't send the resize event if the document is loading. Some pages automatically reload
     // when the window is resized; Safari on iOS often resizes the window while setting up its
     // viewport. This obviously can cause problems.
@@ -4893,7 +4893,7 @@ AXObjectCache* FrameView::axObjectCache() const
     return nullptr;
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 bool FrameView::useCustomFixedPositionLayoutRect() const
 {
     return !frame().settings().visualViewportEnabled() && m_useCustomFixedPositionLayoutRect;
@@ -4938,7 +4938,7 @@ void FrameView::setScrollVelocity(double horizontalVelocity, double verticalVelo
     if (TiledBacking* tiledBacking = this->tiledBacking())
         tiledBacking->setVelocity(VelocityData(horizontalVelocity, verticalVelocity, scaleChangeRate, timestamp));
 }
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 void FrameView::setScrollingPerformanceLoggingEnabled(bool flag)
 {

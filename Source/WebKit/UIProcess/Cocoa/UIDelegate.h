@@ -127,14 +127,14 @@ private:
         bool checkUserMediaPermissionForOrigin(WebPageProxy&, WebFrameProxy&, API::SecurityOrigin&, API::SecurityOrigin&, UserMediaPermissionCheckProxy&) final;
         void mediaCaptureStateDidChange(WebCore::MediaProducer::MediaStateFlags) final;
         void printFrame(WebPageProxy&, WebFrameProxy&) final;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #if HAVE(APP_LINKS)
         bool shouldIncludeAppLinkActionsForElement(_WKActivatedElementInfo *) final;
 #endif
         RetainPtr<NSArray> actionsForElement(_WKActivatedElementInfo *, RetainPtr<NSArray> defaultActions) final;
         void didNotHandleTapAsClick(const WebCore::IntPoint&) final;
         UIViewController *presentingViewController() final;
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
         NSDictionary *dataDetectionContext() final;
 
@@ -201,7 +201,7 @@ private:
         bool webViewCheckUserMediaPermissionForURLMainFrameURLFrameIdentifierDecisionHandler : 1;
         bool webViewMediaCaptureStateDidChange : 1;
         bool webViewDidChangeFontAttributes : 1;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #if HAVE(APP_LINKS)
         bool webViewShouldIncludeAppLinkActionsForElement : 1;
 #endif

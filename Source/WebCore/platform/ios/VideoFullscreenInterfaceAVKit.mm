@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import "VideoFullscreenInterfaceAVKit.h"
 
 #if HAVE(AVKIT)
@@ -1450,11 +1450,11 @@ bool VideoFullscreenInterfaceAVKit::isPlayingVideoInEnhancedFullscreen() const
 
 bool WebCore::supportsPictureInPicture()
 {
-#if PLATFORM(IOS) && HAVE(AVKIT) && !PLATFORM(WATCHOS)
+#if PLATFORM(IOS_FAMILY) && HAVE(AVKIT) && !PLATFORM(WATCHOS)
     return [getAVPictureInPictureControllerClass() isPictureInPictureSupported];
 #else
     return false;
 #endif
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

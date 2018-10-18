@@ -38,7 +38,7 @@
 #include <sys/time.h>
 #endif
 
-#if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)
 #include <sys/attr.h>
 #include <unistd.h>
 #endif
@@ -148,7 +148,7 @@ void updateFileModificationTimeIfNeeded(const String& path)
 
 bool isSafeToUseMemoryMapForPath(const String& path)
 {
-#if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)
     struct {
         uint32_t length;
         uint32_t protectionClass;

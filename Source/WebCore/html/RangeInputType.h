@@ -50,7 +50,7 @@ private:
     bool supportsRequired() const final;
     StepRange createStepRange(AnyStepHandling) const final;
     bool isSteppable() const final;
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     void handleMouseDownEvent(MouseEvent&) final;
 #endif
     void handleKeydownEvent(KeyboardEvent&) final;
@@ -84,7 +84,7 @@ private:
 
     void disabledStateChanged() final;
 
-#if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS) && ENABLE(TOUCH_SLIDER)
+#if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS_FAMILY) && ENABLE(TOUCH_SLIDER)
     bool hasTouchEventHandler() const final;
 #endif
 };

@@ -35,7 +35,7 @@
 OBJC_CLASS NSPasteboard;
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 OBJC_CLASS UIPasteboard;
 #endif
 
@@ -58,7 +58,7 @@ struct PasteboardWebContent;
 class PlatformPasteboard {
 public:
     WEBCORE_EXPORT explicit PlatformPasteboard(const String& pasteboardName);
-#if PLATFORM(IOS) || PLATFORM(WPE)
+#if PLATFORM(IOS_FAMILY) || PLATFORM(WPE)
     WEBCORE_EXPORT PlatformPasteboard();
     WEBCORE_EXPORT Vector<PasteboardItemInfo> allPasteboardItemInfo();
     WEBCORE_EXPORT PasteboardItemInfo informationForItemAtIndex(int index);
@@ -107,14 +107,14 @@ public:
 #endif
 
 private:
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     bool allowReadingURLAtIndex(const URL&, int index) const;
 #endif
 
 #if PLATFORM(MAC)
     RetainPtr<NSPasteboard> m_pasteboard;
 #endif
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     RetainPtr<id> m_pasteboard;
 #endif
 #if PLATFORM(GTK)

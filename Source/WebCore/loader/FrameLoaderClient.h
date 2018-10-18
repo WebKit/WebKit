@@ -131,7 +131,7 @@ public:
     virtual std::optional<uint64_t> frameID() const = 0;
     virtual PAL::SessionID sessionID() const = 0;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // Returns true if the client forced the layout.
     virtual bool forceLayoutOnRestoreFromPageCache() = 0;
 #endif
@@ -151,7 +151,7 @@ public:
     virtual bool canAuthenticateAgainstProtectionSpace(DocumentLoader*, unsigned long identifier, const ProtectionSpace&) = 0;
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     virtual RetainPtr<CFDictionaryRef> connectionProperties(DocumentLoader*, unsigned long identifier) = 0;
 #endif
 
@@ -276,7 +276,7 @@ public:
     
     virtual void savePlatformDataToCachedFrame(CachedFrame*) = 0;
     virtual void transitionToCommittedFromCachedFrame(CachedFrame*) = 0;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     virtual void didRestoreFrameHierarchyForCachedFrame() = 0;
 #endif
     virtual void transitionToCommittedForNewPage() = 0;

@@ -85,7 +85,7 @@
 #import <wtf/RunLoop.h>
 #import <wtf/text/WTFString.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import <WebCore/WebCoreThreadMessage.h>
 #import "DOMElementInternal.h"
 #import "WebFrameView.h"
@@ -100,13 +100,13 @@ using namespace WebCore;
 
 using namespace HTMLNames;
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 @interface NSSpellChecker (WebNSSpellCheckerDetails)
 - (NSString *)languageForWordRange:(NSRange)range inString:(NSString *)string orthography:(NSOrthography *)orthography;
 @end
 #endif
 
-#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300)
+#if (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300)
 @interface NSAttributedString (WebNSAttributedStringDetails)
 - (DOMDocumentFragment *)_documentFromRange:(NSRange)range document:(DOMDocument *)document documentAttributes:(NSDictionary *)attributes subresources:(NSArray **)subresources;
 @end
@@ -138,7 +138,7 @@ static WebViewInsertAction kit(EditorInsertAction action)
 
 + (void)initialize
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
     RunLoop::initializeMainRunLoop();
@@ -217,7 +217,7 @@ void WebEditorClient::toggleContinuousSpellChecking()
     [m_webView toggleContinuousSpellChecking:nil];
 }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 
 bool WebEditorClient::isGrammarCheckingEnabled()
 {
@@ -267,7 +267,7 @@ bool WebEditorClient::shouldApplyStyle(StyleProperties* style, Range* range)
 
 static void updateFontPanel(WebView *webView)
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     NSView <WebDocumentView> *view = [[[webView selectedFrame] frameView] documentView];
     if ([view isKindOfClass:[WebHTMLView class]])
         [(WebHTMLView *)view _updateFontPanel];
@@ -314,14 +314,14 @@ bool WebEditorClient::shouldChangeSelectedRange(Range* fromRange, Range* toRange
 
 void WebEditorClient::didBeginEditing()
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidBeginEditingNotification object:m_webView];
 #else
     WebThreadPostNotification(WebViewDidBeginEditingNotification, m_webView, nil);
 #endif
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 void WebEditorClient::startDelayingAndCoalescingContentChangeNotifications()
 {
@@ -343,7 +343,7 @@ void WebEditorClient::stopDelayingAndCoalescingContentChangeNotifications()
 void WebEditorClient::respondToChangedContents()
 {
     updateFontPanel(m_webView);
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidChangeNotification object:m_webView];    
 #else
     if (m_delayingContentChangeNotifications) {
@@ -366,7 +366,7 @@ void WebEditorClient::respondToChangedSelection(Frame* frame)
         m_lastEditorStateWasContentEditable = [(WebHTMLView *)documentView _isEditable] ? EditorStateIsContentEditable::Yes : EditorStateIsContentEditable::No;
     }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     // FIXME: This quirk is needed due to <rdar://problem/5009625> - We can phase it out once Aperture can adopt the new behavior on their end
     if (!WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_APERTURE_QUIRK) && [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.Aperture"])
         return;
@@ -392,14 +392,14 @@ void WebEditorClient::discardedComposition(Frame*)
 
 void WebEditorClient::canceledComposition()
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     [[NSTextInputContext currentInputContext] discardMarkedText];
 #endif
 }
 
 void WebEditorClient::didEndEditing()
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidEndEditingNotification object:m_webView];
 #else
     WebThreadPostNotification(WebViewDidEndEditingNotification, m_webView, nil);
@@ -408,7 +408,7 @@ void WebEditorClient::didEndEditing()
 
 void WebEditorClient::didWriteSelectionToPasteboard()
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     [[m_webView _editingDelegateForwarder] webView:m_webView didWriteSelectionToPasteboard:[NSPasteboard generalPasteboard]];
 #endif
 }
@@ -429,7 +429,7 @@ String WebEditorClient::replacementURLForResource(Ref<SharedBuffer>&&, const Str
     return { };
 }
 
-#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300)
+#if (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300)
 
 // FIXME: Remove both this stub and the real version of this function below once we don't need the real version on any supported platform.
 // This stub is not used outside WebKit, but it's here so we won't get a linker error.
@@ -464,7 +464,7 @@ static NSDictionary *attributesForAttributedStringConversion()
         [excludedElements addObject:@"object"];
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     static NSString * const NSExcludedElementsDocumentAttribute = @"ExcludedElements";
 #endif
 
@@ -494,7 +494,7 @@ void _WebCreateFragment(Document& document, NSAttributedString *string, Fragment
 
 void WebEditorClient::setInsertionPasteboard(const String& pasteboardName)
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     NSPasteboard *pasteboard = pasteboardName.isEmpty() ? nil : [NSPasteboard pasteboardWithName:pasteboardName];
     [m_webView _setInsertionPasteboard:pasteboard];
 #endif
@@ -669,7 +669,7 @@ void WebEditorClient::registerUndoOrRedoStep(UndoStep& step, bool isRedo)
 {
     NSUndoManager *undoManager = [m_webView undoManager];
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // While we are undoing, we shouldn't be asked to register another Undo operation, we shouldn't even be touching the DOM.
     // But just in case this happens, return to avoid putting the undo manager into an inconsistent state.
     // Same for being asked to register a Redo operation in the midst of another Redo.
@@ -770,7 +770,7 @@ void WebEditorClient::redo()
 void WebEditorClient::handleKeyboardEvent(KeyboardEvent* event)
 {
     auto* frame = downcast<Node>(event->target())->document().frame();
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     WebHTMLView *webHTMLView = (WebHTMLView *)[[kit(frame) frameView] documentView];
     if ([webHTMLView _interpretKeyEvent:event savingCommands:NO])
         event->setDefaultHandled();
@@ -783,7 +783,7 @@ void WebEditorClient::handleKeyboardEvent(KeyboardEvent* event)
 
 void WebEditorClient::handleInputMethodKeydown(KeyboardEvent* event)
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     // FIXME: Switch to WebKit2 model, interpreting the event before it's sent down to WebCore.
     auto* frame = downcast<Node>(event->target())->document().frame();
     WebHTMLView *webHTMLView = (WebHTMLView *)[[kit(frame) frameView] documentView];
@@ -821,7 +821,7 @@ void WebEditorClient::textDidChangeInTextField(Element* element)
     if (!is<HTMLInputElement>(*element))
         return;
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     if (!UserTypingGestureIndicator::processingUserTypingGesture() || UserTypingGestureIndicator::focusedElementAtGestureStart() != element)
         return;
 #endif
@@ -889,7 +889,7 @@ void WebEditorClient::textDidChangeInTextArea(Element* element)
     CallFormDelegate(m_webView, @selector(textDidChangeInTextArea:inFrame:), textAreaElement, kit(element->document().frame()));
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 bool WebEditorClient::hasRichlyEditableSelection()
 {
@@ -954,9 +954,9 @@ Vector<TextCheckingResult> WebEditorClient::checkTextOfParagraph(StringView stri
     return results;
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 
 bool WebEditorClient::performTwoStepDrop(DocumentFragment&, Range&, bool)
 {
@@ -1184,7 +1184,7 @@ void WebEditorClient::getGuessesForWord(const String& word, const String& contex
     }
 }
 
-#endif // !PLATFORM(IOS)
+#endif // !PLATFORM(IOS_FAMILY)
 
 void WebEditorClient::willSetInputMethodState()
 {
@@ -1294,7 +1294,7 @@ void WebEditorClient::handleAcceptedCandidateWithSoftSpaces(TextCheckingResult a
 
 #endif // PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 
 @interface WebEditorSpellCheckResponder : NSObject
 {
@@ -1336,7 +1336,7 @@ void WebEditorClient::didCheckSucceed(int sequence, NSArray* results)
 
 void WebEditorClient::requestCheckingOfString(WebCore::TextCheckingRequest& request, const VisibleSelection& currentSelection)
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     ASSERT(!m_textCheckingRequest);
     m_textCheckingRequest = &request;
 

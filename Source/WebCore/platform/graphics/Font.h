@@ -189,7 +189,7 @@ public:
     String description() const;
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     bool shouldNotBeUsedForArabic() const { return m_shouldNotBeUsedForArabic; };
 #endif
 #if PLATFORM(COCOA)
@@ -314,12 +314,12 @@ private:
 
     unsigned m_isUsedInSystemFallbackCache : 1;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     unsigned m_shouldNotBeUsedForArabic : 1;
 #endif
 };
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 bool fontFamilyShouldNotBeUsedForArabic(CFStringRef);
 #endif
 

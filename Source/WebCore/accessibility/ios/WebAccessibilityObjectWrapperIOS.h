@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if HAVE(ACCESSIBILITY) && PLATFORM(IOS)
+#if HAVE(ACCESSIBILITY) && PLATFORM(IOS_FAMILY)
 
 #import "AXObjectCache.h"
 #import "AccessibilityObject.h"
@@ -71,4 +71,4 @@
 
 @end
 
-#endif // HAVE(ACCESSIBILITY) && PLATFORM(IOS)
+#endif // HAVE(ACCESSIBILITY) && PLATFORM(IOS_FAMILY)

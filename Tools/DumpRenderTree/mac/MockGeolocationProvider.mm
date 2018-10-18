@@ -26,7 +26,7 @@
 #import "config.h"
 #import "MockGeolocationProvider.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import <WebCore/WebCoreThreadRun.h>
 #endif
 
@@ -92,7 +92,7 @@
     return _lastPosition.get();
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 - (void)setEnableHighAccuracy:(BOOL)enableHighAccuracy
 {
     UNUSED_PARAM(enableHighAccuracy);
@@ -128,7 +128,7 @@
     auto copyOfRegisteredViews { _registeredViews };
     for (auto typelessView : copyOfRegisteredViews) {
         auto webView = (__bridge WebView *)typelessView;
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
         if (_hasError)
             [webView _geolocationDidFailWithMessage:_errorMessage.get()];
         else

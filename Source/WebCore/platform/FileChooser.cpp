@@ -73,10 +73,10 @@ void FileChooser::chooseFiles(const Vector<String>& filenames)
     m_client->filesChosen(files);
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 // FIXME: This function is almost identical to FileChooser::chooseFiles(). We should merge this function
-// with FileChooser::chooseFiles() and hence remove the PLATFORM(IOS)-guard.
+// with FileChooser::chooseFiles() and hence remove the PLATFORM(IOS_FAMILY)-guard.
 void FileChooser::chooseMediaFiles(const Vector<String>& filenames, const String& displayString, Icon* icon)
 {
     // FIXME: This is inelegant. We should not be looking at settings here.

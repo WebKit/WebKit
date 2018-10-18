@@ -37,7 +37,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/Vector.h>
 
-#if PLATFORM(IOS) || PLATFORM(MAC)
+#if PLATFORM(IOS_FAMILY) || PLATFORM(MAC)
 #include <wtf/spi/darwin/dyldSPI.h>
 #endif
 
@@ -191,7 +191,7 @@ inline bool TimerHeapLessThanFunction::operator()(const TimerBase* a, const Time
 
 static bool shouldSuppressThreadSafetyCheck()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     return WebThreadIsEnabled() || applicationSDKVersion() < DYLD_IOS_VERSION_12_0;
 #elif PLATFORM(MAC)
     return !isInWebProcess() && applicationSDKVersion() < DYLD_MACOSX_VERSION_10_14;

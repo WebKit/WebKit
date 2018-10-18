@@ -32,13 +32,13 @@
 #import <WebCore/DatabaseTracker.h>
 #import <WebCore/SecurityOrigin.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import <WebCore/WebCoreThread.h>
 #endif
 
 using namespace WebCore;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 static const CFStringRef WebDatabaseOriginWasAddedNotification = CFSTR("com.apple.MobileSafariSettings.WebDatabaseOriginWasAddedNotification");
 static const CFStringRef WebDatabaseWasDeletedNotification = CFSTR("com.apple.MobileSafariSettings.WebDatabaseWasDeletedNotification");
 static const CFStringRef WebDatabaseOriginWasDeletedNotification = CFSTR("com.apple.MobileSafariSettings.WebDatabaseOriginWasDeletedNotification");
@@ -50,7 +50,7 @@ WebDatabaseManagerClient* WebDatabaseManagerClient::sharedWebDatabaseManagerClie
     return sharedClient;
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 static void onNewDatabaseOriginAdded(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef)
 {
     ASSERT(observer);
@@ -78,7 +78,7 @@ static void onDatabaseOriginDeleted(CFNotificationCenterRef, void* observer, CFS
 
 WebDatabaseManagerClient::WebDatabaseManagerClient()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     CFNotificationCenterRef center = CFNotificationCenterGetDarwinNotifyCenter(); 
     CFNotificationCenterAddObserver(center, this, onNewDatabaseOriginAdded, WebDatabaseOriginWasAddedNotification, 0, CFNotificationSuspensionBehaviorDeliverImmediately);
     CFNotificationCenterAddObserver(center, this, onDatabaseDeleted, WebDatabaseWasDeletedNotification, 0, CFNotificationSuspensionBehaviorDeliverImmediately);
@@ -88,7 +88,7 @@ WebDatabaseManagerClient::WebDatabaseManagerClient()
 
 WebDatabaseManagerClient::~WebDatabaseManagerClient()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, 0, 0);
 #endif
 }
@@ -138,7 +138,7 @@ void WebDatabaseManagerClient::dispatchDidModifyDatabase(const SecurityOriginDat
     [[NSNotificationCenter defaultCenter] postNotificationName:WebDatabaseDidModifyDatabaseNotification object:webSecurityOrigin.get() userInfo:userInfo.get()];
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 void WebDatabaseManagerClient::dispatchDidAddNewOrigin()
 {    
@@ -213,4 +213,4 @@ void WebDatabaseManagerClient::databaseOriginsDidChange()
     CFNotificationCenterPostNotification(CFNotificationCenterGetLocalCenter(), WebDatabaseOriginsDidChangeNotification, 0, 0, true);
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

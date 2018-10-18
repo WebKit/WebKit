@@ -42,7 +42,7 @@
 #import <WebCore/WebCoreCALayerExtras.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIView.h>
 #endif
 
@@ -210,7 +210,7 @@ void RemoteLayerTreeHost::clearLayers()
 {
     for (auto& idLayer : m_layers) {
         m_animationDelegates.remove(idLayer.key);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         [idLayer.value.get() removeFromSuperview];
 #else
         [asLayer(idLayer.value.get()) removeFromSuperlayer];
@@ -238,7 +238,7 @@ WebCore::GraphicsLayer::PlatformLayerID RemoteLayerTreeHost::layerID(CALayer* la
     return [[layer valueForKey:WKLayerIDPropertyKey] unsignedLongLongValue];
 }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 LayerOrView *RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties& properties, const RemoteLayerTreeTransaction::LayerProperties*)
 {
     RetainPtr<CALayer>& layer = m_layers.add(properties.layerID, nullptr).iterator->value;
@@ -293,7 +293,7 @@ LayerOrView *RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::
 
 void RemoteLayerTreeHost::detachRootLayer()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     [m_rootLayer removeFromSuperview];
 #else
     [asLayer(m_rootLayer) removeFromSuperlayer];

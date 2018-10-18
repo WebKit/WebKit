@@ -53,11 +53,11 @@
 #import <WebKit/WebViewPrivate.h>
 #import <wtf/Assertions.h>
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 #import "AppleScriptController.h"
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import <WebKit/WebCoreThreadMessage.h>
 #endif
 
@@ -119,7 +119,7 @@ IGNORE_WARNINGS_END
     if ((self = [super init])) {
         gcController = new GCController;
         accessibilityController = new AccessibilityController;
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(webViewProgressFinishedNotification:) name:WebViewProgressFinishedNotification object:nil];
 #endif
     }
@@ -128,7 +128,7 @@ IGNORE_WARNINGS_END
 
 - (void)dealloc
 {
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 #endif
     delete gcController;
@@ -143,7 +143,7 @@ IGNORE_WARNINGS_END
     if (topLoadingFrame)
         return;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     WebThreadLock();
 #endif
 
@@ -202,7 +202,7 @@ IGNORE_WARNINGS_END
         int64_t deferredWaitTime = 5 * NSEC_PER_MSEC;
         dispatch_time_t when = dispatch_time(DISPATCH_TIME_NOW, deferredWaitTime);
         dispatch_after(when, dispatch_get_main_queue(), ^{
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
             WebThreadLock();
 #endif
             [sender setDefersCallbacks:NO];
@@ -220,7 +220,7 @@ IGNORE_WARNINGS_END
     ASSERT(![frame provisionalDataSource]);
     ASSERT([frame dataSource]);
     gTestRunner->setWindowIsKey(true);
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     NSView *documentView = [[mainFrame frameView] documentView];
     [[[mainFrame webView] window] makeFirstResponder:documentView];
 #endif
@@ -312,7 +312,7 @@ IGNORE_WARNINGS_END
 
     WebView *webView = [frame webView];
     WebScriptObject *obj = [frame windowObject];
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     AppleScriptController *asc = [[AppleScriptController alloc] initWithWebView:webView];
     [obj setValue:asc forKey:@"appleScriptController"];
     [asc release];

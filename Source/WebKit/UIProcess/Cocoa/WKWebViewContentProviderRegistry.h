@@ -27,7 +27,7 @@
 
 #if WK_API_ENABLED
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import <wtf/text/WTFString.h>
 
@@ -52,6 +52,6 @@ class WebPageProxy;
 
 @end
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 
 #endif // WK_API_ENABLED

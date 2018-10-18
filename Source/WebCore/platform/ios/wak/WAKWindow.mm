@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WAKWindow.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "LegacyTileCache.h"
 #import "PlatformScreen.h"
@@ -728,4 +728,4 @@ static id<OrientationProvider> gOrientationProvider;
 
 @end
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

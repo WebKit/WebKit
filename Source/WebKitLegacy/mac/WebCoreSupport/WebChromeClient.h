@@ -99,7 +99,7 @@ private:
     WebCore::IntPoint screenToRootView(const WebCore::IntPoint&) const final;
     WebCore::IntRect rootViewToScreen(const WebCore::IntRect&) const final;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     WebCore::IntPoint accessibilityScreenToRootView(const WebCore::IntPoint&) const final;
     WebCore::IntRect rootViewToAccessibilityScreen(const WebCore::IntRect&) const final;
 #endif
@@ -131,7 +131,7 @@ private:
     void loadIconForFiles(const Vector<String>&, WebCore::FileIconLoader&) final;
     RefPtr<WebCore::Icon> createIconForFiles(const Vector<String>& filenames) override;
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     void setCursor(const WebCore::Cursor&) final;
     void setCursorHiddenUntilMouseMoves(bool) final;
 #endif
@@ -160,7 +160,7 @@ private:
     bool shouldReplaceWithGeneratedFileForUpload(const String& path, String &generatedFilename) final;
     String generateReplacementFile(const String& path) final;
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     void elementDidFocus(WebCore::Element&) override;
     void elementDidBlur(WebCore::Element&) override;
 #endif
@@ -179,7 +179,7 @@ private:
             VideoTrigger |
             PluginTrigger| 
             CanvasTrigger |
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
             AnimatedOpacityTrigger | // Allow opacity animations to trigger compositing mode for iOS: <rdar://problem/7830677>
 #endif
             AnimationTrigger);
@@ -220,7 +220,7 @@ private:
     bool hasRelevantSelectionServices(bool isTextOnly) const final;
 #endif
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
     void addPlaybackTargetPickerClient(uint64_t /*contextId*/) final;
     void removePlaybackTargetPickerClient(uint64_t /*contextId*/) final;
     void showPlaybackTargetPicker(uint64_t /*contextId*/, const WebCore::IntPoint&, bool /* hasVideo */) final;

@@ -116,7 +116,7 @@ public:
     float height() const { return size().height(); }
     virtual std::optional<IntPoint> hotSpot() const { return std::nullopt; }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     virtual FloatSize originalSize() const { return size(); }
 #endif
 

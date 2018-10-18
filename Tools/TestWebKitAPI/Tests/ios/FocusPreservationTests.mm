@@ -26,7 +26,7 @@
 #import "config.h"
 #import "Test.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "PlatformUtilities.h"
 #import "TestInputDelegate.h"
@@ -105,4 +105,4 @@ TEST(FocusPreservationTests, ChangingFocusedNodeResetsFocusPreservationState)
 
 } // namespace TestWebKitAPI
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

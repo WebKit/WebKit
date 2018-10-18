@@ -222,7 +222,7 @@ void EditCommandComposition::unapply()
     // Low level operations, like RemoveNodeCommand, don't require a layout because the high level operations that use them perform one
     // if one is necessary (like for the creation of VisiblePositions).
     m_document->updateLayoutIgnorePendingStylesheets();
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // FIXME: Where should iPhone code deal with the composition?
     // Since editing commands don't save/restore the composition, undoing without fixing
     // up the composition will leave a stale, invalid composition, as in <rdar://problem/6831637>.
@@ -770,7 +770,7 @@ void CompositeEditCommand::replaceTextInNodePreservingMarkers(Text& node, unsign
     replaceTextInNode(node, offset, count, replacementText);
     RefPtr<Range> newRange = Range::create(document(), &node, offset, &node, offset + replacementText.length());
     for (const auto& marker : markers) {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
         if (marker.isDictation()) {
             markerController.addMarker(newRange.get(), marker.type(), marker.description(), marker.alternatives(), marker.metadata());
             continue;
@@ -1450,7 +1450,7 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
     // anything if we're given an empty paragraph, but an empty paragraph can have style
     // too, <div><b><br></b></div> for example.  Save it so that we can preserve it later.
     RefPtr<EditingStyle> styleInEmptyParagraph;
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     if (startOfParagraphToMove == endOfParagraphToMove && preserveStyle) {
 #else
     if (startOfParagraphToMove == endOfParagraphToMove && preserveStyle && isRichlyEditablePosition(destination.deepEquivalent())) {

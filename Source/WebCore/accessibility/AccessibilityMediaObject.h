@@ -28,7 +28,7 @@
 
 #pragma once
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #include "AccessibilityRenderObject.h"
 
@@ -68,4 +68,4 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityMediaObject, isMediaObject())
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

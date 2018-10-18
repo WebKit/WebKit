@@ -29,7 +29,7 @@
 #include <wtf/RetainPtr.h>
 #include "Timer.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 OBJC_CLASS WebNetworkStateObserver;
 #endif
 
@@ -75,7 +75,7 @@ private:
     Vector<WTF::Function<void(bool)>> m_listeners;
     Timer m_updateStateTimer;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     RetainPtr<WebNetworkStateObserver> m_observer;
 #endif
 

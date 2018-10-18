@@ -67,7 +67,7 @@ private:
     bool hasWebView() const final;
     
     void makeRepresentation(WebCore::DocumentLoader*) final;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     bool forceLayoutOnRestoreFromPageCache() final;
 #endif
     void forceLayoutForNonHTML() final;
@@ -85,7 +85,7 @@ private:
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     bool canAuthenticateAgainstProtectionSpace(WebCore::DocumentLoader*, unsigned long identifier, const WebCore::ProtectionSpace&) final;
 #endif
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     RetainPtr<CFDictionaryRef> connectionProperties(WebCore::DocumentLoader*, unsigned long identifier) final;
 #endif
     void dispatchDidReceiveResponse(WebCore::DocumentLoader*, unsigned long identifier, const WebCore::ResourceResponse&) final;
@@ -197,7 +197,7 @@ private:
 
     void savePlatformDataToCachedFrame(WebCore::CachedFrame*) final;
     void transitionToCommittedFromCachedFrame(WebCore::CachedFrame*) final;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     void didRestoreFrameHierarchyForCachedFrame() final;
 #endif
     void transitionToCommittedForNewPage() final;

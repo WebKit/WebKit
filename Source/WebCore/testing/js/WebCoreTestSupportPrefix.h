@@ -113,19 +113,19 @@
 #endif
 #include <windows.h>
 #else
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
 #include <CoreServices/CoreServices.h>
-#endif // !PLATFORM(IOS)
+#endif // !PLATFORM(IOS_FAMILY)
 #endif // OS(WINDOWS)
 
 #endif
 
 #ifdef __OBJC__
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import <Foundation/Foundation.h>
 #else
 #import <Cocoa/Cocoa.h>
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)
 #endif
 
 #ifdef __cplusplus

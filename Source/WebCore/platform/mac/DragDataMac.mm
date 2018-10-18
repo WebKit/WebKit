@@ -37,7 +37,7 @@
 #import "RuntimeEnabledFeatures.h"
 #import "WebCoreNSURLExtras.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 #import <MobileCoreServices/MobileCoreServices.h>
 #endif
 
@@ -45,7 +45,7 @@ namespace WebCore {
 
 static inline String rtfPasteboardType()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     return String(kUTTypeRTF);
 #else
     return String(legacyRTFPasteboardType());
@@ -54,7 +54,7 @@ static inline String rtfPasteboardType()
 
 static inline String rtfdPasteboardType()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     return String(kUTTypeFlatRTFD);
 #else
     return String(legacyRTFDPasteboardType());
@@ -63,7 +63,7 @@ static inline String rtfdPasteboardType()
 
 static inline String stringPasteboardType()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     return String(kUTTypeText);
 #else
     return String(legacyStringPasteboardType());
@@ -72,7 +72,7 @@ static inline String stringPasteboardType()
 
 static inline String urlPasteboardType()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     return String(kUTTypeURL);
 #else
     return String(legacyURLPasteboardType());
@@ -81,7 +81,7 @@ static inline String urlPasteboardType()
 
 static inline String htmlPasteboardType()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     return String(kUTTypeHTML);
 #else
     return String(legacyHTMLPasteboardType());
@@ -90,7 +90,7 @@ static inline String htmlPasteboardType()
 
 static inline String colorPasteboardType()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     return String { UIColorPboardType };
 #else
     return String(legacyColorPasteboardType());
@@ -99,7 +99,7 @@ static inline String colorPasteboardType()
 
 static inline String pdfPasteboardType()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     return String(kUTTypePDF);
 #else
     return String(legacyPDFPasteboardType());
@@ -108,7 +108,7 @@ static inline String pdfPasteboardType()
 
 static inline String tiffPasteboardType()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     return String(kUTTypeTIFF);
 #else
     return String(legacyTIFFPasteboardType());
@@ -265,7 +265,7 @@ bool DragData::containsPromise() const
 
 bool DragData::containsURL(FilenameConversionPolicy filenamePolicy) const
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     UNUSED_PARAM(filenamePolicy);
     Vector<String> types;
     platformStrategies()->pasteboardStrategy()->getTypes(types, m_pasteboardName);

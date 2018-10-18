@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import <UIKit/UIAlertController.h>
 #import <UIKit/UIPopoverController.h>
@@ -57,4 +57,4 @@ typedef NS_ENUM(NSInteger, WKActionSheetPresentationStyle) {
 - (void)updatePositionInformation;
 @end
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

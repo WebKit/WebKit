@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED && PLATFORM(IOS)
+#if WK_API_ENABLED && PLATFORM(IOS_FAMILY)
 
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
@@ -267,4 +267,4 @@ TEST(WebKit, DuplicateGeolocationAuthorizationCallbackCalls)
 
 } // namespace TestWebKitAPI
 
-#endif // WK_API_ENABLED && PLATFORM(IOS)
+#endif // WK_API_ENABLED && PLATFORM(IOS_FAMILY)

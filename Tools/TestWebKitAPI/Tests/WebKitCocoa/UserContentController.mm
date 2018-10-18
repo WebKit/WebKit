@@ -259,7 +259,7 @@ TEST(WKUserContentController, ScriptMessageHandlerMultipleHandlerRemoval)
     EXPECT_WK_STREQ(@"PASS", (NSString *)[scriptMessages[0] body]);
 }
 
-#if !PLATFORM(IOS) // FIXME: hangs in the iOS simulator
+#if !PLATFORM(IOS_FAMILY) // FIXME: hangs in the iOS simulator
 TEST(WKUserContentController, ScriptMessageHandlerWithNavigation)
 {
     RetainPtr<ScriptMessageHandler> handler = adoptNS([[ScriptMessageHandler alloc] init]);

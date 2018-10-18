@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #include "ArgumentCoders.h"
 #include "InteractionInformationRequest.h"
@@ -89,4 +89,4 @@ struct InteractionInformationAtPosition {
 
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

@@ -162,7 +162,7 @@ Field* ObjcClass::fieldNamed(PropertyName propertyName, Instance* instance) cons
     CString jsName = name.ascii();
     RetainPtr<CFStringRef> fieldName = adoptCF(CFStringCreateWithCString(NULL, jsName.data(), kCFStringEncodingASCII));
     id targetObject = (static_cast<ObjcInstance*>(instance))->getObject();
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     IGNORE_WARNINGS_BEGIN("undeclared-selector")
     id attributes = [targetObject respondsToSelector:@selector(attributeKeys)] ? [targetObject performSelector:@selector(attributeKeys)] : nil;
     IGNORE_WARNINGS_END

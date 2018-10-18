@@ -29,7 +29,7 @@
 
 @interface TestRunnerWKWebView : WKWebView
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 @property (nonatomic, copy) void (^didStartFormControlInteractionCallback)(void);
 @property (nonatomic, copy) void (^didEndFormControlInteractionCallback)(void);

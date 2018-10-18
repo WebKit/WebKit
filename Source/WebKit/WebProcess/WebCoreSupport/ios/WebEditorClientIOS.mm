@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WebEditorClient.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "WebPage.h"
 #import <WebCore/DocumentFragment.h>
@@ -93,4 +93,4 @@ void WebEditorClient::overflowScrollPositionChanged()
 
 } // namespace WebKit
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS_FAMILY)

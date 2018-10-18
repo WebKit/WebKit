@@ -104,7 +104,7 @@ struct FrameState {
     std::optional<HTTPBody> httpBody;
 
     // FIXME: These should not be per frame.
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     WebCore::FloatRect exposedContentRect;
     WebCore::IntRect unobscuredContentRect;
     WebCore::FloatSize minimumLayoutSizeInScrollViewCoordinates;

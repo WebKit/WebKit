@@ -46,7 +46,7 @@ public:
 
     void disconnectImageElement() { m_imageElement = nullptr; }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     void windowSizeChanged();
     void imageClicked(int x, int y);
 #endif
@@ -59,7 +59,7 @@ private:
     LayoutSize imageSize();
 
     void createDocumentStructure();
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     void resizeImageToFit();
     void restoreImageSize();
     bool imageFitsInWindow();
@@ -73,7 +73,7 @@ private:
     // Whether enough of the image has been loaded to determine its size.
     bool m_imageSizeIsKnown;
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS_FAMILY)
     // Whether the image is shrunk to fit or not.
     bool m_didShrinkImage;
 #endif
