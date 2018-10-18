@@ -129,26 +129,10 @@ enum WebGLLoadPolicy {
     WebGLPendingCreation
 };
 
-enum class LockHistory : uint8_t {
-    Yes,
-    No
-};
-
-enum class LockBackForwardList : uint8_t {
-    Yes,
-    No
-};
-
-enum class AllowNavigationToInvalidURL : uint8_t {
-    Yes,
-    No
-};
-
-enum class HasInsecureContent : uint8_t {
-    Yes,
-    No,
-};
-
+enum class LockHistory : bool { No, Yes };
+enum class LockBackForwardList : bool { No, Yes };
+enum class AllowNavigationToInvalidURL : bool { No, Yes };
+enum class HasInsecureContent : bool { No, Yes };
 
 struct SystemPreviewInfo {
     IntRect systemPreviewRect;

@@ -1068,7 +1068,7 @@ void FrameLoader::provisionalLoadStarted()
 {
     if (m_stateMachine.firstLayoutDone())
         m_stateMachine.advanceTo(FrameLoaderStateMachine::CommittedFirstRealLoad);
-    m_frame.navigationScheduler().cancel(true);
+    m_frame.navigationScheduler().cancel(NewLoadInProgress::Yes);
     m_client.provisionalLoadStarted();
 
     if (m_frame.isMainFrame()) {
@@ -1592,7 +1592,7 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
         }
     }
 
-    m_frame.navigationScheduler().cancel(true);
+    m_frame.navigationScheduler().cancel(NewLoadInProgress::Yes);
 
     if (m_currentLoadShouldBeTreatedAsContinuingLoad) {
         continueLoadAfterNavigationPolicy(loader->request(), formState.get(), ShouldContinue::Yes, allowNavigationToInvalidURL);
@@ -1970,7 +1970,7 @@ void FrameLoader::commitProvisionalLoad()
     // the redirect in its -webView:willPerformClientRedirectToURL:delay:fireDate:forFrame:.  Since we are
     // just about to commit a new page, there cannot possibly be a pending redirect at this point.
     if (m_sentRedirectNotification)
-        clientRedirectCancelledOrFinished(false);
+        clientRedirectCancelledOrFinished(NewLoadInProgress::No);
     
     if (cachedPage && cachedPage->document()) {
 #if PLATFORM(IOS)
@@ -2158,14 +2158,14 @@ void FrameLoader::transitionToCommitted(CachedPage* cachedPage)
         m_stateMachine.advanceTo(FrameLoaderStateMachine::DisplayingInitialEmptyDocumentPostCommit);
 }
 
-void FrameLoader::clientRedirectCancelledOrFinished(bool cancelWithLoadInProgress)
+void FrameLoader::clientRedirectCancelledOrFinished(NewLoadInProgress newLoadInProgress)
 {
     // Note that -webView:didCancelClientRedirectForFrame: is called on the frame load delegate even if
     // the redirect succeeded.  We should either rename this API, or add a new method, like
     // -webView:didFinishClientRedirectForFrame:
     m_client.dispatchDidCancelClientRedirect();
 
-    if (!cancelWithLoadInProgress)
+    if (newLoadInProgress == NewLoadInProgress::No)
         m_quickRedirectComing = false;
 
     m_sentRedirectNotification = false;
@@ -2173,7 +2173,7 @@ void FrameLoader::clientRedirectCancelledOrFinished(bool cancelWithLoadInProgres
 
 void FrameLoader::clientRedirected(const URL& url, double seconds, WallTime fireDate, LockBackForwardList lockBackForwardList)
 {
-    m_client.dispatchWillPerformClientRedirect(url, seconds, fireDate);
+    m_client.dispatchWillPerformClientRedirect(url, seconds, fireDate, lockBackForwardList);
     
     // Remember that we sent a redirect notification to the frame load delegate so that when we commit
     // the next provisional load, we can send a corresponding -webView:didCancelClientRedirectForFrame:
@@ -3033,7 +3033,7 @@ void FrameLoader::receivedMainResourceError(const ResourceError& error)
         // not going to use this provisional resource, as it was cancelled, notify the frame load delegate that the redirect
         // has ended.
         if (m_sentRedirectNotification)
-            clientRedirectCancelledOrFinished(false);
+            clientRedirectCancelledOrFinished(NewLoadInProgress::No);
     }
 
     checkCompleted();
@@ -3289,7 +3289,7 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
         // need to report that the client redirect was cancelled.
         // FIXME: The client should be told about ignored non-quick redirects, too.
         if (m_quickRedirectComing)
-            clientRedirectCancelledOrFinished(false);
+            clientRedirectCancelledOrFinished(NewLoadInProgress::No);
 
         setPolicyDocumentLoader(nullptr);
         checkCompleted();

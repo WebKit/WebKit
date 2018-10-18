@@ -733,14 +733,6 @@ template<> struct EnumTraits<WebCore::ColorSpace> {
     >;
 };
 
-template<> struct EnumTraits<WebCore::HasInsecureContent> {
-    using values = EnumValues<
-        WebCore::HasInsecureContent,
-        WebCore::HasInsecureContent::No,
-        WebCore::HasInsecureContent::Yes
-    >;
-};
-
 template<> struct EnumTraits<WebCore::AutoplayEvent> {
     using values = EnumValues<
         WebCore::AutoplayEvent,
@@ -748,14 +740,6 @@ template<> struct EnumTraits<WebCore::AutoplayEvent> {
         WebCore::AutoplayEvent::DidPlayMediaPreventedFromPlaying,
         WebCore::AutoplayEvent::DidAutoplayMediaPastThresholdWithoutUserInterference,
         WebCore::AutoplayEvent::UserDidInterfereWithPlayback
-    >;
-};
-
-template<> struct EnumTraits<WebCore::ShouldSample> {
-    using values = EnumValues<
-        WebCore::ShouldSample,
-        WebCore::ShouldSample::No,
-        WebCore::ShouldSample::Yes
     >;
 };
 
@@ -805,14 +789,6 @@ template<> struct EnumTraits<WebCore::MediaSelectionOption::Type> {
         WebCore::MediaSelectionOption::Type::Regular,
         WebCore::MediaSelectionOption::Type::LegibleOff,
         WebCore::MediaSelectionOption::Type::LegibleAuto
-    >;
-};
-
-template <> struct EnumTraits<WebCore::StoredCredentialsPolicy> {
-    using values = EnumValues<
-        WebCore::StoredCredentialsPolicy,
-        WebCore::StoredCredentialsPolicy::DoNotUse,
-        WebCore::StoredCredentialsPolicy::Use
     >;
 };
 

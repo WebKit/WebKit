@@ -79,7 +79,7 @@ messages -> NetworkProcess LegacyReceiver {
 
     WriteBlobToFilePath(WebCore::URL blobURL, String path, WebKit::SandboxExtension::Handle handle, uint64_t callbackID)
 
-    PreconnectTo(WebCore::URL url, enum:uint8_t WebCore::StoredCredentialsPolicy storedCredentialsPolicy);
+    PreconnectTo(WebCore::URL url, enum:bool WebCore::StoredCredentialsPolicy storedCredentialsPolicy);
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     UpdatePrevalentDomainsToBlockCookiesFor(PAL::SessionID sessionID, Vector<String> domainsToBlock, bool shouldClearFirst, uint64_t contextId)

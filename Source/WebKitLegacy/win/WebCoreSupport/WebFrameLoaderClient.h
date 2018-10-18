@@ -85,7 +85,7 @@ public:
     void dispatchDidDispatchOnloadEvents() override;
     void dispatchDidReceiveServerRedirectForProvisionalLoad() override;
     void dispatchDidCancelClientRedirect() override;
-    void dispatchWillPerformClientRedirect(const WebCore::URL&, double interval, WallTime fireDate) override;
+    void dispatchWillPerformClientRedirect(const WebCore::URL&, double interval, WallTime fireDate, WebCore::LockBackForwardList) override;
     void dispatchDidChangeLocationWithinPage() override;
     void dispatchDidPushStateWithinPage() override;
     void dispatchDidReplaceStateWithinPage() override;

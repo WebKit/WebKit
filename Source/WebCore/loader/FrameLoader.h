@@ -83,6 +83,7 @@ class SharedBuffer;
 class SubframeLoader;
 class SubstituteData;
 
+enum class NewLoadInProgress : bool;
 enum class ShouldContinue;
 enum class ShouldTreatAsContinuingLoad : bool;
 
@@ -280,7 +281,7 @@ public:
     void completed();
     bool allAncestorsAreComplete() const; // including this
     void clientRedirected(const URL&, double delay, WallTime fireDate, LockBackForwardList);
-    void clientRedirectCancelledOrFinished(bool cancelWithLoadInProgress);
+    void clientRedirectCancelledOrFinished(NewLoadInProgress);
 
     WEBCORE_EXPORT void setOriginalURLForDownloadRequest(ResourceRequest&);
 

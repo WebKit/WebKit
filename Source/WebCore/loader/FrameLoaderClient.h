@@ -103,6 +103,7 @@ class SubstituteData;
 class URL;
 class Widget;
 
+enum class LockBackForwardList : bool;
 enum class PolicyDecisionMode;
 enum class ShouldSkipSafeBrowsingCheck : bool;
 
@@ -164,7 +165,7 @@ public:
     virtual void dispatchDidReceiveServerRedirectForProvisionalLoad() = 0;
     virtual void dispatchDidChangeProvisionalURL() { }
     virtual void dispatchDidCancelClientRedirect() = 0;
-    virtual void dispatchWillPerformClientRedirect(const URL&, double interval, WallTime fireDate) = 0;
+    virtual void dispatchWillPerformClientRedirect(const URL&, double interval, WallTime fireDate, LockBackForwardList) = 0;
     virtual void dispatchDidChangeMainDocument() { }
     virtual void dispatchWillChangeDocument(const URL&, const URL&) { }
     virtual void dispatchDidNavigateWithinPage() { }

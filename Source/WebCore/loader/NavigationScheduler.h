@@ -43,6 +43,8 @@ class ScheduledNavigation;
 class SecurityOrigin;
 class URL;
 
+enum class NewLoadInProgress : bool { No, Yes };
+    
 class NavigationScheduler {
 public:
     explicit NavigationScheduler(Frame&);
@@ -60,7 +62,7 @@ public:
 
     void startTimer();
 
-    void cancel(bool newLoadInProgress = false);
+    void cancel(NewLoadInProgress = NewLoadInProgress::No);
     void clear();
 
 private:

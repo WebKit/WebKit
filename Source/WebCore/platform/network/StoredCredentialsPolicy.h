@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-enum class StoredCredentialsPolicy : uint8_t {
+enum class StoredCredentialsPolicy : bool {
     DoNotUse,
     Use,
 };

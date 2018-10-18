@@ -1,3 +1,21 @@
+2018-10-18  Alex Christensen  <achristensen@webkit.org>
+
+        Clean up FrameLoader two-state enums
+        https://bugs.webkit.org/show_bug.cgi?id=190731
+
+        Reviewed by Chris Dumez.
+
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * Shared/WebCoreArgumentCoders.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::willPerformClientRedirectForFrame):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchWillPerformClientRedirect):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
 2018-10-18  Youenn Fablet  <youenn@apple.com>
 
         Handle MDNS resolution of candidates through libwebrtc directly
