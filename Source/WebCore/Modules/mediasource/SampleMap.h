@@ -79,6 +79,7 @@ public:
     typedef MapType::const_iterator const_iterator;
     typedef MapType::reverse_iterator reverse_iterator;
     typedef MapType::const_reverse_iterator const_reverse_iterator;
+    typedef std::pair<iterator, iterator> iterator_range;
     typedef std::pair<reverse_iterator, reverse_iterator> reverse_iterator_range;
     typedef MapType::value_type value_type;
 
@@ -98,6 +99,7 @@ public:
     WEBCORE_EXPORT iterator findSyncSampleAfterPresentationTime(const MediaTime&, const MediaTime& threshold = MediaTime::positiveInfiniteTime());
     WEBCORE_EXPORT iterator findSyncSampleAfterDecodeIterator(iterator);
     WEBCORE_EXPORT reverse_iterator_range findDependentSamples(MediaSample*);
+    WEBCORE_EXPORT iterator_range findSamplesBetweenDecodeKeys(const KeyType&, const KeyType&);
 
 private:
     MapType m_samples;

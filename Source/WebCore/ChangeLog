@@ -1,3 +1,25 @@
+2018-10-18  Jer Noble  <jer.noble@apple.com>
+
+        Safari is not able to adapt between H264 streams with EditList and without EditList
+        https://bugs.webkit.org/show_bug.cgi?id=190638
+        <rdar://problem/45342208>
+
+        Reviewed by Eric Carlson.
+
+        Test: media/media-source/media-source-append-overlapping-dts.html
+
+        The MSE frame replacement algorithm does not take decode timestamps into account; this can
+        lead to situations where the replacement algorithm may leave in place frames where the 
+        presentationTimestamp is less than the replacement frame, but whose decodeTimestamp is
+        after the replacement frame. When re-enqueuing these frames, they may cause a decode error
+        if they break the group-of-pictures sequence of the replaced range.
+
+        * Modules/mediasource/SampleMap.cpp:
+        (WebCore::DecodeOrderSampleMap::findSamplesBetweenDecodeKeys):
+        * Modules/mediasource/SampleMap.h:
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveSample):
+
 2018-10-18  Per Arne Vollan  <pvollan@apple.com>
 
         [WebVTT] Region parameter and value should be separated by ':'

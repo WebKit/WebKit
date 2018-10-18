@@ -1,3 +1,14 @@
+2018-10-18  Jer Noble  <jer.noble@apple.com>
+
+        Safari is not able to adapt between H264 streams with EditList and without EditList
+        https://bugs.webkit.org/show_bug.cgi?id=190638
+        <rdar://problem/45342208>
+
+        Reviewed by Eric Carlson.
+
+        * media/media-source/media-source-append-overlapping-dts-expected.txt: Added.
+        * media/media-source/media-source-append-overlapping-dts.html: Added.
+
 2018-10-18  Per Arne Vollan  <pvollan@apple.com>
 
         [WebVTT] Region parameter and value should be separated by ':'
