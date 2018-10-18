@@ -1,3 +1,30 @@
+2018-10-18  Saam Barati  <sbarati@apple.com>
+
+        Make JetStream 2
+        https://bugs.webkit.org/show_bug.cgi?id=187829
+
+        Rubber-stamped by Mark Lam.
+
+        This patch checks in the new JetStream 2 benchmark. JetStream 2 is
+        a new JavaScript and Web Assembly benchmark. JetStream 2's goal
+        is to measure the startup, worst case, and peak throughput performance
+        of the JavaScript engine. JetStream 2 incorporates these previous
+        benchmarks:
+        - JetStream
+        - ARES-6
+        - Kraken
+        - Web Tooling Benchmark
+        - WasmBench
+        - RexBench
+        
+        JetStream 2 also adds some new benchmarks:
+        - Two tests emphasizing web worker performance.
+        - One test emphasizing Promise, async iteration, and DataView performance.
+        - Two new code load tests.
+        - WSL: a test measuring all kinds of things, especially emphasizing exception performance.
+
+        * JetStream2: Added.
+
 2018-10-02  Chris Dumez  <cdumez@apple.com>
 
         Regression(r236613): Parser/html-parser.html performance test is failing
