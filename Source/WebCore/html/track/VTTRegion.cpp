@@ -170,8 +170,8 @@ void VTTRegion::setRegionSettings(const String& inputString)
         // Scan the name part.
         RegionSetting name = scanSettingName(input);
 
-        // Verify that we're looking at a '='.
-        if (name == None || !input.scan('=')) {
+        // Verify that we're looking at a ':'.
+        if (name == None || !input.scan(':')) {
             input.skipUntil<isHTMLSpace<UChar>>();
             continue;
         }

@@ -1,28 +1,28 @@
 WEBVTT FILE
 
 REGION
-id=region_without_settings
+id:region_without_settings
 
 REGION
-id=region_with_all_settings
-width=32%
-lines=5
-regionanchor=41%,20%
-viewportanchor=31%,84%
-scroll=up
+id:region_with_all_settings
+width:32%
+lines:5
+regionanchor:41%,20%
+viewportanchor:31%,84%
+scroll:up
 
 REGION
-id=region_floating_point_anchor
-regionanchor=41.133%,20.42%
-viewportanchor=32.33%,32.44%
+id:region_floating_point_anchor
+regionanchor:41.133%,20.42%
+viewportanchor:32.33%,32.44%
 
 REGION
-id=not_unique_id
-width=42%
+id:not_unique_id
+width:42%
 
 REGION
-id=not_unique_id
-width=67%
+id:not_unique_id
+width:67%
 
 REGION
 invalid_settings values but region still created

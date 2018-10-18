@@ -1,3 +1,17 @@
+2018-10-18  Per Arne Vollan  <pvollan@apple.com>
+
+        [WebVTT] Region parameter and value should be separated by ':'
+        https://bugs.webkit.org/show_bug.cgi?id=190735
+
+        Reviewed by Eric Carlson.
+
+        This is specified in https://w3c.github.io/webvtt/#region-settings.
+
+        No new tests. Modified existing tests.
+
+        * html/track/VTTRegion.cpp:
+        (WebCore::VTTRegion::setRegionSettings):
+
 2018-10-18  Jer Noble  <jer.noble@apple.com>
 
         Add support for MediaKeyEncryptionScheme
