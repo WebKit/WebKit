@@ -39,9 +39,18 @@ public:
         return adoptRef(*new CSSPaintImageValue(name));
     }
 
-    bool equals(const CSSPaintImageValue& other) const { return m_name == other.m_name; }
+    RefPtr<Image> image(RenderElement&, const FloatSize&);
 
+    bool equals(const CSSPaintImageValue& other) const { return m_name == other.m_name; }
     String customCSSText() const;
+
+    bool isFixedSize() const { return false; }
+    FloatSize fixedSize(const RenderElement&) const { return FloatSize(); }
+
+    bool isPending() const { return false; }
+    bool knownToBeOpaque(const RenderElement&) const { return false; }
+
+    void loadSubimages(CachedResourceLoader&, const ResourceLoaderOptions&) { }
 
 private:
     CSSPaintImageValue(const String& name)

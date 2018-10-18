@@ -1,3 +1,40 @@
+2018-10-18  Justin Michaud  <justin_michaud@apple.com>
+
+        Add new image type for CSS painting API
+        https://bugs.webkit.org/show_bug.cgi?id=190697
+
+        Reviewed by Dean Jackson.
+
+        Add a new image type for the CSS painting API, and hook it up so it can be drawn.
+        For now, it uses a WebGL rendering context from OfflineCanvas because that was
+        easy to hook up. The spec actually calls for a RenderingContext2D, which can be
+        handled in another patch.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSImageGeneratorValue.cpp:
+        (WebCore::CSSImageGeneratorValue::image):
+        (WebCore::CSSImageGeneratorValue::isFixedSize const):
+        (WebCore::CSSImageGeneratorValue::fixedSize):
+        (WebCore::CSSImageGeneratorValue::isPending const):
+        (WebCore::CSSImageGeneratorValue::knownToBeOpaque const):
+        (WebCore::CSSImageGeneratorValue::loadSubimages):
+        * css/CSSPaintCallback.h:
+        * css/CSSPaintCallback.idl:
+        * css/CSSPaintImageValue.cpp:
+        (WebCore::CSSPaintImageValue::image):
+        * css/CSSPaintImageValue.h:
+        * platform/graphics/CustomPaintImage.cpp: Added.
+        (WebCore::CustomPaintImage::CustomPaintImage):
+        (WebCore::CustomPaintImage::doCustomPaint):
+        (WebCore::CustomPaintImage::draw):
+        (WebCore::CustomPaintImage::drawPattern):
+        * platform/graphics/CustomPaintImage.h: Copied from Source/WebCore/css/CSSPaintCallback.h.
+        * platform/graphics/Image.h:
+        (WebCore::Image::isCustomPaintImage const):
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/cairo/CairoOperations.cpp:
+
 2018-10-18  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r237272.

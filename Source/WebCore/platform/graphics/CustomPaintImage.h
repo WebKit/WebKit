@@ -27,23 +27,35 @@
 
 #if ENABLE(CSS_PAINTING_API)
 
-#include "ActiveDOMCallback.h"
-#include "CallbackResult.h"
-#include <wtf/RefCounted.h>
+#include "CSSPaintWorkletGlobalScope.h"
+#include "GeneratedImage.h"
 
 namespace WebCore {
-class WebGLRenderingContext;
 
-class CSSPaintCallback : public RefCounted<CSSPaintCallback>, public ActiveDOMCallback {
+class ImageBuffer;
+
+class CustomPaintImage final : public GeneratedImage {
 public:
-    using ActiveDOMCallback::ActiveDOMCallback;
-
-    virtual CallbackResult<void> handleEvent(WebGLRenderingContext&) = 0;
-
-    virtual ~CSSPaintCallback()
+    static Ref<CustomPaintImage> create(const CSSPaintWorkletGlobalScope::PaintDefinition& definition, const FloatSize& size)
     {
+        return adoptRef(*new CustomPaintImage(definition, size));
     }
+
+    virtual ~CustomPaintImage();
+    bool isCustomPaintImage() const override { return true; }
+
+private:
+    CustomPaintImage(const CSSPaintWorkletGlobalScope::PaintDefinition&, const FloatSize&);
+
+    ImageDrawResult doCustomPaint(GraphicsContext&, const FloatSize&);
+
+    ImageDrawResult draw(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator, BlendMode, DecodingMode, ImageOrientationDescription) final;
+    void drawPattern(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, CompositeOperator, BlendMode) final;
+
+    Ref<CSSPaintCallback> m_paintCallback;
 };
 
-} // namespace WebCore
+}
+
+SPECIALIZE_TYPE_TRAITS_IMAGE(CustomPaintImage)
 #endif

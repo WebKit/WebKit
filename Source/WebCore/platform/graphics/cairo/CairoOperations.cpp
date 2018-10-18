@@ -35,6 +35,7 @@
 
 #if USE(CAIRO)
 
+#include "CairoUtilities.h"
 #include "DrawErrorUnderline.h"
 #include "FloatConversion.h"
 #include "FloatRect.h"

@@ -29,6 +29,9 @@
 
 #if ENABLE(CSS_PAINTING_API)
 
+#include "CSSPaintWorkletGlobalScope.h"
+#include "CustomPaintImage.h"
+#include "RenderElement.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -41,6 +44,18 @@ String CSSPaintImageValue::customCSSText() const
     // FIXME: print args.
     result.append(')');
     return result.toString();
+}
+
+RefPtr<Image> CSSPaintImageValue::image(RenderElement& renderElement, const FloatSize& size)
+{
+    if (size.isEmpty())
+        return nullptr;
+    auto& selectedGlobalScope = renderElement.document().ensureCSSPaintWorkletGlobalScope();
+    auto* registration = selectedGlobalScope.paintDefinitionMap().get(m_name);
+
+    if (!registration)
+        return nullptr;
+    return CustomPaintImage::create(*registration, size);
 }
 
 } // namespace WebCore

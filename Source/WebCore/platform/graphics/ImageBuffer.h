@@ -156,6 +156,7 @@ private:
     friend class CrossfadeGeneratedImage;
     friend class NamedImageGeneratedImage;
     friend class GradientImage;
+    friend class CustomPaintImage;
 
 private:
     ImageBufferData m_data;

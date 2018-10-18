@@ -33,6 +33,7 @@
 #include "CSSGradientValue.h"
 #include "CSSImageValue.h"
 #include "CSSNamedImageValue.h"
+#include "CSSPaintImageValue.h"
 #include "GeneratedImage.h"
 #include "HTMLCanvasElement.h"
 #include "InspectorInstrumentation.h"
@@ -152,7 +153,7 @@ RefPtr<Image> CSSImageGeneratorValue::image(RenderElement& renderer, const Float
         return downcast<CSSConicGradientValue>(*this).image(renderer, size);
 #if ENABLE(CSS_PAINTING_API)
     case PaintImageClass:
-        return nullptr;
+        return downcast<CSSPaintImageValue>(*this).image(renderer, size);
 #endif
     default:
         ASSERT_NOT_REACHED();
@@ -179,7 +180,7 @@ bool CSSImageGeneratorValue::isFixedSize() const
         return downcast<CSSConicGradientValue>(*this).isFixedSize();
 #if ENABLE(CSS_PAINTING_API)
     case PaintImageClass:
-        return false;
+        return downcast<CSSPaintImageValue>(*this).isFixedSize();
 #endif
     default:
         ASSERT_NOT_REACHED();
@@ -204,7 +205,7 @@ FloatSize CSSImageGeneratorValue::fixedSize(const RenderElement& renderer)
         return downcast<CSSConicGradientValue>(*this).fixedSize(renderer);
 #if ENABLE(CSS_PAINTING_API)
     case PaintImageClass:
-        return FloatSize();
+        return downcast<CSSPaintImageValue>(*this).fixedSize(renderer);
 #endif
     default:
         ASSERT_NOT_REACHED();
@@ -231,7 +232,7 @@ bool CSSImageGeneratorValue::isPending() const
         return downcast<CSSConicGradientValue>(*this).isPending();
 #if ENABLE(CSS_PAINTING_API)
     case PaintImageClass:
-        return false;
+        return downcast<CSSPaintImageValue>(*this).isPending();
 #endif
     default:
         ASSERT_NOT_REACHED();
@@ -258,7 +259,7 @@ bool CSSImageGeneratorValue::knownToBeOpaque(const RenderElement& renderer) cons
         return downcast<CSSConicGradientValue>(*this).knownToBeOpaque(renderer);
 #if ENABLE(CSS_PAINTING_API)
     case PaintImageClass:
-        return false;
+        return downcast<CSSPaintImageValue>(*this).knownToBeOpaque(renderer);
 #endif
     default:
         ASSERT_NOT_REACHED();
@@ -289,6 +290,7 @@ void CSSImageGeneratorValue::loadSubimages(CachedResourceLoader& cachedResourceL
         break;
 #if ENABLE(CSS_PAINTING_API)
     case PaintImageClass:
+        downcast<CSSPaintImageValue>(*this).loadSubimages(cachedResourceLoader, options);
         break;
 #endif
     default:

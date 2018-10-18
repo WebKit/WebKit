@@ -26,4 +26,4 @@
 [
     EnabledAtRuntime=CSSPaintingAPI,
     Conditional=CSS_PAINTING_API,
-] callback CSSPaintCallback = void ();
+] callback CSSPaintCallback = void (WebGLRenderingContext context);
