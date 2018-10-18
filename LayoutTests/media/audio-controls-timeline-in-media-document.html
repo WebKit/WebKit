@@ -13,13 +13,12 @@ function timeLineValue()
     return timeline.value;
 }
 
-function iframeLoaded()
+async function iframeLoaded()
 {
     video = iframe.contentDocument.querySelector("video");
-    video.addEventListener("timeupdate", function() {
-        consoleWrite("EVENT(timeupdate)");
-        testAndEnd("timeLineValue() > 0");
-    });
+    await waitFor(video, 'timeupdate');
+    await testExpectedEventually("timeLineValue()", 0, ">");
+    endTest();
 }
 
 var video;

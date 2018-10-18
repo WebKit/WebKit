@@ -1,6 +1,6 @@
 Pass if the timeline of audio in a media document is properly updated during playback.
 
 EVENT(timeupdate)
-TEST(timeLineValue() > 0) OK
+EXPECTED (timeLineValue() > '0') OK
 END OF TEST
 

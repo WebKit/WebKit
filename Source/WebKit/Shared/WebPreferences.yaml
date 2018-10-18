@@ -452,7 +452,7 @@ HiddenPageCSSAnimationSuspensionEnabled:
 
 LowPowerVideoAudioBufferSizeEnabled:
   type: bool
-  defaultValue: false
+  defaultValue: true
   webcoreBinding: DeprecatedGlobalSettings
 
 ThreadedScrollingEnabled:

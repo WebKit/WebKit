@@ -1,5 +1,16 @@
 2018-10-18  Jer Noble  <jer.noble@apple.com>
 
+        Enable WKPreferences._lowPowerVideoAudioBufferSizeEnabled by default
+        https://bugs.webkit.org/show_bug.cgi?id=190315
+        <rdar://problem/45047807>
+
+        Reviewed by Eric Carlson.
+
+        * media/audio-controls-timeline-in-media-document-expected.txt:
+        * media/audio-controls-timeline-in-media-document.html:
+
+2018-10-18  Jer Noble  <jer.noble@apple.com>
+
         Safari is not able to adapt between H264 streams with EditList and without EditList
         https://bugs.webkit.org/show_bug.cgi?id=190638
         <rdar://problem/45342208>

@@ -1,3 +1,15 @@
+2018-10-18  Jer Noble  <jer.noble@apple.com>
+
+        Enable WKPreferences._lowPowerVideoAudioBufferSizeEnabled by default
+        https://bugs.webkit.org/show_bug.cgi?id=190315
+
+        Reviewed by Eric Carlson.
+
+        This preference is disabled for WebKitLegacy because it can interact poorly with clients' own use of audio.
+        It can be enabled for WebKit since it will only affect the WebProcess and not the client process.
+
+        * Shared/WebPreferences.yaml:
+
 2018-10-18  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Allow ports to optionally do screen capture in the UI process
