@@ -35,6 +35,7 @@
 #include "RealtimeMediaSourceCenter.h"
 #include "RealtimeMediaSourceSettings.h"
 #include "RealtimeVideoUtilities.h"
+#include "RemoteVideoSample.h"
 #include "Timer.h"
 #include <CoreMedia/CMSync.h>
 #include <mach/mach_time.h>
@@ -172,22 +173,44 @@ void DisplayCaptureSourceCocoa::emitFrame()
         m_imageTransferSession = ImageTransferSessionVT::create(preferedPixelBufferFormat());
 
     auto sampleTime = MediaTime::createWithDouble((elapsedTime() + 100_ms).seconds());
+
     auto frame = generateFrame();
-    IntSize imageSize;
+    auto imageSize = WTF::switchOn(frame,
+        [](RetainPtr<IOSurfaceRef> surface) -> IntSize {
+            if (!surface)
+                return { };
+
+            return IntSize(IOSurfaceGetWidth(surface.get()), IOSurfaceGetHeight(surface.get()));
+        },
+        [](RetainPtr<CGImageRef> image) -> IntSize {
+            if (!image)
+                return { };
+
+            return IntSize(CGImageGetWidth(image.get()), CGImageGetHeight(image.get()));
+        }
+    );
+
+    ASSERT(!imageSize.isEmpty());
+    if (imageSize.isEmpty())
+        return;
+
+    if (m_intrinsicSize != imageSize)
+        setIntrinsicSize(imageSize);
+
+    auto mediaSampleSize = isRemote() ? imageSize : frameSize();
+
     RefPtr<MediaSample> sample = WTF::switchOn(frame,
-        [this, sampleTime, &imageSize](RetainPtr<IOSurfaceRef> surface) -> RefPtr<MediaSample> {
+        [this, sampleTime, mediaSampleSize](RetainPtr<IOSurfaceRef> surface) -> RefPtr<MediaSample> {
             if (!surface)
                 return nullptr;
 
-            imageSize = IntSize(IOSurfaceGetWidth(surface.get()), IOSurfaceGetHeight(surface.get()));
-            return m_imageTransferSession->createMediaSample(surface.get(), sampleTime, imageSize);
+            return m_imageTransferSession->createMediaSample(surface.get(), sampleTime, mediaSampleSize);
         },
-        [this, sampleTime, &imageSize](RetainPtr<CGImageRef> image) -> RefPtr<MediaSample> {
+        [this, sampleTime, mediaSampleSize](RetainPtr<CGImageRef> image) -> RefPtr<MediaSample> {
             if (!image)
                 return nullptr;
 
-            imageSize = IntSize(CGImageGetWidth(image.get()), CGImageGetHeight(image.get()));
-            return m_imageTransferSession->createMediaSample(image.get(), sampleTime, imageSize);
+            return m_imageTransferSession->createMediaSample(image.get(), sampleTime, mediaSampleSize);
         }
     );
 
@@ -196,8 +219,13 @@ void DisplayCaptureSourceCocoa::emitFrame()
         return;
     }
 
-    if (m_intrinsicSize != imageSize)
-        setIntrinsicSize(imageSize);
+    if (isRemote()) {
+        auto remoteSample = RemoteVideoSample::create(WTFMove(*sample));
+        if (remoteSample)
+            remoteVideoSampleAvailable(WTFMove(*remoteSample));
+
+        return;
+    }
 
     videoSampleAvailable(*sample.get());
 #endif

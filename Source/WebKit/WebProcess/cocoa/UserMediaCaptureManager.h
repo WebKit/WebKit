@@ -36,6 +36,7 @@
 
 namespace WebCore {
 class CAAudioStreamDescription;
+class RemoteVideoSample;
 }
 
 namespace WebKit {
@@ -43,7 +44,7 @@ namespace WebKit {
 class CrossProcessRealtimeAudioSource;
 class WebProcess;
 
-class UserMediaCaptureManager : public WebProcessSupplement, public IPC::MessageReceiver, public WebCore::AudioCaptureFactory, public WebCore::VideoCaptureFactory {
+class UserMediaCaptureManager : public WebProcessSupplement, public IPC::MessageReceiver, public WebCore::AudioCaptureFactory, public WebCore::VideoCaptureFactory, public WebCore::DisplayCaptureFactory {
 public:
     explicit UserMediaCaptureManager(WebProcess&);
     ~UserMediaCaptureManager();
@@ -55,9 +56,10 @@ private:
     void initialize(const WebProcessCreationParameters&) final;
 
     // WebCore::RealtimeMediaSource factories
-    WebCore::CaptureSourceOrError createAudioCaptureSource(const WebCore::CaptureDevice& device, String&& hashSalt, const WebCore::MediaConstraints* constraints) final { return createCaptureSource(device, WebCore::RealtimeMediaSource::Type::Audio, WTFMove(hashSalt), constraints); }
-    WebCore::CaptureSourceOrError createVideoCaptureSource(const WebCore::CaptureDevice& device, String&& hashSalt, const WebCore::MediaConstraints* constraints) final { return createCaptureSource(device, WebCore::RealtimeMediaSource::Type::Video, WTFMove(hashSalt), constraints); }
-    WebCore::CaptureSourceOrError createCaptureSource(const WebCore::CaptureDevice&, WebCore::RealtimeMediaSource::Type, String&&, const WebCore::MediaConstraints*);
+    WebCore::CaptureSourceOrError createAudioCaptureSource(const WebCore::CaptureDevice& device, String&& hashSalt, const WebCore::MediaConstraints* constraints) final { return createCaptureSource(device, WTFMove(hashSalt), constraints); }
+    WebCore::CaptureSourceOrError createVideoCaptureSource(const WebCore::CaptureDevice& device, String&& hashSalt, const WebCore::MediaConstraints* constraints) final { return createCaptureSource(device, WTFMove(hashSalt), constraints); }
+    WebCore::CaptureSourceOrError createDisplayCaptureSource(const WebCore::CaptureDevice& device, const WebCore::MediaConstraints* constraints) final  { return createCaptureSource(device, { }, constraints); }
+    WebCore::CaptureSourceOrError createCaptureSource(const WebCore::CaptureDevice&, String&&, const WebCore::MediaConstraints*);
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -70,6 +72,7 @@ private:
     void storageChanged(uint64_t id, const SharedMemory::Handle&, const WebCore::CAAudioStreamDescription&, uint64_t numberOfFrames);
     void ringBufferFrameBoundsChanged(uint64_t id, uint64_t startFrame, uint64_t endFrame);
     void audioSamplesAvailable(uint64_t id, MediaTime, uint64_t numberOfFrames, uint64_t startFrame, uint64_t endFrame);
+    void remoteVideoSampleAvailable(uint64_t id, WebCore::RemoteVideoSample&&);
 
     void startProducingData(uint64_t);
     void stopProducingData(uint64_t);
@@ -85,6 +88,6 @@ private:
     WebProcess& m_process;
 };
 
-}
+} // namespace WebKit
 
 #endif

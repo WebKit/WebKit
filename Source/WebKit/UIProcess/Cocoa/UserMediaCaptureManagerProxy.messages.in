@@ -1,4 +1,4 @@
-# Copyright (C) 2017 Apple Inc. All rights reserved.
+# Copyright (C) 2017-2018 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -24,7 +24,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 messages -> UserMediaCaptureManagerProxy {
-    CreateMediaSourceForCaptureDeviceWithConstraints(uint64_t id, WebCore::CaptureDevice device, WebCore::RealtimeMediaSource::Type type, String hashSalt, struct WebCore::MediaConstraints constraints) -> (bool success, String invalidConstraints, WebCore::RealtimeMediaSourceSettings settings)
+CreateMediaSourceForCaptureDeviceWithConstraints(uint64_t id, WebCore::CaptureDevice device, String hashSalt, struct WebCore::MediaConstraints constraints) -> (bool success, String invalidConstraints, WebCore::RealtimeMediaSourceSettings settings)
     StartProducingData(uint64_t id)
     StopProducingData(uint64_t id)
     Capabilities(uint64_t id) -> (WebCore::RealtimeMediaSourceCapabilities capabilities)

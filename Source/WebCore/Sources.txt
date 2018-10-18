@@ -1668,6 +1668,7 @@ platform/graphics/PathUtilities.cpp
 platform/graphics/Pattern.cpp
 platform/graphics/PlatformTimeRanges.cpp
 platform/graphics/Region.cpp
+platform/graphics/RemoteVideoSample.cpp
 platform/graphics/RoundedRect.cpp
 platform/graphics/ShadowBlur.cpp
 platform/graphics/StringTruncator.cpp

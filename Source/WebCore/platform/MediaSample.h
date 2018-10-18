@@ -93,6 +93,7 @@ public:
     };
     virtual VideoRotation videoRotation() const { return VideoRotation::None; }
     virtual bool videoMirrored() const { return false; }
+    virtual uint32_t videoPixelFormat() const { return 0; }
 
     bool isSync() const { return flags() & IsSync; }
     bool isNonDisplaying() const { return flags() & IsNonDisplaying; }

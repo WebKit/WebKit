@@ -1,3 +1,52 @@
+2018-10-18  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Allow ports to optionally do screen capture in the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=190728
+        <rdar://problem/45376824>
+
+        Reviewed by Jer Noble and Tim Horton.
+
+        No new tests, covered by existing tests.
+
+        * Sources.txt: Add RemoteVideoSample.cpp.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * platform/MediaSample.h:
+        (WebCore::MediaSample::videoPixelFormat const):
+
+        * platform/graphics/RemoteVideoSample.cpp: Added.
+        (WebCore::RemoteVideoSample::~RemoteVideoSample):
+        (WebCore::RemoteVideoSample::create):
+        (WebCore::RemoteVideoSample::RemoteVideoSample):
+        (WebCore::RemoteVideoSample::surface):
+        * platform/graphics/RemoteVideoSample.h: Added.
+        (WebCore::RemoteVideoSample::time const):
+        (WebCore::RemoteVideoSample::videoFormat const):
+        (WebCore::RemoteVideoSample::size const):
+        (WebCore::RemoteVideoSample::encode const):
+        (WebCore::RemoteVideoSample::decode):
+        * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.h:
+        * platform/graphics/cv/ImageTransferSessionVT.h:
+
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::remoteVideoSampleAvailable): Call observers.
+        * platform/mediastream/RealtimeMediaSource.h:
+
+        * platform/mediastream/RealtimeVideoSource.cpp:
+        (WebCore::RealtimeVideoSource::dispatchMediaSampleToObservers): Dispatch remote samples without
+        resizing, resize local samples if necessary.
+        * platform/mediastream/RealtimeVideoSource.h:
+
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::captureOutputDidOutputSampleBufferFromConnection): Don't resize
+        samples, it will be done in the base class if necessary.
+
+        * platform/mediastream/mac/DisplayCaptureSourceCocoa.cpp:
+        (WebCore::DisplayCaptureSourceCocoa::emitFrame): Don't resize samples when running in the UI
+        process, it will be done in the web process.
+
+        * platform/mediastream/mac/RealtimeOutgoingVideoSourceCocoa.cpp: Remove unneeded include.
+
 2018-10-18  Jer Noble  <jer.noble@apple.com>
 
         Safari is not able to adapt between H264 streams with EditList and without EditList
