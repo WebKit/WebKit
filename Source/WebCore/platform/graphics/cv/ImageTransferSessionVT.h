@@ -52,7 +52,7 @@ public:
     RefPtr<MediaSample> createMediaSample(CMSampleBufferRef, const IntSize&, MediaSample::VideoRotation = MediaSample::VideoRotation::None, bool mirrored = false);
 
 #if HAVE(IOSURFACE) && !PLATFORM(IOSMAC)
-    WEBCORE_EXPORT RefPtr<MediaSample> createMediaSample(IOSurfaceRef, const MediaTime&, const IntSize&, MediaSample::VideoRotation = MediaSample::VideoRotation::None, bool mirrored = false);
+    RefPtr<MediaSample> createMediaSample(IOSurfaceRef, const MediaTime&, const IntSize&, MediaSample::VideoRotation = MediaSample::VideoRotation::None, bool mirrored = false);
 #endif
 
 private:

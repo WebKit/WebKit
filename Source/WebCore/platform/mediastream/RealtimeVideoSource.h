@@ -37,8 +37,6 @@
 
 namespace WebCore {
 
-class ImageTransferSessionVT;
-
 class RealtimeVideoSource : public RealtimeMediaSource {
 public:
     virtual ~RealtimeVideoSource();
@@ -85,9 +83,6 @@ private:
     Deque<double> m_observedFrameTimeStamps;
     double m_observedFrameRate { 0 };
     IntSize m_defaultSize;
-#if PLATFORM(COCOA)
-    std::unique_ptr<ImageTransferSessionVT> m_imageTransferSession;
-#endif
 };
 
 } // namespace WebCore

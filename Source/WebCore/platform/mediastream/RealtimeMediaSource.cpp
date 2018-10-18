@@ -158,13 +158,6 @@ void RealtimeMediaSource::videoSampleAvailable(MediaSample& mediaSample)
     });
 }
 
-void RealtimeMediaSource::remoteVideoSampleAvailable(RemoteVideoSample&& sample)
-{
-    forEachObserver([&](auto& observer) {
-        observer.remoteVideoSampleAvailable(sample);
-    });
-}
-
 void RealtimeMediaSource::audioSamplesAvailable(const MediaTime& time, const PlatformAudioData& audioData, const AudioStreamDescription& description, size_t numberOfFrames)
 {
     forEachObserver([&](auto& observer) {

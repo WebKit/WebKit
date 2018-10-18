@@ -907,7 +907,6 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
     parameters.resourceLoadStatisticsEnabled = websiteDataStore.resourceLoadStatisticsEnabled();
 #if ENABLE(MEDIA_STREAM)
     parameters.shouldCaptureAudioInUIProcess = m_configuration->shouldCaptureAudioInUIProcess();
-    parameters.shouldCaptureDisplayInUIProcess = m_configuration->shouldCaptureDisplayInUIProcess();
 #endif
 
     parameters.presentingApplicationPID = m_configuration->presentingApplicationPID();

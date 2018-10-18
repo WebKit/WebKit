@@ -64,7 +64,7 @@ public:
 
     VideoRotation videoRotation() const override { return m_rotation; }
     bool videoMirrored() const override { return m_mirrored; }
-    uint32_t videoPixelFormat() const final;
+    uint32_t videoPixelFormat() const;
 
     CMSampleBufferRef sampleBuffer() const { return m_sample.get(); }
 

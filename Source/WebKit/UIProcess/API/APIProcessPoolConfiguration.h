@@ -36,12 +36,6 @@
 
 namespace API {
 
-#if PLATFORM(COCOA) && !PLATFORM(IOS_FAMILY_SIMULATOR)
-#define DEFAULT_CAPTURE_DISPLAY_IN_UI_PROCESS true
-#else
-#define DEFAULT_CAPTURE_DISPLAY_IN_UI_PROCESS false
-#endif
-
 class ProcessPoolConfiguration final : public ObjectImpl<Object::Type::ProcessPoolConfiguration> {
 public:
     static Ref<ProcessPoolConfiguration> create();
@@ -139,9 +133,6 @@ public:
     bool shouldCaptureAudioInUIProcess() const { return m_shouldCaptureAudioInUIProcess; }
     void setShouldCaptureAudioInUIProcess(bool shouldCaptureAudioInUIProcess) { m_shouldCaptureAudioInUIProcess = shouldCaptureAudioInUIProcess; }
 
-    bool shouldCaptureDisplayInUIProcess() const { return m_shouldCaptureDisplayInUIProcess; }
-    void setShouldCaptureDisplayInUIProcess(bool shouldCaptureDisplayInUIProcess) { m_shouldCaptureDisplayInUIProcess = shouldCaptureDisplayInUIProcess; }
-
 #if PLATFORM(IOS_FAMILY)
     const WTF::String& ctDataConnectionServiceType() const { return m_ctDataConnectionServiceType; }
     void setCTDataConnectionServiceType(const WTF::String& ctDataConnectionServiceType) { m_ctDataConnectionServiceType = ctDataConnectionServiceType; }
@@ -203,7 +194,6 @@ private:
     bool m_alwaysRunsAtBackgroundPriority { false };
     bool m_shouldTakeUIBackgroundAssertion { true };
     bool m_shouldCaptureAudioInUIProcess { false };
-    bool m_shouldCaptureDisplayInUIProcess { DEFAULT_CAPTURE_DISPLAY_IN_UI_PROCESS };
     ProcessID m_presentingApplicationPID { getCurrentProcessID() };
     bool m_processSwapsOnNavigation { false };
     bool m_alwaysKeepAndReuseSwappedProcesses { false };

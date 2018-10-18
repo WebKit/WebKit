@@ -32,7 +32,6 @@ messages -> UserMediaCaptureManager {
     AudioSamplesAvailable(uint64_t id, MediaTime time, uint64_t numberOfFrames, uint64_t startFrame, uint64_t endFrame)
     ApplyConstraintsSucceeded(uint64_t id, WebCore::RealtimeMediaSourceSettings settings)
     ApplyConstraintsFailed(uint64_t id, String failedConstraint, String message)
-    RemoteVideoSampleAvailable(uint64_t id, WebCore::RemoteVideoSample sample)
 }
 
 #endif

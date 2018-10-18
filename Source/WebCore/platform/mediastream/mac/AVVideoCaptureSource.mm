@@ -540,9 +540,27 @@ void AVVideoCaptureSource::processNewFrame(Ref<MediaSample>&& sample)
 
 void AVVideoCaptureSource::captureOutputDidOutputSampleBufferFromConnection(AVCaptureOutputType*, CMSampleBufferRef sampleBuffer, AVCaptureConnectionType* captureConnection)
 {
-    auto sample = MediaSampleAVFObjC::create(sampleBuffer, m_sampleRotation, [captureConnection isVideoMirrored]);
+    CMFormatDescriptionRef formatDescription = CMSampleBufferGetFormatDescription(sampleBuffer);
+    if (!formatDescription)
+        return;
+
+    CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions(formatDescription);
+    RefPtr<MediaSample> sample;
+    if (dimensions.width != m_requestedSize.width() || dimensions.height != m_requestedSize.height()) {
+
+        if (!m_imageTransferSession)
+            m_imageTransferSession = ImageTransferSessionVT::create(avVideoCapturePixelBufferFormat());
+
+        sample = m_imageTransferSession->createMediaSample(sampleBuffer, m_requestedSize, m_sampleRotation, [captureConnection isVideoMirrored]);
+        if (!sample) {
+            ASSERT_NOT_REACHED();
+            return;
+        }
+    } else
+        sample = MediaSampleAVFObjC::create(sampleBuffer, m_sampleRotation, [captureConnection isVideoMirrored]);
+
     scheduleDeferredTask([this, sample = WTFMove(sample)] () mutable {
-        processNewFrame(WTFMove(sample));
+        processNewFrame(sample.releaseNonNull());
     });
 }
 

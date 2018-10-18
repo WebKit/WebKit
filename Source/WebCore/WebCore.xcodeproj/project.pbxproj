@@ -114,7 +114,6 @@
 		073794FA19F5864E00E5A045 /* RTCDataChannelHandlerMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 073794F419F5864E00E5A045 /* RTCDataChannelHandlerMock.h */; };
 		073794FE19F5864E00E5A045 /* RTCNotifiersMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 073794F819F5864E00E5A045 /* RTCNotifiersMock.h */; };
 		07394ECA1BAB2CD700BE99CD /* MediaDevicesRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 07394EC91BAB2CD700BE99CD /* MediaDevicesRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		073A15542177A42600EA08F2 /* RemoteVideoSample.h in Headers */ = {isa = PBXBuildFile; fileRef = 073A15532177A39A00EA08F2 /* RemoteVideoSample.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		073B87671E4385AC0071C0EC /* AudioSampleBufferList.h in Headers */ = {isa = PBXBuildFile; fileRef = 073B87631E43859D0071C0EC /* AudioSampleBufferList.h */; };
 		073B87691E4385AC0071C0EC /* AudioSampleDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 073B87651E43859D0071C0EC /* AudioSampleDataSource.h */; };
 		073BDC051F68436100EE34ED /* TrackPrivateBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 076E11BE1F683E0D00177395 /* TrackPrivateBase.cpp */; };
@@ -619,7 +618,7 @@
 		1AFE119A0CBFFCC4003017FA /* JSSQLResultSetRowList.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AFE11980CBFFCC4003017FA /* JSSQLResultSetRowList.h */; };
 		1AFFC4581D5E865500267A66 /* WebGLBlacklist.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AFFC4511D5E7EC700267A66 /* WebGLBlacklist.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AFFC4591D5E866100267A66 /* PluginBlacklist.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AFFC44F1D5E7EC700267A66 /* PluginBlacklist.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		1B124D8D1D380B7000ECDFB0 /* MediaSampleAVFObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B124D8C1D380B7000ECDFB0 /* MediaSampleAVFObjC.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1B124D8D1D380B7000ECDFB0 /* MediaSampleAVFObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B124D8C1D380B7000ECDFB0 /* MediaSampleAVFObjC.h */; };
 		1B124D8F1D380BB600ECDFB0 /* MediaSampleAVFObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1B124D8E1D380BB600ECDFB0 /* MediaSampleAVFObjC.mm */; };
 		1BF9DB3C1D3973AD0026AEB7 /* MediaSample.h in Headers */ = {isa = PBXBuildFile; fileRef = CD641EC7181ED60100EE4C41 /* MediaSample.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C010701192594DF008A4201 /* InlineTextBoxStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C0106FF192594DF008A4201 /* InlineTextBoxStyle.h */; };
@@ -5363,8 +5362,6 @@
 		073794F819F5864E00E5A045 /* RTCNotifiersMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCNotifiersMock.h; sourceTree = "<group>"; };
 		07394EC71BAB2CCD00BE99CD /* MediaDevicesRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaDevicesRequest.cpp; sourceTree = "<group>"; };
 		07394EC91BAB2CD700BE99CD /* MediaDevicesRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaDevicesRequest.h; sourceTree = "<group>"; };
-		073A15512177A39800EA08F2 /* RemoteVideoSample.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteVideoSample.cpp; sourceTree = "<group>"; };
-		073A15532177A39A00EA08F2 /* RemoteVideoSample.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteVideoSample.h; sourceTree = "<group>"; };
 		073B87561E40DCE50071C0EC /* AudioStreamDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioStreamDescription.h; sourceTree = "<group>"; };
 		073B87571E40DCFD0071C0EC /* CAAudioStreamDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CAAudioStreamDescription.cpp; sourceTree = "<group>"; };
 		073B87581E40DCFD0071C0EC /* CAAudioStreamDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAAudioStreamDescription.h; sourceTree = "<group>"; };
@@ -19789,9 +19786,7 @@
 				E42050162141901B0066EF3B /* ProcessWarming.cpp */,
 				E42050142141901A0066EF3B /* ProcessWarming.h */,
 				CD9A87F9215D6CF3006F17B5 /* Quirks.cpp */,
-				CD9A87F2215D43A6006F17B5 /* Quirks.cpp */,
 				CD9A87FB215D6CF3006F17B5 /* Quirks.h */,
-				CD9A87F1215D43A6006F17B5 /* Quirks.h */,
 				46B9518D207D632A00A7D2DD /* RemoteDOMWindow.cpp */,
 				46B9518E207D632A00A7D2DD /* RemoteDOMWindow.h */,
 				46BCBBC3208500A700710638 /* RemoteDOMWindow.idl */,
@@ -19804,6 +19799,8 @@
 				A5071E841C56D079009951BE /* ResourceUsageThread.h */,
 				7C52229B1E1DAE47002CB8F7 /* RuntimeEnabledFeatures.cpp */,
 				7C52229C1E1DAE47002CB8F7 /* RuntimeEnabledFeatures.h */,
+				CD9A87F2215D43A6006F17B5 /* Quirks.cpp */,
+				CD9A87F1215D43A6006F17B5 /* Quirks.h */,
 				BCEC01BA0C274DAC009F4EC9 /* Screen.cpp */,
 				BCEC01BB0C274DAC009F4EC9 /* Screen.h */,
 				BCEC01BC0C274DAC009F4EC9 /* Screen.idl */,
@@ -24112,8 +24109,6 @@
 				074E82B918A69F0E007EF54C /* PlatformTimeRanges.h */,
 				BCAB417F13E356E800D8AAF3 /* Region.cpp */,
 				BCAB418013E356E800D8AAF3 /* Region.h */,
-				073A15512177A39800EA08F2 /* RemoteVideoSample.cpp */,
-				073A15532177A39A00EA08F2 /* RemoteVideoSample.h */,
 				A73F95FC12C97BFE0031AAF9 /* RoundedRect.cpp */,
 				A73F95FD12C97BFE0031AAF9 /* RoundedRect.h */,
 				0F3DD44D12F5EA1B000D9190 /* ShadowBlur.cpp */,
@@ -25149,8 +25144,6 @@
 				CD94A5C91F71CA9D00F525C5 /* CDMClient.h */,
 				CD063F801E23FA8900812BE3 /* InitDataRegistry.cpp */,
 				CD063F811E23FA8900812BE3 /* InitDataRegistry.h */,
-				CDF7569D215C244400EFCB50 /* MediaKeyEncryptionScheme.h */,
-				CDF7569E215C285E00EFCB50 /* MediaKeyEncryptionScheme.idl */,
 				2D9BF72F1DBFDC0F007A7D99 /* MediaKeyMessageEvent.cpp */,
 				2D9BF7301DBFDC0F007A7D99 /* MediaKeyMessageEvent.h */,
 				2D9BF6F51DBFB71F007A7D99 /* MediaKeyMessageEvent.idl */,
@@ -25159,6 +25152,8 @@
 				2D9BF7331DBFDC0F007A7D99 /* MediaKeys.cpp */,
 				2D9BF7341DBFDC0F007A7D99 /* MediaKeys.h */,
 				2D9BF6F61DBFB71F007A7D99 /* MediaKeys.idl */,
+				CDF7569D215C244400EFCB50 /* MediaKeyEncryptionScheme.h */,
+				CDF7569E215C285E00EFCB50 /* MediaKeyEncryptionScheme.idl */,
 				2D9BF7351DBFDC0F007A7D99 /* MediaKeySession.cpp */,
 				2D9BF7361DBFDC0F007A7D99 /* MediaKeySession.h */,
 				2D9BF6F71DBFB71F007A7D99 /* MediaKeySession.idl */,
@@ -29278,7 +29273,6 @@
 				FD23A12613F5FA5900F67001 /* JSMediaElementAudioSourceNode.h in Headers */,
 				2D9BF7121DBFD914007A7D99 /* JSMediaEncryptedEvent.h in Headers */,
 				E44614190CD6826900FADA75 /* JSMediaError.h in Headers */,
-				CDF756A3215C29E900EFCB50 /* JSMediaKeyEncryptionScheme.h in Headers */,
 				2D9BF7281DBFDB0D007A7D99 /* JSMediaKeyMessageEvent.h in Headers */,
 				2D9BF7291DBFDB10007A7D99 /* JSMediaKeys.h in Headers */,
 				2D9BF72A1DBFDB13007A7D99 /* JSMediaKeySession.h in Headers */,
@@ -29961,6 +29955,7 @@
 				51058AE01D67C229009A538C /* MockGamepad.h in Headers */,
 				51058AE21D67C229009A538C /* MockGamepadProvider.h in Headers */,
 				413CCD4A20DE034F0065A21A /* MockMediaDevice.h in Headers */,
+				CDF756A3215C29E900EFCB50 /* JSMediaKeyEncryptionScheme.h in Headers */,
 				CDF2B0131820540600F2B424 /* MockMediaPlayerMediaSource.h in Headers */,
 				CDF2B0151820540600F2B424 /* MockMediaSourcePrivate.h in Headers */,
 				A1BB85A92159B02C0067E07D /* MockPaymentError.h in Headers */,
@@ -30316,7 +30311,6 @@
 				CD8ACA891D237AA200ECC59E /* RemoteCommandListenerMac.h in Headers */,
 				46B95199207D634D00A7D2DD /* RemoteDOMWindow.h in Headers */,
 				46B9519A207D635400A7D2DD /* RemoteFrame.h in Headers */,
-				073A15542177A42600EA08F2 /* RemoteVideoSample.h in Headers */,
 				D06C0D8F0CFD11460065F43F /* RemoveFormatCommand.h in Headers */,
 				93309E05099E64920056E581 /* RemoveNodeCommand.h in Headers */,
 				93309E07099E64920056E581 /* RemoveNodePreservingChildrenCommand.h in Headers */,
