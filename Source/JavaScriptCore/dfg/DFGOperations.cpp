@@ -1286,6 +1286,17 @@ size_t JIT_OPERATION operationRegExpTestGeneric(ExecState* exec, JSGlobalObject*
     RELEASE_AND_RETURN(scope, regexp->test(exec, globalObject, input));
 }
 
+JSCell* JIT_OPERATION operationSubBigInt(ExecState* exec, JSCell* op1, JSCell* op2)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+    
+    JSBigInt* leftOperand = jsCast<JSBigInt*>(op1);
+    JSBigInt* rightOperand = jsCast<JSBigInt*>(op2);
+    
+    return JSBigInt::sub(*vm, leftOperand, rightOperand);
+}
+
 JSCell* JIT_OPERATION operationBitAndBigInt(ExecState* exec, JSCell* op1, JSCell* op2)
 {
     VM* vm = &exec->vm();

@@ -1,3 +1,14 @@
+2018-10-17  Caio Lima  <ticaiolima@gmail.com>
+
+        [BigInt] Add ValueSub into DFG
+        https://bugs.webkit.org/show_bug.cgi?id=186176
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/big-int-subtraction-jit.js:
+        * stress/value-sub-big-int-prediction-propagation.js: Added.
+        * stress/value-sub-big-int-untyped.js: Added.
+
 2018-10-16  Dominik Infuehr  <dinfuehr@igalia.com>
 
         [JSC] stress/array-prototype-concat-of-long-spliced-arrays2.js times out on arm and mips
