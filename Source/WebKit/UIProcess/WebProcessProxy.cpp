@@ -34,7 +34,6 @@
 #include "Logging.h"
 #include "PluginInfoStore.h"
 #include "PluginProcessManager.h"
-#include "SuspendedPageProxy.h"
 #include "TextChecker.h"
 #include "TextCheckerState.h"
 #include "UIMessagePortChannelProvider.h"
@@ -444,27 +443,6 @@ void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, uint64_t pageID)
     updateBackgroundResponsivenessTimer();
 }
 
-void WebProcessProxy::suspendWebPageProxy(WebPageProxy& webPage, API::Navigation& navigation, uint64_t mainFrameID)
-{
-    if (auto* suspendedPage = webPage.maybeCreateSuspendedPage(*this, navigation, mainFrameID)) {
-        LOG(ProcessSwapping, "WebProcessProxy pid %i added suspended page %s", processIdentifier(), suspendedPage->loggingString());
-        m_suspendedPageMap.set(webPage.pageID(), suspendedPage);
-    }
-
-    removeWebPage(webPage, webPage.pageID());
-    removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), webPage.pageID());
-}
-
-void WebProcessProxy::suspendedPageWasDestroyed(SuspendedPageProxy& suspendedPage)
-{
-    LOG(ProcessSwapping, "WebProcessProxy pid %i suspended page %s was destroyed", processIdentifier(), suspendedPage.loggingString());
-
-    ASSERT(m_suspendedPageMap.contains(suspendedPage.page().pageID()));
-    m_suspendedPageMap.remove(suspendedPage.page().pageID());
-
-    maybeShutDown();
-}
-
 void WebProcessProxy::markIsNoLongerInPrewarmedPool()
 {
     ASSERT(m_isPrewarmed);
@@ -673,15 +651,6 @@ void WebProcessProxy::didReceiveMessage(IPC::Connection& connection, IPC::Decode
         return;
     }
 
-    // WebPageProxy messages are normally handled by the normal "dispatchMessage" up above.
-    // If they were not handled there, then they may potentially be handled by SuspendedPageProxy objects.
-    if (decoder.messageReceiverName() == Messages::WebPageProxy::messageReceiverName()) {
-        if (auto* suspendedPage = m_suspendedPageMap.get(decoder.destinationID())) {
-            suspendedPage->didReceiveMessage(connection, decoder);
-            return;
-        }
-    }
-
     // FIXME: Add unhandled message logging.
 }
 
@@ -728,11 +697,6 @@ void WebProcessProxy::processDidTerminateOrFailedToLaunch()
             page.logDiagnosticMessageWithEnhancedPrivacy(WebCore::DiagnosticLoggingKeys::domainCausingCrashKey(), domain, WebCore::ShouldSample::No);
     }
 #endif
-
-    for (auto* suspendedPage : copyToVectorOf<SuspendedPageProxy*>(m_suspendedPageMap.values()))
-        suspendedPage->webProcessDidClose(*this);
-
-    m_suspendedPageMap.clear();
 
     for (auto& page : pages)
         page->processDidTerminate(ProcessTerminationReason::Crash);
@@ -901,7 +865,7 @@ void WebProcessProxy::maybeShutDown()
 
 bool WebProcessProxy::canTerminateChildProcess()
 {
-    if (!m_pageMap.isEmpty() || !m_suspendedPageMap.isEmpty())
+    if (!m_pageMap.isEmpty() || m_processPool->hasSuspendedPageProxyFor(*this))
         return false;
 
     if (!m_processPool->shouldTerminate(this))
@@ -1014,11 +978,6 @@ void WebProcessProxy::requestTermination(ProcessTerminationReason reason)
     auto pages = copyToVectorOf<RefPtr<WebPageProxy>>(m_pageMap.values());
 
     shutDown();
-
-    for (auto* suspendedPage : copyToVectorOf<SuspendedPageProxy*>(m_suspendedPageMap.values()))
-        suspendedPage->webProcessDidClose(*this);
-
-    m_suspendedPageMap.clear();
 
     for (auto& page : pages)
         page->processDidTerminate(reason);

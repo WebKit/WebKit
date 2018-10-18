@@ -711,27 +711,22 @@ void WebPageProxy::reattachToWebProcess()
     finishAttachingToWebProcess();
 }
 
-SuspendedPageProxy* WebPageProxy::maybeCreateSuspendedPage(WebProcessProxy& process, API::Navigation& navigation, uint64_t mainFrameID)
+void WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, std::optional<uint64_t> mainFrameID)
 {
-    ASSERT(!m_suspendedPage || m_suspendedPage->process() != &process);
+    if (!mainFrameID)
+        return;
 
     auto* currentItem = navigation.fromItem();
     if (!currentItem) {
-        LOG(ProcessSwapping, "WebPageProxy %" PRIu64 " unable to create suspended page for process pid %i - No current back/forward item", pageID(), process.processIdentifier());
-        return nullptr;
+        LOG(ProcessSwapping, "WebPageProxy %" PRIu64 " unable to create suspended page for process pid %i - No current back/forward item", pageID(), m_process->processIdentifier());
+        return;
     }
 
-    m_suspendedPage = std::make_unique<SuspendedPageProxy>(*this, process, *currentItem, mainFrameID);
+    auto suspendedPage = std::make_unique<SuspendedPageProxy>(*this, m_process.copyRef(), *currentItem, *mainFrameID);
+    m_lastSuspendedPage = makeWeakPtr(suspendedPage.get());
+    m_process->processPool().addSuspendedPageProxy(WTFMove(suspendedPage));
 
-    LOG(ProcessSwapping, "WebPageProxy %" PRIu64 " created suspended page %s for process pid %i, back/forward item %s" PRIu64, pageID(), m_suspendedPage->loggingString(), process.processIdentifier(), currentItem->itemID().logString());
-
-    return m_suspendedPage.get();
-}
-
-void WebPageProxy::suspendedPageClosed(SuspendedPageProxy& page)
-{
-    ASSERT_UNUSED(page, &page == m_suspendedPage.get());
-    m_suspendedPage = nullptr;
+    LOG(ProcessSwapping, "WebPageProxy %" PRIu64 " created suspended page %s for process pid %i, back/forward item %s" PRIu64, pageID(), m_lastSuspendedPage->loggingString(), m_process->processIdentifier(), currentItem->itemID().logString());
 }
 
 void WebPageProxy::swapToWebProcess(Ref<WebProcessProxy>&& process, API::Navigation& navigation, std::optional<uint64_t> mainFrameIDInPreviousProcess)
@@ -739,11 +734,18 @@ void WebPageProxy::swapToWebProcess(Ref<WebProcessProxy>&& process, API::Navigat
     ASSERT(!m_isClosed);
     RELEASE_LOG_IF_ALLOWED(Process, "%p WebPageProxy::swapToWebProcess\n", this);
 
-    // If the process we're attaching to is kept alive solely by our current suspended page,
-    // we need to maintain that by temporarily keeping the suspended page alive.
-    auto currentSuspendedPage = WTFMove(m_suspendedPage);
-    if (mainFrameIDInPreviousProcess)
-        m_process->suspendWebPageProxy(*this, navigation, *mainFrameIDInPreviousProcess);
+    std::unique_ptr<SuspendedPageProxy> destinationSuspendedPage;
+    if (auto* backForwardListItem = navigation.targetItem()) {
+        if (backForwardListItem->suspendedPage() && &backForwardListItem->suspendedPage()->process() == process.ptr()) {
+            destinationSuspendedPage = this->process().processPool().takeSuspendedPageProxy(*backForwardListItem->suspendedPage());
+            ASSERT(destinationSuspendedPage);
+            destinationSuspendedPage->unsuspend();
+        }
+    }
+
+    m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
+    suspendCurrentPageIfPossible(navigation, mainFrameIDInPreviousProcess);
+    m_process->removeWebPage(*this, m_pageID);
 
     m_process = WTFMove(process);
     m_isValid = true;
@@ -752,10 +754,11 @@ void WebPageProxy::swapToWebProcess(Ref<WebProcessProxy>&& process, API::Navigat
     // WebPageProxy::didCreateMainFrame() will not be called to initialize m_mainFrame. In such
     // case, we need to initialize m_mainFrame to reflect the fact the the WebProcess' WebPage
     // already exists and already has a main frame.
-    if (currentSuspendedPage && currentSuspendedPage->process() == m_process.ptr()) {
+    if (destinationSuspendedPage) {
         ASSERT(!m_mainFrame);
-        m_mainFrame = WebFrameProxy::create(this, currentSuspendedPage->mainFrameID());
-        m_process->frameCreated(currentSuspendedPage->mainFrameID(), *m_mainFrame);
+        ASSERT(&destinationSuspendedPage->process() == m_process.ptr());
+        m_mainFrame = WebFrameProxy::create(this, destinationSuspendedPage->mainFrameID());
+        m_process->frameCreated(destinationSuspendedPage->mainFrameID(), *m_mainFrame);
     }
 
     finishAttachingToWebProcess();
@@ -927,6 +930,8 @@ void WebPageProxy::close()
 #endif
 
     m_webProcessLifetimeTracker.pageWasInvalidated();
+
+    m_process->processPool().removeAllSuspendedPageProxiesForPage(*this);
 
     m_process->send(Messages::WebPage::Close(), m_pageID);
     m_process->removeWebPage(*this, m_pageID);
@@ -2554,7 +2559,7 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, R
 
         auto itemStates = m_backForwardList->filteredItemStates([this, targetItem = item](WebBackForwardListItem& item) {
             if (auto* page = item.suspendedPage()) {
-                if (page->process() == m_process.ptr())
+                if (&page->process() == m_process.ptr())
                     return false;
             }
             return &item != targetItem;
@@ -3490,7 +3495,7 @@ void WebPageProxy::didFinishProgress()
 void WebPageProxy::didCompletePageTransition(bool isInitialEmptyDocument)
 {
     // Attach drawing area for the initial empty document only if this is not a process swap.
-    if (isInitialEmptyDocument && m_suspendedPage)
+    if (isInitialEmptyDocument && m_lastSuspendedPage)
         return;
 
 #if PLATFORM(MAC)
@@ -3500,8 +3505,8 @@ void WebPageProxy::didCompletePageTransition(bool isInitialEmptyDocument)
     // Drawing area for the suspended page will be torn down when the attach completes.
     m_drawingArea->attachInWebProcess();
 #else
-    if (m_suspendedPage)
-        m_suspendedPage->tearDownDrawingAreaInWebProcess();
+    if (m_lastSuspendedPage)
+        m_lastSuspendedPage->tearDownDrawingAreaInWebProcess();
 #endif
 }
 
@@ -6395,8 +6400,8 @@ void WebPageProxy::enterAcceleratedCompositingMode(const LayerTreeContext& layer
     pageClient().enterAcceleratedCompositingMode(layerTreeContext);
 
     // We have completed the page transition and can tear down the layers in the suspended process.
-    if (m_suspendedPage)
-        m_suspendedPage->tearDownDrawingAreaInWebProcess();
+    if (m_lastSuspendedPage)
+        m_lastSuspendedPage->tearDownDrawingAreaInWebProcess();
 }
 
 void WebPageProxy::exitAcceleratedCompositingMode()

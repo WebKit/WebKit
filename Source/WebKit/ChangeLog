@@ -1,3 +1,55 @@
+2018-10-18  Chris Dumez  <cdumez@apple.com>
+
+        [PSON] Cap number of SuspendedPageProxy objects and allow a WebPageProxy to have more than one
+        https://bugs.webkit.org/show_bug.cgi?id=190688
+        <rdar://problem/45354095>
+
+        Reviewed by Antti Koivisto.
+
+        Cap number of SuspendedPageProxy objects to 3 to avoid accumulating too many "suspended" processes.
+
+        Also allow a WebPageProxy to have more than one SuspendedPageProxy so that PageCache now works for
+        more than 1 history navigation (up to 3 with the suspended page limit in this patch).
+
+        The following cleanup / refactoring was made to support this:
+        - The SuspendedPageProxy objects are now owned by the WebProcessPool instead of the WebPageProxy.
+          The WebProcessPool is in charge of limiting the number of SuspendedPageProxy objects by dropping
+          the oldest one whenever a WebPageProxy tries to add a new one and we've already reached the limit.
+        - WebProcessProxy no longer needs to know anything about suspended pages, which simplifies the
+          code quite a bit. Instead, the SuspendedPageProxy objects now register themselves as
+          IPC::MessageReceivers with their WebProcessProxy. The SuspendedPageProxy also take care of
+          calling maybeShutdown() on their WebProcessProxy when they get destroyed.
+
+        * UIProcess/SuspendedPageProxy.cpp:
+        (WebKit::SuspendedPageProxy::~SuspendedPageProxy):
+        (WebKit::SuspendedPageProxy::tearDownDrawingAreaInWebProcess):
+        (WebKit::SuspendedPageProxy::unsuspend):
+        (WebKit::SuspendedPageProxy::didFinishLoad):
+        (WebKit::SuspendedPageProxy::didReceiveSyncMessage):
+        * UIProcess/SuspendedPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::suspendCurrentPageIfPossible):
+        (WebKit::WebPageProxy::swapToWebProcess):
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::continueNavigationInNewProcess):
+        (WebKit::WebPageProxy::didCompletePageTransition):
+        (WebKit::WebPageProxy::enterAcceleratedCompositingMode):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::disconnectProcess):
+        (WebKit::WebProcessPool::processForNavigationInternal):
+        (WebKit::WebProcessPool::addSuspendedPageProxy):
+        (WebKit::WebProcessPool::removeAllSuspendedPageProxiesForPage):
+        (WebKit::WebProcessPool::takeSuspendedPageProxy):
+        (WebKit::WebProcessPool::hasSuspendedPageProxyFor):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didReceiveMessage):
+        (WebKit::WebProcessProxy::processDidTerminateOrFailedToLaunch):
+        (WebKit::WebProcessProxy::canTerminateChildProcess):
+        (WebKit::WebProcessProxy::requestTermination):
+        * UIProcess/WebProcessProxy.h:
+
 2018-10-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Enable the datalist element by default on iOS and macOS

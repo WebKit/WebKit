@@ -412,6 +412,7 @@ TEST(ProcessSwap, NoSwappingForeTLDPlus2)
     EXPECT_EQ(numberOfDecidePolicyCalls, 2);
 }
 
+// We currently keep 3 suspended pages around so we can go back 3 times and use the page cache for each load.
 TEST(ProcessSwap, Back)
 {
     auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
@@ -422,6 +423,8 @@ TEST(ProcessSwap, Back)
     [webViewConfiguration setProcessPool:processPool.get()];
     auto handler = adoptNS([[PSONScheme alloc] init]);
     [handler addMappingFromURLString:@"pson://www.webkit.org/main.html" toData:testBytes];
+    [handler addMappingFromURLString:@"pson://www.apple.com/main.html" toData:testBytes];
+    [handler addMappingFromURLString:@"pson://www.google.com/main.html" toData:testBytes];
     [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
 
     RetainPtr<PSONMessageHandler> messageHandler = adoptNS([[PSONMessageHandler alloc] init]);
@@ -439,7 +442,7 @@ TEST(ProcessSwap, Back)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    auto pid1 = [webView _webProcessIdentifier];
+    auto webkitPID = [webView _webProcessIdentifier];
 
     request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/main.html"]];
     [webView loadRequest:request];
@@ -447,30 +450,70 @@ TEST(ProcessSwap, Back)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    auto pid2 = [webView _webProcessIdentifier];
+    auto applePID = [webView _webProcessIdentifier];
+    EXPECT_NE(webkitPID, applePID);
 
-    [webView goBack];
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.google.com/main.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto googlePID = [webView _webProcessIdentifier];
+    EXPECT_NE(applePID, googlePID);
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.bing.com/main.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto bingPID = [webView _webProcessIdentifier];
+    EXPECT_NE(googlePID, bingPID);
+
+    [webView goBack]; // Back to google.com.
 
     TestWebKitAPI::Util::run(&receivedMessage);
     receivedMessage = false;
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    auto pid3 = [webView _webProcessIdentifier];
+    auto pidAfterFirstBackNavigation = [webView _webProcessIdentifier];
+    EXPECT_EQ(googlePID, pidAfterFirstBackNavigation);
 
-    // 3 loads, 3 decidePolicy calls (e.g. any load that performs a process swap should not have generated an
+    [webView goBack]; // Back to apple.com.
+
+    TestWebKitAPI::Util::run(&receivedMessage);
+    receivedMessage = false;
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto pidAfterSecondBackNavigation = [webView _webProcessIdentifier];
+    EXPECT_EQ(applePID, pidAfterSecondBackNavigation);
+
+    [webView goBack]; // Back to webkit.org.
+
+    TestWebKitAPI::Util::run(&receivedMessage);
+    receivedMessage = false;
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto pidAfterThirdBackNavigation = [webView _webProcessIdentifier];
+    EXPECT_EQ(webkitPID, pidAfterThirdBackNavigation);
+
+    // 7 loads, 7 decidePolicy calls (e.g. any load that performs a process swap should not have generated an
     // additional decidePolicy call as a result of the process swap)
-    EXPECT_EQ(numberOfDecidePolicyCalls, 3);
+    EXPECT_EQ(7, numberOfDecidePolicyCalls);
 
-    EXPECT_EQ([receivedMessages count], 2u);
-    EXPECT_TRUE([receivedMessages.get()[0] isEqualToString:@"PageShow called. Persisted: false, and window.history.state is: null"]);
-    EXPECT_TRUE([receivedMessages.get()[1] isEqualToString:@"PageShow called. Persisted: true, and window.history.state is: onloadCalled"]);
+    EXPECT_EQ(6u, [receivedMessages count]);
+    EXPECT_WK_STREQ(@"PageShow called. Persisted: false, and window.history.state is: null", receivedMessages.get()[0]);
+    EXPECT_WK_STREQ(@"PageShow called. Persisted: false, and window.history.state is: null", receivedMessages.get()[1]);
+    EXPECT_WK_STREQ(@"PageShow called. Persisted: false, and window.history.state is: null", receivedMessages.get()[2]);
+    EXPECT_WK_STREQ(@"PageShow called. Persisted: true, and window.history.state is: onloadCalled", receivedMessages.get()[3]);
+    EXPECT_WK_STREQ(@"PageShow called. Persisted: true, and window.history.state is: onloadCalled", receivedMessages.get()[4]);
+    EXPECT_WK_STREQ(@"PageShow called. Persisted: true, and window.history.state is: onloadCalled", receivedMessages.get()[5]);
 
-    EXPECT_EQ(2u, seenPIDs.size());
-
-    EXPECT_FALSE(pid1 == pid2);
-    EXPECT_FALSE(pid2 == pid3);
-    EXPECT_TRUE(pid1 == pid3);
+    EXPECT_EQ(4u, seenPIDs.size());
 }
 
 TEST(ProcessSwap, BackWithoutSuspendedPage)
@@ -1114,7 +1157,7 @@ TEST(ProcessSwap, MainFramesOnly)
     EXPECT_EQ(1u, seenPIDs.size());
 }
 
-TEST(ProcessSwap, OnePreviousProcessRemains)
+TEST(ProcessSwap, ThreePreviousProcessesRemains)
 {
     auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
     [processPoolConfiguration setProcessSwapsOnNavigation:YES];
@@ -1147,11 +1190,23 @@ TEST(ProcessSwap, OnePreviousProcessRemains)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    // Navigations to 3 different domains, we expect to have seen 3 different PIDs
-    EXPECT_EQ(3u, seenPIDs.size());
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.bing.com/main.html"]];
+    [webView loadRequest:request];
 
-    // But only 2 of those processes should still be alive
-    EXPECT_EQ(2u, [processPool _webProcessCountIgnoringPrewarmed]);
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.yahoo.com/main.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    // Navigations to 5 different domains, we expect to have seen 5 different PIDs
+    EXPECT_EQ(5u, seenPIDs.size());
+
+    // But only 4 of those processes should still be alive (1 visible, 3 suspended).
+    EXPECT_EQ(4u, [processPool _webProcessCountIgnoringPrewarmed]);
 }
 
 static const char* pageCache1Bytes = R"PSONRESOURCE(

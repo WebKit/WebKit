@@ -36,21 +36,19 @@ namespace WebKit {
 class WebPageProxy;
 class WebProcessProxy;
 
-class SuspendedPageProxy : public CanMakeWeakPtr<SuspendedPageProxy> {
+class SuspendedPageProxy final: public IPC::MessageReceiver, public CanMakeWeakPtr<SuspendedPageProxy> {
 public:
     SuspendedPageProxy(WebPageProxy&, Ref<WebProcessProxy>&&, WebBackForwardListItem&, uint64_t mainFrameID);
     ~SuspendedPageProxy();
 
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
-
     WebPageProxy& page() const { return m_page; }
-    WebProcessProxy* process() const { return m_process.get(); }
+    WebProcessProxy& process() { return m_process.get(); }
     uint64_t mainFrameID() const { return m_mainFrameID; }
     const WebCore::SecurityOriginData& origin() const { return m_origin; }
 
-    void webProcessDidClose(WebProcessProxy&);
-    void destroyWebPageInWebProcess();
     void tearDownDrawingAreaInWebProcess();
+
+    void unsuspend();
 
 #if !LOG_DISABLED
     const char* loggingString() const;
@@ -59,10 +57,16 @@ public:
 private:
     void didFinishLoad();
 
+    // IPC::MessageReceiver
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) final;
+
     WebPageProxy& m_page;
-    RefPtr<WebProcessProxy> m_process;
+    Ref<WebProcessProxy> m_process;
     uint64_t m_mainFrameID;
     WebCore::SecurityOriginData m_origin;
+
+    bool m_isSuspended { true };
 
 #if !LOG_DISABLED
     bool m_finishedSuspending { false };

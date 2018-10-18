@@ -440,8 +440,13 @@ public:
 #endif
 
     Ref<WebProcessProxy> processForNavigation(WebPageProxy&, const API::Navigation&, ProcessSwapRequestedByClient, WebCore::PolicyAction&, String& reason);
-    void registerSuspendedPageProxy(SuspendedPageProxy&);
-    void unregisterSuspendedPageProxy(SuspendedPageProxy&);
+
+    // SuspendedPageProxy management.
+    void addSuspendedPageProxy(std::unique_ptr<SuspendedPageProxy>&&);
+    void removeAllSuspendedPageProxiesForPage(WebPageProxy&);
+    std::unique_ptr<SuspendedPageProxy> takeSuspendedPageProxy(SuspendedPageProxy&);
+    bool hasSuspendedPageProxyFor(WebProcessProxy&);
+
     void didReachGoodTimeToPrewarm();
 
     void didCollectPrewarmInformation(const String& registrableDomain, const WebCore::PrewarmInformation&);
@@ -703,7 +708,7 @@ private:
 #endif
 #endif
 
-    HashMap<WebCore::SecurityOriginData, Vector<SuspendedPageProxy*>> m_suspendedPages;
+    Deque<std::unique_ptr<SuspendedPageProxy>> m_suspendedPages;
     HashMap<String, RefPtr<WebProcessProxy>> m_swappedProcessesPerRegistrableDomain;
 
     HashMap<String, std::unique_ptr<WebCore::PrewarmInformation>> m_prewarmInformationPerRegistrableDomain;

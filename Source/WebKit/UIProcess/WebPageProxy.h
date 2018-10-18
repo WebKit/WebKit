@@ -1355,10 +1355,6 @@ public:
 
     WebPreferencesStore preferencesStore() const;
 
-    SuspendedPageProxy* maybeCreateSuspendedPage(WebProcessProxy&, API::Navigation&, uint64_t mainFrameID);
-    SuspendedPageProxy* suspendedPage() const { return m_suspendedPage.get(); }
-    void suspendedPageClosed(SuspendedPageProxy&);
-
     void setDefersLoadingForTesting(bool);
 
     WebCore::IntRect syncRootViewToScreen(const WebCore::IntRect& viewRect);
@@ -1378,6 +1374,8 @@ private:
     void updateActivityState(OptionSet<WebCore::ActivityState::Flag> flagsToUpdate = WebCore::ActivityState::allFlags());
     void updateThrottleState();
     void updateHiddenPageThrottlingAutoIncreases();
+
+    void suspendCurrentPageIfPossible(API::Navigation&, std::optional<uint64_t> mainFrameID);
 
     enum class ResetStateReason {
         PageInvalidated,
@@ -2260,10 +2258,8 @@ private:
 
     std::optional<MonotonicTime> m_pageLoadStart;
 
-    // FIXME: Support more than one suspended page per WebPageProxy,
-    // and have a global collection of them per process pool
-    // (e.g. for that process pool's page cache)
-    std::unique_ptr<SuspendedPageProxy> m_suspendedPage;
+    // FIXME: We should try and get rid of this data member.
+    WeakPtr<SuspendedPageProxy> m_lastSuspendedPage;
 
     RunLoop::Timer<WebPageProxy> m_resetRecentCrashCountTimer;
     unsigned m_recentCrashCount { 0 };

@@ -1,3 +1,17 @@
+2018-10-18  Chris Dumez  <cdumez@apple.com>
+
+        [PSON] Cap number of SuspendedPageProxy objects and allow a WebPageProxy to have more than one
+        https://bugs.webkit.org/show_bug.cgi?id=190688
+        <rdar://problem/45354095>
+
+        Reviewed by Antti Koivisto.
+
+        Extended API test coverage to confirm that:
+        - We do not accumulate more than 3 suspended processes.
+        - We can navigate back 3 times and use the page cache for each of these loads.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2018-10-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Enable the datalist element by default on iOS and macOS
