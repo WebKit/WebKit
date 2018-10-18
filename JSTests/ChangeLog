@@ -1,3 +1,28 @@
+2018-10-18  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] JSC should have "parseFunction" to optimize Function constructor
+        https://bugs.webkit.org/show_bug.cgi?id=190340
+
+        Reviewed by Mark Lam.
+
+        This patch fixes the line number of syntax errors raised by the Function constructor,
+        since we now parse the final code only once. And we no longer use block statement
+        for Function constructor's parsing.
+
+        * ChakraCore/test/Function/FuncBodyES5.baseline-jsc:
+        * stress/function-cache-with-parameters-end-position.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (i.anonymous):
+        * stress/function-constructor-name.js: Added.
+        (shouldBe):
+        (GeneratorFunction):
+        (AsyncFunction.async):
+        (AsyncGeneratorFunction.async):
+        (anonymous):
+        (async.anonymous):
+        * test262/expectations.yaml:
+
 2018-10-18  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r237242.

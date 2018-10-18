@@ -1,3 +1,72 @@
+2018-10-18  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] JSC should have "parseFunction" to optimize Function constructor
+        https://bugs.webkit.org/show_bug.cgi?id=190340
+
+        Reviewed by Mark Lam.
+
+        The current Function constructor is suboptimal. We parse the piece of the same code three times to meet
+        the spec requirement. (1) check parameters syntax, (2) check body syntax, and (3) parse the entire function.
+        And to parse 1-3 correctly, we create two strings, the parameters and the entire function. This operation
+        is really costly and ideally we should meet the above requirement by the one time parsing.
+
+        To meet the above requirement, we add a special function for Parser, parseSingleFunction. This function
+        takes `std::optional<int> functionConstructorParametersEndPosition` and check this end position is correct in the parser.
+        For example, if we run the code,
+
+            Function('/*', '*/){')
+
+        According to the spec, this should produce '/*' parameter string and '*/){' body string. And parameter
+        string should be syntax-checked by the parser, and raise the error since it is incorrect. Instead of doing
+        that, in our implementation, we first create the entire string.
+
+            function anonymous(/*) {
+                */){
+            }
+
+        And we parse it. At that time, we also pass the end position of the parameters to the parser. In the above case,
+        the position of the `function anonymous(/*)' <> is passed. And in the parser, we check that the last token
+        offset of the parameters is the given end position. This check allows us to raise the error correctly to the
+        above example while we parse the entire function only once. And we do not need to create two strings too.
+
+        This improves the performance of the Function constructor significantly. And web-tooling-benchmark/uglify-js is
+        significantly sped up (28.2%).
+
+        Before:
+            uglify-js:  2.94 runs/s
+        After:
+            uglify-js:  3.77 runs/s
+
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::UnlinkedFunctionExecutable::fromGlobalCode):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseInner):
+        (JSC::Parser<LexerType>::parseSingleFunction):
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        (JSC::Parser<LexerType>::parseFunctionDeclaration):
+        (JSC::Parser<LexerType>::parseAsyncFunctionDeclaration):
+        * parser/Parser.h:
+        (JSC::Parser<LexerType>::parse):
+        (JSC::parse):
+        (JSC::parseFunctionForFunctionConstructor):
+        * parser/ParserModes.h:
+        * parser/ParserTokens.h:
+        (JSC::JSTextPosition::JSTextPosition):
+        (JSC::JSTokenLocation::JSTokenLocation): Deleted.
+        * parser/SourceCodeKey.h:
+        (JSC::SourceCodeKey::SourceCodeKey):
+        (JSC::SourceCodeKey::operator== const):
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getUnlinkedGlobalCodeBlock):
+        (JSC::CodeCache::getUnlinkedGlobalFunctionExecutable):
+        * runtime/CodeCache.h:
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunctionSkippingEvalEnabledCheck):
+        * runtime/FunctionExecutable.cpp:
+        (JSC::FunctionExecutable::fromGlobalCode):
+        * runtime/FunctionExecutable.h:
+
 2018-10-18  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r237242.
