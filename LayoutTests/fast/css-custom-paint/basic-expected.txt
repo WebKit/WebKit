@@ -5,4 +5,5 @@ PASS test that registerPaint runs with inputArguments
 PASS test that registerPaint runs with contextOptions 
 PASS test that registerPaint runs with predefined class 
 PASS test that registerPaint accepts only a string and a class constructor 
+PASS test that test div has paint() value 
 

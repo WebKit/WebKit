@@ -1,3 +1,42 @@
+2018-10-17  Justin Michaud  <justin_michaud@apple.com>
+
+        Parse paint() and store paint callbacks for CSS Painting API
+        https://bugs.webkit.org/show_bug.cgi?id=190657
+
+        Reviewed by Dean Jackson.
+
+        Implement support for parsing paint() images in css, and store CSS paint callback objects in the paint definition map.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCSSPaintWorkletGlobalScopeCustom.cpp:
+        (WebCore::JSCSSPaintWorkletGlobalScope::visitAdditionalChildren):
+        (WebCore::JSCSSPaintWorkletGlobalScope::registerPaint):
+        * css/CSSImageGeneratorValue.cpp:
+        (WebCore::CSSImageGeneratorValue::image):
+        (WebCore::CSSImageGeneratorValue::isFixedSize const):
+        (WebCore::CSSImageGeneratorValue::fixedSize):
+        (WebCore::CSSImageGeneratorValue::isPending const):
+        (WebCore::CSSImageGeneratorValue::knownToBeOpaque const):
+        (WebCore::CSSImageGeneratorValue::loadSubimages):
+        * css/CSSPaintImageValue.cpp: Added.
+        (WebCore::CSSPaintImageValue::customCSSText const):
+        * css/CSSPaintImageValue.h: Added.
+        * css/CSSPaintWorkletGlobalScope.h:
+        * css/CSSPaintWorkletGlobalScope.idl:
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::equals const):
+        (WebCore::CSSValue::cssText const):
+        (WebCore::CSSValue::destroy):
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isPaintImageValue const):
+        * css/CSSValueKeywords.in:
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::consumeCustomPaint):
+        (WebCore::CSSPropertyParserHelpers::consumeGeneratedImage):
+        (WebCore::CSSPropertyParserHelpers::isGeneratedImage):
+        * platform/mediastream/mac/RealtimeVideoUtilities.h:
+
 2018-10-17  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Consolidate all image conversion and resizing into one class

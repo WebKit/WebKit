@@ -27,6 +27,7 @@
 
 #if ENABLE(CSS_PAINTING_API)
 
+#include "CSSPaintCallback.h"
 #include "ExceptionOr.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
@@ -49,6 +50,9 @@ public:
 
     struct PaintDefinition {
         const AtomicString name;
+        const Ref<CSSPaintCallback> paintCallback;
+        const Vector<String> inputProperties;
+        const Vector<String> inputArguments;
     };
 
     HashMap<String, std::unique_ptr<PaintDefinition>>& paintDefinitionMap() { return m_paintDefinitionMap; }

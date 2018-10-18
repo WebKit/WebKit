@@ -44,6 +44,12 @@ static JSValue throwInvalidModificationError(ExecState& state, ThrowScope& scope
     return jsUndefined();
 }
 
+void JSCSSPaintWorkletGlobalScope::visitAdditionalChildren(JSC::SlotVisitor& visitor)
+{
+    for (auto& registered : wrapped().paintDefinitionMap().values())
+        registered->paintCallback->visitJSFunction(visitor);
+}
+
 // https://drafts.css-houdini.org/css-paint-api/#registering-custom-paint
 JSValue JSCSSPaintWorkletGlobalScope::registerPaint(ExecState& state)
 {
@@ -115,17 +121,10 @@ JSValue JSCSSPaintWorkletGlobalScope::registerPaint(ExecState& state)
     RefPtr<JSCSSPaintCallback> paint = convert<IDLCallbackFunction<JSCSSPaintCallback>>(state, paintValue, *globalObject());
     RETURN_IF_EXCEPTION(scope, JSValue());
 
-    auto paintDefinition = std::unique_ptr<PaintDefinition>(new PaintDefinition { name });
+    auto paintDefinition = std::unique_ptr<PaintDefinition>(new PaintDefinition { name, paint.releaseNonNull(), inputProperties, inputArguments });
     paintDefinitionMap.add(name, WTFMove(paintDefinition));
 
     // FIXME: construct documentDefinition (step 22).
-
-    // FIXME: This is for testing only.
-    paint->handleEvent();
-    RETURN_IF_EXCEPTION(scope, JSValue());
-
-    UNUSED_PARAM(inputProperties);
-    UNUSED_PARAM(inputArguments);
 
     return jsUndefined();
 }

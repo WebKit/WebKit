@@ -38,6 +38,7 @@
 #include "CSSImageSetValue.h"
 #include "CSSImageValue.h"
 #include "CSSNamedImageValue.h"
+#include "CSSPaintImageValue.h"
 #include "CSSParserIdioms.h"
 #include "CSSValuePool.h"
 #include "Pair.h"
@@ -1281,6 +1282,23 @@ static RefPtr<CSSValue> consumeFilterImage(CSSParserTokenRange& args, const CSSP
     return CSSFilterImageValue::create(imageValue.releaseNonNull(), filterValue.releaseNonNull());
 }
 
+#if ENABLE(CSS_PAINTING_API)
+static RefPtr<CSSValue> consumeCustomPaint(CSSParserTokenRange& args)
+{
+    if (!RuntimeEnabledFeatures::sharedFeatures().cssPaintingAPIEnabled())
+        return nullptr;
+    if (args.peek().type() != IdentToken)
+        return nullptr;
+    auto name = args.consumeIncludingWhitespace().value().toString();
+
+    // FIXME: should parse arguments.
+    while (!args.atEnd())
+        args.consume();
+
+    return CSSPaintImageValue::create(name);
+}
+#endif
+
 static RefPtr<CSSValue> consumeGeneratedImage(CSSParserTokenRange& range, CSSParserContext context)
 {
     CSSValueID id = range.peek().functionId();
@@ -1317,6 +1335,10 @@ static RefPtr<CSSValue> consumeGeneratedImage(CSSParserTokenRange& range, CSSPar
         result = consumeWebkitNamedImage(args);
     else if (id == CSSValueWebkitFilter || id == CSSValueFilter)
         result = consumeFilterImage(args, context);
+#if ENABLE(CSS_PAINTING_API)
+    else if (id == CSSValuePaint)
+        result = consumeCustomPaint(args);
+#endif
     if (!result || !args.atEnd())
         return nullptr;
     range = rangeCopy;
@@ -1371,6 +1393,9 @@ static bool isGeneratedImage(CSSValueID id)
         || id == CSSValueCrossFade
         || id == CSSValueWebkitNamedImage
         || id == CSSValueWebkitFilter
+#if ENABLE(CSS_PAINTING_API)
+        || id == CSSValuePaint
+#endif
         || id == CSSValueFilter;
 }
     

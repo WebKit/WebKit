@@ -609,6 +609,7 @@ css/CSSMediaRule.cpp
 css/CSSNamedImageValue.cpp
 css/CSSNamespaceRule.cpp
 css/CSSPageRule.cpp
+css/CSSPaintImageValue.cpp
 css/CSSPaintWorkletGlobalScope.cpp
 css/CSSPendingSubstitutionValue.cpp
 css/CSSPrimitiveValue.cpp

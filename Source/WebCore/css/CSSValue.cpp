@@ -52,6 +52,7 @@
 #include "CSSInitialValue.h"
 #include "CSSLineBoxContainValue.h"
 #include "CSSNamedImageValue.h"
+#include "CSSPaintImageValue.h"
 #include "CSSPendingSubstitutionValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSProperty.h"
@@ -151,6 +152,10 @@ bool CSSValue::equals(const CSSValue& other) const
             return compareCSSValues<CSSCursorImageValue>(*this, other);
         case FilterImageClass:
             return compareCSSValues<CSSFilterImageValue>(*this, other);
+#if ENABLE(CSS_PAINTING_API)
+        case PaintImageClass:
+            return compareCSSValues<CSSPaintImageValue>(*this, other);
+#endif
         case FontClass:
             return compareCSSValues<CSSFontValue>(*this, other);
         case FontFaceSrcClass:
@@ -247,6 +252,10 @@ String CSSValue::cssText() const
         return downcast<CSSCursorImageValue>(*this).customCSSText();
     case FilterImageClass:
         return downcast<CSSFilterImageValue>(*this).customCSSText();
+#if ENABLE(CSS_PAINTING_API)
+    case PaintImageClass:
+        return downcast<CSSPaintImageValue>(*this).customCSSText();
+#endif
     case FontClass:
         return downcast<CSSFontValue>(*this).customCSSText();
     case FontFaceSrcClass:
@@ -432,6 +441,11 @@ void CSSValue::destroy()
     case FilterImageClass:
         delete downcast<CSSFilterImageValue>(this);
         return;
+#if ENABLE(CSS_PAINTING_API)
+    case PaintImageClass:
+        delete downcast<CSSPaintImageValue>(this);
+        return;
+#endif
     case CSSContentDistributionClass:
         delete downcast<CSSContentDistributionValue>(this);
         return;

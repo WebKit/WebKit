@@ -1201,6 +1201,9 @@ repeating-conic-gradient
 filter
 -webkit-filter
 dashboard-region
+#if defined(ENABLE_CSS_PAINTING_API) && ENABLE_CSS_PAINTING_API
+paint
+#endif
 
 // deprecated gradients
 from

@@ -106,6 +106,9 @@ public:
     bool isLineBoxContainValue() const { return m_classType == LineBoxContainClass; }
     bool isCalcValue() const {return m_classType == CalculationClass; }
     bool isFilterImageValue() const { return m_classType == FilterImageClass; }
+#if ENABLE(CSS_PAINTING_API)
+    bool isPaintImageValue() const { return m_classType == PaintImageClass; }
+#endif
     bool isContentDistributionValue() const { return m_classType == CSSContentDistributionClass; }
     bool isGridAutoRepeatValue() const { return m_classType == GridAutoRepeatClass; }
     bool isGridTemplateAreasValue() const { return m_classType == GridTemplateAreasClass; }
@@ -142,6 +145,9 @@ protected:
 
         // Image generator classes.
         CanvasClass,
+#if ENABLE(CSS_PAINTING_API)
+        PaintImageClass,
+#endif
         NamedImageClass,
         CrossfadeClass,
         FilterImageClass,

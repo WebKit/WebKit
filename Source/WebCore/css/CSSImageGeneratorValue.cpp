@@ -150,6 +150,10 @@ RefPtr<Image> CSSImageGeneratorValue::image(RenderElement& renderer, const Float
         return downcast<CSSRadialGradientValue>(*this).image(renderer, size);
     case ConicGradientClass:
         return downcast<CSSConicGradientValue>(*this).image(renderer, size);
+#if ENABLE(CSS_PAINTING_API)
+    case PaintImageClass:
+        return nullptr;
+#endif
     default:
         ASSERT_NOT_REACHED();
     }
@@ -173,6 +177,10 @@ bool CSSImageGeneratorValue::isFixedSize() const
         return downcast<CSSRadialGradientValue>(*this).isFixedSize();
     case ConicGradientClass:
         return downcast<CSSConicGradientValue>(*this).isFixedSize();
+#if ENABLE(CSS_PAINTING_API)
+    case PaintImageClass:
+        return false;
+#endif
     default:
         ASSERT_NOT_REACHED();
     }
@@ -194,6 +202,10 @@ FloatSize CSSImageGeneratorValue::fixedSize(const RenderElement& renderer)
         return downcast<CSSRadialGradientValue>(*this).fixedSize(renderer);
     case ConicGradientClass:
         return downcast<CSSConicGradientValue>(*this).fixedSize(renderer);
+#if ENABLE(CSS_PAINTING_API)
+    case PaintImageClass:
+        return FloatSize();
+#endif
     default:
         ASSERT_NOT_REACHED();
     }
@@ -217,6 +229,10 @@ bool CSSImageGeneratorValue::isPending() const
         return downcast<CSSRadialGradientValue>(*this).isPending();
     case ConicGradientClass:
         return downcast<CSSConicGradientValue>(*this).isPending();
+#if ENABLE(CSS_PAINTING_API)
+    case PaintImageClass:
+        return false;
+#endif
     default:
         ASSERT_NOT_REACHED();
     }
@@ -240,6 +256,10 @@ bool CSSImageGeneratorValue::knownToBeOpaque(const RenderElement& renderer) cons
         return downcast<CSSRadialGradientValue>(*this).knownToBeOpaque(renderer);
     case ConicGradientClass:
         return downcast<CSSConicGradientValue>(*this).knownToBeOpaque(renderer);
+#if ENABLE(CSS_PAINTING_API)
+    case PaintImageClass:
+        return false;
+#endif
     default:
         ASSERT_NOT_REACHED();
     }
@@ -267,6 +287,10 @@ void CSSImageGeneratorValue::loadSubimages(CachedResourceLoader& cachedResourceL
     case ConicGradientClass:
         downcast<CSSConicGradientValue>(*this).loadSubimages(cachedResourceLoader, options);
         break;
+#if ENABLE(CSS_PAINTING_API)
+    case PaintImageClass:
+        break;
+#endif
     default:
         ASSERT_NOT_REACHED();
     }

@@ -1350,6 +1350,7 @@
 		4B5BDD9B21658A1500DD4262 /* CSSPaintCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B5BDD9A21658A1500DD4262 /* CSSPaintCallback.h */; };
 		4B6B5CBD21640EFF00603817 /* DOMCSSPaintWorklet.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B6B5CB82163EC0700603817 /* DOMCSSPaintWorklet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4B6B5CC02164386400603817 /* CSSPaintWorkletGlobalScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B6B5CBF2164386400603817 /* CSSPaintWorkletGlobalScope.h */; };
+		4B6E87692176D69200420E5E /* CSSPaintImageValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B6E87682176D69200420E5E /* CSSPaintImageValue.h */; };
 		4B6FA6F40C39E48C00087011 /* SmartReplace.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B6FA6F20C39E48C00087011 /* SmartReplace.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4BAE95B10B2FA9CE00AED8A0 /* EditorDeleteAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BAE95B00B2FA9CE00AED8A0 /* EditorDeleteAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4BDA3FFE2151B6F500FD6604 /* DOMCSSCustomPropertyDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BDA3FF82151B6F200FD6604 /* DOMCSSCustomPropertyDescriptor.h */; };
@@ -7888,6 +7889,8 @@
 		4B6B5CBF2164386400603817 /* CSSPaintWorkletGlobalScope.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSPaintWorkletGlobalScope.h; sourceTree = "<group>"; };
 		4B6B5CC1216439CF00603817 /* CSSPaintWorkletGlobalScope.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSPaintWorkletGlobalScope.cpp; sourceTree = "<group>"; };
 		4B6B5CC321643A8E00603817 /* CSSPaintWorkletGlobalScope.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CSSPaintWorkletGlobalScope.idl; sourceTree = "<group>"; };
+		4B6E87682176D69200420E5E /* CSSPaintImageValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSPaintImageValue.h; sourceTree = "<group>"; };
+		4B6E876B2176D8A100420E5E /* CSSPaintImageValue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSPaintImageValue.cpp; sourceTree = "<group>"; };
 		4B6FA6F20C39E48C00087011 /* SmartReplace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmartReplace.h; sourceTree = "<group>"; };
 		4B6FA6F60C39E4A100087011 /* SmartReplaceCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SmartReplaceCF.cpp; sourceTree = "<group>"; };
 		4BAE95B00B2FA9CE00AED8A0 /* EditorDeleteAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditorDeleteAction.h; sourceTree = "<group>"; };
@@ -25990,6 +25993,8 @@
 				85C56CA60AA89D5F00D95755 /* CSSPageRule.idl */,
 				4B5BDD9A21658A1500DD4262 /* CSSPaintCallback.h */,
 				4B5BDD99216588E500DD4262 /* CSSPaintCallback.idl */,
+				4B6E876B2176D8A100420E5E /* CSSPaintImageValue.cpp */,
+				4B6E87682176D69200420E5E /* CSSPaintImageValue.h */,
 				4B6B5CC1216439CF00603817 /* CSSPaintWorkletGlobalScope.cpp */,
 				4B6B5CBF2164386400603817 /* CSSPaintWorkletGlobalScope.h */,
 				4B6B5CC321643A8E00603817 /* CSSPaintWorkletGlobalScope.idl */,
@@ -27992,6 +27997,7 @@
 				94E839511DFB2A0E007BC6A7 /* CSSNamespaceRule.h in Headers */,
 				A80E6D000A1989CA007FB8C5 /* CSSPageRule.h in Headers */,
 				4B5BDD9B21658A1500DD4262 /* CSSPaintCallback.h in Headers */,
+				4B6E87692176D69200420E5E /* CSSPaintImageValue.h in Headers */,
 				4B6B5CC02164386400603817 /* CSSPaintWorkletGlobalScope.h in Headers */,
 				946D372E1D6CB2940077084F /* CSSParser.h in Headers */,
 				E4A7995220EE4B1400C19568 /* CSSParserContext.h in Headers */,
