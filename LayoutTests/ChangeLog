@@ -1,5 +1,19 @@
 2018-10-18  Jer Noble  <jer.noble@apple.com>
 
+        [MSE] timestampOffset can introduce floating-point rounding errors to incoming samples
+        https://bugs.webkit.org/show_bug.cgi?id=190590
+        <rdar://problem/45275626>
+
+        Reviewed by Eric Carlson.
+
+        * media/media-source/media-source-sequence-timestamps-expected.txt:
+        * media/media-source/media-source-timestampoffset-rounding-error-expected.txt: Added.
+        * media/media-source/media-source-timestampoffset-rounding-error.html: Added.
+        * media/media-source/mock-media-source.js:
+        (makeASample):
+
+2018-10-18  Jer Noble  <jer.noble@apple.com>
+
         Enable WKPreferences._lowPowerVideoAudioBufferSizeEnabled by default
         https://bugs.webkit.org/show_bug.cgi?id=190315
         <rdar://problem/45047807>

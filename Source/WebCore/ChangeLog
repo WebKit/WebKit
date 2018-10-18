@@ -1,3 +1,23 @@
+2018-10-18  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] timestampOffset can introduce floating-point rounding errors to incoming samples
+        https://bugs.webkit.org/show_bug.cgi?id=190590
+        <rdar://problem/45275626>
+
+        Reviewed by Eric Carlson.
+
+        Test: media/media-source/media-source-timestampoffset-rounding-error.html
+
+        SourceBuffer.timestampOffset is a double property, which, when added to a MediaTime will
+        result in a double-backed MediaTime as PTS & DTS. This can introduce rounding errors when
+        these samples are appended as overlapping existing samples. Rather than converting a MediaTime
+        to double-backed when adding the timestampOffset, convert the offset to a multiple of the
+        sample's timeBase.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::setTimestampOffset):
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveSample):
+
 2018-10-18  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Allow ports to optionally do screen capture in the UI process
