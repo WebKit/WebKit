@@ -230,6 +230,45 @@
                     testExpected('access.getConfiguration().persistentState', 'not-allowed');
                 });
         },
+
+        function() {
+            run('mock.supportedEncryptionSchemes = ["cenc"]');
+            passingTestWithCapabilities([{
+                    label: 'encryption-scheme-cenc',
+                    initDataTypes: ['mock'],
+                    videoCapabilities: [{ contentType: 'video/mock; codecs="mock"', encryptionScheme: 'cenc'}],
+                }],
+                mediaKeySystemAccess => {
+                    window.access = mediaKeySystemAccess;
+                    testExpected('access.getConfiguration().label', 'encryption-scheme-cenc');
+                    testExpected('access.getConfiguration().videoCapabilities[0].encryptionScheme', 'cenc');
+                });
+        },
+
+        function() {
+            failingTestWithCapabilities([{
+                    initDataTypes: ['mock'],
+                    videoCapabilities: [{ contentType: 'video/mock; codecs="mock"', encryptionScheme: 'cbcs'}],
+                }],
+                exceptionCode => {
+                    window.exceptionCode = exceptionCode;
+                    testExpected('exceptionCode.name', 'NotSupportedError');
+                });
+        },
+
+        function() {
+            run('mock.supportedEncryptionSchemes = ["cenc", "cbcs"]');
+            passingTestWithCapabilities([{
+                    label: 'encryption-scheme-cbcs',
+                    initDataTypes: ['mock'],
+                    videoCapabilities: [{ contentType: 'video/mock; codecs="mock"', encryptionScheme: 'cbcs'}],
+                }],
+                mediaKeySystemAccess => {
+                    window.access = mediaKeySystemAccess;
+                    testExpected('access.getConfiguration().label', 'encryption-scheme-cbcs');
+                    testExpected('access.getConfiguration().videoCapabilities[0].encryptionScheme', 'cbcs');
+                });
+        },
     ];
     </script>
 </head>

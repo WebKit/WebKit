@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=ENCRYPTED_MEDIA,
-    NoInterfaceObject,
-    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
-] interface MockCDMFactory {
-    attribute sequence<DOMString> supportedDataTypes;
-    attribute sequence<DOMString> supportedRobustness;
-    attribute sequence<MediaKeySessionType> supportedSessionTypes;
-    attribute MediaKeysRequirement distinctiveIdentifiersRequirement;
-    attribute MediaKeysRequirement persistentStateRequirement;
-    attribute boolean canCreateInstances;
-    attribute boolean supportsServerCertificates;
-    attribute boolean supportsSessions;
-    attribute sequence<MediaKeyEncryptionScheme> supportedEncryptionSchemes;
+#pragma once
 
-    void unregister();
+#if ENABLE(ENCRYPTED_MEDIA)
+
+namespace WebCore {
+
+enum class CDMEncryptionScheme {
+    cenc,
+    cbcs,
 };
 
+}
+
+#endif

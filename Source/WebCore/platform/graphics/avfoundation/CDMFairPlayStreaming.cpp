@@ -260,13 +260,13 @@ bool CDMPrivateFairPlayStreaming::supportsConfiguration(const CDMKeySystemConfig
 
     if (!configuration.audioCapabilities.isEmpty()
         && !WTF::anyOf(configuration.audioCapabilities, [](auto& capability) {
-            return CDMInstanceFairPlayStreamingAVFObjC::mimeTypeIsPlayable(capability.contentType);
+            return CDMInstanceFairPlayStreamingAVFObjC::supportsMediaCapability(capability);
         }))
         return false;
 
     if (!configuration.videoCapabilities.isEmpty()
         && !WTF::anyOf(configuration.videoCapabilities, [](auto& capability) {
-            return CDMInstanceFairPlayStreamingAVFObjC::mimeTypeIsPlayable(capability.contentType);
+            return CDMInstanceFairPlayStreamingAVFObjC::supportsMediaCapability(capability);
         }))
         return false;
 

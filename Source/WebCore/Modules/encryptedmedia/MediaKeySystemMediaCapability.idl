@@ -32,4 +32,5 @@
 ] dictionary MediaKeySystemMediaCapability {
     DOMString contentType = "";
     DOMString robustness = "";
+    MediaKeyEncryptionScheme? encryptionScheme = null;
 };

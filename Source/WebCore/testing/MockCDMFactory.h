@@ -32,6 +32,7 @@
 #include "CDMInstance.h"
 #include "CDMInstanceSession.h"
 #include "CDMPrivate.h"
+#include "MediaKeyEncryptionScheme.h"
 #include "MediaKeysRequirement.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
@@ -69,6 +70,9 @@ public:
     bool supportsSessions() const { return m_supportsSessions; }
     void setSupportsSessions(bool flag) { m_supportsSessions = flag; }
 
+    const Vector<MediaKeyEncryptionScheme>& supportedEncryptionSchemes() const { return m_supportedEncryptionSchemes; }
+    void setSupportedEncryptionSchemes(Vector<MediaKeyEncryptionScheme>&& schemes) { m_supportedEncryptionSchemes = WTFMove(schemes); }
+
     void unregister();
 
     bool hasSessionWithID(const String& id) { return m_sessions.contains(id); }
@@ -87,6 +91,7 @@ private:
     Vector<AtomicString> m_supportedDataTypes;
     Vector<MediaKeySessionType> m_supportedSessionTypes;
     Vector<String> m_supportedRobustness;
+    Vector<MediaKeyEncryptionScheme> m_supportedEncryptionSchemes;
     bool m_registered { true };
     bool m_canCreateInstances { true };
     bool m_supportsServerCertificates { true };

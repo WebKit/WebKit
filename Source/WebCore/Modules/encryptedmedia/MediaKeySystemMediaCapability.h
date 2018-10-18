@@ -31,6 +31,7 @@
 #if ENABLE(ENCRYPTED_MEDIA)
 
 #include "CDMMediaCapability.h"
+#include "MediaKeyEncryptionScheme.h"
 
 namespace WebCore {
 

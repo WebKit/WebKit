@@ -1,3 +1,44 @@
+2018-10-18  Jer Noble  <jer.noble@apple.com>
+
+        Add support for MediaKeyEncryptionScheme
+        https://bugs.webkit.org/show_bug.cgi?id=190173
+
+        Reviewed by Eric Carlson.
+
+        Added sub-tests to: media/encrypted-media/mock-navigator-requestMediaKeySystemAccess.html
+
+        Add support for the MediaKeyEncryptionScheme extension to EME, as detailed here:
+        <https://github.com/WICG/encrypted-media-encryption-scheme/blob/master/explainer.md>
+
+        As the strings "cenc" and "cbcs" are explicitly lower-case, add support to the bindings generator to keep
+        those strings as lower-case when converting from IDL.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Modules/encryptedmedia/MediaKeyEncryptionScheme.h:
+        * Modules/encryptedmedia/MediaKeyEncryptionScheme.idl:
+        * Modules/encryptedmedia/MediaKeySystemMediaCapability.h:
+        * Modules/encryptedmedia/MediaKeySystemMediaCapability.idl:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/scripts/CodeGenerator.pm:
+        (WK_ucfirst):
+        * platform/encryptedmedia/CDMEncryptionScheme.h: Copied from Source/WebCore/testing/MockCDMFactory.idl.
+        * platform/encryptedmedia/CDMMediaCapability.h:
+        * platform/graphics/avfoundation/CDMFairPlayStreaming.cpp:
+        (WebCore::CDMPrivateFairPlayStreaming::supportsConfiguration const):
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.h:
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm:
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::supportsMediaCapability):
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::initializeWithConfiguration):
+        * testing/MockCDMFactory.cpp:
+        (WebCore::m_supportedEncryptionSchemes):
+        (WebCore::MockCDM::supportsConfiguration const):
+        * testing/MockCDMFactory.h:
+        (WebCore::MockCDMFactory::supportedEncryptionSchemes const):
+        (WebCore::MockCDMFactory::setSupportedEncryptionSchemes):
+        * testing/MockCDMFactory.idl:
+
 2018-10-18  Alexey Proskuryakov  <ap@apple.com>
 
         Switch from PLATFORM(IOS) to PLATFORM(IOS_FAMILY)

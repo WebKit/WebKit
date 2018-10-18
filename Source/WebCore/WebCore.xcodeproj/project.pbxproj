@@ -4141,6 +4141,7 @@
 		CDF65CC8145B1E7500C4C7AA /* MediaController.h in Headers */ = {isa = PBXBuildFile; fileRef = CD27F6E4145767870078207D /* MediaController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDF65CCA145B448800C4C7AA /* MediaControllerInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF65CC9145B43A700C4C7AA /* MediaControllerInterface.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDF7483F18FEBCEC0006ECC0 /* GridPositionsResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF7483D18FEBCEC0006ECC0 /* GridPositionsResolver.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CDF756A3215C29E900EFCB50 /* JSMediaKeyEncryptionScheme.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF756A1215C29E900EFCB50 /* JSMediaKeyEncryptionScheme.h */; };
 		CDFC360618CA61C20026E56F /* RemoteCommandListener.h in Headers */ = {isa = PBXBuildFile; fileRef = CDFC360418CA61C20026E56F /* RemoteCommandListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE057FA61220731100A476D5 /* DocumentMarkerController.h in Headers */ = {isa = PBXBuildFile; fileRef = CE057FA41220731100A476D5 /* DocumentMarkerController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE08C3D2152B599A0021B8C2 /* AlternativeTextController.h in Headers */ = {isa = PBXBuildFile; fileRef = CE08C3D0152B599A0021B8C2 /* AlternativeTextController.h */; settings = {ATTRIBUTES = (); }; };
@@ -13581,6 +13582,11 @@
 		CDF65CC9145B43A700C4C7AA /* MediaControllerInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaControllerInterface.h; sourceTree = "<group>"; };
 		CDF7483C18FEBCEC0006ECC0 /* GridPositionsResolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GridPositionsResolver.cpp; sourceTree = "<group>"; };
 		CDF7483D18FEBCEC0006ECC0 /* GridPositionsResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GridPositionsResolver.h; sourceTree = "<group>"; };
+		CDF7569B215C23A400EFCB50 /* CDMEncryptionScheme.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CDMEncryptionScheme.h; sourceTree = "<group>"; };
+		CDF7569D215C244400EFCB50 /* MediaKeyEncryptionScheme.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaKeyEncryptionScheme.h; sourceTree = "<group>"; };
+		CDF7569E215C285E00EFCB50 /* MediaKeyEncryptionScheme.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MediaKeyEncryptionScheme.idl; sourceTree = "<group>"; };
+		CDF756A0215C29E800EFCB50 /* JSMediaKeyEncryptionScheme.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaKeyEncryptionScheme.cpp; sourceTree = "<group>"; };
+		CDF756A1215C29E900EFCB50 /* JSMediaKeyEncryptionScheme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaKeyEncryptionScheme.h; sourceTree = "<group>"; };
 		CDFC360118CA61630026E56F /* RemoteCommandListenerIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteCommandListenerIOS.h; sourceTree = "<group>"; };
 		CDFC360218CA61630026E56F /* RemoteCommandListenerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteCommandListenerIOS.mm; sourceTree = "<group>"; };
 		CDFC360318CA61C20026E56F /* RemoteCommandListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteCommandListener.cpp; sourceTree = "<group>"; };
@@ -19793,6 +19799,8 @@
 				A5071E841C56D079009951BE /* ResourceUsageThread.h */,
 				7C52229B1E1DAE47002CB8F7 /* RuntimeEnabledFeatures.cpp */,
 				7C52229C1E1DAE47002CB8F7 /* RuntimeEnabledFeatures.h */,
+				CD9A87F2215D43A6006F17B5 /* Quirks.cpp */,
+				CD9A87F1215D43A6006F17B5 /* Quirks.h */,
 				BCEC01BA0C274DAC009F4EC9 /* Screen.cpp */,
 				BCEC01BB0C274DAC009F4EC9 /* Screen.h */,
 				BCEC01BC0C274DAC009F4EC9 /* Screen.idl */,
@@ -25072,6 +25080,7 @@
 			isa = PBXGroup;
 			children = (
 				CD94A5D91F71CB9F00F525C5 /* clearkey */,
+				CDF7569B215C23A400EFCB50 /* CDMEncryptionScheme.h */,
 				CD94A5D11F71CB6B00F525C5 /* CDMFactory.cpp */,
 				CD94A5D21F71CB6B00F525C5 /* CDMFactory.h */,
 				CD94A5CE1F71CB6A00F525C5 /* CDMInstance.h */,
@@ -25143,6 +25152,8 @@
 				2D9BF7331DBFDC0F007A7D99 /* MediaKeys.cpp */,
 				2D9BF7341DBFDC0F007A7D99 /* MediaKeys.h */,
 				2D9BF6F61DBFB71F007A7D99 /* MediaKeys.idl */,
+				CDF7569D215C244400EFCB50 /* MediaKeyEncryptionScheme.h */,
+				CDF7569E215C285E00EFCB50 /* MediaKeyEncryptionScheme.idl */,
 				2D9BF7351DBFDC0F007A7D99 /* MediaKeySession.cpp */,
 				2D9BF7361DBFDC0F007A7D99 /* MediaKeySession.h */,
 				2D9BF6F71DBFB71F007A7D99 /* MediaKeySession.idl */,
@@ -25172,6 +25183,8 @@
 		CDA98DCD1601515C00FEA3B1 /* EncryptedMedia */ = {
 			isa = PBXGroup;
 			children = (
+				CDF756A0215C29E800EFCB50 /* JSMediaKeyEncryptionScheme.cpp */,
+				CDF756A1215C29E900EFCB50 /* JSMediaKeyEncryptionScheme.h */,
 				2D9BF7131DBFDAB1007A7D99 /* JSMediaKeyMessageEvent.cpp */,
 				2D9BF7141DBFDAB1007A7D99 /* JSMediaKeyMessageEvent.h */,
 				2D9BF7151DBFDAB1007A7D99 /* JSMediaKeys.cpp */,
@@ -29942,6 +29955,7 @@
 				51058AE01D67C229009A538C /* MockGamepad.h in Headers */,
 				51058AE21D67C229009A538C /* MockGamepadProvider.h in Headers */,
 				413CCD4A20DE034F0065A21A /* MockMediaDevice.h in Headers */,
+				CDF756A3215C29E900EFCB50 /* JSMediaKeyEncryptionScheme.h in Headers */,
 				CDF2B0131820540600F2B424 /* MockMediaPlayerMediaSource.h in Headers */,
 				CDF2B0151820540600F2B424 /* MockMediaSourcePrivate.h in Headers */,
 				A1BB85A92159B02C0067E07D /* MockPaymentError.h in Headers */,

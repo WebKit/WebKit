@@ -3248,6 +3248,7 @@ JSWebKitMediaKeyError.cpp
 
 #if ENABLE_ENCRYPTED_MEDIA
 
+JSMediaKeyEncryptionScheme.cpp
 JSMediaKeyMessageEvent.cpp
 JSMediaKeySession.cpp
 JSMediaKeySessionType.cpp

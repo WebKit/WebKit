@@ -1,3 +1,13 @@
+2018-10-18  Jer Noble  <jer.noble@apple.com>
+
+        Add support for MediaKeyEncryptionScheme
+        https://bugs.webkit.org/show_bug.cgi?id=190173
+
+        Reviewed by Eric Carlson.
+
+        * media/encrypted-media/mock-navigator-requestMediaKeySystemAccess-expected.txt:
+        * media/encrypted-media/mock-navigator-requestMediaKeySystemAccess.html:
+
 2018-10-18  Youenn Fablet  <youenn@apple.com>
 
         Handle MDNS resolution of candidates through libwebrtc directly

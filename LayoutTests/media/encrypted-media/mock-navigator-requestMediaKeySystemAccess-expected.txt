@@ -85,5 +85,24 @@ RUN(promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", capabilit
 Promise resolved OK
 EXPECTED (access.getConfiguration().label == 'persistent-state-not-required') OK
 EXPECTED (access.getConfiguration().persistentState == 'not-allowed') OK
+
+RUN(mock.supportedEncryptionSchemes = ["cenc"])
+SET capabilities = '[ { "label": "encryption-scheme-cenc", "initDataTypes": [ "mock" ], "videoCapabilities": [ { "contentType": "video/mock; codecs=\"mock\"", "encryptionScheme": "cenc" } ] } ]'
+RUN(promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", capabilities))
+Promise resolved OK
+EXPECTED (access.getConfiguration().label == 'encryption-scheme-cenc') OK
+EXPECTED (access.getConfiguration().videoCapabilities[0].encryptionScheme == 'cenc') OK
+
+SET capabilities = '[ { "initDataTypes": [ "mock" ], "videoCapabilities": [ { "contentType": "video/mock; codecs=\"mock\"", "encryptionScheme": "cbcs" } ] } ]'
+RUN(promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", capabilities))
+Promise rejected correctly OK
+EXPECTED (exceptionCode.name == 'NotSupportedError') OK
+
+RUN(mock.supportedEncryptionSchemes = ["cenc", "cbcs"])
+SET capabilities = '[ { "label": "encryption-scheme-cbcs", "initDataTypes": [ "mock" ], "videoCapabilities": [ { "contentType": "video/mock; codecs=\"mock\"", "encryptionScheme": "cbcs" } ] } ]'
+RUN(promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", capabilities))
+Promise resolved OK
+EXPECTED (access.getConfiguration().label == 'encryption-scheme-cbcs') OK
+EXPECTED (access.getConfiguration().videoCapabilities[0].encryptionScheme == 'cbcs') OK
 END OF TEST
 

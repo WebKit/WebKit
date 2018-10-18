@@ -44,6 +44,7 @@ OBJC_CLASS WebCoreFPSContentKeySessionDelegate;
 namespace WebCore {
 
 class CDMInstanceSessionFairPlayStreamingAVFObjC;
+struct CDMMediaCapability;
 
 class CDMInstanceFairPlayStreamingAVFObjC final : public CDMInstance, public CanMakeWeakPtr<CDMInstanceFairPlayStreamingAVFObjC> {
 public:
@@ -52,6 +53,7 @@ public:
 
     static bool supportsPersistableState();
     static bool supportsPersistentKeys();
+    static bool supportsMediaCapability(const CDMMediaCapability&);
     static bool mimeTypeIsPlayable(const String&);
 
     ImplementationType implementationType() const final { return ImplementationType::FairPlayStreaming; }

@@ -30,6 +30,7 @@
 
 #include "InitDataRegistry.h"
 #include <JavaScriptCore/ArrayBuffer.h>
+#include <wtf/Algorithms.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/UUID.h>
 #include <wtf/text/StringHash.h>
@@ -39,6 +40,7 @@ namespace WebCore {
 
 MockCDMFactory::MockCDMFactory()
     : m_supportedSessionTypes({ MediaKeySessionType::Temporary, MediaKeySessionType::PersistentUsageRecord, MediaKeySessionType::PersistentLicense })
+    , m_supportedEncryptionSchemes({ MediaKeyEncryptionScheme::cenc })
 {
     CDMFactory::registerFactory(*this);
 }
@@ -113,9 +115,20 @@ bool MockCDM::supportsInitDataType(const AtomicString& initDataType) const
     return false;
 }
 
-bool MockCDM::supportsConfiguration(const MediaKeySystemConfiguration&) const
+bool MockCDM::supportsConfiguration(const MediaKeySystemConfiguration& configuration) const
 {
-    // NOTE: Implement;
+    auto capabilityHasSupportedEncryptionScheme = [&] (auto& capability) {
+        if (capability.encryptionScheme)
+            return m_factory->supportedEncryptionSchemes().contains(capability.encryptionScheme.value());
+        return true;
+    };
+
+    if (!configuration.audioCapabilities.isEmpty() && !anyOf(configuration.audioCapabilities, capabilityHasSupportedEncryptionScheme))
+        return false;
+
+    if (!configuration.videoCapabilities.isEmpty() && !anyOf(configuration.videoCapabilities, capabilityHasSupportedEncryptionScheme))
+        return false;
+
     return true;
 
 }

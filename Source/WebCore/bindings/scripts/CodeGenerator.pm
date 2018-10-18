@@ -694,6 +694,8 @@ sub WK_ucfirst
     $ret =~ s/Xml/XML/ if $ret =~ /^Xml[^a-z]/;
     $ret =~ s/Svg/SVG/ if $ret =~ /^Svg/;
     $ret =~ s/Srgb/SRGB/ if $ret =~ /^Srgb/;
+    $ret =~ s/Cenc/cenc/ if $ret =~ /^Cenc/;
+    $ret =~ s/Cbcs/cbcs/ if $ret =~ /^Cbcs/;
 
     return $ret;
 }

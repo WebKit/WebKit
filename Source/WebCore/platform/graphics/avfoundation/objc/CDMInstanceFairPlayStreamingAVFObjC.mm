@@ -30,6 +30,7 @@
 
 #import "CDMFairPlayStreaming.h"
 #import "CDMKeySystemConfiguration.h"
+#import "CDMMediaCapability.h"
 #import "NotImplemented.h"
 #import "SharedBuffer.h"
 #import "TextDecoder.h"
@@ -158,9 +159,16 @@ bool CDMInstanceFairPlayStreamingAVFObjC::supportsPersistentKeys()
 #endif
 }
 
-bool CDMInstanceFairPlayStreamingAVFObjC::mimeTypeIsPlayable(const String& contentType)
+bool CDMInstanceFairPlayStreamingAVFObjC::supportsMediaCapability(const CDMMediaCapability& capability)
 {
-    return [getAVURLAssetClass() isPlayableExtendedMIMEType:contentType];
+    if (![getAVURLAssetClass() isPlayableExtendedMIMEType:capability.contentType])
+        return false;
+
+    // FairPlay only supports 'cbcs' encryption:
+    if (capability.encryptionScheme && capability.encryptionScheme.value() != CDMEncryptionScheme::cbcs)
+        return false;
+
+    return true;
 }
 
 CDMInstance::SuccessValue CDMInstanceFairPlayStreamingAVFObjC::initializeWithConfiguration(const CDMKeySystemConfiguration& configuration)
