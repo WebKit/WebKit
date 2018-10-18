@@ -39,6 +39,6 @@ PASS value IDL attribute of input type number without value attribute
 PASS value IDL attribute of input type number with value attribute 
 PASS value IDL attribute of input type range without value attribute 
 PASS value IDL attribute of input type range with value attribute 
-PASS value IDL attribute of input type color without value attribute 
-PASS value IDL attribute of input type color with value attribute 
+FAIL value IDL attribute of input type color without value attribute assert_equals: expected "#000000" but got "foo"
+FAIL value IDL attribute of input type color with value attribute assert_equals: expected "#000000" but got "foo"
 

@@ -96,6 +96,12 @@ public:
 #if ENABLE(SERVICE_CONTROLS)
     virtual String imageControlsStyleSheet() const { return String(); }
 #endif
+#if ENABLE(DATALIST_ELEMENT)
+    String dataListStyleSheet() const;
+#endif
+#if ENABLE(INPUT_TYPE_COLOR)
+    String colorInputStyleSheet() const;
+#endif
 
     // A method to obtain the baseline position for a "leaf" control.  This will only be used if a baseline
     // position cannot be determined by examining child content. Checkboxes and radio buttons are examples of
@@ -341,6 +347,10 @@ protected:
 
 #if ENABLE(DATALIST_ELEMENT)
     virtual void adjustListButtonStyle(StyleResolver&, RenderStyle&, const Element*) const;
+#endif
+
+#if ENABLE(INPUT_TYPE_COLOR)
+    virtual String platformColorInputStyleSheet() const { return { }; }
 #endif
 
     virtual void adjustProgressBarStyle(StyleResolver&, RenderStyle&, const Element*) const;

@@ -408,6 +408,8 @@ typedef enum {
 @end
 
 @interface UITextSuggestion : NSObject
++ (instancetype)textSuggestionWithInputText:(NSString *)inputText;
+@property (nonatomic, copy, readonly) NSString *inputText;
 @end
 
 @protocol UITextInputSuggestionDelegate <UITextInputDelegate>

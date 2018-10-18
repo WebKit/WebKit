@@ -1341,6 +1341,9 @@ webkit.org/b/182087 imported/w3c/web-platform-tests/css/css-multicol/multicol-sp
 
 webkit.org/b/148884 imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection.html [ Pass Failure ]
 
+webkit.org/b/190626 imported/w3c/web-platform-tests/html/semantics/forms/the-datalist-element/datalistoptions.html [ Failure ]
+webkit.org/b/190613 imported/blink/fast/forms/datalist/slider-appearance-with-ticks-crash.html [ Crash Failure ]
+
 # Does timeout
 imported/w3c/web-platform-tests/webaudio/idlharness.https.html [ Skip ]
 # Do assert in OfflineAudioContext

@@ -461,12 +461,6 @@ input[type="search"]::-webkit-search-results-button {
     flex: none;
 }
 
-#if defined(ENABLE_DATALIST_ELEMENT) && ENABLE_DATALIST_ELEMENT
-datalist {
-    display: none;
-}
-#endif
-
 #if defined(ENABLE_INPUT_TYPE_DATE) && ENABLE_INPUT_TYPE_DATE
 input[type="date"] {
     align-items: center;
@@ -891,15 +885,6 @@ select:focus {
 #endif
 
 #if defined(ENABLE_INPUT_TYPE_COLOR) && ENABLE_INPUT_TYPE_COLOR
-
-input[type="color"] {
-#if !(defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS)
-    -webkit-appearance: color-well;
-#endif
-    width: 44px;
-    height: 23px;
-    outline: none;
-}
 
 input[type="color"]::-webkit-color-swatch-wrapper {
     display: flex;

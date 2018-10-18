@@ -51,6 +51,7 @@
 #include "RenderLayer.h"
 #include "RenderTextControlSingleLine.h"
 #include "RenderTheme.h"
+#include "RuntimeEnabledFeatures.h"
 #include "ShadowRoot.h"
 #include "TextControlInnerElements.h"
 #include "TextEvent.h"
@@ -582,7 +583,7 @@ void TextFieldInputType::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent& 
 bool TextFieldInputType::shouldRespectListAttribute()
 {
 #if ENABLE(DATALIST_ELEMENT)
-    return true;
+    return RuntimeEnabledFeatures::sharedFeatures().dataListElementEnabled();
 #else
     return InputType::themeSupportsDataListUI(this);
 #endif

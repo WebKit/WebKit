@@ -71,6 +71,7 @@ namespace WebCore {
     macro(GamepadEvent) \
     macro(HTMLAttachmentElement) \
     macro(HTMLAudioElement) \
+    macro(HTMLDataListElement) \
     macro(HTMLMenuItemElement) \
     macro(HTMLSlotElement) \
     macro(Headers) \

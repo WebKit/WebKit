@@ -320,9 +320,6 @@ webkit.org/b/151506 fast/events/beforeunload-showModalDialog.html [ Skip ]
 webkit.org/b/151506 fast/events/pagehide-showModalDialog.html [ Skip ]
 webkit.org/b/151506 fast/events/unload-showModalDialog.html [ Skip ]
 
-# Datalist is not yet enabled.
-fast/forms/datalist/ [ Skip ]
-
 # TODO Color input is not yet enabled.
 fast/forms/color/ [ Skip ]
 
@@ -555,6 +552,10 @@ fast/events/platform-wheelevent-paging-y-in-scrolling-page.html [ Skip ]
 # Pointer Lock is not implemented.
 pointer-lock/ [ Skip ]
 http/tests/pointer-lock/ [ Skip ]
+
+# Datalist is unsupported on Windows
+fast/forms/datalist [ WontFix ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-datalist-element [ WontFix ]
 
 # TODO Fail until SUBPIXEL_LAYOUT is enabled
 webkit.org/b/85532 fast/sub-pixel [ Skip ]

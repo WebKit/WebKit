@@ -1,14 +1,44 @@
 <!DOCTYPE html>
 <html>
+<head>
+<style>
+input[type="text"] {
+    width: 100px;
+}
+
+.blacksquare {
+    position: absolute;
+    top: 6px;
+    left: 92px;
+    width: 25px;
+    height: 25px;
+    background-color: black;
+}
+</style>
+</head>
 <body>
-    <label>Enter your browser</label>
-    <input type="text" list="browsers">
-    <datalist id="browsers">
-        or select from this list
-        <select>
-            <option>Safari</option>
-            <option>Chrome</option>
-        </select>
-    </datalist>
+    <div class="blacksquare"></div>
+    <div>
+        <input type="text" list="browsers">
+        <datalist id="browsers">
+            or select from this list
+            <select>
+                <option>Safari</option>
+                <option>Chrome</option>
+            </select>
+        </datalist>
+        <label>Enter your browser</label>
+    </div>
+    <div>
+        <input type="color" list="colors">
+        <datalist id="colors">
+            or select from this list
+            <select>
+                <option>#EFEFEF</option>
+                <option>#556323</option>
+            </select>
+        </datalist>
+        <label>Enter your color</label>
+    </div>
 </body>
 </html>

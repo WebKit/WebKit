@@ -27,6 +27,10 @@ media/no-fullscreen-when-hidden.html [ Skip ]
 pointerevents [ Skip ]
 imported/w3c/web-platform-tests/pointerevents [ Skip ]
 
+# Datalist is unsupported in WK1
+fast/forms/datalist [ WontFix ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-datalist-element [ WontFix ]
+
 # <rdar://problem/6501130> LayoutTests: Enable editing tests after we support editing
 editing/deleting/4922367.html
 editing/deleting/5126166.html

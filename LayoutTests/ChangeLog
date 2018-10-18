@@ -1,3 +1,106 @@
+2018-10-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Enable the datalist element by default on iOS and macOS
+        https://bugs.webkit.org/show_bug.cgi?id=190594
+        <rdar://problem/45281159>
+
+        Reviewed by Ryosuke Niwa and Tim Horton.
+
+        * TestExpectations:
+
+        Mark a couple of datalist tests as failures, with corresponding Bugzilla links.
+
+        * fast/forms/datalist/datalist-fallback-content-expected.html:
+        * fast/forms/datalist/datalist-fallback-content.html:
+
+        Refactor this ref test. This was checking that a text input field with an associated datalist with fallback
+        content looks identical to an text input field without a datalist, but this simply isn't the case with our
+        current implementation due to the presence of the list button. Instead, add a div to cover the list button in
+        both cases, and further augment this test to check that inputs of type color behave the same.
+
+        * fast/forms/datalist/range-snap-to-datalist-expected.txt: Added.
+
+        Add missing expectations for this test that were never checked in. Since sliderTickSnappingThreshold simply
+        returns 0, this test behaves as expected, though behavior here may change when we add a make the "snapping
+        threshold" nonzero.
+
+        * fast/forms/datalist/validity-assertion-inserting-into-datalist-expected.txt: Renamed from LayoutTests/fast/forms/validity-assertion-inserting-into-datalist-expected.txt.
+        * fast/forms/datalist/validity-assertion-inserting-into-datalist.html: Renamed from LayoutTests/fast/forms/validity-assertion-inserting-into-datalist.html.
+        * fast/selectors/read-only-read-write-input-basics-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/html/dom/reflection-forms-expected.txt:
+        * platform/ios-simulator/fast/forms/datalist/datalist-searchinput-appearance-expected.txt: Added.
+        * platform/ios-simulator/fast/forms/datalist/datalist-textinput-appearance-expected.txt: Added.
+
+        Add missing expectations.
+
+        * platform/ios-wk1/TestExpectations:
+
+        Don't run datalist tests in WebKitLegacy by marking them as [ WontFix ].
+
+        * platform/ios-wk2/accessibility/roles-exposed-expected.txt: Added.
+        * platform/ios-wk2/fast/borders/empty-outline-border-assert-expected.txt: Added.
+        * platform/ios-wk2/fast/dom/Window/window-lookup-precedence-expected.txt: Added.
+        * platform/ios-wk2/fast/forms/label/labelable-elements-expected.txt: Added.
+        * platform/ios-wk2/fast/forms/label/readwrite-readonly-expected.txt: Copied from LayoutTests/platform/mac/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/readwrite-readonly-expected.txt.
+        * platform/ios-wk2/fast/selectors/read-only-read-write-input-basics-expected.txt: Copied from LayoutTests/fast/selectors/read-only-read-write-input-basics-expected.txt.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/custom-elements/builtin-coverage-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/dom/nodes/Node-cloneNode-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-newelements-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-newelements-xhtml-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/dom/reflection-forms-expected.txt: Copied from LayoutTests/platform/mac/imported/w3c/web-platform-tests/html/dom/reflection-forms-expected.txt.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-badInput-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-badInput-expected.txt.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection-not-application-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/selection-expected.txt: Copied from LayoutTests/platform/mac/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/selection-expected.txt.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/semantics/interfaces-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/readwrite-readonly-expected.txt: Copied from LayoutTests/platform/mac/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/readwrite-readonly-expected.txt.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/shadow-dom/input-element-list-expected.txt: Added.
+        * platform/ios-wk2/mathml/presentation/foreign-element-in-token-expected.txt: Added.
+
+        Add baselines for WebKit2, where we enable the datalist element and color inputs.
+
+        * platform/ios/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+
+        Don't run datalist tests in WebKitLegacy by marking them as [ WontFix ].
+
+        * platform/mac-wk2/accessibility/roles-exposed-expected.txt: Copied from LayoutTests/platform/mac/accessibility/roles-exposed-expected.txt.
+        * platform/mac-wk2/fast/borders/empty-outline-border-assert-expected.txt: Added.
+        * platform/mac-wk2/fast/dom/Window/window-lookup-precedence-expected.txt: Added.
+        * platform/mac-wk2/fast/forms/label/labelable-elements-expected.txt: Added.
+        * platform/mac-wk2/fast/forms/label/readwrite-readonly-expected.txt: Copied from LayoutTests/platform/mac/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/readwrite-readonly-expected.txt.
+        * platform/mac-wk2/fast/selectors/read-only-read-write-input-basics-expected.txt: Copied from LayoutTests/fast/selectors/read-only-read-write-input-basics-expected.txt.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/custom-elements/builtin-coverage-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/dom/nodes/Node-cloneNode-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-newelements-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-newelements-xhtml-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-badInput-expected.txt: Renamed from LayoutTests/platform/mac/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-badInput-expected.txt.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-willValidate-expected.txt: Renamed from LayoutTests/platform/mac/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-willValidate-expected.txt.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection-not-application-expected.txt: Copied from LayoutTests/platform/mac/imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection-not-application-expected.txt.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/selection-expected.txt: Renamed from LayoutTests/platform/mac/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/selection-expected.txt.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/type-change-state-expected.txt: Copied from LayoutTests/platform/mac/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/type-change-state-expected.txt.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/valueMode-expected.txt: Copied from LayoutTests/platform/mac/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/valueMode-expected.txt.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/interfaces-expected.txt: Copied from LayoutTests/platform/ios-wk2/imported/w3c/web-platform-tests/html/semantics/interfaces-expected.txt.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/readwrite-readonly-expected.txt: Copied from LayoutTests/platform/mac/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/readwrite-readonly-expected.txt.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/shadow-dom/input-element-list-expected.txt: Added.
+        * platform/mac-wk2/mathml/presentation/foreign-element-in-token-expected.txt: Added.
+
+        Add baselines for WebKit2, where we enable the datalist element and color inputs.
+
+        * platform/mac/TestExpectations:
+        * platform/mac/accessibility/roles-exposed-expected.txt:
+        * platform/mac/fast/selectors/read-only-read-write-input-basics-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection-not-application-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/type-change-state-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/valueMode-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/readwrite-readonly-expected.txt:
+
+        Re-rebaseline test expectations that involve input type color, now that color inputs are off by default in WebKitLegacy.
+
+        * platform/win/TestExpectations:
+
+        Remove various datalist test skips and failures on macOS and iOS; ensure that the test failures that are still
+        present are tracked with links to Bugzilla.
+
 2018-10-17  Justin Michaud  <justin_michaud@apple.com>
 
         Parse paint() and store paint callbacks for CSS Painting API

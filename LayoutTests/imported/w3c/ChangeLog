@@ -1,3 +1,21 @@
+2018-10-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Enable the datalist element by default on iOS and macOS
+        https://bugs.webkit.org/show_bug.cgi?id=190594
+        <rdar://problem/45281159>
+
+        Reviewed by Ryosuke Niwa and Tim Horton.
+
+        Rebaseline some web platform tests.
+
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-validity-badInput-expected.txt:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-willValidate-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-datalist-element/datalistoptions-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-input-element/hidden-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-input-element/selection-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-input-element/text-expected.txt:
+        * web-platform-tests/shadow-dom/input-element-list-expected.txt:
+
 2018-10-17  Charlie Turner  <cturner@igalia.com>
 
         [EME] Sanity check key ID length in the keyids init data format

@@ -228,6 +228,11 @@ public:
     void setInputTypeColorEnabled(bool isEnabled) { m_isInputTypeColorEnabled = isEnabled; }
 #endif
 
+#if ENABLE(DATALIST_ELEMENT)
+    bool dataListElementEnabled() const { return m_isDataListElementEnabled; }
+    void setDataListElementEnabled(bool isEnabled) { m_isDataListElementEnabled = isEnabled; }
+#endif
+
 #if ENABLE(INPUT_TYPE_DATE)
     bool inputTypeDateEnabled() const { return m_isInputTypeDateEnabled; }
     void setInputTypeDateEnabled(bool isEnabled) { m_isInputTypeDateEnabled = isEnabled; }
@@ -400,7 +405,11 @@ private:
 #endif
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    bool m_isInputTypeColorEnabled { true };
+    bool m_isInputTypeColorEnabled { false };
+#endif
+
+#if ENABLE(DATALIST_ELEMENT)
+    bool m_isDataListElementEnabled { false };
 #endif
 
 #if ENABLE(INPUT_TYPE_DATE)

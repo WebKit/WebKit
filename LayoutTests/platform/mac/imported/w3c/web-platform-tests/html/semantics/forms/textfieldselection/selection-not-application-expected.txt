@@ -153,22 +153,24 @@ PASS setRangeText on an input[type=range] throws InvalidStateError
 FAIL setSelectionRange on an input[type=range] throws InvalidStateError assert_throws: function "function (){
         el.setSelectionRange(0, 1);
       }" threw object "TypeError: Type error" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
-FAIL selectionStart on an input[type=color] returns null Type error
-FAIL selectionEnd on an input[type=color] returns null Type error
-FAIL selectionDirection on an input[type=color] returns null Type error
+FAIL selectionStart on an input[type=color] returns null assert_equals: expected (object) null but got (number) 0
+FAIL selectionEnd on an input[type=color] returns null assert_equals: expected (object) null but got (number) 0
+FAIL selectionDirection on an input[type=color] returns null assert_equals: expected (object) null but got (string) "none"
 FAIL assigning selectionStart on an input[type=color] throws InvalidStateError assert_throws: function "function (){
         el.selectionStart = 0;
-      }" threw object "TypeError: Type error" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+      }" did not throw
 FAIL assigning selectionEnd on an input[type=color] throws InvalidStateError assert_throws: function "function (){
         el.selectionEnd = 0;
-      }" threw object "TypeError: Type error" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+      }" did not throw
 FAIL assigning selectionDirection on an input[type=color] throws InvalidStateError assert_throws: function "function (){
         el.selectionDirection = 'none';
-      }" threw object "TypeError: Type error" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
-PASS setRangeText on an input[type=color] throws InvalidStateError 
+      }" did not throw
+FAIL setRangeText on an input[type=color] throws InvalidStateError assert_throws: function "function (){
+        el.setRangeText("foobar");
+      }" did not throw
 FAIL setSelectionRange on an input[type=color] throws InvalidStateError assert_throws: function "function (){
         el.setSelectionRange(0, 1);
-      }" threw object "TypeError: Type error" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+      }" did not throw
 FAIL selectionStart on an input[type=checkbox] returns null Type error
 FAIL selectionEnd on an input[type=checkbox] returns null Type error
 FAIL selectionDirection on an input[type=checkbox] returns null Type error

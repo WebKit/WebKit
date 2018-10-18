@@ -1,3 +1,13 @@
+2018-10-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Enable the datalist element by default on iOS and macOS
+        https://bugs.webkit.org/show_bug.cgi?id=190594
+        <rdar://problem/45281159>
+
+        Reviewed by Ryosuke Niwa and Tim Horton.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2018-10-16  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r237163.

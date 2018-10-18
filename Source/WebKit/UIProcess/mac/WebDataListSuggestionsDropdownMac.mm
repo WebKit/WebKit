@@ -23,12 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebDataListSuggestionsDropdownMac.h"
-
-#include <WebCore/IntRect.h>
+#import "config.h"
+#import "WebDataListSuggestionsDropdownMac.h"
 
 #if ENABLE(DATALIST_ELEMENT) && USE(APPKIT)
+
+#import <WebCore/IntRect.h>
+#import <pal/spi/cocoa/NSColorSPI.h>
 
 static const CGFloat dropdownTopMargin = 2;
 static const CGFloat dropdownRowHeight = 20;
@@ -43,6 +44,7 @@ static NSString * const suggestionCellReuseIdentifier = @"WKDataListSuggestionCe
 @interface WKDataListSuggestionCell : NSView {
     RetainPtr<NSTextField> _textField;
     BOOL _mouseIsOver;
+    BOOL _active;
 }
 
 @property (nonatomic, assign) BOOL active;
@@ -149,6 +151,8 @@ void WebDataListSuggestionsDropdownMac::close()
 
 @implementation WKDataListSuggestionCell
 
+@synthesize active=_active;
+
 - (id)initWithFrame:(NSRect)frameRect
 {
     if (!(self = [super initWithFrame:frameRect]))
@@ -173,7 +177,7 @@ void WebDataListSuggestionsDropdownMac::close()
     [_textField sizeToFit];
 
     NSRect textFieldFrame = [_textField frame];
-    [_textField setFrame:CGRectMake(0, (CGRectGetHeight(self.frame) - CGRectGetHeight(textFieldFrame)) / 2, CGRectGetWidth(textFieldFrame), CGRectGetHeight(textFieldFrame))];
+    [_textField setFrame:NSMakeRect(0, (NSHeight(self.frame) - NSHeight(textFieldFrame)) / 2, NSWidth(textFieldFrame), NSHeight(textFieldFrame))];
 
     _mouseIsOver = NO;
     self.active = NO;
@@ -230,7 +234,7 @@ void WebDataListSuggestionsDropdownMac::close()
     if (!(self = [super initWithFrame:NSMakeRect(0, 0, rect.width(), 0)]))
         return self;
 
-    [self setIntercellSpacing:CGSizeZero];
+    [self setIntercellSpacing:NSZeroSize];
     [self setHeaderView:nil];
     [self setSelectionHighlightStyle:NSTableViewSelectionHighlightStyleNone];
 

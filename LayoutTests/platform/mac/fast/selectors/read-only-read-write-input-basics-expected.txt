@@ -1099,6 +1099,60 @@ PASS document.querySelector("input:read-only") is document.getElementById("testc
 PASS getComputedStyle(document.getElementById("testcase")).color is "rgb(0, 0, 0)"
 PASS getComputedStyle(document.getElementById("testcase")).backgroundColor is "rgb(1, 2, 3)"
 Testing color
+FAIL document.querySelectorAll("input:read-write").length should be 0. Was 1.
+FAIL document.querySelector("input:read-write") should be null. Was [object HTMLInputElement].
+FAIL document.querySelectorAll("input:read-only").length should be 1. Was 0.
+FAIL document.querySelector("input:read-only") should be [object HTMLInputElement]. Was null.
+FAIL getComputedStyle(document.getElementById("testcase")).color should be rgb(0, 0, 0). Was rgb(4, 5, 6).
+FAIL getComputedStyle(document.getElementById("testcase")).backgroundColor should be rgb(1, 2, 3). Was rgb(255, 255, 255).
+PASS document.querySelectorAll("input:read-write").length is 0
+PASS document.querySelector("input:read-write") is null
+PASS document.querySelectorAll("input:read-only").length is 1
+PASS document.querySelector("input:read-only") is document.getElementById("testcase")
+PASS getComputedStyle(document.getElementById("testcase")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("testcase")).backgroundColor is "rgb(1, 2, 3)"
+FAIL document.querySelectorAll("input:read-write").length should be 0. Was 1.
+FAIL document.querySelector("input:read-write") should be null. Was [object HTMLInputElement].
+FAIL document.querySelectorAll("input:read-only").length should be 1. Was 0.
+FAIL document.querySelector("input:read-only") should be [object HTMLInputElement]. Was null.
+FAIL getComputedStyle(document.getElementById("testcase")).color should be rgb(0, 0, 0). Was rgb(4, 5, 6).
+FAIL getComputedStyle(document.getElementById("testcase")).backgroundColor should be rgb(1, 2, 3). Was rgb(255, 255, 255).
+PASS document.querySelectorAll("input:read-write").length is 0
+PASS document.querySelector("input:read-write") is null
+PASS document.querySelectorAll("input:read-only").length is 1
+PASS document.querySelector("input:read-only") is document.getElementById("testcase")
+PASS getComputedStyle(document.getElementById("testcase")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("testcase")).backgroundColor is "rgb(1, 2, 3)"
+FAIL document.querySelectorAll("input:read-write").length should be 0. Was 1.
+FAIL document.querySelector("input:read-write") should be null. Was [object HTMLInputElement].
+FAIL document.querySelectorAll("input:read-only").length should be 1. Was 0.
+FAIL document.querySelector("input:read-only") should be [object HTMLInputElement]. Was null.
+FAIL getComputedStyle(document.getElementById("testcase")).color should be rgb(0, 0, 0). Was rgb(4, 5, 6).
+FAIL getComputedStyle(document.getElementById("testcase")).backgroundColor should be rgb(1, 2, 3). Was rgb(255, 255, 255).
+PASS document.querySelectorAll("input:read-write").length is 0
+PASS document.querySelector("input:read-write") is null
+PASS document.querySelectorAll("input:read-only").length is 1
+PASS document.querySelector("input:read-only") is document.getElementById("testcase")
+PASS getComputedStyle(document.getElementById("testcase")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("testcase")).backgroundColor is "rgb(1, 2, 3)"
+FAIL document.querySelectorAll("input:read-write").length should be 0. Was 1.
+FAIL document.querySelector("input:read-write") should be null. Was [object HTMLInputElement].
+FAIL document.querySelectorAll("input:read-only").length should be 1. Was 0.
+FAIL document.querySelector("input:read-only") should be [object HTMLInputElement]. Was null.
+FAIL getComputedStyle(document.getElementById("testcase")).color should be rgb(0, 0, 0). Was rgb(4, 5, 6).
+FAIL getComputedStyle(document.getElementById("testcase")).backgroundColor should be rgb(1, 2, 3). Was rgb(255, 255, 255).
+PASS document.querySelectorAll("input:read-write").length is 0
+PASS document.querySelector("input:read-write") is null
+PASS document.querySelectorAll("input:read-only").length is 1
+PASS document.querySelector("input:read-only") is document.getElementById("testcase")
+PASS getComputedStyle(document.getElementById("testcase")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("testcase")).backgroundColor is "rgb(1, 2, 3)"
+FAIL document.querySelectorAll("input:read-write").length should be 0. Was 1.
+FAIL document.querySelector("input:read-write") should be null. Was [object HTMLInputElement].
+FAIL document.querySelectorAll("input:read-only").length should be 1. Was 0.
+FAIL document.querySelector("input:read-only") should be [object HTMLInputElement]. Was null.
+FAIL getComputedStyle(document.getElementById("testcase")).color should be rgb(0, 0, 0). Was rgb(4, 5, 6).
+FAIL getComputedStyle(document.getElementById("testcase")).backgroundColor should be rgb(1, 2, 3). Was rgb(255, 255, 255).
 PASS document.querySelectorAll("input:read-write").length is 0
 PASS document.querySelector("input:read-write") is null
 PASS document.querySelectorAll("input:read-only").length is 1
@@ -1111,66 +1165,12 @@ PASS document.querySelectorAll("input:read-only").length is 1
 PASS document.querySelector("input:read-only") is document.getElementById("testcase")
 PASS getComputedStyle(document.getElementById("testcase")).color is "rgb(0, 0, 0)"
 PASS getComputedStyle(document.getElementById("testcase")).backgroundColor is "rgb(1, 2, 3)"
-PASS document.querySelectorAll("input:read-write").length is 0
-PASS document.querySelector("input:read-write") is null
-PASS document.querySelectorAll("input:read-only").length is 1
-PASS document.querySelector("input:read-only") is document.getElementById("testcase")
-PASS getComputedStyle(document.getElementById("testcase")).color is "rgb(0, 0, 0)"
-PASS getComputedStyle(document.getElementById("testcase")).backgroundColor is "rgb(1, 2, 3)"
-PASS document.querySelectorAll("input:read-write").length is 0
-PASS document.querySelector("input:read-write") is null
-PASS document.querySelectorAll("input:read-only").length is 1
-PASS document.querySelector("input:read-only") is document.getElementById("testcase")
-PASS getComputedStyle(document.getElementById("testcase")).color is "rgb(0, 0, 0)"
-PASS getComputedStyle(document.getElementById("testcase")).backgroundColor is "rgb(1, 2, 3)"
-PASS document.querySelectorAll("input:read-write").length is 0
-PASS document.querySelector("input:read-write") is null
-PASS document.querySelectorAll("input:read-only").length is 1
-PASS document.querySelector("input:read-only") is document.getElementById("testcase")
-PASS getComputedStyle(document.getElementById("testcase")).color is "rgb(0, 0, 0)"
-PASS getComputedStyle(document.getElementById("testcase")).backgroundColor is "rgb(1, 2, 3)"
-PASS document.querySelectorAll("input:read-write").length is 0
-PASS document.querySelector("input:read-write") is null
-PASS document.querySelectorAll("input:read-only").length is 1
-PASS document.querySelector("input:read-only") is document.getElementById("testcase")
-PASS getComputedStyle(document.getElementById("testcase")).color is "rgb(0, 0, 0)"
-PASS getComputedStyle(document.getElementById("testcase")).backgroundColor is "rgb(1, 2, 3)"
-PASS document.querySelectorAll("input:read-write").length is 0
-PASS document.querySelector("input:read-write") is null
-PASS document.querySelectorAll("input:read-only").length is 1
-PASS document.querySelector("input:read-only") is document.getElementById("testcase")
-PASS getComputedStyle(document.getElementById("testcase")).color is "rgb(0, 0, 0)"
-PASS getComputedStyle(document.getElementById("testcase")).backgroundColor is "rgb(1, 2, 3)"
-PASS document.querySelectorAll("input:read-write").length is 0
-PASS document.querySelector("input:read-write") is null
-PASS document.querySelectorAll("input:read-only").length is 1
-PASS document.querySelector("input:read-only") is document.getElementById("testcase")
-PASS getComputedStyle(document.getElementById("testcase")).color is "rgb(0, 0, 0)"
-PASS getComputedStyle(document.getElementById("testcase")).backgroundColor is "rgb(1, 2, 3)"
-PASS document.querySelectorAll("input:read-write").length is 0
-PASS document.querySelector("input:read-write") is null
-PASS document.querySelectorAll("input:read-only").length is 1
-PASS document.querySelector("input:read-only") is document.getElementById("testcase")
-PASS getComputedStyle(document.getElementById("testcase")).color is "rgb(0, 0, 0)"
-PASS getComputedStyle(document.getElementById("testcase")).backgroundColor is "rgb(1, 2, 3)"
-PASS document.querySelectorAll("input:read-write").length is 0
-PASS document.querySelector("input:read-write") is null
-PASS document.querySelectorAll("input:read-only").length is 1
-PASS document.querySelector("input:read-only") is document.getElementById("testcase")
-PASS getComputedStyle(document.getElementById("testcase")).color is "rgb(0, 0, 0)"
-PASS getComputedStyle(document.getElementById("testcase")).backgroundColor is "rgb(1, 2, 3)"
-PASS document.querySelectorAll("input:read-write").length is 0
-PASS document.querySelector("input:read-write") is null
-PASS document.querySelectorAll("input:read-only").length is 1
-PASS document.querySelector("input:read-only") is document.getElementById("testcase")
-PASS getComputedStyle(document.getElementById("testcase")).color is "rgb(0, 0, 0)"
-PASS getComputedStyle(document.getElementById("testcase")).backgroundColor is "rgb(1, 2, 3)"
-PASS document.querySelectorAll("input:read-write").length is 0
-PASS document.querySelector("input:read-write") is null
-PASS document.querySelectorAll("input:read-only").length is 1
-PASS document.querySelector("input:read-only") is document.getElementById("testcase")
-PASS getComputedStyle(document.getElementById("testcase")).color is "rgb(0, 0, 0)"
-PASS getComputedStyle(document.getElementById("testcase")).backgroundColor is "rgb(1, 2, 3)"
+FAIL document.querySelectorAll("input:read-write").length should be 0. Was 1.
+FAIL document.querySelector("input:read-write") should be null. Was [object HTMLInputElement].
+FAIL document.querySelectorAll("input:read-only").length should be 1. Was 0.
+FAIL document.querySelector("input:read-only") should be [object HTMLInputElement]. Was null.
+FAIL getComputedStyle(document.getElementById("testcase")).color should be rgb(0, 0, 0). Was rgb(4, 5, 6).
+FAIL getComputedStyle(document.getElementById("testcase")).backgroundColor should be rgb(1, 2, 3). Was rgb(255, 255, 255).
 Testing checkbox
 PASS document.querySelectorAll("input:read-write").length is 0
 PASS document.querySelector("input:read-write") is null

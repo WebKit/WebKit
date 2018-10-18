@@ -1,3 +1,64 @@
+2018-10-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Enable the datalist element by default on iOS and macOS
+        https://bugs.webkit.org/show_bug.cgi?id=190594
+        <rdar://problem/45281159>
+
+        Reviewed by Ryosuke Niwa and Tim Horton.
+
+        Rebaselined existing layout tests.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * css/CSSDefaultStyleSheets.cpp:
+        (WebCore::CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement):
+        * css/CSSDefaultStyleSheets.h:
+        * css/InspectorCSSOMWrappers.cpp:
+        (WebCore::InspectorCSSOMWrappers::collectDocumentWrappers):
+        * css/html.css:
+
+        Remove color input and datalist style rules from the default UA stylesheet.
+
+        (input[type="color"]::-webkit-color-swatch-wrapper): Deleted.
+        * html/HTMLDataListElement.idl:
+
+        Make HTMLDataListElement runtime-enabled.
+
+        * html/HTMLTagNames.in:
+        * html/RangeInputType.cpp:
+
+        Make a slight adjustment here so that inputs of type range respect the list attribute. Fixes a few layout tests
+        that add a datalist to an input of type range. See <https://bugs.webkit.org/show_bug.cgi?id=190613> for more
+        details.
+
+        (WebCore::RangeInputType::shouldRespectListAttribute):
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::shouldRespectListAttribute):
+        * page/RuntimeEnabledFeatures.h:
+
+        Add a runtime-enabled feature for the datalist element. Additionally, make the runtime-enabled feature for input
+        type color false by default, so that it's off in WebKitLegacy.
+
+        (WebCore::RuntimeEnabledFeatures::dataListElementEnabled const):
+        (WebCore::RuntimeEnabledFeatures::setDataListElementEnabled):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::colorInputStyleSheet const):
+
+        Add new style-sheet hooks for datalist and input type color, so that style rules for color inputs and datalists
+        can be added at runtime only if the feature is enabled. This ensures that in WebKitLegacy (or other ports where
+        either or both elements are disabled), we don't still apply rules for datalist and input[type="color"]. Notably,
+        this allows fallback content inside datalist elements to still work in WebKitLegacy (which would otherwise be
+        hidden when using the default stylesheet since `display: none` is applied to datalist by default). This also
+        prevents inputs of type color from having a smaller size, no outline, and the appearance of a color well on
+        macOS.
+
+        (WebCore::RenderTheme::dataListStyleSheet const):
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::platformColorInputStyleSheet const):
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::platformColorInputStyleSheet const):
+
 2018-10-17  Justin Michaud  <justin_michaud@apple.com>
 
         Parse paint() and store paint callbacks for CSS Painting API

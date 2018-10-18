@@ -170,6 +170,10 @@ imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-off
 pointerevents [ Skip ]
 imported/w3c/web-platform-tests/pointerevents [ Skip ]
 
+# Datalist is unsupported in WK1
+fast/forms/datalist [ WontFix ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-datalist-element [ WontFix ]
+
 # These tests test the Shadow DOM based HTML form validation UI but Mac WK1 is using native dialogs instead.
 fast/forms/validation-message-on-listbox.html
 fast/forms/validation-message-on-menulist.html

@@ -42,6 +42,7 @@
 #include "MouseEvent.h"
 #include "PlatformMouseEvent.h"
 #include "RenderSlider.h"
+#include "RuntimeEnabledFeatures.h"
 #include "ScopedEventQueue.h"
 #include "ShadowRoot.h"
 #include "SliderThumbElement.h"
@@ -368,7 +369,11 @@ String RangeInputType::sanitizeValue(const String& proposedValue) const
 
 bool RangeInputType::shouldRespectListAttribute()
 {
+#if ENABLE(DATALIST_ELEMENT)
+    return RuntimeEnabledFeatures::sharedFeatures().dataListElementEnabled();
+#else
     return InputType::themeSupportsDataListUI(this);
+#endif
 }
 
 #if ENABLE(DATALIST_ELEMENT)

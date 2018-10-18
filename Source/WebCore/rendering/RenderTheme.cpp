@@ -41,6 +41,7 @@
 #include "PaintInfo.h"
 #include "RenderStyle.h"
 #include "RenderView.h"
+#include "RuntimeEnabledFeatures.h"
 #include "SpinButtonElement.h"
 #include "StringTruncator.h"
 #include "TextControlInnerElements.h"
@@ -1033,7 +1034,23 @@ bool RenderTheme::paintAttachment(const RenderObject&, const PaintInfo&, const I
 
 #endif
 
+#if ENABLE(INPUT_TYPE_COLOR)
+
+String RenderTheme::colorInputStyleSheet() const
+{
+    ASSERT(RuntimeEnabledFeatures::sharedFeatures().inputTypeColorEnabled());
+    return makeString(platformColorInputStyleSheet(), " input[type=\"color\"] { width: 44px; height: 23px; outline: none; }"_s);
+}
+
+#endif // ENABLE(INPUT_TYPE_COLOR)
+
 #if ENABLE(DATALIST_ELEMENT)
+
+String RenderTheme::dataListStyleSheet() const
+{
+    ASSERT(RuntimeEnabledFeatures::sharedFeatures().dataListElementEnabled());
+    return "datalist { display: none; }"_s;
+}
 
 void RenderTheme::adjustListButtonStyle(StyleResolver&, RenderStyle&, const Element*) const
 {

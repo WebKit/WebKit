@@ -34,7 +34,7 @@ col interfaceName=HTMLTableColElement
 colgroup interfaceName=HTMLTableColElement
 command interfaceName=HTMLUnknownElement
 data
-datalist interfaceName=HTMLDataListElement, conditional=DATALIST_ELEMENT
+datalist interfaceName=HTMLDataListElement, conditional=DATALIST_ELEMENT, runtimeEnabled=dataListElement
 dd interfaceName=HTMLElement
 del interfaceName=HTMLModElement
 details

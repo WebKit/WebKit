@@ -1,5 +1,5 @@
 
 
-FAIL Input element's list attribute should point to the datalist element. assert_equals: expected (object) null but got (undefined) undefined
-FAIL Input element's list attribute should point to the datalist element in Shadow DOM. assert_equals: expected (object) null but got (undefined) undefined
+FAIL Input element's list attribute should point to the datalist element. assert_equals: expected Element node <datalist id="datalist"></datalist> but got null
+FAIL Input element's list attribute should point to the datalist element in Shadow DOM. assert_equals: expected Element node <datalist id="datalist"></datalist> but got null
 

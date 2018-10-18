@@ -216,3 +216,11 @@
 
 bool defaultPassiveTouchListenersAsDefaultOnDocument();
 bool defaultCustomPasteboardDataEnabled();
+
+#if PLATFORM(WATCHOS)
+#define DEFAULT_INPUT_TYPE_COLOR_ENABLED false
+#define DEFAULT_DATALIST_ELEMENT_ENABLED false
+#else
+#define DEFAULT_INPUT_TYPE_COLOR_ENABLED true
+#define DEFAULT_DATALIST_ELEMENT_ENABLED true
+#endif

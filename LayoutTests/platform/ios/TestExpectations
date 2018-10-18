@@ -1665,10 +1665,6 @@ fast/forms/color/input-color-readonly.html [ Failure ]
 fast/forms/color/input-value-sanitization-color.html [ Failure ]
 fast/forms/color/color-setrangetext.html [ Failure ]
 
-fast/forms/datalist/datalist-fallback-content.html [ ImageOnlyFailure ]
-fast/forms/datalist/datalist-nonoption-child.html [ Failure ]
-fast/forms/datalist/datalist.html [ Failure ]
-fast/forms/datalist/input-appearance-range-with-datalist-zoomed.html [ Failure ]
 fast/forms/datalist/input-list.html [ Failure ]
 fast/forms/datetime/ValidityState-rangeOverflow-datetime.html [ Failure ]
 fast/forms/datetime/ValidityState-rangeUnderflow-datetime.html [ Failure ]
@@ -1975,8 +1971,7 @@ fast/parser/residual-style-hang.html
 # <rdar://problem/19226623> ASSERT(isIdentifierStart<CharacterType>()) fails in CSSParser::parseIdentifier()
 fast/css/css-selector-text.html
 
-# <rdar://problem/19226679> ASSERT(m_isValid == valid()) fails in HTMLFormControlElement::isValidFormControlElement()
-fast/forms/datalist/datalist-child-validation.html
+webkit.org/b/190620 fast/forms/datalist/datalist-child-validation.html [ Crash Failure ]
 
 # <rdar://problem/19227549> ASSERT(!m_webFrame->_private->provisionalURL) fails in WebFrameLoaderClient::dispatchDidStartProvisionalLoad()
 fast/forms/validation-message-user-modify.html
@@ -3116,9 +3111,8 @@ fast/block/block-only/absolute-position-min-max-height.html [ Failure ]
 # Datalist
 webkit.org/b/186714 fast/forms/datalist/datalist-show-hide.html [ Skip ]
 webkit.org/b/186714 fast/forms/datalist/datalist-textinput-keydown.html [ Skip ]
-fast/forms/datalist/datalist-searchinput-appearance.html [ Skip ]
-fast/forms/datalist/datalist-textinput-appearance.html  [ Skip ]
-fast/forms/datalist/datalist-textinput-suggestions-order.html [ Skip ]
+webkit.org/b/190621 fast/forms/datalist/datalist-textinput-suggestions-order.html [ Skip ]
+webkit.org/b/190613 fast/forms/datalist/update-range-with-datalist.html [ Skip ]
 
 # We are only accepting GLSL3 for macOS. 
 webkit.org/b/187982 webgl/2.0.0/conformance2/glsl3 [ Skip ]

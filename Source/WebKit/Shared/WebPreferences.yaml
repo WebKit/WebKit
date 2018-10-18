@@ -1437,9 +1437,18 @@ SelectionAcrossShadowBoundariesEnabled:
 
 InputTypeColorEnabled:
   type: bool
-  defaultValue: true
+  defaultValue: DEFAULT_INPUT_TYPE_COLOR_ENABLED
   humanReadableName: "Color Inputs"
   humanReadableDescription: "Enable input elements of type color"
   category: internal
   webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(INPUT_TYPE_COLOR)
+
+DataListElementEnabled:
+  type: bool
+  defaultValue: DEFAULT_DATALIST_ELEMENT_ENABLED
+  humanReadableName: "DataList Element"
+  humanReadableDescription: "Enable datalist elements"
+  category: internal
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(DATALIST_ELEMENT)

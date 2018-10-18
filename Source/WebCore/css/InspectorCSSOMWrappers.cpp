@@ -110,6 +110,12 @@ void InspectorCSSOMWrappers::collectDocumentWrappers(ExtensionStyleSheets& exten
         collectFromStyleSheetContents(CSSDefaultStyleSheets::mathMLStyleSheet);
         collectFromStyleSheetContents(CSSDefaultStyleSheets::mediaControlsStyleSheet);
         collectFromStyleSheetContents(CSSDefaultStyleSheets::fullscreenStyleSheet);
+#if ENABLE(DATALIST_ELEMENT)
+        collectFromStyleSheetContents(CSSDefaultStyleSheets::dataListStyleSheet);
+#endif
+#if ENABLE(INPUT_TYPE_COLOR)
+        collectFromStyleSheetContents(CSSDefaultStyleSheets::colorInputStyleSheet);
+#endif
         collectFromStyleSheetContents(CSSDefaultStyleSheets::plugInsStyleSheet);
         collectFromStyleSheetContents(CSSDefaultStyleSheets::mediaQueryStyleSheet);
 
