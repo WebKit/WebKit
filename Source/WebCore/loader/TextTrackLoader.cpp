@@ -65,11 +65,11 @@ void TextTrackLoader::cueLoadTimerFired()
 {
     if (m_newCuesAvailable) {
         m_newCuesAvailable = false;
-        m_client.newCuesAvailable(this);
+        m_client.newCuesAvailable(*this);
     }
     
     if (m_state >= Finished)
-        m_client.cueLoadingCompleted(this, m_state == Failed);
+        m_client.cueLoadingCompleted(*this, m_state == Failed);
 }
 
 void TextTrackLoader::cancelLoad()
@@ -178,7 +178,7 @@ void TextTrackLoader::newCuesParsed()
 
 void TextTrackLoader::newRegionsParsed()
 {
-    m_client.newRegionsAvailable(this);
+    m_client.newRegionsAvailable(*this);
 }
 
 void TextTrackLoader::newStyleSheetsParsed()

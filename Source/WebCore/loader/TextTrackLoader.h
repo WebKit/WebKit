@@ -45,9 +45,9 @@ class TextTrackLoaderClient {
 public:
     virtual ~TextTrackLoaderClient() = default;
     
-    virtual void newCuesAvailable(TextTrackLoader*) = 0;
-    virtual void cueLoadingCompleted(TextTrackLoader*, bool loadingFailed) = 0;
-    virtual void newRegionsAvailable(TextTrackLoader*) = 0;
+    virtual void newCuesAvailable(TextTrackLoader&) = 0;
+    virtual void cueLoadingCompleted(TextTrackLoader&, bool loadingFailed) = 0;
+    virtual void newRegionsAvailable(TextTrackLoader&) = 0;
     virtual void newStyleSheetsAvailable(TextTrackLoader&) = 0;
 };
 

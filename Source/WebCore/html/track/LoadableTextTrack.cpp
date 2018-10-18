@@ -86,9 +86,9 @@ void LoadableTextTrack::loadTimerFired()
         m_trackElement->didCompleteLoad(HTMLTrackElement::Failure);
 }
 
-void LoadableTextTrack::newCuesAvailable(TextTrackLoader* loader)
+void LoadableTextTrack::newCuesAvailable(TextTrackLoader& loader)
 {
-    ASSERT_UNUSED(loader, m_loader.get() == loader);
+    ASSERT_UNUSED(loader, m_loader.get() == &loader);
 
     Vector<RefPtr<TextTrackCue>> newCues;
     m_loader->getNewCues(newCues);
@@ -106,9 +106,9 @@ void LoadableTextTrack::newCuesAvailable(TextTrackLoader* loader)
         client()->textTrackAddCues(*this, *m_cues);
 }
 
-void LoadableTextTrack::cueLoadingCompleted(TextTrackLoader* loader, bool loadingFailed)
+void LoadableTextTrack::cueLoadingCompleted(TextTrackLoader& loader, bool loadingFailed)
 {
-    ASSERT_UNUSED(loader, m_loader.get() == loader);
+    ASSERT_UNUSED(loader, m_loader.get() == &loader);
 
     if (!m_trackElement)
         return;
@@ -118,9 +118,9 @@ void LoadableTextTrack::cueLoadingCompleted(TextTrackLoader* loader, bool loadin
     m_trackElement->didCompleteLoad(loadingFailed ? HTMLTrackElement::Failure : HTMLTrackElement::Success);
 }
 
-void LoadableTextTrack::newRegionsAvailable(TextTrackLoader* loader)
+void LoadableTextTrack::newRegionsAvailable(TextTrackLoader& loader)
 {
-    ASSERT_UNUSED(loader, m_loader.get() == loader);
+    ASSERT_UNUSED(loader, m_loader.get() == &loader);
 
     Vector<RefPtr<VTTRegion>> newRegions;
     m_loader->getNewRegions(newRegions);

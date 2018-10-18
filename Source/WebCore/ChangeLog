@@ -1,3 +1,22 @@
+2018-10-18  Per Arne Vollan  <pvollan@apple.com>
+
+        [WebVTT] The TextTrackLoader parameter in TextTrackLoaderClient virtual methods should be a reference
+        https://bugs.webkit.org/show_bug.cgi?id=190730
+
+        Reviewed by Chris Dumez.
+
+        No new tests. No change in behavior.
+
+        * html/track/LoadableTextTrack.cpp:
+        (WebCore::LoadableTextTrack::newCuesAvailable):
+        (WebCore::LoadableTextTrack::cueLoadingCompleted):
+        (WebCore::LoadableTextTrack::newRegionsAvailable):
+        * html/track/LoadableTextTrack.h:
+        * loader/TextTrackLoader.cpp:
+        (WebCore::TextTrackLoader::cueLoadTimerFired):
+        (WebCore::TextTrackLoader::newRegionsParsed):
+        * loader/TextTrackLoader.h:
+
 2018-10-18  Alex Christensen  <achristensen@webkit.org>
 
         Clean up FrameLoader two-state enums

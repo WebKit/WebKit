@@ -53,9 +53,9 @@ public:
 private:
     LoadableTextTrack(HTMLTrackElement&, const String& kind, const String& label, const String& language);
 
-    void newCuesAvailable(TextTrackLoader*) final;
-    void cueLoadingCompleted(TextTrackLoader*, bool loadingFailed) final;
-    void newRegionsAvailable(TextTrackLoader*) final;
+    void newCuesAvailable(TextTrackLoader&) final;
+    void cueLoadingCompleted(TextTrackLoader&, bool loadingFailed) final;
+    void newRegionsAvailable(TextTrackLoader&) final;
     void newStyleSheetsAvailable(TextTrackLoader&) final;
 
     AtomicString id() const final;
