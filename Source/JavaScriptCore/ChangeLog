@@ -109,6 +109,19 @@
 
 2018-10-17  Keith Miller  <keith_miller@apple.com>
 
+        AI does not clear Phantom allocation nodes.
+        https://bugs.webkit.org/show_bug.cgi?id=190694
+
+        Reviewed by Saam Barati.
+
+        Phantom nodes claim to have a result so they should make sure they clear
+        their abstract values.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+
+2018-10-17  Keith Miller  <keith_miller@apple.com>
+
         Unreviewed, fix windows build.
 
         * offlineasm/generate_offset_extractor.rb:

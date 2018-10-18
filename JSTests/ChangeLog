@@ -1,3 +1,23 @@
+2018-10-17  Keith Miller  <keith_miller@apple.com>
+
+        AI does not clear Phantom allocation nodes.
+        https://bugs.webkit.org/show_bug.cgi?id=190694
+
+        Reviewed by Saam Barati.
+
+        * stress/ftl-ai-filter-phantoms-should-clear-clear-value.js: Added.
+        (Day):
+        (DaysInYear):
+        (TimeInYear):
+        (TimeFromYear):
+        (DayFromYear):
+        (InLeapYear):
+        (YearFromTime):
+        (WeekDay):
+        (DaylightSavingTA):
+        (GetSecondSundayInMarch):
+        (TimeInMonth):
+
 2018-10-17  Caio Lima  <ticaiolima@gmail.com>
 
         [BigInt] Add ValueSub into DFG
