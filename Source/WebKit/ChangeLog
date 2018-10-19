@@ -1,3 +1,25 @@
+2018-10-19  Chris Dumez  <cdumez@apple.com>
+
+        [PSON] WebPageProxy::didCompletePageTransition() may interact with a SuspendedPageProxy from a previous navigation
+        https://bugs.webkit.org/show_bug.cgi?id=190717
+
+        Reviewed by Antti Koivisto.
+
+        WebPageProxy::didCompletePageTransition() may interact with a SuspendedPageProxy from a previous navigation. We need
+        to reset m_lastSuspendedPage whenever the page starts a new navigation as m_lastSuspendedPage is only updated when
+        we process-swap otherwise.
+
+        Also rename the data member to m_pageSuspendedDueToCurrentNavigation for clarity.
+
+        In a follow-up, I will see if I can get rid of this data member entirely or maybe move it to the Navigation
+        object.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::suspendCurrentPageIfPossible):
+        (WebKit::WebPageProxy::receivedNavigationPolicyDecision):
+        (WebKit::WebPageProxy::didCompletePageTransition):
+        (WebKit::WebPageProxy::enterAcceleratedCompositingMode):
+
 2018-10-18  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Allow ports to optionally do screen capture in the UI process

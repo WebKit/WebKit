@@ -723,10 +723,10 @@ void WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, std
     }
 
     auto suspendedPage = std::make_unique<SuspendedPageProxy>(*this, m_process.copyRef(), *currentItem, *mainFrameID);
-    m_lastSuspendedPage = makeWeakPtr(suspendedPage.get());
+    m_pageSuspendedDueToCurrentNavigation = makeWeakPtr(suspendedPage.get());
     m_process->processPool().addSuspendedPageProxy(WTFMove(suspendedPage));
 
-    LOG(ProcessSwapping, "WebPageProxy %" PRIu64 " created suspended page %s for process pid %i, back/forward item %s" PRIu64, pageID(), m_lastSuspendedPage->loggingString(), m_process->processIdentifier(), currentItem->itemID().logString());
+    LOG(ProcessSwapping, "WebPageProxy %" PRIu64 " created suspended page %s for process pid %i, back/forward item %s" PRIu64, pageID(), m_pageSuspendedDueToCurrentNavigation->loggingString(), m_process->processIdentifier(), currentItem->itemID().logString());
 }
 
 void WebPageProxy::swapToWebProcess(Ref<WebProcessProxy>&& process, API::Navigation& navigation, std::optional<uint64_t> mainFrameIDInPreviousProcess)
@@ -2487,6 +2487,10 @@ void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, A
     }
     
     if (policyAction == PolicyAction::Use && frame.isMainFrame()) {
+        // We're about to navigate so we need to reset m_pageSuspendedDueToCurrentNavigation. If we decide to process swap,
+        // continueNavigationInNewProcess() will take care of updating m_pageSuspendedDueToCurrentNavigation as needed.
+        m_pageSuspendedDueToCurrentNavigation = nullptr;
+
         String reason;
         auto proposedProcess = process().processPool().processForNavigation(*this, *navigation, processSwapRequestedByClient, policyAction, reason);
         ASSERT(!reason.isNull());
@@ -3495,7 +3499,7 @@ void WebPageProxy::didFinishProgress()
 void WebPageProxy::didCompletePageTransition(bool isInitialEmptyDocument)
 {
     // Attach drawing area for the initial empty document only if this is not a process swap.
-    if (isInitialEmptyDocument && m_lastSuspendedPage)
+    if (isInitialEmptyDocument && m_pageSuspendedDueToCurrentNavigation)
         return;
 
 #if PLATFORM(MAC)
@@ -3505,8 +3509,8 @@ void WebPageProxy::didCompletePageTransition(bool isInitialEmptyDocument)
     // Drawing area for the suspended page will be torn down when the attach completes.
     m_drawingArea->attachInWebProcess();
 #else
-    if (m_lastSuspendedPage)
-        m_lastSuspendedPage->tearDownDrawingAreaInWebProcess();
+    if (m_pageSuspendedDueToCurrentNavigation)
+        m_pageSuspendedDueToCurrentNavigation->tearDownDrawingAreaInWebProcess();
 #endif
 }
 
@@ -6400,8 +6404,8 @@ void WebPageProxy::enterAcceleratedCompositingMode(const LayerTreeContext& layer
     pageClient().enterAcceleratedCompositingMode(layerTreeContext);
 
     // We have completed the page transition and can tear down the layers in the suspended process.
-    if (m_lastSuspendedPage)
-        m_lastSuspendedPage->tearDownDrawingAreaInWebProcess();
+    if (m_pageSuspendedDueToCurrentNavigation)
+        m_pageSuspendedDueToCurrentNavigation->tearDownDrawingAreaInWebProcess();
 }
 
 void WebPageProxy::exitAcceleratedCompositingMode()

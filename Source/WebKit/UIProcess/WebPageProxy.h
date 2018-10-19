@@ -2260,7 +2260,7 @@ private:
     std::optional<MonotonicTime> m_pageLoadStart;
 
     // FIXME: We should try and get rid of this data member.
-    WeakPtr<SuspendedPageProxy> m_lastSuspendedPage;
+    WeakPtr<SuspendedPageProxy> m_pageSuspendedDueToCurrentNavigation;
 
     RunLoop::Timer<WebPageProxy> m_resetRecentCrashCountTimer;
     unsigned m_recentCrashCount { 0 };
