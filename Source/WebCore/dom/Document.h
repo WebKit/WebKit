@@ -191,6 +191,7 @@ class VisitedLinkState;
 class WebAnimation;
 class WebGL2RenderingContext;
 class WebGLRenderingContext;
+class WebGPURenderingContext;
 class WebMetalRenderingContext;
 class WindowProxy;
 class XPathEvaluator;
@@ -317,6 +318,9 @@ using RenderingContext = Variant<
 #endif
 #if ENABLE(WEBGL2)
     RefPtr<WebGL2RenderingContext>,
+#endif
+#if ENABLE(WEBGPU)
+    RefPtr<WebGPURenderingContext>,
 #endif
 #if ENABLE(WEBMETAL)
     RefPtr<WebMetalRenderingContext>,

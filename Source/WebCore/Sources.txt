@@ -299,6 +299,8 @@ Modules/webgpu/DOMWindowWebGPU.cpp
 Modules/webgpu/WebGPU.cpp
 Modules/webgpu/WebGPUAdapter.cpp
 Modules/webgpu/WebGPUDevice.cpp
+Modules/webgpu/WebGPURenderingContext.cpp
+Modules/webgpu/WebGPUSwapChain.cpp
 
 Modules/webvr/NavigatorWebVR.cpp
 Modules/webvr/VRDisplay.cpp
@@ -3175,6 +3177,9 @@ JSWebGPU.cpp
 JSWebGPUAdapter.cpp
 JSWebGPUAdapterDescriptor.cpp
 JSWebGPUDevice.cpp
+JSWebGPURenderingContext.cpp
+JSWebGPUSwapChain.cpp
+JSWebGPUSwapChainDescriptor.cpp
 JSWebMetalBuffer.cpp
 JSWebMetalCommandBuffer.cpp
 JSWebMetalCommandQueue.cpp

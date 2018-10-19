@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2018 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  * Copyright (C) 2010 Torch Mobile (Beijing) Co. Ltd. All rights reserved.
  *
@@ -51,6 +51,7 @@ class ImageData;
 class MediaSample;
 class MediaStream;
 class WebGLRenderingContextBase;
+class WebGPURenderingContext;
 class WebMetalRenderingContext;
 struct UncachedString;
 
@@ -96,6 +97,11 @@ public:
     static bool isWebGLType(const String&);
     WebGLRenderingContextBase* createContextWebGL(const String&, WebGLContextAttributes&& = { });
     WebGLRenderingContextBase* getContextWebGL(const String&, WebGLContextAttributes&& = { });
+#endif
+#if ENABLE(WEBGPU)
+    static bool isWebGPUType(const String&);
+    WebGPURenderingContext* createContextWebGPU(const String&);
+    WebGPURenderingContext* getContextWebGPU(const String&);
 #endif
 #if ENABLE(WEBMETAL)
     static bool isWebMetalType(const String&);

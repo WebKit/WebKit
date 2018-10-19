@@ -1,3 +1,15 @@
+2018-10-19  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Add stubs for WebGPUSwapChain and WebGPURenderingContext
+        https://bugs.webkit.org/show_bug.cgi?id=190742
+
+        Reviewed by Dean Jackson.
+
+        Updated basic webgpu feature detection test to check for WebGPURenderingContext.
+
+        * webgpu/webgpu-enabled-expected.txt: 
+        * webgpu/webgpu-enabled.html:
+
 2018-10-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] [Datalist] Can't pick datalist suggestions in a stock WKWebView

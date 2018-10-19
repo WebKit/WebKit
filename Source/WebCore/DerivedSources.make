@@ -372,6 +372,9 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webgpu/WebGPUAdapter.idl \
     $(WebCore)/Modules/webgpu/WebGPUAdapterDescriptor.idl \
     $(WebCore)/Modules/webgpu/WebGPUDevice.idl \
+    $(WebCore)/Modules/webgpu/WebGPURenderingContext.idl \
+    $(WebCore)/Modules/webgpu/WebGPUSwapChain.idl \
+    $(WebCore)/Modules/webgpu/WebGPUSwapChainDescriptor.idl \
     $(WebCore)/Modules/websockets/CloseEvent.idl \
     $(WebCore)/Modules/websockets/WebSocket.idl \
     $(WebCore)/Modules/webvr/DOMWindowWebVR.idl \

@@ -7,11 +7,22 @@ if (window.testRunner)
     window.testRunner.dumpAsText();
 
 function runTest() {
+    let canvas = document.createElement("canvas");
+    let context = canvas.getContext("webgpu");
+    if (!context)
+        testFailed("Could not create WebGPU context!");
+
     shouldBeDefined(window.webgpu);
     window.webgpu.requestAdapter({ powerPreference: "default" }).then(adapter => {
-        shouldBeDefined(adapter);
+        if (!adapter) {
+            testFailed("Could not create default WebGPUAdapter!")
+            return;
+        }
         let defaultDevice = adapter.createDevice();
-        shouldBeDefined(defaultDevice);
+        if (!defaultDevice) {
+            testFailed("Could not create WebGPUDevice!");
+            return;
+        }
     }).catch(error => {
         testFailed(error);
     });

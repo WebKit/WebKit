@@ -1,3 +1,48 @@
+2018-10-19  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Add stubs for WebGPUSwapChain and WebGPURenderingContext
+        https://bugs.webkit.org/show_bug.cgi?id=190742
+
+        Reviewed by Dean Jackson.
+
+        Test: updated webgpu-enabled.html to check for WebGPURenderingContext.
+
+        Implement support for creating a "webgpu" context from an HTML canvas.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Modules/webgpu/WebGPURenderingContext.cpp: Added.
+        (WebCore::WebGPURenderingContext::create):
+        (WebCore::WebGPURenderingContext::WebGPURenderingContext):
+        * Modules/webgpu/WebGPURenderingContext.h: Added.
+        * Modules/webgpu/WebGPURenderingContext.idl: Added.
+        * Modules/webgpu/WebGPUSwapChain.cpp: Added.
+        (WebCore::WebGPUSwapChain::configure):
+        (WebCore::WebGPUSwapChain::present):
+        (WebCore::WebGPUSwapChain::reshape):
+        (WebCore::WebGPUSwapChain::markLayerComposited):
+        * Modules/webgpu/WebGPUSwapChain.h: Added.
+        (WebCore::WebGPUSwapChain::WebGPUSwapChain):
+        * Modules/webgpu/WebGPUSwapChain.idl: Added.
+        * Modules/webgpu/WebGPUSwapChainDescriptor.h: Added.
+        * Modules/webgpu/WebGPUSwapChainDescriptor.idl: Added.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * dom/Document.cpp:
+        (WebCore::Document::getCSSCanvasContext):
+        * dom/Document.h:
+        * dom/Document.idl:
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::getContext):
+        (WebCore::HTMLCanvasElement::isWebGPUType):
+        (WebCore::HTMLCanvasElement::createContextWebGPU):
+        (WebCore::HTMLCanvasElement::getContextWebGPU):
+        * html/HTMLCanvasElement.h:
+        * html/HTMLCanvasElement.idl:
+        * html/canvas/CanvasRenderingContext.h:
+        (WebCore::CanvasRenderingContext::isWebGPU const):
+
 2018-10-19  John Wilander  <wilander@apple.com>
 
         Only cap lifetime of persistent cookies created client-side through document.cookie when resource load statistics is enabled

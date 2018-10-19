@@ -13754,6 +13754,9 @@
 		D0843A4C20FEC16500FE860E /* GraphicsContext3DManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsContext3DManager.cpp; sourceTree = "<group>"; };
 		D086FE9609D53AAB005BC74D /* UnlinkCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnlinkCommand.h; sourceTree = "<group>"; };
 		D086FE9709D53AAB005BC74D /* UnlinkCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnlinkCommand.cpp; sourceTree = "<group>"; };
+		D093D225217951D400329217 /* WebGPURenderingContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPURenderingContext.h; sourceTree = "<group>"; };
+		D093D227217951D400329217 /* WebGPURenderingContext.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPURenderingContext.idl; sourceTree = "<group>"; };
+		D093D2292179541600329217 /* WebGPURenderingContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPURenderingContext.cpp; sourceTree = "<group>"; };
 		D0A20D542092A0A600E0C259 /* WebGLCompressedTextureASTC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGLCompressedTextureASTC.h; sourceTree = "<group>"; };
 		D0A20D562092A0A600E0C259 /* WebGLCompressedTextureASTC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGLCompressedTextureASTC.cpp; sourceTree = "<group>"; };
 		D0A3A7301405A39800FB8ED3 /* ResourceLoaderOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoaderOptions.h; sourceTree = "<group>"; };
@@ -13768,6 +13771,11 @@
 		D0CAAE9C216824A7001C91C7 /* WebMetalComputeCommandEncoder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebMetalComputeCommandEncoder.cpp; sourceTree = "<group>"; };
 		D0CAAE9D216824A7001C91C7 /* WebMetalBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebMetalBuffer.h; sourceTree = "<group>"; };
 		D0CAAE9E216824A8001C91C7 /* WebMetalCommandBuffer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebMetalCommandBuffer.cpp; sourceTree = "<group>"; };
+		D0DA0BE4217930E2007FE2AC /* WebGPUSwapChain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUSwapChain.h; sourceTree = "<group>"; };
+		D0DA0BE5217930E2007FE2AC /* WebGPUSwapChain.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUSwapChain.cpp; sourceTree = "<group>"; };
+		D0DA0BE6217930E2007FE2AC /* WebGPUSwapChain.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUSwapChain.idl; sourceTree = "<group>"; };
+		D0DA0BE821793B56007FE2AC /* WebGPUSwapChainDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUSwapChainDescriptor.h; sourceTree = "<group>"; };
+		D0DA0BE921793B56007FE2AC /* WebGPUSwapChainDescriptor.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUSwapChainDescriptor.idl; sourceTree = "<group>"; };
 		D0EDA772143E303C0028E383 /* CachedRawResource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedRawResource.cpp; sourceTree = "<group>"; };
 		D0EDA773143E303C0028E383 /* CachedRawResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedRawResource.h; sourceTree = "<group>"; };
 		D0FF2A5B11F8C45A007E74E0 /* PingLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PingLoader.cpp; sourceTree = "<group>"; };
@@ -25359,6 +25367,14 @@
 				D00F595321701D8C000D71DB /* WebGPUDevice.cpp */,
 				D00F595221701D8C000D71DB /* WebGPUDevice.h */,
 				D00F595421701D8C000D71DB /* WebGPUDevice.idl */,
+				D093D2292179541600329217 /* WebGPURenderingContext.cpp */,
+				D093D225217951D400329217 /* WebGPURenderingContext.h */,
+				D093D227217951D400329217 /* WebGPURenderingContext.idl */,
+				D0DA0BE5217930E2007FE2AC /* WebGPUSwapChain.cpp */,
+				D0DA0BE4217930E2007FE2AC /* WebGPUSwapChain.h */,
+				D0DA0BE6217930E2007FE2AC /* WebGPUSwapChain.idl */,
+				D0DA0BE821793B56007FE2AC /* WebGPUSwapChainDescriptor.h */,
+				D0DA0BE921793B56007FE2AC /* WebGPUSwapChainDescriptor.idl */,
 			);
 			path = webgpu;
 			sourceTree = "<group>";
