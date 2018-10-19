@@ -194,8 +194,6 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
         this._callStackGroup = new WI.DetailsSectionGroup([this._callStackRow]);
         this._callStackSection = new WI.DetailsSection("call-stack", WI.UIString("Call Stack"), [this._callStackGroup]);
 
-        this._showingSingleThreadCallStack = true;
-
         this._activeCallFrameTreeElement = null;
 
         this._pauseReasonTreeOutline = null;
