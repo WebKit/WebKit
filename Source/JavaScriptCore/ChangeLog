@@ -1,3 +1,30 @@
+2018-10-19  Saam Barati  <sbarati@apple.com>
+
+        vmCall should check if we exit before emitting an OSR exit due to exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=190740
+        <rdar://problem/45220139>
+
+        Reviewed by Mark Lam.
+
+        The bug we were seeing is the MovHint removal phase would
+        eliminate a superfluous MovHint. This left a certain range
+        of nodes in a state where they would not be able to reconstruct
+        values for an OSR exit. This is OK, since this phase proved those
+        nodes don't exit. However, some of these nodes may use the vmCall
+        construct in FTLLower. vmCall used to unconditionally emit an
+        exception check after each call. However, if such a call happens
+        in the range of nodes where we can't exit, we would end up generating
+        an invalid exit (and running with validateFTLOSRExitLiveness flag
+        would find this issue).
+        
+        This patch makes vmCall check to see if the node can exit before
+        emitting an exception check. A node not being able to exit implies
+        that it can't exit for exceptions, therefore, by definition, it can't
+        throw an exception.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::vmCall):
+
 2018-10-19  Caio Lima  <ticaiolima@gmail.com>
 
         [ESNext][BigInt] Implement support for "^"

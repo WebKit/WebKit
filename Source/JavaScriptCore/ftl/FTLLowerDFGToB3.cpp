@@ -45,6 +45,7 @@
 #include "DFGCapabilities.h"
 #include "DFGDominators.h"
 #include "DFGInPlaceAbstractState.h"
+#include "DFGMayExit.h"
 #include "DFGOSRAvailabilityAnalysisPhase.h"
 #include "DFGOSRExitFuzz.h"
 #include "DirectArguments.h"
@@ -16333,7 +16334,26 @@ private:
     {
         callPreflight();
         LValue result = m_out.call(type, function, std::forward<Args>(args)...);
-        callCheck();
+        if (mayExit(m_graph, m_node))
+            callCheck();
+        else {
+            // We can't exit due to an exception, so we also can't throw an exception.
+#ifndef NDEBUG
+            LBasicBlock crash = m_out.newBlock();
+            LBasicBlock continuation = m_out.newBlock();
+
+            LValue exception = m_out.load64(m_out.absolute(vm().addressOfException()));
+            LValue hadException = m_out.notZero64(exception);
+
+            m_out.branch(
+                hadException, rarely(crash), usually(continuation));
+
+            LBasicBlock lastNext = m_out.appendTo(crash, continuation);
+            m_out.unreachable();
+
+            m_out.appendTo(continuation, lastNext);
+#endif
+        }
         return result;
     }
     
