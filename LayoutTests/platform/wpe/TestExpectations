@@ -282,8 +282,9 @@ Bug(WPE) js/stringimpl-to-jsstring-on-large-strings-1.html [ Skip ]
 Bug(WPE) js/stringimpl-to-jsstring-on-large-strings-2.html [ Skip ]
 Bug(WPE) js/stringimpl-to-jsstring-on-large-strings-3.html [ Skip ]
 
-# No WebGPU support yet
-fast/canvas/webgpu [ Skip ]
+# No WebMetal or WebGPU support yet
+fast/canvas/webmetal [ Skip ]
+webgpu [ Skip ]
 
 # This test relies on Mac-specific quirks
 media/document-level-media-user-gesture-quirk.html [ Skip ]

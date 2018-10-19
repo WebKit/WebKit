@@ -1,0 +1,7 @@
+PASS [object WebGPU] is defined.
+PASS [object WebGPUAdapter] is defined.
+PASS [object WebGPUDevice] is defined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,3 +1,20 @@
+2018-10-18  Justin Fan  <justin_fan@apple.com>
+
+        Add test expectations for webgpu-enabled.html
+        https://bugs.webkit.org/show_bug.cgi?id=190739
+
+        Unreviewed test gardening.
+
+        Added forgotten expectations for webgpu-enabled, and updated some expectations 
+        to match the WebGPU -> WebMetal naming and new WebGPU tests.
+
+        * platform/ios/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+        * platform/wpe/TestExpectations:
+        * webgpu/webgpu-enabled-expected.txt: Added.
+
 2018-10-18  Justin Michaud  <justin_michaud@apple.com>
 
         Add new image type for CSS painting API

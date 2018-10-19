@@ -288,10 +288,11 @@ inspector/canvas/shaderProgram-add-remove-webgl2.html [ Skip ]
 webgl/webgl2-rendering-context-defined.html [ Skip ]
 webgl/webgl2-rendering-context-obtain.html [ Skip ]
 
-# WEBGPU is disabled
-fast/canvas/webgpu [ Skip ]
-inspector/canvas/create-context-webgpu.html [ Skip ]
-inspector/canvas/resolveCanvasContext-webgpu.html [ Skip ]
+# WEBMETAL and WEBGPU are disabled
+fast/canvas/webmetal [ Skip ]
+inspector/canvas/create-context-webmetal.html [ Skip ]
+inspector/canvas/resolveCanvasContext-webmetal.html [ Skip ]
+webgpu [ Skip ]
 
 # WIRELESS_PLAYBACK_TARGET is disabled
 media/airplay-target-availability.html [ Skip ]

@@ -35,10 +35,11 @@ fullscreen
 http/tests/fullscreen
 compositing/no-compositing-when-fulll-screen-is-present.html
 
-# WebGPU is not enabled on iOS Simulator.
+# WebMetal and WebGPU are not enabled on iOS Simulator.
 fast/canvas/webmetal
 inspector/canvas/create-context-webmetal.html [ Skip ]
 inspector/canvas/resolveCanvasContext-webmetal.html [ Skip ]
+webgpu [ Skip ]
 
 # Encrypted Media Extensions are not enabled
 media/encrypted-media/
