@@ -1,0 +1,7 @@
+
+PASS org.w3.clearkey test MediaKeys attribute syntax 
+FAIL org.w3.clearkey test MediaKeys setServerCertificate() exceptions. assert_unreached: function "function (mk) {
+                return mk.setServerCertificate(new Uint8Array(0));
+            }" Reached unreachable code
+PASS org.w3.clearkey test MediaKeys setServerCertificate() syntax with non-empty certificate. 
+

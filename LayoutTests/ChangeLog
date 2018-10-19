@@ -1,3 +1,44 @@
+2018-10-19  Charlie Turner  <cturner@igalia.com>
+
+        [EME] Fix crash during tracing in  gst_qtdemux_request_protection_context
+        https://bugs.webkit.org/show_bug.cgi?id=190738
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Add failing test expectations for the GTK port. These tests are
+        not mirrored in the top-level TestExpectations file, since there
+        are no passing baselines for these tests there. The testing
+        infrastructure will report them as unexpected passing when they
+        are marked as [ Failure ] there, since their output matches the
+        failing output in this directory, and if you don't have an
+        expected test, then they fail as [ Missing ], and putting failing
+        baselines in the top-level cross-platform directory also seem
+        wrong...
+
+        The following two tests produce a dumpRenderTree output for
+        unknown reasons, and so they have been marked as Missing for now.
+
+        platform/gtk/imported/w3c/web-platform-tests/encrypted-media/resources/clearkey-retrieve-destroy-persistent-license.html
+        platform/gtk/imported/w3c/web-platform-tests/encrypted-media/resources/clearkey-retrieve-persistent-license.html
+
+        * platform/gtk/TestExpectations: Update expectations.
+        * platform/gtk/imported/w3c/web-platform-tests/encrypted-media/clearKey-encrypted-webm-event-mse-actual.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-persistent-license-events.https-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-persistent-usage-record-events.https-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-persistent-usage-record.https-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-persistent-usage-record.https-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-encrypted-clear.https-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-events.https-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey-sequential-readyState.https-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey-sequential.https-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-after-src.https-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-requestmediakeysystemaccess.https-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-reset-src-after-setmediakeys.https-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-syntax-mediakeys.https-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-unique-origin.https-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-update-disallowed-input.https-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-waiting-for-a-key.https-expected.txt: Added.
+
 2018-10-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [CG] Adopt CG SPI for non-even cornered rounded rects

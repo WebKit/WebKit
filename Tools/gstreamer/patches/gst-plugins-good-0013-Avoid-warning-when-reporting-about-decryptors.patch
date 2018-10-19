@@ -1,0 +1,28 @@
+From 057c5099bfe1576c52dccd4173eae2a978e63ab0 Mon Sep 17 00:00:00 2001
+From: Philippe Normand <philn@igalia.com>
+Date: Fri, 22 Jun 2018 16:00:11 +0100
+Subject: [PATCH] qtdemux: Avoid warning when reporting about decryptors
+
+https://bugzilla.gnome.org/show_bug.cgi?id=796652
+---
+ gst/isomp4/qtdemux.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/gst/isomp4/qtdemux.c b/gst/isomp4/qtdemux.c
+index d7c7ab6cb..dc255e8d7 100644
+--- a/gst/isomp4/qtdemux.c
++++ b/gst/isomp4/qtdemux.c
+@@ -8120,7 +8120,9 @@ gst_qtdemux_request_protection_context (GstQTDemux * qtdemux,
+       qtdemux->protection_system_ids->len - 1);
+   GST_TRACE_OBJECT (qtdemux, "detected %u protection systems, we have "
+       "decryptors for %u of them, running context request",
+-      qtdemux->protection_system_ids->len, g_strv_length (filtered_sys_ids));
++      qtdemux->protection_system_ids->len,
++      filtered_sys_ids ? g_strv_length (filtered_sys_ids) : 0);
++
+ 
+   if (stream->protection_scheme_event_queue.length) {
+     GST_TRACE_OBJECT (qtdemux, "using stream event queue, length %u",
+-- 
+2.17.1
+

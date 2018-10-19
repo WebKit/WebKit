@@ -1,3 +1,16 @@
+2018-10-19  Charlie Turner  <cturner@igalia.com>
+
+        [EME] Fix crash during tracing in  gst_qtdemux_request_protection_context
+        https://bugs.webkit.org/show_bug.cgi?id=190738
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Add a GStreamer patch to avoid crashing when the run-time logging
+        level is TRACE. There was a missing null check which caused many
+        tests to crash.
+
+        * gstreamer/patches/gst-plugins-good-0013-Avoid-warning-when-reporting-about-decryptors.patch: Added.
+
 2018-10-18  Alicia Boya García  <aboya@igalia.com>
 
         [Media] Use nanoseconds as MaximumTimeScale

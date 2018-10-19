@@ -1,3 +1,31 @@
+2018-10-19  Charlie Turner  <cturner@igalia.com>
+
+        [EME] Fix crash during tracing in  gst_qtdemux_request_protection_context
+        https://bugs.webkit.org/show_bug.cgi?id=190738
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Add new passing baselines for some ClearKey tests, now that the
+        GStreamer crash fix allows us the generate them.
+
+        * web-platform-tests/encrypted-media/clearkey-mp4-playback-destroy-persistent-license.https-expected.txt: Added.
+        * web-platform-tests/encrypted-media/clearkey-mp4-playback-persistent-license.https-expected.txt: Added.
+        * web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-destroy-persistent-license.https-expected.txt: Added.
+        * web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-persistent-license.https-expected.txt: Added.
+        * web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-clear-encrypted.https-expected.txt: Added.
+        * web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-encrypted-clear-sources.https-expected.txt: Added.
+        * web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey.https-expected.txt: Added.
+        * web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multisession.https-expected.txt: Added.
+        * web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-after-update.https-expected.txt: Added.
+        * web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-immediately.https-expected.txt: Added.
+        * web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-onencrypted.https-expected.txt: Added.
+        * web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-two-videos.https-expected.txt: Added.
+        * web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-waitingforkey.https-expected.txt: Added.
+        * web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary.https-expected.txt: Added.
+        * web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-again-after-playback.https-expected.txt: Added.
+        * web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-again-after-resetting-src.https-expected.txt: Added.
+        * web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-multiple-times-with-different-mediakeys.https-expected.txt: Added.
+
 2018-10-19  Ali Juma  <ajuma@chromium.org>
 
         [IntersectionObserver] Handle zero-area intersections
