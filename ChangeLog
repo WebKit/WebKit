@@ -1,3 +1,24 @@
+2018-10-18  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][Clang] Do not give -Wall to clang-cl because it is treated as -Weverything
+        https://bugs.webkit.org/show_bug.cgi?id=190514
+
+        Reviewed by Michael Catanzaro.
+
+        clang-cl maps /Wall and -Wall to -Weverything which reports tons
+        of compilation warnings. Do not give -Wall option to clang-cl.
+
+        Clang processes -Wall and -Wextra options differently than GCC.
+        Clang processes all warning options in left-to-right order, while
+        GCC processes -Wall and -Wextra options first. In order to get the
+        same effect in both compilers, -Wall and -Wextra should be
+        speficied before all -Wno-* options.
+
+        * Source/cmake/WebKitCompilerFlags.cmake: Put -Wall and -Wextra
+        options before all -Wno-* options.
+        * Source/cmake/OptionsMSVC.cmake: Prepend /W4 option, instead of
+        just replacing /W3 option.
+
 2018-10-16  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK bots build fix

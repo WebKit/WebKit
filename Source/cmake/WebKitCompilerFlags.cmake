@@ -119,9 +119,7 @@ if (COMPILER_IS_GCC_OR_CLANG)
     endif ()
 
     # Warnings to be enabled
-    WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-Wall
-                                         -Wextra
-                                         -Wcast-align
+    WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-Wcast-align
                                          -Wformat-security
                                          -Wmissing-format-attribute
                                          -Wpointer-arith
@@ -139,12 +137,18 @@ if (COMPILER_IS_GCC_OR_CLANG)
     if (${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS "8.0" AND NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang")
         WEBKIT_PREPEND_GLOBAL_CXX_FLAGS(-Wno-attributes)
     endif ()
+
+    # -Wexpansion-to-defined produces false positives with GCC but not Clang
+    # https://bugs.webkit.org/show_bug.cgi?id=167643#c13
+    if (CMAKE_COMPILER_IS_GNUCXX)
+        WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-Wno-expansion-to-defined)
+    endif ()
 endif ()
 
-# -Wexpansion-to-defined produces false positives with GCC but not Clang
-# https://bugs.webkit.org/show_bug.cgi?id=167643#c13
-if (CMAKE_COMPILER_IS_GNUCXX)
-    WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-Wno-expansion-to-defined)
+if (COMPILER_IS_GCC_OR_CLANG AND NOT MSVC)
+    # Don't give -Wall to clang-cl because clang-cl treats /Wall and -Wall as -Weverything.
+    # -Wall and -Wextra should be specified before -Wno-* for Clang.
+    WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-Wall -Wextra)
 endif ()
 
 # Ninja tricks compilers into turning off color support.
