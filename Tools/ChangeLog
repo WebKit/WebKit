@@ -1,3 +1,15 @@
+2018-10-18  Alicia Boya García  <aboya@igalia.com>
+
+        [Media] Use nanoseconds as MaximumTimeScale
+        https://bugs.webkit.org/show_bug.cgi?id=190631
+
+        Rebased MediaTime tests covering timescales over the maximum.
+
+        Reviewed by Jer Noble.
+
+        * TestWebKitAPI/Tests/WTF/MediaTime.cpp:
+        (TestWebKitAPI::TEST):
+
 2018-10-18  Dean Johnson  <dean_johnson@apple.com>
 
         clean-webkit pulls in many unnecessary dependencies in webkitpy
