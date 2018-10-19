@@ -40,14 +40,14 @@
 #include <wtf/text/WTFString.h>
 
 namespace IPC {
-    class MachPort;
-    class Connection;
-    class DummyType;
+class MachPort;
+class Connection;
+class DummyType;
 }
 
 namespace WebKit {
-    class WebTouchEvent;
-    class WebPreferencesStore;
+class WebTouchEvent;
+class WebPreferencesStore;
 }
 
 namespace Messages {

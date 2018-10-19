@@ -1,5 +1,13 @@
 2018-10-19  Alex Christensen  <achristensen@webkit.org>
 
+        Rebase python tests.
+
+        * Scripts/Makefile:
+        * Scripts/webkit/MessageReceiver-expected.cpp:
+        * Scripts/webkit/Messages-expected.h:
+
+2018-10-19  Alex Christensen  <achristensen@webkit.org>
+
         Mark LegacySync IPC messages
         https://bugs.webkit.org/show_bug.cgi?id=190759
 
