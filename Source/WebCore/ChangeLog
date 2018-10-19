@@ -1,3 +1,16 @@
+2018-10-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [CG] Adopt CG SPI for non-even cornered rounded rects
+        https://bugs.webkit.org/show_bug.cgi?id=190155
+
+        Reviewed by Simon Fraser.
+
+        Instead of creating bezier curves for the non-even corners of the rounded
+        rects, we should use the optimized SPI provided by CG.
+
+        * platform/graphics/cg/PathCG.cpp:
+        (WebCore::Path::platformAddPathForRoundedRect):
+
 2018-10-18  Justin Michaud  <justin_michaud@apple.com>
 
         Add new image type for CSS painting API

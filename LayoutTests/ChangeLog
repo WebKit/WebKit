@@ -1,3 +1,20 @@
+2018-10-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [CG] Adopt CG SPI for non-even cornered rounded rects
+        https://bugs.webkit.org/show_bug.cgi?id=190155
+
+        Reviewed by Simon Fraser.
+
+        This test fails on iOS simulator because of just one pixel difference.
+        I think it happens because of anti aliasing the color at the border of
+        the black shadow. Since this test is testing the radius attribute of the
+        CSS box-shadow and this should not be affected by whether the shadow has
+        non-even rounded corners or not, I am going to change it to have even 
+        rounded corners.
+
+        * fast/box-shadow/box-shadow-with-zero-radius-expected.html:
+        * fast/box-shadow/box-shadow-with-zero-radius.html:
+
 2018-10-18  Justin Fan  <justin_fan@apple.com>
 
         Add test expectations for webgpu-enabled.html
