@@ -1,6 +1,6 @@
 Test that window.onerror is called on window object when there is a syntax error in attribute handler. Bug 70991.
 
-Main frame window.onerror: SyntaxError: Unexpected token '%' at window-onerror-syntax-error-in-attr.html:10:38 SyntaxError: Unexpected token '%'
-Main frame window.onerror: SyntaxError: Unexpected token '%' at window-onerror-syntax-error-in-attr.html:36:38 SyntaxError: Unexpected token '%'
-Main frame window.onerror: SyntaxError: Unexpected token '%' at window-onerror-syntax-error-in-attr.html:36:14 SyntaxError: Unexpected token '%'
+Main frame window.onerror: SyntaxError: Unexpected token '%' at window-onerror-syntax-error-in-attr.html:11:38 SyntaxError: Unexpected token '%'
+Main frame window.onerror: SyntaxError: Unexpected token '%' at window-onerror-syntax-error-in-attr.html:37:38 SyntaxError: Unexpected token '%'
+Main frame window.onerror: SyntaxError: Unexpected token '%' at window-onerror-syntax-error-in-attr.html:37:14 SyntaxError: Unexpected token '%'
 Button 1 Button 2 Button 3

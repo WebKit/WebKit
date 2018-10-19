@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: line 19: SyntaxError: Unexpected token ')'
-CONSOLE MESSAGE: line 16: SyntaxError: Unexpected end of script
+CONSOLE MESSAGE: line 18: SyntaxError: Unexpected token ')'
 
 PASS window.onerror - compile error in <body onerror> 
 

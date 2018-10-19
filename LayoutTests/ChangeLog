@@ -1,3 +1,18 @@
+2018-10-19  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r237254.
+        https://bugs.webkit.org/show_bug.cgi?id=190760
+
+        "It regresses JetStream 2 by 5% on some iOS devices"
+        (Requested by saamyjoon on #webkit).
+
+        Reverted changeset:
+
+        "[JSC] JSC should have "parseFunction" to optimize Function
+        constructor"
+        https://bugs.webkit.org/show_bug.cgi?id=190340
+        https://trac.webkit.org/changeset/237254
+
 2018-10-19  Charlie Turner  <cturner@igalia.com>
 
         [EME] Fix crash during tracing in  gst_qtdemux_request_protection_context
