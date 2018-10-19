@@ -35,12 +35,16 @@
 #include "WebProcess.h"
 #include "WebProcessCreationParameters.h"
 #include <WebCore/CaptureDevice.h>
+#include <WebCore/ImageTransferSessionVT.h>
 #include <WebCore/MediaConstraints.h>
 #include <WebCore/RealtimeMediaSourceCenter.h>
+#include <WebCore/RemoteVideoSample.h>
 #include <WebCore/WebAudioBufferList.h>
 #include <WebCore/WebAudioSourceProviderAVFObjC.h>
+#include <wtf/Assertions.h>
 
 namespace WebKit {
+using namespace PAL;
 using namespace WebCore;
 
 static uint64_t nextSessionID()
@@ -55,16 +59,22 @@ public:
         : RealtimeMediaSource(type, WTFMove(name), WTFMove(sourceID), WTFMove(hashSalt))
         , m_id(id)
         , m_manager(manager)
-        , m_ringBuffer(makeUniqueRef<SharedRingBufferStorage>(nullptr))
     {
+        if (type == Type::Audio)
+            m_ringBuffer = std::make_unique<CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>(nullptr));
     }
 
     ~Source()
     {
-        storage().invalidate();
+        if (type() == Type::Audio)
+            storage().invalidate();
     }
 
-    SharedRingBufferStorage& storage() { return static_cast<SharedRingBufferStorage&>(m_ringBuffer.storage()); }
+    SharedRingBufferStorage& storage()
+    {
+        ASSERT(type() == Type::Audio);
+        return static_cast<SharedRingBufferStorage&>(m_ringBuffer->storage());
+    }
 
     const RealtimeMediaSourceCapabilities& capabilities() final
     {
@@ -84,10 +94,11 @@ public:
     const CAAudioStreamDescription& description() const { return m_description; }
     void setStorage(const SharedMemory::Handle& handle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
     {
+        ASSERT(type() == Type::Audio);
         m_description = description;
 
         if (handle.isNull()) {
-            m_ringBuffer.deallocate();
+            m_ringBuffer->deallocate();
             storage().setReadOnly(false);
             storage().setStorage(nullptr);
             return;
@@ -97,21 +108,50 @@ public:
         storage().setStorage(WTFMove(memory));
         storage().setReadOnly(true);
 
-        m_ringBuffer.allocate(description, numberOfFrames);
+        m_ringBuffer->allocate(description, numberOfFrames);
     }
 
     void setRingBufferFrameBounds(uint64_t startFrame, uint64_t endFrame)
     {
-        m_ringBuffer.setCurrentFrameBounds(startFrame, endFrame);
+        ASSERT(type() == Type::Audio);
+        m_ringBuffer->setCurrentFrameBounds(startFrame, endFrame);
     }
 
     void audioSamplesAvailable(MediaTime time, uint64_t numberOfFrames)
     {
+        ASSERT(type() == Type::Audio);
         WebAudioBufferList audioData(m_description, numberOfFrames);
-        m_ringBuffer.fetch(audioData.list(), numberOfFrames, time.timeValue());
+        m_ringBuffer->fetch(audioData.list(), numberOfFrames, time.timeValue());
 
         RealtimeMediaSource::audioSamplesAvailable(time, audioData, m_description, numberOfFrames);
     }
+
+#if HAVE(IOSURFACE)
+    void remoteVideoSampleAvailable(RemoteVideoSample&& remoteSample)
+    {
+        ASSERT(type() == Type::Video);
+
+        auto videoSampleSize = IntSize(m_settings.width(), m_settings.height());
+        if (videoSampleSize.isEmpty())
+            videoSampleSize = remoteSample.size();
+
+        if (!m_imageTransferSession)
+            m_imageTransferSession = ImageTransferSessionVT::create(remoteSample.videoFormat());
+
+        if (!m_imageTransferSession) {
+            ASSERT_NOT_REACHED();
+            return;
+        }
+
+        auto sampleRef = m_imageTransferSession->createMediaSample(remoteSample.surface(), remoteSample.time(), videoSampleSize);
+        if (!sampleRef) {
+            ASSERT_NOT_REACHED();
+            return;
+        }
+
+        RealtimeMediaSource::videoSampleAvailable(*sampleRef);
+    }
+#endif
 
     void applyConstraintsSucceeded(const WebCore::RealtimeMediaSourceSettings& settings)
     {
@@ -144,8 +184,11 @@ private:
     UserMediaCaptureManager& m_manager;
     mutable std::optional<RealtimeMediaSourceCapabilities> m_capabilities;
     RealtimeMediaSourceSettings m_settings;
+
     CAAudioStreamDescription m_description;
-    CARingBuffer m_ringBuffer;
+    std::unique_ptr<CARingBuffer> m_ringBuffer;
+
+    std::unique_ptr<ImageTransferSessionVT> m_imageTransferSession;
 
     struct ApplyConstraintsCallback {
         SuccessHandler successHandler;
@@ -162,7 +205,8 @@ UserMediaCaptureManager::UserMediaCaptureManager(WebProcess& process)
 
 UserMediaCaptureManager::~UserMediaCaptureManager()
 {
-    RealtimeMediaSourceCenter::singleton().unsetAudioFactory(*this);
+    RealtimeMediaSourceCenter::unsetAudioFactory(*this);
+    RealtimeMediaSourceCenter::unsetDisplayCaptureFactory(*this);
     m_process.removeMessageReceiver(Messages::UserMediaCaptureManager::messageReceiverName());
 }
 
@@ -174,10 +218,12 @@ const char* UserMediaCaptureManager::supplementName()
 void UserMediaCaptureManager::initialize(const WebProcessCreationParameters& parameters)
 {
     if (parameters.shouldCaptureAudioInUIProcess)
-        RealtimeMediaSourceCenter::singleton().setAudioFactory(*this);
+        RealtimeMediaSourceCenter::setAudioFactory(*this);
+    if (parameters.shouldCaptureDisplayInUIProcess)
+        RealtimeMediaSourceCenter::setDisplayCaptureFactory(*this);
 }
 
-WebCore::CaptureSourceOrError UserMediaCaptureManager::createCaptureSource(const CaptureDevice& device, WebCore::RealtimeMediaSource::Type sourceType, String&& hashSalt, const WebCore::MediaConstraints* constraints)
+WebCore::CaptureSourceOrError UserMediaCaptureManager::createCaptureSource(const CaptureDevice& device, String&& hashSalt, const WebCore::MediaConstraints* constraints)
 {
     if (!constraints)
         return { };
@@ -186,10 +232,11 @@ WebCore::CaptureSourceOrError UserMediaCaptureManager::createCaptureSource(const
     RealtimeMediaSourceSettings settings;
     String errorMessage;
     bool succeeded;
-    if (!m_process.sendSync(Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints(id, device, sourceType, hashSalt, *constraints), Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints::Reply(succeeded, errorMessage, settings), 0))
+    if (!m_process.sendSync(Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints(id, device, hashSalt, *constraints), Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints::Reply(succeeded, errorMessage, settings), 0))
         return WTFMove(errorMessage);
 
-    auto source = adoptRef(*new Source(String::number(id), sourceType, String { settings.label() }, WTFMove(hashSalt), id, *this));
+    auto type = device.type() == CaptureDevice::DeviceType::Microphone ? WebCore::RealtimeMediaSource::Type::Audio : WebCore::RealtimeMediaSource::Type::Video;
+    auto source = adoptRef(*new Source(String::number(id), type, String { settings.label() }, WTFMove(hashSalt), id, *this));
     source->setSettings(WTFMove(settings));
     m_sources.set(id, source.copyRef());
     return WebCore::CaptureSourceOrError(WTFMove(source));
@@ -238,6 +285,19 @@ void UserMediaCaptureManager::audioSamplesAvailable(uint64_t id, MediaTime time,
     source.setRingBufferFrameBounds(startFrame, endFrame);
     source.audioSamplesAvailable(time, numberOfFrames);
 }
+
+#if HAVE(IOSURFACE)
+void UserMediaCaptureManager::remoteVideoSampleAvailable(uint64_t id, RemoteVideoSample&& sample)
+{
+    ASSERT(m_sources.contains(id));
+    m_sources.get(id)->remoteVideoSampleAvailable(WTFMove(sample));
+}
+#else
+NO_RETURN_DUE_TO_ASSERT void UserMediaCaptureManager::remoteVideoSampleAvailable(uint64_t, RemoteVideoSample&&)
+{
+    ASSERT_NOT_REACHED();
+}
+#endif
 
 void UserMediaCaptureManager::startProducingData(uint64_t id)
 {

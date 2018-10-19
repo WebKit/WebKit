@@ -31,6 +31,11 @@
 #include "Logging.h"
 #include "RealtimeMediaSourceCenter.h"
 #include "RealtimeMediaSourceSettings.h"
+#include "RemoteVideoSample.h"
+
+#if PLATFORM(COCOA)
+#include "ImageTransferSessionVT.h"
+#endif
 
 namespace WebCore {
 
@@ -378,7 +383,36 @@ void RealtimeVideoSource::dispatchMediaSampleToObservers(MediaSample& sample)
     if (interval > 1)
         m_observedFrameRate = (m_observedFrameTimeStamps.size() / interval);
 
-    videoSampleAvailable(sample);
+    if (isRemote()) {
+#if HAVE(IOSURFACE)
+        auto remoteSample = RemoteVideoSample::create(WTFMove(sample));
+        if (remoteSample)
+            remoteVideoSampleAvailable(WTFMove(*remoteSample));
+#else
+        ASSERT_NOT_REACHED();
+#endif
+        return;
+    }
+
+    auto mediaSample = makeRefPtr(&sample);
+#if PLATFORM(COCOA)
+    auto size = this->size();
+    if (!size.isEmpty() && size != expandedIntSize(sample.presentationSize())) {
+
+        if (!m_imageTransferSession)
+            m_imageTransferSession = ImageTransferSessionVT::create(sample.videoPixelFormat());
+
+        if (m_imageTransferSession) {
+            mediaSample = m_imageTransferSession->convertMediaSample(sample, size);
+            if (!mediaSample) {
+                ASSERT_NOT_REACHED();
+                return;
+            }
+        }
+    }
+#endif
+
+    videoSampleAvailable(mediaSample.releaseNonNull());
 }
 
 } // namespace WebCore

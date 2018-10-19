@@ -148,7 +148,7 @@ RetainPtr<CMSampleBufferRef> ImageTransferSessionVT::convertCMSampleBuffer(CMSam
     auto description = CMSampleBufferGetFormatDescription(sourceBuffer);
     auto sourceSize = FloatSize(CMVideoFormatDescriptionGetPresentationDimensions(description, true, true));
     auto pixelBuffer = static_cast<CVPixelBufferRef>(CMSampleBufferGetImageBuffer(sourceBuffer));
-    if (size == roundedIntSize(sourceSize) && m_pixelFormat == CVPixelBufferGetPixelFormatType(pixelBuffer))
+    if (size == expandedIntSize(sourceSize) && m_pixelFormat == CVPixelBufferGetPixelFormatType(pixelBuffer))
         return retainPtr(sourceBuffer);
 
     if (!setSize(size))
@@ -340,7 +340,7 @@ RefPtr<MediaSample> ImageTransferSessionVT::convertMediaSample(MediaSample& samp
 {
     ASSERT(sample.platformSample().type == PlatformSample::CMSampleBufferType);
 
-    if (size == roundedIntSize(sample.presentationSize()))
+    if (size == expandedIntSize(sample.presentationSize()))
         return &sample;
 
     auto resizedBuffer = convertCMSampleBuffer(sample.platformSample().sample.cmSampleBuffer, size);

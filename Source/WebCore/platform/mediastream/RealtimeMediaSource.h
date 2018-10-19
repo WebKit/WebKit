@@ -61,6 +61,7 @@ class MediaStreamPrivate;
 class OrientationNotifier;
 class PlatformAudioData;
 class RealtimeMediaSourceSettings;
+class RemoteVideoSample;
 
 struct CaptureSourceOrError;
 
@@ -81,6 +82,7 @@ public:
 
         // Called on the main thread.
         virtual void videoSampleAvailable(MediaSample&) { }
+        virtual void remoteVideoSampleAvailable(RemoteVideoSample&) { }
 
         // May be called on a background thread.
         virtual void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t /*numberOfFrames*/) { }
@@ -165,6 +167,9 @@ public:
     virtual bool isIncomingAudioSource() const { return false; }
     virtual bool isIncomingVideoSource() const { return false; }
 
+    void setIsRemote(bool isRemote) { m_isRemote = isRemote; }
+    bool isRemote() const { return m_isRemote; }
+
     // Testing only
     virtual void delaySamples(Seconds) { };
 
@@ -196,12 +201,12 @@ protected:
 
     void videoSampleAvailable(MediaSample&);
     void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t);
+    void remoteVideoSampleAvailable(RemoteVideoSample&&);
 
 private:
     virtual void startProducingData() { }
     virtual void stopProducingData() { }
     virtual void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) { }
-
 
     void forEachObserver(const WTF::Function<void(Observer&)>&) const;
 
@@ -228,6 +233,7 @@ private:
     bool m_isProducingData { false };
     bool m_interrupted { false };
     bool m_captureDidFailed { false };
+    bool m_isRemote { false };
 };
 
 struct CaptureSourceOrError {

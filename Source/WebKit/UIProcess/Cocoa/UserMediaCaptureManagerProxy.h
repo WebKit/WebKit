@@ -29,6 +29,7 @@
 
 #include "Connection.h"
 #include "MessageReceiver.h"
+#include "UserMediaCaptureManager.h"
 #include "UserMediaCaptureManagerProxyMessages.h"
 #include <WebCore/RealtimeMediaSource.h>
 
@@ -49,7 +50,7 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) final;
 
-    void createMediaSourceForCaptureDeviceWithConstraints(uint64_t id, const WebCore::CaptureDevice& deviceID, WebCore::RealtimeMediaSource::Type, String&&, const WebCore::MediaConstraints&, bool& succeeded, String& invalidConstraints, WebCore::RealtimeMediaSourceSettings&);
+    void createMediaSourceForCaptureDeviceWithConstraints(uint64_t id, const WebCore::CaptureDevice& deviceID, String&&, const WebCore::MediaConstraints&, bool& succeeded, String& invalidConstraints, WebCore::RealtimeMediaSourceSettings&);
     void startProducingData(uint64_t);
     void stopProducingData(uint64_t);
     void capabilities(uint64_t, WebCore::RealtimeMediaSourceCapabilities&);
