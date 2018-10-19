@@ -116,5 +116,6 @@ TestOptions::TestOptions(const std::string& pathOrURL, const std::string& absolu
 bool TestOptions::webViewIsCompatibleWithOptions(const TestOptions& other) const
 {
     return other.layerBackedWebView == layerBackedWebView
-        && other.jscOptions == jscOptions;
+        && other.jscOptions == jscOptions
+        && other.enableWebAnimationsCSSIntegration == enableWebAnimationsCSSIntegration;
 }

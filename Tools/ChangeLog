@@ -1,3 +1,17 @@
+2018-10-19  Dean Jackson  <dino@apple.com>
+
+        ASSERTION FAILED: !frame().animation().hasAnimations() in WebCore::FrameView::didDestroyRenderTree()
+        https://bugs.webkit.org/show_bug.cgi?id=186946
+        <rdar://problem/41724248>
+
+        Reviewed by Antoine Quint.
+
+        If the incoming test has different enableWebAnimationsCSSIntegration options,
+        then we need to create a new WebView.
+
+        * DumpRenderTree/TestOptions.cpp:
+        (TestOptions::webViewIsCompatibleWithOptions const):
+
 2018-10-19  Charlie Turner  <cturner@igalia.com>
 
         [EME] Fix crash during tracing in  gst_qtdemux_request_protection_context
