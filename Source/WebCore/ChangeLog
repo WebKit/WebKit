@@ -1,5 +1,19 @@
 2018-10-19  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Inline replaced width should default to 300px only if width is auto.
+        https://bugs.webkit.org/show_bug.cgi?id=190722
+
+        Reviewed by Antti Koivisto.
+
+        See #5
+
+        // 5. Otherwise, if 'width' has a computed value of 'auto', but none of the conditions above are met, then the used value of 'width' becomes 300px.
+
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedWidthAndMargin):
+
+2018-10-19  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Add inline runs to showLayoutTree
         https://bugs.webkit.org/show_bug.cgi?id=190718
 

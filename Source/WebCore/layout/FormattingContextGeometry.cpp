@@ -887,7 +887,7 @@ WidthAndMargin FormattingContext::Geometry::inlineReplacedWidthAndMargin(const L
     } else if (!width && replaced->hasIntrinsicWidth()) {
         // #4
         width = replaced->intrinsicWidth();
-    } else {
+    } else if (!width) {
         // #5
         width = { 300 };
     }
