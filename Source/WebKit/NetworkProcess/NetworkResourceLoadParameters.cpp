@@ -133,11 +133,12 @@ bool NetworkResourceLoadParameters::decode(IPC::Decoder& decoder, NetworkResourc
             return false;
         result.request.setHTTPBody(WTFMove(formData));
 
-        SandboxExtension::HandleArray requestBodySandboxExtensionHandles;
-        if (!decoder.decode(requestBodySandboxExtensionHandles))
+        std::optional<SandboxExtension::HandleArray> requestBodySandboxExtensionHandles;
+        decoder >> requestBodySandboxExtensionHandles;
+        if (!requestBodySandboxExtensionHandles)
             return false;
-        for (size_t i = 0; i < requestBodySandboxExtensionHandles.size(); ++i) {
-            if (auto extension = SandboxExtension::create(WTFMove(requestBodySandboxExtensionHandles[i])))
+        for (size_t i = 0; i < requestBodySandboxExtensionHandles->size(); ++i) {
+            if (auto extension = SandboxExtension::create(WTFMove(requestBodySandboxExtensionHandles->at(i))))
                 result.requestBodySandboxExtensions.append(WTFMove(extension));
         }
     }

@@ -50,8 +50,11 @@ bool MediaDeviceSandboxExtensions::decode(IPC::Decoder& decoder, MediaDeviceSand
     if (!decoder.decode(result.m_ids))
         return false;
 
-    if (!SandboxExtension::HandleArray::decode(decoder, result.m_handles))
+    std::optional<SandboxExtension::HandleArray> handles;
+    decoder >> handles;
+    if (!handles)
         return false;
+    result.m_handles = WTFMove(*handles);
 
     return true;
 }

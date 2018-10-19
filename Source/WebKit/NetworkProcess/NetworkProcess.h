@@ -193,7 +193,7 @@ public:
 #endif
 
 #if ENABLE(SANDBOX_EXTENSIONS)
-    void getSandboxExtensionsForBlobFiles(const Vector<String>& filenames, WTF::Function<void(SandboxExtension::HandleArray&&)>&& completionHandler);
+    void getSandboxExtensionsForBlobFiles(const Vector<String>& filenames, CompletionHandler<void(SandboxExtension::HandleArray&&)>&&);
     void updateTemporaryFileSandboxExtensions(const Vector<String>& paths, SandboxExtension::HandleArray&);
 #endif
 
@@ -314,10 +314,6 @@ private:
     void registerURLSchemeAsCORSEnabled(const String&) const;
     void registerURLSchemeAsCanDisplayOnlyIfCanRequest(const String&) const;
 
-#if ENABLE(SANDBOX_EXTENSIONS)
-    void didGetSandboxExtensionsForBlobFiles(uint64_t requestID, SandboxExtension::HandleArray&&);
-#endif
-
 #if ENABLE(INDEXED_DATABASE)
     void addIndexedDatabaseSession(PAL::SessionID, String&, SandboxExtension::Handle&);
     HashSet<WebCore::SecurityOriginData> indexedDatabaseOrigins(const String& path);
@@ -398,7 +394,6 @@ private:
 #endif
 
     HashMap<String, RefPtr<SandboxExtension>> m_blobTemporaryFileSandboxExtensions;
-    HashMap<uint64_t, WTF::Function<void(SandboxExtension::HandleArray&&)>> m_sandboxExtensionForBlobsCompletionHandlersStorageForNetworkProcess;
     
     Deque<CrossThreadTask> m_storageTasks;
     Lock m_storageTaskMutex;

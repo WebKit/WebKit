@@ -692,7 +692,7 @@ void NetworkProcessProxy::sendProcessDidTransitionToBackground()
 }
 
 #if ENABLE(SANDBOX_EXTENSIONS)
-void NetworkProcessProxy::getSandboxExtensionsForBlobFiles(uint64_t requestID, const Vector<String>& paths)
+void NetworkProcessProxy::getSandboxExtensionsForBlobFiles(const Vector<String>& paths, Messages::NetworkProcessProxy::GetSandboxExtensionsForBlobFiles::AsyncReply&& reply)
 {
     SandboxExtension::HandleArray extensions;
     extensions.allocate(paths.size());
@@ -700,8 +700,7 @@ void NetworkProcessProxy::getSandboxExtensionsForBlobFiles(uint64_t requestID, c
         // ReadWrite is required for creating hard links, which is something that might be done with these extensions.
         SandboxExtension::createHandle(paths[i], SandboxExtension::Type::ReadWrite, extensions[i]);
     }
-    
-    send(Messages::NetworkProcess::DidGetSandboxExtensionsForBlobFiles(requestID, extensions), 0);
+    reply(WTFMove(extensions));
 }
 #endif
 

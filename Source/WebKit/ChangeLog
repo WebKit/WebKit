@@ -1,3 +1,63 @@
+2018-10-19  Alex Christensen  <achristensen@webkit.org>
+
+        Introduce CompletionHandler-based Async IPC messages with replies
+        https://bugs.webkit.org/show_bug.cgi?id=190746
+
+        Reviewed by Tim Horton.
+
+        Before this patch, to make an asynchronous IPC message with a reply you had to find two objects that
+        can talk to each other, make two new message types, send a generated identifier, keep track of that
+        identifier, make a HashMap somewhere to store the object waiting for the response, and hook it all up.
+        What a mess.  No wonder people take shortcuts and make strange design decisions.
+
+        Now, you can just use a CompletionHandler and mark the reply as Async in *.messages.in.
+        I've adopted this with a message whose behavior is covered by the storage/indexeddb/modern/blob-cursor.html
+        layout test and many others.  I intent to refine and further adopt this incrementally.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::getSandboxExtensionsForBlobFiles):
+        (WebKit::NetworkProcess::didGetSandboxExtensionsForBlobFiles): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        This is representative of how code will be simplified with greater adoption. 
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::decode):
+        Modernize HandleArray decoding.
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::dispatchMessage):
+        (IPC::nextAsyncReplyHandlerID):
+        (IPC::asyncReplyHandlerMap):
+        Handle async replies when looking at incoming messages from the sending process.
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::sendWithAsyncReply):
+        Send a message with an async reply and prepare the reply receiver.
+        * Platform/IPC/Encoder.h:
+        Make the uint64_t encoder public so we can use it when encoding the listenerID.
+        * Platform/IPC/HandleMessage.h:
+        (IPC::handleMessageAsync):
+        Handle an asynchronous message with a reply from the receiving process.
+        This is similar to how DelayedReply messages are handled, but the listenerID is automatically captured and sent back.
+        * Scripts/webkit/messages.py:
+        Generate code for async message replies.
+        * Shared/Databases/IndexedDB/WebIDBResult.cpp:
+        (WebKit::WebIDBResult::decode):
+        * Shared/SandboxExtension.h:
+        (WebKit::SandboxExtension::HandleArray::at):
+        (WebKit::SandboxExtension::HandleArray::decode):
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/mac/SandboxExtensionMac.mm:
+        (WebKit::SandboxExtension::HandleArray::decode):
+        Modernize the decoding of HandleArray to work with generated decoding.
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::getSandboxExtensionsForBlobFiles):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        This is also representative of how code will be simplified with greater adoption.
+        * WebProcess/MediaStream/MediaDeviceSandboxExtensions.cpp:
+        (WebKit::MediaDeviceSandboxExtensions::decode):
+        Modernize HandleArray decoding.
+
 2018-10-19  Chris Dumez  <cdumez@apple.com>
 
         [PSON] WebPageProxy::didCompletePageTransition() may interact with a SuspendedPageProxy from a previous navigation

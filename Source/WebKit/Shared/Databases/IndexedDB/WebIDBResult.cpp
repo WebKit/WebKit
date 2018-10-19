@@ -46,8 +46,11 @@ bool WebIDBResult::decode(IPC::Decoder& decoder, WebIDBResult& result)
         return false;
     result.m_resultData = WTFMove(*resultData);
 
-    if (!SandboxExtension::HandleArray::decode(decoder, result.m_handles))
+    std::optional<SandboxExtension::HandleArray> handles;
+    decoder >> handles;
+    if (!handles)
         return false;
+    result.m_handles = WTFMove(*handles);
 
     return true;
 }

@@ -237,6 +237,12 @@ static HashMap<IPC::Connection::UniqueID, Connection*>& allConnections()
     return map;
 }
 
+static HashMap<uintptr_t, HashMap<uint64_t, CompletionHandler<void(Decoder*)>>>& asyncReplyHandlerMap()
+{
+    static NeverDestroyed<HashMap<uintptr_t, HashMap<uint64_t, CompletionHandler<void(Decoder*)>>>> map;
+    return map.get();
+}
+    
 Connection::Connection(Identifier identifier, bool isServer, Client& client)
     : m_client(client)
     , m_uniqueID(generateObjectIdentifier<UniqueIDType>())
@@ -271,6 +277,12 @@ Connection::~Connection()
     ASSERT(!isValid());
 
     allConnections().remove(m_uniqueID);
+    
+    auto map = asyncReplyHandlerMap().take(reinterpret_cast<uintptr_t>(this));
+    for (auto& handler : map.values()) {
+        if (handler)
+            handler(nullptr);
+    }
 }
 
 Connection* Connection::connection(UniqueID uniqueID)
@@ -948,6 +960,21 @@ void Connection::enqueueIncomingMessage(std::unique_ptr<Decoder> incomingMessage
 void Connection::dispatchMessage(Decoder& decoder)
 {
     RELEASE_ASSERT(isValid());
+    if (decoder.messageReceiverName() == "AsyncReply") {
+        std::optional<uint64_t> listenerID;
+        decoder >> listenerID;
+        if (!listenerID) {
+            ASSERT_NOT_REACHED();
+            return;
+        }
+        auto handler = takeAsyncReplyHandler(*this, *listenerID);
+        if (!handler) {
+            ASSERT_NOT_REACHED();
+            return;
+        }
+        handler(&decoder);
+        return;
+    }
     m_client.didReceiveMessage(*this, decoder);
 }
 
@@ -1091,6 +1118,36 @@ void Connection::dispatchIncomingMessages()
         }
         dispatchMessage(WTFMove(message));
     }
+}
+
+uint64_t nextAsyncReplyHandlerID()
+{
+    static uint64_t identifier { 0 };
+    return ++identifier;
+}
+
+void addAsyncReplyHandler(Connection& connection, uint64_t identifier, CompletionHandler<void(Decoder*)>&& completionHandler)
+{
+    auto result = asyncReplyHandlerMap().ensure(reinterpret_cast<uintptr_t>(&connection), [] {
+        return HashMap<uint64_t, CompletionHandler<void(Decoder*)>>();
+    }).iterator->value.add(identifier, WTFMove(completionHandler));
+    ASSERT_UNUSED(result, result.isNewEntry);
+}
+
+CompletionHandler<void(Decoder*)> takeAsyncReplyHandler(Connection& connection, uint64_t identifier)
+{
+    auto iterator = asyncReplyHandlerMap().find(reinterpret_cast<uintptr_t>(&connection));
+    if (iterator != asyncReplyHandlerMap().end()) {
+        if (!iterator->value.isValidKey(identifier)) {
+            ASSERT_NOT_REACHED();
+            connection.markCurrentlyDispatchedMessageAsInvalid();
+            return nullptr;
+        }
+        ASSERT(iterator->value.contains(identifier));
+        return iterator->value.take(identifier);
+    }
+    ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
 void Connection::wakeUpRunLoop()

@@ -175,8 +175,11 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
         return false;
     parameters.injectedBundlePathExtensionHandle = WTFMove(*injectedBundlePathExtensionHandle);
 
-    if (!decoder.decode(parameters.additionalSandboxExtensionHandles))
+    std::optional<SandboxExtension::HandleArray> additionalSandboxExtensionHandles;
+    decoder >> additionalSandboxExtensionHandles;
+    if (!additionalSandboxExtensionHandles)
         return false;
+    parameters.additionalSandboxExtensionHandles = WTFMove(*additionalSandboxExtensionHandles);
     if (!decoder.decode(parameters.initializationUserData))
         return false;
     if (!decoder.decode(parameters.applicationCacheDirectory))

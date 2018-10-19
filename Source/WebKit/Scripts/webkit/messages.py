@@ -29,6 +29,7 @@ from webkit import parser
 WANTS_CONNECTION_ATTRIBUTE = 'WantsConnection'
 LEGACY_RECEIVER_ATTRIBUTE = 'LegacyReceiver'
 DELAYED_ATTRIBUTE = 'Delayed'
+ASYNC_ATTRIBUTE = 'Async'
 
 _license_header = """/*
  * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
@@ -96,6 +97,10 @@ def reply_parameter_type(type):
     return '%s&' % type
 
 
+def move_type(type):
+    return '%s&&' % type
+
+
 def arguments_type(message):
     return 'std::tuple<%s>' % ', '.join(function_parameter_type(parameter.type, parameter.kind) for parameter in message.parameters)
 
@@ -113,20 +118,25 @@ def message_to_struct_declaration(message):
     result.append('\n')
     result.append('    static IPC::StringReference receiverName() { return messageReceiverName(); }\n')
     result.append('    static IPC::StringReference name() { return IPC::StringReference("%s"); }\n' % message.name)
-    result.append('    static const bool isSync = %s;\n' % ('false', 'true')[message.reply_parameters != None])
+    result.append('    static const bool isSync = %s;\n' % ('false', 'true')[message.reply_parameters != None and not message.has_attribute(ASYNC_ATTRIBUTE)])
     result.append('\n')
     if message.reply_parameters != None:
-        if message.has_attribute(DELAYED_ATTRIBUTE):
-            send_parameters = [(function_parameter_type(x.type, x.kind), x.name) for x in message.reply_parameters]
-            result.append('    using DelayedReply = CompletionHandler<void(')
-            if len(send_parameters):
-                result.append('%s' % ', '.join([' '.join(x) for x in send_parameters]))
-            result.append(')>;\n')
+        send_parameters = [(function_parameter_type(x.type, x.kind), x.name) for x in message.reply_parameters]
+        if message.has_attribute(DELAYED_ATTRIBUTE) or message.has_attribute(ASYNC_ATTRIBUTE):
+            completion_handler_parameters = '%s' % ', '.join([' '.join(x) for x in send_parameters])
+            if message.has_attribute(ASYNC_ATTRIBUTE):
+                move_parameters = ', '.join([move_type(x.type) for x in message.reply_parameters])
+                result.append('    static void callReply(IPC::Decoder&, CompletionHandler<void(%s)>&&);\n' % move_parameters)
+                result.append('    static void cancelReply(CompletionHandler<void(%s)>&&);\n' % move_parameters)
+                result.append('    static IPC::StringReference asyncMessageReplyName() { return { "%sReply" }; }\n' % message.name)
+                result.append('    using AsyncReply')
+            else:
+                result.append('    using DelayedReply')
+            result.append(' = CompletionHandler<void(%s)>;\n' % completion_handler_parameters)
             result.append('    static void send(std::unique_ptr<IPC::Encoder>&&, IPC::Connection&')
             if len(send_parameters):
-                result.append(', %s' % ', '.join([' '.join(x) for x in send_parameters]))
+                result.append(', %s' % completion_handler_parameters)
             result.append(');\n')
-
         result.append('    typedef %s Reply;\n' % reply_type(message))
 
     if len(function_parameters):
@@ -276,6 +286,9 @@ def async_message_statement(receiver, message):
     dispatch_function_args = ['decoder', 'this', '&%s' % handler_function(receiver, message)]
 
     dispatch_function = 'handleMessage'
+    if message.has_attribute(ASYNC_ATTRIBUTE):
+        dispatch_function += 'Async'
+        dispatch_function_args.insert(0, 'connection')
 
     if message.has_attribute(WANTS_CONNECTION_ATTRIBUTE):
         dispatch_function_args.insert(0, 'connection')
@@ -292,12 +305,14 @@ def sync_message_statement(receiver, message):
     dispatch_function = 'handleMessage'
     if message.has_attribute(DELAYED_ATTRIBUTE):
         dispatch_function += 'Delayed'
+    if message.has_attribute(ASYNC_ATTRIBUTE):
+        dispatch_function += 'Async'
 
     wants_connection = message.has_attribute(DELAYED_ATTRIBUTE) or message.has_attribute(WANTS_CONNECTION_ATTRIBUTE)
 
     result = []
     result.append('    if (decoder.messageName() == Messages::%s::%s::name()) {\n' % (receiver.name, message.name))
-    result.append('        IPC::%s<Messages::%s::%s>(%sdecoder, %sreplyEncoder, this, &%s);\n' % (dispatch_function, receiver.name, message.name, 'connection, ' if wants_connection else '', '' if message.has_attribute(DELAYED_ATTRIBUTE) else '*', handler_function(receiver, message)))
+    result.append('        IPC::%s<Messages::%s::%s>(%sdecoder, %sreplyEncoder, this, &%s);\n' % (dispatch_function, receiver.name, message.name, 'connection, ' if wants_connection else '', '' if message.has_attribute(DELAYED_ATTRIBUTE) or message.has_attribute(ASYNC_ATTRIBUTE) else '*', handler_function(receiver, message)))
     result.append('        return;\n')
     result.append('    }\n')
     return surround_in_condition(''.join(result), message.condition)
@@ -525,19 +540,31 @@ def generate_message_handler(file):
             result += ['#include %s\n' % header]
     result.append('\n')
 
-    sync_delayed_messages = []
+    delayed_or_async_messages = []
     for message in receiver.messages:
-        if message.reply_parameters != None and message.has_attribute(DELAYED_ATTRIBUTE):
-            sync_delayed_messages.append(message)
+        if message.reply_parameters != None and (message.has_attribute(DELAYED_ATTRIBUTE) or message.has_attribute(ASYNC_ATTRIBUTE)):
+            delayed_or_async_messages.append(message)
 
-    if sync_delayed_messages:
+    if delayed_or_async_messages:
         result.append('namespace Messages {\n\nnamespace %s {\n\n' % receiver.name)
 
-        for message in sync_delayed_messages:
+        for message in delayed_or_async_messages:
             send_parameters = [(function_parameter_type(x.type, x.kind), x.name) for x in message.reply_parameters]
 
             if message.condition:
                 result.append('#if %s\n\n' % message.condition)
+
+            if message.has_attribute(ASYNC_ATTRIBUTE):
+                move_parameters = message.name, ', '.join([move_type(x.type) for x in message.reply_parameters])
+                result.append('void %s::callReply(IPC::Decoder& decoder, CompletionHandler<void(%s)>&& completionHandler)\n{\n' % move_parameters)
+                for x in message.reply_parameters:
+                    result.append('    std::optional<%s> %s;\n' % (x.type, x.name))
+                    result.append('    decoder >> %s;\n' % x.name)
+                    result.append('    if (!%s) {\n        ASSERT_NOT_REACHED();\n        return;\n    }\n' % x.name)
+                result.append('    completionHandler(WTFMove(*%s));\n}\n\n' % (', *'.join(x.name for x in message.reply_parameters)))
+                result.append('void %s::cancelReply(CompletionHandler<void(%s)>&& completionHandler)\n{\n    completionHandler(' % move_parameters)
+                result.append(', '.join(['{ }' for x in message.reply_parameters]))
+                result.append(');\n}\n\n')
 
             result.append('void %s::send(std::unique_ptr<IPC::Encoder>&& encoder, IPC::Connection& connection' % (message.name))
             if len(send_parameters):
@@ -558,7 +585,7 @@ def generate_message_handler(file):
     async_messages = []
     sync_messages = []
     for message in receiver.messages:
-        if message.reply_parameters is not None:
+        if message.reply_parameters is not None and not message.has_attribute(ASYNC_ATTRIBUTE):
             sync_messages.append(message)
         else:
             async_messages.append(message)
@@ -586,7 +613,7 @@ def generate_message_handler(file):
         result.append('    ASSERT_NOT_REACHED();\n')
         result.append('}\n')
 
-    result.append('\n} // namespace WebKit\n')
+    result.append('\n} // namespace WebKit\n\n')
 
     if receiver.condition:
         result.append('\n#endif // %s\n' % receiver.condition)

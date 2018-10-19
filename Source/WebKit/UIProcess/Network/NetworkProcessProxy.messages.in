@@ -56,7 +56,7 @@ messages -> NetworkProcessProxy LegacyReceiver {
     RetrieveCacheStorageParameters(PAL::SessionID sessionID)
 
 #if ENABLE(SANDBOX_EXTENSIONS)
-    GetSandboxExtensionsForBlobFiles(uint64_t requestID, Vector<String> paths)
+    GetSandboxExtensionsForBlobFiles(Vector<String> paths) -> (WebKit::SandboxExtension::HandleArray extensions) Async
 #endif
 
 #if ENABLE(SERVICE_WORKER)

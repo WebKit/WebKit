@@ -187,4 +187,28 @@ void handleMessageDelayed(Connection& connection, Decoder& decoder, std::unique_
     callMemberFunction(WTFMove(arguments), WTFMove(completionHandler), object, function);
 }
 
+template<typename T, typename C, typename MF>
+void handleMessageAsync(Connection& connection, Decoder& decoder, C* object, MF function)
+{
+    std::optional<uint64_t> listenerID;
+    decoder >> listenerID;
+    if (!listenerID) {
+        ASSERT(decoder.isInvalid());
+        return;
+    }
+    
+    typename CodingType<typename T::Arguments>::Type arguments;
+    if (!decoder.decode(arguments)) {
+        ASSERT(decoder.isInvalid());
+        return;
+    }
+
+    typename T::AsyncReply completionHandler = [listenerID = *listenerID, connection = makeRef(connection)] (auto&&... args) mutable {
+        auto encoder = std::make_unique<Encoder>("AsyncReply", T::asyncMessageReplyName(), 0);
+        *encoder << listenerID;
+        T::send(WTFMove(encoder), WTFMove(connection), args...);
+    };
+    callMemberFunction(WTFMove(arguments), WTFMove(completionHandler), object, function);
+}
+
 } // namespace IPC

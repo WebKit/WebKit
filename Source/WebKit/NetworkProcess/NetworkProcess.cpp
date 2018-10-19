@@ -1190,21 +1190,11 @@ void NetworkProcess::addIndexedDatabaseSession(PAL::SessionID sessionID, String&
 #endif // ENABLE(INDEXED_DATABASE)
 
 #if ENABLE(SANDBOX_EXTENSIONS)
-void NetworkProcess::getSandboxExtensionsForBlobFiles(const Vector<String>& filenames, Function<void(SandboxExtension::HandleArray&&)>&& completionHandler)
+void NetworkProcess::getSandboxExtensionsForBlobFiles(const Vector<String>& filenames, CompletionHandler<void(SandboxExtension::HandleArray&&)>&& completionHandler)
 {
-    static uint64_t lastRequestID;
-    
-    uint64_t requestID = ++lastRequestID;
-    m_sandboxExtensionForBlobsCompletionHandlersStorageForNetworkProcess.set(requestID, WTFMove(completionHandler));
-    parentProcessConnection()->send(Messages::NetworkProcessProxy::GetSandboxExtensionsForBlobFiles(requestID, filenames), 0);
+    parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::GetSandboxExtensionsForBlobFiles(filenames), WTFMove(completionHandler));
 }
 
-void NetworkProcess::didGetSandboxExtensionsForBlobFiles(uint64_t requestID, SandboxExtension::HandleArray&& handles)
-{
-    if (auto handler = m_sandboxExtensionForBlobsCompletionHandlersStorageForNetworkProcess.take(requestID))
-        handler(WTFMove(handles));
-}
-    
 void NetworkProcess::updateTemporaryFileSandboxExtensions(const Vector<String>& paths, SandboxExtension::HandleArray& handles)
 {
     for (size_t i = 0; i < handles.size(); ++i) {

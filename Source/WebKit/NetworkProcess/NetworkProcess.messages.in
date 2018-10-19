@@ -73,10 +73,6 @@ messages -> NetworkProcess LegacyReceiver {
     CancelPrepareToSuspend()
     ProcessDidResume()
 
-#if ENABLE(SANDBOX_EXTENSIONS)
-    DidGetSandboxExtensionsForBlobFiles(uint64_t requestID, WebKit::SandboxExtension::HandleArray extensions)
-#endif
-
     WriteBlobToFilePath(WebCore::URL blobURL, String path, WebKit::SandboxExtension::Handle handle, uint64_t callbackID)
 
     PreconnectTo(WebCore::URL url, enum:bool WebCore::StoredCredentialsPolicy storedCredentialsPolicy);

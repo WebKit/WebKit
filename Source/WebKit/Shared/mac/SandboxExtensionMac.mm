@@ -190,20 +190,22 @@ void SandboxExtension::HandleArray::encode(IPC::Encoder& encoder) const
         encoder << handle;
 }
 
-bool SandboxExtension::HandleArray::decode(IPC::Decoder& decoder, SandboxExtension::HandleArray& handles)
+std::optional<SandboxExtension::HandleArray> SandboxExtension::HandleArray::decode(IPC::Decoder& decoder)
 {
-    uint64_t size;
-    if (!decoder.decode(size))
-        return false;
-    handles.allocate(size);
-    for (size_t i = 0; i < size; i++) {
+    std::optional<uint64_t> size;
+    decoder >> size;
+    if (!size)
+        return std::nullopt;
+    SandboxExtension::HandleArray handles;
+    handles.allocate(*size);
+    for (size_t i = 0; i < *size; ++i) {
         std::optional<SandboxExtension::Handle> handle;
         decoder >> handle;
         if (!handle)
-            return false;
+            return std::nullopt;
         handles[i] = WTFMove(*handle);
     }
-    return true;
+    return WTFMove(handles);
 }
 
 RefPtr<SandboxExtension> SandboxExtension::create(Handle&& handle)
