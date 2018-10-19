@@ -1259,6 +1259,7 @@ layout/floats/FloatingState.cpp
 layout/inlineformatting/InlineFormattingContext.cpp
 layout/inlineformatting/InlineFormattingState.cpp
 layout/inlineformatting/InlineInvalidation.cpp
+layout/inlineformatting/InlineRunProvider.cpp
 layout/inlineformatting/textlayout/TextContentProvider.cpp
 layout/inlineformatting/textlayout/simple/SimpleTextRunGenerator.cpp
 layout/inlineformatting/textlayout/simple/SimpleLineBreaker.cpp
@@ -1267,6 +1268,7 @@ layout/layouttree/LayoutBox.cpp
 layout/layouttree/LayoutContainer.cpp
 layout/layouttree/LayoutInlineBox.cpp
 layout/layouttree/LayoutInlineContainer.cpp
+layout/layouttree/LayoutLineBreakBox.cpp
 layout/layouttree/LayoutReplaced.cpp
 layout/layouttree/LayoutTreeBuilder.cpp
 

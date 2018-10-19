@@ -1,3 +1,86 @@
+2018-10-19  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add generic inline run generator.
+        https://bugs.webkit.org/show_bug.cgi?id=190696
+
+        Reviewed by Antti Koivisto.
+
+        InlineRunProvider turns the following inline content ->
+
+            <span>foo<span>bar</span></span>
+            <img src="broken.jpg"><span>hello world</span>
+
+        into a set of runs ->
+
+            <foobar><image box><hello>< ><world>
+
+        Note that a text run can overlap multiple inline elements. InlineRunProvider::Run only stores a reference to
+        the first inline element (continuous content can be accessed by iterating through the InlineContent ListHashSet).
+        These runs are the input to the line breaking algoritm.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::layout const):
+        * layout/inlineformatting/InlineFormattingState.h:
+        (WebCore::Layout::InlineFormattingState::inlineContent):
+        * layout/inlineformatting/InlineItem.h: Added.
+        (WebCore::Layout::InlineItem::layoutBox const):
+        (WebCore::Layout::InlineItem::style const):
+        (WebCore::Layout::InlineItemHashFunctions::hash):
+        (WebCore::Layout::InlineItemHashFunctions::equal):
+        (WebCore::Layout::InlineItemHashTranslator::hash):
+        (WebCore::Layout::InlineItemHashTranslator::equal):
+        (WebCore::Layout::InlineItem::InlineItem):
+        (WebCore::Layout::InlineItem::type const):
+        (WebCore::Layout::InlineItem::textContent const):
+        * layout/inlineformatting/InlineRunProvider.cpp: Added.
+        (WebCore::Layout::InlineRunProvider::InlineRunProvider):
+        (WebCore::Layout::InlineRunProvider::append):
+        (WebCore::Layout::InlineRunProvider::insertBefore):
+        (WebCore::Layout::InlineRunProvider::remove):
+        (WebCore::Layout::isWhitespace):
+        (WebCore::Layout::isSoftLineBreak):
+        (WebCore::Layout::InlineRunProvider::isContinousContent):
+        (WebCore::Layout::InlineRunProvider::processInlineTextItem):
+        (WebCore::Layout::InlineRunProvider::moveToNextNonWhitespacePosition):
+        (WebCore::Layout::InlineRunProvider::moveToNextBreakablePosition):
+        * layout/inlineformatting/InlineRunProvider.h: Added.
+        (WebCore::Layout::InlineRunProvider::Run::type const):
+        (WebCore::Layout::InlineRunProvider::Run::isText const):
+        (WebCore::Layout::InlineRunProvider::Run::isWhitespace const):
+        (WebCore::Layout::InlineRunProvider::Run::isNonWhitespace const):
+        (WebCore::Layout::InlineRunProvider::Run::isLineBreak const):
+        (WebCore::Layout::InlineRunProvider::Run::isBox const):
+        (WebCore::Layout::InlineRunProvider::Run::isFloat const):
+        (WebCore::Layout::InlineRunProvider::Run::TextContext::start const):
+        (WebCore::Layout::InlineRunProvider::Run::TextContext::length const):
+        (WebCore::Layout::InlineRunProvider::Run::TextContext::isCollapsed const):
+        (WebCore::Layout::InlineRunProvider::Run::TextContext::setStart):
+        (WebCore::Layout::InlineRunProvider::Run::TextContext::setLength):
+        (WebCore::Layout::InlineRunProvider::Run::textContext const):
+        (WebCore::Layout::InlineRunProvider::Run::style const):
+        (WebCore::Layout::InlineRunProvider::Run::inlineItem const):
+        (WebCore::Layout::InlineRunProvider::runs const):
+        (WebCore::Layout::InlineRunProvider::Run::createBoxRun):
+        (WebCore::Layout::InlineRunProvider::Run::createFloatRun):
+        (WebCore::Layout::InlineRunProvider::Run::createSoftLineBreakRun):
+        (WebCore::Layout::InlineRunProvider::Run::createHardLineBreakRun):
+        (WebCore::Layout::InlineRunProvider::Run::createWhitespaceRun):
+        (WebCore::Layout::InlineRunProvider::Run::createNonWhitespaceRun):
+        (WebCore::Layout::InlineRunProvider::Run::Run):
+        (WebCore::Layout::InlineRunProvider::Run::TextContext::TextContext):
+        * layout/layouttree/LayoutBox.h:
+        (WebCore::Layout::Box::isLineBreakBox const):
+        * layout/layouttree/LayoutInlineBox.cpp:
+        (WebCore::Layout::InlineBox::InlineBox):
+        * layout/layouttree/LayoutInlineBox.h:
+        (WebCore::Layout::InlineBox::hasTextContent const):
+        (WebCore::Layout::InlineBox::textContent const):
+        * layout/layouttree/LayoutLineBreakBox.cpp: Copied from Source/WebCore/layout/layouttree/LayoutInlineBox.cpp.
+        (WebCore::Layout::LineBreakBox::LineBreakBox):
+        * layout/layouttree/LayoutLineBreakBox.h: Copied from Source/WebCore/layout/layouttree/LayoutInlineBox.cpp.
+
 2018-10-19  Ali Juma  <ajuma@chromium.org>
 
         [IntersectionObserver] Handle zero-area intersections

@@ -23,35 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#include "LayoutBox.h"
-#include <wtf/IsoMalloc.h>
+#include "config.h"
+#include "LayoutLineBreakBox.h"
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "RenderStyle.h"
+#include <wtf/IsoMallocInlines.h>
+
 namespace WebCore {
-
-class RenderStyle;
-
 namespace Layout {
 
-class InlineBox : public Box {
-    WTF_MAKE_ISO_ALLOCATED(InlineBox);
-public:
-    InlineBox(std::optional<ElementAttributes>, RenderStyle&&, BaseTypeFlags = InlineBoxFlag);
+WTF_MAKE_ISO_ALLOCATED_IMPL(LineBreakBox);
 
-    void setTextContent(String text) { m_textContent = text; }
-    bool hasTextContent() const { return !m_textContent.isNull(); }
-    String textContent() const { return m_textContent; }
-
-private:
-    String m_textContent;
-};
+LineBreakBox::LineBreakBox(std::optional<ElementAttributes> attributes, RenderStyle&& style)
+    : InlineBox(attributes, WTFMove(style), LineBreakBoxFlag)
+{
+}
 
 }
 }
-
-SPECIALIZE_TYPE_TRAITS_LAYOUT_BOX(InlineBox, isInlineBox())
-
 #endif

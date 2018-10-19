@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "LayoutBox.h"
+#include "LayoutInlineBox.h"
 #include <wtf/IsoMalloc.h>
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
@@ -36,22 +36,15 @@ class RenderStyle;
 
 namespace Layout {
 
-class InlineBox : public Box {
-    WTF_MAKE_ISO_ALLOCATED(InlineBox);
+class LineBreakBox : public InlineBox {
+    WTF_MAKE_ISO_ALLOCATED(LineBreakBox);
 public:
-    InlineBox(std::optional<ElementAttributes>, RenderStyle&&, BaseTypeFlags = InlineBoxFlag);
-
-    void setTextContent(String text) { m_textContent = text; }
-    bool hasTextContent() const { return !m_textContent.isNull(); }
-    String textContent() const { return m_textContent; }
-
-private:
-    String m_textContent;
+    LineBreakBox(std::optional<ElementAttributes>, RenderStyle&&);
 };
 
 }
 }
 
-SPECIALIZE_TYPE_TRAITS_LAYOUT_BOX(InlineBox, isInlineBox())
+SPECIALIZE_TYPE_TRAITS_LAYOUT_BOX(LineBreakBox, isLineBreakBox())
 
 #endif

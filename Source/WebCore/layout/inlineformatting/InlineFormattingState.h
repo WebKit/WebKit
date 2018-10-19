@@ -28,11 +28,11 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "FormattingState.h"
+#include "InlineItem.h"
 #include "Runs.h"
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
-
 namespace Layout {
 
 // InlineFormattingState holds the state for a particular inline formatting context tree.
@@ -42,11 +42,13 @@ public:
     InlineFormattingState(Ref<FloatingState>&&, const LayoutContext&);
     virtual ~InlineFormattingState();
 
+    InlineContent& inlineContent() { return m_inlineContent; }
     // This is temporary. We need to construct a display tree context for inlines.
     void addLayoutRuns(Vector<LayoutRun>&& layoutRuns) { m_layoutRuns = WTFMove(layoutRuns); }
     const Vector<LayoutRun>& layoutRuns() const { return m_layoutRuns; }
 
 private:
+    InlineContent m_inlineContent;
     Vector<LayoutRun> m_layoutRuns;
 };
 

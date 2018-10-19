@@ -70,8 +70,8 @@ void InlineFormattingContext::layout(LayoutContext& layoutContext, FormattingSta
         }
         auto& inlineBox = downcast<InlineBox>(*layoutBox);
         // Only text content at this point.
-        if (inlineBox.textContent())
-            textContentProvider.appendText(*inlineBox.textContent(), inlineBox.style(), true);
+        if (inlineBox.hasTextContent())
+            textContentProvider.appendText(inlineBox.textContent(), inlineBox.style(), true);
 
         for (; layoutBox; layoutBox = layoutBox->containingBlock()) {
             if (layoutBox == &formattingRoot) {

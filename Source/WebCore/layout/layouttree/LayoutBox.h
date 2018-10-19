@@ -96,6 +96,7 @@ public:
     bool isBlockContainer() const { return m_baseTypeFlags & BlockContainerFlag; }
     bool isInlineBox() const { return m_baseTypeFlags & InlineBoxFlag; }
     bool isInlineContainer() const { return m_baseTypeFlags & InlineContainerFlag; }
+    bool isLineBreakBox() const { return m_baseTypeFlags & LineBreakBoxFlag; }
 
     bool isPaddingApplicable() const;
     bool isOverflowVisible() const;
@@ -125,7 +126,8 @@ protected:
         ContainerFlag         = 1 << 0,
         BlockContainerFlag    = 1 << 1,
         InlineBoxFlag         = 1 << 2,
-        InlineContainerFlag   = 1 << 3
+        InlineContainerFlag   = 1 << 3,
+        LineBreakBoxFlag      = 1 << 4
     };
     Box(std::optional<ElementAttributes>, RenderStyle&&, BaseTypeFlags);
 

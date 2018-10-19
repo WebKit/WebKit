@@ -36,8 +36,8 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(InlineBox);
 
-InlineBox::InlineBox(std::optional<ElementAttributes> attributes, RenderStyle&& style)
-    : Box(attributes, WTFMove(style), InlineBoxFlag)
+InlineBox::InlineBox(std::optional<ElementAttributes> attributes, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
+    : Box(attributes, WTFMove(style), baseTypeFlags | InlineBoxFlag)
 {
 }
 
