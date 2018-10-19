@@ -29,6 +29,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "DisplayBox.h"
+#include "InlineFormattingState.h"
 #include "LayoutBlockContainer.h"
 #include "LayoutBox.h"
 #include "LayoutChildIterator.h"
@@ -128,6 +129,24 @@ void TreeBuilder::createSubTree(const RenderElement& rootRenderer, Container& ro
 }
 
 #if ENABLE(TREE_DEBUGGING)
+static void outputInlineRuns(TextStream& stream, const LayoutContext& layoutContext, const Container& inlineFormattingRoot, unsigned depth)
+{
+    auto& inlineFormattingState = layoutContext.establishedFormattingState(inlineFormattingRoot);
+    ASSERT(is<InlineFormattingState>(inlineFormattingState));
+    auto& inlineRuns = downcast<InlineFormattingState>(inlineFormattingState).inlineRuns();
+
+    for (auto& inlineRun : inlineRuns) {
+        unsigned printedCharacters = 0;
+        while (++printedCharacters <= depth * 2)
+            stream << " ";
+        stream << "run";
+        if (inlineRun.textContext())
+            stream << "(" << inlineRun.textContext()->position() << ", " << inlineRun.textContext()->position() + inlineRun.textContext()->length() << ") ";
+        stream << "(" << inlineRun.logicalLeft() << ", " << inlineRun.logicalRight() << ")";
+        stream.nextLine();
+    }
+}
+
 static void outputLayoutBox(TextStream& stream, const Box& layoutBox, const Display::Box* displayBox, unsigned depth)
 {
     unsigned printedCharacters = 0;
@@ -145,8 +164,13 @@ static void outputLayoutBox(TextStream& stream, const Box& layoutBox, const Disp
     } else
         stream << "box";
     // FIXME: Inline text runs don't create display boxes yet.
-    if (displayBox)
-        stream << " at [" << displayBox->left() << " " << displayBox->top() << "] size [" << displayBox->width() << " " << displayBox->height() << "]";
+    if (displayBox) {
+        if (is<InlineBox>(layoutBox) || is<InlineContainer>(layoutBox)) {
+            // FIXME: display box is not completely set yet.
+            stream << " at [" << "." << " " << "." << "] size [" << displayBox->width() << " " << displayBox->height() << "]";
+        } else
+            stream << " at [" << displayBox->left() << " " << displayBox->top() << "] size [" << displayBox->width() << " " << displayBox->height() << "]";
+    }
     stream << " object [" << &layoutBox << "]";
 
     stream.nextLine();
@@ -155,7 +179,15 @@ static void outputLayoutBox(TextStream& stream, const Box& layoutBox, const Disp
 static void outputLayoutTree(const LayoutContext* layoutContext, TextStream& stream, const Container& rootContainer, unsigned depth)
 {
     for (auto& child : childrenOfType<Box>(rootContainer)) {
-        outputLayoutBox(stream, child, layoutContext ? &layoutContext->displayBoxForLayoutBox(child) : nullptr, depth);
+        Display::Box* displayBox = nullptr;
+        // Not all boxes generate display boxes.
+        if (layoutContext && layoutContext->hasDisplayBox(child))
+            displayBox = &layoutContext->displayBoxForLayoutBox(child);
+
+        outputLayoutBox(stream, child, displayBox, depth);
+        if (layoutContext && child.establishesInlineFormattingContext())
+            outputInlineRuns(stream, *layoutContext, downcast<Container>(child), depth + 1);
+
         if (is<Container>(child))
             outputLayoutTree(layoutContext, stream, downcast<Container>(child), depth + 1);
     }
