@@ -1,4 +1,7 @@
 
 PASS isIntersecting changes should trigger notifications. 
-FAIL Rects in initial notifications should report initial positions. assert_equals: entries[2].target.isIntersecting equals true expected true but got false
+PASS Rects in initial notifications should report initial positions. 
+PASS Set scrollTop=100 and check for no new notifications. 
+PASS Add 4th target. 
+PASS Set scrollTop=100 and check for one new notification. 
 

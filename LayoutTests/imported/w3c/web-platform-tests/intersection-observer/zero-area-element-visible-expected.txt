@@ -1,4 +1,4 @@
 
 PASS Ensure that a zero-area target intersecting root generates a notification with intersectionRatio == 1 
-FAIL First rAF should generate a notification. assert_equals: intersectionRatio == 1 expected 1 but got 0
+PASS First rAF should generate a notification. 
 

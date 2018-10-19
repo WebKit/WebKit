@@ -1,3 +1,18 @@
+2018-10-19  Ali Juma  <ajuma@chromium.org>
+
+        [IntersectionObserver] Handle zero-area intersections
+        https://bugs.webkit.org/show_bug.cgi?id=189624
+
+        Reviewed by Simon Fraser.
+
+        Rebaseline expectations for tests that now pass.
+
+        * web-platform-tests/intersection-observer/edge-inclusive-intersection-expected.txt:
+        * web-platform-tests/intersection-observer/isIntersecting-change-events-expected.txt:
+        * web-platform-tests/intersection-observer/same-document-zero-size-target-expected.txt:
+        * web-platform-tests/intersection-observer/text-target-expected.txt:
+        * web-platform-tests/intersection-observer/zero-area-element-visible-expected.txt:
+
 2018-10-18  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] JSC should have "parseFunction" to optimize Function constructor

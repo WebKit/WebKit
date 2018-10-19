@@ -1,3 +1,21 @@
+2018-10-19  Ali Juma  <ajuma@chromium.org>
+
+        [IntersectionObserver] Handle zero-area intersections
+        https://bugs.webkit.org/show_bug.cgi?id=189624
+
+        Reviewed by Simon Fraser.
+
+        Use edge-inclusive intersection when applying clips and intersecting with the
+        root, so that two rects that touch each other are considered intersecting even
+        if the area of their intersection is 0.
+
+        Covered by rebased tests in imported/w3c/web-platform-tests/intersection-observer.
+
+        * dom/Document.cpp:
+        (WebCore::computeIntersectionState):
+        (WebCore::Document::updateIntersectionObservations):
+        (WebCore::computeIntersectionRects): Deleted.
+
 2018-10-18  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Allow ports to optionally do screen capture in the UI process

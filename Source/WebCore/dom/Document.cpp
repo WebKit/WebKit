@@ -7592,25 +7592,32 @@ static void expandRootBoundsWithRootMargin(FloatRect& localRootBounds, const Len
     localRootBounds.expand(rootMarginFloatBox);
 }
 
-static void computeIntersectionRects(FrameView& frameView, IntersectionObserver& observer, Element& target, FloatRect& absTargetRect, FloatRect& absIntersectionRect, FloatRect& absRootBounds)
+struct IntersectionObservationState {
+    FloatRect absoluteTargetRect;
+    FloatRect absoluteRootBounds;
+    FloatRect absoluteIntersectionRect;
+    bool isIntersecting { false };
+};
+
+static std::optional<IntersectionObservationState> computeIntersectionState(FrameView& frameView, const IntersectionObserver& observer, Element& target)
 {
     // FIXME: Implement intersection computation for the cross-document case.
     if (observer.trackingDocument() != &target.document())
-        return;
+        return std::nullopt;
 
     auto* targetRenderer = target.renderer();
     if (!targetRenderer)
-        return;
+        return std::nullopt;
 
     FloatRect localRootBounds;
     RenderBlock* rootRenderer;
     if (observer.root()) {
         if (!observer.root()->renderer() || !is<RenderBlock>(observer.root()->renderer()))
-            return;
+            return std::nullopt;
 
         rootRenderer = downcast<RenderBlock>(observer.root()->renderer());
         if (!rootRenderer->isContainingBlockAncestorFor(*targetRenderer))
-            return;
+            return std::nullopt;
 
         if (rootRenderer->hasOverflowClip())
             localRootBounds = rootRenderer->contentBoxRect();
@@ -7632,14 +7639,19 @@ static void computeIntersectionRects(FrameView& frameView, IntersectionObserver&
     else if (is<RenderLineBreak>(targetRenderer))
         localTargetBounds = downcast<RenderLineBreak>(targetRenderer)->linesBoundingBox();
 
-    FloatRect rootLocalIntersectionRect = targetRenderer->computeRectForRepaint(localTargetBounds, rootRenderer);
-    rootLocalIntersectionRect.intersect(localRootBounds);
+    OptionSet<RenderObject::VisibleRectContextOption> visibleRectOptions = { RenderObject::VisibleRectContextOption::UseEdgeInclusiveIntersection, RenderObject::VisibleRectContextOption::ApplyCompositedClips, RenderObject::VisibleRectContextOption::ApplyCompositedContainerScrolls };
+    std::optional<LayoutRect> rootLocalTargetRect = targetRenderer->computeVisibleRectInContainer(localTargetBounds, rootRenderer, { false /* hasPositionFixedDescendant */, false /* dirtyRectIsFlipped */, visibleRectOptions });
+    FloatRect rootLocalIntersectionRect = localRootBounds;
 
-    if (!rootLocalIntersectionRect.isEmpty())
-        absIntersectionRect = rootRenderer->localToAbsoluteQuad(rootLocalIntersectionRect).boundingBox();
+    IntersectionObservationState intersectionState;
+    intersectionState.isIntersecting = rootLocalTargetRect && rootLocalIntersectionRect.edgeInclusiveIntersect(*rootLocalTargetRect);
 
-    absTargetRect = targetRenderer->localToAbsoluteQuad(FloatRect(localTargetBounds)).boundingBox();
-    absRootBounds = rootRenderer->localToAbsoluteQuad(localRootBounds).boundingBox();
+    if (intersectionState.isIntersecting)
+        intersectionState.absoluteIntersectionRect = rootRenderer->localToAbsoluteQuad(rootLocalIntersectionRect).boundingBox();
+
+    intersectionState.absoluteTargetRect = targetRenderer->localToAbsoluteQuad(FloatRect(localTargetBounds)).boundingBox();
+    intersectionState.absoluteRootBounds = rootRenderer->localToAbsoluteQuad(localRootBounds).boundingBox();
+    return intersectionState;
 }
 
 void Document::updateIntersectionObservations()
@@ -7667,28 +7679,38 @@ void Document::updateIntersectionObservations()
             ASSERT(index != notFound);
             auto& registration = targetRegistrations[index];
 
-            FloatRect absTargetRect;
-            FloatRect absIntersectionRect;
-            FloatRect absRootBounds;
-            computeIntersectionRects(*frameView, *observer, *target, absTargetRect, absIntersectionRect, absRootBounds);
+            auto intersectionState = computeIntersectionState(*frameView, *observer, *target);
 
-            // FIXME: Handle zero-area intersections (e.g., intersections involving zero-area targets).
-            bool isIntersecting = absIntersectionRect.area();
-            float intersectionRatio = isIntersecting ? absIntersectionRect.area() / absTargetRect.area() : 0;
+            float intersectionRatio = 0;
             size_t thresholdIndex = 0;
-            if (isIntersecting) {
-                auto& thresholds = observer->thresholds();
-                while (thresholdIndex < thresholds.size() && thresholds[thresholdIndex] <= intersectionRatio)
-                    ++thresholdIndex;
+            if (intersectionState) {
+                if (intersectionState->isIntersecting) {
+                    float absTargetArea = intersectionState->absoluteTargetRect.area();
+                    if (absTargetArea)
+                        intersectionRatio = intersectionState->absoluteIntersectionRect.area() / absTargetArea;
+                    else
+                        intersectionRatio = 1;
+
+                    auto& thresholds = observer->thresholds();
+                    while (thresholdIndex < thresholds.size() && thresholds[thresholdIndex] <= intersectionRatio)
+                        ++thresholdIndex;
+                }
             }
 
+
             if (!registration.previousThresholdIndex || thresholdIndex != registration.previousThresholdIndex) {
-                FloatRect targetBoundingClientRect = frameView->absoluteToClientRect(absTargetRect);
-                FloatRect clientIntersectionRect = isIntersecting ? frameView->absoluteToClientRect(absIntersectionRect) : FloatRect();
+                FloatRect targetBoundingClientRect;
+                FloatRect clientIntersectionRect;
+                FloatRect clientRootBounds;
+                if (intersectionState) {
+                    targetBoundingClientRect = frameView->absoluteToClientRect(intersectionState->absoluteTargetRect);
+                    clientRootBounds = frameView->absoluteToClientRect(intersectionState->absoluteRootBounds);
+                    if (intersectionState->isIntersecting)
+                        clientIntersectionRect = frameView->absoluteToClientRect(intersectionState->absoluteIntersectionRect);
+                }
 
                 // FIXME: Once cross-document observation is implemented, only report root bounds if the target document and
                 // the root document are similar-origin.
-                FloatRect clientRootBounds = frameView->absoluteToClientRect(absRootBounds);
                 std::optional<DOMRectInit> reportedRootBounds = DOMRectInit({
                     clientRootBounds.x(),
                     clientRootBounds.y(),
@@ -7703,7 +7725,7 @@ void Document::updateIntersectionObservations()
                     { clientIntersectionRect.x(), clientIntersectionRect.y(), clientIntersectionRect.width(), clientIntersectionRect.height() },
                     intersectionRatio,
                     target,
-                    isIntersecting,
+                    intersectionState? intersectionState->isIntersecting : false,
                 }));
                 needNotify = true;
                 registration.previousThresholdIndex = thresholdIndex;

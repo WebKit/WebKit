@@ -1,7 +1,7 @@
 
 PASS IntersectionObserver should detect and report edge-adjacent and zero-area intersections. 
 PASS First rAF. 
-FAIL Set transform=translateY(200px) on target. assert_equals: entries.length expected 2 but got 1
-FAIL Set transform=translateY(201px) on target. assert_equals: entries.length expected 3 but got 1
-FAIL Set transform=translateY(185px) on target. assert_equals: entries.length expected 4 but got 1
+PASS Set transform=translateY(200px) on target. 
+PASS Set transform=translateY(201px) on target. 
+PASS Set transform=translateY(185px) on target. 
 
