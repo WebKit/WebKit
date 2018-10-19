@@ -1,5 +1,14 @@
 2018-10-18  Alexey Proskuryakov  <ap@apple.com>
 
+        Remove PLATFORM(IOS) for now
+        https://bugs.webkit.org/show_bug.cgi?id=190737
+
+        Reviewed by Tim Horton.
+
+        * wtf/Platform.h:
+
+2018-10-18  Alexey Proskuryakov  <ap@apple.com>
+
         Switch from PLATFORM(IOS) to PLATFORM(IOS_FAMILY)
         https://bugs.webkit.org/show_bug.cgi?id=190729
 

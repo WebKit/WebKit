@@ -373,7 +373,8 @@
 /* OS(MAC_OS_X) - macOS (not including iOS family) */
 #if OS(DARWIN)
 #if TARGET_OS_IPHONE
-#define WTF_OS_IOS 1
+/* FIXME (November 2018): Add WTF_OS_IOS once most patches that used it as an old
+ * version of PLATFORM(IOS_FAMILY) are no longer relevant. */
 #define WTF_OS_IOS_FAMILY 1
 #elif TARGET_OS_MAC
 #define WTF_OS_MAC_OS_X 1
@@ -522,11 +523,13 @@
 /* JSCOnly does not provide PLATFORM() macro */
 #elif OS(MAC_OS_X)
 #define WTF_PLATFORM_MAC 1
-#elif OS(IOS)
-#define WTF_PLATFORM_IOS 1
+#elif OS(IOS_FAMILY)
+/* FIXME (November 2018): Add WTF_PLATFORM_IOS once most patches that used it as an old
+ * version of PLATFORM(IOS_FAMILY) are no longer relevant. */
 #define WTF_PLATFORM_IOS_FAMILY 1
 #if TARGET_OS_SIMULATOR
-#define WTF_PLATFORM_IOS_SIMULATOR 1
+/* FIXME (November 2018): Add WTF_PLATFORM_IOS_SIMULATOR once most patches that used it as an old
+ * version of PLATFORM(IOS_FAMILY) are no longer relevant. */
 #define WTF_PLATFORM_IOS_FAMILY_SIMULATOR 1
 #endif
 #if defined(TARGET_OS_IOSMAC) && TARGET_OS_IOSMAC
