@@ -197,4 +197,5 @@ void WebPage::didReceiveSyncWebPageMessage(IPC::Connection& connection, IPC::Dec
 
 } // namespace WebKit
 
+
 #endif // (ENABLE(WEBKIT2) && (NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND))

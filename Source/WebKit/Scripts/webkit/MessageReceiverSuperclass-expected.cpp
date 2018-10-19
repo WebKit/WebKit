@@ -29,8 +29,45 @@
 #include "ArgumentCoders.h"
 #include "Decoder.h"
 #include "HandleMessage.h"
+#if ENABLE(TEST_FEATURE)
+#include "TestTwoStateEnum.h"
+#endif
 #include "WebPageMessages.h"
 #include <wtf/text/WTFString.h>
+
+namespace Messages {
+
+namespace WebPage {
+
+#if ENABLE(TEST_FEATURE)
+
+void TestAsyncMessage::callReply(IPC::Decoder& decoder, CompletionHandler<void(uint64_t&&)>&& completionHandler)
+{
+    std::optional<uint64_t> result;
+    decoder >> result;
+    if (!result) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    completionHandler(WTFMove(*result));
+}
+
+void TestAsyncMessage::cancelReply(CompletionHandler<void(uint64_t&&)>&& completionHandler)
+{
+    completionHandler({ });
+}
+
+void TestAsyncMessage::send(std::unique_ptr<IPC::Encoder>&& encoder, IPC::Connection& connection, uint64_t result)
+{
+    *encoder << result;
+    connection.sendSyncReply(WTFMove(encoder));
+}
+
+#endif
+
+} // namespace WebPage
+
+} // namespace Messages
 
 namespace WebKit {
 
@@ -40,7 +77,14 @@ void WebPage::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decod
         IPC::handleMessage<Messages::WebPage::LoadURL>(decoder, this, &WebPage::loadURL);
         return;
     }
+#if ENABLE(TEST_FEATURE)
+    if (decoder.messageName() == Messages::WebPage::TestAsyncMessage::name()) {
+        IPC::handleMessageAsync<Messages::WebPage::TestAsyncMessage>(connection, decoder, this, &WebPage::testAsyncMessage);
+        return;
+    }
+#endif
     WebPageBase::didReceiveMessage(connection, decoder);
 }
 
 } // namespace WebKit
+

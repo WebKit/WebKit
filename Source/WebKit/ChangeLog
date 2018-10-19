@@ -1,5 +1,27 @@
 2018-10-19  Alex Christensen  <achristensen@webkit.org>
 
+        Update and add python tests after r237294
+        https://bugs.webkit.org/show_bug.cgi?id=190746
+
+        * Scripts/Makefile: Added to help updating expectations.
+        * Scripts/webkit/LegacyMessageReceiver-expected.cpp:
+        * Scripts/webkit/MessageReceiverSuperclass-expected.cpp:
+        (Messages::WebPage::TestAsyncMessage::callReply):
+        (Messages::WebPage::TestAsyncMessage::cancelReply):
+        (Messages::WebPage::TestAsyncMessage::send):
+        (WebKit::WebPage::didReceiveMessage):
+        * Scripts/webkit/MessagesSuperclass-expected.h:
+        (Messages::WebPage::TestAsyncMessage::receiverName):
+        (Messages::WebPage::TestAsyncMessage::name):
+        (Messages::WebPage::TestAsyncMessage::asyncMessageReplyName):
+        (Messages::WebPage::TestAsyncMessage::TestAsyncMessage):
+        (Messages::WebPage::TestAsyncMessage::arguments const):
+        * Scripts/webkit/test-superclass-messages.in:
+        Adding the extra newline made python tests fail.
+        I also added more tests for the new functionality introduced in r237924.
+
+2018-10-19  Alex Christensen  <achristensen@webkit.org>
+
         Introduce CompletionHandler-based Async IPC messages with replies
         https://bugs.webkit.org/show_bug.cgi?id=190746
 

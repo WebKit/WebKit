@@ -28,6 +28,9 @@
 #include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
 
+namespace WebKit {
+    enum class TestTwoStateEnum : bool;
+}
 
 namespace Messages {
 namespace WebPage {
@@ -58,6 +61,36 @@ public:
 private:
     Arguments m_arguments;
 };
+
+#if ENABLE(TEST_FEATURE)
+class TestAsyncMessage {
+public:
+    typedef std::tuple<WebKit::TestTwoStateEnum> Arguments;
+
+    static IPC::StringReference receiverName() { return messageReceiverName(); }
+    static IPC::StringReference name() { return IPC::StringReference("TestAsyncMessage"); }
+    static const bool isSync = false;
+
+    static void callReply(IPC::Decoder&, CompletionHandler<void(uint64_t&&)>&&);
+    static void cancelReply(CompletionHandler<void(uint64_t&&)>&&);
+    static IPC::StringReference asyncMessageReplyName() { return { "TestAsyncMessageReply" }; }
+    using AsyncReply = CompletionHandler<void(uint64_t result)>;
+    static void send(std::unique_ptr<IPC::Encoder>&&, IPC::Connection&, uint64_t result);
+    typedef std::tuple<uint64_t&> Reply;
+    explicit TestAsyncMessage(WebKit::TestTwoStateEnum twoStateEnum)
+        : m_arguments(twoStateEnum)
+    {
+    }
+
+    const Arguments& arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    Arguments m_arguments;
+};
+#endif
 
 } // namespace WebPage
 } // namespace Messages
