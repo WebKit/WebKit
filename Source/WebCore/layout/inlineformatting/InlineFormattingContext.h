@@ -28,13 +28,14 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "FormattingContext.h"
+#include "InlineLineBreaker.h"
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
-
 namespace Layout {
 
 class InlineFormattingState;
+class InlineRunProvider;
 
 // This class implements the layout logic for inline formatting contexts.
 // https://www.w3.org/TR/CSS22/visuren.html#inline-formatting
@@ -46,6 +47,33 @@ public:
     void layout(LayoutContext&, FormattingState&) const override;
 
 private:
+    class Line {
+    public:
+        Line(InlineFormattingState&);
+
+        void setConstraints(LayoutUnit lineLogicalLeft, LayoutUnit availableWidth);
+        void appendContent(const InlineLineBreaker::Run&);
+        void close();
+        bool hasContent() const { return !m_isEmpty; }
+        LayoutUnit contentLogicalLeft() const { return m_contentLogicalLeft; }
+        LayoutUnit availableWidth() const { return m_availableWidth; }
+
+    private:
+        struct TrailingTrimmableContent {
+            LayoutUnit width;
+            unsigned length;
+        };
+        std::optional<TrailingTrimmableContent> m_trailingTrimmableContent;
+        InlineFormattingState& m_inlineFormattingState;
+        LayoutUnit m_contentLogicalLeft;
+        LayoutUnit m_availableWidth;
+        bool m_isEmpty { true };
+        bool m_lastRunIsNotCollapsedText { true };
+    };
+
+    void layoutInlineContent(const LayoutContext&, InlineFormattingState&, const InlineRunProvider&) const;
+
+    void computeWidthAndHeight(const LayoutContext&, const Box&) const;
     void computeStaticPosition(const LayoutContext&, const Box&) const override;
     void computeInFlowPositionedPosition(const LayoutContext&, const Box&) const override;
 

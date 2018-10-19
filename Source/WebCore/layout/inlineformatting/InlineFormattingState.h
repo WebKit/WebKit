@@ -29,6 +29,7 @@
 
 #include "FormattingState.h"
 #include "InlineItem.h"
+#include "InlineRun.h"
 #include "Runs.h"
 #include <wtf/IsoMalloc.h>
 
@@ -47,9 +48,14 @@ public:
     void addLayoutRuns(Vector<LayoutRun>&& layoutRuns) { m_layoutRuns = WTFMove(layoutRuns); }
     const Vector<LayoutRun>& layoutRuns() const { return m_layoutRuns; }
 
+    // Temp
+    InlineRuns& inlineRuns() { return m_inlineRuns; }
+    void appendInlineRun(InlineRun inlineRun) { m_inlineRuns.append(inlineRun); }
+
 private:
     InlineContent m_inlineContent;
     Vector<LayoutRun> m_layoutRuns;
+    InlineRuns m_inlineRuns;
 };
 
 }

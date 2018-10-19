@@ -1261,6 +1261,7 @@ layout/inlineformatting/InlineFormattingState.cpp
 layout/inlineformatting/InlineInvalidation.cpp
 layout/inlineformatting/InlineLineBreaker.cpp
 layout/inlineformatting/InlineRunProvider.cpp
+layout/inlineformatting/Line.cpp
 layout/inlineformatting/textlayout/TextContentProvider.cpp
 layout/inlineformatting/textlayout/TextUtil.cpp
 layout/inlineformatting/textlayout/simple/SimpleTextRunGenerator.cpp

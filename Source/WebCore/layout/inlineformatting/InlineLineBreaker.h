@@ -45,7 +45,7 @@ public:
         InlineRunProvider::Run inlineRun;
         LayoutUnit width;
     };
-    std::optional<Run> nextLayoutRun(LayoutUnit contentLogicalLeft, LayoutUnit availableWidth, bool lineIsEmpty);
+    std::optional<Run> nextRun(LayoutUnit contentLogicalLeft, LayoutUnit availableWidth, bool lineIsEmpty);
 
 private:
     enum class LineBreakingBehavior { Keep, Break, WrapToNextLine };

@@ -30,14 +30,14 @@
 
 #include "FloatingState.h"
 #include "InlineFormattingState.h"
+#include "InlineLineBreaker.h"
+#include "InlineRunProvider.h"
 #include "LayoutBox.h"
 #include "LayoutContainer.h"
 #include "LayoutContext.h"
 #include "LayoutInlineBox.h"
 #include "LayoutInlineContainer.h"
 #include "Logging.h"
-#include "SimpleLineBreaker.h"
-#include "TextContentProvider.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
@@ -51,14 +51,15 @@ InlineFormattingContext::InlineFormattingContext(const Box& formattingContextRoo
 {
 }
 
-void InlineFormattingContext::layout(LayoutContext& layoutContext, FormattingState& inlineFormattingState) const
+void InlineFormattingContext::layout(LayoutContext& layoutContext, FormattingState& formattingState) const
 {
     if (!is<Container>(root()))
         return;
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Start] -> inline formatting context -> layout context(" << &layoutContext << ") formatting root(" << &root() << ")");
 
-    TextContentProvider textContentProvider;
+    auto& inlineFormattingState = downcast<InlineFormattingState>(formattingState);
+    InlineRunProvider inlineRunProvider(inlineFormattingState);
     auto& formattingRoot = downcast<Container>(root());
     auto* layoutBox = formattingRoot.firstInFlowOrFloatingChild();
     // Casually walk through the block's descendants and place the inline boxes one after the other as much as we can (yeah, I am looking at you floats).
@@ -68,12 +69,11 @@ void InlineFormattingContext::layout(LayoutContext& layoutContext, FormattingSta
             layoutBox = downcast<Container>(*layoutBox).firstInFlowOrFloatingChild();
             continue;
         }
-        auto& inlineBox = downcast<InlineBox>(*layoutBox);
-        // Only text content at this point.
-        if (inlineBox.hasTextContent())
-            textContentProvider.appendText(inlineBox.textContent(), inlineBox.style(), true);
 
-        for (; layoutBox; layoutBox = layoutBox->containingBlock()) {
+        inlineRunProvider.append(*layoutBox);
+        computeWidthAndHeight(layoutContext, *layoutBox);
+
+        for (; layoutBox; layoutBox = layoutBox->parent()) {
             if (layoutBox == &formattingRoot) {
                 layoutBox = nullptr;
                 break;
@@ -86,20 +86,104 @@ void InlineFormattingContext::layout(LayoutContext& layoutContext, FormattingSta
         ASSERT(!layoutBox || layoutBox->isDescendantOf(formattingRoot));
     }
 
-    auto& formattingRootDisplayBox = layoutContext.displayBoxForLayoutBox(formattingRoot);
-    auto lineLeft = formattingRootDisplayBox.contentBoxLeft();
-    auto lineRight = formattingRootDisplayBox.contentBoxRight();
-
-    SimpleLineBreaker::LineConstraintList constraints;
-    constraints.append({ { }, lineLeft, lineRight });
-    auto textRunList = textContentProvider.textRuns();
-    SimpleLineBreaker simpleLineBreaker(textRunList, textContentProvider, WTFMove(constraints), formattingRoot.style());
-
-    // Since we don't yet have a display tree context for inline boxes, let's just cache the runs on the state so that they can be verified against the sll/inline tree runs later.
-    ASSERT(is<InlineFormattingState>(inlineFormattingState));
-    downcast<InlineFormattingState>(inlineFormattingState).addLayoutRuns(simpleLineBreaker.runs());
+    layoutInlineContent(layoutContext, inlineFormattingState, inlineRunProvider);
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[End] -> inline formatting context -> layout context(" << &layoutContext << ") formatting root(" << &root() << ")");
+}
+
+static bool trimLeadingRun(const InlineLineBreaker::Run& run)
+{
+    ASSERT(run.position == InlineLineBreaker::Run::Position::LineBegin);
+
+    auto& inlineRun = run.inlineRun;
+    if (!inlineRun.isWhitespace())
+        return false;
+
+    return inlineRun.style().collapseWhiteSpace();
+}
+
+void InlineFormattingContext::layoutInlineContent(const LayoutContext& layoutContext, InlineFormattingState& inlineFormattingState, const InlineRunProvider& inlineRunProvider) const
+{
+    auto& formattingRoot = downcast<Container>(root());
+    auto& formattingRootDisplayBox = layoutContext.displayBoxForLayoutBox(formattingRoot);
+
+    auto lineLogicalLeft = formattingRootDisplayBox.contentBoxLeft();
+    auto availableWidth = formattingRootDisplayBox.contentBoxWidth();
+    auto previousRunPositionIsLineEnd = false;
+
+    Line line(inlineFormattingState);
+    line.setConstraints(lineLogicalLeft, availableWidth);
+
+    InlineLineBreaker lineBreaker(layoutContext, inlineFormattingState.inlineContent(), inlineRunProvider.runs());
+    while (auto run = lineBreaker.nextRun(line.contentLogicalLeft(), line.availableWidth(), !line.hasContent())) {
+
+        if (run->position == InlineLineBreaker::Run::Position::LineBegin) {
+            // First run on line.
+
+            // Previous run ended up being at the line end. Adjust the line accordingly.
+            if (!previousRunPositionIsLineEnd) {
+                line.close();
+                line.setConstraints(lineLogicalLeft, availableWidth);
+            }
+            // Skip leading whitespace.
+            if (!trimLeadingRun(*run))
+                line.appendContent(*run);
+            continue;
+        }
+
+        if (run->position == InlineLineBreaker::Run::Position::LineEnd) {
+            // Last run on line.
+            previousRunPositionIsLineEnd = true;
+            line.appendContent(*run);
+            // Move over to the next line.
+            line.close();
+            line.setConstraints(lineLogicalLeft, availableWidth);
+            continue;
+        }
+
+        // This may or may not be the last run on line -but definitely not the first one.
+        line.appendContent(*run);
+    }
+    line.close();
+}
+
+void InlineFormattingContext::computeWidthAndHeight(const LayoutContext& layoutContext, const Box& layoutBox) const
+{
+    if (is<InlineBox>(layoutBox) && downcast<InlineBox>(layoutBox).hasTextContent()) {
+        // Text content width is computed during text run generation. -It does not make any sense to measure unprocessed text here, since it will likely be
+        // split up (or concatenated).
+        return;
+    }
+
+    if (layoutBox.isFloatingPositioned()) {
+        ASSERT_NOT_IMPLEMENTED_YET();
+        return;
+    }
+
+    if (layoutBox.isInlineBlockBox()) {
+        ASSERT_NOT_IMPLEMENTED_YET();
+        return;
+    }
+
+    if (layoutBox.replaced()) {
+        computeBorderAndPadding(layoutContext, layoutBox);
+
+        auto& displayBox = layoutContext.displayBoxForLayoutBox(layoutBox);
+
+        auto widthAndMargin = Geometry::inlineReplacedWidthAndMargin(layoutContext, layoutBox);
+        displayBox.setContentBoxWidth(widthAndMargin.width);
+        displayBox.setHorizontalMargin(widthAndMargin.margin);
+        displayBox.setHorizontalNonComputedMargin(widthAndMargin.nonComputedMargin);
+
+        auto heightAndMargin = Geometry::inlineReplacedHeightAndMargin(layoutContext, layoutBox);
+        displayBox.setContentBoxHeight(heightAndMargin.height);
+        displayBox.setVerticalNonCollapsedMargin(heightAndMargin.margin);
+        displayBox.setVerticalMargin(heightAndMargin.collapsedMargin.value_or(heightAndMargin.margin));
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
+    return;
 }
 
 void InlineFormattingContext::computeStaticPosition(const LayoutContext&, const Box&) const

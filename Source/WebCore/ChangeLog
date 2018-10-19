@@ -1,5 +1,56 @@
 2018-10-19  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Add generic inline content handling.
+        https://bugs.webkit.org/show_bug.cgi?id=190713
+
+        Reviewed by Antti Koivisto.
+
+        layoutInlineContent turns InlineLineBreaker::Run objects into final inline runs by
+        resolving heading/trailing whitespace, aligment, expansion opportunities etc.
+        These inline runs are input to the display tree construction.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/displaytree/DisplayBox.h:
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::layout const):
+        (WebCore::Layout::trimLeadingRun):
+        (WebCore::Layout::InlineFormattingContext::layoutInlineContent const):
+        (WebCore::Layout::InlineFormattingContext::computeWidthAndHeight const):
+        * layout/inlineformatting/InlineFormattingContext.h:
+        (WebCore::Layout::InlineFormattingContext::Line::hasContent const):
+        (WebCore::Layout::InlineFormattingContext::Line::contentLogicalLeft const):
+        (WebCore::Layout::InlineFormattingContext::Line::availableWidth const):
+        * layout/inlineformatting/InlineFormattingState.h:
+        (WebCore::Layout::InlineFormattingState::inlineRuns):
+        (WebCore::Layout::InlineFormattingState::appendInlineRun):
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::InlineLineBreaker::nextRun):
+        (WebCore::Layout::InlineLineBreaker::nextLayoutRun): Deleted.
+        * layout/inlineformatting/InlineLineBreaker.h:
+        * layout/inlineformatting/InlineRun.h: Added.
+        (WebCore::Layout::InlineRun::logicalLeft const):
+        (WebCore::Layout::InlineRun::logicalRight const):
+        (WebCore::Layout::InlineRun::width const):
+        (WebCore::Layout::InlineRun::setWidth):
+        (WebCore::Layout::InlineRun::setLogicalRight):
+        (WebCore::Layout::InlineRun::TextContext::position const):
+        (WebCore::Layout::InlineRun::TextContext::length const):
+        (WebCore::Layout::InlineRun::TextContext::setLength):
+        (WebCore::Layout::InlineRun::textContext):
+        (WebCore::Layout::InlineRun::inlineItem const):
+        (WebCore::Layout::InlineRun::InlineRun):
+        (WebCore::Layout::InlineRun::TextContext::TextContext):
+        * layout/inlineformatting/Line.cpp: Added.
+        (WebCore::Layout::InlineFormattingContext::Line::Line):
+        (WebCore::Layout::InlineFormattingContext::Line::setConstraints):
+        (WebCore::Layout::isNonCollapsedText):
+        (WebCore::Layout::isTrimmableContent):
+        (WebCore::Layout::InlineFormattingContext::Line::appendContent):
+        (WebCore::Layout::InlineFormattingContext::Line::close):
+
+2018-10-19  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Add generic inline line breaker
         https://bugs.webkit.org/show_bug.cgi?id=190698
 

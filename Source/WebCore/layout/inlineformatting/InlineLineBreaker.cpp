@@ -45,7 +45,7 @@ InlineLineBreaker::InlineLineBreaker(const LayoutContext& layoutContext, const I
 {
 }
 
-std::optional<InlineLineBreaker::Run> InlineLineBreaker::nextLayoutRun(LayoutUnit contentLogicalLeft, LayoutUnit availableWidth, bool lineIsEmpty)
+std::optional<InlineLineBreaker::Run> InlineLineBreaker::nextRun(LayoutUnit contentLogicalLeft, LayoutUnit availableWidth, bool lineIsEmpty)
 {
     if (isAtContentEnd())
         return std::nullopt;

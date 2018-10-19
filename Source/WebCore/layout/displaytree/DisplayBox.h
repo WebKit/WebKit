@@ -41,6 +41,7 @@ class FloatAvoider;
 class FloatBox;
 class FormattingContext;
 class FloatingContext;
+class InlineFormattingContext;
 class LayoutContext;
 }
 
@@ -54,6 +55,7 @@ public:
     friend class Layout::FloatBox;
     friend class Layout::FormattingContext;
     friend class Layout::FloatingContext;
+    friend class Layout::InlineFormattingContext;
     friend class Layout::LayoutContext;
 
     Box(const RenderStyle&);
