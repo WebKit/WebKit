@@ -116,6 +116,7 @@ public:
 
     static JSBigInt* bitwiseAnd(VM&, JSBigInt* x, JSBigInt* y);
     static JSBigInt* bitwiseOr(VM&, JSBigInt* x, JSBigInt* y);
+    static JSBigInt* bitwiseXor(VM&, JSBigInt* x, JSBigInt* y);
 
 private:
 
@@ -168,6 +169,7 @@ private:
     static JSBigInt* absoluteAnd(VM&, JSBigInt* x, JSBigInt* y);
     static JSBigInt* absoluteOr(VM&, JSBigInt* x, JSBigInt* y);
     static JSBigInt* absoluteAndNot(VM&, JSBigInt* x, JSBigInt* y);
+    static JSBigInt* absoluteXor(VM&, JSBigInt* x, JSBigInt* y);
 
     enum class SignOption {
         Signed,

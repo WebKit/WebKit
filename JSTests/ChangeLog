@@ -1,5 +1,17 @@
 2018-10-19  Caio Lima  <ticaiolima@gmail.com>
 
+        [ESNext][BigInt] Implement support for "^"
+        https://bugs.webkit.org/show_bug.cgi?id=186235
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/big-int-bitwise-xor-general.js: Added.
+        * stress/big-int-bitwise-xor-to-primitive-precedence.js: Added.
+        * stress/big-int-bitwise-xor-type-error.js: Added.
+        * stress/big-int-bitwise-xor-wrapped-value.js: Added.
+
+2018-10-19  Caio Lima  <ticaiolima@gmail.com>
+
         [BigInt] Add ValueSub into DFG
         https://bugs.webkit.org/show_bug.cgi?id=186176
 

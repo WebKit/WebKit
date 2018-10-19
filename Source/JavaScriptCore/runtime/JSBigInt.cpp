@@ -428,6 +428,32 @@ JSBigInt* JSBigInt::bitwiseOr(VM& vm, JSBigInt* x, JSBigInt* y)
     return absoluteAddOne(vm, result, SignOption::Signed);
 }
 
+JSBigInt* JSBigInt::bitwiseXor(VM& vm, JSBigInt* x, JSBigInt* y)
+{
+    if (!x->sign() && !y->sign())
+        return absoluteXor(vm, x, y);
+    
+    if (x->sign() && y->sign()) {
+        int resultLength = std::max(x->length(), y->length());
+        
+        // (-x) ^ (-y) == ~(x-1) ^ ~(y-1) == (x-1) ^ (y-1)
+        JSBigInt* result = absoluteSubOne(vm, x, resultLength);
+        JSBigInt* y1 = absoluteSubOne(vm, y, y->length());
+        return absoluteXor(vm, result, y1);
+    }
+    ASSERT(x->sign() != y->sign());
+    int resultLength = std::max(x->length(), y->length()) + 1;
+    
+    // Assume that x is the positive BigInt.
+    if (x->sign())
+        std::swap(x, y);
+    
+    // x ^ (-y) == x ^ ~(y-1) == ~(x ^ (y-1)) == -((x ^ (y-1)) + 1)
+    JSBigInt* result = absoluteSubOne(vm, y, resultLength);
+    result = absoluteXor(vm, result, x);
+    return absoluteAddOne(vm, result, SignOption::Signed);
+}
+
 #if USE(JSVALUE32_64)
 #define HAVE_TWO_DIGIT 1
 typedef uint64_t TwoDigit;
@@ -1110,6 +1136,14 @@ JSBigInt* JSBigInt::absoluteAndNot(VM& vm, JSBigInt* x, JSBigInt* y)
     return absoluteBitwiseOp(vm, x, y, ExtraDigitsHandling::Copy, SymmetricOp::NotSymmetric, digitOperation);
 }
 
+JSBigInt* JSBigInt::absoluteXor(VM& vm, JSBigInt* x, JSBigInt* y)
+{
+    auto digitOperation = [](Digit a, Digit b) {
+        return a ^ b;
+    };
+    return absoluteBitwiseOp(vm, x, y, ExtraDigitsHandling::Copy, SymmetricOp::Symmetric, digitOperation);
+}
+    
 JSBigInt* JSBigInt::absoluteAddOne(VM& vm, JSBigInt* x, SignOption signOption)
 {
     unsigned inputLength = x->length();
