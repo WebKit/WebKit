@@ -952,7 +952,7 @@ void ResourceLoadStatisticsMemoryStore::clear(CompletionHandler<void()>&& comple
     removeAllStorageAccess([callbackAggregator = callbackAggregator.copyRef()] { });
 
     auto primaryDomainsToBlock = ensurePrevalentResourcesForDebugMode();
-    updateCookieBlockingForDomains(primaryDomainsToBlock, ShouldClearFirst::Yes, [callbackAggregator = callbackAggregator.copyRef()] { });
+    updateCookieBlockingForDomains(primaryDomainsToBlock, [callbackAggregator = callbackAggregator.copyRef()] { });
 }
 
 bool ResourceLoadStatisticsMemoryStore::wasAccessedAsFirstPartyDueToUserInteraction(const ResourceLoadStatistics& current, const ResourceLoadStatistics& updated) const
@@ -1035,10 +1035,8 @@ void ResourceLoadStatisticsMemoryStore::updateCookieBlocking(CompletionHandler<v
 
     Vector<String> domainsToBlock;
     for (auto& resourceStatistic : m_resourceStatisticsMap.values()) {
-        if (resourceStatistic.isPrevalentResource && !resourceStatistic.isMarkedForCookieBlocking) {
+        if (resourceStatistic.isPrevalentResource)
             domainsToBlock.append(resourceStatistic.highLevelDomain);
-            resourceStatistic.isMarkedForCookieBlocking = true;
-        }
     }
 
     if (domainsToBlock.isEmpty()) {
@@ -1050,7 +1048,7 @@ void ResourceLoadStatisticsMemoryStore::updateCookieBlocking(CompletionHandler<v
             debugLogDomainsInBatches("block", domainsToBlock);
 
     RunLoop::main().dispatch([weakThis = makeWeakPtr(*this), store = makeRef(m_store), domainsToBlock = crossThreadCopy(domainsToBlock), completionHandler = WTFMove(completionHandler)] () mutable {
-        store->callUpdatePrevalentDomainsToBlockCookiesForHandler(domainsToBlock, ShouldClearFirst::No, [weakThis = WTFMove(weakThis), store = store.copyRef(), completionHandler = WTFMove(completionHandler)]() mutable {
+        store->callUpdatePrevalentDomainsToBlockCookiesForHandler(domainsToBlock, [weakThis = WTFMove(weakThis), store = store.copyRef(), completionHandler = WTFMove(completionHandler)]() mutable {
             store->statisticsQueue().dispatch([weakThis = WTFMove(weakThis), completionHandler = WTFMove(completionHandler)]() mutable {
                 completionHandler();
                 if (!weakThis)
@@ -1063,23 +1061,12 @@ void ResourceLoadStatisticsMemoryStore::updateCookieBlocking(CompletionHandler<v
     });
 }
 
-void ResourceLoadStatisticsMemoryStore::updateCookieBlockingForDomains(const Vector<String>& domainsToBlock, ShouldClearFirst shouldClearFirst, CompletionHandler<void()>&& completionHandler)
+void ResourceLoadStatisticsMemoryStore::updateCookieBlockingForDomains(const Vector<String>& domainsToBlock, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
-    if (domainsToBlock.isEmpty() && shouldClearFirst == ShouldClearFirst::No) {
-        completionHandler();
-        return;
-    }
-
-    if (shouldClearFirst == ShouldClearFirst::Yes)
-        resetCookieBlockingState();
-
-    for (auto& domain : domainsToBlock)
-        ensureResourceStatisticsForPrimaryDomain(domain).isMarkedForCookieBlocking = true;
-
-    RunLoop::main().dispatch([store = makeRef(m_store), shouldClearFirst, domainsToBlock = crossThreadCopy(domainsToBlock), completionHandler = WTFMove(completionHandler)] () mutable {
-        store->callUpdatePrevalentDomainsToBlockCookiesForHandler(domainsToBlock, shouldClearFirst, [store = store.copyRef(), completionHandler = WTFMove(completionHandler)]() mutable {
+    RunLoop::main().dispatch([store = makeRef(m_store), domainsToBlock = crossThreadCopy(domainsToBlock), completionHandler = WTFMove(completionHandler)] () mutable {
+        store->callUpdatePrevalentDomainsToBlockCookiesForHandler(domainsToBlock, [store = store.copyRef(), completionHandler = WTFMove(completionHandler)]() mutable {
             store->statisticsQueue().dispatch([completionHandler = WTFMove(completionHandler)]() mutable {
                 completionHandler();
             });
@@ -1100,20 +1087,7 @@ void ResourceLoadStatisticsMemoryStore::clearBlockingStateForDomains(const Vecto
         store->callRemoveDomainsHandler(domains);
     });
 
-    for (auto& domain : domains) {
-        auto& statistic = ensureResourceStatisticsForPrimaryDomain(domain);
-        statistic.isMarkedForCookieBlocking = false;
-    }
-
     completionHandler();
-}
-
-void ResourceLoadStatisticsMemoryStore::resetCookieBlockingState()
-{
-    ASSERT(!RunLoop::isMain());
-
-    for (auto& resourceStatistic : m_resourceStatisticsMap.values())
-        resourceStatistic.isMarkedForCookieBlocking = false;
 }
 
 void ResourceLoadStatisticsMemoryStore::processStatistics(const Function<void(const ResourceLoadStatistics&)>& processFunction) const

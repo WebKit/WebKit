@@ -395,7 +395,7 @@ void NetworkProcessProxy::logDiagnosticMessageWithValue(uint64_t pageID, const S
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-void NetworkProcessProxy::updatePrevalentDomainsToBlockCookiesFor(PAL::SessionID sessionID, const Vector<String>& domainsToBlock, ShouldClearFirst shouldClearFirst, CompletionHandler<void()>&& completionHandler)
+void NetworkProcessProxy::updatePrevalentDomainsToBlockCookiesFor(PAL::SessionID sessionID, const Vector<String>& domainsToBlock, CompletionHandler<void()>&& completionHandler)
 {
     if (!canSendMessage()) {
         completionHandler();
@@ -407,10 +407,30 @@ void NetworkProcessProxy::updatePrevalentDomainsToBlockCookiesFor(PAL::SessionID
         completionHandler();
     });
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
-    send(Messages::NetworkProcess::UpdatePrevalentDomainsToBlockCookiesFor(sessionID, domainsToBlock, shouldClearFirst == ShouldClearFirst::Yes, callbackId), 0);
+    send(Messages::NetworkProcess::UpdatePrevalentDomainsToBlockCookiesFor(sessionID, domainsToBlock, callbackId), 0);
 }
 
 void NetworkProcessProxy::didUpdateBlockCookies(uint64_t callbackId)
+{
+    m_updateBlockCookiesCallbackMap.take(callbackId)();
+}
+
+void NetworkProcessProxy::setShouldCapLifetimeForClientSideCookies(PAL::SessionID sessionID, ShouldCapLifetimeForClientSideCookies shouldCapLifetime, CompletionHandler<void()>&& completionHandler)
+{
+    if (!canSendMessage()) {
+        completionHandler();
+        return;
+    }
+    
+    auto callbackId = generateCallbackID();
+    auto addResult = m_updateBlockCookiesCallbackMap.add(callbackId, [protectedProcessPool = makeRef(m_processPool), token = throttler().backgroundActivityToken(), completionHandler = WTFMove(completionHandler)]() mutable {
+        completionHandler();
+    });
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+    send(Messages::NetworkProcess::SetShouldCapLifetimeForClientSideCookies(sessionID, shouldCapLifetime == ShouldCapLifetimeForClientSideCookies::Yes, callbackId), 0);
+}
+
+void NetworkProcessProxy::didSetShouldCapLifetimeForClientSideCookies(uint64_t callbackId)
 {
     m_updateBlockCookiesCallbackMap.take(callbackId)();
 }
@@ -507,7 +527,7 @@ void NetworkProcessProxy::didResetCacheMaxAgeCapForPrevalentResources(uint64_t c
     auto completionHandler = m_updateRuntimeSettingsCallbackMap.take(contextId);
     completionHandler();
 }
-#endif
+#endif // ENABLE(RESOURCE_LOAD_STATISTICS)
 
 void NetworkProcessProxy::sendProcessWillSuspendImminently()
 {

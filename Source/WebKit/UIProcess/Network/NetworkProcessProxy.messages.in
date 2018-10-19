@@ -43,6 +43,7 @@ messages -> NetworkProcessProxy LegacyReceiver {
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     DidUpdateBlockCookies(uint64_t callbackId)
+    DidSetShouldCapLifetimeForClientSideCookies(uint64_t callbackId)
     StorageAccessRequestResult(bool wasGranted, uint64_t contextId)
     AllStorageAccessEntriesResult(Vector<String> domains, uint64_t contextId)
     DidRemoveAllStorageAccess(uint64_t contextId)

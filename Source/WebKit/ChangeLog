@@ -1,3 +1,69 @@
+2018-10-19  John Wilander  <wilander@apple.com>
+
+        Only cap lifetime of persistent cookies created client-side through document.cookie when resource load statistics is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=190687
+        <rdar://problem/45349024>
+
+        Reviewed by Alex Christensen.
+
+        This patch adds the following:
+        - The WebProcessPool now tells the WebsiteDataStore when a network process has
+            been created.
+        - The WebsiteDataStore in turn tells the WebResourceLoadStatisticsStore when
+            a network process has been created.
+        - The WebResourceLoadStatisticsStore makes sure to update the network processes
+            with its cookie policy when it's notified that a network process has been
+            created.
+
+        In addition, this patch changes the following:
+        - The ResourceLoadStatisticsMemoryStore no longer keeps track of which domains
+            it has told the network process to block cookies for. The reason is that
+            we cannot assume that there is only one network process so we should
+            always send complete blocking data.
+        - The ResourceLoadStatisticsMemoryStore's functions for communicating cookie
+            blocking state to the network process no longer take and forward the
+            "clear first" parameter. This is because complete data is sent every time
+            and thus the network process' set is always cleared on an update.
+        - Removes WebsiteDataStore::networkProcessDidCrash() and
+            WebResourceLoadStatisticsStore::scheduleCookieBlockingStateReset() since
+            the call site---WebProcessPool::ensureNetworkProcess()---now calls
+            WebsiteDataStore::didCreateNetworkProcess() after a network process
+            crash and the state sync for cookie blocking is triggered.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::updatePrevalentDomainsToBlockCookiesFor):
+        (WebKit::NetworkProcess::setShouldCapLifetimeForClientSideCookies):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::updatePrevalentDomainsToBlockCookiesFor):
+        (WebKit::NetworkProcessProxy::setShouldCapLifetimeForClientSideCookies):
+        (WebKit::NetworkProcessProxy::didSetShouldCapLifetimeForClientSideCookies):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::clear):
+        (WebKit::ResourceLoadStatisticsMemoryStore::updateCookieBlocking):
+        (WebKit::ResourceLoadStatisticsMemoryStore::updateCookieBlockingForDomains):
+        (WebKit::ResourceLoadStatisticsMemoryStore::clearBlockingStateForDomains):
+        (WebKit::ResourceLoadStatisticsMemoryStore::resetCookieBlockingState): Deleted.
+        * UIProcess/ResourceLoadStatisticsMemoryStore.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::didCreateNetworkProcess):
+        (WebKit::WebResourceLoadStatisticsStore::scheduleCookieBlockingUpdateForDomains):
+        (WebKit::WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent):
+        (WebKit::WebResourceLoadStatisticsStore::callUpdatePrevalentDomainsToBlockCookiesForHandler):
+        (WebKit::WebResourceLoadStatisticsStore::scheduleCookieBlockingStateReset): Deleted.
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::updatePrevalentDomainsToBlockCookiesFor):
+        (WebKit::WebsiteDataStore::setShouldCapLifetimeForClientSideCookies):
+        (WebKit::WebsiteDataStore::didCreateNetworkProcess):
+        (WebKit::WebsiteDataStore::networkProcessDidCrash): Deleted.
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2018-10-19  Alex Christensen  <achristensen@webkit.org>
 
         Rebase python tests.

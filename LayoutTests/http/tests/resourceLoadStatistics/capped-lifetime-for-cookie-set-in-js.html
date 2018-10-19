@@ -2,12 +2,15 @@
 <html>
 <head>
     <script src="/js-test-resources/js-test.js"></script>
-    <script src="resources/cookie-utilities.js"></script>
+    <script src="/cookies/resources/cookie-utilities.js"></script>
 </head>
 <body>
 <script>
     description("Check that cookies created by JavaScript with max-age or expiry longer than a week get capped to a week.");
     jsTestIsAsync = true;
+
+    if (internals)
+        internals.setResourceLoadStatisticsEnabled(true);
 
     let passedTests = 0;
     function checkThatCookieDoesNotExpireAfter(cookieData, maxAgeInSeconds) {
@@ -66,6 +69,9 @@
             testFailed("At least one cookie's expiry attribute was beyond the test thresholds.");
     } else
         testFailed("No internals object.");
+
+    if (internals)
+        internals.setResourceLoadStatisticsEnabled(false);
 
     finishJSTest();
 </script>

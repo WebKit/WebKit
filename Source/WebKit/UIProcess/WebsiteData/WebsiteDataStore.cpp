@@ -1256,13 +1256,23 @@ void WebsiteDataStore::removeDataForTopPrivatelyControlledDomains(OptionSet<Webs
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-void WebsiteDataStore::updatePrevalentDomainsToBlockCookiesFor(const Vector<String>& domainsToBlock, ShouldClearFirst shouldClearFirst, CompletionHandler<void()>&& completionHandler)
+void WebsiteDataStore::updatePrevalentDomainsToBlockCookiesFor(const Vector<String>& domainsToBlock, CompletionHandler<void()>&& completionHandler)
 {
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
     for (auto& processPool : processPools()) {
         if (auto* process = processPool->networkProcess())
-            process->updatePrevalentDomainsToBlockCookiesFor(m_sessionID, domainsToBlock, shouldClearFirst, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
+            process->updatePrevalentDomainsToBlockCookiesFor(m_sessionID, domainsToBlock, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
+    }
+}
+
+void WebsiteDataStore::setShouldCapLifetimeForClientSideCookies(ShouldCapLifetimeForClientSideCookies shouldCapLifetime, CompletionHandler<void()>&& completionHandler)
+{
+    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+    
+    for (auto& processPool : processPools()) {
+        if (auto* process = processPool->networkProcess())
+            process->setShouldCapLifetimeForClientSideCookies(m_sessionID, shouldCapLifetime, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
     }
 }
 
@@ -1347,7 +1357,7 @@ void WebsiteDataStore::grantStorageAccess(String&& subFrameHost, String&& topFra
     
     m_resourceLoadStatistics->grantStorageAccess(WTFMove(subFrameHost), WTFMove(topFrameHost), frameID, pageID, userWasPrompted, WTFMove(completionHandler));
 }
-#endif
+#endif // ENABLE(RESOURCE_LOAD_STATISTICS)
 
 void WebsiteDataStore::setCacheMaxAgeCapForPrevalentResources(Seconds seconds, CompletionHandler<void()>&& completionHandler)
 {
@@ -1375,14 +1385,6 @@ void WebsiteDataStore::resetCacheMaxAgeCapForPrevalentResources(CompletionHandle
     }
 #else
     completionHandler();
-#endif
-}
-
-void WebsiteDataStore::networkProcessDidCrash()
-{
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    if (m_resourceLoadStatistics)
-        m_resourceLoadStatistics->scheduleCookieBlockingStateReset();
 #endif
 }
 
@@ -1686,5 +1688,11 @@ void WebsiteDataStore::setMockWebAuthenticationConfiguration(MockWebAuthenticati
     static_cast<MockAuthenticatorManager*>(&m_authenticatorManager)->setTestConfiguration(WTFMove(configuration));
 }
 #endif
+
+void WebsiteDataStore::didCreateNetworkProcess()
+{
+    if (m_resourceLoadStatistics)
+        m_resourceLoadStatistics->didCreateNetworkProcess();
+}
 
 }

@@ -425,10 +425,6 @@ String ResourceLoadStatistics::toString() const
     builder.appendNumber(dataRecordsRemoved);
     builder.append('\n');
 
-    // In-memory only
-    appendBoolean(builder, "isMarkedForCookieBlocking", isMarkedForCookieBlocking);
-    builder.append('\n');
-
     appendHashSet(builder, "fontsFailedToLoad", fontsFailedToLoad);
     appendHashSet(builder, "fontsSuccessfullyLoaded", fontsSuccessfullyLoaded);
     appendHashCountedSet(builder, "topFrameRegistrableDomainsWhichAccessedWebAPIs", topFrameRegistrableDomainsWhichAccessedWebAPIs);
@@ -497,9 +493,6 @@ void ResourceLoadStatistics::merge(const ResourceLoadStatistics& other)
     isVeryPrevalentResource |= other.isVeryPrevalentResource;
     dataRecordsRemoved = std::max(dataRecordsRemoved, other.dataRecordsRemoved);
     
-    // In-memory only
-    isMarkedForCookieBlocking |= other.isMarkedForCookieBlocking;
-
     mergeHashSet(fontsFailedToLoad, other.fontsFailedToLoad);
     mergeHashSet(fontsSuccessfullyLoaded, other.fontsSuccessfullyLoaded);
     mergeHashCountedSet(topFrameRegistrableDomainsWhichAccessedWebAPIs, other.topFrameRegistrableDomainsWhichAccessedWebAPIs);

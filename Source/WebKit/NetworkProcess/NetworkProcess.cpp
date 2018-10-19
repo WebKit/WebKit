@@ -500,11 +500,18 @@ void NetworkProcess::writeBlobToFilePath(const WebCore::URL& url, const String& 
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-void NetworkProcess::updatePrevalentDomainsToBlockCookiesFor(PAL::SessionID sessionID, const Vector<String>& domainsToBlock, bool shouldClearFirst, uint64_t contextId)
+void NetworkProcess::updatePrevalentDomainsToBlockCookiesFor(PAL::SessionID sessionID, const Vector<String>& domainsToBlock, uint64_t contextId)
 {
     if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID))
-        networkStorageSession->setPrevalentDomainsToBlockCookiesFor(domainsToBlock, shouldClearFirst);
+        networkStorageSession->setPrevalentDomainsToBlockCookiesFor(domainsToBlock);
     parentProcessConnection()->send(Messages::NetworkProcessProxy::DidUpdateBlockCookies(contextId), 0);
+}
+
+void NetworkProcess::setShouldCapLifetimeForClientSideCookies(PAL::SessionID sessionID, bool value, uint64_t contextId)
+{
+    if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID))
+        networkStorageSession->setShouldCapLifetimeForClientSideCookies(value);
+    parentProcessConnection()->send(Messages::NetworkProcessProxy::DidSetShouldCapLifetimeForClientSideCookies(contextId), 0);
 }
 
 void NetworkProcess::hasStorageAccessForFrame(PAL::SessionID sessionID, const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, uint64_t contextId)
@@ -568,7 +575,7 @@ void NetworkProcess::resetCacheMaxAgeCapForPrevalentResources(PAL::SessionID ses
         ASSERT_NOT_REACHED();
     parentProcessConnection()->send(Messages::NetworkProcessProxy::DidResetCacheMaxAgeCapForPrevalentResources(contextId), 0);
 }
-#endif
+#endif // ENABLE(RESOURCE_LOAD_STATISTICS)
 
 bool NetworkProcess::sessionIsControlledByAutomation(PAL::SessionID sessionID) const
 {

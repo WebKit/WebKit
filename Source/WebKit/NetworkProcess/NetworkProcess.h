@@ -157,7 +157,8 @@ public:
     void addWebsiteDataStore(WebsiteDataStoreParameters&&);
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    void updatePrevalentDomainsToBlockCookiesFor(PAL::SessionID, const Vector<String>& domainsToBlock, bool shouldClearFirst, uint64_t contextId);
+    void updatePrevalentDomainsToBlockCookiesFor(PAL::SessionID, const Vector<String>& domainsToBlock, uint64_t contextId);
+    void setShouldCapLifetimeForClientSideCookies(PAL::SessionID, bool value, uint64_t contextId);
     void hasStorageAccessForFrame(PAL::SessionID, const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, uint64_t contextId);
     void getAllStorageAccessEntries(PAL::SessionID, uint64_t contextId);
     void grantStorageAccess(PAL::SessionID, const String& resourceDomain, const String& firstPartyDomain, std::optional<uint64_t> frameID, uint64_t pageID, uint64_t contextId);

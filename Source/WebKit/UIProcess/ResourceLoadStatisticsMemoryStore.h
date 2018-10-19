@@ -64,9 +64,8 @@ public:
     void mergeStatistics(Vector<WebCore::ResourceLoadStatistics>&&);
     void processStatistics(const Function<void(const WebCore::ResourceLoadStatistics&)>&) const;
 
-    void resetCookieBlockingState();
     void updateCookieBlocking(CompletionHandler<void()>&&);
-    void updateCookieBlockingForDomains(const Vector<String>& domainsToBlock, ShouldClearFirst, CompletionHandler<void()>&&);
+    void updateCookieBlockingForDomains(const Vector<String>& domainsToBlock, CompletionHandler<void()>&&);
     void clearBlockingStateForDomains(const Vector<String>& domains, CompletionHandler<void()>&&);
 
     void includeTodayAsOperatingDateIfNecessary();

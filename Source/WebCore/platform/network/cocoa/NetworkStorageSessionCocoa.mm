@@ -260,7 +260,7 @@ static NSArray *httpCookiesForURL(CFHTTPCookieStorageRef cookieStorage, NSURL *f
     return cookiesForURL(nsCookieStorage.get(), url, firstParty, sameSiteInfo);
 }
 
-static RetainPtr<NSArray> filterCookies(NSArray *unfilteredCookies)
+static RetainPtr<NSArray> filterCookies(NSArray *unfilteredCookies, bool shouldCapLifetime)
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
     NSUInteger count = [unfilteredCookies count];
@@ -281,7 +281,7 @@ static RetainPtr<NSArray> filterCookies(NSArray *unfilteredCookies)
             continue;
 
         // Cap lifetime of persistent, client-side cookies to a week.
-        if (![cookie isSessionOnly]) {
+        if (shouldCapLifetime && ![cookie isSessionOnly]) {
             if (!cookie.expiresDate || cookie.expiresDate.timeIntervalSinceNow > secondsPerWeek) {
                 RetainPtr<NSMutableDictionary<NSHTTPCookiePropertyKey, id>> properties = adoptNS([[cookie properties] mutableCopy]);
                 RetainPtr<NSDate> dateInAWeek = adoptNS([[NSDate alloc] initWithTimeIntervalSinceNow:secondsPerWeek]);
@@ -404,7 +404,11 @@ void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameS
     NSArray *unfilteredCookies = [NSHTTPCookie cookiesWithResponseHeaderFields:headerFields forURL:cookieURL];
 #endif
 
-    RetainPtr<NSArray> filteredCookies = filterCookies(unfilteredCookies);
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    RetainPtr<NSArray> filteredCookies = filterCookies(unfilteredCookies, m_shouldCapLifetimeForClientSideCookies);
+#else
+    RetainPtr<NSArray> filteredCookies = filterCookies(unfilteredCookies, false);
+#endif
     ASSERT([filteredCookies.get() count] <= 1);
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)

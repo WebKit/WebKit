@@ -38,6 +38,7 @@
 #include "WebsiteDataFetchOption.h"
 #include "WebsiteDataStore.h"
 #include <WebCore/ResourceLoadStatistics.h>
+#include <wtf/CallbackAggregator.h>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/threads/BinarySemaphore.h>
@@ -319,6 +320,22 @@ void WebResourceLoadStatisticsStore::callGrantStorageAccessHandler(const String&
     }
 #endif
     callback(false);
+}
+
+void WebResourceLoadStatisticsStore::didCreateNetworkProcess()
+{
+    ASSERT(RunLoop::isMain());
+
+    postTask([this] {
+        if (!m_memoryStore)
+            return;
+        m_memoryStore->updateCookieBlocking([]() { });
+    });
+
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    if (m_websiteDataStore)
+        m_websiteDataStore->setShouldCapLifetimeForClientSideCookies(ShouldCapLifetimeForClientSideCookies::Yes, []() { });
+#endif
 }
 
 void WebResourceLoadStatisticsStore::removeAllStorageAccess(CompletionHandler<void()>&& completionHandler)
@@ -716,17 +733,17 @@ void WebResourceLoadStatisticsStore::scheduleCookieBlockingUpdate(CompletionHand
     });
 }
 
-void WebResourceLoadStatisticsStore::scheduleCookieBlockingUpdateForDomains(const Vector<String>& domainsToBlock, ShouldClearFirst shouldClearFirst, CompletionHandler<void()>&& completionHandler)
+void WebResourceLoadStatisticsStore::scheduleCookieBlockingUpdateForDomains(const Vector<String>& domainsToBlock, CompletionHandler<void()>&& completionHandler)
 {
     // Helper function used by testing system. Should only be called from the main thread.
     ASSERT(RunLoop::isMain());
-    postTask([this, domainsToBlock = crossThreadCopy(domainsToBlock), shouldClearFirst, completionHandler = WTFMove(completionHandler)] () mutable {
+    postTask([this, domainsToBlock = crossThreadCopy(domainsToBlock), completionHandler = WTFMove(completionHandler)] () mutable {
         if (!m_memoryStore) {
             postTaskReply(WTFMove(completionHandler));
             return;
         }
 
-        m_memoryStore->updateCookieBlockingForDomains(domainsToBlock, shouldClearFirst, [completionHandler = WTFMove(completionHandler)]() mutable {
+        m_memoryStore->updateCookieBlockingForDomains(domainsToBlock, [completionHandler = WTFMove(completionHandler)]() mutable {
             postTaskReply(WTFMove(completionHandler));
         });
     });
@@ -747,17 +764,6 @@ void WebResourceLoadStatisticsStore::scheduleClearBlockingStateForDomains(const 
         });
     });
 }
-
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-void WebResourceLoadStatisticsStore::scheduleCookieBlockingStateReset()
-{
-    ASSERT(RunLoop::isMain());
-    postTask([this] {
-        if (m_memoryStore)
-            m_memoryStore->resetCookieBlockingState();
-    });
-}
-#endif
 
 void WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent(ShouldGrandfather shouldGrandfather, CompletionHandler<void()>&& completionHandler)
 {
@@ -836,13 +842,13 @@ void WebResourceLoadStatisticsStore::setCacheMaxAgeCap(Seconds seconds, Completi
     completionHandler();
 }
 
-void WebResourceLoadStatisticsStore::callUpdatePrevalentDomainsToBlockCookiesForHandler(const Vector<String>& domainsToBlock, ShouldClearFirst shouldClearFirst, CompletionHandler<void()>&& completionHandler)
+void WebResourceLoadStatisticsStore::callUpdatePrevalentDomainsToBlockCookiesForHandler(const Vector<String>& domainsToBlock, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (m_websiteDataStore) {
-        m_websiteDataStore->updatePrevalentDomainsToBlockCookiesFor(domainsToBlock, shouldClearFirst, WTFMove(completionHandler));
+        m_websiteDataStore->updatePrevalentDomainsToBlockCookiesFor(domainsToBlock, WTFMove(completionHandler));
         return;
     }
 #endif

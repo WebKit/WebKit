@@ -96,9 +96,6 @@ struct ResourceLoadStatistics {
     unsigned timesAccessedAsFirstPartyDueToUserInteraction { 0 };
     unsigned timesAccessedAsFirstPartyDueToStorageAccessAPI { 0 };
 
-    // In-memory only
-    bool isMarkedForCookieBlocking { false };
-    
     // This set represents the registrable domain of the top frame where web API
     // were used in the top frame or one of its subframes.
     HashCountedSet<String> topFrameRegistrableDomainsWhichAccessedWebAPIs;

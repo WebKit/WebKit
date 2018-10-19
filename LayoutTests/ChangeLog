@@ -1,3 +1,31 @@
+2018-10-19  John Wilander  <wilander@apple.com>
+
+        Only cap lifetime of persistent cookies created client-side through document.cookie when resource load statistics is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=190687
+        <rdar://problem/45349024>
+
+        Reviewed by Alex Christensen.
+
+        The test case now makes use of internals.setResourceLoadStatisticsEnabled()
+        and was thus moved to http/tests/resourceLoadStatistics/.
+
+        * TestExpectations:
+            Removed skip of previous test location.
+        * http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-expected.txt: Renamed from LayoutTests/http/tests/cookies/capped-lifetime-for-cookie-set-in-js-expected.txt.
+        * http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js.html: Renamed from LayoutTests/http/tests/cookies/capped-lifetime-for-cookie-set-in-js.html.
+        * http/tests/webAPIStatistics/canvas-read-and-write-data-collection-expected.txt:
+            Removed line containing "isMarkedForCookieBlocking: No."
+        * http/tests/webAPIStatistics/font-load-data-collection-expected.txt:
+            Removed line containing "isMarkedForCookieBlocking: No."
+        * http/tests/webAPIStatistics/navigator-functions-accessed-data-collection-expected.txt:
+            Removed line containing "isMarkedForCookieBlocking: No."
+        * http/tests/webAPIStatistics/screen-functions-accessed-data-collection-expected.txt:
+            Removed line containing "isMarkedForCookieBlocking: No."
+        * platform/ios/TestExpectations:
+            Removed pass of previous test location. The whole http/tests/resourceLoadStatistics/ is marked pass for relevant platforms.
+        * platform/mac-wk2/TestExpectations:
+            Removed pass of previous test location. The whole http/tests/resourceLoadStatistics/ is marked pass for relevant platforms.
+
 2018-10-19  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r237254.

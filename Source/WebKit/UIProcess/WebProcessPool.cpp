@@ -560,14 +560,15 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     if (m_didNetworkProcessCrash) {
         m_didNetworkProcessCrash = false;
         reinstateNetworkProcessAssertionState(*m_networkProcess);
-        if (m_websiteDataStore)
-            m_websiteDataStore->websiteDataStore().networkProcessDidCrash();
     }
 
     if (withWebsiteDataStore) {
         m_networkProcess->addSession(makeRef(*withWebsiteDataStore));
         withWebsiteDataStore->clearPendingCookies();
     }
+
+    if (m_websiteDataStore)
+        m_websiteDataStore->websiteDataStore().didCreateNetworkProcess();
 
     return *m_networkProcess;
 }

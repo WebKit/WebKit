@@ -53,7 +53,6 @@ class WebFrameProxy;
 class WebProcessProxy;
 class WebsiteDataStore;
 
-enum class ShouldClearFirst;
 enum class StorageAccessStatus {
     CannotRequestAccess,
     RequiresUserPrompt,
@@ -107,14 +106,11 @@ public:
     void setTopFrameUniqueRedirectTo(const WebCore::URL& topFrameHostName, const WebCore::URL& hostNameRedirectedTo);
     void setTopFrameUniqueRedirectFrom(const WebCore::URL& topFrameHostName, const WebCore::URL& hostNameRedirectedFrom);
     void scheduleCookieBlockingUpdate(CompletionHandler<void()>&&);
-    void scheduleCookieBlockingUpdateForDomains(const Vector<String>& domainsToBlock, ShouldClearFirst, CompletionHandler<void()>&&);
+    void scheduleCookieBlockingUpdateForDomains(const Vector<String>& domainsToBlock, CompletionHandler<void()>&&);
     void scheduleClearBlockingStateForDomains(const Vector<String>& domains, CompletionHandler<void()>&&);
     void scheduleStatisticsAndDataRecordsProcessing();
     void submitTelemetry();
-    void scheduleCookieBlockingStateReset();
 
-    void scheduleClearInMemory(CompletionHandler<void()>&&);
-    
     enum class ShouldGrandfather {
         No,
         Yes,
@@ -138,9 +134,11 @@ public:
     void logTestingEvent(const String&);
     void callGrantStorageAccessHandler(const String& subFramePrimaryDomain, const String& topFramePrimaryDomain, std::optional<uint64_t> frameID, uint64_t pageID, CompletionHandler<void(bool)>&&);
     void removeAllStorageAccess(CompletionHandler<void()>&&);
-    void callUpdatePrevalentDomainsToBlockCookiesForHandler(const Vector<String>& domainsToBlock, ShouldClearFirst, CompletionHandler<void()>&&);
+    void callUpdatePrevalentDomainsToBlockCookiesForHandler(const Vector<String>& domainsToBlock, CompletionHandler<void()>&&);
     void callRemoveDomainsHandler(const Vector<String>& domains);
     void callHasStorageAccessForFrameHandler(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, CompletionHandler<void(bool)>&&);
+
+    void didCreateNetworkProcess();
 
 private:
     explicit WebResourceLoadStatisticsStore(WebsiteDataStore&);
@@ -171,6 +169,8 @@ private:
     bool m_hasScheduledProcessStats { false };
 
     WTF::Function<void(const String&)> m_statisticsTestingCallback;
+
+    bool m_firstNetworkProcessCreated { false };
 };
 
 } // namespace WebKit

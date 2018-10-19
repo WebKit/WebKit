@@ -74,7 +74,7 @@ enum class StorageAccessPromptStatus;
 struct PluginModuleInfo;
 #endif
 
-enum class ShouldClearFirst { No, Yes };
+enum class ShouldCapLifetimeForClientSideCookies { No, Yes };
 
 class WebsiteDataStore : public RefCounted<WebsiteDataStore>, public WebProcessLifetimeObserver, public Identified<WebsiteDataStore>, public CanMakeWeakPtr<WebsiteDataStore>  {
 public:
@@ -137,7 +137,8 @@ public:
     void removeDataForTopPrivatelyControlledDomains(OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, const Vector<String>& topPrivatelyControlledDomains, Function<void(HashSet<String>&&)>&& completionHandler);
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    void updatePrevalentDomainsToBlockCookiesFor(const Vector<String>& domainsToBlock, ShouldClearFirst, CompletionHandler<void()>&&);
+    void updatePrevalentDomainsToBlockCookiesFor(const Vector<String>& domainsToBlock, CompletionHandler<void()>&&);
+    void setShouldCapLifetimeForClientSideCookies(ShouldCapLifetimeForClientSideCookies, CompletionHandler<void()>&&);
     void hasStorageAccessForFrameHandler(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, CompletionHandler<void(bool hasAccess)>&&);
     void getAllStorageAccessEntries(uint64_t pageID, CompletionHandler<void(Vector<String>&& domains)>&&);
     void grantStorageAccessHandler(const String& resourceDomain, const String& firstPartyDomain, std::optional<uint64_t> frameID, uint64_t pageID, CompletionHandler<void(bool wasGranted)>&&);
@@ -149,7 +150,6 @@ public:
 #endif
     void setCacheMaxAgeCapForPrevalentResources(Seconds, CompletionHandler<void()>&&);
     void resetCacheMaxAgeCapForPrevalentResources(CompletionHandler<void()>&&);
-    void networkProcessDidCrash();
     void resolveDirectoriesIfNecessary();
     const String& resolvedApplicationCacheDirectory() const { return m_resolvedConfiguration.applicationCacheDirectory; }
     const String& resolvedMediaCacheDirectory() const { return m_resolvedConfiguration.mediaCacheDirectory; }
@@ -198,6 +198,8 @@ public:
     AuthenticatorManager& authenticatorManager() { return m_authenticatorManager.get(); }
     void setMockWebAuthenticationConfiguration(MockWebAuthenticationConfiguration&&);
 #endif
+
+    void didCreateNetworkProcess();
 
 private:
     explicit WebsiteDataStore(PAL::SessionID);

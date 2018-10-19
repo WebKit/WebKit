@@ -273,13 +273,14 @@ std::optional<Seconds> NetworkStorageSession::maxAgeCacheCap(const ResourceReque
     return std::nullopt;
 }
 
-void NetworkStorageSession::setPrevalentDomainsToBlockCookiesFor(const Vector<String>& domains, bool clearFirst)
+void NetworkStorageSession::setShouldCapLifetimeForClientSideCookies(bool value)
 {
-    if (clearFirst) {
-        m_topPrivatelyControlledDomainsToBlock.clear();
-        m_framesGrantedStorageAccess.clear();
-    }
+    m_shouldCapLifetimeForClientSideCookies = value;
+}
 
+void NetworkStorageSession::setPrevalentDomainsToBlockCookiesFor(const Vector<String>& domains)
+{
+    m_topPrivatelyControlledDomainsToBlock.clear();
     m_topPrivatelyControlledDomainsToBlock.add(domains.begin(), domains.end());
 }
 
