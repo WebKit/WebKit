@@ -2,6 +2,12 @@
 
         Rebase python tests.
 
+        * Scripts/webkit/messages_unittest.py:
+
+2018-10-19  Alex Christensen  <achristensen@webkit.org>
+
+        Rebase python tests.
+
         * Scripts/Makefile:
         * Scripts/webkit/MessageReceiver-expected.cpp:
         * Scripts/webkit/Messages-expected.h:

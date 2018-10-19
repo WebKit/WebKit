@@ -244,6 +244,36 @@ _expected_superclass_results = {
             ),
             'conditions': (None),
         },
+        {
+            'name': 'TestAsyncMessage',
+            'parameters': (
+                ('WebKit::TestTwoStateEnum', 'twoStateEnum'),
+            ),
+            'reply_parameters': (
+                ('uint64_t', 'result'),
+            ),
+            'conditions': ('ENABLE(TEST_FEATURE)'),
+        },
+        {
+            'name': 'TestSyncMessage',
+            'parameters': (
+                ('uint32_t', 'param'),
+            ),
+            'reply_parameters': (
+                ('uint8_t', 'reply'),
+            ),
+            'conditions': (None),
+        },
+        {
+            'name': 'TestDelayedMessage',
+            'parameters': (
+                ('bool', 'value'),
+            ),
+            'reply_parameters': (
+                ('std::optional<WebKit::TestClassName>', 'optionalReply'),
+            ),
+            'conditions': (None),
+        },
     ),
 }
 
