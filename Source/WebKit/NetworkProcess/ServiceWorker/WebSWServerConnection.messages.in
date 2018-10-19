@@ -42,7 +42,7 @@ messages -> WebSWServerConnection {
     RegisterServiceWorkerClient(struct WebCore::SecurityOriginData topOrigin, struct WebCore::ServiceWorkerClientData data, std::optional<WebCore::ServiceWorkerRegistrationIdentifier> controllingServiceWorkerRegistrationIdentifier)
     UnregisterServiceWorkerClient(struct WebCore::ServiceWorkerClientIdentifier identifier)
 
-    SyncTerminateWorker(WebCore::ServiceWorkerIdentifier workerIdentifier) -> ()
+    SyncTerminateWorker(WebCore::ServiceWorkerIdentifier workerIdentifier) -> () LegacySync
 }
 
 #endif // ENABLE(SERVICE_WORKER)

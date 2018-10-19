@@ -134,7 +134,7 @@ void handleMessage(Decoder& decoder, C* object, MF function)
 }
 
 template<typename T, typename C, typename MF>
-void handleMessage(Decoder& decoder, Encoder& replyEncoder, C* object, MF function)
+void handleMessageLegacySync(Decoder& decoder, Encoder& replyEncoder, C* object, MF function)
 {
     typename CodingType<typename T::Arguments>::Type arguments;
     if (!decoder.decode(arguments)) {
@@ -148,7 +148,7 @@ void handleMessage(Decoder& decoder, Encoder& replyEncoder, C* object, MF functi
 }
 
 template<typename T, typename C, typename MF>
-void handleMessage(Connection& connection, Decoder& decoder, Encoder& replyEncoder, C* object, MF function)
+void handleMessageLegacySync(Connection& connection, Decoder& decoder, Encoder& replyEncoder, C* object, MF function)
 {
     typename CodingType<typename T::Arguments>::Type arguments;
     if (!decoder.decode(arguments)) {

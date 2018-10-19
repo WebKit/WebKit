@@ -77,10 +77,10 @@ messages -> WebPage LegacyReceiver {
     ReplaceSelectedText(String oldText, String newText)
     RequestAutocorrectionData(String textForAutocorrection, WebKit::CallbackID callbackID)
     ApplyAutocorrection(String correction, String originalText, WebKit::CallbackID callbackID)
-    SyncApplyAutocorrection(String correction, String originalText) -> (bool autocorrectionApplied)
+    SyncApplyAutocorrection(String correction, String originalText) -> (bool autocorrectionApplied) LegacySync
     RequestAutocorrectionContext(WebKit::CallbackID callbackID)
-    GetAutocorrectionContext() -> (String beforeContext, String markedText, String selectedText, String afterContext, uint64_t location, uint64_t length) 
-    GetPositionInformation(struct WebKit::InteractionInformationRequest request) -> (struct WebKit::InteractionInformationAtPosition information)
+    GetAutocorrectionContext() -> (String beforeContext, String markedText, String selectedText, String afterContext, uint64_t location, uint64_t length) LegacySync
+    GetPositionInformation(struct WebKit::InteractionInformationRequest request) -> (struct WebKit::InteractionInformationAtPosition information) LegacySync
     RequestPositionInformation(struct WebKit::InteractionInformationRequest request)
     StartInteractionWithElementAtPosition(WebCore::IntPoint point)
     StopInteraction()
@@ -116,7 +116,7 @@ messages -> WebPage LegacyReceiver {
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)
-    TouchEventSync(WebKit::WebTouchEvent event) -> (bool handled)
+    TouchEventSync(WebKit::WebTouchEvent event) -> (bool handled) LegacySync
 #endif
 #if !ENABLE(IOS_TOUCH_EVENTS) && ENABLE(TOUCH_EVENTS)
     TouchEvent(WebKit::WebTouchEvent event)
@@ -382,7 +382,7 @@ messages -> WebPage LegacyReceiver {
 #endif
 
 #if PLATFORM (GTK) && HAVE(GTK_GESTURES)
-    GetCenterForZoomGesture(WebCore::IntPoint centerInViewCoordinates) -> (WebCore::IntPoint center)
+    GetCenterForZoomGesture(WebCore::IntPoint centerInViewCoordinates) -> (WebCore::IntPoint center) LegacySync
 #endif
 
 #if PLATFORM(COCOA)
@@ -392,16 +392,16 @@ messages -> WebPage LegacyReceiver {
     WindowAndViewFramesChanged(WebCore::FloatRect windowFrameInScreenCoordinates, WebCore::FloatRect windowFrameInUnflippedScreenCoordinates, WebCore::FloatRect viewFrameInWindowCoordinates, WebCore::FloatPoint accessibilityViewCoordinates)
     SetMainFrameIsScrollable(bool isScrollable)
     RegisterUIProcessAccessibilityTokens(IPC::DataReference elemenToken, IPC::DataReference windowToken)
-    GetStringSelectionForPasteboard() -> (String stringValue)
-    GetDataSelectionForPasteboard(String pasteboardType) -> (WebKit::SharedMemory::Handle handle, uint64_t size)
-    ReadSelectionFromPasteboard(String pasteboardName) -> (bool result)
+    GetStringSelectionForPasteboard() -> (String stringValue) LegacySync
+    GetDataSelectionForPasteboard(String pasteboardType) -> (WebKit::SharedMemory::Handle handle, uint64_t size) LegacySync
+    ReadSelectionFromPasteboard(String pasteboardName) -> (bool result) LegacySync
 
 #if ENABLE(SERVICE_CONTROLS)
     ReplaceSelectionWithPasteboardData(Vector<String> types, IPC::DataReference data)
 #endif
 
-    ShouldDelayWindowOrderingEvent(WebKit::WebMouseEvent event) -> (bool result)
-    AcceptsFirstMouse(int eventNumber, WebKit::WebMouseEvent event) -> (bool result)
+    ShouldDelayWindowOrderingEvent(WebKit::WebMouseEvent event) -> (bool result) LegacySync
+    AcceptsFirstMouse(int eventNumber, WebKit::WebMouseEvent event) -> (bool result) LegacySync
 
     SetTextAsync(String text)
     InsertTextAsync(String text, struct WebKit::EditingRange replacementRange, bool registerUndoGroup, uint32_t editingRangeIsRelativeTo, bool suppressSelectionUpdate)

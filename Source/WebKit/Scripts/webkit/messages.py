@@ -30,6 +30,7 @@ WANTS_CONNECTION_ATTRIBUTE = 'WantsConnection'
 LEGACY_RECEIVER_ATTRIBUTE = 'LegacyReceiver'
 DELAYED_ATTRIBUTE = 'Delayed'
 ASYNC_ATTRIBUTE = 'Async'
+LEGACY_SYNC_ATTRIBUTE = 'LegacySync'
 
 _license_header = """/*
  * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
@@ -122,16 +123,16 @@ def message_to_struct_declaration(message):
     result.append('\n')
     if message.reply_parameters != None:
         send_parameters = [(function_parameter_type(x.type, x.kind), x.name) for x in message.reply_parameters]
+        completion_handler_parameters = '%s' % ', '.join([' '.join(x) for x in send_parameters])
+        if message.has_attribute(ASYNC_ATTRIBUTE):
+            move_parameters = ', '.join([move_type(x.type) for x in message.reply_parameters])
+            result.append('    static void callReply(IPC::Decoder&, CompletionHandler<void(%s)>&&);\n' % move_parameters)
+            result.append('    static void cancelReply(CompletionHandler<void(%s)>&&);\n' % move_parameters)
+            result.append('    static IPC::StringReference asyncMessageReplyName() { return { "%sReply" }; }\n' % message.name)
+            result.append('    using AsyncReply')
+        elif message.has_attribute(DELAYED_ATTRIBUTE):
+            result.append('    using DelayedReply')
         if message.has_attribute(DELAYED_ATTRIBUTE) or message.has_attribute(ASYNC_ATTRIBUTE):
-            completion_handler_parameters = '%s' % ', '.join([' '.join(x) for x in send_parameters])
-            if message.has_attribute(ASYNC_ATTRIBUTE):
-                move_parameters = ', '.join([move_type(x.type) for x in message.reply_parameters])
-                result.append('    static void callReply(IPC::Decoder&, CompletionHandler<void(%s)>&&);\n' % move_parameters)
-                result.append('    static void cancelReply(CompletionHandler<void(%s)>&&);\n' % move_parameters)
-                result.append('    static IPC::StringReference asyncMessageReplyName() { return { "%sReply" }; }\n' % message.name)
-                result.append('    using AsyncReply')
-            else:
-                result.append('    using DelayedReply')
             result.append(' = CompletionHandler<void(%s)>;\n' % completion_handler_parameters)
             result.append('    static void send(std::unique_ptr<IPC::Encoder>&&, IPC::Connection&')
             if len(send_parameters):
@@ -170,7 +171,7 @@ def forward_declaration(namespace, kind_and_type):
 def forward_declarations_for_namespace(namespace, kind_and_types):
     result = []
     result.append('namespace %s {\n' % namespace)
-    result += ['    %s;\n' % forward_declaration(namespace, x) for x in kind_and_types]
+    result += ['%s;\n' % forward_declaration(namespace, x) for x in kind_and_types]
     result.append('}\n')
     return ''.join(result)
 
@@ -307,6 +308,8 @@ def sync_message_statement(receiver, message):
         dispatch_function += 'Delayed'
     if message.has_attribute(ASYNC_ATTRIBUTE):
         dispatch_function += 'Async'
+    if message.has_attribute(LEGACY_SYNC_ATTRIBUTE):
+        dispatch_function += 'LegacySync'
 
     wants_connection = message.has_attribute(DELAYED_ATTRIBUTE) or message.has_attribute(WANTS_CONNECTION_ATTRIBUTE)
 

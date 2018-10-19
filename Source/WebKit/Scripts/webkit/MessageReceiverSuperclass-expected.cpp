@@ -29,10 +29,12 @@
 #include "ArgumentCoders.h"
 #include "Decoder.h"
 #include "HandleMessage.h"
+#include "TestClassName.h"
 #if ENABLE(TEST_FEATURE)
 #include "TestTwoStateEnum.h"
 #endif
 #include "WebPageMessages.h"
+#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace Messages {
@@ -65,6 +67,12 @@ void TestAsyncMessage::send(std::unique_ptr<IPC::Encoder>&& encoder, IPC::Connec
 
 #endif
 
+void TestDelayedMessage::send(std::unique_ptr<IPC::Encoder>&& encoder, IPC::Connection& connection, const std::optional<WebKit::TestClassName>& optionalReply)
+{
+    *encoder << optionalReply;
+    connection.sendSyncReply(WTFMove(encoder));
+}
+
 } // namespace WebPage
 
 } // namespace Messages
@@ -84,6 +92,22 @@ void WebPage::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decod
     }
 #endif
     WebPageBase::didReceiveMessage(connection, decoder);
+}
+
+void WebPage::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
+{
+    if (decoder.messageName() == Messages::WebPage::TestSyncMessage::name()) {
+        IPC::handleMessage<Messages::WebPage::TestSyncMessage>(decoder, *replyEncoder, this, &WebPage::testSyncMessage);
+        return;
+    }
+    if (decoder.messageName() == Messages::WebPage::TestDelayedMessage::name()) {
+        IPC::handleMessageDelayed<Messages::WebPage::TestDelayedMessage>(connection, decoder, replyEncoder, this, &WebPage::testDelayedMessage);
+        return;
+    }
+    UNUSED_PARAM(connection);
+    UNUSED_PARAM(decoder);
+    UNUSED_PARAM(replyEncoder);
+    ASSERT_NOT_REACHED();
 }
 
 } // namespace WebKit

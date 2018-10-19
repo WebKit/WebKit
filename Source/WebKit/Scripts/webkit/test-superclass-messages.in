@@ -25,4 +25,6 @@ messages -> WebPage : WebPageBase {
 #if ENABLE(TEST_FEATURE)
     TestAsyncMessage(enum:bool WebKit::TestTwoStateEnum twoStateEnum) -> (uint64_t result) Async
 #endif
+    TestSyncMessage(uint32_t param) -> (uint8_t reply) Sync
+    TestDelayedMessage(bool value) -> (std::optional<WebKit::TestClassName> optionalReply) Delayed
 }

@@ -30,22 +30,22 @@ messages -> PluginProxy LegacyReceiver {
     Update(WebCore::IntRect paintedRect)
 
     # Returns a PAC style string with proxies for the given URL.
-    ProxiesForURL(String urlString) -> (String proxiesString)
+    ProxiesForURL(String urlString) -> (String proxiesString) LegacySync
 
     # Returns the cookies for the given URL.
-    CookiesForURL(String urlString) -> (String cookieString)
+    CookiesForURL(String urlString) -> (String cookieString) LegacySync
 
     # Sets the cookies for the given URL.
     SetCookiesForURL(String urlString, String cookieString)
 
     # Gets the authentication info for the given protection space.
-    GetAuthenticationInfo(WebCore::ProtectionSpace protectionSpace) -> (bool returnValue, String username, String password)
+    GetAuthenticationInfo(WebCore::ProtectionSpace protectionSpace) -> (bool returnValue, String username, String password) LegacySync
 
     # Gets a reference to the plug-in element NPObject.
-    GetPluginElementNPObject() -> (uint64_t pluginElementNPObjectID)
+    GetPluginElementNPObject() -> (uint64_t pluginElementNPObjectID) LegacySync
 
     # Evaluates the given JavaScript string.
-    Evaluate(WebKit::NPVariantData npObjectAsVariantData, String scriptString, bool allowPopups) -> (bool returnValue, WebKit::NPVariantData resultData)
+    Evaluate(WebKit::NPVariantData npObjectAsVariantData, String scriptString, bool allowPopups) -> (bool returnValue, WebKit::NPVariantData resultData) LegacySync
 
     # Cancels the given stream load.
     CancelStreamLoad(uint64_t streamID)
@@ -72,7 +72,7 @@ messages -> PluginProxy LegacyReceiver {
 
 #if PLATFORM(X11)
     # Create the plugin container for windowed plugins
-    CreatePluginContainer() -> (uint64_t windowID)
+    CreatePluginContainer() -> (uint64_t windowID) LegacySync
 
     # Update geometry of windowed plugin widget
     WindowedPluginGeometryDidChange(WebCore::IntRect frameRect, WebCore::IntRect clipRect, uint64_t windowID)
@@ -82,10 +82,10 @@ messages -> PluginProxy LegacyReceiver {
 #endif
 
     # Tells the WebProcess that the plug-in was successfully initialized asynchronously
-    DidCreatePlugin(bool wantsWheelEvents, uint32_t remoteLayerClientID) -> ()
+    DidCreatePlugin(bool wantsWheelEvents, uint32_t remoteLayerClientID) -> () LegacySync
     
     # Tells the WebProcess that the plug-in failed to initialize.
-    DidFailToCreatePlugin() -> ()
+    DidFailToCreatePlugin() -> () LegacySync
 
     # Tells the WebProcess that the plug-in has started or stopped playing audio.
     SetPluginIsPlayingAudio(bool pluginIsPlayingAudio)

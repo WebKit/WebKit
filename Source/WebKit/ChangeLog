@@ -1,5 +1,35 @@
 2018-10-19  Alex Christensen  <achristensen@webkit.org>
 
+        Mark LegacySync IPC messages
+        https://bugs.webkit.org/show_bug.cgi?id=190759
+
+        Reviewed by Tim Horton.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.messages.in:
+        * Platform/IPC/HandleMessage.h:
+        (IPC::handleMessageLegacySync):
+        * PluginProcess/PluginControllerProxy.messages.in:
+        * Scripts/webkit/messages.py:
+        * Shared/Plugins/NPObjectMessageReceiver.messages.in:
+        * UIProcess/ApplePay/WebPaymentCoordinatorProxy.messages.in:
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.messages.in:
+        * UIProcess/Plugins/PluginProcessProxy.messages.in:
+        * UIProcess/WebFullScreenManagerProxy.messages.in:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebPasteboardProxy.messages.in:
+        * UIProcess/WebProcessPool.messages.in:
+        * UIProcess/WebProcessProxy.messages.in:
+        * UIProcess/WebStorage/StorageManager.messages.in:
+        * UIProcess/mac/SecItemShimProxy.messages.in:
+        * WebProcess/Plugins/PluginProcessConnection.messages.in:
+        * WebProcess/Plugins/PluginProxy.messages.in:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebProcess.messages.in:
+
+2018-10-19  Alex Christensen  <achristensen@webkit.org>
+
         Update and add python tests after r237294
         https://bugs.webkit.org/show_bug.cgi?id=190746
 

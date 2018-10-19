@@ -23,16 +23,16 @@
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
 messages -> NPObjectMessageReceiver LegacyReceiver {
-    Deallocate() -> ()
-    HasMethod(WebKit::NPIdentifierData methodName) -> (bool returnValue)
-    Invoke(WebKit::NPIdentifierData methodName, Vector<WebKit::NPVariantData> argumentsData) -> (bool returnValue, WebKit::NPVariantData resultData)
-    InvokeDefault(Vector<WebKit::NPVariantData> argumentsData) -> (bool returnValue, WebKit::NPVariantData resultData)
-    HasProperty(WebKit::NPIdentifierData propertyName) -> (bool returnValue)
-    GetProperty(WebKit::NPIdentifierData propertyName) -> (bool returnValue, WebKit::NPVariantData resultData)
-    SetProperty(WebKit::NPIdentifierData propertyName, WebKit::NPVariantData propertyValueData) -> (bool returnValue)
-    RemoveProperty(WebKit::NPIdentifierData propertyName) -> (bool returnValue)
-    Enumerate() -> (bool returnValue, Vector<WebKit::NPIdentifierData> identifiersData)
-    Construct(Vector<WebKit::NPVariantData> argumentsData) -> (bool returnValue, WebKit::NPVariantData resultData)
+    Deallocate() -> () LegacySync
+    HasMethod(WebKit::NPIdentifierData methodName) -> (bool returnValue) LegacySync
+    Invoke(WebKit::NPIdentifierData methodName, Vector<WebKit::NPVariantData> argumentsData) -> (bool returnValue, WebKit::NPVariantData resultData) LegacySync
+    InvokeDefault(Vector<WebKit::NPVariantData> argumentsData) -> (bool returnValue, WebKit::NPVariantData resultData) LegacySync
+    HasProperty(WebKit::NPIdentifierData propertyName) -> (bool returnValue) LegacySync
+    GetProperty(WebKit::NPIdentifierData propertyName) -> (bool returnValue, WebKit::NPVariantData resultData) LegacySync
+    SetProperty(WebKit::NPIdentifierData propertyName, WebKit::NPVariantData propertyValueData) -> (bool returnValue) LegacySync
+    RemoveProperty(WebKit::NPIdentifierData propertyName) -> (bool returnValue) LegacySync
+    Enumerate() -> (bool returnValue, Vector<WebKit::NPIdentifierData> identifiersData) LegacySync
+    Construct(Vector<WebKit::NPVariantData> argumentsData) -> (bool returnValue, WebKit::NPVariantData resultData) LegacySync
 }
 
 #endif

@@ -53,7 +53,7 @@ messages -> NetworkProcess LegacyReceiver {
     SetQOS(int latencyQOS, int throughputQOS)
     SetStorageAccessAPIEnabled(bool enabled)
 #endif
-    SetAllowsAnySSLCertificateForWebSocket(bool enabled) -> ()
+    SetAllowsAnySSLCertificateForWebSocket(bool enabled) -> () LegacySync
 
     SyncAllCookies()
 
@@ -68,7 +68,7 @@ messages -> NetworkProcess LegacyReceiver {
     ProcessDidTransitionToBackground()
     ProcessDidTransitionToForeground()
 
-    ProcessWillSuspendImminently() -> (bool handled)
+    ProcessWillSuspendImminently() -> (bool handled) LegacySync
     PrepareToSuspend()
     CancelPrepareToSuspend()
     ProcessDidResume()
@@ -101,16 +101,16 @@ messages -> NetworkProcess LegacyReceiver {
     SetCacheStorageParameters(PAL::SessionID sessionID, uint64_t quota, String cacheStorageDirectory, WebKit::SandboxExtension::Handle handle);
 
 #if ENABLE(SERVICE_WORKER)
-DidNotHandleFetch(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::FetchIdentifier fetchIdentifier)
-DidFailFetch(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::FetchIdentifier fetchIdentifier, WebCore::ResourceError error)
-DidReceiveFetchResponse(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::FetchIdentifier fetchIdentifier, WebCore::ResourceResponse response)
-DidReceiveFetchData(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::FetchIdentifier fetchIdentifier, IPC::SharedBufferDataReference data, int64_t encodedDataLength)
-DidReceiveFetchFormData(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::FetchIdentifier fetchIdentifier, IPC::FormDataReference data)
-DidFinishFetch(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::FetchIdentifier fetchIdentifier)
-PostMessageToServiceWorkerClient(struct WebCore::ServiceWorkerClientIdentifier destinationIdentifier, struct WebCore::MessageWithMessagePorts message, WebCore::ServiceWorkerIdentifier sourceIdentifier, String sourceOrigin)
+    DidNotHandleFetch(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::FetchIdentifier fetchIdentifier)
+    DidFailFetch(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::FetchIdentifier fetchIdentifier, WebCore::ResourceError error)
+    DidReceiveFetchResponse(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::FetchIdentifier fetchIdentifier, WebCore::ResourceResponse response)
+    DidReceiveFetchData(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::FetchIdentifier fetchIdentifier, IPC::SharedBufferDataReference data, int64_t encodedDataLength)
+    DidReceiveFetchFormData(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::FetchIdentifier fetchIdentifier, IPC::FormDataReference data)
+    DidFinishFetch(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::FetchIdentifier fetchIdentifier)
+    PostMessageToServiceWorkerClient(struct WebCore::ServiceWorkerClientIdentifier destinationIdentifier, struct WebCore::MessageWithMessagePorts message, WebCore::ServiceWorkerIdentifier sourceIdentifier, String sourceOrigin)
 
-PostMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destination, struct WebCore::MessageWithMessagePorts message, WebCore::ServiceWorkerOrClientIdentifier source, WebCore::SWServerConnectionIdentifier connectionIdentifier)
+    PostMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destination, struct WebCore::MessageWithMessagePorts message, WebCore::ServiceWorkerOrClientIdentifier source, WebCore::SWServerConnectionIdentifier connectionIdentifier)
 
-DisableServiceWorkerProcessTerminationDelay()
+    DisableServiceWorkerProcessTerminationDelay()
 #endif
 }
