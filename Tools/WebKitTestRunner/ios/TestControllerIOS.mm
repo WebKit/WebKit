@@ -107,6 +107,7 @@ void TestController::platformResetStateToConsistentValues()
 
     [[UIDevice currentDevice] setOrientation:UIDeviceOrientationPortrait animated:NO];
     
+    BOOL shouldRestoreFirstResponder = NO;
     if (PlatformWebView* platformWebView = mainWebView()) {
         TestRunnerWKWebView *webView = platformWebView->platformView();
         webView._stableStateOverride = nil;
@@ -121,10 +122,13 @@ void TestController::platformResetStateToConsistentValues()
         [scrollView setContentOffset:CGPointZero];
 
         if (webView.interactingWithFormControl)
-            [webView resignFirstResponder];
+            shouldRestoreFirstResponder = [webView resignFirstResponder];
     }
 
     runUntil(isDoneWaitingForKeyboardToDismiss, m_currentInvocation->shortTimeout());
+
+    if (shouldRestoreFirstResponder)
+        [mainWebView()->platformView() becomeFirstResponder];
 }
 
 void TestController::platformConfigureViewForTest(const TestInvocation& test)

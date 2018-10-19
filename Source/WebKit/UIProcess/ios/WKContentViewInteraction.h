@@ -159,6 +159,7 @@ struct WKAutoCorrectionData {
 }
 
 @class WKFocusedElementInfo;
+@protocol WKFormControl;
 
 @interface WKFormInputSession : NSObject <_WKFormInputSession>
 
@@ -247,6 +248,11 @@ struct WKAutoCorrectionData {
 
     RetainPtr<WKKeyboardScrollViewAnimator> _keyboardScrollingAnimator;
 
+#if ENABLE(DATALIST_ELEMENT)
+    RetainPtr<UIView <WKFormControl>> _dataListTextSuggestionsInputView;
+    RetainPtr<NSArray<UITextSuggestion *>> _dataListTextSuggestions;
+#endif
+
     BOOL _isEditable;
     BOOL _showingTextStyleOptions;
     BOOL _hasValidPositionInformation;
@@ -310,6 +316,11 @@ struct WKAutoCorrectionData {
 @property (nonatomic, readonly) const WebKit::AssistedNodeInformation& assistedNodeInformation;
 @property (nonatomic, readonly) UIWebFormAccessory *formAccessoryView;
 @property (nonatomic) BOOL suppressAssistantSelectionView;
+
+#if ENABLE(DATALIST_ELEMENT)
+@property (nonatomic, strong) UIView <WKFormControl> *dataListTextSuggestionsInputView;
+@property (nonatomic, strong) NSArray<UITextSuggestion *> *dataListTextSuggestions;
+#endif
 
 - (void)setupInteraction;
 - (void)cleanupInteraction;
@@ -391,6 +402,10 @@ DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW(_pasteAsQuotation)
 #endif
 
 - (void)reloadContextViewForPresentedListViewController;
+
+#if ENABLE(DATALIST_ELEMENT)
+- (void)updateTextSuggestionsForInputDelegate;
+#endif
 
 @end
 

@@ -395,15 +395,11 @@ const CGFloat minimumTapHighlightRadius = 2.0;
 
 - (void)setSuggestions:(NSArray<UITextSuggestion *> *)suggestions
 {
-    // Suggestions that come from a <datalist> should not be overwritten by other clients.
-#if ENABLE(DATALIST_ELEMENT)
-    if ([_contentView assistedNodeInformation].hasSuggestions && ![suggestions.firstObject isKindOfClass:[WKDataListTextSuggestion class]])
+    if (suggestions == _suggestions || [suggestions isEqualToArray:_suggestions.get()])
         return;
-#endif
 
-    id <UITextInputSuggestionDelegate> suggestionDelegate = (id <UITextInputSuggestionDelegate>)[_contentView inputDelegate];
     _suggestions = adoptNS([suggestions copy]);
-    [suggestionDelegate setSuggestions:suggestions];
+    [_contentView updateTextSuggestionsForInputDelegate];
 }
 
 - (BOOL)requiresStrongPasswordAssistance
@@ -712,6 +708,11 @@ static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeI
     _needsDeferredEndScrollingSelectionUpdate = NO;
     _isChangingFocus = NO;
     _isBlurringFocusedNode = NO;
+
+#if ENABLE(DATALIST_ELEMENT)
+    _dataListTextSuggestionsInputView = nil;
+    _dataListTextSuggestions = nil;
+#endif
 }
 
 - (void)cleanupInteraction
@@ -807,6 +808,11 @@ static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeI
     
     [_keyboardScrollingAnimator invalidate];
     _keyboardScrollingAnimator = nil;
+
+#if ENABLE(DATALIST_ELEMENT)
+    _dataListTextSuggestionsInputView = nil;
+    _dataListTextSuggestions = nil;
+#endif
 }
 
 - (void)_removeDefaultGestureRecognizers
@@ -968,6 +974,15 @@ static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeI
     return YES;
 }
 
+- (void)_endEditing
+{
+    [_inputPeripheral endEditing];
+    [_formInputSession endEditing];
+#if ENABLE(DATALIST_ELEMENT)
+    [_dataListTextSuggestionsInputView controlEndEditing];
+#endif
+}
+
 - (BOOL)canBecomeFirstResponder
 {
     return _becomingFirstResponder;
@@ -1017,9 +1032,7 @@ static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeI
     _resigningFirstResponder = YES;
     if (!_webView._retainingActiveFocusedState) {
         // We need to complete the editing operation before we blur the element.
-        [_inputPeripheral endEditing];
-        [_formInputSession endEditing];
-
+        [self _endEditing];
         _page->blurAssistedNode();
     }
 
@@ -1362,7 +1375,15 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     } else
         [self _displayFormNodeInputView];
 
-    return [_formInputSession customInputView] ?: [_inputPeripheral assistantView];
+    if (UIView *customInputView = [_formInputSession customInputView])
+        return customInputView;
+
+#if ENABLE(DATALIST_ELEMENT)
+    if (_dataListTextSuggestionsInputView)
+        return _dataListTextSuggestionsInputView.get();
+#endif
+
+    return [_inputPeripheral assistantView];
 }
 
 - (CGRect)_selectionClipRect
@@ -3170,9 +3191,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)accessoryTab:(BOOL)isNext
 {
-    [_formInputSession endEditing];
-
-    [_inputPeripheral endEditing];
+    [self _endEditing];
     _inputPeripheral = nil;
 
     _didAccessoryTabInitiateFocus = YES; // Will be cleared in either -_displayFormNodeInputView or -cleanupInteraction.
@@ -4322,6 +4341,11 @@ static bool isAssistableInputType(InputType type)
     [_formInputSession invalidate];
     _formInputSession = nil;
 
+#if ENABLE(DATALIST_ELEMENT)
+    _dataListTextSuggestionsInputView = nil;
+    _dataListTextSuggestions = nil;
+#endif
+
     BOOL editableChanged = [self setIsEditable:NO];
 
     _assistedNodeInformation.elementType = InputType::None;
@@ -4738,6 +4762,62 @@ static bool isAssistableInputType(InputType type)
         [_textSelectionAssistant deactivateSelection];
     else
         [_textSelectionAssistant activateSelection];
+}
+
+#if ENABLE(DATALIST_ELEMENT)
+
+- (UIView <WKFormControl> *)dataListTextSuggestionsInputView
+{
+    return _dataListTextSuggestionsInputView.get();
+}
+
+- (NSArray<UITextSuggestion *> *)dataListTextSuggestions
+{
+    return _dataListTextSuggestions.get();
+}
+
+- (void)setDataListTextSuggestionsInputView:(UIView <WKFormControl> *)suggestionsInputView
+{
+    if (_dataListTextSuggestionsInputView == suggestionsInputView)
+        return;
+
+    _dataListTextSuggestionsInputView = suggestionsInputView;
+
+    if (![_formInputSession customInputView])
+        [self reloadInputViews];
+}
+
+- (void)setDataListTextSuggestions:(NSArray<UITextSuggestion *> *)textSuggestions
+{
+    if (textSuggestions == _dataListTextSuggestions || [textSuggestions isEqualToArray:_dataListTextSuggestions.get()])
+        return;
+
+    _dataListTextSuggestions = textSuggestions;
+
+    if (![_formInputSession suggestions].count)
+        [self updateTextSuggestionsForInputDelegate];
+}
+
+#endif
+
+- (void)updateTextSuggestionsForInputDelegate
+{
+    // Text suggestions vended from clients take precedence over text suggestions from a focused form control with a datalist.
+    id <UITextInputSuggestionDelegate> inputDelegate = (id <UITextInputSuggestionDelegate>)self.inputDelegate;
+    NSArray<UITextSuggestion *> *formInputSessionSuggestions = [_formInputSession suggestions];
+    if (formInputSessionSuggestions.count) {
+        [inputDelegate setSuggestions:formInputSessionSuggestions];
+        return;
+    }
+
+#if ENABLE(DATALIST_ELEMENT)
+    if ([_dataListTextSuggestions count]) {
+        [inputDelegate setSuggestions:_dataListTextSuggestions.get()];
+        return;
+    }
+#endif
+
+    [inputDelegate setSuggestions:nil];
 }
 
 - (void)_showPlaybackTargetPicker:(BOOL)hasVideo fromRect:(const IntRect&)elementRect routeSharingPolicy:(WebCore::RouteSharingPolicy)routeSharingPolicy routingContextUID:(NSString *)routingContextUID

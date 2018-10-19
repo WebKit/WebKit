@@ -89,6 +89,10 @@ void UIScriptController::zoomToScale(double scale, JSValueRef callback)
     });
 }
 
+void UIScriptController::resignFirstResponder()
+{
+}
+
 void UIScriptController::setViewScale(double)
 {
 }

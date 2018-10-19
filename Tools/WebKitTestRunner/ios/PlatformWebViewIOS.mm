@@ -286,8 +286,7 @@ void PlatformWebView::removeChromeInputField()
 
 void PlatformWebView::makeWebViewFirstResponder()
 {
-    // FIXME: iOS equivalent?
-    // [m_window makeFirstResponder:m_view];
+    [m_view becomeFirstResponder];
 }
 
 void PlatformWebView::changeWindowScaleIfNeeded(float)

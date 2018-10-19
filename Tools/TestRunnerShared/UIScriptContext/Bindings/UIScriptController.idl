@@ -219,6 +219,8 @@ interface UIScriptController {
 
     void setViewScale(double scale);
 
+    void resignFirstResponder();
+
     void scrollToOffset(long x, long y); // Initiate an animated scroll in the UI process.
     attribute object didEndScrollingCallback;
 

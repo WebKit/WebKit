@@ -42,4 +42,11 @@ void UIScriptController::setViewScale(double scale)
 #endif
 }
 
+void UIScriptController::resignFirstResponder()
+{
+#if WK_API_ENABLED
+    [TestController::singleton().mainWebView()->platformView() resignFirstResponder];
+#endif
+}
+
 } // namespace WTR

@@ -1,3 +1,26 @@
+2018-10-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] [Datalist] Can't pick datalist suggestions in a stock WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=190621
+        <rdar://problem/45310649>
+
+        Reviewed by Tim Horton.
+
+        Refactor an existing layout test to run on both iOS and macOS. On both platforms, it checks that the top
+        suggestion respects option element order in the document, as well as the current contents of the text field.
+        On macOS, we use arrow keys and hit return to select a suggestion; on iOS, we tap the suggestions button and
+        simulate hitting the done button on the input view to dismiss the keyboard.
+
+        * fast/forms/datalist/datalist-textinput-suggestions-order-expected.txt:
+        * fast/forms/datalist/datalist-textinput-suggestions-order.html:
+        * platform/ios/TestExpectations:
+
+        Enable this test on iOS.
+
+        * resources/ui-helper.js:
+        (window.UIHelper.resignFirstResponder):
+        (window.UIHelper):
+
 2018-10-19  John Wilander  <wilander@apple.com>
 
         Only cap lifetime of persistent cookies created client-side through document.cookie when resource load statistics is enabled

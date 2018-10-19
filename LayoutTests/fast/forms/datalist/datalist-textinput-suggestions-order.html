@@ -1,8 +1,18 @@
-<!DOCTYPE html>
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
 <html>
 <head>
-<script src="../../../resources/js-test-pre.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 <script src="../../../resources/ui-helper.js"></script>
+<style>
+input {
+    width: 300px;
+    height: 50px;
+}
+
+body {
+    margin: 0;
+}
+</style>
 </head>
 <body>
 
@@ -12,27 +22,52 @@
     <option>Pear</option>
     <option>Apple</option>
 </datalist>
+<pre>Top suggestion with empty text field: "<span id="first"></span>"</pre>
+<pre>Top suggestion with "a" in text field: "<span id="second"></span>"</pre>
+<br>
+<div>This test verifies that datalist suggestions in a text field are ordered in a way that respects the order of option
+elements in the document, as well as the contents of the text field. To test manually:</div>
+<ol>
+    <li>Focus the text field.</li>
+    <li>Check that "Orange" is the top suggestion.</li>
+    <li>Type "a" and blur the text field.</li>
+    <li>Focus the text field again.</li>
+    <li>Check that "Apple" is the top suggestion.</li>
+</ol>
 
 <script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
 
-description('Test to verify that prefix-matched values are displayed first');
+function focusInputFieldAndChooseFirstSuggestion()
+{
+    return new Promise(async resolve => {
+        await UIHelper.activateAndWaitForInputSessionAt(100, 25);
+        if (UIHelper.isIOS()) {
+            await UIHelper.tapAt(290, 30);
+            await UIHelper.resignFirstResponder();
+            await UIHelper.waitForKeyboardToHide();
+        } else {
+            await UIHelper.typeCharacter("downArrow");
+            await UIHelper.typeCharacter("\r");
+        }
+        resolve();
+    });
+}
 
-var input = document.getElementById("fruit");
+(async () => {
+    await focusInputFieldAndChooseFirstSuggestion();
+    first.textContent = fruit.value;
 
-UIHelper.activateElement(input);
-eventSender.keyDown("downArrow");
-eventSender.keyDown("\r");
-shouldBe('input.value', '"Orange"');
+    fruit.value = "a";
 
-input.value = "a";
+    await focusInputFieldAndChooseFirstSuggestion();
+    second.textContent = fruit.value;
 
-UIHelper.activateElement(input);
-eventSender.keyDown("downArrow");
-eventSender.keyDown("\r");
-shouldBe('input.value', '"Apple"');
-
+    testRunner.notifyDone();
+})();
 </script>
-
-<script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

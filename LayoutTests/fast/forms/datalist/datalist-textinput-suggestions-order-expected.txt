@@ -1,11 +1,10 @@
-Test to verify that prefix-matched values are displayed first
 
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+Top suggestion with empty text field: "Orange"
+Top suggestion with "a" in text field: "Apple"
 
-
-PASS input.value is "Orange"
-PASS input.value is "Apple"
-PASS successfullyParsed is true
-
-TEST COMPLETE
-
+This test verifies that datalist suggestions in a text field are ordered in a way that respects the order of option elements in the document, as well as the contents of the text field. To test manually:
+Focus the text field.
+Check that "Orange" is the top suggestion.
+Type "a" and blur the text field.
+Focus the text field again.
+Check that "Apple" is the top suggestion.

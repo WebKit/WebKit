@@ -68,6 +68,8 @@ public:
     void zoomToScale(double scale, JSValueRef callback);
     void setViewScale(double);
 
+    void resignFirstResponder();
+
     void simulateAccessibilitySettingsChangeNotification(JSValueRef callback);
 
     void touchDownAtPoint(long x, long y, long touchCount, JSValueRef callback);

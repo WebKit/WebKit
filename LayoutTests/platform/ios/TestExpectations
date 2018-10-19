@@ -3111,7 +3111,6 @@ fast/block/block-only/absolute-position-min-max-height.html [ Failure ]
 # Datalist
 webkit.org/b/186714 fast/forms/datalist/datalist-show-hide.html [ Skip ]
 webkit.org/b/186714 fast/forms/datalist/datalist-textinput-keydown.html [ Skip ]
-webkit.org/b/190621 fast/forms/datalist/datalist-textinput-suggestions-order.html [ Skip ]
 webkit.org/b/190613 fast/forms/datalist/update-range-with-datalist.html [ Skip ]
 
 # We are only accepting GLSL3 for macOS. 

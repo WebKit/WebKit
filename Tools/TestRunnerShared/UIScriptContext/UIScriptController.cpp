@@ -214,6 +214,10 @@ void UIScriptController::setViewScale(double)
 {
 }
 
+void UIScriptController::resignFirstResponder()
+{
+}
+
 void UIScriptController::simulateAccessibilitySettingsChangeNotification(JSValueRef)
 {
 }

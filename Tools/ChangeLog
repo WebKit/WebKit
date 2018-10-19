@@ -1,3 +1,34 @@
+2018-10-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] [Datalist] Can't pick datalist suggestions in a stock WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=190621
+        <rdar://problem/45310649>
+
+        Reviewed by Tim Horton.
+
+        Add a UIScriptController hook to resign first responder on WKWebView. See LayoutTests/ChangeLog for more detail.
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::resignFirstResponder):
+        * DumpRenderTree/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptController::resignFirstResponder):
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::resignFirstResponder):
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/UIScriptControllerCocoa.mm:
+        (WTR::UIScriptController::resignFirstResponder):
+        * WebKitTestRunner/ios/PlatformWebViewIOS.mm:
+        (WTR::PlatformWebView::makeWebViewFirstResponder):
+
+        Implement this method stub on iOS, to ensure that TestController::resetStateToConsistentValues restores first
+        responder on the WKWebView when running iOS layout tests.
+
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformResetStateToConsistentValues):
+
+        After resigning first responder to dismiss any on-screen keyboard, ensure that we restore first responder.
+
 2018-10-19  Dean Jackson  <dino@apple.com>
 
         ASSERTION FAILED: !frame().animation().hasAnimations() in WebCore::FrameView::didDestroyRenderTree()

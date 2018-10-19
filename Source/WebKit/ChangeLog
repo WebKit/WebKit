@@ -1,3 +1,70 @@
+2018-10-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] [Datalist] Can't pick datalist suggestions in a stock WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=190621
+        <rdar://problem/45310649>
+
+        Reviewed by Tim Horton.
+
+        Fixes the bug by refactoring datalist suggestion information on iOS; currently, we override text suggestions on
+        _WKFormInputSession. This only works for a few internal clients (including Safari) that set a _WKInputDelegate
+        and also implement either -_webView:willStartInputSession: or -_webView:didStartInputSession:, which is
+        necessary in order to ensure that WebKit creates and maintains a form input session.
+
+        The two pieces of information that datalist code needs to vend to WKContentView are a list of UITextSuggestions
+        and a custom input view, which are both currently properties of _WKFormInputSession. This patch lifts these out
+        of the input session and makes them properties of WKContentView, which are used in
+        WebDataListSuggestionsDropdownIOS.
+
+        Test: fast/forms/datalist/datalist-textinput-suggestions-order.html
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+
+        Add new properties to WKContentView: an input view for datalist suggestions, and a list of text suggestions.
+
+        (-[WKFormInputSession setSuggestions:]):
+        (-[WKContentView setupInteraction]):
+        (-[WKContentView cleanupInteraction]):
+        (-[WKContentView _endEditing]):
+
+        Pull out common logic when resigning first responder or tabbing to the next or previous text field into a new
+        helper. This helper notifies `_inputPeripheral`, `_formInputSession`, and `_dataListTextSuggestionsInputView`
+        when editing has ended; the input peripheral and suggestions input view use this chance to send the value of the
+        form control to the web process.
+
+        (-[WKContentView resignFirstResponderForWebView]):
+        (-[WKContentView inputView]):
+
+        If a custom input view is not set but we have an input view for a datalist's text suggestions, use the datalist
+        input view.
+
+        (-[WKContentView accessoryTab:]):
+        (-[WKContentView _stopAssistingNode]):
+
+        Clear datalist state on WKContentView.
+
+        (-[WKContentView dataListTextSuggestionsInputView]):
+        (-[WKContentView dataListTextSuggestions]):
+        (-[WKContentView setDataListTextSuggestionsInputView:]):
+        (-[WKContentView setDataListTextSuggestions:]):
+        (-[WKContentView updateTextSuggestionsForInputDelegate]):
+
+        Pull out logic for setting suggestions on UIKit's `inputDelegate` (i.e. UIKeyboardImpl). We now first consult
+        internally-vended text suggestions from _WKFormInputSession; if an internal client has not overridden our text
+        suggestions, then we simply use suggestions from the current datalist (if present).
+
+        * UIProcess/ios/WebDataListSuggestionsDropdownIOS.mm:
+        (-[WKDataListSuggestionsPicker updateWithInformation:]):
+        (-[WKDataListSuggestionsPicker showSuggestionsDropdown:activationType:]):
+        (-[WKDataListSuggestionsPicker invalidate]):
+        (-[WKDataListSuggestionsPopover updateWithInformation:]):
+        (-[WKDataListSuggestionsPopover showSuggestionsDropdown:activationType:]):
+        (-[WKDataListSuggestionsPopover didSelectOptionAtIndex:]):
+
+        Change all the places that currently manipulate WKContentView's form input session to directly set text
+        suggestions and the text suggestion input view on the content view instead.
+
 2018-10-19  John Wilander  <wilander@apple.com>
 
         Only cap lifetime of persistent cookies created client-side through document.cookie when resource load statistics is enabled
