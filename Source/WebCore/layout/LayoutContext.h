@@ -82,6 +82,7 @@ public:
     FormattingState& createFormattingStateForFormattingRootIfNeeded(const Box& formattingRoot);
 
     Display::Box& displayBoxForLayoutBox(const Box& layoutBox) const;
+    bool hasDisplayBox(const Box& layoutBox) const { return m_layoutToDisplayBox.contains(&layoutBox); }
 
     bool inQuirksMode() const { return m_inQuirksMode; }
     // For testing purposes only

@@ -28,6 +28,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "LayoutContainer.h"
 #include "RenderStyle.h"
 #include <wtf/IsoMallocInlines.h>
 

@@ -1,5 +1,45 @@
 2018-10-19  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Add generic inline line breaker
+        https://bugs.webkit.org/show_bug.cgi?id=190698
+
+        Reviewed by Antti Koivisto.
+
+        InlineLineBreaker takes the inline runs and applies the appropriate line breaking rules on them.
+        InlineRunProvider::Run objects ->
+
+            <foobar><image box><hello>< ><world>
+
+        InlineLineBreaker::Run ->
+
+            <foobar><image box><hello world>
+
+        InlineLineBreaker::Run also contains information whether the run is at the beginning or at the end of the line.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/LayoutContext.h:
+        (WebCore::Layout::LayoutContext::hasDisplayBox const):
+        * layout/inlineformatting/InlineLineBreaker.cpp: Added.
+        (WebCore::Layout::InlineLineBreaker::InlineLineBreaker):
+        (WebCore::Layout::InlineLineBreaker::nextLayoutRun):
+        (WebCore::Layout::InlineLineBreaker::isAtContentEnd const):
+        (WebCore::Layout::InlineLineBreaker::lineBreakingBehavior):
+        (WebCore::Layout::InlineLineBreaker::runWidth const):
+        (WebCore::Layout::InlineLineBreaker::splitRun):
+        (WebCore::Layout::InlineLineBreaker::adjustSplitPositionWithHyphenation const):
+        * layout/inlineformatting/InlineLineBreaker.h: Added.
+        * layout/inlineformatting/textlayout/TextUtil.cpp: Added.
+        (WebCore::Layout::TextUtil::TextUtil):
+        (WebCore::Layout::TextUtil::width const):
+        (WebCore::Layout::TextUtil::hyphenPositionBefore const):
+        (WebCore::Layout::TextUtil::textWidth const):
+        (WebCore::Layout::TextUtil::fixedPitchWidth const):
+        * layout/inlineformatting/textlayout/TextUtil.h: Added.
+        * layout/layouttree/LayoutBox.cpp:
+
+2018-10-19  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Add generic inline run generator.
         https://bugs.webkit.org/show_bug.cgi?id=190696
 
