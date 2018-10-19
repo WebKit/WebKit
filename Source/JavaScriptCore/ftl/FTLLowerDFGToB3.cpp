@@ -593,6 +593,9 @@ private:
         case ValueAdd:
             compileValueAdd();
             break;
+        case ValueSub:
+            compileValueSub();
+            break;
         case StrCat:
             compileStrCat();
             break;
@@ -1863,6 +1866,25 @@ private:
         auto repatchingFunction = operationValueAddOptimize;
         auto nonRepatchingFunction = operationValueAdd;
         compileBinaryMathIC<JITAddGenerator>(arithProfile, instruction, repatchingFunction, nonRepatchingFunction);
+    }
+
+    void compileValueSub()
+    {
+        if (m_node->isBinaryUseKind(BigIntUse)) {
+            LValue left = lowBigInt(m_node->child1());
+            LValue right = lowBigInt(m_node->child2());
+            
+            LValue result = vmCall(pointerType(), m_out.operation(operationSubBigInt), m_callFrame, left, right);
+            setJSValue(result);
+            return;
+        }
+
+        CodeBlock* baselineCodeBlock = m_ftlState.graph.baselineCodeBlockFor(m_node->origin.semantic);
+        ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(m_node->origin.semantic.bytecodeIndex);
+        Instruction* instruction = &baselineCodeBlock->instructions()[m_node->origin.semantic.bytecodeIndex];
+        auto repatchingFunction = operationValueSubOptimize;
+        auto nonRepatchingFunction = operationValueSub;
+        compileBinaryMathIC<JITSubGenerator>(arithProfile, instruction, repatchingFunction, nonRepatchingFunction);
     }
 
     template <typename Generator, typename Func1, typename Func2,

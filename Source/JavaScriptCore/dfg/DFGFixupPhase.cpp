@@ -98,7 +98,38 @@ private:
             // This gets handled by fixupGetAndSetLocalsInBlock().
             return;
         }
+
+        case ValueSub: {
+            Edge& child1 = node->child1();
+            Edge& child2 = node->child2();
+
+            if (Node::shouldSpeculateBigInt(child1.node(), child2.node())) {
+                fixEdge<BigIntUse>(child1);
+                fixEdge<BigIntUse>(child2);
+                break; 
+            }
             
+            if (Node::shouldSpeculateUntypedForArithmetic(node->child1().node(), node->child2().node())) {
+                fixEdge<UntypedUse>(child1);
+                fixEdge<UntypedUse>(child2);
+                break;
+            }
+
+            if (attemptToMakeIntegerAdd(node)) {
+                // FIXME: Clear ArithSub's NodeMustGenerate when ArithMode is unchecked
+                // https://bugs.webkit.org/show_bug.cgi?id=190607
+                node->setOp(ArithSub);
+                break;
+            }
+
+            fixDoubleOrBooleanEdge(node->child1());
+            fixDoubleOrBooleanEdge(node->child2());
+            node->setOp(ArithSub);
+            node->setResult(NodeResultDouble);
+
+            break;
+        }
+
         case ValueBitOr:
         case ValueBitAnd: {
             if (Node::shouldSpeculateBigInt(node->child1().node(), node->child2().node())) {
@@ -293,13 +324,8 @@ private:
             
         case ArithAdd:
         case ArithSub: {
-            if (op == ArithSub
-                && Node::shouldSpeculateUntypedForArithmetic(node->child1().node(), node->child2().node())) {
-                fixEdge<UntypedUse>(node->child1());
-                fixEdge<UntypedUse>(node->child2());
-                node->setResult(NodeResultJS);
-                break;
-            }
+            // FIXME: Clear ArithSub's NodeMustGenerate when ArithMode is unchecked
+            // https://bugs.webkit.org/show_bug.cgi?id=190607
             if (attemptToMakeIntegerAdd(node))
                 break;
             fixDoubleOrBooleanEdge(node->child1());

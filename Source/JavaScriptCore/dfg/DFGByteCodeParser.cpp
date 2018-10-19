@@ -4933,7 +4933,10 @@ void ByteCodeParser::parseBlock(unsigned limit)
         case op_sub: {
             Node* op1 = get(VirtualRegister(currentInstruction[2].u.operand));
             Node* op2 = get(VirtualRegister(currentInstruction[3].u.operand));
-            set(VirtualRegister(currentInstruction[1].u.operand), makeSafe(addToGraph(ArithSub, op1, op2)));
+            if (op1->hasNumberResult() && op2->hasNumberResult())
+                set(VirtualRegister(currentInstruction[1].u.operand), makeSafe(addToGraph(ArithSub, op1, op2)));
+            else
+                set(VirtualRegister(currentInstruction[1].u.operand), makeSafe(addToGraph(ValueSub, op1, op2)));
             NEXT_OPCODE(op_sub);
         }
 

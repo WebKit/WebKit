@@ -1344,6 +1344,7 @@ public:
 
     void compileArithDoubleUnaryOp(Node*, double (*doubleFunction)(double), double (*operation)(ExecState*, EncodedJSValue));
     void compileValueAdd(Node*);
+    void compileValueSub(Node*);
     void compileArithAdd(Node*);
     void compileMakeRope(Node*);
     void compileArithAbs(Node*);

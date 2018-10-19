@@ -1,3 +1,54 @@
+2018-10-19  Caio Lima  <ticaiolima@gmail.com>
+
+        [BigInt] Add ValueSub into DFG
+        https://bugs.webkit.org/show_bug.cgi?id=186176
+
+        Reviewed by Yusuke Suzuki.
+
+        We are introducing in this patch a new node called ValueSub. This node
+        is necessary due to introduction of BigInt, making subtraction
+        operations result in non-Number values in some cases. In such case, ValueSub is
+        responsible to handle Untyped and BigInt operations.
+        In addition, we are also creating a speculative path when both
+        operands are BigInt. According to a simple BigInt subtraction microbenchmark,
+        this represents a speedup of ~1.2x faster.
+
+        big-int-simple-sub    14.6427+-0.5652    ^    11.9559+-0.6485   ^   definitely 1.2247x faster
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::addSpeculationMode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileValueSub):
+        (JSC::DFG::SpeculativeJIT::compileArithSub):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGValidate.cpp:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueAdd):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueSub):
+
 2018-10-18  Alexey Proskuryakov  <ap@apple.com>
 
         Switch from PLATFORM(IOS) to PLATFORM(IOS_FAMILY)

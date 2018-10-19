@@ -1,3 +1,15 @@
+2018-10-19  Caio Lima  <ticaiolima@gmail.com>
+
+        [BigInt] Add ValueSub into DFG
+        https://bugs.webkit.org/show_bug.cgi?id=186176
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/big-int-subtraction-jit.js:
+        * stress/value-sub-big-int-prediction-propagation.js: Added.
+        * stress/value-sub-big-int-untyped.js: Added.
+        * stress/value-sub-spec-none-case.js: Added.
+
 2018-10-18  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] JSC should have "parseFunction" to optimize Function constructor
