@@ -1,3 +1,32 @@
+2018-10-19  Alex Christensen  <achristensen@webkit.org>
+
+        WebDataListSuggestionsDropdown should use a WeakPtr
+        https://bugs.webkit.org/show_bug.cgi?id=190763
+        <rdar://problem/45417449>
+
+        Reviewed by Tim Horton.
+
+        Nothing suspicious here. It's just good practice to not keep raw pointers that aren't reset when the object they point to are destroyed.
+
+        * UIProcess/WebDataListSuggestionsDropdown.cpp:
+        (WebKit::WebDataListSuggestionsDropdown::WebDataListSuggestionsDropdown):
+        (WebKit::WebDataListSuggestionsDropdown::close):
+        * UIProcess/WebDataListSuggestionsDropdown.h:
+        (WebKit::WebDataListSuggestionsDropdown::Client::~Client): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WebDataListSuggestionsDropdownIOS.h:
+        * UIProcess/ios/WebDataListSuggestionsDropdownIOS.mm:
+        (WebKit::WebDataListSuggestionsDropdownIOS::create):
+        (WebKit::WebDataListSuggestionsDropdownIOS::WebDataListSuggestionsDropdownIOS):
+        (WebKit::WebDataListSuggestionsDropdownIOS::close):
+        (WebKit::WebDataListSuggestionsDropdownIOS::didSelectOption):
+        * UIProcess/mac/WebDataListSuggestionsDropdownMac.h:
+        * UIProcess/mac/WebDataListSuggestionsDropdownMac.mm:
+        (WebKit::WebDataListSuggestionsDropdownMac::create):
+        (WebKit::WebDataListSuggestionsDropdownMac::WebDataListSuggestionsDropdownMac):
+        (WebKit::WebDataListSuggestionsDropdownMac::didSelectOption):
+        (WebKit::WebDataListSuggestionsDropdownMac::selectOption):
+
 2018-10-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] [Datalist] Can't pick datalist suggestions in a stock WKWebView

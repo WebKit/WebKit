@@ -36,13 +36,13 @@ namespace WebKit {
 
 class WebDataListSuggestionsDropdownMac final : public WebDataListSuggestionsDropdown {
 public:
-    static Ref<WebDataListSuggestionsDropdownMac> create(WebDataListSuggestionsDropdown::Client&, NSView *);
+    static Ref<WebDataListSuggestionsDropdownMac> create(WebPageProxy&, NSView *);
     ~WebDataListSuggestionsDropdownMac();
 
     void didSelectOption(const String&);
 
 private:
-    WebDataListSuggestionsDropdownMac(WebDataListSuggestionsDropdown::Client&, NSView *);
+    WebDataListSuggestionsDropdownMac(WebPageProxy&, NSView *);
 
     void show(WebCore::DataListSuggestionInformation&&) final;
     void handleKeydownWithIdentifier(const String&) final;

@@ -84,15 +84,15 @@ static NSString * const suggestionCellReuseIdentifier = @"WKDataListSuggestionCe
 
 namespace WebKit {
 
-Ref<WebDataListSuggestionsDropdownMac> WebDataListSuggestionsDropdownMac::create(WebDataListSuggestionsDropdown::Client& client, NSView *view)
+Ref<WebDataListSuggestionsDropdownMac> WebDataListSuggestionsDropdownMac::create(WebPageProxy& page, NSView *view)
 {
-    return adoptRef(*new WebDataListSuggestionsDropdownMac(client, view));
+    return adoptRef(*new WebDataListSuggestionsDropdownMac(page, view));
 }
 
 WebDataListSuggestionsDropdownMac::~WebDataListSuggestionsDropdownMac() { }
 
-WebDataListSuggestionsDropdownMac::WebDataListSuggestionsDropdownMac(WebDataListSuggestionsDropdown::Client& client, NSView *view)
-    : WebDataListSuggestionsDropdown(client)
+WebDataListSuggestionsDropdownMac::WebDataListSuggestionsDropdownMac(WebPageProxy& page, NSView *view)
+    : WebDataListSuggestionsDropdown(page)
     , m_view(view)
 {
 }
@@ -110,21 +110,21 @@ void WebDataListSuggestionsDropdownMac::show(WebCore::DataListSuggestionInformat
 
 void WebDataListSuggestionsDropdownMac::didSelectOption(const String& selectedOption)
 {
-    if (!m_client)
+    if (!m_page)
         return;
 
-    m_client->didSelectOption(selectedOption);
+    m_page->didSelectOption(selectedOption);
     close();
 }
 
 void WebDataListSuggestionsDropdownMac::selectOption()
 {
-    if (!m_client)
+    if (!m_page)
         return;
 
     String selectedOption = [m_dropdownUI currentSelectedString];
     if (!selectedOption.isNull())
-        m_client->didSelectOption(selectedOption);
+        m_page->didSelectOption(selectedOption);
 
     close();
 }

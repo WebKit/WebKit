@@ -30,8 +30,8 @@
 
 namespace WebKit {
 
-WebDataListSuggestionsDropdown::WebDataListSuggestionsDropdown(Client& client)
-    : m_client(&client)
+WebDataListSuggestionsDropdown::WebDataListSuggestionsDropdown(WebPageProxy& page)
+    : m_page(makeWeakPtr(page))
 {
 }
 
@@ -41,8 +41,8 @@ WebDataListSuggestionsDropdown::~WebDataListSuggestionsDropdown()
 
 void WebDataListSuggestionsDropdown::close()
 {
-    m_client->didCloseSuggestions();
-    m_client = nullptr;
+    if (auto page = std::exchange(m_page, nullptr))
+        page->didCloseSuggestions();
 }
 
 } // namespace WebKit

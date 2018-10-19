@@ -30,20 +30,14 @@
 #include <WebCore/DataListSuggestionPicker.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebKit {
 
+class WebPageProxy;
+
 class WebDataListSuggestionsDropdown : public RefCounted<WebDataListSuggestionsDropdown> {
 public:
-    class Client {
-    protected:
-        virtual ~Client() { }
-
-    public:
-        virtual void didSelectOption(const String&) = 0;
-        virtual void didCloseSuggestions() = 0;
-    };
-
     virtual ~WebDataListSuggestionsDropdown();
 
     virtual void show(WebCore::DataListSuggestionInformation&&) = 0;
@@ -51,9 +45,9 @@ public:
     virtual void close();
 
 protected:
-    explicit WebDataListSuggestionsDropdown(Client&);
+    explicit WebDataListSuggestionsDropdown(WebPageProxy&);
 
-    Client* m_client;
+    WeakPtr<WebPageProxy> m_page;
 };
 
 } // namespace WebKit

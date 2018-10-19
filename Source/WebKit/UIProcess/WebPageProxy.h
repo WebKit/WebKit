@@ -333,9 +333,6 @@ class WebPageProxy : public API::ObjectImpl<API::Object::Type::Page>
 #if ENABLE(INPUT_TYPE_COLOR)
     , public WebColorPicker::Client
 #endif
-#if ENABLE(DATALIST_ELEMENT)
-    , public WebDataListSuggestionsDropdown::Client
-#endif
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
     , public WebCore::WebMediaSessionManagerClient
 #endif
@@ -1364,6 +1361,11 @@ public:
     Vector<String> mediaMIMETypes();
 #endif
 
+#if ENABLE(DATALIST_ELEMENT)
+    void didSelectOption(const String&);
+    void didCloseSuggestions();
+#endif
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, uint64_t pageID, Ref<API::PageConfiguration>&&);
     void platformInitialize();
@@ -1551,8 +1553,6 @@ private:
     void showDataListSuggestions(WebCore::DataListSuggestionInformation&&);
     void handleKeydownInDataList(const String&);
     void endDataListSuggestions();
-    void didSelectOption(const String&) final;
-    void didCloseSuggestions() final;
 #endif
 
     void closeOverlayedViews();

@@ -32,6 +32,7 @@
 #import "WKContentViewInteraction.h"
 #import "WKFormPeripheral.h"
 #import "WKFormPopover.h"
+#import "WebPageProxy.h"
 
 static const CGFloat maxVisibleSuggestions = 5;
 static const CGFloat suggestionsPopoverCellHeight = 44;
@@ -80,13 +81,13 @@ static NSString * const suggestionCellReuseIdentifier = @"WKDataListSuggestionCe
 
 namespace WebKit {
 
-Ref<WebDataListSuggestionsDropdownIOS> WebDataListSuggestionsDropdownIOS::create(WebDataListSuggestionsDropdown::Client& client, WKContentView *view)
+Ref<WebDataListSuggestionsDropdownIOS> WebDataListSuggestionsDropdownIOS::create(WebPageProxy& page, WKContentView *view)
 {
-    return adoptRef(*new WebDataListSuggestionsDropdownIOS(client, view));
+    return adoptRef(*new WebDataListSuggestionsDropdownIOS(page, view));
 }
 
-WebDataListSuggestionsDropdownIOS::WebDataListSuggestionsDropdownIOS(WebDataListSuggestionsDropdown::Client& client, WKContentView *view)
-    : WebDataListSuggestionsDropdown(client)
+WebDataListSuggestionsDropdownIOS::WebDataListSuggestionsDropdownIOS(WebPageProxy& page, WKContentView *view)
+    : WebDataListSuggestionsDropdown(page)
     , m_contentView(view)
 {
 }
@@ -116,15 +117,15 @@ void WebDataListSuggestionsDropdownIOS::close()
 {
     [m_suggestionsControl invalidate];
     m_suggestionsControl = nil;
-    m_client->didCloseSuggestions();
+    m_page->didCloseSuggestions();
 }
 
 void WebDataListSuggestionsDropdownIOS::didSelectOption(const String& selectedOption)
 {
-    if (!m_client)
+    if (!m_page)
         return;
 
-    m_client->didSelectOption(selectedOption);
+    m_page->didSelectOption(selectedOption);
     close();
 }
 
