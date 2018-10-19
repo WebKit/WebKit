@@ -83,23 +83,25 @@ void TreeBuilder::createSubTree(const RenderElement& rootRenderer, Container& ro
     };
 
     for (auto& child : childrenOfType<RenderObject>(rootRenderer)) {
-        Box* box = nullptr;
+        std::unique_ptr<Box> box;
 
-        if (is<RenderElement>(child)) {
+        if (is<RenderText>(child)) {
+            box = std::make_unique<InlineBox>(std::optional<Box::ElementAttributes>(), RenderStyle::createAnonymousStyleWithDisplay(rootRenderer.style(), DisplayType::Inline));
+            downcast<InlineBox>(*box).setTextContent(downcast<RenderText>(child).originalText());
+        } else if (is<RenderReplaced>(child)) {
+            auto& renderer = downcast<RenderReplaced>(child);
+            box = std::make_unique<InlineBox>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
+        } else if (is<RenderElement>(child)) {
             auto& renderer = downcast<RenderElement>(child);
             auto display = renderer.style().display();
             if (display == DisplayType::Block)
-                box = new BlockContainer(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
+                box = std::make_unique<BlockContainer>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
             else if (display == DisplayType::Inline)
-                box = new InlineContainer(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
+                box = std::make_unique<InlineContainer>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
             else {
                 ASSERT_NOT_IMPLEMENTED_YET();
                 continue;
             }
-
-        } else if (is<RenderText>(child)) {
-            box = new InlineBox( { }, RenderStyle::createAnonymousStyleWithDisplay(rootRenderer.style(), DisplayType::Inline));
-            downcast<InlineBox>(*box).setTextContent(downcast<RenderText>(child).originalText());
         } else {
             ASSERT_NOT_IMPLEMENTED_YET();
             continue;
@@ -123,8 +125,10 @@ void TreeBuilder::createSubTree(const RenderElement& rootRenderer, Container& ro
             auto& containingBlockFormattingContextRoot = box->containingBlock()->formattingContextRoot();
             const_cast<Container&>(containingBlockFormattingContextRoot).addOutOfFlowDescendant(*box);
         }
-        if (is<RenderElement>(child))
+        if (is<Container>(*box))
             createSubTree(downcast<RenderElement>(child), downcast<Container>(*box));
+        // Temporary
+        box.release();
     }
 }
 

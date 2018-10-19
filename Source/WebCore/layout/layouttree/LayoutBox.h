@@ -42,8 +42,32 @@ class TreeBuilder;
 class Box : public CanMakeWeakPtr<Box> {
     WTF_MAKE_ISO_ALLOCATED(Box);
 public:
-    friend class TreeBuilder;
+    enum class ElementType {
+        Document,
+        Body,
+        TableColumn,
+        TableRow,
+        TableColumnGroup,
+        TableRowGroup,
+        TableHeaderGroup,
+        TableFooterGroup,
+        GenericElement
+    };
 
+    struct ElementAttributes {
+        ElementType elementType;
+    };
+
+    enum BaseTypeFlag {
+        ContainerFlag         = 1 << 0,
+        BlockContainerFlag    = 1 << 1,
+        InlineBoxFlag         = 1 << 2,
+        InlineContainerFlag   = 1 << 3,
+        LineBreakBoxFlag      = 1 << 4
+    };
+    typedef unsigned BaseTypeFlags;
+
+    Box(std::optional<ElementAttributes>, RenderStyle&&, BaseTypeFlags);
     virtual ~Box();
 
     bool establishesFormattingContext() const;
@@ -91,7 +115,6 @@ public:
     const Box* previousInFlowSibling() const;
     const Box* previousInFlowOrFloatingSibling() const;
 
-    typedef unsigned BaseTypeFlags;
     bool isContainer() const { return m_baseTypeFlags & ContainerFlag; }
     bool isBlockContainer() const { return m_baseTypeFlags & BlockContainerFlag; }
     bool isInlineBox() const { return m_baseTypeFlags & InlineBoxFlag; }
@@ -105,37 +128,11 @@ public:
 
     std::optional<const Replaced> replaced() const { return m_replaced; }
 
-protected:
-    enum class ElementType {
-        Document,
-        Body,
-        TableColumn,
-        TableRow,
-        TableColumnGroup,
-        TableRowGroup,
-        TableHeaderGroup,
-        TableFooterGroup,
-        GenericElement
-    };
-
-    struct ElementAttributes {
-        ElementType elementType;
-    };
-
-    enum BaseTypeFlag {
-        ContainerFlag         = 1 << 0,
-        BlockContainerFlag    = 1 << 1,
-        InlineBoxFlag         = 1 << 2,
-        InlineContainerFlag   = 1 << 3,
-        LineBreakBoxFlag      = 1 << 4
-    };
-    Box(std::optional<ElementAttributes>, RenderStyle&&, BaseTypeFlags);
-
-private:
     void setParent(Container& parent) { m_parent = &parent; }
     void setNextSibling(Box& nextSibling) { m_nextSibling = &nextSibling; }
     void setPreviousSibling(Box& previousSibling) { m_previousSibling = &previousSibling; }
 
+private:
     RenderStyle m_style;
     std::optional<ElementAttributes> m_elementAttributes;
 
