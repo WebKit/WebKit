@@ -5879,8 +5879,6 @@
 		11CB2787203BA570004A1DC9 /* RenderTreeBuilderFullScreen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderTreeBuilderFullScreen.h; sourceTree = "<group>"; };
 		11E067EB1E62461300162D16 /* SimpleLineLayoutCoverage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleLineLayoutCoverage.cpp; sourceTree = "<group>"; };
 		11E067ED1E6246E500162D16 /* SimpleLineLayoutCoverage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleLineLayoutCoverage.h; sourceTree = "<group>"; };
-		11EA57FB20FFAFB600311EBB /* SimpleTextRunGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleTextRunGenerator.cpp; sourceTree = "<group>"; };
-		11EA57FC20FFAFB700311EBB /* SimpleTextRunGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleTextRunGenerator.h; sourceTree = "<group>"; };
 		11FF02D520BA3C810083F25B /* Verification.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Verification.cpp; sourceTree = "<group>"; };
 		12F75A9A86EA03DAF24B7971 /* ISOProtectionSystemSpecificHeaderBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISOProtectionSystemSpecificHeaderBox.h; sourceTree = "<group>"; };
 		1400D7A717136EA70077CE05 /* ScriptWrappableInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptWrappableInlines.h; sourceTree = "<group>"; };
@@ -9079,8 +9077,6 @@
 		6F7CA3C5208C2956002F29AB /* LayoutContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutContext.cpp; sourceTree = "<group>"; };
 		6F7CA3C8208C2B2E002F29AB /* InlineFormattingContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InlineFormattingContext.h; sourceTree = "<group>"; };
 		6F7CA3C9208C2B2E002F29AB /* InlineFormattingContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InlineFormattingContext.cpp; sourceTree = "<group>"; };
-		6F8304C920FBA5E1004AD5D1 /* SimpleLineBreaker.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleLineBreaker.cpp; sourceTree = "<group>"; };
-		6F8304CA20FBA5E1004AD5D1 /* SimpleLineBreaker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SimpleLineBreaker.h; sourceTree = "<group>"; };
 		6F995A091A7070E600A735F4 /* WebGLQuery.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGLQuery.idl; sourceTree = "<group>"; };
 		6F995A0A1A7070E600A735F4 /* WebGLSampler.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGLSampler.idl; sourceTree = "<group>"; };
 		6F995A0B1A7070E600A735F4 /* WebGLSync.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGLSync.idl; sourceTree = "<group>"; };
@@ -9109,9 +9105,6 @@
 		6FB11B5921783FCF00E2A574 /* TextUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextUtil.h; sourceTree = "<group>"; };
 		6FB11B5B21783FCF00E2A574 /* TextUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextUtil.cpp; sourceTree = "<group>"; };
 		6FBB860520B464B600DAD938 /* FormattingContextGeometry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FormattingContextGeometry.cpp; sourceTree = "<group>"; };
-		6FCD19C120F9727A00FD4529 /* TextContentProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextContentProvider.h; sourceTree = "<group>"; };
-		6FCD19C720F9727D00FD4529 /* TextContentProvider.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TextContentProvider.cpp; sourceTree = "<group>"; };
-		6FCF975220F02B3500214960 /* Runs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Runs.h; sourceTree = "<group>"; };
 		6FE198132178397B00446F08 /* InlineLineBreaker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InlineLineBreaker.cpp; sourceTree = "<group>"; };
 		6FE198152178397C00446F08 /* InlineLineBreaker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineLineBreaker.h; sourceTree = "<group>"; };
 		6FE7CFA02177EEF1005B1573 /* InlineItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineItem.h; sourceTree = "<group>"; };
@@ -16059,11 +16052,7 @@
 		115CFA9A208BC140001E6991 /* inlineformatting */ = {
 			isa = PBXGroup;
 			children = (
-				6F219D742178D37100BB033C /* InlineRun.h */,
-				6F219D762178D37100BB033C /* Line.cpp */,
-				6FE198132178397B00446F08 /* InlineLineBreaker.cpp */,
-				6FE198152178397C00446F08 /* InlineLineBreaker.h */,
-				6FE7DDDD20EC6E8B008B5B4E /* textlayout */,
+				6FE7DDDD20EC6E8B008B5B4E /* text */,
 				6F7CA3C9208C2B2E002F29AB /* InlineFormattingContext.cpp */,
 				6F7CA3C8208C2B2E002F29AB /* InlineFormattingContext.h */,
 				115CFA7D208B8E10001E6991 /* InlineFormattingState.cpp */,
@@ -16071,8 +16060,12 @@
 				1123AFDD209ABBBA00736ACC /* InlineInvalidation.cpp */,
 				1123AFDC209ABBBA00736ACC /* InlineInvalidation.h */,
 				6FE7CFA02177EEF1005B1573 /* InlineItem.h */,
+				6FE198132178397B00446F08 /* InlineLineBreaker.cpp */,
+				6FE198152178397C00446F08 /* InlineLineBreaker.h */,
+				6F219D742178D37100BB033C /* InlineRun.h */,
 				6F5217C62177F5A6006583BB /* InlineRunProvider.cpp */,
 				6F5217C42177F5A6006583BB /* InlineRunProvider.h */,
+				6F219D762178D37100BB033C /* Line.cpp */,
 			);
 			path = inlineformatting;
 			sourceTree = "<group>";
@@ -19916,17 +19909,6 @@
 			tabWidth = 4;
 			usesTabs = 0;
 		};
-		6F13A12320F9949C001C025A /* simple */ = {
-			isa = PBXGroup;
-			children = (
-				6F8304C920FBA5E1004AD5D1 /* SimpleLineBreaker.cpp */,
-				6F8304CA20FBA5E1004AD5D1 /* SimpleLineBreaker.h */,
-				11EA57FB20FFAFB600311EBB /* SimpleTextRunGenerator.cpp */,
-				11EA57FC20FFAFB700311EBB /* SimpleTextRunGenerator.h */,
-			);
-			path = simple;
-			sourceTree = "<group>";
-		};
 		6FCFC055212DACC2007695D2 /* floats */ = {
 			isa = PBXGroup;
 			children = (
@@ -19942,17 +19924,13 @@
 			path = floats;
 			sourceTree = "<group>";
 		};
-		6FE7DDDD20EC6E8B008B5B4E /* textlayout */ = {
+		6FE7DDDD20EC6E8B008B5B4E /* text */ = {
 			isa = PBXGroup;
 			children = (
 				6FB11B5B21783FCF00E2A574 /* TextUtil.cpp */,
 				6FB11B5921783FCF00E2A574 /* TextUtil.h */,
-				6F13A12320F9949C001C025A /* simple */,
-				6FCF975220F02B3500214960 /* Runs.h */,
-				6FCD19C720F9727D00FD4529 /* TextContentProvider.cpp */,
-				6FCD19C120F9727A00FD4529 /* TextContentProvider.h */,
 			);
-			path = textlayout;
+			path = text;
 			sourceTree = "<group>";
 		};
 		71025EC11F99F096004A250C /* animation */ = {
@@ -28845,6 +28823,8 @@
 				11310CF820BA4A6A0065A8D0 /* InlineInvalidation.h in Headers */,
 				6FE7CFA22177EEF2005B1573 /* InlineItem.h in Headers */,
 				BCE789161120D6080060ECE5 /* InlineIterator.h in Headers */,
+				6FE198172178397C00446F08 /* InlineLineBreaker.h in Headers */,
+				6F219D772178D37200BB033C /* InlineRun.h in Headers */,
 				6F5217C72177F5A7006583BB /* InlineRunProvider.h in Headers */,
 				AA4C3A770B2B1679002334A2 /* InlineStyleSheetOwner.h in Headers */,
 				BCEA485A097D93020094C9E4 /* InlineTextBox.h in Headers */,
@@ -29504,7 +29484,6 @@
 				A84EBD830CB8C97700079609 /* JSStyleSheetList.h in Headers */,
 				571F21891DA57C54005C9EFD /* JSSubtleCrypto.h in Headers */,
 				B20111080AB7740500DB0E68 /* JSSVGAElement.h in Headers */,
-				6FB11B5C21783FD000E2A574 /* TextUtil.h in Headers */,
 				24D9129213CA951E00D21915 /* JSSVGAltGlyphDefElement.h in Headers */,
 				6515EC920D9723FF0063D49A /* JSSVGAltGlyphElement.h in Headers */,
 				24D9129613CA956100D21915 /* JSSVGAltGlyphItemElement.h in Headers */,
@@ -30153,7 +30132,6 @@
 				A88DD4870B4629A300C02990 /* PathTraversalState.h in Headers */,
 				2D5002FC1B56D7990020AAF7 /* PathUtilities.h in Headers */,
 				A8FA6E5D0E4CFDED00D5CF49 /* Pattern.h in Headers */,
-				6FE198172178397C00446F08 /* InlineLineBreaker.h in Headers */,
 				B22279710D00BF220071B782 /* PatternAttributes.h in Headers */,
 				A1677E08213E024C00A08C34 /* PayerErrorFields.h in Headers */,
 				1A8A643A1D19FC5300D0E00F /* Payment.h in Headers */,
@@ -30458,7 +30436,6 @@
 				A10BB5851484E3A700B2E87A /* RenderSVGRect.h in Headers */,
 				436708CD12D9CA4B00044234 /* RenderSVGResource.h in Headers */,
 				436708CF12D9CA4B00044234 /* RenderSVGResourceClipper.h in Headers */,
-				6F219D772178D37200BB033C /* InlineRun.h in Headers */,
 				436708D112D9CA4B00044234 /* RenderSVGResourceContainer.h in Headers */,
 				436708D312D9CA4B00044234 /* RenderSVGResourceFilter.h in Headers */,
 				436708D512D9CA4B00044234 /* RenderSVGResourceFilterPrimitive.h in Headers */,
@@ -31221,6 +31198,7 @@
 				29FAF4B6195AB08900A522DC /* TextUndoInsertionMarkupMac.h in Headers */,
 				498770F11242C535002226BA /* Texture.h in Headers */,
 				CD9D82761C7AE535006FF066 /* TextureCacheCV.h in Headers */,
+				6FB11B5C21783FD000E2A574 /* TextUtil.h in Headers */,
 				BCE658FF0EA9248A007E4533 /* Theme.h in Headers */,
 				310D71961B335C9E009C7B73 /* ThemeCocoa.h in Headers */,
 				44C9919F0F3D210E00586670 /* ThemeIOS.h in Headers */,

@@ -1262,10 +1262,7 @@ layout/inlineformatting/InlineInvalidation.cpp
 layout/inlineformatting/InlineLineBreaker.cpp
 layout/inlineformatting/InlineRunProvider.cpp
 layout/inlineformatting/Line.cpp
-layout/inlineformatting/textlayout/TextContentProvider.cpp
-layout/inlineformatting/textlayout/TextUtil.cpp
-layout/inlineformatting/textlayout/simple/SimpleTextRunGenerator.cpp
-layout/inlineformatting/textlayout/simple/SimpleLineBreaker.cpp
+layout/inlineformatting/text/TextUtil.cpp
 layout/layouttree/LayoutBlockContainer.cpp
 layout/layouttree/LayoutBox.cpp
 layout/layouttree/LayoutContainer.cpp
