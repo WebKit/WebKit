@@ -1,3 +1,16 @@
+2018-10-19  Brent Fulgham  <bfulgham@apple.com>
+
+        Allow WebContent process to check some file system features
+        https://bugs.webkit.org/show_bug.cgi?id=190768
+        <rdar://problem/45377609>
+
+        Reviewed by Alexey Proskuryakov.
+
+        This patch unblocks some IOKit properties that are needed by lower level frameworks to make decisions
+        about how to efficiently use the file system.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2018-10-19  Stephan Szabo  <stephan.szabo@sony.com>
 
         [WinCairo] Search terms are not saved for <input type="search">
