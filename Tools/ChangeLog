@@ -1,3 +1,17 @@
+2018-10-19  Dan Bernstein  <mitz@apple.com>
+
+        [macOS] MiniBrowser has an unused injected bundle
+        https://bugs.webkit.org/show_bug.cgi?id=190770
+
+        Reviewed by Tim Horton.
+
+        * MiniBrowser/Configurations/MiniBrowserBundle.xcconfig: Removed.
+        * MiniBrowser/MiniBrowser.xcodeproj/project.pbxproj: Removed the MiniBrowserBundle target,
+          the Copy Bundle build phase in the MiniBrowser target, and references to removed files.
+        * MiniBrowser/MiniBrowserWebProcessPlugIn.h: Removed.
+        * MiniBrowser/MiniBrowserWebProcessPlugIn.m: Removed.
+        * MiniBrowser/mac/Bundle: Removed.
+
 2018-10-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] [Datalist] Can't pick datalist suggestions in a stock WKWebView
