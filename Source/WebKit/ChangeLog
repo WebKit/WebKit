@@ -1,3 +1,23 @@
+2018-10-19  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [WinCairo] Search terms are not saved for <input type="search">
+        https://bugs.webkit.org/show_bug.cgi?id=188174
+
+        Reviewed by Fujii Hironori.
+
+        Add support for saving the search terms for <input
+        type="search"> to a SQLite database, replacing the
+        CF-based implementation for Windows and adding support
+        for non-legacy WebKit.
+
+        * UIProcess/win/WebPageProxyWin.cpp:
+        (WebKit::WebPageProxy::saveRecentSearches): Use SQLite database
+        implementation in WebCore::SearchPopupMenuDB to save search
+        terms
+        (WebKit::WebPageProxy::loadRecentSearches): Use SQLite database
+        implementation in WebCore::SearchPopupMenuDB to load search
+        terms
+
 2018-10-19  Alex Christensen  <achristensen@webkit.org>
 
         WebDataListSuggestionsDropdown should use a WeakPtr

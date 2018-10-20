@@ -1,3 +1,47 @@
+2018-10-19  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [WinCairo] Search terms are not saved for <input type="search">
+        https://bugs.webkit.org/show_bug.cgi?id=188174
+
+        Reviewed by Fujii Hironori.
+
+        No new tests, should be covered by existing tests of search 
+        inputs.
+
+        Add support for saving the search terms for <input
+        type="search"> to a SQLite database, replacing the
+        CF-based implementation for Windows and adding support
+        for non-legacy WebKit.
+
+        * PlatformWin.cmake:
+        * platform/win/SearchPopupMenuDB.cpp: Added.
+        (WebCore::SearchPopupMenuDB::singleton):
+        (WebCore::SearchPopupMenuDB::SearchPopupMenuDB):
+        (WebCore::SearchPopupMenuDB::~SearchPopupMenuDB):
+        (WebCore::SearchPopupMenuDB::saveRecentSearches):
+        (WebCore::SearchPopupMenuDB::loadRecentSearches):
+        (WebCore::SearchPopupMenuDB::checkDatabaseValidity): Use
+        quick_check pragma to test database status.
+        (WebCore::SearchPopupMenuDB::deleteAllDatabaseFiles):
+        (WebCore::SearchPopupMenuDB::openDatabase):
+        (WebCore::SearchPopupMenuDB::closeDatabase):
+        (WebCore::SearchPopupMenuDB::verifySchemaVersion): Check
+        schema version and update for schema changes.
+        (WebCore::SearchPopupMenuDB::checkSQLiteReturnCode): Check
+        for error codes that indicate database errors and remove and
+        recreate the database.
+        (WebCore::SearchPopupMenuDB::executeSimpleSql):
+        (WebCore::SearchPopupMenuDB::createPreparedStatement):
+        * platform/win/SearchPopupMenuDB.h: Added.
+        * platform/win/SearchPopupMenuWin.cpp:
+        (WebCore::SearchPopupMenuWin::enabled): Always enable support
+        for search term popup
+        (WebCore::SearchPopupMenuWin::saveRecentSearches): Switch from
+        CF implementation to SQLite database implementation
+        (WebCore::SearchPopupMenuWin::loadRecentSearches): Switch from
+        CF implementation to SQLite database implementation
+        (WebCore::autosaveKey): Deleted.
+
 2018-10-19  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Add stubs for WebGPUSwapChain and WebGPURenderingContext

@@ -101,6 +101,7 @@ list(APPEND WebCore_SOURCES
     platform/win/PopupMenuWin.cpp
     platform/win/SSLKeyGeneratorWin.cpp
     platform/win/ScrollbarThemeWin.cpp
+    platform/win/SearchPopupMenuDB.cpp
     platform/win/SearchPopupMenuWin.cpp
     platform/win/SharedBufferWin.cpp
     platform/win/StructuredExceptionHandlerSuppressor.cpp
