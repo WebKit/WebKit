@@ -1,3 +1,12 @@
+2018-10-20  Daniel Bates  <dabates@apple.com>
+
+        Unskip test fast/writing-mode/english-rl-text-with-spelling-marker.html in iOS WebKit2
+
+        Following r235149 we mark spelling errors in iOS WebKit2.
+
+        * platform/ios-wk1/TestExpectations: Skip in legacy WebKit until we fix <https://webkit.org/b/188762>.
+        * platform/ios/TestExpectations: Unskip test.
+
 2018-10-19  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Add stubs for WebGPUSwapChain and WebGPURenderingContext
