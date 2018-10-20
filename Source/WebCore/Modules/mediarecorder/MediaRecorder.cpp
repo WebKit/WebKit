@@ -46,12 +46,19 @@ MediaRecorder::MediaRecorder(Document& document, Ref<MediaStream>&& stream, Opti
     , m_options(WTFMove(option))
     , m_stream(WTFMove(stream))
 {
+    m_tracks = WTF::map(m_stream->getTracks(), [this] (const auto& track) -> Ref<MediaStreamTrackPrivate> {
+        auto& privateTrack = track->privateTrack();
+        privateTrack.addObserver(*this);
+        return privateTrack;
+    });
     m_stream->addObserver(this);
 }
 
 MediaRecorder::~MediaRecorder()
 {
     m_stream->removeObserver(this);
+    for (auto& track : m_tracks)
+        track->removeObserver(*this);
 }
 
 void MediaRecorder::stop()
@@ -85,6 +92,22 @@ void MediaRecorder::didAddOrRemoveTrack()
         if (!m_isActive || state() == RecordingState::Inactive)
             return;
         auto event = MediaRecorderErrorEvent::create(eventNames().errorEvent, Exception { UnknownError, "Track cannot be added to or removed from the MediaStream while recording is happening"_s });
+        setNewRecordingState(RecordingState::Inactive, WTFMove(event));
+    });
+}
+
+void MediaRecorder::trackEnded(MediaStreamTrackPrivate&)
+{
+    auto position = m_tracks.findMatching([](auto& track) {
+        return !track->ended();
+    });
+    if (position != notFound)
+        return;
+    scheduleDeferredTask([this] {
+        if (!m_isActive || state() == RecordingState::Inactive)
+            return;
+        // FIXME: Add a dataavailable event
+        auto event = Event::create(eventNames().stopEvent, Event::CanBubble::No, Event::IsCancelable::No);
         setNewRecordingState(RecordingState::Inactive, WTFMove(event));
     });
 }

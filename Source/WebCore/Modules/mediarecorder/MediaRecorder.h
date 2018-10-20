@@ -28,12 +28,19 @@
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
 #include "MediaStream.h"
+#include "MediaStreamTrackPrivate.h"
 
 namespace WebCore {
 
 class Document;
 
-class MediaRecorder final : public ActiveDOMObject, public RefCounted<MediaRecorder>, public EventTargetWithInlineData, public CanMakeWeakPtr<MediaRecorder>, private MediaStream::Observer {
+class MediaRecorder final
+    : public ActiveDOMObject
+    , public RefCounted<MediaRecorder>
+    , public EventTargetWithInlineData
+    , public CanMakeWeakPtr<MediaRecorder>
+    , private MediaStream::Observer
+    , private MediaStreamTrackPrivate::Observer {
 public:
     enum class RecordingState { Inactive, Recording, Paused };
     
@@ -72,12 +79,19 @@ private:
     // MediaStream::Observer
     void didAddOrRemoveTrack() final;
     
+    // MediaStreamTrackPrivate::Observer
+    void trackEnded(MediaStreamTrackPrivate&) final;
+    void trackMutedChanged(MediaStreamTrackPrivate&) final { };
+    void trackSettingsChanged(MediaStreamTrackPrivate&) final { };
+    void trackEnabledChanged(MediaStreamTrackPrivate&) final { };
+    
     void scheduleDeferredTask(Function<void()>&&);
     void setNewRecordingState(RecordingState, Ref<Event>&&);
     
     Options m_options;
     Ref<MediaStream> m_stream;
     RecordingState m_state { RecordingState::Inactive };
+    Vector<Ref<MediaStreamTrackPrivate>> m_tracks;
     
     bool m_isActive { true };
 };

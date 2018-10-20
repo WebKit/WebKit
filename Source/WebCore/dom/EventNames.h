@@ -237,6 +237,7 @@ namespace WebCore {
     macro(start) \
     macro(started) \
     macro(statechange) \
+    macro(stop) \
     macro(storage) \
     macro(submit) \
     macro(success) \

@@ -1,0 +1,3 @@
+
+PASS MediaRecorder will stop recording and fire a stop event when all tracks are ended 
+
