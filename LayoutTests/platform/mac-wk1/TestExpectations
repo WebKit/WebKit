@@ -647,4 +647,8 @@ webkit.org/b/189756 [ Mojave+ ] compositing/filters/opacity-change-on-filtered-p
 # WebGPU is not supported on WK1.
 webgpu [ Skip ]
 
-webkit.org/b/189680 platform/mac/media/audio-session-category-video-paused.html [ Pass Timeout ] 
+webkit.org/b/189680 platform/mac/media/audio-session-category-video-paused.html [ Pass Timeout ]
+
+webkit.org/b/190627  [ Mojave+ ] compositing/masks/compositing-clip-path-change-no-repaint.html  [ Pass Failure ]
+webkit.org/b/190627  [ Mojave+ ] compositing/repaint/iframes/compositing-iframe-scroll-repaint.html  [ Pass Failure ]
+webkit.org/b/190627  [ Mojave+ ] compositing/repaint/iframes/compositing-iframe-with-fixed-background-doc-repaint.html  [ Pass Failure ]
