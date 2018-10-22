@@ -51,6 +51,7 @@ public:
         TableRowGroup,
         TableHeaderGroup,
         TableFooterGroup,
+        Replaced,
         GenericElement
     };
 
@@ -126,7 +127,7 @@ public:
 
     const RenderStyle& style() const { return m_style; }
 
-    std::optional<const Replaced> replaced() const { return m_replaced; }
+    const Replaced* replaced() const { return m_replaced.get(); }
 
     void setParent(Container& parent) { m_parent = &parent; }
     void setNextSibling(Box& nextSibling) { m_nextSibling = &nextSibling; }
@@ -140,7 +141,7 @@ private:
     Box* m_previousSibling { nullptr };
     Box* m_nextSibling { nullptr };
 
-    std::optional<const Replaced> m_replaced;
+    std::unique_ptr<const Replaced> m_replaced;
 
     unsigned m_baseTypeFlags : 4;
 };

@@ -77,6 +77,8 @@ void TreeBuilder::createSubTree(const RenderElement& rootRenderer, Container& ro
                 return Box::ElementAttributes { Box::ElementType::TableFooterGroup };
             if (element->hasTagName(HTMLNames::tfootTag))
                 return Box::ElementAttributes { Box::ElementType::TableFooterGroup };
+            if (element->hasTagName(HTMLNames::imgTag))
+                return Box::ElementAttributes { Box::ElementType::Replaced };
             return Box::ElementAttributes { Box::ElementType::GenericElement };
         }
         return std::nullopt;

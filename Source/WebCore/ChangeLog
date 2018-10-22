@@ -1,5 +1,34 @@
 2018-10-22  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Implement Replaced helper class.
+        https://bugs.webkit.org/show_bug.cgi?id=190719
+
+        Reviewed by Antti Koivisto.
+
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::Box):
+        * layout/layouttree/LayoutBox.h:
+        (WebCore::Layout::Box::replaced const):
+        * layout/layouttree/LayoutReplaced.cpp:
+        (WebCore::Layout::Replaced::Replaced):
+        (WebCore::Layout::Replaced::hasIntrinsicWidth const):
+        (WebCore::Layout::Replaced::hasIntrinsicHeight const):
+        (WebCore::Layout::Replaced::hasIntrinsicRatio const):
+        (WebCore::Layout::Replaced::intrinsicWidth const):
+        (WebCore::Layout::Replaced::intrinsicHeight const):
+        (WebCore::Layout::Replaced::intrinsicRatio const):
+        * layout/layouttree/LayoutReplaced.h:
+        (WebCore::Layout::Replaced::hasIntrinsicWidth const): Deleted.
+        (WebCore::Layout::Replaced::hasIntrinsicHeight const): Deleted.
+        (WebCore::Layout::Replaced::hasIntrinsicRatio const): Deleted.
+        (WebCore::Layout::Replaced::intrinsicWidth const): Deleted.
+        (WebCore::Layout::Replaced::intrinsicHeight const): Deleted.
+        (WebCore::Layout::Replaced::intrinsicRatio const): Deleted.
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::TreeBuilder::createSubTree):
+
+2018-10-22  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Block formatting context roots avoid floats.
         https://bugs.webkit.org/show_bug.cgi?id=190723
 

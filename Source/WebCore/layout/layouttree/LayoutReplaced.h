@@ -29,52 +29,31 @@
 
 #include "LayoutUnit.h"
 #include <wtf/IsoMalloc.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
-
 namespace Layout {
-class LayoutBox;
+
+class Box;
 
 // HTMLAudioElement, HTMLCanvasElement. HTMLEmbedElement, HTMLIFrameElement, HTMLImageElement, HTMLInputElement, HTMLObjectElement, HTMLVideoElement.
 class Replaced {
     WTF_MAKE_ISO_ALLOCATED(Replaced);
 public:
-    friend class LayoutBox;
+    Replaced(const Box&);
+    ~Replaced() = default;
 
-    bool hasIntrinsicWidth() const { return m_intrinsicWidth.has_value(); }
-    bool hasIntrinsicHeight() const { return m_intrinsicHeight.has_value(); }
-    bool hasIntrinsicRatio() const { return m_intrinsicRatio.has_value(); }
+    bool hasIntrinsicWidth() const;
+    bool hasIntrinsicHeight() const;
+    bool hasIntrinsicRatio() const;
     LayoutUnit intrinsicWidth() const;
     LayoutUnit intrinsicHeight() const;
     LayoutUnit intrinsicRatio() const;
 
 private:
-    Replaced(const LayoutBox&);
-
-    std::optional<LayoutUnit> m_intrinsicWidth;
-    std::optional<LayoutUnit> m_intrinsicHeight;
-    std::optional<LayoutUnit> m_intrinsicRatio;
+    WeakPtr<const Box> m_layoutBox;
 };
 
-inline LayoutUnit Replaced::intrinsicWidth() const
-{
-    ASSERT(hasIntrinsicWidth());
-    return m_intrinsicWidth.value_or(LayoutUnit::max());
-}
-
-inline LayoutUnit Replaced::intrinsicHeight() const
-{
-    ASSERT(hasIntrinsicHeight());
-    return m_intrinsicHeight.value_or(LayoutUnit::max());
-}
-
-inline LayoutUnit Replaced::intrinsicRatio() const
-{
-    ASSERT(hasIntrinsicRatio());
-    return m_intrinsicRatio.value_or(LayoutUnit::max());
-}
-
 }
 }
-
 #endif

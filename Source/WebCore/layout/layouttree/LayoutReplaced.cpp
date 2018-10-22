@@ -29,16 +29,53 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "LayoutBox.h"
+#include "RenderStyle.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 namespace Layout {
 
-Replaced::Replaced(const LayoutBox&)
+WTF_MAKE_ISO_ALLOCATED_IMPL(Replaced);
+
+Replaced::Replaced(const Box& layoutBox)
+    : m_layoutBox(makeWeakPtr(layoutBox))
 {
 }
 
-}
+bool Replaced::hasIntrinsicWidth() const
+{
+    return m_layoutBox->style().logicalWidth().isIntrinsic();
 }
 
+bool Replaced::hasIntrinsicHeight() const
+{
+    return m_layoutBox->style().logicalHeight().isIntrinsic();
+}
+
+bool Replaced::hasIntrinsicRatio() const
+{
+    return m_layoutBox->style().aspectRatioType() == AspectRatioType::FromIntrinsic;
+}
+
+LayoutUnit Replaced::intrinsicWidth() const
+{
+    ASSERT(hasIntrinsicWidth());
+    return m_layoutBox->style().logicalWidth().value();
+}
+
+LayoutUnit Replaced::intrinsicHeight() const
+{
+    ASSERT(hasIntrinsicHeight());
+    return m_layoutBox->style().logicalHeight().value();
+}
+
+LayoutUnit Replaced::intrinsicRatio() const
+{
+    ASSERT(hasIntrinsicRatio());
+    ASSERT_NOT_IMPLEMENTED_YET();
+    return 1;
+}
+
+}
+}
 #endif
