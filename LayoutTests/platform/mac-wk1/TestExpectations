@@ -652,3 +652,5 @@ webkit.org/b/189680 platform/mac/media/audio-session-category-video-paused.html 
 webkit.org/b/190627  [ Mojave+ ] compositing/masks/compositing-clip-path-change-no-repaint.html  [ Pass Failure ]
 webkit.org/b/190627  [ Mojave+ ] compositing/repaint/iframes/compositing-iframe-scroll-repaint.html  [ Pass Failure ]
 webkit.org/b/190627  [ Mojave+ ] compositing/repaint/iframes/compositing-iframe-with-fixed-background-doc-repaint.html  [ Pass Failure ]
+
+webkit.org/b/189723 http/tests/security/cross-origin-xsl-redirect-BLOCKED.html [ Pass Failure ]
