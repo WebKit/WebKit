@@ -1,5 +1,14 @@
 2018-10-22  Ryan Haddad  <ryanhaddad@apple.com>
 
+        [ Mojave WK1 ] Layout Test storage/indexeddb/database-odd-names.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=190350
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations: Mark test as failing.
+
+2018-10-22  Ryan Haddad  <ryanhaddad@apple.com>
+
         [macOS WK1] Layout Test http/tests/security/cross-origin-xsl-redirect-BLOCKED.html is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=189723
 
