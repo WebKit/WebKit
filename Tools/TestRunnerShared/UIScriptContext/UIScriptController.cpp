@@ -507,6 +507,11 @@ void UIScriptController::setShareSheetCompletesImmediatelyWithResolution(bool)
 {
 }
 
+bool UIScriptController::isShowingDataListSuggestions() const
+{
+    return false;
+}
+
 #endif // !PLATFORM(COCOA)
 
 #if !PLATFORM(MAC)
@@ -532,11 +537,6 @@ void UIScriptController::makeWindowContentViewFirstResponder()
 }
 
 bool UIScriptController::isWindowContentViewFirstResponder() const
-{
-    return false;
-}
-
-bool UIScriptController::isShowingDataListSuggestions() const
 {
     return false;
 }

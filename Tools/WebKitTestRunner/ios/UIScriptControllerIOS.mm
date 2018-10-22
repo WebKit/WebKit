@@ -784,6 +784,45 @@ void UIScriptController::completeBackSwipe(JSValueRef callback)
     m_context->asyncTaskComplete(callbackID);
 }
 
+static BOOL forEachViewInHierarchy(UIView *view, void(^mapFunction)(UIView *subview, BOOL *stop))
+{
+    BOOL stop = NO;
+    mapFunction(view, &stop);
+    if (stop)
+        return YES;
+
+    for (UIView *subview in view.subviews) {
+        stop = forEachViewInHierarchy(subview, mapFunction);
+        if (stop)
+            break;
+    }
+    return stop;
+}
+
+bool UIScriptController::isShowingDataListSuggestions() const
+{
+    Class remoteKeyboardWindowClass = NSClassFromString(@"UIRemoteKeyboardWindow");
+    Class suggestionsPickerViewClass = NSClassFromString(@"WKDataListSuggestionsPickerView");
+    UIWindow *remoteInputHostingWindow = nil;
+    for (UIWindow *window in UIApplication.sharedApplication.windows) {
+        if ([window isKindOfClass:remoteKeyboardWindowClass])
+            remoteInputHostingWindow = window;
+    }
+
+    if (!remoteInputHostingWindow)
+        return false;
+
+    __block bool foundDataListSuggestionsPickerView = false;
+    forEachViewInHierarchy(remoteInputHostingWindow, ^(UIView *subview, BOOL *stop) {
+        if (![subview isKindOfClass:suggestionsPickerViewClass])
+            return;
+
+        foundDataListSuggestionsPickerView = true;
+        *stop = YES;
+    });
+    return foundDataListSuggestionsPickerView;
+}
+
 }
 
 #endif // PLATFORM(IOS_FAMILY)

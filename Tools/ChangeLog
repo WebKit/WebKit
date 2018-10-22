@@ -1,3 +1,31 @@
+2018-10-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] [Datalist] fast/forms/datalist/datalist-show-hide.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=190777
+
+        Reviewed by Tim Horton.
+
+        Implement isShowingDataListSuggestions on iOS. See below for more details.
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::isShowingDataListSuggestions const):
+
+        Add a stub implementation for DumpRenderTree.
+
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::isShowingDataListSuggestions const):
+
+        Move this stub implementation to !PLATFORM(COCOA).
+
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::forEachViewInHierarchy):
+
+        Add a helper function to apply a given function to a UIView and each of its subviews, recursively.
+
+        (WTR::UIScriptController::isShowingDataListSuggestions const):
+
+        For iOS, return whether the UIRemoteKeyboardWindow contains a subview of type WKDataListSuggestionsPickerView.
+
 2018-10-19  Dan Bernstein  <mitz@apple.com>
 
         [macOS] MiniBrowser has an unused injected bundle

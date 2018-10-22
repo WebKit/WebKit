@@ -1,38 +1,71 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../../resources/js-test.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 <script src="../../../resources/ui-helper.js"></script>
+<style>
+input {
+    width: 300px;
+    height: 50px;
+}
+
+body {
+    margin: 0;
+}
+</style>
 <head>
 <body onload="runTest()">
-<input id="fruit" list="fruits" type="text"/>
+<input id="input" list="fruits" type="text"/>
 <datalist id="fruits">
     <option>Apple</option>
     <option>Orange</option>
     <option>Pear</option>
 </datalist>
+<pre>1. Is showing suggestions? <span id="before"></span></pre>
+<pre>2. Is showing suggestions? <span id="after"></span></pre>
+<br>
+<div>This test verifies that datalist suggestions UI can be shown and hidden. To test manually:</div>
+<ol>
+    <li>Focus the text field; on iOS, additionally tap the suggestions dropdown button.</li>
+    <li>Verify that a menu containing suggestions is shown.</li>
+    <li>On iOS, tap the input field; on macOS, blur the input.</li>
+    <li>Verify that the suggestions menu is no longer shown.</li>
+</ol>
 </body>
 <script>
-jsTestIsAsync = true;
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
 
-async function runTest() {
-    let input = document.getElementById("fruit");
-
-    await UIHelper.activateElement(input);
-    UIHelper.isShowingDataListSuggestions().then(async (value) => {
-        showingList = value;
-        debug("CLICK");
-        shouldBe("showingList", '"true"');
-
-        await UIHelper.activateAt(0, 0);
-        UIHelper.isShowingDataListSuggestions().then((value) => {
-            showingList = value;
-            debug("BLUR");
-            shouldBe("showingList", '"false"');
-            finishJSTest();
-        });
+function waitForDataListSuggestionsToChangeVisibility(visible)
+{
+    return new Promise(async resolve => {
+        while (visible != await UIHelper.isShowingDataListSuggestions())
+            continue;
+        resolve();
     });
 }
 
+async function runTest() {
+    await UIHelper.activateAndWaitForInputSessionAt(150, 25);
+
+    if (UIHelper.isIOS()) {
+        await UIHelper.tapAt(290, 30);
+        await waitForDataListSuggestionsToChangeVisibility(true);
+    }
+
+    before.textContent = await UIHelper.isShowingDataListSuggestions();
+
+    if (UIHelper.isIOS()) {
+        await UIHelper.tapAt(150, 25);
+        await waitForDataListSuggestionsToChangeVisibility(false);
+    } else
+        input.blur();
+
+    after.textContent = await UIHelper.isShowingDataListSuggestions();
+
+    testRunner.notifyDone();
+}
 </script>
 </html>

@@ -389,6 +389,11 @@ JSObjectRef UIScriptController::selectionEndGrabberViewRect() const
     return nullptr;
 }
 
+bool UIScriptController::isShowingDataListSuggestions() const
+{
+    return false;
+}
+
 }
 
 #endif // PLATFORM(IOS_FAMILY)

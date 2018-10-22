@@ -1,3 +1,26 @@
+2018-10-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] [Datalist] fast/forms/datalist/datalist-show-hide.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=190777
+
+        Reviewed by Tim Horton.
+
+        Refactor this test such that it passes on both iOS and macOS. This test verifies that datalist suggestions menu
+        UI can be shown and hidden. On macOS, we focus and then blur the input field; on iOS, we tap in the datalist
+        button to show the suggestions UI, and then tap in the text field to bring back the regular keyboard.
+
+        * fast/forms/datalist/datalist-show-hide-expected.txt:
+        * fast/forms/datalist/datalist-show-hide.html:
+        * platform/ios/TestExpectations:
+
+        Unskip the layout test on iOS.
+
+        * resources/ui-helper.js:
+        (window.UIHelper.isShowingDataListSuggestions):
+
+        Tweak this helper function to resolve with either true or false (Boolean types), instead of the strings "true"
+        and "false".
+
 2018-10-22  Truitt Savell  <tsavell@apple.com>
 
         [ MacOS WK1 ] Layout Test platform/mac/media/audio-session-category-video-paused.html is flaky Timeout 

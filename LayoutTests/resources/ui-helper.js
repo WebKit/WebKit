@@ -297,7 +297,7 @@ window.UIHelper = class UIHelper {
         return new Promise(resolve => {
             testRunner.runUIScript(`(() => {
                 uiController.uiScriptComplete(uiController.isShowingDataListSuggestions);
-            })()`, resolve);
+            })()`, result => resolve(result === "true" ? true : false));
         });
     }
 

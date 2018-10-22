@@ -1,8 +1,9 @@
-CLICK
-PASS showingList is "true"
-BLUR
-PASS showingList is "false"
-PASS successfullyParsed is true
 
-TEST COMPLETE
+1. Is showing suggestions? true
+2. Is showing suggestions? false
 
+This test verifies that datalist suggestions UI can be shown and hidden. To test manually:
+Focus the text field; on iOS, additionally tap the suggestions dropdown button.
+Verify that a menu containing suggestions is shown.
+On iOS, tap the input field; on macOS, blur the input.
+Verify that the suggestions menu is no longer shown.
