@@ -1,3 +1,26 @@
+2018-10-21  Babak Shafiei  <bshafiei@apple.com>
+
+        Apply patch. rdar://problem/45285649
+
+    2018-10-21  Chris Dumez  <cdumez@apple.com>
+
+            Crash under WebKit: WTF::Function<void ()>::CallableWrapper<WebKit::ResourceLoadStatisticsMemoryStore::removeDataRecords(WTF::CompletionHandler<void ()>&&)::$_1>::call()
+            https://bugs.webkit.org/show_bug.cgi?id=189098
+            <rdar://problem/43179891>
+
+            Reviewed by Youenn Fablet.
+
+            The crash was caused by implicitly using |this| on the main thread by accessing member variables, even though
+            |this| gets destroyed on the statistics queue. To address the issue, capture what we need on the statistics
+            queue, *before* dispatching to the main thread.
+
+            Also stop capturing |this| in the lambdas to make this less error prone.
+
+            * UIProcess/ResourceLoadStatisticsMemoryStore.cpp:
+            (WebKit::ResourceLoadStatisticsMemoryStore::removeDataRecords):
+            (WebKit::ResourceLoadStatisticsMemoryStore::grandfatherExistingWebsiteData):
+            (WebKit::ResourceLoadStatisticsMemoryStore::updateCookiePartitioning):
+
 2018-09-28  Babak Shafiei  <bshafiei@apple.com>
 
         Cherry-pick r236571. rdar://problem/44852809
