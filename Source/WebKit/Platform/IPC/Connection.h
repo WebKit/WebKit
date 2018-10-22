@@ -349,6 +349,7 @@ private:
     void receiveSourceEventHandler();
     void initializeSendSource();
     void resumeSendSource();
+    void cancelReceiveSource();
 
     mach_port_t m_sendPort { MACH_PORT_NULL };
     dispatch_source_t m_sendSource { nullptr };
