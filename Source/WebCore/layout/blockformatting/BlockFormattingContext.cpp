@@ -148,7 +148,7 @@ void BlockFormattingContext::layoutFormattingContextRoot(LayoutContext& layoutCo
     }
     else if (layoutBox.hasFloatClear())
         computeVerticalPositionForFloatClear(layoutContext, floatingContext, layoutBox);
-    else
+    else if (layoutBox.establishesBlockFormattingContext())
         computePositionToAvoidFloats(layoutContext, floatingContext, layoutBox);
 
     // Now that we computed the root's height, we can go back and layout the out-of-flow descedants (if any).

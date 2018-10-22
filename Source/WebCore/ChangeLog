@@ -1,3 +1,15 @@
+2018-10-22  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Block formatting context roots avoid floats.
+        https://bugs.webkit.org/show_bug.cgi?id=190723
+
+        Reviewed by Antti Koivisto.
+
+        Inline formatting context roots don't avoid floats (unless they also establish block formatting context).
+
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layoutFormattingContextRoot const):
+
 2018-10-20  YUHAN WU  <yuhan_wu@apple.com>
 
         MediaRecorder should fire a stop event when all tracks are ended
