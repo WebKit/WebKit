@@ -1,3 +1,21 @@
+2018-10-21  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][Clang] WebView.h: warning: 'QueryInterface' overrides a member function but is not marked 'override' [-Winconsistent-missing-override]
+        https://bugs.webkit.org/show_bug.cgi?id=190744
+
+        Reviewed by Alex Christensen.
+
+        clang-cl reports compilation warnings for inconsistent 'override'
+        keyword usage.
+
+        WebView::flushPendingGraphicsLayerChanges is used only if USE(CA).
+        This can't be marked 'override' if !USE(CA).
+
+        * WebView.cpp:
+        (WebView::flushPendingGraphicsLayerChanges): Define flushPendingGraphicsLayerChanges only if USE(CA).
+        * WebView.h: Marked all overriding member function declarations of WebView 'override'.
+        Declare flushPendingGraphicsLayerChanges only if USE(CA).
+
 2018-10-18  Alex Christensen  <achristensen@webkit.org>
 
         Clean up FrameLoader two-state enums

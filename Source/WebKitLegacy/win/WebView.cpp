@@ -7363,6 +7363,7 @@ void WebView::paintContents(const GraphicsLayer*, GraphicsContext& context, Grap
     context.restore();
 }
 
+#if USE(CA)
 void WebView::flushPendingGraphicsLayerChanges()
 {
     Frame* coreFrame = core(m_mainFrame);
@@ -7377,17 +7378,13 @@ void WebView::flushPendingGraphicsLayerChanges()
 
     view->updateLayoutAndStyleIfNeededRecursive();
 
-#if USE(CA)
     // Updating layout might have taken us out of compositing mode.
     if (m_backingLayer)
         m_backingLayer->flushCompositingStateForThisLayerOnly();
 
     view->flushCompositingStateIncludingSubframes();
-#elif USE(TEXTURE_MAPPER_GL)
-    if (isAcceleratedCompositing())
-        m_acceleratedCompositingContext->flushPendingLayerChanges();
-#endif
 }
+#endif
 
 class EnumTextMatches : public IEnumTextMatches
 {
