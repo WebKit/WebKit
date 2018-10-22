@@ -4,6 +4,18 @@
         https://bugs.webkit.org/show_bug.cgi?id=190515
         <rdar://problem/45222379>
 
+        Rubber-stamped by Saam Barati.
+
+        Adding another test.
+
+        * stress/regress-190515-2.js: Added.
+
+2018-10-22  Mark Lam  <mark.lam@apple.com>
+
+        DFGAbstractValue::m_arrayModes expects IndexingMode values, not IndexingType.
+        https://bugs.webkit.org/show_bug.cgi?id=190515
+        <rdar://problem/45222379>
+
         Reviewed by Saam Barati.
 
         * stress/regress-190515.js: Added.
