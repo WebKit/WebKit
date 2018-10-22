@@ -1,3 +1,17 @@
+2018-10-22  Chris Dumez  <cdumez@apple.com>
+
+        Deque's contains() and findIf() should be const
+        https://bugs.webkit.org/show_bug.cgi?id=190796
+
+        Reviewed by Antti Koivisto.
+
+        Mark method as const now that Deque's implementation allows it to be.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::hasSuspendedPageProxyFor const):
+        (WebKit::WebProcessPool::hasSuspendedPageProxyFor): Deleted.
+        * UIProcess/WebProcessPool.h:
+
 2018-10-19  Brent Fulgham  <bfulgham@apple.com>
 
         Allow WebContent process to check some file system features

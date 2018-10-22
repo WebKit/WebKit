@@ -1,3 +1,18 @@
+2018-10-22  Chris Dumez  <cdumez@apple.com>
+
+        Deque's contains() and findIf() should be const
+        https://bugs.webkit.org/show_bug.cgi?id=190796
+
+        Reviewed by Antti Koivisto.
+
+        Deque's contains() and findIf() should be const as they do not modify the container.
+
+        * wtf/Deque.h:
+        (WTF::inlineCapacity>::findIf):
+        (WTF::inlineCapacity>::findIf const):
+        (WTF::inlineCapacity>::contains const):
+        (WTF::inlineCapacity>::contains): Deleted.
+
 2018-10-18  Alicia Boya García  <aboya@igalia.com>
 
         [Media] Use nanoseconds as MaximumTimeScale

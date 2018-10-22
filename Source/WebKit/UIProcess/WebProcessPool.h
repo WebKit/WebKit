@@ -446,7 +446,7 @@ public:
     void addSuspendedPageProxy(std::unique_ptr<SuspendedPageProxy>&&);
     void removeAllSuspendedPageProxiesForPage(WebPageProxy&);
     std::unique_ptr<SuspendedPageProxy> takeSuspendedPageProxy(SuspendedPageProxy&);
-    bool hasSuspendedPageProxyFor(WebProcessProxy&);
+    bool hasSuspendedPageProxyFor(WebProcessProxy&) const;
 
     void didReachGoodTimeToPrewarm();
 

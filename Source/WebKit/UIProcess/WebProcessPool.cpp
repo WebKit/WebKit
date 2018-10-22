@@ -2227,7 +2227,7 @@ std::unique_ptr<SuspendedPageProxy> WebProcessPool::takeSuspendedPageProxy(Suspe
     });
 }
 
-bool WebProcessPool::hasSuspendedPageProxyFor(WebProcessProxy& process)
+bool WebProcessPool::hasSuspendedPageProxyFor(WebProcessProxy& process) const
 {
     return m_suspendedPages.findIf([&process](auto& suspendedPage) {
         return &suspendedPage->process() == &process;
