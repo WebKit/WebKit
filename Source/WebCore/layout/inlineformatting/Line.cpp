@@ -36,6 +36,7 @@ namespace Layout {
 InlineFormattingContext::Line::Line(InlineFormattingState& formattingState, const Box& formattingRoot)
     : m_formattingState(formattingState)
     , m_formattingRoot(formattingRoot)
+    , m_alignmentIsJustify(m_formattingRoot.style().textAlign() == TextAlignMode::Justify)
 {
 }
 
@@ -44,7 +45,11 @@ void InlineFormattingContext::Line::init(LayoutUnit lineLogicalLeft, LayoutUnit 
     m_lineLogicalLeft = lineLogicalLeft;
     m_lineWidth = availableWidth;
     m_availableWidth = availableWidth;
+
     m_firstRunIndex = { };
+    m_lastRunIsWhitespace = false;
+    m_lastRunCanExpand = false;
+    m_trailingTrimmableContent = { };
 }
 
 static LayoutUnit adjustedLineLogicalLeft(TextAlignMode align, LayoutUnit lineLogicalLeft, LayoutUnit remainingWidth)
@@ -69,11 +74,6 @@ static LayoutUnit adjustedLineLogicalLeft(TextAlignMode align, LayoutUnit lineLo
     return lineLogicalLeft;
 }
 
-static bool isNonCollapsedText(const InlineRunProvider::Run& inlineRun)
-{
-    return inlineRun.isText() && !inlineRun.textContext()->isCollapsed();
-}
-
 static bool isTrimmableContent(const InlineRunProvider::Run& inlineRun)
 {
     return inlineRun.isWhitespace() && inlineRun.style().collapseWhiteSpace();
@@ -87,41 +87,109 @@ LayoutUnit InlineFormattingContext::Line::contentLogicalRight()
     return m_formattingState.inlineRuns().last().logicalRight();
 }
 
+void InlineFormattingContext::Line::computeExpansionOpportunities(const InlineLineBreaker::Run& run)
+{
+    if (!m_alignmentIsJustify)
+        return;
+
+    auto isExpansionOpportunity = [](auto currentRunIsWhitespace, auto lastRunIsWhitespace) {
+        return currentRunIsWhitespace || (!currentRunIsWhitespace && !lastRunIsWhitespace);
+    };
+
+    auto expansionBehavior = [](auto isAtExpansionOpportunity) {
+        ExpansionBehavior expansionBehavior = AllowTrailingExpansion;
+        expansionBehavior |= isAtExpansionOpportunity ? ForbidLeadingExpansion : AllowLeadingExpansion;
+        return expansionBehavior;
+    };
+
+    auto isAtExpansionOpportunity = isExpansionOpportunity(run.content.isWhitespace(), m_lastRunIsWhitespace);
+
+    auto& currentInlineRun = m_formattingState.inlineRuns().last();
+    auto& expansionOpportunity = currentInlineRun.expansionOpportunity();
+    if (isAtExpansionOpportunity)
+        ++expansionOpportunity.count;
+
+    expansionOpportunity.behavior = expansionBehavior(isAtExpansionOpportunity);
+}
+
 void InlineFormattingContext::Line::appendContent(const InlineLineBreaker::Run& run)
 {
-    auto lastRunWasNotCollapsedText = m_lastRunIsNotCollapsedText;
-    m_trailingTrimmableContent = { };
-    m_availableWidth -= run.width;
-
     auto& content = run.content;
-    m_lastRunIsNotCollapsedText = isNonCollapsedText(content);
 
     // Append this text run to the end of the last text run, if the last run is continuous.
     std::optional<InlineRun::TextContext> textRun;
     if (content.isText()) {
         auto textContext = content.textContext();
         auto runLength = textContext->isCollapsed() ? 1 : textContext->length();
-
-        if (isTrimmableContent(content))
-            m_trailingTrimmableContent = TrailingTrimmableContent { run.width, runLength };
-
-        if (hasContent() && lastRunWasNotCollapsedText) {
-            auto& inlineRun = m_formattingState.inlineRuns().last();
-            inlineRun.setWidth(inlineRun.width() + run.width);
-            inlineRun.textContext()->setLength(inlineRun.textContext()->length() + runLength);
-            return;
-        }
         textRun = InlineRun::TextContext { textContext->start(), runLength };
     }
 
-    if (textRun)
-        m_formattingState.appendInlineRun(InlineRun::createTextRun(contentLogicalRight(), run.width, textRun->start(), textRun->length(), content.inlineItem()));
-    else
-        m_formattingState.appendInlineRun(InlineRun::createRun(contentLogicalRight(), run.width, content.inlineItem()));
+    auto requiresNewInlineRun = !hasContent() || !content.isText() || !m_lastRunCanExpand;
+    if (requiresNewInlineRun) {
+        auto inlineRun = InlineRun { contentLogicalRight(), run.width, content.inlineItem() };
+        if (textRun)
+            inlineRun.setTextContext({ textRun->start(), textRun->length() });
+        m_formattingState.appendInlineRun(inlineRun);
+    } else {
+        // Non-text runs always require new inline run.
+        ASSERT(textRun);
+        auto& inlineRun = m_formattingState.inlineRuns().last();
+        inlineRun.setWidth(inlineRun.width() + run.width);
+        inlineRun.textContext()->setLength(inlineRun.textContext()->length() + textRun->length());
+    }
+
+    computeExpansionOpportunities(run);
+
+    m_availableWidth -= run.width;
+    m_lastRunIsWhitespace = content.isWhitespace();
+    m_lastRunCanExpand = content.isText() && !content.textContext()->isCollapsed();
     m_firstRunIndex = m_firstRunIndex.value_or(m_formattingState.inlineRuns().size() - 1);
+    m_trailingTrimmableContent = { };
+    if (isTrimmableContent(content))
+        m_trailingTrimmableContent = TrailingTrimmableContent { run.width, textRun->length() };
 }
 
-void InlineFormattingContext::Line::close()
+void InlineFormattingContext::Line::justifyRuns()
+{
+    if (!hasContent())
+        return;
+
+    auto& inlineRuns = m_formattingState.inlineRuns();
+    auto& lastInlineRun = inlineRuns.last();
+
+    // Adjust (forbid) trailing expansion for the last text run on line.
+    auto expansionBehavior = lastInlineRun.expansionOpportunity().behavior;
+    // Remove allow and add forbid.
+    expansionBehavior ^= AllowTrailingExpansion;
+    expansionBehavior |= ForbidTrailingExpansion;
+    lastInlineRun.expansionOpportunity().behavior = expansionBehavior;
+
+    // Collect expansion opportunities and justify the runs.
+    auto widthToDistribute = availableWidth();
+    if (widthToDistribute <= 0)
+        return;
+
+    auto expansionOpportunities = 0;
+    for (auto runIndex = *m_firstRunIndex; runIndex < inlineRuns.size(); ++runIndex)
+        expansionOpportunities += inlineRuns[runIndex].expansionOpportunity().count;
+
+    if (!expansionOpportunities)
+        return;
+
+    float expansion = widthToDistribute.toFloat() / expansionOpportunities;
+    LayoutUnit accumulatedExpansion = 0;
+    for (auto runIndex = *m_firstRunIndex; runIndex < inlineRuns.size(); ++runIndex) {
+        auto& inlineRun = inlineRuns[runIndex];
+        auto expansionForRun = inlineRun.expansionOpportunity().count * expansion;
+
+        inlineRun.expansionOpportunity().expansion = expansionForRun;
+        inlineRun.setLogicalLeft(inlineRun.logicalLeft() + accumulatedExpansion);
+        inlineRun.setWidth(inlineRun.width() + expansionForRun);
+        accumulatedExpansion += expansionForRun;
+    }
+}
+
+void InlineFormattingContext::Line::close(LastLine isLastLine)
 {
     auto trimTrailingContent = [&]() {
 
@@ -133,22 +201,20 @@ void InlineFormattingContext::Line::close()
         lastInlineRun.textContext()->setLength(lastInlineRun.textContext()->length() - m_trailingTrimmableContent->length);
 
         if (!lastInlineRun.textContext()->length()) {
-            m_formattingState.inlineRuns().removeLast();
-            if (m_firstRunIndex.value())
-                --*m_firstRunIndex;
-            else
+            if (*m_firstRunIndex == m_formattingState.inlineRuns().size() - 1)
                 m_firstRunIndex = { };
+            m_formattingState.inlineRuns().removeLast();
         }
         m_availableWidth += m_trailingTrimmableContent->width;
         m_trailingTrimmableContent = { };
     };
 
-    auto alignRuns = [&]() {
+    auto alignRuns = [&](auto alignment) {
 
         if (!hasContent())
             return;
 
-        auto adjustedLogicalLeft = adjustedLineLogicalLeft(m_formattingRoot.style().textAlign(), m_lineLogicalLeft, m_availableWidth);
+        auto adjustedLogicalLeft = adjustedLineLogicalLeft(alignment, m_lineLogicalLeft, m_availableWidth);
         if (m_lineLogicalLeft == adjustedLogicalLeft)
             return;
 
@@ -162,7 +228,16 @@ void InlineFormattingContext::Line::close()
         return;
 
     trimTrailingContent();
-    alignRuns();
+
+    auto textAlignment = m_formattingRoot.style().textAlign();
+    if (m_alignmentIsJustify) {
+        if (isLastLine == LastLine::No) {
+            justifyRuns();
+            return;
+        }
+        textAlignment = TextAlignMode::Left;
+    }
+    alignRuns(textAlignment);
 }
 
 }

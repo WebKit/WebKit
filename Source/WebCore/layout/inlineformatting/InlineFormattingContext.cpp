@@ -143,7 +143,7 @@ void InlineFormattingContext::layoutInlineContent(const LayoutContext& layoutCon
         // This may or may not be the last run on line -but definitely not the first one.
         line.appendContent(*run);
     }
-    line.close();
+    line.close(Line::LastLine::Yes);
 }
 
 void InlineFormattingContext::computeWidthAndHeight(const LayoutContext& layoutContext, const Box& layoutBox) const

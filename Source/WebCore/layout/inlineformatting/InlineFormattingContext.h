@@ -53,19 +53,24 @@ private:
 
         void init(LayoutUnit lineLogicalLeft, LayoutUnit availableWidth);
         void appendContent(const InlineLineBreaker::Run&);
-        void close();
+        enum class LastLine { No, Yes };
+        void close(LastLine = LastLine::No);
 
         bool hasContent() const { return m_firstRunIndex.has_value(); }
         LayoutUnit contentLogicalRight();
         LayoutUnit availableWidth() const { return m_availableWidth; }
 
     private:
+        void justifyRuns();
+        void computeExpansionOpportunities(const InlineLineBreaker::Run&);
+
         struct TrailingTrimmableContent {
             LayoutUnit width;
             unsigned length;
         };
         std::optional<TrailingTrimmableContent> m_trailingTrimmableContent;
-        bool m_lastRunIsNotCollapsedText { true };
+        bool m_lastRunIsWhitespace { false };
+        bool m_lastRunCanExpand { false };
 
         InlineFormattingState& m_formattingState;
         const Box& m_formattingRoot;
@@ -75,6 +80,7 @@ private:
         LayoutUnit m_lineWidth;
 
         std::optional<unsigned> m_firstRunIndex;
+        bool m_alignmentIsJustify { false };
     };
 
     void layoutInlineContent(const LayoutContext&, InlineFormattingState&, const InlineRunProvider&) const;

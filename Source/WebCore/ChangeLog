@@ -1,5 +1,33 @@
 2018-10-22  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Add justify text-align support.
+        https://bugs.webkit.org/show_bug.cgi?id=190779
+
+        Reviewed by Antti Koivisto.
+
+        Collect expansion opportunities and adjust runs accordingly.
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::layoutInlineContent const):
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/inlineformatting/InlineRun.h:
+        (WebCore::Layout::InlineRun::expansionOpportunity):
+        (WebCore::Layout::InlineRun::TextContext::setStart):
+        (WebCore::Layout::InlineRun::TextContext::setLength):
+        (WebCore::Layout::InlineRun::setTextContext):
+        (WebCore::Layout::InlineRun::createRun): Deleted.
+        (WebCore::Layout::InlineRun::createTextRun): Deleted.
+        * layout/inlineformatting/Line.cpp:
+        (WebCore::Layout::InlineFormattingContext::Line::Line):
+        (WebCore::Layout::InlineFormattingContext::Line::init):
+        (WebCore::Layout::InlineFormattingContext::Line::computeExpansionOpportunities):
+        (WebCore::Layout::InlineFormattingContext::Line::appendContent):
+        (WebCore::Layout::InlineFormattingContext::Line::justifyRuns):
+        (WebCore::Layout::InlineFormattingContext::Line::close):
+        (WebCore::Layout::isNonCollapsedText): Deleted.
+
+2018-10-22  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Add (right, center)text-align support.
         https://bugs.webkit.org/show_bug.cgi?id=190745
 

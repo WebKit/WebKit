@@ -34,8 +34,7 @@ namespace WebCore {
 namespace Layout {
 
 struct InlineRun {
-    static InlineRun createRun(LayoutUnit logcialLeft, LayoutUnit width, const InlineItem&);
-    static InlineRun createTextRun(LayoutUnit logcialLeft, LayoutUnit width, ItemPosition, unsigned length, const InlineItem&);
+    InlineRun(LayoutUnit logcialLeft, LayoutUnit width, const InlineItem&);
 
     LayoutUnit logicalLeft() const { return m_logicalLeft; }
     LayoutUnit logicalRight() const { return logicalLeft() + width(); }
@@ -45,28 +44,36 @@ struct InlineRun {
     void setLogicalLeft(LayoutUnit logicalLeft) { m_logicalLeft = logicalLeft; }
     void setLogicalRight(LayoutUnit logicalRight) { m_width -= (this->logicalRight() - logicalRight); }
 
+    struct ExpansionOpportunity {
+        unsigned count { 0 };
+        ExpansionBehavior behavior { ForbidLeadingExpansion | ForbidTrailingExpansion };
+        LayoutUnit expansion;
+    };
+    ExpansionOpportunity& expansionOpportunity() { return m_expansionOpportunity; }
+
     struct TextContext {
     public:
         TextContext(ItemPosition, unsigned length);
 
+        void setStart(ItemPosition start) { m_start = start; }
+        void setLength(unsigned length) { m_length = length; }
+
         ItemPosition start() const { return m_start; }
         unsigned length() const { return m_length; }
-
-        void setLength(unsigned length) { m_length = length; }
 
     private:
         ItemPosition m_start;
         unsigned m_length;
     };
+    void setTextContext(TextContext textContext) { m_textContext.emplace(textContext); }
     std::optional<TextContext>& textContext() { return m_textContext; }
+
     const InlineItem& inlineItem() const { return m_inlineItem; }
 
 private:
-    InlineRun(LayoutUnit logcialLeft, LayoutUnit width, const InlineItem&);
-    InlineRun(LayoutUnit logcialLeft, LayoutUnit width, ItemPosition, unsigned length, const InlineItem&);
-
     LayoutUnit m_logicalLeft;
     LayoutUnit m_width;
+    ExpansionOpportunity m_expansionOpportunity;
 
     const InlineItem& m_inlineItem;
     std::optional<TextContext> m_textContext;
@@ -74,28 +81,10 @@ private:
 
 using InlineRuns = Vector<InlineRun>;
 
-inline InlineRun InlineRun::createRun(LayoutUnit logicalLeft, LayoutUnit width, const InlineItem& inlineItem)
-{
-    return { logicalLeft, width, inlineItem };
-}
-
-inline InlineRun InlineRun::createTextRun(LayoutUnit logicalLeft, LayoutUnit width, ItemPosition start, unsigned length, const InlineItem& inlineItem)
-{
-    return { logicalLeft, width, start, length, inlineItem };
-}
-
 inline InlineRun::InlineRun(LayoutUnit logicalLeft, LayoutUnit width, const InlineItem& inlineItem)
     : m_logicalLeft(logicalLeft)
     , m_width(width)
     , m_inlineItem(inlineItem)
-{
-}
-
-inline InlineRun::InlineRun(LayoutUnit logicalLeft, LayoutUnit width, ItemPosition start, unsigned length, const InlineItem& inlineItem)
-    : m_logicalLeft(logicalLeft)
-    , m_width(width)
-    , m_inlineItem(inlineItem)
-    , m_textContext(TextContext { start, length })
 {
 }
 
