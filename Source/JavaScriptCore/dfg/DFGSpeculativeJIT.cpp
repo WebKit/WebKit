@@ -12175,7 +12175,7 @@ void SpeculativeJIT::compileNewArrayBuffer(Node* node)
     flushRegisters();
     GPRFlushedCallResult result(this);
 
-    callOperation(operationNewArrayBuffer, result.gpr(), m_jit.graph().registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(node->indexingType())), TrustedImmPtr(node->cellOperand()));
+    callOperation(operationNewArrayBuffer, result.gpr(), structure, TrustedImmPtr(node->cellOperand()));
     m_jit.exceptionCheck();
 
     cellResult(result.gpr(), node);
