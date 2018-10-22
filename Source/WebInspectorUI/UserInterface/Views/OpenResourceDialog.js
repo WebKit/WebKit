@@ -147,6 +147,8 @@ WI.OpenResourceDialog = class OpenResourceDialog extends WI.Dialog
         if (WI.networkManager.mainFrame)
             this._addResourcesForFrame(WI.networkManager.mainFrame);
 
+        this._addScriptsForTarget(WI.mainTarget);
+
         for (let target of WI.targets) {
             if (target !== WI.mainTarget)
                 this._addResourcesForTarget(target);
@@ -312,11 +314,20 @@ WI.OpenResourceDialog = class OpenResourceDialog extends WI.Dialog
         for (let resource of target.resourceCollection)
             this._addResource(resource, suppressFilterUpdate);
 
+        this._addScriptsForTarget(target);
+    }
+
+    _addScriptsForTarget(target)
+    {
+        const suppressFilterUpdate = true;
+
         let targetData = WI.debuggerManager.dataForTarget(target);
         for (let script of targetData.scripts) {
             if (script.resource)
                 continue;
-            if (isWebKitInternalScript(script.sourceURL) || isWebInspectorConsoleEvaluationScript(script.sourceURL))
+            if (script.dynamicallyAddedScriptElement)
+                continue;
+            if (!script.sourceURL || isWebKitInternalScript(script.sourceURL) || isWebInspectorConsoleEvaluationScript(script.sourceURL))
                 continue;
             this._addResource(script, suppressFilterUpdate);
         }

@@ -1,3 +1,17 @@
+2018-10-22  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Open Quickly dialog doesn't show named scripts that appear in the debugger sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=190649
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/OpenResourceDialog.js:
+        (WI.OpenResourceDialog.prototype.didPresentDialog):
+        (WI.OpenResourceDialog.prototype._addResourcesForTarget):
+        (WI.OpenResourceDialog.prototype._addScriptsForTarget):
+        Include non-resource named scripts from the main target in
+        the open quickly dialog.
+
 2018-10-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove unused member variable of DebuggerSidebarPanel
