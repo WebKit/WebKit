@@ -656,3 +656,5 @@ webkit.org/b/190627  [ Mojave+ ] compositing/repaint/iframes/compositing-iframe-
 webkit.org/b/189723 http/tests/security/cross-origin-xsl-redirect-BLOCKED.html [ Pass Failure ]
 
 webkit.org/b/190350 [ Mojave ] storage/indexeddb/database-odd-names.html [ Failure ]
+
+webkit.org/b/188421 [ Sierra+ ] fast/repaint/canvas-object-fit.html [ Pass Failure ]
