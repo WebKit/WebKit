@@ -20,6 +20,50 @@ PASS testNumberFormat(Intl.NumberFormat('de'), [{locale: 'de'}]) is true
 PASS testNumberFormat(Intl.NumberFormat('zh-Hans-CN-u-nu-hanidec'), [{locale: 'zh-Hans-CN-u-nu-hanidec', numberingSystem: 'hanidec'}]) is true
 PASS testNumberFormat(Intl.NumberFormat('ZH-hans-cn-U-Nu-Hanidec'), [{locale: 'zh-Hans-CN-u-nu-hanidec', numberingSystem: 'hanidec'}]) is true
 PASS testNumberFormat(Intl.NumberFormat('en-u-nu-abcd'), [{locale: 'en'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en-u-nu-arab'), [{locale: 'en-u-nu-arab', numberingSystem: 'arab'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en-u-nu-arabext'), [{locale: 'en-u-nu-arabext', numberingSystem: 'arabext'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en-u-nu-bali'), [{locale: 'en-u-nu-bali', numberingSystem: 'bali'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en-u-nu-beng'), [{locale: 'en-u-nu-beng', numberingSystem: 'beng'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en-u-nu-deva'), [{locale: 'en-u-nu-deva', numberingSystem: 'deva'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en-u-nu-fullwide'), [{locale: 'en-u-nu-fullwide', numberingSystem: 'fullwide'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en-u-nu-gujr'), [{locale: 'en-u-nu-gujr', numberingSystem: 'gujr'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en-u-nu-guru'), [{locale: 'en-u-nu-guru', numberingSystem: 'guru'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en-u-nu-hanidec'), [{locale: 'en-u-nu-hanidec', numberingSystem: 'hanidec'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en-u-nu-khmr'), [{locale: 'en-u-nu-khmr', numberingSystem: 'khmr'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en-u-nu-knda'), [{locale: 'en-u-nu-knda', numberingSystem: 'knda'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en-u-nu-laoo'), [{locale: 'en-u-nu-laoo', numberingSystem: 'laoo'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en-u-nu-latn'), [{locale: 'en-u-nu-latn', numberingSystem: 'latn'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en-u-nu-limb'), [{locale: 'en-u-nu-limb', numberingSystem: 'limb'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en-u-nu-mlym'), [{locale: 'en-u-nu-mlym', numberingSystem: 'mlym'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en-u-nu-mong'), [{locale: 'en-u-nu-mong', numberingSystem: 'mong'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en-u-nu-mymr'), [{locale: 'en-u-nu-mymr', numberingSystem: 'mymr'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en-u-nu-orya'), [{locale: 'en-u-nu-orya', numberingSystem: 'orya'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en-u-nu-tamldec'), [{locale: 'en-u-nu-tamldec', numberingSystem: 'tamldec'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en-u-nu-telu'), [{locale: 'en-u-nu-telu', numberingSystem: 'telu'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en-u-nu-thai'), [{locale: 'en-u-nu-thai', numberingSystem: 'thai'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en-u-nu-tibt'), [{locale: 'en-u-nu-tibt', numberingSystem: 'tibt'}]) is true
+PASS Intl.NumberFormat('en-u-nu-arab').format(1234567890) is '١٬٢٣٤٬٥٦٧٬٨٩٠'
+PASS Intl.NumberFormat('en-u-nu-arabext').format(1234567890) is '۱٬۲۳۴٬۵۶۷٬۸۹۰'
+PASS Intl.NumberFormat('en-u-nu-bali').format(1234567890) is '᭑,᭒᭓᭔,᭕᭖᭗,᭘᭙᭐'
+PASS Intl.NumberFormat('en-u-nu-beng').format(1234567890) is '১,২৩৪,৫৬৭,৮৯০'
+PASS Intl.NumberFormat('en-u-nu-deva').format(1234567890) is '१,२३४,५६७,८९०'
+PASS Intl.NumberFormat('en-u-nu-fullwide').format(1234567890) is '１,２３４,５６７,８９０'
+PASS Intl.NumberFormat('en-u-nu-gujr').format(1234567890) is '૧,૨૩૪,૫૬૭,૮૯૦'
+PASS Intl.NumberFormat('en-u-nu-guru').format(1234567890) is '੧,੨੩੪,੫੬੭,੮੯੦'
+PASS Intl.NumberFormat('en-u-nu-hanidec').format(1234567890) is '一,二三四,五六七,八九〇'
+PASS Intl.NumberFormat('en-u-nu-khmr').format(1234567890) is '១,២៣៤,៥៦៧,៨៩០'
+PASS Intl.NumberFormat('en-u-nu-knda').format(1234567890) is '೧,೨೩೪,೫೬೭,೮೯೦'
+PASS Intl.NumberFormat('en-u-nu-laoo').format(1234567890) is '໑,໒໓໔,໕໖໗,໘໙໐'
+PASS Intl.NumberFormat('en-u-nu-latn').format(1234567890) is '1,234,567,890'
+PASS Intl.NumberFormat('en-u-nu-limb').format(1234567890) is '᥇,᥈᥉᥊,᥋᥌᥍,᥎᥏᥆'
+PASS Intl.NumberFormat('en-u-nu-mlym').format(1234567890) is '൧,൨൩൪,൫൬൭,൮൯൦'
+PASS Intl.NumberFormat('en-u-nu-mong').format(1234567890) is '᠑,᠒᠓᠔,᠕᠖᠗,᠘᠙᠐'
+PASS Intl.NumberFormat('en-u-nu-mymr').format(1234567890) is '၁,၂၃၄,၅၆၇,၈၉၀'
+PASS Intl.NumberFormat('en-u-nu-orya').format(1234567890) is '୧,୨୩୪,୫୬୭,୮୯୦'
+PASS Intl.NumberFormat('en-u-nu-tamldec').format(1234567890) is '௧,௨௩௪,௫௬௭,௮௯௦'
+PASS Intl.NumberFormat('en-u-nu-telu').format(1234567890) is '౧,౨౩౪,౫౬౭,౮౯౦'
+PASS Intl.NumberFormat('en-u-nu-thai').format(1234567890) is '๑,๒๓๔,๕๖๗,๘๙๐'
+PASS Intl.NumberFormat('en-u-nu-tibt').format(1234567890) is '༡,༢༣༤,༥༦༧,༨༩༠'
 PASS testNumberFormat(Intl.NumberFormat('zh-Hans-CN-u-aa-aaaa-co-pinyin-nu-hanidec-bb-bbbb'), [{locale: 'zh-Hans-CN-u-nu-hanidec', numberingSystem: 'hanidec'}]) is true
 PASS testNumberFormat(Intl.NumberFormat('en', {localeMatcher: 'lookup'}), [{locale: 'en'}]) is true
 PASS testNumberFormat(Intl.NumberFormat('en', {localeMatcher: 'best fit'}), [{locale: 'en'}]) is true

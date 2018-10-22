@@ -32,6 +32,7 @@
 
 #include "Error.h"
 #include "FunctionPrototype.h"
+#include "IntlCanonicalizeLanguage.h"
 #include "IntlCollator.h"
 #include "IntlCollatorConstructor.h"
 #include "IntlCollatorPrototype.h"
@@ -201,6 +202,17 @@ unsigned intlNumberOption(ExecState& state, JSValue options, PropertyName proper
     JSValue value = opts->get(&state, property);
     RETURN_IF_EXCEPTION(scope, 0);
 
+    return intlDefaultNumberOption(state, value, property, minimum, maximum, fallback);
+}
+
+unsigned intlDefaultNumberOption(ExecState& state, JSValue value, PropertyName property, unsigned minimum, unsigned maximum, unsigned fallback)
+{
+    // DefaultNumberOption (value, minimum, maximum, fallback)
+    // https://tc39.github.io/ecma402/#sec-defaultnumberoption
+
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (!value.isUndefined()) {
         double doubleValue = value.toNumber(&state);
         RETURN_IF_EXCEPTION(scope, 0);
@@ -261,6 +273,23 @@ static String privateUseLangTag(const Vector<String>& parts, size_t startIndex)
     return privateuse.toString();
 }
 
+static String preferredLanguage(const String& language)
+{
+    auto preferred = intlPreferredLanguageTag(language);
+    if (!preferred.isNull())
+        return preferred;
+    return language;
+}
+
+static String preferredRegion(const String& region)
+{
+    auto preferred = intlPreferredRegionTag(region);
+    if (!preferred.isNull())
+        return preferred;
+    return region;
+
+}
+
 static String canonicalLangTag(const Vector<String>& parts)
 {
     ASSERT(!parts.isEmpty());
@@ -281,7 +310,9 @@ static String canonicalLangTag(const Vector<String>& parts)
 
     ++currentIndex;
     StringBuilder canonical;
-    canonical.append(language.convertToASCIILowercase());
+
+    const String langtag = preferredLanguage(language.convertToASCIILowercase());
+    canonical.append(langtag);
 
     // Check for extlang.
     // extlang = 3ALPHA *2("-" 3ALPHA)
@@ -291,8 +322,14 @@ static String canonicalLangTag(const Vector<String>& parts)
             unsigned extlangLength = extlang.length();
             if (extlangLength == 3 && extlang.isAllSpecialCharacters<isASCIIAlpha>()) {
                 ++currentIndex;
+                auto extlangLower = extlang.convertToASCIILowercase();
+                if (!times && intlPreferredExtlangTag(extlangLower) == langtag) {
+                    canonical.clear();
+                    canonical.append(extlangLower);
+                    continue;
+                }
                 canonical.append('-');
-                canonical.append(extlang.convertToASCIILowercase());
+                canonical.append(extlangLower);
             } else
                 break;
         }
@@ -323,7 +360,7 @@ static String canonicalLangTag(const Vector<String>& parts)
         if (isValidRegion) {
             ++currentIndex;
             canonical.append('-');
-            canonical.append(region.convertToASCIIUppercase());
+            canonical.append(preferredRegion(region.convertToASCIIUppercase()));
         }
     }
 
@@ -417,47 +454,11 @@ static String canonicalLangTag(const Vector<String>& parts)
         canonical.append(privateuse);
     }
 
-    // FIXME: Replace subtags with their preferred values.
-
-    return canonical.toString();
-}
-
-static String grandfatheredLangTag(const String& locale)
-{
-    // grandfathered = irregular / regular
-    // FIXME: convert to a compile time hash table if this is causing performance issues.
-    HashMap<String, String> tagMap = {
-        // Irregular.
-        { "en-gb-oed"_s, "en-GB-oed"_s },
-        { "i-ami"_s, "ami"_s },
-        { "i-bnn"_s, "bnn"_s },
-        { "i-default"_s, "i-default"_s },
-        { "i-enochian"_s, "i-enochian"_s },
-        { "i-hak"_s, "hak"_s },
-        { "i-klingon"_s, "tlh"_s },
-        { "i-lux"_s, "lb"_s },
-        { "i-mingo"_s, "i-mingo"_s },
-        { "i-navajo"_s, "nv"_s },
-        { "i-pwn"_s, "pwn"_s },
-        { "i-tao"_s, "tao"_s },
-        { "i-tay"_s, "tay"_s },
-        { "i-tsu"_s, "tsu"_s },
-        { "sgn-be-fr"_s, "sfb"_s },
-        { "sgn-be-nl"_s, "vgt"_s },
-        { "sgn-ch-de"_s, "sgg"_s },
-        // Regular.
-        { "art-lojban"_s, "jbo"_s },
-        { "cel-gaulish"_s, "cel-gaulish"_s },
-        { "no-bok"_s, "nb"_s },
-        { "no-nyn"_s, "nn"_s },
-        { "zh-guoyu"_s, "cmn"_s },
-        { "zh-hakka"_s, "hak"_s },
-        { "zh-min"_s, "zh-min"_s },
-        { "zh-min-nan"_s, "nan"_s },
-        { "zh-xiang"_s, "hsn"_s }
-    };
-
-    return tagMap.get(locale.convertToASCIILowercase());
+    const String tag = canonical.toString();
+    const String preferred = intlRedundantLanguageTag(tag);
+    if (!preferred.isNull())
+        return preferred;
+    return tag;
 }
 
 static String canonicalizeLanguageTag(const String& locale)
@@ -468,11 +469,9 @@ static String canonicalizeLanguageTag(const String& locale)
     // https://www.rfc-editor.org/rfc/bcp/bcp47.txt
 
     // Language-Tag = langtag / privateuse / grandfathered
-    String grandfather = grandfatheredLangTag(locale);
+    String grandfather = intlGrandfatheredLanguageTag(locale.convertToASCIILowercase());
     if (!grandfather.isNull())
         return grandfather;
-
-    // FIXME: Replace redundant tags [RFC4647].
 
     Vector<String> parts;
     locale.split('-', true, parts);
@@ -584,7 +583,7 @@ String defaultLocale(ExecState& state)
 {
     // DefaultLocale ()
     // https://tc39.github.io/ecma402/#sec-defaultlocale
-    
+
     // WebCore's global objects will have their own ideas of how to determine the language. It may
     // be determined by WebCore-specific logic like some WK settings. Usually this will return the
     // same thing as userPreferredLanguages()[0].
@@ -598,7 +597,7 @@ String defaultLocale(ExecState& state)
     Vector<String> languages = userPreferredLanguages();
     if (!languages.isEmpty() && !languages[0].isEmpty())
         return canonicalizeLanguageTag(languages[0]);
-    
+
     // If all else fails, ask ICU. It will probably say something bogus like en_us even if the user
     // has configured some other language, but being wrong is better than crashing.
     String locale = uloc_getDefault();
@@ -612,10 +611,13 @@ String removeUnicodeLocaleExtension(const String& locale)
     locale.split('-', parts);
     StringBuilder builder;
     size_t partsSize = parts.size();
+    bool atPrivate = false;
     if (partsSize > 0)
         builder.append(parts[0]);
     for (size_t p = 1; p < partsSize; ++p) {
-        if (parts[p] == "u" && p + 1 < partsSize) {
+        if (parts[p] == "x")
+            atPrivate = true;
+        if (!atPrivate && parts[p] == "u" && p + 1 < partsSize) {
             // Skip the u- and anything that follows until another singleton.
             // While the next part is part of the unicode extension, skip it.
             while (p + 1 < partsSize && parts[p + 1].length() > 1)
@@ -879,7 +881,12 @@ Vector<String> numberingSystemsForLocale(const String& locale)
             // Numbering system names are always ASCII, so use char[].
             while (const char* result = uenum_next(numberingSystemNames, &resultLength, &status)) {
                 ASSERT(U_SUCCESS(status));
-                availableNumberingSystems.append(String(result, resultLength));
+                auto numsys = unumsys_openByName(result, &status);
+                ASSERT(U_SUCCESS(status));
+                // Only support algorithmic if it is the default fot the locale, handled below.
+                if (!unumsys_isAlgorithmic(numsys))
+                    availableNumberingSystems.append(String(result, resultLength));
+                unumsys_close(numsys);
             }
             uenum_close(numberingSystemNames);
         }

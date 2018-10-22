@@ -1,3 +1,88 @@
+2018-10-21  Babak Shafiei  <bshafiei@apple.com>
+
+        Cherry-pick r234127. rdar://problem/45285391
+
+    [INTL] Language tags are not canonicalized
+    https://bugs.webkit.org/show_bug.cgi?id=185836
+    
+    Patch by Andy VanWagoner <andy@vanwagoner.family> on 2018-07-23
+    Reviewed by Keith Miller.
+    
+    JSTests:
+    
+    Remove expected failures that have been fixed.
+    
+    * test262/expectations.yaml:
+    
+    Source/JavaScriptCore:
+    
+    Canonicalize language tags, replacing deprecated tag parts with the
+    preferred values. Remove broken support for algorithmic numbering systems,
+    that can cause an error in icu, and are not supported in other engines.
+    
+    Generate the lookup functions from the language-subtag-registry.
+    
+    Also initialize the UNumberFormat in initializeNumberFormat so any
+    failures are thrown immediately instead of failing to format later.
+    
+    * CMakeLists.txt:
+    * DerivedSources.make:
+    * JavaScriptCore.xcodeproj/project.pbxproj:
+    * Scripts/generateIntlCanonicalizeLanguage.py: Added.
+    * runtime/IntlDateTimeFormat.cpp:
+    (JSC::IntlDateTimeFormat::initializeDateTimeFormat):
+    * runtime/IntlNumberFormat.cpp:
+    (JSC::IntlNumberFormat::initializeNumberFormat):
+    (JSC::IntlNumberFormat::formatNumber):
+    (JSC::IntlNumberFormat::formatToParts):
+    (JSC::IntlNumberFormat::createNumberFormat): Deleted.
+    * runtime/IntlNumberFormat.h:
+    * runtime/IntlObject.cpp:
+    (JSC::intlNumberOption):
+    (JSC::intlDefaultNumberOption):
+    (JSC::preferredLanguage):
+    (JSC::preferredRegion):
+    (JSC::canonicalLangTag):
+    (JSC::canonicalizeLanguageTag):
+    (JSC::defaultLocale):
+    (JSC::removeUnicodeLocaleExtension):
+    (JSC::numberingSystemsForLocale):
+    (JSC::grandfatheredLangTag): Deleted.
+    * runtime/IntlObject.h:
+    * runtime/IntlPluralRules.cpp:
+    (JSC::IntlPluralRules::initializePluralRules):
+    * runtime/JSGlobalObject.cpp:
+    (JSC::addMissingScriptLocales):
+    (JSC::JSGlobalObject::intlCollatorAvailableLocales):
+    (JSC::JSGlobalObject::intlDateTimeFormatAvailableLocales):
+    (JSC::JSGlobalObject::intlNumberFormatAvailableLocales):
+    (JSC::JSGlobalObject::intlPluralRulesAvailableLocales):
+    * ucd/language-subtag-registry.txt: Added.
+    
+    LayoutTests:
+    
+    Use gregory instead of gregorian, matching test262/intl402 and other engines.
+    Remove tests for algorithmic numbering systems. Add NumberFormat numbering system tests.
+    
+    * js/intl-datetimeformat-expected.txt:
+    * js/intl-numberformat-expected.txt:
+    * js/script-tests/intl-datetimeformat.js:
+    * js/script-tests/intl-numberformat.js:
+    (string_appeared_here):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@234127 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-07-23  Andy VanWagoner  <andy@vanwagoner.family>
+
+            [INTL] Language tags are not canonicalized
+            https://bugs.webkit.org/show_bug.cgi?id=185836
+
+            Reviewed by Keith Miller.
+
+            Remove expected failures that have been fixed.
+
+            * test262/expectations.yaml:
+
 2018-10-18  Babak Shafiei  <bshafiei@apple.com>
 
         Cherry-pick r237129. rdar://problem/45285646

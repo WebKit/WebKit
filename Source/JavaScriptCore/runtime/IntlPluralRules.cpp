@@ -114,7 +114,7 @@ void IntlPluralRules::initializePluralRules(ExecState& exec, JSValue locales, JS
 
     JSObject* options;
     if (optionsValue.isUndefined())
-        options = constructEmptyObject(&exec);
+        options = constructEmptyObject(&exec, exec.lexicalGlobalObject()->nullPrototypeObjectStructure());
     else {
         options = optionsValue.toObject(&exec);
         RETURN_IF_EXCEPTION(scope, void());

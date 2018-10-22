@@ -71,7 +71,6 @@ private:
         void operator()(UNumberFormat*) const;
     };
 
-    void createNumberFormat(ExecState&);
     static ASCIILiteral styleString(Style);
     static ASCIILiteral currencyDisplayString(CurrencyDisplay);
 

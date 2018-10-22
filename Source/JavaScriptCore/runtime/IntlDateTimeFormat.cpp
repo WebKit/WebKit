@@ -47,6 +47,8 @@
 
 namespace JSC {
 
+static const double minECMAScriptTime = -8.64E15;
+
 const ClassInfo IntlDateTimeFormat::s_info = { "Object", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlDateTimeFormat) };
 
 namespace IntlDTFInternal {
@@ -466,8 +468,8 @@ void IntlDateTimeFormat::initializeDateTimeFormat(ExecState& exec, JSValue local
     // 14. Set dateTimeFormat.[[calendar]] to the value of r.[[ca]].
     m_calendar = resolved.get("ca"_s);
     // Switch to preferred aliases.
-    if (m_calendar == "gregory")
-        m_calendar = "gregorian"_s;
+    if (m_calendar == "gregorian")
+        m_calendar = "gregory"_s;
     else if (m_calendar == "islamicc")
         m_calendar = "islamic-civil"_s;
     else if (m_calendar == "ethioaa")
@@ -672,6 +674,11 @@ void IntlDateTimeFormat::initializeDateTimeFormat(ExecState& exec, JSValue local
         throwTypeError(&exec, scope, "failed to initialize DateTimeFormat"_s);
         return;
     }
+
+    // Gregorian calendar should be used from the beginning of ECMAScript time.
+    // Failure here means unsupported calendar, and can safely be ignored.
+    UCalendar* cal = const_cast<UCalendar*>(udat_getCalendar(m_dateFormat.get()));
+    ucal_setGregorianChange(cal, minECMAScriptTime, &status);
 
     // 37. Set dateTimeFormat.[[boundFormat]] to undefined.
     // Already undefined.

@@ -269,9 +269,9 @@ void IntlNumberFormat::initializeNumberFormat(ExecState& state, JSValue locales,
     RETURN_IF_EXCEPTION(scope, void());
 
     if (!minimumSignificantDigitsValue.isUndefined() || !maximumSignificantDigitsValue.isUndefined()) {
-        unsigned minimumSignificantDigits = intlNumberOption(state, options, Identifier::fromString(&vm, "minimumSignificantDigits"), 1, 21, 1);
+        unsigned minimumSignificantDigits = intlDefaultNumberOption(state, minimumSignificantDigitsValue, Identifier::fromString(&vm, "minimumSignificantDigits"), 1, 21, 1);
         RETURN_IF_EXCEPTION(scope, void());
-        unsigned maximumSignificantDigits = intlNumberOption(state, options, Identifier::fromString(&vm, "maximumSignificantDigits"), minimumSignificantDigits, 21, 21);
+        unsigned maximumSignificantDigits = intlDefaultNumberOption(state, maximumSignificantDigitsValue, Identifier::fromString(&vm, "maximumSignificantDigits"), minimumSignificantDigits, 21, 21);
         RETURN_IF_EXCEPTION(scope, void());
         m_minimumSignificantDigits = minimumSignificantDigits;
         m_maximumSignificantDigits = maximumSignificantDigits;
@@ -283,21 +283,6 @@ void IntlNumberFormat::initializeNumberFormat(ExecState& state, JSValue locales,
         useGrouping = true;
     RETURN_IF_EXCEPTION(scope, void());
     m_useGrouping = useGrouping;
-
-    m_initializedNumberFormat = true;
-}
-
-void IntlNumberFormat::createNumberFormat(ExecState& state)
-{
-    VM& vm = state.vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
-
-    ASSERT(!m_numberFormat);
-
-    if (!m_initializedNumberFormat) {
-        initializeNumberFormat(state, jsUndefined(), jsUndefined());
-        scope.assertNoException();
-    }
 
     UNumberFormatStyle style = UNUM_DEFAULT;
     switch (m_style) {
@@ -327,27 +312,32 @@ void IntlNumberFormat::createNumberFormat(ExecState& state)
     }
 
     UErrorCode status = U_ZERO_ERROR;
-    auto numberFormat = std::unique_ptr<UNumberFormat, UNumberFormatDeleter>(unum_open(style, nullptr, 0, m_locale.utf8().data(), nullptr, &status));
-    if (U_FAILURE(status))
+    m_numberFormat = std::unique_ptr<UNumberFormat, UNumberFormatDeleter>(unum_open(style, nullptr, 0, m_locale.utf8().data(), nullptr, &status));
+    if (U_FAILURE(status)) {
+        throwTypeError(&state, scope, "failed to initialize NumberFormat"_s);
         return;
-
-    if (m_style == Style::Currency)
-        unum_setTextAttribute(numberFormat.get(), UNUM_CURRENCY_CODE, StringView(m_currency).upconvertedCharacters(), 3, &status);
-    if (!m_minimumSignificantDigits) {
-        unum_setAttribute(numberFormat.get(), UNUM_MIN_INTEGER_DIGITS, m_minimumIntegerDigits);
-        unum_setAttribute(numberFormat.get(), UNUM_MIN_FRACTION_DIGITS, m_minimumFractionDigits);
-        unum_setAttribute(numberFormat.get(), UNUM_MAX_FRACTION_DIGITS, m_maximumFractionDigits);
-    } else {
-        unum_setAttribute(numberFormat.get(), UNUM_SIGNIFICANT_DIGITS_USED, true);
-        unum_setAttribute(numberFormat.get(), UNUM_MIN_SIGNIFICANT_DIGITS, m_minimumSignificantDigits);
-        unum_setAttribute(numberFormat.get(), UNUM_MAX_SIGNIFICANT_DIGITS, m_maximumSignificantDigits);
     }
-    unum_setAttribute(numberFormat.get(), UNUM_GROUPING_USED, m_useGrouping);
-    unum_setAttribute(numberFormat.get(), UNUM_ROUNDING_MODE, UNUM_ROUND_HALFUP);
-    if (U_FAILURE(status))
-        return;
 
-    m_numberFormat = WTFMove(numberFormat);
+    if (m_style == Style::Currency) {
+        unum_setTextAttribute(m_numberFormat.get(), UNUM_CURRENCY_CODE, StringView(m_currency).upconvertedCharacters(), m_currency.length(), &status);
+        if (U_FAILURE(status)) {
+            throwTypeError(&state, scope, "failed to initialize NumberFormat"_s);
+            return;
+        }
+    }
+    if (!m_minimumSignificantDigits) {
+        unum_setAttribute(m_numberFormat.get(), UNUM_MIN_INTEGER_DIGITS, m_minimumIntegerDigits);
+        unum_setAttribute(m_numberFormat.get(), UNUM_MIN_FRACTION_DIGITS, m_minimumFractionDigits);
+        unum_setAttribute(m_numberFormat.get(), UNUM_MAX_FRACTION_DIGITS, m_maximumFractionDigits);
+    } else {
+        unum_setAttribute(m_numberFormat.get(), UNUM_SIGNIFICANT_DIGITS_USED, true);
+        unum_setAttribute(m_numberFormat.get(), UNUM_MIN_SIGNIFICANT_DIGITS, m_minimumSignificantDigits);
+        unum_setAttribute(m_numberFormat.get(), UNUM_MAX_SIGNIFICANT_DIGITS, m_maximumSignificantDigits);
+    }
+    unum_setAttribute(m_numberFormat.get(), UNUM_GROUPING_USED, m_useGrouping);
+    unum_setAttribute(m_numberFormat.get(), UNUM_ROUNDING_MODE, UNUM_ROUND_HALFUP);
+
+    m_initializedNumberFormat = true;
 }
 
 JSValue IntlNumberFormat::formatNumber(ExecState& state, double number)
@@ -356,11 +346,8 @@ JSValue IntlNumberFormat::formatNumber(ExecState& state, double number)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // 11.3.4 FormatNumber abstract operation (ECMA-402 2.0)
-    if (!m_numberFormat) {
-        createNumberFormat(state);
-        if (!m_numberFormat)
-            return throwException(&state, scope, createError(&state, "Failed to format a number."_s));
-    }
+    if (!m_initializedNumberFormat)
+        return throwTypeError(&state, scope, "Intl.NumberFormat.prototype.format called on value that's not an object initialized as a NumberFormat"_s);
 
     // Map negative zero to positive zero.
     if (!number)
@@ -504,9 +491,7 @@ JSValue IntlNumberFormat::formatToParts(ExecState& exec, double value)
     // https://tc39.github.io/ecma402/#sec-formatnumbertoparts
     // https://tc39.github.io/ecma402/#sec-partitionnumberpattern
 
-    if (!m_numberFormat)
-        createNumberFormat(exec);
-    if (!m_initializedNumberFormat || !m_numberFormat)
+    if (!m_initializedNumberFormat)
         return throwTypeError(&exec, scope, "Intl.NumberFormat.prototype.formatToParts called on value that's not an object initialized as a NumberFormat"_s);
 
     UErrorCode status = U_ZERO_ERROR;
