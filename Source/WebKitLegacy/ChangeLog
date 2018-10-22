@@ -1,3 +1,18 @@
+2018-10-22  Sihui Liu  <sihui_liu@apple.com>
+
+        Regression (r232410): StorageTracker.db file gets unlinked while in use
+        https://bugs.webkit.org/show_bug.cgi?id=190795
+
+        Reviewed by Chris Dumez.
+
+        WK2 stopped using StorageTracker.db file in r232410 and would delete 
+        the file for safety.
+        It turned out WK1 could use the same file path, so WK2 may delete the 
+        file while WK1 is using it.
+
+        * Storage/StorageTracker.cpp:
+        (WebKit::StorageTracker::trackerDatabasePath):
+
 2018-10-18  Alexey Proskuryakov  <ap@apple.com>
 
         Switch from PLATFORM(IOS) to PLATFORM(IOS_FAMILY)

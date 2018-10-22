@@ -104,7 +104,7 @@ StorageTracker::StorageTracker(const String& storagePath)
 String StorageTracker::trackerDatabasePath()
 {
     ASSERT(!m_databaseMutex.tryLock());
-    return FileSystem::pathByAppendingComponent(m_storageDirectoryPath, "StorageTracker.db");
+    return FileSystem::pathByAppendingComponent(m_storageDirectoryPath, "LegacyStorageTracker.db");
 }
 
 static bool ensureDatabaseFileExists(const String& fileName, bool createIfDoesNotExist)
