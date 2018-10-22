@@ -49,13 +49,14 @@ public:
 private:
     class Line {
     public:
-        Line(InlineFormattingState&);
+        Line(InlineFormattingState&, const Box& formattingRoot);
 
-        void setConstraints(LayoutUnit lineLogicalLeft, LayoutUnit availableWidth);
+        void init(LayoutUnit lineLogicalLeft, LayoutUnit availableWidth);
         void appendContent(const InlineLineBreaker::Run&);
         void close();
-        bool hasContent() const { return !m_isEmpty; }
-        LayoutUnit contentLogicalLeft() const { return m_contentLogicalLeft; }
+
+        bool hasContent() const { return m_firstRunIndex.has_value(); }
+        LayoutUnit contentLogicalRight();
         LayoutUnit availableWidth() const { return m_availableWidth; }
 
     private:
@@ -64,11 +65,16 @@ private:
             unsigned length;
         };
         std::optional<TrailingTrimmableContent> m_trailingTrimmableContent;
-        InlineFormattingState& m_inlineFormattingState;
-        LayoutUnit m_contentLogicalLeft;
-        LayoutUnit m_availableWidth;
-        bool m_isEmpty { true };
         bool m_lastRunIsNotCollapsedText { true };
+
+        InlineFormattingState& m_formattingState;
+        const Box& m_formattingRoot;
+
+        LayoutUnit m_lineLogicalLeft;
+        LayoutUnit m_availableWidth;
+        LayoutUnit m_lineWidth;
+
+        std::optional<unsigned> m_firstRunIndex;
     };
 
     void layoutInlineContent(const LayoutContext&, InlineFormattingState&, const InlineRunProvider&) const;

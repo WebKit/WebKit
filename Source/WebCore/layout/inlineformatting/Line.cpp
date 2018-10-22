@@ -33,15 +33,40 @@
 namespace WebCore {
 namespace Layout {
 
-InlineFormattingContext::Line::Line(InlineFormattingState& inlineFormattingState)
-    : m_inlineFormattingState(inlineFormattingState)
+InlineFormattingContext::Line::Line(InlineFormattingState& formattingState, const Box& formattingRoot)
+    : m_formattingState(formattingState)
+    , m_formattingRoot(formattingRoot)
 {
 }
 
-void InlineFormattingContext::Line::setConstraints(LayoutUnit lineLogicalLeft, LayoutUnit availableWidth)
+void InlineFormattingContext::Line::init(LayoutUnit lineLogicalLeft, LayoutUnit availableWidth)
 {
-    m_contentLogicalLeft = lineLogicalLeft;
+    m_lineLogicalLeft = lineLogicalLeft;
+    m_lineWidth = availableWidth;
     m_availableWidth = availableWidth;
+    m_firstRunIndex = { };
+}
+
+static LayoutUnit adjustedLineLogicalLeft(TextAlignMode align, LayoutUnit lineLogicalLeft, LayoutUnit remainingWidth)
+{
+    switch (align) {
+    case TextAlignMode::Left:
+    case TextAlignMode::WebKitLeft:
+    case TextAlignMode::Start:
+        return lineLogicalLeft;
+    case TextAlignMode::Right:
+    case TextAlignMode::WebKitRight:
+    case TextAlignMode::End:
+        return lineLogicalLeft + std::max(remainingWidth, LayoutUnit());
+    case TextAlignMode::Center:
+    case TextAlignMode::WebKitCenter:
+        return lineLogicalLeft + std::max(remainingWidth / 2, LayoutUnit());
+    case TextAlignMode::Justify:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return lineLogicalLeft;
 }
 
 static bool isNonCollapsedText(const InlineRunProvider::Run& inlineRun)
@@ -54,38 +79,46 @@ static bool isTrimmableContent(const InlineRunProvider::Run& inlineRun)
     return inlineRun.isWhitespace() && inlineRun.style().collapseWhiteSpace();
 }
 
+LayoutUnit InlineFormattingContext::Line::contentLogicalRight()
+{
+    if (!m_firstRunIndex.has_value())
+        return m_lineLogicalLeft;
+
+    return m_formattingState.inlineRuns().last().logicalRight();
+}
+
 void InlineFormattingContext::Line::appendContent(const InlineLineBreaker::Run& run)
 {
     auto lastRunWasNotCollapsedText = m_lastRunIsNotCollapsedText;
-    auto hadContent = hasContent();
-    auto contentLogicalLeft = m_contentLogicalLeft;
     m_trailingTrimmableContent = { };
-
-    auto& inlineRun = run.inlineRun;
     m_availableWidth -= run.width;
-    m_lastRunIsNotCollapsedText = isNonCollapsedText(inlineRun);
-    m_isEmpty = false;
-    m_contentLogicalLeft += run.width;
+
+    auto& content = run.content;
+    m_lastRunIsNotCollapsedText = isNonCollapsedText(content);
 
     // Append this text run to the end of the last text run, if the last run is continuous.
-    if (inlineRun.isText()) {
-        auto textContext = inlineRun.textContext();
+    std::optional<InlineRun::TextContext> textRun;
+    if (content.isText()) {
+        auto textContext = content.textContext();
         auto runLength = textContext->isCollapsed() ? 1 : textContext->length();
 
-        if (isTrimmableContent(inlineRun))
+        if (isTrimmableContent(content))
             m_trailingTrimmableContent = TrailingTrimmableContent { run.width, runLength };
 
-        if (hadContent && lastRunWasNotCollapsedText) {
-            auto& inlineRun = m_inlineFormattingState.inlineRuns().last();
+        if (hasContent() && lastRunWasNotCollapsedText) {
+            auto& inlineRun = m_formattingState.inlineRuns().last();
             inlineRun.setWidth(inlineRun.width() + run.width);
             inlineRun.textContext()->setLength(inlineRun.textContext()->length() + runLength);
             return;
         }
-
-        return m_inlineFormattingState.appendInlineRun({ contentLogicalLeft, run.width, textContext->start(), runLength, inlineRun.inlineItem()});
+        textRun = InlineRun::TextContext { textContext->start(), runLength };
     }
 
-    m_inlineFormattingState.appendInlineRun({ contentLogicalLeft, run.width, inlineRun.inlineItem() });
+    if (textRun)
+        m_formattingState.appendInlineRun(InlineRun::createTextRun(contentLogicalRight(), run.width, textRun->start(), textRun->length(), content.inlineItem()));
+    else
+        m_formattingState.appendInlineRun(InlineRun::createRun(contentLogicalRight(), run.width, content.inlineItem()));
+    m_firstRunIndex = m_firstRunIndex.value_or(m_formattingState.inlineRuns().size() - 1);
 }
 
 void InlineFormattingContext::Line::close()
@@ -95,18 +128,41 @@ void InlineFormattingContext::Line::close()
         if (!m_trailingTrimmableContent)
             return;
 
-        auto& lastInlineRun = m_inlineFormattingState.inlineRuns().last();
+        auto& lastInlineRun = m_formattingState.inlineRuns().last();
         lastInlineRun.setWidth(lastInlineRun.width() - m_trailingTrimmableContent->width);
         lastInlineRun.textContext()->setLength(lastInlineRun.textContext()->length() - m_trailingTrimmableContent->length);
 
-        if (!lastInlineRun.textContext()->length())
-            m_inlineFormattingState.inlineRuns().removeLast();
+        if (!lastInlineRun.textContext()->length()) {
+            m_formattingState.inlineRuns().removeLast();
+            if (m_firstRunIndex.value())
+                --*m_firstRunIndex;
+            else
+                m_firstRunIndex = { };
+        }
         m_availableWidth += m_trailingTrimmableContent->width;
         m_trailingTrimmableContent = { };
     };
 
+    auto alignRuns = [&]() {
+
+        if (!hasContent())
+            return;
+
+        auto adjustedLogicalLeft = adjustedLineLogicalLeft(m_formattingRoot.style().textAlign(), m_lineLogicalLeft, m_availableWidth);
+        if (m_lineLogicalLeft == adjustedLogicalLeft)
+            return;
+
+        auto& inlineRuns = m_formattingState.inlineRuns();
+        auto delta = adjustedLogicalLeft - m_lineLogicalLeft;
+        for (auto runIndex = *m_firstRunIndex; runIndex < inlineRuns.size(); ++runIndex)
+            inlineRuns[runIndex].setLogicalLeft(inlineRuns[runIndex].logicalLeft() + delta);
+    };
+
+    if (!hasContent())
+        return;
+
     trimTrailingContent();
-    m_isEmpty = true;
+    alignRuns();
 }
 
 }

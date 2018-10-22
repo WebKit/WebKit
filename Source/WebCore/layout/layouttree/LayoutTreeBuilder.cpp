@@ -147,7 +147,7 @@ static void outputInlineRuns(TextStream& stream, const LayoutContext& layoutCont
             stream << " ";
         stream << "run";
         if (inlineRun.textContext())
-            stream << "(" << inlineRun.textContext()->position() << ", " << inlineRun.textContext()->position() + inlineRun.textContext()->length() << ") ";
+            stream << "(" << inlineRun.textContext()->start() << ", " << inlineRun.textContext()->start() + inlineRun.textContext()->length() << ") ";
         stream << "(" << inlineRun.logicalLeft() << ", " << inlineRun.logicalRight() << ")";
         stream.nextLine();
     }

@@ -42,8 +42,8 @@ public:
     struct Run {
         enum class Position { Undetermined, LineBegin, LineEnd };
         Position position;
-        InlineRunProvider::Run inlineRun;
         LayoutUnit width;
+        InlineRunProvider::Run content;
     };
     std::optional<Run> nextRun(LayoutUnit contentLogicalLeft, LayoutUnit availableWidth, bool lineIsEmpty);
 

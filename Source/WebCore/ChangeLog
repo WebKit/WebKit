@@ -1,5 +1,46 @@
 2018-10-22  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Add (right, center)text-align support.
+        https://bugs.webkit.org/show_bug.cgi?id=190745
+
+        Reviewed by Antti Koivisto.
+
+        Adjust the logical left of each run while closing the line.
+
+        * layout/Verification.cpp:
+        (WebCore::Layout::outputMismatchingSimpleLineInformationIfNeeded):
+        (WebCore::Layout::outputMismatchingComplexLineInformationIfNeeded):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::trimLeadingRun):
+        (WebCore::Layout::InlineFormattingContext::layoutInlineContent const):
+        * layout/inlineformatting/InlineFormattingContext.h:
+        (WebCore::Layout::InlineFormattingContext::Line::hasContent const):
+        (WebCore::Layout::InlineFormattingContext::Line::contentLogicalLeft const): Deleted.
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::InlineLineBreaker::nextRun):
+        (WebCore::Layout::InlineLineBreaker::splitRun):
+        * layout/inlineformatting/InlineLineBreaker.h:
+        * layout/inlineformatting/InlineRun.h:
+        (WebCore::Layout::InlineRun::setLogicalLeft):
+        (WebCore::Layout::InlineRun::TextContext::start const):
+        (WebCore::Layout::InlineRun::createRun):
+        (WebCore::Layout::InlineRun::createTextRun):
+        (WebCore::Layout::InlineRun::InlineRun):
+        (WebCore::Layout::InlineRun::TextContext::TextContext):
+        (WebCore::Layout::InlineRun::TextContext::position const): Deleted.
+        * layout/inlineformatting/Line.cpp:
+        (WebCore::Layout::InlineFormattingContext::Line::Line):
+        (WebCore::Layout::InlineFormattingContext::Line::init):
+        (WebCore::Layout::adjustedLineLogicalLeft):
+        (WebCore::Layout::InlineFormattingContext::Line::contentLogicalRight):
+        (WebCore::Layout::InlineFormattingContext::Line::appendContent):
+        (WebCore::Layout::InlineFormattingContext::Line::close):
+        (WebCore::Layout::InlineFormattingContext::Line::setConstraints): Deleted.
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::outputInlineRuns):
+
+2018-10-22  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Implement Replaced helper class.
         https://bugs.webkit.org/show_bug.cgi?id=190719
 

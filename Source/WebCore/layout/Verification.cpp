@@ -73,11 +73,11 @@ static bool outputMismatchingSimpleLineInformationIfNeeded(TextStream& stream, c
 
         auto matchingRuns = areEssentiallyEqual(simpleRun.logicalLeft, inlineRun.logicalLeft()) && areEssentiallyEqual(simpleRun.logicalRight, inlineRun.logicalRight());
         if (matchingRuns)
-            matchingRuns = (simpleRun.start == inlineRun.textContext()->position() && simpleRun.end == (inlineRun.textContext()->position() + inlineRun.textContext()->length()));
+            matchingRuns = (simpleRun.start == inlineRun.textContext()->start() && simpleRun.end == (inlineRun.textContext()->start() + inlineRun.textContext()->length()));
         if (matchingRuns)
             continue;
 
-        stream << "Mismatching: simple run(" << simpleRun.start << ", " << simpleRun.end << ") (" << simpleRun.logicalLeft << ", " << simpleRun.logicalRight << ") layout run(" << inlineRun.textContext()->position() << ", " << inlineRun.textContext()->position() + inlineRun.textContext()->length() << ") (" << inlineRun.logicalLeft() << ", " << inlineRun.logicalRight() << ")";
+        stream << "Mismatching: simple run(" << simpleRun.start << ", " << simpleRun.end << ") (" << simpleRun.logicalLeft << ", " << simpleRun.logicalRight << ") layout run(" << inlineRun.textContext()->start() << ", " << inlineRun.textContext()->start() + inlineRun.textContext()->length() << ") (" << inlineRun.logicalLeft() << ", " << inlineRun.logicalRight() << ")";
         stream.nextLine();
         mismatched = true;
     }
@@ -107,7 +107,7 @@ static bool outputMismatchingComplexLineInformationIfNeeded(TextStream& stream, 
             auto matchingRuns = areEssentiallyEqual(lineBox->logicalLeft(), inlineRun.logicalLeft()) && areEssentiallyEqual(lineBox->logicalRight(), inlineRun.logicalRight());
             if (matchingRuns && inlineTextBox) {
                 ASSERT(inlineRun.textContext());
-                matchingRuns = inlineTextBox->start() == inlineRun.textContext()->position() && inlineTextBox->end() + 1 == (inlineRun.textContext()->position() + inlineRun.textContext()->length());
+                matchingRuns = inlineTextBox->start() == inlineRun.textContext()->start() && inlineTextBox->end() + 1 == (inlineRun.textContext()->start() + inlineRun.textContext()->length());
             }
 
             if (!matchingRuns) {
@@ -119,7 +119,7 @@ static bool outputMismatchingComplexLineInformationIfNeeded(TextStream& stream, 
 
                 stream << "layout run ";
                 if (inlineRun.textContext())
-                    stream << "(" << inlineRun.textContext()->position() << ", " << inlineRun.textContext()->position() + inlineRun.textContext()->length() << ") ";
+                    stream << "(" << inlineRun.textContext()->start() << ", " << inlineRun.textContext()->start() + inlineRun.textContext()->length() << ") ";
                 stream << "(" << inlineRun.logicalLeft() << ", " << inlineRun.logicalRight() << ")";
                 stream.nextLine();
                 mismatched = true;

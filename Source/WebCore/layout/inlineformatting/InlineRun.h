@@ -34,33 +34,37 @@ namespace WebCore {
 namespace Layout {
 
 struct InlineRun {
-    InlineRun(LayoutUnit logcialLeft, LayoutUnit width, const InlineItem&);
-    InlineRun(LayoutUnit logcialLeft, LayoutUnit width, ItemPosition, unsigned length, const InlineItem&);
+    static InlineRun createRun(LayoutUnit logcialLeft, LayoutUnit width, const InlineItem&);
+    static InlineRun createTextRun(LayoutUnit logcialLeft, LayoutUnit width, ItemPosition, unsigned length, const InlineItem&);
 
     LayoutUnit logicalLeft() const { return m_logicalLeft; }
     LayoutUnit logicalRight() const { return logicalLeft() + width(); }
     LayoutUnit width() const { return m_width; }
 
     void setWidth(LayoutUnit width) { m_width = width; }
+    void setLogicalLeft(LayoutUnit logicalLeft) { m_logicalLeft = logicalLeft; }
     void setLogicalRight(LayoutUnit logicalRight) { m_width -= (this->logicalRight() - logicalRight); }
 
     struct TextContext {
     public:
         TextContext(ItemPosition, unsigned length);
 
-        ItemPosition position() const { return m_position; }
+        ItemPosition start() const { return m_start; }
         unsigned length() const { return m_length; }
 
         void setLength(unsigned length) { m_length = length; }
 
     private:
-        ItemPosition m_position;
+        ItemPosition m_start;
         unsigned m_length;
     };
     std::optional<TextContext>& textContext() { return m_textContext; }
     const InlineItem& inlineItem() const { return m_inlineItem; }
 
 private:
+    InlineRun(LayoutUnit logcialLeft, LayoutUnit width, const InlineItem&);
+    InlineRun(LayoutUnit logcialLeft, LayoutUnit width, ItemPosition, unsigned length, const InlineItem&);
+
     LayoutUnit m_logicalLeft;
     LayoutUnit m_width;
 
@@ -70,6 +74,16 @@ private:
 
 using InlineRuns = Vector<InlineRun>;
 
+inline InlineRun InlineRun::createRun(LayoutUnit logicalLeft, LayoutUnit width, const InlineItem& inlineItem)
+{
+    return { logicalLeft, width, inlineItem };
+}
+
+inline InlineRun InlineRun::createTextRun(LayoutUnit logicalLeft, LayoutUnit width, ItemPosition start, unsigned length, const InlineItem& inlineItem)
+{
+    return { logicalLeft, width, start, length, inlineItem };
+}
+
 inline InlineRun::InlineRun(LayoutUnit logicalLeft, LayoutUnit width, const InlineItem& inlineItem)
     : m_logicalLeft(logicalLeft)
     , m_width(width)
@@ -77,16 +91,16 @@ inline InlineRun::InlineRun(LayoutUnit logicalLeft, LayoutUnit width, const Inli
 {
 }
 
-inline InlineRun::InlineRun(LayoutUnit logicalLeft, LayoutUnit width, ItemPosition position, unsigned length, const InlineItem& inlineItem)
+inline InlineRun::InlineRun(LayoutUnit logicalLeft, LayoutUnit width, ItemPosition start, unsigned length, const InlineItem& inlineItem)
     : m_logicalLeft(logicalLeft)
     , m_width(width)
     , m_inlineItem(inlineItem)
-    , m_textContext(TextContext { position, length })
+    , m_textContext(TextContext { start, length })
 {
 }
 
-inline InlineRun::TextContext::TextContext(ItemPosition position, unsigned length)
-    : m_position(position)
+inline InlineRun::TextContext::TextContext(ItemPosition start, unsigned length)
+    : m_start(start)
     , m_length(length)
 {
 }

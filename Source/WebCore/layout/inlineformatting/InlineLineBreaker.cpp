@@ -60,32 +60,32 @@ std::optional<InlineLineBreaker::Run> InlineLineBreaker::nextRun(LayoutUnit cont
 
     if (currentInlineRun.isLineBreak()) {
         ++m_currentRunIndex;
-        return Run { Run::Position::LineEnd, currentInlineRun, 0 };
+        return Run { Run::Position::LineEnd, 0, currentInlineRun };
     }
 
     auto contentWidth = runWidth(currentInlineRun, contentLogicalLeft);
     // 1. Plenty of space left.
     if (contentWidth <= availableWidth) {
         ++m_currentRunIndex;
-        return Run { lineIsEmpty ? Run::Position::LineBegin : Run::Position::Undetermined, currentInlineRun, contentWidth };
+        return Run { lineIsEmpty ? Run::Position::LineBegin : Run::Position::Undetermined, contentWidth, currentInlineRun };
     }
 
     // 2. No space left whatsoever.
     if (availableWidth <= 0) {
         ++m_currentRunIndex;
-        return Run { Run::Position::LineBegin, currentInlineRun, contentWidth };
+        return Run { Run::Position::LineBegin, contentWidth, currentInlineRun };
     }
 
     // 3. Some space left. Let's find out what we need to do with this run.
     auto breakingBehavior = lineBreakingBehavior(currentInlineRun, lineIsEmpty);
     if (breakingBehavior == LineBreakingBehavior::Keep) {
         ++m_currentRunIndex;
-        return Run { lineIsEmpty ? Run::Position::LineBegin : Run::Position::Undetermined, currentInlineRun, contentWidth };
+        return Run { lineIsEmpty ? Run::Position::LineBegin : Run::Position::Undetermined, contentWidth, currentInlineRun };
     }
 
     if (breakingBehavior == LineBreakingBehavior::WrapToNextLine) {
         ++m_currentRunIndex;
-        return Run { Run::Position::LineBegin, currentInlineRun, contentWidth };
+        return Run { Run::Position::LineBegin, contentWidth, currentInlineRun };
     }
 
     ASSERT(breakingBehavior == LineBreakingBehavior::Break);
@@ -154,7 +154,7 @@ LayoutUnit InlineLineBreaker::runWidth(const InlineRunProvider::Run& inlineRun, 
 
 InlineLineBreaker::Run InlineLineBreaker::splitRun(const InlineRunProvider::Run& inlineRun, LayoutUnit, LayoutUnit, bool)
 {
-    return { Run::Position::Undetermined, inlineRun, { } };
+    return { Run::Position::Undetermined, { }, inlineRun };
 }
 
 std::optional<ItemPosition> InlineLineBreaker::adjustSplitPositionWithHyphenation(const InlineRunProvider::Run&, ItemPosition, LayoutUnit, LayoutUnit, bool) const

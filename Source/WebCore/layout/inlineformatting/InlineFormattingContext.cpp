@@ -95,11 +95,10 @@ static bool trimLeadingRun(const InlineLineBreaker::Run& run)
 {
     ASSERT(run.position == InlineLineBreaker::Run::Position::LineBegin);
 
-    auto& inlineRun = run.inlineRun;
-    if (!inlineRun.isWhitespace())
+    if (!run.content.isWhitespace())
         return false;
 
-    return inlineRun.style().collapseWhiteSpace();
+    return run.content.style().collapseWhiteSpace();
 }
 
 void InlineFormattingContext::layoutInlineContent(const LayoutContext& layoutContext, InlineFormattingState& inlineFormattingState, const InlineRunProvider& inlineRunProvider) const
@@ -111,11 +110,11 @@ void InlineFormattingContext::layoutInlineContent(const LayoutContext& layoutCon
     auto availableWidth = formattingRootDisplayBox.contentBoxWidth();
     auto previousRunPositionIsLineEnd = false;
 
-    Line line(inlineFormattingState);
-    line.setConstraints(lineLogicalLeft, availableWidth);
+    Line line(inlineFormattingState, root());
+    line.init(lineLogicalLeft, availableWidth);
 
     InlineLineBreaker lineBreaker(layoutContext, inlineFormattingState.inlineContent(), inlineRunProvider.runs());
-    while (auto run = lineBreaker.nextRun(line.contentLogicalLeft(), line.availableWidth(), !line.hasContent())) {
+    while (auto run = lineBreaker.nextRun(line.contentLogicalRight(), line.availableWidth(), !line.hasContent())) {
 
         if (run->position == InlineLineBreaker::Run::Position::LineBegin) {
             // First run on line.
@@ -123,7 +122,7 @@ void InlineFormattingContext::layoutInlineContent(const LayoutContext& layoutCon
             // Previous run ended up being at the line end. Adjust the line accordingly.
             if (!previousRunPositionIsLineEnd) {
                 line.close();
-                line.setConstraints(lineLogicalLeft, availableWidth);
+                line.init(lineLogicalLeft, availableWidth);
             }
             // Skip leading whitespace.
             if (!trimLeadingRun(*run))
@@ -137,7 +136,7 @@ void InlineFormattingContext::layoutInlineContent(const LayoutContext& layoutCon
             line.appendContent(*run);
             // Move over to the next line.
             line.close();
-            line.setConstraints(lineLogicalLeft, availableWidth);
+            line.init(lineLogicalLeft, availableWidth);
             continue;
         }
 
