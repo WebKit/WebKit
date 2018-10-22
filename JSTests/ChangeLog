@@ -1,5 +1,64 @@
 2018-10-21  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r236804. rdar://problem/45285687
+
+    Make string MaxLength for all WTF and JS strings consistently equal to INT_MAX.
+    https://bugs.webkit.org/show_bug.cgi?id=190187
+    <rdar://problem/42512909>
+    
+    Reviewed by Michael Saboff.
+    
+    JSTests:
+    
+    * stress/regress-190187.js: Added.
+    
+    Source/JavaScriptCore:
+    
+    Allowing different max string lengths at each level opens up opportunities for
+    bugs to creep in.  With 2 different max length values, it is more difficult to
+    keep the story straight on how we do overflow / bounds checks at each place in
+    the code.  It's also difficult to tell if a seemingly valid check at the WTF level
+    will have bad ramifications at the JSC level.  Also, it's also not meaningful to
+    support a max length > INT_MAX.  To eliminate this class of bugs, we'll
+    standardize on a MaxLength of INT_MAX at all levels.
+    
+    We'll also standardize the way we do length overflow checks on using
+    CheckedArithmetic, and add some asserts to document the assumptions of the code.
+    
+    * runtime/FunctionConstructor.cpp:
+    (JSC::constructFunctionSkippingEvalEnabledCheck):
+    - Fix OOM error handling which crashed a test after the new MaxLength was applied.
+    * runtime/JSString.h:
+    (JSC::JSString::finishCreation):
+    (JSC::JSString::createHasOtherOwner):
+    (JSC::JSString::setLength):
+    * runtime/JSStringInlines.h:
+    (JSC::jsMakeNontrivialString):
+    * runtime/Operations.h:
+    (JSC::jsString):
+    
+    Source/WTF:
+    
+    * wtf/text/StringConcatenate.h:
+    (WTF::tryMakeStringFromAdapters):
+    (WTF::sumWithOverflow): Deleted.
+    * wtf/text/StringImpl.h:
+    * wtf/text/WTFString.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@236804 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-10-03  Mark Lam  <mark.lam@apple.com>
+
+            Make string MaxLength for all WTF and JS strings consistently equal to INT_MAX.
+            https://bugs.webkit.org/show_bug.cgi?id=190187
+            <rdar://problem/42512909>
+
+            Reviewed by Michael Saboff.
+
+            * stress/regress-190187.js: Added.
+
+2018-10-21  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r234127. rdar://problem/45285391
 
     [INTL] Language tags are not canonicalized
