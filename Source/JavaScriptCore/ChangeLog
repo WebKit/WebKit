@@ -1,3 +1,18 @@
+2018-10-22  Keith Rollin  <krollin@apple.com>
+
+        Use Location = "Relative to Build Products" rather than "Relative to Group"
+        https://bugs.webkit.org/show_bug.cgi?id=190781
+
+        Reviewed by Alexey Proskuryakov.
+
+        Almost all Derived Files are included in Xcode projects with the
+        Location attribute set to "Relative to Group". While this currently
+        works, the Derived Files can no longer be found when enabling XCBuild
+        (which has stricter requirements). Fix this by setting the Location
+        attribute to "Relative to Build Products".
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2018-10-22  Mark Lam  <mark.lam@apple.com>
 
         DFGAbstractValue::m_arrayModes expects IndexingMode values, not IndexingType.
