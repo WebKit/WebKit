@@ -327,7 +327,7 @@ TEST(VideoControlsManager, VideoControlsManagerAudioElementStartedByInteraction)
     EXPECT_TRUE([[webView controlledElementID] isEqualToString:@"first"]);
 }
 
-TEST(VideoControlsManager, VideoControlsManagerAudioElementFollowingUserInteraction)
+TEST(VideoControlsManager, DISABLED_VideoControlsManagerAudioElementFollowingUserInteraction)
 {
     RetainPtr<VideoControlsManagerTestWebView*> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 400, 400));
 
