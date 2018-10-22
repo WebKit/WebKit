@@ -218,7 +218,6 @@ private:
     [self addSubview:_fixedClippingView.get()];
     [_fixedClippingView addSubview:_rootContentView.get()];
 
-    [self setupInteraction];
     [self setUserInteractionEnabled:YES];
 
     self.layer.hitTestsAsOpaque = YES;
@@ -275,6 +274,14 @@ private:
 
         [self _updateForScreen:newWindow.screen];
     }
+}
+
+- (void)didMoveToWindow
+{
+    [super didMoveToWindow];
+
+    if (self.window)
+        [self setupInteraction];
 }
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN

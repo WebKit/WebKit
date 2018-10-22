@@ -625,6 +625,9 @@ static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeI
 
 - (void)setupInteraction
 {
+    if (_hasSetUpInteractions)
+        return;
+
     if (!_interactionViewsContainerView) {
         _interactionViewsContainerView = adoptNS([[UIView alloc] init]);
         [_interactionViewsContainerView layer].name = @"InteractionViewsContainer";
@@ -713,10 +716,15 @@ static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeI
     _dataListTextSuggestionsInputView = nil;
     _dataListTextSuggestions = nil;
 #endif
+
+    _hasSetUpInteractions = YES;
 }
 
 - (void)cleanupInteraction
 {
+    if (!_hasSetUpInteractions)
+        return;
+
     _webSelectionAssistant = nil;
     _textSelectionAssistant = nil;
     
@@ -813,6 +821,8 @@ static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeI
     _dataListTextSuggestionsInputView = nil;
     _dataListTextSuggestions = nil;
 #endif
+
+    _hasSetUpInteractions = NO;
 }
 
 - (void)_removeDefaultGestureRecognizers

@@ -277,6 +277,8 @@ struct WKAutoCorrectionData {
 
     BOOL _focusRequiresStrongPasswordAssistance;
 
+    BOOL _hasSetUpInteractions;
+
 #if ENABLE(DATA_INTERACTION)
     WebKit::DragDropInteractionState _dragDropInteractionState;
     RetainPtr<UIDragInteraction> _dragInteraction;
