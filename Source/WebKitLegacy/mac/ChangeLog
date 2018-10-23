@@ -1,3 +1,20 @@
+2018-10-23  David Kilzer  <ddkilzer@apple.com>
+
+        Fix false positive leaks when using custom -init methods that don't start with -init
+        <https://webkit.org/b/190818>
+        <rdar://problem/45476042>
+
+        Reviewed by Dan Bernstein.
+
+        * Misc/WebKitErrors.m: Move `descriptions` static global so that
+        it is accessible by both categories.
+        (-[NSError _webkit_initWithDomain:code:URL:]): Declare new
+        NSError (WebKitInternal) category.  Add attribute to make this
+        behave like an -init method.
+        (-[NSError _webkit_initWithDomain:code:URL:]): Move into new
+        NSError (WebKitInternal) category.  Modernize method.  Replace
+        constant NSString with `NSURLErrorFailingURLStringErrorKey`.
+
 2018-10-18  Alexey Proskuryakov  <ap@apple.com>
 
         Switch from PLATFORM(IOS) to PLATFORM(IOS_FAMILY)

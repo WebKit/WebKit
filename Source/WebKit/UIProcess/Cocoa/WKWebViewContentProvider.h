@@ -43,7 +43,7 @@ struct UIEdgeInsets;
 
 @protocol WKWebViewContentProvider <NSObject>
 
-- (instancetype)web_initWithFrame:(CGRect) frame webView:(WKWebView *)webView mimeType:(NSString *)mimeType;
+- (instancetype)web_initWithFrame:(CGRect)frame webView:(WKWebView *)webView mimeType:(NSString *)mimeType __attribute__((objc_method_family(init)));
 - (void)web_setContentProviderData:(NSData *)data suggestedFilename:(NSString *)filename;
 - (void)web_setMinimumSize:(CGSize)size;
 - (void)web_setOverlaidAccessoryViewsInset:(CGSize)inset;

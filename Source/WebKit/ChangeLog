@@ -1,3 +1,15 @@
+2018-10-23  David Kilzer  <ddkilzer@apple.com>
+
+        Fix false positive leaks when using custom -init methods that don't start with -init
+        <https://webkit.org/b/190818>
+        <rdar://problem/45476042>
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/Cocoa/WKWebViewContentProvider.h:
+        (-[WKWebViewContentProvider web_initWithFrame:webView:mimeType:]):
+        Add attribute to make this behave like an -init method.
+
 2018-10-23  Chris Dumez  <cdumez@apple.com>
 
         [PSON] Add support for cross-site client-side redirects
