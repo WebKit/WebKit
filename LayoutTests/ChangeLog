@@ -1,5 +1,18 @@
 2018-10-23  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Unreviewed, rolling out r237280.
+
+        Causes fast/box-shadow/box-shadow-with-zero-radius.html to
+        fail on iOS Simulator.
+
+        Reverted changeset:
+
+        "[CG] Adopt CG SPI for non-even cornered rounded rects"
+        https://bugs.webkit.org/show_bug.cgi?id=190155
+        https://trac.webkit.org/changeset/237280
+
+2018-10-23  Ryan Haddad  <ryanhaddad@apple.com>
+
         [macOS Debug WK1] Layout Test inspector/codemirror/prettyprinting-css.html is a flaky timeout
         https://bugs.webkit.org/show_bug.cgi?id=190833
 

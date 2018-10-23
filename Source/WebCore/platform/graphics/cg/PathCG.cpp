@@ -318,13 +318,6 @@ void Path::platformAddPathForRoundedRect(const FloatRect& rect, const FloatSize&
         CGPathAddRoundedRect(ensurePlatformPath(), nullptr, rectToDraw, radiusWidth, radiusHeight);
         return;
     }
-
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
-    CGRect rectToDraw = rect;
-    CGSize corners[4] = { bottomLeftRadius, bottomRightRadius, topRightRadius, topLeftRadius };
-    CGPathAddUnevenCornersRoundedRect(ensurePlatformPath(), nullptr, rectToDraw, corners);
-    return;
-#endif
 #endif
 
     addBeziersForRoundedRect(rect, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius);
