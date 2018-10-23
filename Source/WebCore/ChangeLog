@@ -1,3 +1,45 @@
+2018-10-23  Jer Noble  <jer.noble@apple.com>
+
+        Use WeakPtr and GenericTaskQueue within ObjC classes used by MediaPlayerPrivateAVFoundationObjC
+        https://bugs.webkit.org/show_bug.cgi?id=190790
+
+        Reviewed by Alex Christensen.
+
+        Move towards using WeakPtr callbacks instead of raw pointers within the utility objects used by
+        MediaPlayerPrivateAVFoundationObjC. Additionally, accessing WeakPtr off the thread which created
+        the pointer is not allowed, so use a GenericTaskQueue to schedule callbacks instead. Make 
+        GenericTaskQueue<Timer> thread-safe by locking around access to m_pendingTasks, and by making 
+        incrementing the pending task count atomic.
+
+        * platform/GenericTaskQueue.cpp:
+        (WebCore::TaskDispatcher<Timer>::postTask):
+        (WebCore::TaskDispatcher<Timer>::sharedLock):
+        (WebCore::TaskDispatcher<Timer>::sharedTimerFired):
+        (WebCore::TaskDispatcher<Timer>::dispatchOneTask):
+        (WebCore::TaskDispatcher<Timer>::pendingDispatchers):
+        * platform/GenericTaskQueue.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::~MediaPlayerPrivateAVFoundationObjC):
+        (-[WebCoreAVFMovieObserver initWithPlayer:]):
+        (-[WebCoreAVFMovieObserver disconnect]):
+        (-[WebCoreAVFMovieObserver metadataLoaded]):
+        (-[WebCoreAVFMovieObserver didEnd:]):
+        (-[WebCoreAVFMovieObserver observeValueForKeyPath:ofObject:change:context:]):
+        (-[WebCoreAVFMovieObserver legibleOutput:didOutputAttributedStrings:nativeSampleBuffers:forItemTime:]):
+        (-[WebCoreAVFMovieObserver outputSequenceWasFlushed:]):
+        (-[WebCoreAVFLoaderDelegate initWithPlayer:]):
+        (-[WebCoreAVFLoaderDelegate resourceLoader:shouldWaitForLoadingOfRequestedResource:]):
+        (-[WebCoreAVFLoaderDelegate resourceLoader:didCancelLoadingRequest:]):
+        (-[WebCoreAVFPullDelegate initWithPlayer:]):
+        (-[WebCoreAVFPullDelegate outputMediaDataWillChange:]):
+        (-[WebCoreAVFMovieObserver initWithCallback:]): Deleted.
+        (-[WebCoreAVFLoaderDelegate initWithCallback:]): Deleted.
+        (-[WebCoreAVFLoaderDelegate setCallback:]): Deleted.
+        (-[WebCoreAVFPullDelegate initWithCallback:]): Deleted.
+        (-[WebCoreAVFPullDelegate setCallback:]): Deleted.
+
 2018-10-22  Justin Michaud  <justin_michaud@apple.com>
 
         Registered custom properties should support syntax parameter for <length> and *
