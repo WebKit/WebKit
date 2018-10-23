@@ -3199,3 +3199,5 @@ compositing/contents-scale/non-decomposable-matrix.html [ ImageOnlyFailure ]
 
 # <rdar://problem/41546970> REGRESSION: LayoutTest media/media-fullscreen-loop-inline.html is a flaky timeout
 media/media-fullscreen-loop-inline.html [ Pass Timeout ]
+
+webkit.org/b/187618 [ Release ] media/media-fullscreen-pause-inline.html [ Pass Failure ]
