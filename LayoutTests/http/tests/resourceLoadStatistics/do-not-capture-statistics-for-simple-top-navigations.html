@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="resources/util.js"></script>
+</head>
+<body>
+<script>
+    description("Test that a non-redirected top frame navigation doesn't get captured in statistics.");
+    jsTestIsAsync = true;
+
+    function finishTest() {
+        shouldBeFalse('testRunner.isStatisticsRegisteredAsSubFrameUnder("http://localhost", "http://127.0.0.1")');
+        shouldBeFalse('testRunner.isStatisticsRegisteredAsSubFrameUnder("http://127.0.0.1", "http://localhost")');
+        setEnableFeature(false, finishJSTest);
+    }
+
+    function runTest() {
+        switch (document.location.host) {
+            case "127.0.0.1:8000":
+                setEnableFeature(true, function() {
+                    if (testRunner.isStatisticsPrevalentResource("http://localhost:8000"))
+                        testFailed("Localhost was classified as prevalent resource before the test starts.");
+                    document.location.href = "http://localhost:8000/resourceLoadStatistics/do-not-capture-statistics-for-simple-top-navigations.html";
+                });
+                break;
+            case "localhost:8000":
+                testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
+                testRunner.installStatisticsDidScanDataRecordsCallback(finishTest);
+                testRunner.statisticsNotifyObserver();
+                break;
+            default:
+                testFailed("Unknown host: " + document.location.host);
+                finishTest();
+        }
+    }
+
+    if (window.testRunner && window.internals)
+        runTest();
+</script>
+</body>
+</html>

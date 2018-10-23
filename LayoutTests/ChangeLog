@@ -1,3 +1,47 @@
+2018-10-23  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r236578. rdar://problem/45285613
+
+    Resource Load Statistics: Non-redirected top frame navigation should not get captured in statistics
+    https://bugs.webkit.org/show_bug.cgi?id=190055
+    <rdar://problem/44843460>
+    
+    Reviewed by Chris Dumez.
+    
+    Source/WebCore:
+    
+    Test: http/tests/resourceLoadStatistics/do-not-capture-statistics-for-simple-top-navigations.html
+    
+    * loader/ResourceLoadStatistics.cpp:
+    (WebCore::ResourceLoadStatistics::decode):
+        Corrects legacy statistics for frames and triggers a re-classification.
+    
+    Source/WebKit:
+    
+    * UIProcess/ResourceLoadStatisticsMemoryStore.cpp:
+        Bumped the statisticsModelVersion to 14 to be able to
+        correct legacy statistics.
+    (WebKit::ResourceLoadStatisticsMemoryStore::logFrameNavigation):
+        Now skips capture if it's the main frame.
+    
+    LayoutTests:
+    
+    * http/tests/resourceLoadStatistics/do-not-capture-statistics-for-simple-top-navigations-expected.txt: Added.
+    * http/tests/resourceLoadStatistics/do-not-capture-statistics-for-simple-top-navigations.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@236578 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-09-27  John Wilander  <wilander@apple.com>
+
+            Resource Load Statistics: Non-redirected top frame navigation should not get captured in statistics
+            https://bugs.webkit.org/show_bug.cgi?id=190055
+            <rdar://problem/44843460>
+
+            Reviewed by Chris Dumez.
+
+            * http/tests/resourceLoadStatistics/do-not-capture-statistics-for-simple-top-navigations-expected.txt: Added.
+            * http/tests/resourceLoadStatistics/do-not-capture-statistics-for-simple-top-navigations.html: Added.
+
 2018-10-21  Babak Shafiei  <bshafiei@apple.com>
 
         Cherry-pick r234127. rdar://problem/45285391
