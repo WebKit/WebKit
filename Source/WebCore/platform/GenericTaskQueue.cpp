@@ -26,7 +26,6 @@
 #include "config.h"
 #include "GenericTaskQueue.h"
 
-#include <wtf/Lock.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -38,20 +37,10 @@ TaskDispatcher<Timer>::TaskDispatcher()
 
 void TaskDispatcher<Timer>::postTask(Function<void()>&& function)
 {
-    {
-        auto locker = holdLock(sharedLock());
-        m_pendingTasks.append(WTFMove(function));
-        pendingDispatchers().append(makeWeakPtr(*this));
-    }
-
-    auto startTimer = [] {
-        if (!sharedTimer().isActive())
-            sharedTimer().startOneShot(0_s);
-    };
-    if (isMainThread())
-        startTimer();
-    else
-        callOnMainThread(WTFMove(startTimer));
+    m_pendingTasks.append(WTFMove(function));
+    pendingDispatchers().append(makeWeakPtr(*this));
+    if (!sharedTimer().isActive())
+        sharedTimer().startOneShot(0_s);
 }
 
 Timer& TaskDispatcher<Timer>::sharedTimer()
@@ -61,12 +50,6 @@ Timer& TaskDispatcher<Timer>::sharedTimer()
     return timer.get();
 }
 
-Lock& TaskDispatcher<Timer>::sharedLock()
-{
-    static NeverDestroyed<Lock> lock;
-    return lock;
-}
-
 void TaskDispatcher<Timer>::sharedTimerFired()
 {
     ASSERT(!sharedTimer().isActive());
@@ -74,11 +57,7 @@ void TaskDispatcher<Timer>::sharedTimerFired()
 
     // Copy the pending events first because we don't want to process synchronously the new events
     // queued by the JS events handlers that are executed in the loop below.
-    Deque<WeakPtr<TaskDispatcher<Timer>>> queuedDispatchers;
-    {
-        auto locker = holdLock(sharedLock());
-        queuedDispatchers = WTFMove(pendingDispatchers());
-    }
+    Deque<WeakPtr<TaskDispatcher<Timer>>> queuedDispatchers = WTFMove(pendingDispatchers());
     while (!queuedDispatchers.isEmpty()) {
         WeakPtr<TaskDispatcher<Timer>> dispatcher = queuedDispatchers.takeFirst();
         if (!dispatcher)
@@ -87,27 +66,17 @@ void TaskDispatcher<Timer>::sharedTimerFired()
     }
 }
 
-
 Deque<WeakPtr<TaskDispatcher<Timer>>>& TaskDispatcher<Timer>::pendingDispatchers()
 {
-    static LazyNeverDestroyed<Deque<WeakPtr<TaskDispatcher<Timer>>>> dispatchers;
-
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        dispatchers.construct();
-    });
-
+    ASSERT(isMainThread());
+    static NeverDestroyed<Deque<WeakPtr<TaskDispatcher<Timer>>>> dispatchers;
     return dispatchers.get();
 }
 
 void TaskDispatcher<Timer>::dispatchOneTask()
 {
-    WTF::Function<void()> task;
-    {
-        auto locker = holdLock(sharedLock());
-        ASSERT(!m_pendingTasks.isEmpty());
-        task = m_pendingTasks.takeFirst();
-    }
+    ASSERT(!m_pendingTasks.isEmpty());
+    auto task = m_pendingTasks.takeFirst();
     task();
 }
 

@@ -336,11 +336,10 @@ enum MediaPlayerAVFoundationObservationContext {
 @interface WebCoreAVFMovieObserver : NSObject
 #endif
 {
-    WeakPtr<MediaPlayerPrivateAVFoundationObjC> m_player;
-    GenericTaskQueue<Timer, std::atomic<unsigned>> m_taskQueue;
+    MediaPlayerPrivateAVFoundationObjC* m_callback;
     int m_delayCallbacks;
 }
--(id)initWithPlayer:(WeakPtr<MediaPlayerPrivateAVFoundationObjC>&&)callback;
+-(id)initWithCallback:(MediaPlayerPrivateAVFoundationObjC*)callback;
 -(void)disconnect;
 -(void)metadataLoaded;
 -(void)didEnd:(NSNotification *)notification;
@@ -353,19 +352,20 @@ enum MediaPlayerAVFoundationObservationContext {
 
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE)
 @interface WebCoreAVFLoaderDelegate : NSObject<AVAssetResourceLoaderDelegate> {
-    WeakPtr<MediaPlayerPrivateAVFoundationObjC> m_player;
-    GenericTaskQueue<Timer, std::atomic<unsigned>> m_taskQueue;
+    MediaPlayerPrivateAVFoundationObjC* m_callback;
 }
-- (id)initWithPlayer:(WeakPtr<MediaPlayerPrivateAVFoundationObjC>&&)player;
+- (id)initWithCallback:(MediaPlayerPrivateAVFoundationObjC*)callback;
 - (BOOL)resourceLoader:(AVAssetResourceLoader *)resourceLoader shouldWaitForLoadingOfRequestedResource:(AVAssetResourceLoadingRequest *)loadingRequest;
+- (void)setCallback:(MediaPlayerPrivateAVFoundationObjC*)callback;
 @end
 #endif
 
 #if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
 @interface WebCoreAVFPullDelegate : NSObject<AVPlayerItemOutputPullDelegate> {
-    WeakPtr<MediaPlayerPrivateAVFoundationObjC> m_player;
+    MediaPlayerPrivateAVFoundationObjC *m_callback;
 }
-- (id)initWithPlayer:(WeakPtr<MediaPlayerPrivateAVFoundationObjC>&&)player;
+- (id)initWithCallback:(MediaPlayerPrivateAVFoundationObjC *)callback;
+- (void)setCallback:(MediaPlayerPrivateAVFoundationObjC*)callback;
 - (void)outputMediaDataWillChange:(AVPlayerItemOutput *)sender;
 - (void)outputSequenceWasFlushed:(AVPlayerItemOutput *)output;
 @end
@@ -501,14 +501,14 @@ MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC(MediaPlay
     : MediaPlayerPrivateAVFoundation(player)
     , m_videoFullscreenLayerManager(std::make_unique<VideoFullscreenLayerManagerObjC>())
     , m_videoFullscreenGravity(MediaPlayer::VideoGravityResizeAspect)
-    , m_objcObserver(adoptNS([[WebCoreAVFMovieObserver alloc] initWithPlayer:m_weakPtrFactory.createWeakPtr(*this)]))
+    , m_objcObserver(adoptNS([[WebCoreAVFMovieObserver alloc] initWithCallback:this]))
     , m_videoFrameHasDrawn(false)
     , m_haveCheckedPlayability(false)
 #if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
-    , m_videoOutputDelegate(adoptNS([[WebCoreAVFPullDelegate alloc] initWithPlayer:m_weakPtrFactory.createWeakPtr(*this)]))
+    , m_videoOutputDelegate(adoptNS([[WebCoreAVFPullDelegate alloc] initWithCallback:this]))
 #endif
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE)
-    , m_loaderDelegate(adoptNS([[WebCoreAVFLoaderDelegate alloc] initWithPlayer:m_weakPtrFactory.createWeakPtr(*this)]))
+    , m_loaderDelegate(adoptNS([[WebCoreAVFLoaderDelegate alloc] initWithCallback:this]))
 #endif
     , m_currentTextTrack(0)
     , m_cachedRate(0)
@@ -530,15 +530,15 @@ MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC(MediaPlay
 
 MediaPlayerPrivateAVFoundationObjC::~MediaPlayerPrivateAVFoundationObjC()
 {
-    m_weakPtrFactory.revokeAll();
-
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE)
+    [m_loaderDelegate.get() setCallback:0];
     [[m_avAsset.get() resourceLoader] setDelegate:nil queue:0];
 
     for (auto& pair : m_resourceLoaderMap)
         pair.value->invalidate();
 #endif
 #if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
+    [m_videoOutputDelegate setCallback:0];
     [m_videoOutput setDelegate:nil queue:0];
 #endif
 
@@ -3349,134 +3349,147 @@ NSArray* playerKVOProperties()
 
 @implementation WebCoreAVFMovieObserver
 
-- (id)initWithPlayer:(WeakPtr<MediaPlayerPrivateAVFoundationObjC>&&)player
+- (id)initWithCallback:(MediaPlayerPrivateAVFoundationObjC*)callback
 {
     self = [super init];
     if (!self)
         return nil;
-    m_player = WTFMove(player);
+    m_callback = callback;
     return self;
 }
 
 - (void)disconnect
 {
-    m_player = nullptr;
+    [NSObject cancelPreviousPerformRequestsWithTarget:self];
+    m_callback = nil;
 }
 
 - (void)metadataLoaded
 {
-    m_taskQueue.enqueueTask([player = m_player] {
-        if (player)
-            player->metadataLoaded();
-    });
+    if (!m_callback)
+        return;
+    m_callback->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification::AssetMetadataLoaded);
 }
 
 - (void)didEnd:(NSNotification *)unusedNotification
 {
     UNUSED_PARAM(unusedNotification);
-    m_taskQueue.enqueueTask([player = m_player] {
-        if (player)
-            player->didEnd();
-    });
+    if (!m_callback)
+        return;
+    m_callback->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification::ItemDidPlayToEndTime);
 }
 
 - (void)observeValueForKeyPath:keyPath ofObject:(id)object change:(NSDictionary *)change context:(MediaPlayerAVFoundationObservationContext)context
 {
-    m_taskQueue.enqueueTask([player = m_player, keyPath = retainPtr(keyPath), change = retainPtr(change), object = retainPtr(object), context] {
-        if (!player)
-            return;
-        id newValue = [change valueForKey:NSKeyValueChangeNewKey];
-        bool willChange = [[change valueForKey:NSKeyValueChangeNotificationIsPriorKey] boolValue];
-        bool shouldLogValue = !willChange;
+    UNUSED_PARAM(object);
+    id newValue = [change valueForKey:NSKeyValueChangeNewKey];
 
-        if (context == MediaPlayerAVFoundationObservationContextAVPlayerLayer) {
-            if ([keyPath isEqualToString:@"readyForDisplay"])
-                player->firstFrameAvailableDidChange([newValue boolValue]);
-        }
+    if (!m_callback)
+        return;
 
-        if (context == MediaPlayerAVFoundationObservationContextPlayerItemTrack) {
-            if ([keyPath isEqualToString:@"enabled"])
-                player->trackEnabledDidChange([newValue boolValue]);
-        }
+    bool willChange = [[change valueForKey:NSKeyValueChangeNotificationIsPriorKey] boolValue];
+    bool shouldLogValue = !willChange;
+    WTF::Function<void ()> function;
 
-        if (context == MediaPlayerAVFoundationObservationContextPlayerItem && willChange) {
-            if ([keyPath isEqualToString:@"playbackLikelyToKeepUp"])
-                player->playbackLikelyToKeepUpWillChange();
-            else if ([keyPath isEqualToString:@"playbackBufferEmpty"])
-                player->playbackBufferEmptyWillChange();
-            else if ([keyPath isEqualToString:@"playbackBufferFull"])
-                player->playbackBufferFullWillChange();
-        }
+    if (context == MediaPlayerAVFoundationObservationContextAVPlayerLayer) {
+        if ([keyPath isEqualToString:@"readyForDisplay"])
+            function = std::bind(&MediaPlayerPrivateAVFoundationObjC::firstFrameAvailableDidChange, m_callback, [newValue boolValue]);
+    }
 
-        if (context == MediaPlayerAVFoundationObservationContextPlayerItem && !willChange) {
-            // A value changed for an AVPlayerItem
-            if ([keyPath isEqualToString:@"status"])
-                player->playerItemStatusDidChange([newValue intValue]);
-            else if ([keyPath isEqualToString:@"playbackLikelyToKeepUp"])
-                player->playbackLikelyToKeepUpDidChange([newValue boolValue]);
-            else if ([keyPath isEqualToString:@"playbackBufferEmpty"])
-                player->playbackBufferEmptyDidChange([newValue boolValue]);
-            else if ([keyPath isEqualToString:@"playbackBufferFull"])
-                player->playbackBufferFullDidChange([newValue boolValue]);
-            else if ([keyPath isEqualToString:@"asset"]) {
-                player->setAsset(RetainPtr<id>(newValue));
-                shouldLogValue = false;
-            } else if ([keyPath isEqualToString:@"loadedTimeRanges"])
-                player->loadedTimeRangesDidChange(RetainPtr<NSArray>(newValue));
-            else if ([keyPath isEqualToString:@"seekableTimeRanges"])
-                player->seekableTimeRangesDidChange(RetainPtr<NSArray>(newValue));
-            else if ([keyPath isEqualToString:@"tracks"]) {
-                player->tracksDidChange(RetainPtr<NSArray>(newValue));
-                shouldLogValue = false;
-            } else if ([keyPath isEqualToString:@"hasEnabledAudio"])
-                player->hasEnabledAudioDidChange([newValue boolValue]);
-            else if ([keyPath isEqualToString:@"presentationSize"])
-                player->presentationSizeDidChange(FloatSize([newValue sizeValue]));
-            else if ([keyPath isEqualToString:@"duration"])
-                player->durationDidChange(PAL::toMediaTime([newValue CMTimeValue]));
-            else if ([keyPath isEqualToString:@"timedMetadata"] && newValue) {
-                MediaTime now;
-                CMTime itemTime = [(AVPlayerItemType *)object.get() currentTime];
-                if (CMTIME_IS_NUMERIC(itemTime))
-                    now = std::max(PAL::toMediaTime(itemTime), MediaTime::zeroTime());
-                player->metadataDidArrive(RetainPtr<NSArray>(newValue), now);
-                shouldLogValue = false;
-            } else if ([keyPath isEqualToString:@"canPlayFastReverse"])
-                player->canPlayFastReverseDidChange([newValue boolValue]);
-            else if ([keyPath isEqualToString:@"canPlayFastForward"])
-                player->canPlayFastForwardDidChange([newValue boolValue]);
-        }
+    if (context == MediaPlayerAVFoundationObservationContextPlayerItemTrack) {
+        if ([keyPath isEqualToString:@"enabled"])
+            function = std::bind(&MediaPlayerPrivateAVFoundationObjC::trackEnabledDidChange, m_callback, [newValue boolValue]);
+    }
 
-        if (context == MediaPlayerAVFoundationObservationContextPlayer && !willChange) {
-            // A value changed for an AVPlayer.
-            if ([keyPath isEqualToString:@"rate"])
-                player->rateDidChange([newValue doubleValue]);
+    if (context == MediaPlayerAVFoundationObservationContextPlayerItem && willChange) {
+        if ([keyPath isEqualToString:@"playbackLikelyToKeepUp"])
+            function = std::bind(&MediaPlayerPrivateAVFoundationObjC::playbackLikelyToKeepUpWillChange, m_callback);
+        else if ([keyPath isEqualToString:@"playbackBufferEmpty"])
+            function = std::bind(&MediaPlayerPrivateAVFoundationObjC::playbackBufferEmptyWillChange, m_callback);
+        else if ([keyPath isEqualToString:@"playbackBufferFull"])
+            function = std::bind(&MediaPlayerPrivateAVFoundationObjC::playbackBufferFullWillChange, m_callback);
+    }
+
+    if (context == MediaPlayerAVFoundationObservationContextPlayerItem && !willChange) {
+        // A value changed for an AVPlayerItem
+        if ([keyPath isEqualToString:@"status"])
+            function = std::bind(&MediaPlayerPrivateAVFoundationObjC::playerItemStatusDidChange, m_callback, [newValue intValue]);
+        else if ([keyPath isEqualToString:@"playbackLikelyToKeepUp"])
+            function = std::bind(&MediaPlayerPrivateAVFoundationObjC::playbackLikelyToKeepUpDidChange, m_callback, [newValue boolValue]);
+        else if ([keyPath isEqualToString:@"playbackBufferEmpty"])
+            function = std::bind(&MediaPlayerPrivateAVFoundationObjC::playbackBufferEmptyDidChange, m_callback, [newValue boolValue]);
+        else if ([keyPath isEqualToString:@"playbackBufferFull"])
+            function = std::bind(&MediaPlayerPrivateAVFoundationObjC::playbackBufferFullDidChange, m_callback, [newValue boolValue]);
+        else if ([keyPath isEqualToString:@"asset"]) {
+            function = std::bind(&MediaPlayerPrivateAVFoundationObjC::setAsset, m_callback, RetainPtr<id>(newValue));
+            shouldLogValue = false;
+        } else if ([keyPath isEqualToString:@"loadedTimeRanges"])
+            function = std::bind(&MediaPlayerPrivateAVFoundationObjC::loadedTimeRangesDidChange, m_callback, RetainPtr<NSArray>(newValue));
+        else if ([keyPath isEqualToString:@"seekableTimeRanges"])
+            function = std::bind(&MediaPlayerPrivateAVFoundationObjC::seekableTimeRangesDidChange, m_callback, RetainPtr<NSArray>(newValue));
+        else if ([keyPath isEqualToString:@"tracks"]) {
+            function = std::bind(&MediaPlayerPrivateAVFoundationObjC::tracksDidChange, m_callback, RetainPtr<NSArray>(newValue));
+            shouldLogValue = false;
+        } else if ([keyPath isEqualToString:@"hasEnabledAudio"])
+            function = std::bind(&MediaPlayerPrivateAVFoundationObjC::hasEnabledAudioDidChange, m_callback, [newValue boolValue]);
+        else if ([keyPath isEqualToString:@"presentationSize"])
+            function = std::bind(&MediaPlayerPrivateAVFoundationObjC::presentationSizeDidChange, m_callback, FloatSize([newValue sizeValue]));
+        else if ([keyPath isEqualToString:@"duration"])
+            function = std::bind(&MediaPlayerPrivateAVFoundationObjC::durationDidChange, m_callback, PAL::toMediaTime([newValue CMTimeValue]));
+        else if ([keyPath isEqualToString:@"timedMetadata"] && newValue) {
+            MediaTime now;
+            CMTime itemTime = [(AVPlayerItemType *)object currentTime];
+            if (CMTIME_IS_NUMERIC(itemTime))
+                now = std::max(PAL::toMediaTime(itemTime), MediaTime::zeroTime());
+            function = std::bind(&MediaPlayerPrivateAVFoundationObjC::metadataDidArrive, m_callback, RetainPtr<NSArray>(newValue), now);
+            shouldLogValue = false;
+        } else if ([keyPath isEqualToString:@"canPlayFastReverse"])
+            function = std::bind(&MediaPlayerPrivateAVFoundationObjC::canPlayFastReverseDidChange, m_callback, [newValue boolValue]);
+        else if ([keyPath isEqualToString:@"canPlayFastForward"])
+            function = std::bind(&MediaPlayerPrivateAVFoundationObjC::canPlayFastForwardDidChange, m_callback, [newValue boolValue]);
+    }
+
+    if (context == MediaPlayerAVFoundationObservationContextPlayer && !willChange) {
+        // A value changed for an AVPlayer.
+        if ([keyPath isEqualToString:@"rate"])
+            function = std::bind(&MediaPlayerPrivateAVFoundationObjC::rateDidChange, m_callback, [newValue doubleValue]);
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-            else if ([keyPath isEqualToString:@"externalPlaybackActive"] || [keyPath isEqualToString:@"allowsExternalPlayback"])
-                player->playbackTargetIsWirelessDidChange();
+        else if ([keyPath isEqualToString:@"externalPlaybackActive"] || [keyPath isEqualToString:@"allowsExternalPlayback"])
+            function = std::bind(&MediaPlayerPrivateAVFoundationObjC::playbackTargetIsWirelessDidChange, m_callback);
 #endif
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
-            else if ([keyPath isEqualToString:@"outputObscuredDueToInsufficientExternalProtection"])
-                player->outputObscuredDueToInsufficientExternalProtectionChanged([newValue boolValue]);
+        else if ([keyPath isEqualToString:@"outputObscuredDueToInsufficientExternalProtection"])
+            function = std::bind(&MediaPlayerPrivateAVFoundationObjC::outputObscuredDueToInsufficientExternalProtectionChanged, m_callback, [newValue boolValue]);
 #endif
-        }
+    }
 
 #if !RELEASE_LOG_DISABLED
-        if (player->logger().willLog(player->logChannel(), WTFLogLevelDebug) && !([keyPath isEqualToString:@"loadedTimeRanges"] || [keyPath isEqualToString:@"seekableTimeRanges"])) {
-            auto identifier = Logger::LogSiteIdentifier("MediaPlayerPrivateAVFoundation", "observeValueForKeyPath", player->logIdentifier());
+    if (m_callback->logger().willLog(m_callback->logChannel(), WTFLogLevelDebug) && !([keyPath isEqualToString:@"loadedTimeRanges"] || [keyPath isEqualToString:@"seekableTimeRanges"])) {
+        auto identifier = Logger::LogSiteIdentifier("MediaPlayerPrivateAVFoundation", "observeValueForKeyPath", m_callback->logIdentifier());
 
-            if (shouldLogValue) {
-                if ([keyPath isEqualToString:@"duration"])
-                    player->logger().debug(player->logChannel(), identifier, "did change '", [keyPath UTF8String], "' to ", PAL::toMediaTime([newValue CMTimeValue]));
-                else {
-                    RetainPtr<NSString> valueString = adoptNS([[NSString alloc] initWithFormat:@"%@", newValue]);
-                    player->logger().debug(player->logChannel(), identifier, "did change '", [keyPath UTF8String], "' to ", [valueString.get() UTF8String]);
-                }
-            } else
-                player->logger().debug(player->logChannel(), identifier, willChange ? "will" : "did", " change '", [keyPath UTF8String], "'");
-        }
+        if (shouldLogValue) {
+            if ([keyPath isEqualToString:@"duration"])
+                m_callback->logger().debug(m_callback->logChannel(), identifier, "did change '", [keyPath UTF8String], "' to ", PAL::toMediaTime([newValue CMTimeValue]));
+            else {
+                RetainPtr<NSString> valueString = adoptNS([[NSString alloc] initWithFormat:@"%@", newValue]);
+                m_callback->logger().debug(m_callback->logChannel(), identifier, "did change '", [keyPath UTF8String], "' to ", [valueString.get() UTF8String]);
+            }
+        } else
+            m_callback->logger().debug(m_callback->logChannel(), identifier, willChange ? "will" : "did", " change '", [keyPath UTF8String], "'");
+    }
 #endif
-    });
+
+    if (!function)
+        return;
+
+    auto weakThis = makeWeakPtr(*m_callback);
+    m_callback->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification([weakThis, function = WTFMove(function)]{
+        // weakThis and function both refer to the same MediaPlayerPrivateAVFoundationObjC instance. If the WeakPtr has
+        // been cleared, the underlying object has been destroyed, and it is unsafe to call function().
+        if (!weakThis)
+            return;
+        function();
+    }));
 }
 
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
@@ -3484,12 +3497,20 @@ NSArray* playerKVOProperties()
 - (void)legibleOutput:(id)output didOutputAttributedStrings:(NSArray *)strings nativeSampleBuffers:(NSArray *)nativeSamples forItemTime:(CMTime)itemTime
 {
     UNUSED_PARAM(output);
+    UNUSED_PARAM(nativeSamples);
 
-    m_taskQueue.enqueueTask([player = m_player, strings = retainPtr(strings), nativeSamples = retainPtr(nativeSamples), itemTime] {
-        if (!player)
+    if (!m_callback)
+        return;
+
+    RetainPtr<WebCoreAVFMovieObserver> protectedSelf = self;
+    RetainPtr<NSArray> protectedStrings = strings;
+    RetainPtr<NSArray> protectedNativeSamples = nativeSamples;
+    callOnMainThread([protectedSelf = WTFMove(protectedSelf), protectedStrings = WTFMove(protectedStrings), protectedNativeSamples = WTFMove(protectedNativeSamples), itemTime] {
+        MediaPlayerPrivateAVFoundationObjC* callback = protectedSelf->m_callback;
+        if (!callback)
             return;
         MediaTime time = std::max(PAL::toMediaTime(itemTime), MediaTime::zeroTime());
-        player->processCue(strings.get(), nativeSamples.get(), time);
+        callback->processCue(protectedStrings.get(), protectedNativeSamples.get(), time);
     });
 }
 
@@ -3497,9 +3518,12 @@ NSArray* playerKVOProperties()
 {
     UNUSED_PARAM(output);
 
-    m_taskQueue.enqueueTask([player = m_player] {
-        if (player)
-            player->flushCues();
+    if (!m_callback)
+        return;
+    
+    callOnMainThread([protectedSelf = RetainPtr<WebCoreAVFMovieObserver>(self)] {
+        if (MediaPlayerPrivateAVFoundationObjC* callback = protectedSelf->m_callback)
+            callback->flushCues();
     });
 }
 
@@ -3511,29 +3535,32 @@ NSArray* playerKVOProperties()
 
 @implementation WebCoreAVFLoaderDelegate
 
-- (id)initWithPlayer:(WeakPtr<MediaPlayerPrivateAVFoundationObjC>&&)player
+- (id)initWithCallback:(MediaPlayerPrivateAVFoundationObjC*)callback
 {
     self = [super init];
     if (!self)
         return nil;
-    m_player = WTFMove(player);
+    m_callback = callback;
     return self;
 }
 
 - (BOOL)resourceLoader:(AVAssetResourceLoader *)resourceLoader shouldWaitForLoadingOfRequestedResource:(AVAssetResourceLoadingRequest *)loadingRequest
 {
     UNUSED_PARAM(resourceLoader);
-    if (!m_player)
+    if (!m_callback)
         return NO;
 
-    m_taskQueue.enqueueTask([player = m_player, loadingRequest = retainPtr(loadingRequest)] {
-        if (!player) {
-            [loadingRequest finishLoadingWithError:nil];
+    RetainPtr<WebCoreAVFLoaderDelegate> protectedSelf = self;
+    RetainPtr<AVAssetResourceLoadingRequest> protectedLoadingRequest = loadingRequest;
+    callOnMainThread([protectedSelf = WTFMove(protectedSelf), protectedLoadingRequest = WTFMove(protectedLoadingRequest)] {
+        MediaPlayerPrivateAVFoundationObjC* callback = protectedSelf->m_callback;
+        if (!callback) {
+            [protectedLoadingRequest finishLoadingWithError:nil];
             return;
         }
 
-        if (!player->shouldWaitForLoadingOfResource(loadingRequest.get()))
-            [loadingRequest finishLoadingWithError:nil];
+        if (!callback->shouldWaitForLoadingOfResource(protectedLoadingRequest.get()))
+            [protectedLoadingRequest finishLoadingWithError:nil];
     });
 
     return YES;
@@ -3550,12 +3577,22 @@ NSArray* playerKVOProperties()
 - (void)resourceLoader:(AVAssetResourceLoader *)resourceLoader didCancelLoadingRequest:(AVAssetResourceLoadingRequest *)loadingRequest
 {
     UNUSED_PARAM(resourceLoader);
-    m_taskQueue.enqueueTask([player = m_player, loadingRequest = retainPtr(loadingRequest)] {
-        if (player)
-            player->didCancelLoadingRequest(loadingRequest.get());
+    if (!m_callback)
+        return;
+
+    RetainPtr<WebCoreAVFLoaderDelegate> protectedSelf = self;
+    RetainPtr<AVAssetResourceLoadingRequest> protectedLoadingRequest = loadingRequest;
+    callOnMainThread([protectedSelf = WTFMove(protectedSelf), protectedLoadingRequest = WTFMove(protectedLoadingRequest)] {
+        MediaPlayerPrivateAVFoundationObjC* callback = protectedSelf->m_callback;
+        if (callback)
+            callback->didCancelLoadingRequest(protectedLoadingRequest.get());
     });
 }
 
+- (void)setCallback:(MediaPlayerPrivateAVFoundationObjC*)callback
+{
+    m_callback = callback;
+}
 @end
 
 #endif
@@ -3564,18 +3601,23 @@ NSArray* playerKVOProperties()
 
 @implementation WebCoreAVFPullDelegate
 
-- (id)initWithPlayer:(WeakPtr<MediaPlayerPrivateAVFoundationObjC>&&)player
+- (id)initWithCallback:(MediaPlayerPrivateAVFoundationObjC *)callback
 {
     self = [super init];
     if (self)
-        m_player = WTFMove(player);
+        m_callback = callback;
     return self;
+}
+
+- (void)setCallback:(MediaPlayerPrivateAVFoundationObjC *)callback
+{
+    m_callback = callback;
 }
 
 - (void)outputMediaDataWillChange:(AVPlayerItemVideoOutputType *)output
 {
-    if (m_player)
-        m_player->outputMediaDataWillChange(output);
+    if (m_callback)
+        m_callback->outputMediaDataWillChange(output);
 }
 
 - (void)outputSequenceWasFlushed:(AVPlayerItemVideoOutputType *)output

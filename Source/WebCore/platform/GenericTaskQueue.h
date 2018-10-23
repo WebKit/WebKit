@@ -30,10 +30,6 @@
 #include <wtf/Function.h>
 #include <wtf/WeakPtr.h>
 
-namespace WTF {
-class Lock;
-};
-
 namespace WebCore {
 
 template <typename T>
@@ -62,7 +58,6 @@ public:
 
 private:
     static Timer& sharedTimer();
-    static WTF::Lock& sharedLock();
     static void sharedTimerFired();
     static Deque<WeakPtr<TaskDispatcher<Timer>>>& pendingDispatchers();
 
@@ -71,8 +66,8 @@ private:
     Deque<WTF::Function<void()>> m_pendingTasks;
 };
 
-template <typename T, typename C = unsigned>
-class GenericTaskQueue : public CanMakeWeakPtr<GenericTaskQueue<T, C>> {
+template <typename T>
+class GenericTaskQueue : public CanMakeWeakPtr<GenericTaskQueue<T>> {
 public:
     GenericTaskQueue()
         : m_dispatcher()
@@ -124,7 +119,7 @@ public:
 
 private:
     TaskDispatcher<T> m_dispatcher;
-    C m_pendingTasks { 0 };
+    unsigned m_pendingTasks { 0 };
     bool m_isClosed { false };
 };
 

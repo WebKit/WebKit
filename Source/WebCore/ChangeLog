@@ -1,3 +1,16 @@
+2018-10-23  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, rolling out r237350.
+
+        Caused several Crashes cross multiple tests and platforms.
+
+        Reverted changeset:
+
+        "Use WeakPtr and GenericTaskQueue within ObjC classes used by
+        MediaPlayerPrivateAVFoundationObjC"
+        https://bugs.webkit.org/show_bug.cgi?id=190790
+        https://trac.webkit.org/changeset/237350
+
 2018-10-23  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r237280.
