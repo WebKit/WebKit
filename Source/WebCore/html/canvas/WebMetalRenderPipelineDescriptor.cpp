@@ -28,8 +28,8 @@
 
 #if ENABLE(WEBMETAL)
 
-#include "GPUFunction.h"
-#include "GPURenderPipelineColorAttachmentDescriptor.h"
+#include "GPULegacyFunction.h"
+#include "GPULegacyRenderPipelineColorAttachmentDescriptor.h"
 #include "WebMetalFunction.h"
 #include "WebMetalRenderPipelineColorAttachmentDescriptor.h"
 

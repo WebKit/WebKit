@@ -28,25 +28,25 @@
 
 #if ENABLE(WEBMETAL)
 
-#include "GPUTexture.h"
+#include "GPULegacyTexture.h"
 #include "WebMetalTexture.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-Ref<WebMetalRenderPassColorAttachmentDescriptor> WebMetalRenderPassColorAttachmentDescriptor::create(GPURenderPassColorAttachmentDescriptor&& descriptor)
+Ref<WebMetalRenderPassColorAttachmentDescriptor> WebMetalRenderPassColorAttachmentDescriptor::create(GPULegacyRenderPassColorAttachmentDescriptor&& descriptor)
 {
     return adoptRef(*new WebMetalRenderPassColorAttachmentDescriptor(WTFMove(descriptor)));
 }
 
-WebMetalRenderPassColorAttachmentDescriptor::WebMetalRenderPassColorAttachmentDescriptor(GPURenderPassColorAttachmentDescriptor&& descriptor)
+WebMetalRenderPassColorAttachmentDescriptor::WebMetalRenderPassColorAttachmentDescriptor(GPULegacyRenderPassColorAttachmentDescriptor&& descriptor)
     : m_descriptor { WTFMove(descriptor) }
 {
 }
 
 WebMetalRenderPassColorAttachmentDescriptor::~WebMetalRenderPassColorAttachmentDescriptor() = default;
 
-const GPURenderPassAttachmentDescriptor& WebMetalRenderPassColorAttachmentDescriptor::descriptor() const
+const GPULegacyRenderPassAttachmentDescriptor& WebMetalRenderPassColorAttachmentDescriptor::descriptor() const
 {
     return m_descriptor;
 }

@@ -32,12 +32,12 @@
 
 namespace WebCore {
 
-Ref<WebMetalLibrary> WebMetalLibrary::create(GPULibrary&& library, const String& sourceCode)
+Ref<WebMetalLibrary> WebMetalLibrary::create(GPULegacyLibrary&& library, const String& sourceCode)
 {
     return adoptRef(*new WebMetalLibrary(WTFMove(library), sourceCode));
 }
 
-WebMetalLibrary::WebMetalLibrary(GPULibrary&& library, const String& sourceCode)
+WebMetalLibrary::WebMetalLibrary(GPULegacyLibrary&& library, const String& sourceCode)
     : m_sourceCode { sourceCode }
     , m_library { WTFMove(library) }
 {
@@ -50,7 +50,7 @@ Vector<String> WebMetalLibrary::functionNames() const
 
 RefPtr<WebMetalFunction> WebMetalLibrary::functionWithName(const String& name) const
 {
-    GPUFunction function { m_library, name };
+    GPULegacyFunction function { m_library, name };
     if (!function)
         return nullptr;
     return WebMetalFunction::create(WTFMove(function));

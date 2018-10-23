@@ -53,7 +53,7 @@ WebMetalCompareFunction WebMetalDepthStencilDescriptor::depthCompareFunction() c
 void WebMetalDepthStencilDescriptor::setDepthCompareFunction(CompareFunction newDepthCompareFunction)
 {
     m_depthCompareFunction = newDepthCompareFunction;
-    m_descriptor.setDepthCompareFunction(toGPUCompareFunction(m_depthCompareFunction));
+    m_descriptor.setDepthCompareFunction(toGPULegacyCompareFunction(m_depthCompareFunction));
 }
 
 } // namespace WebCore

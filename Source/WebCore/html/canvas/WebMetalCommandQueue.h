@@ -27,7 +27,7 @@
 
 #if ENABLE(WEBMETAL)
 
-#include "GPUCommandQueue.h"
+#include "GPULegacyCommandQueue.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -38,7 +38,7 @@ class WebMetalCommandBuffer;
 class WebMetalCommandQueue : public RefCounted<WebMetalCommandQueue> {
 public:
     ~WebMetalCommandQueue();
-    static Ref<WebMetalCommandQueue> create(GPUCommandQueue&&);
+    static Ref<WebMetalCommandQueue> create(GPULegacyCommandQueue&&);
 
     String label() const { return m_queue.label(); }
     void setLabel(const String& label) { m_queue.setLabel(label); }
@@ -46,9 +46,9 @@ public:
     Ref<WebMetalCommandBuffer> createCommandBuffer();
 
 private:
-    explicit WebMetalCommandQueue(GPUCommandQueue&&);
+    explicit WebMetalCommandQueue(GPULegacyCommandQueue&&);
 
-    GPUCommandQueue m_queue;
+    GPULegacyCommandQueue m_queue;
 };
 
 } // namespace WebCore

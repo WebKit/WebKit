@@ -32,12 +32,12 @@
 
 namespace WebCore {
 
-Ref<WebMetalCommandQueue> WebMetalCommandQueue::create(GPUCommandQueue&& queue)
+Ref<WebMetalCommandQueue> WebMetalCommandQueue::create(GPULegacyCommandQueue&& queue)
 {
     return adoptRef(*new WebMetalCommandQueue(WTFMove(queue)));
 }
 
-WebMetalCommandQueue::WebMetalCommandQueue(GPUCommandQueue&& queue)
+WebMetalCommandQueue::WebMetalCommandQueue(GPULegacyCommandQueue&& queue)
     : m_queue { WTFMove(queue) }
 {
 }

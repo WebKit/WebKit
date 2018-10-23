@@ -30,12 +30,12 @@
 
 namespace WebCore {
 
-Ref<WebMetalTexture> WebMetalTexture::create(GPUTexture&& texture)
+Ref<WebMetalTexture> WebMetalTexture::create(GPULegacyTexture&& texture)
 {
     return adoptRef(*new WebMetalTexture(WTFMove(texture)));
 }
 
-WebMetalTexture::WebMetalTexture(GPUTexture&& texture)
+WebMetalTexture::WebMetalTexture(GPULegacyTexture&& texture)
     : m_texture { WTFMove(texture) }
 {
 }

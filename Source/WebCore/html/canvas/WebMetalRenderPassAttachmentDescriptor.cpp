@@ -28,8 +28,8 @@
 
 #if ENABLE(WEBMETAL)
 
-#include "GPURenderPassAttachmentDescriptor.h"
-#include "GPUTexture.h"
+#include "GPULegacyRenderPassAttachmentDescriptor.h"
+#include "GPULegacyTexture.h"
 #include "WebMetalTexture.h"
 
 namespace WebCore {

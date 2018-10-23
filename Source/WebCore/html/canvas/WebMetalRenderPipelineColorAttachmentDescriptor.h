@@ -27,7 +27,7 @@
 
 #if ENABLE(WEBMETAL)
 
-#include "GPURenderPipelineColorAttachmentDescriptor.h"
+#include "GPULegacyRenderPipelineColorAttachmentDescriptor.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -35,15 +35,15 @@ namespace WebCore {
 
 class WebMetalRenderPipelineColorAttachmentDescriptor : public RefCounted<WebMetalRenderPipelineColorAttachmentDescriptor> {
 public:
-    static Ref<WebMetalRenderPipelineColorAttachmentDescriptor> create(GPURenderPipelineColorAttachmentDescriptor&&);
+    static Ref<WebMetalRenderPipelineColorAttachmentDescriptor> create(GPULegacyRenderPipelineColorAttachmentDescriptor&&);
 
     unsigned pixelFormat() const;
     void setPixelFormat(unsigned);
 
 private:
-    explicit WebMetalRenderPipelineColorAttachmentDescriptor(GPURenderPipelineColorAttachmentDescriptor&&);
+    explicit WebMetalRenderPipelineColorAttachmentDescriptor(GPULegacyRenderPipelineColorAttachmentDescriptor&&);
 
-    GPURenderPipelineColorAttachmentDescriptor m_descriptor;
+    GPULegacyRenderPipelineColorAttachmentDescriptor m_descriptor;
 };
     
 } // namespace WebCore

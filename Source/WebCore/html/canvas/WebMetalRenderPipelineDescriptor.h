@@ -27,7 +27,7 @@
 
 #if ENABLE(WEBMETAL)
 
-#include "GPURenderPipelineDescriptor.h"
+#include "GPULegacyRenderPipelineDescriptor.h"
 #include "WebMetalRenderPipelineColorAttachmentDescriptor.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -35,8 +35,8 @@
 
 namespace WebCore {
 
-class GPUFunction;
-class GPURenderPipelineDescriptor;
+class GPULegacyFunction;
+class GPULegacyRenderPipelineDescriptor;
 class WebMetalFunction;
 class WebMetalRenderPipelineColorAttachmentDescriptor;
 
@@ -58,7 +58,7 @@ public:
 
     void reset();
 
-    const GPURenderPipelineDescriptor& descriptor() { return m_descriptor; }
+    const GPULegacyRenderPipelineDescriptor& descriptor() { return m_descriptor; }
 
 private:
     WebMetalRenderPipelineDescriptor();
@@ -68,7 +68,7 @@ private:
 
     Vector<RefPtr<WebMetalRenderPipelineColorAttachmentDescriptor>> m_colorAttachments;
 
-    GPURenderPipelineDescriptor m_descriptor;
+    GPULegacyRenderPipelineDescriptor m_descriptor;
 };
 
 } // namespace WebCore

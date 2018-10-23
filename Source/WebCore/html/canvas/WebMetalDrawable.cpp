@@ -28,19 +28,19 @@
 
 #if ENABLE(WEBMETAL)
 
-#include "GPUTexture.h"
+#include "GPULegacyTexture.h"
 #include "WebMetalTexture.h"
 
 namespace WebCore {
 
-Ref<WebMetalDrawable> WebMetalDrawable::create(GPUDrawable&& drawable)
+Ref<WebMetalDrawable> WebMetalDrawable::create(GPULegacyDrawable&& drawable)
 {
     return adoptRef(*new WebMetalDrawable(WTFMove(drawable)));
 }
 
-WebMetalDrawable::WebMetalDrawable(GPUDrawable&& drawable)
+WebMetalDrawable::WebMetalDrawable(GPULegacyDrawable&& drawable)
     : m_drawable { WTFMove(drawable) }
-    , m_texture { WebMetalTexture::create(GPUTexture { m_drawable }) }
+    , m_texture { WebMetalTexture::create(GPULegacyTexture { m_drawable }) }
 {
 }
 

@@ -32,12 +32,12 @@
 
 namespace WebCore {
 
-Ref<WebMetalFunction> WebMetalFunction::create(GPUFunction&& function)
+Ref<WebMetalFunction> WebMetalFunction::create(GPULegacyFunction&& function)
 {
     return adoptRef(*new WebMetalFunction(WTFMove(function)));
 }
 
-WebMetalFunction::WebMetalFunction(GPUFunction&& function)
+WebMetalFunction::WebMetalFunction(GPULegacyFunction&& function)
     : m_function { WTFMove(function) }
 {
 }

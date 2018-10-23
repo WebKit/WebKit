@@ -124,11 +124,11 @@
 		2EFF06D41D8AEDBB0004BB30 /* TestWKWebView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2EFF06D31D8AEDBB0004BB30 /* TestWKWebView.mm */; };
 		2EFF06D71D8AF34A0004BB30 /* WKWebViewCandidateTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2EFF06D61D8AF34A0004BB30 /* WKWebViewCandidateTests.mm */; };
 		315118101DB1AE4000176304 /* ExtendedColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3151180F1DB1ADD500176304 /* ExtendedColor.cpp */; };
-		315231CA1EB3B3C700A22A16 /* GPUCommandQueue.mm in Sources */ = {isa = PBXBuildFile; fileRef = 315231C91EB3B3C700A22A16 /* GPUCommandQueue.mm */; };
-		3162AE9C1E6F2FF5000E4DBC /* GPUDevice.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3162AE9B1E6F2FCE000E4DBC /* GPUDevice.mm */; };
-		316BDBA11E70D71B00DE0D5A /* GPULibrary.mm in Sources */ = {isa = PBXBuildFile; fileRef = 316BDBA01E70D6D800DE0D5A /* GPULibrary.mm */; };
-		316BDBA41E70EF6800DE0D5A /* GPUFunction.mm in Sources */ = {isa = PBXBuildFile; fileRef = 316BDBA31E70EF5D00DE0D5A /* GPUFunction.mm */; };
-		316BDBAC1E7207F100DE0D5A /* GPUBuffer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 316BDBAB1E7207F100DE0D5A /* GPUBuffer.mm */; };
+		315231CA1EB3B3C700A22A16 /* GPULegacyCommandQueue.mm in Sources */ = {isa = PBXBuildFile; fileRef = 315231C91EB3B3C700A22A16 /* GPULegacyCommandQueue.mm */; };
+		3162AE9C1E6F2FF5000E4DBC /* GPULegacyDevice.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3162AE9B1E6F2FCE000E4DBC /* GPULegacyDevice.mm */; };
+		316BDBA11E70D71B00DE0D5A /* GPULegacyLibrary.mm in Sources */ = {isa = PBXBuildFile; fileRef = 316BDBA01E70D6D800DE0D5A /* GPULegacyLibrary.mm */; };
+		316BDBA41E70EF6800DE0D5A /* GPULegacyFunction.mm in Sources */ = {isa = PBXBuildFile; fileRef = 316BDBA31E70EF5D00DE0D5A /* GPULegacyFunction.mm */; };
+		316BDBAC1E7207F100DE0D5A /* GPULegacyBuffer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 316BDBAB1E7207F100DE0D5A /* GPULegacyBuffer.mm */; };
 		33BE5AF9137B5AAE00705813 /* MouseMoveAfterCrash_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33BE5AF8137B5AAE00705813 /* MouseMoveAfterCrash_Bundle.cpp */; };
 		33DC8912141955FE00747EF7 /* simple-iframe.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 33DC890E1419539300747EF7 /* simple-iframe.html */; };
 		33DC89141419579F00747EF7 /* LoadCanceledNoServerRedirectCallback_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33DC89131419579F00747EF7 /* LoadCanceledNoServerRedirectCallback_Bundle.cpp */; };
@@ -1381,12 +1381,12 @@
 		2EFF06D31D8AEDBB0004BB30 /* TestWKWebView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TestWKWebView.mm; path = cocoa/TestWKWebView.mm; sourceTree = "<group>"; };
 		2EFF06D61D8AF34A0004BB30 /* WKWebViewCandidateTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewCandidateTests.mm; sourceTree = "<group>"; };
 		3151180F1DB1ADD500176304 /* ExtendedColor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExtendedColor.cpp; sourceTree = "<group>"; };
-		315231C91EB3B3C700A22A16 /* GPUCommandQueue.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPUCommandQueue.mm; sourceTree = "<group>"; };
-		3162AE9B1E6F2FCE000E4DBC /* GPUDevice.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPUDevice.mm; sourceTree = "<group>"; };
-		316BDBA01E70D6D800DE0D5A /* GPULibrary.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULibrary.mm; sourceTree = "<group>"; };
-		316BDBA21E70DEE500DE0D5A /* GPUTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUTest.h; sourceTree = "<group>"; };
-		316BDBA31E70EF5D00DE0D5A /* GPUFunction.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPUFunction.mm; sourceTree = "<group>"; };
-		316BDBAB1E7207F100DE0D5A /* GPUBuffer.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = GPUBuffer.mm; sourceTree = "<group>"; };
+		315231C91EB3B3C700A22A16 /* GPULegacyCommandQueue.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyCommandQueue.mm; sourceTree = "<group>"; };
+		3162AE9B1E6F2FCE000E4DBC /* GPULegacyDevice.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyDevice.mm; sourceTree = "<group>"; };
+		316BDBA01E70D6D800DE0D5A /* GPULegacyLibrary.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyLibrary.mm; sourceTree = "<group>"; };
+		316BDBA21E70DEE500DE0D5A /* GPULegacyTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPULegacyTest.h; sourceTree = "<group>"; };
+		316BDBA31E70EF5D00DE0D5A /* GPULegacyFunction.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyFunction.mm; sourceTree = "<group>"; };
+		316BDBAB1E7207F100DE0D5A /* GPULegacyBuffer.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = GPULegacyBuffer.mm; sourceTree = "<group>"; };
 		333B9CE11277F23100FEFCE3 /* PreventEmptyUserAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PreventEmptyUserAgent.cpp; sourceTree = "<group>"; };
 		33BE5AF4137B5A6C00705813 /* MouseMoveAfterCrash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MouseMoveAfterCrash.cpp; sourceTree = "<group>"; };
 		33BE5AF8137B5AAE00705813 /* MouseMoveAfterCrash_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MouseMoveAfterCrash_Bundle.cpp; sourceTree = "<group>"; };
@@ -2505,12 +2505,12 @@
 		3162AE9A1E6F2F8F000E4DBC /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				316BDBAB1E7207F100DE0D5A /* GPUBuffer.mm */,
-				315231C91EB3B3C700A22A16 /* GPUCommandQueue.mm */,
-				3162AE9B1E6F2FCE000E4DBC /* GPUDevice.mm */,
-				316BDBA31E70EF5D00DE0D5A /* GPUFunction.mm */,
-				316BDBA01E70D6D800DE0D5A /* GPULibrary.mm */,
-				316BDBA21E70DEE500DE0D5A /* GPUTest.h */,
+				316BDBAB1E7207F100DE0D5A /* GPULegacyBuffer.mm */,
+				315231C91EB3B3C700A22A16 /* GPULegacyCommandQueue.mm */,
+				3162AE9B1E6F2FCE000E4DBC /* GPULegacyDevice.mm */,
+				316BDBA31E70EF5D00DE0D5A /* GPULegacyFunction.mm */,
+				316BDBA01E70D6D800DE0D5A /* GPULegacyLibrary.mm */,
+				316BDBA21E70DEE500DE0D5A /* GPULegacyTest.h */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -3849,11 +3849,11 @@
 				7CCE7EE21A411A9A00447C4C /* GetPIDAfterAbortedProcessLaunch.cpp in Sources */,
 				07CE1CF31F06A7E000BF89F5 /* GetUserMediaNavigation.mm in Sources */,
 				07E499911F9E56DF002F1EF3 /* GetUserMediaReprompt.mm in Sources */,
-				316BDBAC1E7207F100DE0D5A /* GPUBuffer.mm in Sources */,
-				315231CA1EB3B3C700A22A16 /* GPUCommandQueue.mm in Sources */,
-				3162AE9C1E6F2FF5000E4DBC /* GPUDevice.mm in Sources */,
-				316BDBA41E70EF6800DE0D5A /* GPUFunction.mm in Sources */,
-				316BDBA11E70D71B00DE0D5A /* GPULibrary.mm in Sources */,
+				316BDBAC1E7207F100DE0D5A /* GPULegacyBuffer.mm in Sources */,
+				315231CA1EB3B3C700A22A16 /* GPULegacyCommandQueue.mm in Sources */,
+				3162AE9C1E6F2FF5000E4DBC /* GPULegacyDevice.mm in Sources */,
+				316BDBA41E70EF6800DE0D5A /* GPULegacyFunction.mm in Sources */,
+				316BDBA11E70D71B00DE0D5A /* GPULegacyLibrary.mm in Sources */,
 				8E4A85371E1D1AB200F53B0F /* GridPosition.cpp in Sources */,
 				7CCE7EFA1A411AE600447C4C /* HitTestResultNodeHandle.cpp in Sources */,
 				7CCE7EC11A411A7E00447C4C /* HTMLCollectionNamedItem.mm in Sources */,

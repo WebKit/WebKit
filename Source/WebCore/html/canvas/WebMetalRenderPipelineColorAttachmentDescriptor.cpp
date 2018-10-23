@@ -30,12 +30,12 @@
 
 namespace WebCore {
 
-Ref<WebMetalRenderPipelineColorAttachmentDescriptor> WebMetalRenderPipelineColorAttachmentDescriptor::create(GPURenderPipelineColorAttachmentDescriptor&& descriptor)
+Ref<WebMetalRenderPipelineColorAttachmentDescriptor> WebMetalRenderPipelineColorAttachmentDescriptor::create(GPULegacyRenderPipelineColorAttachmentDescriptor&& descriptor)
 {
     return adoptRef(*new WebMetalRenderPipelineColorAttachmentDescriptor(WTFMove(descriptor)));
 }
 
-WebMetalRenderPipelineColorAttachmentDescriptor::WebMetalRenderPipelineColorAttachmentDescriptor(GPURenderPipelineColorAttachmentDescriptor&& descriptor)
+WebMetalRenderPipelineColorAttachmentDescriptor::WebMetalRenderPipelineColorAttachmentDescriptor(GPULegacyRenderPipelineColorAttachmentDescriptor&& descriptor)
     : m_descriptor { WTFMove(descriptor) }
 {
 }

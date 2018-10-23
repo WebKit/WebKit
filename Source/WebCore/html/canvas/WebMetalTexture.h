@@ -27,27 +27,27 @@
 
 #if ENABLE(WEBMETAL)
 
-#include "GPUTexture.h"
+#include "GPULegacyTexture.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class GPUTextureDescriptor;
+class GPULegacyTextureDescriptor;
 
 class WebMetalTexture : public RefCounted<WebMetalTexture> {
 public:
-    static Ref<WebMetalTexture> create(GPUTexture&&);
+    static Ref<WebMetalTexture> create(GPULegacyTexture&&);
 
     unsigned width() const { return m_texture.width(); }
     unsigned height() const { return m_texture.height(); }
 
-    const GPUTexture& texture() const { return m_texture; }
+    const GPULegacyTexture& texture() const { return m_texture; }
 
 private:
-    explicit WebMetalTexture(GPUTexture&&);
+    explicit WebMetalTexture(GPULegacyTexture&&);
 
-    GPUTexture m_texture;
+    GPULegacyTexture m_texture;
 };
     
 } // namespace WebCore

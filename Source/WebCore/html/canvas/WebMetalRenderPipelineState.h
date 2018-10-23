@@ -27,7 +27,7 @@
 
 #if ENABLE(WEBMETAL)
 
-#include "GPURenderPipelineState.h"
+#include "GPULegacyRenderPipelineState.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -35,17 +35,17 @@ namespace WebCore {
 
 class WebMetalRenderPipelineState : public RefCounted<WebMetalRenderPipelineState> {
 public:
-    static Ref<WebMetalRenderPipelineState> create(GPURenderPipelineState&&);
+    static Ref<WebMetalRenderPipelineState> create(GPULegacyRenderPipelineState&&);
 
     String label() const;
     void setLabel(const String&);
 
-    const GPURenderPipelineState& state() const { return m_state; }
+    const GPULegacyRenderPipelineState& state() const { return m_state; }
 
 private:
-    explicit WebMetalRenderPipelineState(GPURenderPipelineState&&);
+    explicit WebMetalRenderPipelineState(GPULegacyRenderPipelineState&&);
 
-    GPURenderPipelineState m_state;
+    GPULegacyRenderPipelineState m_state;
 };
     
 } // namespace WebCore

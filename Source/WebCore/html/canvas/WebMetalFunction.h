@@ -27,7 +27,7 @@
 
 #if ENABLE(WEBMETAL)
 
-#include "GPUFunction.h"
+#include "GPULegacyFunction.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -36,15 +36,15 @@ namespace WebCore {
 
 class WebMetalFunction : public RefCounted<WebMetalFunction> {
 public:
-    static Ref<WebMetalFunction> create(GPUFunction&&);
+    static Ref<WebMetalFunction> create(GPULegacyFunction&&);
 
     String name() const { return m_function.name(); }
-    const GPUFunction& function() const { return m_function; }
+    const GPULegacyFunction& function() const { return m_function; }
 
 private:
-    explicit WebMetalFunction(GPUFunction&&);
+    explicit WebMetalFunction(GPULegacyFunction&&);
 
-    GPUFunction m_function;
+    GPULegacyFunction m_function;
 };
     
 } // namespace WebCore

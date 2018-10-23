@@ -31,7 +31,7 @@
 
 #include "Document.h"
 #include "FrameView.h"
-#include "GPUDevice.h"
+#include "GPULegacyDevice.h"
 #include "InspectorInstrumentation.h"
 #include "WebMetalBuffer.h"
 #include "WebMetalCommandQueue.h"
@@ -72,7 +72,7 @@ static const int kMaxTextureSize = 4096;
 
 std::unique_ptr<WebMetalRenderingContext> WebMetalRenderingContext::create(CanvasBase& canvas)
 {
-    GPUDevice device;
+    GPULegacyDevice device;
 
     if (!device) {
         // FIXME: WebMetal - dispatch an event here for the failure.
@@ -87,7 +87,7 @@ std::unique_ptr<WebMetalRenderingContext> WebMetalRenderingContext::create(Canva
     return renderingContext;
 }
 
-WebMetalRenderingContext::WebMetalRenderingContext(CanvasBase& canvas, GPUDevice&& device)
+WebMetalRenderingContext::WebMetalRenderingContext(CanvasBase& canvas, GPULegacyDevice&& device)
     : GPUBasedCanvasRenderingContext(canvas)
     , m_device(WTFMove(device))
 {
@@ -153,42 +153,42 @@ void WebMetalRenderingContext::reshape(int width, int height)
 
 Ref<WebMetalLibrary> WebMetalRenderingContext::createLibrary(const String& sourceCode)
 {
-    return WebMetalLibrary::create(GPULibrary { m_device, sourceCode }, sourceCode);
+    return WebMetalLibrary::create(GPULegacyLibrary { m_device, sourceCode }, sourceCode);
 }
 
 Ref<WebMetalRenderPipelineState> WebMetalRenderingContext::createRenderPipelineState(WebMetalRenderPipelineDescriptor& descriptor)
 {
-    return WebMetalRenderPipelineState::create(GPURenderPipelineState { m_device, descriptor.descriptor() });
+    return WebMetalRenderPipelineState::create(GPULegacyRenderPipelineState { m_device, descriptor.descriptor() });
 }
 
 Ref<WebMetalDepthStencilState> WebMetalRenderingContext::createDepthStencilState(WebMetalDepthStencilDescriptor& descriptor)
 {
-    return WebMetalDepthStencilState::create(GPUDepthStencilState { m_device, descriptor.descriptor() });
+    return WebMetalDepthStencilState::create(GPULegacyDepthStencilState { m_device, descriptor.descriptor() });
 }
 
 Ref<WebMetalComputePipelineState> WebMetalRenderingContext::createComputePipelineState(WebMetalFunction& function)
 {
-    return WebMetalComputePipelineState::create(GPUComputePipelineState { m_device, function.function() });
+    return WebMetalComputePipelineState::create(GPULegacyComputePipelineState { m_device, function.function() });
 }
 
 Ref<WebMetalCommandQueue> WebMetalRenderingContext::createCommandQueue()
 {
-    return WebMetalCommandQueue::create(GPUCommandQueue { m_device });
+    return WebMetalCommandQueue::create(GPULegacyCommandQueue { m_device });
 }
 
 Ref<WebMetalDrawable> WebMetalRenderingContext::nextDrawable()
 {
-    return WebMetalDrawable::create(GPUDrawable { m_device });
+    return WebMetalDrawable::create(GPULegacyDrawable { m_device });
 }
 
 RefPtr<WebMetalBuffer> WebMetalRenderingContext::createBuffer(JSC::ArrayBufferView& data)
 {
-    return WebMetalBuffer::create(GPUBuffer { m_device, data });
+    return WebMetalBuffer::create(GPULegacyBuffer { m_device, data });
 }
 
 Ref<WebMetalTexture> WebMetalRenderingContext::createTexture(WebMetalTextureDescriptor& descriptor)
 {
-    return WebMetalTexture::create(GPUTexture { m_device, descriptor.descriptor() });
+    return WebMetalTexture::create(GPULegacyTexture { m_device, descriptor.descriptor() });
 }
 
 } // namespace WebCore

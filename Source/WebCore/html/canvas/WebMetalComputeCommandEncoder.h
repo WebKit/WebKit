@@ -27,7 +27,7 @@
 
 #if ENABLE(WEBMETAL)
 
-#include "GPUComputeCommandEncoder.h"
+#include "GPULegacyComputeCommandEncoder.h"
 #include "WebMetalSize.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -39,7 +39,7 @@ class WebMetalComputePipelineState;
 
 class WebMetalComputeCommandEncoder : public RefCounted<WebMetalComputeCommandEncoder> {
 public:
-    static Ref<WebMetalComputeCommandEncoder> create(GPUComputeCommandEncoder&&);
+    static Ref<WebMetalComputeCommandEncoder> create(GPULegacyComputeCommandEncoder&&);
 
     void setComputePipelineState(WebMetalComputePipelineState&);
     void setBuffer(WebMetalBuffer&, unsigned, unsigned);
@@ -47,9 +47,9 @@ public:
     void endEncoding();
 
 private:
-    explicit WebMetalComputeCommandEncoder(GPUComputeCommandEncoder&&);
+    explicit WebMetalComputeCommandEncoder(GPULegacyComputeCommandEncoder&&);
 
-    GPUComputeCommandEncoder m_encoder;
+    GPULegacyComputeCommandEncoder m_encoder;
 };
 
 } // namespace WebCore

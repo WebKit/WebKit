@@ -28,7 +28,7 @@
 
 #if ENABLE(WEBMETAL)
 
-#include "GPUEnums.h"
+#include "GPULegacyEnums.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -79,27 +79,27 @@ String web3DCompareFunctionName(WebMetalCompareFunction value)
     return emptyString();
 }
 
-GPUCompareFunction toGPUCompareFunction(const WebMetalCompareFunction value)
+GPULegacyCompareFunction toGPULegacyCompareFunction(const WebMetalCompareFunction value)
 {
     if (value == WebMetalCompareFunction::Never)
-        return GPUCompareFunction::Never;
+        return GPULegacyCompareFunction::Never;
     if (value == WebMetalCompareFunction::Less)
-        return GPUCompareFunction::Less;
+        return GPULegacyCompareFunction::Less;
     if (value == WebMetalCompareFunction::Equal)
-        return GPUCompareFunction::Equal;
+        return GPULegacyCompareFunction::Equal;
     if (value == WebMetalCompareFunction::Lessequal)
-        return GPUCompareFunction::LessEqual;
+        return GPULegacyCompareFunction::LessEqual;
     if (value == WebMetalCompareFunction::Greater)
-        return GPUCompareFunction::Greater;
+        return GPULegacyCompareFunction::Greater;
     if (value == WebMetalCompareFunction::Notequal)
-        return GPUCompareFunction::NotEqual;
+        return GPULegacyCompareFunction::NotEqual;
     if (value == WebMetalCompareFunction::Greaterequal)
-        return GPUCompareFunction::GreaterEqual;
+        return GPULegacyCompareFunction::GreaterEqual;
     if (value == WebMetalCompareFunction::Always)
-        return GPUCompareFunction::Always;
+        return GPULegacyCompareFunction::Always;
     
     ASSERT_NOT_REACHED();
-    return GPUCompareFunction::Never;
+    return GPULegacyCompareFunction::Never;
 }
 
 } // namespace WebCore

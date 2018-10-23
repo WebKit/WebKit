@@ -27,7 +27,7 @@
 
 #if ENABLE(WEBMETAL)
 
-#include "GPUBuffer.h"
+#include "GPULegacyBuffer.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -35,17 +35,17 @@ namespace WebCore {
 
 class WebMetalBuffer : public RefCounted<WebMetalBuffer> {
 public:
-    static RefPtr<WebMetalBuffer> create(GPUBuffer&&);
+    static RefPtr<WebMetalBuffer> create(GPULegacyBuffer&&);
 
     unsigned length() const { return m_buffer.length(); }
     JSC::ArrayBuffer& contents() const { return *m_buffer.contents(); }
 
-    const GPUBuffer& buffer() const { return m_buffer; }
+    const GPULegacyBuffer& buffer() const { return m_buffer; }
 
 private:
-    explicit WebMetalBuffer(GPUBuffer&&);
+    explicit WebMetalBuffer(GPULegacyBuffer&&);
 
-    GPUBuffer m_buffer;
+    GPULegacyBuffer m_buffer;
 };
 
 } // namespace WebCore

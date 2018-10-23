@@ -31,7 +31,7 @@
 #import <QuartzCore/QuartzCore.h>
 
 namespace WebCore {
-class GPUDevice;
+class GPULegacyDevice;
 }
 
 #if !PLATFORM(IOS_FAMILY_SIMULATOR)
@@ -39,13 +39,13 @@ class GPUDevice;
 #else
 @interface WebMetalLayer : CALayer { // FIXME: WebMetal - Disable WebMetal on iOS simulator?
 #endif
-    WebCore::GPUDevice* _context;
+    WebCore::GPULegacyDevice* _context;
     float _devicePixelRatio;
 }
 
-@property (nonatomic) WebCore::GPUDevice* context;
+@property (nonatomic) WebCore::GPULegacyDevice* context;
 
-- (id)initWithGPUDevice:(WebCore::GPUDevice*)context;
+- (id)initWithGPUDevice:(WebCore::GPULegacyDevice*)context;
 
 - (CGImageRef)copyImageSnapshotWithColorSpace:(CGColorSpaceRef)colorSpace;
 

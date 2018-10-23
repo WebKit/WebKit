@@ -27,7 +27,7 @@
 
 #if ENABLE(WEBMETAL)
 
-#include "GPUDepthStencilDescriptor.h"
+#include "GPULegacyDepthStencilDescriptor.h"
 #include "WebMetalEnums.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -45,7 +45,7 @@ public:
     CompareFunction depthCompareFunction() const;
     void setDepthCompareFunction(CompareFunction);
 
-    GPUDepthStencilDescriptor& descriptor() { return m_descriptor; }
+    GPULegacyDepthStencilDescriptor& descriptor() { return m_descriptor; }
 
 private:
     WebMetalDepthStencilDescriptor() = default;
@@ -56,7 +56,7 @@ private:
     // there would be no need for a default value here.
 
     WebMetalCompareFunction m_depthCompareFunction { WebMetalCompareFunction::Always };
-    GPUDepthStencilDescriptor m_descriptor;
+    GPULegacyDepthStencilDescriptor m_descriptor;
 };
 
 } // namespace WebCore

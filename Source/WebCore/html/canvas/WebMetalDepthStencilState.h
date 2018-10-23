@@ -27,7 +27,7 @@
 
 #if ENABLE(WEBMETAL)
 
-#include "GPUDepthStencilState.h"
+#include "GPULegacyDepthStencilState.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -35,17 +35,17 @@ namespace WebCore {
 
 class WebMetalDepthStencilState : public RefCounted<WebMetalDepthStencilState> {
 public:
-    static Ref<WebMetalDepthStencilState> create(GPUDepthStencilState&&);
+    static Ref<WebMetalDepthStencilState> create(GPULegacyDepthStencilState&&);
 
     String label() const;
     void setLabel(const String&);
 
-    GPUDepthStencilState& state() { return m_state; }
+    GPULegacyDepthStencilState& state() { return m_state; }
 
 private:
-    explicit WebMetalDepthStencilState(GPUDepthStencilState&&);
+    explicit WebMetalDepthStencilState(GPULegacyDepthStencilState&&);
 
-    GPUDepthStencilState m_state;
+    GPULegacyDepthStencilState m_state;
 };
     
 } // namespace WebCore

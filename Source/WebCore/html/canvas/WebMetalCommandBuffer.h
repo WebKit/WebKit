@@ -29,7 +29,7 @@
 #if ENABLE(WEBMETAL)
 
 #include "DOMPromiseProxy.h"
-#include "GPUCommandBuffer.h"
+#include "GPULegacyCommandBuffer.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -43,7 +43,7 @@ class WebMetalRenderPassDescriptor;
 class WebMetalCommandBuffer : public RefCounted<WebMetalCommandBuffer> {
 public:
     ~WebMetalCommandBuffer();
-    static Ref<WebMetalCommandBuffer> create(const GPUCommandQueue&);
+    static Ref<WebMetalCommandBuffer> create(const GPULegacyCommandQueue&);
 
     void commit();
     void presentDrawable(WebMetalDrawable&);
@@ -53,12 +53,12 @@ public:
 
     DOMPromiseProxy<IDLVoid>& completed();
 
-    const GPUCommandBuffer& buffer() const { return m_buffer; }
+    const GPULegacyCommandBuffer& buffer() const { return m_buffer; }
 
 private:
-    explicit WebMetalCommandBuffer(const GPUCommandQueue&);
+    explicit WebMetalCommandBuffer(const GPULegacyCommandQueue&);
 
-    GPUCommandBuffer m_buffer;
+    GPULegacyCommandBuffer m_buffer;
     DOMPromiseProxy<IDLVoid> m_completed;
 };
 

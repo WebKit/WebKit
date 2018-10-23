@@ -32,12 +32,12 @@
 
 namespace WebCore {
 
-Ref<WebMetalRenderPassDepthAttachmentDescriptor> WebMetalRenderPassDepthAttachmentDescriptor::create(GPURenderPassDepthAttachmentDescriptor&& descriptor)
+Ref<WebMetalRenderPassDepthAttachmentDescriptor> WebMetalRenderPassDepthAttachmentDescriptor::create(GPULegacyRenderPassDepthAttachmentDescriptor&& descriptor)
 {
     return adoptRef(*new WebMetalRenderPassDepthAttachmentDescriptor(WTFMove(descriptor)));
 }
 
-WebMetalRenderPassDepthAttachmentDescriptor::WebMetalRenderPassDepthAttachmentDescriptor(GPURenderPassDepthAttachmentDescriptor&& descriptor)
+WebMetalRenderPassDepthAttachmentDescriptor::WebMetalRenderPassDepthAttachmentDescriptor(GPULegacyRenderPassDepthAttachmentDescriptor&& descriptor)
     : m_descriptor { WTFMove(descriptor) }
 {
 }
@@ -54,7 +54,7 @@ void WebMetalRenderPassDepthAttachmentDescriptor::setClearDepth(double newClearD
     m_descriptor.setClearDepth(newClearDepth);
 }
 
-const GPURenderPassAttachmentDescriptor& WebMetalRenderPassDepthAttachmentDescriptor::descriptor() const
+const GPULegacyRenderPassAttachmentDescriptor& WebMetalRenderPassDepthAttachmentDescriptor::descriptor() const
 {
     return m_descriptor;
 }

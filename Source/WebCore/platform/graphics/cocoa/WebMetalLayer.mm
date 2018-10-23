@@ -28,7 +28,7 @@
 
 #if ENABLE(WEBMETAL)
 
-#import "GPUDevice.h"
+#import "GPULegacyDevice.h"
 #import "GraphicsContextCG.h"
 #import "GraphicsLayer.h"
 #import <wtf/FastMalloc.h>
@@ -38,7 +38,7 @@
 
 @synthesize context=_context;
 
-- (id)initWithGPUDevice:(WebCore::GPUDevice*)context
+- (id)initWithGPUDevice:(WebCore::GPULegacyDevice*)context
 {
     self = [super init];
     _context = context;

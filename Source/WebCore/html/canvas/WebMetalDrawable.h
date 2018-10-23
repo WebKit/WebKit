@@ -27,7 +27,7 @@
 
 #if ENABLE(WEBMETAL)
 
-#include "GPUDrawable.h"
+#include "GPULegacyDrawable.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -38,15 +38,15 @@ class WebMetalTexture;
 class WebMetalDrawable : public RefCounted<WebMetalDrawable> {
 public:
     ~WebMetalDrawable();
-    static Ref<WebMetalDrawable> create(GPUDrawable&&);
+    static Ref<WebMetalDrawable> create(GPULegacyDrawable&&);
 
-    GPUDrawable& drawable() { return m_drawable; }
+    GPULegacyDrawable& drawable() { return m_drawable; }
     WebMetalTexture& texture() { return m_texture.get(); }
 
 private:
-    explicit WebMetalDrawable(GPUDrawable&&);
+    explicit WebMetalDrawable(GPULegacyDrawable&&);
 
-    GPUDrawable m_drawable;
+    GPULegacyDrawable m_drawable;
     Ref<WebMetalTexture> m_texture;
 };
 

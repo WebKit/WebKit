@@ -33,12 +33,12 @@
 
 namespace WebCore {
 
-Ref<WebMetalDepthStencilState> WebMetalDepthStencilState::create(GPUDepthStencilState&& state)
+Ref<WebMetalDepthStencilState> WebMetalDepthStencilState::create(GPULegacyDepthStencilState&& state)
 {
     return adoptRef(*new WebMetalDepthStencilState(WTFMove(state)));
 }
 
-WebMetalDepthStencilState::WebMetalDepthStencilState(GPUDepthStencilState&& state)
+WebMetalDepthStencilState::WebMetalDepthStencilState(GPULegacyDepthStencilState&& state)
     : m_state { WTFMove(state) }
 {
 }

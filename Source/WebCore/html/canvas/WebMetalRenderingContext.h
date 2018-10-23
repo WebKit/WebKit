@@ -29,7 +29,7 @@
 #if ENABLE(WEBMETAL)
 
 #include "GPUBasedCanvasRenderingContext.h"
-#include "GPUDevice.h"
+#include "GPULegacyDevice.h"
 
 namespace JSC {
 class ArrayBufferView;
@@ -66,10 +66,10 @@ public:
     RefPtr<WebMetalBuffer> createBuffer(JSC::ArrayBufferView&);
     Ref<WebMetalTexture> createTexture(WebMetalTextureDescriptor&);
 
-    const GPUDevice& device() const { return m_device; }
+    const GPULegacyDevice& device() const { return m_device; }
 
 private:
-    WebMetalRenderingContext(CanvasBase&, GPUDevice&&);
+    WebMetalRenderingContext(CanvasBase&, GPULegacyDevice&&);
 
     bool hasPendingActivity() const final;
     void stop() final;
@@ -85,7 +85,7 @@ private:
     void markLayerComposited() final;
     PlatformLayer* platformLayer() const final;
 
-    GPUDevice m_device;
+    GPULegacyDevice m_device;
 };
 
 } // namespace WebCore

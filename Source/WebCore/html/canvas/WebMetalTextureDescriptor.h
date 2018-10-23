@@ -27,7 +27,7 @@
 
 #if ENABLE(WEBMETAL)
 
-#include "GPUTextureDescriptor.h"
+#include "GPULegacyTextureDescriptor.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -55,12 +55,12 @@ public:
     unsigned usage() const;
     void setUsage(unsigned);
 
-    const GPUTextureDescriptor& descriptor() { return m_descriptor; }
+    const GPULegacyTextureDescriptor& descriptor() { return m_descriptor; }
 
 private:
     WebMetalTextureDescriptor(unsigned pixelFormat, unsigned width, unsigned height, bool mipmapped);
 
-    GPUTextureDescriptor m_descriptor;
+    GPULegacyTextureDescriptor m_descriptor;
 };
 
 } // namespace WebCore

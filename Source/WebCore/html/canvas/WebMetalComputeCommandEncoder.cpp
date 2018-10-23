@@ -28,26 +28,26 @@
 
 #if ENABLE(WEBMETAL)
 
-#include "GPUCommandBuffer.h"
-#include "GPUComputeCommandEncoder.h"
-#include "GPUSize.h"
+#include "GPULegacyCommandBuffer.h"
+#include "GPULegacyComputeCommandEncoder.h"
+#include "GPULegacySize.h"
 #include "WebMetalBuffer.h"
 #include "WebMetalCommandBuffer.h"
 #include "WebMetalComputePipelineState.h"
 
 namespace WebCore {
 
-static inline GPUSize GPUSizeMake(WebMetalSize size)
+static inline GPULegacySize GPULegacySizeMake(WebMetalSize size)
 {
     return { size.width, size.height, size.depth };
 }
 
-Ref<WebMetalComputeCommandEncoder> WebMetalComputeCommandEncoder::create(GPUComputeCommandEncoder&& encoder)
+Ref<WebMetalComputeCommandEncoder> WebMetalComputeCommandEncoder::create(GPULegacyComputeCommandEncoder&& encoder)
 {
     return adoptRef(*new WebMetalComputeCommandEncoder(WTFMove(encoder)));
 }
     
-WebMetalComputeCommandEncoder::WebMetalComputeCommandEncoder(GPUComputeCommandEncoder&& encoder)
+WebMetalComputeCommandEncoder::WebMetalComputeCommandEncoder(GPULegacyComputeCommandEncoder&& encoder)
     : m_encoder { WTFMove(encoder) }
 {
 }
@@ -64,7 +64,7 @@ void WebMetalComputeCommandEncoder::setBuffer(WebMetalBuffer& buffer, unsigned o
 
 void WebMetalComputeCommandEncoder::dispatch(WebMetalSize threadgroupsPerGrid, WebMetalSize threadsPerThreadgroup)
 {
-    m_encoder.dispatch(GPUSizeMake(threadgroupsPerGrid), GPUSizeMake(threadsPerThreadgroup));
+    m_encoder.dispatch(GPULegacySizeMake(threadgroupsPerGrid), GPULegacySizeMake(threadsPerThreadgroup));
 }
 
 void WebMetalComputeCommandEncoder::endEncoding()

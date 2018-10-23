@@ -1,3 +1,14 @@
+2018-10-23  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Rename old GPU* implementation files to GPULegacy* for WebMetal
+        https://bugs.webkit.org/show_bug.cgi?id=190817
+
+        Reviewed by Dean Jackson.
+
+        No new tests. No change in behavior.
+
+        * [Large list of refactored classes and renamed files]: GPU* is now GPULegacy*
+
 2018-10-23  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r237261.

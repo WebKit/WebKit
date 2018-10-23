@@ -30,12 +30,12 @@
 
 namespace WebCore {
 
-Ref<WebMetalComputePipelineState> WebMetalComputePipelineState::create(GPUComputePipelineState&& state)
+Ref<WebMetalComputePipelineState> WebMetalComputePipelineState::create(GPULegacyComputePipelineState&& state)
 {
     return adoptRef(*new WebMetalComputePipelineState(WTFMove(state)));
 }
 
-WebMetalComputePipelineState::WebMetalComputePipelineState(GPUComputePipelineState&& state)
+WebMetalComputePipelineState::WebMetalComputePipelineState(GPULegacyComputePipelineState&& state)
     : m_state { WTFMove(state) }
 {
 }

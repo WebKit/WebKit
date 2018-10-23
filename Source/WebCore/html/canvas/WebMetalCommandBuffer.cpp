@@ -29,8 +29,8 @@
 
 #if ENABLE(WEBMETAL)
 
-#include "GPUCommandBuffer.h"
-#include "GPUCommandQueue.h"
+#include "GPULegacyCommandBuffer.h"
+#include "GPULegacyCommandQueue.h"
 #include "Logging.h"
 #include "WebMetalComputeCommandEncoder.h"
 #include "WebMetalDrawable.h"
@@ -39,12 +39,12 @@
 
 namespace WebCore {
 
-Ref<WebMetalCommandBuffer> WebMetalCommandBuffer::create(const GPUCommandQueue& queue)
+Ref<WebMetalCommandBuffer> WebMetalCommandBuffer::create(const GPULegacyCommandQueue& queue)
 {
     return adoptRef(*new WebMetalCommandBuffer(queue));
 }
 
-WebMetalCommandBuffer::WebMetalCommandBuffer(const GPUCommandQueue& queue)
+WebMetalCommandBuffer::WebMetalCommandBuffer(const GPULegacyCommandQueue& queue)
     : m_buffer { queue, [this] () { m_completed.resolve(); } }
 {
     LOG(WebMetal, "WebMetalCommandBuffer::WebMetalCommandBuffer()");
@@ -69,12 +69,12 @@ void WebMetalCommandBuffer::presentDrawable(WebMetalDrawable& drawable)
 
 Ref<WebMetalRenderCommandEncoder> WebMetalCommandBuffer::createRenderCommandEncoderWithDescriptor(WebMetalRenderPassDescriptor& descriptor)
 {
-    return WebMetalRenderCommandEncoder::create(GPURenderCommandEncoder { m_buffer, descriptor.descriptor() });
+    return WebMetalRenderCommandEncoder::create(GPULegacyRenderCommandEncoder { m_buffer, descriptor.descriptor() });
 }
 
 Ref<WebMetalComputeCommandEncoder> WebMetalCommandBuffer::createComputeCommandEncoder()
 {
-    return WebMetalComputeCommandEncoder::create(GPUComputeCommandEncoder { m_buffer });
+    return WebMetalComputeCommandEncoder::create(GPULegacyComputeCommandEncoder { m_buffer });
 }
 
 DOMPromiseProxy<IDLVoid>& WebMetalCommandBuffer::completed()

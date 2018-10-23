@@ -27,7 +27,7 @@
 
 #if ENABLE(WEBMETAL)
 
-#include "GPURenderPassColorAttachmentDescriptor.h"
+#include "GPULegacyRenderPassColorAttachmentDescriptor.h"
 #include "WebMetalRenderPassAttachmentDescriptor.h"
 
 namespace WebCore {
@@ -35,18 +35,18 @@ namespace WebCore {
 class WebMetalRenderPassColorAttachmentDescriptor final : public WebMetalRenderPassAttachmentDescriptor {
 public:
     virtual ~WebMetalRenderPassColorAttachmentDescriptor();
-    static Ref<WebMetalRenderPassColorAttachmentDescriptor> create(GPURenderPassColorAttachmentDescriptor&&);
+    static Ref<WebMetalRenderPassColorAttachmentDescriptor> create(GPULegacyRenderPassColorAttachmentDescriptor&&);
 
     Vector<float> clearColor() const;
     void setClearColor(const Vector<float>&);
 
 private:
-    explicit WebMetalRenderPassColorAttachmentDescriptor(GPURenderPassColorAttachmentDescriptor&&);
+    explicit WebMetalRenderPassColorAttachmentDescriptor(GPULegacyRenderPassColorAttachmentDescriptor&&);
 
-    const GPURenderPassAttachmentDescriptor& descriptor() const final;
+    const GPULegacyRenderPassAttachmentDescriptor& descriptor() const final;
     bool isColorAttachmentDescriptor() const final { return true; }
 
-    GPURenderPassColorAttachmentDescriptor m_descriptor;
+    GPULegacyRenderPassColorAttachmentDescriptor m_descriptor;
 };
     
 } // namespace WebCore

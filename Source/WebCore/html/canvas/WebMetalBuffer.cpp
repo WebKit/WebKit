@@ -30,13 +30,13 @@
 
 namespace WebCore {
 
-RefPtr<WebMetalBuffer> WebMetalBuffer::create(GPUBuffer&& buffer)
+RefPtr<WebMetalBuffer> WebMetalBuffer::create(GPULegacyBuffer&& buffer)
 {
     // FIXME: Consider returning null rather than a buffer with length 0 and contents null when creation fails.
     return adoptRef(*new WebMetalBuffer(WTFMove(buffer)));
 }
 
-WebMetalBuffer::WebMetalBuffer(GPUBuffer&& buffer)
+WebMetalBuffer::WebMetalBuffer(GPULegacyBuffer&& buffer)
     : m_buffer { WTFMove(buffer) }
 {
 }

@@ -28,8 +28,8 @@
 
 #if ENABLE(WEBMETAL)
 
-#include "GPUCommandBuffer.h"
-#include "GPURenderPassDescriptor.h"
+#include "GPULegacyCommandBuffer.h"
+#include "GPULegacyRenderPassDescriptor.h"
 #include "WebMetalBuffer.h"
 #include "WebMetalCommandBuffer.h"
 #include "WebMetalDepthStencilState.h"
@@ -38,12 +38,12 @@
 
 namespace WebCore {
 
-Ref<WebMetalRenderCommandEncoder> WebMetalRenderCommandEncoder::create(GPURenderCommandEncoder&& encoder)
+Ref<WebMetalRenderCommandEncoder> WebMetalRenderCommandEncoder::create(GPULegacyRenderCommandEncoder&& encoder)
 {
     return adoptRef(*new WebMetalRenderCommandEncoder(WTFMove(encoder)));
 }
 
-WebMetalRenderCommandEncoder::WebMetalRenderCommandEncoder(GPURenderCommandEncoder&& encoder)
+WebMetalRenderCommandEncoder::WebMetalRenderCommandEncoder(GPULegacyRenderCommandEncoder&& encoder)
     : m_encoder { WTFMove(encoder) }
 {
 }

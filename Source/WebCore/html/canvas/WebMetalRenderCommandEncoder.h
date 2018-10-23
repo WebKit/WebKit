@@ -27,7 +27,7 @@
 
 #if ENABLE(WEBMETAL)
 
-#include "GPURenderCommandEncoder.h"
+#include "GPULegacyRenderCommandEncoder.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -40,7 +40,7 @@ class WebMetalRenderPipelineState;
 class WebMetalRenderCommandEncoder : public RefCounted<WebMetalRenderCommandEncoder> {
 public:
     ~WebMetalRenderCommandEncoder();
-    static Ref<WebMetalRenderCommandEncoder> create(GPURenderCommandEncoder&&);
+    static Ref<WebMetalRenderCommandEncoder> create(GPULegacyRenderCommandEncoder&&);
 
     void setRenderPipelineState(WebMetalRenderPipelineState&);
     void setDepthStencilState(WebMetalDepthStencilState&);
@@ -49,12 +49,12 @@ public:
     void drawPrimitives(unsigned type, unsigned start, unsigned count);
     void endEncoding();
 
-    GPURenderCommandEncoder& encoder() { return m_encoder; }
+    GPULegacyRenderCommandEncoder& encoder() { return m_encoder; }
 
 private:
-    explicit WebMetalRenderCommandEncoder(GPURenderCommandEncoder&&);
+    explicit WebMetalRenderCommandEncoder(GPULegacyRenderCommandEncoder&&);
 
-    GPURenderCommandEncoder m_encoder;
+    GPULegacyRenderCommandEncoder m_encoder;
 };
 
 } // namespace WebCore

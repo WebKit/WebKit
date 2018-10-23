@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-enum class GPUCompareFunction;
+enum class GPULegacyCompareFunction;
 
 enum class WebMetalCompareFunction {
     Never,
@@ -47,7 +47,7 @@ enum class WebMetalCompareFunction {
 
 std::optional<WebMetalCompareFunction> toWebMetalCompareFunction(const String&);
 String web3DCompareFunctionName(WebMetalCompareFunction);
-GPUCompareFunction toGPUCompareFunction(WebMetalCompareFunction);
+GPULegacyCompareFunction toGPULegacyCompareFunction(WebMetalCompareFunction);
 
 } // namespace WebCore
 

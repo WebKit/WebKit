@@ -27,7 +27,7 @@
 
 #if ENABLE(WEBMETAL)
 
-#include "GPUComputePipelineState.h"
+#include "GPULegacyComputePipelineState.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -37,14 +37,14 @@ class WebMetalFunction;
 
 class WebMetalComputePipelineState : public RefCounted<WebMetalComputePipelineState> {
 public:
-    static Ref<WebMetalComputePipelineState> create(GPUComputePipelineState&&);
+    static Ref<WebMetalComputePipelineState> create(GPULegacyComputePipelineState&&);
 
-    GPUComputePipelineState& state() { return m_state; }
+    GPULegacyComputePipelineState& state() { return m_state; }
 
 private:
-    explicit WebMetalComputePipelineState(GPUComputePipelineState&&);
+    explicit WebMetalComputePipelineState(GPULegacyComputePipelineState&&);
 
-    GPUComputePipelineState m_state;
+    GPULegacyComputePipelineState m_state;
 };
 
 } // namespace WebCore
