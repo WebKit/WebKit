@@ -1,3 +1,17 @@
+2018-10-23  Chris Dumez  <cdumez@apple.com>
+
+        [PSON] Add support for cross-site client-side redirects
+        https://bugs.webkit.org/show_bug.cgi?id=190806
+        <rdar://problem/45047344>
+
+        Reviewed by Geoffrey Garen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        (-[PSONNavigationDelegate _webView:willPerformClientRedirectToURL:delay:]):
+        (-[PSONNavigationDelegate _webView:didPerformClientRedirectFromURL:toURL:]):
+
 2018-10-23  Claudio Saavedra  <csaavedra@igalia.com>
 
         [WPE][GTK] Pass full certificate chain in CertificateInfo coder

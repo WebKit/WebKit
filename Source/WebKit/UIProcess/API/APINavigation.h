@@ -101,6 +101,15 @@ public:
     void setRequesterOrigin(const WebCore::SecurityOriginData& origin) { m_requesterOrigin = origin; }
     const WebCore::SecurityOriginData& requesterOrigin() const { return m_requesterOrigin; }
 
+    void setLockHistory(WebCore::LockHistory lockHistory) { m_lockHistory = lockHistory; }
+    WebCore::LockHistory lockHistory() const { return m_lockHistory; }
+
+    void setLockBackForwardList(WebCore::LockBackForwardList lockBackForwardList) { m_lockBackForwardList = lockBackForwardList; }
+    WebCore::LockBackForwardList lockBackForwardList() const { return m_lockBackForwardList; }
+
+    void setClientRedirectSourceForHistory(const WTF::String& clientRedirectSourceForHistory) { m_clientRedirectSourceForHistory = clientRedirectSourceForHistory; }
+    WTF::String clientRedirectSourceForHistory() const { return m_clientRedirectSourceForHistory; }
+
 #if !LOG_DISABLED
     const char* loggingString() const;
 #endif
@@ -127,6 +136,9 @@ private:
     bool m_openedViaWindowOpenWithOpener { false };
     std::optional<std::pair<uint64_t, uint64_t>> m_opener;
     WebCore::SecurityOriginData m_requesterOrigin;
+    WebCore::LockHistory m_lockHistory;
+    WebCore::LockBackForwardList m_lockBackForwardList;
+    WTF::String m_clientRedirectSourceForHistory;
 };
 
 } // namespace API

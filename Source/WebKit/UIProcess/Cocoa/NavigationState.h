@@ -98,6 +98,7 @@ private:
         void didStartProvisionalNavigation(WebPageProxy&, API::Navigation*, API::Object*) override;
         void didReceiveServerRedirectForProvisionalNavigation(WebPageProxy&, API::Navigation*, API::Object*) override;
         void willPerformClientRedirect(WebPageProxy&, const WTF::String&, double) override;
+        void didPerformClientRedirect(WebPageProxy&, const WTF::String&, const WTF::String&) override;
         void didCancelClientRedirect(WebPageProxy&) override;
         void didFailProvisionalNavigationWithError(WebPageProxy&, WebFrameProxy&, API::Navigation*, const WebCore::ResourceError&, API::Object*) override;
         void didFailProvisionalLoadInSubframeWithError(WebPageProxy&, WebFrameProxy&, const WebCore::SecurityOriginData&, API::Navigation*, const WebCore::ResourceError&, API::Object*) override;
@@ -195,6 +196,7 @@ private:
         bool webViewDidFailProvisionalNavigationWithError : 1;
         bool webViewNavigationDidFailProvisionalLoadInSubframeWithError : 1;
         bool webViewWillPerformClientRedirect : 1;
+        bool webViewDidPerformClientRedirect : 1;
         bool webViewDidCancelClientRedirect : 1;
         bool webViewDidCommitNavigation : 1;
         bool webViewNavigationDidFinishDocumentLoad : 1;

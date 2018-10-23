@@ -103,6 +103,7 @@
 #include "WebImage.h"
 #include "WebInspectorProxy.h"
 #include "WebInspectorUtilities.h"
+#include "WebNavigationDataStore.h"
 #include "WebNavigationState.h"
 #include "WebNotificationManagerProxy.h"
 #include "WebOpenPanelResultListenerProxy.h"
@@ -1017,6 +1018,9 @@ void WebPageProxy::loadRequestWithNavigation(API::Navigation& navigation, Resour
     loadParameters.shouldOpenExternalURLsPolicy = (uint64_t)shouldOpenExternalURLsPolicy;
     loadParameters.userData = UserData(process().transformObjectsToHandles(userData).get());
     loadParameters.shouldTreatAsContinuingLoad = shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::Yes;
+    loadParameters.lockHistory = navigation.lockHistory();
+    loadParameters.lockBackForwardList = navigation.lockBackForwardList();
+    loadParameters.clientRedirectSourceForHistory = navigation.clientRedirectSourceForHistory();
     bool createdExtension = maybeInitializeSandboxExtensionHandle(url, loadParameters.sandboxExtensionHandle);
     if (createdExtension)
         m_process->willAcquireUniversalFileReadSandboxExtension();
@@ -2548,6 +2552,7 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, R
 
     Ref<WebProcessProxy> previousProcess = m_process.copyRef();
     std::optional<uint64_t> mainFrameIDInPreviousProcess = m_mainFrame ? std::make_optional(m_mainFrame->frameID()) : std::nullopt;
+    auto mainFrameURL = m_mainFrame ? m_mainFrame->url() : WebCore::URL();
 
     ASSERT(m_process.ptr() != process.ptr());
 
@@ -2575,21 +2580,34 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, R
         return;
     }
 
+    if (navigation.lockBackForwardList() == LockBackForwardList::Yes || navigation.lockHistory() == LockHistory::Yes) {
+        // If WebCore is supposed to lock the history for this load, then the new process needs to know about the current history item so it can update
+        // it instead of creating a new one.
+        auto itemStates = m_backForwardList->filteredItemStates([currentItem = m_backForwardList->currentItem()](WebBackForwardListItem& item) {
+            return &item == currentItem;
+        });
+        RELEASE_ASSERT(itemStates.size() == 1);
+        m_process->send(Messages::WebPage::SetCurrentHistoryItemForReattach(itemStates[0]), m_pageID);
+    }
+
     // FIXME: Work out timing of responding with the last policy delegate, etc
     ASSERT(!navigation.currentRequest().isEmpty());
     loadRequestWithNavigation(navigation, ResourceRequest { navigation.currentRequest() }, WebCore::ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemes, nullptr, ShouldTreatAsContinuingLoad::Yes);
 
-    // Normally, notification of a server redirect comes from the WebContent process.
-    // If we are process swapping in response to a server redirect then that notification will not come from the new WebContent process.
-    // In this case we have the UIProcess synthesize the redirect notification at the appropriate time.
-    if (navigation.currentRequestIsRedirect()) {
-        ASSERT(!m_mainFrame);
-        m_mainFrameCreationHandler = [this, protectedThis = makeRef(*this), navigation = makeRef(navigation), request =  navigation.currentRequest()]() mutable {
-            ASSERT(m_mainFrame);
+    ASSERT(!m_mainFrame);
+    m_mainFrameCreationHandler = [this, protectedThis = makeRef(*this), navigation = makeRef(navigation), request =  navigation.currentRequest(), mainFrameURL, isServerRedirect = navigation.currentRequestIsRedirect()]() mutable {
+        ASSERT(m_mainFrame);
+        // Restore the main frame's committed URL as some clients may rely on it until the next load is committed.
+        m_mainFrame->frameLoadState().setURL(mainFrameURL);
+
+        // Normally, notification of a server redirect comes from the WebContent process.
+        // If we are process swapping in response to a server redirect then that notification will not come from the new WebContent process.
+        // In this case we have the UIProcess synthesize the redirect notification at the appropriate time.
+        if (isServerRedirect) {
             m_mainFrame->frameLoadState().didStartProvisionalLoad(request.url());
             didReceiveServerRedirectForProvisionalLoadForFrame(m_mainFrame->frameID(), navigation->navigationID(), WTFMove(request), { });
-        };
-    }
+        }
+    };
 
     bool isInitialNavigationInNewWindow = openedByDOM() && !hasCommittedAnyProvisionalLoads();
     if (!isInitialNavigationInNewWindow || !mainFrameIDInPreviousProcess)
@@ -4115,6 +4133,9 @@ void WebPageProxy::decidePolicyForNavigationAction(WebFrameProxy& frame, const W
         navigation->setOpenedViaWindowOpenWithOpener();
     navigation->setOpener(navigationActionData.opener);
     navigation->setRequesterOrigin(navigationActionData.requesterOrigin);
+    navigation->setLockHistory(navigationActionData.lockHistory);
+    navigation->setLockBackForwardList(navigationActionData.lockBackForwardList);
+    navigation->setClientRedirectSourceForHistory(navigationActionData.clientRedirectSourceForHistory);
 
 #if ENABLE(CONTENT_FILTERING)
     if (frame.didHandleContentFilterUnblockNavigation(request))
@@ -4302,8 +4323,10 @@ void WebPageProxy::didPerformClientRedirect(const String& sourceURLString, const
     MESSAGE_CHECK_URL(sourceURLString);
     MESSAGE_CHECK_URL(destinationURLString);
 
-    if (frame->isMainFrame())
+    if (frame->isMainFrame()) {
         m_historyClient->didPerformClientRedirect(*this, sourceURLString, destinationURLString);
+        m_navigationClient->didPerformClientRedirect(*this, sourceURLString, destinationURLString);
+    }
     process().processPool().historyClient().didPerformClientRedirect(process().processPool(), *this, sourceURLString, destinationURLString, *frame);
 }
 

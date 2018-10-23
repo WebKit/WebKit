@@ -58,6 +58,9 @@ struct NavigationActionData {
     std::optional<std::pair<uint64_t, uint64_t>> opener;
     WebCore::SecurityOriginData requesterOrigin;
     std::optional<WebCore::BackForwardItemIdentifier> targetBackForwardItemIdentifier;
+    WebCore::LockHistory lockHistory;
+    WebCore::LockBackForwardList lockBackForwardList;
+    WTF::String clientRedirectSourceForHistory;
 };
 
 }

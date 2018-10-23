@@ -157,6 +157,7 @@ void NavigationState::setNavigationDelegate(id <WKNavigationDelegate> delegate)
 
     m_navigationDelegateMethods.webViewNavigationDidFailProvisionalLoadInSubframeWithError = [delegate respondsToSelector:@selector(_webView:navigation:didFailProvisionalLoadInSubframe:withError:)];
     m_navigationDelegateMethods.webViewWillPerformClientRedirect = [delegate respondsToSelector:@selector(_webView:willPerformClientRedirectToURL:delay:)];
+    m_navigationDelegateMethods.webViewDidPerformClientRedirect = [delegate respondsToSelector:@selector(_webView:didPerformClientRedirectFromURL:toURL:)];
     m_navigationDelegateMethods.webViewDidCancelClientRedirect = [delegate respondsToSelector:@selector(_webViewDidCancelClientRedirect:)];
     m_navigationDelegateMethods.webViewNavigationDidFinishDocumentLoad = [delegate respondsToSelector:@selector(_webView:navigationDidFinishDocumentLoad:)];
     m_navigationDelegateMethods.webViewNavigationDidSameDocumentNavigation = [delegate respondsToSelector:@selector(_webView:navigation:didSameDocumentNavigation:)];
@@ -702,6 +703,21 @@ void NavigationState::NavigationClient::willPerformClientRedirect(WebPageProxy& 
     WebCore::URL url(WebCore::URL(), urlString);
 
     [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate) _webView:m_navigationState.m_webView willPerformClientRedirectToURL:url delay:delay];
+}
+
+void NavigationState::NavigationClient::didPerformClientRedirect(WebPageProxy& page, const WTF::String& sourceURLString, const WTF::String& destinationURLString)
+{
+    if (!m_navigationState.m_navigationDelegateMethods.webViewDidPerformClientRedirect)
+        return;
+
+    auto navigationDelegate = m_navigationState.m_navigationDelegate.get();
+    if (!navigationDelegate)
+        return;
+
+    WebCore::URL sourceURL(WebCore::URL(), sourceURLString);
+    WebCore::URL destinationURL(WebCore::URL(), destinationURLString);
+
+    [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate) _webView:m_navigationState.m_webView didPerformClientRedirectFromURL:sourceURL toURL:destinationURL];
 }
 
 void NavigationState::NavigationClient::didCancelClientRedirect(WebPageProxy& page)

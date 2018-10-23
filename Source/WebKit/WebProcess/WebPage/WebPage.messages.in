@@ -157,6 +157,7 @@ messages -> WebPage LegacyReceiver {
     
     RestoreSession(Vector<WebKit::BackForwardListItemState> itemStates)
     UpdateBackForwardListForReattach(Vector<WebKit::BackForwardListItemState> itemStates)
+    SetCurrentHistoryItemForReattach(struct WebKit::BackForwardListItemState itemState)
 
     DidRemoveBackForwardItem(struct WebCore::BackForwardItemIdentifier backForwardItemID)
 

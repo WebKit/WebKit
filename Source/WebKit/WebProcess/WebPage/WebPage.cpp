@@ -1307,6 +1307,9 @@ void WebPage::loadRequest(LoadParameters&& loadParameters)
     ShouldOpenExternalURLsPolicy externalURLsPolicy = static_cast<ShouldOpenExternalURLsPolicy>(loadParameters.shouldOpenExternalURLsPolicy);
     frameLoadRequest.setShouldOpenExternalURLsPolicy(externalURLsPolicy);
     frameLoadRequest.setShouldTreatAsContinuingLoad(loadParameters.shouldTreatAsContinuingLoad);
+    frameLoadRequest.setLockHistory(loadParameters.lockHistory);
+    frameLoadRequest.setlockBackForwardList(loadParameters.lockBackForwardList);
+    frameLoadRequest.setClientRedirectSourceForHistory(loadParameters.clientRedirectSourceForHistory);
 
     corePage()->userInputBridge().loadRequest(WTFMove(frameLoadRequest));
 
@@ -2604,6 +2607,14 @@ void WebPage::restoreSession(const Vector<BackForwardListItemState>& itemStates)
 void WebPage::updateBackForwardListForReattach(const Vector<WebKit::BackForwardListItemState>& itemStates)
 {
     restoreSessionInternal(itemStates, WasRestoredByAPIRequest::No, WebBackForwardListProxy::OverwriteExistingItem::Yes);
+}
+
+void WebPage::setCurrentHistoryItemForReattach(WebKit::BackForwardListItemState&& itemState)
+{
+    auto historyItem = toHistoryItem(itemState);
+    auto& historyItemRef = historyItem.get();
+    static_cast<WebBackForwardListProxy&>(corePage()->backForward().client()).addItemFromUIProcess(itemState.identifier, WTFMove(historyItem), m_pageID, WebBackForwardListProxy::OverwriteExistingItem::Yes);
+    corePage()->mainFrame().loader().history().setCurrentItem(historyItemRef);
 }
 
 void WebPage::requestFontAttributesAtSelectionStart(CallbackID callbackID)

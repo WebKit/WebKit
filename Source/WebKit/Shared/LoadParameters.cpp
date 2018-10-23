@@ -50,6 +50,9 @@ void LoadParameters::encode(IPC::Encoder& encoder) const
     encoder << shouldTreatAsContinuingLoad;
     encoder << userData;
     encoder << forSafeBrowsing;
+    encoder.encodeEnum(lockHistory);
+    encoder.encodeEnum(lockBackForwardList);
+    encoder << clientRedirectSourceForHistory;
 
     platformEncode(encoder);
 }
@@ -108,7 +111,19 @@ bool LoadParameters::decode(IPC::Decoder& decoder, LoadParameters& data)
 
     if (!decoder.decode(data.forSafeBrowsing))
         return false;
-    
+
+    if (!decoder.decodeEnum(data.lockHistory))
+        return false;
+
+    if (!decoder.decodeEnum(data.lockBackForwardList))
+        return false;
+
+    std::optional<String> clientRedirectSourceForHistory;
+    decoder >> clientRedirectSourceForHistory;
+    if (!clientRedirectSourceForHistory)
+        return false;
+    data.clientRedirectSourceForHistory = WTFMove(*clientRedirectSourceForHistory);
+
     if (!platformDecode(decoder, data))
         return false;
 

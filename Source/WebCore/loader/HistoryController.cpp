@@ -440,7 +440,7 @@ void HistoryController::updateForRedirectWithLockedBackForwardList()
         if (Page* page = m_frame.page())
             addVisitedLink(*page, historyURL);
 
-        if (!m_frame.loader().documentLoader()->didCreateGlobalHistoryEntry() && m_frame.loader().documentLoader()->unreachableURL().isEmpty() && !m_frame.document()->url().isEmpty())
+        if (!m_frame.loader().documentLoader()->didCreateGlobalHistoryEntry() && m_frame.loader().documentLoader()->unreachableURL().isEmpty())
             m_frame.loader().client().updateGlobalHistoryRedirectLinks();
     }
 }

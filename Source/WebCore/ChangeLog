@@ -1,3 +1,51 @@
+2018-10-23  Chris Dumez  <cdumez@apple.com>
+
+        [PSON] Add support for cross-site client-side redirects
+        https://bugs.webkit.org/show_bug.cgi?id=190806
+        <rdar://problem/45047344>
+
+        Reviewed by Geoffrey Garen.
+
+        Add support for cross-site client-side redirects so that it swaps process and so that the back
+        forward list looks as expected. To support this, the following changes had to be done:
+        - The NavigationAction now provides additional information so that the WebProcess can communicate
+          things about the client-side redirect to the UIProcess: lockHistory / lockBackForwardList and
+          clientRedirectSourceForHistory.
+        - If the UIProcess decides to process-swap on a client-side redirect, we pass the client-side
+          redirect information to the new WebContent process via LoadRequest struct. WebCore then takes
+          care of setting things up using this information so that it recognizes that it is continuing
+          a load that is a client side redirect.
+        - We also need to pass the current BackForwardListItem / HistoryItem to the new WebContent
+          process so that the new process can truly lock history and keep updating the *current*
+          HistoryItem, instead of creating a new HistoryItem.
+        - After a process swap, when we re-construct the WebFrameProxy for the main frame in the new
+          process, we now set the frame's URL in the UIProcess to the URL it had before we swapped.
+          Clients such as Safari, rely on the main frame's URL being the expected value (the last
+          committed load URL) until the next load is committed when receiving didPerformRedirect
+          calls. Because we are destroying the main frame on process-swapping, we were losing the
+          last committed URL and Safari would hit assertions.
+
+        With this model, the willPerformClientRedirect IPC is still sent from the previous WebProcess
+        and the didPerformClientRedirect IPC is now sent by the new WebProcess. No change should be
+        observable from the client's point of view.
+
+        * loader/FrameLoadRequest.h:
+        (WebCore::FrameLoadRequest::setLockHistory):
+        (WebCore::FrameLoadRequest::setlockBackForwardList):
+        (WebCore::FrameLoadRequest::clientRedirectSourceForHistory const):
+        (WebCore::FrameLoadRequest::setClientRedirectSourceForHistory):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::load):
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::updateForRedirectWithLockedBackForwardList):
+        * loader/HistoryController.h:
+        * loader/NavigationAction.h:
+        (WebCore::NavigationAction::lockHistory const):
+        (WebCore::NavigationAction::setLockHistory):
+        (WebCore::NavigationAction::lockBackForwardList const):
+        (WebCore::NavigationAction::setLockBackForwardList):
+
 2018-10-23  Jer Noble  <jer.noble@apple.com>
 
         Use WeakPtr and GenericTaskQueue within ObjC classes used by MediaPlayerPrivateAVFoundationObjC

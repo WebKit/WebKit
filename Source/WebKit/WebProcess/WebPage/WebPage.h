@@ -1209,6 +1209,7 @@ private:
     void restoreSession(const Vector<BackForwardListItemState>&);
     void didRemoveBackForwardItem(const WebCore::BackForwardItemIdentifier&);
     void updateBackForwardListForReattach(const Vector<WebKit::BackForwardListItemState>&);
+    void setCurrentHistoryItemForReattach(WebKit::BackForwardListItemState&&);
 
     void requestFontAttributesAtSelectionStart(CallbackID);
 

@@ -115,7 +115,6 @@ bool WebBackForwardListItem::itemIsInSameDocument(const WebBackForwardListItem& 
 
 void WebBackForwardListItem::setSuspendedPage(SuspendedPageProxy& page)
 {
-    ASSERT(!m_suspendedPage);
     m_suspendedPage = makeWeakPtr(page);
 }
 

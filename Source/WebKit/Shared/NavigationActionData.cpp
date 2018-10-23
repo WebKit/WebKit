@@ -51,6 +51,9 @@ void NavigationActionData::encode(IPC::Encoder& encoder) const
     encoder << opener;
     encoder << requesterOrigin;
     encoder << targetBackForwardItemIdentifier;
+    encoder.encodeEnum(lockHistory);
+    encoder.encodeEnum(lockBackForwardList);
+    encoder << clientRedirectSourceForHistory;
 }
 
 std::optional<NavigationActionData> NavigationActionData::decode(IPC::Decoder& decoder)
@@ -128,11 +131,24 @@ std::optional<NavigationActionData> NavigationActionData::decode(IPC::Decoder& d
     decoder >> targetBackForwardItemIdentifier;
     if (!targetBackForwardItemIdentifier)
         return std::nullopt;
-        
+
+    WebCore::LockHistory lockHistory;
+    if (!decoder.decodeEnum(lockHistory))
+        return std::nullopt;
+
+    WebCore::LockBackForwardList lockBackForwardList;
+    if (!decoder.decodeEnum(lockBackForwardList))
+        return std::nullopt;
+
+    std::optional<String> clientRedirectSourceForHistory;
+    decoder >> clientRedirectSourceForHistory;
+    if (!clientRedirectSourceForHistory)
+        return std::nullopt;
+
     return {{ WTFMove(navigationType), WTFMove(modifiers), WTFMove(mouseButton), WTFMove(syntheticClickType), WTFMove(*userGestureTokenIdentifier),
         WTFMove(*canHandleRequest), WTFMove(shouldOpenExternalURLsPolicy), WTFMove(*downloadAttribute), WTFMove(clickLocationInRootViewCoordinates),
         WTFMove(*isRedirect), *treatAsSameOriginNavigation, *hasOpenedFrames, *openedViaWindowOpenWithOpener, WTFMove(*opener), WTFMove(*requesterOrigin),
-        WTFMove(*targetBackForwardItemIdentifier) }};
+        WTFMove(*targetBackForwardItemIdentifier), lockHistory, lockBackForwardList, WTFMove(*clientRedirectSourceForHistory) }};
 }
 
 } // namespace WebKit

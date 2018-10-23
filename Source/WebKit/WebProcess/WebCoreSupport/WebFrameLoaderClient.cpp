@@ -871,6 +871,8 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     if (auto& requester = navigationAction.requester())
         navigationActionData.requesterOrigin = requester->securityOrigin().data();
     navigationActionData.targetBackForwardItemIdentifier = navigationAction.targetBackForwardItemIdentifier();
+    navigationActionData.lockHistory = navigationAction.lockHistory();
+    navigationActionData.lockBackForwardList = navigationAction.lockBackForwardList();
 
     WebCore::Frame* coreFrame = m_frame->coreFrame();
     if (!coreFrame)
@@ -883,6 +885,8 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     }
     if (!documentLoader)
         documentLoader = static_cast<WebDocumentLoader*>(coreFrame->loader().documentLoader());
+
+    navigationActionData.clientRedirectSourceForHistory = documentLoader->clientRedirectSourceForHistory();
 
     // Notify the UIProcess.
     Ref<WebFrame> protect(*m_frame);

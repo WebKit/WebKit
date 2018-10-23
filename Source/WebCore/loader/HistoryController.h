@@ -75,7 +75,7 @@ public:
     void updateForFrameLoadCompleted();
 
     HistoryItem* currentItem() const { return m_currentItem.get(); }
-    void setCurrentItem(HistoryItem&);
+    WEBCORE_EXPORT void setCurrentItem(HistoryItem&);
     void setCurrentItemTitle(const StringWithDirection&);
     bool currentItemShouldBeReplaced() const;
     WEBCORE_EXPORT void replaceCurrentItem(HistoryItem*);

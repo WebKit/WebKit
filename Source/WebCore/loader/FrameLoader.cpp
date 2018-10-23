@@ -1360,6 +1360,8 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
     if (m_frame.page() && m_frame.page()->openedViaWindowOpenWithOpener())
         action.setOpenedViaWindowOpenWithOpener();
     action.setHasOpenedFrames(!m_openedFrames.isEmpty());
+    action.setLockHistory(lockHistory);
+    action.setLockBackForwardList(frameLoadRequest.lockBackForwardList());
 
     if (!targetFrame && !effectiveFrameName.isEmpty()) {
         action = action.copyWithShouldOpenExternalURLsPolicy(shouldOpenExternalURLsPolicyToApply(m_frame, frameLoadRequest));
@@ -1458,6 +1460,13 @@ void FrameLoader::load(FrameLoadRequest&& request)
     addSameSiteInfoToRequestIfNeeded(loader->request());
     applyShouldOpenExternalURLsPolicyToNewDocumentLoader(m_frame, loader, request);
 
+    if (request.shouldTreatAsContinuingLoad() && request.lockHistory() == LockHistory::Yes) {
+        // The load we're continuing is a client-side redirect so set things up accordingly.
+        loader->setClientRedirectSourceForHistory(request.clientRedirectSourceForHistory());
+        loader->setIsClientRedirect(true);
+        m_loadType = FrameLoadType::RedirectWithLockedBackForwardList;
+    }
+
     SetForScope<bool> currentLoadShouldBeTreatedAsContinuingLoadGuard(m_currentLoadShouldBeTreatedAsContinuingLoad, request.shouldTreatAsContinuingLoad());
     load(loader.get(), request.shouldSkipSafeBrowsingCheck());
 }
@@ -1495,7 +1504,7 @@ void FrameLoader::load(DocumentLoader& newDocumentLoader, ShouldSkipSafeBrowsing
         type = FrameLoadType::Same;
     } else if (shouldTreatURLAsSameAsCurrent(newDocumentLoader.unreachableURL()) && isReload(m_loadType))
         type = m_loadType;
-    else if (m_loadType == FrameLoadType::RedirectWithLockedBackForwardList && !newDocumentLoader.unreachableURL().isEmpty() && newDocumentLoader.substituteData().isValid())
+    else if (m_loadType == FrameLoadType::RedirectWithLockedBackForwardList && ((!newDocumentLoader.unreachableURL().isEmpty() && newDocumentLoader.substituteData().isValid()) || m_currentLoadShouldBeTreatedAsContinuingLoad))
         type = FrameLoadType::RedirectWithLockedBackForwardList;
     else
         type = FrameLoadType::Standard;

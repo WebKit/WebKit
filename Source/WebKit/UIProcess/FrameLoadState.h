@@ -51,6 +51,7 @@ public:
 
     State state() const { return m_state; }
     const WebCore::URL& url() const { return m_url; }
+    void setURL(const WebCore::URL& url) { m_url = url; }
     const WebCore::URL& provisionalURL() const { return m_provisionalURL; }
 
     void setUnreachableURL(const WebCore::URL&);
