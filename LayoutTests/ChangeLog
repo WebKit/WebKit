@@ -1,3 +1,12 @@
+2018-10-23  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [macOS Debug WK1] Layout Test inspector/codemirror/prettyprinting-css.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=190833
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations: Mark test as slow.
+
 2018-10-23  Truitt Savell  <tsavell@apple.com>
 
         [ MacOS Debug WK1 ] Layout Test fast/forms/state-restore-to-non-edited-controls.html is flaky

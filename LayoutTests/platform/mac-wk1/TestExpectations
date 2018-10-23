@@ -658,3 +658,5 @@ webkit.org/b/190350 [ Mojave ] storage/indexeddb/database-odd-names.html [ Failu
 webkit.org/b/188421 [ Sierra+ ] fast/repaint/canvas-object-fit.html [ Pass Failure ]
 
 webkit.org/b/190832 [ Debug ] fast/forms/state-restore-to-non-edited-controls.html [ Pass Failure ]
+
+webkit.org/b/190833 [ Debug ] inspector/codemirror/prettyprinting-css.html [ Slow ]
