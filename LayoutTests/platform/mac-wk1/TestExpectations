@@ -472,8 +472,6 @@ webkit.org/b/175195 media/modern-media-controls/css/webkit-cursor-visibility-aut
 webkit.org/b/168265 media/modern-media-controls/forward-button/forward-button.html [ Pass Timeout ]
 webkit.org/b/182571 media/modern-media-controls/tracks-support/tracks-support-show-panel-fullscreen.html [ Pass Timeout ]
 
-webkit.org/b/173432 [ Debug ] imported/w3c/web-platform-tests/fetch/nosniff/importscripts.html [ Pass Crash ]
-
 # Requires WK2 loading support
 http/wpt/fetch/dnt-header-after-redirection.html [ Skip ]
 http/wpt/fetch/inspect-preflight.html [ Skip ]

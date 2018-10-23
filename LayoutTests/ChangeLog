@@ -1,3 +1,11 @@
+2018-10-22  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, update TestExpectations for imported/w3c/web-platform-tests/fetch/nosniff/importscripts.html.
+        https://bugs.webkit.org/show_bug.cgi?id=157068
+
+        * TestExpectations: Mark test as a flaky failure for release builds.
+        * platform/mac-wk1/TestExpectations: Remove duplicate expectation.
+
 2018-10-22  Dawei Fenton  <realdawei@apple.com>
 
         REGRESSION (r234330): [mac-wk1] Layout Test fast/repaint/animation-after-layer-scroll.html is a flaky failure

@@ -2054,6 +2054,7 @@ webkit.org/b/183848 imported/mozilla/css-animations/test_keyframeeffect-getkeyfr
 webkit.org/b/177440 imported/w3c/web-platform-tests/html/browsers/origin/relaxing-the-same-origin-restriction/document_domain_setter_null.tentative.html [ Pass Failure ]
 
 webkit.org/b/157068 [ Debug ] imported/w3c/web-platform-tests/fetch/nosniff/importscripts.html [ Pass Crash ]
+webkit.org/b/157068 [ Release ] imported/w3c/web-platform-tests/fetch/nosniff/importscripts.html [ Pass Failure ]
 
 # Application Manifest tests
 webkit.org/b/153152 http/tests/security/contentSecurityPolicy/manifest-src-allowed.html [ Skip ]
