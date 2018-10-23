@@ -31,6 +31,8 @@
 #import "URL.h"
 #import "WebCoreNSURLExtras.h"
 #import <pal/spi/cf/CFNetworkSPI.h>
+#import <wtf/HashMap.h>
+#import <wtf/text/StringHash.h>
 
 namespace WebCore {
 
@@ -43,22 +45,35 @@ bool isPublicSuffix(const String& domain)
 
 String topPrivatelyControlledDomain(const String& domain)
 {
-    if (URL::hostIsIPAddress(domain))
+    if (domain.isEmpty() || !domain.isAllASCII())
         return domain;
 
-    if (!domain.isAllASCII())
-        return domain;
-    
-    const auto& lowercaseDomain = domain.convertToASCIILowercase();
-    if (lowercaseDomain == "localhost")
-        return lowercaseDomain;
+    static NeverDestroyed<HashMap<String, String, ASCIICaseInsensitiveHash>> cache;
+    static Lock cacheLock;
 
-    size_t separatorPosition;
-    for (unsigned labelStart = 0; (separatorPosition = lowercaseDomain.find('.', labelStart)) != notFound; labelStart = separatorPosition + 1) {
-        if (isPublicSuffix(lowercaseDomain.substring(separatorPosition + 1)))
-            return lowercaseDomain.substring(labelStart);
-    }
-    return String();
+    auto isolatedDomain = domain.isolatedCopy();
+
+    auto locker = holdLock(cacheLock);
+
+    constexpr auto maximumSizeToPreventUnlimitedGrowth = 128;
+    if (cache.get().size() == maximumSizeToPreventUnlimitedGrowth)
+        cache.get().clear();
+
+    return cache.get().ensure(isolatedDomain, [&isolatedDomain] {
+        const auto lowercaseDomain = isolatedDomain.convertToASCIILowercase();
+        if (lowercaseDomain == "localhost")
+            return lowercaseDomain;
+
+        if (URL::hostIsIPAddress(lowercaseDomain))
+            return lowercaseDomain;
+
+        size_t separatorPosition;
+        for (unsigned labelStart = 0; (separatorPosition = lowercaseDomain.find('.', labelStart)) != notFound; labelStart = separatorPosition + 1) {
+            if (isPublicSuffix(lowercaseDomain.substring(separatorPosition + 1)))
+                return lowercaseDomain.substring(labelStart);
+        }
+        return String();
+    }).iterator->value.isolatedCopy();
 }
 
 String decodeHostName(const String& domain)
