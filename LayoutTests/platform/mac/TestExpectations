@@ -1774,3 +1774,5 @@ webgl/2.0.0/conformance2/attribs/gl-vertexattribipointer.html [ Slow ]
 webgl/2.0.0/conformance2/textures/misc/copy-texture-image-luma-format.html [ Slow ]
 
 webkit.org/b/190210 compositing/geometry/limit-layer-bounds-opacity-transition.html [ Pass Failure ]
+
+webkit.org/b/176929 [ Mojave+ ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/autoplay-with-slow-text-tracks.html [ Pass Failure ]
