@@ -21,6 +21,7 @@ PASS http://localhost:8800/resource-timing/resources/blue.png?id=picture-notsupp
 PASS http://localhost:8800/resource-timing/resources/blue.png?id=picture-source is expected to have initiatorType img 
 PASS http://localhost:8800/resource-timing/resources/blue.png?id=svg-image is expected to have initiatorType image 
 PASS http://localhost:8800/resource-timing/resources/blue.png?id=video-poster is expected to have initiatorType video 
+PASS http://localhost:8800/resource-timing/resources/empty.py?id=audio-source-mpeg is expected to have initiatorType audio 
 PASS http://localhost:8800/resource-timing/resources/empty.py?id=audio-source-wav is expected to have initiatorType audio 
 PASS http://localhost:8800/resource-timing/resources/empty.py?id=audio-src is expected to have initiatorType audio 
 PASS http://localhost:8800/resource-timing/resources/empty.py?id=fetch is expected to have initiatorType fetch 
