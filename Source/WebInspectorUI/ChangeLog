@@ -1,5 +1,18 @@
 2018-10-23  Devin Rousso  <drousso@apple.com>
 
+        Uncaught Exception: TypeError: null is not an object (evaluating 'mouseBlock.addEventListener')
+        https://bugs.webkit.org/show_bug.cgi?id=190766
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype._populateWaterfallGraph):
+        When creating the `mouseBlock`, if the `startTimestamp` and `endTimestamp` are equal, we
+        don't create an element. If this is true for the total range of the `WI.Resouce` (meaning
+        its `startTime` and `responseEnd`), don't even try to create blocks.
+
+2018-10-23  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: "Queued NaNms" in Network tab
         https://bugs.webkit.org/show_bug.cgi?id=190767
         <rdar://problem/45420859>

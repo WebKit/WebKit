@@ -728,7 +728,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         }
 
         let {startTime, redirectStart, redirectEnd, fetchStart, domainLookupStart, domainLookupEnd, connectStart, connectEnd, secureConnectionStart, requestStart, responseStart, responseEnd} = resource.timingData;
-        if (isNaN(startTime) || isNaN(responseEnd)) {
+        if (isNaN(startTime) || isNaN(responseEnd) || startTime >= responseEnd) {
             cell.textContent = zeroWidthSpace;
             return;
         }
