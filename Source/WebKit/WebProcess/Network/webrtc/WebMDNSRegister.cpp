@@ -52,6 +52,13 @@ void WebMDNSRegister::finishedRegisteringMDNSName(uint64_t identifier, LibWebRTC
     pendingRegistration.callback(WTFMove(result));
 }
 
+void WebMDNSRegister::finishedResolvingMDNSName(uint64_t identifier, LibWebRTCProvider::IPAddressOrError&& result)
+{
+    auto callback = m_pendingResolutions.take(identifier);
+    if (callback)
+        callback(WTFMove(result));
+}
+
 void WebMDNSRegister::unregisterMDNSNames(uint64_t documentIdentifier)
 {
     auto identifier = makeObjectIdentifier<DocumentIdentifierType>(documentIdentifier);
@@ -80,6 +87,15 @@ void WebMDNSRegister::registerMDNSName(PAL::SessionID sessionID, uint64_t docume
     auto& connection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
     if (!connection.send(Messages::NetworkMDNSRegister::RegisterMDNSName { m_pendingRequestsIdentifier, sessionID, identifier, ipAddress }, 0))
         finishedRegisteringMDNSName(m_pendingRequestsIdentifier, makeUnexpected(MDNSRegisterError::Internal));
+}
+
+void WebMDNSRegister::resolveMDNSName(PAL::SessionID sessionID, const String& name, CompletionHandler<void(LibWebRTCProvider::IPAddressOrError&&)>&& callback)
+{
+    m_pendingResolutions.add(++m_pendingRequestsIdentifier, WTFMove(callback));
+
+    auto& connection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
+    if (!connection.send(Messages::NetworkMDNSRegister::ResolveMDNSName { m_pendingRequestsIdentifier, sessionID, name }, 0))
+        finishedResolvingMDNSName(m_pendingRequestsIdentifier, makeUnexpected(MDNSRegisterError::Internal));
 }
 
 } // namespace WebKit

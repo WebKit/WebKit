@@ -1,3 +1,16 @@
+2018-10-23  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r237261.
+
+        The layout test for this change crashes under GuardMalloc.
+
+        Reverted changeset:
+
+        "Handle MDNS resolution of candidates through libwebrtc
+        directly"
+        https://bugs.webkit.org/show_bug.cgi?id=190681
+        https://trac.webkit.org/changeset/237261
+
 2018-10-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove unused css-rules pretty printing test expectation

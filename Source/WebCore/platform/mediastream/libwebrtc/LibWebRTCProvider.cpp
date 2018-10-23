@@ -33,7 +33,6 @@
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
 
-#include <webrtc/api/asyncresolverfactory.h>
 #include <webrtc/api/audio_codecs/builtin_audio_decoder_factory.h>
 #include <webrtc/api/audio_codecs/builtin_audio_encoder_factory.h>
 #include <webrtc/api/peerconnectionfactoryproxy.h>
@@ -245,10 +244,10 @@ rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPee
         factoryAndThreads.packetSocketFactory = std::make_unique<BasicPacketSocketFactory>(*factoryAndThreads.networkThread);
     factoryAndThreads.packetSocketFactory->setDisableNonLocalhostConnections(m_disableNonLocalhostConnections);
 
-    return createPeerConnection(observer, *factoryAndThreads.networkManager, *factoryAndThreads.packetSocketFactory, WTFMove(configuration), nullptr);
+    return createPeerConnection(observer, *factoryAndThreads.networkManager, *factoryAndThreads.packetSocketFactory, WTFMove(configuration));
 }
 
-rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPeerConnection(webrtc::PeerConnectionObserver& observer, rtc::NetworkManager& networkManager, rtc::PacketSocketFactory& packetSocketFactory, webrtc::PeerConnectionInterface::RTCConfiguration&& configuration, std::unique_ptr<webrtc::AsyncResolverFactory>&& asyncResolveFactory)
+rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPeerConnection(webrtc::PeerConnectionObserver& observer, rtc::NetworkManager& networkManager, rtc::PacketSocketFactory& packetSocketFactory, webrtc::PeerConnectionInterface::RTCConfiguration&& configuration)
 {
     auto& factoryAndThreads = getStaticFactoryAndThreads(m_useNetworkThreadWithSocketServer);
 
@@ -264,11 +263,7 @@ rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPee
     if (!factory)
         return nullptr;
 
-    webrtc::PeerConnectionDependencies dependencies { &observer };
-    dependencies.allocator = WTFMove(portAllocator);
-    dependencies.async_resolver_factory = WTFMove(asyncResolveFactory);
-
-    return m_factory->CreatePeerConnection(configuration, WTFMove(dependencies));
+    return m_factory->CreatePeerConnection(configuration, WTFMove(portAllocator), nullptr, &observer);
 }
 
 rtc::RTCCertificateGenerator& LibWebRTCProvider::certificateGenerator()

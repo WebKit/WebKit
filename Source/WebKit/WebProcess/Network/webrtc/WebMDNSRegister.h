@@ -46,11 +46,13 @@ public:
 
     void unregisterMDNSNames(uint64_t documentIdentifier);
     void registerMDNSName(PAL::SessionID, uint64_t documentIdentifier, const String& ipAddress, CompletionHandler<void(WebCore::LibWebRTCProvider::MDNSNameOrError&&)>&&);
+    void resolveMDNSName(PAL::SessionID, const String& name, CompletionHandler<void(WebCore::LibWebRTCProvider::IPAddressOrError&&)>&&);
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
 private:
     void finishedRegisteringMDNSName(uint64_t, WebCore::LibWebRTCProvider::MDNSNameOrError&&);
+    void finishedResolvingMDNSName(uint64_t, WebCore::LibWebRTCProvider::IPAddressOrError&&);
 
     struct PendingRegistration {
         CompletionHandler<void(WebCore::LibWebRTCProvider::MDNSNameOrError&&)> callback;

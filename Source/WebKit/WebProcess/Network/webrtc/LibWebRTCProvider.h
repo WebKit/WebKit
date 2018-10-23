@@ -54,6 +54,7 @@ private:
 
     void unregisterMDNSNames(uint64_t documentIdentifier) final;
     void registerMDNSName(PAL::SessionID, uint64_t documentIdentifier, const String& ipAddress, CompletionHandler<void(MDNSNameOrError&&)>&&) final;
+    void resolveMDNSName(PAL::SessionID, const String& name, CompletionHandler<void(IPAddressOrError&&)>&&) final;
     void disableNonLocalhostConnections() final;
 };
 #else

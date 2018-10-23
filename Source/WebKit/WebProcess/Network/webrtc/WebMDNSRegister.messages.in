@@ -24,6 +24,7 @@
 
 messages -> WebMDNSRegister {
     void FinishedRegisteringMDNSName(uint64_t identifier, WebCore::LibWebRTCProvider::MDNSNameOrError result)
+    void FinishedResolvingMDNSName(uint64_t identifier, WebCore::LibWebRTCProvider::IPAddressOrError result)
 }
 
 #endif // ENABLE(WEB_RTC)

@@ -172,24 +172,24 @@ MockLibWebRTCPeerConnectionFactory::MockLibWebRTCPeerConnectionFactory(String&& 
 {
 }
 
-rtc::scoped_refptr<webrtc::PeerConnectionInterface> MockLibWebRTCPeerConnectionFactory::CreatePeerConnection(const webrtc::PeerConnectionInterface::RTCConfiguration&, webrtc::PeerConnectionDependencies dependencies)
+rtc::scoped_refptr<webrtc::PeerConnectionInterface> MockLibWebRTCPeerConnectionFactory::CreatePeerConnection(const webrtc::PeerConnectionInterface::RTCConfiguration&, std::unique_ptr<cricket::PortAllocator>, std::unique_ptr<rtc::RTCCertificateGeneratorInterface>, webrtc::PeerConnectionObserver* observer)
 {
     if (m_testCase == "ICECandidates")
-        return new rtc::RefCountedObject<MockLibWebRTCPeerConnectionForIceCandidates>(*dependencies.observer);
+        return new rtc::RefCountedObject<MockLibWebRTCPeerConnectionForIceCandidates>(*observer);
 
     if (m_testCase == "ICEConnectionState")
-        return new rtc::RefCountedObject<MockLibWebRTCPeerConnectionForIceConnectionState>(*dependencies.observer);
+        return new rtc::RefCountedObject<MockLibWebRTCPeerConnectionForIceConnectionState>(*observer);
 
     if (m_testCase == "LibWebRTCReleasingWhileCreatingOffer")
-        return new rtc::RefCountedObject<MockLibWebRTCPeerConnectionReleasedInNetworkThreadWhileCreatingOffer>(*dependencies.observer);
+        return new rtc::RefCountedObject<MockLibWebRTCPeerConnectionReleasedInNetworkThreadWhileCreatingOffer>(*observer);
 
     if (m_testCase == "LibWebRTCReleasingWhileGettingStats")
-        return new rtc::RefCountedObject<MockLibWebRTCPeerConnectionReleasedInNetworkThreadWhileGettingStats>(*dependencies.observer);
+        return new rtc::RefCountedObject<MockLibWebRTCPeerConnectionReleasedInNetworkThreadWhileGettingStats>(*observer);
 
     if (m_testCase == "LibWebRTCReleasingWhileSettingDescription")
-        return new rtc::RefCountedObject<MockLibWebRTCPeerConnectionReleasedInNetworkThreadWhileSettingDescription>(*dependencies.observer);
+        return new rtc::RefCountedObject<MockLibWebRTCPeerConnectionReleasedInNetworkThreadWhileSettingDescription>(*observer);
 
-    return new rtc::RefCountedObject<MockLibWebRTCPeerConnection>(*dependencies.observer);
+    return new rtc::RefCountedObject<MockLibWebRTCPeerConnection>(*observer);
 }
 
 rtc::scoped_refptr<webrtc::VideoTrackInterface> MockLibWebRTCPeerConnectionFactory::CreateVideoTrack(const std::string& id, webrtc::VideoTrackSourceInterface* source)
