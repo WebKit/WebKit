@@ -30,9 +30,13 @@
 
 namespace WebCore {
 
+class AffineTransform;
 class CanvasBase;
 class CanvasRenderingContext;
 class Element;
+class GraphicsContext;
+class Image;
+class ImageBuffer;
 class IntSize;
 class FloatRect;
 class ScriptExecutionContext;
@@ -58,6 +62,7 @@ public:
 
     virtual bool isHTMLCanvasElement() const { return false; }
     virtual bool isOffscreenCanvas() const { return false; }
+    virtual bool isCustomPaintCanvas() const { return false; }
 
     virtual unsigned width() const = 0;
     virtual unsigned height() const = 0;
@@ -80,6 +85,15 @@ public:
     void notifyObserversCanvasDestroyed();
 
     HashSet<Element*> cssCanvasClients() const;
+
+    virtual GraphicsContext* drawingContext() const = 0;
+    virtual GraphicsContext* existingDrawingContext() const = 0;
+
+    virtual void makeRenderingResultsAvailable() = 0;
+    virtual void didDraw(const FloatRect&) = 0;
+
+    virtual AffineTransform baseTransform() const = 0;
+    virtual Image* copiedImage() const = 0;
 
 protected:
     CanvasBase(ScriptExecutionContext*);

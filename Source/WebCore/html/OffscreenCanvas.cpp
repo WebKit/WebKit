@@ -26,6 +26,7 @@
 #include "config.h"
 #include "OffscreenCanvas.h"
 
+#include "CanvasRenderingContext.h"
 #include "ImageBitmap.h"
 #include "WebGLRenderingContext.h"
 
@@ -42,7 +43,10 @@ OffscreenCanvas::OffscreenCanvas(ScriptExecutionContext& context, unsigned width
 {
 }
 
-OffscreenCanvas::~OffscreenCanvas() = default;
+OffscreenCanvas::~OffscreenCanvas()
+{
+    m_context = nullptr;
+}
 
 unsigned OffscreenCanvas::width() const
 {

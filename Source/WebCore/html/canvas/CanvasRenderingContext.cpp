@@ -61,7 +61,7 @@ bool CanvasRenderingContext::wouldTaintOrigin(const CanvasPattern* pattern)
     return false;
 }
 
-bool CanvasRenderingContext::wouldTaintOrigin(const HTMLCanvasElement* sourceCanvas)
+bool CanvasRenderingContext::wouldTaintOrigin(const CanvasBase* sourceCanvas)
 {
     if (m_canvas.originClean() && sourceCanvas && !sourceCanvas->originClean())
         return true;

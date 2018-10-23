@@ -1,3 +1,78 @@
+2018-10-22  Justin Michaud  <justin_michaud@apple.com>
+
+        CSS Paint API should give a 2d rendering context
+        https://bugs.webkit.org/show_bug.cgi?id=190762
+
+        Reviewed by Dean Jackson.
+
+        Add a new type of canvas and 2d rendering context to support the CSS Painting API.
+        Make many of the methods from HTMLCanvasElement virtual functions on CanvasBase, and
+        remove many of the downcasts in CanvasRenderingContext2DBase as a result.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSPaintRenderingContext2DCustom.cpp: Copied from Source/WebCore/css/CSSPaintCallback.h.
+        (WebCore::root):
+        (WebCore::JSPaintRenderingContext2DOwner::isReachableFromOpaqueRoots):
+        (WebCore::JSPaintRenderingContext2D::visitAdditionalChildren):
+        * bindings/js/WebCoreBuiltinNames.h:
+        * css/CSSPaintCallback.h:
+        * css/CSSPaintCallback.idl:
+        * html/CanvasBase.cpp:
+        (WebCore::CanvasBase::~CanvasBase):
+        * html/CanvasBase.h:
+        (WebCore::CanvasBase::isCustomPaintCanvas const):
+        * html/CustomPaintCanvas.cpp: Added.
+        (WebCore::CustomPaintCanvas::create):
+        (WebCore::CustomPaintCanvas::CustomPaintCanvas):
+        (WebCore::CustomPaintCanvas::~CustomPaintCanvas):
+        (WebCore::CustomPaintCanvas::width const):
+        (WebCore::CustomPaintCanvas::setWidth):
+        (WebCore::CustomPaintCanvas::height const):
+        (WebCore::CustomPaintCanvas::setHeight):
+        (WebCore::CustomPaintCanvas::size const):
+        (WebCore::CustomPaintCanvas::setSize):
+        (WebCore::CustomPaintCanvas::getContext):
+        (WebCore::CustomPaintCanvas::copiedImage const):
+        (WebCore::CustomPaintCanvas::drawingContext const):
+        (WebCore::CustomPaintCanvas::existingDrawingContext const):
+        (WebCore::CustomPaintCanvas::makeRenderingResultsAvailable):
+        * html/CustomPaintCanvas.h: Copied from Source/WebCore/html/OffscreenCanvas.h.
+        * html/HTMLCanvasElement.h:
+        * html/OffscreenCanvas.h:
+        * html/canvas/CanvasRenderingContext.cpp:
+        (WebCore::CanvasRenderingContext::wouldTaintOrigin):
+        * html/canvas/CanvasRenderingContext.h:
+        (WebCore::CanvasRenderingContext::isPaint const):
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::DisplayListDrawingContext::DisplayListDrawingContext):
+        (WebCore::CanvasRenderingContext2DBase::unwindStateStack):
+        (WebCore::CanvasRenderingContext2DBase::isAccelerated const):
+        (WebCore::CanvasRenderingContext2DBase::setStrokeStyle):
+        (WebCore::CanvasRenderingContext2DBase::setFillStyle):
+        (WebCore::CanvasRenderingContext2DBase::resetTransform):
+        (WebCore::CanvasRenderingContext2DBase::clearCanvas):
+        (WebCore::CanvasRenderingContext2DBase::transformAreaToDevice const):
+        (WebCore::CanvasRenderingContext2DBase::rectContainsCanvas const):
+        (WebCore::CanvasRenderingContext2DBase::calculateCompositingBufferRect):
+        (WebCore::CanvasRenderingContext2DBase::compositeBuffer):
+        (WebCore::CanvasRenderingContext2DBase::createPattern):
+        (WebCore::CanvasRenderingContext2DBase::didDrawEntireCanvas):
+        (WebCore::CanvasRenderingContext2DBase::didDraw):
+        (WebCore::CanvasRenderingContext2DBase::paintRenderingResultsToCanvas):
+        (WebCore::CanvasRenderingContext2DBase::drawingContext const):
+        * html/canvas/CanvasRenderingContext2DBase.h:
+        * html/canvas/PaintRenderingContext2D.cpp: Copied from Source/WebCore/css/CSSPaintCallback.h.
+        (WebCore::PaintRenderingContext2D::create):
+        (WebCore::PaintRenderingContext2D::PaintRenderingContext2D):
+        * html/canvas/PaintRenderingContext2D.h: Copied from Source/WebCore/css/CSSPaintCallback.h.
+        * html/canvas/PaintRenderingContext2D.idl: Copied from Source/WebCore/css/CSSPaintCallback.idl.
+        * html/canvas/WebMetalRenderPassAttachmentDescriptor.h:
+        * platform/graphics/CustomPaintImage.cpp:
+        (WebCore::CustomPaintImage::doCustomPaint):
+
 2018-10-22  Keith Rollin  <krollin@apple.com>
 
         Use Location = "Relative to Build Products" rather than "Relative to Group"

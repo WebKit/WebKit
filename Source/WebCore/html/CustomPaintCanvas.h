@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,10 +25,13 @@
 
 #pragma once
 
+#if ENABLE(CSS_PAINTING_API)
+
 #include "AffineTransform.h"
 #include "CanvasBase.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
+#include "ImageBuffer.h"
 #include "IntSize.h"
 #include "JSDOMPromiseDeferred.h"
 #include "ScriptWrappable.h"
@@ -39,28 +42,15 @@
 namespace WebCore {
 
 class ImageBitmap;
-class WebGLRenderingContext;
+class PaintRenderingContext2D;
 
-#if ENABLE(WEBGL)
-using OffscreenRenderingContext = RefPtr<WebGLRenderingContext>;
-#endif
-
-class OffscreenCanvas final : public RefCounted<OffscreenCanvas>, public CanvasBase, public EventTargetWithInlineData {
+class CustomPaintCanvas final : public RefCounted<CustomPaintCanvas>, public CanvasBase {
     WTF_MAKE_FAST_ALLOCATED;
 public:
 
-    struct ImageEncodeOptions {
-        String type = "image/png";
-        double quality = 1.0;
-    };
-
-    enum class RenderingContextType {
-        _2d,
-        Webgl
-    };
-
-    static Ref<OffscreenCanvas> create(ScriptExecutionContext&, unsigned width, unsigned height);
-    virtual ~OffscreenCanvas();
+    static Ref<CustomPaintCanvas> create(ScriptExecutionContext&, unsigned width, unsigned height);
+    virtual ~CustomPaintCanvas();
+    bool isCustomPaintCanvas() const final { return true; }
 
     unsigned width() const final;
     void setWidth(unsigned);
@@ -70,42 +60,32 @@ public:
     const IntSize& size() const final;
     void setSize(const IntSize&) final;
 
-#if ENABLE(WEBGL)
-    ExceptionOr<OffscreenRenderingContext> getContext(JSC::ExecState&, RenderingContextType, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
-#endif
-    RefPtr<ImageBitmap> transferToImageBitmap();
-    // void convertToBlob(ImageEncodeOptions options);
+    ExceptionOr<RefPtr<PaintRenderingContext2D>> getContext();
 
-    GraphicsContext* drawingContext() const final { return nullptr; }
-    GraphicsContext* existingDrawingContext() const final { return nullptr; }
+    GraphicsContext* drawingContext() const final;
+    GraphicsContext* existingDrawingContext() const final;
 
-    void makeRenderingResultsAvailable() final { }
+    void makeRenderingResultsAvailable() final;
     void didDraw(const FloatRect&) final { }
 
-    AffineTransform baseTransform() const final { return { }; }
-    Image* copiedImage() const final { return nullptr; }
+    AffineTransform baseTransform() const final { ASSERT(m_destinationGraphicsContext && m_copiedBuffer); return m_copiedBuffer->baseTransform(); }
+    Image* copiedImage() const final;
 
     using RefCounted::ref;
     using RefCounted::deref;
 
 private:
-
-    OffscreenCanvas(ScriptExecutionContext&, unsigned width, unsigned height);
-
-    bool isOffscreenCanvas() const final { return true; }
-
-    ScriptExecutionContext* scriptExecutionContext() const final { return CanvasBase::scriptExecutionContext(); }
-
-    EventTargetInterface eventTargetInterface() const final { return OffscreenCanvasEventTargetInterfaceType; }
-    void refEventTarget() final { ref(); }
-    void derefEventTarget() final { deref(); }
+    CustomPaintCanvas(ScriptExecutionContext&, unsigned width, unsigned height);
 
     void refCanvasBase() final { ref(); }
     void derefCanvasBase() final { deref(); }
 
-    IntSize m_size;
+    mutable GraphicsContext* m_destinationGraphicsContext = nullptr;
+    mutable IntSize m_size;
+    mutable std::unique_ptr<ImageBuffer> m_copiedBuffer;
+    mutable RefPtr<Image> m_copiedImage;
 };
 
 }
-
-SPECIALIZE_TYPE_TRAITS_CANVAS(WebCore::OffscreenCanvas, isOffscreenCanvas())
+SPECIALIZE_TYPE_TRAITS_CANVAS(WebCore::CustomPaintCanvas, isCustomPaintCanvas())
+#endif

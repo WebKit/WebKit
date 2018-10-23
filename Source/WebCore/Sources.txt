@@ -445,6 +445,7 @@ bindings/js/JSNodeCustom.cpp
 bindings/js/JSNodeIteratorCustom.cpp
 bindings/js/JSNodeListCustom.cpp
 bindings/js/JSOffscreenCanvasRenderingContext2DCustom.cpp
+bindings/js/JSPaintRenderingContext2DCustom.cpp
 bindings/js/JSPaymentMethodChangeEventCustom.cpp
 bindings/js/JSPaymentResponseCustom.cpp
 bindings/js/JSPerformanceEntryCustom.cpp
@@ -970,6 +971,7 @@ html/ButtonInputType.cpp
 html/CanvasBase.cpp
 html/CheckboxInputType.cpp
 html/ColorInputType.cpp
+html/CustomPaintCanvas.cpp
 html/DOMFormData.cpp
 html/DOMTokenList.cpp
 html/DOMURL.cpp
@@ -1128,6 +1130,7 @@ html/canvas/CanvasRenderingContext2DBase.cpp
 html/canvas/CanvasStyle.cpp
 html/canvas/ImageBitmapRenderingContext.cpp
 html/canvas/OffscreenCanvasRenderingContext2D.cpp
+html/canvas/PaintRenderingContext2D.cpp
 html/canvas/Path2D.cpp
 html/canvas/PlaceholderRenderingContext.cpp
 html/canvas/WebMetalBuffer.cpp
@@ -2845,6 +2848,7 @@ JSOfflineAudioCompletionEvent.cpp
 JSOfflineAudioContext.cpp
 JSOffscreenCanvas.cpp
 JSOffscreenCanvasRenderingContext2D.cpp
+JSPaintRenderingContext2D.cpp
 JSOscillatorNode.cpp
 JSOverconstrainedError.cpp
 JSOverconstrainedErrorEvent.cpp

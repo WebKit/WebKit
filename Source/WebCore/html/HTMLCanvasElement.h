@@ -118,12 +118,12 @@ public:
     ExceptionOr<void> toBlob(ScriptExecutionContext&, Ref<BlobCallback>&&, const String& mimeType, JSC::JSValue quality);
 
     // Used for rendering
-    void didDraw(const FloatRect&);
+    void didDraw(const FloatRect&) final;
 
     void paint(GraphicsContext&, const LayoutRect&);
 
-    GraphicsContext* drawingContext() const;
-    GraphicsContext* existingDrawingContext() const;
+    GraphicsContext* drawingContext() const final;
+    GraphicsContext* existingDrawingContext() const final;
 
 #if ENABLE(MEDIA_STREAM)
     RefPtr<MediaSample> toMediaSample();
@@ -131,7 +131,7 @@ public:
 #endif
 
     ImageBuffer* buffer() const;
-    Image* copiedImage() const;
+    Image* copiedImage() const final;
     void clearCopiedImage();
     RefPtr<ImageData> getImageData();
     void makePresentationCopy();
@@ -139,9 +139,9 @@ public:
 
     SecurityOrigin* securityOrigin() const final;
 
-    AffineTransform baseTransform() const;
+    AffineTransform baseTransform() const final;
 
-    void makeRenderingResultsAvailable();
+    void makeRenderingResultsAvailable() final;
     bool hasCreatedImageBuffer() const { return m_hasCreatedImageBuffer; }
 
     bool shouldAccelerate(const IntSize&) const;

@@ -66,6 +66,7 @@ public:
     virtual bool isBitmapRenderer() const { return false; }
     virtual bool isPlaceholder() const { return false; }
     virtual bool isOffscreen2d() const { return false; }
+    virtual bool isPaint() const { return false; }
 
     virtual void paintRenderingResultsToCanvas() {}
     virtual PlatformLayer* platformLayer() const { return 0; }
@@ -76,7 +77,7 @@ public:
 protected:
     explicit CanvasRenderingContext(CanvasBase&);
     bool wouldTaintOrigin(const CanvasPattern*);
-    bool wouldTaintOrigin(const HTMLCanvasElement*);
+    bool wouldTaintOrigin(const CanvasBase*);
     bool wouldTaintOrigin(const HTMLImageElement*);
     bool wouldTaintOrigin(const HTMLVideoElement*);
     bool wouldTaintOrigin(const ImageBitmap*);

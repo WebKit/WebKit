@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,40 +25,27 @@
 
 #pragma once
 
-#if ENABLE(WEBMETAL)
+#include "CanvasRenderingContext2DBase.h"
 
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#if ENABLE(CSS_PAINTING_API)
+
+#include "CustomPaintCanvas.h"
 
 namespace WebCore {
 
-class GPURenderPassAttachmentDescriptor;
-class WebMetalTexture;
-
-class WebMetalRenderPassAttachmentDescriptor : public RefCounted<WebMetalRenderPassAttachmentDescriptor> {
+class PaintRenderingContext2D final : public CanvasRenderingContext2DBase {
 public:
-    virtual ~WebMetalRenderPassAttachmentDescriptor();
+    static std::unique_ptr<PaintRenderingContext2D> create(CanvasBase&);
 
-    unsigned loadAction() const;
-    void setLoadAction(unsigned);
+    virtual ~PaintRenderingContext2D();
 
-    unsigned storeAction() const;
-    void setStoreAction(unsigned);
-
-    WebMetalTexture* texture() const;
-    void setTexture(RefPtr<WebMetalTexture>&&);
-
-    virtual bool isColorAttachmentDescriptor() const = 0;
-
-protected:
-    WebMetalRenderPassAttachmentDescriptor();
+    bool isPaint() const override { return true; }
+    CustomPaintCanvas& canvas() const { return downcast<CustomPaintCanvas>(canvasBase()); }
 
 private:
-    virtual const GPURenderPassAttachmentDescriptor& descriptor() const = 0;
-
-    RefPtr<WebMetalTexture> m_texture;
+    PaintRenderingContext2D(CanvasBase&);
 };
 
 } // namespace WebCore
-
+SPECIALIZE_TYPE_TRAITS_CANVASRENDERINGCONTEXT(WebCore::PaintRenderingContext2D, isPaint())
 #endif

@@ -1345,6 +1345,8 @@
 		4A9CC82116BF9BB400EC645A /* InspectorCSSOMWrappers.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A9CC81F16BF9BB400EC645A /* InspectorCSSOMWrappers.h */; };
 		4AD01009127E642A0015035F /* HTMLOutputElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4AD01006127E642A0015035F /* HTMLOutputElement.h */; };
 		4AD0173D127E82860015035F /* JSHTMLOutputElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4AD0173B127E82860015035F /* JSHTMLOutputElement.h */; };
+		4B1E13E721790D660042CF98 /* CustomPaintCanvas.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B1E13E621790D660042CF98 /* CustomPaintCanvas.h */; };
+		4B1E13EB217937B30042CF98 /* PaintRenderingContext2D.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B1E13EA217937B30042CF98 /* PaintRenderingContext2D.h */; };
 		4B2708C70AF19EE40065127F /* Pasteboard.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B2708C50AF19EE40065127F /* Pasteboard.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4B3043CD0AE0373B00A82647 /* Editor.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B3043CB0AE0373B00A82647 /* Editor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4B3480940EEF50D400AC1B41 /* ImageSourceCG.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B3480920EEF50D400AC1B41 /* ImageSourceCG.h */; };
@@ -7883,6 +7885,12 @@
 		4AD0173A127E82860015035F /* JSHTMLOutputElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLOutputElement.cpp; sourceTree = "<group>"; };
 		4AD0173B127E82860015035F /* JSHTMLOutputElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLOutputElement.h; sourceTree = "<group>"; };
 		4B1706642162B42F00E578BB /* CSSRegisteredCustomProperty.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSRegisteredCustomProperty.cpp; sourceTree = "<group>"; };
+		4B1E13E621790D660042CF98 /* CustomPaintCanvas.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomPaintCanvas.h; sourceTree = "<group>"; };
+		4B1E13E921790D7E0042CF98 /* CustomPaintCanvas.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CustomPaintCanvas.cpp; sourceTree = "<group>"; };
+		4B1E13EA217937B30042CF98 /* PaintRenderingContext2D.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PaintRenderingContext2D.h; sourceTree = "<group>"; };
+		4B1E13EC217938380042CF98 /* PaintRenderingContext2D.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PaintRenderingContext2D.cpp; sourceTree = "<group>"; };
+		4B1E13ED21793DC10042CF98 /* PaintRenderingContext2D.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = PaintRenderingContext2D.idl; sourceTree = "<group>"; };
+		4B1E13EE217941320042CF98 /* JSPaintRenderingContext2DCustom.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSPaintRenderingContext2DCustom.cpp; sourceTree = "<group>"; };
 		4B2708C50AF19EE40065127F /* Pasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pasteboard.h; sourceTree = "<group>"; };
 		4B2709810AF2E5E00065127F /* PasteboardMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PasteboardMac.mm; sourceTree = "<group>"; };
 		4B3043CA0AE0373B00A82647 /* Editor.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Editor.cpp; sourceTree = "<group>"; };
@@ -17636,6 +17644,9 @@
 				3140C51D1FDF151A00D2A873 /* OffscreenCanvasRenderingContext2D.cpp */,
 				3140C51E1FDF151A00D2A873 /* OffscreenCanvasRenderingContext2D.h */,
 				3140C51B1FDF13D200D2A873 /* OffscreenCanvasRenderingContext2D.idl */,
+				4B1E13EC217938380042CF98 /* PaintRenderingContext2D.cpp */,
+				4B1E13EA217937B30042CF98 /* PaintRenderingContext2D.h */,
+				4B1E13ED21793DC10042CF98 /* PaintRenderingContext2D.idl */,
 				7C193BA71F5E0EAF0088F3E6 /* Path2D.cpp */,
 				7C193BAB1F5E0EB10088F3E6 /* Path2D.h */,
 				7C193BB41F5E0EB70088F3E6 /* Path2D.idl */,
@@ -20211,6 +20222,7 @@
 				BCD9C2610C17AA67005C90A2 /* JSNodeListCustom.cpp */,
 				AD20B18C18E9D216005A8083 /* JSNodeListCustom.h */,
 				3140C52B1FE06B4900D2A873 /* JSOffscreenCanvasRenderingContext2DCustom.cpp */,
+				4B1E13EE217941320042CF98 /* JSPaintRenderingContext2DCustom.cpp */,
 				CB38FD551CD21D5B00592A3F /* JSPerformanceEntryCustom.cpp */,
 				833CF70F20DB3F5F00141BCC /* JSPerformanceObserverCustom.cpp */,
 				A4A69B8BB91B49D0A804C31D /* JSPromiseRejectionEventCustom.cpp */,
@@ -20777,6 +20789,8 @@
 				93C441FF0F813AE100C1A634 /* CollectionType.h */,
 				BC29935C17A1DD5800BCE880 /* ColorInputType.cpp */,
 				F55B3D801251F12D003EF269 /* ColorInputType.h */,
+				4B1E13E921790D7E0042CF98 /* CustomPaintCanvas.cpp */,
+				4B1E13E621790D660042CF98 /* CustomPaintCanvas.h */,
 				E517670220B88C1400D41167 /* DataListSuggestionInformation.h */,
 				F55B3D811251F12D003EF269 /* DateInputType.cpp */,
 				F55B3D821251F12D003EF269 /* DateInputType.h */,
@@ -28103,6 +28117,7 @@
 				93D437A01D57B19A00AB85EA /* CustomElementReactionQueue.h in Headers */,
 				9BD4E91B1C462CFC005065BC /* CustomElementRegistry.h in Headers */,
 				62CD325A1157E57C0063B0A7 /* CustomEvent.h in Headers */,
+				4B1E13E721790D660042CF98 /* CustomPaintCanvas.h in Headers */,
 				4B7AE4932177B56F00C59959 /* CustomPaintImage.h in Headers */,
 				A8CB413E0E8633FD0032C4F0 /* DashArray.h in Headers */,
 				A80E6D0B0A1989CA007FB8C5 /* DashboardRegion.h in Headers */,
@@ -30128,6 +30143,7 @@
 				55EC9599206AA7A0007DD0A9 /* PaintFrequencyTracker.h in Headers */,
 				0885067F11DA045B00182B98 /* PaintInfo.h in Headers */,
 				0885068011DA045B00182B98 /* PaintPhase.h in Headers */,
+				4B1E13EB217937B30042CF98 /* PaintRenderingContext2D.h in Headers */,
 				A80E6CFB0A1989CA007FB8C5 /* Pair.h in Headers */,
 				FD3160A312B026F700C1A359 /* Panner.h in Headers */,
 				FD31601A12B0267600C1A359 /* PannerNode.h in Headers */,

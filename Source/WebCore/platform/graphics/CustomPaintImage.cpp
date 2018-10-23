@@ -28,12 +28,12 @@
 
 #if ENABLE(CSS_PAINTING_API)
 
+#include "CustomPaintCanvas.h"
 #include "GraphicsContext.h"
 #include "ImageBitmap.h"
 #include "ImageBuffer.h"
 #include "JSCSSPaintCallback.h"
-#include "OffscreenCanvas.h"
-#include "WebGLRenderingContext.h"
+#include "PaintRenderingContext2D.h"
 
 namespace WebCore {
 
@@ -51,29 +51,24 @@ ImageDrawResult CustomPaintImage::doCustomPaint(GraphicsContext& destContext, co
     auto* scriptExecutionContext = callback.scriptExecutionContext();
     if (!scriptExecutionContext)
         return ImageDrawResult::DidNothing;
-    auto* execState = scriptExecutionContext->execState();
-    if (!execState)
-        return ImageDrawResult::DidNothing;
 
-    auto canvas = OffscreenCanvas::create(*scriptExecutionContext, destSize.width(), destSize.height());
-    ExceptionOr<OffscreenRenderingContext> contextOrException = canvas->getContext(*execState, OffscreenCanvas::RenderingContextType::Webgl, { });
+    auto canvas = CustomPaintCanvas::create(*scriptExecutionContext, destSize.width(), destSize.height());
+    ExceptionOr<RefPtr<PaintRenderingContext2D>> contextOrException = canvas->getContext();
 
     if (contextOrException.hasException())
         return ImageDrawResult::DidNothing;
     auto context = contextOrException.releaseReturnValue();
 
-    context->clearColor(0, 0, 0, 1.0);
-    context->clear(GL_COLOR_BUFFER_BIT);
-
     auto result = m_paintCallback->handleEvent(*context);
     if (result.type() != CallbackResultType::Success)
         return ImageDrawResult::DidNothing;
 
-    auto bitmap = canvas->transferToImageBitmap();
-    if (!bitmap)
+    UNUSED_PARAM(destContext);
+    auto image = canvas->copiedImage();
+    if (!image)
         return ImageDrawResult::DidNothing;
 
-    destContext.drawImage(*bitmap->buffer()->copyImage(), FloatPoint());
+    destContext.drawImage(*image, FloatPoint());
 
     return ImageDrawResult::DidDraw;
 }

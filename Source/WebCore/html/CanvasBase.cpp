@@ -41,6 +41,7 @@ CanvasBase::CanvasBase(ScriptExecutionContext* scriptExecutionContext)
 
 CanvasBase::~CanvasBase()
 {
+    ASSERT(!m_context); // Should have been set to null by base class.
     notifyObserversCanvasDestroyed();
 }
 

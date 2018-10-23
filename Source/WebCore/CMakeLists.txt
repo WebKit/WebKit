@@ -806,6 +806,7 @@ set(WebCore_NON_SVG_IDL_FILES
     html/canvas/ImageBitmapRenderingContextSettings.idl
     html/canvas/ImageSmoothingQuality.idl
     html/canvas/OffscreenCanvasRenderingContext2D.idl
+    html/canvas/PaintRenderingContext2D.idl
     html/canvas/Path2D.idl
     html/canvas/WebMetalBuffer.idl
     html/canvas/WebMetalCommandBuffer.idl

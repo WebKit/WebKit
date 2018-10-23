@@ -1,3 +1,12 @@
+2018-10-22  Justin Michaud  <justin_michaud@apple.com>
+
+        CSS Paint API should give a 2d rendering context
+        https://bugs.webkit.org/show_bug.cgi?id=190762
+
+        Reviewed by Dean Jackson.
+
+        * fast/css-custom-paint/basic.html:
+
 2018-10-22  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, update TestExpectations for imported/w3c/web-platform-tests/fetch/nosniff/importscripts.html.

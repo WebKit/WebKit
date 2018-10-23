@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,42 +23,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "PaintRenderingContext2D.h"
 
-#if ENABLE(WEBMETAL)
-
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#if ENABLE(CSS_PAINTING_API)
 
 namespace WebCore {
 
-class GPURenderPassAttachmentDescriptor;
-class WebMetalTexture;
+std::unique_ptr<PaintRenderingContext2D> PaintRenderingContext2D::create(CanvasBase& canvas)
+{
+    return std::unique_ptr<PaintRenderingContext2D>(new PaintRenderingContext2D(canvas));
+}
 
-class WebMetalRenderPassAttachmentDescriptor : public RefCounted<WebMetalRenderPassAttachmentDescriptor> {
-public:
-    virtual ~WebMetalRenderPassAttachmentDescriptor();
+PaintRenderingContext2D::PaintRenderingContext2D(CanvasBase& canvas)
+    : CanvasRenderingContext2DBase(canvas, false, false)
+{
+}
 
-    unsigned loadAction() const;
-    void setLoadAction(unsigned);
-
-    unsigned storeAction() const;
-    void setStoreAction(unsigned);
-
-    WebMetalTexture* texture() const;
-    void setTexture(RefPtr<WebMetalTexture>&&);
-
-    virtual bool isColorAttachmentDescriptor() const = 0;
-
-protected:
-    WebMetalRenderPassAttachmentDescriptor();
-
-private:
-    virtual const GPURenderPassAttachmentDescriptor& descriptor() const = 0;
-
-    RefPtr<WebMetalTexture> m_texture;
-};
+PaintRenderingContext2D::~PaintRenderingContext2D() = default;
 
 } // namespace WebCore
-
 #endif
