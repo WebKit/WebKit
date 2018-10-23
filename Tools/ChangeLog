@@ -1,3 +1,22 @@
+2018-10-23  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [WPE][GTK] Pass full certificate chain in CertificateInfo coder
+        https://bugs.webkit.org/show_bug.cgi?id=190789
+
+        Reviewed by Michael Catanzaro.
+
+        When the network process serializes certificate data to other
+        processes through the argument coders, the certificate chain, if
+        present, is lost. In practice this means that applications using
+        the public API to process certificate info have no details on the
+        certificate chain, other than the very basics included in the
+        certificate. Serialize the entire chain if available in the
+        certificate.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestSSL.cpp:
+        (testSSL): Test that the self-signed certificate has no bogus
+        issuer certificate.
+
 2018-10-22  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r237331): InteractionDeadlockAfterCrash API test fails

@@ -1,3 +1,24 @@
+2018-10-23  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [WPE][GTK] Pass full certificate chain in CertificateInfo coder
+        https://bugs.webkit.org/show_bug.cgi?id=190789
+
+        Reviewed by Michael Catanzaro.
+
+        When the network process serializes certificate data to other
+        processes through the argument coders, the certificate chain, if
+        present, is lost. In practice this means that applications using
+        the public API to process certificate info have no details on the
+        certificate chain, other than the very basics included in the
+        certificate. Serialize the entire chain if available in the
+        certificate.
+
+        * Shared/soup/WebCoreArgumentCodersSoup.cpp:
+        (IPC::ArgumentCoder<CertificateInfo>::encode): Encode the
+        certificate chain if present.
+        (IPC::ArgumentCoder<CertificateInfo>::decode): Decode the
+        entire certificate chain and rebuild it.
+
 2018-10-22  Keith Rollin  <krollin@apple.com>
 
         Use Location = "Relative to Build Products" rather than "Relative to Group"

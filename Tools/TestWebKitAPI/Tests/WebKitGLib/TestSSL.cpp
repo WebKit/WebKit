@@ -73,6 +73,8 @@ static void testSSL(SSLTest* test, gconstpointer)
     test->loadURI(kHttpsServer->getURIForPath("/").data());
     test->waitUntilLoadFinished();
     g_assert(test->m_certificate);
+    // Self-signed certificate has a nullptr issuer.
+    g_assert(!g_tls_certificate_get_issuer(test->m_certificate.get()));
     // We always expect errors because we are using a self-signed certificate,
     // but only G_TLS_CERTIFICATE_UNKNOWN_CA flags should be present.
     g_assert(test->m_tlsErrors);
