@@ -113,7 +113,7 @@ WI.ResourceTimingData = class ResourceTimingData
     get startTime() { return this._startTime || this._resource.requestSentTimestamp; }
     get redirectStart() { return this._redirectStart; }
     get redirectEnd() { return this._redirectEnd; }
-    get fetchStart() { return this._fetchStart; }
+    get fetchStart() { return this._fetchStart || this._resource.requestSentTimestamp; }
     get domainLookupStart() { return this._domainLookupStart; }
     get domainLookupEnd() { return this._domainLookupEnd; }
     get connectStart() { return this._connectStart; }
