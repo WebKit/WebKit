@@ -1,5 +1,5 @@
 
-FAIL var() references work with registered properties assert_equals: expected "15px" but got "10%"
+FAIL var() references work with registered properties assert_equals: expected "  10px" but got " 10px"
 FAIL References to registered var()-properties work in registered lists assert_equals: expected "1px, 10px, 2px" but got "0px"
 FAIL References to mixed registered and unregistered var()-properties work in registered lists assert_equals: expected "1px, 20px, 10px, 2px" but got "0px"
 FAIL Registered lists may be concatenated assert_equals: expected "1px, 10px, 2px, 1px, 20px, 10px, 2px" but got "0px"

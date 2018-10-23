@@ -2,7 +2,7 @@ CONSOLE MESSAGE: line 340: ReferenceError: Can't find variable: CSSUnparsedValue
 
 Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSUnparsedValue
 
-FAIL Computed * is reified as CSSUnparsedValue The given initial value does not parse for the given syntax.
+FAIL Computed * is reified as CSSUnparsedValue target.computedStyleMap is not a function. (In 'target.computedStyleMap()', 'target.computedStyleMap' is undefined)
 FAIL Computed <angle> is reified as CSSUnitValue The given initial value does not parse for the given syntax.
 FAIL Computed <color> is reified as CSSStyleValue The given initial value does not parse for the given syntax.
 FAIL Computed <custom-ident> is reified as CSSKeywordValue The given initial value does not parse for the given syntax.

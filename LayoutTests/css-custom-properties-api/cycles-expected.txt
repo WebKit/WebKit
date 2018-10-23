@@ -1,0 +1,18 @@
+test
+
+test
+
+test
+
+test
+
+test
+
+
+PASS Registration is successful 
+PASS JS Attributes are valid for element 1 
+PASS JS Attributes are valid for element 2 
+PASS JS Attributes are valid for element 3 
+PASS JS Attributes are valid for element 4 
+PASS JS Attributes are valid for element 5 
+

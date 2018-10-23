@@ -1879,13 +1879,13 @@ inline void StyleBuilderCustom::applyValueStrokeColor(StyleResolver& styleResolv
 
 inline void StyleBuilderCustom::applyInitialCustomProperty(StyleResolver& styleResolver, const CSSRegisteredCustomProperty* registered, const AtomicString& name)
 {
-    if (registered) {
+    if (registered && registered->initialValue()) {
         auto initialValue = registered->initialValueCopy();
         applyValueCustomProperty(styleResolver, registered, *initialValue);
         return;
     }
 
-    auto invalid = CSSCustomPropertyValue::createWithID(name, CSSValueInvalid);
+    auto invalid = CSSCustomPropertyValue::createUnresolved(name, CSSValueInvalid);
     applyValueCustomProperty(styleResolver, registered, invalid.get());
 }
 
@@ -1900,12 +1900,13 @@ inline void StyleBuilderCustom::applyInheritCustomProperty(StyleResolver& styleR
 
 inline void StyleBuilderCustom::applyValueCustomProperty(StyleResolver& styleResolver, const CSSRegisteredCustomProperty* registered, CSSCustomPropertyValue& value)
 {
+    ASSERT(value.isResolved());
     const auto& name = value.name();
 
     if (!registered || registered->inherits)
-        styleResolver.style()->setInheritedCustomPropertyValue(name, makeRef(value), registered);
+        styleResolver.style()->setInheritedCustomPropertyValue(name, makeRef(value));
     else
-        styleResolver.style()->setNonInheritedCustomPropertyValue(name, makeRef(value), registered);
+        styleResolver.style()->setNonInheritedCustomPropertyValue(name, makeRef(value));
 }
 
 } // namespace WebCore

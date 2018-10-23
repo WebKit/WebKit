@@ -1,5 +1,117 @@
 2018-10-22  Justin Michaud  <justin_michaud@apple.com>
 
+        Registered custom properties should support syntax parameter for <length> and *
+        https://bugs.webkit.org/show_bug.cgi?id=190039
+
+        Reviewed by Antti Koivisto.
+
+        Refactor code so that:
+        - All properties applied in StyleResolver::applyMatchedProperties are only applied once. 
+        - Custom properties are only resolved once, in StyleResolver, when they are applied to the RenderStyle. They were previously resolved
+          every time they were referenced, and again in RenderStyle.
+        - The font-size property is applied after its variable references, but before custom properties that depend on it.
+        - Cycles are detected at the same time as resolution.
+        - MutableStyleProperties' custom properties cannot be set from Javascript or WebKitLegacy if they do not parse for the property's type.
+          If they contain var(--...) references, however, then they can be set because we cannot check if the references are valid from setProperty.
+          This behaviour matches chrome, but is not documented in the spec. 
+        - Custom property values have more explicit resolved/unresolved state.
+        - RenderStyle only ever holds resolved custom properties, and StyleResolver::CascadedProperties only holds unresolved properties.
+
+        Tests: css-custom-properties-api/crash.html
+               css-custom-properties-api/cycles.html
+               css-custom-properties-api/inline.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::customPropertyValue):
+        * css/CSSCustomPropertyValue.cpp:
+        (WebCore::CSSCustomPropertyValue::equals const):
+        (WebCore::CSSCustomPropertyValue::customCSSText const):
+        (WebCore::CSSCustomPropertyValue::tokens const):
+        (WebCore::CSSCustomPropertyValue::checkVariablesForCycles const): Deleted.
+        (WebCore::CSSCustomPropertyValue::resolveVariableReferences const): Deleted.
+        (WebCore::CSSCustomPropertyValue::setResolvedTypedValue): Deleted.
+        * css/CSSCustomPropertyValue.h:
+        * css/CSSRegisteredCustomProperty.cpp:
+        (WebCore::CSSRegisteredCustomProperty::CSSRegisteredCustomProperty):
+        * css/CSSRegisteredCustomProperty.h:
+        * css/CSSStyleSheet.h:
+        * css/CSSVariableData.cpp:
+        (WebCore::CSSVariableData::CSSVariableData):
+        (WebCore::CSSVariableData::consumeAndUpdateTokens): Deleted.
+        (WebCore::CSSVariableData::checkVariablesForCycles const): Deleted.
+        (WebCore::CSSVariableData::checkVariablesForCyclesWithRange const): Deleted.
+        (WebCore::CSSVariableData::resolveVariableFallback const): Deleted.
+        (WebCore::CSSVariableData::resolveVariableReference const): Deleted.
+        (WebCore::CSSVariableData::resolveVariableReferences const): Deleted.
+        (WebCore::CSSVariableData::resolveTokenRange const): Deleted.
+        * css/CSSVariableData.h:
+        (WebCore::CSSVariableData::create):
+        (WebCore::CSSVariableData::createResolved): Deleted.
+        (WebCore::CSSVariableData::needsVariableResolution const): Deleted.
+        (WebCore::CSSVariableData::CSSVariableData): Deleted.
+        * css/CSSVariableReferenceValue.cpp:
+        (WebCore::resolveVariableFallback):
+        (WebCore::resolveVariableReference):
+        (WebCore::resolveTokenRange):
+        (WebCore::CSSVariableReferenceValue::resolveVariableReferences const):
+        (WebCore::CSSVariableReferenceValue::checkVariablesForCycles const): Deleted.
+        * css/CSSVariableReferenceValue.h:
+        (WebCore::CSSVariableReferenceValue::create):
+        (WebCore::CSSVariableReferenceValue::equals const):
+        (WebCore::CSSVariableReferenceValue::variableDataValue const): Deleted.
+        * css/DOMCSSRegisterCustomProperty.cpp:
+        (WebCore::DOMCSSRegisterCustomProperty::registerProperty):
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        (WebCore::PropertySetCSSStyleDeclaration::setProperty):
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyInitialCustomProperty):
+        (WebCore::StyleBuilderCustom::applyValueCustomProperty):
+        * css/StyleProperties.cpp:
+        (WebCore::MutableStyleProperties::setCustomProperty):
+        * css/StyleProperties.h:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::State::setStyle):
+        (WebCore::StyleResolver::styleForKeyframe):
+        (WebCore::StyleResolver::styleForPage):
+        (WebCore::StyleResolver::applyMatchedProperties):
+        (WebCore::StyleResolver::applyPropertyToCurrentStyle):
+        (WebCore::StyleResolver::applyProperty):
+        (WebCore::StyleResolver::resolvedVariableValue const):
+        (WebCore::StyleResolver::CascadedProperties::applyDeferredProperties):
+        (WebCore::StyleResolver::CascadedProperties::Property::apply):
+        (WebCore::StyleResolver::applyCascadedCustomProperty):
+        (WebCore::StyleResolver::applyCascadedProperties):
+        * css/StyleResolver.h:
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParser::parseValueWithVariableReferences):
+        * css/parser/CSSParser.h:
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::CSSPropertyParser):
+        (WebCore::CSSPropertyParser::canParseTypedCustomPropertyValue):
+        (WebCore::CSSPropertyParser::parseTypedCustomPropertyValue):
+        (WebCore::CSSPropertyParser::collectParsedCustomPropertyValueDependencies):
+        (WebCore::CSSPropertyParser::parseValueStart):
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        * css/parser/CSSPropertyParser.h:
+        * css/parser/CSSVariableParser.cpp:
+        (WebCore::CSSVariableParser::parseDeclarationValue):
+        * dom/ConstantPropertyMap.cpp:
+        (WebCore::ConstantPropertyMap::setValueForProperty):
+        (WebCore::variableDataForPositivePixelLength):
+        (WebCore::variableDataForPositiveDuration):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::checkVariablesInCustomProperties): Deleted.
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::setInheritedCustomPropertyValue):
+        (WebCore::RenderStyle::setNonInheritedCustomPropertyValue):
+        * rendering/style/StyleCustomPropertyData.h:
+        (WebCore::StyleCustomPropertyData::operator== const):
+        (WebCore::StyleCustomPropertyData::setCustomPropertyValue):
+        (WebCore::StyleCustomPropertyData::StyleCustomPropertyData):
+        (): Deleted.
+
+2018-10-22  Justin Michaud  <justin_michaud@apple.com>
+
         CSS Paint API should give a 2d rendering context
         https://bugs.webkit.org/show_bug.cgi?id=190762
 

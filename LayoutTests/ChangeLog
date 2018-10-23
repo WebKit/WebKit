@@ -1,3 +1,19 @@
+2018-10-22  Justin Michaud  <justin_michaud@apple.com>
+
+        Registered custom properties should support syntax parameter for <length> and *
+        https://bugs.webkit.org/show_bug.cgi?id=190039
+
+        Reviewed by Antti Koivisto.
+
+        Add tests for inline styles, font-size cycles with custom properties, and a crash that was reported.
+
+        * css-custom-properties-api/crash-expected.txt: Added.
+        * css-custom-properties-api/crash.html: Added.
+        * css-custom-properties-api/cycles-expected.txt: Added.
+        * css-custom-properties-api/cycles.html: Added.
+        * css-custom-properties-api/inline-expected.txt: Added.
+        * css-custom-properties-api/inline.html: Added.
+
 2018-10-22  Ryan Haddad  <ryanhaddad@apple.com>
 
         REGRESSION: [iOS] Layout Test media/media-fullscreen-pause-inline.html is a flaky failure

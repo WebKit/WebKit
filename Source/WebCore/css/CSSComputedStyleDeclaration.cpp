@@ -2612,21 +2612,23 @@ RefPtr<CSSValue> ComputedStyleExtractor::customPropertyValue(const String& prope
     auto* registered = styledElement->document().getCSSRegisteredCustomPropertySet().get(propertyName);
     auto* value = style->getCustomProperty(propertyName);
 
-    if (registered) {
-        // TODO this should be done based on the syntax
-        if (value && value->resolvedTypedValue())
-            return zoomAdjustedPixelValueForLength(*value->resolvedTypedValue(), *style);
+    if (registered && !value)
+        return registered->initialValueCopy();
 
-        if (registered->initialValue() && registered->initialValue()->resolvedTypedValue())
-            return zoomAdjustedPixelValueForLength(*registered->initialValue()->resolvedTypedValue(), *style);
-
+    if (!value)
         return nullptr;
-    }
 
-    if (value)
+    auto visitor = WTF::makeVisitor([&](const Ref<CSSVariableReferenceValue>&) {
+        ASSERT_NOT_REACHED();
+        return RefPtr<CSSValue>();
+    }, [&](const CSSValueID&) {
         return CSSCustomPropertyValue::create(*value);
-
-    return nullptr;
+    }, [&](const Ref<CSSVariableData>&) {
+        return CSSCustomPropertyValue::create(*value);
+    }, [&](const Length& value) {
+        return zoomAdjustedPixelValueForLength(value, *style);
+    });
+    return WTF::visit(visitor, value->value());
 }
 
 String ComputedStyleExtractor::customPropertyText(const String& propertyName)

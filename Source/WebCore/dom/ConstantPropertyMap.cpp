@@ -90,7 +90,7 @@ void ConstantPropertyMap::setValueForProperty(ConstantProperty property, Ref<CSS
         buildValues();
 
     auto& name = nameForProperty(property);
-    m_values->set(name, CSSCustomPropertyValue::createWithVariableData(name, WTFMove(data)));
+    m_values->set(name, CSSCustomPropertyValue::createSyntaxAll(name, WTFMove(data)));
 }
 
 void ConstantPropertyMap::buildValues()
@@ -110,7 +110,7 @@ static Ref<CSSVariableData> variableDataForPositivePixelLength(float lengthInPx)
 
     Vector<CSSParserToken> tokens { token };
     CSSParserTokenRange tokenRange(tokens);
-    return CSSVariableData::create(tokenRange, false);
+    return CSSVariableData::create(tokenRange);
 }
 
 static Ref<CSSVariableData> variableDataForPositiveDuration(Seconds durationInSeconds)
@@ -122,7 +122,7 @@ static Ref<CSSVariableData> variableDataForPositiveDuration(Seconds durationInSe
 
     Vector<CSSParserToken> tokens { token };
     CSSParserTokenRange tokenRange(tokens);
-    return CSSVariableData::create(tokenRange, false);
+    return CSSVariableData::create(tokenRange);
 }
 
 void ConstantPropertyMap::updateConstantsForSafeAreaInsets()
