@@ -1,3 +1,12 @@
+2018-10-22  Alexey Proskuryakov  <ap@apple.com>
+
+        Really prevent PLATFORM(IOS) from being used
+        https://bugs.webkit.org/show_bug.cgi?id=190813
+
+        Reviewed by Tim Horton.
+
+        * wtf/Platform.h: This relies on -Wundef, which we have enabled.
+
 2018-10-22  Chris Dumez  <cdumez@apple.com>
 
         Deque's contains() and findIf() should be const
