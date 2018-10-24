@@ -31,18 +31,6 @@ WI.TextResourceContentView = class TextResourceContentView extends WI.ResourceCo
 
         resource.addEventListener(WI.SourceCode.Event.ContentDidChange, this._sourceCodeContentDidChange, this);
 
-        this._textEditor = new WI.SourceCodeTextEditor(resource);
-        this._textEditor.addEventListener(WI.TextEditor.Event.ExecutionLineNumberDidChange, this._executionLineNumberDidChange, this);
-        this._textEditor.addEventListener(WI.TextEditor.Event.NumberOfSearchResultsDidChange, this._numberOfSearchResultsDidChange, this);
-        this._textEditor.addEventListener(WI.TextEditor.Event.ContentDidChange, this._textEditorContentDidChange, this);
-        this._textEditor.addEventListener(WI.TextEditor.Event.FormattingDidChange, this._textEditorFormattingDidChange, this);
-        this._textEditor.addEventListener(WI.SourceCodeTextEditor.Event.ContentWillPopulate, this._contentWillPopulate, this);
-        this._textEditor.addEventListener(WI.SourceCodeTextEditor.Event.ContentDidPopulate, this._contentDidPopulate, this);
-        this._textEditor.readOnly = !this._shouldBeEditable();
-
-        WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ProbeSetAdded, this._probeSetsChanged, this);
-        WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ProbeSetRemoved, this._probeSetsChanged, this);
-
         var toolTip = WI.UIString("Pretty print");
         var activatedToolTip = WI.UIString("Original formatting");
         this._prettyPrintButtonNavigationItem = new WI.ActivateButtonNavigationItem("pretty-print", toolTip, activatedToolTip, "Images/NavigationItemCurleyBraces.svg", 13, 13);
@@ -65,6 +53,19 @@ WI.TextResourceContentView = class TextResourceContentView extends WI.ResourceCo
         this._codeCoverageButtonNavigationItem.enabled = false;
         this._codeCoverageButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
         WI.enableControlFlowProfilerSetting.addEventListener(WI.Setting.Event.Changed, this._enableControlFlowProfilerSettingChanged, this);
+
+        this._textEditor = new WI.SourceCodeTextEditor(resource);
+        this._textEditor.addEventListener(WI.TextEditor.Event.ExecutionLineNumberDidChange, this._executionLineNumberDidChange, this);
+        this._textEditor.addEventListener(WI.TextEditor.Event.NumberOfSearchResultsDidChange, this._numberOfSearchResultsDidChange, this);
+        this._textEditor.addEventListener(WI.TextEditor.Event.ContentDidChange, this._textEditorContentDidChange, this);
+        this._textEditor.addEventListener(WI.TextEditor.Event.FormattingDidChange, this._textEditorFormattingDidChange, this);
+        this._textEditor.addEventListener(WI.TextEditor.Event.MIMETypeChanged, this._handleTextEditorMIMETypeChanged, this);
+        this._textEditor.addEventListener(WI.SourceCodeTextEditor.Event.ContentWillPopulate, this._contentWillPopulate, this);
+        this._textEditor.addEventListener(WI.SourceCodeTextEditor.Event.ContentDidPopulate, this._contentDidPopulate, this);
+        this._textEditor.readOnly = !this._shouldBeEditable();
+
+        WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ProbeSetAdded, this._probeSetsChanged, this);
+        WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ProbeSetRemoved, this._probeSetsChanged, this);
     }
 
     // Public
@@ -253,6 +254,11 @@ WI.TextResourceContentView = class TextResourceContentView extends WI.ResourceCo
     _textEditorFormattingDidChange(event)
     {
         this._prettyPrintButtonNavigationItem.activated = this._textEditor.formatted;
+    }
+
+    _handleTextEditorMIMETypeChanged(event)
+    {
+        this._prettyPrintButtonNavigationItem.enabled = this._textEditor.canBeFormatted();
     }
 
     _sourceCodeContentDidChange(event)

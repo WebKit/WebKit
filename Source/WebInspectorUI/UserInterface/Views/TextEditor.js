@@ -140,6 +140,13 @@ WI.TextEditor = class TextEditor extends WI.View
                     this._searchQuery = null;
                     this.performSearch(query);
                 }
+
+                if (this._codeMirror.getMode().name === "null") {
+                    // If the content matches a known MIME type, but isn't explicitly declared as
+                    // such, attempt to detect that so we can enable syntax highlighting and
+                    // formatting features.
+                    this._attemptToDetermineMIMEType();
+                }
             }
 
             // Update the execution line now that we might have content for that line.
@@ -243,6 +250,8 @@ WI.TextEditor = class TextEditor extends WI.View
 
         this._mimeType = newMIMEType;
         this._codeMirror.setOption("mode", {name: newMIMEType, globalVars: true});
+
+        this.dispatchEventToListeners(WI.TextEditor.Event.MIMETypeChanged);
     }
 
     get executionLineNumber()
@@ -885,6 +894,24 @@ WI.TextEditor = class TextEditor extends WI.View
     _canUseFormatterWorker()
     {
         return this._codeMirror.getMode().name === "javascript";
+    }
+
+    _attemptToDetermineMIMEType()
+    {
+        let startTime = Date.now();
+
+        const isModule = false;
+        const includeSourceMapData = false;
+        let workerProxy = WI.FormatterWorkerProxy.singleton();
+        workerProxy.formatJavaScript(this.string, isModule, WI.indentString(), includeSourceMapData, ({formattedText}) => {
+            if (!formattedText)
+                return;
+
+            this.mimeType = "application/javascript";
+
+            if (Date.now() - startTime < 100)
+                this.updateFormattedState(true);
+        });
     }
 
     _startWorkerPrettyPrint(beforePrettyPrintState, callback)
@@ -1720,5 +1747,6 @@ WI.TextEditor.Event = {
     ExecutionLineNumberDidChange: "text-editor-execution-line-number-did-change",
     NumberOfSearchResultsDidChange: "text-editor-number-of-search-results-did-change",
     ContentDidChange: "text-editor-content-did-change",
-    FormattingDidChange: "text-editor-formatting-did-change"
+    FormattingDidChange: "text-editor-formatting-did-change",
+    MIMETypeChanged: "text-editor-mime-type-changed",
 };

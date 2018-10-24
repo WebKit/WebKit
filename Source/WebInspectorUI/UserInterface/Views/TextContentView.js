@@ -34,18 +34,13 @@ WI.TextContentView = class TextContentView extends WI.ContentView
         this._textEditor = new WI.TextEditor;
         this._textEditor.addEventListener(WI.TextEditor.Event.NumberOfSearchResultsDidChange, this._numberOfSearchResultsDidChange, this);
         this._textEditor.addEventListener(WI.TextEditor.Event.FormattingDidChange, this._textEditorFormattingDidChange, this);
-
+        this._textEditor.addEventListener(WI.TextEditor.Event.MIMETypeChanged, this._handleTextEditorMIMETypeChanged, this);
         this.addSubview(this._textEditor);
-
-        this._textEditor.readOnly = true;
-        this._textEditor.mimeType = mimeType;
-        this._textEditor.string = string;
 
         var toolTip = WI.UIString("Pretty print");
         var activatedToolTip = WI.UIString("Original formatting");
         this._prettyPrintButtonNavigationItem = new WI.ActivateButtonNavigationItem("pretty-print", toolTip, activatedToolTip, "Images/NavigationItemCurleyBraces.svg", 13, 13);
         this._prettyPrintButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._togglePrettyPrint, this);
-        this._prettyPrintButtonNavigationItem.enabled = this._textEditor.canBeFormatted();
         this._prettyPrintButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
 
         var toolTipTypes = WI.UIString("Show type information");
@@ -59,6 +54,11 @@ WI.TextContentView = class TextContentView extends WI.ContentView
         this._codeCoverageButtonNavigationItem = new WI.ActivateButtonNavigationItem("code-coverage", toolTipCodeCoverage, activatedToolTipCodeCoverage, "Images/NavigationItemCodeCoverage.svg", 13, 14);
         this._codeCoverageButtonNavigationItem.enabled = false;
         this._codeCoverageButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
+
+        this._textEditor.readOnly = true;
+        this._textEditor.mimeType = mimeType;
+        this._textEditor.string = string;
+        this._prettyPrintButtonNavigationItem.enabled = this._textEditor.canBeFormatted();
     }
 
     // Public
@@ -166,6 +166,11 @@ WI.TextContentView = class TextContentView extends WI.ContentView
     _textEditorFormattingDidChange(event)
     {
         this._prettyPrintButtonNavigationItem.activated = this._textEditor.formatted;
+    }
+
+    _handleTextEditorMIMETypeChanged(event)
+    {
+        this._prettyPrintButtonNavigationItem.enabled = this._textEditor.canBeFormatted();
     }
 
     _numberOfSearchResultsDidChange(event)

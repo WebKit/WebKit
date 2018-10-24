@@ -1,3 +1,31 @@
+2018-10-24  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: CSP request payload on medium.com is unreadable, should be pretty-printed
+        https://bugs.webkit.org/show_bug.cgi?id=190354
+        <rdar://problem/45090894>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/TextEditor.js:
+        (WI.TextEditor.prototype.set string.update):
+        (WI.TextEditor.prototype._attemptToDetermineMIMEType): Added.
+        If the content doesn't already have a MIME type, attempt to determine one by trying to
+        format it as "javascript" (e.g. request JSON that is simply missing a MIME type).
+
+        * UserInterface/Views/TextContentView.js:
+        (WI.TextContentView):
+        (WI.TextContentView.prototype._handleTextEditorMIMETypeChanged): Added.
+        * UserInterface/Views/TextResourceContentView.js:
+        (WI.TextResourceContentView):
+        (WI.TextResourceContentView.prototype._handleTextEditorMIMETypeChanged): Added.
+        * UserInterface/Views/ScriptContentView.js:
+        (WI.ScriptContentView):
+        (WI.ScriptContentView.prototype._handleTextEditorMIMETypeChanged): Added.
+        Enable the "Pretty Print" navigation button if the MIME type changes to something that is
+        able to be formatted.
+        Drive-by: reorder the creation of the "Pretty Print" button so that it exists if
+        `_attemptToDetermineMIMEType` finishes synchronously.
+
 2018-10-23  Devin Rousso  <drousso@apple.com>
 
         Uncaught Exception: TypeError: null is not an object (evaluating 'mouseBlock.addEventListener')
