@@ -1,3 +1,27 @@
+2018-10-24  Christopher Reid  <chris.reid@sony.com>
+
+        [Win] Add function call name information to stack traces
+        https://bugs.webkit.org/show_bug.cgi?id=190761
+
+        Reviewed by Fujii Hironori.
+
+        Add symbol information to stack traces using dbghelp.dll
+        This library will use symbols files from these sources:
+            - The current working directory
+            - The directory containing the application's executable
+            - _NT_SYMBOL_PATH environment variable
+            - _NT_ALTERNATE_SYMBOL_PATH environment variable
+
+        This functionality is currently only enabled in debug mode since dbghelp is not threadsafe.
+        The DbgHelper class attempts to synchronize calls to dbghelp.dll but external code
+        can still attempt to call the library at the same time as WebKit.
+
+        * wtf/CMakeLists.txt:
+        * wtf/PlatformWin.cmake:
+        * wtf/StackTrace.cpp:
+        * wtf/win/DbgHelperWin.cpp: Added.
+        * wtf/win/DbgHelperWin.h: Added.
+
 2018-10-22  Alexey Proskuryakov  <ap@apple.com>
 
         Really prevent PLATFORM(IOS) from being used

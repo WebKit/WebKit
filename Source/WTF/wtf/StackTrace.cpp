@@ -41,6 +41,7 @@
 
 #if OS(WINDOWS)
 #include <windows.h>
+#include <wtf/win/DbgHelperWin.h>
 #endif
 
 void WTFGetBacktrace(void** stack, int* size)
@@ -110,6 +111,13 @@ void StackTrace::dump(PrintStream& out, const char* indentString) const
     char** symbols = backtrace_symbols(stack, m_size);
     if (!symbols)
         return;
+#elif OS(WINDOWS)
+    HANDLE hProc = GetCurrentProcess();
+    uint8_t symbolData[sizeof(SYMBOL_INFO) + MAX_SYM_NAME * sizeof(TCHAR)] = { 0 };
+    auto symbolInfo = reinterpret_cast<SYMBOL_INFO*>(symbolData);
+
+    symbolInfo->SizeOfStruct = sizeof(SYMBOL_INFO);
+    symbolInfo->MaxNameLen = MAX_SYM_NAME;
 #endif
 
     if (!indentString)
@@ -125,6 +133,9 @@ void StackTrace::dump(PrintStream& out, const char* indentString) const
             mangledName = demangled->mangledName();
             cxaDemangled = demangled->demangledName();
         }
+#elif OS(WINDOWS)
+        if (DbgHelper::SymFromAddress(hProc, reinterpret_cast<DWORD64>(stack[i]), 0, symbolInfo))
+            mangledName = symbolInfo->Name;
 #endif
         const int frameNumber = i + 1;
         if (mangledName || cxaDemangled)

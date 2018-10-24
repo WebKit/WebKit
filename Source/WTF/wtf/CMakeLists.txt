@@ -499,6 +499,7 @@ if (WIN32)
         ThreadingWin.cpp
     )
     list(APPEND WTF_LIBRARIES
+        DbgHelp
         winmm
     )
 else ()

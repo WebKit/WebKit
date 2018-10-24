@@ -1,6 +1,7 @@
 list(APPEND WTF_PUBLIC_HEADERS
     text/win/WCharStringExtras.h
 
+    win/DbgHelperWin.h
     win/GDIObject.h
     win/SoftLinking.h
     win/Win32Handle.h
@@ -10,6 +11,7 @@ list(APPEND WTF_SOURCES
     text/win/TextBreakIteratorInternalICUWin.cpp
 
     win/CPUTimeWin.cpp
+    win/DbgHelperWin.cpp
     win/LanguageWin.cpp
     win/MainThreadWin.cpp
     win/MemoryFootprintWin.cpp
