@@ -351,7 +351,7 @@ Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescripti
     // Search all typical Windows-installed full Unicode fonts.
     // Sorted by most to least glyphs according to http://en.wikipedia.org/wiki/Unicode_typefaces
     // Start with Times New Roman also since it is the default if the user doesn't change prefs.
-    static AtomicString fallbackFonts[] = {
+    static NeverDestroyed<AtomicString> fallbackFonts[] = {
         AtomicString("Times New Roman", AtomicString::ConstructFromLiteral),
         AtomicString("Microsoft Sans Serif", AtomicString::ConstructFromLiteral),
         AtomicString("Tahoma", AtomicString::ConstructFromLiteral),
