@@ -3288,6 +3288,19 @@ std::optional<VideoPlaybackQualityMetrics> MediaPlayerPrivateAVFoundationObjC::v
 #endif
 }
 
+bool MediaPlayerPrivateAVFoundationObjC::performTaskAtMediaTime(WTF::Function<void()>&& task, MediaTime time)
+{
+    if (!m_avPlayer)
+        return false;
+
+    __block WTF::Function<void()> taskIn = WTFMove(task);
+
+    [m_avPlayer addBoundaryTimeObserverForTimes:@[[NSValue valueWithCMTime:toCMTime(time)]] queue:dispatch_get_main_queue() usingBlock:^{
+        taskIn();
+    }];
+    return true;
+}
+
 NSArray* assetMetadataKeyNames()
 {
     static NSArray* keys = [[NSArray alloc] initWithObjects:

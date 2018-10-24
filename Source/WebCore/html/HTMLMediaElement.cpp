@@ -1657,6 +1657,11 @@ static bool compareCueInterval(const CueInterval& one, const CueInterval& two)
     return one.data()->isOrderedBefore(two.data());
 }
 
+static bool compareCueIntervalEndTime(const CueInterval& one, const CueInterval& two)
+{
+    return one.data()->endMediaTime() > two.data()->endMediaTime();
+}
+
 void HTMLMediaElement::updateActiveTextTrackCues(const MediaTime& movieTime)
 {
     // 4.8.10.8 Playing the media resource
@@ -1676,8 +1681,9 @@ void HTMLMediaElement::updateActiveTextTrackCues(const MediaTime& movieTime)
 
     // The user agent must synchronously unset [the text track cue active] flag
     // whenever ... the media element's readyState is changed back to HAVE_NOTHING.
+    auto movieTimeInterval = m_cueTree.createInterval(movieTime, movieTime);
     if (m_readyState != HAVE_NOTHING && m_player) {
-        currentCues = m_cueTree.allOverlaps(m_cueTree.createInterval(movieTime, movieTime));
+        currentCues = m_cueTree.allOverlaps(movieTimeInterval);
         if (currentCues.size() > 1)
             std::sort(currentCues.begin(), currentCues.end(), &compareCueInterval);
     }
@@ -1744,6 +1750,21 @@ void HTMLMediaElement::updateActiveTextTrackCues(const MediaTime& movieTime)
 
         if (!cue->isActive())
             activeSetChanged = true;
+    }
+
+    MediaTime nextInterestingTime = MediaTime::invalidTime();
+    if (auto nearestEndingCue = std::min_element(currentCues.begin(), currentCues.end(), compareCueIntervalEndTime))
+        nextInterestingTime = nearestEndingCue->data()->endMediaTime();
+
+    std::optional<CueInterval> nextCue = m_cueTree.nextIntervalAfter(movieTimeInterval);
+    if (nextCue)
+        nextInterestingTime = std::min(nextInterestingTime, nextCue->low());
+
+    if (nextInterestingTime.isValid() && m_player) {
+        m_player->performTaskAtMediaTime([weakThis = makeWeakPtr(this), nextInterestingTime] {
+            if (weakThis)
+                weakThis->updateActiveTextTrackCues(weakThis->currentMediaTime());
+        }, nextInterestingTime);
     }
 
     if (!activeSetChanged)

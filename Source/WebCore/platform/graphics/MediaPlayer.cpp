@@ -1537,6 +1537,11 @@ AVPlayer* MediaPlayer::objCAVFoundationAVPlayer() const
 
 #endif
 
+bool MediaPlayer::performTaskAtMediaTime(WTF::Function<void()>&& task, MediaTime time)
+{
+    return m_private->performTaskAtMediaTime(WTFMove(task), time);
+}
+
 #if !RELEASE_LOG_DISABLED
 const Logger& MediaPlayer::mediaPlayerLogger()
 {

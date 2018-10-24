@@ -1,3 +1,17 @@
+2018-10-23  Jer Noble  <jer.noble@apple.com>
+
+        TextTrack cues should be updated more often than every 250ms.
+        https://bugs.webkit.org/show_bug.cgi?id=190827
+
+        Reviewed by Eric Carlson.
+
+        Add a LayoutTest which plays back 6s of captions, each 50 ms in duration, and uses
+        when the "enter" and "exit" were fired (in media time) to check whether they were missed
+        or not. The test succeeds if fewer than 50 of the 120 cues were missed.
+
+        * media/track/track-cue-missing-expected.txt: Added.
+        * media/track/track-cue-missing.html: Added.
+
 2018-10-23  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r237261.

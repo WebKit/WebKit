@@ -571,6 +571,8 @@ public:
     WEBCORE_EXPORT AVPlayer *objCAVFoundationAVPlayer() const;
 #endif
 
+    bool performTaskAtMediaTime(WTF::Function<void()>&&, MediaTime);
+
 private:
     MediaPlayer(MediaPlayerClient&);
 

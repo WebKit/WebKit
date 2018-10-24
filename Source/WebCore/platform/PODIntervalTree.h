@@ -30,6 +30,7 @@
 #include "PODRedBlackTree.h"
 #include <wtf/Assertions.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 #include <wtf/text/ValueToString.h>
 
@@ -115,6 +116,15 @@ public:
         return IntervalType(low, high, data);
     }
 
+    std::optional<IntervalType> nextIntervalAfter(const IntervalType& interval)
+    {
+        auto next = smallestNodeGreaterThanFrom(interval, this->root());
+        if (!next)
+            return std::nullopt;
+
+        return next->data();
+    }
+
     bool checkInvariants() const override
     {
         if (!PODRedBlackTree<IntervalType>::checkInvariants())
@@ -164,6 +174,20 @@ private:
         if (!(adapter.highValue() < node->data().low()))
             searchForOverlapsFrom<AdapterType>(node->right(), adapter);
     }
+
+    IntervalNode* smallestNodeGreaterThanFrom(const IntervalType& interval, IntervalNode* node) const
+    {
+        if (!node)
+            return nullptr;
+
+        if (!(interval.high() < node->data().low()))
+            return smallestNodeGreaterThanFrom(interval, node->right());
+
+        if (auto left = smallestNodeGreaterThanFrom(interval, node->right()))
+            return left;
+
+        return node;
+}
 
     bool updateNode(IntervalNode* node) override
     {

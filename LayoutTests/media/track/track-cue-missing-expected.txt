@@ -1,0 +1,10 @@
+
+RUN(video.src = findMediaFile("video", "../content/test"))
+RUN(track = video.addTextTrack("subtitles", "English", "en"))
+RUN(track.mode = "showing")
+EVENT(loadeddata)
+Created 121 cues.
+EVENT(ended)
+EXPECTED (missedCueCount < '50') OK
+END OF TEST
+

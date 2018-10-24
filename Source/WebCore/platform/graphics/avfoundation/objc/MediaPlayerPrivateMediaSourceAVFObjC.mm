@@ -1110,6 +1110,16 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::isCurrentPlaybackTargetWireless() con
 }
 #endif
 
+bool MediaPlayerPrivateMediaSourceAVFObjC::performTaskAtMediaTime(WTF::Function<void()>&& task, MediaTime time)
+{
+    __block WTF::Function<void()> taskIn = WTFMove(task);
+
+    [m_synchronizer addBoundaryTimeObserverForTimes:@[[NSValue valueWithCMTime:toCMTime(time)]] queue:dispatch_get_main_queue() usingBlock:^{
+        taskIn();
+    }];
+    return true;
+}
+
 }
 
 #endif

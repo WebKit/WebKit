@@ -1,3 +1,38 @@
+2018-10-23  Jer Noble  <jer.noble@apple.com>
+
+        TextTrack cues should be updated more often than every 250ms.
+        https://bugs.webkit.org/show_bug.cgi?id=190827
+
+        Reviewed by Eric Carlson.
+
+        Test: media/track/track-cue-timing.html
+
+        TextTracks cues are recalculated on the playback timer, which fires at least every 250ms.
+        In addition to this timer, add a method to MediaPlayer to provide a task which will be
+        performed at a particular media time, and use this new method to request cues be updated
+        at the next interesting media time. The next interesting time would be either when the
+        soonest current cue will end, or when the next non-current cue will start, whichever is
+        earlier.
+
+        (Determining the "next non-current cue" requires new API on PODIntervalTree, as that class
+        does not have iterators per-se.)
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::compareCueIntervalEndTime):
+        (WebCore::HTMLMediaElement::updateActiveTextTrackCues):
+        * platform/PODIntervalTree.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::performTaskAtMediaTime):
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::performTaskAtMediaTime):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::performTaskAtMediaTime):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::performTaskAtMediaTime):
+
 2018-10-23  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] Assertion fails while destructing local static AtomicString of FontCache::lastResortFallbackFont

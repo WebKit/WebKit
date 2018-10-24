@@ -234,6 +234,8 @@ private:
     bool wirelessVideoPlaybackDisabled() const override { return false; }
 #endif
 
+    bool performTaskAtMediaTime(WTF::Function<void()>&&, MediaTime) final;
+
     void ensureLayer();
     void destroyLayer();
     void ensureDecompressionSession();
@@ -272,6 +274,7 @@ private:
     ALLOW_NEW_API_WITHOUT_GUARDS_END
     RetainPtr<id> m_timeJumpedObserver;
     RetainPtr<id> m_durationObserver;
+    RetainPtr<id> m_performTaskObserver;
     RetainPtr<AVStreamSession> m_streamSession;
     RetainPtr<CVPixelBufferRef> m_lastPixelBuffer;
     RetainPtr<CGImageRef> m_lastImage;
