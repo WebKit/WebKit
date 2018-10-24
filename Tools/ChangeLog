@@ -1,3 +1,13 @@
+2018-10-24  Pablo Saavedra  <psaavedra@igalia.com>
+
+        [WPE] Fix CMake rules in for TestWebKitAPIBase library building in developer mode
+        https://bugs.webkit.org/show_bug.cgi?id=190328
+
+        Reviewed by Michael Catanzaro.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/PlatformWPE.cmake:
+
 2018-10-24  Chris Dumez  <cdumez@apple.com>
 
         [PSON] When navigating back and forth, 'about:blank' shows up in the back/forward list

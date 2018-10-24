@@ -85,6 +85,19 @@ if (ENABLE_WEBKIT)
         ${TESTWEBKITAPI_DIR}/Tests/WebKit/WKURL.cpp
     )
 
+    set(TestWebKitAPIBase_LIBRARIES
+        JavaScriptCore
+        WTF
+        WebKit
+        gtest
+    )
+
+    set(TestWebKitAPIBase_SOURCES
+        ${TESTWEBKITAPI_DIR}/JavaScriptTest.cpp
+        ${TESTWEBKITAPI_DIR}/PlatformUtilities.cpp
+        ${TESTWEBKITAPI_DIR}/TestsController.cpp
+    )
+
     list(APPEND TestWebKitAPI_LIBRARIES
         WebKit
     )
@@ -273,12 +286,10 @@ if (ENABLE_WEBKIT)
     add_library(TestWebKitAPIBase
         ${test_main_SOURCES}
         ${webkit_api_harness_SOURCES}
-        ${TESTWEBKITAPI_DIR}/JavaScriptTest.cpp
-        ${TESTWEBKITAPI_DIR}/PlatformUtilities.cpp
-        ${TESTWEBKITAPI_DIR}/TestsController.cpp
+        ${TestWebKitAPIBase_SOURCES}
     )
 
-    target_link_libraries(TestWebKitAPIBase JavaScriptCore WTF WebKit gtest)
+    target_link_libraries(TestWebKitAPIBase ${TestWebKitAPIBase_LIBRARIES})
 
     add_dependencies(TestWebKitAPIBase WebKit ${TestWebKitAPI_DEPENDENCIES})
 
