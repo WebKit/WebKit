@@ -53,8 +53,8 @@ public:
     Ref<API::Navigation> createReloadNavigation();
     Ref<API::Navigation> createLoadDataNavigation();
 
-    API::Navigation& navigation(uint64_t navigationID);
-    Ref<API::Navigation> takeNavigation(uint64_t navigationID);
+    API::Navigation* navigation(uint64_t navigationID);
+    RefPtr<API::Navigation> takeNavigation(uint64_t navigationID);
     void didDestroyNavigation(uint64_t navigationID);
     void clearAllNavigations();
 
