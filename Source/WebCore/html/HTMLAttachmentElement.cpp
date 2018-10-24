@@ -160,6 +160,27 @@ String HTMLAttachmentElement::attachmentTitle() const
     return m_file ? m_file->name() : String();
 }
 
+String HTMLAttachmentElement::attachmentTitleForDisplay() const
+{
+    auto title = attachmentTitle();
+
+    auto indexOfLastDot = title.reverseFind('.');
+    if (indexOfLastDot == notFound)
+        return title;
+
+    String name = title.left(indexOfLastDot);
+    String extension = title.substring(indexOfLastDot);
+
+    StringBuilder builder;
+    builder.append(leftToRightMark);
+    builder.append(firstStrongIsolate);
+    builder.append(name);
+    builder.append(popDirectionalIsolate);
+    builder.append(extension);
+
+    return builder.toString();
+}
+
 String HTMLAttachmentElement::attachmentType() const
 {
     return attributeWithoutSynchronization(typeAttr);

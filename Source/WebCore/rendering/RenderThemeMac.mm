@@ -2637,7 +2637,7 @@ void AttachmentLayout::layOutTitle(const RenderAttachment& attachment)
     RetainPtr<CTFontRef> font = adoptCF(CTFontCreateUIFontForLanguage(kCTFontUIFontSystem, attachmentTitleFontSize, language));
     baseline = CGRound(attachmentIconBackgroundSize + attachmentIconToTitleMargin + CTFontGetAscent(font.get()));
 
-    String title = attachment.attachmentElement().attachmentTitle();
+    String title = attachment.attachmentElement().attachmentTitleForDisplay();
     if (title.isEmpty())
         return;
 
@@ -2677,12 +2677,13 @@ void AttachmentLayout::layOutTitle(const RenderAttachment& attachment)
     // Combine it into one last line, and center-truncate it.
     CTLineRef firstRemainingLine = (CTLineRef)CFArrayGetValueAtIndex(ctLines, lineIndex);
     CFIndex remainingRangeStart = CTLineGetStringRange(firstRemainingLine).location;
-    NSRange remainingRange = NSMakeRange(remainingRangeStart, [attributedTitle length] - remainingRangeStart);
-    NSAttributedString *remainingString = [attributedTitle attributedSubstringFromRange:remainingRange];
-    RetainPtr<CTLineRef> remainingLine = adoptCF(CTLineCreateWithAttributedString((CFAttributedStringRef)remainingString));
+    CFRange remainingRange = CFRangeMake(remainingRangeStart, [attributedTitle length] - remainingRangeStart);
+    RetainPtr<CGPathRef> remainingPath = adoptCF(CGPathCreateWithRect(CGRectMake(0, 0, CGFLOAT_MAX, CGFLOAT_MAX), nullptr));
+    RetainPtr<CTFrameRef> remainingFrame = adoptCF(CTFramesetterCreateFrame(titleFramesetter.get(), remainingRange, remainingPath.get(), nullptr));
     RetainPtr<NSAttributedString> ellipsisString = adoptNS([[NSAttributedString alloc] initWithString:@"\u2026" attributes:textAttributes]);
     RetainPtr<CTLineRef> ellipsisLine = adoptCF(CTLineCreateWithAttributedString((CFAttributedStringRef)ellipsisString.get()));
-    RetainPtr<CTLineRef> truncatedLine = adoptCF(CTLineCreateTruncatedLine(remainingLine.get(), attachmentTitleMaximumWidth, kCTLineTruncationMiddle, ellipsisLine.get()));
+    CTLineRef remainingLine = (CTLineRef)CFArrayGetValueAtIndex(CTFrameGetLines(remainingFrame.get()), 0);
+    RetainPtr<CTLineRef> truncatedLine = adoptCF(CTLineCreateTruncatedLine(remainingLine, attachmentTitleMaximumWidth, kCTLineTruncationMiddle, ellipsisLine.get()));
 
     if (!truncatedLine)
         truncatedLine = remainingLine;

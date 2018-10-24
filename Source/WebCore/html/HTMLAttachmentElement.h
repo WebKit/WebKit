@@ -61,6 +61,7 @@ public:
     bool hasEnclosingImage() const;
 
     WEBCORE_EXPORT String attachmentTitle() const;
+    String attachmentTitleForDisplay() const;
     String attachmentType() const;
     String attachmentPath() const;
 

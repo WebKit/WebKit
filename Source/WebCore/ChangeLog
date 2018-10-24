@@ -1,3 +1,29 @@
+2018-10-24  Tim Horton  <timothy_horton@apple.com>
+
+        Attachment filenames with RTL characters should format similar to Finder
+        https://bugs.webkit.org/show_bug.cgi?id=190736
+        <rdar://problem/44735946>
+
+        Reviewed by Dan Bernstein.
+
+        Test: fast/attachment/attachment-title-with-rtl.html
+
+        * html/HTMLAttachmentElement.cpp:
+        (WebCore::HTMLAttachmentElement::attachmentTitleForDisplay const):
+        * html/HTMLAttachmentElement.h:
+        Add attachmentTitleForDisplay(), which wraps the non-extension part of
+        attachmentTitle in BiDi isolates, matching Finder's behavior.
+
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderAttachmentInfo::buildWrappedLines):
+        (WebCore::RenderAttachmentInfo::RenderAttachmentInfo):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::AttachmentLayout::layOutTitle):
+        Adopt attachmentTitleForDisplay, and ask CoreText to use a subrange of
+        the original string for the last line, instead of splitting the string
+        ourselves. This ensures that BiDi control characters are respected
+        even in the last line of the string.
+
 2018-10-24  Megan Gardner  <megan_gardner@apple.com>
 
         Turn on Conic Gradients
