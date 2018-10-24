@@ -1,3 +1,22 @@
+2018-10-24  Chris Dumez  <cdumez@apple.com>
+
+        [PSON] When navigating back and forth, 'about:blank' shows up in the back/forward list
+        https://bugs.webkit.org/show_bug.cgi?id=190846
+        <rdar://problem/45058938>
+
+        Reviewed by Antti Koivisto.
+
+        When a page gets suspended after a process-swap, we navigate it to about:blank from inside the navigation
+        policy handler, by overriding the request URL. This normally works fine because we usually process-swap
+        on standard navigation. However, when we would process-swap on a back/forward navigation, we would end
+        up using the back/forward navigation load type to do the about:blank load. This would have repercussions
+        because history navigations update the current history item with the new URL (in this case 'about:blank').
+        To avoid the issue, switch to a standard load type whenever the client asks us to suspend and we load
+        'about:blank' as a result.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy):
+
 2018-10-24  Andy Estes  <aestes@apple.com>
 
         [macOS Debug WK2] Layout Test http/tests/ssl/applepay/ApplePayShippingAddressChangeEventErrorsV3.https.html is a flaky failure

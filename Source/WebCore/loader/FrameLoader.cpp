@@ -3363,8 +3363,13 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
         m_loadingFromCachedPage = false;
 
         // We handle suspension by navigating forward to about:blank, which leaves us setup to navigate back to resume.
-        if (shouldContinue == ShouldContinue::ForSuspension)
+        if (shouldContinue == ShouldContinue::ForSuspension) {
+            // Make sure we do a standard load to about:blank instead of reusing whatever the load type was on process swap.
+            // For example, using a Back/Forward load to load about blank would cause the current HistoryItem's url to be
+            // overwritten with 'about:blank', which we do not want.
+            m_loadType = FrameLoadType::Standard;
             m_provisionalDocumentLoader->willContinueMainResourceLoadAfterRedirect({ blankURL() });
+        }
 
         m_provisionalDocumentLoader->startLoadingMainResource(shouldContinue);
     };
