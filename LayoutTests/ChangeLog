@@ -1,3 +1,14 @@
+2018-10-24  Truitt Savell  <tsavell@apple.com>
+
+        Marking Multiple tests as flakey at once
+        https://bugs.webkit.org/show_bug.cgi?id=190847
+
+        Unreviewed Test Gardening
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2018-10-24  Andy Estes  <aestes@apple.com>
 
         [macOS Debug WK2] Layout Test http/tests/ssl/applepay/ApplePayShippingAddressChangeEventErrorsV3.https.html is a flaky failure

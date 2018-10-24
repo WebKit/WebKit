@@ -1302,3 +1302,9 @@ imported/w3c/web-platform-tests/payment-request/user-accepts-payment-request-alg
 
 webkit.org/b/189087 svg/animations/animate-end-attribute-numeric-precision.html [ Pass Failure ]
 
+webkit.org/b/190847 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/unregister-then-register-new-script.https.html [ Pass Failure ] 
+
+webkit.org/b/190848 imported/w3c/web-platform-tests/service-workers/service-worker/navigation-redirect-to-http.https.html [ Pass Failure ] 
+
+webkit.org/b/190850 [ Debug ] platform/ios/ios/plugin/youtube-flash-plugin-iframe-no-height-or-width.html [ Pass Failure ] 
+
