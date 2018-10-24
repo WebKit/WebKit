@@ -31,7 +31,7 @@
 #include <stdio.h>
 #endif
 
-#if BPLATFORM(IOS)
+#if BPLATFORM(IOS_FAMILY)
 #include <CoreFoundation/CoreFoundation.h>
 #include <mach/exception_types.h>
 #include <objc/objc.h>
@@ -46,7 +46,7 @@ namespace bmalloc {
 
 void logVMFailure(size_t vmSize)
 {
-#if BPLATFORM(IOS)
+#if BPLATFORM(IOS_FAMILY)
     const mach_exception_data_type_t kExceptionCode = 0xc105ca11;
     CFStringRef description = CFStringCreateWithFormat(kCFAllocatorDefault, nullptr, CFSTR("bmalloc failed to mmap %lu bytes"), vmSize);
     SimulateCrash(getpid(), kExceptionCode, description);

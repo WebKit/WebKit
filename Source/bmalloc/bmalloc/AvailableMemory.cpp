@@ -26,7 +26,7 @@
 #include "AvailableMemory.h"
 
 #include "Environment.h"
-#if BPLATFORM(IOS)
+#if BPLATFORM(IOS_FAMILY)
 #include "MemoryStatusSPI.h"
 #endif
 #include "PerProcess.h"
@@ -34,7 +34,7 @@
 #include "Sizes.h"
 #include <mutex>
 #if BOS(DARWIN)
-#if BPLATFORM(IOS)
+#if BPLATFORM(IOS_FAMILY)
 #import <algorithm>
 #endif
 #import <dispatch/dispatch.h>
@@ -53,7 +53,7 @@ static const size_t availableMemoryGuess = 512 * bmalloc::MB;
 #if BOS(DARWIN)
 static size_t memorySizeAccordingToKernel()
 {
-#if BPLATFORM(IOS_SIMULATOR)
+#if BPLATFORM(IOS_FAMILY_SIMULATOR)
     BUNUSED_PARAM(availableMemoryGuess);
     // Pretend we have 1024MB of memory to make cache sizes behave like on device.
     return 1024 * bmalloc::MB;
@@ -75,7 +75,7 @@ static size_t memorySizeAccordingToKernel()
 }
 #endif
 
-#if BPLATFORM(IOS)
+#if BPLATFORM(IOS_FAMILY)
 static size_t jetsamLimit()
 {
     memorystatus_memlimit_properties_t properties;
@@ -92,7 +92,7 @@ static size_t computeAvailableMemory()
 {
 #if BOS(DARWIN)
     size_t sizeAccordingToKernel = memorySizeAccordingToKernel();
-#if BPLATFORM(IOS)
+#if BPLATFORM(IOS_FAMILY)
     sizeAccordingToKernel = std::min(sizeAccordingToKernel, jetsamLimit());
 #endif
     size_t multiple = 128 * bmalloc::MB;
@@ -121,7 +121,7 @@ size_t availableMemory()
     return availableMemory;
 }
 
-#if BPLATFORM(IOS)
+#if BPLATFORM(IOS_FAMILY)
 MemoryStatus memoryStatus()
 {
     task_vm_info_data_t vmInfo;

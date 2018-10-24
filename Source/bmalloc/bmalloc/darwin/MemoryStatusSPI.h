@@ -26,7 +26,7 @@
 
 #include "BPlatform.h"
 
-#if BPLATFORM(IOS)
+#if BPLATFORM(IOS_FAMILY)
 
 #if __has_include(<System/sys/kern_memorystatus.h>)
 extern "C" {
@@ -51,4 +51,4 @@ extern "C" {
 int memorystatus_control(uint32_t command, int32_t pid, uint32_t flags, void *buffer, size_t buffersize);
 }
 
-#endif // BPLATFORM(IOS)
+#endif // BPLATFORM(IOS_FAMILY)

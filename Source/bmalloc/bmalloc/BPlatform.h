@@ -53,17 +53,23 @@
 #endif
 
 #if BOS(DARWIN) && !defined(BUILDING_WITH_CMAKE)
-#if TARGET_OS_IPHONE
+#if TARGET_OS_IOS
 #define BPLATFORM_IOS 1
 #if TARGET_OS_SIMULATOR
 #define BPLATFORM_IOS_SIMULATOR 1
+#endif
+#endif
+#if TARGET_OS_IPHONE
+#define BPLATFORM_IOS_FAMILY 1
+#if TARGET_OS_SIMULATOR
+#define BPLATFORM_IOS_FAMILY_SIMULATOR 1
 #endif
 #elif TARGET_OS_MAC
 #define BPLATFORM_MAC 1
 #endif
 #endif
 
-#if BPLATFORM(MAC) || BPLATFORM(IOS)
+#if BPLATFORM(MAC) || BPLATFORM(IOS_FAMILY)
 #define BPLATFORM_COCOA 1
 #endif
 
@@ -222,11 +228,11 @@
 
 #define BATTRIBUTE_PRINTF(formatStringArgument, extraArguments) __attribute__((__format__(printf, formatStringArgument, extraArguments)))
 
-#if (BPLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200) || BPLATFORM(IOS)
+#if BPLATFORM(MAC) || BPLATFORM(IOS_FAMILY)
 #define BUSE_OS_LOG 1
 #endif
 
-#if !defined(BUSE_EXPORT_MACROS) && (BPLATFORM(MAC) || BPLATFORM(IOS))
+#if !defined(BUSE_EXPORT_MACROS) && (BPLATFORM(MAC) || BPLATFORM(IOS_FAMILY))
 #define BUSE_EXPORT_MACROS 1
 #endif
 
@@ -238,8 +244,7 @@
 /* This is used for debugging when hacking on how bmalloc calculates its physical footprint. */
 #define ENABLE_PHYSICAL_PAGE_MAP 0
 
-#if ((BPLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000) || (BPLATFORM(WATCHOS) && __WATCH_OS_VERSION_MIN_REQUIRED >= 50000) || (BPLATFORM(APPLETV) && __TV_OS_VERSION_MIN_REQUIRED >= 120000)) \
-    && (BCPU(ARM64) || BCPU(ARM))
+#if BPLATFORM(IOS_FAMILY) && (BCPU(ARM64) || BCPU(ARM))
 #define BUSE_CHECK_NANO_MALLOC 1
 #else
 #define BUSE_CHECK_NANO_MALLOC 0
