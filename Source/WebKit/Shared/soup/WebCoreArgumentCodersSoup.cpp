@@ -56,31 +56,28 @@ void ArgumentCoder<CertificateInfo>::encode(Encoder& encoder, const CertificateI
         return;
     }
 
-    uint32_t chainLength = 0;
     GTlsCertificate* certificate = certificateInfo.certificate();
-    GByteArray* certificateData = 0;
-    Vector<GByteArray*> certificatesDataList;
-
+    Vector<GRefPtr<GByteArray>> certificatesDataList;
     do {
-        g_object_get(G_OBJECT(certificate), "certificate", &certificateData, NULL);
+        GByteArray* certificateData = nullptr;
+        g_object_get(G_OBJECT(certificate), "certificate", &certificateData, nullptr);
 
         if (!certificateData)
             break;
 
         certificatesDataList.append(certificateData);
-        chainLength++;
 
         certificate = g_tls_certificate_get_issuer(certificate);
     } while (certificate);
 
-    encoder << chainLength;
+    encoder << static_cast<uint32_t>(certificatesDataList.size());
 
-    if (!chainLength)
+    if (certificatesDataList.isEmpty())
         return;
 
     // Encode starting from the root certificate.
-    for (uint32_t i = chainLength; i > 0; i--) {
-        GRefPtr<GByteArray> certificate = adoptGRef(certificatesDataList[i - 1]);
+    for (size_t i = certificatesDataList.size(); i > 0; --i) {
+        auto& certificate = certificatesDataList[i - 1];
         encoder.encodeVariableLengthByteArray(IPC::DataReference(certificate->data, certificate->len));
     }
 
