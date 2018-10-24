@@ -332,6 +332,7 @@ private:
 
     bool performTaskAtMediaTime(WTF::Function<void()>&&, MediaTime) final;
 
+    WeakPtrFactory<MediaPlayerPrivateAVFoundationObjC> m_weakPtrFactory;
     RetainPtr<AVURLAsset> m_avAsset;
     RetainPtr<AVPlayer> m_avPlayer;
     RetainPtr<AVPlayerItem> m_avPlayerItem;
