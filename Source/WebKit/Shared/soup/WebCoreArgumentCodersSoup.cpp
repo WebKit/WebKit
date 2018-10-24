@@ -93,22 +93,18 @@ bool ArgumentCoder<CertificateInfo>::decode(Decoder& decoder, CertificateInfo& c
     if (!chainLength)
         return true;
 
-    GTlsCertificate* issuer = nullptr;
-    GTlsBackend* backend = g_tls_backend_get_default();
+    GType certificateType = g_tls_backend_get_certificate_type(g_tls_backend_get_default());
     GRefPtr<GTlsCertificate> certificate;
     for (uint32_t i = 0; i < chainLength; i++) {
         IPC::DataReference certificateDataReference;
         if (!decoder.decodeVariableLengthByteArray(certificateDataReference))
             return false;
 
-        GByteArray* certificateData = g_byte_array_sized_new(certificateDataReference.size());
-        certificateData = g_byte_array_append(certificateData, certificateDataReference.data(), certificateDataReference.size());
-        GRefPtr<GByteArray> certificateBytes = adoptGRef(certificateData);
+        GRefPtr<GByteArray> certificateData = g_byte_array_sized_new(certificateDataReference.size());
+        certificateData = g_byte_array_append(certificateData.get(), certificateDataReference.data(), certificateDataReference.size());
 
         certificate = adoptGRef(G_TLS_CERTIFICATE(g_initable_new(
-            g_tls_backend_get_certificate_type(backend), 0, 0, "certificate", certificateBytes.get(), "issuer", issuer, nullptr)));
-
-        issuer = certificate.get();
+            certificateType, nullptr, nullptr, "certificate", certificateData.get(), "issuer", certificate.get(), nullptr)));
     }
 
     uint32_t tlsErrors;
