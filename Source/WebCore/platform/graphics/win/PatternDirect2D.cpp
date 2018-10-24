@@ -48,7 +48,7 @@ ID2D1BitmapBrush* Pattern::createPlatformPattern(const GraphicsContext& context,
     brushProperties.transform = patternTransform;
     brushProperties.opacity = alpha;
 
-    auto patternImage = tileImage();
+    auto& patternImage = tileImage();
 
     auto platformContext = context.platformContext();
     RELEASE_ASSERT(platformContext);

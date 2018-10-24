@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,7 +49,7 @@ public:
 
     static bool supportsMediaType(MediaType type) { return type == MediaType::Image; }
 
-    static size_t bytesDecodedToDetermineProperties();
+    size_t bytesDecodedToDetermineProperties() const final;
 
     String filenameExtension() const final;
     EncodedDataStatus encodedDataStatus() const final;
@@ -66,12 +66,12 @@ public:
     bool frameIsCompleteAtIndex(size_t) const final;
     ImageOrientation frameOrientationAtIndex(size_t) const final;
 
-    float frameDurationAtIndex(size_t) const final;
+    Seconds frameDurationAtIndex(size_t) const final;
     bool frameHasAlphaAtIndex(size_t) const final;
     bool frameAllowSubsamplingAtIndex(size_t) const final;
     unsigned frameBytesAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default) const final;
 
-    NativeImagePtr createFrameImageAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default, const DecodingOptions& = DecodingOptions(DecodingMode::Synchronous)) const final;
+    NativeImagePtr createFrameImageAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default, const DecodingOptions& = DecodingOptions(DecodingMode::Synchronous)) final;
 
     void setData(SharedBuffer&, bool allDataReceived) final;
     bool isAllDataReceived() const final { return m_isAllDataReceived; }

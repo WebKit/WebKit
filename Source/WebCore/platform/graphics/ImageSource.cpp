@@ -36,6 +36,10 @@
 #include <wtf/RunLoop.h>
 #include <wtf/SystemTracing.h>
 
+#if USE(DIRECT2D)
+#include "GraphicsContext.h"
+#endif
+
 namespace WebCore {
 
 ImageSource::ImageSource(BitmapImage* image, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
@@ -638,7 +642,7 @@ ImageOrientation ImageSource::frameOrientationAtIndex(size_t index)
 void ImageSource::setTargetContext(const GraphicsContext* targetContext)
 {
     if (isDecoderAvailable() && targetContext)
-        m_decoder->setTargetContext(targetContext->platformContext())
+        m_decoder->setTargetContext(targetContext->platformContext());
 }
 #endif
 

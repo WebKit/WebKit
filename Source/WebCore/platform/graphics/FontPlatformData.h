@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2018 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com
  * Copyright (C) 2007 Holger Hans Peter Freyther
  * Copyright (C) 2007 Pioneer Research Center USA, Inc.
@@ -61,6 +61,10 @@ typedef const struct __CTFont* CTFontRef;
 typedef struct HFONT__* HFONT;
 interface IDWriteFont;
 interface IDWriteFontFace;
+#endif
+
+#if USE(DIRECT2D)
+#include <dwrite.h>
 #endif
 
 namespace WebCore {

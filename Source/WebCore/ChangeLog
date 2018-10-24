@@ -1,3 +1,98 @@
+2018-10-24  Brent Fulgham  <bfulgham@apple.com>
+
+        Cure Windows Direct2D Backend of a nasty case of bitrot
+        https://bugs.webkit.org/show_bug.cgi?id=190875
+        <rdar://problem/45523268>
+        
+        Reviewed by Zalan Bujtas.
+
+        The Direct2D backend has drifted out of date with the rest of WebKit.
+        This patch updates things so we can get a runnable build.
+        
+        * platform/graphics/FontPlatformData.h:
+        * platform/graphics/ImageBuffer.cpp:
+        (WebCore::ImageBuffer::create):
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/ImageDecoder.h:
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::setTargetContext):
+        * platform/graphics/opentype/OpenTypeMathData.cpp:
+        (WebCore::OpenTypeMathData::OpenTypeMathData): Need non-default constructor to make Visual
+        Studio happy.
+        * platform/graphics/win/GradientDirect2D.cpp:
+        (WebCore::Gradient::generateGradient):
+        * platform/graphics/win/GraphicsContextDirect2D.cpp: Update for new display list implementation.
+        (WebCore::GraphicsContextPlatformPrivate::setAlpha):
+        (WebCore::GraphicsContext::savePlatformState):
+        (WebCore::GraphicsContext::restorePlatformState):
+        (WebCore::GraphicsContext::drawNativeImage):
+        (WebCore::GraphicsContext::drawPattern):
+        (WebCore::GraphicsContext::drawRect):
+        (WebCore::GraphicsContext::drawLine):
+        (WebCore::GraphicsContext::drawEllipse):
+        (WebCore::GraphicsContext::drawPath):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::platformFillRoundedRect):
+        (WebCore::GraphicsContext::fillRectWithRoundedHole):
+        (WebCore::GraphicsContext::clip):
+        (WebCore::GraphicsContext::clipOut):
+        (WebCore::GraphicsContext::clipPath):
+        (WebCore::GraphicsContext::clipBounds const):
+        (WebCore::GraphicsContext::beginPlatformTransparencyLayer):
+        (WebCore::GraphicsContext::endPlatformTransparencyLayer):
+        (WebCore::GraphicsContext::setMiterLimit):
+        (WebCore::GraphicsContext::clearRect):
+        (WebCore::GraphicsContext::strokeRect):
+        (WebCore::GraphicsContext::setLineCap):
+        (WebCore::GraphicsContext::setLineDash):
+        (WebCore::GraphicsContext::setLineJoin):
+        (WebCore::GraphicsContext::scale):
+        (WebCore::GraphicsContext::rotate):
+        (WebCore::GraphicsContext::translate):
+        (WebCore::GraphicsContext::concatCTM):
+        (WebCore::GraphicsContext::setCTM):
+        (WebCore::GraphicsContext::getCTM const):
+        (WebCore::GraphicsContext::roundToDevicePixels):
+        (WebCore::GraphicsContext::drawLinesForText):
+        (WebCore::GraphicsContext::setURLForRect):
+        (WebCore::GraphicsContext::setIsCALayerContext):
+        (WebCore::GraphicsContext::isCALayerContext const):
+        (WebCore::GraphicsContext::setIsAcceleratedContext):
+        (WebCore::GraphicsContext::isAcceleratedContext const):
+        (WebCore::GraphicsContext::setPlatformShouldAntialias):
+        (WebCore::GraphicsContext::setPlatformShouldSmoothFonts):
+        (WebCore::GraphicsContext::setPlatformCompositeOperation):
+        (WebCore::GraphicsContext::platformFillEllipse):
+        (WebCore::GraphicsContext::platformStrokeEllipse):
+        * platform/graphics/win/GraphicsLayerDirect2D.cpp:
+        (WebCore::GraphicsLayer::create):
+        (): Deleted.
+        * platform/graphics/win/ImageBufferDataDirect2D.cpp:
+        (WebCore::ImageBufferData::putData):
+        * platform/graphics/win/ImageBufferDataDirect2D.h:
+        * platform/graphics/win/ImageBufferDirect2D.cpp:
+        (WebCore::ImageBuffer::createCompatibleBuffer):
+        (WebCore::ImageBuffer::ImageBuffer):
+        * platform/graphics/win/ImageDecoderDirect2D.cpp:
+        (WebCore::ImageDecoderDirect2D::bytesDecodedToDetermineProperties const):
+        (WebCore::ImageDecoderDirect2D::encodedDataStatus const):
+        (WebCore::ImageDecoderDirect2D::repetitionCount const):
+        (WebCore::ImageDecoderDirect2D::frameOrientationAtIndex const):
+        (WebCore::ImageDecoderDirect2D::frameDurationAtIndex const):
+        (WebCore::ImageDecoderDirect2D::frameAllowSubsamplingAtIndex const):
+        (WebCore::ImageDecoderDirect2D::frameHasAlphaAtIndex const):
+        (WebCore::ImageDecoderDirect2D::createFrameImageAtIndex):
+        (WebCore::ImageDecoderDirect2D::setData):
+        (WebCore::ImageDecoderDirect2D::bytesDecodedToDetermineProperties): Deleted.
+        (WebCore::ImageDecoderDirect2D::createFrameImageAtIndex const): Deleted.
+        * platform/graphics/win/ImageDecoderDirect2D.h:
+        * platform/graphics/win/ImageDirect2D.cpp:
+        (WebCore::BitmapImage::drawFrameMatchingSourceSize):
+        * platform/graphics/win/PatternDirect2D.cpp:
+        (WebCore::Pattern::createPlatformPattern const):
+
 2018-10-24  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Cleanup: MIMETypeRegistry functions

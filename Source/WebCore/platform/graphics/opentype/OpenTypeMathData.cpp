@@ -262,6 +262,10 @@ OpenTypeMathData::OpenTypeMathData(const FontPlatformData& font)
     if (!hb_ot_math_has_data(hb_font_get_face(m_mathFont.get())))
         m_mathFont = nullptr;
 }
+#elif USE(DIRECT2D)
+OpenTypeMathData::OpenTypeMathData(const FontPlatformData& font)
+{
+}
 #else
 OpenTypeMathData::OpenTypeMathData(const FontPlatformData&) = default;
 #endif

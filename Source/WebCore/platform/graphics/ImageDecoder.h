@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -78,6 +78,10 @@ public:
     virtual void setData(SharedBuffer&, bool allDataReceived) = 0;
     virtual bool isAllDataReceived() const = 0;
     virtual void clearFrameBufferCache(size_t) = 0;
+
+#if USE(DIRECT2D)
+    virtual void setTargetContext(ID2D1RenderTarget*) = 0;
+#endif
 
 protected:
     ImageDecoder() = default;

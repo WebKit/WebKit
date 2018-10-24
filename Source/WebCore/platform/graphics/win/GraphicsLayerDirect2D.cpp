@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,10 +53,9 @@ Ref<GraphicsLayer> GraphicsLayer::create(GraphicsLayerFactory* factory, Graphics
         layer->initialize(layerType);
         return layer;
     }
-    
-    auto layer = adoptRef(*new GraphicsLayerCA(layerType, client);
-    layer->initialize(layerType);
-    return layer;
+
+    // FIXME: Return a real Direct2D graphics layer
+    return adoptRef(*new GraphicsLayerDirect2D(layerType, client));
 }
 
 GraphicsLayerDirect2D::GraphicsLayerDirect2D(Type layerType, GraphicsLayerClient& client)

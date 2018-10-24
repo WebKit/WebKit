@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,7 +56,7 @@ IWICImagingFactory* ImageDecoderDirect2D::systemImagingFactory()
     return wicImagingFactory;
 }
 
-size_t ImageDecoderDirect2D::bytesDecodedToDetermineProperties()
+size_t ImageDecoderDirect2D::bytesDecodedToDetermineProperties() const
 {
     // Set to match value used for CoreGraphics.
     return 13088;
@@ -75,8 +75,11 @@ bool ImageDecoderDirect2D::isSizeAvailable() const
 
 EncodedDataStatus ImageDecoderDirect2D::encodedDataStatus() const
 {
-    notImplemented();
-    return EncodedDataStatus::Unknown;
+    if (!m_nativeDecoder)
+        return EncodedDataStatus::Error;
+
+    // FIXME: Hook into WIC decoder (if async decode is even possible)
+    return EncodedDataStatus::Complete;
 }
 
 IntSize ImageDecoderDirect2D::size() const
@@ -112,6 +115,10 @@ size_t ImageDecoderDirect2D::frameCount() const
 
 RepetitionCount ImageDecoderDirect2D::repetitionCount() const
 {
+    if (!m_nativeDecoder)
+        return RepetitionCountNone;
+
+    // FIXME: Identify image type, and determine proper repetition count.
     return RepetitionCountNone;
 }
 
@@ -150,24 +157,64 @@ bool ImageDecoderDirect2D::frameIsCompleteAtIndex(size_t index) const
 
 ImageOrientation ImageDecoderDirect2D::frameOrientationAtIndex(size_t index) const
 {
-    notImplemented();
+    if (!m_nativeDecoder)
+        return ImageOrientation();
+
+    COMPtr<IWICBitmapFrameDecode> frame;
+    HRESULT hr = m_nativeDecoder->GetFrame(index, &frame);
+    if (!SUCCEEDED(hr))
+        return ImageOrientation();
+
+    COMPtr<IWICMetadataQueryReader> metadata;
+    hr = frame->GetMetadataQueryReader(&metadata);
+    if (!SUCCEEDED(hr))
+        return ImageOrientation();
+
+    // FIXME: Identify image type, and ask proper orientation.
     return ImageOrientation();
 }
 
-float ImageDecoderDirect2D::frameDurationAtIndex(size_t index) const
+Seconds ImageDecoderDirect2D::frameDurationAtIndex(size_t index) const
 {
+    if (!m_nativeDecoder)
+        return Seconds(0);
+
+    COMPtr<IWICBitmapFrameDecode> frame;
+    HRESULT hr = m_nativeDecoder->GetFrame(index, &frame);
+    if (!SUCCEEDED(hr))
+        return Seconds(0);
+
+    // FIXME: Figure out correct image format-specific query for frame duration check.
     notImplemented();
-    return 0;
+    return Seconds(0);
 }
 
-bool ImageDecoderDirect2D::frameAllowSubsamplingAtIndex(size_t) const
+bool ImageDecoderDirect2D::frameAllowSubsamplingAtIndex(size_t index) const
 {
+    if (!m_nativeDecoder)
+        return false;
+
+    COMPtr<IWICBitmapFrameDecode> frame;
+    HRESULT hr = m_nativeDecoder->GetFrame(index, &frame);
+    if (!SUCCEEDED(hr))
+        return false;
+
+    // FIXME: Figure out correct image format-specific query for subsampling check.
     notImplemented();
     return true;
 }
 
 bool ImageDecoderDirect2D::frameHasAlphaAtIndex(size_t index) const
 {
+    if (!m_nativeDecoder)
+        return false;
+
+    COMPtr<IWICBitmapFrameDecode> frame;
+    HRESULT hr = m_nativeDecoder->GetFrame(index, &frame);
+    if (!SUCCEEDED(hr))
+        return false;
+
+    // FIXME: Figure out correct image format-specific query for alpha check.
     notImplemented();
     return true;
 }
@@ -186,7 +233,7 @@ void ImageDecoderDirect2D::setTargetContext(ID2D1RenderTarget* renderTarget)
     m_renderTarget = renderTarget;
 }
 
-NativeImagePtr ImageDecoderDirect2D::createFrameImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel, const DecodingOptions&) const
+NativeImagePtr ImageDecoderDirect2D::createFrameImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel, const DecodingOptions&)
 {
     if (!m_nativeDecoder || !m_renderTarget)
         return nullptr;
@@ -231,9 +278,13 @@ void ImageDecoderDirect2D::setData(SharedBuffer& data, bool allDataReceived)
     m_nativeDecoder = nullptr;
 
     hr = systemImagingFactory()->CreateDecoderFromStream(stream.get(), nullptr, WICDecodeMetadataCacheOnDemand, &m_nativeDecoder);
-    ASSERT(SUCCEEDED(hr));
-}
+    if (!SUCCEEDED(hr)) {
+        m_nativeDecoder = nullptr;
+        return;
+    }
 
+    // Image was valid.
+}
 }
 
 #endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -147,7 +147,7 @@ void ImageBufferData::putData(const Uint8ClampedArray& source, AlphaPremultiplic
                 row[basex + 2] = (srcRows[basex + 2] * alpha + 254) / 255;
                 row[basex + 3] = alpha;
             } else
-                reinterpret_cast<uint32_t*>(row.get() + basex)[0] = reinterpret_cast<uint32_t*>(srcRows + basex)[0];
+                reinterpret_cast<uint32_t*>(row.get() + basex)[0] = reinterpret_cast<const uint32_t*>(srcRows + basex)[0];
         }
 
         D2D1_RECT_U dstRect = D2D1::RectU(destPoint.x(), destPoint.y() + y, destPoint.x() + size.width(), destPoint.y() + y + 1);

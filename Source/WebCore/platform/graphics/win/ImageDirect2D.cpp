@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2016 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2018 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -81,7 +81,7 @@ void BitmapImage::drawFrameMatchingSourceSize(GraphicsContext& ctxt, const Float
         if (image && clampTo<size_t>(imageSize.height) == static_cast<size_t>(srcSize.height()) && clampTo<size_t>(imageSize.width) == static_cast<size_t>(srcSize.width())) {
             size_t currentFrame = m_currentFrame;
             m_currentFrame = i;
-            draw(ctxt, dstRect, FloatRect(0.0f, 0.0f, srcSize.width(), srcSize.height()), compositeOp, BlendMode::Normal, ImageOrientationDescription());
+            draw(ctxt, dstRect, FloatRect(0.0f, 0.0f, srcSize.width(), srcSize.height()), compositeOp, BlendMode::Normal, DecodingMode::Synchronous, ImageOrientationDescription());
             m_currentFrame = currentFrame;
             return;
         }
@@ -89,7 +89,7 @@ void BitmapImage::drawFrameMatchingSourceSize(GraphicsContext& ctxt, const Float
 
     // No image of the correct size was found, fallback to drawing the current frame
     FloatSize imageSize = BitmapImage::size();
-    draw(ctxt, dstRect, FloatRect(0.0f, 0.0f, imageSize.width(), imageSize.height()), compositeOp, BlendMode::Normal, ImageOrientationDescription());
+    draw(ctxt, dstRect, FloatRect(0.0f, 0.0f, imageSize.width(), imageSize.height()), compositeOp, BlendMode::Normal, DecodingMode::Synchronous, ImageOrientationDescription());
 }
 
 } // namespace WebCore
