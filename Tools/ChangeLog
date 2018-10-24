@@ -1,3 +1,13 @@
+2018-10-24  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK] TestSSL failing because of missing libsoup patch
+        https://bugs.webkit.org/show_bug.cgi?id=190869
+
+        Reviewed by Michael Catanzaro.
+
+        * gtk/jhbuild.modules: Add the patch below to fix the API test TestSSL
+        * gtk/patches/libsoup-soup-socket-fix-critical-warning-when-the-peer-certi.patch: Added.
+
 2018-10-23  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Rename old GPU* implementation files to GPULegacy* for WebMetal

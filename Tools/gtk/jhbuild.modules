@@ -252,6 +252,7 @@
       <patch file="libsoup-auth-Fix-async-authentication-when-flag-SOUP_MESSAGE.patch" strip="1"/>
       <patch file="libsoup-auth-do-not-use-cached-credentials-in-lookup-method-.patch" strip="1"/>
       <patch file="libsoup-soup-message-io-Do-not-fail-when-there-s-no-empty-li.patch" strip="1"/>
+      <patch file="libsoup-soup-socket-fix-critical-warning-when-the-peer-certi.patch" strip="1"/>
     </branch>
   </autotools>
 
