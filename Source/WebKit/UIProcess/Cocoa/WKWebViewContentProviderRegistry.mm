@@ -53,16 +53,16 @@
         return nil;
 
 #if ENABLE(WKPDFVIEW)
-    for (auto& mimeType : WebCore::MIMETypeRegistry::getPDFMIMETypes())
+    for (auto& mimeType : WebCore::MIMETypeRegistry::pdfMIMETypes())
         [self registerProvider:[WKPDFView class] forMIMEType:mimeType];
 #elif ENABLE(WKLEGACYPDFVIEW)
-    for (auto& mimeType : WebCore::MIMETypeRegistry::getPDFMIMETypes())
+    for (auto& mimeType : WebCore::MIMETypeRegistry::pdfMIMETypes())
         [self registerProvider:[WKLegacyPDFView class] forMIMEType:mimeType];
 #endif
 
 #if USE(SYSTEM_PREVIEW)
     if (configuration._systemPreviewEnabled) {
-        for (auto& mimeType : WebCore::MIMETypeRegistry::getSystemPreviewMIMETypes())
+        for (auto& mimeType : WebCore::MIMETypeRegistry::systemPreviewMIMETypes())
             [self registerProvider:[WKSystemPreviewView class] forMIMEType:mimeType];
     }
 #endif

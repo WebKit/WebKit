@@ -1,3 +1,13 @@
+2018-10-24  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Cleanup: MIMETypeRegistry functions
+        https://bugs.webkit.org/show_bug.cgi?id=190838
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/Cocoa/WKWebViewContentProviderRegistry.mm:
+        (-[WKWebViewContentProviderRegistry initWithConfiguration:]):
+
 2018-10-24  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r237257): [iOS] Crashes in com.apple.WebKit: WebKit::RemoteScrollingCoordinator::scheduleTreeStateCommit

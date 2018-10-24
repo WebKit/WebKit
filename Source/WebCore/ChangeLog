@@ -1,3 +1,70 @@
+2018-10-24  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Cleanup: MIMETypeRegistry functions
+        https://bugs.webkit.org/show_bug.cgi?id=190838
+
+        Reviewed by Simon Fraser.
+
+        Modernize the initialization of the lists in MIMETypeRegistry. Make the
+        functions that return these list be self-contained. Use NeverDestroy<> to
+        allocate the local static variable. Use std::initializer_list() and
+        makeNeverDestroyed() to initialize NeverDestroy<> variables only once.
+
+        supportedImageResourceMIMETypes will be deleted and all the calls to it 
+        will be replaced by supportedImageMIMETypes because they are identical.
+
+        * loader/archive/ArchiveFactory.cpp:
+        (WebCore::ArchiveFactory::registerKnownArchiveMIMETypes): This function
+        is called while initializing the supportedNonImageMIMETypes(). So it
+        should not have a direct call to it. Instead, supportedNonImageMIMETypes
+        is passed to it.
+        * loader/archive/ArchiveFactory.h:
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::MIMETypeRegistry::supportedImageMIMETypes):
+        (WebCore::supportedImageMIMETypesForEncoding):
+        (WebCore::supportedJavaScriptMIMETypes):
+        (WebCore::MIMETypeRegistry::supportedNonImageMIMETypes):
+        (WebCore::MIMETypeRegistry::supportedMediaMIMETypes):
+        (WebCore::pdfMIMETypes):
+        (WebCore::MIMETypeRegistry::unsupportedTextMIMETypes):
+        (WebCore::MIMETypeRegistry::isSupportedImageMIMEType):
+        (WebCore::MIMETypeRegistry::isSupportedImageMIMETypeForEncoding):
+        (WebCore::MIMETypeRegistry::isSupportedJavaScriptMIMEType):
+        (WebCore::MIMETypeRegistry::isSupportedNonImageMIMEType):
+        (WebCore::MIMETypeRegistry::isSupportedMediaMIMEType):
+        (WebCore::MIMETypeRegistry::isUnsupportedTextMIMEType):
+        (WebCore::MIMETypeRegistry::isPDFMIMEType):
+        (WebCore::MIMETypeRegistry::systemPreviewMIMETypes):
+        (WebCore::MIMETypeRegistry::isSystemPreviewMIMEType):
+        (WebCore::initializeSupportedImageMIMETypes): Deleted.
+        (WebCore::initializeSupportedImageMIMETypesForEncoding): Deleted.
+        (WebCore::initializeSupportedJavaScriptMIMETypes): Deleted.
+        (WebCore::initializePDFMIMETypes): Deleted.
+        (WebCore::initializeSupportedNonImageMimeTypes): Deleted.
+        (WebCore::initializeSupportedMediaMIMETypes): Deleted.
+        (WebCore::initializeUnsupportedTextMIMETypes): Deleted.
+        (WebCore::MIMETypeRegistry::isSupportedImageResourceMIMEType): Deleted.
+        (WebCore::MIMETypeRegistry::getSupportedImageMIMETypes): Deleted.
+        (WebCore::MIMETypeRegistry::getSupportedImageResourceMIMETypes): Deleted.
+        (WebCore::MIMETypeRegistry::getSupportedNonImageMIMETypes): Deleted.
+        (WebCore::MIMETypeRegistry::getSupportedMediaMIMETypes): Deleted.
+        (WebCore::MIMETypeRegistry::getPDFMIMETypes): Deleted.
+        (WebCore::MIMETypeRegistry::getUnsupportedTextMIMETypes): Deleted.
+        (WebCore::MIMETypeRegistry::getSystemPreviewMIMETypes): Deleted.
+        * platform/MIMETypeRegistry.h:
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::supportsType):
+        * platform/graphics/cg/ImageDecoderCG.cpp:
+        (WebCore::ImageDecoderCG::encodedDataStatus const):
+        * platform/graphics/cg/UTIRegistry.cpp:
+        (WebCore::supportedDefaultImageSourceTypes):
+        (WebCore::isSupportImageSourceType):
+        (WebCore::allowedImageUTIs): Deleted.
+        (WebCore::isAllowedImageUTI): Deleted.
+        * platform/graphics/cg/UTIRegistry.h:
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::write):
+
 2018-10-24  Chris Dumez  <cdumez@apple.com>
 
         [PSON] When navigating back and forth, 'about:blank' shows up in the back/forward list

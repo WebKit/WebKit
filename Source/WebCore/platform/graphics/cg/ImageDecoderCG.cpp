@@ -199,7 +199,7 @@ EncodedDataStatus ImageDecoderCG::encodedDataStatus() const
         return EncodedDataStatus::Error;
 
     case kCGImageStatusIncomplete: {
-        if (!isAllowedImageUTI(uti))
+        if (!isSupportImageSourceType(uti))
             return EncodedDataStatus::Error;
 
         RetainPtr<CFDictionaryRef> image0Properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_nativeDecoder.get(), 0, imageSourceOptions().get()));
@@ -213,7 +213,7 @@ EncodedDataStatus ImageDecoderCG::encodedDataStatus() const
     }
 
     case kCGImageStatusComplete:
-        if (!isAllowedImageUTI(uti))
+        if (!isSupportImageSourceType(uti))
             return EncodedDataStatus::Error;
 
         return EncodedDataStatus::Complete;

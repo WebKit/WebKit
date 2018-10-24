@@ -3420,7 +3420,7 @@ IGNORE_WARNINGS_END
     // FIXME: We also need to maintain MIMEType registrations (which can be dynamically changed)
     // in the WebCore MIMEType registry.  For now we're doing this in a safe, limited manner
     // to fix <rdar://problem/5372989> - a future revamping of the entire system is neccesary for future robustness
-    MIMETypeRegistry::getSupportedNonImageMIMETypes().remove(MIMEType);
+    MIMETypeRegistry::supportedNonImageMIMETypes().remove(MIMEType);
 }
 
 + (void)_registerViewClass:(Class)viewClass representationClass:(Class)representationClass forURLScheme:(NSString *)URLScheme
@@ -3432,7 +3432,7 @@ IGNORE_WARNINGS_END
     // in the WebCore MIMEType registry.  For now we're doing this in a safe, limited manner
     // to fix <rdar://problem/5372989> - a future revamping of the entire system is neccesary for future robustness
     if ([viewClass class] == [WebHTMLView class])
-        MIMETypeRegistry::getSupportedNonImageMIMETypes().add(MIMEType);
+        MIMETypeRegistry::supportedNonImageMIMETypes().add(MIMEType);
     
     // This is used to make _representationExistsForURLScheme faster.
     // Without this set, we'd have to create the MIME type each time.
@@ -6997,7 +6997,7 @@ static WebFrame *incrementFrame(WebFrame *frame, WebFindOptions options = 0)
     // in the WebCore MIMEType registry.  For now we're doing this in a safe, limited manner
     // to fix <rdar://problem/5372989> - a future revamping of the entire system is neccesary for future robustness
     if ([viewClass class] == [WebHTMLView class])
-        MIMETypeRegistry::getSupportedNonImageMIMETypes().add(MIMEType);
+        MIMETypeRegistry::supportedNonImageMIMETypes().add(MIMEType);
 }
 
 - (void)setGroupName:(NSString *)groupName

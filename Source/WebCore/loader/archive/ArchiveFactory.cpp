@@ -95,9 +95,8 @@ RefPtr<Archive> ArchiveFactory::create(const URL& url, SharedBuffer* data, const
     return function(url, *data);
 }
 
-void ArchiveFactory::registerKnownArchiveMIMETypes()
+void ArchiveFactory::registerKnownArchiveMIMETypes(HashSet<String, ASCIICaseInsensitiveHash>& mimeTypes)
 {
-    auto& mimeTypes = MIMETypeRegistry::getSupportedNonImageMIMETypes();
     for (auto& mimeType : archiveMIMETypes().keys())
         mimeTypes.add(mimeType);
 }

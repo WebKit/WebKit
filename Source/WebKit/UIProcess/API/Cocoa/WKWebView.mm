@@ -5682,7 +5682,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
 - (BOOL)_isDisplayingPDF
 {
-    for (auto& mimeType : WebCore::MIMETypeRegistry::getPDFMIMETypes()) {
+    for (auto& mimeType : WebCore::MIMETypeRegistry::pdfMIMETypes()) {
         Class providerClass = [[_configuration _contentProviderRegistry] providerForMIMEType:mimeType];
         if ([_customContentView isKindOfClass:providerClass])
             return YES;

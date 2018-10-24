@@ -40,7 +40,7 @@ class ArchiveFactory {
 public:
     static bool isArchiveMIMEType(const String&);
     static RefPtr<Archive> create(const URL&, SharedBuffer* data, const String& mimeType);
-    static void registerKnownArchiveMIMETypes();
+    static void registerKnownArchiveMIMETypes(HashSet<String, ASCIICaseInsensitiveHash>&);
 };
 
 } // namespace WebCore

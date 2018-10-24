@@ -50,10 +50,6 @@ public:
     // Check to see if a MIME type is suitable for being loaded as an image, including SVG and Video (where supported).
     WEBCORE_EXPORT static bool isSupportedImageVideoOrSVGMIMEType(const String& mimeType);
 
-    // Check to see if a MIME type is suitable for being loaded as an image
-    // document in a frame.
-    WEBCORE_EXPORT static bool isSupportedImageResourceMIMEType(const String& mimeType);
-
     // Check to see if a MIME type is suitable for being encoded.
     static bool isSupportedImageMIMETypeForEncoding(const String& mimeType);
 
@@ -108,18 +104,15 @@ public:
     // makes this test is after many other tests are done on the MIME type.
     WEBCORE_EXPORT static bool isTextMIMEType(const String& mimeType);
 
-    // FIXME: WebKit coding style says we should not have the word "get" in the names of these functions.
     // FIXME: Would be nice to find a way to avoid exposing these sets, even worse exposing non-const references.
-    WEBCORE_EXPORT static HashSet<String, ASCIICaseInsensitiveHash>& getSupportedNonImageMIMETypes();
-
-    WEBCORE_EXPORT const static HashSet<String, ASCIICaseInsensitiveHash>& getSupportedImageMIMETypes();
-    const static HashSet<String, ASCIICaseInsensitiveHash>& getSupportedImageResourceMIMETypes();
-    WEBCORE_EXPORT const static HashSet<String, ASCIICaseInsensitiveHash>& getSupportedMediaMIMETypes();
-    WEBCORE_EXPORT const static HashSet<String, ASCIICaseInsensitiveHash>& getPDFMIMETypes();
-    WEBCORE_EXPORT const static HashSet<String, ASCIICaseInsensitiveHash>& getUnsupportedTextMIMETypes();
+    WEBCORE_EXPORT static const HashSet<String, ASCIICaseInsensitiveHash>& supportedImageMIMETypes();
+    WEBCORE_EXPORT static HashSet<String, ASCIICaseInsensitiveHash>& supportedNonImageMIMETypes();
+    WEBCORE_EXPORT static const HashSet<String, ASCIICaseInsensitiveHash>& supportedMediaMIMETypes();
+    WEBCORE_EXPORT static const HashSet<String, ASCIICaseInsensitiveHash>& pdfMIMETypes();
+    WEBCORE_EXPORT static const HashSet<String, ASCIICaseInsensitiveHash>& unsupportedTextMIMETypes();
 
 #if USE(SYSTEM_PREVIEW)
-    WEBCORE_EXPORT const static HashSet<String, ASCIICaseInsensitiveHash>& getSystemPreviewMIMETypes();
+    WEBCORE_EXPORT const static HashSet<String, ASCIICaseInsensitiveHash>& systemPreviewMIMETypes();
 #endif
 
     // FIXME: WebKit coding style says we should not have the word "get" in the name of this function.

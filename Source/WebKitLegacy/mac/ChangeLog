@@ -1,3 +1,25 @@
+2018-10-24  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Cleanup: MIMETypeRegistry functions
+        https://bugs.webkit.org/show_bug.cgi?id=190838
+
+        Reviewed by Simon Fraser.
+
+        * Misc/WebNSPasteboardExtras.mm:
+        (-[NSPasteboard _web_writePromisedRTFDFromArchive:containsImage:]):
+        Replace isSupportedImageResourceMIMEType() by isSupportedImageMIMEType()
+        because they were identical.
+
+        * WebView/WebHTMLRepresentation.mm:
+        (+[WebHTMLRepresentation supportedMediaMIMETypes]):
+        (+[WebHTMLRepresentation supportedNonImageMIMETypes]):
+        (+[WebHTMLRepresentation supportedImageMIMETypes]):
+        (+[WebHTMLRepresentation unsupportedTextMIMETypes]):
+        * WebView/WebView.mm:
+        (+[WebView _unregisterViewClassAndRepresentationClassForMIMEType:]):
+        (+[WebView _registerViewClass:representationClass:forURLScheme:]):
+        (+[WebView registerViewClass:representationClass:forMIMEType:]):
+
 2018-10-23  David Kilzer  <ddkilzer@apple.com>
 
         Fix false positive leaks when using custom -init methods that don't start with -init

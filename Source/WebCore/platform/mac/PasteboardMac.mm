@@ -255,7 +255,7 @@ void Pasteboard::write(const PasteboardImage& pasteboardImage)
         return;
 
     // FIXME: Why can we assert this? It doesn't seem like it's guaranteed.
-    ASSERT(MIMETypeRegistry::isSupportedImageResourceMIMEType(pasteboardImage.resourceMIMEType));
+    ASSERT(MIMETypeRegistry::isSupportedImageMIMEType(pasteboardImage.resourceMIMEType));
 
     auto types = writableTypesForImage();
     if (pasteboardImage.dataInWebArchiveFormat)

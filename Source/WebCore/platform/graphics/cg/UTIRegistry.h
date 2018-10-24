@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-HashSet<String>& allowedImageUTIs();
-bool isAllowedImageUTI(const String&);
+const HashSet<String>& supportedDefaultImageSourceTypes();
+bool isSupportImageSourceType(const String&);
 
 }

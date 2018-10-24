@@ -38,10 +38,10 @@
 
 namespace WebCore {
 
-HashSet<String>& allowedImageUTIs()
+const HashSet<String>& supportedDefaultImageSourceTypes()
 {
     // CG at least supports the following standard image types:
-    static NeverDestroyed<HashSet<String>> s_allowedImageUTIs = std::initializer_list<String> {
+    static NeverDestroyed<HashSet<String>> supportedDefaultImageSourceTypes = std::initializer_list<String> {
         "com.compuserve.gif",
         "com.microsoft.bmp",
         "com.microsoft.cur",
@@ -54,25 +54,24 @@ HashSet<String>& allowedImageUTIs()
     };
 
 #ifndef NDEBUG
-    // But make sure that all of them are really supported.
-    static bool checked = false;
-    if (!checked) {
-        RetainPtr<CFArrayRef> systemImageUTIs = adoptCF(CGImageSourceCopyTypeIdentifiers());
-        CFIndex count = CFArrayGetCount(systemImageUTIs.get());
-        for (auto& imageUTI : s_allowedImageUTIs.get()) {
-            RetainPtr<CFStringRef> string = imageUTI.createCFString();
-            ASSERT(CFArrayContainsValue(systemImageUTIs.get(), CFRangeMake(0, count), string.get()));
+    // Make sure that CG supports them.
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        RetainPtr<CFArrayRef> systemImageSourceTypes = adoptCF(CGImageSourceCopyTypeIdentifiers());
+        CFIndex count = CFArrayGetCount(systemImageSourceTypes.get());
+        for (auto& imageSourceType : supportedDefaultImageSourceTypes.get()) {
+            RetainPtr<CFStringRef> string = imageSourceType.createCFString();
+            ASSERT(CFArrayContainsValue(systemImageSourceTypes.get(), CFRangeMake(0, count), string.get()));
         }
-        checked = true;
-    }
+    });
 #endif
 
-    return s_allowedImageUTIs.get();
+    return supportedDefaultImageSourceTypes;
 }
 
-bool isAllowedImageUTI(const String& imageUTI)
+bool isSupportImageSourceType(const String& imageSourceType)
 {
-    return !imageUTI.isEmpty() && allowedImageUTIs().contains(imageUTI);
+    return !imageSourceType.isEmpty() && supportedDefaultImageSourceTypes().contains(imageSourceType);
 }
 
 }

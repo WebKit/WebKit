@@ -82,7 +82,7 @@ RefPtr<Image> Image::create(ImageObserver& observer)
 
 bool Image::supportsType(const String& type)
 {
-    return MIMETypeRegistry::isSupportedImageResourceMIMEType(type);
+    return MIMETypeRegistry::isSupportedImageMIMEType(type);
 } 
 
 bool Image::isPDFResource(const String& mimeType, const URL& url)

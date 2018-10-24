@@ -104,25 +104,25 @@ static RetainPtr<NSArray> newArrayWithStrings(const HashSet<String, ASCIICaseIns
 
 + (NSArray *)supportedMediaMIMETypes
 {
-    static NSArray *staticSupportedMediaMIMETypes = newArrayWithStrings(MIMETypeRegistry::getSupportedMediaMIMETypes()).leakRef();
+    static NSArray *staticSupportedMediaMIMETypes = newArrayWithStrings(MIMETypeRegistry::supportedMediaMIMETypes()).leakRef();
     return staticSupportedMediaMIMETypes;
 }
 
 + (NSArray *)supportedNonImageMIMETypes
 {
-    static NSArray *staticSupportedNonImageMIMETypes = newArrayWithStrings(MIMETypeRegistry::getSupportedNonImageMIMETypes()).leakRef();
+    static NSArray *staticSupportedNonImageMIMETypes = newArrayWithStrings(MIMETypeRegistry::supportedNonImageMIMETypes()).leakRef();
     return staticSupportedNonImageMIMETypes;
 }
 
 + (NSArray *)supportedImageMIMETypes
 {
-    static NSArray *staticSupportedImageMIMETypes = newArrayWithStrings(MIMETypeRegistry::getSupportedImageMIMETypes()).leakRef();
+    static NSArray *staticSupportedImageMIMETypes = newArrayWithStrings(MIMETypeRegistry::supportedImageMIMETypes()).leakRef();
     return staticSupportedImageMIMETypes;
 }
 
 + (NSArray *)unsupportedTextMIMETypes
 {
-    static NSArray *staticUnsupportedTextMIMETypes = newArrayWithStrings(MIMETypeRegistry::getUnsupportedTextMIMETypes()).leakRef();
+    static NSArray *staticUnsupportedTextMIMETypes = newArrayWithStrings(MIMETypeRegistry::unsupportedTextMIMETypes()).leakRef();
     return staticUnsupportedTextMIMETypes;
 }
 

@@ -214,13 +214,13 @@ static NSArray *_writableTypesForImageWithArchive (void)
     if (containsImage && [subresources count] > 0) {
         WebResource *subresource = [subresources objectAtIndex:0];
         NSString *subresourceMIMEType = [subresource MIMEType];
-        if (MIMETypeRegistry::isSupportedImageResourceMIMEType(subresourceMIMEType) || MIMETypeRegistry::isPDFOrPostScriptMIMEType(subresourceMIMEType))
+        if (MIMETypeRegistry::isSupportedImageMIMEType(subresourceMIMEType) || MIMETypeRegistry::isPDFOrPostScriptMIMEType(subresourceMIMEType))
             resource = subresource;
     }
     ASSERT(resource != nil);
     
-    ASSERT(!containsImage || MIMETypeRegistry::isSupportedImageResourceMIMEType([resource MIMEType]) || MIMETypeRegistry::isPDFOrPostScriptMIMEType([resource MIMEType]));
-    if (!containsImage || MIMETypeRegistry::isSupportedImageResourceMIMEType([resource MIMEType]) || MIMETypeRegistry::isPDFOrPostScriptMIMEType([resource MIMEType]))
+    ASSERT(!containsImage || MIMETypeRegistry::isSupportedImageMIMEType([resource MIMEType]) || MIMETypeRegistry::isPDFOrPostScriptMIMEType([resource MIMEType]));
+    if (!containsImage || MIMETypeRegistry::isSupportedImageMIMEType([resource MIMEType]) || MIMETypeRegistry::isPDFOrPostScriptMIMEType([resource MIMEType]))
         [self _web_writeFileWrapperAsRTFDAttachment:[resource _fileWrapperRepresentation]];
     
 }
