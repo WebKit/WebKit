@@ -61,7 +61,8 @@ RemoteScrollingCoordinator::~RemoteScrollingCoordinator()
 
 void RemoteScrollingCoordinator::scheduleTreeStateCommit()
 {
-    m_webPage->drawingArea()->scheduleCompositingLayerFlush();
+    if (auto* drawingArea = m_webPage->drawingArea())
+        drawingArea->scheduleCompositingLayerFlush();
 }
 
 bool RemoteScrollingCoordinator::coordinatesScrollingForFrameView(const FrameView& frameView) const

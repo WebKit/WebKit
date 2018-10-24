@@ -1,3 +1,16 @@
+2018-10-24  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r237257): [iOS] Crashes in com.apple.WebKit: WebKit::RemoteScrollingCoordinator::scheduleTreeStateCommit
+        https://bugs.webkit.org/show_bug.cgi?id=190804
+
+        Reviewed by Alex Christensen.
+
+        Fix null-dereference of the drawing area in RemoteScrollingCoordinator::scheduleTreeStateCommit.
+        With process-swap-on-navigation enabled, suspended pages' drawing area gets torn down.
+
+        * WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.mm:
+        (WebKit::RemoteScrollingCoordinator::scheduleTreeStateCommit):
+
 2018-10-24  Claudio Saavedra  <csaavedra@igalia.com>
 
         [WPE][GTK] Cleanups to the certificate decoder
