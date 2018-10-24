@@ -1875,19 +1875,19 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
                 mode: "text/javascript",
                 readOnly: "nocursor",
             });
-            codeMirror.on("update", () => {
-                this._popover.update();
-            });
 
             const isModule = false;
             const indentString = WI.indentString();
             const includeSourceMapData = false;
             let workerProxy = WI.FormatterWorkerProxy.singleton();
             workerProxy.formatJavaScript(data.description, isModule, indentString, includeSourceMapData, ({formattedText}) => {
-                codeMirror.setValue(formattedText || data.description);
-            });
+                if (candidate !== this.tokenTrackingController.candidate)
+                    return;
 
-            this._showPopover(content);
+                this._showPopover(content);
+                codeMirror.setValue(formattedText || data.description);
+                this._popover.update();
+            });
         }
 
         data.target.DebuggerAgent.getFunctionDetails(data.objectId, didGetDetails.bind(this));

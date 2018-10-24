@@ -1,5 +1,31 @@
 2018-10-24  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: popovers for function source code are malformed
+        https://bugs.webkit.org/show_bug.cgi?id=190859
+
+        Reviewed by Joseph Pecoraro.
+
+        Previously, the `WI.Popover` would be drawn twice: once when the
+        `WI.CodeMirrorTokenTrackingController` determines that the user has hovered on a function
+        token, and once again when the source for that function is formatted (after being retrieved).
+        In the case that the formatter is able to return the prettified source within a frame (or
+        two), the `WI.Popover` is still in the middle of animating to its new size, meaning that the
+        changes made by the formatted `update` will be overridden on the next rAF (creates a flash).
+
+        * UserInterface/Views/Popover.js:
+        (WI.Popover.prototype):
+        (WI.Popover.prototype._animateFrame.drawBackground):
+        (WI.Popover.prototype._drawBackground):
+        Add a member variable to make sure that there is only ever one rAF firing at a time.
+        Drive-by: rework the background code to only use one canvas.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WI.SourceCodeTextEditor.prototype._showPopoverForFunction.didGetDetails):
+        Don't show the `WI.Popover` until the formatter has finished prettifying the function's
+        source code, as otherwise there is brief moment that the popover appears and is empty.
+
+2018-10-24  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: REGRESSION (r237232): changing resources via up/down blurs the TreeOutline in Resources
         https://bugs.webkit.org/show_bug.cgi?id=190862
 
