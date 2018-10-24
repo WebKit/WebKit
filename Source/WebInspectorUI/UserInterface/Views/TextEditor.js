@@ -234,8 +234,10 @@ WI.TextEditor = class TextEditor extends WI.View
 
     set selectedTextRange(textRange)
     {
+        if (document.activeElement === document.body)
+            this.focus();
+
         var position = this._codeMirrorPositionFromTextRange(textRange);
-        this.focus();
         this._codeMirror.setSelection(position.start, position.end);
     }
 
