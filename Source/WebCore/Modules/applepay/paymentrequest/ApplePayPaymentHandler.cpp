@@ -363,14 +363,15 @@ Vector<PaymentError> ApplePayPaymentHandler::computeErrors(String&& error, Addre
 #if ENABLE(APPLE_PAY_SESSION_V3)
     if (paymentMethodErrors) {
         auto& context = *scriptExecutionContext();
-        auto throwScope = DECLARE_THROW_SCOPE(context.vm());
+        auto catchScope = DECLARE_CATCH_SCOPE(context.vm());
         auto applePayErrors = convert<IDLSequence<IDLInterface<ApplePayError>>>(*context.execState(), paymentMethodErrors);
-        if (!throwScope.exception()) {
+        if (!catchScope.exception()) {
             for (auto& applePayError : applePayErrors) {
                 if (applePayError)
                     errors.append({ applePayError->code(), applePayError->message(), applePayError->contactField() });
             }
-        }
+        } else
+            catchScope.clearException();
     }
 #else
     UNUSED_PARAM(paymentMethodErrors);

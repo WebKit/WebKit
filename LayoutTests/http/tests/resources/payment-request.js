@@ -68,7 +68,7 @@ function updateDetailsOnShippingAddressChange(paymentDetailsInit, paymentOptions
                 event.updateWith(detailsUpdatePromise);
                 detailsUpdatePromise.then(() => {
                     resolve();
-                    request.abort();
+                    request.abort().catch(() => { });
                 });
             };
             request.show().catch(error => error);
