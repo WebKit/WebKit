@@ -524,9 +524,6 @@ shouldConvertInvalidURLsToBlank:
 springTimingFunctionEnabled:
   initial: false
 
-conicGradientsEnabled:
-  initial: defaultConicGradient
-
 colorFilterEnabled:
   initial: false
   onChange: setNeedsRecalcStyleInAllFrames

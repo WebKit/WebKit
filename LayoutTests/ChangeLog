@@ -1,3 +1,14 @@
+2018-10-24  Megan Gardner  <megan_gardner@apple.com>
+
+        Turn on Conic Gradients
+        https://bugs.webkit.org/show_bug.cgi?id=190810
+
+        Reviewed by Tim Horton.
+
+        No longer necessary to manually turn on conic gradients for testing.
+
+        * http/wpt/css/css-images-4/conic-gradient-parsing.html:
+
 2018-10-11  Jiewen Tan  <jiewen_tan@apple.com>
 
         Only report resource timing to parent frame for the first iframe load

@@ -3169,6 +3169,7 @@ system-preview [ Pass ]
 editing/selection/character-granularity-rect.html [ Pass ]
 
 # < iOS12 doesn't support the CG needed for Conic Gradients
+http/wpt/css/css-images-4/conic-gradient-parsing.html [ Pass ]
 fast/gradients/conic-repeating.html [ Pass ]
 fast/gradients/conic.html [ Pass ]
 fast/gradients/conic-off-center.html [ Pass ]

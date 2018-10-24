@@ -54,7 +54,6 @@ public:
     bool useLegacyBackgroundSizeShorthandBehavior { false };
     bool springTimingFunctionEnabled { false };
     bool constantPropertiesEnabled { false };
-    bool conicGradientsEnabled { false };
     bool colorFilterEnabled { false };
     bool deferredCSSParserEnabled { false };
     
@@ -95,12 +94,11 @@ struct CSSParserContextHash {
             & key.useLegacyBackgroundSizeShorthandBehavior  << 4
             & key.springTimingFunctionEnabled               << 5
             & key.constantPropertiesEnabled                 << 6
-            & key.conicGradientsEnabled                     << 7
-            & key.colorFilterEnabled                        << 8
-            & key.deferredCSSParserEnabled                  << 9
-            & key.hasDocumentSecurityOrigin                 << 10
-            & key.useSystemAppearance                       << 11
-            & key.mode                                      << 12; // Keep this last.
+            & key.colorFilterEnabled                        << 7
+            & key.deferredCSSParserEnabled                  << 8
+            & key.hasDocumentSecurityOrigin                 << 9
+            & key.useSystemAppearance                       << 10
+            & key.mode                                      << 11; // Keep this last.
         hash ^= WTF::intHash(bits);
         return hash;
     }

@@ -1,3 +1,12 @@
+2018-10-24  Megan Gardner  <megan_gardner@apple.com>
+
+        Turn on Conic Gradients
+        https://bugs.webkit.org/show_bug.cgi?id=190810
+
+        Reviewed by Tim Horton.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2018-10-24  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Cleanup: MIMETypeRegistry functions

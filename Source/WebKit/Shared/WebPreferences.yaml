@@ -1180,13 +1180,6 @@ SpringTimingFunctionEnabled:
   humanReadableDescription: "CSS Spring Animation prototype"
   category: experimental
 
-ConicGradientsEnabled:
-  type: bool
-  defaultValue: DEFAULT_CONIC_GRADIENT_ENABLED
-  humanReadableName: "CSS Conic Gradient"
-  humanReadableDescription: "Support for CSS Conic Gradients"
-  category: experimental
-
 ImageBitmapOffscreenCanvasEnabled:
   type: bool
   defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED

@@ -400,6 +400,10 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 #define ENABLE_CSS_IMAGE_RESOLUTION 0
 #endif
 
+#if !defined(ENABLE_CSS_CONIC_GRADIENTS)
+#define ENABLE_CSS_CONIC_GRADIENTS 0
+#endif
+
 #if !defined(ENABLE_CURSOR_SUPPORT)
 #define ENABLE_CURSOR_SUPPORT 1
 #endif

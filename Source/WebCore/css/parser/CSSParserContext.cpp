@@ -67,7 +67,6 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
 #endif
     springTimingFunctionEnabled = document.settings().springTimingFunctionEnabled();
     constantPropertiesEnabled = document.settings().constantPropertiesEnabled();
-    conicGradientsEnabled = document.settings().conicGradientsEnabled();
     colorFilterEnabled = document.settings().colorFilterEnabled();
     deferredCSSParserEnabled = document.settings().deferredCSSParserEnabled();
     useSystemAppearance = document.page() ? document.page()->useSystemAppearance() : false;
@@ -94,7 +93,6 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.useLegacyBackgroundSizeShorthandBehavior == b.useLegacyBackgroundSizeShorthandBehavior
         && a.springTimingFunctionEnabled == b.springTimingFunctionEnabled
         && a.constantPropertiesEnabled == b.constantPropertiesEnabled
-        && a.conicGradientsEnabled == b.conicGradientsEnabled
         && a.colorFilterEnabled == b.colorFilterEnabled
         && a.deferredCSSParserEnabled == b.deferredCSSParserEnabled
         && a.hasDocumentSecurityOrigin == b.hasDocumentSecurityOrigin

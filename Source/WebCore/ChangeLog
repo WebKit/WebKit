@@ -1,3 +1,22 @@
+2018-10-24  Megan Gardner  <megan_gardner@apple.com>
+
+        Turn on Conic Gradients
+        https://bugs.webkit.org/show_bug.cgi?id=190810
+
+        Reviewed by Tim Horton.
+
+        Added tests previously, only switching feature from experimental to always avaiable.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * css/parser/CSSParserContext.cpp:
+        (WebCore::CSSParserContext::CSSParserContext):
+        (WebCore::operator==):
+        * css/parser/CSSParserContext.h:
+        (WebCore::CSSParserContextHash::hash):
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::consumeConicGradient):
+        * page/Settings.yaml:
+
 2018-10-11  Jiewen Tan  <jiewen_tan@apple.com>
 
         Only report resource timing to parent frame for the first iframe load

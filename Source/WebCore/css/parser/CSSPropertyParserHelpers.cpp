@@ -1178,9 +1178,7 @@ static RefPtr<CSSValue> consumeLinearGradient(CSSParserTokenRange& args, CSSPars
 
 static RefPtr<CSSValue> consumeConicGradient(CSSParserTokenRange& args, CSSParserContext context, CSSGradientRepeat repeating)
 {
-    if (!context.conicGradientsEnabled)
-        return nullptr;
-
+#if ENABLE(CSS_CONIC_GRADIENTS)
     RefPtr<CSSConicGradientValue> result = CSSConicGradientValue::create(repeating);
 
     bool expectComma = false;
@@ -1216,6 +1214,12 @@ static RefPtr<CSSValue> consumeConicGradient(CSSParserTokenRange& args, CSSParse
     if (!consumeGradientColorStops(args, context.mode, *result))
         return nullptr;
     return result;
+#else
+    UNUSED_PARAM(args);
+    UNUSED_PARAM(context);
+    UNUSED_PARAM(repeating);
+    return nullptr;
+#endif
 }
 
 RefPtr<CSSValue> consumeImageOrNone(CSSParserTokenRange& range, CSSParserContext context)
