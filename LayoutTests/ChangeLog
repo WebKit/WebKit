@@ -1,3 +1,20 @@
+2018-10-11  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Only report resource timing to parent frame for the first iframe load
+        https://bugs.webkit.org/show_bug.cgi?id=190498
+        <rdar://problem/44347398>
+
+        Reviewed by Youenn Fablet.
+
+        The layout test is from Chromium change:
+        https://chromium-review.googlesource.com/c/chromium/src/+/1186215.
+
+        * http/tests/misc/resource-timing-navigation-in-restored-iframe-expected.txt: Added.
+        * http/tests/misc/resource-timing-navigation-in-restored-iframe.html: Added.
+        * http/tests/misc/resources/alert-then-back.html: Added.
+        * http/tests/misc/resources/navigate-on-message.html: Added.
+        * http/tests/misc/resources/post-message-to-parent.html: Added.
+
 2018-10-24  Ryan Haddad  <ryanhaddad@apple.com>
 
         [macOS] Layout Test legacy-animation-engine/animations/suspend-resume-animation.html is a flaky failure

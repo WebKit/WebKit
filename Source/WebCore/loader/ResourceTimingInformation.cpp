@@ -70,10 +70,8 @@ void ResourceTimingInformation::addResourceTiming(CachedResource& resource, Docu
         return;
 
     Document* initiatorDocument = &document;
-    if (resource.type() == CachedResource::Type::MainResource && document.frame() && document.frame()->loader().shouldReportResourceTimingToParentFrame()) {
-        document.frame()->loader().setShouldReportResourceTimingToParentFrame(false);
+    if (resource.type() == CachedResource::Type::MainResource && document.frame() && document.frame()->loader().shouldReportResourceTimingToParentFrame())
         initiatorDocument = document.parentDocument();
-    }
     if (!initiatorDocument)
         return;
 

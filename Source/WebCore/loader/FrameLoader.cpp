@@ -119,6 +119,7 @@
 #include "SubframeLoader.h"
 #include "SubresourceLoader.h"
 #include "TextResourceDecoder.h"
+#include "URL.h"
 #include "UserContentController.h"
 #include "UserGestureIndicator.h"
 #include "WindowFeatures.h"
@@ -1553,6 +1554,11 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
         m_previousURL = m_frame.document()->url();
 
     const URL& newURL = loader->request().url();
+
+    // Only the first iframe navigation or the first iframe navigation after about:blank should be reported.
+    // https://www.w3.org/TR/resource-timing-2/#resources-included-in-the-performanceresourcetiming-interface
+    if (m_shouldReportResourceTimingToParentFrame && !m_previousURL.isNull() && m_previousURL != blankURL())
+        m_shouldReportResourceTimingToParentFrame = false;
 
     // Log main frame navigation types.
     if (m_frame.isMainFrame()) {
