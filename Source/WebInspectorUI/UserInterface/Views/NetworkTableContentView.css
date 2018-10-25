@@ -206,6 +206,37 @@ body[dir=rtl] .network-table .cell.name > .status {
     top: 8px;
     min-width: 2px;
     height: 4px;
+
+    --start-radius: 2px;
+    --end-radius: 2px;
+}
+
+body[dir=ltr] .waterfall .block {
+    border-top-left-radius: var(--start-radius);
+    border-top-right-radius: var(--end-radius);
+    border-bottom-left-radius: var(--start-radius);
+    border-bottom-right-radius: var(--end-radius);
+}
+
+body[dir=rtl] .waterfall .block {
+    border-top-left-radius: var(--end-radius);
+    border-top-right-radius: var(--start-radius);
+    border-bottom-left-radius: var(--end-radius);
+    border-bottom-right-radius: var(--start-radius);
+}
+
+.network-table .waterfall .block + .block {
+    --start-radius: 0;
+    --end-radius: 0;
+}
+
+.network-table .waterfall .block.filler + .block,
+.network-table .waterfall .block:not(.request, .response) + :matches(.request, .response) {
+    --start-radius: 2px;
+}
+
+.network-table .waterfall .block:last-child {
+    --end-radius: 2px;
 }
 
 .waterfall .block.request,
