@@ -42,7 +42,8 @@ CanvasBase::CanvasBase(ScriptExecutionContext* scriptExecutionContext)
 CanvasBase::~CanvasBase()
 {
     ASSERT(!m_context); // Should have been set to null by base class.
-    notifyObserversCanvasDestroyed();
+    ASSERT(m_didNotifyObserversCanvasDestroyed);
+    ASSERT(m_observers.isEmpty());
 }
 
 CanvasRenderingContext* CanvasBase::renderingContext() const
@@ -80,10 +81,16 @@ void CanvasBase::notifyObserversCanvasResized()
 
 void CanvasBase::notifyObserversCanvasDestroyed()
 {
+    ASSERT(!m_didNotifyObserversCanvasDestroyed);
+
     for (auto& observer : m_observers)
         observer->canvasDestroyed(*this);
 
     m_observers.clear();
+
+#ifndef NDEBUG
+    m_didNotifyObserversCanvasDestroyed = true;
+#endif
 }
 
 HashSet<Element*> CanvasBase::cssCanvasClients() const

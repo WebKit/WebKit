@@ -1,3 +1,38 @@
+2018-10-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        InspectorCanvas is not getting cleared properly for OffscreenCanvas
+        https://bugs.webkit.org/show_bug.cgi?id=190894
+        <rdar://problem/45498435>
+
+        Reviewed by Simon Fraser.
+
+        Covered by existing tests not crashing with guard malloc.
+
+        InspectorCanvasAgents tracks all CanvasRenderingContexts and needs to
+        remove its reference when the containing CanvasBase goes away. It does
+        this by registering as a notification observer, but if it can't map
+        from the CanvasBase back to the rendering context we were failing to
+        remove our reference. Enforce CanvasBase classes to notify observers
+        of destruction while they still have their CanvasRenderingContext.
+
+        * html/CanvasBase.cpp:
+        (WebCore::CanvasBase::~CanvasBase):
+        (WebCore::CanvasBase::notifyObserversCanvasDestroyed):
+        * html/CanvasBase.h:
+        Assert that subclasses notify observers of the canvas being destroyed,
+        since they will need to do this before m_context is cleared.
+
+        * html/CustomPaintCanvas.cpp:
+        (WebCore::CustomPaintCanvas::~CustomPaintCanvas):
+        * html/OffscreenCanvas.cpp:
+        (WebCore::OffscreenCanvas::~OffscreenCanvas):
+        Follow the new expected pattern of notifying observers before clearing
+        the context. HTMLCanvasElement already followed this pattern.
+
+        * inspector/agents/InspectorCanvasAgent.cpp:
+        (WebCore::InspectorCanvasAgent::canvasDestroyed):
+        Add an assertion that would catch this earlier.
+
 2018-10-24  Alexey Proskuryakov  <ap@apple.com>
 
         Clean up some obsolete macOS version guards

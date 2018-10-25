@@ -46,6 +46,8 @@ CustomPaintCanvas::CustomPaintCanvas(ScriptExecutionContext& context, unsigned w
 
 CustomPaintCanvas::~CustomPaintCanvas()
 {
+    notifyObserversCanvasDestroyed();
+
     m_context = nullptr; // Ensure this goes away before the ImageBuffer.
 }
 

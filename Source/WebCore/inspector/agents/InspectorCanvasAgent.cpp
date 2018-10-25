@@ -475,6 +475,7 @@ void InspectorCanvasAgent::recordCanvasAction(CanvasRenderingContext& canvasRend
 void InspectorCanvasAgent::canvasDestroyed(CanvasBase& canvasBase)
 {
     auto* context = canvasBase.renderingContext();
+    ASSERT(context);
     if (!context)
         return;
 

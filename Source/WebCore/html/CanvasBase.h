@@ -82,7 +82,7 @@ public:
     void removeObserver(CanvasObserver&);
     void notifyObserversCanvasChanged(const FloatRect&);
     void notifyObserversCanvasResized();
-    void notifyObserversCanvasDestroyed();
+    void notifyObserversCanvasDestroyed(); // Must be called in destruction before clearing m_context.
 
     HashSet<Element*> cssCanvasClients() const;
 
@@ -102,6 +102,9 @@ protected:
 
 private:
     bool m_originClean { true };
+#ifndef NDEBUG
+    bool m_didNotifyObserversCanvasDestroyed { false };
+#endif
     ScriptExecutionContext* m_scriptExecutionContext;
     HashSet<CanvasObserver*> m_observers;
 };

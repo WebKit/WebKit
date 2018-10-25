@@ -45,6 +45,8 @@ OffscreenCanvas::OffscreenCanvas(ScriptExecutionContext& context, unsigned width
 
 OffscreenCanvas::~OffscreenCanvas()
 {
+    notifyObserversCanvasDestroyed();
+
     m_context = nullptr;
 }
 
