@@ -1,3 +1,19 @@
+2018-10-25  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (236779) scandinaviandesigns.com product pages auto redirect to product image
+        https://bugs.webkit.org/show_bug.cgi?id=190891
+        <rdar://problem/45296796>
+
+        Reviewed by Antti Koivisto.
+
+        When a radio element gets clicked, we should only fire the 'input' and 'change' if the checked state
+        of the radio element has changed.
+
+        Test: fast/dom/HTMLInputElement/radio-element-fires-change-event-only-when-checked-state-changes.html
+
+        * html/RadioInputType.cpp:
+        (WebCore::RadioInputType::didDispatchClick):
+
 2018-10-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         InspectorCanvas is not getting cleared properly for OffscreenCanvas

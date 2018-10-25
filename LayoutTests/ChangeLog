@@ -1,3 +1,16 @@
+2018-10-25  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (236779) scandinaviandesigns.com product pages auto redirect to product image
+        https://bugs.webkit.org/show_bug.cgi?id=190891
+        <rdar://problem/45296796>
+
+        Reviewed by Antti Koivisto.
+
+        Add layout test coverage.
+
+        * fast/dom/HTMLInputElement/radio-element-fires-change-event-only-when-checked-state-changes-expected.txt: Added.
+        * fast/dom/HTMLInputElement/radio-element-fires-change-event-only-when-checked-state-changes.html: Added.
+
 2018-10-25  Frederic Wang  <fwang@igalia.com>
 
         Unreviewed test gardening.
