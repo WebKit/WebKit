@@ -1,0 +1,18 @@
+
+== Running test suite: SetUtilities
+-- Running test case: Set.prototype.intersects
+PASS: an empty set should not intersect another empty set.
+PASS: a non-empty set should not intersect an empty set.
+PASS: a set should intersect another set with the same values.
+PASS: a set should not intersect another set with different values.
+PASS: a set should intersect another set with same and additional values.
+PASS: a set should intersect another set with same and different values.
+
+-- Running test case: Set.prototype.isSubsetOf
+PASS: an empty set should be a subset of another empty set.
+PASS: an empty set should be a subset of a non-empty set.
+PASS: a set should be a subset of another set with the same values.
+PASS: a set should not be a subset of another set with different values.
+PASS: a set should be a subset of another set with same and additional values.
+PASS: a set should not be a subset of another set with same and different values.
+

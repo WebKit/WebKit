@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createSyncSuite("SetUtilities");
+
+    suite.addTestCase({
+        name: "Set.prototype.intersects",
+        test() {
+            function testTrue(a, b, message) {
+                InspectorTest.expectThat((new Set(a)).intersects(new Set(b)), message);
+            }
+
+            function testFalse(a, b, message) {
+                InspectorTest.expectFalse((new Set(a)).intersects(new Set(b)), message);
+            }
+
+            const object1 = {a: 1};
+            const object2 = {b: 2};
+            const object3 = {c: 3};
+
+            testFalse([], [], "an empty set should not intersect another empty set.");
+            testFalse([1, "a", object1], [], "a non-empty set should not intersect an empty set.");
+            testTrue([1, "a", object1], [1, "a", object1], "a set should intersect another set with the same values.");
+            testFalse([1, "a", object1], [2, "b", object2], "a set should not intersect another set with different values.");
+            testTrue([1, "a", object1], [1, 3, "a", "c", object1, object3], "a set should intersect another set with same and additional values.");
+            testTrue([1, 2, "a", "b", object1, object2], [1, 3, "a", "c", object1, object3], "a set should intersect another set with same and different values.");
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "Set.prototype.isSubsetOf",
+        test() {
+            function testTrue(a, b, message) {
+                InspectorTest.expectThat((new Set(a)).isSubsetOf(new Set(b)), message);
+            }
+
+            function testFalse(a, b, message) {
+                InspectorTest.expectFalse((new Set(a)).isSubsetOf(new Set(b)), message);
+            }
+
+            const object1 = {a: 1};
+            const object2 = {b: 2};
+            const object3 = {c: 3};
+
+            testTrue([], [], "an empty set should be a subset of another empty set.");
+            testTrue([], [2, "b", object2], "an empty set should be a subset of a non-empty set.");
+            testTrue([1, "a", object1], [1, "a", object1], "a set should be a subset of another set with the same values.");
+            testFalse([1, "a", object1], [2, "b", object2], "a set should not be a subset of another set with different values.");
+            testTrue([1, "a", object1], [1, 3, "a", "c", object1, object3], "a set should be a subset of another set with same and additional values.");
+            testFalse([1, 2, "a", "b", object1, object2], [1, 3, "a", "c", object1, object3], "a set should not be a subset of another set with same and different values.");
+
+            return true;
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onLoad="runTest()">
+</body>
+</html>

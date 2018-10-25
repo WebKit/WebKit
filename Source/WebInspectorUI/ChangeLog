@@ -1,3 +1,28 @@
+2018-10-25  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Canvas Recording loading goes significantly slower when "Frame" tree element is expanded
+        https://bugs.webkit.org/show_bug.cgi?id=190497
+
+        Reviewed by Joseph Pecoraro.
+
+        Save the `WI.TreeElement` that are in the DOM, and compare that with any `WI.TreeElement`
+        that would be added to the DOM. If all of the following are true, don't edit the DOM:
+         - no focused `WI.TreeElement` that isn't currently visible (we would scroll otherwise)
+         - the set of previously visible `WI.TreeElement`s (e.g. not used for scroll padding) has at
+           least one of the `WI.TreeElement`s that would be added from this update
+            - this means that the user hasn't scrolled beyond the padding `WI.TreeElement`
+         - there are no `WI.TreeElement`s that would be added from this update that were NOT added
+           in a previous update
+            - this covers the case that a `WI.TreeElement` is inserted in the visible area
+
+        * UserInterface/Base/Utilities.js:
+
+        * UserInterface/Views/TreeOutline.js:
+        (WI.TreeOutline):
+        (WI.TreeOutline.prototype.registerScrollVirtualizer):
+        (WI.TreeOutline.prototype.updateVirtualizedElements.walk):
+        (WI.TreeOutline.prototype.updateVirtualizedElements):
+
 2018-10-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         JSContext Inspector: Broken frontend, DOMAgent is used but does not exist

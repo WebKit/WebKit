@@ -118,6 +118,35 @@ Object.defineProperty(Map.prototype, "take",
     }
 });
 
+Object.defineProperty(Set.prototype, "intersects",
+{
+    value(other)
+    {
+        if (!this.size || !other.size)
+            return false;
+
+        for (let item of this) {
+            if (other.has(item))
+                return true;
+        }
+
+        return false;
+    }
+});
+
+Object.defineProperty(Set.prototype, "isSubsetOf",
+{
+    value(other)
+    {
+        for (let item of this) {
+            if (!other.has(item))
+                return false;
+        }
+
+        return true;
+    }
+});
+
 Object.defineProperty(Node.prototype, "enclosingNodeOrSelfWithClass",
 {
     value(className)
