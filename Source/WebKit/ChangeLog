@@ -1,3 +1,18 @@
+2018-10-25  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [WPE][GTK] Follow-up fixes to the certificate coders
+        https://bugs.webkit.org/show_bug.cgi?id=190900
+
+        Reviewed by Michael Catanzaro.
+
+        Cleanup the GRefPtr mess I created earlier. Also we now bail out
+        if any certificate in the chain has no data instead of returning a
+        cropped chain.
+
+        * Shared/soup/WebCoreArgumentCodersSoup.cpp:
+        (IPC::ArgumentCoder<CertificateInfo>::encode):
+        (IPC::ArgumentCoder<CertificateInfo>::decode):
+
 2018-10-25  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK][AC] Resizing the window doesn't always update the visible rect

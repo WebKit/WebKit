@@ -51,24 +51,24 @@ bool ArgumentCoder<ResourceRequest>::decodePlatformData(Decoder& decoder, Resour
 
 void ArgumentCoder<CertificateInfo>::encode(Encoder& encoder, const CertificateInfo& certificateInfo)
 {
-    if (!certificateInfo.certificate()) {
+    auto* certificate = certificateInfo.certificate();
+    if (!certificate) {
         encoder << 0;
         return;
     }
 
-    GTlsCertificate* certificate = certificateInfo.certificate();
     Vector<GRefPtr<GByteArray>> certificatesDataList;
-    do {
+    for (; certificate; certificate = g_tls_certificate_get_issuer(certificate)) {
         GByteArray* certificateData = nullptr;
         g_object_get(G_OBJECT(certificate), "certificate", &certificateData, nullptr);
 
-        if (!certificateData)
+        if (!certificateData) {
+            certificatesDataList.clear();
             break;
+        }
 
-        certificatesDataList.append(certificateData);
-
-        certificate = g_tls_certificate_get_issuer(certificate);
-    } while (certificate);
+        certificatesDataList.append(adoptGRef(certificateData));
+    }
 
     encoder << static_cast<uint32_t>(certificatesDataList.size());
 
@@ -77,7 +77,7 @@ void ArgumentCoder<CertificateInfo>::encode(Encoder& encoder, const CertificateI
 
     // Encode starting from the root certificate.
     for (size_t i = certificatesDataList.size(); i > 0; --i) {
-        auto& certificate = certificatesDataList[i - 1];
+        GByteArray* certificate = certificatesDataList[i - 1].get();
         encoder.encodeVariableLengthByteArray(IPC::DataReference(certificate->data, certificate->len));
     }
 
@@ -100,11 +100,11 @@ bool ArgumentCoder<CertificateInfo>::decode(Decoder& decoder, CertificateInfo& c
         if (!decoder.decodeVariableLengthByteArray(certificateDataReference))
             return false;
 
-        GRefPtr<GByteArray> certificateData = g_byte_array_sized_new(certificateDataReference.size());
-        certificateData = g_byte_array_append(certificateData.get(), certificateDataReference.data(), certificateDataReference.size());
+        GByteArray* certificateData = g_byte_array_sized_new(certificateDataReference.size());
+        GRefPtr<GByteArray> certificateBytes = adoptGRef(g_byte_array_append(certificateData, certificateDataReference.data(), certificateDataReference.size()));
 
         certificate = adoptGRef(G_TLS_CERTIFICATE(g_initable_new(
-            certificateType, nullptr, nullptr, "certificate", certificateData.get(), "issuer", certificate.get(), nullptr)));
+            certificateType, nullptr, nullptr, "certificate", certificateBytes.get(), "issuer", certificate.get(), nullptr)));
     }
 
     uint32_t tlsErrors;
