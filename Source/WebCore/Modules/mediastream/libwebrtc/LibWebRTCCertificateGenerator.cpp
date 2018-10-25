@@ -98,6 +98,8 @@ static inline rtc::KeyParams keyParamsFromCertificateType(const PeerConnectionBa
             return rtc::KeyParams::RSA(info.rsaParameters->modulusLength, info.rsaParameters->publicExponent);
         return rtc::KeyParams::RSA(2048, 65537);
     }
+
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 void generateCertificate(LibWebRTCProvider& provider, const PeerConnectionBackend::CertificateInformation& info, DOMPromiseDeferred<IDLInterface<RTCCertificate>>&& promise)

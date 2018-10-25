@@ -1,3 +1,13 @@
+2018-10-25  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, silence a -Wreturn-type warning
+
+        When every return is supposed to be covered by a switch statement, a release assert or CRASH
+        is required by GCC.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCCertificateGenerator.cpp:
+        (WebCore::LibWebRTCCertificateGenerator::keyParamsFromCertificateType):
+
 2018-10-25  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Turn Web Animations CSS Integration off by default
