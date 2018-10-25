@@ -191,8 +191,11 @@
                         r"|Tools/Scripts/generate-inspector-protocol-bindings.py"
                         r"|Tools/Scripts/webkitpy/inspector",
         },
+        "WebInspectorProtocol": {
+            "filename": r"Source/JavaScriptCore/inspector/protocol/",
+        },
         "WebInspectorRecording": {
-            "filename": r"Source/JavaScriptCore/inspector/Protocol/Recording\.json"
+            "filename": r"Source/JavaScriptCore/inspector/protocol/Recording\.json"
                         r"|Source/WebCore/bindings/js/CallTracer.*"
                         r"|Source/WebCore/inspector/Recording.*"
                         r"|Source/WebInspectorUI/UserInterface/\w*/Recording.*\.js"
@@ -439,6 +442,7 @@
                                  "See http://trac.webkit.org/wiki/WebKitGTK/AddingNewWebKit2API", ],
         "ANGLE": [ "Note that there are important steps to take when updating ANGLE. "
                    "See http://trac.webkit.org/wiki/UpdatingANGLE", ],
+        "WebInspectorProtocol": [ "This patch modifies the inspector protocol. Please ensure that any frontend changes appropriately use feature checks for new protocol features." ],
         "WebInspectorGenerator": [ "This patch modifies the inspector protocol generator. Please ensure that you have rebaselined any generator test results (i.e., by running `Tools/Scripts/run-inspector-generator-tests --reset-results`)" ],
         "JSBuiltinsGenerator": [ "This patch modifies the JS builtins code generator. Please ensure that you have rebaselined any generator test results (i.e., by running `Tools/Scripts/run-builtins-generator-tests --reset-results`)" ],
         "WasmJSON": [ "This patch modifies one of the wasm.json files. Please ensure that any changes in one have been mirrored to the other. You can find the wasm.json files at \"Source/JavaScriptCore/wasm/wasm.json\" and \"JSTests/wasm/wasm.json\"." ],

@@ -1,3 +1,12 @@
+2018-10-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Add a watchlist message rule to warn about feature checking new inspector protocol changes
+        https://bugs.webkit.org/show_bug.cgi?id=190896
+
+        Reviewed by Matt Baker.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2018-10-25  Geoffrey Garen  <ggaren@apple.com>
 
         HashMap should support selecting a random entry
