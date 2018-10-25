@@ -1,3 +1,52 @@
+2018-10-25  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK][AC] Resizing the window doesn't always update the visible rect
+        https://bugs.webkit.org/show_bug.cgi?id=189743
+
+        Reviewed by Michael Catanzaro.
+
+        Disassociate resizing that can be done on an AcceleratedSurface object
+        between "host resizes" and "client resizes".
+
+        The former is done from ThreadedCoordinatedLayerTreeHost directly, and
+        is currently used only for GTK on X11, where a new pixmap object is
+        created on each resize, which affects the context ID that is based on
+        that pixmap object's address.
+
+        The latter is done from the composition thread. It's used for GTK on
+        Wayland and WPE. In both cases, the underlying window object does not
+        change on each resize, but it's necessary to perform the actual resize
+        on the composition thread.
+
+        So far it hasn't been performed there, which ended up pushing sizes of
+        the WebKit view and the underlying window object out of sync during
+        resizing, leaving parts of window unrendered.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::renderLayerTree):
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.h:
+        * WebProcess/WebPage/AcceleratedSurface.cpp:
+        (WebKit::AcceleratedSurface::hostResize):
+        (WebKit::AcceleratedSurface::resize): Deleted.
+        * WebProcess/WebPage/AcceleratedSurface.h:
+        (WebKit::AcceleratedSurface::clientResize):
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.cpp:
+        (WebKit::ThreadedCoordinatedLayerTreeHost::deviceOrPageScaleFactorChanged):
+        (WebKit::ThreadedCoordinatedLayerTreeHost::sizeDidChange):
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.h:
+        * WebProcess/WebPage/gtk/AcceleratedSurfaceWayland.cpp:
+        (WebKit::AcceleratedSurfaceWayland::clientResize):
+        (WebKit::AcceleratedSurfaceWayland::resize): Deleted.
+        * WebProcess/WebPage/gtk/AcceleratedSurfaceWayland.h:
+        * WebProcess/WebPage/gtk/AcceleratedSurfaceX11.cpp:
+        (WebKit::AcceleratedSurfaceX11::hostResize):
+        (WebKit::AcceleratedSurfaceX11::resize): Deleted.
+        * WebProcess/WebPage/gtk/AcceleratedSurfaceX11.h:
+        * WebProcess/WebPage/wpe/AcceleratedSurfaceWPE.cpp:
+        (WebKit::AcceleratedSurfaceWPE::clientResize):
+        (WebKit::AcceleratedSurfaceWPE::resize): Deleted.
+        * WebProcess/WebPage/wpe/AcceleratedSurfaceWPE.h:
+
 2018-10-24  Alexey Proskuryakov  <ap@apple.com>
 
         Clean up some obsolete macOS version guards

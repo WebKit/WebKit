@@ -57,13 +57,9 @@ void AcceleratedSurfaceWayland::finalize()
     wl_egl_window_destroy(m_window);
 }
 
-bool AcceleratedSurfaceWayland::resize(const IntSize& size)
+void AcceleratedSurfaceWayland::clientResize(const IntSize& size)
 {
-    if (!AcceleratedSurface::resize(size))
-        return false;
-
     wl_egl_window_resize(m_window, m_size.width(), m_size.height(), 0, 0);
-    return true;
 }
 
 void AcceleratedSurfaceWayland::didRenderFrame()

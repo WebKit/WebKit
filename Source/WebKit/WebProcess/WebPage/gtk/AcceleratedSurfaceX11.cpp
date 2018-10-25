@@ -133,9 +133,9 @@ void AcceleratedSurfaceX11::createPixmap()
     XSync(m_display, False);
 }
 
-bool AcceleratedSurfaceX11::resize(const IntSize& size)
+bool AcceleratedSurfaceX11::hostResize(const IntSize& size)
 {
-    if (!AcceleratedSurface::resize(size))
+    if (!AcceleratedSurface::hostResize(size))
         return false;
 
     // Resize the window to at last 1x1 since X doesn't allow to create empty windows.

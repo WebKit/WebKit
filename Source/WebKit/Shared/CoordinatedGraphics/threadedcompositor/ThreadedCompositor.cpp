@@ -238,8 +238,10 @@ void ThreadedCompositor::renderLayerTree()
         m_attributes.needsResize = false;
     }
 
-    if (needsResize)
+    if (needsResize) {
+        m_client.resize(viewportSize);
         glViewport(0, 0, viewportSize.width(), viewportSize.height());
+    }
 
     TransformationMatrix viewportTransform;
     viewportTransform.scale(scaleFactor);
