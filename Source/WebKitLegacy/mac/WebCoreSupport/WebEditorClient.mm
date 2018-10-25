@@ -379,7 +379,7 @@ void WebEditorClient::respondToChangedSelection(Frame* frame)
         WebThreadPostNotification(WebViewDidChangeSelectionNotification, m_webView, nil);
 #endif
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+#if PLATFORM(MAC)
     if (frame->editor().canEdit())
         requestCandidatesForSelection(frame->selection().selection());
 #endif
@@ -1194,7 +1194,7 @@ void WebEditorClient::setInputMethodState(bool)
 {
 }
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+#if PLATFORM(MAC)
 
 void WebEditorClient::requestCandidatesForSelection(const VisibleSelection& selection)
 {
@@ -1292,7 +1292,7 @@ void WebEditorClient::handleAcceptedCandidateWithSoftSpaces(TextCheckingResult a
     frame->editor().handleAcceptedCandidate(acceptedCandidate);
 }
 
-#endif // PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+#endif // PLATFORM(MAC)
 
 #if !PLATFORM(IOS_FAMILY)
 

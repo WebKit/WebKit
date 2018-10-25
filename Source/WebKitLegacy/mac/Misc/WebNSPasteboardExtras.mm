@@ -113,9 +113,7 @@ static NSArray *_writableTypesForImageWithArchive (void)
         WebURLNamePboardType,
         legacyStringPasteboardType(),
         legacyFilenamesPasteboardType(),
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
         legacyFilesPromisePasteboardType(),
-#endif
         nil];
 }
 

@@ -330,7 +330,7 @@
 
     (home-literal "/Library/Preferences/com.apple.lookup.shared.plist"))
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101240
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
 ;; FIXME: This should be removed when <rdar://problem/10479685> is fixed.
 ;; Restrict AppSandboxed processes from creating /Library/Keychains, but allow access to the contents of /Library/Keychains:
 (allow file-read-data file-read-metadata file-write-data

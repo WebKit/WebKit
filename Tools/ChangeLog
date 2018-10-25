@@ -1,3 +1,18 @@
+2018-10-24  Alexey Proskuryakov  <ap@apple.com>
+
+        Clean up some obsolete macOS version guards
+        https://bugs.webkit.org/show_bug.cgi?id=190887
+
+        Reviewed by Dan Bernstein.
+
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (__simulated_forceClickAssociatedEventsMask):
+        (-[TestWKWebViewHostWindow _mouseDownAtPoint:simulatePressure:clickCount:]):
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::initializeWebViewConfiguration):
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        (-[EventSenderSyntheticEvent initPressureEventAtLocation:globalLocation:stage:pressure:stageTransition:phase:time:eventNumber:window:]):
+
 2018-10-24  Megan Gardner  <megan_gardner@apple.com>
 
         Turn on Conic Gradients

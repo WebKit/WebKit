@@ -103,24 +103,18 @@ SOFT_LINK_CLASS(UIKit, UIWindow)
 #if PLATFORM(MAC)
 static int gEventNumber = 1;
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101003
 NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
 {
     return NSEventMaskPressure | NSEventMaskLeftMouseDown | NSEventMaskLeftMouseUp | NSEventMaskLeftMouseDragged;
 }
-#endif
 
 - (void)_mouseDownAtPoint:(NSPoint)point simulatePressure:(BOOL)simulatePressure clickCount:(NSUInteger)clickCount
 {
     NSEventType mouseEventType = NSEventTypeLeftMouseDown;
 
     NSEventMask modifierFlags = 0;
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101003
     if (simulatePressure)
         modifierFlags |= NSEventMaskPressure;
-#else
-    simulatePressure = NO;
-#endif
 
     NSEvent *event = [NSEvent mouseEventWithType:mouseEventType location:point modifierFlags:modifierFlags timestamp:GetCurrentEventTime() windowNumber:self.windowNumber context:[NSGraphicsContext currentContext] eventNumber:++gEventNumber clickCount:clickCount pressure:simulatePressure];
     if (!simulatePressure) {
@@ -128,7 +122,6 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
         return;
     }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101003
     IMP simulatedAssociatedEventsMaskImpl = (IMP)__simulated_forceClickAssociatedEventsMask;
     Method associatedEventsMaskMethod = class_getInstanceMethod([NSEvent class], @selector(associatedEventsMask));
     IMP originalAssociatedEventsMaskImpl = method_setImplementation(associatedEventsMaskMethod, simulatedAssociatedEventsMaskImpl);
@@ -139,7 +132,6 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
         // to prevent subsequent event sending tests from being affected.
         method_setImplementation(associatedEventsMaskMethod, originalAssociatedEventsMaskImpl);
     }
-#endif
 }
 
 - (void)_mouseUpAtPoint:(NSPoint)point clickCount:(NSUInteger)clickCount

@@ -66,9 +66,7 @@ void initializeWebViewConfiguration(const char* libraryPath, WKStringRef injecte
     globalWebViewConfiguration._allowUniversalAccessFromFileURLs = YES;
     globalWebViewConfiguration._applePayEnabled = YES;
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || PLATFORM(IOS_FAMILY)
     WKCookieManagerSetStorageAccessAPIEnabled(WKContextGetCookieManager(context), true);
-#endif
 
     WKWebsiteDataStore* poolWebsiteDataStore = (__bridge WKWebsiteDataStore *)WKContextGetWebsiteDataStore((__bridge WKContextRef)globalWebViewConfiguration.processPool);
     [poolWebsiteDataStore _setCacheStoragePerOriginQuota: 400 * 1024];

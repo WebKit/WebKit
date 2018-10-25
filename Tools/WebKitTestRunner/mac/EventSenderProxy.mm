@@ -85,7 +85,7 @@
     _eventSender_timestamp = time;
     _eventSender_eventNumber = eventNumber;
     _eventSender_window = window;
-#if defined(__LP64__) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101003
+#if defined(__LP64__)
     self->_type = NSEventTypePressure;
     _eventSender_type = NSEventTypePressure;
 #endif
@@ -325,7 +325,7 @@ void EventSenderProxy::mouseUp(unsigned buttonNumber, WKEventModifiers modifiers
     m_clickPosition = m_position;
 }
 
-#if defined(__LP64__) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101003
+#if defined(__LP64__)
 void EventSenderProxy::sendMouseDownToStartPressureEvents()
 {
     updateClickCountForButton(0);
@@ -573,7 +573,7 @@ void EventSenderProxy::mouseForceClick()
 void EventSenderProxy::startAndCancelMouseForceClick()
 {
 }
-#endif // defined(__LP64__) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101003
+#endif // defined(__LP64__)
 
 void EventSenderProxy::mouseMoveTo(double x, double y)
 {

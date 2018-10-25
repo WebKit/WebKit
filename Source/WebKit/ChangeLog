@@ -1,3 +1,14 @@
+2018-10-24  Alexey Proskuryakov  <ap@apple.com>
+
+        Clean up some obsolete macOS version guards
+        https://bugs.webkit.org/show_bug.cgi?id=190887
+
+        Reviewed by Dan Bernstein.
+
+        * PluginProcess/mac/com.apple.WebKit.plugin-common.sb.in:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+
 2018-10-24  Megan Gardner  <megan_gardner@apple.com>
 
         Turn on Conic Gradients

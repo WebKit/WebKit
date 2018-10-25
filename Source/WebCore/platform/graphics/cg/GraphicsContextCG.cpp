@@ -129,7 +129,7 @@ CGColorSpaceRef displayP3ColorSpaceRef()
     static CGColorSpaceRef displayP3ColorSpace;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
-#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 101100)
+#if PLATFORM(IOS_FAMILY) || PLATFORM(MAC)
         displayP3ColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceDisplayP3);
 #else
         displayP3ColorSpace = sRGBColorSpaceRef();
