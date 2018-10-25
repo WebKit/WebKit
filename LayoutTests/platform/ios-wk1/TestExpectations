@@ -1400,6 +1400,13 @@ fast/scrolling/ios/scrolling-content-clip-to-viewport.html [ Failure ]
 fast/scrolling/ios/touch-stacking.html [ Failure ]
 fast/scrolling/ios/touch-scroll-visibility-hidden.html [ Skip ]
 
+# These tests require API for finding string which is not available in WK1.
+# See https://webkit.org/b/178789#c15
+platform/ios/fast/scrolling/find-text-in-overflow-node-indicator-position-limit.html [ ImageOnlyFailure ]
+platform/ios/fast/scrolling/find-text-in-overflow-node-indicator-position.html [ ImageOnlyFailure ]
+platform/ios/fast/scrolling/find-text-in-overflow-node.html [ Failure ]
+platform/ios/fast/scrolling/find-text-in-subframe.html [ Failure ]
+
 # dumpPolicyDelegateCallbacks is not supported in DumpRenderTree
 fast/loader/iframe-src-invalid-url.html [ Skip ]
 
