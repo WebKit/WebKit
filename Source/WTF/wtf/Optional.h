@@ -215,18 +215,18 @@ template <class T> class optional<T&>;
 namespace detail_ {
 
 // workaround: std utility functions aren't constexpr yet
-template <class T> inline constexpr T&& constexpr_forward(typename std::remove_reference<T>::type& t) __NOEXCEPT
+template <class T> constexpr T&& constexpr_forward(typename std::remove_reference<T>::type& t) __NOEXCEPT
 {
   return static_cast<T&&>(t);
 }
 
-template <class T> inline constexpr T&& constexpr_forward(typename std::remove_reference<T>::type&& t) __NOEXCEPT
+template <class T> constexpr T&& constexpr_forward(typename std::remove_reference<T>::type&& t) __NOEXCEPT
 {
     static_assert(!std::is_lvalue_reference<T>::value, "!!");
     return static_cast<T&&>(t);
 }
 
-template <class T> inline constexpr typename std::remove_reference<T>::type&& constexpr_move(T&& t) __NOEXCEPT
+template <class T> constexpr typename std::remove_reference<T>::type&& constexpr_move(T&& t) __NOEXCEPT
 {
     return static_cast<typename std::remove_reference<T>::type&&>(t);
 }

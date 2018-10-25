@@ -195,7 +195,7 @@ inline bool shouldUseSlowPut(IndexingType indexingType)
     return hasSlowPutArrayStorage(indexingType);
 }
 
-inline constexpr bool isCopyOnWrite(IndexingType indexingMode)
+constexpr bool isCopyOnWrite(IndexingType indexingMode)
 {
     return indexingMode & CopyOnWrite;
 }

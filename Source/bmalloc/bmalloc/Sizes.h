@@ -73,7 +73,7 @@ namespace Sizes {
     
     static const size_t maskSizeClassCount = maskSizeClassMax / alignment;
 
-    inline constexpr size_t maskSizeClass(size_t size)
+    constexpr size_t maskSizeClass(size_t size)
     {
         // We mask to accommodate zero.
         return mask((size - 1) / alignment, maskSizeClassCount - 1);

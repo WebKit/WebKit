@@ -1,3 +1,25 @@
+2018-10-25  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Cleanup: inline constexpr is redundant as constexpr implies inline
+        https://bugs.webkit.org/show_bug.cgi?id=190819
+
+        Reviewed by Mark Lam.
+
+        * bmalloc/Algorithm.h:
+        (bmalloc::max):
+        (bmalloc::min):
+        (bmalloc::mask):
+        (bmalloc::test):
+        (bmalloc::isPowerOfTwo):
+        (bmalloc::roundDownToMultipleOf):
+        (bmalloc::sizeOf):
+        (bmalloc::bitCount):
+        (bmalloc::log2):
+        * bmalloc/Bits.h:
+        (bmalloc::bitsArrayLength):
+        * bmalloc/Sizes.h:
+        (bmalloc::Sizes::maskSizeClass):
+
 2018-10-24  Alexey Proskuryakov  <ap@apple.com>
 
         Add BPLATFORM(IOS_FAMILY)

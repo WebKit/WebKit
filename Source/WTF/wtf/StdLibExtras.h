@@ -189,7 +189,7 @@ inline size_t roundUpToMultipleOf(size_t divisor, size_t x)
     return roundUpToMultipleOfImpl(divisor, x);
 }
 
-template<size_t divisor> inline constexpr size_t roundUpToMultipleOf(size_t x)
+template<size_t divisor> constexpr size_t roundUpToMultipleOf(size_t x)
 {
     static_assert(divisor && !(divisor & (divisor - 1)), "divisor must be a power of two!");
     return roundUpToMultipleOfImpl(divisor, x);
@@ -448,7 +448,7 @@ IteratorTypeDst mergeDeduplicatedSorted(IteratorTypeLeft leftBegin, IteratorType
 // This workaround can be removed after 2019-04 and all users of WTF::tie can be converted to std::tie
 // For more info see: https://bugs.webkit.org/show_bug.cgi?id=180692 and https://gcc.gnu.org/bugzilla/show_bug.cgi?id=65978
 template <class ...Args>
-inline constexpr std::tuple<Args&...> tie(Args&... values)
+constexpr std::tuple<Args&...> tie(Args&... values)
 {
     return std::tuple<Args&...>(values...);
 }

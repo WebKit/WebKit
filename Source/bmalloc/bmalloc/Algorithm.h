@@ -38,17 +38,17 @@
 namespace bmalloc {
 
 // Versions of min and max that are compatible with compile-time constants.
-template<typename T> inline constexpr T max(T a, T b)
+template<typename T> constexpr T max(T a, T b)
 {
     return a > b ? a : b;
 }
     
-template<typename T> inline constexpr T min(T a, T b)
+template<typename T> constexpr T min(T a, T b)
 {
     return a < b ? a : b;
 }
 
-template<typename T> inline constexpr T mask(T value, uintptr_t mask)
+template<typename T> constexpr T mask(T value, uintptr_t mask)
 {
     static_assert(sizeof(T) == sizeof(uintptr_t), "sizeof(T) must be equal to sizeof(uintptr_t).");
     return static_cast<T>(static_cast<uintptr_t>(value) & mask);
@@ -59,13 +59,13 @@ template<typename T> inline T* mask(T* value, uintptr_t mask)
     return reinterpret_cast<T*>(reinterpret_cast<uintptr_t>(value) & mask);
 }
 
-template<typename T> inline constexpr bool test(T value, uintptr_t mask)
+template<typename T> constexpr bool test(T value, uintptr_t mask)
 {
     return !!(reinterpret_cast<uintptr_t>(value) & mask);
 }
 
 template <typename T>
-inline constexpr bool isPowerOfTwo(T size)
+constexpr bool isPowerOfTwo(T size)
 {
     static_assert(std::is_integral<T>::value, "");
     return size && !(size & (size - 1));
@@ -102,7 +102,7 @@ template<typename T> inline T roundDownToMultipleOf(size_t divisor, T x)
     return reinterpret_cast<T>(mask(reinterpret_cast<uintptr_t>(x), ~(divisor - 1ul)));
 }
 
-template<size_t divisor, typename T> inline constexpr T roundDownToMultipleOf(T x)
+template<size_t divisor, typename T> constexpr T roundDownToMultipleOf(T x)
 {
     static_assert(isPowerOfTwo(divisor), "'divisor' must be a power of two.");
     return roundDownToMultipleOf(divisor, x);
@@ -129,12 +129,12 @@ template<typename T> inline T roundUpToMultipleOfNonPowerOfTwo(size_t divisor, T
 
 // Version of sizeof that returns 0 for empty classes.
 
-template<typename T> inline constexpr size_t sizeOf()
+template<typename T> constexpr size_t sizeOf()
 {
     return std::is_empty<T>::value ? 0 : sizeof(T);
 }
 
-template<typename T> inline constexpr size_t bitCount()
+template<typename T> constexpr size_t bitCount()
 {
     return sizeof(T) * 8;
 }
@@ -156,7 +156,7 @@ __forceinline constexpr unsigned long __builtin_clzl(unsigned long value)
 }
 #endif
 
-inline constexpr unsigned long log2(unsigned long value)
+constexpr unsigned long log2(unsigned long value)
 {
     return bitCount<unsigned long>() - 1 - __builtin_clzl(value);
 }

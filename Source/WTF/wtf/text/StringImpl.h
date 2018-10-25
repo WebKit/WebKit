@@ -773,7 +773,7 @@ inline StringImplShape::StringImplShape(unsigned refCount, unsigned length, cons
 {
 }
 
-template<unsigned characterCount> inline constexpr StringImplShape::StringImplShape(unsigned refCount, unsigned length, const char (&characters)[characterCount], unsigned hashAndFlags, ConstructWithConstExprTag)
+template<unsigned characterCount> constexpr StringImplShape::StringImplShape(unsigned refCount, unsigned length, const char (&characters)[characterCount], unsigned hashAndFlags, ConstructWithConstExprTag)
     : m_refCount(refCount)
     , m_length(length)
     , m_data8Char(characters)
@@ -781,7 +781,7 @@ template<unsigned characterCount> inline constexpr StringImplShape::StringImplSh
 {
 }
 
-template<unsigned characterCount> inline constexpr StringImplShape::StringImplShape(unsigned refCount, unsigned length, const char16_t (&characters)[characterCount], unsigned hashAndFlags, ConstructWithConstExprTag)
+template<unsigned characterCount> constexpr StringImplShape::StringImplShape(unsigned refCount, unsigned length, const char16_t (&characters)[characterCount], unsigned hashAndFlags, ConstructWithConstExprTag)
     : m_refCount(refCount)
     , m_length(length)
     , m_data16Char(characters)
@@ -1159,13 +1159,13 @@ inline void StringImpl::assertHashIsCorrect() const
     ASSERT(existingHash() == StringHasher::computeHashAndMaskTop8Bits(characters8(), length()));
 }
 
-template<unsigned characterCount> inline constexpr StringImpl::StaticStringImpl::StaticStringImpl(const char (&characters)[characterCount], StringKind stringKind)
+template<unsigned characterCount> constexpr StringImpl::StaticStringImpl::StaticStringImpl(const char (&characters)[characterCount], StringKind stringKind)
     : StringImplShape(s_refCountFlagIsStaticString, characterCount - 1, characters,
         s_hashFlag8BitBuffer | s_hashFlagDidReportCost | stringKind | BufferInternal | (StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount), ConstructWithConstExpr)
 {
 }
 
-template<unsigned characterCount> inline constexpr StringImpl::StaticStringImpl::StaticStringImpl(const char16_t (&characters)[characterCount], StringKind stringKind)
+template<unsigned characterCount> constexpr StringImpl::StaticStringImpl::StaticStringImpl(const char16_t (&characters)[characterCount], StringKind stringKind)
     : StringImplShape(s_refCountFlagIsStaticString, characterCount - 1, characters,
         s_hashFlagDidReportCost | stringKind | BufferInternal | (StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount), ConstructWithConstExpr)
 {

@@ -2027,12 +2027,12 @@ constexpr bool operator<=(Variant<_Types...> const& __lhs,Variant<_Types...> con
 
 struct Monostate{};
 
-constexpr inline bool operator==(Monostate const&,Monostate const&){ return true;}
-constexpr inline bool operator!=(Monostate const&,Monostate const&){ return false;}
-constexpr inline bool operator>=(Monostate const&,Monostate const&){ return true;}
-constexpr inline bool operator<=(Monostate const&,Monostate const&){ return true;}
-constexpr inline bool operator>(Monostate const&,Monostate const&){ return false;}
-constexpr inline bool operator<(Monostate const&,Monostate const&){ return false;}
+constexpr bool operator==(Monostate const&, Monostate const&) { return true; }
+constexpr bool operator!=(Monostate const&, Monostate const&) { return false; }
+constexpr bool operator>=(Monostate const&, Monostate const&) { return true; }
+constexpr bool operator<=(Monostate const&, Monostate const&) { return true; }
+constexpr bool operator>(Monostate const&, Monostate const&) { return false; }
+constexpr bool operator<(Monostate const&, Monostate const&) { return false; }
 
 struct __hash_visitor{
     template<typename _Type>

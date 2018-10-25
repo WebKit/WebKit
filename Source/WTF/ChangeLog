@@ -1,3 +1,43 @@
+2018-10-25  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Cleanup: inline constexpr is redundant as constexpr implies inline
+        https://bugs.webkit.org/show_bug.cgi?id=190819
+
+        Reviewed by Mark Lam.
+
+        * wtf/Bitmap.h:
+        (WTF::WordType>::Bitmap):
+        * wtf/LEBDecoder.h:
+        (WTF::LEBDecoder::maxByteLength):
+        * wtf/MathExtras.h:
+        (defaultMinimumForClamp):
+        (defaultMaximumForClamp):
+        (clampToAccepting64):
+        (isLessThan):
+        (isLessThanEqual):
+        (isGreaterThan):
+        (isGreaterThanEqual):
+        (WTF::roundUpToPowerOfTwo):
+        (WTF::maskForSize):
+        * wtf/Optional.h:
+        * wtf/PtrTag.h:
+        (WTF::tagCodePtr):
+        (WTF::untagCodePtr):
+        (WTF::retagCodePtr):
+        (WTF::removeCodePtrTag):
+        * wtf/StdLibExtras.h:
+        (WTF::roundUpToMultipleOf):
+        * wtf/Variant.h:
+        (WTF::operator==):
+        (WTF::operator!=):
+        (WTF::operator>=):
+        (WTF::operator<=):
+        (WTF::operator>):
+        (WTF::operator<):
+        * wtf/text/StringImpl.h:
+        (WTF::StringImplShape::StringImplShape):
+        (WTF::StringImpl::StaticStringImpl::StaticStringImpl):
+
 2018-10-25  Geoffrey Garen  <ggaren@apple.com>
 
         HashMap should support selecting a random entry

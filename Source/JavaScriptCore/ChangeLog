@@ -1,3 +1,21 @@
+2018-10-25  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Cleanup: inline constexpr is redundant as constexpr implies inline
+        https://bugs.webkit.org/show_bug.cgi?id=190819
+
+        Reviewed by Mark Lam.
+
+        * bytecode/ArrayProfile.h:
+        (JSC::asArrayModes):
+        * runtime/IndexingType.h:
+        (JSC::isCopyOnWrite):
+        * runtime/MathCommon.h:
+        (JSC::maxSafeInteger):
+        (JSC::minSafeInteger):
+        * runtime/StackAlignment.h:
+        (JSC::stackAlignmentBytes):
+        (JSC::stackAlignmentRegisters):
+
 2018-10-24  Megan Gardner  <megan_gardner@apple.com>
 
         Turn on Conic Gradients

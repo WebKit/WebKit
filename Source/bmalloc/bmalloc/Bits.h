@@ -31,7 +31,7 @@
 
 namespace bmalloc {
 
-constexpr inline size_t bitsArrayLength(size_t numBits) { return (numBits + 31) / 32; }
+constexpr size_t bitsArrayLength(size_t numBits) { return (numBits + 31) / 32; }
 
 class BitsWordView {
 public:

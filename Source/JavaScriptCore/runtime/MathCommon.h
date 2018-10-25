@@ -35,13 +35,13 @@ double JIT_OPERATION operationMathPow(double x, double y) WTF_INTERNAL;
 int32_t JIT_OPERATION operationToInt32(double) WTF_INTERNAL;
 int32_t JIT_OPERATION operationToInt32SensibleSlow(double) WTF_INTERNAL;
 
-inline constexpr double maxSafeInteger()
+constexpr double maxSafeInteger()
 {
     // 2 ^ 53 - 1
     return 9007199254740991.0;
 }
 
-inline constexpr double minSafeInteger()
+constexpr double minSafeInteger()
 {
     // -(2 ^ 53 - 1)
     return -9007199254740991.0;

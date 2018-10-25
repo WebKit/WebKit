@@ -133,7 +133,7 @@ private:
 };
 
 template<size_t bitmapSize, typename WordType>
-constexpr inline Bitmap<bitmapSize, WordType>::Bitmap()
+constexpr Bitmap<bitmapSize, WordType>::Bitmap()
 {
     clearAll();
 }

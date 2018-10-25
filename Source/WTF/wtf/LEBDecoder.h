@@ -36,7 +36,7 @@
 namespace WTF { namespace LEBDecoder {
 
 template<typename T>
-inline constexpr size_t maxByteLength()
+constexpr size_t maxByteLength()
 {
     const size_t numBits = sizeof(T) * CHAR_BIT;
     return (numBits - 1) / 7 + 1; // numBits / 7 rounding up.
