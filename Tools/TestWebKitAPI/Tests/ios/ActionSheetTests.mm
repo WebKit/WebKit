@@ -90,7 +90,7 @@ static UIViewController *overrideViewControllerForFullscreenPresentation()
     return gOverrideViewControllerForFullscreenPresentation.get();
 }
 
-TEST(ActionSheetTests, DismissingActionSheetShouldNotDismissPresentingViewController)
+TEST(ActionSheetTests, DISABLED_DismissingActionSheetShouldNotDismissPresentingViewController)
 {
     IPadUserInterfaceSwizzler iPadUserInterface;
     UIApplicationInitialize();
