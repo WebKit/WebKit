@@ -1,3 +1,12 @@
+2018-10-25  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Reenable the sandbox
+
+        Previously reviewed by, er, myself. This just reverts the sabotague as our bots should have
+        the required deps now. Hopefully.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2018-10-18  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][Clang] Do not give -Wall to clang-cl because it is treated as -Weverything
