@@ -68,6 +68,9 @@ public:
     iterator begin() const;
     iterator end() const;
 
+    iterator random() { return m_impl.random(); }
+    const_iterator random() const { return m_impl.random(); }
+
     iterator find(const ValueType&) const;
     bool contains(const ValueType&) const;
 

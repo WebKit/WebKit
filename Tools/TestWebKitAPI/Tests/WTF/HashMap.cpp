@@ -69,6 +69,14 @@ static int bucketForKey(double key)
     return DefaultHash<double>::Hash::hash(key) & (TestDoubleHashTraits::minimumTableSize - 1);
 }
 
+template<typename T> struct BigTableHashTraits : public HashTraits<T> {
+    static const int minimumTableSize = WTF::HashTableCapacityForSize<4096>::value;
+};
+
+template<typename T> struct ZeroHash : public IntHash<T> {
+    static unsigned hash(const T&) { return 0; }
+};
+
 TEST(WTF_HashMap, DoubleHashCollisions)
 {
     // The "clobber" key here is one that ends up stealing the bucket that the -0 key
@@ -986,6 +994,47 @@ TEST(WTF_HashMap, RefMappedToNonZeroEmptyValue)
 
     for (auto& pair : vectorMap)
         ASSERT_TRUE(map.remove(pair.first));
+}
+
+TEST(WTF_HashMap, Random_Empty)
+{
+    HashMap<unsigned, unsigned> map;
+
+    auto result = map.random();
+    ASSERT_EQ(result, map.end());
+}
+
+TEST(WTF_HashMap, Random_WrapAround)
+{
+    HashMap<unsigned, unsigned, ZeroHash<unsigned>, BigTableHashTraits<unsigned>> map;
+    map.add(1, 1);
+
+    auto result = map.random();
+    ASSERT_EQ(result, map.begin());
+}
+
+TEST(WTF_HashMap, Random_IsRandom)
+{
+    HashMap<unsigned, unsigned> map;
+    map.add(1, 1);
+    map.add(2, 2);
+
+    unsigned ones = 0;
+    unsigned twos = 0;
+
+    for (unsigned i = 0; i < 100; ++i) {
+        auto it = map.random();
+        if (it->value == 1)
+            ++ones;
+        else {
+            ASSERT_EQ(it->value, 2u);
+            ++twos;
+        }
+    }
+
+    ASSERT_EQ(ones + twos, 100u);
+    ASSERT_LE(ones, 99u);
+    ASSERT_LE(twos, 99u);
 }
 
 } // namespace TestWebKitAPI

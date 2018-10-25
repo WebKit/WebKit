@@ -32,6 +32,7 @@
 #include <wtf/HashTraits.h>
 #include <wtf/Lock.h>
 #include <wtf/MathExtras.h>
+#include <wtf/RandomNumber.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/ValueCheck.h>
 
@@ -378,6 +379,18 @@ namespace WTF {
         iterator end() { return makeKnownGoodIterator(m_table + m_tableSize); }
         const_iterator begin() const { return isEmpty() ? end() : makeConstIterator(m_table); }
         const_iterator end() const { return makeKnownGoodConstIterator(m_table + m_tableSize); }
+
+        iterator random()
+        {
+            if (isEmpty())
+                return end();
+            auto it = makeIterator(m_table + (weakRandomUint32() & m_tableSizeMask));
+            if (it == end())
+                return begin();
+            return it;
+        }
+
+        const_iterator random() const { return const_cast<HashTable*>(this)->random().const_iterator(); }
 
         unsigned size() const { return m_keyCount; }
         unsigned capacity() const { return m_tableSize; }

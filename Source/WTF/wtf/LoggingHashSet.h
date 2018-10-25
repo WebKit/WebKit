@@ -100,6 +100,9 @@ public:
     iterator begin() const { return m_set.begin(); }
     iterator end() const { return m_set.end(); }
     
+    iterator random() { return m_set.random(); }
+    const_iterator random() const { return m_set.random(); }
+
     iterator find(const ValueType& value) const
     {
         StringPrintStream string;

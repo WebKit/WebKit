@@ -87,6 +87,9 @@ public:
     const_iterator begin() const { return makeConstIterator(m_head); }
     const_iterator end() const { return makeConstIterator(nullptr); }
 
+    iterator random() { return makeIterator(m_impl.random()); }
+    const_iterator random() const { return makeIterator(m_impl.random()); }
+
     reverse_iterator rbegin() { return reverse_iterator(end()); }
     reverse_iterator rend() { return reverse_iterator(begin()); }
     const_reverse_iterator rbegin() const { return const_reverse_iterator(end()); }

@@ -34,6 +34,7 @@
 #include <stdlib.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/RandomNumberSeed.h>
+#include <wtf/WeakRandom.h>
 
 namespace WTF {
 
@@ -41,6 +42,14 @@ double randomNumber()
 {
     uint32_t bits = cryptographicallyRandomNumber();
     return static_cast<double>(bits) / (static_cast<double>(std::numeric_limits<uint32_t>::max()) + 1.0);
+}
+
+unsigned weakRandomUint32()
+{
+    // We don't care about thread safety. WeakRandom just uses POD types,
+    // and racy access just increases randomness.
+    static WeakRandom s_weakRandom;
+    return s_weakRandom.getUint32();
 }
 
 }

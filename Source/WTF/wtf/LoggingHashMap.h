@@ -100,6 +100,9 @@ public:
     iterator end() { return m_map.end(); }
     const_iterator begin() const { return m_map.begin(); }
     const_iterator end() const { return m_map.end(); }
+
+    iterator random() { return m_map.random(); }
+    const_iterator random() const { return m_map.random(); }
     
     auto keys() { return m_map.keys(); }
     const auto keys() const { return m_map.keys(); }

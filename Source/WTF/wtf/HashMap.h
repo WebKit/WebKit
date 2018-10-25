@@ -98,6 +98,9 @@ public:
     const_iterator begin() const;
     const_iterator end() const;
     
+    iterator random() { return m_impl.random(); }
+    const_iterator random() const { return m_impl.random(); }
+
     KeysIteratorRange keys() { return makeSizedIteratorRange(*this, begin().keys(), end().keys()); }
     const KeysConstIteratorRange keys() const { return makeSizedIteratorRange(*this, begin().keys(), end().keys()); }
 

@@ -1,3 +1,43 @@
+2018-10-25  Geoffrey Garen  <ggaren@apple.com>
+
+        HashMap should support selecting a random entry
+        https://bugs.webkit.org/show_bug.cgi?id=190814
+
+        Reviewed by Antti Koivisto.
+
+        In some cases, remove(begin()) is not quite good enough as a random
+        eviction strategy. (See https://bugs.webkit.org/show_bug.cgi?id=190792.)
+        So, let's support real random eviction.
+
+        (And by "real" I mean "pseudo".)
+
+        * wtf/HashCountedSet.h:
+        * wtf/HashMap.h:
+        * wtf/HashSet.h:
+        * wtf/ListHashSet.h:
+        (WTF::ListHashSet::random):
+        (WTF::ListHashSet::random const):
+        * wtf/LoggingHashMap.h:
+        * wtf/LoggingHashSet.h: Plumb through the random() iterator.
+
+        * wtf/HashTable.h:
+        (WTF::HashTable::random):
+        (WTF::HashTable::random const): Implement the random() iterator.
+        makeIterator() already supports starting from any bucket, so this is
+        pretty easy.
+
+        In the subtle case where we select end(), we choose to wrap around and
+        return begin(). We expect that clients don't really think of the end()
+        bucket as being in the domain of the random search. Also, we don't want
+        to annoy clients who know their tables are non-empty with needless
+        checks for end().
+
+        * wtf/RandomNumber.cpp:
+        (WTF::weakRandomUint32):
+        * wtf/RandomNumber.h: Added a free function for weak random numbers so
+        that clients that want cheap random numbers aren't required to allocate
+        storage for a WeakRandom generator.
+
 2018-10-24  Megan Gardner  <megan_gardner@apple.com>
 
         Turn on Conic Gradients

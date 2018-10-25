@@ -69,6 +69,9 @@ public:
     const_iterator begin() const;
     const_iterator end() const;
 
+    iterator random() { return m_impl.random(); }
+    const_iterator random() const { return m_impl.random(); }
+
     ValuesIteratorRange values();
     const ValuesConstIteratorRange values() const;
 

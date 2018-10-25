@@ -1,3 +1,16 @@
+2018-10-25  Geoffrey Garen  <ggaren@apple.com>
+
+        HashMap should support selecting a random entry
+        https://bugs.webkit.org/show_bug.cgi?id=190814
+
+        Reviewed by Antti Koivisto.
+
+        Unit testing is fun and easy!
+
+        * TestWebKitAPI/Tests/WTF/HashMap.cpp:
+        (TestWebKitAPI::ZeroHash::hash):
+        (TestWebKitAPI::TEST):
+
 2018-10-24  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r237331): DismissingActionSheetShouldNotDismissPresentingViewController times out
