@@ -20,9 +20,6 @@
 
 #if ENABLE(BUBBLEWRAP_SANDBOX)
 
-// For fd sealing APIs.
-#define _GNU_SOURCE
-
 #include <WebCore/FileSystem.h>
 #include <WebCore/PlatformDisplay.h>
 #include <fcntl.h>
@@ -33,15 +30,35 @@
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 
-namespace WebKit {
-using namespace WebCore;
+#if __has_include(<sys/memfd.h>)
+
+#include <sys/memfd.h>
+
+#else
+
+// These defines were added in glibc 2.27, the same release that added memfd_create.
+// But the kernel added all of this in Linux 3.17. So it's totally safe for us to
+// depend on, as long as we define it all ourselves. Remove this once we depend on
+// glibc 2.27.
+
+#define F_ADD_SEALS 1033
+#define F_GET_SEALS 1034
+
+#define F_SEAL_SEAL   0x0001
+#define F_SEAL_SHRINK 0x0002
+#define F_SEAL_GROW   0x0004
+#define F_SEAL_WRITE  0x0008
+
+#define MFD_ALLOW_SEALING 2U
 
 static int memfd_create(const char* name, unsigned flags)
 {
     return syscall(__NR_memfd_create, name, flags);
 }
+#endif
 
-#define MFD_ALLOW_SEALING 2U
+namespace WebKit {
+using namespace WebCore;
 
 static int createSealedMemFdWithData(const char* name, gconstpointer data, size_t size)
 {

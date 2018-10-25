@@ -1,3 +1,10 @@
+2018-10-25  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, another try at fixing the GTK build with sandbox enabled
+
+        * UIProcess/Launcher/glib/BubblewrapLauncher.cpp:
+        (WebKit::memfd_create): Deleted.
+
 2018-10-25  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Turn Web Animations CSS Integration off by default
