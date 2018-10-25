@@ -1,3 +1,15 @@
+2018-10-25  Per Arne Vollan  <pvollan@apple.com>
+
+        [High Sierra/Sierra Release] Layout Test media/track/track-cue-css.html is a flaky image failure
+        https://bugs.webkit.org/show_bug.cgi?id=190876
+
+        Reviewed by Alexey Proskuryakov.
+
+        This is a speculative fix; avoid an unnecessary video seek step in test.
+
+        * media/track/track-cue-css-expected.html:
+        * media/track/track-cue-css.html:
+
 2018-10-25  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (236779) scandinaviandesigns.com product pages auto redirect to product image

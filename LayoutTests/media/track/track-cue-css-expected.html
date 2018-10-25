@@ -21,8 +21,7 @@
             consoleWrite("Test that CSS in VTT file is applied correctly.");
             findMediaElement();
             video.src = findMediaFile('video', '../content/test');
-            waitForEvent('seeked', endTest);
-            waitForEvent('canplaythrough', function() { video.currentTime = .5; });
+            waitForEvent('canplaythrough', endTest);
         }
 
         setCaptionDisplayMode('Automatic');
