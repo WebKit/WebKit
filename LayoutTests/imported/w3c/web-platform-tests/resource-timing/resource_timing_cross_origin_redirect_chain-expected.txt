@@ -1,10 +1,10 @@
-Blocked access to external URL http://www.localhost:8800/resource-timing/resources/multi_redirect.py?page_origin=http://localhost:8800&cross_origin=http://www.localhost:8800
-CONSOLE MESSAGE: line 26: TypeError: undefined is not an object (evaluating 'entry.redirectStart')
 
-
-Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'entry.redirectStart')
 
 PASS window.performance is defined 
 PASS window.performance.getEntriesByName is defined 
-FAIL There should be one entry. assert_equals: There should be one entry. expected 1 but got 0
+PASS There should be one entry. 
+FAIL redirectStart == 0 in cross-origin redirect. assert_equals: redirectStart == 0 in cross-origin redirect. expected 0 but got 889
+FAIL redirectEnd == 0 in cross-origin redirect. assert_equals: redirectEnd == 0 in cross-origin redirect. expected 0 but got 955.0000000000001
+PASS fetchStart > 0 in cross-origin redirect. 
+FAIL startTime == fetchStart in cross-origin redirect. assert_equals: startTime == fetchStart in cross-origin redirect. expected 955.0000000000001 but got 889
 

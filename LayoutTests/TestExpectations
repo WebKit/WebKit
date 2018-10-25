@@ -358,6 +358,7 @@ webkit.org/b/180240 imported/w3c/web-platform-tests/resource-timing/single-entry
 webkit.org/b/189906 imported/w3c/web-platform-tests/resource-timing/resource_timing_buffer_full_eventually.html [ Skip ]
 webkit.org/b/189905 imported/w3c/web-platform-tests/resource-timing/resource_initiator_types.html [ Pass Failure ]
 webkit.org/b/189910 imported/w3c/web-platform-tests/resource-timing/resource_timing_store_and_clear_during_callback.html [ Pass Failure ]
+webkit.org/b/190523 imported/w3c/web-platform-tests/resource-timing/resource_timing_cross_origin_redirect_chain.html [ Pass Failure ]
 
 # The follow two tests change their output each run
 imported/w3c/web-platform-tests/fetch/api/abort/general.any.html [ Skip ]

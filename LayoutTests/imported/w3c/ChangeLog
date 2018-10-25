@@ -1,3 +1,15 @@
+2018-10-25  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WPT] Update resource-timing WPT tests to use the right cross origin
+        https://bugs.webkit.org/show_bug.cgi?id=190554
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/resource-timing/resource_TAO_cross_origin_redirect_chain-expected.txt:
+        * web-platform-tests/resource-timing/resource_TAO_cross_origin_redirect_chain.html:
+        * web-platform-tests/resource-timing/resource_timing_cross_origin_redirect_chain-expected.txt:
+        * web-platform-tests/resource-timing/resource_timing_cross_origin_redirect_chain.html:
+
 2018-10-22  Justin Michaud  <justin_michaud@apple.com>
 
         Registered custom properties should support syntax parameter for <length> and *
