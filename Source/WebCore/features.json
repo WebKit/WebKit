@@ -134,7 +134,7 @@
     {
         "name": "CSS Painting API Level 1",
         "status": {
-            "status": "Under Development"
+            "status": "In Development"
         },
         "url": "https://drafts.css-houdini.org/css-paint-api-1/",
         "keywords": ["css", "houdini", "worklet"],
@@ -150,7 +150,7 @@
     {
         "name": "CSS Properties and Values API Level 1",
         "status": {
-            "status": "Under Development"
+            "status": "In Development"
         },
         "url": "https://drafts.css-houdini.org/css-properties-values-api/",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=189692",

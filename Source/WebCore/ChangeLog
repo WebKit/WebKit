@@ -1,3 +1,12 @@
+2018-10-25  Jon Davis  <jond@apple.com>
+
+        Changed "Under Development" status to use "In Development" instead
+        https://bugs.webkit.org/show_bug.cgi?id=187615
+
+        Reviewed by Joseph Pecoraro.
+
+        * features.json: Updated CSS Painting API Level 1 and CSS Properties and Values API Level 1.
+
 2018-10-25  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (236779) scandinaviandesigns.com product pages auto redirect to product image

@@ -479,6 +479,7 @@ function initializeStatusPage() {
         'supported in preview',
         'partially supported',
         'supported',
+        'deprecated',
         'removed',
         'not considering'
     ];
