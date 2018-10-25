@@ -69,6 +69,21 @@
     border-radius: 50%;
 }
 
+.dom-events-breakdown .graph > .area.fullscreen {
+    top: 0;
+    height: 100%;
+    background-color: var(--panel-background-color);
+}
+
 .dom-events-breakdown .time {
     text-align: end;
+}
+
+.dom-events-breakdown .inherited > .name,
+.dom-events-breakdown .inherited > .graph > .point {
+    opacity: 0.5;
+}
+
+.dom-events-breakdown:not(.has-inherited) .originator {
+    display: none;
 }

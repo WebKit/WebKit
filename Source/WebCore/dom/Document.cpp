@@ -560,6 +560,8 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
 
     for (auto& nodeListAndCollectionCount : m_nodeListAndCollectionCounts)
         nodeListAndCollectionCount = 0;
+
+    InspectorInstrumentation::addEventListenersToNode(*this);
 }
 
 #if ENABLE(FULLSCREEN_API)

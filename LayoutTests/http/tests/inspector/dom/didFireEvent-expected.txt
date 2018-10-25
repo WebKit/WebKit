@@ -3,8 +3,38 @@ Tests that listeners registered by InspectorDOMAgent::addEventListenersToNode ar
 
 
 == Running test suite: DOM.didFireEvent
--- Running test case: DOM.didFireEvent
+-- Running test case: DOM.didFireEvent.Basic
 Adding video source "resources/white.mp4"...
-PASS: Should recieve a "loadstart" event.
+PASS: Should receive a "loadstart" event.
 PASS: Event timestamp should be greater than 0.
+
+-- Running test case: DOM.didFireEvent.Fullscreen
+Entering fullscreen on #video...
+PASS: Should receive a "webkitfullscreenchange" event.
+PASS: Event timestamp should be greater than 0.
+PASS: Event should have data.
+PASS: Fullscreen should be true.
+Target: video#video
+Exiting fullscreen...
+PASS: Should receive a "webkitfullscreenchange" event.
+PASS: Event timestamp should be greater than 0.
+PASS: Event should have data.
+PASS: Fullscreen should be false.
+Target: video#video
+
+-- Running test case: DOM.didFireEvent.Inherited
+Entering fullscreen on #container...
+PASS: Should receive a "webkitfullscreenchange" event.
+PASS: Event timestamp should be greater than 0.
+PASS: Event should have data.
+PASS: Fullscreen should be true.
+Target: video#video
+Originator: div#container
+Exiting fullscreen...
+PASS: Should receive a "webkitfullscreenchange" event.
+PASS: Event timestamp should be greater than 0.
+PASS: Event should have data.
+PASS: Fullscreen should be false.
+Target: video#video
+Originator: div#container
 

@@ -69,6 +69,10 @@ WI.DOMEventsBreakdownView = class DOMEventsBreakdownView extends WI.View
         timeHeadCell.classList.add("time");
         timeHeadCell.textContent = WI.UIString("Time");
 
+        let originatorHeadCell = headRowElement.appendChild(document.createElement("th"));
+        originatorHeadCell.classList.add("originator");
+        originatorHeadCell.textContent = WI.UIString("Originator");
+
         this._tableBodyElement = tableElement.appendChild(document.createElement("tbody"));
 
         this._populateTable();
@@ -89,6 +93,18 @@ WI.DOMEventsBreakdownView = class DOMEventsBreakdownView extends WI.View
             return time / totalTime * 100;
         }
 
+        let fullscreenRanges = [];
+        let fullscreenDOMEvents = WI.DOMNode.getFullscreenDOMEvents(this._domEvents);
+        for (let fullscreenDOMEvent of fullscreenDOMEvents) {
+            let {enabled} = fullscreenDOMEvent.data;
+            if (enabled || !fullscreenRanges.length) {
+                fullscreenRanges.push({
+                    startTimestamp: enabled ? fullscreenDOMEvent.timestamp : startTimestamp,
+                });
+            }
+            fullscreenRanges.lastValue.endTimestamp = (enabled && fullscreenDOMEvent === fullscreenDOMEvents.lastValue) ? endTimestamp : fullscreenDOMEvent.timestamp;
+        }
+
         for (let domEvent of this._domEvents) {
             let rowElement = this._tableBodyElement.appendChild(document.createElement("tr"));
 
@@ -100,6 +116,14 @@ WI.DOMEventsBreakdownView = class DOMEventsBreakdownView extends WI.View
                 let graphCell = rowElement.appendChild(document.createElement("td"));
                 graphCell.classList.add("graph");
 
+                let fullscreenRange = fullscreenRanges.find((range) => domEvent.timestamp >= range.startTimestamp && domEvent.timestamp <= range.endTimestamp);
+                if (fullscreenRange) {
+                    let fullscreenArea = graphCell.appendChild(document.createElement("div"));
+                    fullscreenArea.classList.add("area", "fullscreen");
+                    fullscreenArea.style.setProperty(styleAttribute, percentOfTotalTime(fullscreenRange.startTimestamp - startTimestamp) + "%");
+                    fullscreenArea.style.setProperty("width", percentOfTotalTime(fullscreenRange.endTimestamp - fullscreenRange.startTimestamp) + "%");
+                }
+
                 let graphPoint = graphCell.appendChild(document.createElement("div"));
                 graphPoint.classList.add("point");
                 graphPoint.style.setProperty(styleAttribute, `calc(${percentOfTotalTime(domEvent.timestamp - startTimestamp)}% - (var(--point-size) / 2))`);
@@ -110,6 +134,15 @@ WI.DOMEventsBreakdownView = class DOMEventsBreakdownView extends WI.View
 
             const higherResolution = true;
             timeCell.textContent = Number.secondsToString(domEvent.timestamp - this._startTimestamp, higherResolution);
+
+            let originatorCell = rowElement.appendChild(document.createElement("td"));
+            originatorCell.classList.add("originator");
+            if (domEvent.originator) {
+                originatorCell.appendChild(WI.linkifyNodeReference(domEvent.originator));
+
+                rowElement.classList.add("inherited");
+                this.element.classList.add("has-inherited");
+            }
         }
     }
 };

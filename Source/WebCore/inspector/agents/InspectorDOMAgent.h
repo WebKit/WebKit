@@ -177,6 +177,7 @@ public:
     void didAddEventListener(EventTarget&);
     void willRemoveEventListener(EventTarget&, const AtomicString& eventType, EventListener&, bool capture);
     bool isEventListenerDisabled(EventTarget&, const AtomicString& eventType, EventListener&, bool capture);
+    void eventDidResetAfterDispatch(const Event&);
 
     // Callbacks that don't directly correspond to an instrumentation entry point.
     void setDocument(Document*);
@@ -319,6 +320,7 @@ private:
 
     friend class EventFiredCallback;
 
+    HashSet<const Event*> m_dispatchedEvents;
     HashMap<int, InspectorEventListener> m_eventListenerEntries;
     int m_lastEventListenerId { 1 };
 };

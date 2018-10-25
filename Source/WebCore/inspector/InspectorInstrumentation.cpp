@@ -429,6 +429,12 @@ void InspectorInstrumentation::didDispatchEventOnWindowImpl(const InspectorInstr
         timelineAgent->didDispatchEvent();
 }
 
+void InspectorInstrumentation::eventDidResetAfterDispatchImpl(InstrumentingAgents& instrumentingAgents, const Event& event)
+{
+    if (auto* domAgent = instrumentingAgents.inspectorDOMAgent())
+        domAgent->eventDidResetAfterDispatch(event);
+}
+
 InspectorInstrumentationCookie InspectorInstrumentation::willEvaluateScriptImpl(InstrumentingAgents& instrumentingAgents, Frame& frame, const String& url, int lineNumber)
 {
     int timelineAgentId = 0;

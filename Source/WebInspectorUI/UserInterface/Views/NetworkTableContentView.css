@@ -182,6 +182,16 @@ body[dir=rtl] .network-table .cell.name > .status {
     overflow: hidden;
 }
 
+.network-table :not(.header) .cell.waterfall .waterfall-container > .dom-fullscreen {
+    position: absolute;
+    top: var(--dom-fullscreen-vertical-padding);
+    height: calc(100% - (var(--dom-fullscreen-vertical-padding) * 2));
+    background-color: lightgrey;
+
+    /* Half of the vertical space above any .dom-event node */
+    --dom-fullscreen-vertical-padding: calc((50% - (var(--node-waterfall-dom-event-size) / 2)) / 2);
+}
+
 .network-table .timeline-ruler > .header {
     top: calc(var(--navigation-bar-height) - var(--timeline-ruler-height));
 }

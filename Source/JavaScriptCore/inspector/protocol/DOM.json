@@ -666,7 +666,8 @@
             "parameters": [
                 { "name": "nodeId", "$ref": "NodeId" },
                 { "name": "eventName", "type": "string" },
-                { "name": "timestamp", "$ref": "Network.Timestamp", "description": "Time when the event was fired" }
+                { "name": "timestamp", "$ref": "Network.Timestamp", "description": "Time when the event was fired" },
+                { "name": "data", "type": "object", "optional": true, "description": "Holds ancillary information about the event or its target." }
             ]
         }
     ]

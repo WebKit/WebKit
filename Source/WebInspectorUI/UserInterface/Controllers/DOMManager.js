@@ -122,7 +122,7 @@ WI.DOMManager = class DOMManager extends WI.Object
         node.dispatchEventToListeners(WI.DOMNode.Event.EventListenersChanged);
     }
 
-    didFireEvent(nodeId, eventName, timestamp)
+    didFireEvent(nodeId, eventName, timestamp, data)
     {
         // Called from WI.DOMObserver.
 
@@ -130,7 +130,7 @@ WI.DOMManager = class DOMManager extends WI.Object
         if (!node)
             return;
 
-        node.didFireEvent(eventName, timestamp);
+        node.didFireEvent(eventName, timestamp, data);
     }
 
     // Private

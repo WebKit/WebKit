@@ -157,6 +157,7 @@ public:
     static void didHandleEvent(ScriptExecutionContext&);
     static InspectorInstrumentationCookie willDispatchEventOnWindow(Frame*, const Event&, DOMWindow&);
     static void didDispatchEventOnWindow(const InspectorInstrumentationCookie&);
+    static void eventDidResetAfterDispatch(const Event&);
     static InspectorInstrumentationCookie willEvaluateScript(Frame&, const String& url, int lineNumber);
     static void didEvaluateScript(const InspectorInstrumentationCookie&, Frame&);
     static InspectorInstrumentationCookie willFireTimer(ScriptExecutionContext&, int timerId, bool oneShot);
@@ -343,6 +344,7 @@ private:
     static void didDispatchEventImpl(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willDispatchEventOnWindowImpl(InstrumentingAgents&, const Event&, DOMWindow&);
     static void didDispatchEventOnWindowImpl(const InspectorInstrumentationCookie&);
+    static void eventDidResetAfterDispatchImpl(InstrumentingAgents&, const Event&);
     static InspectorInstrumentationCookie willEvaluateScriptImpl(InstrumentingAgents&, Frame&, const String& url, int lineNumber);
     static void didEvaluateScriptImpl(const InspectorInstrumentationCookie&, Frame&);
     static InspectorInstrumentationCookie willFireTimerImpl(InstrumentingAgents&, int timerId, bool oneShot, ScriptExecutionContext&);
@@ -807,6 +809,18 @@ inline void InspectorInstrumentation::didDispatchEventOnWindow(const InspectorIn
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (cookie.isValid())
         didDispatchEventOnWindowImpl(cookie);
+}
+
+inline void InspectorInstrumentation::eventDidResetAfterDispatch(const Event& event)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+
+    if (!is<Node>(event.target()))
+        return;
+
+    auto* node = downcast<Node>(event.target());
+    if (auto* instrumentingAgents = instrumentingAgentsForContext(node->scriptExecutionContext()))
+        return eventDidResetAfterDispatchImpl(*instrumentingAgents, event);
 }
 
 inline InspectorInstrumentationCookie InspectorInstrumentation::willEvaluateScript(Frame& frame, const String& url, int lineNumber)

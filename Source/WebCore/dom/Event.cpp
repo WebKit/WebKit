@@ -171,6 +171,8 @@ void Event::resetAfterDispatch()
     m_eventPhase = NONE;
     m_propagationStopped = false;
     m_immediatePropagationStopped = false;
+
+    InspectorInstrumentation::eventDidResetAfterDispatch(*this);
 }
 
 } // namespace WebCore

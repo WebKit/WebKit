@@ -234,7 +234,7 @@ public:
 
     void handleEvent(ScriptExecutionContext&, Event& event) final
     {
-        if (!is<Node>(event.target()))
+        if (!is<Node>(event.target()) || m_domAgent.m_dispatchedEvents.contains(&event))
             return;
 
         auto* node = downcast<Node>(event.target());
@@ -242,8 +242,15 @@ public:
         if (!nodeId)
             return;
 
+        m_domAgent.m_dispatchedEvents.add(&event);
+
+        RefPtr<JSON::Object> data = JSON::Object::create();
+
+        if (event.type() == eventNames().webkitfullscreenchangeEvent)
+            data->setBoolean("enabled"_s, !!node->document().webkitFullscreenElement());
+
         auto timestamp = m_domAgent.m_environment.executionStopwatch()->elapsedTime().seconds();
-        m_domAgent.m_frontendDispatcher->didFireEvent(nodeId, event.type(), timestamp);
+        m_domAgent.m_frontendDispatcher->didFireEvent(nodeId, event.type(), timestamp, data->size() ? WTFMove(data) : nullptr);
     }
 
 private:
@@ -289,6 +296,9 @@ void InspectorDOMAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, 
 
     m_instrumentingAgents.setInspectorDOMAgent(this);
     m_document = m_pageAgent->mainFrame().document();
+
+    if (m_document)
+        addEventListenersToNode(*m_document);
 
     for (auto* mediaElement : HTMLMediaElement::allMediaElements())
         addEventListenersToNode(*mediaElement);
@@ -523,6 +533,7 @@ void InspectorDOMAgent::discardBindings()
 {
     m_documentNodeToIdMap.clear();
     m_idToNode.clear();
+    m_dispatchedEvents.clear();
     m_eventListenerEntries.clear();
     releaseDanglingNodes();
     m_childrenRequested.clear();
@@ -2138,7 +2149,10 @@ void InspectorDOMAgent::addEventListenersToNode(Node& node)
         node.addEventListener(eventName, callback.copyRef(), false);
     };
 
-    if (is<HTMLMediaElement>(node)) {
+    if (is<Document>(node))
+        createEventListener(eventNames().webkitfullscreenchangeEvent);
+    else if (is<HTMLMediaElement>(node)) {
+        createEventListener(eventNames().webkitfullscreenchangeEvent);
         createEventListener(eventNames().abortEvent);
         createEventListener(eventNames().canplayEvent);
         createEventListener(eventNames().canplaythroughEvent);
@@ -2404,6 +2418,11 @@ bool InspectorDOMAgent::isEventListenerDisabled(EventTarget& target, const Atomi
             return inspectorEventListener.disabled;
     }
     return false;
+}
+
+void InspectorDOMAgent::eventDidResetAfterDispatch(const Event& event)
+{
+    m_dispatchedEvents.remove(&event);
 }
 
 bool InspectorDOMAgent::hasBreakpointForEventListener(EventTarget& target, const AtomicString& eventType, EventListener& listener, bool capture)

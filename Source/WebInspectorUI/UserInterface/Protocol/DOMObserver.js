@@ -112,8 +112,8 @@ WI.DOMObserver = class DOMObserver
         WI.domManager.willRemoveEventListener(nodeId);
     }
 
-    didFireEvent(nodeId, eventName, timestamp)
+    didFireEvent(nodeId, eventName, timestamp, data)
     {
-        WI.domManager.didFireEvent(nodeId, eventName, timestamp);
+        WI.domManager.didFireEvent(nodeId, eventName, timestamp, data);
     }
 };

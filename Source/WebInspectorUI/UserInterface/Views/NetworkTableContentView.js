@@ -660,17 +660,42 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         if (domNode) {
             const domEventElementSize = 8; // Keep this in sync with `--node-waterfall-dom-event-size`.
 
-            let groupedDOMEvents = domNode.domEvents.reduce((accumulator, current) => {
-                if (!accumulator.length || (current.timestamp - accumulator.lastValue.endTimestamp) >= (domEventElementSize * secondsPerPixel)) {
-                    accumulator.push({
-                        startTimestamp: current.timestamp,
+            let groupedDOMEvents = [];
+            for (let domEvent of domNode.domEvents) {
+                if (domEvent.originator)
+                    continue;
+
+                if (!groupedDOMEvents.length || (domEvent.timestamp - groupedDOMEvents.lastValue.endTimestamp) >= (domEventElementSize * secondsPerPixel)) {
+                    groupedDOMEvents.push({
+                        startTimestamp: domEvent.timestamp,
                         domEvents: [],
                     });
                 }
-                accumulator.lastValue.endTimestamp = current.timestamp;
-                accumulator.lastValue.domEvents.push(current);
-                return accumulator;
-            }, []);
+                groupedDOMEvents.lastValue.endTimestamp = domEvent.timestamp;
+                groupedDOMEvents.lastValue.domEvents.push(domEvent);
+            }
+
+            let fullscreenDOMEvents = WI.DOMNode.getFullscreenDOMEvents(domNode.domEvents);
+            if (fullscreenDOMEvents.length) {
+                if (!fullscreenDOMEvents[0].data.enabled)
+                    fullscreenDOMEvents.unshift({timestamp: graphStartTime});
+
+                if (fullscreenDOMEvents.lastValue.data.enabled)
+                    fullscreenDOMEvents.push({timestamp: this._waterfallEndTime});
+
+                console.assert((fullscreenDOMEvents.length % 2) === 0, "Every enter/exit of fullscreen should have a corresponding exit/enter.");
+
+                for (let i = 0; i < fullscreenDOMEvents.length; i += 2) {
+                    let fullscreenElement = container.appendChild(document.createElement("div"));
+                    fullscreenElement.classList.add("dom-fullscreen");
+                    positionByStartOffset(fullscreenElement, fullscreenDOMEvents[i].timestamp);
+                    setWidthForDuration(fullscreenElement, fullscreenDOMEvents[i].timestamp, fullscreenDOMEvents[i + 1].timestamp);
+
+                    let originator = fullscreenDOMEvents[i].originator || fullscreenDOMEvents[i + 1].originator;
+                    if (originator)
+                        fullscreenElement.title = WI.UIString("Fullscreen from “%s“").format(originator.displayName);
+                }
+            }
 
             let playing = false;
 
