@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Find text in overflow node</title>
+    <meta name="viewport" content="width=device-width">
+    <script type="text/javascript">
+      if (window.testRunner)
+          testRunner.waitUntilDone();
+      function run() {
+        if (!window.testRunner || !testRunner.runUIScript)
+          return;
+
+        var findOptions = 1 << 6; // show find indicator
+        var maxCount = 1;
+        testRunner.runUIScript(`
+          uiController.findString("match", ${findOptions}, ${maxCount});
+          uiController.findString("match", ${findOptions}, ${maxCount});
+          uiController.uiScriptComplete("Done");
+        `);
+
+        testRunner.notifyDone();
+      }
+    </script>
+    <style>
+      #scrollable {
+        border: 1px solid black;
+        background: gray;
+        width: 200px;
+        height: 200px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+    </style>
+  </head>
+  <body onload="run();">
+    <p>Use iOS Find UI to search for the text "match" in the following overflow node. The result should be highlighted.</p>
+    <div id="scrollable">
+      <div style="height: 300px; background: linear-gradient(135deg, blue, cyan);"></div>
+      <div>match</div>
+    </div>
+  </body>
+</html>

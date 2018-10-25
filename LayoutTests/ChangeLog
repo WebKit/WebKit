@@ -1,3 +1,28 @@
+2018-10-25  Frederic Wang  <fwang@igalia.com>
+
+        Add more tests for the Find UI
+        https://bugs.webkit.org/show_bug.cgi?id=190823
+
+        Reviewed by Antonio Gomes.
+
+        We add more tests for iOS's find UI to cover cases fixed by r224284. Equivalent tests for
+        subframes currently fails when frame flattening is disabled, they will be handled in bug
+        184297.
+
+        * platform/ios/fast/scrolling/find-text-in-overflow-node-indicator-position-expected.png: Added.
+        * platform/ios/fast/scrolling/find-text-in-overflow-node-indicator-position-expected.txt: Added.
+        * platform/ios/fast/scrolling/find-text-in-overflow-node-indicator-position-limit-expected.png: Added.
+        * platform/ios/fast/scrolling/find-text-in-overflow-node-indicator-position-limit-expected.txt: Added.
+        * platform/ios/fast/scrolling/find-text-in-overflow-node-indicator-position-limit.html: Added.
+        Test with a match at the limit of the scrolling element.
+        * platform/ios/fast/scrolling/find-text-in-overflow-node-indicator-position.html: Added. Test
+        with a match at the middle of the scrolling element.
+        * platform/ios/fast/scrolling/find-text-in-overflow-node.html: Use names for parameters to
+        make it more explicit.
+        * platform/ios/fast/scrolling/find-text-in-subframe-expected.txt: Added.
+        * platform/ios/fast/scrolling/find-text-in-subframe.html: Added. Test with a subframe instead
+        of an overflow node.
+
 2018-10-25  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WPT] Update resource-timing WPT tests to use the right cross origin

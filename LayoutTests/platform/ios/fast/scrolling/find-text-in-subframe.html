@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Find text in overflow node</title>
+    <title>Find text in subframe</title>
     <meta name="viewport" content="width=device-width">
     <script src="../../../../resources/testharness.js"></script>
     <script src="../../../../resources/testharnessreport.js"></script>
     <script type="text/javascript">
+      if (window.internals)
+        window.internals.settings.setAsyncFrameScrollingEnabled(true);
       setup({ "explicit_done": true });
-      function height(id) {
-        return document.getElementById(id).getBoundingClientRect().height;
+      function height(w, id) {
+        return w.document.getElementById(id).getBoundingClientRect().height;
       }
       function run() {
         if (!window.testRunner || !testRunner.runUIScript)
@@ -16,26 +18,26 @@
 
         var findOptions = 1 << 6; // show find indicator
         var maxCount = 4;
-        var node = document.getElementById("scrollable");
+        var node = document.getElementById("scrollable").contentWindow;
         test(function() {
-          assert_equals(node.scrollTop, 0);
-        }, "Initial position of overflow node");
-        var afterMatch3 = async_test("Position of overflow node after the three first results");
-        var afterMatch4 = async_test("Position of overflow node after the fourth result");
+          assert_equals(node.scrollY, 0);
+        }, "Initial position of iframe node");
+        var afterMatch3 = async_test("Position of iframe node after the three first results");
+        var afterMatch4 = async_test("Position of iframe node after the fourth result");
         testRunner.runUIScript(`
           uiController.findString("match", ${findOptions}, ${maxCount}); // match
           uiController.findString("match", ${findOptions}, ${maxCount}); // match 2
           uiController.findString("match", ${findOptions}, ${maxCount}); // match 3
           uiController.uiScriptComplete("Done");
         `, afterMatch3.step_func_done(function() {
-          assert_equals(node.scrollTop, 0);
+          assert_equals(node.scrollY, 0);
           testRunner.runUIScript(`
             uiController.findString("match", ${findOptions}, ${maxCount}); // match 4
             uiController.uiScriptComplete("Done");
           `, afterMatch4.step_func_done(function() {
-              assert_greater_than(node.scrollTop, 0);
-              var expectedScrollTop = height("divBefore") + height("match4") / 2 - height("scrollable") / 2;
-              assert_approx_equals(node.scrollTop, expectedScrollTop, 2);
+              assert_greater_than(node.scrollY, 0);
+              var expectedScrollY = height(node, "divBefore") + height(node, "match4") / 2 - height(window, "scrollable") / 2;
+              assert_approx_equals(node.scrollY, expectedScrollY, 2);
           }));
         }));
 
@@ -43,24 +45,18 @@
       }
     </script>
     <style>
-      #scrollable {
+      iframe {
         border: 1px solid black;
         background: gray;
         width: 200px;
         height: 200px;
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
       }
     </style>
   </head>
-  <body onload="run()">
-    <p>Use iOS Find UI to search for the text "match". The following overflow node should scroll to show the fourth result at its center.</p>
+  <body>
+    <p>Use iOS Find UI to search for the text "match". The following iframe node should scroll to show the fourth result at its center.</p>
     <p>match 2</p>
     <p>match 3</p>
-    <div id="scrollable">
-      <div id="divBefore" style="height: 300px; background: linear-gradient(135deg, blue, cyan);"></div>
-      <div id="match4">match 4</div>
-      <div style="height: 300px; background: linear-gradient(135deg, blue, cyan);"></div>
-    </div>
+    <iframe onload="run()" id="scrollable" srcdoc="<body style='margin: 0'><div id='divBefore' style='height: 300px; background: linear-gradient(135deg, blue, cyan);'></div><div id='match4'>match 4</div><div style='height: 300px; background: linear-gradient(135deg, blue, cyan);'></div></body>"></iframe>
   </body>
 </html>
