@@ -3202,3 +3202,6 @@ compositing/contents-scale/non-decomposable-matrix.html [ ImageOnlyFailure ]
 media/media-fullscreen-loop-inline.html [ Pass Timeout ]
 
 webkit.org/b/187618 [ Release ] media/media-fullscreen-pause-inline.html [ Pass Failure ]
+
+# Disabled globally.
+http/tests/xmlhttprequest/gzip-content-type-no-content-encoding.html [ Pass ]
