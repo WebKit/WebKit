@@ -1,3 +1,16 @@
+2018-10-25  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Network: more aggressively snap timing blocks together
+        https://bugs.webkit.org/show_bug.cgi?id=190439
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype._populateWaterfallGraph.appendBlock):
+        (WI.NetworkTableContentView.prototype._populateWaterfallGraph):
+        If the time difference between the end of the previous block and the start of this block
+        would result in less than 2px of space, extend the next block back to the previous block.
+
 2018-10-24  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: popovers for function source code are malformed

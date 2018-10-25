@@ -744,9 +744,14 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             return;
         }
 
+        let lastEndTimestamp = NaN;
         function appendBlock(startTimestamp, endTimestamp, className) {
             if (isNaN(startTimestamp) || isNaN(endTimestamp) || endTimestamp - startTimestamp <= 0)
                 return null;
+
+            if (Math.abs(startTimestamp - lastEndTimestamp) < secondsPerPixel * 2)
+                startTimestamp = lastEndTimestamp;
+            lastEndTimestamp = endTimestamp;
 
             let block = container.appendChild(document.createElement("div"));
             block.classList.add("block", className);
