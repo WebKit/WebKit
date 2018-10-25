@@ -1,3 +1,9 @@
+2018-10-25  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, try to fix GTK build with sandbox enabled
+
+        * UIProcess/Launcher/glib/BubblewrapLauncher.cpp:
+
 2018-10-25  Claudio Saavedra  <csaavedra@igalia.com>
 
         [WPE][GTK] Follow-up fixes to the certificate coders

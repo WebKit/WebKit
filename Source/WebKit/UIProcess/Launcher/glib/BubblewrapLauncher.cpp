@@ -20,6 +20,9 @@
 
 #if ENABLE(BUBBLEWRAP_SANDBOX)
 
+// For fd sealing APIs.
+#define _GNU_SOURCE
+
 #include <WebCore/FileSystem.h>
 #include <WebCore/PlatformDisplay.h>
 #include <fcntl.h>
