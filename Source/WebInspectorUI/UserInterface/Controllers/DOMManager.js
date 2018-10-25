@@ -82,7 +82,8 @@ WI.DOMManager = class DOMManager extends WI.Object
             this._pendingDocumentRequestCallbacks = null;
         }
 
-        DOMAgent.getDocument(onDocumentAvailable.bind(this));
+        if (window.DOMAgent)
+            DOMAgent.getDocument(onDocumentAvailable.bind(this));
     }
 
     ensureDocument()
