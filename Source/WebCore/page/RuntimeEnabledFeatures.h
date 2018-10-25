@@ -346,7 +346,7 @@ private:
     bool m_isWebShareEnabled { false };
     bool m_inputEventsEnabled { true };
     bool m_areWebAnimationsEnabled { true };
-    bool m_isWebAnimationsCSSIntegrationEnabled { true };
+    bool m_isWebAnimationsCSSIntegrationEnabled { false };
     bool m_isImageBitmapOffscreenCanvasEnabled { true };
     bool m_isCacheAPIEnabled { false };
     bool m_isFetchAPIEnabled { true };

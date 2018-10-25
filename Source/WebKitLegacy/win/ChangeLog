@@ -1,3 +1,13 @@
+2018-10-25  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Turn Web Animations CSS Integration off by default
+        https://bugs.webkit.org/show_bug.cgi?id=190901
+
+        Reviewed by Dean Jackson.
+
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings):
+
 2018-10-21  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][Clang] WebView.h: warning: 'QueryInterface' overrides a member function but is not marked 'override' [-Winconsistent-missing-override]

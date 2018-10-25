@@ -1,3 +1,12 @@
+2018-10-25  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Turn Web Animations CSS Integration off by default
+        https://bugs.webkit.org/show_bug.cgi?id=190901
+
+        Reviewed by Dean Jackson.
+
+        * page/RuntimeEnabledFeatures.h:
+
 2018-10-25  Jon Davis  <jond@apple.com>
 
         Changed "Under Development" status to use "In Development" instead

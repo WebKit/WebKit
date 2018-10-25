@@ -1,3 +1,12 @@
+2018-10-25  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Turn Web Animations CSS Integration off by default
+        https://bugs.webkit.org/show_bug.cgi?id=190901
+
+        Reviewed by Dean Jackson.
+
+        * Shared/WebPreferences.yaml:
+
 2018-10-25  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, try to fix GTK build with sandbox enabled
