@@ -1,3 +1,17 @@
+2018-10-26  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r237445.
+        https://bugs.webkit.org/show_bug.cgi?id=190972
+
+        Cause performance regression on iOS devices (Requested by
+        yusukesuzuki on #webkit).
+
+        Reverted changeset:
+
+        "Unreviewed, partial rolling in r237254"
+        https://bugs.webkit.org/show_bug.cgi?id=190340
+        https://trac.webkit.org/changeset/237445
+
 2018-10-26  Mark Lam  <mark.lam@apple.com>
 
         Fix missing edge cases with JSGlobalObjects having a bad time.
