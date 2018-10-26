@@ -26,7 +26,6 @@
 #pragma once
 
 #include "ArrayProfile.h"
-#include "BytecodeStructs.h"
 #include "Instruction.h"
 #include "InterpreterInlines.h"
 #include "Opcode.h"
@@ -36,12 +35,22 @@ namespace JSC {
 enum OpcodeShape {
     AnyOpcodeShape,
     OpCallShape,
+    OpHasIndexedPropertyShape,
+    OpGetArrayLengthShape,
+    OpGetByValShape,
+    OpInByValShape,
+    OpPutByValShape,
 };
 
 template<OpcodeShape shape, typename = std::enable_if_t<shape != AnyOpcodeShape>>
 inline bool isOpcodeShape(OpcodeID opcodeID)
 {
     if (shape == OpCallShape) {
+        static_assert(OPCODE_LENGTH(op_call) == OPCODE_LENGTH(op_tail_call), "");
+        static_assert(OPCODE_LENGTH(op_call) == OPCODE_LENGTH(op_call_eval), "");
+        static_assert(OPCODE_LENGTH(op_call) == OPCODE_LENGTH(op_call_varargs), "");
+        static_assert(OPCODE_LENGTH(op_call) == OPCODE_LENGTH(op_tail_call_varargs), "");
+        static_assert(OPCODE_LENGTH(op_call) == OPCODE_LENGTH(op_tail_call_forward_arguments), "");
         return opcodeID == op_call
             || opcodeID == op_tail_call
             || opcodeID == op_call_eval
@@ -50,31 +59,68 @@ inline bool isOpcodeShape(OpcodeID opcodeID)
             || opcodeID == op_tail_call_forward_arguments;
     }
 
+    if (shape == OpHasIndexedPropertyShape)
+        return opcodeID == op_has_indexed_property;
+
+    if (shape == OpGetArrayLengthShape)
+        return opcodeID == op_get_array_length;
+
+    if (shape == OpGetByValShape)
+        return opcodeID == op_get_by_val;
+
+    if (shape == OpInByValShape)
+        return opcodeID == op_in_by_val;
+
+    if (shape == OpPutByValShape) {
+        static_assert(OPCODE_LENGTH(op_put_by_val) == OPCODE_LENGTH(op_put_by_val_direct), "");
+        return opcodeID == op_put_by_val
+            || opcodeID == op_put_by_val_direct;
+    }
+
     RELEASE_ASSERT_NOT_REACHED();
 }
 
 template<OpcodeShape shape, typename = std::enable_if_t<shape != AnyOpcodeShape>>
 inline bool isOpcodeShape(const Instruction* instruction)
 {
-    return isOpcodeShape<shape>(instruction->opcodeID());
+    OpcodeID opcodeID = Interpreter::getOpcodeID(*instruction);
+    return isOpcodeShape<shape>(opcodeID);
 }
 
-template<typename T, typename... Args>
-void getOpcodeType(OpcodeID opcodeID, Args&&... args)
+template<OpcodeShape shape = AnyOpcodeShape>
+inline ArrayProfile* arrayProfileFor(const Instruction* instruction)
 {
+    ArrayProfile* arrayProfile = nullptr;
+    OpcodeID opcodeID = Interpreter::getOpcodeID(*instruction);
+    if (OpCallShape == shape || (AnyOpcodeShape == shape && isOpcodeShape<OpCallShape>(opcodeID))) {
+        ASSERT(isOpcodeShape<OpCallShape>(instruction));
+        arrayProfile = instruction[OPCODE_LENGTH(op_call) - 2].u.arrayProfile;
 
-#define CASE(__Op) \
-    case __Op::opcodeID: \
-        T::template withOpcodeType<__Op>(std::forward<Args>(args)...); \
-        break; \
+    } else if (OpHasIndexedPropertyShape == shape || (AnyOpcodeShape == shape && isOpcodeShape<OpHasIndexedPropertyShape>(opcodeID))) {
+        ASSERT(isOpcodeShape<OpHasIndexedPropertyShape>(instruction));
+        arrayProfile = instruction[4].u.arrayProfile;
 
-    switch (opcodeID) {
-        FOR_EACH_BYTECODE_STRUCT(CASE)
-    default:
-        ASSERT_NOT_REACHED();
-    }
+    } else if (OpGetArrayLengthShape == shape || (AnyOpcodeShape == shape && isOpcodeShape<OpGetArrayLengthShape>(opcodeID))) {
+        ASSERT(isOpcodeShape<OpGetArrayLengthShape>(instruction));
+        arrayProfile = instruction[4].u.arrayProfile;
 
-#undef CASE
+    } else if (OpGetByValShape == shape || (AnyOpcodeShape == shape && isOpcodeShape<OpGetByValShape>(opcodeID))) {
+        ASSERT(isOpcodeShape<OpGetByValShape>(instruction));
+        arrayProfile = instruction[4].u.arrayProfile;
+
+    } else if (OpInByValShape == shape || (AnyOpcodeShape == shape && isOpcodeShape<OpInByValShape>(opcodeID))) {
+        ASSERT(isOpcodeShape<OpInByValShape>(instruction));
+        arrayProfile = instruction[OPCODE_LENGTH(op_in_by_val) - 1].u.arrayProfile;
+
+    } else if (OpPutByValShape == shape || (AnyOpcodeShape == shape && isOpcodeShape<OpPutByValShape>(opcodeID))) {
+        ASSERT(isOpcodeShape<OpPutByValShape>(instruction));
+        arrayProfile = instruction[4].u.arrayProfile;
+
+    } else if (AnyOpcodeShape != shape)
+        RELEASE_ASSERT_NOT_REACHED();
+
+    ASSERT(!arrayProfile || arrayProfile->isValid());
+    return arrayProfile;
 }
 
 } // namespace JSC

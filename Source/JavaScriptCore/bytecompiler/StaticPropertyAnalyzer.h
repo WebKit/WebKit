@@ -35,55 +35,63 @@ namespace JSC {
 // is understood to be lossy, and it's OK if it turns out to be wrong sometimes.
 class StaticPropertyAnalyzer {
 public:
-    void createThis(RegisterID* dst, InstructionStream::MutableRef&& instructionRef);
-    void newObject(RegisterID* dst, InstructionStream::MutableRef&& instructionRef);
-    void putById(RegisterID* dst, unsigned propertyIndex); // propertyIndex is an index into a uniqued set of strings.
-    void mov(RegisterID* dst, RegisterID* src);
+    StaticPropertyAnalyzer(Vector<UnlinkedInstruction, 0, UnsafeVectorOverflow>*);
+
+    void createThis(int dst, unsigned offsetOfInlineCapacityOperand);
+    void newObject(int dst, unsigned offsetOfInlineCapacityOperand);
+    void putById(int dst, unsigned propertyIndex); // propertyIndex is an index into a uniqued set of strings.
+    void mov(int dst, int src);
 
     void kill();
-    void kill(RegisterID* dst);
+    void kill(int dst);
 
 private:
     void kill(StaticPropertyAnalysis*);
 
+    Vector<UnlinkedInstruction, 0, UnsafeVectorOverflow>* m_instructions;
     typedef HashMap<int, RefPtr<StaticPropertyAnalysis>, WTF::IntHash<int>, WTF::UnsignedWithZeroKeyHashTraits<int>> AnalysisMap;
     AnalysisMap m_analyses;
 };
 
-inline void StaticPropertyAnalyzer::createThis(RegisterID* dst, InstructionStream::MutableRef&& instructionRef)
+inline StaticPropertyAnalyzer::StaticPropertyAnalyzer(Vector<UnlinkedInstruction, 0, UnsafeVectorOverflow>* instructions)
+    : m_instructions(instructions)
+{
+}
+
+inline void StaticPropertyAnalyzer::createThis(int dst, unsigned offsetOfInlineCapacityOperand)
 {
     AnalysisMap::AddResult addResult = m_analyses.add(
-        dst->index(), StaticPropertyAnalysis::create(WTFMove(instructionRef)));
+        dst, StaticPropertyAnalysis::create(m_instructions, offsetOfInlineCapacityOperand));
     ASSERT_UNUSED(addResult, addResult.isNewEntry); // Can't have two 'this' in the same constructor.
 }
 
-inline void StaticPropertyAnalyzer::newObject(RegisterID* dst, InstructionStream::MutableRef&& instructionRef)
+inline void StaticPropertyAnalyzer::newObject(int dst, unsigned offsetOfInlineCapacityOperand)
 {
-    RefPtr<StaticPropertyAnalysis> analysis = StaticPropertyAnalysis::create(WTFMove(instructionRef));
-    AnalysisMap::AddResult addResult = m_analyses.add(dst->index(), analysis);
+    RefPtr<StaticPropertyAnalysis> analysis = StaticPropertyAnalysis::create(m_instructions, offsetOfInlineCapacityOperand);
+    AnalysisMap::AddResult addResult = m_analyses.add(dst, analysis);
     if (!addResult.isNewEntry) {
         kill(addResult.iterator->value.get());
         addResult.iterator->value = WTFMove(analysis);
     }
 }
 
-inline void StaticPropertyAnalyzer::putById(RegisterID* dst, unsigned propertyIndex)
+inline void StaticPropertyAnalyzer::putById(int dst, unsigned propertyIndex)
 {
-    StaticPropertyAnalysis* analysis = m_analyses.get(dst->index());
+    StaticPropertyAnalysis* analysis = m_analyses.get(dst);
     if (!analysis)
         return;
     analysis->addPropertyIndex(propertyIndex);
 }
 
-inline void StaticPropertyAnalyzer::mov(RegisterID* dst, RegisterID* src)
+inline void StaticPropertyAnalyzer::mov(int dst, int src)
 {
-    RefPtr<StaticPropertyAnalysis> analysis = m_analyses.get(src->index());
+    RefPtr<StaticPropertyAnalysis> analysis = m_analyses.get(src);
     if (!analysis) {
         kill(dst);
         return;
     }
 
-    AnalysisMap::AddResult addResult = m_analyses.add(dst->index(), analysis);
+    AnalysisMap::AddResult addResult = m_analyses.add(dst, analysis);
     if (!addResult.isNewEntry) {
         kill(addResult.iterator->value.get());
         addResult.iterator->value = WTFMove(analysis);
@@ -99,7 +107,7 @@ inline void StaticPropertyAnalyzer::kill(StaticPropertyAnalysis* analysis)
     analysis->record();
 }
 
-inline void StaticPropertyAnalyzer::kill(RegisterID* dst)
+inline void StaticPropertyAnalyzer::kill(int dst)
 {
     // We observe kills in order to avoid piling on properties to an object after
     // its bytecode register has been recycled.
@@ -140,7 +148,7 @@ inline void StaticPropertyAnalyzer::kill(RegisterID* dst)
     // so we accept kills to any registers except for registers that have no inferred
     // properties yet.
 
-    AnalysisMap::iterator it = m_analyses.find(dst->index());
+    AnalysisMap::iterator it = m_analyses.find(dst);
     if (it == m_analyses.end())
         return;
     if (!it->value->propertyIndexCount())

@@ -141,9 +141,7 @@ if ($forceCLoop) {
 }
 
 if (isCMakeBuild()) {
-    if ($forceCLoop) {
-        push @cmakeArgs, " -DENABLE_JIT=OFF"
-    }
+    push @cmakeArgs, $forceCLoop ? " -DENABLE_JIT=OFF" : " -DENABLE_JIT=ON";
     push @cmakeArgs, $ftlJIT ? " -DENABLE_FTL_JIT=ON" : " -DENABLE_FTL_JIT=OFF";
     if ($buildDir) {
         push @cmakeArgs, " " . sourceDir();

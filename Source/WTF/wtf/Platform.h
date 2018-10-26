@@ -752,19 +752,23 @@
 #endif
 #endif /* !defined(USE_JSVALUE64) && !defined(USE_JSVALUE32_64) */
 
-/* The JIT is enabled by default on all x86-64 & ARM64 platforms. */
+/* The JIT is enabled by default on all x86, x86-64, ARM & MIPS platforms except ARMv7k. */
 #if !defined(ENABLE_JIT) \
-    && (CPU(X86_64) || CPU(ARM64)) \
+    && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(MIPS)) \
     && !CPU(APPLE_ARMV7K)
 #define ENABLE_JIT 1
 #endif
 
-/* Force C_LOOP for 32-bit builds. */
-#if USE(JSVALUE32_64)
+/* Cocoa ports should not use the jit on 32-bit ARM CPUs. */
+#if PLATFORM(COCOA) && (CPU(ARM) || CPU(APPLE_ARMV7K))
 #undef ENABLE_JIT
 #define ENABLE_JIT 0
-#undef ENABLE_C_LOOP
-#define ENABLE_C_LOOP 1
+#endif
+
+/* Disable the JIT for 32-bit Windows builds. */
+#if USE(JSVALUE32_64) && OS(WINDOWS)
+#undef ENABLE_JIT
+#define ENABLE_JIT 0
 #endif
 
 #if !defined(ENABLE_C_LOOP)

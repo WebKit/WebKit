@@ -53,7 +53,7 @@ namespace JSC  {
             : m_bits(bits)
         { }
 #if USE(JSVALUE32_64)
-        explicit CallSiteIndex(const Instruction* instruction)
+        explicit CallSiteIndex(Instruction* instruction)
             : m_bits(bitwise_cast<uint32_t>(instruction))
         { }
 #endif
@@ -70,7 +70,7 @@ namespace JSC  {
     // arm64_32 expects caller frame and return pc to use 8 bytes 
     struct CallerFrameAndPC {
         alignas(CPURegister) CallFrame* callerFrame;
-        alignas(CPURegister) const Instruction* returnPC;
+        alignas(CPURegister) Instruction* returnPC;
         static const int sizeInRegisters = 2 * sizeof(CPURegister) / sizeof(Register);
     };
     static_assert(CallerFrameAndPC::sizeInRegisters == sizeof(CallerFrameAndPC) / sizeof(Register), "CallerFrameAndPC::sizeInRegisters is incorrect.");
@@ -183,8 +183,8 @@ namespace JSC  {
             return topOfFrameInternal();
         }
     
-        const Instruction* currentVPC() const; // This only makes sense in the LLInt and baseline.
-        void setCurrentVPC(const Instruction*);
+        Instruction* currentVPC() const; // This only makes sense in the LLInt and baseline.
+        void setCurrentVPC(Instruction* vpc);
 
         void setCallerFrame(CallFrame* frame) { callerFrameAndPC().callerFrame = frame; }
         void setScope(int scopeRegisterOffset, JSScope* scope) { static_cast<Register*>(this)[scopeRegisterOffset] = scope; }
@@ -264,7 +264,7 @@ namespace JSC  {
         void setArgumentCountIncludingThis(int count) { static_cast<Register*>(this)[CallFrameSlot::argumentCount].payload() = count; }
         void setCallee(JSObject* callee) { static_cast<Register*>(this)[CallFrameSlot::callee] = callee; }
         void setCodeBlock(CodeBlock* codeBlock) { static_cast<Register*>(this)[CallFrameSlot::codeBlock] = codeBlock; }
-        void setReturnPC(void* value) { callerFrameAndPC().returnPC = reinterpret_cast<const Instruction*>(value); }
+        void setReturnPC(void* value) { callerFrameAndPC().returnPC = reinterpret_cast<Instruction*>(value); }
 
         String friendlyFunctionName();
 

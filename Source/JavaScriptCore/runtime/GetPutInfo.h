@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2015 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -223,9 +223,7 @@ public:
     ResolveType resolveType() const { return static_cast<ResolveType>(m_operand & typeBits); }
     InitializationMode initializationMode() const { return static_cast<InitializationMode>((m_operand & initializationBits) >> initializationShift); }
     ResolveMode resolveMode() const { return static_cast<ResolveMode>((m_operand & modeBits) >> modeShift); }
-    unsigned operand() const { return m_operand; }
-
-    void dump(PrintStream&) const;
+    unsigned operand() { return m_operand; }
 
 private:
     Operand m_operand;
@@ -234,13 +232,3 @@ private:
 enum GetOrPut { Get, Put };
 
 } // namespace JSC
-
-namespace WTF {
-
-class PrintStream;
-
-void printInternal(PrintStream&, JSC::ResolveMode);
-void printInternal(PrintStream&, JSC::ResolveType);
-void printInternal(PrintStream&, JSC::InitializationMode);
-
-} // namespace WTF

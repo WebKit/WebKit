@@ -371,13 +371,12 @@ File.open(outputFlnm, "w") {
     $asm = Assembler.new($output)
     
     ast = parse(asmFile)
-    settingsCombinations = computeSettingsCombinations(ast)
 
     configurationList.each {
         | configuration |
         offsetsList = configuration[0]
         configIndex = configuration[1]
-        forSettings(settingsCombinations[configIndex], ast) {
+        forSettings(computeSettingsCombinations(ast)[configIndex], ast) {
             | concreteSettings, lowLevelAST, backend |
 
             # There could be multiple backends we are generating for, but the C_LOOP is
@@ -387,7 +386,6 @@ File.open(outputFlnm, "w") {
                 $enableDebugAnnotations = false
             end
 
-            lowLevelAST = lowLevelAST.demacroify({})
             lowLevelAST = lowLevelAST.resolve(buildOffsetsMap(lowLevelAST, offsetsList))
             lowLevelAST.validate
             emitCodeInConfiguration(concreteSettings, lowLevelAST, backend) {

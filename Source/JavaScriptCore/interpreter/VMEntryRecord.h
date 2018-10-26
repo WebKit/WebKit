@@ -48,8 +48,6 @@ struct VMEntryRecord {
 
 #if !ENABLE(C_LOOP) && NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
     CPURegister calleeSaveRegistersBuffer[NUMBER_OF_CALLEE_SAVES_REGISTERS];
-#elif ENABLE(C_LOOP)
-    CPURegister calleeSaveRegistersBuffer[1];
 #endif
 
     ExecState* prevTopCallFrame() { return m_prevTopCallFrame; }

@@ -26,7 +26,6 @@
 
 #pragma once
 
-#include "BytecodeGenerator.h"
 #include "BytecodeGraph.h"
 #include "Bytecodes.h"
 #include "Opcode.h"
@@ -94,10 +93,10 @@ public:
     };
 
     struct InsertionPoint {
-        int32_t bytecodeOffset;
+        int bytecodeOffset;
         Position position;
 
-        InsertionPoint(InstructionStream::Offset offset, Position pos)
+        InsertionPoint(int offset, Position pos)
             : bytecodeOffset(offset)
             , position(pos)
         {
@@ -131,88 +130,85 @@ private:
         Type type;
         IncludeBranch includeBranch;
         size_t removeLength;
-        InstructionStreamWriter instructions;
+        Vector<UnlinkedInstruction> instructions;
     };
 
 public:
     class Fragment {
     WTF_MAKE_NONCOPYABLE(Fragment);
     public:
-        Fragment(BytecodeGenerator& bytecodeGenerator, InstructionStreamWriter& writer, IncludeBranch& includeBranch)
-            : m_bytecodeGenerator(bytecodeGenerator)
-            , m_writer(writer)
+        Fragment(Vector<UnlinkedInstruction>& fragment, IncludeBranch& includeBranch)
+            : m_fragment(fragment)
             , m_includeBranch(includeBranch)
         {
         }
 
-        template<class Op, class... Args>
-        void appendInstruction(Args... args)
+        template<class... Args>
+        void appendInstruction(OpcodeID opcodeID, Args... args)
         {
-            if (isBranch(Op::opcodeID))
+            if (isBranch(opcodeID))
                 m_includeBranch = IncludeBranch::Yes;
 
-            m_bytecodeGenerator.withWriter(m_writer, [&] {
-                Op::emit(&m_bytecodeGenerator, std::forward<Args>(args)...);
-            });
+            UnlinkedInstruction instructions[sizeof...(args) + 1] = {
+                UnlinkedInstruction(opcodeID),
+                UnlinkedInstruction(args)...
+            };
+            m_fragment.append(instructions, sizeof...(args) + 1);
         }
 
     private:
-        BytecodeGenerator& m_bytecodeGenerator;
-        InstructionStreamWriter& m_writer;
+        Vector<UnlinkedInstruction>& m_fragment;
         IncludeBranch& m_includeBranch;
     };
 
-    BytecodeRewriter(BytecodeGenerator& bytecodeGenerator, BytecodeGraph& graph, UnlinkedCodeBlock* codeBlock, InstructionStreamWriter& writer)
-        : m_bytecodeGenerator(bytecodeGenerator)
-        , m_graph(graph)
+    BytecodeRewriter(BytecodeGraph& graph, UnlinkedCodeBlock* codeBlock, UnlinkedCodeBlock::UnpackedInstructions& instructions)
+        : m_graph(graph)
         , m_codeBlock(codeBlock)
-        , m_writer(writer)
+        , m_instructions(instructions)
     {
     }
 
     template<class Function>
-    void insertFragmentBefore(const InstructionStream::Ref& instruction, Function function)
+    void insertFragmentBefore(unsigned bytecodeOffset, Function function)
     {
         IncludeBranch includeBranch = IncludeBranch::No;
-        InstructionStreamWriter writer;
-        Fragment fragment(m_bytecodeGenerator, writer, includeBranch);
+        Vector<UnlinkedInstruction> instructions;
+        Fragment fragment(instructions, includeBranch);
         function(fragment);
-        insertImpl(InsertionPoint(instruction.offset(), Position::Before), includeBranch, WTFMove(writer));
+        insertImpl(InsertionPoint(bytecodeOffset, Position::Before), includeBranch, WTFMove(instructions));
     }
 
     template<class Function>
-    void insertFragmentAfter(const InstructionStream::Ref& instruction, Function function)
+    void insertFragmentAfter(unsigned bytecodeOffset, Function function)
     {
         IncludeBranch includeBranch = IncludeBranch::No;
-        InstructionStreamWriter writer;
-        Fragment fragment(m_bytecodeGenerator, writer, includeBranch);
+        Vector<UnlinkedInstruction> instructions;
+        Fragment fragment(instructions, includeBranch);
         function(fragment);
-        insertImpl(InsertionPoint(instruction.offset(), Position::After), includeBranch, WTFMove(writer));
+        insertImpl(InsertionPoint(bytecodeOffset, Position::After), includeBranch, WTFMove(instructions));
     }
 
-    void removeBytecode(const InstructionStream::Ref& instruction)
+    void removeBytecode(unsigned bytecodeOffset)
     {
-        m_insertions.append(Insertion { InsertionPoint(instruction.offset(), Position::OriginalBytecodePoint), Insertion::Type::Remove, IncludeBranch::No, instruction->size(), { } });
+        m_insertions.append(Insertion { InsertionPoint(bytecodeOffset, Position::OriginalBytecodePoint), Insertion::Type::Remove, IncludeBranch::No, opcodeLength(m_instructions[bytecodeOffset].u.opcode), { } });
     }
 
     void execute();
 
     BytecodeGraph& graph() { return m_graph; }
 
-    int32_t adjustAbsoluteOffset(InstructionStream::Offset absoluteOffset)
+    int adjustAbsoluteOffset(int absoluteOffset)
     {
         return adjustJumpTarget(InsertionPoint(0, Position::EntryPoint), InsertionPoint(absoluteOffset, Position::LabelPoint));
     }
 
-    int32_t adjustJumpTarget(InstructionStream::Offset originalBytecodeOffset, int32_t originalJumpTarget)
+    int adjustJumpTarget(int originalBytecodeOffset, int originalJumpTarget)
     {
         return adjustJumpTarget(InsertionPoint(originalBytecodeOffset, Position::LabelPoint), InsertionPoint(originalJumpTarget, Position::LabelPoint));
     }
 
-    void adjustJumpTargets();
-
 private:
-    void insertImpl(InsertionPoint, IncludeBranch, InstructionStreamWriter&& fragment);
+    void insertImpl(InsertionPoint, IncludeBranch, Vector<UnlinkedInstruction>&& fragment);
 
     friend class UnlinkedCodeBlock;
     void applyModification();
@@ -221,10 +217,9 @@ private:
     int adjustJumpTarget(InsertionPoint startPoint, InsertionPoint jumpTargetPoint);
     template<typename Iterator> int calculateDifference(Iterator begin, Iterator end);
 
-    BytecodeGenerator& m_bytecodeGenerator;
     BytecodeGraph& m_graph;
     UnlinkedCodeBlock* m_codeBlock;
-    InstructionStreamWriter& m_writer;
+    UnlinkedCodeBlock::UnpackedInstructions& m_instructions;
     Vector<Insertion, 8> m_insertions;
 };
 

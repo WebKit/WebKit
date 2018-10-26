@@ -51,17 +51,18 @@ inline bool operandIsLive(const FastBitVector& out, int operand)
     return operandIsAlwaysLive(operand) || operandThatIsNotAlwaysLiveIsLive(out, operand);
 }
 
-inline bool isValidRegisterForLiveness(VirtualRegister operand)
+inline bool isValidRegisterForLiveness(int operand)
 {
-    if (operand.isConstant())
+    VirtualRegister virtualReg(operand);
+    if (virtualReg.isConstant())
         return false;
-    return operand.isLocal();
+    return virtualReg.isLocal();
 }
 
 // Simplified interface to bytecode use/def, which determines defs first and then uses, and includes
 // exception handlers in the uses.
-template<typename CodeBlockType, typename UseFunctor, typename DefFunctor>
-inline void BytecodeLivenessPropagation::stepOverInstruction(CodeBlockType* codeBlock, const InstructionStream& instructions, BytecodeGraph& graph, InstructionStream::Offset bytecodeOffset, const UseFunctor& use, const DefFunctor& def)
+template<typename CodeBlockType, typename Instructions, typename UseFunctor, typename DefFunctor>
+inline void BytecodeLivenessPropagation::stepOverInstruction(CodeBlockType* codeBlock, const Instructions& instructions, BytecodeGraph& graph, unsigned bytecodeOffset, const UseFunctor& use, const DefFunctor& def)
 {
     // This abstractly execute the instruction in reverse. Instructions logically first use operands and
     // then define operands. This logical ordering is necessary for operations that use and def the same
@@ -78,21 +79,22 @@ inline void BytecodeLivenessPropagation::stepOverInstruction(CodeBlockType* code
     // uses before defs, then the add operation above would appear to not have loc1 live, since we'd
     // first add it to the out set (the use), and then we'd remove it (the def).
 
-    auto* instruction = instructions.at(bytecodeOffset).ptr();
-    OpcodeID opcodeID = instruction->opcodeID();
+    auto* instructionsBegin = instructions.begin();
+    auto* instruction = &instructionsBegin[bytecodeOffset];
+    OpcodeID opcodeID = Interpreter::getOpcodeID(*instruction);
 
     computeDefsForBytecodeOffset(
         codeBlock, opcodeID, instruction,
-        [&] (VirtualRegister operand) {
+        [&] (CodeBlockType*, const typename CodeBlockType::Instruction*, OpcodeID, int operand) {
             if (isValidRegisterForLiveness(operand))
-                def(operand.toLocal());
+                def(VirtualRegister(operand).toLocal());
         });
 
     computeUsesForBytecodeOffset(
         codeBlock, opcodeID, instruction,
-        [&] (VirtualRegister operand) {
+        [&] (CodeBlockType*, const typename CodeBlockType::Instruction*, OpcodeID, int operand) {
             if (isValidRegisterForLiveness(operand))
-                use(operand.toLocal());
+                use(VirtualRegister(operand).toLocal());
         });
 
     // If we have an exception handler, we want the live-in variables of the 
@@ -104,8 +106,8 @@ inline void BytecodeLivenessPropagation::stepOverInstruction(CodeBlockType* code
     }
 }
 
-template<typename CodeBlockType>
-inline void BytecodeLivenessPropagation::stepOverInstruction(CodeBlockType* codeBlock, const InstructionStream& instructions, BytecodeGraph& graph, InstructionStream::Offset bytecodeOffset, FastBitVector& out)
+template<typename CodeBlockType, typename Instructions>
+inline void BytecodeLivenessPropagation::stepOverInstruction(CodeBlockType* codeBlock, const Instructions& instructions, BytecodeGraph& graph, unsigned bytecodeOffset, FastBitVector& out)
 {
     stepOverInstruction(
         codeBlock, instructions, graph, bytecodeOffset,

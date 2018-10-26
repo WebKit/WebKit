@@ -37,8 +37,6 @@ namespace JSC {
 
     class RegisterID {
         WTF_MAKE_NONCOPYABLE(RegisterID);
-
-        friend class VirtualRegister;
     public:
         RegisterID()
             : m_refCount(0)
@@ -124,6 +122,7 @@ namespace JSC {
         bool m_didSetIndex;
 #endif
     };
+
 } // namespace JSC
 
 namespace WTF {

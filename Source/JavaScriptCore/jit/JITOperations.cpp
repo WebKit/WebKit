@@ -753,7 +753,7 @@ static OptimizationResult tryPutByValOptimize(ExecState* exec, JSValue baseValue
             ASSERT(!byValInfo->stubRoutine);
             if (byValInfo->seen) {
                 if (byValInfo->cachedId == propertyName) {
-                    JIT::compilePutByValWithCachedId<OpPutByVal>(&vm, exec->codeBlock(), byValInfo, returnAddress, NotDirect, propertyName);
+                    JIT::compilePutByValWithCachedId(&vm, exec->codeBlock(), byValInfo, returnAddress, NotDirect, propertyName);
                     optimizationResult = OptimizationResult::Optimized;
                 } else {
                     // Seem like a generic property access site.
@@ -835,7 +835,7 @@ static OptimizationResult tryDirectPutByValOptimize(ExecState* exec, JSObject* o
             ASSERT(!byValInfo->stubRoutine);
             if (byValInfo->seen) {
                 if (byValInfo->cachedId == propertyName) {
-                    JIT::compilePutByValWithCachedId<OpPutByValDirect>(&vm, exec->codeBlock(), byValInfo, returnAddress, Direct, propertyName);
+                    JIT::compilePutByValWithCachedId(&vm, exec->codeBlock(), byValInfo, returnAddress, Direct, propertyName);
                     optimizationResult = OptimizationResult::Optimized;
                 } else {
                     // Seem like a generic property access site.
@@ -1657,9 +1657,8 @@ char* JIT_OPERATION operationTryOSREnterAtCatchAndValueProfile(ExecState* exec, 
     }
 
     codeBlock->ensureCatchLivenessIsComputedForBytecodeOffset(bytecodeIndex);
-    auto bytecode = codeBlock->instructions().at(bytecodeIndex)->as<OpCatch>();
-    auto& metadata = bytecode.metadata(codeBlock);
-    metadata.buffer->forEach([&] (ValueProfileAndOperand& profile) {
+    ValueProfileAndOperandBuffer* buffer = static_cast<ValueProfileAndOperandBuffer*>(codeBlock->instructions()[bytecodeIndex + 3].u.pointer);
+    buffer->forEach([&] (ValueProfileAndOperand& profile) {
         profile.m_profile.m_buckets[0] = JSValue::encode(exec->uncheckedR(profile.m_operand).jsValue());
     });
 
@@ -2281,18 +2280,18 @@ char* JIT_OPERATION operationSwitchStringWithUnknownKeyType(ExecState* exec, Enc
     return reinterpret_cast<char*>(result);
 }
 
-EncodedJSValue JIT_OPERATION operationGetFromScope(ExecState* exec, const Instruction* pc)
+EncodedJSValue JIT_OPERATION operationGetFromScope(ExecState* exec, Instruction* bytecodePC)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     CodeBlock* codeBlock = exec->codeBlock();
+    Instruction* pc = bytecodePC;
 
-    auto bytecode = pc->as<OpGetFromScope>();
-    const Identifier& ident = codeBlock->identifier(bytecode.var);
-    JSObject* scope = jsCast<JSObject*>(exec->uncheckedR(bytecode.scope.offset()).jsValue());
-    GetPutInfo& getPutInfo = bytecode.metadata(codeBlock).getPutInfo;
+    const Identifier& ident = codeBlock->identifier(pc[3].u.operand);
+    JSObject* scope = jsCast<JSObject*>(exec->uncheckedR(pc[2].u.operand).jsValue());
+    GetPutInfo getPutInfo(pc[4].u.operand);
 
     // ModuleVar is always converted to ClosureVar for get_from_scope.
     ASSERT(getPutInfo.resolveType() != ModuleVar);
@@ -2314,7 +2313,7 @@ EncodedJSValue JIT_OPERATION operationGetFromScope(ExecState* exec, const Instru
             }
         }
 
-        CommonSlowPaths::tryCacheGetFromScopeGlobal(exec, vm, bytecode, scope, slot, ident);
+        CommonSlowPaths::tryCacheGetFromScopeGlobal(exec, vm, pc, scope, slot, ident);
 
         if (!result)
             return slot.getValue(exec, ident);
@@ -2322,28 +2321,27 @@ EncodedJSValue JIT_OPERATION operationGetFromScope(ExecState* exec, const Instru
     })));
 }
 
-void JIT_OPERATION operationPutToScope(ExecState* exec, const Instruction* pc)
+void JIT_OPERATION operationPutToScope(ExecState* exec, Instruction* bytecodePC)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    CodeBlock* codeBlock = exec->codeBlock();
-    auto bytecode = pc->as<OpPutToScope>();
-    auto& metadata = bytecode.metadata(codeBlock);
+    Instruction* pc = bytecodePC;
 
-    const Identifier& ident = codeBlock->identifier(bytecode.var);
-    JSObject* scope = jsCast<JSObject*>(exec->uncheckedR(bytecode.scope.offset()).jsValue());
-    JSValue value = exec->r(bytecode.value.offset()).jsValue();
-    GetPutInfo& getPutInfo = metadata.getPutInfo;
+    CodeBlock* codeBlock = exec->codeBlock();
+    const Identifier& ident = codeBlock->identifier(pc[2].u.operand);
+    JSObject* scope = jsCast<JSObject*>(exec->uncheckedR(pc[1].u.operand).jsValue());
+    JSValue value = exec->r(pc[3].u.operand).jsValue();
+    GetPutInfo getPutInfo = GetPutInfo(pc[4].u.operand);
 
     // ModuleVar does not keep the scope register value alive in DFG.
     ASSERT(getPutInfo.resolveType() != ModuleVar);
 
     if (getPutInfo.resolveType() == LocalClosureVar) {
         JSLexicalEnvironment* environment = jsCast<JSLexicalEnvironment*>(scope);
-        environment->variableAt(ScopeOffset(metadata.operand)).set(vm, environment, value);
-        if (WatchpointSet* set = metadata.watchpointSet)
+        environment->variableAt(ScopeOffset(pc[6].u.operand)).set(vm, environment, value);
+        if (WatchpointSet* set = pc[5].u.watchpointSet)
             set->touch(vm, "Executed op_put_scope<LocalClosureVar>");
         return;
     }
@@ -2372,7 +2370,7 @@ void JIT_OPERATION operationPutToScope(ExecState* exec, const Instruction* pc)
     
     RETURN_IF_EXCEPTION(throwScope, void());
 
-    CommonSlowPaths::tryCachePutToScopeGlobal(exec, codeBlock, bytecode, scope, slot, ident);
+    CommonSlowPaths::tryCachePutToScopeGlobal(exec, codeBlock, pc, scope, getPutInfo, slot, ident);
 }
 
 void JIT_OPERATION operationThrow(ExecState* exec, EncodedJSValue encodedExceptionValue)

@@ -462,8 +462,8 @@ CallFrame* JIT_OPERATION operationSetupVarargsFrame(ExecState*, CallFrame*, Enco
 char* JIT_OPERATION operationSwitchCharWithUnknownKeyType(ExecState*, EncodedJSValue key, size_t tableIndex) WTF_INTERNAL;
 char* JIT_OPERATION operationSwitchImmWithUnknownKeyType(ExecState*, EncodedJSValue key, size_t tableIndex) WTF_INTERNAL;
 char* JIT_OPERATION operationSwitchStringWithUnknownKeyType(ExecState*, EncodedJSValue key, size_t tableIndex) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationGetFromScope(ExecState*, const Instruction* bytecodePC) WTF_INTERNAL;
-void JIT_OPERATION operationPutToScope(ExecState*, const Instruction* bytecodePC) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationGetFromScope(ExecState*, Instruction* bytecodePC) WTF_INTERNAL;
+void JIT_OPERATION operationPutToScope(ExecState*, Instruction* bytecodePC) WTF_INTERNAL;
 
 char* JIT_OPERATION operationReallocateButterflyToHavePropertyStorageWithInitialCapacity(ExecState*, JSObject*) WTF_INTERNAL;
 char* JIT_OPERATION operationReallocateButterflyToGrowPropertyStorage(ExecState*, JSObject*, size_t newSize) WTF_INTERNAL;

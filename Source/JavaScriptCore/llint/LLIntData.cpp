@@ -41,18 +41,13 @@
 
 #define STATIC_ASSERT(cond) static_assert(cond, "LLInt assumes " #cond)
 
+namespace JSC { namespace LLInt {
 
-namespace JSC {
-
-namespace LLInt {
-
-
-uint8_t Data::s_exceptionInstructions[maxOpcodeLength + 1] = { };
-Opcode g_opcodeMap[numOpcodeIDs] = { };
-Opcode g_opcodeMapWide[numOpcodeIDs] = { };
+Instruction Data::s_exceptionInstructions[maxOpcodeLength + 1] = { };
+Opcode Data::s_opcodeMap[numOpcodeIDs] = { };
 
 #if !ENABLE(C_LOOP)
-extern "C" void llint_entry(void*, void*);
+extern "C" void llint_entry(void*);
 #endif
 
 void initialize()
@@ -61,16 +56,14 @@ void initialize()
     CLoop::initialize();
 
 #else // !ENABLE(C_LOOP)
-    llint_entry(&g_opcodeMap, &g_opcodeMapWide);
+    llint_entry(&Data::s_opcodeMap);
 
-    for (int i = 0; i < numOpcodeIDs; ++i) {
-        g_opcodeMap[i] = tagCodePtr(g_opcodeMap[i], BytecodePtrTag);
-        g_opcodeMapWide[i] = tagCodePtr(g_opcodeMapWide[i], BytecodePtrTag);
-    }
+    for (int i = 0; i < numOpcodeIDs; ++i)
+        Data::s_opcodeMap[i] = tagCodePtr(Data::s_opcodeMap[i], BytecodePtrTag);
 
-    ASSERT(llint_throw_from_slow_path_trampoline < UINT8_MAX);
+    void* handler = Data::s_opcodeMap[llint_throw_from_slow_path_trampoline];
     for (int i = 0; i < maxOpcodeLength + 1; ++i)
-        Data::s_exceptionInstructions[i] = llint_throw_from_slow_path_trampoline;
+        Data::s_exceptionInstructions[i].u.pointer = handler;
 #endif // ENABLE(C_LOOP)
 }
 
@@ -131,14 +124,12 @@ void Data::performAssertions(VM& vm)
     STATIC_ASSERT(ValueNull == TagBitTypeOther);
 #endif
 
-#if ENABLE(C_LOOP)
-    ASSERT(CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters() == 1);
-#elif USE(JSVALUE32_64)
+#if ENABLE(C_LOOP) || USE(JSVALUE32_64)
     ASSERT(!CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters());
 #elif (CPU(X86_64) && !OS(WINDOWS))  || CPU(ARM64)
-    ASSERT(CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters() == 4);
+    ASSERT(CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters() == 3);
 #elif (CPU(X86_64) && OS(WINDOWS))
-    ASSERT(CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters() == 4);
+    ASSERT(CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters() == 3);
 #endif
 
     ASSERT(!(reinterpret_cast<ptrdiff_t>((reinterpret_cast<WriteBarrier<JSCell>*>(0x4000)->slot())) - 0x4000));

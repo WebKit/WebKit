@@ -26,7 +26,7 @@
 #include "config.h"
 #include "HeapVerifier.h"
 
-#include "CodeBlockInlines.h"
+#include "CodeBlock.h"
 #include "HeapIterationScope.h"
 #include "JSCInlines.h"
 #include "JSObject.h"

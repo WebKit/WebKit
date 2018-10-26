@@ -53,87 +53,26 @@ namespace JSC {
     )
 
 
-const int maxOpcodeLength = 40;
+#define OPCODE_ID_ENUM(opcode, length) opcode,
+    enum OpcodeID : unsigned { FOR_EACH_OPCODE_ID(OPCODE_ID_ENUM) };
+#undef OPCODE_ID_ENUM
+
+const int maxOpcodeLength = 9;
 #if ENABLE(C_LOOP)
 const int numOpcodeIDs = NUMBER_OF_BYTECODE_IDS + NUMBER_OF_CLOOP_BYTECODE_HELPER_IDS + NUMBER_OF_BYTECODE_HELPER_IDS;
 #else
 const int numOpcodeIDs = NUMBER_OF_BYTECODE_IDS + NUMBER_OF_BYTECODE_HELPER_IDS;
 #endif
 
-#define OPCODE_ID_ENUM(opcode, length) opcode,
-    enum OpcodeID : unsigned { FOR_EACH_OPCODE_ID(OPCODE_ID_ENUM) };
-#undef OPCODE_ID_ENUM
-
-#if ENABLE(C_LOOP) && !HAVE(COMPUTED_GOTO)
-
-#define OPCODE_ID_ENUM(opcode, length) opcode##_wide = numOpcodeIDs + opcode,
-    enum OpcodeIDWide : unsigned { FOR_EACH_OPCODE_ID(OPCODE_ID_ENUM) };
-#undef OPCODE_ID_ENUM
-#endif
-
-#define OPCODE_LENGTH(opcode, length) length,
-    static unsigned opcodeLengths[] = {
-        FOR_EACH_OPCODE_ID(OPCODE_LENGTH)
-    };
-#undef OPCODE_LENGTH
-
 #define OPCODE_ID_LENGTHS(id, length) const int id##_length = length;
     FOR_EACH_OPCODE_ID(OPCODE_ID_LENGTHS);
 #undef OPCODE_ID_LENGTHS
 
-#define FOR_EACH_OPCODE_WITH_VALUE_PROFILE(macro) \
-    macro(OpCallVarargs) \
-    macro(OpTailCallVarargs) \
-    macro(OpTailCallForwardArguments) \
-    macro(OpConstructVarargs) \
-    macro(OpGetByVal) \
-    macro(OpGetDirectPname) \
-    macro(OpGetById) \
-    macro(OpGetByIdWithThis) \
-    macro(OpTryGetById) \
-    macro(OpGetByIdDirect) \
-    macro(OpGetByValWithThis) \
-    macro(OpGetFromArguments) \
-    macro(OpToNumber) \
-    macro(OpToObject) \
-    macro(OpGetArgument) \
-    macro(OpToThis) \
-    macro(OpCall) \
-    macro(OpTailCall) \
-    macro(OpCallEval) \
-    macro(OpConstruct) \
-    macro(OpGetFromScope) \
-    macro(OpBitand) \
-    macro(OpBitor) \
+#define OPCODE_LENGTH(opcode) opcode##_length
 
-#define FOR_EACH_OPCODE_WITH_ARRAY_PROFILE(macro) \
-    macro(OpHasIndexedProperty) \
-    macro(OpCallVarargs) \
-    macro(OpTailCallVarargs) \
-    macro(OpTailCallForwardArguments) \
-    macro(OpConstructVarargs) \
-    macro(OpGetByVal) \
-    macro(OpCall) \
-    macro(OpTailCall) \
-    macro(OpCallEval) \
-    macro(OpConstruct) \
-    macro(OpInByVal) \
-    macro(OpPutByVal) \
-    macro(OpPutByValDirect) \
-
-#define FOR_EACH_OPCODE_WITH_ARRAY_ALLOCATION_PROFILE(macro) \
-    macro(OpNewArray) \
-    macro(OpNewArrayWithSize) \
-    macro(OpNewArrayBuffer) \
-
-#define FOR_EACH_OPCODE_WITH_OBJECT_ALLOCATION_PROFILE(macro) \
-    macro(OpNewObject) \
-
-#define FOR_EACH_OPCODE_WITH_LLINT_CALL_LINK_INFO(macro) \
-    macro(OpCall) \
-    macro(OpTailCall) \
-    macro(OpCallEval) \
-    macro(OpConstruct) \
+#define OPCODE_ID_LENGTH_MAP(opcode, length) length,
+    const int opcodeLengths[numOpcodeIDs] = { FOR_EACH_OPCODE_ID(OPCODE_ID_LENGTH_MAP) };
+#undef OPCODE_ID_LENGTH_MAP
 
 IGNORE_WARNINGS_BEGIN("type-limits")
 
@@ -178,6 +117,17 @@ struct OpcodeStats {
 };
 
 #endif
+
+inline size_t opcodeLength(OpcodeID opcode)
+{
+    switch (opcode) {
+#define OPCODE_ID_LENGTHS(id, length) case id: return OPCODE_LENGTH(id);
+         FOR_EACH_OPCODE_ID(OPCODE_ID_LENGTHS)
+#undef OPCODE_ID_LENGTHS
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return 0;
+}
 
 inline bool isBranch(OpcodeID opcodeID)
 {
@@ -243,8 +193,6 @@ inline bool isThrow(OpcodeID opcodeID)
         return false;
     }
 }
-
-unsigned metadataSize(OpcodeID);
 
 } // namespace JSC
 

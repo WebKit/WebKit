@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-inline MacroAssembler::JumpList JIT::emitDoubleGetByVal(const Instruction* instruction, PatchableJump& badType)
+inline MacroAssembler::JumpList JIT::emitDoubleGetByVal(Instruction* instruction, PatchableJump& badType)
 {
 #if USE(JSVALUE64)
     JSValueRegs result = JSValueRegs(regT0);
@@ -43,7 +43,7 @@ inline MacroAssembler::JumpList JIT::emitDoubleGetByVal(const Instruction* instr
     return slowCases;
 }
 
-ALWAYS_INLINE MacroAssembler::JumpList JIT::emitLoadForArrayMode(const Instruction* currentInstruction, JITArrayMode arrayMode, PatchableJump& badType)
+ALWAYS_INLINE MacroAssembler::JumpList JIT::emitLoadForArrayMode(Instruction* currentInstruction, JITArrayMode arrayMode, PatchableJump& badType)
 {
     switch (arrayMode) {
     case JITInt32:
@@ -61,12 +61,12 @@ ALWAYS_INLINE MacroAssembler::JumpList JIT::emitLoadForArrayMode(const Instructi
     return MacroAssembler::JumpList();
 }
 
-inline MacroAssembler::JumpList JIT::emitContiguousGetByVal(const Instruction* instruction, PatchableJump& badType, IndexingType expectedShape)
+inline MacroAssembler::JumpList JIT::emitContiguousGetByVal(Instruction* instruction, PatchableJump& badType, IndexingType expectedShape)
 {
     return emitContiguousLoad(instruction, badType, expectedShape);
 }
 
-inline MacroAssembler::JumpList JIT::emitArrayStorageGetByVal(const Instruction* instruction, PatchableJump& badType)
+inline MacroAssembler::JumpList JIT::emitArrayStorageGetByVal(Instruction* instruction, PatchableJump& badType)
 {
     return emitArrayStorageLoad(instruction, badType);
 }
@@ -181,11 +181,10 @@ ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheckSetJSValueRe
     return call;
 }
 
-template<typename Metadata>
-ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheckSetJSValueResultWithProfile(Metadata& metadata, const FunctionPtr<CFunctionPtrTag> function, int dst)
+ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheckSetJSValueResultWithProfile(const FunctionPtr<CFunctionPtrTag> function, int dst)
 {
     MacroAssembler::Call call = appendCallWithExceptionCheck(function);
-    emitValueProfilingSite(metadata);
+    emitValueProfilingSite();
 #if USE(JSVALUE64)
     emitPutVirtualRegister(dst, returnValueGPR);
 #else
@@ -276,13 +275,13 @@ ALWAYS_INLINE void JIT::emitCount(AbstractSamplingCounter& counter, int32_t coun
 
 #if ENABLE(OPCODE_SAMPLING)
 #if CPU(X86_64)
-ALWAYS_INLINE void JIT::sampleInstruction(const Instruction* instruction, bool inHostFunction)
+ALWAYS_INLINE void JIT::sampleInstruction(Instruction* instruction, bool inHostFunction)
 {
     move(TrustedImmPtr(m_interpreter->sampler()->sampleSlot()), X86Registers::ecx);
     storePtr(TrustedImmPtr(m_interpreter->sampler()->encodeSample(instruction, inHostFunction)), X86Registers::ecx);
 }
 #else
-ALWAYS_INLINE void JIT::sampleInstruction(const Instruction* instruction, bool inHostFunction)
+ALWAYS_INLINE void JIT::sampleInstruction(Instruction* instruction, bool inHostFunction)
 {
     storePtr(TrustedImmPtr(m_interpreter->sampler()->encodeSample(instruction, inHostFunction)), m_interpreter->sampler()->sampleSlot());
 }
@@ -329,20 +328,16 @@ inline void JIT::emitValueProfilingSite(ValueProfile& valueProfile)
 #endif
 }
 
-template<typename Op>
-inline std::enable_if_t<std::is_same<decltype(Op::Metadata::profile), ValueProfile>::value, void> JIT::emitValueProfilingSiteIfProfiledOpcode(Op bytecode)
-{
-    emitValueProfilingSite(bytecode.metadata(m_codeBlock));
-}
-
-inline void JIT::emitValueProfilingSiteIfProfiledOpcode(...) { }
-
-template<typename Metadata>
-inline void JIT::emitValueProfilingSite(Metadata& metadata)
+inline void JIT::emitValueProfilingSite(unsigned bytecodeOffset)
 {
     if (!shouldEmitProfiling())
         return;
-    emitValueProfilingSite(metadata.profile);
+    emitValueProfilingSite(m_codeBlock->valueProfileForBytecodeOffset(bytecodeOffset));
+}
+
+inline void JIT::emitValueProfilingSite()
+{
+    emitValueProfilingSite(m_bytecodeOffset);
 }
 
 inline void JIT::emitArrayProfilingSiteWithCell(RegisterID cell, RegisterID indexingType, ArrayProfile* arrayProfile)
@@ -706,34 +701,9 @@ ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotNumber(RegisterID reg)
     addSlowCase(branchIfNotNumber(reg));
 }
 
-ALWAYS_INLINE int JIT::jumpTarget(const Instruction* instruction, int target)
+inline Instruction* JIT::copiedInstruction(Instruction* inst)
 {
-    if (target)
-        return target;
-    return m_codeBlock->outOfLineJumpOffset(instruction);
-}
-
-ALWAYS_INLINE GetPutInfo JIT::copiedGetPutInfo(OpPutToScope bytecode)
-{
-    unsigned key = bytecode.metadataID + 1; // HashMap doesn't like 0 as a key
-    auto iterator = m_copiedGetPutInfos.find(key);
-    if (iterator != m_copiedGetPutInfos.end())
-        return GetPutInfo(iterator->value);
-    GetPutInfo getPutInfo = bytecode.metadata(m_codeBlock).getPutInfo;
-    m_copiedGetPutInfos.add(key, getPutInfo.operand());
-    return getPutInfo;
-}
-
-template<typename BinaryOp>
-ALWAYS_INLINE ArithProfile JIT::copiedArithProfile(BinaryOp bytecode)
-{
-    size_t key = static_cast<size_t>(BinaryOp::opcodeID) << 32 | static_cast<size_t>(bytecode.metadataID);
-    auto iterator = m_copiedArithProfiles.find(key);
-    if (iterator != m_copiedArithProfiles.end())
-        return iterator->value;
-    ArithProfile arithProfile = bytecode.metadata(m_codeBlock).arithProfile;
-    m_copiedArithProfiles.add(key, arithProfile);
-    return arithProfile;
+    return &m_instructions[m_codeBlock->bytecodeOffset(inst)];
 }
 
 #endif // USE(JSVALUE32_64)

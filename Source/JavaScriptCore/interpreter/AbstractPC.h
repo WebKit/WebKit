@@ -62,7 +62,7 @@ public:
 
 private:
 #if ENABLE(JIT)
-    const void* m_pointer { nullptr };
+    void* m_pointer { nullptr };
 #endif
 
     enum Mode { None, JIT, Interpreter };

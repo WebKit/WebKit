@@ -103,14 +103,12 @@ inline void debugFail(CodeBlock* codeBlock, OpcodeID opcodeID, CapabilityLevel r
         dataLog("DFG rejecting opcode in ", *codeBlock, " because of opcode ", opcodeNames[opcodeID], "\n");
 }
 
-CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, const Instruction* pc)
+CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruction* pc)
 {
     UNUSED_PARAM(codeBlock); // This function does some bytecode parsing. Ordinarily bytecode parsing requires the owning CodeBlock. It's sort of strange that we don't use it here right now.
     UNUSED_PARAM(pc);
     
     switch (opcodeID) {
-    case op_wide:
-        RELEASE_ASSERT_NOT_REACHED();
     case op_enter:
     case op_to_this:
     case op_argument_count:
@@ -166,9 +164,12 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, const I
     case op_put_by_val_direct:
     case op_try_get_by_id:
     case op_get_by_id:
+    case op_get_by_id_proto_load:
+    case op_get_by_id_unset:
     case op_get_by_id_with_this:
     case op_get_by_id_direct:
     case op_get_by_val_with_this:
+    case op_get_array_length:
     case op_put_by_id:
     case op_put_by_id_with_this:
     case op_put_by_val_with_this:
@@ -301,17 +302,20 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, const I
 
 CapabilityLevel capabilityLevel(CodeBlock* codeBlock)
 {
+    Instruction* instructionsBegin = codeBlock->instructions().begin();
+    unsigned instructionCount = codeBlock->instructions().size();
     CapabilityLevel result = CanCompileAndInline;
     
-    for (const auto& instruction : codeBlock->instructions()) {
-        switch (instruction->opcodeID()) {
+    for (unsigned bytecodeOffset = 0; bytecodeOffset < instructionCount; ) {
+        switch (Interpreter::getOpcodeID(instructionsBegin[bytecodeOffset].u.opcode)) {
 #define DEFINE_OP(opcode, length) \
         case opcode: { \
-            CapabilityLevel newResult = leastUpperBound(result, capabilityLevel(opcode, codeBlock, instruction.ptr())); \
+            CapabilityLevel newResult = leastUpperBound(result, capabilityLevel(opcode, codeBlock, instructionsBegin + bytecodeOffset)); \
             if (newResult != result) { \
                 debugFail(codeBlock, opcode, newResult); \
                 result = newResult; \
             } \
+            bytecodeOffset += length; \
             break; \
         }
             FOR_EACH_OPCODE_ID(DEFINE_OP)

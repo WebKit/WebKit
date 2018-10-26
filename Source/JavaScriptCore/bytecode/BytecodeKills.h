@@ -40,6 +40,37 @@ public:
     {
     }
     
+    // By convention, we say that non-local operands are never killed.
+    bool operandIsKilled(unsigned bytecodeIndex, int operand) const
+    {
+        ASSERT_WITH_SECURITY_IMPLICATION(bytecodeIndex < m_codeBlock->instructions().size());
+        VirtualRegister reg(operand);
+        if (reg.isLocal())
+            return m_killSets[bytecodeIndex].contains(operand);
+        return false;
+    }
+    
+    bool operandIsKilled(Instruction* instruction, int operand) const
+    {
+        return operandIsKilled(m_codeBlock->bytecodeOffset(instruction), operand);
+    }
+    
+    template<typename Functor>
+    void forEachOperandKilledAt(unsigned bytecodeIndex, const Functor& functor) const
+    {
+        ASSERT_WITH_SECURITY_IMPLICATION(bytecodeIndex < m_codeBlock->instructions().size());
+        m_killSets[bytecodeIndex].forEachLocal(
+            [&] (unsigned local) {
+                functor(virtualRegisterForLocal(local));
+            });
+    }
+    
+    template<typename Functor>
+    void forEachOperandKilledAt(Instruction* pc, const Functor& functor) const
+    {
+        forEachOperandKilledAt(m_codeBlock->bytecodeOffset(pc), functor);
+    }
+    
 private:
     friend class BytecodeLivenessAnalysis;
 

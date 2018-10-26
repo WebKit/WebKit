@@ -31,15 +31,12 @@
 #include "ExpressionRangeInfo.h"
 #include "HandlerInfo.h"
 #include "Identifier.h"
-#include "InstructionStream.h"
 #include "JSCast.h"
 #include "LockDuringMarking.h"
-#include "Opcode.h"
 #include "ParserModes.h"
 #include "RegExp.h"
 #include "SpecialPointer.h"
 #include "UnlinkedFunctionExecutable.h"
-#include "UnlinkedMetadataTable.h"
 #include "VirtualRegister.h"
 #include <algorithm>
 #include <wtf/BitVector.h>
@@ -63,6 +60,7 @@ class SourceProvider;
 class UnlinkedCodeBlock;
 class UnlinkedFunctionCodeBlock;
 class UnlinkedFunctionExecutable;
+class UnlinkedInstructionStream;
 struct ExecutableInfo;
 
 typedef unsigned UnlinkedValueProfile;
@@ -103,6 +101,17 @@ struct UnlinkedSimpleJumpTable {
     }
 };
 
+struct UnlinkedInstruction {
+    UnlinkedInstruction() { u.operand = 0; }
+    UnlinkedInstruction(OpcodeID opcode) { u.opcode = opcode; }
+    UnlinkedInstruction(int operand) { u.operand = operand; }
+    union {
+        OpcodeID opcode;
+        int32_t operand;
+        unsigned unsignedValue;
+    } u;
+};
+
 class UnlinkedCodeBlock : public JSCell {
 public:
     typedef JSCell Base;
@@ -111,6 +120,9 @@ public:
     static const bool needsDestruction = true;
 
     enum { CallFunction, ApplyFunction };
+
+    typedef UnlinkedInstruction Instruction;
+    typedef Vector<UnlinkedInstruction, 0, UnsafeVectorOverflow> UnpackedInstructions;
 
     bool isConstructor() const { return m_isConstructor; }
     bool isStrictMode() const { return m_isStrictMode; }
@@ -225,8 +237,8 @@ public:
 
     void shrinkToFit();
 
-    void setInstructions(std::unique_ptr<InstructionStream>);
-    const InstructionStream& instructions() const;
+    void setInstructions(std::unique_ptr<UnlinkedInstructionStream>);
+    const UnlinkedInstructionStream& instructions() const;
 
     int numCalleeLocals() const { return m_numCalleeLocals; }
     int numVars() const { return m_numVars; }
@@ -269,18 +281,37 @@ public:
     void addExceptionHandler(const UnlinkedHandlerInfo& handler) { createRareDataIfNecessary(); return m_rareData->m_exceptionHandlers.append(handler); }
     UnlinkedHandlerInfo& exceptionHandler(int index) { ASSERT(m_rareData); return m_rareData->m_exceptionHandlers[index]; }
 
+    UnlinkedArrayProfile addArrayProfile() { return m_arrayProfileCount++; }
+    unsigned numberOfArrayProfiles() { return m_arrayProfileCount; }
+    UnlinkedArrayAllocationProfile addArrayAllocationProfile(IndexingType recommendedIndexingType) { return (m_arrayAllocationProfileCount++) | recommendedIndexingType << 24; }
+    unsigned numberOfArrayAllocationProfiles() { return m_arrayAllocationProfileCount; }
+    UnlinkedObjectAllocationProfile addObjectAllocationProfile() { return m_objectAllocationProfileCount++; }
+    static std::tuple<unsigned, IndexingType> decompressArrayAllocationProfile(UnlinkedArrayAllocationProfile compressedProfile)
+    {
+        unsigned profile = (compressedProfile << 8) >> 8;
+        IndexingType recommendedIndexingType = compressedProfile >> 24;
+        return std::make_tuple<unsigned, IndexingType>(WTFMove(profile), WTFMove(recommendedIndexingType));
+
+    }
+    unsigned numberOfObjectAllocationProfiles() { return m_objectAllocationProfileCount; }
+    UnlinkedValueProfile addValueProfile() { return m_valueProfileCount++; }
+    unsigned numberOfValueProfiles() { return m_valueProfileCount; }
+
+    UnlinkedLLIntCallLinkInfo addLLIntCallLinkInfo() { return m_llintCallLinkInfoCount++; }
+    unsigned numberOfLLintCallLinkInfos() { return m_llintCallLinkInfoCount; }
+
     CodeType codeType() const { return m_codeType; }
 
     VirtualRegister thisRegister() const { return m_thisRegister; }
     VirtualRegister scopeRegister() const { return m_scopeRegister; }
 
-    void addPropertyAccessInstruction(InstructionStream::Offset propertyAccessInstruction)
+    void addPropertyAccessInstruction(unsigned propertyAccessInstruction)
     {
         m_propertyAccessInstructions.append(propertyAccessInstruction);
     }
 
     size_t numberOfPropertyAccessInstructions() const { return m_propertyAccessInstructions.size(); }
-    const Vector<InstructionStream::Offset>& propertyAccessInstructions() const { return m_propertyAccessInstructions; }
+    const Vector<unsigned>& propertyAccessInstructions() const { return m_propertyAccessInstructions; }
 
     bool hasRareData() const { return m_rareData.get(); }
 
@@ -311,12 +342,12 @@ public:
     ALWAYS_INLINE unsigned startColumn() const { return 0; }
     unsigned endColumn() const { return m_endColumn; }
 
-    void addOpProfileControlFlowBytecodeOffset(InstructionStream::Offset offset)
+    void addOpProfileControlFlowBytecodeOffset(size_t offset)
     {
         createRareDataIfNecessary();
         m_rareData->m_opProfileControlFlowBytecodeOffsets.append(offset);
     }
-    const Vector<InstructionStream::Offset>& opProfileControlFlowBytecodeOffsets() const
+    const Vector<size_t>& opProfileControlFlowBytecodeOffsets() const
     {
         ASSERT(m_rareData);
         return m_rareData->m_opProfileControlFlowBytecodeOffsets;
@@ -357,14 +388,6 @@ public:
     DFG::ExitProfile& exitProfile() { return m_exitProfile; }
 #endif
 
-    UnlinkedMetadataTable& metadata() { return m_metadata; }
-
-    size_t metadataSizeInBytes()
-    {
-        return m_metadata.sizeInBytes();
-    }
-
-
 protected:
     UnlinkedCodeBlock(VM*, Structure*, CodeType, const ExecutableInfo&, DebuggerMode);
     ~UnlinkedCodeBlock();
@@ -378,7 +401,7 @@ private:
     friend class BytecodeRewriter;
     friend class BytecodeGenerator;
 
-    void applyModification(BytecodeRewriter&, InstructionStreamWriter&);
+    void applyModification(BytecodeRewriter&, UnpackedInstructions&);
 
     void createRareDataIfNecessary()
     {
@@ -391,7 +414,7 @@ private:
     void getLineAndColumn(const ExpressionRangeInfo&, unsigned& line, unsigned& column) const;
     BytecodeLivenessAnalysis& livenessAnalysisSlow(CodeBlock*);
 
-    std::unique_ptr<InstructionStream> m_instructions;
+    std::unique_ptr<UnlinkedInstructionStream> m_unlinkedInstructions;
     std::unique_ptr<BytecodeLivenessAnalysis> m_liveness;
 
     VirtualRegister m_thisRegister;
@@ -400,7 +423,6 @@ private:
 
     String m_sourceURLDirective;
     String m_sourceMappingURLDirective;
-    UnlinkedMetadataTable m_metadata;
 
 #if ENABLE(DFG_JIT)
     DFG::ExitProfile m_exitProfile;
@@ -436,9 +458,9 @@ private:
     SourceParseMode m_parseMode;
     CodeType m_codeType;
 
-    Vector<InstructionStream::Offset> m_jumpTargets;
+    Vector<unsigned> m_jumpTargets;
 
-    Vector<InstructionStream::Offset> m_propertyAccessInstructions;
+    Vector<unsigned> m_propertyAccessInstructions;
 
     // Constant Pools
     Vector<Identifier> m_identifiers;
@@ -450,6 +472,12 @@ private:
     FunctionExpressionVector m_functionDecls;
     FunctionExpressionVector m_functionExprs;
     std::array<unsigned, LinkTimeConstantCount> m_linkTimeConstants;
+
+    unsigned m_arrayProfileCount { 0 };
+    unsigned m_arrayAllocationProfileCount { 0 };
+    unsigned m_objectAllocationProfileCount { 0 };
+    unsigned m_valueProfileCount { 0 };
+    unsigned m_llintCallLinkInfoCount { 0 };
 
 public:
     struct RareData {
@@ -468,27 +496,10 @@ public:
             unsigned m_endDivot;
         };
         HashMap<unsigned, TypeProfilerExpressionRange> m_typeProfilerInfoMap;
-        Vector<InstructionStream::Offset> m_opProfileControlFlowBytecodeOffsets;
+        Vector<size_t> m_opProfileControlFlowBytecodeOffsets;
     };
 
-    void addOutOfLineJumpTarget(InstructionStream::Offset, int target);
-    int outOfLineJumpOffset(InstructionStream::Offset);
-    int outOfLineJumpOffset(const InstructionStream::Ref& instruction)
-    {
-        return outOfLineJumpOffset(instruction.offset());
-    }
-
 private:
-    using OutOfLineJumpTargets = HashMap<InstructionStream::Offset, int>;
-
-    OutOfLineJumpTargets replaceOutOfLineJumpTargets()
-    {
-        OutOfLineJumpTargets newJumpTargets;
-        std::swap(m_outOfLineJumpTargets, newJumpTargets);
-        return newJumpTargets;
-    }
-
-    OutOfLineJumpTargets m_outOfLineJumpTargets;
     std::unique_ptr<RareData> m_rareData;
     Vector<ExpressionRangeInfo> m_expressionInfo;
 

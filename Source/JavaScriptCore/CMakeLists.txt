@@ -201,27 +201,11 @@ set(OFFLINE_ASM
     offlineasm/x86.rb
 )
 
-set(GENERATOR
-    generator/Argument.rb
-    generator/Assertion.rb
-    generator/DSL.rb
-    generator/Fits.rb
-    generator/GeneratedFile.rb
-    generator/Metadata.rb
-    generator/Opcode.rb
-    generator/OpcodeGroup.rb
-    generator/Options.rb
-    generator/Section.rb
-    generator/Template.rb
-    generator/Type.rb
-    generator/main.rb
-)
-
 add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/Bytecodes.h ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InitBytecodes.asm ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/BytecodeStructs.h ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/BytecodeIndices.h
-    MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/generator/main.rb
-    DEPENDS ${GENERATOR} bytecode/BytecodeList.rb
-    COMMAND ${RUBY_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/generator/main.rb --bytecodes_h ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/Bytecodes.h --init_bytecodes_asm ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InitBytecodes.asm --bytecode_structs_h ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/BytecodeStructs.h --bytecode_indices_h ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/BytecodeIndices.h ${JAVASCRIPTCORE_DIR}/bytecode/BytecodeList.rb
+    OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/Bytecodes.h ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InitBytecodes.asm ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/BytecodeStructs.h
+    MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/generate-bytecode-files
+    DEPENDS ${JAVASCRIPTCORE_DIR}/generate-bytecode-files bytecode/BytecodeList.json
+    COMMAND ${PYTHON_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/generate-bytecode-files --bytecodes_h ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/Bytecodes.h --init_bytecodes_asm ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InitBytecodes.asm --bytecode_structs_h ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/BytecodeStructs.h ${JAVASCRIPTCORE_DIR}/bytecode/BytecodeList.json
     VERBATIM)
 
 list(APPEND JavaScriptCore_HEADERS
@@ -482,17 +466,13 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     bytecode/ICStatusMap.h
     bytecode/InlineCallFrame.h
     bytecode/Instruction.h
-    bytecode/InstructionStream.h
     bytecode/InternalFunctionAllocationProfile.h
     bytecode/JumpTable.h
     bytecode/LLIntCallLinkInfo.h
     bytecode/LLIntPrototypeLoadAdaptiveStructureWatchpoint.h
     bytecode/LazyOperandValueProfile.h
-    bytecode/MetadataTable.h
     bytecode/ObjectAllocationProfile.h
     bytecode/ObjectPropertyCondition.h
-    bytecode/Opcode.h
-    bytecode/OpcodeSize.h
     bytecode/PropertyCondition.h
     bytecode/PutByIdFlags.h
     bytecode/SpecialPointer.h
@@ -505,7 +485,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     bytecode/UnlinkedEvalCodeBlock.h
     bytecode/UnlinkedFunctionExecutable.h
     bytecode/UnlinkedGlobalCodeBlock.h
-    bytecode/UnlinkedMetadataTable.h
     bytecode/ValueProfile.h
     bytecode/ValueRecovery.h
     bytecode/VariableWriteFireDetail.h
@@ -689,8 +668,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     jit/TempRegisterSet.h
     jit/ThunkGenerator.h
     jit/UnusedPointer.h
-
-    llint/LLIntOpcode.h
 
     parser/ParserError.h
     parser/ParserModes.h

@@ -970,7 +970,7 @@ class Error < NoChildren
 end
 
 class ConstExpr < NoChildren
-    attr_reader :value
+    attr_reader :variable, :value
 
     def initialize(codeOrigin, value)
         super(codeOrigin)
@@ -1025,10 +1025,11 @@ $labelMapping = {}
 $referencedExternLabels = Array.new
 
 class Label < NoChildren
-    def initialize(codeOrigin, name, definedInFile = false)
+    attr_reader :name
+    
+    def initialize(codeOrigin, name)
         super(codeOrigin)
         @name = name
-        @definedInFile = definedInFile
         @extern = true
         @global = false
     end
@@ -1037,7 +1038,7 @@ class Label < NoChildren
         if $labelMapping[name]
             raise "Label name collision: #{name}" unless $labelMapping[name].is_a? Label
         else
-            $labelMapping[name] = Label.new(codeOrigin, name, definedInFile)
+            $labelMapping[name] = Label.new(codeOrigin, name)
         end
         if definedInFile
             $labelMapping[name].clearExtern()
@@ -1084,10 +1085,6 @@ class Label < NoChildren
         @global
     end
 
-    def name
-        @name
-    end
-
     def dump
         "#{name}:"
     end
@@ -1114,9 +1111,6 @@ class LocalLabel < NoChildren
     
     def self.unique(comment)
         newName = "_#{comment}"
-        if $emitWinAsm and newName.length > 90
-            newName = newName[0...45] + "___" + newName[-45..-1]
-        end
         if $labelMapping[newName]
             while $labelMapping[newName = "_#{@@uniqueNameCounter}_#{comment}"]
                 @@uniqueNameCounter += 1
@@ -1436,9 +1430,7 @@ class IfThenElse < Node
     end
     
     def mapChildren
-        ifThenElse = IfThenElse.new(codeOrigin, (yield @predicate), (yield @thenCase))
-        ifThenElse.elseCase = yield @elseCase
-        ifThenElse
+        IfThenElse.new(codeOrigin, (yield @predicate), (yield @thenCase), (yield @elseCase))
     end
     
     def dump

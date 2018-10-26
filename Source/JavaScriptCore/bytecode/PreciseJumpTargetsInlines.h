@@ -25,159 +25,64 @@
 
 #pragma once
 
-#include "BytecodeStructs.h"
 #include "InterpreterInlines.h"
 #include "Opcode.h"
 #include "PreciseJumpTargets.h"
 
 namespace JSC {
 
-#define SWITCH_JMP(CASE_OP, SWITCH_CASE, SWITCH_DEFAULT_OFFSET) \
-    switch (instruction->opcodeID()) { \
-    CASE_OP(OpJmp) \
-    \
-    CASE_OP(OpJtrue) \
-    CASE_OP(OpJfalse) \
-    CASE_OP(OpJeqNull) \
-    CASE_OP(OpJneqNull) \
-    CASE_OP(OpJneqPtr) \
-    \
-    CASE_OP(OpJless) \
-    CASE_OP(OpJlesseq) \
-    CASE_OP(OpJgreater) \
-    CASE_OP(OpJgreatereq) \
-    CASE_OP(OpJnless) \
-    CASE_OP(OpJnlesseq) \
-    CASE_OP(OpJngreater) \
-    CASE_OP(OpJngreatereq) \
-    CASE_OP(OpJeq) \
-    CASE_OP(OpJneq) \
-    CASE_OP(OpJstricteq) \
-    CASE_OP(OpJnstricteq) \
-    CASE_OP(OpJbelow) \
-    CASE_OP(OpJbeloweq) \
-    case op_switch_imm: { \
-        auto bytecode = instruction->as<OpSwitchImm>(); \
-        auto& table = codeBlock->switchJumpTable(bytecode.tableIndex); \
-        for (unsigned i = table.branchOffsets.size(); i--;) \
-            SWITCH_CASE(table.branchOffsets[i]); \
-        SWITCH_DEFAULT_OFFSET(OpSwitchImm); \
-        break; \
-    } \
-    case op_switch_char: { \
-        auto bytecode = instruction->as<OpSwitchChar>(); \
-        auto& table = codeBlock->switchJumpTable(bytecode.tableIndex); \
-        for (unsigned i = table.branchOffsets.size(); i--;) \
-            SWITCH_CASE(table.branchOffsets[i]); \
-        SWITCH_DEFAULT_OFFSET(OpSwitchChar); \
-        break; \
-    } \
-    case op_switch_string: { \
-        auto bytecode = instruction->as<OpSwitchString>(); \
-        auto& table = codeBlock->stringSwitchJumpTable(bytecode.tableIndex); \
-        auto iter = table.offsetTable.begin(); \
-        auto end = table.offsetTable.end(); \
-        for (; iter != end; ++iter) \
-            SWITCH_CASE(iter->value.branchOffset); \
-        SWITCH_DEFAULT_OFFSET(OpSwitchString); \
-        break; \
-    } \
-    default: \
-        break; \
-    } \
-
-
-template<typename Block>
-inline int jumpTargetForInstruction(Block* codeBlock, const InstructionStream::Ref& instruction, unsigned target)
+template<typename Block, typename Instruction, typename Function>
+inline void extractStoredJumpTargetsForBytecodeOffset(Block* codeBlock, Instruction* instructionsBegin, unsigned bytecodeOffset, Function function)
 {
-    if (target)
-        return target;
-    return codeBlock->outOfLineJumpOffset(instruction);
-}
-
-template<typename HashMap>
-inline int jumpTargetForInstruction(HashMap& outOfLineJumpTargets, const InstructionStream::Ref& instruction, unsigned target)
-{
-    if (target)
-        return target;
-    ASSERT(outOfLineJumpTargets.contains(instruction.offset()));
-    return outOfLineJumpTargets.get(instruction.offset());
-}
-
-template<typename Op, typename Block>
-inline int jumpTargetForInstruction(Block&& codeBlock, const InstructionStream::Ref& instruction)
-{
-    auto bytecode = instruction->as<Op>();
-    return jumpTargetForInstruction(codeBlock, instruction, bytecode.target);
-}
-
-template<typename Block, typename Function>
-inline void extractStoredJumpTargetsForInstruction(Block&& codeBlock, const InstructionStream::Ref& instruction, Function function)
-{
-#define CASE_OP(__op) \
-    case __op::opcodeID: \
-        function(jumpTargetForInstruction<__op>(codeBlock, instruction)); \
+    OpcodeID opcodeID = Interpreter::getOpcodeID(instructionsBegin[bytecodeOffset]);
+    Instruction* current = instructionsBegin + bytecodeOffset;
+    switch (opcodeID) {
+    case op_jmp:
+        function(current[1].u.operand);
         break;
-
-#define SWITCH_CASE(__target) \
-    function(__target)
-
-#define SWITCH_DEFAULT_OFFSET(__op) \
-    function(jumpTargetForInstruction(codeBlock, instruction, bytecode.defaultOffset)) \
-
-SWITCH_JMP(CASE_OP, SWITCH_CASE, SWITCH_DEFAULT_OFFSET)
-
-#undef CASE_OP
-#undef SWITCH_CASE
-#undef SWITCH_DEFAULT_OFFSET
-}
-
-template<typename Block, typename Function, typename CodeBlockOrHashMap>
-inline void updateStoredJumpTargetsForInstruction(Block&& codeBlock, unsigned finalOffset, InstructionStream::MutableRef instruction, Function function, CodeBlockOrHashMap codeBlockOrHashMap)
-{
-#define CASE_OP(__op) \
-    case __op::opcodeID: { \
-        int32_t target = jumpTargetForInstruction<__op>(codeBlockOrHashMap, instruction); \
-        int32_t newTarget = function(target); \
-        if (newTarget != target || finalOffset) { \
-            instruction->cast<__op>()->setTarget(newTarget, [&]() { \
-                codeBlock->addOutOfLineJumpTarget(finalOffset + instruction.offset(), newTarget); \
-                return 0; \
-            }); \
-        } \
-        break; \
+    case op_jtrue:
+    case op_jfalse:
+    case op_jeq_null:
+    case op_jneq_null:
+        function(current[2].u.operand);
+        break;
+    case op_jneq_ptr:
+    case op_jless:
+    case op_jlesseq:
+    case op_jgreater:
+    case op_jgreatereq:
+    case op_jnless:
+    case op_jnlesseq:
+    case op_jngreater:
+    case op_jngreatereq:
+    case op_jeq:
+    case op_jneq:
+    case op_jstricteq:
+    case op_jnstricteq:
+    case op_jbelow:
+    case op_jbeloweq:
+        function(current[3].u.operand);
+        break;
+    case op_switch_imm:
+    case op_switch_char: {
+        auto& table = codeBlock->switchJumpTable(current[1].u.operand);
+        for (unsigned i = table.branchOffsets.size(); i--;)
+            function(table.branchOffsets[i]);
+        function(current[2].u.operand);
+        break;
     }
-
-#define SWITCH_CASE(__target) \
-    do { \
-        int32_t target = __target; \
-        int32_t newTarget = function(target); \
-        if (newTarget != target) \
-            __target = newTarget; \
-    } while (false)
-
-#define SWITCH_DEFAULT_OFFSET(__op) \
-    do { \
-        int32_t target = jumpTargetForInstruction(codeBlockOrHashMap, instruction, bytecode.defaultOffset); \
-        int32_t newTarget = function(target); \
-        if (newTarget != target || finalOffset) { \
-            instruction->cast<__op>()->setDefaultOffset(newTarget, [&]() { \
-                codeBlock->addOutOfLineJumpTarget(finalOffset + instruction.offset(), newTarget); \
-                return 0; \
-            }); \
-        } \
-    } while (false)
-
-SWITCH_JMP(CASE_OP, SWITCH_CASE, SWITCH_DEFAULT_OFFSET)
-
-#undef CASE_OP
-#undef JMP_TARGET
-}
-
-template<typename Block, typename Function>
-inline void updateStoredJumpTargetsForInstruction(Block* codeBlock, unsigned finalOffset, InstructionStream::MutableRef instruction, Function function)
-{
-    updateStoredJumpTargetsForInstruction(codeBlock, finalOffset, instruction, function, codeBlock);
+    case op_switch_string: {
+        auto& table = codeBlock->stringSwitchJumpTable(current[1].u.operand);
+        auto iter = table.offsetTable.begin();
+        auto end = table.offsetTable.end();
+        for (; iter != end; ++iter)
+            function(iter->value.branchOffset);
+        function(current[2].u.operand);
+        break;
+    }
+    default:
+        break;
+    }
 }
 
 } // namespace JSC

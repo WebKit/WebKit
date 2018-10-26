@@ -34,6 +34,7 @@
 #include <limits.h>
 
 namespace JSC {
+
     class BytecodeGenerator;
 
     class Label {
@@ -43,21 +44,14 @@ namespace JSC {
 
         void setLocation(BytecodeGenerator&, unsigned);
 
-        int bind(BytecodeGenerator*);
-
-        int bind(unsigned offset)
+        int bind(int opcode, int offset) const
         {
             m_bound = true;
-            if (!isForward())
-                return m_location - offset;
-            m_unresolvedJumps.append(offset);
-            return 0;
-        }
-
-        int bind()
-        {
-            ASSERT(!isForward());
-            return bind(0u);
+            if (m_location == invalidLocation) {
+                m_unresolvedJumps.append(std::make_pair(opcode, offset));
+                return 0;
+            }
+            return m_location - opcode;
         }
 
         void ref() { ++m_refCount; }
@@ -71,10 +65,16 @@ namespace JSC {
 
         bool isForward() const { return m_location == invalidLocation; }
         
+        int bind()
+        {
+            ASSERT(!isForward());
+            return bind(0, 0);
+        }
+
         bool isBound() const { return m_bound; }
 
     private:
-        typedef Vector<int, 8> JumpVector;
+        typedef Vector<std::pair<int, int>, 8> JumpVector;
 
         static const unsigned invalidLocation = UINT_MAX;
 

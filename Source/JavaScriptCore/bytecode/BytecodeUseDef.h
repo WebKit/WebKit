@@ -26,50 +26,16 @@
 #pragma once
 
 #include "CodeBlock.h"
-#include "Instruction.h"
-#include <wtf/Forward.h>
 
 namespace JSC {
 
-#define CALL_FUNCTOR(__arg) \
-    functor(__bytecode.__arg);
-
-#define USES_OR_DEFS(__opcode, ...) \
-    case __opcode::opcodeID: { \
-        auto __bytecode = instruction->as<__opcode>(); \
-        WTF_LAZY_FOR_EACH_TERM(CALL_FUNCTOR, __VA_ARGS__) \
-        return; \
-    }
-
-#define USES USES_OR_DEFS
-#define DEFS USES_OR_DEFS
-
-template<typename Block, typename Functor>
-void computeUsesForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, const Instruction* instruction, const Functor& functor)
+template<typename Block, typename Functor, typename Instruction>
+void computeUsesForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, Instruction* instruction, const Functor& functor)
 {
     if (opcodeID != op_enter && (codeBlock->wasCompiledWithDebuggingOpcodes() || codeBlock->usesEval()) && codeBlock->scopeRegister().isValid())
-        functor(codeBlock->scopeRegister());
-
-    auto handleNewArrayLike = [&](auto op) {
-        int base = op.argv.offset();
-        for (int i = 0; i < static_cast<int>(op.argc); i++)
-            functor(VirtualRegister { base - i });
-    };
-
-    auto handleOpCallLike = [&](auto op) {
-        functor(op.callee);
-        int lastArg = -static_cast<int>(op.argv) + CallFrame::thisArgumentOffset();
-        for (int i = 0; i < static_cast<int>(op.argc); i++)
-            functor(VirtualRegister { lastArg + i });
-        if (opcodeID == op_call_eval)
-            functor(codeBlock->scopeRegister());
-        return;
-    };
+        functor(codeBlock, instruction, opcodeID, codeBlock->scopeRegister().offset());
 
     switch (opcodeID) {
-    case op_wide:
-        RELEASE_ASSERT_NOT_REACHED();
-
     // No uses.
     case op_new_regexp:
     case op_debug:
@@ -91,203 +57,281 @@ void computeUsesForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, const Ins
     case op_super_sampler_begin:
     case op_super_sampler_end:
         return;
-
-    USES(OpGetScope, dst)
-    USES(OpToThis, srcDst)
-    USES(OpCheckTdz, target)
-    USES(OpIdentityWithProfile, srcDst)
-    USES(OpProfileType, target);
-    USES(OpThrow, value)
-    USES(OpThrowStaticError, message)
-    USES(OpEnd, value)
-    USES(OpRet, value)
-    USES(OpJtrue, condition)
-    USES(OpJfalse, condition)
-    USES(OpJeqNull, value)
-    USES(OpJneqNull, value)
-    USES(OpDec, srcDst)
-    USES(OpInc, srcDst)
-    USES(OpLogShadowChickenPrologue, scope)
-
-    USES(OpJless, lhs, rhs)
-    USES(OpJlesseq, lhs, rhs)
-    USES(OpJgreater, lhs, rhs)
-    USES(OpJgreatereq, lhs, rhs)
-    USES(OpJnless, lhs, rhs)
-    USES(OpJnlesseq, lhs, rhs)
-    USES(OpJngreater, lhs, rhs)
-    USES(OpJngreatereq, lhs, rhs)
-    USES(OpJeq, lhs, rhs)
-    USES(OpJneq, lhs, rhs)
-    USES(OpJstricteq, lhs, rhs)
-    USES(OpJnstricteq, lhs, rhs)
-    USES(OpJbelow, lhs, rhs)
-    USES(OpJbeloweq, lhs, rhs)
-    USES(OpSetFunctionName, function, name)
-    USES(OpLogShadowChickenTail, thisValue, scope)
-
-    USES(OpPutByVal, base, property, value)
-    USES(OpPutByValDirect, base, property, value)
-
-    USES(OpPutById, base, value)
-    USES(OpPutToScope, scope, value)
-    USES(OpPutToArguments, arguments, value)
-
-    USES(OpPutByIdWithThis, base, thisValue, value)
-
-    USES(OpPutByValWithThis, base, thisValue, property, value)
-
-    USES(OpPutGetterById, base, accessor)
-    USES(OpPutSetterById, base, accessor)
-
-    USES(OpPutGetterSetterById, base, getter, setter)
-
-    USES(OpPutGetterByVal, base, property, accessor)
-    USES(OpPutSetterByVal, base, property, accessor)
-
-    USES(OpDefineDataProperty, base, property, value, attributes)
-
-    USES(OpDefineAccessorProperty, base, property, getter, setter, attributes)
-
-    USES(OpSpread, argument)
-    USES(OpGetPropertyEnumerator, base)
-    USES(OpGetEnumerableLength, base)
-    USES(OpNewFuncExp, scope)
-    USES(OpNewGeneratorFuncExp, scope)
-    USES(OpNewAsyncFuncExp, scope)
-    USES(OpToIndexString, index)
-    USES(OpCreateLexicalEnvironment, scope)
-    USES(OpResolveScope, scope)
-    USES(OpResolveScopeForHoistingFuncDeclInEval, scope)
-    USES(OpGetFromScope, scope)
-    USES(OpToPrimitive, src)
-    USES(OpTryGetById, base)
-    USES(OpGetById, base)
-    USES(OpGetByIdDirect, base)
-    USES(OpInById, base)
-    USES(OpTypeof, value)
-    USES(OpIsEmpty, operand)
-    USES(OpIsUndefined, operand)
-    USES(OpIsBoolean, operand)
-    USES(OpIsNumber, operand)
-    USES(OpIsObject, operand)
-    USES(OpIsObjectOrNull, operand)
-    USES(OpIsCellWithType, operand)
-    USES(OpIsFunction, operand)
-    USES(OpToNumber, operand)
-    USES(OpToString, operand)
-    USES(OpToObject, operand)
-    USES(OpNegate, operand)
-    USES(OpEqNull, operand)
-    USES(OpNeqNull, operand)
-    USES(OpNot, operand)
-    USES(OpUnsigned, operand)
-    USES(OpMov, src)
-    USES(OpNewArrayWithSize, length)
-    USES(OpCreateThis, callee)
-    USES(OpDelById, base)
-    USES(OpNewFunc, scope)
-    USES(OpNewAsyncGeneratorFunc, scope)
-    USES(OpNewAsyncGeneratorFuncExp, scope)
-    USES(OpNewGeneratorFunc, scope)
-    USES(OpNewAsyncFunc, scope)
-    USES(OpGetParentScope, scope)
-    USES(OpCreateScopedArguments, scope)
-    USES(OpCreateRest, arraySize)
-    USES(OpGetFromArguments, arguments)
-    USES(OpNewArrayBuffer, immutableButterfly)
-
-    USES(OpHasGenericProperty, base, property)
-    USES(OpHasIndexedProperty, base, property)
-    USES(OpEnumeratorStructurePname, enumerator, index)
-    USES(OpEnumeratorGenericPname, enumerator, index)
-    USES(OpGetByVal, base, property)
-    USES(OpInByVal, base, property)
-    USES(OpOverridesHasInstance, constructor, hasInstanceValue)
-    USES(OpInstanceof, value, prototype)
-    USES(OpAdd, lhs, rhs)
-    USES(OpMul, lhs, rhs)
-    USES(OpDiv, lhs, rhs)
-    USES(OpMod, lhs, rhs)
-    USES(OpSub, lhs, rhs)
-    USES(OpPow, lhs, rhs)
-    USES(OpLshift, lhs, rhs)
-    USES(OpRshift, lhs, rhs)
-    USES(OpUrshift, lhs, rhs)
-    USES(OpBitand, lhs, rhs)
-    USES(OpBitxor, lhs, rhs)
-    USES(OpBitor, lhs, rhs)
-    USES(OpLess, lhs, rhs)
-    USES(OpLesseq, lhs, rhs)
-    USES(OpGreater, lhs, rhs)
-    USES(OpGreatereq, lhs, rhs)
-    USES(OpBelow, lhs, rhs)
-    USES(OpBeloweq, lhs, rhs)
-    USES(OpNstricteq, lhs, rhs)
-    USES(OpStricteq, lhs, rhs)
-    USES(OpNeq, lhs, rhs)
-    USES(OpEq, lhs, rhs)
-    USES(OpPushWithScope, currentScope, newScope)
-    USES(OpGetByIdWithThis, base, thisValue)
-    USES(OpDelByVal, base, property)
-    USES(OpTailCallForwardArguments, callee, thisValue)
-
-    USES(OpGetByValWithThis, base, thisValue, property)
-    USES(OpInstanceofCustom, value, constructor, hasInstanceValue)
-    USES(OpHasStructureProperty, base, property, enumerator)
-    USES(OpConstructVarargs, callee, thisValue, arguments)
-    USES(OpCallVarargs, callee, thisValue, arguments)
-    USES(OpTailCallVarargs, callee, thisValue, arguments)
-
-    USES(OpGetDirectPname, base, property, index, enumerator)
-
-    USES(OpSwitchString, scrutinee)
-    USES(OpSwitchChar, scrutinee)
-    USES(OpSwitchImm, scrutinee)
-
-    USES(OpYield, generator, argument)
-
-    case op_new_array_with_spread:
-        handleNewArrayLike(instruction->as<OpNewArrayWithSpread>());
-        return;
-    case op_new_array:
-        handleNewArrayLike(instruction->as<OpNewArray>());
-        return;
-
-    case op_strcat: {
-        auto bytecode = instruction->as<OpStrcat>();
-        int base = bytecode.src.offset();
-        for (int i = 0; i < bytecode.count; i++)
-            functor(VirtualRegister { base - i });
+    case op_get_scope:
+    case op_to_this:
+    case op_check_tdz:
+    case op_identity_with_profile:
+    case op_profile_type:
+    case op_throw:
+    case op_throw_static_error:
+    case op_end:
+    case op_ret:
+    case op_jtrue:
+    case op_jfalse:
+    case op_jeq_null:
+    case op_jneq_null:
+    case op_dec:
+    case op_inc:
+    case op_log_shadow_chicken_prologue: {
+        ASSERT(opcodeLengths[opcodeID] > 1);
+        functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
         return;
     }
-
+    case op_jlesseq:
+    case op_jgreater:
+    case op_jgreatereq:
+    case op_jnless:
+    case op_jnlesseq:
+    case op_jngreater:
+    case op_jngreatereq:
+    case op_jless:
+    case op_jeq:
+    case op_jneq:
+    case op_jstricteq:
+    case op_jnstricteq:
+    case op_jbelow:
+    case op_jbeloweq:
+    case op_set_function_name:
+    case op_log_shadow_chicken_tail: {
+        ASSERT(opcodeLengths[opcodeID] > 2);
+        functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
+        functor(codeBlock, instruction, opcodeID, instruction[2].u.operand);
+        return;
+    }
+    case op_put_by_val_direct:
+    case op_put_by_val: {
+        ASSERT(opcodeLengths[opcodeID] > 3);
+        functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
+        functor(codeBlock, instruction, opcodeID, instruction[2].u.operand);
+        functor(codeBlock, instruction, opcodeID, instruction[3].u.operand);
+        return;
+    }
+    case op_put_by_id:
+    case op_put_to_scope:
+    case op_put_to_arguments: {
+        ASSERT(opcodeLengths[opcodeID] > 3);
+        functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
+        functor(codeBlock, instruction, opcodeID, instruction[3].u.operand);
+        return;
+    }
+    case op_put_by_id_with_this: {
+        ASSERT(opcodeLengths[opcodeID] > 4);
+        functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
+        functor(codeBlock, instruction, opcodeID, instruction[2].u.operand);
+        functor(codeBlock, instruction, opcodeID, instruction[4].u.operand);
+        return;
+    }
+    case op_put_by_val_with_this: {
+        ASSERT(opcodeLengths[opcodeID] > 4);
+        functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
+        functor(codeBlock, instruction, opcodeID, instruction[2].u.operand);
+        functor(codeBlock, instruction, opcodeID, instruction[3].u.operand);
+        functor(codeBlock, instruction, opcodeID, instruction[4].u.operand);
+        return;
+    }
+    case op_put_getter_by_id:
+    case op_put_setter_by_id: {
+        ASSERT(opcodeLengths[opcodeID] > 4);
+        functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
+        functor(codeBlock, instruction, opcodeID, instruction[4].u.operand);
+        return;
+    }
+    case op_put_getter_setter_by_id: {
+        ASSERT(opcodeLengths[opcodeID] > 5);
+        functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
+        functor(codeBlock, instruction, opcodeID, instruction[4].u.operand);
+        functor(codeBlock, instruction, opcodeID, instruction[5].u.operand);
+        return;
+    }
+    case op_put_getter_by_val:
+    case op_put_setter_by_val: {
+        ASSERT(opcodeLengths[opcodeID] > 4);
+        functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
+        functor(codeBlock, instruction, opcodeID, instruction[2].u.operand);
+        functor(codeBlock, instruction, opcodeID, instruction[4].u.operand);
+        return;
+    }
+    case op_define_data_property: {
+        ASSERT(opcodeLengths[opcodeID] > 4);
+        functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
+        functor(codeBlock, instruction, opcodeID, instruction[2].u.operand);
+        functor(codeBlock, instruction, opcodeID, instruction[3].u.operand);
+        functor(codeBlock, instruction, opcodeID, instruction[4].u.operand);
+        return;
+    }
+    case op_define_accessor_property: {
+        ASSERT(opcodeLengths[opcodeID] > 5);
+        functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
+        functor(codeBlock, instruction, opcodeID, instruction[2].u.operand);
+        functor(codeBlock, instruction, opcodeID, instruction[3].u.operand);
+        functor(codeBlock, instruction, opcodeID, instruction[4].u.operand);
+        functor(codeBlock, instruction, opcodeID, instruction[5].u.operand);
+        return;
+    }
+    case op_spread:
+    case op_get_property_enumerator:
+    case op_get_enumerable_length:
+    case op_new_func_exp:
+    case op_new_generator_func_exp:
+    case op_new_async_func_exp:
+    case op_to_index_string:
+    case op_create_lexical_environment:
+    case op_resolve_scope:
+    case op_resolve_scope_for_hoisting_func_decl_in_eval:
+    case op_get_from_scope:
+    case op_to_primitive:
+    case op_try_get_by_id:
+    case op_get_by_id:
+    case op_get_by_id_proto_load:
+    case op_get_by_id_unset:
+    case op_get_by_id_direct:
+    case op_get_array_length:
+    case op_in_by_id:
+    case op_typeof:
+    case op_is_empty:
+    case op_is_undefined:
+    case op_is_boolean:
+    case op_is_number:
+    case op_is_object:
+    case op_is_object_or_null:
+    case op_is_cell_with_type:
+    case op_is_function:
+    case op_to_number:
+    case op_to_string:
+    case op_to_object:
+    case op_negate:
+    case op_neq_null:
+    case op_eq_null:
+    case op_not:
+    case op_mov:
+    case op_new_array_with_size:
+    case op_create_this:
+    case op_del_by_id:
+    case op_unsigned:
+    case op_new_func:
+    case op_new_async_generator_func:
+    case op_new_async_generator_func_exp:
+    case op_new_generator_func:
+    case op_new_async_func:
+    case op_get_parent_scope:
+    case op_create_scoped_arguments:
+    case op_create_rest:
+    case op_get_from_arguments:
+    case op_new_array_buffer: {
+        ASSERT(opcodeLengths[opcodeID] > 2);
+        functor(codeBlock, instruction, opcodeID, instruction[2].u.operand);
+        return;
+    }
+    case op_has_generic_property:
+    case op_has_indexed_property:
+    case op_enumerator_structure_pname:
+    case op_enumerator_generic_pname:
+    case op_get_by_val:
+    case op_in_by_val:
+    case op_overrides_has_instance:
+    case op_instanceof:
+    case op_add:
+    case op_mul:
+    case op_div:
+    case op_mod:
+    case op_sub:
+    case op_pow:
+    case op_lshift:
+    case op_rshift:
+    case op_urshift:
+    case op_bitand:
+    case op_bitxor:
+    case op_bitor:
+    case op_less:
+    case op_lesseq:
+    case op_greater:
+    case op_greatereq:
+    case op_below:
+    case op_beloweq:
+    case op_nstricteq:
+    case op_stricteq:
+    case op_neq:
+    case op_eq:
+    case op_push_with_scope:
+    case op_get_by_id_with_this:
+    case op_del_by_val:
+    case op_tail_call_forward_arguments: {
+        ASSERT(opcodeLengths[opcodeID] > 3);
+        functor(codeBlock, instruction, opcodeID, instruction[2].u.operand);
+        functor(codeBlock, instruction, opcodeID, instruction[3].u.operand);
+        return;
+    }
+    case op_get_by_val_with_this: {
+        ASSERT(opcodeLengths[opcodeID] > 4);
+        functor(codeBlock, instruction, opcodeID, instruction[2].u.operand);
+        functor(codeBlock, instruction, opcodeID, instruction[3].u.operand);
+        functor(codeBlock, instruction, opcodeID, instruction[4].u.operand);
+        return;
+    }
+    case op_instanceof_custom:
+    case op_has_structure_property:
+    case op_construct_varargs:
+    case op_call_varargs:
+    case op_tail_call_varargs: {
+        ASSERT(opcodeLengths[opcodeID] > 4);
+        functor(codeBlock, instruction, opcodeID, instruction[2].u.operand);
+        functor(codeBlock, instruction, opcodeID, instruction[3].u.operand);
+        functor(codeBlock, instruction, opcodeID, instruction[4].u.operand);
+        return;
+    }
+    case op_get_direct_pname: {
+        ASSERT(opcodeLengths[opcodeID] > 5);
+        functor(codeBlock, instruction, opcodeID, instruction[2].u.operand);
+        functor(codeBlock, instruction, opcodeID, instruction[3].u.operand);
+        functor(codeBlock, instruction, opcodeID, instruction[4].u.operand);
+        functor(codeBlock, instruction, opcodeID, instruction[5].u.operand);
+        return;
+    }
+    case op_switch_string:
+    case op_switch_char:
+    case op_switch_imm: {
+        ASSERT(opcodeLengths[opcodeID] > 3);
+        functor(codeBlock, instruction, opcodeID, instruction[3].u.operand);
+        return;
+    }
+    case op_new_array_with_spread:
+    case op_new_array:
+    case op_strcat: {
+        int base = instruction[2].u.operand;
+        int count = instruction[3].u.operand;
+        for (int i = 0; i < count; i++)
+            functor(codeBlock, instruction, opcodeID, base - i);
+        return;
+    }
     case op_construct:
-        handleOpCallLike(instruction->as<OpConstruct>());
-        return;
     case op_call_eval:
-        handleOpCallLike(instruction->as<OpCallEval>());
-        return;
     case op_call:
-        handleOpCallLike(instruction->as<OpCall>());
+    case op_tail_call: {
+        functor(codeBlock, instruction, opcodeID, instruction[2].u.operand);
+        int argCount = instruction[3].u.operand;
+        int registerOffset = -instruction[4].u.operand;
+        int lastArg = registerOffset + CallFrame::thisArgumentOffset();
+        for (int i = 0; i < argCount; i++)
+            functor(codeBlock, instruction, opcodeID, lastArg + i);
+        if (opcodeID == op_call_eval)
+            functor(codeBlock, instruction, opcodeID, codeBlock->scopeRegister().offset());
         return;
-    case op_tail_call:
-        handleOpCallLike(instruction->as<OpTailCall>());
+    }
+    case op_yield: {
+        functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
+        functor(codeBlock, instruction, opcodeID, instruction[3].u.operand);
         return;
-
+    }
     default:
         RELEASE_ASSERT_NOT_REACHED();
         break;
     }
 }
 
-template<typename Block, typename Functor>
-void computeDefsForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, const Instruction* instruction, const Functor& functor)
+template<typename Block, typename Instruction, typename Functor>
+void computeDefsForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, Instruction* instruction, const Functor& functor)
 {
     switch (opcodeID) {
-    case op_wide:
-        RELEASE_ASSERT_NOT_REACHED();
-
     // These don't define anything.
     case op_put_to_scope:
     case op_end:
@@ -348,127 +392,133 @@ void computeDefsForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, const Ins
 #undef LLINT_HELPER_OPCODES
         return;
     // These all have a single destination for the first argument.
-    DEFS(OpArgumentCount, dst)
-    DEFS(OpToIndexString, dst)
-    DEFS(OpGetEnumerableLength, dst)
-    DEFS(OpHasIndexedProperty, dst)
-    DEFS(OpHasStructureProperty, dst)
-    DEFS(OpHasGenericProperty, dst)
-    DEFS(OpGetDirectPname, dst)
-    DEFS(OpGetPropertyEnumerator, dst)
-    DEFS(OpEnumeratorStructurePname, dst)
-    DEFS(OpEnumeratorGenericPname, dst)
-    DEFS(OpGetParentScope, dst)
-    DEFS(OpPushWithScope, dst)
-    DEFS(OpCreateLexicalEnvironment, dst)
-    DEFS(OpResolveScope, dst)
-    DEFS(OpResolveScopeForHoistingFuncDeclInEval, dst)
-    DEFS(OpStrcat, dst)
-    DEFS(OpToPrimitive, dst)
-    DEFS(OpCreateThis, dst)
-    DEFS(OpNewArray, dst)
-    DEFS(OpNewArrayWithSpread, dst)
-    DEFS(OpSpread, dst)
-    DEFS(OpNewArrayBuffer, dst)
-    DEFS(OpNewArrayWithSize, dst)
-    DEFS(OpNewRegexp, dst)
-    DEFS(OpNewFunc, dst)
-    DEFS(OpNewFuncExp, dst)
-    DEFS(OpNewGeneratorFunc, dst)
-    DEFS(OpNewGeneratorFuncExp, dst)
-    DEFS(OpNewAsyncGeneratorFunc, dst)
-    DEFS(OpNewAsyncGeneratorFuncExp, dst)
-    DEFS(OpNewAsyncFunc, dst)
-    DEFS(OpNewAsyncFuncExp, dst)
-    DEFS(OpCallVarargs, dst)
-    DEFS(OpTailCallVarargs, dst)
-    DEFS(OpTailCallForwardArguments, dst)
-    DEFS(OpConstructVarargs, dst)
-    DEFS(OpGetFromScope, dst)
-    DEFS(OpCall, dst)
-    DEFS(OpTailCall, dst)
-    DEFS(OpCallEval, dst)
-    DEFS(OpConstruct, dst)
-    DEFS(OpTryGetById, dst)
-    DEFS(OpGetById, dst)
-    DEFS(OpGetByIdDirect, dst)
-    DEFS(OpGetByIdWithThis, dst)
-    DEFS(OpGetByValWithThis, dst)
-    DEFS(OpOverridesHasInstance, dst)
-    DEFS(OpInstanceof, dst)
-    DEFS(OpInstanceofCustom, dst)
-    DEFS(OpGetByVal, dst)
-    DEFS(OpTypeof, dst)
-    DEFS(OpIdentityWithProfile, srcDst)
-    DEFS(OpIsEmpty, dst)
-    DEFS(OpIsUndefined, dst)
-    DEFS(OpIsBoolean, dst)
-    DEFS(OpIsNumber, dst)
-    DEFS(OpIsObject, dst)
-    DEFS(OpIsObjectOrNull, dst)
-    DEFS(OpIsCellWithType, dst)
-    DEFS(OpIsFunction, dst)
-    DEFS(OpInById, dst)
-    DEFS(OpInByVal, dst)
-    DEFS(OpToNumber, dst)
-    DEFS(OpToString, dst)
-    DEFS(OpToObject, dst)
-    DEFS(OpNegate, dst)
-    DEFS(OpAdd, dst)
-    DEFS(OpMul, dst)
-    DEFS(OpDiv, dst)
-    DEFS(OpMod, dst)
-    DEFS(OpSub, dst)
-    DEFS(OpPow, dst)
-    DEFS(OpLshift, dst)
-    DEFS(OpRshift, dst)
-    DEFS(OpUrshift, dst)
-    DEFS(OpBitand, dst)
-    DEFS(OpBitxor, dst)
-    DEFS(OpBitor, dst)
-    DEFS(OpInc, srcDst)
-    DEFS(OpDec, srcDst)
-    DEFS(OpEq, dst)
-    DEFS(OpNeq, dst)
-    DEFS(OpStricteq, dst)
-    DEFS(OpNstricteq, dst)
-    DEFS(OpLess, dst)
-    DEFS(OpLesseq, dst)
-    DEFS(OpGreater, dst)
-    DEFS(OpGreatereq, dst)
-    DEFS(OpBelow, dst)
-    DEFS(OpBeloweq, dst)
-    DEFS(OpNeqNull, dst)
-    DEFS(OpEqNull, dst)
-    DEFS(OpNot, dst)
-    DEFS(OpMov, dst)
-    DEFS(OpNewObject, dst)
-    DEFS(OpToThis, srcDst)
-    DEFS(OpCheckTdz, target)
-    DEFS(OpGetScope, dst)
-    DEFS(OpCreateDirectArguments, dst)
-    DEFS(OpCreateScopedArguments, dst)
-    DEFS(OpCreateClonedArguments, dst)
-    DEFS(OpDelById, dst)
-    DEFS(OpDelByVal, dst)
-    DEFS(OpUnsigned, dst)
-    DEFS(OpGetFromArguments, dst)
-    DEFS(OpGetArgument, dst)
-    DEFS(OpCreateRest, dst)
-    DEFS(OpGetRestLength, dst)
-
-    DEFS(OpCatch, exception, thrownValue)
-
+    case op_argument_count:
+    case op_to_index_string:
+    case op_get_enumerable_length:
+    case op_has_indexed_property:
+    case op_has_structure_property:
+    case op_has_generic_property:
+    case op_get_direct_pname:
+    case op_get_property_enumerator:
+    case op_enumerator_structure_pname:
+    case op_enumerator_generic_pname:
+    case op_get_parent_scope:
+    case op_push_with_scope:
+    case op_create_lexical_environment:
+    case op_resolve_scope:
+    case op_resolve_scope_for_hoisting_func_decl_in_eval:
+    case op_strcat:
+    case op_to_primitive:
+    case op_create_this:
+    case op_new_array:
+    case op_new_array_with_spread:
+    case op_spread:
+    case op_new_array_buffer:
+    case op_new_array_with_size:
+    case op_new_regexp:
+    case op_new_func:
+    case op_new_func_exp:
+    case op_new_generator_func:
+    case op_new_generator_func_exp:
+    case op_new_async_generator_func:
+    case op_new_async_generator_func_exp:
+    case op_new_async_func:
+    case op_new_async_func_exp:
+    case op_call_varargs:
+    case op_tail_call_varargs:
+    case op_tail_call_forward_arguments:
+    case op_construct_varargs:
+    case op_get_from_scope:
+    case op_call:
+    case op_tail_call:
+    case op_call_eval:
+    case op_construct:
+    case op_try_get_by_id:
+    case op_get_by_id:
+    case op_get_by_id_proto_load:
+    case op_get_by_id_unset:
+    case op_get_by_id_direct:
+    case op_get_by_id_with_this:
+    case op_get_by_val_with_this:
+    case op_get_array_length:
+    case op_overrides_has_instance:
+    case op_instanceof:
+    case op_instanceof_custom:
+    case op_get_by_val:
+    case op_typeof:
+    case op_identity_with_profile:
+    case op_is_empty:
+    case op_is_undefined:
+    case op_is_boolean:
+    case op_is_number:
+    case op_is_object:
+    case op_is_object_or_null:
+    case op_is_cell_with_type:
+    case op_is_function:
+    case op_in_by_id:
+    case op_in_by_val:
+    case op_to_number:
+    case op_to_string:
+    case op_to_object:
+    case op_negate:
+    case op_add:
+    case op_mul:
+    case op_div:
+    case op_mod:
+    case op_sub:
+    case op_pow:
+    case op_lshift:
+    case op_rshift:
+    case op_urshift:
+    case op_bitand:
+    case op_bitxor:
+    case op_bitor:
+    case op_inc:
+    case op_dec:
+    case op_eq:
+    case op_neq:
+    case op_stricteq:
+    case op_nstricteq:
+    case op_less:
+    case op_lesseq:
+    case op_greater:
+    case op_greatereq:
+    case op_below:
+    case op_beloweq:
+    case op_neq_null:
+    case op_eq_null:
+    case op_not:
+    case op_mov:
+    case op_new_object:
+    case op_to_this:
+    case op_check_tdz:
+    case op_get_scope:
+    case op_create_direct_arguments:
+    case op_create_scoped_arguments:
+    case op_create_cloned_arguments:
+    case op_del_by_id:
+    case op_del_by_val:
+    case op_unsigned:
+    case op_get_from_arguments: 
+    case op_get_argument:
+    case op_create_rest:
+    case op_get_rest_length: {
+        ASSERT(opcodeLengths[opcodeID] > 1);
+        functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
+        return;
+    }
+    case op_catch: {
+        ASSERT(opcodeLengths[opcodeID] > 2);
+        functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
+        functor(codeBlock, instruction, opcodeID, instruction[2].u.operand);
+        return;
+    }
     case op_enter: {
         for (unsigned i = codeBlock->numVars(); i--;)
-            functor(virtualRegisterForLocal(i));
+            functor(codeBlock, instruction, opcodeID, virtualRegisterForLocal(i).offset());
         return;
     }
     }
 }
 
-#undef CALL_FUNCTOR
-#undef USES_OR_DEFS
-#undef USES
-#undef DEFS
 } // namespace JSC

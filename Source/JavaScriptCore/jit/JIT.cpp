@@ -76,7 +76,7 @@ void ctiPatchCallByReturnAddress(ReturnAddressPtr returnAddress, FunctionPtr<CFu
 JIT::JIT(VM* vm, CodeBlock* codeBlock, unsigned loopOSREntryBytecodeOffset)
     : JSInterfaceJIT(vm, codeBlock)
     , m_interpreter(vm->interpreter)
-    , m_labels(codeBlock ? codeBlock->instructions().size() : 0)
+    , m_labels(codeBlock ? codeBlock->numberOfInstructions() : 0)
     , m_bytecodeOffset(std::numeric_limits<unsigned>::max())
     , m_pcToCodeOriginMapBuilder(*vm)
     , m_canBeOptimized(false)
@@ -137,7 +137,7 @@ void JIT::assertStackPointerOffset()
 }
 
 #define NEXT_OPCODE(name) \
-    m_bytecodeOffset += currentInstruction->size(); \
+    m_bytecodeOffset += OPCODE_LENGTH(name); \
     break;
 
 #define DEFINE_SLOW_OP(name) \
@@ -169,7 +169,7 @@ void JIT::assertStackPointerOffset()
         NEXT_OPCODE(op_##name); \
     }
 
-void JIT::emitSlowCaseCall(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter, SlowPathFunction stub)
+void JIT::emitSlowCaseCall(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter, SlowPathFunction stub)
 {
     linkAllSlowCases(iter);
 
@@ -185,8 +185,8 @@ void JIT::privateCompileMainPass()
     jitAssertTagsInPlace();
     jitAssertArgumentCountSane();
     
-    auto& instructions = m_codeBlock->instructions();
-    unsigned instructionCount = m_codeBlock->instructions().size();
+    Instruction* instructionsBegin = m_codeBlock->instructions().begin();
+    unsigned instructionCount = m_instructions.size();
 
     m_callLinkInfoIndex = 0;
 
@@ -206,7 +206,7 @@ void JIT::privateCompileMainPass()
             // Instead, we just find the minimum bytecode offset that is reachable, and
             // compile code from that bytecode offset onwards.
 
-            BytecodeGraph graph(m_codeBlock, m_codeBlock->instructions());
+            BytecodeGraph graph(m_codeBlock, m_instructions);
             BytecodeBasicBlock* block = graph.findBasicBlockForBytecodeOffset(m_loopOSREntryBytecodeOffset);
             RELEASE_ASSERT(block);
 
@@ -221,11 +221,12 @@ void JIT::privateCompileMainPass()
                 // Also add catch blocks for bytecodes that throw.
                 if (m_codeBlock->numberOfExceptionHandlers()) {
                     for (unsigned bytecodeOffset = block->leaderOffset(); bytecodeOffset < block->leaderOffset() + block->totalLength();) {
-                        auto instruction = instructions.at(bytecodeOffset);
+                        OpcodeID opcodeID = Interpreter::getOpcodeID(instructionsBegin[bytecodeOffset].u.opcode);
                         if (auto* handler = m_codeBlock->handlerForBytecodeOffset(bytecodeOffset))
                             worklist.push(graph.findBasicBlockWithLeaderOffset(handler->target));
 
-                        bytecodeOffset += instruction->size();
+                        unsigned opcodeLength = opcodeLengths[opcodeID];
+                        bytecodeOffset += opcodeLength;
                     }
                 }
             }
@@ -241,8 +242,8 @@ void JIT::privateCompileMainPass()
 
         if (m_disassembler)
             m_disassembler->setForBytecodeMainPath(m_bytecodeOffset, label());
-        const Instruction* currentInstruction = instructions.at(m_bytecodeOffset).ptr();
-        ASSERT_WITH_MESSAGE(currentInstruction->size(), "privateCompileMainPass gone bad @ %d", m_bytecodeOffset);
+        Instruction* currentInstruction = instructionsBegin + m_bytecodeOffset;
+        ASSERT_WITH_MESSAGE(Interpreter::isOpcode(currentInstruction->u.opcode), "privateCompileMainPass gone bad @ %d", m_bytecodeOffset);
 
         m_pcToCodeOriginMapBuilder.appendItem(label(), CodeOrigin(m_bytecodeOffset));
 
@@ -256,7 +257,7 @@ void JIT::privateCompileMainPass()
         if (JITInternal::verbose)
             dataLogF("Old JIT emitting code for bc#%u at offset 0x%lx.\n", m_bytecodeOffset, (long)debugOffset());
 
-        OpcodeID opcodeID = currentInstruction->opcodeID();
+        OpcodeID opcodeID = Interpreter::getOpcodeID(currentInstruction->u.opcode);
 
         if (UNLIKELY(m_compilation)) {
             add64(
@@ -336,6 +337,9 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_beloweq)
         DEFINE_OP(op_try_get_by_id)
         DEFINE_OP(op_in_by_id)
+        case op_get_array_length:
+        case op_get_by_id_proto_load:
+        case op_get_by_id_unset:
         DEFINE_OP(op_get_by_id)
         DEFINE_OP(op_get_by_id_with_this)
         DEFINE_OP(op_get_by_id_direct)
@@ -401,7 +405,7 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_profile_control_flow)
         DEFINE_OP(op_get_parent_scope)
         DEFINE_OP(op_put_by_id)
-        DEFINE_OP(op_put_by_val_direct)
+        case op_put_by_val_direct:
         DEFINE_OP(op_put_by_val)
         DEFINE_OP(op_put_getter_by_id)
         DEFINE_OP(op_put_setter_by_id)
@@ -465,6 +469,8 @@ void JIT::privateCompileLinkPass()
 
 void JIT::privateCompileSlowCases()
 {
+    Instruction* instructionsBegin = m_codeBlock->instructions().begin();
+
     m_getByIdIndex = 0;
     m_getByIdWithThisIndex = 0;
     m_putByIdIndex = 0;
@@ -473,6 +479,14 @@ void JIT::privateCompileSlowCases()
     m_byValInstructionIndex = 0;
     m_callLinkInfoIndex = 0;
     
+    // Use this to assert that slow-path code associates new profiling sites with existing
+    // ValueProfiles rather than creating new ones. This ensures that for a given instruction
+    // (say, get_by_id) we get combined statistics for both the fast-path executions of that
+    // instructions and the slow-path executions. Furthermore, if the slow-path code created
+    // new ValueProfiles then the ValueProfiles would no longer be sorted by bytecode offset,
+    // which would break the invariant necessary to use CodeBlock::valueProfileForBytecodeOffset().
+    unsigned numberOfValueProfiles = m_codeBlock->numberOfValueProfiles();
+
     for (Vector<SlowCaseEntry>::iterator iter = m_slowCases.begin(); iter != m_slowCases.end();) {
         m_bytecodeOffset = iter->to;
 
@@ -480,7 +494,7 @@ void JIT::privateCompileSlowCases()
 
         unsigned firstTo = m_bytecodeOffset;
 
-        const Instruction* currentInstruction = m_codeBlock->instructions().at(m_bytecodeOffset).ptr();
+        Instruction* currentInstruction = instructionsBegin + m_bytecodeOffset;
         
         RareCaseProfile* rareCaseProfile = 0;
         if (shouldEmitProfiling())
@@ -492,7 +506,7 @@ void JIT::privateCompileSlowCases()
         if (m_disassembler)
             m_disassembler->setForBytecodeSlowPath(m_bytecodeOffset, label());
 
-        switch (currentInstruction->opcodeID()) {
+        switch (Interpreter::getOpcodeID(currentInstruction->u.opcode)) {
         DEFINE_SLOWCASE_OP(op_add)
         DEFINE_SLOWCASE_OP(op_call)
         DEFINE_SLOWCASE_OP(op_tail_call)
@@ -505,6 +519,9 @@ void JIT::privateCompileSlowCases()
         DEFINE_SLOWCASE_OP(op_eq)
         DEFINE_SLOWCASE_OP(op_try_get_by_id)
         DEFINE_SLOWCASE_OP(op_in_by_id)
+        case op_get_array_length:
+        case op_get_by_id_proto_load:
+        case op_get_by_id_unset:
         DEFINE_SLOWCASE_OP(op_get_by_id)
         DEFINE_SLOWCASE_OP(op_get_by_id_with_this)
         DEFINE_SLOWCASE_OP(op_get_by_id_direct)
@@ -584,6 +601,7 @@ void JIT::privateCompileSlowCases()
     RELEASE_ASSERT(m_inByIdIndex == m_inByIds.size());
     RELEASE_ASSERT(m_instanceOfIndex == m_instanceOfs.size());
     RELEASE_ASSERT(m_callLinkInfoIndex == m_callCompilationInfo.size());
+    RELEASE_ASSERT(numberOfValueProfiles == m_codeBlock->numberOfValueProfiles());
 
 #ifndef NDEBUG
     // Reset this, in order to guard its use with ASSERTs.
@@ -597,6 +615,11 @@ void JIT::compileWithoutLinking(JITCompilationEffort effort)
     if (UNLIKELY(computeCompileTimes()))
         before = MonotonicTime::now();
     
+    {
+        ConcurrentJSLocker locker(m_codeBlock->m_lock);
+        m_instructions = m_codeBlock->instructions().clone();
+    }
+
     DFG::CapabilityLevel level = m_codeBlock->capabilityLevel();
     switch (level) {
     case DFG::CannotCompile:
@@ -884,7 +907,7 @@ CompilationResult JIT::link()
     
     m_vm->machineCodeBytesPerBytecodeWordForBaselineJIT->add(
         static_cast<double>(result.size()) /
-        static_cast<double>(m_codeBlock->instructionCount()));
+        static_cast<double>(m_instructions.size()));
 
     m_codeBlock->shrinkToFit(CodeBlock::LateShrink);
     m_codeBlock->setJITCode(

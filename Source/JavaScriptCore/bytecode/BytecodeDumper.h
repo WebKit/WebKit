@@ -28,7 +28,6 @@
 
 #include "CallLinkInfo.h"
 #include "ICStatusMap.h"
-#include "InstructionStream.h"
 #include "StructureStubInfo.h"
 
 namespace JSC {
@@ -38,31 +37,20 @@ struct Instruction;
 template<class Block>
 class BytecodeDumper {
 public:
-    static void dumpBytecode(Block*, PrintStream& out, const InstructionStream::Ref& it, const ICStatusMap& = ICStatusMap());
-    static void dumpBlock(Block*, const InstructionStream&, PrintStream& out, const ICStatusMap& = ICStatusMap());
+    typedef typename Block::Instruction Instruction;
 
-    void printLocationAndOp(InstructionStream::Offset location, const char* op);
-
-    template<typename T>
-    void dumpOperand(T operand, bool isFirst = false)
-    {
-        if (!isFirst)
-            m_out.print(", ");
-        dumpValue(operand);
-    }
-
-    void dumpValue(VirtualRegister reg) { m_out.printf("%s", registerName(reg.offset()).data()); }
-    template<typename T>
-    void dumpValue(T v) { m_out.print(v); }
+    static void dumpBytecode(Block*, PrintStream& out, const Instruction* begin, const Instruction*& it, const ICStatusMap& statusMap = ICStatusMap());
+    static void dumpBlock(Block*, const typename Block::UnpackedInstructions&, PrintStream& out, const ICStatusMap& statusMap = ICStatusMap());
 
 private:
-    BytecodeDumper(Block* block, PrintStream& out)
+    BytecodeDumper(Block* block, const Instruction* instructionsBegin)
         : m_block(block)
-        , m_out(out)
+        , m_instructionsBegin(instructionsBegin)
     {
     }
 
     Block* block() const { return m_block; }
+    const Instruction* instructionsBegin() const { return m_instructionsBegin; }
 
     ALWAYS_INLINE VM* vm() const;
 
@@ -71,16 +59,38 @@ private:
 
     const Identifier& identifier(int index) const;
 
-    void dumpIdentifiers();
-    void dumpConstants();
-    void dumpExceptionHandlers();
-    void dumpSwitchJumpTables();
-    void dumpStringSwitchJumpTables();
+    void dumpIdentifiers(PrintStream& out);
+    void dumpConstants(PrintStream& out);
+    void dumpExceptionHandlers(PrintStream& out);
+    void dumpSwitchJumpTables(PrintStream& out);
+    void dumpStringSwitchJumpTables(PrintStream& out);
 
-    void dumpBytecode(const InstructionStream::Ref& it, const ICStatusMap&);
+    void printUnaryOp(PrintStream& out, int location, const Instruction*& it, const char* op);
+    void printBinaryOp(PrintStream& out, int location, const Instruction*& it, const char* op);
+    void printConditionalJump(PrintStream& out, const Instruction*, const Instruction*& it, int location, const char* op);
+    void printCompareJump(PrintStream& out, const Instruction*, const Instruction*& it, int location, const char* op);
+    void printGetByIdOp(PrintStream& out, int location, const Instruction*& it);
+    void printGetByIdCacheStatus(PrintStream& out, int location, const ICStatusMap&);
+    void printPutByIdCacheStatus(PrintStream& out, int location, const ICStatusMap&);
+    void printInByIdCacheStatus(PrintStream& out, int location, const ICStatusMap&);
+    enum CacheDumpMode { DumpCaches, DontDumpCaches };
+    void printCallOp(PrintStream& out, int location, const Instruction*& it, const char* op, CacheDumpMode, bool& hasPrintedProfiling, const ICStatusMap&);
+    void printPutByIdOp(PrintStream& out, int location, const Instruction*& it, const char* op);
+    void printLocationOpAndRegisterOperand(PrintStream& out, int location, const Instruction*& it, const char* op, int operand);
+    void dumpBytecode(PrintStream& out, const Instruction* begin, const Instruction*& it, const ICStatusMap&);
+
+    void dumpValueProfiling(PrintStream&, const Instruction*&, bool& hasPrintedProfiling);
+    void dumpArrayProfiling(PrintStream&, const Instruction*&, bool& hasPrintedProfiling);
+    void dumpProfilesForBytecodeOffset(PrintStream&, unsigned location, bool& hasPrintedProfiling);
+
+    void* actualPointerFor(Special::Pointer) const;
+
+#if ENABLE(JIT)
+    void dumpCallLinkStatus(PrintStream&, unsigned location, const ICStatusMap&);
+#endif
 
     Block* m_block;
-    PrintStream& m_out;
+    const Instruction* m_instructionsBegin;
 };
 
 }

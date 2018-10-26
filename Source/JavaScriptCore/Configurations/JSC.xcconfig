@@ -37,4 +37,3 @@ OTHER_CODE_SIGN_FLAGS[sdk=iphone*] = -i com.apple.jsc;
 
 // Explicitly add the PrivateHeaders directory to the search path so that generated header files can be found in production builds.
 HEADER_SEARCH_PATHS = "$(JAVASCRIPTCORE_FRAMEWORKS_DIR)/JavaScriptCore.framework/PrivateHeaders" $(inherited);
-HEADER_SEARCH_PATHS = "${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore" $(HEADER_SEARCH_PATHS);

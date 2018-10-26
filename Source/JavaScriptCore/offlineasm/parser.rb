@@ -177,11 +177,11 @@ def lex(str, file)
             end
             result << Token.new(CodeOrigin.new(file, lineNumber), $&)
             lineNumber += 1
-        when /\A[a-zA-Z%]([a-zA-Z0-9_.%]*)/
+        when /\A[a-zA-Z]([a-zA-Z0-9_.]*)/
             result << Token.new(CodeOrigin.new(file, lineNumber), $&)
         when /\A\.([a-zA-Z0-9_]*)/
             result << Token.new(CodeOrigin.new(file, lineNumber), $&)
-        when /\A_([a-zA-Z0-9_%]*)/
+        when /\A_([a-zA-Z0-9_]*)/
             result << Token.new(CodeOrigin.new(file, lineNumber), $&)
         when /\A([ \t]+)/
             # whitespace, ignore
@@ -228,11 +228,11 @@ def isKeyword(token)
 end
 
 def isIdentifier(token)
-    token =~ /\A[a-zA-Z%]([a-zA-Z0-9_.%]*)\Z/ and not isKeyword(token)
+    token =~ /\A[a-zA-Z]([a-zA-Z0-9_.]*)\Z/ and not isKeyword(token)
 end
 
 def isLabel(token)
-    token =~ /\A_([a-zA-Z0-9_%]*)\Z/
+    token =~ /\A_([a-zA-Z0-9_]*)\Z/
 end
 
 def isLocalLabel(token)

@@ -26,7 +26,6 @@
 #pragma once
 
 #include <wtf/Lock.h>
-#include <wtf/MonotonicTime.h>
 #include <wtf/Ref.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WorkQueue.h>

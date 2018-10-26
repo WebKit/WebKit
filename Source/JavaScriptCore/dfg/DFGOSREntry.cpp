@@ -390,9 +390,8 @@ MacroAssemblerCodePtr<ExceptionHandlerPtrTag> prepareCatchOSREntry(ExecState* ex
     if (UNLIKELY(!vm.ensureStackCapacityFor(&exec->registers()[virtualRegisterForLocal(frameSizeForCheck).offset()])))
         return nullptr;
 
-    auto instruction = exec->codeBlock()->instructions().at(exec->bytecodeOffset());
-    ASSERT(instruction->is<OpCatch>());
-    ValueProfileAndOperandBuffer* buffer = instruction->as<OpCatch>().metadata(exec).buffer;
+    ASSERT(Interpreter::getOpcodeID(exec->codeBlock()->instructions()[exec->bytecodeOffset()].u.opcode) == op_catch);
+    ValueProfileAndOperandBuffer* buffer = static_cast<ValueProfileAndOperandBuffer*>(exec->codeBlock()->instructions()[exec->bytecodeOffset() + 3].u.pointer);
     JSValue* dataBuffer = reinterpret_cast<JSValue*>(dfgCommon->catchOSREntryBuffer->dataBuffer());
     unsigned index = 0;
     buffer->forEach([&] (ValueProfileAndOperand& profile) {

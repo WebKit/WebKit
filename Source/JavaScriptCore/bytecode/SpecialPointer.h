@@ -61,11 +61,3 @@ void* actualPointerFor(JSGlobalObject*, Special::Pointer);
 void* actualPointerFor(CodeBlock*, Special::Pointer);
 
 } // namespace JSC
-
-namespace WTF {
-
-class PrintStream;
-
-void printInternal(PrintStream&, JSC::Special::Pointer);
-
-} // namespace WTF

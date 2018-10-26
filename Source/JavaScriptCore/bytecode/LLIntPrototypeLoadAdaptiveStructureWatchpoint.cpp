@@ -32,9 +32,9 @@
 
 namespace JSC {
 
-LLIntPrototypeLoadAdaptiveStructureWatchpoint::LLIntPrototypeLoadAdaptiveStructureWatchpoint(const ObjectPropertyCondition& key, OpGetById::Metadata& getByIdMetadata)
+LLIntPrototypeLoadAdaptiveStructureWatchpoint::LLIntPrototypeLoadAdaptiveStructureWatchpoint(const ObjectPropertyCondition& key, Instruction* getByIdInstruction)
     : m_key(key)
-    , m_getByIdMetadata(getByIdMetadata)
+    , m_getByIdInstruction(getByIdInstruction)
 {
     RELEASE_ASSERT(key.watchingRequiresStructureTransitionWatchpoint());
     RELEASE_ASSERT(!key.watchingRequiresReplacementWatchpoint());
@@ -54,15 +54,7 @@ void LLIntPrototypeLoadAdaptiveStructureWatchpoint::fireInternal(VM& vm, const F
         return;
     }
 
-    clearLLIntGetByIdCache(m_getByIdMetadata);
+    CodeBlock::clearLLIntGetByIdCache(m_getByIdInstruction);
 }
-
-void LLIntPrototypeLoadAdaptiveStructureWatchpoint::clearLLIntGetByIdCache(OpGetById::Metadata& metadata)
-{
-    metadata.mode = GetByIdMode::Default;
-    metadata.modeMetadata.defaultMode.cachedOffset = 0;
-    metadata.modeMetadata.defaultMode.structure = 0;
-}
-
 
 } // namespace JSC

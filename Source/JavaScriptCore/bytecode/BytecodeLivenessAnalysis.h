@@ -37,9 +37,9 @@ class FullBytecodeLiveness;
 
 class BytecodeLivenessPropagation {
 protected:
-    template<typename CodeBlockType, typename UseFunctor, typename DefFunctor> void stepOverInstruction(CodeBlockType*, const InstructionStream&, BytecodeGraph&, InstructionStream::Offset bytecodeOffset, const UseFunctor&, const DefFunctor&);
+    template<typename CodeBlockType, typename Instructions, typename UseFunctor, typename DefFunctor> void stepOverInstruction(CodeBlockType*, const Instructions&, BytecodeGraph&, unsigned bytecodeOffset, const UseFunctor&, const DefFunctor&);
 
-    template<typename CodeBlockType> void stepOverInstruction(CodeBlockType*, const InstructionStream&, BytecodeGraph&, InstructionStream::Offset bytecodeOffset, FastBitVector& out);
+    template<typename CodeBlockType, typename Instructions> void stepOverInstruction(CodeBlockType*, const Instructions&, BytecodeGraph&, unsigned bytecodeOffset, FastBitVector& out);
 
     template<typename CodeBlockType, typename Instructions> bool computeLocalLivenessForBytecodeOffset(CodeBlockType*, const Instructions&, BytecodeGraph&, BytecodeBasicBlock*, unsigned targetOffset, FastBitVector& result);
 

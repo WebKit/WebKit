@@ -56,7 +56,7 @@ template <typename GeneratorType, bool(*isProfileEmpty)(ArithProfile&)>
 class JITMathIC {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    JITMathIC(ArithProfile* arithProfile, const Instruction* instruction)
+    JITMathIC(ArithProfile* arithProfile, Instruction* instruction)
         : m_arithProfile(arithProfile)
         , m_instruction(instruction)
     {
@@ -232,7 +232,7 @@ public:
     }
 
     ArithProfile* arithProfile() const { return m_arithProfile; }
-    const Instruction* instruction() const { return m_instruction; }
+    Instruction* instruction() const { return m_instruction; }
 
 #if ENABLE(MATH_IC_STATS)
     size_t m_generatedCodeSize { 0 };
@@ -246,7 +246,7 @@ public:
 #endif
 
     ArithProfile* m_arithProfile;
-    const Instruction* m_instruction;
+    Instruction* m_instruction;
     MacroAssemblerCodeRef<JITStubRoutinePtrTag> m_code;
     CodeLocationLabel<JSInternalPtrTag> m_inlineStart;
     CodeLocationLabel<JSInternalPtrTag> m_inlineEnd;
@@ -263,7 +263,7 @@ inline bool isBinaryProfileEmpty(ArithProfile& arithProfile)
 template <typename GeneratorType>
 class JITBinaryMathIC : public JITMathIC<GeneratorType, isBinaryProfileEmpty> {
 public:
-    JITBinaryMathIC(ArithProfile* arithProfile, const Instruction* instruction)
+    JITBinaryMathIC(ArithProfile* arithProfile, Instruction* instruction)
         : JITMathIC<GeneratorType, isBinaryProfileEmpty>(arithProfile, instruction)
     {
     }
@@ -281,7 +281,7 @@ inline bool isUnaryProfileEmpty(ArithProfile& arithProfile)
 template <typename GeneratorType>
 class JITUnaryMathIC : public JITMathIC<GeneratorType, isUnaryProfileEmpty> {
 public:
-    JITUnaryMathIC(ArithProfile* arithProfile, const Instruction* instruction)
+    JITUnaryMathIC(ArithProfile* arithProfile, Instruction* instruction)
         : JITMathIC<GeneratorType, isUnaryProfileEmpty>(arithProfile, instruction)
     {
     }

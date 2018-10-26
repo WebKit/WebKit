@@ -283,7 +283,8 @@ class RegisterID
             when "t4"
                 isWin ? "r10" : "r8"
             when "t5"
-                isWin ? "ecx" : "r10"
+                raise "cannot use register #{name} on X86-64 Windows" unless not isWin
+                "r10"
             when "csr0"
                 "ebx"
             when "csr1"
@@ -464,12 +465,7 @@ class LabelReference
     def x86LoadOperand(kind, dst)
         # FIXME: Implement this on platforms that aren't Mach-O.
         # https://bugs.webkit.org/show_bug.cgi?id=175104
-        used
-        if !isIntelSyntax
-            $asm.puts "movq #{asmLabel}@GOTPCREL(%rip), #{dst.x86Operand(:ptr)}"
-        else
-            $asm.puts "lea #{dst.x86Operand(:ptr)}, #{asmLabel}"
-        end
+        $asm.puts "movq #{asmLabel}@GOTPCREL(%rip), #{dst.x86Operand(:ptr)}"
         "#{offset}(#{dst.x86Operand(kind)})"
     end
 end
@@ -588,12 +584,7 @@ class Instruction
 
     def emitX86Lea(src, dst, kind)
         if src.is_a? LabelReference
-            src.used
-            if !isIntelSyntax
-                $asm.puts "movq #{src.asmLabel}@GOTPCREL(%rip), #{dst.x86Operand(:ptr)}"
-            else
-                $asm.puts "lea #{dst.x86Operand(:ptr)}, #{src.asmLabel}"
-            end
+            $asm.puts "movq #{src.asmLabel}@GOTPCREL(%rip), #{dst.x86Operand(:ptr)}"
         else
             $asm.puts "lea#{x86Suffix(kind)} #{orderOperands(src.x86AddressOperand(kind), dst.x86Operand(kind))}"
         end
@@ -956,8 +947,6 @@ class Instruction
             handleX86Op("xor#{x86Suffix(:ptr)}", :ptr)
         when "xorq"
             handleX86Op("xor#{x86Suffix(:quad)}", :quad)
-        when "leap"
-            emitX86Lea(operands[0], operands[1], :ptr)
         when "loadi"
             $asm.puts "mov#{x86Suffix(:int)} #{x86LoadOperands(:int, :int)}"
         when "storei"
@@ -991,12 +980,6 @@ class Instruction
                 $asm.puts "movsbl #{x86LoadOperands(:byte, :int)}"
             else
                 $asm.puts "movsx #{x86LoadOperands(:byte, :int)}"
-            end
-        when "loadbsp"
-            if !isIntelSyntax
-                $asm.puts "movsb#{x86Suffix(:ptr)} #{x86LoadOperands(:byte, :ptr)}"
-            else
-                $asm.puts "movsx #{x86LoadOperands(:byte, :ptr)}"
             end
         when "loadh"
             if !isIntelSyntax

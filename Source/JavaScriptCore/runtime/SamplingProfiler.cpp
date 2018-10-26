@@ -760,7 +760,7 @@ String SamplingProfiler::StackFrame::displayName(VM& vm)
     if (frameType == FrameType::Unknown || frameType == FrameType::C) {
 #if HAVE(DLADDR)
         if (frameType == FrameType::C) {
-            auto demangled = WTF::StackTrace::demangle(const_cast<void*>(cCodePC));
+            auto demangled = WTF::StackTrace::demangle(cCodePC);
             if (demangled)
                 return String(demangled->demangledName() ? demangled->demangledName() : demangled->mangledName());
             WTF::dataLog("couldn't get a name");

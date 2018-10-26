@@ -26,8 +26,6 @@
 #include "config.h"
 #include "VirtualRegister.h"
 
-#include "RegisterID.h"
-
 namespace JSC {
 
 void VirtualRegister::dump(PrintStream& out) const
@@ -63,10 +61,5 @@ void VirtualRegister::dump(PrintStream& out) const
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-
-VirtualRegister::VirtualRegister(RegisterID* reg)
-    : VirtualRegister(reg->m_virtualRegister.m_virtualRegister)
-{
-}
-
 } // namespace JSC
+

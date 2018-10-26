@@ -64,6 +64,16 @@ inline OpcodeID Interpreter::getOpcodeID(Opcode opcode)
 #endif
 }
 
+inline OpcodeID Interpreter::getOpcodeID(const Instruction& instruction)
+{
+    return getOpcodeID(instruction.u.opcode);
+}
+
+inline OpcodeID Interpreter::getOpcodeID(const UnlinkedInstruction& instruction)
+{
+    return instruction.u.opcode;
+}
+
 ALWAYS_INLINE JSValue Interpreter::execute(CallFrameClosure& closure)
 {
     VM& vm = *closure.vm;

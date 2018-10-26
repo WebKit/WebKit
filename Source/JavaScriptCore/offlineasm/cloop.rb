@@ -88,8 +88,6 @@ class RegisterID
             "tagTypeNumber"
         when "csr2"
             "tagMask"
-        when "csr3"
-            "metadataTable"
         when "cfr"
             "cfr"
         when "lr"
@@ -418,7 +416,7 @@ end
 def cloopEmitCompareAndSet(operands, type, comparator)
     # The result is a boolean.  Hence, it doesn't need to be based on the type
     # of the arguments being compared.
-    $asm.putc "#{operands[2].clValue} = (#{operands[0].clValue(type)} #{comparator} #{operands[1].clValue(type)});"
+    $asm.putc "#{operands[2].clValue} = (#{operands[0].clValue(type)} #{comparator} #{op2 = operands[1].clValue(type)});"
 end
 
 
@@ -511,7 +509,7 @@ def cloopEmitCallSlowPath(operands)
     $asm.putc "{"
     $asm.putc "    cloopStack.setCurrentStackPointer(sp.vp);"
     $asm.putc "    SlowPathReturnType result = #{operands[0].cLabel}(#{operands[1].clDump}, #{operands[2].clDump});"
-    $asm.putc "    decodeResult(result, t0.cvp, t1.cvp);"
+    $asm.putc "    decodeResult(result, t0.vp, t1.vp);"
     $asm.putc "}"
 end
 
@@ -614,7 +612,7 @@ class Instruction
             $asm.putc "#{operands[1].intMemRef} = #{operands[0].clValue(:int)};"
         when "loadb"
             $asm.putc "#{operands[1].clValue(:int)} = #{operands[0].uint8MemRef};"
-        when "loadbs", "loadbsp"
+        when "loadbs"
             $asm.putc "#{operands[1].clValue(:int)} = #{operands[0].int8MemRef};"
         when "storeb"
             $asm.putc "#{operands[1].uint8MemRef} = #{operands[0].clValue(:int8)};"

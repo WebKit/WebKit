@@ -42,14 +42,10 @@ inline bool operandIsArgument(int operand)
 }
 
 
-class RegisterID;
-
 class VirtualRegister {
 public:
     friend VirtualRegister virtualRegisterForLocal(int);
     friend VirtualRegister virtualRegisterForArgument(int, int);
-
-    VirtualRegister(RegisterID*);
 
     VirtualRegister()
         : m_virtualRegister(s_invalidVirtualRegister)

@@ -119,7 +119,7 @@ void BytecodeLivenessAnalysis::computeKills(CodeBlock* codeBlock, BytecodeKills&
 void BytecodeLivenessAnalysis::dumpResults(CodeBlock* codeBlock)
 {
     dataLog("\nDumping bytecode liveness for ", *codeBlock, ":\n");
-    const auto& instructions = codeBlock->instructions();
+    Instruction* instructionsBegin = codeBlock->instructions().begin();
     unsigned i = 0;
 
     unsigned numberOfBlocks = m_graph.size();
@@ -167,15 +167,17 @@ void BytecodeLivenessAnalysis::dumpResults(CodeBlock* codeBlock)
             continue;
         }
         for (unsigned bytecodeOffset = block->leaderOffset(); bytecodeOffset < block->leaderOffset() + block->totalLength();) {
-            const auto currentInstruction = instructions.at(bytecodeOffset);
+            const Instruction* currentInstruction = &instructionsBegin[bytecodeOffset];
 
             dataLogF("Live variables:");
             FastBitVector liveBefore = getLivenessInfoAtBytecodeOffset(codeBlock, bytecodeOffset);
             dumpBitVector(liveBefore);
             dataLogF("\n");
-            codeBlock->dumpBytecode(WTF::dataFile(), currentInstruction);
+            codeBlock->dumpBytecode(WTF::dataFile(), instructionsBegin, currentInstruction);
 
-            bytecodeOffset += currentInstruction->size();
+            OpcodeID opcodeID = Interpreter::getOpcodeID(instructionsBegin[bytecodeOffset].u.opcode);
+            unsigned opcodeLength = opcodeLengths[opcodeID];
+            bytecodeOffset += opcodeLength;
         }
 
         dataLogF("Live variables:");

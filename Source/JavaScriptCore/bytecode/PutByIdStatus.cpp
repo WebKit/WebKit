@@ -26,7 +26,6 @@
 #include "config.h"
 #include "PutByIdStatus.h"
 
-#include "BytecodeStructs.h"
 #include "CodeBlock.h"
 #include "ComplexGetStatus.h"
 #include "GetterSetterAccessCase.h"
@@ -56,18 +55,21 @@ ExitFlag PutByIdStatus::hasExitSite(CodeBlock* profiledBlock, unsigned bytecodeI
 
 PutByIdStatus PutByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned bytecodeIndex, UniquedStringImpl* uid)
 {
+    UNUSED_PARAM(profiledBlock);
+    UNUSED_PARAM(bytecodeIndex);
+    UNUSED_PARAM(uid);
+
     VM& vm = *profiledBlock->vm();
     
-    auto instruction = profiledBlock->instructions().at(bytecodeIndex);
-    auto& metadata = instruction->as<OpPutById>().metadata(profiledBlock);
+    Instruction* instruction = &profiledBlock->instructions()[bytecodeIndex];
 
-    StructureID structureID = metadata.oldStructure;
+    StructureID structureID = instruction[4].u.structureID;
     if (!structureID)
         return PutByIdStatus(NoInformation);
     
     Structure* structure = vm.heap.structureIDTable().get(structureID);
 
-    StructureID newStructureID = metadata.newStructure;
+    StructureID newStructureID = instruction[6].u.structureID;
     if (!newStructureID) {
         PropertyOffset offset = structure->getConcurrently(uid);
         if (!isValidOffset(offset))
@@ -85,7 +87,7 @@ PutByIdStatus PutByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
         return PutByIdStatus(NoInformation);
     
     ObjectPropertyConditionSet conditionSet;
-    if (!(metadata.flags & PutByIdIsDirect)) {
+    if (!(instruction[8].u.putByIdFlags & PutByIdIsDirect)) {
         conditionSet =
             generateConditionsForPropertySetterMissConcurrently(
                 vm, profiledBlock->globalObject(), structure, uid);

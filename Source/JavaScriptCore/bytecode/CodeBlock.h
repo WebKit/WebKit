@@ -47,7 +47,6 @@
 #include "HandlerInfo.h"
 #include "ICStatusMap.h"
 #include "Instruction.h"
-#include "InstructionStream.h"
 #include "JITCode.h"
 #include "JITCodeMap.h"
 #include "JITMathICForwards.h"
@@ -56,8 +55,8 @@
 #include "JSGlobalObject.h"
 #include "JumpTable.h"
 #include "LLIntCallLinkInfo.h"
+#include "LLIntPrototypeLoadAdaptiveStructureWatchpoint.h"
 #include "LazyOperandValueProfile.h"
-#include "MetadataTable.h"
 #include "ModuleProgramExecutable.h"
 #include "ObjectAllocationProfile.h"
 #include "Options.h"
@@ -86,11 +85,10 @@ struct OSRExitState;
 
 class BytecodeLivenessAnalysis;
 class CodeBlockSet;
+class ExecState;
 class ExecutableToCodeBlockEdge;
 class JSModuleEnvironment;
 class LLIntOffsetsExtractor;
-class LLIntPrototypeLoadAdaptiveStructureWatchpoint;
-class MetadataTable;
 class PCToCodeOriginMap;
 class RegisterAtOffsetList;
 class StructureStubInfo;
@@ -98,7 +96,6 @@ class StructureStubInfo;
 enum class AccessType : int8_t;
 
 struct ArithProfile;
-struct OpCatch;
 
 enum ReoptimizationMode { DontCountReoptimization, CountReoptimization };
 
@@ -200,7 +197,7 @@ public:
 
     void dumpBytecode();
     void dumpBytecode(PrintStream&);
-    void dumpBytecode(PrintStream& out, const InstructionStream::Ref& it, const ICStatusMap& = ICStatusMap());
+    void dumpBytecode(PrintStream& out, const Instruction* begin, const Instruction*& it, const ICStatusMap& = ICStatusMap());
     void dumpBytecode(PrintStream& out, unsigned bytecodeOffset, const ICStatusMap& = ICStatusMap());
 
     void dumpExceptionHandlers(PrintStream&);
@@ -245,22 +242,22 @@ public:
     void getICStatusMap(ICStatusMap& result);
     
 #if ENABLE(JIT)
-    JITAddIC* addJITAddIC(ArithProfile*, const Instruction*);
-    JITMulIC* addJITMulIC(ArithProfile*, const Instruction*);
-    JITNegIC* addJITNegIC(ArithProfile*, const Instruction*);
-    JITSubIC* addJITSubIC(ArithProfile*, const Instruction*);
+    JITAddIC* addJITAddIC(ArithProfile*, Instruction*);
+    JITMulIC* addJITMulIC(ArithProfile*, Instruction*);
+    JITNegIC* addJITNegIC(ArithProfile*, Instruction*);
+    JITSubIC* addJITSubIC(ArithProfile*, Instruction*);
 
     template <typename Generator, typename = typename std::enable_if<std::is_same<Generator, JITAddGenerator>::value>::type>
-    JITAddIC* addMathIC(ArithProfile* profile, const Instruction* instruction) { return addJITAddIC(profile, instruction); }
+    JITAddIC* addMathIC(ArithProfile* profile, Instruction* instruction) { return addJITAddIC(profile, instruction); }
 
     template <typename Generator, typename = typename std::enable_if<std::is_same<Generator, JITMulGenerator>::value>::type>
-    JITMulIC* addMathIC(ArithProfile* profile, const Instruction* instruction) { return addJITMulIC(profile, instruction); }
+    JITMulIC* addMathIC(ArithProfile* profile, Instruction* instruction) { return addJITMulIC(profile, instruction); }
 
     template <typename Generator, typename = typename std::enable_if<std::is_same<Generator, JITNegGenerator>::value>::type>
-    JITNegIC* addMathIC(ArithProfile* profile, const Instruction* instruction) { return addJITNegIC(profile, instruction); }
+    JITNegIC* addMathIC(ArithProfile* profile, Instruction* instruction) { return addJITNegIC(profile, instruction); }
 
     template <typename Generator, typename = typename std::enable_if<std::is_same<Generator, JITSubGenerator>::value>::type>
-    JITSubIC* addMathIC(ArithProfile* profile, const Instruction* instruction) { return addJITSubIC(profile, instruction); }
+    JITSubIC* addMathIC(ArithProfile* profile, Instruction* instruction) { return addJITSubIC(profile, instruction); }
 
     StructureStubInfo* addStubInfo(AccessType);
     auto stubInfoBegin() { return m_stubInfos.begin(); }
@@ -309,26 +306,24 @@ public:
     }
 #endif
 
-    const Instruction* outOfLineJumpTarget(const Instruction* pc);
-    int outOfLineJumpOffset(const Instruction* pc);
-    int outOfLineJumpOffset(const InstructionStream::Ref& instruction)
+    typedef JSC::Instruction Instruction;
+    typedef PoisonedRefCountedArray<CodeBlockPoison, Instruction>& UnpackedInstructions;
+
+    static void clearLLIntGetByIdCache(Instruction*);
+
+    unsigned bytecodeOffset(Instruction* returnAddress)
     {
-        return outOfLineJumpOffset(instruction.ptr());
+        RELEASE_ASSERT(returnAddress >= instructions().begin() && returnAddress < instructions().end());
+        return static_cast<Instruction*>(returnAddress) - instructions().begin();
     }
 
-    inline unsigned bytecodeOffset(const Instruction* returnAddress)
-    {
-        const auto* instructionsBegin = instructions().at(0).ptr();
-        const auto* instructionsEnd = reinterpret_cast<const Instruction*>(reinterpret_cast<uintptr_t>(instructionsBegin) + instructions().size());
-        RELEASE_ASSERT(returnAddress >= instructionsBegin && returnAddress < instructionsEnd);
-        return returnAddress - instructionsBegin;
-    }
-
-    const InstructionStream& instructions() const { return *m_instructions; }
+    unsigned numberOfInstructions() const { return m_instructions.size(); }
+    PoisonedRefCountedArray<CodeBlockPoison, Instruction>& instructions() { return m_instructions; }
+    const PoisonedRefCountedArray<CodeBlockPoison, Instruction>& instructions() const { return m_instructions; }
 
     size_t predictedMachineCodeSize();
 
-    unsigned instructionCount() const { return m_instructionCount; }
+    unsigned instructionCount() const { return m_instructions.size(); }
 
     // Exactly equivalent to codeBlock->ownerExecutable()->newReplacementCodeBlockFor(codeBlock->specializationKind())
     CodeBlock* newReplacement();
@@ -430,13 +425,20 @@ public:
     }
 
     ValueProfile& valueProfileForBytecodeOffset(int bytecodeOffset);
-    SpeculatedType valueProfilePredictionForBytecodeOffset(const ConcurrentJSLocker&, int bytecodeOffset);
+    SpeculatedType valueProfilePredictionForBytecodeOffset(const ConcurrentJSLocker& locker, int bytecodeOffset)
+    {
+        if (ValueProfile* valueProfile = tryGetValueProfileForBytecodeOffset(bytecodeOffset))
+            return valueProfile->computeUpdatedPrediction(locker);
+        return SpecNone;
+    }
 
-    template<typename Functor> void forEachValueProfile(const Functor&);
-    template<typename Functor> void forEachArrayProfile(const Functor&);
-    template<typename Functor> void forEachArrayAllocationProfile(const Functor&);
-    template<typename Functor> void forEachObjectAllocationProfile(const Functor&);
-    template<typename Functor> void forEachLLIntCallLinkInfo(const Functor&);
+    template<typename Functor> void forEachValueProfile(const Functor& func)
+    {
+        for (unsigned i = 0; i < numberOfArgumentValueProfiles(); ++i)
+            func(valueProfileForArgument(i));
+        for (unsigned i = 0; i < numberOfValueProfiles(); ++i)
+            func(valueProfile(i));
+    }
 
     RareCaseProfile* addRareCaseProfile(int bytecodeOffset);
     unsigned numberOfRareCaseProfiles() { return m_rareCaseProfiles.size(); }
@@ -459,10 +461,10 @@ public:
         return value >= Options::couldTakeSlowCaseMinimumCount();
     }
 
-    ArithProfile* arithProfileForBytecodeOffset(InstructionStream::Offset bytecodeOffset);
-    ArithProfile* arithProfileForPC(const Instruction*);
+    ArithProfile* arithProfileForBytecodeOffset(int bytecodeOffset);
+    ArithProfile* arithProfileForPC(Instruction*);
 
-    bool couldTakeSpecialFastCase(InstructionStream::Offset bytecodeOffset);
+    bool couldTakeSpecialFastCase(int bytecodeOffset);
 
     unsigned numberOfArrayProfiles() const { return m_arrayProfiles.size(); }
     const ArrayProfileVector& arrayProfiles() { return m_arrayProfiles; }
@@ -612,7 +614,7 @@ public:
         return m_llintExecuteCounter;
     }
 
-    typedef HashMap<std::tuple<Structure*, const Instruction*>, Bag<LLIntPrototypeLoadAdaptiveStructureWatchpoint>> StructureWatchpointMap;
+    typedef HashMap<std::tuple<Structure*, Instruction*>, Bag<LLIntPrototypeLoadAdaptiveStructureWatchpoint>> StructureWatchpointMap;
     StructureWatchpointMap& llintGetByIdWatchpointMap() { return m_llintGetByIdWatchpointMap; }
 
     // Functions for controlling when tiered compilation kicks in. This
@@ -650,7 +652,7 @@ public:
     size_t calleeSaveSpaceAsVirtualRegisters();
 #else
     static unsigned numberOfLLIntBaselineCalleeSaveRegisters() { return 0; }
-    static size_t llintBaselineCalleeSaveSpaceAsVirtualRegisters() { return 1; };
+    static size_t llintBaselineCalleeSaveSpaceAsVirtualRegisters() { return 0; };
     size_t calleeSaveSpaceAsVirtualRegisters() { return 0; }
 #endif
 
@@ -847,7 +849,25 @@ public:
 
     CallSiteIndex newExceptionHandlingCallSiteIndex(CallSiteIndex originalCallSite);
 
-    void ensureCatchLivenessIsComputedForBytecodeOffset(InstructionStream::Offset bytecodeOffset);
+    void ensureCatchLivenessIsComputedForBytecodeOffset(unsigned bytecodeOffset)
+    {
+        if (!!m_instructions[bytecodeOffset + 3].u.pointer) {
+#if !ASSERT_DISABLED
+            ConcurrentJSLocker locker(m_lock);
+            bool found = false;
+            for (auto& profile : m_catchProfiles) {
+                if (profile.get() == m_instructions[bytecodeOffset + 3].u.pointer) {
+                    found = true;
+                    break;
+                }
+            }
+            ASSERT(found);
+#endif
+            return;
+        }
+
+        ensureCatchLivenessIsComputedForBytecodeOffsetSlow(bytecodeOffset);
+    }
 
 #if ENABLE(JIT)
     void setPCToCodeOriginMap(std::unique_ptr<PCToCodeOriginMap>&&);
@@ -855,17 +875,6 @@ public:
 #endif
 
     bool hasTailCalls() const { return m_unlinkedCode->hasTailCalls(); }
-
-    template<typename Metadata>
-    Metadata& metadata(OpcodeID opcodeID, unsigned metadataID)
-    {
-        return reinterpret_cast<Metadata*>(m_metadata->get(opcodeID))[metadataID];
-    }
-
-    size_t metadataSizeInBytes()
-    {
-        return m_unlinkedCode->metadataSizeInBytes();
-    }
 
 protected:
     void finalizeLLIntInlineCaches();
@@ -912,8 +921,10 @@ private:
     void stronglyVisitWeakReferences(const ConcurrentJSLocker&, SlotVisitor&);
     void visitOSRExitTargets(const ConcurrentJSLocker&, SlotVisitor&);
 
-    unsigned numberOfNonArgumentValueProfiles() { return m_numberOfNonArgumentValueProfiles; }
+    unsigned numberOfValueProfiles() { return m_valueProfiles.size(); }
+    unsigned numberOfNonArgumentValueProfiles() { return numberOfValueProfiles(); }
     unsigned totalNumberOfValueProfiles() { return numberOfArgumentValueProfiles() + numberOfNonArgumentValueProfiles(); }
+    ValueProfile& valueProfile(int index) { return m_valueProfiles[index]; }
     ValueProfile* tryGetValueProfileForBytecodeOffset(int bytecodeOffset);
 
     Seconds timeSinceCreation()
@@ -927,14 +938,13 @@ private:
             m_rareData = std::make_unique<RareData>();
     }
 
-    void insertBasicBlockBoundariesForControlFlowProfiler();
-    void ensureCatchLivenessIsComputedForBytecodeOffsetSlow(const OpCatch&, InstructionStream::Offset);
+    void insertBasicBlockBoundariesForControlFlowProfiler(RefCountedArray<Instruction>&);
+    void ensureCatchLivenessIsComputedForBytecodeOffsetSlow(unsigned);
 
     int m_numCalleeLocals;
     int m_numVars;
     int m_numParameters;
     int m_numberOfArgumentsToSkip { 0 };
-    unsigned m_numberOfNonArgumentValueProfiles { 0 };
     union {
         unsigned m_debuggerRequests;
         struct {
@@ -948,8 +958,7 @@ private:
     WriteBarrier<ExecutableToCodeBlockEdge> m_ownerEdge;
     Poisoned<CodeBlockPoison, VM*> m_poisonedVM;
 
-    unsigned m_instructionCount { 0 };
-    const InstructionStream* m_instructions;
+    PoisonedRefCountedArray<CodeBlockPoison, Instruction> m_instructions;
     VirtualRegister m_thisRegister;
     VirtualRegister m_scopeRegister;
     mutable CodeBlockHash m_hash;
@@ -958,6 +967,7 @@ private:
     unsigned m_sourceOffset;
     unsigned m_firstLineColumnOffset;
 
+    RefCountedArray<LLIntCallLinkInfo> m_llintCallLinkInfos;
     SentinelLinkedList<LLIntCallLinkInfo, BasicRawSentinelNode<LLIntCallLinkInfo>> m_incomingLLIntCalls;
     StructureWatchpointMap m_llintGetByIdWatchpointMap;
     PoisonedRefPtr<CodeBlockPoison, JITCode> m_jitCode;
@@ -983,9 +993,12 @@ private:
     CompressedLazyOperandValueProfileHolder m_lazyOperandValueProfiles;
 #endif
     RefCountedArray<ValueProfile> m_argumentValueProfiles;
+    RefCountedArray<ValueProfile> m_valueProfiles;
     Vector<std::unique_ptr<ValueProfileAndOperandBuffer>> m_catchProfiles;
     SegmentedVector<RareCaseProfile, 8> m_rareCaseProfiles;
+    RefCountedArray<ArrayAllocationProfile> m_arrayAllocationProfiles;
     ArrayProfileVector m_arrayProfiles;
+    RefCountedArray<ObjectAllocationProfile> m_objectAllocationProfiles;
 
     // Constant Pool
     COMPILE_ASSERT(sizeof(Register) == sizeof(WriteBarrier<Unknown>), Register_must_be_same_size_as_WriteBarrier_Unknown);
@@ -1004,8 +1017,6 @@ private:
     uint32_t m_osrExitCounter;
     uint16_t m_optimizationDelayCounter;
     uint16_t m_reoptimizationRetryCounter;
-
-    RefPtr<MetadataTable> m_metadata;
 
     MonotonicTime m_creationTime;
 

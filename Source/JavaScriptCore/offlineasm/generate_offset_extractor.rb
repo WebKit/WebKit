@@ -84,7 +84,6 @@ File.open(outputFlnm, "w") {
         forSettings(settingsCombinations[configIndex], ast) {
             | concreteSettings, lowLevelAST, backend |
 
-            lowLevelAST = lowLevelAST.demacroify({})
             offsetsList = offsetsList(lowLevelAST)
             sizesList = sizesList(lowLevelAST)
             constsList = constsList(lowLevelAST)

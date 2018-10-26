@@ -131,11 +131,3 @@ static_assert(sizeof(JSType) == sizeof(uint8_t), "sizeof(JSType) is one byte.");
 static_assert(LastJSCObjectType < 128, "The highest bit is reserved for embedder's extension.");
 
 } // namespace JSC
-
-namespace WTF {
-
-class PrintStream;
-
-void printInternal(PrintStream&, JSC::JSType);
-
-} // namespace WTF

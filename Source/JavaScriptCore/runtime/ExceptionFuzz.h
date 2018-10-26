@@ -33,10 +33,10 @@ class ExecState;
 class ThrowScope;
 
 // Call this only if you know that exception fuzzing is enabled.
-void doExceptionFuzzing(ExecState*, ThrowScope&, const char* where, const void* returnPC);
+void doExceptionFuzzing(ExecState*, ThrowScope&, const char* where, void* returnPC);
 
 // This is what you should call if you don't know if fuzzing is enabled.
-ALWAYS_INLINE void doExceptionFuzzingIfEnabled(ExecState* exec, ThrowScope& scope, const char* where, const void* returnPC)
+ALWAYS_INLINE void doExceptionFuzzingIfEnabled(ExecState* exec, ThrowScope& scope, const char* where, void* returnPC)
 {
     if (LIKELY(!Options::useExceptionFuzz()))
         return;
