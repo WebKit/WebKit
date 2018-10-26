@@ -1,5 +1,16 @@
 2018-10-25  Devin Rousso  <drousso@apple.com>
 
+        Fix build after r237431 for platforms that don't support FULLSCREEN_API
+
+        Reviewed by Joseph Pecoraro.
+
+        No new tests. No change in behavior.
+
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::addEventListenersToNode):
+
+2018-10-25  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: display fullscreen enter/exit events in Timelines and Network node waterfalls
         https://bugs.webkit.org/show_bug.cgi?id=189874
         <rdar://problem/44700000>

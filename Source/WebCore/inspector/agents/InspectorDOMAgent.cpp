@@ -246,8 +246,10 @@ public:
 
         RefPtr<JSON::Object> data = JSON::Object::create();
 
+#if ENABLE(FULLSCREEN_API)
         if (event.type() == eventNames().webkitfullscreenchangeEvent)
             data->setBoolean("enabled"_s, !!node->document().webkitFullscreenElement());
+#endif // ENABLE(FULLSCREEN_API)
 
         auto timestamp = m_domAgent.m_environment.executionStopwatch()->elapsedTime().seconds();
         m_domAgent.m_frontendDispatcher->didFireEvent(nodeId, event.type(), timestamp, data->size() ? WTFMove(data) : nullptr);
@@ -2149,10 +2151,12 @@ void InspectorDOMAgent::addEventListenersToNode(Node& node)
         node.addEventListener(eventName, callback.copyRef(), false);
     };
 
-    if (is<Document>(node))
+#if ENABLE(FULLSCREEN_API)
+    if (is<Document>(node) || is<HTMLMediaElement>(node))
         createEventListener(eventNames().webkitfullscreenchangeEvent);
-    else if (is<HTMLMediaElement>(node)) {
-        createEventListener(eventNames().webkitfullscreenchangeEvent);
+#endif // ENABLE(FULLSCREEN_API)
+
+    if (is<HTMLMediaElement>(node)) {
         createEventListener(eventNames().abortEvent);
         createEventListener(eventNames().canplayEvent);
         createEventListener(eventNames().canplaythroughEvent);
