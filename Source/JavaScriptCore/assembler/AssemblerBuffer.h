@@ -299,9 +299,7 @@ namespace JSC {
             unsigned nextIndex = m_index + sizeof(IntegralType);
             if (UNLIKELY(nextIndex > m_storage.capacity()))
                 outOfLineGrow();
-            ASSERT(isAvailable(sizeof(IntegralType)));
-            *reinterpret_cast_ptr<IntegralType*>(m_storage.buffer() + m_index) = value;
-            m_index = nextIndex;
+            putIntegralUnchecked<IntegralType>(value);
         }
 
         template<typename IntegralType>
