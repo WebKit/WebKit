@@ -23,6 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+WI.enclosingCodeMirror = function(element)
+{
+    while (element) {
+        if (element.CodeMirror)
+            return element.CodeMirror;
+        element = element.parentNode;
+    }
+    return null;
+};
+
 WI.isBeingEdited = function(element)
 {
     while (element) {
@@ -30,7 +40,6 @@ WI.isBeingEdited = function(element)
             return true;
         element = element.parentNode;
     }
-
     return false;
 };
 
@@ -57,25 +66,18 @@ WI.isEditingAnyField = function()
 
 WI.isEventTargetAnEditableField = function(event)
 {
-    let textInputTypes = new Set(["text", "search", "number", "tel", "url", "email", "password"]);
-    if (event.target instanceof HTMLInputElement)
-        return textInputTypes.has(event.target.type);
-
-    let codeMirrorEditorElement = event.target.enclosingNodeOrSelfWithClass("CodeMirror");
-    if (codeMirrorEditorElement && codeMirrorEditorElement.CodeMirror)
-        return !codeMirrorEditorElement.CodeMirror.getOption("readOnly");
-
-    if (event.target instanceof HTMLTextAreaElement)
+    if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement)
         return true;
 
     if (event.target.isContentEditable)
         return true;
 
-    if (event.target.enclosingNodeOrSelfWithClass("text-prompt"))
-        return true;
-
     if (WI.isBeingEdited(event.target))
         return true;
+
+    let codeMirror = WI.enclosingCodeMirror(event.target);
+    if (codeMirror)
+        return !codeMirror.getOption("readOnly");
 
     return false;
 };

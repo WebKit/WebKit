@@ -1,5 +1,25 @@
 2018-10-26  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: simplify some editing code checks
+        https://bugs.webkit.org/show_bug.cgi?id=190970
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Base/Main.js:
+        (WI._focusChanged):
+
+        * UserInterface/Base/Utilities.js:
+
+        * UserInterface/Views/EditingSupport.js:
+        (WI.enclosingCodeMirror): Added.
+        (WI.isBeingEdited):
+        (WI.isEventTargetAnEditableField):
+
+        * UserInterface/Views/QuickConsole.js:
+        (WI.QuickConsole):
+
+2018-10-26  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Uncaught Exception: undefined is not an object (evaluating 'this._classListContainer.children')
         https://bugs.webkit.org/show_bug.cgi?id=190966
 

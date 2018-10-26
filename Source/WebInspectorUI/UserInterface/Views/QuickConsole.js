@@ -44,7 +44,6 @@ WI.QuickConsole = class QuickConsole extends WI.View
         this.element.addEventListener("mousedown", this._handleMouseDown.bind(this));
 
         this.prompt = new WI.ConsolePrompt(null, "text/javascript");
-        this.prompt.element.classList.add("text-prompt");
         this.addSubview(this.prompt);
 
         // FIXME: CodeMirror 4 has a default "Esc" key handler that always prevents default.

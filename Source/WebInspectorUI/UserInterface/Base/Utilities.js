@@ -379,16 +379,6 @@ Object.defineProperty(Element.prototype, "isInsertionCaretInside",
     }
 });
 
-Object.defineProperty(Element.prototype, "removeMatchingStyleClasses",
-{
-    value(classNameRegex)
-    {
-        var regex = new RegExp("(^|\\s+)" + classNameRegex + "($|\\s+)");
-        if (regex.test(this.className))
-            this.className = this.className.replace(regex, " ");
-    }
-});
-
 Object.defineProperty(Element.prototype, "createChild",
 {
     value(elementName, className)

@@ -1294,13 +1294,21 @@ WI._focusChanged = function(event)
 
     if (WI.isEventTargetAnEditableField(event)) {
         // Still update the currentFocusElement if inside of a CodeMirror editor or an input element.
-        let codeMirrorEditorElement = event.target.enclosingNodeOrSelfWithClass("CodeMirror");
-        if (codeMirrorEditorElement && codeMirrorEditorElement !== this.currentFocusElement) {
+        let newFocusElement = null;
+        if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement)
+            newFocusElement = event.target;
+        else {
+            let codeMirror = WI.enclosingCodeMirror(event.target);
+            if (codeMirror) {
+                let codeMirrorElement = codeMirror.getWrapperElement();
+                if (codeMirrorElement && codeMirrorElement !== this.currentFocusElement)
+                    newFocusElement = codeMirrorElement;
+            }
+        }
+
+        if (newFocusElement) {
             this.previousFocusElement = this.currentFocusElement;
-            this.currentFocusElement = codeMirrorEditorElement;
-        } else if (event.target.tagName === "INPUT") {
-            this.previousFocusElement = this.currentFocusElement;
-            this.currentFocusElement = event.target;
+            this.currentFocusElement = newFocusElement;
         }
 
         // Due to the change in WI.isEventTargetAnEditableField (r196271), this return
