@@ -3205,3 +3205,5 @@ webkit.org/b/187618 [ Release ] media/media-fullscreen-pause-inline.html [ Pass 
 
 # Disabled globally.
 http/tests/xmlhttprequest/gzip-content-type-no-content-encoding.html [ Pass ]
+
+webkit.org/b/173041 http/tests/websocket/tests/hybi/handshake-ok-with-legacy-sec-websocket-response-headers.html [ Pass Failure ]
