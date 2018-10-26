@@ -1,5 +1,17 @@
 2018-10-26  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Compute float box size and position
+        https://bugs.webkit.org/show_bug.cgi?id=190938
+
+        Reviewed by Antti Koivisto.
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::computeWidthAndHeight const):
+        (WebCore::Layout::InlineFormattingContext::computeFloatPosition const):
+        * layout/inlineformatting/InlineFormattingContext.h:
+
+2018-10-26  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Add line logical top and bottom
         https://bugs.webkit.org/show_bug.cgi?id=190934
 

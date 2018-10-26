@@ -92,7 +92,8 @@ private:
     void layoutInlineContent(const LayoutContext&, InlineFormattingState&, const InlineRunProvider&) const;
     void initializeNewLine(const LayoutContext&, Line&) const;
 
-    void computeWidthAndHeight(const LayoutContext&, const Box&) const;
+    void computeWidthAndHeight(LayoutContext&, const Box&) const;
+    void computeFloatPosition(const LayoutContext&, const FloatingContext&, Line&, const Box&) const;
     void computeStaticPosition(const LayoutContext&, const Box&) const override;
     void computeInFlowPositionedPosition(const LayoutContext&, const Box&) const override;
 

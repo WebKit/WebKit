@@ -159,16 +159,11 @@ void InlineFormattingContext::layoutInlineContent(const LayoutContext& layoutCon
     line.close(Line::LastLine::Yes);
 }
 
-void InlineFormattingContext::computeWidthAndHeight(const LayoutContext& layoutContext, const Box& layoutBox) const
+void InlineFormattingContext::computeWidthAndHeight(LayoutContext& layoutContext, const Box& layoutBox) const
 {
     if (is<InlineBox>(layoutBox) && downcast<InlineBox>(layoutBox).hasTextContent()) {
         // Text content width is computed during text run generation. -It does not make any sense to measure unprocessed text here, since it will likely be
         // split up (or concatenated).
-        return;
-    }
-
-    if (layoutBox.isFloatingPositioned()) {
-        ASSERT_NOT_IMPLEMENTED_YET();
         return;
     }
 
@@ -177,25 +172,40 @@ void InlineFormattingContext::computeWidthAndHeight(const LayoutContext& layoutC
         return;
     }
 
-    if (layoutBox.replaced()) {
-        computeBorderAndPadding(layoutContext, layoutBox);
+    computeBorderAndPadding(layoutContext, layoutBox);
 
-        auto& displayBox = layoutContext.displayBoxForLayoutBox(layoutBox);
+    WidthAndMargin widthAndMargin;
+    HeightAndMargin heightAndMargin;
 
-        auto widthAndMargin = Geometry::inlineReplacedWidthAndMargin(layoutContext, layoutBox);
-        displayBox.setContentBoxWidth(widthAndMargin.width);
-        displayBox.setHorizontalMargin(widthAndMargin.margin);
-        displayBox.setHorizontalNonComputedMargin(widthAndMargin.nonComputedMargin);
+    if (layoutBox.isFloatingPositioned()) {
+        widthAndMargin = Geometry::floatingWidthAndMargin(layoutContext, *this, layoutBox);
+        heightAndMargin = Geometry::floatingHeightAndMargin(layoutContext, layoutBox);
+    } else if (layoutBox.replaced()) {
+        widthAndMargin = Geometry::inlineReplacedWidthAndMargin(layoutContext, layoutBox);
+        heightAndMargin = Geometry::inlineReplacedHeightAndMargin(layoutContext, layoutBox);
+    } else
+        ASSERT_NOT_REACHED();
 
-        auto heightAndMargin = Geometry::inlineReplacedHeightAndMargin(layoutContext, layoutBox);
-        displayBox.setContentBoxHeight(heightAndMargin.height);
-        displayBox.setVerticalNonCollapsedMargin(heightAndMargin.margin);
-        displayBox.setVerticalMargin(heightAndMargin.collapsedMargin.value_or(heightAndMargin.margin));
-        return;
-    }
+    auto& displayBox = layoutContext.displayBoxForLayoutBox(layoutBox);
+    displayBox.setContentBoxWidth(widthAndMargin.width);
+    displayBox.setHorizontalMargin(widthAndMargin.margin);
+    displayBox.setHorizontalNonComputedMargin(widthAndMargin.nonComputedMargin);
 
-    ASSERT_NOT_REACHED();
+    displayBox.setContentBoxHeight(heightAndMargin.height);
+    displayBox.setVerticalNonCollapsedMargin(heightAndMargin.margin);
+    displayBox.setVerticalMargin(heightAndMargin.collapsedMargin.value_or(heightAndMargin.margin));
     return;
+}
+
+void InlineFormattingContext::computeFloatPosition(const LayoutContext& layoutContext, const FloatingContext& floatingContext, Line& line, const Box& floatBox) const
+{
+    ASSERT(layoutContext.hasDisplayBox(floatBox));
+    auto& displayBox = layoutContext.displayBoxForLayoutBox(floatBox);
+
+    // Set static position first.
+    displayBox.setTopLeft({ line.contentLogicalRight(), line.logicalTop() });
+    // Float it.
+    displayBox.setTopLeft(floatingContext.positionForFloat(floatBox));
 }
 
 void InlineFormattingContext::computeStaticPosition(const LayoutContext&, const Box&) const
