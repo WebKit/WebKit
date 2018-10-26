@@ -1,3 +1,27 @@
+2018-10-26  Jer Noble  <jer.noble@apple.com>
+
+        Adopt -setOverrideRouteSharingPolicy:routingContextUID: SPI
+        https://bugs.webkit.org/show_bug.cgi?id=190951
+        <rdar://problem/45213065>
+
+        Reviewed by Alex Christensen.
+
+        Add an asyncronous reply request to VideoFullscreenManager.
+
+        Drive-by fix: messages.py generates "WTFMove(*arg1, *arg2)" instead of "WTFMove(*arg1), WTFMove(*arg2)"
+        in its reply handler generation.
+
+        * Platform/IPC/MessageSender.h:
+        (IPC::MessageSender::sendWithAsyncReply):
+        * Scripts/webkit/messages.py:
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.h:
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        (WebKit::VideoFullscreenModelContext::requestRouteSharingPolicyAndContextUID):
+        * WebProcess/cocoa/VideoFullscreenManager.h:
+        * WebProcess/cocoa/VideoFullscreenManager.messages.in:
+        * WebProcess/cocoa/VideoFullscreenManager.mm:
+        (WebKit::VideoFullscreenManager::requestRouteSharingPolicyAndContextUID):
+
 2018-10-25  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, another try at fixing the GTK build with sandbox enabled

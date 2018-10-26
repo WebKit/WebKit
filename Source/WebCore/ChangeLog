@@ -1,3 +1,24 @@
+2018-10-26  Jer Noble  <jer.noble@apple.com>
+
+        Adopt -setOverrideRouteSharingPolicy:routingContextUID: SPI
+        https://bugs.webkit.org/show_bug.cgi?id=190951
+        <rdar://problem/45213065>
+
+        Reviewed by Alex Christensen.
+
+        Request the correct route policy and context from the VideoFullscreenModel.
+
+        * platform/cocoa/VideoFullscreenModel.h:
+        (WebCore::VideoFullscreenModel::requestRouteSharingPolicyAndContextUID):
+        * platform/cocoa/VideoFullscreenModelVideoElement.h:
+        * platform/cocoa/VideoFullscreenModelVideoElement.mm:
+        (WebCore::VideoFullscreenModelVideoElement::requestRouteSharingPolicyAndContextUID):
+        * platform/ios/VideoFullscreenInterfaceAVKit.h:
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        (-[WebAVPlayerViewController setWebKitOverrideRouteSharingPolicy:routingContextUID:]):
+        (VideoFullscreenInterfaceAVKit::setVideoFullscreenModel):
+        (VideoFullscreenInterfaceAVKit::doSetup):
+
 2018-10-26  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add more inline information to outputLayoutTree
