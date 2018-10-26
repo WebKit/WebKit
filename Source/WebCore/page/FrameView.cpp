@@ -118,6 +118,10 @@
 #include "LegacyTileCache.h"
 #endif
 
+#if PLATFORM(MAC)
+#include "LocalDefaultSystemAppearance.h"
+#endif
+
 #define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(frame().page() && frame().page()->isAlwaysOnLoggingAllowed(), Layout, "%p - FrameView::" fmt, this, ##__VA_ARGS__)
 
 namespace WebCore {
@@ -2035,6 +2039,13 @@ bool FrameView::shouldSetCursor() const
     return page && page->isVisible() && page->focusController().isActive();
 }
 
+bool FrameView::useDarkAppearance() const
+{
+    ASSERT(frame().document());
+    auto& document = *frame().document();
+    return document.useDarkAppearance();
+}
+
 bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect)
 {
     if (!m_viewportConstrainedObjects || m_viewportConstrainedObjects->isEmpty()) {
@@ -3891,6 +3902,14 @@ void FrameView::paintScrollCorner(GraphicsContext& context, const IntRect& corne
         m_scrollCorner->paintIntoRect(context, cornerRect.location(), cornerRect);
         return;
     }
+
+#if PLATFORM(MAC)
+    // If dark appearance is used or the overlay style is light (because of a dark page background), set the dark apppearance.
+    // Keep this in sync with ScrollAnimatorMac's effectiveAppearanceForScrollerImp:.
+    auto* document = frame().document();
+    bool useDarkAppearance = (document && document->useDarkAppearance()) || scrollbarOverlayStyle() == WebCore::ScrollbarOverlayStyleLight;
+    LocalDefaultSystemAppearance localAppearance(useDarkAppearance);
+#endif
 
     ScrollView::paintScrollCorner(context, cornerRect);
 }

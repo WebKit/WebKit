@@ -106,6 +106,7 @@ typedef NSUInteger NSOverlayScrollerState;
 - (NSPoint)mouseLocationInScrollerForScrollerImp:(NSScrollerImp *)scrollerImp;
 - (NSRect)convertRectToLayer:(NSRect)aRect;
 - (BOOL)shouldUseLayerPerPartForScrollerImp:(NSScrollerImp *)scrollerImp;
+- (NSAppearance *)effectiveAppearanceForScrollerImp:(NSScrollerImp *)scrollerImp;
 @end
 
 @protocol NSScrollerImpPairDelegate;

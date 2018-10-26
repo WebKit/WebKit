@@ -1,3 +1,22 @@
+2018-10-26  Timothy Hatcher  <timothy@apple.com>
+
+        Use dark appearance scrollbar when page background is dark or document supports dark mode.
+        https://bugs.webkit.org/show_bug.cgi?id=190937
+        rdar://problem/41225839
+
+        Reviewed by Beth Dakin.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::useDarkAppearance const): Added. Ask the document.
+        (WebCore::FrameView::paintScrollCorner): Set LocalDefaultSystemAppearance based
+        on the scrollbar overlay style too.
+        * page/FrameView.h:
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::useDarkAppearance const): Added. Default to false.
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[WebScrollerImpDelegate effectiveAppearanceForScrollerImp:]): Added.
+        Ask the ScrollableArea if a dark appearance is desired.
+
 2018-10-26  Antti Koivisto  <antti@apple.com>
 
         Use random() instead of begin() to limit cache sizes

@@ -507,6 +507,8 @@ public:
     bool isHandlingWheelEvent() const final;
     bool shouldSetCursor() const;
 
+    bool useDarkAppearance() const final;
+
     // FIXME: Remove this method once plugin loading is decoupled from layout.
     void flushAnyPendingPostLayoutTasks();
 
