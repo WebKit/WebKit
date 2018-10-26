@@ -1,3 +1,43 @@
+2018-10-26  Megan Gardner  <megan_gardner@apple.com>
+
+        Remove Unused WebSelectionAssistant
+        https://bugs.webkit.org/show_bug.cgi?id=190939
+
+        Reviewed by Tim Horton.
+
+        We made webSelectionAssistant alwasys nil last year when we moved to using
+        the textSelectionAssistant for all text selection on the web. This patch merely 
+        goes through and cleans out all the references to this object that is always nil.
+        No functionality should change.
+
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _didExitStableState]):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cleanupInteraction]):
+        (-[WKContentView resignFirstResponderForWebView]):
+        (-[WKContentView _scrollingNodeScrollingWillBegin]):
+        (-[WKContentView _scrollingNodeScrollingDidEnd]):
+        (-[WKContentView gestureRecognizer:canBePreventedByGestureRecognizer:]):
+        (-[WKContentView gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:]):
+        (-[WKContentView _uiTextSelectionRects]):
+        (-[WKContentView _singleTapCommited:]):
+        (-[WKContentView _willStartScrollingOrZooming]):
+        (-[WKContentView _didEndScrollingOrZooming]):
+        (-[WKContentView _lookupForWebView:]):
+        (-[WKContentView _shareForWebView:]):
+        (-[WKContentView _addShortcutForWebView:]):
+        (-[WKContentView _showDictionary:]):
+        (selectionChangedWithGesture):
+        (selectionChangedWithTouch):
+        (-[WKContentView selectionInteractionAssistant]):
+        (-[WKContentView _stopAssistingNode]):
+        (-[WKContentView _updateChangedSelection:]):
+        (-[WKContentView actionSheetAssistant:shareElementWithURL:rect:]):
+        (-[WKContentView _restoreCalloutBarIfNeeded]):
+        (-[WKContentView dragInteraction:willAnimateLiftWithAnimator:session:]):
+        (-[WKContentView webSelectionAssistant]): Deleted.
+
 2018-10-26  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r237458.

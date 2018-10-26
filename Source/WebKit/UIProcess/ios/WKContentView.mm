@@ -359,9 +359,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return;
 
     [_textSelectionAssistant deactivateSelection];
-#if !PLATFORM(IOSMAC)
-    [[_webSelectionAssistant selectionView] setHidden:YES];
-#endif
 }
 
 - (CGRect)_computeUnobscuredContentRectRespectingInputViewBounds:(CGRect)unobscuredContentRect inputViewBounds:(CGRect)inputViewBounds

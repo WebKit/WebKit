@@ -188,7 +188,6 @@ struct WKAutoCorrectionData {
 #endif
 
     RetainPtr<UIWKTextInteractionAssistant> _textSelectionAssistant;
-    RetainPtr<UIWKSelectionAssistant> _webSelectionAssistant;
     BOOL _suppressAssistantSelectionView;
 
     RetainPtr<UITextInputTraits> _traits;

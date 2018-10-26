@@ -725,7 +725,6 @@ static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeI
     if (!_hasSetUpInteractions)
         return;
 
-    _webSelectionAssistant = nil;
     _textSelectionAssistant = nil;
     
     [_actionSheetAssistant cleanupSheet];
@@ -1047,7 +1046,6 @@ static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeI
     }
 
     [self _cancelInteraction];
-    [_webSelectionAssistant resignedFirstResponder];
     [_textSelectionAssistant deactivateSelection];
     
     _inputViewUpdateDeferrer = nullptr;
@@ -1298,7 +1296,6 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 
 - (void)_scrollingNodeScrollingWillBegin
 {
-    [_webSelectionAssistant willStartScrollingOverflow];
     [_textSelectionAssistant willStartScrollingOverflow];    
 }
 
@@ -1311,7 +1308,6 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
         return;
     }
     [self _updateChangedSelection];
-    [_webSelectionAssistant didEndScrollingOverflow];
     [_textSelectionAssistant didEndScrollingOverflow];
 }
 
@@ -1423,7 +1419,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
         return YES;
 #endif
     
-    if ((preventingGestureRecognizer == _textSelectionAssistant.get().loupeGesture || isForcePressGesture || [_webSelectionAssistant isSelectionGestureRecognizer:preventingGestureRecognizer]) && (preventedGestureRecognizer == _highlightLongPressGestureRecognizer || preventedGestureRecognizer == _longPressGestureRecognizer))
+    if ((preventingGestureRecognizer == _textSelectionAssistant.get().loupeGesture || isForcePressGesture) && (preventedGestureRecognizer == _highlightLongPressGestureRecognizer || preventedGestureRecognizer == _longPressGestureRecognizer))
         return NO;
 
     return YES;
@@ -1439,8 +1435,6 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     if (isSamePair(gestureRecognizer, otherGestureRecognizer, _highlightLongPressGestureRecognizer.get(), _longPressGestureRecognizer.get()))
         return YES;
 
-    if (isSamePair(gestureRecognizer, otherGestureRecognizer, _highlightLongPressGestureRecognizer.get(), _webSelectionAssistant.get().selectionLongPressRecognizer))
-        return YES;
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000
 #if PLATFORM(IOSMAC)
     if (isSamePair(gestureRecognizer, otherGestureRecognizer, _textSelectionAssistant.get().loupeGesture, _textSelectionAssistant.get().forcePressGesture))
@@ -1644,9 +1638,6 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     if (_textSelectionAssistant) {
         for (WKTextSelectionRect *selectionRect in [_textSelectionAssistant valueForKeyPath:@"selectionView.selection.selectionRects"])
             [textSelectionRects addObject:[NSValue valueWithCGRect:selectionRect.webRect.rect]];
-    } else if (_webSelectionAssistant) {
-        for (WebSelectionRect *selectionRect in [_webSelectionAssistant valueForKeyPath:@"selectionView.selectionRects"])
-            [textSelectionRects addObject:[NSValue valueWithCGRect:selectionRect.rect]];
     }
 
     return textSelectionRects;
@@ -1984,11 +1975,6 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
         [self becomeFirstResponder];
     }
 
-    if (_webSelectionAssistant && ![_webSelectionAssistant shouldHandleSingleTapAtPoint:gestureRecognizer.location]) {
-        [self _singleTapDidReset:gestureRecognizer];
-        return;
-    }
-
     ASSERT(_potentialTapInProgress);
 
     // We don't want to clear the selection if it is in editable content.
@@ -2084,7 +2070,6 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
 - (void)_willStartScrollingOrZooming
 {
-    [_webSelectionAssistant willStartScrollingOrZoomingPage];
     [_textSelectionAssistant willStartScrollingOverflow];
     _page->setIsScrollingOrZooming(true);
 
@@ -2105,7 +2090,6 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 - (void)_didEndScrollingOrZooming
 {
     if (!_needsDeferredEndScrollingSelectionUpdate) {
-        [_webSelectionAssistant didEndScrollingOrZoomingPage];
         [_textSelectionAssistant didEndScrollingOverflow];
     }
     _page->setIsScrollingOrZooming(false);
@@ -2225,8 +2209,6 @@ FORWARD_ACTION_TO_WKWEBVIEW(_pasteAsQuotation)
 
         if (auto textSelectionAssistant = view->_textSelectionAssistant)
             [textSelectionAssistant lookup:selectionContext withRange:selectedRangeInContext fromRect:presentationRect];
-        else
-            [view->_webSelectionAssistant lookup:selectionContext withRange:selectedRangeInContext fromRect:presentationRect];
     });
 }
 
@@ -2243,8 +2225,6 @@ FORWARD_ACTION_TO_WKWEBVIEW(_pasteAsQuotation)
 
         if (view->_textSelectionAssistant)
             [view->_textSelectionAssistant showShareSheetFor:string fromRect:presentationRect];
-        else if (view->_webSelectionAssistant)
-            [view->_webSelectionAssistant showShareSheetFor:string fromRect:presentationRect];
     });
 }
 
@@ -2252,8 +2232,6 @@ FORWARD_ACTION_TO_WKWEBVIEW(_pasteAsQuotation)
 {
     if (_textSelectionAssistant)
         [_textSelectionAssistant showTextServiceFor:[self selectedText] fromRect:_page->editorState().postLayoutData().selectionRects[0].rect()];
-    else if (_webSelectionAssistant)
-        [_webSelectionAssistant showTextServiceFor:[self selectedText] fromRect:_page->editorState().postLayoutData().selectionRects[0].rect()];
 }
 
 - (NSString *)selectedText
@@ -2610,8 +2588,6 @@ WEBCORE_COMMAND_FOR_WEBVIEW(alignJustified);
     CGRect presentationRect = _page->editorState().postLayoutData().selectionRects[0].rect();
     if (_textSelectionAssistant)
         [_textSelectionAssistant showDictionaryFor:text fromRect:presentationRect];
-    else
-        [_webSelectionAssistant showDictionaryFor:text fromRect:presentationRect];
 }
 
 - (void)_defineForWebView:(id)sender
@@ -2886,10 +2862,7 @@ static void selectionChangedWithGesture(WKContentView *view, const WebCore::IntP
         ASSERT_NOT_REACHED();
         return;
     }
-    if ([view webSelectionAssistant])
-        [(UIWKSelectionAssistant *)[view webSelectionAssistant] selectionChangedWithGestureAt:(CGPoint)point withGesture:toUIWKGestureType((GestureType)gestureType) withState:toUIGestureRecognizerState(static_cast<GestureRecognizerState>(gestureState)) withFlags:(toUIWKSelectionFlags((SelectionFlags)flags))];
-    else
-        [(UIWKTextInteractionAssistant *)[view interactionAssistant] selectionChangedWithGestureAt:(CGPoint)point withGesture:toUIWKGestureType((GestureType)gestureType) withState:toUIGestureRecognizerState(static_cast<GestureRecognizerState>(gestureState)) withFlags:(toUIWKSelectionFlags((SelectionFlags)flags))];
+    [(UIWKTextInteractionAssistant *)[view interactionAssistant] selectionChangedWithGestureAt:(CGPoint)point withGesture:toUIWKGestureType((GestureType)gestureType) withState:toUIGestureRecognizerState(static_cast<GestureRecognizerState>(gestureState)) withFlags:(toUIWKSelectionFlags((SelectionFlags)flags))];
 }
 
 static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoint& point, uint32_t touch, uint32_t flags, WebKit::CallbackBase::Error error)
@@ -2898,10 +2871,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
         ASSERT_NOT_REACHED();
         return;
     }
-    if ([view webSelectionAssistant])
-        [(UIWKSelectionAssistant *)[view webSelectionAssistant] selectionChangedWithTouchAt:(CGPoint)point withSelectionTouch:toUIWKSelectionTouch((SelectionTouch)touch) withFlags:static_cast<UIWKSelectionFlags>(flags)];
-    else
-        [(UIWKTextInteractionAssistant *)[view interactionAssistant] selectionChangedWithTouchAt:(CGPoint)point withSelectionTouch:toUIWKSelectionTouch((SelectionTouch)touch) withFlags:static_cast<UIWKSelectionFlags>(flags)];
+    [(UIWKTextInteractionAssistant *)[view interactionAssistant] selectionChangedWithTouchAt:(CGPoint)point withSelectionTouch:toUIWKSelectionTouch((SelectionTouch)touch) withFlags:static_cast<UIWKSelectionFlags>(flags)];
 }
 
 - (BOOL)_isInteractingWithAssistedNode
@@ -3729,15 +3699,8 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     return _textSelectionAssistant.get();
 }
 
-- (UIWebSelectionAssistant *)webSelectionAssistant
-{
-    return _webSelectionAssistant.get();
-}
-
 - (id<UISelectionInteractionAssistant>)selectionInteractionAssistant
 {
-    if ([_webSelectionAssistant conformsToProtocol:@protocol(UISelectionInteractionAssistant)])
-        return (id<UISelectionInteractionAssistant>)_webSelectionAssistant.get();
     return nil;
 }
 
@@ -4366,8 +4329,6 @@ static bool isAssistableInputType(InputType type)
     [_formAccessoryView hideAutoFillButton];
     [self reloadInputViews];
     [self _updateAccessory];
-    // The name is misleading, but this actually clears the selection views and removes any selection.
-    [_webSelectionAssistant resignedFirstResponder];
 
 #if PLATFORM(WATCHOS)
     [self dismissAllInputViewControllers:YES];
@@ -4726,12 +4687,10 @@ static bool isAssistableInputType(InputType type)
             _markedText = (_page->editorState().hasComposition) ? _page->editorState().markedText : String();
             if (!_showingTextStyleOptions)
                 [_textSelectionAssistant selectionChanged];
-        } else if (!_page->editorState().isContentEditable)
-            [_webSelectionAssistant selectionChanged];
+        }
 
         _selectionNeedsUpdate = NO;
         if (_shouldRestoreSelection) {
-            [_webSelectionAssistant didEndScrollingOverflow];
             [_textSelectionAssistant didEndScrollingOverflow];
             _shouldRestoreSelection = NO;
         }
@@ -4740,10 +4699,6 @@ static bool isAssistableInputType(InputType type)
     auto& state = _page->editorState();
     if (!state.isMissingPostLayoutData && state.postLayoutData().isStableStateUpdate && _needsDeferredEndScrollingSelectionUpdate && _page->inStableState()) {
         [[self selectionInteractionAssistant] showSelectionCommands];
-        [_webSelectionAssistant didEndScrollingOrZoomingPage];
-#if !PLATFORM(IOSMAC)
-        [[_webSelectionAssistant selectionView] setHidden:NO];
-#endif
 
         if (!self.suppressAssistantSelectionView)
             [_textSelectionAssistant activateSelection];
@@ -4983,8 +4938,6 @@ static bool isAssistableInputType(InputType type)
 {
     if (_textSelectionAssistant)
         [_textSelectionAssistant showShareSheetFor:userVisibleString(url) fromRect:boundingRect];
-    else if (_webSelectionAssistant)
-        [_webSelectionAssistant showShareSheetFor:userVisibleString(url) fromRect:boundingRect];
 }
 
 #if HAVE(APP_LINKS)
@@ -5422,7 +5375,6 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
         return;
 
     // FIXME: This SPI should be renamed in UIKit to reflect a more general purpose of revealing hidden interaction assistant controls.
-    [_webSelectionAssistant didEndScrollingOverflow];
     [_textSelectionAssistant didEndScrollingOverflow];
     _shouldRestoreCalloutBarAfterDrop = NO;
 }
@@ -5571,7 +5523,6 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 {
     if (!_shouldRestoreCalloutBarAfterDrop && _dragDropInteractionState.anyActiveDragSourceIs(DragSourceActionSelection)) {
         // FIXME: This SPI should be renamed in UIKit to reflect a more general purpose of hiding interaction assistant controls.
-        [_webSelectionAssistant willStartScrollingOverflow];
         [_textSelectionAssistant willStartScrollingOverflow];
         _shouldRestoreCalloutBarAfterDrop = YES;
     }
