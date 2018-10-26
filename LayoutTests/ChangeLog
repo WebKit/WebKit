@@ -1,3 +1,15 @@
+2018-10-26  Per Arne Vollan  <pvollan@apple.com>
+
+        [High Sierra/Sierra Release] Layout Test media/track/track-cue-css.html is a flaky image failure
+        https://bugs.webkit.org/show_bug.cgi?id=190876
+
+        Unreviewed test fix.
+
+        This is a speculative flakiness fix.
+
+        * media/track/track-cue-css-expected.html:
+        * media/track/track-cue-css.html:
+
 2018-10-26  Zalan Bujtas  <zalan@apple.com>
 
         [iOS] Unreviewed test gardening.
