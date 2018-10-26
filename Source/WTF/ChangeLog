@@ -1,3 +1,17 @@
+2018-10-26  Keith Miller  <keith_miller@apple.com>
+
+        Some internal projects include wtf headers and build with C++11
+        https://bugs.webkit.org/show_bug.cgi?id=190791
+
+        Reviewed by Alexey Proskuryakov.
+
+        C++11 doesn't support constexpr functions that contain
+        statements. This patch removes getLSBSet set from builds before
+        C++14 to avoid this for now.
+
+        * wtf/MathExtras.h:
+        (getLSBSet):
+
 2018-10-25  Ross Kirsling  <ross.kirsling@sony.com>
 
         Cleanup: inline constexpr is redundant as constexpr implies inline

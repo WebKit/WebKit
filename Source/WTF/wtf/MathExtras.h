@@ -206,6 +206,9 @@ template<typename T> constexpr bool hasTwoOrMoreBitsSet(T value)
     return !hasZeroOrOneBitsSet(value);
 }
 
+// FIXME: Some Darwin projects shamelessly include WTF headers and don't build with C++14... See: rdar://problem/45395767
+// Since C++11 and before don't support constexpr statements we can't mark this function constexpr.
+#if !defined(WTF_CPP_STD_VER) || WTF_CPP_STD_VER >= 14
 template <typename T> constexpr unsigned getLSBSet(T value)
 {
     typedef typename std::make_unsigned<T>::type UnsignedT;
@@ -217,6 +220,7 @@ template <typename T> constexpr unsigned getLSBSet(T value)
 
     return result;
 }
+#endif
 
 template<typename T> inline T divideRoundedUp(T a, T b)
 {
