@@ -2362,12 +2362,10 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
 
             // FIXME: We could easily relax the Array/Object.prototype transition as long as we OSR exitted if we saw a hole.
             // https://bugs.webkit.org/show_bug.cgi?id=173171
-            if (globalObject->havingABadTimeWatchpoint()->isStillValid()
-                && arrayPrototypeStructure->transitionWatchpointSetIsStillValid()
+            if (arrayPrototypeStructure->transitionWatchpointSetIsStillValid()
                 && objectPrototypeStructure->transitionWatchpointSetIsStillValid()
                 && globalObject->arrayPrototypeChainIsSane()) {
 
-                m_graph.watchpoints().addLazily(globalObject->havingABadTimeWatchpoint());
                 m_graph.registerAndWatchStructureTransition(arrayPrototypeStructure);
                 m_graph.registerAndWatchStructureTransition(objectPrototypeStructure);
 

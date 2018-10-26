@@ -1,5 +1,26 @@
 2018-10-25  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
+        [JSC] havingABadTimeWatchpoint is not required in Array#indexOf optimization
+        https://bugs.webkit.org/show_bug.cgi?id=190941
+
+        Reviewed by Saam Barati.
+
+        While "Rest" operation fast path requires havingABadTimeWatchpoint since it allocates
+        JSArray, Array#{indexOf,lastIndexOf} do not require it when we use the fast path for them.
+        This patch removes watching on havingABadTimeWatchpoint in Array#indexOf. The test causing
+        "havingABadTime" is already included in our test suites (e.g. array-indexof-have-a-bad-time.js).
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * runtime/JSArrayInlines.h:
+        (JSC::JSArray::canDoFastIndexedAccess):
+        * runtime/JSGlobalObject.h:
+        * runtime/JSGlobalObjectInlines.h:
+        (JSC::JSGlobalObject::isArrayPrototypeIteratorProtocolFastAndNonObservable):
+        (JSC::JSGlobalObject::isArrayPrototypeIndexedAccessFastAndNonObservable): Deleted.
+
+2018-10-25  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
         Unreviewed, partial rolling in r237254
         https://bugs.webkit.org/show_bug.cgi?id=190340
 

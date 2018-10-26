@@ -74,7 +74,7 @@ inline bool JSArray::canFastCopy(VM& vm, JSArray* otherArray)
 inline bool JSArray::canDoFastIndexedAccess(VM& vm)
 {
     JSGlobalObject* globalObject = this->globalObject();
-    if (!globalObject->isArrayPrototypeIndexedAccessFastAndNonObservable())
+    if (!globalObject->arrayPrototypeChainIsSane())
         return false;
 
     Structure* structure = this->structure(vm);
