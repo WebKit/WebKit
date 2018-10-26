@@ -1,3 +1,15 @@
+2018-10-26  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Rebase some flaky tests
+        https://bugs.webkit.org/show_bug.cgi?id=190969
+
+        Reviewed by Dean Jackson.
+
+        A few Web Animations tests that are flaky have outdated expectations. Rebasing them to have the output
+        that is most likely to be produced.
+
+        * css-animations/test_document-get-animations-expected.txt:
+
 2018-09-27  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Turn Web Animations with CSS integration on

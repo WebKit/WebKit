@@ -1,4 +1,6 @@
 
+Harness Error (TIMEOUT), message = null
+
 PASS Updating the finished state when playing past end 
 PASS Updating the finished state when seeking past end 
 PASS Updating the finished state when seeking exactly to end 
@@ -8,19 +10,19 @@ PASS Updating the finished state when seeking a reversed animation exactly to ze
 PASS Updating the finished state when playing before end 
 PASS Updating the finished state when seeking before end 
 PASS Updating the finished state when seeking a reversed animation before end 
-PASS Updating the finished state when playback rate is zero and the current time is less than zero 
-PASS Updating the finished state when playback rate is zero and the current time is less than end 
-PASS Updating the finished state when playback rate is zero and the current time is greater than end 
-PASS Updating the finished state when current time is unresolved 
+TIMEOUT Updating the finished state when playback rate is zero and the current time is less than zero Test timed out
+NOTRUN Updating the finished state when playback rate is zero and the current time is less than end 
+NOTRUN Updating the finished state when playback rate is zero and the current time is greater than end 
+NOTRUN Updating the finished state when current time is unresolved 
 PASS Updating the finished state when there is a pending task 
-PASS Updating the finished state when start time is unresolved and did seek = false 
+NOTRUN Updating the finished state when start time is unresolved and did seek = false 
 PASS Updating the finished state when start time is unresolved and did seek = true 
-PASS Finish notification steps don't run when the animation seeks to finish and then seeks back again 
-PASS Finish notification steps run when the animation completes normally 
-PASS Finish notification steps run when the animation seeks past finish 
-PASS Finish notification steps run when the animation completes with .finish(), even if we then seek away 
-PASS Animation finished promise is replaced after seeking back to start 
-PASS Animation finished promise is replaced after replaying from start 
+NOTRUN Finish notification steps don't run when the animation seeks to finish and then seeks back again 
+NOTRUN Finish notification steps run when the animation completes normally 
+NOTRUN Finish notification steps run when the animation seeks past finish 
+NOTRUN Finish notification steps run when the animation completes with .finish(), even if we then seek away 
+NOTRUN Animation finished promise is replaced after seeking back to start 
+NOTRUN Animation finished promise is replaced after replaying from start 
 PASS Animation finish event is fired again after seeking back to start 
 PASS Animation finish event is fired again after replaying from start 
 
