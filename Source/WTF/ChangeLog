@@ -1,3 +1,15 @@
+2018-10-26  Geoffrey Garen  <ggaren@apple.com>
+
+        HashMap should support selecting a random entry
+        https://bugs.webkit.org/show_bug.cgi?id=190814
+
+        Reviewed by Antti Koivisto.
+
+        * wtf/HashTable.h:
+        (WTF::HashTable::random):
+        (WTF::HashTable::random const): Draw a new random bucket any time we
+        have a miss, to avoid bias caused by lopsided tables.
+
 2018-10-26  Antti Koivisto  <antti@apple.com>
 
         hashSet.remove(hashSet.random()) doesn't build

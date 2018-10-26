@@ -384,10 +384,13 @@ namespace WTF {
         {
             if (isEmpty())
                 return end();
-            auto it = makeIterator(m_table + (weakRandomUint32() & m_tableSizeMask));
-            if (it == end())
-                return begin();
-            return it;
+
+            while (1) {
+                ValueType* entry = m_table + (weakRandomUint32() & m_tableSizeMask);
+                if (isEmptyBucket(*entry) || isDeletedBucket(*entry))
+                    continue;
+                return makeKnownGoodIterator(entry);
+            };
         }
 
         const_iterator random() const { return static_cast<const_iterator>(const_cast<HashTable*>(this)->random()); }

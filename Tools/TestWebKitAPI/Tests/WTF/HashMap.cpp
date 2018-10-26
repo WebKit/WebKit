@@ -1022,7 +1022,7 @@ TEST(WTF_HashMap, Random_IsRandom)
     unsigned ones = 0;
     unsigned twos = 0;
 
-    for (unsigned i = 0; i < 100; ++i) {
+    for (unsigned i = 0; i < 1000; ++i) {
         auto it = map.random();
         if (it->value == 1)
             ++ones;
@@ -1032,9 +1032,9 @@ TEST(WTF_HashMap, Random_IsRandom)
         }
     }
 
-    ASSERT_EQ(ones + twos, 100u);
-    ASSERT_LE(ones, 99u);
-    ASSERT_LE(twos, 99u);
+    ASSERT_EQ(ones + twos, 1000u);
+    ASSERT_LE(ones, 600u);
+    ASSERT_LE(twos, 600u);
 }
 
 } // namespace TestWebKitAPI

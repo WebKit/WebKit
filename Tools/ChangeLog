@@ -1,3 +1,13 @@
+2018-10-26  Geoffrey Garen  <ggaren@apple.com>
+
+        HashMap should support selecting a random entry
+        https://bugs.webkit.org/show_bug.cgi?id=190814
+
+        Reviewed by Antti Koivisto.
+
+        * TestWebKitAPI/Tests/WTF/HashMap.cpp: Updated the Random_IsRandom to
+        more thoroughly test for randomness.
+
 2018-10-26  Antti Koivisto  <antti@apple.com>
 
         hashSet.remove(hashSet.random()) doesn't build
