@@ -448,7 +448,7 @@ void StackVisitor::Frame::dump(PrintStream& out, Indenter indent, WTF::Function<
 
         CallFrame* callFrame = m_callFrame;
         CallFrame* callerFrame = this->callerFrame();
-        void* returnPC = callFrame->hasReturnPC() ? callFrame->returnPC().value() : nullptr;
+        const void* returnPC = callFrame->hasReturnPC() ? callFrame->returnPC().value() : nullptr;
 
         out.print(indent, "name: ", functionName(), "\n");
         out.print(indent, "sourceURL: ", sourceURL(), "\n");

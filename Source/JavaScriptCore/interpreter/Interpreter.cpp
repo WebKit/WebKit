@@ -1229,3 +1229,34 @@ NEVER_INLINE void Interpreter::debug(CallFrame* callFrame, DebugHookType debugHo
 }
 
 } // namespace JSC
+
+namespace WTF {
+
+void printInternal(PrintStream& out, JSC::DebugHookType type)
+{
+    switch (type) {
+    case JSC::WillExecuteProgram:
+        out.print("WillExecuteProgram");
+        return;
+    case JSC::DidExecuteProgram:
+        out.print("DidExecuteProgram");
+        return;
+    case JSC::DidEnterCallFrame:
+        out.print("DidEnterCallFrame");
+        return;
+    case JSC::DidReachBreakpoint:
+        out.print("DidReachBreakpoint");
+        return;
+    case JSC::WillLeaveCallFrame:
+        out.print("WillLeaveCallFrame");
+        return;
+    case JSC::WillExecuteStatement:
+        out.print("WillExecuteStatement");
+        return;
+    case JSC::WillExecuteExpression:
+        out.print("WillExecuteExpression");
+        return;
+    }
+}
+
+} // namespace WTF

@@ -216,14 +216,8 @@ udis86_itab.h: $(JavaScriptCore)/disassembler/udis86/ud_itab.py $(JavaScriptCore
 
 # Bytecode files
 
-Bytecodes.h: $(JavaScriptCore)/generate-bytecode-files $(JavaScriptCore)/bytecode/BytecodeList.json
-	$(PYTHON) $(JavaScriptCore)/generate-bytecode-files --bytecodes_h Bytecodes.h $(JavaScriptCore)/bytecode/BytecodeList.json
-
-BytecodeStructs.h: $(JavaScriptCore)/generate-bytecode-files $(JavaScriptCore)/bytecode/BytecodeList.json
-	$(PYTHON) $(JavaScriptCore)/generate-bytecode-files --bytecode_structs_h BytecodeStructs.h $(JavaScriptCore)/bytecode/BytecodeList.json
-
-InitBytecodes.asm: $(JavaScriptCore)/generate-bytecode-files $(JavaScriptCore)/bytecode/BytecodeList.json
-	$(PYTHON) $(JavaScriptCore)/generate-bytecode-files --init_bytecodes_asm InitBytecodes.asm $(JavaScriptCore)/bytecode/BytecodeList.json
+Bytecodes.h BytecodeOffsets.h BytecodeStructs.h InitBytecodes.asm: $(wildcard $(JavaScriptCore)/generator/*.rb) $(JavaScriptCore)/bytecode/BytecodeList.rb
+	$(RUBY) $(JavaScriptCore)/generator/main.rb $(JavaScriptCore)/bytecode/BytecodeList.rb --bytecode_structs_h BytecodeStructs.h --init_bytecodes_asm InitBytecodes.asm --bytecodes_h Bytecodes.h --bytecode_indices_h BytecodeIndices.h
 
 # Inspector interfaces
 

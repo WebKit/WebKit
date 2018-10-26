@@ -3863,7 +3863,7 @@ void SpeculativeJIT::compileValueAdd(Node* node)
 
     CodeBlock* baselineCodeBlock = m_jit.graph().baselineCodeBlockFor(node->origin.semantic);
     ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex);
-    Instruction* instruction = &baselineCodeBlock->instructions()[node->origin.semantic.bytecodeIndex];
+    const Instruction* instruction = baselineCodeBlock->instructions().at(node->origin.semantic.bytecodeIndex).ptr();
     JITAddIC* addIC = m_jit.codeBlock()->addJITAddIC(arithProfile, instruction);
     auto repatchingFunction = operationValueAddOptimize;
     auto nonRepatchingFunction = operationValueAdd;
@@ -3887,7 +3887,7 @@ void SpeculativeJIT::compileValueSub(Node* node)
 
         CodeBlock* baselineCodeBlock = m_jit.graph().baselineCodeBlockFor(node->origin.semantic);
         ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex);
-        Instruction* instruction = &baselineCodeBlock->instructions()[node->origin.semantic.bytecodeIndex];
+        const Instruction* instruction = baselineCodeBlock->instructions().at(node->origin.semantic.bytecodeIndex).ptr();
         JITSubIC* subIC = m_jit.codeBlock()->addJITSubIC(arithProfile, instruction);
         auto repatchingFunction = operationValueSubOptimize;
         auto nonRepatchingFunction = operationValueSub;
@@ -4561,7 +4561,7 @@ void SpeculativeJIT::compileValueNegate(Node* node)
 {
     CodeBlock* baselineCodeBlock = m_jit.graph().baselineCodeBlockFor(node->origin.semantic);
     ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex);
-    Instruction* instruction = &baselineCodeBlock->instructions()[node->origin.semantic.bytecodeIndex];
+    const Instruction* instruction = baselineCodeBlock->instructions().at(node->origin.semantic.bytecodeIndex).ptr();
     JITNegIC* negIC = m_jit.codeBlock()->addJITNegIC(arithProfile, instruction);
     auto repatchingFunction = operationArithNegateOptimize;
     auto nonRepatchingFunction = operationArithNegate;
@@ -4903,7 +4903,7 @@ void SpeculativeJIT::compileArithMul(Node* node)
 
         CodeBlock* baselineCodeBlock = m_jit.graph().baselineCodeBlockFor(node->origin.semantic);
         ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex);
-        Instruction* instruction = &baselineCodeBlock->instructions()[node->origin.semantic.bytecodeIndex];
+        const Instruction* instruction = baselineCodeBlock->instructions().at(node->origin.semantic.bytecodeIndex).ptr();
         JITMulIC* mulIC = m_jit.codeBlock()->addJITMulIC(arithProfile, instruction);
         auto repatchingFunction = operationValueMulOptimize;
         auto nonRepatchingFunction = operationValueMul;

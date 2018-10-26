@@ -54,6 +54,7 @@ MACRO_INSTRUCTIONS =
      "loadis",
      "loadb",
      "loadbs",
+     "loadbsp",
      "loadh",
      "loadhs",
      "storei",

@@ -30,6 +30,7 @@
 #include "BytecodeDumper.h"
 #include "BytecodeLivenessAnalysisInlines.h"
 #include "BytecodeRewriter.h"
+#include "BytecodeStructs.h"
 #include "BytecodeUseDef.h"
 #include "IdentifierInlines.h"
 #include "InterpreterInlines.h"
@@ -38,13 +39,14 @@
 #include "JSGeneratorFunction.h"
 #include "StrongInlines.h"
 #include "UnlinkedCodeBlock.h"
+#include "UnlinkedMetadataTableInlines.h"
 #include <wtf/Optional.h>
 
 namespace JSC {
 
 struct YieldData {
-    size_t point { 0 };
-    int argument { 0 };
+    InstructionStream::Offset point { 0 };
+    VirtualRegister argument { 0 };
     FastBitVector liveness;
 };
 
@@ -52,29 +54,31 @@ class BytecodeGeneratorification {
 public:
     typedef Vector<YieldData> Yields;
 
-    BytecodeGeneratorification(UnlinkedCodeBlock* codeBlock, UnlinkedCodeBlock::UnpackedInstructions& instructions, SymbolTable* generatorFrameSymbolTable, int generatorFrameSymbolTableIndex)
-        : m_codeBlock(codeBlock)
+    BytecodeGeneratorification(BytecodeGenerator& bytecodeGenerator, UnlinkedCodeBlock* codeBlock, InstructionStreamWriter& instructions, SymbolTable* generatorFrameSymbolTable, int generatorFrameSymbolTableIndex)
+        : m_bytecodeGenerator(bytecodeGenerator)
+        , m_codeBlock(codeBlock)
         , m_instructions(instructions)
         , m_graph(m_codeBlock, m_instructions)
         , m_generatorFrameSymbolTable(*codeBlock->vm(), generatorFrameSymbolTable)
         , m_generatorFrameSymbolTableIndex(generatorFrameSymbolTableIndex)
     {
         for (BytecodeBasicBlock* block : m_graph) {
-            for (unsigned bytecodeOffset : block->offsets()) {
-                const UnlinkedInstruction* pc = &instructions[bytecodeOffset];
-                switch (pc->u.opcode) {
+            for (const auto offset : block->offsets()) {
+                const auto instruction = m_instructions.at(offset);
+                switch (instruction->opcodeID()) {
                 case op_enter: {
-                    m_enterPoint = bytecodeOffset;
+                    m_enterPoint = instruction.offset();
                     break;
                 }
 
                 case op_yield: {
-                    unsigned liveCalleeLocalsIndex = pc[2].u.unsignedValue;
+                    auto bytecode = instruction->as<OpYield>();
+                    unsigned liveCalleeLocalsIndex = bytecode.yieldPoint;
                     if (liveCalleeLocalsIndex >= m_yields.size())
                         m_yields.resize(liveCalleeLocalsIndex + 1);
                     YieldData& data = m_yields[liveCalleeLocalsIndex];
-                    data.point = bytecodeOffset;
-                    data.argument = pc[3].u.operand;
+                    data.point = instruction.offset();
+                    data.argument = bytecode.argument;
                     break;
                 }
 
@@ -105,9 +109,14 @@ public:
         return m_yields;
     }
 
-    unsigned enterPoint() const
+    InstructionStream::Ref enterPoint() const
     {
-        return m_enterPoint;
+        return m_instructions.at(m_enterPoint);
+    }
+
+    const InstructionStream& instructions() const
+    {
+        return m_instructions;
     }
 
 private:
@@ -138,9 +147,10 @@ private:
         return storage;
     }
 
-    unsigned m_enterPoint { 0 };
+    BytecodeGenerator& m_bytecodeGenerator;
+    InstructionStream::Offset m_enterPoint;
     UnlinkedCodeBlock* m_codeBlock;
-    UnlinkedCodeBlock::UnpackedInstructions& m_instructions;
+    InstructionStreamWriter& m_instructions;
     BytecodeGraph m_graph;
     Vector<std::optional<Storage>> m_storages;
     Yields m_yields;
@@ -155,7 +165,7 @@ public:
     {
     }
 
-    void run(UnlinkedCodeBlock* codeBlock, UnlinkedCodeBlock::UnpackedInstructions& instructions)
+    void run(UnlinkedCodeBlock* codeBlock, InstructionStreamWriter& instructions)
     {
         // Perform modified liveness analysis to determine which locals are live at the merge points.
         // This produces the conservative results for the question, "which variables should be saved and resumed?".
@@ -163,7 +173,7 @@ public:
         runLivenessFixpoint(codeBlock, instructions, m_generatorification.graph());
 
         for (YieldData& data : m_generatorification.yields())
-            data.liveness = getLivenessInfoAtBytecodeOffset(codeBlock, instructions, m_generatorification.graph(), data.point + opcodeLength(op_yield));
+            data.liveness = getLivenessInfoAtBytecodeOffset(codeBlock, instructions, m_generatorification.graph(), m_generatorification.instructions().at(data.point).next().offset());
     }
 
 private:
@@ -179,85 +189,80 @@ void BytecodeGeneratorification::run()
         pass.run(m_codeBlock, m_instructions);
     }
 
-    BytecodeRewriter rewriter(m_graph, m_codeBlock, m_instructions);
+    BytecodeRewriter rewriter(m_bytecodeGenerator, m_graph, m_codeBlock, m_instructions);
 
     // Setup the global switch for the generator.
     {
-        unsigned nextToEnterPoint = enterPoint() + opcodeLength(op_enter);
+        auto nextToEnterPoint = enterPoint().next();
         unsigned switchTableIndex = m_codeBlock->numberOfSwitchJumpTables();
         VirtualRegister state = virtualRegisterForArgument(static_cast<int32_t>(JSGeneratorFunction::GeneratorArgument::State));
         auto& jumpTable = m_codeBlock->addSwitchJumpTable();
         jumpTable.min = 0;
         jumpTable.branchOffsets.resize(m_yields.size() + 1);
         jumpTable.branchOffsets.fill(0);
-        jumpTable.add(0, nextToEnterPoint);
+        jumpTable.add(0, nextToEnterPoint.offset());
         for (unsigned i = 0; i < m_yields.size(); ++i)
             jumpTable.add(i + 1, m_yields[i].point);
 
         rewriter.insertFragmentBefore(nextToEnterPoint, [&](BytecodeRewriter::Fragment& fragment) {
-            fragment.appendInstruction(op_switch_imm, switchTableIndex, nextToEnterPoint, state.offset());
+            fragment.appendInstruction<OpSwitchImm>(switchTableIndex, nextToEnterPoint.offset(), state);
         });
     }
 
     for (const YieldData& data : m_yields) {
         VirtualRegister scope = virtualRegisterForArgument(static_cast<int32_t>(JSGeneratorFunction::GeneratorArgument::Frame));
 
+        auto instruction = m_instructions.at(data.point);
         // Emit save sequence.
-        rewriter.insertFragmentBefore(data.point, [&](BytecodeRewriter::Fragment& fragment) {
+        rewriter.insertFragmentBefore(instruction, [&](BytecodeRewriter::Fragment& fragment) {
             data.liveness.forEachSetBit([&](size_t index) {
                 VirtualRegister operand = virtualRegisterForLocal(index);
                 Storage storage = storageForGeneratorLocal(index);
 
-                fragment.appendInstruction(
-                    op_put_to_scope,
-                    scope.offset(), // scope
+                fragment.appendInstruction<OpPutToScope>(
+                    scope, // scope
                     storage.identifierIndex, // identifier
-                    operand.offset(), // value
-                    GetPutInfo(DoNotThrowIfNotFound, LocalClosureVar, InitializationMode::NotInitialization).operand(), // info
+                    operand, // value
+                    GetPutInfo(DoNotThrowIfNotFound, LocalClosureVar, InitializationMode::NotInitialization), // info
                     m_generatorFrameSymbolTableIndex, // symbol table constant index
                     storage.scopeOffset.offset() // scope offset
                 );
             });
 
             // Insert op_ret just after save sequence.
-            fragment.appendInstruction(op_ret, data.argument);
+            fragment.appendInstruction<OpRet>(data.argument);
         });
 
         // Emit resume sequence.
-        rewriter.insertFragmentAfter(data.point, [&](BytecodeRewriter::Fragment& fragment) {
+        rewriter.insertFragmentAfter(instruction, [&](BytecodeRewriter::Fragment& fragment) {
             data.liveness.forEachSetBit([&](size_t index) {
                 VirtualRegister operand = virtualRegisterForLocal(index);
                 Storage storage = storageForGeneratorLocal(index);
 
-                UnlinkedValueProfile profile = m_codeBlock->vm()->canUseJIT()
-                    ? m_codeBlock->addValueProfile()
-                    : static_cast<UnlinkedValueProfile>(-1);
-                fragment.appendInstruction(
-                    op_get_from_scope,
-                    operand.offset(), // dst
-                    scope.offset(), // scope
+                fragment.appendInstruction<OpGetFromScope>(
+                    operand, // dst
+                    scope, // scope
                     storage.identifierIndex, // identifier
-                    GetPutInfo(DoNotThrowIfNotFound, LocalClosureVar, InitializationMode::NotInitialization).operand(), // info
+                    GetPutInfo(DoNotThrowIfNotFound, LocalClosureVar, InitializationMode::NotInitialization), // info
                     0, // local scope depth
-                    storage.scopeOffset.offset(), // scope offset
-                    profile // profile
+                    storage.scopeOffset.offset() // scope offset
                 );
             });
         });
 
         // Clip the unnecessary bytecodes.
-        rewriter.removeBytecode(data.point);
+        rewriter.removeBytecode(instruction);
     }
 
     rewriter.execute();
 }
 
-void performGeneratorification(UnlinkedCodeBlock* codeBlock, UnlinkedCodeBlock::UnpackedInstructions& instructions, SymbolTable* generatorFrameSymbolTable, int generatorFrameSymbolTableIndex)
+void performGeneratorification(BytecodeGenerator& bytecodeGenerator, UnlinkedCodeBlock* codeBlock, InstructionStreamWriter& instructions, SymbolTable* generatorFrameSymbolTable, int generatorFrameSymbolTableIndex)
 {
     if (Options::dumpBytecodesBeforeGeneratorification())
         BytecodeDumper<UnlinkedCodeBlock>::dumpBlock(codeBlock, instructions, WTF::dataFile());
 
-    BytecodeGeneratorification pass(codeBlock, instructions, generatorFrameSymbolTable, generatorFrameSymbolTableIndex);
+    BytecodeGeneratorification pass(bytecodeGenerator, codeBlock, instructions, generatorFrameSymbolTable, generatorFrameSymbolTableIndex);
     pass.run();
 }
 

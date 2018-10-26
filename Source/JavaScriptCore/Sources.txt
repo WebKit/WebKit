@@ -233,10 +233,12 @@ bytecode/InlineCallFrameSet.cpp
 bytecode/InstanceOfAccessCase.cpp
 bytecode/InstanceOfStatus.cpp
 bytecode/InstanceOfVariant.cpp
+bytecode/InstructionStream.cpp
 bytecode/IntrinsicGetterAccessCase.cpp
 bytecode/JumpTable.cpp
 bytecode/LLIntPrototypeLoadAdaptiveStructureWatchpoint.cpp
 bytecode/LazyOperandValueProfile.cpp
+bytecode/MetadataTable.cpp
 bytecode/MethodOfGettingAValueProfile.cpp
 bytecode/ModuleNamespaceAccessCase.cpp
 bytecode/ModuleProgramCodeBlock.cpp
@@ -268,7 +270,6 @@ bytecode/UnlinkedCodeBlock.cpp
 bytecode/UnlinkedEvalCodeBlock.cpp
 bytecode/UnlinkedFunctionCodeBlock.cpp
 bytecode/UnlinkedFunctionExecutable.cpp
-bytecode/UnlinkedInstructionStream.cpp
 bytecode/UnlinkedModuleProgramCodeBlock.cpp
 bytecode/UnlinkedProgramCodeBlock.cpp
 bytecode/ValueRecovery.cpp
@@ -278,6 +279,7 @@ bytecode/Watchpoint.cpp
 
 bytecompiler/BytecodeGenerator.cpp
 bytecompiler/NodesCodegen.cpp
+bytecompiler/ProfileTypeBytecodeFlag.cpp
 
 debugger/Debugger.cpp
 debugger/DebuggerCallFrame.cpp
@@ -759,6 +761,7 @@ runtime/FunctionRareData.cpp
 runtime/GeneratorFunctionConstructor.cpp
 runtime/GeneratorFunctionPrototype.cpp
 runtime/GeneratorPrototype.cpp
+runtime/GetPutInfo.cpp
 runtime/GetterSetter.cpp
 runtime/HashMapImpl.cpp
 runtime/Identifier.cpp
@@ -851,6 +854,7 @@ runtime/JSStringJoiner.cpp
 runtime/JSStringHeapCellType.cpp
 runtime/JSSymbolTableObject.cpp
 runtime/JSTemplateObjectDescriptor.cpp
+runtime/JSType.cpp
 runtime/JSTypedArrayConstructors.cpp
 runtime/JSTypedArrayPrototypes.cpp
 runtime/JSTypedArrayViewConstructor.cpp

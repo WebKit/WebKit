@@ -32,6 +32,13 @@ namespace JSC {
 
 class ArrayAllocationProfile {
 public:
+    ArrayAllocationProfile() = default;
+
+    ArrayAllocationProfile(IndexingType recommendedIndexingMode)
+    {
+        initializeIndexingMode(recommendedIndexingMode);
+    }
+
     IndexingType selectIndexingType()
     {
         JSArray* lastArray = m_lastArray;

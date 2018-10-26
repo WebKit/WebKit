@@ -34,7 +34,7 @@ namespace JSC {
 
 class JITSlowPathCall {
 public:
-    JITSlowPathCall(JIT* jit, Instruction* pc, SlowPathFunction slowPathFunction)
+    JITSlowPathCall(JIT* jit, const Instruction* pc, SlowPathFunction slowPathFunction)
         : m_jit(jit)
         , m_slowPathFunction(slowPathFunction)
         , m_pc(pc)
@@ -84,7 +84,7 @@ public:
 private:
     JIT* m_jit;
     SlowPathFunction m_slowPathFunction;
-    Instruction* m_pc;
+    const Instruction* m_pc;
 };
 
 } // namespace JS

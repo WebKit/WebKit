@@ -44,20 +44,20 @@ public:
     typedef WTF::IndexedContainerIterator<BytecodeGraph> iterator;
 
     template <typename CodeBlockType>
-    inline BytecodeGraph(CodeBlockType*, typename CodeBlockType::UnpackedInstructions&);
+    inline BytecodeGraph(CodeBlockType*, const InstructionStream&);
 
     WTF::IteratorRange<BasicBlocksVector::reverse_iterator> basicBlocksInReverseOrder()
     {
         return WTF::makeIteratorRange(m_basicBlocks.rbegin(), m_basicBlocks.rend());
     }
 
-    static bool blockContainsBytecodeOffset(BytecodeBasicBlock* block, unsigned bytecodeOffset)
+    static bool blockContainsBytecodeOffset(BytecodeBasicBlock* block, InstructionStream::Offset bytecodeOffset)
     {
         unsigned leaderOffset = block->leaderOffset();
         return bytecodeOffset >= leaderOffset && bytecodeOffset < leaderOffset + block->totalLength();
     }
 
-    BytecodeBasicBlock* findBasicBlockForBytecodeOffset(unsigned bytecodeOffset)
+    BytecodeBasicBlock* findBasicBlockForBytecodeOffset(InstructionStream::Offset bytecodeOffset)
     {
         /*
             for (unsigned i = 0; i < m_basicBlocks.size(); i++) {
@@ -85,7 +85,7 @@ public:
         return basicBlock[1].get();
     }
 
-    BytecodeBasicBlock* findBasicBlockWithLeaderOffset(unsigned leaderOffset)
+    BytecodeBasicBlock* findBasicBlockWithLeaderOffset(InstructionStream::Offset leaderOffset)
     {
         return (*tryBinarySearch<std::unique_ptr<BytecodeBasicBlock>, unsigned>(m_basicBlocks, m_basicBlocks.size(), leaderOffset, [] (std::unique_ptr<BytecodeBasicBlock>* basicBlock) { return (*basicBlock)->leaderOffset(); })).get();
     }
@@ -105,9 +105,9 @@ private:
 
 
 template<typename CodeBlockType>
-BytecodeGraph::BytecodeGraph(CodeBlockType* codeBlock, typename CodeBlockType::UnpackedInstructions& instructions)
+BytecodeGraph::BytecodeGraph(CodeBlockType* codeBlock, const InstructionStream& instructions)
 {
-    BytecodeBasicBlock::compute(codeBlock, instructions.begin(), instructions.size(), m_basicBlocks);
+    BytecodeBasicBlock::compute(codeBlock, instructions, m_basicBlocks);
     ASSERT(m_basicBlocks.size());
 }
 

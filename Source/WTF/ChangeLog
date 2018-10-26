@@ -1,3 +1,17 @@
+2018-10-26  Tadeu Zagallo  <tzagallo@apple.com>
+
+        New bytecode format for JSC
+        https://bugs.webkit.org/show_bug.cgi?id=187373
+        <rdar://problem/44186758>
+
+        Reviewed by Filip Pizlo.
+
+        * wtf/Forward.h: Fix WTF_LAZY_FOR_EACH_TERM on MSVC and add WTF_LAZY_HAS_REST to check whether
+        a macro was passed multiple arguments
+        * wtf/Platform.h: Force ENABLE_JIT=false on all 32-bit platforms
+        * wtf/Vector.h:
+        (WTF::minCapacity>::insertVector): Allow vectors with different overflow handlers to be passed to insertVector
+
 2018-10-26  Geoffrey Garen  <ggaren@apple.com>
 
         HashMap should support selecting a random entry

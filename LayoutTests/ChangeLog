@@ -1,3 +1,15 @@
+2018-10-26  Tadeu Zagallo  <tzagallo@apple.com>
+
+        New bytecode format for JSC
+        https://bugs.webkit.org/show_bug.cgi?id=187373
+        <rdar://problem/44186758>
+
+        Reviewed by Filip Pizlo.
+
+        Don't use recursion on `equal` to avoid premature stack overflows when testing deep arrays.
+
+        * fast/dom/Window/resources/postmessage-test.js:
+
 2018-10-26  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Remove useless internals methods

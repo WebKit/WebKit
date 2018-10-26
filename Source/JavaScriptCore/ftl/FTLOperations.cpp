@@ -474,10 +474,10 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
         // For now, we use array allocation profile in the actual CodeBlock. It is OK since current NewArrayBuffer
         // and PhantomNewArrayBuffer are always bound to a specific op_new_array_buffer.
         CodeBlock* codeBlock = baselineCodeBlockForOriginAndBaselineCodeBlock(materialization->origin(), exec->codeBlock()->baselineAlternative());
-        Instruction* currentInstruction = &codeBlock->instructions()[materialization->origin().bytecodeIndex];
-        RELEASE_ASSERT(Interpreter::getOpcodeID(currentInstruction[0].u.opcode) == op_new_array_buffer);
-        auto* newArrayBuffer = bitwise_cast<OpNewArrayBuffer*>(currentInstruction);
-        ArrayAllocationProfile* profile = currentInstruction[3].u.arrayAllocationProfile;
+        const Instruction* currentInstruction = codeBlock->instructions().at(materialization->origin().bytecodeIndex).ptr();
+        RELEASE_ASSERT(currentInstruction->is<OpNewArrayBuffer>());
+        auto newArrayBuffer = currentInstruction->as<OpNewArrayBuffer>();
+        ArrayAllocationProfile* profile = &newArrayBuffer.metadata(codeBlock).arrayAllocationProfile;
 
         // FIXME: Share the code with CommonSlowPaths. Currently, codeBlock etc. are slightly different.
         IndexingType indexingMode = profile->selectIndexingType();
@@ -495,7 +495,7 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
             // We also cannot allocate a new butterfly from compilation threads since it's invalid to allocate cells from
             // a compilation thread.
             WTF::storeStoreFence();
-            codeBlock->constantRegister(newArrayBuffer->immutableButterfly()).set(vm, codeBlock, immutableButterfly);
+            codeBlock->constantRegister(newArrayBuffer.immutableButterfly.offset()).set(vm, codeBlock, immutableButterfly);
             WTF::storeStoreFence();
         }
 

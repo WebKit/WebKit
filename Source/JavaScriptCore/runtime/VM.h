@@ -745,7 +745,7 @@ public:
     ExecState* newCallFrameReturnValue;
     ExecState* callFrameForCatch;
     void* targetMachinePCForThrow;
-    Instruction* targetInterpreterPCForThrow;
+    const Instruction* targetInterpreterPCForThrow;
     uint32_t osrExitIndex;
     void* osrExitJumpDestination;
     bool isExecutingInRegExpJIT { false };

@@ -55,9 +55,10 @@ BytecodeSequence::BytecodeSequence(CodeBlock* codeBlock)
     for (unsigned bytecodeIndex = 0; bytecodeIndex < codeBlock->instructions().size();) {
         out.reset();
         codeBlock->dumpBytecode(out, bytecodeIndex, statusMap);
-        OpcodeID opcodeID = Interpreter::getOpcodeID(codeBlock->instructions()[bytecodeIndex].u.opcode);
+        auto instruction = codeBlock->instructions().at(bytecodeIndex);
+        OpcodeID opcodeID = instruction->opcodeID();
         m_sequence.append(Bytecode(bytecodeIndex, opcodeID, out.toCString()));
-        bytecodeIndex += opcodeLength(opcodeID);
+        bytecodeIndex += instruction->size();
     }
 }
 

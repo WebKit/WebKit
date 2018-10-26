@@ -227,7 +227,9 @@ const CallOpCodeSize = constexpr op_call_length
 const maxFrameExtentForSlowPathCall = constexpr maxFrameExtentForSlowPathCall
 
 if X86_64 or X86_64_WIN or ARM64 or ARM64E
-    const CalleeSaveSpaceAsVirtualRegisters = 3
+    const CalleeSaveSpaceAsVirtualRegisters = 4
+elsif C_LOOP
+    const CalleeSaveSpaceAsVirtualRegisters = 1
 else
     const CalleeSaveSpaceAsVirtualRegisters = 0
 end
@@ -267,14 +269,17 @@ if JSVALUE64
     #   This requires an add before the call, and a sub after.
     const PC = t4 # When changing this, make sure LLIntPC is up to date in LLIntPCRanges.h
     if ARM64 or ARM64E
+        const metadataTable = csr6
         const PB = csr7
         const tagTypeNumber = csr8
         const tagMask = csr9
     elsif X86_64
+        const metadataTable = csr1
         const PB = csr2
         const tagTypeNumber = csr3
         const tagMask = csr4
     elsif X86_64_WIN
+        const metadataTable = csr3
         const PB = csr4
         const tagTypeNumber = csr5
         const tagMask = csr6
@@ -282,66 +287,139 @@ if JSVALUE64
         const PB = csr0
         const tagTypeNumber = csr1
         const tagMask = csr2
-    end
-
-    macro loadisFromInstruction(offset, dest)
-        loadis offset * PtrSize[PB, PC, PtrSize], dest
-    end
-    
-    macro loadpFromInstruction(offset, dest)
-        loadp offset * PtrSize[PB, PC, PtrSize], dest
-    end
-
-    macro loadisFromStruct(offset, dest)
-        loadis offset[PB, PC, PtrSize], dest
-    end
-
-    macro loadpFromStruct(offset, dest)
-        loadp offset[PB, PC, PtrSize], dest
-    end
-
-    macro storeisToInstruction(value, offset)
-        storei value, offset * PtrSize[PB, PC, PtrSize]
-    end
-
-    macro storepToInstruction(value, offset)
-        storep value, offset * PtrSize[PB, PC, PtrSize]
-    end
-
-    macro storeisFromStruct(value, offset)
-        storei value, offset[PB, PC, PtrSize]
-    end
-
-    macro storepFromStruct(value, offset)
-        storep value, offset[PB, PC, PtrSize]
+        const metadataTable = csr3
     end
 
 else
     const PC = t4 # When changing this, make sure LLIntPC is up to date in LLIntPCRanges.h
-    macro loadisFromInstruction(offset, dest)
-        loadis offset * 4[PC], dest
-    end
-    
-    macro loadpFromInstruction(offset, dest)
-        loadp offset * 4[PC], dest
-    end
-
-    macro storeisToInstruction(value, offset)
-        storei value, offset * 4[PC]
-    end
-
-    macro loadisFromStruct(offset, dest)
-        loadis offset[PC], dest
-    end
-
-    macro loadpFromStruct(offset, dest)
-        loadp offset[PC], dest
-    end
-
-    macro storeisToStruct(value, offset)
-        storei value, offset[PC]
+    if C_LOOP
+        const metadataTable = csr3
     end
 end
+
+macro dispatch(advance)
+    addp advance, PC
+    nextInstruction()
+end
+
+macro dispatchIndirect(offset)
+    dispatch(offset)
+end
+
+macro dispatchOp(size, op)
+    macro dispatchNarrow()
+        dispatch(constexpr %op%_length)
+    end
+
+    macro dispatchWide()
+        dispatch(constexpr %op%_length * 4 + 1)
+    end
+
+    size(dispatchNarrow, dispatchWide, macro (dispatch) dispatch() end)
+end
+
+macro getu(size, op, field, dst)
+    size(getuOperandNarrow, getuOperandWide, macro (getu)
+        getu(op, field, dst)
+    end)
+end
+
+macro get(size, op, field, dst)
+    size(getOperandNarrow, getOperandWide, macro (get)
+        get(op, field, dst)
+    end)
+end
+
+macro narrow(narrowFn, wideFn, k)
+    k(narrowFn)
+end
+
+macro wide(narrowFn, wideFn, k)
+    k(wideFn)
+end
+
+macro metadata(size, opcode, dst, scratch)
+    loadp constexpr %opcode%::opcodeID * 4[metadataTable], dst # offset = metadataTable<unsigned*>[opcodeID]
+    getu(size, opcode, metadataID, scratch) # scratch = bytecode.metadataID
+    muli sizeof %opcode%::Metadata, scratch # scratch *= sizeof(Op::Metadata)
+    addi scratch, dst # offset += scratch
+    addp metadataTable, dst # return &metadataTable[offset]
+end
+
+macro jumpImpl(target)
+    btiz target, .outOfLineJumpTarget
+    dispatchIndirect(target)
+.outOfLineJumpTarget:
+    callSlowPath(_llint_slow_path_out_of_line_jump_target)
+    nextInstruction()
+end
+
+macro commonOp(label, prologue, fn)
+_%label%:
+    prologue()
+    fn(narrow)
+
+_%label%_wide:
+    prologue()
+    fn(wide)
+end
+
+macro op(l, fn)
+    commonOp(l, macro () end, macro (unused)
+        fn()
+    end)
+end
+
+macro llintOp(name, op, fn)
+    commonOp(llint_%name%, traceExecution, macro(size)
+        macro getImpl(field, dst)
+            get(size, op, field, dst)
+        end
+
+        macro dispatchImpl()
+            dispatchOp(size, name)
+        end
+
+        fn(size, getImpl, dispatchImpl)
+    end)
+end
+
+macro llintOpWithReturn(name, op, fn)
+    llintOp(name, op, macro(size, get, dispatch)
+        makeReturn(get, dispatch, macro (return)
+            fn(size, get, dispatch, return)
+        end)
+    end)
+end
+
+macro llintOpWithMetadata(name, op, fn)
+    llintOpWithReturn(name, op, macro (size, get, dispatch, return)
+        macro meta(dst, scratch)
+            metadata(size, op, dst, scratch)
+        end
+        fn(size, get, dispatch, meta, return)
+    end)
+end
+
+macro llintOpWithJump(name, op, impl)
+    llintOpWithMetadata(name, op, macro(size, get, dispatch, metadata, return)
+        macro jump(field)
+            get(field, t0)
+            jumpImpl(t0)
+        end
+
+        impl(size, get, jump, dispatch)
+    end)
+end
+
+macro llintOpWithProfile(name, op, fn)
+    llintOpWithMetadata(name, op, macro(size, get, dispatch, metadata, return)
+        makeReturnProfiled(op, get, metadata, dispatch, macro (returnProfiled)
+            fn(size, get, dispatch, returnProfiled)
+        end)
+    end)
+end
+
 
 if X86_64_WIN
     const extraTempReg = t0
@@ -394,7 +472,8 @@ const MasqueradesAsUndefined = constexpr MasqueradesAsUndefined
 const ImplementsDefaultHasInstance = constexpr ImplementsDefaultHasInstance
 
 # Bytecode operand constants.
-const FirstConstantRegisterIndex = constexpr FirstConstantRegisterIndex
+const FirstConstantRegisterIndexNarrow = 16
+const FirstConstantRegisterIndexWide = constexpr FirstConstantRegisterIndex
 
 # Code type constants.
 const GlobalCode = constexpr GlobalCode
@@ -630,11 +709,12 @@ end
 macro preserveCalleeSavesUsedByLLInt()
     subp CalleeSaveSpaceStackAligned, sp
     if C_LOOP
+        storep metadataTable, -PtrSize[cfr]
     elsif ARM or ARMv7_TRADITIONAL
     elsif ARMv7
     elsif ARM64 or ARM64E
         emit "stp x27, x28, [x29, #-16]"
-        emit "stp xzr, x26, [x29, #-32]"
+        emit "stp x25, x26, [x29, #-32]"
     elsif MIPS
     elsif X86
     elsif X86_WIN
@@ -642,28 +722,33 @@ macro preserveCalleeSavesUsedByLLInt()
         storep csr4, -8[cfr]
         storep csr3, -16[cfr]
         storep csr2, -24[cfr]
+        storep csr1, -32[cfr]
     elsif X86_64_WIN
         storep csr6, -8[cfr]
         storep csr5, -16[cfr]
         storep csr4, -24[cfr]
+        storep csr3, -32[cfr]
     end
 end
 
 macro restoreCalleeSavesUsedByLLInt()
     if C_LOOP
+        loadp -PtrSize[cfr], metadataTable
     elsif ARM or ARMv7_TRADITIONAL
     elsif ARMv7
     elsif ARM64 or ARM64E
-        emit "ldp xzr, x26, [x29, #-32]"
+        emit "ldp x25, x26, [x29, #-32]"
         emit "ldp x27, x28, [x29, #-16]"
     elsif MIPS
     elsif X86
     elsif X86_WIN
     elsif X86_64
+        loadp -32[cfr], csr1
         loadp -24[cfr], csr2
         loadp -16[cfr], csr3
         loadp -8[cfr], csr4
     elsif X86_64_WIN
+        loadp -32[cfr], csr3
         loadp -24[cfr], csr4
         loadp -16[cfr], csr5
         loadp -8[cfr], csr6
@@ -823,14 +908,14 @@ macro traceExecution()
     end
 end
 
-macro callTargetFunction(callee, callPtrTag)
+macro callTargetFunction(size, op, dispatch, callee, callPtrTag)
     if C_LOOP
         cloopCallJSFunction callee
     else
         call callee, callPtrTag
     end
     restoreStackPointerAfterCall()
-    dispatchAfterCall()
+    dispatchAfterCall(size, op, dispatch)
 end
 
 macro prepareForRegularCall(callee, temp1, temp2, temp3, callPtrTag)
@@ -898,7 +983,7 @@ macro prepareForTailCall(callee, temp1, temp2, temp3, callPtrTag)
     jmp callee, callPtrTag
 end
 
-macro slowPathForCall(slowPath, prepareCall)
+macro slowPathForCall(size, op, dispatch, slowPath, prepareCall)
     callCallSlowPath(
         slowPath,
         # Those are r0 and r1
@@ -907,15 +992,15 @@ macro slowPathForCall(slowPath, prepareCall)
             move calleeFramePtr, sp
             prepareCall(callee, t2, t3, t4, SlowPathPtrTag)
         .dontUpdateSP:
-            callTargetFunction(callee, SlowPathPtrTag)
+            callTargetFunction(size, op, dispatch, callee, SlowPathPtrTag)
         end)
 end
 
-macro arrayProfile(cellAndIndexingType, profile, scratch)
+macro arrayProfile(offset, cellAndIndexingType, metadata, scratch)
     const cell = cellAndIndexingType
     const indexingType = cellAndIndexingType 
     loadi JSCell::m_structureID[cell], scratch
-    storei scratch, ArrayProfile::m_lastSeenStructureID[profile]
+    storei scratch, offset + ArrayProfile::m_lastSeenStructureID[metadata]
     loadb JSCell::m_indexingTypeAndMisc[cell], indexingType
 end
 
@@ -945,8 +1030,10 @@ macro checkSwitchToJITForEpilogue()
         end)
 end
 
-macro assertNotConstant(index)
-    assert(macro (ok) bilt index, FirstConstantRegisterIndex, ok end)
+macro assertNotConstant(size, index)
+    size(FirstConstantRegisterIndexNarrow, FirstConstantRegisterIndexWide, macro (FirstConstantRegisterIndex)
+        assert(macro (ok) bilt index, FirstConstantRegisterIndex, ok end)
+    end)
 end
 
 macro functionForCallCodeBlockGetter(targetRegister, scratch)
@@ -1037,11 +1124,17 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
 
     # Set up the PC.
     if JSVALUE64
+        # FIXME: cleanup double load
+        # https://bugs.webkit.org/show_bug.cgi?id=190932
         loadp CodeBlock::m_instructions[t1], PB
+        loadp [PB], PB
         unpoison(_g_CodeBlockPoison, PB, t3)
         move 0, PC
     else
+        # FIXME: cleanup double load
+        # https://bugs.webkit.org/show_bug.cgi?id=190932
         loadp CodeBlock::m_instructions[t1], PC
+        loadp [PC], PC
     end
 
     # Get new sp in t0 and check stack height.
@@ -1093,6 +1186,12 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
         move t0, sp
     end
 
+    if JSVALUE64 or C_LOOP
+        # FIXME: cleanup double load
+        # https://bugs.webkit.org/show_bug.cgi?id=190933
+        loadp CodeBlock::m_metadata[t1], metadataTable
+        loadp MetadataTable::m_buffer[metadataTable], metadataTable
+    end
     if JSVALUE64
         move TagTypeNumber, tagTypeNumber
         addq TagBitTypeOther, tagTypeNumber, tagMask
@@ -1235,33 +1334,41 @@ else
         end
 end
 
-# The PC base is in t1, as this is what _llint_entry leaves behind through
-# initPCRelative(t1)
+# The PC base is in t2, as this is what _llint_entry leaves behind through
+# initPCRelative(t2)
 macro setEntryAddress(index, label)
+    setEntryAddressCommon(index, label, a0)
+end
+
+macro setEntryAddressWide(index, label)
+     setEntryAddressCommon(index, label, a1)
+end
+
+macro setEntryAddressCommon(index, label, map)
     if X86_64 or X86_64_WIN
-        leap (label - _relativePCBase)[t1], t3
+        leap (label - _relativePCBase)[t2], t3
         move index, t4
-        storep t3, [a0, t4, 8]
+        storep t3, [map, t4, 8]
     elsif X86 or X86_WIN
-        leap (label - _relativePCBase)[t1], t3
+        leap (label - _relativePCBase)[t2], t3
         move index, t4
-        storep t3, [a0, t4, 4]
+        storep t3, [map, t4, 4]
     elsif ARM64 or ARM64E
-        pcrtoaddr label, t1
+        pcrtoaddr label, t2
         move index, t4
-        storep t1, [a0, t4, PtrSize]
+        storep t2, [a0, t4, PtrSize]
     elsif ARM or ARMv7 or ARMv7_TRADITIONAL
         mvlbl (label - _relativePCBase), t4
-        addp t4, t1, t4
+        addp t4, t2, t4
         move index, t3
-        storep t4, [a0, t3, 4]
+        storep t4, [map, t3, 4]
     elsif MIPS
         la label, t4
         la _relativePCBase, t3
         subp t3, t4
-        addp t4, t1, t4
+        addp t4, t2, t4
         move index, t3
-        storep t4, [a0, t3, 4]
+        storep t4, [map, t3, 4]
     end
 end
 
@@ -1272,8 +1379,10 @@ _llint_entry:
     pushCalleeSaves()
     if X86 or X86_WIN
         loadp 20[sp], a0
+        loadp 24[sp], a1
     end
-    initPCRelative(t1)
+
+    initPCRelative(t2)
 
     # Include generated bytecode initialization file.
     include InitBytecodes
@@ -1283,47 +1392,63 @@ _llint_entry:
     ret
 end
 
-_llint_program_prologue:
+_llint_op_wide:
+    nextInstructionWide()
+
+_llint_op_wide_wide:
+    crash()
+
+_llint_op_enter_wide:
+    crash()
+
+op(llint_program_prologue, macro ()
     prologue(notFunctionCodeBlockGetter, notFunctionCodeBlockSetter, _llint_entry_osr, _llint_trace_prologue)
     dispatch(0)
+end)
 
 
-_llint_module_program_prologue:
+op(llint_module_program_prologue, macro ()
     prologue(notFunctionCodeBlockGetter, notFunctionCodeBlockSetter, _llint_entry_osr, _llint_trace_prologue)
     dispatch(0)
+end)
 
 
-_llint_eval_prologue:
+op(llint_eval_prologue, macro ()
     prologue(notFunctionCodeBlockGetter, notFunctionCodeBlockSetter, _llint_entry_osr, _llint_trace_prologue)
     dispatch(0)
+end)
 
 
-_llint_function_for_call_prologue:
+op(llint_function_for_call_prologue, macro ()
     prologue(functionForCallCodeBlockGetter, functionCodeBlockSetter, _llint_entry_osr_function_for_call, _llint_trace_prologue_function_for_call)
     functionInitialization(0)
     dispatch(0)
+end)
     
 
-_llint_function_for_construct_prologue:
+op(llint_function_for_construct_prologue, macro ()
     prologue(functionForConstructCodeBlockGetter, functionCodeBlockSetter, _llint_entry_osr_function_for_construct, _llint_trace_prologue_function_for_construct)
     functionInitialization(1)
     dispatch(0)
+end)
     
 
-_llint_function_for_call_arity_check:
+op(llint_function_for_call_arity_check, macro ()
     prologue(functionForCallCodeBlockGetter, functionCodeBlockSetter, _llint_entry_osr_function_for_call_arityCheck, _llint_trace_arityCheck_for_call)
     functionArityCheck(.functionForCallBegin, _slow_path_call_arityCheck)
 .functionForCallBegin:
     functionInitialization(0)
     dispatch(0)
+end)
 
 
-_llint_function_for_construct_arity_check:
+op(llint_function_for_construct_arity_check, macro ()
     prologue(functionForConstructCodeBlockGetter, functionCodeBlockSetter, _llint_entry_osr_function_for_construct_arityCheck, _llint_trace_arityCheck_for_construct)
     functionArityCheck(.functionForConstructBegin, _slow_path_construct_arityCheck)
 .functionForConstructBegin:
     functionInitialization(1)
     dispatch(0)
+end)
 
 
 # Value-representation-specific code.
@@ -1335,374 +1460,221 @@ end
 
 
 # Value-representation-agnostic code.
-_llint_op_create_direct_arguments:
-    traceExecution()
-    callSlowPath(_slow_path_create_direct_arguments)
-    dispatch(constexpr op_create_direct_arguments_length)
+macro slowPathOp(op)
+    llintOp(op_%op%, unused, macro (unused, unused, dispatch)
+        callSlowPath(_slow_path_%op%)
+        dispatch()
+    end)
+end
+
+slowPathOp(create_cloned_arguments)
+slowPathOp(create_direct_arguments)
+slowPathOp(create_lexical_environment)
+slowPathOp(create_rest)
+slowPathOp(create_scoped_arguments)
+slowPathOp(create_this)
+slowPathOp(define_accessor_property)
+slowPathOp(define_data_property)
+slowPathOp(enumerator_generic_pname)
+slowPathOp(enumerator_structure_pname)
+slowPathOp(get_by_id_with_this)
+slowPathOp(get_by_val_with_this)
+slowPathOp(get_direct_pname)
+slowPathOp(get_enumerable_length)
+slowPathOp(get_property_enumerator)
+slowPathOp(greater)
+slowPathOp(greatereq)
+slowPathOp(has_generic_property)
+slowPathOp(has_indexed_property)
+slowPathOp(has_structure_property)
+slowPathOp(in_by_id)
+slowPathOp(in_by_val)
+slowPathOp(is_function)
+slowPathOp(is_object_or_null)
+slowPathOp(less)
+slowPathOp(lesseq)
+slowPathOp(mod)
+slowPathOp(new_array_buffer)
+slowPathOp(new_array_with_spread)
+slowPathOp(pow)
+slowPathOp(push_with_scope)
+slowPathOp(put_by_id_with_this)
+slowPathOp(put_by_val_with_this)
+slowPathOp(resolve_scope_for_hoisting_func_decl_in_eval)
+slowPathOp(spread)
+slowPathOp(strcat)
+slowPathOp(throw_static_error)
+slowPathOp(to_index_string)
+slowPathOp(typeof)
+slowPathOp(unreachable)
+
+macro llintSlowPathOp(op)
+    llintOp(op_%op%, unused, macro (unused, unused, dispatch)
+        callSlowPath(_llint_slow_path_%op%)
+        dispatch()
+    end)
+end
+
+llintSlowPathOp(del_by_id)
+llintSlowPathOp(del_by_val)
+llintSlowPathOp(instanceof)
+llintSlowPathOp(instanceof_custom)
+llintSlowPathOp(new_array)
+llintSlowPathOp(new_array_with_size)
+llintSlowPathOp(new_async_func)
+llintSlowPathOp(new_async_func_exp)
+llintSlowPathOp(new_async_generator_func)
+llintSlowPathOp(new_async_generator_func_exp)
+llintSlowPathOp(new_func)
+llintSlowPathOp(new_func_exp)
+llintSlowPathOp(new_generator_func)
+llintSlowPathOp(new_generator_func_exp)
+llintSlowPathOp(new_object)
+llintSlowPathOp(new_regexp)
+llintSlowPathOp(put_getter_by_id)
+llintSlowPathOp(put_getter_by_val)
+llintSlowPathOp(put_getter_setter_by_id)
+llintSlowPathOp(put_setter_by_id)
+llintSlowPathOp(put_setter_by_val)
+llintSlowPathOp(set_function_name)
+llintSlowPathOp(super_sampler_begin)
+llintSlowPathOp(super_sampler_end)
+llintSlowPathOp(throw)
+llintSlowPathOp(try_get_by_id)
+
+llintOp(op_switch_string, unused, macro (unused, unused, unused)
+    callSlowPath(_llint_slow_path_switch_string)
+    nextInstruction()
+end)
 
 
-_llint_op_create_scoped_arguments:
-    traceExecution()
-    callSlowPath(_slow_path_create_scoped_arguments)
-    dispatch(constexpr op_create_scoped_arguments_length)
+equalityComparisonOp(eq, OpEq,
+    macro (left, right, result) cieq left, right, result end)
 
 
-_llint_op_create_cloned_arguments:
-    traceExecution()
-    callSlowPath(_slow_path_create_cloned_arguments)
-    dispatch(constexpr op_create_cloned_arguments_length)
+equalityComparisonOp(neq, OpNeq,
+    macro (left, right, result) cineq left, right, result end)
 
 
-_llint_op_create_this:
-    traceExecution()
-    callSlowPath(_slow_path_create_this)
-    dispatch(constexpr op_create_this_length)
-
-
-_llint_op_new_object:
-    traceExecution()
-    callSlowPath(_llint_slow_path_new_object)
-    dispatch(constexpr op_new_object_length)
-
-
-_llint_op_new_func:
-    traceExecution()
-    callSlowPath(_llint_slow_path_new_func)
-    dispatch(constexpr op_new_func_length)
-
-
-_llint_op_new_generator_func:
-    traceExecution()
-    callSlowPath(_llint_slow_path_new_generator_func)
-    dispatch(constexpr op_new_generator_func_length)
-
-_llint_op_new_async_generator_func:
-    traceExecution()
-    callSlowPath(_llint_slow_path_new_async_generator_func)
-    dispatch(constexpr op_new_async_generator_func_length)
-
-_llint_op_new_async_generator_func_exp:
-    traceExecution()
-    callSlowPath(_llint_slow_path_new_async_generator_func_exp)
-    dispatch(constexpr op_new_async_generator_func_exp_length)
-
-_llint_op_new_async_func:
-    traceExecution()
-    callSlowPath(_llint_slow_path_new_async_func)
-    dispatch(constexpr op_new_async_func_length)
-
-
-_llint_op_new_array:
-    traceExecution()
-    callSlowPath(_llint_slow_path_new_array)
-    dispatch(constexpr op_new_array_length)
-
-
-_llint_op_new_array_with_spread:
-    traceExecution()
-    callSlowPath(_slow_path_new_array_with_spread)
-    dispatch(constexpr op_new_array_with_spread_length)
-
-
-_llint_op_spread:
-    traceExecution()
-    callSlowPath(_slow_path_spread)
-    dispatch(constexpr op_spread_length)
-
-
-_llint_op_new_array_with_size:
-    traceExecution()
-    callSlowPath(_llint_slow_path_new_array_with_size)
-    dispatch(constexpr op_new_array_with_size_length)
-
-
-_llint_op_new_array_buffer:
-    traceExecution()
-    callSlowPath(_slow_path_new_array_buffer)
-    dispatch(constexpr op_new_array_buffer_length)
-
-
-_llint_op_new_regexp:
-    traceExecution()
-    callSlowPath(_llint_slow_path_new_regexp)
-    dispatch(constexpr op_new_regexp_length)
-
-
-_llint_op_less:
-    traceExecution()
-    callSlowPath(_slow_path_less)
-    dispatch(constexpr op_less_length)
-
-
-_llint_op_lesseq:
-    traceExecution()
-    callSlowPath(_slow_path_lesseq)
-    dispatch(constexpr op_lesseq_length)
-
-
-_llint_op_greater:
-    traceExecution()
-    callSlowPath(_slow_path_greater)
-    dispatch(constexpr op_greater_length)
-
-
-_llint_op_greatereq:
-    traceExecution()
-    callSlowPath(_slow_path_greatereq)
-    dispatch(constexpr op_greatereq_length)
-
-
-_llint_op_eq:
-    traceExecution()
-    equalityComparison(
-        macro (left, right, result) cieq left, right, result end,
-        _slow_path_eq)
-
-
-_llint_op_neq:
-    traceExecution()
-    equalityComparison(
-        macro (left, right, result) cineq left, right, result end,
-        _slow_path_neq)
-
-
-_llint_op_below:
-    traceExecution()
-    compareUnsigned(
+compareUnsignedOp(below, OpBelow,
         macro (left, right, result) cib left, right, result end)
 
 
-_llint_op_beloweq:
-    traceExecution()
-    compareUnsigned(
+compareUnsignedOp(beloweq, OpBeloweq,
         macro (left, right, result) cibeq left, right, result end)
 
 
-_llint_op_mod:
-    traceExecution()
-    callSlowPath(_slow_path_mod)
-    dispatch(constexpr op_mod_length)
+llintOpWithJump(op_jmp, OpJmp, macro (size, get, jump, dispatch)
+    jump(target)
+end)
 
 
-_llint_op_pow:
-    traceExecution()
-    callSlowPath(_slow_path_pow)
-    dispatch(constexpr op_pow_length)
+llintJumpTrueOrFalseOp(
+    jtrue, OpJtrue,
+    macro (value, target) btinz value, 1, target end)
 
 
-_llint_op_typeof:
-    traceExecution()
-    callSlowPath(_slow_path_typeof)
-    dispatch(constexpr op_typeof_length)
+llintJumpTrueOrFalseOp(
+    jfalse, OpJfalse,
+    macro (value, target) btiz value, 1, target end)
 
 
-_llint_op_is_object_or_null:
-    traceExecution()
-    callSlowPath(_slow_path_is_object_or_null)
-    dispatch(constexpr op_is_object_or_null_length)
-
-_llint_op_is_function:
-    traceExecution()
-    callSlowPath(_slow_path_is_function)
-    dispatch(constexpr op_is_function_length)
+compareJumpOp(
+    jless, OpJless,
+    macro (left, right, target) bilt left, right, target end,
+    macro (left, right, target) bdlt left, right, target end)
 
 
-_llint_op_in_by_id:
-    traceExecution()
-    callSlowPath(_slow_path_in_by_id)
-    dispatch(constexpr op_in_by_id_length)
+compareJumpOp(
+    jnless, OpJnless,
+    macro (left, right, target) bigteq left, right, target end,
+    macro (left, right, target) bdgtequn left, right, target end)
 
 
-_llint_op_in_by_val:
-    traceExecution()
-    callSlowPath(_slow_path_in_by_val)
-    dispatch(constexpr op_in_by_val_length)
+compareJumpOp(
+    jgreater, OpJgreater,
+    macro (left, right, target) bigt left, right, target end,
+    macro (left, right, target) bdgt left, right, target end)
 
 
-_llint_op_try_get_by_id:
-    traceExecution()
-    callSlowPath(_llint_slow_path_try_get_by_id)
-    dispatch(constexpr op_try_get_by_id_length)
+compareJumpOp(
+    jngreater, OpJngreater,
+    macro (left, right, target) bilteq left, right, target end,
+    macro (left, right, target) bdltequn left, right, target end)
 
 
-_llint_op_del_by_id:
-    traceExecution()
-    callSlowPath(_llint_slow_path_del_by_id)
-    dispatch(constexpr op_del_by_id_length)
+compareJumpOp(
+    jlesseq, OpJlesseq,
+    macro (left, right, target) bilteq left, right, target end,
+    macro (left, right, target) bdlteq left, right, target end)
 
 
-_llint_op_del_by_val:
-    traceExecution()
-    callSlowPath(_llint_slow_path_del_by_val)
-    dispatch(constexpr op_del_by_val_length)
+compareJumpOp(
+    jnlesseq, OpJnlesseq,
+    macro (left, right, target) bigt left, right, target end,
+    macro (left, right, target) bdgtun left, right, target end)
 
 
-_llint_op_put_getter_by_id:
-    traceExecution()
-    callSlowPath(_llint_slow_path_put_getter_by_id)
-    dispatch(constexpr op_put_getter_by_id_length)
+compareJumpOp(
+    jgreatereq, OpJgreatereq,
+    macro (left, right, target) bigteq left, right, target end,
+    macro (left, right, target) bdgteq left, right, target end)
 
 
-_llint_op_put_setter_by_id:
-    traceExecution()
-    callSlowPath(_llint_slow_path_put_setter_by_id)
-    dispatch(constexpr op_put_setter_by_id_length)
+compareJumpOp(
+    jngreatereq, OpJngreatereq,
+    macro (left, right, target) bilt left, right, target end,
+    macro (left, right, target) bdltun left, right, target end)
 
 
-_llint_op_put_getter_setter_by_id:
-    traceExecution()
-    callSlowPath(_llint_slow_path_put_getter_setter_by_id)
-    dispatch(constexpr op_put_getter_setter_by_id_length)
+equalityJumpOp(
+    jeq, OpJeq,
+    macro (left, right, target) bieq left, right, target end)
 
 
-_llint_op_put_getter_by_val:
-    traceExecution()
-    callSlowPath(_llint_slow_path_put_getter_by_val)
-    dispatch(constexpr op_put_getter_by_val_length)
+equalityJumpOp(
+    jneq, OpJneq,
+    macro (left, right, target) bineq left, right, target end)
 
 
-_llint_op_put_setter_by_val:
-    traceExecution()
-    callSlowPath(_llint_slow_path_put_setter_by_val)
-    dispatch(constexpr op_put_setter_by_val_length)
+compareUnsignedJumpOp(
+    jbelow, OpJbelow,
+    macro (left, right, target) bib left, right, target end)
 
 
-_llint_op_define_data_property:
-    traceExecution()
-    callSlowPath(_slow_path_define_data_property)
-    dispatch(constexpr op_define_data_property_length)
+compareUnsignedJumpOp(
+    jbeloweq, OpJbeloweq,
+    macro (left, right, target) bibeq left, right, target end)
 
 
-_llint_op_define_accessor_property:
-    traceExecution()
-    callSlowPath(_slow_path_define_accessor_property)
-    dispatch(constexpr op_define_accessor_property_length)
+preOp(inc, OpInc,
+    macro (value, slow) baddio 1, value, slow end)
 
 
-_llint_op_jtrue:
-    traceExecution()
-    jumpTrueOrFalse(
-        macro (value, target) btinz value, 1, target end,
-        _llint_slow_path_jtrue)
+preOp(dec, OpDec,
+    macro (value, slow) bsubio 1, value, slow end)
 
 
-_llint_op_jfalse:
-    traceExecution()
-    jumpTrueOrFalse(
-        macro (value, target) btiz value, 1, target end,
-        _llint_slow_path_jfalse)
-
-
-_llint_op_jless:
-    traceExecution()
-    compareJump(
-        macro (left, right, target) bilt left, right, target end,
-        macro (left, right, target) bdlt left, right, target end,
-        _llint_slow_path_jless)
-
-
-_llint_op_jnless:
-    traceExecution()
-    compareJump(
-        macro (left, right, target) bigteq left, right, target end,
-        macro (left, right, target) bdgtequn left, right, target end,
-        _llint_slow_path_jnless)
-
-
-_llint_op_jgreater:
-    traceExecution()
-    compareJump(
-        macro (left, right, target) bigt left, right, target end,
-        macro (left, right, target) bdgt left, right, target end,
-        _llint_slow_path_jgreater)
-
-
-_llint_op_jngreater:
-    traceExecution()
-    compareJump(
-        macro (left, right, target) bilteq left, right, target end,
-        macro (left, right, target) bdltequn left, right, target end,
-        _llint_slow_path_jngreater)
-
-
-_llint_op_jlesseq:
-    traceExecution()
-    compareJump(
-        macro (left, right, target) bilteq left, right, target end,
-        macro (left, right, target) bdlteq left, right, target end,
-        _llint_slow_path_jlesseq)
-
-
-_llint_op_jnlesseq:
-    traceExecution()
-    compareJump(
-        macro (left, right, target) bigt left, right, target end,
-        macro (left, right, target) bdgtun left, right, target end,
-        _llint_slow_path_jnlesseq)
-
-
-_llint_op_jgreatereq:
-    traceExecution()
-    compareJump(
-        macro (left, right, target) bigteq left, right, target end,
-        macro (left, right, target) bdgteq left, right, target end,
-        _llint_slow_path_jgreatereq)
-
-
-_llint_op_jngreatereq:
-    traceExecution()
-    compareJump(
-        macro (left, right, target) bilt left, right, target end,
-        macro (left, right, target) bdltun left, right, target end,
-        _llint_slow_path_jngreatereq)
-
-
-_llint_op_jeq:
-    traceExecution()
-    equalityJump(
-        macro (left, right, target) bieq left, right, target end,
-        _llint_slow_path_jeq)
-
-
-_llint_op_jneq:
-    traceExecution()
-    equalityJump(
-        macro (left, right, target) bineq left, right, target end,
-        _llint_slow_path_jneq)
-
-
-_llint_op_jbelow:
-    traceExecution()
-    compareUnsignedJump(
-        macro (left, right, target) bib left, right, target end)
-
-
-_llint_op_jbeloweq:
-    traceExecution()
-    compareUnsignedJump(
-        macro (left, right, target) bibeq left, right, target end)
-
-
-_llint_op_loop_hint:
-    traceExecution()
+llintOp(op_loop_hint, OpLoopHint, macro (unused, unused, dispatch)
     checkSwitchToJITForLoop()
-    dispatch(constexpr op_loop_hint_length)
+    dispatch()
+end)
 
 
-_llint_op_check_traps:
-    traceExecution()
+llintOp(op_check_traps, OpCheckTraps, macro (unused, unused, dispatch)
     loadp CodeBlock[cfr], t1
     loadp CodeBlock::m_poisonedVM[t1], t1
     unpoison(_g_CodeBlockPoison, t1, t2)
     loadb VM::m_traps+VMTraps::m_needTrapHandling[t1], t0
     btpnz t0, .handleTraps
 .afterHandlingTraps:
-    dispatch(constexpr op_check_traps_length)
+    dispatch()
 .handleTraps:
     callTrapHandler(.throwHandler)
     jmp .afterHandlingTraps
 .throwHandler:
     jmp _llint_throw_from_slow_path_trampoline
+end)
 
 
 # Returns the packet pointer in t0.
@@ -1718,64 +1690,34 @@ macro acquireShadowChickenPacket(slow)
 end
 
 
-_llint_op_nop:
-    dispatch(constexpr op_nop_length)
+llintOp(op_nop, OpNop, macro (unused, unused, dispatch)
+    dispatch()
+end)
 
 
-_llint_op_super_sampler_begin:
-    callSlowPath(_llint_slow_path_super_sampler_begin)
-    dispatch(constexpr op_super_sampler_begin_length)
+# we can't use callOp because we can't pass `call` as the opcode name, since it's an instruction name
+commonCallOp(op_call, _llint_slow_path_call, OpCall, prepareForRegularCall, macro (getu, metadata)
+    arrayProfileForCall(OpCall, getu)
+end)
 
 
-_llint_op_super_sampler_end:
-    traceExecution()
-    callSlowPath(_llint_slow_path_super_sampler_end)
-    dispatch(constexpr op_super_sampler_end_length)
+macro callOp(name, op, prepareCall, fn)
+    commonCallOp(op_%name%, _llint_slow_path_%name%, op, prepareCall, fn)
+end
 
 
-_llint_op_switch_string:
-    traceExecution()
-    callSlowPath(_llint_slow_path_switch_string)
-    dispatch(0)
-
-
-_llint_op_new_func_exp:
-    traceExecution()
-    callSlowPath(_llint_slow_path_new_func_exp)
-    dispatch(constexpr op_new_func_exp_length)
-
-_llint_op_new_generator_func_exp:
-    traceExecution()
-    callSlowPath(_llint_slow_path_new_generator_func_exp)
-    dispatch(constexpr op_new_generator_func_exp_length)
-
-_llint_op_new_async_func_exp:
-    traceExecution()
-    callSlowPath(_llint_slow_path_new_async_func_exp)
-    dispatch(constexpr op_new_async_func_exp_length)
-
-
-_llint_op_set_function_name:
-    traceExecution()
-    callSlowPath(_llint_slow_path_set_function_name)
-    dispatch(constexpr op_set_function_name_length)
-
-_llint_op_call:
-    traceExecution()
-    arrayProfileForCall()
-    doCall(_llint_slow_path_call, prepareForRegularCall)
-
-_llint_op_tail_call:
-    traceExecution()
-    arrayProfileForCall()
+callOp(tail_call, OpTailCall, prepareForTailCall, macro (getu, metadata)
+    arrayProfileForCall(OpTailCall, getu)
     checkSwitchToJITForEpilogue()
-    doCall(_llint_slow_path_call, prepareForTailCall)
+    # reload metadata since checkSwitchToJITForEpilogue() might have trashed t5
+    metadata(t5, t0)
+end)
 
-_llint_op_construct:
-    traceExecution()
-    doCall(_llint_slow_path_construct, prepareForRegularCall)
 
-macro doCallVarargs(frameSlowPath, slowPath, prepareCall)
+callOp(construct, OpConstruct, prepareForRegularCall, macro (getu, metadata) end)
+
+
+macro doCallVarargs(size, op, dispatch, frameSlowPath, slowPath, prepareCall)
     callSlowPath(frameSlowPath)
     branchIfException(_llint_throw_from_slow_path_trampoline)
     # calleeFrame in r1
@@ -1790,227 +1732,133 @@ macro doCallVarargs(frameSlowPath, slowPath, prepareCall)
             subp r1, CallerFrameAndPCSize, sp
         end
     end
-    slowPathForCall(slowPath, prepareCall)
+    slowPathForCall(size, op, dispatch, slowPath, prepareCall)
 end
 
-_llint_op_call_varargs:
-    traceExecution()
-    doCallVarargs(_llint_slow_path_size_frame_for_varargs, _llint_slow_path_call_varargs, prepareForRegularCall)
 
-_llint_op_tail_call_varargs:
-    traceExecution()
+llintOp(op_call_varargs, OpCallVarargs, macro (size, get, dispatch)
+    doCallVarargs(size, OpCallVarargs, dispatch, _llint_slow_path_size_frame_for_varargs, _llint_slow_path_call_varargs, prepareForRegularCall)
+end)
+
+llintOp(op_tail_call_varargs, OpTailCallVarargs, macro (size, get, dispatch)
     checkSwitchToJITForEpilogue()
     # We lie and perform the tail call instead of preparing it since we can't
     # prepare the frame for a call opcode
-    doCallVarargs(_llint_slow_path_size_frame_for_varargs, _llint_slow_path_call_varargs, prepareForTailCall)
+    doCallVarargs(size, OpTailCallVarargs, dispatch, _llint_slow_path_size_frame_for_varargs, _llint_slow_path_tail_call_varargs, prepareForTailCall)
+end)
 
 
-_llint_op_tail_call_forward_arguments:
-    traceExecution()
+llintOp(op_tail_call_forward_arguments, OpTailCallForwardArguments, macro (size, get, dispatch)
     checkSwitchToJITForEpilogue()
     # We lie and perform the tail call instead of preparing it since we can't
     # prepare the frame for a call opcode
-    doCallVarargs(_llint_slow_path_size_frame_for_forward_arguments, _llint_slow_path_tail_call_forward_arguments, prepareForTailCall)
+    doCallVarargs(size, OpTailCallForwardArguments, dispatch, _llint_slow_path_size_frame_for_forward_arguments, _llint_slow_path_tail_call_forward_arguments, prepareForTailCall)
+end)
 
 
-_llint_op_construct_varargs:
-    traceExecution()
-    doCallVarargs(_llint_slow_path_size_frame_for_varargs, _llint_slow_path_construct_varargs, prepareForRegularCall)
+llintOp(op_construct_varargs, OpConstructVarargs, macro (size, get, dispatch)
+    doCallVarargs(size, OpConstructVarargs, dispatch, _llint_slow_path_size_frame_for_varargs, _llint_slow_path_construct_varargs, prepareForRegularCall)
+end)
 
+
+# Eval is executed in one of two modes:
+#
+# 1) We find that we're really invoking eval() in which case the
+#    execution is perfomed entirely inside the slow_path, and it
+#    returns the PC of a function that just returns the return value
+#    that the eval returned.
+#
+# 2) We find that we're invoking something called eval() that is not
+#    the real eval. Then the slow_path returns the PC of the thing to
+#    call, and we call it.
+#
+# This allows us to handle two cases, which would require a total of
+# up to four pieces of state that cannot be easily packed into two
+# registers (C functions can return up to two registers, easily):
+#
+# - The call frame register. This may or may not have been modified
+#   by the slow_path, but the convention is that it returns it. It's not
+#   totally clear if that's necessary, since the cfr is callee save.
+#   But that's our style in this here interpreter so we stick with it.
+#
+# - A bit to say if the slow_path successfully executed the eval and has
+#   the return value, or did not execute the eval but has a PC for us
+#   to call.
+#
+# - Either:
+#   - The JS return value (two registers), or
+#
+#   - The PC to call.
+#
+# It turns out to be easier to just always have this return the cfr
+# and a PC to call, and that PC may be a dummy thunk that just
+# returns the JS value that the eval returned.
 
 _llint_op_call_eval:
-    traceExecution()
-    
-    # Eval is executed in one of two modes:
-    #
-    # 1) We find that we're really invoking eval() in which case the
-    #    execution is perfomed entirely inside the slow_path, and it
-    #    returns the PC of a function that just returns the return value
-    #    that the eval returned.
-    #
-    # 2) We find that we're invoking something called eval() that is not
-    #    the real eval. Then the slow_path returns the PC of the thing to
-    #    call, and we call it.
-    #
-    # This allows us to handle two cases, which would require a total of
-    # up to four pieces of state that cannot be easily packed into two
-    # registers (C functions can return up to two registers, easily):
-    #
-    # - The call frame register. This may or may not have been modified
-    #   by the slow_path, but the convention is that it returns it. It's not
-    #   totally clear if that's necessary, since the cfr is callee save.
-    #   But that's our style in this here interpreter so we stick with it.
-    #
-    # - A bit to say if the slow_path successfully executed the eval and has
-    #   the return value, or did not execute the eval but has a PC for us
-    #   to call.
-    #
-    # - Either:
-    #   - The JS return value (two registers), or
-    #
-    #   - The PC to call.
-    #
-    # It turns out to be easier to just always have this return the cfr
-    # and a PC to call, and that PC may be a dummy thunk that just
-    # returns the JS value that the eval returned.
-    
-    slowPathForCall(_llint_slow_path_call_eval, prepareForRegularCall)
+    slowPathForCall(
+        narrow,
+        OpCallEval,
+        macro () dispatchOp(narrow, op_call_eval) end,
+        _llint_slow_path_call_eval,
+        prepareForRegularCall)
 
+_llint_op_call_eval_wide:
+    slowPathForCall(
+        wide,
+        OpCallEval,
+        macro () dispatchOp(wide, op_call_eval) end,
+        _llint_slow_path_call_eval_wide,
+        prepareForRegularCall)
 
 _llint_generic_return_point:
-    dispatchAfterCall()
+    dispatchAfterCall(narrow, OpCallEval, macro ()
+        dispatchOp(narrow, op_call_eval)
+    end)
+
+_llint_generic_return_point_wide:
+    dispatchAfterCall(wide, OpCallEval, macro()
+        dispatchOp(wide, op_call_eval)
+    end)
+
+llintOp(op_identity_with_profile, OpIdentityWithProfile, macro (unused, unused, dispatch)
+    dispatch()
+end)
 
 
-_llint_op_strcat:
-    traceExecution()
-    callSlowPath(_slow_path_strcat)
-    dispatch(constexpr op_strcat_length)
-
-
-_llint_op_push_with_scope:
-    traceExecution()
-    callSlowPath(_slow_path_push_with_scope)
-    dispatch(constexpr op_push_with_scope_length)
-
-
-_llint_op_identity_with_profile:
-    traceExecution()
-    dispatch(constexpr op_identity_with_profile_length)
-
-
-_llint_op_unreachable:
-    traceExecution()
-    callSlowPath(_slow_path_unreachable)
-    dispatch(constexpr op_unreachable_length)
-
-
-_llint_op_yield:
+llintOp(op_yield, OpYield, macro (unused, unused, unused)
     notSupported()
+end)
 
 
-_llint_op_create_lexical_environment:
-    traceExecution()
-    callSlowPath(_slow_path_create_lexical_environment)
-    dispatch(constexpr op_create_lexical_environment_length)
-
-
-_llint_op_throw:
-    traceExecution()
-    callSlowPath(_llint_slow_path_throw)
-    dispatch(constexpr op_throw_length)
-
-
-_llint_op_throw_static_error:
-    traceExecution()
-    callSlowPath(_slow_path_throw_static_error)
-    dispatch(constexpr op_throw_static_error_length)
-
-
-_llint_op_debug:
-    traceExecution()
+llintOp(op_debug, OpDebug, macro (unused, unused, dispatch)
     loadp CodeBlock[cfr], t0
     loadi CodeBlock::m_debuggerRequests[t0], t0
     btiz t0, .opDebugDone
     callSlowPath(_llint_slow_path_debug)
 .opDebugDone:                    
-    dispatch(constexpr op_debug_length)
+    dispatch()
+end)
 
 
-_llint_native_call_trampoline:
+op(llint_native_call_trampoline, macro ()
     nativeCallTrampoline(NativeExecutable::m_function)
+end)
 
 
-_llint_native_construct_trampoline:
+op(llint_native_construct_trampoline, macro ()
     nativeCallTrampoline(NativeExecutable::m_constructor)
+end)
 
 
-_llint_internal_function_call_trampoline:
+op(llint_internal_function_call_trampoline, macro ()
     internalFunctionCallTrampoline(InternalFunction::m_functionForCall)
+end)
 
 
-_llint_internal_function_construct_trampoline:
+op(llint_internal_function_construct_trampoline, macro ()
     internalFunctionCallTrampoline(InternalFunction::m_functionForConstruct)
+end)
 
-
-_llint_op_get_enumerable_length:
-    traceExecution()
-    callSlowPath(_slow_path_get_enumerable_length)
-    dispatch(constexpr op_get_enumerable_length_length)
-
-_llint_op_has_indexed_property:
-    traceExecution()
-    callSlowPath(_slow_path_has_indexed_property)
-    dispatch(constexpr op_has_indexed_property_length)
-
-_llint_op_has_structure_property:
-    traceExecution()
-    callSlowPath(_slow_path_has_structure_property)
-    dispatch(constexpr op_has_structure_property_length)
-
-_llint_op_has_generic_property:
-    traceExecution()
-    callSlowPath(_slow_path_has_generic_property)
-    dispatch(constexpr op_has_generic_property_length)
-
-_llint_op_get_direct_pname:
-    traceExecution()
-    callSlowPath(_slow_path_get_direct_pname)
-    dispatch(constexpr op_get_direct_pname_length)
-
-_llint_op_get_property_enumerator:
-    traceExecution()
-    callSlowPath(_slow_path_get_property_enumerator)
-    dispatch(constexpr op_get_property_enumerator_length)
-
-_llint_op_enumerator_structure_pname:
-    traceExecution()
-    callSlowPath(_slow_path_next_structure_enumerator_pname)
-    dispatch(constexpr op_enumerator_structure_pname_length)
-
-_llint_op_enumerator_generic_pname:
-    traceExecution()
-    callSlowPath(_slow_path_next_generic_enumerator_pname)
-    dispatch(constexpr op_enumerator_generic_pname_length)
-
-_llint_op_to_index_string:
-    traceExecution()
-    callSlowPath(_slow_path_to_index_string)
-    dispatch(constexpr op_to_index_string_length)
-
-_llint_op_create_rest:
-    traceExecution()
-    callSlowPath(_slow_path_create_rest)
-    dispatch(constexpr op_create_rest_length)
-
-_llint_op_instanceof:
-    traceExecution()
-    callSlowPath(_llint_slow_path_instanceof)
-    dispatch(constexpr op_instanceof_length)
-
-_llint_op_get_by_id_with_this:
-    traceExecution()
-    callSlowPath(_slow_path_get_by_id_with_this)
-    dispatch(constexpr op_get_by_id_with_this_length)
-
-_llint_op_get_by_val_with_this:
-    traceExecution()
-    callSlowPath(_slow_path_get_by_val_with_this)
-    dispatch(constexpr op_get_by_val_with_this_length)
-
-_llint_op_put_by_id_with_this:
-    traceExecution()
-    callSlowPath(_slow_path_put_by_id_with_this)
-    dispatch(constexpr op_put_by_id_with_this_length)
-
-_llint_op_put_by_val_with_this:
-    traceExecution()
-    callSlowPath(_slow_path_put_by_val_with_this)
-    dispatch(constexpr op_put_by_val_with_this_length)
-
-_llint_op_resolve_scope_for_hoisting_func_decl_in_eval:
-    traceExecution()
-    callSlowPath(_slow_path_resolve_scope_for_hoisting_func_decl_in_eval)
-    dispatch(constexpr op_resolve_scope_for_hoisting_func_decl_in_eval_length)
 
 # Lastly, make sure that we can link even though we don't support all opcodes.
 # These opcodes should never arise when using LLInt or either JIT. We assert

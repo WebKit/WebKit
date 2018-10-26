@@ -972,8 +972,10 @@ void JIT::emit_op_create_this(Instruction* currentInstruction)
 
 void JIT::emit_op_to_this(Instruction* currentInstruction)
 {
-    WriteBarrierBase<Structure>* cachedStructure = &currentInstruction[2].u.structure;
-    int thisRegister = currentInstruction[1].u.operand;
+    auto bytecode = currentInstruction->as<OpToThis>();
+    auto& metadata = bytecode.metadata(m_codeBlock);
+    WriteBarrierBase<Structure>* cachedStructure = &metadata.cachedStructure;
+    int thisRegister = bytecode.srcDst.offset();
 
     emitLoad(thisRegister, regT3, regT2);
 

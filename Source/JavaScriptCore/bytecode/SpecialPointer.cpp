@@ -44,3 +44,27 @@ void* actualPointerFor(CodeBlock* codeBlock, Special::Pointer pointer)
 
 } // namespace JSC
 
+namespace WTF {
+
+void printInternal(PrintStream& out, JSC::Special::Pointer pointer)
+{
+    switch (pointer) {
+    case JSC::Special::CallFunction:
+        out.print("CallFunction");
+        return;
+    case JSC::Special::ApplyFunction:
+        out.print("ApplyFunction");
+        return;
+    case JSC::Special::ObjectConstructor:
+        out.print("ObjectConstructor");
+        return;
+    case JSC::Special::ArrayConstructor:
+        out.print("ArrayConstructor");
+        return;
+    case JSC::Special::TableSize:
+        out.print("TableSize");
+        return;
+    }
+}
+
+} // namespace WTF

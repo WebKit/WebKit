@@ -105,6 +105,11 @@ public:
         ASSERT(lhsObservedType().isEmpty());
         ASSERT(rhsObservedType().isEmpty());
     }
+
+    ArithProfile(OperandTypes types)
+        : ArithProfile(types.first(), types.second())
+    { }
+
     ArithProfile() = default;
 
     static constexpr ArithProfile fromInt(uint32_t bits)
