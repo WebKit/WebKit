@@ -51,7 +51,7 @@ uint8_t Data::s_exceptionInstructions[maxOpcodeLength + 1] = { };
 Opcode g_opcodeMap[numOpcodeIDs] = { };
 Opcode g_opcodeMapWide[numOpcodeIDs] = { };
 
-#if ENABLE(JIT)
+#if !ENABLE(C_LOOP)
 extern "C" void llint_entry(void*, void*);
 #endif
 
@@ -60,7 +60,7 @@ void initialize()
 #if ENABLE(C_LOOP)
     CLoop::initialize();
 
-#else // ENABLE(JIT)
+#else // !ENABLE(C_LOOP)
     llint_entry(&g_opcodeMap, &g_opcodeMapWide);
 
     for (int i = 0; i < numOpcodeIDs; ++i) {
@@ -71,7 +71,7 @@ void initialize()
     ASSERT(llint_throw_from_slow_path_trampoline < UINT8_MAX);
     for (int i = 0; i < maxOpcodeLength + 1; ++i)
         Data::s_exceptionInstructions[i] = llint_throw_from_slow_path_trampoline;
-#endif // ENABLE(JIT)
+#endif // ENABLE(C_LOOP)
 }
 
 IGNORE_CLANG_WARNINGS_BEGIN("missing-noreturn")

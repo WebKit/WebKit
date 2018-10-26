@@ -1864,6 +1864,13 @@
 			remoteGlobalIDString = 0F4680A914BA7FD900BFE272;
 			remoteInfo = "LLInt Offsets";
 		};
+		14013B752183C01E00999946 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 65FB3F6609D11E9100F49DEB;
+			remoteInfo = "Derived Sources";
+		};
 		14BD6883215191310050DAFF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -9973,6 +9980,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				14013B762183C01E00999946 /* PBXTargetDependency */,
 			);
 			name = jsc;
 			productInstallPath = /usr/local/bin;
@@ -10587,6 +10595,11 @@
 			isa = PBXTargetDependency;
 			target = 0F4680A914BA7FD900BFE272 /* LLInt Offsets */;
 			targetProxy = 0FF922D214F46B2F0041A24E /* PBXContainerItemProxy */;
+		};
+		14013B762183C01E00999946 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 65FB3F6609D11E9100F49DEB /* Derived Sources */;
+			targetProxy = 14013B752183C01E00999946 /* PBXContainerItemProxy */;
 		};
 		14BD6882215191310050DAFF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

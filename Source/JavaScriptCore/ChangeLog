@@ -1,5 +1,17 @@
 2018-10-26  Tadeu Zagallo  <tzagallo@apple.com>
 
+        Gardening: Build fix after r237479.
+        https://bugs.webkit.org/show_bug.cgi?id=187373
+
+        Unreviewed.
+
+        * Configurations/JSC.xcconfig:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::initialize):
+
+2018-10-26  Tadeu Zagallo  <tzagallo@apple.com>
+
         New bytecode format for JSC
         https://bugs.webkit.org/show_bug.cgi?id=187373
         <rdar://problem/44186758>
