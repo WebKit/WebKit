@@ -1,5 +1,48 @@
 2018-10-26  Chris Dumez  <cdumez@apple.com>
 
+        [PSON] Only delay attaching drawingArea in case of process swap and drop DidCompletePageTransition IPC handshake
+        https://bugs.webkit.org/show_bug.cgi?id=190971
+
+        Reviewed by Geoffrey Garen.
+
+        Only delay attaching drawingArea in case of process swap and drop DidCompletePageTransition IPC handshake.
+
+        Since r236257, the WebProcess would always delay attaching the drawing area when a new WebPage is created. The
+        WebProcess would send a DidCompletePageTransition IPC to the UIProcess when the page transition is complete and
+        the UIProcess would then send an IPC back to attach the drawing area.
+
+        In the new design, WebPageCreationParameters contains a flag indicating if the WebPage should delay attaching
+        the drawing area or not. We only delay attaching in case of process swap and we've successfuly suspended the
+        previous page. Then when WebPage::didCompletePageTransition(), we stop sending the DidCompletePageTransition
+        IPC to the UIProcess and instead have the WebProcess attach the drawing area right away if we've delayed
+        attaching until then.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/DrawingAreaProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::suspendCurrentPageIfPossible):
+        (WebKit::WebPageProxy::swapToWebProcess):
+        (WebKit::WebPageProxy::finishAttachingToWebProcess):
+        (WebKit::WebPageProxy::initializeWebPage):
+        (WebKit::WebPageProxy::receivedNavigationPolicyDecision):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.h:
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm:
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_shouldAttachDrawingAreaOnPageTransition):
+        (WebKit::WebPage::reinitializeWebPage):
+        (WebKit::WebPage::didCompletePageTransition):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+
+2018-10-26  Chris Dumez  <cdumez@apple.com>
+
         [PSON] Avoid tearing down the drawing area when suspending a WebPage due to process-swap
         https://bugs.webkit.org/show_bug.cgi?id=190879
 

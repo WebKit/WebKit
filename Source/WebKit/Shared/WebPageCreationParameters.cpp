@@ -82,6 +82,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << colorSpace;
     encoder << useSystemAppearance;
     encoder << useDarkAppearance;
+    encoder << shouldDelayAttachingDrawingArea;
 #endif
 #if PLATFORM(IOS_FAMILY)
     encoder << screenSize;
@@ -242,6 +243,8 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
     if (!decoder.decode(parameters.useSystemAppearance))
         return std::nullopt;
     if (!decoder.decode(parameters.useDarkAppearance))
+        return std::nullopt;
+    if (!decoder.decode(parameters.shouldDelayAttachingDrawingArea))
         return std::nullopt;
 #endif
 

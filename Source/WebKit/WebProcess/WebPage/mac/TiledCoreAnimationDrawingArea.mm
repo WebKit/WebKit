@@ -91,6 +91,9 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage& webPage, c
 
     updateLayerHostingContext();
     setColorSpace(parameters.colorSpace);
+
+    if (!parameters.shouldDelayAttachingDrawingArea)
+        attach();
 }
 
 TiledCoreAnimationDrawingArea::~TiledCoreAnimationDrawingArea()

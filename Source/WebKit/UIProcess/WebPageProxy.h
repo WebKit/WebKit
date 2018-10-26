@@ -438,7 +438,8 @@ public:
     API::IconLoadingClient& iconLoadingClient() { return *m_iconLoadingClient; }
     void setIconLoadingClient(std::unique_ptr<API::IconLoadingClient>&&);
 
-    void initializeWebPage();
+    enum class ShouldDelayAttachingDrawingArea { No, Yes };
+    void initializeWebPage(ShouldDelayAttachingDrawingArea = ShouldDelayAttachingDrawingArea::No);
 
     WeakPtr<SecKeyProxyStore> secKeyProxyStore(const WebCore::AuthenticationChallenge&);
         
@@ -1378,7 +1379,7 @@ private:
     void updateThrottleState();
     void updateHiddenPageThrottlingAutoIncreases();
 
-    void suspendCurrentPageIfPossible(API::Navigation&, std::optional<uint64_t> mainFrameID);
+    bool suspendCurrentPageIfPossible(API::Navigation&, std::optional<uint64_t> mainFrameID);
 
     enum class ResetStateReason {
         PageInvalidated,
@@ -1441,7 +1442,6 @@ private:
     void didStartProgress();
     void didChangeProgress(double);
     void didFinishProgress();
-    void didCompletePageTransition(bool isInitialEmptyDocument);
     void setNetworkRequestsInProgress(bool);
 
     void hasInsecureContent(WebCore::HasInsecureContent&);
@@ -1528,7 +1528,8 @@ private:
 
     void reattachToWebProcess();
     void swapToWebProcess(Ref<WebProcessProxy>&&, API::Navigation&, std::optional<uint64_t> mainFrameIDInPreviousProcess);
-    void finishAttachingToWebProcess();
+
+    void finishAttachingToWebProcess(ShouldDelayAttachingDrawingArea = ShouldDelayAttachingDrawingArea::No);
 
     RefPtr<API::Navigation> reattachToWebProcessForReload();
     RefPtr<API::Navigation> reattachToWebProcessWithItem(WebBackForwardListItem&);
@@ -2258,11 +2259,6 @@ private:
     std::optional<SpellDocumentTag> m_spellDocumentTag;
 
     std::optional<MonotonicTime> m_pageLoadStart;
-
-#if PLATFORM(MAC)
-    // FIXME: We should try and get rid of this data member.
-    WeakPtr<SuspendedPageProxy> m_pageSuspendedDueToCurrentNavigation;
-#endif
 
     RunLoop::Timer<WebPageProxy> m_resetRecentCrashCountTimer;
     unsigned m_recentCrashCount { 0 };

@@ -46,8 +46,6 @@ messages -> DrawingArea {
 #endif
 
 #if PLATFORM(MAC)
-    Attach()
-
 #if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     DisplayWasRefreshed()
 #endif

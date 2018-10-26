@@ -1747,6 +1747,9 @@ private:
 
     bool m_isSuspended { false };
     bool m_needsFontAttributes { false };
+#if PLATFORM(MAC)
+    bool m_shouldAttachDrawingAreaOnPageTransition { false };
+#endif
 };
 
 } // namespace WebKit

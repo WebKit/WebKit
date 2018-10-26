@@ -53,11 +53,6 @@ TiledCoreAnimationDrawingAreaProxy::~TiledCoreAnimationDrawingAreaProxy()
     m_callbacks.invalidate(CallbackBase::Error::OwnerWasInvalidated);
 }
 
-void TiledCoreAnimationDrawingAreaProxy::attachInWebProcess()
-{
-    m_webPageProxy.process().send(Messages::DrawingArea::Attach(), m_webPageProxy.pageID());
-}
-
 void TiledCoreAnimationDrawingAreaProxy::deviceScaleFactorDidChange()
 {
     m_webPageProxy.process().send(Messages::DrawingArea::SetDeviceScaleFactor(m_webPageProxy.deviceScaleFactor()), m_webPageProxy.pageID());

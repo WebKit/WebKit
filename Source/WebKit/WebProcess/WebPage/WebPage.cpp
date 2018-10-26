@@ -394,6 +394,9 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
     , m_userInterfaceLayoutDirection(parameters.userInterfaceLayoutDirection)
     , m_overrideContentSecurityPolicy { parameters.overrideContentSecurityPolicy }
     , m_cpuLimit(parameters.cpuLimit)
+#if PLATFORM(MAC)
+    , m_shouldAttachDrawingAreaOnPageTransition(parameters.shouldDelayAttachingDrawingArea)
+#endif
 {
     ASSERT(m_pageID);
 
@@ -666,6 +669,9 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
         m_drawingArea->setShouldScaleViewToFitDocument(parameters.shouldScaleViewToFitDocument);
         m_drawingArea->updatePreferences(parameters.store);
         m_drawingArea->setPaintingEnabled(true);
+#if PLATFORM(MAC)
+        m_shouldAttachDrawingAreaOnPageTransition = parameters.shouldDelayAttachingDrawingArea;
+#endif
     }
 
     if (m_activityState != parameters.activityState)
@@ -2998,8 +3004,18 @@ void WebPage::didCompletePageTransition()
     // FIXME: Layer tree freezing should be managed entirely in the UI process side.
     setLayerTreeStateIsFrozen(false);
 
+#if PLATFORM(MAC)
     bool isInitialEmptyDocument = !m_mainFrame;
-    send(Messages::WebPageProxy::DidCompletePageTransition(isInitialEmptyDocument));
+    if (m_shouldAttachDrawingAreaOnPageTransition && !isInitialEmptyDocument) {
+        m_shouldAttachDrawingAreaOnPageTransition = false;
+        // Unfreezing the layer tree above schedules a layer flush so we delay attaching the drawing area
+        // after the next event loop iteration.
+        RunLoop::main().dispatch([this, weakThis = makeWeakPtr(*this)] {
+            if (weakThis && m_drawingArea)
+                m_drawingArea->attach();
+        });
+    }
+#endif
 }
 
 void WebPage::show()

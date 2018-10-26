@@ -82,8 +82,6 @@ public:
     void viewExposedRectChangedTimerFired();
 #endif
 
-    virtual void attachInWebProcess() { }
-
     virtual void updateDebugIndicator() { }
 
     virtual void waitForDidUpdateActivityState(ActivityStateChangeID) { }

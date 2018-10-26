@@ -712,26 +712,23 @@ void WebPageProxy::reattachToWebProcess()
     finishAttachingToWebProcess();
 }
 
-void WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, std::optional<uint64_t> mainFrameID)
+bool WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, std::optional<uint64_t> mainFrameID)
 {
     if (!mainFrameID)
-        return;
+        return false;
 
     auto* currentItem = navigation.fromItem();
     if (!currentItem) {
         LOG(ProcessSwapping, "WebPageProxy %" PRIu64 " unable to create suspended page for process pid %i - No current back/forward item", pageID(), m_process->processIdentifier());
-        return;
+        return false;
     }
 
     auto suspendedPage = std::make_unique<SuspendedPageProxy>(*this, m_process.copyRef(), *currentItem, *mainFrameID);
 
-#if PLATFORM(MAC)
-    m_pageSuspendedDueToCurrentNavigation = makeWeakPtr(suspendedPage.get());
-#endif
-
     LOG(ProcessSwapping, "WebPageProxy %" PRIu64 " created suspended page %s for process pid %i, back/forward item %s" PRIu64, pageID(), suspendedPage->loggingString(), m_process->processIdentifier(), currentItem->itemID().logString());
 
     m_process->processPool().addSuspendedPageProxy(WTFMove(suspendedPage));
+    return true;
 }
 
 void WebPageProxy::swapToWebProcess(Ref<WebProcessProxy>&& process, API::Navigation& navigation, std::optional<uint64_t> mainFrameIDInPreviousProcess)
@@ -749,7 +746,7 @@ void WebPageProxy::swapToWebProcess(Ref<WebProcessProxy>&& process, API::Navigat
     }
 
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
-    suspendCurrentPageIfPossible(navigation, mainFrameIDInPreviousProcess);
+    bool didSuspendPreviousPage = suspendCurrentPageIfPossible(navigation, mainFrameIDInPreviousProcess);
     m_process->removeWebPage(*this, m_pageID);
 
     m_process = WTFMove(process);
@@ -766,10 +763,10 @@ void WebPageProxy::swapToWebProcess(Ref<WebProcessProxy>&& process, API::Navigat
         m_process->frameCreated(destinationSuspendedPage->mainFrameID(), *m_mainFrame);
     }
 
-    finishAttachingToWebProcess();
+    finishAttachingToWebProcess(didSuspendPreviousPage ? ShouldDelayAttachingDrawingArea::Yes : ShouldDelayAttachingDrawingArea::No);
 }
 
-void WebPageProxy::finishAttachingToWebProcess()
+void WebPageProxy::finishAttachingToWebProcess(ShouldDelayAttachingDrawingArea shouldDelayAttachingDrawingArea)
 {
     ASSERT(m_process->state() != ChildProcessProxy::State::Terminated);
 
@@ -805,7 +802,7 @@ void WebPageProxy::finishAttachingToWebProcess()
     m_credentialsMessenger = std::make_unique<WebAuthenticatorCoordinatorProxy>(*this);
 #endif
 
-    initializeWebPage();
+    initializeWebPage(shouldDelayAttachingDrawingArea);
 
     pageClient().didRelaunchProcess();
     m_drawingArea->waitForBackingStoreUpdateOnNextPaint();
@@ -850,7 +847,7 @@ RefPtr<API::Navigation> WebPageProxy::reattachToWebProcessWithItem(WebBackForwar
     return WTFMove(navigation);
 }
 
-void WebPageProxy::initializeWebPage()
+void WebPageProxy::initializeWebPage(ShouldDelayAttachingDrawingArea shouldDelayAttachingDrawingArea)
 {
     ASSERT(isValid());
 
@@ -868,6 +865,11 @@ void WebPageProxy::initializeWebPage()
 #endif
 
     auto parameters = creationParameters();
+#if PLATFORM(MAC)
+    parameters.shouldDelayAttachingDrawingArea = shouldDelayAttachingDrawingArea == ShouldDelayAttachingDrawingArea::Yes;
+#else
+    UNUSED_PARAM(shouldDelayAttachingDrawingArea);
+#endif
 
 #if ENABLE(SERVICE_WORKER)
     parameters.hasRegisteredServiceWorkers = process().processPool().mayHaveRegisteredServiceWorkers(m_websiteDataStore);
@@ -2495,12 +2497,6 @@ void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, A
     }
     
     if (policyAction == PolicyAction::Use && frame.isMainFrame()) {
-#if PLATFORM(MAC)
-        // We're about to navigate so we need to reset m_pageSuspendedDueToCurrentNavigation. If we decide to process swap,
-        // continueNavigationInNewProcess() will take care of updating m_pageSuspendedDueToCurrentNavigation as needed.
-        m_pageSuspendedDueToCurrentNavigation = nullptr;
-#endif
-
         String reason;
         auto proposedProcess = process().processPool().processForNavigation(*this, *navigation, processSwapRequestedByClient, policyAction, reason);
         ASSERT(!reason.isNull());
@@ -3518,23 +3514,6 @@ void WebPageProxy::didFinishProgress()
     m_pageLoadState.didFinishProgress(transaction);
 
     m_pageLoadState.commitChanges();
-}
-
-void WebPageProxy::didCompletePageTransition(bool isInitialEmptyDocument)
-{
-#if PLATFORM(MAC)
-    // Attach drawing area for the initial empty document only if this is not a process swap.
-    if (isInitialEmptyDocument && m_pageSuspendedDueToCurrentNavigation)
-        return;
-
-    if (!m_drawingArea)
-        return;
-
-    // Drawing area for the suspended page will be torn down when the attach completes.
-    m_drawingArea->attachInWebProcess();
-#else
-    UNUSED_PARAM(isInitialEmptyDocument);
-#endif
 }
 
 void WebPageProxy::setNetworkRequestsInProgress(bool networkRequestsInProgress)
