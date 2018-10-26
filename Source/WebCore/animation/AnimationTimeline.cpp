@@ -77,12 +77,6 @@ std::optional<double> AnimationTimeline::bindingsCurrentTime()
     return secondsToWebAnimationsAPITime(*time);
 }
 
-void AnimationTimeline::setCurrentTime(Seconds currentTime)
-{
-    m_currentTime = currentTime;
-    timingModelDidChange();
-}
-
 HashMap<Element*, ListHashSet<RefPtr<WebAnimation>>>& AnimationTimeline::relevantMapForAnimation(WebAnimation& animation)
 {
     if (animation.isCSSAnimation())
@@ -476,21 +470,6 @@ void AnimationTimeline::cancelOrRemoveDeclarativeAnimation(RefPtr<DeclarativeAni
     animation->cancel();
     animationWasRemovedFromElement(*animation, animation->target());
     removeAnimation(animation.releaseNonNull());
-}
-
-String AnimationTimeline::description()
-{
-    TextStream stream;
-    int count = 1;
-    stream << (m_classType == DocumentTimelineClass ? "DocumentTimeline" : "AnimationTimeline") << " with " << m_animations.size() << " animations:";
-    stream << "\n";
-    for (const auto& animation : m_animations) {
-        writeIndent(stream, 1);
-        stream << count << ". " << animation->description();
-        stream << "\n";
-        count++;
-    }
-    return stream.release();
 }
 
 } // namespace WebCore

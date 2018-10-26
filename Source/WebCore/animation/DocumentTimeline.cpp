@@ -144,7 +144,7 @@ unsigned DocumentTimeline::numberOfActiveAnimationsForTesting() const
 
 std::optional<Seconds> DocumentTimeline::currentTime()
 {
-    if (m_paused || !m_document || !m_document->domWindow())
+    if (!m_document || !m_document->domWindow())
         return AnimationTimeline::currentTime();
 
     if (auto* mainDocumentTimeline = m_document->existingTimeline()) {
@@ -187,11 +187,6 @@ std::optional<Seconds> DocumentTimeline::currentTime()
         });
     }
     return m_cachedCurrentTime.value() - m_originTime;
-}
-
-void DocumentTimeline::pause()
-{
-    m_paused = true;
 }
 
 void DocumentTimeline::timingModelDidChange()

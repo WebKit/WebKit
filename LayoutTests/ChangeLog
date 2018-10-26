@@ -1,3 +1,15 @@
+2018-10-26  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Remove useless internals methods
+        https://bugs.webkit.org/show_bug.cgi?id=190968
+
+        Reviewed by Dean Jackson.
+
+        Remove a test that is no longer useful.
+
+        * webanimations/animation-creation-addition-expected.txt: Removed.
+        * webanimations/animation-creation-addition.html: Removed.
+
 2018-10-26  Per Arne Vollan  <pvollan@apple.com>
 
         [High Sierra/Sierra Release] Layout Test media/track/track-cue-css.html is a flaky image failure

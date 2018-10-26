@@ -701,10 +701,6 @@ public:
     MockPaymentCoordinator& mockPaymentCoordinator() const;
 #endif
 
-    String timelineDescription(AnimationTimeline&);
-    void pauseTimeline(AnimationTimeline&);
-    void setTimelineCurrentTime(AnimationTimeline&, double);
-
     bool isSystemPreviewLink(Element&) const;
     bool isSystemPreviewImage(Element&) const;
 

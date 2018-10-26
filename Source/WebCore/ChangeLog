@@ -1,5 +1,32 @@
 2018-10-26  Antoine Quint  <graouts@apple.com>
 
+        [Web Animations] Remove useless internals methods
+        https://bugs.webkit.org/show_bug.cgi?id=190968
+
+        Reviewed by Dean Jackson.
+
+        We had a few internals methods added early on in the Web Animations implementation that are no longer
+        relevant now that the full API is implemented. We can safely remove them now.
+
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::setCurrentTime): Deleted.
+        (WebCore::AnimationTimeline::description): Deleted.
+        * animation/AnimationTimeline.h:
+        (WebCore::AnimationTimeline::currentTime):
+        (WebCore::AnimationTimeline::pause): Deleted.
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::currentTime):
+        (WebCore::DocumentTimeline::pause): Deleted.
+        * animation/DocumentTimeline.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::timelineDescription): Deleted.
+        (WebCore::Internals::pauseTimeline): Deleted.
+        (WebCore::Internals::setTimelineCurrentTime): Deleted.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
+2018-10-26  Antoine Quint  <graouts@apple.com>
+
         Web Inspector: Crash in http/tests/inspector/network/resource-response-source-memory-cache-revalidate-expired-only.html
         https://bugs.webkit.org/show_bug.cgi?id=190955
 

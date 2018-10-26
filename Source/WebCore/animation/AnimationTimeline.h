@@ -51,9 +51,6 @@ public:
     void removeAnimation(Ref<WebAnimation>&&);
     std::optional<double> bindingsCurrentTime();
     virtual std::optional<Seconds> currentTime() { return m_currentTime; }
-    WEBCORE_EXPORT void setCurrentTime(Seconds);
-    WEBCORE_EXPORT String description();
-    virtual void pause() { };
 
     virtual void timingModelDidChange() { };
 

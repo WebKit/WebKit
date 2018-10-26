@@ -46,7 +46,6 @@ public:
     Document* document() const { return m_document.get(); }
 
     std::optional<Seconds> currentTime() override;
-    void pause() override;
 
     void timingModelDidChange() override;
 
@@ -96,7 +95,6 @@ private:
 
     RefPtr<Document> m_document;
     Seconds m_originTime;
-    bool m_paused { false };
     bool m_isSuspended { false };
     bool m_waitingOnVMIdle { false };
     std::optional<Seconds> m_cachedCurrentTime;
