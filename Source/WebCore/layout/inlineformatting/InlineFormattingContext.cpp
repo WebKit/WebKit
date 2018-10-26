@@ -101,17 +101,30 @@ static bool trimLeadingRun(const InlineLineBreaker::Run& run)
     return run.content.style().collapseWhiteSpace();
 }
 
-void InlineFormattingContext::layoutInlineContent(const LayoutContext& layoutContext, InlineFormattingState& inlineFormattingState, const InlineRunProvider& inlineRunProvider) const
+void InlineFormattingContext::initializeNewLine(const LayoutContext& layoutContext, Line& line) const
 {
     auto& formattingRoot = downcast<Container>(root());
     auto& formattingRootDisplayBox = layoutContext.displayBoxForLayoutBox(formattingRoot);
 
     auto lineLogicalLeft = formattingRootDisplayBox.contentBoxLeft();
+    auto lineLogicalTop = line.isFirstLine() ? formattingRootDisplayBox.contentBoxTop() : line.logicalBottom();
     auto availableWidth = formattingRootDisplayBox.contentBoxWidth();
+
+    Display::Box::Rect logicalRect;
+    logicalRect.setTop(lineLogicalTop);
+    logicalRect.setLeft(lineLogicalLeft);
+    logicalRect.setWidth(availableWidth);
+    logicalRect.setHeight(formattingRoot.style().computedLineHeight());
+
+    line.init(logicalRect);
+}
+
+void InlineFormattingContext::layoutInlineContent(const LayoutContext& layoutContext, InlineFormattingState& inlineFormattingState, const InlineRunProvider& inlineRunProvider) const
+{
     auto previousRunPositionIsLineEnd = false;
 
     Line line(inlineFormattingState, root());
-    line.init(lineLogicalLeft, availableWidth);
+    initializeNewLine(layoutContext, line);
 
     InlineLineBreaker lineBreaker(layoutContext, inlineFormattingState.inlineContent(), inlineRunProvider.runs());
     while (auto run = lineBreaker.nextRun(line.contentLogicalRight(), line.availableWidth(), !line.hasContent())) {
@@ -122,7 +135,7 @@ void InlineFormattingContext::layoutInlineContent(const LayoutContext& layoutCon
             // Previous run ended up being at the line end. Adjust the line accordingly.
             if (!previousRunPositionIsLineEnd) {
                 line.close();
-                line.init(lineLogicalLeft, availableWidth);
+                initializeNewLine(layoutContext, line);
             }
             // Skip leading whitespace.
             if (!trimLeadingRun(*run))
@@ -136,7 +149,7 @@ void InlineFormattingContext::layoutInlineContent(const LayoutContext& layoutCon
             line.appendContent(*run);
             // Move over to the next line.
             line.close();
-            line.init(lineLogicalLeft, availableWidth);
+            initializeNewLine(layoutContext, line);
             continue;
         }
 

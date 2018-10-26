@@ -27,6 +27,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "DisplayBox.h"
 #include "FormattingContext.h"
 #include "InlineLineBreaker.h"
 #include <wtf/IsoMalloc.h>
@@ -51,14 +52,19 @@ private:
     public:
         Line(InlineFormattingState&, const Box& formattingRoot);
 
-        void init(LayoutUnit lineLogicalLeft, LayoutUnit availableWidth);
+        void init(const Display::Box::Rect&);
+
         void appendContent(const InlineLineBreaker::Run&);
         enum class LastLine { No, Yes };
         void close(LastLine = LastLine::No);
 
         bool hasContent() const { return m_firstRunIndex.has_value(); }
+        bool isFirstLine() const { return m_isFirstLine; }
         LayoutUnit contentLogicalRight();
         LayoutUnit availableWidth() const { return m_availableWidth; }
+
+        LayoutUnit logicalTop() const { return m_logicalRect.top(); }
+        LayoutUnit logicalBottom() const { return m_logicalRect.bottom(); }
 
     private:
         void justifyRuns();
@@ -75,15 +81,16 @@ private:
         InlineFormattingState& m_formattingState;
         const Box& m_formattingRoot;
 
-        LayoutUnit m_lineLogicalLeft;
+        Display::Box::Rect m_logicalRect;
         LayoutUnit m_availableWidth;
-        LayoutUnit m_lineWidth;
 
         std::optional<unsigned> m_firstRunIndex;
         bool m_alignmentIsJustify { false };
+        bool m_isFirstLine { true };
     };
 
     void layoutInlineContent(const LayoutContext&, InlineFormattingState&, const InlineRunProvider&) const;
+    void initializeNewLine(const LayoutContext&, Line&) const;
 
     void computeWidthAndHeight(const LayoutContext&, const Box&) const;
     void computeStaticPosition(const LayoutContext&, const Box&) const override;

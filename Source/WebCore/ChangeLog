@@ -1,5 +1,24 @@
 2018-10-26  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Add line logical top and bottom
+        https://bugs.webkit.org/show_bug.cgi?id=190934
+
+        Reviewed by Antti Koivisto.
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::initializeNewLine const):
+        (WebCore::Layout::InlineFormattingContext::layoutInlineContent const):
+        * layout/inlineformatting/InlineFormattingContext.h:
+        (WebCore::Layout::InlineFormattingContext::Line::isFirstLine const):
+        (WebCore::Layout::InlineFormattingContext::Line::logicalTop const):
+        (WebCore::Layout::InlineFormattingContext::Line::logicalBottom const):
+        * layout/inlineformatting/Line.cpp:
+        (WebCore::Layout::InlineFormattingContext::Line::init):
+        (WebCore::Layout::InlineFormattingContext::Line::contentLogicalRight):
+        (WebCore::Layout::InlineFormattingContext::Line::close):
+
+2018-10-26  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Find floating constraints for a given vertical position
         https://bugs.webkit.org/show_bug.cgi?id=190928
 

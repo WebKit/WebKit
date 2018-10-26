@@ -40,11 +40,10 @@ InlineFormattingContext::Line::Line(InlineFormattingState& formattingState, cons
 {
 }
 
-void InlineFormattingContext::Line::init(LayoutUnit lineLogicalLeft, LayoutUnit availableWidth)
+void InlineFormattingContext::Line::init(const Display::Box::Rect& logicalRect)
 {
-    m_lineLogicalLeft = lineLogicalLeft;
-    m_lineWidth = availableWidth;
-    m_availableWidth = availableWidth;
+    m_logicalRect = logicalRect;
+    m_availableWidth = logicalRect.width();
 
     m_firstRunIndex = { };
     m_lastRunIsWhitespace = false;
@@ -82,7 +81,7 @@ static bool isTrimmableContent(const InlineRunProvider::Run& inlineRun)
 LayoutUnit InlineFormattingContext::Line::contentLogicalRight()
 {
     if (!m_firstRunIndex.has_value())
-        return m_lineLogicalLeft;
+        return m_logicalRect.left();
 
     return m_formattingState.inlineRuns().last().logicalRight();
 }
@@ -214,12 +213,12 @@ void InlineFormattingContext::Line::close(LastLine isLastLine)
         if (!hasContent())
             return;
 
-        auto adjustedLogicalLeft = adjustedLineLogicalLeft(alignment, m_lineLogicalLeft, m_availableWidth);
-        if (m_lineLogicalLeft == adjustedLogicalLeft)
+        auto adjustedLogicalLeft = adjustedLineLogicalLeft(alignment, m_logicalRect.left(), m_availableWidth);
+        if (m_logicalRect.left() == adjustedLogicalLeft)
             return;
 
         auto& inlineRuns = m_formattingState.inlineRuns();
-        auto delta = adjustedLogicalLeft - m_lineLogicalLeft;
+        auto delta = adjustedLogicalLeft - m_logicalRect.left();
         for (auto runIndex = *m_firstRunIndex; runIndex < inlineRuns.size(); ++runIndex)
             inlineRuns[runIndex].setLogicalLeft(inlineRuns[runIndex].logicalLeft() + delta);
     };
@@ -237,7 +236,9 @@ void InlineFormattingContext::Line::close(LastLine isLastLine)
         }
         textAlignment = TextAlignMode::Left;
     }
+
     alignRuns(textAlignment);
+    m_isFirstLine = false;
 }
 
 }
