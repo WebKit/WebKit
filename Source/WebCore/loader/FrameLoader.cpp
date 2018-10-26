@@ -1461,11 +1461,12 @@ void FrameLoader::load(FrameLoadRequest&& request)
     addSameSiteInfoToRequestIfNeeded(loader->request());
     applyShouldOpenExternalURLsPolicyToNewDocumentLoader(m_frame, loader, request);
 
-    if (request.shouldTreatAsContinuingLoad() && request.lockHistory() == LockHistory::Yes) {
-        // The load we're continuing is a client-side redirect so set things up accordingly.
+    if (request.shouldTreatAsContinuingLoad()) {
         loader->setClientRedirectSourceForHistory(request.clientRedirectSourceForHistory());
-        loader->setIsClientRedirect(true);
-        m_loadType = FrameLoadType::RedirectWithLockedBackForwardList;
+        if (request.lockBackForwardList() == LockBackForwardList::Yes) {
+            loader->setIsClientRedirect(true);
+            m_loadType = FrameLoadType::RedirectWithLockedBackForwardList;
+        }
     }
 
     SetForScope<bool> currentLoadShouldBeTreatedAsContinuingLoadGuard(m_currentLoadShouldBeTreatedAsContinuingLoad, request.shouldTreatAsContinuingLoad());

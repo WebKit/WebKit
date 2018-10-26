@@ -280,6 +280,38 @@ onload = () => {
 </body>
 )PSONRESOURCE";
 
+static const char* navigationWithLockedHistoryBytes = R"PSONRESOURCE(
+<script>
+let shouldNavigate = true;
+window.addEventListener('pageshow', function(event) {
+    if (event.persisted) {
+        window.webkit.messageHandlers.pson.postMessage("Was persisted");
+        shouldNavigate = false;
+    }
+});
+
+onload = function()
+{
+    if (!shouldNavigate)
+        return;
+
+    // JS navigation via window.location
+    setTimeout(() => {
+        location = "pson://www.apple.com/main.html";
+    }, 10);
+}
+</script>
+)PSONRESOURCE";
+
+static const char* pageCache1Bytes = R"PSONRESOURCE(
+<script>
+window.addEventListener('pageshow', function(event) {
+    if (event.persisted)
+        window.webkit.messageHandlers.pson.postMessage("Was persisted");
+});
+</script>
+)PSONRESOURCE";
+
 #if PLATFORM(MAC)
 
 static const char* windowOpenCrossSiteNoOpenerTestBytes = R"PSONRESOURCE(
@@ -1267,6 +1299,87 @@ TEST(ProcessSwap, CrossSiteClientSideRedirectWithPSON)
     runClientSideRedirectTest(ShouldEnablePSON::Yes);
 }
 
+static void runNavigationWithLockedHistoryTest(ShouldEnablePSON shouldEnablePSON)
+{
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().processSwapsOnNavigation = shouldEnablePSON == ShouldEnablePSON::Yes ? YES : NO;
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [handler addMappingFromURLString:@"pson://www.webkit.org/main.html" toData:navigationWithLockedHistoryBytes];
+    [handler addMappingFromURLString:@"pson://www.apple.com/main.html" toData:pageCache1Bytes];
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"pson"];
+
+    auto messageHandler = adoptNS([[PSONMessageHandler alloc] init]);
+    [[webViewConfiguration userContentController] addScriptMessageHandler:messageHandler.get() name:@"pson"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto webkitPID = [webView _webProcessIdentifier];
+
+    // Page redirects to apple.com.
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto applePID = [webView _webProcessIdentifier];
+    if (shouldEnablePSON == ShouldEnablePSON::Yes)
+        EXPECT_NE(webkitPID, applePID);
+    else
+        EXPECT_EQ(webkitPID, applePID);
+
+    auto* backForwardList = [webView backForwardList];
+    EXPECT_WK_STREQ(@"pson://www.apple.com/main.html", [backForwardList.currentItem.URL absoluteString]);
+    EXPECT_TRUE(!backForwardList.forwardItem);
+    EXPECT_EQ(1U, backForwardList.backList.count);
+    EXPECT_WK_STREQ(@"pson://www.webkit.org/main.html", [backForwardList.backItem.URL absoluteString]);
+
+    receivedMessage = false;
+    [webView goBack];
+    TestWebKitAPI::Util::run(&receivedMessage); // Should be restored from PageCache.
+    receivedMessage = false;
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    EXPECT_EQ(webkitPID, [webView _webProcessIdentifier]);
+    EXPECT_WK_STREQ(@"pson://www.webkit.org/main.html", [backForwardList.currentItem.URL absoluteString]);
+    EXPECT_TRUE(!backForwardList.backItem);
+    EXPECT_EQ(1U, backForwardList.forwardList.count);
+    EXPECT_WK_STREQ(@"pson://www.apple.com/main.html", [backForwardList.forwardItem.URL absoluteString]);
+
+    [webView goForward];
+    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&receivedMessage); // Should be restored from PageCache.
+    receivedMessage = false;
+    done = false;
+
+    EXPECT_EQ(applePID, [webView _webProcessIdentifier]);
+
+    EXPECT_WK_STREQ(@"pson://www.apple.com/main.html", [backForwardList.currentItem.URL absoluteString]);
+    EXPECT_TRUE(!backForwardList.forwardItem);
+    EXPECT_EQ(1U, backForwardList.backList.count);
+    EXPECT_WK_STREQ(@"pson://www.webkit.org/main.html", [backForwardList.backItem.URL absoluteString]);
+}
+
+TEST(ProcessSwap, NavigationWithLockedHistoryWithPSON)
+{
+    runNavigationWithLockedHistoryTest(ShouldEnablePSON::Yes);
+}
+
+TEST(ProcessSwap, NavigationWithLockedHistoryWithoutPSON)
+{
+    runNavigationWithLockedHistoryTest(ShouldEnablePSON::No);
+}
+
 static const char* sessionStorageTestBytes = R"PSONRESOURCE(
 <head>
 <script>
@@ -1447,15 +1560,6 @@ TEST(ProcessSwap, ThreePreviousProcessesRemains)
     // But only 4 of those processes should still be alive (1 visible, 3 suspended).
     EXPECT_EQ(4u, [processPool _webProcessCountIgnoringPrewarmed]);
 }
-
-static const char* pageCache1Bytes = R"PSONRESOURCE(
-<script>
-window.addEventListener('pageshow', function(event) {
-    if (event.persisted)
-        window.webkit.messageHandlers.pson.postMessage("Was persisted");
-});
-</script>
-)PSONRESOURCE";
 
 TEST(ProcessSwap, PageCache1)
 {

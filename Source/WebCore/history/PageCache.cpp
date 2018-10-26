@@ -85,6 +85,11 @@ static bool canCacheFrame(Frame& frame, DiagnosticLoggingClient& diagnosticLoggi
         return false;
     }
 
+    if (frame.isMainFrame() && frameLoader.stateMachine().isDisplayingInitialEmptyDocument()) {
+        PCLOG("   -MainFrame is displaying initial empty document");
+        return false;
+    }
+
     DocumentLoader* documentLoader = frameLoader.documentLoader();
     if (!documentLoader) {
         PCLOG("   -There is no DocumentLoader object");

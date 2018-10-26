@@ -1,3 +1,32 @@
+2018-10-25  Chris Dumez  <cdumez@apple.com>
+
+        [PSON] Navigating cross-site with locked history but unlocked back/forward list fails to create a new BackForwardListItem
+        https://bugs.webkit.org/show_bug.cgi?id=190915
+        <rdar://problem/45059069>
+
+        Reviewed by Geoffrey Garen.
+
+        * history/PageCache.cpp:
+        (WebCore::canCacheFrame):
+        Make sure we do not put into PageCache a page whose main frame is showing the initial empty document.
+        We usually do not try to put those into PageCache because we do not have a HistoryItem to save the
+        PageCache entry on. However, when we process-swap on a navigation with the history locked, the new
+        process has a HistoryItem and is initially showing the initial empty document before continuing
+        the load from the previous process. Note that saving the initial empty document in PageCache would
+        lead to crashes later on previous the initial empty document's Window is taken and reused for the
+        next load.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::load):
+        Stop assuming that we're continuing a client-side redirect when lockHistory is Yes. It is
+        lockBackForwardList that is actually Yes when we're doing a client-side redirect.
+
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::checkNavigationPolicy):
+        Stop using calling the completion handler with an invalid URL when the policy decision is 'Suspend' and
+        use 'about:blank' instead. Without this change, FrameLoader::continueLoadAfterNavigationPolicy() would
+        not load 'about:blank' when its AllowNavigationToInvalidURL parameter is No.
+
 2018-10-25  Devin Rousso  <drousso@apple.com>
 
         Fix build after r237431 for platforms that don't support FULLSCREEN_API
