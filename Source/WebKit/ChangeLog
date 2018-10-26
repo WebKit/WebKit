@@ -1,3 +1,13 @@
+2018-10-26  Chris Dumez  <cdumez@apple.com>
+
+        Modernize / Simplify IPC::Connection::sendOutgoingMessage()
+        https://bugs.webkit.org/show_bug.cgi?id=190931
+
+        Reviewed by Alex Christensen.
+
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::Connection::sendOutgoingMessage):
+
 2018-10-26  Jer Noble  <jer.noble@apple.com>
 
         Adopt -setOverrideRouteSharingPolicy:routingContextUID: SPI
