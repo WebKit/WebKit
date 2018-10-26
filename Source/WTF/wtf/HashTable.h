@@ -390,7 +390,7 @@ namespace WTF {
             return it;
         }
 
-        const_iterator random() const { return const_cast<HashTable*>(this)->random().const_iterator(); }
+        const_iterator random() const { return static_cast<const_iterator>(const_cast<HashTable*>(this)->random()); }
 
         unsigned size() const { return m_keyCount; }
         unsigned capacity() const { return m_tableSize; }

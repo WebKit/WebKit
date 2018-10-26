@@ -457,4 +457,13 @@ TEST(WTF_HashSet, DeletedAddressOfOperator)
     set1.remove(10);
 }
 
+TEST(WTF_HashSet, RemoveRandom)
+{
+    HashSet<unsigned> set1 { 1, 2, 3 };
+    set1.remove(set1.random());
+    set1.remove(set1.random());
+    set1.remove(set1.random());
+    ASSERT_TRUE(set1.isEmpty());
+}
+
 } // namespace TestWebKitAPI

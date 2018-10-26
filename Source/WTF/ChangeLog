@@ -1,3 +1,19 @@
+2018-10-26  Antti Koivisto  <antti@apple.com>
+
+        hashSet.remove(hashSet.random()) doesn't build
+        https://bugs.webkit.org/show_bug.cgi?id=190953
+
+        Reviewed by Chris Dumez.
+
+        * wtf/HashSet.h:
+
+        Remove non-const random(). HashSet only returns const iterators (it is immutable via iterator).
+
+        * wtf/HashTable.h:
+        (WTF::HashTable::random const):
+
+        Invoke const_iterator() by using static_cast<> instead of trying to do it directly.
+
 2018-10-26  Alicia Boya García  <aboya@igalia.com>
 
         [MSE][WTF][Media] Invalid MediaTime should be falsy
