@@ -193,7 +193,6 @@ enum JSTokenType {
 struct JSTextPosition {
     JSTextPosition() = default;
     JSTextPosition(int _line, int _offset, int _lineStartOffset) : line(_line), offset(_offset), lineStartOffset(_lineStartOffset) { }
-    JSTextPosition(const JSTextPosition& other) : line(other.line), offset(other.offset), lineStartOffset(other.lineStartOffset) { }
 
     JSTextPosition operator+(int adjustment) const { return JSTextPosition(line, offset + adjustment, lineStartOffset); }
     JSTextPosition operator+(unsigned adjustment) const { return *this + static_cast<int>(adjustment); }
@@ -246,13 +245,6 @@ union JSTokenData {
 
 struct JSTokenLocation {
     JSTokenLocation() = default;
-    JSTokenLocation(const JSTokenLocation& location)
-    {
-        line = location.line;
-        lineStartOffset = location.lineStartOffset;
-        startOffset = location.startOffset;
-        endOffset = location.endOffset;
-    }
 
     int line { 0 };
     unsigned lineStartOffset { 0 };

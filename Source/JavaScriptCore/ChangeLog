@@ -1,3 +1,41 @@
+2018-10-25  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        Unreviewed, partial rolling in r237254
+        https://bugs.webkit.org/show_bug.cgi?id=190340
+
+        We do not use the added function right now to investigate what is the reason of the regression.
+        If it causes the regression, it seems that Parser.cpp's inlining decision seems culprit.
+
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::UnlinkedFunctionExecutable::fromGlobalCode):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseInner):
+        (JSC::Parser<LexerType>::parseSingleFunction):
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        (JSC::Parser<LexerType>::parseFunctionDeclaration):
+        (JSC::Parser<LexerType>::parseAsyncFunctionDeclaration):
+        * parser/Parser.h:
+        (JSC::Parser<LexerType>::parse):
+        (JSC::parse):
+        (JSC::parseFunctionForFunctionConstructor):
+        * parser/ParserModes.h:
+        * parser/ParserTokens.h:
+        (JSC::JSTextPosition::JSTextPosition):
+        (JSC::JSTokenLocation::JSTokenLocation): Deleted.
+        * parser/SourceCodeKey.h:
+        (JSC::SourceCodeKey::SourceCodeKey):
+        (JSC::SourceCodeKey::operator== const):
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getUnlinkedGlobalCodeBlock):
+        (JSC::CodeCache::getUnlinkedGlobalFunctionExecutable):
+        * runtime/CodeCache.h:
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunctionSkippingEvalEnabledCheck):
+        * runtime/FunctionExecutable.cpp:
+        (JSC::FunctionExecutable::fromGlobalCode):
+        * runtime/FunctionExecutable.h:
+
 2018-10-25  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed build fix for Visual Studio 2017
