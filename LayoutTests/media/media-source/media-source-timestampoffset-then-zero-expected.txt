@@ -1,0 +1,59 @@
+
+EXPECTED (source.readyState == 'closed') OK
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock"))
+RUN(sourceBuffer.timestampOffset = 5)
+RUN(sourceBuffer.appendBuffer(makeSimpleAudio(0, 20, 0)))
+EVENT(updateend)
+After first append:
+{PTS({5000/1000 = 5.000000}), DTS({5000/1000 = 5.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(0)}
+{PTS({6000/1000 = 6.000000}), DTS({6000/1000 = 6.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(0)}
+{PTS({7000/1000 = 7.000000}), DTS({7000/1000 = 7.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(0)}
+{PTS({8000/1000 = 8.000000}), DTS({8000/1000 = 8.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(0)}
+{PTS({9000/1000 = 9.000000}), DTS({9000/1000 = 9.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(0)}
+{PTS({10000/1000 = 10.000000}), DTS({10000/1000 = 10.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(0)}
+{PTS({11000/1000 = 11.000000}), DTS({11000/1000 = 11.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(0)}
+{PTS({12000/1000 = 12.000000}), DTS({12000/1000 = 12.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(0)}
+{PTS({13000/1000 = 13.000000}), DTS({13000/1000 = 13.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(0)}
+{PTS({14000/1000 = 14.000000}), DTS({14000/1000 = 14.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(0)}
+{PTS({15000/1000 = 15.000000}), DTS({15000/1000 = 15.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(0)}
+{PTS({16000/1000 = 16.000000}), DTS({16000/1000 = 16.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(0)}
+{PTS({17000/1000 = 17.000000}), DTS({17000/1000 = 17.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(0)}
+{PTS({18000/1000 = 18.000000}), DTS({18000/1000 = 18.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(0)}
+{PTS({19000/1000 = 19.000000}), DTS({19000/1000 = 19.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(0)}
+{PTS({20000/1000 = 20.000000}), DTS({20000/1000 = 20.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(0)}
+{PTS({21000/1000 = 21.000000}), DTS({21000/1000 = 21.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(0)}
+{PTS({22000/1000 = 22.000000}), DTS({22000/1000 = 22.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(0)}
+{PTS({23000/1000 = 23.000000}), DTS({23000/1000 = 23.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(0)}
+{PTS({24000/1000 = 24.000000}), DTS({24000/1000 = 24.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(0)}
+RUN(sourceBuffer.timestampOffset = 0)
+RUN(sourceBuffer.appendBuffer(makeSimpleAudio(0, 20, 1)))
+EVENT(updateend)
+After second append:
+{PTS({0/1000 = 0.000000}), DTS({0/1000 = 0.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(1)}
+{PTS({1000/1000 = 1.000000}), DTS({1000/1000 = 1.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(1)}
+{PTS({2000/1000 = 2.000000}), DTS({2000/1000 = 2.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(1)}
+{PTS({3000/1000 = 3.000000}), DTS({3000/1000 = 3.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(1)}
+{PTS({4000/1000 = 4.000000}), DTS({4000/1000 = 4.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(1)}
+{PTS({5000/1000 = 5.000000}), DTS({5000/1000 = 5.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(1)}
+{PTS({6000/1000 = 6.000000}), DTS({6000/1000 = 6.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(1)}
+{PTS({7000/1000 = 7.000000}), DTS({7000/1000 = 7.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(1)}
+{PTS({8000/1000 = 8.000000}), DTS({8000/1000 = 8.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(1)}
+{PTS({9000/1000 = 9.000000}), DTS({9000/1000 = 9.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(1)}
+{PTS({10000/1000 = 10.000000}), DTS({10000/1000 = 10.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(1)}
+{PTS({11000/1000 = 11.000000}), DTS({11000/1000 = 11.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(1)}
+{PTS({12000/1000 = 12.000000}), DTS({12000/1000 = 12.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(1)}
+{PTS({13000/1000 = 13.000000}), DTS({13000/1000 = 13.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(1)}
+{PTS({14000/1000 = 14.000000}), DTS({14000/1000 = 14.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(1)}
+{PTS({15000/1000 = 15.000000}), DTS({15000/1000 = 15.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(1)}
+{PTS({16000/1000 = 16.000000}), DTS({16000/1000 = 16.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(1)}
+{PTS({17000/1000 = 17.000000}), DTS({17000/1000 = 17.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(1)}
+{PTS({18000/1000 = 18.000000}), DTS({18000/1000 = 18.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(1)}
+{PTS({19000/1000 = 19.000000}), DTS({19000/1000 = 19.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(1)}
+{PTS({20000/1000 = 20.000000}), DTS({20000/1000 = 20.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(0)}
+{PTS({21000/1000 = 21.000000}), DTS({21000/1000 = 21.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(0)}
+{PTS({22000/1000 = 22.000000}), DTS({22000/1000 = 22.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(0)}
+{PTS({23000/1000 = 23.000000}), DTS({23000/1000 = 23.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(0)}
+{PTS({24000/1000 = 24.000000}), DTS({24000/1000 = 24.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(0)}
+END OF TEST
+

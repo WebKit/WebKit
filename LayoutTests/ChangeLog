@@ -1,3 +1,15 @@
+2018-10-26  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][WTF][Media] Invalid MediaTime should be falsy
+        https://bugs.webkit.org/show_bug.cgi?id=190893
+
+        Reviewed by Jer Noble.
+
+        A test is added that replicates a bug fixed by this patch.
+
+        * media/media-source/media-source-timestampoffset-then-zero-expected.txt: Added.
+        * media/media-source/media-source-timestampoffset-then-zero.html: Added.
+
 2018-10-26  Ali Juma  <ajuma@chromium.org>
 
         REGRESSION (r237255): Text selection is broken in form fields

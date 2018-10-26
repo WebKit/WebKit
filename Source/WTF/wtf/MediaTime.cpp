@@ -328,13 +328,15 @@ MediaTime MediaTime::operator*(int32_t rhs) const
 bool MediaTime::operator!() const
 {
     return (m_timeFlags == Valid && !m_timeValue)
-        || (m_timeFlags == (Valid | DoubleValue) && !m_timeValueAsDouble);
+        || (m_timeFlags == (Valid | DoubleValue) && !m_timeValueAsDouble)
+        || isInvalid();
 }
 
 MediaTime::operator bool() const
 {
     return !(m_timeFlags == Valid && !m_timeValue)
-        && !(m_timeFlags == (Valid | DoubleValue) && !m_timeValueAsDouble);
+        && !(m_timeFlags == (Valid | DoubleValue) && !m_timeValueAsDouble)
+        && !isInvalid();
 }
 
 MediaTime::ComparisonFlags MediaTime::compare(const MediaTime& rhs) const

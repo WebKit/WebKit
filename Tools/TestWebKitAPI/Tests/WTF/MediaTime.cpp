@@ -93,6 +93,10 @@ TEST(WTF, MediaTime)
     EXPECT_EQ(MediaTime(-8, 10) >= MediaTime(-1, 1), true);
     EXPECT_TRUE((bool)MediaTime(1, 1));
     EXPECT_TRUE(!MediaTime(0, 1));
+    EXPECT_TRUE(!MediaTime::invalidTime());
+    EXPECT_TRUE(!MediaTime::createWithDouble(0.0, 1));
+    EXPECT_FALSE(!MediaTime(1, 1));
+    EXPECT_FALSE((bool)MediaTime::invalidTime());
 
     // Addition Operators
     EXPECT_EQ(MediaTime::positiveInfiniteTime() + MediaTime::positiveInfiniteTime(), MediaTime::positiveInfiniteTime());

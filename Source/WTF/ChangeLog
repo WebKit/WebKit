@@ -1,3 +1,17 @@
+2018-10-26  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][WTF][Media] Invalid MediaTime should be falsy
+        https://bugs.webkit.org/show_bug.cgi?id=190893
+
+        Reviewed by Jer Noble.
+
+        This patch modifies the definition of MediaTime so that invalid times
+        are evaluated to false in the context of a boolean expression.
+
+        * wtf/MediaTime.cpp:
+        (WTF::MediaTime::operator! const):
+        (WTF::MediaTime::operator bool const):
+
 2018-10-26  Keith Miller  <keith_miller@apple.com>
 
         Some internal projects include wtf headers and build with C++11

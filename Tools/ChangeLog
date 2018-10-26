@@ -1,3 +1,16 @@
+2018-10-26  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][WTF][Media] Invalid MediaTime should be falsy
+        https://bugs.webkit.org/show_bug.cgi?id=190893
+
+        Reviewed by Jer Noble.
+
+        This patch adds additional API tests for the conversions from
+        MediaTime to boolean.
+
+        * TestWebKitAPI/Tests/WTF/MediaTime.cpp:
+        (TestWebKitAPI::TEST):
+
 2018-10-25  Chris Dumez  <cdumez@apple.com>
 
         [PSON] Navigating cross-site with locked history but unlocked back/forward list fails to create a new BackForwardListItem
