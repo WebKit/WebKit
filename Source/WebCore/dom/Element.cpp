@@ -1962,10 +1962,9 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
         document().accessSVGExtensions().removeElementFromPendingResources(this);
 
     RefPtr<Frame> frame = document().frame();
-    if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
-        if (auto* timeline = document().existingTimeline())
-            timeline->elementWasRemoved(*this);
-    } else if (frame)
+    if (auto* timeline = document().existingTimeline())
+        timeline->elementWasRemoved(*this);
+    if (frame)
         frame->animation().cancelAnimations(*this);
 
 #if PLATFORM(MAC)

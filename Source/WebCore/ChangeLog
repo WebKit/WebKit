@@ -1,3 +1,25 @@
+2018-10-26  Antoine Quint  <graouts@apple.com>
+
+        Web Inspector: Crash in http/tests/inspector/network/resource-response-source-memory-cache-revalidate-expired-only.html
+        https://bugs.webkit.org/show_bug.cgi?id=190955
+
+        Reviewed by Dean Jackson.
+
+        We can get in situations when running tests where runtime flags are not consistent throughout the time a test is run since
+        showing the Web Inspector can cause flags to be re-set after the initial test was loaded. As such, to avoid crashes due to
+        the ASSERT(!frame().animation().hasAnimations()) in FrameView::didDestroyRenderTree(), we now cancel animations upon teardown
+        no matter what the value of the runtime flag for the Web Animations CSS Integration on both the DocumentTimeline (if it exists)
+        and the CSSAnimationController.
+
+        * dom/Element.cpp:
+        (WebCore::Element::removedFromAncestor):
+        * dom/PseudoElement.cpp:
+        (WebCore::PseudoElement::clearHostElement):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::didDestroyRenderTree):
+        * rendering/updating/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::tearDownRenderers):
+
 2018-10-26  Timothy Hatcher  <timothy@apple.com>
 
         Use dark appearance scrollbar when page background is dark or document supports dark mode.

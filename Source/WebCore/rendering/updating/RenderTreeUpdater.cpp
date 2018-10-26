@@ -555,15 +555,13 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
             auto& element = *teardownStack.takeLast();
 
             if (teardownType == TeardownType::Full || teardownType == TeardownType::RendererUpdateCancelingAnimations) {
-                if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
-                    if (timeline) {
-                        if (document.renderTreeBeingDestroyed())
-                            timeline->elementWasRemoved(element);
-                        else if (teardownType == TeardownType::RendererUpdateCancelingAnimations)
-                            timeline->cancelDeclarativeAnimationsForElement(element);
-                    }
-                } else
-                    animationController.cancelAnimations(element);
+                if (timeline) {
+                    if (document.renderTreeBeingDestroyed())
+                        timeline->elementWasRemoved(element);
+                    else if (teardownType == TeardownType::RendererUpdateCancelingAnimations)
+                        timeline->cancelDeclarativeAnimationsForElement(element);
+                }
+                animationController.cancelAnimations(element);
             }
 
             if (teardownType == TeardownType::Full)
