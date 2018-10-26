@@ -104,9 +104,7 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
         this._panel.markAsNeedsRefresh(domNode);
 
         this._updatePseudoClassCheckboxes();
-
-        if (!this._classListContainer.hidden)
-            this._populateClassToggles();
+        this._populateClassToggles();
     }
 
     addEventListeners()
@@ -324,9 +322,6 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
         this._classToggleButton.classList.toggle("selected");
         this._classListContainer.hidden = !this._classListContainer.hidden;
         this._classListContainerToggledSetting.value = !this._classListContainer.hidden;
-        if (this._classListContainer.hidden)
-            return;
-
         this._populateClassToggles();
     }
 
@@ -353,6 +348,9 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
 
     _populateClassToggles()
     {
+        if (!this._classListContainer || this._classListContainer.hidden)
+            return;
+
         // Ensure that _addClassContainer is the first child of _classListContainer.
         while (this._classListContainer.children.length > 1)
             this._classListContainer.children[1].remove();
