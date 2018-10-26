@@ -55,6 +55,10 @@ private:
         void init(const Display::Box::Rect&);
 
         void appendContent(const InlineLineBreaker::Run&);
+
+        void adjustLogicalLeft(LayoutUnit delta);
+        void adjustLogicalRight(LayoutUnit delta);
+
         enum class LastLine { No, Yes };
         void close(LastLine = LastLine::No);
 
@@ -90,7 +94,7 @@ private:
     };
 
     void layoutInlineContent(const LayoutContext&, InlineFormattingState&, const InlineRunProvider&) const;
-    void initializeNewLine(const LayoutContext&, Line&) const;
+    void initializeNewLine(const LayoutContext&, InlineFormattingState&, Line&) const;
 
     void computeWidthAndHeight(LayoutContext&, const Box&) const;
     void computeFloatPosition(const LayoutContext&, const FloatingContext&, Line&, const Box&) const;

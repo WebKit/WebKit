@@ -43,6 +43,7 @@ struct InlineRun {
     void setWidth(LayoutUnit width) { m_width = width; }
     void setLogicalLeft(LayoutUnit logicalLeft) { m_logicalLeft = logicalLeft; }
     void setLogicalRight(LayoutUnit logicalRight) { m_width -= (this->logicalRight() - logicalRight); }
+    void moveHorizontally(LayoutUnit delta) { m_logicalLeft += delta; }
 
     struct ExpansionOpportunity {
         unsigned count { 0 };

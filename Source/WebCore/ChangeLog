@@ -1,5 +1,22 @@
 2018-10-26  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Adjust current line with float constraints.
+        https://bugs.webkit.org/show_bug.cgi?id=190940
+
+        Reviewed by Antti Koivisto.
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::initializeNewLine const):
+        (WebCore::Layout::InlineFormattingContext::layoutInlineContent const):
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/inlineformatting/InlineRun.h:
+        (WebCore::Layout::InlineRun::moveHorizontally):
+        * layout/inlineformatting/Line.cpp:
+        (WebCore::Layout::InlineFormattingContext::Line::adjustLogicalLeft):
+        (WebCore::Layout::InlineFormattingContext::Line::adjustLogicalRight):
+
+2018-10-26  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Compute float box size and position
         https://bugs.webkit.org/show_bug.cgi?id=190938
 

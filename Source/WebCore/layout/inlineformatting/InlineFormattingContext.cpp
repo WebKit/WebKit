@@ -101,7 +101,7 @@ static bool trimLeadingRun(const InlineLineBreaker::Run& run)
     return run.content.style().collapseWhiteSpace();
 }
 
-void InlineFormattingContext::initializeNewLine(const LayoutContext& layoutContext, Line& line) const
+void InlineFormattingContext::initializeNewLine(const LayoutContext& layoutContext, InlineFormattingState& inlineFormattingState, Line& line) const
 {
     auto& formattingRoot = downcast<Container>(root());
     auto& formattingRootDisplayBox = layoutContext.displayBoxForLayoutBox(formattingRoot);
@@ -109,6 +109,31 @@ void InlineFormattingContext::initializeNewLine(const LayoutContext& layoutConte
     auto lineLogicalLeft = formattingRootDisplayBox.contentBoxLeft();
     auto lineLogicalTop = line.isFirstLine() ? formattingRootDisplayBox.contentBoxTop() : line.logicalBottom();
     auto availableWidth = formattingRootDisplayBox.contentBoxWidth();
+
+    // Check for intruding floats and adjust logical left/available width for this line accordingly.
+    auto& floatingState = inlineFormattingState.floatingState();
+    if (!floatingState.isEmpty()) {
+        auto floatConstraints = floatingState.constraints(lineLogicalTop, formattingRoot);
+        // Check if these constraints actually put limitation on the line.
+        if (floatConstraints.left && *floatConstraints.left <= formattingRootDisplayBox.contentBoxLeft())
+            floatConstraints.left = { };
+
+        if (floatConstraints.right && *floatConstraints.right >= formattingRootDisplayBox.contentBoxRight())
+            floatConstraints.right = { };
+
+        if (floatConstraints.left && floatConstraints.right) {
+            ASSERT(*floatConstraints.left < *floatConstraints.right);
+            availableWidth = *floatConstraints.right - *floatConstraints.left;
+            lineLogicalLeft = *floatConstraints.left;
+        } else if (floatConstraints.left) {
+            ASSERT(*floatConstraints.left > lineLogicalLeft);
+            availableWidth -= (*floatConstraints.left - lineLogicalLeft);
+            lineLogicalLeft = *floatConstraints.left;
+        } else if (floatConstraints.right) {
+            ASSERT(*floatConstraints.right > lineLogicalLeft);
+            availableWidth = *floatConstraints.right - lineLogicalLeft;
+        }
+    }
 
     Display::Box::Rect logicalRect;
     logicalRect.setTop(lineLogicalTop);
@@ -124,7 +149,7 @@ void InlineFormattingContext::layoutInlineContent(const LayoutContext& layoutCon
     auto previousRunPositionIsLineEnd = false;
 
     Line line(inlineFormattingState, root());
-    initializeNewLine(layoutContext, line);
+    initializeNewLine(layoutContext, inlineFormattingState, line);
 
     InlineLineBreaker lineBreaker(layoutContext, inlineFormattingState.inlineContent(), inlineRunProvider.runs());
     while (auto run = lineBreaker.nextRun(line.contentLogicalRight(), line.availableWidth(), !line.hasContent())) {
@@ -135,7 +160,7 @@ void InlineFormattingContext::layoutInlineContent(const LayoutContext& layoutCon
             // Previous run ended up being at the line end. Adjust the line accordingly.
             if (!previousRunPositionIsLineEnd) {
                 line.close();
-                initializeNewLine(layoutContext, line);
+                initializeNewLine(layoutContext, inlineFormattingState, line);
             }
             // Skip leading whitespace.
             if (!trimLeadingRun(*run))
@@ -149,7 +174,7 @@ void InlineFormattingContext::layoutInlineContent(const LayoutContext& layoutCon
             line.appendContent(*run);
             // Move over to the next line.
             line.close();
-            initializeNewLine(layoutContext, line);
+            initializeNewLine(layoutContext, inlineFormattingState, line);
             continue;
         }
 

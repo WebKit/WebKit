@@ -51,6 +51,25 @@ void InlineFormattingContext::Line::init(const Display::Box::Rect& logicalRect)
     m_trailingTrimmableContent = { };
 }
 
+void InlineFormattingContext::Line::adjustLogicalLeft(LayoutUnit delta)
+{
+    m_availableWidth -= delta;
+    m_logicalRect.shiftLeftTo(m_logicalRect.left() + delta);
+
+    if (!m_firstRunIndex)
+        return;
+
+    auto& inlineRuns = m_formattingState.inlineRuns();
+    for (auto runIndex = *m_firstRunIndex; runIndex < inlineRuns.size(); ++runIndex)
+        inlineRuns[runIndex].moveHorizontally(delta);
+}
+
+void InlineFormattingContext::Line::adjustLogicalRight(LayoutUnit delta)
+{
+    m_availableWidth -= delta;
+    m_logicalRect.shiftRightTo(m_logicalRect.right() - delta);
+}
+
 static LayoutUnit adjustedLineLogicalLeft(TextAlignMode align, LayoutUnit lineLogicalLeft, LayoutUnit remainingWidth)
 {
     switch (align) {
