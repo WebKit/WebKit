@@ -1238,7 +1238,7 @@ static bool shouldAutoActivateFontIfNeeded(const AtomicString& family)
     static const unsigned maxCacheSize = 128;
     ASSERT(knownFamilies.get().size() <= maxCacheSize);
     if (knownFamilies.get().size() == maxCacheSize)
-        knownFamilies.get().remove(knownFamilies.get().begin());
+        knownFamilies.get().remove(knownFamilies.get().random());
 
     // Only attempt to auto-activate fonts once for performance reasons.
     return knownFamilies.get().add(family).isNewEntry;

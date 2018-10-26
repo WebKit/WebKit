@@ -2282,7 +2282,7 @@ void WebProcessPool::didCollectPrewarmInformation(const String& registrableDomai
 {
     static const size_t maximumSizeToPreventUnlimitedGrowth = 100;
     if (m_prewarmInformationPerRegistrableDomain.size() == maximumSizeToPreventUnlimitedGrowth)
-        m_prewarmInformationPerRegistrableDomain.remove(m_prewarmInformationPerRegistrableDomain.begin());
+        m_prewarmInformationPerRegistrableDomain.remove(m_prewarmInformationPerRegistrableDomain.random());
 
     auto& value = m_prewarmInformationPerRegistrableDomain.ensure(registrableDomain, [] {
         return std::make_unique<WebCore::PrewarmInformation>();

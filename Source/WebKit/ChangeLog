@@ -1,3 +1,13 @@
+2018-10-26  Antti Koivisto  <antti@apple.com>
+
+        Use random() instead of begin() to limit cache sizes
+        https://bugs.webkit.org/show_bug.cgi?id=190957
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::didCollectPrewarmInformation):
+
 2018-10-26  Chris Dumez  <cdumez@apple.com>
 
         Modernize / Simplify IPC::Connection::sendOutgoingMessage()

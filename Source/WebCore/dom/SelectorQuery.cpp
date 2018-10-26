@@ -631,7 +631,7 @@ ExceptionOr<SelectorQuery&> SelectorQueryCache::add(const String& selectors, Doc
 
     const int maximumSelectorQueryCacheSize = 256;
     if (m_entries.size() == maximumSelectorQueryCacheSize)
-        m_entries.remove(m_entries.begin());
+        m_entries.remove(m_entries.random());
 
     return *m_entries.add(selectors, std::make_unique<SelectorQuery>(WTFMove(selectorList))).iterator->value;
 }

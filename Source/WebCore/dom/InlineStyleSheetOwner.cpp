@@ -218,8 +218,9 @@ void InlineStyleSheetOwner::createSheet(Element& element, const String& text)
         // Prevent pathological growth.
         const size_t maximumInlineStyleSheetCacheSize = 50;
         if (inlineStyleSheetCache().size() > maximumInlineStyleSheetCacheSize) {
-            inlineStyleSheetCache().begin()->value->removedFromMemoryCache();
-            inlineStyleSheetCache().remove(inlineStyleSheetCache().begin());
+            auto toRemove = inlineStyleSheetCache().random();
+            toRemove->value->removedFromMemoryCache();
+            inlineStyleSheetCache().remove(toRemove);
         }
     }
 }

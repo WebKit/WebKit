@@ -59,7 +59,7 @@ String topPrivatelyControlledDomain(const String& domain)
 
     constexpr auto maximumSizeToPreventUnlimitedGrowth = 128;
     if (cache.get().size() == maximumSizeToPreventUnlimitedGrowth)
-        cache.get().clear();
+        cache.get().remove(cache.get().random());
 
     return cache.get().ensure(isolatedDomain, [&isolatedDomain] {
         const auto lowercaseDomain = isolatedDomain.convertToASCIILowercase();
