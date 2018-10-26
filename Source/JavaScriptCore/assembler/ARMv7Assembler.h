@@ -2055,8 +2055,7 @@ public:
         return OP_NOP_T2a | (OP_NOP_T2b << 16);
     }
 
-    template <typename CopyFunction>
-    static void fillNops(void* base, size_t size, CopyFunction copy)
+    static void fillNops(void* base, size_t size, bool isCopyingToExecutableMemory)
     {
         RELEASE_ASSERT(!(size % sizeof(int16_t)));
 
@@ -2064,7 +2063,10 @@ public:
         const size_t num32s = size / sizeof(int32_t);
         for (size_t i = 0; i < num32s; i++) {
             const int32_t insn = nopPseudo32();
-            copy(ptr, &insn, sizeof(int32_t));
+            if (isCopyingToExecutableMemory)
+                performJITMemcpy(ptr, &insn, sizeof(int32_t));
+            else
+                memcpy(ptr, &insn, sizeof(int32_t));
             ptr += sizeof(int32_t);
         }
 
@@ -2073,7 +2075,10 @@ public:
         ASSERT(num16s * sizeof(int16_t) + num32s * sizeof(int32_t) == size);
         if (num16s) {
             const int16_t insn = nopPseudo16();
-            copy(ptr, &insn, sizeof(int16_t));
+            if (isCopyingToExecutableMemory)
+                performJITMemcpy(ptr, &insn, sizeof(int16_t));
+            else
+                memcpy(ptr, &insn, sizeof(int16_t));
         }
     }
 
@@ -2240,6 +2245,7 @@ public:
         }
     }
 
+    void* unlinkedCode() { return m_formatter.data(); }
     size_t codeSize() const { return m_formatter.codeSize(); }
 
     static unsigned getCallReturnOffset(AssemblerLabel call)
