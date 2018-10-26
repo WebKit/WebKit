@@ -962,6 +962,7 @@ protected:
 private:
     friend class LLIntOffsetsExtractor;
 
+    void fireWatchpointAndMakeAllArrayStructuresSlowPut(VM&);
     void setGlobalThis(VM&, JSObject* globalThis);
 
     JS_EXPORT_PRIVATE void init(VM&);

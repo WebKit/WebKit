@@ -59,6 +59,29 @@ inline Structure* Structure::create(VM& vm, Structure* previous, DeferredStructu
     return newStructure;
 }
 
+inline bool Structure::mayInterceptIndexedAccesses() const
+{
+    if (indexingModeIncludingHistory() & MayHaveIndexedAccessors)
+        return true;
+
+    // Consider a scenario where object O (of global G1)'s prototype is set to A
+    // (of global G2), and G2 is already having a bad time. If an object B with
+    // indexed accessors is then set as the prototype of A:
+    //      O -> A -> B
+    // Then, O should be converted to SlowPutArrayStorage (because it now has an
+    // object with indexed accessors in its prototype chain). But it won't be
+    // converted because this conversion is done by JSGlobalObject::haveAbadTime(),
+    // but G2 is already having a bad time. We solve this by conservatively
+    // treating A as potentially having indexed accessors if its global is already
+    // having a bad time. Hence, when A is set as O's prototype, O will be
+    // converted to SlowPutArrayStorage.
+
+    JSGlobalObject* globalObject = this->globalObject();
+    if (!globalObject)
+        return false;
+    return globalObject->isHavingABadTime();
+}
+
 inline JSObject* Structure::storedPrototypeObject() const
 {
     ASSERT(hasMonoProto());
