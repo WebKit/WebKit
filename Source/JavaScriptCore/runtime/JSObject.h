@@ -159,11 +159,8 @@ public:
     bool setPrototype(VM&, ExecState*, JSValue prototype, bool shouldThrowIfCantSet = false);
     JS_EXPORT_PRIVATE static bool setPrototype(JSObject*, ExecState*, JSValue prototype, bool shouldThrowIfCantSet);
         
-    bool mayInterceptIndexedAccesses(VM& vm)
-    {
-        return structure(vm)->mayInterceptIndexedAccesses();
-    }
-        
+    inline bool mayInterceptIndexedAccesses(VM&);
+
     JSValue get(ExecState*, PropertyName) const;
     JSValue get(ExecState*, unsigned propertyName) const;
 

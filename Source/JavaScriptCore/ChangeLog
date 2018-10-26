@@ -1,3 +1,122 @@
+2018-10-26  Mark Lam  <mark.lam@apple.com>
+
+        Fix missing edge cases with JSGlobalObjects having a bad time.
+        https://bugs.webkit.org/show_bug.cgi?id=189028
+        <rdar://problem/45204939>
+
+        Reviewed by Saam Barati.
+
+        Consider the following scenario:
+
+            let object O1 (of global G1) have an indexing type that is not SlowPut.
+            let global G2 have a bad time.
+            let object O2 (of global G2) be set as the prototype of O1.
+            let object O3 (of global G2) have indexed accessors.
+
+        In the existing code, if we set O3 as O2's prototype, we'll have a bug where
+        O1 will not be made aware that that there are indexed accessors in its prototype
+        chain.
+
+        In this patch, we solve this issue by introducing a new invariant:
+
+            A prototype chain is considered to possibly have indexed accessors if any
+            object in the chain belongs to a global object that is having a bad time.
+
+        We apply this invariant as follows:
+
+        1. Enhance JSGlobalObject::haveABadTime() to also check if other global objects are
+           affected by it having a bad time.  If so, it also ensures that those affected
+           global objects have a bad time.
+
+           The original code for JSGlobalObject::haveABadTime() uses a ObjectsWithBrokenIndexingFinder
+           to find all objects affected by the global object having a bad time.  We enhance
+           ObjectsWithBrokenIndexingFinder to also check for the possibility that any global
+           objects may be affected by other global objects having a bad time i.e.
+
+                let g1 = global1
+                let g2 = global2
+                let o1 = an object in g1
+                let o2 = an object in g2
+
+                let g1 have a bad time
+                g2 is affected if
+                    o1 is in the prototype chain of o2,
+                    and o2 may be a prototype.
+
+           If the ObjectsWithBrokenIndexingFinder does find the possibility of other global
+           objects being affected, it will abort its heap scan and let haveABadTime() take
+           a slow path to do a more complete multi global object scan.
+
+           The slow path works as follows:
+
+           1. Iterate the heap and record the graph of all global object dependencies.
+
+              For each global object, record the list of other global objects that are
+              affected by it.
+
+           2. Compute a list of global objects that need to have a bad time using the
+              current global object dependency graph.
+
+           3. For each global object in the list of affected global objects, fire their
+              HaveABadTime watchpoint and convert all their array structures to the
+              SlowPut alternatives.
+
+           4. Re-run ObjectsWithBrokenIndexingFinder to find all objects that are affected
+              by any of the globals in the list from (2).
+
+        2. Enhance Structure::mayInterceptIndexedAccesses() to also return true if the
+           structure's global object is having a bad time.
+
+        Note: there are 3 scenarios that we need to consider:
+
+            let g1 = global1
+            let g2 = global2
+            let o1 = an object in g1
+            let o2 = an object in g2
+
+            Scenario 1: o2 is a prototype, and
+                        g1 has a bad time after o1 is inserted into the o2's prototype chain.
+
+            Scenario 2: o2 is a prototype, and
+                        o1 is inserted into the o2's prototype chain after g1 has a bad time.
+
+            Scenario 3: o2 is NOT a prototype, and
+                        o1 is inserted into the o2's prototype chain after g1 has a bad time.
+
+            For scenario 1, when g1 has a bad time, we need to also make sure g2 has
+            a bad time.  This is handled by enhancement 1 above.
+
+            For scenario 2, when o1 is inserted into o2's prototype chain, we need to check
+            if o1's global object has a bad time.  If so, then we need to make sure o2's
+            global also has a bad time (because o2 is a prototype) and convert o2's
+            storage type to SlowPut.  This is handled by enhancement 2 above in conjunction
+            with JSObject::setPrototypeDirect().
+
+            For scenario 3, when o1 is inserted into o2's prototype chain, we need to check
+            if o1's global object has a bad time.  If so, then we only need to convert o2's
+            storage type to SlowPut (because o2 is NOT a prototype).  This is handled by
+            enhancement 2 above.
+
+        3. Also add $vm.isHavingABadTime(), $vm.createGlobalObject() to enable us to
+           write some tests for this issue.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::fireWatchpointAndMakeAllArrayStructuresSlowPut):
+        (JSC::JSGlobalObject::haveABadTime):
+        * runtime/JSGlobalObject.h:
+        * runtime/JSObject.h:
+        (JSC::JSObject::mayInterceptIndexedAccesses): Deleted.
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::mayInterceptIndexedAccesses):
+        * runtime/Structure.h:
+        * runtime/StructureInlines.h:
+        (JSC::Structure::mayInterceptIndexedAccesses const):
+        * tools/JSDollarVM.cpp:
+        (JSC::functionHaveABadTime):
+        (JSC::functionIsHavingABadTime):
+        (JSC::functionCreateGlobalObject):
+        (JSC::JSDollarVM::finishCreation):
+
 2018-10-26  Keith Miller  <keith_miller@apple.com>
 
         JSC xcconfig should set DEFINES_MODULE

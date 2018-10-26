@@ -1165,22 +1165,108 @@ static inline JSObject* lastInPrototypeChain(VM& vm, JSObject* object)
 // Private namespace for helpers for JSGlobalObject::haveABadTime()
 namespace {
 
+class GlobalObjectDependencyFinder : public MarkedBlock::VoidFunctor {
+public:
+    GlobalObjectDependencyFinder(VM& vm)
+        : m_vm(vm)
+    { }
+
+    IterationStatus operator()(HeapCell*, HeapCell::Kind) const;
+
+    void addDependency(JSGlobalObject* key, JSGlobalObject* dependent);
+    HashSet<JSGlobalObject*>* dependentsFor(JSGlobalObject* key);
+
+private:
+    void visit(JSObject*);
+
+    VM& m_vm;
+    HashMap<JSGlobalObject*, HashSet<JSGlobalObject*>> m_dependencies;
+};
+
+inline void GlobalObjectDependencyFinder::addDependency(JSGlobalObject* key, JSGlobalObject* dependent)
+{
+    auto keyResult = m_dependencies.add(key, HashSet<JSGlobalObject*>());
+    keyResult.iterator->value.add(dependent);
+}
+
+inline HashSet<JSGlobalObject*>* GlobalObjectDependencyFinder::dependentsFor(JSGlobalObject* key)
+{
+    auto iterator = m_dependencies.find(key);
+    if (iterator == m_dependencies.end())
+        return nullptr;
+    return &iterator->value;
+}
+
+inline void GlobalObjectDependencyFinder::visit(JSObject* object)
+{
+    VM& vm = m_vm;
+
+    if (!object->mayBePrototype())
+        return;
+
+    JSObject* current = object;
+    JSGlobalObject* objectGlobalObject = object->globalObject(vm);
+    do {
+        JSValue prototypeValue = current->getPrototypeDirect(vm);
+        if (prototypeValue.isNull())
+            return;
+        current = asObject(prototypeValue);
+
+        JSGlobalObject* protoGlobalObject = current->globalObject(vm);
+        if (protoGlobalObject != objectGlobalObject)
+            addDependency(protoGlobalObject, objectGlobalObject);
+    } while (true);
+}
+
+IterationStatus GlobalObjectDependencyFinder::operator()(HeapCell* cell, HeapCell::Kind kind) const
+{
+    if (isJSCellKind(kind) && static_cast<JSCell*>(cell)->isObject()) {
+        // FIXME: This const_cast exists because this isn't a C++ lambda.
+        // https://bugs.webkit.org/show_bug.cgi?id=159644
+        const_cast<GlobalObjectDependencyFinder*>(this)->visit(jsCast<JSObject*>(static_cast<JSCell*>(cell)));
+    }
+    return IterationStatus::Continue;
+}
+
+enum class BadTimeFinderMode {
+    SingleGlobal,
+    MultipleGlobals
+};
+
+template<BadTimeFinderMode mode>
 class ObjectsWithBrokenIndexingFinder : public MarkedBlock::VoidFunctor {
 public:
-    ObjectsWithBrokenIndexingFinder(MarkedArgumentBuffer&, JSGlobalObject*);
+    ObjectsWithBrokenIndexingFinder(VM&, Vector<JSObject*>&, JSGlobalObject*);
+    ObjectsWithBrokenIndexingFinder(VM&, Vector<JSObject*>&, HashSet<JSGlobalObject*>&);
+
+    bool needsMultiGlobalsScan() const { return m_needsMultiGlobalsScan; }
     IterationStatus operator()(HeapCell*, HeapCell::Kind) const;
 
 private:
-    void visit(JSCell*);
+    IterationStatus visit(JSObject*);
 
-    MarkedArgumentBuffer& m_foundObjects;
-    JSGlobalObject* m_globalObject;
+    VM& m_vm;
+    Vector<JSObject*>& m_foundObjects;
+    JSGlobalObject* m_globalObject { nullptr }; // Only used for SingleBadTimeGlobal mode.
+    HashSet<JSGlobalObject*>* m_globalObjects { nullptr }; // Only used for BadTimeGlobalGraph mode;
+    bool m_needsMultiGlobalsScan { false };
 };
 
-ObjectsWithBrokenIndexingFinder::ObjectsWithBrokenIndexingFinder(
-    MarkedArgumentBuffer& foundObjects, JSGlobalObject* globalObject)
-    : m_foundObjects(foundObjects)
+template<>
+ObjectsWithBrokenIndexingFinder<BadTimeFinderMode::SingleGlobal>::ObjectsWithBrokenIndexingFinder(
+    VM& vm, Vector<JSObject*>& foundObjects, JSGlobalObject* globalObject)
+    : m_vm(vm)
+    , m_foundObjects(foundObjects)
     , m_globalObject(globalObject)
+{
+}
+
+template<>
+ObjectsWithBrokenIndexingFinder<BadTimeFinderMode::MultipleGlobals>::ObjectsWithBrokenIndexingFinder(
+    VM& vm, Vector<JSObject*>& foundObjects, HashSet<JSGlobalObject*>& globalObjects)
+    : m_vm(vm)
+    , m_foundObjects(foundObjects)
+    , m_globalObjects(&globalObjects)
 {
 }
 
@@ -1195,21 +1281,38 @@ inline bool hasBrokenIndexing(JSObject* object)
     return hasBrokenIndexing(type);
 }
 
-inline void ObjectsWithBrokenIndexingFinder::visit(JSCell* cell)
+template<BadTimeFinderMode mode>
+inline IterationStatus ObjectsWithBrokenIndexingFinder<mode>::visit(JSObject* object)
 {
-    if (!cell->isObject())
-        return;
-    
-    VM& vm = m_globalObject->vm();
+    VM& vm = m_vm;
 
     // We only want to have a bad time in the affected global object, not in the entire
     // VM. But we have to be careful, since there may be objects that claim to belong to
     // a different global object that have prototypes from our global object.
-    auto isInEffectedGlobalObject = [&] (JSObject* object) {
-        for (JSObject* current = object; ;) {
-            if (current->globalObject(vm) == m_globalObject)
+    auto isInAffectedGlobalObject = [&] (JSObject* object) {
+        JSGlobalObject* objectGlobalObject { nullptr };
+        bool objectMayBePrototype { false };
+
+        if (mode == BadTimeFinderMode::SingleGlobal) {
+            objectGlobalObject = object->globalObject(vm);
+            if (objectGlobalObject == m_globalObject)
                 return true;
-            
+
+            objectMayBePrototype = object->mayBePrototype();
+        }
+
+        for (JSObject* current = object; ;) {
+            JSGlobalObject* currentGlobalObject = current->globalObject(vm);
+            if (mode == BadTimeFinderMode::SingleGlobal) {
+                if (objectMayBePrototype && currentGlobalObject != objectGlobalObject)
+                    m_needsMultiGlobalsScan = true;
+                if (currentGlobalObject == m_globalObject)
+                    return true;
+            } else {
+                if (m_globalObjects->contains(currentGlobalObject))
+                    return true;
+            }
+
             JSValue prototypeValue = current->getPrototypeDirect(vm);
             if (prototypeValue.isNull())
                 return false;
@@ -1218,8 +1321,6 @@ inline void ObjectsWithBrokenIndexingFinder::visit(JSCell* cell)
         RELEASE_ASSERT_NOT_REACHED();
     };
 
-    JSObject* object = asObject(cell);
-
     if (JSFunction* function = jsDynamicCast<JSFunction*>(vm, object)) {
         if (FunctionRareData* rareData = function->rareData()) {
             // We only use this to cache JSFinalObjects. They do not start off with a broken indexing type.
@@ -1227,8 +1328,13 @@ inline void ObjectsWithBrokenIndexingFinder::visit(JSCell* cell)
 
             if (Structure* structure = rareData->internalFunctionAllocationStructure()) {
                 if (hasBrokenIndexing(structure->indexingType())) {
-                    bool isRelevantGlobalObject = (structure->globalObject() == m_globalObject)
-                        || (structure->hasMonoProto() && !structure->storedPrototype().isNull() && isInEffectedGlobalObject(asObject(structure->storedPrototype())));
+                    bool isRelevantGlobalObject =
+                        (mode == BadTimeFinderMode::SingleGlobal
+                            ? m_globalObject == structure->globalObject()
+                            : m_globalObjects->contains(structure->globalObject()))
+                        || (structure->hasMonoProto() && !structure->storedPrototype().isNull() && isInAffectedGlobalObject(asObject(structure->storedPrototype())));
+                    if (mode == BadTimeFinderMode::SingleGlobal && m_needsMultiGlobalsScan)
+                        return IterationStatus::Done; // Bailing early and let the MultipleGlobals path handle everything.
                     if (isRelevantGlobalObject)
                         rareData->clearInternalFunctionAllocationProfile();
                 }
@@ -1238,32 +1344,34 @@ inline void ObjectsWithBrokenIndexingFinder::visit(JSCell* cell)
 
     // Run this filter first, since it's cheap, and ought to filter out a lot of objects.
     if (!hasBrokenIndexing(object))
-        return;
-    
-    if (isInEffectedGlobalObject(object))
+        return IterationStatus::Continue;
+
+    if (isInAffectedGlobalObject(object))
         m_foundObjects.append(object);
+
+    if (mode == BadTimeFinderMode::SingleGlobal && m_needsMultiGlobalsScan)
+        return IterationStatus::Done; // Bailing early and let the MultipleGlobals path handle everything.
+
+    return IterationStatus::Continue;
 }
 
-IterationStatus ObjectsWithBrokenIndexingFinder::operator()(HeapCell* cell, HeapCell::Kind kind) const
+template<BadTimeFinderMode mode>
+IterationStatus ObjectsWithBrokenIndexingFinder<mode>::operator()(HeapCell* cell, HeapCell::Kind kind) const
 {
-    if (isJSCellKind(kind)) {
+    if (isJSCellKind(kind) && static_cast<JSCell*>(cell)->isObject()) {
         // FIXME: This const_cast exists because this isn't a C++ lambda.
         // https://bugs.webkit.org/show_bug.cgi?id=159644
-        const_cast<ObjectsWithBrokenIndexingFinder*>(this)->visit(static_cast<JSCell*>(cell));
+        return const_cast<ObjectsWithBrokenIndexingFinder*>(this)->visit(jsCast<JSObject*>(static_cast<JSCell*>(cell)));
     }
     return IterationStatus::Continue;
 }
 
 } // end private namespace for helpers for JSGlobalObject::haveABadTime()
 
-void JSGlobalObject::haveABadTime(VM& vm)
+void JSGlobalObject::fireWatchpointAndMakeAllArrayStructuresSlowPut(VM& vm)
 {
-    ASSERT(&vm == &this->vm());
-    
     if (isHavingABadTime())
         return;
-
-    vm.structureCache.clear(); // We may be caching array structures in here.
 
     // Make sure that all allocations or indexed storage transitions that are inlining
     // the assumption that it's safe to transition to a non-SlowPut array storage don't
@@ -1284,16 +1392,118 @@ void JSGlobalObject::haveABadTime(VM& vm)
     m_regExpMatchesArrayWithGroupsStructure.set(vm, this, slowPutStructure);
     slowPutStructure = ClonedArguments::createSlowPutStructure(vm, this, m_objectPrototype.get());
     m_clonedArgumentsStructure.set(vm, this, slowPutStructure);
+};
 
-    // Make sure that all objects that have indexed storage switch to the slow kind of
-    // indexed storage.
-    MarkedArgumentBuffer foundObjects; // Use MarkedArgumentBuffer because switchToSlowPutArrayStorage() may GC.
-    ObjectsWithBrokenIndexingFinder finder(foundObjects, this);
+void JSGlobalObject::haveABadTime(VM& vm)
+{
+    ASSERT(&vm == &this->vm());
+    
+    if (isHavingABadTime())
+        return;
+
+    vm.structureCache.clear(); // We may be caching array structures in here.
+
+    DeferGC deferGC(vm.heap);
+
+    // Consider the following objects and prototype chains:
+    //    O (of global G1) -> A (of global G1)
+    //    B (of global G2) where G2 has a bad time
+    //
+    // If we set B as the prototype of A, G1 will need to have a bad time.
+    // See comments in Structure::mayInterceptIndexedAccesses() for why.
+    //
+    // Now, consider the following objects and prototype chains:
+    //    O1 (of global G1) -> A1 (of global G1) -> B1 (of global G2)
+    //    O2 (of global G2) -> A2 (of global G2)
+    //    B2 (of global G3) where G3 has a bad time.
+    //
+    // G1 and G2 does not have a bad time, but G3 already has a bad time.
+    // If we set B2 as the prototype of A2, then G2 needs to have a bad time.
+    // Note that by induction, G1 also now needs to have a bad time because of
+    // O1 -> A1 -> B1.
+    //
+    // We describe this as global G1 being affected by global G2, and G2 by G3.
+    // Similarly, we say that G1 is dependent on G2, and G2 on G3.
+    // Hence, when G3 has a bad time, we need to ensure that all globals that
+    // are transitively dependent on it also have a bad time (G2 and G1 in this
+    // example).
+    //
+    // Apart from clearing the VM structure cache above, there are 2 more things
+    // that we have to do when globals have a bad time:
+    // 1. For each affected global:
+    //    a. Fire its HaveABadTime watchpoint.
+    //    b. Convert all of its array structures to SlowPutArrayStorage.
+    // 2. Make sure that all affected objects  switch to the slow kind of
+    //    indexed storage. An object is considered to be affected if it has
+    //    indexed storage and has a prototype object which may have indexed
+    //    accessors. If the prototype object belongs to a global having a bad
+    //    time, then the prototype object is considered to possibly have indexed
+    //    accessors. See comments in Structure::mayInterceptIndexedAccesses()
+    //    for details.
+    //
+    // Note: step 1 must be completed before step 2 because step 2 relies on
+    // the HaveABadTime watchpoint having already been fired on all affected
+    // globals.
+    //
+    // In the common case, only this global will start having a bad time here,
+    // and no other globals are affected by it. So, we first proceed on this assumption
+    // with a simpler ObjectsWithBrokenIndexingFinder scan to find heap objects
+    // affected by this global that need to be converted to SlowPutArrayStorage.
+    // We'll also have the finder check for the presence of other global objects
+    // depending on this one.
+    //
+    // If we do discover other globals depending on this one, we'll abort this
+    // first ObjectsWithBrokenIndexingFinder scan because it will be insufficient
+    // to find all affected objects that need to be converted to SlowPutArrayStorage.
+    // It also does not make dependent globals have a bad time. Instead, we'll
+    // take a more comprehensive approach of first creating a dependency graph
+    // between globals, and then using that graph to determine all affected
+    // globals and objects. With that, we can make all affected globals have a
+    // bad time, and convert all affected objects to SlowPutArrayStorage.
+
+    fireWatchpointAndMakeAllArrayStructuresSlowPut(vm); // Step 1 above.
+    
+    Vector<JSObject*> foundObjects;
+    ObjectsWithBrokenIndexingFinder<BadTimeFinderMode::SingleGlobal> finder(vm, foundObjects, this);
     {
         HeapIterationScope iterationScope(vm.heap);
-        vm.heap.objectSpace().forEachLiveCell(iterationScope, finder);
+        vm.heap.objectSpace().forEachLiveCell(iterationScope, finder); // Attempt step 2 above.
     }
-    RELEASE_ASSERT(!foundObjects.hasOverflowed());
+
+    if (finder.needsMultiGlobalsScan()) {
+        foundObjects.clear();
+
+        // Find all globals that will also have a bad time as a side effect of
+        // this global having a bad time.
+        GlobalObjectDependencyFinder dependencies(vm);
+        {
+            HeapIterationScope iterationScope(vm.heap);
+            vm.heap.objectSpace().forEachLiveCell(iterationScope, dependencies);
+        }
+
+        HashSet<JSGlobalObject*> globalsHavingABadTime;
+        Deque<JSGlobalObject*> globals;
+
+        globals.append(this);
+        while (!globals.isEmpty()) {
+            JSGlobalObject* global = globals.takeFirst();
+            global->fireWatchpointAndMakeAllArrayStructuresSlowPut(vm); // Step 1 above.
+            auto result = globalsHavingABadTime.add(global);
+            if (result.isNewEntry) {
+                if (HashSet<JSGlobalObject*>* dependents = dependencies.dependentsFor(global)) {
+                    for (JSGlobalObject* dependentGlobal : *dependents)
+                        globals.append(dependentGlobal);
+                }
+            }
+        }
+
+        ObjectsWithBrokenIndexingFinder<BadTimeFinderMode::MultipleGlobals> finder(vm, foundObjects, globalsHavingABadTime);
+        {
+            HeapIterationScope iterationScope(vm.heap);
+            vm.heap.objectSpace().forEachLiveCell(iterationScope, finder); // Step 2 above.
+        }
+    }
+
     while (!foundObjects.isEmpty()) {
         JSObject* object = asObject(foundObjects.last());
         foundObjects.removeLast();

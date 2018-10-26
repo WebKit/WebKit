@@ -27,6 +27,7 @@
 #include "Error.h"
 #include "JSObject.h"
 #include "Lookup.h"
+#include "StructureInlines.h"
 
 namespace JSC {
 
@@ -170,6 +171,11 @@ inline bool JSObject::getOwnPropertySlotInline(ExecState* exec, PropertyName pro
     if (UNLIKELY(TypeInfo::overridesGetOwnPropertySlot(inlineTypeFlags())))
         return methodTable(vm)->getOwnPropertySlot(this, exec, propertyName, slot);
     return JSObject::getOwnPropertySlot(this, exec, propertyName, slot);
+}
+
+inline bool JSObject::mayInterceptIndexedAccesses(VM& vm)
+{
+    return structure(vm)->mayInterceptIndexedAccesses();
 }
 
 inline void JSObject::putDirectWithoutTransition(VM& vm, PropertyName propertyName, JSValue value, unsigned attributes)

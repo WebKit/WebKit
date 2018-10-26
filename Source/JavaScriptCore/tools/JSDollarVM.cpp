@@ -1651,6 +1651,57 @@ static EncodedJSValue JSC_HOST_CALL functionGetPID(ExecState*)
     return JSValue::encode(jsNumber(getCurrentProcessID()));
 }
 
+// Make the globalObject have a bad time. Does nothing if the object is not a JSGlobalObject.
+// Usage: $vm.haveABadTime(globalObject)
+static EncodedJSValue JSC_HOST_CALL functionHaveABadTime(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    JSLockHolder lock(vm);
+    JSValue objValue = exec->argument(0);
+    if (!objValue.isObject())
+        return JSValue::encode(jsBoolean(false));
+
+    JSObject* obj = asObject(objValue.asCell());
+    JSGlobalObject* globalObject = jsDynamicCast<JSGlobalObject*>(vm, obj);
+    if (!globalObject)
+        JSValue::encode(jsBoolean(false));
+
+    globalObject->haveABadTime(vm);
+    return JSValue::encode(jsBoolean(true));
+}
+
+// Checks if the object (or its global if the object is not a global) is having a bad time.
+// Usage: $vm.isHavingABadTime(obj)
+static EncodedJSValue JSC_HOST_CALL functionIsHavingABadTime(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    JSLockHolder lock(vm);
+    JSValue objValue = exec->argument(0);
+    if (!objValue.isObject())
+        return JSValue::encode(jsUndefined());
+
+    JSObject* obj = asObject(objValue.asCell());
+    JSGlobalObject* globalObject = jsDynamicCast<JSGlobalObject*>(vm, obj);
+    if (globalObject)
+        JSValue::encode(jsBoolean(globalObject->isHavingABadTime()));
+
+    globalObject = obj->globalObject();
+    if (!globalObject)
+        return JSValue::encode(jsUndefined());
+
+    return JSValue::encode(jsBoolean(globalObject->isHavingABadTime()));
+}
+
+// Creates a new global object.
+// Usage: $vm.createGlobalObject()
+static EncodedJSValue JSC_HOST_CALL functionCreateGlobalObject(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    JSLockHolder lock(vm);
+    JSGlobalObject* globalObject = JSGlobalObject::create(vm, JSGlobalObject::createStructure(vm, jsNull()));
+    return JSValue::encode(globalObject);
+}
+
 static EncodedJSValue JSC_HOST_CALL functionCreateProxy(ExecState* exec)
 {
     VM& vm = exec->vm();
@@ -2144,6 +2195,10 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, "value", functionValue, 1);
     addFunction(vm, "getpid", functionGetPID, 0);
 
+    addFunction(vm, "haveABadTime", functionHaveABadTime, 1);
+    addFunction(vm, "isHavingABadTime", functionIsHavingABadTime, 1);
+
+    addFunction(vm, "createGlobalObject", functionCreateGlobalObject, 0);
     addFunction(vm, "createProxy", functionCreateProxy, 1);
     addFunction(vm, "createRuntimeArray", functionCreateRuntimeArray, 0);
 

@@ -1,3 +1,13 @@
+2018-10-26  Mark Lam  <mark.lam@apple.com>
+
+        Fix missing edge cases with JSGlobalObjects having a bad time.
+        https://bugs.webkit.org/show_bug.cgi?id=189028
+        <rdar://problem/45204939>
+
+        Reviewed by Saam Barati.
+
+        * stress/regress-189028.js: Added.
+
 2018-10-22  Mark Lam  <mark.lam@apple.com>
 
         DFGAbstractValue::m_arrayModes expects IndexingMode values, not IndexingType.
