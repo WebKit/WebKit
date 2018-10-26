@@ -57,7 +57,7 @@ class IntRect;
 class FloatSize;
 class VideoFullscreenModel;
 class VideoFullscreenChangeObserver;
-
+    
 class VideoFullscreenInterfaceAVKit final
     : public VideoFullscreenModelClient
     , public PlaybackSessionModelClient
@@ -184,8 +184,6 @@ protected:
     WTF::Function<void(bool)> m_prepareToInlineCallback;
     RunLoop::Timer<VideoFullscreenInterfaceAVKit> m_watchdogTimer;
     FloatRect m_inlineRect;
-    RouteSharingPolicy m_routeSharingPolicy { RouteSharingPolicy::Default };
-    String m_routingContextUID;
     bool m_allowsPictureInPicturePlayback { false };
     bool m_wirelessVideoPlaybackDisabled { true };
     bool m_shouldReturnToFullscreenWhenStoppingPiP { false };

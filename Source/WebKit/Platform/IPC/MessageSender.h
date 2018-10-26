@@ -65,14 +65,6 @@ public:
         return messageSenderConnection()->sendSync(WTFMove(message), WTFMove(reply), destinationID, timeout, sendSyncOptions);
     }
 
-    template<typename T, typename... Args>
-    void sendWithAsyncReply(T&& message, CompletionHandler<void(Args...)>&& args, uint64_t destinationID = 0)
-    {
-        ASSERT(messageSenderConnection());
-
-        messageSenderConnection()->sendWithAsyncReply(WTFMove(message), WTFMove(args), destinationID);
-    }
-
     virtual bool sendMessage(std::unique_ptr<Encoder>, OptionSet<SendOption>);
 
 private:

@@ -30,6 +30,7 @@
 #import "Attachment.h"
 #import "Logging.h"
 #import "PlaybackSessionManager.h"
+#import "VideoFullscreenManagerMessages.h"
 #import "VideoFullscreenManagerProxyMessages.h"
 #import "WebCoreArgumentCoders.h"
 #import "WebPage.h"
@@ -556,11 +557,6 @@ void VideoFullscreenManager::fullscreenMayReturnToInline(uint64_t contextId, boo
     if (!isPageVisible)
         model.videoElement()->scrollIntoViewIfNotVisible(false);
     m_page->send(Messages::VideoFullscreenManagerProxy::PreparedToReturnToInline(contextId, true, inlineVideoFrame(*model.videoElement())), m_page->pageID());
-}
-
-void VideoFullscreenManager::requestRouteSharingPolicyAndContextUID(uint64_t contextId, Messages::VideoFullscreenManager::RequestRouteSharingPolicyAndContextUID::AsyncReply&& reply)
-{
-    ensureModel(contextId).requestRouteSharingPolicyAndContextUID(WTFMove(reply));
 }
     
 void VideoFullscreenManager::setVideoLayerFrameFenced(uint64_t contextId, WebCore::FloatRect bounds, IPC::Attachment fencePort)

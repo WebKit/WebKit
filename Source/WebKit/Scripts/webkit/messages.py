@@ -559,13 +559,12 @@ def generate_message_handler(file):
 
             if message.has_attribute(ASYNC_ATTRIBUTE):
                 move_parameters = message.name, ', '.join([move_type(x.type) for x in message.reply_parameters])
-                move_values = ', '.join(['WTFMove(*%s)' % x.name for x in message.reply_parameters])
                 result.append('void %s::callReply(IPC::Decoder& decoder, CompletionHandler<void(%s)>&& completionHandler)\n{\n' % move_parameters)
                 for x in message.reply_parameters:
                     result.append('    std::optional<%s> %s;\n' % (x.type, x.name))
                     result.append('    decoder >> %s;\n' % x.name)
                     result.append('    if (!%s) {\n        ASSERT_NOT_REACHED();\n        return;\n    }\n' % x.name)
-                result.append('    completionHandler(%s);\n}\n\n' % move_values)
+                result.append('    completionHandler(WTFMove(*%s));\n}\n\n' % (', *'.join(x.name for x in message.reply_parameters)))
                 result.append('void %s::cancelReply(CompletionHandler<void(%s)>&& completionHandler)\n{\n    completionHandler(' % move_parameters)
                 result.append(', '.join(['{ }' for x in message.reply_parameters]))
                 result.append(');\n}\n\n')

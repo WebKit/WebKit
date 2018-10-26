@@ -274,14 +274,6 @@ void VideoFullscreenModelContext::fullscreenMayReturnToInline()
         m_manager->fullscreenMayReturnToInline(m_contextId);
 }
 
-void VideoFullscreenModelContext::requestRouteSharingPolicyAndContextUID(CompletionHandler<void(WebCore::RouteSharingPolicy, String)>&& completionHandler)
-{
-    if (m_manager)
-        m_manager->requestRouteSharingPolicyAndContextUID(m_contextId, WTFMove(completionHandler));
-    else
-        completionHandler(WebCore::RouteSharingPolicy::Default, emptyString());
-}
-
 void VideoFullscreenModelContext::willEnterPictureInPicture()
 {
     for (auto& client : m_clients)
@@ -399,11 +391,6 @@ void VideoFullscreenManagerProxy::applicationDidBecomeActive()
 {
     for (auto& tuple : m_contextMap.values())
         std::get<1>(tuple)->applicationDidBecomeActive();
-}
-
-void VideoFullscreenManagerProxy::requestRouteSharingPolicyAndContextUID(uint64_t contextId, CompletionHandler<void(WebCore::RouteSharingPolicy, String)>&& callback)
-{
-    m_page->sendWithAsyncReply(Messages::VideoFullscreenManager::RequestRouteSharingPolicyAndContextUID(contextId), WTFMove(callback));
 }
 
 VideoFullscreenManagerProxy::ModelInterfaceTuple VideoFullscreenManagerProxy::createModelAndInterface(uint64_t contextId)

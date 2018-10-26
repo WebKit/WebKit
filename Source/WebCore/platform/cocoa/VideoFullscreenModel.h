@@ -28,12 +28,10 @@
 
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
-#include "AudioSession.h"
 #include "FloatRect.h"
 #include "HTMLMediaElementEnums.h"
 #include "MediaPlayerEnums.h"
 #include "PlaybackSessionModel.h"
-#include <wtf/CompletionHandler.h>
 
 #if PLATFORM(IOS_FAMILY)
 OBJC_CLASS AVPlayerViewController;
@@ -63,8 +61,6 @@ public:
     virtual void failedToEnterPictureInPicture() = 0;
     virtual void willExitPictureInPicture() = 0;
     virtual void didExitPictureInPicture() = 0;
-
-    virtual void requestRouteSharingPolicyAndContextUID(CompletionHandler<void(RouteSharingPolicy, String)>&& completionHandler) { completionHandler(RouteSharingPolicy::Default, emptyString()); }
 
 #if PLATFORM(IOS_FAMILY)
     virtual UIViewController *presentingViewController() { return nullptr; }
