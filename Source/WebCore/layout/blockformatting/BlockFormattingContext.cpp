@@ -145,8 +145,7 @@ void BlockFormattingContext::layoutFormattingContextRoot(LayoutContext& layoutCo
     if (layoutBox.isFloatingPositioned()) {
         computeFloatingPosition(layoutContext, floatingContext, layoutBox);
         floatingContext.floatingState().append(layoutBox);
-    }
-    else if (layoutBox.hasFloatClear())
+    } else if (layoutBox.hasFloatClear())
         computeVerticalPositionForFloatClear(layoutContext, floatingContext, layoutBox);
     else if (layoutBox.establishesBlockFormattingContext())
         computePositionToAvoidFloats(layoutContext, floatingContext, layoutBox);

@@ -91,14 +91,9 @@ void InlineFormattingContext::layout(LayoutContext& layoutContext, FormattingSta
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[End] -> inline formatting context -> layout context(" << &layoutContext << ") formatting root(" << &root() << ")");
 }
 
-static bool trimLeadingRun(const InlineLineBreaker::Run& run)
+static bool isTrimmableContent(const InlineLineBreaker::Run& run)
 {
-    ASSERT(run.position == InlineLineBreaker::Run::Position::LineBegin);
-
-    if (!run.content.isWhitespace())
-        return false;
-
-    return run.content.style().collapseWhiteSpace();
+    return run.content.isWhitespace() && run.content.style().collapseWhiteSpace();
 }
 
 void InlineFormattingContext::initializeNewLine(const LayoutContext& layoutContext, InlineFormattingState& inlineFormattingState, Line& line) const
@@ -146,41 +141,55 @@ void InlineFormattingContext::initializeNewLine(const LayoutContext& layoutConte
 
 void InlineFormattingContext::layoutInlineContent(const LayoutContext& layoutContext, InlineFormattingState& inlineFormattingState, const InlineRunProvider& inlineRunProvider) const
 {
-    auto previousRunPositionIsLineEnd = false;
+    auto floatingContext = FloatingContext { inlineFormattingState.floatingState() };
 
     Line line(inlineFormattingState, root());
     initializeNewLine(layoutContext, inlineFormattingState, line);
 
     InlineLineBreaker lineBreaker(layoutContext, inlineFormattingState.inlineContent(), inlineRunProvider.runs());
     while (auto run = lineBreaker.nextRun(line.contentLogicalRight(), line.availableWidth(), !line.hasContent())) {
+        auto isFirstRun = run->position == InlineLineBreaker::Run::Position::LineBegin;
+        auto isLastRun = run->position == InlineLineBreaker::Run::Position::LineEnd;
+        auto generatesInlineRun = true;
 
-        if (run->position == InlineLineBreaker::Run::Position::LineBegin) {
-            // First run on line.
+        // Position float and adjust the runs on line.
+        if (run->content.isFloat()) {
+            auto& floatBox = run->content.inlineItem().layoutBox();
+            computeFloatPosition(layoutContext, floatingContext, line, floatBox);
+            inlineFormattingState.floatingState().append(floatBox);
 
-            // Previous run ended up being at the line end. Adjust the line accordingly.
-            if (!previousRunPositionIsLineEnd) {
-                line.close();
+            auto floatBoxWidth = layoutContext.displayBoxForLayoutBox(floatBox).width();
+            // Shrink availble space for current line and move existing inline runs.
+            floatBox.isLeftFloatingPositioned() ? line.adjustLogicalLeft(floatBoxWidth) : line.adjustLogicalRight(floatBoxWidth);
+
+            generatesInlineRun = false;
+        }
+
+        // 1. Initialize new line if needed.
+        // 2. Append inline run unless it is skipped.
+        // 3. Close current line if needed.
+        if (isFirstRun) {
+            // When the first run does not generate an actual inline run, the next run comes in first-run as well.
+            // No need to spend time on closing/initializing.
+            // Skip leading whitespace.
+            if (!generatesInlineRun || isTrimmableContent(*run))
+                continue;
+
+            if (line.hasContent()) {
+                // Previous run ended up being at the line end. Adjust the line accordingly.
+                if (!line.isClosed())
+                    line.close(Line::LastLine::No);
                 initializeNewLine(layoutContext, inlineFormattingState, line);
             }
-            // Skip leading whitespace.
-            if (!trimLeadingRun(*run))
-                line.appendContent(*run);
-            continue;
-        }
+         }
 
-        if (run->position == InlineLineBreaker::Run::Position::LineEnd) {
-            // Last run on line.
-            previousRunPositionIsLineEnd = true;
-            line.appendContent(*run);
-            // Move over to the next line.
-            line.close();
-            initializeNewLine(layoutContext, inlineFormattingState, line);
-            continue;
-        }
+        if (generatesInlineRun)
+             line.appendContent(*run);
 
-        // This may or may not be the last run on line -but definitely not the first one.
-        line.appendContent(*run);
+        if (isLastRun)
+            line.close(Line::LastLine::No);
     }
+
     line.close(Line::LastLine::Yes);
 }
 

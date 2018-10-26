@@ -63,6 +63,7 @@ private:
         void close(LastLine = LastLine::No);
 
         bool hasContent() const { return m_firstRunIndex.has_value(); }
+        bool isClosed() const { return m_closed; }
         bool isFirstLine() const { return m_isFirstLine; }
         LayoutUnit contentLogicalRight();
         LayoutUnit availableWidth() const { return m_availableWidth; }
@@ -91,6 +92,7 @@ private:
         std::optional<unsigned> m_firstRunIndex;
         bool m_alignmentIsJustify { false };
         bool m_isFirstLine { true };
+        bool m_closed { true };
     };
 
     void layoutInlineContent(const LayoutContext&, InlineFormattingState&, const InlineRunProvider&) const;

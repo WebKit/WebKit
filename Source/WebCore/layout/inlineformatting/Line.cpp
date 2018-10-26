@@ -49,10 +49,13 @@ void InlineFormattingContext::Line::init(const Display::Box::Rect& logicalRect)
     m_lastRunIsWhitespace = false;
     m_lastRunCanExpand = false;
     m_trailingTrimmableContent = { };
+    m_closed = false;
 }
 
 void InlineFormattingContext::Line::adjustLogicalLeft(LayoutUnit delta)
 {
+    ASSERT(delta > 0);
+
     m_availableWidth -= delta;
     m_logicalRect.shiftLeftTo(m_logicalRect.left() + delta);
 
@@ -66,6 +69,8 @@ void InlineFormattingContext::Line::adjustLogicalLeft(LayoutUnit delta)
 
 void InlineFormattingContext::Line::adjustLogicalRight(LayoutUnit delta)
 {
+    ASSERT(delta > 0);
+
     m_availableWidth -= delta;
     m_logicalRect.shiftRightTo(m_logicalRect.right() - delta);
 }
@@ -132,6 +137,8 @@ void InlineFormattingContext::Line::computeExpansionOpportunities(const InlineLi
 
 void InlineFormattingContext::Line::appendContent(const InlineLineBreaker::Run& run)
 {
+    ASSERT(!isClosed());
+
     auto& content = run.content;
 
     // Append this text run to the end of the last text run, if the last run is continuous.
@@ -258,6 +265,7 @@ void InlineFormattingContext::Line::close(LastLine isLastLine)
 
     alignRuns(textAlignment);
     m_isFirstLine = false;
+    m_closed = true;
 }
 
 }

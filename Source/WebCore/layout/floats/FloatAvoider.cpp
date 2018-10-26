@@ -42,7 +42,7 @@ FloatAvoider::FloatAvoider(const Box& layoutBox, const FloatingState& floatingSt
     : m_layoutBox(makeWeakPtr(layoutBox))
     , m_floatingState(floatingState)
     , m_absoluteDisplayBox(FormattingContext::mapBoxToAncestor(layoutContext, layoutBox, downcast<Container>(floatingState.root())))
-    , m_containingBlockAbsoluteDisplayBox(FormattingContext::mapBoxToAncestor(layoutContext, *layoutBox.containingBlock(), downcast<Container>(floatingState.root())))
+    , m_containingBlockAbsoluteDisplayBox(layoutBox.containingBlock() == &floatingState.root() ? Display::Box(layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock())) : FormattingContext::mapBoxToAncestor(layoutContext, *layoutBox.containingBlock(), downcast<Container>(floatingState.root())))
     , m_initialVerticalPosition(m_absoluteDisplayBox.top())
 {
     ASSERT(m_layoutBox->establishesBlockFormattingContext());
