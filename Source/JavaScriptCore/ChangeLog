@@ -1,3 +1,11 @@
+2018-10-25  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build fix for Visual Studio 2017
+
+        * API/tests/testapi.c:
+        (testMarkingConstraintsAndHeapFinalizers):
+        (main):
+
 2018-10-25  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: display fullscreen enter/exit events in Timelines and Network node waterfalls

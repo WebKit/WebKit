@@ -1239,7 +1239,7 @@ static void testMarkingConstraintsAndHeapFinalizers(void)
     
     deadCount = 0;
     for (i = 0; i < numWeakRefs; i += 2) {
-        assertTrue(JSWeakGetObject(weakRefs[i]), "Marked objects stayed alive");
+        assertTrue((bool)JSWeakGetObject(weakRefs[i]), "Marked objects stayed alive");
         if (!JSWeakGetObject(weakRefs[i + 1]))
             deadCount++;
     }
@@ -2052,7 +2052,7 @@ int main(int argc, char* argv[])
             JSValueRef exception;
             JSStringRef code = JSStringCreateWithUTF8CString("result = 0; Promise.resolve(42).then(function (value) { result = value; });");
             JSStringRef file = JSStringCreateWithUTF8CString("");
-            assertTrue(JSEvaluateScript(context, code, globalObject, file, 1, &exception), "An exception should not be thrown");
+            assertTrue((bool)JSEvaluateScript(context, code, globalObject, file, 1, &exception), "An exception should not be thrown");
             JSStringRelease(code);
             JSStringRelease(file);
 
