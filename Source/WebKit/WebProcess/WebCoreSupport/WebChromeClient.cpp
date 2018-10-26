@@ -523,8 +523,7 @@ void WebChromeClient::invalidateContentsAndRootView(const IntRect& rect)
             return;
     }
 
-    if (auto* drawingArea = m_page.drawingArea())
-        drawingArea->setNeedsDisplayInRect(rect);
+    m_page.drawingArea()->setNeedsDisplayInRect(rect);
 }
 
 void WebChromeClient::invalidateContentsForSlowScroll(const IntRect& rect)
@@ -542,8 +541,7 @@ void WebChromeClient::invalidateContentsForSlowScroll(const IntRect& rect)
         return;
     }
 #endif
-    if (auto* drawingArea = m_page.drawingArea())
-        drawingArea->setNeedsDisplayInRect(rect);
+    m_page.drawingArea()->setNeedsDisplayInRect(rect);
 }
 
 void WebChromeClient::scroll(const IntSize& scrollDelta, const IntRect& scrollRect, const IntRect& clipRect)
@@ -597,8 +595,7 @@ void WebChromeClient::contentsSizeChanged(Frame& frame, const IntSize& size) con
 
     m_page.send(Messages::WebPageProxy::DidChangeContentSize(size));
 
-    if (auto* drawingArea = m_page.drawingArea())
-        drawingArea->mainFrameContentSizeChanged(size);
+    m_page.drawingArea()->mainFrameContentSizeChanged(size);
 
     if (frameView && !frameView->delegatesScrolling())  {
         bool hasHorizontalScrollbar = frameView->horizontalScrollbar();

@@ -653,7 +653,14 @@ void WebPage::enableEnumeratingAllNetworkInterfaces()
 
 void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
 {
-    if (!m_drawingArea) {
+    ASSERT(m_drawingArea);
+
+    if (m_shouldResetDrawingArea) {
+        // Make sure we destroy the previous drawing area before constructing the new one as DrawingArea registers / unregisters
+        // itself as an IPC::MesssageReceiver in its constructor / destructor.
+        m_drawingArea = nullptr;
+        m_shouldResetDrawingArea = false;
+
         m_drawingArea = DrawingArea::create(*this, parameters);
         m_drawingArea->setPaintingEnabled(false);
         m_drawingArea->setShouldScaleViewToFitDocument(parameters.shouldScaleViewToFitDocument);
@@ -1155,8 +1162,7 @@ void WebPage::enterAcceleratedCompositingMode(GraphicsLayer* layer)
 
 void WebPage::exitAcceleratedCompositingMode()
 {
-    if (m_drawingArea)
-        m_drawingArea->setRootCompositingLayer(0);
+    m_drawingArea->setRootCompositingLayer(0);
 }
 
 void WebPage::close()
@@ -6128,14 +6134,10 @@ void WebPage::setIsSuspended(bool suspended)
 
     m_isSuspended = suspended;
 
-    setLayerTreeStateIsFrozen(true);
-}
-
-void WebPage::tearDownDrawingAreaForSuspend()
-{
     if (!m_isSuspended)
-        return;
-    m_drawingArea = nullptr;
+        m_shouldResetDrawingArea = true;
+
+    setLayerTreeStateIsFrozen(true);
 }
 
 void WebPage::frameBecameRemote(uint64_t frameID, GlobalFrameIdentifier&& remoteFrameIdentifier, GlobalWindowIdentifier&& remoteWindowIdentifier)

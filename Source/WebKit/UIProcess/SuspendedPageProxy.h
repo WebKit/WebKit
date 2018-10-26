@@ -46,8 +46,6 @@ public:
     uint64_t mainFrameID() const { return m_mainFrameID; }
     const WebCore::SecurityOriginData& origin() const { return m_origin; }
 
-    void tearDownDrawingAreaInWebProcess();
-
     void unsuspend();
 
 #if !LOG_DISABLED

@@ -103,11 +103,6 @@ SuspendedPageProxy::~SuspendedPageProxy()
     });
 }
 
-void SuspendedPageProxy::tearDownDrawingAreaInWebProcess()
-{
-    m_process->send(Messages::WebPage::TearDownDrawingAreaForSuspend(), m_page.pageID());
-}
-
 void SuspendedPageProxy::unsuspend()
 {
     ASSERT(m_isSuspended);

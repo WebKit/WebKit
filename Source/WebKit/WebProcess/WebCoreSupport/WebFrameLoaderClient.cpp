@@ -1435,8 +1435,7 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     m_frame->coreFrame()->view()->setProhibitsScrolling(shouldDisableScrolling);
     m_frame->coreFrame()->view()->setVisualUpdatesAllowedByClient(!webPage->shouldExtendIncrementalRenderingSuppression());
 #if PLATFORM(COCOA)
-    if (webPage->drawingArea())
-        m_frame->coreFrame()->view()->setViewExposedRect(webPage->drawingArea()->viewExposedRect());
+    m_frame->coreFrame()->view()->setViewExposedRect(webPage->drawingArea()->viewExposedRect());
 #endif
 #if PLATFORM(IOS_FAMILY)
     m_frame->coreFrame()->view()->setDelegatesScrolling(true);

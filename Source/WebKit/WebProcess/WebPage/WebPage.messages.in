@@ -512,7 +512,6 @@ messages -> WebPage LegacyReceiver {
     URLSchemeTaskDidComplete(uint64_t handlerIdentifier, uint64_t taskIdentifier, WebCore::ResourceError error)
 
     SetIsSuspended(bool suspended)
-    TearDownDrawingAreaForSuspend();
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     StorageAccessResponse(bool wasGranted, uint64_t contextId)

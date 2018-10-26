@@ -1,3 +1,41 @@
+2018-10-26  Chris Dumez  <cdumez@apple.com>
+
+        [PSON] Avoid tearing down the drawing area when suspending a WebPage due to process-swap
+        https://bugs.webkit.org/show_bug.cgi?id=190879
+
+        Reviewed by Antti Koivisto.
+
+        Avoid tearing down the drawing area when suspending a WebPage due to process-swap. We really only need to reset
+        the drawing area upon resuming the WebPage. There is no strict need to destroy the drawing area on suspension
+        and this has caused various crashes because code usually assumes we always have a drawing area.
+
+        This patch also drops various drawing area null checks that were added to address PSON crashes.
+
+        * UIProcess/SuspendedPageProxy.cpp:
+        (WebKit::SuspendedPageProxy::tearDownDrawingAreaInWebProcess): Deleted.
+        * UIProcess/SuspendedPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::suspendCurrentPageIfPossible):
+        (WebKit::WebPageProxy::receivedNavigationPolicyDecision):
+        (WebKit::WebPageProxy::didCompletePageTransition):
+        (WebKit::WebPageProxy::enterAcceleratedCompositingMode):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::invalidateContentsAndRootView):
+        (WebKit::WebChromeClient::invalidateContentsForSlowScroll):
+        (WebKit::WebChromeClient::contentsSizeChanged const):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+        * WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.mm:
+        (WebKit::RemoteScrollingCoordinator::scheduleTreeStateCommit):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::reinitializeWebPage):
+        (WebKit::WebPage::exitAcceleratedCompositingMode):
+        (WebKit::WebPage::setIsSuspended):
+        (WebKit::WebPage::tearDownDrawingAreaForSuspend): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2018-10-26  Antti Koivisto  <antti@apple.com>
 
         Use random() instead of begin() to limit cache sizes
