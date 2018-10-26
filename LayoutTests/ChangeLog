@@ -1,3 +1,12 @@
+2018-10-26  Ali Juma  <ajuma@chromium.org>
+
+        [GTK] Unreviewed test gardening.
+        https://bugs.webkit.org/show_bug.cgi?id=190962
+
+        Add a baseline for the test added in r237449.
+
+        * platform/gtk/fast/repaint/text-selection-overflow-hidden-expected.txt: Added.
+
 2018-10-26  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Layout floats as part of the inline content
