@@ -147,6 +147,13 @@ inline PtrType untagCFunctionPtr(PtrType ptr, PtrTag) { return ptr; }
 template<PtrTag, typename PtrType, typename = std::enable_if_t<std::is_pointer<PtrType>::value>>
 inline PtrType untagCFunctionPtr(PtrType ptr) { return ptr; }
 
+template <typename IntType>
+inline IntType tagInt(IntType ptrInt, PtrTag)
+{
+    static_assert(sizeof(IntType) == sizeof(uintptr_t), "");
+    return ptrInt;
+}
+
 template<typename PtrType> void assertIsCFunctionPtr(PtrType) { }
 template<typename PtrType> void assertIsNullOrCFunctionPtr(PtrType) { }
 
@@ -184,6 +191,7 @@ using WTF::retagCodePtr;
 using WTF::removeCodePtrTag;
 using WTF::tagCFunctionPtr;
 using WTF::untagCFunctionPtr;
+using WTF::tagInt;
 
 using WTF::assertIsCFunctionPtr;
 using WTF::assertIsNullOrCFunctionPtr;

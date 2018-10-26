@@ -862,8 +862,6 @@ public:
         AssemblerType::cacheFlush(code, size);
     }
 
-    AssemblerType m_assembler;
-    
     template<PtrTag tag>
     static void linkJump(void* code, Jump jump, CodeLocationLabel<tag> target)
     {
@@ -962,13 +960,18 @@ public:
 
     void emitNops(size_t memoryToFillWithNopsInBytes)
     {
+#if CPU(ARM64)
+        RELEASE_ASSERT(memoryToFillWithNopsInBytes % 4 == 0);
+        for (unsigned i = 0; i < memoryToFillWithNopsInBytes / 4; ++i)
+            m_assembler.nop();
+#else
         AssemblerBuffer& buffer = m_assembler.buffer();
         size_t startCodeSize = buffer.codeSize();
         size_t targetCodeSize = startCodeSize + memoryToFillWithNopsInBytes;
         buffer.ensureSpace(memoryToFillWithNopsInBytes);
-        bool isCopyingToExecutableMemory = false;
-        AssemblerType::fillNops(static_cast<char*>(buffer.data()) + startCodeSize, memoryToFillWithNopsInBytes, isCopyingToExecutableMemory);
+        AssemblerType::fillNops(static_cast<char*>(buffer.data()) + startCodeSize, memoryToFillWithNopsInBytes, memcpy);
         buffer.setCodeSize(targetCodeSize);
+#endif
     }
 
     ALWAYS_INLINE void tagReturnAddress() { }
@@ -983,6 +986,11 @@ public:
 protected:
     AbstractMacroAssembler()
         : m_randomSource(0)
+#if CPU(ARM64E)
+        , m_assembler(random())
+#else
+        , m_assembler()
+#endif
     {
         invalidateAllTempRegisters();
     }
@@ -998,6 +1006,9 @@ protected:
 
     bool m_randomSourceIsInitialized { false };
     WeakRandom m_randomSource;
+public:
+    AssemblerType m_assembler;
+protected:
 
 #if ENABLE(DFG_REGISTER_ALLOCATION_VALIDATION)
     Vector<RegisterAllocationOffset, 10> m_registerAllocationForOffsets;
