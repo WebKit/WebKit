@@ -158,11 +158,11 @@ FormattingState& LayoutContext::createFormattingStateForFormattingRootIfNeeded(c
 
 std::unique_ptr<FormattingContext> LayoutContext::formattingContext(const Box& formattingContextRoot) const
 {
-    if (formattingContextRoot.establishesBlockFormattingContext())
-        return std::make_unique<BlockFormattingContext>(formattingContextRoot);
-
     if (formattingContextRoot.establishesInlineFormattingContext())
         return std::make_unique<InlineFormattingContext>(formattingContextRoot);
+
+    if (formattingContextRoot.establishesBlockFormattingContext())
+        return std::make_unique<BlockFormattingContext>(formattingContextRoot);
 
     ASSERT_NOT_IMPLEMENTED_YET();
     return nullptr;

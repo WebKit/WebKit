@@ -1,3 +1,18 @@
+2018-10-26  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Inline formatting context has higher priority than block
+        https://bugs.webkit.org/show_bug.cgi?id=190924
+
+        Reviewed by Antti Koivisto.
+
+        When an element establishes both inline and block formatting contexts, we need to pick one to
+        create (and we choose the content driven formatting type (inline)). See example below:
+
+        <div style="overflow: hidden">This text should be inside an inlines formatting context.</div>
+
+        * layout/LayoutContext.cpp:
+        (WebCore::Layout::LayoutContext::formattingContext const):
+
 2018-10-26  Ali Juma  <ajuma@chromium.org>
 
         REGRESSION (r237255): Text selection is broken in form fields
