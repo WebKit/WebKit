@@ -1,3 +1,14 @@
+2018-10-26  Keith Miller  <keith_miller@apple.com>
+
+        JSC xcconfig should set DEFINES_MODULE
+        https://bugs.webkit.org/show_bug.cgi?id=190952
+
+        Reviewed by Mark Lam.
+
+        This should mean that the JavaScriptCore.framework will have a module map.
+
+        * Configurations/JavaScriptCore.xcconfig:
+
 2018-10-25  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] havingABadTimeWatchpoint is not required in Array#indexOf optimization
