@@ -1,5 +1,25 @@
 2018-10-26  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Find floating constraints for a given vertical position
+        https://bugs.webkit.org/show_bug.cgi?id=190928
+
+        Reviewed by Antti Koivisto.
+
+        https://www.w3.org/TR/CSS22/visuren.html#inline-formatting
+
+        "In general, the left edge of a line box touches the left edge of its containing block and the right edge touches the right edge of its containing block.
+        However, floating boxes may come between the containing block edge and the line box edge.
+        Thus, although line boxes in the same inline formatting context generally have the same width
+        (that of the containing block), they may vary in width if available horizontal space is reduced due to floats."
+
+        This patch adds support for retrieving left/right constraints for a given line (vertical position).
+
+        * layout/floats/FloatingState.cpp:
+        (WebCore::Layout::FloatingState::constraints const):
+        * layout/floats/FloatingState.h:
+
+2018-10-26  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Inline formatting context has higher priority than block
         https://bugs.webkit.org/show_bug.cgi?id=190924
 

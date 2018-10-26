@@ -58,6 +58,12 @@ public:
     std::optional<LayoutUnit> rightBottom(const Box& formattingContextRoot) const;
     std::optional<LayoutUnit> bottom(const Box& formattingContextRoot) const;
 
+    struct Constraints {
+        std::optional<LayoutUnit> left;
+        std::optional<LayoutUnit> right;
+    };
+    Constraints constraints(LayoutUnit verticalPosition, const Box& formattingContextRoot) const;
+
     class FloatItem {
     public:
         FloatItem(const Box&, const FloatingState&);

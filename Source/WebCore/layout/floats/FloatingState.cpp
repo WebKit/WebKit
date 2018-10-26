@@ -86,6 +86,54 @@ void FloatingState::append(const Box& layoutBox)
     m_floats.append({ layoutBox, *this });
 }
 
+FloatingState::Constraints FloatingState::constraints(LayoutUnit verticalPosition, const Box& formattingContextRoot) const
+{
+    if (isEmpty())
+        return { };
+
+    // 1. Convert vertical position if this floating context is inherited.
+    // 2. Find the inner left/right floats at verticalPosition.
+    // 3. Convert left/right positions back to formattingContextRoot's cooridnate system.
+    auto coordinateMappingIsRequired = &root() != &formattingContextRoot;
+    auto adjustedPosition = Position { 0, verticalPosition };
+
+    if (coordinateMappingIsRequired)
+        adjustedPosition = FormattingContext::mapCoordinateToAncestor(m_layoutContext, adjustedPosition, downcast<Container>(formattingContextRoot), downcast<Container>(root()));
+
+    Constraints constraints;
+    for (int index = m_floats.size() - 1; index >= 0; --index) {
+        auto& floatItem = m_floats[index];
+
+        if (constraints.left && floatItem.isLeftPositioned())
+            continue;
+
+        if (constraints.right && !floatItem.isLeftPositioned())
+            continue;
+
+        auto rect = floatItem.rectWithMargin();
+        if (!(rect.top() <= verticalPosition && verticalPosition < rect.bottom()))
+            continue;
+
+        if (floatItem.isLeftPositioned())
+            constraints.left = rect.right();
+        else
+            constraints.right = rect.left();
+
+        if (constraints.left && constraints.right)
+            break;
+    }
+
+    if (coordinateMappingIsRequired) {
+        if (constraints.left)
+            constraints.left = *constraints.left - adjustedPosition.x;
+
+        if (constraints.right)
+            constraints.right = *constraints.right - adjustedPosition.x;
+    }
+
+    return constraints;
+}
+
 std::optional<LayoutUnit> FloatingState::bottom(const Box& formattingContextRoot, Clear type) const
 {
     if (m_floats.isEmpty())
