@@ -148,6 +148,8 @@ static void outputInlineRuns(TextStream& stream, const LayoutContext& layoutCont
         stream << "run";
         if (inlineRun.textContext())
             stream << "(" << inlineRun.textContext()->start() << ", " << inlineRun.textContext()->start() + inlineRun.textContext()->length() << ") ";
+        else
+            stream << "(x, x) ";
         stream << "(" << inlineRun.logicalLeft() << ", " << inlineRun.logicalRight() << ")";
         stream.nextLine();
     }
@@ -161,9 +163,15 @@ static void outputLayoutBox(TextStream& stream, const Box& layoutBox, const Disp
 
     if (is<InlineContainer>(layoutBox))
         stream << "inline container";
-    else if (is<InlineBox>(layoutBox))
-        stream << "inline box";
-    else if (is<BlockContainer>(layoutBox)) {
+    else if (is<InlineBox>(layoutBox)) {
+        if (layoutBox.replaced())
+            stream << "inline replaced box";
+        else if (downcast<InlineBox>(layoutBox).hasTextContent()) {
+            auto textContent = downcast<InlineBox>(layoutBox).textContent();
+            stream << "inline text [\"" << textContent.utf8().data() << "\"]";
+        } else
+            stream << "inline box";
+    } else if (is<BlockContainer>(layoutBox)) {
         if (!layoutBox.parent())
             stream << "initial ";
         stream << "block container";
@@ -171,13 +179,13 @@ static void outputLayoutBox(TextStream& stream, const Box& layoutBox, const Disp
         stream << "box";
     // FIXME: Inline text runs don't create display boxes yet.
     if (displayBox) {
-        if (is<InlineBox>(layoutBox) || is<InlineContainer>(layoutBox)) {
-            // FIXME: display box is not completely set yet.
+        // FIXME: display box is not completely set yet.
+        if ((is<InlineBox>(layoutBox) || is<InlineContainer>(layoutBox)) && !layoutBox.isFloatingPositioned())
             stream << " at [" << "." << " " << "." << "] size [" << displayBox->width() << " " << displayBox->height() << "]";
-        } else
+        else
             stream << " at [" << displayBox->left() << " " << displayBox->top() << "] size [" << displayBox->width() << " " << displayBox->height() << "]";
     }
-    stream << " object [" << &layoutBox << "]";
+    stream << " [" << &layoutBox << "]";
 
     stream.nextLine();
 }

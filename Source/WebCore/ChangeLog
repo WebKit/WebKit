@@ -1,5 +1,16 @@
 2018-10-26  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Add more inline information to outputLayoutTree
+        https://bugs.webkit.org/show_bug.cgi?id=190945
+
+        Reviewed by Antti Koivisto.
+
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::outputInlineRuns):
+        (WebCore::Layout::outputLayoutBox):
+
+2018-10-26  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Layout floats as part of the inline content
         https://bugs.webkit.org/show_bug.cgi?id=190942
 
