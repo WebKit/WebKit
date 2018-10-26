@@ -1,3 +1,9 @@
+2018-10-26  Zalan Bujtas  <zalan@apple.com>
+
+        [iOS] Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
 2018-10-26  Ali Juma  <ajuma@chromium.org>
 
         [GTK] Unreviewed test gardening.
