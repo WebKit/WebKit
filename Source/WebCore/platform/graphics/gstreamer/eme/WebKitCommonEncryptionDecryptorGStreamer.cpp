@@ -316,8 +316,8 @@ static gboolean webkitMediaCommonEncryptionDecryptSinkEventHandler(GstBaseTransf
             GST_DEBUG_OBJECT(self, "key received");
             priv->keyReceived = true;
             priv->waitingForKey = false;
-            priv->condition.notifyOne();
             gst_element_post_message(GST_ELEMENT(self), gst_message_new_element(GST_OBJECT(self), gst_structure_new_empty("drm-key-received")));
+            priv->condition.notifyOne();
         } else if (priv->waitingForKey) {
             GST_DEBUG_OBJECT(self, "still waiting for key, reposting");
             gst_element_post_message(GST_ELEMENT(self), gst_message_new_element(GST_OBJECT(self), gst_structure_new_empty("drm-waiting-for-key")));
