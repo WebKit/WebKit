@@ -51,6 +51,7 @@ BEGIN {
 my (
     $accelerated2DCanvasSupport,
     $attachmentElementSupport,
+    $bubblewrapSandboxSupport,
     $canvasProxySupport,
     $channelMessagingSupport,
     $css3TextSupport,
@@ -151,6 +152,9 @@ my @features = (
 
     { option => "attachment-element", desc => "Toggle Attachment Element support",
       define => "ENABLE_ATTACHMENT_ELEMENT", value => \$attachmentElementSupport },
+
+    { option => "bubblewrap-sandbox", desc => "Toggle Bubblewrap sandboxing support",
+      define => "ENABLE_BUBBLEWRAP_SANDBOX", value => \$bubblewrapSandboxSupport },
 
     { option => "channel-messaging", desc => "Toggle Channel Messaging support",
       define => "ENABLE_CHANNEL_MESSAGING", value => \$channelMessagingSupport },
