@@ -1,3 +1,19 @@
+2018-10-27  Charlie Turner  <cturner@igalia.com>
+
+        Fix release build with -DLOG_DISABLED=0
+        https://bugs.webkit.org/show_bug.cgi?id=190866
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        No new tests since no functionality changed.
+
+        * platform/graphics/Font.cpp:
+        * platform/graphics/Font.h:
+        * platform/graphics/FontPlatformData.h:
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        * platform/graphics/freetype/FontPlatformDataFreeType.cpp:
+        * platform/graphics/win/FontPlatformDataWin.cpp:
+
 2018-10-26  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r237458.
