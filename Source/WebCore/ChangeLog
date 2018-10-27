@@ -1,3 +1,25 @@
+2018-10-27  Charlie Turner  <cturner@igalia.com>
+
+        [EME] Add a logging macro
+        https://bugs.webkit.org/show_bug.cgi?id=190984
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        No tests since no new functionality.
+
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        (WebCore::MediaKeySession::MediaKeySession):
+        (WebCore::MediaKeySession::generateRequest):
+        (WebCore::MediaKeySession::update):
+        (WebCore::MediaKeySession::close):
+        (WebCore::MediaKeySession::remove):
+        (WebCore::MediaKeySession::sessionClosed):
+        * Modules/encryptedmedia/MediaKeys.cpp:
+        (WebCore::MediaKeys::createSession):
+        * Modules/encryptedmedia/NavigatorEME.cpp:
+        (WebCore::NavigatorEME::requestMediaKeySystemAccess):
+        * platform/Logging.h:
+
 2018-10-27  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GStreamer][EME] Post key received to bus should be done before waking up other threads

@@ -34,6 +34,7 @@
 #include "CDM.h"
 #include "Document.h"
 #include "JSMediaKeySystemAccess.h"
+#include "Logging.h"
 
 namespace WebCore {
 
@@ -43,6 +44,7 @@ void NavigatorEME::requestMediaKeySystemAccess(Navigator&, Document& document, c
 {
     // https://w3c.github.io/encrypted-media/#dom-navigator-requestmediakeysystemaccess
     // W3C Editor's Draft 09 November 2016
+    LOG(EME, "EME - request media key system access for %s", keySystem.utf8().data());
 
     // When this method is invoked, the user agent must run the following steps:
     // 1. If keySystem is the empty string, return a promise rejected with a newly created TypeError.
@@ -60,6 +62,7 @@ void NavigatorEME::requestMediaKeySystemAccess(Navigator&, Document& document, c
         // 6.1. If keySystem is not one of the Key Systems supported by the user agent, reject promise with a NotSupportedError.
         //      String comparison is case-sensitive.
         if (!CDM::supportsKeySystem(keySystem)) {
+            LOG(EME, "EME - %s is not supported", keySystem.utf8().data());
             promise->reject(NotSupportedError);
             return;
         }

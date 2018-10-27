@@ -34,6 +34,7 @@
 #include "CDM.h"
 #include "CDMClient.h"
 #include "CDMInstance.h"
+#include "Logging.h"
 #include "MediaKeySession.h"
 #include "SharedBuffer.h"
 
@@ -54,6 +55,7 @@ ExceptionOr<Ref<MediaKeySession>> MediaKeys::createSession(ScriptExecutionContex
 {
     // https://w3c.github.io/encrypted-media/#dom-mediakeys-setservercertificate
     // W3C Editor's Draft 09 November 2016
+    LOG(EME, "EME - check if a new session can be created");
 
     // When this method is invoked, the user agent must run the following steps:
     // 1. If this object's supported session types value does not contain sessionType, throw [WebIDL] a NotSupportedError.
