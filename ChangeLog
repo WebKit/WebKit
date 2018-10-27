@@ -1,5 +1,14 @@
 2018-10-27  Charlie Turner  <cturner@igalia.com>
 
+        Make VIDEO enabled if ENCRYPTED_MEDIA is enabled.
+        https://bugs.webkit.org/show_bug.cgi?id=190983
+
+        Unreviewed build update.
+
+        * Source/cmake/WebKitFeatures.cmake:
+
+2018-10-27  Charlie Turner  <cturner@igalia.com>
+
         [GTK] Enable experimental encrypted media support
         https://bugs.webkit.org/show_bug.cgi?id=190829
 
