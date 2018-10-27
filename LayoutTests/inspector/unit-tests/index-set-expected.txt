@@ -68,3 +68,7 @@ PASS: Index less than 1 should be NaN.
 PASS: Index less than 2 should be 1.
 PASS: Index less than 3 should be 2.
 
+-- Running test case: IndexSet.prototype.copy
+PASS: Copy and original should be different objects.
+PASS: Copy and original should have the same values.
+

@@ -1,0 +1,84 @@
+Tests that rows can be removed from Table, and that the selection is updated when removing selected rows.
+
+An asterix (*) indicates a selected row; a hyphen (-) indicates a removed row.
+
+
+== Running test suite: Table.RemoveRows
+-- Running test case: Table.RemoveRow.NoneSelected
+Given a Table with selected rows [], remove row 0.
+PASS: Should remove row 0.
+
+-- Running test case: Table.RemoveRow.Selected
+Given a Table with selected rows [0], remove row 0.
+Selection changed to [] before removing row 0.
+PASS: Should remove row 0.
+
+-- Running test case: Table.RemoveSelectedRows.Single.SelectFollowing
+Given a Table with selected rows [0]:
+ * Row 0
+   Row 1
+   Row 2
+   Row 3
+Selection changed before removing rows:
+ - Row 0
+ * Row 1
+   Row 2
+   Row 3
+PASS: Should remove rows [0].
+
+-- Running test case: Table.RemoveSelectedRows.Single.SelectPreceding
+Given a Table with selected rows [3]:
+   Row 0
+   Row 1
+   Row 2
+ * Row 3
+Selection changed before removing rows:
+   Row 0
+   Row 1
+ * Row 2
+ - Row 3
+PASS: Should remove rows [3].
+
+-- Running test case: Table.RemoveSelectedRows.Multiple.SelectFollowing
+Given a Table with selected rows [0,2]:
+ * Row 0
+   Row 1
+ * Row 2
+   Row 3
+Selection changed before removing rows:
+ - Row 0
+   Row 1
+ - Row 2
+ * Row 3
+PASS: Should remove rows [0,2].
+
+-- Running test case: Table.RemoveSelectedRows.Multiple.SelectHole
+Given a Table with selected rows [0,3]:
+ * Row 0
+   Row 1
+   Row 2
+ * Row 3
+Selection changed before removing rows:
+ - Row 0
+ * Row 1
+   Row 2
+ - Row 3
+PASS: Should remove rows [0,3].
+
+-- Running test case: Table.RemoveSelectedRows.Multiple.SelectPreceding
+Given a Table with selected rows [2,3]:
+   Row 0
+   Row 1
+ * Row 2
+ * Row 3
+Selection changed before removing rows:
+   Row 0
+ * Row 1
+ - Row 2
+ - Row 3
+PASS: Should remove rows [2,3].
+
+-- Running test case: Table.RemoveRow.NotCached
+Given a Table with selected rows [], remove row 999.
+PASS: Should remove row 999.
+

@@ -1,3 +1,41 @@
+2018-10-27  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Table should support deleting rows
+        https://bugs.webkit.org/show_bug.cgi?id=189803
+        <rdar://problem/44655709>
+
+        Reviewed by Devin Rousso.
+
+        Add methods for removing rows from a Table without reloading the data
+        source. This patch adds Table.prototype.removeRow for removing a single
+        row, and Table.prototype.removeSelectedRows for removing the entire selection.
+        The latter also attempts to select a new row, if possible, before removing
+        the selection.
+
+        * UserInterface/Base/IndexSet.js:
+        (WI.IndexSet.prototype.copy):
+
+        * UserInterface/Views/Table.js:
+        (WI.Table):
+        (WI.Table.prototype.get numberOfRows):
+        Cache the number of rows in the table data source. Invalidate cached
+        value whenever table data is reloaded. Removing rows immediately updates
+        cached value, without incurring a potentially expensive reload.
+
+        (WI.Table.prototype.reloadData):
+        (WI.Table.prototype.selectRow):
+        (WI.Table.prototype.deselectRow):
+        (WI.Table.prototype.removeRow):
+        (WI.Table.prototype.removeSelectedRows):
+        Remove the selected rows and select a new row, if possible.
+        (WI.Table.prototype._updateVisibleRows):
+        (WI.Table.prototype._handleKeyDown):
+        (WI.Table.prototype._deselectAllAndSelect):
+        Drive-by fix: should work when `rowToSelect` isn't already selected.
+        (WI.Table.prototype._removeRows):
+        Remove rows and adjust the indexes of rows that are shifted up as a result
+        of preceding rows being removed.
+
 2018-10-26  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: simplify some editing code checks

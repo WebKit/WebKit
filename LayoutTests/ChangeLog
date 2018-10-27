@@ -1,3 +1,29 @@
+2018-10-27  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Table should support deleting rows
+        https://bugs.webkit.org/show_bug.cgi?id=189803
+        <rdar://problem/44655709>
+
+        Reviewed by Devin Rousso.
+
+        * inspector/table/resources/table-utilities.js:
+        (TestPage.registerInitializer.InspectorTest.TableDelegate.prototype.tableDidRemoveRows):
+        (TestPage.registerInitializer.createDataSource):
+        (TestPage.registerInitializer.InspectorTest.createTable):
+        (TestPage.registerInitializer.InspectorTest.createTableWithDelegate):
+        (TestPage.registerInitializer):
+        Update table test utilities to keep TableDataSource backing array in
+        sync when rows are removed. Also allow the number of table rows to be
+        specified when creating a table for testing.
+
+        * inspector/table/table-remove-rows-expected.txt: Added.
+        * inspector/table/table-remove-rows.html: Added.
+        Add tests for new Table methods `removeRow(rowIndex)` and `removeSelectedRows()`.
+
+        * inspector/unit-tests/index-set-expected.txt:
+        * inspector/unit-tests/index-set.html:
+        Add tests for new IndexSet method `copy()`.
+
 2018-10-26  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r237479 and r237484.

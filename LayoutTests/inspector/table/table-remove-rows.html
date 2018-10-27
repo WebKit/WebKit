@@ -1,0 +1,206 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/table-utilities.js"></script>
+<script>
+function test()
+{
+    InspectorTest.redirectRequestAnimationFrame();
+
+    let suite = InspectorTest.createSyncSuite("Table.RemoveRows");
+
+    function logTable(table, rowsToRemove = []) {
+        for (let rowIndex = 0; rowIndex < table.numberOfRows; ++rowIndex) {
+            let type = " ";
+            if (rowsToRemove.includes(rowIndex))
+                type = "-";
+            else if (table.selectedRows.includes(rowIndex))
+                type = "*";
+            InspectorTest.log(` ${type} Row ${rowIndex}`);
+        }
+    }
+
+    class RemoveRowTestDelegate extends InspectorTest.TableDelegate
+    {
+        constructor()
+        {
+            super();
+
+            this._rowIndex = NaN;
+        }
+
+        // Public
+
+        triggerRemoveRow(table, rowIndex)
+        {
+            InspectorTest.assert(isNaN(this._rowIndex));
+
+            this._rowIndex = rowIndex;
+
+            InspectorTest.log(`Given a Table with selected rows [${table.selectedRows}], remove row ${rowIndex}.`);
+            table.removeRow(rowIndex);
+        }
+
+        // Table delegate
+
+        tableDidRemoveRows(table, rowIndexes)
+        {
+            super.tableDidRemoveRows(table, rowIndexes);
+
+            InspectorTest.expectShallowEqual(rowIndexes, [this._rowIndex], `Should remove row ${this._rowIndex}.`);
+            this._rowIndex = NaN;
+        }
+
+        tableSelectionDidChange(table)
+        {
+            if (isNaN(this._rowIndex))
+                return;
+
+            InspectorTest.log(`Selection changed to [${table.selectedRows}] before removing row ${this._rowIndex}.`);
+        }
+    }
+
+    class RemoveSelectedRowsTestDelegate extends InspectorTest.TableDelegate
+    {
+        constructor()
+        {
+            super();
+
+            this._rowIndexes = null;
+        }
+
+        // Public
+
+        triggerRemoveSelectedRows(table)
+        {
+            InspectorTest.assert(!this._rowIndexes);
+
+            this._rowIndexes = table.selectedRows;
+
+            InspectorTest.log(`Given a Table with selected rows [${this._rowIndexes}]:`);
+            logTable(table);
+
+            table.removeSelectedRows();
+        }
+
+        // Table delegate
+
+        tableDidRemoveRows(table, rowIndexes)
+        {
+            super.tableDidRemoveRows(table, rowIndexes);
+
+            InspectorTest.expectShallowEqual(rowIndexes, this._rowIndexes, `Should remove rows [${this._rowIndexes}].`);
+            this._rowIndexes = null;
+        }
+
+        tableSelectionDidChange(table)
+        {
+            if (!this._rowIndexes)
+                return;
+
+            InspectorTest.log(`Selection changed before removing rows:`);
+            logTable(table, this._rowIndexes);
+        }
+    }
+
+    const numberOfRows = 4;
+    const lastRowIndex = numberOfRows - 1;
+
+    suite.addTestCase({
+        name: "Table.RemoveRow.NoneSelected",
+        description: "Remove a row from a table with no selected rows.",
+        test() {
+            let testDelegate = new RemoveRowTestDelegate;
+            let table = InspectorTest.createTableWithDelegate(testDelegate, numberOfRows);
+
+            testDelegate.triggerRemoveRow(table, 0);
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "Table.RemoveRow.Selected",
+        description: "Remove the only selected table row.",
+        test() {
+            let testDelegate = new RemoveRowTestDelegate;
+            let table = InspectorTest.createTableWithDelegate(testDelegate, numberOfRows);
+
+            table.selectRow(0);
+            testDelegate.triggerRemoveRow(table, 0);
+
+            return true;
+        }
+    });
+
+    function addTestCase({name, description, rowIndexes}) {
+        suite.addTestCase({
+            name, description,
+            test() {
+                let testDelegate = new RemoveSelectedRowsTestDelegate;
+                let table = InspectorTest.createTableWithDelegate(testDelegate, numberOfRows);
+                table.allowsMultipleSelection = true;
+
+                for (let rowIndex of rowIndexes)
+                    table.selectRow(rowIndex, true);
+
+                testDelegate.triggerRemoveSelectedRows(table);
+
+                return true;
+            }
+        });
+    }
+
+    addTestCase({
+        name: "Table.RemoveSelectedRows.Single.SelectFollowing",
+        description: "Remove the selected row, causing the following row to be selected.",
+        rowIndexes: [0],
+    });
+
+    addTestCase({
+        name: "Table.RemoveSelectedRows.Single.SelectPreceding",
+        description: "Remove the selected row, causing the preceding row to be selected.",
+        rowIndexes: [lastRowIndex],
+    });
+
+    addTestCase({
+        name: "Table.RemoveSelectedRows.Multiple.SelectFollowing",
+        description: "Remove selected rows, causing the row following the selection to be selected.",
+        rowIndexes: [0, lastRowIndex - 1],
+    });
+
+    addTestCase({
+        name: "Table.RemoveSelectedRows.Multiple.SelectHole",
+        description: "Remove selected rows, causing the first deselected row inside the selection to be selected.",
+        rowIndexes: [0, lastRowIndex],
+    });
+
+    addTestCase({
+        name: "Table.RemoveSelectedRows.Multiple.SelectPreceding",
+        description: "Remove selected rows, causing the row preceding the selection to be selected.",
+        rowIndexes: [lastRowIndex - 1, lastRowIndex],
+    });
+
+    suite.addTestCase({
+        name: "Table.RemoveRow.NotCached",
+        description: "Remove a row that is not in the table cache.",
+        test() {
+            let testDelegate = new RemoveRowTestDelegate;
+            let table = InspectorTest.createTableWithDelegate(testDelegate, 1000);
+
+            testDelegate.triggerRemoveRow(table, 999);
+
+            return true;
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onLoad="runTest()">
+    <p>Tests that rows can be removed from Table, and that the selection is updated when removing selected rows.</p>
+    <p>An asterix (*) indicates a selected row; a hyphen (-) indicates a removed row.</p>
+</body>
+</html>

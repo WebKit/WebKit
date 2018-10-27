@@ -194,6 +194,18 @@ function test()
         }
     });
 
+    suite.addTestCase({
+        name: "IndexSet.prototype.copy",
+        test() {
+            let original = new WI.IndexSet([1, 2, 3]);
+            let copied = original.copy();
+            InspectorTest.expectNotEqual(copied, original, "Copy and original should be different objects.");
+            InspectorTest.expectShallowEqual(Array.from(copied), Array.from(original), "Copy and original should have the same values.");
+
+            return true;
+        }
+    });
+
     suite.runTestCasesAndFinish();
 }
 </script>

@@ -21,6 +21,13 @@ TestPage.registerInitializer(() => {
             this.items = items || [];
         }
 
+        tableDidRemoveRows(table, rowIndexes)
+        {
+            // Prevent data source from getting out of sync.
+            for (let index = rowIndexes.length - 1; index >= 0; --index)
+                this.items.splice(index, 1);
+        }
+
         tableSelectionDidChange(table)
         {
             InspectorTest.pass("Table selection changed.");
@@ -36,9 +43,9 @@ TestPage.registerInitializer(() => {
         }
     };
 
-    function createDataSource() {
+    function createDataSource(numberOfRows = 10) {
         let items = [];
-        for (let i = 0; i < 10; ++i)
+        for (let i = 0; i < numberOfRows; ++i)
             items.push({index: i, name: `Row ${i}`});
 
         return new InspectorTest.TableDataSource(items);
@@ -58,16 +65,16 @@ TestPage.registerInitializer(() => {
         return table;
     }
 
-    InspectorTest.createTable = function() {
-        let dataSource = createDataSource();
+    InspectorTest.createTable = function(numberOfRows) {
+        let dataSource = createDataSource(numberOfRows);
         let delegate = new InspectorTest.TableDelegate(dataSource.items);
         return createTableInternal(dataSource, delegate);
     };
 
-    InspectorTest.createTableWithDelegate = function(delegate) {
+    InspectorTest.createTableWithDelegate = function(delegate, numberOfRows) {
         InspectorTest.assert(delegate instanceof InspectorTest.TableDelegate);
 
-        let dataSource = createDataSource();
+        let dataSource = createDataSource(numberOfRows);
         delegate.items = dataSource.items;
         return createTableInternal(dataSource, delegate);
     };

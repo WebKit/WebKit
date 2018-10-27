@@ -96,6 +96,13 @@ WI.IndexSet = class IndexSet
         this._indexes = [];
     }
 
+    copy()
+    {
+        let indexSet = new WI.IndexSet;
+        indexSet._indexes = this._indexes.slice();
+        return indexSet;
+    }
+
     indexGreaterThan(value)
     {
         const following = true;
