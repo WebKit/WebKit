@@ -113,7 +113,7 @@ TEST(WTF, MediaTime)
     EXPECT_EQ(MediaTime::indefiniteTime() + MediaTime(1, 1), MediaTime::indefiniteTime());
     EXPECT_EQ(MediaTime(1, 1) + MediaTime(1, 1), MediaTime(2, 1));
     EXPECT_EQ(MediaTime(1, 2) + MediaTime(1, 3), MediaTime(5, 6));
-    EXPECT_EQ(MediaTime(1, numeric_limits<int32_t>::max()-1) + MediaTime(1, numeric_limits<int32_t>::max()-2), MediaTime(2, numeric_limits<int32_t>::max()));
+    EXPECT_EQ(MediaTime(1, MediaTime::MaximumTimeScale - 1) + MediaTime(1, MediaTime::MaximumTimeScale - 2), MediaTime(2, MediaTime::MaximumTimeScale));
 
     // Subtraction Operators
     EXPECT_EQ(MediaTime::positiveInfiniteTime() - MediaTime::positiveInfiniteTime(), MediaTime::invalidTime());
@@ -134,7 +134,7 @@ TEST(WTF, MediaTime)
     EXPECT_EQ(MediaTime::indefiniteTime() - MediaTime(1, 1), MediaTime::indefiniteTime());
     EXPECT_EQ(MediaTime(3, 1) - MediaTime(2, 1), MediaTime(1, 1));
     EXPECT_EQ(MediaTime(1, 2) - MediaTime(1, 3), MediaTime(1, 6));
-    EXPECT_EQ(MediaTime(2, numeric_limits<int32_t>::max()-1) - MediaTime(1, numeric_limits<int32_t>::max()-2), MediaTime(1, numeric_limits<int32_t>::max()));
+    EXPECT_EQ(MediaTime(2, MediaTime::MaximumTimeScale - 1) - MediaTime(1, MediaTime::MaximumTimeScale - 2), MediaTime(1, MediaTime::MaximumTimeScale));
 
     // Multiplication Operators
     EXPECT_EQ(MediaTime::positiveInfiniteTime(), MediaTime::positiveInfiniteTime() * 2);
@@ -299,9 +299,9 @@ TEST(WTF, MediaTime)
     int64_t maxInt32 = numeric_limits<int32_t>::max();
     EXPECT_EQ(MediaTime(maxInt32 * 2, 1).toTimeScale(2).timeValue(), maxInt32 * 4);
     int64_t bigInt = 1LL << 62;
-    EXPECT_EQ(MediaTime(bigInt, 1U << 31).toTimeScale(1U << 30).timeValue(), bigInt / 2);
-    EXPECT_EQ(MediaTime(bigInt + 1, 1U << 31).toTimeScale(1U << 30, MediaTime::RoundingFlags::TowardZero).timeValue(), bigInt / 2);
-    EXPECT_EQ(MediaTime(bigInt + 1, 1U << 31).toTimeScale(1U << 30).hasBeenRounded(), true);
+    EXPECT_EQ(MediaTime(bigInt, 1U << 31).toTimeScale(1U << 29).timeValue(), bigInt / 4);
+    EXPECT_EQ(MediaTime(bigInt + 1, 1U << 31).toTimeScale(1U << 29, MediaTime::RoundingFlags::TowardZero).timeValue(), bigInt / 4);
+    EXPECT_EQ(MediaTime(bigInt + 1, 1U << 31).toTimeScale(1U << 29).hasBeenRounded(), true);
     EXPECT_EQ(MediaTime(bigInt - 2, MediaTime::MaximumTimeScale).toTimeScale(MediaTime::MaximumTimeScale - 1).hasBeenRounded(), true);
     EXPECT_EQ(MediaTime(bigInt, 1).toTimeScale(MediaTime::MaximumTimeScale), MediaTime::positiveInfiniteTime());
     EXPECT_EQ(MediaTime(-bigInt, 1).toTimeScale(MediaTime::MaximumTimeScale), MediaTime::negativeInfiniteTime());
