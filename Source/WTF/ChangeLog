@@ -1,3 +1,15 @@
+2018-10-28  Geoffrey Garen  <ggaren@apple.com>
+
+        HashMap should support selecting a random entry
+        https://bugs.webkit.org/show_bug.cgi?id=190814
+
+        Reviewed by Ryosuke Niwa.
+
+        * wtf/HashTable.h:
+        (WTF::HashTable::random):
+        (WTF::HashTable::random const): Merge the empty and deleted checks, and
+        use more idiomatic addressing.
+
 2018-10-26  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r237479 and r237484.

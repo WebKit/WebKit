@@ -1,3 +1,15 @@
+2018-10-28  Geoffrey Garen  <ggaren@apple.com>
+
+        HashMap should support selecting a random entry
+        https://bugs.webkit.org/show_bug.cgi?id=190814
+
+        Reviewed by Ryosuke Niwa.
+
+        * TestWebKitAPI/Tests/WTF/HashMap.cpp: Renamed IsRandom to
+        IsEvenlyDistributed to reflect the fact that we're only testing the
+        distribution. Added a test case that covers more table densities and
+        the remove() operation.
+
 2018-10-27  Charlie Turner  <cturner@igalia.com>
 
         [GTK] Add bubblewrap feature option

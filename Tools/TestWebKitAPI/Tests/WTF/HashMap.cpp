@@ -1013,28 +1013,56 @@ TEST(WTF_HashMap, Random_WrapAround)
     ASSERT_EQ(result, map.begin());
 }
 
-TEST(WTF_HashMap, Random_IsRandom)
+TEST(WTF_HashMap, Random_IsEvenlyDistributed)
 {
-    HashMap<unsigned, unsigned> map;
+    HashMap<unsigned, unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> map;
+    map.add(0, 0);
     map.add(1, 1);
-    map.add(2, 2);
 
+    unsigned zeros = 0;
     unsigned ones = 0;
-    unsigned twos = 0;
 
     for (unsigned i = 0; i < 1000; ++i) {
         auto it = map.random();
-        if (it->value == 1)
-            ++ones;
+        if (!it->value)
+            ++zeros;
         else {
-            ASSERT_EQ(it->value, 2u);
-            ++twos;
+            ASSERT_EQ(it->value, 1u);
+            ++ones;
         }
     }
 
-    ASSERT_EQ(ones + twos, 1000u);
+    ASSERT_EQ(zeros + ones, 1000u);
+    ASSERT_LE(zeros, 600u);
     ASSERT_LE(ones, 600u);
-    ASSERT_LE(twos, 600u);
+}
+
+TEST(WTF_HashMap, Random_IsEvenlyDistributedAfterRemove)
+{
+    for (size_t tableSize = 2; tableSize <= 2 * 6; ++tableSize) { // Our hash tables shrink at a load factor of 1 / 6.
+        HashMap<unsigned, unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> map;
+        for (size_t i = 0; i < tableSize; ++i)
+            map.add(i, i);
+        for (size_t i = 2; i < tableSize; ++i)
+            map.remove(i);
+
+        unsigned zeros = 0;
+        unsigned ones = 0;
+
+        for (unsigned i = 0; i < 1000; ++i) {
+            auto it = map.random();
+            if (!it->value)
+                ++zeros;
+            else {
+                ASSERT_EQ(it->value, 1u);
+                ++ones;
+            }
+        }
+
+        ASSERT_EQ(zeros + ones, 1000u);
+        ASSERT_LE(zeros, 600u);
+        ASSERT_LE(ones, 600u);
+    }
 }
 
 } // namespace TestWebKitAPI

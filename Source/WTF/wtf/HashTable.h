@@ -386,10 +386,9 @@ namespace WTF {
                 return end();
 
             while (1) {
-                ValueType* entry = m_table + (weakRandomUint32() & m_tableSizeMask);
-                if (isEmptyBucket(*entry) || isDeletedBucket(*entry))
-                    continue;
-                return makeKnownGoodIterator(entry);
+                auto& bucket = m_table[weakRandomUint32() & m_tableSizeMask];
+                if (!isEmptyOrDeletedBucket(bucket))
+                    return makeKnownGoodIterator(&bucket);
             };
         }
 
