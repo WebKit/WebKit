@@ -84,7 +84,9 @@ private:
 
     void didDisconnectFromRemote(WebAutomationSession&) override
     {
+#if ENABLE(REMOTE_INSPECTOR)
         webkitWebContextWillCloseAutomationSession(m_session->priv->webContext);
+#endif
     }
 
     void requestNewPageWithOptions(WebAutomationSession&, API::AutomationSessionBrowsingContextOptions, CompletionHandler<void(WebPageProxy*)>&& completionHandler) override
@@ -288,6 +290,7 @@ static void webkit_automation_session_class_init(WebKitAutomationSessionClass* s
         G_TYPE_NONE);
 }
 
+#if ENABLE(REMOTE_INSPECTOR)
 WebKitAutomationSession* webkitAutomationSessionCreate(WebKitWebContext* webContext, const char* sessionID, const Inspector::RemoteInspector::Client::SessionCapabilities& capabilities)
 {
     auto* session = WEBKIT_AUTOMATION_SESSION(g_object_new(WEBKIT_TYPE_AUTOMATION_SESSION, "id", sessionID, nullptr));
@@ -301,6 +304,7 @@ WebKitAutomationSession* webkitAutomationSessionCreate(WebKitWebContext* webCont
     }
     return session;
 }
+#endif
 
 WebAutomationSession& webkitAutomationSessionGetSession(WebKitAutomationSession* session)
 {
