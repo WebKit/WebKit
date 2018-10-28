@@ -65,6 +65,7 @@ public:
     virtual AffineTransform localCoordinateSpaceTransform(SVGLocatable::CTMScope) const;
 
     virtual bool isSVGGraphicsElement() const { return false; }
+    virtual bool isSVGGeometryElement() const { return false; }
     virtual bool isFilterEffect() const { return false; }
     virtual bool isGradientStop() const { return false; }
     virtual bool isTextContent() const { return false; }
