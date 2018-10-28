@@ -1,5 +1,11 @@
 2018-10-27  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        Unreviewed, fix content added by a stray Ctrl+V
+
+        * platform/gtk/TestExpectations:
+
+2018-10-27  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         Unreviewed GTK test gardening
 
         * TestExpectations:
