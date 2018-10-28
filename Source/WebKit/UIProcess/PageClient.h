@@ -140,7 +140,7 @@ class InstallMissingMediaPluginsPermissionRequest;
 struct ColorSpaceData;
 #endif
 
-class PageClient {
+class PageClient : public CanMakeWeakPtr<PageClient> {
 public:
     virtual ~PageClient() { }
 

@@ -59,7 +59,7 @@ void WebPageProxy::editorStateChanged(const EditorState& editorState)
 
 PlatformWidget WebPageProxy::viewWidget()
 {
-    return static_cast<PageClientImpl&>(m_pageClient).viewWidget();
+    return static_cast<PageClientImpl&>(pageClient()).viewWidget();
 }
 
 

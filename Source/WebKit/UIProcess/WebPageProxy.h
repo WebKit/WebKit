@@ -503,6 +503,8 @@ public:
     void clearSelection();
     void restoreSelectionInFocusedEditableElement();
 
+    PageClient& pageClient() const;
+
     void setViewNeedsDisplay(const WebCore::Region&);
     void requestScroll(const WebCore::FloatPoint& scrollPosition, const WebCore::IntPoint& scrollOrigin, bool isProgrammaticScroll);
     
@@ -1819,7 +1821,7 @@ private:
 
     void continueNavigationInNewProcess(API::Navigation&, Ref<WebProcessProxy>&&);
 
-    PageClient& m_pageClient;
+    WeakPtr<PageClient> m_pageClient;
     Ref<API::PageConfiguration> m_configuration;
 
     std::unique_ptr<API::LoaderClient> m_loaderClient;
