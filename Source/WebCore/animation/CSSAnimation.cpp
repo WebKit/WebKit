@@ -103,81 +103,16 @@ void CSSAnimation::syncPropertiesWithBackingAnimation()
     unsuspendEffectInvalidation();
 }
 
-std::optional<double> CSSAnimation::bindingsStartTime() const
-{
-    flushPendingStyleChanges();
-    return DeclarativeAnimation::bindingsStartTime();
-}
-
-void CSSAnimation::setBindingsStartTime(std::optional<double> startTime)
-{
-    flushPendingStyleChanges();
-    return DeclarativeAnimation::setBindingsStartTime(startTime);
-}
-
-std::optional<double> CSSAnimation::bindingsCurrentTime() const
-{
-    flushPendingStyleChanges();
-    auto currentTime = DeclarativeAnimation::bindingsCurrentTime();
-    if (currentTime) {
-        if (auto* animationEffect = effect())
-            return std::max(0.0, std::min(currentTime.value(), animationEffect->timing()->activeDuration().milliseconds()));
-    }
-    return currentTime;
-}
-
-ExceptionOr<void> CSSAnimation::setBindingsCurrentTime(std::optional<double> currentTime)
-{
-    flushPendingStyleChanges();
-    return DeclarativeAnimation::setBindingsCurrentTime(currentTime);
-}
-
-WebAnimation::PlayState CSSAnimation::bindingsPlayState() const
-{
-    flushPendingStyleChanges();
-    return DeclarativeAnimation::bindingsPlayState();
-}
-
-bool CSSAnimation::bindingsPending() const
-{
-    flushPendingStyleChanges();
-    return DeclarativeAnimation::bindingsPending();
-}
-
-WebAnimation::ReadyPromise& CSSAnimation::bindingsReady()
-{
-    flushPendingStyleChanges();
-    return DeclarativeAnimation::bindingsReady();
-}
-
-WebAnimation::FinishedPromise& CSSAnimation::bindingsFinished()
-{
-    flushPendingStyleChanges();
-    return DeclarativeAnimation::bindingsFinished();
-}
-
 ExceptionOr<void> CSSAnimation::bindingsPlay()
 {
-    flushPendingStyleChanges();
     m_stickyPaused = false;
     return DeclarativeAnimation::bindingsPlay();
 }
 
 ExceptionOr<void> CSSAnimation::bindingsPause()
 {
-    flushPendingStyleChanges();
     m_stickyPaused = true;
     return DeclarativeAnimation::bindingsPause();
-}
-
-void CSSAnimation::flushPendingStyleChanges() const
-{
-    if (auto* animationEffect = effect()) {
-        if (is<KeyframeEffectReadOnly>(animationEffect)) {
-            if (auto* target = downcast<KeyframeEffectReadOnly>(animationEffect)->target())
-                target->document().updateStyleIfNeeded();
-        }
-    }
 }
 
 } // namespace WebCore

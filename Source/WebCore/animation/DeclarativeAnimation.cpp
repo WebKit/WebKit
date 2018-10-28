@@ -84,6 +84,76 @@ void DeclarativeAnimation::syncPropertiesWithBackingAnimation()
 {
 }
 
+std::optional<double> DeclarativeAnimation::bindingsStartTime() const
+{
+    flushPendingStyleChanges();
+    return WebAnimation::bindingsStartTime();
+}
+
+void DeclarativeAnimation::setBindingsStartTime(std::optional<double> startTime)
+{
+    flushPendingStyleChanges();
+    return WebAnimation::setBindingsStartTime(startTime);
+}
+
+std::optional<double> DeclarativeAnimation::bindingsCurrentTime() const
+{
+    flushPendingStyleChanges();
+    return WebAnimation::bindingsCurrentTime();
+}
+
+ExceptionOr<void> DeclarativeAnimation::setBindingsCurrentTime(std::optional<double> currentTime)
+{
+    flushPendingStyleChanges();
+    return WebAnimation::setBindingsCurrentTime(currentTime);
+}
+
+WebAnimation::PlayState DeclarativeAnimation::bindingsPlayState() const
+{
+    flushPendingStyleChanges();
+    return WebAnimation::bindingsPlayState();
+}
+
+bool DeclarativeAnimation::bindingsPending() const
+{
+    flushPendingStyleChanges();
+    return WebAnimation::bindingsPending();
+}
+
+WebAnimation::ReadyPromise& DeclarativeAnimation::bindingsReady()
+{
+    flushPendingStyleChanges();
+    return WebAnimation::bindingsReady();
+}
+
+WebAnimation::FinishedPromise& DeclarativeAnimation::bindingsFinished()
+{
+    flushPendingStyleChanges();
+    return WebAnimation::bindingsFinished();
+}
+
+ExceptionOr<void> DeclarativeAnimation::bindingsPlay()
+{
+    flushPendingStyleChanges();
+    return WebAnimation::bindingsPlay();
+}
+
+ExceptionOr<void> DeclarativeAnimation::bindingsPause()
+{
+    flushPendingStyleChanges();
+    return WebAnimation::bindingsPause();
+}
+
+void DeclarativeAnimation::flushPendingStyleChanges() const
+{
+    if (auto* animationEffect = effect()) {
+        if (is<KeyframeEffectReadOnly>(animationEffect)) {
+            if (auto* target = downcast<KeyframeEffectReadOnly>(animationEffect)->target())
+                target->document().updateStyleIfNeeded();
+        }
+    }
+}
+
 void DeclarativeAnimation::setTimeline(RefPtr<AnimationTimeline>&& newTimeline)
 {
     if (timeline() && !newTimeline)

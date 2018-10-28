@@ -1,3 +1,41 @@
+2018-10-27  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Move bindings methods requiring style flush from CSSAnimation to DeclarativeAnimation
+        https://bugs.webkit.org/show_bug.cgi?id=190996
+
+        Reviewed by Dean Jackson.
+
+        Moving all of the IDL bindings methods that require flushing style from CSSAnimation to its superclass
+        DeclarativeAnimation so we follow the same route in CSSTransition. Note that there was code in
+        CSSAnimation::bindingsCurrentTime() that was not moved as it proved to not be necessary.
+
+        * animation/CSSAnimation.cpp:
+        (WebCore::CSSAnimation::bindingsPlay):
+        (WebCore::CSSAnimation::bindingsPause):
+        (WebCore::CSSAnimation::bindingsStartTime const): Deleted.
+        (WebCore::CSSAnimation::setBindingsStartTime): Deleted.
+        (WebCore::CSSAnimation::bindingsCurrentTime const): Deleted.
+        (WebCore::CSSAnimation::setBindingsCurrentTime): Deleted.
+        (WebCore::CSSAnimation::bindingsPlayState const): Deleted.
+        (WebCore::CSSAnimation::bindingsPending const): Deleted.
+        (WebCore::CSSAnimation::bindingsReady): Deleted.
+        (WebCore::CSSAnimation::bindingsFinished): Deleted.
+        (WebCore::CSSAnimation::flushPendingStyleChanges const): Deleted.
+        * animation/CSSAnimation.h:
+        * animation/DeclarativeAnimation.cpp:
+        (WebCore::DeclarativeAnimation::bindingsStartTime const):
+        (WebCore::DeclarativeAnimation::setBindingsStartTime):
+        (WebCore::DeclarativeAnimation::bindingsCurrentTime const):
+        (WebCore::DeclarativeAnimation::setBindingsCurrentTime):
+        (WebCore::DeclarativeAnimation::bindingsPlayState const):
+        (WebCore::DeclarativeAnimation::bindingsPending const):
+        (WebCore::DeclarativeAnimation::bindingsReady):
+        (WebCore::DeclarativeAnimation::bindingsFinished):
+        (WebCore::DeclarativeAnimation::bindingsPlay):
+        (WebCore::DeclarativeAnimation::bindingsPause):
+        (WebCore::DeclarativeAnimation::flushPendingStyleChanges const):
+        * animation/DeclarativeAnimation.h:
+
 2018-10-27  Charlie Turner  <cturner@igalia.com>
 
         [EME] Add a logging macro
