@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-timestampoffset-rounding-error</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var initSegment;
+    var bufferedSamples;
+    var enqueuedSamples;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    function makeVideo(generation, timeScale) {
+        const init = makeAInit(2, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]);
+
+        const samples = [];
+        for (let time = 0; time < 2 * timeScale; time++)
+            samples.push(makeASample(time / timeScale, time / timeScale, 1 / timeScale, 1, time % 2 === 0 ? SAMPLE_FLAG.SYNC : SAMPLE_FLAG.NONE, generation, timeScale));
+
+        return concatenateSamples([init].concat(samples));
+    }
+
+    window.addEventListener('load', async () => {
+        findMediaElement();
+        source = new MediaSource();
+        testExpected('source.readyState', 'closed');
+        const sourceOpened = waitFor(source, 'sourceopen');
+
+        const videoSource = document.createElement('source');
+        videoSource.type = 'video/mock; codecs=mock';
+        videoSource.src = URL.createObjectURL(source);
+        video.appendChild(videoSource);
+
+        await sourceOpened;
+        run('sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
+
+        run('sourceBuffer.appendBuffer(makeVideo(0, 6))');
+        await waitFor(sourceBuffer, 'updateend');
+
+        bufferedSamples = internals.bufferedSamplesForTrackID(sourceBuffer, 1);
+        enqueuedSamples = internals.enqueuedSamplesForTrackID(sourceBuffer, 1);
+
+        run("sourceBuffer.timestampOffset = 1");
+        run('sourceBuffer.appendBuffer(makeVideo(1, 6))');
+        await waitFor(sourceBuffer, 'updateend');
+
+        bufferedSamples = internals.bufferedSamplesForTrackID(sourceBuffer, 1);
+        enqueuedSamples = internals.enqueuedSamplesForTrackID(sourceBuffer, 1);
+
+        run("sourceBuffer.timestampOffset = 1.5");
+        run('sourceBuffer.appendBuffer(makeVideo(2, 5))');
+        await waitFor(sourceBuffer, 'updateend');
+
+        bufferedSamples = internals.bufferedSamplesForTrackID(sourceBuffer, 1);
+        enqueuedSamples = internals.enqueuedSamplesForTrackID(sourceBuffer, 1);
+
+        consoleWrite("Buffered:");
+        bufferedSamples.forEach(consoleWrite);
+
+        endTest();
+    });
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>

@@ -16,7 +16,9 @@ var SAMPLE_FLAG = {
     DELAYED: 1 << 3,
 };
 
-function makeASample(presentationTime, decodeTime, duration, trackID, flags, generation) {
+function makeASample(presentationTime, decodeTime, duration, trackID, flags, generation, timeScale) {
+    if (typeof timeScale === 'undefined')
+        timeScale = 1000
     var byteLength = 30;
     var buffer = new ArrayBuffer(byteLength);
     var array = new Uint8Array(buffer);
@@ -24,8 +26,6 @@ function makeASample(presentationTime, decodeTime, duration, trackID, flags, gen
 
     var view = new DataView(buffer);
     view.setUint32(4, byteLength, true);
-
-    var timeScale = 1000;
     view.setInt32(8, timeScale, true);
     view.setInt32(12, presentationTime * timeScale, true);
     view.setInt32(16, decodeTime * timeScale, true);

@@ -8,11 +8,11 @@ RUN(sourceBuffer.timestampOffset = 10)
 RUN(sourceBuffer.appendBuffer(samples))
 EVENT(updateend)
 EXPECTED (bufferedSamples.length == '6') OK
-{PTS({10.000000}), DTS({10.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(0)}
-{PTS({11.000000}), DTS({11.000000}), duration({1000/1000 = 1.000000}), flags(0), generation(0)}
-{PTS({12.000000}), DTS({12.000000}), duration({1000/1000 = 1.000000}), flags(0), generation(0)}
-{PTS({13.000000}), DTS({13.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(0)}
-{PTS({14.000000}), DTS({14.000000}), duration({1000/1000 = 1.000000}), flags(0), generation(0)}
-{PTS({15.000000}), DTS({15.000000}), duration({1000/1000 = 1.000000}), flags(0), generation(0)}
+{PTS({10000/1000 = 10.000000}), DTS({10000/1000 = 10.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(0)}
+{PTS({11000/1000 = 11.000000}), DTS({11000/1000 = 11.000000}), duration({1000/1000 = 1.000000}), flags(0), generation(0)}
+{PTS({12000/1000 = 12.000000}), DTS({12000/1000 = 12.000000}), duration({1000/1000 = 1.000000}), flags(0), generation(0)}
+{PTS({13000/1000 = 13.000000}), DTS({13000/1000 = 13.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(0)}
+{PTS({14000/1000 = 14.000000}), DTS({14000/1000 = 14.000000}), duration({1000/1000 = 1.000000}), flags(0), generation(0)}
+{PTS({15000/1000 = 15.000000}), DTS({15000/1000 = 15.000000}), duration({1000/1000 = 1.000000}), flags(0), generation(0)}
 END OF TEST
 
