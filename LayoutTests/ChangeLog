@@ -1,5 +1,13 @@
 2018-10-28  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        Unreviewed, fix a few more expectations from yesterday
+
+        These should be timeouts!
+
+        * platform/gtk/TestExpectations:
+
+2018-10-28  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         Unreviewed, attempt to fix missing trailing whitespace in new expectations
 
         * platform/gtk/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-badInput-expected.txt:
