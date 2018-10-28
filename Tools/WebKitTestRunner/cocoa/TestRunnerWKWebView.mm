@@ -53,7 +53,7 @@
 
 @property (nonatomic, copy) void (^zoomToScaleCompletionHandler)(void);
 @property (nonatomic, copy) void (^retrieveSpeakSelectionContentCompletionHandler)(void);
-@property (nonatomic) BOOL isShowingKeyboard;
+@property (nonatomic, getter=isShowingKeyboard, setter=setIsShowingKeyboard:) BOOL showingKeyboard;
 
 @end
 
@@ -142,20 +142,20 @@
 
 - (void)_invokeShowKeyboardCallbackIfNecessary
 {
-    if (self.isShowingKeyboard)
+    if (self.showingKeyboard)
         return;
 
-    self.isShowingKeyboard = YES;
+    self.showingKeyboard = YES;
     if (self.didShowKeyboardCallback)
         self.didShowKeyboardCallback();
 }
 
 - (void)_invokeHideKeyboardCallbackIfNecessary
 {
-    if (!self.isShowingKeyboard)
+    if (!self.showingKeyboard)
         return;
 
-    self.isShowingKeyboard = NO;
+    self.showingKeyboard = NO;
     if (self.didHideKeyboardCallback)
         self.didHideKeyboardCallback();
 }

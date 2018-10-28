@@ -138,6 +138,8 @@ public:
     void setDidHideKeyboardCallback(JSValueRef);
     JSValueRef didHideKeyboardCallback() const;
 
+    bool isShowingKeyboard() const;
+
     void setDidEndScrollingCallback(JSValueRef);
     JSValueRef didEndScrollingCallback() const;
 
