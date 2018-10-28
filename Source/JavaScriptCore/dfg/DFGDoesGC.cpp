@@ -248,7 +248,6 @@ bool doesGC(Graph& graph, Node* node)
     case GetSetter:
     case GetByVal:
     case GetByValWithThis:
-    case GetIndexedPropertyStorage:
     case GetArrayLength:
     case GetVectorLength:
     case ArrayPush:
@@ -374,6 +373,11 @@ bool doesGC(Graph& graph, Node* node)
     case SetAdd:
     case MapSet:
         return true;
+
+    case GetIndexedPropertyStorage:
+        if (node->arrayMode().type() == Array::String)
+            return true;
+        return false;
 
     case MapHash:
         switch (node->child1().useKind()) {
