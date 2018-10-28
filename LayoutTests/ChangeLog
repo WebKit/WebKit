@@ -1,5 +1,11 @@
 2018-10-28  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        Unreviewed, one more GTK expectations fix
+
+        * platform/gtk/inspector/canvas/recording-bitmaprenderer-expected.txt:
+
+2018-10-28  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         Unreviewed, fix a few more expectations from yesterday
 
         These should be timeouts!

@@ -69,3 +69,4 @@ frames:
 PASS: The recording should have the name "TEST".
 PASS: The recording should have one frame.
 PASS: The first frame should have one action.
+
