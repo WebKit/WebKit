@@ -2,6 +2,7 @@ include(GLib.cmake)
 
 list(APPEND JavaScriptCore_LIBRARIES
     ${GLIB_LIBRARIES}
+    ${GLIB_GMODULE_LIBRARIES}
 )
 
 list(APPEND JavaScriptCore_SYSTEM_INCLUDE_DIRECTORIES
