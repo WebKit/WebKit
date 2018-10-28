@@ -397,7 +397,7 @@ struct AbstractValue {
             ASSERT(m_type & SpecCell);
             Structure* structure = value.asCell()->structure();
             return m_structure.contains(structure)
-                && (m_arrayModes & asArrayModes(structure->indexingType()));
+                && (m_arrayModes & asArrayModes(structure->indexingMode()));
         }
         
         return true;

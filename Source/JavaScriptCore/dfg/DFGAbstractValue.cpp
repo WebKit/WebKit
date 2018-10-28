@@ -60,7 +60,7 @@ void AbstractValue::set(Graph& graph, const FrozenValue& value, StructureClobber
                 m_arrayModes = ALL_ARRAY_MODES;
                 m_structure.clobber();
             } else
-                m_arrayModes = asArrayModes(structure->indexingType());
+                m_arrayModes = asArrayModes(structure->indexingMode());
         } else {
             m_structure.makeTop();
             m_arrayModes = ALL_ARRAY_MODES;
@@ -87,7 +87,7 @@ void AbstractValue::set(Graph& graph, RegisteredStructure structure)
     RELEASE_ASSERT(structure);
     
     m_structure = structure;
-    m_arrayModes = asArrayModes(structure->indexingType());
+    m_arrayModes = asArrayModes(structure->indexingMode());
     m_type = speculationFromStructure(structure.get());
     m_value = JSValue();
     
@@ -228,7 +228,7 @@ bool AbstractValue::mergeOSREntryValue(Graph& graph, JSValue value)
         FrozenValue* frozenValue = graph.freeze(value);
         if (frozenValue->pointsToHeap()) {
             m_structure = graph.registerStructure(frozenValue->structure());
-            m_arrayModes = asArrayModes(frozenValue->structure()->indexingType());
+            m_arrayModes = asArrayModes(frozenValue->structure()->indexingMode());
         } else {
             m_structure.clear();
             m_arrayModes = 0;
@@ -240,7 +240,7 @@ bool AbstractValue::mergeOSREntryValue(Graph& graph, JSValue value)
         mergeSpeculation(m_type, speculationFromValue(value));
         if (!!value && value.isCell()) {
             RegisteredStructure structure = graph.registerStructure(value.asCell()->structure(graph.m_vm));
-            mergeArrayModes(m_arrayModes, asArrayModes(structure->indexingType()));
+            mergeArrayModes(m_arrayModes, asArrayModes(structure->indexingMode()));
             m_structure.merge(RegisteredStructureSet(structure));
         }
         if (m_value != value)
