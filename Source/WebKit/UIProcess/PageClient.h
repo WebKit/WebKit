@@ -36,6 +36,7 @@
 #include <WebCore/UserInterfaceLayoutDirection.h>
 #include <WebCore/ValidationBubble.h>
 #include <wtf/Forward.h>
+#include <wtf/WeakPtr.h>
 
 #if PLATFORM(COCOA)
 #include "LayerRepresentation.h"
