@@ -1,3 +1,77 @@
+2018-10-28  Babak Shafiei  <bshafiei@apple.com>
+
+        Cherry-pick r237325. rdar://problem/45363533
+
+    DFGAbstractValue::m_arrayModes expects IndexingMode values, not IndexingType.
+    https://bugs.webkit.org/show_bug.cgi?id=190515
+    <rdar://problem/45222379>
+    
+    Reviewed by Saam Barati.
+    
+    JSTests:
+    
+    * stress/regress-190515.js: Added.
+    
+    Source/JavaScriptCore:
+    
+    1. Fixes calls to asArrayModes() to take a structure's IndexingMode instead of
+       IndexingType.
+    
+    2. DFG's compileNewArrayBuffer()'s HaveABadTime case was previously using the
+       node's indexingType (instead of indexingMode) to choose the array structure
+       to use for creating an array buffer with.  This turns out to not be an issue
+       because when the VM is in having a bad time, all the
+       arrayStructureForIndexingTypeDuringAllocation structure pointers will point to
+       the SlowPutArrayStorage structure anyway.  However, to be strictly correct,
+       we'll fix it to use the structure for the node's indexingMode.
+    
+    * dfg/DFGAbstractValue.cpp:
+    (JSC::DFG::AbstractValue::set):
+    (JSC::DFG::AbstractValue::mergeOSREntryValue):
+    * dfg/DFGAbstractValue.h:
+    (JSC::DFG::AbstractValue::validate const):
+    * dfg/DFGOSRExit.cpp:
+    (JSC::DFG::OSRExit::executeOSRExit):
+    * dfg/DFGRegisteredStructureSet.cpp:
+    (JSC::DFG::RegisteredStructureSet::arrayModesFromStructures const):
+    * dfg/DFGSpeculativeJIT.cpp:
+    (JSC::DFG::SpeculativeJIT::compileNewArrayBuffer):
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@237325 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-10-22  Mark Lam  <mark.lam@apple.com>
+
+            DFGAbstractValue::m_arrayModes expects IndexingMode values, not IndexingType.
+            https://bugs.webkit.org/show_bug.cgi?id=190515
+            <rdar://problem/45222379>
+
+            Reviewed by Saam Barati.
+
+            1. Fixes calls to asArrayModes() to take a structure's IndexingMode instead of
+               IndexingType.
+
+            2. DFG's compileNewArrayBuffer()'s HaveABadTime case was previously using the
+               node's indexingType (instead of indexingMode) to choose the array structure
+               to use for creating an array buffer with.  This turns out to not be an issue
+               because when the VM is in having a bad time, all the
+               arrayStructureForIndexingTypeDuringAllocation structure pointers will point to
+               the SlowPutArrayStorage structure anyway.  However, to be strictly correct,
+               we'll fix it to use the structure for the node's indexingMode.
+
+            * dfg/DFGAbstractValue.cpp:
+            (JSC::DFG::AbstractValue::set):
+            (JSC::DFG::AbstractValue::mergeOSREntryValue):
+            * dfg/DFGAbstractValue.h:
+            (JSC::DFG::AbstractValue::validate const):
+            * dfg/DFGOSRExit.cpp:
+            (JSC::DFG::OSRExit::executeOSRExit):
+            * dfg/DFGRegisteredStructureSet.cpp:
+            (JSC::DFG::RegisteredStructureSet::arrayModesFromStructures const):
+            * dfg/DFGSpeculativeJIT.cpp:
+            (JSC::DFG::SpeculativeJIT::compileNewArrayBuffer):
+
 2018-10-26  Mark Lam  <mark.lam@apple.com>
 
         Cherry-pick r237469. rdar://problem/45363534

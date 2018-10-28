@@ -499,7 +499,7 @@ void OSRExit::executeOSRExit(Context& context)
             ASSERT(exit.m_kind == BadCache || exit.m_kind == BadIndexingType);
             Structure* structure = profiledValue.asCell()->structure(vm);
             arrayProfile->observeStructure(structure);
-            arrayProfile->observeArrayMode(asArrayModes(structure->indexingType()));
+            arrayProfile->observeArrayMode(asArrayModes(structure->indexingMode()));
         }
         if (extraInitializationLevel <= ExtraInitializationLevel::ArrayProfileUpdate)
             break;
