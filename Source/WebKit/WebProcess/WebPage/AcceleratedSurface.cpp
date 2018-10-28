@@ -69,7 +69,7 @@ AcceleratedSurface::AcceleratedSurface(WebPage& webPage, Client& client)
     m_size.scale(m_webPage.deviceScaleFactor());
 }
 
-bool AcceleratedSurface::resize(const IntSize& size)
+bool AcceleratedSurface::hostResize(const IntSize& size)
 {
     IntSize scaledSize(size);
     scaledSize.scale(m_webPage.deviceScaleFactor());

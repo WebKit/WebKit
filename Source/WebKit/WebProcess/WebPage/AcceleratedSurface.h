@@ -45,7 +45,8 @@ public:
 
     virtual uint64_t window() const { ASSERT_NOT_REACHED(); return 0; }
     virtual uint64_t surfaceID() const { ASSERT_NOT_REACHED(); return 0; }
-    virtual bool resize(const WebCore::IntSize&);
+    virtual bool hostResize(const WebCore::IntSize&);
+    virtual void clientResize(const WebCore::IntSize&) { };
     virtual bool shouldPaintMirrored() const { return false; }
 
     virtual void initialize() { }

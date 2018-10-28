@@ -91,6 +91,12 @@ private:
             m_layerTreeHost.didDestroyGLContext();
         }
 
+        void resize(const IntSize& size)
+        {
+            if (m_layerTreeHost.m_surface)
+                m_layerTreeHost.m_surface->clientResize(size);
+        }
+
         void willRenderFrame() override
         {
             m_layerTreeHost.willRenderFrame();

@@ -44,7 +44,7 @@ public:
 
     uint64_t window() const override;
     uint64_t surfaceID() const override;
-    bool resize(const WebCore::IntSize&) override;
+    void clientResize(const WebCore::IntSize&) override;
     bool shouldPaintMirrored() const override { return false; }
 
     void initialize() override;

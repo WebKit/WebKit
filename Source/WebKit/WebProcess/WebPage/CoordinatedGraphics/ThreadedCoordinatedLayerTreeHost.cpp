@@ -177,7 +177,7 @@ void ThreadedCoordinatedLayerTreeHost::deviceOrPageScaleFactorChanged()
         return;
     }
 
-    if (m_surface && m_surface->resize(m_webPage.size()))
+    if (m_surface && m_surface->hostResize(m_webPage.size()))
         m_layerTreeContext.contextID = m_surface->surfaceID();
 
     CoordinatedLayerTreeHost::deviceOrPageScaleFactorChanged();
@@ -203,7 +203,7 @@ void ThreadedCoordinatedLayerTreeHost::sizeDidChange(const IntSize& size)
         return;
     }
 
-    if (m_surface && m_surface->resize(size))
+    if (m_surface && m_surface->hostResize(size))
         m_layerTreeContext.contextID = m_surface->surfaceID();
 
     CoordinatedLayerTreeHost::sizeDidChange(size);

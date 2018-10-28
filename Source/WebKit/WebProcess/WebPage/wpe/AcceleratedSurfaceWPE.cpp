@@ -92,15 +92,10 @@ uint64_t AcceleratedSurfaceWPE::surfaceID() const
     return m_webPage.pageID();
 }
 
-bool AcceleratedSurfaceWPE::resize(const IntSize& size)
+void AcceleratedSurfaceWPE::clientResize(const IntSize& size)
 {
     ASSERT(m_backend);
-    if (!AcceleratedSurface::resize(size))
-        return false;
-
     wpe_renderer_backend_egl_target_resize(m_backend, std::max(0, m_size.width()), std::max(0, m_size.height()));
-
-    return true;
 }
 
 void AcceleratedSurfaceWPE::willRenderFrame()
