@@ -503,7 +503,7 @@ unsigned ApplePayPaymentHandler::version() const
 void ApplePayPaymentHandler::validateMerchant(URL&& validationURL)
 {
     if (validationURL.isValid())
-        m_paymentRequest->dispatchEvent(MerchantValidationEvent::create(eventNames().merchantvalidationEvent, WTFMove(validationURL)).get());
+        m_paymentRequest->dispatchEvent(MerchantValidationEvent::create(eventNames().merchantvalidationEvent, WTF::get<URL>(m_identifier).string(), WTFMove(validationURL)).get());
 }
 
 static Ref<PaymentAddress> convert(const ApplePayPaymentContact& contact)

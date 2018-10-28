@@ -275,7 +275,7 @@ static ExceptionOr<std::tuple<String, Vector<String>>> checkAndCanonicalizeDetai
         if (shouldValidatePaymentMethodIdentifier == ShouldValidatePaymentMethodIdentifier::Yes) {
             auto paymentMethodIdentifier = convertAndValidatePaymentMethodIdentifier(modifier.supportedMethods);
             if (!paymentMethodIdentifier)
-                return Exception { RangeError, makeString("\"", modifier.supportedMethods, "\" is an invalid payment method identifier.") };
+                return Exception { RangeError, makeString('"', modifier.supportedMethods, "\" is an invalid payment method identifier.") };
         }
 
         if (modifier.total) {
@@ -323,7 +323,7 @@ ExceptionOr<Ref<PaymentRequest>> PaymentRequest::create(Document& document, Vect
     for (auto& paymentMethod : methodData) {
         auto identifier = convertAndValidatePaymentMethodIdentifier(paymentMethod.supportedMethods);
         if (!identifier)
-            return Exception { RangeError, makeString("\"", paymentMethod.supportedMethods, "\" is an invalid payment method identifier.") };
+            return Exception { RangeError, makeString('"', paymentMethod.supportedMethods, "\" is an invalid payment method identifier.") };
 
         String serializedData;
         if (paymentMethod.data) {

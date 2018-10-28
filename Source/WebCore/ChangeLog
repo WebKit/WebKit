@@ -1,3 +1,26 @@
+2018-10-28  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Implement MerchantValidationEvent.methodName
+        https://bugs.webkit.org/show_bug.cgi?id=190058
+
+        Reviewed by Darin Adler.
+
+        Implemented MerchantValidationEvent's methodName attribute and MerchantValidationEventInit's
+        methodName property as specified in the Payment Request API W3C Editor's Draft of
+        27 September 2018.
+
+        Covered by web-platform-tests/payment-request/MerchantValidationEvent/constructor.https.html.
+
+        * Modules/applepay/paymentrequest/ApplePayPaymentHandler.cpp:
+        (WebCore::ApplePayPaymentHandler::validateMerchant): Passed the payment method identifier
+        (as a string) to MerchantValidationEvent::create()
+        * Modules/paymentrequest/MerchantValidationEvent.cpp:
+        (WebCore::MerchantValidationEvent::create): Validated the methodName before constructing the
+        event, throwing a RangeError on failure.
+        (WebCore::MerchantValidationEvent::MerchantValidationEvent):
+        * Modules/paymentrequest/MerchantValidationEvent.h:
+        * Modules/paymentrequest/MerchantValidationEvent.idl:
+
 2018-10-27  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Remove WebAnimation::description()
