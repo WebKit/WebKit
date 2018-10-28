@@ -1,5 +1,21 @@
 2018-10-27  Antoine Quint  <graouts@apple.com>
 
+        [Web Animations] Move the logic of Document::getAnimations() to DocumentTimeline
+        https://bugs.webkit.org/show_bug.cgi?id=190994
+
+        Reviewed by Dean Jackson.
+
+        It would be cleaner to have the logic of document.getAnimations() on the DocumentTimeline instead of the Document, keep more
+        animation-related code compartmentalized in the animation directory. No change in behavior, so no test update.
+
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::getAnimations const):
+        * animation/DocumentTimeline.h:
+        * dom/Document.cpp:
+        (WebCore::Document::getAnimations):
+
+2018-10-27  Antoine Quint  <graouts@apple.com>
+
         [Web Animations] Move bindings methods requiring style flush from CSSAnimation to DeclarativeAnimation
         https://bugs.webkit.org/show_bug.cgi?id=190996
 

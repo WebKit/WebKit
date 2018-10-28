@@ -83,6 +83,23 @@ void DocumentTimeline::detachFromDocument()
     m_document = nullptr;
 }
 
+Vector<RefPtr<WebAnimation>> DocumentTimeline::getAnimations() const
+{
+    ASSERT(m_document);
+
+    // FIXME: Filter and order the list as specified (webkit.org/b/179535).
+    Vector<RefPtr<WebAnimation>> animations;
+    for (const auto& animation : this->animations()) {
+        if (animation->canBeListed() && is<KeyframeEffectReadOnly>(animation->effect())) {
+            if (auto* target = downcast<KeyframeEffectReadOnly>(animation->effect())->target()) {
+                if (target->isDescendantOf(*m_document))
+                    animations.append(animation);
+            }
+        }
+    }
+    return animations;
+}
+
 void DocumentTimeline::updateThrottlingState()
 {
     m_needsUpdateAnimationSchedule = false;

@@ -43,6 +43,8 @@ public:
     static Ref<DocumentTimeline> create(Document&, DocumentTimelineOptions&&);
     ~DocumentTimeline();
 
+    Vector<RefPtr<WebAnimation>> getAnimations() const;
+
     Document* document() const { return m_document.get(); }
 
     std::optional<Seconds> currentTime() override;
