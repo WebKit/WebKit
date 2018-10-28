@@ -1,5 +1,18 @@
 2018-10-27  Antoine Quint  <graouts@apple.com>
 
+        [Web Animations] Remove WebAnimation::description()
+        https://bugs.webkit.org/show_bug.cgi?id=190995
+
+        Reviewed by Dean Jackson.
+
+        This method is never used.
+
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::description): Deleted.
+        * animation/WebAnimation.h:
+
+2018-10-27  Antoine Quint  <graouts@apple.com>
+
         [Web Animations] Move the logic of Document::getAnimations() to DocumentTimeline
         https://bugs.webkit.org/show_bug.cgi?id=190994
 

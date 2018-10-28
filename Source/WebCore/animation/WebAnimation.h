@@ -122,8 +122,6 @@ public:
     bool isSuspended() const { return m_isSuspended; }
     virtual void remove();
 
-    String description();
-
     using RefCounted::ref;
     using RefCounted::deref;
 

@@ -1107,11 +1107,6 @@ WebAnimation& WebAnimation::finishedPromiseResolve()
     return *this;
 }
 
-String WebAnimation::description()
-{
-    return "Animation";
-}
-
 const char* WebAnimation::activeDOMObjectName() const
 {
     return "Animation";
