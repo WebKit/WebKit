@@ -263,11 +263,8 @@ public:
     IndexingType indexingMode() const  { return m_blob.indexingModeIncludingHistory() & AllArrayTypes; }
     IndexingType indexingModeIncludingHistory() const { return m_blob.indexingModeIncludingHistory(); }
         
-    bool mayInterceptIndexedAccesses() const
-    {
-        return !!(indexingModeIncludingHistory() & MayHaveIndexedAccessors);
-    }
-        
+    inline bool mayInterceptIndexedAccesses() const;
+    
     bool holesMustForwardToPrototype(VM&, JSObject*) const;
         
     JSGlobalObject* globalObject() const { return m_globalObject.get(); }
