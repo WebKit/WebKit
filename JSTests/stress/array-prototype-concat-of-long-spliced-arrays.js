@@ -8,7 +8,7 @@ function test() {
     var exception;
     try {
         var a = [];
-        a.length = 0xffffff00;
+        a.length = 0x1fff00;
 
         var b = a.splice(0, 0x100000); // Undecided array
 
