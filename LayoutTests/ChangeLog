@@ -1,3 +1,11 @@
+2018-10-28  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, attempt to fix missing trailing whitespace in new expectations
+
+        * platform/gtk/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-badInput-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-willValidate-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/selection-expected.txt:
+
 2018-10-27  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, fix content added by a stray Ctrl+V

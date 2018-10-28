@@ -1,19 +1,19 @@
 
-PASS Input element programmatic selection support
-PASS input type text should support the select() method
-PASS input type search should support the select() method
-PASS input type url should support the select() method
-PASS input type tel should support the select() method
-PASS input type email should support the select() method
-PASS input type password should support the select() method
+PASS Input element programmatic selection support 
+PASS input type text should support the select() method 
+PASS input type search should support the select() method 
+PASS input type url should support the select() method 
+PASS input type tel should support the select() method 
+PASS input type email should support the select() method 
+PASS input type password should support the select() method 
 FAIL input type date should support the select() method assert_equals: the given input type is not supported expected "date" but got "text"
 FAIL input type month should support the select() method assert_equals: the given input type is not supported expected "month" but got "text"
 FAIL input type week should support the select() method assert_equals: the given input type is not supported expected "week" but got "text"
 FAIL input type time should support the select() method assert_equals: the given input type is not supported expected "time" but got "text"
 FAIL input type datetime-local should support the select() method assert_equals: the given input type is not supported expected "datetime-local" but got "text"
-PASS input type number should support the select() method
-PASS input type color should support the select() method
-PASS input type file should support the select() method
+PASS input type number should support the select() method 
+PASS input type color should support the select() method 
+PASS input type file should support the select() method 
 FAIL input type hidden should do nothing when the select() method is called (but, not throw) Type error
 FAIL input type range should do nothing when the select() method is called (but, not throw) Type error
 FAIL input type checkbox should do nothing when the select() method is called (but, not throw) Type error
@@ -22,12 +22,12 @@ FAIL input type submit should do nothing when the select() method is called (but
 FAIL input type image should do nothing when the select() method is called (but, not throw) Type error
 FAIL input type reset should do nothing when the select() method is called (but, not throw) Type error
 FAIL input type button should do nothing when the select() method is called (but, not throw) Type error
-PASS Input element programmatic selection support 1
-PASS input type text should support all selection attributes and methods
-PASS input type search should support all selection attributes and methods
-PASS input type url should support all selection attributes and methods
-PASS input type tel should support all selection attributes and methods
-PASS input type password should support all selection attributes and methods
+PASS Input element programmatic selection support 1 
+PASS input type text should support all selection attributes and methods 
+PASS input type search should support all selection attributes and methods 
+PASS input type url should support all selection attributes and methods 
+PASS input type tel should support all selection attributes and methods 
+PASS input type password should support all selection attributes and methods 
 FAIL input type hidden should not support variable-length selections Type error
 FAIL input type email should not support variable-length selections assert_equals: getting input.selectionStart expected (object) null but got (number) 0
 FAIL input type date should not support variable-length selections assert_equals: the given input type is not supported expected "date" but got "text"
