@@ -1,3 +1,14 @@
+2018-10-27  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed GTK test gardening
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-badInput-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-willValidate-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/selection-expected.txt: Added.
+        * platform/gtk/inspector/canvas/recording-bitmaprenderer-expected.txt: Added.
+
 2018-10-27  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Table should support deleting rows

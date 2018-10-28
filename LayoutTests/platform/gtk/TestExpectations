@@ -1133,12 +1133,15 @@ webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/service-work
 webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/service-worker/skip-waiting.https.html [ Skip ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/cache-storage/window/cache-storage-match.https.html [ Skip ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/cache-storage/worker/cache-storage-match.https.html [ Skip ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-storage-match.https.html [ Skip ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/credentials.https.html [ Skip ]
 
 # Skip anything related to WebAuthN
 http/wpt/credential-management/ [ Skip ]
 http/wpt/webauthn/ [ Skip ]
 imported/w3c/web-platform-tests/credential-management/ [ Skip ]
 
+# FIXME: This can't be the right bug number.
 webkit.org/b/175419 imported/w3c/web-platform-tests/background-fetch/interfaces-worker.https.html [ Failure ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/background-fetch/interfaces.html [ Failure ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/fetch/api/policies/referrer-origin-when-cross-origin-service-worker.https.html [ Failure ]
@@ -2034,6 +2037,13 @@ webkit.org/b/190703 inspector/worker/debugger-pause.html [ Failure Pass Timeout 
 
 webkit.org/b/190738 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-reset-src-after-setmediakeys.https.html [ Failure Pass ]
 
+webkit.org/b/191007 http/tests/media/media-stream/get-display-media-prompt.html [ Pass Timeout ]
+
+webkit.org/b/191010 editing/pasteboard/5075944.html [ Pass Failure ]
+webkit.org/b/191010 editing/pasteboard/paste-and-sanitize.html [ Pass Failure ]
+webkit.org/b/191010 editing/pasteboard/paste-text-006.html [ Pass Failure ]
+webkit.org/b/191010 editing/pasteboard/paste-text-with-style-5.html [ Pass Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2379,6 +2389,10 @@ webkit.org/b/188106 webgl/1.0.2/conformance/ogles/GL/swizzlers/swizzlers_017_to_
 
 webkit.org/b/190738 media/encrypted-media/clearKey/clearKey-cenc-video-playback-mse.html [ Timeout ]
 webkit.org/b/190738 media/encrypted-media/clearKey/clearKey-webm-video-playback-mse.html [ Timeout ]
+
+webkit.org/b/191008 webanimations/accelerated-animation-suspension.html [ Timeout ]
+
+webkit.org/b/191009 webrtc/video-mute-vp8.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -3548,9 +3562,33 @@ webkit.org/b/190709 editing/pasteboard/emacs-ctrl-a-k-y.html [ Failure ]
 webkit.org/b/190710 fast/css-custom-paint/basic.html [ Failure ]
 webkit.org/b/190710 fast/css-custom-paint/registerPaintBindings.html [ Failure ]
 
-webkit.org/b/190711 fast/selectors/read-only-read-write-input-basics.html [ Failure ]
+webkit.org/b/190990 fast/block/basic/inline-content-with-floating-image.html [ Failure Missing ]
 
-webkit.org/b/190712 fast/css/pseudo-visited-background-color-on-input.html [ ImageOnlyFailure ]
+# Regressions from EME enablement
+webkit.org/b/190991 fast/dom/navigator-detached-no-crash.html [ Failure ]
+webkit.org/b/190991 imported/w3c/web-platform-tests/encrypted-media/ [ Skip ]
+webkit.org/b/190991 media/encrypted-media/encrypted-media-constants.html [ Failure ]
+webkit.org/b/190991 media/encrypted-media/encrypted-media-is-type-supported.html [ Failure ]
+webkit.org/b/190991 media/encrypted-media/encrypted-media-events.html [ Failure ]
+webkit.org/b/190991 media/encrypted-media/encrypted-media-session-lifetime.html [ Failure ]
+webkit.org/b/190991 media/encrypted-media/encrypted-media-v2-events.html [ Failure ]
+webkit.org/b/190991 media/encrypted-media/encrypted-media-v2-syntax.html [ Failure ]
+
+webkit.org/b/190992 http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js.html [ Failure ]
+
+webkit.org/b/191000 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/hidden.html [ Failure ]
+webkit.org/b/191000 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/text.html [ Failure ]
+webkit.org/b/191000 imported/w3c/web-platform-tests/shadow-dom/input-element-list.html [ Failure ]
+
+webkit.org/b/191001 imported/w3c/web-platform-tests/intersection-observer/same-document-root.html [ Failure ]
+
+webkit.org/b/191003 imported/w3c/web-platform-tests/mimesniff/mime-types/charset-parameter.window.html [ Failure ]
+
+webkit.org/b/191004 media/track/track-cue-missing.html [ Failure ]
+
+webkit.org/b/191005 webgpu/webgpu-enabled.html [ Failure ]
+
+webkit.org/b/191006 webrtc/simulcast-h264.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
@@ -3624,6 +3662,11 @@ webkit.org/b/139282 imported/mozilla/svg/image/image-filter-01.svg [ Pass ]
 
 imported/w3c/web-platform-tests/css/css-display/run-in/quotes-applies-to-011.xht [ Pass ]
 
+imported/blink/fast/forms/datalist/slider-appearance-with-ticks-crash.html [ Pass ]
+
+imported/w3c/web-platform-tests/web-animations/interfaces/Animatable/animate.html [ Pass ]
+imported/w3c/web-platform-tests/web-animations/timing-model/animations/current-time.html [ Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests. See top of file where to put new expectations.
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -3684,4 +3727,4 @@ webkit.org/b/160119 media/video-object-fit-change.html [ Pass ImageOnlyFailure ]
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of tests failing due to THREADED COMPOSITOR enablement. Don't put random test
 # failures here. See the top of the file for where to put new expectations.
-#////////////////////////////////////////////////////////////////////////////////////////
+#////////////////////////////////////////////////////////////////////////////////////////sts/intersection-observer/initial-observation-with-threshold.html

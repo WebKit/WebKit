@@ -2912,3 +2912,5 @@ webkit.org/b/190032 imported/w3c/web-platform-tests/web-animations/timing-model/
 fast/mediacapturefromelement/CanvasCaptureMediaStream-imagebitmaprenderingcontext.html [ Skip ]
 fast/mediacapturefromelement/CanvasCaptureMediaStream-framerate-0.html [ Skip ]
 fast/mediacapturefromelement/CanvasCaptureMediaStream-capture-out-of-DOM-element.html [ Skip ]
+
+webkit.org/b/191002 imported/w3c/web-platform-tests/intersection-observer/ [ Pass Failure ]
