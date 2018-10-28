@@ -36,6 +36,7 @@
 #include "BuiltinNames.h"
 #include "BytecodeGeneratorification.h"
 #include "BytecodeLivenessAnalysis.h"
+#include "BytecodeUseDef.h"
 #include "CatchScope.h"
 #include "DefinePropertyAttributes.h"
 #include "Interpreter.h"
@@ -2912,9 +2913,10 @@ RegisterID* BytecodeGenerator::emitGetByVal(RegisterID* dst, RegisterID* base, R
 
         unsigned instIndex = instructions().size();
 
-        if (context.type() == ForInContext::IndexedForInContextType) {
-            static_cast<IndexedForInContext&>(context).addGetInst(instIndex, property->index());
-            property = static_cast<IndexedForInContext&>(context).index();
+        if (context.isIndexedForInContext()) {
+            auto& indexedContext = context.asIndexedForInContext();
+            indexedContext.addGetInst(instIndex, property->index());
+            property = indexedContext.index();
             break;
         }
 
@@ -4624,16 +4626,16 @@ void BytecodeGenerator::pushIndexedForInScope(RegisterID* localRegister, Registe
 {
     if (!localRegister)
         return;
-    m_forInContextStack.append(adoptRef(*new IndexedForInContext(localRegister, indexRegister)));
+    unsigned bodyBytecodeStartOffset = instructions().size();
+    m_forInContextStack.append(adoptRef(*new IndexedForInContext(localRegister, indexRegister, bodyBytecodeStartOffset)));
 }
 
 void BytecodeGenerator::popIndexedForInScope(RegisterID* localRegister)
 {
     if (!localRegister)
         return;
-
-    ASSERT(m_forInContextStack.last()->type() == ForInContext::IndexedForInContextType);
-    static_cast<IndexedForInContext&>(m_forInContextStack.last().get()).finalize(*this);
+    unsigned bodyBytecodeEndOffset = instructions().size();
+    m_forInContextStack.last()->asIndexedForInContext().finalize(*this, m_codeBlock.get(), bodyBytecodeEndOffset);
     m_forInContextStack.removeLast();
 }
 
@@ -4736,36 +4738,17 @@ void BytecodeGenerator::pushStructureForInScope(RegisterID* localRegister, Regis
 {
     if (!localRegister)
         return;
-    m_forInContextStack.append(adoptRef(*new StructureForInContext(localRegister, indexRegister, propertyRegister, enumeratorRegister)));
+    unsigned bodyBytecodeStartOffset = instructions().size();
+    m_forInContextStack.append(adoptRef(*new StructureForInContext(localRegister, indexRegister, propertyRegister, enumeratorRegister, bodyBytecodeStartOffset)));
 }
 
 void BytecodeGenerator::popStructureForInScope(RegisterID* localRegister)
 {
     if (!localRegister)
         return;
-    ASSERT(m_forInContextStack.last()->type() == ForInContext::StructureForInContextType);
-    static_cast<StructureForInContext&>(m_forInContextStack.last().get()).finalize(*this);
+    unsigned bodyBytecodeEndOffset = instructions().size();
+    m_forInContextStack.last()->asStructureForInContext().finalize(*this, m_codeBlock.get(), bodyBytecodeEndOffset);
     m_forInContextStack.removeLast();
-}
-
-void BytecodeGenerator::invalidateForInContextForLocal(RegisterID* localRegister)
-{
-    // Lexically invalidating ForInContexts is kind of weak sauce, but it only occurs if 
-    // either of the following conditions is true:
-    // 
-    // (1) The loop iteration variable is re-assigned within the body of the loop.
-    // (2) The loop iteration variable is captured in the lexical scope of the function.
-    //
-    // These two situations occur sufficiently rarely that it's okay to use this style of 
-    // "analysis" to make iteration faster. If we didn't want to do this, we would either have 
-    // to perform some flow-sensitive analysis to see if/when the loop iteration variable was 
-    // reassigned, or we'd have to resort to runtime checks to see if the variable had been 
-    // reassigned from its original value.
-    for (size_t i = m_forInContextStack.size(); i--; ) {
-        ForInContext& context = m_forInContextStack[i].get();
-        if (context.local() == localRegister)
-            context.invalidate();
-    }
 }
 
 RegisterID* BytecodeGenerator::emitRestParameter(RegisterID* result, unsigned numParametersToSkip)
@@ -5193,8 +5176,37 @@ void BytecodeGenerator::emitJumpIf(OpcodeID compareOpcode, RegisterID* completio
     emitJumpIfTrue(equivalenceResult, jumpTarget);
 }
 
-void StructureForInContext::finalize(BytecodeGenerator& generator)
+void ForInContext::finalize(BytecodeGenerator& generator, UnlinkedCodeBlock* codeBlock, unsigned bodyBytecodeEndOffset)
 {
+    // Lexically invalidating ForInContexts is kind of weak sauce, but it only occurs if
+    // either of the following conditions is true:
+    //
+    // (1) The loop iteration variable is re-assigned within the body of the loop.
+    // (2) The loop iteration variable is captured in the lexical scope of the function.
+    //
+    // These two situations occur sufficiently rarely that it's okay to use this style of
+    // "analysis" to make iteration faster. If we didn't want to do this, we would either have
+    // to perform some flow-sensitive analysis to see if/when the loop iteration variable was
+    // reassigned, or we'd have to resort to runtime checks to see if the variable had been
+    // reassigned from its original value.
+
+    for (unsigned offset = bodyBytecodeStartOffset(); isValid() && offset < bodyBytecodeEndOffset;) {
+        UnlinkedInstruction* instruction = &generator.instructions()[offset];
+        OpcodeID opcodeID = instruction->u.opcode;
+        unsigned opcodeLength = opcodeLengths[opcodeID];
+
+        ASSERT(opcodeID != op_enter);
+        computeDefsForBytecodeOffset(codeBlock, opcodeID, instruction, [&] (UnlinkedCodeBlock*, UnlinkedInstruction*, OpcodeID, int operand) {
+            if (local()->index() == operand)
+                invalidate();
+        });
+        offset += opcodeLength;
+    }
+}
+
+void StructureForInContext::finalize(BytecodeGenerator& generator, UnlinkedCodeBlock* codeBlock, unsigned bodyBytecodeEndOffset)
+{
+    Base::finalize(generator, codeBlock, bodyBytecodeEndOffset);
     if (isValid())
         return;
 
@@ -5222,8 +5234,9 @@ void StructureForInContext::finalize(BytecodeGenerator& generator)
     }
 }
 
-void IndexedForInContext::finalize(BytecodeGenerator& generator)
+void IndexedForInContext::finalize(BytecodeGenerator& generator, UnlinkedCodeBlock* codeBlock, unsigned bodyBytecodeEndOffset)
 {
+    Base::finalize(generator, codeBlock, bodyBytecodeEndOffset);
     if (isValid())
         return;
 

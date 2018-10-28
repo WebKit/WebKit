@@ -801,6 +801,7 @@ SLOW_PATH_DECL(slow_path_has_generic_property)
     JSObject* base = OP(2).jsValue().toObject(exec);
     CHECK_EXCEPTION();
     JSValue property = OP(3).jsValue();
+    ASSERT(property.isString());
     JSString* string = asString(property);
     auto propertyName = string->toIdentifier(exec);
     CHECK_EXCEPTION();
@@ -812,6 +813,7 @@ SLOW_PATH_DECL(slow_path_get_direct_pname)
     BEGIN();
     JSValue baseValue = OP_C(2).jsValue();
     JSValue property = OP(3).jsValue();
+    ASSERT(property.isString());
     JSString* string = asString(property);
     auto propertyName = string->toIdentifier(exec);
     CHECK_EXCEPTION();
