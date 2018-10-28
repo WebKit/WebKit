@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-timestampoffset-then-zero</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var bufferedSamples;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    function makeSimpleAudio(start, end, generation) {
+        const init = makeAInit(2, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]);
+
+        const samples = [];
+        for (let time = start; time < end; time++)
+            samples.push(makeASample(time, time, 1, 1, SAMPLE_FLAG.SYNC, generation));
+
+        return concatenateSamples([init].concat(samples));
+    }
+
+    window.addEventListener('load', async () => {
+        findMediaElement();
+        source = new MediaSource();
+        testExpected('source.readyState', 'closed');
+        const sourceOpened = waitFor(source, 'sourceopen');
+
+        const videoSource = document.createElement('source');
+        videoSource.type = 'audio/mock; codecs=mock';
+        videoSource.src = URL.createObjectURL(source);
+        video.appendChild(videoSource);
+
+        await sourceOpened;
+        run('sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
+
+        run('sourceBuffer.timestampOffset = 5');
+        run('sourceBuffer.appendBuffer(makeSimpleAudio(0, 20, 0))');
+        await waitFor(sourceBuffer, 'updateend');
+
+        bufferedSamples = internals.bufferedSamplesForTrackID(sourceBuffer, 1);
+        consoleWrite("After first append:");
+        bufferedSamples.forEach(consoleWrite);
+
+        run('sourceBuffer.timestampOffset = 0');
+        run('sourceBuffer.appendBuffer(makeSimpleAudio(0, 20, 1))');
+        await waitFor(sourceBuffer, 'updateend');
+
+        bufferedSamples = internals.bufferedSamplesForTrackID(sourceBuffer, 1);
+        consoleWrite("After second append:");
+        bufferedSamples.forEach(consoleWrite);
+
+        endTest();
+    });
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>
