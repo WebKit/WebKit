@@ -29,6 +29,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "FormattingContext.h"
+#include "InlineFormattingState.h"
 #include "LayoutChildIterator.h"
 #include "Logging.h"
 #include <wtf/text/TextStream.h>
@@ -120,8 +121,9 @@ HeightAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMarg
 
         // 1. the bottom edge of the last line box, if the box establishes a inline formatting context with one or more lines
         if (layoutBox.establishesInlineFormattingContext()) {
-            // height = lastLineBox().bottom();
-            return { 0, nonCollapsedMargin, collapsedMargin };
+            // This is temp and will be replaced by the correct display box once inline runs move over to the display tree.
+            auto& lastInlineRun = downcast<InlineFormattingState>(layoutContext.establishedFormattingState(layoutBox)).inlineRuns().last();
+            return { lastInlineRun.logicalBottom(), nonCollapsedMargin, collapsedMargin };
         }
 
         // 2. the bottom edge of the bottom (possibly collapsed) margin of its last in-flow child, if the child's bottom margin...

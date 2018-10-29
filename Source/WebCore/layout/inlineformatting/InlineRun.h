@@ -34,16 +34,20 @@ namespace WebCore {
 namespace Layout {
 
 struct InlineRun {
-    InlineRun(LayoutUnit logcialLeft, LayoutUnit width, const InlineItem&);
+    InlineRun(Display::Box::Rect logicalRect, const InlineItem&);
 
-    LayoutUnit logicalLeft() const { return m_logicalLeft; }
-    LayoutUnit logicalRight() const { return logicalLeft() + width(); }
-    LayoutUnit width() const { return m_width; }
+    LayoutUnit logicalLeft() const { return m_logicalRect.left(); }
+    LayoutUnit logicalRight() const { return m_logicalRect.right(); }
+    LayoutUnit logicalTop() const { return m_logicalRect.top(); }
+    LayoutUnit logicalBottom() const { return m_logicalRect.bottom(); }
 
-    void setWidth(LayoutUnit width) { m_width = width; }
-    void setLogicalLeft(LayoutUnit logicalLeft) { m_logicalLeft = logicalLeft; }
-    void setLogicalRight(LayoutUnit logicalRight) { m_width -= (this->logicalRight() - logicalRight); }
-    void moveHorizontally(LayoutUnit delta) { m_logicalLeft += delta; }
+    LayoutUnit width() const { return m_logicalRect.width(); }
+    LayoutUnit height() const { return m_logicalRect.height(); }
+
+    void setWidth(LayoutUnit width) { m_logicalRect.setWidth(width); }
+    void setLogicalLeft(LayoutUnit logicalLeft) { m_logicalRect.setLeft(logicalLeft); }
+    void setLogicalRight(LayoutUnit logicalRight) { m_logicalRect.shiftRightTo(logicalRight); }
+    void moveHorizontally(LayoutUnit delta) { m_logicalRect.moveHorizontally(delta); }
 
     struct ExpansionOpportunity {
         unsigned count { 0 };
@@ -73,8 +77,7 @@ struct InlineRun {
     const InlineItem& inlineItem() const { return m_inlineItem; }
 
 private:
-    LayoutUnit m_logicalLeft;
-    LayoutUnit m_width;
+    Display::Box::Rect m_logicalRect;
     ExpansionOpportunity m_expansionOpportunity;
 
     const InlineItem& m_inlineItem;
@@ -83,9 +86,8 @@ private:
 
 using InlineRuns = Vector<InlineRun>;
 
-inline InlineRun::InlineRun(LayoutUnit logicalLeft, LayoutUnit width, const InlineItem& inlineItem)
-    : m_logicalLeft(logicalLeft)
-    , m_width(width)
+inline InlineRun::InlineRun(Display::Box::Rect logicalRect, const InlineItem& inlineItem)
+    : m_logicalRect(logicalRect)
     , m_inlineItem(inlineItem)
 {
 }

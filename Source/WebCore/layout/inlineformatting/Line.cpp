@@ -151,7 +151,8 @@ void InlineFormattingContext::Line::appendContent(const InlineLineBreaker::Run& 
 
     auto requiresNewInlineRun = !hasContent() || !content.isText() || !m_lastRunCanExpand;
     if (requiresNewInlineRun) {
-        auto inlineRun = InlineRun { contentLogicalRight(), run.width, content.inlineItem() };
+        // FIXME: This needs proper baseline handling
+        auto inlineRun = InlineRun { { logicalTop(), contentLogicalRight(), run.width, logicalBottom() - logicalTop() }, content.inlineItem() };
         if (textRun)
             inlineRun.setTextContext({ textRun->start(), textRun->length() });
         m_formattingState.appendInlineRun(inlineRun);

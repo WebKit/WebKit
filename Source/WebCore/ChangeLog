@@ -1,5 +1,36 @@
 2018-10-29  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Add support for inflow non replaced content height when the box is an inline formatting root.
+        https://bugs.webkit.org/show_bug.cgi?id=191011
+
+        Reviewed by Antti Koivisto.
+
+        // 10.6.3 Block-level non-replaced elements in normal flow when 'overflow' computes to 'visible'
+        // Height is the bottom edge of the last line box, if the box establishes a inline formatting context with one or more lines
+
+        This is temporary until after inline runs transition to the display tree.
+
+        Test: fast/inline/simple-intruding-floats2.html
+
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+        * layout/inlineformatting/InlineRun.h:
+        (WebCore::Layout::InlineRun::logicalLeft const):
+        (WebCore::Layout::InlineRun::logicalRight const):
+        (WebCore::Layout::InlineRun::logicalTop const):
+        (WebCore::Layout::InlineRun::logicalBottom const):
+        (WebCore::Layout::InlineRun::width const):
+        (WebCore::Layout::InlineRun::height const):
+        (WebCore::Layout::InlineRun::setWidth):
+        (WebCore::Layout::InlineRun::setLogicalLeft):
+        (WebCore::Layout::InlineRun::setLogicalRight):
+        (WebCore::Layout::InlineRun::moveHorizontally):
+        (WebCore::Layout::InlineRun::InlineRun):
+        * layout/inlineformatting/Line.cpp:
+        (WebCore::Layout::InlineFormattingContext::Line::appendContent):
+
+2018-10-29  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Add support for simple intruding floats.
         https://bugs.webkit.org/show_bug.cgi?id=190998
 
