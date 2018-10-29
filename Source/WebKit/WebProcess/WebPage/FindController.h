@@ -79,7 +79,7 @@ private:
     bool mouseEvent(WebCore::PageOverlay&, const WebCore::PlatformMouseEvent&) override;
     void drawRect(WebCore::PageOverlay&, WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect) override;
 
-    Vector<WebCore::IntRect> rectsForTextMatchesInRect(WebCore::IntRect clipRect);
+    Vector<WebCore::FloatRect> rectsForTextMatchesInRect(WebCore::IntRect clipRect);
     bool updateFindIndicator(WebCore::Frame& selectedFrame, bool isShowingOverlay, bool shouldAnimate = true);
 
     void updateFindUIAfterPageScroll(bool found, const String&, FindOptions, unsigned maxMatchCount, WebCore::DidWrap);
@@ -88,6 +88,9 @@ private:
     void didFindString();
     void didFailToFindString();
     void didHideFindIndicator();
+    
+    unsigned findIndicatorRadius() const;
+    bool shouldHideFindIndicatorOnScroll() const;
 
     WebPage* m_webPage;
     WebCore::PageOverlay* m_findPageOverlay { nullptr };

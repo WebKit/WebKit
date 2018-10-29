@@ -1,3 +1,49 @@
+2018-10-29  Tim Horton  <timothy_horton@apple.com>
+
+        Make FindOptionsShowOverlay work on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=190551
+
+        Reviewed by Andy Estes.
+
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::updateFindUIAfterPageScroll):
+        Update the find indicator after installing the page overlay for the find holes.
+        This ensures that if the find indicator mechanism also uses page overlays,
+        as it does on iOS, that they are installed in the correct order (because
+        order of installation directly affects z-order).
+
+        (WebKit::FindController::findIndicatorRadius const):
+        (WebKit::FindController::shouldHideFindIndicatorOnScroll const):
+        Add two getters for design differences between find-in-page on iOS vs. other platforms.
+
+        (WebKit::FindController::rectsForTextMatchesInRect):
+        Return FloatRects instead of IntRects for ease of use in the caller.
+        Don't clip rects for matches that intersect the current tile. We still
+        drop ones that don't intersect at all, but if they do intersect, we
+        provide the full rect (which may overlap a different tile), so that
+        e.g. border drawing will work correctly.
+
+        (WebKit::FindController::drawRect):
+        Adopt shrink-wrapping for find holes. This has minimal impact on macOS,
+        where the holes don't have rounded corners, but on iOS this makes
+        overlapping or adjacent holes look great. We already do this for the indicator,
+        so it only makes sense to do the same for the holes.
+
+        In order to support shrink-wrapping here, switch to using a Clear operator
+        with a path-fill instead of clearRect to clear out the holes.
+
+        Avoid hiding the find indicator on scroll if the platform says not to.
+
+        * WebProcess/WebPage/FindController.h:
+        * WebProcess/WebPage/ios/FindControllerIOS.mm:
+        (WebKit::FindController::findIndicatorRadius const):
+        (WebKit::FindController::shouldHideFindIndicatorOnScroll const):
+        Slightly adjust the find indicator's parameters to be compatible with having holes.
+        Reduce the horizontal margin by half a point so that it fits precisely in the hole.
+        Drop the "TightlyFitContent" text indicator parameter, because we want 
+        rects that match the holes, and they do not tightly fit the content's height.
+        This matches macOS's behavior.
+
 2018-10-29  Jer Noble  <jer.noble@apple.com>
 
         CRASH in CoreGraphics: ERROR_CGDataProvider_BufferIsNotBigEnough

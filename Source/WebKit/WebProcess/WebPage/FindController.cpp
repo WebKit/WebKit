@@ -42,6 +42,7 @@
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageOverlayController.h>
+#include <WebCore/PathUtilities.h>
 #include <WebCore/PlatformMouseEvent.h>
 #include <WebCore/PluginDocument.h>
 
@@ -176,9 +177,6 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
         }
 
         m_webPage->send(Messages::WebPageProxy::DidFindString(string, matchRects, matchCount, m_foundStringMatchIndex, didWrap == DidWrap::Yes));
-
-        if (!(options & FindOptionsShowFindIndicator) || !selectedFrame || !updateFindIndicator(*selectedFrame, shouldShowOverlay))
-            hideFindIndicator();
     }
 
     if (!shouldShowOverlay) {
@@ -192,6 +190,9 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
         }
         m_findPageOverlay->setNeedsDisplay();
     }
+    
+    if (found && (!(options & FindOptionsShowFindIndicator) || !selectedFrame || !updateFindIndicator(*selectedFrame, shouldShowOverlay)))
+        hideFindIndicator();
 }
 
 void FindController::findString(const String& string, FindOptions options, unsigned maxMatchCount)
@@ -360,6 +361,16 @@ void FindController::didFailToFindString()
 void FindController::didHideFindIndicator()
 {
 }
+    
+unsigned FindController::findIndicatorRadius() const
+{
+    return 0;
+}
+    
+bool FindController::shouldHideFindIndicatorOnScroll() const
+{
+    return true;
+}
 
 #endif
 
@@ -392,9 +403,9 @@ void FindController::redraw()
     updateFindIndicator(*selectedFrame, isShowingOverlay(), false);
 }
 
-Vector<IntRect> FindController::rectsForTextMatchesInRect(IntRect clipRect)
+Vector<FloatRect> FindController::rectsForTextMatchesInRect(IntRect clipRect)
 {
-    Vector<IntRect> rects;
+    Vector<FloatRect> rects;
 
     FrameView* mainFrameView = m_webPage->corePage()->mainFrame().view();
 
@@ -406,9 +417,8 @@ Vector<IntRect> FindController::rectsForTextMatchesInRect(IntRect clipRect)
         for (FloatRect rect : document->markers().renderedRectsForMarkers(DocumentMarker::TextMatch)) {
             if (!frame->isMainFrame())
                 rect = mainFrameView->windowToContents(frame->view()->contentsToWindow(enclosingIntRect(rect)));
-            rect.intersect(clipRect);
 
-            if (rect.isEmpty())
+            if (rect.isEmpty() || !rect.intersects(clipRect))
                 continue;
 
             rects.append(rect);
@@ -434,40 +444,41 @@ void FindController::didMoveToPage(PageOverlay&, Page*)
 const float shadowOffsetX = 0;
 const float shadowOffsetY = 0;
 const float shadowBlurRadius = 1;
-const float shadowColorAlpha = 0.5;
 
 void FindController::drawRect(PageOverlay&, GraphicsContext& graphicsContext, const IntRect& dirtyRect)
 {
     const int borderWidth = 1;
 
     Color overlayBackgroundColor(0.1f, 0.1f, 0.1f, 0.25f);
+    Color shadowColor(0.0f, 0.0f, 0.0f, 0.5f);
 
     IntRect borderInflatedDirtyRect = dirtyRect;
     borderInflatedDirtyRect.inflate(borderWidth);
-    Vector<IntRect> rects = rectsForTextMatchesInRect(borderInflatedDirtyRect);
+    Vector<FloatRect> rects = rectsForTextMatchesInRect(borderInflatedDirtyRect);
 
     // Draw the background.
     graphicsContext.fillRect(dirtyRect, overlayBackgroundColor);
 
-    {
-        GraphicsContextStateSaver stateSaver(graphicsContext);
+    Vector<Path> whiteFramePaths = PathUtilities::pathsWithShrinkWrappedRects(rects, findIndicatorRadius());
 
-        graphicsContext.setShadow(FloatSize(shadowOffsetX, shadowOffsetY), shadowBlurRadius, Color(0.0f, 0.0f, 0.0f, shadowColorAlpha));
-        graphicsContext.setFillColor(Color::white);
+    GraphicsContextStateSaver stateSaver(graphicsContext);
 
-        // Draw white frames around the holes.
-        for (auto& rect : rects) {
-            IntRect whiteFrameRect = rect;
-            whiteFrameRect.inflate(borderWidth);
-            graphicsContext.fillRect(whiteFrameRect);
-        }
-    }
+    // Draw white frames around the holes.
+    // We double the thickness because half of the stroke will be erased when we clear the holes.
+    graphicsContext.setShadow(FloatSize(shadowOffsetX, shadowOffsetY), shadowBlurRadius, shadowColor);
+    graphicsContext.setStrokeColor(Color::white);
+    graphicsContext.setStrokeThickness(borderWidth * 2);
+    for (auto& path : whiteFramePaths)
+        graphicsContext.strokePath(path);
+
+    graphicsContext.clearShadow();
 
     // Clear out the holes.
-    for (auto& rect : rects)
-        graphicsContext.clearRect(rect);
+    graphicsContext.setCompositeOperation(CompositeClear);
+    for (auto& path : whiteFramePaths)
+        graphicsContext.fillPath(path);
 
-    if (!m_isShowingFindIndicator)
+    if (!m_isShowingFindIndicator || !shouldHideFindIndicatorOnScroll())
         return;
 
     if (Frame* selectedFrame = frameWithSelection(m_webPage->corePage())) {

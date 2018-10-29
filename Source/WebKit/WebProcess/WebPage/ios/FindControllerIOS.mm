@@ -48,10 +48,10 @@ namespace WebKit {
 using namespace WebCore;
 
 const int cornerRadius = 3;
-const int totalHorizontalMargin = 2;
+const int totalHorizontalMargin = 1;
 const int totalVerticalMargin = 1;
 
-const TextIndicatorOptions findTextIndicatorOptions = TextIndicatorOptionTightlyFitContent | TextIndicatorOptionIncludeMarginIfRangeMatchesSelection | TextIndicatorOptionDoNotClipToVisibleRect;
+const TextIndicatorOptions findTextIndicatorOptions = TextIndicatorOptionIncludeMarginIfRangeMatchesSelection | TextIndicatorOptionDoNotClipToVisibleRect;
 
 static Color highlightColor()
 {
@@ -173,6 +173,16 @@ void FindController::didFailToFindString()
 void FindController::didHideFindIndicator()
 {
     setSelectionChangeUpdatesEnabledInAllFrames(*m_webPage, false);
+}
+    
+unsigned FindController::findIndicatorRadius() const
+{
+    return cornerRadius;
+}
+    
+bool FindController::shouldHideFindIndicatorOnScroll() const
+{
+    return false;
 }
 
 } // namespace WebKit
