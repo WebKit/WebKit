@@ -194,6 +194,32 @@ static bool navigationFailed = false;
 }
 @end
 
+static const char* mainCacheStorageBytes = R"SWRESOURCE(
+<script>
+
+function log(msg)
+{
+    window.webkit.messageHandlers.sw.postMessage(msg);
+}
+
+async function doTest()
+{
+    const keys = await window.caches.keys();
+    if (!keys.length) {
+        const cache = await window.caches.open("my cache");
+        log("No cache storage data");
+        return;
+    }
+    if (keys.length !== 1) {
+        log("Unexpected cache number");
+        return;
+    }
+    log("Some cache storage data: " + keys[0]);
+}
+doTest();
+
+</script>
+)SWRESOURCE";
 
 static const char* mainBytes = R"SWRESOURCE(
 <script>
@@ -540,6 +566,63 @@ TEST(ServiceWorkers, RestoreFromDisk)
     TestWebKitAPI::Util::run(&done);
     done = false;
 }
+
+TEST(ServiceWorkers, CacheStorageRestoreFromDisk)
+{
+    ASSERT(mainCacheStorageBytes);
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    // Start with a clean slate data store
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    [WKWebsiteDataStore _deleteDefaultDataStoreForTesting];
+
+    auto handler = adoptNS([[SWSchemes alloc] init]);
+    handler->resources.set("sw://host/main.html", ResourceInfo { @"text/html", mainCacheStorageBytes });
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto messageHandler = adoptNS([[SWMessageHandlerForRestoreFromDiskTest alloc] initWithExpectedMessage:@"No cache storage data"]);
+
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"SW"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView.get().configuration.processPool _registerURLSchemeServiceWorkersCanHandle:@"sw"];
+
+    // Trigger creation of network process.
+    [webView.get().configuration.processPool _syncNetworkProcessCookies];
+
+    auto *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"sw://host/main.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    webView = nullptr;
+    configuration = nullptr;
+    messageHandler = nullptr;
+
+    configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    messageHandler = adoptNS([[SWMessageHandlerForRestoreFromDiskTest alloc] initWithExpectedMessage:@"Some cache storage data: my cache"]);
+
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"SW"];
+
+    webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView.get().configuration.processPool _registerURLSchemeServiceWorkersCanHandle:@"sw"];
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"sw://host/main.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+}
+
 
 TEST(ServiceWorkers, FetchAfterRestoreFromDisk)
 {

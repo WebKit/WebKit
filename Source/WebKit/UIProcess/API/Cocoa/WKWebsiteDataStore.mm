@@ -186,6 +186,11 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     return API::WebsiteDataStore::defaultDataStoreExists();
 }
 
++ (void)_deleteDefaultDataStoreForTesting
+{
+    return API::WebsiteDataStore::deleteDefaultDataStoreForTesting();
+}
+
 - (instancetype)_initWithConfiguration:(_WKWebsiteDataStoreConfiguration *)configuration
 {
     if (!(self = [super init]))

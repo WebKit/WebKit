@@ -157,6 +157,8 @@ private:
     void contentExtensionRules(UserContentControllerIdentifier);
 #endif
 
+    WebsiteDataStore* websiteDataStoreFromSessionID(PAL::SessionID);
+
     // ProcessLauncher::Client
     void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;
 

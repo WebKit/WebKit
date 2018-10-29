@@ -40,6 +40,7 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteDataStoreFetchOptions) {
 
 + (NSSet<NSString *> *)_allWebsiteDataTypesIncludingPrivate;
 + (BOOL)_defaultDataStoreExists;
++ (void)_deleteDefaultDataStoreForTesting;
 
 - (instancetype)_initWithConfiguration:(_WKWebsiteDataStoreConfiguration *)configuration WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 

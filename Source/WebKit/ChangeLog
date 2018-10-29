@@ -1,5 +1,72 @@
 2018-10-28  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r237060. rdar://problem/45435468
+
+    IOS 12 - Service worker cache not shared when added to homescreen
+    https://bugs.webkit.org/show_bug.cgi?id=190269
+    <rdar://problem/45009961>
+    
+    Reviewed by Alex Christensen.
+    
+    Source/WebCore:
+    
+    Expose Cache Storage API when Service Worker API is exposed.
+    This is used for API tests.
+    
+    * dom/ScriptExecutionContext.h: Make hasServiceWorkerScheme
+    available outside SERVICE_WORKER compilation flag since used by DOMWindowCaches.
+    * dom/ScriptExecutionContext.cpp: Ditto.
+    * Modules/cache/DOMWindowCaches.idl:
+    
+    Source/WebKit:
+    
+    NetworkProcessProxy does not always have all its stores in its hash map.
+    Make sure to check for the default web process pool store when grabbing cache storage parameters from a given session ID.
+    
+    Add a way to remove the default website data for testing.
+    This is used in the new API test.
+    
+    * UIProcess/API/APIWebsiteDataStore.cpp:
+    (API::WebsiteDataStore::deleteDefaultDataStoreForTesting):
+    * UIProcess/API/APIWebsiteDataStore.h:
+    * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+    (+[WKWebsiteDataStore _deleteDefaultDataStoreForTesting]):
+    * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+    * UIProcess/Network/NetworkProcessProxy.cpp:
+    (WebKit::NetworkProcessProxy::retrieveCacheStorageParameters):
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+    Add test to ensure that CacheStorage use the default website data store parameters.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@237060 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-10-11  Youenn Fablet  <youenn@apple.com>
+
+            IOS 12 - Service worker cache not shared when added to homescreen
+            https://bugs.webkit.org/show_bug.cgi?id=190269
+            <rdar://problem/45009961>
+
+            Reviewed by Alex Christensen.
+
+            NetworkProcessProxy does not always have all its stores in its hash map.
+            Make sure to check for the default web process pool store when grabbing cache storage parameters from a given session ID.
+
+            Add a way to remove the default website data for testing.
+            This is used in the new API test.
+
+            * UIProcess/API/APIWebsiteDataStore.cpp:
+            (API::WebsiteDataStore::deleteDefaultDataStoreForTesting):
+            * UIProcess/API/APIWebsiteDataStore.h:
+            * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+            (+[WKWebsiteDataStore _deleteDefaultDataStoreForTesting]):
+            * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+            * UIProcess/Network/NetworkProcessProxy.cpp:
+            (WebKit::NetworkProcessProxy::retrieveCacheStorageParameters):
+
+2018-10-28  Babak Shafiei  <bshafiei@apple.com>
+
         Apply patch. rdar://problem/45523764
 
     2018-10-28  John Wilander  <wilander@apple.com>

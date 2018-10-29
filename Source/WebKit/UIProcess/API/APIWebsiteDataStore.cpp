@@ -31,21 +31,32 @@
 
 namespace API {
 
-static WebsiteDataStore* globalDefaultDataStore;
+static RefPtr<WebsiteDataStore>& globalDefaultDataStore()
+{
+    static NeverDestroyed<RefPtr<WebsiteDataStore>> globalDefaultDataStore;
+    return globalDefaultDataStore.get();
+}
+
 
 Ref<WebsiteDataStore> WebsiteDataStore::defaultDataStore()
 {
     WebKit::InitializeWebKit2();
 
-    if (!globalDefaultDataStore)
-        globalDefaultDataStore = adoptRef(new WebsiteDataStore(defaultDataStoreConfiguration(), PAL::SessionID::defaultSessionID())).leakRef();
+    auto& store = globalDefaultDataStore();
+    if (!store)
+        store = adoptRef(new WebsiteDataStore(defaultDataStoreConfiguration(), PAL::SessionID::defaultSessionID()));
 
-    return *globalDefaultDataStore;
+    return *store;
+}
+
+void WebsiteDataStore::deleteDefaultDataStoreForTesting()
+{
+    globalDefaultDataStore() = nullptr;
 }
 
 bool WebsiteDataStore::defaultDataStoreExists()
 {
-    return globalDefaultDataStore;
+    return !!globalDefaultDataStore();
 }
 
 Ref<WebsiteDataStore> WebsiteDataStore::createNonPersistentDataStore()
