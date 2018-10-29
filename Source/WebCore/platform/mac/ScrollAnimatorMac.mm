@@ -527,6 +527,21 @@ enum FeatureToAnimate {
     return _scrollbar->supportsUpdateOnSecondaryThread();
 }
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+- (NSAppearance *)effectiveAppearanceForScrollerImp:(NSScrollerImp *)scrollerImp
+{
+    UNUSED_PARAM(scrollerImp);
+
+    if (!_scrollbar)
+        return [NSAppearance currentAppearance];
+
+    // If dark appearance is used or the overlay style is light (because of a dark page background), return the dark apppearance.
+    // Keep this in sync with FrameView::paintScrollCorner.
+    bool useDarkAppearance = _scrollbar->scrollableArea().useDarkAppearance() || _scrollbar->scrollableArea().scrollbarOverlayStyle() == WebCore::ScrollbarOverlayStyleLight;
+    return [NSAppearance appearanceNamed:useDarkAppearance ? NSAppearanceNameDarkAqua : NSAppearanceNameAqua];
+}
+#endif
+
 - (void)setUpAlphaAnimation:(RetainPtr<WebScrollbarPartAnimation>&)scrollbarPartAnimation scrollerPainter:(NSScrollerImp *)scrollerPainter part:(WebCore::ScrollbarPart)part animateAlphaTo:(CGFloat)newAlpha duration:(NSTimeInterval)duration
 {
     // If the user has scrolled the page, then the scrollbars must be animated here.

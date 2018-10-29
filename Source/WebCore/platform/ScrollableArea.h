@@ -251,6 +251,8 @@ public:
     // The totalContentsSize() is equivalent to the contentsSize() plus the header and footer heights.
     WEBCORE_EXPORT IntSize totalContentsSize() const;
 
+    virtual bool useDarkAppearance() const { return false; }
+
     virtual bool shouldSuspendScrollAnimations() const { return true; }
     WEBCORE_EXPORT virtual void scrollbarStyleChanged(ScrollbarStyle /*newStyle*/, bool /*forceUpdate*/);
     virtual void setVisibleScrollerThumbRect(const IntRect&) { }
