@@ -1737,9 +1737,10 @@ private:
         AbstractValue& value = m_state.operand(data->local);
         
         DFG_ASSERT(m_graph, m_node, isConcrete(data->format), data->format);
-        DFG_ASSERT(m_graph, m_node, data->format != FlushedDouble, data->format); // This just happens to not arise for GetStacks, right now. It would be trivial to support.
         
-        if (isInt32Speculation(value.m_type))
+        if (data->format == FlushedDouble)
+            setDouble(m_out.loadDouble(addressFor(data->machineLocal)));
+        else if (isInt32Speculation(value.m_type))
             setInt32(m_out.load32(payloadFor(data->machineLocal)));
         else
             setJSValue(m_out.load64(addressFor(data->machineLocal)));

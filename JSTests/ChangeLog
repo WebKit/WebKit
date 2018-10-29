@@ -1,5 +1,17 @@
 2018-10-29  Tadeu Zagallo  <tzagallo@apple.com>
 
+        Add support for GetStack FlushedDouble
+        https://bugs.webkit.org/show_bug.cgi?id=191012
+        <rdar://problem/45265141>
+
+        Reviewed by Saam Barati.
+
+        * stress/get-stack-double.js: Added.
+        (bar):
+        (noInline):
+
+2018-10-29  Tadeu Zagallo  <tzagallo@apple.com>
+
         New bytecode format for JSC
         https://bugs.webkit.org/show_bug.cgi?id=187373
         <rdar://problem/44186758>
