@@ -27,7 +27,10 @@
 
 #if (PLATFORM(IOS) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
+#include "Connection.h"
+#include "GenericCallback.h"
 #include "MessageReceiver.h"
+#include "VideoFullscreenManagerMessages.h"
 #include <WebCore/EventListener.h>
 #include <WebCore/HTMLMediaElementEnums.h>
 #include <WebCore/PlatformCALayer.h>
@@ -151,7 +154,8 @@ protected:
     void setVideoLayerGravityEnum(uint64_t contextId, unsigned gravity);
     void fullscreenModeChanged(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
     void fullscreenMayReturnToInline(uint64_t contextId, bool isPageVisible);
-    
+    void requestRouteSharingPolicyAndContextUID(uint64_t contextId, CallbackID);
+
     WebPage* m_page;
     Ref<PlaybackSessionManager> m_playbackSessionManager;
     HashMap<WebCore::HTMLVideoElement*, uint64_t> m_videoElements;

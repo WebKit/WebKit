@@ -28,9 +28,11 @@
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
+#include "AudioSession.h"
 #include "FloatRect.h"
 #include "HTMLMediaElementEnums.h"
 #include "PlaybackSessionModel.h"
+#include <wtf/CompletionHandler.h>
 
 #if PLATFORM(IOS)
 OBJC_CLASS AVPlayerViewController;
@@ -56,6 +58,8 @@ public:
     virtual bool isVisible() const = 0;
     virtual FloatSize videoDimensions() const = 0;
     virtual bool hasVideo() const = 0;
+
+    virtual void requestRouteSharingPolicyAndContextUID(CompletionHandler<void(RouteSharingPolicy, String)>&& completionHandler) { completionHandler(RouteSharingPolicy::Default, emptyString()); }
 
 #if PLATFORM(IOS)
     virtual UIViewController *presentingViewController() { return nullptr; }

@@ -27,7 +27,9 @@
 
 #if (PLATFORM(IOS) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
+#include "GenericCallback.h"
 #include "MessageReceiver.h"
+#include <WebCore/AudioSession.h>
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/PlatformView.h>
 #include <WebCore/VideoFullscreenChangeObserver.h>
@@ -36,6 +38,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS)
 #include <WebCore/VideoFullscreenInterfaceAVKit.h>
@@ -55,6 +58,8 @@ class WebPageProxy;
 class PlaybackSessionManagerProxy;
 class PlaybackSessionModelContext;
 class VideoFullscreenManagerProxy;
+
+typedef GenericCallback<WebCore::RouteSharingPolicy, String> RequestRouteSharingPolicyAndContextUIDCallback;
 
 class VideoFullscreenModelContext final
     : public RefCounted<VideoFullscreenModelContext>
@@ -89,6 +94,7 @@ private:
     UIViewController *presentingViewController() final;
     UIViewController *createVideoFullscreenViewController(AVPlayerViewController*) final;
 #endif
+    void requestRouteSharingPolicyAndContextUID(CompletionHandler<void(WebCore::RouteSharingPolicy, String)>&&) final;
 
     // VideoFullscreenChangeObserver
     void requestUpdateInlineRect() final;
@@ -123,6 +129,8 @@ public:
     void applicationDidBecomeActive();
     bool isVisible() const;
 
+    void requestRouteSharingPolicyAndContextUID(uint64_t contextId, CompletionHandler<void(WebCore::RouteSharingPolicy, String)>&&);
+
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     bool isPlayingVideoInEnhancedFullscreen() const;
 #endif
@@ -155,6 +163,7 @@ private:
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
     void exitFullscreenWithoutAnimationToMode(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
 #endif
+    void requestRouteSharingPolicyAndContextUIDCallback(WebCore::RouteSharingPolicy, String, WebKit::CallbackID);
 
     // Messages to VideoFullscreenManager
     void requestFullscreenMode(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool finishedWithMedia = false);
@@ -176,6 +185,7 @@ private:
     HashMap<uint64_t, ModelInterfaceTuple> m_contextMap;
     uint64_t m_controlsManagerContextId { 0 };
     HashMap<uint64_t, int> m_clientCounts;
+    CallbackMap m_callbacks;
 };
     
 } // namespace WebKit

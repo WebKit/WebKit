@@ -282,6 +282,14 @@ void VideoFullscreenModelContext::fullscreenMayReturnToInline()
         m_manager->fullscreenMayReturnToInline(m_contextId);
 }
 
+void VideoFullscreenModelContext::requestRouteSharingPolicyAndContextUID(CompletionHandler<void(WebCore::RouteSharingPolicy, String)>&& completionHandler)
+{
+    if (m_manager)
+        m_manager->requestRouteSharingPolicyAndContextUID(m_contextId, WTFMove(completionHandler));
+    else
+        completionHandler(WebCore::RouteSharingPolicy::Default, emptyString());
+}
+
 #pragma mark - VideoFullscreenManagerProxy
 
 RefPtr<VideoFullscreenManagerProxy> VideoFullscreenManagerProxy::create(WebPageProxy& page, PlaybackSessionManagerProxy& playbackSessionManagerProxy)
@@ -362,6 +370,16 @@ void VideoFullscreenManagerProxy::applicationDidBecomeActive()
 {
     for (auto& tuple : m_contextMap.values())
         std::get<1>(tuple)->applicationDidBecomeActive();
+}
+
+void VideoFullscreenManagerProxy::requestRouteSharingPolicyAndContextUID(uint64_t contextId, CompletionHandler<void(WebCore::RouteSharingPolicy, String)>&& completion)
+{
+    auto callback = RequestRouteSharingPolicyAndContextUIDCallback::create([completion = WTFMove(completion)] (WebCore::RouteSharingPolicy policy, String contextUID, RequestRouteSharingPolicyAndContextUIDCallback::Error) {
+        completion(policy, contextUID);
+    });
+    auto callbackID = callback->callbackID();
+    m_callbacks.put(WTFMove(callback));
+    m_page->send(Messages::VideoFullscreenManager::RequestRouteSharingPolicyAndContextUID(contextId, callbackID), m_page->pageID());
 }
 
 VideoFullscreenManagerProxy::ModelInterfaceTuple VideoFullscreenManagerProxy::createModelAndInterface(uint64_t contextId)
@@ -502,6 +520,12 @@ void VideoFullscreenManagerProxy::exitFullscreenWithoutAnimationToMode(uint64_t 
     ensureInterface(contextId).exitFullscreenWithoutAnimationToMode(targetMode);
 }
 #endif
+
+void VideoFullscreenManagerProxy::requestRouteSharingPolicyAndContextUIDCallback(WebCore::RouteSharingPolicy policy, String contextUID, WebKit::CallbackID callbackID)
+{
+    if (auto callback = m_callbacks.take<RequestRouteSharingPolicyAndContextUIDCallback>(callbackID))
+        callback->performCallbackWithReturnValue(policy, contextUID);
+}
 
 #if PLATFORM(IOS) && ENABLE(FULLSCREEN_API)
 

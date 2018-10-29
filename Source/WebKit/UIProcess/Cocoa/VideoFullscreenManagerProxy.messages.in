@@ -35,5 +35,7 @@ messages -> VideoFullscreenManagerProxy {
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
     ExitFullscreenWithoutAnimationToMode(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode)
 #endif
+
+    RequestRouteSharingPolicyAndContextUIDCallback(enum WebCore::RouteSharingPolicy routeSharingPolicy, String routingContextUID, WebKit::CallbackID callbackID)
 }
 #endif
