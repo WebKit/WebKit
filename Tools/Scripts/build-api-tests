@@ -72,10 +72,6 @@ if (isAppleCocoaWebKit()) {
         push @options, ("-target", "TestWTF");
     }
     $result = buildXCodeProject("TestWebKitAPI", $clean, @options, @ARGV);
-} elsif (isAppleWinWebKit()) {
-    chdir "Tools/TestWebKitAPI" or die;
-    my $solutionPath = "TestWebKitAPI.vcxproj/TestWebKitAPI.sln";
-    $result = buildVisualStudioProject($solutionPath, $clean);
 } else {
     die "TestWebKitAPI is not supported on this platform.\n";
 }

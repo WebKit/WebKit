@@ -198,11 +198,6 @@ sub buildMyProject
     chdir $projectDirectory or die "Can't find $projectName directory to build from";
     if (isAppleCocoaWebKit()) {
         $result = system "sh", "-c", ('xcodebuild -project ' . $projectName . '.xcodeproj "$@" | grep -v setenv && exit ${PIPESTATUS[0]}'), "xcodebuild",  @options, @ARGV, @additionalSupportOptions;
-    } elsif (isAppleWinWebKit() || isWinCairo()) {
-        # WTF is a part of JavaScriptCore.sln because jsc.exe wouldn't start otherwise.
-        if ($projectName ne "WTF") {
-            $result = buildVisualStudioProject("$projectName.vcxproj/$projectName.sln");
-        }
     } else {
         die "Building not defined for this platform!\n";
     }
@@ -221,9 +216,7 @@ sub writeCongrats()
     print "====================================================================\n";
 }
 
-if (!isAppleWinWebKit() && !isWinCairo()) {
-    buildMyProject("Source/bmalloc", "bmalloc");
-}
+buildMyProject("Source/bmalloc", "bmalloc");
 buildMyProject("Source/WTF", "WTF");
 buildMyProject("Source/JavaScriptCore", "JavaScriptCore");
 if (isAppleCocoaWebKit() && $cli) {

@@ -1,3 +1,17 @@
+2018-10-28  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] Remove obsolete code for vcxproj builds in build-api-tests and build-jsc
+        https://bugs.webkit.org/show_bug.cgi?id=190948
+
+        Reviewed by Brent Fulgham.
+
+        vcxproj files have been removed in Bug 154388.
+
+        * Scripts/build-api-tests: Removed obsolete code to build vcproj.
+        * Scripts/build-jsc:
+        (buildMyProject): Ditto. Removed a condition of buiding bmalloc
+        which is not used because Windows ports are using CMake.
+
 2018-10-28  Geoffrey Garen  <ggaren@apple.com>
 
         HashMap should support selecting a random entry
