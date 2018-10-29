@@ -50,9 +50,11 @@ WI.CanvasTabContentView = class CanvasTabContentView extends WI.ContentBrowserTa
 
         this._recordShortcut = new WI.KeyboardShortcut(null, WI.KeyboardShortcut.Key.Space, this._handleSpace.bind(this));
         this._recordShortcut.implicitlyPreventsDefault = false;
+        this._recordShortcut.disabled = true;
 
         this._recordSingleFrameShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.Shift, WI.KeyboardShortcut.Key.Space, this._handleSpace.bind(this));
         this._recordSingleFrameShortcut.implicitlyPreventsDefault = false;
+        this._recordSingleFrameShortcut.disabled = true;
     }
 
     static tabInfo()
@@ -102,8 +104,19 @@ WI.CanvasTabContentView = class CanvasTabContentView extends WI.ContentBrowserTa
     {
         super.shown();
 
+        this._recordShortcut.disabled = false;
+        this._recordSingleFrameShortcut.disabled = false;
+
         if (!this.contentBrowser.currentContentView)
             this.showRepresentedObject(this._canvasCollection);
+    }
+
+    hidden()
+    {
+        this._recordShortcut.disabled = true;
+        this._recordSingleFrameShortcut.disabled = true;
+
+        super.hidden();
     }
 
     restoreStateFromCookie(cookie)
