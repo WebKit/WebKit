@@ -33,6 +33,7 @@
 #include "BitmapImage.h"
 #include "GraphicsContextCG.h"
 #include "Image.h"
+#include "ImageBufferUtilitiesCG.h"
 
 #if HAVE(ARM_NEON_INTRINSICS)
 #include "GraphicsContext3DNEON.h"
@@ -514,9 +515,15 @@ void GraphicsContext3D::paintToCanvas(const unsigned char* imagePixels, const In
             return;
 
         memcpy(copiedPixels, imagePixels, rowBytes * imageSize.height());
-        dataProvider = adoptCF(CGDataProviderCreateWithData(0, copiedPixels, rowBytes * imageSize.height(), releaseImageData));
-    } else
-        dataProvider = adoptCF(CGDataProviderCreateWithData(0, imagePixels, rowBytes * imageSize.height(), 0));
+
+        size_t dataSize = rowBytes * imageSize.height();
+        verifyImageBufferIsBigEnough(copiedPixels, dataSize);
+        dataProvider = adoptCF(CGDataProviderCreateWithData(0, copiedPixels, dataSize, releaseImageData));
+    } else {
+        size_t dataSize = rowBytes * imageSize.height();
+        verifyImageBufferIsBigEnough(imagePixels, dataSize);
+        dataProvider = adoptCF(CGDataProviderCreateWithData(0, imagePixels, dataSize, 0));
+    }
 
     RetainPtr<CGImageRef> cgImage = adoptCF(CGImageCreate(imageSize.width(), imageSize.height(), 8, 32, rowBytes, sRGBColorSpaceRef(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host,
         dataProvider.get(), 0, false, kCGRenderingIntentDefault));

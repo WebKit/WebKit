@@ -29,6 +29,7 @@
 #if HAVE(CORE_VIDEO)
 
 #include "GraphicsContextCG.h"
+#include "ImageBufferUtilitiesCG.h"
 #include "Logging.h"
 #include <wtf/SoftLinking.h>
 
@@ -82,6 +83,7 @@ static const void* CVPixelBufferGetBytePointerCallback(void* refcon)
 
     ++info->lockCount;
     void* address = CVPixelBufferGetBaseAddress(info->pixelBuffer.get());
+    verifyImageBufferIsBigEnough(address, CVPixelBufferGetDataSize(info->pixelBuffer.get()));
     RELEASE_LOG_INFO(Media, "CVPixelBufferGetBytePointerCallback() returning bytePointer: %p, size: %zu", address, CVPixelBufferGetDataSize(info->pixelBuffer.get()));
     return address;
 }
@@ -176,6 +178,10 @@ RetainPtr<CGImageRef> PixelBufferConformerCV::createImageFromPixelBuffer(CVPixel
     CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Little | kCGImageAlphaFirst;
     size_t bytesPerRow = CVPixelBufferGetBytesPerRow(buffer.get());
     size_t byteLength = CVPixelBufferGetDataSize(buffer.get());
+
+    ASSERT(byteLength);
+    if (!byteLength)
+        return nullptr;
 
     CVPixelBufferInfo* info = new CVPixelBufferInfo();
     info->pixelBuffer = WTFMove(buffer);

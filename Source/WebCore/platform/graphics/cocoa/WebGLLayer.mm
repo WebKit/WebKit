@@ -32,6 +32,7 @@
 #import "GraphicsContextCG.h"
 #import "GraphicsLayer.h"
 #import "GraphicsLayerCA.h"
+#import "ImageBufferUtilitiesCG.h"
 #import "PlatformCALayer.h"
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/FastMalloc.h>
@@ -110,6 +111,7 @@ static void freeData(void *, const void *data, size_t /* size */)
     glPixelStorei(GL_PACK_ROW_LENGTH, rowBytes / 4);
     glReadPixels(0, 0, width, height, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, data);
 
+    WebCore::verifyImageBufferIsBigEnough((uint8_t*)data, dataSize);
     CGDataProviderRef provider = CGDataProviderCreateWithData(0, data, dataSize, freeData);
     CGImageRef image = CGImageCreate(width, height, 8, 32, rowBytes, imageColorSpace.get(),
         kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host, provider, 0, true, kCGRenderingIntentDefault);

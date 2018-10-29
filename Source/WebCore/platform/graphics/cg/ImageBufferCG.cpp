@@ -33,6 +33,7 @@
 #include "BitmapImage.h"
 #include "GraphicsContext.h"
 #include "GraphicsContextCG.h"
+#include "ImageBufferUtilitiesCG.h"
 #include "ImageData.h"
 #include "IntRect.h"
 #include "MIMETypeRegistry.h"
@@ -180,6 +181,7 @@ ImageBuffer::ImageBuffer(const FloatSize& size, float resolutionScale, CGColorSp
             fastFree(const_cast<void*>(data));
         };
         // Create a live image that wraps the data.
+        verifyImageBufferIsBigEnough(m_data.data, numBytes.unsafeGet());
         m_data.dataProvider = adoptCF(CGDataProviderCreateWithData(0, m_data.data, numBytes.unsafeGet(), releaseImageData));
 
         if (!cgContext)
@@ -544,6 +546,7 @@ RetainPtr<CFDataRef> ImageBuffer::toCFData(const String& mimeType, std::optional
             return nullptr;
 
         size_t dataSize = 4 * logicalSize().width() * logicalSize().height();
+        verifyImageBufferIsBigEnough(premultipliedData->data(), dataSize);
         auto dataProvider = adoptCF(CGDataProviderCreateWithData(nullptr, premultipliedData->data(), dataSize, nullptr));
         if (!dataProvider)
             return nullptr;
@@ -605,6 +608,7 @@ static RetainPtr<CFDataRef> cfData(const ImageData& source, const String& mimeTy
         data = premultipliedData.data();
     }
 
+    verifyImageBufferIsBigEnough(data, 4 * source.width() * source.height());
     auto dataProvider = adoptCF(CGDataProviderCreateWithData(0, data, 4 * source.width() * source.height(), 0));
     if (!dataProvider)
         return nullptr;

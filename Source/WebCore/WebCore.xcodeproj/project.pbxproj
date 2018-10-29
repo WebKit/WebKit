@@ -4016,6 +4016,7 @@
 		CD3A495F17A9D01B00274E42 /* MediaSource.h in Headers */ = {isa = PBXBuildFile; fileRef = CD3A495617A9D01B00274E42 /* MediaSource.h */; };
 		CD3A496217A9D01B00274E42 /* SourceBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = CD3A495917A9D01B00274E42 /* SourceBuffer.h */; };
 		CD3A496517A9D01B00274E42 /* SourceBufferList.h in Headers */ = {isa = PBXBuildFile; fileRef = CD3A495C17A9D01B00274E42 /* SourceBufferList.h */; };
+		CD3E21DD2183444A00E66F55 /* ImageBufferUtilitiesCG.h in Headers */ = {isa = PBXBuildFile; fileRef = CD3E21DB21833F5100E66F55 /* ImageBufferUtilitiesCG.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD3E251C18046B0600E27F56 /* GridArea.h in Headers */ = {isa = PBXBuildFile; fileRef = CD3E251B18046B0600E27F56 /* GridArea.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD3E252418046BCD00E27F56 /* CSSGridTemplateAreasValue.h in Headers */ = {isa = PBXBuildFile; fileRef = CD3E252218046BCD00E27F56 /* CSSGridTemplateAreasValue.h */; };
 		CD4AC52A1496AE9A0087C4EF /* Composite.wav in Copy Audio Resources */ = {isa = PBXBuildFile; fileRef = CD4AC5281496AE2F0087C4EF /* Composite.wav */; };
@@ -4028,6 +4029,7 @@
 		CD54A763180F9F7000B076C9 /* AudioTrackPrivateMediaSourceAVFObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = CD54A761180F9F7000B076C9 /* AudioTrackPrivateMediaSourceAVFObjC.h */; };
 		CD5596911475B678001D0BD0 /* AudioFileReaderIOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD55968F1475B678001D0BD0 /* AudioFileReaderIOS.cpp */; };
 		CD5596921475B678001D0BD0 /* AudioFileReaderIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = CD5596901475B678001D0BD0 /* AudioFileReaderIOS.h */; };
+		CD58949521874064004F424A /* ImageBufferUtilitiesCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD58949321874064004F424A /* ImageBufferUtilitiesCG.cpp */; };
 		CD5896E21CD2B15100B3BCC8 /* WebPlaybackControlsManager.h in Headers */ = {isa = PBXBuildFile; fileRef = CD5896E01CD2B15100B3BCC8 /* WebPlaybackControlsManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD5D27781E8318E000D80A3D /* WebCoreDecompressionSession.h in Headers */ = {isa = PBXBuildFile; fileRef = CD5D27761E8318E000D80A3D /* WebCoreDecompressionSession.h */; };
 		CD5E5B5F1A15CE54000C609E /* PageConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = CD5E5B5E1A15CE54000C609E /* PageConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -13342,6 +13344,7 @@
 		CD3A495B17A9D01B00274E42 /* SourceBufferList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SourceBufferList.cpp; sourceTree = "<group>"; };
 		CD3A495C17A9D01B00274E42 /* SourceBufferList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SourceBufferList.h; sourceTree = "<group>"; };
 		CD3A495D17A9D01B00274E42 /* SourceBufferList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SourceBufferList.idl; sourceTree = "<group>"; };
+		CD3E21DB21833F5100E66F55 /* ImageBufferUtilitiesCG.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageBufferUtilitiesCG.h; sourceTree = "<group>"; };
 		CD3E251B18046B0600E27F56 /* GridArea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GridArea.h; sourceTree = "<group>"; };
 		CD3E252118046BCD00E27F56 /* CSSGridTemplateAreasValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSGridTemplateAreasValue.cpp; sourceTree = "<group>"; };
 		CD3E252218046BCD00E27F56 /* CSSGridTemplateAreasValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSGridTemplateAreasValue.h; sourceTree = "<group>"; };
@@ -13360,6 +13363,7 @@
 		CD54DE4917469C6D005E5B36 /* AudioSessionMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioSessionMac.cpp; sourceTree = "<group>"; };
 		CD55968F1475B678001D0BD0 /* AudioFileReaderIOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioFileReaderIOS.cpp; sourceTree = "<group>"; };
 		CD5596901475B678001D0BD0 /* AudioFileReaderIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioFileReaderIOS.h; sourceTree = "<group>"; };
+		CD58949321874064004F424A /* ImageBufferUtilitiesCG.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImageBufferUtilitiesCG.cpp; sourceTree = "<group>"; };
 		CD5896DF1CD2B15100B3BCC8 /* WebPlaybackControlsManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPlaybackControlsManager.mm; sourceTree = "<group>"; };
 		CD5896E01CD2B15100B3BCC8 /* WebPlaybackControlsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPlaybackControlsManager.h; sourceTree = "<group>"; };
 		CD5D27751E8318E000D80A3D /* WebCoreDecompressionSession.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreDecompressionSession.mm; sourceTree = "<group>"; };
@@ -23895,6 +23899,8 @@
 				B2A10B930B3818D700099AA4 /* ImageBufferCG.cpp */,
 				2292B27B1356669400CF11EF /* ImageBufferDataCG.cpp */,
 				22BD9F80135364FE009BD102 /* ImageBufferDataCG.h */,
+				CD3E21DB21833F5100E66F55 /* ImageBufferUtilitiesCG.h */,
+				CD58949321874064004F424A /* ImageBufferUtilitiesCG.cpp */,
 				555B87EA1CAAF0AB00349425 /* ImageDecoderCG.cpp */,
 				555B87EB1CAAF0AB00349425 /* ImageDecoderCG.h */,
 				4B3480920EEF50D400AC1B41 /* ImageSourceCG.h */,
@@ -28824,6 +28830,7 @@
 				4B3480940EEF50D400AC1B41 /* ImageSourceCG.h in Headers */,
 				078ED193216D079500775B33 /* ImageTransferSessionVT.h in Headers */,
 				5550CB421E955E3C00111AA0 /* ImageTypes.h in Headers */,
+				CD3E21DD2183444A00E66F55 /* ImageBufferUtilitiesCG.h in Headers */,
 				26F756B31B3B66F70005DD79 /* ImmutableNFA.h in Headers */,
 				26F756B51B3B68F20005DD79 /* ImmutableNFANodeBuilder.h in Headers */,
 				316FE1180E6E1DA700BF6088 /* ImplicitAnimation.h in Headers */,
@@ -32644,6 +32651,7 @@
 				DE5F860A1FA2386A006DB63A /* UnifiedSource475.cpp in Sources */,
 				DE5F860B1FA2386A006DB63A /* UnifiedSource476.cpp in Sources */,
 				DE5F860C1FA2386A006DB63A /* UnifiedSource477.cpp in Sources */,
+				CD58949521874064004F424A /* ImageBufferUtilitiesCG.cpp in Sources */,
 				DE5F860D1FA2386B006DB63A /* UnifiedSource478.cpp in Sources */,
 				DE5F860E1FA2386B006DB63A /* UnifiedSource479.cpp in Sources */,
 				DE5F860F1FA2386B006DB63A /* UnifiedSource480.cpp in Sources */,
