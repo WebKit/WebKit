@@ -1,3 +1,20 @@
+2018-10-29  Youenn Fablet  <youenn@apple.com>
+
+        Invalid ssrc value in the stats of type 'inbound-rtp'
+        https://bugs.webkit.org/show_bug.cgi?id=190826
+        <rdar://problem/45487435>
+
+        Reviewed by Eric Carlson.
+
+        Value was not initialized in WebCore if missing from libwebrtc.
+        Change value to an optional so that it will not appear if libwebrtc does not expose it.
+        Move integer/boolean values from being initialized to be optional so
+        that we do not expose them to JS if not exposed by libwebrtc.
+
+        Covered by updated tests.
+
+        * Modules/mediastream/RTCStatsReport.h:
+
 2018-10-29  Jer Noble  <jer.noble@apple.com>
 
         CRASH in CoreGraphics: ERROR_CGDataProvider_BufferIsNotBigEnough

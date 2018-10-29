@@ -170,6 +170,23 @@ promise_test(async (test) => {
     assert_false(!!outstats);
     assert_true(!!instats);
 }, "Receiver stats");
+
+promise_test(async (test) => {
+    let instats1, instats2;
+
+    let report1 = await secondConnection.getReceivers()[0].getStats();
+    report1.forEach((statItem) => {
+        if (statItem.type === "inbound-rtp")
+            instats1 = statItem;
+    });
+    waitFor(50);
+    let report2 = await secondConnection.getReceivers()[0].getStats();
+    report2.forEach((statItem) => {
+        if (statItem.type === "inbound-rtp")
+            instats2 = statItem;
+    });
+    assert_equals(instats1.ssrc, instats2.ssrc);
+}, "Check ssrc is not changing in inbound rtp stats");
         </script>
     </body>
 </html>

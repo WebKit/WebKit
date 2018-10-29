@@ -59,7 +59,7 @@ public:
     };
 
     struct RTCRTPStreamStats : Stats {
-        uint32_t ssrc;
+        std::optional<uint32_t> ssrc;
         String associateStatsId;
         bool isRemote { false };
         String mediaType;
@@ -67,63 +67,63 @@ public:
         String trackId;
         String transportId;
         String codecId;
-        unsigned long firCount { 0 };
-        unsigned long pliCount { 0 };
-        unsigned long nackCount { 0 };
-        unsigned long sliCount { 0 };
-        unsigned long long qpSum { 0 };
+        std::optional<uint32_t> firCount;
+        std::optional<uint32_t> pliCount;
+        std::optional<uint32_t> nackCount;
+        std::optional<uint32_t> sliCount;
+        std::optional<uint64_t> qpSum;
     };
 
     struct InboundRTPStreamStats : RTCRTPStreamStats {
         InboundRTPStreamStats() { type = RTCStatsReport::Type::InboundRtp; }
 
-        unsigned long packetsReceived { 0 };
-        unsigned long long bytesReceived { 0 };
-        unsigned long packetsLost { 0 };
-        double jitter { 0 };
-        double fractionLost { 0 };
-        unsigned long packetsDiscarded { 0 };
-        unsigned long packetsRepaired { 0 };
-        unsigned long burstPacketsLost { 0 };
-        unsigned long burstPacketsDiscarded { 0 };
-        unsigned long burstLossCount { 0 };
-        unsigned long burstDiscardCount { 0 };
-        double burstLossRate { 0 };
-        double burstDiscardRate { 0 };
-        double gapLossRate { 0 };
-        double gapDiscardRate { 0 };
-        unsigned long framesDecoded { 0 };
+        std::optional<uint32_t> packetsReceived;
+        std::optional<uint64_t> bytesReceived;
+        std::optional<uint32_t> packetsLost;
+        std::optional<double> jitter;
+        std::optional<double> fractionLost;
+        std::optional<uint32_t> packetsDiscarded;
+        std::optional<uint32_t> packetsRepaired;
+        std::optional<uint32_t> burstPacketsLost;
+        std::optional<uint32_t> burstPacketsDiscarded;
+        std::optional<uint32_t> burstLossCount;
+        std::optional<uint32_t> burstDiscardCount;
+        std::optional<double> burstLossRate;
+        std::optional<double> burstDiscardRate;
+        std::optional<double> gapLossRate;
+        std::optional<double> gapDiscardRate;
+        std::optional<uint32_t> framesDecoded;
     };
 
     struct OutboundRTPStreamStats : RTCRTPStreamStats {
         OutboundRTPStreamStats() { type = RTCStatsReport::Type::OutboundRtp; }
 
-        unsigned long packetsSent { 0 };
-        unsigned long long bytesSent { 0 };
-        double targetBitrate { 0 };
-        unsigned long framesEncoded { 0 };
+        std::optional<uint32_t> packetsSent;
+        std::optional<uint64_t> bytesSent;
+        std::optional<double> targetBitrate;
+        std::optional<uint32_t> framesEncoded;
     };
 
     struct MediaStreamTrackStats : Stats {
         MediaStreamTrackStats() { type = RTCStatsReport::Type::Track; }
 
         String trackIdentifier;
-        bool remoteSource { false };
-        bool ended { false };
-        bool detached { false };
-        unsigned long frameWidth { 0 };
-        unsigned long frameHeight { 0 };
-        double framesPerSecond { 0 };
-        unsigned long framesSent { 0 };
-        unsigned long framesReceived { 0 };
-        unsigned long framesDecoded { 0 };
-        unsigned long framesDropped { 0 };
-        unsigned long framesCorrupted { 0 };
-        unsigned long partialFramesLost { 0 };
-        unsigned long fullFramesLost { 0 };
-        double audioLevel { 0 };
-        double echoReturnLoss { 0 };
-        double echoReturnLossEnhancement { 0 };
+        std::optional<bool> remoteSource;
+        std::optional<bool> ended;
+        std::optional<bool> detached;
+        std::optional<uint32_t> frameWidth;
+        std::optional<uint32_t> frameHeight;
+        std::optional<double> framesPerSecond;
+        std::optional<uint32_t> framesSent;
+        std::optional<uint32_t> framesReceived;
+        std::optional<uint32_t> framesDecoded;
+        std::optional<uint32_t> framesDropped;
+        std::optional<uint32_t> framesCorrupted;
+        std::optional<uint32_t> partialFramesLost;
+        std::optional<uint32_t> fullFramesLost;
+        std::optional<double> audioLevel;
+        std::optional<double> echoReturnLoss;
+        std::optional<double> echoReturnLossEnhancement;
     };
 
     struct DataChannelStats : Stats {
@@ -131,12 +131,12 @@ public:
         
         String label;
         String protocol;
-        long datachannelid { 0 };
+        std::optional<int> datachannelid;
         String state;
-        unsigned long messagesSent { 0 };
-        unsigned long long bytesSent { 0 };
-        unsigned long messagesReceived { 0 };
-        unsigned long long bytesReceived { 0 };
+        std::optional<uint32_t> messagesSent;
+        std::optional<uint64_t> bytesSent;
+        std::optional<uint32_t> messagesReceived;
+        std::optional<uint64_t> bytesReceived;
     };
 
     enum class IceCandidatePairState {
@@ -155,26 +155,26 @@ public:
         String localCandidateId;
         String remoteCandidateId;
         IceCandidatePairState state;
-        unsigned long long priority { 0 };
-        bool nominated { false };
-        bool writable { false };
-        bool readable { false };
-        unsigned long long bytesSent { 0 };
-        unsigned long long bytesReceived { 0 };
-        double totalRoundTripTime { 0 };
-        double currentRoundTripTime { 0 };
-        double availableOutgoingBitrate { 0 };
-        double availableIncomingBitrate { 0 };
-        unsigned long long requestsReceived { 0 };
-        unsigned long long requestsSent { 0 };
-        unsigned long long responsesReceived { 0 };
-        unsigned long long responsesSent { 0 };
-        unsigned long long retransmissionsReceived { 0 };
-        unsigned long long retransmissionsSent { 0 };
-        unsigned long long consentRequestsReceived { 0 };
-        unsigned long long consentRequestsSent { 0 };
-        unsigned long long consentResponsesReceived { 0 };
-        unsigned long long consentResponsesSent { 0 };
+        std::optional<uint64_t> priority;
+        std::optional<bool> nominated;
+        std::optional<bool> writable;
+        std::optional<bool> readable;
+        std::optional<uint64_t> bytesSent;
+        std::optional<uint64_t> bytesReceived;
+        std::optional<double> totalRoundTripTime;
+        std::optional<double> currentRoundTripTime;
+        std::optional<double> availableOutgoingBitrate;
+        std::optional<double> availableIncomingBitrate;
+        std::optional<uint64_t> requestsReceived;
+        std::optional<uint64_t> requestsSent;
+        std::optional<uint64_t> responsesReceived;
+        std::optional<uint64_t> responsesSent;
+        std::optional<uint64_t> retransmissionsReceived;
+        std::optional<uint64_t> retransmissionsSent;
+        std::optional<uint64_t> consentRequestsReceived;
+        std::optional<uint64_t> consentRequestsSent;
+        std::optional<uint64_t> consentResponsesReceived;
+        std::optional<uint64_t> consentResponsesSent;
     };
 
     enum class IceCandidateType { Host, Srflx, Prflx, Relay };
@@ -207,12 +207,12 @@ public:
     struct CodecStats : Stats {
         CodecStats() { type = RTCStatsReport::Type::Codec; }
 
-        unsigned long payloadType;
+        std::optional<uint32_t> payloadType;
         std::optional<CodecType> codecType;
         String transportId;
         String mimeType;
-        std::optional<unsigned> clockRate;
-        std::optional<unsigned> channels;
+        std::optional<uint32_t> clockRate;
+        std::optional<uint32_t> channels;
         String sdpFmtpLine;
         String implementation;
     };

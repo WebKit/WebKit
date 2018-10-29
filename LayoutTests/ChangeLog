@@ -1,3 +1,15 @@
+2018-10-29  Youenn Fablet  <youenn@apple.com>
+
+        Invalid ssrc value in the stats of type 'inbound-rtp'
+        https://bugs.webkit.org/show_bug.cgi?id=190826
+        <rdar://problem/45487435>
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/video-mediastreamtrack-stats.html:
+        * webrtc/video-stats-expected.txt:
+        * webrtc/video-stats.html:
+
 2018-10-29  Ali Juma  <ajuma@chromium.org>
 
         Unreviewed test gardening
