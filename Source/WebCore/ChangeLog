@@ -1,3 +1,19 @@
+2018-10-29  David Kilzer  <ddkilzer@apple.com>
+
+        Fix clang static analyzer warning in StyleBuilderConverter.h
+        <https://webkit.org/b/190907>
+
+        Reviewed by Antti Koivisto.
+
+        Fix the following clang static warning in StyleBuilderConverter.h:
+            Value stored to 'autoFlow' during its initialization is never read
+
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertGridAutoFlow): Move
+        assignment of RenderStyle::initialGridAutoFlow() to `default`
+        case.  Make `CSSValueDense` consistent with other cases by
+        assigning value to `autoFlow` instead of returning early.
+
 2018-10-29  Youenn Fablet  <youenn@apple.com>
 
         Guard H264 simulcast with a runtime flag

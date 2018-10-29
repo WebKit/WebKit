@@ -1047,11 +1047,11 @@ inline GridAutoFlow StyleBuilderConverter::convertGridAutoFlow(StyleResolver&, c
     auto& first = downcast<CSSPrimitiveValue>(*list.item(0));
     auto* second = downcast<CSSPrimitiveValue>(list.item(1));
 
-    GridAutoFlow autoFlow = RenderStyle::initialGridAutoFlow();
+    GridAutoFlow autoFlow;
     switch (first.valueID()) {
     case CSSValueRow:
         if (second && second->valueID() == CSSValueDense)
-            autoFlow =  AutoFlowRowDense;
+            autoFlow = AutoFlowRowDense;
         else
             autoFlow = AutoFlowRow;
         break;
@@ -1063,10 +1063,13 @@ inline GridAutoFlow StyleBuilderConverter::convertGridAutoFlow(StyleResolver&, c
         break;
     case CSSValueDense:
         if (second && second->valueID() == CSSValueColumn)
-            return AutoFlowColumnDense;
-        return AutoFlowRowDense;
+            autoFlow = AutoFlowColumnDense;
+        else
+            autoFlow = AutoFlowRowDense;
+        break;
     default:
         ASSERT_NOT_REACHED();
+        autoFlow = RenderStyle::initialGridAutoFlow();
         break;
     }
 
