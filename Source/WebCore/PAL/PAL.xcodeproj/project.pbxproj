@@ -796,7 +796,7 @@
 			};
 			buildConfigurationList = 1C09D0381E31C32800725F18 /* Build configuration list for PBXProject "PAL" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,

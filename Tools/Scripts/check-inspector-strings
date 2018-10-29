@@ -44,7 +44,7 @@ from webkitpy.style.filereader import TextFileReader
 from webkitpy.style.main import change_directory
 
 _inspector_directory = "Source/WebCore/inspector/front-end"
-_localized_strings = "Source/WebCore/English.lproj/localizedStrings.js"
+_localized_strings = "Source/WebCore/en.lproj/localizedStrings.js"
 
 _log = logging.getLogger("check-inspector-strings")
 

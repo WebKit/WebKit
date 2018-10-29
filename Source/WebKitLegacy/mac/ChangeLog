@@ -1,3 +1,21 @@
+2018-10-29  Tim Horton  <timothy_horton@apple.com>
+
+        Modernize WebKit nibs and lprojs for localization's sake
+        https://bugs.webkit.org/show_bug.cgi?id=190911
+        <rdar://problem/45349466>
+
+        Reviewed by Dan Bernstein.
+
+        * Misc/WebNSControlExtras.m:
+        (-[NSControl sizeToFitAndAdjustWindowHeight]):
+        NSWindow and its contents are both in the same scale space these days; avoid
+        double-applying the scale factor, or you can't see the prompt.
+
+        * Panels/English.lproj/WebAuthenticationPanel.nib/designable.nib: Removed.
+        * Panels/English.lproj/WebAuthenticationPanel.nib/keyedobjects.nib: Removed.
+        * Panels/en.lproj/WebAuthenticationPanel.xib: Added.
+        NIB->XIB
+
 2018-10-25  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Turn Web Animations CSS Integration off by default

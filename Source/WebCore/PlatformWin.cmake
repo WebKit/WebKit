@@ -291,8 +291,8 @@ endif ()
 
 make_directory(${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/WebKit.resources/en.lproj)
 file(COPY
-    "${WEBCORE_DIR}/English.lproj/Localizable.strings"
-    "${WEBCORE_DIR}/English.lproj/mediaControlsLocalizedStrings.js"
+    "${WEBCORE_DIR}/en.lproj/Localizable.strings"
+    "${WEBCORE_DIR}/en.lproj/mediaControlsLocalizedStrings.js"
     DESTINATION
     ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/WebKit.resources/en.lproj
 )

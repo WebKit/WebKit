@@ -9288,7 +9288,7 @@
 		718675461DF101C60033D7F3 /* seek-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "seek-support.js"; sourceTree = "<group>"; };
 		718C7F561DD385C500B733C8 /* status-label.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = "status-label.css"; sourceTree = "<group>"; };
 		718C7F571DD385C500B733C8 /* status-label.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "status-label.js"; sourceTree = "<group>"; };
-		71A1B6071DEE5A820073BCFB /* English */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = English; path = "English.lproj/modern-media-controls-localized-strings.js"; sourceTree = SOURCE_ROOT; };
+		71A1B6071DEE5A820073BCFB /* en */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = en; path = "en.lproj/modern-media-controls-localized-strings.js"; sourceTree = SOURCE_ROOT; };
 		71A57DEF154BE25C0009D120 /* SVGPathUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPathUtilities.cpp; sourceTree = "<group>"; };
 		71A57DF0154BE25C0009D120 /* SVGPathUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathUtilities.h; sourceTree = "<group>"; };
 		71B0460A1DD3C2EE00EE19CF /* status-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "status-support.js"; sourceTree = "<group>"; };
@@ -9418,7 +9418,7 @@
 		7A0E770D10C00A8800A0276E /* InspectorFrontendHost.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = InspectorFrontendHost.idl; sourceTree = "<group>"; };
 		7A0E771C10C00DB100A0276E /* JSInspectorFrontendHost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSInspectorFrontendHost.cpp; sourceTree = "<group>"; };
 		7A0E771D10C00DB100A0276E /* JSInspectorFrontendHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSInspectorFrontendHost.h; sourceTree = "<group>"; };
-		7A1D7FCA18F85F0F00C385AD /* English */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = English; path = English.lproj/mediaControlsLocalizedStrings.js; sourceTree = SOURCE_ROOT; };
+		7A1D7FCA18F85F0F00C385AD /* en */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = en; path = en.lproj/mediaControlsLocalizedStrings.js; sourceTree = SOURCE_ROOT; };
 		7A1F2B51126C61B20006A7E6 /* InspectorClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorClient.cpp; sourceTree = "<group>"; };
 		7A22731E20C9F9D900DB1DEF /* WebKitNSImageExtras.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebKitNSImageExtras.mm; sourceTree = "<group>"; };
 		7A22731F20C9F9DA00DB1DEF /* WebKitNSImageExtras.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebKitNSImageExtras.h; sourceTree = "<group>"; };
@@ -9998,7 +9998,7 @@
 		8379363C1FBBB0A400C8023C /* ServiceWorkerClientData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerClientData.cpp; sourceTree = "<group>"; };
 		8379363E1FBBB0A500C8023C /* ServiceWorkerClientData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerClientData.h; sourceTree = "<group>"; };
 		837964CE1F8DB69A00218EA0 /* GeolocationPositionIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GeolocationPositionIOS.mm; path = Modules/geolocation/ios/GeolocationPositionIOS.mm; sourceTree = SOURCE_ROOT; };
-		837A80121E1E127300026B9F /* English */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = English; path = English.lproj/Localizable.stringsdict; sourceTree = SOURCE_ROOT; };
+		837A80121E1E127300026B9F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = en; path = en.lproj/Localizable.stringsdict; sourceTree = SOURCE_ROOT; };
 		837B7D1F1DC3F54C00D051FC /* ValidationBubbleIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ValidationBubbleIOS.mm; sourceTree = "<group>"; };
 		837D46251FA2A8C50054E1FA /* ServiceWorkerClientIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerClientIdentifier.h; sourceTree = "<group>"; };
 		837DFB341EBFEA7000601385 /* ElementCSSInlineStyle.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ElementCSSInlineStyle.idl; sourceTree = "<group>"; };
@@ -12967,7 +12967,7 @@
 		BCAB418013E356E800D8AAF3 /* Region.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Region.h; sourceTree = "<group>"; };
 		BCACF3BA1072921A00C0C8A3 /* UserContentURLPattern.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserContentURLPattern.cpp; sourceTree = "<group>"; };
 		BCACF3BB1072921A00C0C8A3 /* UserContentURLPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserContentURLPattern.h; sourceTree = "<group>"; };
-		BCAD1809131C7A0D00990406 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = SOURCE_ROOT; };
+		BCAD1809131C7A0D00990406 /* en */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = SOURCE_ROOT; };
 		BCAE1FA512939DB7004CB026 /* ScrollAnimatorMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollAnimatorMac.h; sourceTree = "<group>"; };
 		BCB16BFE0979C3BD00467741 /* MemoryCache.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryCache.cpp; sourceTree = "<group>"; };
 		BCB16BFF0979C3BD00467741 /* MemoryCache.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MemoryCache.h; sourceTree = "<group>"; };
@@ -31705,7 +31705,7 @@
 			};
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -32841,7 +32841,7 @@
 		71A1B6061DEE5A820073BCFB /* modern-media-controls-localized-strings.js */ = {
 			isa = PBXVariantGroup;
 			children = (
-				71A1B6071DEE5A820073BCFB /* English */,
+				71A1B6071DEE5A820073BCFB /* en */,
 			);
 			name = "modern-media-controls-localized-strings.js";
 			sourceTree = "<group>";
@@ -32849,7 +32849,7 @@
 		7A1D7FC918F85F0F00C385AD /* mediaControlsLocalizedStrings.js */ = {
 			isa = PBXVariantGroup;
 			children = (
-				7A1D7FCA18F85F0F00C385AD /* English */,
+				7A1D7FCA18F85F0F00C385AD /* en */,
 			);
 			name = mediaControlsLocalizedStrings.js;
 			sourceTree = "<group>";
@@ -32857,7 +32857,7 @@
 		837A80111E1E127300026B9F /* Localizable.stringsdict */ = {
 			isa = PBXVariantGroup;
 			children = (
-				837A80121E1E127300026B9F /* English */,
+				837A80121E1E127300026B9F /* en */,
 			);
 			name = Localizable.stringsdict;
 			sourceTree = "<group>";
@@ -32865,7 +32865,7 @@
 		BCAD1808131C7A0D00990406 /* Localizable.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
-				BCAD1809131C7A0D00990406 /* English */,
+				BCAD1809131C7A0D00990406 /* en */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";

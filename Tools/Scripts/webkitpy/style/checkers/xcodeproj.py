@@ -41,10 +41,10 @@ class XcodeProjectFileChecker(object):
         matched = self._development_region_regex.search(line)
         if not matched:
             return False
-        if matched.group('region') != 'English':
+        if matched.group('region') != 'en':
             self.handle_style_error(line_index,
                                     'xcodeproj/settings', 5,
-                                    'developmentRegion is not English.')
+                                    'developmentRegion is not en.')
         return True
 
     def check(self, lines):
@@ -56,4 +56,4 @@ class XcodeProjectFileChecker(object):
         if not development_region_is_detected:
             self.handle_style_error(len(lines),
                                     'xcodeproj/settings', 5,
-                                    'Missing "developmentRegion = English".')
+                                    'Missing "developmentRegion = en".')

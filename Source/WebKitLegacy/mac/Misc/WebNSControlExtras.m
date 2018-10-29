@@ -47,10 +47,7 @@
     NSWindow *window = [self window];
     NSRect windowFrame = [window frame];
 
-    CGFloat backingScaleFactor;
-    backingScaleFactor = [window backingScaleFactor];
-
-    windowFrame.size.height += heightDelta * backingScaleFactor;
+    windowFrame.size.height += heightDelta;
     [window setFrame:windowFrame display:NO];
 }
 

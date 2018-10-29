@@ -67,7 +67,7 @@ exclude Source/WebKit/gtk/NEWS$
 # We do want to include the NEWS, but we want it to be in the root of the archive.
 file Source/WebKit/gtk/NEWS NEWS
 
-file Source/WebCore/English.lproj/mediaControlsLocalizedStrings.js Source/WebCore/English.lproj/mediaControlsLocalizedStrings.js
+file Source/WebCore/en.lproj/mediaControlsLocalizedStrings.js Source/WebCore/en.lproj/mediaControlsLocalizedStrings.js
 file Source/WebInspectorUI/Localizations/en.lproj/localizedStrings.js Source/WebInspectorUI/Localizations/en.lproj/localizedStrings.js
 
 # Include only the resources we actually build

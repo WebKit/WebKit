@@ -109,7 +109,7 @@
 			};
 			buildConfigurationList = A54C2250148B23DE00373FA3 /* Build configuration list for PBXProject "WebInspectorUI" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,

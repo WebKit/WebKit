@@ -63,7 +63,7 @@ class XcodeProjectFileCheckerTest(unittest.TestCase):
         self.assertTrue(self.had_error, '%s should have error: %s.' % (lines, expected_message))
 
     def test_detect_development_region(self):
-        self.assert_no_error(['developmentRegion = English;'])
-        self.assert_error([''], 'Missing "developmentRegion = English".')
+        self.assert_no_error(['developmentRegion = en;'])
+        self.assert_error([''], 'Missing "developmentRegion = en".')
         self.assert_error(['developmentRegion = Japanese;'],
-                          'developmentRegion is not English.')
+                          'developmentRegion is not en.')

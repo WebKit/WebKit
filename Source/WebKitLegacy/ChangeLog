@@ -1,3 +1,17 @@
+2018-10-29  Tim Horton  <timothy_horton@apple.com>
+
+        Modernize WebKit nibs and lprojs for localization's sake
+        https://bugs.webkit.org/show_bug.cgi?id=190911
+        <rdar://problem/45349466>
+
+        Reviewed by Dan Bernstein.
+
+        * English.lproj/WebJavaScriptTextInputPanel.nib/designable.nib: Removed.
+        * English.lproj/WebJavaScriptTextInputPanel.nib/keyedobjects.nib: Removed.
+        * WebKitLegacy.xcodeproj/project.pbxproj:
+        * en.lproj/WebJavaScriptTextInputPanel.xib: Added.
+        NIB->XIB, English->en
+
 2018-10-25  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [CMake][Ninja][Win] midl.exe fails to create, open and write a temporary file in parallel build in Docker container
