@@ -1,3 +1,14 @@
+2018-10-29  Ali Juma  <ajuma@chromium.org>
+
+        Unreviewed test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=191002
+
+        Make expectations for IntersectionObserver WPTs more specific.
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2018-10-29  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Compute estimated margin top for inline formatting root's ancestors

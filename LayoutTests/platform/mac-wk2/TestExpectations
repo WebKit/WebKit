@@ -844,6 +844,14 @@ webkit.org/b/186362 [ Release ] http/tests/resourceLoadStatistics/prevalent-reso
 
 webkit.org/b/186425 [ Debug ] inspector/console/webcore-logging.html [ Pass Failure ]
 
+webkit.org/b/190808 [ Debug ] imported/w3c/web-platform-tests/intersection-observer/containing-block.html [ Pass Failure ]
+webkit.org/b/191002 [ Debug ] imported/w3c/web-platform-tests/intersection-observer/bounding-box.html [ Pass Failure ]
+webkit.org/b/191002 [ Debug ] imported/w3c/web-platform-tests/intersection-observer/display-none.html [ Pass Failure ]
+webkit.org/b/191002 [ Debug ] imported/w3c/web-platform-tests/intersection-observer/edge-inclusive-intersection.html [ Pass Failure ]
+webkit.org/b/191002 [ Debug ] imported/w3c/web-platform-tests/intersection-observer/remove-element.html [ Pass Failure ]
+webkit.org/b/191002 [ Debug ] imported/w3c/web-platform-tests/intersection-observer/shadow-content.html [ Pass Failure ]
+webkit.org/b/191002 [ Debug ] imported/w3c/web-platform-tests/intersection-observer/unclipped-root.html [ Pass Failure ]
+
 # skip manual payment-request tests
 imported/w3c/web-platform-tests/payment-request/PaymentRequestUpdateEvent/updateWith-call-immediate-manual.https.html [ Skip ]
 imported/w3c/web-platform-tests/payment-request/PaymentRequestUpdateEvent/updateWith-duplicate-shipping-options-manual.https.html [ Skip ]

@@ -3582,6 +3582,8 @@ webkit.org/b/191000 imported/w3c/web-platform-tests/shadow-dom/input-element-lis
 
 webkit.org/b/191001 imported/w3c/web-platform-tests/intersection-observer/same-document-root.html [ Failure ]
 
+webkit.org/b/191002 imported/w3c/web-platform-tests/intersection-observer/ [ Pass Failure ]
+
 webkit.org/b/191003 imported/w3c/web-platform-tests/mimesniff/mime-types/charset-parameter.window.html [ Failure ]
 
 webkit.org/b/191004 media/track/track-cue-missing.html [ Failure ]
