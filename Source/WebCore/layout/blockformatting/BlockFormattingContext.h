@@ -61,8 +61,10 @@ private:
     void computeVerticalPositionForFloatClear(const LayoutContext&, const FloatingContext&, const Box&) const;
 
     void computeInFlowPositionedPosition(const LayoutContext&, const Box&) const override;
-    void computeEstimatedMarginTop(const LayoutContext&, const Box&) const;
     void computeEstimatedMarginTopForAncestors(const LayoutContext&, const Box&) const;
+    void computeEstimatedMarginTop(const LayoutContext&, const Box&) const;
+
+    void precomputeVerticalPositionForFormattingRootIfNeeded(const LayoutContext&, const Box&) const;
 
     InstrinsicWidthConstraints instrinsicWidthConstraints(LayoutContext&, const Box&) const override;
 

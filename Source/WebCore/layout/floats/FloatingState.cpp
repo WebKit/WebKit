@@ -111,7 +111,7 @@ FloatingState::Constraints FloatingState::constraints(LayoutUnit verticalPositio
             continue;
 
         auto rect = floatItem.rectWithMargin();
-        if (!(rect.top() <= verticalPosition && verticalPosition < rect.bottom()))
+        if (!(rect.top() <= adjustedPosition.y && adjustedPosition.y < rect.bottom()))
             continue;
 
         if (floatItem.isLeftPositioned())

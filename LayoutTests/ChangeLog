@@ -1,5 +1,16 @@
 2018-10-29  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Add support for simple intruding floats.
+        https://bugs.webkit.org/show_bug.cgi?id=190998
+
+        Reviewed by Antti Koivisto.
+
+        * fast/inline/simple-intruding-float1-expected.txt: Added.
+        * fast/inline/simple-intruding-float1.html: Added.
+        * platform/ios/TestExpectations:
+
+2018-10-29  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Inline layout produces separate runs when float is present.
         https://bugs.webkit.org/show_bug.cgi?id=190980
 

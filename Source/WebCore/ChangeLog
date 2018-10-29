@@ -1,5 +1,29 @@
 2018-10-29  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Add support for simple intruding floats.
+        https://bugs.webkit.org/show_bug.cgi?id=190998
+
+        Reviewed by Antti Koivisto.
+
+        In order to be able to figure out whether a float is intruding on a line, we need to provide the line's final vertical position.
+        This vertical position must be in the same coordinate system as the float's position is. In case of intruding float,
+        it is the parent block formatting root's coordinate system (that's where the float lives.)
+
+        Test: fast/inline/simple-intruding-float1.html
+
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layoutFormattingContextRoot const):
+        (WebCore::Layout::BlockFormattingContext::computeEstimatedMarginTopForAncestors const):
+        (WebCore::Layout::BlockFormattingContext::precomputeVerticalPositionForFormattingRootIfNeeded const):
+        (WebCore::Layout::BlockFormattingContext::computeFloatingPosition const):
+        (WebCore::Layout::BlockFormattingContext::computePositionToAvoidFloats const):
+        (WebCore::Layout::BlockFormattingContext::computeVerticalPositionForFloatClear const):
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/floats/FloatingState.cpp:
+        (WebCore::Layout::FloatingState::constraints const):
+
+2018-10-29  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Inline layout produces separate runs when float is present.
         https://bugs.webkit.org/show_bug.cgi?id=190980
 
