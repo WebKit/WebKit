@@ -516,7 +516,7 @@ WebRTCUnifiedPlanEnabled:
 
 WebRTCVP8CodecEnabled:
   type: bool
-  defaultValue: false
+  defaultValue: true
   webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(WEB_RTC)
   humanReadableName: "WebRTC VP8 codec"

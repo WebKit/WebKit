@@ -1,3 +1,12 @@
+2018-10-29  Youenn Fablet  <youenn@apple.com>
+
+        [WebRTC] Enable VP8 by default
+        https://bugs.webkit.org/show_bug.cgi?id=190672
+
+        Reviewed by Eric Carlson.
+
+        * Shared/WebPreferences.yaml:
+
 2018-10-28  Zan Dobersek  <zdobersek@igalia.com>
 
         [WPE] Add the WebKitVersion.h header

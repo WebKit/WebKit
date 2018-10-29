@@ -394,7 +394,7 @@ private:
 #endif
 
 #if ENABLE(WEB_RTC)
-    bool m_isWebRTCVP8CodecEnabled { false };
+    bool m_isWebRTCVP8CodecEnabled { true };
     bool m_isWebRTCUnifiedPlanEnabled { true };
     bool m_isPeerConnectionEnabled { true };
     bool m_mdnsICECandidatesEnabled { false };
