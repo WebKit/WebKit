@@ -1,3 +1,50 @@
+2018-10-29  Daniel Bates  <dabates@apple.com>
+
+        [llbd-webkit] Add summaries for Document, Frame, and SecurityOrigin
+        https://bugs.webkit.org/show_bug.cgi?id=191033
+
+        Reviewed by Andy Estes.
+
+        For Documents we display its origin, URL, whether it's in the main frame, and its page cache state.
+        We display the same details in the summary for a Frame because its Document tends to be the most
+        interesting aspect of it. For SecurityOrigin we display its origin, domain (affects cookie access),
+        and whether the origin has universal access.
+
+        * lldb/lldb_webkit.py:
+        (__lldb_init_module):
+        Register new summary providers.
+
+        (WebCoreSecurityOrigin_SummaryProvider):
+        (WebCoreFrame_SummaryProvider):
+        (WebCoreDocument_SummaryProvider):
+        Add new summary providers.
+
+        (StdOptionalWrapper):
+        (StdOptionalWrapper.__init__):
+        (StdOptionalWrapper.has_value):
+        (StdOptionalWrapper.value):
+        Convenience data type that provides access to the fields of a std::optional<>.
+        
+        (WebCoreSecurityOriginProvider):
+        (WebCoreSecurityOriginProvider.__init__):
+        (WebCoreSecurityOriginProvider.is_unique):
+        (WebCoreSecurityOriginProvider.scheme):
+        (WebCoreSecurityOriginProvider.host):
+        (WebCoreSecurityOriginProvider.port):
+        (WebCoreSecurityOriginProvider.domain):
+        (WebCoreSecurityOriginProvider.has_universal_access):
+        (WebCoreSecurityOriginProvider.to_string):
+        (WebCoreFrameProvider):
+        (WebCoreFrameProvider.__init__):
+        (WebCoreFrameProvider.is_main_frame):
+        (WebCoreFrameProvider.document):
+        (WebCoreDocumentProvider):
+        (WebCoreDocumentProvider.__init__):
+        (WebCoreDocumentProvider.url):
+        (WebCoreDocumentProvider.origin):
+        (WebCoreDocumentProvider.page_cache_state):
+        (WebCoreDocumentProvider.frame):
+
 2018-10-29  Chris Dumez  <cdumez@apple.com>
 
         [PSON] When Safari restores session state after launching, going back and forward does not swap processes

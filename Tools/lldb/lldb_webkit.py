@@ -62,6 +62,10 @@ def __lldb_init_module(debugger, dict):
     debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreFloatPoint_SummaryProvider WebCore::FloatPoint')
     debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreFloatRect_SummaryProvider WebCore::FloatRect')
 
+    debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreSecurityOrigin_SummaryProvider WebCore::SecurityOrigin')
+    debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreFrame_SummaryProvider WebCore::Frame')
+    debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreDocument_SummaryProvider WebCore::Document')
+
     # synthetic types (see <https://lldb.llvm.org/varformats.html>)
     debugger.HandleCommand('type synthetic add -x "^WTF::Vector<.+>$" --python-class lldb_webkit.WTFVectorProvider')
     debugger.HandleCommand('type synthetic add -x "^WTF::HashTable<.+>$" --python-class lldb_webkit.WTFHashTableProvider')
@@ -189,6 +193,30 @@ def WebCoreFloatRect_SummaryProvider(valobj, dict):
     return "{ x = %s, y = %s, width = %s, height = %s }" % (provider.get_x(), provider.get_y(), provider.get_width(), provider.get_height())
 
 
+def WebCoreSecurityOrigin_SummaryProvider(valobj, dict):
+    provider = WebCoreSecurityOriginProvider(valobj, dict)
+    return '{ %s, domain = %s, hasUniversalAccess = %d }' % (provider.to_string(), provider.domain(), provider.has_universal_access())
+
+
+def WebCoreFrame_SummaryProvider(valobj, dict):
+    provider = WebCoreFrameProvider(valobj, dict)
+    document = provider.document()
+    if document:
+        origin = document.origin()
+        url = document.url()
+        pageCacheState = document.page_cache_state()
+    else:
+        origin = ''
+        url = ''
+        pageCacheState = ''
+    return '{ origin = %s, url = %s, isMainFrame = %s, pageCacheState = %s' % (origin, url, provider.is_main_frame(), pageCacheState)
+
+
+def WebCoreDocument_SummaryProvider(valobj, dict):
+    provider = WebCoreDocumentProvider(valobj, dict)
+    frame = provider.frame()
+    in_main_frame = '%d' % frame.is_main_frame() if frame else 'Detached'
+    return '{ origin = %s, url = %s, isMainFrame = %s, pageCacheState = %s' % (provider.origin(), provider.url(), in_main_frame, provider.page_cache_state())
 
 
 def btjs(debugger, command, result, internal_dict):
@@ -579,6 +607,94 @@ class WebCoreURLProvider:
 
     def to_string(self):
         return WTFStringProvider(self.valobj.GetChildMemberWithName('m_string'), dict).to_string()
+
+
+class StdOptionalWrapper:
+    def __init__(self, valobj, internal_dict):
+        self.valobj = valobj
+
+    def has_value(self):
+        return bool(self.valobj.GetChildMemberWithName('init_').GetValueAsUnsigned(0))
+
+    def value(self):
+        return self.valobj.GetChildMemberWithName('storage_').GetChildMemberWithName('value_')
+
+
+class WebCoreSecurityOriginProvider:
+    def __init__(self, valobj, internal_dict):
+        self.valobj = valobj
+        self._data_ptr = self.valobj.GetChildMemberWithName('m_data')
+
+    def is_unique(self):
+        return bool(self.valobj.GetChildMemberWithName('m_isUnique').GetValueAsUnsigned(0))
+
+    def scheme(self):
+        return WTFStringProvider(self._data_ptr.GetChildMemberWithName('protocol'), dict()).to_string()
+
+    def host(self):
+        return WTFStringProvider(self._data_ptr.GetChildMemberWithName('host'), dict()).to_string()
+
+    def port(self):
+        optional_port = StdOptionalWrapper(self._data_ptr.GetChildMemberWithName('port'), dict())
+        if not optional_port.has_value():
+            return None
+        return optional_port.value().GetValueAsUnsigned(0)
+
+    def domain(self):
+        return WTFStringProvider(self.valobj.GetChildMemberWithName('m_domain'), dict()).to_string()
+
+    def has_universal_access(self):
+        return bool(self.valobj.GetChildMemberWithName('m_universalAccess').GetValueAsUnsigned(0))
+
+    def to_string(self):
+        if self.is_unique():
+            return 'Unique'
+        scheme = self.scheme()
+        host = self.host()
+        port = self.port()
+        if not scheme and not host and not port:
+            return ''
+        if scheme == 'file:':
+            return 'file://'
+        result = '{}://{}'.format(scheme, host)
+        if port:
+            result += ':' + port
+        return result
+
+
+class WebCoreFrameProvider:
+    def __init__(self, valobj, internal_dict):
+        self.valobj = valobj
+
+    def is_main_frame(self):
+        return self.valobj.GetAddress().GetFileAddress() == self.valobj.GetChildMemberWithName('m_mainFrame').GetAddress().GetFileAddress()
+
+    def document(self):
+        document_ptr = self.valobj.GetChildMemberWithName('m_doc').GetChildMemberWithName('m_ptr')
+        if not document_ptr or not bool(document_ptr.GetValueAsUnsigned(0)):
+            return None
+        return WebCoreDocumentProvider(document_ptr, dict())
+
+
+class WebCoreDocumentProvider:
+    def __init__(self, valobj, internal_dict):
+        self.valobj = valobj
+
+    def url(self):
+        return WebCoreURLProvider(self.valobj.GetChildMemberWithName('m_url'), dict()).to_string()
+
+    def origin(self):
+        security_origin_ptr = self.valobj.GetChildMemberWithName('m_securityOriginPolicy').GetChildMemberWithName('m_ptr').GetChildMemberWithName('m_securityOrigin').GetChildMemberWithName('m_ptr')
+        return WebCoreSecurityOriginProvider(security_origin_ptr, dict()).to_string()
+
+    def page_cache_state(self):
+        return self.valobj.GetChildMemberWithName('m_pageCacheState').GetValue()
+
+    def frame(self):
+        frame_ptr = self.valobj.GetChildMemberWithName('m_frame')
+        if not frame_ptr or not bool(frame_ptr.GetValueAsUnsigned(0)):
+            return None
+        return WebCoreFrameProvider(frame_ptr, dict())
 
 
 class WTFOptionSetProvider:
