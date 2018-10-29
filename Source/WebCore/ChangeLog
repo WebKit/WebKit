@@ -1,5 +1,22 @@
 2018-10-29  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Compute estimated margin top for inline formatting root's ancestors
+        https://bugs.webkit.org/show_bug.cgi?id=191018
+
+        Reviewed by Antti Koivisto.
+
+        <div><img style="float: left"></div>
+        This inline formatting context (root -> div) inherits the floating context from the parent block formatting context.
+        Floats are added to the floating context relative to the floating context's root. In order to position this float properly we
+        need to precompute the ancestor's margin top (stop at the block formatting root boundary).
+
+        Test: fast/inline/simple-intruding-floats3.html
+
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::precomputeVerticalPositionForFormattingRootIfNeeded const):
+
+2018-10-29  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Add support for inflow non replaced content height when the box is an inline formatting root.
         https://bugs.webkit.org/show_bug.cgi?id=191011
 

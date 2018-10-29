@@ -205,8 +205,10 @@ void BlockFormattingContext::precomputeVerticalPositionForFormattingRootIfNeeded
     // If the inline formatting root is also the root for the floats (happens when the root box also establishes a block formatting context)
     // the floats are in the coordinate system of this root. No need to find the final vertical position.
     auto inlineContextInheritsFloats = layoutBox.establishesInlineFormattingContext() && !layoutBox.establishesBlockFormattingContext();
-    if (inlineContextInheritsFloats)
+    if (inlineContextInheritsFloats) {
         computeEstimatedMarginTop(layoutContext, layoutBox);
+        computeEstimatedMarginTopForAncestors(layoutContext, layoutBox);
+    }
 }
 
 #ifndef NDEBUG

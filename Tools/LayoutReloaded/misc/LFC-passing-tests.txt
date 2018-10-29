@@ -66,3 +66,4 @@ fast/block/basic/inline-content-with-floating-image.html
 fast/block/basic/inline-content-with-floating-images2.html
 fast/inline/simple-intruding-float1.html
 fast/inline/simple-intruding-floats2.html
+fast/inline/simple-intruding-floats3.html
