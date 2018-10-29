@@ -1,4 +1,20 @@
 =================
+WebKitGTK+ 2.22.3
+=================
+
+What's new in WebKitGTK+ 2.22.3?
+
+  - Many improvements and fixes for video playback with media source
+    extensions (MSE), which improve the user experience across the board,
+    and in particular for playback of WebM videos.
+  - Fix a memory leak during media playback when using playbin3.
+  - Fix portions of Web views not being rendered after resizing.
+  - Fix Resource Timing reporting for <iframe> elements.
+  - Fix the build with the remote Web Inspector disabled.
+  - Fix the build on ARMv7 with NEON extensions.
+  - Fix several crashes and rendering issues.
+
+=================
 WebKitGTK+ 2.22.2
 =================
 
