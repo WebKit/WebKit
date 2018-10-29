@@ -77,11 +77,21 @@ void LibWebRTCResolver::Destroy(bool)
     if (!isResolving())
         return;
 
+    if (m_isProvidingResults) {
+        m_shouldDestroy = true;
+        return;
+    }
+
     auto identifier = m_identifier;
     sendOnMainThread([identifier](IPC::Connection& connection) {
         connection.send(Messages::NetworkRTCProvider::StopResolver(identifier), 0);
     });
 
+    doDestroy();
+}
+
+void LibWebRTCResolver::doDestroy()
+{
     // Let's take the resolver so that it gets destroyed at the end of this function.
     auto resolver = WebProcess::singleton().libWebRTCNetwork().socketFactory().takeResolver(m_identifier);
     ASSERT(resolver);
@@ -90,13 +100,21 @@ void LibWebRTCResolver::Destroy(bool)
 void LibWebRTCResolver::setResolvedAddress(const Vector<rtc::IPAddress>& addresses)
 {
     m_addresses = addresses;
+    m_isProvidingResults = true;
     SignalDone(this);
+    m_isProvidingResults = false;
+    if (m_shouldDestroy)
+        doDestroy();
 }
 
 void LibWebRTCResolver::setError(int error)
 {
     m_error = error;
+    m_isProvidingResults = true;
     SignalDone(this);
+    m_isProvidingResults = false;
+    if (m_shouldDestroy)
+        doDestroy();
 }
 
 } // namespace WebKit

@@ -55,6 +55,7 @@ private:
     int GetError() const final { return m_error; }
     void Destroy(bool) final;
 
+    void doDestroy();
     void setError(int);
     void setResolvedAddress(const Vector<rtc::IPAddress>&);
 
@@ -66,6 +67,8 @@ private:
     int m_error { 0 };
     uint16_t m_port { 0 };
     bool m_isResolving { false };
+    bool m_isProvidingResults { false };
+    bool m_shouldDestroy { false };
 };
 
 } // namespace WebKit

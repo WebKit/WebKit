@@ -51,6 +51,8 @@ public:
 
     void disableNonLocalhostConnections() { m_disableNonLocalhostConnections = true; }
 
+    rtc::AsyncResolverInterface* createAsyncResolver() { return CreateAsyncResolver(); }
+
 private:
     rtc::AsyncPacketSocket* CreateUdpSocket(const rtc::SocketAddress&, uint16_t minPort, uint16_t maxPort) final;
     rtc::AsyncPacketSocket* CreateServerTcpSocket(const rtc::SocketAddress&, uint16_t min_port, uint16_t max_port, int options) final;

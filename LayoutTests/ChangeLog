@@ -1,3 +1,13 @@
+2018-10-29  Youenn Fablet  <youenn@apple.com>
+
+        Handle MDNS resolution of candidates through libwebrtc directly
+        https://bugs.webkit.org/show_bug.cgi?id=190681
+
+        Reviewed by Eric Carlson.
+
+        * TestExpectations:
+        Test should no longer be flaky as we no longer enforce a timer for resolving MDNS candidates.
+
 2018-10-29  Tim Horton  <timothy_horton@apple.com>
 
         Modernize WebKit nibs and lprojs for localization's sake

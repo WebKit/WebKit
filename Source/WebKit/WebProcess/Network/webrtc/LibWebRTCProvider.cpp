@@ -30,14 +30,23 @@
 
 #include "LibWebRTCNetwork.h"
 #include "WebProcess.h"
+#include <webrtc/api/asyncresolverfactory.h>
 #include <webrtc/pc/peerconnectionfactory.h>
 
 namespace WebKit {
 using namespace WebCore;
 
+class AsyncResolverFactory : public webrtc::AsyncResolverFactory {
+private:
+    rtc::AsyncResolverInterface* Create() final
+    {
+        return WebProcess::singleton().libWebRTCNetwork().socketFactory().createAsyncResolver();
+    }
+};
+
 rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPeerConnection(webrtc::PeerConnectionObserver& observer, webrtc::PeerConnectionInterface::RTCConfiguration&& configuration)
 {
-    return WebCore::LibWebRTCProvider::createPeerConnection(observer, WebProcess::singleton().libWebRTCNetwork().monitor(), WebProcess::singleton().libWebRTCNetwork().socketFactory(), WTFMove(configuration));
+    return WebCore::LibWebRTCProvider::createPeerConnection(observer, WebProcess::singleton().libWebRTCNetwork().monitor(), WebProcess::singleton().libWebRTCNetwork().socketFactory(), WTFMove(configuration), std::make_unique<AsyncResolverFactory>());
 }
 
 void LibWebRTCProvider::disableNonLocalhostConnections()
@@ -53,11 +62,6 @@ void LibWebRTCProvider::unregisterMDNSNames(uint64_t documentIdentifier)
 void LibWebRTCProvider::registerMDNSName(PAL::SessionID sessionID, uint64_t documentIdentifier, const String& ipAddress, CompletionHandler<void(MDNSNameOrError&&)>&& callback)
 {
     WebProcess::singleton().libWebRTCNetwork().mdnsRegister().registerMDNSName(sessionID, documentIdentifier, ipAddress, WTFMove(callback));
-}
-
-void LibWebRTCProvider::resolveMDNSName(PAL::SessionID sessionID, const String& name, CompletionHandler<void(IPAddressOrError&&)>&& callback)
-{
-    WebProcess::singleton().libWebRTCNetwork().mdnsRegister().resolveMDNSName(sessionID, name, WTFMove(callback));
 }
 
 } // namespace WebKit

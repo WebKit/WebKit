@@ -1,3 +1,33 @@
+2018-10-29  Youenn Fablet  <youenn@apple.com>
+
+        Handle MDNS resolution of candidates through libwebrtc directly
+        https://bugs.webkit.org/show_bug.cgi?id=190681
+
+        Reviewed by Eric Carlson.
+
+        Add support for AsyncResolver to resolve MDNS.
+        This basically reuse the code path used to resolve STUN server addresses.
+        Removed MDNS specific resolution.
+        Use existing CFHost resolution mechanism to do the actual resolution.
+
+        Make sure that a resolver is kept alive while iterating through its clients when signaling done.
+        Some of its clients may indeed call Destroy() on the resolver during that iteration.
+
+        * NetworkProcess/webrtc/NetworkMDNSRegister.cpp:
+        (WebKit::NetworkMDNSRegister::registerMDNSName):
+        * NetworkProcess/webrtc/NetworkMDNSRegister.messages.in:
+        * WebProcess/Network/webrtc/LibWebRTCProvider.cpp:
+        (WebKit::LibWebRTCResolver::Destroy):
+        (WebKit::LibWebRTCResolver::doDestroy):
+        (WebKit::LibWebRTCResolver::setResolvedAddress):
+        (WebKit::LibWebRTCResolver::setError):
+        (WebKit::LibWebRTCProvider::createPeerConnection):
+        * WebProcess/Network/webrtc/LibWebRTCProvider.h:
+        * WebProcess/Network/webrtc/LibWebRTCSocketFactory.h:
+        * WebProcess/Network/webrtc/WebMDNSRegister.cpp:
+        * WebProcess/Network/webrtc/WebMDNSRegister.h:
+        * WebProcess/Network/webrtc/WebMDNSRegister.messages.in:
+
 2018-10-29  Tim Horton  <timothy_horton@apple.com>
 
         Modernize WebKit nibs and lprojs for localization's sake

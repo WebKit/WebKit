@@ -51,6 +51,7 @@ class RTCCertificateGenerator;
 }
 
 namespace webrtc {
+class AsyncResolverFactory;
 class PeerConnectionFactoryInterface;
 }
 #endif
@@ -88,12 +89,6 @@ public:
         callback(makeUnexpected(MDNSRegisterError::NotImplemented));
     }
 
-    virtual void resolveMDNSName(PAL::SessionID, const String& name, CompletionHandler<void(IPAddressOrError&&)>&& callback)
-    {
-        UNUSED_PARAM(name);
-        callback(makeUnexpected(MDNSRegisterError::NotImplemented));
-    }
-
 #if USE(LIBWEBRTC)
     virtual rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(webrtc::PeerConnectionObserver&, webrtc::PeerConnectionInterface::RTCConfiguration&&);
 
@@ -117,7 +112,7 @@ public:
 protected:
     LibWebRTCProvider() = default;
 
-    rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(webrtc::PeerConnectionObserver&, rtc::NetworkManager&, rtc::PacketSocketFactory&, webrtc::PeerConnectionInterface::RTCConfiguration&&);
+    rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(webrtc::PeerConnectionObserver&, rtc::NetworkManager&, rtc::PacketSocketFactory&, webrtc::PeerConnectionInterface::RTCConfiguration&&, std::unique_ptr<webrtc::AsyncResolverFactory>&&);
 
     rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> createPeerConnectionFactory(rtc::Thread* networkThread, rtc::Thread* signalingThread, LibWebRTCAudioModule*);
     virtual std::unique_ptr<webrtc::VideoDecoderFactory> createDecoderFactory();
