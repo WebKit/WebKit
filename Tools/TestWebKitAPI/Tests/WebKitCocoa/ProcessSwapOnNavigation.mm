@@ -710,6 +710,61 @@ TEST(ProcessSwap, BackWithoutSuspendedPage)
     EXPECT_FALSE(pid2 == pid3);
 }
 
+TEST(ProcessSwap, BackNavigationAfterSessionRestore)
+{
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    auto webView1 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView1 setNavigationDelegate:delegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
+    [webView1 loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto pid1 = [webView1 _webProcessIdentifier];
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/main.html"]];
+    [webView1 loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto pid2 = [webView1 _webProcessIdentifier];
+    EXPECT_NE(pid1, pid2);
+
+    RetainPtr<_WKSessionState> sessionState = [webView1 _sessionState];
+    webView1 = nullptr;
+
+    auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView2 setNavigationDelegate:delegate.get()];
+
+    [webView2 _restoreSessionState:sessionState.get() andNavigate:YES];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    EXPECT_WK_STREQ(@"pson://www.apple.com/main.html", [[webView2 URL] absoluteString]);
+    auto pid3 = [webView2 _webProcessIdentifier];
+
+    [webView2 goBack];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    EXPECT_WK_STREQ(@"pson://www.webkit.org/main.html", [[webView2 URL] absoluteString]);
+    auto pid4 = [webView2 _webProcessIdentifier];
+    EXPECT_NE(pid3, pid4);
+}
+
 #if PLATFORM(MAC)
 
 TEST(ProcessSwap, CrossSiteWindowOpenNoOpener)

@@ -1,3 +1,15 @@
+2018-10-29  Chris Dumez  <cdumez@apple.com>
+
+        [PSON] When Safari restores session state after launching, going back and forward does not swap processes
+        https://bugs.webkit.org/show_bug.cgi?id=190975
+        <rdar://problem/45059256>
+
+        Reviewed by Antti Koivisto.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2018-10-29  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Compute estimated margin top for inline formatting root's ancestors

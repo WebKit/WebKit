@@ -1,3 +1,20 @@
+2018-10-29  Chris Dumez  <cdumez@apple.com>
+
+        [PSON] When Safari restores session state after launching, going back and forward does not swap processes
+        https://bugs.webkit.org/show_bug.cgi?id=190975
+        <rdar://problem/45059256>
+
+        Reviewed by Antti Koivisto.
+
+        When deciding to process-swap or not on a history navigation, we normally check the BackForwardListItems'
+        process identifiers do check if they come from different WebProcesses or not. However, the check was invalid
+        in the case where the BackForwardListItems were restored by the client. After a session restore, the
+        items' process identifier is the UIProcess one. Therefore, we need to disable the BackForwardListItems'
+        process identifiers check if if the process identifier is the one of the UIProcess.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::processForNavigationInternal):
+
 2018-10-29  Youenn Fablet  <youenn@apple.com>
 
         [WebRTC] Enable VP8 by default

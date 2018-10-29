@@ -2143,7 +2143,10 @@ Ref<WebProcessProxy> WebProcessPool::processForNavigationInternal(WebPageProxy& 
         // If the target back/forward item and the current back/forward item originated
         // in the same WebProcess then we should reuse the current WebProcess.
         if (auto* fromItem = navigation.fromItem()) {
-            if (fromItem->itemID().processIdentifier == backForwardListItem->itemID().processIdentifier) {
+            auto uiProcessIdentifier = Process::identifier();
+            // In case of session restore, the item's process identifier is the UIProcess' identifier, in which case we do not want to do this check
+            // or we'd never swap after a session restore.
+            if (fromItem->itemID().processIdentifier == backForwardListItem->itemID().processIdentifier && backForwardListItem->itemID().processIdentifier != uiProcessIdentifier) {
                 reason = "Source and target back/forward item originated in the same process"_s;
                 return page.process();
             }
