@@ -189,19 +189,6 @@
             }
         }
     },
-    "TestSSL": {
-        "subtests": {
-            "/webkit/WebKitWebView/tls-errors-policy": {
-                "expected": {"all": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/186913"}}
-            },
-            "/webkit/WebKitWebView/load-failed-with-tls-errors": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/186913"}}
-            },
-            "/webkit/WebKitWebView/tls-subresource": {
-                "expected": {"all": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/186913"}}
-            }
-        }
-    },
     "TestResources": {
         "subtests": {
             "/webkit/WebKitWebResource/get-data-error": {
