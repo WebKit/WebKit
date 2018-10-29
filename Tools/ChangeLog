@@ -1,5 +1,18 @@
 2018-10-29  Claudio Saavedra  <csaavedra@igalia.com>
 
+        [GTK] Try to fix the xserver-xorg build in the Ubuntu LTS bot
+
+        Unreviewed build fix
+
+        The build fails because of some array-bound check related
+        to strcmp() macro optimizations. Disabling selective Werrors
+        when building xserver-xorg might get past this.
+
+        * gtk/jhbuild.modules: Add --disable-selective-werror to xserver-xorg
+        configuration.
+
+2018-10-29  Claudio Saavedra  <csaavedra@igalia.com>
+
         [GTK] Update API test expectations after r237383
         https://bugs.webkit.org/show_bug.cgi?id=186913
 
