@@ -36,7 +36,7 @@ function test()
 
             for (let scopeObject of scope.objects) {
                 promises.push(new Promise((resolve, reject) => {
-                    scopeObject.getAllPropertyDescriptors((propertyDescriptors) => {
+                    scopeObject.getPropertyDescriptors((propertyDescriptors) => {
                         data.properties = data.properties.concat(propertyDescriptors);
                         resolve();
                     });

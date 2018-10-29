@@ -60,7 +60,7 @@ function test()
             InspectorTest.expectThat(callFrame.isTailDeleted === expectedFrame.isTailDeleted, `Tail deleted expectation correct: ${callFrame.isTailDeleted}`);
             let scope = callFrame.scopeChain[1];
 
-            scope.objects[0].getAllPropertyDescriptors(function(properties) {
+            scope.objects[0].getPropertyDescriptors(function(properties) {
                 let found = false;
                 let variableName = expectedFrame.scope[0];
                 let variableValue = expectedFrame.scope[1];

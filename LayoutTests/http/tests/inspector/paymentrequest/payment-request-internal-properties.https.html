@@ -135,7 +135,7 @@ function test()
                     InspectorTest.evaluateInPage(expression, null, {remoteObjectOnly: true}),
                     InspectorTest.awaitEvent("Continue"),
                 ]);
-                let [propertyDescriptors] = await promisify((cb) => { remoteObject.getAllPropertyDescriptors(cb); });
+                let [propertyDescriptors] = await promisify((cb) => { remoteObject.getPropertyDescriptors(cb); });
                 for (let propertyDescriptor of propertyDescriptors.reverse()) {
                     if (propertyDescriptor.isInternalProperty) {
                         let displayString = await propertyDescriptorString(propertyDescriptor);

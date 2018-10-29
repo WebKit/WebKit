@@ -85,13 +85,17 @@ function test()
             if (remoteObject.subtype)
                 InspectorTest.log("subtype: " + remoteObject.subtype);
             InspectorTest.log("description: " + remoteObject.description);
-            remoteObject.getOwnPropertyDescriptors(function(properties) {
+
+            const options = {
+                ownProperties: true,
+            };
+            remoteObject.getPropertyDescriptors(function(properties) {
                 InspectorTest.log("\nOWN PROPERTIES:");
                 for (var property of properties) {
                     InspectorTest.assert(property instanceof WI.PropertyDescriptor);
                     InspectorTest.log("    " + property.name);
                 }
-            });
+            }, options);
 
             remoteObject.getDisplayablePropertyDescriptors(function(properties) {
                 InspectorTest.log("\nDISPLAYABLE PROPERTIES:");
@@ -101,7 +105,7 @@ function test()
                 }
             });
 
-            remoteObject.getAllPropertyDescriptors(function(properties) {
+            remoteObject.getPropertyDescriptors(function(properties) {
                 InspectorTest.log("\nALL PROPERTIES:");
                 for (var property of properties) {
                     InspectorTest.assert(property instanceof WI.PropertyDescriptor);

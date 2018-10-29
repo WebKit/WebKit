@@ -246,12 +246,17 @@ WI.ObjectTreeView = class ObjectTreeView extends WI.Object
 
     update()
     {
+        const options = {
+            ownProperties: true,
+            generatePreview: true,
+        };
+
         if (this._object.isCollectionType() && this._mode === WI.ObjectTreeView.Mode.Properties)
             this._object.getCollectionEntries(0, 100, this._updateChildren.bind(this, this._updateEntries));
         else if (this._object.isClass())
             this._object.classPrototype.getDisplayablePropertyDescriptors(this._updateChildren.bind(this, this._updateProperties));
         else if (this._mode === WI.ObjectTreeView.Mode.PureAPI)
-            this._object.getOwnPropertyDescriptors(this._updateChildren.bind(this, this._updateProperties));
+            this._object.getPropertyDescriptors(this._updateChildren.bind(this, this._updateProperties), options);
         else
             this._object.getDisplayablePropertyDescriptors(this._updateChildren.bind(this, this._updateProperties));
     }

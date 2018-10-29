@@ -12,9 +12,12 @@ function test()
     InspectorTest.expectThat(fakeObject.type === "object" && !fakeObject.subtype, "A fake remote object should have object type.");
     InspectorTest.expectThat(fakeObject !== WI.RemoteObject.createFakeRemoteObject(), "Each fake remote object instance should be unique.");
 
-    fakeObject.getOwnPropertyDescriptors(function(properties) {
+    const options = {
+        ownProperties: true,
+    };
+    fakeObject.getPropertyDescriptors((properties) => {
         InspectorTest.expectThat(Array.isArray(properties) && !properties.length, "A fake remote object should have an empty list of own properties.");
-    });
+    }, options);
 
     fakeObject.getDisplayablePropertyDescriptors(function(properties) {
         InspectorTest.expectThat(Array.isArray(properties) && !properties.length, "A fake remote object should have an empty list of displayable properties.");

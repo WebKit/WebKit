@@ -61,7 +61,7 @@ function test()
             InspectorTest.assert(callFrame.isTailDeleted === expectedFrame.isTailDeleted);
             let topScope = callFrame.scopeChain[0];
 
-            topScope.objects[0].getAllPropertyDescriptors(function(properties) {
+            topScope.objects[0].getPropertyDescriptors(function(properties) {
                 let found = false;
                 let variableName = expectedFrame.scope[0];
                 let variableValue = expectedFrame.scope[1];

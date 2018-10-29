@@ -263,14 +263,14 @@ WI.RemoteObject = class RemoteObject
         });
     }
 
-    getOwnPropertyDescriptors(callback)
+    getPropertyDescriptors(callback, options = {})
     {
-        this._getPropertyDescriptors(true, callback);
-    }
+        if (!this._objectId || this._isSymbol() || this._isFakeObject()) {
+            callback([]);
+            return;
+        }
 
-    getAllPropertyDescriptors(callback)
-    {
-        this._getPropertyDescriptors(false, callback);
+        this._target.RuntimeAgent.getProperties(this._objectId, options.ownProperties, options.generatePreview, this._getPropertyDescriptorsResolver.bind(this, callback));
     }
 
     getDisplayablePropertyDescriptors(callback)
@@ -651,19 +651,9 @@ WI.RemoteObject = class RemoteObject
         return JSON.stringify(this._objectId) + "-" + this._subtype;
     }
 
-    _getPropertyDescriptors(ownProperties, callback)
+    getPropertyDescriptorsAsObject(callback, options = {})
     {
-        if (!this._objectId || this._isSymbol() || this._isFakeObject()) {
-            callback([]);
-            return;
-        }
-
-        this._target.RuntimeAgent.getProperties(this._objectId, ownProperties, true, this._getPropertyDescriptorsResolver.bind(this, callback));
-    }
-
-    getOwnPropertyDescriptorsAsObject(callback)
-    {
-        this.getOwnPropertyDescriptors(function(properties) {
+        this.getPropertyDescriptors(function(properties) {
             var propertiesResult = {};
             var internalPropertiesResult = {};
             for (var propertyDescriptor of properties) {
@@ -671,7 +661,7 @@ WI.RemoteObject = class RemoteObject
                 object[propertyDescriptor.name] = propertyDescriptor;
             }
             callback(propertiesResult, internalPropertiesResult);
-        });
+        }, options);
     }
 
     _getPropertyDescriptorsResolver(callback, error, properties, internalProperties)

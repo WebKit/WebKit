@@ -321,13 +321,18 @@ WI.ObjectTreePropertyTreeElement = class ObjectTreePropertyTreeElement extends W
         if (this.children.length && !this.shouldRefreshChildren)
             return;
 
+        const options = {
+            ownProperties: true,
+            generatePreview: true,
+        };
+
         var resolvedValue = this.resolvedValue();
         if (resolvedValue.isCollectionType() && this._mode === WI.ObjectTreeView.Mode.Properties)
             resolvedValue.getCollectionEntries(0, 100, this._updateChildrenInternal.bind(this, this._updateEntries, this._mode));
         else if (this._mode === WI.ObjectTreeView.Mode.ClassAPI || this._mode === WI.ObjectTreeView.Mode.PureAPI)
-            resolvedValue.getOwnPropertyDescriptors(this._updateChildrenInternal.bind(this, this._updateProperties, WI.ObjectTreeView.Mode.ClassAPI));
+            resolvedValue.getPropertyDescriptors(this._updateChildrenInternal.bind(this, this._updateProperties, WI.ObjectTreeView.Mode.ClassAPI), options);
         else if (this.property.name === "__proto__")
-            resolvedValue.getOwnPropertyDescriptors(this._updateChildrenInternal.bind(this, this._updateProperties, WI.ObjectTreeView.Mode.PrototypeAPI));
+            resolvedValue.getPropertyDescriptors(this._updateChildrenInternal.bind(this, this._updateProperties, WI.ObjectTreeView.Mode.PrototypeAPI), options);
         else
             resolvedValue.getDisplayablePropertyDescriptors(this._updateChildrenInternal.bind(this, this._updateProperties, this._mode));
     }

@@ -92,14 +92,18 @@ WI.ErrorObjectView = class ErrorObjectView extends WI.Object
 
     update()
     {
-        this._object.getOwnPropertyDescriptorsAsObject((properties) => {
+        const options = {
+            ownProperties: true,
+            generatePreview: true,
+        };
+        this._object.getPropertyDescriptorsAsObject((properties) => {
             console.assert(properties && properties.stack && properties.stack.value);
 
             if (!this._hasStackTrace)
                 this._buildStackTrace(properties.stack.value.value);
 
             this._hasStackTrace = true;
-        });
+        }, options);
     }
 
     expand()

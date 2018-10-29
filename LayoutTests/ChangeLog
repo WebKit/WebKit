@@ -1,3 +1,19 @@
+2018-10-29  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: refactor code for getting properties via WI.RemoteObject
+        https://bugs.webkit.org/show_bug.cgi?id=190989
+
+        Reviewed by Matt Baker.
+
+        * http/tests/inspector/paymentrequest/payment-request-internal-properties.https.html:
+        * inspector/debugger/breakpoint-scope.html:
+        * inspector/debugger/paused-scopes.html:
+        * inspector/debugger/tail-deleted-frames-from-vm-entry.html:
+        * inspector/debugger/tail-deleted-frames.html:
+        * inspector/debugger/tail-recursion.html:
+        * inspector/model/remote-object-fake-object.html:
+        * inspector/model/remote-object-get-properties.html:
+
 2018-10-29  Justin Michaud  <justin_michaud@apple.com>
 
         Revert r237347 registered custom properties... https://bugs.webkit.org/show_bug.cgi?id=190039

@@ -61,7 +61,7 @@ function test()
             else
                 InspectorTest.assert(!callFrame.isTailDeleted);
 
-            topScope.objects[0].getAllPropertyDescriptors(function(properties) {
+            topScope.objects[0].getPropertyDescriptors(function(properties) {
                 let found = false;
                 for (let propertyDescriptor of properties) {
                     if (propertyDescriptor.name === 'i') {
