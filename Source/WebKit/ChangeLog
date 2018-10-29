@@ -1,3 +1,21 @@
+2018-10-28  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WPE] Add the WebKitVersion.h header
+        https://bugs.webkit.org/show_bug.cgi?id=191015
+
+        Reviewed by Michael Catanzaro.
+
+        Add the WebKitVersion.h API header for the WPE port. As with other
+        headers providing the GLib API, we have to provide a WPE-specific
+        version, but the implementation file can be shared with the GTK port,
+        and is moved under the UIProcess/API/glib/ directory accordingly.
+
+        * PlatformWPE.cmake:
+        * SourcesWPE.txt:
+        * UIProcess/API/glib/WebKitVersion.cpp: Renamed from Source/WebKit/UIProcess/API/gtk/WebKitVersion.cpp.
+        * UIProcess/API/wpe/WebKitVersion.h.in: Added.
+        * UIProcess/API/wpe/webkit.h:
+
 2018-10-26  Megan Gardner  <megan_gardner@apple.com>
 
         Remove Unused WebSelectionAssistant

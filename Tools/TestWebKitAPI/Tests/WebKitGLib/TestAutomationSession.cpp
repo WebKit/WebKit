@@ -24,13 +24,6 @@
 #include <wtf/UUID.h>
 #include <wtf/text/StringBuilder.h>
 
-// FIXME: WPE doesn't expose WebKitVersion yet, the numbers defined here don't really matter.
-#if PLATFORM(WPE)
-#define WEBKIT_MAJOR_VERSION 1
-#define WEBKIT_MINOR_VERSION 2
-#define WEBKIT_MICRO_VERSION 3
-#endif
-
 class AutomationTest: public Test {
 public:
     MAKE_GLIB_TEST_FIXTURE(AutomationTest);

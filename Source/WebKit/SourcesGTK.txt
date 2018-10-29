@@ -171,6 +171,7 @@ UIProcess/API/glib/WebKitURISchemeRequest.cpp @no-unify
 UIProcess/API/glib/WebKitUserContent.cpp @no-unify
 UIProcess/API/glib/WebKitUserContentManager.cpp @no-unify
 UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp @no-unify
+UIProcess/API/glib/WebKitVersion.cpp @no-unify
 UIProcess/API/glib/WebKitWebContext.cpp @no-unify
 UIProcess/API/glib/WebKitWebResource.cpp @no-unify
 UIProcess/API/glib/WebKitWebView.cpp @no-unify
@@ -191,7 +192,6 @@ UIProcess/API/gtk/WebKitPrintOperation.cpp @no-unify
 UIProcess/API/gtk/WebKitRemoteInspectorProtocolHandler.cpp @no-unify
 UIProcess/API/gtk/WebKitScriptDialogGtk.cpp @no-unify
 UIProcess/API/gtk/WebKitScriptDialogImpl.cpp @no-unify
-UIProcess/API/gtk/WebKitVersion.cpp @no-unify
 UIProcess/API/gtk/WebKitWebInspector.cpp @no-unify
 UIProcess/API/gtk/WebKitWebViewBase.cpp @no-unify
 UIProcess/API/gtk/WebKitWebViewBaseAccessible.cpp @no-unify

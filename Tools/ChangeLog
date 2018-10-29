@@ -1,3 +1,16 @@
+2018-10-28  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WPE] Add the WebKitVersion.h header
+        https://bugs.webkit.org/show_bug.cgi?id=191015
+
+        Reviewed by Michael Catanzaro.
+
+        * MiniBrowser/wpe/main.cpp:
+        (automationStartedCallback): Remove the FIXME and finally enable the
+        webkit_application_info_set_version() call.
+        * TestWebKitAPI/Tests/WebKitGLib/TestAutomationSession.cpp: Remove
+        this FIXME as well and remove the custom WEBKIT_*_VERSION macros.
+
 2018-10-28  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] Remove obsolete code for vcxproj builds in build-api-tests and build-jsc

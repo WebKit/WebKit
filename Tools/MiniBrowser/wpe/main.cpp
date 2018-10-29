@@ -84,8 +84,7 @@ static WebKitWebView* createWebViewForAutomationCallback(WebKitAutomationSession
 static void automationStartedCallback(WebKitWebContext*, WebKitAutomationSession* session, WebKitWebView* view)
 {
     auto* info = webkit_application_info_new();
-    // FIXME: add version info when wpe has WebKitVersion.h
-    // webkit_application_info_set_version(info, WEBKIT_MAJOR_VERSION, WEBKIT_MINOR_VERSION, WEBKIT_MICRO_VERSION);
+    webkit_application_info_set_version(info, WEBKIT_MAJOR_VERSION, WEBKIT_MINOR_VERSION, WEBKIT_MICRO_VERSION);
     webkit_automation_session_set_application_info(session, info);
     webkit_application_info_unref(info);
 
