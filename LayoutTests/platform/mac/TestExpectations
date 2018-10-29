@@ -1781,3 +1781,5 @@ webkit.org/b/176929 [ Mojave+ ] imported/w3c/web-platform-tests/html/semantics/e
 webkit.org/b/170877 [ Debug ] webgl/1.0.2/conformance/glsl/misc/shader-with-reserved-words.html [ Pass Timeout ]
 
 webkit.org/b/190883 legacy-animation-engine/animations/suspend-resume-animation.html [ Pass Failure ]
+
+webkit.org/b/190724 [ Debug ] http/tests/misc/large-js-program.php [ Pass Timeout ]
