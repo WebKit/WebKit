@@ -29,30 +29,28 @@
 
 #pragma once
 
-#include "CSSParserToken.h"
-#include "CSSParserTokenRange.h"
 #include "CSSValue.h"
 #include "CSSVariableData.h"
-#include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-struct ApplyCascadedPropertyState;
-class CSSParserTokenRange;
-
 class CSSVariableReferenceValue : public CSSValue {
 public:
-    static Ref<CSSVariableReferenceValue> create(const CSSParserTokenRange& range)
+    static Ref<CSSVariableReferenceValue> create(Ref<CSSVariableData>&& data)
     {
-        return adoptRef(*new CSSVariableReferenceValue(CSSVariableData::create(range)));
+        return adoptRef(*new CSSVariableReferenceValue(WTFMove(data)));
     }
 
-    bool equals(const CSSVariableReferenceValue& other) const { return m_data.get() == other.m_data.get(); }
+    CSSVariableData* variableDataValue() const
+    {
+        return m_data.get();
+    }
+
+    bool equals(const CSSVariableReferenceValue& other) const { return m_data == other.m_data; }
     String customCSSText() const;
 
-    RefPtr<CSSVariableData> resolveVariableReferences(ApplyCascadedPropertyState&) const;
+    bool checkVariablesForCycles(const AtomicString& name, const RenderStyle&, HashSet<AtomicString>& seenProperties, HashSet<AtomicString>& invalidProperties) const;
 
 private:
     CSSVariableReferenceValue(Ref<CSSVariableData>&& data)
@@ -61,7 +59,7 @@ private:
     {
     }
 
-    Ref<CSSVariableData> m_data;
+    RefPtr<CSSVariableData> m_data;
     mutable String m_stringValue;
     mutable bool m_serialized { false };
 };

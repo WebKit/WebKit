@@ -226,21 +226,14 @@ bool PropertySetCSSStyleDeclaration::isPropertyImplicit(const String& propertyNa
 ExceptionOr<void> PropertySetCSSStyleDeclaration::setProperty(const String& propertyName, const String& value, const String& priority)
 {
     StyleAttributeMutationScope mutationScope(this);
-
-    if (!willMutate())
-        return { };
-
-    Document* document = nullptr;
-
-    if (parentElement())
-        document = &parentElement()->document();
-    else
-        document = parentStyleSheet()->ownerDocument();
     
     CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (isCustomPropertyName(propertyName))
         propertyID = CSSPropertyCustom;
     if (!propertyID)
+        return { };
+
+    if (!willMutate())
         return { };
 
     bool important = equalIgnoringASCIICase(priority, "important");
@@ -249,7 +242,7 @@ ExceptionOr<void> PropertySetCSSStyleDeclaration::setProperty(const String& prop
 
     bool changed;
     if (propertyID == CSSPropertyCustom)
-        changed = m_propertySet->setCustomProperty(document, propertyName, value, important, cssParserContext());
+        changed = m_propertySet->setCustomProperty(propertyName, value, important, cssParserContext());
     else
         changed = m_propertySet->setProperty(propertyID, value, important, cssParserContext());
 

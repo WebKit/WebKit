@@ -186,8 +186,8 @@ public:
     const CustomPropertyValueMap& inheritedCustomProperties() const { return m_rareInheritedData->customProperties->values; }
     const CustomPropertyValueMap& nonInheritedCustomProperties() const { return m_rareNonInheritedData->customProperties->values; }
     const CSSCustomPropertyValue* getCustomProperty(const AtomicString&) const;
-    void setInheritedCustomPropertyValue(const AtomicString& name, Ref<CSSCustomPropertyValue>&& value) { return m_rareInheritedData.access().customProperties.access().setCustomPropertyValue(name, WTFMove(value)); }
-    void setNonInheritedCustomPropertyValue(const AtomicString& name, Ref<CSSCustomPropertyValue>&& value) { return m_rareNonInheritedData.access().customProperties.access().setCustomPropertyValue(name, WTFMove(value)); }
+    void setInheritedCustomPropertyValue(const AtomicString& name, Ref<CSSCustomPropertyValue>&& value, bool isRegistered = false) { return m_rareInheritedData.access().customProperties.access().setCustomPropertyValue(name, WTFMove(value), isRegistered); }
+    void setNonInheritedCustomPropertyValue(const AtomicString& name, Ref<CSSCustomPropertyValue>&& value, bool isRegistered = false) { return m_rareNonInheritedData.access().customProperties.access().setCustomPropertyValue(name, WTFMove(value), isRegistered); }
 
     void setHasViewportUnits(bool v = true) { m_nonInheritedFlags.hasViewportUnits = v; }
     bool hasViewportUnits() const { return m_nonInheritedFlags.hasViewportUnits; }
@@ -794,6 +794,8 @@ public:
     ApplePayButtonStyle applePayButtonStyle() const { return static_cast<ApplePayButtonStyle>(m_rareNonInheritedData->applePayButtonStyle); }
     ApplePayButtonType applePayButtonType() const { return static_cast<ApplePayButtonType>(m_rareNonInheritedData->applePayButtonType); }
 #endif
+
+    void checkVariablesInCustomProperties(const CSSRegisteredCustomPropertySet&, const RenderStyle* parentStyle, const StyleResolver&);
 
 // attribute setter methods
 

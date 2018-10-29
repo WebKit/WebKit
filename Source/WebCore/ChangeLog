@@ -1,3 +1,97 @@
+2018-10-29  Justin Michaud  <justin_michaud@apple.com>
+
+        Revert r237347 registered custom properties... https://bugs.webkit.org/show_bug.cgi?id=190039
+        https://bugs.webkit.org/show_bug.cgi?id=190919
+
+        Reviewed by Michael Saboff.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::customPropertyValue):
+        * css/CSSCustomPropertyValue.cpp:
+        (WebCore::CSSCustomPropertyValue::customCSSText const):
+        (WebCore::CSSCustomPropertyValue::tokens const):
+        (WebCore::CSSCustomPropertyValue::checkVariablesForCycles const):
+        (WebCore::CSSCustomPropertyValue::resolveVariableReferences const):
+        (WebCore::CSSCustomPropertyValue::setResolvedTypedValue):
+        (WebCore::CSSCustomPropertyValue::equals const): Deleted.
+        * css/CSSCustomPropertyValue.h:
+        * css/CSSRegisteredCustomProperty.cpp:
+        (WebCore::CSSRegisteredCustomProperty::CSSRegisteredCustomProperty):
+        * css/CSSRegisteredCustomProperty.h:
+        * css/CSSVariableData.cpp:
+        (WebCore::CSSVariableData::consumeAndUpdateTokens):
+        (WebCore::CSSVariableData::CSSVariableData):
+        (WebCore::CSSVariableData::checkVariablesForCycles const):
+        (WebCore::CSSVariableData::checkVariablesForCyclesWithRange const):
+        (WebCore::CSSVariableData::resolveVariableFallback const):
+        (WebCore::CSSVariableData::resolveVariableReference const):
+        (WebCore::CSSVariableData::resolveVariableReferences const):
+        (WebCore::CSSVariableData::resolveTokenRange const):
+        * css/CSSVariableData.h:
+        (WebCore::CSSVariableData::create):
+        (WebCore::CSSVariableData::createResolved):
+        (WebCore::CSSVariableData::needsVariableResolution const):
+        (WebCore::CSSVariableData::CSSVariableData):
+        * css/CSSVariableReferenceValue.cpp:
+        (WebCore::CSSVariableReferenceValue::checkVariablesForCycles const):
+        (WebCore::resolveVariableFallback): Deleted.
+        (WebCore::resolveVariableReference): Deleted.
+        (WebCore::resolveTokenRange): Deleted.
+        (WebCore::CSSVariableReferenceValue::resolveVariableReferences const): Deleted.
+        * css/CSSVariableReferenceValue.h:
+        (WebCore::CSSVariableReferenceValue::create):
+        (WebCore::CSSVariableReferenceValue::variableDataValue const):
+        (WebCore::CSSVariableReferenceValue::equals const):
+        * css/DOMCSSRegisterCustomProperty.cpp:
+        (WebCore::DOMCSSRegisterCustomProperty::registerProperty):
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        (WebCore::PropertySetCSSStyleDeclaration::setProperty):
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyInitialCustomProperty):
+        (WebCore::StyleBuilderCustom::applyValueCustomProperty):
+        * css/StyleProperties.cpp:
+        (WebCore::MutableStyleProperties::setCustomProperty):
+        * css/StyleProperties.h:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::State::setStyle):
+        (WebCore::StyleResolver::styleForKeyframe):
+        (WebCore::StyleResolver::styleForPage):
+        (WebCore::StyleResolver::applyMatchedProperties):
+        (WebCore::StyleResolver::applyPropertyToCurrentStyle):
+        (WebCore::StyleResolver::applyProperty):
+        (WebCore::StyleResolver::resolvedVariableValue const):
+        (WebCore::StyleResolver::CascadedProperties::applyDeferredProperties):
+        (WebCore::StyleResolver::CascadedProperties::Property::apply):
+        (WebCore::StyleResolver::applyCascadedProperties):
+        (WebCore::StyleResolver::applyCascadedCustomProperty): Deleted.
+        * css/StyleResolver.h:
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParser::parseValueWithVariableReferences):
+        * css/parser/CSSParser.h:
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::CSSPropertyParser):
+        (WebCore::CSSPropertyParser::parseValueStart):
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        (WebCore::CSSPropertyParser::canParseTypedCustomPropertyValue): Deleted.
+        (WebCore::CSSPropertyParser::parseTypedCustomPropertyValue): Deleted.
+        (WebCore::CSSPropertyParser::collectParsedCustomPropertyValueDependencies): Deleted.
+        * css/parser/CSSPropertyParser.h:
+        * css/parser/CSSVariableParser.cpp:
+        (WebCore::CSSVariableParser::parseDeclarationValue):
+        * dom/ConstantPropertyMap.cpp:
+        (WebCore::ConstantPropertyMap::setValueForProperty):
+        (WebCore::variableDataForPositivePixelLength):
+        (WebCore::variableDataForPositiveDuration):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::checkVariablesInCustomProperties):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::setInheritedCustomPropertyValue):
+        (WebCore::RenderStyle::setNonInheritedCustomPropertyValue):
+        * rendering/style/StyleCustomPropertyData.h:
+        (WebCore::StyleCustomPropertyData::operator== const):
+        (WebCore::StyleCustomPropertyData::setCustomPropertyValue):
+        (WebCore::StyleCustomPropertyData::StyleCustomPropertyData):
+
 2018-10-29  Youenn Fablet  <youenn@apple.com>
 
         Handle MDNS resolution of candidates through libwebrtc directly

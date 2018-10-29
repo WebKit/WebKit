@@ -30,9 +30,6 @@
 #include "config.h"
 #include "CSSVariableReferenceValue.h"
 
-#include "RenderStyle.h"
-#include "StyleResolver.h"
-
 namespace WebCore {
 
 String CSSVariableReferenceValue::customCSSText() const
@@ -43,72 +40,11 @@ String CSSVariableReferenceValue::customCSSText() const
     }
     return m_stringValue;
 }
-
-static bool resolveTokenRange(CSSParserTokenRange, Vector<CSSParserToken>&, ApplyCascadedPropertyState&);
-
-static bool resolveVariableFallback(CSSParserTokenRange range, Vector<CSSParserToken>& result, ApplyCascadedPropertyState& state)
+    
+bool CSSVariableReferenceValue::checkVariablesForCycles(const AtomicString& name, const RenderStyle& style, HashSet<AtomicString>& seenProperties, HashSet<AtomicString>& invalidProperties) const
 {
-    if (range.atEnd())
-        return false;
-    ASSERT(range.peek().type() == CommaToken);
-    range.consume();
-    return resolveTokenRange(range, result, state);
-}
-
-static bool resolveVariableReference(CSSParserTokenRange range, Vector<CSSParserToken>& result, ApplyCascadedPropertyState& state)
-{
-    auto& registeredProperties = state.styleResolver->document().getCSSRegisteredCustomPropertySet();
-    auto& style = *state.styleResolver->style();
-
-    range.consumeWhitespace();
-    ASSERT(range.peek().type() == IdentToken);
-    String variableName = range.consumeIncludingWhitespace().value().toString();
-    ASSERT(range.atEnd() || (range.peek().type() == CommaToken));
-
-    // Apply this variable first, in case it is still unresolved
-    state.styleResolver->applyCascadedCustomProperty(variableName, state);
-
-    // Apply fallback to detect cycles
-    Vector<CSSParserToken> fallbackResult;
-    resolveVariableFallback(CSSParserTokenRange(range), fallbackResult, state);
-
-    auto* property = style.getCustomProperty(variableName);
-
-    if (!property || property->isUnset() || property->isInvalid()) {
-        auto* registered = registeredProperties.get(variableName);
-        if (registered && registered->initialValue())
-            property = registered->initialValue();
-        else
-            return resolveVariableFallback(range, result, state);
-    }
-
-    ASSERT(property->isResolved());
-    result.appendVector(property->tokens());
-
-    return true;
-}
-
-static bool resolveTokenRange(CSSParserTokenRange range, Vector<CSSParserToken>& result, ApplyCascadedPropertyState& state)
-{
-    bool success = true;
-    while (!range.atEnd()) {
-        if (range.peek().functionId() == CSSValueVar || range.peek().functionId() == CSSValueEnv)
-            success &= resolveVariableReference(range.consumeBlock(), result, state);
-        else
-            result.append(range.consume());
-    }
-    return success;
-}
-
-RefPtr<CSSVariableData> CSSVariableReferenceValue::resolveVariableReferences(ApplyCascadedPropertyState& state) const
-{
-    Vector<CSSParserToken> resolvedTokens;
-    CSSParserTokenRange range = m_data->tokenRange();
-
-    if (!resolveTokenRange(range, resolvedTokens, state))
-        return nullptr;
-
-    return CSSVariableData::create(resolvedTokens);
+    ASSERT(m_data);
+    return m_data->checkVariablesForCycles(name, style, seenProperties, invalidProperties);
 }
 
 } // namespace WebCore

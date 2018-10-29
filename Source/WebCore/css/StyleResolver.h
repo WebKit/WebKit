@@ -267,7 +267,7 @@ public:
         CascadedProperties(TextDirection, WritingMode);
 
         struct Property {
-            void apply(StyleResolver&, ApplyCascadedPropertyState&);
+            void apply(StyleResolver&, const MatchResult*);
 
             CSSPropertyID id;
             CascadeLevel level;
@@ -281,7 +281,7 @@ public:
         void addNormalMatches(const MatchResult&, int startIndex, int endIndex, bool inheritedOnly = false);
         void addImportantMatches(const MatchResult&, int startIndex, int endIndex, bool inheritedOnly = false);
 
-        void applyDeferredProperties(StyleResolver&, ApplyCascadedPropertyState&);
+        void applyDeferredProperties(StyleResolver&, const MatchResult*);
 
         HashMap<AtomicString, Property>& customProperties() { return m_customProperties; }
         bool hasCustomProperty(const String&) const;
@@ -302,10 +302,7 @@ public:
         TextDirection m_direction;
         WritingMode m_writingMode;
     };
-
-    void applyCascadedProperties(int firstProperty, int lastProperty, ApplyCascadedPropertyState&);
-    void applyCascadedCustomProperty(const String& name, ApplyCascadedPropertyState&);
-
+    
 private:
     // This function fixes up the default font size if it detects that the current generic font family has changed. -dwh
     void checkForGenericFamilyChange(RenderStyle*, const RenderStyle* parentStyle);
@@ -324,6 +321,7 @@ private:
     enum ShouldUseMatchedPropertiesCache { DoNotUseMatchedPropertiesCache = 0, UseMatchedPropertiesCache };
     void applyMatchedProperties(const MatchResult&, const Element&, ShouldUseMatchedPropertiesCache = UseMatchedPropertiesCache);
 
+    void applyCascadedProperties(CascadedProperties&, int firstProperty, int lastProperty, const MatchResult*);
     void cascadeMatches(CascadedProperties&, const MatchResult&, bool important, int startIndex, int endIndex, bool inheritedOnly);
 
     void matchPageRules(MatchResult&, RuleSet*, bool isLeftPage, bool isFirstPage, const String& pageName);
@@ -457,12 +455,12 @@ public:
     void setWritingMode(WritingMode writingMode) { m_state.setWritingMode(writingMode); }
     void setTextOrientation(TextOrientation textOrientation) { m_state.setTextOrientation(textOrientation); }
 
-    RefPtr<CSSValue> resolvedVariableValue(CSSPropertyID, const CSSValue&, ApplyCascadedPropertyState&) const;
+    RefPtr<CSSValue> resolvedVariableValue(CSSPropertyID, const CSSValue&) const;
 
 private:
     void cacheBorderAndBackground();
 
-    void applyProperty(CSSPropertyID, CSSValue*, ApplyCascadedPropertyState&, SelectorChecker::LinkMatchMask = SelectorChecker::MatchDefault);
+    void applyProperty(CSSPropertyID, CSSValue*, SelectorChecker::LinkMatchMask = SelectorChecker::MatchDefault, const MatchResult* = nullptr);
 
     void applySVGProperty(CSSPropertyID, CSSValue*);
 
@@ -525,19 +523,6 @@ private:
     friend bool operator==(const MatchRanges&, const MatchRanges&);
     friend bool operator!=(const MatchRanges&, const MatchRanges&);
 };
-
-// State to use when applying properties, to keep track of which custom and high-priority
-// properties have been resolved.
-struct ApplyCascadedPropertyState {
-    StyleResolver* styleResolver;
-    StyleResolver::CascadedProperties* cascade;
-    const StyleResolver::MatchResult* matchResult;
-    HashSet<CSSPropertyID> appliedProperties = { };
-    HashSet<String> appliedCustomProperties = { };
-    HashSet<CSSPropertyID> inProgressProperties = { };
-    HashSet<String> inProgressPropertiesCustom = { };
-};
-
 
 inline bool StyleResolver::hasSelectorForAttribute(const Element& element, const AtomicString &attributeName) const
 {
