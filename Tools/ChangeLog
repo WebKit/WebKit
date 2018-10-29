@@ -1,5 +1,35 @@
 2018-10-29  Daniel Bates  <dabates@apple.com>
 
+        [lldb-webkit] Last aliased enumerator in OptionSet is printed; should print first enumerator
+        https://bugs.webkit.org/show_bug.cgi?id=191036
+
+        Reviewed by Andy Estes.
+
+        Prefer the first enumerator (in parse order) when pretty-printing an OptionSet that is parameterized
+        by an enum that contains two or more enumerators with the same value. For example, suppose
+        you have the following enum:
+
+        enum Flag {
+            A = 1 << 0,
+            AAlias = A,
+        };
+
+        Then pretty-printing OptionSet<Flag>(Flag::A) should print A instead of AAlias. A side effect of
+        this change is that OptionSet<Flag>(Flag::AAlias) will also print A as its only member as we cannot
+        differentiate between A and Alias. This should be acceptable in practice as aliased enumerators
+        tend to be used in bounds checks as opposed to code that adds to a set.
+
+        * lldb/lldbWebKitTester/main.cpp:
+        (testSummaryProviders):
+        * lldb/lldb_webkit.py:
+        (WTFOptionSetProvider.update):
+        * lldb/lldb_webkit_unittest.py:
+        (TestSummaryProviders.serial_test_WTFOptionSetProvider_simple):
+        (TestSummaryProviders):
+        (TestSummaryProviders.serial_test_WTFOptionSetProvider_aliased_flag):
+
+2018-10-29  Daniel Bates  <dabates@apple.com>
+
         [llbd-webkit] Add summaries for Document, Frame, and SecurityOrigin
         https://bugs.webkit.org/show_bug.cgi?id=191033
 

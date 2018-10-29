@@ -196,3 +196,11 @@ class TestSummaryProviders(unittest.TestCase):
         self.assertEqual(provider.get_child_at_index(1).GetValue(), '4')
         self.assertEqual(provider.get_child_at_index(2).GetName(), 'D')
         self.assertEqual(provider.get_child_at_index(2).GetValue(), '8')
+
+    def serial_test_WTFOptionSetProvider_aliased_flag(self):
+        variable = self._sbFrame.FindVariable('exampleFlagsAliasedFlag')
+        provider = lldb_webkit.WTFOptionSetProvider(variable, {})
+        self.assertEqual(provider.get_child_at_index(0).GetName(), 'A')
+        self.assertEqual(provider.get_child_at_index(0).GetValue(), '1')
+        self.assertEqual(provider.get_child_at_index(1).GetName(), 'D')
+        self.assertEqual(provider.get_child_at_index(1).GetValue(), '8')

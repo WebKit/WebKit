@@ -50,6 +50,7 @@ enum class ExampleFlags {
     B = 1 << 1,
     C = 1 << 2,
     D = 1 << 3,
+    AAlias = A,
 };
 
 static void testSummaryProviders()
@@ -83,6 +84,7 @@ static void testSummaryProviders()
 
     OptionSet<ExampleFlags> exampleFlagsEmpty;
     OptionSet<ExampleFlags> exampleFlagsSimple { ExampleFlags::A, ExampleFlags::D, ExampleFlags::C };
+    OptionSet<ExampleFlags> exampleFlagsAliasedFlag { ExampleFlags::AAlias, ExampleFlags::D };
 
     breakForTestingSummaryProviders();
 }

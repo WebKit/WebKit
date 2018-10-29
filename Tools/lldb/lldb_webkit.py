@@ -733,7 +733,11 @@ class WTFOptionSetProvider:
         self.size = 0
 
         template_argument_sbType = self.valobj.GetType().GetTemplateArgumentType(0)
-        enumerator_value_to_name_map = {sbTypeEnumMember.GetValueAsUnsigned(): sbTypeEnumMember.GetName() for sbTypeEnumMember in template_argument_sbType.get_enum_members_array()}
+        enumerator_value_to_name_map = {}
+        for sbTypeEnumMember in template_argument_sbType.get_enum_members_array():
+            enumerator_value = sbTypeEnumMember.GetValueAsUnsigned()
+            if enumerator_value not in enumerator_value_to_name_map:
+                enumerator_value_to_name_map[enumerator_value] = sbTypeEnumMember.GetName()
         if not enumerator_value_to_name_map:
             return
 
