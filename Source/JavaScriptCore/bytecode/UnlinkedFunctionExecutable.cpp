@@ -174,14 +174,14 @@ FunctionExecutable* UnlinkedFunctionExecutable::link(VM& vm, const SourceCode& p
 
 UnlinkedFunctionExecutable* UnlinkedFunctionExecutable::fromGlobalCode(
     const Identifier& name, ExecState& exec, const SourceCode& source, 
-    JSObject*& exception, int overrideLineNumber, std::optional<int> functionConstructorParametersEndPosition)
+    JSObject*& exception, int overrideLineNumber)
 {
     ParserError error;
     VM& vm = exec.vm();
     auto& globalObject = *exec.lexicalGlobalObject();
     CodeCache* codeCache = vm.codeCache();
     DebuggerMode debuggerMode = globalObject.hasInteractiveDebugger() ? DebuggerOn : DebuggerOff;
-    UnlinkedFunctionExecutable* executable = codeCache->getUnlinkedGlobalFunctionExecutable(vm, name, source, debuggerMode, functionConstructorParametersEndPosition, error);
+    UnlinkedFunctionExecutable* executable = codeCache->getUnlinkedGlobalFunctionExecutable(vm, name, source, debuggerMode, error);
 
     if (globalObject.hasDebugger())
         globalObject.debugger()->sourceParsed(&exec, source.provider(), error.line(), error.message());
