@@ -53,13 +53,13 @@ public:
             , callSiteIndex(callSiteIndex)
         { }
 
-        UnprocessedStackFrame(void* pc)
+        UnprocessedStackFrame(const void* pc)
             : cCodePC(pc)
         { }
 
         UnprocessedStackFrame() = default;
 
-        void* cCodePC { nullptr };
+        const void* cCodePC { nullptr };
         CalleeBits unverifiedCallee;
         CodeBlock* verifiedCodeBlock { nullptr };
         CallSiteIndex callSiteIndex;
@@ -82,7 +82,7 @@ public:
         { }
 
         FrameType frameType { FrameType::Unknown };
-        void* cCodePC { nullptr };
+        const void* cCodePC { nullptr };
         ExecutableBase* executable { nullptr };
         JSObject* callee { nullptr };
 

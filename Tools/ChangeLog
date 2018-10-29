@@ -1,3 +1,15 @@
+2018-10-29  Tadeu Zagallo  <tzagallo@apple.com>
+
+        New bytecode format for JSC
+        https://bugs.webkit.org/show_bug.cgi?id=187373
+        <rdar://problem/44186758>
+
+        Reviewed by Filip Pizlo.
+
+        Do not force ENABLE_JIT=true when $forceCLoop is false.
+
+        * Scripts/build-jsc:
+
 2018-10-29  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK] Try to fix the xserver-xorg build in the Ubuntu LTS bot

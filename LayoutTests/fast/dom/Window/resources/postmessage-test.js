@@ -10,57 +10,68 @@ var evalThunks = [];
 
 function equal(actual, expected)
 {
-    if (actual === expected)
-        return true;
-    if (typeof actual !== typeof expected)
-        return false;
-    if ((actual instanceof Date) || (expected instanceof Date)) {
-        if ((actual instanceof Date) && (expected instanceof Date))
-            return (expected instanceof Date) && actual.getTime() == expected.getTime();
-        return false;
-    }
-    if ((actual instanceof Number) || (expected instanceof Number)) {
-        return (actual instanceof Number) && (expected instanceof Number) &&
-            (expected.valueOf() == actual.valueOf());
-    }
-    if ((actual instanceof Boolean) || (expected instanceof Boolean)) {
-        return (actual instanceof Boolean) && (expected instanceof Boolean) &&
-            (expected.valueOf() == actual.valueOf());
-    }
-    if ((actual instanceof String) || (expected instanceof String)) {
-        return (actual instanceof String) && (expected instanceof String) &&
-            (expected.valueOf() == actual.valueOf());
-    }
-    if (Array.isArray(actual) || Array.isArray(expected)) {
-        if (!Array.isArray(actual) || !Array.isArray(expected))
+    var actualQueue = [actual];
+    var expectedQueue = [expected];
+    while (actualQueue.length && expectedQueue.length) {
+        var actual = actualQueue.shift();
+        var expected = expectedQueue.shift();
+
+        if (actual === expected)
+            continue;
+        if (typeof actual !== typeof expected)
             return false;
-        if (actual.length != expected.length)
+        if ((actual instanceof Date) || (expected instanceof Date)) {
+            if ((actual instanceof Date) && (expected instanceof Date) && actual.getTime() == expected.getTime())
+                continue;
             return false;
-        for (var i = 0; i < actual.length; i++) {
-            if ((i in actual) ^ (i in expected))
-                return false;
-            if (!equal(actual[i], expected[i]))
-                return false;
         }
-        return true;
-    }
-    if (actual.constructor !== expected.constructor)
-        return false;
-    try {
-        var keys = Object.keys(actual);
-    } catch(e) {
-        return false;
-    }
-    try {
-    if (!equal(keys, Object.keys(expected)))
-        return false;
-    } catch(e) {
-        return false;
-    }
-    for (var i = 0; i < keys.length; i++) {
-        if (!equal(actual[keys[i]], expected[keys[i]]))
+        if ((actual instanceof Number) || (expected instanceof Number)) {
+            if ((actual instanceof Number) && (expected instanceof Number) && (expected.valueOf() == actual.valueOf()))
+                continue;
             return false;
+        }
+        if ((actual instanceof Boolean) || (expected instanceof Boolean)) {
+            if ((actual instanceof Boolean) && (expected instanceof Boolean) && (expected.valueOf() == actual.valueOf()))
+                continue;
+            return false;
+        }
+        if ((actual instanceof String) || (expected instanceof String)) {
+            if ((actual instanceof String) && (expected instanceof String) && (expected.valueOf() == actual.valueOf()))
+                continue;
+            return false;
+        }
+        if (Array.isArray(actual) || Array.isArray(expected)) {
+            if (!Array.isArray(actual) || !Array.isArray(expected))
+                return false;
+            if (actual.length != expected.length)
+                return false;
+            for (var i = 0; i < actual.length; i++) {
+                if ((i in actual) ^ (i in expected))
+                    return false;
+                actualQueue.push(actual[i]);
+                expectedQueue.push(expected[i]);
+            }
+            continue;
+        }
+        if (actual.constructor !== expected.constructor)
+            return false;
+        try {
+            var keys = Object.keys(actual);
+        } catch(e) {
+            return false;
+        }
+        try {
+        if (!equal(keys, Object.keys(expected)))
+            return false;
+        } catch(e) {
+            return false;
+        }
+        for (var i = 0; i < keys.length; i++) {
+            actualQueue.push(actual[keys[i]]);
+            expectedQueue.push(expected[keys[i]]);
+        }
     }
+
     return true;
 }
 

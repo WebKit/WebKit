@@ -210,6 +210,8 @@ inline bool hasSeenCopyOnWriteArray(ArrayModes arrayModes)
 }
 
 class ArrayProfile {
+    friend class CodeBlock;
+
 public:
     ArrayProfile()
         : ArrayProfile(std::numeric_limits<unsigned>::max())

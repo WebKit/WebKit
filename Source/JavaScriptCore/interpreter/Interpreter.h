@@ -62,7 +62,6 @@ namespace JSC {
     struct HandlerInfo;
     struct Instruction;
     struct ProtoCallFrame;
-    struct UnlinkedInstruction;
 
     enum DebugHookType {
         WillExecuteProgram,
@@ -100,8 +99,6 @@ namespace JSC {
         static inline Opcode getOpcode(OpcodeID);
 
         static inline OpcodeID getOpcodeID(Opcode);
-        static inline OpcodeID getOpcodeID(const Instruction&);
-        static inline OpcodeID getOpcodeID(const UnlinkedInstruction&);
 
 #if !ASSERT_DISABLED
         static bool isOpcode(Opcode);
@@ -186,3 +183,11 @@ namespace JSC {
     void setupForwardArgumentsFrameAndSetThis(CallFrame* execCaller, CallFrame* execCallee, JSValue thisValue, uint32_t length);
     
 } // namespace JSC
+
+namespace WTF {
+
+class PrintStream;
+
+void printInternal(PrintStream&, JSC::DebugHookType);
+
+} // namespace WTF

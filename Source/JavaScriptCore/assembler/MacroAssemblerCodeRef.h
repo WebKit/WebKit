@@ -176,7 +176,7 @@ class ReturnAddressPtr {
 public:
     ReturnAddressPtr() { }
 
-    explicit ReturnAddressPtr(void* value)
+    explicit ReturnAddressPtr(const void* value)
         : m_value(value)
     {
         PoisonedMasmPtr::assertIsNotPoisoned(m_value);
@@ -191,7 +191,7 @@ public:
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
-    void* value() const
+    const void* value() const
     {
         PoisonedMasmPtr::assertIsNotPoisoned(m_value);
         return m_value;
@@ -203,7 +203,7 @@ public:
     }
 
 private:
-    void* m_value { nullptr };
+    const void* m_value { nullptr };
 };
 
 // MacroAssemblerCodePtr:
@@ -222,10 +222,10 @@ public:
     MacroAssemblerCodePtr() = default;
     MacroAssemblerCodePtr(std::nullptr_t) : m_value(nullptr) { }
 
-    explicit MacroAssemblerCodePtr(void* value)
+    explicit MacroAssemblerCodePtr(const void* value)
 #if CPU(ARM_THUMB2)
         // Decorate the pointer as a thumb code pointer.
-        : m_value(reinterpret_cast<char*>(value) + 1)
+        : m_value(reinterpret_cast<const char*>(value) + 1)
 #else
         : m_value(value)
 #endif
@@ -239,7 +239,7 @@ public:
         ASSERT_VALID_CODE_POINTER(m_value.unpoisoned());
     }
 
-    static MacroAssemblerCodePtr createFromExecutableAddress(void* value)
+    static MacroAssemblerCodePtr createFromExecutableAddress(const void* value)
     {
         ASSERT(value);
         ASSERT_VALID_CODE_POINTER(value);

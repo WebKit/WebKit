@@ -776,7 +776,7 @@ public:
 
     template<typename U> void insert(size_t position, const U*, size_t);
     template<typename U> void insert(size_t position, U&&);
-    template<typename U, size_t c> void insertVector(size_t position, const Vector<U, c>&);
+    template<typename U, size_t c, typename OH> void insertVector(size_t position, const Vector<U, c, OH>&);
 
     void remove(size_t position);
     void remove(size_t position, size_t length);
@@ -1432,8 +1432,8 @@ inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity>::insert(size
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
-template<typename U, size_t c>
-inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity>::insertVector(size_t position, const Vector<U, c>& val)
+template<typename U, size_t c, typename OH>
+inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity>::insertVector(size_t position, const Vector<U, c, OH>& val)
 {
     insert(position, val.begin(), val.size());
 }

@@ -276,7 +276,7 @@ def arm64LowerLabelReferences(list)
         | node |
         if node.is_a? Instruction
             case node.opcode
-            when "loadi", "loadis", "loadp", "loadq", "loadb", "loadbs", "loadh", "loadhs"
+            when "loadi", "loadis", "loadp", "loadq", "loadb", "loadbs", "loadh", "loadhs", "leap"
                 labelRef = node.operands[0]
                 if labelRef.is_a? LabelReference
                     tmp = Tmp.new(node.codeOrigin, :gpr)
@@ -373,7 +373,7 @@ class Sequence
         result = riscLowerMalformedAddresses(result) {
             | node, address |
             case node.opcode
-            when "loadb", "loadbs", "storeb", /^bb/, /^btb/, /^cb/, /^tb/
+            when "loadb", "loadbs", "loadbsp", "storeb", /^bb/, /^btb/, /^cb/, /^tb/
                 size = 1
             when "loadh", "loadhs"
                 size = 2
@@ -669,6 +669,8 @@ class Instruction
             emitARM64Access("ldrb", "ldurb", operands[1], operands[0], :word)
         when "loadbs"
             emitARM64Access("ldrsb", "ldursb", operands[1], operands[0], :word)
+        when "loadbsp"
+            emitARM64Access("ldrsb", "ldursb", operands[1], operands[0], :ptr)
         when "storeb"
             emitARM64Unflipped("strb", operands, :word)
         when "loadh"

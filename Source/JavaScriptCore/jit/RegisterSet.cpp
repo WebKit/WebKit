@@ -221,12 +221,14 @@ RegisterSet RegisterSet::llintBaselineCalleeSaveRegisters()
 #if CPU(X86)
 #elif CPU(X86_64)
 #if !OS(WINDOWS)
+    result.set(GPRInfo::regCS1);
     result.set(GPRInfo::regCS2);
     ASSERT(GPRInfo::regCS3 == GPRInfo::tagTypeNumberRegister);
     ASSERT(GPRInfo::regCS4 == GPRInfo::tagMaskRegister);
     result.set(GPRInfo::regCS3);
     result.set(GPRInfo::regCS4);
 #else
+    result.set(GPRInfo::regCS3);
     result.set(GPRInfo::regCS4);
     ASSERT(GPRInfo::regCS5 == GPRInfo::tagTypeNumberRegister);
     ASSERT(GPRInfo::regCS6 == GPRInfo::tagMaskRegister);
@@ -236,6 +238,7 @@ RegisterSet RegisterSet::llintBaselineCalleeSaveRegisters()
 #elif CPU(ARM_THUMB2)
 #elif CPU(ARM_TRADITIONAL)
 #elif CPU(ARM64)
+    result.set(GPRInfo::regCS6);
     result.set(GPRInfo::regCS7);
     ASSERT(GPRInfo::regCS8 == GPRInfo::tagTypeNumberRegister);
     ASSERT(GPRInfo::regCS9 == GPRInfo::tagMaskRegister);

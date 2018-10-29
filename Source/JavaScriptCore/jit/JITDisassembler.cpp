@@ -41,8 +41,8 @@ namespace JSC {
 
 JITDisassembler::JITDisassembler(CodeBlock *codeBlock)
     : m_codeBlock(codeBlock)
-    , m_labelForBytecodeIndexInMainPath(codeBlock->instructionCount())
-    , m_labelForBytecodeIndexInSlowPath(codeBlock->instructionCount())
+    , m_labelForBytecodeIndexInMainPath(codeBlock->instructions().size())
+    , m_labelForBytecodeIndexInSlowPath(codeBlock->instructions().size())
 {
 }
 

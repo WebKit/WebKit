@@ -30,6 +30,7 @@
 #include "config.h"
 #include "Opcode.h"
 
+#include "BytecodeStructs.h"
 #include <wtf/PrintStream.h>
 
 #if ENABLE(OPCODE_STATS)
@@ -183,6 +184,20 @@ void OpcodeStats::resetLastInstruction()
 }
 
 #endif
+
+static unsigned metadataSizes[] = {
+
+#define METADATA_SIZE(size) size,
+    FOR_EACH_BYTECODE_METADATA_SIZE(METADATA_SIZE)
+#undef METADATA_SIZE
+
+};
+
+unsigned metadataSize(OpcodeID opcodeID)
+{
+    return metadataSizes[opcodeID];
+}
+
 
 } // namespace JSC
 

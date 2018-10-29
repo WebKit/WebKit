@@ -1,3 +1,852 @@
+2018-10-29  Tadeu Zagallo  <tzagallo@apple.com>
+
+        New bytecode format for JSC
+        https://bugs.webkit.org/show_bug.cgi?id=187373
+        <rdar://problem/44186758>
+
+        Reviewed by Filip Pizlo.
+
+        Replace unlinked and linked bytecode with a new immutable bytecode that does not embed
+        any addresses. Instructions can be encoded as narrow (1-byte operands) or wide (4-byte
+        operands) and might contain an extra operand, the metadataID. The metadataID is used to
+        access the instruction's mutable data in a side table in the CodeBlock (the MetadataTable).
+
+        Bytecodes now must be structs declared in the new BytecodeList.rb. All bytecodes give names
+        and types to all its operands. Additionally, reading a bytecode from the instruction stream
+        requires decoding the whole bytecode, i.e. it's no longer possible to access arbitrary
+        operands directly from the stream.
+
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * assembler/MacroAssemblerCodeRef.h:
+        (JSC::ReturnAddressPtr::ReturnAddressPtr):
+        (JSC::ReturnAddressPtr::value const):
+        (JSC::MacroAssemblerCodePtr::MacroAssemblerCodePtr):
+        (JSC::MacroAssemblerCodePtr::createFromExecutableAddress):
+        * bytecode/ArithProfile.h:
+        (JSC::ArithProfile::ArithProfile):
+        * bytecode/ArrayAllocationProfile.h:
+        (JSC::ArrayAllocationProfile::ArrayAllocationProfile):
+        * bytecode/ArrayProfile.h:
+        * bytecode/BytecodeBasicBlock.cpp:
+        (JSC::isJumpTarget):
+        (JSC::BytecodeBasicBlock::computeImpl):
+        (JSC::BytecodeBasicBlock::compute):
+        * bytecode/BytecodeBasicBlock.h:
+        (JSC::BytecodeBasicBlock::leaderOffset const):
+        (JSC::BytecodeBasicBlock::totalLength const):
+        (JSC::BytecodeBasicBlock::offsets const):
+        (JSC::BytecodeBasicBlock::BytecodeBasicBlock):
+        (JSC::BytecodeBasicBlock::addLength):
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::BytecodeDumper<Block>::printLocationAndOp):
+        (JSC::BytecodeDumper<Block>::dumpBytecode):
+        (JSC::BytecodeDumper<Block>::dumpIdentifiers):
+        (JSC::BytecodeDumper<Block>::dumpConstants):
+        (JSC::BytecodeDumper<Block>::dumpExceptionHandlers):
+        (JSC::BytecodeDumper<Block>::dumpSwitchJumpTables):
+        (JSC::BytecodeDumper<Block>::dumpStringSwitchJumpTables):
+        (JSC::BytecodeDumper<Block>::dumpBlock):
+        * bytecode/BytecodeDumper.h:
+        (JSC::BytecodeDumper::dumpOperand):
+        (JSC::BytecodeDumper::dumpValue):
+        (JSC::BytecodeDumper::BytecodeDumper):
+        (JSC::BytecodeDumper::block const):
+        * bytecode/BytecodeGeneratorification.cpp:
+        (JSC::BytecodeGeneratorification::BytecodeGeneratorification):
+        (JSC::BytecodeGeneratorification::enterPoint const):
+        (JSC::BytecodeGeneratorification::instructions const):
+        (JSC::GeneratorLivenessAnalysis::run):
+        (JSC::BytecodeGeneratorification::run):
+        (JSC::performGeneratorification):
+        * bytecode/BytecodeGeneratorification.h:
+        * bytecode/BytecodeGraph.h:
+        (JSC::BytecodeGraph::blockContainsBytecodeOffset):
+        (JSC::BytecodeGraph::findBasicBlockForBytecodeOffset):
+        (JSC::BytecodeGraph::findBasicBlockWithLeaderOffset):
+        (JSC::BytecodeGraph::BytecodeGraph):
+        * bytecode/BytecodeKills.h:
+        * bytecode/BytecodeList.json: Removed.
+        * bytecode/BytecodeList.rb: Added.
+        * bytecode/BytecodeLivenessAnalysis.cpp:
+        (JSC::BytecodeLivenessAnalysis::dumpResults):
+        * bytecode/BytecodeLivenessAnalysis.h:
+        * bytecode/BytecodeLivenessAnalysisInlines.h:
+        (JSC::isValidRegisterForLiveness):
+        (JSC::BytecodeLivenessPropagation::stepOverInstruction):
+        * bytecode/BytecodeRewriter.cpp:
+        (JSC::BytecodeRewriter::applyModification):
+        (JSC::BytecodeRewriter::execute):
+        (JSC::BytecodeRewriter::adjustJumpTargetsInFragment):
+        (JSC::BytecodeRewriter::insertImpl):
+        (JSC::BytecodeRewriter::adjustJumpTarget):
+        (JSC::BytecodeRewriter::adjustJumpTargets):
+        * bytecode/BytecodeRewriter.h:
+        (JSC::BytecodeRewriter::InsertionPoint::InsertionPoint):
+        (JSC::BytecodeRewriter::Fragment::Fragment):
+        (JSC::BytecodeRewriter::Fragment::appendInstruction):
+        (JSC::BytecodeRewriter::BytecodeRewriter):
+        (JSC::BytecodeRewriter::insertFragmentBefore):
+        (JSC::BytecodeRewriter::insertFragmentAfter):
+        (JSC::BytecodeRewriter::removeBytecode):
+        (JSC::BytecodeRewriter::adjustAbsoluteOffset):
+        (JSC::BytecodeRewriter::adjustJumpTarget):
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::computeFromLLInt):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::estimatedSize):
+        (JSC::CodeBlock::visitChildren):
+        (JSC::CodeBlock::propagateTransitions):
+        (JSC::CodeBlock::finalizeLLIntInlineCaches):
+        (JSC::CodeBlock::addJITAddIC):
+        (JSC::CodeBlock::addJITMulIC):
+        (JSC::CodeBlock::addJITSubIC):
+        (JSC::CodeBlock::addJITNegIC):
+        (JSC::CodeBlock::stronglyVisitStrongReferences):
+        (JSC::CodeBlock::ensureCatchLivenessIsComputedForBytecodeOffset):
+        (JSC::CodeBlock::ensureCatchLivenessIsComputedForBytecodeOffsetSlow):
+        (JSC::CodeBlock::hasOpDebugForLineAndColumn):
+        (JSC::CodeBlock::getArrayProfile):
+        (JSC::CodeBlock::updateAllArrayPredictions):
+        (JSC::CodeBlock::predictedMachineCodeSize):
+        (JSC::CodeBlock::tryGetValueProfileForBytecodeOffset):
+        (JSC::CodeBlock::valueProfilePredictionForBytecodeOffset):
+        (JSC::CodeBlock::valueProfileForBytecodeOffset):
+        (JSC::CodeBlock::validate):
+        (JSC::CodeBlock::outOfLineJumpOffset):
+        (JSC::CodeBlock::outOfLineJumpTarget):
+        (JSC::CodeBlock::arithProfileForBytecodeOffset):
+        (JSC::CodeBlock::arithProfileForPC):
+        (JSC::CodeBlock::couldTakeSpecialFastCase):
+        (JSC::CodeBlock::insertBasicBlockBoundariesForControlFlowProfiler):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::addMathIC):
+        (JSC::CodeBlock::outOfLineJumpOffset):
+        (JSC::CodeBlock::bytecodeOffset):
+        (JSC::CodeBlock::instructions const):
+        (JSC::CodeBlock::instructionCount const):
+        (JSC::CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters):
+        (JSC::CodeBlock::metadata):
+        (JSC::CodeBlock::metadataSizeInBytes):
+        (JSC::CodeBlock::numberOfNonArgumentValueProfiles):
+        (JSC::CodeBlock::totalNumberOfValueProfiles):
+        * bytecode/CodeBlockInlines.h: Added.
+        (JSC::CodeBlock::forEachValueProfile):
+        (JSC::CodeBlock::forEachArrayProfile):
+        (JSC::CodeBlock::forEachArrayAllocationProfile):
+        (JSC::CodeBlock::forEachObjectAllocationProfile):
+        (JSC::CodeBlock::forEachLLIntCallLinkInfo):
+        * bytecode/Fits.h: Added.
+        * bytecode/GetByIdMetadata.h: Copied from Source/JavaScriptCore/bytecode/LLIntPrototypeLoadAdaptiveStructureWatchpoint.h.
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeFromLLInt):
+        * bytecode/Instruction.h:
+        (JSC::Instruction::Instruction):
+        (JSC::Instruction::Impl::opcodeID const):
+        (JSC::Instruction::opcodeID const):
+        (JSC::Instruction::name const):
+        (JSC::Instruction::isWide const):
+        (JSC::Instruction::size const):
+        (JSC::Instruction::is const):
+        (JSC::Instruction::as const):
+        (JSC::Instruction::cast):
+        (JSC::Instruction::cast const):
+        (JSC::Instruction::narrow const):
+        (JSC::Instruction::wide const):
+        * bytecode/InstructionStream.cpp: Copied from Source/JavaScriptCore/bytecode/SpecialPointer.cpp.
+        (JSC::InstructionStream::InstructionStream):
+        (JSC::InstructionStream::sizeInBytes const):
+        * bytecode/InstructionStream.h: Added.
+        (JSC::InstructionStream::BaseRef::BaseRef):
+        (JSC::InstructionStream::BaseRef::operator=):
+        (JSC::InstructionStream::BaseRef::operator-> const):
+        (JSC::InstructionStream::BaseRef::ptr const):
+        (JSC::InstructionStream::BaseRef::operator!= const):
+        (JSC::InstructionStream::BaseRef::next const):
+        (JSC::InstructionStream::BaseRef::offset const):
+        (JSC::InstructionStream::BaseRef::isValid const):
+        (JSC::InstructionStream::BaseRef::unwrap const):
+        (JSC::InstructionStream::MutableRef::freeze const):
+        (JSC::InstructionStream::MutableRef::operator->):
+        (JSC::InstructionStream::MutableRef::ptr):
+        (JSC::InstructionStream::MutableRef::operator Ref):
+        (JSC::InstructionStream::MutableRef::unwrap):
+        (JSC::InstructionStream::iterator::operator*):
+        (JSC::InstructionStream::iterator::operator++):
+        (JSC::InstructionStream::begin const):
+        (JSC::InstructionStream::end const):
+        (JSC::InstructionStream::at const):
+        (JSC::InstructionStream::size const):
+        (JSC::InstructionStreamWriter::InstructionStreamWriter):
+        (JSC::InstructionStreamWriter::ref):
+        (JSC::InstructionStreamWriter::seek):
+        (JSC::InstructionStreamWriter::position):
+        (JSC::InstructionStreamWriter::write):
+        (JSC::InstructionStreamWriter::rewind):
+        (JSC::InstructionStreamWriter::finalize):
+        (JSC::InstructionStreamWriter::swap):
+        (JSC::InstructionStreamWriter::iterator::operator*):
+        (JSC::InstructionStreamWriter::iterator::operator++):
+        (JSC::InstructionStreamWriter::begin):
+        (JSC::InstructionStreamWriter::end):
+        * bytecode/LLIntPrototypeLoadAdaptiveStructureWatchpoint.cpp:
+        (JSC::LLIntPrototypeLoadAdaptiveStructureWatchpoint::LLIntPrototypeLoadAdaptiveStructureWatchpoint):
+        (JSC::LLIntPrototypeLoadAdaptiveStructureWatchpoint::fireInternal):
+        (JSC::LLIntPrototypeLoadAdaptiveStructureWatchpoint::clearLLIntGetByIdCache):
+        * bytecode/LLIntPrototypeLoadAdaptiveStructureWatchpoint.h:
+        * bytecode/MetadataTable.cpp: Copied from Source/JavaScriptCore/bytecode/SpecialPointer.cpp.
+        (JSC::MetadataTable::MetadataTable):
+        (JSC::DeallocTable::withOpcodeType):
+        (JSC::MetadataTable::~MetadataTable):
+        (JSC::MetadataTable::sizeInBytes):
+        * bytecode/MetadataTable.h: Copied from Source/JavaScriptCore/runtime/Watchdog.h.
+        (JSC::MetadataTable::get):
+        (JSC::MetadataTable::forEach):
+        (JSC::MetadataTable::getImpl):
+        * bytecode/Opcode.cpp:
+        (JSC::metadataSize):
+        * bytecode/Opcode.h:
+        (JSC::padOpcodeName):
+        * bytecode/OpcodeInlines.h:
+        (JSC::isOpcodeShape):
+        (JSC::getOpcodeType):
+        * bytecode/OpcodeSize.h: Copied from Source/JavaScriptCore/bytecode/SpecialPointer.cpp.
+        * bytecode/PreciseJumpTargets.cpp:
+        (JSC::getJumpTargetsForInstruction):
+        (JSC::computePreciseJumpTargetsInternal):
+        (JSC::computePreciseJumpTargets):
+        (JSC::recomputePreciseJumpTargets):
+        (JSC::findJumpTargetsForInstruction):
+        * bytecode/PreciseJumpTargets.h:
+        * bytecode/PreciseJumpTargetsInlines.h:
+        (JSC::jumpTargetForInstruction):
+        (JSC::extractStoredJumpTargetsForInstruction):
+        (JSC::updateStoredJumpTargetsForInstruction):
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeFromLLInt):
+        * bytecode/SpecialPointer.cpp:
+        (WTF::printInternal):
+        * bytecode/SpecialPointer.h:
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        (JSC::UnlinkedCodeBlock::visitChildren):
+        (JSC::UnlinkedCodeBlock::estimatedSize):
+        (JSC::UnlinkedCodeBlock::lineNumberForBytecodeOffset):
+        (JSC::dumpLineColumnEntry):
+        (JSC::UnlinkedCodeBlock::expressionRangeForBytecodeOffset const):
+        (JSC::UnlinkedCodeBlock::setInstructions):
+        (JSC::UnlinkedCodeBlock::instructions const):
+        (JSC::UnlinkedCodeBlock::applyModification):
+        (JSC::UnlinkedCodeBlock::addOutOfLineJumpTarget):
+        (JSC::UnlinkedCodeBlock::outOfLineJumpOffset):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::addPropertyAccessInstruction):
+        (JSC::UnlinkedCodeBlock::propertyAccessInstructions const):
+        (JSC::UnlinkedCodeBlock::addOpProfileControlFlowBytecodeOffset):
+        (JSC::UnlinkedCodeBlock::opProfileControlFlowBytecodeOffsets const):
+        (JSC::UnlinkedCodeBlock::metadata):
+        (JSC::UnlinkedCodeBlock::metadataSizeInBytes):
+        (JSC::UnlinkedCodeBlock::outOfLineJumpOffset):
+        (JSC::UnlinkedCodeBlock::replaceOutOfLineJumpTargets):
+        * bytecode/UnlinkedInstructionStream.cpp: Removed.
+        * bytecode/UnlinkedInstructionStream.h: Removed.
+        * bytecode/UnlinkedMetadataTable.h: Copied from Source/JavaScriptCore/bytecode/LLIntPrototypeLoadAdaptiveStructureWatchpoint.h.
+        * bytecode/UnlinkedMetadataTableInlines.h: Added.
+        (JSC::UnlinkedMetadataTable::UnlinkedMetadataTable):
+        (JSC::UnlinkedMetadataTable::~UnlinkedMetadataTable):
+        (JSC::UnlinkedMetadataTable::addEntry):
+        (JSC::UnlinkedMetadataTable::sizeInBytes):
+        (JSC::UnlinkedMetadataTable::finalize):
+        (JSC::UnlinkedMetadataTable::link):
+        (JSC::UnlinkedMetadataTable::unlink):
+        * bytecode/VirtualRegister.cpp:
+        (JSC::VirtualRegister::VirtualRegister):
+        * bytecode/VirtualRegister.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::Label::setLocation):
+        (JSC::Label::bind):
+        (JSC::BytecodeGenerator::generate):
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::initializeVarLexicalEnvironment):
+        (JSC::BytecodeGenerator::emitEnter):
+        (JSC::BytecodeGenerator::emitLoopHint):
+        (JSC::BytecodeGenerator::emitJump):
+        (JSC::BytecodeGenerator::emitCheckTraps):
+        (JSC::BytecodeGenerator::rewind):
+        (JSC::BytecodeGenerator::fuseCompareAndJump):
+        (JSC::BytecodeGenerator::fuseTestAndJmp):
+        (JSC::BytecodeGenerator::emitJumpIfTrue):
+        (JSC::BytecodeGenerator::emitJumpIfFalse):
+        (JSC::BytecodeGenerator::emitJumpIfNotFunctionCall):
+        (JSC::BytecodeGenerator::emitJumpIfNotFunctionApply):
+        (JSC::BytecodeGenerator::moveLinkTimeConstant):
+        (JSC::BytecodeGenerator::moveEmptyValue):
+        (JSC::BytecodeGenerator::emitMove):
+        (JSC::BytecodeGenerator::emitUnaryOp):
+        (JSC::BytecodeGenerator::emitBinaryOp):
+        (JSC::BytecodeGenerator::emitToObject):
+        (JSC::BytecodeGenerator::emitToNumber):
+        (JSC::BytecodeGenerator::emitToString):
+        (JSC::BytecodeGenerator::emitTypeOf):
+        (JSC::BytecodeGenerator::emitInc):
+        (JSC::BytecodeGenerator::emitDec):
+        (JSC::BytecodeGenerator::emitEqualityOp):
+        (JSC::BytecodeGenerator::emitProfileType):
+        (JSC::BytecodeGenerator::emitProfileControlFlow):
+        (JSC::BytecodeGenerator::pushLexicalScopeInternal):
+        (JSC::BytecodeGenerator::emitResolveScopeForHoistingFuncDeclInEval):
+        (JSC::BytecodeGenerator::prepareLexicalScopeForNextForLoopIteration):
+        (JSC::BytecodeGenerator::emitOverridesHasInstance):
+        (JSC::BytecodeGenerator::emitResolveScope):
+        (JSC::BytecodeGenerator::emitGetFromScope):
+        (JSC::BytecodeGenerator::emitPutToScope):
+        (JSC::BytecodeGenerator::emitInstanceOf):
+        (JSC::BytecodeGenerator::emitInstanceOfCustom):
+        (JSC::BytecodeGenerator::emitInByVal):
+        (JSC::BytecodeGenerator::emitInById):
+        (JSC::BytecodeGenerator::emitTryGetById):
+        (JSC::BytecodeGenerator::emitGetById):
+        (JSC::BytecodeGenerator::emitDirectGetById):
+        (JSC::BytecodeGenerator::emitPutById):
+        (JSC::BytecodeGenerator::emitDirectPutById):
+        (JSC::BytecodeGenerator::emitPutGetterById):
+        (JSC::BytecodeGenerator::emitPutSetterById):
+        (JSC::BytecodeGenerator::emitPutGetterSetter):
+        (JSC::BytecodeGenerator::emitPutGetterByVal):
+        (JSC::BytecodeGenerator::emitPutSetterByVal):
+        (JSC::BytecodeGenerator::emitDeleteById):
+        (JSC::BytecodeGenerator::emitGetByVal):
+        (JSC::BytecodeGenerator::emitPutByVal):
+        (JSC::BytecodeGenerator::emitDirectPutByVal):
+        (JSC::BytecodeGenerator::emitDeleteByVal):
+        (JSC::BytecodeGenerator::emitSuperSamplerBegin):
+        (JSC::BytecodeGenerator::emitSuperSamplerEnd):
+        (JSC::BytecodeGenerator::emitIdWithProfile):
+        (JSC::BytecodeGenerator::emitUnreachable):
+        (JSC::BytecodeGenerator::emitGetArgument):
+        (JSC::BytecodeGenerator::emitCreateThis):
+        (JSC::BytecodeGenerator::emitTDZCheck):
+        (JSC::BytecodeGenerator::emitNewObject):
+        (JSC::BytecodeGenerator::emitNewArrayBuffer):
+        (JSC::BytecodeGenerator::emitNewArray):
+        (JSC::BytecodeGenerator::emitNewArrayWithSpread):
+        (JSC::BytecodeGenerator::emitNewArrayWithSize):
+        (JSC::BytecodeGenerator::emitNewRegExp):
+        (JSC::BytecodeGenerator::emitNewFunctionExpressionCommon):
+        (JSC::BytecodeGenerator::emitNewDefaultConstructor):
+        (JSC::BytecodeGenerator::emitNewFunction):
+        (JSC::BytecodeGenerator::emitSetFunctionNameIfNeeded):
+        (JSC::BytecodeGenerator::emitCall):
+        (JSC::BytecodeGenerator::emitCallInTailPosition):
+        (JSC::BytecodeGenerator::emitCallEval):
+        (JSC::BytecodeGenerator::emitExpectedFunctionSnippet):
+        (JSC::BytecodeGenerator::emitCallVarargs):
+        (JSC::BytecodeGenerator::emitCallVarargsInTailPosition):
+        (JSC::BytecodeGenerator::emitConstructVarargs):
+        (JSC::BytecodeGenerator::emitCallForwardArgumentsInTailPosition):
+        (JSC::BytecodeGenerator::emitLogShadowChickenPrologueIfNecessary):
+        (JSC::BytecodeGenerator::emitLogShadowChickenTailIfNecessary):
+        (JSC::BytecodeGenerator::emitCallDefineProperty):
+        (JSC::BytecodeGenerator::emitReturn):
+        (JSC::BytecodeGenerator::emitEnd):
+        (JSC::BytecodeGenerator::emitConstruct):
+        (JSC::BytecodeGenerator::emitStrcat):
+        (JSC::BytecodeGenerator::emitToPrimitive):
+        (JSC::BytecodeGenerator::emitGetScope):
+        (JSC::BytecodeGenerator::emitPushWithScope):
+        (JSC::BytecodeGenerator::emitGetParentScope):
+        (JSC::BytecodeGenerator::emitDebugHook):
+        (JSC::BytecodeGenerator::emitCatch):
+        (JSC::BytecodeGenerator::emitThrow):
+        (JSC::BytecodeGenerator::emitArgumentCount):
+        (JSC::BytecodeGenerator::emitThrowStaticError):
+        (JSC::BytecodeGenerator::beginSwitch):
+        (JSC::prepareJumpTableForSwitch):
+        (JSC::prepareJumpTableForStringSwitch):
+        (JSC::BytecodeGenerator::endSwitch):
+        (JSC::BytecodeGenerator::emitGetEnumerableLength):
+        (JSC::BytecodeGenerator::emitHasGenericProperty):
+        (JSC::BytecodeGenerator::emitHasIndexedProperty):
+        (JSC::BytecodeGenerator::emitHasStructureProperty):
+        (JSC::BytecodeGenerator::emitGetPropertyEnumerator):
+        (JSC::BytecodeGenerator::emitEnumeratorStructurePropertyName):
+        (JSC::BytecodeGenerator::emitEnumeratorGenericPropertyName):
+        (JSC::BytecodeGenerator::emitToIndexString):
+        (JSC::BytecodeGenerator::emitIsCellWithType):
+        (JSC::BytecodeGenerator::emitIsObject):
+        (JSC::BytecodeGenerator::emitIsNumber):
+        (JSC::BytecodeGenerator::emitIsUndefined):
+        (JSC::BytecodeGenerator::emitIsEmpty):
+        (JSC::BytecodeGenerator::emitRestParameter):
+        (JSC::BytecodeGenerator::emitRequireObjectCoercible):
+        (JSC::BytecodeGenerator::emitYieldPoint):
+        (JSC::BytecodeGenerator::emitYield):
+        (JSC::BytecodeGenerator::emitGetAsyncIterator):
+        (JSC::BytecodeGenerator::emitDelegateYield):
+        (JSC::BytecodeGenerator::emitFinallyCompletion):
+        (JSC::BytecodeGenerator::emitJumpIf):
+        (JSC::ForInContext::finalize):
+        (JSC::StructureForInContext::finalize):
+        (JSC::IndexedForInContext::finalize):
+        (JSC::StaticPropertyAnalysis::record):
+        (JSC::BytecodeGenerator::emitToThis):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::StructureForInContext::addGetInst):
+        (JSC::BytecodeGenerator::recordOpcode):
+        (JSC::BytecodeGenerator::addMetadataFor):
+        (JSC::BytecodeGenerator::emitUnaryOp):
+        (JSC::BytecodeGenerator::kill):
+        (JSC::BytecodeGenerator::instructions const):
+        (JSC::BytecodeGenerator::write):
+        (JSC::BytecodeGenerator::withWriter):
+        * bytecompiler/Label.h:
+        (JSC::Label::Label):
+        (JSC::Label::bind):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ArrayNode::emitBytecode):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_argumentCount):
+        (JSC::ApplyFunctionCallDotNode::emitBytecode):
+        (JSC::BitwiseNotNode::emitBytecode):
+        (JSC::BinaryOpNode::emitBytecode):
+        (JSC::EqualNode::emitBytecode):
+        (JSC::StrictEqualNode::emitBytecode):
+        (JSC::emitReadModifyAssignment):
+        (JSC::ForInNode::emitBytecode):
+        (JSC::CaseBlockNode::emitBytecodeForBlock):
+        (JSC::FunctionNode::emitBytecode):
+        (JSC::ClassExprNode::emitBytecode):
+        * bytecompiler/ProfileTypeBytecodeFlag.cpp: Copied from Source/JavaScriptCore/bytecode/VirtualRegister.cpp.
+        (WTF::printInternal):
+        * bytecompiler/ProfileTypeBytecodeFlag.h: Copied from Source/JavaScriptCore/bytecode/SpecialPointer.cpp.
+        * bytecompiler/RegisterID.h:
+        * bytecompiler/StaticPropertyAnalysis.h:
+        (JSC::StaticPropertyAnalysis::create):
+        (JSC::StaticPropertyAnalysis::StaticPropertyAnalysis):
+        * bytecompiler/StaticPropertyAnalyzer.h:
+        (JSC::StaticPropertyAnalyzer::createThis):
+        (JSC::StaticPropertyAnalyzer::newObject):
+        (JSC::StaticPropertyAnalyzer::putById):
+        (JSC::StaticPropertyAnalyzer::mov):
+        (JSC::StaticPropertyAnalyzer::kill):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::addCall):
+        (JSC::DFG::ByteCodeParser::getPredictionWithoutOSRExit):
+        (JSC::DFG::ByteCodeParser::getArrayMode):
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::ByteCodeParser::handleVarargsCall):
+        (JSC::DFG::ByteCodeParser::handleRecursiveTailCall):
+        (JSC::DFG::ByteCodeParser::inlineCall):
+        (JSC::DFG::ByteCodeParser::handleCallVariant):
+        (JSC::DFG::ByteCodeParser::handleVarargsInlining):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::handleMinMax):
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        (JSC::DFG::ByteCodeParser::handleDOMJITCall):
+        (JSC::DFG::ByteCodeParser::handleIntrinsicGetter):
+        (JSC::DFG::ByteCodeParser::handleDOMJITGetter):
+        (JSC::DFG::ByteCodeParser::handleModuleNamespaceLoad):
+        (JSC::DFG::ByteCodeParser::handleTypedArrayConstructor):
+        (JSC::DFG::ByteCodeParser::handleConstantInternalFunction):
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        (JSC::DFG::ByteCodeParser::handlePutById):
+        (JSC::DFG::ByteCodeParser::parseGetById):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::parseCodeBlock):
+        (JSC::DFG::ByteCodeParser::handlePutByVal):
+        (JSC::DFG::ByteCodeParser::handlePutAccessorById):
+        (JSC::DFG::ByteCodeParser::handlePutAccessorByVal):
+        (JSC::DFG::ByteCodeParser::handleNewFunc):
+        (JSC::DFG::ByteCodeParser::handleNewFuncExp):
+        (JSC::DFG::ByteCodeParser::parse):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGCapabilities.h:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareCatchOSREntry):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileValueAdd):
+        (JSC::DFG::SpeculativeJIT::compileValueSub):
+        (JSC::DFG::SpeculativeJIT::compileValueNegate):
+        (JSC::DFG::SpeculativeJIT::compileArithMul):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueAdd):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueSub):
+        (JSC::FTL::DFG::LowerDFGToB3::compileUnaryMathIC):
+        (JSC::FTL::DFG::LowerDFGToB3::compileBinaryMathIC):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithAddOrSub):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithMul):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueNegate):
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::operationMaterializeObjectInOSR):
+        * generate-bytecode-files: Removed.
+        * generator/Argument.rb: Added.
+        * generator/Assertion.rb: Added.
+        * generator/DSL.rb: Added.
+        * generator/Fits.rb: Added.
+        * generator/GeneratedFile.rb: Added.
+        * generator/Metadata.rb: Added.
+        * generator/Opcode.rb: Added.
+        * generator/OpcodeGroup.rb: Added.
+        * generator/Options.rb: Added.
+        * generator/Section.rb: Added.
+        * generator/Template.rb: Added.
+        * generator/Type.rb: Added.
+        * generator/main.rb: Added.
+        * interpreter/AbstractPC.h:
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::currentVPC const):
+        (JSC::CallFrame::setCurrentVPC):
+        * interpreter/CallFrame.h:
+        (JSC::CallSiteIndex::CallSiteIndex):
+        (JSC::ExecState::setReturnPC):
+        * interpreter/Interpreter.cpp:
+        (WTF::printInternal):
+        * interpreter/Interpreter.h:
+        * interpreter/InterpreterInlines.h:
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::Frame::dump const):
+        * interpreter/VMEntryRecord.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::JIT):
+        (JSC::JIT::emitSlowCaseCall):
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::compileWithoutLinking):
+        (JSC::JIT::link):
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_jless):
+        (JSC::JIT::emit_op_jlesseq):
+        (JSC::JIT::emit_op_jgreater):
+        (JSC::JIT::emit_op_jgreatereq):
+        (JSC::JIT::emit_op_jnless):
+        (JSC::JIT::emit_op_jnlesseq):
+        (JSC::JIT::emit_op_jngreater):
+        (JSC::JIT::emit_op_jngreatereq):
+        (JSC::JIT::emitSlow_op_jless):
+        (JSC::JIT::emitSlow_op_jlesseq):
+        (JSC::JIT::emitSlow_op_jgreater):
+        (JSC::JIT::emitSlow_op_jgreatereq):
+        (JSC::JIT::emitSlow_op_jnless):
+        (JSC::JIT::emitSlow_op_jnlesseq):
+        (JSC::JIT::emitSlow_op_jngreater):
+        (JSC::JIT::emitSlow_op_jngreatereq):
+        (JSC::JIT::emit_op_below):
+        (JSC::JIT::emit_op_beloweq):
+        (JSC::JIT::emit_op_jbelow):
+        (JSC::JIT::emit_op_jbeloweq):
+        (JSC::JIT::emit_op_unsigned):
+        (JSC::JIT::emit_compareAndJump):
+        (JSC::JIT::emit_compareUnsignedAndJump):
+        (JSC::JIT::emit_compareUnsigned):
+        (JSC::JIT::emit_compareAndJumpSlow):
+        (JSC::JIT::emit_op_inc):
+        (JSC::JIT::emit_op_dec):
+        (JSC::JIT::emit_op_mod):
+        (JSC::JIT::emitSlow_op_mod):
+        (JSC::JIT::emit_op_negate):
+        (JSC::JIT::emitSlow_op_negate):
+        (JSC::JIT::emitBitBinaryOpFastPath):
+        (JSC::JIT::emit_op_bitand):
+        (JSC::JIT::emit_op_bitor):
+        (JSC::JIT::emit_op_bitxor):
+        (JSC::JIT::emit_op_lshift):
+        (JSC::JIT::emitRightShiftFastPath):
+        (JSC::JIT::emit_op_rshift):
+        (JSC::JIT::emit_op_urshift):
+        (JSC::getOperandTypes):
+        (JSC::JIT::emit_op_add):
+        (JSC::JIT::emitSlow_op_add):
+        (JSC::JIT::emitMathICFast):
+        (JSC::JIT::emitMathICSlow):
+        (JSC::JIT::emit_op_div):
+        (JSC::JIT::emit_op_mul):
+        (JSC::JIT::emitSlow_op_mul):
+        (JSC::JIT::emit_op_sub):
+        (JSC::JIT::emitSlow_op_sub):
+        * jit/JITCall.cpp:
+        (JSC::JIT::emitPutCallResult):
+        (JSC::JIT::compileSetupFrame):
+        (JSC::JIT::compileCallEval):
+        (JSC::JIT::compileCallEvalSlowCase):
+        (JSC::JIT::compileTailCall):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        (JSC::JIT::emit_op_call):
+        (JSC::JIT::emit_op_tail_call):
+        (JSC::JIT::emit_op_call_eval):
+        (JSC::JIT::emit_op_call_varargs):
+        (JSC::JIT::emit_op_tail_call_varargs):
+        (JSC::JIT::emit_op_tail_call_forward_arguments):
+        (JSC::JIT::emit_op_construct_varargs):
+        (JSC::JIT::emit_op_construct):
+        (JSC::JIT::emitSlow_op_call):
+        (JSC::JIT::emitSlow_op_tail_call):
+        (JSC::JIT::emitSlow_op_call_eval):
+        (JSC::JIT::emitSlow_op_call_varargs):
+        (JSC::JIT::emitSlow_op_tail_call_varargs):
+        (JSC::JIT::emitSlow_op_tail_call_forward_arguments):
+        (JSC::JIT::emitSlow_op_construct_varargs):
+        (JSC::JIT::emitSlow_op_construct):
+        * jit/JITDisassembler.cpp:
+        (JSC::JITDisassembler::JITDisassembler):
+        * jit/JITExceptions.cpp:
+        (JSC::genericUnwind):
+        * jit/JITInlines.h:
+        (JSC::JIT::emitDoubleGetByVal):
+        (JSC::JIT::emitLoadForArrayMode):
+        (JSC::JIT::emitContiguousGetByVal):
+        (JSC::JIT::emitArrayStorageGetByVal):
+        (JSC::JIT::appendCallWithExceptionCheckSetJSValueResultWithProfile):
+        (JSC::JIT::sampleInstruction):
+        (JSC::JIT::emitValueProfilingSiteIfProfiledOpcode):
+        (JSC::JIT::emitValueProfilingSite):
+        (JSC::JIT::jumpTarget):
+        (JSC::JIT::copiedGetPutInfo):
+        (JSC::JIT::copiedArithProfile):
+        * jit/JITMathIC.h:
+        (JSC::isProfileEmpty):
+        (JSC::JITBinaryMathIC::JITBinaryMathIC):
+        (JSC::JITUnaryMathIC::JITUnaryMathIC):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_mov):
+        (JSC::JIT::emit_op_end):
+        (JSC::JIT::emit_op_jmp):
+        (JSC::JIT::emit_op_new_object):
+        (JSC::JIT::emitSlow_op_new_object):
+        (JSC::JIT::emit_op_overrides_has_instance):
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::emitSlow_op_instanceof):
+        (JSC::JIT::emit_op_instanceof_custom):
+        (JSC::JIT::emit_op_is_empty):
+        (JSC::JIT::emit_op_is_undefined):
+        (JSC::JIT::emit_op_is_boolean):
+        (JSC::JIT::emit_op_is_number):
+        (JSC::JIT::emit_op_is_cell_with_type):
+        (JSC::JIT::emit_op_is_object):
+        (JSC::JIT::emit_op_ret):
+        (JSC::JIT::emit_op_to_primitive):
+        (JSC::JIT::emit_op_set_function_name):
+        (JSC::JIT::emit_op_not):
+        (JSC::JIT::emit_op_jfalse):
+        (JSC::JIT::emit_op_jeq_null):
+        (JSC::JIT::emit_op_jneq_null):
+        (JSC::JIT::emit_op_jneq_ptr):
+        (JSC::JIT::emit_op_eq):
+        (JSC::JIT::emit_op_jeq):
+        (JSC::JIT::emit_op_jtrue):
+        (JSC::JIT::emit_op_neq):
+        (JSC::JIT::emit_op_jneq):
+        (JSC::JIT::emit_op_throw):
+        (JSC::JIT::compileOpStrictEq):
+        (JSC::JIT::emit_op_stricteq):
+        (JSC::JIT::emit_op_nstricteq):
+        (JSC::JIT::compileOpStrictEqJump):
+        (JSC::JIT::emit_op_jstricteq):
+        (JSC::JIT::emit_op_jnstricteq):
+        (JSC::JIT::emitSlow_op_jstricteq):
+        (JSC::JIT::emitSlow_op_jnstricteq):
+        (JSC::JIT::emit_op_to_number):
+        (JSC::JIT::emit_op_to_string):
+        (JSC::JIT::emit_op_to_object):
+        (JSC::JIT::emit_op_catch):
+        (JSC::JIT::emit_op_identity_with_profile):
+        (JSC::JIT::emit_op_get_parent_scope):
+        (JSC::JIT::emit_op_switch_imm):
+        (JSC::JIT::emit_op_switch_char):
+        (JSC::JIT::emit_op_switch_string):
+        (JSC::JIT::emit_op_debug):
+        (JSC::JIT::emit_op_eq_null):
+        (JSC::JIT::emit_op_neq_null):
+        (JSC::JIT::emit_op_enter):
+        (JSC::JIT::emit_op_get_scope):
+        (JSC::JIT::emit_op_to_this):
+        (JSC::JIT::emit_op_create_this):
+        (JSC::JIT::emit_op_check_tdz):
+        (JSC::JIT::emitSlow_op_eq):
+        (JSC::JIT::emitSlow_op_neq):
+        (JSC::JIT::emitSlow_op_jeq):
+        (JSC::JIT::emitSlow_op_jneq):
+        (JSC::JIT::emitSlow_op_instanceof_custom):
+        (JSC::JIT::emit_op_loop_hint):
+        (JSC::JIT::emitSlow_op_loop_hint):
+        (JSC::JIT::emit_op_check_traps):
+        (JSC::JIT::emit_op_nop):
+        (JSC::JIT::emit_op_super_sampler_begin):
+        (JSC::JIT::emit_op_super_sampler_end):
+        (JSC::JIT::emitSlow_op_check_traps):
+        (JSC::JIT::emit_op_new_regexp):
+        (JSC::JIT::emitNewFuncCommon):
+        (JSC::JIT::emit_op_new_func):
+        (JSC::JIT::emit_op_new_generator_func):
+        (JSC::JIT::emit_op_new_async_generator_func):
+        (JSC::JIT::emit_op_new_async_func):
+        (JSC::JIT::emitNewFuncExprCommon):
+        (JSC::JIT::emit_op_new_func_exp):
+        (JSC::JIT::emit_op_new_generator_func_exp):
+        (JSC::JIT::emit_op_new_async_func_exp):
+        (JSC::JIT::emit_op_new_async_generator_func_exp):
+        (JSC::JIT::emit_op_new_array):
+        (JSC::JIT::emit_op_new_array_with_size):
+        (JSC::JIT::emit_op_has_structure_property):
+        (JSC::JIT::privateCompileHasIndexedProperty):
+        (JSC::JIT::emit_op_has_indexed_property):
+        (JSC::JIT::emitSlow_op_has_indexed_property):
+        (JSC::JIT::emit_op_get_direct_pname):
+        (JSC::JIT::emit_op_enumerator_structure_pname):
+        (JSC::JIT::emit_op_enumerator_generic_pname):
+        (JSC::JIT::emit_op_profile_type):
+        (JSC::JIT::emit_op_log_shadow_chicken_prologue):
+        (JSC::JIT::emit_op_log_shadow_chicken_tail):
+        (JSC::JIT::emit_op_profile_control_flow):
+        (JSC::JIT::emit_op_argument_count):
+        (JSC::JIT::emit_op_get_rest_length):
+        (JSC::JIT::emit_op_get_argument):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_to_this):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emitGetByValWithCachedId):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::emit_op_put_by_val_direct):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::emitGenericContiguousPutByVal):
+        (JSC::JIT::emitArrayStoragePutByVal):
+        (JSC::JIT::emitPutByValWithCachedId):
+        (JSC::JIT::emitSlow_op_put_by_val):
+        (JSC::JIT::emit_op_put_getter_by_id):
+        (JSC::JIT::emit_op_put_setter_by_id):
+        (JSC::JIT::emit_op_put_getter_setter_by_id):
+        (JSC::JIT::emit_op_put_getter_by_val):
+        (JSC::JIT::emit_op_put_setter_by_val):
+        (JSC::JIT::emit_op_del_by_id):
+        (JSC::JIT::emit_op_del_by_val):
+        (JSC::JIT::emit_op_try_get_by_id):
+        (JSC::JIT::emitSlow_op_try_get_by_id):
+        (JSC::JIT::emit_op_get_by_id_direct):
+        (JSC::JIT::emitSlow_op_get_by_id_direct):
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emit_op_get_by_id_with_this):
+        (JSC::JIT::emitSlow_op_get_by_id):
+        (JSC::JIT::emitSlow_op_get_by_id_with_this):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::emitSlow_op_put_by_id):
+        (JSC::JIT::emit_op_in_by_id):
+        (JSC::JIT::emitSlow_op_in_by_id):
+        (JSC::JIT::emit_op_resolve_scope):
+        (JSC::JIT::emit_op_get_from_scope):
+        (JSC::JIT::emitSlow_op_get_from_scope):
+        (JSC::JIT::emit_op_put_to_scope):
+        (JSC::JIT::emitSlow_op_put_to_scope):
+        (JSC::JIT::emit_op_get_from_arguments):
+        (JSC::JIT::emit_op_put_to_arguments):
+        (JSC::JIT::privateCompileGetByVal):
+        (JSC::JIT::privateCompileGetByValWithCachedId):
+        (JSC::JIT::privateCompilePutByVal):
+        (JSC::JIT::privateCompilePutByValWithCachedId):
+        (JSC::JIT::emitDoubleLoad):
+        (JSC::JIT::emitContiguousLoad):
+        (JSC::JIT::emitArrayStorageLoad):
+        (JSC::JIT::emitDirectArgumentsGetByVal):
+        (JSC::JIT::emitScopedArgumentsGetByVal):
+        (JSC::JIT::emitIntTypedArrayGetByVal):
+        (JSC::JIT::emitFloatTypedArrayGetByVal):
+        (JSC::JIT::emitIntTypedArrayPutByVal):
+        (JSC::JIT::emitFloatTypedArrayPutByVal):
+        * jit/RegisterSet.cpp:
+        (JSC::RegisterSet::llintBaselineCalleeSaveRegisters):
+        * jit/SlowPathCall.h:
+        (JSC::JITSlowPathCall::JITSlowPathCall):
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::initialize):
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LLIntData.h:
+        (JSC::LLInt::exceptionInstructions):
+        (JSC::LLInt::opcodeMap):
+        (JSC::LLInt::opcodeMapWide):
+        (JSC::LLInt::getOpcode):
+        (JSC::LLInt::getOpcodeWide):
+        (JSC::LLInt::getWideCodePtr):
+        * llint/LLIntOffsetsExtractor.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::llint_trace_operand):
+        (JSC::LLInt::llint_trace_value):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (JSC::LLInt::entryOSR):
+        (JSC::LLInt::setupGetByIdPrototypeCache):
+        (JSC::LLInt::getByVal):
+        (JSC::LLInt::handleHostCall):
+        (JSC::LLInt::setUpCall):
+        (JSC::LLInt::genericCall):
+        (JSC::LLInt::varargsSetup):
+        (JSC::LLInt::commonCallEval):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter.cpp:
+        (JSC::CLoopRegister::operator const Instruction*):
+        (JSC::CLoop::execute):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * offlineasm/arm64.rb:
+        * offlineasm/asm.rb:
+        * offlineasm/ast.rb:
+        * offlineasm/cloop.rb:
+        * offlineasm/generate_offset_extractor.rb:
+        * offlineasm/instructions.rb:
+        * offlineasm/offsets.rb:
+        * offlineasm/parser.rb:
+        * offlineasm/transform.rb:
+        * offlineasm/x86.rb:
+        * parser/ResultType.h:
+        (JSC::ResultType::dump const):
+        (JSC::OperandTypes::first const):
+        (JSC::OperandTypes::second const):
+        (JSC::OperandTypes::dump const):
+        * profiler/ProfilerBytecodeSequence.cpp:
+        (JSC::Profiler::BytecodeSequence::BytecodeSequence):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        (JSC::updateArithProfileForUnaryArithOp):
+        (JSC::updateArithProfileForBinaryArithOp):
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::tryCachePutToScopeGlobal):
+        (JSC::CommonSlowPaths::tryCacheGetFromScopeGlobal):
+        * runtime/ExceptionFuzz.cpp:
+        (JSC::doExceptionFuzzing):
+        * runtime/ExceptionFuzz.h:
+        (JSC::doExceptionFuzzingIfEnabled):
+        * runtime/GetPutInfo.cpp: Copied from Source/JavaScriptCore/bytecode/SpecialPointer.cpp.
+        (JSC::GetPutInfo::dump const):
+        (WTF::printInternal):
+        * runtime/GetPutInfo.h:
+        (JSC::GetPutInfo::operand const):
+        * runtime/JSCPoison.h:
+        * runtime/JSType.cpp: Added.
+        (WTF::printInternal):
+        * runtime/JSType.h:
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::StackFrame::displayName):
+        * runtime/SamplingProfiler.h:
+        (JSC::SamplingProfiler::UnprocessedStackFrame::UnprocessedStackFrame):
+        * runtime/SlowPathReturnType.h:
+        (JSC::encodeResult):
+        (JSC::decodeResult):
+        * runtime/VM.h:
+        * runtime/Watchdog.h:
+        * tools/HeapVerifier.cpp:
+
 2018-10-27  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         Unreviewed, partial rolling in r237254

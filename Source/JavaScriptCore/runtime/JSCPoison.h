@@ -69,7 +69,7 @@ FOR_EACH_JSC_POISON(DECLARE_POISON)
 struct ClassInfo;
 
 using PoisonedClassInfoPtr = Poisoned<GlobalDataPoison, const ClassInfo*>;
-using PoisonedMasmPtr = Poisoned<JITCodePoison, void*>;
+using PoisonedMasmPtr = Poisoned<JITCodePoison, const void*>;
 
 void initializePoison();
 
