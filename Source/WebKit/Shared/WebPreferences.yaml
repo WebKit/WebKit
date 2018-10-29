@@ -1350,7 +1350,7 @@ ProcessSwapOnCrossSiteNavigationEnabled:
   defaultValue: false
   humanReadableName: "Swap Processes on Cross-Site Navigation"
   humanReadableDescription: "Swap WebContent processes on cross-site navigations"
-  category: internal
+  category: experimental
   webcoreBinding: none
 
 ResourceLoadStatisticsDebugMode:
