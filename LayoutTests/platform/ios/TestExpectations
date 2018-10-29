@@ -3108,6 +3108,7 @@ fast/block/block-only/margin-sibling-collapse-propagated.html [ Failure ]
 fast/block/block-only/relative-auto-with-parent-offset.html [ Failure ]
 fast/block/block-only/absolute-position-min-max-height.html [ Failure ]
 fast/block/basic/inline-content-with-floating-image.html [ Failure ]
+fast/block/basic/inline-content-with-floating-images2.html [ Failure ]
 
 # Datalist
 webkit.org/b/186714 fast/forms/datalist/datalist-textinput-keydown.html [ Skip ]

@@ -84,48 +84,96 @@ static bool outputMismatchingSimpleLineInformationIfNeeded(TextStream& stream, c
     return mismatched;
 }
 
+static bool checkForMatchingNonTextRuns(const InlineRun& inlineRun, const WebCore::InlineBox& inlineBox)
+{
+    return areEssentiallyEqual(inlineBox.logicalLeft(), inlineRun.logicalLeft()) && areEssentiallyEqual(inlineBox.logicalRight(), inlineRun.logicalRight());
+}
+
+static bool checkForMatchingTextRuns(const InlineRun& inlineRun, float logicalLeft, float logicalRight, unsigned start, unsigned end)
+{
+    return areEssentiallyEqual(logicalLeft, inlineRun.logicalLeft()) && areEssentiallyEqual(logicalRight, inlineRun.logicalRight()) && start == inlineRun.textContext()->start() && (end == (inlineRun.textContext()->start() + inlineRun.textContext()->length()));
+}
+
 static bool outputMismatchingComplexLineInformationIfNeeded(TextStream& stream, const LayoutContext& layoutContext, const RenderBlockFlow& blockFlow, const Container& inlineFormattingRoot)
 {
     auto& inlineFormattingState = layoutContext.establishedFormattingState(inlineFormattingRoot);
     ASSERT(is<InlineFormattingState>(inlineFormattingState));
     auto& inlineRunList = downcast<InlineFormattingState>(inlineFormattingState).inlineRuns();
 
+    // Collect inlineboxes.
+    Vector<WebCore::InlineBox*> inlineBoxes;
+    for (auto* rootLine = blockFlow.firstRootBox(); rootLine; rootLine = rootLine->nextRootBox()) {
+        for (auto* inlineBox = rootLine->firstChild(); inlineBox; inlineBox = inlineBox->nextOnLine())
+            inlineBoxes.append(inlineBox);
+    }
+
     auto mismatched = false;
     unsigned runIndex = 0;
-    for (auto* rootLine = blockFlow.firstRootBox(); rootLine; rootLine = rootLine->nextRootBox()) {
-        for (auto* lineBox = rootLine->firstChild(); lineBox; lineBox = lineBox->nextOnLine()) {
-            if (runIndex >= inlineRunList.size()) {
-                // FIXME: <span>foobar</span>foobar generates 2 inline text boxes while we only generate one layout run (which is much better, since it enables us to do kerning across inline elements).
-                stream << "Mismatching number of runs: inline runs(" << inlineRunList.size() << ")";
-                stream.nextLine();
-                return true;
+
+    if (inlineBoxes.size() != inlineRunList.size()) {
+        stream << "Warning: mismatching number of runs: inlineboxes(" << inlineBoxes.size() << ") vs. inline runs(" << inlineRunList.size() << ")";
+        stream.nextLine();
+    }
+
+    for (unsigned inlineBoxIndex = 0; inlineBoxIndex < inlineBoxes.size() && runIndex < inlineRunList.size(); ++inlineBoxIndex) {
+        auto* inlineBox = inlineBoxes[inlineBoxIndex];
+        auto* inlineTextBox = is<InlineTextBox>(inlineBox) ? downcast<InlineTextBox>(inlineBox) : nullptr;
+
+        auto& inlineRun = inlineRunList[runIndex];
+        auto matchingRuns = false;
+        if (inlineTextBox) {
+            matchingRuns = checkForMatchingTextRuns(inlineRun, inlineTextBox->logicalLeft(), inlineTextBox->logicalRight(), inlineTextBox->start(), inlineTextBox->end() + 1);
+
+            // <span>foobar</span>foobar generates 2 inline text boxes while we only generate one inline run.
+            // also <div>foo<img style="float: left;">bar</div> too.
+            auto inlineRunEnd = inlineRun.textContext()->start() + inlineRun.textContext()->length();
+            auto textRunMightBeExtended = !matchingRuns && inlineTextBox->end() < inlineRunEnd && inlineBoxIndex < inlineBoxes.size() - 1;
+
+            if (textRunMightBeExtended) {
+                auto logicalLeft = inlineTextBox->logicalLeft();
+                auto logicalRight = inlineTextBox->logicalRight();
+                auto start = inlineTextBox->start();
+                auto end = inlineTextBox->end() + 1;
+                auto index = ++inlineBoxIndex;
+                for (; index < inlineBoxes.size(); ++index) {
+                    auto* inlineBox = inlineBoxes[index];
+                    auto* inlineTextBox = is<InlineTextBox>(inlineBox) ? downcast<InlineTextBox>(inlineBox) : nullptr;
+                    // Can't mix different inline boxes.
+                    if (!inlineTextBox)
+                        break;
+
+                    logicalRight = inlineTextBox->logicalRight();
+                    end += (inlineTextBox->end() + 1);
+                    if (checkForMatchingTextRuns(inlineRun, logicalLeft, logicalRight, start, end)) {
+                        matchingRuns = true;
+                        inlineBoxIndex = index;
+                        break;
+                    }
+
+                    // Went too far?
+                    if (end >= inlineRunEnd)
+                        break;
+                }
             }
+        } else
+            matchingRuns = checkForMatchingNonTextRuns(inlineRun, *inlineBox);
 
-            auto& inlineRun = inlineRunList[runIndex];
-            auto* inlineTextBox = is<InlineTextBox>(lineBox) ? downcast<InlineTextBox>(lineBox) : nullptr;
 
-            auto matchingRuns = areEssentiallyEqual(lineBox->logicalLeft(), inlineRun.logicalLeft()) && areEssentiallyEqual(lineBox->logicalRight(), inlineRun.logicalRight());
-            if (matchingRuns && inlineTextBox) {
-                ASSERT(inlineRun.textContext());
-                matchingRuns = inlineTextBox->start() == inlineRun.textContext()->start() && inlineTextBox->end() + 1 == (inlineRun.textContext()->start() + inlineRun.textContext()->length());
-            }
+        if (!matchingRuns) {
+            stream << "Mismatching: run ";
 
-            if (!matchingRuns) {
-                stream << "Mismatching: run ";
+            if (inlineTextBox)
+                stream << "(" << inlineTextBox->start() << ", " << inlineTextBox->end() + 1 << ")";
+            stream << " (" << inlineBox->logicalLeft() << ", " << inlineBox->logicalRight() << ") ";
 
-                if (inlineTextBox)
-                    stream << "(" << inlineTextBox->start() << ", " << inlineTextBox->end() + 1 << ")";
-                stream << " (" << lineBox->logicalLeft() << ", " << lineBox->logicalRight() << ") ";
-
-                stream << "layout run ";
-                if (inlineRun.textContext())
-                    stream << "(" << inlineRun.textContext()->start() << ", " << inlineRun.textContext()->start() + inlineRun.textContext()->length() << ") ";
-                stream << "(" << inlineRun.logicalLeft() << ", " << inlineRun.logicalRight() << ")";
-                stream.nextLine();
-                mismatched = true;
-            }
-            ++runIndex;
+            stream << "inline run ";
+            if (inlineRun.textContext())
+                stream << "(" << inlineRun.textContext()->start() << ", " << inlineRun.textContext()->start() + inlineRun.textContext()->length() << ") ";
+            stream << "(" << inlineRun.logicalLeft() << ", " << inlineRun.logicalRight() << ")";
+            stream.nextLine();
+            mismatched = true;
         }
+        ++runIndex;
     }
     return mismatched;
 }

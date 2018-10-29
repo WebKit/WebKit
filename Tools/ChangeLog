@@ -1,3 +1,12 @@
+2018-10-29  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Inline layout produces separate runs when float is present.
+        https://bugs.webkit.org/show_bug.cgi?id=190980
+
+        Reviewed by Antti Koivisto.
+
+        * LayoutReloaded/misc/LFC-passing-tests.txt:
+
 2018-10-29  Tadeu Zagallo  <tzagallo@apple.com>
 
         New bytecode format for JSC

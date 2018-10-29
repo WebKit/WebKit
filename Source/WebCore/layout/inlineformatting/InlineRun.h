@@ -68,6 +68,7 @@ struct InlineRun {
     };
     void setTextContext(TextContext textContext) { m_textContext.emplace(textContext); }
     std::optional<TextContext>& textContext() { return m_textContext; }
+    std::optional<TextContext> textContext() const { return m_textContext; }
 
     const InlineItem& inlineItem() const { return m_inlineItem; }
 

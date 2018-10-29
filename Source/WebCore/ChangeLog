@@ -1,3 +1,21 @@
+2018-10-29  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Inline layout produces separate runs when float is present.
+        https://bugs.webkit.org/show_bug.cgi?id=190980
+
+        Reviewed by Antti Koivisto.
+
+        <div>foo<img src="foobar.jpg" style="float: left">bar</div> produces 2 inline boxes (foo) and (bar) -> current inline code
+        while it is really just one continuous run (foobar) -> LFC
+        Adjust verification code to check for such runs.
+
+        * layout/Verification.cpp:
+        (WebCore::Layout::checkForMatchingNonTextRuns):
+        (WebCore::Layout::checkForMatchingTextRuns):
+        (WebCore::Layout::outputMismatchingComplexLineInformationIfNeeded):
+        * layout/inlineformatting/InlineRun.h:
+        (WebCore::Layout::InlineRun::textContext const):
+
 2018-10-29  Youenn Fablet  <youenn@apple.com>
 
         [WebRTC] Enable VP8 by default

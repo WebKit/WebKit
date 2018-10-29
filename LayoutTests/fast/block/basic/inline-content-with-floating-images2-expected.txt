@@ -1,0 +1,41 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+layer at (8,8) size 300x54
+  RenderBlock {DIV} at (0,0) size 300x54
+    RenderText {#text} at (40,0) size 24x18
+      text run at (40,0) width 24: "this"
+    RenderImage {IMG} at (0,0) size 20x30
+    RenderText {#text} at (63,0) size 11x18
+      text run at (63,0) width 11: "is"
+    RenderImage {IMG} at (20,0) size 20x30
+    RenderText {#text} at (73,0) size 296x54
+      text run at (73,0) width 212: "one run long long long long long"
+      text run at (40,18) width 256: "long long long long long long long long"
+      text run at (0,36) width 89: "long long text"
+layer at (8,62) size 300x54
+  RenderBlock {DIV} at (0,54) size 300x54
+    RenderText {#text} at (15,0) size 24x18
+      text run at (15,0) width 24: "this"
+    RenderImage {IMG} at (280,0) size 20x30
+    RenderText {#text} at (38,0) size 12x18
+      text run at (38,0) width 12: "is"
+    RenderImage {IMG} at (260,0) size 20x30
+    RenderText {#text} at (49,0) size 296x54
+      text run at (49,0) width 211: "one run long long long long long"
+      text run at (4,18) width 256: "long long long long long long long long"
+      text run at (211,36) width 89: "long long text"
+layer at (8,116) size 300x54
+  RenderBlock {DIV} at (0,108) size 300x54
+    RenderText {#text} at (35,0) size 24x18
+      text run at (35,0) width 24: "this"
+    RenderImage {IMG} at (0,0) size 20x30
+    RenderText {#text} at (58,0) size 12x18
+      text run at (58,0) width 12: "is"
+    RenderImage {IMG} at (280,0) size 20x30
+    RenderText {#text} at (69,0) size 276x54
+      text run at (69,0) width 211: "one run long long long long long"
+      text run at (24,18) width 256: "long long long long long long long long"
+      text run at (211,36) width 89: "long long text"
