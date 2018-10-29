@@ -77,7 +77,8 @@ LibWebRTCMediaEndpoint::LibWebRTCMediaEndpoint(LibWebRTCPeerConnectionBackend& p
     ASSERT(isMainThread());
     ASSERT(client.factory());
 
-    webrtc::field_trial::InitFieldTrialsFromString("WebRTC-H264Simulcast/Enabled/");
+    if (RuntimeEnabledFeatures::sharedFeatures().webRTCH264SimulcastEnabled())
+        webrtc::field_trial::InitFieldTrialsFromString("WebRTC-H264Simulcast/Enabled/");
 }
 
 bool LibWebRTCMediaEndpoint::setConfiguration(LibWebRTCProvider& client, webrtc::PeerConnectionInterface::RTCConfiguration&& configuration)

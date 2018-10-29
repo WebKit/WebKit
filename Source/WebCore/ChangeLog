@@ -1,3 +1,19 @@
+2018-10-29  Youenn Fablet  <youenn@apple.com>
+
+        Guard H264 simulcast with a runtime flag
+        https://bugs.webkit.org/show_bug.cgi?id=191025
+
+        Reviewed by Eric Carlson.
+
+        Add a runtime flag for H264 simulcast and enable libwebrtc field trial based on it.
+        Covered by existing test.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::LibWebRTCMediaEndpoint):
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::webRTCH264SimulcastEnabled const):
+        (WebCore::RuntimeEnabledFeatures::setWebRTCH264SimulcastEnabled):
+
 2018-10-29  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Compute estimated margin top for inline formatting root's ancestors

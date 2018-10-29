@@ -523,6 +523,15 @@ WebRTCVP8CodecEnabled:
   humanReadableDescription: "Enable WebRTC VP8 codec"
   category: experimental
 
+WebRTCH264SimulcastEnabled:
+  type: bool
+  defaultValue: true
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(WEB_RTC)
+  humanReadableName: "WebRTC H264 Simulcast"
+  humanReadableDescription: "Enable WebRTC H264 Simulcast"
+  category: experimental
+
 UseLegacyTextAlignPositionedElementBehavior:
   type: bool
   defaultValue: false

@@ -216,6 +216,8 @@ public:
     void setPeerConnectionEnabled(bool isEnabled) { m_isPeerConnectionEnabled = isEnabled; }
     bool mdnsICECandidatesEnabled() const { return m_mdnsICECandidatesEnabled; }
     void setMDNSICECandidatesEnabled(bool isEnabled) { m_mdnsICECandidatesEnabled = isEnabled; }
+    bool webRTCH264SimulcastEnabled() const { return m_isWebRTCH264SimulcastEnabled; }
+    void setWebRTCH264SimulcastEnabled(bool isEnabled) { m_isWebRTCH264SimulcastEnabled = isEnabled; }
 #endif
 
 #if ENABLE(LEGACY_CSS_VENDOR_PREFIXES)
@@ -398,6 +400,7 @@ private:
     bool m_isWebRTCUnifiedPlanEnabled { true };
     bool m_isPeerConnectionEnabled { true };
     bool m_mdnsICECandidatesEnabled { false };
+    bool m_isWebRTCH264SimulcastEnabled { true };
 #endif
 
 #if ENABLE(LEGACY_CSS_VENDOR_PREFIXES)
