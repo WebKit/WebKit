@@ -1177,7 +1177,14 @@ bool DOMWindow::offscreenBuffering() const
 int DOMWindow::outerHeight() const
 {
 #if PLATFORM(IOS_FAMILY)
-    return 0;
+    if (!frame())
+        return 0;
+
+    auto* view = frame()->isMainFrame() ? frame()->view() : frame()->mainFrame().view();
+    if (!view)
+        return 0;
+
+    return view->frameRect().height();
 #else
     auto* frame = this->frame();
     if (!frame)
@@ -1194,7 +1201,14 @@ int DOMWindow::outerHeight() const
 int DOMWindow::outerWidth() const
 {
 #if PLATFORM(IOS_FAMILY)
-    return 0;
+    if (!frame())
+        return 0;
+
+    auto* view = frame()->isMainFrame() ? frame()->view() : frame()->mainFrame().view();
+    if (!view)
+        return 0;
+
+    return view->frameRect().width();
 #else
     auto* frame = this->frame();
     if (!frame)

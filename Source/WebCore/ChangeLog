@@ -1,3 +1,18 @@
+2018-10-30  Zalan Bujtas  <zalan@apple.com>
+
+        [iOS] Use the mainframe view size to compute window.outerWidth/height.
+        https://bugs.webkit.org/show_bug.cgi?id=191070
+        <rdar://problem/42368377>
+
+        Reviewed by Tim Horton.
+
+        Use a more reasonable value for window.outerWidth and height.
+        (WKWebView's frame rect -> drawing area sizing -> WebPage's view size -> FrameView size)
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::outerHeight const):
+        (WebCore::DOMWindow::outerWidth const):
+
 2018-10-30  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] PaymentRequest.canMakePayment() should resolve to true whenever Apple Pay is available
