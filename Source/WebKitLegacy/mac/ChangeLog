@@ -1,3 +1,18 @@
+2018-10-30  Alexey Proskuryakov  <ap@apple.com>
+
+        Enable InstallAPI for iOS unconditionally
+        https://bugs.webkit.org/show_bug.cgi?id=191043
+        rdar://problem/32728423
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/WebKitLegacy.xcconfig: Enabled it. Added NSURLDownloadSPI.h as an
+        excluded header - WebKitLegacy doesn't export NSURLDownload, so the definition
+        shouldn't be processed by InstallAPI.
+        * MigrateHeaders.make: Removed an obsolete workaround.
+        * Misc/NSURLDownloadSPI.h: Added.
+        * Misc/WebDownload.h: Use NSURLDownloadSPI.h instead of defining SPI inline.
+
 2018-10-29  Tim Horton  <timothy_horton@apple.com>
 
         Modernize WebKit nibs and lprojs for localization's sake

@@ -787,6 +787,7 @@
 		DD89682009AA87240097E7F0 /* WebElementDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = DD89681E09AA87240097E7F0 /* WebElementDictionary.h */; };
 		DD89682109AA87240097E7F0 /* WebElementDictionary.mm in Sources */ = {isa = PBXBuildFile; fileRef = DD89681F09AA87240097E7F0 /* WebElementDictionary.mm */; };
 		E13E782C1E5A7365001849D1 /* WebCreateFragmentInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = E13E782B1E5A7365001849D1 /* WebCreateFragmentInternal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E1531BD82187B954002E3F81 /* NSURLDownloadSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = E1531BD72187B8F2002E3F81 /* NSURLDownloadSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E15663190FB61C1F00C199CA /* WebDownload.mm in Sources */ = {isa = PBXBuildFile; fileRef = E15663180FB61C1F00C199CA /* WebDownload.mm */; };
 		E169836211346D1B00894115 /* ProxyRuntimeObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E169836111346D1B00894115 /* ProxyRuntimeObject.h */; };
 		E169836C11346D5600894115 /* ProxyRuntimeObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = E169836B11346D5600894115 /* ProxyRuntimeObject.mm */; };
@@ -1545,6 +1546,7 @@
 		DD89681E09AA87240097E7F0 /* WebElementDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebElementDictionary.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		DD89681F09AA87240097E7F0 /* WebElementDictionary.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebElementDictionary.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		E13E782B1E5A7365001849D1 /* WebCreateFragmentInternal.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = WebCreateFragmentInternal.h; sourceTree = "<group>"; };
+		E1531BD72187B8F2002E3F81 /* NSURLDownloadSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSURLDownloadSPI.h; sourceTree = "<group>"; };
 		E15663180FB61C1F00C199CA /* WebDownload.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDownload.mm; sourceTree = "<group>"; };
 		E169836111346D1B00894115 /* ProxyRuntimeObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProxyRuntimeObject.h; sourceTree = "<group>"; };
 		E169836B11346D5600894115 /* ProxyRuntimeObject.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ProxyRuntimeObject.mm; sourceTree = "<group>"; };
@@ -1773,6 +1775,7 @@
 			isa = PBXGroup;
 			children = (
 				A10C1D2018202FAF0036883A /* ios */,
+				E1531BD72187B8F2002E3F81 /* NSURLDownloadSPI.h */,
 				29AEF95D134C755400FE5096 /* OutlookQuirksUserScript.js */,
 				5241ADF30B1BC48A004012BD /* WebCache.h */,
 				5241ADF40B1BC48A004012BD /* WebCache.mm */,
@@ -2782,6 +2785,7 @@
 				93D436AB1D57ABEE00AB85EA /* DOMException.h in Headers */,
 				93D436AC1D57ABEE00AB85EA /* DOMExtensions.h in Headers */,
 				93D436AD1D57ABEE00AB85EA /* DOMFile.h in Headers */,
+				E1531BD82187B954002E3F81 /* NSURLDownloadSPI.h in Headers */,
 				93D436AF1D57ABEE00AB85EA /* DOMFileInternal.h in Headers */,
 				93D436B01D57ABEE00AB85EA /* DOMFileList.h in Headers */,
 				93D436B21D57ABEE00AB85EA /* DOMFileListInternal.h in Headers */,
