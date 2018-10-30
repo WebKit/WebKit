@@ -74,12 +74,12 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         this._checkboxsNavigationItemGroup = new WI.GroupNavigationItem([this._preserveLogNavigationItem, new WI.DividerNavigationItem]);
 
         let scopeBarItems = [
-            new WI.ScopeBarItem(WI.LogContentView.Scopes.All, WI.UIString("All"), true),
-            new WI.ScopeBarItem(WI.LogContentView.Scopes.Errors, WI.UIString("Errors"), false, "errors"),
-            new WI.ScopeBarItem(WI.LogContentView.Scopes.Warnings, WI.UIString("Warnings"), false, "warnings"),
-            new WI.ScopeBarItem(WI.LogContentView.Scopes.Logs, WI.UIString("Logs"), false, "logs"),
-            new WI.ScopeBarItem(WI.LogContentView.Scopes.Infos, WI.UIString("Infos"), false, "infos", true),
-            new WI.ScopeBarItem(WI.LogContentView.Scopes.Debugs, WI.UIString("Debugs"), false, "debugs", true),
+            new WI.ScopeBarItem(WI.LogContentView.Scopes.All, WI.UIString("All"), {exclusive: true}),
+            new WI.ScopeBarItem(WI.LogContentView.Scopes.Errors, WI.UIString("Errors"), {className: "errors"}),
+            new WI.ScopeBarItem(WI.LogContentView.Scopes.Warnings, WI.UIString("Warnings"), {className: "warnings"}),
+            new WI.ScopeBarItem(WI.LogContentView.Scopes.Logs, WI.UIString("Logs"), {className: "logs"}),
+            new WI.ScopeBarItem(WI.LogContentView.Scopes.Infos, WI.UIString("Infos"), {className: "infos", hidden: true}),
+            new WI.ScopeBarItem(WI.LogContentView.Scopes.Debugs, WI.UIString("Debugs"), {className: "debugs", hidden: true}),
         ];
 
         this._scopeBar = new WI.ScopeBar("log-scope-bar", scopeBarItems, scopeBarItems[0]);
@@ -88,9 +88,9 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         this._hasNonDefaultLogChannelMessage = false;
         if (WI.ConsoleManager.supportsLogChannels()) {
             let messageChannelBarItems = [
-                new WI.ScopeBarItem(WI.LogContentView.Scopes.AllChannels, WI.UIString("All"), true),
-                new WI.ScopeBarItem(WI.LogContentView.Scopes.Media, WI.UIString("Media"), false, "media"),
-                new WI.ScopeBarItem(WI.LogContentView.Scopes.WebRTC, WI.UIString("WebRTC"), false, "webrtc")
+                new WI.ScopeBarItem(WI.LogContentView.Scopes.AllChannels, WI.UIString("All"), {exclusive: true}),
+                new WI.ScopeBarItem(WI.LogContentView.Scopes.Media, WI.UIString("Media"), {className: "media"}),
+                new WI.ScopeBarItem(WI.LogContentView.Scopes.WebRTC, WI.UIString("WebRTC"), {className: "webrtc"}),
             ];
 
             this._messageSourceBar = new WI.ScopeBar("message-channel-scope-bar", messageChannelBarItems, messageChannelBarItems[0]);

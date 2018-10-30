@@ -54,8 +54,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         // FIXME: Network Timeline.
         // FIXME: Throttling.
 
-        const exclusive = true;
-        this._typeFilterScopeBarItemAll = new WI.ScopeBarItem("network-type-filter-all", WI.UIString("All"), exclusive);
+        this._typeFilterScopeBarItemAll = new WI.ScopeBarItem("network-type-filter-all", WI.UIString("All"), {exclusive: true});
         let typeFilterScopeBarItems = [this._typeFilterScopeBarItemAll];
 
         let uniqueTypes = [

@@ -35,7 +35,7 @@ WI.StorageSidebarPanel = class StorageSidebarPanel extends WI.NavigationSidebarP
         var scopeItemPrefix = "storage-sidebar-";
         var scopeBarItems = [];
 
-        scopeBarItems.push(new WI.ScopeBarItem(scopeItemPrefix + "type-all", WI.UIString("All Storage"), true));
+        scopeBarItems.push(new WI.ScopeBarItem(scopeItemPrefix + "type-all", WI.UIString("All Storage"), {exclusive: true}));
 
         var storageTypes = [
             {identifier: "application-cache", title: WI.UIString("Application Cache"), classes: [WI.ApplicationCacheFrameTreeElement, WI.ApplicationCacheManifestTreeElement]},

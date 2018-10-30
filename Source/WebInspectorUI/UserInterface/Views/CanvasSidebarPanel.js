@@ -494,10 +494,7 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
         if (!selectedScopeBarItem) {
             selectedScopeBarItem = scopeBarItems[0];
 
-            const exclusive = true;
-            const className = null;
-            const hidden = true;
-            this._placeholderScopeBarItem = new WI.ScopeBarItem("canvas-recording-scope-bar-item-placeholder", WI.UIString("Recordings"), exclusive, className, hidden);
+            this._placeholderScopeBarItem = new WI.ScopeBarItem("canvas-recording-scope-bar-item-placeholder", WI.UIString("Recordings"), {exclusive: true, hidden: true});
             this._placeholderScopeBarItem.selected = true;
 
             scopeBarItems.unshift(this._placeholderScopeBarItem);

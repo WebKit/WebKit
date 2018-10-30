@@ -37,7 +37,7 @@ WI.ResourceSidebarPanel = class ResourceSidebarPanel extends WI.NavigationSideba
         var scopeItemPrefix = "resource-sidebar-";
         var scopeBarItems = [];
 
-        scopeBarItems.push(new WI.ScopeBarItem(scopeItemPrefix + "type-all", WI.UIString("All Resources"), true));
+        scopeBarItems.push(new WI.ScopeBarItem(scopeItemPrefix + "type-all", WI.UIString("All Resources"), {exclusive: true}));
 
         for (var key in WI.Resource.Type) {
             var value = WI.Resource.Type[key];

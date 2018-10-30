@@ -1,3 +1,39 @@
+2018-10-30  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: refactor WI.ScopeBarItem for better extensibility
+        https://bugs.webkit.org/show_bug.cgi?id=190986
+
+        Reviewed by Brian Burg.
+
+        Renames `withModifier` to `extendSelection` for clarity of usage, and to allow the changes
+        in <https://webkit.org/b/190754> (adding an option to allow `WI.ScopeBarItem`s to be
+        selected without deselcting any other `WI.ScopeBarItem`s) to use the same variable.
+
+        * UserInterface/Views/ScopeBarItem.js:
+        (WI.ScopeBarItem):
+        (WI.ScopeBarItem.prototype.set selected):
+        (WI.ScopeBarItem.prototype._handleMouseDown):
+        (WI.ScopeBarItem.prototype.setSelected): Deleted.
+
+        * UserInterface/Views/ScopeBar.js:
+        (WI.ScopeBar):
+        (WI.ScopeBar.prototype._populate):
+        (WI.ScopeBar.prototype._itemSelectionDidChange):
+
+        * UserInterface/Views/MultipleScopeBarItem.js:
+        (WI.MultipleScopeBarItem.prototype.set selectedScopeBarItem):
+
+        * UserInterface/Views/CanvasSidebarPanel.js:
+        (WI.CanvasSidebarPanel.prototype._updateRecordingScopeBar):
+        * UserInterface/Views/LogContentView.js:
+        (WI.LogContentView):
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView):
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WI.ResourceSidebarPanel):
+        * UserInterface/Views/StorageSidebarPanel.js:
+        (WI.StorageSidebarPanel):
+
 2018-10-29  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Flash views with red outline on initial layout

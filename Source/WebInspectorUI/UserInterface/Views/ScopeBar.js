@@ -133,10 +133,12 @@ WI.ScopeBar = class ScopeBar extends WI.NavigationItem
             }
         }
 
-        if (!this.selectedItems.length && this._defaultItem)
-            this._defaultItem.selected = true;
+        if (this._defaultItem) {
+            if (!this.selectedItems.length)
+                this._defaultItem.selected = true;
 
-        this._element.classList.toggle("default-item-selected", this._defaultItem.selected);
+            this._element.classList.toggle("default-item-selected", this._defaultItem.selected);
+        }
     }
 
     _itemSelectionDidChange(event)
@@ -152,7 +154,7 @@ WI.ScopeBar = class ScopeBar extends WI.NavigationItem
                     item.selected = false;
             }
         } else {
-            var replacesCurrentSelection = this._shouldGroupNonExclusiveItems || !event.data.withModifier;
+            let replacesCurrentSelection = this._shouldGroupNonExclusiveItems || !event.data.extendSelection;
             for (var i = 0; i < this._items.length; ++i) {
                 item = this._items[i];
                 if (item.exclusive && item !== sender && sender.selected)
@@ -162,11 +164,13 @@ WI.ScopeBar = class ScopeBar extends WI.NavigationItem
             }
         }
 
-        // If nothing is selected anymore, select the default item.
-        if (!this.selectedItems.length && this._defaultItem)
-            this._defaultItem.selected = true;
+        if (this._defaultItem) {
+            if (!this.selectedItems.length)
+                this._defaultItem.selected = true;
 
-        this._element.classList.toggle("default-item-selected", this._defaultItem.selected);
+            this._element.classList.toggle("default-item-selected", this._defaultItem.selected);
+        }
+
         this.dispatchEventToListeners(WI.ScopeBar.Event.SelectionChanged);
     }
 };

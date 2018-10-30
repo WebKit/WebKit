@@ -137,8 +137,9 @@ WI.MultipleScopeBarItem = class MultipleScopeBarItem extends WI.Object
             this._selectedScopeBarItem.selected = true;
         }
 
-        var withModifier = WI.modifierKeys.metaKey && !WI.modifierKeys.ctrlKey && !WI.modifierKeys.altKey && !WI.modifierKeys.shiftKey;
-        this.dispatchEventToListeners(WI.ScopeBarItem.Event.SelectionChanged, {withModifier});
+        this.dispatchEventToListeners(WI.ScopeBarItem.Event.SelectionChanged, {
+            extendSelection: WI.modifierKeys.metaKey && !WI.modifierKeys.ctrlKey && !WI.modifierKeys.altKey && !WI.modifierKeys.shiftKey,
+        });
 
         this._ignoreItemSelectedEvent = false;
     }
