@@ -35,7 +35,10 @@
 #if !TARGET_OS_IPHONE || (defined USE_APPLE_INTERNAL_SDK && USE_APPLE_INTERNAL_SDK)
 #import <Foundation/NSURLDownload.h>
 #else
-#import <WebKitLegacy/NSURLDownloadSPI.h>
+@interface NSURLDownload : NSObject
+@end
+
+@protocol NSURLDownloadDelegate;
 #endif
 
 #if TARGET_OS_IPHONE

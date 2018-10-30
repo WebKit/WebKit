@@ -87,9 +87,15 @@ REEXPORT_FILE = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitLegacy/ReexportedWebC
 reexport_headers : $(REEXPORT_FILE)
 
 TAPI_PATH = $(strip $(shell xcrun --find tapi 2>/dev/null))
+ifneq (,$(TAPI_PATH))
+REEXPORT_COMMAND = $(TAPI_PATH) reexport -arch $(WK_CURRENT_ARCH) -$(DEPLOYMENT_TARGET_CLANG_FLAG_NAME)=$($(DEPLOYMENT_TARGET_CLANG_ENV_NAME)) -isysroot $(SDK_DIR) $(HEADER_FLAGS) $(FRAMEWORK_FLAGS) $^ -o $@
+else
+# Temporary stub for SDKs that don't have the tapi command, <rdar://problem/24582471>.
+REEXPORT_COMMAND = touch $@
+endif
 
 $(REEXPORT_FILE) : $(HEADERS)
-	$(TAPI_PATH) reexport -arch $(WK_CURRENT_ARCH) -$(DEPLOYMENT_TARGET_CLANG_FLAG_NAME)=$($(DEPLOYMENT_TARGET_CLANG_ENV_NAME)) -isysroot $(SDK_DIR) $(HEADER_FLAGS) $(FRAMEWORK_FLAGS) $^ -o $@
+	$(REEXPORT_COMMAND)
 
 else
 

@@ -1,3 +1,21 @@
+2018-10-30  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r237600 and r237604.
+        https://bugs.webkit.org/show_bug.cgi?id=191086
+
+        Breaks internal iOS builds (Requested by ryanhadd_ on
+        #webkit).
+
+        Reverted changesets:
+
+        "Enable InstallAPI for iOS unconditionally"
+        https://bugs.webkit.org/show_bug.cgi?id=191043
+        https://trac.webkit.org/changeset/237600
+
+        "Build fix attempt after enabling InstallAPI for iOS."
+        https://bugs.webkit.org/show_bug.cgi?id=191043
+        https://trac.webkit.org/changeset/237604
+
 2018-10-30  Alexey Proskuryakov  <ap@apple.com>
 
         Enable InstallAPI for iOS unconditionally
