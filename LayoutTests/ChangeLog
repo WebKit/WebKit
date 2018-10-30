@@ -1,3 +1,18 @@
+2018-10-30  Sihui Liu  <sihui_liu@apple.com>
+
+        IndexedDB: iteration of cursors skip records if updated or deleted
+        https://bugs.webkit.org/show_bug.cgi?id=190917
+        <rdar://problem/35250410>
+
+        Reviewed by Chris Dumez.
+
+        * storage/indexeddb/cursor-update-while-iterating-expected.txt: Added.
+        * storage/indexeddb/cursor-update-while-iterating.html: Added.
+        * storage/indexeddb/resources/cursor-update-while-iterating.js: Added.
+        (prepareDatabase):
+        (onOpenSuccess.request.onsuccess):
+        (onOpenSuccess):
+
 2018-10-28  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Implement the update animations and send events procedure

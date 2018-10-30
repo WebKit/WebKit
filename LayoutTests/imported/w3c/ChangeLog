@@ -1,3 +1,15 @@
+2018-10-30  Sihui Liu  <sihui_liu@apple.com>
+
+        IndexedDB: iteration of cursors skip records if updated or deleted
+        https://bugs.webkit.org/show_bug.cgi?id=190917
+        <rdar://problem/35250410>
+
+        Reviewed by Chris Dumez.
+
+        Rebaseline the expectation for test that passes.
+
+        * web-platform-tests/IndexedDB/idbcursor-iterating-update-expected.txt:
+
 2018-10-28  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Implement the update animations and send events procedure

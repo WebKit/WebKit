@@ -44,6 +44,8 @@ class IDBGetResult;
 
 namespace IDBServer {
 
+enum class ShouldFetchForSameKey : bool { No, Yes };
+
 class SQLiteIDBTransaction;
 
 class SQLiteIDBCursor {
@@ -91,7 +93,7 @@ private:
         ShouldFetchAgain
     };
 
-    bool fetch();
+    bool fetch(ShouldFetchForSameKey = ShouldFetchForSameKey::No);
 
     struct SQLiteCursorRecord {
         IDBCursorRecord record;

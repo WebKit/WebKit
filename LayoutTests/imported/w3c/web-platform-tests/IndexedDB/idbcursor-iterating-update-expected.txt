@@ -1,8 +1,4 @@
-CONSOLE MESSAGE: line 2659: Error: assert_equals: Cursor should iterate over 4 records expected 4 but got 2
-CONSOLE MESSAGE: line 2659: Error: assert_equals: Cursor should iterate over 4 records expected 4 but got 2
 
-Harness Error (FAIL), message = Error: assert_equals: Cursor should iterate over 4 records expected 4 but got 2
-
-TIMEOUT Calling cursor => cursor.update({}) doesn't affect index iteration Test timed out
-TIMEOUT Calling cursor => cursor.delete() doesn't affect index iteration Test timed out
+PASS Calling cursor => cursor.update({}) doesn't affect index iteration 
+PASS Calling cursor => cursor.delete() doesn't affect index iteration 
 

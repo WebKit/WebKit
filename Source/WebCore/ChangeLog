@@ -1,3 +1,23 @@
+2018-10-30  Sihui Liu  <sihui_liu@apple.com>
+
+        IndexedDB: iteration of cursors skip records if updated or deleted
+        https://bugs.webkit.org/show_bug.cgi?id=190917
+        <rdar://problem/35250410>
+
+        Reviewed by Chris Dumez.
+
+        When object store has changes, we cleared cached records and reset the SQLite statement, 
+        updating the boundary to the next key in cursor's direction. Therefore, the cursor could 
+        jump to the next key after update or deletion.
+        We should cache those records before changing the statement.
+
+        Test: storage/indexeddb/cursor-update-while-iterating.html
+
+        * Modules/indexeddb/server/SQLiteIDBCursor.cpp:
+        (WebCore::IDBServer::SQLiteIDBCursor::objectStoreRecordsChanged):
+        (WebCore::IDBServer::SQLiteIDBCursor::fetch):
+        * Modules/indexeddb/server/SQLiteIDBCursor.h:
+
 2018-10-29  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Introduce InlineFormattingContextGeometry class

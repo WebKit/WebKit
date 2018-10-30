@@ -214,32 +214,40 @@ void SQLiteIDBCursor::objectStoreRecordsChanged()
     if (m_statementNeedsReset)
         return;
 
+    ASSERT(!m_fetchedRecords.isEmpty());
+
+    m_currentKeyForUniqueness = m_fetchedRecords.first().record.key;
+
+    if (m_cursorDirection != IndexedDB::CursorDirection::Nextunique && m_cursorDirection != IndexedDB::CursorDirection::Prevunique) {
+        if (!m_fetchedRecords.last().isTerminalRecord())
+            fetch(ShouldFetchForSameKey::Yes);
+
+        while (m_fetchedRecords.last().record.key != m_fetchedRecords.first().record.key)
+            m_fetchedRecords.removeLast();
+    } else
+        m_fetchedRecords.clear();
+
     // If ObjectStore or Index contents changed, we need to reset the statement and bind new parameters to it.
     // This is to pick up any changes that might exist.
     // We also need to throw away any fetched records as they may no longer be valid.
 
     m_statementNeedsReset = true;
-    ASSERT(!m_fetchedRecords.isEmpty());
 
     if (m_cursorDirection == IndexedDB::CursorDirection::Next || m_cursorDirection == IndexedDB::CursorDirection::Nextunique) {
-        m_currentLowerKey = m_fetchedRecords.first().record.key;
+        m_currentLowerKey = m_currentKeyForUniqueness;
         if (!m_keyRange.lowerOpen) {
             m_keyRange.lowerOpen = true;
             m_keyRange.lowerKey = m_currentLowerKey;
             m_statement = nullptr;
         }
     } else {
-        m_currentUpperKey = m_fetchedRecords.first().record.key;
+        m_currentUpperKey = m_currentKeyForUniqueness;
         if (!m_keyRange.upperOpen) {
             m_keyRange.upperOpen = true;
             m_keyRange.upperKey = m_currentUpperKey;
             m_statement = nullptr;
         }
     }
-
-    m_currentKeyForUniqueness = m_fetchedRecords.first().record.key;
-
-    m_fetchedRecords.clear();
 }
 
 void SQLiteIDBCursor::resetAndRebindStatement()
@@ -360,23 +368,25 @@ bool SQLiteIDBCursor::advance(uint64_t count)
     return true;
 }
 
-bool SQLiteIDBCursor::fetch()
+bool SQLiteIDBCursor::fetch(ShouldFetchForSameKey shouldFetchForSameKey)
 {
     ASSERT(m_fetchedRecords.isEmpty() || !m_fetchedRecords.last().isTerminalRecord());
 
     m_fetchedRecords.append({ });
 
-    bool isUnique = m_cursorDirection == IndexedDB::CursorDirection::Nextunique || m_cursorDirection == IndexedDB::CursorDirection::Prevunique;
+    bool isUnique = m_cursorDirection == IndexedDB::CursorDirection::Nextunique || m_cursorDirection == IndexedDB::CursorDirection::Prevunique || shouldFetchForSameKey == ShouldFetchForSameKey::Yes;
     if (!isUnique)
         return fetchNextRecord(m_fetchedRecords.last());
 
-    while (!m_fetchedRecords.last().completed) {
-        if (!fetchNextRecord(m_fetchedRecords.last()))
-            return false;
-
-        // If the new current key is different from the old current key, we're done.
+    while (fetchNextRecord(m_fetchedRecords.last())) {
         if (m_currentKeyForUniqueness.compare(m_fetchedRecords.last().record.key))
             return true;
+
+        if (m_fetchedRecords.last().completed)
+            return false;
+
+        if (shouldFetchForSameKey == ShouldFetchForSameKey::Yes)
+            m_fetchedRecords.append({ });
     }
 
     return false;
