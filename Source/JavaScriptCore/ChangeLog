@@ -1,3 +1,22 @@
+2018-10-30  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        "Unreviewed, partial rolling in r237254"
+        https://bugs.webkit.org/show_bug.cgi?id=190340
+
+        This only adds Parser.{cpp,h}. And it is not used in this patch.
+        It examines that the regression is related to exact Parser changes.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseInner):
+        (JSC::Parser<LexerType>::parseSingleFunction):
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        (JSC::Parser<LexerType>::parseFunctionDeclaration):
+        (JSC::Parser<LexerType>::parseAsyncFunctionDeclaration):
+        * parser/Parser.h:
+        (JSC::Parser<LexerType>::parse):
+        (JSC::parse):
+        (JSC::parseFunctionForFunctionConstructor):
+
 2018-10-29  Mark Lam  <mark.lam@apple.com>
 
         Correctly detect string overflow when using the 'Function' constructor.
