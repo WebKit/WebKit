@@ -2897,13 +2897,8 @@ webkit.org/b/190032 compositing/layer-creation/mismatched-transform-transition-o
 webkit.org/b/190032 compositing/layer-creation/scale-rotation-transition-overlap.html [ Failure ]
 webkit.org/b/190032 compositing/layer-creation/translate-scale-transition-overlap.html [ Failure ]
 webkit.org/b/190032 compositing/layer-creation/translate-transition-overlap.html [ Failure ]
-webkit.org/b/190032 compositing/visible-rect/animated-from-none.html [ Failure ]
-webkit.org/b/190032 fast/animation/css-animation-resuming-when-visible-with-style-change2.html [ Failure ]
 webkit.org/b/190032 imported/w3c/web-platform-tests/css/css-logical/animation-003.tentative.html [ Failure ]
 webkit.org/b/190032 imported/w3c/web-platform-tests/css/css-scoping/keyframes-001.html [ Failure ]
-webkit.org/b/190032 imported/w3c/web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-context.html [ Failure ]
-webkit.org/b/190032 imported/w3c/web-platform-tests/web-animations/interfaces/Animatable/animate.html [ Failure ]
-webkit.org/b/190032 imported/w3c/web-platform-tests/web-animations/timing-model/animations/current-time.html [ Failure ]
 
 # FIXME: Need to implement MediaRecorder dataavailable event to support these testcases
 fast/mediacapturefromelement/CanvasCaptureMediaStream-imagebitmaprenderingcontext.html [ Skip ]

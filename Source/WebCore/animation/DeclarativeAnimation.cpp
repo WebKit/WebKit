@@ -49,6 +49,17 @@ DeclarativeAnimation::~DeclarativeAnimation()
 {
 }
 
+void DeclarativeAnimation::tick()
+{
+    WebAnimation::tick();
+    invalidateDOMEvents();
+}
+
+bool DeclarativeAnimation::needsTick() const
+{
+    return WebAnimation::needsTick() || m_eventQueue.hasPendingEvents();
+}
+
 void DeclarativeAnimation::remove()
 {
     m_eventQueue.close();
@@ -84,16 +95,16 @@ void DeclarativeAnimation::syncPropertiesWithBackingAnimation()
 {
 }
 
-std::optional<double> DeclarativeAnimation::bindingsStartTime() const
+std::optional<double> DeclarativeAnimation::startTime() const
 {
     flushPendingStyleChanges();
-    return WebAnimation::bindingsStartTime();
+    return WebAnimation::startTime();
 }
 
-void DeclarativeAnimation::setBindingsStartTime(std::optional<double> startTime)
+void DeclarativeAnimation::setStartTime(std::optional<double> startTime)
 {
     flushPendingStyleChanges();
-    return WebAnimation::setBindingsStartTime(startTime);
+    return WebAnimation::setStartTime(startTime);
 }
 
 std::optional<double> DeclarativeAnimation::bindingsCurrentTime() const

@@ -47,8 +47,10 @@ class Element;
 class AnimationTimeline : public RefCounted<AnimationTimeline> {
 public:
     bool isDocumentTimeline() const { return m_classType == DocumentTimelineClass; }
-    void addAnimation(Ref<WebAnimation>&&);
-    void removeAnimation(Ref<WebAnimation>&&);
+
+    virtual void animationTimingDidChange(WebAnimation&);
+    virtual void removeAnimation(WebAnimation&);
+
     std::optional<double> bindingsCurrentTime();
     virtual std::optional<Seconds> currentTime() { return m_currentTime; }
 
@@ -77,12 +79,7 @@ protected:
 
     explicit AnimationTimeline(ClassType);
 
-    bool hasElementAnimations() const { return !m_elementToAnimationsMap.isEmpty() || !m_elementToCSSAnimationsMap.isEmpty() || !m_elementToCSSTransitionsMap.isEmpty(); }
-
-    const ListHashSet<WebAnimation*>& animationsWithoutTarget() const { return m_animationsWithoutTarget; }
-    const HashMap<Element*, ListHashSet<RefPtr<WebAnimation>>>& elementToAnimationsMap() { return m_elementToAnimationsMap; }
-    const HashMap<Element*, ListHashSet<RefPtr<WebAnimation>>>& elementToCSSAnimationsMap() { return m_elementToCSSAnimationsMap; }
-    const HashMap<Element*, ListHashSet<RefPtr<WebAnimation>>>& elementToCSSTransitionsMap() { return m_elementToCSSTransitionsMap; }
+    ListHashSet<RefPtr<WebAnimation>> m_animations;
 
 private:
     HashMap<Element*, ListHashSet<RefPtr<WebAnimation>>>& relevantMapForAnimation(WebAnimation&);
@@ -94,9 +91,6 @@ private:
     HashMap<Element*, ListHashSet<RefPtr<WebAnimation>>> m_elementToAnimationsMap;
     HashMap<Element*, ListHashSet<RefPtr<WebAnimation>>> m_elementToCSSAnimationsMap;
     HashMap<Element*, ListHashSet<RefPtr<WebAnimation>>> m_elementToCSSTransitionsMap;
-    ListHashSet<RefPtr<WebAnimation>> m_animations;
-
-    ListHashSet<WebAnimation*> m_animationsWithoutTarget;
     HashMap<Element*, HashMap<String, RefPtr<CSSAnimation>>> m_elementToCSSAnimationByName;
     HashMap<Element*, HashMap<CSSPropertyID, RefPtr<CSSTransition>>> m_elementToRunningCSSTransitionByCSSPropertyID;
     HashMap<Element*, HashMap<CSSPropertyID, RefPtr<CSSTransition>>> m_elementToCompletedCSSTransitionByCSSPropertyID;

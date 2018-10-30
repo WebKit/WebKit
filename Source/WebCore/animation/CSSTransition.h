@@ -49,7 +49,6 @@ public:
     const RenderStyle& reversingAdjustedStartStyle() const { return *m_reversingAdjustedStartStyle; }
     double reversingShorteningFactor() const { return m_reversingShorteningFactor; }
 
-    bool canBeListed() const final;
     void resolve(RenderStyle&) final;
 
 private:

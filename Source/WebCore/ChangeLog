@@ -1,3 +1,165 @@
+2018-10-28  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Implement the update animations and send events procedure
+        https://bugs.webkit.org/show_bug.cgi?id=191013
+        <rdar://problem/45620495>
+
+        Reviewed by Dean Jackson.
+
+        While we implemented the various parts of what the Web Animations specification refers to as the "update animations and send events"
+        procedure, we did not implement it as one function and in the correct order, specifically updating animations and sending events in
+        two separate tasks. We now have a single method on DocumentTimeline which runs as the DisplayRefreshMonitor fires to update each
+        "relevant" animation with the current time, perform a microtask checkpoint and dispatch events.
+
+        Implementing this procedure allowed us to make several enhancements:
+
+        1. We introduce the concept of a "relevant" animation, which is essentially an animation that is either pending or playing. All animations
+        in a different state are no longer owned by the DocumentTimeline and can thus be destroyed if the developer doesn't hold references in JS.
+        Maintaining such a list guarantees that we're only updating animations that would have changed state since the last time the "update animations
+        and send events" procedure was run. Note that DeclarativeAnimation instances are also considered to be relevant if they have queued DOM events
+        to dispatch as they could otherwise be destroyed before they can fully dispatch them.
+
+        2. We no longer conflate the timing model and effects. Until now the way we would update animations was to go through all elements for which
+        we had a registered animation, invalidate their style and finally forcing a style update on the document. We had a separate data structure where
+        we help animations without targets so we update these as well in a separate pass, in order to make sure that promises and events would fire for
+        them as expected. We now let the "update animations and send events" procedure update the timing of all relevant animations and let individual
+        animation effects invalidate their style as needed, the document style invalidation happening naturally without DocumentTimeline forcing it. 
+
+        3. We use a single step to schedule the update of animations, which is to register for a display refresh monitor update provided a "relevant"
+        animation is known since the previous update. Until now we first had an "timing model invalidation" task scheduled upon any change of an animation's
+        timing model, which would then create a timer to the earliest moment any listed animation would require an update, finally registering a display
+        refresh monitor update, which used at least GenericTaskQueue<Timer> and potentially two, whereas we use none right now.
+
+        4. We allow for a display refresh monitor update to be canceled should the number of "relevant" animations since the last update goes back to 0.
+
+        To facilitate all of this, we have changed the m_animations ListHashSet to contain only the "relevant" animations, and no longer every animation created
+        that has this DocumentTimeline set as their "timeline" property. To keep this list current, every single change that changes a given animation's timing
+        ends up calling AnimationTimeline::animationTimingDidChange() passing the animation as the sole parameter and adding this animation to m_animations. We
+        immediately schedule a display refresh monitor update if one wasn't already scheduled. Then, when running the "update animations and send events"
+        procedure, we call a new WebAnimation::tick() method on each of those animations, which updates this animation's effect and relevance, using the newly
+        computed relevance to identify whether this animation should be kept in the m_animations ListHashSet.
+
+        This is only the first step towards a more efficient update and ownership model of animations by the document timeline since animations created as CSS
+        Animations and CSS Transitions are committed through CSS have dedicated data structures that are not updated in this particular patch, but this will be
+        addressed in a followup to keep this already significant patch smaller. Another issue that will be addressed later is the ability to not schedule display
+        refresh monitor udpates when only accelerated animations are running.
+
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::animationTimingDidChange): Called by animations when any aspect of their timing model changes. The provided animation is then
+        added to the m_animations list unless its timeline is no longer this timeline.
+        (WebCore::AnimationTimeline::removeAnimation): Remove the provided animation from m_animations and remove any animation registered on the element-specific
+        animation lists if this animation has an effect with a target.
+        (WebCore::AnimationTimeline::animationWasAddedToElement): We no longer need to worry about the m_animationsWithoutTarget data structure since we removed it.
+        (WebCore::removeCSSTransitionFromMap): Fix a bug where we would remove any CSSTransition in the provided map that had a matching transition-property instead
+        of checking the CSSTransition registered for this transition-property was indeed the provided CSSTransition. The other code changes in this patch made this
+        code now cause regressions in the Web Platform Tests.
+        (WebCore::AnimationTimeline::animationWasRemovedFromElement): Stop updating m_animationsWithoutTarget since it no longer exists.
+        (WebCore::AnimationTimeline::elementWasRemoved):
+        (WebCore::AnimationTimeline::updateCSSAnimationsForElement): Fix a small error that caused a regression in the Web Platform Tests where we could attempt to
+        call setBackingAnimation() on a nullptr instead of a valid CSSAnimation.
+        (WebCore::AnimationTimeline::cancelOrRemoveDeclarativeAnimation):
+        (WebCore::AnimationTimeline::addAnimation): Deleted.
+        * animation/AnimationTimeline.h:
+        (WebCore::AnimationTimeline::hasElementAnimations const): Deleted.
+        (WebCore::AnimationTimeline:: const): Deleted.
+        (WebCore::AnimationTimeline::elementToAnimationsMap): Deleted.
+        (WebCore::AnimationTimeline::elementToCSSAnimationsMap): Deleted.
+        (WebCore::AnimationTimeline::elementToCSSTransitionsMap): Deleted.
+        * animation/CSSTransition.cpp:
+        (WebCore::CSSTransition::canBeListed const): Deleted.
+        * animation/CSSTransition.h:
+        * animation/DeclarativeAnimation.cpp:
+        (WebCore::DeclarativeAnimation::tick): Call the superclass's method and queue any necessary DOM events reflecting the timing model changes.
+        (WebCore::DeclarativeAnimation::needsTick const): Call the superclass's method and return true also if we have pending events since otherwise this animation
+        could be removed from m_animations on its AnimationTimeline and potentially destroyed before the GenericEventQueue had a chance to dispatch all events.
+        (WebCore::DeclarativeAnimation::startTime const): We removed the custom binding for this IDL property and renamed the method from bindingsStartTime to startTime.
+        (WebCore::DeclarativeAnimation::setStartTime): We removed the custom binding for this IDL property and renamed the method from setBindingsStartTime to setStartTime.
+        (WebCore::DeclarativeAnimation::bindingsStartTime const): Deleted.
+        (WebCore::DeclarativeAnimation::setBindingsStartTime): Deleted.
+        * animation/DeclarativeAnimation.h:
+        * animation/DocumentAnimationScheduler.cpp:
+        (WebCore::DocumentAnimationScheduler::unscheduleWebAnimationsResolution): Add a method to mark that we no longer need a display refresh monitor update for this
+        document's animation timeline. This is called when m_animations becomes empty.
+        * animation/DocumentAnimationScheduler.h:
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::DocumentTimeline):
+        (WebCore::DocumentTimeline::detachFromDocument): Stop clearing two task queues and a timer that no longer exist and instead only clear the task queue to clear
+        the cached current time, which we queue any time we generate a new one (see DocumentTimeline::currentTime).
+        (WebCore::DocumentTimeline::getAnimations const): Use isRelevant() instead of canBeListed().
+        (WebCore::DocumentTimeline::updateThrottlingState):
+        (WebCore::DocumentTimeline::suspendAnimations):
+        (WebCore::DocumentTimeline::resumeAnimations):
+        (WebCore::DocumentTimeline::numberOfActiveAnimationsForTesting const):
+        (WebCore::DocumentTimeline::currentTime): Queue a task in the new m_currentTimeClearingTaskQueue task queue to clear the current time that we've generated and cached
+        in the next run loop (provided all pending JS execution has also completed). 
+        (WebCore::DocumentTimeline::maybeClearCachedCurrentTime):
+        (WebCore::DocumentTimeline::scheduleAnimationResolutionIfNeeded): Schedule a display refresh monitor update if we are not suspended and have "relevant" animations.
+        (WebCore::DocumentTimeline::animationTimingDidChange): Call scheduleAnimationResolutionIfNeeded() after calling the superclass's implementation.
+        (WebCore::DocumentTimeline::removeAnimation): Call unscheduleAnimationResolution() if the list of "relevant" animations is now empty.
+        (WebCore::DocumentTimeline::unscheduleAnimationResolution): Unschedule a pending display refresh monitor update.
+        (WebCore::DocumentTimeline::animationResolutionTimerFired):
+        (WebCore::DocumentTimeline::updateAnimationsAndSendEvents): Implement the "update animations and send events" procedure as specified by the Web Animations spec.
+        During this procedure, we call tick() on all animations listed in m_animations and create a list of animations to remove from that list if this animation is no
+        longer relevant following the call to tick().
+        (WebCore::DocumentTimeline::enqueueAnimationPlaybackEvent):
+        (WebCore::DocumentTimeline::timingModelDidChange): Deleted.
+        (WebCore::DocumentTimeline::scheduleInvalidationTaskIfNeeded): Deleted.
+        (WebCore::DocumentTimeline::performInvalidationTask): Deleted.
+        (WebCore::DocumentTimeline::updateAnimationSchedule): Deleted.
+        (WebCore::DocumentTimeline::animationScheduleTimerFired): Deleted.
+        (WebCore::DocumentTimeline::updateAnimations): Deleted.
+        (WebCore::compareAnimationPlaybackEvents): Deleted.
+        (WebCore::DocumentTimeline::performEventDispatchTask): Deleted.
+        * animation/DocumentTimeline.h:
+        * animation/WebAnimation.cpp: The majority of the changes to this class is that we call the new timingDidChange() method when any code that modifies the timing model
+        is run. We also remove methods to set the pending play and pause tasks as well as the animation's start time and hold time since any time we're changing these instance
+        variables, we later already have a call to update the timing model and we were doing more work than needed. As a result we no longer need an internal method to set the
+        start time and can stop requiring a custom IDL binding for the "startTime" property.
+        (WebCore::WebAnimation::effectTimingPropertiesDidChange):
+        (WebCore::WebAnimation::setEffect):
+        (WebCore::WebAnimation::setEffectInternal):
+        (WebCore::WebAnimation::setTimeline):
+        (WebCore::WebAnimation::setTimelineInternal):
+        (WebCore::WebAnimation::startTime const):
+        (WebCore::WebAnimation::setStartTime):
+        (WebCore::WebAnimation::silentlySetCurrentTime):
+        (WebCore::WebAnimation::setCurrentTime):
+        (WebCore::WebAnimation::setPlaybackRate):
+        (WebCore::WebAnimation::cancel):
+        (WebCore::WebAnimation::resetPendingTasks):
+        (WebCore::WebAnimation::finish):
+        (WebCore::WebAnimation::timingDidChange): New method called any time a timing property changed where we run the "update the finished state" procedure and notify the
+        animation's timeline that its timing changed so that it can be considered the next time the "update animations and send events" procedure runs.
+        (WebCore::WebAnimation::invalidateEffect):
+        (WebCore::WebAnimation::updateFinishedState): Update the animation's relevance after running the procedure as specified.
+        (WebCore::WebAnimation::play):
+        (WebCore::WebAnimation::runPendingPlayTask):
+        (WebCore::WebAnimation::pause):
+        (WebCore::WebAnimation::runPendingPauseTask):
+        (WebCore::WebAnimation::needsTick const):
+        (WebCore::WebAnimation::tick): New method called during the "update animations and send events" procedure where we run the "update the finished state" procedure and run
+        the pending play and pause tasks.
+        (WebCore::WebAnimation::resolve):
+        (WebCore::WebAnimation::updateRelevance):
+        (WebCore::WebAnimation::computeRelevance):
+        (WebCore::WebAnimation::timingModelDidChange): Deleted.
+        (WebCore::WebAnimation::setHoldTime): Deleted.
+        (WebCore::WebAnimation::bindingsStartTime const): Deleted.
+        (WebCore::WebAnimation::setBindingsStartTime): Deleted.
+        (WebCore::WebAnimation::setTimeToRunPendingPlayTask): Deleted.
+        (WebCore::WebAnimation::setTimeToRunPendingPauseTask): Deleted.
+        (WebCore::WebAnimation::updatePendingTasks): Deleted.
+        (WebCore::WebAnimation::timeToNextRequiredTick const): Deleted.
+        (WebCore::WebAnimation::runPendingTasks): Deleted.
+        (WebCore::WebAnimation::canBeListed const): Deleted.
+        * animation/WebAnimation.h:
+        (WebCore::WebAnimation::isRelevant const):
+        (WebCore::WebAnimation::hasPendingPlayTask const):
+        (WebCore::WebAnimation::isEffectInvalidationSuspended):
+        * animation/WebAnimation.idl:
+        * dom/Element.cpp:
+        (WebCore::Element::getAnimations): Use isRelevant() instead of canBeListed().
+
 2018-10-30  Youenn Fablet  <youenn@apple.com>
 
         LibWebRTCRtpReceiverBackend::getSynchronizationSources should use Vector::append

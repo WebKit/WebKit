@@ -58,7 +58,6 @@ DocumentTimeline::DocumentTimeline(Document& document, Seconds originTime)
     : AnimationTimeline(DocumentTimelineClass)
     , m_document(&document)
     , m_originTime(originTime)
-    , m_animationScheduleTimer(*this, &DocumentTimeline::animationScheduleTimerFired)
 #if !USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     , m_animationResolutionTimer(*this, &DocumentTimeline::animationResolutionTimerFired)
 #endif
@@ -71,15 +70,14 @@ DocumentTimeline::~DocumentTimeline() = default;
 
 void DocumentTimeline::detachFromDocument()
 {
-    m_invalidationTaskQueue.close();
-    m_eventDispatchTaskQueue.close();
-    m_animationScheduleTimer.stop();
+    m_currentTimeClearingTaskQueue.close();
     m_elementsWithRunningAcceleratedAnimations.clear();
 
-    auto& animationsToRemove = animations();
+    auto& animationsToRemove = m_animations;
     while (!animationsToRemove.isEmpty())
         animationsToRemove.first()->remove();
 
+    unscheduleAnimationResolution();
     m_document = nullptr;
 }
 
@@ -89,8 +87,8 @@ Vector<RefPtr<WebAnimation>> DocumentTimeline::getAnimations() const
 
     // FIXME: Filter and order the list as specified (webkit.org/b/179535).
     Vector<RefPtr<WebAnimation>> animations;
-    for (const auto& animation : this->animations()) {
-        if (animation->canBeListed() && is<KeyframeEffectReadOnly>(animation->effect())) {
+    for (const auto& animation : m_animations) {
+        if (animation->isRelevant() && is<KeyframeEffectReadOnly>(animation->effect())) {
             if (auto* target = downcast<KeyframeEffectReadOnly>(animation->effect())->target()) {
                 if (target->isDescendantOf(*m_document))
                     animations.append(animation);
@@ -102,8 +100,7 @@ Vector<RefPtr<WebAnimation>> DocumentTimeline::getAnimations() const
 
 void DocumentTimeline::updateThrottlingState()
 {
-    m_needsUpdateAnimationSchedule = false;
-    timingModelDidChange();
+    scheduleAnimationResolutionIfNeeded();
 }
 
 Seconds DocumentTimeline::animationInterval() const
@@ -118,16 +115,14 @@ void DocumentTimeline::suspendAnimations()
     if (animationsAreSuspended())
         return;
 
-    m_invalidationTaskQueue.cancelAllTasks();
-    if (m_animationScheduleTimer.isActive())
-        m_animationScheduleTimer.stop();
-
-    for (const auto& animation : animations())
+    for (const auto& animation : m_animations)
         animation->setSuspended(true);
 
     m_isSuspended = true;
 
     applyPendingAcceleratedAnimations();
+
+    unscheduleAnimationResolution();
 }
 
 void DocumentTimeline::resumeAnimations()
@@ -137,11 +132,10 @@ void DocumentTimeline::resumeAnimations()
 
     m_isSuspended = false;
 
-    for (const auto& animation : animations())
+    for (const auto& animation : m_animations)
         animation->setSuspended(false);
 
-    m_needsUpdateAnimationSchedule = false;
-    timingModelDidChange();
+    scheduleAnimationResolutionIfNeeded();
 }
 
 bool DocumentTimeline::animationsAreSuspended()
@@ -152,7 +146,7 @@ bool DocumentTimeline::animationsAreSuspended()
 unsigned DocumentTimeline::numberOfActiveAnimationsForTesting() const
 {
     unsigned count = 0;
-    for (const auto& animation : animations()) {
+    for (const auto& animation : m_animations) {
         if (!animation->isSuspended())
             ++count;
     }
@@ -196,8 +190,9 @@ std::optional<Seconds> DocumentTimeline::currentTime()
         // We want to be sure to keep this time cached until we've both finished running JS and finished updating
         // animations, so we schedule the invalidation task and register a whenIdle callback on the VM, which will
         // fire syncronously if no JS is running.
-        scheduleInvalidationTaskIfNeeded();
         m_waitingOnVMIdle = true;
+        if (!m_currentTimeClearingTaskQueue.hasPendingTasks())
+            m_currentTimeClearingTaskQueue.enqueueTask(std::bind(&DocumentTimeline::maybeClearCachedCurrentTime, this));
         m_document->vm().whenIdle([this, protectedThis = makeRefPtr(this)]() {
             m_waitingOnVMIdle = false;
             maybeClearCachedCurrentTime();
@@ -206,84 +201,34 @@ std::optional<Seconds> DocumentTimeline::currentTime()
     return m_cachedCurrentTime.value() - m_originTime;
 }
 
-void DocumentTimeline::timingModelDidChange()
-{
-    if (m_needsUpdateAnimationSchedule || m_isSuspended)
-        return;
-
-    m_needsUpdateAnimationSchedule = true;
-
-    // We know that we will resolve animations again, so we can cancel the timer right away.
-    if (m_animationScheduleTimer.isActive())
-        m_animationScheduleTimer.stop();
-
-    scheduleInvalidationTaskIfNeeded();
-}
-
-void DocumentTimeline::scheduleInvalidationTaskIfNeeded()
-{
-    if (m_invalidationTaskQueue.hasPendingTasks())
-        return;
-
-    m_invalidationTaskQueue.enqueueTask(std::bind(&DocumentTimeline::performInvalidationTask, this));
-}
-
-void DocumentTimeline::performInvalidationTask()
-{
-    // Now that the timing model has changed we can see if there are DOM events to dispatch for declarative animations.
-    if (!m_isSuspended) {
-        for (auto& animation : animations()) {
-            if (is<DeclarativeAnimation>(animation))
-                downcast<DeclarativeAnimation>(*animation).invalidateDOMEvents();
-        }
-    }
-
-    applyPendingAcceleratedAnimations();
-
-    updateAnimationSchedule();
-    maybeClearCachedCurrentTime();
-}
-
 void DocumentTimeline::maybeClearCachedCurrentTime()
 {
     // We want to make sure we only clear the cached current time if we're not currently running
     // JS or waiting on all current animation updating code to have completed. This is so that
     // we're guaranteed to have a consistent current time reported for all work happening in a given
     // JS frame or throughout updating animations in WebCore.
-    if (!m_waitingOnVMIdle && !m_invalidationTaskQueue.hasPendingTasks())
+    if (!m_waitingOnVMIdle && !m_currentTimeClearingTaskQueue.hasPendingTasks())
         m_cachedCurrentTime = std::nullopt;
 }
 
-void DocumentTimeline::updateAnimationSchedule()
+void DocumentTimeline::scheduleAnimationResolutionIfNeeded()
 {
-    if (!m_needsUpdateAnimationSchedule)
-        return;
-
-    m_needsUpdateAnimationSchedule = false;
-
-    if (!m_acceleratedAnimationsPendingRunningStateChange.isEmpty()) {
+    if (!m_isSuspended && !m_animations.isEmpty())
         scheduleAnimationResolution();
-        return;
-    }
-
-    Seconds scheduleDelay = Seconds::infinity();
-
-    for (const auto& animation : animations()) {
-        auto animationTimeToNextRequiredTick = animation->timeToNextRequiredTick();
-        if (animationTimeToNextRequiredTick < animationInterval()) {
-            scheduleAnimationResolution();
-            return;
-        }
-        scheduleDelay = std::min(scheduleDelay, animationTimeToNextRequiredTick);
-    }
-
-    if (scheduleDelay < Seconds::infinity())
-        m_animationScheduleTimer.startOneShot(scheduleDelay);
 }
 
-void DocumentTimeline::animationScheduleTimerFired()
+void DocumentTimeline::animationTimingDidChange(WebAnimation& animation)
 {
-    scheduleAnimationResolution();
+    AnimationTimeline::animationTimingDidChange(animation);
+    scheduleAnimationResolutionIfNeeded();
+}
+
+void DocumentTimeline::removeAnimation(WebAnimation& animation)
+{
+    AnimationTimeline::removeAnimation(animation);
+
+    if (m_animations.isEmpty())
+        unscheduleAnimationResolution();
 }
 
 void DocumentTimeline::scheduleAnimationResolution()
@@ -297,44 +242,81 @@ void DocumentTimeline::scheduleAnimationResolution()
 #endif
 }
 
+void DocumentTimeline::unscheduleAnimationResolution()
+{
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+    m_document->animationScheduler().unscheduleWebAnimationsResolution();
+#else
+    // FIXME: We need to use the same logic as ScriptedAnimationController here,
+    // which will be addressed by the refactor tracked by webkit.org/b/179293.
+    m_animationResolutionTimer.stop();
+#endif
+}
+
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
 void DocumentTimeline::documentAnimationSchedulerDidFire()
 #else
 void DocumentTimeline::animationResolutionTimerFired()
 #endif
 {
-    updateAnimations();
+    updateAnimationsAndSendEvents();
 }
 
-void DocumentTimeline::updateAnimations()
+void DocumentTimeline::updateAnimationsAndSendEvents()
 {
     m_numberOfAnimationTimelineInvalidationsForTesting++;
 
-    for (const auto& animation : animations())
-        animation->runPendingTasks();
+    // https://drafts.csswg.org/web-animations/#update-animations-and-send-events
 
-    // Perform a microtask checkpoint such that all promises that may have resolved while
-    // running pending tasks can fire right away.
-    MicrotaskQueue::mainThreadQueue().performMicrotaskCheckpoint();
+    // 1. Update the current time of all timelines associated with doc passing now as the timestamp.
 
-    // Let's first resolve any animation that does not have a target.
-    for (auto* animation : animationsWithoutTarget())
-        animation->resolve();
+    Vector<RefPtr<WebAnimation>> animationsToRemove;
 
-    // For the rest of the animations, we will resolve them via TreeResolver::createAnimatedElementUpdate()
-    // by invalidating their target element's style.
-    if (m_document && hasElementAnimations()) {
-        for (const auto& elementToAnimationsMapItem : elementToAnimationsMap())
-            elementToAnimationsMapItem.key->invalidateStyleAndLayerComposition();
-        for (const auto& elementToCSSAnimationsMapItem : elementToCSSAnimationsMap())
-            elementToCSSAnimationsMapItem.key->invalidateStyleAndLayerComposition();
-        for (const auto& elementToCSSTransitionsMapItem : elementToCSSTransitionsMap())
-            elementToCSSTransitionsMapItem.key->invalidateStyleAndLayerComposition();
-        m_document->updateStyleIfNeeded();
+    for (auto& animation : m_animations) {
+        if (animation->timeline() != this) {
+            ASSERT(!animation->timeline());
+            animationsToRemove.append(animation);
+            continue;
+        }
+
+        // This will notify the animation that timing has changed and will call automatically
+        // schedule invalidation if required for this animation.
+        animation->tick();
+
+        if (!animation->isRelevant() && !animation->needsTick())
+            animationsToRemove.append(animation);
     }
 
-    // Time has advanced, the timing model requires invalidation now.
-    timingModelDidChange();
+    // 2. Perform a microtask checkpoint.
+    MicrotaskQueue::mainThreadQueue().performMicrotaskCheckpoint();
+
+    // 3. Let events to dispatch be a copy of doc's pending animation event queue.
+    // 4. Clear doc's pending animation event queue.
+    auto pendingAnimationEvents = WTFMove(m_pendingAnimationEvents);
+
+    // 5. Perform a stable sort of the animation events in events to dispatch as follows.
+    std::stable_sort(pendingAnimationEvents.begin(), pendingAnimationEvents.end(), [] (const Ref<AnimationPlaybackEvent>& lhs, const Ref<AnimationPlaybackEvent>& rhs) {
+        // 1. Sort the events by their scheduled event time such that events that were scheduled to occur earlier, sort before events scheduled to occur later
+        // and events whose scheduled event time is unresolved sort before events with a resolved scheduled event time.
+        // 2. Within events with equal scheduled event times, sort by their composite order. FIXME: We don't do this.
+        if (lhs->timelineTime() && !rhs->timelineTime())
+            return false;
+        if (!lhs->timelineTime() && rhs->timelineTime())
+            return true;
+        if (!lhs->timelineTime() && !rhs->timelineTime())
+            return true;
+        return lhs->timelineTime().value() < rhs->timelineTime().value();
+    });
+
+    // 6. Dispatch each of the events in events to dispatch at their corresponding target using the order established in the previous step.
+    for (auto& pendingEvent : pendingAnimationEvents)
+        pendingEvent->target()->dispatchEvent(pendingEvent);
+
+    // This will cancel any scheduled invalidation if we end up removing all animations.
+    for (auto& animation : animationsToRemove)
+        removeAnimation(*animation);
+
+    applyPendingAcceleratedAnimations();
 }
 
 bool DocumentTimeline::computeExtentOfAnimation(RenderElement& renderer, LayoutRect& bounds) const
@@ -503,34 +485,6 @@ bool DocumentTimeline::runningAnimationsForElementAreAllAccelerated(Element& ele
 void DocumentTimeline::enqueueAnimationPlaybackEvent(AnimationPlaybackEvent& event)
 {
     m_pendingAnimationEvents.append(event);
-
-    if (!m_eventDispatchTaskQueue.hasPendingTasks())
-        m_eventDispatchTaskQueue.enqueueTask(std::bind(&DocumentTimeline::performEventDispatchTask, this));
-}
-
-static inline bool compareAnimationPlaybackEvents(const Ref<WebCore::AnimationPlaybackEvent>& lhs, const Ref<WebCore::AnimationPlaybackEvent>& rhs)
-{
-    // Sort the events by their scheduled event time such that events that were scheduled to occur earlier, sort before events scheduled to occur later
-    // and events whose scheduled event time is unresolved sort before events with a resolved scheduled event time.
-    if (lhs->timelineTime() && !rhs->timelineTime())
-        return false;
-    if (!lhs->timelineTime() && rhs->timelineTime())
-        return true;
-    if (!lhs->timelineTime() && !rhs->timelineTime())
-        return true;
-    return lhs->timelineTime().value() < rhs->timelineTime().value();
-}
-
-void DocumentTimeline::performEventDispatchTask()
-{
-    if (m_pendingAnimationEvents.isEmpty())
-        return;
-
-    auto pendingAnimationEvents = WTFMove(m_pendingAnimationEvents);
-
-    std::stable_sort(pendingAnimationEvents.begin(), pendingAnimationEvents.end(), compareAnimationPlaybackEvents);
-    for (auto& pendingEvent : pendingAnimationEvents)
-        pendingEvent->target()->dispatchEvent(pendingEvent);
 }
 
 Vector<std::pair<String, double>> DocumentTimeline::acceleratedAnimationsForElement(Element& element) const

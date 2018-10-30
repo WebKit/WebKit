@@ -57,8 +57,6 @@ public:
     virtual bool isCSSAnimation() const { return false; }
     virtual bool isCSSTransition() const { return false; }
 
-    virtual bool canBeListed() const;
-
     const String& id() const { return m_id; }
     void setId(const String& id) { m_id = id; }
 
@@ -66,9 +64,6 @@ public:
     void setEffect(RefPtr<AnimationEffectReadOnly>&&);
     AnimationTimeline* timeline() const { return m_timeline.get(); }
     virtual void setTimeline(RefPtr<AnimationTimeline>&&);
-
-    std::optional<Seconds> startTime() const;
-    void setStartTime(std::optional<Seconds>);
 
     std::optional<Seconds> currentTime() const;
     ExceptionOr<void> setCurrentTime(std::optional<Seconds>);
@@ -95,8 +90,8 @@ public:
     ExceptionOr<void> pause();
     ExceptionOr<void> reverse();
 
-    virtual std::optional<double> bindingsStartTime() const;
-    virtual void setBindingsStartTime(std::optional<double>);
+    virtual std::optional<double> startTime() const;
+    virtual void setStartTime(std::optional<double>);
     virtual std::optional<double> bindingsCurrentTime() const;
     virtual ExceptionOr<void> setBindingsCurrentTime(std::optional<double>);
     virtual PlayState bindingsPlayState() const { return playState(); }
@@ -106,15 +101,14 @@ public:
     virtual ExceptionOr<void> bindingsPlay() { return play(); }
     virtual ExceptionOr<void> bindingsPause() { return pause(); }
 
-    Seconds timeToNextRequiredTick() const;
-    void resolve();
+    virtual bool needsTick() const;
+    virtual void tick();
     virtual void resolve(RenderStyle&);
-    void runPendingTasks();
     void effectTargetDidChange(Element* previousTarget, Element* newTarget);
     void acceleratedStateDidChange();
     void applyPendingAcceleratedActions();
 
-    void timingModelDidChange();
+    bool isRelevant() const { return m_isRelevant; }
     void effectTimingPropertiesDidChange();
     void suspendEffectInvalidation();
     void unsuspendEffectInvalidation();
@@ -128,7 +122,6 @@ public:
 protected:
     explicit WebAnimation(Document&);
 
-    bool isEffectInvalidationSuspended() { return m_suspendCount; }
     void stop() override;
 
 private:
@@ -138,28 +131,29 @@ private:
     enum class AutoRewind { Yes, No };
     enum class TimeToRunPendingTask { NotScheduled, ASAP, WhenReady };
 
+    void timingDidChange(DidSeek, SynchronouslyNotify);
     void updateFinishedState(DidSeek, SynchronouslyNotify);
     void enqueueAnimationPlaybackEvent(const AtomicString&, std::optional<Seconds>, std::optional<Seconds>);
     Seconds effectEndTime() const;
     WebAnimation& readyPromiseResolve();
     WebAnimation& finishedPromiseResolve();
-    void setHoldTime(std::optional<Seconds>);
     std::optional<Seconds> currentTime(RespectHoldTime) const;
     ExceptionOr<void> silentlySetCurrentTime(std::optional<Seconds>);
     void finishNotificationSteps();
     void scheduleMicrotaskIfNeeded();
     void performMicrotask();
-    void setTimeToRunPendingPauseTask(TimeToRunPendingTask);
-    void setTimeToRunPendingPlayTask(TimeToRunPendingTask);
     bool hasPendingPauseTask() const { return m_timeToRunPendingPauseTask != TimeToRunPendingTask::NotScheduled; }
     bool hasPendingPlayTask() const { return m_timeToRunPendingPlayTask != TimeToRunPendingTask::NotScheduled; }
-    void updatePendingTasks();
     ExceptionOr<void> play(AutoRewind);
     void runPendingPauseTask();
     void runPendingPlayTask();
     void resetPendingTasks(Silently = Silently::No);
     void setEffectInternal(RefPtr<AnimationEffectReadOnly>&&, bool = false);
     void setTimelineInternal(RefPtr<AnimationTimeline>&&);
+    bool isEffectInvalidationSuspended() { return m_suspendCount; }
+    bool computeRelevance();
+    void updateRelevance();
+    void invalidateEffect();
 
     String m_id;
     RefPtr<AnimationEffectReadOnly> m_effect;
@@ -173,6 +167,7 @@ private:
     bool m_isSuspended { false };
     bool m_finishNotificationStepsMicrotaskPending;
     bool m_scheduledMicrotask;
+    bool m_isRelevant;
     UniqueRef<ReadyPromise> m_readyPromise;
     UniqueRef<FinishedPromise> m_finishedPromise;
     TimeToRunPendingTask m_timeToRunPendingPlayTask { TimeToRunPendingTask::NotScheduled };

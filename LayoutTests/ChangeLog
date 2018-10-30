@@ -1,3 +1,17 @@
+2018-10-28  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Implement the update animations and send events procedure
+        https://bugs.webkit.org/show_bug.cgi?id=191013
+        <rdar://problem/45620495>
+
+        Reviewed by Dean Jackson.
+
+        Several tests that broke when turning Web Animations CSS Integration on by default are now passing. In the case of one test, we had to ensure
+        that the final animation frame had been committed before terminating the test or there would be a tiny image reference issue.
+
+        * TestExpectations:
+        * fast/layers/no-clipping-overflow-hidden-added-after-transform.html:
+
 2018-10-30  Youenn Fablet  <youenn@apple.com>
 
         LibWebRTCRtpReceiverBackend::getSynchronizationSources should use Vector::append

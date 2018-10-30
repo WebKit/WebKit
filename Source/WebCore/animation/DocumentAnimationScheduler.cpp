@@ -64,6 +64,14 @@ bool DocumentAnimationScheduler::scheduleWebAnimationsResolution()
     return DisplayRefreshMonitorManager::sharedManager().scheduleAnimation(*this);
 }
 
+void DocumentAnimationScheduler::unscheduleWebAnimationsResolution()
+{
+    m_scheduledWebAnimationsResolution = false;
+
+    if (!m_scheduledScriptedAnimationResolution)
+        DisplayRefreshMonitorManager::sharedManager().unregisterClient(*this);
+}
+
 bool DocumentAnimationScheduler::scheduleScriptedAnimationResolution()
 {
     m_scheduledScriptedAnimationResolution = true;

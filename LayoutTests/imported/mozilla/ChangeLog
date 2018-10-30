@@ -1,3 +1,15 @@
+2018-10-28  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Implement the update animations and send events procedure
+        https://bugs.webkit.org/show_bug.cgi?id=191013
+        <rdar://problem/45620495>
+
+        Reviewed by Dean Jackson.
+
+        Progression in a couple of getAnimations() tests for CSS Animations.
+
+        * css-animations/test_document-get-animations-expected.txt:
+
 2018-10-26  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Rebase some flaky tests

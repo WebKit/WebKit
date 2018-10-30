@@ -48,6 +48,7 @@ public:
     void windowScreenDidChange(PlatformDisplayID);
 
     bool scheduleWebAnimationsResolution();
+    void unscheduleWebAnimationsResolution();
     bool scheduleScriptedAnimationResolution();
 
     Seconds lastTimestamp() { return m_lastTimestamp; }

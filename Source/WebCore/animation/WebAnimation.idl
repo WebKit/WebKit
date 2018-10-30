@@ -40,7 +40,7 @@ enum AnimationPlayState {
     attribute DOMString id;
     attribute AnimationEffectReadOnly? effect;
     attribute AnimationTimeline? timeline;
-    [ImplementedAs=bindingsStartTime] attribute double? startTime;
+    attribute double? startTime;
     [MayThrowException, ImplementedAs=bindingsCurrentTime] attribute double? currentTime;
     attribute double playbackRate;
     [ImplementedAs=bindingsPlayState] readonly attribute AnimationPlayState playState;

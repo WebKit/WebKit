@@ -74,15 +74,4 @@ void CSSTransition::setTimingProperties(Seconds delay, Seconds duration)
     unsuspendEffectInvalidation();
 }
 
-bool CSSTransition::canBeListed() const
-{
-    if (auto* transitionEffect = effect()) {
-        if (is<KeyframeEffectReadOnly>(transitionEffect)) {
-            if (!downcast<KeyframeEffectReadOnly>(effect())->hasBlendingKeyframes())
-                return false;
-        }
-    }
-    return WebAnimation::canBeListed();
-}
-
 } // namespace WebCore

@@ -4031,7 +4031,7 @@ Vector<RefPtr<WebAnimation>> Element::getAnimations()
     Vector<RefPtr<WebAnimation>> animations;
     if (auto timeline = document().existingTimeline()) {
         for (auto& animation : timeline->animationsForElement(*this, AnimationTimeline::Ordering::Sorted)) {
-            if (animation->canBeListed())
+            if (animation->isRelevant())
                 animations.append(animation);
         }
     }

@@ -49,8 +49,8 @@ public:
 
     std::optional<Seconds> currentTime() override;
 
-    void timingModelDidChange() override;
-
+    void animationTimingDidChange(WebAnimation&) override;
+    void removeAnimation(WebAnimation&) override;
     void animationWasAddedToElement(WebAnimation&, Element&) final;
     void animationWasRemovedFromElement(WebAnimation&, Element&) final;
 
@@ -85,12 +85,13 @@ public:
 private:
     DocumentTimeline(Document&, Seconds);
 
+    void scheduleAnimationResolutionIfNeeded();
     void scheduleInvalidationTaskIfNeeded();
     void performInvalidationTask();
-    void updateAnimationSchedule();
     void animationScheduleTimerFired();
     void scheduleAnimationResolution();
-    void updateAnimations();
+    void unscheduleAnimationResolution();
+    void updateAnimationsAndSendEvents();
     void performEventDispatchTask();
     void maybeClearCachedCurrentTime();
     void updateListOfElementsWithRunningAcceleratedAnimationsForElement(Element&);
@@ -100,10 +101,7 @@ private:
     bool m_isSuspended { false };
     bool m_waitingOnVMIdle { false };
     std::optional<Seconds> m_cachedCurrentTime;
-    GenericTaskQueue<Timer> m_invalidationTaskQueue;
-    GenericTaskQueue<Timer> m_eventDispatchTaskQueue;
-    bool m_needsUpdateAnimationSchedule { false };
-    Timer m_animationScheduleTimer;
+    GenericTaskQueue<Timer> m_currentTimeClearingTaskQueue;
     HashSet<RefPtr<WebAnimation>> m_acceleratedAnimationsPendingRunningStateChange;
     Vector<Ref<AnimationPlaybackEvent>> m_pendingAnimationEvents;
     unsigned m_numberOfAnimationTimelineInvalidationsForTesting { 0 };

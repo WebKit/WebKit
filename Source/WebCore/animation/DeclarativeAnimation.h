@@ -45,10 +45,9 @@ public:
     Element& target() const { return m_target; }
     const Animation& backingAnimation() const { return m_backingAnimation; }
     void setBackingAnimation(const Animation&);
-    void invalidateDOMEvents(Seconds elapsedTime = 0_s);
 
-    std::optional<double> bindingsStartTime() const final;
-    void setBindingsStartTime(std::optional<double>) final;
+    std::optional<double> startTime() const final;
+    void setStartTime(std::optional<double>) final;
     std::optional<double> bindingsCurrentTime() const final;
     ExceptionOr<void> setBindingsCurrentTime(std::optional<double>) final;
     WebAnimation::PlayState bindingsPlayState() const final;
@@ -61,11 +60,15 @@ public:
     void setTimeline(RefPtr<AnimationTimeline>&&) final;
     void cancel() final;
 
+    bool needsTick() const override;
+    void tick() override;
+
 protected:
     DeclarativeAnimation(Element&, const Animation&);
 
     virtual void initialize(const Element&, const RenderStyle* oldStyle, const RenderStyle& newStyle);
     virtual void syncPropertiesWithBackingAnimation();
+    void invalidateDOMEvents(Seconds elapsedTime = 0_s);
 
 private:
     void flushPendingStyleChanges() const;

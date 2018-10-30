@@ -32,7 +32,7 @@ div {
 <script>
     function transitionFinished() {
         if (window.testRunner)
-            window.testRunner.notifyDone();
+            requestAnimationFrame(() => window.testRunner.notifyDone());
     }
 
     if (!window.eventSender)
