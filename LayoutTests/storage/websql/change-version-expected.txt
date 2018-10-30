@@ -1,3 +1,7 @@
+CONSOLE MESSAGE: line 63: Web SQL is deprecated. Please use IndexedDB instead.
+CONSOLE MESSAGE: line 64: Web SQL is deprecated. Please use IndexedDB instead.
+CONSOLE MESSAGE: line 86: Web SQL is deprecated. Please use IndexedDB instead.
+CONSOLE MESSAGE: line 45: Web SQL is deprecated. Please use IndexedDB instead.
 This test verifies that the JS database.changeVersion() function works as expected.
 Finished tests with version 3; expected version: 3
 TEST COMPLETE

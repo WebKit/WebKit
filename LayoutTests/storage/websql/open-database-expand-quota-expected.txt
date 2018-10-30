@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 13: Web SQL is deprecated. Please use IndexedDB instead.
 UI DELEGATE DATABASE CALLBACK: increased quota to 8000000
 This tests that calling openDatabase with a size over 5MB doesn't assert on debug builds, and will increase the quota to accommodate the requested size whennot exceeding a max limit of 10M.
 PASS

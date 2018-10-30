@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 40: Web SQL is deprecated. Please use IndexedDB instead.
 This test confirms that a successful transaction - both with and without a statement - receives its successCallback
 Transaction succeeded - Transaction with one statement
 Transaction succeeded - Empty transaction

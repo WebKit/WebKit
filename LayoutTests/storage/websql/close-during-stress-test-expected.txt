@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 9: Web SQL is deprecated. Please use IndexedDB instead.
 Should not crash or cause an assertion failure.
 
 A JavaScript failure on the console is expected, however, as the global object is cleared when closing a frame. It actually helps to cause database activity by throwing an exception from a callback.

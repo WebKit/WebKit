@@ -1,3 +1,6 @@
+CONSOLE MESSAGE: line 8: Web SQL is deprecated. Please use IndexedDB instead.
+CONSOLE MESSAGE: line 8: Web SQL is deprecated. Please use IndexedDB instead.
+CONSOLE MESSAGE: line 8: Web SQL is deprecated. Please use IndexedDB instead.
 This is a test to see if queueing up multiple transactions on different handles to the same database results in a deadlock.
 db1 read statement succeeded
 db1 write statement succeeded

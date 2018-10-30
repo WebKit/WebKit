@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 8: Web SQL is deprecated. Please use IndexedDB instead.
 This test tests the database authorizer.
 SQLITE_CREATE_TABLE statement succeeded.
 SQLITE_CREATE_INDEX statement succeeded.

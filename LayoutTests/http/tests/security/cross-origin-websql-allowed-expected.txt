@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: line 5: Web SQL is deprecated. Please use IndexedDB instead.
+CONSOLE MESSAGE: line 5: Web SQL is deprecated. Please use IndexedDB instead.
 This iframe should not return any errors:
 
 

@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 5: Web SQL is deprecated. Please use IndexedDB instead.
 This iframe should return a security error:
 
 

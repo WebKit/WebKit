@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 64: Web SQL is deprecated. Please use IndexedDB instead.
 CONSOLE MESSAGE: line 67: Exception in statement error callback
 This test confirms that a transaction is immediately rolled back if and only if a statement's error callback throws an exception, returns true, or doesn't return any value.
 PASS - the transaction error callback was invoked.

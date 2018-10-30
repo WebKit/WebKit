@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 92: Web SQL is deprecated. Please use IndexedDB instead.
 This test makes sure that attempts to change the database during private browsing fail.
 Setup statement 1 completed successfully
 Setup statement 2 completed successfully

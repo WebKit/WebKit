@@ -1,5 +1,17 @@
 2018-10-30  Sihui Liu  <sihui_liu@apple.com>
 
+        Add a deprecation warning to console for Web SQL
+        https://bugs.webkit.org/show_bug.cgi?id=190936
+
+        Reviewed by Ryosuke Niwa.
+
+        No new tests. Just adding a console message.
+
+        * Modules/webdatabase/DOMWindowWebDatabase.cpp:
+        (WebCore::DOMWindowWebDatabase::openDatabase):
+
+2018-10-30  Sihui Liu  <sihui_liu@apple.com>
+
         IndexedDB: iteration of cursors skip records if updated or deleted
         https://bugs.webkit.org/show_bug.cgi?id=190917
         <rdar://problem/35250410>

@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 8: Web SQL is deprecated. Please use IndexedDB instead.
 CONSOLE MESSAGE: line 17: PASS: toString called on exception value thrown from event handler
 CONSOLE MESSAGE: line 23: PASS: toString called on exception value thrown from sql transaction callback
 CONSOLE MESSAGE: line 33: PASS: toString called on exception value thrown from sql error callback

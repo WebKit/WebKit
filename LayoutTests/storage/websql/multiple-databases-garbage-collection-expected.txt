@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: line 8: Web SQL is deprecated. Please use IndexedDB instead.
+CONSOLE MESSAGE: line 8: Web SQL is deprecated. Please use IndexedDB instead.
 This test opens two databases, queues up a series of operations on both, then "forgets" about one of them. After forcing GC, resources associated with that database should be freed gracefully.
 Forgotten Database Transaction Complete
 Persistent Database Transaction Complete

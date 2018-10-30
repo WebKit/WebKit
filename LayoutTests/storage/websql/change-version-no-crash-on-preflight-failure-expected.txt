@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 21: Web SQL is deprecated. Please use IndexedDB instead.
 This test verifies that no assertion is triggered when changeVersion()'s preflight step fails.
 PASS: db.changeVersion() failed as expected, and no assertions were triggered.
 

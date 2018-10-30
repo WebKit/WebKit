@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 21: Web SQL is deprecated. Please use IndexedDB instead.
 Testing mutations are delivered following Database transaction callbacks.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

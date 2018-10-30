@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: line 46: Web SQL is deprecated. Please use IndexedDB instead.
+CONSOLE MESSAGE: line 39: Web SQL is deprecated. Please use IndexedDB instead.
 Inserting some data
 Test part 2 Complete
 

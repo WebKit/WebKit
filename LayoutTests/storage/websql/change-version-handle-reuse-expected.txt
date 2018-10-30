@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 8: Web SQL is deprecated. Please use IndexedDB instead.
 This tests that a database can be accessed after changing its version. You should see an error about FooBar table below, not about mismatching versions.
 changeVersion: transaction callback
 changeVersion: success callback

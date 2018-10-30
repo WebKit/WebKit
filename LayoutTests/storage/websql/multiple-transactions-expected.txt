@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 8: Web SQL is deprecated. Please use IndexedDB instead.
 This is a test to see if the database API allows multiple transactions to be queued on the same database at once:
 Transaction 1 Started
 Transaction 1 Succeeded

@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 1: Web SQL is deprecated. Please use IndexedDB instead.
 Tests for CommandLineAPI.prototype.inspect with different object types.
 
 

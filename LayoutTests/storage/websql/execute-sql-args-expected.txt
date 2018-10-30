@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 8: Web SQL is deprecated. Please use IndexedDB instead.
 PASS. executeSql(null) did not throw an exception
 PASS. executeSql(undefined) did not throw an exception
 PASS. executeSql(0) did not throw an exception

@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: line 8: Web SQL is deprecated. Please use IndexedDB instead.
+CONSOLE MESSAGE: line 8: Web SQL is deprecated. Please use IndexedDB instead.
 This is a test to see if opening a database while a transaction is running on a different handle to the same database results in a deadlock.
 openDatabase() succeeded.
 

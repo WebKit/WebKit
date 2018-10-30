@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 4: Web SQL is deprecated. Please use IndexedDB instead.
 
 
 --------

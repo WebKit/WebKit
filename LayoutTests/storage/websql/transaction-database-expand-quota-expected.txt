@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 48: Web SQL is deprecated. Please use IndexedDB instead.
 UI DELEGATE DATABASE CALLBACK: exceededDatabaseQuotaForSecurityOrigin:{file, , 0} database:ExpandedQuotaTransaction
 UI DELEGATE DATABASE CALLBACK: increased quota to 209715
 UI DELEGATE DATABASE CALLBACK: exceededDatabaseQuotaForSecurityOrigin:{file, , 0} database:ExpandedQuotaTransaction

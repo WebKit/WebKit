@@ -1,5 +1,66 @@
 2018-10-30  Sihui Liu  <sihui_liu@apple.com>
 
+        Add a deprecation warning to console for Web SQL
+        https://bugs.webkit.org/show_bug.cgi?id=190936
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline the tests that are affected by the added console message.
+
+        * fast/dom/MutationObserver/database-callback-delivery-expected.txt:
+        * fast/frames/sandboxed-iframe-storage-expected.txt:
+        * fast/history/page-cache-webdatabase-no-transaction-db-expected.txt:
+        * http/tests/security/cross-origin-websql-allowed-expected.txt:
+        * http/tests/security/cross-origin-websql-expected.txt:
+        * http/tests/security/same-origin-websql-blocked-expected.txt:
+        * http/tests/security/storage-blocking-loosened-websql-expected.txt:
+        * http/tests/security/storage-blocking-strengthened-websql-expected.txt:
+        * http/tests/storage/callbacks-are-called-in-correct-context-expected.txt:
+        * inspector/runtime/CommandLineAPI-inspect-expected.txt:
+        * js/dom/callback-function-with-handle-event-expected.txt:
+        * js/dom/exceptions-thrown-in-callbacks-expected.txt:
+        * storage/websql/alter-to-info-table-expected.txt:
+        * storage/websql/change-version-expected.txt:
+        * storage/websql/change-version-handle-reuse-expected.txt:
+        * storage/websql/change-version-no-crash-on-preflight-failure-expected.txt:
+        * storage/websql/close-during-stress-test-expected.txt:
+        * storage/websql/database-lock-after-reload-expected.txt:
+        * storage/websql/empty-statement-expected.txt:
+        * storage/websql/execute-sql-args-expected.txt:
+        * storage/websql/execute-sql-rowsAffected-expected.txt:
+        * storage/websql/executesql-accepts-only-one-statement-expected.txt:
+        * storage/websql/hash-change-with-xhr-expected.txt:
+        * storage/websql/multiple-databases-garbage-collection-expected.txt:
+        * storage/websql/multiple-transactions-expected.txt:
+        * storage/websql/multiple-transactions-on-different-handles-expected.txt:
+        * storage/websql/null-callbacks-expected.txt:
+        * storage/websql/open-database-creation-callback-expected.txt:
+        * storage/websql/open-database-creation-callback-isolated-world-expected.txt:
+        * storage/websql/open-database-empty-version-expected.txt:
+        * storage/websql/open-database-expand-quota-expected.txt:
+        * storage/websql/open-database-over-quota-expected.txt:
+        * storage/websql/open-database-set-empty-version-expected.txt:
+        * storage/websql/open-database-while-transaction-in-progress-expected.txt:
+        * storage/websql/private-browsing-noread-nowrite-expected.txt:
+        * storage/websql/read-and-write-transactions-dont-run-together-expected.txt:
+        * storage/websql/read-transactions-running-concurrently-expected.txt:
+        * storage/websql/sql-data-types-expected.txt:
+        * storage/websql/statement-error-callback-expected.txt:
+        * storage/websql/statement-error-callback-isolated-world-expected.txt:
+        * storage/websql/statement-success-callback-isolated-world-expected.txt:
+        * storage/websql/success-callback-expected.txt:
+        * storage/websql/success-callback-when-page-defers-loading-expected.txt:
+        * storage/websql/test-authorizer-expected.txt:
+        * storage/websql/transaction-callback-exception-crash-expected.txt:
+        * storage/websql/transaction-callback-isolated-world-expected.txt:
+        * storage/websql/transaction-database-expand-quota-expected.txt:
+        * storage/websql/transaction-error-callback-expected.txt:
+        * storage/websql/transaction-error-callback-isolated-world-expected.txt:
+        * storage/websql/transaction-prototype-expected.txt:
+        * storage/websql/transaction-success-callback-isolated-world-expected.txt:
+
+2018-10-30  Sihui Liu  <sihui_liu@apple.com>
+
         IndexedDB: iteration of cursors skip records if updated or deleted
         https://bugs.webkit.org/show_bug.cgi?id=190917
         <rdar://problem/35250410>

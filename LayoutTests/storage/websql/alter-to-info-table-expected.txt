@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 8: Web SQL is deprecated. Please use IndexedDB instead.
 This tests that a tricky way to setup your own info table fails.
 CREATE TABLE statement succeeded.
 CREATE TEMP TABLE statement succeeded.
