@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2005-2009, 2015-2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2005-2018 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -53,6 +53,7 @@ WTF_EXPORT_PRIVATE char* fastStrDup(const char*) RETURNS_NONNULL;
 WTF_EXPORT_PRIVATE TryMallocReturnValue tryFastMalloc(size_t);
 WTF_EXPORT_PRIVATE TryMallocReturnValue tryFastZeroedMalloc(size_t);
 WTF_EXPORT_PRIVATE TryMallocReturnValue tryFastCalloc(size_t numElements, size_t elementSize);
+WTF_EXPORT_PRIVATE TryMallocReturnValue tryFastRealloc(void*, size_t);
 
 WTF_EXPORT_PRIVATE void fastFree(void*);
 

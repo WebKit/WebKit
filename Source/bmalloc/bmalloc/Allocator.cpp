@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -95,8 +95,20 @@ void* Allocator::allocateImpl(size_t alignment, size_t size, bool crashOnFailure
 
 void* Allocator::reallocate(void* object, size_t newSize)
 {
+    bool crashOnFailure = true;
+    return reallocateImpl(object, newSize, crashOnFailure);
+}
+
+void* Allocator::tryReallocate(void* object, size_t newSize)
+{
+    bool crashOnFailure = false;
+    return reallocateImpl(object, newSize, crashOnFailure);
+}
+
+void* Allocator::reallocateImpl(void* object, size_t newSize, bool crashOnFailure)
+{
     if (m_debugHeap)
-        return m_debugHeap->realloc(object, newSize);
+        return m_debugHeap->realloc(object, newSize, crashOnFailure);
 
     size_t oldSize = 0;
     switch (objectType(m_heap.kind(), object)) {
@@ -121,7 +133,14 @@ void* Allocator::reallocate(void* object, size_t newSize)
     }
     }
 
-    void* result = allocate(newSize);
+    void* result = nullptr;
+    if (crashOnFailure)
+        result = allocate(newSize);
+    else {
+        result = tryAllocate(newSize);
+        if (!result)
+            return nullptr;
+    }
     size_t copySize = std::min(oldSize, newSize);
     memcpy(result, object, copySize);
     m_deallocator.deallocate(object);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -273,7 +273,7 @@ JSValue Stringifier::stringify(JSValue value)
         object->putDirect(vm, vm.propertyNames->emptyIdentifier, value);
     }
 
-    StringBuilder result;
+    StringBuilder result(StringBuilder::OverflowHandler::RecordOverflow);
     Holder root(Holder::RootHolder, object);
     auto stringifyResult = appendStringifiedValue(result, value, root, emptyPropertyName);
     EXCEPTION_ASSERT(!scope.exception() || (stringifyResult != StringifySucceeded));
@@ -358,10 +358,12 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
     if (value.isString()) {
         const String& string = asString(value)->value(m_exec);
         RETURN_IF_EXCEPTION(scope, StringifyFailed);
-        if (builder.appendQuotedJSONString(string))
-            return StringifySucceeded;
-        throwOutOfMemoryError(m_exec, scope);
-        return StringifyFailed;
+        builder.appendQuotedJSONString(string);
+        if (UNLIKELY(builder.hasOverflowed())) {
+            throwOutOfMemoryError(m_exec, scope);
+            return StringifyFailed;
+        }
+        return StringifySucceeded;
     }
 
     if (value.isNumber()) {

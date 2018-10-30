@@ -59,10 +59,10 @@ void* DebugHeap::memalign(size_t alignment, size_t size, bool crashOnFailure)
     return result;
 }
 
-void* DebugHeap::realloc(void* object, size_t size)
+void* DebugHeap::realloc(void* object, size_t size, bool crashOnFailure)
 {
     void* result = malloc_zone_realloc(m_zone, object, size);
-    if (!result)
+    if (!result && crashOnFailure)
         BCRASH();
     return result;
 }
@@ -98,10 +98,10 @@ void* DebugHeap::memalign(size_t alignment, size_t size, bool crashOnFailure)
     return result;
 }
 
-void* DebugHeap::realloc(void* object, size_t size)
+void* DebugHeap::realloc(void* object, size_t size, bool crashOnFailure)
 {
     void* result = ::realloc(object, size);
-    if (!result)
+    if (!result && crashOnFailure)
         BCRASH();
     return result;
 }

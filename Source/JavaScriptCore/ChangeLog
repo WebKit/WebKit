@@ -1,3 +1,23 @@
+2018-10-29  Mark Lam  <mark.lam@apple.com>
+
+        Correctly detect string overflow when using the 'Function' constructor.
+        https://bugs.webkit.org/show_bug.cgi?id=184883
+        <rdar://problem/36320331>
+
+        Reviewed by Saam Barati.
+
+        Added StringBuilder::hasOverflowed() checks, and throwing OutOfMemoryErrors if
+        we detect an overflow.
+
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunctionSkippingEvalEnabledCheck):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::encode):
+        (JSC::decode):
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::stringify):
+        (JSC::Stringifier::appendStringifiedValue):
+
 2018-10-29  Tadeu Zagallo  <tzagallo@apple.com>
 
         Unreviewed, fix JSC on arm64e after r237547

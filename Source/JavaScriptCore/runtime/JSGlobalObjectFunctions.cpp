@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2002 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2018 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *  Copyright (C) 2007 Maks Orlovich
  *
@@ -87,7 +87,7 @@ static JSValue encode(ExecState* exec, const Bitmap<256>& doNotEscape, const Cha
         return JSC::throwException(exec, scope, createURIError(exec, "String contained an illegal UTF-16 sequence."_s));
     };
 
-    StringBuilder builder;
+    StringBuilder builder(StringBuilder::OverflowHandler::RecordOverflow);
     builder.reserveCapacity(length);
 
     // 4. Repeat
@@ -151,6 +151,8 @@ static JSValue encode(ExecState* exec, const Bitmap<256>& doNotEscape, const Cha
         }
     }
 
+    if (UNLIKELY(builder.hasOverflowed()))
+        return throwOutOfMemoryError(exec, scope);
     return jsString(exec, builder.toString());
 }
 
@@ -170,7 +172,7 @@ static JSValue decode(ExecState* exec, const CharType* characters, int length, c
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    StringBuilder builder;
+    StringBuilder builder(StringBuilder::OverflowHandler::RecordOverflow);
     int k = 0;
     UChar u = 0;
     while (k < length) {
@@ -229,6 +231,8 @@ static JSValue decode(ExecState* exec, const CharType* characters, int length, c
         k++;
         builder.append(c);
     }
+    if (UNLIKELY(builder.hasOverflowed()))
+        return throwOutOfMemoryError(exec, scope);
     RELEASE_AND_RETURN(scope, jsString(&vm, builder.toString()));
 }
 

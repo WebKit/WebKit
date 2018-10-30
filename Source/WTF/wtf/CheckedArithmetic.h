@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -70,6 +70,31 @@ enum class CheckedState {
     DidNotOverflow
 };
 
+class ConditionalCrashOnOverflow {
+public:
+    void overflowed()
+    {
+        m_overflowed = true;
+        if (m_shouldCrashOnOverflow)
+            crash();
+    }
+
+    bool shouldCrashOnOverflow() const { return m_shouldCrashOnOverflow; }
+    void setShouldCrashOnOverflow(bool value) { m_shouldCrashOnOverflow = value; }
+
+    bool hasOverflowed() const { return m_overflowed; }
+    void clearOverflow() { m_overflowed = false; }
+
+    static NO_RETURN_DUE_TO_CRASH void crash()
+    {
+        CRASH();
+    }
+
+private:
+    bool m_overflowed { false };
+    bool m_shouldCrashOnOverflow { true };
+};
+
 class CrashOnOverflow {
 public:
     static NO_RETURN_DUE_TO_CRASH void overflowed()
@@ -95,11 +120,6 @@ protected:
     {
     }
 
-    void overflowed()
-    {
-        m_overflowed = true;
-    }
-
     void clearOverflow()
     {
         m_overflowed = false;
@@ -112,6 +132,7 @@ protected:
 
 public:
     bool hasOverflowed() const { return m_overflowed; }
+    void overflowed() { m_overflowed = true; }
 
 private:
     unsigned char m_overflowed;
@@ -204,6 +225,11 @@ template <typename Target, typename Source> static inline bool convertSafely(Sou
 template <typename T> struct RemoveChecked {
     typedef T CleanType;
     static const CleanType DefaultValue = 0;    
+};
+
+template <typename T> struct RemoveChecked<Checked<T, ConditionalCrashOnOverflow>> {
+    using CleanType = typename RemoveChecked<T>::CleanType;
+    static const CleanType DefaultValue = 0;
 };
 
 template <typename T> struct RemoveChecked<Checked<T, CrashOnOverflow>> {
@@ -631,11 +657,12 @@ public:
     }
 
     // Value accessors. unsafeGet() will crash if there's been an overflow.
-    T unsafeGet() const
+    template<typename U = T>
+    U unsafeGet() const
     {
         if (this->hasOverflowed())
             this->crash();
-        return m_value;
+        return static_cast<U>(m_value);
     }
     
     inline CheckedState safeGet(T& value) const WARN_UNUSED_RETURN
@@ -914,6 +941,7 @@ using WTF::CheckedUint32;
 using WTF::CheckedInt64;
 using WTF::CheckedUint64;
 using WTF::CheckedSize;
+using WTF::ConditionalCrashOnOverflow;
 using WTF::CrashOnOverflow;
 using WTF::RecordOverflow;
 using WTF::checkedSum;

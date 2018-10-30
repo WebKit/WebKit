@@ -43,6 +43,7 @@ public:
     static void* tryAllocate(HeapKind, size_t alignment, size_t);
     static void* allocate(HeapKind, size_t alignment, size_t);
     static void deallocate(HeapKind, void*);
+    static void* tryReallocate(HeapKind, void*, size_t);
     static void* reallocate(HeapKind, void*, size_t);
 
     static void scavenge(HeapKind);
@@ -101,6 +102,14 @@ inline void Cache::deallocate(HeapKind heapKind, void* object)
     if (!caches)
         return deallocateSlowCaseNullCache(heapKind, object);
     return caches->at(mapToActiveHeapKindAfterEnsuringGigacage(heapKind)).deallocator().deallocate(object);
+}
+
+inline void* Cache::tryReallocate(HeapKind heapKind, void* object, size_t newSize)
+{
+    PerHeapKind<Cache>* caches = PerThread<PerHeapKind<Cache>>::getFastCase();
+    if (!caches)
+        return reallocateSlowCaseNullCache(heapKind, object, newSize);
+    return caches->at(mapToActiveHeapKindAfterEnsuringGigacage(heapKind)).allocator().tryReallocate(object, newSize);
 }
 
 inline void* Cache::reallocate(HeapKind heapKind, void* object, size_t newSize)

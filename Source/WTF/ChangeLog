@@ -1,3 +1,107 @@
+2018-10-29  Mark Lam  <mark.lam@apple.com>
+
+        Correctly detect string overflow when using the 'Function' constructor.
+        https://bugs.webkit.org/show_bug.cgi?id=184883
+        <rdar://problem/36320331>
+
+        Reviewed by Saam Barati.
+
+        1. Enhanced StringBuilder so that it supports 2 modes of behavior:
+           a. StringBuilder::OverflowHandler::CrashOnOverflow.
+           b. StringBuilder::OverflowHandler::RecordOverflow.
+
+           CrashOnOverflow will crash the moment an overflow or failure to allocate
+           memory is detected.
+
+           RecordOverflow will make StringBuilder::hasOverflowed() return true when an
+           overflow or failure to allocate memory is detected.  However, if the user
+           invokes toString(), toStringPreserveCapacity(), toAtomicString(), length(),
+           capacity(), isEmpty(), characters8(), or characters16(), then the StringBuilder
+           will crash regardless because these methods can only meaningfully do their
+           work and return a result if and only if the builder has not overflowed.
+
+           By default, the StringBuilder crashes on overflow (the old behavior) unless it
+           is explicitly constructed with the StringBuilder::OverflowHandler::RecordOverflow
+           enum.
+
+           Design note:
+
+           The StringBuilder can only be put in 1 of the 2 modes at the time of
+           construction.  This means that we could have implemented it as a template
+           that is parameterized on an OverflowHandler class (like CheckedArithmetic)
+           instead of using a runtime check in the ConditionalCrashOnOverflow handler.
+
+           However, I was not able to get clang to export the explicitly instantiated
+           instances (despite the methods having being decorated with WTF_EXPORT_PRIVATE).
+           Since the StringBuilder is a transient object (not stored for a long time on
+           the heap), and the runtime check of the boolean is not that costly compared
+           to other work that StringBuilder routinely does (e.g. memcpy), using the
+           new ConditionalCrashOnOverflow (which does a runtime check to determine to
+           crash or not on overflow) is fine.
+
+           When clang is able to export explicitly instantiated template methods, we can
+           templatize StringBuilder and do away with ConditionalCrashOnOverflow.
+           See https://bugs.webkit.org/show_bug.cgi?id=191050.
+
+        To support the above, we also did:
+
+        2. Enhanced all StringBuilder append and buffer allocation methods to be able to
+           fail without crashing.  This also meant that ...
+
+        3. Added tryReallocate() support to StringImpl.  tryRealloc() was added to
+           FastMalloc, and bmalloc (and related peers) to enable this.
+
+        4. Added ConditionalCrashOnOverflow, which can choose at runtime whether to behave
+           like CrashOnOverflow or RecordOverflow.
+
+        * wtf/CheckedArithmetic.h:
+        (WTF::ConditionalCrashOnOverflow::overflowed):
+        (WTF::ConditionalCrashOnOverflow::shouldCrashOnOverflow const):
+        (WTF::ConditionalCrashOnOverflow::setShouldCrashOnOverflow):
+        (WTF::ConditionalCrashOnOverflow::hasOverflowed const):
+        (WTF::ConditionalCrashOnOverflow::clearOverflow):
+        (WTF::ConditionalCrashOnOverflow::crash):
+        (WTF::RecordOverflow::overflowed):
+        (WTF::Checked::unsafeGet const):
+        * wtf/FastMalloc.cpp:
+        (WTF::tryFastRealloc):
+        * wtf/FastMalloc.h:
+        * wtf/text/StringBuilder.cpp:
+        (WTF::expandedCapacity):
+        (WTF::StringBuilder::reifyString const):
+        (WTF::StringBuilder::resize):
+        (WTF::StringBuilder::allocateBuffer):
+        (WTF::StringBuilder::allocateBufferUpConvert):
+        (WTF::StringBuilder::reallocateBuffer<LChar>):
+        (WTF::StringBuilder::reallocateBuffer<UChar>):
+        (WTF::StringBuilder::reserveCapacity):
+        (WTF::StringBuilder::appendUninitialized):
+        (WTF::StringBuilder::appendUninitializedSlow):
+        (WTF::StringBuilder::append):
+        (WTF::StringBuilder::canShrink const):
+        (WTF::StringBuilder::shrinkToFit):
+        * wtf/text/StringBuilder.h:
+        (WTF::StringBuilder::StringBuilder):
+        (WTF::StringBuilder::didOverflow):
+        (WTF::StringBuilder::hasOverflowed const):
+        (WTF::StringBuilder::crashesOnOverflow const):
+        (WTF::StringBuilder::append):
+        (WTF::StringBuilder::toString):
+        (WTF::StringBuilder::toStringPreserveCapacity const):
+        (WTF::StringBuilder::toAtomicString const):
+        (WTF::StringBuilder::length const):
+        (WTF::StringBuilder::capacity const):
+        (WTF::StringBuilder::operator[] const):
+        (WTF::StringBuilder::swap):
+        (WTF::StringBuilder::getBufferCharacters<UChar>):
+        * wtf/text/StringBuilderJSON.cpp:
+        (WTF::StringBuilder::appendQuotedJSONString):
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::reallocateInternal):
+        (WTF::StringImpl::reallocate):
+        (WTF::StringImpl::tryReallocate):
+        * wtf/text/StringImpl.h:
+
 2018-10-29  Tim Horton  <timothy_horton@apple.com>
 
         Modernize WebKit nibs and lprojs for localization's sake

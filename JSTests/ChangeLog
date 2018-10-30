@@ -1,3 +1,15 @@
+2018-10-29  Mark Lam  <mark.lam@apple.com>
+
+        Correctly detect string overflow when using the 'Function' constructor.
+        https://bugs.webkit.org/show_bug.cgi?id=184883
+        <rdar://problem/36320331>
+
+        Reviewed by Saam Barati.
+
+        I've verified that this passes on 32-bit as well.
+
+        * slowMicrobenchmarks/function-constructor-with-huge-strings.js: Added.
+
 2018-10-29  Tadeu Zagallo  <tzagallo@apple.com>
 
         Add support for GetStack FlushedDouble
