@@ -1,3 +1,12 @@
+2018-10-30  Dawei Fenton  <realdawei@apple.com>
+
+        [ Mojave Debug ] Layout Test http/tests/workers/service/self_registration.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=190828
+
+        Unreviewed.
+
+        * platform/mac-wk2/TestExpectations: Mark test as flay.
+
 2018-10-30  Sihui Liu  <sihui_liu@apple.com>
 
         Add a deprecation warning to console for Web SQL

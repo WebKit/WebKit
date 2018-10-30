@@ -59,6 +59,8 @@ webkit.org/b/187183 http/tests/security/pasteboard-file-url.html [ Pass ]
 
 [ Mojave+ ] fast/canvas/webgl/context-update-on-display-configuration.html [ Pass ]
 
+webkit.org/b/190828 [ Mojave+ Debug ]  http/tests/workers/service/self_registration.html [ Pass Failure ]
+
 fast/misc/valid-primary-screen-displayID.html [ Pass ]
 
 webkit.org/b/187773 http/tests/webAPIStatistics [ Pass ]
