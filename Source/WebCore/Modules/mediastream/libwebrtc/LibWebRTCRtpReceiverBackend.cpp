@@ -73,7 +73,7 @@ Vector<RTCRtpSynchronizationSource> LibWebRTCRtpReceiverBackend::getSynchronizat
     Vector<RTCRtpSynchronizationSource> sources;
     for (auto& rtcSource : m_rtcReceiver->GetSources()) {
         if (rtcSource.source_type() == webrtc::RtpSourceType::SSRC)
-            sources.uncheckedAppend(toRTCRtpSynchronizationSource(rtcSource));
+            sources.append(toRTCRtpSynchronizationSource(rtcSource));
     }
     return sources;
 }

@@ -1,3 +1,15 @@
+2018-10-30  Youenn Fablet  <youenn@apple.com>
+
+        LibWebRTCRtpReceiverBackend::getSynchronizationSources should use Vector::append
+        https://bugs.webkit.org/show_bug.cgi?id=191026
+
+        Reviewed by Eric Carlson.
+
+        Covered by updated test.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpReceiverBackend.cpp:
+        (WebCore::LibWebRTCRtpReceiverBackend::getSynchronizationSources const):
+
 2018-10-30  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK][WPE] Fixes to the PublicSuffix implementation

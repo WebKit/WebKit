@@ -87,6 +87,36 @@ promise_test(async (test) => {
     testImage();
 }, "Basic video exchange set up with addTransceiver");
 
+promise_test(async (test) => {
+    let receivingConnection;
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(true);
+
+    const stream = await navigator.mediaDevices.getUserMedia({audio: true, video: true});
+
+    const remoteStream = await new Promise((resolve, reject) => {
+        createConnections((firstConnection) => {
+            firstConnection.addTrack(stream.getAudioTracks()[0], stream);
+            firstConnection.addTrack(stream.getVideoTracks()[0], stream);
+        }, (secondConnection) => {
+            secondConnection.ontrack = (trackEvent) => {
+                resolve(trackEvent.streams[0]);
+            };
+            receivingConnection = secondConnection;
+        });
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+
+    video.srcObject = remoteStream;
+    await video.play();
+
+    const sources = receivingConnection.getReceivers()[0].getSynchronizationSources();
+    if (sources.length) {
+        assert_true(!!sources[0].audioLevel, "audioLevel");
+        assert_true(!!sources[0].source, "source");
+        assert_true(!!sources[0].timestamp, "timestamp");
+    }
+}, "Testing synchronization sources");
         </script>
     </body>
 </html>

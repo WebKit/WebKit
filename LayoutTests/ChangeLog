@@ -1,3 +1,13 @@
+2018-10-30  Youenn Fablet  <youenn@apple.com>
+
+        LibWebRTCRtpReceiverBackend::getSynchronizationSources should use Vector::append
+        https://bugs.webkit.org/show_bug.cgi?id=191026
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/video-addTransceiver-expected.txt:
+        * webrtc/video-addTransceiver.html:
+
 2018-10-29  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: refactor code for getting properties via WI.RemoteObject
