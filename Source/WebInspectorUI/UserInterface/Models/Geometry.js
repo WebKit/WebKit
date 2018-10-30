@@ -63,9 +63,9 @@ WI.Point = class Point
 
     distance(anotherPoint)
     {
-        var dx = anotherPoint.x - this.x;
-        var dy = anotherPoint.y - this.y;
-        return Math.sqrt(dx * dx, dy * dy);
+        let dx = anotherPoint.x - this.x;
+        let dy = anotherPoint.y - this.y;
+        return Math.sqrt((dx * dx) + (dy * dy));
     }
 };
 

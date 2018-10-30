@@ -27,14 +27,22 @@
     position: relative;
 }
 
+.color-wheel > .gradient {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+
 .color-wheel > .crosshair {
     position: absolute;
-    top: -4px;
-    left: -3px;
-    width: 5px;
-    height: 5px;
+    top: calc(-1 * var(--crosshair-size) / 2);
+    left: calc(-1 * var(--crosshair-size) / 2);
+    width: var(--crosshair-size);
+    height: var(--crosshair-size);
+    background-color: white;
     border: 1px solid black;
     border-radius: 3px;
     pointer-events: none;
-    background-color: white;
+
+    --crosshair-size: 5px;
 }

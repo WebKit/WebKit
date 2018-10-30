@@ -29,46 +29,33 @@ WI.ColorWheel = class ColorWheel extends WI.Object
     {
         super();
 
-        this._rawCanvas = document.createElement("canvas");
-        this._tintedCanvas = document.createElement("canvas");
-        this._finalCanvas = document.createElement("canvas");
-
-        this._crosshair = document.createElement("div");
-        this._crosshair.className = "crosshair";
+        this._brightness = 0.5;
 
         this._element = document.createElement("div");
         this._element.className = "color-wheel";
 
-        this._element.appendChild(this._finalCanvas);
-        this._element.appendChild(this._crosshair);
+        this._gradientElement = this._element.appendChild(document.createElement("div"));
+        this._gradientElement.classList.add("gradient");
+        this._gradientElement.addEventListener("mousedown", this);
 
-        this._finalCanvas.addEventListener("mousedown", this);
+        this._crosshairElement = this._element.appendChild(document.createElement("div"));
+        this._crosshairElement.className = "crosshair";
     }
 
     // Public
 
+    get element() { return this._element; }
+
     set dimension(dimension)
     {
-        this._element.style.width = this.element.style.height = `${dimension}px`;
-
-        this._finalCanvas.width = this._tintedCanvas.width = this._rawCanvas.width = dimension * window.devicePixelRatio;
-        this._finalCanvas.height = this._tintedCanvas.height = this._rawCanvas.height = dimension * window.devicePixelRatio;
-
-        this._finalCanvas.style.width = this._finalCanvas.style.height = dimension + "px";
-
         this._dimension = dimension;
-        // We shrink the radius a bit for better anti-aliasing.
-        this._radius = dimension / 2 - 2;
 
-        this._setCrosshairPosition(new WI.Point(dimension / 2, dimension / 2));
+        this._element.style.width = this.element.style.height = `${this._dimension}px`;
 
-        this._drawRawCanvas();
-        this._draw();
-    }
+        let center = this._dimension / 2;
+        this._setCrosshairPosition(new WI.Point(center, center));
 
-    get element()
-    {
-        return this._element;
+        this._updateGradient();
     }
 
     get brightness()
@@ -79,30 +66,35 @@ WI.ColorWheel = class ColorWheel extends WI.Object
     set brightness(brightness)
     {
         this._brightness = brightness;
-        this._draw();
+        this._updateGradient();
     }
 
     get tintedColor()
     {
         if (this._crosshairPosition)
-            return this._colorAtPointWithBrightness(this._crosshairPosition.x * window.devicePixelRatio, this._crosshairPosition.y * window.devicePixelRatio, this._brightness);
-
-        return new WI.Color(WI.Color.Format.RGBA, [0, 0, 0, 0]);
+            return new WI.Color(WI.Color.Format.HSL, [this._hue, this._saturation, this._brightness * 100]);
+        return new WI.Color(WI.Color.Format.HSLA, [0, 0, 0, 0]);
     }
 
     set tintedColor(tintedColor)
     {
-        var data = this._tintedColorToPointAndBrightness(tintedColor);
-        this._setCrosshairPosition(data.point);
-        this.brightness = data.brightness;
+        let hsl = tintedColor.hsl;
+
+        let cosHue = Math.cos(hsl[0] * Math.PI / 180);
+        let sinHue = Math.sin(hsl[0] * Math.PI / 180);
+        let center = this._dimension / 2;
+        let x = center + (sinHue * hsl[1]);
+        let y = center - (cosHue * hsl[1]);
+        this._setCrosshairPosition(new WI.Point(x, y));
+
+        this.brightness = hsl[2] / 100;
     }
 
     get rawColor()
     {
         if (this._crosshairPosition)
-            return this._colorAtPointWithBrightness(this._crosshairPosition.x * window.devicePixelRatio, this._crosshairPosition.y * window.devicePixelRatio, 1);
-
-        return new WI.Color(WI.Color.Format.RGBA, [0, 0, 0, 0]);
+            return new WI.Color(WI.Color.Format.HSL, [this._hue, this._saturation, 50]);
+        return new WI.Color(WI.Color.Format.HSLA, [0, 0, 0, 0]);
     }
 
     // Protected
@@ -124,6 +116,23 @@ WI.ColorWheel = class ColorWheel extends WI.Object
 
     // Private
 
+    get _hue()
+    {
+        let center = this._dimension / 2;
+        let hue = Math.atan2(this._crosshairPosition.x - center, center - this._crosshairPosition.y) * 180 / Math.PI;
+        if (hue < 0)
+            hue += 360;
+        return hue;
+    }
+
+    get _saturation()
+    {
+        let center = this._dimension / 2;
+        let xDis = (this._crosshairPosition.x - center) / center;
+        let yDis = (this._crosshairPosition.y - center) / center;
+        return Math.sqrt(Math.pow(xDis, 2) + Math.pow(yDis, 2)) * 100;
+    }
+
     _handleMousedown(event)
     {
         window.addEventListener("mousemove", this, true);
@@ -143,36 +152,9 @@ WI.ColorWheel = class ColorWheel extends WI.Object
         window.removeEventListener("mouseup", this, true);
     }
 
-    _pointInCircleForEvent(event)
-    {
-        function distance(a, b)
-        {
-            return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
-        }
-
-        function angleFromCenterToPoint(center, point)
-        {
-            return Math.atan2(point.y - center.y, point.x - center.x);
-        }
-
-        function pointOnCircumference(c, r, a)
-        {
-            return new WI.Point(c.x + r * Math.cos(a), c.y + r * Math.sin(a));
-        }
-
-        var dimension = this._dimension;
-        var point = window.webkitConvertPointFromPageToNode(this._finalCanvas, new WebKitPoint(event.pageX, event.pageY));
-        var center = new WI.Point(dimension / 2, dimension / 2);
-        if (distance(point, center) > this._radius) {
-            var angle = angleFromCenterToPoint(center, point);
-            point = pointOnCircumference(center, this._radius, angle);
-        }
-        return point;
-    }
-
     _updateColorForMouseEvent(event)
     {
-        var point = this._pointInCircleForEvent(event);
+        var point = window.webkitConvertPointFromPageToNode(this._gradientElement, new WebKitPoint(event.pageX, event.pageY));
 
         this._setCrosshairPosition(point);
 
@@ -182,103 +164,25 @@ WI.ColorWheel = class ColorWheel extends WI.Object
 
     _setCrosshairPosition(point)
     {
+        let radius = this._dimension / 2;
+        let center = new WI.Point(radius, radius);
+
+        // Prevents the crosshair from being dragged outside the wheel.
+        if (center.distance(point) > radius) {
+            let angle = Math.atan2(point.y - center.y, point.x - center.x);
+            point = new WI.Point(center.x + radius * Math.cos(angle), center.y + radius * Math.sin(angle));
+        }
+
         this._crosshairPosition = point;
-        this._crosshair.style.webkitTransform = "translate(" + Math.round(point.x) + "px, " + Math.round(point.y) + "px)";
+        this._crosshairElement.style.setProperty("transform", "translate(" + Math.round(point.x) + "px, " + Math.round(point.y) + "px)");
     }
 
-    _tintedColorToPointAndBrightness(color)
+    _updateGradient()
     {
-        var rgb = color.rgb;
-        var hsv = WI.Color.rgb2hsv(rgb[0], rgb[1], rgb[2]);
-        var cosHue = Math.cos(hsv[0] * Math.PI / 180);
-        var sinHue = Math.sin(hsv[0] * Math.PI / 180);
-        var center = this._dimension / 2;
-        var x = center + (center * cosHue * hsv[1]);
-        var y = center - (center * sinHue * hsv[1]);
-        return {
-            point: new WI.Point(x, y),
-            brightness: hsv[2]
-        };
-    }
+        let stops = [];
+        for (let i = 0; i <= 360; i += 60)
+            stops.push(`hsl(${i}, 100%, ${this._brightness * 100}%)`);
 
-    _drawRawCanvas() {
-        var ctx = this._rawCanvas.getContext("2d");
-
-        var dimension = this._dimension * window.devicePixelRatio;
-
-        ctx.fillStyle = "white";
-        ctx.fillRect(0, 0, dimension, dimension);
-
-        var imageData = ctx.getImageData(0, 0, dimension, dimension);
-        var data = imageData.data;
-        for (var j = 0; j < dimension; ++j) {
-            for (var i = 0; i < dimension; ++i) {
-                var color = this._colorAtPointWithBrightness(i, j, 1);
-                if (!color)
-                    continue;
-                var pos = (j * dimension + i) * 4;
-                data[pos] = color.rgb[0];
-                data[pos + 1] = color.rgb[1];
-                data[pos + 2] = color.rgb[2];
-            }
-        }
-        ctx.putImageData(imageData, 0, 0);
-    }
-
-    _colorAtPointWithBrightness(x, y, brightness)
-    {
-        var center = this._dimension / 2 * window.devicePixelRatio;
-        var xDis = x - center;
-        var yDis = y - center;
-        var distance = Math.sqrt(xDis * xDis + yDis * yDis);
-
-        if (distance - center > 0.001)
-            return new WI.Color(WI.Color.Format.RGBA, [0, 0, 0, 0]);
-
-        var h = Math.atan2(y - center, center - x) * 180 / Math.PI;
-        h = (h + 180) % 360;
-        var v = brightness;
-        var s = Math.max(0, distance) / center;
-
-        var rgb = WI.Color.hsv2rgb(h, s, v);
-        return new WI.Color(WI.Color.Format.RGBA, [
-            Math.round(rgb[0] * 255),
-            Math.round(rgb[1] * 255),
-            Math.round(rgb[2] * 255),
-            1
-        ]);
-    }
-
-    _drawTintedCanvas()
-    {
-        var ctx = this._tintedCanvas.getContext("2d");
-        var dimension = this._dimension * window.devicePixelRatio;
-
-        ctx.save();
-        ctx.drawImage(this._rawCanvas, 0, 0, dimension, dimension);
-        if (this._brightness !== 1) {
-            ctx.globalAlpha = 1 - this._brightness;
-            ctx.fillStyle = "black";
-            ctx.fillRect(0, 0, dimension, dimension);
-        }
-        ctx.restore();
-    }
-
-    _draw()
-    {
-        this._drawTintedCanvas();
-
-        var ctx = this._finalCanvas.getContext("2d");
-        var dimension = this._dimension * window.devicePixelRatio;
-        var radius = this._radius * window.devicePixelRatio;
-
-        ctx.save();
-        ctx.clearRect(0, 0, dimension, dimension);
-        ctx.beginPath();
-        ctx.arc(dimension / 2, dimension / 2, radius + 1, 0, Math.PI * 2, true);
-        ctx.closePath();
-        ctx.clip();
-        ctx.drawImage(this._tintedCanvas, 0, 0, dimension, dimension);
-        ctx.restore();
+        this._gradientElement.style.setProperty("background-image", `conic-gradient(${stops.join(",")})`);
     }
 };

@@ -1,5 +1,52 @@
 2018-10-30  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: change WI.ColorWheel to use conic-gradient()
+        https://bugs.webkit.org/show_bug.cgi?id=189485
+
+        Reviewed by Brian Burg.
+
+        Use the ("new") HSL `WI.ColorPicker` if `conic-gradient` is supported. Otherwise, use the
+        ("old") RGB `WI.LegacyColorPicker`.
+
+        * UserInterface/Views/ColorWheel.js:
+        (WI.ColorWheel):
+        (WI.ColorWheel.prototype.set dimension):
+        (WI.ColorWheel.prototype.set brightness):
+        (WI.ColorWheel.prototype.get tintedColor):
+        (WI.ColorWheel.prototype.set tintedColor):
+        (WI.ColorWheel.prototype.get rawColor):
+        (WI.ColorWheel.prototype.get _hue): Added.
+        (WI.ColorWheel.prototype.get _saturation): Added.
+        (WI.ColorWheel.prototype._updateColorForMouseEvent):
+        (WI.ColorWheel.prototype._setCrosshairPosition):
+        (WI.ColorWheel.prototype._updateGradient): Added.
+        (WI.ColorWheel.prototype._pointInCircleForEvent.distance): Deleted.
+        (WI.ColorWheel.prototype._pointInCircleForEvent.angleFromCenterToPoint): Deleted.
+        (WI.ColorWheel.prototype._pointInCircleForEvent.pointOnCircumference): Deleted.
+        (WI.ColorWheel.prototype._pointInCircleForEvent): Deleted.
+        (WI.ColorWheel.prototype._tintedColorToPointAndBrightness): Deleted.
+        (WI.ColorWheel.prototype._drawRawCanvas): Deleted.
+        (WI.ColorWheel.prototype._colorAtPointWithBrightness): Deleted.
+        (WI.ColorWheel.prototype._drawTintedCanvas): Deleted.
+        (WI.ColorWheel.prototype._draw): Deleted.
+        * UserInterface/Views/ColorWheel.css:
+        (.color-wheel > .gradient): Added.
+        (.color-wheel > .crosshair): Added.
+
+        * UserInterface/Views/LegacyColorWheel.js: Copied from Source/WebInspectorUI/UserInterface/Views/ColorWheel.js.
+
+        * UserInterface/Views/ColorPicker.js:
+        (WI.ColorPicker):
+        (WI.ColorPicker.supportsConicGradient): Added.
+        (WI.ColorPicker.prototype._updateSliders):
+
+        * UserInterface/Models/Geometry.js:
+        (WI.Point.prototype.distance):
+
+        * UserInterface/Main.html:
+
+2018-10-30  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: make the layers sidebar in the Elements tab always visible
         https://bugs.webkit.org/show_bug.cgi?id=190158
 

@@ -29,7 +29,7 @@ WI.ColorPicker = class ColorPicker extends WI.Object
     {
         super();
 
-        this._colorWheel = new WI.ColorWheel;
+        this._colorWheel = WI.ColorPicker.supportsConicGradient() ? new WI.ColorWheel : new WI.LegacyColorWheel;
         this._colorWheel.delegate = this;
         this._colorWheel.dimension = 200;
 
@@ -88,6 +88,24 @@ WI.ColorPicker = class ColorPicker extends WI.Object
         this._dontUpdateColor = false;
 
         this._enableColorComponentInputs = true;
+    }
+
+    // Static
+
+    static supportsConicGradient()
+    {
+        if (WI.ColorPicker._supportsConicGradient === undefined) {
+            const property = "background-image";
+            const conicGradient = "conic-gradient(black, white)";
+
+            let element = document.body.appendChild(document.createElement("div"));
+            element.style.setProperty(property, conicGradient);
+
+            WI.ColorPicker._supportsConicGradient = window.getComputedStyle(element).getPropertyValue(property).includes(conicGradient);
+
+            element.remove();
+        }
+        return WI.ColorPicker._supportsConicGradient;
     }
 
     // Public
@@ -211,8 +229,14 @@ WI.ColorPicker = class ColorPicker extends WI.Object
         var opaque = new WI.Color(WI.Color.Format.RGBA, rgb.concat(1)).toString();
         var transparent = new WI.Color(WI.Color.Format.RGBA, rgb.concat(0)).toString();
 
-        this._opacitySlider.element.style.backgroundImage = "linear-gradient(90deg, " + transparent + ", " + opaque + "), " + this._opacityPattern;
-        this._brightnessSlider.element.style.backgroundImage = "linear-gradient(90deg, black, " + rawColor + ")";
+        let brightnessGradient = "";
+        if (WI.ColorPicker.supportsConicGradient())
+            brightnessGradient = `linear-gradient(90deg, black, ${rawColor}, white)`;
+        else
+            brightnessGradient = `linear-gradient(90deg, black, ${rawColor})`;
+        this._brightnessSlider.element.style.setProperty("background-image", brightnessGradient);
+
+        this._opacitySlider.element.style.setProperty("background-image", "linear-gradient(90deg, " + transparent + ", " + opaque + "), " + this._opacityPattern);
     }
 
     _handleFormatChange()
