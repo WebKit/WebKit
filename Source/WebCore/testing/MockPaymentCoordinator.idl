@@ -27,6 +27,8 @@
     Conditional=APPLE_PAY,
     NoInterfaceObject,
 ] interface MockPaymentCoordinator {
+    void setCanMakePayments(boolean canMakePayments);
+    void setCanMakePaymentsWithActiveCard(boolean canMakePaymentsWithActiveCard);
     void setShippingAddress(MockPaymentAddress shippingAddress);
     void changeShippingOption(DOMString shippingOption);
     void changePaymentMethod(ApplePayPaymentMethod paymentMethod);

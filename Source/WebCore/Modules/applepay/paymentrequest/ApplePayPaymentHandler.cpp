@@ -225,25 +225,11 @@ void ApplePayPaymentHandler::hide()
     paymentCoordinator().abortPaymentSession();
 }
 
-static bool shouldDiscloseApplePayCapability(Document& document)
-{
-    auto* page = document.page();
-    if (!page || page->usesEphemeralSession())
-        return false;
-
-    return document.settings().applePayCapabilityDisclosureAllowed();
-}
-
 void ApplePayPaymentHandler::canMakePayment(Function<void(bool)>&& completionHandler)
 {
-    if (!shouldDiscloseApplePayCapability(document())) {
-        completionHandler(paymentCoordinator().canMakePayments());
-        return;
-    }
-
-    paymentCoordinator().canMakePaymentsWithActiveCard(m_applePayRequest->merchantIdentifier, document().domain(), WTFMove(completionHandler));
+    completionHandler(paymentCoordinator().canMakePayments());
 }
-    
+
 ExceptionOr<Vector<ApplePaySessionPaymentRequest::ShippingMethod>> ApplePayPaymentHandler::computeShippingMethods()
 {
     auto& details = m_paymentRequest->paymentDetails();

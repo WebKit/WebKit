@@ -9,6 +9,7 @@
 <script src="/resources/payment-request.js"></script>
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
+<body>
 <script>
 const applePay = Object.freeze({
     supportedMethods: "https://apple.com/apple-pay",
@@ -182,4 +183,14 @@ promise_test(async t => {
     }
   }
 }, `Optionally, at the user agent's discretion, return a promise rejected with a "NotAllowedError" DOMException.`);
+
+promise_test(async t => {
+  internals.mockPaymentCoordinator.setCanMakePaymentsWithActiveCard(false);
+  const request = new PaymentRequest(defaultMethods, defaultDetails);
+  assert_true(
+    await request.canMakePayment(),
+    `canMakePaymentPromise should be true`
+  );
+  internals.mockPaymentCoordinator.setCanMakePaymentsWithActiveCard(true);
+}, `Return a promise that resolves to true when Apple Pay is available, even if there isn't an active card.`);
 </script>

@@ -44,6 +44,8 @@ class MockPaymentCoordinator final : public PaymentCoordinatorClient {
 public:
     explicit MockPaymentCoordinator(Page&);
 
+    void setCanMakePayments(bool canMakePayments) { m_canMakePayments = canMakePayments; }
+    void setCanMakePaymentsWithActiveCard(bool canMakePaymentsWithActiveCard) { m_canMakePaymentsWithActiveCard = canMakePaymentsWithActiveCard; }
     void setShippingAddress(MockPaymentAddress&& shippingAddress) { m_shippingAddress = WTFMove(shippingAddress); }
     void changeShippingOption(String&& shippingOption);
     void changePaymentMethod(ApplePayPaymentMethod&&);
@@ -77,6 +79,8 @@ private:
     void updateTotalAndLineItems(const ApplePaySessionPaymentRequest::TotalAndLineItems&);
 
     Page& m_page;
+    bool m_canMakePayments { true };
+    bool m_canMakePaymentsWithActiveCard { true };
     ApplePayPaymentContact m_shippingAddress;
     ApplePayLineItem m_total;
     Vector<ApplePayLineItem> m_lineItems;

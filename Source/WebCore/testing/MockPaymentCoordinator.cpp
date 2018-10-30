@@ -77,13 +77,13 @@ std::optional<String> MockPaymentCoordinator::validatedPaymentNetwork(const Stri
 
 bool MockPaymentCoordinator::canMakePayments()
 {
-    return true;
+    return m_canMakePayments;
 }
 
 void MockPaymentCoordinator::canMakePaymentsWithActiveCard(const String&, const String&, Function<void(bool)>&& completionHandler)
 {
-    RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler)] {
-        completionHandler(true);
+    RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), canMakePaymentsWithActiveCard = m_canMakePaymentsWithActiveCard] {
+        completionHandler(canMakePaymentsWithActiveCard);
     });
 }
 

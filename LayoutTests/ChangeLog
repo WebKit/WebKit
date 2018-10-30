@@ -1,3 +1,13 @@
+2018-10-30  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] PaymentRequest.canMakePayment() should resolve to true whenever Apple Pay is available
+        https://bugs.webkit.org/show_bug.cgi?id=191039
+
+        Reviewed by Megan Gardner.
+
+        * http/tests/paymentrequest/payment-request-canmakepayment-method.https-expected.txt:
+        * http/tests/paymentrequest/payment-request-canmakepayment-method.https.html:
+
 2018-10-30  Dawei Fenton  <realdawei@apple.com>
 
         [ Mojave Debug ] Layout Test http/tests/workers/service/self_registration.html is flaky

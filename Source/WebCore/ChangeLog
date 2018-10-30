@@ -1,3 +1,28 @@
+2018-10-30  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] PaymentRequest.canMakePayment() should resolve to true whenever Apple Pay is available
+        https://bugs.webkit.org/show_bug.cgi?id=191039
+
+        Reviewed by Megan Gardner.
+
+        During a recent Web Payments WG F2F, we decided that canMakePayment() should return true
+        whenever the user agent supports one or more of the specified payment methods, even if those
+        payment methods do not have active instruments.
+
+        Change WebKit's implementation of canMakePayment() for Apple Pay to resolve with the value
+        of ApplePaySession.canMakePayments() rather than ApplePaySession.canMakePaymentsWithActiveCard().
+
+        Added a test case to http/tests/paymentrequest/payment-request-canmakepayment-method.https.html.
+
+        * Modules/applepay/paymentrequest/ApplePayPaymentHandler.cpp:
+        (WebCore::ApplePayPaymentHandler::canMakePayment):
+        (WebCore::shouldDiscloseApplePayCapability): Deleted.
+        * testing/MockPaymentCoordinator.cpp:
+        (WebCore::MockPaymentCoordinator::canMakePayments):
+        (WebCore::MockPaymentCoordinator::canMakePaymentsWithActiveCard):
+        * testing/MockPaymentCoordinator.h:
+        * testing/MockPaymentCoordinator.idl:
+
 2018-10-30  Sihui Liu  <sihui_liu@apple.com>
 
         Add a deprecation warning to console for Web SQL
