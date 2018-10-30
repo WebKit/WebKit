@@ -1,3 +1,13 @@
+2018-10-30  Ali Juma  <ajuma@chromium.org>
+
+        Calling window.open("", "_self") allows working around restrictions on window.close()
+        https://bugs.webkit.org/show_bug.cgi?id=191073
+
+        Reviewed by Chris Dumez.
+
+        * fast/dom/Window/window-open-self-disallow-close-expected.txt: Added.
+        * fast/dom/Window/window-open-self-disallow-close.html: Added.
+
 2018-10-30  Andy Estes  <aestes@apple.com>
 
         [Payment Request] Implement PaymentResponse.retry()

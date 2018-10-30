@@ -2241,7 +2241,8 @@ ExceptionOr<RefPtr<Frame>> DOMWindow::createWindow(const String& urlString, cons
         newFrame->loader().setOpener(&openerFrame);
         newFrame->page()->setOpenedViaWindowOpenWithOpener();
     }
-    newFrame->page()->setOpenedByDOM();
+    if (created)
+        newFrame->page()->setOpenedByDOM();
 
     if (newFrame->document()->domWindow()->isInsecureScriptAccess(activeWindow, completedURL))
         return windowFeatures.noopener ? RefPtr<Frame> { nullptr } : newFrame;
