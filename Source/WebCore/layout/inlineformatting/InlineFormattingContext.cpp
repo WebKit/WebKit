@@ -64,6 +64,15 @@ void InlineFormattingContext::layout(LayoutContext& layoutContext, FormattingSta
     auto* layoutBox = formattingRoot.firstInFlowOrFloatingChild();
     // Casually walk through the block's descendants and place the inline boxes one after the other as much as we can (yeah, I am looking at you floats).
     while (layoutBox) {
+
+        if (layoutBox->establishesFormattingContext()) {
+            layoutFormattingContextRoot(layoutContext, *layoutBox);
+            // Formatting context roots take care of their entire subtree. Continue with next sibling.
+            inlineRunProvider.append(*layoutBox);
+            layoutBox = layoutBox->nextInFlowOrFloatingSibling();
+            continue;
+        }
+
         if (is<Container>(layoutBox)) {
             ASSERT(is<InlineContainer>(layoutBox));
             layoutBox = downcast<Container>(*layoutBox).firstInFlowOrFloatingChild();
@@ -71,7 +80,7 @@ void InlineFormattingContext::layout(LayoutContext& layoutContext, FormattingSta
         }
 
         inlineRunProvider.append(*layoutBox);
-        computeWidthAndHeight(layoutContext, *layoutBox);
+        computeWidthAndHeightForInlineBox(layoutContext, *layoutBox);
 
         for (; layoutBox; layoutBox = layoutBox->parent()) {
             if (layoutBox == &formattingRoot) {
@@ -193,32 +202,68 @@ void InlineFormattingContext::layoutInlineContent(const LayoutContext& layoutCon
     line.close(Line::LastLine::Yes);
 }
 
-void InlineFormattingContext::computeWidthAndHeight(LayoutContext& layoutContext, const Box& layoutBox) const
+void InlineFormattingContext::layoutFormattingContextRoot(LayoutContext& layoutContext, const Box& layoutBox) const
 {
+    ASSERT(layoutBox.isFloatingPositioned() || layoutBox.isInlineBlockBox());
+    auto& displayBox = layoutContext.displayBoxForLayoutBox(layoutBox);
+
+    auto computeWidthAndMargin = [&]() {
+        WidthAndMargin widthAndMargin;
+
+        if (layoutBox.isFloatingPositioned())
+            widthAndMargin = Geometry::floatingWidthAndMargin(layoutContext, *this, layoutBox);
+        else if (layoutBox.isInlineBlockBox())
+            widthAndMargin = Geometry::inlineBlockWidthAndMargin(layoutContext, layoutBox);
+        else
+            ASSERT_NOT_REACHED();
+
+        displayBox.setContentBoxWidth(widthAndMargin.width);
+        displayBox.setHorizontalMargin(widthAndMargin.margin);
+        displayBox.setHorizontalNonComputedMargin(widthAndMargin.nonComputedMargin);
+    };
+
+    auto computeHeightAndMargin = [&]() {
+        HeightAndMargin heightAndMargin;
+
+        if (layoutBox.isFloatingPositioned())
+            heightAndMargin = Geometry::floatingHeightAndMargin(layoutContext, layoutBox);
+        else if (layoutBox.isInlineBlockBox())
+            heightAndMargin = Geometry::inlineBlockHeightAndMargin(layoutContext, layoutBox);
+        else
+            ASSERT_NOT_REACHED();
+
+        displayBox.setContentBoxHeight(heightAndMargin.height);
+        displayBox.setVerticalNonCollapsedMargin(heightAndMargin.margin);
+        displayBox.setVerticalMargin(heightAndMargin.collapsedMargin.value_or(heightAndMargin.margin));
+    };
+
+    computeBorderAndPadding(layoutContext, layoutBox);
+    computeWidthAndMargin();
+
+    // Swich over to the new formatting context (the one that the root creates).
+    layoutContext.formattingContext(layoutBox)->layout(layoutContext, layoutContext.createFormattingStateForFormattingRootIfNeeded(layoutBox));
+
+    // Come back and finalize the root's height and margin.
+    computeHeightAndMargin();
+}
+
+void InlineFormattingContext::computeWidthAndHeightForInlineBox(LayoutContext& layoutContext, const Box& layoutBox) const
+{
+    ASSERT(!layoutBox.isContainer());
+    ASSERT(!layoutBox.establishesFormattingContext());
+
     if (is<InlineBox>(layoutBox) && downcast<InlineBox>(layoutBox).hasTextContent()) {
         // Text content width is computed during text run generation. -It does not make any sense to measure unprocessed text here, since it will likely be
         // split up (or concatenated).
         return;
     }
 
-    if (layoutBox.isInlineBlockBox()) {
-        ASSERT_NOT_IMPLEMENTED_YET();
-        return;
-    }
-
+    // This is pretty much only for replaced inline boxes atm.
+    ASSERT(layoutBox.replaced());
     computeBorderAndPadding(layoutContext, layoutBox);
 
-    WidthAndMargin widthAndMargin;
-    HeightAndMargin heightAndMargin;
-
-    if (layoutBox.isFloatingPositioned()) {
-        widthAndMargin = Geometry::floatingWidthAndMargin(layoutContext, *this, layoutBox);
-        heightAndMargin = Geometry::floatingHeightAndMargin(layoutContext, layoutBox);
-    } else if (layoutBox.replaced()) {
-        widthAndMargin = Geometry::inlineReplacedWidthAndMargin(layoutContext, layoutBox);
-        heightAndMargin = Geometry::inlineReplacedHeightAndMargin(layoutContext, layoutBox);
-    } else
-        ASSERT_NOT_REACHED();
+    auto widthAndMargin = Geometry::inlineReplacedWidthAndMargin(layoutContext, layoutBox);
+    auto heightAndMargin = Geometry::inlineReplacedHeightAndMargin(layoutContext, layoutBox);
 
     auto& displayBox = layoutContext.displayBoxForLayoutBox(layoutBox);
     displayBox.setContentBoxWidth(widthAndMargin.width);
@@ -228,7 +273,6 @@ void InlineFormattingContext::computeWidthAndHeight(LayoutContext& layoutContext
     displayBox.setContentBoxHeight(heightAndMargin.height);
     displayBox.setVerticalNonCollapsedMargin(heightAndMargin.margin);
     displayBox.setVerticalMargin(heightAndMargin.collapsedMargin.value_or(heightAndMargin.margin));
-    return;
 }
 
 void InlineFormattingContext::computeFloatPosition(const LayoutContext& layoutContext, const FloatingContext& floatingContext, Line& line, const Box& floatBox) const

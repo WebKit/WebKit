@@ -95,10 +95,18 @@ private:
         bool m_closed { true };
     };
 
+    // This class implements positioning and sizing for boxes participating in a block formatting context.
+    class Geometry : public FormattingContext::Geometry {
+    public:
+        static HeightAndMargin inlineBlockHeightAndMargin(const LayoutContext&, const Box&);
+        static WidthAndMargin inlineBlockWidthAndMargin(const LayoutContext&, const Box&);
+    };
+
     void layoutInlineContent(const LayoutContext&, InlineFormattingState&, const InlineRunProvider&) const;
     void initializeNewLine(const LayoutContext&, InlineFormattingState&, Line&) const;
 
-    void computeWidthAndHeight(LayoutContext&, const Box&) const;
+    void layoutFormattingContextRoot(LayoutContext&, const Box&) const;
+    void computeWidthAndHeightForInlineBox(LayoutContext&, const Box&) const;
     void computeFloatPosition(const LayoutContext&, const FloatingContext&, Line&, const Box&) const;
     void computeStaticPosition(const LayoutContext&, const Box&) const override;
     void computeInFlowPositionedPosition(const LayoutContext&, const Box&) const override;

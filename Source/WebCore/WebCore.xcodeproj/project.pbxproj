@@ -9077,6 +9077,7 @@
 		6F219D762178D37100BB033C /* Line.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Line.cpp; sourceTree = "<group>"; };
 		6F222B741AB52D640094651A /* WebGLVertexArrayObjectBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGLVertexArrayObjectBase.h; sourceTree = "<group>"; };
 		6F222B751AB52D8A0094651A /* WebGLVertexArrayObjectBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGLVertexArrayObjectBase.cpp; sourceTree = "<group>"; };
+		6F35EFAF2187CBD50044E0F4 /* InlineFormattingContextGeometry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InlineFormattingContextGeometry.cpp; sourceTree = "<group>"; };
 		6F3E1F5F2136141700A65A08 /* FloatBox.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FloatBox.cpp; sourceTree = "<group>"; };
 		6F3E1F612136141700A65A08 /* FloatBox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FloatBox.h; sourceTree = "<group>"; };
 		6F5217C42177F5A6006583BB /* InlineRunProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineRunProvider.h; sourceTree = "<group>"; };
@@ -16075,6 +16076,7 @@
 				6FE7DDDD20EC6E8B008B5B4E /* text */,
 				6F7CA3C9208C2B2E002F29AB /* InlineFormattingContext.cpp */,
 				6F7CA3C8208C2B2E002F29AB /* InlineFormattingContext.h */,
+				6F35EFAF2187CBD50044E0F4 /* InlineFormattingContextGeometry.cpp */,
 				115CFA7D208B8E10001E6991 /* InlineFormattingState.cpp */,
 				115CFA7C208B8E10001E6991 /* InlineFormattingState.h */,
 				1123AFDD209ABBBA00736ACC /* InlineInvalidation.cpp */,
@@ -23899,8 +23901,8 @@
 				B2A10B930B3818D700099AA4 /* ImageBufferCG.cpp */,
 				2292B27B1356669400CF11EF /* ImageBufferDataCG.cpp */,
 				22BD9F80135364FE009BD102 /* ImageBufferDataCG.h */,
-				CD3E21DB21833F5100E66F55 /* ImageBufferUtilitiesCG.h */,
 				CD58949321874064004F424A /* ImageBufferUtilitiesCG.cpp */,
+				CD3E21DB21833F5100E66F55 /* ImageBufferUtilitiesCG.h */,
 				555B87EA1CAAF0AB00349425 /* ImageDecoderCG.cpp */,
 				555B87EB1CAAF0AB00349425 /* ImageDecoderCG.h */,
 				4B3480920EEF50D400AC1B41 /* ImageSourceCG.h */,
@@ -28810,6 +28812,7 @@
 				B2A10B920B3818BD00099AA4 /* ImageBuffer.h in Headers */,
 				22BD9F7F1353625C009BD102 /* ImageBufferData.h in Headers */,
 				22BD9F81135364FE009BD102 /* ImageBufferDataCG.h in Headers */,
+				CD3E21DD2183444A00E66F55 /* ImageBufferUtilitiesCG.h in Headers */,
 				2D25396318CE7F6200270222 /* ImageControlsButtonElementMac.h in Headers */,
 				510192D618B6B9B7007FC7A1 /* ImageControlsRootElement.h in Headers */,
 				510192D218B6B9AB007FC7A1 /* ImageControlsRootElementMac.h in Headers */,
@@ -28830,7 +28833,6 @@
 				4B3480940EEF50D400AC1B41 /* ImageSourceCG.h in Headers */,
 				078ED193216D079500775B33 /* ImageTransferSessionVT.h in Headers */,
 				5550CB421E955E3C00111AA0 /* ImageTypes.h in Headers */,
-				CD3E21DD2183444A00E66F55 /* ImageBufferUtilitiesCG.h in Headers */,
 				26F756B31B3B66F70005DD79 /* ImmutableNFA.h in Headers */,
 				26F756B51B3B68F20005DD79 /* ImmutableNFANodeBuilder.h in Headers */,
 				316FE1180E6E1DA700BF6088 /* ImplicitAnimation.h in Headers */,
@@ -32015,6 +32017,7 @@
 				7C3E510B18DF8F3500C112F7 /* HTMLConverter.mm in Sources */,
 				A8D06B3A0A265DCD005E7203 /* HTMLNames.cpp in Sources */,
 				1AC900C31943C0FC008625B5 /* HTTPHeaderNames.cpp in Sources */,
+				CD58949521874064004F424A /* ImageBufferUtilitiesCG.cpp in Sources */,
 				CD19FEAF1F574B6D000C42FB /* ImageDecoderAVFObjC.mm in Sources */,
 				BE961C5418AD338500D07DC5 /* InbandDataTextTrack.cpp in Sources */,
 				BE16C59217CFE17200852C04 /* InbandGenericTextTrack.cpp in Sources */,
@@ -32651,7 +32654,6 @@
 				DE5F860A1FA2386A006DB63A /* UnifiedSource475.cpp in Sources */,
 				DE5F860B1FA2386A006DB63A /* UnifiedSource476.cpp in Sources */,
 				DE5F860C1FA2386A006DB63A /* UnifiedSource477.cpp in Sources */,
-				CD58949521874064004F424A /* ImageBufferUtilitiesCG.cpp in Sources */,
 				DE5F860D1FA2386B006DB63A /* UnifiedSource478.cpp in Sources */,
 				DE5F860E1FA2386B006DB63A /* UnifiedSource479.cpp in Sources */,
 				DE5F860F1FA2386B006DB63A /* UnifiedSource480.cpp in Sources */,

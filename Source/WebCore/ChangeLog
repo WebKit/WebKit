@@ -1,3 +1,27 @@
+2018-10-29  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Introduce InlineFormattingContextGeometry class
+        https://bugs.webkit.org/show_bug.cgi?id=191054
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for inline-block support.
+
+        Move float and inline-block elements layout to layoutFormattingContextRoot().
+        computeWidthAndHeightForInlineBox takes care of replaced elements.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::layout const):
+        (WebCore::Layout::InlineFormattingContext::layoutFormattingContextRoot const):
+        (WebCore::Layout::InlineFormattingContext::computeWidthAndHeightForInlineBox const):
+        (WebCore::Layout::InlineFormattingContext::computeWidthAndHeight const): Deleted.
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/inlineformatting/InlineFormattingContextGeometry.cpp: Added.
+        (WebCore::Layout::InlineFormattingContext::Geometry::inlineBlockWidthAndMargin):
+        (WebCore::Layout::InlineFormattingContext::Geometry::inlineBlockHeightAndMargin):
+
 2018-10-28  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Implement the update animations and send events procedure

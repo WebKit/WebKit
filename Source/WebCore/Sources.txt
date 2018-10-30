@@ -1262,6 +1262,7 @@ layout/floats/FloatBox.cpp
 layout/floats/FloatingContext.cpp
 layout/floats/FloatingState.cpp
 layout/inlineformatting/InlineFormattingContext.cpp
+layout/inlineformatting/InlineFormattingContextGeometry.cpp
 layout/inlineformatting/InlineFormattingState.cpp
 layout/inlineformatting/InlineInvalidation.cpp
 layout/inlineformatting/InlineLineBreaker.cpp
