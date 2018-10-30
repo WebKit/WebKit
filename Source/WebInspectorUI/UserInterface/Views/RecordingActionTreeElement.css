@@ -220,7 +220,7 @@ body[dir=rtl] .tree-outline:not(.hide-disclosure-buttons) .item.action:not(.init
     content: url(../Images/Error.svg);
 }
 
-.item.action.visual.no-visible-effect:not(.invalid) > .status > .warning {
+.item.action.warning:not(.invalid) > .status > .warning {
     width: 12px;
     height: 12px;
     margin-top: 2px;

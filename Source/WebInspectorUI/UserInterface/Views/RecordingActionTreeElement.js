@@ -407,11 +407,9 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
 
         this.element.dataset.index = this._index.toLocaleString();
 
-        if (this.representedObject.valid && this.representedObject.isVisual && !this.representedObject.hasVisibleEffect) {
-            this.addClassName("no-visible-effect");
-
-            const title = WI.UIString("This action causes no visual change");
-            this.status = WI.ImageUtilities.useSVGSymbol("Images/Warning.svg", "warning", title);
+        if (this.representedObject.valid && this.representedObject.warning) {
+            this.addClassName("warning");
+            this.status = WI.ImageUtilities.useSVGSymbol("Images/Warning.svg", "warning", this.representedObject.warning);
         }
     }
 

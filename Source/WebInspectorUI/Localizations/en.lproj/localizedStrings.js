@@ -851,6 +851,7 @@ localizedStrings["Text Node"] = "Text Node";
 localizedStrings["The page's content has changed"] = "The page's content has changed";
 localizedStrings["The “%s”\ntable is empty."] = "The “%s”\ntable is empty.";
 localizedStrings["This action causes no visual change"] = "This action causes no visual change";
+localizedStrings["This action moves the path outside the visible area"] = "This action moves the path outside the visible area";
 localizedStrings["This object is a root"] = "This object is a root";
 localizedStrings["This object is referenced by internal objects"] = "This object is referenced by internal objects";
 localizedStrings["This text resource could benefit from compression"] = "This text resource could benefit from compression";

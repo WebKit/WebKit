@@ -44,11 +44,11 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         this._isFunction = false;
         this._isGetter = false;
         this._isVisual = false;
-        this._hasVisibleEffect = undefined;
 
         this._states = [];
         this._stateModifiers = new Set;
 
+        this._warning = null;
         this._swizzled = false;
         this._processed = false;
     }
@@ -135,34 +135,37 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         if (type === WI.Recording.Type.Canvas2D) {
             let matrix = context.getTransform();
 
-            let state = {
-                currentX: context.currentX,
-                currentY: context.currentY,
-                direction: context.direction,
-                fillStyle: context.fillStyle,
-                font: context.font,
-                globalAlpha: context.globalAlpha,
-                globalCompositeOperation: context.globalCompositeOperation,
-                imageSmoothingEnabled: context.imageSmoothingEnabled,
-                imageSmoothingQuality: context.imageSmoothingQuality,
-                lineCap: context.lineCap,
-                lineDash: context.getLineDash(),
-                lineDashOffset: context.lineDashOffset,
-                lineJoin: context.lineJoin,
-                lineWidth: context.lineWidth,
-                miterLimit: context.miterLimit,
-                shadowBlur: context.shadowBlur,
-                shadowColor: context.shadowColor,
-                shadowOffsetX: context.shadowOffsetX,
-                shadowOffsetY: context.shadowOffsetY,
-                strokeStyle: context.strokeStyle,
-                textAlign: context.textAlign,
-                textBaseline: context.textBaseline,
-                transform: [matrix.a, matrix.b, matrix.c, matrix.d, matrix.e, matrix.f],
-                webkitImageSmoothingEnabled: context.webkitImageSmoothingEnabled,
-                webkitLineDash: context.webkitLineDash,
-                webkitLineDashOffset: context.webkitLineDashOffset,
-            };
+            let state = {};
+
+            if (WI.ImageUtilities.supportsCanvasPathDebugging()) {
+                state.currentX = context.currentX;
+                state.currentY = context.currentY;
+            }
+
+            state.direction = context.direction;
+            state.fillStyle = context.fillStyle;
+            state.font = context.font;
+            state.globalAlpha = context.globalAlpha;
+            state.globalCompositeOperation = context.globalCompositeOperation;
+            state.imageSmoothingEnabled = context.imageSmoothingEnabled;
+            state.imageSmoothingQuality = context.imageSmoothingQuality;
+            state.lineCap = context.lineCap;
+            state.lineDash = context.getLineDash();
+            state.lineDashOffset = context.lineDashOffset;
+            state.lineJoin = context.lineJoin;
+            state.lineWidth = context.lineWidth;
+            state.miterLimit = context.miterLimit;
+            state.shadowBlur = context.shadowBlur;
+            state.shadowColor = context.shadowColor;
+            state.shadowOffsetX = context.shadowOffsetX;
+            state.shadowOffsetY = context.shadowOffsetY;
+            state.strokeStyle = context.strokeStyle;
+            state.textAlign = context.textAlign;
+            state.textBaseline = context.textBaseline;
+            state.transform = [matrix.a, matrix.b, matrix.c, matrix.d, matrix.e, matrix.f];
+            state.webkitImageSmoothingEnabled = context.webkitImageSmoothingEnabled;
+            state.webkitLineDash = context.webkitLineDash;
+            state.webkitLineDashOffset = context.webkitLineDashOffset;
 
             if (WI.ImageUtilities.supportsCanvasPathDebugging())
                 state.setPath = [context.getPath()];
@@ -195,9 +198,9 @@ WI.RecordingAction = class RecordingAction extends WI.Object
     get isFunction() { return this._isFunction; }
     get isGetter() { return this._isGetter; }
     get isVisual() { return this._isVisual; }
-    get hasVisibleEffect() { return this._hasVisibleEffect; }
     get states() { return this._states; }
     get stateModifiers() { return this._stateModifiers; }
+    get warning() { return this._warning; }
 
     get ready()
     {
@@ -215,7 +218,8 @@ WI.RecordingAction = class RecordingAction extends WI.Object
             // We add each RecordingAction to the list of visualActionIndexes after it is processed.
             if (this._valid && this._isVisual) {
                 let contentBefore = recording.visualActionIndexes.length ? recording.actions[recording.visualActionIndexes.lastValue].snapshot : recording.initialState.content;
-                this._hasVisibleEffect = this._snapshot !== contentBefore;
+                if (this._snapshot === contentBefore)
+                    this._warning = WI.UIString("This action causes no visual change");
             }
             return;
         }
@@ -244,8 +248,11 @@ WI.RecordingAction = class RecordingAction extends WI.Object
 
         this.apply(context);
 
-        if (shouldCheckHasVisualEffect)
-            this._hasVisibleEffect = !Array.shallowEqual(contentBefore, getContent());
+        if (shouldCheckHasVisualEffect) {
+            let contentAfter = getContent();
+            if (Array.shallowEqual(contentBefore, contentAfter))
+                this._warning = WI.UIString("This action causes no visual change");
+        }
 
         if (recording.type === WI.Recording.Type.Canvas2D) {
             let currentState = WI.RecordingAction.deriveCurrentState(recording.type, context);
@@ -259,12 +266,24 @@ WI.RecordingAction = class RecordingAction extends WI.Object
             this._states = states.slice();
             this._states.push(currentState);
 
+            let lastState = null;
             if (lastAction) {
-                let lastState = lastAction.states.lastValue;
+                lastState = lastAction.states.lastValue;
                 for (let key in currentState) {
                     if (!(key in lastState) || (currentState[key] !== lastState[key] && !Object.shallowEqual(currentState[key], lastState[key])))
                         this._stateModifiers.add(key);
                 }
+            }
+
+            if (WI.ImageUtilities.supportsCanvasPathDebugging()) {
+                let currentX = currentState.currentX;
+                let invalidX = (currentX < 0 || currentX >= context.canvas.width) && (!lastState || currentX !== lastState.currentX);
+
+                let currentY = currentState.currentY;
+                let invalidY = (currentY < 0 || currentY >= context.canvas.height) && (!lastState || currentY !== lastState.currentY);
+
+                if (invalidX || invalidY)
+                    this._warning = WI.UIString("This action moves the path outside the visible area");
             }
         }
     }

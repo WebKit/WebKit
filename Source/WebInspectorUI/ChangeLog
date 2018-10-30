@@ -1,5 +1,31 @@
 2018-10-29  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Canvas: show warning when path moves offscreen
+        https://bugs.webkit.org/show_bug.cgi?id=191016
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Models/RecordingAction.js:
+        (WI.RecordingAction):
+        (WI.RecordingAction.deriveCurrentState):
+        (WI.RecordingAction.prototype.get isVisual):
+        (WI.RecordingAction.prototype.get warning): Added.
+        (WI.RecordingAction.prototype.process.checkInvalidCurrentAxisPoint): Added.
+        (WI.RecordingAction.prototype.process):
+        (WI.RecordingAction.prototype.get hasVisibleEffect): Deleted.
+        Replace `hasVisibleEffect` with a more general `warning` value, so that it can be used for
+        more types of warnings.
+
+        * UserInterface/Views/RecordingActionTreeElement.js:
+        (WI.RecordingActionTreeElement.prototype.onattach):
+        * UserInterface/Views/RecordingActionTreeElement.css:
+        (.item.action.visual.warning:not(.invalid) > .status > .warning): Added.
+        (.item.action.visual.no-visible-effect:not(.invalid) > .status > .warning): Deleted.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+2018-10-29  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: refactor code for getting properties via WI.RemoteObject
         https://bugs.webkit.org/show_bug.cgi?id=190989
 
