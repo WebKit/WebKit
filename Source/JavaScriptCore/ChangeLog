@@ -1,3 +1,15 @@
+2018-10-29  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Unreviewed, fix JSC on arm64e after r237547
+        https://bugs.webkit.org/show_bug.cgi?id=187373
+
+        Unreviewed.
+
+        Remove unused move guarded by POINTER_PROFILING that was trashing the
+        metadata on arm64e.
+
+        * llint/LowLevelInterpreter64.asm:
+
 2018-10-29  Keith Miller  <keith_miller@apple.com>
 
         JSC should explicitly list its modulemap file

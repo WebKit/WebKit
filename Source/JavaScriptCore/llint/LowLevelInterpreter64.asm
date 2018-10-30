@@ -1981,9 +1981,6 @@ macro commonCallOp(name, slowPath, op, prepareCall, prologue)
         end, metadata)
 
         get(callee, t0)
-        if POINTER_PROFILING
-            move t1, t5
-        end
         loadp %op%::Metadata::callLinkInfo.callee[t5], t2
         loadConstantOrVariable(size, t0, t3)
         bqneq t3, t2, .opCallSlow
