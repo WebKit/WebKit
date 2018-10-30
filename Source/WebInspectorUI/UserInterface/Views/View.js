@@ -266,6 +266,7 @@ WI.View = class View extends WI.Object
     {
         this._dirty = false;
         this._dirtyDescendantsCount = 0;
+        let isInitialLayout = !this._didInitialLayout;
 
         if (!this._didInitialLayout) {
             this.initialLayout();
@@ -278,7 +279,7 @@ WI.View = class View extends WI.Object
         this.layout();
 
         if (WI.settings.enableLayoutFlashing.value)
-            this._drawLayoutFlashingOutline();
+            this._drawLayoutFlashingOutline(isInitialLayout);
 
         for (let view of this._subviews) {
             view._setLayoutReason(this._layoutReason);
@@ -296,14 +297,15 @@ WI.View = class View extends WI.Object
         this._layoutReason = layoutReason || WI.View.LayoutReason.Dirty;
     }
 
-    _drawLayoutFlashingOutline()
+    _drawLayoutFlashingOutline(isInitialLayout)
     {
         if (this._layoutFlashingTimeout)
             clearTimeout(this._layoutFlashingTimeout);
         else
             this._layoutFlashingPreviousOutline = this._element.style.outline;
 
-        this._element.style.outline = "1px solid hsla(39, 100%, 51%, 0.8)";
+        let hue = isInitialLayout ? 20 : 40;
+        this._element.style.outline = `1px solid hsla(${hue}, 100%, 51%, 0.8)`;
 
         this._layoutFlashingTimeout = setTimeout(() => {
             if (this._element)

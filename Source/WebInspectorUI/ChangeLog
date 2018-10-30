@@ -1,3 +1,14 @@
+2018-10-29  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Flash views with red outline on initial layout
+        https://bugs.webkit.org/show_bug.cgi?id=191048
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/View.js:
+        (WI.View.prototype._layoutSubtree):
+        (WI.View.prototype._drawLayoutFlashingOutline):
+
 2018-10-29  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Canvas: show warning when path moves offscreen
