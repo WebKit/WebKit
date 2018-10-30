@@ -60,7 +60,7 @@ void executeProbe(State* state)
 
     if (context.hasWritesToFlush()) {
         context.stack().setSavedStackPointer(state->cpu.sp());
-        void* lowWatermark = context.stack().lowWatermark(state->cpu.sp());
+        void* lowWatermark = context.stack().lowWatermarkFromVisitingDirtyPages();
         state->cpu.sp() = std::min(lowWatermark, state->cpu.sp());
 
         state->initializeStackFunction = flushDirtyStackPages;

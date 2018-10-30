@@ -1,3 +1,21 @@
+2018-10-30  Ross Kirsling  <ross.kirsling@sony.com>
+
+        useProbeOSRExit causes failures for Win64 DFG JIT
+        https://bugs.webkit.org/show_bug.cgi?id=190656
+
+        Reviewed by Keith Miller.
+
+        * assembler/ProbeContext.cpp:
+        (JSC::Probe::executeProbe):
+        If lowWatermark is expected to equal lowWatermarkFromVisitingDirtyPages *regardless* of the input param,
+        then let's just call lowWatermarkFromVisitingDirtyPages instead.
+
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::executeOSRExit):
+        The result of VariableEventStream::reconstruct appears to be inappropriate for direct use as a stack pointer offset;
+        mimic the non-probe case and use requiredRegisterCountForExit from DFGCommonData instead.
+        (Also, stop redundantly setting the stack pointer twice in a row.)
+
 2018-10-30  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         "Unreviewed, partial rolling in r237254"
