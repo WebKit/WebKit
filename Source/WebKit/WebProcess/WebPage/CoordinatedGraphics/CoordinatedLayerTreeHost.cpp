@@ -214,11 +214,8 @@ void CoordinatedLayerTreeHost::commitSceneState(const CoordinatedGraphicsState& 
 
 void CoordinatedLayerTreeHost::flushLayersAndForceRepaint()
 {
-    if (m_layerFlushTimer.isActive())
-        m_layerFlushTimer.stop();
-
     m_coordinator.forceFrameSync();
-    layerFlushTimerFired();
+    scheduleLayerFlush();
 }
 
 void CoordinatedLayerTreeHost::deviceOrPageScaleFactorChanged()
