@@ -1,3 +1,12 @@
+2018-10-30  Dawei Fenton  <realdawei@apple.com>
+
+        WebGL conformance: Failures and Timeouts in suite 2.0.0/conformance
+        https://bugs.webkit.org/show_bug.cgi?id=189641
+
+        Unreviewed.
+
+        * platform/ios-wk2/TestExpectations: Mark test as [ Slow ]
+
 2018-10-30  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: provide options to WI.cssPath for more verbosity

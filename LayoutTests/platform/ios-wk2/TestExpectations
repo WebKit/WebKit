@@ -1308,3 +1308,5 @@ webkit.org/b/190848 imported/w3c/web-platform-tests/service-workers/service-work
 
 webkit.org/b/190850 [ Debug ] platform/ios/ios/plugin/youtube-flash-plugin-iframe-no-height-or-width.html [ Pass Failure ] 
 
+webkit.org/b/189641 [ Debug ] webgl/2.0.0/conformance/attribs/gl-vertexattribpointer.html [ Slow ]
+
