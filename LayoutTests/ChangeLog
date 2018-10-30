@@ -1,5 +1,29 @@
 2018-10-30  Andy Estes  <aestes@apple.com>
 
+        [Payment Request] Implement PaymentResponse.retry()
+        https://bugs.webkit.org/show_bug.cgi?id=190985
+
+        Reviewed by Daniel Bates
+
+        * http/tests/paymentrequest/payment-address-attributes-and-toJSON-method.https.html:
+        * http/tests/paymentrequest/payment-response-complete-method.https.html:
+        * http/tests/paymentrequest/payment-response-methodName-attribute.https.html:
+        * http/tests/paymentrequest/payment-response-payerEmail-attribute.https.html:
+        * http/tests/paymentrequest/payment-response-payerName-attribute.https.html:
+        * http/tests/paymentrequest/payment-response-payerPhone-attribute.https.html:
+        * http/tests/paymentrequest/payment-response-rejects-if-not-active.https-expected.txt: Added.
+        * http/tests/paymentrequest/payment-response-rejects-if-not-active.https.html: Copied from
+        imported/w3c/web-platform-tests/payment-request/payment-response/rejects_if_not_active-manual.https.html
+        and automated using internals.mockPaymentCoordinator.
+        * http/tests/paymentrequest/payment-response-retry-method.https-expected.txt: Added.
+        * http/tests/paymentrequest/payment-response-retry-method.https.html: Copied from
+        imported/w3c/web-platform-tests/payment-request/payment-response/retry-method-manual.https.html
+        and automated using internals.mockPaymentCoordinator.
+        * http/tests/paymentrequest/resources/helpers.js:
+        (setUpAndSmokeTest):
+
+2018-10-30  Andy Estes  <aestes@apple.com>
+
         [Apple Pay] PaymentRequest.canMakePayment() should resolve to true whenever Apple Pay is available
         https://bugs.webkit.org/show_bug.cgi?id=191039
 

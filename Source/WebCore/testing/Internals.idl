@@ -682,7 +682,7 @@ enum CompositingPolicy {
     [Conditional=SERVICE_WORKER] void terminateServiceWorker(ServiceWorker worker);
     [Conditional=SERVICE_WORKER] boolean hasServiceWorkerConnection();
 
-    [Conditional=APPLE_PAY] readonly attribute MockPaymentCoordinator mockPaymentCoordinator;
+    [CallWith=Document, Conditional=APPLE_PAY] readonly attribute MockPaymentCoordinator mockPaymentCoordinator;
 
     boolean isSystemPreviewLink(Element element);
     boolean isSystemPreviewImage(Element element);

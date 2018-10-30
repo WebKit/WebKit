@@ -42,6 +42,7 @@
 #include "PaymentMethodData.h"
 #include "PaymentOptions.h"
 #include "PaymentRequestUpdateEvent.h"
+#include "PaymentValidationErrors.h"
 #include "ScriptController.h"
 #include <JavaScriptCore/JSONObject.h>
 #include <JavaScriptCore/ThrowScope.h>
@@ -404,7 +405,7 @@ void PaymentRequest::show(Document& document, RefPtr<DOMPromise>&& detailsPromis
     for (auto& paymentMethod : m_serializedMethodData) {
         auto data = parse(document, paymentMethod.serializedData);
         if (data.hasException()) {
-            m_showPromise->reject(data.releaseException());
+            settleShowPromise(data.releaseException());
             return;
         }
 
@@ -414,7 +415,7 @@ void PaymentRequest::show(Document& document, RefPtr<DOMPromise>&& detailsPromis
 
         auto result = handler->convertData(data.releaseReturnValue());
         if (result.hasException()) {
-            m_showPromise->reject(result.releaseException());
+            settleShowPromise(result.releaseException());
             return;
         }
 
@@ -423,13 +424,13 @@ void PaymentRequest::show(Document& document, RefPtr<DOMPromise>&& detailsPromis
     }
 
     if (!selectedPaymentHandler) {
-        m_showPromise->reject(Exception { NotSupportedError });
+        settleShowPromise(Exception { NotSupportedError });
         return;
     }
 
     auto exception = selectedPaymentHandler->show();
     if (exception.hasException()) {
-        m_showPromise->reject(exception.releaseException());
+        settleShowPromise(exception.releaseException());
         return;
     }
 
@@ -445,32 +446,51 @@ void PaymentRequest::show(Document& document, RefPtr<DOMPromise>&& detailsPromis
 
 void PaymentRequest::abortWithException(Exception&& exception)
 {
-    if (m_state != State::Interactive)
-        return;
-
-    if (auto paymentHandler = activePaymentHandler())
-        paymentHandler->hide();
-    m_activePaymentHandler = std::nullopt;
-
     ASSERT(m_state == State::Interactive);
+    closeActivePaymentHandler();
+
+    if (m_response)
+        m_response->abortWithException(WTFMove(exception));
+    else
+        settleShowPromise(WTFMove(exception));
+}
+
+void PaymentRequest::settleShowPromise(ExceptionOr<PaymentResponse&>&& result)
+{
+    if (auto showPromise = std::exchange(m_showPromise, std::nullopt))
+        showPromise->settle(WTFMove(result));
+}
+
+void PaymentRequest::closeActivePaymentHandler()
+{
+    if (auto activePaymentHandler = std::exchange(m_activePaymentHandler, std::nullopt))
+        activePaymentHandler->paymentHandler->hide();
+
+    m_isUpdating = false;
     m_state = State::Closed;
-    m_showPromise->reject(WTFMove(exception));
 }
 
 void PaymentRequest::stop()
 {
-    abortWithException(Exception { AbortError });
+    closeActivePaymentHandler();
+    settleShowPromise(Exception { AbortError });
 }
 
 // https://www.w3.org/TR/payment-request/#abort()-method
-ExceptionOr<void> PaymentRequest::abort(AbortPromise&& promise)
+void PaymentRequest::abort(AbortPromise&& promise)
 {
-    if (m_state != State::Interactive)
-        return Exception { InvalidStateError };
+    if (m_response && m_response->hasRetryPromise()) {
+        promise.reject(Exception { InvalidStateError });
+        return;
+    }
 
-    stop();
+    if (m_state != State::Interactive) {
+        promise.reject(Exception { InvalidStateError });
+        return;
+    }
+
+    abortWithException(Exception { AbortError });
     promise.resolve();
-    return { };
 }
 
 // https://www.w3.org/TR/payment-request/#canmakepayment()-method
@@ -587,7 +607,7 @@ ExceptionOr<void> PaymentRequest::completeMerchantValidation(Event& event, Ref<D
             return;
 
         if (m_merchantSessionPromise->status() == DOMPromise::Status::Rejected) {
-            stop();
+            abortWithException(Exception { AbortError });
             return;
         }
 
@@ -613,7 +633,7 @@ void PaymentRequest::settleDetailsPromise(UpdateReason reason)
         return;
 
     if (m_isCancelPending || m_detailsPromise->status() == DOMPromise::Status::Rejected) {
-        stop();
+        abortWithException(Exception { AbortError });
         return;
     }
 
@@ -679,42 +699,55 @@ void PaymentRequest::whenDetailsSettled(std::function<void()>&& callback)
 
 void PaymentRequest::accept(const String& methodName, PaymentResponse::DetailsFunction&& detailsFunction, Ref<PaymentAddress>&& shippingAddress, const String& payerName, const String& payerEmail, const String& payerPhone)
 {
+    ASSERT(!m_isUpdating);
     ASSERT(m_state == State::Interactive);
 
-    auto response = PaymentResponse::create(scriptExecutionContext(), *this, WTFMove(detailsFunction));
-    response->setRequestId(m_details.id);
-    response->setMethodName(methodName);
-
-    if (m_options.requestShipping) {
-        response->setShippingAddress(shippingAddress.ptr());
-        response->setShippingOption(m_shippingOption);
+    bool isRetry = m_response;
+    if (!isRetry) {
+        m_response = PaymentResponse::create(scriptExecutionContext(), *this, WTFMove(detailsFunction));
+        m_response->setRequestId(m_details.id);
     }
 
-    if (m_options.requestPayerName)
-        response->setPayerName(payerName);
+    m_response->setMethodName(methodName);
+    m_response->setShippingAddress(m_options.requestShipping ? shippingAddress.ptr() : nullptr);
+    m_response->setShippingOption(m_options.requestShipping ? m_shippingOption : String { });
+    m_response->setPayerName(m_options.requestPayerName ? payerName : String { });
+    m_response->setPayerEmail(m_options.requestPayerEmail ? payerEmail : String { });
+    m_response->setPayerPhone(m_options.requestPayerPhone ? payerPhone : String { });
 
-    if (m_options.requestPayerEmail)
-        response->setPayerEmail(payerEmail);
+    if (!isRetry)
+        settleShowPromise(*m_response);
+    else {
+        ASSERT(m_response->hasRetryPromise());
+        m_response->settleRetryPromise();
+    }
 
-    if (m_options.requestPayerPhone)
-        response->setPayerPhone(payerPhone);
-
-    m_showPromise->resolve(response.get());
     m_state = State::Closed;
 }
 
-void PaymentRequest::complete(std::optional<PaymentComplete>&& result)
+ExceptionOr<void> PaymentRequest::complete(std::optional<PaymentComplete>&& result)
 {
     ASSERT(m_state == State::Closed);
+    if (!m_activePaymentHandler)
+        return Exception { AbortError };
+
     activePaymentHandler()->complete(WTFMove(result));
     m_activePaymentHandler = std::nullopt;
+    return { };
+}
+
+ExceptionOr<void> PaymentRequest::retry(PaymentValidationErrors&& errors)
+{
+    ASSERT(m_state == State::Closed);
+    if (!m_activePaymentHandler)
+        return Exception { AbortError };
+
+    m_state = State::Interactive;
+    return activePaymentHandler()->retry(WTFMove(errors));
 }
 
 void PaymentRequest::cancel()
 {
-    if (m_state != State::Interactive)
-        return;
-
     m_activePaymentHandler = std::nullopt;
 
     if (m_isUpdating) {
@@ -722,7 +755,7 @@ void PaymentRequest::cancel()
         return;
     }
 
-    stop();
+    abortWithException(Exception { AbortError });
 }
 
 } // namespace WebCore

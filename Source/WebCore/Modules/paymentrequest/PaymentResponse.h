@@ -27,12 +27,14 @@
 
 #if ENABLE(PAYMENT_REQUEST)
 
+#include "ActiveDOMObject.h"
 #include "ContextDestructionObserver.h"
 #include "EventTarget.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSValueInWrappedObject.h"
 #include "PaymentAddress.h"
 #include "PaymentComplete.h"
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -40,13 +42,15 @@ class Document;
 class PaymentRequest;
 struct PaymentValidationErrors;
 
-class PaymentResponse final : public ContextDestructionObserver, public EventTargetWithInlineData, public RefCounted<PaymentResponse> {
+class PaymentResponse final : public ActiveDOMObject, public EventTargetWithInlineData, public RefCounted<PaymentResponse> {
 public:
     using DetailsFunction = Function<JSC::Strong<JSC::JSObject>(JSC::ExecState&)>;
 
     static Ref<PaymentResponse> create(ScriptExecutionContext* context, PaymentRequest& request, DetailsFunction&& detailsFunction)
     {
-        return adoptRef(*new PaymentResponse(context, request, WTFMove(detailsFunction)));
+        auto response = adoptRef(*new PaymentResponse(context, request, WTFMove(detailsFunction)));
+        response->finishConstruction();
+        return response;
     }
 
     ~PaymentResponse();
@@ -77,20 +81,35 @@ public:
 
     void complete(std::optional<PaymentComplete>&&, DOMPromiseDeferred<void>&&);
     void retry(PaymentValidationErrors&&, DOMPromiseDeferred<void>&&);
+    void abortWithException(Exception&&);
+    bool hasRetryPromise() const { return !!m_retryPromise; }
+    void settleRetryPromise(ExceptionOr<void>&& = { });
 
     using RefCounted<PaymentResponse>::ref;
     using RefCounted<PaymentResponse>::deref;
 
 private:
     PaymentResponse(ScriptExecutionContext*, PaymentRequest&, DetailsFunction&&);
+    void finishConstruction();
+
+    // ActiveDOMObject
+    const char* activeDOMObjectName() const final { return "PaymentResponse"; }
+    bool canSuspendForDocumentSuspension() const final;
+    void stop() final;
 
     // EventTarget
     EventTargetInterface eventTargetInterface() const final { return PaymentResponseEventTargetInterfaceType; }
-    ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
+    ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
-    Ref<PaymentRequest> m_request;
+    enum class State {
+        Created,
+        Completed,
+        Stopped,
+    };
+
+    WeakPtr<PaymentRequest> m_request;
     String m_requestId;
     String m_methodName;
     DetailsFunction m_detailsFunction;
@@ -100,7 +119,9 @@ private:
     String m_payerName;
     String m_payerEmail;
     String m_payerPhone;
-    bool m_completeCalled { false };
+    State m_state { State::Created };
+    std::optional<DOMPromiseDeferred<void>> m_retryPromise;
+    RefPtr<PendingActivity<PaymentResponse>> m_pendingActivity;
 };
 
 } // namespace WebCore

@@ -76,6 +76,8 @@ private:
     void cancelPaymentSession() final;
     void paymentCoordinatorDestroyed() final;
 
+    bool isMockPaymentCoordinator() const final { return true; }
+
     void updateTotalAndLineItems(const ApplePaySessionPaymentRequest::TotalAndLineItems&);
 
     Page& m_page;
@@ -90,5 +92,9 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::MockPaymentCoordinator)
+    static bool isType(const WebCore::PaymentCoordinatorClient& paymentCoordinatorClient) { return paymentCoordinatorClient.isMockPaymentCoordinator(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(APPLE_PAY)

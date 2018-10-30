@@ -1,5 +1,3 @@
-setup({ explicit_done: true, explicit_timeout: true });
-
 const validMethod = Object.freeze({
   supportedMethods: "https://apple.com/apple-pay",
   data: {
@@ -22,18 +20,23 @@ const validTotal = Object.freeze({
   label: "Valid total",
   amount: validAmount,
 });
+
 const validDetails = {
   total: validTotal,
 };
 
-test(() => {
-  try {
-    new PaymentRequest(validMethods, validDetails);
-  } catch (err) {
-    done();
-    throw err;
-  }
-}, "Can construct a payment request (smoke test).");
+function setUpAndSmokeTest(options)
+{
+  setup(options);
+  test(() => {
+    try {
+      new PaymentRequest(validMethods, validDetails);
+    } catch (err) {
+      done();
+      throw err;
+    }
+  }, "Can construct a payment request (smoke test).");
+}
 
 /**
  * Pops up a payment sheet, allowing options to be

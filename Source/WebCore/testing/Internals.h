@@ -698,7 +698,7 @@ public:
 #endif
 
 #if ENABLE(APPLE_PAY)
-    MockPaymentCoordinator& mockPaymentCoordinator() const;
+    MockPaymentCoordinator& mockPaymentCoordinator(Document&);
 #endif
 
     bool isSystemPreviewLink(Element&) const;
@@ -795,10 +795,6 @@ private:
 
     std::unique_ptr<InspectorStubFrontend> m_inspectorFrontend;
     RefPtr<CacheStorageConnection> m_cacheStorageConnection;
-
-#if ENABLE(APPLE_PAY)
-    MockPaymentCoordinator* m_mockPaymentCoordinator { nullptr };
-#endif
 };
 
 } // namespace WebCore

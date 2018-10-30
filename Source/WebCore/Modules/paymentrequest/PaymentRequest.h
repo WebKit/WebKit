@@ -50,7 +50,7 @@ enum class PaymentShippingType;
 struct PaymentDetailsUpdate;
 struct PaymentMethodData;
 
-class PaymentRequest final : public RefCounted<PaymentRequest>, public ActiveDOMObject, public EventTargetWithInlineData {
+class PaymentRequest final : public ActiveDOMObject, public CanMakeWeakPtr<PaymentRequest>, public EventTargetWithInlineData, public RefCounted<PaymentRequest> {
 public:
     using AbortPromise = DOMPromiseDeferred<void>;
     using CanMakePaymentPromise = DOMPromiseDeferred<IDLBoolean>;
@@ -60,7 +60,7 @@ public:
     ~PaymentRequest();
 
     void show(Document&, RefPtr<DOMPromise>&& detailsPromise, ShowPromise&&);
-    ExceptionOr<void> abort(AbortPromise&&);
+    void abort(AbortPromise&&);
     void canMakePayment(Document&, CanMakePaymentPromise&&);
 
     const String& id() const;
@@ -93,7 +93,8 @@ public:
     ExceptionOr<void> updateWith(UpdateReason, Ref<DOMPromise>&&);
     ExceptionOr<void> completeMerchantValidation(Event&, Ref<DOMPromise>&&);
     void accept(const String& methodName, PaymentResponse::DetailsFunction&&, Ref<PaymentAddress>&& shippingAddress, const String& payerName, const String& payerEmail, const String& payerPhone);
-    void complete(std::optional<PaymentComplete>&&);
+    ExceptionOr<void> complete(std::optional<PaymentComplete>&&);
+    ExceptionOr<void> retry(PaymentValidationErrors&&);
     void cancel();
 
     using MethodIdentifier = Variant<String, URL>;
@@ -117,6 +118,8 @@ private:
     void whenDetailsSettled(std::function<void()>&&);
     void abortWithException(Exception&&);
     PaymentHandler* activePaymentHandler() { return m_activePaymentHandler ? m_activePaymentHandler->paymentHandler.ptr() : nullptr; }
+    void settleShowPromise(ExceptionOr<PaymentResponse&>&&);
+    void closeActivePaymentHandler();
 
     // ActiveDOMObject
     const char* activeDOMObjectName() const final { return "PaymentRequest"; }
@@ -141,6 +144,7 @@ private:
     std::optional<PaymentHandlerWithPendingActivity> m_activePaymentHandler;
     RefPtr<DOMPromise> m_detailsPromise;
     RefPtr<DOMPromise> m_merchantSessionPromise;
+    RefPtr<PaymentResponse> m_response;
     bool m_isUpdating { false };
     bool m_isCancelPending { false };
 };

@@ -35,31 +35,98 @@
 namespace WebCore {
 
 PaymentResponse::PaymentResponse(ScriptExecutionContext* context, PaymentRequest& request, DetailsFunction&& detailsFunction)
-    : ContextDestructionObserver { context }
-    , m_request { request }
+    : ActiveDOMObject { context }
+    , m_request { makeWeakPtr(request) }
     , m_detailsFunction { WTFMove(detailsFunction) }
 {
     ASSERT(m_detailsFunction);
+    suspendIfNeeded();
 }
 
-PaymentResponse::~PaymentResponse() = default;
+void PaymentResponse::finishConstruction()
+{
+    ASSERT(!hasPendingActivity());
+    m_pendingActivity = makePendingActivity(*this);
+}
+
+PaymentResponse::~PaymentResponse()
+{
+    ASSERT(!hasPendingActivity());
+    ASSERT(!hasRetryPromise());
+}
 
 void PaymentResponse::complete(std::optional<PaymentComplete>&& result, DOMPromiseDeferred<void>&& promise)
 {
-    if (m_completeCalled) {
+    if (m_state == State::Stopped || !m_request) {
+        promise.reject(Exception { AbortError });
+        return;
+    }
+
+    if (m_state == State::Completed || m_retryPromise) {
         promise.reject(Exception { InvalidStateError });
         return;
     }
 
-    m_completeCalled = true;
-    m_request->complete(WTFMove(result));
-    promise.resolve();
+    ASSERT(hasPendingActivity());
+    ASSERT(m_state == State::Created);
+    m_pendingActivity = nullptr;
+    m_state = State::Completed;
+
+    promise.settle(m_request->complete(WTFMove(result)));
 }
 
-void PaymentResponse::retry(PaymentValidationErrors&&, DOMPromiseDeferred<void>&& promise)
+void PaymentResponse::retry(PaymentValidationErrors&& errors, DOMPromiseDeferred<void>&& promise)
 {
-    notImplemented();
-    promise.reject(Exception { NotSupportedError });
+    if (m_state == State::Stopped || !m_request) {
+        promise.reject(Exception { AbortError });
+        return;
+    }
+
+    if (m_state == State::Completed || m_retryPromise) {
+        promise.reject(Exception { InvalidStateError });
+        return;
+    }
+
+    ASSERT(hasPendingActivity());
+    ASSERT(m_state == State::Created);
+
+    auto exception = m_request->retry(WTFMove(errors));
+    if (exception.hasException()) {
+        promise.reject(exception.releaseException());
+        return;
+    }
+
+    m_retryPromise = WTFMove(promise);
+}
+
+void PaymentResponse::abortWithException(Exception&& exception)
+{
+    settleRetryPromise(WTFMove(exception));
+    m_pendingActivity = nullptr;
+    m_state = State::Completed;
+}
+
+void PaymentResponse::settleRetryPromise(ExceptionOr<void>&& result)
+{
+    if (!m_retryPromise)
+        return;
+
+    ASSERT(hasPendingActivity());
+    ASSERT(m_state == State::Created);
+    std::exchange(m_retryPromise, std::nullopt)->settle(WTFMove(result));
+}
+
+bool PaymentResponse::canSuspendForDocumentSuspension() const
+{
+    ASSERT(m_state != State::Stopped);
+    return !hasPendingActivity();
+}
+
+void PaymentResponse::stop()
+{
+    settleRetryPromise(Exception { AbortError });
+    m_pendingActivity = nullptr;
+    m_state = State::Stopped;
 }
 
 } // namespace WebCore

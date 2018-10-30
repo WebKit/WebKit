@@ -58,6 +58,8 @@ public:
     virtual void cancelPaymentSession() = 0;
     virtual void paymentCoordinatorDestroyed() = 0;
 
+    virtual bool isMockPaymentCoordinator() const { return false; }
+
 protected:
     virtual ~PaymentCoordinatorClient() = default;
 };

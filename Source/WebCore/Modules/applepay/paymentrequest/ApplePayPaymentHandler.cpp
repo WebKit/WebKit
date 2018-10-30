@@ -53,6 +53,7 @@
 #include "PaymentMethod.h"
 #include "PaymentRequestValidator.h"
 #include "PaymentResponse.h"
+#include "PaymentValidationErrors.h"
 #include "Settings.h"
 
 namespace WebCore {
@@ -249,7 +250,7 @@ ExceptionOr<Vector<ApplePaySessionPaymentRequest::ShippingMethod>> ApplePayPayme
     return WTFMove(shippingMethods);
 }
 
-ExceptionOr<ApplePaySessionPaymentRequest::TotalAndLineItems> ApplePayPaymentHandler::computeTotalAndLineItems()
+ExceptionOr<ApplePaySessionPaymentRequest::TotalAndLineItems> ApplePayPaymentHandler::computeTotalAndLineItems() const
 {
     auto& details = m_paymentRequest->paymentDetails();
     String currency = details.total.amount.currency;
@@ -322,20 +323,42 @@ Vector<PaymentError> ApplePayPaymentHandler::computeErrors(String&& error, Addre
 {
     Vector<PaymentError> errors;
 
+    if (m_paymentRequest->paymentDetails().shippingOptions.isEmpty())
+        computeAddressErrors(WTFMove(error), WTFMove(addressErrors), errors);
+
+    computePayerErrors(WTFMove(payerErrors), errors);
+
+    auto scope = DECLARE_CATCH_SCOPE(scriptExecutionContext()->vm());
+    auto exception = computePaymentMethodErrors(paymentMethodErrors, errors);
+    if (exception.hasException()) {
+        ASSERT(scope.exception());
+        scope.clearException();
+    }
+
+    return errors;
+}
+
+void ApplePayPaymentHandler::computeAddressErrors(String&& error, AddressErrors&& addressErrors, Vector<PaymentError>& errors) const
+{
+    if (!m_paymentRequest->paymentOptions().requestShipping)
+        return;
+
+    using ContactField = PaymentError::ContactField;
+    appendShippingContactInvalidError(WTFMove(error), std::nullopt, errors);
+    appendShippingContactInvalidError(WTFMove(addressErrors.addressLine), ContactField::AddressLines, errors);
+    appendShippingContactInvalidError(WTFMove(addressErrors.city), ContactField::Locality, errors);
+    appendShippingContactInvalidError(WTFMove(addressErrors.country), ContactField::Country, errors);
+    appendShippingContactInvalidError(WTFMove(addressErrors.dependentLocality), ContactField::SubLocality, errors);
+    appendShippingContactInvalidError(WTFMove(addressErrors.phone), ContactField::PhoneNumber, errors);
+    appendShippingContactInvalidError(WTFMove(addressErrors.postalCode), ContactField::PostalCode, errors);
+    appendShippingContactInvalidError(WTFMove(addressErrors.recipient), ContactField::Name, errors);
+    appendShippingContactInvalidError(WTFMove(addressErrors.region), ContactField::AdministrativeArea, errors);
+}
+
+void ApplePayPaymentHandler::computePayerErrors(PayerErrorFields&& payerErrors, Vector<PaymentError>& errors) const
+{
     auto& options = m_paymentRequest->paymentOptions();
     using ContactField = PaymentError::ContactField;
-
-    if (options.requestShipping && m_paymentRequest->paymentDetails().shippingOptions.isEmpty()) {
-        appendShippingContactInvalidError(WTFMove(error), std::nullopt, errors);
-        appendShippingContactInvalidError(WTFMove(addressErrors.addressLine), ContactField::AddressLines, errors);
-        appendShippingContactInvalidError(WTFMove(addressErrors.city), ContactField::Locality, errors);
-        appendShippingContactInvalidError(WTFMove(addressErrors.country), ContactField::Country, errors);
-        appendShippingContactInvalidError(WTFMove(addressErrors.dependentLocality), ContactField::SubLocality, errors);
-        appendShippingContactInvalidError(WTFMove(addressErrors.phone), ContactField::PhoneNumber, errors);
-        appendShippingContactInvalidError(WTFMove(addressErrors.postalCode), ContactField::PostalCode, errors);
-        appendShippingContactInvalidError(WTFMove(addressErrors.recipient), ContactField::Name, errors);
-        appendShippingContactInvalidError(WTFMove(addressErrors.region), ContactField::AdministrativeArea, errors);
-    }
 
     if (options.requestPayerName)
         appendShippingContactInvalidError(WTFMove(payerErrors.name), ContactField::Name, errors);
@@ -345,25 +368,29 @@ Vector<PaymentError> ApplePayPaymentHandler::computeErrors(String&& error, Addre
 
     if (options.requestPayerPhone)
         appendShippingContactInvalidError(WTFMove(payerErrors.phone), ContactField::PhoneNumber, errors);
+}
+
+ExceptionOr<void> ApplePayPaymentHandler::computePaymentMethodErrors(JSC::JSObject* paymentMethodErrors, Vector<PaymentError>& errors) const
+{
+    if (!paymentMethodErrors)
+        return { };
 
 #if ENABLE(APPLE_PAY_SESSION_V3)
-    if (paymentMethodErrors) {
-        auto& context = *scriptExecutionContext();
-        auto catchScope = DECLARE_CATCH_SCOPE(context.vm());
-        auto applePayErrors = convert<IDLSequence<IDLInterface<ApplePayError>>>(*context.execState(), paymentMethodErrors);
-        if (!catchScope.exception()) {
-            for (auto& applePayError : applePayErrors) {
-                if (applePayError)
-                    errors.append({ applePayError->code(), applePayError->message(), applePayError->contactField() });
-            }
-        } else
-            catchScope.clearException();
+    auto& context = *scriptExecutionContext();
+    auto throwScope = DECLARE_THROW_SCOPE(context.vm());
+    auto applePayErrors = convert<IDLSequence<IDLInterface<ApplePayError>>>(*context.execState(), paymentMethodErrors);
+    if (throwScope.exception())
+        return Exception { ExistingExceptionError };
+
+    for (auto& applePayError : applePayErrors) {
+        if (applePayError)
+            errors.append({ applePayError->code(), applePayError->message(), applePayError->contactField() });
     }
 #else
-    UNUSED_PARAM(paymentMethodErrors);
+    UNUSED_PARAM(errors);
 #endif
 
-    return errors;
+    return { };
 }
 
 ExceptionOr<void> ApplePayPaymentHandler::detailsUpdated(PaymentRequest::UpdateReason reason, String&& error, AddressErrors&& addressErrors, PayerErrorFields&& payerErrors, JSC::JSObject* paymentMethodErrors)
@@ -458,6 +485,7 @@ ExceptionOr<void> ApplePayPaymentHandler::paymentMethodUpdated()
 void ApplePayPaymentHandler::complete(std::optional<PaymentComplete>&& result)
 {
     if (!result) {
+        ASSERT(isFinalStateResult(std::nullopt));
         paymentCoordinator().completePaymentSession(std::nullopt);
         return;
     }
@@ -473,7 +501,29 @@ void ApplePayPaymentHandler::complete(std::optional<PaymentComplete>&& result)
         break;
     }
 
+    ASSERT(isFinalStateResult(authorizationResult));
     paymentCoordinator().completePaymentSession(WTFMove(authorizationResult));
+}
+
+ExceptionOr<void> ApplePayPaymentHandler::retry(PaymentValidationErrors&& validationErrors)
+{
+    Vector<PaymentError> errors;
+
+    computeAddressErrors(WTFMove(validationErrors.error), WTFMove(validationErrors.shippingAddress), errors);
+    computePayerErrors(WTFMove(validationErrors.payer), errors);
+
+    auto exception = computePaymentMethodErrors(validationErrors.paymentMethod.get(), errors);
+    if (exception.hasException())
+        return exception.releaseException();
+
+    // Ensure there is always at least one error to avoid having a final result.
+    if (errors.isEmpty())
+        errors.append({ PaymentError::Code::Unknown, { }, std::nullopt });
+
+    PaymentAuthorizationResult authorizationResult { PaymentAuthorizationStatus::Failure, WTFMove(errors) };
+    ASSERT(!isFinalStateResult(authorizationResult));
+    paymentCoordinator().completePaymentSession(WTFMove(authorizationResult));
+    return { };
 }
 
 unsigned ApplePayPaymentHandler::version() const

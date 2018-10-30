@@ -10,6 +10,7 @@
 <script src="/resources/testharnessreport.js"></script>
 <script src="resources/helpers.js"></script>
 <script>
+setUpAndSmokeTest({ explicit_done: true, explicit_timeout: true });
 async function runTest({ completeWith: result }, button) {
   button.disabled = true;
   const { response, request } = await getPaymentRequestResponse();

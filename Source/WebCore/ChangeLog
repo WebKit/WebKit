@@ -1,3 +1,98 @@
+2018-10-30  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Implement PaymentResponse.retry()
+        https://bugs.webkit.org/show_bug.cgi?id=190985
+
+        Reviewed by Daniel Bates.
+
+        Implemented the retry() method on PaymentResponse as specified in the Payment Request API
+        W3C Editor's Draft of 24 October 2018.
+
+        See https://w3c.github.io/payment-request/#retry-method for details.
+
+        Tests: http/tests/paymentrequest/payment-response-rejects-if-not-active.https.html
+               http/tests/paymentrequest/payment-response-retry-method.https.html
+
+        * Modules/applepay/PaymentCoordinator.h:
+        (WebCore::PaymentCoordinator::client): Added. Returns m_client.
+        * Modules/applepay/PaymentCoordinatorClient.h:
+        (WebCore::PaymentCoordinatorClient::isMockPaymentCoordinator const): Added. Used to downcast
+        a PaymentCoordinatorClient to a MockPaymentCoordinator.
+        * Modules/applepay/paymentrequest/ApplePayPaymentHandler.cpp:
+        (WebCore::ApplePayPaymentHandler::computeTotalAndLineItems const): Made const.
+        (WebCore::ApplePayPaymentHandler::computeErrors const): Broke this function into
+        computeAddressErrors, computePayerErrors, and computePaymentMethodErrors, then modified this
+        function to call those functions. Exceptions thrown by computePaymentMethodErrors are ignored.
+        (WebCore::ApplePayPaymentHandler::computeAddressErrors const): Added.
+        (WebCore::ApplePayPaymentHandler::computePayerErrors const): Added.
+        (WebCore::ApplePayPaymentHandler::computePaymentMethodErrors const): Added.
+        (WebCore::ApplePayPaymentHandler::complete): Added ASSERTs to verify whether result is a
+        final result.
+        (WebCore::ApplePayPaymentHandler::retry): Computed PaymentErrors from PaymentValidationErrors,
+        ensured the PaymentAuthorizationResult was non-final by adding an unknown error if necessary,
+        and called PaymentCoordinator::completePaymentSession.
+        * Modules/applepay/paymentrequest/ApplePayPaymentHandler.h:
+        * Modules/paymentrequest/PaymentHandler.h:
+        * Modules/paymentrequest/PaymentRequest.cpp:
+        (WebCore::PaymentRequest::show): Changed to call settleShowPromise.
+        (WebCore::PaymentRequest::abortWithException): Changed to abort PaymentResponse's retry
+        promise, if present, instead of PaymentResponse's show promise.
+        (WebCore::PaymentRequest::settleShowPromise): Added. Settles m_showPromise then sets it to
+        std::nullopt.
+        (WebCore::PaymentRequest::closeActivePaymentHandler): Added. Hides the active payment
+        handler then sets it to std::nullopt.
+        (WebCore::PaymentRequest::stop): Stopped calling abortWithException, since that function
+        might settle PaymentResponse's retry promise. PaymentResponse is now an ActiveDOMObject and
+        will settle its own promise in its implementation of stop.
+        (WebCore::PaymentRequest::abort): Changed to throw an InvalidStateError if there is a
+        pending retry promise and to call abortWithException instead of stop.
+        (WebCore::PaymentRequest::completeMerchantValidation): Changed to call abortWithException
+        instead of stop.
+        (WebCore::PaymentRequest::settleDetailsPromise): Ditto.
+        (WebCore::PaymentRequest::accept): Updated the existing PaymentResponse, if present, rather
+        than creating a new one. Settled the existing PaymentResponse's retry promise, if present,
+        rather than the show promise.
+        (WebCore::PaymentRequest::complete): Changed to throw an AbortError if there is no longer an
+        active payment handler.
+        (WebCore::PaymentRequest::retry): Changed to throw an AbortError if there is no longer an
+        active payment handler, and to call PaymentHandler::retry if there is.
+        (WebCore::PaymentRequest::cancel): Changed to call abortWithException instead of stop.
+        * Modules/paymentrequest/PaymentRequest.h:
+        * Modules/paymentrequest/PaymentRequest.idl:
+        * Modules/paymentrequest/PaymentResponse.cpp:
+        (WebCore::PaymentResponse::PaymentResponse):
+        (WebCore::PaymentResponse::finishConstruction): Pending activities create strong references
+        to |this|, so they cannot be created in constructors without relaxing adoption requirements.
+        Added this function so that the pending activity can be created after the PaymentResponse is
+        created and adopted.
+        (WebCore::PaymentResponse::~PaymentResponse):
+        (WebCore::PaymentResponse::complete): Updated to throw an AbortError or InvalidStateError
+        when necessary.
+        (WebCore::PaymentResponse::retry): Implemented. Throws an AbortError or InvalidStateError
+        when necessary, otherwise calls PaymentRequest::retry and stores the retry promise in
+        m_retryPromise.
+        (WebCore::PaymentResponse::abortWithException): Added. Rejects the retry promise with
+        |exception|, clears the pending activity, and sets m_state to Completed.
+        (WebCore::PaymentResponse::settleRetryPromise): Added. Settles the retry promise and sets it
+        to std::nullopt.
+        (WebCore::PaymentResponse::canSuspendForDocumentSuspension const): Added. Returns true if
+        there is no pending activity.
+        (WebCore::PaymentResponse::stop): Added. Rejects the retry promise with AbortError, clears
+        the pending activity, and sets m_state to Stopped.
+        * Modules/paymentrequest/PaymentResponse.h: Changed create to call finishConstruction and
+        made PaymentResponse an ActiveDOMObject instead of a ContextDestructionObserver.
+        * testing/Internals.cpp:
+        (WebCore::Internals::Internals): Changed to only create a MockPaymentCoordinator for main frames.
+        (WebCore::Internals::mockPaymentCoordinator): Changed to get the MockPaymentCoordinator by
+        downcasting the page's payment coordinator client.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        * testing/MockPaymentCoordinator.cpp:
+        (WebCore::MockPaymentCoordinator::completePaymentSession): Changed to only increment
+        hideCount for final results.
+        * testing/MockPaymentCoordinator.h:
+        (isType): Added so that PaymentCoordinatorClients can be downcasted to MockPaymentCoordinators.
+
 2018-10-30  Zalan Bujtas  <zalan@apple.com>
 
         [iOS] Use the mainframe view size to compute window.outerWidth/height.

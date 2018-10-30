@@ -28,6 +28,7 @@
 
 #if ENABLE(APPLE_PAY)
 
+#include "ApplePaySessionPaymentRequest.h"
 #include "MockPayment.h"
 #include "MockPaymentContact.h"
 #include "MockPaymentMethod.h"
@@ -209,7 +210,10 @@ void MockPaymentCoordinator::cancelPayment()
 
 void MockPaymentCoordinator::completePaymentSession(std::optional<PaymentAuthorizationResult>&& result)
 {
-    if (!isFinalStateResult(result))
+    auto isFinalState = isFinalStateResult(result);
+    m_errors = WTFMove(result->errors);
+
+    if (!isFinalState)
         return;
 
     ++hideCount;

@@ -10,6 +10,7 @@
 <script src="/resources/testharnessreport.js"></script>
 <script src="resources/helpers.js"></script>
 <script>
+setUpAndSmokeTest({ explicit_done: true, explicit_timeout: true });
 const options = { requestShipping: true };
 function runTest(button, expected = {}) {
   button.disabled = true;

@@ -53,8 +53,11 @@ private:
     PaymentCoordinator& paymentCoordinator() const;
 
     ExceptionOr<Vector<ApplePaySessionPaymentRequest::ShippingMethod>> computeShippingMethods();
-    ExceptionOr<ApplePaySessionPaymentRequest::TotalAndLineItems> computeTotalAndLineItems();
+    ExceptionOr<ApplePaySessionPaymentRequest::TotalAndLineItems> computeTotalAndLineItems() const;
     Vector<PaymentError> computeErrors(String&& error, AddressErrors&&, PayerErrorFields&&, JSC::JSObject* paymentMethodErrors) const;
+    void computeAddressErrors(String&& error, AddressErrors&&, Vector<PaymentError>&) const;
+    void computePayerErrors(PayerErrorFields&&, Vector<PaymentError>&) const;
+    ExceptionOr<void> computePaymentMethodErrors(JSC::JSObject* paymentMethodErrors, Vector<PaymentError>&) const;
 
     ExceptionOr<void> shippingAddressUpdated(Vector<PaymentError>&& errors);
     ExceptionOr<void> shippingOptionUpdated();
@@ -68,6 +71,7 @@ private:
     ExceptionOr<void> detailsUpdated(PaymentRequest::UpdateReason, String&& error, AddressErrors&&, PayerErrorFields&&, JSC::JSObject* paymentMethodErrors) final;
     ExceptionOr<void> merchantValidationCompleted(JSC::JSValue&&) final;
     void complete(std::optional<PaymentComplete>&&) final;
+    ExceptionOr<void> retry(PaymentValidationErrors&&) final;
 
     // PaymentSession
     unsigned version() const final;
