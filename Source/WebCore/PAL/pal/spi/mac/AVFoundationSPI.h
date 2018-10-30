@@ -54,14 +54,14 @@
 #import <AVFoundation/AVPlayerItem.h>
 #import <AVFoundation/AVPlayerLayer.h>
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000)
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101300) || PLATFORM(IOS_FAMILY)
 NS_ASSUME_NONNULL_BEGIN
 @interface AVPlayerItem ()
 @property (nonatomic, readonly) NSTimeInterval seekableTimeRangesLastModifiedTime NS_AVAILABLE(10_13, 11_0);
 @property (nonatomic, readonly) NSTimeInterval liveUpdateInterval;
 @end
 NS_ASSUME_NONNULL_END
-#endif // (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000)
+#endif // (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101300) || PLATFORM(IOS_FAMILY)
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) || PLATFORM(IOS_FAMILY)
 
@@ -235,7 +235,7 @@ NS_ASSUME_NONNULL_END
 
 #endif // __has_include(<AVFoundation/AVSampleBufferRenderSynchronizer.h>)
 
-#if ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED < 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MAX_ALLOWED < 110000)) && __has_include(<AVFoundation/AVQueuedSampleBufferRendering.h>)
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED < 101300) && __has_include(<AVFoundation/AVQueuedSampleBufferRendering.h>)
 #import <AVFoundation/AVQueuedSampleBufferRendering.h>
 @class AVVideoPerformanceMetrics;
 NS_ASSUME_NONNULL_BEGIN
@@ -273,7 +273,7 @@ NS_ASSUME_NONNULL_BEGIN
 NS_ASSUME_NONNULL_END
 #endif // __has_include(<AVFoundation/AVSampleBufferDisplayLayer.h>)
 
-#if ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED < 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MAX_ALLOWED < 110000)) && __has_include(<AVFoundation/AVQueuedSampleBufferRendering.h>)
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED < 101300) && __has_include(<AVFoundation/AVQueuedSampleBufferRendering.h>)
 // Nothing to do, AVfoundation/AVQueuedSampleBufferRendering.h was imported above.
 #elif __has_include(<AVFoundation/AVSampleBufferAudioRenderer.h>)
 #import <AVFoundation/AVSampleBufferAudioRenderer.h>

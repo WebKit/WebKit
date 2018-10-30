@@ -39,7 +39,6 @@
 #import "WeakGCMap.h"
 #import "WeakGCMapInlines.h"
 #import <wtf/Vector.h>
-#import <wtf/spi/cocoa/NSMapTableSPI.h>
 #import <wtf/spi/darwin/dyldSPI.h>
 
 #include <mach-o/dyld.h>

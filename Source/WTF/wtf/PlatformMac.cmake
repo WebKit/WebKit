@@ -21,7 +21,6 @@ list(APPEND WTF_PUBLIC_HEADERS
     spi/cf/CFBundleSPI.h
     spi/cf/CFStringSPI.h
 
-    spi/cocoa/NSMapTableSPI.h
     spi/cocoa/SecuritySPI.h
     spi/cocoa/objcSPI.h
 

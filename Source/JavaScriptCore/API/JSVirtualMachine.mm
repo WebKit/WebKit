@@ -40,7 +40,6 @@
 #import <mutex>
 #import <wtf/BlockPtr.h>
 #import <wtf/Lock.h>
-#import <wtf/spi/cocoa/NSMapTableSPI.h>
 
 static NSMapTable *globalWrapperCache = 0;
 

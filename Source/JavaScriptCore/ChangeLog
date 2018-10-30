@@ -1,3 +1,14 @@
+2018-10-30  Alexey Proskuryakov  <ap@apple.com>
+
+        Clean up some obsolete MAX_ALLOWED macros
+        https://bugs.webkit.org/show_bug.cgi?id=190916
+
+        Reviewed by Tim Horton.
+
+        * API/JSManagedValue.mm:
+        * API/JSVirtualMachine.mm:
+        * API/JSWrapperMap.mm:
+
 2018-10-30  Ross Kirsling  <ross.kirsling@sony.com>
 
         useProbeOSRExit causes failures for Win64 DFG JIT

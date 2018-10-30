@@ -33,11 +33,6 @@
 
 @class WebDataSource;
 
-#if __MAC_OS_X_VERSION_MAX_ALLOWED < 101200
-@protocol PDFViewDelegate <NSObject>
-@end
-#endif
-
 @interface WebPDFView : NSView <PDFViewDelegate, WebDocumentView, WebDocumentSearching, WebDocumentIncrementalSearching, WebMultipleTextMatches, WebDocumentSelection, WebDocumentElement, WebDocumentPDF, _WebDocumentViewState, _WebDocumentZooming>
 {
     PDFView *PDFSubview;

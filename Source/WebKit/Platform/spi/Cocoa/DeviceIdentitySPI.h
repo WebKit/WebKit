@@ -31,10 +31,6 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
-#if __IPHONE_OS_VERSION_MAX_ALLOWED < 110300
-extern NSString * _Nonnull const kMAOptionsBAAAccessControls;
-#endif
-
 extern "C" {
 #import <DeviceIdentity/DeviceIdentity.h>
 }

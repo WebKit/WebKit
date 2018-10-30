@@ -54,7 +54,7 @@ NSPoint globalPoint(const NSPoint& windowPoint, NSWindow *window)
 static NSPoint globalPointForEvent(NSEvent *event)
 {
     switch ([event type]) {
-#if defined(__LP64__) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101003
+#if defined(__LP64__)
     case NSEventTypePressure:
 #endif
     case NSEventTypeLeftMouseDown:
@@ -79,7 +79,7 @@ static NSPoint globalPointForEvent(NSEvent *event)
 static IntPoint pointForEvent(NSEvent *event, NSView *windowView)
 {
     switch ([event type]) {
-#if defined(__LP64__) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101003
+#if defined(__LP64__)
     case NSEventTypePressure:
 #endif
     case NSEventTypeLeftMouseDown:
@@ -110,7 +110,7 @@ static IntPoint pointForEvent(NSEvent *event, NSView *windowView)
 static MouseButton mouseButtonForEvent(NSEvent *event)
 {
     switch ([event type]) {
-#if defined(__LP64__) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101003
+#if defined(__LP64__)
     case NSEventTypePressure:
 #endif
     case NSEventTypeLeftMouseDown:
@@ -723,7 +723,7 @@ public:
         // PlatformEvent
         m_type = mouseEventTypeForEvent(event);
 
-#if defined(__LP64__) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101003
+#if defined(__LP64__)
         BOOL eventIsPressureEvent = [event type] == NSEventTypePressure;
         if (eventIsPressureEvent) {
             // Since AppKit doesn't send mouse events for force down or force up, we have to use the current pressure
@@ -753,7 +753,7 @@ public:
 #endif
 
         m_force = 0;
-#if defined(__LP64__) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101003
+#if defined(__LP64__)
         int stage = eventIsPressureEvent ? event.stage : correspondingPressureEvent.stage;
         double pressure = eventIsPressureEvent ? event.pressure : correspondingPressureEvent.pressure;
         m_force = pressure + stage;

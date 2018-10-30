@@ -247,7 +247,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didRequestMerchantSession:(void(^)(PKPaymentMerchantSession *, NSError *))sessionBlock;
 @end
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101304) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 110300)
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101304) || PLATFORM(IOS_FAMILY)
 typedef NS_ENUM(NSUInteger, PKPaymentRequestAPIType) {
     PKPaymentRequestAPITypeInApp = 0,
     PKPaymentRequestAPITypeWebJS,
@@ -276,7 +276,7 @@ typedef NS_ENUM(NSInteger, PKPaymentButtonType) {
     PKPaymentButtonTypeSetUp,
     PKPaymentButtonTypeInStore,
     PKPaymentButtonTypeDonate,
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101400) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 120000)
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101400) || PLATFORM(IOS_FAMILY)
     PKPaymentButtonTypeCheckout,
     PKPaymentButtonTypeBook,
     PKPaymentButtonTypeSubscribe,

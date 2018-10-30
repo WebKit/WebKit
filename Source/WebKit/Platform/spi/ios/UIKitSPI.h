@@ -341,9 +341,7 @@ typedef NS_ENUM(NSInteger, UIScrollViewIndicatorInsetAdjustmentBehavior) {
 @property (nonatomic, readonly) BOOL _isInterruptingDeceleration;
 @property (nonatomic, getter=_contentScrollInset, setter=_setContentScrollInset:) UIEdgeInsets contentScrollInset;
 @property (nonatomic, getter=_indicatorInsetAdjustmentBehavior, setter=_setIndicatorInsetAdjustmentBehavior:) UIScrollViewIndicatorInsetAdjustmentBehavior indicatorInsetAdjustmentBehavior;
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
 @property (nonatomic, readonly) UIEdgeInsets _systemContentInset;
-#endif
 @end
 
 @interface NSString (UIKitDetails)
@@ -492,9 +490,7 @@ typedef NS_ENUM (NSInteger, _UIBackdropMaskViewFlags) {
 - (void)setSize:(CGSize)size;
 @property (nonatomic, assign, setter=_setBackdropMaskViewFlags:) NSInteger _backdropMaskViewFlags;
 - (void)_populateArchivedSubviews:(NSMutableSet *)encodedViews;
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
 - (void)safeAreaInsetsDidChange;
-#endif
 @property (nonatomic, setter=_setContinuousCornerRadius:) CGFloat _continuousCornerRadius;
 - (void)insertSubview:(UIView *)view above:(UIView *)sibling;
 - (void)viewWillMoveToSuperview:(UIView *)newSuperview;
@@ -631,9 +627,6 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 - (BOOL)hasMarkedText;
 
 - (BOOL)hasSelectablePositionAtPoint:(CGPoint)point;
-#if __IPHONE_OS_VERSION_MAX_ALLOWED < 110000
-- (BOOL)pointIsInAssistedNode:(CGPoint)point;
-#endif
 - (NSArray *)webSelectionRects;
 - (void)_cancelLongPressGestureRecognizer;
 

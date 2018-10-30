@@ -1,3 +1,14 @@
+2018-10-30  Alexey Proskuryakov  <ap@apple.com>
+
+        Clean up some obsolete MAX_ALLOWED macros
+        https://bugs.webkit.org/show_bug.cgi?id=190916
+
+        Reviewed by Tim Horton.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView pressureChangeWithEvent:]):
+        * WebView/WebPDFView.h:
+
 2018-10-30  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r237600 and r237604.

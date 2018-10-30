@@ -1372,7 +1372,7 @@ TEST(DragAndDropTests, DoNotCrashWhenSelectionIsClearedInDragStart)
 }
 
 // FIXME: Re-enable this test once we resolve <https://bugs.webkit.org/show_bug.cgi?id=175204>
-#if __IPHONE_OS_VERSION_MAX_ALLOWED <= 110401
+#if 0
 TEST(DragAndDropTests, CustomActionSheetPopover)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);

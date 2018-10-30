@@ -1,3 +1,14 @@
+2018-10-30  Alexey Proskuryakov  <ap@apple.com>
+
+        Clean up some obsolete MAX_ALLOWED macros
+        https://bugs.webkit.org/show_bug.cgi?id=190916
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WTF/darwin/WeakLinking.cpp:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKHTTPCookieStore.mm:
+        * TestWebKitAPI/Tests/ios/DragAndDropTestsIOS.mm:
+
 2018-10-30  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK][WPE] Fixes to the PublicSuffix implementation

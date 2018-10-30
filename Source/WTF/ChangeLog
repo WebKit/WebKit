@@ -1,3 +1,14 @@
+2018-10-30  Alexey Proskuryakov  <ap@apple.com>
+
+        Clean up some obsolete MAX_ALLOWED macros
+        https://bugs.webkit.org/show_bug.cgi?id=190916
+
+        Reviewed by Tim Horton.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/PlatformMac.cmake:
+        * wtf/spi/cocoa/NSMapTableSPI.h: Removed. This was only needed for old SDKs.
+
 2018-10-29  Mark Lam  <mark.lam@apple.com>
 
         Correctly detect string overflow when using the 'Function' constructor.

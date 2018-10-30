@@ -149,7 +149,7 @@ static WebCore::ApplePaySessionPaymentRequest::ShippingMethod toShippingMethod(P
     return result;
 }
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000)
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101300) || PLATFORM(IOS_FAMILY)
 
 - (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didAuthorizePayment:(PKPayment *)payment handler:(void (^)(PKPaymentAuthorizationResult *result))completion
 {
@@ -498,8 +498,7 @@ static RetainPtr<NSSet> toNSSet(const Vector<String>& strings)
 }
 #endif
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300 && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101304) \
-    || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110300 && __IPHONE_OS_VERSION_MAX_ALLOWED >= 110300)
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300 && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101304) || PLATFORM(IOS_FAMILY)
 static PKPaymentRequestAPIType toAPIType(WebCore::ApplePaySessionPaymentRequest::Requester requester)
 {
     switch (requester) {
@@ -526,8 +525,7 @@ RetainPtr<PKPaymentRequest> toPKPaymentRequest(WebPageProxy& webPageProxy, const
     } else if (!linkIconURLs.isEmpty())
         [result setThumbnailURL:linkIconURLs[0]];
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300 && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101304) \
-    || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110300 && __IPHONE_OS_VERSION_MAX_ALLOWED >= 110300)
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300 && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101304) || PLATFORM(IOS_FAMILY)
     [result setAPIType:toAPIType(paymentRequest.requester())];
 #endif
 

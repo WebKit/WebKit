@@ -2809,7 +2809,6 @@ static NSString *exernalDeviceDisplayNameForPlayer(AVPlayerType *player)
     if (!AVFoundationLibrary())
         return nil;
 
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
     if ([getAVOutputContextClass() respondsToSelector:@selector(sharedAudioPresentationOutputContext)]) {
         AVOutputContext *outputContext = [getAVOutputContextClass() sharedAudioPresentationOutputContext];
 
@@ -2828,7 +2827,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
         return [outputDeviceNames componentsJoinedByString:@" + "];
     }
-#endif
 
     if (player.externalPlaybackType != AVPlayerExternalPlaybackTypeAirPlay)
         return nil;
