@@ -1,3 +1,11 @@
+2018-10-29  Zalan Bujtas  <zalan@apple.com>
+
+        Missing from r237549
+
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::precomputeVerticalPositionForFormattingRootIfNeeded const):
+        (WebCore::Layout::hasPrecomputedMarginTop):
+
 2018-10-29  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed speculative build fix for AppleWin after r237559.

@@ -198,8 +198,8 @@ void BlockFormattingContext::precomputeVerticalPositionForFormattingRootIfNeeded
 {
     ASSERT(layoutBox.establishesFormattingContext());
 
-    auto avoidsFloats = (layoutBox.establishesBlockFormattingContext() && !layoutBox.establishesInlineFormattingContext()) || layoutBox.hasFloatClear();
-    if (layoutBox.isFloatingPositioned() || avoidsFloats)
+    auto avoidsFloats = layoutBox.isFloatingPositioned() || layoutBox.establishesBlockFormattingContext() || layoutBox.hasFloatClear();
+    if (avoidsFloats)
         computeEstimatedMarginTopForAncestors(layoutContext, layoutBox);
 
     // If the inline formatting root is also the root for the floats (happens when the root box also establishes a block formatting context)
@@ -214,8 +214,12 @@ void BlockFormattingContext::precomputeVerticalPositionForFormattingRootIfNeeded
 #ifndef NDEBUG
 static bool hasPrecomputedMarginTop(const LayoutContext& layoutContext, const Box& layoutBox)
 {
-    for (auto* ancestor = layoutBox.containingBlock(); ancestor && !ancestor->establishesBlockFormattingContext(); ancestor = ancestor->containingBlock())
-        ASSERT(displayBox.layoutContext.displayBoxForLayoutBox(*ancestor).estimatedMarginTop());
+    for (auto* ancestor = layoutBox.containingBlock(); ancestor && !ancestor->establishesBlockFormattingContext(); ancestor = ancestor->containingBlock()) {
+        if (layoutContext.displayBoxForLayoutBox(*ancestor).estimatedMarginTop())
+            continue;
+        return false;
+    }
+    return true;
 }
 #endif
 
