@@ -7,10 +7,17 @@ function test()
 {
     let documentNode;
 
-    function nodeForSelector(selector, callback) {
-        WI.domManager.querySelector(documentNode.id, selector, (nodeId) => {
-            callback(WI.domManager.nodeForId(nodeId));
-        });
+    async function nodeForSelector(selector) {
+        let nodeId = await WI.domManager.querySelector(documentNode.id, selector);
+        return WI.domManager.nodeForId(nodeId);
+    }
+
+    function testNodeMatchesPath(node, message, {regular, full}) {
+        InspectorTest.expectEqual(WI.cssPath(node), regular, message);
+        if (full) {
+            let actual = WI.cssPath(node, {full: true});
+            InspectorTest.assert(actual === full, `Full path ${actual} doesn't match expected ${full}.`);
+        }
     }
 
     let suite = InspectorTest.createAsyncSuite("WI.cssPath");
@@ -18,16 +25,23 @@ function test()
     suite.addTestCase({
         name: "WI.cssPath.TopLevelNode",
         description: "Top level nodes like html, body, and head are unique.",
-        test(resolve, reject) {
-            nodeForSelector("html", (node) => {
-                InspectorTest.expectEqual(WI.cssPath(node), "html", "HTML element should have simple selector 'html'.");
+        async test() {
+            let html = await nodeForSelector("html");
+            testNodeMatchesPath(html, "HTML element should have simple selector 'html'.", {
+                regular: `html`,
+                full: `html`,
             });
-            nodeForSelector("html > body", (node) => {
-                InspectorTest.expectEqual(WI.cssPath(node), "body", "BODY element should have simple selector 'body'.");
+
+            let body = await nodeForSelector("html > body");
+            testNodeMatchesPath(body, "BODY element should have simple selector 'body'.", {
+                regular: `body`,
+                full: `html > body[onload="runTest()"]`,
             });
-            nodeForSelector("html > head", (node) => {
-                InspectorTest.expectEqual(WI.cssPath(node), "head", "HEAD element should have simple selector 'head'.");
-                resolve();
+
+            let head = await nodeForSelector("html > head");
+            testNodeMatchesPath(head, "HEAD element should have simple selector 'head'.", {
+                regular: `head`,
+                full: `html > head`,
             });
         }
     });
@@ -35,13 +49,17 @@ function test()
     suite.addTestCase({
         name: "WI.cssPath.ElementWithID",
         description: "Element with ID is unique (#id). Path does not need to go past it.",
-        test(resolve, reject) {
-            nodeForSelector("#id-test", (node) => {
-                InspectorTest.expectEqual(WI.cssPath(node), "#id-test", "Element with id should have simple selector '#id-test'.");
+        async test() {
+            let test = await nodeForSelector("#id-test");
+            testNodeMatchesPath(test, "Element with id should have simple selector '#id-test'.", {
+                regular: `#id-test`,
+                full: `html > body[onload="runTest()"] > div[style="visibility:hidden"] > div#id-test`,
             });
-            nodeForSelector("#id-test > div", (node) => {
-                InspectorTest.expectEqual(WI.cssPath(node), "#id-test > div", "Element inside element with id should have path from id.");
-                resolve();
+
+            let div = await nodeForSelector("#id-test > div");
+            testNodeMatchesPath(div, "Element inside element with id should have path from id.", {
+                regular: `#id-test > div`,
+                full: `html > body[onload="runTest()"] > div[style="visibility:hidden"] > div#id-test > div`,
             });
         }
     });
@@ -49,10 +67,11 @@ function test()
     suite.addTestCase({
         name: "WI.cssPath.InputElementFlair",
         description: "Input elements include their type.",
-        test(resolve, reject) {
-            nodeForSelector("#input-test input", (node) => {
-                InspectorTest.expectEqual(WI.cssPath(node), "#input-test > input[type=\"password\"]", "Input element should include type.");
-                resolve();
+        async test() {
+            let input = await nodeForSelector("#input-test input");
+            testNodeMatchesPath(input, "Input element should include type.", {
+                regular: `#input-test > input[type="password"]`,
+                full: `html > body[onload="runTest()"] > div[style="visibility:hidden"] > div#input-test > input[type="password"]`,
             });
         }
     });
@@ -60,10 +79,11 @@ function test()
     suite.addTestCase({
         name: "WI.cssPath.UniqueTagName",
         description: "Elements with unique tag name do not need nth-child.",
-        test(resolve, reject) {
-            nodeForSelector("#unique-tag-test > span", (node) => {
-                InspectorTest.expectEqual(WI.cssPath(node), "#unique-tag-test > span", "Elements with unique tag name should not need nth-child().");
-                resolve();
+        async test() {
+            let span = await nodeForSelector("#unique-tag-test > span");
+            testNodeMatchesPath(span, "Elements with unique tag name should not need nth-child().", {
+                regular: `#unique-tag-test > span`,
+                full: `html > body[onload="runTest()"] > div[style="visibility:hidden"] > div#unique-tag-test > span`,
             });
         }
     });
@@ -71,10 +91,11 @@ function test()
     suite.addTestCase({
         name: "WI.cssPath.NonUniqueTagName",
         description: "Elements with non-unique tag name need nth-child.",
-        test(resolve, reject) {
-            nodeForSelector("#non-unique-tag-test > span ~ span", (node) => {
-                InspectorTest.expectEqual(WI.cssPath(node), "#non-unique-tag-test > span:nth-child(3)", "Elements with non-unique tag name should need nth-child().");
-                resolve();
+        async test() {
+            let span = await nodeForSelector("#non-unique-tag-test > span ~ span");
+            testNodeMatchesPath(span, "Elements with non-unique tag name should need nth-child().", {
+                regular: `#non-unique-tag-test > span:nth-child(3)`,
+                full: `html > body[onload="runTest()"] > div[style="visibility:hidden"] > div#non-unique-tag-test > span:nth-child(3)`,
             });
         }
     });
@@ -82,10 +103,11 @@ function test()
     suite.addTestCase({
         name: "WI.cssPath.UniqueClassName",
         description: "Elements with unique class names should include their class names.",
-        test(resolve, reject) {
-            nodeForSelector("#unique-class-test > .beta", (node) => {
-                InspectorTest.expectEqual(WI.cssPath(node), "#unique-class-test > div.alpha.beta", "Elements with unique class names should include their class names.");
-                resolve();
+        async test() {
+            let beta = await nodeForSelector("#unique-class-test > .beta");
+            testNodeMatchesPath(beta, "Elements with unique class names should include their class names.", {
+                regular: `#unique-class-test > div.alpha.beta`,
+                full: `html > body[onload="runTest()"] > div[style="visibility:hidden"] > div#unique-class-test > div.alpha.beta`,
             });
         }
     });
@@ -93,10 +115,11 @@ function test()
     suite.addTestCase({
         name: "WI.cssPath.NonUniqueClassName",
         description: "Elements with non-unique class names should not include their class names.",
-        test(resolve, reject) {
-            nodeForSelector("#non-unique-class-test > div ~ div", (node) => {
-                InspectorTest.expectEqual(WI.cssPath(node), "#non-unique-class-test > div:nth-child(2)", "Elements with non-unique class names should not include their class names.");
-                resolve();
+        async test() {
+            let div = await nodeForSelector("#non-unique-class-test > div ~ div");
+            testNodeMatchesPath(div, "Elements with non-unique class names should not include their class names.", {
+                regular: `#non-unique-class-test > div:nth-child(2)`,
+                full: `html > body[onload="runTest()"] > div[style="visibility:hidden"] > div#non-unique-class-test > div.alpha:nth-child(2)`,
             });
         }
     });
@@ -104,10 +127,11 @@ function test()
     suite.addTestCase({
         name: "WI.cssPath.UniqueTagAndClassName",
         description: "Elements with unique tag and class name just use tag for simplicity.",
-        test(resolve, reject) {
-            nodeForSelector("#unique-tag-and-class-test > .alpha", (node) => {
-                InspectorTest.expectEqual(WI.cssPath(node), "#unique-tag-and-class-test > div", "Elements with unique tag and class names should just have simple tag.");
-                resolve();
+        async test() {
+            let alpha = await nodeForSelector("#unique-tag-and-class-test > .alpha");
+            testNodeMatchesPath(alpha, "Elements with unique tag and class names should just have simple tag.", {
+                regular: `#unique-tag-and-class-test > div`,
+                full: `html > body[onload="runTest()"] > div[style="visibility:hidden"] > div#unique-tag-and-class-test > div.alpha`,
             });
         }
     });
@@ -115,10 +139,11 @@ function test()
     suite.addTestCase({
         name: "WI.cssPath.DeepPath",
         description: "Tests for element with complex path.",
-        test(resolve, reject) {
-            nodeForSelector("small", (node) => {
-                InspectorTest.expectEqual(WI.cssPath(node), "body > div > div.deep-path-test > ul > li > div:nth-child(4) > ul > li.active > a > small", "Should be able to create path for deep elements.");
-                resolve();
+        async test() {
+            let small = await nodeForSelector("small");
+            testNodeMatchesPath(small, "Should be able to create path for deep elements.", {
+                regular: `body > div > div.deep-path-test > ul > li > div:nth-child(4) > ul > li.active > a > small`,
+                full: `html > body[onload="runTest()"] > div[style="visibility:hidden"] > div.deep-path-test > ul > li > div:nth-child(4) > ul.list > li.active > a[href="#"] > small`,
             });
         }
     });
@@ -126,15 +151,21 @@ function test()
     suite.addTestCase({
         name: "WI.cssPath.PseudoElement",
         description: "For a pseudo element we should get the path of the parent and append the pseudo element selector.",
-        test(resolve, reject) {
-            nodeForSelector("#pseudo-element-test > div ~ div", (node) => {
-                let pseudoElementBefore = node.beforePseudoElement();
-                InspectorTest.assert(pseudoElementBefore);
-                InspectorTest.expectEqual(WI.cssPath(pseudoElementBefore), "#pseudo-element-test > div:nth-child(3)::before", "Should be able to create path for ::before pseudo elements.");
-                let pseudoElementAfter = node.afterPseudoElement();
-                InspectorTest.assert(pseudoElementAfter);
-                InspectorTest.expectEqual(WI.cssPath(pseudoElementAfter), "#pseudo-element-test > div:nth-child(3)::after", "Should be able to create path for ::after pseudo elements.");
-                resolve();
+        async test() {
+            let div = await nodeForSelector("#pseudo-element-test > div ~ div");
+
+            let pseudoElementBefore = div.beforePseudoElement();
+            InspectorTest.assert(pseudoElementBefore);
+            testNodeMatchesPath(pseudoElementBefore, "Should be able to create path for ::before pseudo elements.", {
+                regular: `#pseudo-element-test > div:nth-child(3)::before`,
+                full: `html > body[onload="runTest()"] > div[style="visibility:hidden"] > div#pseudo-element-test > div:nth-child(3)::before`,
+            });
+
+            let pseudoElementAfter = div.afterPseudoElement();
+            InspectorTest.assert(pseudoElementAfter);
+            testNodeMatchesPath(pseudoElementAfter, "Should be able to create path for ::after pseudo elements.", {
+                regular: `#pseudo-element-test > div:nth-child(3)::after`,
+                full: `html > body[onload="runTest()"] > div[style="visibility:hidden"] > div#pseudo-element-test > div:nth-child(3)::after`,
             });
         }
     });

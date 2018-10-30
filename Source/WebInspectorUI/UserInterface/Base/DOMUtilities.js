@@ -93,7 +93,7 @@ function createSVGElement(tagName)
     return document.createElementNS("http://www.w3.org/2000/svg", tagName);
 }
 
-WI.cssPath = function(node)
+WI.cssPath = function(node, options = {})
 {
     console.assert(node instanceof WI.DOMNode, "Expected a DOMNode.");
     if (node.nodeType() !== Node.ELEMENT_NODE)
@@ -107,7 +107,7 @@ WI.cssPath = function(node)
 
     let components = [];
     while (node) {
-        let component = WI.cssPathComponent(node);
+        let component = WI.cssPathComponent(node, options);
         if (!component)
             break;
         components.push(component);
@@ -120,7 +120,7 @@ WI.cssPath = function(node)
     return components.map((x) => x.value).join(" > ") + suffix;
 };
 
-WI.cssPathComponent = function(node)
+WI.cssPathComponent = function(node, options = {})
 {
     console.assert(node instanceof WI.DOMNode, "Expected a DOMNode.");
     console.assert(!node.isPseudoElement());
@@ -128,6 +128,75 @@ WI.cssPathComponent = function(node)
         return null;
 
     let nodeName = node.nodeNameInCorrectCase();
+
+    // Root node does not have siblings.
+    if (!node.parentNode || node.parentNode.nodeType() === Node.DOCUMENT_NODE)
+        return {value: nodeName, done: true};
+
+    if (options.full) {
+        function getUniqueAttributes(domNode) {
+            let uniqueAttributes = new Map;
+            for (let attribute of domNode.attributes()) {
+                let values = [attribute.value];
+                if (attribute.name === "id" || attribute.name === "class")
+                    values = attribute.value.split(/\s+/);
+                uniqueAttributes.set(attribute.name, new Set(values));
+            }
+            return uniqueAttributes;
+        }
+
+        let nodeIndex = 0;
+        let needsNthChild = false;
+        let uniqueAttributes = getUniqueAttributes(node);
+        node.parentNode.children.forEach((child, i) => {
+            if (child.nodeType() !== Node.ELEMENT_NODE)
+                return;
+
+            if (child === node) {
+                nodeIndex = i;
+                return;
+            }
+
+            if (needsNthChild || child.nodeNameInCorrectCase() !== nodeName)
+                return;
+
+            let childUniqueAttributes = getUniqueAttributes(child);
+            let subsetCount = 0;
+            for (let [name, values] of uniqueAttributes) {
+                let childValues = childUniqueAttributes.get(name);
+                if (childValues && values.size <= childValues.size && values.isSubsetOf(childValues))
+                    ++subsetCount;
+            }
+
+            if (subsetCount === uniqueAttributes.size)
+                needsNthChild = true;
+        });
+
+        function selectorForAttribute(values, prefix = "", shouldCSSEscape = false) {
+            if (!values || !values.size)
+                return "";
+            values = Array.from(values);
+            values = values.filter((value) => value && value.length);
+            if (!values.length)
+                return "";
+            values = values.map((value) => shouldCSSEscape ? CSS.escape(value) : value.escapeCharacters("\""));
+            return prefix + values.join(prefix);
+        }
+
+        let selector = nodeName;
+        selector += selectorForAttribute(uniqueAttributes.get("id"), "#", true);
+        selector += selectorForAttribute(uniqueAttributes.get("class"), ".", true);
+        for (let [attribute, values] of uniqueAttributes) {
+            if (attribute !== "id" && attribute !== "class")
+                selector += `[${attribute}="${selectorForAttribute(values)}"]`;
+        }
+
+        if (needsNthChild)
+            selector += `:nth-child(${nodeIndex + 1})`;
+
+        return {value: selector, done: false};
+    }
+
     let lowerNodeName = node.nodeName().toLowerCase();
 
     // html, head, and body are unique nodes.
@@ -138,10 +207,6 @@ WI.cssPathComponent = function(node)
     let id = node.getAttribute("id");
     if (id)
         return {value: node.escapedIdSelector, done: true};
-
-    // Root node does not have siblings.
-    if (!node.parentNode || node.parentNode.nodeType() === Node.DOCUMENT_NODE)
-        return {value: nodeName, done: true};
 
     // Find uniqueness among siblings.
     //   - look for a unique className
