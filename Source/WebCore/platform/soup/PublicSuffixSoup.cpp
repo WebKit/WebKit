@@ -38,7 +38,7 @@ bool isPublicSuffix(const String& domain)
     if (domain.isEmpty())
         return false;
 
-    return soup_tld_domain_is_public_suffix(domain.utf8().data());
+    return soup_tld_domain_is_public_suffix(domain.convertToASCIILowercase().utf8().data());
 }
 
 String topPrivatelyControlledDomain(const String& domain)
@@ -46,15 +46,21 @@ String topPrivatelyControlledDomain(const String& domain)
     if (domain.isEmpty())
         return String();
 
+    String lowercaseDomain = domain.convertToASCIILowercase();
+
+    if (lowercaseDomain == "localhost")
+        return lowercaseDomain;
+
     GUniqueOutPtr<GError> error;
-    CString domainUTF8 = domain.utf8();
+    CString domainUTF8 = lowercaseDomain.utf8();
+
     if (const char* baseDomain = soup_tld_get_base_domain(domainUTF8.data(), &error.outPtr()))
         return String::fromUTF8(baseDomain);
 
-    if (g_error_matches(error.get(), SOUP_TLD_ERROR, SOUP_TLD_ERROR_NO_BASE_DOMAIN) || g_error_matches(error.get(), SOUP_TLD_ERROR, SOUP_TLD_ERROR_NOT_ENOUGH_DOMAINS))
+    if (g_error_matches(error.get(), SOUP_TLD_ERROR, SOUP_TLD_ERROR_INVALID_HOSTNAME) || g_error_matches(error.get(), SOUP_TLD_ERROR, SOUP_TLD_ERROR_NOT_ENOUGH_DOMAINS))
         return String();
 
-    if (g_error_matches(error.get(), SOUP_TLD_ERROR, SOUP_TLD_ERROR_IS_IP_ADDRESS) || g_error_matches(error.get(), SOUP_TLD_ERROR, SOUP_TLD_ERROR_INVALID_HOSTNAME))
+    if (g_error_matches(error.get(), SOUP_TLD_ERROR, SOUP_TLD_ERROR_IS_IP_ADDRESS) || g_error_matches(error.get(), SOUP_TLD_ERROR, SOUP_TLD_ERROR_NO_BASE_DOMAIN))
         return domain;
 
     ASSERT_NOT_REACHED();

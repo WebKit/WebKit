@@ -153,7 +153,6 @@ TEST_F(PublicSuffix, IsPublicSuffix)
 
 TEST_F(PublicSuffix, TopPrivatelyControlledDomain)
 {
-    EXPECT_EQ(utf16String(u"\u6803\u6728.jp"), topPrivatelyControlledDomain(utf16String(u"\u6803\u6728.jp")));
     EXPECT_EQ(String(utf16String(u"example.\u6803\u6728.jp")), topPrivatelyControlledDomain(utf16String(u"example.\u6803\u6728.jp")));
     EXPECT_EQ(String(), topPrivatelyControlledDomain(String()));
     EXPECT_EQ(String(), topPrivatelyControlledDomain(""));

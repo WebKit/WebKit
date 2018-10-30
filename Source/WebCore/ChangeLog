@@ -1,3 +1,20 @@
+2018-10-30  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK][WPE] Fixes to the PublicSuffix implementation
+        https://bugs.webkit.org/show_bug.cgi?id=191031
+
+        Reviewed by Michael Catanzaro.
+
+        Covered by existing tests.
+
+        Downcase hostnames before passing it on to the underlying
+        libsoup API. Special case localhost and fix a mixed-up
+        libsoup GError checks. This fixes most of the failures.
+
+        * platform/soup/PublicSuffixSoup.cpp:
+        (WebCore::isPublicSuffix):
+        (WebCore::topPrivatelyControlledDomain):
+
 2018-10-29  Zalan Bujtas  <zalan@apple.com>
 
         Missing from r237549
