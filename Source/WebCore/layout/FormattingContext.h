@@ -28,7 +28,6 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "DisplayBox.h"
-#include "FloatingState.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/WeakPtr.h>
 
@@ -47,7 +46,7 @@ class LayoutState;
 class FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(FormattingContext);
 public:
-    FormattingContext(const Box& formattingContextRoot);
+    FormattingContext(const Box& formattingContextRoot, FormattingState&);
     virtual ~FormattingContext();
 
     virtual void layout(LayoutState&, FormattingState&) const = 0;
@@ -66,6 +65,8 @@ public:
 protected:
     using LayoutQueue = Vector<const Box*>;
 
+    FormattingState& formattingState() const;
+    LayoutState& layoutState() const;
     const Box& root() const { return *m_root; }
 
     virtual void computeStaticPosition(const LayoutState&, const Box&) const = 0;
@@ -126,6 +127,7 @@ private:
     void computeOutOfFlowHorizontalGeometry(LayoutState&, const Box&) const;
 
     WeakPtr<const Box> m_root;
+    FormattingState& m_formattingState;
 };
 
 }

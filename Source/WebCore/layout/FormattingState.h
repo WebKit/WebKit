@@ -46,7 +46,7 @@ class FormattingState {
 public:
     virtual ~FormattingState();
 
-    virtual std::unique_ptr<FormattingContext>formattingContext(const Box& formattingContextRoot) const = 0;
+    virtual std::unique_ptr<FormattingContext>formattingContext(const Box& formattingContextRoot) = 0;
 
     FloatingState& floatingState() const { return m_floatingState; }
 
@@ -60,13 +60,14 @@ public:
     bool isBlockFormattingState() const { return m_type == Type::Block; }
     bool isInlineFormattingState() const { return m_type == Type::Inline; }
 
+    LayoutState& layoutState() const { return m_layoutState; }
+
 protected:
     enum class Type { Block, Inline };
-    FormattingState(Ref<FloatingState>&&, Type, const LayoutState&);
-
-    const LayoutState& m_layoutState;
+    FormattingState(Ref<FloatingState>&&, Type, LayoutState&);
 
 private:
+    LayoutState& m_layoutState;
     Ref<FloatingState> m_floatingState;
     HashMap<const Box*, FormattingContext::InstrinsicWidthConstraints> m_instrinsicWidthConstraints;
     Type m_type;

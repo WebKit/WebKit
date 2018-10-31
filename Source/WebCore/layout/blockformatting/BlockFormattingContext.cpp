@@ -44,8 +44,8 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(BlockFormattingContext);
 
-BlockFormattingContext::BlockFormattingContext(const Box& formattingContextRoot)
-    : FormattingContext(formattingContextRoot)
+BlockFormattingContext::BlockFormattingContext(const Box& formattingContextRoot, FormattingState& formattingState)
+    : FormattingContext(formattingContextRoot, formattingState)
 {
 }
 

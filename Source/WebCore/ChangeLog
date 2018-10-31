@@ -1,5 +1,43 @@
 2018-10-31  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] FormattingContext class should take FormattingState&
+        https://bugs.webkit.org/show_bug.cgi?id=191099
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for not passing LayoutState& into every layout functions.
+        FormattingContext has FormattingState now and LayoutState can be acquired through FormattingState.
+        LayoutState <- FormattingState <- FormattingContext
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::FormattingContext):
+        (WebCore::Layout::FormattingContext::formattingState const):
+        (WebCore::Layout::FormattingContext::layoutState const):
+        * layout/FormattingContext.h:
+        * layout/FormattingState.cpp:
+        (WebCore::Layout::FormattingState::FormattingState):
+        * layout/FormattingState.h:
+        (WebCore::Layout::FormattingState::layoutState const):
+        * layout/LayoutFormattingState.h:
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::BlockFormattingContext):
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockFormattingState.cpp:
+        (WebCore::Layout::BlockFormattingState::BlockFormattingState):
+        (WebCore::Layout::BlockFormattingState::formattingContext):
+        (WebCore::Layout::BlockFormattingState::formattingContext const): Deleted.
+        * layout/blockformatting/BlockFormattingState.h:
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::InlineFormattingContext):
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/inlineformatting/InlineFormattingState.cpp:
+        (WebCore::Layout::InlineFormattingState::InlineFormattingState):
+        (WebCore::Layout::InlineFormattingState::formattingContext):
+        (WebCore::Layout::InlineFormattingState::formattingContext const): Deleted.
+        * layout/inlineformatting/InlineFormattingState.h:
+
+2018-10-31  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] The *FormattingState class should provide the *FormattingContext.
         https://bugs.webkit.org/show_bug.cgi?id=191089
 

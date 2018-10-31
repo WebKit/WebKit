@@ -43,7 +43,7 @@ class InlineRunProvider;
 class InlineFormattingContext : public FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(InlineFormattingContext);
 public:
-    InlineFormattingContext(const Box& formattingContextRoot);
+    InlineFormattingContext(const Box& formattingContextRoot, FormattingState&);
 
     void layout(LayoutState&, FormattingState&) const override;
 

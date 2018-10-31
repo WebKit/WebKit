@@ -37,7 +37,7 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(BlockFormattingState);
 
-BlockFormattingState::BlockFormattingState(Ref<FloatingState>&& floatingState, const LayoutState& layoutState)
+BlockFormattingState::BlockFormattingState(Ref<FloatingState>&& floatingState, LayoutState& layoutState)
     : FormattingState(WTFMove(floatingState), Type::Block, layoutState)
 {
 }
@@ -46,10 +46,10 @@ BlockFormattingState::~BlockFormattingState()
 {
 }
 
-std::unique_ptr<FormattingContext> BlockFormattingState::formattingContext(const Box& formattingContextRoot) const
+std::unique_ptr<FormattingContext> BlockFormattingState::formattingContext(const Box& formattingContextRoot)
 {
     ASSERT(formattingContextRoot.establishesBlockFormattingContext());
-    return std::make_unique<BlockFormattingContext>(formattingContextRoot);
+    return std::make_unique<BlockFormattingContext>(formattingContextRoot, *this);
 }
 
 }

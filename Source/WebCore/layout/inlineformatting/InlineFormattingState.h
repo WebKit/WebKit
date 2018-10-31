@@ -39,10 +39,10 @@ namespace Layout {
 class InlineFormattingState : public FormattingState {
     WTF_MAKE_ISO_ALLOCATED(InlineFormattingState);
 public:
-    InlineFormattingState(Ref<FloatingState>&&, const LayoutState&);
+    InlineFormattingState(Ref<FloatingState>&&, LayoutState&);
     virtual ~InlineFormattingState();
 
-    std::unique_ptr<FormattingContext> formattingContext(const Box& formattingContextRoot) const override;
+    std::unique_ptr<FormattingContext> formattingContext(const Box& formattingContextRoot) override;
 
     InlineContent& inlineContent() { return m_inlineContent; }
     // Temp

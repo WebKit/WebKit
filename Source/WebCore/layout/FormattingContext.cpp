@@ -43,13 +43,24 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(FormattingContext);
 
-FormattingContext::FormattingContext(const Box& formattingContextRoot)
+FormattingContext::FormattingContext(const Box& formattingContextRoot, FormattingState& formattingState)
     : m_root(makeWeakPtr(formattingContextRoot))
+    , m_formattingState(formattingState)
 {
 }
 
 FormattingContext::~FormattingContext()
 {
+}
+
+FormattingState& FormattingContext::formattingState() const
+{
+    return m_formattingState;
+}
+
+LayoutState& FormattingContext::layoutState() const
+{
+    return m_formattingState.layoutState();
 }
 
 void FormattingContext::computeOutOfFlowHorizontalGeometry(LayoutState& layoutState, const Box& layoutBox) const
