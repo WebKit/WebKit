@@ -1,3 +1,14 @@
+2018-10-30  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Move 'ProcessSwapOnCrossSiteNavigationEnabled' to 'experimental' category.
+        https://bugs.webkit.org/show_bug.cgi?id=191049
+
+        Reviewed by Dean Jackson.
+
+        Move the feature flag to experimental feature section.
+
+        * Shared/WebPreferences.yaml:
+
 2018-10-30  Alexey Proskuryakov  <ap@apple.com>
 
         Enable InstallAPI for iOS unconditionally

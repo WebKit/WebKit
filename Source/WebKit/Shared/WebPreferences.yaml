@@ -1331,6 +1331,14 @@ WebSQLDisabled:
   webcoreBinding: RuntimeEnabledFeatures
   category: experimental
 
+ProcessSwapOnCrossSiteNavigationEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Swap Processes on Cross-Site Navigation"
+  humanReadableDescription: "Swap WebContent processes on cross-site navigations"
+  category: experimental
+  webcoreBinding: none
+
 # For internal features:
 # The type should be boolean.
 # You must provide a humanReadableName and humanReadableDescription for all debug features. They
@@ -1344,14 +1352,6 @@ ExperimentalPlugInSandboxProfilesEnabled:
   category: internal
   webcoreBinding: RuntimeEnabledFeatures
   webcoreName: experimentalPlugInSandboxProfilesEnabled
-
-ProcessSwapOnCrossSiteNavigationEnabled:
-  type: bool
-  defaultValue: false
-  humanReadableName: "Swap Processes on Cross-Site Navigation"
-  humanReadableDescription: "Swap WebContent processes on cross-site navigations"
-  category: experimental
-  webcoreBinding: none
 
 ResourceLoadStatisticsDebugMode:
   type: bool
