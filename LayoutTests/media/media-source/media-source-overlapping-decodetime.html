@@ -34,12 +34,12 @@
     function loadOrderedSamples()
     {
        samples = concatenateSamples([
-            makeASample(0, 0, 1, 1, SAMPLE_FLAG.SYNC, 0),
-            makeASample(1, 1, 1, 1, SAMPLE_FLAG.NONE, 0),
-            makeASample(2, 2, 1, 1, SAMPLE_FLAG.NONE, 0),
-            makeASample(3, 3, 1, 1, SAMPLE_FLAG.SYNC, 0),
-            makeASample(4, 4, 1, 1, SAMPLE_FLAG.NONE, 0),
-            makeASample(5, 5, 1, 1, SAMPLE_FLAG.NONE, 0),
+            makeASample(0, 0, 1, 1, 1, SAMPLE_FLAG.SYNC, 0),
+            makeASample(1, 1, 1, 1, 1, SAMPLE_FLAG.NONE, 0),
+            makeASample(2, 2, 1, 1, 1, SAMPLE_FLAG.NONE, 0),
+            makeASample(3, 3, 1, 1, 1, SAMPLE_FLAG.SYNC, 0),
+            makeASample(4, 4, 1, 1, 1, SAMPLE_FLAG.NONE, 0),
+            makeASample(5, 5, 1, 1, 1, SAMPLE_FLAG.NONE, 0),
         ]);
         waitForEventOn(sourceBuffer, 'updateend', loadMoreOrderedSamples, false, true);
         run('sourceBuffer.appendBuffer(samples)');
@@ -48,9 +48,9 @@
     function loadMoreOrderedSamples()
     {
         samples = concatenateSamples([
-            makeASample(4, 3, 1, 1, SAMPLE_FLAG.SYNC, 1),
-            makeASample(5, 4, 1, 1, SAMPLE_FLAG.NONE, 1),
-            makeASample(6, 5, 1, 1, SAMPLE_FLAG.NONE, 1),
+            makeASample(4, 3, 1, 1, 1, SAMPLE_FLAG.SYNC, 1),
+            makeASample(5, 4, 1, 1, 1, SAMPLE_FLAG.NONE, 1),
+            makeASample(6, 5, 1, 1, 1, SAMPLE_FLAG.NONE, 1),
         ]);
         waitForEventOn(sourceBuffer, 'updateend', samplesAdded, false, true);
         run('sourceBuffer.appendBuffer(samples)');

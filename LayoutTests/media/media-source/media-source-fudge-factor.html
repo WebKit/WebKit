@@ -33,7 +33,7 @@
 
     function loadedMetadata() {
         consoleWrite('Samples with presentation times after currentTime should not cause loadedData.');
-        sourceBuffer.appendBuffer(makeASample(0.5, 0.5, 0.5, 1, SAMPLE_FLAG.SYNC));
+        sourceBuffer.appendBuffer(makeASample(500, 500, 500, 1000, 1, SAMPLE_FLAG.SYNC));
         setTimeout(notLoadedData, 50);
     }
 
@@ -41,7 +41,7 @@
         testExpected('video.readyState', HTMLMediaElement.HAVE_METADATA);
 
         consoleWrite('Samples with presentation times very close to currentTime should cause loadedData.');
-        sourceBuffer.appendBuffer(makeASample(0.01, 0.01, 0.01, 1, SAMPLE_FLAG.SYNC));
+        sourceBuffer.appendBuffer(makeASample(10, 10, 10, 1000, 1, SAMPLE_FLAG.SYNC));
         waitForEvent('loadeddata', loadedData);
     }
 
@@ -49,7 +49,7 @@
         testExpected('video.readyState', HTMLMediaElement.HAVE_CURRENT_DATA);
 
         consoleWrite('Samples with presentation end times very close to currentTime should not cause canPlay.');
-        sourceBuffer.appendBuffer(makeASample(0.02, 0.02, 0.01, 1, SAMPLE_FLAG.SYNC));
+        sourceBuffer.appendBuffer(makeASample(20, 20, 10, 1000, 1, SAMPLE_FLAG.SYNC));
         setTimeout(notCanPlay, 50);
     }
 
@@ -57,7 +57,7 @@
         testExpected('video.readyState', HTMLMediaElement.HAVE_CURRENT_DATA);
 
         consoleWrite('Continuous samples with presentation end times after currentTime should cause canPlay.');
-        sourceBuffer.appendBuffer(makeASample(0.03, 0.03, 0.47, 1, SAMPLE_FLAG.SYNC));
+        sourceBuffer.appendBuffer(makeASample(30, 30, 470, 1000, 1, SAMPLE_FLAG.SYNC));
         waitForEvent('canplay', canPlay);
     }
 

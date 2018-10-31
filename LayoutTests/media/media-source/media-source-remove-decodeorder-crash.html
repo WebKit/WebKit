@@ -29,9 +29,9 @@
 
     function loadSamples() {
         samples = concatenateSamples([
-            makeASample(0, 0, 1, 1, SAMPLE_FLAG.SYNC),
-            makeASample(2, 1, 1, 1, SAMPLE_FLAG.NONE),
-            makeASample(1, 2, 1, 1, SAMPLE_FLAG.SYNC),
+            makeASample(0, 0, 1, 1, 1, SAMPLE_FLAG.SYNC),
+            makeASample(2, 1, 1, 1, 1, SAMPLE_FLAG.NONE),
+            makeASample(1, 2, 1, 1, 1, SAMPLE_FLAG.SYNC),
         ]);
         waitForEventOn(sourceBuffer, 'updateend', remove, false, true);
         run('sourceBuffer.appendBuffer(samples)');

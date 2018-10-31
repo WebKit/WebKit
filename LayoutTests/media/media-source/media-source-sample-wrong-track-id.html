@@ -27,8 +27,8 @@
         consoleWrite('Append a set of invalid, overlapping samples. Should not crash.')
         mediaSegment = concatenateSamples([
             makeAInit(2, [makeATrack(1, 'mock', TRACK_KIND.AUDIO)]), 
-            makeASample(1, 1, 1, 2, SAMPLE_FLAG.SYNC, 0),
-            makeASample(1, 0, 2, 2, SAMPLE_FLAG.SYNC, 0),
+            makeASample(1, 1, 1, 1, 2, SAMPLE_FLAG.SYNC, 0),
+            makeASample(1, 0, 2, 1, 2, SAMPLE_FLAG.SYNC, 0),
         ]);
         run('sourceBuffer.appendBuffer(mediaSegment)');
     }

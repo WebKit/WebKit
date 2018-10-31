@@ -34,7 +34,7 @@
     function loadSamples1()
     {
         samples = concatenateSamples([
-            makeASample(1, 1, 1, 1, SAMPLE_FLAG.SYNC, 0),
+            makeASample(1, 1, 1, 1, 1, SAMPLE_FLAG.SYNC, 0),
         ]);
         waitForEventOn(sourceBuffer, 'updateend', loadSamples2, false, true);
         run('sourceBuffer.appendBuffer(samples)');
@@ -44,8 +44,8 @@
     {
         samples = concatenateSamples([
             // New Coded Frame Group (DTS went backwards)
-            makeASample(0, 0, 1, 1, SAMPLE_FLAG.SYNC, 0),
-            makeASample(1, 1, 2, 1, SAMPLE_FLAG.SYNC, 0), // duration = 2
+            makeASample(0, 0, 1, 1, 1, SAMPLE_FLAG.SYNC, 0),
+            makeASample(1, 1, 2, 1, 1, SAMPLE_FLAG.SYNC, 0), // duration = 2
         ]);
         waitForEventOn(sourceBuffer, 'updateend', samplesAdded, false, true);
         run('sourceBuffer.appendBuffer(samples)');

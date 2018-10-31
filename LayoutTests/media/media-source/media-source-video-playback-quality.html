@@ -33,7 +33,7 @@
 
     function loadSample()
     {
-        samples = concatenateSamples([makeASample(0, 0, 1, 1, SAMPLE_FLAG.NONE)]);
+        samples = concatenateSamples([makeASample(0, 0, 1, 1, 1, SAMPLE_FLAG.NONE)]);
         waitForEventOn(sourceBuffer, 'updateend', loadMoreSamples, false, true);
         consoleWrite('Test that beginning a buffer with a non-sync sample results in that sample being dropped.')
         run('sourceBuffer.appendBuffer(samples)');
@@ -48,13 +48,13 @@
         testExpected('quality.totalFrameDelay', 0);
 
         samples = concatenateSamples([
-            makeASample(0, 0, 1, 1, SAMPLE_FLAG.SYNC),
-            makeASample(1, 1, 1, 1, SAMPLE_FLAG.CORRUPTED),
-            makeASample(2, 2, 1, 1, SAMPLE_FLAG.DROPPED),
-            makeASample(4, 4, 1, 1, SAMPLE_FLAG.DELAYED),
-            makeASample(5, 5, 1, 1, SAMPLE_FLAG.DELAYED),
-            makeASample(6, 6, 1, 1, SAMPLE_FLAG.DELAYED),
-            makeASample(7, 7, 1, 1, SAMPLE_FLAG.NONE),
+            makeASample(0, 0, 1, 1, 1, SAMPLE_FLAG.SYNC),
+            makeASample(1, 1, 1, 1, 1, SAMPLE_FLAG.CORRUPTED),
+            makeASample(2, 2, 1, 1, 1, SAMPLE_FLAG.DROPPED),
+            makeASample(4, 4, 1, 1, 1, SAMPLE_FLAG.DELAYED),
+            makeASample(5, 5, 1, 1, 1, SAMPLE_FLAG.DELAYED),
+            makeASample(6, 6, 1, 1, 1, SAMPLE_FLAG.DELAYED),
+            makeASample(7, 7, 1, 1, 1, SAMPLE_FLAG.NONE),
         ]);
         waitForEventOn(sourceBuffer, 'updateend', samplesAdded, false, true);
         run('sourceBuffer.appendBuffer(samples)');

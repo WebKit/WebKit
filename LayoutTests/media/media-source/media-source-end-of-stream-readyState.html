@@ -25,7 +25,7 @@
         waitForEventOn(sourceBuffer, 'updateend', updateEnd1, false, true);
         mediaSegment = concatenateSamples([
             makeAInit(10, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]),
-            makeASample(0, 0, 5, 1, SAMPLE_FLAG.SYNC, 0),
+            makeASample(0, 0, 5, 1, 1, SAMPLE_FLAG.SYNC, 0),
         ]);
         run('sourceBuffer.appendBuffer(mediaSegment)');
 

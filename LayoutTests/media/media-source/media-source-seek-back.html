@@ -36,7 +36,7 @@
     function loadSamples()
     {
         samples = concatenateSamples([
-            makeASample(10, 10, 1, 1, SAMPLE_FLAG.SYNC),
+            makeASample(10, 10, 1, 1, 1, SAMPLE_FLAG.SYNC),
         ]);
         consoleWrite('Append a sample from 10 -> 11')
         waitForEventOn(sourceBuffer, 'updateend', seek, false, true);
@@ -52,7 +52,7 @@
     function seeking()
     {
         samples = concatenateSamples([
-            makeASample(0, 0, 1, 1, SAMPLE_FLAG.SYNC),
+            makeASample(0, 0, 1, 1, 1, SAMPLE_FLAG.SYNC),
         ]);
         consoleWrite('Append a sample from 0 -> 1')
         waitForEvent('seeked', seeked);

@@ -19,7 +19,7 @@
 
         const samples = [];
         for (let time = 0; time < 2 * timeScale; time++)
-            samples.push(makeASample(time / timeScale, time / timeScale, 1 / timeScale, 1, time % 2 === 0 ? SAMPLE_FLAG.SYNC : SAMPLE_FLAG.NONE, generation, timeScale));
+            samples.push(makeASample(time, time, 1, timeScale, 1, time % 2 === 0 ? SAMPLE_FLAG.SYNC : SAMPLE_FLAG.NONE, generation));
 
         return concatenateSamples([init].concat(samples));
     }

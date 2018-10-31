@@ -29,7 +29,7 @@
     function syncSampleRun(start, end) {
         const samples = [];
         for (let time = start; time < end; time++)
-            samples.push(makeASample(time, time, 1, 1, time === start ? SAMPLE_FLAG.SYNC : SAMPLE_FLAG.NONE));
+            samples.push(makeASample(time, time, 1, 1, 1, time === start ? SAMPLE_FLAG.SYNC : SAMPLE_FLAG.NONE));
         return concatenateSamples(samples);
     }
 

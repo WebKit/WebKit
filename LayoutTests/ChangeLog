@@ -1,3 +1,64 @@
+2018-10-31  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE] WebKit tests: Use fixed point in makeASample()
+        https://bugs.webkit.org/show_bug.cgi?id=191128
+
+        Reviewed by Jer Noble.
+
+        This patch modifies the utility function makeASample() so as to accept
+        time values in arbitrary time scales.
+
+        Previously makeASample() accepted optionally a time scale, but still
+        required to receive all time values as seconds, therefore requiring a
+        division at call time in order to use the function, which could cause
+        rounding errors (see https://bugs.webkit.org/show_bug.cgi?id=190085#c20).
+
+        * media/media-source/media-source-append-acb-no-frame-lost-expected.txt:
+        * media/media-source/media-source-append-acb-no-frame-lost.html:
+        * media/media-source/media-source-append-buffer-with-append-window.html:
+        * media/media-source/media-source-append-media-segment-without-init.html:
+        * media/media-source/media-source-append-nonsync-sample-after-abort.html:
+        * media/media-source/media-source-append-out-of-order.html:
+        * media/media-source/media-source-append-overlapping-dts-expected.txt:
+        * media/media-source/media-source-append-overlapping-dts.html:
+        * media/media-source/media-source-canplaythrough.html:
+        * media/media-source/media-source-duplicate-seeked.html:
+        * media/media-source/media-source-duration-after-append.html:
+        * media/media-source/media-source-end-of-stream-buffered.html:
+        * media/media-source/media-source-end-of-stream-readyState.html:
+        * media/media-source/media-source-fastseek.html:
+        * media/media-source/media-source-fudge-factor.html:
+        * media/media-source/media-source-monitor-source-buffers.html:
+        * media/media-source/media-source-overlapping-append-buffered.html:
+        * media/media-source/media-source-overlapping-append-expected.txt:
+        * media/media-source/media-source-overlapping-append.html:
+        * media/media-source/media-source-overlapping-decodetime-expected.txt:
+        * media/media-source/media-source-overlapping-decodetime.html:
+        * media/media-source/media-source-play.html:
+        * media/media-source/media-source-range-end-frame-not-removed-expected.txt:
+        * media/media-source/media-source-range-end-frame-not-removed.html:
+        * media/media-source/media-source-range-start-frame-replaced-expected.txt:
+        * media/media-source/media-source-range-start-frame-replaced.html:
+        * media/media-source/media-source-remove-decodeorder-crash.html:
+        * media/media-source/media-source-remove-too-much.html:
+        * media/media-source/media-source-remove.html:
+        * media/media-source/media-source-restrictions.html:
+        * media/media-source/media-source-sample-wrong-track-id.html:
+        * media/media-source/media-source-seek-back-expected.txt:
+        * media/media-source/media-source-seek-back.html:
+        * media/media-source/media-source-seek-complete.html:
+        * media/media-source/media-source-sequence-timestamps-expected.txt:
+        * media/media-source/media-source-sequence-timestamps.html:
+        * media/media-source/media-source-small-gap.html:
+        * media/media-source/media-source-timeoffset-expected.txt:
+        * media/media-source/media-source-timeoffset.html:
+        * media/media-source/media-source-timestampoffset-rounding-error.html:
+        * media/media-source/media-source-timestampoffset-then-zero-expected.txt:
+        * media/media-source/media-source-timestampoffset-then-zero.html:
+        * media/media-source/media-source-video-playback-quality.html:
+        * media/media-source/mock-media-source.js:
+        (makeASample):
+
 2018-10-31  YUHAN WU  <yuhan_wu@apple.com>
 
         MediaRecorder should fire dataavailable event when all tracks are ended and stop() is called

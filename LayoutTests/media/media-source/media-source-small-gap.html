@@ -31,14 +31,14 @@
         const maximumGap = Math.floor(2002 / 24000 * 1000) / 1000;
 
         samples = concatenateSamples([
-            makeASample(0, 0, 1 - maximumGap,      1, SAMPLE_FLAG.SYNC),
-            makeASample(1, 1, 1 - maximumGap / 2,  1, SAMPLE_FLAG.NONE),
-            makeASample(2, 2, 1 - maximumGap / 3,  1, SAMPLE_FLAG.NONE),
-            makeASample(3, 3, 1,                   1, SAMPLE_FLAG.NONE),
-            makeASample(4, 4, 1 - maximumGap,      1, SAMPLE_FLAG.SYNC),
-            makeASample(5, 5, 1 - maximumGap / 10, 1, SAMPLE_FLAG.NONE),
-            makeASample(6, 6, 0.99,                1, SAMPLE_FLAG.NONE),
-            makeASample(7, 7, 1,                   1, SAMPLE_FLAG.NONE),
+            makeASample(   0,    0, 1000 * (1 - maximumGap),      1000, 1, SAMPLE_FLAG.SYNC),
+            makeASample(1000, 1000, 1000 * (1 - maximumGap / 2),  1000, 1, SAMPLE_FLAG.NONE),
+            makeASample(2000, 2000, 1000 * (1 - maximumGap / 3),  1000, 1, SAMPLE_FLAG.NONE),
+            makeASample(3000, 3000, 1000,                         1000, 1, SAMPLE_FLAG.NONE),
+            makeASample(4000, 4000, 1000 * (1 - maximumGap),      1000, 1, SAMPLE_FLAG.SYNC),
+            makeASample(5000, 5000, 1000 * (1 - maximumGap / 10), 1000, 1, SAMPLE_FLAG.NONE),
+            makeASample(6000, 6000, 1000 * (0.99),                1000, 1, SAMPLE_FLAG.NONE),
+            makeASample(7000, 7000, 1000,                         1000, 1, SAMPLE_FLAG.NONE),
         ]);
 
         waitForEventOn(sourceBuffer, 'updateend', checkBuffered, false, true);

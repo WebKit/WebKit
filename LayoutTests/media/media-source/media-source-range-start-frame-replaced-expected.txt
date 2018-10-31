@@ -8,8 +8,8 @@ RUN(sourceBuffer.appendBuffer(samples))
 EVENT(updateend)
 RUN(sourceBuffer.appendBuffer(samples))
 EVENT(updateend)
-{PTS({0/1000 = 0.000000}), DTS({0/1000 = 0.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(0)}
-{PTS({1000/1000 = 1.000000}), DTS({1000/1000 = 1.000000}), duration({2000/1000 = 2.000000}), flags(1), generation(0)}
+{PTS({0/1 = 0.000000}), DTS({0/1 = 0.000000}), duration({1/1 = 1.000000}), flags(1), generation(0)}
+{PTS({1/1 = 1.000000}), DTS({1/1 = 1.000000}), duration({2/1 = 2.000000}), flags(1), generation(0)}
 EXPECTED (sourceBuffer.buffered.length == '1') OK
 EXPECTED (sourceBuffer.buffered.start(0) == '0') OK
 EXPECTED (sourceBuffer.buffered.end(0) == '3') OK

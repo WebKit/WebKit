@@ -43,14 +43,14 @@
 
     function loadSamples() {
         samples = concatenateSamples([
-            makeASample(0, 0, 1, 1, SAMPLE_FLAG.SYNC),
-            makeASample(1, 1, 1, 1, SAMPLE_FLAG.SYNC),
-            makeASample(2, 2, 1, 1, SAMPLE_FLAG.SYNC),
-            makeASample(3, 3, 1, 1, SAMPLE_FLAG.SYNC),
-            makeASample(4, 4, 1, 1, SAMPLE_FLAG.SYNC),
-            makeASample(5, 5, 1, 1, SAMPLE_FLAG.SYNC),
-            makeASample(6, 6, 1, 1, SAMPLE_FLAG.SYNC),
-            makeASample(7, 7, 1, 1, SAMPLE_FLAG.SYNC),
+            makeASample(0, 0, 1, 1, 1, SAMPLE_FLAG.SYNC),
+            makeASample(1, 1, 1, 1, 1, SAMPLE_FLAG.SYNC),
+            makeASample(2, 2, 1, 1, 1, SAMPLE_FLAG.SYNC),
+            makeASample(3, 3, 1, 1, 1, SAMPLE_FLAG.SYNC),
+            makeASample(4, 4, 1, 1, 1, SAMPLE_FLAG.SYNC),
+            makeASample(5, 5, 1, 1, 1, SAMPLE_FLAG.SYNC),
+            makeASample(6, 6, 1, 1, 1, SAMPLE_FLAG.SYNC),
+            makeASample(7, 7, 1, 1, 1, SAMPLE_FLAG.SYNC),
         ]);
 
         waitForEventOn(sourceBuffer, 'updateend', updateEnd, false, true);

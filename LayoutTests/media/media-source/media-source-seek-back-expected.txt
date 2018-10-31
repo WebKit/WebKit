@@ -12,6 +12,6 @@ Append a sample from 0 -> 1
 RUN(sourceBuffer.appendBuffer(samples))
 EVENT(seeked)
 EXPECTED (enqueuedSamples.length == '1') OK
-{PTS({0/1000 = 0.000000}), DTS({0/1000 = 0.000000}), duration({1000/1000 = 1.000000}), flags(1), generation(0)}
+{PTS({0/1 = 0.000000}), DTS({0/1 = 0.000000}), duration({1/1 = 1.000000}), flags(1), generation(0)}
 END OF TEST
 

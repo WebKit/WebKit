@@ -27,7 +27,7 @@
         waitForEventOn(sourceBuffer1, 'updateend', updateEndInit1);
         mediaSegment = concatenateSamples([
             makeAInit(10, [makeATrack(1, 'mock', TRACK_KIND.AUDIO)]), 
-            makeASample(0, 0, 10, 1, SAMPLE_FLAG.SYNC, 0),
+            makeASample(0, 0, 10, 1, 1, SAMPLE_FLAG.SYNC, 0),
         ]);
         run('sourceBuffer1.appendBuffer(mediaSegment)');
     }
@@ -37,7 +37,7 @@
         waitForEventOn(sourceBuffer2, 'updateend', updateEndInit2);
         mediaSegment = concatenateSamples([
             makeAInit(10, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]),
-            makeASample(0, 0, 5, 1, SAMPLE_FLAG.SYNC, 0),
+            makeASample(0, 0, 5, 1, 1, SAMPLE_FLAG.SYNC, 0),
         ]);
         run('sourceBuffer2.appendBuffer(mediaSegment)');
     }

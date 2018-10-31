@@ -31,7 +31,7 @@
     }
 
     function loadSamples() {
-        sample = makeASample(0, 0, 10, 1, SAMPLE_FLAG.SYNC);
+        sample = makeASample(0, 0, 10, 1, 1, SAMPLE_FLAG.SYNC);
         waitForEventOn(sourceBuffer, 'updateend', play, false, true);
         run('sourceBuffer.appendBuffer(sample)');
     }

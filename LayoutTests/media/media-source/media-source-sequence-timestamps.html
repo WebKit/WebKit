@@ -39,12 +39,12 @@
     {
         // In "sequence" mode, the samples' timestamps are not used
         samples = concatenateSamples([
-            makeASample(0, 0, 1, 1, SAMPLE_FLAG.SYNC, 0),
-            makeASample(2, 2, 1, 1, SAMPLE_FLAG.NONE, 0),
-            makeASample(4, 4, 1, 1, SAMPLE_FLAG.NONE, 0),
-            makeASample(6, 6, 1, 1, SAMPLE_FLAG.SYNC, 0),
-            makeASample(8, 8, 1, 1, SAMPLE_FLAG.NONE, 0),
-            makeASample(10, 10, 1, 1, SAMPLE_FLAG.NONE, 0),
+            makeASample(0, 0, 1, 1, 1, SAMPLE_FLAG.SYNC, 0),
+            makeASample(2, 2, 1, 1, 1, SAMPLE_FLAG.NONE, 0),
+            makeASample(4, 4, 1, 1, 1, SAMPLE_FLAG.NONE, 0),
+            makeASample(6, 6, 1, 1, 1, SAMPLE_FLAG.SYNC, 0),
+            makeASample(8, 8, 1, 1, 1, SAMPLE_FLAG.NONE, 0),
+            makeASample(10, 10, 1, 1, 1, SAMPLE_FLAG.NONE, 0),
         ]);
         waitForEventOn(sourceBuffer, 'updateend', samplesAdded, false, true);
         run('sourceBuffer.appendBuffer(samples)');
