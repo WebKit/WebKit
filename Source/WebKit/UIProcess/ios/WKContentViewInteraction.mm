@@ -1151,16 +1151,6 @@ static FloatQuad inflateQuad(const FloatQuad& quad, float inflateSize)
 }
 #endif
 
-static inline bool highlightedQuadsAreSmallerThanRect(const Vector<FloatQuad>& quads, const FloatRect& rect)
-{
-    for (size_t i = 0; i < quads.size(); ++i) {
-        FloatRect boundingBox = quads[i].boundingBox();
-        if (boundingBox.width() > rect.width() || boundingBox.height() > rect.height())
-            return false;
-    }
-    return true;
-}
-
 static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius, CGFloat borderRadiusScale)
 {
     return [NSValue valueWithCGSize:CGSizeMake((borderRadius.width() * borderRadiusScale) + minimumTapHighlightRadius, (borderRadius.height() * borderRadiusScale) + minimumTapHighlightRadius)];
@@ -1223,7 +1213,19 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 
 - (void)_showTapHighlight
 {
-    if (!highlightedQuadsAreSmallerThanRect(_tapHighlightInformation.quads, _page->unobscuredContentRect()) && !_showDebugTapHighlightsForFastClicking)
+    auto shouldPaintTapHighlight = [&](const FloatRect& rect) {
+        static const float highlightPaintThreshold = 0.3; // 30%
+        float highlightArea = 0;
+        for (auto highlightQuad : _tapHighlightInformation.quads) {
+            auto boundingBox = highlightQuad.boundingBox();
+            highlightArea += boundingBox.area(); 
+            if (boundingBox.width() > (rect.width() * highlightPaintThreshold) || boundingBox.height() > (rect.height() * highlightPaintThreshold))
+                return false;
+        }
+        return highlightArea < rect.area() * highlightPaintThreshold;
+    };
+
+    if (!shouldPaintTapHighlight(_page->unobscuredContentRect()) && !_showDebugTapHighlightsForFastClicking)
         return;
 
     if (!_highlightView) {

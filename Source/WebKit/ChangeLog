@@ -1,3 +1,18 @@
+2018-10-31  Zalan Bujtas  <zalan@apple.com>
+
+        [iOS] Do not paint tap highlight unless it is above a certain threshold
+        https://bugs.webkit.org/show_bug.cgi?id=191134
+        <rdar://problem/43615142>
+
+        Flashing a large portion of the screen on every tap looks unpleasant.
+        This patch impoves the existing heuristic by adding area check and a % threshold.  
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _showTapHighlight]):
+        (highlightedQuadsAreSmallerThanRect): Deleted.
+
 2018-10-31  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         API test WKAttachmentTests.CopyAndPasteBetweenWebViews fails on macOS 10.13
