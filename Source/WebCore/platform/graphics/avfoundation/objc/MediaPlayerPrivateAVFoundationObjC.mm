@@ -2487,6 +2487,7 @@ void MediaPlayerPrivateAVFoundationObjC::cdmInstanceDetached(CDMInstance& instan
 
 void MediaPlayerPrivateAVFoundationObjC::attemptToDecryptWithInstance(CDMInstance&)
 {
+#if HAVE(AVCONTENTKEYSESSION)
     if (!m_keyID || !m_cdmInstance)
         return;
 
@@ -2503,6 +2504,7 @@ void MediaPlayerPrivateAVFoundationObjC::attemptToDecryptWithInstance(CDMInstanc
         [request finishLoading];
     }
     setWaitingForKey(false);
+#endif
 }
 
 void MediaPlayerPrivateAVFoundationObjC::setWaitingForKey(bool waitingForKey)

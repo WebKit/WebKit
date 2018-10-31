@@ -1,3 +1,11 @@
+2018-10-31  Jer Noble  <jer.noble@apple.com>
+
+        Unreivewed build fix; fix the non-HAVE_AVCONTENTKEYSESSION builds by adding guards around
+        access of m_cdmInstance.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::attemptToDecryptWithInstance):
+
 2018-10-31  YUHAN WU  <yuhan_wu@apple.com>
 
         MediaRecorder should fire dataavailable event when all tracks are ended and stop() is called
