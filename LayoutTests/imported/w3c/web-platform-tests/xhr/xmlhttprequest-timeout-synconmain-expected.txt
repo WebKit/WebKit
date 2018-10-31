@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: line 314: XMLHttpRequest.timeout cannot be set for synchronous HTTP(S) requests made from the window context.
-CONSOLE MESSAGE: line 289: Synchronous XMLHttpRequests must not have a timeout value set.
+CONSOLE MESSAGE: line 316: XMLHttpRequest.timeout cannot be set for synchronous HTTP(S) requests made from the window context.
+CONSOLE MESSAGE: line 290: Synchronous XMLHttpRequests must not have a timeout value set.
 Description
 
 This test validates that the XHR2 timeout property behaves as expected in async cases in document (i.e. non-worker) context.

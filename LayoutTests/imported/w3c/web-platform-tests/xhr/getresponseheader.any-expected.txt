@@ -1,0 +1,4 @@
+
+PASS getResponseHeader('foo-test') 
+PASS getResponseHeader('www-authenticate') 
+

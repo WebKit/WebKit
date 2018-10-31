@@ -119,6 +119,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/xhr/getresponseheader-server-date.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/getresponseheader-special-characters.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/getresponseheader-unsent-opened-state.htm
+/LayoutTests/imported/w3c/web-platform-tests/xhr/getresponseheader.any.js
 /LayoutTests/imported/w3c/web-platform-tests/xhr/header-user-agent-async.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/header-user-agent-sync.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/headers-normalize-response.htm
@@ -128,6 +129,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/xhr/no-utf16-json.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/open-after-abort.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/open-after-setrequestheader.htm
+/LayoutTests/imported/w3c/web-platform-tests/xhr/open-after-stop.window.js
 /LayoutTests/imported/w3c/web-platform-tests/xhr/open-during-abort-event.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/open-during-abort-processing.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/open-during-abort.htm
@@ -220,6 +222,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/xhr/send-data-blob.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/send-data-es-object.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/send-data-formdata.htm
+/LayoutTests/imported/w3c/web-platform-tests/xhr/send-data-readablestream.any.js
 /LayoutTests/imported/w3c/web-platform-tests/xhr/send-data-unexpected-tostring.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/send-entity-body-basic.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/send-entity-body-document-bogus.htm

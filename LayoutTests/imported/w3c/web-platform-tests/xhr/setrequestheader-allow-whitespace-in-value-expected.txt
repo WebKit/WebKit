@@ -1,5 +1,5 @@
 
-FAIL XMLHttpRequest: setRequestHeader() - header value with whitespace ( ) assert_equals: expected "X-Empty: \n" but got "X-Empty:  \n"
+PASS XMLHttpRequest: setRequestHeader() - header value with whitespace ( ) 
 PASS XMLHttpRequest: setRequestHeader() - header value with whitespace ( t) 
 PASS XMLHttpRequest: setRequestHeader() - header value with whitespace (t ) 
 PASS XMLHttpRequest: setRequestHeader() - header value with whitespace ( t ) 

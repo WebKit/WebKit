@@ -1,5 +1,5 @@
 
-FAIL XMLHttpRequest: setRequestHeader() - empty header () assert_equals: expected "X-Empty: \n" but got "X-Empty:  \n"
+PASS XMLHttpRequest: setRequestHeader() - empty header () 
 PASS XMLHttpRequest: setRequestHeader() - empty header (null) 
 PASS XMLHttpRequest: setRequestHeader() - empty header (undefined) 
 

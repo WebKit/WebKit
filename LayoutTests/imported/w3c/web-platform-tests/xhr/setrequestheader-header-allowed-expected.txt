@@ -8,4 +8,5 @@ PASS XMLHttpRequest: setRequestHeader() - headers that are allowed (Overwrite)
 PASS XMLHttpRequest: setRequestHeader() - headers that are allowed (If) 
 PASS XMLHttpRequest: setRequestHeader() - headers that are allowed (Status-URI) 
 PASS XMLHttpRequest: setRequestHeader() - headers that are allowed (X-Pink-Unicorn) 
+PASS XMLHttpRequest: setRequestHeader() - headers that are allowed (!#$%&'*+-.^_`|~0123456789abcdefghijklmnopqrstuvwxyz) 
 

@@ -55,6 +55,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/xhr/resources/header-content-length.asis
 /LayoutTests/imported/w3c/web-platform-tests/xhr/resources/header-user-agent.py
 /LayoutTests/imported/w3c/web-platform-tests/xhr/resources/headers-basic.asis
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/headers-www-authenticate.asis
 /LayoutTests/imported/w3c/web-platform-tests/xhr/resources/headers.asis
 /LayoutTests/imported/w3c/web-platform-tests/xhr/resources/headers.py
 /LayoutTests/imported/w3c/web-platform-tests/xhr/resources/image.gif

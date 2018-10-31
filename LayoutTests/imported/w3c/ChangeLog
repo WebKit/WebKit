@@ -1,3 +1,84 @@
+2018-10-30  Chris Dumez  <cdumez@apple.com>
+
+        Resync XHR Web Platform Tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=191085
+
+        Reviewed by Alex Christensen.
+
+        Resync XHR Web Platform Tests from upstream 75b0f336c5.
+
+        * web-platform-tests/xhr/abort-after-stop.htm:
+        * web-platform-tests/xhr/getallresponseheaders-expected.txt:
+        * web-platform-tests/xhr/getallresponseheaders.htm:
+        * web-platform-tests/xhr/getresponseheader.any-expected.txt: Added.
+        * web-platform-tests/xhr/getresponseheader.any.html: Added.
+        * web-platform-tests/xhr/getresponseheader.any.js: Added.
+        (async_test.t.client.onload.t.step_func_done):
+        * web-platform-tests/xhr/getresponseheader.any.worker-expected.txt: Added.
+        * web-platform-tests/xhr/getresponseheader.any.worker.html: Added.
+        * web-platform-tests/xhr/headers-normalize-response-expected.txt:
+        * web-platform-tests/xhr/headers-normalize-response.htm:
+        * web-platform-tests/xhr/open-after-abort.htm:
+        * web-platform-tests/xhr/open-after-stop.window-expected.txt: Added.
+        * web-platform-tests/xhr/open-after-stop.window.html: Added.
+        * web-platform-tests/xhr/open-after-stop.window.js: Added.
+        (onload):
+        * web-platform-tests/xhr/overridemimetype-edge-cases.window-expected.txt:
+        * web-platform-tests/xhr/overridemimetype-edge-cases.window.js:
+        (async_test.t.client.onload.t.step_func_done):
+        (async_test.t.client.onload.t.step_func):
+        * web-platform-tests/xhr/resources/headers-www-authenticate.asis: Added.
+        * web-platform-tests/xhr/resources/inspect-headers.py:
+        (get_response):
+        * web-platform-tests/xhr/resources/responseXML-unavailable-in-worker.js:
+        (test):
+        * web-platform-tests/xhr/resources/w3c-import.log:
+        * web-platform-tests/xhr/resources/xmlhttprequest-timeout-aborted.js:
+        * web-platform-tests/xhr/resources/xmlhttprequest-timeout-abortedonmain.js:
+        * web-platform-tests/xhr/resources/xmlhttprequest-timeout-overrides.js:
+        * web-platform-tests/xhr/resources/xmlhttprequest-timeout-overridesexpires.js:
+        * web-platform-tests/xhr/resources/xmlhttprequest-timeout-simple.js:
+        * web-platform-tests/xhr/resources/xmlhttprequest-timeout-synconmain.js:
+        * web-platform-tests/xhr/resources/xmlhttprequest-timeout-synconworker.js:
+        * web-platform-tests/xhr/resources/xmlhttprequest-timeout-twice.js:
+        * web-platform-tests/xhr/resources/xmlhttprequest-timeout.js:
+        (AbortedRequest):
+        (SyncRequestSettingTimeoutAfterOpen.this.startXHR):
+        (SyncRequestSettingTimeoutAfterOpen):
+        (SyncRequestSettingTimeoutBeforeOpen.this.startXHR):
+        (SyncRequestSettingTimeoutBeforeOpen):
+        (runTestRequests):
+        * web-platform-tests/xhr/send-content-type-charset-expected.txt:
+        * web-platform-tests/xhr/send-content-type-charset.htm:
+        * web-platform-tests/xhr/send-data-readablestream.any-expected.txt: Added.
+        * web-platform-tests/xhr/send-data-readablestream.any.html: Added.
+        * web-platform-tests/xhr/send-data-readablestream.any.js: Added.
+        (assert_xhr):
+        (test):
+        (promise_test.async):
+        * web-platform-tests/xhr/send-data-readablestream.any.worker-expected.txt: Added.
+        * web-platform-tests/xhr/send-data-readablestream.any.worker.html: Added.
+        * web-platform-tests/xhr/setrequestheader-allow-empty-value-expected.txt:
+        * web-platform-tests/xhr/setrequestheader-allow-whitespace-in-value-expected.txt:
+        * web-platform-tests/xhr/setrequestheader-header-allowed-expected.txt:
+        * web-platform-tests/xhr/setrequestheader-header-allowed.htm:
+        * web-platform-tests/xhr/timeout-multiple-fetches.html:
+        * web-platform-tests/xhr/w3c-import.log:
+        * web-platform-tests/xhr/xmlhttprequest-timeout-aborted.html:
+        * web-platform-tests/xhr/xmlhttprequest-timeout-abortedonmain.html:
+        * web-platform-tests/xhr/xmlhttprequest-timeout-overrides.html:
+        * web-platform-tests/xhr/xmlhttprequest-timeout-overridesexpires.html:
+        * web-platform-tests/xhr/xmlhttprequest-timeout-simple.html:
+        * web-platform-tests/xhr/xmlhttprequest-timeout-synconmain-expected.txt:
+        * web-platform-tests/xhr/xmlhttprequest-timeout-synconmain.html:
+        * web-platform-tests/xhr/xmlhttprequest-timeout-twice.html:
+        * web-platform-tests/xhr/xmlhttprequest-timeout-worker-aborted.html:
+        * web-platform-tests/xhr/xmlhttprequest-timeout-worker-overrides.html:
+        * web-platform-tests/xhr/xmlhttprequest-timeout-worker-overridesexpires.html:
+        * web-platform-tests/xhr/xmlhttprequest-timeout-worker-simple.html:
+        * web-platform-tests/xhr/xmlhttprequest-timeout-worker-synconworker.html:
+        * web-platform-tests/xhr/xmlhttprequest-timeout-worker-twice.html:
+
 2018-10-30  Sihui Liu  <sihui_liu@apple.com>
 
         IndexedDB: iteration of cursors skip records if updated or deleted
