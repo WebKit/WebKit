@@ -41,7 +41,7 @@ WI.AuditTestGroup = class AuditTestGroup extends WI.AuditTestBase
 
     // Static
 
-    static fromPayload(payload)
+    static async fromPayload(payload)
     {
         if (typeof payload !== "object" || payload === null)
             return null;
@@ -57,7 +57,17 @@ WI.AuditTestGroup = class AuditTestGroup extends WI.AuditTestBase
         if (!Array.isArray(tests))
             return null;
 
-        tests = tests.map((test) => WI.AuditTestCase.fromPayload(test) || WI.AuditTestGroup.fromPayload(test));
+        tests = await Promise.all(tests.map(async (test) => {
+            let testCase = await WI.AuditTestCase.fromPayload(test);
+            if (testCase)
+                return testCase;
+
+            let testGroup = await WI.AuditTestGroup.fromPayload(test);
+            if (testGroup)
+                return testGroup;
+
+            return null;
+        }));
         tests = tests.filter((test) => !!test);
         if (!tests.length)
             return null;

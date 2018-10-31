@@ -95,7 +95,7 @@ WI.AuditManager = class AuditManager extends WI.Object
 
     import()
     {
-        WI.loadDataFromFile((data, filename) => {
+        WI.loadDataFromFile(async (data, filename) => {
             if (!data)
                 return;
 
@@ -107,9 +107,9 @@ WI.AuditManager = class AuditManager extends WI.Object
                 return;
             }
 
-            let object = WI.AuditTestGroup.fromPayload(payload) || WI.AuditTestCase.fromPayload(payload);
+            let object = await WI.AuditTestGroup.fromPayload(payload) || await WI.AuditTestCase.fromPayload(payload);
             if (!object) {
-                object = WI.AuditTestGroupResult.fromPayload(payload) || WI.AuditTestCaseResult.fromPayload(payload);
+                object = await WI.AuditTestGroupResult.fromPayload(payload) || await WI.AuditTestCaseResult.fromPayload(payload);
                 if (!object) {
                     WI.AuditManager.synthesizeError(WI.UIString("invalid JSON."));
                     return;

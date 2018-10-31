@@ -36,7 +36,7 @@ WI.AuditTestCase = class AuditTestCase extends WI.AuditTestBase
 
     // Static
 
-    static fromPayload(payload)
+    static async fromPayload(payload)
     {
         if (typeof payload !== "object" || payload === null)
             return null;

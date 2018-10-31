@@ -11,7 +11,7 @@ function test()
         suite.addTestCase({
             name,
             async test() {
-                let object = WI.AuditTestGroupResult.fromPayload(payload);
+                let object = await WI.AuditTestGroupResult.fromPayload(payload);
                 InspectorTest.log(object ? JSON.stringify(object, null, 2) : object);
             },
         });

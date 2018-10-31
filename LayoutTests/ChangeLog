@@ -1,3 +1,16 @@
+2018-10-31  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Audit: attempt to re-link DOM nodes for imported results
+        https://bugs.webkit.org/show_bug.cgi?id=191044
+        <rdar://problem/45687364>
+
+        Reviewed by Brian Burg.
+
+        * inspector/model/auditTestCase.html:
+        * inspector/model/auditTestCaseResult.html:
+        * inspector/model/auditTestGroup.html:
+        * inspector/model/auditTestGroupResult.html:
+
 2018-10-31  Jer Noble  <jer.noble@apple.com>
 
         MediaSource.isTypeSupported('video/mp4; codecs="hvc1.1.6.L60.B0') is inproperly rejected

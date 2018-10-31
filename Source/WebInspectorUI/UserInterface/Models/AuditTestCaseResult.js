@@ -40,7 +40,7 @@ WI.AuditTestCaseResult = class AuditTestCaseResult extends WI.AuditTestResultBas
 
     // Static
 
-    static fromPayload(payload)
+    static async fromPayload(payload)
     {
         if (typeof payload !== "object" || payload === null)
             return null;
@@ -86,8 +86,20 @@ WI.AuditTestCaseResult = class AuditTestCaseResult extends WI.AuditTestResultBas
             options.description = description;
         if (!isEmptyObject(data)) {
             options.data = {};
-            if (data.domNodes && data.domNodes.length)
+            if (data.domNodes && data.domNodes.length) {
+                if (window.DOMAgent) {
+                    let documentNode = await new Promise((resolve) => WI.domManager.requestDocument(resolve));
+                    data.domNodes = await Promise.all(data.domNodes.map(async (domNodeString) => {
+                        let nodeId = 0;
+                        try {
+                            nodeId = await WI.domManager.querySelector(documentNode, domNodeString);
+                        } catch { }
+                        return WI.domManager.nodeForId(nodeId) || domNodeString;
+                    }));
+                }
+
                 options.data.domNodes = data.domNodes;
+            }
             if (data.domAttributes && data.domAttributes.length)
                 options.data.domAttributes = data.domAttributes;
             if (data.errors && data.errors.length)
@@ -102,6 +114,7 @@ WI.AuditTestCaseResult = class AuditTestCaseResult extends WI.AuditTestResultBas
             if (metadata.url)
                 options.metadata.url = metadata.url;
         }
+
         return new WI.AuditTestCaseResult(name, level, options);
     }
 

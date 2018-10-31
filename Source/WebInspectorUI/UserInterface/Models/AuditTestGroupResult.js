@@ -36,7 +36,7 @@ WI.AuditTestGroupResult = class AuditTestGroupResult extends WI.AuditTestResultB
 
     // Static
 
-    static fromPayload(payload)
+    static async fromPayload(payload)
     {
         if (typeof payload !== "object" || payload === null)
             return null;
@@ -52,7 +52,17 @@ WI.AuditTestGroupResult = class AuditTestGroupResult extends WI.AuditTestResultB
         if (!Array.isArray(results))
             return null;
 
-        results = results.map((result) => WI.AuditTestGroupResult.fromPayload(result) || WI.AuditTestCaseResult.fromPayload(result));
+        results = await Promise.all(results.map(async (test) => {
+            let testCaseResult = await WI.AuditTestCaseResult.fromPayload(test);
+            if (testCaseResult)
+                return testCaseResult;
+
+            let testGroupResult = await WI.AuditTestGroupResult.fromPayload(test);
+            if (testGroupResult)
+                return testGroupResult;
+
+            return null;
+        }));
         results = results.filter((result) => !!result);
         if (!results.length)
             return null;
