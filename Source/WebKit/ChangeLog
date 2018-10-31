@@ -1,3 +1,28 @@
+2018-10-31  Chris Dumez  <cdumez@apple.com>
+
+        [PSON] When process-swapping for a POST request the HTTP body gets dropped
+        https://bugs.webkit.org/show_bug.cgi?id=191046
+        <rdar://problem/45229732>
+
+        Reviewed by Alex Christensen.
+
+        For performance reasons, the ResourceRequest IPC encoder does not encode the request's HTTP body (aka form data).
+        When we decide to process-swap for a POST request in WebPageProxy::decidePolicyForNavigationAction(), the request
+        we pass the new WebProcess thus no longer has a HTTP body and the load will likely fail in the new process.
+
+        To address the issue, we now pass the request body along with the request when sending the DecidePolicyForNavigationActionAsync
+        / DecidePolicyForNavigationActionSync IPC from the WebProcess to the UIProcess. No action is needed for the
+        LoadRequest IPC to the new WebProcess since the LoadParameters' IPC encoder takes care of encoding the request's
+        body already.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationActionAsync):
+        (WebKit::WebPageProxy::decidePolicyForNavigationActionSync):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+
 2018-10-31  Antti Koivisto  <antti@apple.com>
 
         Stop using LayerFlushScheduler in WK2

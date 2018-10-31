@@ -1,3 +1,16 @@
+2018-10-31  Chris Dumez  <cdumez@apple.com>
+
+        [PSON] When process-swapping for a POST request the HTTP body gets dropped
+        https://bugs.webkit.org/show_bug.cgi?id=191046
+        <rdar://problem/45229732>
+
+        Reviewed by Alex Christensen.
+
+        Add layout test coverage.
+
+        * http/tests/misc/form-post-textplain-cross-site-expected.txt: Added.
+        * http/tests/misc/form-post-textplain-cross-site.html: Added.
+
 2018-10-30  David Kilzer  <ddkilzer@apple.com>
 
         XSLTProcessor should limit max transform depth

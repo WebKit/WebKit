@@ -2,12 +2,9 @@
 header("Content-type: text/html; charset=UTF-8");
 ?>
 <html>
-<head>
-<title>Regression test for bug 20795 and 100445</title>
-</head>
 <body>
 <p>
-This is a test for 20795 and 100445, it makes sure that forms POSTed with a content-type of text/plain actually send data in text/plain
+This test makes sure that forms POSTed with a content-type of text/plain actually send data in text/plain
 </p>
 <?php
 
