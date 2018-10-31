@@ -92,7 +92,6 @@ else ()
         page/win/FrameCGWin.cpp
 
         platform/graphics/ca/GraphicsLayerCA.cpp
-        platform/graphics/ca/LayerFlushScheduler.cpp
         platform/graphics/ca/LayerPool.cpp
         platform/graphics/ca/PlatformCALayer.cpp
         platform/graphics/ca/TileController.cpp

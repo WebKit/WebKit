@@ -30,6 +30,7 @@
 
 #include "Logging.h"
 #include "RealtimeIncomingVideoSourceCocoa.h"
+#include "RealtimeVideoUtilities.h"
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
 

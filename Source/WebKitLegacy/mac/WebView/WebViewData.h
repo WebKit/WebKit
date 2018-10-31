@@ -34,8 +34,6 @@
 #import <pal/spi/cocoa/AVKitSPI.h>
 #endif
 #import <WebCore/AlternativeTextClient.h>
-#import <WebCore/LayerFlushScheduler.h>
-#import <WebCore/LayerFlushSchedulerClient.h>
 #import <WebCore/WebCoreKeyboardUIMode.h>
 #import <wtf/HashMap.h>
 #import <wtf/Lock.h>
@@ -51,6 +49,7 @@ namespace WebCore {
 class AlternativeTextUIController;
 class HistoryItem;
 class Page;
+class RunLoopObserver;
 class TextIndicatorWindow;
 class ValidationBubble;
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
@@ -109,29 +108,29 @@ class WebSelectionServiceController;
 @class WebTextTouchBarItemController;
 #endif
 
-class WebViewLayerFlushScheduler : public WebCore::LayerFlushScheduler {
+class WebViewLayerFlushScheduler {
 public:
     WebViewLayerFlushScheduler(LayerFlushController*);
-    virtual ~WebViewLayerFlushScheduler() { }
+    ~WebViewLayerFlushScheduler();
+
+    void schedule();
+    void invalidate();
 
 private:
-    void layerFlushCallback() override
-    {
-        RefPtr<LayerFlushController> protector = m_flushController;
-        WebCore::LayerFlushScheduler::layerFlushCallback();
-    }
+    void layerFlushCallback();
     
     LayerFlushController* m_flushController;
+    std::unique_ptr<WebCore::RunLoopObserver> m_runLoopObserver;
 };
 
-class LayerFlushController : public RefCounted<LayerFlushController>, public WebCore::LayerFlushSchedulerClient {
+class LayerFlushController : public RefCounted<LayerFlushController> {
 public:
     static Ref<LayerFlushController> create(WebView* webView)
     {
         return adoptRef(*new LayerFlushController(webView));
     }
     
-    virtual bool flushLayers();
+    bool flushLayers();
     
     void scheduleLayerFlush();
     void invalidate();

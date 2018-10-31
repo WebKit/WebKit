@@ -692,8 +692,6 @@
 		26F9A83918A046AC00AEB88A /* ViewportConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 26F9A83718A046AC00AEB88A /* ViewportConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		285D32082035D6560070D32F /* ServerTimingParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 288E82F02035D4ED00B0DCFF /* ServerTimingParser.h */; };
 		2914E3081CAB5A440049966F /* AccessibilityAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = 2914E3061CAB5A440049966F /* AccessibilityAttachment.h */; };
-		2917B5621473496C0052C9D0 /* LayerFlushScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 2917B55F1473496C0052C9D0 /* LayerFlushScheduler.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		2917B5631473496C0052C9D0 /* LayerFlushSchedulerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 2917B5601473496C0052C9D0 /* LayerFlushSchedulerClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		293EAE1F1356B2FE0067ACF9 /* RuntimeApplicationChecks.h in Headers */ = {isa = PBXBuildFile; fileRef = 293EAE1E1356B2FE0067ACF9 /* RuntimeApplicationChecks.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		29489FC712C00F0300D83F0F /* AccessibilityScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = 29489FC512C00F0300D83F0F /* AccessibilityScrollView.h */; };
 		297BE3D516C03C08003316BD /* PlatformSpeechSynthesisUtterance.h in Headers */ = {isa = PBXBuildFile; fileRef = 2527CC9116BF8BA1009DDAC0 /* PlatformSpeechSynthesisUtterance.h */; };
@@ -2937,7 +2935,7 @@
 		A14832C4187F663C00DA63A6 /* WKView.h in Headers */ = {isa = PBXBuildFile; fileRef = A14832A9187F508700DA63A6 /* WKView.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A14832C6187F668F00DA63A6 /* WKViewPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = A14832AB187F508700DA63A6 /* WKViewPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A14832C7187F66C800DA63A6 /* WebCoreThread.h in Headers */ = {isa = PBXBuildFile; fileRef = A1483299187F508700DA63A6 /* WebCoreThread.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A14832C9187F676B00DA63A6 /* WebCoreThreadInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = A148329B187F508700DA63A6 /* WebCoreThreadInternal.h */; };
+		A14832C9187F676B00DA63A6 /* WebCoreThreadInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = A148329B187F508700DA63A6 /* WebCoreThreadInternal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A14832CA187F678000DA63A6 /* WebCoreThreadMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A148329C187F508700DA63A6 /* WebCoreThreadMessage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A14832CC187F67C400DA63A6 /* WebCoreThreadRun.h in Headers */ = {isa = PBXBuildFile; fileRef = A148329E187F508700DA63A6 /* WebCoreThreadRun.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A14832CF187F684700DA63A6 /* WebCoreThreadSystemInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = A14832A1187F508700DA63A6 /* WebCoreThreadSystemInterface.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6498,10 +6496,6 @@
 		28DB9BC72020EA0400E54A07 /* PerformanceServerTiming.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PerformanceServerTiming.idl; sourceTree = "<group>"; };
 		2914E3051CAB5A440049966F /* AccessibilityAttachment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityAttachment.cpp; sourceTree = "<group>"; };
 		2914E3061CAB5A440049966F /* AccessibilityAttachment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityAttachment.h; sourceTree = "<group>"; };
-		2917B55E1473496C0052C9D0 /* LayerFlushScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LayerFlushScheduler.cpp; sourceTree = "<group>"; };
-		2917B55F1473496C0052C9D0 /* LayerFlushScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayerFlushScheduler.h; sourceTree = "<group>"; };
-		2917B5601473496C0052C9D0 /* LayerFlushSchedulerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayerFlushSchedulerClient.h; sourceTree = "<group>"; };
-		2917B565147349950052C9D0 /* LayerFlushSchedulerMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LayerFlushSchedulerMac.cpp; sourceTree = "<group>"; };
 		293EAE1E1356B2FE0067ACF9 /* RuntimeApplicationChecks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RuntimeApplicationChecks.h; sourceTree = "<group>"; };
 		29489FC512C00F0300D83F0F /* AccessibilityScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityScrollView.h; sourceTree = "<group>"; };
 		29498681195341940072D2BD /* TextUndoInsertionMarkupMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TextUndoInsertionMarkupMac.mm; sourceTree = "<group>"; };
@@ -17901,7 +17895,6 @@
 		4958781E12A57DBC007238AC /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
-				2917B565147349950052C9D0 /* LayerFlushSchedulerMac.cpp */,
 				0F5E200518E771FC003EC3E5 /* PlatformCAAnimationCocoa.h */,
 				4958781F12A57DDF007238AC /* PlatformCAAnimationCocoa.mm */,
 				0F13163F16ED0CDE0035CC04 /* PlatformCAFiltersCocoa.mm */,
@@ -17976,9 +17969,6 @@
 				4958781E12A57DBC007238AC /* cocoa */,
 				499B3ED4128CD31400E726C2 /* GraphicsLayerCA.cpp */,
 				499B3ED5128CD31400E726C2 /* GraphicsLayerCA.h */,
-				2917B55E1473496C0052C9D0 /* LayerFlushScheduler.cpp */,
-				2917B55F1473496C0052C9D0 /* LayerFlushScheduler.h */,
-				2917B5601473496C0052C9D0 /* LayerFlushSchedulerClient.h */,
 				7AA3A69D194B59B6001CBD24 /* LayerPool.cpp */,
 				7AA3A69E194B59B6001CBD24 /* LayerPool.h */,
 				0FDF45A61BD1C6FD00E4FA8C /* PlatformCAAnimation.cpp */,
@@ -29798,8 +29788,6 @@
 				E15FF7D518C9553800FE4C87 /* KeypressCommand.h in Headers */,
 				450CEBF115073BBE002BB149 /* LabelableElement.h in Headers */,
 				A456FA2711AD4A830020B420 /* LabelsNodeList.h in Headers */,
-				2917B5621473496C0052C9D0 /* LayerFlushScheduler.h in Headers */,
-				2917B5631473496C0052C9D0 /* LayerFlushSchedulerClient.h in Headers */,
 				E4916FF7195DF6A0005AB349 /* LayerFlushThrottleState.h in Headers */,
 				580371641A66F1D300BAF519 /* LayerFragment.h in Headers */,
 				7AA3A6A0194B59B6001CBD24 /* LayerPool.h in Headers */,

@@ -42,7 +42,7 @@ void WebRunLoopDisableNested();
 
 void WebThreadInitRunQueue();
 
-CFRunLoopRef WebThreadRunLoop(void);
+WEBCORE_EXPORT CFRunLoopRef WebThreadRunLoop(void);
 WebThreadContext *WebThreadCurrentContext(void);
 
 #if defined(__cplusplus)

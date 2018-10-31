@@ -1,3 +1,24 @@
+2018-10-31  Antti Koivisto  <antti@apple.com>
+
+        Remove LayerFlushScheduler
+        https://bugs.webkit.org/show_bug.cgi?id=191103
+
+        Reviewed by Anders Carlsson.
+
+        Add a RunLoopObserver directly into WebViewLayerFlushScheduler and remove
+        all the virtual cruft.
+
+        * WebView/WebViewData.h:
+        (WebViewLayerFlushScheduler::~WebViewLayerFlushScheduler): Deleted.
+        (): Deleted.
+        * WebView/WebViewData.mm:
+        (currentRunLoop):
+        (WebViewLayerFlushScheduler::WebViewLayerFlushScheduler):
+        (WebViewLayerFlushScheduler::~WebViewLayerFlushScheduler):
+        (WebViewLayerFlushScheduler::schedule):
+        (WebViewLayerFlushScheduler::invalidate):
+        (WebViewLayerFlushScheduler::layerFlushCallback):
+
 2018-10-30  Alexey Proskuryakov  <ap@apple.com>
 
         Enable InstallAPI for iOS unconditionally

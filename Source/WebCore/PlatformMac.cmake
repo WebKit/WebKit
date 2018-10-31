@@ -256,7 +256,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm
 
     platform/graphics/ca/GraphicsLayerCA.cpp
-    platform/graphics/ca/LayerFlushScheduler.cpp
     platform/graphics/ca/LayerPool.cpp
     platform/graphics/ca/PlatformCAAnimation.cpp
     platform/graphics/ca/PlatformCALayer.cpp
@@ -265,7 +264,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/ca/TileGrid.cpp
     platform/graphics/ca/TransformationMatrixCA.cpp
 
-    platform/graphics/ca/cocoa/LayerFlushSchedulerMac.cpp
     platform/graphics/ca/cocoa/PlatformCAAnimationCocoa.mm
     platform/graphics/ca/cocoa/PlatformCAFiltersCocoa.mm
     platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm

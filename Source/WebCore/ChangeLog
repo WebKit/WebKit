@@ -1,3 +1,19 @@
+2018-10-31  Antti Koivisto  <antti@apple.com>
+
+        Remove LayerFlushScheduler
+        https://bugs.webkit.org/show_bug.cgi?id=191103
+
+        Reviewed by Anders Carlsson.
+
+        It is only used in WK1.
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/ca/LayerFlushScheduler.cpp: Removed.
+        * platform/graphics/ca/LayerFlushScheduler.h: Removed.
+        * platform/graphics/ca/LayerFlushSchedulerClient.h: Removed.
+        * platform/graphics/ca/cocoa/LayerFlushSchedulerMac.cpp: Removed.
+
 2018-10-31  Zalan Bujtas  <zalan@apple.com>
 
         Missing from r237634
