@@ -1,3 +1,14 @@
+2018-10-30  Don Olmstead  <don.olmstead@sony.com>
+
+        [PlayStation] Enable JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=191072
+
+        Reviewed by Brent Fulgham.
+
+        Add platform files for the PlayStation port.
+
+        * gtest/PlatformPlayStation.cmake: Added.
+
 2018-10-08  Dan Bernstein  <mitz@apple.com>
 
         gtest part of [Xcode] Update some build settings as recommended by Xcode 10

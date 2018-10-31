@@ -1,3 +1,15 @@
+2018-10-30  Don Olmstead  <don.olmstead@sony.com>
+
+        [PlayStation] Enable JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=191072
+
+        Reviewed by Brent Fulgham.
+
+        Add support for building the PlayStation port through JavaScriptCore.
+
+        * CMakeLists.txt:
+        * Source/cmake/OptionsPlayStation.cmake: Added.
+
 2018-10-29  Tadeu Zagallo  <tzagallo@apple.com>
 
         New bytecode format for JSC

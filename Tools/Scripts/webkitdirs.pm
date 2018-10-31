@@ -104,16 +104,17 @@ BEGIN {
 
 # Ports
 use constant {
-    AppleWin => "AppleWin",
-    GTK      => "GTK",
-    iOS      => "iOS",
-    tvOS     => "tvOS",
-    watchOS  => "watchOS",
-    Mac      => "Mac",
-    JSCOnly  => "JSCOnly",
-    WinCairo => "WinCairo",
-    WPE      => "WPE",
-    Unknown  => "Unknown"
+    AppleWin    => "AppleWin",
+    GTK         => "GTK",
+    iOS         => "iOS",
+    tvOS        => "tvOS",
+    watchOS     => "watchOS",
+    Mac         => "Mac",
+    JSCOnly     => "JSCOnly",
+    PlayStation => "PlayStation",
+    WinCairo    => "WinCairo",
+    WPE         => "WPE",
+    Unknown     => "Unknown"
 };
 
 use constant USE_OPEN_COMMAND => 1; # Used in runMacWebKitApp().
@@ -494,6 +495,7 @@ sub argumentsForConfiguration()
     push(@args, '--wpe') if isWPE();
     push(@args, '--jsc-only') if isJSCOnly();
     push(@args, '--wincairo') if isWinCairo();
+    push(@args, '--playstation') if isPlayStation();
     return @args;
 }
 
@@ -771,7 +773,7 @@ sub determineConfigurationProductDir
     return if defined $configurationProductDir;
     determineBaseProductDir();
     determineConfiguration();
-    if (isAppleWinWebKit() || isWinCairo()) {
+    if (isAppleWinWebKit() || isWinCairo() || isPlayStation()) {
         $configurationProductDir = File::Spec->catdir($baseProductDir, $configuration);
     } else {
         if (usesPerConfigurationBuildDirectory()) {
@@ -1212,6 +1214,7 @@ sub determinePortName()
     my %argToPortName = (
         gtk => GTK,
         'jsc-only' => JSCOnly,
+        playstation => PlayStation,
         wincairo => WinCairo,
         wpe => WPE
     );
@@ -1278,6 +1281,11 @@ sub isJSCOnly()
 sub isWPE()
 {
     return portName() eq WPE;
+}
+
+sub isPlayStation()
+{
+    return portName() eq PlayStation;
 }
 
 # Determine if this is debian, ubuntu, linspire, or something similar.
@@ -1972,6 +1980,17 @@ sub usingVisualStudioExpress()
     return $willUseVCExpressWhenBuilding;
 }
 
+sub getMSBuildPlatformArgument()
+{
+    if (isPlayStation()) {
+        return "";
+    } elsif (isWin64()) {
+        return "/p:Platform=x64";
+    } else {
+        return "/p:Platform=Win32";
+    }
+}
+
 sub buildVisualStudioProject
 {
     my ($project, $clean) = @_;
@@ -1988,7 +2007,7 @@ sub buildVisualStudioProject
         $action = "/t:clean";
     }
 
-    my $platform = "/p:Platform=" . (isWin64() ? "x64" : "Win32");
+    my $platform = getMSBuildPlatformArgument();
     my $logPath = File::Spec->catdir($baseProductDir, $configuration);
     make_path($logPath) unless -d $logPath or $logPath eq ".";
 
@@ -2098,7 +2117,7 @@ sub runInFlatpakIfAvailable(@)
 sub wrapperPrefixIfNeeded()
 {
 
-    if (isAnyWindows() || isJSCOnly()) {
+    if (isAnyWindows() || isJSCOnly() || isPlayStation()) {
         return ();
     }
     if (isAppleCocoaWebKit()) {
@@ -2274,6 +2293,8 @@ sub generateBuildSystemFromCMakeProject
 
     push @args, "-DENABLE_ADDRESS_SANITIZER=ON" if asanIsEnabled();
 
+    push @args, '-DCMAKE_TOOLCHAIN_FILE=Platform/PlayStation' if isPlayStation();
+
     if ($willUseNinja) {
         push @args, "-G";
         if (canUseEclipseNinjaGenerator()) {
@@ -2281,10 +2302,14 @@ sub generateBuildSystemFromCMakeProject
         } else {
             push @args, "Ninja";
         }
+        push @args, "-DUSE_THIN_ARCHIVES=OFF" if isPlayStation();
     } elsif (isAnyWindows() && isWin64()) {
         push @args, '-G "Visual Studio 15 2017 Win64"';
         push @args, '-DCMAKE_GENERATOR_TOOLSET="host=x64"';
+    } elsif (isPlayStation()) {
+        push @args, '-G "Visual Studio 15"';
     }
+
     # Do not show progress of generating bindings in interactive Ninja build not to leave noisy lines on tty
     push @args, '-DSHOW_BINDINGS_GENERATION_PROGRESS=1' unless ($willUseNinja && -t STDOUT);
 

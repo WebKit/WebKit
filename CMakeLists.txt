@@ -40,6 +40,7 @@ set(ALL_PORTS
     GTK
     JSCOnly
     Mac
+    PlayStation
     WPE
     WinCairo
 )
