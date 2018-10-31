@@ -1,3 +1,17 @@
+2018-10-30  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Support alternate simctl list outputs
+        https://bugs.webkit.org/show_bug.cgi?id=191090
+        <rdar://problem/45684255>
+
+        Rubber-stamped by Aakash Jain.
+
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDeviceManager._create_runtimes): Support alternative availability format.
+        (SimulatedDeviceManager._create_device_with_runtime): Ditto.
+        * Scripts/webkitpy/xcode/simulated_device_unittest.py:
+        (test_available_devices): Add iOS 12 with alternative availability format.
+
 2018-10-30  Alexey Proskuryakov  <ap@apple.com>
 
         Clean up some obsolete MAX_ALLOWED macros

@@ -75,6 +75,10 @@ simctl_json_output = """{
      "identifier" : "com.apple.CoreSimulator.SimDeviceType.iPhone-X"
    },
    {
+     "name" : "iPhone Xs",
+     "identifier" : "com.apple.CoreSimulator.SimDeviceType.iPhone-Xs"
+   },
+   {
      "name" : "iPad 2",
      "identifier" : "com.apple.CoreSimulator.SimDeviceType.iPad-2"
    },
@@ -175,6 +179,13 @@ simctl_json_output = """{
      "name" : "watchOS 4.0",
      "identifier" : "com.apple.CoreSimulator.SimRuntime.watchOS-4-0",
      "version" : "4.0"
+   },
+   {
+     "buildversion" : "16A367",
+     "isAvailable" : "YES",
+     "name" : "iOS 12.0",
+     "identifier" : "com.apple.CoreSimulator.SimRuntime.iOS-12-0",
+     "version" : "12.0"
    }
  ],
  "devices" : {
@@ -413,6 +424,14 @@ simctl_json_output = """{
        "name" : "iPad Pro (10.5-inch)",
        "udid" : "C92DDBB6-14AE-4B19-B9E5-4365FADE66E0"
      }
+   ],
+   "iOS 12.0" : [
+     {
+       "state" : "Shutdown",
+       "isAvailable" : "YES",
+       "name" : "iPhone Xs",
+       "udid" : "450C587D-70B1-54D9-9A56-2BD7B5FC01EF"
+     }
    ]
  },
  "pairs" : {
@@ -551,8 +570,8 @@ class SimulatedDeviceTest(unittest.TestCase):
         self.assertEquals(2, len(SimulatedDeviceManager.device_by_filter(lambda device: device.platform_device.device_type == DeviceType.from_string('iPhone 5s'), host)))
         self.assertEquals(2, len(SimulatedDeviceManager.device_by_filter(lambda device: device.platform_device.device_type == DeviceType.from_string('iPhone 6s'), host)))
 
-        # 18 iPhones
-        self.assertEquals(18, len(SimulatedDeviceManager.device_by_filter(lambda device: device.platform_device.device_type == DeviceType.from_string('iPhone'), host)))
+        # 19 iPhones
+        self.assertEquals(19, len(SimulatedDeviceManager.device_by_filter(lambda device: device.platform_device.device_type == DeviceType.from_string('iPhone'), host)))
 
         # 11 iPads
         self.assertEquals(11, len(SimulatedDeviceManager.device_by_filter(lambda device: device.platform_device.device_type == DeviceType.from_string('iPad'), host)))
@@ -568,6 +587,9 @@ class SimulatedDeviceTest(unittest.TestCase):
 
         # 11 iPhones running iOS 11.0
         self.assertEquals(11, len(SimulatedDeviceManager.device_by_filter(lambda device: device.platform_device.device_type == DeviceType(hardware_family='iPhone', software_version=Version(11, 0, 1)), host)))
+
+        # 1 device running iOS 12
+        self.assertEquals(1, len(SimulatedDeviceManager.device_by_filter(lambda device: device.platform_device.device_type == DeviceType(software_variant='iOS', software_version=Version(12, 0, 0)), host)))
 
     def test_existing_simulator(self):
         SimulatedDeviceTest.reset_simulated_device_manager()
