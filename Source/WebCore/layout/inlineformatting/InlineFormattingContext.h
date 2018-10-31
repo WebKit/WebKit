@@ -45,7 +45,7 @@ class InlineFormattingContext : public FormattingContext {
 public:
     InlineFormattingContext(const Box& formattingContextRoot);
 
-    void layout(LayoutContext&, FormattingState&) const override;
+    void layout(LayoutState&, FormattingState&) const override;
 
 private:
     class Line {
@@ -98,20 +98,20 @@ private:
     // This class implements positioning and sizing for boxes participating in a block formatting context.
     class Geometry : public FormattingContext::Geometry {
     public:
-        static HeightAndMargin inlineBlockHeightAndMargin(const LayoutContext&, const Box&);
-        static WidthAndMargin inlineBlockWidthAndMargin(const LayoutContext&, const Box&);
+        static HeightAndMargin inlineBlockHeightAndMargin(const LayoutState&, const Box&);
+        static WidthAndMargin inlineBlockWidthAndMargin(const LayoutState&, const Box&);
     };
 
-    void layoutInlineContent(const LayoutContext&, InlineFormattingState&, const InlineRunProvider&) const;
-    void initializeNewLine(const LayoutContext&, InlineFormattingState&, Line&) const;
+    void layoutInlineContent(const LayoutState&, InlineFormattingState&, const InlineRunProvider&) const;
+    void initializeNewLine(const LayoutState&, InlineFormattingState&, Line&) const;
 
-    void layoutFormattingContextRoot(LayoutContext&, const Box&) const;
-    void computeWidthAndHeightForInlineBox(LayoutContext&, const Box&) const;
-    void computeFloatPosition(const LayoutContext&, const FloatingContext&, Line&, const Box&) const;
-    void computeStaticPosition(const LayoutContext&, const Box&) const override;
-    void computeInFlowPositionedPosition(const LayoutContext&, const Box&) const override;
+    void layoutFormattingContextRoot(LayoutState&, const Box&) const;
+    void computeWidthAndHeightForInlineBox(LayoutState&, const Box&) const;
+    void computeFloatPosition(const LayoutState&, const FloatingContext&, Line&, const Box&) const;
+    void computeStaticPosition(const LayoutState&, const Box&) const override;
+    void computeInFlowPositionedPosition(const LayoutState&, const Box&) const override;
 
-    InstrinsicWidthConstraints instrinsicWidthConstraints(LayoutContext&, const Box&) const override;
+    InstrinsicWidthConstraints instrinsicWidthConstraints(LayoutState&, const Box&) const override;
 };
 
 }

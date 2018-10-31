@@ -32,7 +32,7 @@
 #include "Invalidation.h"
 #include "LayoutBox.h"
 #include "LayoutContainer.h"
-#include "LayoutContext.h"
+#include "LayoutFormattingState.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -48,25 +48,25 @@ static bool invalidationStopsAtFormattingContextBoundary(const Container& format
     return true;
 }
 
-static LayoutContext::UpdateType computeUpdateType(const Box&, StyleDiff, BlockFormattingState&)
+static LayoutState::UpdateType computeUpdateType(const Box&, StyleDiff, BlockFormattingState&)
 {
-    return LayoutContext::UpdateType::All;
+    return LayoutState::UpdateType::All;
 }
 
-static LayoutContext::UpdateType computeUpdateTypeForAncestor(const Container&, StyleDiff, BlockFormattingState&)
+static LayoutState::UpdateType computeUpdateTypeForAncestor(const Container&, StyleDiff, BlockFormattingState&)
 {
-    return LayoutContext::UpdateType::All;
+    return LayoutState::UpdateType::All;
 }
 
-InvalidationResult BlockInvalidation::invalidate(const Box& layoutBox, StyleDiff styleDiff, LayoutContext& layoutContext,
+InvalidationResult BlockInvalidation::invalidate(const Box& layoutBox, StyleDiff styleDiff, LayoutState& layoutState,
     BlockFormattingState& formattingState)
 {
     // Invalidate this box and the containing block chain all the way up to the formatting context root (and beyond if needed).
-    layoutContext.markNeedsUpdate(layoutBox, computeUpdateType(layoutBox, styleDiff, formattingState));
+    layoutState.markNeedsUpdate(layoutBox, computeUpdateType(layoutBox, styleDiff, formattingState));
     for (auto* containingBlock = layoutBox.containingBlock(); containingBlock; containingBlock = containingBlock->containingBlock()) {
         if (containingBlock->establishesFormattingContext() && invalidationStopsAtFormattingContextBoundary(*containingBlock, layoutBox, styleDiff))
             return { containingBlock };
-        layoutContext.markNeedsUpdate(*containingBlock, computeUpdateTypeForAncestor(*containingBlock, styleDiff, formattingState));
+        layoutState.markNeedsUpdate(*containingBlock, computeUpdateTypeForAncestor(*containingBlock, styleDiff, formattingState));
     }
     // Invalidation always stops at the initial containing block.
     ASSERT_NOT_REACHED();

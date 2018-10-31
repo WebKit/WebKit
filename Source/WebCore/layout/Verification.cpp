@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "LayoutContext.h"
+#include "LayoutFormattingState.h"
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
@@ -48,7 +48,7 @@ static bool areEssentiallyEqual(float a, LayoutUnit b)
     return ::abs(a - b.toFloat()) <= 4 * LayoutUnit::epsilon();
 }
 
-static bool outputMismatchingSimpleLineInformationIfNeeded(TextStream& stream, const LayoutContext& layoutContext, const RenderBlockFlow& blockFlow, const Container& inlineFormattingRoot)
+static bool outputMismatchingSimpleLineInformationIfNeeded(TextStream& stream, const LayoutState& layoutState, const RenderBlockFlow& blockFlow, const Container& inlineFormattingRoot)
 {
     auto* lineLayoutData = blockFlow.simpleLineLayout();
     if (!lineLayoutData) {
@@ -56,7 +56,7 @@ static bool outputMismatchingSimpleLineInformationIfNeeded(TextStream& stream, c
         return true;
     }
 
-    auto& inlineFormattingState = layoutContext.establishedFormattingState(inlineFormattingRoot);
+    auto& inlineFormattingState = layoutState.establishedFormattingState(inlineFormattingRoot);
     ASSERT(is<InlineFormattingState>(inlineFormattingState));
     auto& inlineRunList = downcast<InlineFormattingState>(inlineFormattingState).inlineRuns();
 
@@ -94,9 +94,9 @@ static bool checkForMatchingTextRuns(const InlineRun& inlineRun, float logicalLe
     return areEssentiallyEqual(logicalLeft, inlineRun.logicalLeft()) && areEssentiallyEqual(logicalRight, inlineRun.logicalRight()) && start == inlineRun.textContext()->start() && (end == (inlineRun.textContext()->start() + inlineRun.textContext()->length()));
 }
 
-static bool outputMismatchingComplexLineInformationIfNeeded(TextStream& stream, const LayoutContext& layoutContext, const RenderBlockFlow& blockFlow, const Container& inlineFormattingRoot)
+static bool outputMismatchingComplexLineInformationIfNeeded(TextStream& stream, const LayoutState& layoutState, const RenderBlockFlow& blockFlow, const Container& inlineFormattingRoot)
 {
-    auto& inlineFormattingState = layoutContext.establishedFormattingState(inlineFormattingRoot);
+    auto& inlineFormattingState = layoutState.establishedFormattingState(inlineFormattingRoot);
     ASSERT(is<InlineFormattingState>(inlineFormattingState));
     auto& inlineRunList = downcast<InlineFormattingState>(inlineFormattingState).inlineRuns();
 
@@ -178,7 +178,7 @@ static bool outputMismatchingComplexLineInformationIfNeeded(TextStream& stream, 
     return mismatched;
 }
 
-static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, const LayoutContext& context, const RenderBox& renderer, const Box& layoutBox)
+static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, const LayoutState& context, const RenderBox& renderer, const Box& layoutBox)
 {
     bool firstMismatchingRect = true;
     auto outputRect = [&] (const String& prefix, const LayoutRect& rendererRect, const LayoutRect& layoutRect) {
@@ -240,7 +240,7 @@ static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, con
     return false;
 }
 
-static bool verifyAndOutputSubtree(TextStream& stream, const LayoutContext& context, const RenderBox& renderer, const Box& layoutBox)
+static bool verifyAndOutputSubtree(TextStream& stream, const LayoutState& context, const RenderBox& renderer, const Box& layoutBox)
 {
     auto mismtachingGeometry = outputMismatchingBlockBoxInformationIfNeeded(stream, context, renderer, layoutBox);
 
@@ -280,7 +280,7 @@ static bool verifyAndOutputSubtree(TextStream& stream, const LayoutContext& cont
     return mismtachingGeometry;
 }
 
-void LayoutContext::verifyAndOutputMismatchingLayoutTree(const RenderView& renderView) const
+void LayoutState::verifyAndOutputMismatchingLayoutTree(const RenderView& renderView) const
 {
     TextStream stream;
     auto mismatchingGeometry = verifyAndOutputSubtree(stream, *this, renderView, *m_root.get());

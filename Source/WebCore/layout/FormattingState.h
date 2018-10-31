@@ -30,7 +30,7 @@
 #include "FloatingState.h"
 #include "FormattingContext.h"
 #include "LayoutBox.h"
-#include "LayoutContext.h"
+#include "LayoutFormattingState.h"
 #include "LayoutUnit.h"
 #include <wtf/IsoMalloc.h>
 
@@ -60,9 +60,9 @@ public:
 
 protected:
     enum class Type { Block, Inline };
-    FormattingState(Ref<FloatingState>&&, Type, const LayoutContext&);
+    FormattingState(Ref<FloatingState>&&, Type, const LayoutState&);
 
-    const LayoutContext& m_layoutContext;
+    const LayoutState& m_layoutState;
 
 private:
     Ref<FloatingState> m_floatingState;
@@ -73,7 +73,7 @@ private:
 inline void FormattingState::setInstrinsicWidthConstraints(const Box& layoutBox, FormattingContext::InstrinsicWidthConstraints instrinsicWidthConstraints)
 {
     ASSERT(!m_instrinsicWidthConstraints.contains(&layoutBox));
-    ASSERT(&m_layoutContext.formattingStateForBox(layoutBox) == this);
+    ASSERT(&m_layoutState.formattingStateForBox(layoutBox) == this);
     m_instrinsicWidthConstraints.set(&layoutBox, instrinsicWidthConstraints);
 }
 
@@ -84,7 +84,7 @@ inline void FormattingState::clearInstrinsicWidthConstraints(const Box& layoutBo
 
 inline std::optional<FormattingContext::InstrinsicWidthConstraints> FormattingState::instrinsicWidthConstraints(const Box& layoutBox) const
 {
-    ASSERT(&m_layoutContext.formattingStateForBox(layoutBox) == this);
+    ASSERT(&m_layoutState.formattingStateForBox(layoutBox) == this);
     auto iterator = m_instrinsicWidthConstraints.find(&layoutBox);
     if (iterator == m_instrinsicWidthConstraints.end())
         return { };

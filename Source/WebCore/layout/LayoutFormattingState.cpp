@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "LayoutContext.h"
+#include "LayoutFormattingState.h"
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
@@ -43,13 +43,13 @@
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(LayoutContext);
+WTF_MAKE_ISO_ALLOCATED_IMPL(LayoutState);
 
-LayoutContext::LayoutContext()
+LayoutState::LayoutState()
 {
 }
 
-void LayoutContext::initializeRoot(const Container& root, const LayoutSize& containerSize)
+void LayoutState::initializeRoot(const Container& root, const LayoutSize& containerSize)
 {
     ASSERT(root.establishesFormattingContext());
 
@@ -70,7 +70,7 @@ void LayoutContext::initializeRoot(const Container& root, const LayoutSize& cont
     m_formattingContextRootListForLayout.add(&root);
 }
 
-void LayoutContext::updateLayout()
+void LayoutState::updateLayout()
 {
     ASSERT(!m_formattingContextRootListForLayout.isEmpty());
     for (auto* layoutRoot : m_formattingContextRootListForLayout)
@@ -78,7 +78,7 @@ void LayoutContext::updateLayout()
     m_formattingContextRootListForLayout.clear();
 }
 
-void LayoutContext::layoutFormattingContextSubtree(const Box& layoutRoot)
+void LayoutState::layoutFormattingContextSubtree(const Box& layoutRoot)
 {
     RELEASE_ASSERT(layoutRoot.establishesFormattingContext());
     auto formattingContext = this->formattingContext(layoutRoot);
@@ -87,14 +87,14 @@ void LayoutContext::layoutFormattingContextSubtree(const Box& layoutRoot)
     formattingContext->layoutOutOfFlowDescendants(*this, layoutRoot);
 }
 
-Display::Box& LayoutContext::displayBoxForLayoutBox(const Box& layoutBox) const
+Display::Box& LayoutState::displayBoxForLayoutBox(const Box& layoutBox) const
 {
     return *m_layoutToDisplayBox.ensure(&layoutBox, [&layoutBox] {
         return std::make_unique<Display::Box>(layoutBox.style());
     }).iterator->value;
 }
 
-void LayoutContext::styleChanged(const Box& layoutBox, StyleDiff styleDiff)
+void LayoutState::styleChanged(const Box& layoutBox, StyleDiff styleDiff)
 {
     auto& formattingState = formattingStateForBox(layoutBox);
     const Container* invalidationRoot = nullptr;
@@ -108,25 +108,25 @@ void LayoutContext::styleChanged(const Box& layoutBox, StyleDiff styleDiff)
     m_formattingContextRootListForLayout.addVoid(invalidationRoot);
 }
 
-void LayoutContext::markNeedsUpdate(const Box&, OptionSet<UpdateType>)
+void LayoutState::markNeedsUpdate(const Box&, OptionSet<UpdateType>)
 {
 }
 
-FormattingState& LayoutContext::formattingStateForBox(const Box& layoutBox) const
+FormattingState& LayoutState::formattingStateForBox(const Box& layoutBox) const
 {
     auto& root = layoutBox.formattingContextRoot();
     RELEASE_ASSERT(m_formattingStates.contains(&root));
     return *m_formattingStates.get(&root);
 }
 
-FormattingState& LayoutContext::establishedFormattingState(const Box& formattingRoot) const
+FormattingState& LayoutState::establishedFormattingState(const Box& formattingRoot) const
 {
     ASSERT(formattingRoot.establishesFormattingContext());
     RELEASE_ASSERT(m_formattingStates.contains(&formattingRoot));
     return *m_formattingStates.get(&formattingRoot);
 }
 
-FormattingState& LayoutContext::createFormattingStateForFormattingRootIfNeeded(const Box& formattingRoot)
+FormattingState& LayoutState::createFormattingStateForFormattingRootIfNeeded(const Box& formattingRoot)
 {
     ASSERT(formattingRoot.establishesFormattingContext());
 
@@ -156,7 +156,7 @@ FormattingState& LayoutContext::createFormattingStateForFormattingRootIfNeeded(c
     CRASH();
 }
 
-std::unique_ptr<FormattingContext> LayoutContext::formattingContext(const Box& formattingContextRoot) const
+std::unique_ptr<FormattingContext> LayoutState::formattingContext(const Box& formattingContextRoot) const
 {
     if (formattingContextRoot.establishesInlineFormattingContext())
         return std::make_unique<InlineFormattingContext>(formattingContextRoot);

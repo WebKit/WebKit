@@ -37,14 +37,14 @@ class Box;
 class Container;
 class InlineFormattingState;
 struct InvalidationResult;
-class LayoutContext;
+class LayoutState;
 enum class StyleDiff;
 
 // This class implements box invalidation for inline formatting context.
 class InlineInvalidation {
     WTF_MAKE_ISO_ALLOCATED(InlineInvalidation);
 public:
-    static InvalidationResult invalidate(const Box&, StyleDiff, LayoutContext&, InlineFormattingState&);
+    static InvalidationResult invalidate(const Box&, StyleDiff, LayoutState&, InlineFormattingState&);
 };
 
 }

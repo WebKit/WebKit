@@ -33,7 +33,7 @@
 #include "FloatBox.h"
 #include "LayoutBox.h"
 #include "LayoutContainer.h"
-#include "LayoutContext.h"
+#include "LayoutFormattingState.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -121,11 +121,11 @@ PointInContainingBlock FloatingContext::positionForFloat(const Box& layoutBox) c
     ASSERT(layoutBox.isFloatingPositioned());
 
     if (m_floatingState.isEmpty()) {
-        auto& displayBox = layoutContext().displayBoxForLayoutBox(layoutBox);
+        auto& displayBox = layoutState().displayBoxForLayoutBox(layoutBox);
 
         auto alignWithContainingBlock = [&]() -> PositionInContainingBlock {
             // If there is no floating to align with, push the box to the left/right edge of its containing block's content box.
-            auto& containingBlockDisplayBox = layoutContext().displayBoxForLayoutBox(*layoutBox.containingBlock());
+            auto& containingBlockDisplayBox = layoutState().displayBoxForLayoutBox(*layoutBox.containingBlock());
 
             if (layoutBox.isLeftFloatingPositioned())
                 return containingBlockDisplayBox.contentBoxLeft() + displayBox.marginLeft();
@@ -138,7 +138,7 @@ PointInContainingBlock FloatingContext::positionForFloat(const Box& layoutBox) c
     }
 
     // Find the top most position where the float box fits.
-    FloatBox floatBox = { layoutBox, m_floatingState, layoutContext() };
+    FloatBox floatBox = { layoutBox, m_floatingState, layoutState() };
     floatingPosition(floatBox);
     return floatBox.rectInContainingBlock().topLeft();
 }
@@ -152,7 +152,7 @@ std::optional<PointInContainingBlock> FloatingContext::positionForFloatAvoiding(
     if (m_floatingState.isEmpty())
         return { };
 
-    FloatAvoider floatAvoider = { layoutBox, m_floatingState, layoutContext() };
+    FloatAvoider floatAvoider = { layoutBox, m_floatingState, layoutState() };
     floatingPosition(floatAvoider);
     return { floatAvoider.rectInContainingBlock().topLeft() };
 }
@@ -176,16 +176,16 @@ std::optional<PositionInContainingBlock> FloatingContext::verticalPositionWithCl
         // 1. The amount necessary to place the border edge of the block even with the bottom outer edge of the lowest float that is to be cleared.
         // 2. The amount necessary to place the top border edge of the block at its hypothetical position.
 
-        auto& layoutContext = this->layoutContext();
-        auto& displayBox = layoutContext.displayBoxForLayoutBox(layoutBox);
-        auto rootRelativeTop = FormattingContext::mapTopLeftToAncestor(layoutContext, layoutBox, downcast<Container>(m_floatingState.root())).y;
+        auto& layoutState = this->layoutState();
+        auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
+        auto rootRelativeTop = FormattingContext::mapTopLeftToAncestor(layoutState, layoutBox, downcast<Container>(m_floatingState.root())).y;
         auto clearance = *floatBottom - rootRelativeTop;
         if (clearance <= 0)
             return { };
 
         // Clearance inhibits margin collapsing. Let's reset the relevant adjoining margins.
         if (auto* previousInFlowSibling = layoutBox.previousInFlowSibling()) {
-            auto& previousInFlowDisplayBox = layoutContext.displayBoxForLayoutBox(*previousInFlowSibling);
+            auto& previousInFlowDisplayBox = layoutState.displayBoxForLayoutBox(*previousInFlowSibling);
 
             // Since the previous inflow sibling has already been laid out, its margin is collapsed by now.
             ASSERT(!previousInFlowDisplayBox.marginBottom());
@@ -208,7 +208,7 @@ std::optional<PositionInContainingBlock> FloatingContext::verticalPositionWithCl
         ASSERT(*floatBottom == rootRelativeTop);
 
         // The return vertical position is in the containing block's coordinate system.
-        auto containingBlockRootRelativeTop = FormattingContext::mapTopLeftToAncestor(layoutContext, *layoutBox.containingBlock(), downcast<Container>(m_floatingState.root())).y;
+        auto containingBlockRootRelativeTop = FormattingContext::mapTopLeftToAncestor(layoutState, *layoutBox.containingBlock(), downcast<Container>(m_floatingState.root())).y;
         return rootRelativeTop - containingBlockRootRelativeTop;
     };
 

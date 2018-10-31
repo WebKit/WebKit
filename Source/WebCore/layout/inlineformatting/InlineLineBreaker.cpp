@@ -38,8 +38,8 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(InlineLineBreaker);
 
-InlineLineBreaker::InlineLineBreaker(const LayoutContext& layoutContext, const InlineContent& inlineContent, const Vector<InlineRunProvider::Run>& inlineRuns)
-    : m_layoutContext(layoutContext)
+InlineLineBreaker::InlineLineBreaker(const LayoutState& layoutState, const InlineContent& inlineContent, const Vector<InlineRunProvider::Run>& inlineRuns)
+    : m_layoutState(layoutState)
     , m_textUtil(inlineContent)
     , m_inlineRuns(inlineRuns)
 {
@@ -147,8 +147,8 @@ LayoutUnit InlineLineBreaker::runWidth(const InlineRunProvider::Run& inlineRun, 
 
     ASSERT(inlineRun.isBox() || inlineRun.isFloat());
     auto& layoutBox = inlineRun.inlineItem().layoutBox();
-    ASSERT(m_layoutContext.hasDisplayBox(layoutBox));
-    auto& displayBox = m_layoutContext.displayBoxForLayoutBox(layoutBox);
+    ASSERT(m_layoutState.hasDisplayBox(layoutBox));
+    auto& displayBox = m_layoutState.displayBoxForLayoutBox(layoutBox);
     return displayBox.width();
 }
 

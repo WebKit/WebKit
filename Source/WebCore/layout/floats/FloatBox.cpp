@@ -35,8 +35,8 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(FloatBox);
 
-FloatBox::FloatBox(const Box& layoutBox, const FloatingState& floatingState, const LayoutContext& layoutContext)
-    : FloatAvoider(layoutBox, floatingState, layoutContext)
+FloatBox::FloatBox(const Box& layoutBox, const FloatingState& floatingState, const LayoutState& layoutState)
+    : FloatAvoider(layoutBox, floatingState, layoutState)
 {
 }
 

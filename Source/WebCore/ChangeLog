@@ -1,3 +1,206 @@
+2018-10-31  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Rename LayoutContext to LayoutState
+        https://bugs.webkit.org/show_bug.cgi?id=191080
+
+        Reviewed by Antti Koivisto.
+
+        LayoutContext naming was a bit misleading since none of the other *FormattingContext classes (BlockFormattingContext etc) hold states.
+        (LayoutContext.cpp -> LayoutFormattingState.cpp because LayoutState.cpp name is already taken.)
+
+        Now the current state is as follows:
+
+        LayoutState has
+        1. Layout tree
+        2. State content for each formatting subtrees
+        3. Display tree
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeOutOfFlowHorizontalGeometry const):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowVerticalGeometry const):
+        (WebCore::Layout::FormattingContext::computeBorderAndPadding const):
+        (WebCore::Layout::FormattingContext::placeInFlowPositionedChildren const):
+        (WebCore::Layout::FormattingContext::layoutOutOfFlowDescendants const):
+        (WebCore::Layout::FormattingContext::mapBoxToAncestor):
+        (WebCore::Layout::FormattingContext::mapTopLeftToAncestor):
+        (WebCore::Layout::FormattingContext::mapCoordinateToAncestor):
+        (WebCore::Layout::FormattingContext::validateGeometryConstraintsAfterLayout const):
+        * layout/FormattingContext.h:
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowVerticalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::floatingHeightAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::floatingWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedHeightAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::complicatedCases):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::floatingReplacedHeightAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::floatingReplacedWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::floatingNonReplacedWidthAndMargin):
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::contentHeightForFormattingContextRoot):
+        (WebCore::Layout::FormattingContext::Geometry::computedMaxHeight):
+        (WebCore::Layout::FormattingContext::Geometry::computedMinHeight):
+        (WebCore::Layout::staticVerticalPositionForOutOfFlowPositioned):
+        (WebCore::Layout::staticHorizontalPositionForOutOfFlowPositioned):
+        (WebCore::Layout::FormattingContext::Geometry::shrinkToFitWidth):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::complicatedCases):
+        (WebCore::Layout::FormattingContext::Geometry::floatingNonReplacedWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::floatingReplacedHeightAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::floatingReplacedWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowVerticalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::floatingHeightAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::floatingWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedHeightAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::computedBorder):
+        (WebCore::Layout::FormattingContext::Geometry::computedPadding):
+        (WebCore::Layout::FormattingContext::Geometry::computedNonCollapsedHorizontalMarginValue):
+        (WebCore::Layout::FormattingContext::Geometry::computedNonCollapsedVerticalMarginValue):
+        * layout/FormattingState.cpp:
+        (WebCore::Layout::FormattingState::FormattingState):
+        * layout/FormattingState.h:
+        (WebCore::Layout::FormattingState::setInstrinsicWidthConstraints):
+        (WebCore::Layout::FormattingState::instrinsicWidthConstraints const):
+        * layout/LayoutFormattingState.cpp: Renamed from Source/WebCore/layout/LayoutContext.cpp.
+        (WebCore::Layout::LayoutState::LayoutState):
+        (WebCore::Layout::LayoutState::initializeRoot):
+        (WebCore::Layout::LayoutState::updateLayout):
+        (WebCore::Layout::LayoutState::layoutFormattingContextSubtree):
+        (WebCore::Layout::LayoutState::displayBoxForLayoutBox const):
+        (WebCore::Layout::LayoutState::styleChanged):
+        (WebCore::Layout::LayoutState::markNeedsUpdate):
+        (WebCore::Layout::LayoutState::formattingStateForBox const):
+        (WebCore::Layout::LayoutState::establishedFormattingState const):
+        (WebCore::Layout::LayoutState::createFormattingStateForFormattingRootIfNeeded):
+        (WebCore::Layout::LayoutState::formattingContext const):
+        * layout/LayoutFormattingState.h: Renamed from Source/WebCore/layout/LayoutContext.h.
+        (WebCore::Layout::LayoutState::setInQuirksMode):
+        (WebCore::Layout::LayoutState::hasDisplayBox const):
+        (WebCore::Layout::LayoutState::inQuirksMode const):
+        * layout/Verification.cpp:
+        (WebCore::Layout::outputMismatchingSimpleLineInformationIfNeeded):
+        (WebCore::Layout::outputMismatchingComplexLineInformationIfNeeded):
+        (WebCore::Layout::outputMismatchingBlockBoxInformationIfNeeded):
+        (WebCore::Layout::verifyAndOutputSubtree):
+        (WebCore::Layout::LayoutState::verifyAndOutputMismatchingLayoutTree const):
+        (WebCore::Layout::LayoutContext::verifyAndOutputMismatchingLayoutTree const): Deleted.
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layout const):
+        (WebCore::Layout::BlockFormattingContext::layoutFormattingContextRoot const):
+        (WebCore::Layout::BlockFormattingContext::computeStaticPosition const):
+        (WebCore::Layout::BlockFormattingContext::computeEstimatedMarginTop const):
+        (WebCore::Layout::BlockFormattingContext::computeEstimatedMarginTopForAncestors const):
+        (WebCore::Layout::BlockFormattingContext::precomputeVerticalPositionForFormattingRootIfNeeded const):
+        (WebCore::Layout::hasPrecomputedMarginTop):
+        (WebCore::Layout::BlockFormattingContext::computeFloatingPosition const):
+        (WebCore::Layout::BlockFormattingContext::computePositionToAvoidFloats const):
+        (WebCore::Layout::BlockFormattingContext::computeVerticalPositionForFloatClear const):
+        (WebCore::Layout::BlockFormattingContext::computeInFlowPositionedPosition const):
+        (WebCore::Layout::BlockFormattingContext::computeWidthAndMargin const):
+        (WebCore::Layout::BlockFormattingContext::computeHeightAndMargin const):
+        (WebCore::Layout::BlockFormattingContext::instrinsicWidthConstraints const):
+        * layout/blockformatting/BlockFormattingContext.h:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowHeightAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowWidthAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowReplacedWidthAndMargin):
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::isStretchedToInitialContainingBlock):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowReplacedWidthAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::staticPosition):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowPositionedPosition):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowHeightAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowWidthAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::instrinsicWidthConstraints):
+        (WebCore::Layout::BlockFormattingContext::Geometry::estimatedMarginTop):
+        * layout/blockformatting/BlockFormattingState.cpp:
+        (WebCore::Layout::BlockFormattingState::BlockFormattingState):
+        * layout/blockformatting/BlockFormattingState.h:
+        * layout/blockformatting/BlockInvalidation.cpp:
+        (WebCore::Layout::computeUpdateType):
+        (WebCore::Layout::computeUpdateTypeForAncestor):
+        (WebCore::Layout::BlockInvalidation::invalidate):
+        * layout/blockformatting/BlockInvalidation.h:
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::isMarginTopCollapsedWithParent):
+        (WebCore::Layout::isMarginBottomCollapsedThrough):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::collapsedMarginTopFromFirstChild):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::nonCollapsedMarginTop):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::computedNonCollapsedMarginTop):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::computedNonCollapsedMarginBottom):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::marginTop):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::marginBottom):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::isMarginBottomCollapsedWithParent):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::collapsedMarginBottomFromLastChild):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::nonCollapsedMarginBottom):
+        * layout/displaytree/DisplayBox.h:
+        * layout/floats/FloatAvoider.cpp:
+        (WebCore::Layout::FloatAvoider::FloatAvoider):
+        * layout/floats/FloatAvoider.h:
+        * layout/floats/FloatBox.cpp:
+        (WebCore::Layout::FloatBox::FloatBox):
+        * layout/floats/FloatBox.h:
+        * layout/floats/FloatingContext.cpp:
+        (WebCore::Layout::FloatingContext::positionForFloat const):
+        (WebCore::Layout::FloatingContext::positionForFloatAvoiding const):
+        (WebCore::Layout::FloatingContext::verticalPositionWithClearance const):
+        * layout/floats/FloatingContext.h:
+        (WebCore::Layout::FloatingContext::layoutState const):
+        (WebCore::Layout::FloatingContext::layoutContext const): Deleted.
+        * layout/floats/FloatingState.cpp:
+        (WebCore::Layout::FloatingState::FloatItem::FloatItem):
+        (WebCore::Layout::FloatingState::FloatingState):
+        (WebCore::Layout::FloatingState::constraints const):
+        * layout/floats/FloatingState.h:
+        (WebCore::Layout::FloatingState::create):
+        (WebCore::Layout::FloatingState::layoutState const):
+        (WebCore::Layout::FloatingState::layoutContext const): Deleted.
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::layout const):
+        (WebCore::Layout::InlineFormattingContext::initializeNewLine const):
+        (WebCore::Layout::InlineFormattingContext::layoutInlineContent const):
+        (WebCore::Layout::InlineFormattingContext::layoutFormattingContextRoot const):
+        (WebCore::Layout::InlineFormattingContext::computeWidthAndHeightForInlineBox const):
+        (WebCore::Layout::InlineFormattingContext::computeFloatPosition const):
+        (WebCore::Layout::InlineFormattingContext::computeStaticPosition const):
+        (WebCore::Layout::InlineFormattingContext::computeInFlowPositionedPosition const):
+        (WebCore::Layout::InlineFormattingContext::instrinsicWidthConstraints const):
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/inlineformatting/InlineFormattingContextGeometry.cpp:
+        (WebCore::Layout::InlineFormattingContext::Geometry::inlineBlockWidthAndMargin):
+        (WebCore::Layout::InlineFormattingContext::Geometry::inlineBlockHeightAndMargin):
+        * layout/inlineformatting/InlineFormattingState.cpp:
+        (WebCore::Layout::InlineFormattingState::InlineFormattingState):
+        * layout/inlineformatting/InlineFormattingState.h:
+        * layout/inlineformatting/InlineInvalidation.cpp:
+        (WebCore::Layout::InlineInvalidation::invalidate):
+        * layout/inlineformatting/InlineInvalidation.h:
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::InlineLineBreaker::InlineLineBreaker):
+        (WebCore::Layout::InlineLineBreaker::runWidth const):
+        * layout/inlineformatting/InlineLineBreaker.h:
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::outputInlineRuns):
+        (WebCore::Layout::outputLayoutTree):
+        (WebCore::Layout::showLayoutTree):
+        * layout/layouttree/LayoutTreeBuilder.h:
+        * page/FrameViewLayoutContext.cpp:
+        (WebCore::layoutUsingFormattingContext):
+
 2018-10-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Cocoa] Attachment dropped from one web view to another is missing its file wrapper

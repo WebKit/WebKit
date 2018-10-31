@@ -31,7 +31,7 @@
 #include "FormattingContext.h"
 #include "LayoutBox.h"
 #include "LayoutContainer.h"
-#include "LayoutContext.h"
+#include "LayoutFormattingState.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -41,12 +41,12 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(FloatingState);
 
 FloatingState::FloatItem::FloatItem(const Box& layoutBox, const FloatingState& floatingState)
     : m_layoutBox(makeWeakPtr(layoutBox))
-    , m_absoluteDisplayBox(FormattingContext::mapBoxToAncestor(floatingState.layoutContext(), layoutBox, downcast<Container>(floatingState.root())))
+    , m_absoluteDisplayBox(FormattingContext::mapBoxToAncestor(floatingState.layoutState(), layoutBox, downcast<Container>(floatingState.root())))
 {
 }
 
-FloatingState::FloatingState(LayoutContext& layoutContext, const Box& formattingContextRoot)
-    : m_layoutContext(layoutContext)
+FloatingState::FloatingState(LayoutState& layoutState, const Box& formattingContextRoot)
+    : m_layoutState(layoutState)
     , m_formattingContextRoot(makeWeakPtr(formattingContextRoot))
 {
 }
@@ -98,7 +98,7 @@ FloatingState::Constraints FloatingState::constraints(LayoutUnit verticalPositio
     auto adjustedPosition = Position { 0, verticalPosition };
 
     if (coordinateMappingIsRequired)
-        adjustedPosition = FormattingContext::mapCoordinateToAncestor(m_layoutContext, adjustedPosition, downcast<Container>(formattingContextRoot), downcast<Container>(root()));
+        adjustedPosition = FormattingContext::mapCoordinateToAncestor(m_layoutState, adjustedPosition, downcast<Container>(formattingContextRoot), downcast<Container>(root()));
 
     Constraints constraints;
     for (int index = m_floats.size() - 1; index >= 0; --index) {

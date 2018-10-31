@@ -39,7 +39,7 @@ namespace Layout {
 class InlineFormattingState : public FormattingState {
     WTF_MAKE_ISO_ALLOCATED(InlineFormattingState);
 public:
-    InlineFormattingState(Ref<FloatingState>&&, const LayoutContext&);
+    InlineFormattingState(Ref<FloatingState>&&, const LayoutState&);
     virtual ~InlineFormattingState();
 
     InlineContent& inlineContent() { return m_inlineContent; }

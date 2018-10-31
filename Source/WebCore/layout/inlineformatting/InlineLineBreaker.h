@@ -37,7 +37,7 @@ namespace Layout {
 class InlineLineBreaker {
     WTF_MAKE_ISO_ALLOCATED(InlineLineBreaker);
 public:
-    InlineLineBreaker(const LayoutContext&, const InlineContent&, const Vector<InlineRunProvider::Run>&);
+    InlineLineBreaker(const LayoutState&, const InlineContent&, const Vector<InlineRunProvider::Run>&);
 
     struct Run {
         enum class Position { Undetermined, LineBegin, LineEnd };
@@ -55,7 +55,7 @@ private:
     LayoutUnit runWidth(const InlineRunProvider::Run&, LayoutUnit contentLogicalLeft) const;
     std::optional<ItemPosition> adjustSplitPositionWithHyphenation(const InlineRunProvider::Run&, ItemPosition splitPosition, LayoutUnit contentLogicalLeft, LayoutUnit availableWidth, bool isLineEmpty) const;
 
-    const LayoutContext& m_layoutContext;
+    const LayoutState& m_layoutState;
     const TextUtil m_textUtil;
     const Vector<InlineRunProvider::Run>& m_inlineRuns;
 

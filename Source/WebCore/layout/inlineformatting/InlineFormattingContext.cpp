@@ -34,7 +34,7 @@
 #include "InlineRunProvider.h"
 #include "LayoutBox.h"
 #include "LayoutContainer.h"
-#include "LayoutContext.h"
+#include "LayoutFormattingState.h"
 #include "LayoutInlineBox.h"
 #include "LayoutInlineContainer.h"
 #include "Logging.h"
@@ -51,12 +51,12 @@ InlineFormattingContext::InlineFormattingContext(const Box& formattingContextRoo
 {
 }
 
-void InlineFormattingContext::layout(LayoutContext& layoutContext, FormattingState& formattingState) const
+void InlineFormattingContext::layout(LayoutState& layoutState, FormattingState& formattingState) const
 {
     if (!is<Container>(root()))
         return;
 
-    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Start] -> inline formatting context -> layout context(" << &layoutContext << ") formatting root(" << &root() << ")");
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Start] -> inline formatting context -> layout context(" << &layoutState << ") formatting root(" << &root() << ")");
 
     auto& inlineFormattingState = downcast<InlineFormattingState>(formattingState);
     InlineRunProvider inlineRunProvider(inlineFormattingState);
@@ -66,7 +66,7 @@ void InlineFormattingContext::layout(LayoutContext& layoutContext, FormattingSta
     while (layoutBox) {
 
         if (layoutBox->establishesFormattingContext()) {
-            layoutFormattingContextRoot(layoutContext, *layoutBox);
+            layoutFormattingContextRoot(layoutState, *layoutBox);
             // Formatting context roots take care of their entire subtree. Continue with next sibling.
             inlineRunProvider.append(*layoutBox);
             layoutBox = layoutBox->nextInFlowOrFloatingSibling();
@@ -80,7 +80,7 @@ void InlineFormattingContext::layout(LayoutContext& layoutContext, FormattingSta
         }
 
         inlineRunProvider.append(*layoutBox);
-        computeWidthAndHeightForInlineBox(layoutContext, *layoutBox);
+        computeWidthAndHeightForInlineBox(layoutState, *layoutBox);
 
         for (; layoutBox; layoutBox = layoutBox->parent()) {
             if (layoutBox == &formattingRoot) {
@@ -95,9 +95,9 @@ void InlineFormattingContext::layout(LayoutContext& layoutContext, FormattingSta
         ASSERT(!layoutBox || layoutBox->isDescendantOf(formattingRoot));
     }
 
-    layoutInlineContent(layoutContext, inlineFormattingState, inlineRunProvider);
+    layoutInlineContent(layoutState, inlineFormattingState, inlineRunProvider);
 
-    LOG_WITH_STREAM(FormattingContextLayout, stream << "[End] -> inline formatting context -> layout context(" << &layoutContext << ") formatting root(" << &root() << ")");
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "[End] -> inline formatting context -> layout context(" << &layoutState << ") formatting root(" << &root() << ")");
 }
 
 static bool isTrimmableContent(const InlineLineBreaker::Run& run)
@@ -105,10 +105,10 @@ static bool isTrimmableContent(const InlineLineBreaker::Run& run)
     return run.content.isWhitespace() && run.content.style().collapseWhiteSpace();
 }
 
-void InlineFormattingContext::initializeNewLine(const LayoutContext& layoutContext, InlineFormattingState& inlineFormattingState, Line& line) const
+void InlineFormattingContext::initializeNewLine(const LayoutState& layoutState, InlineFormattingState& inlineFormattingState, Line& line) const
 {
     auto& formattingRoot = downcast<Container>(root());
-    auto& formattingRootDisplayBox = layoutContext.displayBoxForLayoutBox(formattingRoot);
+    auto& formattingRootDisplayBox = layoutState.displayBoxForLayoutBox(formattingRoot);
 
     auto lineLogicalLeft = formattingRootDisplayBox.contentBoxLeft();
     auto lineLogicalTop = line.isFirstLine() ? formattingRootDisplayBox.contentBoxTop() : line.logicalBottom();
@@ -148,14 +148,14 @@ void InlineFormattingContext::initializeNewLine(const LayoutContext& layoutConte
     line.init(logicalRect);
 }
 
-void InlineFormattingContext::layoutInlineContent(const LayoutContext& layoutContext, InlineFormattingState& inlineFormattingState, const InlineRunProvider& inlineRunProvider) const
+void InlineFormattingContext::layoutInlineContent(const LayoutState& layoutState, InlineFormattingState& inlineFormattingState, const InlineRunProvider& inlineRunProvider) const
 {
     auto floatingContext = FloatingContext { inlineFormattingState.floatingState() };
 
     Line line(inlineFormattingState, root());
-    initializeNewLine(layoutContext, inlineFormattingState, line);
+    initializeNewLine(layoutState, inlineFormattingState, line);
 
-    InlineLineBreaker lineBreaker(layoutContext, inlineFormattingState.inlineContent(), inlineRunProvider.runs());
+    InlineLineBreaker lineBreaker(layoutState, inlineFormattingState.inlineContent(), inlineRunProvider.runs());
     while (auto run = lineBreaker.nextRun(line.contentLogicalRight(), line.availableWidth(), !line.hasContent())) {
         auto isFirstRun = run->position == InlineLineBreaker::Run::Position::LineBegin;
         auto isLastRun = run->position == InlineLineBreaker::Run::Position::LineEnd;
@@ -164,10 +164,10 @@ void InlineFormattingContext::layoutInlineContent(const LayoutContext& layoutCon
         // Position float and adjust the runs on line.
         if (run->content.isFloat()) {
             auto& floatBox = run->content.inlineItem().layoutBox();
-            computeFloatPosition(layoutContext, floatingContext, line, floatBox);
+            computeFloatPosition(layoutState, floatingContext, line, floatBox);
             inlineFormattingState.floatingState().append(floatBox);
 
-            auto floatBoxWidth = layoutContext.displayBoxForLayoutBox(floatBox).width();
+            auto floatBoxWidth = layoutState.displayBoxForLayoutBox(floatBox).width();
             // Shrink availble space for current line and move existing inline runs.
             floatBox.isLeftFloatingPositioned() ? line.adjustLogicalLeft(floatBoxWidth) : line.adjustLogicalRight(floatBoxWidth);
 
@@ -188,7 +188,7 @@ void InlineFormattingContext::layoutInlineContent(const LayoutContext& layoutCon
                 // Previous run ended up being at the line end. Adjust the line accordingly.
                 if (!line.isClosed())
                     line.close(Line::LastLine::No);
-                initializeNewLine(layoutContext, inlineFormattingState, line);
+                initializeNewLine(layoutState, inlineFormattingState, line);
             }
          }
 
@@ -202,18 +202,18 @@ void InlineFormattingContext::layoutInlineContent(const LayoutContext& layoutCon
     line.close(Line::LastLine::Yes);
 }
 
-void InlineFormattingContext::layoutFormattingContextRoot(LayoutContext& layoutContext, const Box& layoutBox) const
+void InlineFormattingContext::layoutFormattingContextRoot(LayoutState& layoutState, const Box& layoutBox) const
 {
     ASSERT(layoutBox.isFloatingPositioned() || layoutBox.isInlineBlockBox());
-    auto& displayBox = layoutContext.displayBoxForLayoutBox(layoutBox);
+    auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
 
     auto computeWidthAndMargin = [&]() {
         WidthAndMargin widthAndMargin;
 
         if (layoutBox.isFloatingPositioned())
-            widthAndMargin = Geometry::floatingWidthAndMargin(layoutContext, *this, layoutBox);
+            widthAndMargin = Geometry::floatingWidthAndMargin(layoutState, *this, layoutBox);
         else if (layoutBox.isInlineBlockBox())
-            widthAndMargin = Geometry::inlineBlockWidthAndMargin(layoutContext, layoutBox);
+            widthAndMargin = Geometry::inlineBlockWidthAndMargin(layoutState, layoutBox);
         else
             ASSERT_NOT_REACHED();
 
@@ -226,9 +226,9 @@ void InlineFormattingContext::layoutFormattingContextRoot(LayoutContext& layoutC
         HeightAndMargin heightAndMargin;
 
         if (layoutBox.isFloatingPositioned())
-            heightAndMargin = Geometry::floatingHeightAndMargin(layoutContext, layoutBox);
+            heightAndMargin = Geometry::floatingHeightAndMargin(layoutState, layoutBox);
         else if (layoutBox.isInlineBlockBox())
-            heightAndMargin = Geometry::inlineBlockHeightAndMargin(layoutContext, layoutBox);
+            heightAndMargin = Geometry::inlineBlockHeightAndMargin(layoutState, layoutBox);
         else
             ASSERT_NOT_REACHED();
 
@@ -237,17 +237,17 @@ void InlineFormattingContext::layoutFormattingContextRoot(LayoutContext& layoutC
         displayBox.setVerticalMargin(heightAndMargin.collapsedMargin.value_or(heightAndMargin.margin));
     };
 
-    computeBorderAndPadding(layoutContext, layoutBox);
+    computeBorderAndPadding(layoutState, layoutBox);
     computeWidthAndMargin();
 
     // Swich over to the new formatting context (the one that the root creates).
-    layoutContext.formattingContext(layoutBox)->layout(layoutContext, layoutContext.createFormattingStateForFormattingRootIfNeeded(layoutBox));
+    layoutState.formattingContext(layoutBox)->layout(layoutState, layoutState.createFormattingStateForFormattingRootIfNeeded(layoutBox));
 
     // Come back and finalize the root's height and margin.
     computeHeightAndMargin();
 }
 
-void InlineFormattingContext::computeWidthAndHeightForInlineBox(LayoutContext& layoutContext, const Box& layoutBox) const
+void InlineFormattingContext::computeWidthAndHeightForInlineBox(LayoutState& layoutState, const Box& layoutBox) const
 {
     ASSERT(!layoutBox.isContainer());
     ASSERT(!layoutBox.establishesFormattingContext());
@@ -260,12 +260,12 @@ void InlineFormattingContext::computeWidthAndHeightForInlineBox(LayoutContext& l
 
     // This is pretty much only for replaced inline boxes atm.
     ASSERT(layoutBox.replaced());
-    computeBorderAndPadding(layoutContext, layoutBox);
+    computeBorderAndPadding(layoutState, layoutBox);
 
-    auto widthAndMargin = Geometry::inlineReplacedWidthAndMargin(layoutContext, layoutBox);
-    auto heightAndMargin = Geometry::inlineReplacedHeightAndMargin(layoutContext, layoutBox);
+    auto widthAndMargin = Geometry::inlineReplacedWidthAndMargin(layoutState, layoutBox);
+    auto heightAndMargin = Geometry::inlineReplacedHeightAndMargin(layoutState, layoutBox);
 
-    auto& displayBox = layoutContext.displayBoxForLayoutBox(layoutBox);
+    auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
     displayBox.setContentBoxWidth(widthAndMargin.width);
     displayBox.setHorizontalMargin(widthAndMargin.margin);
     displayBox.setHorizontalNonComputedMargin(widthAndMargin.nonComputedMargin);
@@ -275,10 +275,10 @@ void InlineFormattingContext::computeWidthAndHeightForInlineBox(LayoutContext& l
     displayBox.setVerticalMargin(heightAndMargin.collapsedMargin.value_or(heightAndMargin.margin));
 }
 
-void InlineFormattingContext::computeFloatPosition(const LayoutContext& layoutContext, const FloatingContext& floatingContext, Line& line, const Box& floatBox) const
+void InlineFormattingContext::computeFloatPosition(const LayoutState& layoutState, const FloatingContext& floatingContext, Line& line, const Box& floatBox) const
 {
-    ASSERT(layoutContext.hasDisplayBox(floatBox));
-    auto& displayBox = layoutContext.displayBoxForLayoutBox(floatBox);
+    ASSERT(layoutState.hasDisplayBox(floatBox));
+    auto& displayBox = layoutState.displayBoxForLayoutBox(floatBox);
 
     // Set static position first.
     displayBox.setTopLeft({ line.contentLogicalRight(), line.logicalTop() });
@@ -286,15 +286,15 @@ void InlineFormattingContext::computeFloatPosition(const LayoutContext& layoutCo
     displayBox.setTopLeft(floatingContext.positionForFloat(floatBox));
 }
 
-void InlineFormattingContext::computeStaticPosition(const LayoutContext&, const Box&) const
+void InlineFormattingContext::computeStaticPosition(const LayoutState&, const Box&) const
 {
 }
 
-void InlineFormattingContext::computeInFlowPositionedPosition(const LayoutContext&, const Box&) const
+void InlineFormattingContext::computeInFlowPositionedPosition(const LayoutState&, const Box&) const
 {
 }
 
-FormattingContext::InstrinsicWidthConstraints InlineFormattingContext::instrinsicWidthConstraints(LayoutContext&, const Box&) const
+FormattingContext::InstrinsicWidthConstraints InlineFormattingContext::instrinsicWidthConstraints(LayoutState&, const Box&) const
 {
     return { };
 }

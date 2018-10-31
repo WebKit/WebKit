@@ -30,7 +30,7 @@
 
 #include "LayoutBox.h"
 #include "LayoutContainer.h"
-#include "LayoutContext.h"
+#include "LayoutFormattingState.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -38,11 +38,11 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(FloatAvoider);
 
-FloatAvoider::FloatAvoider(const Box& layoutBox, const FloatingState& floatingState, const LayoutContext& layoutContext)
+FloatAvoider::FloatAvoider(const Box& layoutBox, const FloatingState& floatingState, const LayoutState& layoutState)
     : m_layoutBox(makeWeakPtr(layoutBox))
     , m_floatingState(floatingState)
-    , m_absoluteDisplayBox(FormattingContext::mapBoxToAncestor(layoutContext, layoutBox, downcast<Container>(floatingState.root())))
-    , m_containingBlockAbsoluteDisplayBox(layoutBox.containingBlock() == &floatingState.root() ? Display::Box(layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock())) : FormattingContext::mapBoxToAncestor(layoutContext, *layoutBox.containingBlock(), downcast<Container>(floatingState.root())))
+    , m_absoluteDisplayBox(FormattingContext::mapBoxToAncestor(layoutState, layoutBox, downcast<Container>(floatingState.root())))
+    , m_containingBlockAbsoluteDisplayBox(layoutBox.containingBlock() == &floatingState.root() ? Display::Box(layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock())) : FormattingContext::mapBoxToAncestor(layoutState, *layoutBox.containingBlock(), downcast<Container>(floatingState.root())))
     , m_initialVerticalPosition(m_absoluteDisplayBox.top())
 {
     ASSERT(m_layoutBox->establishesBlockFormattingContext());

@@ -36,12 +36,12 @@ namespace Layout {
 
 class Box;
 class FloatingState;
-class LayoutContext;
+class LayoutState;
 
 class FloatBox : public FloatAvoider {
     WTF_MAKE_ISO_ALLOCATED(FloatBox);
 public:
-    FloatBox(const Box&, const FloatingState&, const LayoutContext&);
+    FloatBox(const Box&, const FloatingState&, const LayoutState&);
 
     Display::Box::Rect rect() const final;
 

@@ -33,12 +33,12 @@
 namespace WebCore {
 namespace Layout {
 
-WidthAndMargin InlineFormattingContext::Geometry::inlineBlockWidthAndMargin(const LayoutContext&, const Box&)
+WidthAndMargin InlineFormattingContext::Geometry::inlineBlockWidthAndMargin(const LayoutState&, const Box&)
 {
     return { };
 }
 
-HeightAndMargin InlineFormattingContext::Geometry::inlineBlockHeightAndMargin(const LayoutContext&, const Box&)
+HeightAndMargin InlineFormattingContext::Geometry::inlineBlockHeightAndMargin(const LayoutState&, const Box&)
 {
     return { };
 }

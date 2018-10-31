@@ -39,13 +39,13 @@ namespace WebCore {
 namespace Layout {
 
 class FormattingState;
-class LayoutContext;
+class LayoutState;
 
 // FloatingState holds the floating boxes per formatting context.
 class FloatingState : public RefCounted<FloatingState> {
     WTF_MAKE_ISO_ALLOCATED(FloatingState);
 public:
-    static Ref<FloatingState> create(LayoutContext& layoutContext, const Box& formattingContextRoot) { return adoptRef(*new FloatingState(layoutContext, formattingContextRoot)); }
+    static Ref<FloatingState> create(LayoutState& layoutState, const Box& formattingContextRoot) { return adoptRef(*new FloatingState(layoutState, formattingContextRoot)); }
 
     void append(const Box& layoutBox);
     void remove(const Box& layoutBox);
@@ -86,13 +86,13 @@ public:
 
 private:
     friend class FloatingContext;
-    FloatingState(LayoutContext&, const Box& formattingContextRoot);
+    FloatingState(LayoutState&, const Box& formattingContextRoot);
 
-    LayoutContext& layoutContext() const { return m_layoutContext; }
+    LayoutState& layoutState() const { return m_layoutState; }
 
     std::optional<LayoutUnit> bottom(const Box& formattingContextRoot, Clear) const;
 
-    LayoutContext& m_layoutContext;
+    LayoutState& m_layoutState;
     WeakPtr<const Box> m_formattingContextRoot;
     FloatList m_floats;
 };

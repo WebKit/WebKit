@@ -35,8 +35,8 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(FormattingState);
 
-FormattingState::FormattingState(Ref<FloatingState>&& floatingState, Type type, const LayoutContext& layoutContext)
-    : m_layoutContext(layoutContext)
+FormattingState::FormattingState(Ref<FloatingState>&& floatingState, Type type, const LayoutState& layoutState)
+    : m_layoutState(layoutState)
     , m_floatingState(WTFMove(floatingState))
     , m_type(type)
 {

@@ -36,7 +36,7 @@ namespace Layout {
 
 class Box;
 class Container;
-class LayoutContext;
+class LayoutState;
 
 class TreeBuilder {
 public:
@@ -47,7 +47,7 @@ private:
 };
 
 #if ENABLE(TREE_DEBUGGING)
-void showLayoutTree(const Box&, const LayoutContext*);
+void showLayoutTree(const Box&, const LayoutState*);
 void showLayoutTree(const Box&);
 void printLayoutTreeForLiveDocuments();
 #endif

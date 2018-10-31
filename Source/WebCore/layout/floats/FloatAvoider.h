@@ -38,12 +38,12 @@ namespace WebCore {
 namespace Layout {
 
 class FloatingState;
-class LayoutContext;
+class LayoutState;
 
 class FloatAvoider {
     WTF_MAKE_ISO_ALLOCATED(FloatAvoider);
 public:
-    FloatAvoider(const Box&, const FloatingState&, const LayoutContext&);
+    FloatAvoider(const Box&, const FloatingState&, const LayoutState&);
     virtual ~FloatAvoider() = default;
 
     virtual Display::Box::Rect rect() const { return m_absoluteDisplayBox.rect(); }
