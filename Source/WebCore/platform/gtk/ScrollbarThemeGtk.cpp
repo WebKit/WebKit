@@ -772,13 +772,19 @@ bool ScrollbarThemeGtk::paint(Scrollbar& scrollbar, GraphicsContext& graphicsCon
 
 ScrollbarButtonPressAction ScrollbarThemeGtk::handleMousePressEvent(Scrollbar&, const PlatformMouseEvent& event, ScrollbarPart pressedPart)
 {
+    gboolean warp_slider = FALSE;
     switch (pressedPart) {
     case BackTrackPart:
     case ForwardTrackPart:
-        if (event.button() == LeftButton)
-            return ScrollbarButtonPressAction::CenterOnThumb;
-        if (event.button() == RightButton)
-            return ScrollbarButtonPressAction::Scroll;
+        g_object_get(gtk_settings_get_default(),
+            "gtk-primary-button-warps-slider",
+            &warp_slider, nullptr);
+        // The shift key or middle/right button reverses the sense.
+        if (event.shiftKey() || event.button() != LeftButton)
+            warp_slider = !warp_slider;
+        return warp_slider ?
+            ScrollbarButtonPressAction::CenterOnThumb:
+            ScrollbarButtonPressAction::Scroll;
         break;
     case ThumbPart:
         if (event.button() != RightButton)

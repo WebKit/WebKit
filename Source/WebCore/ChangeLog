@@ -1,3 +1,13 @@
+2018-10-30  Jim Mason  <jmason@ibinx.com>
+
+        [GTK] Scrollbars not following gtk-primary-button-warps-slider setting
+        https://bugs.webkit.org/show_bug.cgi?id=191067
+
+        Reviewed by Michael Catanzaro.
+
+        * platform/gtk/ScrollbarThemeGtk.cpp:
+        (WebCore::ScrollbarThemeGtk::handleMousePressEvent):
+
 2018-10-30  Alexey Proskuryakov  <ap@apple.com>
 
         Clean up some obsolete MAX_ALLOWED macros
