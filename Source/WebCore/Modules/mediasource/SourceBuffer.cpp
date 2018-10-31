@@ -1645,6 +1645,14 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(MediaSample& sample)
                 erasedSamples.addRange(iter_pair.first, iter_pair.second);
         }
 
+        // There are many files out there where the frame times are not perfectly contiguous and may have small overlaps
+        // between the beginning of a frame and the end of the previous one; therefore a tolerance is needed whenever
+        // durations are considered.
+        // For instance, most WebM files are muxed rounded to the millisecond (the default TimecodeScale of the format)
+        // but their durations use a finer timescale (causing a sub-millisecond overlap). More rarely, there are also
+        // MP4 files with slightly off tfdt boxes, presenting a similar problem at the beginning of each fragment.
+        const MediaTime contiguousFrameTolerance = MediaTime(1, 1000);
+
         // If highest presentation timestamp for track buffer is set and less than or equal to presentation timestamp
         if (trackBuffer.highestPresentationTimestamp.isValid() && trackBuffer.highestPresentationTimestamp <= presentationTimestamp) {
             // Remove all coded frames from track buffer that have a presentation timestamp greater than highest
@@ -1658,14 +1666,16 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(MediaSample& sample)
                     break;
 
                 MediaTime highestBufferedTime = trackBuffer.buffered.maximumBufferedTime();
+                MediaTime eraseBeginTime = trackBuffer.highestPresentationTimestamp;
+                MediaTime eraseEndTime = frameEndTimestamp - contiguousFrameTolerance;
 
                 PresentationOrderSampleMap::iterator_range range;
                 if (highestBufferedTime - trackBuffer.highestPresentationTimestamp < trackBuffer.lastFrameDuration)
                     // If the new frame is at the end of the buffered ranges, perform a sequential scan from end (O(1)).
-                    range = trackBuffer.samples.presentationOrder().findSamplesBetweenPresentationTimesFromEnd(trackBuffer.highestPresentationTimestamp, frameEndTimestamp);
+                    range = trackBuffer.samples.presentationOrder().findSamplesBetweenPresentationTimesFromEnd(eraseBeginTime, eraseEndTime);
                 else
                     // In any other case, perform a binary search (O(log(n)).
-                    range = trackBuffer.samples.presentationOrder().findSamplesBetweenPresentationTimes(trackBuffer.highestPresentationTimestamp, frameEndTimestamp);
+                    range = trackBuffer.samples.presentationOrder().findSamplesBetweenPresentationTimes(eraseBeginTime, eraseEndTime);
 
                 if (range.first != trackBuffer.samples.presentationOrder().end())
                     erasedSamples.addRange(range.first, range.second);
@@ -1726,10 +1736,6 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(MediaSample& sample)
         //
         // In order to check whether a frame should be added to the decode queue we check whether it starts after the
         // lastEnqueuedDecodeEndTime or even a bit before that to accomodate files with imprecise timing information.
-        //
-        // There are many files out there where the frame times are not perfectly contiguous, therefore a tolerance is needed.
-        // For instance, most WebM files are muxed rounded to the millisecond (the default TimecodeScale of the format).
-        const MediaTime contiguousFrameTolerance = MediaTime(1, 1000);
         if (trackBuffer.lastEnqueuedDecodeEndTime.isInvalid() || decodeTimestamp >= (trackBuffer.lastEnqueuedDecodeEndTime - contiguousFrameTolerance)) {
             DecodeOrderSampleMap::KeyType decodeKey(sample.decodeTime(), sample.presentationTime());
             trackBuffer.decodeQueue.insert(DecodeOrderSampleMap::MapType::value_type(decodeKey, &sample));

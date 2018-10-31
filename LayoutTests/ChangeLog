@@ -1,3 +1,16 @@
+2018-10-31  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE] Use tolerance when growing the coded frame group
+        https://bugs.webkit.org/show_bug.cgi?id=190085
+
+        Reviewed by Jer Noble.
+
+        A test simulating unordered appends with imprecise timestamps,
+        overlapping <1ms (replicating a typical WebM 30fps video file) is
+        added.
+
+        * media/media-source/media-source-append-acb-tolerance.html: Added.
+
 2018-10-31  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Audit: attempt to re-link DOM nodes for imported results

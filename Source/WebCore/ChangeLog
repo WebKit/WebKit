@@ -1,3 +1,28 @@
+2018-10-31  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE] Use tolerance when growing the coded frame group
+        https://bugs.webkit.org/show_bug.cgi?id=190085
+
+        Reviewed by Jer Noble.
+
+        Test: media/media-source/media-source-append-acb-tolerance.html
+
+        This patch introduces a millisecond tolerance in the range of
+        potential frames that should be erased frame from the track buffer
+        when the coded frame group is growing.
+
+        This is necessary because some files have imprecise overlapping
+        timestamps (especially WebM files).
+
+        This fixes a stall when seeking back and forth in YouTube with WebM
+        video.
+
+        A test case simulating the problem with video/mock using timestamps
+        similar to those of a typical 30 fps WebM video is also added.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveSample):
+
 2018-10-31  Jer Noble  <jer.noble@apple.com>
 
         MediaSource.isTypeSupported('video/mp4; codecs="hvc1.1.6.L60.B0') is inproperly rejected
