@@ -47,6 +47,7 @@ ApplePayShippingContactSelectedEvent conditional=APPLE_PAY
 ApplePayShippingMethodSelectedEvent conditional=APPLE_PAY
 ApplePayValidateMerchantEvent conditional=APPLE_PAY
 AudioProcessingEvent conditional=WEB_AUDIO
+BlobEvent conditional=MEDIA_STREAM
 OfflineAudioCompletionEvent conditional=WEB_AUDIO
 MediaRecorderErrorEvent conditional=MEDIA_STREAM
 MediaStreamTrackEvent conditional=MEDIA_STREAM

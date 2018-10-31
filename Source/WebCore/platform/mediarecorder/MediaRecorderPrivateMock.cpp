@@ -22,41 +22,49 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-enum RecordingState { "inactive", "recording", "paused" };
 
-[
-    ActiveDOMObject,
-    Conditional=MEDIA_STREAM,
-    Constructor(MediaStream stream, optional MediaRecorderOptions options),
-    ConstructorCallWith=Document,
-    EnabledAtRuntime=MediaRecorder,
-    Exposed=Window
-] interface MediaRecorder : EventTarget {
-    readonly attribute RecordingState state;
-    // FIXME: Implement these:
-    // readonly attribute MediaStream stream;
-    // readonly attribute DOMString mimeType;
-    // attribute EventHandler onstart;
-    attribute EventHandler onstop;
-    attribute EventHandler ondataavailable;
-    // attribute EventHandler onpause;
-    // attribute EventHandler onresume;
-    attribute EventHandler onerror;
-    // readonly attribute unsigned long videoBitsPerSecond;
-    // readonly attribute unsigned long audioBitsPerSecond;
+#include "config.h"
+#include "MediaRecorderPrivateMock.h"
 
-    [MayThrowException, ImplementedAs=startRecording] void start(optional long timeslice);
-    [ImplementedAs=stopRecording] void stop();
-    // void pause();
-    // void resume();
-    // void requestData();
+#if ENABLE(MEDIA_STREAM)
 
-    // static boolean isTypeSupported(DOMString type);
-};
+#include "Blob.h"
+#include "MediaStreamTrackPrivate.h"
 
-dictionary MediaRecorderOptions {
-    DOMString mimeType;
-    unsigned long audioBitsPerSecond;
-    unsigned long videoBitsPerSecond;
-    unsigned long bitsPerSecond;
-};
+namespace WebCore {
+
+void MediaRecorderPrivateMock::sampleBufferUpdated(MediaStreamTrackPrivate& track, MediaSample&)
+{
+    generateMockString(track);
+}
+
+void MediaRecorderPrivateMock::audioSamplesAvailable(MediaStreamTrackPrivate& track, const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t)
+{
+    generateMockString(track);
+}
+
+void MediaRecorderPrivateMock::generateMockString(MediaStreamTrackPrivate& track)
+{
+    auto locker = holdLock(m_bufferLock);
+    if (track.type() == RealtimeMediaSource::Type::Audio)
+        m_buffer.append("Audio Track ID: ");
+    else
+        m_buffer.append("Video Track ID: ");
+    m_buffer.append(track.id());
+    m_buffer.append(" Counter: ");
+    m_buffer.appendNumber(++m_counter);
+    m_buffer.append("\r\n---------\r\n");
+}
+
+Ref<Blob> MediaRecorderPrivateMock::fetchData()
+{
+    auto locker = holdLock(m_bufferLock);
+    Vector<uint8_t> value(m_buffer.length());
+    memcpy(value.data(), m_buffer.characters8(), m_buffer.length());
+    m_buffer.clear();
+    return Blob::create(WTFMove(value), "text/plain");
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(MEDIA_STREAM)

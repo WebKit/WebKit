@@ -31,7 +31,7 @@ typedef double DOMHighResTimeStamp;
     Exposed=Window
 ]  interface BlobEvent : Event {
     // FIXME: Implement these:
-    // [SameObject] readonly attribute Blob data;
+    [SameObject] readonly attribute Blob data;
     // readonly attribute DOMHighResTimeStamp timecode;
 };
 

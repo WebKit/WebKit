@@ -22,41 +22,32 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-enum RecordingState { "inactive", "recording", "paused" };
+#pragma once
 
-[
-    ActiveDOMObject,
-    Conditional=MEDIA_STREAM,
-    Constructor(MediaStream stream, optional MediaRecorderOptions options),
-    ConstructorCallWith=Document,
-    EnabledAtRuntime=MediaRecorder,
-    Exposed=Window
-] interface MediaRecorder : EventTarget {
-    readonly attribute RecordingState state;
-    // FIXME: Implement these:
-    // readonly attribute MediaStream stream;
-    // readonly attribute DOMString mimeType;
-    // attribute EventHandler onstart;
-    attribute EventHandler onstop;
-    attribute EventHandler ondataavailable;
-    // attribute EventHandler onpause;
-    // attribute EventHandler onresume;
-    attribute EventHandler onerror;
-    // readonly attribute unsigned long videoBitsPerSecond;
-    // readonly attribute unsigned long audioBitsPerSecond;
+#if ENABLE(MEDIA_STREAM)
 
-    [MayThrowException, ImplementedAs=startRecording] void start(optional long timeslice);
-    [ImplementedAs=stopRecording] void stop();
-    // void pause();
-    // void resume();
-    // void requestData();
+#include "MediaRecorderPrivate.h"
+#include <wtf/Lock.h>
+#include <wtf/text/StringBuilder.h>
 
-    // static boolean isTypeSupported(DOMString type);
+namespace WebCore {
+
+class Blob;
+class MediaStreamTrackPrivate;
+
+class MediaRecorderPrivateMock final : public MediaRecorderPrivate {
+private:
+    void sampleBufferUpdated(MediaStreamTrackPrivate&, MediaSample&) final;
+    void audioSamplesAvailable(MediaStreamTrackPrivate&, const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;
+    Ref<Blob> fetchData() final;
+    
+    void generateMockString(MediaStreamTrackPrivate&);
+
+    mutable Lock m_bufferLock;
+    StringBuilder m_buffer;
+    unsigned m_counter { 0 };
 };
 
-dictionary MediaRecorderOptions {
-    DOMString mimeType;
-    unsigned long audioBitsPerSecond;
-    unsigned long videoBitsPerSecond;
-    unsigned long bitsPerSecond;
-};
+} // namespace WebCore
+
+#endif // ENABLE(MEDIA_STREAM)

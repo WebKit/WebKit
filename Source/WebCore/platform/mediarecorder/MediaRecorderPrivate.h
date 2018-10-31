@@ -22,41 +22,31 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-enum RecordingState { "inactive", "recording", "paused" };
+#pragma once
 
-[
-    ActiveDOMObject,
-    Conditional=MEDIA_STREAM,
-    Constructor(MediaStream stream, optional MediaRecorderOptions options),
-    ConstructorCallWith=Document,
-    EnabledAtRuntime=MediaRecorder,
-    Exposed=Window
-] interface MediaRecorder : EventTarget {
-    readonly attribute RecordingState state;
-    // FIXME: Implement these:
-    // readonly attribute MediaStream stream;
-    // readonly attribute DOMString mimeType;
-    // attribute EventHandler onstart;
-    attribute EventHandler onstop;
-    attribute EventHandler ondataavailable;
-    // attribute EventHandler onpause;
-    // attribute EventHandler onresume;
-    attribute EventHandler onerror;
-    // readonly attribute unsigned long videoBitsPerSecond;
-    // readonly attribute unsigned long audioBitsPerSecond;
+#if ENABLE(MEDIA_STREAM)
 
-    [MayThrowException, ImplementedAs=startRecording] void start(optional long timeslice);
-    [ImplementedAs=stopRecording] void stop();
-    // void pause();
-    // void resume();
-    // void requestData();
+namespace WTF {
+class MediaTime;
+}
 
-    // static boolean isTypeSupported(DOMString type);
+namespace WebCore {
+
+class AudioStreamDescription;
+class Blob;
+class PlatformAudioData;
+class MediaSample;
+class MediaStreamTrackPrivate;
+
+class MediaRecorderPrivate {
+public:
+    virtual void sampleBufferUpdated(MediaStreamTrackPrivate&, MediaSample&) = 0;
+    virtual void audioSamplesAvailable(MediaStreamTrackPrivate&, const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) = 0;
+    
+    virtual Ref<Blob> fetchData() = 0;
+    virtual ~MediaRecorderPrivate() = default;
 };
+    
+} // namespace WebCore
 
-dictionary MediaRecorderOptions {
-    DOMString mimeType;
-    unsigned long audioBitsPerSecond;
-    unsigned long videoBitsPerSecond;
-    unsigned long bitsPerSecond;
-};
+#endif // ENABLE(MEDIA_STREAM)

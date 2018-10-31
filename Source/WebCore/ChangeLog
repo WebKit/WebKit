@@ -1,3 +1,52 @@
+2018-10-31  YUHAN WU  <yuhan_wu@apple.com>
+
+        MediaRecorder should fire dataavailable event when all tracks are ended and stop() is called
+        https://bugs.webkit.org/show_bug.cgi?id=190778
+
+        Reviewed by Youenn Fablet.
+
+        Implement JavaScript dispatch event dataavailable and JavaScript exposed method stop().
+        Implement a mock string as the output buffer of MediaRecorder.
+        Remove the declaration of timecode in BlobEvent since it has not been implemented in MediaRecorder and MediaRecorderPrivate. 
+
+        Tests: http/wpt/mediarecorder/MediaRecorder-dataavailable.html
+               http/wpt/mediarecorder/MediaRecorder-mock-dataavailable.html
+               imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-destroy-script-execution.html
+               imported/w3c/web-platform-tests/mediacapture-record/support/MediaRecorder-iframe.html
+
+        * CMakeLists.txt:
+        * Modules/mediarecorder/BlobEvent.cpp: Added.
+        (WebCore::BlobEvent::create):
+        (WebCore::BlobEvent::BlobEvent):
+        (WebCore::BlobEvent::eventInterface const):
+        * Modules/mediarecorder/BlobEvent.h:
+        * Modules/mediarecorder/BlobEvent.idl:
+        * Modules/mediarecorder/MediaRecorder.cpp:
+        (WebCore::MediaRecorder::MediaRecorder):
+        (WebCore::MediaRecorder::~MediaRecorder):
+        (WebCore::MediaRecorder::stop):
+        (WebCore::MediaRecorder::startRecording):
+        (WebCore::MediaRecorder::stopRecording):
+        (WebCore::MediaRecorder::stopRecordingInternal):
+        (WebCore::MediaRecorder::didAddOrRemoveTrack):
+        (WebCore::MediaRecorder::trackEnded):
+        (WebCore::MediaRecorder::sampleBufferUpdated):
+        (WebCore::MediaRecorder::audioSamplesAvailable):
+        (WebCore::MediaRecorder::scheduleDeferredTask):
+        * Modules/mediarecorder/MediaRecorder.h:
+        * Modules/mediarecorder/MediaRecorder.idl:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/EventNames.h:
+        * dom/EventNames.in:
+        * platform/mediarecorder/MediaRecorderPrivate.h: Added.
+        * platform/mediarecorder/MediaRecorderPrivateMock.cpp: Added.
+        (WebCore::MediaRecorderPrivateMock::sampleBufferUpdated):
+        (WebCore::MediaRecorderPrivateMock::audioSamplesAvailable):
+        (WebCore::MediaRecorderPrivateMock::generateMockString):
+        (WebCore::MediaRecorderPrivateMock::fetchData):
+        * platform/mediarecorder/MediaRecorderPrivateMock.h: Added.
+
 2018-10-31  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK][WPE] Remaining topPrivatelyControlledDomain() fixes

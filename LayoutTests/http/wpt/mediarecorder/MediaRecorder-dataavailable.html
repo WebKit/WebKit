@@ -1,0 +1,101 @@
+<!doctype html>
+<html>
+<head>
+    <title>MediaRecorder Dataavailable</title>
+    <link rel="help" href="https://w3c.github.io/mediacapture-record/MediaRecorder.html#mediarecorder">
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<canvas id="canvas" width="200" height="200">
+</canvas>
+<script>
+    var context;
+
+    function createVideoStream() {
+        const canvas = document.getElementById("canvas");
+        context = canvas.getContext('2d');
+        return canvas.captureStream();
+    }
+
+    function drawSomethingOnCanvas() {
+        context.fillStyle = "red";
+        context.fillRect(0, 0, 10, 10);
+    }
+
+    function dataAvailableAssertions(blobEvent) {
+        assert_true(blobEvent instanceof BlobEvent, 'the type of event should be BlobEvent');
+        assert_equals(blobEvent.type, 'dataavailable', 'the event type should be dataavailable');
+        assert_true(blobEvent.isTrusted, 'isTrusted should be true when the event is created by C++');
+        assert_true(blobEvent.data instanceof Blob, 'the type of data should be Blob');
+        assert_true(blobEvent.data.size > 0, 'the blob should contain some buffers');
+    }
+
+    async_test(t => {
+        const video = createVideoStream();
+        const recorder = new MediaRecorder(video);
+
+        recorder.ondataavailable = t.step_func(blobEvent => {
+            dataAvailableAssertions(blobEvent);
+            t.done();
+        });
+        recorder.start();
+        assert_equals(recorder.state, 'recording', 'MediaRecorder has been started successfully');
+        drawSomethingOnCanvas();
+        setTimeout(() => {
+            recorder.stop();
+        }, 500)
+    }, 'MediaRecorder will fire a dataavailable event with a blob data for a video-only stream when stop() is called');
+
+    async_test(t => {
+        const ac = new AudioContext();
+        const osc = ac.createOscillator();
+        const dest = ac.createMediaStreamDestination();
+        const audio = dest.stream;
+        osc.connect(dest);
+        const recorder = new MediaRecorder(audio);
+
+        recorder.ondataavailable = t.step_func(blobEvent => {
+            dataAvailableAssertions(blobEvent);
+            t.done();
+        });
+        recorder.start();
+        osc.start();
+        assert_equals(recorder.state, 'recording', 'MediaRecorder has been started successfully');
+        setTimeout(() => {
+            recorder.stop();
+            osc.stop();
+        }, 500);
+    }, 'MediaRecorder will fire a dataavailable event with a blob data for a audio-only stream when stop() is called');
+
+    async_test(t => {
+        const ac = new AudioContext();
+        const osc = ac.createOscillator();
+        const dest = ac.createMediaStreamDestination();
+        const audio = dest.stream;
+        osc.connect(dest);
+
+        const video = createVideoStream();
+        assert_equals(video.getAudioTracks().length, 0, "video mediastream starts with no audio track");
+        assert_equals(audio.getAudioTracks().length, 1, "audio mediastream starts with one audio track");
+        video.addTrack(audio.getAudioTracks()[0]);
+        assert_equals(video.getAudioTracks().length, 1, "video mediastream starts with one audio track");
+        const recorder = new MediaRecorder(video);
+
+        recorder.ondataavailable = t.step_func(blobEvent => {
+            dataAvailableAssertions(blobEvent);
+            t.done();
+        });
+        recorder.start();
+        osc.start();
+        drawSomethingOnCanvas();
+        assert_equals(recorder.state, 'recording', 'MediaRecorder has been started successfully');
+        setTimeout(() => {
+            recorder.stop();
+            osc.stop();
+        }, 500);
+    }, 'MediaRecorder will fire a dataavailable event with a blob data for a video-audio stream when stop() is called');
+
+</script>
+</body>
+</html>

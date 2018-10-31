@@ -1360,6 +1360,7 @@
 		4BDA40012151B6F500FD6604 /* CSSRegisteredCustomProperty.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BDA3FFB2151B6F400FD6604 /* CSSRegisteredCustomProperty.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4D3B00AB215D69A70076B983 /* MediaRecorder.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D3B00A9215D69A70076B983 /* MediaRecorder.h */; };
 		4D3B00AF215D6A690076B983 /* BlobEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D3B00AD215D6A690076B983 /* BlobEvent.h */; };
+		4D3B5016217E58B700665DB1 /* MediaRecorderPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D3B5014217E58B700665DB1 /* MediaRecorderPrivate.h */; };
 		4DB7130D216ECB4D0096A4DD /* MediaRecorderErrorEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DB7130C216EC2BD0096A4DD /* MediaRecorderErrorEvent.h */; };
 		4E1959220A39DABA00220FE5 /* MediaFeatureNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E1959200A39DABA00220FE5 /* MediaFeatureNames.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4E19592A0A39DACC00220FE5 /* MediaQuery.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E1959240A39DACC00220FE5 /* MediaQuery.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7920,6 +7921,10 @@
 		4D3B00A8215D69A60076B983 /* MediaRecorder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaRecorder.cpp; sourceTree = "<group>"; };
 		4D3B00A9215D69A70076B983 /* MediaRecorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaRecorder.h; sourceTree = "<group>"; };
 		4D3B00AD215D6A690076B983 /* BlobEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlobEvent.h; sourceTree = "<group>"; };
+		4D3B5014217E58B700665DB1 /* MediaRecorderPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaRecorderPrivate.h; sourceTree = "<group>"; };
+		4D7EB3F4217C6AE600D64888 /* BlobEvent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BlobEvent.cpp; sourceTree = "<group>"; };
+		4D9F6B642182532B0092A9C5 /* MediaRecorderPrivateMock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaRecorderPrivateMock.h; sourceTree = "<group>"; };
+		4D9F6B652182532B0092A9C5 /* MediaRecorderPrivateMock.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MediaRecorderPrivateMock.cpp; sourceTree = "<group>"; };
 		4DB7130A216EC2BC0096A4DD /* MediaRecorderErrorEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaRecorderErrorEvent.idl; sourceTree = "<group>"; };
 		4DB7130C216EC2BD0096A4DD /* MediaRecorderErrorEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaRecorderErrorEvent.h; sourceTree = "<group>"; };
 		4DB7130E216EEBAE0096A4DD /* MediaRecorderErrorEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaRecorderErrorEvent.cpp; sourceTree = "<group>"; };
@@ -18037,6 +18042,7 @@
 		4D3B00A0215D5C0F0076B983 /* mediarecorder */ = {
 			isa = PBXGroup;
 			children = (
+				4D7EB3F4217C6AE600D64888 /* BlobEvent.cpp */,
 				4D3B00AD215D6A690076B983 /* BlobEvent.h */,
 				4D3B00A6215D645B0076B983 /* BlobEvent.idl */,
 				4D3B00A8215D69A60076B983 /* MediaRecorder.cpp */,
@@ -18045,6 +18051,16 @@
 				4DB7130E216EEBAE0096A4DD /* MediaRecorderErrorEvent.cpp */,
 				4DB7130C216EC2BD0096A4DD /* MediaRecorderErrorEvent.h */,
 				4DB7130A216EC2BC0096A4DD /* MediaRecorderErrorEvent.idl */,
+			);
+			path = mediarecorder;
+			sourceTree = "<group>";
+		};
+		4D3B5012217E58A300665DB1 /* mediarecorder */ = {
+			isa = PBXGroup;
+			children = (
+				4D3B5014217E58B700665DB1 /* MediaRecorderPrivate.h */,
+				4D9F6B652182532B0092A9C5 /* MediaRecorderPrivateMock.cpp */,
+				4D9F6B642182532B0092A9C5 /* MediaRecorderPrivateMock.h */,
 			);
 			path = mediarecorder;
 			sourceTree = "<group>";
@@ -24831,6 +24847,7 @@
 				A59E3C1B11580F340072928E /* ios */,
 				6582A14809999D6C00BEEB6D /* mac */,
 				9AC6F02021148F1E00CBDA06 /* mediacapabilities */,
+				4D3B5012217E58A300665DB1 /* mediarecorder */,
 				C96F5EBF1B5872260091EA9D /* mediasession */,
 				07221B9217CF0AD400848E51 /* mediastream */,
 				59C77F101054591C00506104 /* mock */,
@@ -29945,6 +29962,7 @@
 				4471710E205AF945000A116E /* MediaQueryParserContext.h in Headers */,
 				4D3B00AB215D69A70076B983 /* MediaRecorder.h in Headers */,
 				4DB7130D216ECB4D0096A4DD /* MediaRecorderErrorEvent.h in Headers */,
+				4D3B5016217E58B700665DB1 /* MediaRecorderPrivate.h in Headers */,
 				C90843D01B18E47D00B68564 /* MediaRemoteControls.h in Headers */,
 				CD8ACA8F1D23971900ECC59E /* MediaRemoteSoftLink.h in Headers */,
 				CEEFCD7A19DB31F7003876D7 /* MediaResourceLoader.h in Headers */,

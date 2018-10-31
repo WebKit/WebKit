@@ -39,16 +39,19 @@ public:
         double timecode;
     };
     
-    static Ref<BlobEvent> create(const AtomicString& type, Init&& init, IsTrusted isTrusted = IsTrusted::No)
-    {
-        return adoptRef(*new BlobEvent(type, WTFMove(init), isTrusted));
-    }
+    static Ref<BlobEvent> create(const AtomicString&, Init&&, IsTrusted = IsTrusted::No);
+    static Ref<BlobEvent> create(const AtomicString&, CanBubble, IsCancelable, Ref<Blob>&&);
 
+    Blob& data() const { return m_blob.get(); }
+    
 private:
-    BlobEvent(const AtomicString& type, Init&& init, IsTrusted isTrusted)
-        : Event(type, WTFMove(init), isTrusted)
-    {
-    }
+    BlobEvent(const AtomicString&, Init&&, IsTrusted);
+    BlobEvent(const AtomicString&, CanBubble, IsCancelable, Ref<Blob>&&);
+    
+    // Event
+    EventInterface eventInterface() const final;
+    
+    Ref<Blob> m_blob;
 };
     
 } // namespace WebCore

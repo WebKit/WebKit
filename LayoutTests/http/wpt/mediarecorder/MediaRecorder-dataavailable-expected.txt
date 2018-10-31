@@ -1,0 +1,5 @@
+
+PASS MediaRecorder will fire a dataavailable event with a blob data for a video-only stream when stop() is called 
+PASS MediaRecorder will fire a dataavailable event with a blob data for a audio-only stream when stop() is called 
+PASS MediaRecorder will fire a dataavailable event with a blob data for a video-audio stream when stop() is called 
+

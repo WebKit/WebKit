@@ -1,3 +1,17 @@
+2018-10-31  YUHAN WU  <yuhan_wu@apple.com>
+
+        MediaRecorder should fire dataavailable event when all tracks are ended and stop() is called
+        https://bugs.webkit.org/show_bug.cgi?id=190778
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/mediacapture-record/BlobEvent-constructor-expected.txt:
+        * web-platform-tests/mediacapture-record/MediaRecorder-destroy-script-execution-expected.txt: Added.
+        * web-platform-tests/mediacapture-record/MediaRecorder-destroy-script-execution.html: Added.
+        * web-platform-tests/mediacapture-record/MediaRecorder-stop-expected.txt:
+        * web-platform-tests/mediacapture-record/MediaRecorder-stop.html:
+        * web-platform-tests/mediacapture-record/support/MediaRecorder-iframe.html: Added.
+
 2018-10-30  Chris Dumez  <cdumez@apple.com>
 
         Resync XHR Web Platform Tests from upstream

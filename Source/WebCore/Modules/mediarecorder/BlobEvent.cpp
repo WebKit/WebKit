@@ -22,41 +22,43 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-enum RecordingState { "inactive", "recording", "paused" };
 
-[
-    ActiveDOMObject,
-    Conditional=MEDIA_STREAM,
-    Constructor(MediaStream stream, optional MediaRecorderOptions options),
-    ConstructorCallWith=Document,
-    EnabledAtRuntime=MediaRecorder,
-    Exposed=Window
-] interface MediaRecorder : EventTarget {
-    readonly attribute RecordingState state;
-    // FIXME: Implement these:
-    // readonly attribute MediaStream stream;
-    // readonly attribute DOMString mimeType;
-    // attribute EventHandler onstart;
-    attribute EventHandler onstop;
-    attribute EventHandler ondataavailable;
-    // attribute EventHandler onpause;
-    // attribute EventHandler onresume;
-    attribute EventHandler onerror;
-    // readonly attribute unsigned long videoBitsPerSecond;
-    // readonly attribute unsigned long audioBitsPerSecond;
+#include "config.h"
+#include "BlobEvent.h"
 
-    [MayThrowException, ImplementedAs=startRecording] void start(optional long timeslice);
-    [ImplementedAs=stopRecording] void stop();
-    // void pause();
-    // void resume();
-    // void requestData();
+#if ENABLE(MEDIA_STREAM)
 
-    // static boolean isTypeSupported(DOMString type);
-};
+#include "Blob.h"
 
-dictionary MediaRecorderOptions {
-    DOMString mimeType;
-    unsigned long audioBitsPerSecond;
-    unsigned long videoBitsPerSecond;
-    unsigned long bitsPerSecond;
-};
+namespace WebCore {
+
+Ref<BlobEvent> BlobEvent::create(const AtomicString& type, Init&& init, IsTrusted isTrusted)
+{
+    return adoptRef(*new BlobEvent(type, WTFMove(init), isTrusted));
+}
+
+Ref<BlobEvent> BlobEvent::create(const AtomicString& type, CanBubble canBubble, IsCancelable isCancelable, Ref<Blob>&& data)
+{
+    return adoptRef(*new BlobEvent(type, canBubble, isCancelable, WTFMove(data)));
+}
+
+BlobEvent::BlobEvent(const AtomicString& type, Init&& init, IsTrusted isTrusted)
+    : Event(type, init, isTrusted)
+    , m_blob(init.data.releaseNonNull())
+{
+}
+
+BlobEvent::BlobEvent(const AtomicString& type, CanBubble canBubble, IsCancelable isCancelable, Ref<Blob>&& data)
+    : Event(type, canBubble, isCancelable)
+    , m_blob(WTFMove(data))
+{
+}
+    
+EventInterface BlobEvent::eventInterface() const
+{
+    return BlobEventInterfaceType;
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(MEDIA_STREAM)

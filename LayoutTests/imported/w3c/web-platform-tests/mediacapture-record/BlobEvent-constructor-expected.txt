@@ -1,5 +1,5 @@
 
 PASS The BlobEventInit dictionary is required 
 PASS The BlobEventInit dictionary's data member is required. 
-FAIL The BlobEvent instance's data attribute is set. assert_equals: expected (object) object "[object Blob]" but got (undefined) undefined
+PASS The BlobEvent instance's data attribute is set. 
 

@@ -28,9 +28,12 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "Blob.h"
+#include "BlobEvent.h"
 #include "Document.h"
 #include "EventNames.h"
 #include "MediaRecorderErrorEvent.h"
+#include "MediaRecorderPrivateMock.h"
 
 namespace WebCore {
 
@@ -45,11 +48,10 @@ MediaRecorder::MediaRecorder(Document& document, Ref<MediaStream>&& stream, Opti
     : ActiveDOMObject(&document)
     , m_options(WTFMove(option))
     , m_stream(WTFMove(stream))
+    , m_private(makeUniqueRef<MediaRecorderPrivateMock>()) // FIXME: we will need to decide which MediaRecorderPrivate instance to create based on the mock enabled feature flag
 {
-    m_tracks = WTF::map(m_stream->getTracks(), [this] (const auto& track) -> Ref<MediaStreamTrackPrivate> {
-        auto& privateTrack = track->privateTrack();
-        privateTrack.addObserver(*this);
-        return privateTrack;
+    m_tracks = WTF::map(m_stream->getTracks(), [] (auto&& track) -> Ref<MediaStreamTrackPrivate> {
+        return track->privateTrack();
     });
     m_stream->addObserver(this);
 }
@@ -57,13 +59,13 @@ MediaRecorder::MediaRecorder(Document& document, Ref<MediaStream>&& stream, Opti
 MediaRecorder::~MediaRecorder()
 {
     m_stream->removeObserver(this);
-    for (auto& track : m_tracks)
-        track->removeObserver(*this);
+    stopRecordingInternal();
 }
 
 void MediaRecorder::stop()
 {
     m_isActive = false;
+    stopRecordingInternal();
 }
 
 const char* MediaRecorder::activeDOMObjectName() const
@@ -76,14 +78,47 @@ bool MediaRecorder::canSuspendForDocumentSuspension() const
     return false; // FIXME: We should do better here as this prevents entering PageCache.
 }
 
-ExceptionOr<void> MediaRecorder::start(std::optional<int> timeslice)
+ExceptionOr<void> MediaRecorder::startRecording(std::optional<int> timeslice)
 {
     UNUSED_PARAM(timeslice);
     if (state() != RecordingState::Inactive)
         return Exception { InvalidStateError, "The MediaRecorder's state must be inactive in order to start recording"_s };
     
+    for (auto& track : m_tracks)
+        track->addObserver(*this);
+
     m_state = RecordingState::Recording;
     return { };
+}
+
+ExceptionOr<void> MediaRecorder::stopRecording()
+{
+    if (state() == RecordingState::Inactive)
+        return Exception { InvalidStateError, "The MediaRecorder's state cannot be inactive"_s };
+
+    scheduleDeferredTask([this] {
+        if (!m_isActive || state() == RecordingState::Inactive)
+            return;
+
+        stopRecordingInternal();
+        ASSERT(m_state == RecordingState::Inactive);
+        dispatchEvent(BlobEvent::create(eventNames().dataavailableEvent, Event::CanBubble::No, Event::IsCancelable::No, m_private->fetchData()));
+        if (!m_isActive)
+            return;
+        dispatchEvent(Event::create(eventNames().stopEvent, Event::CanBubble::No, Event::IsCancelable::No));
+    });
+    return { };
+}
+
+void MediaRecorder::stopRecordingInternal()
+{
+    if (state() != RecordingState::Recording)
+        return;
+
+    for (auto& track : m_tracks)
+        track->removeObserver(*this);
+
+    m_state = RecordingState::Inactive;
 }
 
 void MediaRecorder::didAddOrRemoveTrack()
@@ -103,13 +138,18 @@ void MediaRecorder::trackEnded(MediaStreamTrackPrivate&)
     });
     if (position != notFound)
         return;
-    scheduleDeferredTask([this] {
-        if (!m_isActive || state() == RecordingState::Inactive)
-            return;
-        // FIXME: Add a dataavailable event
-        auto event = Event::create(eventNames().stopEvent, Event::CanBubble::No, Event::IsCancelable::No);
-        setNewRecordingState(RecordingState::Inactive, WTFMove(event));
-    });
+
+    stopRecording();
+}
+
+void MediaRecorder::sampleBufferUpdated(MediaStreamTrackPrivate& track, MediaSample& mediaSample)
+{
+    m_private->sampleBufferUpdated(track, mediaSample);
+}
+
+void MediaRecorder::audioSamplesAvailable(MediaStreamTrackPrivate& track, const MediaTime& mediaTime, const PlatformAudioData& audioData, const AudioStreamDescription& description, size_t sampleCount)
+{
+    m_private->audioSamplesAvailable(track, mediaTime, audioData, description, sampleCount);
 }
 
 void MediaRecorder::setNewRecordingState(RecordingState newState, Ref<Event>&& event)
@@ -124,10 +164,7 @@ void MediaRecorder::scheduleDeferredTask(Function<void()>&& function)
     auto* scriptExecutionContext = this->scriptExecutionContext();
     if (!scriptExecutionContext)
         return;
-    scriptExecutionContext->postTask([weakThis = makeWeakPtr(*this), function = WTFMove(function)] (auto&) {
-        if (!weakThis)
-            return;
-
+    scriptExecutionContext->postTask([protectedThis = makeRef(*this), function = WTFMove(function)] (auto&) {
         function();
     });
 }
