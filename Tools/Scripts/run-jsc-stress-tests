@@ -449,6 +449,12 @@ $hostOS = determineOS unless $hostOS
 $architecture = determineArchitecture unless $architecture
 $isFTLPlatform = !($architecture == "x86" || $architecture == "arm" || $architecture == "mips" || $hostOS == "windows")
 
+if ["arm", "mips", "x86"].include?($architecture)
+    # The JIT is temporarily disabled on these platforms since
+    # https://trac.webkit.org/changeset/237547
+    $jitTests = false
+end
+
 def isFTLEnabled
     $jitTests && $isFTLPlatform
 end
