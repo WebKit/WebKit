@@ -1,3 +1,19 @@
+2018-10-30  David Kilzer  <ddkilzer@apple.com>
+
+        XSLTProcessor should limit max transform depth
+        <https://webkit.org/b/191075>
+        <rdar://problem/45531453>
+
+        Reviewed by Alex Christensen.
+
+        Test: fast/xsl/xslt-max-depth.html
+
+        * xml/SoftLinkLibxslt.cpp: Add macro for `xsltMaxDepth` global.
+        * xml/SoftLinkLibxslt.h: Ditto.
+        * xml/XSLTProcessorLibxslt.cpp:
+        (WebCore::XSLTProcessor::transformToString): Set `xsltMaxDepth`
+        to 1000.  Default in libxslt.dylib is 3000.
+
 2018-10-30  Jim Mason  <jmason@ibinx.com>
 
         [GTK] Scrollbars not following gtk-primary-button-warps-slider setting

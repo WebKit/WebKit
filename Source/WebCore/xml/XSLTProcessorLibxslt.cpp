@@ -45,6 +45,7 @@
 #include <libxslt/imports.h>
 #include <libxslt/security.h>
 #include <libxslt/variables.h>
+#include <libxslt/xslt.h>
 #include <libxslt/xsltutils.h>
 #include <wtf/Assertions.h>
 #include <wtf/text/StringBuffer.h>
@@ -301,6 +302,14 @@ bool XSLTProcessor::transformToString(Node& sourceNode, String& mimeType, String
     }
     m_stylesheet->clearDocuments();
 
+#if OS(DARWIN) && !PLATFORM(GTK)
+    int origXsltMaxDepth = *xsltMaxDepth;
+    *xsltMaxDepth = 1000;
+#else
+    int origXsltMaxDepth = xsltMaxDepth;
+    xsltMaxDepth = 1000;
+#endif
+
     xmlChar* origMethod = sheet->method;
     if (!origMethod && mimeType == "text/html")
         sheet->method = reinterpret_cast<xmlChar*>(const_cast<char*>("html"));
@@ -353,6 +362,11 @@ bool XSLTProcessor::transformToString(Node& sourceNode, String& mimeType, String
     }
 
     sheet->method = origMethod;
+#if OS(DARWIN) && !PLATFORM(GTK)
+    *xsltMaxDepth = origXsltMaxDepth;
+#else
+    xsltMaxDepth = origXsltMaxDepth;
+#endif
     setXSLTLoadCallBack(0, 0, 0);
     xsltFreeStylesheet(sheet);
     m_stylesheet = nullptr;

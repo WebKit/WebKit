@@ -54,4 +54,6 @@ SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, libxslt, xsltFunctionNodeSet, void, (xmlX
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, libxslt, xsltComputeSortResult, xmlXPathObjectPtr*, (xsltTransformContextPtr ctxt, xmlNodePtr sort), (ctxt, sort))
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, libxslt, xsltEvalAttrValueTemplate, xmlChar*, (xsltTransformContextPtr ctxt, xmlNodePtr node, const xmlChar *name, const xmlChar *ns), (ctxt, node, name, ns))
 
+SOFT_LINK_VARIABLE_FOR_SOURCE(WebCore, libxslt, xsltMaxDepth, int);
+
 #endif // OS(DARWIN) && !PLATFORM(GTK)

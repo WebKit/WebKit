@@ -575,3 +575,30 @@
         return pointer##framework##variableName; \
     } \
     }
+
+#define SOFT_LINK_VARIABLE_FOR_HEADER(functionNamespace, framework, variableName, variableType) \
+    WTF_EXTERN_C_BEGIN \
+    extern variableType variableName; \
+    WTF_EXTERN_C_END \
+    namespace functionNamespace { \
+    variableType * get_##framework##_##variableName(); \
+    }
+
+#define SOFT_LINK_VARIABLE_FOR_SOURCE(functionNamespace, framework, variableName, variableType) \
+    WTF_EXTERN_C_BEGIN \
+    extern variableType variableName; \
+    WTF_EXTERN_C_END \
+    namespace functionNamespace { \
+    variableType * get_##framework##_##variableName(); \
+    variableType * get_##framework##_##variableName() \
+    { \
+        static variableType * variable##framework##variableName; \
+        static dispatch_once_t once; \
+        dispatch_once(&once, ^{ \
+            void* variable = dlsym(framework##Library(), #variableName); \
+            RELEASE_ASSERT_WITH_MESSAGE(variable, "%s", dlerror()); \
+            variable##framework##variableName = static_cast<variableType *>(variable); \
+        }); \
+        return variable##framework##variableName; \
+    } \
+    }

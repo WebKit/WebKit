@@ -1,3 +1,16 @@
+2018-10-30  David Kilzer  <ddkilzer@apple.com>
+
+        XSLTProcessor should limit max transform depth
+        <https://webkit.org/b/191075>
+        <rdar://problem/45531453>
+
+        Reviewed by Alex Christensen.
+
+        * wtf/cocoa/SoftLinking.h:
+        (SOFT_LINK_VARIABLE_FOR_HEADER):
+        (SOFT_LINK_VARIABLE_FOR_SOURCE):
+        - Add macros for non-constant global variables.
+
 2018-10-30  Alexey Proskuryakov  <ap@apple.com>
 
         Clean up some obsolete MAX_ALLOWED macros
