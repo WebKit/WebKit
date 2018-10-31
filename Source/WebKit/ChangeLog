@@ -1,3 +1,24 @@
+2018-10-31  Antti Koivisto  <antti@apple.com>
+
+        Stop using LayerFlushScheduler in WK2
+        https://bugs.webkit.org/show_bug.cgi?id=191065
+
+        Reviewed by Tim Horton.
+
+        Code gets more understandable when TiledCoreAnimationDrawingArea simply uses RunLoopObserver
+        directly for flush scheduling. LayerFlushScheduler can be later moved to WK1.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+        (WebKit::TiledCoreAnimationDrawingArea::~TiledCoreAnimationDrawingArea):
+        (WebKit::TiledCoreAnimationDrawingArea::setLayerTreeStateIsFrozen):
+        (WebKit::TiledCoreAnimationDrawingArea::scheduleCompositingLayerFlush):
+        (WebKit::TiledCoreAnimationDrawingArea::dispatchAfterEnsuringUpdatedScrollPosition):
+        (WebKit::TiledCoreAnimationDrawingArea::layerFlushRunLoopCallback):
+        (WebKit::TiledCoreAnimationDrawingArea::invalidateLayerFlushRunLoopObserver):
+        (WebKit::TiledCoreAnimationDrawingArea::scheduleLayerFlushRunLoopObserver):
+
 2018-10-31  Claudio Saavedra  <csaavedra@igalia.com>
 
         [WPE][GTK] Certificates loaded from the cache don't include the certificate chain

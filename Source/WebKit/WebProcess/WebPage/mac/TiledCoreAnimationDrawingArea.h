@@ -31,8 +31,6 @@
 #include "DrawingArea.h"
 #include "LayerTreeContext.h"
 #include <WebCore/FloatRect.h>
-#include <WebCore/LayerFlushScheduler.h>
-#include <WebCore/LayerFlushSchedulerClient.h>
 #include <WebCore/TransformationMatrix.h>
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
@@ -43,6 +41,7 @@ OBJC_CLASS CALayer;
 namespace WebCore {
 class FrameView;
 class PlatformCALayer;
+class RunLoopObserver;
 class TiledBacking;
 }
 
@@ -50,7 +49,7 @@ namespace WebKit {
 
 class LayerHostingContext;
 
-class TiledCoreAnimationDrawingArea : public DrawingArea, WebCore::LayerFlushSchedulerClient {
+class TiledCoreAnimationDrawingArea : public DrawingArea {
 public:
     TiledCoreAnimationDrawingArea(WebPage&, const WebPageCreationParameters&);
     virtual ~TiledCoreAnimationDrawingArea();
@@ -88,8 +87,7 @@ private:
 
     bool dispatchDidReachLayoutMilestone(WebCore::LayoutMilestones) override;
 
-    // WebCore::LayerFlushSchedulerClient
-    bool flushLayers() override;
+    bool flushLayers();
 
     // Message handlers.
     void updateGeometry(const WebCore::IntSize& viewSize, bool flushSynchronously, const WTF::MachSendRight& fencePort) override;
@@ -127,8 +125,11 @@ private:
 
     void sendPendingNewlyReachedLayoutMilestones();
 
+    void layerFlushRunLoopCallback();
+    void invalidateLayerFlushRunLoopObserver();
+    void scheduleLayerFlushRunLoopObserver();
+
     bool m_layerTreeStateIsFrozen;
-    WebCore::LayerFlushScheduler m_layerFlushScheduler;
 
     std::unique_ptr<LayerHostingContext> m_layerHostingContext;
 
@@ -164,6 +165,8 @@ private:
 
     WebCore::LayoutMilestones m_pendingNewlyReachedLayoutMilestones { 0 };
     Vector<CallbackID> m_pendingCallbackIDs;
+
+    std::unique_ptr<WebCore::RunLoopObserver> m_layerFlushRunLoopObserver;
 };
 
 } // namespace WebKit

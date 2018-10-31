@@ -51,6 +51,7 @@
 #import <WebCore/RenderLayerBacking.h>
 #import <WebCore/RenderLayerCompositor.h>
 #import <WebCore/RenderView.h>
+#import <WebCore/RunLoopObserver.h>
 #import <WebCore/ScrollbarTheme.h>
 #import <WebCore/Settings.h>
 #import <WebCore/TiledBacking.h>
@@ -75,7 +76,6 @@ using namespace WebCore;
 TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage& webPage, const WebPageCreationParameters& parameters)
     : DrawingArea(DrawingAreaTypeTiledCoreAnimation, webPage)
     , m_layerTreeStateIsFrozen(false)
-    , m_layerFlushScheduler(this)
     , m_isPaintingSuspended(!(parameters.activityState & ActivityState::IsVisible))
     , m_transientZoomScale(1)
     , m_sendDidUpdateActivityStateTimer(RunLoop::main(), this, &TiledCoreAnimationDrawingArea::didUpdateActivityStateTimerFired)
@@ -89,6 +89,10 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage& webPage, c
     [m_hostingLayer setOpaque:YES];
     [m_hostingLayer setGeometryFlipped:YES];
 
+    m_layerFlushRunLoopObserver = std::make_unique<WebCore::RunLoopObserver>(static_cast<CFIndex>(RunLoopObserver::WellKnownRunLoopOrders::LayerFlush), [this]() {
+        this->layerFlushRunLoopCallback();
+    });
+
     updateLayerHostingContext();
     setColorSpace(parameters.colorSpace);
 
@@ -98,9 +102,8 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage& webPage, c
 
 TiledCoreAnimationDrawingArea::~TiledCoreAnimationDrawingArea()
 {
-    m_layerFlushScheduler.invalidate();
+    invalidateLayerFlushRunLoopObserver();
 }
-
 
 void TiledCoreAnimationDrawingArea::attach()
 {
@@ -170,10 +173,11 @@ void TiledCoreAnimationDrawingArea::setLayerTreeStateIsFrozen(bool layerTreeStat
         return;
 
     m_layerTreeStateIsFrozen = layerTreeStateIsFrozen;
+
     if (m_layerTreeStateIsFrozen)
-        m_layerFlushScheduler.suspend();
+        invalidateLayerFlushRunLoopObserver();
     else
-        m_layerFlushScheduler.resume();
+        scheduleLayerFlushRunLoopObserver();
 }
 
 bool TiledCoreAnimationDrawingArea::layerTreeStateIsFrozen() const
@@ -183,7 +187,10 @@ bool TiledCoreAnimationDrawingArea::layerTreeStateIsFrozen() const
 
 void TiledCoreAnimationDrawingArea::scheduleCompositingLayerFlush()
 {
-    m_layerFlushScheduler.schedule();
+    if (m_layerTreeStateIsFrozen)
+        return;
+
+    scheduleLayerFlushRunLoopObserver();
 }
 
 void TiledCoreAnimationDrawingArea::scheduleCompositingLayerFlushImmediately()
@@ -374,7 +381,7 @@ void TiledCoreAnimationDrawingArea::dispatchAfterEnsuringUpdatedScrollPosition(W
     m_webPage.corePage()->scrollingCoordinator()->commitTreeStateIfNeeded();
 
     if (!m_layerTreeStateIsFrozen)
-        m_layerFlushScheduler.suspend();
+        invalidateLayerFlushRunLoopObserver();
 
     // It is possible for the drawing area to be destroyed before the bound block
     // is invoked, so grab a reference to the web page here so we can access the drawing area through it.
@@ -389,7 +396,7 @@ void TiledCoreAnimationDrawingArea::dispatchAfterEnsuringUpdatedScrollPosition(W
         function();
 
         if (!m_layerTreeStateIsFrozen)
-            m_layerFlushScheduler.resume();
+            scheduleLayerFlushRunLoopObserver();
 
         webPage->deref();
     });
@@ -415,7 +422,8 @@ void TiledCoreAnimationDrawingArea::addTransactionCallbackID(CallbackID callback
 
 bool TiledCoreAnimationDrawingArea::flushLayers()
 {
-    ASSERT(!m_layerTreeStateIsFrozen);
+    if (layerTreeStateIsFrozen())
+        return false;
 
     @autoreleasepool {
         scaleViewToFitDocumentIfNeeded();
@@ -567,8 +575,7 @@ void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize, bool
         size = contentSize;
     }
 
-    if (!m_layerTreeStateIsFrozen)
-        flushLayers();
+    flushLayers();
 
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
@@ -887,6 +894,22 @@ bool TiledCoreAnimationDrawingArea::dispatchDidReachLayoutMilestone(WebCore::Lay
 {
     m_pendingNewlyReachedLayoutMilestones |= layoutMilestones;
     return true;
+}
+
+void TiledCoreAnimationDrawingArea::layerFlushRunLoopCallback()
+{
+    if (flushLayers())
+        invalidateLayerFlushRunLoopObserver();
+}
+
+void TiledCoreAnimationDrawingArea::invalidateLayerFlushRunLoopObserver()
+{
+    m_layerFlushRunLoopObserver->invalidate();
+}
+
+void TiledCoreAnimationDrawingArea::scheduleLayerFlushRunLoopObserver()
+{
+    m_layerFlushRunLoopObserver->schedule(CFRunLoopGetCurrent());
 }
 
 } // namespace WebKit
