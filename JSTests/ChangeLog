@@ -1,3 +1,14 @@
+2018-10-31  Tadeu Zagallo  <tzagallo@apple.com>
+
+        REGRESSION(r237547): Exception handlers should be aware of wide opcodes
+        https://bugs.webkit.org/show_bug.cgi?id=191108
+        <rdar://problem/45690700>
+
+        Reviewed by Saam Barati.
+
+        * stress/wide-op_catch.js: Added.
+        (catch):
+
 2018-10-29  Mark Lam  <mark.lam@apple.com>
 
         Correctly detect string overflow when using the 'Function' constructor.

@@ -1,3 +1,17 @@
+2018-10-31  Tadeu Zagallo  <tzagallo@apple.com>
+
+        REGRESSION(r237547): Exception handlers should be aware of wide opcodes
+        https://bugs.webkit.org/show_bug.cgi?id=191108
+        <rdar://problem/45690700>
+
+        Reviewed by Saam Barati.
+
+        When linking the handler, we need to check whether the target op_catch is
+        wide or narrow in order to chose the right code pointer for the handler.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+
 2018-10-31  Dominik Infuehr  <dinfuehr@igalia.com>
 
         Align entries in metadata table
