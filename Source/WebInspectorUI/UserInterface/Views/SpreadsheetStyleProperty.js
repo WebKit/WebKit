@@ -44,16 +44,36 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
         this._property.__propertyView = this;
 
+        this._selected = false;
         this._hasInvalidVariableValue = false;
 
         this._update();
         property.addEventListener(WI.CSSProperty.Event.OverriddenStatusChanged, this.updateStatus, this);
         property.addEventListener(WI.CSSProperty.Event.Changed, this.updateStatus, this);
+
+        if (WI.settings.experimentalEnableMultiplePropertiesSelection.value && this._property.editable) {
+            this._element.tabIndex = -1;
+
+            this._element.addEventListener("blur", (event) => {
+                this._delegate.spreadsheetStylePropertyBlur(event, this);
+            });
+
+            this._element.addEventListener("mouseenter", (event) => {
+                this._delegate.spreadsheetStylePropertyMouseEnter(event, this);
+            });
+
+            this._element.addEventListener("mouseleave", (event) => {
+                this._delegate.spreadsheetStylePropertyMouseLeave(event, this);
+            });
+
+            this._element.copyHandler = this;
+        }
     }
 
     // Public
 
     get element() { return this._element; }
+    get property() { return this._property; }
     get nameTextField() { return this._nameTextField; }
     get valueTextField() { return this._valueTextField; }
     get enabled() { return this._property.enabled; }
@@ -61,6 +81,20 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
     set index(index)
     {
         this._element.dataset.propertyIndex = index;
+    }
+
+    get selected()
+    {
+        return this._selected;
+    }
+
+    set selected(value)
+    {
+        if (value === this._selected)
+            return;
+
+        this._selected = value;
+        this.updateStatus();
     }
 
     detached()
@@ -85,6 +119,21 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
     highlight()
     {
         this._element.classList.add("highlighted");
+    }
+
+    remove(replacement = null)
+    {
+        this.element.remove();
+
+        if (replacement)
+            this._property.replaceWithText(replacement);
+        else
+            this._property.remove();
+
+        this.detached();
+
+        if (this._delegate && typeof this._delegate.spreadsheetStylePropertyRemoved === "function")
+            this._delegate.spreadsheetStylePropertyRemoved(this);
     }
 
     updateStatus()
@@ -140,6 +189,9 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         if (!this._property.enabled)
             classNames.push("disabled");
 
+        if (this._selected)
+            classNames.push("selected");
+
         this._element.className = classNames.join(" ");
         this._element.title = elementTitle;
     }
@@ -157,22 +209,12 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         return matches;
     }
 
-    // Private
-
-    _remove(replacement = "")
+    handleCopyEvent(event)
     {
-        this.element.remove();
-
-        if (replacement)
-            this._property.replaceWithText(replacement);
-        else
-            this._property.remove();
-
-        this.detached();
-
-        if (this._delegate && typeof this._delegate.spreadsheetStylePropertyRemoved === "function")
-            this._delegate.spreadsheetStylePropertyRemoved(this);
+        this._delegate.spreadsheetStylePropertyCopy(event, this);
     }
+
+    // Private
 
     _update()
     {
@@ -315,14 +357,14 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         }
 
         if (willRemoveProperty)
-            this._remove();
+            this.remove();
     }
 
     spreadsheetTextFieldDidBlur(textField, event)
     {
         let focusedOutsideThisProperty = event.relatedTarget !== this._nameElement && event.relatedTarget !== this._valueElement;
         if (focusedOutsideThisProperty && (!this._nameTextField.value.trim() || !this._valueTextField.value.trim())) {
-            this._remove();
+            this.remove();
             return;
         }
 
@@ -617,7 +659,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
         event.preventDefault();
 
-        this._remove(text);
+        this.remove(text);
 
         if (this._delegate.spreadsheetStylePropertyAddBlankPropertySoon) {
             this._delegate.spreadsheetStylePropertyAddBlankPropertySoon(this, {

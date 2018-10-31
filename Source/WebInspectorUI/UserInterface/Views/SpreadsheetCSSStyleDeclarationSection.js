@@ -37,6 +37,9 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
 
         super(element);
 
+        if (WI.settings.experimentalEnableMultiplePropertiesSelection.value)
+            element.classList.add("multiple-properties-selection");
+
         this._delegate = delegate || null;
         this._style = style;
         this._propertiesEditor = null;
@@ -45,6 +48,10 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
         this._filterText = null;
         this._shouldFocusSelectorElement = false;
         this._wasEditing = false;
+
+        this._isMousePressed = true;
+        this._mouseDownIndex = NaN;
+        this._startedSelection = false;
     }
 
     // Public
@@ -206,6 +213,26 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
 
         if (this._delegate.spreadsheetCSSStyleDeclarationSectionStartEditingAdjacentRule)
             this._delegate.spreadsheetCSSStyleDeclarationSectionStartEditingAdjacentRule(this, delta);
+    }
+
+    spreadsheetCSSStyleDeclarationEditorPropertyBlur(event, property)
+    {
+        if (!this._startedSelection)
+            this._propertiesEditor.deselectProperties();
+    }
+
+    spreadsheetCSSStyleDeclarationEditorPropertyMouseEnter(event, property)
+    {
+        if (this._isMousePressed && this._startedSelection) {
+            let index = parseInt(property.element.dataset.propertyIndex);
+            this._propertiesEditor.selectProperties(this._mouseDownIndex, index);
+        }
+    }
+
+    spreadsheetCSSStyleDeclarationEditorPropertyMouseLeave(event, property)
+    {
+        if (this._isMousePressed)
+            this._startedSelection = true;
     }
 
     applyFilter(filterText)
@@ -435,11 +462,50 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
     _handleMouseDown(event)
     {
         this._wasEditing = this._propertiesEditor.editing || document.activeElement === this._selectorElement;
+
+        if (!WI.settings.experimentalEnableMultiplePropertiesSelection.value)
+            return;
+
+        let propertyElement = event.target.closest(".property");
+        if (!propertyElement)
+            return;
+
+        this._isMousePressed = true;
+        this._startedSelection = false;
+
+        // Disable text selection on mousemove.
+        event.preventDefault();
+
+        // Canceling mousedown event prevents blur event from firing on the previously focused element.
+        if (this._wasEditing && document.activeElement)
+            document.activeElement.blur();
+
+        window.addEventListener("mouseup", this._handleWindowMouseUp.bind(this), {capture: true, once: true});
+
+        let propertyIndex = parseInt(propertyElement.dataset.propertyIndex);
+        this._propertiesEditor.deselectProperties();
+        this._mouseDownIndex = propertyIndex;
+
+        this._element.classList.add("selecting");
+    }
+
+    _handleWindowMouseUp(event)
+    {
+        if (this._startedSelection) {
+            // Don't start editing name/value if there's selection.
+            event.stop();
+            this._startedSelection = false;
+        }
+
+        this._isMousePressed = false;
+        this._mouseDownIndex = NaN;
+
+        this._element.classList.remove("selecting");
     }
 
     _handleClick(event)
     {
-        if (this._wasEditing)
+        if (this._wasEditing || this._startedSelection)
             return;
 
         if (window.getSelection().type === "Range")

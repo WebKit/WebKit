@@ -164,6 +164,14 @@ WI.CSSProperty = class CSSProperty extends WI.Object
         this._text = newText;
     }
 
+    get formattedText()
+    {
+        if (!this._name)
+            return "";
+
+        return `${this._name}: ${this._rawValue};`;
+    }
+
     get name()
     {
         return this._name;

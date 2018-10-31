@@ -30,11 +30,19 @@
     font-size: 11px;
     color: hsl(0, 0%, 70%);
     -webkit-user-select: text;
+
+    --background-color-selected: hsl(210, 98%, 93%);
+    --border-color-selected: hsl(225, 91%, 70%);
 }
 
 .spreadsheet-style-declaration-editor .property {
     padding-right: var(--css-declaration-horizontal-padding);
     padding-left: calc(var(--css-declaration-horizontal-padding) + 17px);
+}
+
+.multiple-properties-selection .spreadsheet-style-declaration-editor .property {
+    border-left: 1px solid transparent;
+    outline: none;
 }
 
 .spreadsheet-style-declaration-editor .property:not(.disabled) .name {
@@ -43,6 +51,10 @@
 
 .spreadsheet-style-declaration-editor .property:not(.disabled) .value {
     color: var(--text-color);
+}
+
+.multiple-properties-selection .spreadsheet-style-declaration-editor :matches(.name, .value):not(.editing) {
+    outline: none;
 }
 
 .spreadsheet-style-declaration-editor :matches(.name, .value).editing {
@@ -124,6 +136,14 @@
     -webkit-clip-path: polygon(0% 50%, 6px 0%, 100% 0%, 100% 100%, 6px 100%);
 }
 
+.multiple-properties-selection .spreadsheet-style-declaration-editor .property.selected {
+    background-color: var(--background-color-selected);
+}
+
+.multiple-properties-selection .spreadsheet-style-declaration-editor .property.selected:focus {
+    border-left-color: var(--border-color-selected);
+}
+
 .spreadsheet-style-declaration-editor .property:matches(.implicit, .not-inherited) .content > * {
     opacity: 0.5;
 }
@@ -160,6 +180,11 @@
 }
 
 @media (prefers-dark-interface) {
+    .spreadsheet-style-declaration-editor {
+        --background-color-selected: hsl(230, 51%, 36%);
+        --border-color-selected: hsl(216, 98%, 67%);
+    }
+
     .spreadsheet-style-declaration-editor :matches(.name, .value).editing {
         outline-color: var(--background-color-secondary) !important;
     }

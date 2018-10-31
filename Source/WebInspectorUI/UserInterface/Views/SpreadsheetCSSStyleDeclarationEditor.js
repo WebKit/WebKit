@@ -47,6 +47,9 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
         this._propertyPendingStartEditing = null;
         this._pendingAddBlankPropertyIndexOffset = NaN;
         this._filterText = null;
+
+        this._anchorIndex = NaN;
+        this._focusIndex = NaN;
     }
 
     // Public
@@ -64,6 +67,9 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
 
             this.focused = false;
         }, true);
+
+        if (WI.settings.experimentalEnableMultiplePropertiesSelection.value)
+            this.element.addEventListener("keydown", this._handleKeyDown.bind(this));
     }
 
     layout()
@@ -307,6 +313,43 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
         this.needsLayout();
     }
 
+    selectProperties(anchorIndex, focusIndex)
+    {
+        console.assert(anchorIndex < this._propertyViews.length, `anchorIndex (${anchorIndex}) is greater than the last property index (${this._propertyViews.length})`);
+        console.assert(focusIndex < this._propertyViews.length, `focusIndex (${focusIndex}) is greater than the last property index (${this._propertyViews.length})`);
+
+        if (isNaN(anchorIndex) || isNaN(focusIndex)) {
+            console.error(`Nothing to select. anchorIndex (${anchorIndex}) and focusIndex (${focusIndex}) must be numbers.`);
+            this.deselectProperties();
+            return;
+        }
+
+        this._anchorIndex = anchorIndex;
+        this._focusIndex = focusIndex;
+
+        let startIndex = Math.min(anchorIndex, focusIndex);
+        let endIndex = Math.max(anchorIndex, focusIndex);
+
+        for (let i = 0; i < this._propertyViews.length; ++i) {
+            let propertyView = this._propertyViews[i];
+            let isSelected = i >= startIndex && i <= endIndex;
+            propertyView.selected = isSelected;
+        }
+
+        let property = this._propertyViews[focusIndex];
+        property.element.focus();
+    }
+
+    deselectProperties()
+    {
+        for (let propertyView  of this._propertyViews)
+            propertyView.selected = false;
+
+        this._focused = false;
+        this._anchorIndex = NaN;
+        this._focusIndex = NaN;
+    }
+
     applyFilter(filterText)
     {
         this._filterText = filterText;
@@ -329,6 +372,24 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
     }
 
     // SpreadsheetStyleProperty delegate
+
+    spreadsheetStylePropertyBlur(event, property)
+    {
+        if (this._suppressBlur)
+            return;
+
+        this._delegate.spreadsheetCSSStyleDeclarationEditorPropertyBlur(event, property);
+    }
+
+    spreadsheetStylePropertyMouseEnter(event, property)
+    {
+        this._delegate.spreadsheetCSSStyleDeclarationEditorPropertyMouseEnter(event, property);
+    }
+
+    spreadsheetStylePropertyMouseLeave(event, property)
+    {
+        this._delegate.spreadsheetCSSStyleDeclarationEditorPropertyMouseLeave(event, property);
+    }
 
     spreadsheetStylePropertyFocusMoved(propertyView, {direction, willRemoveProperty})
     {
@@ -384,6 +445,23 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
         this._pendingAddBlankPropertyIndexOffset = this._propertyViews.length - index;
     }
 
+    spreadsheetStylePropertyCopy(event)
+    {
+        if (!this._hasSelectedProperties())
+            return;
+
+        let formattedProperties = [];
+        let startIndex = Math.min(this._anchorIndex, this._focusIndex);
+        let endIndex = Math.max(this._anchorIndex, this._focusIndex);
+        for (let i = startIndex; i <= endIndex; ++i) {
+            let propertyView = this._propertyViews[i];
+            formattedProperties.push(propertyView.property.formattedText);
+        }
+
+        event.clipboardData.setData("text/plain", formattedProperties.join("\n"));
+        event.stop();
+    }
+
     spreadsheetStylePropertyRemoved(propertyView)
     {
         this._propertyViews.remove(propertyView);
@@ -411,6 +489,53 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
     }
 
     // Private
+
+    _handleKeyDown(event)
+    {
+        if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+            let delta = event.key === "ArrowUp" ? -1 : 1;
+            let focusIndex = Number.constrain(this._focusIndex + delta, 0, this._propertyViews.length - 1);
+
+            // Blur event deselects all properties.
+            this._suppressBlur = true;
+            this.selectProperties(focusIndex, focusIndex);
+            this._suppressBlur = false;
+
+            event.stop();
+        } else if (event.key === "Backspace") {
+            if (!this._hasSelectedProperties())
+                return;
+
+            let startIndex = Math.min(this._anchorIndex, this._focusIndex);
+            let endIndex = Math.max(this._anchorIndex, this._focusIndex);
+
+            let propertyIndexToSelect = NaN;
+            if (endIndex + 1 !== this._propertyViews.length)
+                propertyIndexToSelect = startIndex;
+            else if (startIndex > 0)
+                propertyIndexToSelect = startIndex - 1;
+
+            this.deselectProperties();
+
+            for (let i = endIndex; i >= startIndex; i--)
+                this._propertyViews[i].remove();
+
+            if (!isNaN(propertyIndexToSelect)) {
+                this._suppressBlur = true;
+                this.selectProperties(propertyIndexToSelect, propertyIndexToSelect);
+                this._suppressBlur = false;
+            }
+
+            event.stop();
+
+        } else if (event.key === "Esc")
+            this.deselectProperties();
+    }
+
+    _hasSelectedProperties()
+    {
+        return !isNaN(this._anchorIndex) && !isNaN(this._focusIndex);
+    }
 
     _editablePropertyAfter(propertyIndex)
     {

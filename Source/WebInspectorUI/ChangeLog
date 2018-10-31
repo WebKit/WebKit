@@ -1,3 +1,70 @@
+2018-10-31  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles: implement copying and deletion of multiple properties
+        https://bugs.webkit.org/show_bug.cgi?id=191037
+        <rdar://problem/45650078>
+
+        Reviewed by Brian Burg.
+
+        This patch should only work with "Enable Selection of Multiple Properties" checked. It shouldn't introduce any
+        changes when this setting is unchecked.
+
+        Mousedown on a property (1) and moving the mouse cursor to another property (2) should select properties 1, 2, and
+        all properties between them until mouseup is fired.
+
+        Once selected:
+        - Pressing Command-C should copy the selected properties.
+        - Pressing Delete should remove the properties.
+
+        * UserInterface/Models/CSSProperty.js:
+        (WI.CSSProperty.prototype.get formattedText):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.css:
+        (.spreadsheet-style-declaration-editor):
+        (.multiple-properties-selection .spreadsheet-style-declaration-editor .property):
+        (.multiple-properties-selection .spreadsheet-style-declaration-editor :matches(.name, .value):not(.editing)):
+        (.multiple-properties-selection .spreadsheet-style-declaration-editor .property.selected):
+        (.multiple-properties-selection .spreadsheet-style-declaration-editor .property.selected:focus):
+        (@media (prefers-dark-interface)):
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.js:
+        (WI.SpreadsheetCSSStyleDeclarationEditor):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.initialLayout):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.selectProperties):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.deselectProperties):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.spreadsheetStylePropertyBlur):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.spreadsheetStylePropertyMouseEnter):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.spreadsheetStylePropertyMouseLeave):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.spreadsheetStylePropertyCopy):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype._handleKeyDown):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype._hasSelectedProperties):
+        Property selection is defined as two numbers: anchorIndex and focusIndex.
+        The property with focusIndex is actually focused. The focus outline is replaced by a more subtle left blue border.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.css:
+        (.spreadsheet-css-declaration.selecting,):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        (WI.SpreadsheetCSSStyleDeclarationSection):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.spreadsheetCSSStyleDeclarationEditorPropertyBlur):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.spreadsheetCSSStyleDeclarationEditorPropertyMouseEnter):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.spreadsheetCSSStyleDeclarationEditorPropertyMouseLeave):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype._handleMouseDown):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype._handleWindowMouseUp):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype._handleClick):
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty):
+        Implement copying the same way it's done for DataGrid: by adding copyHandler property to the focused element.
+        Add `tabIndex=-1` so the property element can be focused.
+
+        (WI.SpreadsheetStyleProperty.prototype.get property):
+        (WI.SpreadsheetStyleProperty.prototype.get selected):
+        (WI.SpreadsheetStyleProperty.prototype.set selected):
+        (WI.SpreadsheetStyleProperty.prototype.remove):
+        (WI.SpreadsheetStyleProperty.prototype.updateStatus):
+        (WI.SpreadsheetStyleProperty.prototype.handleCopyEvent):
+        (WI.SpreadsheetStyleProperty.prototype.spreadsheetTextFieldDidCommit):
+        (WI.SpreadsheetStyleProperty.prototype.spreadsheetTextFieldDidBlur):
+        (WI.SpreadsheetStyleProperty.prototype._handleNamePaste):
+
 2018-10-31  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Audit: attempt to re-link DOM nodes for imported results
