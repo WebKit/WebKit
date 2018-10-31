@@ -1,3 +1,24 @@
+2018-10-31  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [WPE][GTK] Certificates loaded from the cache don't include the certificate chain
+        https://bugs.webkit.org/show_bug.cgi?id=190956
+
+        Reviewed by Youenn Fablet.
+
+        Similarly to what was done for the IPC coders, serialize
+        the entire certificate chain in the cache coder. Bump
+        the cache version due to the caching format changes.
+
+        * NetworkProcess/cache/NetworkCacheCoders.h: Add GRefPtr<GByteArray> coders.
+        * NetworkProcess/cache/NetworkCacheCodersSoup.cpp:
+        (WTF::Persistence::certificatesDataListFromCertificateInfo):
+        (WTF::Persistence::certificateFromCertificatesDataList): Helpers.
+        (WTF::Persistence::Coder<WebCore::CertificateInfo>::encode):
+        (WTF::Persistence::Coder<WebCore::CertificateInfo>::decode):
+        (WTF::Persistence::Coder<GRefPtr<GByteArray>>::encode):
+        (WTF::Persistence::Coder<GRefPtr<GByteArray>>::decode):
+        * NetworkProcess/cache/NetworkCacheStorage.h: Bump the cache version.
+
 2018-10-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Cocoa] Attachment dropped from one web view to another is missing its file wrapper

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010, 2014-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,6 +50,13 @@ template<> struct Coder<WebCore::HTTPHeaderMap> {
     static void encode(Encoder&, const WebCore::HTTPHeaderMap&);
     static bool decode(Decoder&, WebCore::HTTPHeaderMap&);
 };
+
+#if USE(GLIB)
+template<> struct Coder<GRefPtr<GByteArray>> {
+    static void encode(Encoder&, const GRefPtr<GByteArray>&);
+    static bool decode(Decoder&, GRefPtr<GByteArray>&);
+};
+#endif
 
 }
 }
