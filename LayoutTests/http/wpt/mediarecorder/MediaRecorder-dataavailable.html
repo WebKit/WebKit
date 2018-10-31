@@ -44,7 +44,7 @@
         drawSomethingOnCanvas();
         setTimeout(() => {
             recorder.stop();
-        }, 500)
+        }, 2000)
     }, 'MediaRecorder will fire a dataavailable event with a blob data for a video-only stream when stop() is called');
 
     async_test(t => {
@@ -65,7 +65,7 @@
         setTimeout(() => {
             recorder.stop();
             osc.stop();
-        }, 500);
+        }, 2000);
     }, 'MediaRecorder will fire a dataavailable event with a blob data for a audio-only stream when stop() is called');
 
     async_test(t => {
@@ -93,7 +93,7 @@
         setTimeout(() => {
             recorder.stop();
             osc.stop();
-        }, 500);
+        }, 2000);
     }, 'MediaRecorder will fire a dataavailable event with a blob data for a video-audio stream when stop() is called');
 
 </script>

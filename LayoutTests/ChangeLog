@@ -1,3 +1,16 @@
+2018-10-31  YUHAN WU  <yuhan_wu@apple.com>
+
+        MediaRecorder should fire dataavailable event when all tracks are ended and stop() is called
+        https://bugs.webkit.org/show_bug.cgi?id=190778
+        <rdar://problem/45703574>
+
+        Reviewed by Youenn Fablet.
+
+        Increase the timer of recording to 2 seconds until we support timeslice in order to reduce flakiness.
+
+        * http/wpt/mediarecorder/MediaRecorder-dataavailable.html:
+        * http/wpt/mediarecorder/MediaRecorder-mock-dataavailable.html:
+
 2018-10-31  Zach Li  <zacharyli323@gmail.com>
 
         Add credit card autofill button

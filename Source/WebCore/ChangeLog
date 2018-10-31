@@ -1,3 +1,17 @@
+2018-10-31  YUHAN WU  <yuhan_wu@apple.com>
+
+        MediaRecorder should fire dataavailable event when all tracks are ended and stop() is called
+        https://bugs.webkit.org/show_bug.cgi?id=190778
+        <rdar://problem/45703574>
+
+        Reviewed by Youenn Fablet.
+
+        Add a include to fix the unified build error.
+
+        No tests since no new functionality.
+
+        * Modules/webgpu/WebGPUDevice.cpp:
+
 2018-10-26  Jer Noble  <jer.noble@apple.com>
 
         [EME][Cocoa] Cannot play unmuxed video and audio fMP4 streams encrypted with different keys via MSE

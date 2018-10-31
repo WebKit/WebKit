@@ -28,6 +28,8 @@
 
 #if ENABLE(WEBGPU)
 
+#include "WebGPUAdapter.h"
+
 namespace WebCore {
 
 Ref<WebGPUDevice> WebGPUDevice::create(ScriptExecutionContext&, Ref<WebGPUAdapter>&& adapter)

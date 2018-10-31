@@ -41,7 +41,7 @@
         drawSomethingOnCanvas();
         setTimeout(() => {
             recorder.stop();
-        }, 500);
+        }, 2000);
     }, 'MediaRecorder will fire a dataavailable event which only contains video buffers for a video-only stream when stop() is called');
 
     async_test(t => {
@@ -66,7 +66,7 @@
         setTimeout(() => {
             recorder.stop();
             osc.stop();
-        }, 500);
+        }, 2000);
     }, 'MediaRecorder will fire a dataavailable event which only contains audio buffers for a audio-only stream when stop() is called');
 
     async_test(t => {
@@ -98,7 +98,7 @@
         setTimeout(() => {
             recorder.stop();
             osc.stop();
-        }, 500);
+        }, 2000);
     }, 'MediaRecorder will fire a dataavailable event which only contains both video and audio buffers when stop() is called');
 
 </script>
