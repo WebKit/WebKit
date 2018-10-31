@@ -80,25 +80,26 @@ WI.appendContextMenuItemsForSourceCode = function(contextMenu, sourceCodeOrLocat
     }
 };
 
-WI.appendContextMenuItemsForURL = function(contextMenu, url, options)
+WI.appendContextMenuItemsForURL = function(contextMenu, url, options = {})
 {
     if (!url)
         return;
 
-    let {sourceCode, location, frame} = options;
     function showResourceWithOptions(options) {
-        if (location)
-            WI.showSourceCodeLocation(location, options);
-        else if (sourceCode)
-            WI.showSourceCode(sourceCode, options);
+        if (options.location)
+            WI.showSourceCodeLocation(options.location, options);
+        else if (options.sourceCode)
+            WI.showSourceCode(options.sourceCode, options);
         else
-            WI.openURL(url, frame, options);
+            WI.openURL(url, options.frame, options);
     }
 
-    contextMenu.appendItem(WI.UIString("Open in New Tab"), () => {
-        const frame = null;
-        WI.openURL(url, frame, {alwaysOpenExternally: true});
-    });
+    if (!url.startsWith("javascript:") && !url.startsWith("data:")) {
+        contextMenu.appendItem(WI.UIString("Open in New Tab"), () => {
+            const frame = null;
+            WI.openURL(url, frame, {alwaysOpenExternally: true});
+        });
+    }
 
     if (WI.networkManager.resourceForURL(url)) {
         if (!WI.isShowingResourcesTab()) {
@@ -113,7 +114,9 @@ WI.appendContextMenuItemsForURL = function(contextMenu, url, options)
         }
     }
 
-    contextMenu.appendItem(WI.UIString("Copy Link Address"), () => {
+    contextMenu.appendSeparator();
+
+    contextMenu.appendItem(WI.UIString("Copy Link"), () => {
         InspectorFrontendHost.copyText(url);
     });
 };

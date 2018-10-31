@@ -420,6 +420,10 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
                 let span = document.createElement("span");
                 span.classList.add(className);
                 span.textContent = token.value.truncateMiddle(maxValueLength);
+
+                if (token.type && token.type.includes("link"))
+                    span.addEventListener("contextmenu", this._handleLinkContextMenu.bind(this, token));
+
                 return span;
             }
 
@@ -737,6 +741,53 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
             let sourceCode = sourceCodeLocation.sourceCode;
             WI.showSourceCodeLocation(sourceCode.createSourceCodeLocation(range.startLine, range.startColumn), options);
         });
+    }
+
+    _handleLinkContextMenu(token, event)
+    {
+        let contextMenu = WI.ContextMenu.createFromEvent(event);
+
+        let resolveURL = (url) => {
+            let ownerStyle = this._property.ownerStyle;
+            if (!ownerStyle)
+                return url;
+
+            let ownerStyleSheet = ownerStyle.ownerStyleSheet;
+            if (!ownerStyleSheet) {
+                let ownerRule = ownerStyle.ownerRule;
+                if (ownerRule)
+                    ownerStyleSheet = ownerRule.ownerStyleSheet;
+            }
+            if (ownerStyleSheet) {
+                if (ownerStyleSheet.url)
+                    return absoluteURL(url, ownerStyleSheet.url);
+
+                let parentFrame = ownerStyleSheet.parentFrame;
+                if (parentFrame)
+                    return absoluteURL(url, parentFrame.url);
+            }
+
+            let node = ownerStyle.node;
+            if (!node) {
+                let nodeStyles = ownerStyle.nodeStyles;
+                if (!nodeStyles) {
+                    let ownerRule = ownerStyle.ownerRule;
+                    if (ownerRule)
+                        nodeStyles = ownerRule.nodeStyles;
+                }
+                if (nodeStyles)
+                    node = nodeStyles.node;
+            }
+            if (node) {
+                let ownerDocument = node.ownerDocument;
+                if (ownerDocument)
+                    return absoluteURL(url, node.ownerDocument.documentURL);
+            }
+
+            return url;
+        };
+
+        WI.appendContextMenuItemsForURL(contextMenu, resolveURL(token.value));
     }
 };
 
