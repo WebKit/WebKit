@@ -96,6 +96,15 @@ RefPtr<WebCore::SharedBuffer> Attachment::enclosingImageData() const
     return nullptr;
 }
 
+RefPtr<WebCore::SharedBuffer> Attachment::createSerializedRepresentation() const
+{
+    return nullptr;
+}
+
+void Attachment::updateFromSerializedRepresentation(Ref<WebCore::SharedBuffer>&&, const WTF::String&)
+{
+}
+
 #endif // !PLATFORM(COCOA)
 
 }

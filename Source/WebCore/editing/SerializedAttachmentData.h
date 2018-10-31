@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,32 +25,22 @@
 
 #pragma once
 
-#include "PageClient.h"
-
-@class WKWebView;
-
-namespace API {
-class Attachment;
-}
-
-namespace WebKit {
-
-class PageClientImplCocoa : public PageClient {
-public:
-    PageClientImplCocoa(WKWebView *webView)
-        : m_webView(webView) { }
-    void isPlayingAudioWillChange() final;
-    void isPlayingAudioDidChange() final;
-
 #if ENABLE(ATTACHMENT_ELEMENT)
-    void didInsertAttachment(API::Attachment&, const String& source) final;
-    void didRemoveAttachment(API::Attachment&) final;
-    NSFileWrapper *allocFileWrapperInstance() const final;
-    NSSet *serializableFileWrapperClasses() const final;
-#endif
 
-protected:
-    WKWebView *m_webView;
+#include "SharedBuffer.h"
+#include <wtf/Ref.h>
+#include <wtf/text/WTFString.h>
+
+namespace WebCore {
+
+class SharedBuffer;
+
+struct SerializedAttachmentData {
+    String identifier;
+    String mimeType;
+    Ref<SharedBuffer> data;
 };
 
-}
+} // namespace WebKit
+
+#endif // ENABLE(ATTACHMENT_ELEMENT)

@@ -66,7 +66,7 @@ void PageClientImplCocoa::didRemoveAttachment(API::Attachment& attachment)
 #endif
 }
 
-NSFileWrapper *PageClientImplCocoa::allocFileWrapperInstance()
+NSFileWrapper *PageClientImplCocoa::allocFileWrapperInstance() const
 {
 #if WK_API_ENABLED
     Class cls = m_webView.configuration._attachmentFileWrapperClass ?: [NSFileWrapper self];
@@ -74,6 +74,17 @@ NSFileWrapper *PageClientImplCocoa::allocFileWrapperInstance()
 #else
     return nil;
 #endif
+}
+
+NSSet *PageClientImplCocoa::serializableFileWrapperClasses() const
+{
+    Class defaultFileWrapperClass = NSFileWrapper.self;
+#if WK_API_ENABLED
+    Class configuredFileWrapperClass = m_webView.configuration._attachmentFileWrapperClass;
+    if (configuredFileWrapperClass && configuredFileWrapperClass != defaultFileWrapperClass)
+        return [NSSet setWithObjects:configuredFileWrapperClass, defaultFileWrapperClass, nil];
+#endif
+    return [NSSet setWithObjects:defaultFileWrapperClass, nil];
 }
 
 #endif

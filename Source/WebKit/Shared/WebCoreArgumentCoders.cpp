@@ -28,6 +28,7 @@
 
 #include "DataReference.h"
 #include "ShareableBitmap.h"
+#include "SharedBufferDataReference.h"
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/BlobPart.h>
 #include <WebCore/CacheQueryOptions.h>
@@ -69,6 +70,7 @@
 #include <WebCore/ScrollingCoordinator.h>
 #include <WebCore/SearchPopupMenu.h>
 #include <WebCore/SecurityOrigin.h>
+#include <WebCore/SerializedAttachmentData.h>
 #include <WebCore/ServiceWorkerClientData.h>
 #include <WebCore/ServiceWorkerClientIdentifier.h>
 #include <WebCore/ServiceWorkerData.h>
@@ -3011,5 +3013,31 @@ std::optional<FontAttributes> ArgumentCoder<FontAttributes>::decode(Decoder& dec
 
     return attributes;
 }
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+
+void ArgumentCoder<SerializedAttachmentData>::encode(IPC::Encoder& encoder, const WebCore::SerializedAttachmentData& data)
+{
+    encoder << data.identifier << data.mimeType << IPC::SharedBufferDataReference { data.data.get() };
+}
+
+std::optional<SerializedAttachmentData> ArgumentCoder<WebCore::SerializedAttachmentData>::decode(IPC::Decoder& decoder)
+{
+    String identifier;
+    if (!decoder.decode(identifier))
+        return std::nullopt;
+
+    String mimeType;
+    if (!decoder.decode(mimeType))
+        return std::nullopt;
+
+    IPC::DataReference data;
+    if (!decoder.decode(data))
+        return std::nullopt;
+
+    return {{ WTFMove(identifier), WTFMove(mimeType), WebCore::SharedBuffer::create(data.data(), data.size()) }};
+}
+
+#endif // ENABLE(ATTACHMENT_ELEMENT)
 
 } // namespace IPC

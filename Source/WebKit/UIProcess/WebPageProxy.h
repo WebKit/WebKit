@@ -231,6 +231,7 @@ class RemoteLayerTreeScrollingPerformanceData;
 class RemoteLayerTreeTransaction;
 class RemoteScrollingCoordinatorProxy;
 class SecKeyProxyStore;
+class SharedBufferDataReference;
 class UserData;
 class ViewSnapshot;
 class VisitedLinkStore;
@@ -1344,6 +1345,7 @@ public:
     RefPtr<API::Attachment> attachmentForIdentifier(const String& identifier) const;
     void insertAttachment(Ref<API::Attachment>&&, Function<void(CallbackBase::Error)>&&);
     void updateAttachmentAttributes(const API::Attachment&, Function<void(CallbackBase::Error)>&&);
+    void serializedAttachmentDataForIdentifiers(const Vector<String>&, Vector<WebCore::SerializedAttachmentData>&);
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)
@@ -1829,6 +1831,7 @@ private:
 #if ENABLE(ATTACHMENT_ELEMENT)
     void registerAttachmentIdentifierFromData(const String&, const String& contentType, const String& preferredFileName, const IPC::DataReference&);
     void registerAttachmentIdentifierFromFilePath(const String&, const String& contentType, const String& filePath);
+    void registerAttachmentsFromSerializedData(Vector<WebCore::SerializedAttachmentData>&&);
     void registerAttachmentIdentifier(const String&);
     void cloneAttachmentData(const String& fromIdentifier, const String& toIdentifier);
 

@@ -1,3 +1,21 @@
+2018-10-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] Attachment dropped from one web view to another is missing its file wrapper
+        https://bugs.webkit.org/show_bug.cgi?id=190530
+        <rdar://problem/45232149>
+
+        Reviewed by Tim Horton.
+
+        Add a test to verify that copying different types of attachments and pasting in a new web view inserts
+        attachments in the second web view that are backed by _WKAttachment objects, whose NSFileWrappers hold data that
+        is equivalent to the original file wrappers used to insert attachments in the first web view.
+
+        Existing API tests verify that when copying and pasting within a single web view, the pasted attachment element
+        is still backed by the same NSFileWrapper instance.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (TestWebKitAPI::TEST):
+
 2018-10-30  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] Remove obsolete code for Visual Studio Express in webkitdirs.pm

@@ -32,10 +32,13 @@
 #include "CachedResource.h"
 #include "Document.h"
 #include "DocumentLoader.h"
+#include "Editor.h"
+#include "EditorClient.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameSelection.h"
 #include "FrameTree.h"
+#include "HTMLAttachmentElement.h"
 #include "HTMLFrameElement.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLIFrameElement.h"
@@ -47,7 +50,10 @@
 #include "MemoryCache.h"
 #include "Page.h"
 #include "Range.h"
+#include "RuntimeEnabledFeatures.h"
+#include "SerializedAttachmentData.h"
 #include "Settings.h"
+#include "SharedBuffer.h"
 #include "markup.h"
 #include <wtf/ListHashSet.h>
 #include <wtf/RetainPtr.h>
@@ -464,6 +470,42 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(Range* range)
     return create(markupString, *frame, nodeList, nullptr);
 }
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+
+static void addSubresourcesForAttachmentElementsIfNecessary(Frame& frame, const Vector<Node*>& nodes, Vector<Ref<ArchiveResource>>& subresources)
+{
+    if (!RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled())
+        return;
+
+    Vector<String> identifiers;
+    for (auto* node : nodes) {
+        if (!is<HTMLAttachmentElement>(node))
+            continue;
+
+        auto uniqueIdentifier = downcast<HTMLAttachmentElement>(*node).uniqueIdentifier();
+        if (uniqueIdentifier.isEmpty())
+            continue;
+
+        identifiers.append(WTFMove(uniqueIdentifier));
+    }
+
+    if (identifiers.isEmpty())
+        return;
+
+    auto* editorClient = frame.editor().client();
+    if (!editorClient)
+        return;
+
+    auto frameName = frame.tree().uniqueName();
+    for (auto& data : editorClient->serializedAttachmentDataForIdentifiers(WTFMove(identifiers))) {
+        auto resourceURL = HTMLAttachmentElement::archiveResourceURL(data.identifier);
+        if (auto resource = ArchiveResource::create(data.data.ptr(), WTFMove(resourceURL), data.mimeType, { }, frameName))
+            subresources.append(resource.releaseNonNull());
+    }
+}
+
+#endif
+
 RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Frame& frame, const Vector<Node*>& nodes, WTF::Function<bool (Frame&)>&& frameFilter)
 {
     auto& response = frame.loader().documentLoader()->response();
@@ -527,6 +569,10 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Fr
             }
         }
     }
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+    addSubresourcesForAttachmentElementsIfNecessary(frame, nodes, subresources);
+#endif
 
     // If we are archiving the entire page, add any link icons that we have data for.
     if (!nodes.isEmpty() && nodes[0]->isDocumentNode()) {

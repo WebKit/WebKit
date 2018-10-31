@@ -41,6 +41,7 @@ class HTMLAttachmentElement final : public HTMLElement {
 public:
     static Ref<HTMLAttachmentElement> create(const QualifiedName&, Document&);
     static const String& getAttachmentIdentifier(HTMLImageElement&);
+    static URL archiveResourceURL(const String&);
 
     WEBCORE_EXPORT URL blobURL() const;
     WEBCORE_EXPORT File* file() const;

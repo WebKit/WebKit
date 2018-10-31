@@ -534,9 +534,11 @@ messages -> WebPageProxy {
     RegisterAttachmentIdentifierFromData(String identifier, String contentType, String preferredFileName, IPC::SharedBufferDataReference data)
     RegisterAttachmentIdentifierFromFilePath(String identifier, String contentType, String filePath)
     RegisterAttachmentIdentifier(String identifier)
+    registerAttachmentsFromSerializedData(Vector<WebCore::SerializedAttachmentData> data)
     CloneAttachmentData(String fromIdentifier, String toIdentifier)
     DidInsertAttachmentWithIdentifier(String identifier, String source, bool hasEnclosingImage)
     DidRemoveAttachmentWithIdentifier(String identifier)
+    SerializedAttachmentDataForIdentifiers(Vector<String> identifiers) -> (Vector<WebCore::SerializedAttachmentData> seralizedData) LegacySync
 #endif
 
 #if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)

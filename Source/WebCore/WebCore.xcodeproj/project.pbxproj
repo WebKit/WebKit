@@ -4889,6 +4889,7 @@
 		F49786881FF45FA500E060AB /* PasteboardItemInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = F49786871FF45FA500E060AB /* PasteboardItemInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F4BFB9851E1DDF9B00862C24 /* DumpEditingHistory.js in Copy Scripts */ = {isa = PBXBuildFile; fileRef = F48389831E1DDF2B0076B7EA /* DumpEditingHistory.js */; };
 		F4BFB9861E1DDF9B00862C24 /* EditingHistoryUtil.js in Copy Scripts */ = {isa = PBXBuildFile; fileRef = F48389841E1DDF2B0076B7EA /* EditingHistoryUtil.js */; };
+		F4D43D662188038B00ECECAC /* SerializedAttachmentData.h in Headers */ = {isa = PBXBuildFile; fileRef = F4D43D64218802E600ECECAC /* SerializedAttachmentData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F4E57EDC213F3F5F004EA98E /* FontAttributeChanges.h in Headers */ = {isa = PBXBuildFile; fileRef = F4E57EDA213F3F5F004EA98E /* FontAttributeChanges.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F4E57EE1213F434A004EA98E /* WebCoreNSFontManagerExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = F4E57EDF213F434A004EA98E /* WebCoreNSFontManagerExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F50664F8157F52DC00AC226F /* FormController.h in Headers */ = {isa = PBXBuildFile; fileRef = F50664F6157F52DC00AC226F /* FormController.h */; };
@@ -14798,6 +14799,7 @@
 		F48D2AA32159740D00C6752B /* ColorCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColorCocoa.h; sourceTree = "<group>"; };
 		F48D2AA42159740D00C6752B /* ColorCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ColorCocoa.mm; sourceTree = "<group>"; };
 		F49786871FF45FA500E060AB /* PasteboardItemInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PasteboardItemInfo.h; sourceTree = "<group>"; };
+		F4D43D64218802E600ECECAC /* SerializedAttachmentData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SerializedAttachmentData.h; sourceTree = "<group>"; };
 		F4E57EDA213F3F5F004EA98E /* FontAttributeChanges.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FontAttributeChanges.h; sourceTree = "<group>"; };
 		F4E57EDF213F434A004EA98E /* WebCoreNSFontManagerExtras.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebCoreNSFontManagerExtras.h; sourceTree = "<group>"; };
 		F4E57EE0213F434A004EA98E /* WebCoreNSFontManagerExtras.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreNSFontManagerExtras.mm; sourceTree = "<group>"; };
@@ -20621,6 +20623,7 @@
 				93309DBB099E64910056E581 /* ReplaceSelectionCommand.h */,
 				51405C86190B014400754F94 /* SelectionRectGatherer.cpp */,
 				51405C87190B014400754F94 /* SelectionRectGatherer.h */,
+				F4D43D64218802E600ECECAC /* SerializedAttachmentData.h */,
 				93309DC0099E64910056E581 /* SetNodeAttributeCommand.cpp */,
 				93309DC1099E64910056E581 /* SetNodeAttributeCommand.h */,
 				B8DBDB47130B0F8A00F5CDB1 /* SetSelectionCommand.cpp */,
@@ -30704,6 +30707,7 @@
 				415071581685067300C3C7B3 /* SelectorFilter.h in Headers */,
 				43107BE218CC19DE00CC18E8 /* SelectorPseudoTypeMap.h in Headers */,
 				E45322AC140CE267005A0F92 /* SelectorQuery.h in Headers */,
+				F4D43D662188038B00ECECAC /* SerializedAttachmentData.h in Headers */,
 				E18DF33518AAF12C00773E59 /* SerializedCryptoKeyWrap.h in Headers */,
 				077AF14018F4AE400001ED61 /* SerializedPlatformRepresentation.h in Headers */,
 				077AF14318F4B1BB0001ED61 /* SerializedPlatformRepresentationMac.h in Headers */,

@@ -49,6 +49,7 @@
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
+#include <WebCore/SerializedAttachmentData.h>
 #include <WebCore/SpellChecker.h>
 #include <WebCore/StyleProperties.h>
 #include <WebCore/TextIterator.h>
@@ -165,6 +166,11 @@ void WebEditorClient::registerAttachmentIdentifier(const String& identifier, con
     m_page->send(Messages::WebPageProxy::RegisterAttachmentIdentifierFromData(identifier, contentType, preferredFileName, { data }));
 }
 
+void WebEditorClient::registerAttachments(Vector<WebCore::SerializedAttachmentData>&& data)
+{
+    m_page->send(Messages::WebPageProxy::registerAttachmentsFromSerializedData(WTFMove(data)));
+}
+
 void WebEditorClient::registerAttachmentIdentifier(const String& identifier, const String& contentType, const String& filePath)
 {
     m_page->send(Messages::WebPageProxy::RegisterAttachmentIdentifierFromFilePath(identifier, contentType, filePath));
@@ -188,6 +194,13 @@ void WebEditorClient::didInsertAttachmentWithIdentifier(const String& identifier
 void WebEditorClient::didRemoveAttachmentWithIdentifier(const String& identifier)
 {
     m_page->send(Messages::WebPageProxy::DidRemoveAttachmentWithIdentifier(identifier));
+}
+
+Vector<SerializedAttachmentData> WebEditorClient::serializedAttachmentDataForIdentifiers(const Vector<String>& identifiers)
+{
+    Vector<WebCore::SerializedAttachmentData> serializedData;
+    m_page->sendSync(Messages::WebPageProxy::SerializedAttachmentDataForIdentifiers(identifiers), Messages::WebPageProxy::SerializedAttachmentDataForIdentifiers::Reply(serializedData));
+    return serializedData;
 }
 
 #endif

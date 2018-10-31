@@ -7900,6 +7900,15 @@ void WebPageProxy::registerAttachmentIdentifier(const String& identifier)
         m_attachmentIdentifierToAttachmentMap.set(identifier, ensureAttachment(identifier));
 }
 
+void WebPageProxy::registerAttachmentsFromSerializedData(Vector<WebCore::SerializedAttachmentData>&& data)
+{
+    for (auto& serializedData : data) {
+        auto identifier = WTFMove(serializedData.identifier);
+        if (!attachmentForIdentifier(identifier))
+            ensureAttachment(identifier)->updateFromSerializedRepresentation(WTFMove(serializedData.data), WTFMove(serializedData.mimeType));
+    }
+}
+
 void WebPageProxy::cloneAttachmentData(const String& fromIdentifier, const String& toIdentifier)
 {
     auto newAttachment = ensureAttachment(toIdentifier);
@@ -7923,6 +7932,21 @@ void WebPageProxy::invalidateAllAttachments()
         attachment->invalidate();
     }
     m_attachmentIdentifierToAttachmentMap.clear();
+}
+
+void WebPageProxy::serializedAttachmentDataForIdentifiers(const Vector<String>& identifiers, Vector<WebCore::SerializedAttachmentData>& serializedData)
+{
+    for (auto identifier : identifiers) {
+        auto attachment = attachmentForIdentifier(identifier);
+        if (!attachment)
+            continue;
+
+        auto data = attachment->createSerializedRepresentation();
+        if (!data)
+            continue;
+
+        serializedData.append({ identifier, attachment->mimeType(), data.releaseNonNull() });
+    }
 }
 
 #if !PLATFORM(COCOA)

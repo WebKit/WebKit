@@ -51,6 +51,7 @@
 #import "Page.h"
 #import "PublicURLManager.h"
 #import "RuntimeEnabledFeatures.h"
+#import "SerializedAttachmentData.h"
 #import "Settings.h"
 #import "SocketProvider.h"
 #import "TypedElementDescendantIterator.h"
@@ -274,6 +275,20 @@ static void replaceRichContentWithAttachments(Frame& frame, DocumentFragment& fr
             urlToResourceMap.set(url.string(), subresource.copyRef());
     }
 
+    Vector<SerializedAttachmentData> serializedAttachmentData;
+    for (auto& attachment : descendantsOfType<HTMLAttachmentElement>(fragment)) {
+        auto resourceURL = HTMLAttachmentElement::archiveResourceURL(attachment.uniqueIdentifier());
+        auto resourceEntry = urlToResourceMap.find(resourceURL.string());
+        if (resourceEntry == urlToResourceMap.end())
+            continue;
+
+        auto& resource = resourceEntry->value;
+        serializedAttachmentData.append({ attachment.uniqueIdentifier(), resource->mimeType(), resource->data() });
+    }
+
+    if (!serializedAttachmentData.isEmpty())
+        frame.editor().registerAttachments(WTFMove(serializedAttachmentData));
+
     Vector<Ref<Element>> elementsToRemove;
     Vector<AttachmentInsertionInfo> attachmentInsertionInfo;
     for (auto& image : descendantsOfType<HTMLImageElement>(fragment)) {
@@ -323,7 +338,7 @@ static void replaceRichContentWithAttachments(Frame& frame, DocumentFragment& fr
             if (is<HTMLImageElement>(originalElement.get()) && contentTypeIsSuitableForInlineImageRepresentation(info.contentType)) {
                 auto& image = downcast<HTMLImageElement>(originalElement.get());
                 image.setAttributeWithoutSynchronization(HTMLNames::srcAttr, DOMURL::createObjectURL(*frame.document(), Blob::create(info.data, info.contentType)));
-                image.setAttachmentElement(WTFMove(attachment));
+                image.setAttachmentElement(attachment.copyRef());
             } else {
                 attachment->updateAttributes(info.data->size(), info.contentType, info.fileName);
                 parent->replaceChild(attachment, WTFMove(originalElement));

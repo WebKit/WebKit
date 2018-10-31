@@ -85,8 +85,10 @@
 #include "ReplaceRangeWithTextCommand.h"
 #include "ReplaceSelectionCommand.h"
 #include "RuntimeEnabledFeatures.h"
+#include "SerializedAttachmentData.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
+#include "SharedBuffer.h"
 #include "SimplifyMarkupCommand.h"
 #include "SpellChecker.h"
 #include "SpellingCorrectionCommand.h"
@@ -4008,6 +4010,12 @@ void Editor::registerAttachmentIdentifier(const String& identifier, const String
 {
     if (auto* client = this->client())
         client->registerAttachmentIdentifier(identifier, contentType, filePath);
+}
+
+void Editor::registerAttachments(Vector<SerializedAttachmentData>&& data)
+{
+    if (auto* client = this->client())
+        client->registerAttachments(WTFMove(data));
 }
 
 void Editor::registerAttachmentIdentifier(const String& identifier)

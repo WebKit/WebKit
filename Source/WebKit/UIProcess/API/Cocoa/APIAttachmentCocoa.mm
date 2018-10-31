@@ -26,6 +26,7 @@
 #import "config.h"
 #import "APIAttachment.h"
 
+#import "PageClient.h"
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/SharedBuffer.h>
 #if PLATFORM(IOS_FAMILY)
@@ -33,6 +34,7 @@
 #else
 #import <CoreServices/CoreServices.h>
 #endif
+#import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 
 namespace API {
 
@@ -123,6 +125,35 @@ RefPtr<WebCore::SharedBuffer> Attachment::enclosingImageData() const
 bool Attachment::isEmpty() const
 {
     return !m_fileWrapper;
+}
+
+RefPtr<WebCore::SharedBuffer> Attachment::createSerializedRepresentation() const
+{
+    if (!m_fileWrapper || !m_webPage)
+        return nullptr;
+
+    NSData *serializedData = securelyArchivedDataWithRootObject(m_fileWrapper.get());
+    if (!serializedData)
+        return nullptr;
+
+    return WebCore::SharedBuffer::create(serializedData);
+}
+
+void Attachment::updateFromSerializedRepresentation(Ref<WebCore::SharedBuffer>&& serializedRepresentation, const WTF::String& contentType)
+{
+    if (!m_webPage)
+        return;
+
+    auto serializedData = serializedRepresentation->createNSData();
+    if (!serializedData)
+        return;
+
+    NSFileWrapper *fileWrapper = unarchivedObjectOfClassesFromData(m_webPage->pageClient().serializableFileWrapperClasses(), serializedData.get());
+    if (!fileWrapper)
+        return;
+
+    setFileWrapperAndUpdateContentType(fileWrapper, contentType);
+    m_webPage->updateAttachmentAttributes(*this, [] (auto) { });
 }
 
 } // namespace API

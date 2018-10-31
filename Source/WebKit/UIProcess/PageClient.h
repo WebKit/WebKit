@@ -45,6 +45,7 @@
 
 OBJC_CLASS CALayer;
 OBJC_CLASS NSFileWrapper;
+OBJC_CLASS NSSet;
 OBJC_CLASS _WKRemoteObjectRegistry;
 
 #if USE(APPKIT)
@@ -445,7 +446,8 @@ public:
     virtual void didInsertAttachment(API::Attachment&, const String& source) { }
     virtual void didRemoveAttachment(API::Attachment&) { }
 #if PLATFORM(COCOA)
-    virtual NSFileWrapper *allocFileWrapperInstance() { return nullptr; }
+    virtual NSFileWrapper *allocFileWrapperInstance() const { return nullptr; }
+    virtual NSSet *serializableFileWrapperClasses() const { return nullptr; }
 #endif
 #endif
 };

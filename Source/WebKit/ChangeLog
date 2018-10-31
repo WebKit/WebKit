@@ -1,3 +1,69 @@
+2018-10-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] Attachment dropped from one web view to another is missing its file wrapper
+        https://bugs.webkit.org/show_bug.cgi?id=190530
+        <rdar://problem/45232149>
+
+        Reviewed by Tim Horton.
+
+        See WebCore ChangeLog for more details.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<SerializedAttachmentData>::encode):
+        (IPC::ArgumentCoder<SerializedAttachmentData>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+
+        Add IPC encoding/decoding support for SerializedAttachmentData.
+
+        * UIProcess/API/APIAttachment.cpp:
+        (API::Attachment::createSerializedRepresentation const):
+        (API::Attachment::updateFromSerializedRepresentation):
+        * UIProcess/API/APIAttachment.h:
+        * UIProcess/API/Cocoa/APIAttachmentCocoa.mm:
+        (API::Attachment::createSerializedRepresentation const):
+
+        Add a method to serialize and return attachment info as a blob of data.
+
+        (API::Attachment::updateFromSerializedRepresentation):
+
+        Add a method to update the attachment, given a serialized blob of data. On Cocoa platforms, this fails
+        gracefully if the serialized data cannot be decoded.
+
+        * UIProcess/Cocoa/PageClientImplCocoa.h:
+        * UIProcess/Cocoa/PageClientImplCocoa.mm:
+        (WebKit::PageClientImplCocoa::allocFileWrapperInstance const):
+        (WebKit::PageClientImplCocoa::serializableFileWrapperClasses const):
+        (WebKit::PageClientImplCocoa::allocFileWrapperInstance): Deleted.
+
+        Add an additional hook to return the list of NSFileWrapper subclasses suitable for deserialization. This
+        array contains (at minimum) NSFileWrapper, but may additionally include a custom NSFileWrapper subclass, if
+        configured.
+
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::allocFileWrapperInstance const):
+        (WebKit::PageClient::serializableFileWrapperClasses const):
+        (WebKit::PageClient::allocFileWrapperInstance): Deleted.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::registerAttachmentsFromSerializedData):
+
+        Registers the given serialized attachment data, creating new _WKAttachment instances if necessary. Currently,
+        this does not update the file wrappers of existing _WKAttachments; we should revisit this in the future to see
+        if we can additionally update file wrappers for existing attachments, without breaking the case where the user
+        copies and pastes or drags and drops attachments within a single web view and the client expects _WKAttachment
+        instances to be reused.
+
+        (WebKit::WebPageProxy::serializedAttachmentDataForIdentifiers):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::registerAttachments):
+        (WebKit::WebEditorClient::serializedAttachmentDataForIdentifiers):
+
+        Implement a new IPC hook to fetch an array of serialized attachment data blobs, given a list of attachment
+        identifiers.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+
 2018-10-30  Chris Dumez  <cdumez@apple.com>
 
         [PSON] View gesture snapshot gets taken down early when process-swapping

@@ -164,6 +164,10 @@ class MediaSessionMetadata;
 struct MediaConstraints;
 #endif
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+struct SerializedAttachmentData;
+#endif
+
 #if ENABLE(INDEXED_DATABASE)
 using IDBKeyPath = Variant<String, Vector<String>>;
 #endif
@@ -719,6 +723,15 @@ template<> struct ArgumentCoder<WebCore::FontAttributes> {
     static void encode(Encoder&, const WebCore::FontAttributes&);
     static std::optional<WebCore::FontAttributes> decode(Decoder&);
 };
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+
+template<> struct ArgumentCoder<WebCore::SerializedAttachmentData> {
+    static void encode(Encoder&, const WebCore::SerializedAttachmentData&);
+    static std::optional<WebCore::SerializedAttachmentData> decode(Decoder&);
+};
+
+#endif // ENABLE(ATTACHMENT_ELEMENT)
 
 } // namespace IPC
 

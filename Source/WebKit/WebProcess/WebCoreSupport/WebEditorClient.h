@@ -63,10 +63,12 @@ private:
     void registerAttachmentIdentifier(const String&, const String& contentType, const String& preferredFileName, Ref<WebCore::SharedBuffer>&&) final;
     void registerAttachmentIdentifier(const String&, const String& contentType, const String& filePath) final;
     void registerAttachmentIdentifier(const String&) final;
+    void registerAttachments(Vector<WebCore::SerializedAttachmentData>&&) final;
     void cloneAttachmentData(const String& fromIdentifier, const String& toIdentifier) final;
     void didInsertAttachmentWithIdentifier(const String& identifier, const String& source, bool hasEnclosingImage) final;
     void didRemoveAttachmentWithIdentifier(const String& identifier) final;
     bool supportsClientSideAttachmentData() const final { return true; }
+    Vector<WebCore::SerializedAttachmentData> serializedAttachmentDataForIdentifiers(const Vector<String>&) final;
 #endif
 
     void didBeginEditing() final;

@@ -1,3 +1,57 @@
+2018-10-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] Attachment dropped from one web view to another is missing its file wrapper
+        https://bugs.webkit.org/show_bug.cgi?id=190530
+        <rdar://problem/45232149>
+
+        Reviewed by Tim Horton.
+
+        Add support for copying and pasting attachment elements across web views by encoding and adding file wrapper
+        data as subresources in the web archive when writing selected web content to the pasteboard, and then decoding
+        and creating NSFileWrappers upon reading web content.
+
+        Test: WKAttachmentTests.CopyAndPasteBetweenWebViews
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/Editor.cpp:
+        (WebCore::Editor::registerAttachments):
+        * editing/Editor.h:
+
+        Add registerAttachments(), which registers _WKAttachments in the UI process given a list of
+        SerializedAttachmentData. This behaves similarly to registerAttachmentIdentifiers(), but differs in that (1) it
+        sends serialized file wrapper data, and (2) it sends a list of serialized attachments, rather than information
+        about just a single attachment.
+
+        * editing/SerializedAttachmentData.h:
+
+        Introduce SerializedAttachmentData, a struct containing information needed to serialize and deserialize an
+        attachment. These are used both when writing attachment data to the pasteboard, and when consuming attachment
+        data upon paste.
+
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::replaceRichContentWithAttachments):
+
+        Add a step when pasting rich content with attachments, to collect and send serialized attachments to the client.
+        Also, drive-by fix: don't WTFMove() the Ref here if it's still going to be used below.
+
+        * html/HTMLAttachmentElement.cpp:
+        (WebCore::HTMLAttachmentElement::archiveResourceURL):
+        * html/HTMLAttachmentElement.h:
+
+        Add a static helper function to compute a URL that represents the data for the given attachment identifier, for
+        use in a web archive resource.
+
+        * loader/archive/cf/LegacyWebArchive.cpp:
+        (WebCore::addSubresourcesForAttachmentElementsIfNecessary):
+
+        Add a helper function to create and append ArchiveResources representing attachment element data when writing
+        attachments to the pasteboard via web archive data.
+
+        (WebCore::LegacyWebArchive::create):
+        * page/EditorClient.h:
+        (WebCore::EditorClient::registerAttachments):
+        (WebCore::EditorClient::serializedAttachmentDataForIdentifiers):
+
 2018-10-30  David Kilzer  <ddkilzer@apple.com>
 
         XSLTProcessor should limit max transform depth
