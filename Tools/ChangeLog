@@ -1,5 +1,20 @@
 2018-10-30  Fujii Hironori  <Hironori.Fujii@sony.com>
 
+        [Win] Remove obsolete code for Visual Studio Express in webkitdirs.pm
+        https://bugs.webkit.org/show_bug.cgi?id=190949
+
+        Reviewed by Alex Christensen.
+
+        Visual Studio 2017 Community is the alternative.
+
+        * Scripts/webkitdirs.pm: Remove $willUseVCExpressWhenBuilding variable.
+        (setupCygwinEnv): Remove obsolete code for Visual Studio Express.
+        (buildVisualStudioProject): Ditto.
+        (dieIfWindowsPlatformSDKNotInstalled): Deleted.
+        (usingVisualStudioExpress): Deleted.
+
+2018-10-30  Fujii Hironori  <Hironori.Fujii@sony.com>
+
         [Win][Direct2D] Support building DumpRenderTree for Direct2D
         https://bugs.webkit.org/show_bug.cgi?id=191093
         <rdar://problem/45685706>

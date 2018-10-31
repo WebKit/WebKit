@@ -166,7 +166,6 @@ my $msBuildInstallDir;
 my $vsVersion;
 my $windowsSourceDir;
 my $winVersion;
-my $willUseVCExpressWhenBuilding = 0;
 my $vsWhereFoundInstallation;
 
 # Defined in VCSUtils.
@@ -1896,20 +1895,6 @@ sub setupCygwinEnv()
 
     my $programFilesPath = programFilesPath();
     my $visualStudioPath = File::Spec->catfile(visualStudioInstallDir(), qw(Common7 IDE devenv.com));
-    if (!-e $visualStudioPath) {
-        # Visual Studio not found, try VC++ Express
-        $visualStudioPath = File::Spec->catfile(visualStudioInstallDir(), qw(Common7 IDE WDExpress.exe));
-        if (! -e $visualStudioPath) {
-            print "*************************************************************\n";
-            print "Cannot find '$visualStudioPath'\n";
-            print "Please execute the file 'vcvars32.bat' from\n";
-            print "your Visual Studio 2017 installation\n";
-            print "to setup the necessary environment variables.\n";
-            print "*************************************************************\n";
-            die;
-        }
-        $willUseVCExpressWhenBuilding = 1;
-    }
 
     print "Building results into: ", baseProductDir(), "\n";
     print "WEBKIT_OUTPUTDIR is set to: ", $ENV{"WEBKIT_OUTPUTDIR"}, "\n";
@@ -1930,37 +1915,6 @@ sub setupCygwinEnv()
     }
 }
 
-sub dieIfWindowsPlatformSDKNotInstalled
-{
-    my $registry32Path = "/proc/registry/";
-    my $registry64Path = "/proc/registry64/";
-    my @windowsPlatformSDKRegistryEntries = (
-        "HKEY_LOCAL_MACHINE/SOFTWARE/Microsoft/Microsoft SDKs/Windows/v8.0A",
-        "HKEY_LOCAL_MACHINE/SOFTWARE/Microsoft/Microsoft SDKs/Windows/v8.0",
-        "HKEY_LOCAL_MACHINE/SOFTWARE/Microsoft/Microsoft SDKs/Windows/v7.1A",
-        "HKEY_LOCAL_MACHINE/SOFTWARE/Microsoft/Microsoft SDKs/Windows/v7.0A",
-        "HKEY_LOCAL_MACHINE/SOFTWARE/Microsoft/MicrosoftSDK/InstalledSDKs/D2FF9F89-8AA2-4373-8A31-C838BF4DBBE1",
-    );
-
-    # FIXME: It would be better to detect whether we are using 32- or 64-bit Windows
-    # and only check the appropriate entry. But for now we just blindly check both.
-    my $recommendedPlatformSDK = $windowsPlatformSDKRegistryEntries[0];
-
-    while (@windowsPlatformSDKRegistryEntries) {
-        my $windowsPlatformSDKRegistryEntry = shift @windowsPlatformSDKRegistryEntries;
-        return if (-e $registry32Path . $windowsPlatformSDKRegistryEntry) || (-e $registry64Path . $windowsPlatformSDKRegistryEntry);
-    }
-
-    print "*************************************************************\n";
-    print "Cannot find registry entry '$recommendedPlatformSDK'.\n";
-    print "Please download and install the Microsoft Windows SDK\n";
-    print "from <http://www.microsoft.com/en-us/download/details.aspx?id=8279>.\n\n";
-    print "Then follow step 2 in the Windows section of the \"Installing Developer\n";
-    print "Tools\" instructions at <http://www.webkit.org/building/tools.html>.\n";
-    print "*************************************************************\n";
-    die;
-}
-
 sub buildXCodeProject($$@)
 {
     my ($project, $clean, @extraOptions) = @_;
@@ -1972,12 +1926,6 @@ sub buildXCodeProject($$@)
 
     chomp($ENV{DSYMUTIL_NUM_THREADS} = `sysctl -n hw.activecpu`);
     return system "xcodebuild", "-project", "$project.xcodeproj", @extraOptions;
-}
-
-sub usingVisualStudioExpress()
-{
-    setupCygwinEnv();
-    return $willUseVCExpressWhenBuilding;
 }
 
 sub getMSBuildPlatformArgument()
@@ -1997,8 +1945,6 @@ sub buildVisualStudioProject
     setupCygwinEnv();
 
     my $config = configurationForVisualStudio();
-
-    dieIfWindowsPlatformSDKNotInstalled() if $willUseVCExpressWhenBuilding;
 
     chomp($project = `cygpath -w "$project"`) if isCygwin();
 
