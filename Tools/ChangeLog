@@ -1,3 +1,28 @@
+2018-10-30  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win][Direct2D] Support building DumpRenderTree for Direct2D
+        https://bugs.webkit.org/show_bug.cgi?id=191093
+        <rdar://problem/45685706>
+
+        Reviewed by Alex Christensen.
+
+        * DumpRenderTree/PixelDumpSupport.cpp: Update for Direct2D use.
+        * DumpRenderTree/PlatformWin.cmake: Add support for Direct2D build.
+        * DumpRenderTree/win/PixelDumpSupportDirect2D.cpp: Added.
+        (pixelDumpSystemFactory): Added.
+        (printPNG): Create stub.
+        (computeMD5HashStringForBitmapContext): Ditto.
+        (dumpBitmap): Ditto.
+        * DumpRenderTree/win/PixelDumpSupportDirect2D.h: Added.
+        (BitmapContext::createByAdoptingBitmapAndContext):
+        (BitmapContext::~BitmapContext):
+        (BitmapContext::platformContext const):
+        (BitmapContext::BitmapContext):
+        * DumpRenderTree/win/PixelDumpSupportWin.cpp:
+        (createBitmapContextFromWebView): Update to support Direct2D.
+        * MiniBrowser/win/MiniBrowserReplace.h: Drive-by fix: The old WebKit
+        logo is no longer available at this location. Switch to the new logo.
+
 2018-10-30  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Support alternate simctl list outputs

@@ -32,6 +32,8 @@
 #include "PixelDumpSupportCG.h"
 #elif USE(CAIRO)
 #include "PixelDumpSupportCairo.h"
+#elif USE(DIRECT2D)
+#include "PixelDumpSupportDirect2D.h"
 #endif
 
 #include "DumpRenderTree.h"
@@ -94,8 +96,20 @@ RefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool increme
     cairo_surface_t* image = cairo_image_surface_create_for_data((unsigned char*)info.bmBits, CAIRO_FORMAT_ARGB32, 
                                                       info.bmWidth, info.bmHeight, info.bmWidthBytes); 
     cairo_t* context = cairo_create(image); 
-    cairo_surface_destroy(image); 
+    cairo_surface_destroy(image);
+#elif USE(DIRECT2D)
+    auto targetProperties = D2D1::RenderTargetProperties();
+    targetProperties.pixelFormat = D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_IGNORE);
+
+    COMPtr<ID2D1DCRenderTarget> renderTarget;
+    HRESULT hr = pixelDumpSystemFactory()->CreateDCRenderTarget(&targetProperties, &renderTarget);
+    if (!SUCCEEDED(hr))
+        return nullptr;
+
+    hr = renderTarget->BindDC(memoryDC.get(), &frame);
+    if (!SUCCEEDED(hr))
+        return nullptr;
 #endif 
 
-   return BitmapContext::createByAdoptingBitmapAndContext(bitmap, context);
+    return BitmapContext::createByAdoptingBitmapAndContext(bitmap, renderTarget.get());
 }

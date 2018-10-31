@@ -41,6 +41,8 @@
 #include "PixelDumpSupportCG.h"
 #elif USE(CAIRO)
 #include "PixelDumpSupportCairo.h"
+#elif USE(DIRECT2D)
+#include "PixelDumpSupportDirect2D.h"
 #endif
 
 void dumpWebViewAsPixelsAndCompareWithExpected(const std::string& expectedHash)
