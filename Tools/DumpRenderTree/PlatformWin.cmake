@@ -1,5 +1,3 @@
-set(USE_DIRECT2D 1)
-
 set(DumpRenderTreeLib_SOURCES
     ${DumpRenderTree_SOURCES}
 
