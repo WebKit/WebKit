@@ -78,8 +78,10 @@ WI.CSSCompletions = class CSSCompletions
 
     // Static
 
-    static requestCSSCompletions()
+    static initializeCSSCompletions(target)
     {
+        console.assert(target.CSSAgent);
+
         if (WI.CSSCompletions.cssNameCompletions)
             return;
 
@@ -162,13 +164,11 @@ WI.CSSCompletions = class CSSCompletions
             WI.CSSKeywordCompletions.addPropertyCompletionValues("font", fontFamilyNames);
         }
 
-        if (window.CSSAgent) {
-            CSSAgent.getSupportedCSSProperties(propertyNamesCallback);
+        target.CSSAgent.getSupportedCSSProperties(propertyNamesCallback);
 
-            // COMPATIBILITY (iOS 9): CSS.getSupportedSystemFontFamilyNames did not exist.
-            if (CSSAgent.getSupportedSystemFontFamilyNames)
-                CSSAgent.getSupportedSystemFontFamilyNames(fontFamilyNamesCallback);
-        }
+        // COMPATIBILITY (iOS 9): CSS.getSupportedSystemFontFamilyNames did not exist.
+        if (CSSAgent.getSupportedSystemFontFamilyNames)
+            target.CSSAgent.getSupportedSystemFontFamilyNames(fontFamilyNamesCallback);
     }
 
     // Public

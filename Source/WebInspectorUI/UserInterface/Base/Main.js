@@ -88,17 +88,6 @@ WI.loaded = function()
     if (InspectorBackend.registerCanvasDispatcher)
         InspectorBackend.registerCanvasDispatcher(new WI.CanvasObserver);
 
-    // Main backend target.
-    WI.mainTarget = new WI.MainTarget;
-    WI.pageTarget = WI.sharedApp.debuggableType === WI.DebuggableType.Web ? WI.mainTarget : null;
-
-    // Enable agents.
-    if (window.InspectorAgent)
-        InspectorAgent.enable();
-
-    // Perform one-time tasks.
-    WI.CSSCompletions.requestCSSCompletions();
-
     // Listen for the ProvisionalLoadStarted event before registering for events so our code gets called before any managers or sidebars.
     // This lets us save a state cookie before any managers or sidebars do any resets that would affect state (namely TimelineManager).
     WI.Frame.addEventListener(WI.Frame.Event.ProvisionalLoadStarted, this._provisionalLoadStarted, this);
@@ -108,46 +97,38 @@ WI.loaded = function()
 
     // Create the singleton managers next, before the user interface elements, so the user interface can register
     // as event listeners on these managers.
-    this.targetManager = new WI.TargetManager;
-    this.branchManager = new WI.BranchManager;
-    this.networkManager = new WI.NetworkManager;
-    this.domStorageManager = new WI.DOMStorageManager;
-    this.databaseManager = new WI.DatabaseManager;
-    this.indexedDBManager = new WI.IndexedDBManager;
-    this.domManager = new WI.DOMManager;
-    this.cssManager = new WI.CSSManager;
-    this.consoleManager = new WI.ConsoleManager;
-    this.runtimeManager = new WI.RuntimeManager;
-    this.heapManager = new WI.HeapManager;
-    this.memoryManager = new WI.MemoryManager;
-    this.applicationCacheManager = new WI.ApplicationCacheManager;
-    this.timelineManager = new WI.TimelineManager;
-    this.debuggerManager = new WI.DebuggerManager;
-    this.layerTreeManager = new WI.LayerTreeManager;
-    this.workerManager = new WI.WorkerManager;
-    this.domDebuggerManager = new WI.DOMDebuggerManager;
-    this.canvasManager = new WI.CanvasManager;
-    this.auditManager = new WI.AuditManager;
-
-    // Enable the Console Agent after creating the singleton managers.
-    ConsoleAgent.enable();
-
-    // Tell the backend we are initialized after all our initialization messages have been sent.
-    setTimeout(function() {
-        // COMPATIBILITY (iOS 8): Inspector.initialized did not exist yet.
-        if (window.InspectorAgent && InspectorAgent.initialized)
-            InspectorAgent.initialized();
-    }, 0);
+    WI.managers = [
+        WI.targetManager = new WI.TargetManager,
+        WI.branchManager = new WI.BranchManager,
+        WI.networkManager = new WI.NetworkManager,
+        WI.domStorageManager = new WI.DOMStorageManager,
+        WI.databaseManager = new WI.DatabaseManager,
+        WI.indexedDBManager = new WI.IndexedDBManager,
+        WI.domManager = new WI.DOMManager,
+        WI.cssManager = new WI.CSSManager,
+        WI.consoleManager = new WI.ConsoleManager,
+        WI.runtimeManager = new WI.RuntimeManager,
+        WI.heapManager = new WI.HeapManager,
+        WI.memoryManager = new WI.MemoryManager,
+        WI.applicationCacheManager = new WI.ApplicationCacheManager,
+        WI.timelineManager = new WI.TimelineManager,
+        WI.debuggerManager = new WI.DebuggerManager,
+        WI.layerTreeManager = new WI.LayerTreeManager,
+        WI.workerManager = new WI.WorkerManager,
+        WI.domDebuggerManager = new WI.DOMDebuggerManager,
+        WI.canvasManager = new WI.CanvasManager,
+        WI.auditManager = new WI.AuditManager,
+    ];
 
     // Register for events.
-    this.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, this._debuggerDidPause, this);
-    this.debuggerManager.addEventListener(WI.DebuggerManager.Event.Resumed, this._debuggerDidResume, this);
-    this.domManager.addEventListener(WI.DOMManager.Event.InspectModeStateChanged, this._inspectModeStateChanged, this);
-    this.domManager.addEventListener(WI.DOMManager.Event.DOMNodeWasInspected, this._domNodeWasInspected, this);
-    this.domStorageManager.addEventListener(WI.DOMStorageManager.Event.DOMStorageObjectWasInspected, this._domStorageWasInspected, this);
-    this.databaseManager.addEventListener(WI.DatabaseManager.Event.DatabaseWasInspected, this._databaseWasInspected, this);
-    this.networkManager.addEventListener(WI.NetworkManager.Event.MainFrameDidChange, this._mainFrameDidChange, this);
-    this.networkManager.addEventListener(WI.NetworkManager.Event.FrameWasAdded, this._frameWasAdded, this);
+    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, this._debuggerDidPause, this);
+    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Resumed, this._debuggerDidResume, this);
+    WI.domManager.addEventListener(WI.DOMManager.Event.InspectModeStateChanged, this._inspectModeStateChanged, this);
+    WI.domManager.addEventListener(WI.DOMManager.Event.DOMNodeWasInspected, this._domNodeWasInspected, this);
+    WI.domStorageManager.addEventListener(WI.DOMStorageManager.Event.DOMStorageObjectWasInspected, this._domStorageWasInspected, this);
+    WI.databaseManager.addEventListener(WI.DatabaseManager.Event.DatabaseWasInspected, this._databaseWasInspected, this);
+    WI.networkManager.addEventListener(WI.NetworkManager.Event.MainFrameDidChange, this._mainFrameDidChange, this);
+    WI.networkManager.addEventListener(WI.NetworkManager.Event.FrameWasAdded, this._frameWasAdded, this);
 
     WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
 
@@ -155,48 +136,32 @@ WI.loaded = function()
 
     // Create settings.
     this._showingSplitConsoleSetting = new WI.Setting("showing-split-console", false);
-
     this._openTabsSetting = new WI.Setting("open-tab-types", ["elements", "network", "debugger", "resources", "timeline", "storage", "canvas", "console"]);
     this._selectedTabIndexSetting = new WI.Setting("selected-tab-index", 0);
-
     this.showShadowDOMSetting = new WI.Setting("show-shadow-dom", false);
-
-    // COMPATIBILITY (iOS 8): Page.enableTypeProfiler did not exist.
     this.showJavaScriptTypeInformationSetting = new WI.Setting("show-javascript-type-information", false);
     this.showJavaScriptTypeInformationSetting.addEventListener(WI.Setting.Event.Changed, this._showJavaScriptTypeInformationSettingChanged, this);
-    if (this.showJavaScriptTypeInformationSetting.value && window.RuntimeAgent && RuntimeAgent.enableTypeProfiler)
-        RuntimeAgent.enableTypeProfiler();
-
     this.enableControlFlowProfilerSetting = new WI.Setting("enable-control-flow-profiler", false);
     this.enableControlFlowProfilerSetting.addEventListener(WI.Setting.Event.Changed, this._enableControlFlowProfilerSettingChanged, this);
-    if (this.enableControlFlowProfilerSetting.value && window.RuntimeAgent && RuntimeAgent.enableControlFlowProfiler)
-        RuntimeAgent.enableControlFlowProfiler();
-
-    // COMPATIBILITY (iOS 8): Page.setShowPaintRects did not exist.
     this.showPaintRectsSetting = new WI.Setting("show-paint-rects", false);
-    if (this.showPaintRectsSetting.value && window.PageAgent && PageAgent.setShowPaintRects)
-        PageAgent.setShowPaintRects(true);
-
-    this.printStylesEnabled = false;
-
-    // COMPATIBILITY (iOS 10.3): Network.setDisableResourceCaching did not exist.
     this.resourceCachingDisabledSetting = new WI.Setting("disable-resource-caching", false);
-    if (window.NetworkAgent && NetworkAgent.setResourceCachingDisabled) {
-        if (this.resourceCachingDisabledSetting.value)
-            NetworkAgent.setResourceCachingDisabled(true);
-        this.resourceCachingDisabledSetting.addEventListener(WI.Setting.Event.Changed, this._resourceCachingDisabledSettingChanged, this);
-    }
+    this.resourceCachingDisabledSetting.addEventListener(WI.Setting.Event.Changed, this._resourceCachingDisabledSettingChanged, this);
 
+    // State.
+    this.printStylesEnabled = false;
     this.setZoomFactor(WI.settings.zoomFactor.value);
-
-    this.mouseCoords = {
-        x: 0,
-        y: 0
-    };
-
+    this.mouseCoords = {x: 0, y: 0};
     this.visible = false;
-
     this._windowKeydownListeners = [];
+
+    // Targets.
+    WI.mainTarget = new WI.MainTarget;
+    WI.mainTarget.initialize();
+    WI.pageTarget = WI.sharedApp.debuggableType === WI.DebuggableType.Web ? WI.mainTarget : null;
+
+    // Post-target initialization.
+    WI.targetManager.initializeMainTarget();
+    WI.runtimeManager.activeExecutionContext = WI.mainTarget.executionContext;
 };
 
 WI.contentLoaded = function()
@@ -519,6 +484,19 @@ WI.contentLoaded = function()
         this.runBootstrapOperations();
 };
 
+WI.performOneTimeFrontendInitializationsUsingTarget = function(target)
+{
+    if (!WI.__didPerformConsoleInitialization && target.ConsoleAgent) {
+        WI.__didPerformConsoleInitialization = true;
+        WI.consoleManager.initializeLogChannels(target);
+    }
+
+    if (!WI.__didPerformCSSInitialization && target.CSSAgent) {
+        WI.__didPerformCSSInitialization = true;
+        WI.CSSCompletions.initializeCSSCompletions(target);
+    }
+};
+
 WI.isTabTypeAllowed = function(tabType)
 {
     let tabClass = this._knownTabClassesByType.get(tabType);
@@ -682,7 +660,8 @@ WI.activateExtraDomains = function(domains)
 {
     this.notifications.dispatchEventToListeners(WI.Notification.ExtraDomainsActivated, {domains});
 
-    WI.CSSCompletions.requestCSSCompletions();
+    if (WI.mainTarget && WI.mainTarget.CSSAgent)
+        WI.CSSCompletions.initializeCSSCompletions(WI.assumingMainTarget());
 
     this._updateReloadToolbarButton();
     this._updateDownloadToolbarButton();
@@ -2703,7 +2682,7 @@ WI.reportInternalError = function(errorOrString, details = {})
 
 Object.defineProperty(WI, "targets",
 {
-    get() { return this.targetManager.targets; }
+    get() { return WI.targetManager.targets; }
 });
 
 // Many places assume the main target because they cannot yet be

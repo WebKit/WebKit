@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// FIXME: CanvasManager lacks advanced multi-target support. (Canvases per-target)
+
 WI.CanvasManager = class CanvasManager extends WI.Object
 {
     constructor()
@@ -34,9 +36,14 @@ WI.CanvasManager = class CanvasManager extends WI.Object
         this._canvasIdentifierMap = new Map;
         this._shaderProgramIdentifierMap = new Map;
         this._importedRecordings = new Set;
+    }
 
-        if (window.CanvasAgent)
-            CanvasAgent.enable();
+    // Target
+
+    initializeTarget(target)
+    {
+        if (target.CanvasAgent)
+            target.CanvasAgent.enable();
     }
 
     // Public

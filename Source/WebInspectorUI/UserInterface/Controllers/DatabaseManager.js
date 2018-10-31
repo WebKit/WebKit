@@ -24,18 +24,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// FIXME: DatabaseManager lacks advanced multi-target support. (DataBase per-target)
+
 WI.DatabaseManager = class DatabaseManager extends WI.Object
 {
     constructor()
     {
         super();
 
-        if (window.DatabaseAgent)
-            DatabaseAgent.enable();
-
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
 
         this.initialize();
+    }
+
+    // Target
+
+    initializeTarget(target)
+    {
+        if (target.DatabaseAgent)
+            target.DatabaseAgent.enable();
     }
 
     // Public

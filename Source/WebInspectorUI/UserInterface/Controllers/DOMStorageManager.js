@@ -24,19 +24,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// FIXME: DOMStorageManager lacks advanced multi-target support. (DOMStorage per-target)
+
 WI.DOMStorageManager = class DOMStorageManager extends WI.Object
 {
     constructor()
     {
         super();
 
-        if (window.DOMStorageAgent)
-            DOMStorageAgent.enable();
-
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
         WI.Frame.addEventListener(WI.Frame.Event.SecurityOriginDidChange, this._securityOriginDidChange, this);
 
         this.initialize();
+    }
+
+    // Target
+
+    initializeTarget(target)
+    {
+        if (target.DOMStorageAgent)
+            target.DOMStorageAgent.enable();
     }
 
     // Public

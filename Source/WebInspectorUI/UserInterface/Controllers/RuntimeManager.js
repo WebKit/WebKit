@@ -29,12 +29,24 @@ WI.RuntimeManager = class RuntimeManager extends WI.Object
     {
         super();
 
-        // Enable the RuntimeAgent to receive notification of execution contexts.
-        RuntimeAgent.enable();
-
-        this._activeExecutionContext = WI.mainTarget.executionContext;
+        this._activeExecutionContext = null;
 
         WI.Frame.addEventListener(WI.Frame.Event.ExecutionContextsCleared, this._frameExecutionContextsCleared, this);
+    }
+
+    // Target
+
+    initializeTarget(target)
+    {
+        target.RuntimeAgent.enable();
+
+        // COMPATIBILITY (iOS 8): Runtime.enableTypeProfiler did not exist.
+        if (WI.showJavaScriptTypeInformationSetting && WI.showJavaScriptTypeInformationSetting.value && RuntimeAgent.enableTypeProfiler)
+            target.RuntimeAgent.enableTypeProfiler();
+
+        // COMPATIBILITY (iOS 10): Runtime.enableControlFlowProfiler did not exist
+        if (WI.enableControlFlowProfilerSetting && WI.enableControlFlowProfilerSetting.value && RuntimeAgent.enableControlFlowProfiler)
+            target.RuntimeAgent.enableControlFlowProfiler();
     }
 
     // Public

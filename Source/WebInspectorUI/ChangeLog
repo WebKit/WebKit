@@ -1,3 +1,130 @@
+2018-10-31  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Separate target initialization from frontend initialization
+        https://bugs.webkit.org/show_bug.cgi?id=191052
+        <rdar://problem/45658384>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Base/Main.js:
+        (WI.loaded):
+        (WI.performOneTimeFrontendInitializationsUsingTarget):
+        Create the targets after the rest of frontend initialization. This is a step
+        toward a frontend opening and being told about multiple targets instead of
+        knowing in advance a single target it is connected to. All backend
+        messages during frontend initialization now happen with an explicit target.
+
+        * UserInterface/Controllers/ApplicationCacheManager.js:
+        (WI.ApplicationCacheManager):
+        (WI.ApplicationCacheManager.prototype.initializeTarget):
+        (WI.ApplicationCacheManager.prototype.initialize):
+        * UserInterface/Controllers/CSSManager.js:
+        (WI.CSSManager):
+        (WI.CSSManager.prototype.initializeTarget):
+        * UserInterface/Controllers/CanvasManager.js:
+        (WI.CanvasManager):
+        (WI.CanvasManager.prototype.initializeTarget):
+        * UserInterface/Controllers/ConsoleManager.js:
+        (WI.ConsoleManager):
+        (WI.ConsoleManager.prototype.initializeLogChannels):
+        * UserInterface/Controllers/DOMManager.js:
+        (WI.DOMManager):
+        (WI.DOMManager.prototype.initializeTarget):
+        * UserInterface/Controllers/DOMStorageManager.js:
+        (WI.DOMStorageManager):
+        (WI.DOMStorageManager.prototype.initializeTarget):
+        * UserInterface/Controllers/DatabaseManager.js:
+        (WI.DatabaseManager):
+        (WI.DatabaseManager.prototype.initializeTarget):
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WI.DebuggerManager):
+        (WI.DebuggerManager.prototype.initializeTarget):
+        (WI.DebuggerManager.restoreBreakpointsSoon): Deleted.
+        * UserInterface/Controllers/HeapManager.js:
+        (WI.HeapManager.prototype.initializeTarget):
+        * UserInterface/Controllers/IndexedDBManager.js:
+        (WI.IndexedDBManager):
+        (WI.IndexedDBManager.prototype.initializeTarget):
+        * UserInterface/Controllers/LayerTreeManager.js:
+        (WI.LayerTreeManager.prototype.initializeTarget):
+        * UserInterface/Controllers/MemoryManager.js:
+        (WI.MemoryManager.prototype.initializeTarget):
+        * UserInterface/Controllers/NetworkManager.js:
+        (WI.NetworkManager):
+        (WI.NetworkManager.prototype.initializeTarget):
+        * UserInterface/Controllers/RuntimeManager.js:
+        (WI.RuntimeManager):
+        (WI.RuntimeManager.prototype.initializeTarget):
+        * UserInterface/Controllers/TargetManager.js:
+        (WI.TargetManager):
+        (WI.TargetManager.prototype.initializeTargetsWithMainTarget):
+        * UserInterface/Controllers/TimelineManager.js:
+        (WI.TimelineManager):
+        (WI.TimelineManager.prototype.initializeTarget):
+        (WI.TimelineManager.prototype.set enabledTimelineTypes):
+        (WI.TimelineManager.prototype._updateAutoCaptureInstruments):
+        * UserInterface/Controllers/WorkerManager.js:
+        (WI.WorkerManager):
+        (WI.WorkerManager.prototype.initializeTarget):
+        Move Target initialization out of the constructor into a top level
+        `initializeTarget` function. This will be expected to be called
+        by any target that the frontend connects to.
+
+        (WI.DebuggerManager.prototype._pauseForInternalScriptsDidChange):
+        Drive-by fix. Update all targets if the setting changes.
+
+        (WI.WorkerManager.prototype.workerCreated):
+        Call initialize on the new target.
+
+        * UserInterface/Models/CSSCompletions.js:
+        (WI.CSSCompletions.initializeCSSCompletions):
+        (WI.CSSCompletions.requestCSSCompletions): Deleted.
+        Rename requestCSSCompletions to initializeCSSCompletions to try
+        and standardize on "initialize" being used for most frontend one
+        time initialization tasks. This being one such operation that
+        only needs to be performed once on a target that supports it.
+
+        * UserInterface/Protocol/Target.js:
+        (WI.Target):
+        (WI.Target.prototype.initialize):
+        Perform explicit target initialization, such as initializing
+        the state of all backend domains / agents. This is done by asking
+        each of the managers to do initialization work for this target.
+
+        (WI.Target.prototype.get ApplicationCacheAgent):
+        (WI.Target.prototype.get CSSAgent):
+        (WI.Target.prototype.get CanvasAgent):
+        (WI.Target.prototype.get ConsoleAgent):
+        (WI.Target.prototype.get DOMAgent):
+        (WI.Target.prototype.get DOMDebuggerAgent):
+        (WI.Target.prototype.get DOMStorageAgent):
+        (WI.Target.prototype.get DatabaseAgent):
+        (WI.Target.prototype.get DebuggerAgent):
+        (WI.Target.prototype.get HeapAgent):
+        (WI.Target.prototype.get IndexedDBAgent):
+        (WI.Target.prototype.get InspectorAgent):
+        (WI.Target.prototype.get LayerTreeAgent):
+        (WI.Target.prototype.get MemoryAgent):
+        (WI.Target.prototype.get NetworkAgent):
+        (WI.Target.prototype.get PageAgent):
+        (WI.Target.prototype.get RecordingAgent):
+        (WI.Target.prototype.get RuntimeAgent):
+        (WI.Target.prototype.get ScriptProfilerAgent):
+        (WI.Target.prototype.get ServiceWorkerAgent):
+        (WI.Target.prototype.get TargetAgent):
+        (WI.Target.prototype.get TimelineAgent):
+        (WI.Target.prototype.get WorkerAgent):
+        Accessors for all of the agents on a Target.
+
+        * UserInterface/Protocol/WorkerTarget.js:
+        (WI.WorkerTarget):
+        This is now automatically done in the base class.
+
+        * UserInterface/Test/Test.js:
+        (WI.loaded):
+        (WI.performOneTimeFrontendInitializationsUsingTarget):
+        New necessary top level hooks, and initialize more like Main.js.
+
 2018-10-31  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Audit: show metadata for results

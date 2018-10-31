@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// FIXME: NetworkManager lacks advanced multi-target support. (Network.loadResource invocations per-target)
+
 WI.NetworkManager = class NetworkManager extends WI.Object
 {
     constructor()
@@ -40,19 +42,37 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         this._sourceMapURLMap = new Map;
         this._downloadingSourceMaps = new Set;
 
-        if (window.PageAgent) {
-            PageAgent.enable();
-            PageAgent.getResourceTree(this._processMainFrameResourceTreePayload.bind(this));
-        }
-
-        if (window.ServiceWorkerAgent)
-            ServiceWorkerAgent.getInitializationInfo(this._processServiceWorkerConfiguration.bind(this));
-
-        if (window.NetworkAgent)
-            NetworkAgent.enable();
-
         WI.notifications.addEventListener(WI.Notification.ExtraDomainsActivated, this._extraDomainsActivated, this);
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._handleFrameMainResourceDidChange, this);
+    }
+
+    // Target
+
+    initializeTarget(target)
+    {
+        if (target.PageAgent) {
+            target.PageAgent.enable();
+            target.PageAgent.getResourceTree(this._processMainFrameResourceTreePayload.bind(this));
+        }
+
+        // FIXME: ServiceWorkerAgent should only be exposed in the "serviceworker" target type.
+        // Currently it is exposed to "web" targets. Work around this by only using the
+        // ServiceWorker domain if there is no Page domain.
+        if (target.ServiceWorkerAgent && !target.PageAgent)
+            target.ServiceWorkerAgent.getInitializationInfo(this._processServiceWorkerConfiguration.bind(this));
+
+        if (target.NetworkAgent) {
+            target.NetworkAgent.enable();
+
+            // COMPATIBILITY (iOS 10.3): Network.setDisableResourceCaching did not exist.
+            if (NetworkAgent.setResourceCachingDisabled) {
+                if (WI.resourceCachingDisabledSetting && WI.resourceCachingDisabledSetting.value)
+                    target.NetworkAgent.setResourceCachingDisabled(true);
+            }
+        }
+
+        if (target.type === WI.Target.Type.Worker)
+            this.adoptOrphanedResourcesForTarget(target);
     }
 
     // Public

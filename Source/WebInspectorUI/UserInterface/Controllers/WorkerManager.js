@@ -30,9 +30,14 @@ WI.WorkerManager = class WorkerManager extends WI.Object
         super();
 
         this._connections = new Map;
+    }
 
-        if (window.WorkerAgent)
-            WorkerAgent.enable();
+    // Target
+
+    initializeTarget(target)
+    {
+        if (target.WorkerAgent)
+            target.WorkerAgent.enable();
     }
 
     // Public
@@ -41,6 +46,8 @@ WI.WorkerManager = class WorkerManager extends WI.Object
     {
         let connection = new InspectorBackend.WorkerConnection(workerId);
         let workerTarget = new WI.WorkerTarget(workerId, url, connection);
+        workerTarget.initialize();
+
         WI.targetManager.addTarget(workerTarget);
 
         this._connections.set(workerId, connection);

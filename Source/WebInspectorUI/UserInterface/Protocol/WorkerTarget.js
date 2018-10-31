@@ -29,25 +29,7 @@ WI.WorkerTarget = class WorkerTarget extends WI.Target
     {
         super(workerId, name, WI.Target.Type.Worker, connection);
 
-        WI.networkManager.adoptOrphanedResourcesForTarget(this);
-
-        if (this.RuntimeAgent) {
-            this._executionContext = new WI.ExecutionContext(this, WI.RuntimeManager.TopLevelExecutionContextIdentifier, this.displayName, false, null);
-            this.RuntimeAgent.enable();
-            if (WI.showJavaScriptTypeInformationSetting && WI.showJavaScriptTypeInformationSetting.value)
-                this.RuntimeAgent.enableTypeProfiler();
-            if (WI.enableControlFlowProfilerSetting && WI.enableControlFlowProfilerSetting.value)
-                this.RuntimeAgent.enableControlFlowProfiler();
-        }
-
-        if (this.DebuggerAgent)
-            WI.debuggerManager.initializeTarget(this);
-
-        if (this.ConsoleAgent)
-            this.ConsoleAgent.enable();
-
-        if (this.HeapAgent)
-            this.HeapAgent.enable();
+        this._executionContext = new WI.ExecutionContext(this, WI.RuntimeManager.TopLevelContextExecutionIdentifier, this.displayName, false, null);
     }
 
     // Protected (Target)

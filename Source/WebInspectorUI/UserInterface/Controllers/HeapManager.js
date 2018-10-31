@@ -25,12 +25,12 @@
 
 WI.HeapManager = class HeapManager extends WI.Object
 {
-    constructor()
-    {
-        super();
+    // Target
 
-        if (window.HeapAgent)
-            HeapAgent.enable();
+    initializeTarget(target)
+    {
+        if (target.HeapAgent)
+            target.HeapAgent.enable();
     }
 
     // Public

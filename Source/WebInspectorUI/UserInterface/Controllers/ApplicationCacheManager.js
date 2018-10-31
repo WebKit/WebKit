@@ -23,14 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// FIXME: ApplicationCacheManager lacks advanced multi-target support. (ApplciationCache objects per-target)
+
 WI.ApplicationCacheManager = class ApplicationCacheManager extends WI.Object
 {
     constructor()
     {
         super();
-
-        if (window.ApplicationCacheAgent)
-            ApplicationCacheAgent.enable();
 
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
         WI.Frame.addEventListener(WI.Frame.Event.ChildFrameWasRemoved, this._childFrameWasRemoved, this);
@@ -40,14 +39,21 @@ WI.ApplicationCacheManager = class ApplicationCacheManager extends WI.Object
         this.initialize();
     }
 
+    // Target
+
+    initializeTarget(target)
+    {
+        if (target.ApplicationCacheAgent) {
+            target.ApplicationCacheAgent.enable();
+            target.ApplicationCacheAgent.getFramesWithManifests(this._framesWithManifestsLoaded.bind(this));
+        }
+    }
+
     // Public
 
     initialize()
     {
         this._applicationCacheObjects = {};
-
-        if (window.ApplicationCacheAgent)
-            ApplicationCacheAgent.getFramesWithManifests(this._framesWithManifestsLoaded.bind(this));
     }
 
     get applicationCacheObjects()

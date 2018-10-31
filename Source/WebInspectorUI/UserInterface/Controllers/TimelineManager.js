@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// FIXME: TimelineManager lacks advanced multi-target support. (Instruments/Profilers per-target)
+
 WI.TimelineManager = class TimelineManager extends WI.Object
 {
     constructor()
@@ -38,7 +40,6 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         WI.memoryManager.addEventListener(WI.MemoryManager.Event.MemoryPressure, this._memoryPressure, this);
 
         this._enabledTimelineTypesSetting = new WI.Setting("enabled-instrument-types", WI.TimelineManager.defaultTimelineTypes());
-        this._updateAutoCaptureInstruments();
 
         this._persistentNetworkTimeline = new WI.NetworkTimeline;
 
@@ -60,6 +61,13 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         this._lastDeadTimeTickle = 0;
 
         this.reset();
+    }
+
+    // Target
+
+    initializeTarget(target)
+    {
+        this._updateAutoCaptureInstruments([target]);
     }
 
     // Static
@@ -167,7 +175,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
     {
         this._enabledTimelineTypesSetting.value = x || [];
 
-        this._updateAutoCaptureInstruments();
+        this._updateAutoCaptureInstruments(WI.targets);
     }
 
     isCapturing()
@@ -1052,11 +1060,8 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         // FIXME: <https://webkit.org/b/152904> Web Inspector: Timeline UI should keep up with processing all incoming records
     }
 
-    _updateAutoCaptureInstruments()
+    _updateAutoCaptureInstruments(targets)
     {
-        if (!window.TimelineAgent)
-            return;
-
         if (!TimelineAgent.setInstruments)
             return;
 
@@ -1082,7 +1087,10 @@ WI.TimelineManager = class TimelineManager extends WI.Object
             }
         }
 
-        TimelineAgent.setInstruments([...instrumentSet]);
+        for (let target of targets) {
+            if (target.TimelineAgent)
+                target.TimelineAgent.setInstruments([...instrumentSet]);
+        }
     }
 };
 

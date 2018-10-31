@@ -30,6 +30,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// FIXME: DOMManager lacks advanced multi-target support. (DOMNodes per-target)
+
 WI.DOMManager = class DOMManager extends WI.Object
 {
     constructor()
@@ -46,8 +48,21 @@ WI.DOMManager = class DOMManager extends WI.Object
         this._breakpointsForEventListeners = new Map;
 
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
+    }
 
-        this.ensureDocument();
+    // Target
+
+    initializeTarget(target)
+    {
+        // FIXME: This should be improved when adding better DOM multi-target support since it is really per-target.
+        // This currently uses a setTimeout since it doesn't need to happen immediately, and DOMManager uses the
+        // global DOMAgent to request the document, so we want to make sure we've transitioned the global agents
+        // to this target if necessary.
+        if (target.DOMAgent) {
+            setTimeout(() => {
+                this.ensureDocument();
+            });
+        }
     }
 
     // Public
@@ -71,19 +86,17 @@ WI.DOMManager = class DOMManager extends WI.Object
 
         this._pendingDocumentRequestCallbacks = [callback];
 
-        function onDocumentAvailable(error, root)
-        {
-            if (!error)
-                this._setDocument(root);
+        if (window.DOMAgent) {
+            DOMAgent.getDocument((error, root) => {
+                if (!error)
+                    this._setDocument(root);
 
-            for (let callback of this._pendingDocumentRequestCallbacks)
-                callback(this._document);
+                for (let callback of this._pendingDocumentRequestCallbacks)
+                    callback(this._document);
 
-            this._pendingDocumentRequestCallbacks = null;
+                this._pendingDocumentRequestCallbacks = null;
+            });
         }
-
-        if (window.DOMAgent)
-            DOMAgent.getDocument(onDocumentAvailable.bind(this));
     }
 
     ensureDocument()

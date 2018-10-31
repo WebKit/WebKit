@@ -25,12 +25,12 @@
 
 WI.MemoryManager = class MemoryManager extends WI.Object
 {
-    constructor()
-    {
-        super();
+    // Target
 
-        if (window.MemoryAgent)
-            MemoryAgent.enable();
+    initializeTarget(target)
+    {
+        if (target.MemoryAgent)
+            target.MemoryAgent.enable();
     }
 
     // Public

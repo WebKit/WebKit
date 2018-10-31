@@ -44,38 +44,40 @@ WI.loaded = function()
     InspectorBackend.registerWorkerDispatcher(new WI.WorkerObserver);
     InspectorBackend.registerCanvasDispatcher(new WI.CanvasObserver);
 
-    WI.mainTarget = new WI.MainTarget;
-    WI.pageTarget = WI.sharedApp.debuggableType === WI.DebuggableType.Web ? WI.mainTarget : null;
-
     // Instantiate controllers used by tests.
-    this.targetManager = new WI.TargetManager;
-    this.networkManager = new WI.NetworkManager;
-    this.domStorageManager = new WI.DOMStorageManager;
-    this.domManager = new WI.DOMManager;
-    this.cssManager = new WI.CSSManager;
-    this.consoleManager = new WI.ConsoleManager;
-    this.runtimeManager = new WI.RuntimeManager;
-    this.heapManager = new WI.HeapManager;
-    this.memoryManager = new WI.MemoryManager;
-    this.timelineManager = new WI.TimelineManager;
-    this.debuggerManager = new WI.DebuggerManager;
-    this.layerTreeManager = new WI.LayerTreeManager;
-    this.workerManager = new WI.WorkerManager;
-    this.domDebuggerManager = new WI.DOMDebuggerManager;
-    this.canvasManager = new WI.CanvasManager;
-    this.auditManager = new WI.AuditManager;
+    WI.managers = [
+        WI.targetManager = new WI.TargetManager,
+        WI.networkManager = new WI.NetworkManager,
+        WI.domStorageManager = new WI.DOMStorageManager,
+        WI.domManager = new WI.DOMManager,
+        WI.cssManager = new WI.CSSManager,
+        WI.consoleManager = new WI.ConsoleManager,
+        WI.runtimeManager = new WI.RuntimeManager,
+        WI.heapManager = new WI.HeapManager,
+        WI.memoryManager = new WI.MemoryManager,
+        WI.timelineManager = new WI.TimelineManager,
+        WI.debuggerManager = new WI.DebuggerManager,
+        WI.layerTreeManager = new WI.LayerTreeManager,
+        WI.workerManager = new WI.WorkerManager,
+        WI.domDebuggerManager = new WI.DOMDebuggerManager,
+        WI.canvasManager = new WI.CanvasManager,
+        WI.auditManager = new WI.AuditManager,
+    ];
 
+    // Register for events.
     document.addEventListener("DOMContentLoaded", this.contentLoaded);
-
-    // Enable agents.
-    InspectorAgent.enable();
-    ConsoleAgent.enable();
-
-    // Perform one-time tasks.
-    WI.CSSCompletions.requestCSSCompletions();
 
     // Global settings.
     this.showShadowDOMSetting = new WI.Setting("show-shadow-dom", true);
+
+    // Targets.
+    WI.mainTarget = new WI.MainTarget;
+    WI.mainTarget.initialize();
+    WI.pageTarget = WI.sharedApp.debuggableType === WI.DebuggableType.Web ? WI.mainTarget : null;
+
+    // Post-target initialization.
+    WI.targetManager.initializeMainTarget();
+    WI.runtimeManager.activeExecutionContext = WI.mainTarget.executionContext;
 };
 
 WI.contentLoaded = function()
@@ -88,9 +90,22 @@ WI.contentLoaded = function()
     InspectorFrontendHost.loaded();
 };
 
+WI.performOneTimeFrontendInitializationsUsingTarget = function(target)
+{
+    if (!WI.__didPerformConsoleInitialization && target.ConsoleAgent) {
+        WI.__didPerformConsoleInitialization = true;
+        WI.consoleManager.initializeLogChannels(target);
+    }
+
+    if (!WI.__didPerformCSSInitialization && target.CSSAgent) {
+        WI.__didPerformCSSInitialization = true;
+        WI.CSSCompletions.initializeCSSCompletions(target);
+    }
+};
+
 Object.defineProperty(WI, "targets",
 {
-    get() { return this.targetManager.targets; }
+    get() { return WI.targetManager.targets; }
 });
 
 WI.assumingMainTarget = () => WI.mainTarget;

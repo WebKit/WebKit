@@ -29,8 +29,6 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
     {
         super();
 
-        DebuggerAgent.enable();
-
         WI.notifications.addEventListener(WI.Notification.DebugUIEnabledDidChange, this._debugUIEnabledDidChange, this);
 
         WI.Breakpoint.addEventListener(WI.Breakpoint.Event.DisplayLocationDidChange, this._breakpointDisplayLocationDidChange, this);
@@ -44,6 +42,8 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStopped, this._timelineCapturingStopped, this);
 
         WI.targetManager.addEventListener(WI.TargetManager.Event.TargetRemoved, this._targetRemoved, this);
+
+        WI.settings.pauseForInternalScripts.addEventListener(WI.Setting.Event.Changed, this._pauseForInternalScriptsDidChange);
 
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
 
@@ -78,7 +78,6 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
         this._internalWebKitScripts = [];
         this._targetDebuggerDataMap = new Map;
-        this._targetDebuggerDataMap.set(WI.mainTarget, new WI.DebuggerData(WI.mainTarget));
 
         // Used to detect deleted probe actions.
         this._knownProbeIdentifiersForBreakpoint = new Map;
@@ -95,37 +94,54 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             this._temporarilyDisabledBreakpointsRestoreSetting.value = null;
         }
 
-        DebuggerAgent.setBreakpointsActive(this._breakpointsEnabledSetting.value);
-        DebuggerAgent.setPauseOnExceptions(this._breakOnExceptionsState);
-
-        // COMPATIBILITY (iOS 10): DebuggerAgent.setPauseOnAssertions did not exist yet.
-        if (DebuggerAgent.setPauseOnAssertions)
-            DebuggerAgent.setPauseOnAssertions(this._assertionFailuresBreakpointEnabledSetting.value);
-
-        // COMPATIBILITY (iOS 10): Debugger.setAsyncStackTraceDepth did not exist yet.
-        if (DebuggerAgent.setAsyncStackTraceDepth)
-            DebuggerAgent.setAsyncStackTraceDepth(this._asyncStackTraceDepthSetting.value);
-
-        // COMPATIBILITY (iOS 12): DebuggerAgent.setPauseForInternalScripts did not exist yet.
-        if (DebuggerAgent.setPauseForInternalScripts) {
-            let updateBackendSetting = () => { DebuggerAgent.setPauseForInternalScripts(WI.settings.pauseForInternalScripts.value); };
-            WI.settings.pauseForInternalScripts.addEventListener(WI.Setting.Event.Changed, updateBackendSetting);
-
-            updateBackendSetting();
-        }
-
         this._ignoreBreakpointDisplayLocationDidChangeEvent = false;
 
-        function restoreBreakpointsSoon() {
+        // Ensure that all managers learn about restored breakpoints,
+        // regardless of their initialization order.
+        setTimeout(() => {
             this._restoringBreakpoints = true;
             for (let cookie of this._breakpointsSetting.value)
                 this.addBreakpoint(new WI.Breakpoint(cookie));
             this._restoringBreakpoints = false;
-        }
+        });
+    }
 
-        // Ensure that all managers learn about restored breakpoints,
-        // regardless of their initialization order.
-        setTimeout(restoreBreakpointsSoon.bind(this), 0);
+    // Target
+
+    initializeTarget(target)
+    {
+        let targetData = this.dataForTarget(target);
+
+        // Initialize global state.
+        target.DebuggerAgent.enable();
+        target.DebuggerAgent.setBreakpointsActive(this._breakpointsEnabledSetting.value);
+        target.DebuggerAgent.setPauseOnExceptions(this._breakOnExceptionsState);
+
+        // COMPATIBILITY (iOS 10): DebuggerAgent.setPauseOnAssertions did not exist yet.
+        if (DebuggerAgent.setPauseOnAssertions)
+            target.DebuggerAgent.setPauseOnAssertions(this._assertionFailuresBreakpointEnabledSetting.value);
+
+        // COMPATIBILITY (iOS 10): Debugger.setAsyncStackTraceDepth did not exist yet.
+        if (DebuggerAgent.setAsyncStackTraceDepth)
+            target.DebuggerAgent.setAsyncStackTraceDepth(this._asyncStackTraceDepthSetting.value);
+
+        // COMPATIBILITY (iOS 12): DebuggerAgent.setPauseForInternalScripts did not exist yet.
+        if (DebuggerAgent.setPauseForInternalScripts)
+            target.DebuggerAgent.setPauseForInternalScripts(WI.settings.pauseForInternalScripts.value);
+
+        if (this.paused)
+            targetData.pauseIfNeeded();
+
+        // Initialize breakpoints.
+        this._restoringBreakpoints = true;
+        for (let breakpoint of this._breakpoints) {
+            if (breakpoint.disabled)
+                continue;
+            if (!breakpoint.contentIdentifier)
+                continue;
+            this._setBreakpoint(breakpoint, target);
+        }
+        this._restoringBreakpoints = false;
     }
 
     // Public
@@ -537,33 +553,6 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
     nextBreakpointActionIdentifier()
     {
         return this._nextBreakpointActionIdentifier++;
-    }
-
-    initializeTarget(target)
-    {
-        let DebuggerAgent = target.DebuggerAgent;
-        let targetData = this.dataForTarget(target);
-
-        // Initialize global state.
-        DebuggerAgent.enable();
-        DebuggerAgent.setBreakpointsActive(this._breakpointsEnabledSetting.value);
-        DebuggerAgent.setPauseOnAssertions(this._assertionFailuresBreakpointEnabledSetting.value);
-        DebuggerAgent.setPauseOnExceptions(this._breakOnExceptionsState);
-        DebuggerAgent.setAsyncStackTraceDepth(this._asyncStackTraceDepthSetting.value);
-
-        if (this.paused)
-            targetData.pauseIfNeeded();
-
-        // Initialize breakpoints.
-        this._restoringBreakpoints = true;
-        for (let breakpoint of this._breakpoints) {
-            if (breakpoint.disabled)
-                continue;
-            if (!breakpoint.contentIdentifier)
-                continue;
-            this._setBreakpoint(breakpoint, target);
-        }
-        this._restoringBreakpoints = false;
     }
 
     // Protected (Called from WI.DebuggerObserver)
@@ -1163,6 +1152,15 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
         if (!this.paused && wasPaused)
             this.dispatchEventToListeners(WI.DebuggerManager.Event.Resumed);
+    }
+
+    _pauseForInternalScriptsDidChange(event)
+    {
+        // COMPATIBILITY (iOS 12): DebuggerAgent.setPauseForInternalScripts did not exist yet.
+        console.assert(DebuggerAgent.setPauseForInternalScripts);
+
+        for (let target of WI.targets)
+            target.DebuggerAgent.setPauseForInternalScripts(WI.settings.pauseForInternalScripts.value);
     }
 
     _mainResourceDidChange(event)

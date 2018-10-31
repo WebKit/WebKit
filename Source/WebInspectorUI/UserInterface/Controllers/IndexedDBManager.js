@@ -24,19 +24,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// FIXME: IndexedDBManager lacks advanced multi-target support. (IndexedDatabase per-target)
+
 WI.IndexedDBManager = class IndexedDBManager extends WI.Object
 {
     constructor()
     {
         super();
 
-        if (window.IndexedDBAgent)
-            IndexedDBAgent.enable();
-
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
         WI.Frame.addEventListener(WI.Frame.Event.SecurityOriginDidChange, this._securityOriginDidChange, this);
 
         this.initialize();
+    }
+
+    // Target
+
+    initializeTarget(target)
+    {
+        if (target.IndexedDBAgent)
+            target.IndexedDBAgent.enable();
     }
 
     // Public

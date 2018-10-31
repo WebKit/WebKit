@@ -23,14 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// FIXME: LayerTreeManager lacks advanced multi-target support. (Layers per-target)
+
 WI.LayerTreeManager = class LayerTreeManager extends WI.Object
 {
-    constructor()
-    {
-        super();
+    // Target
 
-        if (window.LayerTreeAgent)
-            LayerTreeAgent.enable();
+    initializeTarget(target)
+    {
+        if (target.LayerTreeAgent)
+            target.LayerTreeAgent.enable();
     }
 
     // Public

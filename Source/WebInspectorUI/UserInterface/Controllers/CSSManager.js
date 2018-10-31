@@ -23,14 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// FIXME: CSSManager lacks advanced multi-target support. (Stylesheets per-target)
+
 WI.CSSManager = class CSSManager extends WI.Object
 {
     constructor()
     {
         super();
-
-        if (window.CSSAgent)
-            CSSAgent.enable();
 
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
         WI.Frame.addEventListener(WI.Frame.Event.ResourceWasAdded, this._resourceAdded, this);
@@ -50,6 +49,14 @@ WI.CSSManager = class CSSManager extends WI.Object
         // COMPATIBILITY (iOS 9): Legacy backends did not send stylesheet
         // added/removed events and must be fetched manually.
         this._fetchedInitialStyleSheets = window.CSSAgent && window.CSSAgent.hasEvent("styleSheetAdded");
+    }
+
+    // Target
+
+    initializeTarget(target)
+    {
+        if (target.CSSAgent)
+            target.CSSAgent.enable();
     }
 
     // Static

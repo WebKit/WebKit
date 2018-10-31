@@ -29,9 +29,7 @@ WI.TargetManager = class TargetManager extends WI.Object
     {
         super();
 
-        console.assert(WI.mainTarget);
-
-        this._targets = new Set([WI.mainTarget]);
+        this._targets = new Set;
     }
 
     // Public
@@ -69,6 +67,12 @@ WI.TargetManager = class TargetManager extends WI.Object
         this._targets.delete(target);
 
         this.dispatchEventToListeners(WI.TargetManager.Event.TargetRemoved, {target});
+    }
+
+    initializeMainTarget()
+    {
+        console.assert(WI.mainTarget);
+        this._targets.add(WI.mainTarget);
     }
 };
 
