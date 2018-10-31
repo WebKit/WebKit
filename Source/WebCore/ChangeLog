@@ -1,5 +1,12 @@
 2018-10-31  Zalan Bujtas  <zalan@apple.com>
 
+        Missing from r237634
+
+        * layout/inlineformatting/InlineFormattingState.cpp:
+        (WebCore::Layout::InlineFormattingState::formattingContext):
+
+2018-10-31  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Do not pass LayoutState& to compute* and layout* functions
         https://bugs.webkit.org/show_bug.cgi?id=191100
 
