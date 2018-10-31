@@ -109,7 +109,8 @@ RefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool increme
     hr = renderTarget->BindDC(memoryDC.get(), &frame);
     if (!SUCCEEDED(hr))
         return nullptr;
+    auto context = renderTarget.get();
 #endif 
 
-    return BitmapContext::createByAdoptingBitmapAndContext(bitmap, renderTarget.get());
+    return BitmapContext::createByAdoptingBitmapAndContext(bitmap, context);
 }

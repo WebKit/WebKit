@@ -1,3 +1,16 @@
+2018-10-30  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][Direct2D] Support building DumpRenderTree for Direct2D
+        https://bugs.webkit.org/show_bug.cgi?id=191093
+        <rdar://problem/45685706>
+
+        Unreviewed build fix.
+
+        error C2065: 'renderTarget': undeclared identifier
+
+        * DumpRenderTree/win/PixelDumpSupportWin.cpp:
+        (createBitmapContextFromWebView): Restored the previous implementation.
+
 2018-10-30  Don Olmstead  <don.olmstead@sony.com>
 
         [PlayStation] Enable JavaScriptCore
