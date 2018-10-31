@@ -658,6 +658,8 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
 {
     ASSERT(m_drawingArea);
 
+    setSize(parameters.viewSize);
+
     if (m_shouldResetDrawingArea) {
         // Make sure we destroy the previous drawing area before constructing the new one as DrawingArea registers / unregisters
         // itself as an IPC::MesssageReceiver in its constructor / destructor.
@@ -673,6 +675,8 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
         m_shouldAttachDrawingAreaOnPageTransition = parameters.shouldDelayAttachingDrawingArea;
 #endif
     }
+
+    setViewLayoutSize(parameters.viewLayoutSize);
 
     if (m_activityState != parameters.activityState)
         setActivityState(parameters.activityState, ActivityStateChangeAsynchronous, Vector<CallbackID>());

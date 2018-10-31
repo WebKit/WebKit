@@ -1,3 +1,17 @@
+2018-10-30  Chris Dumez  <cdumez@apple.com>
+
+        [PSON] WebView renders with incorrect dimensions after back or forward
+        https://bugs.webkit.org/show_bug.cgi?id=191071
+        <rdar://problem/45058950>
+
+        Reviewed by Alex Christensen.
+
+        Make sure WebPage::reinitializeWebPage() updates the page's dimensions if needed using the
+        WebPageCreationParameters it is provided.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::reinitializeWebPage):
+
 2018-10-30  Dewei Zhu  <dewei_zhu@apple.com>
 
         Move 'ProcessSwapOnCrossSiteNavigationEnabled' to 'experimental' category.
