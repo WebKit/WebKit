@@ -1,3 +1,20 @@
+2018-10-31  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK][WPE] Remaining topPrivatelyControlledDomain() fixes
+        https://bugs.webkit.org/show_bug.cgi?id=191110
+
+        Reviewed by Michael Catanzaro.
+
+        Covered by existing tests.
+
+        Turns out that this method is expected to reject domains that
+        are not registrable. Also sync with the Mac implementation in
+        that given domains that are not all ASCII should be returned
+        back as is. This fixes the remaining Public Suffix API tests.
+
+        * platform/soup/PublicSuffixSoup.cpp:
+        (WebCore::topPrivatelyControlledDomain):
+
 2018-10-31  Antti Koivisto  <antti@apple.com>
 
         Remove LayerFlushScheduler

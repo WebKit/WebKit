@@ -45,6 +45,8 @@ String topPrivatelyControlledDomain(const String& domain)
 {
     if (domain.isEmpty())
         return String();
+    if (!domain.isAllASCII())
+        return domain;
 
     String lowercaseDomain = domain.convertToASCIILowercase();
 
@@ -57,10 +59,10 @@ String topPrivatelyControlledDomain(const String& domain)
     if (const char* baseDomain = soup_tld_get_base_domain(domainUTF8.data(), &error.outPtr()))
         return String::fromUTF8(baseDomain);
 
-    if (g_error_matches(error.get(), SOUP_TLD_ERROR, SOUP_TLD_ERROR_INVALID_HOSTNAME) || g_error_matches(error.get(), SOUP_TLD_ERROR, SOUP_TLD_ERROR_NOT_ENOUGH_DOMAINS))
+    if (g_error_matches(error.get(), SOUP_TLD_ERROR, SOUP_TLD_ERROR_INVALID_HOSTNAME) || g_error_matches(error.get(), SOUP_TLD_ERROR, SOUP_TLD_ERROR_NOT_ENOUGH_DOMAINS) || g_error_matches(error.get(), SOUP_TLD_ERROR, SOUP_TLD_ERROR_NO_BASE_DOMAIN))
         return String();
 
-    if (g_error_matches(error.get(), SOUP_TLD_ERROR, SOUP_TLD_ERROR_IS_IP_ADDRESS) || g_error_matches(error.get(), SOUP_TLD_ERROR, SOUP_TLD_ERROR_NO_BASE_DOMAIN))
+    if (g_error_matches(error.get(), SOUP_TLD_ERROR, SOUP_TLD_ERROR_IS_IP_ADDRESS))
         return domain;
 
     ASSERT_NOT_REACHED();
