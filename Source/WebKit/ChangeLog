@@ -1,5 +1,17 @@
 2018-10-30  Alexey Proskuryakov  <ap@apple.com>
 
+        Enable InstallAPI for iOS unconditionally
+        https://bugs.webkit.org/show_bug.cgi?id=191043
+        rdar://problem/32728423
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/Base.xcconfig: Enabled it. Added NSURLDownloadSPI.h as an
+        excluded header - WebKit doesn't export NSURLDownload, so the definition
+        shouldn't be processed by InstallAPI.
+
+2018-10-30  Alexey Proskuryakov  <ap@apple.com>
+
         Clean up some obsolete MAX_ALLOWED macros
         https://bugs.webkit.org/show_bug.cgi?id=190916
 
