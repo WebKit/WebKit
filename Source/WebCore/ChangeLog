@@ -1,5 +1,33 @@
 2018-10-31  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] The *FormattingState class should provide the *FormattingContext.
+        https://bugs.webkit.org/show_bug.cgi?id=191089
+
+        Reviewed by Antti Koivisto.
+
+        BlockFormattingState provides the BlockFormattingContext object, while InlineFormattingState provides the InlineFormattingContext.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::layoutOutOfFlowDescendants const):
+        * layout/FormattingState.h:
+        * layout/LayoutFormattingState.cpp:
+        (WebCore::Layout::LayoutState::layoutFormattingContextSubtree):
+        (WebCore::Layout::LayoutState::formattingContext const): Deleted.
+        * layout/LayoutFormattingState.h:
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layoutFormattingContextRoot const):
+        (WebCore::Layout::BlockFormattingContext::instrinsicWidthConstraints const):
+        * layout/blockformatting/BlockFormattingState.cpp:
+        (WebCore::Layout::BlockFormattingState::formattingContext const):
+        * layout/blockformatting/BlockFormattingState.h:
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::layoutFormattingContextRoot const):
+        * layout/inlineformatting/InlineFormattingState.cpp:
+        (WebCore::Layout::InlineFormattingState::formattingContext const):
+        * layout/inlineformatting/InlineFormattingState.h:
+
+2018-10-31  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Rename LayoutContext to LayoutState
         https://bugs.webkit.org/show_bug.cgi?id=191080
 

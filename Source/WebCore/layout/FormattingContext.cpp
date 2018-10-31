@@ -29,6 +29,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "DisplayBox.h"
+#include "FormattingState.h"
 #include "LayoutBox.h"
 #include "LayoutContainer.h"
 #include "LayoutDescendantIterator.h"
@@ -147,13 +148,12 @@ void FormattingContext::layoutOutOfFlowDescendants(LayoutState& layoutState, con
         auto& layoutBox = *outOfFlowBox;
 
         ASSERT(layoutBox.establishesFormattingContext());
-        auto formattingContext = layoutState.formattingContext(layoutBox);
 
         computeBorderAndPadding(layoutState, layoutBox);
         computeOutOfFlowHorizontalGeometry(layoutState, layoutBox);
 
         auto& formattingState = layoutState.createFormattingStateForFormattingRootIfNeeded(layoutBox);
-        formattingContext->layout(layoutState, formattingState);
+        formattingState.formattingContext(layoutBox)->layout(layoutState, formattingState);
 
         computeOutOfFlowVerticalGeometry(layoutState, layoutBox);
         layoutOutOfFlowDescendants(layoutState, layoutBox);

@@ -44,6 +44,12 @@ InlineFormattingState::~InlineFormattingState()
 {
 }
 
+std::unique_ptr<FormattingContext> InlineFormattingState::formattingContext(const Box& formattingContextRoot) const
+{
+    ASSERT(formattingContextRoot.establishesInlineFormattingContext());
+    return std::make_unique<InlineFormattingContext>(formattingContextRoot);
+}
+
 }
 }
 #endif

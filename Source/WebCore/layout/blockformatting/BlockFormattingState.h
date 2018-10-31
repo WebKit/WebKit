@@ -40,6 +40,8 @@ class BlockFormattingState : public FormattingState {
 public:
     BlockFormattingState(Ref<FloatingState>&&, const LayoutState&);
     virtual ~BlockFormattingState();
+
+    std::unique_ptr<FormattingContext> formattingContext(const Box& formattingContextRoot) const override;
 };
 
 }

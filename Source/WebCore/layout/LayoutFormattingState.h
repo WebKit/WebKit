@@ -75,8 +75,6 @@ public:
     void markNeedsUpdate(const Box&, OptionSet<UpdateType>);
     bool needsUpdate(const Box&) const;
 
-    std::unique_ptr<FormattingContext> formattingContext(const Box& formattingContextRoot) const;
-
     FormattingState& formattingStateForBox(const Box&) const;
     FormattingState& establishedFormattingState(const Box& formattingRoot) const;
     FormattingState& createFormattingStateForFormattingRootIfNeeded(const Box& formattingRoot);

@@ -81,8 +81,8 @@ void LayoutState::updateLayout()
 void LayoutState::layoutFormattingContextSubtree(const Box& layoutRoot)
 {
     RELEASE_ASSERT(layoutRoot.establishesFormattingContext());
-    auto formattingContext = this->formattingContext(layoutRoot);
     auto& formattingState = createFormattingStateForFormattingRootIfNeeded(layoutRoot);
+    auto formattingContext = formattingState.formattingContext(layoutRoot);
     formattingContext->layout(*this, formattingState);
     formattingContext->layoutOutOfFlowDescendants(*this, layoutRoot);
 }
@@ -154,18 +154,6 @@ FormattingState& LayoutState::createFormattingStateForFormattingRootIfNeeded(con
     }
 
     CRASH();
-}
-
-std::unique_ptr<FormattingContext> LayoutState::formattingContext(const Box& formattingContextRoot) const
-{
-    if (formattingContextRoot.establishesInlineFormattingContext())
-        return std::make_unique<InlineFormattingContext>(formattingContextRoot);
-
-    if (formattingContextRoot.establishesBlockFormattingContext())
-        return std::make_unique<BlockFormattingContext>(formattingContextRoot);
-
-    ASSERT_NOT_IMPLEMENTED_YET();
-    return nullptr;
 }
 
 }

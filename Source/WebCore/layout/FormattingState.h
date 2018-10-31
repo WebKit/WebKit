@@ -46,6 +46,8 @@ class FormattingState {
 public:
     virtual ~FormattingState();
 
+    virtual std::unique_ptr<FormattingContext>formattingContext(const Box& formattingContextRoot) const = 0;
+
     FloatingState& floatingState() const { return m_floatingState; }
 
     void markNeedsLayout(const Box&, StyleDiff);

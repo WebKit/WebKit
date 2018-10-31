@@ -42,6 +42,8 @@ public:
     InlineFormattingState(Ref<FloatingState>&&, const LayoutState&);
     virtual ~InlineFormattingState();
 
+    std::unique_ptr<FormattingContext> formattingContext(const Box& formattingContextRoot) const override;
+
     InlineContent& inlineContent() { return m_inlineContent; }
     // Temp
     InlineRuns& inlineRuns() { return m_inlineRuns; }

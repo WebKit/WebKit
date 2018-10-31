@@ -241,7 +241,8 @@ void InlineFormattingContext::layoutFormattingContextRoot(LayoutState& layoutSta
     computeWidthAndMargin();
 
     // Swich over to the new formatting context (the one that the root creates).
-    layoutState.formattingContext(layoutBox)->layout(layoutState, layoutState.createFormattingStateForFormattingRootIfNeeded(layoutBox));
+    auto& formattingState = layoutState.createFormattingStateForFormattingRootIfNeeded(layoutBox);
+    formattingState.formattingContext(layoutBox)->layout(layoutState, formattingState);
 
     // Come back and finalize the root's height and margin.
     computeHeightAndMargin();

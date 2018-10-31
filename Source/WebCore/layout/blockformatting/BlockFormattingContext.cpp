@@ -134,8 +134,8 @@ void BlockFormattingContext::layoutFormattingContextRoot(LayoutState& layoutStat
 
     precomputeVerticalPositionForFormattingRootIfNeeded(layoutState, layoutBox);
     // Swich over to the new formatting context (the one that the root creates).
-    auto formattingContext = layoutState.formattingContext(layoutBox);
     auto& formattingState = layoutState.createFormattingStateForFormattingRootIfNeeded(layoutBox);
+    auto formattingContext = formattingState.formattingContext(layoutBox);
     formattingContext->layout(layoutState, formattingState);
 
     // Come back and finalize the root's geometry.
@@ -383,7 +383,7 @@ FormattingContext::InstrinsicWidthConstraints BlockFormattingContext::instrinsic
                 instrinsicWidthConstraints = Geometry::instrinsicWidthConstraints(layoutState, childBox);
             // Is it a formatting context root?
             if (!instrinsicWidthConstraints && childBox.establishesFormattingContext())
-                instrinsicWidthConstraints = layoutState.formattingContext(childBox)->instrinsicWidthConstraints(layoutState, childBox);
+                instrinsicWidthConstraints = formattingStateForChildren.formattingContext(childBox)->instrinsicWidthConstraints(layoutState, childBox);
             // Go to the next sibling (and skip the descendants) if this box's min/max width is computed.
             if (instrinsicWidthConstraints) {
                 formattingStateForChildren.setInstrinsicWidthConstraints(childBox, *instrinsicWidthConstraints); 
