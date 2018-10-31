@@ -1,5 +1,14 @@
 2018-10-31  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Follow-up review comment to r237652.
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WI.DebuggerManager):
+
+2018-10-31  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Separate target initialization from frontend initialization
         https://bugs.webkit.org/show_bug.cgi?id=191052
         <rdar://problem/45658384>
