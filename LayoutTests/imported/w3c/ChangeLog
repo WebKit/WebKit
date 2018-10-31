@@ -1,3 +1,27 @@
+2018-10-31  Chris Dumez  <cdumez@apple.com>
+
+        Resync XHR Web Platform Tests from upstream 44dd29fb0d
+        https://bugs.webkit.org/show_bug.cgi?id=191116
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/xhr/getallresponseheaders-expected.txt:
+        * web-platform-tests/xhr/getallresponseheaders.htm:
+        * web-platform-tests/xhr/getresponseheader.any-expected.txt:
+        * web-platform-tests/xhr/getresponseheader.any.js:
+        (forEach.testValues.async_test.t.client.onload.t.step_func_done):
+        (async_test.t.client.onload.t.step_func_done): Deleted.
+        * web-platform-tests/xhr/getresponseheader.any.worker-expected.txt:
+        * web-platform-tests/xhr/resources/header-content-length-twice.asis: Added.
+        * web-platform-tests/xhr/resources/headers-double-empty.asis: Added.
+        * web-platform-tests/xhr/resources/headers-some-are-empty.asis: Added.
+        * web-platform-tests/xhr/resources/w3c-import.log:
+        * web-platform-tests/xhr/setrequestheader-combining.window-expected.txt: Added.
+        * web-platform-tests/xhr/setrequestheader-combining.window.html: Added.
+        * web-platform-tests/xhr/setrequestheader-combining.window.js: Added.
+        (test):
+        * web-platform-tests/xhr/w3c-import.log:
+
 2018-10-31  YUHAN WU  <yuhan_wu@apple.com>
 
         MediaRecorder should fire dataavailable event when all tracks are ended and stop() is called

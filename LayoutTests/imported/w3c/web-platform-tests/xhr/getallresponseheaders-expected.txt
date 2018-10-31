@@ -3,4 +3,7 @@ PASS XMLHttpRequest: getAllResponseHeaders()
 PASS XMLHttpRequest: getAllResponseHeaders() 1 
 PASS XMLHttpRequest: getAllResponseHeaders() 2 
 PASS XMLHttpRequest: getAllResponseHeaders() 3 
+PASS XMLHttpRequest: getAllResponseHeaders() 4 
+FAIL XMLHttpRequest: getAllResponseHeaders() 5 assert_equals: expected "heya: , \v\f, 1, , , 2\r\n" but got "heya: , , 1, , , 2\r\n"
+PASS XMLHttpRequest: getAllResponseHeaders() 6 
 

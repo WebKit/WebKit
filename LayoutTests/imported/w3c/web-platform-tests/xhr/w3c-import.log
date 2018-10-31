@@ -267,6 +267,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/xhr/setrequestheader-bogus-name.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/setrequestheader-bogus-value.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/setrequestheader-case-insensitive.htm
+/LayoutTests/imported/w3c/web-platform-tests/xhr/setrequestheader-combining.window.js
 /LayoutTests/imported/w3c/web-platform-tests/xhr/setrequestheader-content-type.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/setrequestheader-header-allowed.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/setrequestheader-header-forbidden.htm
