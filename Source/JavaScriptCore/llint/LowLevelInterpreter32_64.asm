@@ -26,15 +26,13 @@
 macro nextInstruction()
     loadb [PC], t0
     leap _g_opcodeMap, t1
-    loadp [t1, t0, 4], t2
-    jmp t2, BytecodePtrTag
+    jmp [t1, t0, 4], BytecodePtrTag
 end
 
 macro nextInstructionWide()
     loadi 1[PC], t0
     leap _g_opcodeMapWide, t1
-    loadp [t1, t0, 4], t2
-    jmp t2, BytecodePtrTag
+    jmp [t1, t0, 4], BytecodePtrTag
 end
 
 macro getuOperandNarrow(op, field, dst)

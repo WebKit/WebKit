@@ -28,15 +28,13 @@
 macro nextInstruction()
     loadb [PB, PC, 1], t0
     leap _g_opcodeMap, t1
-    loadp [t1, t0, PtrSize], t2
-    jmp t2, BytecodePtrTag
+    jmp [t1, t0, PtrSize], BytecodePtrTag
 end
 
 macro nextInstructionWide()
     loadi 1[PB, PC, 1], t0
     leap _g_opcodeMapWide, t1
-    loadp [t1, t0, PtrSize], t2
-    jmp t2, BytecodePtrTag
+    jmp [t1, t0, PtrSize], BytecodePtrTag
 end
 
 macro getuOperandNarrow(op, field, dst)
@@ -437,17 +435,30 @@ end
 
 # Index and value must be different registers. Index may be clobbered.
 macro loadConstantOrVariable(size, index, value)
-    size(FirstConstantRegisterIndexNarrow, FirstConstantRegisterIndexWide, macro (FirstConstantRegisterIndex)
-        bpgteq index, FirstConstantRegisterIndex, .constant
+    macro loadNarrow()
+        bpgteq index, FirstConstantRegisterIndexNarrow, .constant
         loadq [cfr, index, 8], value
         jmp .done
     .constant:
         loadp CodeBlock[cfr], value
         loadp CodeBlock::m_constantRegisters + VectorBufferOffset[value], value
-        subp FirstConstantRegisterIndex, index
+        loadq -(FirstConstantRegisterIndexNarrow * 8)[value, index, 8], value
+    .done:
+    end
+
+    macro loadWide()
+        bpgteq index, FirstConstantRegisterIndexWide, .constant
+        loadq [cfr, index, 8], value
+        jmp .done
+    .constant:
+        loadp CodeBlock[cfr], value
+        loadp CodeBlock::m_constantRegisters + VectorBufferOffset[value], value
+        subp FirstConstantRegisterIndexWide, index
         loadq [value, index, 8], value
     .done:
-    end)
+    end
+
+    size(loadNarrow, loadWide, macro (load) load() end)
 end
 
 macro loadConstantOrVariableInt32(size, index, value, slow)

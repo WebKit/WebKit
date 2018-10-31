@@ -324,3 +324,7 @@ def hasFallThrough(instruction)
     instruction != "ret" and instruction != "jmp"
 end
 
+def isPowerOfTwo(value)
+    return false if value <= 0
+    (value & (value - 1)).zero?
+end

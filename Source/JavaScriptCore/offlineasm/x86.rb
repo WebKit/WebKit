@@ -798,11 +798,18 @@ class Instruction
     def handleX86Mul(kind)
         if operands.size == 3 and operands[0].is_a? Immediate
             $asm.puts "imul#{x86Suffix(kind)} #{x86Operands(kind, kind, kind)}"
-        else
-            # FIXME: could do some peephole in case the left operand is immediate and it's
-            # a power of two.
-            handleX86Op("imul#{x86Suffix(kind)}", kind)
+            return
         end
+
+        if operands.size == 2 and operands[0].is_a? Immediate
+            imm = operands[0].value
+            if imm > 0 and isPowerOfTwo(imm)
+                $asm.puts "sal#{x86Suffix(kind)} #{orderOperands(Immediate.new(nil, Math.log2(imm).to_i).x86Operand(kind), operands[1].x86Operand(kind))}"
+                return
+            end
+        end
+
+        handleX86Op("imul#{x86Suffix(kind)}", kind)
     end
     
     def handleX86Peek()

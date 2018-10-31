@@ -1,3 +1,24 @@
+2018-10-30  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC][LLInt] Compact LLInt ASM code by removing unnecessary instructions
+        https://bugs.webkit.org/show_bug.cgi?id=191092
+
+        Reviewed by Saam Barati.
+
+        Looking through LLIntAssembly.h, we can find several inefficiencies. This patch fixes the
+        following things to tighten LLInt ASM code.
+
+        1. Remove unnecessary load instructions. Use jmp with BaseIndex directly.
+        2. Introduce strength reduction for mul instructions in offlineasm layer. This is now critical
+        since mul instruction is executed in `metadata` operation in LLInt. If the given immediate is
+        a power of two, we convert it to lshift instruction.
+
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * offlineasm/arm64.rb:
+        * offlineasm/instructions.rb:
+        * offlineasm/x86.rb:
+
 2018-10-30  Don Olmstead  <don.olmstead@sony.com>
 
         [PlayStation] Enable JavaScriptCore
