@@ -81,6 +81,19 @@ class Section
               i += 1
           end
           out << "\n"
+
+          out.write("#define FOR_EACH_#{config[:macro_name_component]}_METADATA_ALIGNMENT(macro) \\\n")
+          i = 0
+          while true
+              if opcodes[i].metadata.empty?
+                  out << "\n"
+                  break
+              end
+
+              out.write("macro(alignof(#{opcodes[i].capitalized_name}::Metadata))\\\n")
+              i += 1
+          end
+          out << "\n"
       end
 
       if config[:emit_opcode_id_string_values_in_h_file]

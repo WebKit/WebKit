@@ -91,8 +91,15 @@ ALWAYS_INLINE void UnlinkedMetadataTable::finalize()
     unsigned offset = s_offsetTableSize;
     for (unsigned i = 0; i < s_offsetTableEntries - 1; i++) {
         unsigned numberOfEntries = m_buffer[i];
-        m_buffer[i] = offset;
-        offset += numberOfEntries * metadataSize(static_cast<OpcodeID>(i));
+
+        if (numberOfEntries > 0) {
+#if CPU(NEEDS_ALIGNED_ACCESS)
+            offset = roundUpToMultipleOf(metadataAlignment(static_cast<OpcodeID>(i)), offset);
+#endif
+            m_buffer[i] = offset;
+            offset += numberOfEntries * metadataSize(static_cast<OpcodeID>(i));
+        } else
+            m_buffer[i] = offset;
     }
     m_buffer[s_offsetTableEntries - 1] = offset;
 }

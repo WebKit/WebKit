@@ -56,7 +56,7 @@ public:
 
         auto* metadata = reinterpret_cast<typename Op::Metadata*>(get(Op::opcodeID));
         auto* end = reinterpret_cast<typename Op::Metadata*>(getImpl(Op::opcodeID + 1));
-        for (; metadata != end; ++metadata)
+        for (; metadata + 1 <= end; ++metadata)
             func(*metadata);
     }
 
