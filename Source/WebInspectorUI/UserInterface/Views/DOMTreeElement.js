@@ -47,6 +47,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         this._boundHighlightAnimationEnd = this._highlightAnimationEnd.bind(this);
         this._subtreeBreakpointCount = 0;
 
+        this._highlightedAttributes = new Set;
         this._recentlyModifiedAttributes = [];
         this._boundNodeChangedAnimationEnd = this._nodeChangedAnimationEnd.bind(this);
 
@@ -266,6 +267,11 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
     attributeDidChange(name)
     {
         this._recentlyModifiedAttributes.push({name});
+    }
+
+    highlightAttribute(name)
+    {
+        this._highlightedAttributes.add(name);
     }
 
     showChildNode(node)
@@ -1327,6 +1333,9 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
             if (attribute.name === name)
                 attribute.element = hasText ? attrValueElement : attrNameElement;
         }
+
+        if (this._highlightedAttributes.has(name))
+            attrSpanElement.classList.add("highlight");
     }
 
     _buildTagDOM(parentElement, tagName, isClosingTag, isDistinctTreeElement)

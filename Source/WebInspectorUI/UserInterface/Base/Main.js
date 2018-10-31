@@ -127,6 +127,7 @@ WI.loaded = function()
     this.workerManager = new WI.WorkerManager;
     this.domDebuggerManager = new WI.DOMDebuggerManager;
     this.canvasManager = new WI.CanvasManager;
+    this.auditManager = new WI.AuditManager;
 
     // Enable the Console Agent after creating the singleton managers.
     ConsoleAgent.enable();
@@ -446,6 +447,7 @@ WI.contentLoaded = function()
         WI.StorageTabContentView,
         WI.CanvasTabContentView,
         WI.LayersTabContentView,
+        WI.AuditTabContentView,
         WI.ConsoleTabContentView,
         WI.SearchTabContentView,
         WI.NewTabContentView,
@@ -1113,6 +1115,10 @@ WI.tabContentViewClassForRepresentedObject = function(representedObject)
         representedObject instanceof WI.ApplicationCacheFrame || representedObject instanceof WI.IndexedDatabaseObjectStore ||
         representedObject instanceof WI.IndexedDatabase || representedObject instanceof WI.IndexedDatabaseObjectStoreIndex)
         return WI.StorageTabContentView;
+
+    if (representedObject instanceof WI.AuditTestCase || representedObject instanceof WI.AuditTestGroup
+        || representedObject instanceof WI.AuditTestCaseResult || representedObject instanceof WI.AuditTestGroupResult)
+        return WI.AuditTabContentView;
 
     if (representedObject instanceof WI.CanvasCollection)
         return WI.CanvasTabContentView;

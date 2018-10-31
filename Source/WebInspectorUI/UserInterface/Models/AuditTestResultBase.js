@@ -23,48 +23,65 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.AuditTestSuite = class AuditTestSuite extends WI.Object
+WI.AuditTestResultBase = class AuditTestResultBase
 {
-    constructor(identifier, name)
+    constructor(name, {description} = {})
     {
-        super();
-        this._id = Symbol(identifier);
+        console.assert(typeof name === "string");
+        console.assert(!description || typeof description === "string");
+
         this._name = name;
-        this._testCases = new Map;
-
-        this._buildTestCasesFromDescriptors();
+        this._description = description || null;
     }
-
-    static testCaseDescriptors() { throw WI.NotImplementedError.subclassMustOverride(); }
 
     // Public
 
-    get id() { return this._id; }
     get name() { return this._name; }
-    get testCases() {
-        return [...this._testCases.values()];
-    }
+    get description() { return this._description; }
 
-    // Private
-
-    _buildTestCasesFromDescriptors()
+    get result()
     {
-        for (let descriptor of this.constructor.testCaseDescriptors()) {
-            if (typeof descriptor.name !== "string" || !descriptor.name)
-                throw new Error("Test name must be a valid string.");
-
-            let {name, test, setup, tearDown, errorDetails} = descriptor;
-
-            if (!(test instanceof Function) || test[Symbol.toStringTag] !== "AsyncFunction")
-                throw new Error("Test function must be an async function.");
-
-            let testCaseInstance = new WI.AuditTestCase(this, name, test, setup, tearDown, errorDetails);
-
-            this._testCases.set(testCaseInstance.id, testCaseInstance);
-        }
+        return this;
     }
-};
 
-WI.AuditTestSuite.Event = {
-    NewAuditResultAvailable: Symbol("new-audit-result-available")
+    get didPass()
+    {
+        throw WI.NotImplementedError.subclassMustOverride();
+    }
+
+    get didWarn()
+    {
+        throw WI.NotImplementedError.subclassMustOverride();
+    }
+
+    get didFail()
+    {
+        throw WI.NotImplementedError.subclassMustOverride();
+    }
+
+    get didError()
+    {
+        throw WI.NotImplementedError.subclassMustOverride();
+    }
+
+    get unsupported()
+    {
+        throw WI.NotImplementedError.subclassMustOverride();
+    }
+
+    saveIdentityToCookie(cookie)
+    {
+        cookie["audit-" + this.constructor.TypeIdentifier + "-name"] = this._name;
+    }
+
+    toJSON()
+    {
+        let json = {
+            type: this.constructor.TypeIdentifier,
+            name: this._name,
+        };
+        if (this._description)
+            json.description = this._description;
+        return json;
+    }
 };

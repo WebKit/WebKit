@@ -1,8 +1,0 @@
-Test for the AudtTestCase.
-
-
-== Running test suite: AuditTestCase
--- Running test case: Test functions must be asynchronous.
-PASS: Should produce an exception.
-Error: Test functions must be async functions.
-

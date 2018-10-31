@@ -1,3 +1,40 @@
+2018-10-30  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Audit: create Audit Tab
+        https://bugs.webkit.org/show_bug.cgi?id=190754
+
+        Reviewed by Matt Baker.
+
+        * inspector/audit/resources/audit-utilities.js: Added.
+        * inspector/audit/basic-expected.txt: Added.
+        * inspector/audit/basic.html: Added.
+        * inspector/audit/data-domAttributes-expected.txt: Added.
+        * inspector/audit/data-domAttributes.html: Added.
+        * inspector/audit/data-domNodes-expected.txt: Added.
+        * inspector/audit/data-domNodes.html: Added.
+        * inspector/audit/data-errors-expected.txt: Added.
+        * inspector/audit/data-errors.html: Added.
+        * inspector/model/auditTestCase-expected.txt: Added.
+        * inspector/model/auditTestCase.html: Added.
+        * inspector/model/auditTestCaseResult-expected.txt: Added.
+        * inspector/model/auditTestCaseResult.html: Added.
+        * inspector/model/auditTestGroup-expected.txt: Added.
+        * inspector/model/auditTestGroup.html: Added.
+        * inspector/model/auditTestGroupResult-expected.txt: Added.
+        * inspector/model/auditTestGroupResult.html: Added.
+        * inspector/unit-tests/promise-utilities-expected.txt: Added.
+        * inspector/unit-tests/promise-utilities.html: Added.
+
+        * inspector/audit/audit-manager-expected.txt: Removed.
+        * inspector/audit/audit-manager.html: Removed.
+        * inspector/audit/audit-report-expected.txt: Removed.
+        * inspector/audit/audit-report.html: Removed.
+        * inspector/audit/audit-test-case-expected.txt: Removed.
+        * inspector/audit/audit-test-case.html: Removed.
+        * inspector/audit/audit-test-suite-expected.txt: Removed.
+        * inspector/audit/audit-test-suite.html: Removed.
+        * inspector/audit/resources/audit-test-fixtures.js: Removed.
+
 2018-10-30  Dawei Fenton  <realdawei@apple.com>
 
         WebGL conformance: Failures and Timeouts in suite 2.0.0/conformance

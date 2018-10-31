@@ -103,6 +103,9 @@ WI.ToggleButtonNavigationItem = class ToggleButtonNavigationItem extends WI.Butt
             this.tooltip = this._defaultToolTip;
             this.image = this._defaultImage;
         }
+
+        if (this.buttonStyle === WI.ButtonNavigationItem.Style.Text || this.buttonStyle === WI.ButtonNavigationItem.Style.ImageAndText)
+            this.label = this.tooltip;
     }
 
     // Protected

@@ -1,0 +1,91 @@
+Testing the functions of WI.AuditTestGroup.
+
+
+== Running test suite: AuditTestGroup
+-- Running test case: AuditTestGroup.fromPayload.nullObject
+null
+
+-- Running test case: AuditTestGroup.fromPayload.nonObject
+null
+
+-- Running test case: AuditTestGroup.fromPayload.emptyObject
+null
+
+-- Running test case: AuditTestGroup.fromPayload.invalidTopLevelMembers
+null
+
+-- Running test case: AuditTestGroup.fromPayload.missingSubMembers
+null
+
+-- Running test case: AuditTestGroup.fromPayload.invalidSubMembers
+null
+
+-- Running test case: AuditTestGroup.fromPayload.valid
+{
+  "type": "test-group",
+  "name": "valid group name",
+  "tests": [
+    {
+      "type": "test-case",
+      "name": "valid test name",
+      "test": "valid test function"
+    }
+  ]
+}
+
+-- Running test case: AuditTestGroup.fromPayload.validWithInvalidOptionals
+{
+  "type": "test-group",
+  "name": "validWithInvalidOptionals group name",
+  "tests": [
+    {
+      "type": "test-case",
+      "name": "validWithInvalidOptionals test name",
+      "test": "validWithInvalidOptionals test function"
+    }
+  ]
+}
+
+-- Running test case: AuditTestGroup.fromPayload.validWithValidOptionals
+{
+  "type": "test-group",
+  "name": "validWithValidOptionals group name",
+  "description": "validWithValidOptionals group description",
+  "tests": [
+    {
+      "type": "test-case",
+      "name": "validWithValidOptionals test name",
+      "description": "validWithValidOptionals test description",
+      "test": "validWithValidOptionals test function"
+    }
+  ]
+}
+
+-- Running test case: AuditTestGroup.fromPayload.validNested
+{
+  "type": "test-group",
+  "name": "validNested group name",
+  "description": "validNested group description",
+  "tests": [
+    {
+      "type": "test-group",
+      "name": "validNested nested group name",
+      "description": "validNested nested group description",
+      "tests": [
+        {
+          "type": "test-case",
+          "name": "validNested nested test name",
+          "description": "validNested nested test description",
+          "test": "validNested nested test function"
+        }
+      ]
+    },
+    {
+      "type": "test-case",
+      "name": "validNested test name",
+      "description": "validNested test description",
+      "test": "validNested test function"
+    }
+  ]
+}
+

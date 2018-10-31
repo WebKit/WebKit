@@ -23,30 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.AuditResult = class AuditResult
-{
-    constructor(testInstance, testResult, failed)
-    {
-        this._testResult = testResult;
-        this._failed = failed || false;
-        this._testName = testInstance.name;
-        this._errorDetails = testInstance.errorDetails;
-        this._logLevel = this._errorDetails.logLevel || WI.AuditResult.LogLevel.Passed;
-        this._errorTitle = this._errorDetails.title;
-        this._hint = this._errorDetails.hint;
-        this._documentation = this._errorDetails.documentation;
-    }
-
-    // Public
-
-    get testResult() { return this._testResult; }
-    get name() { return this._testName; }
-    get logLevel() { return this._logLevel; }
-    get failed() { return this._failed; }
-};
-
-WI.AuditResult.LogLevel = {
-    Error: "error",
-    Warning: "warning",
-    Passed: "passed"
-};
+.sidebar > .panel.navigation.audit > .content {
+    top: var(--navigation-bar-height);
+}

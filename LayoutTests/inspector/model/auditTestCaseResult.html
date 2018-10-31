@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("AuditTestCaseResult");
+
+    function addPayloadTest({name, payload}) {
+        suite.addTestCase({
+            name,
+            async test() {
+                let object = WI.AuditTestCaseResult.fromPayload(payload);
+                InspectorTest.log(object ? JSON.stringify(object, null, 2) : object);
+            },
+        });
+    }
+
+    let payloadTests = [
+        {
+            name: "AuditTestCaseResult.fromPayload.nullObject",
+            payload: null,
+        },
+        {
+            name: "AuditTestCaseResult.fromPayload.nonObject",
+            payload: "INVALID",
+        },
+        {
+            name: "AuditTestCaseResult.fromPayload.emptyObject",
+            payload: {},
+        },
+        {
+            name: "AuditTestCaseResult.fromPayload.invalidTopLevelMembers",
+            payload: {
+                type: null,
+                name: null,
+                level: null,
+            },
+        },
+        {
+            name: "AuditTestCaseResult.fromPayload.valid",
+            payload: {
+                type: WI.AuditTestCaseResult.TypeIdentifier,
+                name: "valid test result name",
+                level: WI.AuditTestCaseResult.Level.Pass,
+            },
+        },
+        {
+            name: "AuditTestCaseResult.fromPayload.validWithInvalidOptionals",
+            payload: {
+                type: WI.AuditTestCaseResult.TypeIdentifier,
+                name: "validWithInvalidOptionals test result name",
+                description: null,
+                level: WI.AuditTestCaseResult.Level.Pass,
+                data: null,
+            },
+        },
+        {
+            name: "AuditTestCaseResult.fromPayload.validWithInvalidSubOptionals",
+            payload: {
+                type: WI.AuditTestCaseResult.TypeIdentifier,
+                name: "validWithInvalidSubOptionals test result name",
+                description: "validWithInvalidSubOptionals test result description",
+                level: WI.AuditTestCaseResult.Level.Pass,
+                data: {
+                    domNodes: null,
+                    domAttributes: null,
+                    errors: null,
+                },
+            },
+        },
+        {
+            name: "AuditTestCaseResult.fromPayload.validWithValidSubOptionals",
+            payload: {
+                type: WI.AuditTestCaseResult.TypeIdentifier,
+                name: "validWithValidSubOptionals test result name",
+                description: "validWithValidSubOptionals test result description",
+                level: WI.AuditTestCaseResult.Level.Pass,
+                data: {
+                    domNodes: ["validWithValidSubOptionals test result domNode"],
+                    domAttributes: ["validWithValidSubOptionals test result domAttribute"],
+                    errors: ["validWithValidSubOptionals test result error"],
+                },
+            },
+        },
+    ];
+    payloadTests.forEach(addPayloadTest);
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing the functions of WI.AuditTestCaseResult.</p>
+</body>
+</html>

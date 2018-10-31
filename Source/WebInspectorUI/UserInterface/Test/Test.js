@@ -63,6 +63,7 @@ WI.loaded = function()
     this.workerManager = new WI.WorkerManager;
     this.domDebuggerManager = new WI.DOMDebuggerManager;
     this.canvasManager = new WI.CanvasManager;
+    this.auditManager = new WI.AuditManager;
 
     document.addEventListener("DOMContentLoaded", this.contentLoaded);
 

@@ -1,0 +1,124 @@
+Testing the functions of WI.AuditTestGroupResult.
+
+
+== Running test suite: AuditTestGroupResult
+-- Running test case: AuditTestGroupResult.fromPayload.nullObject
+null
+
+-- Running test case: AuditTestGroupResult.fromPayload.nonObject
+null
+
+-- Running test case: AuditTestGroupResult.fromPayload.emptyObject
+null
+
+-- Running test case: AuditTestGroupResult.fromPayload.invalidTopLevelMembers
+null
+
+-- Running test case: AuditTestGroupResult.fromPayload.missingSubMembers
+null
+
+-- Running test case: AuditTestGroupResult.fromPayload.invalidSubMembers
+null
+
+-- Running test case: AuditTestGroupResult.fromPayload.valid
+{
+  "type": "test-group-result",
+  "name": "valid group result name",
+  "results": [
+    {
+      "type": "test-case-result",
+      "name": "valid test result name",
+      "level": "pass"
+    }
+  ]
+}
+
+-- Running test case: AuditTestGroupResult.fromPayload.validWithInvalidOptionals
+{
+  "type": "test-group-result",
+  "name": "validWithInvalidOptionals group result name",
+  "results": [
+    {
+      "type": "test-case-result",
+      "name": "validWithInvalidOptionals test result name",
+      "level": "pass"
+    }
+  ]
+}
+
+-- Running test case: AuditTestGroupResult.fromPayload.validWithValidOptionals
+{
+  "type": "test-group-result",
+  "name": "validWithValidOptionals group result name",
+  "description": "validWithValidOptionals group result description",
+  "results": [
+    {
+      "type": "test-case-result",
+      "name": "validWithValidOptionals test result name",
+      "description": "validWithValidOptionals test result description",
+      "level": "pass",
+      "data": {
+        "domNodes": [
+          "validWithValidOptionals test result domNode"
+        ],
+        "domAttributes": [
+          "validWithValidOptionals test result domAttribute"
+        ],
+        "errors": [
+          "validWithValidOptionals test result error"
+        ]
+      }
+    }
+  ]
+}
+
+-- Running test case: AuditTestGroupResult.fromPayload.validNested
+{
+  "type": "test-group-result",
+  "name": "validNested group result name",
+  "description": "validNested group result description",
+  "results": [
+    {
+      "type": "test-group-result",
+      "name": "validNested nested group result name",
+      "description": "validNested nested group result description",
+      "results": [
+        {
+          "type": "test-case-result",
+          "name": "validNested nested test result name",
+          "description": "validNested nested test result description",
+          "level": "pass",
+          "data": {
+            "domNodes": [
+              "validNested nested test result domNode"
+            ],
+            "domAttributes": [
+              "validNested nested test result domAttribute"
+            ],
+            "errors": [
+              "validNested nested test result error"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "test-case-result",
+      "name": "validNested test result name",
+      "description": "validNested test result description",
+      "level": "pass",
+      "data": {
+        "domNodes": [
+          "validNested test result domNode"
+        ],
+        "domAttributes": [
+          "validNested test result domAttribute"
+        ],
+        "errors": [
+          "validNested test result error"
+        ]
+      }
+    }
+  ]
+}
+

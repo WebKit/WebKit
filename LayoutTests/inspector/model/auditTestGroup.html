@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("AuditTestGroup");
+
+    function addPayloadTest({name, payload}) {
+        suite.addTestCase({
+            name,
+            async test() {
+                let object = WI.AuditTestGroup.fromPayload(payload);
+                InspectorTest.log(object ? JSON.stringify(object, null, 2) : object);
+            },
+        });
+    }
+
+    let payloadTests = [
+        {
+            name: "AuditTestGroup.fromPayload.nullObject",
+            payload: null,
+        },
+        {
+            name: "AuditTestGroup.fromPayload.nonObject",
+            payload: "INVALID",
+        },
+        {
+            name: "AuditTestGroup.fromPayload.emptyObject",
+            payload: {},
+        },
+        {
+            name: "AuditTestGroup.fromPayload.invalidTopLevelMembers",
+            payload: {
+                type: null,
+                name: null,
+                tests: null,
+            },
+        },
+        {
+            name: "AuditTestGroup.fromPayload.missingSubMembers",
+            payload: {
+                type: WI.AuditTestGroup.TypeIdentifier,
+                name: "missingSubMembers group name",
+                tests: [],
+            },
+        },
+        {
+            name: "AuditTestGroup.fromPayload.invalidSubMembers",
+            payload: {
+                type: WI.AuditTestGroup.TypeIdentifier,
+                name: "invalidSubMembers group name",
+                tests: [
+                    null,
+                ],
+            },
+        },
+        {
+            name: "AuditTestGroup.fromPayload.valid",
+            payload: {
+                type: WI.AuditTestGroup.TypeIdentifier,
+                name: "valid group name",
+                tests: [
+                    {
+                        type: WI.AuditTestCase.TypeIdentifier,
+                        name: "valid test name",
+                        test: "valid test function",
+                    },
+                ],
+            },
+        },
+        {
+            name: "AuditTestGroup.fromPayload.validWithInvalidOptionals",
+            payload: {
+                type: WI.AuditTestGroup.TypeIdentifier,
+                name: "validWithInvalidOptionals group name",
+                description: null,
+                tests: [
+                    {
+                        type: WI.AuditTestCase.TypeIdentifier,
+                        name: "validWithInvalidOptionals test name",
+                        description: null,
+                        test: "validWithInvalidOptionals test function",
+                    },
+                ],
+            },
+        },
+        {
+            name: "AuditTestGroup.fromPayload.validWithValidOptionals",
+            payload: {
+                type: WI.AuditTestGroup.TypeIdentifier,
+                name: "validWithValidOptionals group name",
+                description: "validWithValidOptionals group description",
+                tests: [
+                    {
+                        type: WI.AuditTestCase.TypeIdentifier,
+                        name: "validWithValidOptionals test name",
+                        description: "validWithValidOptionals test description",
+                        test: "validWithValidOptionals test function",
+                    },
+                ],
+            },
+        },
+        {
+            name: "AuditTestGroup.fromPayload.validNested",
+            payload: {
+                type: WI.AuditTestGroup.TypeIdentifier,
+                name: "validNested group name",
+                description: "validNested group description",
+                tests: [
+                    {
+                        type: WI.AuditTestGroup.TypeIdentifier,
+                        name: "validNested nested group name",
+                        description: "validNested nested group description",
+                        tests: [
+                            {
+                                type: WI.AuditTestCase.TypeIdentifier,
+                                name: "validNested nested test name",
+                                description: "validNested nested test description",
+                                test: "validNested nested test function",
+                            },
+                        ],
+                    },
+                    {
+                        type: WI.AuditTestCase.TypeIdentifier,
+                        name: "validNested test name",
+                        description: "validNested test description",
+                        test: "validNested test function",
+                    },
+                ],
+            },
+        },
+    ];
+    payloadTests.forEach(addPayloadTest);
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing the functions of WI.AuditTestGroup.</p>
+</body>
+</html>

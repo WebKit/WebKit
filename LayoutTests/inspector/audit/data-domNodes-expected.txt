@@ -1,0 +1,57 @@
+Testing audits involving DOM nodes.
+
+
+== Running test suite: Audit.DOMNodes
+-- Running test case: Audit.DOMNodes.Tag
+Testing selector `div`...
+PASS: Result should be "fail".
+  domNodes:
+   - div#id1.class2.class3
+   - div#id2.class3.class1
+   - div#id3.class1.class2
+
+-- Running test case: Audit.DOMNodes.ID
+Testing selector `#id1`...
+PASS: Result should be "fail".
+  domNodes:
+   - div#id1.class2.class3
+
+-- Running test case: Audit.DOMNodes.ClassName
+Testing selector `.class1`...
+PASS: Result should be "fail".
+  domNodes:
+   - div#id2.class3.class1
+   - div#id3.class1.class2
+
+-- Running test case: Audit.DOMNodes.DoesNotExist
+Testing selector `DoesNotExist`...
+PASS: Result should be "pass".
+
+-- Running test case: Audit.DOMNodes.Undefined
+Testing value `{"level":"pass"}`...
+PASS: Result should be "pass".
+
+-- Running test case: Audit.DOMNodes.Error.Null
+Testing value `{"level":"pass","domNodes":null}`...
+PASS: Result should be "error".
+  errors:
+   - “domNodes“ must be an array
+
+-- Running test case: Audit.DOMNodes.Error.Number
+Testing value `{"level":"pass","domNodes":42}`...
+PASS: Result should be "error".
+  errors:
+   - “domNodes“ must be an array
+
+-- Running test case: Audit.DOMNodes.Error.String
+Testing value `{"level":"pass","domNodes":"foo"}`...
+PASS: Result should be "error".
+  errors:
+   - “domNodes“ must be an array
+
+-- Running test case: Audit.DOMNodes.Error.Object
+Testing value `{"level":"pass","domNodes":{}}`...
+PASS: Result should be "error".
+  errors:
+   - “domNodes“ must be an array
+

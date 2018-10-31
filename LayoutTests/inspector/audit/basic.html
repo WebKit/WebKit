@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/audit-utilities.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.Audit.createSuite("Audit.Basic");
+
+    InspectorTest.Audit.addFunctionlessTest("Audit.Basic.Boolean.True", true, WI.AuditTestCaseResult.Level.Pass);
+    InspectorTest.Audit.addFunctionlessTest("Audit.Basic.Boolean.False", false, WI.AuditTestCaseResult.Level.Fail);
+
+    InspectorTest.Audit.addStringTest("Audit.Basic.String.Pass", WI.AuditTestCaseResult.Level.Pass, WI.AuditTestCaseResult.Level.Pass);
+    InspectorTest.Audit.addStringTest("Audit.Basic.String.Warn", WI.AuditTestCaseResult.Level.Warn, WI.AuditTestCaseResult.Level.Warn);
+    InspectorTest.Audit.addStringTest("Audit.Basic.String.Fail", WI.AuditTestCaseResult.Level.Fail, WI.AuditTestCaseResult.Level.Fail);
+    InspectorTest.Audit.addStringTest("Audit.Basic.String.Error", WI.AuditTestCaseResult.Level.Error, WI.AuditTestCaseResult.Level.Error);
+    InspectorTest.Audit.addStringTest("Audit.Basic.String.Unsupported", WI.AuditTestCaseResult.Level.Unsupported, WI.AuditTestCaseResult.Level.Unsupported);
+
+    InspectorTest.Audit.addObjectTest("Audit.Basic.Object.Pass", {level: WI.AuditTestCaseResult.Level.Pass}, WI.AuditTestCaseResult.Level.Pass);
+    InspectorTest.Audit.addObjectTest("Audit.Basic.Object.Warn", {level: WI.AuditTestCaseResult.Level.Warn}, WI.AuditTestCaseResult.Level.Warn);
+    InspectorTest.Audit.addObjectTest("Audit.Basic.Object.Fail", {level: WI.AuditTestCaseResult.Level.Fail}, WI.AuditTestCaseResult.Level.Fail);
+    InspectorTest.Audit.addObjectTest("Audit.Basic.Object.Error", {level: WI.AuditTestCaseResult.Level.Error}, WI.AuditTestCaseResult.Level.Error);
+    InspectorTest.Audit.addObjectTest("Audit.Basic.Object.Unsupported", {level: WI.AuditTestCaseResult.Level.Unsupported}, WI.AuditTestCaseResult.Level.Unsupported);
+
+    InspectorTest.Audit.addTest("Audit.Basic.Error.Undefined", undefined, WI.AuditTestCaseResult.Level.Error);
+    InspectorTest.Audit.addTest("Audit.Basic.Error.Null", null, WI.AuditTestCaseResult.Level.Error);
+    InspectorTest.Audit.addTest("Audit.Basic.Error.Number", 42, WI.AuditTestCaseResult.Level.Error);
+    InspectorTest.Audit.addStringTest("Audit.Basic.Error.String", "foo", WI.AuditTestCaseResult.Level.Error);
+    InspectorTest.Audit.addObjectTest("Audit.Basic.Error.Object", {}, WI.AuditTestCaseResult.Level.Error);
+    InspectorTest.Audit.addTest("Audit.Basic.Error.Variable", "INVALID", WI.AuditTestCaseResult.Level.Error);
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing the basic functionality of audits.</p>
+</body>
+</html>

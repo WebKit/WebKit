@@ -307,6 +307,11 @@ body[dir=rtl] .tree-outline.dom li.parent.shadow::after {
     animation: "dom-tree-outline-highlight-fadeout" 2s;
 }
 
+.tree-outline.dom li .highlight {
+    background-color: hsla(53, 83%, 53%, 0.2);
+    border-bottom: 1px solid hsl(47, 82%, 60%);
+}
+
 @media (prefers-dark-interface) {
     .tree-outline.dom li.elements-drag-over .selection-area {
         border-top-color: var(--selected-background-color);

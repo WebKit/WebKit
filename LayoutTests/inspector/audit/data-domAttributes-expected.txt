@@ -1,0 +1,39 @@
+Testing audits involving DOM attributes.
+
+
+== Running test suite: Audit.DOMAttributes
+-- Running test case: Audit.DOMAttributes.Valid
+Testing value `{"level":"pass","domAttributes":["id","tabindex"]}`...
+PASS: Result should be "pass".
+  domAttributes:
+   - id
+   - tabindex
+
+-- Running test case: Audit.DOMAttributes.Undefined
+Testing value `{"level":"pass"}`...
+PASS: Result should be "pass".
+
+-- Running test case: Audit.DOMAttributes.Error.Null
+Testing value `{"level":"pass","domAttributes":null}`...
+PASS: Result should be "error".
+  errors:
+   - “domAttributes“ must be an array
+
+-- Running test case: Audit.DOMAttributes.Error.Number
+Testing value `{"level":"pass","domAttributes":42}`...
+PASS: Result should be "error".
+  errors:
+   - “domAttributes“ must be an array
+
+-- Running test case: Audit.DOMAttributes.Error.String
+Testing value `{"level":"pass","domAttributes":"foo"}`...
+PASS: Result should be "error".
+  errors:
+   - “domAttributes“ must be an array
+
+-- Running test case: Audit.DOMAttributes.Error.Object
+Testing value `{"level":"pass","domAttributes":{}}`...
+PASS: Result should be "error".
+  errors:
+   - “domAttributes“ must be an array
+

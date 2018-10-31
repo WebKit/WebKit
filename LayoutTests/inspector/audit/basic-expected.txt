@@ -1,0 +1,88 @@
+Testing the basic functionality of audits.
+
+
+== Running test suite: Audit.Basic
+-- Running test case: Audit.Basic.Boolean.True
+Testing value `true`...
+PASS: Result should be "pass".
+
+-- Running test case: Audit.Basic.Boolean.False
+Testing value `false`...
+PASS: Result should be "fail".
+
+-- Running test case: Audit.Basic.String.Pass
+Testing value `"pass"`...
+PASS: Result should be "pass".
+
+-- Running test case: Audit.Basic.String.Warn
+Testing value `"warn"`...
+PASS: Result should be "warn".
+
+-- Running test case: Audit.Basic.String.Fail
+Testing value `"fail"`...
+PASS: Result should be "fail".
+
+-- Running test case: Audit.Basic.String.Error
+Testing value `"error"`...
+PASS: Result should be "error".
+
+-- Running test case: Audit.Basic.String.Unsupported
+Testing value `"unsupported"`...
+PASS: Result should be "unsupported".
+
+-- Running test case: Audit.Basic.Object.Pass
+Testing value `{"level":"pass"}`...
+PASS: Result should be "pass".
+
+-- Running test case: Audit.Basic.Object.Warn
+Testing value `{"level":"warn"}`...
+PASS: Result should be "warn".
+
+-- Running test case: Audit.Basic.Object.Fail
+Testing value `{"level":"fail"}`...
+PASS: Result should be "fail".
+
+-- Running test case: Audit.Basic.Object.Error
+Testing value `{"level":"error"}`...
+PASS: Result should be "error".
+
+-- Running test case: Audit.Basic.Object.Unsupported
+Testing value `{"level":"unsupported"}`...
+PASS: Result should be "unsupported".
+
+-- Running test case: Audit.Basic.Error.Undefined
+Testing...
+PASS: Result should be "error".
+  errors:
+   - TypeError: eval(undefined) is not a function. (In 'eval(undefined)()', 'eval(undefined)' is undefined)
+
+-- Running test case: Audit.Basic.Error.Null
+Testing...
+PASS: Result should be "error".
+  errors:
+   - TypeError: eval(null) is not a function. (In 'eval(null)()', 'eval(null)' is null)
+
+-- Running test case: Audit.Basic.Error.Number
+Testing...
+PASS: Result should be "error".
+  errors:
+   - TypeError: eval(42) is not a function. (In 'eval(42)()', 'eval(42)' is 42)
+
+-- Running test case: Audit.Basic.Error.String
+Testing value `"foo"`...
+PASS: Result should be "error".
+  errors:
+   - Return string must be one of ["pass","warn","fail","error","unsupported"]
+
+-- Running test case: Audit.Basic.Error.Object
+Testing value `{}`...
+PASS: Result should be "error".
+  errors:
+   - Missing result level
+
+-- Running test case: Audit.Basic.Error.Variable
+Testing...
+PASS: Result should be "error".
+  errors:
+   - ReferenceError: Can't find variable: INVALID
+

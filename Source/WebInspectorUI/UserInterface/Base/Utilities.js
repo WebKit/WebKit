@@ -1372,6 +1372,17 @@ Object.defineProperty(Array.prototype, "binaryIndexOf",
     }
 });
 
+Object.defineProperty(Promise, "chain",
+{
+    async value(callbacks, initialValue)
+    {
+        let results = [];
+        for (let i = 0; i < callbacks.length; ++i)
+            results.push(await callbacks[i](results.lastValue || initialValue || null, i));
+        return results;
+    }
+});
+
 Object.defineProperty(Promise, "delay",
 {
     value(delay)

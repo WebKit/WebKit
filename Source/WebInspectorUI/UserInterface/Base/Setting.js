@@ -125,6 +125,7 @@ WI.settings = {
     experimentalEnableMultiplePropertiesSelection: new WI.Setting("experimental-enable-multiple-properties-selection", false),
     experimentalEnableLayersTab: new WI.Setting("experimental-enable-layers-tab", false),
     experimentalEnableNewTabBar: new WI.Setting("experimental-enable-new-tab-bar", false),
+    experimentalEnableAuditTab: new WI.Setting("experimental-enable-audit-tab", false),
 
     // DebugUI
     autoLogProtocolMessages: new WI.Setting("auto-collect-protocol-messages", false),

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("AuditTestCase");
+
+    function addPayloadTest({name, payload}) {
+        suite.addTestCase({
+            name,
+            async test() {
+                let object = WI.AuditTestCase.fromPayload(payload);
+                InspectorTest.log(object ? JSON.stringify(object, null, 2) : object);
+            },
+        });
+    }
+
+    let payloadTests = [
+        {
+            name: "AuditTestCase.fromPayload.nullObject",
+            payload: null,
+        },
+        {
+            name: "AuditTestCase.fromPayload.nonObject",
+            payload: "INVALID",
+        },
+        {
+            name: "AuditTestCase.fromPayload.emptyObject",
+            payload: {},
+        },
+        {
+            name: "AuditTestCase.fromPayload.invalidTopLevelMembers",
+            payload: {
+                type: null,
+                name: null,
+                test: null,
+            },
+        },
+        {
+            name: "AuditTestCase.fromPayload.valid",
+            payload: {
+                type: WI.AuditTestCase.TypeIdentifier,
+                name: "valid test name",
+                test: "function() { }",
+            },
+        },
+        {
+            name: "AuditTestCase.fromPayload.validWithInvalidOptionals",
+            payload: {
+                type: WI.AuditTestCase.TypeIdentifier,
+                name: "validWithInvalidOptionals test name",
+                description: null,
+                test: "validWithInvalidOptionals test function",
+            },
+        },
+        {
+            name: "AuditTestCase.fromPayload.validWithValidOptionals",
+            payload: {
+                type: WI.AuditTestCase.TypeIdentifier,
+                name: "validWithValidOptionals test name",
+                description: "validWithValidOptionals test description",
+                test: "validWithValidOptionals test function",
+            },
+        },
+    ];
+    payloadTests.forEach(addPayloadTest);
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing the functions of WI.AuditTestCase.</p>
+</body>
+</html>

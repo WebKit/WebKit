@@ -249,6 +249,9 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
             experimentalSettingsView.addSeparator();
         }
 
+        experimentalSettingsView.addSetting(WI.UIString("Audit:"), WI.settings.experimentalEnableAuditTab, WI.UIString("Enable Audit Tab"));
+        experimentalSettingsView.addSeparator();
+
         experimentalSettingsView.addSetting(WI.UIString("User Interface:"), WI.settings.experimentalEnableNewTabBar, WI.UIString("Enable New Tab Bar"));
         experimentalSettingsView.addSeparator();
 
@@ -268,6 +271,7 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
 
         listenForChange(WI.settings.experimentalEnableMultiplePropertiesSelection);
         listenForChange(WI.settings.experimentalEnableLayersTab);
+        listenForChange(WI.settings.experimentalEnableAuditTab);
         listenForChange(WI.settings.experimentalEnableNewTabBar);
 
         this.addSettingsView(experimentalSettingsView);

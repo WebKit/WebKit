@@ -1,0 +1,57 @@
+Testing the functions of WI.AuditTestCaseResult.
+
+
+== Running test suite: AuditTestCaseResult
+-- Running test case: AuditTestCaseResult.fromPayload.nullObject
+null
+
+-- Running test case: AuditTestCaseResult.fromPayload.nonObject
+null
+
+-- Running test case: AuditTestCaseResult.fromPayload.emptyObject
+null
+
+-- Running test case: AuditTestCaseResult.fromPayload.invalidTopLevelMembers
+null
+
+-- Running test case: AuditTestCaseResult.fromPayload.valid
+{
+  "type": "test-case-result",
+  "name": "valid test result name",
+  "level": "pass"
+}
+
+-- Running test case: AuditTestCaseResult.fromPayload.validWithInvalidOptionals
+{
+  "type": "test-case-result",
+  "name": "validWithInvalidOptionals test result name",
+  "level": "pass"
+}
+
+-- Running test case: AuditTestCaseResult.fromPayload.validWithInvalidSubOptionals
+{
+  "type": "test-case-result",
+  "name": "validWithInvalidSubOptionals test result name",
+  "description": "validWithInvalidSubOptionals test result description",
+  "level": "pass"
+}
+
+-- Running test case: AuditTestCaseResult.fromPayload.validWithValidSubOptionals
+{
+  "type": "test-case-result",
+  "name": "validWithValidSubOptionals test result name",
+  "description": "validWithValidSubOptionals test result description",
+  "level": "pass",
+  "data": {
+    "domNodes": [
+      "validWithValidSubOptionals test result domNode"
+    ],
+    "domAttributes": [
+      "validWithValidSubOptionals test result domAttribute"
+    ],
+    "errors": [
+      "validWithValidSubOptionals test result error"
+    ]
+  }
+}
+

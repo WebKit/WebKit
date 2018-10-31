@@ -1,0 +1,38 @@
+Testing the functions of WI.AuditTestCase.
+
+
+== Running test suite: AuditTestCase
+-- Running test case: AuditTestCase.fromPayload.nullObject
+null
+
+-- Running test case: AuditTestCase.fromPayload.nonObject
+null
+
+-- Running test case: AuditTestCase.fromPayload.emptyObject
+null
+
+-- Running test case: AuditTestCase.fromPayload.invalidTopLevelMembers
+null
+
+-- Running test case: AuditTestCase.fromPayload.valid
+{
+  "type": "test-case",
+  "name": "valid test name",
+  "test": "function() { }"
+}
+
+-- Running test case: AuditTestCase.fromPayload.validWithInvalidOptionals
+{
+  "type": "test-case",
+  "name": "validWithInvalidOptionals test name",
+  "test": "validWithInvalidOptionals test function"
+}
+
+-- Running test case: AuditTestCase.fromPayload.validWithValidOptionals
+{
+  "type": "test-case",
+  "name": "validWithValidOptionals test name",
+  "description": "validWithValidOptionals test description",
+  "test": "validWithValidOptionals test function"
+}
+

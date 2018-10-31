@@ -29,111 +29,148 @@ WI.AuditManager = class AuditManager extends WI.Object
     {
         super();
 
-        this._testSuiteConstructors = [];
-        this._reports = new Map;
+        this._tests = [];
+        this._results = [];
 
-        // Transforming all the constructors into AuditTestSuite instances.
-        this._testSuites = this._testSuiteConstructors.map(suite => {
-            let newTestSuite = new suite;
+        this._runningState = WI.AuditManager.RunningState.Inactive;
+        this._runningTests = [];
+    }
 
-            if (!(newTestSuite instanceof WI.AuditTestSuite))
-                throw new Error("Audit test suites must be of instance WI.AuditTestSuite.");
+    static synthesizeError(message)
+    {
+        let consoleMessage = new WI.ConsoleMessage(WI.mainTarget, WI.ConsoleMessage.MessageSource.Other, WI.ConsoleMessage.MessageLevel.Error, WI.UIString("Audit test error: %s").format(message));
+        consoleMessage.shouldRevealConsole = true;
 
-            return newTestSuite;
-        });
+        WI.consoleLogViewController.appendConsoleMessage(consoleMessage);
     }
 
     // Public
 
-    get testSuites() { return this._testSuites.slice(); }
-    get reports() { return [...this._reports.values()]; }
+    get tests() { return this._tests; }
+    get results() { return this._results; }
+    get runningState() { return this._runningState; }
 
-    async runAuditTestByRepresentedObject(representedObject)
+    async start(tests)
     {
-        let auditReport = new WI.AuditReport(representedObject);
+        console.assert(this._runningState === WI.AuditManager.RunningState.Inactive);
+        if (this._runningState !== WI.AuditManager.RunningState.Inactive)
+            return;
 
-        if (representedObject instanceof WI.AuditTestCase) {
-            let auditResult = await this._runTestCase(representedObject);
-            auditReport.addResult(auditResult);
-        } else if (representedObject instanceof WI.AuditTestSuite) {
-            let testCases = representedObject.testCases;
-            // Start reducing from testCases[0].
-            let result = testCases.slice(1).reduce((chain, testCase, index) => {
-                if (testCase.setup) {
-                    let setup = testCase.setup.call(testCase, testCase.suite);
-                    if (testCase.setup[Symbol.toStringTag] === "AsyncFunction")
-                        return setup;
-                    else
-                        return new Promise(setup);
+        if (tests && tests.length)
+            tests = tests.filter((test) => typeof test === "object" && test instanceof WI.AuditTestBase);
+        else
+            tests = this._tests;
+
+        if (!tests.length)
+            return;
+
+        this._runningState = WI.AuditManager.RunningState.Active;
+        this._runningTests = tests;
+        for (let test of this._runningTests)
+            test.clearResult();
+
+        this.dispatchEventToListeners(WI.AuditManager.Event.TestScheduled);
+
+        await Promise.chain(this._runningTests.map((test) => () => this._runningState === WI.AuditManager.RunningState.Active ? test.start() : null));
+
+        let result = this._runningTests.map((test) => test.result).filter((result) => !!result);
+
+        this._runningState = WI.AuditManager.RunningState.Inactive;
+        this._runningTests = [];
+
+        this._addResult(result);
+    }
+
+    stop()
+    {
+        console.assert(this._runningState === WI.AuditManager.RunningState.Active);
+        if (this._runningState !== WI.AuditManager.RunningState.Active)
+            return;
+
+        for (let test of this._runningTests)
+            test.stop();
+
+        this._runningState = WI.AuditManager.RunningState.Stopping;
+    }
+
+    import()
+    {
+        WI.loadDataFromFile((data, filename) => {
+            if (!data)
+                return;
+
+            let payload = null;
+            try {
+                payload = JSON.parse(data);
+            } catch (e) {
+                WI.AuditManager.synthesizeError(e);
+                return;
+            }
+
+            let object = WI.AuditTestGroup.fromPayload(payload) || WI.AuditTestCase.fromPayload(payload);
+            if (!object) {
+                object = WI.AuditTestGroupResult.fromPayload(payload) || WI.AuditTestCaseResult.fromPayload(payload);
+                if (!object) {
+                    WI.AuditManager.synthesizeError(WI.UIString("invalid JSON."));
+                    return;
                 }
+            }
 
-                chain = chain.then((auditResult) => {
-                    auditReport.addResult(auditResult);
-                    return this._runTestCase(testCase);
-                });
-
-                if (testCase.tearDown) {
-                    let tearDown = testCase.tearDown.call(testCase, testCase.suite);
-                    if (testCase.tearDown[Symbol.toStringTag] === "AsyncFunction")
-                        return tearDown;
-                    else
-                        return new Promise(tearDown);
-                }
-                return chain;
-            }, this._runTestCase(testCases[0]));
-
-            let lastAuditResult = await result;
-            auditReport.addResult(lastAuditResult);
-
-            // Make AuditReport read-only after all the AuditResults have been received.
-            auditReport.close();
-        }
-
-        this._reports.set(representedObject.id, auditReport);
-        this.dispatchEventToListeners(WI.AuditManager.Event.NewReportAdded, {auditReport});
-
-        return auditReport;
+            if (object instanceof WI.AuditTestBase)
+                this._addTest(object);
+            else if (object instanceof WI.AuditTestResultBase)
+                this._addResult(object);
+        });
     }
 
-    addTestSuite(auditTestSuiteConstructor)
+    export(object)
     {
-        if (this._testSuiteConstructors.indexOf(auditTestSuiteConstructor) >= 0)
-            throw new Error(`class ${auditTestSuiteConstructor.name} already exists.`);
+        console.assert(object instanceof WI.AuditTestCase || object instanceof WI.AuditTestGroup || object instanceof WI.AuditTestCaseResult || object instanceof WI.AuditTestGroupResult, object);
 
-        let auditTestSuite = new auditTestSuiteConstructor;
-        this._testSuiteConstructors.push(auditTestSuiteConstructor);
-        this._testSuites.push(auditTestSuite);
-    }
+        let filename = object.name;
+        if (object instanceof WI.AuditTestResultBase)
+            filename = WI.UIString("%s Result").format(filename);
 
-    reportForId(reportId)
-    {
-        return this._reports.get(reportId);
-    }
+        let url = "web-inspector:///" + encodeURI(filename) + ".json";
 
-    removeAllReports()
-    {
-        this._reports.clear();
+        WI.saveDataToFile({
+            url,
+            content: JSON.stringify(object),
+            forceSaveAs: true,
+        });
     }
 
     // Private
 
-    async _runTestCase(testCase)
+    _addTest(test)
     {
-        let didRaiseException = false;
-        let result;
-        this.dispatchEventToListeners(WI.AuditManager.Event.TestStarted, {test: testCase});
-        try {
-            result = await testCase.test.call(testCase, testCase.suite);
-        } catch (resultData) {
-            result = resultData;
-            didRaiseException = true;
-        }
-        this.dispatchEventToListeners(WI.AuditManager.Event.TestEnded, {test: testCase});
-        return new WI.AuditResult(testCase, {result}, didRaiseException);
+        this._tests.push(test);
+
+        this.dispatchEventToListeners(WI.AuditManager.Event.TestAdded, {test});
+    }
+
+    _addResult(result)
+    {
+        if (!result || (Array.isArray(result) && !result.length))
+            return;
+
+        this._results.push(result);
+
+        this.dispatchEventToListeners(WI.AuditManager.Event.TestCompleted, {
+            result,
+            index: this._results.length - 1,
+        });
     }
 };
 
+WI.AuditManager.RunningState = {
+    Inactive: "inactive",
+    Active: "active",
+    Stopping: "stopping",
+};
+
 WI.AuditManager.Event = {
-    TestStarted: Symbol("test-started"),
-    TestEnded: Symbol("test-ended")
+    TestAdded: "audit-manager-test-added",
+    TestCompleted: "audit-manager-test-completed",
+    TestScheduled: "audit-manager-test-scheduled",
 };

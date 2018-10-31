@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("AuditTestGroupResult");
+
+    function addPayloadTest({name, payload}) {
+        suite.addTestCase({
+            name,
+            async test() {
+                let object = WI.AuditTestGroupResult.fromPayload(payload);
+                InspectorTest.log(object ? JSON.stringify(object, null, 2) : object);
+            },
+        });
+    }
+
+    let payloadTests = [
+        {
+            name: "AuditTestGroupResult.fromPayload.nullObject",
+            payload: null,
+        },
+        {
+            name: "AuditTestGroupResult.fromPayload.nonObject",
+            payload: "INVALID",
+        },
+        {
+            name: "AuditTestGroupResult.fromPayload.emptyObject",
+            payload: {},
+        },
+        {
+            name: "AuditTestGroupResult.fromPayload.invalidTopLevelMembers",
+            payload: {
+                type: null,
+                name: null,
+                results: null,
+            },
+        },
+        {
+            name: "AuditTestGroupResult.fromPayload.missingSubMembers",
+            payload: {
+                type: WI.AuditTestGroupResult.TypeIdentifier,
+                name: "missingSubMembers group result name",
+                results: [],
+            },
+        },
+        {
+            name: "AuditTestGroupResult.fromPayload.invalidSubMembers",
+            payload: {
+                type: WI.AuditTestGroupResult.TypeIdentifier,
+                name: "invalidSubMembers group result name",
+                results: [
+                    null,
+                ],
+            },
+        },
+        {
+            name: "AuditTestGroupResult.fromPayload.valid",
+            payload: {
+                type: WI.AuditTestGroupResult.TypeIdentifier,
+                name: "valid group result name",
+                results: [
+                    {
+                        type: WI.AuditTestCaseResult.TypeIdentifier,
+                        name: "valid test result name",
+                        level: WI.AuditTestCaseResult.Level.Pass,
+                    },
+                ],
+            },
+        },
+        {
+            name: "AuditTestGroupResult.fromPayload.validWithInvalidOptionals",
+            payload: {
+                type: WI.AuditTestGroupResult.TypeIdentifier,
+                name: "validWithInvalidOptionals group result name",
+                description: null,
+                results: [
+                    {
+                        type: WI.AuditTestCaseResult.TypeIdentifier,
+                        name: "validWithInvalidOptionals test result name",
+                        description: null,
+                        level: WI.AuditTestCaseResult.Level.Pass,
+                        data: null,
+                    },
+                ],
+            },
+        },
+        {
+            name: "AuditTestGroupResult.fromPayload.validWithValidOptionals",
+            payload: {
+                type: WI.AuditTestGroupResult.TypeIdentifier,
+                name: "validWithValidOptionals group result name",
+                description: "validWithValidOptionals group result description",
+                results: [
+                    {
+                        type: WI.AuditTestCaseResult.TypeIdentifier,
+                        name: "validWithValidOptionals test result name",
+                        description: "validWithValidOptionals test result description",
+                        level: WI.AuditTestCaseResult.Level.Pass,
+                        data: {
+                            domNodes: ["validWithValidOptionals test result domNode"],
+                            domAttributes: ["validWithValidOptionals test result domAttribute"],
+                            errors: ["validWithValidOptionals test result error"],
+                        },
+                    },
+                ],
+            },
+        },
+        {
+            name: "AuditTestGroupResult.fromPayload.validNested",
+            payload: {
+                type: WI.AuditTestGroupResult.TypeIdentifier,
+                name: "validNested group result name",
+                description: "validNested group result description",
+                results: [
+                    {
+                        type: WI.AuditTestGroupResult.TypeIdentifier,
+                        name: "validNested nested group result name",
+                        description: "validNested nested group result description",
+                        results: [
+                            {
+                                type: WI.AuditTestCaseResult.TypeIdentifier,
+                                name: "validNested nested test result name",
+                                description: "validNested nested test result description",
+                                level: WI.AuditTestCaseResult.Level.Pass,
+                                data: {
+                                    domNodes: ["validNested nested test result domNode"],
+                                    domAttributes: ["validNested nested test result domAttribute"],
+                                    errors: ["validNested nested test result error"],
+                                },
+                            },
+                        ],
+                    },
+                    {
+                        type: WI.AuditTestCaseResult.TypeIdentifier,
+                        name: "validNested test result name",
+                        description: "validNested test result description",
+                        level: WI.AuditTestCaseResult.Level.Pass,
+                        data: {
+                            domNodes: ["validNested test result domNode"],
+                            domAttributes: ["validNested test result domAttribute"],
+                            errors: ["validNested test result error"],
+                        },
+                    },
+                ],
+            },
+        },
+    ];
+    payloadTests.forEach(addPayloadTest);
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing the functions of WI.AuditTestGroupResult.</p>
+</body>
+</html>

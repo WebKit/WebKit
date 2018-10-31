@@ -199,7 +199,7 @@ body.docked:matches(.right, .left) #navigation-sidebar.collapsed > .resizer {
     height: 20px;
     padding: 0 4px;
     border-bottom: none;
-    vertical-align: middle;
+    vertical-align: -3px;
 }
 
 .message-text-view .navigation-item-help .navigation-bar > .item {

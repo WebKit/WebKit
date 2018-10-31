@@ -1,5 +1,381 @@
 2018-10-30  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Audit: create Audit Tab
+        https://bugs.webkit.org/show_bug.cgi?id=190754
+
+        Reviewed by Matt Baker.
+
+        Create an Audit tab for running audits on the inspected page. Leverage `Runtime.evaluate`
+        for running the audit tests (arbitrary JavaScript), and use the returned value to generate
+        a preview UI of the results. All tests/results can be exported/imported to formatted JSON:
+
+        `AuditTestCase` JSON:
+            {
+                "type": "test-case",
+                "name": <string>,
+                <optional> "description": <string>,
+                "test": <stringified JavaScript function>,
+            }
+
+        `AuditTestGroup` JSON:
+            {
+                "type": "test-group",
+                "name": <string>,
+                <optional> "description": <string>,
+                "tests": [...<AuditTestCase, AuditTestGroup>],
+            }
+
+        `AuditTestCaseResult` JSON:
+            {
+                "type": "test-case-result",
+                "name": <string>,
+                <optional> "description": <string>,
+                "level": <"pass", "warn", "fail", "error", "unsupported">,
+                "data": {
+                    "domNodes": [...<stringified CSS path>],
+                    "domAttributes": [...<string>],
+                    "errors": [...<string>],
+                },
+            }
+
+        `AuditTestGroupResult` JSON:
+            {
+                "type": "test-group-result",
+                "name": <string>,
+                <optional> "description": <string>,
+                "results": [...<AuditTestCaseResult, AuditTestGroupResult>],
+            }
+
+        More keys may be added in the future (especially for `AuditTestCaseResult.data`).
+
+        * UserInterface/Controllers/AuditManager.js:
+        (WI.AuditManager):
+        (WI.AuditManager.synthesizeError): Added.
+        (WI.AuditManager.prototype.get tests): Added.
+        (WI.AuditManager.prototype.get results): Added.
+        (WI.AuditManager.prototype.get runningState): Added.
+        (WI.AuditManager.prototype.start): Added.
+        (WI.AuditManager.prototype.stop): Added.
+        (WI.AuditManager.prototype.import): Added.
+        (WI.AuditManager.prototype.export): Added.
+        (WI.AuditManager.prototype._addTest): Added.
+        (WI.AuditManager.prototype._addResult): Added.
+        (WI.AuditManager.prototype.get testSuites): Deleted.
+        (WI.AuditManager.prototype.get reports): Deleted.
+        (WI.AuditManager.prototype.async runAuditTestByRepresentedObject): Deleted.
+        (WI.AuditManager.prototype.reportForId): Deleted.
+        (WI.AuditManager.prototype.removeAllReports): Deleted.
+        (WI.AuditManager.prototype.async _runTestCase): Deleted.
+
+        * UserInterface/Models/AuditTestBase.js: Added.
+        (WI.AuditTestBases):
+        (WI.AuditTestBases.prototype.get name):
+        (WI.AuditTestBases.prototype.get description):
+        (WI.AuditTestBases.prototype.get runningState):
+        (WI.AuditTestBases.prototype.get result):
+        (WI.AuditTestBases.prototype.async start):
+        (WI.AuditTestBases.prototype.stop):
+        (WI.AuditTestBases.prototype.clearResult):
+        (WI.AuditTestBases.prototype.saveIdentityToCookie):
+        (WI.AuditTestBases.prototype.toJSON):
+        (WI.AuditTestBases.prototype.async run):
+
+        * UserInterface/Models/AuditTestCase.js:
+        (WI.AuditTestCase):
+        (WI.AuditTestCase.fromPayload): Added.
+        (WI.AuditTestCase.prototype.toJSON): Added.
+        (WI.AuditTestCase.prototype.async run): Added.
+        (WI.AuditTestCase.prototype.async run.setLevel): Added.
+        (WI.AuditTestCase.prototype.async run.addError): Added.
+        (WI.AuditTestCase.prototype.async run.checkResultProperty.addErrorForValueType): Added.
+        (WI.AuditTestCase.prototype.async run.checkResultProperty): Added.
+        (WI.AuditTestCase.prototype.async run.async resultArrayForEach): Added.
+        (WI.AuditTestCase.prototype.get id): Deleted.
+        (WI.AuditTestCase.prototype.get name): Deleted.
+        (WI.AuditTestCase.prototype.get suite): Deleted.
+        (WI.AuditTestCase.prototype.get setup): Deleted.
+        (WI.AuditTestCase.prototype.get tearDown): Deleted.
+        (WI.AuditTestCase.prototype.get errorDetails): Deleted.
+
+        * UserInterface/Models/AuditTestGroup.js: Added.
+        (WI.AuditTestGroup):
+        (WI.AuditTestGroup.fromPayload):
+        (WI.AuditTestGroup.prototype.get tests):
+        (WI.AuditTestGroup.prototype.stop):
+        (WI.AuditTestGroup.prototype.clearResult):
+        (WI.AuditTestGroup.prototype.async run):
+        (WI.AuditTestGroup.prototype.toJSON):
+        (WI.AuditTestGroup.prototype._updateResult):
+        (WI.AuditTestGroup.prototype._handleTestCompleted):
+        (WI.AuditTestGroup.prototype._handleTestProgress):
+
+        * UserInterface/Models/AuditTestResultBase.js: Added.
+        (WI.AuditTestResultBase):
+        (WI.AuditTestResultBase.prototype.get name):
+        (WI.AuditTestResultBase.prototype.get description):
+        (WI.AuditTestResultBase.prototype.get result):
+        (WI.AuditTestResultBase.prototype.get didPass):
+        (WI.AuditTestResultBase.prototype.get didWarn):
+        (WI.AuditTestResultBase.prototype.get didFail):
+        (WI.AuditTestResultBase.prototype.get didError):
+        (WI.AuditTestResultBase.prototype.get unsupported):
+        (WI.AuditTestResultBase.prototype.saveIdentityToCookie):
+        (WI.AuditTestResultBase.prototype.toJSON):
+
+        * UserInterface/Models/AuditTestCaseResult.js: Added.
+        (WI.AuditTestCaseResult):
+        (WI.AuditTestCaseResult.fromPayload.checkArray):
+        (WI.AuditTestCaseResult.fromPayload):
+        (WI.AuditTestCaseResult.prototype.get level):
+        (WI.AuditTestCaseResult.prototype.get data):
+        (WI.AuditTestCaseResult.prototype.get didPass):
+        (WI.AuditTestCaseResult.prototype.get didWarn):
+        (WI.AuditTestCaseResult.prototype.get didFail):
+        (WI.AuditTestCaseResult.prototype.get didError):
+        (WI.AuditTestCaseResult.prototype.get unsupported):
+        (WI.AuditTestCaseResult.prototype.toJSON):
+
+        * UserInterface/Models/AuditTestGroupResult.js: Added.
+        (WI.AuditTestGroupResult):
+        (WI.AuditTestGroupResult.fromPayload):
+        (WI.AuditTestGroupResult.prototype.get results):
+        (WI.AuditTestGroupResult.prototype.get levelCounts):
+        (WI.AuditTestGroupResult.prototype.get didPass):
+        (WI.AuditTestGroupResult.prototype.get didWarn):
+        (WI.AuditTestGroupResult.prototype.get didFail):
+        (WI.AuditTestGroupResult.prototype.get didError):
+        (WI.AuditTestGroupResult.prototype.get unsupported):
+        (WI.AuditTestGroupResult.prototype.toJSON):
+
+        * UserInterface/Views/AuditTabContentView.js: Added.
+        (WI.AuditTabContentView):
+        (WI.AuditTabContentView.tabInfo):
+        (WI.AuditTabContentView.isTabAllowed):
+        (WI.AuditTabContentView.prototype.get type):
+        (WI.AuditTabContentView.prototype.get supportsSplitContentBrowser):
+        (WI.AuditTabContentView.prototype.canShowRepresentedObject):
+        (WI.AuditTabContentView.prototype.shown):
+        (WI.AuditTabContentView.prototype.hidden):
+        (WI.AuditTabContentView.prototype._handleSpace):
+
+        * UserInterface/Views/AuditNavigationSidebarPanel.js: Added.
+        (WI.AuditNavigationSidebarPanel):
+        (WI.AuditNavigationSidebarPanel.prototype.showDefaultContentView):
+        (WI.AuditNavigationSidebarPanel.prototype.initialLayout):
+        (WI.AuditNavigationSidebarPanel.prototype.closed):
+        (WI.AuditNavigationSidebarPanel.prototype._addTest):
+        (WI.AuditNavigationSidebarPanel.prototype._addResult):
+        (WI.AuditNavigationSidebarPanel.prototype._updateStartStopButtonNavigationItemState):
+        (WI.AuditNavigationSidebarPanel.prototype._handleAuditTestAdded):
+        (WI.AuditNavigationSidebarPanel.prototype._handleAuditTestCompleted):
+        (WI.AuditNavigationSidebarPanel.prototype._handleAuditTestScheduled):
+        (WI.AuditNavigationSidebarPanel.prototype._treeSelectionDidChange):
+        (WI.AuditNavigationSidebarPanel.prototype._handleStartStopButtonNavigationItemClicked):
+        (WI.AuditNavigationSidebarPanel.prototype._handleImportButtonNavigationItemClicked):
+        * UserInterface/Views/AuditNavigationSidebarPanel.css: Added.
+        (.sidebar > .panel.navigation.audit > .content):
+
+        * UserInterface/Views/AuditTreeElement.js: Added.
+        (WI.AuditTreeElement):
+        (WI.AuditTreeElement.prototype.get result):
+        (WI.AuditTreeElement.prototype.onattach):
+        (WI.AuditTreeElement.prototype.ondetach):
+        (WI.AuditTreeElement.prototype.onpopulate):
+        (WI.AuditTreeElement.prototype.populateContextMenu):
+        (WI.AuditTreeElement.prototype._start):
+        (WI.AuditTreeElement.prototype._updateLevel):
+        (WI.AuditTreeElement.prototype._showRunningSpinner):
+        (WI.AuditTreeElement.prototype._showRunningProgress):
+        (WI.AuditTreeElement.prototype._handleTestCaseCompleted):
+        (WI.AuditTreeElement.prototype._handleTestResultCleared):
+        (WI.AuditTreeElement.prototype._handleTestCaseScheduled):
+        (WI.AuditTreeElement.prototype._handleTestGroupCompleted):
+        (WI.AuditTreeElement.prototype._handleTestGroupProgress):
+        (WI.AuditTreeElement.prototype._handleTestGroupScheduled):
+        (WI.AuditTreeElement.prototype._handleStatusClick):
+        * UserInterface/Views/AuditTreeElement.css: Added.
+        (.tree-outline .item.audit > .status):
+        (.tree-outline .item.audit > .status > img):
+        (.tree-outline .item.audit:matches(.test-case, .test-group) > .status:hover > img):
+        (.tree-outline .item.audit > .status:not(:hover) > img.show-on-hover, .tree-outline .item.audit.test-group.expanded > .status:not(:hover)):
+        (.tree-outline .item.audit.test-group.expanded > .status:hover > :not(img), .tree-outline .item.audit.test-group-result.expanded > .status):
+        (.tree-outline .item.audit > .status > img.pass):
+        (.tree-outline .item.audit > .status > img.warn):
+        (.tree-outline .item.audit > .status > img.fail):
+        (.tree-outline .item.audit > .status > img.error):
+        (.tree-outline .item.audit > .status > img.unsupported):
+        (.audit.test-case .icon):
+        (.audit.test-group .icon):
+        (.audit.test-case-result .icon):
+        (.audit.test-group-result .icon):
+
+        * UserInterface/Views/AuditTestContentView.js: Added.
+        (WI.AuditTestContentView):
+        (WI.AuditTestContentView.prototype.get navigationItems):
+        (WI.AuditTestContentView.prototype.get headerView):
+        (WI.AuditTestContentView.prototype.get contentView):
+        (WI.AuditTestContentView.prototype.get supportsSave):
+        (WI.AuditTestContentView.prototype.get saveData):
+        (WI.AuditTestContentView.prototype.initialLayout):
+        (WI.AuditTestContentView.prototype.layout):
+        (WI.AuditTestContentView.prototype.shown):
+        (WI.AuditTestContentView.prototype.hidden):
+        (WI.AuditTestContentView.prototype.get placeholderElement):
+        (WI.AuditTestContentView.prototype.set placeholderElement):
+        (WI.AuditTestContentView.prototype.showRunningPlaceholder):
+        (WI.AuditTestContentView.prototype.showStoppingPlaceholder):
+        (WI.AuditTestContentView.prototype.showNoResultPlaceholder):
+        (WI.AuditTestContentView.prototype.showNoResultDataPlaceholder):
+        (WI.AuditTestContentView.prototype.showFilteredPlaceholder):
+        (WI.AuditTestContentView.prototype.hidePlaceholder):
+        (WI.AuditTestContentView.prototype.applyFilter):
+        (WI.AuditTestContentView.prototype.resetFilter):
+        (WI.AuditTestContentView.prototype._exportAudit):
+        (WI.AuditTestContentView.prototype._updateExportButtonNavigationItemState):
+        (WI.AuditTestContentView.prototype._showPlaceholder):
+        (WI.AuditTestContentView.prototype._handleExportButtonNavigationItemClicked):
+        (WI.AuditTestContentView.prototype._handleTestChanged):
+        * UserInterface/Views/AuditTestContentView.css: Added.
+        (.content-view-container > .content-view.audit-test):
+        (.content-view-container > .content-view.audit-test > header):
+        (.content-view-container > .content-view.audit-test > header h1):
+        (.content-view-container > .content-view.audit-test > header p):
+        (.content-view.audit-test):
+        (.content-view.audit-test h1):
+        (.content-view.audit-test > header):
+        (.content-view.audit-test > header p):
+        (.content-view.audit-test .audit-test.filtered, .content-view.audit-test .audit-test .message-text-view):
+        (.content-view.audit-test > section):
+        (.content-view.audit-test > section > .message-text-view):
+        (.content-view.audit-test.showing-placeholder):
+        (.content-view.audit-test.showing-placeholder > section):
+        (.content-view.audit-test.showing-placeholder > section > :not(.message-text-view)):
+        (@media (prefers-dark-interface) .content-view.audit-test):
+
+        * UserInterface/Views/AuditTestCaseContentView.js: Added.
+        (WI.AuditTestCaseContentView):
+        (WI.AuditTestCaseContentView.prototype.initialLayout):
+        (WI.AuditTestCaseContentView.prototype.layout):
+        (WI.AuditTestCaseContentView.prototype.showRunningPlaceholder):
+        * UserInterface/Views/AuditTestCaseContentView.css: Added.
+        (.content-view-container > .content-view.audit-test-case > header):
+        (.content-view-container > .content-view.audit-test-case > section > :not(.message-text-view):first-child):
+        (.content-view.audit-test-case > header > h1):
+        (.content-view.audit-test-case > header > h1 > img):
+        (.content-view.audit-test-case > section > :not(.message-text-view)):
+        (.content-view.audit-test-case > section > :not(.message-text-view):last-child):
+        (.content-view.audit-test-case > section > :not(.message-text-view) + :not(.message-text-view)):
+        (.content-view.audit-test-case > section h1):
+        (.content-view.audit-test-case > section table):
+        (.content-view.audit-test-case > section table > tr + tr > td):
+        (.content-view.audit-test-case > section table > tr > td > :not(.tree-outline)):
+        (.content-view.audit-test-case > section table > tr > td:first-child):
+        (.content-view.audit-test-case > section > .dom-nodes > table > tr > td:first-child):
+        (.content-view.audit-test-case > section code):
+        (.content-view.audit-test-case > section mark):
+
+        * UserInterface/Views/AuditTestGroupContentView.js: Added.
+        (WI.AuditTestGroupContentView):
+        (WI.AuditTestGroupContentView.prototype.initialLayout):
+        (WI.AuditTestGroupContentView.prototype.layout):
+        (WI.AuditTestGroupContentView.prototype.shown):
+        (WI.AuditTestGroupContentView.prototype.hidden):
+        (WI.AuditTestGroupContentView.prototype.applyFilter):
+        (WI.AuditTestGroupContentView.prototype.resetFilter):
+        (WI.AuditTestGroupContentView.prototype.showRunningPlaceholder):
+        (WI.AuditTestGroupContentView.prototype._subobjects):
+        (WI.AuditTestGroupContentView.prototype._updateLevelScopeBar):
+        (WI.AuditTestGroupContentView.prototype._handleTestGroupCompleted):
+        (WI.AuditTestGroupContentView.prototype._handleTestGroupProgress):
+        (WI.AuditTestGroupContentView.prototype._handleTestGroupScheduled):
+        (WI.AuditTestGroupContentView.prototype._handleLevelScopeBarSelectionChanged):
+        * UserInterface/Views/AuditTestGroupContentView.css: Added.
+        (.content-view-container > .content-view.audit-test-group > header):
+        (.content-view.audit-test-group > header):
+        (.content-view.audit-test-group.no-matches + .audit-test-group > header):
+        (.content-view.audit-test-group > header, .content-view.audit-test-group:not(.filtered):last-child > header):
+        (.content-view.audit-test-group.contains-test-case > header):
+        (.content-view.audit-test-group.contains-test-case + .audit-test-group.contains-test-case):
+        (.content-view.audit-test-group.contains-test-case:not(.contains-test-group) > section, .content-view.audit-test-group.contains-test-case.contains-test-group > section > .audit-test-case):
+        (.content-view.audit-test-group > header > .information):
+        (.content-view.audit-test-group > header > .information > p):
+        (.content-view.audit-test-group > header > nav):
+        (.content-view.audit-test-group > header > nav:empty):
+        (.content-view.audit-test-group > header > nav:not(:empty):before):
+        (.content-view.audit-test-group > header > nav > .scope-bar > li):
+        (.content-view.audit-test-group > header > nav > .scope-bar > li:not(:hover, .selected)):
+        (.content-view.audit-test-group > header > nav > .scope-bar > li:last-child):
+        (.content-view.audit-test-group > header > nav > .scope-bar > li::before):
+        (.content-view.audit-test-group > header > nav > .scope-bar > li.pass::before):
+        (.content-view.audit-test-group > header > nav > .scope-bar > li.warn::before):
+        (.content-view.audit-test-group > header > nav > .scope-bar > li.fail::before):
+        (.content-view.audit-test-group > header > nav > .scope-bar > li.error::before):
+        (.content-view.audit-test-group > header > nav > .scope-bar > li.unsupported::before):
+        (.content-view.audit-test-group > header > .percentage-pass):
+        (.content-view.audit-test-group > header > .percentage-pass:not(:empty)::after):
+        (.content-view.audit-test-group > section > .audit-test-case:first-child, .content-view.audit-test-group > section > .audit-test-group + .audit-test-case, .content-view.audit-test-group > section > .audit-test-case + .audit-test-group):
+        (.content-view.audit-test-group > section > .audit-test-case:last-child):
+
+        * UserInterface/Views/ScopeBarItem.js:
+        (WI.ScopeBarItem):
+        (WI.ScopeBarItem.prototype.set selected):
+        * UserInterface/Views/MultipleScopeBarItem.js:
+        (WI.MultipleScopeBarItem.prototype.set selectedScopeBarItem):
+        Add an `independent` option that prevents selection changes from deselecting other
+        `WI.ScopeBarItem`s in the same `WI.ScopeBar` (`exclusive` takes precedence).
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement):
+        (WI.DOMTreeElement.prototype.highlightAttribute):
+        (WI.DOMTreeElement.prototype._buildAttributeDOM):
+        * UserInterface/Views/DOMTreeOutline.css:
+        (.tree-outline.dom li .highlight):
+
+        * UserInterface/Views/ToggleButtonNavigationItem.js:
+        (WI.ToggleButtonNavigationItem.prototype.set toggled):
+        Also change the `label` if the `ButtonStyle` has text.
+
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createExperimentalSettingsView):
+
+        * UserInterface/Views/DividerNavigationItem.css:
+        (.navigation-bar .item.divider):
+
+        * UserInterface/Base/Utilities.js:
+        (Promise.chain): Added.
+
+        * UserInterface/Views/ContentView.js:
+        (WI.ContentView.createFromRepresentedObject):
+        (WI.ContentView.isViewable):
+
+        * UserInterface/Main.html:
+        * UserInterface/Base/Main.js:
+        (WI.loaded):
+        (WI.contentLoaded):
+
+        * UserInterface/Test.html:
+        * UserInterface/Base/Test.js:
+        (WI.loaded):
+
+        * UserInterface/Images/Audit.svg: Added.
+        * UserInterface/Images/AuditStart.svg: Added.
+        * UserInterface/Images/AuditStop.svg: Added.
+        * UserInterface/Images/AuditTestCase.svg: Added.
+        * UserInterface/Images/AuditTestCaseResult.svg: Added.
+        * UserInterface/Images/AuditTestError.svg: Added.
+        * UserInterface/Images/AuditTestFail.svg: Added.
+        * UserInterface/Images/AuditTestGroup.svg: Added.
+        * UserInterface/Images/AuditTestGroupResult.svg: Added.
+        * UserInterface/Images/AuditTestNoResult.svg: Added.
+        * UserInterface/Images/AuditTestPass.svg: Added.
+        * UserInterface/Images/AuditTestUnsupported.svg: Added.
+        * UserInterface/Images/AuditTestWarn.svg: Added.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+2018-10-30  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: provide options to WI.cssPath for more verbosity
         https://bugs.webkit.org/show_bug.cgi?id=190987
 

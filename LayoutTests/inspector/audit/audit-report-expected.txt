@@ -1,7 +1,0 @@
-Test for the AuditManager Instantiation.
-
-
-== Running test suite: AuditReport
--- Running test case: Instantiation with test suite
-PASS: Instantiate AuditReport with AuditTestSuite.
-
