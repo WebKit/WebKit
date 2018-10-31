@@ -1,4 +1,5 @@
 
+PASS Device IDs should be empty initially 
 PASS Collect device IDs 
 PASS Pass device IDs as exact constraints 
 PASS Pass device IDs as optional constraints 

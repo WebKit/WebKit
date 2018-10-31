@@ -2904,3 +2904,7 @@ webkit.org/b/190032 imported/w3c/web-platform-tests/css/css-scoping/keyframes-00
 fast/mediacapturefromelement/CanvasCaptureMediaStream-imagebitmaprenderingcontext.html [ Skip ]
 fast/mediacapturefromelement/CanvasCaptureMediaStream-framerate-0.html [ Skip ]
 fast/mediacapturefromelement/CanvasCaptureMediaStream-capture-out-of-DOM-element.html [ Skip ]
+
+# FIXME: The behavior of navigator.mediaDevices.enumerateDevices is in flux, skip these tests for now.
+http/tests/media/media-stream/enumerate-devices-source-id-persistent.html [ Skip ]
+http/tests/media/media-stream/enumerate-devices-source-id.html [ Skip ]

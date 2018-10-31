@@ -1,3 +1,18 @@
+2018-10-31  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Don't reveal device IDs until the user has granted permission to capture
+        https://bugs.webkit.org/show_bug.cgi?id=191112
+        <rdar://problem/45699932>
+
+        Reviewed by Youenn Fablet.
+
+        * TestExpectations: Skip http/tests/media/media-stream/enumerate-devices-source-id-persistent.html
+        and http/tests/media/media-stream/enumerate-devices-source-id.html for now, they don't make sense
+        with these changes and will be updated to pass in a future patch.
+        * fast/mediastream/MediaStreamTrack-getCapabilities.html:
+        * fast/mediastream/get-user-media-device-id-expected.txt:
+        * fast/mediastream/get-user-media-device-id.html:
+
 2018-10-31  YUHAN WU  <yuhan_wu@apple.com>
 
         MediaRecorder should fire dataavailable event when all tracks are ended and stop() is called

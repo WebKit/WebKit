@@ -15,12 +15,23 @@
         return navigator.mediaDevices.enumerateDevices()
             .then((devices) => {
                 devices.forEach((device) => {
+                    assert_true(device.deviceId.length == 0 , "device.deviceId is empty before permission to capture");
+                });
+            });
+    }, "Device IDs should be empty initially");
+    
+    promise_test((test) => {
+        return navigator.mediaDevices.getUserMedia({ audio:true, video:true })
+            .then((stream) => {
+                return navigator.mediaDevices.enumerateDevices();
+            }).then(devices => {
+                devices.forEach((device) => {
                     let kind = device.kind == "audioinput" ? "audio" : "video";
                     deviceIds.push({ type: kind, id : device.deviceId});
                 });
             });
     }, "Collect device IDs");
-    
+
     let constraints = { };
 
     promise_test((test) => {

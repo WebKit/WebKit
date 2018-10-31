@@ -115,21 +115,24 @@ void MediaDevicesRequest::start()
         document.setDeviceIDHashSalt(deviceIdentifierHashSalt);
 
         Vector<Ref<MediaDeviceInfo>> devices;
+        bool revealIdsAndLabels = originHasPersistentAccess || document.hasHadCaptureMediaStreamTrack();
         for (auto& deviceInfo : captureDevices) {
             auto label = emptyString();
-            if (originHasPersistentAccess || document.hasHadCaptureMediaStreamTrack())
+            auto id = emptyString();
+            auto groupId = emptyString();
+            if (revealIdsAndLabels) {
                 label = deviceInfo.label();
+                id = RealtimeMediaSourceCenter::singleton().hashStringWithSalt(deviceInfo.persistentId(), deviceIdentifierHashSalt);
+                if (id.isEmpty())
+                    continue;
+                groupId = RealtimeMediaSourceCenter::singleton().hashStringWithSalt(deviceInfo.groupId(), deviceIdentifierHashSalt);
+            }
 
-            auto id = RealtimeMediaSourceCenter::singleton().hashStringWithSalt(deviceInfo.persistentId(), deviceIdentifierHashSalt);
-            if (id.isEmpty())
-                continue;
-
-            auto groupId = RealtimeMediaSourceCenter::singleton().hashStringWithSalt(deviceInfo.groupId(), deviceIdentifierHashSalt);
             auto deviceType = deviceInfo.type() == CaptureDevice::DeviceType::Microphone ? MediaDeviceInfo::Kind::Audioinput : MediaDeviceInfo::Kind::Videoinput;
             devices.append(MediaDeviceInfo::create(scriptExecutionContext(), label, id, groupId, deviceType));
         }
 
-        if (!originHasPersistentAccess && !document.hasHadCaptureMediaStreamTrack())
+        if (!revealIdsAndLabels)
             filterDeviceList(devices);
 
         callOnMainThread([protectedThis = makeRef(*this), devices = WTFMove(devices)]() mutable {

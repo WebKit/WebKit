@@ -2,10 +2,12 @@
 <html>
     <head>
         <script src="../../resources/js-test-pre.js"></script>
-        <script src="./resources/getUserMedia-helper.js"></script>
         <script>
             var mediaStream;
             var devices;
+
+            if (window.testRunner)
+                testRunner.setUserMediaPermission(true);
 
             function limitPrecision(value, precision)
             {
@@ -80,16 +82,16 @@
                 finishJSTest();
             }
 
-            function start()
+            async function start()
             {
                 description("Tests MediaStreamTrack.getCapabilities.");
-                navigator.mediaDevices.enumerateDevices().then(deviceInfoArray => {
-                    devices = deviceInfoArray;
-                    getUserMedia("allow", {audio:true, video:true}, gotStream);
-                }, e => {
-                    testFailed('enumerateDevices failed:' + e);
-                    finishJSTest();
-                });
+
+                mediaStream = await navigator.mediaDevices.getUserMedia({ audio:true, video:true });
+                devices = await navigator.mediaDevices.enumerateDevices();
+
+                listTrackProperties(mediaStream.getVideoTracks()[0]);
+                listTrackProperties(mediaStream.getAudioTracks()[0]);
+                finishJSTest();
             }
 
             window.jsTestIsAsync = true;
