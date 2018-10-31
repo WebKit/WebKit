@@ -47,26 +47,26 @@ class BlockFormattingContext : public FormattingContext {
 public:
     BlockFormattingContext(const Box& formattingContextRoot, FormattingState& formattingState);
 
-    void layout(LayoutState&, FormattingState&) const override;
+    void layout() const override;
 
 private:
-    void layoutFormattingContextRoot(LayoutState&, FloatingContext&, FormattingState&, const Box&) const;
+    void layoutFormattingContextRoot(FloatingContext&, const Box&) const;
 
-    void computeWidthAndMargin(LayoutState&, const Box&) const;
-    void computeHeightAndMargin(const LayoutState&, const Box&) const;
+    void computeWidthAndMargin(const Box&) const;
+    void computeHeightAndMargin(const Box&) const;
 
-    void computeStaticPosition(const LayoutState&, const Box&) const override;
-    void computeFloatingPosition(const LayoutState&, const FloatingContext&, const Box&) const;
-    void computePositionToAvoidFloats(const LayoutState&, const FloatingContext&, const Box&) const;
-    void computeVerticalPositionForFloatClear(const LayoutState&, const FloatingContext&, const Box&) const;
+    void computeStaticPosition(const Box&) const override;
+    void computeFloatingPosition(const FloatingContext&, const Box&) const;
+    void computePositionToAvoidFloats(const FloatingContext&, const Box&) const;
+    void computeVerticalPositionForFloatClear(const FloatingContext&, const Box&) const;
 
-    void computeInFlowPositionedPosition(const LayoutState&, const Box&) const override;
-    void computeEstimatedMarginTopForAncestors(const LayoutState&, const Box&) const;
-    void computeEstimatedMarginTop(const LayoutState&, const Box&) const;
+    void computeInFlowPositionedPosition(const Box&) const override;
+    void computeEstimatedMarginTopForAncestors(const Box&) const;
+    void computeEstimatedMarginTop(const Box&) const;
 
-    void precomputeVerticalPositionForFormattingRootIfNeeded(const LayoutState&, const Box&) const;
+    void precomputeVerticalPositionForFormattingRootIfNeeded(const Box&) const;
 
-    InstrinsicWidthConstraints instrinsicWidthConstraints(LayoutState&, const Box&) const override;
+    InstrinsicWidthConstraints instrinsicWidthConstraints(const Box&) const override;
 
     // This class implements positioning and sizing for boxes participating in a block formatting context.
     class Geometry : public FormattingContext::Geometry {

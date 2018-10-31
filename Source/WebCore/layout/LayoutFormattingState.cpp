@@ -83,8 +83,8 @@ void LayoutState::layoutFormattingContextSubtree(const Box& layoutRoot)
     RELEASE_ASSERT(layoutRoot.establishesFormattingContext());
     auto& formattingState = createFormattingStateForFormattingRootIfNeeded(layoutRoot);
     auto formattingContext = formattingState.formattingContext(layoutRoot);
-    formattingContext->layout(*this, formattingState);
-    formattingContext->layoutOutOfFlowDescendants(*this, layoutRoot);
+    formattingContext->layout();
+    formattingContext->layoutOutOfFlowDescendants(layoutRoot);
 }
 
 Display::Box& LayoutState::displayBoxForLayoutBox(const Box& layoutBox) const

@@ -63,8 +63,10 @@ LayoutState& FormattingContext::layoutState() const
     return m_formattingState.layoutState();
 }
 
-void FormattingContext::computeOutOfFlowHorizontalGeometry(LayoutState& layoutState, const Box& layoutBox) const
+void FormattingContext::computeOutOfFlowHorizontalGeometry(const Box& layoutBox) const
 {
+    auto& layoutState = this->layoutState();
+
     auto compute = [&](std::optional<LayoutUnit> usedWidth) {
         return Geometry::outOfFlowHorizontalGeometry(layoutState, *this, layoutBox, usedWidth);
     };
@@ -91,8 +93,10 @@ void FormattingContext::computeOutOfFlowHorizontalGeometry(LayoutState& layoutSt
     displayBox.setHorizontalNonComputedMargin(horizontalGeometry.widthAndMargin.nonComputedMargin);
 }
 
-void FormattingContext::computeOutOfFlowVerticalGeometry(const LayoutState& layoutState, const Box& layoutBox) const
+void FormattingContext::computeOutOfFlowVerticalGeometry(const Box& layoutBox) const
 {
+    auto& layoutState = this->layoutState();
+
     auto compute = [&](std::optional<LayoutUnit> usedHeight) {
         return Geometry::outOfFlowVerticalGeometry(layoutState, layoutBox, usedHeight);
     };
@@ -118,29 +122,30 @@ void FormattingContext::computeOutOfFlowVerticalGeometry(const LayoutState& layo
     displayBox.setVerticalNonCollapsedMargin(verticalGeometry.heightAndMargin.margin);
 }
 
-void FormattingContext::computeBorderAndPadding(const LayoutState& layoutState, const Box& layoutBox) const
+void FormattingContext::computeBorderAndPadding(const Box& layoutBox) const
 {
+    auto& layoutState = this->layoutState();
     auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
     displayBox.setBorder(Geometry::computedBorder(layoutState, layoutBox));
     displayBox.setPadding(Geometry::computedPadding(layoutState, layoutBox));
 }
 
-void FormattingContext::placeInFlowPositionedChildren(const LayoutState& layoutState, const Container& container) const
+void FormattingContext::placeInFlowPositionedChildren(const Container& container) const
 {
     // If this container also establishes a formatting context, then positioning already has happend in that the formatting context.
     if (container.establishesFormattingContext() && &container != &root())
         return;
 
-    LOG_WITH_STREAM(FormattingContextLayout, stream << "Start: move in-flow positioned children -> context: " << &layoutState << " parent: " << &container);
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "Start: move in-flow positioned children -> parent: " << &container);
     for (auto& layoutBox : childrenOfType<Box>(container)) {
         if (!layoutBox.isInFlowPositioned())
             continue;
-        computeInFlowPositionedPosition(layoutState, layoutBox);
+        computeInFlowPositionedPosition(layoutBox);
     }
-    LOG_WITH_STREAM(FormattingContextLayout, stream << "End: move in-flow positioned children -> context: " << &layoutState << " parent: " << &container);
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "End: move in-flow positioned children -> parent: " << &container);
 }
 
-void FormattingContext::layoutOutOfFlowDescendants(LayoutState& layoutState, const Box& layoutBox) const
+void FormattingContext::layoutOutOfFlowDescendants(const Box& layoutBox) const
 {
     // Initial containing block by definition is a containing block.
     if (!layoutBox.isPositioned() && !layoutBox.isInitialContainingBlock())
@@ -153,6 +158,7 @@ void FormattingContext::layoutOutOfFlowDescendants(LayoutState& layoutState, con
     if (!container.hasChild())
         return;
 
+    auto& layoutState = this->layoutState();
     LOG_WITH_STREAM(FormattingContextLayout, stream << "Start: layout out-of-flow descendants -> context: " << &layoutState << " root: " << &root());
 
     for (auto& outOfFlowBox : container.outOfFlowDescendants()) {
@@ -160,14 +166,13 @@ void FormattingContext::layoutOutOfFlowDescendants(LayoutState& layoutState, con
 
         ASSERT(layoutBox.establishesFormattingContext());
 
-        computeBorderAndPadding(layoutState, layoutBox);
-        computeOutOfFlowHorizontalGeometry(layoutState, layoutBox);
+        computeBorderAndPadding(layoutBox);
+        computeOutOfFlowHorizontalGeometry(layoutBox);
 
-        auto& formattingState = layoutState.createFormattingStateForFormattingRootIfNeeded(layoutBox);
-        formattingState.formattingContext(layoutBox)->layout(layoutState, formattingState);
+        layoutState.createFormattingStateForFormattingRootIfNeeded(layoutBox).formattingContext(layoutBox)->layout();
 
-        computeOutOfFlowVerticalGeometry(layoutState, layoutBox);
-        layoutOutOfFlowDescendants(layoutState, layoutBox);
+        computeOutOfFlowVerticalGeometry(layoutBox);
+        layoutOutOfFlowDescendants(layoutBox);
     }
     LOG_WITH_STREAM(FormattingContextLayout, stream << "End: layout out-of-flow descendants -> context: " << &layoutState << " root: " << &root());
 }
@@ -215,11 +220,12 @@ Position FormattingContext::mapCoordinateToAncestor(const LayoutState& layoutSta
 }
 
 #ifndef NDEBUG
-void FormattingContext::validateGeometryConstraintsAfterLayout(const LayoutState& layoutState) const
+void FormattingContext::validateGeometryConstraintsAfterLayout() const
 {
     if (!is<Container>(root()))
         return;
     auto& formattingContextRoot = downcast<Container>(root());
+    auto& layoutState = this->layoutState();
     // FIXME: add a descendantsOfType<> flavor that stops at nested formatting contexts
     for (auto& layoutBox : descendantsOfType<Box>(formattingContextRoot)) {
         if (&layoutBox.formattingContextRoot() != &formattingContextRoot)

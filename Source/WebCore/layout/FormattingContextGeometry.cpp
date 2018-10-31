@@ -210,7 +210,7 @@ LayoutUnit FormattingContext::Geometry::shrinkToFitWidth(LayoutState& layoutStat
 
     // Then the shrink-to-fit width is: min(max(preferred minimum width, available width), preferred width).
     auto availableWidth = layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).width();
-    auto instrinsicWidthConstraints = formattingContext.instrinsicWidthConstraints(layoutState, layoutBox);
+    auto instrinsicWidthConstraints = formattingContext.instrinsicWidthConstraints(layoutBox);
     return std::min(std::max(instrinsicWidthConstraints.minimum, availableWidth), instrinsicWidthConstraints.maximum);
 }
 

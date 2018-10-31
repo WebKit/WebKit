@@ -45,7 +45,7 @@ class InlineFormattingContext : public FormattingContext {
 public:
     InlineFormattingContext(const Box& formattingContextRoot, FormattingState&);
 
-    void layout(LayoutState&, FormattingState&) const override;
+    void layout() const override;
 
 private:
     class Line {
@@ -102,16 +102,16 @@ private:
         static WidthAndMargin inlineBlockWidthAndMargin(const LayoutState&, const Box&);
     };
 
-    void layoutInlineContent(const LayoutState&, InlineFormattingState&, const InlineRunProvider&) const;
-    void initializeNewLine(const LayoutState&, InlineFormattingState&, Line&) const;
+    void layoutInlineContent(const InlineRunProvider&) const;
+    void initializeNewLine(Line&) const;
 
-    void layoutFormattingContextRoot(LayoutState&, const Box&) const;
-    void computeWidthAndHeightForInlineBox(LayoutState&, const Box&) const;
-    void computeFloatPosition(const LayoutState&, const FloatingContext&, Line&, const Box&) const;
-    void computeStaticPosition(const LayoutState&, const Box&) const override;
-    void computeInFlowPositionedPosition(const LayoutState&, const Box&) const override;
+    void layoutFormattingContextRoot(const Box&) const;
+    void computeWidthAndHeightForInlineBox(const Box&) const;
+    void computeFloatPosition(const FloatingContext&, Line&, const Box&) const;
+    void computeStaticPosition(const Box&) const override;
+    void computeInFlowPositionedPosition(const Box&) const override;
 
-    InstrinsicWidthConstraints instrinsicWidthConstraints(LayoutState&, const Box&) const override;
+    InstrinsicWidthConstraints instrinsicWidthConstraints(const Box&) const override;
 };
 
 }

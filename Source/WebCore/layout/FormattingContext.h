@@ -49,14 +49,14 @@ public:
     FormattingContext(const Box& formattingContextRoot, FormattingState&);
     virtual ~FormattingContext();
 
-    virtual void layout(LayoutState&, FormattingState&) const = 0;
-    void layoutOutOfFlowDescendants(LayoutState&, const Box&) const;
+    virtual void layout() const = 0;
+    void layoutOutOfFlowDescendants(const Box&) const;
 
     struct InstrinsicWidthConstraints {
         LayoutUnit minimum;
         LayoutUnit maximum;
     };
-    virtual InstrinsicWidthConstraints instrinsicWidthConstraints(LayoutState&, const Box&) const = 0;
+    virtual InstrinsicWidthConstraints instrinsicWidthConstraints(const Box&) const = 0;
 
     static Display::Box mapBoxToAncestor(const LayoutState&, const Box&, const Container& ancestor);
     static Position mapTopLeftToAncestor(const LayoutState&, const Box&, const Container& ancestor);
@@ -69,15 +69,15 @@ protected:
     LayoutState& layoutState() const;
     const Box& root() const { return *m_root; }
 
-    virtual void computeStaticPosition(const LayoutState&, const Box&) const = 0;
-    virtual void computeInFlowPositionedPosition(const LayoutState&, const Box&) const = 0;
+    virtual void computeStaticPosition(const Box&) const = 0;
+    virtual void computeInFlowPositionedPosition(const Box&) const = 0;
 
-    void computeBorderAndPadding(const LayoutState&, const Box&) const;
+    void computeBorderAndPadding(const Box&) const;
 
-    void placeInFlowPositionedChildren(const LayoutState&, const Container&) const;
+    void placeInFlowPositionedChildren(const Container&) const;
 
 #ifndef NDEBUG
-    virtual void validateGeometryConstraintsAfterLayout(const LayoutState&) const;
+    virtual void validateGeometryConstraintsAfterLayout() const;
 #endif
 
     // This class implements generic positioning and sizing.
@@ -123,8 +123,8 @@ protected:
     };
 
 private:
-    void computeOutOfFlowVerticalGeometry(const LayoutState&, const Box&) const;
-    void computeOutOfFlowHorizontalGeometry(LayoutState&, const Box&) const;
+    void computeOutOfFlowVerticalGeometry(const Box&) const;
+    void computeOutOfFlowHorizontalGeometry(const Box&) const;
 
     WeakPtr<const Box> m_root;
     FormattingState& m_formattingState;
