@@ -1,3 +1,12 @@
+2018-10-31  Jim Mason  <jmason@ibinx.com>
+
+        Static global 'fastHandlerInstalled' conditionally declared in WasmFaultSignalHandler.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=191063
+
+        Reviewed by Yusuke Suzuki.
+
+        * wasm/WasmFaultSignalHandler.cpp:
+
 2018-10-30  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC][LLInt] Compact LLInt ASM code by removing unnecessary instructions
