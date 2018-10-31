@@ -1,5 +1,17 @@
 2018-10-31  Tadeu Zagallo  <tzagallo@apple.com>
 
+        Adjust inlining threshold for new bytecode format
+        https://bugs.webkit.org/show_bug.cgi?id=191115
+
+        Reviewed by Saam Barati.
+
+        The new format reduced the number of operands for many opcodes, which
+        changed inlining decisions and impacted performance negatively.
+
+        * runtime/Options.h:
+
+2018-10-31  Tadeu Zagallo  <tzagallo@apple.com>
+
         REGRESSION(r237547): Exception handlers should be aware of wide opcodes
         https://bugs.webkit.org/show_bug.cgi?id=191108
         <rdar://problem/45690700>

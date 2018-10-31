@@ -303,7 +303,7 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     \
     v(unsigned, maximumOptimizationCandidateInstructionCount, 100000, Normal, nullptr) \
     \
-    v(unsigned, maximumFunctionForCallInlineCandidateInstructionCount, 190, Normal, nullptr) \
+    v(unsigned, maximumFunctionForCallInlineCandidateInstructionCount, 120, Normal, nullptr) \
     v(unsigned, maximumFunctionForClosureCallInlineCandidateInstructionCount, 100, Normal, nullptr) \
     v(unsigned, maximumFunctionForConstructInlineCandidateInstructionCount, 100, Normal, nullptr) \
     \
