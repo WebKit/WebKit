@@ -77,6 +77,11 @@ WI.AuditTestCase = class AuditTestCase extends WI.AuditTestBase
         const levelStrings = Object.values(WI.AuditTestCaseResult.Level);
         let level = null;
         let data = {};
+        let metadata = {
+            url: WI.networkManager.mainFrame.url,
+            startTimestamp: null,
+            endTimestamp: null,
+        };
 
         function setLevel(newLevel) {
             let newLevelIndex = levelStrings.indexOf(newLevel);
@@ -100,15 +105,19 @@ WI.AuditTestCase = class AuditTestCase extends WI.AuditTestBase
             data.errors.push(value);
         }
 
-        try {
-            let {result, wasThrown} = await RuntimeAgent.evaluate.invoke({
-                expression: `(function() { "use strict"; return eval(${this._test})(); })()`,
-                objectGroup: "audit",
-                doNotPauseOnExceptionsAndMuteConsole: true,
-            });
-            let remoteObject = WI.RemoteObject.fromPayload(result, WI.mainTarget);
+        let evaluateArguments = {
+            expression: `(function() { "use strict"; return eval(${this._test})(); })()`,
+            objectGroup: "audit",
+            doNotPauseOnExceptionsAndMuteConsole: true,
+        };
 
-            if (wasThrown || (remoteObject.type === "object" && remoteObject.subtype === "error"))
+        try {
+            metadata.startTimestamp = new Date;
+            let evaluateResponse = await RuntimeAgent.evaluate.invoke(evaluateArguments);
+            metadata.endTimestamp = new Date;
+
+            let remoteObject = WI.RemoteObject.fromPayload(evaluateResponse.result, WI.mainTarget);
+            if (evaluateResponse.wasThrown || (remoteObject.type === "object" && remoteObject.subtype === "error"))
                 addError(remoteObject.description);
             else if (remoteObject.type === "boolean")
                 setLevel(remoteObject.value ? WI.AuditTestCaseResult.Level.Pass : WI.AuditTestCaseResult.Level.Fail);
@@ -221,6 +230,7 @@ WI.AuditTestCase = class AuditTestCase extends WI.AuditTestBase
             } else
                 addError(WI.UIString("Return value is not an object, string, or boolean"));
         } catch (error) {
+            metadata.endTimestamp = new Date;
             addError(error.message);
         }
 
@@ -229,6 +239,7 @@ WI.AuditTestCase = class AuditTestCase extends WI.AuditTestBase
 
         let options = {
             description: this.description,
+            metadata,
         };
         if (!isEmptyObject(data))
             options.data = data;

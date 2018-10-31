@@ -67,6 +67,11 @@ null
         "errors": [
           "validWithValidOptionals test result error"
         ]
+      },
+      "metadata": {
+        "startTimestamp": "0001-01-01T00:00:00.000Z",
+        "endTimestamp": "0002-01-01T00:00:00.000Z",
+        "url": "validWithValidOptionals test result url"
       }
     }
   ]
@@ -98,6 +103,11 @@ null
             "errors": [
               "validNested nested test result error"
             ]
+          },
+          "metadata": {
+            "startTimestamp": "0001-01-01T00:00:00.000Z",
+            "endTimestamp": "0002-01-01T00:00:00.000Z",
+            "url": "validNested nested test result url"
           }
         }
       ]
@@ -117,6 +127,11 @@ null
         "errors": [
           "validNested test result error"
         ]
+      },
+      "metadata": {
+        "startTimestamp": "0003-01-01T00:00:00.000Z",
+        "endTimestamp": "0004-01-01T00:00:00.000Z",
+        "url": "validNested test result url"
       }
     }
   ]

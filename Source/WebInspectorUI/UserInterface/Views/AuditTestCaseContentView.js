@@ -40,16 +40,22 @@ WI.AuditTestCaseContentView = class AuditTestCaseContentView extends WI.AuditTes
     {
         super.initialLayout();
 
-        let nameElement = this.headerView.element.appendChild(document.createElement("h1"));
+        let informationContainer = this.headerView.element.appendChild(document.createElement("div"));
+        informationContainer.classList.add("information");
+
+        let nameElement = informationContainer.appendChild(document.createElement("h1"));
 
         this._resultImageElement = nameElement.appendChild(document.createElement("img"));
 
         nameElement.appendChild(document.createTextNode(this.representedObject.name));
 
         if (this.representedObject.description) {
-            let descriptionElement = this.headerView.element.appendChild(document.createElement("p"));
+            let descriptionElement = informationContainer.appendChild(document.createElement("p"));
             descriptionElement.textContent = this.representedObject.description;
         }
+
+        this._metadataElement = this.headerView.element.appendChild(document.createElement("div"));
+        this._metadataElement.classList.add("metadata");
     }
 
     layout()
@@ -60,6 +66,7 @@ WI.AuditTestCaseContentView = class AuditTestCaseContentView extends WI.AuditTes
         super.layout();
 
         this._resultImageElement.src = "Images/AuditTestNoResult.svg";
+        this._metadataElement.removeChildren();
 
         this.contentView.element.removeChildren();
 
@@ -85,6 +92,34 @@ WI.AuditTestCaseContentView = class AuditTestCaseContentView extends WI.AuditTes
             this._resultImageElement.src = "Images/AuditTestPass.svg";
         else if (result.unsupported)
             this._resultImageElement.src = "Images/AuditTestUnsupported.svg";
+
+        let metadata = result.metadata;
+        if (metadata) {
+            let sourceContainer = this._metadataElement.appendChild(document.createElement("div"));
+            sourceContainer.classList.add("source");
+
+            if (metadata.startTimestamp) {
+                let timeElement = sourceContainer.appendChild(document.createElement("time"));
+                timeElement.datetime = metadata.startTimestamp.toISOString();
+                timeElement.textContent = metadata.startTimestamp.toLocaleString();
+
+                if (metadata.endTimestamp) {
+                    let durationElement = this._metadataElement.appendChild(document.createElement("span"));
+                    durationElement.classList.add("duration");
+                    durationElement.textContent = Number.secondsToString((metadata.endTimestamp - metadata.startTimestamp) / 1000);
+                }
+            }
+
+            if (metadata.url && metadata.url !== WI.networkManager.mainFrame.url) {
+                let url = new URL(metadata.url);
+                let origin = url.origin;
+                if (url.pathname.startsWith("/"))
+                    origin += "/";
+                let linkElement = WI.linkifyURLAsNode(url.href, origin + url.href.substring(origin.length).truncateStart(20));
+                linkElement.title = url.href;
+                sourceContainer.appendChild(linkElement);
+            }
+        }
 
         let resultData = result.data;
 

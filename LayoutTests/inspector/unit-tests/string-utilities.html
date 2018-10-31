@@ -79,6 +79,17 @@ function test()
     });
 
     suite.addTestCase({
+        name: "String.prototype.truncateStart",
+        test() {
+            const ellipsis = "\u2026";
+            InspectorTest.expectEqual("abcdef".truncateStart(6), "abcdef", "String stays the same.");
+            InspectorTest.expectEqual("abcdef".truncateStart(5), ellipsis + "cdef", "Ellipsis is inserted before the third character.");
+            InspectorTest.expectEqual("abcdef".truncateStart(4), ellipsis + "def", "Ellipsis is inserted before the fourth character.");
+            return true;
+        }
+    });
+
+    suite.addTestCase({
         name: "String.prototype.truncateMiddle",
         test() {
             const ellipsis = "\u2026";
@@ -94,7 +105,7 @@ function test()
         test() {
             const ellipsis = "\u2026";
             InspectorTest.expectEqual("abcdef".truncateEnd(6), "abcdef", "String stays the same.");
-            InspectorTest.expectEqual("abcdef".truncateEnd(5), "abcd" + ellipsis, "Ellipsis is inserted in the middle.");
+            InspectorTest.expectEqual("abcdef".truncateEnd(5), "abcd" + ellipsis, "Ellipsis is inserted after the fourth character.");
             InspectorTest.expectEqual("abcdef".truncateEnd(4), "abc" + ellipsis, "Ellipsis is inserted after the third character.");
             return true;
         }

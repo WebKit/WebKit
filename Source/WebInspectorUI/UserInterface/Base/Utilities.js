@@ -582,6 +582,18 @@ Object.defineProperty(String.prototype, "isUpperCase",
     }
 });
 
+Object.defineProperty(String.prototype, "truncateStart",
+{
+    value(maxLength)
+    {
+        "use strict";
+
+        if (this.length <= maxLength)
+            return this;
+        return ellipsis + this.substr(this.length - maxLength + 1);
+    }
+});
+
 Object.defineProperty(String.prototype, "truncateMiddle",
 {
     value(maxLength)

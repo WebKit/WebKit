@@ -1,3 +1,46 @@
+2018-10-31  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Audit: show metadata for results
+        https://bugs.webkit.org/show_bug.cgi?id=190853
+        <rdar://problem/45527623>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Models/AuditTestCase.js:
+        (WI.AuditTestCase.prototype.async run):
+        Capture timestamps around the `RunetimeAgent.evaluate` call, as well as the URL of the page.
+
+        * UserInterface/Models/AuditTestCaseResult.js:
+        (WI.AuditTestCaseResult):
+        (WI.AuditTestCaseResult.fromPayload):
+        (WI.AuditTestCaseResult.prototype.get metadata): Added.
+        (WI.AuditTestCaseResult.prototype.toJSON):
+
+        * UserInterface/Views/AuditTestCaseContentView.js:
+        (WI.AuditTestCaseContentView.prototype.initialLayout):
+        (WI.AuditTestCaseContentView.prototype.layout):
+        * UserInterface/Views/AuditTestCaseContentView.css:
+        (.content-view.audit-test-case > header h1): Added.
+        (.content-view.audit-test-case > header h1 > img): Added.
+        (.content-view.audit-test-case > header > .metadata): Added.
+        (.content-view.audit-test-case > header > .metadata > .source > time): Added.
+        (.content-view.audit-test-case > header > .metadata > .source > a): Added.
+        (.content-view.audit-test-case > header > .metadata > .duration): Added.
+        (.content-view.audit-test-case > header > h1): Deleted.
+        (.content-view.audit-test-case > header > h1 > img): Deleted.
+        Display any metadata information where the `WI.ScopeBar` is for `WI.AuditTestGroupContentView`s.
+
+        * UserInterface/Views/AuditTestContentView.css:
+        (.content-view.audit-test > header):
+        (.content-view.audit-test > header > .information): Added.
+        * UserInterface/Views/AuditTestGroupContentView.css:
+        (.content-view.audit-test-group > header):
+        (.content-view.audit-test-group > header > .percentage-pass):
+        (.content-view.audit-test-group > header > .information): Deleted.
+        Move common CSS rules to common parent class.
+
+        * UserInterface/Base/Utilities.js:
+
 2018-10-30  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Audit: create Audit Tab

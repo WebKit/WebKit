@@ -37,17 +37,41 @@
     margin-top: var(--audit-test-vertical-space);
 }
 
-.content-view.audit-test-case > header > h1 {
+.content-view.audit-test-case > header h1 {
     display: flex;
     align-items: center;
 }
 
-.content-view.audit-test-case > header > h1 > img {
+.content-view.audit-test-case > header h1 > img {
     width: 1em;
     height: 1em;
     min-width: 16px;
     min-height: 16px;
     -webkit-margin-end: 4px;
+}
+
+.content-view.audit-test-case > header > .metadata {
+    display: flex;
+    align-items: center;
+    text-align: end;
+}
+
+.content-view.audit-test-case > header > .metadata > .source > time {
+    display: block;
+    font-style: italic;
+    white-space: nowrap;
+}
+
+.content-view.audit-test-case > header > .metadata > .source > a {
+    display: block;
+}
+
+.content-view.audit-test-case > header > .metadata > .duration {
+    display: inline-block;
+    width: var(--metadata-width);
+    -webkit-margin-start: var(--audit-test-horizontal-space);
+    font-size: 12px;
+    font-weight: bold;
 }
 
 .content-view.audit-test-case > section > :not(.message-text-view) {

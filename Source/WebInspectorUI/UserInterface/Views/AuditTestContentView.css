@@ -52,7 +52,15 @@
 }
 
 .content-view.audit-test > header {
+    display: flex;
+    align-items: center;
     padding: var(--audit-test-vertical-space) var(--audit-test-horizontal-space);
+
+    --metadata-width: 60px;
+}
+
+.content-view.audit-test > header > .information {
+    flex-grow: 1;
 }
 
 .content-view.audit-test > header p {

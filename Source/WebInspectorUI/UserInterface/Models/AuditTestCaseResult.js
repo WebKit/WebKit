@@ -25,15 +25,17 @@
 
 WI.AuditTestCaseResult = class AuditTestCaseResult extends WI.AuditTestResultBase
 {
-    constructor(name, level, {data, description} = {})
+    constructor(name, level, {description, data, metadata} = {})
     {
         console.assert(Object.values(WI.AuditTestCaseResult.Level).includes(level));
         console.assert(!data || typeof data === "object");
+        console.assert(!metadata || typeof metadata === "object");
 
         super(name, {description});
 
         this._level = level;
         this._data = data || {};
+        this._metadata = metadata || {};
     }
 
     // Static
@@ -43,7 +45,7 @@ WI.AuditTestCaseResult = class AuditTestCaseResult extends WI.AuditTestResultBas
         if (typeof payload !== "object" || payload === null)
             return null;
 
-        let {type, name, description, level, data} = payload;
+        let {type, name, description, level, data, metadata} = payload;
 
         if (type !== WI.AuditTestCaseResult.TypeIdentifier)
             return null;
@@ -56,25 +58,50 @@ WI.AuditTestCaseResult = class AuditTestCaseResult extends WI.AuditTestResultBas
 
         if (typeof data !== "object" || data === null)
             data = {};
+        else {
+            function checkArray(key) {
+                if (!data[key])
+                    return;
 
-        function checkArray(key) {
-            if (!data[key])
-                return;
+                if (!Array.isArray(data[key]))
+                    data[key] = [];
 
-            if (!Array.isArray(data[key]))
-                data[key] = [];
-
-            data[key] = data[key].filter((item) => typeof item === "string");
+                data[key] = data[key].filter((item) => typeof item === "string");
+            }
+            checkArray("domNodes");
+            checkArray("domAttributes");
+            checkArray("errors");
         }
-        checkArray("domNodes");
-        checkArray("domAttributes");
-        checkArray("errors");
+
+        if (typeof metadata !== "object" || metadata === null)
+            metadata = {};
+        else {
+            metadata.startTimestamp = typeof metadata.startTimestamp === "string" ? new Date(metadata.startTimestamp) : null;
+            metadata.endTimestamp = typeof metadata.endTimestamp === "string" ? new Date(metadata.endTimestamp) : null;
+            metadata.url = typeof metadata.url === "string" ? metadata.url : null;
+        }
 
         let options = {};
         if (typeof description === "string")
             options.description = description;
-        if (!isEmptyObject(data))
-            options.data = data;
+        if (!isEmptyObject(data)) {
+            options.data = {};
+            if (data.domNodes && data.domNodes.length)
+                options.data.domNodes = data.domNodes;
+            if (data.domAttributes && data.domAttributes.length)
+                options.data.domAttributes = data.domAttributes;
+            if (data.errors && data.errors.length)
+                options.data.errors = data.errors;
+        }
+        if (!isEmptyObject(metadata)) {
+            options.metadata = {};
+            if (metadata.startTimestamp && !isNaN(metadata.startTimestamp))
+                options.metadata.startTimestamp = metadata.startTimestamp;
+            if (metadata.endTimestamp && !isNaN(metadata.endTimestamp))
+                options.metadata.endTimestamp = metadata.endTimestamp;
+            if (metadata.url)
+                options.metadata.url = metadata.url;
+        }
         return new WI.AuditTestCaseResult(name, level, options);
     }
 
@@ -82,6 +109,7 @@ WI.AuditTestCaseResult = class AuditTestCaseResult extends WI.AuditTestResultBas
 
     get level() { return this._level; }
     get data() { return this._data; }
+    get metadata() { return this._metadata; }
 
     get result()
     {
@@ -128,6 +156,16 @@ WI.AuditTestCaseResult = class AuditTestCaseResult extends WI.AuditTestResultBas
             data.errors = this._data.errors;
         if (!isEmptyObject(data))
             json.data = data;
+
+        let metadata = {};
+        if (this._metadata.startTimestamp && !isNaN(this._metadata.startTimestamp))
+            metadata.startTimestamp = this._metadata.startTimestamp;
+        if (this._metadata.endTimestamp && !isNaN(this._metadata.endTimestamp))
+            metadata.endTimestamp = this._metadata.endTimestamp;
+        if (this._metadata.url)
+            metadata.url = this._metadata.url;
+        if (!isEmptyObject(metadata))
+            json.metadata = metadata;
 
         return json;
     }
