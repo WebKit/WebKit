@@ -36,6 +36,8 @@
 #endif
 #import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 
+#define CAN_SECURELY_ARCHIVE_FILE_WRAPPER (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
+
 namespace API {
 
 static WTF::String mimeTypeInferredFromFileExtension(const API::Attachment& attachment)
@@ -132,7 +134,12 @@ RefPtr<WebCore::SharedBuffer> Attachment::createSerializedRepresentation() const
     if (!m_fileWrapper || !m_webPage)
         return nullptr;
 
+#if CAN_SECURELY_ARCHIVE_FILE_WRAPPER
     NSData *serializedData = securelyArchivedDataWithRootObject(m_fileWrapper.get());
+#else
+    NSData *serializedData = insecurelyArchivedDataWithRootObject(m_fileWrapper.get());
+#endif
+
     if (!serializedData)
         return nullptr;
 

@@ -1,3 +1,20 @@
+2018-10-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        API test WKAttachmentTests.CopyAndPasteBetweenWebViews fails on macOS 10.13
+        https://bugs.webkit.org/show_bug.cgi?id=191114
+        <rdar://problem/45700410>
+
+        Reviewed by Dean Jackson.
+
+        On macOS 10.12, we don't attempt secure archival at all because SECURE_ARCHIVER_API is turned off, and on macOS
+        10.14, NSFileWrapper supports secure coding. However, on macOS 10.13, SECURE_ARCHIVER_API is on despite
+        NSFileWrapper not being securely codable, so we're unable to serialize attachment data.
+
+        To fix this, we only use the secure archiver on ≥ macOS 10.14 and ≥ iOS 12.
+
+        * UIProcess/API/Cocoa/APIAttachmentCocoa.mm:
+        (API::Attachment::createSerializedRepresentation const):
+
 2018-10-31  Zach Li  <zacharyli323@gmail.com>
 
         Add credit card autofill button
