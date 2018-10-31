@@ -1,3 +1,13 @@
+2018-10-31  Jer Noble  <jer.noble@apple.com>
+
+        MediaSource.isTypeSupported('video/mp4; codecs="hvc1.1.6.L60.B0') is inproperly rejected
+        https://bugs.webkit.org/show_bug.cgi?id=191129
+
+        Reviewed by Eric Carlson.
+
+        * media/media-source/media-source-istypesupported-case-sensitive-expected.txt: Added.
+        * media/media-source/media-source-istypesupported-case-sensitive.html: Added.
+
 2018-10-31  Alicia Boya García  <aboya@igalia.com>
 
         [MSE] WebKit tests: Use fixed point in makeASample()
