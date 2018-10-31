@@ -43,6 +43,7 @@ typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
 
 namespace WebCore {
 
+class CDMInstance;
 class LegacyCDMSession;
 class MediaPlayerPrivateMediaSourceAVFObjC;
 class MediaSourcePrivateClient;
@@ -84,6 +85,16 @@ public:
     void setVideoLayer(AVSampleBufferDisplayLayer*);
     void setDecompressionSession(WebCoreDecompressionSession*);
 
+#if ENABLE(ENCRYPTED_MEDIA)
+    void cdmInstanceAttached(CDMInstance&);
+    void cdmInstanceDetached(CDMInstance&);
+    void attemptToDecryptWithInstance(CDMInstance&);
+    bool waitingForKey() const;
+    
+    CDMInstance* cdmInstance() const { return m_cdmInstance.get(); }
+    void outputObscuredDueToInsufficientExternalProtectionChanged(bool);
+#endif
+
 private:
     MediaSourcePrivateAVFObjC(MediaPlayerPrivateMediaSourceAVFObjC*, MediaSourcePrivateClient*);
 
@@ -106,6 +117,9 @@ private:
     Deque<SourceBufferPrivateAVFObjC*> m_sourceBuffersNeedingSessions;
     SourceBufferPrivateAVFObjC* m_sourceBufferWithSelectedVideo { nullptr };
     bool m_isEnded;
+#if ENABLE(ENCRYPTED_MEDIA)
+    RefPtr<CDMInstance> m_cdmInstance;
+#endif
 };
 
 }

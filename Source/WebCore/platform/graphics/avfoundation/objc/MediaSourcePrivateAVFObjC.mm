@@ -28,12 +28,14 @@
 
 #if ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)
 
+#import "CDMInstance.h"
 #import "CDMSessionMediaSourceAVFObjC.h"
 #import "ContentType.h"
 #import "MediaPlayerPrivateMediaSourceAVFObjC.h"
 #import "MediaSourcePrivateClient.h"
 #import "SourceBufferPrivateAVFObjC.h"
 #import <objc/runtime.h>
+#import <wtf/Algorithms.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/text/AtomicString.h>
 
@@ -70,8 +72,12 @@ MediaSourcePrivate::AddStatus MediaSourcePrivateAVFObjC::addSourceBuffer(const C
     if (MediaPlayerPrivateMediaSourceAVFObjC::supportsType(parameters) == MediaPlayer::IsNotSupported)
         return NotSupported;
 
-    m_sourceBuffers.append(SourceBufferPrivateAVFObjC::create(this));
-    outPrivate = m_sourceBuffers.last();
+    auto newSourceBuffer = SourceBufferPrivateAVFObjC::create(this);
+#if ENABLE(ENCRYPTED_MEDIA)
+    newSourceBuffer->setCDMInstance(m_cdmInstance.get());
+#endif
+    outPrivate = newSourceBuffer;
+    m_sourceBuffers.append(WTFMove(newSourceBuffer));
 
     return Ok;
 }
@@ -244,6 +250,45 @@ void MediaSourcePrivateAVFObjC::setDecompressionSession(WebCoreDecompressionSess
     if (m_sourceBufferWithSelectedVideo)
         m_sourceBufferWithSelectedVideo->setDecompressionSession(decompressionSession);
 }
+
+#if ENABLE(ENCRYPTED_MEDIA)
+void MediaSourcePrivateAVFObjC::cdmInstanceAttached(CDMInstance& instance)
+{
+    ASSERT(!m_cdmInstance);
+    m_cdmInstance = &instance;
+    for (auto& sourceBuffer : m_sourceBuffers)
+        sourceBuffer->setCDMInstance(&instance);
+}
+
+void MediaSourcePrivateAVFObjC::cdmInstanceDetached(CDMInstance& instance)
+{
+    ASSERT_UNUSED(instance, m_cdmInstance && m_cdmInstance == &instance);
+    for (auto& sourceBuffer : m_sourceBuffers)
+        sourceBuffer->setCDMInstance(nullptr);
+
+    m_cdmInstance = nullptr;
+}
+
+void MediaSourcePrivateAVFObjC::attemptToDecryptWithInstance(CDMInstance& instance)
+{
+    ASSERT_UNUSED(instance, m_cdmInstance && m_cdmInstance == &instance);
+    for (auto& sourceBuffer : m_sourceBuffers)
+        sourceBuffer->attemptToDecrypt();
+}
+
+bool MediaSourcePrivateAVFObjC::waitingForKey() const
+{
+    return anyOf(m_sourceBuffers, [] (auto& sourceBuffer) {
+        return sourceBuffer->waitingForKey();
+    });
+}
+
+void MediaSourcePrivateAVFObjC::outputObscuredDueToInsufficientExternalProtectionChanged(bool obscured)
+{
+    if (m_cdmInstance)
+        m_cdmInstance->setHDCPStatus(obscured ? CDMInstance::HDCPStatus::OutputRestricted : CDMInstance::HDCPStatus::Valid);
+}
+#endif
 
 void MediaSourcePrivateAVFObjC::setSourceBufferWithSelectedVideo(SourceBufferPrivateAVFObjC* sourceBuffer)
 {

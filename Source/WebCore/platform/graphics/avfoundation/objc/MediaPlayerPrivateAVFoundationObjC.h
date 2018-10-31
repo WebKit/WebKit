@@ -61,6 +61,7 @@ class CDMSessionAVFoundationObjC;
 class InbandMetadataTextTrackPrivateAVF;
 class MediaSelectionGroupAVFObjC;
 class PixelBufferConformerCV;
+class SharedBuffer;
 class VideoFullscreenLayerManagerObjC;
 class VideoTextureCopierCV;
 class VideoTrackPrivateAVFObjC;
@@ -411,6 +412,7 @@ private:
     RetainPtr<NSArray> m_currentMetaData;
     FloatSize m_cachedPresentationSize;
     MediaTime m_cachedDuration;
+    RefPtr<SharedBuffer> m_keyID;
     double m_cachedRate;
     mutable long long m_cachedTotalBytes;
     unsigned m_pendingStatusChanges;

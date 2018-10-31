@@ -30,6 +30,7 @@
 
 #import "AVAssetTrackUtilities.h"
 #import "AudioTrackPrivateMediaSourceAVFObjC.h"
+#import "CDMFairPlayStreaming.h"
 #import "CDMInstanceFairPlayStreamingAVFObjC.h"
 #import "CDMSessionAVContentKeySession.h"
 #import "CDMSessionMediaSourceAVFObjC.h"
@@ -665,10 +666,26 @@ void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataFo
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
-    if (m_mediaSource) {
-        auto initDataBuffer = SharedBuffer::create(initData);
-        m_mediaSource->player()->initializationDataEncountered("sinf", initDataBuffer->tryCreateArrayBuffer());
+    //
+    auto initDataBuffer = SharedBuffer::create(initData);
+    auto keyIDs = CDMPrivateFairPlayStreaming::extractKeyIDsSinf(initDataBuffer);
+    if (!keyIDs)
+        return;
+
+    if (m_cdmInstance) {
+        if (auto instanceSession = m_cdmInstance->sessionForKeyIDs(keyIDs.value())) {
+            [instanceSession->contentKeySession() addContentKeyRecipient:m_parser.get()];
+            if (m_hasSessionSemaphore) {
+                m_hasSessionSemaphore->signal();
+                m_hasSessionSemaphore = nullptr;
+            }
+            m_waitingForKey = false;
+            return;
+        }
     }
+
+    m_keyIDs = WTFMove(keyIDs.value());
+    m_mediaSource->player()->initializationDataEncountered("sinf", initDataBuffer->tryCreateArrayBuffer());
 
     m_waitingForKey = true;
     m_mediaSource->player()->waitingForKeyChanged();
@@ -758,8 +775,10 @@ void SourceBufferPrivateAVFObjC::destroyParser()
         [m_mediaSource->player()->streamSession() removeStreamDataParser:m_parser.get()];
 #endif
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
-    if (m_cdmInstance)
-        [m_cdmInstance->contentKeySession() removeContentKeyRecipient:m_parser.get()];
+    if (m_cdmInstance) {
+        if (auto instanceSession = m_cdmInstance->sessionForKeyIDs(m_keyIDs))
+            [instanceSession->contentKeySession() removeContentKeyRecipient:m_parser.get()];
+    }
 #endif
 
     [m_delegate invalidate];
@@ -918,25 +937,32 @@ void SourceBufferPrivateAVFObjC::setCDMInstance(CDMInstance* instance)
 {
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
     auto* fpsInstance = downcast<CDMInstanceFairPlayStreamingAVFObjC>(instance);
-    if (!fpsInstance || fpsInstance == m_cdmInstance)
+    if (fpsInstance == m_cdmInstance)
         return;
 
-    if (m_cdmInstance)
-        [m_cdmInstance->contentKeySession() removeContentKeyRecipient:m_parser.get()];
-
     m_cdmInstance = fpsInstance;
-
-    if (m_cdmInstance) {
-        [m_cdmInstance->contentKeySession() addContentKeyRecipient:m_parser.get()];
-        if (m_hasSessionSemaphore) {
-            m_hasSessionSemaphore->signal();
-            m_hasSessionSemaphore = nullptr;
-        }
-    }
-    m_waitingForKey = false;
-    m_mediaSource->player()->waitingForKeyChanged();
+    attemptToDecrypt();
 #else
     UNUSED_PARAM(instance);
+#endif
+}
+
+void SourceBufferPrivateAVFObjC::attemptToDecrypt()
+{
+#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
+    if (!m_cdmInstance || m_keyIDs.isEmpty() || !m_waitingForKey)
+        return;
+
+    auto instanceSession = m_cdmInstance->sessionForKeyIDs(m_keyIDs);
+    if (!instanceSession)
+        return;
+
+    [instanceSession->contentKeySession() addContentKeyRecipient:m_parser.get()];
+    if (m_hasSessionSemaphore) {
+        m_hasSessionSemaphore->signal();
+        m_hasSessionSemaphore = nullptr;
+    }
+    m_waitingForKey = false;
 #endif
 }
 
@@ -983,9 +1009,8 @@ void SourceBufferPrivateAVFObjC::layerDidReceiveError(AVSampleBufferDisplayLayer
 void SourceBufferPrivateAVFObjC::outputObscuredDueToInsufficientExternalProtectionChanged(bool obscured)
 {
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
-    auto player = m_mediaSource ? m_mediaSource->player() : nullptr;
-    if (player && player->cdmInstance()) {
-        player->outputObscuredDueToInsufficientExternalProtectionChanged(obscured);
+    if (m_mediaSource->cdmInstance()) {
+        m_mediaSource->outputObscuredDueToInsufficientExternalProtectionChanged(obscured);
         return;
     }
 #else

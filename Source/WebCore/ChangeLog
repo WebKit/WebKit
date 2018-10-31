@@ -1,3 +1,85 @@
+2018-10-26  Jer Noble  <jer.noble@apple.com>
+
+        [EME][Cocoa] Cannot play unmuxed video and audio fMP4 streams encrypted with different keys via MSE
+        https://bugs.webkit.org/show_bug.cgi?id=190946
+
+        Reviewed by Eric Carlson.
+
+        Use separate AVContentKeySessions per CDMInstanceSession (rather than one AVContentKeySession per
+        CDMInstance).
+
+        - Add a mechanism for sending a message out from platform/CDMInstance to MediaKeySession without
+          requiring MediaKeySession to send a callback first.
+
+        - Move all the AVContentKeySession delegate methods from CDMInstanceFairPlayStreamingAVFObjC to
+          CDMInstanceSessionFairPlayStreamingAVFObjC.
+
+        - Add a mechanism for requesting the correct CDMInstanceSession for a given KeyID.
+
+        - Support key renewal through a "renew" message.
+
+        - Remember the keyID in SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataForTrackID()
+          and ask for the correct CDMInstanceSession for that keyID in attemptToDecrypt().
+
+        - Pass the CDMInstance down from MediaPlayerPrivateMediaSourceAVFObjC -> SourceBufferPrivateAVFObjC.
+
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        (WebCore::MediaKeySession::sendMessage):
+        * Modules/encryptedmedia/MediaKeySession.h:
+        * platform/encryptedmedia/CDMInstanceSession.h:
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.h:
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm:
+        (-[WebCoreFPSContentKeySessionDelegate initWithParent:]):
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::initializeWithConfiguration):
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::createSession):
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::outputObscuredDueToInsufficientExternalProtectionChanged):
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::sessionForKeyIDs const):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::CDMInstanceSessionFairPlayStreamingAVFObjC):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::~CDMInstanceSessionFairPlayStreamingAVFObjC):
+        (WebCore::keyIDsForRequest):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::keyIDs):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::requestLicense):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::closeSession):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::removeSessionData):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequest):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRenewingRequest):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::didFailToProvideRequest):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::requestDidSucceed):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::nextRequest):
+        (WebCore::requestStatusToCDMStatus):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::keyStatuses const):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::outputObscuredDueToInsufficientExternalProtectionChanged):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::ensureSession):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::cdmInstanceAttached):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::cdmInstanceDetached):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::attemptToDecryptWithInstance):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::outputObscuredDueToInsufficientExternalProtectionChanged):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::cdmInstanceAttached):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::cdmInstanceDetached):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::attemptToDecryptWithInstance):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::waitingForKey const):
+        * platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.mm:
+        (WebCore::MediaSourcePrivateAVFObjC::addSourceBuffer):
+        (WebCore::MediaSourcePrivateAVFObjC::cdmInstanceAttached):
+        (WebCore::MediaSourcePrivateAVFObjC::cdmInstanceDetached):
+        (WebCore::MediaSourcePrivateAVFObjC::attemptToDecryptWithInstance):
+        (WebCore::MediaSourcePrivateAVFObjC::waitingForKey const):
+        (WebCore::MediaSourcePrivateAVFObjC::outputObscuredDueToInsufficientExternalProtectionChanged):
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.h:
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataForTrackID):
+        (WebCore::SourceBufferPrivateAVFObjC::destroyParser):
+        (WebCore::SourceBufferPrivateAVFObjC::setCDMInstance):
+        (WebCore::SourceBufferPrivateAVFObjC::attemptToDecrypt):
+        (WebCore::SourceBufferPrivateAVFObjC::outputObscuredDueToInsufficientExternalProtectionChanged):
+
 2018-10-31  Zach Li  <zacharyli323@gmail.com>
 
         Add credit card autofill button

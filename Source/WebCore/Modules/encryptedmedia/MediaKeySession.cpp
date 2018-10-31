@@ -666,6 +666,11 @@ void MediaKeySession::updateKeyStatuses(CDMInstanceSession::KeyStatusVector&& in
         });
 }
 
+void MediaKeySession::sendMessage(CDMMessageType messageType, Ref<SharedBuffer>&& message)
+{
+    enqueueMessage(messageType, message);
+}
+
 void MediaKeySession::updateExpiration(double)
 {
     notImplemented();

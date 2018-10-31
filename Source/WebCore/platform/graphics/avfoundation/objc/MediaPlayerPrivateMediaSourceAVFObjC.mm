@@ -30,9 +30,7 @@
 
 #import "AVAssetTrackUtilities.h"
 #import "AVFoundationMIMETypeCache.h"
-#import "CDMInstance.h"
 #import "CDMSessionAVStreamSession.h"
-#import "CDMSessionMediaSourceAVFObjC.h"
 #import "FileSystem.h"
 #import "GraphicsContextCG.h"
 #import "Logging.h"
@@ -50,7 +48,6 @@
 #import <objc_runtime.h>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <pal/spi/mac/AVFoundationSPI.h>
-#import <wtf/Algorithms.h>
 #import <wtf/Deque.h>
 #import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>
@@ -933,8 +930,8 @@ void MediaPlayerPrivateMediaSourceAVFObjC::keyNeeded(Uint8Array* initData)
 void MediaPlayerPrivateMediaSourceAVFObjC::outputObscuredDueToInsufficientExternalProtectionChanged(bool obscured)
 {
 #if ENABLE(ENCRYPTED_MEDIA)
-    if (m_cdmInstance)
-        m_cdmInstance->setHDCPStatus(obscured ? CDMInstance::HDCPStatus::OutputRestricted : CDMInstance::HDCPStatus::Valid);
+    if (m_mediaSourcePrivate)
+        m_mediaSourcePrivate->outputObscuredDueToInsufficientExternalProtectionChanged(obscured);
 #else
     UNUSED_PARAM(obscured);
 #endif
@@ -944,30 +941,25 @@ void MediaPlayerPrivateMediaSourceAVFObjC::outputObscuredDueToInsufficientExtern
 #if ENABLE(ENCRYPTED_MEDIA)
 void MediaPlayerPrivateMediaSourceAVFObjC::cdmInstanceAttached(CDMInstance& instance)
 {
-    ASSERT(!m_cdmInstance);
-    m_cdmInstance = &instance;
-    for (auto& sourceBuffer : m_mediaSourcePrivate->sourceBuffers())
-        sourceBuffer->setCDMInstance(&instance);
+    if (m_mediaSourcePrivate)
+        m_mediaSourcePrivate->cdmInstanceAttached(instance);
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::cdmInstanceDetached(CDMInstance& instance)
 {
-    ASSERT_UNUSED(instance, m_cdmInstance && m_cdmInstance == &instance);
-    for (auto& sourceBuffer : m_mediaSourcePrivate->sourceBuffers())
-        sourceBuffer->setCDMInstance(nullptr);
-
-    m_cdmInstance = nullptr;
+    if (m_mediaSourcePrivate)
+        m_mediaSourcePrivate->cdmInstanceDetached(instance);
 }
 
-void MediaPlayerPrivateMediaSourceAVFObjC::attemptToDecryptWithInstance(CDMInstance&)
+void MediaPlayerPrivateMediaSourceAVFObjC::attemptToDecryptWithInstance(CDMInstance& instance)
 {
+    if (m_mediaSourcePrivate)
+        m_mediaSourcePrivate->attemptToDecryptWithInstance(instance);
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::waitingForKey() const
 {
-    return anyOf(m_mediaSourcePrivate->sourceBuffers(), [] (auto& sourceBuffer) {
-        return sourceBuffer->waitingForKey();
-    });
+    return m_mediaSourcePrivate ? m_mediaSourcePrivate->waitingForKey() : false;
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::waitingForKeyChanged()

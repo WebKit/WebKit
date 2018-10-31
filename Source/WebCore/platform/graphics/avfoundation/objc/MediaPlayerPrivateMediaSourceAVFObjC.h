@@ -123,7 +123,6 @@ public:
     bool waitingForKey() const final;
 
     void waitingForKeyChanged();
-    CDMInstance* cdmInstance() const { return m_cdmInstance.get(); }
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
@@ -309,9 +308,6 @@ private:
     bool m_shouldPlayToTarget { false };
 #endif
     std::unique_ptr<VideoFullscreenLayerManagerObjC> m_videoFullscreenLayerManager;
-#if ENABLE(ENCRYPTED_MEDIA)
-    RefPtr<CDMInstance> m_cdmInstance;
-#endif
 };
 
 }

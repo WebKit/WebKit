@@ -1780,8 +1780,8 @@ bool MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource(AVAssetR
             return false;
 
         RetainPtr<NSData> keyURIData = [keyURI dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:YES];
-        auto keyURIBuffer = SharedBuffer::create(keyURIData.get());
-        player()->initializationDataEncountered("skd"_s, keyURIBuffer->tryCreateArrayBuffer());
+        m_keyID = SharedBuffer::create(keyURIData.get());
+        player()->initializationDataEncountered("skd"_s, m_keyID->tryCreateArrayBuffer());
         setWaitingForKey(true);
 #endif
         return true;
@@ -2470,7 +2470,6 @@ void MediaPlayerPrivateAVFoundationObjC::cdmInstanceAttached(CDMInstance& instan
         cdmInstanceDetached(*m_cdmInstance);
 
     m_cdmInstance = &fpsInstance;
-    [m_cdmInstance->contentKeySession() addContentKeyRecipient:m_avAsset.get()];
 #else
     UNUSED_PARAM(instance);
 #endif
@@ -2480,7 +2479,6 @@ void MediaPlayerPrivateAVFoundationObjC::cdmInstanceDetached(CDMInstance& instan
 {
 #if HAVE(AVCONTENTKEYSESSION)
     ASSERT_UNUSED(instance, m_cdmInstance && m_cdmInstance == &instance);
-    [m_cdmInstance->contentKeySession() removeContentKeyRecipient:m_avAsset.get()];
     m_cdmInstance = nullptr;
 #else
     UNUSED_PARAM(instance);
@@ -2489,6 +2487,15 @@ void MediaPlayerPrivateAVFoundationObjC::cdmInstanceDetached(CDMInstance& instan
 
 void MediaPlayerPrivateAVFoundationObjC::attemptToDecryptWithInstance(CDMInstance&)
 {
+    if (!m_keyID || !m_cdmInstance)
+        return;
+
+    auto instanceSession = m_cdmInstance->sessionForKeyIDs(Vector<Ref<SharedBuffer>>::from(*m_keyID));
+    if (!instanceSession)
+        return;
+
+    [instanceSession->contentKeySession() addContentKeyRecipient:m_avAsset.get()];
+
     auto keyURIToRequestMap = WTFMove(m_keyURIToRequestMap);
     for (auto& request : keyURIToRequestMap.values()) {
         if (auto *infoRequest = request.get().contentInformationRequest)
