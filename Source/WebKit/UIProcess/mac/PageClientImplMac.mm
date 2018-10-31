@@ -255,8 +255,7 @@ ColorSpaceData PageClientImpl::colorSpace()
 
 void PageClientImpl::processWillSwap()
 {
-    // FIXME: It didn't really exit.
-    m_impl->processDidExit();
+    m_impl->processWillSwap();
 }
 
 void PageClientImpl::processDidExit()

@@ -1456,7 +1456,7 @@ NSWindow *WebViewImpl::window()
     return [m_view window];
 }
 
-void WebViewImpl::processDidExit()
+void WebViewImpl::handleProcessSwapOrExit()
 {
     dismissContentRelativeChildWindowsWithAnimation(true);
 
@@ -1464,7 +1464,16 @@ void WebViewImpl::processDidExit()
 
     updateRemoteAccessibilityRegistration(false);
     flushPendingMouseEventCallbacks();
+}
 
+void WebViewImpl::processWillSwap()
+{
+    handleProcessSwapOrExit();
+}
+
+void WebViewImpl::processDidExit()
+{
+    handleProcessSwapOrExit();
     m_gestureController = nullptr;
 }
 

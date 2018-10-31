@@ -1,5 +1,27 @@
 2018-10-30  Chris Dumez  <cdumez@apple.com>
 
+        [PSON] View gesture snapshot gets taken down early when process-swapping
+        https://bugs.webkit.org/show_bug.cgi?id=191083
+        <rdar://problem/45058738>
+
+        Reviewed by Alex Christensen.
+
+        When process-swapping, we would call WebViewImpl::processDidExit(), which would destroy
+        the ViewGestureController and thus take down the swipe navigation snapshot before it
+        should. We now call WebViewImpl::processDidSwap() instead, which does the same thing,
+        except for destroying the ViewGestureController. As a result, the view snapshot stays
+        visible as long as it is needed, even in case of process swap.
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::handleProcessSwapOrExit):
+        (WebKit::WebViewImpl::processWillSwap):
+        (WebKit::WebViewImpl::processDidExit):
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::processWillSwap):
+
+2018-10-30  Chris Dumez  <cdumez@apple.com>
+
         [PSON] WebView renders with incorrect dimensions after back or forward
         https://bugs.webkit.org/show_bug.cgi?id=191071
         <rdar://problem/45058950>

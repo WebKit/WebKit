@@ -160,6 +160,7 @@ public:
 
     WebPageProxy& page() { return m_page.get(); }
 
+    void processWillSwap();
     void processDidExit();
     void pageClosed();
     void didRelaunchProcess();
@@ -652,6 +653,8 @@ private:
     void mouseDownInternal(NSEvent *);
     void mouseUpInternal(NSEvent *);
     void mouseDraggedInternal(NSEvent *);
+
+    void handleProcessSwapOrExit();
 
     bool mightBeginDragWhileInactive();
     bool mightBeginScrollWhileInactive();
