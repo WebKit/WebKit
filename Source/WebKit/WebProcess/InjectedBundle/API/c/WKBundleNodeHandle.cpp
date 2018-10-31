@@ -48,6 +48,8 @@ static WebCore::AutoFillButtonType toAutoFillButtonType(WKAutoFillButtonType wkA
         return WebCore::AutoFillButtonType::Credentials;
     case kWKAutoFillButtonTypeStrongPassword:
         return WebCore::AutoFillButtonType::StrongPassword;
+    case kWKAutoFillButtonTypeCreditCard:
+        return WebCore::AutoFillButtonType::CreditCard;
     }
     ASSERT_NOT_REACHED();
     return WebCore::AutoFillButtonType::None;
@@ -64,6 +66,8 @@ static WKAutoFillButtonType toWKAutoFillButtonType(WebCore::AutoFillButtonType a
         return kWKAutoFillButtonTypeCredentials;
     case WebCore::AutoFillButtonType::StrongPassword:
         return kWKAutoFillButtonTypeStrongPassword;
+    case WebCore::AutoFillButtonType::CreditCard:
+        return kWKAutoFillButtonTypeCreditCard;
     }
     ASSERT_NOT_REACHED();
     return kWKAutoFillButtonTypeNone;

@@ -1,0 +1,44 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x81
+  RenderBlock {HTML} at (0,0) size 800x81
+    RenderBody {BODY} at (8,16) size 784x57
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 582x18
+          text run at (0,0) width 196: "This tests that the Credit Card "
+          text run at (195,0) width 387: "AutoFill button renders. It can only be tested in the test tool."
+      RenderBlock {DIV} at (0,34) size 784x23
+        RenderTextControl {INPUT} at (2,2) size 146x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderFlexibleBox {DIV} at (3,3) size 140x13
+            RenderBlock {DIV} at (0,0) size 113x13
+        RenderText {#text} at (149,2) size 5x18
+          text run at (149,2) width 5: " "
+        RenderTextControl {INPUT} at (155,2) size 147x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderFlexibleBox {DIV} at (3,3) size 140x13
+            RenderBlock {DIV} at (0,0) size 113x13
+        RenderText {#text} at (303,2) size 5x18
+          text run at (303,2) width 5: " "
+        RenderTextControl {INPUT} at (309,2) size 147x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderFlexibleBox {DIV} at (3,3) size 140x13
+            RenderBlock {DIV} at (0,0) size 113x13
+        RenderText {#text} at (457,2) size 5x18
+          text run at (457,2) width 5: " "
+        RenderTextControl {INPUT} at (463,2) size 147x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderFlexibleBox {DIV} at (3,3) size 140x13
+            RenderBlock {DIV} at (0,0) size 113x13
+layer at (13,55) size 113x13
+  RenderBlock {DIV} at (0,0) size 113x13
+layer at (167,55) size 113x13
+  RenderBlock {DIV} at (0,0) size 113x13
+layer at (321,55) size 113x13
+  RenderBlock {DIV} at (0,0) size 113x13
+layer at (475,55) size 113x13
+  RenderBlock {DIV} at (0,0) size 113x13
+layer at (129,56) size 22x12
+  RenderBlock {DIV} at (115,0) size 23x13 [bgcolor=#000000]
+layer at (283,56) size 22x12
+  RenderBlock {DIV} at (115,0) size 23x13 [bgcolor=#000000]
+layer at (437,56) size 22x12
+  RenderBlock {DIV} at (115,0) size 23x13 [bgcolor=#000000]
+layer at (591,56) size 22x12
+  RenderBlock {DIV} at (115,0) size 23x13 [bgcolor=#000000]

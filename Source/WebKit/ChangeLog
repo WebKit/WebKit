@@ -1,3 +1,21 @@
+2018-10-31  Zach Li  <zacharyli323@gmail.com>
+
+        Add credit card autofill button
+        https://bugs.webkit.org/show_bug.cgi?id=191051
+        <rdar://problem/45657011>
+
+        Reviewed by Wenson Hsieh.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandle.mm:
+        (toAutoFillButtonType):
+        (toWKAutoFillButtonType):
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandlePrivate.h:
+        Introduce a new button type for credit card autofill.
+        * WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.cpp:
+        (toAutoFillButtonType):
+        (toWKAutoFillButtonType):
+        * WebProcess/InjectedBundle/API/c/WKBundleNodeHandlePrivate.h:
+
 2018-10-31  Chris Dumez  <cdumez@apple.com>
 
         [PSON] When process-swapping for a POST request the HTTP body gets dropped

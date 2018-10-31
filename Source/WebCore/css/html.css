@@ -602,6 +602,26 @@ input::-webkit-contacts-auto-fill-button:active {
     background-color: rgb(0, 60, 219);
 }
 
+input::-webkit-credit-card-auto-fill-button {
+    -webkit-mask-image: -webkit-image-set(url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADQAAAAYCAYAAAC1Ft6mAAAAAXNSR0IArs4c6QAAAYlJREFUWAntmD1OA0EMhQMFBBACCRqq5F4cANHDAZAoaBB00NAiDkSXggvQIAp+JH7eVziYkZddKTOzKPAka2yPx/aLN5NVBoM5xKo4XUmeJB8VhDrUo24RkLwGkbQGdbNjQRn5xIbZM7cnfFbISnvYH49gQjwKfYH6WbGYNdsvSPZPqNIQblTnRbLXsR5xXDKcK3Zlj5R7M5GtpJ7MEK/y2jW/H0Z8Odm3WM5NDXPmWiETweeP9vEdSHxcEykm4+MOOewdOfVZCNHXkevtXfouTgfsN4n1fGx75si9zkqI/k5cwzRvpFIyxE2Rm4jl4/uSYlkO22ftgpTUpQ75yXwjQ0JfoLbehRAxpw19nkUJapPw9aJ+Ih9vFBcSfxY7fNPwQbX1qPkmH80zEa7mc0lIBickDGMpD2ZoHUruJDvOh7ouuZWMMBy2pU+c3aaGTbUd+mk/ffXZSIL59eUTSW+sR/mWJGsSj3tv9KGnE6rdQ5EJMYU+UKQuj9x1H2xK1p27P0l6GlCZsp/oV3aRfWEA1gAAAABJRU5ErkJggg==") 2x);
+    -webkit-mask-size: 22px 12px;
+    width: 22px;
+    height: 12px;
+    margin-left: 3px;
+    margin-right: 2px;
+    background-color: black;
+    flex: none;
+    -webkit-user-select: none;
+}
+
+input::-webkit-credit-card-auto-fill-button:hover {
+    background-color: rgb(0, 122, 255);
+}
+
+input::-webkit-credit-card-auto-fill-button:active {
+    background-color: rgb(0, 60, 219);
+}
+
 input::-webkit-caps-lock-indicator {
     -webkit-appearance: caps-lock-indicator;
     content: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17"><path fill="black" fill-opacity="0.4" d="M12.5 0.5A 4 4 0 0 1 16.5 4.5L 16.5 12.5A 4 4 0 0 1 12.5 16.5L 4.5 16.5A 4 4 0 0 1 0.5 12.5L 0.5 4.5A 4 4 0 0 1 4.5 0.5L 12.5 0.5M 8.5 2L 4 7L 6.25 7L 6.25 10.25L 10.75 10.25L 10.75 7L 13 7L 8.5 2M 10.75 12L 6.25 12L 6.25 14.25L 10.75 14.25L 10.75 12"/></svg>');

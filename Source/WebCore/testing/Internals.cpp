@@ -1778,6 +1778,8 @@ static AutoFillButtonType toAutoFillButtonType(Internals::AutoFillButtonType typ
         return AutoFillButtonType::Contacts;
     case Internals::AutoFillButtonType::StrongPassword:
         return AutoFillButtonType::StrongPassword;
+    case Internals::AutoFillButtonType::CreditCard:
+        return AutoFillButtonType::CreditCard;
     }
     ASSERT_NOT_REACHED();
     return AutoFillButtonType::None;
@@ -1794,6 +1796,8 @@ static Internals::AutoFillButtonType toInternalsAutoFillButtonType(AutoFillButto
         return Internals::AutoFillButtonType::Contacts;
     case AutoFillButtonType::StrongPassword:
         return Internals::AutoFillButtonType::StrongPassword;
+    case AutoFillButtonType::CreditCard:
+        return Internals::AutoFillButtonType::CreditCard;
     }
     ASSERT_NOT_REACHED();
     return Internals::AutoFillButtonType::None;

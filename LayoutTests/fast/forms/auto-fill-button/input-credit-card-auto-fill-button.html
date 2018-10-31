@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests that the Credit Card  AutoFill button renders. It can only be tested in the test tool.</p>
+<div id="container">
+    <input type="text">
+    <input type="text" name="cc_number">
+    <input type="text" name="cc_holder">
+</div>
+<script>
+
+if (window.internals) {
+    var inputs = document.querySelectorAll("input");
+    for (var i = 0; i < inputs.length; ++i)
+        window.internals.setShowAutoFillButton(inputs[i], "CreditCard");
+
+    var dynamicInput = document.createElement("input");
+    window.internals.setShowAutoFillButton(dynamicInput, "CreditCard");
+    document.querySelector("#container").appendChild(dynamicInput);
+}
+</script>
+</body>
+</html>

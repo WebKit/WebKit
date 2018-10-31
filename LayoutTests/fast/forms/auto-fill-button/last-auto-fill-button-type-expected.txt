@@ -16,9 +16,12 @@ PASS internals.lastAutoFillButtonType(inputElement) is "Contacts"
 internals.setShowAutoFillButton(inputElement, 'Credentials')
 PASS internals.autoFillButtonType(inputElement) is "Credentials"
 PASS internals.lastAutoFillButtonType(inputElement) is "StrongPassword"
+internals.setShowAutoFillButton(inputElement, 'CreditCard')
+PASS internals.autoFillButtonType(inputElement) is "CreditCard"
+PASS internals.lastAutoFillButtonType(inputElement) is "Credentials"
 internals.setShowAutoFillButton(inputElement, 'None')
 PASS internals.autoFillButtonType(inputElement) is "None"
-PASS internals.lastAutoFillButtonType(inputElement) is "Credentials"
+PASS internals.lastAutoFillButtonType(inputElement) is "CreditCard"
 PASS successfullyParsed is true
 
 TEST COMPLETE

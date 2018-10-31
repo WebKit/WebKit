@@ -25,9 +25,12 @@ else {
     evalAndLog("internals.setShowAutoFillButton(inputElement, 'Credentials')");
     shouldBeEqualToString("internals.autoFillButtonType(inputElement)", "Credentials");
     shouldBeEqualToString("internals.lastAutoFillButtonType(inputElement)", "StrongPassword");
+    evalAndLog("internals.setShowAutoFillButton(inputElement, 'CreditCard')");
+    shouldBeEqualToString("internals.autoFillButtonType(inputElement)", "CreditCard");
+    shouldBeEqualToString("internals.lastAutoFillButtonType(inputElement)", "Credentials");
     evalAndLog("internals.setShowAutoFillButton(inputElement, 'None')");
     shouldBeEqualToString("internals.autoFillButtonType(inputElement)", "None");
-    shouldBeEqualToString("internals.lastAutoFillButtonType(inputElement)", "Credentials");
+    shouldBeEqualToString("internals.lastAutoFillButtonType(inputElement)", "CreditCard");
 }
 </script>
 </body>

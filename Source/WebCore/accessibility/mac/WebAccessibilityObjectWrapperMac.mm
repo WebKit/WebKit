@@ -3110,6 +3110,8 @@ IGNORE_WARNINGS_END
             return @"contacts";
         case AutoFillButtonType::StrongPassword:
             return @"strong password";
+        case AutoFillButtonType::CreditCard:
+            return @"credit card";
         }
     }
     
