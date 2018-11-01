@@ -74,7 +74,9 @@ void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_
 
     // We don't want XPC to be in charge of whether the process should be terminated or not,
     // so ensure that we have an outstanding transaction here.
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     xpc_transaction_begin();
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     InitializeWebKit2();
 

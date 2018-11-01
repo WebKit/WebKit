@@ -1,3 +1,10 @@
+2018-11-01  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, attempt to fix the build with recent SDKs.
+
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.h:
+        (WebKit::XPCServiceInitializer):
+
 2018-11-01  Sihui Liu  <sihui_liu@apple.com>
 
         Add a storage limit for IndexedDB
