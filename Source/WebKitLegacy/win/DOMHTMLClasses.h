@@ -227,7 +227,7 @@ public:
     
     virtual HRESULT STDMETHODCALLTYPE setNodeValue(_In_ BSTR value)
     {
-        return setNodeValue(value);
+        return DOMDocument::setNodeValue(value);
     }
     
     virtual HRESULT STDMETHODCALLTYPE nodeType(_Out_ unsigned short* result)
