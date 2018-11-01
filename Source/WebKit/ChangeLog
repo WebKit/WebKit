@@ -1,3 +1,26 @@
+2018-11-01  Chris Dumez  <cdumez@apple.com>
+
+        [PSON] Unable to submit a file in FormData cross-site
+        https://bugs.webkit.org/show_bug.cgi?id=191138
+
+        Reviewed by Alex Christensen.
+
+        When PSON is enabled, we are unable to submit a file in FormData cross-site. Although we encode the
+        request body over IPC since r237639, we're missing the right sandbox extensions for its to work for
+        files.
+
+        Update FormDataReference encoder to pass along the necessary sandbox extensions for files in the
+        FormData, and have its decoder consume those extensions so that the recipient has access to those
+        files. Also update LoadParameters's IPC encoder / decoder to encoder an IPC::FormDataReference
+        (which encodes both FormData and sandbox extensions) instead of a FormData.
+
+        * Platform/IPC/FormDataReference.h:
+        (IPC::FormDataReference::encode const):
+        (IPC::FormDataReference::decode):
+        * Shared/LoadParameters.cpp:
+        (WebKit::LoadParameters::encode const):
+        (WebKit::LoadParameters::decode):
+
 2018-11-01  Claudio Saavedra  <csaavedra@igalia.com>
 
         ERROR: ResourceLoadStatisticsPersistentStorage: Unable to delete statistics file

@@ -27,11 +27,11 @@
 
 #include "Decoder.h"
 #include "Encoder.h"
+#include "SandboxExtension.h"
 #include <WebCore/FormData.h>
 
 namespace IPC {
 
-// FIXME: In case of file based form data, we should pass sandbox extensions as well.
 class FormDataReference {
 public:
     FormDataReference() = default;
@@ -45,8 +45,26 @@ public:
     void encode(Encoder& encoder) const
     {
         encoder << !!m_data;
-        if (m_data)
-            encoder << *m_data;
+        if (!m_data)
+            return;
+
+        encoder << *m_data;
+
+        auto& elements = m_data->elements();
+        size_t fileCount = std::count_if(elements.begin(), elements.end(), [](auto& element) {
+            return WTF::holds_alternative<WebCore::FormDataElement::EncodedFileData>(element.data);
+        });
+
+        WebKit::SandboxExtension::HandleArray sandboxExtensionHandles;
+        sandboxExtensionHandles.allocate(fileCount);
+        size_t extensionIndex = 0;
+        for (auto& element : elements) {
+            if (auto* fileData = WTF::get_if<WebCore::FormDataElement::EncodedFileData>(element.data)) {
+                const String& path = fileData->shouldGenerateFile ? fileData->generatedFilename : fileData->filename;
+                WebKit::SandboxExtension::createHandle(path, WebKit::SandboxExtension::Type::ReadOnly, sandboxExtensionHandles[extensionIndex++]);
+            }
+        }
+        encoder << sandboxExtensionHandles;
     }
 
     static std::optional<FormDataReference> decode(Decoder& decoder)
@@ -61,6 +79,14 @@ public:
         auto formData = WebCore::FormData::decode(decoder);
         if (!formData)
             return std::nullopt;
+
+        std::optional<WebKit::SandboxExtension::HandleArray> sandboxExtensionHandles;
+        decoder >> sandboxExtensionHandles;
+        if (!sandboxExtensionHandles)
+            return std::nullopt;
+
+        for (size_t i = 0; i < sandboxExtensionHandles->size(); ++i)
+            WebKit::SandboxExtension::consumePermanently(sandboxExtensionHandles->at(i));
 
         return FormDataReference { formData.releaseNonNull() };
     }
