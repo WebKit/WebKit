@@ -342,6 +342,10 @@ imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/hist
 imported/w3c/web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/navigator-pluginarray.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_to_uri.html [ Pass Failure ]
 
+# Newly imported WPT tests that are flaky only on WK1.
+imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/assign_after_load.html [ Pass Failure ]
+imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/assign_before_load.html [ Pass Failure ]
+
 # testRunner.setShouldDownloadUndisplayableMIMETypes() is not supported on WK1.
 fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download.html [ Skip ]
 fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download-async-delegate.html [ Skip ]

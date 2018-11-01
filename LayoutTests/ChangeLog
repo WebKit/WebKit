@@ -1,3 +1,9 @@
+2018-11-01  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, mark a couple of newly imported WPT tests as flaky on Mac WK1.
+
+        * platform/mac-wk1/TestExpectations:
+
 2018-11-01  Justin Michaud  <justin_michaud@apple.com>
 
         CSS Custom Properties API Should Support syntax="*" and "<length>", and handle cycles properly
