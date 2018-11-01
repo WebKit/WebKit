@@ -1,3 +1,15 @@
+2018-11-01  Youenn Fablet  <youenn@apple.com>
+
+        RTCTrackEvent.streams should be SameObject
+        https://bugs.webkit.org/show_bug.cgi?id=191130
+
+        Reviewed by Eric Carlson.
+
+        Mimick SameObject using CachedAttribute.
+        Covered by rebased test.
+
+        * Modules/mediastream/RTCTrackEvent.idl:
+
 2018-10-31  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add support for inline-block elements.

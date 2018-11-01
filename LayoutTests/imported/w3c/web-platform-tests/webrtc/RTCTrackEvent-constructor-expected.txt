@@ -1,5 +1,5 @@
 
-FAIL new RTCTrackEvent() with valid receiver, track, transceiver should succeed assert_equals: expected [] but got []
+PASS new RTCTrackEvent() with valid receiver, track, transceiver should succeed 
 PASS new RTCTrackEvent() with valid receiver, track, streams, transceiver should succeed 
 PASS new RTCTrackEvent() with valid receiver, track, multiple streams, transceiver should succeed 
 PASS new RTCTrackEvent() with unrelated receiver, track, streams, transceiver should succeed 
