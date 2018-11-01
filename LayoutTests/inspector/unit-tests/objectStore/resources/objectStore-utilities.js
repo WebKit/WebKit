@@ -86,7 +86,11 @@ TestPage.registerInitializer(() => {
                     WI.ObjectStore._database = null;
                 }
 
-                indexedDB.deleteDatabase(WI.ObjectStore._databaseName);
+                await new Promise((resolve, reject) => {
+                    let deleteDatabaseRequest = indexedDB.deleteDatabase(WI.ObjectStore._databaseName);
+                    deleteDatabaseRequest.addEventListener("success", resolve);
+                    deleteDatabaseRequest.addEventListener("error", reject);
+                });
             },
         });
     };

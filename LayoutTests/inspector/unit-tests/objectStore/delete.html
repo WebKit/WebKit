@@ -27,7 +27,10 @@ function test()
         };
         let objectStore = InspectorTest.ObjectStore.createObjectStore(options);
 
-        await InspectorTest.ObjectStore.add(InspectorTest.ObjectStore.basicObject2, 1);
+        try {
+            // This call may fail on WK1
+            await InspectorTest.ObjectStore.add(InspectorTest.ObjectStore.basicObject2, 1);
+        } catch { }
 
         await InspectorTest.expectException(async () => {
             await objectStore.delete();

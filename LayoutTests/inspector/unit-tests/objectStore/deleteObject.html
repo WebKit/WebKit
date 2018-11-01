@@ -30,11 +30,16 @@ function test()
         };
         let objectStore = InspectorTest.ObjectStore.createObjectStore(options);
 
-        await InspectorTest.ObjectStore.add(new InspectorTest.ObjectStore.TestObject(InspectorTest.ObjectStore.basicObject2), 1);
+        let object = new InspectorTest.ObjectStore.TestObject(InspectorTest.ObjectStore.basicObject2);
+
+        try {
+            // This call may fail on WK1
+            await InspectorTest.ObjectStore.add(object, 1);
+        } catch { }
 
         await InspectorTest.expectException(async () => {
             await objectStore.deleteObject();
-            await objectStore.deleteObject(new InspectorTest.ObjectStore.TestObject(InspectorTest.ObjectStore.basicObject2));
+            await objectStore.deleteObject(object);
         });
     });
 
