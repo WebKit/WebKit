@@ -1535,9 +1535,9 @@
       "status" : "committer"
    },
    "David Fenton" : {
-    "aliases" : [
-        "Dawei Fenton"
-     ],
+      "aliases" : [
+         "Dawei Fenton"
+      ],
       "emails" : [
          "david_fenton@apple.com",
          "realdawei@apple.com"
@@ -3313,7 +3313,8 @@
    "Justin Michaud" : {
       "emails" : [
          "justin_michaud@apple.com"
-      ]
+      ],
+      "status" : "committer"
    },
    "Justin Novosad" : {
       "emails" : [
@@ -4553,7 +4554,7 @@
       ],
       "status" : "committer"
    },
-   "Pablo Saavedra Rodi\u00F1o" : {
+   "Pablo Saavedra Rodi\u00f1o" : {
       "emails" : [
          "psaavedra@igalia.com"
       ]
