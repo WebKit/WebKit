@@ -11,7 +11,7 @@
         {
             "id": "Initiator",
             "type": "string",
-            "enum": ["frontend", "console"]
+            "enum": ["frontend", "console", "auto-capture"]
         },
         {
             "id": "InitialState",

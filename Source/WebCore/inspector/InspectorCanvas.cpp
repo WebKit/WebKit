@@ -105,7 +105,8 @@ void InspectorCanvas::resetRecordingData()
     m_recordingName = { };
     m_bufferLimit = 100 * 1024 * 1024;
     m_bufferUsed = 0;
-    m_singleFrame = true;
+    m_frameCount = std::nullopt;
+    m_framesCaptured = 0;
 
     m_context.setCallTracingActive(false);
 }
@@ -150,6 +151,7 @@ void InspectorCanvas::recordAction(const String& name, Vector<RecordCanvasAction
             .release();
 
         m_frames->addItem(WTFMove(frame));
+        ++m_framesCaptured;
 
         m_currentFrameStartTime = MonotonicTime::now();
     }
@@ -214,6 +216,19 @@ void InspectorCanvas::setBufferLimit(long memoryLimit)
 bool InspectorCanvas::hasBufferSpace() const
 {
     return m_bufferUsed < m_bufferLimit;
+}
+
+void InspectorCanvas::setFrameCount(long frameCount)
+{
+    if (frameCount > 0)
+        m_frameCount = std::min<long>(frameCount, std::numeric_limits<int>::max());
+    else
+        m_frameCount = std::nullopt;
+}
+
+bool InspectorCanvas::overFrameCount() const
+{
+    return m_frameCount && m_framesCaptured >= m_frameCount.value();
 }
 
 Ref<Inspector::Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(bool captureBacktrace)

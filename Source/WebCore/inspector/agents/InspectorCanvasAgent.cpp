@@ -95,6 +95,8 @@ void InspectorCanvasAgent::enable(ErrorString&)
     if (m_enabled)
         return;
 
+    m_recordingAutoCaptureFrameCount = std::nullopt;
+
     m_enabled = true;
 
     const bool captureBacktrace = false;
@@ -137,6 +139,8 @@ void InspectorCanvasAgent::disable(ErrorString&)
 
     for (auto& inspectorCanvas : m_identifierToInspectorCanvas.values())
         inspectorCanvas->resetRecordingData();
+
+    m_recordingAutoCaptureFrameCount = std::nullopt;
 
     m_enabled = false;
 }
@@ -261,7 +265,15 @@ void InspectorCanvasAgent::resolveCanvasContext(ErrorString& errorString, const 
     result = injectedScript.wrapObject(value, objectGroupName);
 }
 
-void InspectorCanvasAgent::startRecording(ErrorString& errorString, const String& canvasId, const bool* singleFrame, const int* memoryLimit)
+void InspectorCanvasAgent::setRecordingAutoCaptureFrameCount(ErrorString&, int count)
+{
+    if (count > 0)
+        m_recordingAutoCaptureFrameCount = count;
+    else
+        m_recordingAutoCaptureFrameCount = std::nullopt;
+}
+
+void InspectorCanvasAgent::startRecording(ErrorString& errorString, const String& canvasId, const int* frameCount, const int* memoryLimit)
 {
     auto* inspectorCanvas = assertInspectorCanvas(errorString, canvasId);
     if (!inspectorCanvas)
@@ -272,15 +284,12 @@ void InspectorCanvasAgent::startRecording(ErrorString& errorString, const String
         return;
     }
 
-    inspectorCanvas->resetRecordingData();
-    if (singleFrame)
-        inspectorCanvas->setSingleFrame(*singleFrame);
+    RecordingOptions recordingOptions;
+    if (frameCount)
+        recordingOptions.frameCount = *frameCount;
     if (memoryLimit)
-        inspectorCanvas->setBufferLimit(*memoryLimit);
-
-    inspectorCanvas->context().setCallTracingActive(true);
-
-    m_frontendDispatcher->recordingStarted(inspectorCanvas->identifier(), Inspector::Protocol::Recording::Initiator::Frontend);
+        recordingOptions.memoryLimit = *memoryLimit;
+    startRecording(*inspectorCanvas, Inspector::Protocol::Recording::Initiator::Frontend, WTFMove(recordingOptions));
 }
 
 void InspectorCanvasAgent::stopRecording(ErrorString& errorString, const String& canvasId)
@@ -429,14 +438,20 @@ void InspectorCanvasAgent::didCreateCanvasRenderingContext(CanvasRenderingContex
 
     context.canvasBase().addObserver(*this);
 
-    auto inspectorCanvas = InspectorCanvas::create(context);
+    RefPtr<InspectorCanvas> inspectorCanvas = InspectorCanvas::create(context);
+    m_identifierToInspectorCanvas.set(inspectorCanvas->identifier(), inspectorCanvas);
 
-    if (m_enabled) {
-        const bool captureBacktrace = true;
-        m_frontendDispatcher->canvasAdded(inspectorCanvas->buildObjectForCanvas(captureBacktrace));
+    if (!m_enabled)
+        return;
+
+    const bool captureBacktrace = true;
+    m_frontendDispatcher->canvasAdded(inspectorCanvas->buildObjectForCanvas(captureBacktrace));
+
+    if (m_recordingAutoCaptureFrameCount) {
+        RecordingOptions recordingOptions;
+        recordingOptions.frameCount = m_recordingAutoCaptureFrameCount.value();
+        startRecording(*inspectorCanvas, Inspector::Protocol::Recording::Initiator::AutoCapture, WTFMove(recordingOptions));
     }
-
-    m_identifierToInspectorCanvas.set(inspectorCanvas->identifier(), WTFMove(inspectorCanvas));
 }
 
 void InspectorCanvasAgent::didChangeCanvasMemory(CanvasRenderingContext& context)
@@ -523,7 +538,7 @@ void InspectorCanvasAgent::didFinishRecordingCanvasFrame(CanvasRenderingContext&
     if (inspectorCanvas->currentFrameHasData())
         m_frontendDispatcher->recordingProgress(inspectorCanvas->identifier(), inspectorCanvas->releaseFrames(), inspectorCanvas->bufferUsed());
 
-    if (!forceDispatch && !inspectorCanvas->singleFrame())
+    if (!forceDispatch && !inspectorCanvas->overFrameCount())
         return;
 
     // FIXME: <https://webkit.org/b/176008> Web Inspector: Record actions performed on WebGL2RenderingContext
@@ -565,23 +580,18 @@ void InspectorCanvasAgent::consoleStartRecordingCanvas(CanvasRenderingContext& c
     if (!inspectorCanvas)
         return;
 
-    if (inspectorCanvas->context().callTracingActive())
-        return;
-
-    inspectorCanvas->resetRecordingData();
-
+    RecordingOptions recordingOptions;
     if (options) {
-        if (JSC::JSValue optionName = options->get(&exec, JSC::Identifier::fromString(&exec, "name")))
-            inspectorCanvas->setRecordingName(optionName.toWTFString(&exec));
         if (JSC::JSValue optionSingleFrame = options->get(&exec, JSC::Identifier::fromString(&exec, "singleFrame")))
-            inspectorCanvas->setSingleFrame(optionSingleFrame.toBoolean(&exec));
+            recordingOptions.frameCount = optionSingleFrame.toBoolean(&exec) ? 1 : 0;
+        if (JSC::JSValue optionFrameCount = options->get(&exec, JSC::Identifier::fromString(&exec, "frameCount")))
+            recordingOptions.frameCount = optionFrameCount.toNumber(&exec);
         if (JSC::JSValue optionMemoryLimit = options->get(&exec, JSC::Identifier::fromString(&exec, "memoryLimit")))
-            inspectorCanvas->setBufferLimit(optionMemoryLimit.toNumber(&exec));
+            recordingOptions.memoryLimit = optionMemoryLimit.toNumber(&exec);
+        if (JSC::JSValue optionName = options->get(&exec, JSC::Identifier::fromString(&exec, "name")))
+            recordingOptions.name = optionName.toWTFString(&exec);
     }
-
-    inspectorCanvas->context().setCallTracingActive(true);
-
-    m_frontendDispatcher->recordingStarted(inspectorCanvas->identifier(), Inspector::Protocol::Recording::Initiator::Console);
+    startRecording(*inspectorCanvas, Inspector::Protocol::Recording::Initiator::Console, WTFMove(recordingOptions));
 }
 
 #if ENABLE(WEBGL)
@@ -639,6 +649,32 @@ bool InspectorCanvasAgent::isShaderProgramHighlighted(WebGLProgram& program)
     return inspectorProgram->highlighted();
 }
 #endif
+
+void InspectorCanvasAgent::startRecording(InspectorCanvas& inspectorCanvas, Inspector::Protocol::Recording::Initiator initiator, RecordingOptions&& recordingOptions)
+{
+    auto& canvasRenderingContext = inspectorCanvas.context();
+
+    if (!is<CanvasRenderingContext2D>(canvasRenderingContext)
+#if ENABLE(WEBGL)
+        && !is<WebGLRenderingContext>(canvasRenderingContext)
+#endif
+        && !is<ImageBitmapRenderingContext>(canvasRenderingContext))
+        return;
+
+    if (canvasRenderingContext.callTracingActive())
+        return;
+
+    inspectorCanvas.resetRecordingData();
+    if (recordingOptions.frameCount)
+        inspectorCanvas.setFrameCount(recordingOptions.frameCount.value());
+    if (recordingOptions.memoryLimit)
+        inspectorCanvas.setBufferLimit(recordingOptions.memoryLimit.value());
+    if (recordingOptions.name)
+        inspectorCanvas.setRecordingName(recordingOptions.name.value());
+    canvasRenderingContext.setCallTracingActive(true);
+
+    m_frontendDispatcher->recordingStarted(inspectorCanvas.identifier(), initiator);
+}
 
 void InspectorCanvasAgent::canvasDestroyedTimerFired()
 {

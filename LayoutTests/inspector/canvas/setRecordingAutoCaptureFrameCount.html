@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
+let timeoutID = NaN;
+
+function cancelActions() {
+    clearTimeout(timeoutID);
+    timeoutID = NaN;
+}
+
+function performActions(frames) {
+    let index = 0;
+    function executeFrameFunction() {
+        frames[index++]();
+
+        if (index < frames.length)
+            timeoutID = setTimeout(executeFrameFunction, 0);
+        else {
+            setTimeout(() => {
+                TestPage.dispatchEventToFrontend("LastFrame");
+            }, 0);
+        }
+    };
+    executeFrameFunction();
+}
+
+function performActions2D() {
+    let context = document.createElement("canvas").getContext("2d");
+    performActions([
+        () => {
+            context.fill();
+        },
+        () => {
+            context.stroke();
+        },
+    ]);
+}
+
+function performActionsWebGL() {
+    let context = document.createElement("canvas").getContext("webgl");
+    performActions([
+        () => {
+            context.drawArrays(1, 2, 3);
+        },
+        () => {
+            context.drawElements(1, 2, 3, 4);
+        },
+    ]);
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("Canvas.setRecordingAutoCaptureFrameCount");
+
+    function addTest({name, description, frameCount, expression, handleRecordingStarted, handleRecordingStopped, handleLastFrame}) {
+        suite.addTestCase({
+            name,
+            description,
+            test(resolve, reject) {
+                let canvas = null;
+
+                function handleRecordingStartedWrapper(event)
+                {
+                    InspectorTest.assert(event.target === canvas, "Should be recording the canvas.");
+
+                    handleRecordingStarted(canvas);
+                }
+
+                function handleRecordingStoppedWrapper(event)
+                {
+                    InspectorTest.assert(event.target === canvas, "Should be recording the canvas.");
+
+                    handleRecordingStopped(canvas, event.data.recording);
+                }
+
+                WI.canvasManager.awaitEvent(WI.CanvasManager.Event.CanvasAdded)
+                .then((event) => {
+                    canvas = event.data.canvas;
+
+                    canvas.addEventListener(WI.Canvas.Event.RecordingStarted, handleRecordingStartedWrapper);
+                    canvas.addEventListener(WI.Canvas.Event.RecordingStopped, handleRecordingStoppedWrapper);
+                });
+
+                InspectorTest.awaitEvent("LastFrame")
+                .then((event) => {
+                    canvas.removeEventListener(WI.Canvas.Event.RecordingStarted, handleRecordingStartedWrapper);
+                    canvas.removeEventListener(WI.Canvas.Event.RecordingStopped, handleRecordingStoppedWrapper);
+
+                    handleLastFrame(canvas);
+                })
+                .then(resolve, reject);
+
+                CanvasAgent.setRecordingAutoCaptureFrameCount(frameCount)
+                .then(() => {
+                    InspectorTest.evaluateInPage(expression).catch(reject);
+                })
+                .catch(reject);
+            },
+        });
+    }
+
+    addTest({
+        name: "Canvas.setRecordingAutoCaptureFrameCount.2D.None",
+        description: "Check that newly created 2D contexts are not recorded when setRecordingAutoCaptureFrameCount is 0.",
+        frameCount: 0,
+        expression: `performActions2D()`,
+        handleRecordingStarted(canvas) {
+            InspectorTest.fail("Canvas should not be recording.");
+        },
+        handleRecordingStopped(canvas, recording) {
+            InspectorTest.fail("Canvas should not be recording.");
+        },
+        handleLastFrame(canvas) {
+            InspectorTest.expectEqual(canvas.recordingCollection.size, 0, "Canvas should have no finished recordings.");
+        },
+    });
+
+    addTest({
+        name: "Canvas.setRecordingAutoCaptureFrameCount.2D.Single",
+        description: "Check that newly created 2D contexts only record one frame when setRecordingAutoCaptureFrameCount is 1.",
+        frameCount: 1,
+        expression: `performActions2D()`,
+        handleRecordingStarted(canvas) {
+            InspectorTest.pass("Recording started.");
+        },
+        handleRecordingStopped(canvas, recording) {
+            InspectorTest.pass("Recording stopped.");
+            InspectorTest.expectEqual(recording.frames.length, 1, "Recording should have one frame.");
+            InspectorTest.expectEqual(recording.frames[0].actions.length, 1, "Recording should have one action.");
+        },
+        handleLastFrame(canvas) {
+            InspectorTest.expectEqual(canvas.recordingCollection.size, 1, "Canvas should have one finished recording.");
+        },
+    });
+
+    addTest({
+        name: "Canvas.setRecordingAutoCaptureFrameCount.2D.Multiple",
+        description: "Check that newly created 2D contexts don't finish recording when setRecordingAutoCaptureFrameCount is 10.",
+        frameCount: 10,
+        expression: `performActions2D()`,
+        handleRecordingStarted(canvas) {
+            InspectorTest.pass("Recording started.");
+        },
+        handleRecordingStopped(canvas, recording) {
+            InspectorTest.fail("Canvas should not be done recording.");
+        },
+        handleLastFrame(canvas) {
+            InspectorTest.expectEqual(canvas.recordingCollection.size, 0, "Canvas should have no finished recordings.");
+            InspectorTest.expectThat(canvas.recordingActive, "Canvas should be actively recording.");
+            InspectorTest.expectEqual(canvas.recordingFrameCount, 2, "Recording should have 2 frames.");
+
+            canvas.stopRecording();
+        },
+    });
+
+    addTest({
+        name: "Canvas.setRecordingAutoCaptureFrameCount.WebGL.None",
+        description: "Check that newly created WebGL contexts are not recorded when setRecordingAutoCaptureFrameCount is 0.",
+        frameCount: 0,
+        expression: `performActionsWebGL()`,
+        handleRecordingStarted(canvas) {
+            InspectorTest.fail("Canvas should not be recording.");
+        },
+        handleRecordingStopped(canvas, recording) {
+            InspectorTest.fail("Canvas should not be recording.");
+        },
+        handleLastFrame(canvas) {
+            InspectorTest.expectEqual(canvas.recordingCollection.size, 0, "Canvas should have no finished recordings.");
+        },
+    });
+
+    addTest({
+        name: "Canvas.setRecordingAutoCaptureFrameCount.WebGL.Single",
+        description: "Check that newly created WebGL contexts only record one frame when setRecordingAutoCaptureFrameCount is 1.",
+        frameCount: 1,
+        expression: `performActionsWebGL()`,
+        handleRecordingStarted(canvas) {
+            InspectorTest.pass("Recording started.");
+        },
+        handleRecordingStopped(canvas, recording) {
+            InspectorTest.pass("Recording stopped.");
+            InspectorTest.expectEqual(recording.frames.length, 1, "Recording should have one frame.");
+            InspectorTest.expectEqual(recording.frames[0].actions.length, 1, "Recording should have one action.");
+        },
+        handleLastFrame(canvas) {
+            InspectorTest.expectEqual(canvas.recordingCollection.size, 1, "Canvas should have one finished recording.");
+        },
+    });
+
+    addTest({
+        name: "Canvas.setRecordingAutoCaptureFrameCount.WebGL.Multiple",
+        description: "Check that newly created WebGL contexts don't finish recording when setRecordingAutoCaptureFrameCount is 10.",
+        frameCount: 10,
+        expression: `performActionsWebGL()`,
+        handleRecordingStarted(canvas) {
+            InspectorTest.pass("Recording started.");
+        },
+        handleRecordingStopped(canvas, recording) {
+            InspectorTest.fail("Canvas should not be done recording.");
+        },
+        handleLastFrame(canvas) {
+            InspectorTest.expectEqual(canvas.recordingCollection.size, 0, "Canvas should have no finished recordings.");
+            InspectorTest.expectThat(canvas.recordingActive, "Canvas should be actively recording.");
+            InspectorTest.expectEqual(canvas.recordingFrameCount, 2, "Recording should have 2 frames.");
+
+            canvas.stopRecording();
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Test that contexts created after calling Canvas.setRecordingAutoCaptureFrameCount are properly recorded.</p>
+</body>
+</html>

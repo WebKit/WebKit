@@ -71,8 +71,8 @@ public:
     bool hasBufferSpace() const;
     long bufferUsed() const { return m_bufferUsed; }
 
-    bool singleFrame() const { return m_singleFrame; }
-    void setSingleFrame(bool singleFrame) { m_singleFrame = singleFrame; }
+    void setFrameCount(long);
+    bool overFrameCount() const;
 
     Ref<Inspector::Protocol::Canvas::Canvas> buildObjectForCanvas(bool captureBacktrace);
 
@@ -117,7 +117,8 @@ private:
     MonotonicTime m_currentFrameStartTime { MonotonicTime::nan() };
     size_t m_bufferLimit { 100 * 1024 * 1024 };
     size_t m_bufferUsed { 0 };
-    bool m_singleFrame { false };
+    std::optional<size_t> m_frameCount;
+    size_t m_framesCaptured { 0 };
 };
 
 } // namespace WebCore

@@ -33,13 +33,13 @@ WI.CheckboxNavigationItem = class CheckboxNavigationItem extends WI.NavigationIt
         this._checkboxElement.checked = checked;
         this._checkboxElement.id = "checkbox-navigation-item-" + identifier;
         this._checkboxElement.type = "checkbox";
-
         this._checkboxElement.addEventListener("change", this._checkboxChanged.bind(this));
 
         this._checkboxLabel = this.element.appendChild(document.createElement("label"));
         this._checkboxLabel.className = "toggle";
-        this._checkboxLabel.textContent = label;
+        this._checkboxLabel.append(label);
         this._checkboxLabel.setAttribute("for", this._checkboxElement.id);
+        this._checkboxLabel.addEventListener("click", this._handleLabelClick.bind(this));
     }
 
     // Public
@@ -66,6 +66,12 @@ WI.CheckboxNavigationItem = class CheckboxNavigationItem extends WI.NavigationIt
     _checkboxChanged(event)
     {
         this.dispatchEventToListeners(WI.CheckboxNavigationItem.Event.CheckedDidChange);
+    }
+
+    _handleLabelClick(event)
+    {
+        if (WI.isEventTargetAnEditableField(event))
+            event.stop();
     }
 };
 

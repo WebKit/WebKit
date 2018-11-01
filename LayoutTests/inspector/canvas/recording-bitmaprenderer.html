@@ -87,7 +87,7 @@ function test() {
         name: "Canvas.recordingBitmapRenderer.singleFrame",
         description: "Check that the recording is stopped after a single frame.",
         test(resolve, reject) {
-            startRecording(WI.Canvas.ContextType.BitmapRenderer, resolve, reject, {singleFrame: true});
+            startRecording(WI.Canvas.ContextType.BitmapRenderer, resolve, reject, {frameCount: 1});
         },
     });
 
@@ -95,7 +95,7 @@ function test() {
         name: "Canvas.recordingBitmapRenderer.multipleFrames",
         description: "Check that recording data is serialized correctly for multiple frames.",
         test(resolve, reject) {
-            startRecording(WI.Canvas.ContextType.BitmapRenderer, resolve, reject, {singleFrame: false});
+            startRecording(WI.Canvas.ContextType.BitmapRenderer, resolve, reject);
         },
     });
 

@@ -1,5 +1,60 @@
 2018-10-31  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Canvas: create a setting for auto-recording newly created contexts
+        https://bugs.webkit.org/show_bug.cgi?id=190856
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Controllers/CanvasManager.js:
+        (WI.CanvasManager.supportsRecordingAutoCapture): Added.
+        (WI.CanvasManager.prototype.setRecordingAutoCaptureFrameCount): Added.
+
+        * UserInterface/Models/Canvas.js:
+        (WI.Canvas.prototype.startRecording):
+        (WI.Canvas.prototype.recordingStarted):
+        (WI.Canvas.prototype.recordingFinished):
+
+        * UserInterface/Models/Recording.js:
+
+        * UserInterface/Views/CanvasOverviewContentView.js:
+        (WI.CanvasOverviewContentView):
+        (WI.CanvasOverviewContentView.prototype.get navigationItems):
+        (WI.CanvasOverviewContentView.prototype.initialLayout): Added.
+        (WI.CanvasOverviewContentView.prototype.attached):
+        (WI.CanvasOverviewContentView.prototype.detached):
+        (WI.CanvasOverviewContentView.prototype._setRecordingAutoCaptureFrameCount): Added.
+        (WI.CanvasOverviewContentView.prototype._updateRecordingAutoCaptureInputElementSize): Added.
+        (WI.CanvasOverviewContentView.prototype._handleRecordingAutoCaptureInput): Added.
+        (WI.CanvasOverviewContentView.prototype._handleRecordingAutoCaptureCheckedDidChange): Added.
+        (WI.CanvasOverviewContentView.prototype._handleCanvasRecordingAutoCaptureEnabledChanged): Added.
+        (WI.CanvasOverviewContentView.prototype._handleCanvasRecordingAutoCaptureFrameCountChanged): Added.
+        * UserInterface/Views/CanvasOverviewContentView.css:
+        (.navigation-bar > .item.canvas-recording-auto-capture > label): Added.
+        (.navigation-bar > .item.canvas-recording-auto-capture > label > input): Added.
+        (.navigation-bar > .item.canvas-recording-auto-capture > label > input::-webkit-inner-spin-button): Added.
+        (.popover-content > .tree-outline .item.recording > .icon): Deleted.
+        (.popover-content > .tree-outline .item.recording:hover): Deleted.
+        (.popover-content > .tree-outline .item.recording:hover > .icon): Deleted.
+        Drive-by: removed unused CSS rules.
+
+        * UserInterface/Views/CanvasContentView.js:
+        (WI.CanvasContentView.prototype.initialLayout):
+        (WI.CanvasContentView.prototype._updateProgressView):
+        (WI.CanvasContentView.prototype._updateViewRelatedItems):
+
+        * UserInterface/Views/CanvasTabContentView.js:
+        (WI.CanvasTabContentView.prototype._recordingImportedOrStopped):
+
+        * UserInterface/Views/CheckboxNavigationItem.js:
+        (WI.CheckboxNavigationItem):
+        (WI.CheckboxNavigationItem.prototype._handleLabelClick): Added.
+
+        * UserInterface/Base/Setting.js:
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+2018-10-31  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: display low-power enter/exit events in Timelines and Network node waterfalls
         https://bugs.webkit.org/show_bug.cgi?id=190641
         <rdar://problem/45319049>

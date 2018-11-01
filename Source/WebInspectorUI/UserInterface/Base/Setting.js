@@ -103,6 +103,8 @@ WI.Setting.Event = {
 };
 
 WI.settings = {
+    canvasRecordingAutoCaptureEnabled: new WI.Setting("canvas-recording-auto-capture-enabled", false),
+    canvasRecordingAutoCaptureFrameCount: new WI.Setting("canvas-recording-auto-capture-frame-count", 1),
     clearLogOnNavigate: new WI.Setting("clear-log-on-navigate", true),
     clearNetworkOnNavigate: new WI.Setting("clear-network-on-navigate", true),
     enableControlFlowProfiler: new WI.Setting("enable-control-flow-profiler", false),

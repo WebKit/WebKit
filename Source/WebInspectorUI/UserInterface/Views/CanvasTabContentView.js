@@ -247,12 +247,12 @@ WI.CanvasTabContentView = class CanvasTabContentView extends WI.ContentBrowserTa
 
     _recordingImportedOrStopped(event)
     {
-        let recording = event.data.recording;
+        let {recording, initiatedByUser} = event.data;
         if (!recording)
             return;
 
         this._addRecording(recording, {
-            suppressShowRecording: event.data.fromConsole || this.contentBrowser.currentRepresentedObjects.some((representedObject) => representedObject instanceof WI.Recording),
+            suppressShowRecording: !initiatedByUser || this.contentBrowser.currentRepresentedObjects.some((representedObject) => representedObject instanceof WI.Recording),
         });
     }
 

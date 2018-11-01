@@ -436,7 +436,7 @@ function test() {
         name: "Canvas.recording2D.singleFrame",
         description: "Check that the recording is stopped after a single frame.",
         test(resolve, reject) {
-            startRecording(WI.Canvas.ContextType.Canvas2D, resolve, reject, {singleFrame: true});
+            startRecording(WI.Canvas.ContextType.Canvas2D, resolve, reject, {frameCount: 1});
         },
     });
 
@@ -444,7 +444,7 @@ function test() {
         name: "Canvas.recording2D.multipleFrames",
         description: "Check that recording data is serialized correctly for multiple frames.",
         test(resolve, reject) {
-            startRecording(WI.Canvas.ContextType.Canvas2D, resolve, reject, {singleFrame: false});
+            startRecording(WI.Canvas.ContextType.Canvas2D, resolve, reject);
         },
     });
 
@@ -493,8 +493,8 @@ function test() {
                 InspectorTest.evaluateInPage(`performNaNActions()`);
             });
 
-            const singleFrame = true;
-            CanvasAgent.startRecording(canvas.identifier, singleFrame)
+            const frameCount = 1;
+            CanvasAgent.startRecording(canvas.identifier, frameCount)
             .catch(reject);
         },
     });
@@ -538,8 +538,8 @@ function test() {
 
             InspectorTest.evaluateInPage(`performSavePreActions()`)
             .then(() => {
-                const singleFrame = true;
-                CanvasAgent.startRecording(canvas.identifier, singleFrame).catch(reject);
+                const frameCount = 1;
+                CanvasAgent.startRecording(canvas.identifier, frameCount).catch(reject);
             }, reject);
         },
     });

@@ -173,18 +173,20 @@
     -webkit-padding-start: 4px;
 }
 
-.popover-content > .tree-outline .item.recording > .icon {
-    content: url(../Images/Recording.svg);
+.navigation-bar > .item.canvas-recording-auto-capture > label {
+    display: flex;
+    align-items: center;
 }
 
-.popover-content > .tree-outline .item.recording:hover {
-    color: var(--selected-foreground-color);
-    background-color: var(--selected-background-color);
-    border-radius: 3px;
+.navigation-bar > .item.canvas-recording-auto-capture > label > input {
+    width: 1.5em;
+    min-width: 1.5em;
+    margin: 0 4px;
+    text-align: center;
 }
 
-.popover-content > .tree-outline .item.recording:hover > .icon {
-    filter: invert();
+.navigation-bar > .item.canvas-recording-auto-capture > label > input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
 }
 
 @media (prefers-dark-interface) {

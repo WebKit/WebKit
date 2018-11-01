@@ -149,6 +149,8 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
 
         if (this._errorElement)
             this._showError();
+
+        this._updateProgressView();
     }
 
     layout()
@@ -371,6 +373,9 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
 
     _updateProgressView()
     {
+        if (!this._previewContainerElement)
+            return;
+
         if (!this.representedObject.recordingActive) {
             if (this._progressView && this._progressView.parentView) {
                 this.removeSubview(this._progressView);
@@ -398,6 +403,9 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
 
     _updateViewRelatedItems()
     {
+        if (!this._viewRelatedItemsContainer)
+            return;
+
         this._viewRelatedItemsContainer.removeChildren();
 
         if (this.representedObject.shaderProgramCollection.size)

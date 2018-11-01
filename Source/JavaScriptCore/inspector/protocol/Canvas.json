@@ -105,12 +105,19 @@
             ]
         },
         {
+            "name": "setRecordingAutoCaptureFrameCount",
+            "description": "Tells the backend to record `count` frames whenever a new context is created.",
+            "parameters": [
+                { "name": "count", "type": "integer", "description": "Number of frames to record (0 means don't record anything)." }
+            ]
+        },
+        {
             "name": "startRecording",
             "description": "Record the next frame, or up to the given number of bytes of data, for the given canvas.",
             "parameters": [
                 { "name": "canvasId", "$ref": "CanvasId" },
-                { "name": "singleFrame", "type": "boolean", "optional": true, "description": "Whether to record a single frame or until the memory limit is reached." },
-                { "name": "memoryLimit", "type": "integer", "optional": true, "description": "Memory limit of recorded data." }
+                { "name": "frameCount", "type": "integer", "optional": true, "description": "Number of frames to record (unlimited when not specified)." },
+                { "name": "memoryLimit", "type": "integer", "optional": true, "description": "Memory limit of recorded data (100MB when not specified)." }
             ]
         },
         {

@@ -73,7 +73,8 @@ public:
     void requestContent(ErrorString&, const String& canvasId, String* content) override;
     void requestCSSCanvasClientNodes(ErrorString&, const String& canvasId, RefPtr<JSON::ArrayOf<int>>&) override;
     void resolveCanvasContext(ErrorString&, const String& canvasId, const String* objectGroup, RefPtr<Inspector::Protocol::Runtime::RemoteObject>&) override;
-    void startRecording(ErrorString&, const String& canvasId, const bool* singleFrame, const int* memoryLimit) override;
+    void setRecordingAutoCaptureFrameCount(ErrorString&, int count) override;
+    void startRecording(ErrorString&, const String& canvasId, const int* frameCount, const int* memoryLimit) override;
     void stopRecording(ErrorString&, const String& canvasId) override;
     void requestShaderSource(ErrorString&, const String& programId, const String& shaderType, String*) override;
     void updateShader(ErrorString&, const String& programId, const String& shaderType, const String& source) override;
@@ -103,6 +104,13 @@ public:
     void canvasDestroyed(CanvasBase&) override;
 
 private:
+    struct RecordingOptions {
+        std::optional<long> frameCount;
+        std::optional<long> memoryLimit;
+        std::optional<String> name;
+    };
+    void startRecording(InspectorCanvas&, Inspector::Protocol::Recording::Initiator, RecordingOptions&& = { });
+
     void canvasDestroyedTimerFired();
     void canvasRecordingTimerFired();
     void clearCanvasData();
@@ -124,6 +132,7 @@ private:
     Vector<String> m_removedCanvasIdentifiers;
     Timer m_canvasDestroyedTimer;
     Timer m_canvasRecordingTimer;
+    std::optional<size_t> m_recordingAutoCaptureFrameCount;
 
     bool m_enabled { false };
 };

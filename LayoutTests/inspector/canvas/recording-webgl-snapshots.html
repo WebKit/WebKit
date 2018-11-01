@@ -100,7 +100,7 @@ function test() {
         name: "Canvas.recordingWebGL.snapshots",
         description: "Check that the snapshot taken after each visual action is different.",
         test(resolve, reject) {
-            startRecording(WI.Canvas.ContextType.WebGL, resolve, reject, {singleFrame: true});
+            startRecording(WI.Canvas.ContextType.WebGL, resolve, reject, {frameCount: 1});
         },
     });
 

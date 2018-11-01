@@ -513,7 +513,7 @@ function test() {
         name: "Canvas.recordingWebGL.singleFrame",
         description: "Check that the recording is stopped after a single frame.",
         test(resolve, reject) {
-            startRecording(WI.Canvas.ContextType.WebGL, resolve, reject, {singleFrame: true});
+            startRecording(WI.Canvas.ContextType.WebGL, resolve, reject, {frameCount: 1});
         },
     });
 
@@ -521,7 +521,7 @@ function test() {
         name: "Canvas.recordingWebGL.multipleFrames",
         description: "Check that recording data is serialized correctly for multiple frames.",
         test(resolve, reject) {
-            startRecording(WI.Canvas.ContextType.WebGL, resolve, reject, {singleFrame: false});
+            startRecording(WI.Canvas.ContextType.WebGL, resolve, reject);
         },
     });
 

@@ -83,7 +83,7 @@ TestPage.registerInitializer(() => {
         return canvases[0];
     };
 
-    window.startRecording = function(type, resolve, reject, {singleFrame, memoryLimit} = {}) {
+    window.startRecording = function(type, resolve, reject, {frameCount, memoryLimit} = {}) {
         let canvas = getCanvas(type);
         if (!canvas) {
             reject(`Missing canvas with type "${type}".`);
@@ -110,10 +110,10 @@ TestPage.registerInitializer(() => {
         });
 
         let bufferUsed = 0;
-        let frameCount = 0;
+        let recordingFrameCount = 0;
         function handleRecordingProgress(event) {
-            InspectorTest.assert(canvas.recordingFrameCount > frameCount, "Additional frames were captured for this progress event.");
-            frameCount = canvas.recordingFrameCount;
+            InspectorTest.assert(canvas.recordingFrameCount > recordingFrameCount, "Additional frames were captured for this progress event.");
+            recordingFrameCount = canvas.recordingFrameCount;
 
             InspectorTest.assert(canvas.recordingBufferUsed > bufferUsed, "Total memory usage increases with each progress event.");
             bufferUsed = canvas.recordingBufferUsed;
@@ -129,7 +129,10 @@ TestPage.registerInitializer(() => {
             InspectorTest.assert(recording.source === canvas, "Recording should be of the given canvas.");
             InspectorTest.assert(recording.source.contextType === type, `Recording should be of a canvas with type "${type}".`);
             InspectorTest.assert(recording.source.recordingCollection.has(recording), "Recording should be in the canvas' list of recordings.");
-            InspectorTest.assert(recording.frames.length === frameCount, `Recording should have ${frameCount} frames.`)
+            InspectorTest.assert(recording.frames.length === recordingFrameCount, `Recording should have ${recordingFrameCount} frames.`)
+
+            if (frameCount)
+                InspectorTest.assert(recording.frames.length === frameCount, `Recording frame count should match the provided value ${frameCount}.`)
 
             Promise.all(recording.actions.map((action) => action.swizzle(recording))).then(() => {
                 swizzled = true;
@@ -148,7 +151,7 @@ TestPage.registerInitializer(() => {
             InspectorTest.evaluateInPage(`performActions()`).catch(reject);
         });
 
-        CanvasAgent.startRecording(canvas.identifier, singleFrame, memoryLimit).catch(reject);
+        CanvasAgent.startRecording(canvas.identifier, frameCount, memoryLimit).catch(reject);
     };
 
     window.consoleRecord = function(type, resolve, reject) {

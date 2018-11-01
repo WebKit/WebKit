@@ -46,6 +46,13 @@ WI.CanvasManager = class CanvasManager extends WI.Object
             target.CanvasAgent.enable();
     }
 
+    // Static
+
+    static supportsRecordingAutoCapture()
+    {
+        return window.CanvasAgent && CanvasAgent.setRecordingAutoCaptureFrameCount;
+    }
+
     // Public
 
     get importedRecordings() { return this._importedRecordings; }
@@ -88,6 +95,20 @@ WI.CanvasManager = class CanvasManager extends WI.Object
             this._importedRecordings.add(recording);
 
             this.dispatchEventToListeners(WI.CanvasManager.Event.RecordingImported, {recording});
+        });
+    }
+
+    setRecordingAutoCaptureFrameCount(enabled, count)
+    {
+        console.assert(!isNaN(count) && count >= 0);
+
+        return CanvasAgent.setRecordingAutoCaptureFrameCount(enabled ? count : 0)
+        .then(() => {
+            WI.settings.canvasRecordingAutoCaptureEnabled.value = enabled && count;
+            WI.settings.canvasRecordingAutoCaptureFrameCount.value = count;
+        })
+        .catch((error) => {
+            console.error(error);
         });
     }
 
