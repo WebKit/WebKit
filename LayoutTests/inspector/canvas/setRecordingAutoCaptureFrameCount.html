@@ -77,9 +77,9 @@ function test() {
                     handleRecordingStopped(canvas, event.data.recording);
                 }
 
-                WI.canvasManager.awaitEvent(WI.CanvasManager.Event.CanvasAdded)
-                .then((event) => {
+                WI.canvasManager.singleFireEventListener(WI.CanvasManager.Event.CanvasAdded, (event) => {
                     canvas = event.data.canvas;
+                    InspectorTest.assert(!canvas.recordingActive)
 
                     canvas.addEventListener(WI.Canvas.Event.RecordingStarted, handleRecordingStartedWrapper);
                     canvas.addEventListener(WI.Canvas.Event.RecordingStopped, handleRecordingStoppedWrapper);

@@ -6,12 +6,14 @@ Test that contexts created after calling Canvas.setRecordingAutoCaptureFrameCoun
 PASS: Canvas should have no finished recordings.
 
 -- Running test case: Canvas.setRecordingAutoCaptureFrameCount.2D.Single
+PASS: Recording started.
 PASS: Recording stopped.
 PASS: Recording should have one frame.
 PASS: Recording should have one action.
 PASS: Canvas should have one finished recording.
 
 -- Running test case: Canvas.setRecordingAutoCaptureFrameCount.2D.Multiple
+PASS: Recording started.
 PASS: Canvas should have no finished recordings.
 PASS: Canvas should be actively recording.
 PASS: Recording should have 2 frames.
@@ -20,12 +22,14 @@ PASS: Recording should have 2 frames.
 PASS: Canvas should have no finished recordings.
 
 -- Running test case: Canvas.setRecordingAutoCaptureFrameCount.WebGL.Single
+PASS: Recording started.
 PASS: Recording stopped.
 PASS: Recording should have one frame.
 PASS: Recording should have one action.
 PASS: Canvas should have one finished recording.
 
 -- Running test case: Canvas.setRecordingAutoCaptureFrameCount.WebGL.Multiple
+PASS: Recording started.
 PASS: Canvas should have no finished recordings.
 PASS: Canvas should be actively recording.
 PASS: Recording should have 2 frames.
