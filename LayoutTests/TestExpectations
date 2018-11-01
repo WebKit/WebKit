@@ -489,8 +489,6 @@ fast/harness/sample-fail-mismatch-reftest.html [ WontFix ImageOnlyFailure ]
 
 webkit.org/b/127697 fast/writing-mode/ruby-text-logical-left.html [ Skip ]
 
-webkit.org/b/83618 fast/dom/inline-event-attributes-release.html [ Failure ]
-
 webkit.org/b/129057 media/controls-styling-strict.html [ Pass Failure ]
 
 # These tests will be rewritten, just skip them until that time.

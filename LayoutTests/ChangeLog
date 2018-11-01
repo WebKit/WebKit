@@ -1,3 +1,12 @@
+2018-11-01  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [WinCairo] Unreviewed layout test gardening.
+
+        (Also remove one outdated global test failure.)
+
+        * TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2018-11-01  Sihui Liu  <sihui_liu@apple.com>
 
         Add a storage limit for IndexedDB
