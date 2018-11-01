@@ -56,6 +56,7 @@ WI.TimelineRuler = class TimelineRuler extends WI.View
         this._enabled = true;
 
         this._markerElementMap = new Map;
+        this._cachedClientWidth = 0;
     }
 
     // Public
