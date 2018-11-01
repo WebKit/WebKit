@@ -65,7 +65,7 @@ WI.LayerTreeDetailsSidebarPanel = class LayerTreeDetailsSidebarPanel extends WI.
     {
         super.initialLayout();
 
-        WI.showShadowDOMSetting.addEventListener(WI.Setting.Event.Changed, this._showShadowDOMSettingChanged, this);
+        WI.settings.showShadowDOM.addEventListener(WI.Setting.Event.Changed, this._showShadowDOMSettingChanged, this);
 
         this._buildLayerInfoSection();
         this._buildDataGridSection();
@@ -238,7 +238,7 @@ WI.LayerTreeDetailsSidebarPanel = class LayerTreeDetailsSidebarPanel extends WI.
 
     _updateDisplayWithLayers(layerForNode, childLayers)
     {
-        if (!WI.showShadowDOMSetting.value) {
+        if (!WI.settings.showShadowDOM.value) {
             childLayers = childLayers.filter(function(layer) {
                 return !layer.isInShadowTree;
             });

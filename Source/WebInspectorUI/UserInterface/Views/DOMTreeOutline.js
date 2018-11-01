@@ -58,7 +58,7 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
         this._hideElementKeyboardShortcut = new WI.KeyboardShortcut(null, "H", this._hideElement.bind(this), this.element);
         this._hideElementKeyboardShortcut.implicitlyPreventsDefault = false;
 
-        WI.showShadowDOMSetting.addEventListener(WI.Setting.Event.Changed, this._showShadowDOMSettingChanged, this);
+        WI.settings.showShadowDOM.addEventListener(WI.Setting.Event.Changed, this._showShadowDOMSettingChanged, this);
     }
 
     // Public
@@ -70,7 +70,7 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
 
     close()
     {
-        WI.showShadowDOMSetting.removeEventListener(null, null, this);
+        WI.settings.showShadowDOM.removeEventListener(null, null, this);
 
         if (this._elementsTreeUpdater) {
             this._elementsTreeUpdater.close();
@@ -277,7 +277,7 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
         if (!node || this._suppressRevealAndSelect)
             return;
 
-        if (!WI.showShadowDOMSetting.value) {
+        if (!WI.settings.showShadowDOM.value) {
             while (node && node.isInShadowTree())
                 node = node.parentNode;
             if (!node)

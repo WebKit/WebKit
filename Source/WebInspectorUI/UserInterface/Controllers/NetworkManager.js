@@ -66,7 +66,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
             // COMPATIBILITY (iOS 10.3): Network.setDisableResourceCaching did not exist.
             if (NetworkAgent.setResourceCachingDisabled) {
-                if (WI.resourceCachingDisabledSetting && WI.resourceCachingDisabledSetting.value)
+                if (WI.settings.resourceCachingDisabled && WI.settings.resourceCachingDisabled.value)
                     target.NetworkAgent.setResourceCachingDisabled(true);
             }
         }

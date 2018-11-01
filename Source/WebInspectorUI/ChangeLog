@@ -1,3 +1,78 @@
+2018-10-31  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Move a few remaining global WI settings to WI.settings
+        https://bugs.webkit.org/show_bug.cgi?id=191137
+
+        Reviewed by Brian Burg.
+
+        Move and better name some of the WI.settings created in Main.js
+        to WI.settings, alongside other global settings.
+
+        * UserInterface/Base/Main.js:
+        (WI.loaded):
+        Move settings, and register for settings changes in contentLoaded.
+
+        * UserInterface/Base/Setting.js:
+        New settings, and sort values.
+
+        * UserInterface/Test/Test.js:
+        (WI.loaded):
+        Update setting values for tests.
+
+        * UserInterface/Controllers/NetworkManager.js:
+        (WI.NetworkManager.prototype.initializeTarget):
+        * UserInterface/Controllers/RuntimeManager.js:
+        (WI.RuntimeManager.prototype.initializeTarget):
+        * UserInterface/Models/DOMNode.js:
+        (WI.DOMNode.prototype.get children):
+        (WI.DOMNode.prototype.get nextSibling):
+        (WI.DOMNode.prototype.get previousSibling):
+        (WI.DOMNode.prototype.get childNodeCount):
+        * UserInterface/Protocol/Target.js:
+        (WI.Target.prototype.initialize):
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WI.DOMTreeContentView):
+        (WI.DOMTreeContentView.prototype.closed):
+        (WI.DOMTreeContentView.prototype._togglePaintFlashing):
+        (WI.DOMTreeContentView.prototype._showPaintRectsSettingChanged):
+        (WI.DOMTreeContentView.prototype._showShadowDOMSettingChanged):
+        (WI.DOMTreeContentView.prototype._toggleShowsShadowDOMSetting):
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WI.DOMTreeOutline):
+        (WI.DOMTreeOutline.prototype.close):
+        (WI.DOMTreeOutline.prototype._revealAndSelectNode):
+        * UserInterface/Views/LayerTreeDetailsSidebarPanel.js:
+        (WI.LayerTreeDetailsSidebarPanel.prototype.initialLayout):
+        (WI.LayerTreeDetailsSidebarPanel.prototype._updateDisplayWithLayers):
+        * UserInterface/Views/Layers3DContentView.js:
+        (WI.Layers3DContentView):
+        (WI.Layers3DContentView.prototype.closed):
+        (WI.Layers3DContentView.prototype._showPaintRectsSettingChanged):
+        (WI.Layers3DContentView.prototype._togglePaintFlashing):
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView):
+        (WI.NetworkTableContentView.prototype.closed):
+        (WI.NetworkTableContentView.prototype._resourceCachingDisabledSettingChanged):
+        (WI.NetworkTableContentView.prototype._toggleDisableResourceCache):
+        * UserInterface/Views/ScriptContentView.js:
+        (WI.ScriptContentView):
+        (WI.ScriptContentView.prototype.closed):
+        (WI.ScriptContentView.prototype._contentDidPopulate):
+        (WI.ScriptContentView.prototype._enableControlFlowProfilerSettingChanged):
+        (WI.ScriptContentView.prototype._showJavaScriptTypeInformationSettingChanged):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WI.SourceCodeTextEditor.prototype.shown):
+        (WI.SourceCodeTextEditor.prototype._proceedPopulateWithContent):
+        (WI.SourceCodeTextEditor.prototype._setTypeTokenAnnotatorEnabledState):
+        (WI.SourceCodeTextEditor.prototype.set _basicBlockAnnotatorEnabled):
+        * UserInterface/Views/TextResourceContentView.js:
+        (WI.TextResourceContentView):
+        (WI.TextResourceContentView.prototype.closed):
+        (WI.TextResourceContentView.prototype._contentDidPopulate):
+        (WI.TextResourceContentView.prototype._enableControlFlowProfilerSettingChanged):
+        (WI.TextResourceContentView.prototype._showJavaScriptTypeInformationSettingChanged):
+        Renamed setting.
+
 2018-10-31  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Styles: missing contextmenu items for links

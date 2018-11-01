@@ -121,10 +121,10 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             let toolTipForDisableResourceCache = WI.UIString("Ignore the resource cache when loading resources");
             let activatedToolTipForDisableResourceCache = WI.UIString("Use the resource cache when loading resources");
             this._disableResourceCacheNavigationItem = new WI.ActivateButtonNavigationItem("disable-resource-cache", toolTipForDisableResourceCache, activatedToolTipForDisableResourceCache, "Images/IgnoreCaches.svg", 16, 16);
-            this._disableResourceCacheNavigationItem.activated = WI.resourceCachingDisabledSetting.value;
+            this._disableResourceCacheNavigationItem.activated = WI.settings.resourceCachingDisabled.value;
 
             this._disableResourceCacheNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._toggleDisableResourceCache, this);
-            WI.resourceCachingDisabledSetting.addEventListener(WI.Setting.Event.Changed, this._resourceCachingDisabledSettingChanged, this);
+            WI.settings.resourceCachingDisabled.addEventListener(WI.Setting.Event.Changed, this._resourceCachingDisabledSettingChanged, this);
         }
 
         this._clearNetworkItemsNavigationItem = new WI.ButtonNavigationItem("clear-network-items", WI.UIString("Clear Network Items (%s)").format(WI.clearKeyboardShortcut.displayName), "Images/NavigationItemTrash.svg", 15, 15);
@@ -252,7 +252,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
         WI.Frame.removeEventListener(null, null, this);
         WI.Resource.removeEventListener(null, null, this);
-        WI.resourceCachingDisabledSetting.removeEventListener(null, null, this);
+        WI.settings.resourceCachingDisabled.removeEventListener(null, null, this);
         WI.settings.clearNetworkOnNavigate.removeEventListener(null, null, this);
         WI.networkManager.removeEventListener(WI.NetworkManager.Event.MainFrameDidChange, this._mainFrameDidChange, this);
         WI.timelineManager.persistentNetworkTimeline.removeEventListener(WI.Timeline.Event.RecordAdded, this._networkTimelineRecordAdded, this);
@@ -1366,12 +1366,12 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
     _resourceCachingDisabledSettingChanged()
     {
-        this._disableResourceCacheNavigationItem.activated = WI.resourceCachingDisabledSetting.value;
+        this._disableResourceCacheNavigationItem.activated = WI.settings.resourceCachingDisabled.value;
     }
 
     _toggleDisableResourceCache()
     {
-        WI.resourceCachingDisabledSetting.value = !WI.resourceCachingDisabledSetting.value;
+        WI.settings.resourceCachingDisabled.value = !WI.settings.resourceCachingDisabled.value;
     }
 
     _mainResourceDidChange(event)

@@ -138,14 +138,6 @@ WI.loaded = function()
     this._showingSplitConsoleSetting = new WI.Setting("showing-split-console", false);
     this._openTabsSetting = new WI.Setting("open-tab-types", ["elements", "network", "debugger", "resources", "timeline", "storage", "canvas", "console"]);
     this._selectedTabIndexSetting = new WI.Setting("selected-tab-index", 0);
-    this.showShadowDOMSetting = new WI.Setting("show-shadow-dom", false);
-    this.showJavaScriptTypeInformationSetting = new WI.Setting("show-javascript-type-information", false);
-    this.showJavaScriptTypeInformationSetting.addEventListener(WI.Setting.Event.Changed, this._showJavaScriptTypeInformationSettingChanged, this);
-    this.enableControlFlowProfilerSetting = new WI.Setting("enable-control-flow-profiler", false);
-    this.enableControlFlowProfilerSetting.addEventListener(WI.Setting.Event.Changed, this._enableControlFlowProfilerSettingChanged, this);
-    this.showPaintRectsSetting = new WI.Setting("show-paint-rects", false);
-    this.resourceCachingDisabledSetting = new WI.Setting("disable-resource-caching", false);
-    this.resourceCachingDisabledSetting.addEventListener(WI.Setting.Event.Changed, this._resourceCachingDisabledSettingChanged, this);
 
     // State.
     this.printStylesEnabled = false;
@@ -205,6 +197,10 @@ WI.contentLoaded = function()
 
     document.body.classList.add(WI.sharedApp.debuggableType);
     document.body.setAttribute("dir", this.resolvedLayoutDirection());
+
+    WI.settings.showJavaScriptTypeInformation.addEventListener(WI.Setting.Event.Changed, this._showJavaScriptTypeInformationSettingChanged, this);
+    WI.settings.enableControlFlowProfiler.addEventListener(WI.Setting.Event.Changed, this._enableControlFlowProfilerSettingChanged, this);
+    WI.settings.resourceCachingDisabled.addEventListener(WI.Setting.Event.Changed, this._resourceCachingDisabledSettingChanged, this);
 
     function setTabSize() {
         document.body.style.tabSize = WI.settings.tabSize.value;
@@ -2189,7 +2185,7 @@ WI._showTabAtIndex = function(i, event)
 
 WI._showJavaScriptTypeInformationSettingChanged = function(event)
 {
-    if (this.showJavaScriptTypeInformationSetting.value) {
+    if (WI.settings.showJavaScriptTypeInformation.value) {
         for (let target of WI.targets)
             target.RuntimeAgent.enableTypeProfiler();
     } else {
@@ -2200,7 +2196,7 @@ WI._showJavaScriptTypeInformationSettingChanged = function(event)
 
 WI._enableControlFlowProfilerSettingChanged = function(event)
 {
-    if (this.enableControlFlowProfilerSetting.value) {
+    if (WI.settings.enableControlFlowProfiler.value) {
         for (let target of WI.targets)
             target.RuntimeAgent.enableControlFlowProfiler();
     } else {
@@ -2211,7 +2207,7 @@ WI._enableControlFlowProfilerSettingChanged = function(event)
 
 WI._resourceCachingDisabledSettingChanged = function(event)
 {
-    NetworkAgent.setResourceCachingDisabled(this.resourceCachingDisabledSetting.value);
+    NetworkAgent.setResourceCachingDisabled(WI.settings.resourceCachingDisabled.value);
 };
 
 WI.elementDragStart = function(element, dividerDrag, elementDragEnd, event, cursor, eventTarget)

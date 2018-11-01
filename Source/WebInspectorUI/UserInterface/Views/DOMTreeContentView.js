@@ -36,14 +36,14 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         this._compositingBordersButtonNavigationItem.enabled = !!PageAgent.getCompositingBordersVisible;
         this._compositingBordersButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
 
-        WI.showPaintRectsSetting.addEventListener(WI.Setting.Event.Changed, this._showPaintRectsSettingChanged, this);
+        WI.settings.showPaintRects.addEventListener(WI.Setting.Event.Changed, this._showPaintRectsSettingChanged, this);
         this._paintFlashingButtonNavigationItem = new WI.ActivateButtonNavigationItem("paint-flashing", WI.UIString("Enable paint flashing"), WI.UIString("Disable paint flashing"), "Images/Paint.svg", 16, 16);
         this._paintFlashingButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._togglePaintFlashing, this);
         this._paintFlashingButtonNavigationItem.enabled = !!PageAgent.setShowPaintRects;
-        this._paintFlashingButtonNavigationItem.activated = PageAgent.setShowPaintRects && WI.showPaintRectsSetting.value;
+        this._paintFlashingButtonNavigationItem.activated = PageAgent.setShowPaintRects && WI.settings.showPaintRects.value;
         this._paintFlashingButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
 
-        WI.showShadowDOMSetting.addEventListener(WI.Setting.Event.Changed, this._showShadowDOMSettingChanged, this);
+        WI.settings.showShadowDOM.addEventListener(WI.Setting.Event.Changed, this._showShadowDOMSettingChanged, this);
         this._showsShadowDOMButtonNavigationItem = new WI.ActivateButtonNavigationItem("shows-shadow-DOM", WI.UIString("Show shadow DOM nodes"), WI.UIString("Hide shadow DOM nodes"), "Images/ShadowDOM.svg", 13, 13);
         this._showsShadowDOMButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._toggleShowsShadowDOMSetting, this);
         this._showsShadowDOMButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
@@ -159,8 +159,8 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
     {
         super.closed();
 
-        WI.showPaintRectsSetting.removeEventListener(null, null, this);
-        WI.showShadowDOMSetting.removeEventListener(null, null, this);
+        WI.settings.showPaintRects.removeEventListener(null, null, this);
+        WI.settings.showShadowDOM.removeEventListener(null, null, this);
         WI.settings.showRulers.removeEventListener(null, null, this);
         WI.debuggerManager.removeEventListener(null, null, this);
         WI.domManager.removeEventListener(null, null, this);
@@ -529,7 +529,7 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
 
     _togglePaintFlashing(event)
     {
-        WI.showPaintRectsSetting.value = !WI.showPaintRectsSetting.value;
+        WI.settings.showPaintRects.value = !WI.settings.showPaintRects.value;
     }
 
     _updateCompositingBordersButtonToMatchPageSettings()
@@ -551,19 +551,19 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
     {
         console.assert(PageAgent.setShowPaintRects);
 
-        this._paintFlashingButtonNavigationItem.activated = WI.showPaintRectsSetting.value;
+        this._paintFlashingButtonNavigationItem.activated = WI.settings.showPaintRects.value;
 
         PageAgent.setShowPaintRects(this._paintFlashingButtonNavigationItem.activated);
     }
 
     _showShadowDOMSettingChanged(event)
     {
-        this._showsShadowDOMButtonNavigationItem.activated = WI.showShadowDOMSetting.value;
+        this._showsShadowDOMButtonNavigationItem.activated = WI.settings.showShadowDOM.value;
     }
 
     _toggleShowsShadowDOMSetting(event)
     {
-        WI.showShadowDOMSetting.value = !WI.showShadowDOMSetting.value;
+        WI.settings.showShadowDOM.value = !WI.settings.showShadowDOM.value;
     }
 
     _showPrintStylesChanged()

@@ -44,7 +44,7 @@ WI.TextResourceContentView = class TextResourceContentView extends WI.ResourceCo
         this._showTypesButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._toggleTypeAnnotations, this);
         this._showTypesButtonNavigationItem.enabled = false;
         this._showTypesButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
-        WI.showJavaScriptTypeInformationSetting.addEventListener(WI.Setting.Event.Changed, this._showJavaScriptTypeInformationSettingChanged, this);
+        WI.settings.showJavaScriptTypeInformation.addEventListener(WI.Setting.Event.Changed, this._showJavaScriptTypeInformationSettingChanged, this);
 
         let toolTipCodeCoverage = WI.UIString("Fade unexecuted code");
         let activatedToolTipCodeCoverage = WI.UIString("Do not fade unexecuted code");
@@ -52,7 +52,7 @@ WI.TextResourceContentView = class TextResourceContentView extends WI.ResourceCo
         this._codeCoverageButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._toggleUnexecutedCodeHighlights, this);
         this._codeCoverageButtonNavigationItem.enabled = false;
         this._codeCoverageButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
-        WI.enableControlFlowProfilerSetting.addEventListener(WI.Setting.Event.Changed, this._enableControlFlowProfilerSettingChanged, this);
+        WI.settings.enableControlFlowProfiler.addEventListener(WI.Setting.Event.Changed, this._enableControlFlowProfilerSettingChanged, this);
 
         this._textEditor = new WI.SourceCodeTextEditor(resource);
         this._textEditor.addEventListener(WI.TextEditor.Event.ExecutionLineNumberDidChange, this._executionLineNumberDidChange, this);
@@ -125,8 +125,8 @@ WI.TextResourceContentView = class TextResourceContentView extends WI.ResourceCo
 
         this.resource.removeEventListener(null, null, this);
         WI.debuggerManager.removeEventListener(null, null, this);
-        WI.showJavaScriptTypeInformationSetting.removeEventListener(null, null, this);
-        WI.enableControlFlowProfilerSetting.removeEventListener(null, null, this);
+        WI.settings.showJavaScriptTypeInformation.removeEventListener(null, null, this);
+        WI.settings.enableControlFlowProfiler.removeEventListener(null, null, this);
 
         this._textEditor.close();
     }
@@ -210,10 +210,10 @@ WI.TextResourceContentView = class TextResourceContentView extends WI.ResourceCo
         this._prettyPrintButtonNavigationItem.enabled = this._textEditor.canBeFormatted();
 
         this._showTypesButtonNavigationItem.enabled = this._textEditor.canShowTypeAnnotations();
-        this._showTypesButtonNavigationItem.activated = WI.showJavaScriptTypeInformationSetting.value;
+        this._showTypesButtonNavigationItem.activated = WI.settings.showJavaScriptTypeInformation.value;
 
         this._codeCoverageButtonNavigationItem.enabled = this._textEditor.canShowCoverageHints();
-        this._codeCoverageButtonNavigationItem.activated = WI.enableControlFlowProfilerSetting.value;
+        this._codeCoverageButtonNavigationItem.activated = WI.settings.enableControlFlowProfiler.value;
 
         if (!this._textEditor.string)
             this.showGenericNoContentMessage();
@@ -243,12 +243,12 @@ WI.TextResourceContentView = class TextResourceContentView extends WI.ResourceCo
 
     _showJavaScriptTypeInformationSettingChanged(event)
     {
-        this._showTypesButtonNavigationItem.activated = WI.showJavaScriptTypeInformationSetting.value;
+        this._showTypesButtonNavigationItem.activated = WI.settings.showJavaScriptTypeInformation.value;
     }
 
     _enableControlFlowProfilerSettingChanged(event)
     {
-        this._codeCoverageButtonNavigationItem.activated = WI.enableControlFlowProfilerSetting.value;
+        this._codeCoverageButtonNavigationItem.activated = WI.settings.enableControlFlowProfiler.value;
     }
 
     _textEditorFormattingDidChange(event)

@@ -67,8 +67,8 @@ WI.loaded = function()
     // Register for events.
     document.addEventListener("DOMContentLoaded", this.contentLoaded);
 
-    // Global settings.
-    this.showShadowDOMSetting = new WI.Setting("show-shadow-dom", true);
+    // Non-default global setting values for tests.
+    WI.settings.showShadowDOM.value = true;
 
     // Targets.
     WI.mainTarget = new WI.MainTarget;

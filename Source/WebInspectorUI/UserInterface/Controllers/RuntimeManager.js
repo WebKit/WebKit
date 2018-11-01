@@ -41,11 +41,11 @@ WI.RuntimeManager = class RuntimeManager extends WI.Object
         target.RuntimeAgent.enable();
 
         // COMPATIBILITY (iOS 8): Runtime.enableTypeProfiler did not exist.
-        if (WI.showJavaScriptTypeInformationSetting && WI.showJavaScriptTypeInformationSetting.value && RuntimeAgent.enableTypeProfiler)
+        if (WI.settings.showJavaScriptTypeInformation && WI.settings.showJavaScriptTypeInformation.value && RuntimeAgent.enableTypeProfiler)
             target.RuntimeAgent.enableTypeProfiler();
 
         // COMPATIBILITY (iOS 10): Runtime.enableControlFlowProfiler did not exist
-        if (WI.enableControlFlowProfilerSetting && WI.enableControlFlowProfilerSetting.value && RuntimeAgent.enableControlFlowProfiler)
+        if (WI.settings.enableControlFlowProfiler && WI.settings.enableControlFlowProfiler.value && RuntimeAgent.enableControlFlowProfiler)
             target.RuntimeAgent.enableControlFlowProfiler();
     }
 

@@ -35,11 +35,11 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
         this._compositingBordersButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._toggleCompositingBorders, this);
         this._compositingBordersButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
 
-        WI.showPaintRectsSetting.addEventListener(WI.Setting.Event.Changed, this._showPaintRectsSettingChanged, this);
+        WI.settings.showPaintRects.addEventListener(WI.Setting.Event.Changed, this._showPaintRectsSettingChanged, this);
         this._paintFlashingButtonNavigationItem = new WI.ActivateButtonNavigationItem("paint-flashing", WI.UIString("Enable paint flashing"), WI.UIString("Disable paint flashing"), "Images/Paint.svg", 16, 16);
         this._paintFlashingButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._togglePaintFlashing, this);
         this._paintFlashingButtonNavigationItem.enabled = !!PageAgent.setShowPaintRects;
-        this._paintFlashingButtonNavigationItem.activated = PageAgent.setShowPaintRects && WI.showPaintRectsSetting.value;
+        this._paintFlashingButtonNavigationItem.activated = PageAgent.setShowPaintRects && WI.settings.showPaintRects.value;
         this._paintFlashingButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
 
         this._layers = [];
@@ -98,7 +98,7 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
 
     closed()
     {
-        WI.showPaintRectsSetting.removeEventListener(WI.Setting.Event.Changed, this._showPaintRectsSettingChanged, this);
+        WI.settings.showPaintRects.removeEventListener(WI.Setting.Event.Changed, this._showPaintRectsSettingChanged, this);
 
         super.closed();
     }
@@ -394,13 +394,13 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
     {
         console.assert(PageAgent.setShowPaintRects);
 
-        this._paintFlashingButtonNavigationItem.activated = WI.showPaintRectsSetting.value;
+        this._paintFlashingButtonNavigationItem.activated = WI.settings.showPaintRects.value;
         PageAgent.setShowPaintRects(this._paintFlashingButtonNavigationItem.activated);
     }
 
     _togglePaintFlashing(event)
     {
-        WI.showPaintRectsSetting.value = !WI.showPaintRectsSetting.value;
+        WI.settings.showPaintRects.value = !WI.settings.showPaintRects.value;
     }
 
     _updateCompositingBordersButtonState()

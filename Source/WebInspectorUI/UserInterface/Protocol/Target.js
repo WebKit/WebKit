@@ -65,7 +65,7 @@ WI.Target = class Target extends WI.Object
         // Non-manager specific initialization.
         // COMPATIBILITY (iOS 8): Page.setShowPaintRects did not exist.
         if (this.PageAgent) {
-            if (PageAgent.setShowPaintRects && WI.showPaintRectsSetting && WI.showPaintRectsSetting.value)
+            if (PageAgent.setShowPaintRects && WI.settings.showPaintRects.value)
                 this.PageAgent.setShowPaintRects(true);
         }
 

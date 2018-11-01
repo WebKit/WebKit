@@ -176,7 +176,7 @@ WI.DOMNode = class DOMNode extends WI.Object
         if (!this._children)
             return null;
 
-        if (WI.showShadowDOMSetting.value)
+        if (WI.settings.showShadowDOM.value)
             return this._children;
 
         if (this._filteredChildrenNeedsUpdating) {
@@ -211,7 +211,7 @@ WI.DOMNode = class DOMNode extends WI.Object
 
     get nextSibling()
     {
-        if (WI.showShadowDOMSetting.value)
+        if (WI.settings.showShadowDOM.value)
             return this._nextSibling;
 
         var node = this._nextSibling;
@@ -225,7 +225,7 @@ WI.DOMNode = class DOMNode extends WI.Object
 
     get previousSibling()
     {
-        if (WI.showShadowDOMSetting.value)
+        if (WI.settings.showShadowDOM.value)
             return this._previousSibling;
 
         var node = this._previousSibling;
@@ -243,7 +243,7 @@ WI.DOMNode = class DOMNode extends WI.Object
         if (children)
             return children.length;
 
-        if (WI.showShadowDOMSetting.value)
+        if (WI.settings.showShadowDOM.value)
             return this._childNodeCount + this._shadowRoots.length;
 
         return this._childNodeCount;
