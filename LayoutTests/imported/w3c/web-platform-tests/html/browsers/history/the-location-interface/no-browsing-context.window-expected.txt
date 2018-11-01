@@ -1,0 +1,48 @@
+
+PASS Window and Location are 1:1 after browsing context removal 
+FAIL Setting `href` to `https://example.com/` of a `Location` object sans browsing context is a no-op assert_equals: expected "about:blank" but got ""
+FAIL Setting `href` to `/` of a `Location` object sans browsing context is a no-op assert_equals: expected "about:blank" but got ""
+FAIL Setting `href` to `http://test:test/` of a `Location` object sans browsing context is a no-op assert_equals: expected "about:blank" but got ""
+FAIL Setting `href` to `test test` of a `Location` object sans browsing context is a no-op assert_equals: expected "about:blank" but got ""
+FAIL Setting `href` to `test:test` of a `Location` object sans browsing context is a no-op assert_equals: expected "about:blank" but got ""
+FAIL Setting `href` to `chrome:fail` of a `Location` object sans browsing context is a no-op assert_equals: expected "about:blank" but got ""
+FAIL Setting `protocol` to `http` of a `Location` object sans browsing context is a no-op assert_equals: expected "about:" but got ""
+FAIL Setting `protocol` to `about` of a `Location` object sans browsing context is a no-op assert_equals: expected "about:" but got ""
+FAIL Setting `protocol` to `test` of a `Location` object sans browsing context is a no-op assert_equals: expected "about:" but got ""
+PASS Setting `host` to `example.com` of a `Location` object sans browsing context is a no-op 
+PASS Setting `host` to `test test` of a `Location` object sans browsing context is a no-op 
+PASS Setting `host` to `()` of a `Location` object sans browsing context is a no-op 
+PASS Setting `hostname` to `example.com` of a `Location` object sans browsing context is a no-op 
+PASS Setting `port` to `80` of a `Location` object sans browsing context is a no-op 
+PASS Setting `port` to `` of a `Location` object sans browsing context is a no-op 
+PASS Setting `port` to `443` of a `Location` object sans browsing context is a no-op 
+PASS Setting `port` to `notaport` of a `Location` object sans browsing context is a no-op 
+PASS Setting `pathname` to `/` of a `Location` object sans browsing context is a no-op 
+PASS Setting `pathname` to `x` of a `Location` object sans browsing context is a no-op 
+PASS Setting `search` to `test` of a `Location` object sans browsing context is a no-op 
+PASS Setting `hash` to `test` of a `Location` object sans browsing context is a no-op 
+PASS Setting `hash` to `#` of a `Location` object sans browsing context is a no-op 
+FAIL Getting `origin` of a `Location` object sans browsing context should be "null" assert_equals: expected "null" but got ""
+FAIL Invoking `assign` with `about:blank` on a `Location` object sans browsing context is a no-op assert_equals: expected "about:blank" but got ""
+FAIL Invoking `assign` with `https://example.com/` on a `Location` object sans browsing context is a no-op assert_equals: expected "about:blank" but got ""
+FAIL Invoking `assign` with `/` on a `Location` object sans browsing context is a no-op assert_equals: expected "about:blank" but got ""
+FAIL Invoking `assign` with `http://test:test/` on a `Location` object sans browsing context is a no-op assert_equals: expected "about:blank" but got ""
+FAIL Invoking `assign` with `test test` on a `Location` object sans browsing context is a no-op assert_equals: expected "about:blank" but got ""
+FAIL Invoking `assign` with `test:test` on a `Location` object sans browsing context is a no-op assert_equals: expected "about:blank" but got ""
+FAIL Invoking `assign` with `chrome:fail` on a `Location` object sans browsing context is a no-op assert_equals: expected "about:blank" but got ""
+FAIL Invoking `replace` with `about:blank` on a `Location` object sans browsing context is a no-op assert_equals: expected "about:blank" but got ""
+FAIL Invoking `replace` with `https://example.com/` on a `Location` object sans browsing context is a no-op assert_equals: expected "about:blank" but got ""
+FAIL Invoking `replace` with `/` on a `Location` object sans browsing context is a no-op assert_equals: expected "about:blank" but got ""
+FAIL Invoking `replace` with `http://test:test/` on a `Location` object sans browsing context is a no-op assert_equals: expected "about:blank" but got ""
+FAIL Invoking `replace` with `test test` on a `Location` object sans browsing context is a no-op assert_equals: expected "about:blank" but got ""
+FAIL Invoking `replace` with `test:test` on a `Location` object sans browsing context is a no-op assert_equals: expected "about:blank" but got ""
+FAIL Invoking `replace` with `chrome:fail` on a `Location` object sans browsing context is a no-op assert_equals: expected "about:blank" but got ""
+FAIL Invoking `reload` with `about:blank` on a `Location` object sans browsing context is a no-op assert_equals: expected "about:blank" but got ""
+FAIL Invoking `reload` with `https://example.com/` on a `Location` object sans browsing context is a no-op assert_equals: expected "about:blank" but got ""
+FAIL Invoking `reload` with `/` on a `Location` object sans browsing context is a no-op assert_equals: expected "about:blank" but got ""
+FAIL Invoking `reload` with `http://test:test/` on a `Location` object sans browsing context is a no-op assert_equals: expected "about:blank" but got ""
+FAIL Invoking `reload` with `test test` on a `Location` object sans browsing context is a no-op assert_equals: expected "about:blank" but got ""
+FAIL Invoking `reload` with `test:test` on a `Location` object sans browsing context is a no-op assert_equals: expected "about:blank" but got ""
+FAIL Invoking `reload` with `chrome:fail` on a `Location` object sans browsing context is a no-op assert_equals: expected "about:blank" but got ""
+PASS Getting `ancestorOrigins` of a `Location` object sans browsing context should be [] 
+

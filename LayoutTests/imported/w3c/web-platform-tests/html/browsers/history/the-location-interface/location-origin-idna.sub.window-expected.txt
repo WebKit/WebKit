@@ -1,0 +1,6 @@
+Blocked access to external URL http://xn--n8j6ds53lwwkrqhv28a.localhost:8800/html/browsers/history/the-location-interface/resources/post-your-origin.html
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Test that location.origin returns ASCII Test timed out
+

@@ -1,3 +1,38 @@
+2018-11-01  Chris Dumez  <cdumez@apple.com>
+
+        Resync html/browsers/history/the-location-interface web platform tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=191139
+
+        Reviewed by Alex Christensen.
+
+        Resync html/browsers/history/the-location-interface web platform tests from upstream 8295368c82.
+
+        * web-platform-tests/html/browsers/history/the-location-interface/assign_after_load-expected.txt: Added.
+        * web-platform-tests/html/browsers/history/the-location-interface/assign_after_load.html: Added.
+        * web-platform-tests/html/browsers/history/the-location-interface/assign_before_load-expected.txt: Added.
+        * web-platform-tests/html/browsers/history/the-location-interface/assign_before_load.html: Added.
+        * web-platform-tests/html/browsers/history/the-location-interface/location-origin-idna.sub.window-expected.txt: Added.
+        * web-platform-tests/html/browsers/history/the-location-interface/location-origin-idna.sub.window.html: Added.
+        * web-platform-tests/html/browsers/history/the-location-interface/location_assign-expected.txt: Added.
+        * web-platform-tests/html/browsers/history/the-location-interface/location_assign.html: Added.
+        * web-platform-tests/html/browsers/history/the-location-interface/no-browsing-context.window-expected.txt: Added.
+        * web-platform-tests/html/browsers/history/the-location-interface/no-browsing-context.window.html: Added.
+        * web-platform-tests/html/browsers/history/the-location-interface/no-browsing-context.window.js: Added.
+        (test):
+        (bcLessLocation):
+        (forEach.testSetup.testSetup.values.forEach.value.test):
+        (string_appeared_here.forEach.method.string_appeared_here.forEach.value.test):
+        * web-platform-tests/html/browsers/history/the-location-interface/non-automated/w3c-import.log:
+        * web-platform-tests/html/browsers/history/the-location-interface/per-global.window-expected.txt: Added.
+        * web-platform-tests/html/browsers/history/the-location-interface/per-global.window.html: Added.
+        * web-platform-tests/html/browsers/history/the-location-interface/reload_post_1-1.html: Removed.
+        * web-platform-tests/html/browsers/history/the-location-interface/reload_post_1-expected.txt: Removed.
+        * web-platform-tests/html/browsers/history/the-location-interface/reload_post_1.html: Removed.
+        * web-platform-tests/html/browsers/history/the-location-interface/resources/reload_post_1-1.py: Added.
+        (main):
+        * web-platform-tests/html/browsers/history/the-location-interface/resources/w3c-import.log:
+        * web-platform-tests/html/browsers/history/the-location-interface/w3c-import.log:
+
 2018-11-01  Youenn Fablet  <youenn@apple.com>
 
         RTCTrackEvent.streams should be SameObject

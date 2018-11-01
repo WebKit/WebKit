@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -17,8 +17,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/allow_prototype_cycle_through_location.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/assign_after_load-1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/assign_after_load-2.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/assign_after_load.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/assign_before_load-1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/assign_before_load-2.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/assign_before_load.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/contains.json
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/cross_origin_joined_frame.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/document_location.html
@@ -37,6 +39,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-symbol-toprimitive.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-tojson.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-valueof.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_assign.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_assign_about_blank-1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_assign_about_blank.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_hash.html
@@ -51,6 +54,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_reload.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_replace.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_search.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/no-browsing-context.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/per-global.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/reload_document_open_write-1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/reload_document_open_write.html
@@ -58,8 +62,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/reload_document_write.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/reload_document_write_onload-1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/reload_document_write_onload.html
-/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/reload_post_1-1.html
-/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/reload_post_1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/same_origin_frame.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/scripted_click_assign_during_load-1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/scripted_click_assign_during_load-2.html
