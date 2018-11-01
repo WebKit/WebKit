@@ -1,3 +1,11 @@
+2018-11-01  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GLIB] Silent a build warning when not using Wayland
+
+        Unreviewed.
+
+        * UIProcess/Launcher/glib/BubblewrapLauncher.cpp:
+
 2018-11-01  Frederic Wang  <fwang@igalia.com>
 
         [WebAuthN] Make AuthenticatorManager

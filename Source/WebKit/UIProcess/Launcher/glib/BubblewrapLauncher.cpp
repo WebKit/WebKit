@@ -324,6 +324,7 @@ static void bindDconf(Vector<CString>& args)
     }
 }
 
+#if PLATFORM(WAYLAND) && USE(EGL)
 static void bindWayland(Vector<CString>& args)
 {
     const char* display = g_getenv("WAYLAND_DISPLAY");
@@ -334,6 +335,7 @@ static void bindWayland(Vector<CString>& args)
     GUniquePtr<char> waylandRuntimeFile(g_build_filename(runtimeDir, display, nullptr));
     bindIfExists(args, waylandRuntimeFile.get(), BindFlags::ReadWrite);
 }
+#endif
 
 static void bindPulse(Vector<CString>& args)
 {
