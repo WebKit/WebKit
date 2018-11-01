@@ -1,3 +1,17 @@
+2018-11-01  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [CG] Adopt CG SPI for non-even cornered rounded rects
+        https://bugs.webkit.org/show_bug.cgi?id=190155
+
+        Reviewed by Simon Fraser.
+
+        This test fails on iOS simulator because of just one pixel difference
+        between drawing a shadow of the element and drawing a copy of the element.
+        This failure happens on iOS and does not happen on macOS because we don't 
+        use accelerated drawing for macOS testing but we use it for iOS testing.
+
+        * platform/ios/TestExpectations:
+
 2018-11-01  Chris Dumez  <cdumez@apple.com>
 
         [PSON] Unable to submit a file in FormData cross-site
