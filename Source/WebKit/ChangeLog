@@ -1,5 +1,19 @@
 2018-11-01  Claudio Saavedra  <csaavedra@igalia.com>
 
+        ERROR: ResourceLoadStatisticsPersistentStorage: Unable to delete statistics file
+        https://bugs.webkit.org/show_bug.cgi?id=191152
+
+        Reviewed by Chris Dumez.
+
+        The statistics file is not created unconditionally, so
+        make sure it exists before logging an error.
+
+        * UIProcess/ResourceLoadStatisticsPersistentStorage.cpp:
+        (WebKit::ResourceLoadStatisticsPersistentStorage::clear):
+        Check that the file exists before logging an error.
+
+2018-11-01  Claudio Saavedra  <csaavedra@igalia.com>
+
         [GLIB] Silent a build warning when not using Wayland
 
         Unreviewed.
