@@ -212,8 +212,10 @@ void DownloadClient::didFinish(WebProcessPool&, DownloadProxy& downloadProxy)
 #if USE(SYSTEM_PREVIEW)
     if (downloadProxy.isSystemPreviewDownload()) {
         if (auto* webPage = downloadProxy.originatingPage()) {
-            NSURL *destinationURL = [NSURL fileURLWithPath:(NSString *)downloadProxy.destinationFilename()];
-            webPage->systemPreviewController()->finish(WebCore::URL(destinationURL));
+            WebCore::URL destinationURL = WebCore::URL::fileURLWithFileSystemPath(downloadProxy.destinationFilename());
+            if (!destinationURL.fragmentIdentifier().length())
+                destinationURL.setFragmentIdentifier(downloadProxy.request().url().fragmentIdentifier());
+            webPage->systemPreviewController()->finish(destinationURL);
         }
         releaseActivityTokenIfNecessary(downloadProxy);
         return;

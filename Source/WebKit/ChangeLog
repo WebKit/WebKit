@@ -1,3 +1,18 @@
+2018-10-31  Dean Jackson  <dino@apple.com>
+
+        Forward original fragment identifier into System Preview
+        https://bugs.webkit.org/show_bug.cgi?id=191141
+        <rdar://problem/45717542>
+
+        Reviewed by Wenson Hsieh.
+
+        If the URL used by the page includes a fragment identifier, use
+        it when telling QuickLook to open a local file.
+
+        * UIProcess/Cocoa/DownloadClient.mm:
+        (WebKit::DownloadClient::didFinish): Append original fragment identifier
+        to the destination URL.
+
 2018-10-31  Zalan Bujtas  <zalan@apple.com>
 
         [iOS] Do not paint tap highlight unless it is above a certain threshold
