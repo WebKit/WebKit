@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/objectStore-utilities.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.ObjectStore.createSuite("WI.ObjectStore.prototype.deleteObject");
+
+    function testDeleteObject(name, {options, tests}) {
+        InspectorTest.ObjectStore.wrapTest(name, async function() {
+            InspectorTest.ObjectStore.createObjectStore(options);
+
+            let objects = []
+            for (let {value, expected} of tests) {
+                let object = new InspectorTest.ObjectStore.TestObject(value);
+                await InspectorTest.ObjectStore.addObject(object, expected);
+                objects.push(object);
+            }
+
+            for (let object of objects)
+                await InspectorTest.ObjectStore.deleteObject(object);
+        });
+    }
+
+    InspectorTest.ObjectStore.wrapTest("WI.ObjectStore.prototype.deleteObject.NoParameters", async function() {
+        const options = {
+            autoIncrement: true,
+        };
+        let objectStore = InspectorTest.ObjectStore.createObjectStore(options);
+
+        await InspectorTest.ObjectStore.add(new InspectorTest.ObjectStore.TestObject(InspectorTest.ObjectStore.basicObject2), 1);
+
+        await InspectorTest.expectException(async () => {
+            await objectStore.deleteObject();
+            await objectStore.deleteObject(new InspectorTest.ObjectStore.TestObject(InspectorTest.ObjectStore.basicObject2));
+        });
+    });
+
+    InspectorTest.ObjectStore.wrapTest("WI.ObjectStore.prototype.deleteObject.MissingObject", async function() {
+        const options = {
+            autoIncrement: true,
+        };
+        let objectStore = InspectorTest.ObjectStore.createObjectStore(options);
+
+        await InspectorTest.ObjectStore.add(new InspectorTest.ObjectStore.TestObject(InspectorTest.ObjectStore.basicObject2), 1);
+
+        await InspectorTest.expectException(async () => {
+            await objectStore.deleteObject(new InspectorTest.ObjectStore.TestObject(InspectorTest.ObjectStore.basicObject1));
+            await objectStore.deleteObject(new InspectorTest.ObjectStore.TestObject(InspectorTest.ObjectStore.basicObject2));
+        });
+    });
+
+    InspectorTest.ObjectStore.wrapTest("WI.ObjectStore.prototype.deleteObject.KeyPathMissingOnObjectWithoutAutoIncrement", async function() {
+        const options = {
+            keyPath: "KeyPathMissingOnObjectWithoutAutoIncrement",
+        };
+        let objectStore = InspectorTest.ObjectStore.createObjectStore(options);
+
+        await InspectorTest.expectException(async function() {
+            await objectStore.deleteObject(new InspectorTest.ObjectStore.TestObject(InspectorTest.ObjectStore.basicObject1));
+            await objectStore.deleteObject(new InspectorTest.ObjectStore.TestObject(InspectorTest.ObjectStore.basicObject2));
+        });
+    });
+
+    InspectorTest.ObjectStore.wrapTest("WI.ObjectStore.prototype.deleteObject.WithoutKeyPathOrAutoIncrement", async function() {
+        let objectStore = InspectorTest.ObjectStore.createObjectStore();
+
+        await InspectorTest.expectException(async function() {
+            await objectStore.add(InspectorTest.ObjectStore.basicObject1);
+            await objectStore.add(InspectorTest.ObjectStore.basicObject2);
+        });
+    });
+
+    InspectorTest.ObjectStore.wrapTest("WI.ObjectStore.prototype.deleteObject.KeyPathMissingOnObjectWithoutAutoIncrement", async function() {
+        const options = {
+            keyPath: "KeyPathMissingOnObjectWithoutAutoIncrement",
+        };
+        let objectStore = InspectorTest.ObjectStore.createObjectStore(options);
+
+        await InspectorTest.expectException(async function() {
+            await objectStore.add(InspectorTest.ObjectStore.basicObject1);
+            await objectStore.add(InspectorTest.ObjectStore.basicObject2);
+        });
+    });
+
+    testDeleteObject("WI.ObjectStore.prototype.deleteObject.KeyPathSetOnObjectWithoutAutoIncrement", {
+        options: {keyPath: "KeyPathSetOnObjectWithoutAutoIncrement"},
+        tests: [
+            {value: {KeyPathSetOnObjectWithoutAutoIncrement: 42, ...InspectorTest.ObjectStore.basicObject1}, expected: 42},
+            {value: {KeyPathSetOnObjectWithoutAutoIncrement: 99, ...InspectorTest.ObjectStore.basicObject2}, expected: 99},
+        ],
+    });
+
+    testDeleteObject("WI.ObjectStore.prototype.deleteObject.KeyPathMissingOnObjectWithAutoIncrement", {
+        options: {keyPath: "KeyPathMissingOnObjectWithAutoIncrement", autoIncrement: true},
+        tests: [
+            {value: InspectorTest.ObjectStore.basicObject1, expected: 1},
+            {value: InspectorTest.ObjectStore.basicObject2, expected: 2},
+        ],
+    });
+
+    testDeleteObject("WI.ObjectStore.prototype.deleteObject.KeyPathSetOnObjectWithAutoIncrement", {
+        options: {keyPath: "KeyPathSetOnObjectWithAutoIncrement", autoIncrement: true},
+        tests: [
+            {value: {KeyPathSetOnObjectWithAutoIncrement: 42, ...InspectorTest.ObjectStore.basicObject1}, expected: 42},
+            {value: {KeyPathSetOnObjectWithAutoIncrement: 99, ...InspectorTest.ObjectStore.basicObject2}, expected: 99},
+        ],
+    });
+
+    testDeleteObject("WI.ObjectStore.prototype.deleteObject.AutoIncrementWithoutKeyPath", {
+        options: {autoIncrement: true},
+        tests: [
+            {value: InspectorTest.ObjectStore.basicObject1, expected: 1},
+            {value: InspectorTest.ObjectStore.basicObject2, expected: 2},
+        ],
+    });
+
+    testDeleteObject("WI.ObjectStore.prototype.deleteObject.KeyPathSetOnObjectWithoutAutoIncrement.Sub", {
+        options: {keyPath: "KeyPathSetOnObjectWithoutAutoIncrement.Sub"},
+        tests: [
+            {value: {KeyPathSetOnObjectWithoutAutoIncrement: {Sub: 42}, ...InspectorTest.ObjectStore.basicObject1}, expected: 42},
+            {value: {KeyPathSetOnObjectWithoutAutoIncrement: {Sub: 99}, ...InspectorTest.ObjectStore.basicObject2}, expected: 99},
+        ],
+    });
+
+    testDeleteObject("WI.ObjectStore.prototype.deleteObject.KeyPathMissingOnObjectWithAutoIncrement.Sub", {
+        options: {keyPath: "KeyPathMissingOnObjectWithAutoIncrement.Sub", autoIncrement: true},
+        tests: [
+            {value: InspectorTest.ObjectStore.basicObject1, expected: 1},
+            {value: InspectorTest.ObjectStore.basicObject2, expected: 2},
+        ],
+    });
+
+    testDeleteObject("WI.ObjectStore.prototype.deleteObject.KeyPathSetOnObjectWithAutoIncrement.Sub", {
+        options: {keyPath: "KeyPathSetOnObjectWithAutoIncrement.Sub", autoIncrement: true},
+        tests: [
+            {value: {KeyPathSetOnObjectWithAutoIncrement: {Sub: 42}, ...InspectorTest.ObjectStore.basicObject1}, expected: 42},
+            {value: {KeyPathSetOnObjectWithAutoIncrement: {Sub: 99}, ...InspectorTest.ObjectStore.basicObject2}, expected: 99},
+        ],
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests WI.ObjectStore.prototype.deleteObject.</p>
+</body>
+</html>

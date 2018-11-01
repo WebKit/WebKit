@@ -1,0 +1,54 @@
+Tests WI.ObjectStore.prototype.addObject.
+
+
+== Running test suite: WI.ObjectStore.prototype.addObject
+-- Running test case: WI.ObjectStore.prototype.addObject.NoParameters
+PASS: Should produce an exception.
+TypeError: undefined is not an object (evaluating 'object.toJSON')
+[]
+
+-- Running test case: WI.ObjectStore.prototype.addObject.WithoutKeyPathOrAutoIncrement
+PASS: Should produce an exception.
+DataError: Failed to store record in an IDBObjectStore: The object store uses out-of-line keys and has no key generator and the key parameter was not provided.
+[]
+
+-- Running test case: WI.ObjectStore.prototype.addObject.KeyPathMissingOnObjectWithoutAutoIncrement
+PASS: Should produce an exception.
+DataError: Failed to store record in an IDBObjectStore: Evaluating the object store's key path did not yield a value.
+[]
+
+-- Running test case: WI.ObjectStore.prototype.addObject.KeyPathSetOnObjectWithoutAutoIncrement
+addObject: [{"KeyPathSetOnObjectWithoutAutoIncrement":42,"a":1}]
+addObject: [{"KeyPathSetOnObjectWithoutAutoIncrement":42,"a":1},{"KeyPathSetOnObjectWithoutAutoIncrement":99,"b":2}]
+[{"KeyPathSetOnObjectWithoutAutoIncrement":42,"a":1},{"KeyPathSetOnObjectWithoutAutoIncrement":99,"b":2}]
+
+-- Running test case: WI.ObjectStore.prototype.addObject.KeyPathMissingOnObjectWithAutoIncrement
+addObject: [{"a":1,"KeyPathMissingOnObjectWithAutoIncrement":1}]
+addObject: [{"a":1,"KeyPathMissingOnObjectWithAutoIncrement":1},{"b":2,"KeyPathMissingOnObjectWithAutoIncrement":2}]
+[{"a":1,"KeyPathMissingOnObjectWithAutoIncrement":1},{"b":2,"KeyPathMissingOnObjectWithAutoIncrement":2}]
+
+-- Running test case: WI.ObjectStore.prototype.addObject.KeyPathSetOnObjectWithAutoIncrement
+addObject: [{"KeyPathSetOnObjectWithAutoIncrement":42,"a":1}]
+addObject: [{"KeyPathSetOnObjectWithAutoIncrement":42,"a":1},{"KeyPathSetOnObjectWithAutoIncrement":99,"b":2}]
+[{"KeyPathSetOnObjectWithAutoIncrement":42,"a":1},{"KeyPathSetOnObjectWithAutoIncrement":99,"b":2}]
+
+-- Running test case: WI.ObjectStore.prototype.addObject.AutoIncrementWithoutKeyPath
+addObject: [{"a":1}]
+addObject: [{"a":1},{"b":2}]
+[{"a":1},{"b":2}]
+
+-- Running test case: WI.ObjectStore.prototype.addObject.KeyPathSetOnObjectWithoutAutoIncrement.Sub
+addObject: [{"KeyPathSetOnObjectWithoutAutoIncrement":{"Sub":42},"a":1}]
+addObject: [{"KeyPathSetOnObjectWithoutAutoIncrement":{"Sub":42},"a":1},{"KeyPathSetOnObjectWithoutAutoIncrement":{"Sub":99},"b":2}]
+[{"KeyPathSetOnObjectWithoutAutoIncrement":{"Sub":42},"a":1},{"KeyPathSetOnObjectWithoutAutoIncrement":{"Sub":99},"b":2}]
+
+-- Running test case: WI.ObjectStore.prototype.addObject.KeyPathMissingOnObjectWithAutoIncrement.Sub
+addObject: [{"a":1,"KeyPathMissingOnObjectWithAutoIncrement":{"Sub":1}}]
+addObject: [{"a":1,"KeyPathMissingOnObjectWithAutoIncrement":{"Sub":1}},{"b":2,"KeyPathMissingOnObjectWithAutoIncrement":{"Sub":2}}]
+[{"a":1,"KeyPathMissingOnObjectWithAutoIncrement":{"Sub":1}},{"b":2,"KeyPathMissingOnObjectWithAutoIncrement":{"Sub":2}}]
+
+-- Running test case: WI.ObjectStore.prototype.addObject.KeyPathSetOnObjectWithAutoIncrement.Sub
+addObject: [{"KeyPathSetOnObjectWithAutoIncrement":{"Sub":42},"a":1}]
+addObject: [{"KeyPathSetOnObjectWithAutoIncrement":{"Sub":42},"a":1},{"KeyPathSetOnObjectWithAutoIncrement":{"Sub":99},"b":2}]
+[{"KeyPathSetOnObjectWithAutoIncrement":{"Sub":42},"a":1},{"KeyPathSetOnObjectWithAutoIncrement":{"Sub":99},"b":2}]
+

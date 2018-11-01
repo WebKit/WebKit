@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/objectStore-utilities.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.ObjectStore.createSuite("WI.ObjectStore");
+
+    InspectorTest.ObjectStore.wrapTest("WI.ObjectStore.InitiallyNull", async function() {
+        InspectorTest.expectNull(WI.ObjectStore._database, "The database should initially be null/closed.");
+    });
+
+    InspectorTest.ObjectStore.wrapTest("WI.ObjectStore.prototype._resolveKeyPath.Exists", async function() {
+        const options = {
+            keyPath: "sub.a",
+        };
+        let objectStore = InspectorTest.ObjectStore.createObjectStore(options);
+
+        const object = {sub: {a: 1}, b: 2};
+        InspectorTest.log(objectStore._resolveKeyPath(object));
+    });
+
+    InspectorTest.ObjectStore.wrapTest("WI.ObjectStore.prototype._resolveKeyPath.MissingPart", async function() {
+        const options = {
+            keyPath: "sub.a",
+        };
+        let objectStore = InspectorTest.ObjectStore.createObjectStore(options);
+
+        const object = {"sub.a": 0, a: 1, b: 2};
+        InspectorTest.log(objectStore._resolveKeyPath(object));
+    });
+
+    InspectorTest.ObjectStore.wrapTest("WI.ObjectStore.prototype._resolveKeyPath.MissingWhole", async function() {
+        const options = {
+            keyPath: "sub.a",
+        };
+        let objectStore = InspectorTest.ObjectStore.createObjectStore(options);
+
+        const object = {a: 1, b: 2};
+        InspectorTest.log(objectStore._resolveKeyPath(object));
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests basic functionality of WI.ObjectStore.</p>
+</body>
+</html>

@@ -98,6 +98,19 @@ WI.AuditTreeElement = class AuditTreeElement extends WI.GeneralTreeElement
         }
     }
 
+    ondelete()
+    {
+        if (!(this.representedObject instanceof WI.AuditTestBase))
+            return false;
+
+        if (!(this.parent instanceof WI.TreeOutline))
+            return false;
+
+        WI.auditManager.removeTest(this.representedObject);
+
+        return true;
+    }
+
     populateContextMenu(contextMenu, event)
     {
         if (WI.auditManager.runningState === WI.AuditManager.RunningState.Inactive) {

@@ -116,9 +116,10 @@ WI.AuditManager = class AuditManager extends WI.Object
                 }
             }
 
-            if (object instanceof WI.AuditTestBase)
+            if (object instanceof WI.AuditTestBase) {
                 this._addTest(object);
-            else if (object instanceof WI.AuditTestResultBase)
+                WI.objectStores.audits.addObject(object);
+            } else if (object instanceof WI.AuditTestResultBase)
                 this._addResult(object);
         });
     }
@@ -138,6 +139,31 @@ WI.AuditManager = class AuditManager extends WI.Object
             content: JSON.stringify(object),
             forceSaveAs: true,
         });
+    }
+
+    loadStoredTests()
+    {
+        WI.objectStores.audits.getAll().then(async (tests) => {
+            for (let payload of tests) {
+                let test = await WI.AuditTestGroup.fromPayload(payload) || await WI.AuditTestCase.fromPayload(payload);
+                if (!test)
+                    continue;
+
+                const key = null;
+                WI.objectStores.audits.associateObject(test, key, payload);
+
+                this._addTest(test);
+            }
+        });
+    }
+
+    removeTest(test)
+    {
+        this._tests.remove(test);
+
+        this.dispatchEventToListeners(WI.AuditManager.Event.TestRemoved, {test});
+
+        WI.objectStores.audits.deleteObject(test);
     }
 
     // Private
@@ -172,5 +198,6 @@ WI.AuditManager.RunningState = {
 WI.AuditManager.Event = {
     TestAdded: "audit-manager-test-added",
     TestCompleted: "audit-manager-test-completed",
+    TestRemoved: "audit-manager-test-removed",
     TestScheduled: "audit-manager-test-scheduled",
 };

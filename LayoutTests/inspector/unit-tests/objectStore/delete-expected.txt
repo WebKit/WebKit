@@ -1,0 +1,108 @@
+Tests WI.ObjectStore.prototype.delete.
+
+
+== Running test suite: WI.ObjectStore.prototype.delete
+-- Running test case: WI.ObjectStore.prototype.delete.NoParameters
+add: [{"b":2}]
+PASS: Should produce an exception.
+TypeError: Not enough arguments
+[{"b":2}]
+
+-- Running test case: WI.ObjectStore.prototype.delete.MissingObject
+add: [{"b":2}]
+PASS: Should produce an exception.
+DataError: Failed to execute 'delete' on 'IDBObjectStore': The parameter is not a valid key.
+[{"b":2}]
+
+-- Running test case: WI.ObjectStore.prototype.delete.Boolean
+add: [false]
+add: [false,true]
+delete: [true]
+delete: []
+[]
+
+-- Running test case: WI.ObjectStore.prototype.delete.Number
+add: [11]
+add: [11,22]
+delete: [22]
+delete: []
+[]
+
+-- Running test case: WI.ObjectStore.prototype.delete.String
+add: ["foo"]
+add: ["foo","bar"]
+delete: ["bar"]
+delete: []
+[]
+
+-- Running test case: WI.ObjectStore.prototype.delete.Array
+add: [[11]]
+add: [[11],[22]]
+delete: [[22]]
+delete: []
+[]
+
+-- Running test case: WI.ObjectStore.prototype.delete.Null
+add: [null]
+delete: []
+[]
+
+-- Running test case: WI.ObjectStore.prototype.delete.Object.WithoutKeyPathOrAutoIncrement
+PASS: Should produce an exception.
+DataError: Failed to store record in an IDBObjectStore: The object store uses out-of-line keys and has no key generator and the key parameter was not provided.
+[]
+
+-- Running test case: WI.ObjectStore.prototype.delete.Object.KeyPathMissingOnObjectWithoutAutoIncrement
+PASS: Should produce an exception.
+DataError: Failed to store record in an IDBObjectStore: Evaluating the object store's key path did not yield a value.
+[]
+
+-- Running test case: WI.ObjectStore.prototype.delete.Object.KeyPathSetOnObjectWithoutAutoIncrement
+add: [{"KeyPathSetOnObjectWithoutAutoIncrement":42,"a":1}]
+add: [{"KeyPathSetOnObjectWithoutAutoIncrement":42,"a":1},{"KeyPathSetOnObjectWithoutAutoIncrement":99,"b":2}]
+delete: [{"KeyPathSetOnObjectWithoutAutoIncrement":99,"b":2}]
+delete: []
+[]
+
+-- Running test case: WI.ObjectStore.prototype.delete.Object.KeyPathMissingOnObjectWithAutoIncrement
+add: [{"a":1,"KeyPathMissingOnObjectWithAutoIncrement":1}]
+add: [{"a":1,"KeyPathMissingOnObjectWithAutoIncrement":1},{"b":2,"KeyPathMissingOnObjectWithAutoIncrement":2}]
+delete: [{"b":2,"KeyPathMissingOnObjectWithAutoIncrement":2}]
+delete: []
+[]
+
+-- Running test case: WI.ObjectStore.prototype.delete.Object.KeyPathSetOnObjectWithAutoIncrement
+add: [{"KeyPathSetOnObjectWithAutoIncrement":42,"a":1}]
+add: [{"KeyPathSetOnObjectWithAutoIncrement":42,"a":1},{"KeyPathSetOnObjectWithAutoIncrement":99,"b":2}]
+delete: [{"KeyPathSetOnObjectWithAutoIncrement":99,"b":2}]
+delete: []
+[]
+
+-- Running test case: WI.ObjectStore.prototype.delete.Object.AutoIncrementWithoutKeyPath
+add: [{"a":1}]
+add: [{"a":1},{"b":2}]
+delete: [{"b":2}]
+delete: []
+[]
+
+-- Running test case: WI.ObjectStore.prototype.delete.Object.KeyPathSetOnObjectWithoutAutoIncrement.Sub
+add: [{"KeyPathSetOnObjectWithoutAutoIncrement":{"Sub":42},"a":1}]
+add: [{"KeyPathSetOnObjectWithoutAutoIncrement":{"Sub":42},"a":1},{"KeyPathSetOnObjectWithoutAutoIncrement":{"Sub":99},"b":2}]
+delete: [{"KeyPathSetOnObjectWithoutAutoIncrement":{"Sub":99},"b":2}]
+delete: []
+[]
+
+-- Running test case: WI.ObjectStore.prototype.delete.Object.KeyPathMissingOnObjectWithAutoIncrement.Sub
+add: [{"a":1,"KeyPathMissingOnObjectWithAutoIncrement":{"Sub":1}}]
+add: [{"a":1,"KeyPathMissingOnObjectWithAutoIncrement":{"Sub":1}},{"b":2,"KeyPathMissingOnObjectWithAutoIncrement":{"Sub":2}}]
+delete: [{"b":2,"KeyPathMissingOnObjectWithAutoIncrement":{"Sub":2}}]
+delete: []
+[]
+
+-- Running test case: WI.ObjectStore.prototype.delete.Object.KeyPathSetOnObjectWithAutoIncrement.Sub
+add: [{"KeyPathSetOnObjectWithAutoIncrement":{"Sub":42},"a":1}]
+add: [{"KeyPathSetOnObjectWithAutoIncrement":{"Sub":42},"a":1},{"KeyPathSetOnObjectWithAutoIncrement":{"Sub":99},"b":2}]
+delete: [{"KeyPathSetOnObjectWithAutoIncrement":{"Sub":99},"b":2}]
+delete: []
+[]
+

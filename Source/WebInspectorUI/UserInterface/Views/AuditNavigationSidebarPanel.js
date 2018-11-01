@@ -90,6 +90,7 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
 
         WI.auditManager.addEventListener(WI.AuditManager.Event.TestAdded, this._handleAuditTestAdded, this);
         WI.auditManager.addEventListener(WI.AuditManager.Event.TestCompleted, this._handleAuditTestCompleted, this);
+        WI.auditManager.addEventListener(WI.AuditManager.Event.TestRemoved, this._handleAuditTestRemoved, this);
         WI.auditManager.addEventListener(WI.AuditManager.Event.TestScheduled, this._handleAuditTestScheduled, this);
 
         this.contentTreeOutline.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._treeSelectionDidChange, this);
@@ -145,6 +146,13 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
     {
         let {result, index} = event.data;
         this._addResult(result, index);
+    }
+
+    _handleAuditTestRemoved(event)
+    {
+        let {test} = event.data;
+        let treeElement = this.treeElementForRepresentedObject(test);
+        this.contentTreeOutline.removeChild(treeElement);
     }
 
     _handleAuditTestScheduled(event)

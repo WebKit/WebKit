@@ -83,6 +83,15 @@ WI.AuditTabContentView = class AuditTabContentView extends WI.ContentBrowserTabC
         super.hidden();
     }
 
+    // Protected
+
+    initialLayout()
+    {
+        super.initialLayout();
+
+        WI.auditManager.loadStoredTests();
+    }
+
     // Private
 
     _handleSpace(event)

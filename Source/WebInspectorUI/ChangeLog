@@ -1,3 +1,58 @@
+2018-10-31  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Audit: save imported audits across WebInspector sessions
+        https://bugs.webkit.org/show_bug.cgi?id=190858
+        <rdar://problem/45527625>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Base/ObjectStore.js: Added.
+        (WI.ObjectStore):
+        (WI.ObjectStore.supported):
+        (WI.ObjectStore._open):
+        (WI.ObjectStore.get _databaseName):
+        (WI.ObjectStore.prototype.associateObject):
+        (WI.ObjectStore.prototype.async getAll):
+        (WI.ObjectStore.prototype.async add):
+        (WI.ObjectStore.prototype.async addObject):
+        (WI.ObjectStore.prototype.async delete):
+        (WI.ObjectStore.prototype.async deleteObject):
+        (WI.ObjectStore.prototype._resolveKeyPath):
+        (WI.ObjectStore.prototype.async _operation.listener):
+        (WI.ObjectStore.prototype.async _operation):
+        Wrapper for a global `IndexedDB` instance for all of WebInspector (per level). Instances of
+        `WI.ObjectStore` are able to control a given `IDBObjectStore` using a promise-based API.
+
+        *NOTE*: due to the constraint that `IDBObjectStore`s are only able to be created when the
+        owner `IndexedDB` is "upgrade"d, all `WI.ObjectStore` must be declared before the database
+        is opened for the first time. Additionally, any time a new `WI.ObjectStore` is added, the
+        `version` needs to be incremented to ensure that the "upgrade" event fires.
+
+        To use any of the `*Object` functions, one must implement a `toJSON` on the object provided.
+        This is so that `WI.ObjectStore` is able to add the resulting identifier value to the owner
+        object while storing its `toJSON` value in the IndexedDB (e.g. for objects that have cycles).
+
+        * UserInterface/Controllers/AuditManager.js:
+        (WI.AuditManager.prototype.import):
+        (WI.AuditManager.prototype.loadStoredTests): Added.
+        (WI.AuditManager.prototype.removeTest): Added.
+        (WI.AuditManager.prototype._addTest):
+
+        * UserInterface/Views/AuditTabContentView.js:
+        (WI.AuditTabContentView.prototype.initialLayout): Added.
+        Attempt to load stored audits when the Audit tab is first shown (lazy-load).
+
+        * UserInterface/Views/AuditNavigationSidebarPanel.js:
+        (WI.AuditNavigationSidebarPanel.prototype.initialLayout):
+        (WI.AuditNavigationSidebarPanel.prototype._handleAuditTestRemoved): Added.
+
+        * UserInterface/Views/AuditTreeElement.js:
+        (WI.AuditTreeElement.prototype.ondelete):
+        Only allow top-level audits to be deleted, as that is what matches the `WI.ObjectStore`.
+
+        * UserInterface/Main.html:
+        * UserInterface/Test.html:
+
 2018-10-31  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Move a few remaining global WI settings to WI.settings
