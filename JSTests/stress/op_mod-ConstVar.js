@@ -1,3 +1,6 @@
+// FIXME: unskip when this is solved
+// https://bugs.webkit.org/show_bug.cgi?id=191163
+//@ skip if $architecture == "arm"
 //@ runFTLNoCJIT("--timeoutMultiplier=1.5")
 
 // If all goes well, this test module will terminate silently. If not, it will print

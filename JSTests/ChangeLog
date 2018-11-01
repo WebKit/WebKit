@@ -1,3 +1,41 @@
+2018-11-01  Guillaume Emont  <guijemont@igalia.com>
+
+        Skip tests on arm/mips that time out now we're running on CLoop
+
+        Unreviewed gardening.
+
+        Since the JIT is temporarily disabled on 32-bit platforms, these tests
+        time out on the bots and need to be disabled. There's more tests
+        disabled on arm because the timeout is longer on the mips bot (as the
+        device is slower to start with), so many of the tests don't time out
+        there.
+
+        * microbenchmarks/getter-richards.js: disable on arm and mips.
+        * stress/op_add.js: disable on arm.
+        * stress/op_bitand.js: disable on arm.
+        * stress/op_bitor.js: disable on arm.
+        * stress/op_bitxor.js: disable on arm.
+        * stress/op_lshift-ConstVar.js: disable on arm.
+        * stress/op_lshift-VarConst.js: disable on arm.
+        * stress/op_lshift-VarVar.js: disable on arm.
+        * stress/op_mod-ConstVar.js: disable on arm.
+        * stress/op_mod-VarConst.js: disable on arm.
+        * stress/op_mod-VarVar.js: disable on arm.
+        * stress/op_mul-ConstVar.js: disable on arm.
+        * stress/op_mul-VarConst.js: disable on arm.
+        * stress/op_mul-VarVar.js: disable on arm.
+        * stress/op_rshift-ConstVar.js: disable on arm.
+        * stress/op_rshift-VarConst.js: disable on arm.
+        * stress/op_rshift-VarVar.js: disable on arm.
+        * stress/op_sub-ConstVar.js: disable on arm.
+        * stress/op_sub-VarConst.js: disable on arm.
+        * stress/op_sub-VarVar.js: disable on arm.
+        * stress/op_urshift-ConstVar.js: disable on arm.
+        * stress/op_urshift-VarConst.js: disable on arm.
+        * stress/op_urshift-VarVar.js: disable on arm.
+        * stress/spread-forward-call-varargs-stack-overflow.js: disable on arm.
+        * stress/value-to-boolean.js: disable on arm and mips.
+
 2018-10-31  Tadeu Zagallo  <tzagallo@apple.com>
 
         REGRESSION(r237547): Exception handlers should be aware of wide opcodes

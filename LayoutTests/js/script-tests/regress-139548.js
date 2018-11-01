@@ -1,3 +1,6 @@
+// FIXME: unskip when this is solved
+// https://bugs.webkit.org/show_bug.cgi?id=191163
+//@ skip if $architecture == "mips" or $architecture == "arm"
 //@ slow!
 //@ noEagerNoNoLLIntTestsRunLayoutTest
 

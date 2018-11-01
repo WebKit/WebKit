@@ -1,3 +1,17 @@
+2018-11-01  Guillaume Emont  <guijemont@igalia.com>
+
+        Skip tests on arm/mips that time out now we're running on CLoop
+
+        Unreviewed gardening.
+
+        Since the JIT is temporarily disabled on 32-bit platforms, these tests
+        time out on the bots and need to be disabled. There's more tests
+        disabled on arm because the timeout is longer on the mips bot (as the
+        device is slower to start with), so many of the tests don't time out
+        there.
+
+        * js/script-tests/regress-139548.js: disable on arm and mips.
+
 2018-11-01  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: fix debug WK1 test failures for WI.ObjectStore

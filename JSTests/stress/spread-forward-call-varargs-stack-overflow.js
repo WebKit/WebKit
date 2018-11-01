@@ -1,3 +1,6 @@
+// FIXME: unskip when this is solved
+// https://bugs.webkit.org/show_bug.cgi?id=191163
+//@ skip if $architecture == "arm"
 //@ skip if $architecture == "x86"
 function assert(b) {
     if (!b)
