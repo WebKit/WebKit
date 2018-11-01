@@ -1,3 +1,17 @@
+2018-11-01  Justin Michaud  <justin_michaud@apple.com>
+
+        CSS Custom Properties API Should Support syntax="*" and "<length>", and handle cycles properly
+        https://bugs.webkit.org/show_bug.cgi?id=191042
+
+        Reviewed by Antti Koivisto.
+
+        * css-custom-properties-api/crash-expected.txt: Added.
+        * css-custom-properties-api/crash.html: Added.
+        * css-custom-properties-api/cycles-expected.txt: Added.
+        * css-custom-properties-api/cycles.html: Added.
+        * css-custom-properties-api/inline-expected.txt: Added.
+        * css-custom-properties-api/inline.html: Added.
+
 2018-11-01  Guillaume Emont  <guijemont@igalia.com>
 
         Skip tests on arm/mips that time out now we're running on CLoop

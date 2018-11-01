@@ -43,14 +43,9 @@ class CSSVariableData : public RefCounted<CSSVariableData> {
     WTF_MAKE_NONCOPYABLE(CSSVariableData);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<CSSVariableData> create(const CSSParserTokenRange& range, bool needsVariableResolution = true)
+    static Ref<CSSVariableData> create(const CSSParserTokenRange& range)
     {
-        return adoptRef(*new CSSVariableData(range, needsVariableResolution));
-    }
-
-    static Ref<CSSVariableData> createResolved(const Vector<CSSParserToken>& resolvedTokens, const CSSVariableData& unresolvedData)
-    {
-        return adoptRef(*new CSSVariableData(resolvedTokens, unresolvedData.m_backingString));
+        return adoptRef(*new CSSVariableData(range));
     }
 
     CSSParserTokenRange tokenRange() { return m_tokens; }
@@ -59,36 +54,12 @@ public:
 
     bool operator==(const CSSVariableData& other) const;
 
-    bool needsVariableResolution() const { return m_needsVariableResolution; }
-
-    bool checkVariablesForCycles(const AtomicString& name, const RenderStyle&, HashSet<AtomicString>& seenProperties, HashSet<AtomicString>& invalidProperties) const;
-
-    RefPtr<CSSVariableData> resolveVariableReferences(const CSSRegisteredCustomPropertySet&, const RenderStyle&) const;
-    bool resolveTokenRange(const CSSRegisteredCustomPropertySet&, CSSParserTokenRange, Vector<CSSParserToken>&, const RenderStyle&) const;
-
 private:
-    CSSVariableData(const CSSParserTokenRange&, bool needsVariableResolution);
-
-    // We can safely copy the tokens (which have raw pointers to substrings) because
-    // StylePropertySets contain references to CSSCustomPropertyValues, which
-    // point to the unresolved CSSVariableData values that own the backing strings
-    // this will potentially reference.
-    CSSVariableData(const Vector<CSSParserToken>& resolvedTokens, String backingString)
-        : m_backingString(backingString)
-        , m_tokens(resolvedTokens)
-        , m_needsVariableResolution(false)
-    { }
-
-    void consumeAndUpdateTokens(const CSSParserTokenRange&);
+    CSSVariableData(const CSSParserTokenRange&);
     template<typename CharacterType> void updateTokens(const CSSParserTokenRange&);
-    
-    bool checkVariablesForCyclesWithRange(CSSParserTokenRange, const RenderStyle&, HashSet<AtomicString>& seenProperties, HashSet<AtomicString>& invalidProperties) const;
-    bool resolveVariableReference(const CSSRegisteredCustomPropertySet&, CSSParserTokenRange, Vector<CSSParserToken>&, const RenderStyle&) const;
-    bool resolveVariableFallback(const CSSRegisteredCustomPropertySet&, CSSParserTokenRange, Vector<CSSParserToken>&, const RenderStyle&) const;
 
     String m_backingString;
     Vector<CSSParserToken> m_tokens;
-    const bool m_needsVariableResolution;
 
     // FIXME-NEWPARSER: We want to cache StyleProperties once we support @apply.
 };

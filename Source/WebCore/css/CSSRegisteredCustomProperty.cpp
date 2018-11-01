@@ -30,8 +30,9 @@
 
 namespace WebCore {
 
-CSSRegisteredCustomProperty::CSSRegisteredCustomProperty(const String& name, bool inherits, RefPtr<CSSCustomPropertyValue>&& initialValue)
+CSSRegisteredCustomProperty::CSSRegisteredCustomProperty(const String& name, const String& syntax, bool inherits, RefPtr<CSSCustomPropertyValue>&& initialValue)
     : name(name)
+    , syntax(syntax)
     , inherits(inherits)
     , m_initialValue(WTFMove(initialValue))
 {

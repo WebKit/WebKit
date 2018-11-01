@@ -60,7 +60,7 @@ bool CSSVariableData::operator==(const CSSVariableData& other) const
     return tokens() == other.tokens();
 }
 
-void CSSVariableData::consumeAndUpdateTokens(const CSSParserTokenRange& range)
+CSSVariableData::CSSVariableData(const CSSParserTokenRange& range)
 {
     StringBuilder stringBuilder;
     CSSParserTokenRange localRange = range;
@@ -75,111 +75,6 @@ void CSSVariableData::consumeAndUpdateTokens(const CSSParserTokenRange& range)
         updateTokens<LChar>(range);
     else
         updateTokens<UChar>(range);
-}
-
-CSSVariableData::CSSVariableData(const CSSParserTokenRange& range, bool needsVariableResolution)
-    : m_needsVariableResolution(needsVariableResolution)
-{
-    consumeAndUpdateTokens(range);
-}
-
-bool CSSVariableData::checkVariablesForCycles(const AtomicString& name, const RenderStyle& style, HashSet<AtomicString>& seenProperties, HashSet<AtomicString>& invalidProperties) const
-{
-    if (invalidProperties.contains(name))
-        return false;
-    
-    HashSet<AtomicString> newSeenProperties = seenProperties;
-    newSeenProperties.add(name);
-    
-    bool valid = checkVariablesForCyclesWithRange(m_tokens, style, newSeenProperties, invalidProperties);
-    if (!valid)
-        invalidProperties.add(name);
-    
-    return valid;
-}
-    
-bool CSSVariableData::checkVariablesForCyclesWithRange(CSSParserTokenRange range, const RenderStyle& style, HashSet<AtomicString>& seenProperties, HashSet<AtomicString>& invalidProperties) const
-{
-    while (!range.atEnd()) {
-        if (range.peek().functionId() == CSSValueVar || range.peek().functionId() == CSSValueEnv) {
-            CSSParserTokenRange block = range.consumeBlock();
-            
-            block.consumeWhitespace();
-            ASSERT(block.peek().type() == IdentToken);
-            AtomicString variableName = block.consumeIncludingWhitespace().value().toAtomicString();
-            ASSERT(block.atEnd() || block.peek().type() == CommaToken);
-            if (seenProperties.contains(variableName))
-                return false;
-
-            auto* value = style.getCustomProperty(variableName);
-            if (value && value->containsVariables() && !value->checkVariablesForCycles(variableName, style, seenProperties, invalidProperties))
-                return false;
-
-            if (range.peek().type() == CommaToken) {
-                // Fallback.
-                range.consume();
-                return checkVariablesForCyclesWithRange(block, style, seenProperties, invalidProperties);
-            }
-        } else
-            range.consume();
-    }
-    return true;
-}
-
-bool CSSVariableData::resolveVariableFallback(const CSSRegisteredCustomPropertySet& registeredProperties, CSSParserTokenRange range, Vector<CSSParserToken>& result, const RenderStyle& style) const
-{
-    if (range.atEnd())
-        return false;
-    ASSERT(range.peek().type() == CommaToken);
-    range.consume();
-    return resolveTokenRange(registeredProperties, range, result, style);
-}
-
-bool CSSVariableData::resolveVariableReference(const CSSRegisteredCustomPropertySet& registeredProperties, CSSParserTokenRange range, Vector<CSSParserToken>& result, const RenderStyle& style) const
-{
-    range.consumeWhitespace();
-    ASSERT(range.peek().type() == IdentToken);
-    AtomicString variableName = range.consumeIncludingWhitespace().value().toAtomicString();
-    ASSERT(range.atEnd() || (range.peek().type() == CommaToken));
-    
-    auto* property = style.getCustomProperty(variableName);
-    if (property && property->resolvedTypedValue()) {
-        result.appendVector(property->tokens(registeredProperties, style));
-        return true;
-    }
-
-    if (!property || !property->value()) {
-        auto* registered = registeredProperties.get(variableName);
-        if (registered && registered->initialValue())
-            property = registered->initialValue();
-        else
-            return resolveVariableFallback(registeredProperties, range, result, style);
-    }
-    ASSERT(property);
-    result.appendVector(property->tokens(registeredProperties, style));
-    
-    return true;
-}
-
-RefPtr<CSSVariableData> CSSVariableData::resolveVariableReferences(const CSSRegisteredCustomPropertySet& registeredProperties, const RenderStyle& style) const
-{
-    Vector<CSSParserToken> resolvedTokens;
-    CSSParserTokenRange range = m_tokens;
-    if (!resolveTokenRange(registeredProperties, range, resolvedTokens, style))
-        return nullptr;
-    return CSSVariableData::createResolved(resolvedTokens, *this);
-}
-    
-bool CSSVariableData::resolveTokenRange(const CSSRegisteredCustomPropertySet& registeredProperties, CSSParserTokenRange range, Vector<CSSParserToken>& result, const RenderStyle& style) const
-{
-    bool success = true;
-    while (!range.atEnd()) {
-        if (range.peek().functionId() == CSSValueVar || range.peek().functionId() == CSSValueEnv)
-            success &= resolveVariableReference(registeredProperties, range.consumeBlock(), result, style);
-        else
-            result.append(range.consume());
-    }
-    return success;
 }
 
 } // namespace WebCore

@@ -28,6 +28,8 @@
 #include "CSSDeferredParser.h"
 #include "CSSParser.h"
 #include "CSSPendingSubstitutionValue.h"
+#include "CSSPropertyParser.h"
+#include "CSSTokenizer.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
@@ -779,7 +781,7 @@ bool MutableStyleProperties::setProperty(CSSPropertyID propertyID, const String&
     return setProperty(propertyID, value, important, parserContext);
 }
 
-bool MutableStyleProperties::setCustomProperty(const String& propertyName, const String& value, bool important, CSSParserContext parserContext)
+bool MutableStyleProperties::setCustomProperty(const Document* document, const String& propertyName, const String& value, bool important, CSSParserContext parserContext)
 {
     // Setting the value to an empty string just removes the property in both IE and Gecko.
     // Setting it to null seems to produce less consistent results, but we treat it just the same.
@@ -787,6 +789,17 @@ bool MutableStyleProperties::setCustomProperty(const String& propertyName, const
         return removeCustomProperty(propertyName);
 
     parserContext.mode = cssParserMode();
+
+    String syntax = "*";
+    auto* registered = document ? document->getCSSRegisteredCustomPropertySet().get(propertyName) : nullptr;
+
+    if (registered)
+        syntax = registered->syntax;
+
+    CSSTokenizer tokenizer(value);
+    if (!CSSPropertyParser::canParseTypedCustomPropertyValue(syntax, tokenizer.tokenRange(), parserContext))
+        return false;
+
     // When replacing an existing property value, this moves the property to the end of the list.
     // Firefox preserves the position, and MSIE moves the property to the beginning.
     return CSSParser::parseCustomPropertyValue(*this, propertyName, value, important, parserContext) == CSSParser::ParseResult::Changed;

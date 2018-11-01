@@ -27,31 +27,46 @@
 
 #include "CSSRegisteredCustomProperty.h"
 #include "CSSValue.h"
-#include "CSSVariableData.h"
+#include "CSSVariableReferenceValue.h"
 #include "Length.h"
 #include <wtf/RefPtr.h>
+#include <wtf/Variant.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class CSSParserToken;
+class CSSVariableReferenceValue;
 class RenderStyle;
 
 class CSSCustomPropertyValue final : public CSSValue {
 public:
-    static Ref<CSSCustomPropertyValue> createWithVariableData(const AtomicString& name, Ref<CSSVariableData>&& value)
+    using VariantValue = Variant<Ref<CSSVariableReferenceValue>, CSSValueID, Ref<CSSVariableData>, Length>;
+
+    static Ref<CSSCustomPropertyValue> createUnresolved(const AtomicString& name, Ref<CSSVariableReferenceValue>&& value)
     {
-        return adoptRef(*new CSSCustomPropertyValue(name, WTFMove(value)));
+        return adoptRef(*new CSSCustomPropertyValue(name, { WTFMove(value) }));
+    }
+
+    static Ref<CSSCustomPropertyValue> createUnresolved(const AtomicString& name, CSSValueID value)
+    {
+        return adoptRef(*new CSSCustomPropertyValue(name, { value }));
+    }
+
+    static Ref<CSSCustomPropertyValue> createWithID(const AtomicString& name, CSSValueID id)
+    {
+        ASSERT(id == CSSValueInherit || id == CSSValueInitial || id == CSSValueUnset || id == CSSValueRevert || id == CSSValueInvalid);
+        return adoptRef(*new CSSCustomPropertyValue(name, { id }));
+    }
+
+    static Ref<CSSCustomPropertyValue> createSyntaxAll(const AtomicString& name, Ref<CSSVariableData>&& value)
+    {
+        return adoptRef(*new CSSCustomPropertyValue(name, { WTFMove(value) }));
     }
     
-    static Ref<CSSCustomPropertyValue> createWithID(const AtomicString& name, CSSValueID value)
+    static Ref<CSSCustomPropertyValue> createSyntaxLength(const AtomicString& name, Length value)
     {
-        return adoptRef(*new CSSCustomPropertyValue(name, value));
-    }
-    
-    static Ref<CSSCustomPropertyValue> createInvalid()
-    {
-        return adoptRef(*new CSSCustomPropertyValue(emptyString(), emptyString()));
+        return adoptRef(*new CSSCustomPropertyValue(name, { WTFMove(value) }));
     }
 
     static Ref<CSSCustomPropertyValue> create(const CSSCustomPropertyValue& other)
@@ -62,70 +77,49 @@ public:
     String customCSSText() const;
 
     const AtomicString& name() const { return m_name; }
-    
-    bool equals(const CSSCustomPropertyValue& other) const { return m_name == other.m_name && m_value == other.m_value && m_valueId == other.m_valueId; }
+    bool isResolved() const  { return !WTF::holds_alternative<Ref<CSSVariableReferenceValue>>(m_value); }
+    bool isUnset() const  { return WTF::holds_alternative<CSSValueID>(m_value) && WTF::get<CSSValueID>(m_value) == CSSValueUnset; }
+    bool isInvalid() const  { return WTF::holds_alternative<CSSValueID>(m_value) && WTF::get<CSSValueID>(m_value) == CSSValueInvalid; }
 
-    bool containsVariables() const { ASSERT(!m_containsVariables || !m_resolvedTypedValue); return m_containsVariables; }
-    bool checkVariablesForCycles(const AtomicString& name, const RenderStyle&, HashSet<AtomicString>& seenProperties, HashSet<AtomicString>& invalidProperties) const;
+    const VariantValue& value() const { return m_value; }
 
-    void resolveVariableReferences(const CSSRegisteredCustomPropertySet&, Vector<Ref<CSSCustomPropertyValue>>&, const RenderStyle&) const;
-
-    CSSValueID valueID() const { return m_valueId; }
-    CSSVariableData* value() const { return m_value.get(); }
-    Vector<CSSParserToken> tokens(const CSSRegisteredCustomPropertySet&, const RenderStyle&) const;
-
-    const std::optional<Length>& resolvedTypedValue() const { return m_resolvedTypedValue; }
-    void setResolvedTypedValue(Length);
+    Vector<CSSParserToken> tokens() const;
+    bool equals(const CSSCustomPropertyValue& other) const;
 
 private:
-    CSSCustomPropertyValue(const AtomicString& name, const String& serializedValue)
-        : CSSValue(CustomPropertyClass)
-        , m_name(name)
-        , m_stringValue(serializedValue)
-        , m_serialized(true)
-    {
-    }
-
-    CSSCustomPropertyValue(const AtomicString& name, CSSValueID id)
-        : CSSValue(CustomPropertyClass)
-        , m_name(name)
-        , m_valueId(id)
-    {
-        ASSERT(id == CSSValueInherit || id == CSSValueInitial || id == CSSValueUnset || id == CSSValueRevert || id == CSSValueInvalid);
-    }
-    
-    CSSCustomPropertyValue(const AtomicString& name, Ref<CSSVariableData>&& value)
+    CSSCustomPropertyValue(const AtomicString& name, VariantValue&& value)
         : CSSValue(CustomPropertyClass)
         , m_name(name)
         , m_value(WTFMove(value))
-        , m_valueId(CSSValueInternalVariableValue)
-        , m_containsVariables(m_value->needsVariableResolution())
+        , m_serialized(false)
     {
     }
 
     CSSCustomPropertyValue(const CSSCustomPropertyValue& other)
         : CSSValue(CustomPropertyClass)
         , m_name(other.m_name)
-        , m_value(other.m_value.copyRef())
-        , m_valueId(other.m_valueId)
+        , m_value(CSSValueUnset)
         , m_stringValue(other.m_stringValue)
-        , m_containsVariables(other.m_containsVariables)
         , m_serialized(other.m_serialized)
-        , m_resolvedTypedValue(other.m_resolvedTypedValue)
     {
+        // No copy constructor for Ref<CSSVariableData>, so we have to do this ourselves
+        auto visitor = WTF::makeVisitor([&](const Ref<CSSVariableReferenceValue>& value) {
+            m_value = value.copyRef();
+        }, [&](const CSSValueID& value) {
+            m_value = value;
+        }, [&](const Ref<CSSVariableData>& value) {
+            m_value = value.copyRef();
+        }, [&](const Length& value) {
+            m_value = value;
+        });
+        WTF::visit(visitor, other.m_value);
     }
     
     const AtomicString m_name;
-    
-    RefPtr<CSSVariableData> m_value;
-    CSSValueID m_valueId { CSSValueInvalid };
+    VariantValue m_value;
     
     mutable String m_stringValue;
-    bool m_containsVariables { false };
     mutable bool m_serialized { false };
-
-    // FIXME: It should not be possible to express an invalid state, such as containsVariables() && resolvedTypedValue().
-    std::optional<Length> m_resolvedTypedValue;
 };
 
 } // namespace WebCore

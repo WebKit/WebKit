@@ -226,7 +226,7 @@ bool PropertySetCSSStyleDeclaration::isPropertyImplicit(const String& propertyNa
 ExceptionOr<void> PropertySetCSSStyleDeclaration::setProperty(const String& propertyName, const String& value, const String& priority)
 {
     StyleAttributeMutationScope mutationScope(this);
-    
+
     CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (isCustomPropertyName(propertyName))
         propertyID = CSSPropertyCustom;
@@ -241,9 +241,16 @@ ExceptionOr<void> PropertySetCSSStyleDeclaration::setProperty(const String& prop
         return { };
 
     bool changed;
-    if (propertyID == CSSPropertyCustom)
-        changed = m_propertySet->setCustomProperty(propertyName, value, important, cssParserContext());
-    else
+    if (UNLIKELY(propertyID == CSSPropertyCustom)) {
+        Document* document = nullptr;
+
+        if (parentElement())
+            document = &parentElement()->document();
+        else
+            document = parentStyleSheet()->ownerDocument();
+
+        changed = m_propertySet->setCustomProperty(document, propertyName, value, important, cssParserContext());
+    } else
         changed = m_propertySet->setProperty(propertyID, value, important, cssParserContext());
 
     didMutate(changed ? PropertyChanged : NoChanges);

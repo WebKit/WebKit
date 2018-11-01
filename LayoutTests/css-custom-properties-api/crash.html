@@ -1,0 +1,63 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:CSSCustomPropertiesAndValuesEnabled=true ] -->
+<!-- https://chromium.googlesource.com/chromium/src/+/01ce431409e3a019858677626a983c55168da6dc/third_party/WebKit/LayoutTests/custom-properties/register-property.html -->
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+
+<style>
+  #test1 {
+    font-size: var(--foo, 30px);
+    --foo: var(--bar, 20px);
+    --bar: var(--baz, var(--foo));
+  }
+</style>
+<div>
+  <h2 id=test1>This is text</h2>
+</div>
+<script>
+var computedStyle = getComputedStyle(test1);
+var inlineStyle = test1.style;
+
+test(function() {
+  assert_equals(computedStyle.getPropertyValue('--baz'), '');
+  assert_equals(computedStyle.getPropertyValue('--foo'), '');
+  assert_equals(computedStyle.getPropertyValue('--bar'), '');
+  assert_equals(computedStyle.getPropertyValue('font-size'), '30px');
+}, "Fallback is handled correctly, and we don't crash");
+
+test(function() {
+  inlineStyle.setProperty('--baz', '   40px');
+  assert_equals(computedStyle.getPropertyValue('--baz'), ' 40px');
+  assert_equals(computedStyle.getPropertyValue('--foo'), '');
+  assert_equals(computedStyle.getPropertyValue('--bar'), '');
+  assert_equals(computedStyle.getPropertyValue('--baz'), ' 40px');
+  assert_equals(computedStyle.getPropertyValue('font-size'), '30px');
+  inlineStyle.removeProperty('--baz');
+  assert_equals(computedStyle.getPropertyValue('--baz'), '');
+  assert_equals(computedStyle.getPropertyValue('--foo'), '');
+  assert_equals(computedStyle.getPropertyValue('--bar'), '');
+  assert_equals(computedStyle.getPropertyValue('font-size'), '30px');
+  assert_equals(computedStyle.getPropertyValue('--baz'), '');
+}, "Setting the inline style is handled correctly");
+
+test(function() {
+  CSS.registerProperty({name: '--foo', syntax: '<length>', initialValue: '200px', inherits: true});
+  CSS.registerProperty({name: '--bar', syntax: '<length>', initialValue: '200px', inherits: true});
+  CSS.registerProperty({name: '--baz', syntax: '<length>', initialValue: '200px', inherits: true});
+}, "CSS.registerProperty");
+
+test(function() {
+  inlineStyle.setProperty('--baz', '   40px');
+  assert_equals(computedStyle.getPropertyValue('--baz'), '40px');
+  assert_equals(computedStyle.getPropertyValue('--foo'), '200px');
+  assert_equals(computedStyle.getPropertyValue('--bar'), '200px');
+  assert_equals(computedStyle.getPropertyValue('--baz'), '40px');
+  assert_equals(computedStyle.getPropertyValue('font-size'), '200px');
+  inlineStyle.removeProperty('--baz');
+  assert_equals(computedStyle.getPropertyValue('--baz'), '200px');
+  assert_equals(computedStyle.getPropertyValue('--foo'), '200px');
+  assert_equals(computedStyle.getPropertyValue('--bar'), '200px');
+  assert_equals(computedStyle.getPropertyValue('font-size'), '200px');
+  assert_equals(computedStyle.getPropertyValue('--baz'), '200px');
+}, "Setting the inline style is handled correctly when registered");
+
+</script>
