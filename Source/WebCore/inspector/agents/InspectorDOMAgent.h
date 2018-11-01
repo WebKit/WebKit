@@ -64,7 +64,9 @@ class Frame;
 class InspectorHistory;
 class InspectorOverlay;
 class InspectorPageAgent;
+#if ENABLE(VIDEO)
 class HTMLMediaElement;
+#endif
 class HitTestResult;
 class Node;
 class PseudoElement;
@@ -225,7 +227,9 @@ public:
     int idForEventListener(EventTarget&, const AtomicString& eventType, EventListener&, bool capture);
 
 private:
+#if ENABLE(VIDEO)
     void mediaMetricsTimerFired();
+#endif
 
     void highlightMousedOverNode();
     void setSearchingForNode(ErrorString&, bool enabled, const JSON::Object* highlightConfig);
@@ -288,6 +292,7 @@ private:
     bool m_suppressAttributeModifiedEvent { false };
     bool m_documentRequested { false };
 
+#if ENABLE(VIDEO)
     Timer m_mediaMetricsTimer;
     struct MediaMetrics {
         unsigned displayCompositedFrames { 0 };
@@ -303,6 +308,7 @@ private:
 
     // The pointer key for this map should not be used for anything other than matching.
     HashMap<HTMLMediaElement*, MediaMetrics> m_mediaMetrics;
+#endif
 
     struct InspectorEventListener {
         int identifier { 1 };

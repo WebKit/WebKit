@@ -26,6 +26,8 @@
 #include "config.h"
 #include "VideoPlaybackQuality.h"
 
+#if ENABLE(VIDEO)
+
 #include "MediaPlayer.h"
 
 namespace WebCore {
@@ -46,3 +48,5 @@ VideoPlaybackQuality::VideoPlaybackQuality(double creationTime, const VideoPlayb
 }
 
 }
+
+#endif // ENABLE(VIDEO)

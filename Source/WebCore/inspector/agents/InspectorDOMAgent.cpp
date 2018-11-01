@@ -284,7 +284,9 @@ InspectorDOMAgent::InspectorDOMAgent(WebAgentContext& context, InspectorPageAgen
     , m_backendDispatcher(Inspector::DOMBackendDispatcher::create(context.backendDispatcher, this))
     , m_pageAgent(pageAgent)
     , m_overlay(overlay)
+#if ENABLE(VIDEO)
     , m_mediaMetricsTimer(*this, &InspectorDOMAgent::mediaMetricsTimerFired)
+#endif
 {
 }
 
@@ -302,11 +304,13 @@ void InspectorDOMAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, 
     m_instrumentingAgents.setInspectorDOMAgent(this);
     m_document = m_pageAgent->mainFrame().document();
 
+#if ENABLE(VIDEO)
     if (m_document)
         addEventListenersToNode(*m_document);
 
     for (auto* mediaElement : HTMLMediaElement::allMediaElements())
         addEventListenersToNode(*mediaElement);
+#endif
 
     if (m_nodeToFocus)
         focusNode();
@@ -2146,6 +2150,7 @@ int InspectorDOMAgent::identifierForNode(Node& node)
     return pushNodePathToFrontend(&node);
 }
 
+#if ENABLE(VIDEO)
 void InspectorDOMAgent::addEventListenersToNode(Node& node)
 {
     auto callback = EventFiredCallback::create(*this);
@@ -2186,6 +2191,7 @@ void InspectorDOMAgent::addEventListenersToNode(Node& node)
             m_mediaMetricsTimer.start(0_s, 1_s / 15.);
     }
 }
+#endif
 
 void InspectorDOMAgent::didInsertDOMNode(Node& node)
 {
@@ -2453,6 +2459,7 @@ int InspectorDOMAgent::idForEventListener(EventTarget& target, const AtomicStrin
     return 0;
 }
 
+#if ENABLE(VIDEO)
 void InspectorDOMAgent::mediaMetricsTimerFired()
 {
     // FIXME: remove metrics information for any media element when it's destroyed
@@ -2495,6 +2502,7 @@ void InspectorDOMAgent::mediaMetricsTimerFired()
         return !HTMLMediaElement::allMediaElements().contains(entry.key);
     });
 }
+#endif
 
 Node* InspectorDOMAgent::nodeForPath(const String& path)
 {

@@ -6548,6 +6548,8 @@ void Document::dispatchFullScreenChangeOrErrorEvent(Deque<RefPtr<Node>>& queue, 
 #if ENABLE(VIDEO)
         if (shouldNotifyMediaElement && is<HTMLMediaElement>(*node))
             downcast<HTMLMediaElement>(*node).enteredOrExitedFullscreen();
+#else
+        UNUSED_PARAM(shouldNotifyMediaElement);
 #endif
         node->dispatchEvent(Event::create(eventName, Event::CanBubble::Yes, Event::IsCancelable::No));
     }

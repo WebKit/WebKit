@@ -1,3 +1,13 @@
+2018-11-01  Claudio Saavedra  <csaavedra@igalia.com>
+
+        Fix build with VIDEO and WEB_AUDIO disabled
+        https://bugs.webkit.org/show_bug.cgi?id=191147
+
+        Reviewed by Philippe Normand.
+
+        * MiniBrowser/gtk/main.c:
+        (main): Condition GST includes and calls
+
 2018-10-31  Justin Michaud  <justin_michaud@apple.com>
 
         Add Justin Michaud to the list of WebKit Committers

@@ -1,3 +1,25 @@
+2018-11-01  Claudio Saavedra  <csaavedra@igalia.com>
+
+        Fix build with VIDEO and WEB_AUDIO disabled
+        https://bugs.webkit.org/show_bug.cgi?id=191147
+
+        Reviewed by Philippe Normand.
+
+        Supported or not, there were a few build fixes needed
+        to be able to build WebKit with media disabled. Mostly
+        low-hanging fruits.
+
+        * Modules/mediasource/VideoPlaybackQuality.cpp:
+        * Modules/mediasource/VideoPlaybackQuality.h:
+        * Modules/mediasource/VideoPlaybackQuality.idl:
+        * dom/Document.cpp:
+        (WebCore::Document::dispatchFullScreenChangeOrErrorEvent):
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::InspectorDOMAgent):
+        (WebCore::InspectorDOMAgent::didCreateFrontendAndBackend):
+        * inspector/agents/InspectorDOMAgent.h:
+        * rendering/RenderThemeGtk.cpp:
+
 2018-10-31  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Canvas: create a setting for auto-recording newly created contexts
