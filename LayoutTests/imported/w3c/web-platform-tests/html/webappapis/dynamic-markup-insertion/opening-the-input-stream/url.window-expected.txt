@@ -1,6 +1,6 @@
 
 PASS document.open() changes document's URL (fully active document) 
-FAIL document.open() does not change document's URL (active but not fully active document) assert_equals: expected "http://localhost:8800/common/blank.html" but got ""
+FAIL document.open() does not change document's URL (active but not fully active document) assert_equals: expected "http://localhost:8800/common/blank.html" but got "about:blank"
 PASS document.open() does not change document's URL (non-active document with an associated Window object; frame is removed) 
 PASS document.open() does not change document's URL (non-active document with an associated Window object; navigated away) 
 PASS document.open() does not change document's URL (non-active document without an associated Window object) 

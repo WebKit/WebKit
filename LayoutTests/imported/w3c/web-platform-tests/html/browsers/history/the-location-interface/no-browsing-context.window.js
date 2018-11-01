@@ -42,7 +42,7 @@ function bcLessLocation() {
   },
   {
     "property": "pathname",
-    "expected": "",
+    "expected": "blank",
     "values": ["/", "x"]
   },
   {

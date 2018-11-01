@@ -15,15 +15,15 @@ function validateWindow(_w)
     try {
     shouldBeTrue("!!w.location");
     if (w.location) {
-        shouldBeEqualToString("w.location.href", "");
-        shouldBeEqualToString("w.location.protocol", "");
+        shouldBeEqualToString("w.location.href", "about:blank");
+        shouldBeEqualToString("w.location.protocol", "about:");
         shouldBeEqualToString("w.location.host", "");
         shouldBeEqualToString("w.location.hostname", "");
         shouldBeEqualToString("w.location.port", "");
-        shouldBeEqualToString("w.location.pathname", "");
+        shouldBeEqualToString("w.location.pathname", "blank");
         shouldBeEqualToString("w.location.search", "");
         shouldBeEqualToString("w.location.hash", "");
-        shouldBeEqualToString("w.location.origin", "");
+        shouldBeEqualToString("w.location.origin", "null");
         shouldNotThrow("w.location.assign('')");
         shouldNotThrow("w.location.replace('')");
         shouldNotThrow("w.location.reload('')");

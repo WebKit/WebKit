@@ -46,7 +46,8 @@ Location::Location(DOMWindow& window)
 
 inline const URL& Location::url() const
 {
-    ASSERT(frame());
+    if (!frame())
+        return blankURL();
 
     const URL& url = frame()->document()->url();
     if (!url.isValid())
@@ -57,9 +58,6 @@ inline const URL& Location::url() const
 
 String Location::href() const
 {
-    if (!frame())
-        return String();
-
     auto& url = this->url();
 
     if (!url.hasUsername() && !url.hasPassword())
@@ -73,17 +71,11 @@ String Location::href() const
 
 String Location::protocol() const
 {
-    if (!frame())
-        return String();
-
     return makeString(url().protocol(), ":");
 }
 
 String Location::host() const
 {
-    if (!frame())
-        return String();
-
     // Note: this is the IE spec. The NS spec swaps the two, it says
     // "The hostname property is the concatenation of the host and port properties, separated by a colon."
     return url().hostAndPort();
@@ -91,43 +83,29 @@ String Location::host() const
 
 String Location::hostname() const
 {
-    if (!frame())
-        return String();
-
     return url().host().toString();
 }
 
 String Location::port() const
 {
-    if (!frame())
-        return String();
-
     const URL& url = this->url();
     return url.port() ? String::number(url.port().value()) : emptyString();
 }
 
 String Location::pathname() const
 {
-    if (!frame())
-        return String();
-
     const URL& url = this->url();
     return url.path().isEmpty() ? "/" : url.path();
 }
 
 String Location::search() const
 {
-    if (!frame())
-        return String();
-
     const URL& url = this->url();
     return url.query().isEmpty() ? emptyString() : "?" + url.query();
 }
 
 String Location::origin() const
 {
-    if (!frame())
-        return String();
     return SecurityOrigin::create(url())->toString();
 }
 
@@ -144,9 +122,6 @@ Ref<DOMStringList> Location::ancestorOrigins() const
 
 String Location::hash() const
 {
-    if (!frame())
-        return String();
-
     const String& fragmentIdentifier = url().fragmentIdentifier();
     return fragmentIdentifier.isEmpty() ? emptyString() : "#" + fragmentIdentifier;
 }

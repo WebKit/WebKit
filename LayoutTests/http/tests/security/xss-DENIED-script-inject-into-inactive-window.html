@@ -16,7 +16,7 @@ var intervalId;
 
 function checkDidLoadVictim()
 {
-    if (_openedWindowDocument.location.href == "") {
+    if (_openedWindowDocument.location.href == "about:blank") {
         // Victim loaded; |_openedWindowDocument| is an inactive document.
         window.clearInterval(intervalId);
 

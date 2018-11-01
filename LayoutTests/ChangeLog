@@ -1,3 +1,19 @@
+2018-11-01  Chris Dumez  <cdumez@apple.com>
+
+        Location object sans browsing context
+        https://bugs.webkit.org/show_bug.cgi?id=191060
+
+        Reviewed by Geoffrey Garen.
+
+        Update existing tests to reflect behavior change.
+
+        * http/tests/dom/same-origin-detached-window-properties-expected.txt:
+        * http/tests/dom/same-origin-detached-window-properties.html:
+        * http/tests/security/xss-DENIED-script-inject-into-inactive-window.html:
+        * http/tests/security/xss-DENIED-script-inject-into-inactive-window2-pson.html:
+        * http/tests/security/xss-DENIED-script-inject-into-inactive-window2.html:
+        * http/tests/security/xss-DENIED-script-inject-into-inactive-window3.html:
+
 2018-11-01  Ross Kirsling  <ross.kirsling@sony.com>
 
         [WinCairo] Unreviewed layout test gardening.

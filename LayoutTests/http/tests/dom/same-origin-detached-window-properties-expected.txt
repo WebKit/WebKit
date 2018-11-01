@@ -5,15 +5,15 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 * Before GC
 PASS !!w.location is true
-PASS w.location.href is ""
-PASS w.location.protocol is ""
+PASS w.location.href is "about:blank"
+PASS w.location.protocol is "about:"
 PASS w.location.host is ""
 PASS w.location.hostname is ""
 PASS w.location.port is ""
-PASS w.location.pathname is ""
+PASS w.location.pathname is "blank"
 PASS w.location.search is ""
 PASS w.location.hash is ""
-PASS w.location.origin is ""
+PASS w.location.origin is "null"
 PASS w.location.assign('') did not throw exception.
 PASS w.location.replace('') did not throw exception.
 PASS w.location.reload('') did not throw exception.
@@ -80,15 +80,15 @@ PASS w.location.foo is undefined.
 
 * After GC
 PASS !!w.location is true
-PASS w.location.href is ""
-PASS w.location.protocol is ""
+PASS w.location.href is "about:blank"
+PASS w.location.protocol is "about:"
 PASS w.location.host is ""
 PASS w.location.hostname is ""
 PASS w.location.port is ""
-PASS w.location.pathname is ""
+PASS w.location.pathname is "blank"
 PASS w.location.search is ""
 PASS w.location.hash is ""
-PASS w.location.origin is ""
+PASS w.location.origin is "null"
 PASS w.location.assign('') did not throw exception.
 PASS w.location.replace('') did not throw exception.
 PASS w.location.reload('') did not throw exception.
