@@ -2496,25 +2496,24 @@ void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, A
         if (policies->websiteDataStore())
             changeWebsiteDataStore(policies->websiteDataStore()->websiteDataStore());
     }
-    
+
+    Ref<WebProcessProxy> processForNavigation = process();
     if (policyAction == PolicyAction::Use && frame.isMainFrame()) {
         String reason;
-        auto proposedProcess = process().processPool().processForNavigation(*this, *navigation, processSwapRequestedByClient, policyAction, reason);
+        processForNavigation = process().processPool().processForNavigation(*this, *navigation, processSwapRequestedByClient, reason);
         ASSERT(!reason.isNull());
-        
-        if (proposedProcess.ptr() != &process()) {
-            RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "%p - WebPageProxy::decidePolicyForNavigationAction, swapping process %i with process %i for navigation, reason: %{public}s", this, processIdentifier(), proposedProcess->processIdentifier(), reason.utf8().data());
-            LOG(ProcessSwapping, "(ProcessSwapping) Switching from process %i to new process (%i) for navigation %" PRIu64 " '%s'", processIdentifier(), proposedProcess->processIdentifier(), navigation->navigationID(), navigation->loggingString());
-            
-            RunLoop::main().dispatch([this, protectedThis = makeRef(*this), navigation = makeRef(*navigation), proposedProcess = WTFMove(proposedProcess)]() mutable {
-                continueNavigationInNewProcess(navigation, WTFMove(proposedProcess));
-            });
+        if (processForNavigation.ptr() != &process()) {
+            policyAction = PolicyAction::Suspend;
+            RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "%p - WebPageProxy::decidePolicyForNavigationAction, swapping process %i with process %i for navigation, reason: %{public}s", this, processIdentifier(), processForNavigation->processIdentifier(), reason.utf8().data());
+            LOG(ProcessSwapping, "(ProcessSwapping) Switching from process %i to new process (%i) for navigation %" PRIu64 " '%s'", processIdentifier(), processForNavigation->processIdentifier(), navigation->navigationID(), navigation->loggingString());
         } else
             RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "%p - WebPageProxy::decidePolicyForNavigationAction, keep using process %i for navigation, reason: %{public}s", this, processIdentifier(), reason.utf8().data());
     }
-    
+
     receivedPolicyDecision(policyAction, navigation, WTFMove(data), WTFMove(sender));
 
+    if (processForNavigation.ptr() != &process())
+        continueNavigationInNewProcess(*navigation, WTFMove(processForNavigation));
 }
 
 void WebPageProxy::receivedPolicyDecision(PolicyAction action, API::Navigation* navigation, std::optional<WebsitePoliciesData>&& websitePolicies, Ref<PolicyDecisionSender>&& sender)

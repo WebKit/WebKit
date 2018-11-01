@@ -2071,9 +2071,9 @@ void WebProcessPool::removeProcessFromOriginCacheSet(WebProcessProxy& process)
         m_swappedProcessesPerRegistrableDomain.remove(registrableDomain);
 }
 
-Ref<WebProcessProxy> WebProcessPool::processForNavigation(WebPageProxy& page, const API::Navigation& navigation, ProcessSwapRequestedByClient processSwapRequestedByClient, PolicyAction& action, String& reason)
+Ref<WebProcessProxy> WebProcessPool::processForNavigation(WebPageProxy& page, const API::Navigation& navigation, ProcessSwapRequestedByClient processSwapRequestedByClient, String& reason)
 {
-    auto process = processForNavigationInternal(page, navigation, processSwapRequestedByClient, action, reason);
+    auto process = processForNavigationInternal(page, navigation, processSwapRequestedByClient, reason);
 
     if (m_configuration->alwaysKeepAndReuseSwappedProcesses() && process.ptr() != &page.process()) {
         static std::once_flag onceFlag;
@@ -2089,7 +2089,7 @@ Ref<WebProcessProxy> WebProcessPool::processForNavigation(WebPageProxy& page, co
     return process;
 }
 
-Ref<WebProcessProxy> WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API::Navigation& navigation, ProcessSwapRequestedByClient processSwapRequestedByClient, PolicyAction& action, String& reason)
+Ref<WebProcessProxy> WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API::Navigation& navigation, ProcessSwapRequestedByClient processSwapRequestedByClient, String& reason)
 {
     auto& targetURL = navigation.currentRequest().url();
 
@@ -2135,7 +2135,6 @@ Ref<WebProcessProxy> WebProcessPool::processForNavigationInternal(WebPageProxy& 
 
     if (auto* backForwardListItem = navigation.targetItem()) {
         if (auto* suspendedPage = backForwardListItem->suspendedPage()) {
-            action = PolicyAction::Suspend;
             reason = "Using target back/forward item's process"_s;
             return suspendedPage->process();
         }
@@ -2197,8 +2196,6 @@ Ref<WebProcessProxy> WebProcessPool::processForNavigationInternal(WebPageProxy& 
             }
         }
     }
-
-    action = PolicyAction::Suspend;
 
     if (RefPtr<WebProcessProxy> process = tryTakePrewarmedProcess(page.websiteDataStore())) {
         tryPrewarmWithDomainInformation(*process, targetURL);

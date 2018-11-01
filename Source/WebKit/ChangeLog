@@ -1,5 +1,23 @@
 2018-11-01  Chris Dumez  <cdumez@apple.com>
 
+        [PSON] WebPageProxy::receivedNavigationPolicyDecision() should not schedule the new load asynchronously when process-swapping
+        https://bugs.webkit.org/show_bug.cgi?id=191076
+
+        Reviewed by Geoffrey Garen.
+
+        WebPageProxy::receivedNavigationPolicyDecision() should not schedule the new load asynchronously when process-swapping.
+        The client can request a new load synchronously after answering the policy decision, in which case we'd end up loading
+        the wrong URL.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedNavigationPolicyDecision):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::processForNavigation):
+        (WebKit::WebProcessPool::processForNavigationInternal):
+        * UIProcess/WebProcessPool.h:
+
+2018-11-01  Chris Dumez  <cdumez@apple.com>
+
         [PSON] Unable to submit a file in FormData cross-site
         https://bugs.webkit.org/show_bug.cgi?id=191138
 

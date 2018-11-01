@@ -91,7 +91,7 @@ static RetainPtr<NSURL> clientRedirectDestinationURL;
 @end
 
 @interface PSONNavigationDelegate : NSObject <WKNavigationDelegate> {
-    @public WKNavigationActionPolicy navigationActionPolicyToUse;
+    @public void (^decidePolicyForNavigationAction)(WKNavigationAction *, void (^)(WKNavigationActionPolicy));
 }
 @end
 
@@ -100,7 +100,6 @@ static RetainPtr<NSURL> clientRedirectDestinationURL;
 - (instancetype) init
 {
     self = [super init];
-    navigationActionPolicyToUse = WKNavigationActionPolicyAllow;
     return self;
 }
 
@@ -120,7 +119,10 @@ static RetainPtr<NSURL> clientRedirectDestinationURL;
 {
     ++numberOfDecidePolicyCalls;
     seenPIDs.add([webView _webProcessIdentifier]);
-    decisionHandler(navigationActionPolicyToUse);
+    if (decidePolicyForNavigationAction)
+        decidePolicyForNavigationAction(navigationAction, decisionHandler);
+    else
+        decisionHandler(WKNavigationActionPolicyAllow);
 }
 
 - (void)webView:(WKWebView *)webView didReceiveServerRedirectForProvisionalNavigation:(WKNavigation *)navigation
@@ -440,6 +442,47 @@ TEST(ProcessSwap, Basic)
 
     // 3 loads, 3 decidePolicy calls (e.g. the load that did perform a process swap should not have generated an additional decidePolicy call)
     EXPECT_EQ(numberOfDecidePolicyCalls, 3);
+}
+
+TEST(ProcessSwap, LoadAfterPolicyDecision)
+{
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    processPoolConfiguration.get().prewarmsProcessesAutomatically = YES;
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main1.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    navigationDelegate->decidePolicyForNavigationAction = ^(WKNavigationAction *, void (^decisionHandler)(WKNavigationActionPolicy)) {
+        decisionHandler(WKNavigationActionPolicyAllow);
+
+        // Synchronously navigate again right after answering the policy delegate for the previous navigation.
+        navigationDelegate->decidePolicyForNavigationAction = nil;
+        NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main2.html"]];
+        [webView loadRequest:request];
+    };
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/main.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    // Should navigate to pson://www.webkit.org/main2.html and not pson://www.apple.com/main.html.
+    EXPECT_WK_STREQ(@"pson://www.webkit.org/main2.html", [[webView URL] absoluteString]);
 }
 
 TEST(ProcessSwap, NoSwappingForeTLDPlus2)
@@ -2304,7 +2347,9 @@ TEST(ProcessSwap, APIControlledProcessSwapping)
 
     // Navigating from the above URL to this URL normally should not process swap,
     // but we'll explicitly ask for a swap.
-    navigationDelegate->navigationActionPolicyToUse = _WKNavigationActionPolicyAllowInNewProcess;
+    navigationDelegate->decidePolicyForNavigationAction = ^(WKNavigationAction *, void (^decisionHandler)(WKNavigationActionPolicy)) {
+        decisionHandler(_WKNavigationActionPolicyAllowInNewProcess);
+    };
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webit.org/3"]]];
     TestWebKitAPI::Util::run(&done);
     done = false;
