@@ -78,6 +78,8 @@ public:
     bool supportsSimultaneousTransactions() final { return true; }
     bool isEphemeral() final { return true; }
 
+    void setQuota(uint64_t quota) final { UNUSED_PARAM(quota); };
+
     void removeObjectStoreForVersionChangeAbort(MemoryObjectStore&);
     void restoreObjectStoreForVersionChangeAbort(Ref<MemoryObjectStore>&&);
 

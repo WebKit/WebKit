@@ -1616,6 +1616,13 @@ void WebProcessPool::syncNetworkProcessCookies()
     ensureNetworkProcess().syncAllCookies();
 }
 
+void WebProcessPool::setIDBPerOriginQuota(uint64_t quota)
+{
+#if ENABLE(INDEXED_DATABASE)
+    ensureNetworkProcess().send(Messages::NetworkProcess::SetIDBPerOriginQuota(quota), 0);
+#endif
+}
+
 void WebProcessPool::allowSpecificHTTPSCertificateForHost(const WebCertificateInfo* certificate, const String& host)
 {
     ensureNetworkProcess();

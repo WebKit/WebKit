@@ -114,4 +114,8 @@ messages -> NetworkProcess LegacyReceiver {
 
     DisableServiceWorkerProcessTerminationDelay()
 #endif
+
+#if ENABLE(INDEXED_DATABASE)
+    SetIDBPerOriginQuota(uint64_t quota)
+#endif
 }

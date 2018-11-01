@@ -138,6 +138,9 @@ NetworkProcess::NetworkProcess()
     , m_clearCacheDispatchGroup(0)
 #endif
     , m_storageTaskQueue(WorkQueue::create("com.apple.WebKit.StorageTask"))
+#if ENABLE(INDEXED_DATABASE)
+    , m_idbPerOriginQuota(IDBServer::defaultPerOriginQuota)
+#endif
 {
     NetworkProcessPlatformStrategies::initialize();
 
@@ -1105,6 +1108,7 @@ IDBServer::IDBServer& NetworkProcess::idbServer(PAL::SessionID sessionID)
     ASSERT(!path.isEmpty());
     
     addResult.iterator->value = IDBServer::IDBServer::create(path, NetworkProcess::singleton());
+    addResult.iterator->value->setPerOriginQuota(m_idbPerOriginQuota);
     return *addResult.iterator->value;
 }
 
@@ -1194,6 +1198,13 @@ void NetworkProcess::addIndexedDatabaseSession(PAL::SessionID sessionID, String&
     }
 }
 
+void NetworkProcess::setIDBPerOriginQuota(uint64_t quota)
+{
+    m_idbPerOriginQuota = quota;
+    
+    for (auto& server : m_idbServers.values())
+        server->setPerOriginQuota(quota);
+}
 #endif // ENABLE(INDEXED_DATABASE)
 
 #if ENABLE(SANDBOX_EXTENSIONS)

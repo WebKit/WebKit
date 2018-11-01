@@ -1907,6 +1907,12 @@ void UniqueIDBDatabase::forgetErrorCallback(uint64_t callbackIdentifier)
     m_errorCallbacks.remove(callbackIdentifier);
 }
 
+void UniqueIDBDatabase::setQuota(uint64_t quota)
+{
+    if (m_backingStore)
+        m_backingStore->setQuota(quota);
+}
+
 } // namespace IDBServer
 } // namespace WebCore
 

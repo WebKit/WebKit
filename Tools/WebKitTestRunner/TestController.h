@@ -241,6 +241,8 @@ public:
     bool hasDOMCache(WKStringRef origin);
     uint64_t domCacheSize(WKStringRef origin);
 
+    void setIDBPerOriginQuota(uint64_t);
+
     bool didReceiveServerRedirectForProvisionalNavigation() const { return m_didReceiveServerRedirectForProvisionalNavigation; }
     void clearDidReceiveServerRedirectForProvisionalNavigation() { m_didReceiveServerRedirectForProvisionalNavigation = false; }
 

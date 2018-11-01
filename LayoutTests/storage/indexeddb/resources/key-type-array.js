@@ -20,7 +20,7 @@ function testValidArrayKeys()
     evalAndLog("store = trans.objectStore('store')");
     debug("");
 
-    evalAndLog("long_array = []; for (i = 0; i < 1000; ++i) { long_array.push('abc', 123, new Date(0), []); }");
+    evalAndLog("long_array = []; for (i = 0; i < 10; ++i) { long_array.push('abc', 123, new Date(0), []); }");
     debug("");
 
     debug("array that contains non-numeric self-reference");
@@ -78,6 +78,9 @@ function testValidArrayKeys()
             getreq.onerror = unexpectedErrorCallback;
             getreq.onsuccess = function() {
                 shouldBeEqualToString("getreq.result", value);
+
+                evalAndLog("store.delete(" + key + ");").onerror = unexpectedErrorCallback;
+
                 debug("");
                 callback();
             };

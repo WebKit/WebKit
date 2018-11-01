@@ -44,6 +44,8 @@ public:
     WebCore::IDBClient::IDBConnectionToServer& idbConnectionToServerForSession(const PAL::SessionID&) override;
 
     void deleteAllDatabases();
+
+    void setIDBPerOriginQuota(uint64_t);
 #endif
 
 private:
@@ -53,5 +55,6 @@ private:
 
 #if ENABLE(INDEXED_DATABASE)
     HashMap<uint64_t, RefPtr<WebCore::InProcessIDBServer>> m_idbServerMap;
+    uint64_t m_idbPerOriginQuota { WebCore::IDBServer::defaultPerOriginQuota };
 #endif
 };

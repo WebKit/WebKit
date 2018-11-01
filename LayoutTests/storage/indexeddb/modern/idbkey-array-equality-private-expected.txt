@@ -7,7 +7,7 @@ indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.
 
 indexedDB.deleteDatabase(dbname)
 indexedDB.open(dbname)
-Successfully added all 500 array keys, without any conflicts.
+Successfully added all 50 array keys, without any conflicts.
 PASS successfullyParsed is true
 
 TEST COMPLETE

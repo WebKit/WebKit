@@ -1,3 +1,43 @@
+2018-11-01  Sihui Liu  <sihui_liu@apple.com>
+
+        Add a storage limit for IndexedDB
+        https://bugs.webkit.org/show_bug.cgi?id=190598
+        <rdar://problem/44654715>
+
+        Reviewed by Chris Dumez.
+
+        Set a storage limit in IndexedDB for each pair of mainFrameOrigin and openingOrigin. 
+        IndexedDB will return a QuotaExceededError if limit is reached.
+
+        If the size of free disk space is over 1 GB, the default limit is 500 MB; otherwise it is 
+        half the free disk space.
+
+        Test: storage/indexeddb/storage-limit.html
+
+        * Modules/indexeddb/server/IDBBackingStore.h:
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::createBackingStore):
+        (WebCore::IDBServer::IDBServer::setPerOriginQuota):
+        * Modules/indexeddb/server/IDBServer.h:
+        (WebCore::IDBServer::IDBServer::perOriginQuota const):
+        * Modules/indexeddb/server/MemoryIDBBackingStore.h:
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::SQLiteIDBBackingStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::quotaForOrigin const):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::maximumSize const):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::beginTransaction):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::createObjectStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::renameObjectStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::createIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::uncheckedPutIndexRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::renameIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::addRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::uncheckedSetKeyGeneratorValue):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.h:
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::setQuota):
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+
 2018-11-01  Justin Michaud  <justin_michaud@apple.com>
 
         CSS Custom Properties API Should Support syntax="*" and "<length>", and handle cycles properly

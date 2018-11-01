@@ -191,6 +191,7 @@ public:
     // WebCore::IDBServer::IDBBackingStoreFileHandler.
     void prepareForAccessToTemporaryFile(const String& path) final;
     void accessToTemporaryFileComplete(const String& path) final;
+    void setIDBPerOriginQuota(uint64_t);
 #endif
 
 #if ENABLE(SANDBOX_EXTENSIONS)
@@ -392,6 +393,7 @@ private:
 #if ENABLE(INDEXED_DATABASE)
     HashMap<PAL::SessionID, String> m_idbDatabasePaths;
     HashMap<PAL::SessionID, RefPtr<WebCore::IDBServer::IDBServer>> m_idbServers;
+    uint64_t m_idbPerOriginQuota;
 #endif
 
     HashMap<String, RefPtr<SandboxExtension>> m_blobTemporaryFileSandboxExtensions;

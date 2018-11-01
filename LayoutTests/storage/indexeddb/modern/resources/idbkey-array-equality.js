@@ -2,7 +2,7 @@ description("This test makes sure that array IDBKeys are correctly compared for 
 
 indexedDBTest(prepareDatabase);
 
-var iterationCount = 500;
+var iterationCount = 50;
 var successCount = 0;
 function doAdd(objectStore, value)
 {
@@ -10,15 +10,15 @@ function doAdd(objectStore, value)
     var request = objectStore.add("value", key);
     request.onsuccess = function() {
         if (++successCount == iterationCount) {
-            debug("Successfully added all 500 array keys, without any conflicts.");
+            debug("Successfully added all 50 array keys, without any conflicts.");
             finishJSTest();
         }
     };
 
     request.onerror = function(event) {
-        debug("Error putting value into database (" + value + "): " + event.type);
+        debug("Error putting value into database (" + value + "): (" + event.target.error.name +") " + event.target.error.message);
         finishJSTest();
-    }    
+    }
 }
 
 function prepareDatabase(event)

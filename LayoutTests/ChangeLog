@@ -1,3 +1,40 @@
+2018-11-01  Sihui Liu  <sihui_liu@apple.com>
+
+        Add a storage limit for IndexedDB
+        https://bugs.webkit.org/show_bug.cgi?id=190598
+        <rdar://problem/44654715>
+
+        Reviewed by Chris Dumez.
+
+        Some tests will fail after adding storage limit to IndexedDB, so we need to reduce their 
+        size and rebase their expectations.
+
+        * storage/indexeddb/key-type-array-expected.txt:
+        * storage/indexeddb/key-type-array-private-expected.txt:
+        * storage/indexeddb/modern/idbkey-array-equality-expected.txt:
+        * storage/indexeddb/modern/idbkey-array-equality-private-expected.txt:
+        * storage/indexeddb/modern/resources/idbkey-array-equality.js:
+        (request.onsuccess):
+        (request.onerror):
+        (doAdd):
+        * storage/indexeddb/prefetch-invalidation-expected.txt:
+        * storage/indexeddb/prefetch-invalidation-private-expected.txt:
+        * storage/indexeddb/resources/key-type-array.js:
+        (testValidArrayKeys.getreq.onsuccess):
+        (testValidArrayKeys.putreq.onsuccess):
+        (testValidArrayKeys.testArrayPutGet):
+        * storage/indexeddb/resources/prefetch-invalidation.js:
+        (cursorRequest.onsuccess):
+        (continue50Times):
+        (continue100Times): Deleted.
+        * storage/indexeddb/resources/storage-limit.js: Added.
+        (prepareDatabase):
+        (onOpenSuccess.request.onerror):
+        (onOpenSuccess.request.onsuccess):
+        (onOpenSuccess):
+        * storage/indexeddb/storage-limit-expected.txt: Added.
+        * storage/indexeddb/storage-limit.html: Added.
+
 2018-11-01  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, mark a couple of newly imported WPT tests as flaky on Mac WK1.

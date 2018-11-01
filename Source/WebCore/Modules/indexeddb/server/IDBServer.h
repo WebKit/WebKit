@@ -48,6 +48,8 @@ struct IDBGetRecordData;
 
 namespace IDBServer {
 
+const uint64_t defaultPerOriginQuota = 500 * MB;
+
 class IDBBackingStoreTemporaryFileHandler;
 
 class IDBServer : public RefCounted<IDBServer>, public CrossThreadTaskHandler {
@@ -104,6 +106,9 @@ public:
     WEBCORE_EXPORT void closeAndDeleteDatabasesModifiedSince(WallTime, Function<void ()>&& completionHandler);
     WEBCORE_EXPORT void closeAndDeleteDatabasesForOrigins(const Vector<SecurityOriginData>&, Function<void ()>&& completionHandler);
 
+    uint64_t perOriginQuota() const { return m_perOriginQuota; }
+    WEBCORE_EXPORT void setPerOriginQuota(uint64_t);
+
 private:
     IDBServer(IDBBackingStoreTemporaryFileHandler&);
     IDBServer(const String& databaseDirectoryPath, IDBBackingStoreTemporaryFileHandler&);
@@ -127,6 +132,8 @@ private:
 
     String m_databaseDirectoryPath;
     IDBBackingStoreTemporaryFileHandler& m_backingStoreTemporaryFileHandler;
+
+    uint64_t m_perOriginQuota { defaultPerOriginQuota };
 };
 
 } // namespace IDBServer

@@ -378,6 +378,13 @@ void TestRunner::disallowIncreaseForApplicationCacheQuota()
     m_disallowIncreaseForApplicationCacheQuota = true;
 }
 
+void TestRunner::setIDBPerOriginQuota(uint64_t quota)
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetIDBPerOriginQuota"));
+    WKRetainPtr<WKUInt64Ref> messageBody(AdoptWK, WKUInt64Create(quota));
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+}
+
 static inline JSValueRef stringArrayToJS(JSContextRef context, WKArrayRef strings)
 {
     const size_t count = WKArrayGetSize(strings);

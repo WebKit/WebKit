@@ -2730,6 +2730,11 @@ void TestController::clearDOMCaches()
     runUntil(context.done, noTimeout);
 }
 
+void TestController::setIDBPerOriginQuota(uint64_t quota)
+{
+    WKContextSetIDBPerOriginQuota(platformContext(), quota);
+}
+
 struct FetchCacheOriginsCallbackContext {
     FetchCacheOriginsCallbackContext(TestController& controller, WKStringRef origin)
         : testController(controller)

@@ -1414,6 +1414,13 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return result;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "SetIDBPerOriginQuota")) {
+        ASSERT(WKGetTypeID(messageBody) == WKUInt64GetTypeID());
+        WKUInt64Ref quota = static_cast<WKUInt64Ref>(messageBody);
+        TestController::singleton().setIDBPerOriginQuota(WKUInt64GetValue(quota));
+        return nullptr;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "InjectUserScript")) {
         ASSERT(WKGetTypeID(messageBody) == WKStringGetTypeID());
         WKStringRef script = static_cast<WKStringRef>(messageBody);

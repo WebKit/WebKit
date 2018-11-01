@@ -47,7 +47,7 @@ class SQLiteIDBCursor;
 
 class SQLiteIDBBackingStore : public IDBBackingStore {
 public:
-    SQLiteIDBBackingStore(const IDBDatabaseIdentifier&, const String& databaseRootDirectory, IDBBackingStoreTemporaryFileHandler&);
+    SQLiteIDBBackingStore(const IDBDatabaseIdentifier&, const String& databaseRootDirectory, IDBBackingStoreTemporaryFileHandler&, uint64_t quota);
     
     ~SQLiteIDBBackingStore() final;
 
@@ -80,6 +80,8 @@ public:
     IDBObjectStoreInfo* infoForObjectStore(uint64_t objectStoreIdentifier) final;
     void deleteBackingStore() final;
 
+    void setQuota(uint64_t quota) final { m_quota = quota; }
+
     bool supportsSimultaneousTransactions() final { return false; }
     bool isEphemeral() final { return false; }
 
@@ -96,6 +98,9 @@ public:
 private:
     String filenameForDatabaseName() const;
     String fullDatabasePath() const;
+
+    uint64_t quotaForOrigin() const;
+    uint64_t maximumSize() const;
 
     bool ensureValidRecordsTable();
     bool ensureValidIndexRecordsTable();
@@ -194,6 +199,8 @@ private:
     JSC::Strong<JSC::JSGlobalObject> m_globalObject;
 
     IDBBackingStoreTemporaryFileHandler& m_temporaryFileHandler;
+    
+    uint64_t m_quota;
 };
 
 } // namespace IDBServer

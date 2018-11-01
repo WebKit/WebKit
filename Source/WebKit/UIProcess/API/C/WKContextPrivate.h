@@ -116,6 +116,8 @@ WK_EXPORT WKProcessID WKContextGetNetworkProcessIdentifier(WKContextRef context)
 WK_EXPORT void WKContextAddSupportedPlugin(WKContextRef context, WKStringRef domain, WKStringRef name, WKArrayRef mimeTypes, WKArrayRef extensions);
 WK_EXPORT void WKContextClearSupportedPlugins(WKContextRef context);
 
+WK_EXPORT void WKContextSetIDBPerOriginQuota(WKContextRef context, uint64_t quota);
+
 #ifdef __cplusplus
 }
 #endif

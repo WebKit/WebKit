@@ -133,6 +133,9 @@ interface TestRunner {
     attribute double databaseDefaultQuota;
     attribute double databaseMaxQuota;
 
+    // IndexedDB API
+    void setIDBPerOriginQuota(unsigned long long quota);
+
     // Application Cache API
     void clearAllApplicationCaches();
     void setAppCacheMaximumSize(unsigned long long size);

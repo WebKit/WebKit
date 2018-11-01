@@ -649,3 +649,8 @@ void WKContextClearSupportedPlugins(WKContextRef contextRef)
     toImpl(contextRef)->clearSupportedPlugins();
 #endif
 }
+
+void WKContextSetIDBPerOriginQuota(WKContextRef contextRef, uint64_t quota)
+{
+    toImpl(contextRef)->setIDBPerOriginQuota(quota);
+}

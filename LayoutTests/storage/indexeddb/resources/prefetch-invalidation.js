@@ -40,14 +40,14 @@ function doPrefetchInvalidationTest(operation, callback)
     debug("-------------------------------------------");
     preamble();
     evalAndLog("store = db.transaction('store', 'readwrite').objectStore('store')");
-    debug("Populate the store with 200 records.");
-    for (var i = 0; i < 200; ++i)
+    debug("Populate the store with 100 records.");
+    for (var i = 0; i < 100; ++i)
         store.put(i, i);
     evalAndLog("cursorRequest = store.openCursor()");
-    continue100Times(operation, callback);
+    continue50Times(operation, callback);
 }
 
-function continue100Times(operation, callback)
+function continue50Times(operation, callback)
 {
     preamble();
     var count = 0;
@@ -55,7 +55,7 @@ function continue100Times(operation, callback)
     cursorRequest.onsuccess = function() {
         var cursor = cursorRequest.result;
         ++count;
-        if (count < 100) {
+        if (count < 50) {
             cursor.continue();
             return;
         }

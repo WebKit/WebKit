@@ -1,3 +1,26 @@
+2018-11-01  Sihui Liu  <sihui_liu@apple.com>
+
+        Add a storage limit for IndexedDB
+        https://bugs.webkit.org/show_bug.cgi?id=190598
+        <rdar://problem/44654715>
+
+        Reviewed by Chris Dumez.
+
+        Add SPI for testing.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::NetworkProcess):
+        (WebKit::NetworkProcess::idbServer):
+        (WebKit::NetworkProcess::setIDBPerOriginQuota):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetIDBPerOriginQuota):
+        * UIProcess/API/C/WKContextPrivate.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::setIDBPerOriginQuota):
+        * UIProcess/WebProcessPool.h:
+
 2018-11-01  Chris Dumez  <cdumez@apple.com>
 
         [PSON] WebPageProxy::receivedNavigationPolicyDecision() should not schedule the new load asynchronously when process-swapping

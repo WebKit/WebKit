@@ -1,3 +1,16 @@
+2018-11-01  Sihui Liu  <sihui_liu@apple.com>
+
+        Add a storage limit for IndexedDB
+        https://bugs.webkit.org/show_bug.cgi?id=190598
+        <rdar://problem/44654715>
+
+        Reviewed by Chris Dumez.
+
+        * Interfaces/IWebDatabaseManager.idl:
+        * WebDatabaseManager.cpp:
+        (WebDatabaseManager::setIDBPerOriginQuota):
+        * WebDatabaseManager.h:
+
 2018-10-31  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][WKL] DOMHTMLDocument::setNodeValue does infinite recursion
