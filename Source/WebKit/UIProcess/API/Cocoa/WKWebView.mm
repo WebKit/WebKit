@@ -731,9 +731,7 @@ static void validate(WKWebViewConfiguration *configuration)
 
     _iconLoadingDelegate = std::make_unique<WebKit::IconLoadingDelegate>(self);
 
-#if PLATFORM(IOS_FAMILY)
     [self _setUpSQLiteDatabaseTrackerClient];
-#endif
 
     for (auto& pair : pageConfiguration->urlSchemeHandlers())
         _page->setURLSchemeHandlerForScheme(WebKit::WebURLSchemeHandlerCocoa::create(static_cast<WebKit::WebURLSchemeHandlerCocoa&>(pair.value.get()).apiHandler()), pair.key);
