@@ -1,5 +1,15 @@
 2018-11-01  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        REGRESSION(r237652): Web Inspector: dumpInspectorProtocolMessages is always enabled
+        https://bugs.webkit.org/show_bug.cgi?id=191161
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Protocol/InspectorBackend.js:
+        (InspectorBackendClass.prototype.get dumpInspectorProtocolMessages):
+
+2018-11-01  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: Styles: Toggle selected properties by pressing Space or Command+/
         https://bugs.webkit.org/show_bug.cgi?id=181145
         <rdar://problem/36203388>

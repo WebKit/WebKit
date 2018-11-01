@@ -70,7 +70,6 @@ InspectorBackendClass = class InspectorBackendClass
 
     get dumpInspectorProtocolMessages()
     {
-        return true;
         return WI.settings.autoLogProtocolMessages.value;
     }
 
