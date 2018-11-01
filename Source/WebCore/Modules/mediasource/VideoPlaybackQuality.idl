@@ -24,7 +24,7 @@
  */
 
 [
-    Conditional=MEDIA_SOURCE,
+    Conditional=VIDEO,
     NoInterfaceObject,
     ImplementationLacksVTable,
 ] interface VideoPlaybackQuality {

@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(VIDEO)
+
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -52,3 +54,5 @@ private:
 };
 
 } // namespace WebCore
+
+#endif // ENABLE(VIDEO)

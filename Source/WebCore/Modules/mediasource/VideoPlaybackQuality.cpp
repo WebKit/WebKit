@@ -26,6 +26,8 @@
 #include "config.h"
 #include "VideoPlaybackQuality.h"
 
+#if ENABLE(VIDEO)
+
 namespace WebCore {
 
 Ref<VideoPlaybackQuality> VideoPlaybackQuality::create(double creationTime, unsigned totalVideoFrames, unsigned droppedVideoFrames, unsigned corruptedVideoFrames, double totalFrameDelay)
@@ -43,3 +45,5 @@ VideoPlaybackQuality::VideoPlaybackQuality(double creationTime, unsigned totalVi
 }
 
 }
+
+#endif // ENABLE(VIDEO)
