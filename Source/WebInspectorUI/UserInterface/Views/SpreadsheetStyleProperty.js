@@ -47,7 +47,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         this._selected = false;
         this._hasInvalidVariableValue = false;
 
-        this._update();
+        this.update();
         property.addEventListener(WI.CSSProperty.Event.OverriddenStatusChanged, this.updateStatus, this);
         property.addEventListener(WI.CSSProperty.Event.Changed, this.updateStatus, this);
 
@@ -136,6 +136,98 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
             this._delegate.spreadsheetStylePropertyRemoved(this);
     }
 
+    update()
+    {
+        this.element.removeChildren();
+
+        if (this._property.editable) {
+            this._checkboxElement = this.element.appendChild(document.createElement("input"));
+            this._checkboxElement.classList.add("property-toggle");
+            this._checkboxElement.type = "checkbox";
+            this._checkboxElement.checked = this._property.enabled;
+            this._checkboxElement.tabIndex = -1;
+            this._checkboxElement.addEventListener("click", (event) => {
+                event.stopPropagation();
+                let disabled = !this._checkboxElement.checked;
+                this._property.commentOut(disabled);
+                this.update();
+            });
+        }
+
+        this._contentElement = this.element.appendChild(document.createElement("span"));
+        this._contentElement.className = "content";
+
+        if (!this._property.enabled)
+            this._contentElement.append("/* ");
+
+        this._nameElement = this._contentElement.appendChild(document.createElement("span"));
+        this._nameElement.classList.add("name");
+        this._nameElement.textContent = this._property.name;
+
+        let colonElement = this._contentElement.appendChild(document.createElement("span"));
+        colonElement.textContent = ": ";
+
+        this._valueElement = this._contentElement.appendChild(document.createElement("span"));
+        this._valueElement.classList.add("value");
+        this._renderValue(this._property.rawValue);
+
+        if (this._property.editable && this._property.enabled) {
+            this._nameElement.tabIndex = 0;
+            this._nameElement.addEventListener("beforeinput", this._handleNameBeforeInput.bind(this));
+            this._nameElement.addEventListener("paste", this._handleNamePaste.bind(this));
+
+            this._nameTextField = new WI.SpreadsheetTextField(this, this._nameElement, this._nameCompletionDataProvider.bind(this));
+
+            this._valueElement.tabIndex = 0;
+            this._valueElement.addEventListener("beforeinput", this._handleValueBeforeInput.bind(this));
+
+            this._valueTextField = new WI.SpreadsheetTextField(this, this._valueElement, this._valueCompletionDataProvider.bind(this));
+        }
+
+        if (this._property.editable) {
+            this._setupJumpToSymbol(this._nameElement);
+            this._setupJumpToSymbol(this._valueElement);
+        }
+
+        let semicolonElement = this._contentElement.appendChild(document.createElement("span"));
+        semicolonElement.textContent = ";";
+
+        if (this._property.enabled) {
+            this._warningElement = this.element.appendChild(document.createElement("span"));
+            this._warningElement.className = "warning";
+        } else
+            this._contentElement.append(" */");
+
+        if (!this._property.implicit && this._property.ownerStyle.type === WI.CSSStyleDeclaration.Type.Computed) {
+            let effectiveProperty = this._property.ownerStyle.nodeStyles.effectivePropertyForName(this._property.name);
+            if (effectiveProperty && !effectiveProperty.styleSheetTextRange)
+                effectiveProperty = effectiveProperty.relatedShorthandProperty;
+
+            let ownerRule = effectiveProperty ? effectiveProperty.ownerStyle.ownerRule : null;
+
+            let arrowElement = this._contentElement.appendChild(WI.createGoToArrowButton());
+            arrowElement.addEventListener("click", (event) => {
+                if (!effectiveProperty || !ownerRule || !event.altKey) {
+                    if (this._delegate.spreadsheetStylePropertyShowProperty)
+                        this._delegate.spreadsheetStylePropertyShowProperty(this, this._property);
+                    return;
+                }
+
+                let sourceCode = ownerRule.sourceCodeLocation.sourceCode;
+                let {startLine, startColumn} = effectiveProperty.styleSheetTextRange;
+                WI.showSourceCodeLocation(sourceCode.createSourceCodeLocation(startLine, startColumn), {
+                    ignoreNetworkTab: true,
+                    ignoreSearchTab: true,
+                });
+            });
+
+            if (effectiveProperty && ownerRule)
+                arrowElement.title = WI.UIString("Option-click to show source");
+        }
+
+        this.updateStatus();
+    }
+
     updateStatus()
     {
         let duplicatePropertyExistsBelow = (cssProperty) => {
@@ -212,100 +304,6 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
     handleCopyEvent(event)
     {
         this._delegate.spreadsheetStylePropertyCopy(event, this);
-    }
-
-    // Private
-
-    _update()
-    {
-        this.element.removeChildren();
-
-        if (this._property.editable) {
-            this._checkboxElement = this.element.appendChild(document.createElement("input"));
-            this._checkboxElement.classList.add("property-toggle");
-            this._checkboxElement.type = "checkbox";
-            this._checkboxElement.checked = this._property.enabled;
-            this._checkboxElement.tabIndex = -1;
-            this._checkboxElement.addEventListener("click", (event) => {
-                event.stopPropagation();
-                let disabled = !this._checkboxElement.checked;
-                this._property.commentOut(disabled);
-                this._update();
-            });
-        }
-
-        this._contentElement = this.element.appendChild(document.createElement("span"));
-        this._contentElement.className = "content";
-
-        if (!this._property.enabled)
-            this._contentElement.append("/* ");
-
-        this._nameElement = this._contentElement.appendChild(document.createElement("span"));
-        this._nameElement.classList.add("name");
-        this._nameElement.textContent = this._property.name;
-
-        let colonElement = this._contentElement.appendChild(document.createElement("span"));
-        colonElement.textContent = ": ";
-
-        this._valueElement = this._contentElement.appendChild(document.createElement("span"));
-        this._valueElement.classList.add("value");
-        this._renderValue(this._property.rawValue);
-
-        if (this._property.editable && this._property.enabled) {
-            this._nameElement.tabIndex = 0;
-            this._nameElement.addEventListener("beforeinput", this._handleNameBeforeInput.bind(this));
-            this._nameElement.addEventListener("paste", this._handleNamePaste.bind(this));
-
-            this._nameTextField = new WI.SpreadsheetTextField(this, this._nameElement, this._nameCompletionDataProvider.bind(this));
-
-            this._valueElement.tabIndex = 0;
-            this._valueElement.addEventListener("beforeinput", this._handleValueBeforeInput.bind(this));
-
-            this._valueTextField = new WI.SpreadsheetTextField(this, this._valueElement, this._valueCompletionDataProvider.bind(this));
-        }
-
-        if (this._property.editable) {
-            this._setupJumpToSymbol(this._nameElement);
-            this._setupJumpToSymbol(this._valueElement);
-        }
-
-        let semicolonElement = this._contentElement.appendChild(document.createElement("span"));
-        semicolonElement.textContent = ";";
-
-        if (this._property.enabled) {
-            this._warningElement = this.element.appendChild(document.createElement("span"));
-            this._warningElement.className = "warning";
-        } else
-            this._contentElement.append(" */");
-
-        if (!this._property.implicit && this._property.ownerStyle.type === WI.CSSStyleDeclaration.Type.Computed) {
-            let effectiveProperty = this._property.ownerStyle.nodeStyles.effectivePropertyForName(this._property.name);
-            if (effectiveProperty && !effectiveProperty.styleSheetTextRange)
-                effectiveProperty = effectiveProperty.relatedShorthandProperty;
-
-            let ownerRule = effectiveProperty ? effectiveProperty.ownerStyle.ownerRule : null;
-
-            let arrowElement = this._contentElement.appendChild(WI.createGoToArrowButton());
-            arrowElement.addEventListener("click", (event) => {
-                if (!effectiveProperty || !ownerRule || !event.altKey) {
-                    if (this._delegate.spreadsheetStylePropertyShowProperty)
-                        this._delegate.spreadsheetStylePropertyShowProperty(this, this._property);
-                    return;
-                }
-
-                let sourceCode = ownerRule.sourceCodeLocation.sourceCode;
-                let {startLine, startColumn} = effectiveProperty.styleSheetTextRange;
-                WI.showSourceCodeLocation(sourceCode.createSourceCodeLocation(startLine, startColumn), {
-                    ignoreNetworkTab: true,
-                    ignoreSearchTab: true,
-                });
-            });
-
-            if (effectiveProperty && ownerRule)
-                arrowElement.title = WI.UIString("Option-click to show source");
-        }
-
-        this.updateStatus();
     }
 
     // SpreadsheetTextField delegate

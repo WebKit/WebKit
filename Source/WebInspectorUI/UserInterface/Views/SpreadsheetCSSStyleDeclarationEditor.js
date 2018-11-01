@@ -237,6 +237,13 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
         });
     }
 
+    get selectionRange()
+    {
+        let startIndex = Math.min(this._anchorIndex, this._focusIndex);
+        let endIndex = Math.max(this._anchorIndex, this._focusIndex);
+        return [startIndex, endIndex];
+    }
+
     startEditingFirstProperty()
     {
         let firstEditableProperty = this._editablePropertyAfter(-1);
@@ -327,8 +334,7 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
         this._anchorIndex = anchorIndex;
         this._focusIndex = focusIndex;
 
-        let startIndex = Math.min(anchorIndex, focusIndex);
-        let endIndex = Math.max(anchorIndex, focusIndex);
+        let [startIndex, endIndex] = this.selectionRange;
 
         for (let i = 0; i < this._propertyViews.length; ++i) {
             let propertyView = this._propertyViews[i];
@@ -451,8 +457,7 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
             return;
 
         let formattedProperties = [];
-        let startIndex = Math.min(this._anchorIndex, this._focusIndex);
-        let endIndex = Math.max(this._anchorIndex, this._focusIndex);
+        let [startIndex, endIndex] = this.selectionRange;
         for (let i = startIndex; i <= endIndex; ++i) {
             let propertyView = this._propertyViews[i];
             formattedProperties.push(propertyView.property.formattedText);
@@ -506,8 +511,7 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
             if (!this._hasSelectedProperties())
                 return;
 
-            let startIndex = Math.min(this._anchorIndex, this._focusIndex);
-            let endIndex = Math.max(this._anchorIndex, this._focusIndex);
+            let [startIndex, endIndex] = this.selectionRange;
 
             let propertyIndexToSelect = NaN;
             if (endIndex + 1 !== this._propertyViews.length)
@@ -527,6 +531,23 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
             }
 
             event.stop();
+
+        } else if ((event.code === "Space" && !event.shiftKey && !event.metaKey && !event.ctrlKey) || (event.key === "/" && (event.metaKey || event.ctrlKey) && !event.shiftKey)) {
+            if (!this._hasSelectedProperties())
+                return;
+
+            let [startIndex, endIndex] = this.selectionRange;
+
+            // Toggle the first selected property and set this state to all selected properties.
+            let disabled = this._propertyViews[startIndex].property.enabled;
+
+            for (let i = endIndex; i >= startIndex; --i) {
+                let propertyView = this._propertyViews[i];
+                propertyView.property.commentOut(disabled);
+                propertyView.update();
+            }
+
+            event.preventDefault();
 
         } else if (event.key === "Esc")
             this.deselectProperties();
