@@ -25,26 +25,31 @@
 
 WI.DOMEventsBreakdownView = class DOMEventsBreakdownView extends WI.View
 {
-    constructor(domEvents, {includeGraph, startTimestamp} = {})
+    constructor(domNodeOrEvents, {includeGraph, startTimestamp} = {})
     {
+        console.assert(domNodeOrEvents instanceof WI.DOMNode || Array.isArray(domNodeOrEvents));
+
         super();
 
-        this._domEvents = domEvents;
+        if (domNodeOrEvents instanceof WI.DOMNode) {
+            this._domNode = domNodeOrEvents;
+            this._domNode.addEventListener(WI.DOMNode.Event.DidFireEvent, this._handleDOMNodeDidFireEvent, this);
+            if (this._domNode.canEnterLowPowerMode())
+                this._domNode.addEventListener(WI.DOMNode.Event.LowPowerChanged, this._handleDOMNodeLowPowerChanged, this);
+
+            this._domEvents = null;
+        } else {
+            this._domNode = null;
+            this._domEvents = domNodeOrEvents;
+            this._lowPowerRanges = [];
+        }
+
         this._includeGraph = includeGraph || false;
         this._startTimestamp = startTimestamp || 0;
 
         this._tableBodyElement = null;
 
         this.element.classList.add("dom-events-breakdown");
-    }
-
-    // Public
-
-    addEvent(domEvent)
-    {
-        this._domEvents.push(domEvent);
-
-        this.soon._populateTable();
     }
 
     // Protected
@@ -74,18 +79,19 @@ WI.DOMEventsBreakdownView = class DOMEventsBreakdownView extends WI.View
         originatorHeadCell.textContent = WI.UIString("Originator");
 
         this._tableBodyElement = tableElement.appendChild(document.createElement("tbody"));
-
-        this._populateTable();
     }
 
-    // Private
-
-    _populateTable()
+    layout()
     {
+        if (this.layoutReason !== WI.View.LayoutReason.Dirty)
+            return;
+
         this._tableBodyElement.removeChildren();
 
-        let startTimestamp = this._domEvents[0].timestamp;
-        let endTimestamp = this._domEvents.lastValue.timestamp;
+        console.assert(this._domEvents || (this._domNode && this._domNode.domEvents));
+        let domEvents = this._domEvents || this._domNode.domEvents;
+        let startTimestamp = domEvents[0].timestamp;
+        let endTimestamp = domEvents.lastValue.timestamp;
         let totalTime = endTimestamp - startTimestamp;
         let styleAttribute = WI.resolvedLayoutDirection() === WI.LayoutDirection.LTR ? "left" : "right";
 
@@ -94,7 +100,7 @@ WI.DOMEventsBreakdownView = class DOMEventsBreakdownView extends WI.View
         }
 
         let fullscreenRanges = [];
-        let fullscreenDOMEvents = WI.DOMNode.getFullscreenDOMEvents(this._domEvents);
+        let fullscreenDOMEvents = WI.DOMNode.getFullscreenDOMEvents(domEvents);
         for (let fullscreenDOMEvent of fullscreenDOMEvents) {
             let {enabled} = fullscreenDOMEvent.data;
             if (enabled || !fullscreenRanges.length) {
@@ -103,9 +109,13 @@ WI.DOMEventsBreakdownView = class DOMEventsBreakdownView extends WI.View
                 });
             }
             fullscreenRanges.lastValue.endTimestamp = (enabled && fullscreenDOMEvent === fullscreenDOMEvents.lastValue) ? endTimestamp : fullscreenDOMEvent.timestamp;
+            if (fullscreenDOMEvent.originator)
+                fullscreenRanges.lastValue.originator = fullscreenDOMEvent.originator;
         }
 
-        for (let domEvent of this._domEvents) {
+        let lowPowerRanges = this._domNode ? this._domNode.lowPowerRanges : [];
+
+        for (let domEvent of domEvents) {
             let rowElement = this._tableBodyElement.appendChild(document.createElement("tr"));
 
             let nameCell = rowElement.appendChild(document.createElement("td"));
@@ -122,6 +132,20 @@ WI.DOMEventsBreakdownView = class DOMEventsBreakdownView extends WI.View
                     fullscreenArea.classList.add("area", "fullscreen");
                     fullscreenArea.style.setProperty(styleAttribute, percentOfTotalTime(fullscreenRange.startTimestamp - startTimestamp) + "%");
                     fullscreenArea.style.setProperty("width", percentOfTotalTime(fullscreenRange.endTimestamp - fullscreenRange.startTimestamp) + "%");
+
+                    if (fullscreenRange.originator)
+                        fullscreenArea.title = WI.UIString("Fullscreen from “%s“").format(fullscreenRange.originator.displayName);
+                    else
+                        fullscreenArea.title = WI.UIString("Fullscreen");
+                }
+
+                let lowPowerRange = lowPowerRanges.find((range) => domEvent.timestamp >= range.startTimestamp && domEvent.timestamp <= range.endTimestamp);
+                if (lowPowerRange) {
+                    let lowPowerArea = graphCell.appendChild(document.createElement("div"));
+                    lowPowerArea.classList.add("area", "low-power");
+                    lowPowerArea.title = WI.UIString("Low Power Mode");
+                    lowPowerArea.style.setProperty(styleAttribute, percentOfTotalTime(lowPowerRange.startTimestamp - startTimestamp) + "%");
+                    lowPowerArea.style.setProperty("width", percentOfTotalTime(lowPowerRange.endTimestamp - lowPowerRange.startTimestamp) + "%");
                 }
 
                 let graphPoint = graphCell.appendChild(document.createElement("div"));
@@ -144,5 +168,17 @@ WI.DOMEventsBreakdownView = class DOMEventsBreakdownView extends WI.View
                 this.element.classList.add("has-inherited");
             }
         }
+    }
+
+    // Private
+
+    _handleDOMNodeDidFireEvent(event)
+    {
+        this.needsLayout();
+    }
+
+    _handleDOMNodeLowPowerChanged(event)
+    {
+        this.needsLayout();
     }
 };

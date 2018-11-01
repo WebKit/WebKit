@@ -116,4 +116,9 @@ WI.DOMObserver = class DOMObserver
     {
         WI.domManager.didFireEvent(nodeId, eventName, timestamp, data);
     }
+
+    videoLowPowerChanged(nodeId, timestamp, isLowPower)
+    {
+        WI.domManager.videoLowPowerChanged(nodeId, timestamp, isLowPower);
+    }
 };

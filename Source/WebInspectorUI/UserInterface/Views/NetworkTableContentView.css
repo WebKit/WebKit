@@ -175,21 +175,28 @@ body[dir=rtl] .network-table .cell.name > .status {
     border-top-style: solid;
 }
 
+.network-table :not(.header) .cell.waterfall .waterfall-container > .area {
+    position: absolute;
+    top: var(--area-padding);
+    height: calc(100% - (var(--area-padding) * 2));
+
+    /* Half of the vertical space above any .dom-event node */
+    --area-padding: calc((50% - (var(--node-waterfall-dom-event-size) / 2)) / 2);
+}
+
+.network-table :not(.header) .cell.waterfall .waterfall-container > .area.dom-fullscreen {
+    background-color: hsla(0, 0%, 75%, 0.75);
+}
+
+.network-table :not(.header) .cell.waterfall .waterfall-container > .area.low-power {
+    background-color: var(--network-request-color);
+}
+
 .network-table .timeline-ruler {
     position: absolute;
     top: 0;
     bottom: 0;
     overflow: hidden;
-}
-
-.network-table :not(.header) .cell.waterfall .waterfall-container > .dom-fullscreen {
-    position: absolute;
-    top: var(--dom-fullscreen-vertical-padding);
-    height: calc(100% - (var(--dom-fullscreen-vertical-padding) * 2));
-    background-color: lightgrey;
-
-    /* Half of the vertical space above any .dom-event node */
-    --dom-fullscreen-vertical-padding: calc((50% - (var(--node-waterfall-dom-event-size) / 2)) / 2);
 }
 
 .network-table .timeline-ruler > .header {

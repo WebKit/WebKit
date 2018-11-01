@@ -139,6 +139,7 @@ WI.DOMNode = class DOMNode extends WI.Object
         }
 
         this._domEvents = [];
+        this._lowPowerRanges = [];
 
         if (this._shouldListenForEventListeners())
             WI.DOMNode.addEventListener(WI.DOMNode.Event.DidFireEvent, this._handleDOMNodeDidFireEvent, this);
@@ -158,6 +159,7 @@ WI.DOMNode = class DOMNode extends WI.Object
     // Public
 
     get domEvents() { return this._domEvents; }
+    get lowPowerRanges() { return this._lowPowerRanges; }
 
     get frameIdentifier()
     {
@@ -726,6 +728,34 @@ WI.DOMNode = class DOMNode extends WI.Object
         });
     }
 
+    videoLowPowerChanged(timestamp, isLowPower)
+    {
+        // Called from WI.DOMManager.
+
+        console.assert(this.canEnterLowPowerMode());
+
+        let lastValue = this._lowPowerRanges.lastValue;
+
+        if (isLowPower) {
+            console.assert(!lastValue || lastValue.endTimestamp);
+            if (!lastValue || lastValue.endTimestamp)
+                this._lowPowerRanges.push({startTimestamp: timestamp});
+        } else {
+            console.assert(!lastValue || lastValue.startTimestamp);
+            if (!lastValue)
+                this._lowPowerRanges.push({endTimestamp: timestamp});
+            else if (lastValue.startTimestamp)
+                lastValue.endTimestamp = timestamp;
+        }
+
+        this.dispatchEventToListeners(WI.DOMNode.Event.LowPowerChanged, {isLowPower, timestamp});
+    }
+
+    canEnterLowPowerMode()
+    {
+        return this.localName() === "video" || this.nodeName().toLowerCase() === "video";
+    }
+
     _handleDOMNodeDidFireEvent(event)
     {
         if (event.target === this || !event.target.isAncestor(this))
@@ -898,6 +928,7 @@ WI.DOMNode.Event = {
     AttributeRemoved: "dom-node-attribute-removed",
     EventListenersChanged: "dom-node-event-listeners-changed",
     DidFireEvent: "dom-node-did-fire-event",
+    LowPowerChanged: "dom-node-video-low-power-changed",
 };
 
 WI.DOMNode.PseudoElementType = {

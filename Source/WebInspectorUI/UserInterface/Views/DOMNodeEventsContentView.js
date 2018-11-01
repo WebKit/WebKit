@@ -46,29 +46,10 @@ WI.DOMNodeEventsContentView = class DOMNodeEventsContentView extends WI.ContentV
     {
         super.initialLayout();
 
-        this._breakdownView = new WI.DOMEventsBreakdownView(this._domNode.domEvents.slice(), {
+        this._breakdownView = new WI.DOMEventsBreakdownView(this._domNode, {
             includeGraph: true,
             startTimestamp: this._startTimestamp,
         });
         this.addSubview(this._breakdownView);
-
-        this._domNode.addEventListener(WI.DOMNode.Event.DidFireEvent, this._handleDOMNodeDidFireEvent, this);
-    }
-
-    closed()
-    {
-        this._domNode.removeEventListener(null, null, this);
-
-        super.closed();
-    }
-
-    // Private
-
-    _handleDOMNodeDidFireEvent(event)
-    {
-        let {domEvent} = event.data;
-
-        if (this._breakdownView)
-            this._breakdownView.addEvent(domEvent);
     }
 };

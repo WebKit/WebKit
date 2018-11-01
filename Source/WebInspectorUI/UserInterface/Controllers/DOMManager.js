@@ -147,6 +147,17 @@ WI.DOMManager = class DOMManager extends WI.Object
         node.didFireEvent(eventName, timestamp, data);
     }
 
+    videoLowPowerChanged(nodeId, timestamp, isLowPower)
+    {
+        // Called from WI.DOMObserver.
+
+        let node = this._idToDOMNode[nodeId];
+        if (!node)
+            return;
+
+        node.videoLowPowerChanged(timestamp, isLowPower);
+    }
+
     // Private
 
     _wrapClientCallback(callback)

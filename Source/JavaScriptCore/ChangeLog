@@ -1,3 +1,15 @@
+2018-10-31  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: display low-power enter/exit events in Timelines and Network node waterfalls
+        https://bugs.webkit.org/show_bug.cgi?id=190641
+        <rdar://problem/45319049>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/protocol/DOM.json:
+        Add `videoLowPowerChanged` event that is fired when `InspectorDOMAgent` is able to determine
+        whether a video element's low power state has changed.
+
 2018-10-31  Tadeu Zagallo  <tzagallo@apple.com>
 
         Adjust inlining threshold for new bytecode format

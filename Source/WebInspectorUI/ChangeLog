@@ -1,5 +1,57 @@
 2018-10-31  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: display low-power enter/exit events in Timelines and Network node waterfalls
+        https://bugs.webkit.org/show_bug.cgi?id=190641
+        <rdar://problem/45319049>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Protocol/DOMObserver.js:
+        (WI.DOMObserver.prototype.videoLowPowerChanged): Added.
+
+        * UserInterface/Controllers/DOMManager.js:
+        (WI.DOMManager.prototype.videoLowPowerChanged): Added.
+
+        * UserInterface/Models/DOMNode.js:
+        (WI.DOMNode):
+        (WI.DOMNode.prototype.get lowPowerRanges): Added.
+        (WI.DOMNode.prototype.videoLowPowerChanged): Added.
+        (WI.DOMNode.prototype.canEnterLowPowerMode): Added.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype._populateDomainCell):
+        (WI.NetworkTableContentView.prototype._tryLinkResourceToDOMNode):
+        (WI.NetworkTableContentView.prototype._handleNodeLowPowerChanged): Added.
+        * UserInterface/Views/NetworkTableContentView.css:
+        (.network-table :not(.header) .cell.waterfall .waterfall-container > .area):
+        (.network-table :not(.header) .cell.waterfall .waterfall-container > .area.dom-fullscreen): Added.
+        (.network-table :not(.header) .cell.waterfall .waterfall-container > .area.low-power): Added.
+        (.network-table :not(.header) .cell.waterfall .waterfall-container > .dom-fullscreen): Deleted.
+
+        * UserInterface/Views/DOMNodeEventsContentView.js:
+        (WI.DOMNodeEventsContentView):
+        (WI.DOMNodeEventsContentView.prototype.initialLayout):
+        (WI.DOMNodeEventsContentView.prototype.closed): Deleted.
+        (WI.DOMNodeEventsContentView.prototype._handleDOMNodeDidFireEvent): Deleted.
+
+        * UserInterface/Views/DOMEventsBreakdownView.js:
+        (WI.DOMEventsBreakdownView):
+        (WI.DOMEventsBreakdownView.prototype.initialLayout):
+        (WI.DOMEventsBreakdownView.prototype.layout): Added.
+        (WI.DOMEventsBreakdownView.prototype._handleDOMNodeDidFireEvent): Added.
+        (WI.DOMEventsBreakdownView.prototype._handleDOMNodeLowPowerChanged): Added.
+        (WI.DOMEventsBreakdownView.prototype.addEvent): Deleted.
+        (WI.DOMEventsBreakdownView.prototype._populateTable.percentOfTotalTime): Deleted.
+        (WI.DOMEventsBreakdownView.prototype._populateTable): Deleted.
+        * UserInterface/Views/DOMEventsBreakdownView.css:
+        (.dom-events-breakdown .graph > .area): Added.
+        (.dom-events-breakdown .graph > .area.fullscreen):
+        (.dom-events-breakdown .graph > .area.low-power): Added.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+2018-10-31  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Audit: save imported audits across WebInspector sessions
         https://bugs.webkit.org/show_bug.cgi?id=190858
         <rdar://problem/45527625>

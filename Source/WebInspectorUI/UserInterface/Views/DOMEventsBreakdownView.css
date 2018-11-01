@@ -69,10 +69,17 @@
     border-radius: 50%;
 }
 
-.dom-events-breakdown .graph > .area.fullscreen {
+.dom-events-breakdown .graph > .area {
     top: 0;
     height: 100%;
-    background-color: var(--panel-background-color);
+}
+
+.dom-events-breakdown .graph > .area.fullscreen {
+    background-color: hsla(0, 0%, 75%, 0.25);
+}
+
+.dom-events-breakdown .graph > .area.low-power {
+    background-color: hsla(83, 100%, 48%, 0.4);
 }
 
 .dom-events-breakdown .time {

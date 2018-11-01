@@ -669,6 +669,15 @@
                 { "name": "timestamp", "$ref": "Network.Timestamp", "description": "Time when the event was fired" },
                 { "name": "data", "type": "object", "optional": true, "description": "Holds ancillary information about the event or its target." }
             ]
+        },
+        {
+            "name": "videoLowPowerChanged",
+            "description": "Called when a video element enters/exits low power mode.",
+            "parameters": [
+                { "name": "nodeId", "$ref": "NodeId" },
+                { "name": "timestamp", "$ref": "Network.Timestamp", "description": "Time when the video element entered/exited low power mode" },
+                { "name": "isLowPower", "type": "boolean" }
+            ]
         }
     ]
 }

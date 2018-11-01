@@ -542,7 +542,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
                 lockIconElement.className = "lock";
             }
 
-            cell.append(domain);
+            cell.append(domain || emDash);
         }
 
         let uniqueSchemeValues = this._uniqueValuesForDOMNodeEntry(entry, (resourceEntry) => resourceEntry.scheme);
@@ -555,11 +555,6 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             }
 
             createIconAndText(uniqueSchemeValues.values().next().value, uniqueDomainValues.values().next().value);
-            return;
-        }
-
-        if (!entry.domain) {
-            cell.textContent = emDash;
             return;
         }
 
@@ -686,14 +681,27 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
                 for (let i = 0; i < fullscreenDOMEvents.length; i += 2) {
                     let fullscreenElement = container.appendChild(document.createElement("div"));
-                    fullscreenElement.classList.add("dom-fullscreen");
+                    fullscreenElement.classList.add("area", "dom-fullscreen");
                     positionByStartOffset(fullscreenElement, fullscreenDOMEvents[i].timestamp);
                     setWidthForDuration(fullscreenElement, fullscreenDOMEvents[i].timestamp, fullscreenDOMEvents[i + 1].timestamp);
 
                     let originator = fullscreenDOMEvents[i].originator || fullscreenDOMEvents[i + 1].originator;
                     if (originator)
                         fullscreenElement.title = WI.UIString("Fullscreen from “%s“").format(originator.displayName);
+                    else
+                        fullscreenElement.title = WI.UIString("Fullscreen");
                 }
+            }
+
+            for (let lowPowerRange of domNode.lowPowerRanges) {
+                let startTimestamp = lowPowerRange.startTimestamp || graphStartTime;
+                let endTimestamp = lowPowerRange.endTimestamp || this._waterfallEndTime;
+
+                let lowPowerElement = container.appendChild(document.createElement("div"));
+                lowPowerElement.classList.add("area", "low-power");
+                lowPowerElement.title = WI.UIString("Low Power Mode");
+                positionByStartOffset(lowPowerElement, startTimestamp);
+                setWidthForDuration(lowPowerElement, startTimestamp, endTimestamp);
             }
 
             let playing = false;
@@ -1558,6 +1566,8 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             this._domNodeEntries.set(resource.initiatorNode, nodeEntry);
 
             resource.initiatorNode.addEventListener(WI.DOMNode.Event.DidFireEvent, this._handleNodeDidFireEvent, this);
+            if (resource.initiatorNode.canEnterLowPowerMode())
+                resource.initiatorNode.addEventListener(WI.DOMNode.Event.LowPowerChanged, this._handleNodeLowPowerChanged, this);
         }
 
         if (!this._entriesSortComparator)
@@ -1589,6 +1599,19 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
         if (domEvent.timestamp > this._waterfallEndTime)
             this._waterfallEndTime = domEvent.timestamp + (this._waterfallTimelineRuler.secondsPerPixel * 10);
+
+        this.needsLayout();
+    }
+
+    _handleNodeLowPowerChanged(event)
+    {
+        let domNode = event.target;
+        let {timestamp} = event.data;
+
+        this._pendingUpdates.push(domNode);
+
+        if (timestamp > this._waterfallEndTime)
+            this._waterfallEndTime = timestamp + (this._waterfallTimelineRuler.secondsPerPixel * 10);
 
         this.needsLayout();
     }

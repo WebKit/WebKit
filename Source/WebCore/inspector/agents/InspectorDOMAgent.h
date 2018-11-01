@@ -31,6 +31,7 @@
 
 #include "EventTarget.h"
 #include "InspectorWebAgentBase.h"
+#include "Timer.h"
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
 #include <wtf/HashMap.h>
@@ -63,6 +64,7 @@ class Frame;
 class InspectorHistory;
 class InspectorOverlay;
 class InspectorPageAgent;
+class HTMLMediaElement;
 class HitTestResult;
 class Node;
 class PseudoElement;
@@ -223,6 +225,8 @@ public:
     int idForEventListener(EventTarget&, const AtomicString& eventType, EventListener&, bool capture);
 
 private:
+    void mediaMetricsTimerFired();
+
     void highlightMousedOverNode();
     void setSearchingForNode(ErrorString&, bool enabled, const JSON::Object* highlightConfig);
     std::unique_ptr<HighlightConfig> highlightConfigFromInspectorObject(ErrorString&, const JSON::Object* highlightInspectorObject);
@@ -283,6 +287,22 @@ private:
     bool m_searchingForNode { false };
     bool m_suppressAttributeModifiedEvent { false };
     bool m_documentRequested { false };
+
+    Timer m_mediaMetricsTimer;
+    struct MediaMetrics {
+        unsigned displayCompositedFrames { 0 };
+        bool isLowPower { false };
+
+        MediaMetrics() { }
+
+        MediaMetrics(unsigned displayCompositedFrames)
+            : displayCompositedFrames(displayCompositedFrames)
+        {
+        }
+    };
+
+    // The pointer key for this map should not be used for anything other than matching.
+    HashMap<HTMLMediaElement*, MediaMetrics> m_mediaMetrics;
 
     struct InspectorEventListener {
         int identifier { 1 };
