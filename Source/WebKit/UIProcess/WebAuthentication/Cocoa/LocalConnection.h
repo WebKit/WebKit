@@ -28,6 +28,10 @@
 #if ENABLE(WEB_AUTHN)
 
 #include <wtf/CompletionHandler.h>
+#include <wtf/FastMalloc.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 OBJC_CLASS LAContext;
 

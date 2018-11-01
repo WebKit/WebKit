@@ -1,3 +1,12 @@
+2018-11-01  Frederic Wang  <fwang@igalia.com>
+
+        [WebAuthN] Make AuthenticatorManager
+        https://bugs.webkit.org/show_bug.cgi?id=189279
+
+        Unreviewed build fix.
+
+        * UIProcess/WebAuthentication/Cocoa/LocalConnection.h: Add missing headers.
+
 2018-10-31  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         API test WKAttachmentTests.CopyAndPasteBetweenWebViews fails on macOS 10.13
