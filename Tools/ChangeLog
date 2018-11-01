@@ -1,3 +1,16 @@
+2018-11-01  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Fix build with VIDEO and WEB_AUDIO disabled
+        https://bugs.webkit.org/show_bug.cgi?id=191147
+        <rdar://problem/45726710>
+
+        Unreviewed build fix.
+
+        This adds the missing compilation guards in the WPE MiniBrowser.
+
+        * MiniBrowser/wpe/main.cpp:
+        (main): Condition GST includes and calls.
+
 2018-10-31  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add support for inline-block elements.
