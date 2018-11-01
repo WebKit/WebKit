@@ -11,7 +11,6 @@
 </canvas>
 <script>
     var context;
-    const reader = new FileReader();
 
     function createVideoStream() {
         const canvas = document.getElementById("canvas");
@@ -27,6 +26,7 @@
     async_test(t => {
         const video = createVideoStream();
         const recorder = new MediaRecorder(video);
+        const reader = new FileReader();
 
         recorder.ondataavailable = t.step_func(blobEvent => {
             reader.readAsText(blobEvent.data);
@@ -51,6 +51,7 @@
         const audio = dest.stream;
         osc.connect(dest);
         const recorder = new MediaRecorder(audio);
+        const reader = new FileReader();
 
         recorder.ondataavailable = t.step_func(blobEvent => {
             reader.readAsText(blobEvent.data);
@@ -82,6 +83,7 @@
         video.addTrack(audio.getAudioTracks()[0]);
         assert_equals(video.getAudioTracks().length, 1, "video mediastream starts with one audio track");
         const recorder = new MediaRecorder(video);
+        const reader = new FileReader();
 
         recorder.ondataavailable = t.step_func(blobEvent => {
             reader.readAsText(blobEvent.data);

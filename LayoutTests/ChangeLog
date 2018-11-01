@@ -1,3 +1,16 @@
+2018-11-01  YUHAN WU  <yuhan_wu@apple.com>
+
+        MediaRecorder should fire dataavailable event when all tracks are ended and stop() is called
+        https://bugs.webkit.org/show_bug.cgi?id=190778
+        <rdar://problem/45703574>
+
+        Reviewed by Youenn Fablet.
+
+        Remove share FileReader object between three asynchronous tests which might cause flaky failure.
+        We will need to fix all the falky failures in this test after we implement timeslice.
+
+        * http/wpt/mediarecorder/MediaRecorder-mock-dataavailable.html:
+
 2018-10-31  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Canvas: create a setting for auto-recording newly created contexts
