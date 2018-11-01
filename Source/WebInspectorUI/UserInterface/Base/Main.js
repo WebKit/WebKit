@@ -143,6 +143,7 @@ WI.loaded = function()
     this.printStylesEnabled = false;
     this.setZoomFactor(WI.settings.zoomFactor.value);
     this.mouseCoords = {x: 0, y: 0};
+    this.modifierKeys = {altKey: false, metaKey: false, shiftKey: false};
     this.visible = false;
     this._windowKeydownListeners = [];
 
@@ -385,8 +386,6 @@ WI.contentLoaded = function()
         this._searchToolbarItem.addEventListener(WI.SearchBar.Event.TextChanged, this._searchTextDidChange, this);
         this.toolbar.addToolbarItem(this._searchToolbarItem, WI.Toolbar.Section.Right);
     }
-
-    this.modifierKeys = {altKey: false, metaKey: false, shiftKey: false};
 
     let dockedResizerElement = document.getElementById("docked-resizer");
     dockedResizerElement.classList.add(WI.Popover.IgnoreAutoDismissClassName);
