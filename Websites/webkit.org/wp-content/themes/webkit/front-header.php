@@ -152,6 +152,13 @@
             font-size: 2.5rem;
             letter-spacing: -0.016rem;
         }
+    }    
+    
+    @media (prefers-reduced-motion) {
+        #compass {
+            animation: none;
+            transform: translateY(-400px);
+        }
     }
     </style>
 

@@ -1,3 +1,12 @@
+2018-11-01  Jon Davis  <jond@apple.com>
+
+        Prevent homepage animation for users that prefer reduced motion
+        https://bugs.webkit.org/show_bug.cgi?id=188211
+
+        Reviewed by Timothy Hatcher.
+
+        * wp-content/themes/webkit/front-header.php:
+
 2018-10-25  Jon Davis  <jond@apple.com>
 
         Added support for "deprecated" feature status
