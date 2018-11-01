@@ -29,18 +29,54 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "FormattingContext.h"
+#include "InlineFormattingState.h"
+#include "LayoutBox.h"
+#include "LayoutContainer.h"
+#include "LayoutFormattingState.h"
 
 namespace WebCore {
 namespace Layout {
 
-WidthAndMargin InlineFormattingContext::Geometry::inlineBlockWidthAndMargin(const LayoutState&, const Box&)
+WidthAndMargin InlineFormattingContext::Geometry::inlineBlockWidthAndMargin(const LayoutState& layoutState, const Box& formattingContextRoot)
 {
-    return { };
+    ASSERT(formattingContextRoot.isInFlow());
+
+    // 10.3.10 'Inline-block', replaced elements in normal flow
+
+    // Exactly as inline replaced elements.
+    if (formattingContextRoot.replaced())
+        return inlineReplacedWidthAndMargin(layoutState, formattingContextRoot);
+
+    // 10.3.9 'Inline-block', non-replaced elements in normal flow
+
+    // If 'width' is 'auto', the used value is the shrink-to-fit width as for floating elements.
+    // A computed value of 'auto' for 'margin-left' or 'margin-right' becomes a used value of '0'.
+    auto& containingBlock = *formattingContextRoot.containingBlock();
+    auto containingBlockWidth = layoutState.displayBoxForLayoutBox(containingBlock).contentBoxWidth();
+    // #1
+    auto width = computedValueIfNotAuto(formattingContextRoot.style().logicalWidth(), containingBlockWidth);
+    if (!width) {
+        auto formattingContext = layoutState.establishedFormattingState(formattingContextRoot).formattingContext(formattingContextRoot);
+        width = shrinkToFitWidth(layoutState, *formattingContext, formattingContextRoot);
+    }
+
+    // #2
+    auto margin = computedNonCollapsedHorizontalMarginValue(layoutState, formattingContextRoot);
+
+    return WidthAndMargin { *width, margin, margin };
 }
 
-HeightAndMargin InlineFormattingContext::Geometry::inlineBlockHeightAndMargin(const LayoutState&, const Box&)
+HeightAndMargin InlineFormattingContext::Geometry::inlineBlockHeightAndMargin(const LayoutState& layoutState, const Box& layoutBox)
 {
-    return { };
+    ASSERT(layoutBox.isInFlow());
+
+    // 10.6.2 Inline replaced elements, block-level replaced elements in normal flow, 'inline-block' replaced elements in normal flow and floating replaced elements
+    if (layoutBox.replaced())
+        return inlineReplacedHeightAndMargin(layoutState, layoutBox);
+
+    // 10.6.6 Complicated cases
+    // - 'Inline-block', non-replaced elements.
+    return complicatedCases(layoutState, layoutBox);
 }
 
 }

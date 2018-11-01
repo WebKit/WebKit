@@ -100,6 +100,8 @@ void TreeBuilder::createSubTree(const RenderElement& rootRenderer, Container& ro
                 box = std::make_unique<BlockContainer>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
             else if (display == DisplayType::Inline)
                 box = std::make_unique<InlineContainer>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
+            else if (display == DisplayType::InlineBlock)
+                box = std::make_unique<InlineContainer>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
             else {
                 ASSERT_NOT_IMPLEMENTED_YET();
                 continue;

@@ -30,6 +30,7 @@
 
 #include "FloatingState.h"
 #include "FormattingState.h"
+#include "InlineFormattingState.h"
 
 namespace WebCore {
 namespace Layout {
@@ -50,14 +51,22 @@ static LayoutUnit contentHeightForFormattingContextRoot(const LayoutState& layou
     if (!is<Container>(layoutBox) || !downcast<Container>(layoutBox).hasInFlowOrFloatingChild())
         return 0;
 
+    LayoutUnit top;
+    LayoutUnit bottom;
     auto& formattingRootContainer = downcast<Container>(layoutBox);
-    if (formattingRootContainer.establishesInlineFormattingContext())
-        return 0;
-
-    auto& firstDisplayBox = layoutState.displayBoxForLayoutBox(*formattingRootContainer.firstInFlowChild());
-    auto& lastDisplayBox = layoutState.displayBoxForLayoutBox(*formattingRootContainer.lastInFlowChild());
-    auto top = firstDisplayBox.rectWithMargin().top();
-    auto bottom = lastDisplayBox.rectWithMargin().bottom();
+    if (formattingRootContainer.establishesInlineFormattingContext()) {
+        // This is temp and will be replaced by the correct display box once inline runs move over to the display tree.
+        auto& inlineRuns = downcast<InlineFormattingState>(layoutState.establishedFormattingState(layoutBox)).inlineRuns();
+        if (!inlineRuns.isEmpty()) {
+            top = inlineRuns[0].logicalTop();
+            bottom =  inlineRuns.last().logicalBottom();
+        }
+    } else if (formattingRootContainer.establishesBlockFormattingContext() || layoutBox.isDocumentBox()) {
+        auto& firstDisplayBox = layoutState.displayBoxForLayoutBox(*formattingRootContainer.firstInFlowChild());
+        auto& lastDisplayBox = layoutState.displayBoxForLayoutBox(*formattingRootContainer.lastInFlowChild());
+        top = firstDisplayBox.rectWithMargin().top();
+        bottom = lastDisplayBox.rectWithMargin().bottom();
+    }
 
     auto* formattingContextRoot = &layoutBox;
     // TODO: The document renderer is not a formatting context root by default at all. Need to find out what it is.
@@ -199,7 +208,7 @@ static LayoutUnit staticHorizontalPositionForOutOfFlowPositioned(const LayoutSta
     return left;
 }
 
-LayoutUnit FormattingContext::Geometry::shrinkToFitWidth(LayoutState& layoutState, const FormattingContext& formattingContext, const Box& layoutBox)
+LayoutUnit FormattingContext::Geometry::shrinkToFitWidth(const LayoutState& layoutState, const FormattingContext& formattingContext, const Box& layoutBox)
 {
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Width] -> shrink to fit -> unsupported -> width(" << LayoutUnit { } << "px) layoutBox: " << &layoutBox << ")");
     // Calculation of the shrink-to-fit width is similar to calculating the width of a table cell using the automatic table layout algorithm.

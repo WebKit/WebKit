@@ -1,3 +1,14 @@
+2018-10-31  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add support for inline-block elements.
+        https://bugs.webkit.org/show_bug.cgi?id=191143
+
+        Reviewed by Antti Koivisto.
+
+        * fast/inline/simple-inline-block-expected.txt: Added.
+        * fast/inline/simple-inline-block.html: Added.
+        * platform/ios/TestExpectations:
+
 2018-11-01  YUHAN WU  <yuhan_wu@apple.com>
 
         MediaRecorder should fire dataavailable event when all tracks are ended and stop() is called

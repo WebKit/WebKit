@@ -41,6 +41,19 @@ InlineContainer::InlineContainer(std::optional<ElementAttributes> attributes, Re
 {
 }
 
+bool InlineContainer::establishesInlineFormattingContext() const
+{
+    if (!isInlineBlockBox())
+        return false;
+
+    // 9.4.2 Inline formatting contexts
+    // An inline formatting context is established by a block container box that contains no block-level boxes.
+    if (auto* firstInFlowChild = this->firstInFlowChild())
+        return firstInFlowChild->isInlineLevelBox();
+
+    return false;
+}
+
 }
 }
 

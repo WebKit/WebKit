@@ -1,3 +1,30 @@
+2018-10-31  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add support for inline-block elements.
+        https://bugs.webkit.org/show_bug.cgi?id=191143
+
+        Reviewed by Antti Koivisto.
+
+        This patch add support for laying out non-shrink-to-width inline-block elements.
+
+        Test: fast/inline/simple-inline-block.html
+
+        * layout/FormattingContext.h:
+        (WebCore::Layout::FormattingContext::Geometry::floatingNonReplacedWidthAndMargin):
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::contentHeightForFormattingContextRoot):
+        (WebCore::Layout::FormattingContext::Geometry::shrinkToFitWidth):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::layoutFormattingContextRoot const):
+        * layout/inlineformatting/InlineFormattingContextGeometry.cpp:
+        (WebCore::Layout::InlineFormattingContext::Geometry::inlineBlockWidthAndMargin):
+        (WebCore::Layout::InlineFormattingContext::Geometry::inlineBlockHeightAndMargin):
+        * layout/layouttree/LayoutInlineContainer.cpp:
+        (WebCore::Layout::InlineContainer::establishesInlineFormattingContext const):
+        * layout/layouttree/LayoutInlineContainer.h:
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::TreeBuilder::createSubTree):
+
 2018-11-01  Claudio Saavedra  <csaavedra@igalia.com>
 
         Fix build with VIDEO and WEB_AUDIO disabled

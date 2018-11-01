@@ -94,6 +94,7 @@ protected:
             std::optional<LayoutUnit> precomputedMarginLeft = { }, std::optional<LayoutUnit> precomputedMarginRight = { });
 
         static HeightAndMargin complicatedCases(const LayoutState&, const Box&, std::optional<LayoutUnit> usedHeight = { });
+        static LayoutUnit shrinkToFitWidth(const LayoutState&, const FormattingContext&, const Box&);
 
         static Edges computedBorder(const LayoutState&, const Box&);
         static std::optional<Edges> computedPadding(const LayoutState&, const Box&);
@@ -118,8 +119,6 @@ protected:
         static WidthAndMargin floatingReplacedWidthAndMargin(const LayoutState&, const Box&, std::optional<LayoutUnit> usedWidth = { });
 
         static WidthAndMargin floatingNonReplacedWidthAndMargin(LayoutState&, const FormattingContext&, const Box&, std::optional<LayoutUnit> usedWidth = { });
-
-        static LayoutUnit shrinkToFitWidth(LayoutState&, const FormattingContext&, const Box&);
     };
 
 private:

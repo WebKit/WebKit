@@ -3112,6 +3112,7 @@ fast/block/basic/inline-content-with-floating-images2.html [ Failure ]
 fast/inline/simple-intruding-float1.html [ Failure ]
 fast/inline/simple-intruding-floats2.html [ Failure ]
 fast/inline/simple-intruding-floats3.html [ Failure ]
+fast/inline/simple-inline-block.html [ Failure ]
 
 # Datalist
 webkit.org/b/186714 fast/forms/datalist/datalist-textinput-keydown.html [ Skip ]

@@ -241,11 +241,12 @@ void InlineFormattingContext::layoutFormattingContextRoot(const Box& layoutBox) 
         displayBox.setVerticalMargin(heightAndMargin.collapsedMargin.value_or(heightAndMargin.margin));
     };
 
+    layoutState.createFormattingStateForFormattingRootIfNeeded(layoutBox);
     computeBorderAndPadding(layoutBox);
     computeWidthAndMargin();
 
     // Swich over to the new formatting context (the one that the root creates).
-    layoutState.createFormattingStateForFormattingRootIfNeeded(layoutBox).formattingContext(layoutBox)->layout();
+    layoutState.establishedFormattingState(layoutBox).formattingContext(layoutBox)->layout();
 
     // Come back and finalize the root's height and margin.
     computeHeightAndMargin();
