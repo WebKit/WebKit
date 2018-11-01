@@ -1,3 +1,17 @@
+2018-10-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        API test WKAttachmentTests.CopyAndPasteBetweenWebViews fails on macOS 10.13
+        https://bugs.webkit.org/show_bug.cgi?id=191114
+        <rdar://problem/45700410>
+
+        Reviewed by Dean Jackson.
+
+        Followup to r237648: also make sure that we insecurely unarchive NSFileWrapper on platforms that don't support
+        secure archiving of file wrappers.
+
+        * UIProcess/API/Cocoa/APIAttachmentCocoa.mm:
+        (API::Attachment::updateFromSerializedRepresentation):
+
 2018-10-31  Dean Jackson  <dino@apple.com>
 
         Forward original fragment identifier into System Preview

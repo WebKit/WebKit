@@ -155,8 +155,13 @@ void Attachment::updateFromSerializedRepresentation(Ref<WebCore::SharedBuffer>&&
     if (!serializedData)
         return;
 
+#if CAN_SECURELY_ARCHIVE_FILE_WRAPPER
     NSFileWrapper *fileWrapper = unarchivedObjectOfClassesFromData(m_webPage->pageClient().serializableFileWrapperClasses(), serializedData.get());
-    if (!fileWrapper)
+#else
+    NSFileWrapper *fileWrapper = insecurelyUnarchiveObjectFromData(serializedData.get());
+#endif
+
+    if (![fileWrapper isKindOfClass:NSFileWrapper.class])
         return;
 
     setFileWrapperAndUpdateContentType(fileWrapper, contentType);
