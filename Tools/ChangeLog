@@ -1,5 +1,15 @@
 2018-11-01  Claudio Saavedra  <csaavedra@igalia.com>
 
+        [WPE] Add missing libsoup patch to jhbuild
+        https://bugs.webkit.org/show_bug.cgi?id=191149
+
+        Reviewed by Žan Doberšek.
+
+        * wpe/jhbuild.modules:
+        * wpe/patches/libsoup-soup-socket-fix-critical-warning-when-the-peer-certi.patch: Added.
+
+2018-11-01  Claudio Saavedra  <csaavedra@igalia.com>
+
         Fix build with VIDEO and WEB_AUDIO disabled
         https://bugs.webkit.org/show_bug.cgi?id=191147
 
