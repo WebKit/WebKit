@@ -99,8 +99,9 @@
     </dependencies>
     <branch module="/pub/GNOME/sources/libsoup/2.60/libsoup-2.60.3.tar.xz" version="2.60.3"
             repo="ftp.gnome.org"
-            hash="sha256:1b0dc762f23abe4e0d29b77370e539fd35f31d8e8e0318d6ddccff395be68a22"/>
+            hash="sha256:1b0dc762f23abe4e0d29b77370e539fd35f31d8e8e0318d6ddccff395be68a22">
           <patch file="libsoup-soup-socket-fix-critical-warning-when-the-peer-certi.patch" strip="1"/>
+    </branch>
   </autotools>
 
   <autotools id="fonts" supports-non-srcdir-builds="no"

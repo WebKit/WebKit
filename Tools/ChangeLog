@@ -1,3 +1,11 @@
+2018-11-02  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed follow-up to r237678.
+
+        * wpe/jhbuild.modules: The patch element apparently has to be a child
+        of the branch in order for Jhbuild to properly detect and apply the
+        patch file.
+
 2018-11-01  Ross Kirsling  <ross.kirsling@sony.com>
 
         build-jsc --wincairo should update WinCairo libraries
