@@ -1,3 +1,15 @@
+2018-11-01  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Network: remove unnecessary media event tracking
+        https://bugs.webkit.org/show_bug.cgi?id=191174
+
+        Reviewed by Joseph Pecoraro.
+
+        No new tests, as this simply removes some event listeners for the WebInspector frontend.
+
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::addEventListenersToNode):
+
 2018-11-01  Chris Dumez  <cdumez@apple.com>
 
         Location object sans browsing context

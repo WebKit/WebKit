@@ -434,6 +434,7 @@ localizedStrings["Global Lexical Environment"] = "Global Lexical Environment";
 localizedStrings["Global Variables"] = "Global Variables";
 localizedStrings["Grammar"] = "Grammar";
 localizedStrings["Group"] = "Group";
+localizedStrings["Group Media Requests"] = "Group Media Requests";
 localizedStrings["Group by Event"] = "Group by Event";
 localizedStrings["Group by Node"] = "Group by Node";
 localizedStrings["Grouping Method"] = "Grouping Method";

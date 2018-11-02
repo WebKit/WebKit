@@ -1,5 +1,46 @@
 2018-11-01  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Network: remove unnecessary media event tracking
+        https://bugs.webkit.org/show_bug.cgi?id=191174
+
+        Reviewed by Joseph Pecoraro.
+
+        Renames "Group by Node" to "Group Media Requests" for clarity.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView):
+        (WI.NetworkTableContentView.prototype.reset):
+        (WI.NetworkTableContentView.prototype.showRepresentedObject):
+        (WI.NetworkTableContentView.prototype.networkDetailViewClose):
+        (WI.NetworkTableContentView.prototype._populateNameCell):
+        (WI.NetworkTableContentView.prototype._populateWaterfallGraph.createDOMEventLine):
+        (WI.NetworkTableContentView.prototype._populateWaterfallGraph):
+        (WI.NetworkTableContentView.prototype.layout):
+        (WI.NetworkTableContentView.prototype._entryForDOMNode):
+        (WI.NetworkTableContentView.prototype._handleGroupByDOMNodeCheckedDidChange):
+        (WI.NetworkTableContentView.prototype._restoreSelectedRow):
+        (WI.NetworkTableContentView.prototype._handleResourceEntryMousedownWaterfall):
+        (WI.NetworkTableContentView.prototype._handleNodeEntryMousedownWaterfall):
+        (WI.NetworkTableContentView.prototype._handleMousedownWaterfall):
+        * UserInterface/Views/NetworkTableContentView.css:
+        (.network-table .data-container .cell.name .range): Added.
+        (.network-table .data-container .cell.name .range::before): Added.
+        (.network-table:focus .data-container li.selected .cell.name .range): Added.
+        (@media (prefers-dark-interface) .network-table .data-container .cell.name .range): Added.
+        Always display the "Byte Range" title as a "subtitle", regardless of the media requests
+        setting being toggled.
+        Drive-by: update the position of the waterfall popover whenever the time range changes.
+        Drive-by: close the details view if a node is selected and the media requests setting is
+        turned off.
+
+        * UserInterface/Views/Popover.js:
+        (WI.Popover.prototype.resize): Added.
+        (WI.Popover.prototype.handleEvent):
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+2018-11-01  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Uncaught Exception: TypeError: null is not an object (evaluating 'mouseBlock.addEventListener')
         https://bugs.webkit.org/show_bug.cgi?id=191020
 

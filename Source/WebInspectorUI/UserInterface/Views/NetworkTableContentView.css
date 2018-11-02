@@ -86,6 +86,18 @@ body[dir=rtl] .network-table .cell.dom-node.name .disclosure {
     -webkit-padding-start: calc(var(--item-padding-start) + var(--item-disclosure-width));
 }
 
+.network-table .data-container .cell.name .range {
+    color: hsla(0, 0%, 0%, 0.7);
+}
+
+.network-table .data-container .cell.name .range::before {
+    content: " — ";
+}
+
+.network-table:focus .data-container li.selected .cell.name .range {
+    color: hsla(0, 0%, 100%, 0.9);
+}
+
 .network-table li:not(.selected) .cell:matches(.cache-type, .multiple) {
     color: var(--text-color-gray-medium);
 }
@@ -295,5 +307,9 @@ body[dir=rtl] .waterfall .block {
 @media (prefers-dark-interface) {
     .network-table .cell.domain > .lock {
         filter: var(--filter-invert);
+    }
+
+    .network-table .data-container .cell.name .range {
+        color: var(--text-color-secondary);
     }
 }

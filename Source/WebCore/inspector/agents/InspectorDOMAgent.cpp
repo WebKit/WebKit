@@ -2168,23 +2168,18 @@ void InspectorDOMAgent::addEventListenersToNode(Node& node)
         createEventListener(eventNames().abortEvent);
         createEventListener(eventNames().canplayEvent);
         createEventListener(eventNames().canplaythroughEvent);
-        createEventListener(eventNames().durationchangeEvent);
         createEventListener(eventNames().emptiedEvent);
         createEventListener(eventNames().endedEvent);
-        createEventListener(eventNames().errorEvent);
         createEventListener(eventNames().loadeddataEvent);
         createEventListener(eventNames().loadedmetadataEvent);
         createEventListener(eventNames().loadstartEvent);
         createEventListener(eventNames().pauseEvent);
         createEventListener(eventNames().playEvent);
         createEventListener(eventNames().playingEvent);
-        createEventListener(eventNames().ratechangeEvent);
         createEventListener(eventNames().seekedEvent);
         createEventListener(eventNames().seekingEvent);
         createEventListener(eventNames().stalledEvent);
         createEventListener(eventNames().suspendEvent);
-        createEventListener(eventNames().timeupdateEvent);
-        createEventListener(eventNames().volumechangeEvent);
         createEventListener(eventNames().waitingEvent);
 
         if (!m_mediaMetricsTimer.isActive())

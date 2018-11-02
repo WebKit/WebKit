@@ -94,6 +94,12 @@ WI.Popover = class Popover extends WI.Object
         this._resizeHandler = resizeHandler;
     }
 
+    resize()
+    {
+        if (this.visible && this._resizeHandler)
+            this._resizeHandler();
+    }
+
     update(shouldAnimate = true)
     {
         if (!this.visible)
@@ -169,8 +175,7 @@ WI.Popover = class Popover extends WI.Object
             }
             break;
         case "resize":
-            if (this._resizeHandler)
-                this._resizeHandler();
+            this.resize();
             break;
         case "keypress":
             if (event.keyCode === WI.KeyboardShortcut.Key.Escape.keyCode)
