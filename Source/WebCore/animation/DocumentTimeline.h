@@ -95,6 +95,7 @@ private:
     void performEventDispatchTask();
     void maybeClearCachedCurrentTime();
     void updateListOfElementsWithRunningAcceleratedAnimationsForElement(Element&);
+    void transitionDidComplete(RefPtr<CSSTransition>);
 
     RefPtr<Document> m_document;
     Seconds m_originTime;

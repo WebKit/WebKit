@@ -37,11 +37,11 @@
 
 namespace WebCore {
 
-DeclarativeAnimation::DeclarativeAnimation(Element& target, const Animation& backingAnimation)
-    : WebAnimation(target.document())
-    , m_target(target)
+DeclarativeAnimation::DeclarativeAnimation(Element& owningElement, const Animation& backingAnimation)
+    : WebAnimation(owningElement.document())
+    , m_owningElement(&owningElement)
     , m_backingAnimation(const_cast<Animation&>(backingAnimation))
-    , m_eventQueue(target)
+    , m_eventQueue(owningElement)
 {
 }
 
@@ -51,8 +51,29 @@ DeclarativeAnimation::~DeclarativeAnimation()
 
 void DeclarativeAnimation::tick()
 {
+    bool wasRelevant = isRelevant();
+    
     WebAnimation::tick();
     invalidateDOMEvents();
+
+    // If a declarative animation transitions from a non-idle state to an idle state, it means it was
+    // canceled using the Web Animations API and it should be disassociated from its owner element.
+    // From this point on, this animation is like any other animation and should not appear in the
+    // maps containing running CSS Transitions and CSS Animations for a given element.
+    if (wasRelevant && playState() == WebAnimation::PlayState::Idle) {
+        disassociateFromOwningElement();
+        m_eventQueue.close();
+    }
+}
+
+void DeclarativeAnimation::disassociateFromOwningElement()
+{
+    if (!m_owningElement)
+        return;
+
+    if (auto* animationTimeline = timeline())
+        animationTimeline->removeDeclarativeAnimationFromListsForOwningElement(*this, *m_owningElement);
+    m_owningElement = nullptr;
 }
 
 bool DeclarativeAnimation::needsTick() const
@@ -72,15 +93,17 @@ void DeclarativeAnimation::setBackingAnimation(const Animation& backingAnimation
     syncPropertiesWithBackingAnimation();
 }
 
-void DeclarativeAnimation::initialize(const Element& target, const RenderStyle* oldStyle, const RenderStyle& newStyle)
+void DeclarativeAnimation::initialize(const RenderStyle* oldStyle, const RenderStyle& newStyle)
 {
     // We need to suspend invalidation of the animation's keyframe effect during its creation
     // as it would otherwise trigger invalidation of the document's style and this would be
     // incorrect since it would happen during style invalidation.
     suspendEffectInvalidation();
 
-    setEffect(KeyframeEffectReadOnly::create(target));
-    setTimeline(&target.document().timeline());
+    ASSERT(m_owningElement);
+
+    setEffect(KeyframeEffectReadOnly::create(*m_owningElement));
+    setTimeline(&m_owningElement->document().timeline());
     downcast<KeyframeEffectReadOnly>(effect())->computeDeclarativeAnimationBlendingKeyframes(oldStyle, newStyle);
     syncPropertiesWithBackingAnimation();
     if (backingAnimation().playState() == AnimationPlayState::Playing)
@@ -184,6 +207,12 @@ void DeclarativeAnimation::cancel()
     invalidateDOMEvents(cancelationTime);
 }
 
+void DeclarativeAnimation::cancelFromStyle()
+{
+    cancel();
+    disassociateFromOwningElement();
+}
+
 AnimationEffectReadOnly::Phase DeclarativeAnimation::phaseWithoutEffect() const
 {
     // This shouldn't be called if we actually have an effect.
@@ -199,6 +228,9 @@ AnimationEffectReadOnly::Phase DeclarativeAnimation::phaseWithoutEffect() const
 
 void DeclarativeAnimation::invalidateDOMEvents(Seconds elapsedTime)
 {
+    if (!m_owningElement)
+        return;
+    
     auto* animationEffect = effect();
 
     auto isPending = pending();
@@ -282,11 +314,12 @@ void DeclarativeAnimation::invalidateDOMEvents(Seconds elapsedTime)
 
 void DeclarativeAnimation::enqueueDOMEvent(const AtomicString& eventType, Seconds elapsedTime)
 {
+    ASSERT(m_owningElement);
     auto time = secondsToWebAnimationsAPITime(elapsedTime) / 1000;
     if (is<CSSAnimation>(this))
         m_eventQueue.enqueueEvent(AnimationEvent::create(eventType, downcast<CSSAnimation>(this)->animationName(), time));
     else if (is<CSSTransition>(this))
-        m_eventQueue.enqueueEvent(TransitionEvent::create(eventType, downcast<CSSTransition>(this)->transitionProperty(), time, PseudoElement::pseudoElementNameForEvents(m_target.pseudoId())));
+        m_eventQueue.enqueueEvent(TransitionEvent::create(eventType, downcast<CSSTransition>(this)->transitionProperty(), time, PseudoElement::pseudoElementNameForEvents(m_owningElement->pseudoId())));
 }
 
 void DeclarativeAnimation::stop()

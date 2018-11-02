@@ -37,10 +37,10 @@ test(function(t) {
 test(function(t) {
   addStyle(t, { '.init::after': 'content: ""; width: 0px; ' +
                                 'transition: all 100s;',
-                '.init::before': 'content: ""; width: 0px; ' +
+                '.init::before': 'content: ""; height: 0px; ' +
                                  'transition: all 10s;',
                 '.change::after': 'width: 100px;',
-                '.change::before': 'width: 100px;' });
+                '.change::before': 'height: 100px;' });
   // create two divs with these arrangement:
   //       parent
   //     ::before,
@@ -68,9 +68,9 @@ test(function(t) {
                 'are returned');
   assert_equals(anims[0].effect.target, parent,
                 'The animation targeting the parent element comes first');
-  assert_equals(anims[1].effect.target.type, '::before',
+  assert_equals(anims[1].transitionProperty, 'height',
                 'The animation targeting the ::before element comes second');
-  assert_equals(anims[2].effect.target.type, '::after',
+  assert_equals(anims[2].transitionProperty, 'width',
                 'The animation targeting the ::after element comes third');
   assert_equals(anims[3].effect.target, child,
                 'The animation targeting the child element comes last');

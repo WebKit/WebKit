@@ -54,19 +54,20 @@ public:
     std::optional<double> bindingsCurrentTime();
     virtual std::optional<Seconds> currentTime() { return m_currentTime; }
 
-    virtual void timingModelDidChange() { };
-
     enum class Ordering { Sorted, Unsorted };
-    const ListHashSet<RefPtr<WebAnimation>>& animations() const { return m_animations; }
     Vector<RefPtr<WebAnimation>> animationsForElement(Element&, Ordering ordering = Ordering::Unsorted) const;
     void elementWasRemoved(Element&);
     void removeAnimationsForElement(Element&);
     void cancelDeclarativeAnimationsForElement(Element&);
     virtual void animationWasAddedToElement(WebAnimation&, Element&);
     virtual void animationWasRemovedFromElement(WebAnimation&, Element&);
+    void removeDeclarativeAnimationFromListsForOwningElement(WebAnimation&, Element&);
 
     void updateCSSAnimationsForElement(Element&, const RenderStyle* currentStyle, const RenderStyle& afterChangeStyle);
     void updateCSSTransitionsForElement(Element&, const RenderStyle& currentStyle, const RenderStyle& afterChangeStyle);
+
+    using ElementToAnimationsMap = HashMap<Element*, ListHashSet<RefPtr<WebAnimation>>>;
+    using PropertyToTransitionMap = HashMap<CSSPropertyID, RefPtr<CSSTransition>>;
 
     virtual ~AnimationTimeline();
 
@@ -79,21 +80,22 @@ protected:
 
     explicit AnimationTimeline(ClassType);
 
+    ListHashSet<WebAnimation*> m_allAnimations;
     ListHashSet<RefPtr<WebAnimation>> m_animations;
+    HashMap<Element*, PropertyToTransitionMap> m_elementToCompletedCSSTransitionByCSSPropertyID;
 
 private:
-    HashMap<Element*, ListHashSet<RefPtr<WebAnimation>>>& relevantMapForAnimation(WebAnimation&);
-    void cancelOrRemoveDeclarativeAnimation(RefPtr<DeclarativeAnimation>);
     RefPtr<WebAnimation> cssAnimationForElementAndProperty(Element&, CSSPropertyID);
+    PropertyToTransitionMap& ensureRunningTransitionsByProperty(Element&);
+    void cancelDeclarativeAnimation(DeclarativeAnimation&);
 
     ClassType m_classType;
     std::optional<Seconds> m_currentTime;
-    HashMap<Element*, ListHashSet<RefPtr<WebAnimation>>> m_elementToAnimationsMap;
-    HashMap<Element*, ListHashSet<RefPtr<WebAnimation>>> m_elementToCSSAnimationsMap;
-    HashMap<Element*, ListHashSet<RefPtr<WebAnimation>>> m_elementToCSSTransitionsMap;
+    ElementToAnimationsMap m_elementToAnimationsMap;
+    ElementToAnimationsMap m_elementToCSSAnimationsMap;
+    ElementToAnimationsMap m_elementToCSSTransitionsMap;
     HashMap<Element*, HashMap<String, RefPtr<CSSAnimation>>> m_elementToCSSAnimationByName;
-    HashMap<Element*, HashMap<CSSPropertyID, RefPtr<CSSTransition>>> m_elementToRunningCSSTransitionByCSSPropertyID;
-    HashMap<Element*, HashMap<CSSPropertyID, RefPtr<CSSTransition>>> m_elementToCompletedCSSTransitionByCSSPropertyID;
+    HashMap<Element*, PropertyToTransitionMap> m_elementToRunningCSSTransitionByCSSPropertyID;
 };
 
 } // namespace WebCore

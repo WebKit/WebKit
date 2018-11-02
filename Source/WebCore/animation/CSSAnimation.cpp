@@ -31,10 +31,10 @@
 
 namespace WebCore {
 
-Ref<CSSAnimation> CSSAnimation::create(Element& target, const Animation& backingAnimation, const RenderStyle* oldStyle, const RenderStyle& newStyle)
+Ref<CSSAnimation> CSSAnimation::create(Element& owningElement, const Animation& backingAnimation, const RenderStyle* oldStyle, const RenderStyle& newStyle)
 {
-    auto result = adoptRef(*new CSSAnimation(target, backingAnimation, newStyle));
-    result->initialize(target, oldStyle, newStyle);
+    auto result = adoptRef(*new CSSAnimation(owningElement, backingAnimation, newStyle));
+    result->initialize(oldStyle, newStyle);
     return result;
 }
 

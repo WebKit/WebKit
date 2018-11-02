@@ -1,3 +1,22 @@
+2018-11-01  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Make document.getAnimations() return declarative animations in the correct order
+        https://bugs.webkit.org/show_bug.cgi?id=191153
+
+        Reviewed by Dean Jackson.
+
+        Mark progressions for the document.getAnimations() tests covering CSS Animations and CSS Transitions.
+        These tests are now in WPT and will be updated as part of a general WPT update for all of Web Animations
+        shortly. We will upstream the minor changes made at that point. Those changes were necessary because we
+        don't support the PseudoElement interface and instead we check which animation names and CSS properties
+        are applied to pseudo-elements rather than the pseudo-element's type.
+
+        * css-animations/test_document-get-animations-expected.txt:
+        * css-animations/test_document-get-animations.html:
+        * css-animations/test_event-dispatch.html: Remove a comment that was added by mistake in a previous patch.
+        * css-transitions/test_document-get-animations-expected.txt:
+        * css-transitions/test_document-get-animations.html:
+
 2018-10-28  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Implement the update animations and send events procedure

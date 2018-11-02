@@ -1,3 +1,103 @@
+2018-11-01  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Make document.getAnimations() return declarative animations in the correct order
+        https://bugs.webkit.org/show_bug.cgi?id=191153
+
+        Reviewed by Dean Jackson.
+
+        The Web Animations spec has the notion of "composite order" which determines the order in which animations should
+        be returned when document.getAnimations() is called. The CSS Transitions and CSS Animations specifications also
+        determine the composite order of their respective animation classes, as well as the notion of "owning element",
+        the element that was the animation target when specified through style, prior to any manipulation via the Web
+        Animations API. We implement these two notions so that we can pass the document.getAnimations() tests for
+        declarative animations.
+
+        It is important that we have the notion of an "owning element" since when a CSS Transition or CSS Animation is
+        modified via the Web Animations API in a way that an animation created through CSS we must consider no longer
+        as a declarative animation but as a regular Web Animation. In this patch, we remove the DeclarativeAnimation's
+        target(), which returned a reference, to owningElement(), which returns a pointer and return nullptr once the
+        declarative animation has been modified.
+
+        In order to also keep a correct count of declarative animations applied to elements, we correctly add transitions
+        that have completed to a list of completed transitions, as specified by the CSS Transitions spec. We have had this
+        list declared in AnimationTimeline.h for a while but never actually did the work to add items to it. Thanks to that,
+        AnimationTimeline::updateCSSTransitionsForElement() now correctly accounts for completed transitions so that they
+        may be canceled if overridden with a new animation, correctly removing their "owning element".
+
+        Finally, now that we have saner lists of animations per classes, we can apply the right sorting routines to match
+        the composite order for CSS Transitions, CSS Animations and Web Animations, keeping a list of all animations created
+        in order as the final criterion for sorting.
+
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::animationTimingDidChange): Make sure this animation is tracked on the list of all animations
+        created for this timeline in the order in which they were created, which is needed to sort animations correctly when
+        document.getAnimations() is called.
+        (WebCore::AnimationTimeline::animationWasAddedToElement): We've removed the relevantMapForAnimation() method which we used
+        to determine which map we should add an animation to based on its class and instead have code that accounts for not just
+        the animation's class, but also whether it has an owning element since a valid owning element is required to qualify as
+        a CSS Transition or CSS Animation, regardless of the animation's original class.
+        (WebCore::removeAnimationFromMapForElement): Adding this helper to remove an animation from the provided animation map so
+        that animationWasRemovedFromElement() can call this with all of the various animation maps.
+        (WebCore::AnimationTimeline::animationWasRemovedFromElement): Check all of the various animation maps to see which may
+        contain the animation we're trying to remove as the owning element might have been cleared by the time this function is
+        called and looking at the animation's class would not be sufficient to determine which animation map the animation was in.
+        (WebCore::AnimationTimeline::removeDeclarativeAnimationFromListsForOwningElement): New function in which the logic from
+        animationWasRemovedFromElement() that dealt with removing animations from the list of running CSS Animations/Transitions as
+        well as completed CSS Transitions was factored out. This allowed us to also call this function from
+        DeclarativeAnimation::disassociateFromOwningElement().
+        (WebCore::AnimationTimeline::elementWasRemoved): We no longer need to remove an animation as canceling it will remove it
+        correctly when DocumentTimeline::updateAnimationsAndSendEvents() is called.
+        (WebCore::AnimationTimeline::updateCSSAnimationsForElement): Call cancelDeclarativeAnimation() instead of the removed
+        cancelOrRemoveDeclarativeAnimation() when a CSS Animation should be canceled.
+        (WebCore::AnimationTimeline::ensureRunningTransitionsByProperty): Now that we correctly remove transitions from the list
+        of running transitions once they've completed or have been canceled, we need a helper to always get a valid map of running
+        transitions for a given element as that map can be cleared while updateCSSTransitionsForElement() is running. 
+        (WebCore::AnimationTimeline::updateCSSTransitionsForElement): Call cancelDeclarativeAnimation() instead of the removed
+        cancelOrRemoveDeclarativeAnimation() when a CSS Transition should be canceled. Additionally we always get the list of running
+        transitions for a given element as it can be cleared by a prior cancelation.
+        (WebCore::AnimationTimeline::cancelDeclarativeAnimation): New function replacing cancelOrRemoveDeclarativeAnimation() in which
+        we call the new DeclarativeAnimation::cancelFromStyle() function on the provided animation and then remove the animation from
+        all known lists, including the new list of all animations. We do this final part so that the animation gets re-added as if it
+        were a new animation since canceling a declarative animation via a style change removes its declarative-ness. This guarantees
+        that a declarative animation that is canceled through style but then resumed through the Web Animations API sorts after any
+        declarative animation with an owning element.
+        (WebCore::AnimationTimeline::relevantMapForAnimation): Deleted.
+        (WebCore::AnimationTimeline::cancelOrRemoveDeclarativeAnimation): Deleted.
+        * animation/AnimationTimeline.h:
+        (WebCore::AnimationTimeline::timingModelDidChange): Deleted. This was left over in the patch where we implemented the "update
+        animations and send events" procedure.
+        (WebCore::AnimationTimeline::animations const): Deleted.
+        * animation/CSSAnimation.cpp:
+        (WebCore::CSSAnimation::create): Some refactoring to make the handling of a declarative animation's owning element part of the
+        DeclarativeAnimation constructor.
+        * animation/CSSTransition.cpp:
+        (WebCore::CSSTransition::create): Some refactoring to make the handling of a declarative animation's owning element part of the
+        DeclarativeAnimation constructor.
+        * animation/DeclarativeAnimation.cpp:
+        (WebCore::DeclarativeAnimation::DeclarativeAnimation):
+        (WebCore::DeclarativeAnimation::tick): Make sure we disassociate from the animation's owning element once we transition from a
+        relevant state to an idle state. This will catch any changes made via the Web Animations API to a declarative animation when the
+        "update animations and send events" procedure is run.
+        (WebCore::DeclarativeAnimation::disassociateFromOwningElement): Remove this animation from the list of declarative animations on
+        the associated timeline and make owningElement() nullptr so that document.getAnimations() will know to sort this animation with other
+        Web Animations created via the Web Animations API.
+        (WebCore::DeclarativeAnimation::initialize):
+        (WebCore::DeclarativeAnimation::cancelFromStyle): New method called from AnimationTimeline::cancelDeclarativeAnimation() which
+        cancels the animation but also disassociates it from its owning element.
+        (WebCore::DeclarativeAnimation::invalidateDOMEvents):
+        (WebCore::DeclarativeAnimation::enqueueDOMEvent):
+        * animation/DeclarativeAnimation.h:
+        (WebCore::DeclarativeAnimation::owningElement const):
+        (WebCore::DeclarativeAnimation::target const): Deleted.
+        * animation/DocumentTimeline.cpp:
+        (WebCore::compareDeclarativeAnimationOwningElementPositionsInDocumentTreeOrder): Adding a new utility used when sorting both
+        CSS Transitions and CSS Animations by tree order when their owning element differ, with special logic for pseudo-elements.
+        (WebCore::DocumentTimeline::getAnimations const): Filter and sort animations according to their composite order.
+        (WebCore::DocumentTimeline::updateAnimationsAndSendEvents): Compile a list of transitions that move to a finished state to
+        the list of completed transitions so that they may be canceled correctly in AnimationTimeline::updateCSSTransitionsForElement().
+        (WebCore::DocumentTimeline::transitionDidComplete):
+        * animation/DocumentTimeline.h:
+
 2018-11-02  Zan Dobersek  <zdobersek@igalia.com>
 
         PNGImageDecoder: report no repetition for non-animated images

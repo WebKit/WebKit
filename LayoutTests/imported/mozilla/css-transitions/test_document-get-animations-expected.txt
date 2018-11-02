@@ -1,6 +1,6 @@
 
 PASS getAnimations for non-animated content 
 PASS getAnimations for CSS Transitions 
-FAIL CSS Transitions targetting (pseudo-)elements should have correct order after sorting assert_equals: The animation targeting the ::before element comes second expected (string) "::before" but got (undefined) undefined
+PASS CSS Transitions targetting (pseudo-)elements should have correct order after sorting 
 PASS Transitions are not returned after they have finished 
 

@@ -32,10 +32,10 @@
 
 namespace WebCore {
 
-Ref<CSSTransition> CSSTransition::create(Element& target, CSSPropertyID property, MonotonicTime generationTime, const Animation& backingAnimation, const RenderStyle* oldStyle, const RenderStyle& newStyle, Seconds delay, Seconds duration, const RenderStyle& reversingAdjustedStartStyle, double reversingShorteningFactor)
+Ref<CSSTransition> CSSTransition::create(Element& owningElement, CSSPropertyID property, MonotonicTime generationTime, const Animation& backingAnimation, const RenderStyle* oldStyle, const RenderStyle& newStyle, Seconds delay, Seconds duration, const RenderStyle& reversingAdjustedStartStyle, double reversingShorteningFactor)
 {
-    auto result = adoptRef(*new CSSTransition(target, property, generationTime, backingAnimation, newStyle, reversingAdjustedStartStyle, reversingShorteningFactor));
-    result->initialize(target, oldStyle, newStyle);
+    auto result = adoptRef(*new CSSTransition(owningElement, property, generationTime, backingAnimation, newStyle, reversingAdjustedStartStyle, reversingShorteningFactor));
+    result->initialize(oldStyle, newStyle);
     result->setTimingProperties(delay, duration);
     return result;
 }

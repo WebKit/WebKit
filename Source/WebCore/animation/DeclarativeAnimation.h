@@ -42,9 +42,10 @@ public:
 
     bool isDeclarativeAnimation() const final { return true; }
 
-    Element& target() const { return m_target; }
+    Element* owningElement() const { return m_owningElement; }
     const Animation& backingAnimation() const { return m_backingAnimation; }
     void setBackingAnimation(const Animation&);
+    void cancelFromStyle();
 
     std::optional<double> startTime() const final;
     void setStartTime(std::optional<double>) final;
@@ -66,11 +67,12 @@ public:
 protected:
     DeclarativeAnimation(Element&, const Animation&);
 
-    virtual void initialize(const Element&, const RenderStyle* oldStyle, const RenderStyle& newStyle);
+    virtual void initialize(const RenderStyle* oldStyle, const RenderStyle& newStyle);
     virtual void syncPropertiesWithBackingAnimation();
     void invalidateDOMEvents(Seconds elapsedTime = 0_s);
 
 private:
+    void disassociateFromOwningElement();
     void flushPendingStyleChanges() const;
     AnimationEffectReadOnly::Phase phaseWithoutEffect() const;
     void enqueueDOMEvent(const AtomicString&, Seconds);
@@ -81,7 +83,7 @@ private:
     void resume() final;
     void stop() final;
 
-    Element& m_target;
+    Element* m_owningElement;
     Ref<Animation> m_backingAnimation;
     bool m_wasPending { false };
     AnimationEffectReadOnly::Phase m_previousPhase { AnimationEffectReadOnly::Phase::Idle };

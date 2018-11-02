@@ -259,7 +259,7 @@ test(function(t) {
   //        |
   //       child
   var parent = addDiv(t, { 'id': 'parent' });
-  var child = addDiv(t);
+  var child = addDiv(t, { 'id': 'child' });
   parent.appendChild(child);
   [parent, child].forEach((div) => {
     div.setAttribute('style', 'animation: animBottom 10s');
@@ -271,9 +271,9 @@ test(function(t) {
                 'are returned');
   assert_equals(anims[0].effect.target, parent,
                 'The animation targeting the parent element comes first');
-  assert_equals(anims[1].effect.target.type, '::before',
+  assert_equals(anims[1].animationName, 'animRight',
                 'The animation targeting the ::before element comes second');
-  assert_equals(anims[2].effect.target.type, '::after',
+  assert_equals(anims[2].animationName, 'animLeft',
                 'The animation targeting the ::after element comes third');
   assert_equals(anims[3].effect.target, child,
                 'The animation targeting the child element comes last');
