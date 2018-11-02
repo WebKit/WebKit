@@ -1,3 +1,10 @@
+2018-11-01  Keith Miller  <keith_miller@apple.com>
+
+        Unreviewed, JavaScriptCore should only guarantee to produce a
+        modulemap if we are building for iOSMac.
+
+        * Configurations/JavaScriptCore.xcconfig:
+
 2018-10-31  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Canvas: create a setting for auto-recording newly created contexts

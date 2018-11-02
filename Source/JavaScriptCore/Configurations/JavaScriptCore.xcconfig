@@ -24,7 +24,9 @@
 #include "FeatureDefines.xcconfig"
 #include "Version.xcconfig"
 
-DEFINES_MODULE = YES;
+DEFINES_MODULE = $(DEFINES_MODULE_$(WK_PLATFORM_NAME))
+DEFINES_MODULE_iosmac = YES;
+DEFINES_MODULE_ = NO;
 MODULEMAP_FILE = $(SRCROOT)/JavaScriptCore.modulemap;
 
 // Prevent C++ standard library operator new, delete and their related exception types from being exported as weak symbols.
