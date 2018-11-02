@@ -1,3 +1,17 @@
+2018-11-02  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WPE] WebDriver: support validating and parsing the 'certificates' capability
+        https://bugs.webkit.org/show_bug.cgi?id=191014
+
+        Reviewed by Michael Catanzaro.
+
+        Adopt the same approach as in the GTK's WebDriverService implementation
+        for validating and parsing the 'certificates' WebDriver capability.
+
+        * wpe/WebDriverServiceWPE.cpp:
+        (WebDriver::WebDriverService::platformValidateCapability const):
+        (WebDriver::WebDriverService::platformParseCapabilities const):
+
 2018-08-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: do not try to set the caret when focusing non text element in send keys command
