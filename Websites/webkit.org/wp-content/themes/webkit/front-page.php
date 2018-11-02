@@ -1,16 +1,18 @@
 <?php get_header(); ?>
-
 <div id="posts" class="tiles">
-<?php
+    <?php 
+
+include_post_icons();
 Front_Page_Posts::object(); // Initialize Front Page Posts query
 
 if ( ! dynamic_sidebar('Home Tiles') ):
     $Query = Front_Page_Posts::WP_Query();
-    while ( $Query->have_posts() ): 
-        $Query->the_post(); 
-        get_template_part('loop'); 
+    while ( $Query->have_posts() ):
+        $Query->the_post();
+        get_template_part('loop');
     endwhile;
-endif; 
+endif;
+
 ?>
 </div>
 

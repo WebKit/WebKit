@@ -1,3 +1,62 @@
+2018-11-02  Jon Davis  <jond@apple.com>
+
+        Improved the SVG icons to use SVG symbols
+        https://bugs.webkit.org/show_bug.cgi?id=191205
+
+        Reviewed by Timothy Hatcher.
+        
+        This change makes it far easier to add new SVG icons to the 
+        icons.svg sprite and provides better positioning control
+        over the icons within the blog post tile frame.
+
+        * wp-content/themes/webkit/front-page.php:
+        * wp-content/themes/webkit/functions.php:
+        * wp-content/themes/webkit/header.php:
+        * wp-content/themes/webkit/images/icons.svg:
+        * wp-content/themes/webkit/index.php:
+        * wp-content/themes/webkit/loop.php:
+        * wp-content/themes/webkit/style.css:
+        (@supports ( -webkit-backdrop-filter: blur(10px) )):
+        (footer):
+        (#icons):
+        (.tile .background-image):
+        (.tile .background-image svg):
+        (.tile.category-web-inspector svg):
+        (.tile.category-performance svg):
+        (.tile.category-javascript svg):
+        (.tile.category-css svg):
+        (.tile.category-standards svg):
+        (.tile.category-contributing svg):
+        (.tile.category-storage svg):
+        (.tile.category-layout svg):
+        (.tile.category-safari-technology-preview svg):
+        (.tile.category-accessibility svg):
+        (.tile.category-security svg):
+        (.tile.category-privacy svg):
+        (header .menu-item-has-children .label-toggle::after):
+        (@media only screen and (max-width: 920px)):
+        (.main-menu.label-toggle):
+        (header .menu):
+        (@media only screen and (max-width: 690px)):
+        (@media only screen and (max-width: 415px)):
+        (@media only screen and (max-height: 415px)):
+        (.tile.category-web-inspector .background-image): Deleted.
+        (.tile.category-performance .background-image): Deleted.
+        (.tile.category-javascript .background-image): Deleted.
+        (.tile.category-css .background-image): Deleted.
+        (.tile.category-standards .background-image): Deleted.
+        (.tile.category-contributing .background-image): Deleted.
+        (.tile.category-storage .background-image): Deleted.
+        (.tile.category-layout .background-image): Deleted.
+        (.tile.category-safari-technology-preview .background-image): Deleted.
+        (.tile.category-accessibility .background-image): Deleted.
+        (.tile.tag-console .background-image,): Deleted.
+        (.tile.tag-console .background-image): Deleted.
+        (.tile.tag-debugger .background-image): Deleted.
+        (.tile.tag-shortcuts .background-image): Deleted.
+        (.tile.tag-timeline .background-image): Deleted.
+        * wp-content/themes/webkit/widgets/post.php:
+
 2018-11-01  Jon Davis  <jond@apple.com>
 
         Prevent homepage animation for users that prefer reduced motion

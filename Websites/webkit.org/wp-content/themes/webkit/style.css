@@ -250,13 +250,13 @@ header {
 }
 
 @supports ( -webkit-backdrop-filter: blur(10px) ) {
-    
+
     .home header {
         background-color: transparent;
         backdrop-filter: blur(0px);
         -webkit-backdrop-filter: blur(0px);
     }
-    
+
     .sub-menu-layer {
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
@@ -424,7 +424,7 @@ footer {
     clear: both;
     width: 100%;
     padding-bottom: 1.65rem;
-    box-sizing: border-box;    
+    box-sizing: border-box;
 }
 
 footer .menu {
@@ -485,18 +485,26 @@ footer .menu {
     padding: 0;
 }
 
+#icons {
+    display: none;
+}
+
 .tile .background-image {
     position: relative;
     margin-top: -1px;
     height: 0;
     padding-bottom: 80%;
     overflow: hidden;
+    width: 100%;
 
-    background-size: cover;
-    background-position: 50% 1%;
     background-color: #636a74;
-    background-repeat: no-repeat;
-    background-image: url('images/icons.svg');
+}
+
+.tile .background-image svg {
+    position: relative;
+    top: -12%;
+    width: 209%;
+    height: auto;
 }
 
 .tile .background-image.has-featured-image {
@@ -509,76 +517,54 @@ footer .menu {
     display: none;
 }
 
-.tile.category-web-inspector .background-image {
+.tile.category-web-inspector svg {
     background-color: #08c;
-    background-position: 50% 10.75%; /* Must use this notation for Firefox */
 }
 
-.tile.category-performance .background-image {
+.tile.category-performance svg {
     background-color: rgb(152, 188, 77);
-    background-position: 50% 20.5%;
 }
 
-.tile.category-javascript .background-image {
+.tile.category-javascript svg {
     background-color: #997FA6;
-    background-position: 50% 30.5%;
 }
 
-.tile.category-css .background-image {
+.tile.category-css svg {
     background-color: #bf6d71;
-    background-position: 50% 40.4%;
 }
 
-.tile.category-standards .background-image {
+.tile.category-standards svg {
+    top: -20%;
     background-color: #BF7600;
-    background-position: 50% 50.4%;
 }
 
-.tile.category-contributing .background-image {
+.tile.category-contributing svg {
     background-color: #CBAA44;
-    background-position: 50% 59.8%;
 }
 
-.tile.category-storage .background-image {
+.tile.category-storage svg {
     background-color: #997FA6;
-    background-position: 50% 69.6%;
 }
 
-.tile.category-layout .background-image {
+.tile.category-layout svg {
     background-color: #bf6d71;
-    background-position: 50% 79.45%;
 }
 
-.tile.category-safari-technology-preview .background-image {
+.tile.category-safari-technology-preview svg {
     background-color: #8e56b1;
 }
 
-.tile.category-accessibility .background-image {
+.tile.category-accessibility svg {
+    top: -8%;
     background-color: #08c;
-    background-position: 50% 89.2%;
 }
 
-.tile.tag-console .background-image,
-.tile.tag-debugger .background-image,
-.tile.tag-shortcuts .background-image,
-.tile.tag-timeline .background-image {
-     background-image: url('images/inspector.svg');
+.tile.category-security svg {
+    background-color: #CBAA44;
 }
 
-.tile.tag-console .background-image {
-    background-position: 50% 3%;
-}
-
-.tile.tag-debugger .background-image {
-    background-position: 50% 34%;
-}
-
-.tile.tag-shortcuts .background-image {
-    background-position: 50% 66%;
-}
-
-.tile.tag-timeline .background-image {
-    background-position: 50% 97%;
+.tile.category-privacy svg {
+    background-color: #CBAA44;
 }
 
 .tile .background-image.loaded {
@@ -1567,7 +1553,7 @@ input.menu-toggle {
 }
 
 footer {
-    
+
 }
 
 footer nav {
@@ -1624,11 +1610,11 @@ header .menu-item-has-children .label-toggle::after {
     margin-left: 0.5rem;
     margin-top: -0.1rem;
     content: '';
-    
+
     -webkit-filter: invert(100%);
     filter: invert(100%);
-    perspective: 600;        
-    
+    perspective: 600;
+
     transition: transform 0.3s ease-out;
 }
 
@@ -1769,7 +1755,7 @@ header .menu-item { /* add bottom dimension to main menu items */
         cursor: pointer;
 
         transition: transform 0.3s ease-out;
-        
+
         -webkit-filter: invert(100%);
         filter: invert(100%);
         perspective: 600;
@@ -1794,12 +1780,12 @@ header .menu-item { /* add bottom dimension to main menu items */
         width: 100vw;
         overflow: hidden;
         box-shadow: 0px 5px 5px rgba(0,0,0,0.10);
-        
+
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(10px);
         background-color: rgba(255,255,255,0.8);
     }
-    
+
     header nav a {
         color: #333333;
     }
@@ -1874,14 +1860,14 @@ header .menu-item { /* add bottom dimension to main menu items */
     footer nav li {
         padding: 0 3rem 3rem 0;
     }
-    
+
 }
 
 @media only screen and (max-width: 690px) {
     article h1 {
         font-size: 3.4rem;
     }
-    
+
     .featured-tile {
         padding: 0;
     }
@@ -1944,7 +1930,7 @@ header .menu-item { /* add bottom dimension to main menu items */
     .nextrouter-copy {
         font-size: 2.2rem;
     }
-    
+
     article .scrollable {
         overflow: auto;
         -webkit-overflow-scrolling: touch;
@@ -2045,7 +2031,7 @@ header .menu-item { /* add bottom dimension to main menu items */
 
 }
 
-@media only screen and (max-width: 415px) {    
+@media only screen and (max-width: 415px) {
     .table-of-contents {
         /* Go one-column */
         width: 100vw;
@@ -2055,7 +2041,7 @@ header .menu-item { /* add bottom dimension to main menu items */
         float: none;
         margin: 0 0 3rem 0;
     }
-    
+
     .nextrouter-copy {
         font-size: 1.7rem;
         letter-spacing: -0.016rem;
@@ -2063,7 +2049,7 @@ header .menu-item { /* add bottom dimension to main menu items */
 }
 
 @media only screen and (max-height: 415px) {
-    
+
     .home .site-logo {
         opacity: 1;
         margin-top: 0;
@@ -2073,7 +2059,7 @@ header .menu-item { /* add bottom dimension to main menu items */
     .home header {
         padding-top: 1rem;
     }
-    
+
     @supports(padding:max(0px)) {
         header,
         header .menu,
@@ -2087,21 +2073,21 @@ header .menu-item { /* add bottom dimension to main menu items */
             padding-left: env(safe-area-inset-left);
             padding-right: env(safe-area-inset-right);
         }
-        
+
         header .menu .menu-item > .sub-menu {
             border: none;
             background: none;
         }
-        
+
         .sub-menu-layer {
             padding: 0 3rem;
         }
-        
+
         .sub-menu-layer .menu-item:first-child,
         .sub-menu-layer .menu-item {
             padding: 0 0 1.5rem 1.5rem;
         }
-        
+
     }
 
     .tile {
@@ -2112,13 +2098,10 @@ header .menu-item { /* add bottom dimension to main menu items */
         padding-bottom: 33%;
     }
 
-    .tile.category-performance .background-image {
-        background-position-y: 21.5%;
+    .tile .background-image svg {
+        top: -65%;
     }
 
-    .tile.category-web-inspector .background-image {
-        background-position-y: 12.5%;
-    }
 
     .table-of-contents {
         height: 9rem;

@@ -5,8 +5,8 @@
     <meta name="robots" content="noodp">
 
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes, viewport-fit=cover">
-    
-    <title><?php if ( is_front_page() ) echo "WebKit"; 
+
+    <title><?php if ( is_front_page() ) echo "WebKit";
         else { wp_title(''); echo ' | WebKit'; } ?></title>
 
     <meta name="application-name" content="WebKit">
@@ -20,7 +20,6 @@
     <link rel="pingback" href="<?php bloginfo('pingback_url'); ?>">
 
     <link rel="shortcut icon" sizes="32x32" type="image/x-icon" href="/favicon.ico">
-    <link rel="mask-icon" href="tabicon.svg" color="#0088cc">
 
     <?php wp_head(); ?>
 </head>
@@ -38,7 +37,7 @@
         </div>
     </header>
 
-<?php 
+<?php
 if ( is_front_page() )
     include('front-header.php');
 ?>
