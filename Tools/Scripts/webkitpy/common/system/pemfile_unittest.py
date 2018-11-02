@@ -57,7 +57,7 @@ class PemFileTest(unittest.TestCase):
     def test_parse_bad_format(self):
         with self.assertRaises(BadFormatError):
             # Partial contents raises format error
-            Pem(trim("""-----BEGIN RSA PRIVATE KEY-----
+            Pem(trim("""-----BEGIN PRIVATE KEY-----
             MIICXQIBAAKBgQCmcXbusrr8zQr8snIb0OVQibVfgv7zPjh/5xdcrKOejJzp3epA
             AF4TITeFR9vzWIwkmkcRoY+IbQNhh7kefGUYD47bvVamJMtq5cGYVs0HngT+KTMa
             NGH/G44KkFIOaz/b5d/JNKONrlqwxqXS+m6IY4l/E1Ff25ZjND5TaEvI1wIDAQAB
@@ -85,7 +85,7 @@ class PemFileTest(unittest.TestCase):
                     -----END FOOBAR-----"""))
 
     def setUp(self):
-        self.pem_contents = trim("""-----BEGIN RSA PRIVATE KEY-----
+        self.pem_contents = trim("""-----BEGIN PRIVATE KEY-----
         MIICXQIBAAKBgQCmcXbusrr8zQr8snIb0OVQibVfgv7zPjh/5xdcrKOejJzp3epA
         AF4TITeFR9vzWIwkmkcRoY+IbQNhh7kefGUYD47bvVamJMtq5cGYVs0HngT+KTMa
         NGH/G44KkFIOaz/b5d/JNKONrlqwxqXS+m6IY4l/E1Ff25ZjND5TaEvI1wIDAQAB
@@ -99,7 +99,7 @@ class PemFileTest(unittest.TestCase):
         6VcMHI2vkyxV1T7ITrnoSf4ZrIu9yl56mHnRPzSy9VlAHt8hnMI7UeB+bGUndrMO
         VXQgzHzKUhbbxbePvfECQQDTtkOuhJyKDfHCxLDcwNpi+T6OWTEfCw/cq9ZWDbA7
         yCX81pQxfZkfMIS1YFIOGHovK0rMMTraCe+iDNYtVz/L
-        -----END RSA PRIVATE KEY-----
+        -----END PRIVATE KEY-----
         -----BEGIN CERTIFICATE-----
         MIIB9zCCAWACCQDjWWTeC6BQvTANBgkqhkiG9w0BAQQFADBAMQswCQYDVQQGEwJB
         VTETMBEGA1UECBMKU29tZS1TdGF0ZTEcMBoGA1UEChMTV2ViS2l0IExheW91dCBU
@@ -115,7 +115,7 @@ class PemFileTest(unittest.TestCase):
         -----END CERTIFICATE-----
         """) + "\n"
 
-        self.private_key = trim("""-----BEGIN RSA PRIVATE KEY-----
+        self.private_key = trim("""-----BEGIN PRIVATE KEY-----
         MIICXQIBAAKBgQCmcXbusrr8zQr8snIb0OVQibVfgv7zPjh/5xdcrKOejJzp3epA
         AF4TITeFR9vzWIwkmkcRoY+IbQNhh7kefGUYD47bvVamJMtq5cGYVs0HngT+KTMa
         NGH/G44KkFIOaz/b5d/JNKONrlqwxqXS+m6IY4l/E1Ff25ZjND5TaEvI1wIDAQAB
@@ -129,7 +129,7 @@ class PemFileTest(unittest.TestCase):
         6VcMHI2vkyxV1T7ITrnoSf4ZrIu9yl56mHnRPzSy9VlAHt8hnMI7UeB+bGUndrMO
         VXQgzHzKUhbbxbePvfECQQDTtkOuhJyKDfHCxLDcwNpi+T6OWTEfCw/cq9ZWDbA7
         yCX81pQxfZkfMIS1YFIOGHovK0rMMTraCe+iDNYtVz/L
-        -----END RSA PRIVATE KEY-----
+        -----END PRIVATE KEY-----
         """) + "\n"
 
         self.certificate = trim("""-----BEGIN CERTIFICATE-----

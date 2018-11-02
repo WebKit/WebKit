@@ -68,7 +68,7 @@ class Pem(object):
     @property
     def private_key(self):
         """Return private key"""
-        return self.get(RSA_PRIVATE_KEY)
+        return self.get(PRIVATE_KEY)
 
     @property
     def csr(self):
@@ -91,7 +91,7 @@ BEGIN_MARKER = "BEGIN "
 END_MARKER = "END"
 
 CERTIFICATE_REQUEST = "CERTIFICATE REQUEST"
-RSA_PRIVATE_KEY = "RSA PRIVATE KEY"
+PRIVATE_KEY = "PRIVATE KEY"
 CERTIFICATE = "CERTIFICATE"
 
 BEGIN_PATTERN = re.compile("^{}BEGIN (.+){}$".format(MARKER, MARKER))

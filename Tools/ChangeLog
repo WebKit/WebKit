@@ -1,3 +1,12 @@
+2018-11-01  Philippe Normand  <pnormand@igalia.com>
+
+        [Apache] Self-signed SSL certificate RSA key is considered too weak
+        https://bugs.webkit.org/show_bug.cgi?id=191156
+
+        Reviewed by Michael Catanzaro.
+
+        * Scripts/webkitpy/common/system/pemfile.py:
+
 2018-11-02  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed follow-up to r237678.
