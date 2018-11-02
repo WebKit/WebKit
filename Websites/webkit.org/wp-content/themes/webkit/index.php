@@ -1,6 +1,6 @@
 <?php get_header(); ?>
 
-        <?php if ( have_posts() ) 
+        <?php if ( have_posts() ):
             include_post_icons(); ?>
             <div id="posts" class="tiles">
             <?php

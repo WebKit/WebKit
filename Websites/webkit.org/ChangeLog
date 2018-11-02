@@ -1,5 +1,14 @@
 2018-11-02  Jon Davis  <jond@apple.com>
 
+        Follow-up fix for the webkit.org blog index page
+        https://bugs.webkit.org/show_bug.cgi?id=191216
+
+        Reviewed by Timothy Hatcher.
+
+        * wp-content/themes/webkit/index.php:
+
+2018-11-02  Jon Davis  <jond@apple.com>
+
         Improved the SVG icons to use SVG symbols
         https://bugs.webkit.org/show_bug.cgi?id=191205
 
