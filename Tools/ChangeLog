@@ -1,3 +1,21 @@
+2018-11-02  Daniel Bates  <dabates@apple.com>
+
+        [iOS] WebKit should dispatch DOM events when a modifier key is pressed
+        https://bugs.webkit.org/show_bug.cgi?id=190487
+
+        Reviewed by Tim Horton.
+
+        Update the code for renamed enumerations. For WebKitTestRunner, removed comment that does not
+        match my observations when using the simulator to simulate iOS 12 and add support for testing
+        right-hand side modifiers.
+
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (modifierFlags):
+        (-[EventSendingController keyDown:withModifiers:withLocation:]):
+        (-[EventSendingController setTouchModifier:value:]):
+        * WebKitTestRunner/ios/HIDEventGenerator.mm:
+        (hidUsageCodeForCharacter):
+
 2018-11-02  Chris Dumez  <cdumez@apple.com>
 
         [PSON] Reuse SuspendedPages' process when possible, for performance

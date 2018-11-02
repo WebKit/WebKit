@@ -216,9 +216,9 @@ static WebCore::PhysicalBoxSide boxSide(WebKit::ScrollingDirection direction)
     if (key == Key::Other)
         return std::nullopt;
     
-    BOOL shiftPressed = event.modifierFlags & WebEventFlagMaskShift;
-    BOOL altPressed = event.modifierFlags & WebEventFlagMaskAlternate;
-    BOOL cmdPressed = event.modifierFlags & WebEventFlagMaskCommand;
+    BOOL shiftPressed = event.modifierFlags & WebEventFlagMaskShiftKey;
+    BOOL altPressed = event.modifierFlags & WebEventFlagMaskOptionKey;
+    BOOL cmdPressed = event.modifierFlags & WebEventFlagMaskCommandKey;
 
     auto increment = ^{
         switch (key) {

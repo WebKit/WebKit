@@ -960,13 +960,18 @@ static inline uint32_t hidUsageCodeForCharacter(NSString *key)
         return kHIDUsage_KeyboardRightGUI;
     if ([key isEqualToString:@"clear"]) // Num Lock / Clear
         return kHIDUsage_KeypadNumLock;
-    // The simulator keyboard interprets both left and right modifier keys using the left version of the usage code.
-    if ([key isEqualToString:@"leftControl"] || [key isEqualToString:@"rightControl"])
+    if ([key isEqualToString:@"leftControl"])
         return kHIDUsage_KeyboardLeftControl;
-    if ([key isEqualToString:@"leftShift"] || [key isEqualToString:@"rightShift"])
+    if ([key isEqualToString:@"rightControl"])
+        return kHIDUsage_KeyboardRightControl;
+    if ([key isEqualToString:@"leftShift"])
         return kHIDUsage_KeyboardLeftShift;
-    if ([key isEqualToString:@"leftAlt"] || [key isEqualToString:@"rightAlt"])
+    if ([key isEqualToString:@"rightShift"])
+        return kHIDUsage_KeyboardRightShift;
+    if ([key isEqualToString:@"leftAlt"])
         return kHIDUsage_KeyboardLeftAlt;
+    if ([key isEqualToString:@"rightAlt"])
+        return kHIDUsage_KeyboardRightAlt;
 
     return 0;
 }

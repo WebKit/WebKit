@@ -1,3 +1,14 @@
+2018-11-02  Daniel Bates  <dabates@apple.com>
+
+        [iOS] WebKit should dispatch DOM events when a modifier key is pressed
+        https://bugs.webkit.org/show_bug.cgi?id=190487
+
+        Reviewed by Tim Horton.
+
+        Update expected results of an existing test now that we identify modifier keys.
+
+        * fast/events/ios/keydown-keyup-special-keys-in-non-editable-element-expected.txt:
+
 2018-11-02  Ali Juma  <ajuma@chromium.org>
 
         Allow cross-document intersection observing

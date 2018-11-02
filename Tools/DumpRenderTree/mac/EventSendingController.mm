@@ -525,11 +525,11 @@ static int modifierFlags(const NSString* modifierName)
     const int commandKeyMask = NSEventModifierFlagCommand;
     const int capsLockKeyMask = NSEventModifierFlagCapsLock;
 #else
-    const int controlKeyMask = WebEventFlagMaskControl;
-    const int shiftKeyMask = WebEventFlagMaskShift;
-    const int alternateKeyMask = WebEventFlagMaskAlternate;
-    const int commandKeyMask = WebEventFlagMaskCommand;
-    const int capsLockKeyMask = WebEventFlagMaskAlphaShift;
+    const int controlKeyMask = WebEventFlagMaskLeftControlKey;
+    const int shiftKeyMask = WebEventFlagMaskLeftShiftKey;
+    const int alternateKeyMask = WebEventFlagMaskLeftOptionKey;
+    const int commandKeyMask = WebEventFlagMaskLeftCommandKey;
+    const int capsLockKeyMask = WebEventFlagMaskLeftCapsLockKey;
 #endif
 
     int flags = 0;
@@ -1110,7 +1110,7 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
 #if !PLATFORM(IOS_FAMILY)
         modifierFlags |= NSEventModifierFlagShift;
 #else
-        modifierFlags |= WebEventFlagMaskAlphaShift;
+        modifierFlags |= WebEventFlagMaskLeftShiftKey;
 #endif
         charactersIgnoringModifiers = [character lowercaseString];
     }
@@ -1436,13 +1436,13 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
     unsigned modifier = 0;
     
     if ([modifierName isEqualToString:@"alt"])
-        modifier = WebEventFlagMaskAlternate;
+        modifier = WebEventFlagMaskLeftOptionKey;
     else if ([modifierName isEqualToString:@"shift"])
-        modifier = WebEventFlagMaskShift;
+        modifier = WebEventFlagMaskLeftShiftKey;
     else if ([modifierName isEqualToString:@"meta"])
-        modifier = WebEventFlagMaskCommand;
+        modifier = WebEventFlagMaskLeftCommandKey;
     else if ([modifierName isEqualToString:@"ctrl"])
-        modifier = WebEventFlagMaskControl;
+        modifier = WebEventFlagMaskLeftControlKey;
 
     if (!modifier)
         return;

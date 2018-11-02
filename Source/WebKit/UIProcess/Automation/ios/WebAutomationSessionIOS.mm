@@ -83,19 +83,19 @@ void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& pag
 
             switch (virtualKey) {
             case VirtualKey::Shift:
-                changedModifiers |= WebEventFlagMaskShift;
+                changedModifiers |= WebEventFlagMaskShiftKey;
                 break;
             case VirtualKey::Control:
-                changedModifiers |= WebEventFlagMaskControl;
+                changedModifiers |= WebEventFlagMaskControlKey;
                 break;
             case VirtualKey::Alternate:
-                changedModifiers |= WebEventFlagMaskAlternate;
+                changedModifiers |= WebEventFlagMaskOptionKey;
                 break;
             case VirtualKey::Meta:
                 // The 'meta' key does not exist on Apple keyboards and is usually
                 // mapped to the Command key when using third-party keyboards.
             case VirtualKey::Command:
-                changedModifiers |= WebEventFlagMaskCommand;
+                changedModifiers |= WebEventFlagMaskCommandKey;
                 break;
             default:
                 break;

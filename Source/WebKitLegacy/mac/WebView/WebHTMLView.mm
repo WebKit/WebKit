@@ -6067,6 +6067,8 @@ static BOOL writingDirectionKeyBindingsEnabled()
     
     if (auto* platformEvent = wcEvent->underlyingPlatformEvent()) {
         WebEvent *event = platformEvent->event();
+        if (event.keyboardFlags & WebEventKeyboardInputModifierFlagsChanged)
+            return NO;
         if (![[self _webView] isEditable] && event.isTabKey) 
             return NO;
         

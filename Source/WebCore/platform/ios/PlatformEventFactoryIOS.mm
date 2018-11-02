@@ -44,15 +44,15 @@ static OptionSet<PlatformEvent::Modifier> modifiersForEvent(WebEvent *event)
 {
     OptionSet<PlatformEvent::Modifier> modifiers;
 
-    if (event.modifierFlags & WebEventFlagMaskShift)
+    if (event.modifierFlags & WebEventFlagMaskShiftKey)
         modifiers.add(PlatformEvent::Modifier::ShiftKey);
-    if (event.modifierFlags & WebEventFlagMaskControl)
+    if (event.modifierFlags & WebEventFlagMaskControlKey)
         modifiers.add(PlatformEvent::Modifier::CtrlKey);
-    if (event.modifierFlags & WebEventFlagMaskAlternate)
+    if (event.modifierFlags & WebEventFlagMaskOptionKey)
         modifiers.add(PlatformEvent::Modifier::AltKey);
-    if (event.modifierFlags & WebEventFlagMaskCommand)
+    if (event.modifierFlags & WebEventFlagMaskCommandKey)
         modifiers.add(PlatformEvent::Modifier::MetaKey);
-    if (event.modifierFlags & WebEventFlagMaskAlphaShift)
+    if (event.modifierFlags & WebEventFlagMaskLeftCapsLockKey)
         modifiers.add(PlatformEvent::Modifier::CapsLockKey);
 
     return modifiers;
@@ -127,6 +127,32 @@ PlatformWheelEvent PlatformEventFactory::createPlatformWheelEvent(WebEvent *even
 
 String keyIdentifierForKeyEvent(WebEvent *event)
 {
+    if (event.keyboardFlags & WebEventKeyboardInputModifierFlagsChanged) {
+        switch (event.keyCode) {
+        case VK_LWIN: // Left Command
+        case VK_APPS: // Right Command
+            return "Meta"_s;
+
+        case VK_CAPITAL: // Caps Lock
+            return "CapsLock"_s;
+
+        case VK_LSHIFT: // Left Shift
+        case VK_RSHIFT: // Right Shift
+            return "Shift"_s;
+
+        case VK_LMENU: // Left Alt
+        case VK_RMENU: // Right Alt
+            return "Alt"_s;
+
+        case VK_LCONTROL: // Left Ctrl
+        case VK_RCONTROL: // Right Ctrl
+            return "Control"_s;
+
+        default:
+            ASSERT_NOT_REACHED();
+            return emptyString();
+        }
+    }
     NSString *characters = event.charactersIgnoringModifiers;
     if ([characters length] != 1) {
         LOG(Events, "received an unexpected number of characters in key event: %u", [characters length]);
@@ -137,6 +163,33 @@ String keyIdentifierForKeyEvent(WebEvent *event)
 
 String keyForKeyEvent(WebEvent *event)
 {
+    if (event.keyboardFlags & WebEventKeyboardInputModifierFlagsChanged) {
+        switch (event.keyCode) {
+        case VK_LWIN: // Left Command
+        case VK_APPS: // Right Command
+            return "Meta"_s;
+
+        case VK_CAPITAL: // Caps Lock
+            return "CapsLock"_s;
+
+        case VK_LSHIFT: // Left Shift
+        case VK_RSHIFT: // Right Shift
+            return "Shift"_s;
+
+        case VK_LMENU: // Left Alt
+        case VK_RMENU: // Right Alt
+            return "Alt"_s;
+
+        case VK_LCONTROL: // Left Ctrl
+        case VK_RCONTROL: // Right Ctrl
+            return "Control"_s;
+
+        default:
+            ASSERT_NOT_REACHED();
+            return "Unidentified"_s;
+        }
+    }
+
     NSString *characters = event.characters;
     auto length = [characters length];
     // characters return an empty string for dead keys.
@@ -371,13 +424,19 @@ public:
         m_modifiers = modifiersForEvent(event);
         m_timestamp = WallTime::now();
 
-        m_text = event.characters;
-        m_unmodifiedText = event.charactersIgnoringModifiers;
+        if (event.keyboardFlags & WebEventKeyboardInputModifierFlagsChanged) {
+            m_text = emptyString();
+            m_unmodifiedText = emptyString();
+            m_autoRepeat = false;
+        } else {
+            m_text = event.characters;
+            m_unmodifiedText = event.charactersIgnoringModifiers;
+            m_autoRepeat = event.isKeyRepeating;
+        }
         m_key = keyForKeyEvent(event);
         m_code = codeForKeyEvent(event);
         m_keyIdentifier = keyIdentifierForKeyEvent(event);
         m_windowsVirtualKeyCode = event.keyCode;
-        m_autoRepeat = event.isKeyRepeating;
         m_isKeypad = false; // iOS does not distinguish the numpad. See <rdar://problem/7190835>.
         m_isSystemKey = false;
         m_Event = event;

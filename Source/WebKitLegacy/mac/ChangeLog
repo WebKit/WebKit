@@ -1,3 +1,16 @@
+2018-11-02  Daniel Bates  <dabates@apple.com>
+
+        [iOS] WebKit should dispatch DOM events when a modifier key is pressed
+        https://bugs.webkit.org/show_bug.cgi?id=190487
+
+        Reviewed by Tim Horton.
+
+        Having Legacy WebKit return NO if the editing event represents a modifier flags change to
+        allow the default handling.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _handleEditingKeyEvent:]):
+
 2018-11-01  Sihui Liu  <sihui_liu@apple.com>
 
         Add a storage limit for IndexedDB

@@ -3786,7 +3786,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
         handler(event, eventWasHandled);
         return;
     }
-        
+
     // If we aren't interacting with editable content, we still need to call [super _handleKeyUIEvent:]
     // so that keyboard repeat will work correctly. If we are interacting with editable content,
     // we already did so in _handleKeyUIEvent.
@@ -3815,6 +3815,9 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     static const unsigned kWebDeleteKey = 0x007F;
     static const unsigned kWebDeleteForwardKey = 0xF728;
     static const unsigned kWebSpaceKey = 0x20;
+
+    if (event.keyboardFlags & WebEventKeyboardInputModifierFlagsChanged)
+        return NO;
 
     BOOL contentEditable = _page->editorState().isContentEditable;
 
