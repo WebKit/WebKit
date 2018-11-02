@@ -35,7 +35,7 @@
 #include "ObjectPrototype.h"
 #include "JSCInlines.h"
 #include <wtf/text/StringHash.h>
-#include <wtf/unicode/UTF8.h>
+#include <wtf/unicode/UTF8Conversion.h>
 
 using namespace JSC;
 using namespace WTF::Unicode;

@@ -34,7 +34,7 @@
 #include <wtf/text/IntegerToStringConversion.h>
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/unicode/CharacterNames.h>
-#include <wtf/unicode/UTF8.h>
+#include <wtf/unicode/UTF8Conversion.h>
 
 namespace WTF {
 

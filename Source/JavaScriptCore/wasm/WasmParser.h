@@ -39,7 +39,7 @@
 #include <wtf/LEBDecoder.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/WTFString.h>
-#include <wtf/unicode/UTF8.h>
+#include <wtf/unicode/UTF8Conversion.h>
 
 namespace JSC { namespace Wasm {
 

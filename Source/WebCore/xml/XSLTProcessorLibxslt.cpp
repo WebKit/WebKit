@@ -49,7 +49,7 @@
 #include <libxslt/xsltutils.h>
 #include <wtf/Assertions.h>
 #include <wtf/text/StringBuffer.h>
-#include <wtf/unicode/UTF8.h>
+#include <wtf/unicode/UTF8Conversion.h>
 
 #if OS(DARWIN) && !PLATFORM(GTK)
 #include "SoftLinkLibxslt.h"

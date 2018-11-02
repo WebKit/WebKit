@@ -30,7 +30,7 @@
 #include <wtf/Ref.h>
 #include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
-#include <wtf/unicode/UTF8.h>
+#include <wtf/unicode/UTF8Conversion.h>
 
 namespace API {
 

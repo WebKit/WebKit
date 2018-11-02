@@ -1,3 +1,16 @@
+2018-11-01  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Rename <wtf/unicode/UTF8.h> to <wtf/unicode/UTF8Conversion.h> in order to avoid conflicting with ICU's unicode/utf8.h
+        https://bugs.webkit.org/show_bug.cgi?id=189693
+
+        Reviewed by Yusuke Suzuki.
+
+        No new tests because there's no behaviro changes.
+
+        * platform/SharedBuffer.cpp: Replaced <wtf/unicode/UTF8.h> with <wtf/unicode/UTF8Conversion.h>.
+        * xml/XSLTProcessorLibxslt.cpp: Ditto.
+        * xml/parser/XMLDocumentParserLibxml2.cpp: Ditto.
+
 2018-11-01  John Wilander  <wilander@apple.com>
 
         In WebCore::ResourceLoadObserver, use document.sessionID().isEphemeral() when possible and check for page existence when not

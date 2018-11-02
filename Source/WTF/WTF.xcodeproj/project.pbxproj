@@ -136,7 +136,7 @@
 		A8A47451151A825B004123FF /* BinarySemaphore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A4733A151A825B004123FF /* BinarySemaphore.cpp */; };
 		A8A47460151A825B004123FF /* CollatorDefault.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A4734B151A825B004123FF /* CollatorDefault.cpp */; };
 		A8A47463151A825B004123FF /* CollatorICU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A47350151A825B004123FF /* CollatorICU.cpp */; };
-		A8A47469151A825B004123FF /* UTF8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A47357151A825B004123FF /* UTF8.cpp */; };
+		A8A47469151A825B004123FF /* UTF8Conversion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A47357151A825B004123FF /* UTF8Conversion.cpp */; };
 		AD89B6B71E6415080090707F /* MemoryPressureHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AD89B6B51E6415080090707F /* MemoryPressureHandler.cpp */; };
 		AD89B6BA1E64150F0090707F /* MemoryPressureHandlerCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = AD89B6B91E64150F0090707F /* MemoryPressureHandlerCocoa.mm */; };
 		ADF2CE671E39F106006889DB /* MemoryFootprintCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ADF2CE651E39F106006889DB /* MemoryFootprintCocoa.cpp */; };
@@ -585,8 +585,8 @@
 		A8A4734A151A825B004123FF /* Collator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Collator.h; sourceTree = "<group>"; };
 		A8A4734B151A825B004123FF /* CollatorDefault.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CollatorDefault.cpp; sourceTree = "<group>"; };
 		A8A47350151A825B004123FF /* CollatorICU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CollatorICU.cpp; sourceTree = "<group>"; };
-		A8A47357151A825B004123FF /* UTF8.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UTF8.cpp; sourceTree = "<group>"; };
-		A8A47358151A825B004123FF /* UTF8.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UTF8.h; sourceTree = "<group>"; };
+		A8A47357151A825B004123FF /* UTF8Conversion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UTF8Conversion.cpp; sourceTree = "<group>"; };
+		A8A47358151A825B004123FF /* UTF8Conversion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UTF8Conversion.h; sourceTree = "<group>"; };
 		A8A4735C151A825B004123FF /* UnionFind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnionFind.h; sourceTree = "<group>"; };
 		A8A4736F151A825B004123FF /* ValueCheck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValueCheck.h; sourceTree = "<group>"; };
 		A8A47370151A825B004123FF /* Vector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vector.h; sourceTree = "<group>"; };
@@ -1277,8 +1277,8 @@
 				A8A47349151A825B004123FF /* CharacterNames.h */,
 				A8A4734A151A825B004123FF /* Collator.h */,
 				A8A4734B151A825B004123FF /* CollatorDefault.cpp */,
-				A8A47357151A825B004123FF /* UTF8.cpp */,
-				A8A47358151A825B004123FF /* UTF8.h */,
+				A8A47357151A825B004123FF /* UTF8Conversion.cpp */,
+				A8A47358151A825B004123FF /* UTF8Conversion.h */,
 			);
 			path = unicode;
 			sourceTree = "<group>";
@@ -1592,7 +1592,7 @@
 				1C181C8F1D307AB800F5FA16 /* UTextProvider.cpp in Sources */,
 				1C181C911D307AB800F5FA16 /* UTextProviderLatin1.cpp in Sources */,
 				1C181C931D307AB800F5FA16 /* UTextProviderUTF16.cpp in Sources */,
-				A8A47469151A825B004123FF /* UTF8.cpp in Sources */,
+				A8A47469151A825B004123FF /* UTF8Conversion.cpp in Sources */,
 				7AFEC6B11EB22B5900DADE36 /* UUID.cpp in Sources */,
 				0F66B2921DC97BAB004A1D3F /* WallTime.cpp in Sources */,
 				1FA47C8A152502DA00568D1B /* WebCoreThread.cpp in Sources */,

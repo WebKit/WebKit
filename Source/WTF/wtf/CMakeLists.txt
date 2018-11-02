@@ -327,7 +327,7 @@ set(WTF_PUBLIC_HEADERS
 
     unicode/CharacterNames.h
     unicode/Collator.h
-    unicode/UTF8.h
+    unicode/UTF8Conversion.h
 )
 
 set(WTF_SOURCES
@@ -440,7 +440,7 @@ set(WTF_SOURCES
     threads/BinarySemaphore.cpp
     threads/Signals.cpp
 
-    unicode/UTF8.cpp
+    unicode/UTF8Conversion.cpp
 )
 
 set(WTF_INCLUDE_DIRECTORIES

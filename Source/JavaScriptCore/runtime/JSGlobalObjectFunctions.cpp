@@ -55,7 +55,7 @@
 #include <wtf/MathExtras.h>
 #include <wtf/dtoa.h>
 #include <wtf/text/StringBuilder.h>
-#include <wtf/unicode/UTF8.h>
+#include <wtf/unicode/UTF8Conversion.h>
 
 using namespace WTF;
 using namespace Unicode;

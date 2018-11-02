@@ -29,7 +29,7 @@
 #include "SharedBuffer.h"
 
 #include <algorithm>
-#include <wtf/unicode/UTF8.h>
+#include <wtf/unicode/UTF8Conversion.h>
 
 namespace WebCore {
 

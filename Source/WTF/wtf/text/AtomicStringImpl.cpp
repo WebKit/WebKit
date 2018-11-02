@@ -32,7 +32,7 @@
 #include <wtf/text/AtomicStringTable.h>
 #include <wtf/text/IntegerToStringConversion.h>
 #include <wtf/text/StringHash.h>
-#include <wtf/unicode/UTF8.h>
+#include <wtf/unicode/UTF8Conversion.h>
 
 #if USE(WEB_THREAD)
 #include <wtf/Lock.h>
