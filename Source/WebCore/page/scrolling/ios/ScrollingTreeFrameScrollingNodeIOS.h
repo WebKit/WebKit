@@ -53,6 +53,7 @@ protected:
 
     void updateLayersAfterViewportChange(const FloatRect& fixedPositionRect, double scale) override;
     void updateLayersAfterDelegatedScroll(const FloatPoint&) override;
+    void updateLayersAfterAncestorChange(const ScrollingTreeNode& changedNode, const FloatRect& fixedPositionRect, const FloatSize& cumulativeDelta) override;
 
     void setScrollLayerPosition(const FloatPoint&, const FloatRect& layoutViewport) override;
 

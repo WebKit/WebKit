@@ -1,3 +1,28 @@
+2018-11-02  Ali Juma  <ajuma@chromium.org>
+
+        requestAnimationFrame causes bad location of position:fixed inside overflow:auto and iframe
+        https://bugs.webkit.org/show_bug.cgi?id=176243
+
+        Reviewed by Simon Fraser.
+
+        When a new layer tree is committed to the UIProcess, the positions of layers for fixed
+        or sticky nodes in the newly-committed tree can be stale, because of scrolling that has
+        happened in the UIProcess since the tree was updated in the WebProcess. To handle this,
+        RemoteLayerTreeDrawingAreaProxy::commitLayerTree updates the positions of these layers
+        by calling RemoteScrollingCoordinatorProxy::viewportChangedViaDelegatedScrolling, which
+        leads to a recursive traversal of the ScrollingTree to update each such layer. However,
+        since ScrollingTreeFrameScrollingNodeIOS didn't implement updateLayersAfterAncestorChange,
+        this traversal never descended into scrolling nodes within an iframe, so the layers for
+        these nodes were left with stale positions.
+
+        Implement ScrollingTreeFrameScrollingNodeIOS::updateLayersAfterAncestorChange so that
+        fixed and sticky layers within an iframe do get their positions updated when a new layer
+        tree is committed.
+
+        * page/scrolling/ios/ScrollingTreeFrameScrollingNodeIOS.h:
+        * page/scrolling/ios/ScrollingTreeFrameScrollingNodeIOS.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeIOS::updateLayersAfterAncestorChange):
+
 2018-11-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Changing view scale sometimes does not zoom the page to the new initial scale, when the page is at initial scale

@@ -136,6 +136,16 @@ void ScrollingTreeFrameScrollingNodeIOS::updateLayersAfterViewportChange(const F
         child->updateLayersAfterAncestorChange(*this, fixedPositionRect, FloatSize());
 }
 
+void ScrollingTreeFrameScrollingNodeIOS::updateLayersAfterAncestorChange(const ScrollingTreeNode& changedNode, const FloatRect&, const FloatSize&)
+{
+    if (!m_children)
+        return;
+
+    FloatRect fixedPositionRect(scrollPosition(), scrollableAreaSize());
+    for (auto& child : *m_children)
+        child->updateLayersAfterAncestorChange(changedNode, fixedPositionRect, FloatSize());
+}
+
 void ScrollingTreeFrameScrollingNodeIOS::updateLayersAfterDelegatedScroll(const FloatPoint& scrollPosition)
 {
     updateChildNodesAfterScroll(scrollPosition);
