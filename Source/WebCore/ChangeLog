@@ -1,3 +1,19 @@
+2018-11-02  Zan Dobersek  <zdobersek@igalia.com>
+
+        PNGImageDecoder: report no repetition for non-animated images
+        https://bugs.webkit.org/show_bug.cgi?id=191068
+
+        Reviewed by Michael Catanzaro.
+
+        When building with APNG support enabled, the
+        PNGImageDecoder::repetitionCount() method until now reported  infinite
+        repetition count for all PNG images, even the ones that were not
+        animated. This is now changed so that no repetition is reported for
+        non-animated images.
+
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageDecoder::repetitionCount const):
+
 2018-11-02  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Experimental prototype for MSL shaders

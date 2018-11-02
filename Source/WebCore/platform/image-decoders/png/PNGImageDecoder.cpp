@@ -235,6 +235,10 @@ PNGImageDecoder::~PNGImageDecoder() = default;
 #if ENABLE(APNG)
 RepetitionCount PNGImageDecoder::repetitionCount() const
 {
+    // Signal no repetition if the PNG image is not animated.
+    if (!m_isAnimated)
+        return RepetitionCountNone;
+
     // APNG format uses 0 to indicate that an animation must play indefinitely. But
     // the RepetitionCount enumeration uses RepetitionCountInfinite, so we need to adapt this.
     if (!m_playCount)
