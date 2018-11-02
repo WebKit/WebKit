@@ -215,7 +215,7 @@ void InlineFormattingContext::layoutFormattingContextRoot(const Box& layoutBox) 
         WidthAndMargin widthAndMargin;
 
         if (layoutBox.isFloatingPositioned())
-            widthAndMargin = Geometry::floatingWidthAndMargin(layoutState, *this, layoutBox);
+            widthAndMargin = Geometry::floatingWidthAndMargin(layoutState, layoutBox);
         else if (layoutBox.isInlineBlockBox())
             widthAndMargin = Geometry::inlineBlockWidthAndMargin(layoutState, layoutBox);
         else
@@ -301,7 +301,7 @@ void InlineFormattingContext::computeInFlowPositionedPosition(const Box&) const
 {
 }
 
-FormattingContext::InstrinsicWidthConstraints InlineFormattingContext::instrinsicWidthConstraints(const Box&) const
+FormattingContext::InstrinsicWidthConstraints InlineFormattingContext::instrinsicWidthConstraints() const
 {
     return { };
 }

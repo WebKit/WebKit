@@ -1,3 +1,41 @@
+2018-11-02  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Align shrink-to-fit width computation with the layout implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=191179
+
+        Reviewed by Antti Koivisto.
+
+        There are many similarities between layout and shrink-to-fit.
+        They both operate on formatting roots only (shrink-to-fit -> float, out-of-flow, inline-block) and in both cases
+        the algoritm depends on what type of formatting context the element establishes.
+
+        This patch is in preparation for transforming the "shrink-to-fit" width computation to make it behave more like layout.
+        With this change the instrinsicWidthConstraints() computation happens in the formatting context that the element establishes (similar to layout).
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeOutOfFlowHorizontalGeometry const):
+        * layout/FormattingContext.h:
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::floatingWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::floatingNonReplacedWidthAndMargin):
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::shrinkToFitWidth):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::floatingNonReplacedWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::floatingWidthAndMargin):
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeWidthAndMargin const):
+        (WebCore::Layout::BlockFormattingContext::instrinsicWidthConstraints const):
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::layoutFormattingContextRoot const):
+        (WebCore::Layout::InlineFormattingContext::instrinsicWidthConstraints const):
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/inlineformatting/InlineFormattingContextGeometry.cpp:
+        (WebCore::Layout::InlineFormattingContext::Geometry::inlineBlockWidthAndMargin):
+
 2018-11-01  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Make document.getAnimations() return declarative animations in the correct order

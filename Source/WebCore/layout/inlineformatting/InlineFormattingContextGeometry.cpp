@@ -37,7 +37,7 @@
 namespace WebCore {
 namespace Layout {
 
-WidthAndMargin InlineFormattingContext::Geometry::inlineBlockWidthAndMargin(const LayoutState& layoutState, const Box& formattingContextRoot)
+WidthAndMargin InlineFormattingContext::Geometry::inlineBlockWidthAndMargin(LayoutState& layoutState, const Box& formattingContextRoot)
 {
     ASSERT(formattingContextRoot.isInFlow());
 
@@ -55,10 +55,8 @@ WidthAndMargin InlineFormattingContext::Geometry::inlineBlockWidthAndMargin(cons
     auto containingBlockWidth = layoutState.displayBoxForLayoutBox(containingBlock).contentBoxWidth();
     // #1
     auto width = computedValueIfNotAuto(formattingContextRoot.style().logicalWidth(), containingBlockWidth);
-    if (!width) {
-        auto formattingContext = layoutState.establishedFormattingState(formattingContextRoot).formattingContext(formattingContextRoot);
-        width = shrinkToFitWidth(layoutState, *formattingContext, formattingContextRoot);
-    }
+    if (!width)
+        width = shrinkToFitWidth(layoutState, formattingContextRoot);
 
     // #2
     auto margin = computedNonCollapsedHorizontalMarginValue(layoutState, formattingContextRoot);

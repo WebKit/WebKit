@@ -99,7 +99,7 @@ private:
     class Geometry : public FormattingContext::Geometry {
     public:
         static HeightAndMargin inlineBlockHeightAndMargin(const LayoutState&, const Box&);
-        static WidthAndMargin inlineBlockWidthAndMargin(const LayoutState&, const Box&);
+        static WidthAndMargin inlineBlockWidthAndMargin(LayoutState&, const Box&);
     };
 
     void layoutInlineContent(const InlineRunProvider&) const;
@@ -111,7 +111,7 @@ private:
     void computeStaticPosition(const Box&) const override;
     void computeInFlowPositionedPosition(const Box&) const override;
 
-    InstrinsicWidthConstraints instrinsicWidthConstraints(const Box&) const override;
+    InstrinsicWidthConstraints instrinsicWidthConstraints() const override;
 };
 
 }

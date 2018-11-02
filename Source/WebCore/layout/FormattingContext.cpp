@@ -68,7 +68,7 @@ void FormattingContext::computeOutOfFlowHorizontalGeometry(const Box& layoutBox)
     auto& layoutState = this->layoutState();
 
     auto compute = [&](std::optional<LayoutUnit> usedWidth) {
-        return Geometry::outOfFlowHorizontalGeometry(layoutState, *this, layoutBox, usedWidth);
+        return Geometry::outOfFlowHorizontalGeometry(layoutState, layoutBox, usedWidth);
     };
 
     auto horizontalGeometry = compute({ });

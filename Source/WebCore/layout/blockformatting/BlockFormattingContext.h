@@ -66,7 +66,7 @@ private:
 
     void precomputeVerticalPositionForFormattingRootIfNeeded(const Box&) const;
 
-    InstrinsicWidthConstraints instrinsicWidthConstraints(const Box&) const override;
+    InstrinsicWidthConstraints instrinsicWidthConstraints() const override;
 
     // This class implements positioning and sizing for boxes participating in a block formatting context.
     class Geometry : public FormattingContext::Geometry {
