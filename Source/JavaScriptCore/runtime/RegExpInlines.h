@@ -123,19 +123,30 @@ ALWAYS_INLINE void RegExp::compileIfNecessary(VM& vm, Yarr::YarrCharSize charSiz
     if (hasCodeFor(charSize))
         return;
 
+    if (m_state == ParseError)
+        return;
+
     compile(&vm, charSize);
 }
 
 template<typename VectorType>
 ALWAYS_INLINE int RegExp::matchInline(VM& vm, const String& s, unsigned startOffset, VectorType& ovector)
 {
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
 #if ENABLE(REGEXP_TRACING)
     m_rtMatchCallCount++;
     m_rtMatchTotalSubjectStringLen += (double)(s.length() - startOffset);
 #endif
 
-    ASSERT(m_state != ParseError);
     compileIfNecessary(vm, s.is8Bit() ? Yarr::Char8 : Yarr::Char16);
+
+    if (m_state == ParseError) {
+        ExecState* exec = vm.topCallFrame;
+        throwScope.throwException(exec, errorToThrow(exec));
+        if (!hasHardError(m_constructionErrorCode))
+            reset();
+        return -1;
+    }
 
     int offsetVectorSize = (m_numSubpatterns + 1) * 2;
     ovector.resize(offsetVectorSize);
@@ -237,18 +248,29 @@ ALWAYS_INLINE void RegExp::compileIfNecessaryMatchOnly(VM& vm, Yarr::YarrCharSiz
     if (hasMatchOnlyCodeFor(charSize))
         return;
 
+    if (m_state == ParseError)
+        return;
+
     compileMatchOnly(&vm, charSize);
 }
 
 ALWAYS_INLINE MatchResult RegExp::matchInline(VM& vm, const String& s, unsigned startOffset)
 {
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
 #if ENABLE(REGEXP_TRACING)
     m_rtMatchOnlyCallCount++;
     m_rtMatchOnlyTotalSubjectStringLen += (double)(s.length() - startOffset);
 #endif
 
-    ASSERT(m_state != ParseError);
     compileIfNecessaryMatchOnly(vm, s.is8Bit() ? Yarr::Char8 : Yarr::Char16);
+
+    if (m_state == ParseError) {
+        ExecState* exec = vm.topCallFrame;
+        throwScope.throwException(exec, errorToThrow(exec));
+        if (!hasHardError(m_constructionErrorCode))
+            reset();
+        return MatchResult::failed();
+    }
 
 #if ENABLE(YARR_JIT)
     MatchResult result;

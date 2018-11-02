@@ -1,3 +1,27 @@
+2018-11-02  Michael Saboff  <msaboff@apple.com>
+
+        Running out of stack space not properly handled in RegExp::compile() and its callers
+        https://bugs.webkit.org/show_bug.cgi?id=191206
+
+        Reviewed by Filip Pizlo.
+
+        Eliminated two RELEASE_ASSERT_NOT_REACHED() for errors returned by Yarr parsing code.  Bubbled those errors
+        up to where they are turned into the appropriate exceptions in matchInline().  If the errors are not due
+        to syntax, we reset the RegExp state in case the parsing is tried with a smaller stack.
+
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::compile):
+        (JSC::RegExp::compileMatchOnly):
+        * runtime/RegExp.h:
+        * runtime/RegExpInlines.h:
+        (JSC::RegExp::compileIfNecessary):
+        (JSC::RegExp::matchInline):
+        (JSC::RegExp::compileIfNecessaryMatchOnly):
+        * runtime/RegExpObjectInlines.h:
+        (JSC::RegExpObject::execInline):
+        * yarr/YarrErrorCode.h:
+        (JSC::Yarr::hasHardError):
+
 2018-11-02  Keith Miller  <keith_miller@apple.com>
 
         API should use wrapper object if address is 32-bit

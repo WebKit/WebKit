@@ -1,3 +1,15 @@
+2018-11-02  Michael Saboff  <msaboff@apple.com>
+
+        Running out of stack space not properly handled in RegExp::compile() and its callers
+        https://bugs.webkit.org/show_bug.cgi?id=191206
+
+        Reviewed by Filip Pizlo.
+
+        New regression test.
+
+        * stress/regexp-compile-oom.js: Added.
+        (recurseAndTest):
+
 2018-11-01  Guillaume Emont  <guijemont@igalia.com>
 
         Skip tests on arm/mips that time out now we're running on CLoop

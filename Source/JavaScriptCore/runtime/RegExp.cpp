@@ -23,6 +23,7 @@
 #include "config.h"
 #include "RegExp.h"
 
+#include "ExceptionHelpers.h"
 #include "Lexer.h"
 #include "JSCInlines.h"
 #include "RegExpCache.h"
@@ -290,11 +291,8 @@ void RegExp::compile(VM* vm, Yarr::YarrCharSize charSize)
     
     Yarr::YarrPattern pattern(m_patternString, m_flags, m_constructionErrorCode, vm->stackLimit());
     if (hasError(m_constructionErrorCode)) {
-        RELEASE_ASSERT_NOT_REACHED();
-#if COMPILER_QUIRK(CONSIDERS_UNREACHABLE_CODE)
         m_state = ParseError;
         return;
-#endif
     }
     ASSERT(m_numSubpatterns == pattern.m_numSubpatterns);
 
@@ -350,11 +348,8 @@ void RegExp::compileMatchOnly(VM* vm, Yarr::YarrCharSize charSize)
     
     Yarr::YarrPattern pattern(m_patternString, m_flags, m_constructionErrorCode, vm->stackLimit());
     if (hasError(m_constructionErrorCode)) {
-        RELEASE_ASSERT_NOT_REACHED();
-#if COMPILER_QUIRK(CONSIDERS_UNREACHABLE_CODE)
         m_state = ParseError;
         return;
-#endif
     }
     ASSERT(m_numSubpatterns == pattern.m_numSubpatterns);
 
