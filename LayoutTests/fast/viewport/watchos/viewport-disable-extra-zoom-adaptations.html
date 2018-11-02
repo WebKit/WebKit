@@ -52,7 +52,7 @@
             await logWindowDimensionsAfterSettingMetaContent({
                 "viewport" : "width=device-width"
             });
-            scaleAtDeviceWidthWithDefaultAdaptations = parseFloat(await UIHelper.zoomScale()).toFixed(3);
+            scaleAtDeviceWidthWithDefaultAdaptations = (await UIHelper.zoomScale()).toFixed(3);
             await logWindowDimensionsAfterSettingMetaContent({
                 "viewport" : "width=600"
             });
@@ -71,7 +71,7 @@
                 "viewport" : "width=device-width",
                 "disabled-adaptations" : `watch, three, four, watch`
             });
-            scaleAtDeviceWidthWithAdaptationDisabled = parseFloat(await UIHelper.zoomScale()).toFixed(3);
+            scaleAtDeviceWidthWithAdaptationDisabled = (await UIHelper.zoomScale()).toFixed(3);
             await logWindowDimensionsAfterSettingMetaContent({
                 "viewport" : "width=600",
                 "disabled-adaptations" : `five, watch`
@@ -87,7 +87,7 @@
                 "viewport" : "width=device-width, shrink-to-fit=0",
                 "disabled-adaptations" : "bogus, values"
             });
-            scaleAtDeviceWidthWithShrinkToFitDisabled = parseFloat(await UIHelper.zoomScale()).toFixed(3);
+            scaleAtDeviceWidthWithShrinkToFitDisabled = (await UIHelper.zoomScale()).toFixed(3);
             await logWindowDimensionsAfterSettingMetaContent({
                 "viewport" : "width=600, shrink-to-fit=-0.5",
                 "disabled-adaptations" : ",,,"

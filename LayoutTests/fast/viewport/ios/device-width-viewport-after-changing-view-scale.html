@@ -43,7 +43,7 @@
 
             appendOutput(`window size: [${innerWidth}, ${innerHeight}]`);
             appendOutput(`square size: [${square.clientWidth}, ${square.clientHeight}]`);
-            appendOutput(`zoom scale: ${parseFloat(await UIHelper.zoomScale()).toFixed(2)}`);
+            appendOutput(`zoom scale: ${(await UIHelper.zoomScale()).toFixed(2)}`);
             appendOutput("");
         }
 

@@ -1,3 +1,40 @@
+2018-11-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Changing view scale sometimes does not zoom the page to the new initial scale, when the page is at initial scale
+        https://bugs.webkit.org/show_bug.cgi?id=191180
+        <rdar://problem/45744786>
+
+        Reviewed by Simon Fraser.
+
+        When computing the minimum scale in ViewportConfiguration::minimumScale, if our content width or height is
+        shorter than the view width or height, then we recompute the minimum scale such that the content dimensions will
+        fill the bounds of the view by setting the minimum scale to the view width or height divided by the content
+        width or height.
+
+        Suppose the minimum scale is equal to some value `s`; additionally, let `w_c` denote the content width and `w_v`
+        denote the view width (as integers). If `w_v / s` is not an integral value, the computed content width `w_c` may
+        be rounded, such that `w_v / w_c` is not precisely equal to `s`. In the case that `w_v / w_c` is ever so
+        slightly larger than `s`, we will end up overriding the minimum scale `s` with `w_v / w_c`.
+
+        As a result, specifying a viewport with a decimal `minimum-scale` will sometimes cause the computed minimum
+        scale of the viewport (and platform view) to be very slightly different from the minimum scale. The new layout
+        test below exercises this scenario, specifying a viewport with minimum and initial scales of 0.94 that results
+        in `ViewportConfiguration::minimumScale` returning 0.94158.
+
+        With the `WebPage::setViewportConfigurationViewLayoutSize` check added in r237127, this means setting
+        `_viewScale:` when the page is at initial scale sometimes doesn't zoom the page to the new initial scale when it
+        should, since the page scale factor and the initial scale are different enough such that
+        `areEssentiallyEqualAsFloat` returns false.
+
+        This patch addresses these issues by snapping to the minimum scale if the computed scale that fits content
+        dimensions to view dimensions results in a minimum scale that is close enough to the configuration's minimum
+        scale, such that the difference can be attributed to rounding error when computing content or view dimensions.
+
+        Test: fast/viewport/ios/viewport-minimum-and-initial-scale.html
+
+        * page/ViewportConfiguration.cpp:
+        (WebCore::ViewportConfiguration::minimumScale const):
+
 2018-11-02  Philippe Normand  <pnormand@igalia.com>
 
         [GTK][WPE] Unreviewed, another --no-video --no-web-audio build fix following r237677

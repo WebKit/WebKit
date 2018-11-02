@@ -1,3 +1,30 @@
+2018-11-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Changing view scale sometimes does not zoom the page to the new initial scale, when the page is at initial scale
+        https://bugs.webkit.org/show_bug.cgi?id=191180
+        <rdar://problem/45744786>
+
+        Reviewed by Simon Fraser.
+
+        Add a layout test, and make some adjustments to UIHelper.
+
+        * fast/viewport/ios/constant-width-viewport-after-changing-view-scale.html:
+        * fast/viewport/ios/device-width-viewport-after-changing-view-scale.html:
+        * fast/viewport/ios/viewport-minimum-and-initial-scale-expected.txt: Added.
+        * fast/viewport/ios/viewport-minimum-and-initial-scale.html: Added.
+
+        Add a new layout test that contains a viewport meta tag with minimum and initial scales set to 0.94, and checks
+        that the resulting minimum and initial scales are 0.94 instead of 0.94158.
+
+        * fast/viewport/watchos/viewport-disable-extra-zoom-adaptations.html:
+        * resources/ui-helper.js:
+
+        Make UIHelper.zoomScale return a number rather than a string, and adjust a few call sites.
+
+        (window.UIHelper.zoomScale):
+        (window.UIHelper.minimumZoomScale):
+        (window.UIHelper):
+
 2018-11-02  Daniel Bates  <dabates@apple.com>
 
         [iOS] WebKit should dispatch DOM events when a modifier key is pressed

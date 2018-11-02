@@ -268,13 +268,30 @@ double ViewportConfiguration::minimumScale() const
     if (m_forceAlwaysUserScalable)
         minimumScale = std::min(minimumScale, forceAlwaysUserScalableMinimumScale);
 
+    auto scaleForFittingContentIsApproximatelyEqualToMinimumScale = [] (double viewLength, double contentLength, double minimumScale) {
+        if (contentLength <= 1 || viewLength <= 1)
+            return false;
+
+        if (minimumScale < (viewLength - 0.5) / (contentLength + 0.5))
+            return false;
+
+        if (minimumScale > (viewLength + 0.5) / (contentLength - 0.5))
+            return false;
+
+        return true;
+    };
+
     double contentWidth = m_contentSize.width();
-    if (contentWidth > 0 && contentWidth * minimumScale < m_viewLayoutSize.width() && !shouldIgnoreVerticalScalingConstraints())
-        minimumScale = m_viewLayoutSize.width() / contentWidth;
+    if (contentWidth > 0 && contentWidth * minimumScale < m_viewLayoutSize.width() && !shouldIgnoreVerticalScalingConstraints()) {
+        if (!scaleForFittingContentIsApproximatelyEqualToMinimumScale(m_viewLayoutSize.width(), contentWidth, minimumScale))
+            minimumScale = m_viewLayoutSize.width() / contentWidth;
+    }
 
     double contentHeight = m_contentSize.height();
-    if (contentHeight > 0 && contentHeight * minimumScale < m_viewLayoutSize.height() && !shouldIgnoreHorizontalScalingConstraints())
-        minimumScale = m_viewLayoutSize.height() / contentHeight;
+    if (contentHeight > 0 && contentHeight * minimumScale < m_viewLayoutSize.height() && !shouldIgnoreHorizontalScalingConstraints()) {
+        if (!scaleForFittingContentIsApproximatelyEqualToMinimumScale(m_viewLayoutSize.height(), contentHeight, minimumScale))
+            minimumScale = m_viewLayoutSize.height() / contentHeight;
+    }
 
     minimumScale = std::min(std::max(minimumScale, m_configuration.minimumScale), m_configuration.maximumScale);
 
