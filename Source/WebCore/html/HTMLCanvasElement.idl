@@ -48,7 +48,7 @@ typedef (
     attribute unsigned long width;
     attribute unsigned long height;
 
-    [CallWith=ScriptState, MayThrowException] RenderingContext? getContext(DOMString contextId, any... arguments);
+    [CallWith=ExecState, MayThrowException] RenderingContext? getContext(DOMString contextId, any... arguments);
 
     [MayThrowException] DOMString toDataURL(optional DOMString type, optional any quality);
     [CallWith=ScriptExecutionContext, MayThrowException] void toBlob(BlobCallback callback, optional DOMString type, optional any quality);

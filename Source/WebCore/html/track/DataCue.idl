@@ -33,6 +33,6 @@
     attribute ArrayBuffer data;
 
     // Proposed extensions.
-    [CallWith=ScriptState] attribute any value;
+    [CallWith=ExecState] attribute any value;
     readonly attribute DOMString type;
 };

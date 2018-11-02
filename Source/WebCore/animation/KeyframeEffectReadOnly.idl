@@ -28,14 +28,14 @@
     Exposed=Window,
     JSGenerateToNativeObject,
     ConstructorMayThrowException,
-    ConstructorCallWith=ScriptState,
+    ConstructorCallWith=ExecState,
     Constructor(Element? target, object? keyframes, optional (unrestricted double or KeyframeEffectOptions) options),
     Constructor(KeyframeEffectReadOnly source)
 ] interface KeyframeEffectReadOnly : AnimationEffectReadOnly {
     readonly attribute Element? target;
     readonly attribute IterationCompositeOperation iterationComposite;
     readonly attribute CompositeOperation composite;
-    [CallWith=ScriptState] sequence<object> getKeyframes();
+    [CallWith=ExecState] sequence<object> getKeyframes();
 };
 
 dictionary BasePropertyIndexedKeyframe {

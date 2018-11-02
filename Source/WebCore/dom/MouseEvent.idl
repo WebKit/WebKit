@@ -44,7 +44,7 @@
 
     // FIXME: Using "undefined" as default parameter value is wrong.
     // FIXME: relatedTarget should be of type EventTarget? but we need to use any to support a quirk for iAd Producer (rdar://problem/30640101).
-    [CallWith=ScriptState&ScriptExecutionContext, ImplementedAs=initMouseEventQuirk] void initMouseEvent(optional DOMString type = "undefined",
+    [CallWith=ExecState&ScriptExecutionContext, ImplementedAs=initMouseEventQuirk] void initMouseEvent(optional DOMString type = "undefined",
         optional boolean canBubble = false, optional boolean cancelable = false,
         optional WindowProxy? view = null, optional long detail = 0,
         optional long screenX = 0, optional long screenY = 0, optional long clientX = 0, optional long clientY = 0,

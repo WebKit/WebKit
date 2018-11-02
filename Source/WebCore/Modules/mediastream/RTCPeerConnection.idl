@@ -128,7 +128,7 @@ typedef (object or DOMString) AlgorithmIdentifier;
 
 
     // 4.11 Certificate management
-    [CallWith=ScriptState] static Promise<RTCCertificate> generateCertificate(AlgorithmIdentifier keygenAlgorithm);
+    [CallWith=ExecState] static Promise<RTCCertificate> generateCertificate(AlgorithmIdentifier keygenAlgorithm);
 
     // 5.1 RTCPeerConnection extensions
     // RTP Media API extensions

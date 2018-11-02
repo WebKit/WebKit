@@ -192,23 +192,23 @@ enum TestConfidence { "high", "kinda-low" };
     [ImplementedAs=onfoo] attribute EventHandler onwebkitfoo;
 
     // 'CallWith' extended attribute
-    [CallWith=ScriptState] void withScriptStateVoid();
-    [CallWith=ScriptState] TestObj withScriptStateObj();
-    [CallWith=ScriptState, MayThrowException] void withScriptStateVoidException();
-    [CallWith=ScriptState, MayThrowException] TestObj withScriptStateObjException();
+    [CallWith=ExecState] void withExecStateVoid();
+    [CallWith=ExecState] TestObj withExecStateObj();
+    [CallWith=ExecState, MayThrowException] void withExecStateVoidException();
+    [CallWith=ExecState, MayThrowException] TestObj withExecStateObjException();
     [CallWith=ScriptExecutionContext] void withScriptExecutionContext();
-    [CallWith=ScriptExecutionContext&ScriptState] void withScriptExecutionContextAndScriptState();
-    [CallWith=ScriptExecutionContext&ScriptState, MayThrowException] TestObj withScriptExecutionContextAndScriptStateObjException();
-    [CallWith=  ScriptExecutionContext  &  ScriptState  ] TestObj withScriptExecutionContextAndScriptStateWithSpaces();
+    [CallWith=ScriptExecutionContext&ExecState] void withScriptExecutionContextAndExecState();
+    [CallWith=ScriptExecutionContext&ExecState, MayThrowException] TestObj withScriptExecutionContextAndExecStateObjException();
+    [CallWith=  ScriptExecutionContext  &  ExecState  ] TestObj withScriptExecutionContextAndExecStateWithSpaces();
     [CallWith=Document] void withDocumentArgument();
     [CallWith=IncumbentDocument] void withCallerDocumentArgument();
     [CallWith=IncumbentWindow] void withCallerWindowArgument();
 
-    [CallWith=ScriptState] attribute long withScriptStateAttribute;
-    [CallWith=ScriptState, SetterCallWith=ActiveWindow&FirstWindow] attribute long withCallWithAndSetterCallWithAttribute;
+    [CallWith=ExecState] attribute long withExecStateAttribute;
+    [CallWith=ExecState, SetterCallWith=ActiveWindow&FirstWindow] attribute long withCallWithAndSetterCallWithAttribute;
     [CallWith=ScriptExecutionContext] attribute TestObj withScriptExecutionContextAttribute;
-    [CallWith=ScriptExecutionContext&ScriptState] attribute TestObj withScriptExecutionContextAndScriptStateAttribute;
-    [CallWith=  ScriptExecutionContext  &  ScriptState  ] attribute TestObj withScriptExecutionContextAndScriptStateWithSpacesAttribute;
+    [CallWith=ScriptExecutionContext&ExecState] attribute TestObj withScriptExecutionContextAndExecStateAttribute;
+    [CallWith=  ScriptExecutionContext  &  ExecState  ] attribute TestObj withScriptExecutionContextAndExecStateWithSpacesAttribute;
 
     // Optional parameters.
     void    methodWithOptionalArg(optional long opt);

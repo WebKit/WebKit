@@ -47,7 +47,7 @@
 
     [MayThrowException] void begin();
     [MayThrowException] void abort();
-    [MayThrowException, CallWith=ScriptState] void completeMerchantValidation(any merchantSession);
+    [MayThrowException, CallWith=ExecState] void completeMerchantValidation(any merchantSession);
     [MayThrowException, Conditional=APPLE_PAY_SESSION_V3] void completeShippingMethodSelection(ApplePayShippingMethodUpdate update);
     [MayThrowException, Conditional=APPLE_PAY_SESSION_V3] void completeShippingContactSelection(ApplePayShippingContactUpdate update);
     [MayThrowException, Conditional=APPLE_PAY_SESSION_V3] void completePaymentMethodSelection(ApplePayPaymentMethodUpdate update);

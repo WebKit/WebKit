@@ -46,7 +46,7 @@
         },
         "CallWith": {
             "contextsAllowed": ["attribute", "operation"],
-            "values": ["Document", "ScriptExecutionContext", "ScriptState", "GlobalObject", "ActiveWindow", "FirstWindow", "ResponsibleDocument", "World"]
+            "values": ["Document", "ExecState", "ScriptExecutionContext", "GlobalObject", "ActiveWindow", "FirstWindow", "ResponsibleDocument", "World"]
         },
         "CheckSecurity": {
             "contextsAllowed": ["interface"]
@@ -80,7 +80,7 @@
         },
         "ConstructorCallWith": {
             "contextsAllowed": ["interface"],
-            "values": ["Document", "RuntimeFlags", "ScriptExecutionContext", "ScriptState"]
+            "values": ["Document", "ExecState", "RuntimeFlags", "ScriptExecutionContext"]
         },
         "ConstructorMayThrowException": {
             "contextsAllowed": ["interface"]
@@ -425,7 +425,7 @@
         },
         "SetterCallWith": {
             "contextsAllowed": ["attribute"],
-            "values": ["ScriptExecutionContext", "ScriptState", "GlobalObject", "ActiveWindow", "FirstWindow"]
+            "values": ["ExecState", "ScriptExecutionContext", "GlobalObject", "ActiveWindow", "FirstWindow"]
         },
         "SkipCallbackInvokeCheck": {
             "contextsAllowed": ["operation", "callback-function"]

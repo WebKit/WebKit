@@ -55,7 +55,7 @@
     [CEReactions, MayThrowException] Attr removeAttributeNode(Attr attr);
 
     [EnabledAtRuntime=ShadowDOM, MayThrowException] ShadowRoot attachShadow(ShadowRootInit init);
-    [EnabledAtRuntime=ShadowDOM, ImplementedAs=shadowRootForBindings, CallWith=ScriptState] readonly attribute ShadowRoot? shadowRoot;
+    [EnabledAtRuntime=ShadowDOM, ImplementedAs=shadowRootForBindings, CallWith=ExecState] readonly attribute ShadowRoot? shadowRoot;
 
     [MayThrowException] Element? closest(DOMString selectors);
     [MayThrowException] boolean matches(DOMString selectors);

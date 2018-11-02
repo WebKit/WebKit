@@ -1,3 +1,101 @@
+2018-11-01  Chris Dumez  <cdumez@apple.com>
+
+        [WebIDL] Rename CallWith=ScriptState to CallWith=ExecState
+        https://bugs.webkit.org/show_bug.cgi?id=191162
+
+        Reviewed by Alex Christensen.
+
+        Rename CallWith=ScriptState to CallWith=ExecState in our Web IDL as ScriptState is no longer a thing
+        in modern WebKit. The implementation is actually passed an ExecState nowadays.
+
+        * Modules/applepay/ApplePaySession.idl:
+        * Modules/encryptedmedia/MediaKeyStatusMap.idl:
+        * Modules/fetch/FetchBody.idl:
+        * Modules/indexeddb/IDBCursor.idl:
+        * Modules/indexeddb/IDBFactory.idl:
+        * Modules/indexeddb/IDBIndex.idl:
+        * Modules/indexeddb/IDBKeyRange.idl:
+        * Modules/indexeddb/IDBObjectStore.idl:
+        * Modules/mediastream/RTCPeerConnection.idl:
+        * animation/Animatable.idl:
+        * animation/KeyframeEffect.idl:
+        * animation/KeyframeEffectReadOnly.idl:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateCallWith):
+        (GenerateConstructorDefinition):
+        * bindings/scripts/IDLAttributes.json:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjWithExecStateAttributeGetter):
+        (WebCore::jsTestObjWithExecStateAttribute):
+        (WebCore::setJSTestObjWithExecStateAttributeSetter):
+        (WebCore::setJSTestObjWithExecStateAttribute):
+        (WebCore::jsTestObjWithScriptExecutionContextAndExecStateAttributeGetter):
+        (WebCore::jsTestObjWithScriptExecutionContextAndExecStateAttribute):
+        (WebCore::setJSTestObjWithScriptExecutionContextAndExecStateAttributeSetter):
+        (WebCore::setJSTestObjWithScriptExecutionContextAndExecStateAttribute):
+        (WebCore::jsTestObjWithScriptExecutionContextAndExecStateWithSpacesAttributeGetter):
+        (WebCore::jsTestObjWithScriptExecutionContextAndExecStateWithSpacesAttribute):
+        (WebCore::setJSTestObjWithScriptExecutionContextAndExecStateWithSpacesAttributeSetter):
+        (WebCore::setJSTestObjWithScriptExecutionContextAndExecStateWithSpacesAttribute):
+        (WebCore::jsTestObjPrototypeFunctionWithExecStateVoidBody):
+        (WebCore::jsTestObjPrototypeFunctionWithExecStateVoid):
+        (WebCore::jsTestObjPrototypeFunctionWithExecStateObjBody):
+        (WebCore::jsTestObjPrototypeFunctionWithExecStateObj):
+        (WebCore::jsTestObjPrototypeFunctionWithExecStateVoidExceptionBody):
+        (WebCore::jsTestObjPrototypeFunctionWithExecStateVoidException):
+        (WebCore::jsTestObjPrototypeFunctionWithExecStateObjExceptionBody):
+        (WebCore::jsTestObjPrototypeFunctionWithExecStateObjException):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptExecutionContextAndExecStateBody):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptExecutionContextAndExecState):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptExecutionContextAndExecStateObjExceptionBody):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptExecutionContextAndExecStateObjException):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptExecutionContextAndExecStateWithSpacesBody):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptExecutionContextAndExecStateWithSpaces):
+        (WebCore::jsTestObjWithScriptStateAttributeGetter): Deleted.
+        (WebCore::jsTestObjWithScriptStateAttribute): Deleted.
+        (WebCore::setJSTestObjWithScriptStateAttributeSetter): Deleted.
+        (WebCore::setJSTestObjWithScriptStateAttribute): Deleted.
+        (WebCore::jsTestObjWithScriptExecutionContextAndScriptStateAttributeGetter): Deleted.
+        (WebCore::jsTestObjWithScriptExecutionContextAndScriptStateAttribute): Deleted.
+        (WebCore::setJSTestObjWithScriptExecutionContextAndScriptStateAttributeSetter): Deleted.
+        (WebCore::setJSTestObjWithScriptExecutionContextAndScriptStateAttribute): Deleted.
+        (WebCore::jsTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttributeGetter): Deleted.
+        (WebCore::jsTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribute): Deleted.
+        (WebCore::setJSTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttributeSetter): Deleted.
+        (WebCore::setJSTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribute): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionWithScriptStateVoidBody): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionWithScriptStateVoid): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionWithScriptStateObjBody): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionWithScriptStateObj): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionWithScriptStateVoidExceptionBody): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionWithScriptStateVoidException): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionWithScriptStateObjExceptionBody): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionWithScriptStateObjException): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateBody): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptState): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateObjExceptionBody): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateObjException): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateWithSpacesBody): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateWithSpaces): Deleted.
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/TestPromiseRejectionEvent.idl:
+        * crypto/SubtleCrypto.idl:
+        * dom/Element.idl:
+        * dom/ErrorEvent.idl:
+        * dom/MessagePort.idl:
+        * dom/MouseEvent.idl:
+        * html/HTMLCanvasElement.idl:
+        * html/HTMLFrameElement.idl:
+        * html/OffscreenCanvas.idl:
+        * html/track/DataCue.idl:
+        * inspector/CommandLineAPIHost.idl:
+        * page/DOMWindow.idl:
+        * page/RemoteDOMWindow.idl:
+        * page/WindowOrWorkerGlobalScope.idl:
+        * testing/Internals.idl:
+        * workers/DedicatedWorkerGlobalScope.idl:
+        * workers/Worker.idl:
+
 2018-11-01  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Rename <wtf/unicode/UTF8.h> to <wtf/unicode/UTF8Conversion.h> in order to avoid conflicting with ICU's unicode/utf8.h

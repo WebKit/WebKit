@@ -55,5 +55,5 @@
     [Unforgeable] readonly attribute WindowProxy? top;
     readonly attribute WindowProxy? opener;
     [Replaceable] readonly attribute WindowProxy? parent;
-    [CallWith=ScriptState&IncumbentWindow, ForwardDeclareInHeader] void postMessage(any message, USVString targetOrigin, optional sequence<object> transfer = []);
+    [CallWith=ExecState&IncumbentWindow, ForwardDeclareInHeader] void postMessage(any message, USVString targetOrigin, optional sequence<object> transfer = []);
 };

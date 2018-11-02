@@ -47,7 +47,7 @@ enum OffscreenRenderingContextType
     attribute [EnforceRange] unsigned long width;
     attribute [EnforceRange] unsigned long height;
 
-    [CallWith=ScriptState, MayThrowException, Conditional=WEBGL] WebGLRenderingContext? getContext(OffscreenRenderingContextType contextType, any... arguments);
+    [CallWith=ExecState, MayThrowException, Conditional=WEBGL] WebGLRenderingContext? getContext(OffscreenRenderingContextType contextType, any... arguments);
     ImageBitmap transferToImageBitmap();
     // Promise<Blob> convertToBlob(optional ImageEncodeOptions options);
 

@@ -27,6 +27,6 @@
     EnabledAtRuntime=WebAnimations,
     NoInterfaceObject
 ] interface Animatable {
-    [MayThrowException, CallWith=ScriptState] WebAnimation animate(object? keyframes, optional (unrestricted double or KeyframeAnimationOptions) options);
+    [MayThrowException, CallWith=ExecState] WebAnimation animate(object? keyframes, optional (unrestricted double or KeyframeAnimationOptions) options);
     sequence<WebAnimation> getAnimations();
 };

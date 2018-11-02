@@ -37,10 +37,10 @@
     void clearConsoleMessages();
     void copyText(DOMString text);
 
-    [CallWith=ScriptState] void inspect(any objectToInspect, any hints);
-    [CallWith=ScriptState] any inspectedObject();
+    [CallWith=ExecState] void inspect(any objectToInspect, any hints);
+    [CallWith=ExecState] any inspectedObject();
 
-    [CallWith=ScriptState] record<DOMString, sequence<ListenerEntry>> getEventListeners(Node? node);
+    [CallWith=ExecState] record<DOMString, sequence<ListenerEntry>> getEventListeners(Node? node);
 
     DOMString databaseId(Database database);
     DOMString storageId(Storage storage);

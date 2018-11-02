@@ -32,7 +32,7 @@
 ] interface Worker : EventTarget {
     void terminate();
 
-    [CallWith=ScriptState, MayThrowException] void postMessage(any message, optional sequence<object> transfer = []);
+    [CallWith=ExecState, MayThrowException] void postMessage(any message, optional sequence<object> transfer = []);
     attribute EventHandler onmessage;
 };
 
