@@ -44,7 +44,7 @@ public:
     WebPageProxy& page() const { return m_page; }
     WebProcessProxy& process() { return m_process.get(); }
     uint64_t mainFrameID() const { return m_mainFrameID; }
-    const WebCore::SecurityOriginData& origin() const { return m_origin; }
+    const String& registrableDomain() const { return m_registrableDomain; }
 
     void unsuspend();
 
@@ -62,7 +62,7 @@ private:
     WebPageProxy& m_page;
     Ref<WebProcessProxy> m_process;
     uint64_t m_mainFrameID;
-    WebCore::SecurityOriginData m_origin;
+    String m_registrableDomain;
 
     bool m_isSuspended { true };
 

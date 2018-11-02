@@ -78,7 +78,7 @@ SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&
     : m_page(page)
     , m_process(WTFMove(process))
     , m_mainFrameID(mainFrameID)
-    , m_origin(SecurityOriginData::fromURL({ { }, item.url() }))
+    , m_registrableDomain(toRegistrableDomain(URL(URL(), item.url())))
 {
     item.setSuspendedPage(*this);
     m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_page.pageID(), *this);

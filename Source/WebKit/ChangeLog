@@ -1,3 +1,30 @@
+2018-11-02  Chris Dumez  <cdumez@apple.com>
+
+        [PSON] Reuse SuspendedPages' process when possible, for performance
+        https://bugs.webkit.org/show_bug.cgi?id=191166
+
+        Reviewed by Geoffrey Garen.
+
+        When process-swapping check if there is an existing SuspendedPage for the domain we're going to.
+        If there is, use this SuspendedPage's process for the navigation instead of a fresh new process.
+        This change should be beneficial for performance as it:
+        - Avoids spinning up a new process (CPU & memory cost)
+        - Likely better leverages caches since this process already loaded this domain in the past
+
+        Due to current limitations, using a SuspendedPage's proxy may consume the SuspendedPage, which
+        means that it can no longer be used for PageCache on history navigations. We need to do this when
+        the SuspendedPageProxy in question was created for the current WebPageProxy because:
+        - This SuspendedPageProxy's process already has a suspended WebPage with this WebPageProxy's pageID
+        and
+        - We do not currently support having more than one WebPage with a given pageID within a single
+          WebProcess.
+
+        * UIProcess/SuspendedPageProxy.cpp:
+        (WebKit::SuspendedPageProxy::SuspendedPageProxy):
+        * UIProcess/SuspendedPageProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::processForNavigationInternal):
+
 2018-11-01  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Rename <wtf/unicode/UTF8.h> to <wtf/unicode/UTF8Conversion.h> in order to avoid conflicting with ICU's unicode/utf8.h

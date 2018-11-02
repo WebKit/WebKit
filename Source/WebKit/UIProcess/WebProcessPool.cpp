@@ -2185,8 +2185,8 @@ Ref<WebProcessProxy> WebProcessPool::processForNavigationInternal(WebPageProxy& 
     } else
         reason = "Process swap was requested by the client"_s;
     
+    auto registrableDomain = toRegistrableDomain(targetURL);
     if (m_configuration->alwaysKeepAndReuseSwappedProcesses()) {
-        auto registrableDomain = toRegistrableDomain(targetURL);
         LOG(ProcessSwapping, "(ProcessSwapping) Considering re-use of a previously cached process for domain %s", registrableDomain.utf8().data());
 
         if (auto* process = m_swappedProcessesPerRegistrableDomain.get(registrableDomain)) {
@@ -2196,12 +2196,32 @@ Ref<WebProcessProxy> WebProcessPool::processForNavigationInternal(WebPageProxy& 
                 // FIXME: Architecturally we do not currently support multiple WebPage's with the same ID in a given WebProcess.
                 // In the case where this WebProcess has a SuspendedPageProxy for this WebPage, we can throw it away to support
                 // WebProcess re-use.
-                // In the future it would be great to refactor-out this limitation.
-                page.process().processPool().removeAllSuspendedPageProxiesForPage(page);
+                // In the future it would be great to refactor-out this limitation (https://bugs.webkit.org/show_bug.cgi?id=191166).
+                m_suspendedPages.removeAllMatching([&](auto& suspendedPage) {
+                    return &suspendedPage->page() == &page && &suspendedPage->process() == process;
+                });
 
                 return makeRef(*process);
             }
         }
+    }
+
+    // Check if we have a suspended page for the given registrable domain and use its process if we do, for performance reasons.
+    auto it = m_suspendedPages.findIf([&](auto& suspendedPage) {
+        return suspendedPage->registrableDomain() == registrableDomain;
+    });
+    if (it != m_suspendedPages.end()) {
+        Ref<WebProcessProxy> process = (*it)->process();
+
+        // FIXME: If the SuspendedPage is for this page, then we need to destroy the suspended page as we do not support having
+        // multiple WebPages with the same ID in a given WebProcess currently (https://bugs.webkit.org/show_bug.cgi?id=191166).
+        if (&(*it)->page() == &page)
+            m_suspendedPages.remove(it);
+
+        if (&process->websiteDataStore() != &page.websiteDataStore())
+            process->send(Messages::WebProcess::AddWebsiteDataStore(page.websiteDataStore().parameters()), 0);
+
+        return process;
     }
 
     if (RefPtr<WebProcessProxy> process = tryTakePrewarmedProcess(page.websiteDataStore())) {

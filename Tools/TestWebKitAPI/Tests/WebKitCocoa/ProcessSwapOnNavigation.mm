@@ -1523,7 +1523,7 @@ TEST(ProcessSwap, SessionStorage)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    auto pid1 = [webView _webProcessIdentifier];
+    auto webkitPID = [webView _webProcessIdentifier];
 
     request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/main.html"]];
     [webView loadRequest:request];
@@ -1531,7 +1531,10 @@ TEST(ProcessSwap, SessionStorage)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    auto pid2 = [webView _webProcessIdentifier];
+    auto applePID = [webView _webProcessIdentifier];
+
+    // Verify the web pages are in different processes
+    EXPECT_NE(webkitPID, applePID);
 
     request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
     [webView loadRequest:request];
@@ -1541,17 +1544,65 @@ TEST(ProcessSwap, SessionStorage)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    auto pid3 = [webView _webProcessIdentifier];
-
-    // Verify the web pages are in different processes
-    EXPECT_NE(pid1, pid2);
-    EXPECT_NE(pid1, pid3);
-    EXPECT_NE(pid2, pid3);
+    // We should have gone back to the webkit.org process for this load since we reuse SuspendedPages' process when possible.
+    EXPECT_EQ(webkitPID, [webView _webProcessIdentifier]);
 
     // Verify the sessionStorage values were as expected
     EXPECT_EQ([receivedMessages count], 2u);
     EXPECT_TRUE([receivedMessages.get()[0] isEqualToString:@""]);
     EXPECT_TRUE([receivedMessages.get()[1] isEqualToString:@"I exist!"]);
+}
+
+TEST(ProcessSwap, ReuseSuspendedProcess)
+{
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    [processPoolConfiguration setProcessSwapsOnNavigation:YES];
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main1.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto webkitPID = [webView _webProcessIdentifier];
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/main1.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto applePID = [webView _webProcessIdentifier];
+
+    EXPECT_NE(webkitPID, applePID);
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main2.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    // We should have gone back to the webkit.org process for this load since we reuse SuspendedPages' process when possible.
+    EXPECT_EQ(webkitPID, [webView _webProcessIdentifier]);
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/main2.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    // We should have gone back to the apple.com process for this load since we reuse SuspendedPages' process when possible.
+    EXPECT_EQ(applePID, [webView _webProcessIdentifier]);
 }
 
 static const char* mainFramesOnlyMainFrame = R"PSONRESOURCE(
