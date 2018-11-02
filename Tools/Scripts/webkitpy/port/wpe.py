@@ -81,6 +81,7 @@ class WPEPort(Port):
         self._copy_value_from_environ_if_set(environment, 'GST_DEBUG')
         self._copy_value_from_environ_if_set(environment, 'GST_DEBUG_DUMP_DOT_DIR')
         self._copy_value_from_environ_if_set(environment, 'GST_DEBUG_FILE')
+        self._copy_value_from_environ_if_set(environment, 'GST_DEBUG_NO_COLOR')
         return environment
 
     def check_sys_deps(self):

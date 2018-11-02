@@ -127,6 +127,7 @@ class GtkPort(Port):
         self._copy_value_from_environ_if_set(environment, 'GST_DEBUG')
         self._copy_value_from_environ_if_set(environment, 'GST_DEBUG_DUMP_DOT_DIR')
         self._copy_value_from_environ_if_set(environment, 'GST_DEBUG_FILE')
+        self._copy_value_from_environ_if_set(environment, 'GST_DEBUG_NO_COLOR')
 
         # Configure the software libgl renderer if jhbuild ready and we test inside a virtualized window system
         if self._driver_class() in [XvfbDriver, WestonDriver] and (self._should_use_jhbuild() or self._is_flatpak()):

@@ -1,3 +1,16 @@
+2018-11-02  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK][WPE] Enable GST_DEBUG_NO_COLOR environment variable pass-through
+
+        Rubber-stamped by Michael Catanzaro.
+
+        This variable is useful to get rid of shell color escapes in tests stderr files.
+
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort.setup_environ_for_server):
+        * Scripts/webkitpy/port/wpe.py:
+        (WPEPort.setup_environ_for_server):
+
 2018-11-02  Aakash Jain  <aakash_jain@apple.com>
 
         Add Basic Django web app for OpenSource EWS
