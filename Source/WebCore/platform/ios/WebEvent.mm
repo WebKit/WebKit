@@ -35,25 +35,7 @@
 
 #import "KeyEventCodesIOS.h"
 #import "WAKAppKitStubs.h"
-#import <pal/spi/ios/UIKitSPI.h>
-#import <wtf/SoftLinking.h>
-
-SOFT_LINK_FRAMEWORK(UIKit)
-SOFT_LINK_CONSTANT(UIKit, UIKeyInputUpArrow, NSString *)
-SOFT_LINK_CONSTANT(UIKit, UIKeyInputDownArrow, NSString *)
-SOFT_LINK_CONSTANT(UIKit, UIKeyInputLeftArrow, NSString *)
-SOFT_LINK_CONSTANT(UIKit, UIKeyInputRightArrow, NSString *)
-SOFT_LINK_CONSTANT(UIKit, UIKeyInputPageUp, NSString *)
-SOFT_LINK_CONSTANT(UIKit, UIKeyInputPageDown, NSString *)
-SOFT_LINK_CONSTANT(UIKit, UIKeyInputEscape, NSString *)
-
-#define UIKeyInputUpArrow getUIKeyInputUpArrow()
-#define UIKeyInputDownArrow getUIKeyInputDownArrow()
-#define UIKeyInputLeftArrow getUIKeyInputLeftArrow()
-#define UIKeyInputRightArrow getUIKeyInputRightArrow()
-#define UIKeyInputPageUp getUIKeyInputPageUp()
-#define UIKeyInputPageDown getUIKeyInputPageDown()
-#define UIKeyInputEscape getUIKeyInputEscape()
+#import <pal/spi/cocoa/IOKitSPI.h>
 
 using WebCore::windowsKeyCodeForKeyCode;
 using WebCore::windowsKeyCodeForCharCode;
@@ -142,26 +124,28 @@ static int windowsKeyCodeForCharCodeIOS(unichar charCode)
     return windowsKeyCodeForCharCode(charCode);
 }
 
-static NSString* normalizedStringWithAppKitCompatibilityMapping(NSString *characters)
+static NSString *normalizedStringWithAppKitCompatibilityMapping(NSString *characters, uint16_t keyCode)
 {
     auto makeNSStringWithCharacter = [] (unichar c) { return [NSString stringWithCharacters:&c length:1]; };
 
-    if ([characters isEqualToString:UIKeyInputUpArrow])
+    switch (keyCode) {
+    case kHIDUsage_KeyboardUpArrow:
         return makeNSStringWithCharacter(NSUpArrowFunctionKey);
-    if ([characters isEqualToString:UIKeyInputDownArrow])
+    case kHIDUsage_KeyboardDownArrow:
         return makeNSStringWithCharacter(NSDownArrowFunctionKey);
-    if ([characters isEqualToString:UIKeyInputLeftArrow])
+    case kHIDUsage_KeyboardLeftArrow:
         return makeNSStringWithCharacter(NSLeftArrowFunctionKey);
-    if ([characters isEqualToString:UIKeyInputRightArrow])
+    case kHIDUsage_KeyboardRightArrow:
         return makeNSStringWithCharacter(NSRightArrowFunctionKey);
-    if ([characters isEqualToString:UIKeyInputPageUp])
+    case kHIDUsage_KeyboardPageUp:
         return makeNSStringWithCharacter(NSPageUpFunctionKey);
-    if ([characters isEqualToString:UIKeyInputPageDown])
+    case kHIDUsage_KeyboardPageDown:
         return makeNSStringWithCharacter(NSPageDownFunctionKey);
-    if ([characters isEqualToString:UIKeyInputEscape])
+    case kHIDUsage_KeyboardEscape:
         return @"\x1B";
-    if ([characters isEqualToString:@"\x1B"]) // Num Lock / Clear
+    case kHIDUsage_KeypadNumLock: // Num Lock / Clear
         return makeNSStringWithCharacter(NSClearLineFunctionKey);
+    }
     return characters;
 }
 
@@ -194,8 +178,8 @@ static NSString* normalizedStringWithAppKitCompatibilityMapping(NSString *charac
     }
 
     if (!(_keyboardFlags & WebEventKeyboardInputModifierFlagsChanged)) {
-        _characters = [normalizedStringWithAppKitCompatibilityMapping(characters) retain];
-        _charactersIgnoringModifiers = [normalizedStringWithAppKitCompatibilityMapping(charactersIgnoringModifiers) retain];
+        _characters = [normalizedStringWithAppKitCompatibilityMapping(characters, keyCode) retain];
+        _charactersIgnoringModifiers = [normalizedStringWithAppKitCompatibilityMapping(charactersIgnoringModifiers, keyCode) retain];
         _tabKey = tabKey;
         _keyRepeating = repeating;
     }
@@ -231,8 +215,8 @@ static NSString* normalizedStringWithAppKitCompatibilityMapping(NSString *charac
     }
 
     if (!(_keyboardFlags & WebEventKeyboardInputModifierFlagsChanged)) {
-        _characters = [normalizedStringWithAppKitCompatibilityMapping(characters) retain];
-        _charactersIgnoringModifiers = [normalizedStringWithAppKitCompatibilityMapping(charactersIgnoringModifiers) retain];
+        _characters = [normalizedStringWithAppKitCompatibilityMapping(characters, keyCode) retain];
+        _charactersIgnoringModifiers = [normalizedStringWithAppKitCompatibilityMapping(charactersIgnoringModifiers, keyCode) retain];
         _tabKey = tabKey;
         _keyRepeating = repeating;
     }

@@ -1,5 +1,25 @@
 2018-11-02  Daniel Bates  <dabates@apple.com>
 
+        [iOS] Normalize character string based on key code
+        https://bugs.webkit.org/show_bug.cgi?id=191120
+
+        Reviewed by Tim Horton.
+
+        Following r236417 (https://bugs.webkit.org/show_bug.cgi?id=189604) we always have a valid key code
+        for a special key (e.g. page up) and can simplify the character string normalization code.
+
+        No functionality changed. So, no new tests.
+
+        * platform/ios/WebEvent.mm:
+        (normalizedStringWithAppKitCompatibilityMapping): Modified to take a key code and wrote algorithm
+        in terms of it.
+
+        (-[WebEvent initWithKeyEventType:timeStamp:characters:charactersIgnoringModifiers:modifiers:isRepeating:withFlags:keyCode:isTabKey:characterSet:]):
+        (-[WebEvent initWithKeyEventType:timeStamp:characters:charactersIgnoringModifiers:modifiers:isRepeating:withFlags:withInputManagerHint:keyCode:isTabKey:]):
+        Pass the key code for the event to normalizedStringWithAppKitCompatibilityMapping().
+
+2018-11-02  Daniel Bates  <dabates@apple.com>
+
         [iOS] WebKit should dispatch DOM events when a modifier key is pressed
         https://bugs.webkit.org/show_bug.cgi?id=190487
 

@@ -1,3 +1,14 @@
+2018-11-02  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Normalize character string based on key code
+        https://bugs.webkit.org/show_bug.cgi?id=191120
+
+        Reviewed by Tim Horton.
+
+        Remove forward declarations that are no longer needed now that we check key code.
+
+        * pal/spi/ios/UIKitSPI.h:
+
 2018-11-01  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [CG] Adopt CG SPI for non-even cornered rounded rects
