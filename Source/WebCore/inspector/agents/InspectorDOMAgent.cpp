@@ -2150,9 +2150,9 @@ int InspectorDOMAgent::identifierForNode(Node& node)
     return pushNodePathToFrontend(&node);
 }
 
-#if ENABLE(VIDEO)
 void InspectorDOMAgent::addEventListenersToNode(Node& node)
 {
+#if ENABLE(VIDEO)
     auto callback = EventFiredCallback::create(*this);
 
     auto createEventListener = [&] (const AtomicString& eventName) {
@@ -2185,8 +2185,10 @@ void InspectorDOMAgent::addEventListenersToNode(Node& node)
         if (!m_mediaMetricsTimer.isActive())
             m_mediaMetricsTimer.start(0_s, 1_s / 15.);
     }
+#else
+    UNUSED_PARAM(node);
+#endif // ENABLE(VIDEO)
 }
-#endif
 
 void InspectorDOMAgent::didInsertDOMNode(Node& node)
 {

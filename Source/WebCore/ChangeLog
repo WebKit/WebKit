@@ -1,3 +1,10 @@
+2018-11-02  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK][WPE] Unreviewed, another --no-video --no-web-audio build fix following r237677
+
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::addEventListenersToNode):
+
 2018-11-02  Daniel Bates  <dabates@apple.com>
 
         [iOS] Normalize character string based on key code
