@@ -69,7 +69,7 @@ inline JSC::JSGlobalObject* toJSGlobalObject(JSGlobalContextRef context)
 inline JSC::JSValue toJS(JSC::ExecState* exec, JSValueRef v)
 {
     ASSERT_UNUSED(exec, exec);
-#if USE(JSVALUE32_64)
+#if !CPU(ADDRESS64)
     JSC::JSCell* jsCell = reinterpret_cast<JSC::JSCell*>(const_cast<OpaqueJSValue*>(v));
     if (!jsCell)
         return JSC::jsNull();
@@ -91,7 +91,7 @@ inline JSC::JSValue toJS(JSC::ExecState* exec, JSValueRef v)
 inline JSC::JSValue toJSForGC(JSC::ExecState* exec, JSValueRef v)
 {
     ASSERT_UNUSED(exec, exec);
-#if USE(JSVALUE32_64)
+#if !CPU(ADDRESS64)
     JSC::JSCell* jsCell = reinterpret_cast<JSC::JSCell*>(const_cast<OpaqueJSValue*>(v));
     if (!jsCell)
         return JSC::JSValue();
@@ -131,7 +131,7 @@ inline JSC::VM* toJS(JSContextGroupRef g)
 inline JSValueRef toRef(JSC::ExecState* exec, JSC::JSValue v)
 {
     ASSERT(exec->vm().currentThreadIsHoldingAPILock());
-#if USE(JSVALUE32_64)
+#if !CPU(ADDRESS64)
     if (!v)
         return 0;
     if (!v.isCell())
