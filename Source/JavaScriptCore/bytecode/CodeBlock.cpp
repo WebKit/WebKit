@@ -1280,7 +1280,7 @@ void CodeBlock::finalizeLLIntInlineCaches()
             // Right now this isn't strictly necessary. Any symbol tables that this will refer to
             // are for outer functions, and we refer to those functions strongly, and they refer
             // to the symbol table strongly. But it's nice to be on the safe side.
-            auto metadata = curInstruction->as<OpResolveScope>().metadata(this);
+            auto& metadata = curInstruction->as<OpResolveScope>().metadata(this);
             WriteBarrierBase<SymbolTable>& symbolTable = metadata.symbolTable;
             if (!symbolTable || Heap::isMarked(symbolTable.get()))
                 break;

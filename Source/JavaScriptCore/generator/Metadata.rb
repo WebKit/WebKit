@@ -63,6 +63,9 @@ class Metadata
 
         <<-EOF
         struct Metadata {
+            WTF_MAKE_NONCOPYABLE(Metadata);
+
+        public:
             Metadata(const #{op.capitalized_name}&#{" __op" if inits})
             #{inits}
             { }

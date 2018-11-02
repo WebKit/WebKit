@@ -1,5 +1,20 @@
 2018-11-02  Tadeu Zagallo  <tzagallo@apple.com>
 
+        Metadata should not be copyable
+        https://bugs.webkit.org/show_bug.cgi?id=191193
+
+        Reviewed by Keith Miller.
+
+        We should only ever hold references to the entry in the metadata table.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finalizeLLIntInlineCaches):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * generator/Metadata.rb:
+
+2018-11-02  Tadeu Zagallo  <tzagallo@apple.com>
+
         REGRESSION(r237547): Exception handlers should be aware of wide opcodes when JIT is disabled
         https://bugs.webkit.org/show_bug.cgi?id=191175
 

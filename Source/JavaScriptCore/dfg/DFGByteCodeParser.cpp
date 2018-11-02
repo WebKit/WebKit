@@ -4710,7 +4710,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
         case op_to_this: {
             Node* op1 = getThis();
             if (op1->op() != ToThis) {
-                auto metadata = currentInstruction->as<OpToThis>().metadata(codeBlock);
+                auto& metadata = currentInstruction->as<OpToThis>().metadata(codeBlock);
                 Structure* cachedStructure = metadata.cachedStructure.get();
                 if (metadata.toThisStatus != ToThisOK
                     || !cachedStructure
@@ -6163,7 +6163,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_get_from_scope: {
             auto bytecode = currentInstruction->as<OpGetFromScope>();
-            auto metadata = bytecode.metadata(codeBlock);
+            auto& metadata = bytecode.metadata(codeBlock);
             unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.var];
             UniquedStringImpl* uid = m_graph.identifiers()[identifierNumber];
             ResolveType resolveType = metadata.getPutInfo.resolveType();
