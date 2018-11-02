@@ -1,3 +1,51 @@
+2018-11-02  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: support multiple selection/deletion of cookie records
+        https://bugs.webkit.org/show_bug.cgi?id=66381
+        <rdar://problem/19281525>
+
+        Reviewed by Devin Rousso.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+        * UserInterface/Views/CookieStorageContentView.js:
+        (WI.CookieStorageContentView):
+        (WI.CookieStorageContentView.prototype.get scrollableElements):
+        (WI.CookieStorageContentView.prototype.tableNumberOfRows):
+        (WI.CookieStorageContentView.prototype.tableSortChanged):
+        (WI.CookieStorageContentView.prototype.tableCellContextMenuClicked):
+        (WI.CookieStorageContentView.prototype.tableDidRemoveRows):
+        (WI.CookieStorageContentView.prototype.tablePopulateCell):
+        (WI.CookieStorageContentView.prototype.initialLayout):
+        (WI.CookieStorageContentView.prototype._generateSortComparator):
+        (WI.CookieStorageContentView.prototype._refreshButtonClicked):
+        (WI.CookieStorageContentView.prototype._reloadCookies):
+        (WI.CookieStorageContentView.prototype._updateSort):
+        (WI.CookieStorageContentView.prototype._handleTableKeyDown):
+        (WI.CookieStorageContentView.prototype.update): Deleted.
+        (WI.CookieStorageContentView.prototype._rebuildTable): Deleted.
+        (WI.CookieStorageContentView.prototype._sortDataGrid.localeCompare): Deleted.
+        (WI.CookieStorageContentView.prototype._sortDataGrid.numberCompare): Deleted.
+        (WI.CookieStorageContentView.prototype._sortDataGrid.expiresCompare): Deleted.
+        (WI.CookieStorageContentView.prototype._sortDataGrid): Deleted.
+        (WI.CookieStorageContentView.prototype._deleteCallback): Deleted.
+        Replace DataGrid with Table. The content view serves as the table
+        delegate and data source, and handles delete and backspace key events
+        to allow deleting the selected cookies. Cookies may also be deleted from
+        the table context menu and a new button in the navigation bar.
+
+        * UserInterface/Views/Table.js:
+        (WI.Table.prototype.isRowSelected):
+        (WI.Table.prototype.selectRow):
+        (WI.Table.prototype.deselectRow):
+        (WI.Table.prototype.removeRow):
+        (WI.Table.prototype._getOrCreateRow):
+        (WI.Table.prototype._handleMouseDown):
+        (WI.Table.prototype._removeRows):
+        (WI.Table.prototype._isRowSelected): Deleted.
+        Make `isSelectedRow` public. It is more convenient and efficient than
+        calling `Table.prototype.selectedRows.includes(rowIndex)`.
+
 2018-11-01  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: View: introduce a didLayoutSubtree

@@ -235,6 +235,11 @@ WI.Table = class Table extends WI.View
             this._notifySelectionDidChange();
     }
 
+    isRowSelected(rowIndex)
+    {
+        return this._selectedRows.has(rowIndex);
+    }
+
     resize()
     {
         this._cachedWidth = NaN;
@@ -321,7 +326,7 @@ WI.Table = class Table extends WI.View
         console.assert(!extendSelection || this._allowsMultipleSelection, "Cannot extend selection with multiple selection disabled.");
         console.assert(rowIndex >= 0 && rowIndex < this.numberOfRows);
 
-        if (this._isRowSelected(rowIndex)) {
+        if (this.isRowSelected(rowIndex)) {
             if (!extendSelection)
                 this._deselectAllAndSelect(rowIndex);
             return;
@@ -346,7 +351,7 @@ WI.Table = class Table extends WI.View
     {
         console.assert(rowIndex >= 0 && rowIndex < this.numberOfRows);
 
-        if (!this._isRowSelected(rowIndex))
+        if (!this.isRowSelected(rowIndex))
             return;
 
         let oldSelectedRow = this._cachedRows.get(rowIndex);
@@ -390,7 +395,7 @@ WI.Table = class Table extends WI.View
     {
         console.assert(rowIndex >= 0 && rowIndex < this.numberOfRows);
 
-        if (this._isRowSelected(rowIndex))
+        if (this.isRowSelected(rowIndex))
             this.deselectRow(rowIndex);
 
         this._removeRows(new WI.IndexSet([rowIndex]));
@@ -797,7 +802,7 @@ WI.Table = class Table extends WI.View
         let row = document.createElement("li");
         row.__index = rowIndex;
         row.__widthGeneration = 0;
-        if (this._isRowSelected(rowIndex))
+        if (this.isRowSelected(rowIndex))
             row.classList.add("selected");
 
         this._cachedRows.set(rowIndex, row);
@@ -1321,7 +1326,7 @@ WI.Table = class Table extends WI.View
         let column = this._visibleColumns[columnIndex];
         let rowIndex = row.__index;
 
-        if (this._isRowSelected(rowIndex)) {
+        if (this.isRowSelected(rowIndex)) {
             if (event.metaKey)
                 this.deselectRow(rowIndex)
             else
@@ -1452,7 +1457,7 @@ WI.Table = class Table extends WI.View
                 this._cachedRows.set(newIndex, row);
             }
 
-            if (this._isRowSelected(index)) {
+            if (this.isRowSelected(index)) {
                 this._selectedRows.delete(index);
                 this._selectedRows.add(newIndex);
                 if (this._selectedRowIndex === index)
@@ -1491,11 +1496,6 @@ WI.Table = class Table extends WI.View
             this._delegate.tableDidRemoveRows(this, Array.from(rowIndexes));
             console.assert(this._cachedNumberOfRows === this._dataSource.tableNumberOfRows(this), "Table data source should update after removing rows.");
         }
-    }
-
-    _isRowSelected(rowIndex)
-    {
-        return this._selectedRows.has(rowIndex);
     }
 
     _notifySelectionDidChange()
