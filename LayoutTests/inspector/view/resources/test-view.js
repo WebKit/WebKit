@@ -30,6 +30,10 @@ TestPage.registerInitializer(() => {
         layout()
         {
             this._layoutCount++;
+        }
+
+        didLayoutSubtree()
+        {
             let callbacks = this._layoutCallbacks;
             this._layoutCallbacks = [];
             for (let callback of callbacks)

@@ -213,6 +213,13 @@ WI.View = class View extends WI.Object
         // Should not be called directly; use updateLayout() instead.
     }
 
+    didLayoutSubtree()
+    {
+        // Implemented by subclasses.
+
+        // Called after the view and its entire subtree have finished layout.
+    }
+
     sizeDidChange()
     {
         // Implemented by subclasses.
@@ -287,6 +294,8 @@ WI.View = class View extends WI.Object
         }
 
         this._layoutReason = null;
+
+        this.didLayoutSubtree();
     }
 
     _setLayoutReason(layoutReason)

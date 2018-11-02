@@ -1094,12 +1094,14 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._positionDetailView();
         this._positionEmptyFilterMessage();
         this._updateExportButton();
+    }
 
-        // FIXME: https://webkit.org/b/191176
-        setTimeout(() => {
-            if (this._waterfallPopover)
-                this._waterfallPopover.resize();
-        });
+    didLayoutSubtree()
+    {
+        super.didLayoutSubtree();
+
+        if (this._waterfallPopover)
+            this._waterfallPopover.resize();
     }
 
     handleClearShortcut(event)
