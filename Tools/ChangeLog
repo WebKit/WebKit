@@ -1,3 +1,12 @@
+2018-11-01  Ross Kirsling  <ross.kirsling@sony.com>
+
+        build-jsc --wincairo should update WinCairo libraries
+        https://bugs.webkit.org/show_bug.cgi?id=191170
+
+        Reviewed by Fujii Hironori.
+
+        * Scripts/build-jsc:
+
 2018-11-01  John Wilander  <wilander@apple.com>
 
         In WebCore::ResourceLoadObserver, use document.sessionID().isEphemeral() when possible and check for page existence when not
