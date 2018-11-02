@@ -378,7 +378,6 @@ FormattingContext::InstrinsicWidthConstraints BlockFormattingContext::instrinsic
     // 3. As we climb back on the tree, compute min/max intrinsic width
     // (Any subtrees with new formatting contexts need to layout synchronously)
     Vector<const Box*> queue;
-    // Non-containers early return.
     ASSERT(is<Container>(formattingRoot));
     if (auto* firstChild = downcast<Container>(formattingRoot).firstInFlowOrFloatingChild())
         queue.append(firstChild);
@@ -386,29 +385,23 @@ FormattingContext::InstrinsicWidthConstraints BlockFormattingContext::instrinsic
     auto& formattingState = this->formattingState();
     while (!queue.isEmpty()) {
         while (true) {
-            auto& childBox = *queue.last(); 
-            // Already computed?
-            auto instrinsicWidthConstraints = formattingState.instrinsicWidthConstraints(childBox);
-            // Can we just compute them without checking the children?
-            if (!instrinsicWidthConstraints && !Geometry::instrinsicWidthConstraintsNeedChildrenWidth(childBox))
-                instrinsicWidthConstraints = Geometry::instrinsicWidthConstraints(layoutState, childBox);
-            // Is it a formatting context root?
-            if (!instrinsicWidthConstraints && childBox.establishesFormattingContext())
-                instrinsicWidthConstraints = formattingState.formattingContext(childBox)->instrinsicWidthConstraints();
-            // Go to the next sibling (and skip the descendants) if this box's min/max width is computed.
-            if (instrinsicWidthConstraints) {
-                formattingState.setInstrinsicWidthConstraints(childBox, *instrinsicWidthConstraints); 
+            auto& childBox = *queue.last();
+            auto skipDescendants = formattingState.instrinsicWidthConstraints(childBox) || !Geometry::instrinsicWidthConstraintsNeedChildrenWidth(childBox) || childBox.establishesFormattingContext();
+
+            if (skipDescendants) {
+                if (!Geometry::instrinsicWidthConstraintsNeedChildrenWidth(childBox))
+                    formattingState.setInstrinsicWidthConstraints(childBox, Geometry::instrinsicWidthConstraints(layoutState, childBox));
+                else if (childBox.establishesFormattingContext())
+                    formattingState.setInstrinsicWidthConstraints(childBox, formattingState.formattingContext(childBox)->instrinsicWidthConstraints());
+
+                ASSERT(formattingState.instrinsicWidthConstraints(childBox));
                 queue.removeLast();
                 if (!childBox.nextInFlowOrFloatingSibling())
                     break;
                 queue.append(childBox.nextInFlowOrFloatingSibling());
+                // Skip descendants
                 continue;
             }
-
-            if (!is<Container>(childBox) || !downcast<Container>(childBox).hasInFlowOrFloatingChild())
-                break;
-
-            queue.append(downcast<Container>(childBox).firstInFlowOrFloatingChild());
         }
 
         // Compute min/max intrinsic width bottom up.

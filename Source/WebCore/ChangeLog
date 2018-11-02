@@ -1,5 +1,15 @@
 2018-11-02  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][BFC] BlockFormattingContext::instrinsicWidthConstraints logic should look similar to ::layout
+        https://bugs.webkit.org/show_bug.cgi?id=191181
+
+        Reviewed by Antti Koivisto.
+
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::instrinsicWidthConstraints const):
+
+2018-11-02  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Align shrink-to-fit width computation with the layout implementation.
         https://bugs.webkit.org/show_bug.cgi?id=191179
 
