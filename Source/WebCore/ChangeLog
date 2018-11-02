@@ -1,3 +1,38 @@
+2018-11-02  Ali Juma  <ajuma@chromium.org>
+
+        Allow cross-document intersection observing
+        https://bugs.webkit.org/show_bug.cgi?id=165746
+
+        Reviewed by Simon Fraser.
+
+        Add logic to compute the intersection between the viewport and an element in a
+        subframe.
+
+        Add a FloatRect version of ScrollView::rootViewToContents, and FloatRect versions
+        of the methods it calls.
+
+        Test: http/tests/intersection-observer/intermediate-frame-changes.html
+        Also covered by rebased tests in imported/w3c/web-platform-tests/intersection-observer.
+
+        * dom/Document.cpp:
+        (WebCore::computeClippedRectInRootContentsSpace):
+        (WebCore::computeIntersectionState):
+        (WebCore::Document::updateIntersectionObservations):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::viewportContentsChanged):
+        (WebCore::FrameView::convertFromContainingViewToRenderer const):
+        (WebCore::FrameView::convertFromContainingView const):
+        * page/FrameView.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::viewToContents const):
+        (WebCore::ScrollView::contentsToView const):
+        (WebCore::ScrollView::rootViewToContents const):
+        * platform/ScrollView.h:
+        * platform/Widget.cpp:
+        (WebCore::Widget::convertFromRootView const):
+        (WebCore::Widget::convertFromContainingView const):
+        * platform/Widget.h:
+
 2018-11-02  Rob Buis  <rbuis@igalia.com>
 
         Remove ENABLE_OPENCL fully

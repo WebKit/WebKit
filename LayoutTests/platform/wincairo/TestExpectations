@@ -1463,6 +1463,7 @@ webkit.org/b/185076 css3/color-filters [ Skip ]
 
 # IntersectionObserver is off by default
 webkit.org/b/188613 intersection-observer [ Skip ]
+webkit.org/b/188613 http/tests/intersection-observer [ Skip ]
 
 [ Debug ] css2.1/20110323/replaced-intrinsic-ratio-001.htm [ Pass Failure ]
 

@@ -283,12 +283,16 @@ public:
     WEBCORE_EXPORT IntPoint contentsToRootView(const IntPoint&) const;
     WEBCORE_EXPORT IntRect rootViewToContents(const IntRect&) const;
     WEBCORE_EXPORT IntRect contentsToRootView(const IntRect&) const;
+    WEBCORE_EXPORT FloatRect rootViewToContents(const FloatRect&) const;
 
     IntPoint viewToContents(const IntPoint&) const;
     IntPoint contentsToView(const IntPoint&) const;
 
     IntRect viewToContents(IntRect) const;
     IntRect contentsToView(IntRect) const;
+
+    FloatRect viewToContents(FloatRect) const;
+    FloatRect contentsToView(FloatRect) const;
 
     IntPoint contentsToContainingViewContents(const IntPoint&) const;
     IntRect contentsToContainingViewContents(IntRect) const;

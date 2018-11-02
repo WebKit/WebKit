@@ -7603,6 +7603,26 @@ static void expandRootBoundsWithRootMargin(FloatRect& localRootBounds, const Len
     localRootBounds.expand(rootMarginFloatBox);
 }
 
+static std::optional<LayoutRect> computeClippedRectInRootContentsSpace(const LayoutRect& rect, const RenderElement* renderer)
+{
+    OptionSet<RenderObject::VisibleRectContextOption> visibleRectOptions = { RenderObject::VisibleRectContextOption::UseEdgeInclusiveIntersection, RenderObject::VisibleRectContextOption::ApplyCompositedClips, RenderObject::VisibleRectContextOption::ApplyCompositedContainerScrolls };
+    std::optional<LayoutRect> rectInFrameAbsoluteSpace = renderer->computeVisibleRectInContainer(rect, &renderer->view(),  {false /* hasPositionFixedDescendant */, false /* dirtyRectIsFlipped */, visibleRectOptions });
+    if (!rectInFrameAbsoluteSpace || renderer->frame().isMainFrame())
+        return rectInFrameAbsoluteSpace;
+
+    bool intersects = rectInFrameAbsoluteSpace->edgeInclusiveIntersect(renderer->view().frameView().layoutViewportRect());
+    if (!intersects)
+        return std::nullopt;
+
+    LayoutRect rectInFrameViewSpace(renderer->view().frameView().contentsToView(snappedIntRect(*rectInFrameAbsoluteSpace)));
+    auto* ownerRenderer = renderer->frame().ownerRenderer();
+    if (!ownerRenderer)
+        return std::nullopt;
+
+    rectInFrameViewSpace.moveBy(ownerRenderer->contentBoxLocation());
+    return computeClippedRectInRootContentsSpace(rectInFrameViewSpace, ownerRenderer);
+}
+
 struct IntersectionObservationState {
     FloatRect absoluteTargetRect;
     FloatRect absoluteRootBounds;
@@ -7610,12 +7630,8 @@ struct IntersectionObservationState {
     bool isIntersecting { false };
 };
 
-static std::optional<IntersectionObservationState> computeIntersectionState(FrameView& frameView, const IntersectionObserver& observer, Element& target)
+static std::optional<IntersectionObservationState> computeIntersectionState(FrameView& frameView, const IntersectionObserver& observer, Element& target, bool applyRootMargin)
 {
-    // FIXME: Implement intersection computation for the cross-document case.
-    if (observer.trackingDocument() != &target.document())
-        return std::nullopt;
-
     auto* targetRenderer = target.renderer();
     if (!targetRenderer)
         return std::nullopt;
@@ -7623,6 +7639,9 @@ static std::optional<IntersectionObservationState> computeIntersectionState(Fram
     FloatRect localRootBounds;
     RenderBlock* rootRenderer;
     if (observer.root()) {
+        if (observer.trackingDocument() != &target.document())
+            return std::nullopt;
+
         if (!observer.root()->renderer() || !is<RenderBlock>(observer.root()->renderer()))
             return std::nullopt;
 
@@ -7636,11 +7655,15 @@ static std::optional<IntersectionObservationState> computeIntersectionState(Fram
             localRootBounds = { FloatPoint(), rootRenderer->size() };
     } else {
         ASSERT(frameView.frame().isMainFrame());
+        // FIXME: Handle the case of an implicit-root observer that has a target in a different frame tree.
+        if (&targetRenderer->frame().mainFrame() != &frameView.frame())
+            return std::nullopt;
         rootRenderer = frameView.renderView();
         localRootBounds = frameView.layoutViewportRect();
     }
 
-    expandRootBoundsWithRootMargin(localRootBounds, observer.rootMarginBox());
+    if (applyRootMargin)
+        expandRootBoundsWithRootMargin(localRootBounds, observer.rootMarginBox());
 
     LayoutRect localTargetBounds;
     if (is<RenderBox>(*targetRenderer))
@@ -7650,15 +7673,27 @@ static std::optional<IntersectionObservationState> computeIntersectionState(Fram
     else if (is<RenderLineBreak>(targetRenderer))
         localTargetBounds = downcast<RenderLineBreak>(targetRenderer)->linesBoundingBox();
 
-    OptionSet<RenderObject::VisibleRectContextOption> visibleRectOptions = { RenderObject::VisibleRectContextOption::UseEdgeInclusiveIntersection, RenderObject::VisibleRectContextOption::ApplyCompositedClips, RenderObject::VisibleRectContextOption::ApplyCompositedContainerScrolls };
-    std::optional<LayoutRect> rootLocalTargetRect = targetRenderer->computeVisibleRectInContainer(localTargetBounds, rootRenderer, { false /* hasPositionFixedDescendant */, false /* dirtyRectIsFlipped */, visibleRectOptions });
+    std::optional<LayoutRect> rootLocalTargetRect;
+    if (observer.root()) {
+        OptionSet<RenderObject::VisibleRectContextOption> visibleRectOptions = { RenderObject::VisibleRectContextOption::UseEdgeInclusiveIntersection, RenderObject::VisibleRectContextOption::ApplyCompositedClips, RenderObject::VisibleRectContextOption::ApplyCompositedContainerScrolls };
+        rootLocalTargetRect = targetRenderer->computeVisibleRectInContainer(localTargetBounds, rootRenderer, { false /* hasPositionFixedDescendant */, false /* dirtyRectIsFlipped */, visibleRectOptions });
+    } else
+        rootLocalTargetRect = computeClippedRectInRootContentsSpace(localTargetBounds, targetRenderer);
+
     FloatRect rootLocalIntersectionRect = localRootBounds;
 
     IntersectionObservationState intersectionState;
     intersectionState.isIntersecting = rootLocalTargetRect && rootLocalIntersectionRect.edgeInclusiveIntersect(*rootLocalTargetRect);
 
-    if (intersectionState.isIntersecting)
-        intersectionState.absoluteIntersectionRect = rootRenderer->localToAbsoluteQuad(rootLocalIntersectionRect).boundingBox();
+    if (intersectionState.isIntersecting) {
+        FloatRect rootAbsoluteIntersectionRect = rootRenderer->localToAbsoluteQuad(rootLocalIntersectionRect).boundingBox();
+        if (&targetRenderer->frame() == &rootRenderer->frame())
+            intersectionState.absoluteIntersectionRect = rootAbsoluteIntersectionRect;
+        else {
+            FloatRect rootViewIntersectionRect = frameView.delegatesScrolling() ? rootAbsoluteIntersectionRect : frameView.contentsToView(rootAbsoluteIntersectionRect);
+            intersectionState.absoluteIntersectionRect = targetRenderer->view().frameView().rootViewToContents(rootViewIntersectionRect);
+        }
+    }
 
     intersectionState.absoluteTargetRect = targetRenderer->localToAbsoluteQuad(FloatRect(localTargetBounds)).boundingBox();
     intersectionState.absoluteRootBounds = rootRenderer->localToAbsoluteQuad(localRootBounds).boundingBox();
@@ -7690,7 +7725,8 @@ void Document::updateIntersectionObservations()
             ASSERT(index != notFound);
             auto& registration = targetRegistrations[index];
 
-            auto intersectionState = computeIntersectionState(*frameView, *observer, *target);
+            bool isSameOriginObservation = &target->document() == this || target->document().securityOrigin().canAccess(securityOrigin());
+            auto intersectionState = computeIntersectionState(*frameView, *observer, *target, isSameOriginObservation);
 
             float intersectionRatio = 0;
             size_t thresholdIndex = 0;
@@ -7708,26 +7744,27 @@ void Document::updateIntersectionObservations()
                 }
             }
 
-
             if (!registration.previousThresholdIndex || thresholdIndex != registration.previousThresholdIndex) {
                 FloatRect targetBoundingClientRect;
                 FloatRect clientIntersectionRect;
                 FloatRect clientRootBounds;
                 if (intersectionState) {
-                    targetBoundingClientRect = frameView->absoluteToClientRect(intersectionState->absoluteTargetRect);
+                    auto* targetFrameView = target->document().view();
+                    targetBoundingClientRect = targetFrameView->absoluteToClientRect(intersectionState->absoluteTargetRect);
                     clientRootBounds = frameView->absoluteToClientRect(intersectionState->absoluteRootBounds);
                     if (intersectionState->isIntersecting)
-                        clientIntersectionRect = frameView->absoluteToClientRect(intersectionState->absoluteIntersectionRect);
+                        clientIntersectionRect = targetFrameView->absoluteToClientRect(intersectionState->absoluteIntersectionRect);
                 }
 
-                // FIXME: Once cross-document observation is implemented, only report root bounds if the target document and
-                // the root document are similar-origin.
-                std::optional<DOMRectInit> reportedRootBounds = DOMRectInit({
-                    clientRootBounds.x(),
-                    clientRootBounds.y(),
-                    clientRootBounds.width(),
-                    clientRootBounds.height()
-                });
+                std::optional<DOMRectInit> reportedRootBounds;
+                if (isSameOriginObservation) {
+                    reportedRootBounds = DOMRectInit({
+                        clientRootBounds.x(),
+                        clientRootBounds.y(),
+                        clientRootBounds.width(),
+                        clientRootBounds.height()
+                    });
+                }
 
                 observer->appendQueuedEntry(IntersectionObserverEntry::create({
                     timestamp,

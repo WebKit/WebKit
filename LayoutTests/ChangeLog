@@ -1,3 +1,25 @@
+2018-11-02  Ali Juma  <ajuma@chromium.org>
+
+        Allow cross-document intersection observing
+        https://bugs.webkit.org/show_bug.cgi?id=165746
+
+        Reviewed by Simon Fraser.
+
+        Add a test that cross-document intersection observations are triggered when an intermediate frame
+        scrolls. Skip the test on WK1 platforms where IntersectionObserver is not supported.
+
+        Add platform-specific baselines for tests involving iframe scrolling, which isn't supported on iOS.
+
+        * http/tests/intersection-observer/intermediate-frame-changes-expected.txt: Added.
+        * http/tests/intersection-observer/intermediate-frame-changes.html: Added.
+        * http/tests/intersection-observer/resources/intermediate-frame.html: Added.
+        * http/tests/intersection-observer/resources/nested-frame.html: Added.
+        * platform/ios/imported/w3c/web-platform-tests/intersection-observer/cross-origin-iframe-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/intersection-observer/cross-origin-iframe-expected.txt.
+        * platform/ios/imported/w3c/web-platform-tests/intersection-observer/iframe-no-root-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/intersection-observer/iframe-no-root-expected.txt.
+        * platform/mac-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2018-11-02  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Layout Test fast/block/basic/inline-content-with-floating-image.html is failing

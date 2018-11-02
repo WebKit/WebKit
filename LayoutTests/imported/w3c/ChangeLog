@@ -1,3 +1,17 @@
+2018-11-02  Ali Juma  <ajuma@chromium.org>
+
+        Allow cross-document intersection observing
+        https://bugs.webkit.org/show_bug.cgi?id=165746
+
+        Reviewed by Simon Fraser.
+
+        Update expectations for tests that now pass. 
+
+        * web-platform-tests/intersection-observer/client-rect-expected.txt:
+        * web-platform-tests/intersection-observer/cross-origin-iframe-expected.txt:
+        * web-platform-tests/intersection-observer/iframe-no-root-expected.txt:
+        * web-platform-tests/intersection-observer/timestamp-expected.txt:
+
 2018-11-01  Chris Dumez  <cdumez@apple.com>
 
         Location object sans browsing context

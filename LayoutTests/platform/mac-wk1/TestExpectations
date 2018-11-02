@@ -531,6 +531,7 @@ webkit.org/b/179775 imported/w3c/web-platform-tests/xhr/firing-events-http-no-co
 webkit.org/b/172044 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/open-request-queue.html [ Pass Timeout ]
 
 # Not supported on WK1
+http/tests/intersection-observer [ Skip ]
 imported/w3c/web-platform-tests/intersection-observer [ Skip ]
 intersection-observer [ Skip ]
 

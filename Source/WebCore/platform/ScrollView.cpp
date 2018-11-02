@@ -829,7 +829,19 @@ IntRect ScrollView::viewToContents(IntRect rect) const
     return rect;
 }
 
+FloatRect ScrollView::viewToContents(FloatRect rect) const
+{
+    rect.moveBy(documentScrollPositionRelativeToViewOrigin());
+    return rect;
+}
+
 IntRect ScrollView::contentsToView(IntRect rect) const
+{
+    rect.moveBy(-documentScrollPositionRelativeToViewOrigin());
+    return rect;
+}
+
+FloatRect ScrollView::contentsToView(FloatRect rect) const
 {
     rect.moveBy(-documentScrollPositionRelativeToViewOrigin());
     return rect;
@@ -875,6 +887,14 @@ IntPoint ScrollView::contentsToRootView(const IntPoint& contentsPoint) const
 }
 
 IntRect ScrollView::rootViewToContents(const IntRect& rootViewRect) const
+{
+    if (delegatesScrolling())
+        return convertFromRootView(rootViewRect);
+
+    return viewToContents(convertFromRootView(rootViewRect));
+}
+
+FloatRect ScrollView::rootViewToContents(const FloatRect& rootViewRect) const
 {
     if (delegatesScrolling())
         return convertFromRootView(rootViewRect);

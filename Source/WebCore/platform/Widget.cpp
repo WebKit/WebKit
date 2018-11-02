@@ -76,6 +76,15 @@ IntRect Widget::convertFromRootView(const IntRect& rootRect) const
     return rootRect;
 }
 
+FloatRect Widget::convertFromRootView(const FloatRect& rootRect) const
+{
+    if (const ScrollView* parentScrollView = parent()) {
+        FloatRect parentRect = parentScrollView->convertFromRootView(rootRect);
+        return convertFromContainingView(parentRect);
+    }
+    return rootRect;
+}
+
 IntRect Widget::convertToRootView(const IntRect& localRect) const
 {
     if (const ScrollView* parentScrollView = parent()) {
@@ -180,6 +189,11 @@ IntRect Widget::convertFromContainingView(const IntRect& parentRect) const
     }
 
     return parentRect;
+}
+
+FloatRect Widget::convertFromContainingView(const FloatRect& parentRect) const
+{
+    return convertFromContainingView(IntRect(parentRect));
 }
 
 IntPoint Widget::convertToContainingView(const IntPoint& localPoint) const

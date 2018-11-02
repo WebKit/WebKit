@@ -2009,9 +2009,15 @@ void FrameView::viewportContentsChanged()
 
 #if ENABLE(INTERSECTION_OBSERVER)
     if (auto* document = frame().document()) {
-        if (document->numberOfIntersectionObservers()) {
-            if (auto* page = frame().page())
+        if (auto* page = frame().page()) {
+            if (document->numberOfIntersectionObservers())
                 page->addDocumentNeedingIntersectionObservationUpdate(*document);
+            if (!frame().isMainFrame()) {
+                if (auto* mainDocument = frame().mainFrame().document()) {
+                    if (mainDocument->numberOfIntersectionObservers())
+                        page->addDocumentNeedingIntersectionObservationUpdate(*mainDocument);
+                }
+            }
         }
     }
 #endif
@@ -4554,6 +4560,17 @@ IntRect FrameView::convertFromContainingViewToRenderer(const RenderElement* rend
     return rect;
 }
 
+FloatRect FrameView::convertFromContainingViewToRenderer(const RenderElement* renderer, const FloatRect& viewRect) const
+{
+    FloatRect rect = viewRect;
+
+    // Convert from FrameView coords into page ("absolute") coordinates.
+    if (!delegatesScrolling())
+        rect = viewToContents(rect);
+
+    return (renderer->absoluteToLocalQuad(rect)).boundingBox();
+}
+
 IntPoint FrameView::convertFromRendererToContainingView(const RenderElement* renderer, const IntPoint& rendererPoint) const
 {
     IntPoint point = roundedIntPoint(renderer->localToAbsolute(rendererPoint, UseTransforms));
@@ -4616,6 +4633,28 @@ IntRect FrameView::convertFromContainingView(const IntRect& parentRect) const
         return Widget::convertFromContainingView(parentRect);
     }
     
+    return parentRect;
+}
+
+FloatRect FrameView::convertFromContainingView(const FloatRect& parentRect) const
+{
+    if (const ScrollView* parentScrollView = parent()) {
+        if (is<FrameView>(*parentScrollView)) {
+            const FrameView& parentView = downcast<FrameView>(*parentScrollView);
+
+            // Get our renderer in the parent view
+            RenderWidget* renderer = frame().ownerRenderer();
+            if (!renderer)
+                return parentRect;
+
+            auto rect = parentView.convertFromContainingViewToRenderer(renderer, parentRect);
+            rect.moveBy(-renderer->contentBoxLocation());
+            return rect;
+        }
+
+        return Widget::convertFromContainingView(parentRect);
+    }
+
     return parentRect;
 }
 

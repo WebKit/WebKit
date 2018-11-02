@@ -1,8 +1,8 @@
 
 
 PASS Observer with the implicit root; target in a same-origin iframe. 
-FAIL First rAF. assert_equals: entries[0].boundingClientRect.left expected 8 but got 0
+PASS First rAF. 
 PASS document.scrollingElement.scrollTop = 200 
-FAIL iframe.contentDocument.scrollingElement.scrollTop = 250 assert_equals: entries.length expected 2 but got 1
-FAIL document.scrollingElement.scrollTop = 100 assert_equals: entries.length expected 3 but got 1
+PASS iframe.contentDocument.scrollingElement.scrollTop = 250 
+PASS document.scrollingElement.scrollTop = 100 
 
