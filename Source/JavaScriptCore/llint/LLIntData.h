@@ -140,6 +140,11 @@ ALWAYS_INLINE void* getCodePtr(OpcodeID id)
 {
     return reinterpret_cast<void*>(getOpcode(id));
 }
+
+ALWAYS_INLINE void* getWideCodePtr(OpcodeID id)
+{
+    return reinterpret_cast<void*>(getOpcodeWide(id));
+}
 #endif
 
 ALWAYS_INLINE void* getCodePtr(JSC::EncodedJSValue glueHelper())

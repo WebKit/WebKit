@@ -73,7 +73,9 @@ void genericUnwind(VM* vm, ExecState* callFrame)
 #if ENABLE(JIT)
         catchRoutine = handler->nativeCode.executableAddress();
 #else
-        catchRoutine = LLInt::getCodePtr(catchPCForInterpreter->opcodeID());
+        catchRoutine = catchPCForInterpreter->isWide()
+            ? LLInt::getWideCodePtr(catchPCForInterpreter->opcodeID())
+            : LLInt::getCodePtr(catchPCForInterpreter->opcodeID());
 #endif
     } else
         catchRoutine = LLInt::getCodePtr<ExceptionHandlerPtrTag>(handleUncaughtException).executableAddress();
