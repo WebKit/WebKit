@@ -1,3 +1,17 @@
+2018-11-02  Lucas Forschler  <lforschler@apple.com>
+
+        Add Windows 10 archive bots
+        https://bugs.webkit.org/show_bug.cgi?id=190964
+        
+        This Change updates the Apple Windows Buildbot configuration.
+        - Add Windows 10 specific builders and testers for release and debug.
+        - Refactor Windows -> Windows 7.
+        - Remove Windows 7 Debug.
+
+        Reviewed by Aakash Jain.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2018-11-02  Philippe Normand  <pnormand@igalia.com>
 
         [GTK][WPE] Enable GST_DEBUG_NO_COLOR environment variable pass-through

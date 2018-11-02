@@ -66,6 +66,12 @@
                     { "name": "bot504", "platform": "win" },
                     { "name": "bot511", "platform": "win" },
                     { "name": "bot501", "platform": "win" },
+                    { "name": "bot543", "platform": "win" },
+                    { "name": "bot544", "platform": "win" },
+                    { "name": "bot545", "platform": "win" },
+                    { "name": "bot546", "platform": "win" },
+                    { "name": "bot547", "platform": "win" },
+                    { "name": "bot548", "platform": "win" },
 
                     { "name": "wincairo-wkl-release-build-01", "platform": "wincairo" },
                     { "name": "wincairo-wkl-release-tests-01", "platform": "wincairo" },
@@ -261,26 +267,37 @@
                       "slavenames": ["bot653", "bot654"]
                     },
                     {
-                      "name": "Apple Win Release (Build)", "type": "Build", "builddir": "win-release",
+                      "name": "Apple Win 10 Release (Build)", "type": "Build", "builddir": "win10-release",
+                      "platform": "win", "configuration": "release", "architectures": ["x86_64"],
+                      "triggers": ["win10-release-tests"],
+                      "slavenames": ["bot548"]
+                    },
+                    {
+                      "name": "Apple Win 10 Debug (Build)", "type": "Build", "builddir": "win10-debug",
+                      "platform": "win", "configuration": "debug", "architectures": ["x86_64"],
+                      "triggers": ["win10-debug-tests"],
+                      "slavenames": ["bot547"]
+                    },
+                    {
+                      "name": "Apple Win 10 Release (Tests)", "type": "TestWebKit1", "builddir": "win10-release-tests",
+                      "platform": "win", "configuration": "release", "architectures": ["x86_64"],
+                      "slavenames": ["bot546"]
+                    },
+                    {
+                      "name": "Apple Win 10 Debug (Tests)", "type": "TestWebKit1", "builddir": "win10-debug-tests",
+                      "platform": "win", "configuration": "debug", "architectures": ["x86_64"],
+                      "slavenames": ["bot545"]
+                    },
+                    {
+                      "name": "Apple Win 7 Release (Build)", "type": "Build", "builddir": "win7-release-i386",
                       "platform": "win", "configuration": "release", "architectures": ["i386"],
-                      "triggers": ["win-release-tests"],
-                      "slavenames": ["bot514"]
+                      "triggers": ["win7-release-tests"],
+                      "slavenames": ["bot544"]
                     },
                     {
-                      "name": "Apple Win 7 Release (Tests)", "type": "TestWebKit1", "builddir": "win-release-tests",
+                      "name": "Apple Win 7 Release (Tests)", "type": "TestWebKit1", "builddir": "win7-release-tests",
                       "platform": "win", "configuration": "release", "architectures": ["i386"],
-                      "slavenames": ["bot511", "bot501"]
-                    },
-                    {
-                      "name": "Apple Win Debug (Build)", "type": "Build", "builddir": "win-debug",
-                      "platform": "win", "configuration": "debug", "architectures": ["i386"],
-                      "triggers": ["win-debug-tests"],
-                      "slavenames": ["bot516"]
-                    },
-                    {
-                      "name": "Apple Win 7 Debug (Tests)", "type": "TestWebKit1", "builddir": "win-debug-tests",
-                      "platform": "win", "configuration": "debug", "architectures": ["i386"],
-                      "slavenames": ["bot507", "bot504"]
+                      "slavenames": ["bot543"]
                     },
                     {
                       "name": "GTK Linux 32-bit Release", "type": "BuildAndNonLayoutTestAndGenerateJSCBundle", "builddir": "gtk-linux-32-release",
@@ -459,7 +476,7 @@
                       "builderNames": ["Apple iOS 12 Simulator Release (Build)", "Apple iOS 12 Simulator Debug (Build)"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "win", "branch": "trunk", "treeStableTimer": 45.0,
-                      "builderNames": ["Apple Win Release (Build)", "Apple Win Debug (Build)"]
+                      "builderNames": ["Apple Win 7 Release (Build)", "Apple Win 10 Release (Build)", "Apple Win 10 Debug (Build)"]
                     },
                     { "type": "Triggerable", "name": "highsierra-release-tests-wk1",
                       "builderNames": ["Apple High Sierra Release WK1 (Tests)"]
@@ -506,11 +523,14 @@
                     { "type": "Triggerable", "name": "ios-simulator-12-debug-tests-wk2",
                       "builderNames": ["Apple iOS 12 Simulator Debug WK2 (Tests)"]
                     },
-                    { "type": "Triggerable", "name": "win-release-tests",
-                      "builderNames": ["Apple Win 7 Release (Tests)"]
+                    { "type": "Triggerable", "name": "win10-release-tests",
+                      "builderNames": ["Apple Win 10 Release (Tests)"]
                     },
-                    { "type": "Triggerable", "name": "win-debug-tests",
-                      "builderNames": ["Apple Win 7 Debug (Tests)"]
+                    { "type": "Triggerable", "name": "win10-debug-tests",
+                      "builderNames": ["Apple Win 10 Debug (Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "win7-release-tests",
+                      "builderNames": ["Apple Win 7 Release (Tests)"]
                     },
                     { "type": "Triggerable", "name": "gtk-linux-64-release-tests",
                       "builderNames": ["GTK Linux 64-bit Release (Tests)"]
