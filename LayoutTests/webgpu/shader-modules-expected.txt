@@ -1,0 +1,7 @@
+PASS Bad shader code should not create a module.
+PASS Incomplete shader code should not create a module.
+PASS Shader module created successfully.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

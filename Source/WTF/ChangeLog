@@ -1,3 +1,14 @@
+2018-11-02  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Experimental prototype for MSL shaders
+        https://bugs.webkit.org/show_bug.cgi?id=191084
+
+        Reviewed by Dean Jackson.
+
+        Disabling WebGPU on non-Cocoa platforms and iOS Simulator.
+
+        * wtf/Platform.h:
+
 2018-11-01  Jiewen Tan  <jiewen_tan@apple.com>
 
         Replace CommonRandom SPI with API

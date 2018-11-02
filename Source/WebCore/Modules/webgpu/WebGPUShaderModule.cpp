@@ -22,16 +22,28 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-// https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
 
-typedef unsigned long u32;
+#include "config.h"
+#include "WebGPUShaderModule.h"
 
-[
-    Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU
-] dictionary WebGPUSwapChainDescriptor {
-    // WebGPUTextureUsageFlags usage;
-    // WebGPUTextureFormatEnum format;
-    u32 width;
-    u32 height;
-};
+#if ENABLE(WEBGPU)
+
+namespace WebCore {
+
+RefPtr<WebGPUShaderModule> WebGPUShaderModule::create(RefPtr<GPUShaderModule>&& module)
+{
+    if (!module)
+        return nullptr;
+
+    return adoptRef(new WebGPUShaderModule(WTFMove(module)));
+}
+
+WebGPUShaderModule::WebGPUShaderModule(RefPtr<GPUShaderModule>&& module)
+    : m_module(WTFMove(module))
+{
+    UNUSED_PARAM(m_module);
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(WEBGPU)

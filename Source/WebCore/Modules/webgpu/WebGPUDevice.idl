@@ -33,7 +33,9 @@
     // readonly attribute WebGPULimits limits;
     readonly attribute WebGPUAdapter adapter;
 
-/*
+    WebGPUShaderModule createShaderModule(WebGPUShaderModuleDescriptor descriptor);
+
+/* To Be Implemented:
     WebGPUBuffer createBuffer(WebGPUBufferDescriptor descriptor);
     WebGPUTexture createTexture(WebGPUTextureDescriptor descriptor);
     WebGPUSampler createSampler(WebGPUSamplerDescriptor descriptor);
@@ -45,7 +47,6 @@
     WebGPUBlendState createBlendState(WebGPUBlendStateDescriptor descriptor);
     WebGPUDepthStencilState createDepthStencilState(WebGPUDepthStencilStateDescriptor descriptor);
     WebGPUInputState createInputState(WebGPUInputStateDescriptor descriptor);
-    WebGPUShaderModule createShaderModule(WebGPUShaderModuleDescriptor descriptor);
     WebGPUAttachmentState createAttachmentState(WebGPUAttachmentStateDescriptor descriptor);
     WebGPUComputePipeline createComputePipeline(WebGPUComputePipelineDescriptor descriptor);
     WebGPURenderPipeline createRenderPipeline(WebGPURenderPipelineDescriptor descriptor);

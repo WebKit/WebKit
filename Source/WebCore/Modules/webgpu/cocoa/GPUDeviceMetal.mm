@@ -23,34 +23,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebGPUSwapChain.h"
+#import "config.h"
+#import "GPUDevice.h"
 
 #if ENABLE(WEBGPU)
 
+#import "Logging.h"
+
+#import <Metal/Metal.h>
+#import <wtf/BlockObjCExceptions.h>
+
 namespace WebCore {
 
-WebGPUSwapChain::~WebGPUSwapChain() = default;
-
-void WebGPUSwapChain::configure(const Descriptor& descriptor)
+RefPtr<GPUDevice> GPUDevice::create()
 {
-    reshape(descriptor.width, descriptor.height);
+    PlatformDeviceSmartPtr device;
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
+    device = adoptNS(MTLCreateSystemDefaultDevice()); // FIXME: Take WebGPUPowerPreference into account.
+
+    END_BLOCK_OBJC_EXCEPTIONS;
+
+    if (!device) {
+        LOG(WebGPU, "GPUDevice::GPUDevice(): Unable to create GPUDevice!");
+        return nullptr;
+    }
+
+    LOG(WebGPU, "GPUDevice::GPUDevice(): MTLDevice is %p", device.get());
+    return adoptRef(new GPUDevice(WTFMove(device)));
 }
 
-void WebGPUSwapChain::present()
+GPUDevice::GPUDevice(PlatformDeviceSmartPtr&& device)
+    : m_platformDevice(WTFMove(device))
 {
-    markLayerComposited();
-}
-
-void WebGPUSwapChain::reshape(int width, int height)
-{
-    m_width = width;
-    m_height = height;
-}
-
-void WebGPUSwapChain::markLayerComposited()
-{
-    // FIXME: Unimplemented stub.
+    UNUSED_PARAM(m_platformDevice);
 }
 
 } // namespace WebCore

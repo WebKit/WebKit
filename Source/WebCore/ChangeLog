@@ -1,3 +1,60 @@
+2018-11-02  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Experimental prototype for MSL shaders
+        https://bugs.webkit.org/show_bug.cgi?id=191084
+
+        Reviewed by Dean Jackson.
+
+        Begin implementation for WebGPUDevice and WebGPUShaderModule and associated descriptor objects.
+
+        Test: webgpu/webgpu-basics.html
+        Test: webgpu/shader-modules.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Modules/webgpu/GPUDevice.cpp: 
+        (WebCore::GPUDevice::createShaderModule const):
+        * Modules/webgpu/GPUDevice.h: 
+        (WebCore::GPUDevice::platformDevice const):
+        * Modules/webgpu/GPUShaderModule.h:
+        (WebCore::GPUShaderModule::platformShaderModule const):
+        * Modules/webgpu/GPUShaderModuleDescriptor.h:
+        * Modules/webgpu/WebGPU.cpp:
+        (WebCore::WebGPU::requestAdapter const):
+        * Modules/webgpu/WebGPUAdapter.cpp:
+        (WebCore::WebGPUAdapter::create):
+        (WebCore::WebGPUAdapter::createDevice):
+        * Modules/webgpu/WebGPUAdapter.h:
+        * Modules/webgpu/WebGPUAdapter.idl:
+        * Modules/webgpu/WebGPUDevice.cpp:
+        (WebCore::WebGPUDevice::create):
+        (WebCore::WebGPUDevice::WebGPUDevice):
+        (WebCore::WebGPUDevice::createShaderModule const):
+        * Modules/webgpu/WebGPUDevice.h:
+        * Modules/webgpu/WebGPUDevice.idl:
+        * Modules/webgpu/WebGPUShaderModule.cpp:
+        (WebCore::WebGPUShaderModule::create):
+        (WebCore::WebGPUShaderModule::WebGPUShaderModule):
+        * Modules/webgpu/WebGPUShaderModule.h:
+        * Modules/webgpu/WebGPUShaderModule.idl:
+        * Modules/webgpu/WebGPUShaderModuleDescriptor.h:
+        * Modules/webgpu/WebGPUShaderModuleDescriptor.idl:
+        * Modules/webgpu/WebGPUSwapChain.cpp:
+        (WebCore::WebGPUSwapChain::configure):
+        * Modules/webgpu/WebGPUSwapChain.h:
+        * Modules/webgpu/WebGPUSwapChain.idl:
+        * Modules/webgpu/cocoa/GPUDeviceMetal.mm:
+        (WebCore::GPUDevice::create):
+        (WebCore::GPUDevice::GPUDevice):
+        * Modules/webgpu/cocoa/GPUShaderModuleMetal.mm:
+        (WebCore::GPUShaderModule::create):
+        (WebCore::GPUShaderModule::GPUShaderModule):
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * platform/Logging.h:
+
 2018-11-01  Jiewen Tan  <jiewen_tan@apple.com>
 
         Replace CommonRandom SPI with API

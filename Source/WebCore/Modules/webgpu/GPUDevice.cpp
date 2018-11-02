@@ -24,33 +24,18 @@
  */
 
 #include "config.h"
-#include "WebGPUSwapChain.h"
+#include "GPUDevice.h"
 
 #if ENABLE(WEBGPU)
 
+#include "GPUShaderModule.h"
+#include "GPUShaderModuleDescriptor.h"
+
 namespace WebCore {
 
-WebGPUSwapChain::~WebGPUSwapChain() = default;
-
-void WebGPUSwapChain::configure(const Descriptor& descriptor)
+RefPtr<GPUShaderModule> GPUDevice::createShaderModule(GPUShaderModuleDescriptor&& descriptor) const
 {
-    reshape(descriptor.width, descriptor.height);
-}
-
-void WebGPUSwapChain::present()
-{
-    markLayerComposited();
-}
-
-void WebGPUSwapChain::reshape(int width, int height)
-{
-    m_width = width;
-    m_height = height;
-}
-
-void WebGPUSwapChain::markLayerComposited()
-{
-    // FIXME: Unimplemented stub.
+    return GPUShaderModule::create(*this, WTFMove(descriptor));
 }
 
 } // namespace WebCore

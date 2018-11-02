@@ -33,3 +33,13 @@
     // WebGPUTexture getNextTexture();
     void present();
 };
+
+typedef unsigned long u32;
+
+dictionary WebGPUSwapChainDescriptor {
+    // WebGPUTextureUsageFlags usage;
+    // WebGPUTextureFormatEnum format;
+    u32 width;
+    u32 height;
+};
+

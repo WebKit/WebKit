@@ -23,36 +23,48 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebGPUSwapChain.h"
+#import "config.h"
+#import "GPUShaderModule.h"
 
 #if ENABLE(WEBGPU)
 
+#import "GPUDevice.h"
+#import "GPUShaderModuleDescriptor.h"
+#import "Logging.h"
+
+#import <Metal/Metal.h>
+#import <wtf/BlockObjCExceptions.h>
+
 namespace WebCore {
 
-WebGPUSwapChain::~WebGPUSwapChain() = default;
-
-void WebGPUSwapChain::configure(const Descriptor& descriptor)
+RefPtr<GPUShaderModule> GPUShaderModule::create(const GPUDevice& device, GPUShaderModuleDescriptor&& descriptor)
 {
-    reshape(descriptor.width, descriptor.height);
+    if (!device.platformDevice())
+        return nullptr;
+
+    PlatformShaderModuleSmartPtr module;
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+
+    NSError *error = [NSError errorWithDomain:@"com.apple.WebKit.GPU" code:1 userInfo:nil];
+    module = adoptNS([device.platformDevice() newLibraryWithSource:descriptor.code options:nil error:&error]);
+    if (!module)
+        LOG(WebGPU, "Shader compilation error: %s", [[error localizedDescription] UTF8String]);
+
+    END_BLOCK_OBJC_EXCEPTIONS;
+
+    if (!module)
+        return nullptr;
+
+    return adoptRef(new GPUShaderModule(WTFMove(module)));
 }
 
-void WebGPUSwapChain::present()
+GPUShaderModule::GPUShaderModule(PlatformShaderModuleSmartPtr&& module)
+    : m_platformShaderModule(WTFMove(module))
 {
-    markLayerComposited();
+    UNUSED_PARAM(m_platformShaderModule);
 }
 
-void WebGPUSwapChain::reshape(int width, int height)
-{
-    m_width = width;
-    m_height = height;
 }
-
-void WebGPUSwapChain::markLayerComposited()
-{
-    // FIXME: Unimplemented stub.
-}
-
-} // namespace WebCore
 
 #endif // ENABLE(WEBGPU)

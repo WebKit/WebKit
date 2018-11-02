@@ -1,3 +1,15 @@
+2018-11-02  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Experimental prototype for MSL shaders
+        https://bugs.webkit.org/show_bug.cgi?id=191084
+
+        Reviewed by Dean Jackson.
+
+        * webgpu/shader-modules.html: Added.
+        * webgpu/shader-modules-expected.html: Added.
+        * webgpu/webgpu-basics.html: Added.
+        * webgpu/webgpu-basics-expected.html: Added.
+
 2018-11-01  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: View: introduce a didLayoutSubtree

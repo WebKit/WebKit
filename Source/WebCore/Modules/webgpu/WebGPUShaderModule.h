@@ -23,35 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebGPUSwapChain.h"
+#pragma once
 
 #if ENABLE(WEBGPU)
 
+#include "GPUShaderModule.h"
+#include <JavaScriptCore/ArrayBuffer.h>
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
+
 namespace WebCore {
 
-WebGPUSwapChain::~WebGPUSwapChain() = default;
+class WebGPUShaderModule : public RefCounted<WebGPUShaderModule> {
+public:
+    static RefPtr<WebGPUShaderModule> create(RefPtr<GPUShaderModule>&&);
 
-void WebGPUSwapChain::configure(const Descriptor& descriptor)
-{
-    reshape(descriptor.width, descriptor.height);
-}
+private:
+    WebGPUShaderModule(RefPtr<GPUShaderModule>&&);
 
-void WebGPUSwapChain::present()
-{
-    markLayerComposited();
-}
-
-void WebGPUSwapChain::reshape(int width, int height)
-{
-    m_width = width;
-    m_height = height;
-}
-
-void WebGPUSwapChain::markLayerComposited()
-{
-    // FIXME: Unimplemented stub.
-}
+    RefPtr<GPUShaderModule> m_module;
+};
 
 } // namespace WebCore
 

@@ -30,18 +30,33 @@
 
 #include "WebGPUAdapter.h"
 
+#include "GPUShaderModuleDescriptor.h"
+#include "WebGPUShaderModule.h"
+#include "WebGPUShaderModuleDescriptor.h"
+
 namespace WebCore {
 
-Ref<WebGPUDevice> WebGPUDevice::create(ScriptExecutionContext&, Ref<WebGPUAdapter>&& adapter)
+RefPtr<WebGPUDevice> WebGPUDevice::create(Ref<WebGPUAdapter>&& adapter)
 {
-    return adoptRef(*new WebGPUDevice(WTFMove(adapter)));
+    auto device = GPUDevice::create(); // FIXME: Take adapter into account when creating m_device.
+    if (!device)
+        return nullptr;
+
+    return adoptRef(new WebGPUDevice(WTFMove(adapter), WTFMove(device)));
 }
 
-WebGPUDevice::WebGPUDevice(Ref<WebGPUAdapter>&& adapter)
+WebGPUDevice::WebGPUDevice(Ref<WebGPUAdapter>&& adapter, RefPtr<GPUDevice>&& device)
     : m_adapter(WTFMove(adapter))
+    , m_device(device)
 {
     UNUSED_PARAM(m_adapter);
 }
+
+RefPtr<WebGPUShaderModule> WebGPUDevice::createShaderModule(WebGPUShaderModuleDescriptor&& descriptor) const
+{
+    return WebGPUShaderModule::create(m_device->createShaderModule(GPUShaderModuleDescriptor { descriptor.code }));
+}
+
 
 } // namespace WebCore
 

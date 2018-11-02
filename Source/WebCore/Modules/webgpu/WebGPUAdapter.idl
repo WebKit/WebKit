@@ -33,5 +33,5 @@
     // readonly attribute WebGPUExtensions extensions;
     // readonly attribute WebGPULimits limits; Don't expose higher limits for now.
 
-    [CallWith=ScriptExecutionContext] WebGPUDevice createDevice(/*WebGPUDeviceDescriptor descriptor*/);
+    WebGPUDevice createDevice(/*WebGPUDeviceDescriptor descriptor*/);
 };

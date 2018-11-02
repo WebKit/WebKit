@@ -34,9 +34,10 @@
 
 namespace WebCore {
 
-Ref<WebGPUAdapter> WebGPUAdapter::create(const WebGPUAdapterDescriptor& descriptor)
+RefPtr<WebGPUAdapter> WebGPUAdapter::create(const WebGPUAdapterDescriptor& descriptor)
 {
-    return adoptRef(*new WebGPUAdapter(descriptor));
+    // FIXME: Validation on descriptor.
+    return adoptRef(new WebGPUAdapter(descriptor));
 }
 
 WebGPUAdapter::WebGPUAdapter(const WebGPUAdapterDescriptor& descriptor)
@@ -45,9 +46,9 @@ WebGPUAdapter::WebGPUAdapter(const WebGPUAdapterDescriptor& descriptor)
     UNUSED_PARAM(m_descriptor);
 }
 
-Ref<WebGPUDevice> WebGPUAdapter::createDevice(ScriptExecutionContext& context)
+RefPtr<WebGPUDevice> WebGPUAdapter::createDevice()
 {
-    return WebGPUDevice::create(context, *this);
+    return WebGPUDevice::create(*this);
 }
 
 } // namespace WebCore

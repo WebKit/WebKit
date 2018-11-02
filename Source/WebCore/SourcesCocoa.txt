@@ -27,6 +27,9 @@ Modules/plugins/QuickTimePluginReplacement.mm
 Modules/plugins/YouTubePluginReplacement.cpp
 Modules/webdatabase/cocoa/DatabaseManagerCocoa.mm
 
+Modules/webgpu/cocoa/GPUDeviceMetal.mm
+Modules/webgpu/cocoa/GPUShaderModuleMetal.mm
+
 accessibility/ios/AccessibilityObjectIOS.mm
 accessibility/ios/AXObjectCacheIOS.mm
 accessibility/ios/WebAccessibilityObjectWrapperIOS.mm

@@ -28,6 +28,7 @@
 #if ENABLE(WEBGPU)
 
 #include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -38,9 +39,9 @@ struct WebGPUAdapterDescriptor;
 
 class WebGPUAdapter : public RefCounted<WebGPUAdapter> {
 public:
-    static Ref<WebGPUAdapter> create(const WebGPUAdapterDescriptor&);
+    static RefPtr<WebGPUAdapter> create(const WebGPUAdapterDescriptor&);
 
-    Ref<WebGPUDevice> createDevice(ScriptExecutionContext&);
+    RefPtr<WebGPUDevice> createDevice();
 
 private:
     WebGPUAdapter(const WebGPUAdapterDescriptor&);

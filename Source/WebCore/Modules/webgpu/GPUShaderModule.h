@@ -23,35 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebGPUSwapChain.h"
+#pragma once
 
 #if ENABLE(WEBGPU)
 
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
+#include <wtf/RetainPtr.h>
+
+#if USE(METAL)
+OBJC_PROTOCOL(MTLLibrary);
+#endif
+
 namespace WebCore {
 
-WebGPUSwapChain::~WebGPUSwapChain() = default;
+class GPUDevice;
 
-void WebGPUSwapChain::configure(const Descriptor& descriptor)
-{
-    reshape(descriptor.width, descriptor.height);
-}
+struct GPUShaderModuleDescriptor;
 
-void WebGPUSwapChain::present()
-{
-    markLayerComposited();
-}
+#if USE(METAL)
+using PlatformShaderModule = MTLLibrary;
+using PlatformShaderModuleSmartPtr = RetainPtr<MTLLibrary>;
+#else
+using PlatformShaderModule = void;
+using PlatformShaderModuleSmartPtr = RefPtr<void>;
+#endif
 
-void WebGPUSwapChain::reshape(int width, int height)
-{
-    m_width = width;
-    m_height = height;
-}
+class GPUShaderModule : public RefCounted<GPUShaderModule> {
+public:
+    static RefPtr<GPUShaderModule> create(const GPUDevice&, GPUShaderModuleDescriptor&&);
 
-void WebGPUSwapChain::markLayerComposited()
-{
-    // FIXME: Unimplemented stub.
-}
+    PlatformShaderModule *platformShaderModule() const { return m_platformShaderModule.get(); }
+
+private:
+    GPUShaderModule(PlatformShaderModuleSmartPtr&&);
+
+    PlatformShaderModuleSmartPtr m_platformShaderModule;
+};
 
 } // namespace WebCore
 

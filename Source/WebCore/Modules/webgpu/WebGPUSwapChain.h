@@ -31,12 +31,16 @@
 
 namespace WebCore {
 
-struct WebGPUSwapChainDescriptor;
-
 class WebGPUSwapChain : public GPUBasedCanvasRenderingContext {
 public:
+    struct Descriptor {
+        // FIXME: More texture properties.
+        unsigned long width;
+        unsigned long height;
+    };
+
     virtual ~WebGPUSwapChain() = 0;
-    void configure(const WebGPUSwapChainDescriptor&);
+    void configure(const Descriptor&);
     // FIXME: WebGPUTexture getNextTexture();
     void present();
 
