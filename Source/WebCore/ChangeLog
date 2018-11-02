@@ -1,3 +1,18 @@
+2018-11-02  Rob Buis  <rbuis@igalia.com>
+
+        Remove ENABLE_OPENCL fully
+        https://bugs.webkit.org/show_bug.cgi?id=191172
+
+        Reviewed by Yusuke Suzuki.
+
+        No new tests since no change in functionality.
+
+        * platform/graphics/filters/FilterEffect.h:
+        (WebCore::FilterEffect::hasResult const):
+        (WebCore::FilterEffect::applyAll):
+        (WebCore::FilterEffect::openCLImage): Deleted.
+        (WebCore::FilterEffect::setOpenCLImage): Deleted.
+
 2018-11-02  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add support for intrinsic width calculation
