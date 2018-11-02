@@ -1,3 +1,20 @@
+2018-11-01  John Wilander  <wilander@apple.com>
+
+        In WebCore::ResourceLoadObserver, use document.sessionID().isEphemeral() when possible and check for page existence when not
+        https://bugs.webkit.org/show_bug.cgi?id=191119
+        <rdar://problem/44176965>
+
+        Reviewed by Chris Dumez.
+
+        This is an API test for a WebKitLegacy WebView that is first closed and then
+        JavaScript is handed a keyboard event.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitLegacy/mac/ClosingWebView.mm: Added.
+        (-[ClosingWebViewThenSendingItAKeyDownEventLoadDelegate webView:didFinishLoadForFrame:]):
+        (-[KeyboardEventListener handleEvent:]):
+        (TestWebKitAPI::TEST):
+
 2018-11-01  Sihui Liu  <sihui_liu@apple.com>
 
         Add a storage limit for IndexedDB

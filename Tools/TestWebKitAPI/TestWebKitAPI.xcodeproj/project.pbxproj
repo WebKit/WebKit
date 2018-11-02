@@ -309,6 +309,7 @@
 		636353A71E98665D0009F8AF /* GeolocationGetCurrentPositionResult.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 636353A61E9861940009F8AF /* GeolocationGetCurrentPositionResult.html */; };
 		63A61B8B1FAD251100F06885 /* display-mode.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 63A61B8A1FAD204D00F06885 /* display-mode.html */; };
 		63F668221F97F7F90032EE51 /* ApplicationManifest.mm in Sources */ = {isa = PBXBuildFile; fileRef = 63F668201F97C3AA0032EE51 /* ApplicationManifest.mm */; };
+		6B306106218A372900F5A802 /* ClosingWebView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6B306105218A372900F5A802 /* ClosingWebView.mm */; };
 		6B9ABE122086952F00D75DE6 /* HTTPParsers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6B9ABE112086952F00D75DE6 /* HTTPParsers.cpp */; };
 		6BFD294C1D5E6C1D008EC968 /* HashCountedSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A38D7E51C752D5F004F157D /* HashCountedSet.cpp */; };
 		751B05D61F8EAC410028A09E /* DatabaseTrackerTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = 751B05D51F8EAC1A0028A09E /* DatabaseTrackerTest.mm */; };
@@ -1615,6 +1616,7 @@
 		636353A61E9861940009F8AF /* GeolocationGetCurrentPositionResult.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = GeolocationGetCurrentPositionResult.html; sourceTree = "<group>"; };
 		63A61B8A1FAD204D00F06885 /* display-mode.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "display-mode.html"; sourceTree = "<group>"; };
 		63F668201F97C3AA0032EE51 /* ApplicationManifest.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ApplicationManifest.mm; sourceTree = "<group>"; };
+		6B306105218A372900F5A802 /* ClosingWebView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ClosingWebView.mm; sourceTree = "<group>"; };
 		6B9ABE112086952F00D75DE6 /* HTTPParsers.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPParsers.cpp; sourceTree = "<group>"; };
 		751B05D51F8EAC1A0028A09E /* DatabaseTrackerTest.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DatabaseTrackerTest.mm; sourceTree = "<group>"; };
 		754CEC801F6722DC00D0039A /* AutoFillAvailable.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AutoFillAvailable.mm; sourceTree = "<group>"; };
@@ -2634,6 +2636,7 @@
 			isa = PBXGroup;
 			children = (
 				9BD5111B1FE8E11600D2B630 /* AccessingPastedImage.mm */,
+				6B306105218A372900F5A802 /* ClosingWebView.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -3745,6 +3748,7 @@
 				7CCE7EE51A411AE600447C4C /* CloseThenTerminate.cpp in Sources */,
 				CDF92237216D186400647AA7 /* CloseWebViewAfterEnterFullscreen.mm in Sources */,
 				CDF0B78A216D48DC00421ECC /* CloseWebViewDuringEnterFullscreen.mm in Sources */,
+				6B306106218A372900F5A802 /* ClosingWebView.mm in Sources */,
 				7C83E0BA1D0A64FB00FEBCF3 /* Coding.mm in Sources */,
 				7C3965061CDD74F90094DBB8 /* Color.cpp in Sources */,
 				7C3DB8E41D12129B00AE8CC3 /* CommandBackForward.mm in Sources */,

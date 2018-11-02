@@ -88,8 +88,11 @@ void ResourceLoadObserver::logSubresourceLoading(const Frame* frame, const Resou
 {
     ASSERT(frame->page());
 
+    if (!frame)
+        return;
+
     auto* page = frame->page();
-    if (!shouldLog(page->usesEphemeralSession()))
+    if (!page || !shouldLog(page->usesEphemeralSession()))
         return;
 
     bool isRedirect = is3xxRedirect(redirectResponse);
@@ -157,9 +160,7 @@ void ResourceLoadObserver::logWebSocketLoading(const URL& targetURL, const URL& 
 
 void ResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const Document& document)
 {
-    ASSERT(document.page());
-
-    if (!shouldLog(document.page()->usesEphemeralSession()))
+    if (!shouldLog(document.sessionID().isEphemeral()))
         return;
 
     auto& url = document.url();
