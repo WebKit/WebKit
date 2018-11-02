@@ -1,5 +1,28 @@
 2018-11-02  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Add support for intrinsic width calculation
+        https://bugs.webkit.org/show_bug.cgi?id=191144
+
+        Reviewed by Antti Koivisto.
+
+        This is the inline formatting version of the shrink-to-fit computation. It generates inline runs
+        and uses InlineLineBreaker to compute min/max width. This is very similar to ::layout.
+
+        Test: fast/inline/simple-shrink-to-fit-inline-block.html
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::layout const):
+        (WebCore::Layout::InlineFormattingContext::computeWidthAndMargin const):
+        (WebCore::Layout::InlineFormattingContext::computeHeightAndMargin const):
+        (WebCore::Layout::InlineFormattingContext::layoutFormattingContextRoot const):
+        (WebCore::Layout::InlineFormattingContext::computeWidthAndHeightForReplacedInlineBox const):
+        (WebCore::Layout::InlineFormattingContext::collectInlineContent const):
+        (WebCore::Layout::InlineFormattingContext::instrinsicWidthConstraints const):
+        (WebCore::Layout::InlineFormattingContext::computeWidthAndHeightForInlineBox const): Deleted.
+        * layout/inlineformatting/InlineFormattingContext.h:
+
+2018-11-02  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][BFC] BlockFormattingContext::instrinsicWidthConstraints logic should look similar to ::layout
         https://bugs.webkit.org/show_bug.cgi?id=191181
 

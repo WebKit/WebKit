@@ -1,3 +1,14 @@
+2018-11-02  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add support for intrinsic width calculation
+        https://bugs.webkit.org/show_bug.cgi?id=191144
+
+        Reviewed by Antti Koivisto.
+
+        * fast/inline/simple-shrink-to-fit-inline-block-expected.txt: Added.
+        * fast/inline/simple-shrink-to-fit-inline-block.html: Added.
+        * platform/ios/TestExpectations:
+
 2018-11-01  Philippe Normand  <pnormand@igalia.com>
 
         [Apache] Self-signed SSL certificate RSA key is considered too weak
