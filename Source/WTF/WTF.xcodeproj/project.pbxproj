@@ -620,7 +620,6 @@
 		DCEE21FC1CEA7551000C2396 /* BlockObjCExceptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlockObjCExceptions.h; sourceTree = "<group>"; };
 		DCEE21FD1CEA7551000C2396 /* BlockObjCExceptions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BlockObjCExceptions.mm; sourceTree = "<group>"; };
 		DCEE22041CEB9869000C2396 /* BackwardsGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackwardsGraph.h; sourceTree = "<group>"; };
-		DE5A09FB1BA36992003D4424 /* CommonCryptoSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonCryptoSPI.h; sourceTree = "<group>"; };
 		E15556F318A0CC18006F48FB /* CryptographicUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptographicUtilities.cpp; sourceTree = "<group>"; };
 		E15556F418A0CC18006F48FB /* CryptographicUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptographicUtilities.h; sourceTree = "<group>"; };
 		E300E521203D645F00DA79BE /* UniqueArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UniqueArray.h; sourceTree = "<group>"; };
@@ -1304,7 +1303,6 @@
 		CE73E02319DCB7AB00580D5C /* darwin */ = {
 			isa = PBXGroup;
 			children = (
-				DE5A09FB1BA36992003D4424 /* CommonCryptoSPI.h */,
 				E431CC4A21187ADB000C8A07 /* DispatchSPI.h */,
 				93DDE9311CDC052D00FD3491 /* dyldSPI.h */,
 				A5098AFF1C169E0700087797 /* SandboxSPI.h */,

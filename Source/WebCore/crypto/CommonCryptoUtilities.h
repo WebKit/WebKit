@@ -33,6 +33,7 @@
 
 #include "CryptoAlgorithmIdentifier.h"
 #include <CommonCrypto/CommonCryptor.h>
+#include <CommonCrypto/CommonRandom.h>
 #include <wtf/Vector.h>
 
 #if USE(APPLE_INTERNAL_SDK)
@@ -41,7 +42,6 @@
 // FIXME: <rdar://problem/31508959>
 // #include <CommonCrypto/CommonKeyDerivationSPI.h>
 #include <CommonCrypto/CommonRSACryptor.h>
-#include <CommonCrypto/CommonRandomSPI.h>
 #endif
 
 #if USE(APPLE_INTERNAL_SDK) && HAVE(CCRSAGetCRTComponents)
@@ -78,10 +78,6 @@ enum {
 #endif
 
 typedef struct _CCBigNumRef *CCBigNumRef;
-
-typedef struct __CCRandom *CCRandomRef;
-extern const CCRandomRef kCCRandomDefault;
-extern "C" int CCRandomCopyBytes(CCRandomRef rnd, void *bytes, size_t count);
 
 typedef struct _CCRSACryptor *CCRSACryptorRef;
 extern "C" CCCryptorStatus CCRSACryptorEncrypt(CCRSACryptorRef publicKey, CCAsymmetricPadding padding, const void *plainText, size_t plainTextLen, void *cipherText, size_t *cipherTextLen, const void *tagData, size_t tagDataLen, CCDigestAlgorithm digestType);

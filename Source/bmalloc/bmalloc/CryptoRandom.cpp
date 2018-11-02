@@ -44,12 +44,8 @@
 #endif
 
 #if BOS(DARWIN)
-typedef struct __CCRandom* CCRandomRef;
-
-extern "C" {
-extern const CCRandomRef kCCRandomDefault;
-int CCRandomCopyBytes(CCRandomRef rnd, void *bytes, size_t count);
-}
+#include <CommonCrypto/CommonCryptoError.h>
+#include <CommonCrypto/CommonRandom.h>
 #endif
 
 namespace bmalloc {
@@ -113,7 +109,7 @@ void ARC4RandomNumberGenerator::stir()
     size_t length = sizeof(randomness);
 
 #if BOS(DARWIN)
-    RELEASE_BASSERT(!CCRandomCopyBytes(kCCRandomDefault, randomness, length));
+    RELEASE_BASSERT(!CCRandomGenerateBytes(randomness, length));
 #else
     static std::once_flag onceFlag;
     static int fd;

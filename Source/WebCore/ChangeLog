@@ -1,3 +1,25 @@
+2018-11-01  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Replace CommonRandom SPI with API
+        https://bugs.webkit.org/show_bug.cgi?id=191178
+        <rdar://problem/45722391>
+
+        Reviewed by Brent Fulgham.
+
+        The API is available since macOS 10.10 and iOS 10, and therefore it is safe to replace
+        all SPI usages with API.
+
+        No change of behaviors.
+
+        * crypto/CommonCryptoUtilities.h:
+        * crypto/mac/CryptoKeyMac.cpp:
+        (WebCore::CryptoKey::randomData):
+        * crypto/mac/SerializedCryptoKeyWrapMac.mm:
+        (WebCore::createAndStoreMasterKey):
+        (WebCore::wrapSerializedCryptoKey):
+        * page/Crypto.cpp:
+        (WebCore::Crypto::getRandomValues):
+
 2018-11-01  Chris Dumez  <cdumez@apple.com>
 
         [WebIDL] Rename CallWith=ScriptState to CallWith=ExecState

@@ -42,7 +42,8 @@
 #endif
 
 #if OS(DARWIN)
-#include <wtf/spi/darwin/CommonCryptoSPI.h>
+#include <CommonCrypto/CommonCryptoError.h>
+#include <CommonCrypto/CommonRandom.h>
 #endif
 
 #if OS(FUCHSIA)
@@ -88,7 +89,7 @@ RandomDevice::~RandomDevice()
 void RandomDevice::cryptographicallyRandomValues(unsigned char* buffer, size_t length)
 {
 #if OS(DARWIN)
-    RELEASE_ASSERT(!CCRandomCopyBytes(kCCRandomDefault, buffer, length));
+    RELEASE_ASSERT(!CCRandomGenerateBytes(buffer, length));
 #elif OS(FUCHSIA)
     zx_cprng_draw(buffer, length);
 #elif OS(UNIX)

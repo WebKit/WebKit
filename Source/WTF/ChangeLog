@@ -1,3 +1,17 @@
+2018-11-01  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Replace CommonRandom SPI with API
+        https://bugs.webkit.org/show_bug.cgi?id=191178
+        <rdar://problem/45722391>
+
+        Reviewed by Brent Fulgham.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/RandomDevice.cpp:
+        (WTF::RandomDevice::cryptographicallyRandomValues):
+        * wtf/spi/darwin/CommonCryptoSPI.h: Removed.
+
 2018-11-01  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Rename <wtf/unicode/UTF8.h> to <wtf/unicode/UTF8Conversion.h> in order to avoid conflicting with ICU's unicode/utf8.h
