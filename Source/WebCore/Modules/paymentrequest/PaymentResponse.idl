@@ -42,7 +42,7 @@
     readonly attribute DOMString? payerPhone;
 
     [NewObject] Promise<void> complete(optional PaymentComplete result = "unknown");
-    [NewObject] Promise<void> retry(PaymentValidationErrors errorFields);
+    [NewObject] Promise<void> retry(optional PaymentValidationErrors errorFields);
 
     attribute EventHandler onpayerdetailchange;
 };

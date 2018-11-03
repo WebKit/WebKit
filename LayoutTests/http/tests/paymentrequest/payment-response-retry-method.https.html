@@ -185,4 +185,18 @@ promise_test(async t => {
   await retryPromise;
   await response.complete();
 }, "Calling retry() multiple times is always a new object.");
+
+promise_test(async t => {
+  const { response, request } = await getPaymentRequestResponse({ requestShipping: true });
+  const retryPromise = response.retry();
+  const errors = internals.mockPaymentCoordinator.errors;
+  assert_equals(errors.length, 1, "Must have one error");
+  assert_equals(errors[0].code, "unknown", "Must be an 'unknown' error");
+  assert_equals(errors[0].message, "", "Error message must match");
+  assert_equals(errors[0].contactField, undefined, "Contact field must match");
+  internals.mockPaymentCoordinator.acceptPayment();
+  await retryPromise;
+  await response.complete("success");
+}, "When retrying without errors, the user is shown an `unknown` error.");
+
 </script>

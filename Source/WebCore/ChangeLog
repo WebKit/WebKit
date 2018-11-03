@@ -1,3 +1,17 @@
+2018-11-03  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] PaymentResponse.retry()'s errorFields should be optional
+        https://bugs.webkit.org/show_bug.cgi?id=191212
+
+        Reviewed by Youenn Fablet.
+
+        Per WebIDL, the errorFields argument to PaymentResponse.retry() should be optional. See
+        <https://github.com/w3c/payment-request/issues/804> for details.
+
+        Added test case to http/tests/paymentrequest/payment-response-retry-method.https.html.
+
+        * Modules/paymentrequest/PaymentResponse.idl:
+
 2018-11-02  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC] Resolve percentage height values.
