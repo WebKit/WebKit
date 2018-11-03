@@ -1,3 +1,29 @@
+2018-11-03  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] enumerateDevices should not expose devices that are not available to getUserMedia
+        https://bugs.webkit.org/show_bug.cgi?id=191177
+        <rdar://problem/45747873>
+
+        Reviewed by Jer Noble.
+
+        Test: http/tests/media/media-stream/enumerate-devices-iframe-allow-attribute.html
+
+        * Modules/mediastream/MediaDevicesRequest.cpp:
+        (WebCore::MediaDevicesRequest::start): Only expose devices that are available to gUM.
+
+        * Modules/mediastream/UserMediaController.cpp:
+        (WebCore::isSecure): Moved from UserMediaRequest.cpp.
+        (WebCore::isAllowedToUse): Ditto.
+        (WebCore::UserMediaController::canCallGetUserMedia): Modified from UserMediaRequest.cpp.
+        (WebCore::UserMediaController::logGetUserMediaDenial): Log reason for denial.
+        * Modules/mediastream/UserMediaController.h:
+
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::start): Use UserMediaController::canCallGetUserMedia.
+        (WebCore::isSecure): Deleted.
+        (WebCore::isAllowedToUse): Deleted.
+        (WebCore::canCallGetUserMedia): Deleted.
+
 2018-11-02  Justin Michaud  <justin_michaud@apple.com>
 
         Add new global object and preliminary Worklets support for CSS painting api

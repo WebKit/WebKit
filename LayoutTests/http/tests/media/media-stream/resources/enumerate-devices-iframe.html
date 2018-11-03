@@ -1,0 +1,16 @@
+<script>
+    async function enumerate(event)
+    {
+        let devices = await navigator.mediaDevices.enumerateDevices();
+        let visible = devices.map(device => device.kind.indexOf('video') == 0 ? 'camera' : 'microphone').sort();
+        visible = visible.join('+');
+        parent.postMessage(`${event.data}:${visible}`, '*');
+        result.innerHTML = visible;
+    }
+
+    window.addEventListener("message", (id) => enumerate(id));
+</script>
+
+<div id='result'></div>
+
+

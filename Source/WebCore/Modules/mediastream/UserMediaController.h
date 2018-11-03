@@ -51,6 +51,20 @@ public:
     UserMediaClient::DeviceChangeObserverToken addDeviceChangeObserver(WTF::Function<void()>&&);
     void removeDeviceChangeObserver(UserMediaClient::DeviceChangeObserverToken);
 
+    enum class GetUserMediaAccess {
+        CanCall,
+        InsecureDocument,
+        InsecureParent,
+        BlockedByParent
+    };
+    GetUserMediaAccess canCallGetUserMedia(Document&, bool wantsAudio, bool wantsVideo);
+
+    enum class BlockedCaller {
+        GetUserMedia,
+        EnumerateDevices
+    };
+    void logGetUserMediaDenial(Document&, GetUserMediaAccess, BlockedCaller);
+
     WEBCORE_EXPORT static const char* supplementName();
     static UserMediaController* from(Page* page) { return static_cast<UserMediaController*>(Supplement<Page>::from(page, supplementName())); }
 

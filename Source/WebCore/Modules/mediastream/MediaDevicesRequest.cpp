@@ -103,8 +103,31 @@ void MediaDevicesRequest::filterDeviceList(Vector<Ref<MediaDeviceInfo>>& devices
 
 void MediaDevicesRequest::start()
 {
+    auto& document = downcast<Document>(*scriptExecutionContext());
+    auto* controller = UserMediaController::from(document.page());
+    if (!controller) {
+        callOnMainThread([protectedThis = makeRef(*this)]() {
+            protectedThis->m_promise.resolve({ });
+        });
+
+        return;
+    }
+
+    auto microphoneAccess = controller->canCallGetUserMedia(document, true, false);
+    auto cameraAccess = controller->canCallGetUserMedia(document, false, true);
+    bool canAccessMicrophone = microphoneAccess == UserMediaController::GetUserMediaAccess::CanCall;
+    bool canAccessCamera = cameraAccess == UserMediaController::GetUserMediaAccess::CanCall;
+    if (!canAccessMicrophone && !canAccessCamera) {
+        controller->logGetUserMediaDenial(document, !canAccessMicrophone ? microphoneAccess : cameraAccess, UserMediaController::BlockedCaller::EnumerateDevices);
+        callOnMainThread([protectedThis = makeRef(*this)]() {
+            protectedThis->m_promise.resolve({ });
+        });
+
+        return;
+    }
+
     // This lambda keeps |this| alive until the request completes or is canceled.
-    auto completion = [this, protectedThis = makeRef(*this)] (const Vector<CaptureDevice>& captureDevices, const String& deviceIdentifierHashSalt, bool originHasPersistentAccess) mutable {
+    auto completion = [this, protectedThis = makeRef(*this), canAccessMicrophone, canAccessCamera] (const Vector<CaptureDevice>& captureDevices, const String& deviceIdentifierHashSalt, bool originHasPersistentAccess) mutable {
 
         m_enumerationRequest = nullptr;
 
@@ -117,6 +140,11 @@ void MediaDevicesRequest::start()
         Vector<Ref<MediaDeviceInfo>> devices;
         bool revealIdsAndLabels = originHasPersistentAccess || document.hasHadCaptureMediaStreamTrack();
         for (auto& deviceInfo : captureDevices) {
+            if (!canAccessMicrophone && deviceInfo.type() == CaptureDevice::DeviceType::Microphone)
+                continue;
+            if (!canAccessCamera && deviceInfo.type() == CaptureDevice::DeviceType::Camera)
+                continue;
+
             auto label = emptyString();
             auto id = emptyString();
             auto groupId = emptyString();
@@ -140,7 +168,7 @@ void MediaDevicesRequest::start()
         });
     };
 
-    m_enumerationRequest = MediaDevicesEnumerationRequest::create(*downcast<Document>(scriptExecutionContext()), WTFMove(completion));
+    m_enumerationRequest = MediaDevicesEnumerationRequest::create(document, WTFMove(completion));
     m_enumerationRequest->start();
 }
 

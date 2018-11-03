@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2011 Ericsson AB. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,13 +36,8 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "CaptureDeviceManager.h"
-#include "DeprecatedGlobalSettings.h"
 #include "Document.h"
-#include "DocumentLoader.h"
 #include "Frame.h"
-#include "HTMLIFrameElement.h"
-#include "HTMLParserIdioms.h"
 #include "JSMediaStream.h"
 #include "JSOverconstrainedError.h"
 #include "Logging.h"
@@ -82,78 +77,6 @@ SecurityOrigin* UserMediaRequest::topLevelDocumentOrigin() const
     if (!m_scriptExecutionContext)
         return nullptr;
     return &m_scriptExecutionContext->topOrigin();
-}
-
-static bool isSecure(DocumentLoader& documentLoader)
-{
-    auto& response = documentLoader.response();
-    if (SecurityOrigin::isLocalHostOrLoopbackIPAddress(documentLoader.response().url().host()))
-        return true;
-    return SchemeRegistry::shouldTreatURLSchemeAsSecure(response.url().protocol().toStringWithoutCopying())
-        && response.certificateInfo()
-        && !response.certificateInfo()->containsNonRootSHA1SignedCertificate();
-}
-
-static bool isAllowedToUse(Document& document, Document& topDocument, bool requiresAudio, bool requiresVideo)
-{
-    if (&document == &topDocument)
-        return true;
-
-    auto* parentDocument = document.parentDocument();
-    if (!parentDocument)
-        return false;
-
-    if (document.securityOrigin().isSameSchemeHostPort(parentDocument->securityOrigin()))
-        return true;
-
-    auto* element = document.ownerElement();
-    ASSERT(element);
-    if (!element)
-        return false;
-
-    if (!is<HTMLIFrameElement>(*element))
-        return false;
-    auto& allow = downcast<HTMLIFrameElement>(*element).allow();
-
-    bool allowCameraAccess = false;
-    bool allowMicrophoneAccess = false;
-    for (auto allowItem : StringView { allow }.split(';')) {
-        auto item = allowItem.stripLeadingAndTrailingMatchedCharacters(isHTMLSpace<UChar>);
-        if (!allowCameraAccess && item == "camera")
-            allowCameraAccess = true;
-        else if (!allowMicrophoneAccess && item == "microphone")
-            allowMicrophoneAccess = true;
-    }
-    return (allowCameraAccess || !requiresVideo) && (allowMicrophoneAccess || !requiresAudio);
-}
-
-static bool canCallGetUserMedia(Document& document, bool wantsAudio, bool wantsVideo, String& errorMessage)
-{
-    ASSERT(wantsAudio || wantsVideo);
-
-    bool requiresSecureConnection = DeprecatedGlobalSettings::mediaCaptureRequiresSecureConnection();
-    auto& documentLoader = *document.loader();
-    if (requiresSecureConnection && !isSecure(documentLoader)) {
-        errorMessage = "Trying to call getUserMedia from an insecure document.";
-        return false;
-    }
-
-    auto& topDocument = document.topDocument();
-    if (&document != &topDocument) {
-        for (auto* ancestorDocument = &document; ancestorDocument != &topDocument; ancestorDocument = ancestorDocument->parentDocument()) {
-            if (requiresSecureConnection && !isSecure(*ancestorDocument->loader())) {
-                errorMessage = "Trying to call getUserMedia from a document with an insecure parent frame.";
-                return false;
-            }
-
-            if (!isAllowedToUse(*ancestorDocument, topDocument, wantsAudio, wantsVideo)) {
-                errorMessage = "The top-level frame has prevented a document with a different security origin to call getUserMedia.";
-                return false;
-            }
-        }
-    }
-    
-    return true;
 }
 
 static bool hasInvalidGetDisplayMediaConstraint(const MediaConstraints& constraints)
@@ -266,10 +189,10 @@ void UserMediaRequest::start()
     // ...
     // 6.10 Permission Failure: Reject p with a new DOMException object whose name attribute has
     //      the value NotAllowedError.
-    String errorMessage;
-    if (!canCallGetUserMedia(document, m_request.audioConstraints.isValid, m_request.videoConstraints.isValid, errorMessage)) {
+    auto access = controller->canCallGetUserMedia(document, m_request.audioConstraints.isValid, m_request.videoConstraints.isValid);
+    if (access != UserMediaController::GetUserMediaAccess::CanCall) {
         deny(MediaAccessDenialReason::PermissionDenied);
-        document.domWindow()->printErrorMessage(errorMessage);
+        controller->logGetUserMediaDenial(document, access, UserMediaController::BlockedCaller::GetUserMedia);
         return;
     }
 

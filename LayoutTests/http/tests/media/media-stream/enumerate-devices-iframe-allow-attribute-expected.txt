@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: line 4: The top-level frame has prevented a document with a different security origin from calling enumerateDevices.
+      
+PASS: "allow" attribute respected in all iframes
