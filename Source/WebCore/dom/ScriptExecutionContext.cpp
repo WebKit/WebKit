@@ -54,6 +54,8 @@
 #include "WorkerGlobalScope.h"
 #include "WorkerNavigator.h"
 #include "WorkerThread.h"
+#include "WorkletGlobalScope.h"
+#include "WorkletScriptController.h"
 #include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/Exception.h>
 #include <JavaScriptCore/JSPromise.h>
@@ -476,8 +478,15 @@ JSC::VM& ScriptExecutionContext::vm()
 {
     if (is<Document>(*this))
         return commonVM();
+    if (is<WorkerGlobalScope>(*this))
+        return downcast<WorkerGlobalScope>(*this).script()->vm();
+#if ENABLE(CSS_PAINTING_API)
+    if (is<WorkletGlobalScope>(*this))
+        return downcast<WorkletGlobalScope>(*this).script().vm();
+#endif
 
-    return downcast<WorkerGlobalScope>(*this).script()->vm();
+    RELEASE_ASSERT_NOT_REACHED();
+    return commonVM();
 }
 
 RejectedPromiseTracker& ScriptExecutionContext::ensureRejectedPromiseTrackerSlow()
@@ -519,8 +528,15 @@ JSC::ExecState* ScriptExecutionContext::execState()
         return execStateFromPage(mainThreadNormalWorld(), document.page());
     }
 
-    WorkerGlobalScope* workerGlobalScope = static_cast<WorkerGlobalScope*>(this);
-    return execStateFromWorkerGlobalScope(workerGlobalScope);
+    if (is<WorkerGlobalScope>(*this))
+        return execStateFromWorkerGlobalScope(downcast<WorkerGlobalScope>(*this));
+#if ENABLE(CSS_PAINTING_API)
+    if (is<WorkletGlobalScope>(*this))
+        return execStateFromWorkletGlobalScope(downcast<WorkletGlobalScope>(*this));
+#endif
+
+    ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
 String ScriptExecutionContext::domainForCachePartition() const

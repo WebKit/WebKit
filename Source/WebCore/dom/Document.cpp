@@ -35,7 +35,6 @@
 #include "CDATASection.h"
 #include "CSSAnimationController.h"
 #include "CSSFontSelector.h"
-#include "CSSPaintWorkletGlobalScope.h"
 #include "CSSStyleDeclaration.h"
 #include "CSSStyleSheet.h"
 #include "CachedCSSStyleSheet.h"
@@ -140,6 +139,7 @@
 #include "PageConsoleClient.h"
 #include "PageGroup.h"
 #include "PageTransitionEvent.h"
+#include "PaintWorkletGlobalScope.h"
 #include "PlatformLocale.h"
 #include "PlatformMediaSessionManager.h"
 #include "PlatformScreen.h"
@@ -217,6 +217,7 @@
 #include "WebAnimation.h"
 #include "WheelEvent.h"
 #include "WindowFeatures.h"
+#include "Worklet.h"
 #include "XMLDocument.h"
 #include "XMLDocumentParser.h"
 #include "XMLNSNames.h"
@@ -8405,11 +8406,16 @@ void Document::frameWasDisconnectedFromOwner()
 }
 
 #if ENABLE(CSS_PAINTING_API)
-CSSPaintWorkletGlobalScope& Document::ensureCSSPaintWorkletGlobalScope()
+Worklet& Document::ensurePaintWorklet()
 {
-    if (!m_CSSPaintWorkletGlobalScope)
-        m_CSSPaintWorkletGlobalScope = CSSPaintWorkletGlobalScope::create();
-    return *m_CSSPaintWorkletGlobalScope;
+    if (!m_paintWorklet)
+        m_paintWorklet = Worklet::create();
+    return *m_paintWorklet;
+}
+
+void Document::setPaintWorkletGlobalScope(Ref<PaintWorkletGlobalScope>&& scope)
+{
+    m_paintWorkletGlobalScope = WTFMove(scope);
 }
 #endif
 

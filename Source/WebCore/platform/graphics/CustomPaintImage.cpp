@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-CustomPaintImage::CustomPaintImage(const CSSPaintWorkletGlobalScope::PaintDefinition& definition, const FloatSize& size)
+CustomPaintImage::CustomPaintImage(const PaintWorkletGlobalScope::PaintDefinition& definition, const FloatSize& size)
     : m_paintCallback(definition.paintCallback.get())
 {
     setContainerSize(size);
@@ -63,7 +63,6 @@ ImageDrawResult CustomPaintImage::doCustomPaint(GraphicsContext& destContext, co
     if (result.type() != CallbackResultType::Success)
         return ImageDrawResult::DidNothing;
 
-    UNUSED_PARAM(destContext);
     auto image = canvas->copiedImage();
     if (!image)
         return ImageDrawResult::DidNothing;

@@ -24,8 +24,16 @@
 */
 
 [
+    Exposed=PaintWorklet,
     EnabledAtRuntime=CSSPaintingAPI,
     Conditional=CSS_PAINTING_API,
-] partial interface DOMCSSNamespace {
-    [ImplementedAs=ensurePaintWorklet,CallWith=Document] static readonly attribute Worklet paintWorklet;
+    JSCustomMarkFunction,
+    JSGenerateToNativeObject,
+    ImplicitThis,
+    IsImmutablePrototypeExoticObject,
+    IsImmutablePrototypeExoticObjectOnPrototype,
+    Global=(Worklet,PaintWorklet),
+] interface PaintWorkletGlobalScope : WorkletGlobalScope {
+    [MayThrowException,CallWith=ExecState&GlobalObject] void registerPaint(DOMString name, object paintConstructor);
+    readonly attribute unrestricted double devicePixelRatio;
 };

@@ -29,8 +29,8 @@
 
 #if ENABLE(CSS_PAINTING_API)
 
-#include "CSSPaintWorkletGlobalScope.h"
 #include "CustomPaintImage.h"
+#include "PaintWorkletGlobalScope.h"
 #include "RenderElement.h"
 #include <wtf/text/StringBuilder.h>
 
@@ -50,8 +50,11 @@ RefPtr<Image> CSSPaintImageValue::image(RenderElement& renderElement, const Floa
 {
     if (size.isEmpty())
         return nullptr;
-    auto& selectedGlobalScope = renderElement.document().ensureCSSPaintWorkletGlobalScope();
-    auto* registration = selectedGlobalScope.paintDefinitionMap().get(m_name);
+    auto* selectedGlobalScope = renderElement.document().paintWorkletGlobalScope();
+    if (!selectedGlobalScope)
+        return nullptr;
+    auto locker = holdLock(selectedGlobalScope->paintDefinitionLock());
+    auto* registration = selectedGlobalScope->paintDefinitionMap().get(m_name);
 
     if (!registration)
         return nullptr;

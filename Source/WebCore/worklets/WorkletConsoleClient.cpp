@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,44 +24,47 @@
  */
 
 #include "config.h"
-#include "WorkerDebuggerAgent.h"
+#include "WorkletConsoleClient.h"
 
-#include "ScriptState.h"
-#include "WorkerGlobalScope.h"
+#if ENABLE(CSS_PAINTING_API)
+
+#include "InspectorInstrumentation.h"
 #include <JavaScriptCore/ConsoleMessage.h>
-#include <JavaScriptCore/InjectedScript.h>
-#include <JavaScriptCore/InjectedScriptManager.h>
+#include <JavaScriptCore/ScriptArguments.h>
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/ScriptCallStackFactory.h>
 
 namespace WebCore {
-
-using namespace JSC;
 using namespace Inspector;
 
-WorkerDebuggerAgent::WorkerDebuggerAgent(WorkerAgentContext& context)
-    : WebDebuggerAgent(context)
-    , m_workerGlobalScope(context.workerGlobalScope)
+WorkletConsoleClient::WorkletConsoleClient(WorkletGlobalScope& workletGlobalScope)
+    : m_workletGlobalScope(workletGlobalScope)
 {
-    ASSERT(context.workerGlobalScope.isContextThread());
 }
 
-WorkerDebuggerAgent::~WorkerDebuggerAgent() = default;
+WorkletConsoleClient::~WorkletConsoleClient() = default;
 
-void WorkerDebuggerAgent::breakpointActionLog(ExecState& state, const String& message)
+void WorkletConsoleClient::messageWithTypeAndLevel(MessageType type, MessageLevel level, JSC::ExecState* exec, Ref<Inspector::ScriptArguments>&& arguments)
 {
-    m_workerGlobalScope.addConsoleMessage(std::make_unique<ConsoleMessage>(MessageSource::JS, MessageType::Log, MessageLevel::Log, message, createScriptCallStack(&state)));
+    String messageText;
+    arguments->getFirstArgumentAsString(messageText);
+    auto message = std::make_unique<Inspector::ConsoleMessage>(MessageSource::ConsoleAPI, type, level, messageText, WTFMove(arguments), exec);
+    m_workletGlobalScope.addConsoleMessage(WTFMove(message));
 }
 
-InjectedScript WorkerDebuggerAgent::injectedScriptForEval(ErrorString& errorString, const int* executionContextId)
-{
-    if (executionContextId) {
-        errorString = "Execution context id is not supported for workers as there is only one execution context."_s;
-        return InjectedScript();
-    }
+void WorkletConsoleClient::count(JSC::ExecState*, Ref<ScriptArguments>&&) { }
 
-    JSC::ExecState* scriptState = execStateFromWorkerGlobalScope(m_workerGlobalScope);
-    return injectedScriptManager().injectedScriptFor(scriptState);
-}
+void WorkletConsoleClient::time(JSC::ExecState*, const String&) { }
+void WorkletConsoleClient::timeEnd(JSC::ExecState*, const String&) { }
+
+void WorkletConsoleClient::profile(JSC::ExecState*, const String&) { }
+void WorkletConsoleClient::profileEnd(JSC::ExecState*, const String&) { }
+
+void WorkletConsoleClient::takeHeapSnapshot(JSC::ExecState*, const String&) { }
+void WorkletConsoleClient::timeStamp(JSC::ExecState*, Ref<ScriptArguments>&&) { }
+
+void WorkletConsoleClient::record(JSC::ExecState*, Ref<ScriptArguments>&&) { }
+void WorkletConsoleClient::recordEnd(JSC::ExecState*, Ref<ScriptArguments>&&) { }
 
 } // namespace WebCore
+#endif

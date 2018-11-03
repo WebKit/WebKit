@@ -388,7 +388,6 @@ bindings/js/JSDOMConvertStrings.cpp
 bindings/js/JSDOMConvertWebGL.cpp
 bindings/js/JSDOMIterator.cpp
 bindings/js/JSDeprecatedCSSOMValueCustom.cpp
-bindings/js/JSCSSPaintWorkletGlobalScopeCustom.cpp
 bindings/js/JSCallbackData.cpp
 bindings/js/JSCanvasRenderingContext2DCustom.cpp
 bindings/js/JSCustomElementInterface.cpp
@@ -449,6 +448,7 @@ bindings/js/JSNodeIteratorCustom.cpp
 bindings/js/JSNodeListCustom.cpp
 bindings/js/JSOffscreenCanvasRenderingContext2DCustom.cpp
 bindings/js/JSPaintRenderingContext2DCustom.cpp
+bindings/js/JSPaintWorkletGlobalScopeCustom.cpp
 bindings/js/JSPaymentMethodChangeEventCustom.cpp
 bindings/js/JSPaymentResponseCustom.cpp
 bindings/js/JSPerformanceEntryCustom.cpp
@@ -481,6 +481,7 @@ bindings/js/JSWindowProxy.cpp
 bindings/js/JSWorkerGlobalScopeBase.cpp
 bindings/js/JSWorkerGlobalScopeCustom.cpp
 bindings/js/JSWorkerNavigatorCustom.cpp
+bindings/js/JSWorkletGlobalScopeBase.cpp
 bindings/js/JSXMLDocumentCustom.cpp
 bindings/js/JSXMLHttpRequestCustom.cpp
 bindings/js/JSXPathNSResolverCustom.cpp
@@ -616,7 +617,6 @@ css/CSSNamedImageValue.cpp
 css/CSSNamespaceRule.cpp
 css/CSSPageRule.cpp
 css/CSSPaintImageValue.cpp
-css/CSSPaintWorkletGlobalScope.cpp
 css/CSSPendingSubstitutionValue.cpp
 css/CSSPrimitiveValue.cpp
 css/CSSProperty.cpp
@@ -2377,6 +2377,12 @@ workers/service/server/SWServerRegistration.cpp
 workers/service/server/SWServerToContextConnection.cpp
 workers/service/server/SWServerWorker.cpp
 
+worklets/Worklet.cpp
+worklets/WorkletConsoleClient.cpp
+worklets/WorkletGlobalScope.cpp
+worklets/WorkletScriptController.cpp
+worklets/PaintWorkletGlobalScope.cpp
+
 xml/DOMParser.cpp
 xml/NativeXPathNSResolver.cpp
 xml/XMLErrors.cpp
@@ -2486,7 +2492,9 @@ JSCSSKeyframesRule.cpp
 JSCSSMediaRule.cpp
 JSCSSNamespaceRule.cpp
 JSCSSPaintCallback.cpp
-JSCSSPaintWorkletGlobalScope.cpp
+JSPaintWorkletGlobalScope.cpp
+JSWorklet.cpp
+JSWorkletGlobalScope.cpp
 JSCSSPageRule.cpp
 JSCSSRule.cpp
 JSCSSRuleList.cpp

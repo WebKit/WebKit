@@ -2,17 +2,64 @@
 <meta name="author" title="Justin Michaud" href="mailto:justin_michaud@webkit.org">
 <meta name="assert" content="registerPaint accesses arguments in the correct order">
 <link rel="help" content="https://drafts.css-houdini.org/css-paint-api-1/">
-<script src="../../resources/testharness.js"></script>
-<script src="../../resources/testharnessreport.js"></script>
-<script>
+<script src="resources/testharness.js"></script>
+
+<style>
+  #paint {
+    background-image: paint(my-paint);
+    width: 150px;
+    height: 150px;
+  }
+</style>
+
+<div id="paint"></div>
+
+<script id="code" type="text/worklet">
 class MyPaint {
   paint() { }
 }
 
-test(function () {
-    assert_true('registerPaint' in CSS.paintWorkletGlobalScope.__proto__, '"registerPaint" exists on prototype');
-    assert_true('registerPaint' in CSS.paintWorkletGlobalScope, '"registerPaint" exists on window');
-}, 'registerPaint must be a method');
+test(function() {
+  registerPaint('basic1', class {
+    static get inputProperties() { return ["--test"]; }
+    paint() { }
+  });
+}, 'test that registerPaint runs');
+
+test(function() {
+  registerPaint('basic2', class {
+    paint() { }
+  });
+}, 'test that registerPaint runs without inputProperties');
+
+test(function() {
+  registerPaint('basic3', class {
+    static get inputArguments() { return ["<length>"]; }
+    paint() { }
+  });
+}, 'test that registerPaint runs with inputArguments');
+
+test(function() {
+  registerPaint('basic4', class {
+    static get contextOptions() { return { alpha: true }; }
+    paint() { }
+  });
+}, 'test that registerPaint runs with contextOptions');
+
+test(function() {
+  registerPaint('basic5', MyPaint);
+  assert_throws({'name': 'InvalidModificationError'}, () => registerPaint('basic5', MyPaint));
+  registerPaint('basic6', class extends MyPaint { });
+}, 'test that registerPaint runs with predefined class');
+
+test(function() {
+  assert_throws({'name': 'TypeError'}, () => registerPaint('basic6', 'test'));
+  assert_throws(new TypeError(), () => registerPaint('basic8'));
+  assert_throws(new TypeError(), () => registerPaint('basic9', []));
+  assert_throws(new TypeError(), () => registerPaint('basic10', {}));
+  assert_throws(new TypeError(), () => registerPaint('basic11', 5));
+  assert_throws(new TypeError(), () => registerPaint('', 5));
+}, 'test that registerPaint accepts only a string and a class constructor');
 
 test(function () {
     const calls = [];
@@ -22,7 +69,7 @@ test(function () {
             return target[name];
         }
     });
-    CSS.paintWorkletGlobalScope.registerPaint('test-proto', proxy);
+    registerPaint('test-proto', proxy);
     assert_array_equals(calls, ["inputProperties", "inputArguments", "contextOptions", "prototype"]);
 }, 'must get "prototype" property of the constructor');
 
@@ -36,7 +83,7 @@ test(function () {
             return target[name];
         }
     });
-    assert_throws({'name': 'expectedError'}, function () { CSS.paintWorkletGlobalScope.registerPaint('test-rethrow-inputProperties0', proxy); });
+    assert_throws({'name': 'expectedError'}, function () { registerPaint('test-rethrow-inputProperties0', proxy); });
 }, 'must rethrow an exception thrown while getting "inputProperties" property of the constructor');
 
 test(function () {
@@ -49,7 +96,7 @@ test(function () {
             return target[name];
         }
     });
-    assert_throws({'name': 'expectedError'}, function () { CSS.paintWorkletGlobalScope.registerPaint('test-rethrow-proto', proxy); });
+    assert_throws({'name': 'expectedError'}, function () { registerPaint('test-rethrow-proto', proxy); });
 }, 'must rethrow an exception thrown while getting "prototype" property of the constructor');
 
 test(function () {
@@ -63,16 +110,16 @@ test(function () {
     });
 
     returnedValue = null;
-    assert_throws({'name': 'TypeError'}, function () { CSS.paintWorkletGlobalScope.registerPaint('test-rethrow-proto-noobj1', proxy); },
+    assert_throws({'name': 'TypeError'}, function () { registerPaint('test-rethrow-proto-noobj1', proxy); },
         'must throw when "prototype" property of the constructor is null');
     returnedValue = undefined;
-    assert_throws({'name': 'TypeError'}, function () { CSS.paintWorkletGlobalScope.registerPaint('test-rethrow-proto-noobj2', proxy); },
+    assert_throws({'name': 'TypeError'}, function () { registerPaint('test-rethrow-proto-noobj2', proxy); },
         'must throw when "prototype" property of the constructor is undefined');
     returnedValue = 'hello';
-    assert_throws({'name': 'TypeError'}, function () { CSS.paintWorkletGlobalScope.registerPaint('test-rethrow-proto-noobj3', proxy);; },
+    assert_throws({'name': 'TypeError'}, function () { registerPaint('test-rethrow-proto-noobj3', proxy);; },
         'must throw when "prototype" property of the constructor is a string');
     returnedValue = 1;
-    assert_throws({'name': 'TypeError'}, function () { CSS.paintWorkletGlobalScope.registerPaint('test-rethrow-proto-noobj4', proxy);; },
+    assert_throws({'name': 'TypeError'}, function () { registerPaint('test-rethrow-proto-noobj4', proxy);; },
         'must throw when "prototype" property of the constructor is a number');
 
 }, 'must throw when "prototype" property of the constructor is not an object');
@@ -87,7 +134,7 @@ test(function () {
             return target[name];
         }
     });
-    CSS.paintWorkletGlobalScope.registerPaint('callbacks', constructor);
+    registerPaint('callbacks', constructor);
     assert_array_equals(calls, ['paint']);
 }, 'must get paint callback of the constructor prototype');
 
@@ -102,7 +149,7 @@ test(function () {
             return target[name];
         }
     });
-    assert_throws({'name': 'expectedError'}, function () { CSS.paintWorkletGlobalScope.registerPaint('callbacks-throw', constructor); });
+    assert_throws({'name': 'expectedError'}, function () { registerPaint('callbacks-throw', constructor); });
     assert_array_equals(calls, ['paint']);
 }, 'must rethrow an exception thrown while getting paint callback on the constructor prototype');
 
@@ -117,7 +164,7 @@ test(function () {
             return target[name];
         }
     });
-    assert_throws({'name': 'TypeError'}, function () { CSS.paintWorkletGlobalScope.registerPaint('callbacks-throw2', constructor); });
+    assert_throws({'name': 'TypeError'}, function () { registerPaint('callbacks-throw2', constructor); });
     assert_array_equals(calls, ['paint']);
 }, 'must rethrow an exception thrown while converting paint callback value to Function callback type');
 
@@ -131,7 +178,7 @@ test(function () {
           return target[name];
       }
   });
-  assert_throws({'name': 'TypeError'}, function () { CSS.paintWorkletGlobalScope.registerPaint('sequence-throw', proxy); });
+  assert_throws({'name': 'TypeError'}, function () { registerPaint('sequence-throw', proxy); });
   assert_array_equals(calls, ["inputProperties", "inputArguments"]);
 }, 'must rethrow an exception thrown while converting the value of inputArguments to sequence<DOMString>');
 
@@ -141,12 +188,36 @@ test(function () {
         yield '<length>';
         throw {name: 'SomeError'};
     }};
-    assert_throws({'name': 'SomeError'}, function () { CSS.paintWorkletGlobalScope.registerPaint('sequence-throw2', constructor); });
+    assert_throws({'name': 'SomeError'}, function () { registerPaint('sequence-throw2', constructor); });
 }, 'must rethrow an exception thrown while iterating over inputArguments to sequence<DOMString>');
 
 test(function () {
     const constructor = function () {}
     constructor.inputArguments = {[Symbol.iterator]: 1};
-    assert_throws({'name': 'TypeError'}, function () { CSS.paintWorkletGlobalScope.registerPaint('symbol-iterator-throw2', constructor); });
+    assert_throws({'name': 'TypeError'}, function () { registerPaint('symbol-iterator-throw2', constructor); });
 }, 'must rethrow an exception thrown while retrieving Symbol.iterator on inputArguments');
+
+assert_true(PaintWorkletGlobalScope.hasRunATest);
+if (PaintWorkletGlobalScope.errors) {
+  console.log("The following (" + PaintWorkletGlobalScope.errors.length + ") tests failed: ")
+  console.log(JSON.stringify(PaintWorkletGlobalScope.errors));
+  assert_true(false);
+}
+
+class MyPaint2 {
+  paint(ctx, geom, properties) {
+    for (var i = 0; i < 6; i++){
+      for (var j = 0; j < 6; j++){
+        ctx.fillStyle = 'rgb(' + Math.floor(255 - 42.5 * i) + ',' +
+                         Math.floor(255 - 42.5 * j) + ',0)';
+        ctx.fillRect(j * 25, i * 25, 25, 25);
+      }
+    }
+  }
+}
+registerPaint('my-paint', MyPaint2);
+</script>
+
+<script>
+  importWorklet(CSS.paintWorklet, document.getElementById('code').textContent);
 </script>

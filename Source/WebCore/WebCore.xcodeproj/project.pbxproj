@@ -1350,14 +1350,19 @@
 		4B3480940EEF50D400AC1B41 /* ImageSourceCG.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B3480920EEF50D400AC1B41 /* ImageSourceCG.h */; };
 		4B5BDD9B21658A1500DD4262 /* CSSPaintCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B5BDD9A21658A1500DD4262 /* CSSPaintCallback.h */; };
 		4B6B5CBD21640EFF00603817 /* DOMCSSPaintWorklet.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B6B5CB82163EC0700603817 /* DOMCSSPaintWorklet.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		4B6B5CC02164386400603817 /* CSSPaintWorkletGlobalScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B6B5CBF2164386400603817 /* CSSPaintWorkletGlobalScope.h */; };
+		4B6B5CC02164386400603817 /* PaintWorkletGlobalScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B6B5CBF2164386400603817 /* PaintWorkletGlobalScope.h */; };
 		4B6E87692176D69200420E5E /* CSSPaintImageValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B6E87682176D69200420E5E /* CSSPaintImageValue.h */; };
 		4B6FA6F40C39E48C00087011 /* SmartReplace.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B6FA6F20C39E48C00087011 /* SmartReplace.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4B7AE4932177B56F00C59959 /* CustomPaintImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B7AE4922177B56F00C59959 /* CustomPaintImage.h */; };
+		4B7F9C522183B5E5001CEBA0 /* WorkletConsoleClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B7F9C512183B5E5001CEBA0 /* WorkletConsoleClient.h */; };
 		4BAE95B10B2FA9CE00AED8A0 /* EditorDeleteAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BAE95B00B2FA9CE00AED8A0 /* EditorDeleteAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4BDA3FFE2151B6F500FD6604 /* DOMCSSCustomPropertyDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BDA3FF82151B6F200FD6604 /* DOMCSSCustomPropertyDescriptor.h */; };
 		4BDA3FFF2151B6F500FD6604 /* DOMCSSRegisterCustomProperty.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BDA3FF92151B6F300FD6604 /* DOMCSSRegisterCustomProperty.h */; };
 		4BDA40012151B6F500FD6604 /* CSSRegisteredCustomProperty.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BDA3FFB2151B6F400FD6604 /* CSSRegisteredCustomProperty.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4BDEA320217EC55F0052DFCD /* Worklet.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BDEA31F217EC55F0052DFCD /* Worklet.h */; };
+		4BDEA325217FE2E40052DFCD /* WorkletGlobalScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BDEA324217FE2E40052DFCD /* WorkletGlobalScope.h */; };
+		4BDEA328218003F70052DFCD /* WorkletScriptController.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BDEA327218003F70052DFCD /* WorkletScriptController.h */; };
+		4BDEA32C218033EB0052DFCD /* JSWorkletGlobalScopeBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BDEA32B218033EB0052DFCD /* JSWorkletGlobalScopeBase.h */; };
 		4D3B00AB215D69A70076B983 /* MediaRecorder.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D3B00A9215D69A70076B983 /* MediaRecorder.h */; };
 		4D3B00AF215D6A690076B983 /* BlobEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D3B00AD215D6A690076B983 /* BlobEvent.h */; };
 		4D3B5016217E58B700665DB1 /* MediaRecorderPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D3B5014217E58B700665DB1 /* MediaRecorderPrivate.h */; };
@@ -7899,16 +7904,18 @@
 		4B6B5CB62163DC1A00603817 /* DOMCSSPaintWorklet.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = DOMCSSPaintWorklet.idl; sourceTree = "<group>"; };
 		4B6B5CB82163EC0700603817 /* DOMCSSPaintWorklet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DOMCSSPaintWorklet.h; sourceTree = "<group>"; };
 		4B6B5CB92163ED3200603817 /* DOMCSSPaintWorklet.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DOMCSSPaintWorklet.cpp; sourceTree = "<group>"; };
-		4B6B5CBE216434FB00603817 /* JSCSSPaintWorkletGlobalScopeCustom.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSPaintWorkletGlobalScopeCustom.cpp; sourceTree = "<group>"; };
-		4B6B5CBF2164386400603817 /* CSSPaintWorkletGlobalScope.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSPaintWorkletGlobalScope.h; sourceTree = "<group>"; };
-		4B6B5CC1216439CF00603817 /* CSSPaintWorkletGlobalScope.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSPaintWorkletGlobalScope.cpp; sourceTree = "<group>"; };
-		4B6B5CC321643A8E00603817 /* CSSPaintWorkletGlobalScope.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CSSPaintWorkletGlobalScope.idl; sourceTree = "<group>"; };
+		4B6B5CBE216434FB00603817 /* JSPaintWorkletGlobalScopeCustom.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSPaintWorkletGlobalScopeCustom.cpp; sourceTree = "<group>"; };
+		4B6B5CBF2164386400603817 /* PaintWorkletGlobalScope.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PaintWorkletGlobalScope.h; sourceTree = "<group>"; };
+		4B6B5CC1216439CF00603817 /* PaintWorkletGlobalScope.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PaintWorkletGlobalScope.cpp; sourceTree = "<group>"; };
+		4B6B5CC321643A8E00603817 /* PaintWorkletGlobalScope.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = PaintWorkletGlobalScope.idl; sourceTree = "<group>"; };
 		4B6E87682176D69200420E5E /* CSSPaintImageValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSPaintImageValue.h; sourceTree = "<group>"; };
 		4B6E876B2176D8A100420E5E /* CSSPaintImageValue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSPaintImageValue.cpp; sourceTree = "<group>"; };
 		4B6FA6F20C39E48C00087011 /* SmartReplace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmartReplace.h; sourceTree = "<group>"; };
 		4B6FA6F60C39E4A100087011 /* SmartReplaceCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SmartReplaceCF.cpp; sourceTree = "<group>"; };
 		4B7AE4922177B56F00C59959 /* CustomPaintImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomPaintImage.h; sourceTree = "<group>"; };
 		4B7AE4952177B63E00C59959 /* CustomPaintImage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CustomPaintImage.cpp; sourceTree = "<group>"; };
+		4B7F9C512183B5E5001CEBA0 /* WorkletConsoleClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WorkletConsoleClient.h; sourceTree = "<group>"; };
+		4B7F9C542183B634001CEBA0 /* WorkletConsoleClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WorkletConsoleClient.cpp; sourceTree = "<group>"; };
 		4BAE95B00B2FA9CE00AED8A0 /* EditorDeleteAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditorDeleteAction.h; sourceTree = "<group>"; };
 		4BDA3FF52151B6F000FD6604 /* DOMCSSRegisterCustomProperty.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMCSSRegisterCustomProperty.idl; sourceTree = "<group>"; };
 		4BDA3FF72151B6F100FD6604 /* DOMCSSRegisterCustomProperty.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMCSSRegisterCustomProperty.cpp; sourceTree = "<group>"; };
@@ -7916,6 +7923,16 @@
 		4BDA3FF92151B6F300FD6604 /* DOMCSSRegisterCustomProperty.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMCSSRegisterCustomProperty.h; sourceTree = "<group>"; };
 		4BDA3FFA2151B6F300FD6604 /* DOMCSSCustomPropertyDescriptor.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMCSSCustomPropertyDescriptor.idl; sourceTree = "<group>"; };
 		4BDA3FFB2151B6F400FD6604 /* CSSRegisteredCustomProperty.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSRegisteredCustomProperty.h; sourceTree = "<group>"; };
+		4BDEA31C217EBCF50052DFCD /* Worklet.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = Worklet.idl; sourceTree = "<group>"; };
+		4BDEA31F217EC55F0052DFCD /* Worklet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Worklet.h; sourceTree = "<group>"; };
+		4BDEA323217EC96A0052DFCD /* Worklet.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Worklet.cpp; sourceTree = "<group>"; };
+		4BDEA324217FE2E40052DFCD /* WorkletGlobalScope.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WorkletGlobalScope.h; sourceTree = "<group>"; };
+		4BDEA326217FE2FA0052DFCD /* WorkletGlobalScope.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WorkletGlobalScope.cpp; sourceTree = "<group>"; };
+		4BDEA327218003F70052DFCD /* WorkletScriptController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WorkletScriptController.h; sourceTree = "<group>"; };
+		4BDEA3292180040C0052DFCD /* WorkletScriptController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WorkletScriptController.cpp; sourceTree = "<group>"; };
+		4BDEA32A218010720052DFCD /* WorkletGlobalScope.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WorkletGlobalScope.idl; sourceTree = "<group>"; };
+		4BDEA32B218033EB0052DFCD /* JSWorkletGlobalScopeBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSWorkletGlobalScopeBase.h; sourceTree = "<group>"; };
+		4BDEA32D218034050052DFCD /* JSWorkletGlobalScopeBase.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSWorkletGlobalScopeBase.cpp; sourceTree = "<group>"; };
 		4D3B00A4215D61040076B983 /* MediaRecorder.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaRecorder.idl; sourceTree = "<group>"; };
 		4D3B00A6215D645B0076B983 /* BlobEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BlobEvent.idl; sourceTree = "<group>"; };
 		4D3B00A8215D69A60076B983 /* MediaRecorder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaRecorder.cpp; sourceTree = "<group>"; };
@@ -15816,6 +15833,7 @@
 				B22277CA0D00BF1E0071B782 /* svg */,
 				417DA4CD13734204007C57FB /* testing */,
 				2E4346310F546A6800B0F1BA /* workers */,
+				4BDEA318217EBB880052DFCD /* worklets */,
 				E1F0424309839389006694EA /* xml */,
 				656580EC09D12B20000E61D7 /* Derived Sources */,
 				089C1665FE841158C02AAC07 /* Resources */,
@@ -18046,6 +18064,26 @@
 				49E912A90EFAC906009D0CAF /* TimingFunction.h */,
 			);
 			path = animation;
+			sourceTree = "<group>";
+		};
+		4BDEA318217EBB880052DFCD /* worklets */ = {
+			isa = PBXGroup;
+			children = (
+				4B6B5CC1216439CF00603817 /* PaintWorkletGlobalScope.cpp */,
+				4B6B5CBF2164386400603817 /* PaintWorkletGlobalScope.h */,
+				4B6B5CC321643A8E00603817 /* PaintWorkletGlobalScope.idl */,
+				4BDEA323217EC96A0052DFCD /* Worklet.cpp */,
+				4BDEA31F217EC55F0052DFCD /* Worklet.h */,
+				4BDEA31C217EBCF50052DFCD /* Worklet.idl */,
+				4B7F9C542183B634001CEBA0 /* WorkletConsoleClient.cpp */,
+				4B7F9C512183B5E5001CEBA0 /* WorkletConsoleClient.h */,
+				4BDEA326217FE2FA0052DFCD /* WorkletGlobalScope.cpp */,
+				4BDEA324217FE2E40052DFCD /* WorkletGlobalScope.h */,
+				4BDEA32A218010720052DFCD /* WorkletGlobalScope.idl */,
+				4BDEA3292180040C0052DFCD /* WorkletScriptController.cpp */,
+				4BDEA327218003F70052DFCD /* WorkletScriptController.h */,
+			);
+			path = worklets;
 			sourceTree = "<group>";
 		};
 		4D3B00A0215D5C0F0076B983 /* mediarecorder */ = {
@@ -24435,6 +24473,8 @@
 				BCBFB53B0DCD29CF0019B3E5 /* JSWindowProxy.h */,
 				E1C36D320EB0A094007410BC /* JSWorkerGlobalScopeBase.cpp */,
 				E1C36D330EB0A094007410BC /* JSWorkerGlobalScopeBase.h */,
+				4BDEA32D218034050052DFCD /* JSWorkletGlobalScopeBase.cpp */,
+				4BDEA32B218033EB0052DFCD /* JSWorkletGlobalScopeBase.h */,
 				709A01FD1E3D0BCC006B0D4C /* ModuleFetchFailureKind.h */,
 				41B459ED1F55EBC70000F6FD /* ReadableStream.cpp */,
 				41B459DA1F4CADB90000F6FD /* ReadableStream.h */,
@@ -24475,12 +24515,12 @@
 			children = (
 				7CD3441B1F32DE30000DCD49 /* Cached Attributes w/ Invalidation */,
 				7C3D8EE41E08BABE0023B084 /* GC / Wrapping Only */,
-				4B6B5CBE216434FB00603817 /* JSCSSPaintWorkletGlobalScopeCustom.cpp */,
 				9BC5F9DF1D5AAF6A002B749D /* JSCustomElementRegistryCustom.cpp */,
 				BCD9C25E0C17AA67005C90A2 /* JSDOMWindowCustom.cpp */,
 				652FBBBB0DE27CB60001D386 /* JSDOMWindowCustom.h */,
 				BC5823F40C0A98DF0053F1B5 /* JSHTMLElementCustom.cpp */,
 				BCE1C43F0D9830F4003B02F2 /* JSLocationCustom.cpp */,
+				4B6B5CBE216434FB00603817 /* JSPaintWorkletGlobalScopeCustom.cpp */,
 				418C395D1C8F0AAB0051C8A3 /* JSReadableStreamSourceCustom.cpp */,
 				46BCBBBE2085005B00710638 /* JSRemoteDOMWindowCustom.cpp */,
 			);
@@ -26096,9 +26136,6 @@
 				4B5BDD99216588E500DD4262 /* CSSPaintCallback.idl */,
 				4B6E876B2176D8A100420E5E /* CSSPaintImageValue.cpp */,
 				4B6E87682176D69200420E5E /* CSSPaintImageValue.h */,
-				4B6B5CC1216439CF00603817 /* CSSPaintWorkletGlobalScope.cpp */,
-				4B6B5CBF2164386400603817 /* CSSPaintWorkletGlobalScope.h */,
-				4B6B5CC321643A8E00603817 /* CSSPaintWorkletGlobalScope.idl */,
 				9418278C1D8CAE9500492764 /* CSSPendingSubstitutionValue.cpp */,
 				9418278D1D8CAE9500492764 /* CSSPendingSubstitutionValue.h */,
 				A80E6CDB0A1989CA007FB8C5 /* CSSPrimitiveValue.cpp */,
@@ -28099,7 +28136,6 @@
 				A80E6D000A1989CA007FB8C5 /* CSSPageRule.h in Headers */,
 				4B5BDD9B21658A1500DD4262 /* CSSPaintCallback.h in Headers */,
 				4B6E87692176D69200420E5E /* CSSPaintImageValue.h in Headers */,
-				4B6B5CC02164386400603817 /* CSSPaintWorkletGlobalScope.h in Headers */,
 				946D372E1D6CB2940077084F /* CSSParser.h in Headers */,
 				E4A7995220EE4B1400C19568 /* CSSParserContext.h in Headers */,
 				949C77011D6E1D9800C0DE4F /* CSSParserFastPaths.h in Headers */,
@@ -29803,6 +29839,7 @@
 				E1C362EF0EAF2AA9007410BC /* JSWorkerLocation.h in Headers */,
 				E1271A580EEECDE400F61213 /* JSWorkerNavigator.h in Headers */,
 				51F175061F358BF700C74950 /* JSWorkerType.h in Headers */,
+				4BDEA32C218033EB0052DFCD /* JSWorkletGlobalScopeBase.h in Headers */,
 				7C4C96DD1AD4483500365A60 /* JSWritableStream.h in Headers */,
 				8358CB701C53277500E0C2D8 /* JSXMLDocument.h in Headers */,
 				BC348BD40DB7F804004ABAB9 /* JSXMLHttpRequest.h in Headers */,
@@ -30188,6 +30225,7 @@
 				0885067F11DA045B00182B98 /* PaintInfo.h in Headers */,
 				0885068011DA045B00182B98 /* PaintPhase.h in Headers */,
 				4B1E13EB217937B30042CF98 /* PaintRenderingContext2D.h in Headers */,
+				4B6B5CC02164386400603817 /* PaintWorkletGlobalScope.h in Headers */,
 				A80E6CFB0A1989CA007FB8C5 /* Pair.h in Headers */,
 				FD3160A312B026F700C1A359 /* Panner.h in Headers */,
 				FD31601A12B0267600C1A359 /* PannerNode.h in Headers */,
@@ -31607,6 +31645,10 @@
 				97AABD2D14FA09D5007457AE /* WorkerThreadableWebSocketChannel.h in Headers */,
 				A54A0C681DB807D90017A90B /* WorkerToPageFrontendChannel.h in Headers */,
 				51F174FE1F35899200C74950 /* WorkerType.h in Headers */,
+				4BDEA320217EC55F0052DFCD /* Worklet.h in Headers */,
+				4B7F9C522183B5E5001CEBA0 /* WorkletConsoleClient.h in Headers */,
+				4BDEA325217FE2E40052DFCD /* WorkletGlobalScope.h in Headers */,
+				4BDEA328218003F70052DFCD /* WorkletScriptController.h in Headers */,
 				93309E24099E64920056E581 /* WrapContentsInDummySpanCommand.h in Headers */,
 				416E6FE91BBD12E5000A6053 /* WritableStreamBuiltins.h in Headers */,
 				416E6FE81BBD12DF000A6053 /* WritableStreamInternalsBuiltins.h in Headers */,

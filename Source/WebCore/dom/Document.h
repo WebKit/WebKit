@@ -88,7 +88,6 @@ class Attr;
 class CDATASection;
 class CSSCustomPropertyValue;
 class CSSFontSelector;
-class CSSPaintWorkletGlobalScope;
 class CSSStyleDeclaration;
 class CSSStyleSheet;
 class CachedCSSStyleSheet;
@@ -154,6 +153,7 @@ class MouseEventWithHitTestResults;
 class NodeFilter;
 class NodeIterator;
 class Page;
+class PaintWorkletGlobalScope;
 class PlatformMouseEvent;
 class ProcessingInstruction;
 class QualifiedName;
@@ -194,6 +194,7 @@ class WebGLRenderingContext;
 class WebGPURenderingContext;
 class WebMetalRenderingContext;
 class WindowProxy;
+class Worklet;
 class XPathEvaluator;
 class XPathExpression;
 class XPathNSResolver;
@@ -1350,6 +1351,10 @@ public:
     // Callers should try to create the ConsoleMessage themselves.
     WEBCORE_EXPORT void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier = 0) final;
 
+    // The following addMessage function is deprecated.
+    // Callers should try to create the ConsoleMessage themselves.
+    void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&&, JSC::ExecState* = nullptr, unsigned long requestIdentifier = 0) final;
+
     SecurityOrigin& securityOrigin() const { return *SecurityContext::securityOrigin(); }
     SecurityOrigin& topOrigin() const final { return topDocument().securityOrigin(); }
 
@@ -1517,7 +1522,9 @@ public:
     bool registerCSSProperty(CSSRegisteredCustomProperty&&);
 
 #if ENABLE(CSS_PAINTING_API)
-    CSSPaintWorkletGlobalScope& ensureCSSPaintWorkletGlobalScope();
+    Worklet& ensurePaintWorklet();
+    PaintWorkletGlobalScope* paintWorkletGlobalScope() { return m_paintWorkletGlobalScope.get(); }
+    void setPaintWorkletGlobalScope(Ref<PaintWorkletGlobalScope>&&);
 #endif
 
     void setAsRunningUserScripts() { m_isRunningUserScripts = true; }
@@ -1569,10 +1576,6 @@ private:
 
     void refScriptExecutionContext() final { ref(); }
     void derefScriptExecutionContext() final { deref(); }
-
-    // The following addMessage function is deprecated.
-    // Callers should try to create the ConsoleMessage themselves.
-    void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&&, JSC::ExecState* = nullptr, unsigned long requestIdentifier = 0) final;
 
     Seconds minimumDOMTimerInterval() const final;
 
@@ -2060,7 +2063,8 @@ private:
     CSSRegisteredCustomPropertySet m_CSSRegisteredPropertySet;
 
 #if ENABLE(CSS_PAINTING_API)
-    RefPtr<CSSPaintWorkletGlobalScope> m_CSSPaintWorkletGlobalScope;
+    RefPtr<Worklet> m_paintWorklet;
+    RefPtr<PaintWorkletGlobalScope> m_paintWorkletGlobalScope;
 #endif
 
     bool m_isRunningUserScripts { false };

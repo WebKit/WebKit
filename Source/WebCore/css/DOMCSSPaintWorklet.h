@@ -35,14 +35,14 @@
 namespace WebCore {
 
 class Document;
-class CSSPaintWorkletGlobalScope;
+class Worklet;
 class DOMCSSNamespace;
 
 class DOMCSSPaintWorklet final : public Supplement<DOMCSSNamespace> {
 public:
     explicit DOMCSSPaintWorklet(DOMCSSNamespace&) { }
 
-    static CSSPaintWorkletGlobalScope& ensurePaintWorkletGlobalScope(Document&);
+    static Worklet& ensurePaintWorklet(Document&);
 
 private:
     static DOMCSSPaintWorklet* from(DOMCSSNamespace&);

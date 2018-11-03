@@ -27,9 +27,7 @@
     EnabledAtRuntime=CSSPaintingAPI,
     Conditional=CSS_PAINTING_API,
     ImplementationLacksVTable,
-    JSCustomMarkFunction,
-    JSGenerateToNativeObject
-] interface CSSPaintWorkletGlobalScope {
-    [Custom, MayThrowException] void registerPaint(DOMString name, Function paintCtor);
-    readonly attribute unrestricted double devicePixelRatio;
+    Global=Worklet,
+] interface Worklet {
+    [CallWith=Document] void addModule(USVString moduleURL/*, optional WorkletOptions options*/);
 };

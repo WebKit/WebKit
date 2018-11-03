@@ -35,11 +35,14 @@
 #include "Frame.h"
 #include "JSDOMWindowBase.h"
 #include "JSWorkerGlobalScope.h"
+#include "JSWorkletGlobalScope.h"
 #include "Node.h"
 #include "Page.h"
 #include "ScriptController.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerScriptController.h"
+#include "WorkletGlobalScope.h"
+#include "WorkletScriptController.h"
 #include <JavaScriptCore/CallFrame.h>
 #include <JavaScriptCore/JSGlobalObject.h>
 #include <JavaScriptCore/StrongInlines.h>
@@ -95,9 +98,16 @@ JSC::ExecState* execStateFromPage(DOMWrapperWorld& world, Page* page)
     return page ? page->mainFrame().script().globalObject(world)->globalExec() : nullptr;
 }
 
-JSC::ExecState* execStateFromWorkerGlobalScope(WorkerGlobalScope* workerGlobalScope)
+JSC::ExecState* execStateFromWorkerGlobalScope(WorkerGlobalScope& workerGlobalScope)
 {
-    return workerGlobalScope->script()->workerGlobalScopeWrapper()->globalExec();
+    return workerGlobalScope.script()->workerGlobalScopeWrapper()->globalExec();
 }
+
+#if ENABLE(CSS_PAINTING_API)
+JSC::ExecState* execStateFromWorkletGlobalScope(WorkletGlobalScope& workletGlobalScope)
+{
+    return workletGlobalScope.script().workletGlobalScopeWrapper()->globalExec();
+}
+#endif
 
 }

@@ -52,6 +52,7 @@ WebAnimation
 WebKitMediaKeySession conditional=LEGACY_ENCRYPTED_MEDIA
 WebSocket
 Worker
+WorkletGlobalScope conditional=CSS_PAINTING_API
 XMLHttpRequest
 XMLHttpRequestUpload
 

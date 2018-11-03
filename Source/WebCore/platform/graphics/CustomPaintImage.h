@@ -27,8 +27,8 @@
 
 #if ENABLE(CSS_PAINTING_API)
 
-#include "CSSPaintWorkletGlobalScope.h"
 #include "GeneratedImage.h"
+#include "PaintWorkletGlobalScope.h"
 
 namespace WebCore {
 
@@ -36,7 +36,7 @@ class ImageBuffer;
 
 class CustomPaintImage final : public GeneratedImage {
 public:
-    static Ref<CustomPaintImage> create(const CSSPaintWorkletGlobalScope::PaintDefinition& definition, const FloatSize& size)
+    static Ref<CustomPaintImage> create(const PaintWorkletGlobalScope::PaintDefinition& definition, const FloatSize& size)
     {
         return adoptRef(*new CustomPaintImage(definition, size));
     }
@@ -45,7 +45,7 @@ public:
     bool isCustomPaintImage() const override { return true; }
 
 private:
-    CustomPaintImage(const CSSPaintWorkletGlobalScope::PaintDefinition&, const FloatSize&);
+    CustomPaintImage(const PaintWorkletGlobalScope::PaintDefinition&, const FloatSize&);
 
     ImageDrawResult doCustomPaint(GraphicsContext&, const FloatSize&);
 

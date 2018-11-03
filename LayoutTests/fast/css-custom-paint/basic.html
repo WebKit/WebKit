@@ -17,69 +17,6 @@
 
 <script>
 test(function() {
-  CSS.paintWorkletGlobalScope.registerPaint('test1', class {
-    static get inputProperties() { return ["--test"]; }
-    paint() { }
-  });
-}, 'test that registerPaint runs');
-
-test(function() {
-  CSS.paintWorkletGlobalScope.registerPaint('test2', class {
-    paint() { }
-  });
-}, 'test that registerPaint runs without inputProperties');
-
-test(function() {
-  CSS.paintWorkletGlobalScope.registerPaint('test3', class {
-    static get inputArguments() { return ["<length>"]; }
-    paint() { }
-  });
-}, 'test that registerPaint runs with inputArguments');
-
-test(function() {
-  CSS.paintWorkletGlobalScope.registerPaint('test4', class {
-    static get contextOptions() { return { alpha: true }; }
-    paint() { }
-  });
-}, 'test that registerPaint runs with contextOptions');
-
-class MyPaint {
-  paint() { }
-}
-
-test(function() {
-  CSS.paintWorkletGlobalScope.registerPaint('test5', MyPaint);
-  assert_throws({'name': 'InvalidModificationError'}, () => CSS.paintWorkletGlobalScope.registerPaint('test5', MyPaint));
-  CSS.paintWorkletGlobalScope.registerPaint('test6', class extends MyPaint { });
-}, 'test that registerPaint runs with predefined class');
-
-test(function() {
-  assert_throws({'name': 'InvalidModificationError'}, () => CSS.paintWorkletGlobalScope.registerPaint('test6', 'test'));
-  assert_throws(new TypeError(), () => CSS.paintWorkletGlobalScope.registerPaint('test7'));
-  assert_throws(new TypeError(), () => CSS.paintWorkletGlobalScope.registerPaint('test8', []));
-  assert_throws(new TypeError(), () => CSS.paintWorkletGlobalScope.registerPaint('test9', {}));
-  assert_throws(new TypeError(), () => CSS.paintWorkletGlobalScope.registerPaint('test10', 5));
-  assert_throws(new TypeError(), () => CSS.paintWorkletGlobalScope.registerPaint('', 5));
-}, 'test that registerPaint accepts only a string and a class constructor');
-
-test(function() {
   assert_equals(getComputedStyle(paint).getPropertyValue("background-image"), "paint(my-paint)");
 }, 'test that test div has paint() value');
-
-let paint_called_test = async_test('test that test div paint callback gets called');
-paint_called_test.step(function() {
-  CSS.paintWorkletGlobalScope.registerPaint('my-paint', class {
-    paint(ctx, geom, properties) {
-      for (var i = 0; i < 6; i++){
-        for (var j = 0; j < 6; j++){
-          ctx.fillStyle = 'rgb(' + Math.floor(255 - 42.5 * i) + ',' +
-                           Math.floor(255 - 42.5 * j) + ',0)';
-          ctx.fillRect(j * 25, i * 25, 25, 25);
-        }
-      }
-      paint_called_test.done();
-    }
-  });
-});
-
 </script>

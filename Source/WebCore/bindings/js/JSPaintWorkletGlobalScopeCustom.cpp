@@ -24,37 +24,18 @@
  */
 
 #include "config.h"
-#include "DOMCSSPaintWorklet.h"
+#include "JSPaintWorkletGlobalScope.h"
 
 #if ENABLE(CSS_PAINTING_API)
 
-#include "DOMCSSNamespace.h"
-#include "Document.h"
-#include "Worklet.h"
-
-#include <wtf/text/WTFString.h>
-
 namespace WebCore {
+using namespace JSC;
 
-Worklet& DOMCSSPaintWorklet::ensurePaintWorklet(Document& document)
+void JSPaintWorkletGlobalScope::visitAdditionalChildren(JSC::SlotVisitor& visitor)
 {
-    return document.ensurePaintWorklet();
-}
-
-DOMCSSPaintWorklet* DOMCSSPaintWorklet::from(DOMCSSNamespace& css)
-{
-    auto* supplement = static_cast<DOMCSSPaintWorklet*>(Supplement<DOMCSSNamespace>::from(&css, supplementName()));
-    if (!supplement) {
-        auto newSupplement = std::make_unique<DOMCSSPaintWorklet>(css);
-        supplement = newSupplement.get();
-        provideTo(&css, supplementName(), WTFMove(newSupplement));
-    }
-    return supplement;
-}
-
-const char* DOMCSSPaintWorklet::supplementName()
-{
-    return "DOMCSSPaintWorklet";
+    auto locker = holdLock(wrapped().paintDefinitionLock());
+    for (auto& registered : wrapped().paintDefinitionMap().values())
+        registered->paintCallback->visitJSFunction(visitor);
 }
 
 }

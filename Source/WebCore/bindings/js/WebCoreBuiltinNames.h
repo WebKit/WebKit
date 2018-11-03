@@ -51,7 +51,6 @@ namespace WebCore {
     macro(Credential) \
     macro(CredentialsContainer) \
     macro(CSSAnimation) \
-    macro(CSSPaintWorkletGlobalScope) \
     macro(CSSTransition) \
     macro(CustomElementRegistry) \
     macro(Database) \
@@ -123,6 +122,7 @@ namespace WebCore {
     macro(SQLResultSet) \
     macro(SQLResultSetRowList) \
     macro(SQLTransaction) \
+    macro(PaintWorkletGlobalScope) \
     macro(PerformanceEntry) \
     macro(PerformanceEntryList) \
     macro(PerformanceMark) \
@@ -209,6 +209,8 @@ namespace WebCore {
     macro(WebKitMediaKeys) \
     macro(WebSocket) \
     macro(WindowClient) \
+    macro(Worklet) \
+    macro(WorkletGlobalScope) \
     macro(WritableStream) \
     macro(XMLHttpRequest) \
     macro(appendFromJS) \

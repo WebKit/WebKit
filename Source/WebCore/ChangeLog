@@ -1,3 +1,143 @@
+2018-11-02  Justin Michaud  <justin_michaud@apple.com>
+
+        Add new global object and preliminary Worklets support for CSS painting api
+        https://bugs.webkit.org/show_bug.cgi?id=190979
+
+        Reviewed by Chris Dumez.
+
+        Test: fast/css-custom-paint/worklet.html
+
+        Add a new ScriptExecutionContext and global object to run worklets in. This is mostly copy+paste
+        from Workers, but without any of the threading. Worklet.addModule does not yet support loading scripts
+        or doing cross origin checking. There are quite a few parts of the ScriptExecutionContext api that are
+        left as ASSERT_NOT_REACHED().
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::scriptExecutionContext const):
+        * bindings/js/JSPaintWorkletGlobalScopeCustom.cpp: Renamed from Source/WebCore/bindings/js/JSCSSPaintWorkletGlobalScopeCustom.cpp.
+        (WebCore::JSPaintWorkletGlobalScope::visitAdditionalChildren):
+        (WebCore::JSPaintWorkletGlobalScope::registerPaint):
+        * bindings/js/JSWorkletGlobalScopeBase.cpp: Added.
+        (WebCore::JSWorkletGlobalScopeBase::JSWorkletGlobalScopeBase):
+        (WebCore::JSWorkletGlobalScopeBase::finishCreation):
+        (WebCore::JSWorkletGlobalScopeBase::clearDOMGuardedObjects):
+        (WebCore::JSWorkletGlobalScopeBase::visitChildren):
+        (WebCore::JSWorkletGlobalScopeBase::destroy):
+        (WebCore::JSWorkletGlobalScopeBase::scriptExecutionContext const):
+        (WebCore::JSWorkletGlobalScopeBase::supportsRichSourceInfo):
+        (WebCore::JSWorkletGlobalScopeBase::shouldInterruptScript):
+        (WebCore::JSWorkletGlobalScopeBase::shouldInterruptScriptBeforeTimeout):
+        (WebCore::JSWorkletGlobalScopeBase::javaScriptRuntimeFlags):
+        (WebCore::toJS):
+        (WebCore::toJSWorkletGlobalScope):
+        * bindings/js/JSWorkletGlobalScopeBase.h: Added.
+        (WebCore::JSWorkletGlobalScopeBase::wrapped const):
+        (WebCore::JSWorkletGlobalScopeBase::proxy const):
+        (WebCore::JSWorkletGlobalScopeBase::createStructure):
+        (WebCore::toJS):
+        * bindings/js/ScriptState.cpp:
+        (WebCore::execStateFromWorkerGlobalScope):
+        (WebCore::execStateFromWorkletGlobalScope):
+        * bindings/js/ScriptState.h:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (IsDOMGlobalObject):
+        (ShouldUseGlobalObjectPrototype):
+        (GenerateHeader):
+        (GenerateRuntimeEnableConditionalStringForExposed):
+        (GenerateImplementation):
+        * bindings/scripts/preprocess-idls.pl:
+        * css/CSSPaintImageValue.cpp:
+        (WebCore::CSSPaintImageValue::image):
+        * css/DOMCSSPaintWorklet.cpp:
+        (WebCore::DOMCSSPaintWorklet::ensurePaintWorklet):
+        (WebCore::DOMCSSPaintWorklet::ensurePaintWorkletGlobalScope): Deleted.
+        * css/DOMCSSPaintWorklet.h:
+        * css/DOMCSSPaintWorklet.idl:
+        * dom/Document.cpp:
+        (WebCore::Document::ensureCSSPaintWorklet):
+        (WebCore::Document::setCSSPaintWorkletGlobalScope):
+        (WebCore::Document::ensureCSSPaintWorkletGlobalScope): Deleted.
+        * dom/Document.h:
+        (WebCore::Document::getCSSPaintWorkletGlobalScope):
+        * dom/EventTargetFactory.in:
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::vm):
+        (WebCore::ScriptExecutionContext::execState):
+        * dom/ScriptExecutionContext.h:
+        (WebCore::ScriptExecutionContext::isWorkletGlobalScope const):
+        * inspector/agents/worker/WorkerDebuggerAgent.cpp:
+        (WebCore::WorkerDebuggerAgent::injectedScriptForEval):
+        * inspector/agents/worker/WorkerRuntimeAgent.cpp:
+        (WebCore::WorkerRuntimeAgent::injectedScriptForEval):
+        * platform/graphics/CustomPaintImage.cpp:
+        (WebCore::CustomPaintImage::CustomPaintImage):
+        (WebCore::CustomPaintImage::doCustomPaint):
+        * platform/graphics/CustomPaintImage.h:
+        * worklets/PaintWorkletGlobalScope.cpp: Copied from Source/WebCore/css/CSSPaintWorkletGlobalScope.cpp.
+        (WebCore::PaintWorkletGlobalScope::create):
+        (WebCore::PaintWorkletGlobalScope::PaintWorkletGlobalScope):
+        (WebCore::PaintWorkletGlobalScope::devicePixelRatio):
+        (WebCore::PaintWorkletGlobalScope::addRegisteredPaint):
+        * worklets/PaintWorkletGlobalScope.h: Renamed from Source/WebCore/css/CSSPaintWorkletGlobalScope.h.
+        * worklets/PaintWorkletGlobalScope.idl: Copied from Source/WebCore/css/CSSPaintWorkletGlobalScope.idl.
+        * worklets/Worklet.cpp: Copied from Source/WebCore/css/CSSPaintWorkletGlobalScope.cpp.
+        (WebCore::Worklet::create):
+        (WebCore::Worklet::Worklet):
+        (WebCore::Worklet::addModule):
+        * worklets/Worklet.h: Renamed from Source/WebCore/css/CSSPaintWorkletGlobalScope.cpp.
+        * worklets/Worklet.idl: Copied from Source/WebCore/css/CSSPaintWorkletGlobalScope.idl.
+        * worklets/WorkletConsoleClient.cpp: Copied from Source/WebCore/inspector/agents/worker/WorkerDebuggerAgent.cpp.
+        (WebCore::WorkletConsoleClient::WorkletConsoleClient):
+        (WebCore::WorkletConsoleClient::messageWithTypeAndLevel):
+        (WebCore::WorkletConsoleClient::count):
+        (WebCore::WorkletConsoleClient::time):
+        (WebCore::WorkletConsoleClient::timeEnd):
+        (WebCore::WorkletConsoleClient::profile):
+        (WebCore::WorkletConsoleClient::profileEnd):
+        (WebCore::WorkletConsoleClient::takeHeapSnapshot):
+        (WebCore::WorkletConsoleClient::timeStamp):
+        (WebCore::WorkletConsoleClient::record):
+        (WebCore::WorkletConsoleClient::recordEnd):
+        * worklets/WorkletConsoleClient.h: Added.
+        * worklets/WorkletGlobalScope.cpp: Added.
+        (WebCore::WorkletGlobalScope::WorkletGlobalScope):
+        (WebCore::WorkletGlobalScope::~WorkletGlobalScope):
+        (WebCore::WorkletGlobalScope::evaluate):
+        (WebCore::WorkletGlobalScope::isJSExecutionForbidden const):
+        (WebCore::WorkletGlobalScope::disableEval):
+        (WebCore::WorkletGlobalScope::disableWebAssembly):
+        (WebCore::WorkletGlobalScope::completeURL const):
+        (WebCore::WorkletGlobalScope::logExceptionToConsole):
+        (WebCore::WorkletGlobalScope::addConsoleMessage):
+        (WebCore::WorkletGlobalScope::addMessage):
+        * worklets/WorkletGlobalScope.h: Added.
+        (WebCore::WorkletGlobalScope::isPaintWorkletGlobalScope const):
+        (WebCore::WorkletGlobalScope::identifier const):
+        (WebCore::WorkletGlobalScope::script):
+        (WebCore::WorkletGlobalScope::jsRuntimeFlags const):
+        (isType):
+        * worklets/WorkletGlobalScope.idl: Renamed from Source/WebCore/css/CSSPaintWorkletGlobalScope.idl.
+        * worklets/WorkletScriptController.cpp: Added.
+        (WebCore::WorkletScriptController::WorkletScriptController):
+        (WebCore::WorkletScriptController::~WorkletScriptController):
+        (WebCore::WorkletScriptController::forbidExecution):
+        (WebCore::WorkletScriptController::isExecutionForbidden const):
+        (WebCore::WorkletScriptController::disableEval):
+        (WebCore::WorkletScriptController::disableWebAssembly):
+        (WebCore::WorkletScriptController::initScriptWithSubclass):
+        (WebCore::WorkletScriptController::initScript):
+        (WebCore::WorkletScriptController::evaluate):
+        (WebCore::WorkletScriptController::setException):
+        * worklets/WorkletScriptController.h: Added.
+        (WebCore::WorkletScriptController::workletGlobalScopeWrapper):
+        (WebCore::WorkletScriptController::vm):
+        (WebCore::WorkletScriptController::initScriptIfNeeded):
+
 2018-11-02  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Clean up drawLineForDocumentMarker()

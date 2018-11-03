@@ -1,3 +1,24 @@
+2018-11-02  Justin Michaud  <justin_michaud@apple.com>
+
+        Add new global object and preliminary Worklets support for CSS painting api
+        https://bugs.webkit.org/show_bug.cgi?id=190979
+
+        Reviewed by Chris Dumez.
+
+        Add a new test harness for worklet tests, since they do not have access to the dom.
+
+        * fast/css-custom-paint/basic-expected.txt:
+        * fast/css-custom-paint/basic.html:
+        * fast/css-custom-paint/registerPaintBindings-expected.html: Added.
+        * fast/css-custom-paint/registerPaintBindings-expected.txt: Removed.
+        * fast/css-custom-paint/registerPaintBindings.html:
+        * fast/css-custom-paint/resources/testharness-worklet.js: Added.
+        (format_value):
+        * fast/css-custom-paint/resources/testharness.js: Added.
+        (async.importWorklet):
+        * fast/css-custom-paint/worklet-expected.html: Added.
+        * fast/css-custom-paint/worklet.html: Added.
+
 2018-11-02  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r237699): Layout Test http/tests/security/anchor-download-block-crossorigin.html is a flaky failure

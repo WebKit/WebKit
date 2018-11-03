@@ -24,29 +24,34 @@
  */
 
 #include "config.h"
-#include "CSSPaintWorkletGlobalScope.h"
+#include "Worklet.h"
 
 #if ENABLE(CSS_PAINTING_API)
 
+#include "Document.h"
+#include "PaintWorkletGlobalScope.h"
+#include "ScriptSourceCode.h"
+
 namespace WebCore {
 
-Ref<CSSPaintWorkletGlobalScope> CSSPaintWorkletGlobalScope::create()
+Ref<Worklet> Worklet::create()
 {
-    return adoptRef(*new CSSPaintWorkletGlobalScope());
+    return adoptRef(*new Worklet());
 }
 
-CSSPaintWorkletGlobalScope::CSSPaintWorkletGlobalScope()
+Worklet::Worklet()
 {
 }
 
-double CSSPaintWorkletGlobalScope::devicePixelRatio()
+void Worklet::addModule(Document& document, const String& moduleURL)
 {
-    return 1.0;
-}
-
-ExceptionOr<void> CSSPaintWorkletGlobalScope::addRegisteredPaint()
-{
-    return { };
+    // FIXME: We should download the source from the URL
+    // https://bugs.webkit.org/show_bug.cgi?id=191136
+    auto context = PaintWorkletGlobalScope::create(document, ScriptSourceCode(moduleURL));
+    context->evaluate();
+    // FIXME: We should store multiple global scopes and choose between them
+    // This will not function correctly if multiple modules are added.
+    document.setPaintWorkletGlobalScope(WTFMove(context));
 }
 
 } // namespace WebCore

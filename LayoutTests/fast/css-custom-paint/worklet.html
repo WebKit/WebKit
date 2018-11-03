@@ -1,0 +1,42 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:CSSPaintingAPIEnabled=true ] -->
+<meta name="author" title="Justin Michaud" href="mailto:justin_michaud@webkit.org">
+<meta name="assert" content="Test worklet addModule and global object">
+<link rel="help" content="https://drafts.css-houdini.org/css-paint-api-1/">
+<script src="resources/testharness.js"></script>
+
+<style>
+  #paint {
+    background-image: paint(my-paint);
+    width: 150px;
+    height: 150px;
+  }
+</style>
+
+<div id="paint"></div>
+
+<script id="code" type="text/worklet">
+class MyPaint {
+  paint(ctx, geom, properties) {
+    for (var i = 0; i < 6; i++){
+      for (var j = 0; j < 6; j++){
+        ctx.fillStyle = 'rgb(' + Math.floor(255 - 42.5 * i) + ',' +
+                         Math.floor(255 - 42.5 * j) + ',0)';
+        ctx.fillRect(j * 25, i * 25, 25, 25);
+      }
+    }
+    console.log("Hello from paint callback!");
+    assert_greater_than(eval("devicePixelRatio"), 0);
+    assert_throws({'name': 'ReferenceError'}, function () { eval("window"); });
+
+    const promise = new Promise((resolve, reject) => { console.log("In promise"); resolve() });
+    promise.then(() => console.log("Promise was resolved"));
+  }
+}
+console.log("Hello from paint worklet!");
+registerPaint('my-paint', MyPaint);
+console.log(Window); // test that uncaught exceptions do not affect registered paint callbacks
+</script>
+
+<script>
+importWorklet(CSS.paintWorklet, document.getElementById('code').textContent);
+</script>

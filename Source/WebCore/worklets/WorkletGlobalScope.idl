@@ -24,8 +24,14 @@
 */
 
 [
+    CustomProxyToJSObject,
+    Exposed=Worklet,
     EnabledAtRuntime=CSSPaintingAPI,
     Conditional=CSS_PAINTING_API,
-] partial interface DOMCSSNamespace {
-    [ImplementedAs=ensurePaintWorklet,CallWith=Document] static readonly attribute Worklet paintWorklet;
+    JSLegacyParent=JSWorkletGlobalScopeBase,
+    ImplicitThis,
+    IsImmutablePrototypeExoticObject,
+    IsImmutablePrototypeExoticObjectOnPrototype,
+    Global=Worklet,
+] interface WorkletGlobalScope : EventTarget {
 };

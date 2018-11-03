@@ -25,43 +25,23 @@
 
 #pragma once
 
+#include "ScriptWrappable.h"
+
 #if ENABLE(CSS_PAINTING_API)
 
-#include "CSSPaintCallback.h"
-#include "ExceptionOr.h"
-#include <wtf/HashMap.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
-
-namespace JSC {
-
-class JSValue;
-
-} // namespace JSC
-
 namespace WebCore {
+class Document;
 
-class CSSPaintWorkletGlobalScope : public RefCounted<CSSPaintWorkletGlobalScope> {
+class Worklet : public RefCounted<Worklet>, public ScriptWrappable {
 public:
-    static Ref<CSSPaintWorkletGlobalScope> create();
+    static Ref<Worklet> create();
+    
+    void addModule(Document&, const String& moduleURL);
 
-    ExceptionOr<void> addRegisteredPaint();
-    double devicePixelRatio();
-
-    struct PaintDefinition {
-        const AtomicString name;
-        const Ref<CSSPaintCallback> paintCallback;
-        const Vector<String> inputProperties;
-        const Vector<String> inputArguments;
-    };
-
-    HashMap<String, std::unique_ptr<PaintDefinition>>& paintDefinitionMap() { return m_paintDefinitionMap; }
-
-private:
-    CSSPaintWorkletGlobalScope();
-
-    HashMap<String, std::unique_ptr<PaintDefinition>> m_paintDefinitionMap;
+protected:
+    Worklet();
 };
 
 } // namespace WebCore
+
 #endif

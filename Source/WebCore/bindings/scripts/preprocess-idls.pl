@@ -36,6 +36,8 @@ my $windowConstructorsFile;
 my $workerGlobalScopeConstructorsFile;
 my $dedicatedWorkerGlobalScopeConstructorsFile;
 my $serviceWorkerGlobalScopeConstructorsFile;
+my $workletGlobalScopeConstructorsFile;
+my $paintWorkletGlobalScopeConstructorsFile;
 my $supplementalMakefileDeps;
 
 GetOptions('defines=s' => \$defines,
@@ -46,6 +48,8 @@ GetOptions('defines=s' => \$defines,
            'workerGlobalScopeConstructorsFile=s' => \$workerGlobalScopeConstructorsFile,
            'dedicatedWorkerGlobalScopeConstructorsFile=s' => \$dedicatedWorkerGlobalScopeConstructorsFile,
            'serviceWorkerGlobalScopeConstructorsFile=s' => \$serviceWorkerGlobalScopeConstructorsFile,
+           'workletGlobalScopeConstructorsFile=s' => \$workletGlobalScopeConstructorsFile,
+           'paintWorkletGlobalScopeConstructorsFile=s' => \$paintWorkletGlobalScopeConstructorsFile,
            'supplementalMakefileDeps=s' => \$supplementalMakefileDeps);
 
 die('Must specify #define macros using --defines.') unless defined($defines);
@@ -54,6 +58,8 @@ die('Must specify an output file using --windowConstructorsFile.') unless define
 die('Must specify an output file using --workerGlobalScopeConstructorsFile.') unless defined($workerGlobalScopeConstructorsFile);
 die('Must specify an output file using --dedicatedWorkerGlobalScopeConstructorsFile.') unless defined($dedicatedWorkerGlobalScopeConstructorsFile);
 die('Must specify an output file using --serviceWorkerGlobalScopeConstructorsFile.') unless defined($serviceWorkerGlobalScopeConstructorsFile);
+die('Must specify an output file using --workletGlobalScopeConstructorsFile.') unless defined($workletGlobalScopeConstructorsFile);
+die('Must specify an output file using --paintWorkletGlobalScopeConstructorsFile.') unless defined($paintWorkletGlobalScopeConstructorsFile);
 die('Must specify the file listing all IDLs using --idlFilesList.') unless defined($idlFilesList);
 
 $supplementalDependencyFile = CygwinPathIfNeeded($supplementalDependencyFile);
@@ -61,6 +67,8 @@ $windowConstructorsFile = CygwinPathIfNeeded($windowConstructorsFile);
 $workerGlobalScopeConstructorsFile = CygwinPathIfNeeded($workerGlobalScopeConstructorsFile);
 $dedicatedWorkerGlobalScopeConstructorsFile = CygwinPathIfNeeded($dedicatedWorkerGlobalScopeConstructorsFile);
 $serviceWorkerGlobalScopeConstructorsFile = CygwinPathIfNeeded($serviceWorkerGlobalScopeConstructorsFile);
+$workletGlobalScopeConstructorsFile = CygwinPathIfNeeded($workletGlobalScopeConstructorsFile);
+$paintWorkletGlobalScopeConstructorsFile = CygwinPathIfNeeded($paintWorkletGlobalScopeConstructorsFile);
 $supplementalMakefileDeps = CygwinPathIfNeeded($supplementalMakefileDeps);
 
 open FH, "< $idlFilesList" or die "Cannot open $idlFilesList\n";
@@ -80,6 +88,8 @@ my $windowConstructorsCode = "";
 my $workerGlobalScopeConstructorsCode = "";
 my $dedicatedWorkerGlobalScopeConstructorsCode = "";
 my $serviceWorkerGlobalScopeConstructorsCode = "";
+my $workletGlobalScopeConstructorsCode = "";
+my $paintWorkletGlobalScopeConstructorsCode = "";
 
 # Get rid of duplicates in idlFiles array.
 my %idlFileHash = map { $_, 1 } @idlFiles;
@@ -143,6 +153,10 @@ foreach my $idlFile (sort keys %idlFileHash) {
                     $dedicatedWorkerGlobalScopeConstructorsCode .= $attributeCode;
                 } elsif ($globalContext eq "ServiceWorker") {
                     $serviceWorkerGlobalScopeConstructorsCode .= $attributeCode;
+                } elsif ($globalContext eq "Worklet") {
+                    $workletGlobalScopeConstructorsCode .= $attributeCode;
+                } elsif ($globalContext eq "PaintWorklet") {
+                    $paintWorkletGlobalScopeConstructorsCode .= $attributeCode;
                 } else {
                     die "Unsupported global context '$globalContext' used in [Exposed] at $idlFile";
                 }
@@ -157,6 +171,8 @@ GeneratePartialInterface("DOMWindow", $windowConstructorsCode, $windowConstructo
 GeneratePartialInterface("WorkerGlobalScope", $workerGlobalScopeConstructorsCode, $workerGlobalScopeConstructorsFile);
 GeneratePartialInterface("DedicatedWorkerGlobalScope", $dedicatedWorkerGlobalScopeConstructorsCode, $dedicatedWorkerGlobalScopeConstructorsFile);
 GeneratePartialInterface("ServiceWorkerGlobalScope", $serviceWorkerGlobalScopeConstructorsCode, $serviceWorkerGlobalScopeConstructorsFile);
+GeneratePartialInterface("WorkletGlobalScope", $workletGlobalScopeConstructorsCode, $workletGlobalScopeConstructorsFile);
+GeneratePartialInterface("PaintWorkletGlobalScope", $paintWorkletGlobalScopeConstructorsCode, $paintWorkletGlobalScopeConstructorsFile);
 
 # Resolves partial interfaces and implements dependencies.
 foreach my $idlFile (sort keys %supplementalDependencies) {
