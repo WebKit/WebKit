@@ -281,6 +281,7 @@
 		5C7964101EB0278D0075D74C /* EventModifiers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C79640F1EB0269B0075D74C /* EventModifiers.cpp */; };
 		5C7C74CB1FB529BA002F9ABE /* WebViewScheduleInRunLoop.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C7C74CA1FB528D4002F9ABE /* WebViewScheduleInRunLoop.mm */; };
 		5C838F7F1DB04F900082858F /* LoadInvalidURLRequest.mm in Sources */ = {isa = PBXBuildFile; fileRef = 57901FAE1CAF137100ED64F9 /* LoadInvalidURLRequest.mm */; };
+		5C8BC799218CF44700813886 /* NetworkProcess.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C8BC798218CF3E900813886 /* NetworkProcess.mm */; };
 		5C973F5C1F58EF8B00359C27 /* WebGLPolicy.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C973F5B1F58EF0A00359C27 /* WebGLPolicy.mm */; };
 		5C9E56851DF9145400C9EE33 /* WebsitePolicies.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C9E56841DF9143D00C9EE33 /* WebsitePolicies.mm */; };
 		5C9E56871DF914AE00C9EE33 /* contentBlockerCheck.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5C9E56861DF9148E00C9EE33 /* contentBlockerCheck.html */; };
@@ -1588,6 +1589,7 @@
 		5C726D6E1D3EE06800C5E1A1 /* InstanceMethodSwizzler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InstanceMethodSwizzler.mm; path = cocoa/InstanceMethodSwizzler.mm; sourceTree = "<group>"; };
 		5C79640F1EB0269B0075D74C /* EventModifiers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventModifiers.cpp; sourceTree = "<group>"; };
 		5C7C74CA1FB528D4002F9ABE /* WebViewScheduleInRunLoop.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebViewScheduleInRunLoop.mm; sourceTree = "<group>"; };
+		5C8BC798218CF3E900813886 /* NetworkProcess.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkProcess.mm; sourceTree = "<group>"; };
 		5C973F5B1F58EF0A00359C27 /* WebGLPolicy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebGLPolicy.mm; sourceTree = "<group>"; };
 		5C9E56841DF9143D00C9EE33 /* WebsitePolicies.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebsitePolicies.mm; sourceTree = "<group>"; };
 		5C9E56861DF9148E00C9EE33 /* contentBlockerCheck.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = contentBlockerCheck.html; sourceTree = "<group>"; };
@@ -2393,6 +2395,7 @@
 				5165FE03201EE617009F7EC3 /* MessagePortProviders.mm */,
 				51CD1C6A1B38CE3600142CA5 /* ModalAlerts.mm */,
 				1ABC3DED1899BE6D004F0626 /* Navigation.mm */,
+				5C8BC798218CF3E900813886 /* NetworkProcess.mm */,
 				5CAE4637201937CD0051610F /* NetworkProcessCrashNonPersistentDataStore.mm */,
 				CD2D0D19213465560018C784 /* NowPlaying.mm */,
 				2ECFF5541D9B12F800B55394 /* NowPlayingControlsTests.mm */,
@@ -3927,6 +3930,7 @@
 				7CCE7F011A411AE600447C4C /* MouseMoveAfterCrash.cpp in Sources */,
 				7CCE7F241A411AF600447C4C /* Navigation.mm in Sources */,
 				5C0BF8951DD599CD00B00328 /* NavigatorLanguage.mm in Sources */,
+				5C8BC799218CF44700813886 /* NetworkProcess.mm in Sources */,
 				5CAE463820193B6A0051610F /* NetworkProcessCrashNonPersistentDataStore.mm in Sources */,
 				9B19CDA01F06DFE3000548DD /* NetworkProcessCrashWithPendingConnection.mm in Sources */,
 				7CCE7F021A411AE600447C4C /* NewFirstVisuallyNonEmptyLayout.cpp in Sources */,

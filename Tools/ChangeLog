@@ -1,3 +1,15 @@
+2018-11-02  Alex Christensen  <achristensen@webkit.org>
+
+        Mac production builds should sign the network process xpc service with entitlements
+        https://bugs.webkit.org/show_bug.cgi?id=191209
+        <rdar://problem/45377609>
+
+        Reviewed by Geoff Garen.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/NetworkProcess.mm: Added.
+        (TEST):
+
 2018-11-02  Lucas Forschler  <lforschler@apple.com>
 
         Add Windows 10 archive bots

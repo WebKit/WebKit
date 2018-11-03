@@ -1,3 +1,22 @@
+2018-11-02  Alex Christensen  <achristensen@webkit.org>
+
+        Mac production builds should sign the network process xpc service with entitlements
+        https://bugs.webkit.org/show_bug.cgi?id=191209
+        <rdar://problem/45377609>
+
+        Reviewed by Geoff Garen.
+
+        * Configurations/NetworkService.xcconfig:
+        Set CODE_SIGN_ENTITLEMENTS_COCOA_TOUCH_NO like we do for the web process,
+        except with the corresponoding network process entitlements file.
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _networkProcessHasEntitlementForTesting:]):
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::networkProcessHasEntitlementForTesting):
+        * UIProcess/WebProcessPool.h:
+        Add infrastructure to test that the network process actually has an entitlement.
+
 2018-11-02  Daniel Bates  <dabates@apple.com>
 
         [iOS] WebKit should dispatch DOM events when a modifier key is pressed
