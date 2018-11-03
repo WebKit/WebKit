@@ -1,3 +1,16 @@
+2018-11-02  Alex Christensen  <achristensen@webkit.org>
+
+        Unreviewed, rolling out r237761.
+
+        Makes most API tests timeout and WK2 tests crash
+
+        Reverted changeset:
+
+        "Mac production builds should sign the network process xpc
+        service with entitlements"
+        https://bugs.webkit.org/show_bug.cgi?id=191209
+        https://trac.webkit.org/changeset/237761
+
 2018-11-02  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed API test gardening

@@ -32,7 +32,6 @@ WK_XPC_SERVICE_IOS_ENTITLEMENTS_BASE_appletvos = Network-iOS;
 WK_XPC_SERVICE_IOS_ENTITLEMENTS_BASE_appletvsimulator = Network-iOS;
 WK_XPC_SERVICE_IOS_ENTITLEMENTS_BASE_iosmac = Network-iOS-minimalsimulator;
 
-CODE_SIGN_ENTITLEMENTS_COCOA_TOUCH_NO = Configurations/Network-OSX-sandbox.entitlements;
 OTHER_CODE_SIGN_FLAGS = $(WK_LIBRARY_VALIDATION_CODE_SIGN_FLAGS);
 
 PRODUCT_NAME = com.apple.WebKit.Networking;

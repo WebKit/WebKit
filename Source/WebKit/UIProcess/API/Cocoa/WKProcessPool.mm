@@ -584,11 +584,6 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
     return [array autorelease];
 }
 
-- (BOOL)_networkProcessHasEntitlementForTesting:(NSString *)entitlement
-{
-    return _processPool->networkProcessHasEntitlementForTesting(entitlement);
-}
-
 @end
 
 #endif // WK_API_ENABLED

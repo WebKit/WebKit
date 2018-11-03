@@ -53,7 +53,6 @@
 #import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 #import <sys/param.h>
 #import <wtf/ProcessPrivilege.h>
-#import <wtf/cocoa/Entitlements.h>
 #import <wtf/spi/darwin/dyldSPI.h>
 
 #if PLATFORM(MAC)
@@ -384,11 +383,6 @@ bool WebProcessPool::omitPDFSupport()
 bool WebProcessPool::processSuppressionEnabled() const
 {
     return !m_userObservablePageCounter.value() && !m_processSuppressionDisabledForPageCounter.value();
-}
-
-bool WebProcessPool::networkProcessHasEntitlementForTesting(const String& entitlement)
-{
-    return WTF::hasEntitlement(ensureNetworkProcess().connection()->xpcConnection(), entitlement.utf8().data());
 }
 
 void WebProcessPool::registerNotificationObservers()

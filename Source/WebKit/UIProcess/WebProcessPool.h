@@ -216,7 +216,6 @@ public:
 
     ProcessID networkProcessIdentifier();
     Vector<String> activePagesOriginsInWebProcessForTesting(ProcessID);
-    bool networkProcessHasEntitlementForTesting(const String&);
 
     WebPageGroup& defaultPageGroup() { return m_defaultPageGroup.get(); }
 
