@@ -1052,13 +1052,13 @@
         }
     },
     "imported/w3c/webdriver/tests/is_element_selected/user_prompts.py": {
-        "expected": {"all": {"status": ["SKIP"], "bug": "webkit.org/b/188118"}},
+        "expected": {"all": {"status": ["SKIP"], "bug": "webkit.org/b/188118"}}
     },
     "imported/w3c/webdriver/tests/element_send_keys/user_prompts.py": {
-        "expected": {"all": {"status": ["SKIP"], "bug": "webkit.org/b/188118"}},
+        "expected": {"all": {"status": ["SKIP"], "bug": "webkit.org/b/188118"}}
     },
     "imported/w3c/webdriver/tests/fullscreen_window/user_prompts.py": {
-        "expected": {"all": {"status": ["SKIP"], "bug": "webkit.org/b/188118"}},
+        "expected": {"all": {"status": ["SKIP"], "bug": "webkit.org/b/188118"}}
     },
     "imported/w3c/webdriver/tests/fullscreen_window/user_prompts.py": {
         "subtests": {

@@ -1,3 +1,9 @@
+2018-11-03  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, fix WebDriver expectations syntax after previous commit
+
+        * TestExpectations.json:
+
 2018-11-02  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed WebDriver expectations gardening
