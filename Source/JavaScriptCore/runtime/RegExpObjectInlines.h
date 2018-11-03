@@ -85,6 +85,7 @@ inline JSValue RegExpObject::execInline(ExecState* exec, JSGlobalObject* globalO
     JSArray* array =
         createRegExpMatchesArray(vm, globalObject, string, input, regExp, lastIndex, result);
     if (!array) {
+        RETURN_IF_EXCEPTION(scope, { });
         scope.release();
         if (globalOrSticky)
             setLastIndex(exec, 0);

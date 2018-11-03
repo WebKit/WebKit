@@ -1,3 +1,9 @@
+2018-11-02  Michael Saboff  <msaboff@apple.com>
+
+        Rolling in r237753 with unreviewed build fix.
+
+        Fixed issues with DECLARE_THROW_SCOPE placement.
+
 2018-11-02  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r237753.
