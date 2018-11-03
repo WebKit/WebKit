@@ -1,3 +1,10 @@
+2018-11-02  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, attempt to fix the build with recent SDKs.
+
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.mm:
+        (WebKit::XPCServiceExit):
+
 2018-11-02  Alex Christensen  <achristensen@webkit.org>
 
         Mac production builds should sign the network process xpc service with entitlements
