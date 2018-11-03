@@ -69,3 +69,4 @@ fast/inline/simple-intruding-floats2.html
 fast/inline/simple-intruding-floats3.html
 fast/inline/simple-inline-block.html
 fast/inline/simple-shrink-to-fit-inline-block.html
+fast/block/basic/height-percentage-simple.html

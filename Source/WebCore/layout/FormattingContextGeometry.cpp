@@ -35,9 +35,57 @@
 namespace WebCore {
 namespace Layout {
 
+static inline bool isHeightAuto(const Box& layoutBox)
+{
+    // 10.5 Content height: the 'height' property
+    //
+    // The percentage is calculated with respect to the height of the generated box's containing block.
+    // If the height of the containing block is not specified explicitly (i.e., it depends on content height),
+    // and this element is not absolutely positioned, the used height is calculated as if 'auto' was specified.
+
+    auto height = layoutBox.style().logicalHeight();
+    if (height.isAuto())
+        return true;
+
+    if (height.isPercent()) {
+        if (layoutBox.isOutOfFlowPositioned())
+            return false;
+
+        return !layoutBox.containingBlock()->style().logicalHeight().isFixed();
+    }
+
+    return false;
+}
+
+enum class HeightType { Min, Max, Normal };
+static inline std::optional<LayoutUnit> computedHeightValue(const LayoutState& layoutState, const Box& layoutBox, HeightType heightType)
+{
+    auto& style = layoutBox.style();
+    auto height = heightType == HeightType::Normal ? style.logicalHeight() : heightType == HeightType::Min ? style.logicalMinHeight() : style.logicalMaxHeight();
+    if (height.isUndefined() || height.isAuto())
+        return { };
+
+    if (height.isFixed())
+        return { height.value() };
+
+    std::optional<LayoutUnit> containingBlockHeightValue;
+    auto containingBlockHeight = layoutBox.containingBlock()->style().logicalHeight();
+    if (containingBlockHeight.isFixed())
+        containingBlockHeightValue = { containingBlockHeight.value() };
+    else if (layoutBox.isOutOfFlowPositioned()) {
+        // Containing block's height is already computed.
+        containingBlockHeightValue = layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).height();
+    }
+
+    if (!containingBlockHeightValue)
+        return { };
+
+    return valueForLength(height, *containingBlockHeightValue);
+}
+
 static LayoutUnit contentHeightForFormattingContextRoot(const LayoutState& layoutState, const Box& layoutBox)
 {
-    ASSERT(layoutBox.style().logicalHeight().isAuto() && (layoutBox.establishesFormattingContext() || layoutBox.isDocumentBox()));
+    ASSERT(isHeightAuto(layoutBox) && (layoutBox.establishesFormattingContext() || layoutBox.isDocumentBox()));
 
     // 10.6.7 'Auto' heights for block formatting context roots
 
@@ -108,48 +156,13 @@ std::optional<LayoutUnit> FormattingContext::Geometry::fixedValue(const Length& 
 // the percentage value is treated as '0' (for 'min-height') or 'none' (for 'max-height').
 std::optional<LayoutUnit> FormattingContext::Geometry::computedMaxHeight(const LayoutState& layoutState, const Box& layoutBox)
 {
-    auto maxHeight = layoutBox.style().logicalMaxHeight();
-    if (maxHeight.isUndefined() || maxHeight.isAuto())
-        return { };
-
-    if (maxHeight.isFixed())
-        return { maxHeight.value() };
-
-    std::optional<LayoutUnit> containingBlockHeightValue;
-    auto height = layoutBox.containingBlock()->style().logicalHeight();
-    if (height.isFixed())
-        containingBlockHeightValue = { height.value() };
-    else if (layoutBox.isOutOfFlowPositioned()) {
-        // Containing block's height is already computed.
-        containingBlockHeightValue = layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).height();
-    }
-
-    if (containingBlockHeightValue)
-        return valueForLength(maxHeight, *containingBlockHeightValue);
-
-    return { };
+    return computedHeightValue(layoutState, layoutBox, HeightType::Max);
 }
 
 std::optional<LayoutUnit> FormattingContext::Geometry::computedMinHeight(const LayoutState& layoutState, const Box& layoutBox)
 {
-    auto minHeight = layoutBox.style().logicalMinHeight();
-    if (minHeight.isUndefined() || minHeight.isAuto())
-        return { };
-
-    if (minHeight.isFixed())
-        return { minHeight.value() };
-
-    std::optional<LayoutUnit> containingBlockHeightValue;
-    auto height = layoutBox.containingBlock()->style().logicalHeight();
-    if (height.isFixed())
-        containingBlockHeightValue = { height.value() };
-    else if (layoutBox.isOutOfFlowPositioned()) {
-        // Containing block's height is already computed.
-        containingBlockHeightValue = layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).height();
-    }
-
-    if (containingBlockHeightValue)
-        return valueForLength(minHeight, *containingBlockHeightValue);
+    if (auto minHeightValue = computedHeightValue(layoutState, layoutBox, HeightType::Min))
+        return minHeightValue;
 
     return { 0 };
 }
@@ -262,7 +275,7 @@ VerticalGeometry FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeomet
 
     auto top = computedValueIfNotAuto(style.logicalTop(), containingBlockWidth);
     auto bottom = computedValueIfNotAuto(style.logicalBottom(), containingBlockWidth);
-    auto height = computedValueIfNotAuto(usedHeight ? Length { usedHeight.value(), Fixed } : style.logicalHeight(), containingBlockHeight);
+    auto height = usedHeight ? usedHeight.value() : computedHeightValue(layoutState, layoutBox, HeightType::Normal);
     auto marginTop = computedValueIfNotAuto(style.marginTop(), containingBlockWidth);
     auto marginBottom = computedValueIfNotAuto(style.marginBottom(), containingBlockWidth);
     auto paddingTop = displayBox.paddingTop().value_or(0);
@@ -675,7 +688,7 @@ HeightAndMargin FormattingContext::Geometry::complicatedCases(const LayoutState&
     auto& containingBlockDisplayBox = layoutState.displayBoxForLayoutBox(containingBlock);
     auto containingBlockWidth = containingBlockDisplayBox.contentBoxWidth();
 
-    auto height = fixedValue(usedHeight ? Length { usedHeight.value(), Fixed } : style.logicalHeight());
+    auto height = usedHeight ? usedHeight.value() : computedHeightValue(layoutState, layoutBox, HeightType::Normal);
     auto marginTop = computedValueIfNotAuto(style.marginTop(), containingBlockWidth);
     auto marginBottom = computedValueIfNotAuto(style.marginBottom(), containingBlockWidth);
 
@@ -684,10 +697,8 @@ HeightAndMargin FormattingContext::Geometry::complicatedCases(const LayoutState&
     marginBottom = marginBottom.value_or(0);
     // #2
     if (!height) {
-        if (style.logicalHeight().isAuto())
-            height = contentHeightForFormattingContextRoot(layoutState, layoutBox);
-        else
-            ASSERT_NOT_IMPLEMENTED_YET();
+        ASSERT(isHeightAuto(layoutBox));
+        height = contentHeightForFormattingContextRoot(layoutState, layoutBox);
     }
 
     ASSERT(height);
@@ -801,12 +812,9 @@ HeightAndMargin FormattingContext::Geometry::inlineReplacedHeightAndMargin(const
     auto& style = layoutBox.style();
     auto replaced = layoutBox.replaced();
 
-    auto height = fixedValue(usedHeight ? Length { usedHeight.value(), Fixed } : style.logicalHeight());
-    auto heightIsAuto = !usedHeight && style.logicalHeight().isAuto();
+    auto height = usedHeight ? usedHeight.value() : computedHeightValue(layoutState, layoutBox, HeightType::Normal);
+    auto heightIsAuto = !usedHeight && isHeightAuto(layoutBox);
     auto widthIsAuto = style.logicalWidth().isAuto();
-
-    if (!height && !heightIsAuto)
-        ASSERT_NOT_IMPLEMENTED_YET();
 
     if (heightIsAuto && widthIsAuto && replaced->hasIntrinsicHeight()) {
         // #2
@@ -880,10 +888,8 @@ WidthAndMargin FormattingContext::Geometry::inlineReplacedWidthAndMargin(const L
     auto nonComputedMarginRight = computedValueIfNotAuto(style.marginRight(), containingBlockWidth).value_or(0);
     auto width = computedValueIfNotAuto(usedWidth ? Length { usedWidth.value(), Fixed } : style.logicalWidth(), containingBlockWidth);
 
-    auto heightIsAuto = style.logicalHeight().isAuto();
-    auto height = fixedValue(style.logicalHeight());
-    if (!height && !heightIsAuto)
-        ASSERT_NOT_IMPLEMENTED_YET();
+    auto heightIsAuto = isHeightAuto(layoutBox);
+    auto height = computedHeightValue(layoutState, layoutBox, HeightType::Normal);
 
     if (!width && heightIsAuto && replaced->hasIntrinsicWidth()) {
         // #1

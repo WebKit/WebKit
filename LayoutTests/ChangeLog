@@ -1,3 +1,14 @@
+2018-11-02  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC] Resolve percentage height values.
+        https://bugs.webkit.org/show_bug.cgi?id=191224
+
+        Reviewed by Antti Koivisto.
+
+        * fast/block/basic/height-percentage-simple-expected.txt: Added.
+        * fast/block/basic/height-percentage-simple.html: Added.
+        * platform/ios/TestExpectations:
+
 2018-11-03  Youenn Fablet  <youenn@apple.com>
 
         Refresh WPT webrtc tests

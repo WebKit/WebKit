@@ -1,3 +1,30 @@
+2018-11-02  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC] Resolve percentage height values.
+        https://bugs.webkit.org/show_bug.cgi?id=191224
+
+        Reviewed by Antti Koivisto.
+
+        10.5 Content height: the 'height' property
+        The percentage is calculated with respect to the height of the generated box's containing block.
+        If the height of the containing block is not specified explicitly (i.e., it depends on content height),
+        and this element is not absolutely positioned, the used height is calculated as if 'auto' was specified.
+
+        https://www.w3.org/TR/CSS22/visudet.html#propdef-height
+
+        Test: fast/block/basic/height-percentage-simple.html
+
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::isHeightAuto):
+        (WebCore::Layout::computedHeightValue):
+        (WebCore::Layout::contentHeightForFormattingContextRoot):
+        (WebCore::Layout::FormattingContext::Geometry::computedMaxHeight):
+        (WebCore::Layout::FormattingContext::Geometry::computedMinHeight):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::complicatedCases):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedHeightAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedWidthAndMargin):
+
 2018-11-03  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] enumerateDevices should not expose devices that are not available to getUserMedia
