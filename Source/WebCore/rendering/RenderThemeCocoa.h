@@ -36,15 +36,12 @@ namespace WebCore {
 
 class RenderThemeCocoa : public RenderTheme {
 private:
-    void drawLineForDocumentMarker(const RenderText&, GraphicsContext&, const FloatPoint& origin, float width, DocumentMarkerLineStyle) final;
-
 #if ENABLE(APPLE_PAY)
     void adjustApplePayButtonStyle(StyleResolver&, RenderStyle&, const Element*) const override;
     bool paintApplePayButton(const RenderObject&, const PaintInfo&, const IntRect&) override;
 #endif
-protected:
-    virtual CGColorRef colorForMarkerLineStyle(DocumentMarkerLineStyle, bool useDarkMode) = 0;
 
+protected:
 #if ENABLE(VIDEO)
     String mediaControlsFormattedStringForDuration(double) override;
 #endif

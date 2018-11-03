@@ -37,7 +37,7 @@
 #endif
 #import <wtf/MathExtras.h>
 
-#if ENABLE(LETTERPRESS)
+#if PLATFORM(IOS_FAMILY)
 #import <pal/spi/ios/CoreUISPI.h>
 #import <wtf/SoftLinking.h>
 
@@ -47,6 +47,7 @@ SOFT_LINK_CLASS(CoreUI, CUIStyleEffectConfiguration)
 
 SOFT_LINK_FRAMEWORK(UIKit)
 SOFT_LINK(UIKit, _UIKitGetTextEffectsCatalog, CUICatalog *, (void), ())
+SOFT_LINK_CLASS(UIKit, UIColor)
 #endif
 
 #ifdef __LP64__

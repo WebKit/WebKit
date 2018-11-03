@@ -337,18 +337,18 @@ void GraphicsContext::drawLinesForText(const FloatPoint& point, const DashArray&
     Cairo::drawLinesForText(*platformContext(), point, widths, printing, doubleUnderlines, m_state.strokeColor, m_state.strokeThickness);
 }
 
-void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& origin, float width, DocumentMarkerLineStyle style)
+void GraphicsContext::drawDotsForDocumentMarker(const FloatRect& rect, DocumentMarkerLineStyle style)
 {
     if (paintingDisabled())
         return;
 
     if (m_impl) {
-        m_impl->drawLineForDocumentMarker(origin, width, style);
+        m_impl->drawDotsForDocumentMarker(rect, style);
         return;
     }
 
     ASSERT(hasPlatformContext());
-    Cairo::drawLineForDocumentMarker(*platformContext(), origin, width, style);
+    Cairo::drawDotsForDocumentMarker(*platformContext(), rect, style);
 }
 
 FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect, RoundingMode roundingMode)

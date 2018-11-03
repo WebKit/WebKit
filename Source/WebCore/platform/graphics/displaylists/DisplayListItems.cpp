@@ -99,8 +99,8 @@ size_t Item::sizeInBytes(const Item& item)
         return sizeof(downcast<DrawLine>(item));
     case ItemType::DrawLinesForText:
         return sizeof(downcast<DrawLinesForText>(item));
-    case ItemType::DrawLineForDocumentMarker:
-        return sizeof(downcast<DrawLineForDocumentMarker>(item));
+    case ItemType::DrawDotsForDocumentMarker:
+        return sizeof(downcast<DrawDotsForDocumentMarker>(item));
     case ItemType::DrawEllipse:
         return sizeof(downcast<DrawEllipse>(item));
     case ItemType::DrawPath:
@@ -621,25 +621,20 @@ static TextStream& operator<<(TextStream& ts, const DrawLinesForText& item)
     return ts;
 }
 
-void DrawLineForDocumentMarker::apply(GraphicsContext& context) const
+void DrawDotsForDocumentMarker::apply(GraphicsContext& context) const
 {
-    context.drawLineForDocumentMarker(m_point, m_width, m_style);
+    context.drawDotsForDocumentMarker(m_rect, m_style);
 }
 
-std::optional<FloatRect> DrawLineForDocumentMarker::localBounds(const GraphicsContext&) const
+std::optional<FloatRect> DrawDotsForDocumentMarker::localBounds(const GraphicsContext&) const
 {
-    // This function needs to return a value equal to or enclosing what GraphicsContext::drawLineForDocumentMarker() returns.
-
-    FloatRect result(m_point, FloatSize(m_width, cMisspellingLineThickness));
-    result.inflate(cMisspellingLineThickness); // Account for "misspelling dot" snapping.
-    return result;
+    return m_rect;
 }
 
-static TextStream& operator<<(TextStream& ts, const DrawLineForDocumentMarker& item)
+static TextStream& operator<<(TextStream& ts, const DrawDotsForDocumentMarker& item)
 {
     ts << static_cast<const DrawingItem&>(item);
-    ts.dumpProperty("point", item.point());
-    ts.dumpProperty("width", item.width());
+    ts.dumpProperty("rect", item.rect());
     return ts;
 }
 
@@ -965,7 +960,7 @@ static TextStream& operator<<(TextStream& ts, const ItemType& type)
     case ItemType::DrawRect: ts << "draw-rect"; break;
     case ItemType::DrawLine: ts << "draw-line"; break;
     case ItemType::DrawLinesForText: ts << "draw-lines-for-text"; break;
-    case ItemType::DrawLineForDocumentMarker: ts << "draw-lines-for-document-marker"; break;
+    case ItemType::DrawDotsForDocumentMarker: ts << "draw-dots-for-document-marker"; break;
     case ItemType::DrawEllipse: ts << "draw-ellipse"; break;
     case ItemType::DrawPath: ts << "draw-path"; break;
     case ItemType::DrawFocusRingPath: ts << "draw-focus-ring-path"; break;
@@ -1072,8 +1067,8 @@ TextStream& operator<<(TextStream& ts, const Item& item)
     case ItemType::DrawLinesForText:
         ts << downcast<DrawLinesForText>(item);
         break;
-    case ItemType::DrawLineForDocumentMarker:
-        ts << downcast<DrawLineForDocumentMarker>(item);
+    case ItemType::DrawDotsForDocumentMarker:
+        ts << downcast<DrawDotsForDocumentMarker>(item);
         break;
     case ItemType::DrawEllipse:
         ts << downcast<DrawEllipse>(item);

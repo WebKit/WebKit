@@ -1417,20 +1417,6 @@ String RenderThemeIOS::mediaControlsBase64StringForIconNameAndType(const String&
 
 #endif // ENABLE(VIDEO)
 
-CGColorRef RenderThemeIOS::colorForMarkerLineStyle(DocumentMarkerLineStyle style, bool)
-{
-    switch (style) {
-    case DocumentMarkerLineStyle::Spelling:
-        return [getUIColorClass() systemRedColor].CGColor;
-    case DocumentMarkerLineStyle::DictationAlternatives:
-    case DocumentMarkerLineStyle::TextCheckingDictationPhraseWithAlternatives:
-    case DocumentMarkerLineStyle::AutocorrectionReplacement:
-        return [getUIColorClass() systemBlueColor].CGColor;
-    case DocumentMarkerLineStyle::Grammar:
-        return [getUIColorClass() systemGreenColor].CGColor;
-    }
-}
-
 Color RenderThemeIOS::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::Options> options) const
 {
     const bool forVisitedLink = options.contains(StyleColor::Options::ForVisitedLink);

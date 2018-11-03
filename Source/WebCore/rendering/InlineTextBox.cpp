@@ -698,24 +698,25 @@ void InlineTextBox::paintPlatformDocumentMarker(GraphicsContext& context, const 
         width = markerRect.width();
     }
 
-    auto lineStyleForMarkedTextType = [] (MarkedText::Type type) {
+    auto lineStyleForMarkedTextType = [&] (MarkedText::Type type) -> DocumentMarkerLineStyle {
+        bool shouldUseDarkAppearance = renderer().document().useDarkAppearance();
         switch (type) {
         case MarkedText::SpellingError:
-            return DocumentMarkerLineStyle::Spelling;
+            return { DocumentMarkerLineStyle::Mode::Spelling, shouldUseDarkAppearance };
         case MarkedText::GrammarError:
-            return DocumentMarkerLineStyle::Grammar;
+            return { DocumentMarkerLineStyle::Mode::Grammar, shouldUseDarkAppearance };
         case MarkedText::Correction:
-            return DocumentMarkerLineStyle::AutocorrectionReplacement;
+            return { DocumentMarkerLineStyle::Mode::AutocorrectionReplacement, shouldUseDarkAppearance };
         case MarkedText::DictationAlternatives:
-            return DocumentMarkerLineStyle::DictationAlternatives;
+            return { DocumentMarkerLineStyle::Mode::DictationAlternatives, shouldUseDarkAppearance };
 #if PLATFORM(IOS_FAMILY)
         case MarkedText::DictationPhraseWithAlternatives:
             // FIXME: Rename DocumentMarkerLineStyle::TextCheckingDictationPhraseWithAlternatives and remove the PLATFORM(IOS_FAMILY)-guard.
-            return DocumentMarkerLineStyle::TextCheckingDictationPhraseWithAlternatives;
+            return { DocumentMarkerLineStyle::Mode::TextCheckingDictationPhraseWithAlternatives, shouldUseDarkAppearance };
 #endif
         default:
             ASSERT_NOT_REACHED();
-            return DocumentMarkerLineStyle::Spelling;
+            return { DocumentMarkerLineStyle::Mode::Spelling, shouldUseDarkAppearance };
         }
     };
 
@@ -725,7 +726,7 @@ void InlineTextBox::paintPlatformDocumentMarker(GraphicsContext& context, const 
     // or decrease the underline thickness.  The overlap is actually the most useful, and matches what AppKit does.
     // So, we generally place the underline at the bottom of the text, but in larger fonts that's not so good so
     // we pin to two pixels under the baseline.
-    int lineThickness = cMisspellingLineThickness;
+    int lineThickness = 3;
     int baseline = lineStyle().fontMetrics().ascent();
     int descent = logicalHeight() - baseline;
     int underlineOffset;
@@ -737,11 +738,7 @@ void InlineTextBox::paintPlatformDocumentMarker(GraphicsContext& context, const 
         underlineOffset = baseline + 2;
     }
 
-#if PLATFORM(COCOA)
-    RenderTheme::singleton().drawLineForDocumentMarker(renderer(), context, FloatPoint(boxOrigin.x() + start, boxOrigin.y() + underlineOffset), width, lineStyleForMarkedTextType(markedText.type));
-#else
-    context.drawLineForDocumentMarker(FloatPoint(boxOrigin.x() + start, boxOrigin.y() + underlineOffset), width, lineStyleForMarkedTextType(markedText.type));
-#endif
+    context.drawDotsForDocumentMarker(FloatRect(boxOrigin.x() + start, boxOrigin.y() + underlineOffset, width, lineThickness), lineStyleForMarkedTextType(markedText.type));
 }
 
 auto InlineTextBox::computeStyleForUnmarkedMarkedText(const PaintInfo& paintInfo) const -> MarkedTextStyle

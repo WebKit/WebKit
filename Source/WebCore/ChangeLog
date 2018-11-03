@@ -1,3 +1,84 @@
+2018-11-02  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Clean up drawLineForDocumentMarker()
+        https://bugs.webkit.org/show_bug.cgi?id=191215
+
+        Reviewed by Zalan Bujtas.
+
+        In preparation for https://bugs.webkit.org/show_bug.cgi?id=190764, I need to do a little bit of refactoring.
+        This patch has no behavior change; it just does the following:
+
+        1. Renames drawLineForDocumentMarker() to drawDotsForDocumentMarker(), because 2 of the 3 implementations draw dots
+        2. Moves our implementation back into GraphicsContext, because it's simpler and  GraphicsContext is already platform-
+               specific.
+        3. The signature used to accept a location and a width, but without a height, it's difficult to know what the bounding
+               box is. In particular, knowing the bounding box must be possible without a GraphicsContext. So, I've modified
+               the signature to accept a rectangle instead. The GraphicsContext draws only within this rectangle.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/GraphicsContextImpl.h:
+        * platform/graphics/cairo/CairoOperations.cpp:
+        (WebCore::Cairo::drawDotsForDocumentMarker):
+        (WebCore::Cairo::drawLineForDocumentMarker): Deleted.
+        * platform/graphics/cairo/CairoOperations.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawDotsForDocumentMarker):
+        (WebCore::GraphicsContext::drawLineForDocumentMarker): Deleted.
+        * platform/graphics/cairo/GraphicsContextImplCairo.cpp:
+        (WebCore::GraphicsContextImplCairo::drawDotsForDocumentMarker):
+        (WebCore::GraphicsContextImplCairo::drawLineForDocumentMarker): Deleted.
+        * platform/graphics/cairo/GraphicsContextImplCairo.h:
+        * platform/graphics/cocoa/FontCascadeCocoa.mm:
+        * platform/graphics/cocoa/GraphicsContextCocoa.mm:
+        (WebCore::colorForMarkerLineStyle):
+        (WebCore::GraphicsContext::drawDotsForDocumentMarker):
+        (WebCore::GraphicsContext::drawLineForDocumentMarker): Deleted.
+        * platform/graphics/displaylists/DisplayListItems.cpp:
+        (WebCore::DisplayList::Item::sizeInBytes):
+        (WebCore::DisplayList::DrawDotsForDocumentMarker::apply const):
+        (WebCore::DisplayList::DrawDotsForDocumentMarker::localBounds const):
+        (WebCore::DisplayList::operator<<):
+        (WebCore::DisplayList::DrawLineForDocumentMarker::apply const): Deleted.
+        (WebCore::DisplayList::DrawLineForDocumentMarker::localBounds const): Deleted.
+        * platform/graphics/displaylists/DisplayListItems.h:
+        (WebCore::DisplayList::DrawDotsForDocumentMarker::create):
+        (WebCore::DisplayList::DrawDotsForDocumentMarker::rect const):
+        (WebCore::DisplayList::DrawDotsForDocumentMarker::DrawDotsForDocumentMarker):
+        (WebCore::DisplayList::DrawLineForDocumentMarker::create): Deleted.
+        (WebCore::DisplayList::DrawLineForDocumentMarker::point const): Deleted.
+        (WebCore::DisplayList::DrawLineForDocumentMarker::width const): Deleted.
+        (WebCore::DisplayList::DrawLineForDocumentMarker::DrawLineForDocumentMarker): Deleted.
+        * platform/graphics/displaylists/DisplayListRecorder.cpp:
+        (WebCore::DisplayList::Recorder::drawDotsForDocumentMarker):
+        (WebCore::DisplayList::Recorder::drawLineForDocumentMarker): Deleted.
+        * platform/graphics/displaylists/DisplayListRecorder.h:
+        * platform/graphics/nicosia/cairo/NicosiaCairoOperationRecorder.cpp:
+        (Nicosia::CairoOperationRecorder::drawDotsForDocumentMarker):
+        (Nicosia::CairoOperationRecorder::drawLineForDocumentMarker): Deleted.
+        * platform/graphics/nicosia/cairo/NicosiaCairoOperationRecorder.h:
+        * platform/graphics/win/GraphicsContextCGWin.cpp:
+        (WebCore::GraphicsContext::drawDotsForDocumentMarker):
+        (WebCore::GraphicsContext::drawLineForDocumentMarker): Deleted.
+        * platform/graphics/win/GraphicsContextDirect2D.cpp:
+        (WebCore::GraphicsContext::drawDotsForDocumentMarker):
+        (WebCore::GraphicsContext::drawLineForDocumentMarker): Deleted.
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintPlatformDocumentMarker):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::drawLineForDocumentMarker): Deleted.
+        * rendering/RenderTheme.h:
+        * rendering/RenderThemeCocoa.h:
+        * rendering/RenderThemeCocoa.mm:
+        (WebCore::RenderThemeCocoa::drawLineForDocumentMarker): Deleted.
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::colorForMarkerLineStyle): Deleted.
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::colorForMarkerLineStyle): Deleted.
+
 2018-11-02  Ali Juma  <ajuma@chromium.org>
 
         requestAnimationFrame causes bad location of position:fixed inside overflow:auto and iframe

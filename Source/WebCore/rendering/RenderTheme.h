@@ -261,8 +261,6 @@ public:
     virtual void paintSystemPreviewBadge(Image&, const PaintInfo&, const FloatRect&);
 #endif
 
-    virtual void drawLineForDocumentMarker(const RenderText&, GraphicsContext&, const FloatPoint& origin, float width, DocumentMarkerLineStyle);
-
     virtual bool usingDarkAppearance(const RenderObject&) const { return false; }
 
 protected:

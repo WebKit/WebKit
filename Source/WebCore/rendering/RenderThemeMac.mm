@@ -2999,23 +2999,6 @@ bool RenderThemeMac::usingDarkAppearance(const RenderObject& o) const
     return o.document().useDarkAppearance();
 }
 
-CGColorRef RenderThemeMac::colorForMarkerLineStyle(DocumentMarkerLineStyle style, bool useDarkMode)
-{
-    switch (style) {
-    // Red
-    case DocumentMarkerLineStyle::Spelling:
-        return cachedCGColor(useDarkMode ? Color { 255, 140, 140, 217 } : Color { 255, 59, 48, 191 });
-    // Blue
-    case DocumentMarkerLineStyle::DictationAlternatives:
-    case DocumentMarkerLineStyle::TextCheckingDictationPhraseWithAlternatives:
-    case DocumentMarkerLineStyle::AutocorrectionReplacement:
-        return cachedCGColor(useDarkMode ? Color { 40, 145, 255, 217 } : Color { 0, 122, 255, 191 });
-    // Green
-    case DocumentMarkerLineStyle::Grammar:
-        return cachedCGColor(useDarkMode ? Color { 50, 215, 75, 217 } : Color { 25, 175, 50, 191 });
-    }
-}
-
 } // namespace WebCore
 
 #endif // PLATFORM(MAC)

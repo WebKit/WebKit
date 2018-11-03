@@ -303,9 +303,9 @@ void GraphicsContextImplCairo::drawLinesForText(const FloatPoint& point, const D
     Cairo::drawLinesForText(m_platformContext, point, widths, printing, doubleUnderlines, state.strokeColor, state.strokeThickness);
 }
 
-void GraphicsContextImplCairo::drawLineForDocumentMarker(const FloatPoint& origin, float width, DocumentMarkerLineStyle style)
+void GraphicsContextImplCairo::drawDotsForDocumentMarker(const FloatRect& rect, DocumentMarkerLineStyle style)
 {
-    Cairo::drawLineForDocumentMarker(m_platformContext, origin, width, style);
+    Cairo::drawDotsForDocumentMarker(m_platformContext, rect, style);
 }
 
 void GraphicsContextImplCairo::drawEllipse(const FloatRect& rect)

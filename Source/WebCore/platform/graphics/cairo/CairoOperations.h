@@ -145,7 +145,7 @@ WEBCORE_EXPORT void drawSurface(PlatformContextCairo&, cairo_surface_t*, const F
 void drawRect(PlatformContextCairo&, const FloatRect&, float, const Color&, StrokeStyle, const Color&);
 void drawLine(PlatformContextCairo&, const FloatPoint&, const FloatPoint&, StrokeStyle, const Color&, float, bool);
 void drawLinesForText(PlatformContextCairo&, const FloatPoint&, const DashArray&, bool, bool, const Color&, float);
-void drawLineForDocumentMarker(PlatformContextCairo&, const FloatPoint&, float, DocumentMarkerLineStyle);
+void drawDotsForDocumentMarker(PlatformContextCairo&, const FloatRect&, DocumentMarkerLineStyle);
 void drawEllipse(PlatformContextCairo&, const FloatRect&, const Color&, StrokeStyle, const Color&, float);
 
 void drawFocusRing(PlatformContextCairo&, const Path&, float, const Color&);

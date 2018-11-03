@@ -236,9 +236,9 @@ void Recorder::drawLinesForText(const FloatPoint& point, const DashArray& widths
     updateItemExtent(newItem);
 }
 
-void Recorder::drawLineForDocumentMarker(const FloatPoint& point, float width, DocumentMarkerLineStyle style)
+void Recorder::drawDotsForDocumentMarker(const FloatRect& rect, DocumentMarkerLineStyle style)
 {
-    DrawingItem& newItem = downcast<DrawingItem>(appendItem(DrawLineForDocumentMarker::create(point, width, style)));
+    DrawingItem& newItem = downcast<DrawingItem>(appendItem(DrawDotsForDocumentMarker::create(rect, style)));
     updateItemExtent(newItem);
 }
 

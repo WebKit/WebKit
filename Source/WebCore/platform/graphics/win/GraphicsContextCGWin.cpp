@@ -185,19 +185,19 @@ static const Color& grammarPatternColor() {
     return grammarColor;
 }
 
-void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& point, float width, DocumentMarkerLineStyle style)
+void GraphicsContext::drawDotsForDocumentMarker(const FloatRect& rect, DocumentMarkerLineStyle style)
 {
     if (paintingDisabled())
         return;
 
-    if (style != DocumentMarkerLineStyle::Spelling && style != DocumentMarkerLineStyle::Grammar)
+    if (style.mode != DocumentMarkerLineStyle::Mode::Spelling && style.mode != DocumentMarkerLineStyle::Mode::Grammar)
         return;
 
-    // These are the same for misspelling or bad grammar
-    const int patternHeight = 3; // 3 rows
-    ASSERT(cMisspellingLineThickness == patternHeight);
-    const int patternWidth = 4; // 4 pixels
-    ASSERT(patternWidth == cMisspellingLinePatternWidth);
+    auto point = rect.location();
+    auto width = rect.width();
+    auto lineThickness = rect.height();
+    auto patternGapWidth = lineThickness / 3;
+    auto patternWidth = lineThickness + patternGapWidth;
 
     // Make sure to draw only complete dots.
     // NOTE: Code here used to shift the underline to the left and increase the width
@@ -206,23 +206,23 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& point, float w
     // space between adjacent misspelled words was underlined.
     // allow slightly more considering that the pattern ends with a transparent pixel
     float widthMod = fmodf(width, patternWidth);
-    if (patternWidth - widthMod > cMisspellingLinePatternGapWidth)
+    if (patternWidth - widthMod > patternGapWidth)
         width -= widthMod;
-      
+
     // Draw the underline
     CGContextRef context = platformContext();
     CGContextSaveGState(context);
 
-    const Color& patternColor = style == DocumentMarkerLineStyle::Grammar ? grammarPatternColor() : spellingPatternColor();
+    const Color& patternColor = style.mode == DocumentMarkerLineStyle::Mode::Grammar ? grammarPatternColor() : spellingPatternColor();
     setCGStrokeColor(context, patternColor);
 
     wkSetPatternPhaseInUserSpace(context, point);
     CGContextSetBlendMode(context, kCGBlendModeNormal);
     
     // 3 rows, each offset by half a pixel for blending purposes
-    const CGPoint upperPoints [] = {{point.x(), point.y() + patternHeight - 2.5 }, {point.x() + width, point.y() + patternHeight - 2.5}};
-    const CGPoint middlePoints [] = {{point.x(), point.y() + patternHeight - 1.5 }, {point.x() + width, point.y() + patternHeight - 1.5}};
-    const CGPoint lowerPoints [] = {{point.x(), point.y() + patternHeight - 0.5 }, {point.x() + width, point.y() + patternHeight - 0.5 }};
+    const CGPoint upperPoints[] = {{ point.x(), point.y() + lineThickness - 2.5 }, {point.x() + width, point.y() + lineThickness - 2.5 }};
+    const CGPoint middlePoints[] = {{ point.x(), point.y() + lineThickness - 1.5 }, {point.x() + width, point.y() + lineThickness - 1.5 }};
+    const CGPoint lowerPoints[] = {{ point.x(), point.y() + lineThickness - 0.5 }, {point.x() + width, point.y() + lineThickness - 0.5 }};
     
     // Dash lengths for the top and bottom of the error underline are the same.
     // These are magic.

@@ -32,6 +32,7 @@
 #import "IntRect.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/mac/NSGraphicsSPI.h>
+#import <wtf/SoftLinking.h>
 #import <wtf/StdLibExtras.h>
 
 #if USE(APPKIT)
@@ -41,6 +42,7 @@
 #if PLATFORM(IOS_FAMILY)
 #import "Color.h"
 #import "WKGraphics.h"
+#import <pal/spi/ios/UIKitSPI.h>
 #endif
 
 #if PLATFORM(MAC)
@@ -181,10 +183,66 @@ static inline void setPatternPhaseInUserSpace(CGContextRef context, CGPoint phas
     CGContextSetPatternPhase(context, CGSizeMake(phase.x, phase.y));
 }
 
-// FIXME: We need to keep this function since it is referenced by DrawLineForDocumentMarker::apply().
-void GraphicsContext::drawLineForDocumentMarker(const FloatPoint&, float, DocumentMarkerLineStyle)
+static CGColorRef colorForMarkerLineStyle(DocumentMarkerLineStyle::Mode style, bool useDarkMode)
 {
-    // Cocoa platforms use RenderTheme::drawLineForDocumentMarker() to paint the platform document markers.
+#if PLATFORM(MAC)
+    switch (style) {
+    // Red
+    case DocumentMarkerLineStyle::Mode::Spelling:
+        return cachedCGColor(useDarkMode ? Color { 255, 140, 140, 217 } : Color { 255, 59, 48, 191 });
+    // Blue
+    case DocumentMarkerLineStyle::Mode::DictationAlternatives:
+    case DocumentMarkerLineStyle::Mode::TextCheckingDictationPhraseWithAlternatives:
+    case DocumentMarkerLineStyle::Mode::AutocorrectionReplacement:
+        return cachedCGColor(useDarkMode ? Color { 40, 145, 255, 217 } : Color { 0, 122, 255, 191 });
+    // Green
+    case DocumentMarkerLineStyle::Mode::Grammar:
+        return cachedCGColor(useDarkMode ? Color { 50, 215, 75, 217 } : Color { 25, 175, 50, 191 });
+    }
+#else
+    UNUSED_PARAM(useDarkMode);
+    switch (style) {
+    case DocumentMarkerLineStyle::Mode::Spelling:
+        return [getUIColorClass() systemRedColor].CGColor;
+    case DocumentMarkerLineStyle::Mode::DictationAlternatives:
+    case DocumentMarkerLineStyle::Mode::TextCheckingDictationPhraseWithAlternatives:
+    case DocumentMarkerLineStyle::Mode::AutocorrectionReplacement:
+        return [getUIColorClass() systemBlueColor].CGColor;
+    case DocumentMarkerLineStyle::Mode::Grammar:
+        return [getUIColorClass() systemGreenColor].CGColor;
+    }
+#endif
+}
+
+void GraphicsContext::drawDotsForDocumentMarker(const FloatRect& rect, DocumentMarkerLineStyle style)
+{
+    if (paintingDisabled())
+        return;
+
+    auto circleColor = colorForMarkerLineStyle(style.mode, style.shouldUseDarkAppearance);
+
+    auto lineThickness = rect.height();
+    auto patternGapWidth = lineThickness / 3;
+    auto patternWidth = lineThickness + patternGapWidth;
+
+    FloatPoint offsetPoint = rect.location();
+    auto width = rect.width();
+    float widthMod = fmodf(width, patternWidth);
+    if (patternWidth - widthMod > patternGapWidth) {
+        float gapIncludeWidth = 0;
+        if (width > patternWidth)
+            gapIncludeWidth = patternGapWidth;
+        offsetPoint.move(floor((widthMod + gapIncludeWidth) / 2), 0);
+        width -= widthMod;
+    }
+
+    CGContextRef platformContext = this->platformContext();
+    CGContextStateSaver stateSaver { platformContext };
+    CGContextSetFillColorWithColor(platformContext, circleColor);
+    for (int x = 0; x < width; x += patternWidth)
+        CGContextAddEllipseInRect(platformContext, CGRectMake(offsetPoint.x() + x, offsetPoint.y(), lineThickness, lineThickness));
+    CGContextSetCompositeOperation(platformContext, kCGCompositeSover);
+    CGContextFillPath(platformContext);
 }
 
 } // namespace WebCore

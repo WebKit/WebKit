@@ -77,7 +77,7 @@ enum class ItemType {
     DrawRect,
     DrawLine,
     DrawLinesForText,
-    DrawLineForDocumentMarker,
+    DrawDotsForDocumentMarker,
     DrawEllipse,
     DrawPath,
     DrawFocusRingPath,
@@ -828,21 +828,19 @@ private:
     bool m_doubleLines;
 };
 
-class DrawLineForDocumentMarker : public DrawingItem {
+class DrawDotsForDocumentMarker : public DrawingItem {
 public:
-    static Ref<DrawLineForDocumentMarker> create(const FloatPoint& point, float width, DocumentMarkerLineStyle style)
+    static Ref<DrawDotsForDocumentMarker> create(const FloatRect& rect, DocumentMarkerLineStyle style)
     {
-        return adoptRef(*new DrawLineForDocumentMarker(point, width, style));
+        return adoptRef(*new DrawDotsForDocumentMarker(rect, style));
     }
 
-    FloatPoint point() const { return m_point; }
-    float width() const { return m_width; }
+    FloatRect rect() const { return m_rect; }
 
 private:
-    DrawLineForDocumentMarker(const FloatPoint& point, float width, DocumentMarkerLineStyle style)
-        : DrawingItem(ItemType::DrawLineForDocumentMarker)
-        , m_point(point)
-        , m_width(width)
+    DrawDotsForDocumentMarker(const FloatRect& rect, DocumentMarkerLineStyle style)
+        : DrawingItem(ItemType::DrawDotsForDocumentMarker)
+        , m_rect(rect)
         , m_style(style)
     {
     }
@@ -851,8 +849,7 @@ private:
 
     std::optional<FloatRect> localBounds(const GraphicsContext&) const override;
 
-    FloatPoint m_point;
-    float m_width;
+    FloatRect m_rect;
     DocumentMarkerLineStyle m_style;
 };
 
@@ -1360,7 +1357,7 @@ SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(DrawPattern)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(DrawRect)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(DrawLine)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(DrawLinesForText)
-SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(DrawLineForDocumentMarker)
+SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(DrawDotsForDocumentMarker)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(DrawEllipse)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(DrawPath)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(DrawFocusRingPath)

@@ -51,33 +51,6 @@ SOFT_LINK_MAY_FAIL(PassKit, PKDrawApplePayButton, void, (CGContextRef context, C
 
 namespace WebCore {
 
-void RenderThemeCocoa::drawLineForDocumentMarker(const RenderText& renderer, GraphicsContext& context, const FloatPoint& origin, float width, DocumentMarkerLineStyle style)
-{
-    if (context.paintingDisabled())
-        return;
-
-    auto circleColor = colorForMarkerLineStyle(style, renderer.document().useDarkAppearance());
-
-    // Center the underline and ensure we only draw entire dots.
-    FloatPoint offsetPoint = origin;
-    float widthMod = fmodf(width, cMisspellingLinePatternWidth);
-    if (cMisspellingLinePatternWidth - widthMod > cMisspellingLinePatternGapWidth) {
-        float gapIncludeWidth = 0;
-        if (width > cMisspellingLinePatternWidth)
-            gapIncludeWidth = cMisspellingLinePatternGapWidth;
-        offsetPoint.move(floor((widthMod + gapIncludeWidth) / 2), 0);
-        width -= widthMod;
-    }
-
-    CGContextRef platformContext = context.platformContext();
-    CGContextStateSaver stateSaver { platformContext };
-    CGContextSetFillColorWithColor(platformContext, circleColor);
-    for (int x = 0; x < width; x += cMisspellingLinePatternWidth)
-        CGContextAddEllipseInRect(platformContext, CGRectMake(offsetPoint.x() + x, offsetPoint.y(), cMisspellingLineThickness, cMisspellingLineThickness));
-    CGContextSetCompositeOperation(platformContext, kCGCompositeSover);
-    CGContextFillPath(platformContext);
-}
-
 #if ENABLE(APPLE_PAY)
 
 static const auto applePayButtonMinimumWidth = 140;

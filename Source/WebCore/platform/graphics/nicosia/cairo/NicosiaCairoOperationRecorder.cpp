@@ -652,23 +652,23 @@ void CairoOperationRecorder::drawLinesForText(const FloatPoint& point, const Das
     append(createCommand<DrawLinesForText>(point, widths, printing, doubleUnderlines, state.strokeColor, state.strokeThickness));
 }
 
-void CairoOperationRecorder::drawLineForDocumentMarker(const FloatPoint& origin, float width, DocumentMarkerLineStyle style)
+void CairoOperationRecorder::drawDotsForDocumentMarker(const FloatRect& rect, DocumentMarkerLineStyle style)
 {
-    struct DrawLineForDocumentMarker final : PaintingOperation, OperationData<FloatPoint, float, DocumentMarkerLineStyle> {
-        virtual ~DrawLineForDocumentMarker() = default;
+    struct DrawDotsForDocumentMarker final : PaintingOperation, OperationData<FloatRect, DocumentMarkerLineStyle> {
+        virtual ~DrawDotsForDocumentMarker() = default;
 
         void execute(PaintingOperationReplay& replayer) override
         {
-            Cairo::drawLineForDocumentMarker(contextForReplay(replayer), arg<0>(), arg<1>(), arg<2>());
+            Cairo::drawDotsForDocumentMarker(contextForReplay(replayer), arg<0>(), arg<1>());
         }
 
         void dump(TextStream& ts) override
         {
-            ts << indent << "DrawLineForDocumentMarker<>\n";
+            ts << indent << "DrawDotsForDocumentMarker<>\n";
         }
     };
 
-    append(createCommand<DrawLineForDocumentMarker>(origin, width, style));
+    append(createCommand<DrawDotsForDocumentMarker>(rect, style));
 }
 
 void CairoOperationRecorder::drawEllipse(const FloatRect& rect)
