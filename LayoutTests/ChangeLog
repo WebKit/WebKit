@@ -1,3 +1,15 @@
+2018-11-02  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r237699): Layout Test http/tests/security/anchor-download-block-crossorigin.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=191199
+
+        Reviewed by Dewei Zhu.
+
+        Navigate the subframe instead of the main frame, to make sure that the console message is consistently logged.
+
+        * http/tests/security/anchor-download-block-crossorigin-expected.txt:
+        * http/tests/security/anchor-download-block-crossorigin.html:
+
 2018-11-02  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Layout Test fast/block/basic/inline-content-with-floating-image.html is failing

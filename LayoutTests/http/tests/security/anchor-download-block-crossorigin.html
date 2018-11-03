@@ -10,9 +10,10 @@
 <body>
 <p>
 Tests that the download attribute is ignored if 
-<a id="dl" href="http://localhost:8080/resources/pass-notify-done.html" download="FAIL.pdf">the link</a> is cross origin.
+<a id="dl" href="http://localhost:8080/resources/pass-notify-done.html" download="FAIL.pdf" target="targetFrame">the link</a> is cross origin.
 <p>
-It should navigate instead of downloading the file.
+<p>It should navigate the subframe instead of downloading the file.</p>
+<iframe name="targetFrame"></iframe>
 <script>
     function click(elmt)
     {
@@ -29,7 +30,7 @@ It should navigate instead of downloading the file.
         var link = document.getElementById("dl");
         click(link);
     }
-    runTest();
+    onload = runTest;
 </script>
 </body>
 </html>
