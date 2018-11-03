@@ -1,3 +1,11 @@
+2018-11-02  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed WebDriver expectations gardening
+
+        There are still a few more flaky tests, but this should improve things significantly.
+
+        * TestExpectations.json:
+
 2018-08-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] MiniBrowser: web view doesn't get the focus when new window is created
