@@ -5,10 +5,10 @@ PASS addTransceiver - Calling removeTrack on different connection that is closed
 PASS addTrack - Calling removeTrack on different connection that is closed should throw InvalidStateError 
 FAIL addTransceiver - Calling removeTrack on different connection should throw InvalidAccessError assert_throws: function "() => pc2.removeTrack(sender)" did not throw
 FAIL addTrack - Calling removeTrack on different connection should throw InvalidAccessError assert_throws: function "() => pc2.removeTrack(sender)" did not throw
-FAIL addTransceiver - Calling removeTrack with valid sender should set sender.track to null assert_equals: direction should not be altered expected "sendrecv" but got "recvonly"
+PASS addTransceiver - Calling removeTrack with valid sender should set sender.track to null 
 PASS addTrack - Calling removeTrack with valid sender should set sender.track to null 
-FAIL Calling removeTrack with currentDirection sendrecv should set direction to recvonly assert_equals: expected "sendrecv" but got "sendonly"
+PASS Calling removeTrack with currentDirection sendrecv should set direction to recvonly 
 PASS Calling removeTrack with currentDirection sendonly should set direction to inactive 
-FAIL Calling removeTrack with currentDirection recvonly should not change direction assert_equals: expected "recvonly" but got "inactive"
+PASS Calling removeTrack with currentDirection recvonly should not change direction 
 PASS Calling removeTrack with currentDirection inactive should not change direction 
 

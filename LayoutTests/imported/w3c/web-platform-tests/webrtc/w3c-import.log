@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -14,7 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/webrtc/OWNERS
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCCertificate.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCConfiguration-bundlePolicy.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCConfiguration-helper.js
@@ -32,19 +32,23 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCDataChannelEvent-constructor.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCDtlsTransport-getRemoteCertificates.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCIceCandidate-constructor.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCIceTransport-extension-helper.js
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCIceTransport-extension.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCIceTransport.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-add-track-no-deadlock.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-addIceCandidate.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-addTrack.https.html
-/LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-addTransceiver.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-addTransceiver.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-canTrickleIceCandidates.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-connectionState.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-constructor.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-createAnswer.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-createDataChannel.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-createOffer-offerToReceive.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-createOffer.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-generateCertificate.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-getDefaultIceServers.html
-/LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-getIdentityAssertion.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-getIdentityAssertion.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-getStats.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-getTransceivers.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-helper.js
@@ -54,6 +58,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-onnegotiationneeded.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-ontrack.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-peerIdentity.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-remote-track-mute.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-removeTrack.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setDescription-transceiver.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-answer.html
@@ -64,9 +69,16 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription-answer.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription-offer.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription-pranswer.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription-replaceTrack.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription-rollback.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription-tracks.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-track-stats.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-transceivers.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnectionIceEvent-constructor.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCQuicStream.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCQuicTransport-helper.js
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCQuicTransport.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCRtpCapabilities-helper.js
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCRtpParameters-codecs.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCRtpParameters-degradationPreference.html
@@ -82,19 +94,21 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getSynchronizationSources.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCRtpSender-getCapabilities.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCRtpSender-getStats.https.html
-/LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCRtpSender-replaceTrack.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCRtpSender-replaceTrack.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCRtpSender-setParameters.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCRtpTransceiver-setCodecPreferences.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCRtpTransceiver-setDirection.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCRtpTransceiver.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCSctpTransport-constructor.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCSctpTransport-maxMessageSize.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCStats-helper.js
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCTrackEvent-constructor.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/datachannel-emptystring.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/dictionary-helper.js
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/getstats.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/historical.html
-/LayoutTests/imported/w3c/web-platform-tests/webrtc/identity-helper.js
-/LayoutTests/imported/w3c/web-platform-tests/webrtc/interfaces.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/identity-helper.sub.js
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/idlharness.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/no-media-call.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/promises-call.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/simplecall.https.html

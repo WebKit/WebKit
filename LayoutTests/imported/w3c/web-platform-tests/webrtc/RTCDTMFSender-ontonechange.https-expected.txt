@@ -10,4 +10,6 @@ FAIL Calling insertDTMF() in the middle of tonechange events should cause future
 FAIL Calling insertDTMF() multiple times in the middle of tonechange events should cause future tonechanges to be updated the last provided tones assert_unreached: Unexpected promise rejection: ReferenceError: Can't find variable: RTCDTMFSender Reached unreachable code
 FAIL Calling insertDTMF('') in the middle of tonechange events should stop future tonechange events from firing assert_unreached: Unexpected promise rejection: ReferenceError: Can't find variable: RTCDTMFSender Reached unreachable code
 FAIL Setting transceiver.currentDirection to recvonly in the middle of tonechange events should stop future tonechange events from firing undefined is not an object (evaluating 'dtmfSender.addEventListener')
+FAIL Tone change event constructor works Can't find variable: RTCDTMFToneChangeEvent
+FAIL Tone change event with unexpected name should not crash Can't find variable: RTCDTMFToneChangeEvent
 

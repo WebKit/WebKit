@@ -13,8 +13,7 @@
   // The following helper functions are called from RTCPeerConnection-helper.js:
   //   generateOffer
   //   generateAnswer
-  //   assert_session_desc_equals
-  //   test_state_change_event
+  //   assert_session_desc_similar
 
   /*
     4.3.2.  Interface Definition
@@ -61,7 +60,10 @@
    */
   promise_test(t => {
     const pc = new RTCPeerConnection();
-    test_state_change_event(t, pc, ['have-remote-offer', 'stable']);
+    t.add_cleanup(() => pc.close());
+
+    const states = [];
+    pc.addEventListener('signalingstatechange', () => states.push(pc.signalingState));
 
     return pc.createOffer({ offerToReceiveVideo: true })
     .then(offer =>
@@ -71,14 +73,16 @@
         pc.setLocalDescription(answer)
         .then(() => {
           assert_equals(pc.signalingState, 'stable');
-          assert_session_desc_equals(pc.localDescription, answer);
-          assert_session_desc_equals(pc.remoteDescription, offer);
+          assert_session_desc_similar(pc.localDescription, answer);
+          assert_session_desc_similar(pc.remoteDescription, offer);
 
-          assert_session_desc_equals(pc.currentLocalDescription, answer);
-          assert_session_desc_equals(pc.currentRemoteDescription, offer);
+          assert_session_desc_similar(pc.currentLocalDescription, answer);
+          assert_session_desc_similar(pc.currentRemoteDescription, offer);
 
           assert_equals(pc.pendingLocalDescription, null);
           assert_equals(pc.pendingRemoteDescription, null);
+
+          assert_array_equals(states, ['have-remote-offer', 'stable']);
         })));
   }, 'setLocalDescription() with valid answer should succeed');
 
@@ -91,6 +95,8 @@
   promise_test(t => {
     const pc = new RTCPeerConnection();
 
+    t.add_cleanup(() => pc.close());
+
     return pc.createOffer({ offerToReceiveVideo: true })
     .then(offer =>
       pc.setRemoteDescription(offer)
@@ -99,11 +105,11 @@
         pc.setLocalDescription({ type: 'answer' })
         .then(() => {
           assert_equals(pc.signalingState, 'stable');
-          assert_session_desc_equals(pc.localDescription, answer);
-          assert_session_desc_equals(pc.remoteDescription, offer);
+          assert_session_desc_similar(pc.localDescription, answer);
+          assert_session_desc_similar(pc.remoteDescription, offer);
 
-          assert_session_desc_equals(pc.currentLocalDescription, answer);
-          assert_session_desc_equals(pc.currentRemoteDescription, offer);
+          assert_session_desc_similar(pc.currentLocalDescription, answer);
+          assert_session_desc_similar(pc.currentRemoteDescription, offer);
 
           assert_equals(pc.pendingLocalDescription, null);
           assert_equals(pc.pendingRemoteDescription, null);
@@ -119,6 +125,8 @@
    */
   promise_test(t => {
     const pc = new RTCPeerConnection();
+
+    t.add_cleanup(() => pc.close());
 
     return pc.createOffer({ offerToReceiveVideo: true })
     .then(offer =>
@@ -142,15 +150,18 @@
   promise_test(t => {
     const pc = new RTCPeerConnection();
 
+    t.add_cleanup(() => pc.close());
+
     return pc.createOffer()
     .then(offer =>
       promise_rejects(t, 'InvalidStateError',
         pc.setLocalDescription({ type: 'answer', sdp: offer.sdp })));
-
   }, 'Calling setLocalDescription(answer) from stable state should reject with InvalidStateError');
 
   promise_test(t => {
     const pc = new RTCPeerConnection();
+
+    t.add_cleanup(() => pc.close());
 
     return pc.createOffer()
     .then(offer =>

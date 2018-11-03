@@ -17,4 +17,6 @@ FAIL setConfiguration({ rtcpMuxPolicy: 'require' }) with initial rtcpMuxPolicy n
       pc.setConfiguration({ rtcpMuxPolicy: 'require' })" did not throw
 FAIL setConfiguration({}) with initial rtcpMuxPolicy negotiate should throw InvalidModificationError assert_throws: function "() =>
       pc.setConfiguration({})" did not throw
+FAIL setRemoteDescription throws InvalidAccessError when called with an offer without rtcp-mux and rtcpMuxPolicy is set to require assert_throws: function "function () { throw e }" threw object "OperationError: Failed to set remote offer sdp: The m= section:audio1 is invalid. RTCP-MUX is not enabled when it is required." that is not a DOMException InvalidAccessError: property "code" is equal to 0, expected 15
+FAIL setRemoteDescription throws InvalidAccessError when called with an answer without rtcp-mux and rtcpMuxPolicy is set to require assert_throws: function "function () { throw e }" threw object "OperationError: Failed to set remote answer sdp: The order of m-lines in answer doesn't match order in offer. Rejecting answer." that is not a DOMException InvalidAccessError: property "code" is equal to 0, expected 15
 

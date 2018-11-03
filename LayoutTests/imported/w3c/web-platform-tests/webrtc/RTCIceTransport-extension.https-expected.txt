@@ -1,0 +1,23 @@
+CONSOLE MESSAGE: line 178: TypeError: Type error
+
+Harness Error (FAIL), message = TypeError: Type error
+
+FAIL RTCIceTransport constructor does not throw function is not a constructor (evaluating 'new RTCIceTransport()')
+FAIL RTCIceTransport initial properties are set function is not a constructor (evaluating 'new RTCIceTransport()')
+FAIL gather() with { iceServers: null } should throw TypeError function is not a constructor (evaluating 'new RTCIceTransport()')
+FAIL gather() with { iceServers: undefined } should succeed function is not a constructor (evaluating 'new RTCIceTransport()')
+FAIL gather() with one turns server, one turn server, username, credential should succeed function is not a constructor (evaluating 'new RTCIceTransport()')
+FAIL gather() with 2 stun servers should succeed function is not a constructor (evaluating 'new RTCIceTransport()')
+FAIL gather() throws if closed function is not a constructor (evaluating 'new RTCIceTransport()')
+FAIL gather() transitions gatheringState to 'gathering' function is not a constructor (evaluating 'new RTCIceTransport()')
+FAIL gather() throws if called twice function is not a constructor (evaluating 'new RTCIceTransport()')
+FAIL eventually transition gatheringState to 'complete' promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new RTCIceTransport()')"
+FAIL onicecandidate fires with null candidate before gatheringState transitions to 'complete' promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new RTCIceTransport()')"
+FAIL gather() returns at least one host candidate promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new RTCIceTransport()')"
+FAIL gather() returns no candidates with { gatherPolicy: 'relay'} and no turn servers promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new RTCIceTransport()')"
+FAIL start() throws if closed function is not a constructor (evaluating 'new RTCIceTransport()')
+FAIL start() throws if usernameFragment or password not set function is not a constructor (evaluating 'new RTCIceTransport()')
+FAIL start() does not transition state to 'checking' if no remote candidates added function is not a constructor (evaluating 'new RTCIceTransport()')
+FAIL start() with default role sets role attribute to 'controlled' function is not a constructor (evaluating 'new RTCIceTransport()')
+FAIL start() sets role attribute to 'controlling' function is not a constructor (evaluating 'new RTCIceTransport()')
+

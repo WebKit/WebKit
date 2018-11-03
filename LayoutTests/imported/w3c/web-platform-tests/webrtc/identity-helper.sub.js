@@ -1,14 +1,10 @@
 'use strict';
 
 /*
-  In web-platform-test, the following domains are required to be set up locally:
-    127.0.0.1   web-platform.test
-    127.0.0.1   www.web-platform.test
-    127.0.0.1   www1.web-platform.test
-    127.0.0.1   www2.web-platform.test
-    127.0.0.1   xn--n8j6ds53lwwkrqhv28a.web-platform.test
-    127.0.0.1   xn--lve-6lad.web-platform.test
-    0.0.0.0     nonexistent-origin.web-platform.test
+  In web-platform-test, a number of domains are required to be set up locally.
+  The list is available at docs/_writing-tests/server-features.md. The
+  appropriate hosts file entries can be generated with the WPT CLI via the
+  following command: `wpt make-hosts-file`.
  */
 
 /*
@@ -34,12 +30,16 @@ function parseAssertionResult(assertionResultStr) {
 
 // Return two distinct IdP domains that are different from current domain
 function getIdpDomains() {
-  if(window.location.hostname === 'www1.web-platform.test') {
-    return ['www.web-platform.test', 'www2.web-platform.test'];
-  } else if(window.location.hostname === 'www2.web-platform.test') {
-    return ['www.web-platform.test', 'www1.web-platform.test'];
+  const domainA = '{{domains[www]}}';
+  const domainB = '{{domains[www1]}}';
+  const domainC = '{{domains[www2]}}';
+
+  if(window.location.hostname === domainA) {
+    return [domainB, domainC];
+  } else if(window.location.hostname === domainB) {
+    return [domainA, domainC];
   } else {
-    return ['www1.web-platform.test', 'www2.web-platform.test'];
+    return [domainA, domainB];
   }
 }
 

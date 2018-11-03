@@ -3,7 +3,4 @@ PASS setLocalDescription(pranswer) from stable state should reject with InvalidS
 FAIL setLocalDescription(pranswer) should succeed assert_equals: expected null but got object "[object RTCSessionDescription]"
 PASS setLocalDescription(pranswer) can be applied multiple times while still in have-local-pranswer 
 PASS setLocalDescription(answer) from have-local-pranswer state should succeed 
-PASS Test onsignalingstatechange event for setLocalDescription(pranswer) should succeed 
-PASS Test onsignalingstatechange event for setLocalDescription(pranswer) can be applied multiple times while still in have-local-pranswer 
-PASS Test onsignalingstatechange event for setLocalDescription(answer) from have-local-pranswer state should succeed 
 

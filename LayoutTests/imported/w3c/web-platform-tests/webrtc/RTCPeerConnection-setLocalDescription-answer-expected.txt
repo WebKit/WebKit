@@ -4,5 +4,4 @@ FAIL setLocalDescription() with type answer and null sdp should use lastAnswer g
 FAIL setLocalDescription() with answer not created by own createAnswer() should reject with InvalidModificationError assert_unreached: Should have rejected: undefined Reached unreachable code
 PASS Calling setLocalDescription(answer) from stable state should reject with InvalidStateError 
 PASS Calling setLocalDescription(answer) from have-local-offer state should reject with InvalidStateError 
-PASS Test onsignalingstatechange event for setLocalDescription() with valid answer should succeed 
 

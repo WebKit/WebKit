@@ -1,0 +1,15 @@
+
+FAIL createStream() returns an RTCQuicStream with initial properties set. promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new RTCIceTransport()')"
+FAIL createStream() throws if the transport is not connected. promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new RTCIceTransport()')"
+FAIL createStream() throws if the transport is closed. promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new RTCIceTransport()')"
+FAIL RTCQuicTransport.stop() closes all local streams. promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new RTCIceTransport()')"
+FAIL RTCQuicTransport.stop() closes all remote streams. promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new RTCIceTransport()')"
+FAIL finish() changes state to 'closing'. promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new RTCIceTransport()')"
+FAIL finish() twice does not change state. promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new RTCIceTransport()')"
+FAIL reset() changes state to 'closed'. promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new RTCIceTransport()')"
+FAIL reset() following finish() changes state to 'closed'. promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new RTCIceTransport()')"
+FAIL createStream() followed by finish() fires a quicstream event followed by a statechange event to 'closing' on the remote side. promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new RTCIceTransport()')"
+FAIL createStream() followed by reset() fires a quicstream event followed by a statechange event to 'closed' on the remote side. promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new RTCIceTransport()')"
+FAIL finish() on a remote stream that has already finished fires a statechange event to 'closed' on the remote side. promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new RTCIceTransport()')"
+FAIL finish() then reset() fires two statechange events on the remote side. promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new RTCIceTransport()')"
+

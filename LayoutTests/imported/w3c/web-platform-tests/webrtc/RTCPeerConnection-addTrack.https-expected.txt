@@ -1,10 +1,11 @@
 
 PASS addTrack when pc is closed should throw InvalidStateError 
-PASS addTrack with single track argument and no mediaStream should succeed 
-PASS addTrack with single track argument and single mediaStream should succeed 
-PASS addTrack with single track argument and multiple mediaStreams should succeed 
+PASS addTrack with single track argument and no stream should succeed 
+PASS addTrack with single track argument and single stream should succeed 
+PASS addTrack with single track argument and multiple streams should succeed 
 PASS Adding the same track multiple times should throw InvalidAccessError 
 PASS addTrack with existing sender with null track, same kind, and recvonly direction should reuse sender 
-FAIL addTrack with existing sender with null track, same kind, and sendrecv direction should create new sender assert_not_equals: got disallowed value object "[object RTCRtpSender]"
+PASS addTrack with existing sender that has not been used to send should reuse the sender 
+PASS addTrack with existing sender that has been used to send should create new sender 
 PASS addTrack with existing sender with null track, different kind, and recvonly direction should create new sender 
 

@@ -1,0 +1,5 @@
+
+FAIL H.264 and VP8 should be supported in initial offer assert_true: expected true got false
+PASS H.264 and VP8 should be negotiated after handshake 
+FAIL All H.264 codecs MUST include profile-level-id promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'fmtp.split')"
+

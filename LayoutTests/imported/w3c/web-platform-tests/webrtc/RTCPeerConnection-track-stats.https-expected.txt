@@ -1,0 +1,20 @@
+
+PASS addTrack() without setLocalDescription() yields track stats 
+FAIL addTrack() without setLocalDescription() yields media stream stats assert_true: Has stats for stream expected true got false
+PASS addTrack() with setLocalDescription() yields track stats 
+FAIL addTrack() with setLocalDescription() yields media stream stats assert_true: Has stats for stream expected true got false
+FAIL addTrack(): Media stream stats references track stats assert_true: Has stats for track and stream expected true got false
+FAIL Legacy addStream(): Media stream stats references track stats pc.addStream is not a function. (In 'pc.addStream(stream)', 'pc.addStream' is undefined)
+PASS O/A exchange yields outbound RTP stream stats for sending track 
+PASS O/A exchange yields inbound RTP stream stats for receiving track 
+FAIL replaceTrack() before offer: new track attachment stats present assert_true: Has stats for replaced track expected true got false
+FAIL replaceTrack() after offer, before answer: new track attachment stats present assert_true: Has stats for replaced track expected true got false
+FAIL replaceTrack() after answer: new track attachment stats present assert_true: Has stats for replaced track expected true got false
+FAIL replaceTrack(): original track attachment stats present after replacing assert_true: expected true got undefined
+FAIL RTCRtpSender.getStats() contains only outbound-rtp and related stats promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'inboundTrackStats.id')"
+FAIL RTCRtpReceiver.getStats() contains only inbound-rtp and related stats promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'inboundTrackStats.id')"
+PASS RTCPeerConnection.getStats(sendingTrack) is the same as RTCRtpSender.getStats() 
+PASS RTCPeerConnection.getStats(receivingTrack) is the same as RTCRtpReceiver.getStats() 
+FAIL RTCPeerConnection.getStats(track) throws InvalidAccessError when there are zero senders or receivers for the track assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL RTCPeerConnection.getStats(track) throws InvalidAccessError when there are multiple senders for the track assert_unreached: Should have rejected: undefined Reached unreachable code
+

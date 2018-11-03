@@ -44,9 +44,11 @@
           added.
    */
 
-  promise_test(async () => {
+  promise_test(async t => {
     const caller = new RTCPeerConnection();
+    t.add_cleanup(() => caller.close());
     const callee = new RTCPeerConnection();
+    t.add_cleanup(() => callee.close());
     const { receiver } = caller.addTransceiver('audio');
 
     await doSignalingHandshake(caller, callee);
@@ -55,10 +57,13 @@
     assert_stats_report_has_stats(statsReport, ['inbound-rtp']);
   }, 'receiver.getStats() via addTransceiver should return stats report containing inbound-rtp stats');
 
-  promise_test(async () => {
+  promise_test(async t => {
     const caller = new RTCPeerConnection();
+    t.add_cleanup(() => caller.close());
     const callee = new RTCPeerConnection();
-    const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    t.add_cleanup(() => callee.close());
+    const stream = await getNoiseStream({audio:true});
+    t.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
     const [track] = stream.getTracks();
     caller.addTrack(track, stream);
 

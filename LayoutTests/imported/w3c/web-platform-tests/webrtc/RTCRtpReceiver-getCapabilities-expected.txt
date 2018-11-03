@@ -1,4 +1,5 @@
 
 FAIL RTCRtpSender.getCapabilities('audio') should return RTCRtpCapabilities dictionary RTCRtpReceiver.getCapabilities is not a function. (In 'RTCRtpReceiver.getCapabilities('audio')', 'RTCRtpReceiver.getCapabilities' is undefined)
 FAIL RTCRtpSender.getCapabilities('video') should return RTCRtpCapabilities dictionary RTCRtpReceiver.getCapabilities is not a function. (In 'RTCRtpReceiver.getCapabilities('video')', 'RTCRtpReceiver.getCapabilities' is undefined)
+FAIL RTCRtpSender.getCapabilities('dummy') should return null RTCRtpReceiver.getCapabilities is not a function. (In 'RTCRtpReceiver.getCapabilities('dummy')', 'RTCRtpReceiver.getCapabilities' is undefined)
 

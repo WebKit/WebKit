@@ -1,8 +1,7 @@
 
 PASS setRemoteDescription with invalid type and invalid SDP should reject with TypeError 
 PASS setRemoteDescription() with invalid SDP and stable state should reject with InvalidStateError 
+PASS Negotiation should fire signalingsstate events 
 FAIL Calling setRemoteDescription() again after one round of remote-offer/local-answer should succeed assert_false: Expect both session descriptions to have different count of media lines expected false got true
 PASS Switching role from offerer to answerer after going back to stable state should succeed 
-PASS Test onsignalingstatechange event for Calling setRemoteDescription() again after one round of remote-offer/local-answer should succeed 
-PASS Test onsignalingstatechange event for Switching role from offerer to answerer after going back to stable state should succeed 
 

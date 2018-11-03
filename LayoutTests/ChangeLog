@@ -1,3 +1,12 @@
+2018-11-03  Youenn Fablet  <youenn@apple.com>
+
+        Refresh WPT webrtc tests
+        https://bugs.webkit.org/show_bug.cgi?id=191133
+
+        Reviewed by Eric Carlson.
+
+        * TestExpectations:
+
 2018-11-03  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] enumerateDevices should not expose devices that are not available to getUserMedia

@@ -1,0 +1,42 @@
+
+Harness Error (TIMEOUT), message = null
+
+PASS checkAddTransceiverNoTrack 
+PASS checkAddTransceiverWithTrack 
+PASS checkAddTransceiverWithAddTrack 
+PASS checkAddTransceiverWithDirection 
+FAIL checkAddTransceiverWithStream assert_true: offer contains the expected audio msid expected true got false
+FAIL checkAddTransceiverWithOfferToReceiveAudio assert_equals: expected "[{currentDirection:null,direction:\"recvonly\",mid:null,receiver:{track:{kind:\"audio\"}},sender:{track:null},stopped:false}]" but got "[]"
+FAIL checkAddTransceiverWithOfferToReceiveVideo assert_equals: expected "[{currentDirection:null,direction:\"recvonly\",mid:null,receiver:{track:{kind:\"video\"}},sender:{track:null},stopped:false}]" but got "[]"
+FAIL checkAddTransceiverWithOfferToReceiveBoth assert_equals: expected "[{currentDirection:null,direction:\"recvonly\",mid:null,receiver:{track:{kind:\"audio\"}},sender:{track:null},stopped:false},{currentDirection:null,direction:\"recvonly\",mid:null,receiver:{track:{kind:\"video\"}},sender:{track:null},stopped:false}]" but got "[]"
+FAIL checkAddTransceiverWithSetRemoteOfferSending assert_equals: expected "[{streams:[{id:\"2f636d69-e5d0-46d6-b49b-bad547d32229\"}],track:{}}]" but got "[{streams:[],track:{}}]"
+FAIL checkAddTransceiverWithSetRemoteOfferNoSend promise_test: Unhandled rejection with value: object "TypeError: Attempted to assign to readonly property."
+PASS checkAddTransceiverBadKind 
+FAIL checkNoMidOffer promise_test: Unhandled rejection with value: object "OperationError: Failed to set remote offer sdp: The BUNDLE group contains MID:0 matching no m= section."
+FAIL checkSetDirection promise_test: Unhandled rejection with value: object "TypeError: Attempted to assign to readonly property."
+FAIL checkCurrentDirection promise_test: Unhandled rejection with value: object "TypeError: Attempted to assign to readonly property."
+FAIL checkSendrecvWithNoSendTrack promise_test: Unhandled rejection with value: object "TypeError: Attempted to assign to readonly property."
+FAIL checkSendrecvWithTracklessStream assert_equals: expected "[{streams:[{id:\"bd494b8b-c2a2-4c08-b2a5-ecda5bacf4e4\"}],track:{}}]" but got "[{streams:[],track:{}}]"
+PASS checkAddTransceiverNoTrackDoesntPair 
+PASS checkAddTransceiverWithTrackDoesntPair 
+PASS checkAddTransceiverThenReplaceTrackDoesntPair 
+FAIL checkAddTransceiverThenAddTrackPairs assert_equals: expected "[{sender:{track:{}}}]" but got "[{sender:{track:{}}},{}]"
+PASS checkAddTrackPairs 
+PASS checkReplaceTrackNullDoesntPreventPairing 
+PASS checkRemoveAndReadd 
+PASS checkAddTrackExistingTransceiverThenRemove 
+FAIL checkRemoveTrackNegotiation promise_test: Unhandled rejection with value: object "TypeError: Attempted to assign to readonly property."
+TIMEOUT checkMute Test timed out
+NOTRUN checkOnAddStream 
+NOTRUN checkStop 
+NOTRUN checkStopAfterCreateOffer 
+NOTRUN checkStopAfterSetLocalOffer 
+NOTRUN checkStopAfterSetRemoteOffer 
+NOTRUN checkStopAfterCreateAnswer 
+NOTRUN checkStopAfterSetLocalAnswer 
+NOTRUN checkStopAfterClose 
+NOTRUN checkLocalRollback 
+NOTRUN checkRollbackAndSetRemoteOfferWithDifferentType 
+NOTRUN checkRemoteRollback 
+NOTRUN checkMsectionReuse 
+

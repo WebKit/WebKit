@@ -1,3 +1,13 @@
+2018-11-03  Youenn Fablet  <youenn@apple.com>
+
+        Refresh WPT webrtc tests
+        https://bugs.webkit.org/show_bug.cgi?id=191133
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/webrtc/: Refreshed.
+        * web-platform-tests/webrtc/w3c-import.log:
+
 2018-11-02  Ali Juma  <ajuma@chromium.org>
 
         Allow cross-document intersection observing

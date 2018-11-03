@@ -1,9 +1,7 @@
 
 PASS setLocalDescription with valid offer should succeed 
 FAIL setLocalDescription with type offer and null sdp should use lastOffer generated from createOffer promise_test: Unhandled rejection with value: object "OperationError: Expect line: v="
-FAIL setLocalDescription() with offer not created by own createOffer() should reject with InvalidModificationError assert_throws: function "function () { throw e }" threw object "OperationError: Failed to set local offer sdp: Failed to push down transport description for data: Local fingerprint does not match identity. Expected: sha-256 0D:E8:6D:13:47:D3:0D:40:43:17:84:0B:34:55:1C:15:97:4A:46:FE:8A:F2:6E:3B:0A:A2:CC:6A:70:BC:14:1D Got: sha-256 3D:F2:4E:C4:C0:AC:A1:04:C5:D3:3A:19:C4:92:8F:98:AA:E0:52:9E:05:84:20:19:71:76:EC:C4:02:45:27:21" that is not a DOMException InvalidModificationError: property "code" is equal to 0, expected 13
+FAIL setLocalDescription() with offer not created by own createOffer() should reject with InvalidModificationError assert_throws: function "function () { throw e }" threw object "OperationError: Failed to set local offer sdp: Failed to apply the description for 0: Local fingerprint does not match identity. Expected: sha-256 AD:6B:CA:05:12:E5:47:71:41:68:ED:52:9B:85:F2:0A:B9:BE:FE:28:BE:FF:38:17:D6:4A:6A:7F:A1:F2:2E:AC Got: sha-256 3F:A8:09:A6:A8:AD:A9:F8:A8:58:0A:79:0C:04:B4:AA:E1:56:9E:25:07:C8:84:34:9C:A5:78:C0:E8:22:84:DF" that is not a DOMException InvalidModificationError: property "code" is equal to 0, expected 13
 FAIL Set created offer other than last offer should reject with InvalidModificationError assert_false: Expect both session descriptions to have different count of media lines expected false got true
 FAIL Creating and setting offer multiple times should succeed assert_not_equals: Expect session description to be defined got disallowed value undefined
-PASS Test onsignalingstatechange event for setLocalDescription with valid offer should succeed 
-PASS Test onsignalingstatechange event for Creating and setting offer multiple times should succeed 
 

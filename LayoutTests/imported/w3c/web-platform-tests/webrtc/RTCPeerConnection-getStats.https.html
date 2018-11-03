@@ -39,13 +39,15 @@
         1.  Gather the stats indicated by selector according to the stats selection algorithm.
         2.  Resolve p with the resulting RTCStatsReport object, containing the gathered stats.
    */
-  promise_test(() => {
+  promise_test(t => {
     const pc = new RTCPeerConnection();
+    t.add_cleanup(() => pc.close());
     return pc.getStats();
   }, 'getStats() with no argument should succeed');
 
-  promise_test(() => {
+  promise_test(t => {
     const pc = new RTCPeerConnection();
+    t.add_cleanup(() => pc.close());
     return pc.getStats(null);
   }, 'getStats(null) should succeed');
 
@@ -59,6 +61,7 @@
    */
   promise_test(t => {
     const pc = new RTCPeerConnection();
+    t.add_cleanup(() => pc.close());
     return getTrackFromUserMedia('audio')
     .then(([track, mediaStream]) => {
       return promise_rejects(t, 'InvalidAccessError', pc.getStats(track));
@@ -67,6 +70,7 @@
 
   promise_test(t => {
     const pc = new RTCPeerConnection();
+    t.add_cleanup(() => pc.close());
     return getTrackFromUserMedia('audio')
     .then(([track, mediaStream]) => {
       pc.addTrack(track, mediaStream);
@@ -74,9 +78,13 @@
     });
   }, 'getStats() with track added via addTrack should succeed');
 
-  promise_test(t => {
+  promise_test(async t => {
     const pc = new RTCPeerConnection();
-    const track = generateMediaStreamTrack();
+    t.add_cleanup(() => pc.close());
+
+    const stream = await navigator.mediaDevices.getUserMedia({audio: true});
+    t.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
+    const [track] = stream.getTracks();
     pc.addTransceiver(track);
 
     return pc.getStats(track);
@@ -84,6 +92,7 @@
 
   promise_test(t => {
     const pc = new RTCPeerConnection();
+    t.add_cleanup(() => pc.close());
     return getTrackFromUserMedia('audio')
     .then(([track, mediaStream]) => {
       // addTransceiver allows adding same track multiple times
@@ -100,6 +109,7 @@
 
   promise_test(t => {
     const pc = new RTCPeerConnection();
+    t.add_cleanup(() => pc.close());
     const transceiver1 = pc.addTransceiver('audio');
 
     // Create another transceiver that resends what
@@ -117,6 +127,7 @@
    */
   promise_test(t => {
     const pc = new RTCPeerConnection();
+    t.add_cleanup(() => pc.close());
     return pc.getStats()
     .then(statsReport => {
       validateStatsReport(statsReport);
@@ -126,6 +137,7 @@
 
   promise_test(t => {
     const pc = new RTCPeerConnection();
+    t.add_cleanup(() => pc.close());
     return getTrackFromUserMedia('audio')
     .then(([track, mediaStream]) => {
       pc.addTrack(track, mediaStream);
@@ -140,6 +152,7 @@
 
   promise_test(t => {
     const pc = new RTCPeerConnection();
+    t.add_cleanup(() => pc.close());
     return getTrackFromUserMedia('audio')
     .then(([track, mediaStream]) => {
       pc.addTrack(track);
@@ -160,8 +173,9 @@
         - All stats objects referenced directly or indirectly by the RTCOutboundRTPStreamStats
           objects added.
    */
-  promise_test(() => {
+  promise_test(t => {
     const pc = new RTCPeerConnection();
+    t.add_cleanup(() => pc.close());
     return getTrackFromUserMedia('audio')
     .then(([track, mediaStream]) => {
       pc.addTrack(track, mediaStream);
@@ -183,8 +197,9 @@
         - All stats objects referenced directly or indirectly by the RTCInboundRTPStreamStats
           added.
    */
-  promise_test(() => {
+  promise_test(t => {
     const pc = new RTCPeerConnection();
+    t.add_cleanup(() => pc.close());
     const transceiver = pc.addTransceiver('audio');
 
     return pc.getStats(transceiver.receiver.track)
@@ -226,32 +241,18 @@
 
     const dataChannel = pc1.createDataChannel('test-channel');
 
-    return navigator.mediaDevices.getUserMedia({
+    return getNoiseStream({
       audio: true,
       video: true
     })
     .then(t.step_func(mediaStream => {
       const tracks = mediaStream.getTracks();
-      assert_equals(tracks.length, 2,
-        'Expect media stream to have one audio and one video track');
+      const [audioTrack] = mediaStream.getAudioTracks();
+      const [videoTrack] = mediaStream.getVideoTracks();
 
-      let audioTrack;
-      let videoTrack;
-
-      for (const track of tracks) {
+      for (const track of mediaStream.getTracks()) {
         t.add_cleanup(() => track.stop());
-
         pc1.addTrack(track, mediaStream);
-
-        if (track.kind === 'audio') {
-          audioTrack = track;
-        } else if (track.kind === 'video') {
-          videoTrack = track;
-        }
-      }
-
-      if (!audioTrack || ! videoTrack) {
-        assert_unreached('Expect mediaStream to have both audio and video streams');
       }
 
       const testStatsReport = (pc, statsReport) => {

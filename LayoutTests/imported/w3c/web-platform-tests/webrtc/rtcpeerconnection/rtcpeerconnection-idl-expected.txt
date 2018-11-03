@@ -1,17 +1,15 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Can only call RTCPeerConnection.createOffer on instances of RTCPeerConnection
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Can only call RTCPeerConnection.createAnswer on instances of RTCPeerConnection
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Can only call RTCPeerConnection.addIceCandidate on instances of RTCPeerConnection
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Can only call RTCPeerConnection.getStats on instances of RTCPeerConnection
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Argument 1 ('description') to RTCPeerConnection.setLocalDescription must be an instance of RTCSessionDescription
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Argument 1 ('description') to RTCPeerConnection.setRemoteDescription must be an instance of RTCSessionDescription
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Not enough arguments
 Description
 
 This test verifies the availability of the RTCPeerConnection interface.
 
 
-Harness Error (FAIL), message = Not enough arguments
-
+PASS Partial interface RTCPeerConnection: original interface defined 
+PASS Partial interface RTCPeerConnection[2]: original interface defined 
+PASS Partial interface RTCPeerConnection[3]: original interface defined 
+PASS Partial interface RTCPeerConnection[4]: original interface defined 
+PASS Partial interface RTCPeerConnection[5]: original interface defined 
+PASS Partial interface RTCPeerConnection[6]: original interface defined 
+PASS Partial interface RTCPeerConnection[7]: original interface defined 
 PASS EventTarget interface: existence and properties of interface object 
 PASS EventTarget interface object length 
 PASS EventTarget interface object name 
@@ -25,99 +23,56 @@ PASS RTCPeerConnection interface: existence and properties of interface prototyp
 PASS RTCPeerConnection interface: existence and properties of interface prototype object's "constructor" property 
 PASS RTCPeerConnection interface: existence and properties of interface prototype object's @@unscopables property 
 PASS RTCPeerConnection interface: operation createOffer(RTCOfferOptions) 
-PASS Unscopable handled correctly for createOffer(RTCOfferOptions) on RTCPeerConnection 
 PASS RTCPeerConnection interface: operation createAnswer(RTCAnswerOptions) 
-PASS Unscopable handled correctly for createAnswer(RTCAnswerOptions) on RTCPeerConnection 
 FAIL RTCPeerConnection interface: operation setLocalDescription(RTCSessionDescription) assert_equals: property has wrong .length expected 1 but got 0
-PASS Unscopable handled correctly for setLocalDescription(RTCSessionDescription) on RTCPeerConnection 
 PASS RTCPeerConnection interface: attribute localDescription 
-PASS Unscopable handled correctly for localDescription property on RTCPeerConnection 
 PASS RTCPeerConnection interface: attribute currentLocalDescription 
-PASS Unscopable handled correctly for currentLocalDescription property on RTCPeerConnection 
 PASS RTCPeerConnection interface: attribute pendingLocalDescription 
-PASS Unscopable handled correctly for pendingLocalDescription property on RTCPeerConnection 
 FAIL RTCPeerConnection interface: operation setRemoteDescription(RTCSessionDescription) assert_equals: property has wrong .length expected 1 but got 0
-PASS Unscopable handled correctly for setRemoteDescription(RTCSessionDescription) on RTCPeerConnection 
 PASS RTCPeerConnection interface: attribute remoteDescription 
-PASS Unscopable handled correctly for remoteDescription property on RTCPeerConnection 
 PASS RTCPeerConnection interface: attribute currentRemoteDescription 
-PASS Unscopable handled correctly for currentRemoteDescription property on RTCPeerConnection 
 PASS RTCPeerConnection interface: attribute pendingRemoteDescription 
-PASS Unscopable handled correctly for pendingRemoteDescription property on RTCPeerConnection 
 PASS RTCPeerConnection interface: operation addIceCandidate(RTCIceCandidate) 
-PASS Unscopable handled correctly for addIceCandidate(RTCIceCandidate) on RTCPeerConnection 
 PASS RTCPeerConnection interface: attribute signalingState 
-PASS Unscopable handled correctly for signalingState property on RTCPeerConnection 
 PASS RTCPeerConnection interface: attribute iceGatheringState 
-PASS Unscopable handled correctly for iceGatheringState property on RTCPeerConnection 
 PASS RTCPeerConnection interface: attribute iceConnectionState 
-PASS Unscopable handled correctly for iceConnectionState property on RTCPeerConnection 
 FAIL RTCPeerConnection interface: attribute canTrickleIceCandidates assert_true: The prototype object must have a property "canTrickleIceCandidates" expected true got false
-PASS Unscopable handled correctly for canTrickleIceCandidates property on RTCPeerConnection 
 PASS RTCPeerConnection interface: operation getConfiguration() 
-PASS Unscopable handled correctly for getConfiguration() on RTCPeerConnection 
 PASS RTCPeerConnection interface: operation setConfiguration(RTCConfiguration) 
-PASS Unscopable handled correctly for setConfiguration(RTCConfiguration) on RTCPeerConnection 
 PASS RTCPeerConnection interface: operation close() 
-PASS Unscopable handled correctly for close() on RTCPeerConnection 
 PASS RTCPeerConnection interface: attribute onnegotiationneeded 
-PASS Unscopable handled correctly for onnegotiationneeded property on RTCPeerConnection 
 PASS RTCPeerConnection interface: attribute onicecandidate 
-PASS Unscopable handled correctly for onicecandidate property on RTCPeerConnection 
 PASS RTCPeerConnection interface: attribute onsignalingstatechange 
-PASS Unscopable handled correctly for onsignalingstatechange property on RTCPeerConnection 
 PASS RTCPeerConnection interface: attribute oniceconnectionstatechange 
-PASS Unscopable handled correctly for oniceconnectionstatechange property on RTCPeerConnection 
 PASS RTCPeerConnection interface: attribute onicegatheringstatechange 
-PASS Unscopable handled correctly for onicegatheringstatechange property on RTCPeerConnection 
 FAIL RTCPeerConnection interface: operation createOffer(RTCSessionDescriptionCallback, RTCPeerConnectionErrorCallback, RTCOfferOptions) assert_throws: calling operation with this = null didn't throw TypeError function "function () {
             fn.apply(obj, args);
         }" did not throw
-PASS Unscopable handled correctly for createOffer(RTCSessionDescriptionCallback, RTCPeerConnectionErrorCallback, RTCOfferOptions) on RTCPeerConnection 
 FAIL RTCPeerConnection interface: operation setLocalDescription(RTCSessionDescription, VoidFunction, RTCPeerConnectionErrorCallback) assert_equals: property has wrong .length expected 1 but got 0
-PASS Unscopable handled correctly for setLocalDescription(RTCSessionDescription, VoidFunction, RTCPeerConnectionErrorCallback) on RTCPeerConnection 
 FAIL RTCPeerConnection interface: operation createAnswer(RTCSessionDescriptionCallback, RTCPeerConnectionErrorCallback) assert_throws: calling operation with this = null didn't throw TypeError function "function () {
             fn.apply(obj, args);
         }" did not throw
-PASS Unscopable handled correctly for createAnswer(RTCSessionDescriptionCallback, RTCPeerConnectionErrorCallback) on RTCPeerConnection 
 FAIL RTCPeerConnection interface: operation setRemoteDescription(RTCSessionDescription, VoidFunction, RTCPeerConnectionErrorCallback) assert_equals: property has wrong .length expected 1 but got 0
-PASS Unscopable handled correctly for setRemoteDescription(RTCSessionDescription, VoidFunction, RTCPeerConnectionErrorCallback) on RTCPeerConnection 
 FAIL RTCPeerConnection interface: operation addIceCandidate(RTCIceCandidate, VoidFunction, RTCPeerConnectionErrorCallback) assert_throws: calling operation with this = null didn't throw TypeError function "function () {
             fn.apply(obj, args);
         }" did not throw
-PASS Unscopable handled correctly for addIceCandidate(RTCIceCandidate, VoidFunction, RTCPeerConnectionErrorCallback) on RTCPeerConnection 
 FAIL RTCPeerConnection interface: operation getStats(MediaStreamTrack, RTCStatsCallback, RTCPeerConnectionErrorCallback) assert_throws: calling operation with this = null didn't throw TypeError function "function () {
             fn.apply(obj, args);
         }" did not throw
-PASS Unscopable handled correctly for getStats(MediaStreamTrack, RTCStatsCallback, RTCPeerConnectionErrorCallback) on RTCPeerConnection 
-FAIL RTCPeerConnection interface: operation generateCertificate(AlgorithmIdentifier) assert_own_property: interface object missing static operation expected property "generateCertificate" missing
-PASS Unscopable handled correctly for generateCertificate(AlgorithmIdentifier) on RTCPeerConnection 
+PASS RTCPeerConnection interface: operation generateCertificate(AlgorithmIdentifier) 
 PASS RTCPeerConnection interface: operation getSenders() 
-PASS Unscopable handled correctly for getSenders() on RTCPeerConnection 
 PASS RTCPeerConnection interface: operation getReceivers() 
-PASS Unscopable handled correctly for getReceivers() on RTCPeerConnection 
 PASS RTCPeerConnection interface: operation addTrack(MediaStreamTrack, MediaStream) 
-PASS Unscopable handled correctly for addTrack(MediaStreamTrack, MediaStream) on RTCPeerConnection 
 PASS RTCPeerConnection interface: operation removeTrack(RTCRtpSender) 
-PASS Unscopable handled correctly for removeTrack(RTCRtpSender) on RTCPeerConnection 
 PASS RTCPeerConnection interface: attribute ontrack 
-PASS Unscopable handled correctly for ontrack property on RTCPeerConnection 
 PASS RTCPeerConnection interface: operation createDataChannel(DOMString, RTCDataChannelInit) 
-PASS Unscopable handled correctly for createDataChannel(DOMString, RTCDataChannelInit) on RTCPeerConnection 
 PASS RTCPeerConnection interface: attribute ondatachannel 
-PASS Unscopable handled correctly for ondatachannel property on RTCPeerConnection 
 FAIL RTCPeerConnection interface: attribute dtmf assert_true: The prototype object must have a property "dtmf" expected true got false
-PASS Unscopable handled correctly for dtmf property on RTCPeerConnection 
 PASS RTCPeerConnection interface: operation getStats(MediaStreamTrack) 
-PASS Unscopable handled correctly for getStats(MediaStreamTrack) on RTCPeerConnection 
 FAIL RTCPeerConnection interface: operation setIdentityProvider(DOMString, DOMString, DOMString) assert_own_property: interface prototype object missing non-static operation expected property "setIdentityProvider" missing
-PASS Unscopable handled correctly for setIdentityProvider(DOMString, DOMString, DOMString) on RTCPeerConnection 
 FAIL RTCPeerConnection interface: operation getIdentityAssertion() assert_own_property: interface prototype object missing non-static operation expected property "getIdentityAssertion" missing
-PASS Unscopable handled correctly for getIdentityAssertion() on RTCPeerConnection 
 FAIL RTCPeerConnection interface: attribute peerIdentity assert_true: The prototype object must have a property "peerIdentity" expected true got false
-PASS Unscopable handled correctly for peerIdentity property on RTCPeerConnection 
 FAIL RTCPeerConnection interface: attribute idpLoginUrl assert_true: The prototype object must have a property "idpLoginUrl" expected true got false
-PASS Unscopable handled correctly for idpLoginUrl property on RTCPeerConnection 
 PASS RTCPeerConnection must be primary interface of pc 
 PASS Stringification of pc 
 PASS RTCPeerConnection interface: pc must inherit property "createOffer(RTCOfferOptions)" with the proper type 
@@ -168,7 +123,7 @@ FAIL RTCPeerConnection interface: calling addIceCandidate(RTCIceCandidate, VoidF
 PASS RTCPeerConnection interface: pc must inherit property "getStats(MediaStreamTrack, RTCStatsCallback, RTCPeerConnectionErrorCallback)" with the proper type 
 PASS RTCPeerConnection interface: calling getStats(MediaStreamTrack, RTCStatsCallback, RTCPeerConnectionErrorCallback) on pc with too few arguments must throw TypeError 
 PASS RTCPeerConnection interface: pc must inherit property "generateCertificate(AlgorithmIdentifier)" with the proper type 
-FAIL RTCPeerConnection interface: calling generateCertificate(AlgorithmIdentifier) on pc with too few arguments must throw TypeError assert_own_property: interface object must have static operation as own property expected property "generateCertificate" missing
+PASS RTCPeerConnection interface: calling generateCertificate(AlgorithmIdentifier) on pc with too few arguments must throw TypeError 
 PASS RTCPeerConnection interface: pc must inherit property "getSenders()" with the proper type 
 PASS RTCPeerConnection interface: pc must inherit property "getReceivers()" with the proper type 
 PASS RTCPeerConnection interface: pc must inherit property "addTrack(MediaStreamTrack, MediaStream)" with the proper type 

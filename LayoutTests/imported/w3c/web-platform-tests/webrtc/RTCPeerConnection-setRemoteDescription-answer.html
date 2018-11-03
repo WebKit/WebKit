@@ -13,8 +13,7 @@
   // The following helper functions are called from RTCPeerConnection-helper.js:
   //   generateOffer()
   //   generateAnswer()
-  //   assert_session_desc_equals()
-  //   test_state_change_event()
+  //   assert_session_desc_similar()
 
   /*
     4.3.2.  Interface Definition
@@ -60,7 +59,10 @@
    */
   promise_test(t => {
     const pc = new RTCPeerConnection();
-    test_state_change_event(t, pc, ['have-local-offer', 'stable']);
+    t.add_cleanup(() => pc.close());
+
+    const states = [];
+    pc.addEventListener('signalingstatechange', () => states.push(pc.signalingState));
 
     return pc.createOffer({ offerToReceiveVideo: true })
     .then(offer =>
@@ -71,14 +73,16 @@
         .then(() => {
           assert_equals(pc.signalingState, 'stable');
 
-          assert_session_desc_equals(pc.localDescription, offer);
-          assert_session_desc_equals(pc.remoteDescription, answer);
+          assert_session_desc_similar(pc.localDescription, offer);
+          assert_session_desc_similar(pc.remoteDescription, answer);
 
-          assert_session_desc_equals(pc.currentLocalDescription, offer);
-          assert_session_desc_equals(pc.currentRemoteDescription, answer);
+          assert_session_desc_similar(pc.currentLocalDescription, offer);
+          assert_session_desc_similar(pc.currentRemoteDescription, answer);
 
           assert_equals(pc.pendingLocalDescription, null);
           assert_equals(pc.pendingRemoteDescription, null);
+
+          assert_array_equals(states, ['have-local-offer', 'stable']);
         })));
   }, 'setRemoteDescription() with valid state and answer should succeed');
 
@@ -95,6 +99,8 @@
   promise_test(t => {
     const pc = new RTCPeerConnection();
 
+    t.add_cleanup(() => pc.close());
+
     return pc.createOffer()
     .then(offer =>
       promise_rejects(t, 'InvalidStateError',
@@ -104,6 +110,8 @@
   promise_test(t => {
     const pc = new RTCPeerConnection();
 
+    t.add_cleanup(() => pc.close());
+
     return pc.createOffer()
     .then(offer =>
       pc.setRemoteDescription(offer)
@@ -111,7 +119,6 @@
     .then(answer =>
       promise_rejects(t, 'InvalidStateError',
         pc.setRemoteDescription(answer)));
-
   }, 'Calling setRemoteDescription(answer) from have-remote-offer state should reject with InvalidStateError');
 
 </script>

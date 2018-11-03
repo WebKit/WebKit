@@ -4,25 +4,25 @@ Retrieved stats info
 
   
 {
-  "RTCCertificate_5C:3F:12:18:3A:A5:67:9E:89:0F:94:74:B7:A5:23:86:7E:69:58:6B:78:51:34:A0:A3:94:03:A2:6F:C7:81:33": {
-    "id": "RTCCertificate_5C:3F:12:18:3A:A5:67:9E:89:0F:94:74:B7:A5:23:86:7E:69:58:6B:78:51:34:A0:A3:94:03:A2:6F:C7:81:33",
-    "timestamp": 1505771060940.004,
+  "RTCCertificate_8D:47:6E:8F:78:33:95:C5:E1:8D:D6:59:07:61:D1:12:D9:ED:E5:3D:D3:6E:9E:86:B4:F3:4B:AD:7C:6D:D5:79": {
+    "id": "RTCCertificate_8D:47:6E:8F:78:33:95:C5:E1:8D:D6:59:07:61:D1:12:D9:ED:E5:3D:D3:6E:9E:86:B4:F3:4B:AD:7C:6D:D5:79",
+    "timestamp": 1541019327397,
     "type": "certificate",
-    "base64Certificate": "MIIBFTCBvaADAgECAgkAjcVsWPv41wMwCgYIKoZIzj0EAwIwETEPMA0GA1UEAwwGV2ViUlRDMB4XDTE3MDkxNzIxNDQyMFoXDTE3MTAxODIxNDQyMFowETEPMA0GA1UEAwwGV2ViUlRDMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE+F4eBpG4uZSn+9xPgKNx9ZBmaBKcqQXgAufprkRJDJYkaPQIMCUqO7nmKVTrV3D+aZqWSRA9B5JCDC5rJFXB5jAKBggqhkjOPQQDAgNHADBEAiBhFpe8vrePuJ3CaCfTLC6V6LdD+n0Af3fLsuTRVqncngIgWfkvcunJihscgpepdsUeyuOyTemMoAOFxKNwz0P1uZg=",
-    "fingerprint": "5C:3F:12:18:3A:A5:67:9E:89:0F:94:74:B7:A5:23:86:7E:69:58:6B:78:51:34:A0:A3:94:03:A2:6F:C7:81:33",
+    "base64Certificate": "MIIBFjCBvaADAgECAgkA8TsjlEPDmDMwCgYIKoZIzj0EAwIwETEPMA0GA1UEAwwGV2ViUlRDMB4XDTE4MTAzMDIwNTUyN1oXDTE4MTEzMDIwNTUyN1owETEPMA0GA1UEAwwGV2ViUlRDMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEf5dKEJxZomGg0F3zr4MZAAZ2p9EuoTjZbv0cTh0Jb6XblvSAswGW4OuNInJbfExjkMyN94V0j/1brWAf0kkuVjAKBggqhkjOPQQDAgNIADBFAiADaR8n1iB4DXL/T8FB78zObsgNdMpxTA+JIuQL/4O+PwIhAMAMH0/Buw482C3o+uns+eeHLhBwBhgr4NlbgoWareS+",
+    "fingerprint": "8D:47:6E:8F:78:33:95:C5:E1:8D:D6:59:07:61:D1:12:D9:ED:E5:3D:D3:6E:9E:86:B4:F3:4B:AD:7C:6D:D5:79",
     "fingerprintAlgorithm": "sha-256"
   },
-  "RTCCertificate_D1:61:CA:CB:0B:21:F3:9A:AA:F4:87:50:A3:E8:25:24:D9:E7:91:D8:06:9D:1C:BD:FB:57:C7:C2:42:20:E4:E4": {
-    "id": "RTCCertificate_D1:61:CA:CB:0B:21:F3:9A:AA:F4:87:50:A3:E8:25:24:D9:E7:91:D8:06:9D:1C:BD:FB:57:C7:C2:42:20:E4:E4",
-    "timestamp": 1505771060940.004,
+  "RTCCertificate_9F:2E:D6:37:3F:7A:F0:28:FF:83:AA:FB:5C:D8:8A:65:54:3E:6E:67:BF:38:95:36:09:FD:C4:02:C8:2C:17:E1": {
+    "id": "RTCCertificate_9F:2E:D6:37:3F:7A:F0:28:FF:83:AA:FB:5C:D8:8A:65:54:3E:6E:67:BF:38:95:36:09:FD:C4:02:C8:2C:17:E1",
+    "timestamp": 1541019327397,
     "type": "certificate",
-    "base64Certificate": "MIIBFjCBvaADAgECAgkAyd5b1f+Ab0wwCgYIKoZIzj0EAwIwETEPMA0GA1UEAwwGV2ViUlRDMB4XDTE3MDkxNzIxNDQyMFoXDTE3MTAxODIxNDQyMFowETEPMA0GA1UEAwwGV2ViUlRDMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAExpo/Zj4AP0jQ9oCm4g2IaD3kRbHLE6r1AOq4OgET8GhNEc+SS6s0xcug0tcYeWrT4ICHVK6+nM2ka/obc0XxgjAKBggqhkjOPQQDAgNIADBFAiEAz3FuV0oX4DJLyQl+2bfB3S3d17aRZqqHvno/vx3G0/ACIEeubsNjpeDHkPcvdW8yRNGNpcnnXKQixoupFxYuyoHD",
-    "fingerprint": "D1:61:CA:CB:0B:21:F3:9A:AA:F4:87:50:A3:E8:25:24:D9:E7:91:D8:06:9D:1C:BD:FB:57:C7:C2:42:20:E4:E4",
+    "base64Certificate": "MIIBFjCBvaADAgECAgkA9o0BgR8D1fgwCgYIKoZIzj0EAwIwETEPMA0GA1UEAwwGV2ViUlRDMB4XDTE4MTAzMDIwNTUyN1oXDTE4MTEzMDIwNTUyN1owETEPMA0GA1UEAwwGV2ViUlRDMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEYSF9oRptCmxvizjcW7VPzy8rl2EwLwPqk3ma/HPs33by3AzOQQo3om7FHbb92MUbKgtjFo4jTSEklz23eNH7hDAKBggqhkjOPQQDAgNIADBFAiEAmWh3HDOvCPQ8znNyCp/JbE7jHwI3Bqo+rTjz7wqLgdsCIGbE9xzkohtCrz3NPkhY57Gt/cAW+CTTW4PbFnKlG6aW",
+    "fingerprint": "9F:2E:D6:37:3F:7A:F0:28:FF:83:AA:FB:5C:D8:8A:65:54:3E:6E:67:BF:38:95:36:09:FD:C4:02:C8:2C:17:E1",
     "fingerprintAlgorithm": "sha-256"
   },
   "RTCDataChannel_1": {
     "id": "RTCDataChannel_1",
-    "timestamp": 1505771060940.004,
+    "timestamp": 1541019327397,
     "type": "data-channel",
     "bytesReceived": 0,
     "bytesSent": 0,
@@ -31,53 +31,79 @@ Retrieved stats info
     "messagesReceived": 0,
     "messagesSent": 0,
     "protocol": "",
-    "state": "connecting"
+    "state": "open"
   },
-  "RTCIceCandidatePair_00DQoFZZ_UUZjeNZI": {
-    "id": "RTCIceCandidatePair_00DQoFZZ_UUZjeNZI",
-    "timestamp": 1505771060940.004,
+  "RTCIceCandidatePair_80aSSGTq_8mEPWL7V": {
+    "id": "RTCIceCandidatePair_80aSSGTq_8mEPWL7V",
+    "timestamp": 1541019327397,
     "type": "candidate-pair",
-    "availableIncomingBitrate": 0,
-    "availableOutgoingBitrate": 0,
     "bytesReceived": 0,
     "bytesSent": 0,
-    "currentRoundTripTime": 0,
-    "localCandidateId": "RTCIceCandidate_00DQoFZZ",
+    "localCandidateId": "RTCIceCandidate_80aSSGTq",
     "nominated": false,
-    "priority": 9079301928688570000,
-    "readable": false,
-    "remoteCandidateId": "RTCIceCandidate_UUZjeNZI",
+    "priority": 9079290933572287000,
+    "remoteCandidateId": "RTCIceCandidate_8mEPWL7V",
     "requestsReceived": 0,
     "requestsSent": 0,
     "responsesReceived": 0,
     "responsesSent": 0,
     "state": "waiting",
     "totalRoundTripTime": 0,
-    "transportId": "RTCTransport_data_1",
+    "transportId": "RTCTransport_0_1",
     "writable": false
   },
-  "RTCIceCandidatePair_C7DL4R9N_0Azcj1Da": {
-    "id": "RTCIceCandidatePair_C7DL4R9N_0Azcj1Da",
-    "timestamp": 1505771060940.004,
+  "RTCIceCandidatePair_80aSSGTq_WEBVzEDJ": {
+    "id": "RTCIceCandidatePair_80aSSGTq_WEBVzEDJ",
+    "timestamp": 1541019327397,
     "type": "candidate-pair",
-    "availableIncomingBitrate": 0,
-    "availableOutgoingBitrate": 300000,
-    "bytesReceived": 694,
-    "bytesSent": 1308,
-    "currentRoundTripTime": 0.001,
-    "localCandidateId": "RTCIceCandidate_C7DL4R9N",
-    "nominated": false,
+    "bytesReceived": 693,
+    "bytesSent": 1307,
+    "currentRoundTripTime": 0.003,
+    "localCandidateId": "RTCIceCandidate_80aSSGTq",
+    "nominated": true,
     "priority": 9079290933572287000,
-    "readable": false,
-    "remoteCandidateId": "RTCIceCandidate_0Azcj1Da",
+    "remoteCandidateId": "RTCIceCandidate_WEBVzEDJ",
     "requestsReceived": 1,
     "requestsSent": 1,
     "responsesReceived": 1,
     "responsesSent": 1,
     "state": "succeeded",
-    "totalRoundTripTime": 0.001,
-    "transportId": "RTCTransport_data_1",
+    "totalRoundTripTime": 0.003,
+    "transportId": "RTCTransport_0_1",
     "writable": true
+  },
+  "RTCIceCandidate_80aSSGTq": {
+    "id": "RTCIceCandidate_80aSSGTq",
+    "timestamp": 1541019327397,
+    "type": "local-candidate",
+    "candidateType": "host",
+    "deleted": false,
+    "port": 53682,
+    "priority": 2113937151,
+    "protocol": "udp",
+    "transportId": "RTCTransport_0_1"
+  },
+  "RTCIceCandidate_8mEPWL7V": {
+    "id": "RTCIceCandidate_8mEPWL7V",
+    "timestamp": 1541019327397,
+    "type": "remote-candidate",
+    "candidateType": "host",
+    "deleted": false,
+    "port": 50683,
+    "priority": 2113937151,
+    "protocol": "udp",
+    "transportId": "RTCTransport_0_1"
+  },
+  "RTCIceCandidate_WEBVzEDJ": {
+    "id": "RTCIceCandidate_WEBVzEDJ",
+    "timestamp": 1541019327397,
+    "type": "remote-candidate",
+    "candidateType": "host",
+    "deleted": false,
+    "port": 55831,
+    "priority": 2113937151,
+    "protocol": "udp",
+    "transportId": "RTCTransport_0_1"
   }
 }
 

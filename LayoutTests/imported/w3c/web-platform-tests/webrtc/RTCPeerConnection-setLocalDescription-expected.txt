@@ -1,6 +1,5 @@
 
 PASS Calling createOffer() and setLocalDescription() again after one round of local-offer/remote-answer should succeed 
 PASS Switching role from answerer to offerer after going back to stable state should succeed 
-PASS Test onsignalingstatechange event for Calling createOffer() and setLocalDescription() again after one round of local-offer/remote-answer should succeed 
-PASS Test onsignalingstatechange event for Switching role from answerer to offerer after going back to stable state should succeed 
+PASS onsignalingstatechange fires before setLocalDescription resolves 
 

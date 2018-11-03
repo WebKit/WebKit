@@ -1223,6 +1223,7 @@ webkit.org/b/171094 imported/w3c/web-platform-tests/webrtc/rtcpeerconnection/rtc
 webkit.org/b/172f21 imported/w3c/web-platform-tests/webrtc/getstats.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-ontrack.https.html [ Skip ]
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-offer.html [ Failure ]
+imported/w3c/web-platform-tests/webrtc/RTCRtpTransceiver.https.html [ Failure ]
 
 # Uses legacy WebRTC API.
 imported/w3c/web-platform-tests/webrtc/rtcpeerconnection/setRemoteDescription.html [ Skip ]

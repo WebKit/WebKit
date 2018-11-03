@@ -1,5 +1,7 @@
 
 PASS new RTCPeerConnection() should have default configuration.iceServers of undefined 
+PASS new RTCPeerConnection(config) - {} should succeed 
+PASS setConfiguration(config) - {} should succeed 
 PASS new RTCPeerConnection(config) - { iceServers: null } should throw TypeError 
 PASS setConfiguration(config) - { iceServers: null } should throw TypeError 
 PASS new RTCPeerConnection(config) - { iceServers: undefined } should succeed 
@@ -12,8 +14,6 @@ PASS new RTCPeerConnection(config) - { iceServers: [undefined] } should throw Ty
 PASS setConfiguration(config) - { iceServers: [undefined] } should throw TypeError 
 PASS new RTCPeerConnection(config) - { iceServers: [{}] } should throw TypeError 
 PASS setConfiguration(config) - { iceServers: [{}] } should throw TypeError 
-FAIL new RTCPeerConnection(config) - with empty list urls should succeed assert_equals: expected (string) "password" but got (undefined) undefined
-FAIL setConfiguration(config) - with empty list urls should succeed assert_equals: expected (string) "password" but got (undefined) undefined
 FAIL new RTCPeerConnection(config) - with stun server should succeed assert_array_equals: value is "stun:stun1.example.net", expected array
 FAIL setConfiguration(config) - with stun server should succeed assert_array_equals: value is "stun:stun1.example.net", expected array
 FAIL new RTCPeerConnection(config) - with stun server array should succeed assert_equals: expected (string) "password" but got (undefined) undefined
@@ -42,42 +42,62 @@ PASS new RTCPeerConnection(config) - with turns server and only username should 
 PASS setConfiguration(config) - with turns server and only username should throw InvalidAccessError 
 PASS new RTCPeerConnection(config) - with turns server and only credential should throw InvalidAccessError 
 PASS setConfiguration(config) - with turns server and only credential should throw InvalidAccessError 
+FAIL new RTCPeerConnection(config) - with "" url should throw SyntaxError assert_throws: function "() =>
+      makePc({ iceServers: [{
+        urls: ''
+      }] })" threw object "NotSupportedError: ICE server protocol not supported" ("NotSupportedError") expected object "SyntaxError" ("SyntaxError")
+FAIL setConfiguration(config) - with "" url should throw SyntaxError assert_throws: function "() =>
+      makePc({ iceServers: [{
+        urls: ''
+      }] })" threw object "NotSupportedError: ICE server protocol not supported" ("NotSupportedError") expected object "SyntaxError" ("SyntaxError")
+FAIL new RTCPeerConnection(config) - with ["stun:stun1.example.net", ""] url should throw SyntaxError assert_throws: function "() =>
+      makePc({ iceServers: [{
+        urls: ['stun:stun1.example.net', '']
+      }] })" threw object "NotSupportedError: ICE server protocol not supported" ("NotSupportedError") expected object "SyntaxError" ("SyntaxError")
+FAIL setConfiguration(config) - with ["stun:stun1.example.net", ""] url should throw SyntaxError assert_throws: function "() =>
+      makePc({ iceServers: [{
+        urls: ['stun:stun1.example.net', '']
+      }] })" threw object "NotSupportedError: ICE server protocol not supported" ("NotSupportedError") expected object "SyntaxError" ("SyntaxError")
 FAIL new RTCPeerConnection(config) - with relative url should throw SyntaxError assert_throws: function "() =>
       makePc({ iceServers: [{
         urls: 'relative-url'
-      }] })" threw object "NotSupportedError: ICE server protocol not supported" that is not a DOMException SyntaxError: property "code" is equal to 9, expected 12
+      }] })" threw object "NotSupportedError: ICE server protocol not supported" ("NotSupportedError") expected object "SyntaxError" ("SyntaxError")
 FAIL setConfiguration(config) - with relative url should throw SyntaxError assert_throws: function "() =>
       makePc({ iceServers: [{
         urls: 'relative-url'
-      }] })" threw object "NotSupportedError: ICE server protocol not supported" that is not a DOMException SyntaxError: property "code" is equal to 9, expected 12
+      }] })" threw object "NotSupportedError: ICE server protocol not supported" ("NotSupportedError") expected object "SyntaxError" ("SyntaxError")
 FAIL new RTCPeerConnection(config) - with http url should throw SyntaxError assert_throws: function "() =>
       makePc({ iceServers: [{
         urls: 'http://example.com'
-      }] })" threw object "NotSupportedError: ICE server protocol not supported" that is not a DOMException SyntaxError: property "code" is equal to 9, expected 12
+      }] })" threw object "NotSupportedError: ICE server protocol not supported" ("NotSupportedError") expected object "SyntaxError" ("SyntaxError")
 FAIL setConfiguration(config) - with http url should throw SyntaxError assert_throws: function "() =>
       makePc({ iceServers: [{
         urls: 'http://example.com'
-      }] })" threw object "NotSupportedError: ICE server protocol not supported" that is not a DOMException SyntaxError: property "code" is equal to 9, expected 12
+      }] })" threw object "NotSupportedError: ICE server protocol not supported" ("NotSupportedError") expected object "SyntaxError" ("SyntaxError")
 FAIL new RTCPeerConnection(config) - with invalid turn url should throw SyntaxError assert_throws: function "() =>
       makePc({ iceServers: [{
         urls: 'turn://example.org/foo?x=y'
-      }] })" threw object "InvalidAccessError: TURN/TURNS server requires both username and credential" that is not a DOMException SyntaxError: property "code" is equal to 15, expected 12
+      }] })" threw object "InvalidAccessError: TURN/TURNS server requires both username and credential" ("InvalidAccessError") expected object "SyntaxError" ("SyntaxError")
 FAIL setConfiguration(config) - with invalid turn url should throw SyntaxError assert_throws: function "() =>
       makePc({ iceServers: [{
         urls: 'turn://example.org/foo?x=y'
-      }] })" threw object "InvalidAccessError: TURN/TURNS server requires both username and credential" that is not a DOMException SyntaxError: property "code" is equal to 15, expected 12
+      }] })" threw object "InvalidAccessError: TURN/TURNS server requires both username and credential" ("InvalidAccessError") expected object "SyntaxError" ("SyntaxError")
 FAIL new RTCPeerConnection(config) - with invalid stun url should throw SyntaxError assert_throws: function "() =>
       makePc({ iceServers: [{
         urls: 'stun://example.org/foo?x=y'
-      }] })" threw object "InvalidAccessError: Bad Configuration Parameters" that is not a DOMException SyntaxError: property "code" is equal to 15, expected 12
+      }] })" threw object "InvalidAccessError: Bad Configuration Parameters" ("InvalidAccessError") expected object "SyntaxError" ("SyntaxError")
 FAIL setConfiguration(config) - with invalid stun url should throw SyntaxError assert_throws: function "() =>
       makePc({ iceServers: [{
         urls: 'stun://example.org/foo?x=y'
-      }] })" threw object "InvalidAccessError: Bad Configuration Parameters" that is not a DOMException SyntaxError: property "code" is equal to 15, expected 12
-FAIL new RTCPeerConnection(config) - with empty urls and credentialType password should succeed assert_equals: expected (string) "password" but got (undefined) undefined
-FAIL setConfiguration(config) - with empty urls and credentialType password should succeed assert_equals: expected (string) "password" but got (undefined) undefined
-FAIL new RTCPeerConnection(config) - with empty urls and credentialType oauth should succeed assert_equals: expected (string) "oauth" but got (undefined) undefined
-FAIL setConfiguration(config) - with empty urls and credentialType oauth should succeed assert_equals: expected (string) "oauth" but got (undefined) undefined
+      }] })" threw object "InvalidAccessError: Bad Configuration Parameters" ("InvalidAccessError") expected object "SyntaxError" ("SyntaxError")
+FAIL new RTCPeerConnection(config) - with empty urls should throw SyntaxError assert_throws: function "() =>
+      makePc({ iceServers: [{
+        urls: []
+      }] })" did not throw
+FAIL setConfiguration(config) - with empty urls should throw SyntaxError assert_throws: function "() =>
+      makePc({ iceServers: [{
+        urls: []
+      }] })" did not throw
 FAIL new RTCPeerConnection(config) - with invalid credentialType should throw TypeError assert_throws: function "() =>
       makePc({ iceServers: [{
         urls: [],
@@ -142,8 +162,4 @@ FAIL new RTCPeerConnection(config) - with stun server, credentialType oauth, and
 FAIL setConfiguration(config) - with stun server, credentialType oauth, and string credential should succeed assert_array_equals: value is "stun:stun1.example.net", expected array
 FAIL new RTCPeerConnection(config) - with stun server, credentialType password, and RTCOAuthCredential credential should succeed assert_array_equals: value is "stun:stun1.example.net", expected array
 FAIL setConfiguration(config) - with stun server, credentialType password, and RTCOAuthCredential credential should succeed assert_array_equals: value is "stun:stun1.example.net", expected array
-FAIL new RTCPeerConnection(config) - with empty urls list, credentialType oauth, and string credential should succeed assert_equals: expected (string) "oauth" but got (undefined) undefined
-FAIL setConfiguration(config) - with empty urls list, credentialType oauth, and string credential should succeed assert_equals: expected (string) "oauth" but got (undefined) undefined
-FAIL new RTCPeerConnection(config) - with empty urls list, credentialType password, and RTCOAuthCredential credential should succeed assert_equals: expected (string) "password" but got (undefined) undefined
-FAIL setConfiguration(config) - with empty urls list, credentialType password, and RTCOAuthCredential credential should succeed assert_equals: expected (string) "password" but got (undefined) undefined
 

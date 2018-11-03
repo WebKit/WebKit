@@ -1,8 +1,5 @@
 
-Harness Error (TIMEOUT), message = null
-
 FAIL setRemoteDescription(rollback) in have-remote-offer state should revert to stable state undefined is not an object (evaluating 'pc.createDataChannel')
 PASS setRemoteDescription(rollback) from stable state should reject with InvalidStateError 
 FAIL setRemoteDescription(rollback) should ignore invalid sdp content and succeed promise_test: Unhandled rejection with value: object "InvalidStateError: Description type incompatible with current signaling state"
-TIMEOUT Test onsignalingstatechange event for setRemoteDescription(rollback) in have-remote-offer state should revert to stable state Test timed out
 

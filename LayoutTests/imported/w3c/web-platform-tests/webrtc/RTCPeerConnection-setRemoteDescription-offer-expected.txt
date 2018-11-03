@@ -1,12 +1,7 @@
 
-Harness Error (TIMEOUT), message = null
-
 PASS setRemoteDescription with valid offer should succeed 
 PASS setRemoteDescription multiple times should succeed 
 FAIL setRemoteDescription multiple times with different offer should succeed assert_false: Expect both session descriptions to have different count of media lines expected false got true
 FAIL setRemoteDescription(offer) with invalid SDP should reject with RTCError assert_equals: Expect error detail field to set to sdp-syntax-error expected (string) "sdp-syntax-error" but got (undefined) undefined
 PASS setRemoteDescription(offer) from have-local-offer state should reject with InvalidStateError 
-PASS Test onsignalingstatechange event for setRemoteDescription with valid offer should succeed 
-PASS Test onsignalingstatechange event for setRemoteDescription multiple times should succeed 
-TIMEOUT Test onsignalingstatechange event for setRemoteDescription multiple times with different offer should succeed Test timed out
 
