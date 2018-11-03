@@ -95,6 +95,8 @@ public:
     virtual AffineTransform baseTransform() const = 0;
     virtual Image* copiedImage() const = 0;
 
+    bool callTracingActive() const;
+
 protected:
     CanvasBase(ScriptExecutionContext*);
 

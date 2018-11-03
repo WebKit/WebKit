@@ -45,6 +45,8 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         this._isGetter = false;
         this._isVisual = false;
 
+        this._contextReplacer = null;
+
         this._states = [];
         this._stateModifiers = new Set;
 
@@ -84,7 +86,10 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         let prototype = WI.RecordingAction._prototypeForType(type);
         if (!prototype)
             return false;
-        return typeof Object.getOwnPropertyDescriptor(prototype, name).value === "function";
+        let propertyDescriptor = Object.getOwnPropertyDescriptor(prototype, name);
+        if (!propertyDescriptor)
+            return false;
+        return typeof propertyDescriptor.value === "function";
     }
 
     static constantNameForParameter(type, name, value, index, count)
@@ -123,7 +128,7 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         let prototype = WI.RecordingAction._prototypeForType(type);
         for (let key in prototype) {
             let descriptor = Object.getOwnPropertyDescriptor(prototype, key);
-            if (descriptor.value === value)
+            if (descriptor && descriptor.value === value)
                 return key;
         }
 
@@ -198,6 +203,7 @@ WI.RecordingAction = class RecordingAction extends WI.Object
     get isFunction() { return this._isFunction; }
     get isGetter() { return this._isGetter; }
     get isVisual() { return this._isVisual; }
+    get contextReplacer() { return this._contextReplacer; }
     get states() { return this._states; }
     get stateModifiers() { return this._stateModifiers; }
     get warning() { return this._warning; }
@@ -330,18 +336,31 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         if (this._payloadSnapshot >= 0)
             this._snapshot = snapshot;
 
-        this._isFunction = WI.RecordingAction.isFunctionForType(recording.type, this._name);
-        this._isGetter = !this._isFunction && !this._parameters.length;
+        if (recording.type === WI.Recording.Type.Canvas2D || recording.type === WI.Recording.Type.CanvasBitmapRenderer || recording.type === WI.Recording.Type.CanvasWebGL) {
+            if (this._name === "width" || this._name === "height") {
+                this._contextReplacer = "canvas";
+                this._isFunction = false;
+                this._isGetter = !this._parameters.length;
+                this._isVisual = !this._isGetter;
+            }
 
-        let visualNames = WI.RecordingAction._visualNames[recording.type];
-        this._isVisual = visualNames ? visualNames.has(this._name) : false;
+            // FIXME: <https://webkit.org/b/180833>
+        }
 
-        if (this._valid) {
-            let prototype = WI.RecordingAction._prototypeForType(recording.type);
-            if (prototype && !(name in prototype)) {
-                this.markInvalid();
+        if (!this._contextReplacer) {
+            this._isFunction = WI.RecordingAction.isFunctionForType(recording.type, this._name);
+            this._isGetter = !this._isFunction && !this._parameters.length;
 
-                WI.Recording.synthesizeError(WI.UIString("“%s” is invalid.").format(name));
+            let visualNames = WI.RecordingAction._visualNames[recording.type];
+            this._isVisual = visualNames ? visualNames.has(this._name) : false;
+
+            if (this._valid) {
+                let prototype = WI.RecordingAction._prototypeForType(recording.type);
+                if (prototype && !(name in prototype)) {
+                    this.markInvalid();
+
+                    WI.Recording.synthesizeError(WI.UIString("“%s” is invalid.").format(name));
+                }
             }
         }
 
@@ -375,6 +394,10 @@ WI.RecordingAction = class RecordingAction extends WI.Object
 
         try {
             let name = options.nameOverride || this._name;
+
+            if (this._contextReplacer)
+                context = context[this._contextReplacer];
+
             if (this.isFunction)
                 context[name](...this._parameters);
             else {

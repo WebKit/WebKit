@@ -384,6 +384,14 @@ function performActions() {
             ctx.webkitLineDashOffset = 1;
         },
         () => {
+            ctx.canvas.width;
+            ctx.canvas.width = 2;
+        },
+        () => {
+            ctx.canvas.height;
+            ctx.canvas.height = 2;
+        },
+        () => {
             TestPage.dispatchEventToFrontend("LastFrame");
         },
     ];

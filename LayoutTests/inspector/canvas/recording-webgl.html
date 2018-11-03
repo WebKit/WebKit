@@ -39,6 +39,9 @@ function load() {
     createProgram("webgl");
     linkProgram("vertex-shader", "fragment-shader");
 
+    context.canvas.width = 2;
+    context.canvas.height = 2;
+
     buffer = context.createBuffer();
     framebuffer = context.createFramebuffer();
     uniformLocation = context.getUniformLocation(program, "test");
@@ -482,6 +485,14 @@ function performActions() {
         },
         () => {
             context.viewport(1, 2, 3, 4);
+        },
+        () => {
+            context.canvas.width;
+            context.canvas.width = 2;
+        },
+        () => {
+            context.canvas.height;
+            context.canvas.height = 2;
         },
         () => {
             TestPage.dispatchEventToFrontend("LastFrame");

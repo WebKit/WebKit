@@ -64,27 +64,6 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
         }
     }
 
-    // Static
-
-    static _actionModifiesPath(recordingAction)
-    {
-        switch (recordingAction.name) {
-        case "arc":
-        case "arcTo":
-        case "beginPath":
-        case "bezierCurveTo":
-        case "closePath":
-        case "ellipse":
-        case "lineTo":
-        case "moveTo":
-        case "quadraticCurveTo":
-        case "rect":
-            return true;
-        }
-
-        return false;
-    }
-
     // Public
 
     get navigationItems()
@@ -241,6 +220,9 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
             let saveCount = 0;
             snapshot.context.save();
 
+            for (let attribute in snapshot.attributes)
+                snapshot.element[attribute] = snapshot.attributes[attribute];
+
             if (snapshot.content) {
                 snapshot.context.clearRect(0, 0, snapshot.element.width, snapshot.element.height);
                 snapshot.context.drawImage(snapshot.content, 0, 0);
@@ -269,8 +251,21 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
                 snapshot.context.save();
             }
 
-            let shouldDrawCanvasPath = showCanvasPath && indexOfLastBeginPathAction <= to;
-            if (shouldDrawCanvasPath) {
+            let lastPathPoint = {};
+            let subPathStartPoint = {};
+
+            for (let i = from; i <= to; ++i) {
+                if (actions[i].name === "save")
+                    ++saveCount;
+                else if (actions[i].name === "restore") {
+                    if (!saveCount) // Only attempt to restore if save has been called.
+                        continue;
+                }
+
+                actions[i].apply(snapshot.context);
+            }
+
+            if (showCanvasPath && indexOfLastBeginPathAction <= to) {
                 if (!this._pathContext) {
                     let pathCanvas = document.createElement("canvas");
                     pathCanvas.classList.add("path");
@@ -285,22 +280,29 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
 
                 this._pathContext.fillStyle = "hsla(0, 0%, 100%, 0.75)";
                 this._pathContext.fillRect(0, 0, snapshot.element.width, snapshot.element.height);
-            }
 
-            let lastPathPoint = {};
-            let subPathStartPoint = {};
+                function actionModifiesPath(action) {
+                    switch (action.name) {
+                    case "arc":
+                    case "arcTo":
+                    case "beginPath":
+                    case "bezierCurveTo":
+                    case "closePath":
+                    case "ellipse":
+                    case "lineTo":
+                    case "moveTo":
+                    case "quadraticCurveTo":
+                    case "rect":
+                        return true;
+                    }
 
-            for (let i = from; i <= to; ++i) {
-                if (actions[i].name === "save")
-                    ++saveCount;
-                else if (actions[i].name === "restore") {
-                    if (!saveCount) // Only attempt to restore if save has been called.
-                        continue;
+                    return false;
                 }
 
-                actions[i].apply(snapshot.context);
+                for (let i = indexOfLastBeginPathAction; i <= to; ++i) {
+                    if (!actionModifiesPath(actions[i]))
+                        continue;
 
-                if (shouldDrawCanvasPath && i >= indexOfLastBeginPathAction && WI.RecordingContentView._actionModifiesPath(actions[i])) {
                     lastPathPoint = {x: this._pathContext.currentX, y: this._pathContext.currentY};
 
                     if (i === indexOfLastBeginPathAction)
@@ -326,9 +328,7 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
 
                     this._pathContext.stroke();
                 }
-            }
 
-            if (shouldDrawCanvasPath) {
                 this._pathContext.restore();
                 this._previewContainer.appendChild(this._pathContext.canvas);
             } else if (this._pathContext)
@@ -358,10 +358,16 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
             if (lastSnapshotIndex < 0) {
                 snapshot.content = this._initialContent;
                 snapshot.states = actions[0].states;
+                snapshot.attributes = Object.shallowCopy(initialState.attributes);
             } else {
-                snapshot.content = this._snapshots[lastSnapshotIndex].content;
-                snapshot.states = this._snapshots[lastSnapshotIndex].states;
-                startIndex = this._snapshots[lastSnapshotIndex].index;
+                let lastSnapshot = this._snapshots[lastSnapshotIndex];
+                snapshot.content = lastSnapshot.content;
+                snapshot.states = lastSnapshot.states;
+                snapshot.attributes = {};
+                for (let attribute in initialState.attributes)
+                    snapshot.attributes[attribute] = lastSnapshot.element[attribute];
+
+                startIndex = lastSnapshot.index;
             }
 
             applyActions(startIndex, snapshot.index - 1);

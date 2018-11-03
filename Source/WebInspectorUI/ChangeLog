@@ -1,3 +1,47 @@
+2018-11-03  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Canvas: capture changes to <canvas> that would affect the recorded context
+        https://bugs.webkit.org/show_bug.cgi?id=190854
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Models/RecordingAction.js:
+        (WI.RecordingAction):
+        (WI.RecordingAction.isFunctionForType):
+        (WI.RecordingAction.constantNameForParameter):
+        (WI.RecordingAction.prototype.get contextReplacer): Added.
+        (WI.RecordingAction.prototype.async.swizzle):
+        (WI.RecordingAction.prototype.apply):
+        Create a constant list of actions for each recording type that need to replace the context
+        with a different value before being applied (e.g. `width` should be applied to the
+        `context`'s `canvas` instead of directly to the `context`).
+
+        * UserInterface/Views/RecordingContentView.js:
+        (WI.RecordingContentView.prototype._generateContentCanvas2D.actionModifiesPath): Added.
+        (WI.RecordingContentView.prototype._generateContentCanvas2D):
+        (WI.RecordingContentView._actionModifiesPath): Deleted.
+        Generate the path context after the actions are applied to the preview context so that the
+        final width/height are known and can be used. This is needed because changing the
+        width/height causes the content to be erased.
+
+        * UserInterface/Views/RecordingActionTreeElement.js:
+        (WI.RecordingActionTreeElement._generateDOM):
+        (WI.RecordingActionTreeElement._classNameForAction):
+        * UserInterface/Views/RecordingActionTreeElement.css:
+        (.tree-outline:focus .item.action.selected:not(.invalid, .initial-state, .has-context-replacer) > .icon): Added.
+        (.item.action > .titles .context-replacer::after): Added.
+        (.item.action.has-context-replacer > .icon): Added.
+        (@media (prefers-dark-interface) .item.action:not(.invalid, .initial-state, .has-context-replacer) > .icon): Added.
+        (.tree-outline:focus .item.action.selected:not(.initial-state, .invalid) > .icon): Deleted.
+        (@media (prefers-dark-interface) .item.action:not(.initial-state) > .icon): Deleted.
+        (@media (prefers-dark-interface) .tree-outline:not(.hide-disclosure-buttons) .item.action:not(.initial-state, .parent) > .icon): Deleted.
+        Add the context replacer text to the beginning of the action's name if it exists.
+
+        * UserInterface/Views/CanvasContentView.js:
+        (WI.CanvasContentView.prototype._refreshPixelSize):
+        (WI.CanvasContentView.prototype._updatePixelSize): Deleted.
+        Update preview image when the canvas' size changes.
+
 2018-11-02  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: support multiple selection/deletion of cookie records

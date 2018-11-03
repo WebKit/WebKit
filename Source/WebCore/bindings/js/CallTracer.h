@@ -32,9 +32,11 @@
 namespace WebCore {
 
 class CanvasRenderingContext;
+class HTMLCanvasElement;
 
 class CallTracer {
 public:
+    static void recordCanvasAction(const HTMLCanvasElement&, const String&, Vector<RecordCanvasActionVariant>&& = { });
     static void recordCanvasAction(CanvasRenderingContext&, const String&, Vector<RecordCanvasActionVariant>&& = { });
 };
 

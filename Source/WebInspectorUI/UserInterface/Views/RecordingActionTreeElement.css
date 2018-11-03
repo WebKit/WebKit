@@ -52,7 +52,7 @@ body[dir=rtl] .item.action::before {
     margin-left: var(--tree-outline-icon-margin-end);
 }
 
-.tree-outline:focus .item.action.selected:not(.initial-state, .invalid) > .icon {
+.tree-outline:focus .item.action.selected:not(.invalid, .initial-state, .has-context-replacer) > .icon {
     filter: invert();
     opacity: 1;
 }
@@ -109,6 +109,10 @@ body[dir=rtl] .tree-outline:not(.hide-disclosure-buttons) .item.action:not(.init
     background-color: var(--value-changed-highlight);
 }
 
+.item.action > .titles .context-replacer::after {
+    content: ".";
+}
+
 .item.action.attribute > .titles .parameters::before {
     content: " = ";
 }
@@ -131,6 +135,10 @@ body[dir=rtl] .tree-outline:not(.hide-disclosure-buttons) .item.action:not(.init
 
 .item.action > .titles .parameters > .inline-swatch {
     vertical-align: -1px;
+}
+
+.item.action.has-context-replacer > .icon {
+    content: url("../Images/Source.svg");
 }
 
 .item.action.composite > .icon {
@@ -236,11 +244,7 @@ body[dir=rtl] .tree-outline:not(.hide-disclosure-buttons) .item.action:not(.init
         color: var(--green-highlight-text-color);
     }
 
-    .item.action:not(.initial-state) > .icon {
-        filter: invert();
-    }
-
-    .tree-outline:not(.hide-disclosure-buttons) .item.action:not(.initial-state, .parent) > .icon {
+    .item.action:not(.invalid, .initial-state, .has-context-replacer) > .icon {
         filter: invert();
         opacity: 0.8;
     }

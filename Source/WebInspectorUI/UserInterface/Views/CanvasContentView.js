@@ -287,13 +287,28 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
 
     _refreshPixelSize()
     {
-        this._pixelSize = null;
+        let updatePixelSize = (size) => {
+            if (this._pixelSize && size.width === this._pixelSize.width && size.height === this._pixelSize.height)
+                return;
 
-        this.representedObject.requestSize().then((size) => {
             this._pixelSize = size;
-            this._updatePixelSize();
-        }).catch((error) => {
-            this._updatePixelSize();
+
+            if (this._pixelSizeElement) {
+                if (this._pixelSize)
+                    this._pixelSizeElement.textContent = `${this._pixelSize.width} ${multiplicationSign} ${this._pixelSize.height}`;
+                else
+                    this._pixelSizeElement.textContent = emDash;
+            }
+
+            this.refresh();
+        };
+
+        this.representedObject.requestSize()
+        .then((size) => {
+            updatePixelSize(size);
+        })
+        .catch((error) => {
+            updatePixelSize(null);
         });
     }
 
@@ -347,17 +362,6 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
             let bytesString = Number.bytesToString(memoryCost, higherResolution);
             this._memoryCostElement.textContent = `(${bytesString})`;
         }
-    }
-
-    _updatePixelSize()
-    {
-        if (!this._pixelSizeElement)
-            return;
-
-        if (this._pixelSize)
-            this._pixelSizeElement.textContent = `${this._pixelSize.width} ${multiplicationSign} ${this._pixelSize.height}`;
-        else
-            this._pixelSizeElement.textContent = emDash;
     }
 
     _updateRecordNavigationItem()

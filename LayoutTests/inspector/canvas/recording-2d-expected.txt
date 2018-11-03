@@ -1067,6 +1067,26 @@ frames:
       trace:
         0: (anonymous function)
         1: executeFrameFunction
+  73: (duration)
+    0: width
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    1: width = 2
+      swizzleTypes: [Number]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+  74: (duration)
+    0: height
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    1: height = 2
+      swizzleTypes: [Number]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
 
 -- Running test case: Canvas.recording2D.memoryLimit
 initialState:

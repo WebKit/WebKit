@@ -45,8 +45,8 @@ typedef (
     ReportExtraMemoryCost,
     ReportExternalMemoryCost,
 ] interface HTMLCanvasElement : HTMLElement {
-    attribute unsigned long width;
-    attribute unsigned long height;
+    [CallTracingCallback=recordCanvasAction] attribute unsigned long width;
+    [CallTracingCallback=recordCanvasAction] attribute unsigned long height;
 
     [CallWith=ExecState, MayThrowException] RenderingContext? getContext(DOMString contextId, any... arguments);
 

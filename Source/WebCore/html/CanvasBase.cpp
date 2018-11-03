@@ -109,4 +109,9 @@ HashSet<Element*> CanvasBase::cssCanvasClients() const
     return cssCanvasClients;
 }
 
+bool CanvasBase::callTracingActive() const
+{
+    return m_context && m_context->callTracingActive();
+}
+
 }

@@ -105,6 +105,15 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
         let titleFragment = document.createDocumentFragment();
         let copyText = recordingAction.name;
 
+        let contextReplacer = recordingAction.contextReplacer;
+        if (contextReplacer) {
+            copyText = contextReplacer + "." + copyText;
+
+            let contextReplacerContainer = titleFragment.appendChild(document.createElement("span"));
+            contextReplacerContainer.classList.add("context-replacer");
+            contextReplacerContainer.textContent = contextReplacer;
+        }
+
         let nameContainer = titleFragment.appendChild(document.createElement("span"));
         nameContainer.classList.add("name");
         nameContainer.textContent = recordingAction.name;
@@ -247,6 +256,9 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
 
     static _classNameForAction(recordingAction)
     {
+        if (recordingAction.contextReplacer)
+            return "has-context-replacer";
+
         function classNameForActionName(name) {
             switch (name) {
             case "arc":
