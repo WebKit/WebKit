@@ -1,3 +1,13 @@
+2018-11-03  Philippe Normand  <pnormand@igalia.com>
+
+        [WPE] Add the WebKitVersion.h header
+        https://bugs.webkit.org/show_bug.cgi?id=191015
+        <rdar://problem/45647211>
+
+        Reviewed by Michael Catanzaro.
+
+        * PlatformWPE.cmake: Install the generated header as well.
+
 2018-11-02  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, rolling out r237761.
