@@ -1,3 +1,15 @@
+2018-11-02  Keith Miller  <keith_miller@apple.com>
+
+        Assert JSValues can fit into a pointer when API casting
+        https://bugs.webkit.org/show_bug.cgi?id=191220
+
+        Reviewed by Michael Saboff.
+
+        * API/APICast.h:
+        (toJS):
+        (toJSForGC):
+        (toRef):
+
 2018-11-02  Michael Saboff  <msaboff@apple.com>
 
         Rolling in r237753 with unreviewed build fix.
