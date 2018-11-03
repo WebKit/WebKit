@@ -3410,6 +3410,7 @@
 		5C74300E21500492004BFA17 /* WKWebProcess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebProcess.h; sourceTree = "<group>"; };
 		5C74300F21500492004BFA17 /* WKWebProcess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKWebProcess.cpp; sourceTree = "<group>"; };
 		5C7706731D111D8B0012700F /* WebSocketProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebSocketProvider.cpp; path = Network/WebSocketProvider.cpp; sourceTree = "<group>"; };
+		5C7ACFD1218DD8BD004CBB59 /* Network-OSX.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = "Network-OSX.entitlements"; sourceTree = "<group>"; };
 		5C7C88DC1D0F41A0009D2F6D /* WebSocketProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebSocketProvider.h; path = Network/WebSocketProvider.h; sourceTree = "<group>"; };
 		5C84CF901F96AC4E00B6705A /* NetworkSessionCreationParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkSessionCreationParameters.h; sourceTree = "<group>"; };
 		5C85C7861C3F23C50061A4FA /* PendingDownload.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PendingDownload.cpp; sourceTree = "<group>"; };
@@ -4768,6 +4769,7 @@
 				37119A7D20CCB64E002C6DC9 /* Network-iOS-minimalsimulator.entitlements */,
 				7C0BB9A918DCDF5A0006C086 /* Network-iOS.entitlements */,
 				41D0FC7D20E43A5100076AE8 /* Network-OSX-sandbox.entitlements */,
+				5C7ACFD1218DD8BD004CBB59 /* Network-OSX.entitlements */,
 				BC8283AB16B4BEAD00A278FE /* NetworkService.xcconfig */,
 				A1EDD2DB1884B96400BBFE98 /* PluginProcessShim.xcconfig */,
 				BC8283F216B4FC5300A278FE /* PluginService.32.xcconfig */,
