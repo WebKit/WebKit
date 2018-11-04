@@ -68,12 +68,44 @@ std::optional<LayoutUnit> FormattingContext::Geometry::computedHeightValue(const
         return { height.value() };
 
     std::optional<LayoutUnit> containingBlockHeightValue;
-    auto containingBlockHeight = layoutBox.containingBlock()->style().logicalHeight();
-    if (containingBlockHeight.isFixed())
-        containingBlockHeightValue = { containingBlockHeight.value() };
-    else if (layoutBox.isOutOfFlowPositioned()) {
-        // Containing block's height is already computed.
+    if (layoutBox.isOutOfFlowPositioned()) {
+        // Containing block's height is already computed since we layout the out-of-flow boxes as the last step.
         containingBlockHeightValue = layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).height();
+    } else {
+        auto computedHeightValueForQuirksMode = [&]() -> LayoutUnit {
+            // In quirks mode, we go and travers the containing block chain to find a block level box with fixed height value, even if it means leaving
+            // the current formatting context. FIXME: surely we need to do some tricks here when block direction support is added.
+            auto* containingBlock = layoutBox.containingBlock();
+            LayoutUnit bodyAndDocumentVerticalMarginsPaddingsAndBorders;
+            while (containingBlock) {
+                auto containingBlockHeight = containingBlock->style().logicalHeight();
+                if (containingBlockHeight.isFixed())
+                    return containingBlockHeight.value() - bodyAndDocumentVerticalMarginsPaddingsAndBorders;
+
+                // If the only fixed value box we find is the ICB, then ignore the body and the document (vertical) margin, padding and border. So much quirkiness.
+                // -and it's totally insane because now we freely travel across formatting context boundaries and computed margins are nonexistent.
+                if (containingBlock->isBodyBox() || containingBlock->isDocumentBox()) {
+                    auto& displayBox = layoutState.displayBoxForLayoutBox(*containingBlock);
+
+                    auto verticalMargins = computedNonCollapsedVerticalMarginValue(layoutState, *containingBlock);
+                    auto verticalPaddings = displayBox.paddingTop().value_or(0) + displayBox.paddingBottom().value_or(0);
+                    auto verticalBorders = displayBox.borderTop() + displayBox.borderBottom();
+                    bodyAndDocumentVerticalMarginsPaddingsAndBorders += verticalMargins.top + verticalMargins.bottom + verticalPaddings + verticalBorders;
+                }
+
+                containingBlock = containingBlock->containingBlock();
+            }
+            // Initial containing block has to have a height.
+            return layoutState.displayBoxForLayoutBox(layoutBox.initialContainingBlock()).contentBox().height() - bodyAndDocumentVerticalMarginsPaddingsAndBorders;
+        };
+
+        if (layoutState.inQuirksMode())
+            containingBlockHeightValue = computedHeightValueForQuirksMode();
+        else {
+            auto containingBlockHeight = layoutBox.containingBlock()->style().logicalHeight();
+            if (containingBlockHeight.isFixed())
+                containingBlockHeightValue = { containingBlockHeight.value() };
+        }
     }
 
     if (!containingBlockHeightValue)
