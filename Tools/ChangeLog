@@ -1,3 +1,16 @@
+2018-11-04  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] User should not be prompted again after denying getDisplayMedia request
+        https://bugs.webkit.org/show_bug.cgi?id=191227
+        <rdar://problem/45784512>
+
+        Reviewed by Youenn Fablet.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/GetDisplayMedia.mm:
+        (-[GetDisplayMediaUIDelegate _webView:requestUserMediaAuthorizationForDevices:url:mainFrameURL:decisionHandler:]):
+        (TestWebKitAPI::GetDisplayMediaTest::promptForCapture):
+        (TestWebKitAPI::TEST_F):
+
 2018-11-04  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC] Add support for percentage height in quirks mode.

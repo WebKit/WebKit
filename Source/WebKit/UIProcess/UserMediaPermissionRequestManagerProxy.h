@@ -73,9 +73,16 @@ private:
     bool grantAccess(uint64_t userMediaID, const WebCore::CaptureDevice audioDevice, const WebCore::CaptureDevice videoDevice, const String& deviceIdentifierHashSalt);
 
     const UserMediaPermissionRequestProxy* searchForGrantedRequest(uint64_t frameID, const WebCore::SecurityOrigin& userMediaDocumentOrigin, const WebCore::SecurityOrigin& topLevelDocumentOrigin, bool needsAudio, bool needsVideo) const;
-    bool wasRequestDenied(uint64_t mainFrameID, const WebCore::SecurityOrigin& userMediaDocumentOrigin, const WebCore::SecurityOrigin& topLevelDocumentOrigin, bool needsAudio, bool needsVideo);
+    bool wasRequestDenied(uint64_t mainFrameID, const WebCore::SecurityOrigin& userMediaDocumentOrigin, const WebCore::SecurityOrigin& topLevelDocumentOrigin, bool needsAudio, bool needsVideo, bool needsScreenCapture);
 #endif
     void getUserMediaPermissionInfo(uint64_t userMediaID, uint64_t frameID, UserMediaPermissionCheckProxy::CompletionHandler&&, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin);
+
+    enum class RequestAction {
+        Deny,
+        Grant,
+        Prompt        
+    };
+    RequestAction getRequestAction(uint64_t frameID, WebCore::SecurityOrigin& userMediaDocumentOrigin, WebCore::SecurityOrigin& topLevelDocumentOrigin, const WebCore::MediaStreamRequest&, Vector<WebCore::CaptureDevice>& audioDevices, Vector<WebCore::CaptureDevice>& videoDevices);
 
     void watchdogTimerFired();
 
@@ -96,6 +103,7 @@ private:
         Ref<WebCore::SecurityOrigin> topLevelDocumentOrigin;
         bool isAudioDenied;
         bool isVideoDenied;
+        bool isScreenCaptureDenied;
     };
     Vector<DeniedRequest> m_deniedRequests;
 
