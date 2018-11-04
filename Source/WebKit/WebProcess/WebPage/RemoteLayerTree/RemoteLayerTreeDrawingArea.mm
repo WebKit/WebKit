@@ -57,6 +57,7 @@ RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage& webPage, const W
     : DrawingArea(DrawingAreaTypeRemoteLayerTree, webPage)
     , m_remoteLayerTreeContext(std::make_unique<RemoteLayerTreeContext>(webPage))
     , m_rootLayer(GraphicsLayer::create(graphicsLayerFactory(), *this))
+    , m_initialDeferredPaintTimer(*this, &RemoteLayerTreeDrawingArea::flushInitialDeferredPaint)
     , m_layerFlushTimer(*this, &RemoteLayerTreeDrawingArea::flushLayers)
 {
     webPage.corePage()->settings().setForceCompositingMode(true);
@@ -185,7 +186,7 @@ void RemoteLayerTreeDrawingArea::setLayerTreeStateIsFrozen(bool isFrozen)
 
     if (!m_isFlushingSuspended && m_hasDeferredFlush) {
         m_hasDeferredFlush = false;
-        scheduleCompositingLayerFlush();
+        scheduleInitialDeferredPaint();
     }
 }
 
@@ -273,6 +274,23 @@ void RemoteLayerTreeDrawingArea::scheduleCompositingLayerFlushImmediately()
     m_layerFlushTimer.startOneShot(0_s);
 }
 
+void RemoteLayerTreeDrawingArea::flushInitialDeferredPaint()
+{
+    flushLayers();
+
+    if (!m_isThrottlingLayerFlushes)
+        return;
+
+    scheduleCompositingLayerFlush();
+}
+
+void RemoteLayerTreeDrawingArea::scheduleInitialDeferredPaint()
+{
+    ASSERT(!m_isFlushingSuspended);
+    ASSERT(!m_layerFlushTimer.isActive());
+    m_initialDeferredPaintTimer.startOneShot(0_s);
+}
+
 void RemoteLayerTreeDrawingArea::scheduleCompositingLayerFlush()
 {
     if (m_isFlushingSuspended) {
@@ -286,15 +304,11 @@ void RemoteLayerTreeDrawingArea::scheduleCompositingLayerFlush()
         return;
     }
 
-    if (m_layerFlushTimer.isActive())
+    if (m_initialDeferredPaintTimer.isActive() || m_layerFlushTimer.isActive())
         return;
 
-    const Seconds initialFlushDelay = 500_ms;
-    const Seconds flushDelay = 1500_ms;
-    Seconds throttleDelay = m_isThrottlingLayerFlushes ? (m_isInitialThrottledLayerFlush ? initialFlushDelay : flushDelay) : 0_s;
-    m_isInitialThrottledLayerFlush = false;
-
-    m_layerFlushTimer.startOneShot(throttleDelay);
+    const auto flushDelay = 500_ms;
+    m_layerFlushTimer.startOneShot(m_isThrottlingLayerFlushes ? flushDelay : 0_s);
 }
 
 bool RemoteLayerTreeDrawingArea::adjustLayerFlushThrottling(WebCore::LayerFlushThrottleState::Flags flags)
@@ -304,9 +318,6 @@ bool RemoteLayerTreeDrawingArea::adjustLayerFlushThrottling(WebCore::LayerFlushT
 
     bool wasThrottlingLayerFlushes = m_isThrottlingLayerFlushes;
     m_isThrottlingLayerFlushes = flags & WebCore::LayerFlushThrottleState::Enabled;
-
-    if (!wasThrottlingLayerFlushes && m_isThrottlingLayerFlushes)
-        m_isInitialThrottledLayerFlush = true;
 
     // Re-schedule the flush if we stopped throttling.
     if (wasThrottlingLayerFlushes && !m_isThrottlingLayerFlushes && m_layerFlushTimer.isActive()) {

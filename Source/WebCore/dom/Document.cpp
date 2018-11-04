@@ -1807,7 +1807,9 @@ void Document::scheduleStyleRecalc()
     // FIXME: Why on earth is this here? This is clearly misplaced.
     invalidateAccessKeyMap();
     
-    m_styleRecalcTimer.startOneShot(0_s);
+    auto throttleStyleRecalc = !m_pendingStyleRecalcShouldForce && page() && page()->chrome().client().layerFlushThrottlingIsActive();
+    const auto styleRecalcDelay = 50_ms;
+    m_styleRecalcTimer.startOneShot(throttleStyleRecalc ? styleRecalcDelay : 0_s);
 
     InspectorInstrumentation::didScheduleStyleRecalculation(*this);
 }
@@ -3030,6 +3032,8 @@ bool Document::shouldScheduleLayout()
     if (!bodyOrFrameset())
         return false;
     if (styleScope().hasPendingSheetsBeforeBody())
+        return false;
+    if (page() && page()->chrome().client().layerFlushThrottlingIsActive())
         return false;
 
     return true;

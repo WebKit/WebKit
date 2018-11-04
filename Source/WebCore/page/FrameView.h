@@ -393,7 +393,7 @@ public:
     
     WEBCORE_EXPORT void updateLayoutAndStyleIfNeededRecursive();
 
-    void incrementVisuallyNonEmptyCharacterCount(unsigned);
+    void incrementVisuallyNonEmptyCharacterCount(const String&);
     void incrementVisuallyNonEmptyPixelCount(const IntSize&);
     void updateIsVisuallyNonEmpty();
     void updateSignificantRenderedTextMilestoneIfNeeded();
@@ -870,7 +870,7 @@ private:
     bool m_isVisuallyNonEmpty;
     bool m_firstVisuallyNonEmptyLayoutCallbackPending;
 
-    unsigned m_renderTextCountForVisuallyNonEmptyCharacters;
+    unsigned m_textRendererCountForVisuallyNonEmptyCharacters { 0 };
     bool m_renderedSignificantAmountOfText;
     bool m_significantRenderedTextMilestonePending;
 
@@ -936,18 +936,6 @@ private:
 
     FrameViewLayoutContext m_layoutContext;
 };
-
-inline void FrameView::incrementVisuallyNonEmptyCharacterCount(unsigned count)
-{
-    if (m_isVisuallyNonEmpty && m_renderedSignificantAmountOfText)
-        return;
-    m_visuallyNonEmptyCharacterCount += count;
-    ++m_renderTextCountForVisuallyNonEmptyCharacters;
-    if (!m_isVisuallyNonEmpty && m_visuallyNonEmptyCharacterCount > visualCharacterThreshold)
-        updateIsVisuallyNonEmpty();
-    if (!m_renderedSignificantAmountOfText)
-        updateSignificantRenderedTextMilestoneIfNeeded();
-}
 
 inline void FrameView::incrementVisuallyNonEmptyPixelCount(const IntSize& size)
 {

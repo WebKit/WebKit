@@ -84,6 +84,7 @@ public:
     virtual bool forceRepaintAsync(CallbackID) { return false; }
     virtual void setLayerTreeStateIsFrozen(bool) { }
     virtual bool layerTreeStateIsFrozen() const { return false; }
+    virtual bool layerFlushThrottlingIsActive() const { return false; }
     virtual LayerTreeHost* layerTreeHost() const { return 0; }
 
     virtual void setPaintingEnabled(bool) { }
@@ -111,6 +112,7 @@ public:
     virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() { return nullptr; }
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) = 0;
     virtual void scheduleCompositingLayerFlush() = 0;
+    virtual void scheduleInitialDeferredPaint() = 0;
     virtual void scheduleCompositingLayerFlushImmediately() = 0;
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)

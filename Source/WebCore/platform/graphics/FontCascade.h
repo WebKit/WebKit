@@ -269,9 +269,9 @@ public:
 
     bool useBackslashAsYenSymbol() const { return m_useBackslashAsYenSymbol; }
     FontCascadeFonts* fonts() const { return m_fonts.get(); }
+    bool isLoadingCustomFonts() const;
 
 private:
-    bool isLoadingCustomFonts() const;
 
     bool advancedTextRenderingMode() const
     {

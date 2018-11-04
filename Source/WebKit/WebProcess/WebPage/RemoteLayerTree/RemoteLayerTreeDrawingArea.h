@@ -63,6 +63,7 @@ private:
 
     WebCore::GraphicsLayerFactory* graphicsLayerFactory() override;
     void setRootCompositingLayer(WebCore::GraphicsLayer*) override;
+    void scheduleInitialDeferredPaint() override;
     void scheduleCompositingLayerFlush() override;
     void scheduleCompositingLayerFlushImmediately() override;
     void attachViewOverlayGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*) override;
@@ -79,6 +80,8 @@ private:
     bool supportsAsyncScrolling() override { return true; }
 
     void setLayerTreeStateIsFrozen(bool) override;
+    bool layerTreeStateIsFrozen() const override { return m_isFlushingSuspended; }
+    bool layerFlushThrottlingIsActive() const override { return m_initialDeferredPaintTimer.isActive() || (m_isThrottlingLayerFlushes && m_layerFlushTimer.isActive()); }
 
     void forceRepaint() override;
     bool forceRepaintAsync(CallbackID) override { return false; }
@@ -111,6 +114,7 @@ private:
     void updateScrolledExposedRect();
     void updateRootLayers();
 
+    void flushInitialDeferredPaint();
     void flushLayers();
 
     WebCore::TiledBacking* mainFrameTiledBacking() const;
@@ -144,12 +148,12 @@ private:
     std::optional<WebCore::FloatRect> m_viewExposedRect;
     std::optional<WebCore::FloatRect> m_scrolledViewExposedRect;
 
+    WebCore::Timer m_initialDeferredPaintTimer;
     WebCore::Timer m_layerFlushTimer;
     bool m_isFlushingSuspended { false };
     bool m_hasDeferredFlush { false };
     bool m_isThrottlingLayerFlushes { false };
     bool m_isLayerFlushThrottlingTemporarilyDisabledForInteraction { false };
-    bool m_isInitialThrottledLayerFlush { false };
 
     bool m_waitingForBackingStoreSwap { false };
     bool m_hadFlushDeferredWhileWaitingForBackingStoreSwap { false };
