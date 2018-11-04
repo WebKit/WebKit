@@ -50,7 +50,7 @@ class AudioTrackSinkInterface;
 
 namespace WebCore {
 
-class RealtimeOutgoingAudioSource : public ThreadSafeRefCounted<RealtimeOutgoingAudioSource>, public webrtc::AudioSourceInterface, private MediaStreamTrackPrivate::Observer {
+class RealtimeOutgoingAudioSource : public ThreadSafeRefCounted<RealtimeOutgoingAudioSource, WTF::DestructionThread::Main>, public webrtc::AudioSourceInterface, private MediaStreamTrackPrivate::Observer {
 public:
     static Ref<RealtimeOutgoingAudioSource> create(Ref<MediaStreamTrackPrivate>&& audioSource);
 
@@ -77,10 +77,9 @@ private:
     void AddRef() const final { ref(); }
     rtc::RefCountReleaseStatus Release() const final
     {
-        callOnMainThread([this] {
-            deref();
-        });
-        return rtc::RefCountReleaseStatus::kOtherRefsRemained;
+        auto result = refCount() - 1;
+        deref();
+        return result ? rtc::RefCountReleaseStatus::kOtherRefsRemained : rtc::RefCountReleaseStatus::kDroppedLastRef;
     }
 
     SourceState state() const final { return kLive; }

@@ -1,5 +1,17 @@
 2018-11-04  Youenn Fablet  <youenn@apple.com>
 
+        RealtimeOutgoingAudioSource should use DestructionThread::Main
+        https://bugs.webkit.org/show_bug.cgi?id=191230
+
+        Reviewed by Eric Carlson.
+
+        Covered by imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription-replaceTrack.https.html
+        that should no longer crash in debug.
+
+        * platform/mediastream/RealtimeOutgoingAudioSource.h:
+
+2018-11-04  Youenn Fablet  <youenn@apple.com>
+
         IDB should allow storing RTCCertificate
         https://bugs.webkit.org/show_bug.cgi?id=191077
 
