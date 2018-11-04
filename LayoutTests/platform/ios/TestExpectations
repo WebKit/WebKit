@@ -3116,6 +3116,7 @@ fast/inline/simple-intruding-floats3.html [ Failure ]
 fast/inline/simple-inline-block.html [ Failure ]
 fast/inline/simple-shrink-to-fit-inline-block.html [ Failure ]
 fast/block/basic/height-percentage-simple.html [ Failure ]
+fast/block/basic/child-block-level-box-with-height-percent.html [ Failure ]
 
 # Datalist
 webkit.org/b/186714 fast/forms/datalist/datalist-textinput-keydown.html [ Skip ]

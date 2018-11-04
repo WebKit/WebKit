@@ -1,3 +1,14 @@
+2018-11-04  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BCF] Add support for block level non-replaced inflow height percentage
+        https://bugs.webkit.org/show_bug.cgi?id=191229
+
+        Reviewed by Antti Koivisto.
+
+        * fast/block/basic/child-block-level-box-with-height-percent-expected.txt: Added.
+        * fast/block/basic/child-block-level-box-with-height-percent.html: Added.
+        * platform/ios/TestExpectations:
+
 2018-11-03  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Canvas: capture changes to <canvas> that would affect the recorded context

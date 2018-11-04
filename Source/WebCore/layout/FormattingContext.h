@@ -108,6 +108,10 @@ protected:
         static std::optional<LayoutUnit> computedMinHeight(const LayoutState&, const Box&);
         static std::optional<LayoutUnit> computedMaxHeight(const LayoutState&, const Box&);
 
+    protected:
+        enum class HeightType { Min, Max, Normal };
+        static std::optional<LayoutUnit> computedHeightValue(const LayoutState&, const Box&, HeightType);
+
     private:
         static VerticalGeometry outOfFlowReplacedVerticalGeometry(const LayoutState&, const Box&, std::optional<LayoutUnit> usedHeight = { });
         static HorizontalGeometry outOfFlowReplacedHorizontalGeometry(const LayoutState&, const Box&, std::optional<LayoutUnit> usedWidth = { });

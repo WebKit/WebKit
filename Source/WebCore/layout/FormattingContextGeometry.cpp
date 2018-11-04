@@ -57,8 +57,7 @@ static inline bool isHeightAuto(const Box& layoutBox)
     return false;
 }
 
-enum class HeightType { Min, Max, Normal };
-static inline std::optional<LayoutUnit> computedHeightValue(const LayoutState& layoutState, const Box& layoutBox, HeightType heightType)
+std::optional<LayoutUnit> FormattingContext::Geometry::computedHeightValue(const LayoutState& layoutState, const Box& layoutBox, HeightType heightType)
 {
     auto& style = layoutBox.style();
     auto height = heightType == HeightType::Normal ? style.logicalHeight() : heightType == HeightType::Min ? style.logicalMinHeight() : style.logicalMaxHeight();

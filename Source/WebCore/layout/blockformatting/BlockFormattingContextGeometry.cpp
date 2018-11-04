@@ -107,14 +107,9 @@ HeightAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMarg
         VerticalEdges collapsedMargin = { MarginCollapse::marginTop(layoutState, layoutBox), MarginCollapse::marginBottom(layoutState, layoutBox) };
         auto borderAndPaddingTop = displayBox.borderTop() + displayBox.paddingTop().value_or(0);
         
-        auto height = usedHeight ? Length { usedHeight.value(), Fixed } : style.logicalHeight();
-        if (!height.isAuto()) {
-            if (height.isFixed())
-                return { height.value(), nonCollapsedMargin, collapsedMargin };
-
-            // Most notably height percentage.
-            ASSERT_NOT_IMPLEMENTED_YET();
-        }
+        auto height = usedHeight ? usedHeight.value() : computedHeightValue(layoutState, layoutBox, HeightType::Normal);
+        if (height)
+            return { height.value(), nonCollapsedMargin, collapsedMargin };
 
         if (!is<Container>(layoutBox) || !downcast<Container>(layoutBox).hasInFlowChild())
             return { 0, nonCollapsedMargin, collapsedMargin };

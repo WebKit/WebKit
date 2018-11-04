@@ -70,3 +70,4 @@ fast/inline/simple-intruding-floats3.html
 fast/inline/simple-inline-block.html
 fast/inline/simple-shrink-to-fit-inline-block.html
 fast/block/basic/height-percentage-simple.html
+fast/block/basic/child-block-level-box-with-height-percent.html
