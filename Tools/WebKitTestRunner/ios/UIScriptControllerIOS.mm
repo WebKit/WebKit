@@ -60,17 +60,6 @@ void UIScriptController::checkForOutstandingCallbacks()
         [NSException raise:@"WebKitTestRunnerTestProblem" format:@"The test completed before all synthesized events had been handled. Perhaps you're calling notifyDone() too early?"];
 }
 
-void UIScriptController::doAsyncTask(JSValueRef callback)
-{
-    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
-
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (!m_context)
-            return;
-        m_context->asyncTaskComplete(callbackID);
-    });
-}
-
 void UIScriptController::doAfterPresentationUpdate(JSValueRef callback)
 {
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
@@ -410,19 +399,6 @@ void UIScriptController::setTimePickerValue(long hour, long minute)
     [webView setTimePickerValueToHour:hour minute:minute];
 }
 
-void UIScriptController::setShareSheetCompletesImmediatelyWithResolution(bool resolved)
-{
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    [webView _setShareSheetCompletesImmediatelyWithResolutionForTesting:resolved];
-}
-    
-JSObjectRef UIScriptController::contentsOfUserInterfaceItem(JSStringRef interfaceItem) const
-{
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    NSDictionary *contentDictionary = [webView _contentsOfUserInterfaceItem:toWTFString(toWK(interfaceItem))];
-    return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:contentDictionary inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
-}
-
 static CGPoint contentOffsetBoundedInValidRange(UIScrollView *scrollView, CGPoint contentOffset)
 {
     UIEdgeInsets contentInsets = scrollView.contentInset;
@@ -635,22 +611,6 @@ void UIScriptController::simulateRotationLikeSafari(DeviceOrientation* orientati
     };
     
     [[UIDevice currentDevice] setOrientation:toUIDeviceOrientation(orientation) animated:YES];
-}
-
-void UIScriptController::findString(JSStringRef string, unsigned long options, unsigned long maxCount)
-{
-    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    [webView _findString:toWTFString(toWK(string)) options:options maxCount:maxCount];
-}
-
-void UIScriptController::removeViewFromWindow(JSValueRef callback)
-{
-    TestController::singleton().mainWebView()->removeFromWindow();
-}
-
-void UIScriptController::addViewToWindow(JSValueRef callback)
-{
-    TestController::singleton().mainWebView()->addToWindow();
 }
 
 void UIScriptController::platformSetDidStartFormControlInteractionCallback()

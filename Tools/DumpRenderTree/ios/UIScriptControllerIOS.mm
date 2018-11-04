@@ -394,6 +394,10 @@ bool UIScriptController::isShowingDataListSuggestions() const
     return false;
 }
 
+void UIScriptController::overridePreference(JSStringRef, JSStringRef)
+{
+}
+
 }
 
 #endif // PLATFORM(IOS_FAMILY)

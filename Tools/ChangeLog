@@ -1,3 +1,57 @@
+2018-11-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] Fold common UIScriptController functionality on macOS and iOS into UIScriptControllerCocoa.mm
+        https://bugs.webkit.org/show_bug.cgi?id=191231
+
+        Reviewed by Simon Fraser.
+
+        Moves some UIScriptController method implementations specific to iOS and macOS into UIScriptControllerCocoa, so
+        it can be shared between iOS-family and macOS platforms. See below for more details.
+
+        No change in behavior.
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::overridePreference):
+
+        Add a method stub for DumpRenderTree.
+
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        * WebKitTestRunner/UIScriptControllerCocoa.mm:
+        (WTR::UIScriptController::doAsyncTask):
+        (WTR::UIScriptController::setShareSheetCompletesImmediatelyWithResolution):
+
+        Unify these method implementations.
+
+        (WTR::UIScriptController::removeViewFromWindow):
+        (WTR::UIScriptController::addViewToWindow):
+
+        Move the macOS implementation to UIScriptControllerCocoa. On iOS, this method currently only adds the web view
+        to the window, and does not attempt to invoke the given completion block; additionally, invoking the completion
+        block after a presentation update (as done on macOS) causes pageoverlay/overlay-remove-reinsert-view.html to
+        begin failing consistently. This patch does not attempt to change behavior, but adds a FIXME describing this.
+
+        (WTR::UIScriptController::overridePreference):
+        (WTR::UIScriptController::findString):
+        (WTR::UIScriptController::contentsOfUserInterfaceItem const):
+
+        Move these from UIScriptControllerMac to UIScriptControllerCocoa, so that it is now implemented on iOS as well.
+
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::doAsyncTask): Deleted.
+        (WTR::UIScriptController::setShareSheetCompletesImmediatelyWithResolution): Deleted.
+        (WTR::UIScriptController::contentsOfUserInterfaceItem const): Deleted.
+        (WTR::UIScriptController::findString): Deleted.
+        (WTR::UIScriptController::removeViewFromWindow): Deleted.
+        (WTR::UIScriptController::addViewToWindow): Deleted.
+        * WebKitTestRunner/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptController::doAsyncTask): Deleted.
+        (WTR::UIScriptController::contentsOfUserInterfaceItem const): Deleted.
+        (WTR::UIScriptController::overridePreference): Deleted.
+        (WTR::UIScriptController::findString): Deleted.
+        (WTR::UIScriptController::removeViewFromWindow): Deleted.
+        (WTR::UIScriptController::addViewToWindow): Deleted.
+        (WTR::UIScriptController::setShareSheetCompletesImmediatelyWithResolution): Deleted.
+
 2018-11-04  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] User should not be prompted again after denying getDisplayMedia request

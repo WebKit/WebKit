@@ -27,8 +27,11 @@
 #import "UIScriptController.h"
 
 #import "PlatformWebView.h"
+#import "StringFunctions.h"
 #import "TestController.h"
 #import "TestRunnerWKWebView.h"
+#import "UIScriptContext.h"
+#import <JavaScriptCore/JavaScriptCore.h>
 #import <WebKit/WKWebViewPrivate.h>
 
 namespace WTR {
@@ -46,6 +49,118 @@ void UIScriptController::resignFirstResponder()
 {
 #if WK_API_ENABLED
     [TestController::singleton().mainWebView()->platformView() resignFirstResponder];
+#endif
+}
+
+void UIScriptController::doAsyncTask(JSValueRef callback)
+{
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (!m_context)
+            return;
+        m_context->asyncTaskComplete(callbackID);
+    });
+}
+
+void UIScriptController::setShareSheetCompletesImmediatelyWithResolution(bool resolved)
+{
+#if WK_API_ENABLED
+    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    [webView _setShareSheetCompletesImmediatelyWithResolutionForTesting:resolved];
+#else
+    UNUSED_PARAM(resolved);
+#endif
+}
+
+void UIScriptController::removeViewFromWindow(JSValueRef callback)
+{
+#if WK_API_ENABLED
+    // FIXME: On iOS, we never invoke the completion callback that's passed in. Fixing this causes the layout
+    // test pageoverlay/overlay-remove-reinsert-view.html to start failing consistently on iOS. It seems like
+    // this warrants some more investigation.
+#if PLATFORM(MAC)
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+#else
+    UNUSED_PARAM(callback);
+#endif
+
+    auto* mainWebView = TestController::singleton().mainWebView();
+    mainWebView->removeFromWindow();
+
+#if PLATFORM(MAC)
+    [mainWebView->platformView() _doAfterNextPresentationUpdate:^{
+        if (!m_context)
+            return;
+        m_context->asyncTaskComplete(callbackID);
+    }];
+#endif // PLATFORM(MAC)
+#else
+    UNUSED_PARAM(callback);
+#endif
+}
+
+void UIScriptController::addViewToWindow(JSValueRef callback)
+{
+#if WK_API_ENABLED
+#if PLATFORM(MAC)
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+#else
+    UNUSED_PARAM(callback);
+#endif
+
+    auto* mainWebView = TestController::singleton().mainWebView();
+    mainWebView->addToWindow();
+
+#if PLATFORM(MAC)
+    [mainWebView->platformView() _doAfterNextPresentationUpdate:^{
+        if (!m_context)
+            return;
+        m_context->asyncTaskComplete(callbackID);
+    }];
+#endif // PLATFORM(MAC)
+#else
+    UNUSED_PARAM(callback);
+#endif
+}
+
+void UIScriptController::overridePreference(JSStringRef preferenceRef, JSStringRef valueRef)
+{
+#if WK_API_ENABLED
+    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    WKPreferences *preferences = webView.configuration.preferences;
+
+    String preference = toWTFString(toWK(preferenceRef));
+    String value = toWTFString(toWK(valueRef));
+    if (preference == "WebKitMinimumFontSize")
+        preferences.minimumFontSize = value.toDouble();
+#else
+    UNUSED_PARAM(preferenceRef);
+    UNUSED_PARAM(valueRef);
+#endif
+}
+
+void UIScriptController::findString(JSStringRef string, unsigned long options, unsigned long maxCount)
+{
+#if WK_API_ENABLED
+    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    [webView _findString:toWTFString(toWK(string)) options:options maxCount:maxCount];
+#else
+    UNUSED_PARAM(string);
+    UNUSED_PARAM(options);
+    UNUSED_PARAM(maxCount);
+#endif
+}
+
+JSObjectRef UIScriptController::contentsOfUserInterfaceItem(JSStringRef interfaceItem) const
+{
+#if WK_API_ENABLED
+    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    NSDictionary *contentDictionary = [webView _contentsOfUserInterfaceItem:toWTFString(toWK(interfaceItem))];
+    return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:contentDictionary inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
+#else
+    UNUSED_PARAM(interfaceItem);
+    return nullptr;
 #endif
 }
 

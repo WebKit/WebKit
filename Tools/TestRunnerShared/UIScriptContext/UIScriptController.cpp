@@ -512,13 +512,13 @@ bool UIScriptController::isShowingDataListSuggestions() const
     return false;
 }
 
-#endif // !PLATFORM(COCOA)
-
-#if !PLATFORM(MAC)
-
 void UIScriptController::overridePreference(JSStringRef, JSStringRef)
 {
 }
+
+#endif // !PLATFORM(COCOA)
+
+#if !PLATFORM(MAC)
 
 void UIScriptController::replaceTextAtRange(JSStringRef, int, int)
 {
