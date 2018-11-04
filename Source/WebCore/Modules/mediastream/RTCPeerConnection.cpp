@@ -260,7 +260,10 @@ void RTCPeerConnection::queuedAddIceCandidate(RTCIceCandidate* rtcCandidate, DOM
 static inline ExceptionOr<Vector<MediaEndpointConfiguration::IceServerInfo>> iceServersFromConfiguration(RTCConfiguration& newConfiguration, const RTCConfiguration* existingConfiguration, bool isLocalDescriptionSet)
 {
     if (existingConfiguration && newConfiguration.bundlePolicy != existingConfiguration->bundlePolicy)
-        return Exception { InvalidModificationError, "IceTransportPolicy does not match existing policy" };
+        return Exception { InvalidModificationError, "BundlePolicy does not match existing policy" };
+
+    if (existingConfiguration && newConfiguration.rtcpMuxPolicy != existingConfiguration->rtcpMuxPolicy)
+        return Exception { InvalidModificationError, "RTCPMuxPolicy does not match existing policy" };
 
     if (existingConfiguration && newConfiguration.iceCandidatePoolSize != existingConfiguration->iceCandidatePoolSize && isLocalDescriptionSet)
         return Exception { InvalidModificationError, "IceTransportPolicy pool size does not match existing pool size" };
@@ -320,7 +323,7 @@ ExceptionOr<void> RTCPeerConnection::initializeConfiguration(RTCConfiguration&& 
     if (certificates.hasException())
         return certificates.releaseException();
 
-    if (!m_backend->setConfiguration({ servers.releaseReturnValue(), configuration.iceTransportPolicy, configuration.bundlePolicy, configuration.iceCandidatePoolSize, certificates.releaseReturnValue() }))
+    if (!m_backend->setConfiguration({ servers.releaseReturnValue(), configuration.iceTransportPolicy, configuration.bundlePolicy, configuration.rtcpMuxPolicy, configuration.iceCandidatePoolSize, certificates.releaseReturnValue() }))
         return Exception { InvalidAccessError, "Bad Configuration Parameters" };
 
     m_configuration = WTFMove(configuration);
@@ -351,7 +354,7 @@ ExceptionOr<void> RTCPeerConnection::setConfiguration(RTCConfiguration&& configu
         }
     }
 
-    if (!m_backend->setConfiguration({ servers.releaseReturnValue(), configuration.iceTransportPolicy, configuration.bundlePolicy, configuration.iceCandidatePoolSize, { } }))
+    if (!m_backend->setConfiguration({ servers.releaseReturnValue(), configuration.iceTransportPolicy, configuration.bundlePolicy, configuration.rtcpMuxPolicy, configuration.iceCandidatePoolSize, { } }))
         return Exception { InvalidAccessError, "Bad Configuration Parameters" };
 
     m_configuration = WTFMove(configuration);

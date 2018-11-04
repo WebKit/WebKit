@@ -45,12 +45,21 @@
 [
     Conditional=WEB_RTC,
     EnabledAtRuntime=PeerConnection,
+    ImplementedAs=RTCPMuxPolicy
+] enum RTCPMuxPolicy {
+    "negotiate",
+    "require"
+};
+
+[
+    Conditional=WEB_RTC,
+    EnabledAtRuntime=PeerConnection,
     JSGenerateToJSObject,
 ] dictionary RTCConfiguration {
     sequence<RTCIceServer> iceServers;
     RTCIceTransportPolicy iceTransportPolicy = "all";
     RTCBundlePolicy bundlePolicy = "balanced";
-    // FIXME 169662: missing rtcpMuxPolicy
+    RTCPMuxPolicy rtcpMuxPolicy = "require";
     // FIXME 169662: missing peerIdentity
     sequence<RTCCertificate> certificates;
     [EnforceRange] octet iceCandidatePoolSize = 0;

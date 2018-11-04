@@ -88,6 +88,19 @@ static inline webrtc::PeerConnectionInterface::BundlePolicy bundlePolicyfromConf
     return webrtc::PeerConnectionInterface::kBundlePolicyMaxCompat;
 }
 
+static inline webrtc::PeerConnectionInterface::RtcpMuxPolicy rtcpMuxPolicyfromConfiguration(const MediaEndpointConfiguration& configuration)
+{
+    switch (configuration.rtcpMuxPolicy) {
+    case RTCPMuxPolicy::Negotiate:
+        return webrtc::PeerConnectionInterface::kRtcpMuxPolicyNegotiate;
+    case RTCPMuxPolicy::Require:
+        return webrtc::PeerConnectionInterface::kRtcpMuxPolicyRequire;
+    }
+
+    ASSERT_NOT_REACHED();
+    return webrtc::PeerConnectionInterface::kRtcpMuxPolicyRequire;
+}
+
 static inline webrtc::PeerConnectionInterface::IceTransportsType iceTransportPolicyfromConfiguration(const MediaEndpointConfiguration& configuration)
 {
     switch (configuration.iceTransportPolicy) {
@@ -107,6 +120,7 @@ static webrtc::PeerConnectionInterface::RTCConfiguration configurationFromMediaE
 
     rtcConfiguration.type = iceTransportPolicyfromConfiguration(configuration);
     rtcConfiguration.bundle_policy = bundlePolicyfromConfiguration(configuration);
+    rtcConfiguration.rtcp_mux_policy = rtcpMuxPolicyfromConfiguration(configuration);
 
     for (auto& server : configuration.iceServers) {
         webrtc::PeerConnectionInterface::IceServer iceServer;

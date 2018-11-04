@@ -53,15 +53,11 @@ PASS new RTCPeerConnection({ bundlePolicy: "balanced" })
 PASS new RTCPeerConnection({ bundlePolicy: "max-compat" }) 
 PASS new RTCPeerConnection({ bundlePolicy: "max-bundle" }) 
 PASS new RTCPeerConnection({ bundlePolicy: "invalid" }) 
-FAIL new RTCPeerConnection({ rtcpMuxPolicy: null }) assert_throws: function "function () {
-        eval(expr);
-      }" did not throw
+PASS new RTCPeerConnection({ rtcpMuxPolicy: null }) 
 PASS new RTCPeerConnection({ rtcpMuxPolicy: undefined }) 
 PASS new RTCPeerConnection({ rtcpMuxPolicy: "negotiate" }) 
 PASS new RTCPeerConnection({ rtcpMuxPolicy: "require" }) 
-FAIL new RTCPeerConnection({ rtcpMuxPolicy: "invalid" }) assert_throws: function "function () {
-        eval(expr);
-      }" did not throw
+PASS new RTCPeerConnection({ rtcpMuxPolicy: "invalid" }) 
 FAIL new RTCPeerConnection({ peerIdentity: toStringThrows }) assert_throws: function "function () {
         eval(expr);
       }" did not throw

@@ -35,6 +35,7 @@
 
 #include "RTCBundlePolicy.h"
 #include "RTCIceTransportPolicy.h"
+#include "RTCPMuxPolicy.h"
 #include "URL.h"
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -55,11 +56,12 @@ struct MediaEndpointConfiguration {
         String privateKey;
     };
 
-    MediaEndpointConfiguration(Vector<IceServerInfo>&&, RTCIceTransportPolicy, RTCBundlePolicy, unsigned short, Vector<CertificatePEM>&&);
+    MediaEndpointConfiguration(Vector<IceServerInfo>&&, RTCIceTransportPolicy, RTCBundlePolicy, RTCPMuxPolicy, unsigned short, Vector<CertificatePEM>&&);
 
     Vector<IceServerInfo> iceServers;
     RTCIceTransportPolicy iceTransportPolicy;
     RTCBundlePolicy bundlePolicy;
+    RTCPMuxPolicy rtcpMuxPolicy;
     unsigned short iceCandidatePoolSize;
     Vector<CertificatePEM> certificates;
 };

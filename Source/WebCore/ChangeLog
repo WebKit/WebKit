@@ -1,3 +1,30 @@
+2018-11-04  Youenn Fablet  <youenn@apple.com>
+
+        Add support for RTCMuxPolicy
+        https://bugs.webkit.org/show_bug.cgi?id=191188
+
+        Reviewed by Eric Carlson.
+
+        Add support for RTCMuxPolicy dictionary option for both constructor and setConfiguration.
+        Make sure setConfiguration throws if trying to change this policy.
+        Pipe this parameter up to libwebrtc.
+        Covered by rebased test.
+
+        * Modules/mediastream/RTCConfiguration.h:
+        * Modules/mediastream/RTCConfiguration.idl:
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::iceServersFromConfiguration):
+        (WebCore::RTCPeerConnection::initializeConfiguration):
+        (WebCore::RTCPeerConnection::setConfiguration):
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        (WebCore::rtcpMuxPolicyfromConfiguration):
+        (WebCore::configurationFromMediaEndpointConfiguration):
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mediastream/MediaEndpointConfiguration.cpp:
+        (WebCore::MediaEndpointConfiguration::MediaEndpointConfiguration):
+        * platform/mediastream/MediaEndpointConfiguration.h:
+        * platform/mediastream/RTCPMuxPolicy.h: Added.
+
 2018-11-03  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Canvas: capture changes to <canvas> that would affect the recorded context

@@ -7261,6 +7261,7 @@
 		4129C9871F58662D009D7403 /* ReadableStreamSink.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReadableStreamSink.cpp; sourceTree = "<group>"; };
 		4129DF831BB5B7F700322A16 /* JSReadableStreamPrivateConstructors.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSReadableStreamPrivateConstructors.cpp; sourceTree = "<group>"; };
 		4129DF841BB5B7F700322A16 /* JSReadableStreamPrivateConstructors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSReadableStreamPrivateConstructors.h; sourceTree = "<group>"; };
+		412BA5FE218C651800365474 /* RTCPMuxPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCPMuxPolicy.h; sourceTree = "<group>"; };
 		413015D51C7B570400091C6E /* FetchResponse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FetchResponse.cpp; sourceTree = "<group>"; };
 		413015D51C7B570400091C6F /* FetchBodySource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FetchBodySource.cpp; sourceTree = "<group>"; };
 		413015D61C7B570400091C6E /* FetchResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FetchResponse.h; sourceTree = "<group>"; };
@@ -15570,6 +15571,7 @@
 				313591011E7DDC6000F30630 /* RTCIceGatheringState.h */,
 				313591021E7DDC6000F30630 /* RTCIceTransportPolicy.h */,
 				313591031E7DDC6000F30630 /* RTCIceTransportState.h */,
+				412BA5FE218C651800365474 /* RTCPMuxPolicy.h */,
 				07221BAA17CF0AD400848E51 /* RTCPeerConnectionHandlerClient.h */,
 				41A48A9D1E8312EB00D2AC2D /* RTCPeerConnectionState.h */,
 				31EB54DD1E7DC74400C1623B /* RTCRtpTransceiverDirection.h */,
