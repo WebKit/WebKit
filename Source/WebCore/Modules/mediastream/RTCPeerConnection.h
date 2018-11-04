@@ -37,6 +37,7 @@
 
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
+#include "MediaEndpointConfiguration.h"
 #include "MediaStream.h"
 #include "RTCConfiguration.h"
 #include "RTCDataChannel.h"
@@ -200,6 +201,8 @@ private:
     void updateConnectionState();
     bool doClose();
     void doStop();
+
+    ExceptionOr<Vector<MediaEndpointConfiguration::CertificatePEM>> certificatesFromConfiguration(const RTCConfiguration&);
 
     bool m_isStopped { false };
     RTCSignalingState m_signalingState { RTCSignalingState::Stable };

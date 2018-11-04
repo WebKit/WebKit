@@ -1,5 +1,38 @@
 2018-11-04  Youenn Fablet  <youenn@apple.com>
 
+        IDB should allow storing RTCCertificate
+        https://bugs.webkit.org/show_bug.cgi?id=191077
+
+        Reviewed by Chris Dumez.
+
+        Add support for serialization/deserialization of RTCCertificate.
+        Store the origin in RTCCertificate and make sure that a certificate
+        with a different origin cannot be used to create a RTCPeerConnection.
+
+        Test: imported/w3c/web-platform-tests/webrtc/RTCCertificate-postMessage.html
+
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        (WebCore::PeerConnectionBackend::generateCertificate):
+        * Modules/mediastream/RTCCertificate.cpp:
+        (WebCore::RTCCertificate::create):
+        (WebCore::RTCCertificate::RTCCertificate):
+        * Modules/mediastream/RTCCertificate.h:
+        (WebCore::RTCCertificate::origin const):
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::certificatesFromConfiguration):
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCCertificateGenerator.cpp:
+        (WebCore::LibWebRTCCertificateGenerator::RTCCertificateGeneratorCallback::RTCCertificateGeneratorCallback):
+        (WebCore::LibWebRTCCertificateGenerator::generateCertificate):
+        * Modules/mediastream/libwebrtc/LibWebRTCCertificateGenerator.h:
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::dumpIfTerminal):
+        (WebCore::CloneDeserializer::CachedString::takeString):
+        (WebCore::CloneDeserializer::readRTCCertificate):
+        (WebCore::CloneDeserializer::readTerminal):
+
+2018-11-04  Youenn Fablet  <youenn@apple.com>
+
         Add support for RTCMuxPolicy
         https://bugs.webkit.org/show_bug.cgi?id=191188
 

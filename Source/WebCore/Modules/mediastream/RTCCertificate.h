@@ -26,6 +26,7 @@
 
 #if ENABLE(WEB_RTC)
 
+#include "SecurityOrigin.h"
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -38,17 +39,19 @@ public:
         String value;
     };
 
-    static Ref<RTCCertificate> create(double expires, Vector<DtlsFingerprint>&&, String&& pemCertificate, String&& pemPrivateKey);
+    static Ref<RTCCertificate> create(Ref<SecurityOrigin>&&, double expires, Vector<DtlsFingerprint>&&, String&& pemCertificate, String&& pemPrivateKey);
 
     double expires() const { return m_expires; }
     const Vector<DtlsFingerprint>& getFingerprints() const { return m_fingerprints; }
 
     const String& pemCertificate() const { return m_pemCertificate; }
     const String& pemPrivateKey() const { return m_pemPrivateKey; }
+    const SecurityOrigin& origin() const { return m_origin.get(); }
 
 private:
-    RTCCertificate(double expires, Vector<DtlsFingerprint>&&, String&& pemCertificate, String&& pemPrivateKey);
+    RTCCertificate(Ref<SecurityOrigin>&&, double expires, Vector<DtlsFingerprint>&&, String&& pemCertificate, String&& pemPrivateKey);
 
+    Ref<SecurityOrigin> m_origin;
     double m_expires { 0 };
     Vector<DtlsFingerprint> m_fingerprints;
     String m_pemCertificate;

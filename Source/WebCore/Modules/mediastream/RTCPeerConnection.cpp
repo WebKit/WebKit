@@ -297,18 +297,23 @@ static inline ExceptionOr<Vector<MediaEndpointConfiguration::IceServerInfo>> ice
     return WTFMove(servers);
 }
 
-static inline ExceptionOr<Vector<MediaEndpointConfiguration::CertificatePEM>> certificatesFromConfiguration(const RTCConfiguration& configuration)
+ExceptionOr<Vector<MediaEndpointConfiguration::CertificatePEM>> RTCPeerConnection::certificatesFromConfiguration(const RTCConfiguration& configuration)
 {
-    std::optional<Exception> exception;
     auto currentMilliSeconds = WallTime::now().secondsSinceEpoch().milliseconds();
-    auto result = WTF::map(configuration.certificates, [&](const auto& certificate) {
-        if (!exception && currentMilliSeconds > certificate->expires())
-            exception = Exception { InvalidAccessError, "Certificate has expired"_s };
-        return MediaEndpointConfiguration::CertificatePEM { certificate->pemCertificate(), certificate->pemPrivateKey(), };
-    });
-    if (exception)
-        return WTFMove(*exception);
-    return WTFMove(result);
+    auto& origin = downcast<Document>(*scriptExecutionContext()).securityOrigin();
+
+    Vector<MediaEndpointConfiguration::CertificatePEM> certificates;
+    certificates.reserveInitialCapacity(configuration.certificates.size());
+    for (auto& certificate : configuration.certificates) {
+        if (!originsMatch(origin, certificate->origin()))
+            return Exception { InvalidAccessError, "Certificate does not have a valid origin" };
+
+        if (currentMilliSeconds > certificate->expires())
+            return Exception { InvalidAccessError, "Certificate has expired"_s };
+
+        certificates.uncheckedAppend(MediaEndpointConfiguration::CertificatePEM { certificate->pemCertificate(), certificate->pemPrivateKey(), });
+    }
+    return WTFMove(certificates);
 }
 
 ExceptionOr<void> RTCPeerConnection::initializeConfiguration(RTCConfiguration&& configuration)

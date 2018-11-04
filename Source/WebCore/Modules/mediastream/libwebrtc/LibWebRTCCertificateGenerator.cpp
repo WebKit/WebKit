@@ -47,8 +47,9 @@ static inline String fromStdString(const std::string& value)
 
 class RTCCertificateGeneratorCallback : public ThreadSafeRefCounted<RTCCertificateGeneratorCallback, WTF::DestructionThread::Main>, public rtc::RTCCertificateGeneratorCallback {
 public:
-    explicit RTCCertificateGeneratorCallback(DOMPromiseDeferred<IDLInterface<RTCCertificate>>&& promise)
-        : m_promise(WTFMove(promise))
+    RTCCertificateGeneratorCallback(Ref<SecurityOrigin>&& origin, DOMPromiseDeferred<IDLInterface<RTCCertificate>>&& promise)
+        : m_origin(WTFMove(origin))
+        , m_promise(WTFMove(promise))
     {
     }
 
@@ -63,7 +64,7 @@ public:
 private:
     void OnSuccess(const rtc::scoped_refptr<rtc::RTCCertificate>& certificate) final
     {
-        callOnMainThread([promise = WTFMove(m_promise.value()), certificate]() mutable {
+        callOnMainThread([origin = m_origin.releaseNonNull(), promise = WTFMove(m_promise.value()), certificate]() mutable {
             Vector<RTCCertificate::DtlsFingerprint> fingerprints;
             auto stats = certificate->ssl_certificate().GetStats();
             auto* info = stats.get();
@@ -74,7 +75,7 @@ private:
             };
 
             auto pem = certificate->ToPEM();
-            promise.resolve(RTCCertificate::create(certificate->Expires(), WTFMove(fingerprints), fromStdString(pem.certificate()), fromStdString(pem.private_key())));
+            promise.resolve(RTCCertificate::create(WTFMove(origin), certificate->Expires(), WTFMove(fingerprints), fromStdString(pem.certificate()), fromStdString(pem.private_key())));
         });
     }
 
@@ -85,6 +86,7 @@ private:
         });
     }
 
+    RefPtr<SecurityOrigin> m_origin;
     std::optional<DOMPromiseDeferred<IDLInterface<RTCCertificate>>> m_promise;
 };
 
@@ -102,9 +104,9 @@ static inline rtc::KeyParams keyParamsFromCertificateType(const PeerConnectionBa
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-void generateCertificate(LibWebRTCProvider& provider, const PeerConnectionBackend::CertificateInformation& info, DOMPromiseDeferred<IDLInterface<RTCCertificate>>&& promise)
+void generateCertificate(Ref<SecurityOrigin>&& origin, LibWebRTCProvider& provider, const PeerConnectionBackend::CertificateInformation& info, DOMPromiseDeferred<IDLInterface<RTCCertificate>>&& promise)
 {
-    rtc::scoped_refptr<RTCCertificateGeneratorCallback> callback(new RTCCertificateGeneratorCallback(WTFMove(promise)));
+    rtc::scoped_refptr<RTCCertificateGeneratorCallback> callback(new RTCCertificateGeneratorCallback(WTFMove(origin), WTFMove(promise)));
 
     absl::optional<uint64_t> expiresMs;
     if (info.expires)

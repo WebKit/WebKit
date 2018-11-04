@@ -31,10 +31,11 @@
 namespace WebCore {
 
 class LibWebRTCProvider;
+class SecurityOrigin;
 
 namespace LibWebRTCCertificateGenerator {
 
-void generateCertificate(LibWebRTCProvider&, const PeerConnectionBackend::CertificateInformation&, DOMPromiseDeferred<IDLInterface<RTCCertificate>>&&);
+void generateCertificate(Ref<SecurityOrigin>&&, LibWebRTCProvider&, const PeerConnectionBackend::CertificateInformation&, DOMPromiseDeferred<IDLInterface<RTCCertificate>>&&);
 
 } // namespace LibWebRTCCertificateGenerator
 

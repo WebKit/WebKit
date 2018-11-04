@@ -517,7 +517,7 @@ ExceptionOr<Ref<RTCRtpTransceiver>> PeerConnectionBackend::addTransceiver(Ref<Me
 void PeerConnectionBackend::generateCertificate(Document& document, const CertificateInformation& info, DOMPromiseDeferred<IDLInterface<RTCCertificate>>&& promise)
 {
 #if USE(LIBWEBRTC)
-    LibWebRTCCertificateGenerator::generateCertificate(document.page()->libWebRTCProvider(), info, WTFMove(promise));
+    LibWebRTCCertificateGenerator::generateCertificate(document.securityOrigin(), document.page()->libWebRTCProvider(), info, WTFMove(promise));
 #else
     UNUSED_PARAM(document);
     UNUSED_PARAM(expires);

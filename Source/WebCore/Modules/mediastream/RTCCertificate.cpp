@@ -29,13 +29,14 @@
 
 namespace WebCore {
 
-Ref<RTCCertificate> RTCCertificate::create(double expires, Vector<DtlsFingerprint>&& fingerprints, String&& pemCertificate, String&& pemPrivateKey)
+Ref<RTCCertificate> RTCCertificate::create(Ref<SecurityOrigin>&& origin, double expires, Vector<DtlsFingerprint>&& fingerprints, String&& pemCertificate, String&& pemPrivateKey)
 {
-    return adoptRef(*new RTCCertificate(expires, WTFMove(fingerprints), WTFMove(pemCertificate), WTFMove(pemPrivateKey)));
+    return adoptRef(*new RTCCertificate(WTFMove(origin), expires, WTFMove(fingerprints), WTFMove(pemCertificate), WTFMove(pemPrivateKey)));
 }
 
-RTCCertificate::RTCCertificate(double expires, Vector<DtlsFingerprint>&& fingerprints, String&& pemCertificate, String&& pemPrivateKey)
-    : m_expires(expires)
+RTCCertificate::RTCCertificate(Ref<SecurityOrigin>&& origin, double expires, Vector<DtlsFingerprint>&& fingerprints, String&& pemCertificate, String&& pemPrivateKey)
+    : m_origin(WTFMove(origin))
+    , m_expires(expires)
     , m_fingerprints(WTFMove(fingerprints))
     , m_pemCertificate(WTFMove(pemCertificate))
     , m_pemPrivateKey(WTFMove(pemPrivateKey))
