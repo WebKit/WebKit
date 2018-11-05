@@ -153,6 +153,8 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
         let {test} = event.data;
         let treeElement = this.treeElementForRepresentedObject(test);
         this.contentTreeOutline.removeChild(treeElement);
+
+        this._updateStartStopButtonNavigationItemState();
     }
 
     _handleAuditTestScheduled(event)
