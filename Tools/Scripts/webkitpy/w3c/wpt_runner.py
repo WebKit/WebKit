@@ -100,15 +100,18 @@ def parse_args(args):
                              help='Platform to use (e.g., "gtk")')
     option_parser.add_option('--gtk', action='store_const', dest='platform', const='gtk',
                              help='Alias for --platform=gtk')
+    option_parser.add_option('--wpe', action='store_const', dest='platform', const='wpe',
+                             help='Alias for --platform=wpe')
     option_parser.add_option('--child-processes',
                              help='Number of tests to run in parallel'),
     option_parser.add_option('--wpt-checkout', default=None,
                              help='web-platform-tests repository location')
     option_parser.add_option('--wpt-metadata', default=None,
                              help='web-platform-tests metadata location')
-    option_parser.add_option('--display-server', choices=['xvfb', 'xorg', 'weston', 'wayland'], default='xvfb',
-                             help='"xvfb": Use a virtualized X11 server. "xorg": Use the current X11 session. '
-                                  '"weston": Use a virtualized Weston server. "wayland": Use the current wayland session.')
+    option_parser.add_option('--display-server', choices=['headless', 'xvfb', 'xorg', 'weston', 'wayland'], default='xvfb',
+                             help='"headless": Use headless mode. "xvfb": Use a virtualized X11 server. '
+                                  '"xorg": Use the current X11 session. "weston": Use a virtualized Weston server. '
+                                  '"wayland": Use the current wayland session.')
 
     return option_parser.parse_args(args)
 

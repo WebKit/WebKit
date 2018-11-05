@@ -1,3 +1,16 @@
+2018-11-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        [webkitpy] Support WPE in the run-web-platform-tests script
+        https://bugs.webkit.org/show_bug.cgi?id=191183
+
+        Reviewed by Alex Christensen.
+
+        * Scripts/webkitpy/w3c/wpt_runner.py:
+        (parse_args): Support `--wpe` as an argument that specifies WPE as the
+        target port. Additionally, the `--display-server` flag now accepts
+        `headless` as a valid value, enabling the WPE WebDriver to run in
+        headless mode.
+
 2018-11-04  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] Use C++14, not C++17
