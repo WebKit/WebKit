@@ -1,3 +1,17 @@
+2018-11-05  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GStreamer][WebRTC] Error out when simulcast is activated
+        https://bugs.webkit.org/show_bug.cgi?id=190678
+
+        Reviewed by Philippe Normand.
+
+        Implementing it is not for now yet.
+
+        Tests for simulcast have been disabled as they now fail (instead of crashing).
+
+        * platform/mediastream/libwebrtc/GStreamerVideoEncoderFactory.cpp:
+        (WebCore::GStreamerVideoEncoder::InitEncode):
+
 2018-11-05  Youenn Fablet  <youenn@apple.com>
 
         RealtimeOutgoingAudioSource subclasses should observe its source when fully constructed

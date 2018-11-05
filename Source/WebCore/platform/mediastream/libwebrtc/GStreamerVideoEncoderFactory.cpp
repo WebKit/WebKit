@@ -31,6 +31,7 @@
 #include "webrtc/modules/video_coding/codecs/h264/include/h264.h"
 #include "webrtc/modules/video_coding/codecs/vp8/include/vp8.h"
 #include "webrtc/modules/video_coding/include/video_codec_interface.h"
+#include "webrtc/modules/video_coding/utility/simulcast_utility.h"
 
 #include <gst/app/gstappsink.h>
 #include <gst/app/gstappsrc.h>
@@ -105,6 +106,12 @@ public:
     {
         g_return_val_if_fail(codecSettings, WEBRTC_VIDEO_CODEC_ERR_PARAMETER);
         g_return_val_if_fail(codecSettings->codecType == CodecType(), WEBRTC_VIDEO_CODEC_ERR_PARAMETER);
+
+        if (webrtc::SimulcastUtility::NumberOfSimulcastStreams(*codecSettings) > 1) {
+            GST_ERROR("Simulcast not supported.");
+
+            return WEBRTC_VIDEO_CODEC_ERR_SIMULCAST_PARAMETERS_NOT_SUPPORTED;
+        }
 
         m_encodedFrame._size = codecSettings->width * codecSettings->height * 3;
         m_encodedFrame._buffer = new uint8_t[m_encodedFrame._size];

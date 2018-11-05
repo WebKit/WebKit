@@ -1,3 +1,16 @@
+2018-11-05  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GStreamer][WebRTC] Error out when simulcast is activated
+        https://bugs.webkit.org/show_bug.cgi?id=190678
+
+        Reviewed by Philippe Normand.
+
+        Implementing it is not for now yet.
+        Tests for simulcast have been disabled as they now fail (instead of crashing).
+
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2018-11-05  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed WPE gardening. Updating or adding various baselines. Also
