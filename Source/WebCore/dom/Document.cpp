@@ -7778,7 +7778,7 @@ void Document::updateIntersectionObservations()
                     { clientIntersectionRect.x(), clientIntersectionRect.y(), clientIntersectionRect.width(), clientIntersectionRect.height() },
                     intersectionRatio,
                     target,
-                    intersectionState? intersectionState->isIntersecting : false,
+                    thresholdIndex > 0,
                 }));
                 needNotify = true;
                 registration.previousThresholdIndex = thresholdIndex;

@@ -1,5 +1,5 @@
 
 PASS First observation with a threshold. 
-FAIL First rAF assert_equals: entries[0].isIntersecting expected false but got true
+PASS First rAF 
 PASS root.scrollTop = 20 
 

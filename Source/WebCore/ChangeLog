@@ -1,3 +1,19 @@
+2018-11-05  Ali Juma  <ajuma@chromium.org>
+
+        [IntersectionObserver] Fix isIntersecting computation when 0 is not a threshold
+        https://bugs.webkit.org/show_bug.cgi?id=191210
+
+        Reviewed by Simon Fraser.
+
+        isIntersecting should be false if the intersection ratio is smaller than the
+        smallest threshold value. Update the computation of isIntersecting to depend on
+        the current thresholdIndex.
+
+        Test: imported/w3c/web-platform-tests/intersection-observer/initial-observation-with-threshold-expected.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateIntersectionObservations):
+
 2018-11-05  Rob Buis  <rbuis@igalia.com>
 
         Remove some virtual methods in CachedRawResource
