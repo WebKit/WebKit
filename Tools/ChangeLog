@@ -1,3 +1,22 @@
+2018-11-05  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GStreamer][WebRTC] Add webrtcencoder bin to cleanup and refactor the way we set encoders
+        https://bugs.webkit.org/show_bug.cgi?id=190674
+
+        Reviewed by Philippe Normand.
+
+        webrtcencoder is a simple GstBin with a set of well known GStreamer encoders which
+        it can use to implement encoding for different formats exposing a trimmed down unified API.
+
+        It also adds proper handling of H264 profiles.
+
+        The added files follow GStreamer coding style as we aim at upstreaming the element
+        in the future.
+
+        Reviewed by Philippe Normand.
+
+        * Scripts/webkitpy/style/checker.py:
+
 2018-11-05  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE][GTK] API test /webkit/WebKitSettings/webkit-settings is failing

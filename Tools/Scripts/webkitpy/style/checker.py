@@ -237,6 +237,19 @@ _PATH_RULES_SPECIFIER = [
       "-whitespace/declaration",
       "-whitespace/indent"]),
 
+    ([  # Files following GStreamer coding style (for a simpler upstreaming process for example)
+      os.path.join('Source', 'WebCore', 'platform', 'mediastream', 'libwebrtc', 'GStreamerVideoEncoder.cpp'),
+      os.path.join('Source', 'WebCore', 'platform', 'mediastream', 'libwebrtc', 'GStreamerVideoEncoder.h'),
+     ],
+     ["-whitespace/indent",
+      "-whitespace/declaration",
+      "-whitespace/parens",
+      "-readability/null",
+      "-whitespace/braces",
+      "-readability/naming/underscores",
+      "-readability/enum_casing",
+     ]),
+
     ([
       # There is no way to avoid the symbols __jit_debug_register_code
       # and __jit_debug_descriptor when integrating with gdb.
