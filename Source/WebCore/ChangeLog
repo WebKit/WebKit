@@ -1,3 +1,20 @@
+2018-11-04  Rob Buis  <rbuis@igalia.com>
+
+        Remove ENABLE_OPENCL fully
+        https://bugs.webkit.org/show_bug.cgi?id=191172
+
+        Reviewed by Yusuke Suzuki.
+
+        Forgot to simplify this, no need for applyAll anymore
+        since it just calls apply.
+
+        No new tests since no change in functionality.
+
+        * platform/graphics/filters/FilterEffect.h:
+        (WebCore::FilterEffect::applyAll): Deleted.
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::postApplyResource):
+
 2018-11-04  Zalan Bujtas  <zalan@apple.com>
 
         [iOS] Issue initial paint soon after the visuallyNonEmpty milestone is fired.
