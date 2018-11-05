@@ -230,6 +230,8 @@ if X86_64 or X86_64_WIN or ARM64 or ARM64E
     const CalleeSaveSpaceAsVirtualRegisters = 4
 elsif C_LOOP
     const CalleeSaveSpaceAsVirtualRegisters = 1
+elsif ARMv7
+    const CalleeSaveSpaceAsVirtualRegisters = 1
 else
     const CalleeSaveSpaceAsVirtualRegisters = 0
 end
@@ -294,6 +296,10 @@ else
     const PC = t4 # When changing this, make sure LLIntPC is up to date in LLIntPCRanges.h
     if C_LOOP
         const metadataTable = csr3
+    elsif ARMv7
+        const metadataTable = csr0
+    else
+        error
     end
 end
 
@@ -712,6 +718,7 @@ macro preserveCalleeSavesUsedByLLInt()
         storep metadataTable, -PtrSize[cfr]
     elsif ARM or ARMv7_TRADITIONAL
     elsif ARMv7
+        storep metadataTable, -4[cfr]
     elsif ARM64 or ARM64E
         emit "stp x27, x28, [x29, #-16]"
         emit "stp x25, x26, [x29, #-32]"
@@ -736,6 +743,7 @@ macro restoreCalleeSavesUsedByLLInt()
         loadp -PtrSize[cfr], metadataTable
     elsif ARM or ARMv7_TRADITIONAL
     elsif ARMv7
+        loadp -4[cfr], metadataTable
     elsif ARM64 or ARM64E
         emit "ldp x25, x26, [x29, #-32]"
         emit "ldp x27, x28, [x29, #-16]"
@@ -1186,12 +1194,11 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
         move t0, sp
     end
 
-    if JSVALUE64 or C_LOOP
-        # FIXME: cleanup double load
-        # https://bugs.webkit.org/show_bug.cgi?id=190933
-        loadp CodeBlock::m_metadata[t1], metadataTable
-        loadp MetadataTable::m_buffer[metadataTable], metadataTable
-    end
+    # FIXME: cleanup double load
+    # https://bugs.webkit.org/show_bug.cgi?id=190933
+    loadp CodeBlock::m_metadata[t1], metadataTable
+    loadp MetadataTable::m_buffer[metadataTable], metadataTable
+
     if JSVALUE64
         move TagTypeNumber, tagTypeNumber
         addq TagBitTypeOther, tagTypeNumber, tagMask

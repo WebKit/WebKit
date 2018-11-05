@@ -265,7 +265,8 @@ X86_INSTRUCTIONS =
 ARM_INSTRUCTIONS =
     [
      "clrbp",
-     "mvlbl"
+     "mvlbl",
+     "globaladdr"
     ]
 
 ARM64_INSTRUCTIONS =

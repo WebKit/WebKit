@@ -51,6 +51,7 @@ class Assembler
         @numLocalLabels = 0
         @numGlobalLabels = 0
         @deferredActions = []
+        @deferredNextLabelActions = []
         @count = 0
 
         @newlineSpacerState = :none
@@ -79,7 +80,7 @@ class Assembler
             putsProcEndIfNeeded
         end
         putsLastComment
-        @deferredActions.each {
+        (@deferredNextLabelActions + @deferredActions).each {
             | action |
             action.call()
         }
@@ -89,6 +90,10 @@ class Assembler
     
     def deferAction(&proc)
         @deferredActions << proc
+    end
+
+    def deferNextLabelAction(&proc)
+        @deferredNextLabelActions << proc
     end
     
     def newUID
@@ -209,6 +214,11 @@ class Assembler
 
     def putsLabel(labelName, isGlobal)
         raise unless @state == :asm
+        @deferredNextLabelActions.each {
+            | action |
+            action.call()
+        }
+        @deferredNextLabelActions = []
         @numGlobalLabels += 1
         putsProcEndIfNeeded if $emitWinAsm and isGlobal
         putsNewlineSpacerIfAppropriate(:global)

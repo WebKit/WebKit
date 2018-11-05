@@ -1,3 +1,16 @@
+2018-11-05  Dominik Infuehr  <dinfuehr@igalia.com>
+
+        Enable LLInt on ARMv7/Linux
+        https://bugs.webkit.org/show_bug.cgi?id=191190
+
+        Reviewed by Yusuke Suzuki.
+
+        After enabling the new bytecode format in r237547, C_LOOP was
+        forced on all 32-bit platforms. Now enable LLInt again on
+        ARMv7-Thumb2/Linux by default.
+
+        * Source/cmake/WebKitFeatures.cmake:
+
 2018-11-05  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE][GTK] Expose ENABLE_MEDIA_SOURCE as public option

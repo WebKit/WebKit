@@ -343,7 +343,7 @@ macro makeHostFunctionCall(entry, temp1, temp2)
     end
 end
 
-_handleUncaughtException:
+op(handleUncaughtException, macro()
     loadp Callee + PayloadOffset[cfr], t3
     andp MarkedBlockMask, t3
     loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[t3], t3
@@ -374,6 +374,7 @@ _handleUncaughtException:
     popCalleeSaves()
     functionEpilogue()
     ret
+end)
 
 macro doReturnFromHostFunction(extraStackSpace)
     functionEpilogue(extraStackSpace)
@@ -1938,7 +1939,7 @@ llintOpWithReturn(op_to_primitive, OpToPrimitive, macro (size, get, dispatch, re
 end)
 
 
-commonOp(op_catch, macro() end, macro (size)
+commonOp(llint_op_catch, macro() end, macro (size)
     # This is where we end up from the JIT's throw trampoline (because the
     # machine code return address will be set to _llint_op_catch), and from
     # the interpreter's throw trampoline (see _llint_throw_trampoline).
@@ -1952,14 +1953,12 @@ commonOp(op_catch, macro() end, macro (size)
     storep 0, VM::callFrameForCatch[t3]
     restoreStackPointerAfterCall()
 
-    if C_LOOP
-        # restore metadataTable since we don't restore callee saves for CLoop during unwinding
-        loadp CodeBlock[cfr], t1
-        # FIXME: cleanup double load
-        # https://bugs.webkit.org/show_bug.cgi?id=190933
-        loadp CodeBlock::m_metadata[t1], metadataTable
-        loadp MetadataTable::m_buffer[metadataTable], metadataTable
-    end
+    # restore metadataTable since we don't restore callee saves for CLoop during unwinding
+    loadp CodeBlock[cfr], t1
+    # FIXME: cleanup double load
+    # https://bugs.webkit.org/show_bug.cgi?id=190933
+    loadp CodeBlock::m_metadata[t1], metadataTable
+    loadp MetadataTable::m_buffer[metadataTable], metadataTable
 
     loadi VM::targetInterpreterPCForThrow[t3], PC
 

@@ -1,3 +1,27 @@
+2018-11-05  Dominik Infuehr  <dinfuehr@igalia.com>
+
+        Enable LLInt on ARMv7/Linux
+        https://bugs.webkit.org/show_bug.cgi?id=191190
+
+        Reviewed by Yusuke Suzuki.
+
+        After enabling the new bytecode format in r237547, C_LOOP was
+        forced on all 32-bit platforms. Now enable LLInt again on
+        ARMv7-Thumb2/Linux.
+
+        This adds a callee-saved register in ARMv7/Linux for the metadataTable and
+        stores/restores it on LLInt function calls. It also introduces the globaladdr-
+        instruction for the ARM-offlineasm to access the opcode-table.
+
+        * jit/GPRInfo.h:
+        * jit/RegisterSet.cpp:
+        (JSC::RegisterSet::llintBaselineCalleeSaveRegisters):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * offlineasm/arm.rb:
+        * offlineasm/asm.rb:
+        * offlineasm/instructions.rb:
+
 2018-11-05  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][Clang][JSC] JIT::is64BitType reports "warning: explicit specialization cannot have a storage class"

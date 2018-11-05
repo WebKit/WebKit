@@ -550,6 +550,7 @@ public:
     static const GPRReg regT7 = ARMRegisters::r7;
 #endif
     static const GPRReg regT8 = ARMRegisters::r4;
+    static const GPRReg regCS0 = ARMRegisters::r11;
     // These registers match the baseline JIT.
     static const GPRReg callFrameRegister = ARMRegisters::fp;
     // These constants provide the names for the general purpose argument & return value registers.

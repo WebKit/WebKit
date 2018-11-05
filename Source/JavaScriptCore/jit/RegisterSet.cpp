@@ -236,6 +236,7 @@ RegisterSet RegisterSet::llintBaselineCalleeSaveRegisters()
     result.set(GPRInfo::regCS6);
 #endif
 #elif CPU(ARM_THUMB2)
+    result.set(GPRInfo::regCS0);
 #elif CPU(ARM_TRADITIONAL)
 #elif CPU(ARM64)
     result.set(GPRInfo::regCS6);

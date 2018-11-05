@@ -38,7 +38,7 @@ require "risc"
 #  x8 => t4         (callee-save)
 #  x9 => t5         (callee-save)
 # x10 =>            (callee-save scratch)
-# x11 => cfr        (ARM and ARMv7 traditional)
+# x11 => cfr, csr0  (callee-save, metadataTable)
 # x12 =>            (callee-save scratch)
 #  lr => lr
 #  sp => sp
@@ -133,6 +133,8 @@ class RegisterID
             "r9"
         when "cfr"
             isARMv7 ?  "r7" : "r11"
+        when "csr0"
+            "r11"
         when "lr"
             "lr"
         when "sp"
@@ -273,6 +275,31 @@ def armLowerStackPointerInComparison(list)
     newList
 end
 
+def armLowerLabelReferences(list)
+    newList = []
+    list.each {
+        | node |
+        if node.is_a? Instruction
+            case node.opcode
+            when "leai", "leap", "leaq"
+                labelRef = node.operands[0]
+                if labelRef.is_a? LabelReference
+                    raise unless labelRef.offset == 0
+                    tmp = Tmp.new(node.codeOrigin, :gpr)
+                    newList << Instruction.new(codeOrigin, "globaladdr", [LabelReference.new(node.codeOrigin, labelRef.label), node.operands[1], tmp])
+                else
+                    newList << node
+                end
+            else
+                newList << node
+            end
+        else
+            newList << node
+        end
+    }
+    newList
+end
+
 class Sequence
     def getModifiedListARM
         raise unless $activeBackend == "ARM"
@@ -294,6 +321,7 @@ class Sequence
         result = riscLowerSimpleBranchOps(result)
         result = riscLowerHardBranchOps(result)
         result = riscLowerShiftOps(result)
+        result = armLowerLabelReferences(result)
         result = riscLowerMalformedAddresses(result) {
             | node, address |
             if address.is_a? BaseIndex
@@ -460,7 +488,7 @@ class Instruction
             $asm.puts "str #{armOperands(operands)}"
         when "loadb"
             $asm.puts "ldrb #{armFlippedOperands(operands)}"
-        when "loadbs"
+        when "loadbs", "loadbsp"
             $asm.puts "ldrsb.w #{armFlippedOperands(operands)}"
         when "storeb"
             $asm.puts "strb #{armOperands(operands)}"
@@ -682,6 +710,28 @@ class Instruction
             $asm.puts "dmb sy"
         when "clrbp"
             $asm.puts "bic #{operands[2].armOperand}, #{operands[0].armOperand}, #{operands[1].armOperand}"
+        when "globaladdr"
+            labelRef = operands[0]
+            dest = operands[1]
+            temp = operands[2]
+
+            uid = $asm.newUID
+            gotLabel = "L_offlineasm_arm_got_#{uid}"
+            offsetLabel = "L_offlineasm_arm_got_offset_#{uid}"
+
+            $asm.puts "ldr #{dest.armOperand}, #{gotLabel}"
+            $asm.puts "ldr #{temp.armOperand}, #{gotLabel}+4"
+            $asm.puts "#{offsetLabel}:"
+            $asm.puts "add #{dest.armOperand}, pc, #{dest.armOperand}"
+            $asm.puts "ldr #{dest.armOperand}, [#{dest.armOperand}, #{temp.armOperand}]"
+
+            offset = $activeBackend == "ARMv7" ? 4 : 8
+
+            $asm.deferNextLabelAction {
+                $asm.puts "#{gotLabel}:"
+                $asm.puts ".word _GLOBAL_OFFSET_TABLE_-(#{offsetLabel}+#{offset})"
+                $asm.puts ".word #{labelRef.asmLabel}(GOT)"
+            }
         else
             lowerDefault
         end
