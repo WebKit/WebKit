@@ -1,3 +1,19 @@
+2018-11-05  Daniel Bates  <dabates@apple.com>
+
+        [lldb-webkit] Fix formatting nits in Document and Frame summary strings
+        https://bugs.webkit.org/show_bug.cgi?id=191094
+
+        Reviewed by Andy Estes.
+
+        Format boolean as 1/0 when printing Frame summary to be consistent with the formatting of
+        booleans in other summary strings, substitute "inMainFrame" for "isMainFrame" in the printed
+        Document summary and add closing brace '}' to both Frame and Document summary strings to make
+        them look pretty.
+
+        * lldb/lldb_webkit.py:
+        (WebCoreFrame_SummaryProvider):
+        (WebCoreDocument_SummaryProvider):
+
 2018-11-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Allow WKWebView clients to customize bar button item groups in the accessory view when editing

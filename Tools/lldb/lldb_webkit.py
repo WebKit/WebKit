@@ -209,14 +209,14 @@ def WebCoreFrame_SummaryProvider(valobj, dict):
         origin = ''
         url = ''
         pageCacheState = ''
-    return '{ origin = %s, url = %s, isMainFrame = %s, pageCacheState = %s' % (origin, url, provider.is_main_frame(), pageCacheState)
+    return '{ origin = %s, url = %s, isMainFrame = %d, pageCacheState = %s }' % (origin, url, provider.is_main_frame(), pageCacheState)
 
 
 def WebCoreDocument_SummaryProvider(valobj, dict):
     provider = WebCoreDocumentProvider(valobj, dict)
     frame = provider.frame()
     in_main_frame = '%d' % frame.is_main_frame() if frame else 'Detached'
-    return '{ origin = %s, url = %s, isMainFrame = %s, pageCacheState = %s' % (provider.origin(), provider.url(), in_main_frame, provider.page_cache_state())
+    return '{ origin = %s, url = %s, inMainFrame = %s, pageCacheState = %s }' % (provider.origin(), provider.url(), in_main_frame, provider.page_cache_state())
 
 
 def btjs(debugger, command, result, internal_dict):
