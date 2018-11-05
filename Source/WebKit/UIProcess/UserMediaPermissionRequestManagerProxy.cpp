@@ -261,6 +261,7 @@ void UserMediaPermissionRequestManagerProxy::scheduleNextRejection()
         m_rejectionTimer.startOneShot(Seconds(mimimumDelayBeforeReplying + randomNumber()));
 }
 
+#if ENABLE(MEDIA_STREAM)
 UserMediaPermissionRequestManagerProxy::RequestAction UserMediaPermissionRequestManagerProxy::getRequestAction(uint64_t frameID, SecurityOrigin& userMediaDocumentOrigin, SecurityOrigin& topLevelDocumentOrigin, const MediaStreamRequest& userRequest, Vector<CaptureDevice>& audioDevices, Vector<CaptureDevice>& videoDevices)
 {
     if (videoDevices.isEmpty() && audioDevices.isEmpty())
@@ -280,6 +281,7 @@ UserMediaPermissionRequestManagerProxy::RequestAction UserMediaPermissionRequest
 
     return searchForGrantedRequest(frameID, userMediaDocumentOrigin, topLevelDocumentOrigin, requestingMicrophone, requestingCamera) ? RequestAction::Grant : RequestAction::Prompt;
 }
+#endif
 
 void UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame(uint64_t userMediaID, uint64_t frameID, Ref<SecurityOrigin>&& userMediaDocumentOrigin, Ref<SecurityOrigin>&& topLevelDocumentOrigin, const MediaStreamRequest& userRequest)
 {

@@ -74,7 +74,7 @@ private:
 
     const UserMediaPermissionRequestProxy* searchForGrantedRequest(uint64_t frameID, const WebCore::SecurityOrigin& userMediaDocumentOrigin, const WebCore::SecurityOrigin& topLevelDocumentOrigin, bool needsAudio, bool needsVideo) const;
     bool wasRequestDenied(uint64_t mainFrameID, const WebCore::SecurityOrigin& userMediaDocumentOrigin, const WebCore::SecurityOrigin& topLevelDocumentOrigin, bool needsAudio, bool needsVideo, bool needsScreenCapture);
-#endif
+
     void getUserMediaPermissionInfo(uint64_t userMediaID, uint64_t frameID, UserMediaPermissionCheckProxy::CompletionHandler&&, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin);
 
     enum class RequestAction {
@@ -83,6 +83,7 @@ private:
         Prompt        
     };
     RequestAction getRequestAction(uint64_t frameID, WebCore::SecurityOrigin& userMediaDocumentOrigin, WebCore::SecurityOrigin& topLevelDocumentOrigin, const WebCore::MediaStreamRequest&, Vector<WebCore::CaptureDevice>& audioDevices, Vector<WebCore::CaptureDevice>& videoDevices);
+#endif
 
     void watchdogTimerFired();
 

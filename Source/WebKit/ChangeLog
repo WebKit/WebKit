@@ -1,3 +1,14 @@
+2018-11-04  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [MediaStream] User should not be prompted again after denying getDisplayMedia request
+        https://bugs.webkit.org/show_bug.cgi?id=191227
+        <rdar://problem/45784512>
+
+        Unreviewed build fix of ports not ENABLE(MEDIA_STREAM).
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp: Define getRequestAction only if ENABLE(MEDIA_STREAM).
+        * UIProcess/UserMediaPermissionRequestManagerProxy.h: Ditto.
+
 2018-11-04  Zalan Bujtas  <zalan@apple.com>
 
         [iOS] Issue initial paint soon after the visuallyNonEmpty milestone is fired.
