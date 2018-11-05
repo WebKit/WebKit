@@ -1,27 +1,5 @@
-CONSOLE MESSAGE: line 154: FAIL Should blend as if alpha is 1.0.
-at (150, 75) expected: 64,64,64,255 was 66,65,66,255
-CONSOLE MESSAGE: line 138: FAIL Should blend as if alpha is 1.0.
-at (150, 75) expected: 64,64,64,255 was 66,65,66,255
-CONSOLE MESSAGE: line 138: FAIL Should blend as if alpha is 1.0.
-at (150, 75) expected: 64,64,64,255 was 66,65,66,255
-CONSOLE MESSAGE: line 138: FAIL Should blend as if alpha is 1.0.
-at (150, 75) expected: 64,64,64,255 was 66,65,66,255
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance/context/context-hidden-alpha.html
-[ 1: PASS ] [object WebGLRenderingContext] is non-null.
-[ 2: PASS ] gl.getParameter(gl.ALPHA_BITS) is 0
-[ 3: PASS ] [object WebGLProgram] is non-null.
-[ 4: FAIL ] Should blend as if alpha is 1.0. at (150, 75) expected: 64,64,64,255 was 66,65,66,255
-[ 5: PASS ] dataURL_post is dataURL_pre
-[ 6: FAIL ] Should blend as if alpha is 1.0. at (150, 75) expected: 64,64,64,255 was 66,65,66,255
-[ 7: PASS ] dataURL_post is dataURL_pre
-[ 8: PASS ] getError was expected value: NO_ERROR : should be no errors
-[ 9: FAIL ] Should blend as if alpha is 1.0. at (150, 75) expected: 64,64,64,255 was 66,65,66,255
-[ 10: PASS ] dataURL_post is dataURL_pre
-[ 11: FAIL ] Should blend as if alpha is 1.0. at (150, 75) expected: 64,64,64,255 was 66,65,66,255
-[ 12: PASS ] dataURL_post is dataURL_pre
-[ 13: PASS ] getError was expected value: NO_ERROR : should be no errors
-[ 14: PASS ] successfullyParsed is true
-[ FAIL ] 4 failures reported
+[ PASS ] All tests passed
 

@@ -721,6 +721,8 @@ webkit.org/b/159724 imported/w3c/web-platform-tests/xhr/send-redirect-post-uploa
 Bug(WPE) fast/doctypes/xhtml-with-xhtmlmp-doctype.xhtml [ Pass Failure ]
 Bug(WPE) fast/doctypes/xhtml-with-xhtmlmp12-doctype.xhtml [ Pass Failure ]
 
+webkit.org/b/112532 fast/frames/flattening/frameset-flattening-advanced.html [ Pass Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 7. SLOW TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1502,6 +1504,18 @@ webkit.org/b/188979 fast/css/sticky/sticky-top-zoomed.html [ ImageOnlyFailure ]
 webkit.org/b/188980 fast/css/vertical-align-block-elements.html [ ImageOnlyFailure ]
 webkit.org/b/163977 fast/css/will-change/will-change-creates-stacking-context-inline.html [ ImageOnlyFailure ]
 webkit.org/b/163979 fast/css/will-change/will-change-creates-stacking-context.html [ ImageOnlyFailure ]
+
+webkit.org/b/191006 webrtc/simulcast-h264.html [ Failure ]
+
+webkit.org/b/190710 fast/css-custom-paint/basic.html [ Failure ]
+
+webkit.org/b/190707 css-custom-properties-api/length2.html [ Failure ]
+
+webkit.org/b/191249 animations/stop-animation-on-suspend.html [ Failure ]
+
+webkit.org/b/191250 fast/mediastream/getUserMedia-deny-persistency.html [ Failure ]
+webkit.org/b/191250 fast/mediastream/getUserMedia-deny-persistency2.html [ Failure ]
+webkit.org/b/191250 fast/mediastream/getUserMedia-deny-persistency3.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 #  >> NOTICE <<

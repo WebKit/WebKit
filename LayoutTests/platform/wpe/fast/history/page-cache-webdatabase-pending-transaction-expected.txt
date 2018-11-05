@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: line 38: Web SQL is deprecated. Please use IndexedDB instead.
+CONSOLE MESSAGE: line 38: Web SQL is deprecated. Please use IndexedDB instead.
+Tests that a page with an open WebDatabase that has pending transactions does not go into the page cache.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+pageshow - not from cache
+PASS Page was not restored from page cache
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

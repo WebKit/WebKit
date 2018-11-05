@@ -17,15 +17,15 @@ Test: ../../resources/webgl_test_files/conformance/rendering/multisample-corrupt
 [ 14: PASS ] Canvas should be red
 [ 15: FAIL ] Canvas should be red
 [ 16: FAIL ] Canvas should be red
-[ 17: PASS ] Canvas should be red
+[ 17: FAIL ] Canvas should be red
 [ 18: FAIL ] Canvas should be red
 [ 19: FAIL ] Canvas should be red
-[ 20: PASS ] Canvas should be red
+[ 20: FAIL ] Canvas should be red
 [ 21: FAIL ] Canvas should be red
 [ 22: FAIL ] Canvas should be red
 [ 23: FAIL ] Canvas should be red
 [ 24: FAIL ] Canvas should be red
 [ 25: FAIL ] Canvas should be red
 [ 26: PASS ] successfullyParsed is true
-[ FAIL ] 17 failures reported
+[ FAIL ] 19 failures reported
 

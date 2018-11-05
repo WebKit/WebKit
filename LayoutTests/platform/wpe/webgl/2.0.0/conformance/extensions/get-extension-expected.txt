@@ -8,97 +8,90 @@ Test: ../../resources/webgl_test_files/conformance/extensions/get-extension.html
 [ 5: PASS ] getExtension('MOZ_EXT_blend_minmax') returns an object only if the name is returned by getSupportedExtensions
 [ 6: PASS ] getExtension('OP_EXT_blend_minmax') returns an object only if the name is returned by getSupportedExtensions
 [ 7: PASS ] getExtension('WEBKIT_EXT_blend_minmax') returns an object only if the name is returned by getSupportedExtensions
-[ 8: PASS ] able to get EXT_frag_depth as eXt_fRaG_DePTh
+[ 8: PASS ] able to get OES_texture_float as oEs_tExTURe_FlOAt
 [ 9: PASS ] calling getExtension twice for the same extension returns the same object
 [ 10: PASS ] object returned by 2nd call to getExtension has same properties
-[ 11: PASS ] getExtension('EXT_frag_depth') returns an object only if the name is returned by getSupportedExtensions
-[ 12: PASS ] getExtension('MOZ_EXT_frag_depth') returns an object only if the name is returned by getSupportedExtensions
-[ 13: PASS ] getExtension('OP_EXT_frag_depth') returns an object only if the name is returned by getSupportedExtensions
-[ 14: PASS ] getExtension('WEBKIT_EXT_frag_depth') returns an object only if the name is returned by getSupportedExtensions
-[ 15: PASS ] able to get OES_texture_float as OEs_teXtURE_FloaT
+[ 11: PASS ] getExtension('OES_texture_float') returns an object only if the name is returned by getSupportedExtensions
+[ 12: PASS ] getExtension('MOZ_OES_texture_float') returns an object only if the name is returned by getSupportedExtensions
+[ 13: PASS ] getExtension('OP_OES_texture_float') returns an object only if the name is returned by getSupportedExtensions
+[ 14: PASS ] getExtension('WEBKIT_OES_texture_float') returns an object only if the name is returned by getSupportedExtensions
+[ 15: PASS ] able to get OES_texture_float_linear as oes_tEXTuRe_fLoAT_lINeAR
 [ 16: PASS ] calling getExtension twice for the same extension returns the same object
 [ 17: PASS ] object returned by 2nd call to getExtension has same properties
-[ 18: PASS ] getExtension('OES_texture_float') returns an object only if the name is returned by getSupportedExtensions
-[ 19: PASS ] getExtension('MOZ_OES_texture_float') returns an object only if the name is returned by getSupportedExtensions
-[ 20: PASS ] getExtension('OP_OES_texture_float') returns an object only if the name is returned by getSupportedExtensions
-[ 21: PASS ] getExtension('WEBKIT_OES_texture_float') returns an object only if the name is returned by getSupportedExtensions
-[ 22: PASS ] able to get OES_texture_float_linear as oES_tEXtURe_flOaT_LiNear
+[ 18: PASS ] getExtension('OES_texture_float_linear') returns an object only if the name is returned by getSupportedExtensions
+[ 19: PASS ] getExtension('MOZ_OES_texture_float_linear') returns an object only if the name is returned by getSupportedExtensions
+[ 20: PASS ] getExtension('OP_OES_texture_float_linear') returns an object only if the name is returned by getSupportedExtensions
+[ 21: PASS ] getExtension('WEBKIT_OES_texture_float_linear') returns an object only if the name is returned by getSupportedExtensions
+[ 22: PASS ] able to get OES_texture_half_float as oes_TeXTUrE_haLf_FLoAT
 [ 23: PASS ] calling getExtension twice for the same extension returns the same object
 [ 24: PASS ] object returned by 2nd call to getExtension has same properties
-[ 25: PASS ] getExtension('OES_texture_float_linear') returns an object only if the name is returned by getSupportedExtensions
-[ 26: PASS ] getExtension('MOZ_OES_texture_float_linear') returns an object only if the name is returned by getSupportedExtensions
-[ 27: PASS ] getExtension('OP_OES_texture_float_linear') returns an object only if the name is returned by getSupportedExtensions
-[ 28: PASS ] getExtension('WEBKIT_OES_texture_float_linear') returns an object only if the name is returned by getSupportedExtensions
-[ 29: PASS ] able to get OES_texture_half_float as OeS_TeXTuRE_halF_FLOaT
+[ 25: PASS ] getExtension('OES_texture_half_float') returns an object only if the name is returned by getSupportedExtensions
+[ 26: PASS ] getExtension('MOZ_OES_texture_half_float') returns an object only if the name is returned by getSupportedExtensions
+[ 27: PASS ] getExtension('OP_OES_texture_half_float') returns an object only if the name is returned by getSupportedExtensions
+[ 28: PASS ] getExtension('WEBKIT_OES_texture_half_float') returns an object only if the name is returned by getSupportedExtensions
+[ 29: PASS ] able to get OES_texture_half_float_linear as oES_texTuRE_hAlf_FlOAT_LInEAr
 [ 30: PASS ] calling getExtension twice for the same extension returns the same object
 [ 31: PASS ] object returned by 2nd call to getExtension has same properties
-[ 32: PASS ] getExtension('OES_texture_half_float') returns an object only if the name is returned by getSupportedExtensions
-[ 33: PASS ] getExtension('MOZ_OES_texture_half_float') returns an object only if the name is returned by getSupportedExtensions
-[ 34: PASS ] getExtension('OP_OES_texture_half_float') returns an object only if the name is returned by getSupportedExtensions
-[ 35: PASS ] getExtension('WEBKIT_OES_texture_half_float') returns an object only if the name is returned by getSupportedExtensions
-[ 36: PASS ] able to get OES_texture_half_float_linear as oes_tEXTuRE_HAlf_fLoAT_lIneaR
+[ 32: PASS ] getExtension('OES_texture_half_float_linear') returns an object only if the name is returned by getSupportedExtensions
+[ 33: PASS ] getExtension('MOZ_OES_texture_half_float_linear') returns an object only if the name is returned by getSupportedExtensions
+[ 34: PASS ] getExtension('OP_OES_texture_half_float_linear') returns an object only if the name is returned by getSupportedExtensions
+[ 35: PASS ] getExtension('WEBKIT_OES_texture_half_float_linear') returns an object only if the name is returned by getSupportedExtensions
+[ 36: PASS ] able to get OES_standard_derivatives as oes_sTANdArd_DeRIVaTIvES
 [ 37: PASS ] calling getExtension twice for the same extension returns the same object
 [ 38: PASS ] object returned by 2nd call to getExtension has same properties
-[ 39: PASS ] getExtension('OES_texture_half_float_linear') returns an object only if the name is returned by getSupportedExtensions
-[ 40: PASS ] getExtension('MOZ_OES_texture_half_float_linear') returns an object only if the name is returned by getSupportedExtensions
-[ 41: PASS ] getExtension('OP_OES_texture_half_float_linear') returns an object only if the name is returned by getSupportedExtensions
-[ 42: PASS ] getExtension('WEBKIT_OES_texture_half_float_linear') returns an object only if the name is returned by getSupportedExtensions
-[ 43: PASS ] able to get OES_standard_derivatives as oES_sTAnDArd_dErIVAtIves
+[ 39: PASS ] getExtension('OES_standard_derivatives') returns an object only if the name is returned by getSupportedExtensions
+[ 40: PASS ] getExtension('MOZ_OES_standard_derivatives') returns an object only if the name is returned by getSupportedExtensions
+[ 41: PASS ] getExtension('OP_OES_standard_derivatives') returns an object only if the name is returned by getSupportedExtensions
+[ 42: PASS ] getExtension('WEBKIT_OES_standard_derivatives') returns an object only if the name is returned by getSupportedExtensions
+[ 43: PASS ] able to get EXT_texture_filter_anisotropic as ext_TeXTUrE_fiLtER_aNIsOTropiC
 [ 44: PASS ] calling getExtension twice for the same extension returns the same object
 [ 45: PASS ] object returned by 2nd call to getExtension has same properties
-[ 46: PASS ] getExtension('OES_standard_derivatives') returns an object only if the name is returned by getSupportedExtensions
-[ 47: PASS ] getExtension('MOZ_OES_standard_derivatives') returns an object only if the name is returned by getSupportedExtensions
-[ 48: PASS ] getExtension('OP_OES_standard_derivatives') returns an object only if the name is returned by getSupportedExtensions
-[ 49: PASS ] getExtension('WEBKIT_OES_standard_derivatives') returns an object only if the name is returned by getSupportedExtensions
-[ 50: PASS ] able to get EXT_texture_filter_anisotropic as ExT_TeXTuRE_filTeR_AnIsotRoPIC
+[ 46: PASS ] getExtension('EXT_texture_filter_anisotropic') returns an object only if the name is returned by getSupportedExtensions
+[ 47: PASS ] getExtension('MOZ_EXT_texture_filter_anisotropic') returns an object only if the name is returned by getSupportedExtensions
+[ 48: PASS ] getExtension('OP_EXT_texture_filter_anisotropic') returns an object only if the name is returned by getSupportedExtensions
+[ 49: FAIL ] getExtension('WEBKIT_EXT_texture_filter_anisotropic') returns an object only if the name is returned by getSupportedExtensions
+[ 50: PASS ] able to get OES_vertex_array_object as oES_vErteX_ARRaY_oBJect
 [ 51: PASS ] calling getExtension twice for the same extension returns the same object
 [ 52: PASS ] object returned by 2nd call to getExtension has same properties
-[ 53: PASS ] getExtension('EXT_texture_filter_anisotropic') returns an object only if the name is returned by getSupportedExtensions
-[ 54: PASS ] getExtension('MOZ_EXT_texture_filter_anisotropic') returns an object only if the name is returned by getSupportedExtensions
-[ 55: PASS ] getExtension('OP_EXT_texture_filter_anisotropic') returns an object only if the name is returned by getSupportedExtensions
-[ 56: FAIL ] getExtension('WEBKIT_EXT_texture_filter_anisotropic') returns an object only if the name is returned by getSupportedExtensions
-[ 57: PASS ] able to get OES_vertex_array_object as oES_VErtex_aRRAy_objEcT
+[ 53: PASS ] getExtension('OES_vertex_array_object') returns an object only if the name is returned by getSupportedExtensions
+[ 54: PASS ] getExtension('MOZ_OES_vertex_array_object') returns an object only if the name is returned by getSupportedExtensions
+[ 55: PASS ] getExtension('OP_OES_vertex_array_object') returns an object only if the name is returned by getSupportedExtensions
+[ 56: PASS ] getExtension('WEBKIT_OES_vertex_array_object') returns an object only if the name is returned by getSupportedExtensions
+[ 57: PASS ] able to get OES_element_index_uint as oEs_ELeMent_iNDEx_UiNT
 [ 58: PASS ] calling getExtension twice for the same extension returns the same object
 [ 59: PASS ] object returned by 2nd call to getExtension has same properties
-[ 60: PASS ] getExtension('OES_vertex_array_object') returns an object only if the name is returned by getSupportedExtensions
-[ 61: PASS ] getExtension('MOZ_OES_vertex_array_object') returns an object only if the name is returned by getSupportedExtensions
-[ 62: PASS ] getExtension('OP_OES_vertex_array_object') returns an object only if the name is returned by getSupportedExtensions
-[ 63: PASS ] getExtension('WEBKIT_OES_vertex_array_object') returns an object only if the name is returned by getSupportedExtensions
-[ 64: PASS ] able to get OES_element_index_uint as OEs_ElEMent_InDEX_Uint
+[ 60: PASS ] getExtension('OES_element_index_uint') returns an object only if the name is returned by getSupportedExtensions
+[ 61: PASS ] getExtension('MOZ_OES_element_index_uint') returns an object only if the name is returned by getSupportedExtensions
+[ 62: PASS ] getExtension('OP_OES_element_index_uint') returns an object only if the name is returned by getSupportedExtensions
+[ 63: PASS ] getExtension('WEBKIT_OES_element_index_uint') returns an object only if the name is returned by getSupportedExtensions
+[ 64: PASS ] able to get WEBGL_lose_context as webgL_LOSe_conTeXT
 [ 65: PASS ] calling getExtension twice for the same extension returns the same object
 [ 66: PASS ] object returned by 2nd call to getExtension has same properties
-[ 67: PASS ] getExtension('OES_element_index_uint') returns an object only if the name is returned by getSupportedExtensions
-[ 68: PASS ] getExtension('MOZ_OES_element_index_uint') returns an object only if the name is returned by getSupportedExtensions
-[ 69: PASS ] getExtension('OP_OES_element_index_uint') returns an object only if the name is returned by getSupportedExtensions
-[ 70: PASS ] getExtension('WEBKIT_OES_element_index_uint') returns an object only if the name is returned by getSupportedExtensions
-[ 71: PASS ] able to get WEBGL_lose_context as WeBGL_LOsE_contExT
+[ 67: PASS ] getExtension('WEBGL_lose_context') returns an object only if the name is returned by getSupportedExtensions
+[ 68: PASS ] getExtension('MOZ_WEBGL_lose_context') returns an object only if the name is returned by getSupportedExtensions
+[ 69: PASS ] getExtension('OP_WEBGL_lose_context') returns an object only if the name is returned by getSupportedExtensions
+[ 70: PASS ] getExtension('WEBKIT_WEBGL_lose_context') returns an object only if the name is returned by getSupportedExtensions
+[ 71: PASS ] able to get WEBGL_compressed_texture_s3tc as WeBGl_ComprEsSED_TextUrE_S3TC
 [ 72: PASS ] calling getExtension twice for the same extension returns the same object
 [ 73: PASS ] object returned by 2nd call to getExtension has same properties
-[ 74: PASS ] getExtension('WEBGL_lose_context') returns an object only if the name is returned by getSupportedExtensions
-[ 75: PASS ] getExtension('MOZ_WEBGL_lose_context') returns an object only if the name is returned by getSupportedExtensions
-[ 76: PASS ] getExtension('OP_WEBGL_lose_context') returns an object only if the name is returned by getSupportedExtensions
-[ 77: PASS ] getExtension('WEBKIT_WEBGL_lose_context') returns an object only if the name is returned by getSupportedExtensions
-[ 78: PASS ] able to get WEBGL_compressed_texture_s3tc as WEbGl_cOmPREsSEd_TextuRe_S3tC
+[ 74: PASS ] getExtension('WEBGL_compressed_texture_s3tc') returns an object only if the name is returned by getSupportedExtensions
+[ 75: PASS ] getExtension('MOZ_WEBGL_compressed_texture_s3tc') returns an object only if the name is returned by getSupportedExtensions
+[ 76: PASS ] getExtension('OP_WEBGL_compressed_texture_s3tc') returns an object only if the name is returned by getSupportedExtensions
+[ 77: PASS ] getExtension('WEBKIT_WEBGL_compressed_texture_s3tc') returns an object only if the name is returned by getSupportedExtensions
+[ 78: PASS ] able to get WEBGL_depth_texture as wEBgl_dEpTH_tExtuRe
 [ 79: PASS ] calling getExtension twice for the same extension returns the same object
 [ 80: PASS ] object returned by 2nd call to getExtension has same properties
-[ 81: PASS ] getExtension('WEBGL_compressed_texture_s3tc') returns an object only if the name is returned by getSupportedExtensions
-[ 82: PASS ] getExtension('MOZ_WEBGL_compressed_texture_s3tc') returns an object only if the name is returned by getSupportedExtensions
-[ 83: PASS ] getExtension('OP_WEBGL_compressed_texture_s3tc') returns an object only if the name is returned by getSupportedExtensions
-[ 84: PASS ] getExtension('WEBKIT_WEBGL_compressed_texture_s3tc') returns an object only if the name is returned by getSupportedExtensions
-[ 85: PASS ] able to get WEBGL_depth_texture as webGl_DEpTH_TExturE
+[ 81: PASS ] getExtension('WEBGL_depth_texture') returns an object only if the name is returned by getSupportedExtensions
+[ 82: PASS ] getExtension('MOZ_WEBGL_depth_texture') returns an object only if the name is returned by getSupportedExtensions
+[ 83: PASS ] getExtension('OP_WEBGL_depth_texture') returns an object only if the name is returned by getSupportedExtensions
+[ 84: PASS ] getExtension('WEBKIT_WEBGL_depth_texture') returns an object only if the name is returned by getSupportedExtensions
+[ 85: PASS ] able to get WEBGL_debug_renderer_info as WEBgL_dEBug_rEnDEReR_inFo
 [ 86: PASS ] calling getExtension twice for the same extension returns the same object
 [ 87: PASS ] object returned by 2nd call to getExtension has same properties
-[ 88: PASS ] getExtension('WEBGL_depth_texture') returns an object only if the name is returned by getSupportedExtensions
-[ 89: PASS ] getExtension('MOZ_WEBGL_depth_texture') returns an object only if the name is returned by getSupportedExtensions
-[ 90: PASS ] getExtension('OP_WEBGL_depth_texture') returns an object only if the name is returned by getSupportedExtensions
-[ 91: PASS ] getExtension('WEBKIT_WEBGL_depth_texture') returns an object only if the name is returned by getSupportedExtensions
-[ 92: PASS ] able to get WEBGL_debug_renderer_info as wEBGl_debUg_REnDErER_infO
-[ 93: PASS ] calling getExtension twice for the same extension returns the same object
-[ 94: PASS ] object returned by 2nd call to getExtension has same properties
-[ 95: PASS ] getExtension('WEBGL_debug_renderer_info') returns an object only if the name is returned by getSupportedExtensions
-[ 96: PASS ] getExtension('MOZ_WEBGL_debug_renderer_info') returns an object only if the name is returned by getSupportedExtensions
-[ 97: PASS ] getExtension('OP_WEBGL_debug_renderer_info') returns an object only if the name is returned by getSupportedExtensions
-[ 98: PASS ] getExtension('WEBKIT_WEBGL_debug_renderer_info') returns an object only if the name is returned by getSupportedExtensions
-[ 99: PASS ] successfullyParsed is true
+[ 88: PASS ] getExtension('WEBGL_debug_renderer_info') returns an object only if the name is returned by getSupportedExtensions
+[ 89: PASS ] getExtension('MOZ_WEBGL_debug_renderer_info') returns an object only if the name is returned by getSupportedExtensions
+[ 90: PASS ] getExtension('OP_WEBGL_debug_renderer_info') returns an object only if the name is returned by getSupportedExtensions
+[ 91: PASS ] getExtension('WEBKIT_WEBGL_debug_renderer_info') returns an object only if the name is returned by getSupportedExtensions
+[ 92: PASS ] successfullyParsed is true
 [ FAIL ] 1 failures reported
 

@@ -1,3 +1,32 @@
+2018-11-05  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE gardening. Updating or adding various baselines. Also
+        adding new failure expectations for tests that need a closer look.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/fast/block/basic/child-block-level-box-with-height-percent-expected.txt: Added.
+        * platform/wpe/fast/block/basic/height-percentage-simple-expected.txt: Added.
+        * platform/wpe/fast/block/basic/inline-content-with-floating-image-expected.txt: Added.
+        * platform/wpe/fast/block/basic/inline-content-with-floating-images2-expected.txt: Added.
+        * platform/wpe/fast/block/basic/quirk-mode-percent-height-expected.txt: Added.
+        * platform/wpe/fast/history: Added.
+        * platform/wpe/fast/history/page-cache-webdatabase-pending-transaction-expected.txt: Added.
+        * platform/wpe/fast/inline-block/14498-positionForCoordinates-expected.txt:
+        * platform/wpe/fast/inline/simple-inline-block-expected.txt: Added.
+        * platform/wpe/fast/inline/simple-intruding-float1-expected.txt: Added.
+        * platform/wpe/fast/inline/simple-intruding-floats2-expected.txt: Added.
+        * platform/wpe/fast/inline/simple-intruding-floats3-expected.txt: Added.
+        * platform/wpe/fast/inline/simple-shrink-to-fit-inline-block-expected.txt: Added.
+        * platform/wpe/webgl/2.0.0/conformance/canvas/drawingbuffer-test-expected.txt: Added.
+        * platform/wpe/webgl/2.0.0/conformance/context/context-attributes-alpha-depth-stencil-antialias-expected.txt:
+        * platform/wpe/webgl/2.0.0/conformance/context/context-hidden-alpha-expected.txt:
+        * platform/wpe/webgl/2.0.0/conformance/extensions/get-extension-expected.txt:
+        * platform/wpe/webgl/2.0.0/conformance/extensions/oes-texture-half-float-with-image-data-expected.txt: Added.
+        * platform/wpe/webgl/2.0.0/conformance/glsl/misc/shaders-with-invariance-expected.txt:
+        * platform/wpe/webgl/2.0.0/conformance/rendering/multisample-corruption-expected.txt:
+        * platform/wpe/webgl/2.0.0/conformance2/buffers/bound-buffer-size-change-test-expected.txt:
+        * platform/wpe/webgl/2.0.0/conformance2/extensions/promoted-extensions-in-shaders-expected.txt:
+
 2018-11-04  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC] Add support for percentage height in quirks mode.

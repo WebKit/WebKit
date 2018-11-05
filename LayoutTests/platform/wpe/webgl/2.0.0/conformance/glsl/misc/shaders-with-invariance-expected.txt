@@ -9,16 +9,16 @@ Test: ../../../resources/webgl_test_files/conformance/glsl/misc/shaders-with-inv
 [ 6: PASS ] vertex shader with invariant varying and fragment shader with invariant (separately set) varying must succeed
 [ 7: PASS ] vertex shader with invariant (separately set in wrong order) varying must fail
 [ 8: PASS ] fragment shader with invariant (separately set in wrong order) varying must fail
-[ 9: FAIL ] [unexpected fragment shader compile status] (expected: true) vertex shader with invariant gl_Position and fragment shader with invariant gl_FragCoord must succeed
-[ 10: FAIL ] [unexpected fragment shader compile status] (expected: true) vertex shader with variant gl_Position and fragment shader with invariant gl_FragCoord must fail
+[ 9: PASS ] vertex shader with invariant gl_Position and fragment shader with invariant gl_FragCoord must succeed
+[ 10: FAIL ] [unexpected link status] vertex shader with variant gl_Position and fragment shader with invariant gl_FragCoord must fail
 [ 11: PASS ] vertex shader with invariant gl_Position and fragment shader with variant gl_FragCoord must succeed
 [ 12: PASS ] vertex shader with invariant gl_PointSize and fragment shader with invariant gl_PointCoord must succeed
 [ 13: FAIL ] [unexpected link status] vertex shader with variant gl_PointSize and fragment shader with invariant gl_PointCoord must fail
 [ 14: PASS ] vertex shader with invariant gl_PointSize and fragment shader with variant gl_PointCoord must succeed
 [ 15: PASS ] fragment shader with variant gl_FrontFacing must succeed compilation
 [ 16: PASS ] fragment shader with invariant gl_FrontFacing must fail compilation
-[ 17: FAIL ] [unexpected link status] vertex shader with variant varying and fragment shader with invariant (global setting) varying must fail
-[ 18: FAIL ] [unexpected link status] vertex shader with invariant varying and fragment shader with invariant (global setting) varying must succeed
+[ 17: PASS ] vertex shader with variant varying and fragment shader with invariant (global setting) varying must fail
+[ 18: PASS ] vertex shader with invariant varying and fragment shader with invariant (global setting) varying must succeed
 [ 19: PASS ] successfullyParsed is true
-[ FAIL ] 5 failures reported
+[ FAIL ] 2 failures reported
 

@@ -1,0 +1,30 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+layer at (8,8) size 300x72
+  RenderBlock {DIV} at (0,0) size 300x72
+    RenderImage {IMG} at (0,0) size 50x30
+    RenderText {#text} at (50,0) size 277x71
+      text run at (50,0) width 227: "long text with left floating box. long"
+      text run at (50,18) width 222: "text with left floating box. long text"
+      text run at (0,36) width 277: "with left floating box. text eventually breaks"
+      text run at (0,54) width 118: "below the floating."
+layer at (8,80) size 300x72
+  RenderBlock {DIV} at (0,72) size 300x72
+    RenderImage {IMG} at (250,0) size 50x30
+    RenderText {#text} at (0,0) size 286x71
+      text run at (0,0) width 236: "long text with right floating box. long"
+      text run at (0,18) width 231: "text with right floating box. long text"
+      text run at (0,36) width 286: "with right floating box. text eventually breaks"
+      text run at (0,54) width 118: "below the floating."
+layer at (8,152) size 300x72
+  RenderBlock {DIV} at (0,144) size 300x72
+    RenderImage {IMG} at (0,0) size 20x30
+    RenderImage {IMG} at (280,0) size 20x30
+    RenderText {#text} at (20,0) size 282x71
+      text run at (20,0) width 255: "long text with left and right floating box."
+      text run at (20,18) width 255: "long text with left and right floating box."
+      text run at (0,36) width 282: "long text with left and right floating box. text"
+      text run at (0,54) width 238: "eventually breaks below the floatings."

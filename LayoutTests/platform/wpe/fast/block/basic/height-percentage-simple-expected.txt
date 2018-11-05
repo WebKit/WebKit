@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 300x18
+        RenderText {#text} at (52,0) size 83x17
+          text run at (52,0) width 83: "first line with"
+        RenderBlock (floating) {DIV} at (0,0) size 52x294 [border: (1px solid #FF0000)]
+          RenderText {#text} at (1,1) size 28x17
+            text run at (1,1) width 28: "float"
+        RenderText {#text} at (135,0) size 46x17
+          text run at (135,0) width 46: "content"
+      RenderBlock {DIV} at (0,18) size 784x100
+        RenderText {#text} at (52,19) size 103x17
+          text run at (52,19) width 103: "second line with"
+        RenderBlock {DIV} at (155,0) size 52x52 [border: (1px solid #FF0000)]
+          RenderText {#text} at (1,1) size 35x35
+            text run at (1,1) width 35: "inline"
+            text run at (1,19) width 35: "block"
+        RenderText {#text} at (207,19) size 46x17
+          text run at (207,19) width 46: "content"
