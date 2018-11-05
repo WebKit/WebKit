@@ -1,3 +1,17 @@
+2018-11-04  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] Use C++14, not C++17
+        https://bugs.webkit.org/show_bug.cgi?id=191101
+
+        Reviewed by Alex Christensen.
+
+        std::basic_string::data() returns a read-only const buffer in
+        C++14.
+
+        * MiniBrowser/win/WebKitBrowserWindow.cpp:
+        (createString): Use std::vector instead of std::wstring.
+        (createUTF8String): Use std::vector instead of std::string.
+
 2018-11-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Cocoa] Fold common UIScriptController functionality on macOS and iOS into UIScriptControllerCocoa.mm

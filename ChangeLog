@@ -1,3 +1,16 @@
+2018-11-04  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] Use C++14, not C++17
+        https://bugs.webkit.org/show_bug.cgi?id=191101
+
+        Reviewed by Alex Christensen.
+
+        Based on the webkit-dev discussion, this change switches Windows
+        port from C++17 to C++14.
+        <https://lists.webkit.org/pipermail/webkit-dev/2018-September/030186.html>
+
+        * Source/cmake/OptionsMSVC.cmake: Replaced /std:c++17 with /std:c++14 switch.
+
 2018-10-30  Don Olmstead  <don.olmstead@sony.com>
 
         [PlayStation] Enable JavaScriptCore

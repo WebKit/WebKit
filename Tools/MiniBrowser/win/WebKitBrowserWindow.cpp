@@ -37,11 +37,10 @@
 std::wstring createString(WKStringRef wkString)
 {
     size_t maxSize = WKStringGetLength(wkString);
-    std::wstring str(maxSize, '\0');
-    size_t actualLength = WKStringGetCharacters(wkString, str.data(), maxSize);
-    if (maxSize != actualLength)
-        str.resize(actualLength);
-    return std::wstring(str.data());
+
+    std::vector<WKChar> wkCharBuffer(maxSize);
+    size_t actualLength = WKStringGetCharacters(wkString, wkCharBuffer.data(), maxSize);
+    return std::wstring(wkCharBuffer.data(), actualLength);
 }
 
 std::wstring createString(WKURLRef wkURL)
@@ -53,11 +52,9 @@ std::wstring createString(WKURLRef wkURL)
 std::string createUTF8String(const wchar_t* src, size_t srcLength)
 {
     int length = WideCharToMultiByte(CP_UTF8, 0, src, srcLength, 0, 0, nullptr, nullptr);
-    std::string str(length, '\0');
-    int actualLength = WideCharToMultiByte(CP_UTF8, 0, src, srcLength, str.data(), length, nullptr, nullptr);
-    if (length != actualLength)
-        str.resize(actualLength);
-    return str;
+    std::vector<char> buffer(length);
+    size_t actualLength = WideCharToMultiByte(CP_UTF8, 0, src, srcLength, buffer.data(), length, nullptr, nullptr);
+    return { buffer.data(), actualLength };
 }
 
 WKRetainPtr<WKStringRef> createWKString(_bstr_t str)

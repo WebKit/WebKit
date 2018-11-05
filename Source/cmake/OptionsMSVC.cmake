@@ -26,9 +26,9 @@ if (NOT COMPILER_IS_CLANG_CL)
     add_definitions(-D_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES=1)
 endif ()
 
-# Enable C++17
+# Enable C++14
 # https://docs.microsoft.com/en-us/cpp/build/reference/std-specify-language-standard-version
-add_compile_options(/std:c++17)
+add_compile_options(/std:c++14)
 
 # Specify the source code encoding
 add_compile_options(/utf-8 /validate-charset)

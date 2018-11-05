@@ -527,7 +527,7 @@ template<class... _Args> struct conjunction : wtf_conjunction_impl<_Args...> { }
 
 // Provide in_place_t when not building with -std=c++17, or when building with libstdc++ 6
 // (which doesn't define the _GLIBCXX_RELEASE macro that's been introduced in libstdc++ 7).
-#if (__cplusplus < 201703L || (defined(__GLIBCXX__) && !defined(_GLIBCXX_RELEASE))) && (!defined(_MSC_FULL_VER) || _MSC_FULL_VER < 190023918)
+#if (__cplusplus < 201703L || (defined(__GLIBCXX__) && !defined(_GLIBCXX_RELEASE))) && (!defined(_MSVC_LANG) || _MSVC_LANG < 201703L)
 
 // These are inline variable for C++17 and later.
 #define __IN_PLACE_INLINE_VARIABLE static const
