@@ -79,6 +79,7 @@ namespace WebCore {
 
 void MediaPlayerPrivateGStreamerMSE::registerMediaEngine(MediaEngineRegistrar registrar)
 {
+    initializeGStreamerAndRegisterWebKitElements();
     GST_DEBUG_CATEGORY_INIT(webkit_mse_debug, "webkitmse", 0, "WebKit MSE media player");
     if (isAvailable()) {
         registrar([](MediaPlayer* player) { return std::make_unique<MediaPlayerPrivateGStreamerMSE>(player); },
@@ -116,10 +117,6 @@ void MediaPlayerPrivateGStreamerMSE::load(const String& urlString)
         m_player->networkStateChanged();
         return;
     }
-
-
-    if (UNLIKELY(!MediaPlayerPrivateGStreamerBase::initializeGStreamerAndRegisterWebKitElements()))
-        return;
 
     if (!m_playbackPipeline)
         m_playbackPipeline = PlaybackPipeline::create();
@@ -689,7 +686,7 @@ static HashSet<String, ASCIICaseInsensitiveHash>& mimeTypeCache()
 {
     static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> cache = []()
     {
-        MediaPlayerPrivateGStreamerBase::initializeGStreamerAndRegisterWebKitElements();
+        initializeGStreamerAndRegisterWebKitElements();
         HashSet<String, ASCIICaseInsensitiveHash> set;
         const char* mimeTypes[] = {
             "video/mp4",
@@ -733,7 +730,7 @@ const static HashSet<AtomicString>& codecSet()
 {
     static NeverDestroyed<HashSet<AtomicString>> codecTypes = []()
     {
-        MediaPlayerPrivateGStreamerBase::initializeGStreamerAndRegisterWebKitElements();
+        initializeGStreamerAndRegisterWebKitElements();
         HashSet<AtomicString> set;
 
         GList* audioDecoderFactories = gst_element_factory_list_get_elements(GST_ELEMENT_FACTORY_TYPE_DECODER | GST_ELEMENT_FACTORY_TYPE_MEDIA_AUDIO, GST_RANK_MARGINAL);

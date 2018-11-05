@@ -38,6 +38,22 @@
 #undef GST_USE_UNSTABLE_API
 #endif
 
+#if ENABLE(MEDIA_SOURCE)
+#include "WebKitMediaSourceGStreamer.h"
+#endif
+
+#if ENABLE(MEDIA_STREAM) && GST_CHECK_VERSION(1, 10, 0)
+#include "GStreamerMediaStreamSource.h"
+#endif
+
+#if ENABLE(ENCRYPTED_MEDIA)
+#include "WebKitClearKeyDecryptorGStreamer.h"
+#endif
+
+#if ENABLE(VIDEO)
+#include "WebKitWebSourceGStreamer.h"
+#endif
+
 namespace WebCore {
 
 GstPad* webkitGstGhostPadFromStaticTemplate(GstStaticPadTemplate* staticPadTemplate, const gchar* name, GstPad* target)
@@ -232,6 +248,34 @@ bool initializeGStreamer(std::optional<Vector<String>>&& options)
 #endif
     });
     return isGStreamerInitialized;
+}
+
+bool initializeGStreamerAndRegisterWebKitElements()
+{
+    if (!initializeGStreamer())
+        return false;
+
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+#if ENABLE(ENCRYPTED_MEDIA)
+        if (webkitGstCheckVersion(1, 6, 1))
+            gst_element_register(nullptr, "webkitclearkey", GST_RANK_PRIMARY + 100, WEBKIT_TYPE_MEDIA_CK_DECRYPT);
+#endif
+
+#if ENABLE(MEDIA_STREAM) && GST_CHECK_VERSION(1, 10, 0)
+        if (webkitGstCheckVersion(1, 10, 0))
+            gst_element_register(nullptr, "mediastreamsrc", GST_RANK_PRIMARY, WEBKIT_TYPE_MEDIA_STREAM_SRC);
+#endif
+
+#if ENABLE(MEDIA_SOURCE)
+        gst_element_register(nullptr, "webkitmediasrc", GST_RANK_PRIMARY + 100, WEBKIT_TYPE_MEDIA_SRC);
+#endif
+
+#if ENABLE(VIDEO)
+        gst_element_register(0, "webkitwebsrc", GST_RANK_PRIMARY + 100, WEBKIT_TYPE_WEB_SRC);
+#endif
+    });
+    return true;
 }
 
 unsigned getGstPlayFlag(const char* nick)

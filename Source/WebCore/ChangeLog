@@ -1,3 +1,30 @@
+2018-11-05  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Move elements registration to GStreamerCommon
+        https://bugs.webkit.org/show_bug.cgi?id=191189
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        It was a bit odd to have this in the base player class and to have
+        sub-classes calling a static function of the super-class.
+
+        Covered by existing tests.
+
+        * platform/graphics/gstreamer/GStreamerCommon.cpp:
+        (WebCore::initializeGStreamerAndRegisterWebKitElements):
+        * platform/graphics/gstreamer/GStreamerCommon.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::isAvailable):
+        (WebCore::MediaPlayerPrivateGStreamer::loadFull):
+        (WebCore::MediaPlayerPrivateGStreamer::getSupportedTypes):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerMSE::registerMediaEngine):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::load):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::trackDetected):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::supportsType):
+
 2018-11-04  Rob Buis  <rbuis@igalia.com>
 
         Remove ENABLE_OPENCL fully

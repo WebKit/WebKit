@@ -76,6 +76,8 @@ class MediaPlayerPrivateGStreamerBase : public MediaPlayerPrivateInterface, publ
 {
 
 public:
+    static void initializeDebugCategory();
+
     virtual ~MediaPlayerPrivateGStreamerBase();
 
     FloatSize naturalSize() const override;
@@ -87,7 +89,6 @@ public:
     bool ensureGstGLContext();
     GstContext* requestGLContext(const char* contextType);
 #endif
-    static bool initializeGStreamerAndRegisterWebKitElements();
     bool supportsMuting() const override { return true; }
     void setMuted(bool) override;
     bool muted() const;

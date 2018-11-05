@@ -68,6 +68,7 @@ bool doCapsHaveType(const GstCaps*, const char*);
 bool areEncryptedCaps(const GstCaps*);
 Vector<String> extractGStreamerOptionsFromCommandLine();
 bool initializeGStreamer(std::optional<Vector<String>>&& = std::nullopt);
+bool initializeGStreamerAndRegisterWebKitElements();
 unsigned getGstPlayFlag(const char* nick);
 uint64_t toGstUnsigned64Time(const MediaTime&);
 

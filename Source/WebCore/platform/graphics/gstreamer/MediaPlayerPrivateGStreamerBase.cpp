@@ -37,7 +37,6 @@
 #include "MediaPlayer.h"
 #include "NotImplemented.h"
 #include "VideoSinkGStreamer.h"
-#include "WebKitWebSourceGStreamer.h"
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/CString.h>
@@ -51,15 +50,6 @@
 #include "CDMInstance.h"
 #include "GStreamerEMEUtilities.h"
 #include "SharedBuffer.h"
-#include "WebKitClearKeyDecryptorGStreamer.h"
-#endif
-
-#if ENABLE(MEDIA_SOURCE)
-#include "WebKitMediaSourceGStreamer.h"
-#endif
-
-#if ENABLE(MEDIA_STREAM) && GST_CHECK_VERSION(1, 10, 0)
-#include "GStreamerMediaStreamSource.h"
 #endif
 
 #if USE(GSTREAMER_GL)
@@ -141,33 +131,6 @@ GST_DEBUG_CATEGORY(webkit_media_player_debug);
 
 namespace WebCore {
 using namespace std;
-
-bool MediaPlayerPrivateGStreamerBase::initializeGStreamerAndRegisterWebKitElements()
-{
-    if (!initializeGStreamer())
-        return false;
-
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        GST_DEBUG_CATEGORY_INIT(webkit_media_player_debug, "webkitmediaplayer", 0, "WebKit media player");
-#if ENABLE(ENCRYPTED_MEDIA)
-        if (webkitGstCheckVersion(1, 6, 1))
-            gst_element_register(nullptr, "webkitclearkey", GST_RANK_PRIMARY + 100, WEBKIT_TYPE_MEDIA_CK_DECRYPT);
-#endif
-
-#if ENABLE(MEDIA_STREAM) && GST_CHECK_VERSION(1, 10, 0)
-        if (webkitGstCheckVersion(1, 10, 0))
-            gst_element_register(nullptr, "mediastreamsrc", GST_RANK_PRIMARY, WEBKIT_TYPE_MEDIA_STREAM_SRC);
-#endif
-
-#if ENABLE(MEDIA_SOURCE)
-        gst_element_register(nullptr, "webkitmediasrc", GST_RANK_PRIMARY + 100, WEBKIT_TYPE_MEDIA_SRC);
-#endif
-
-        gst_element_register(0, "webkitwebsrc", GST_RANK_PRIMARY + 100, WEBKIT_TYPE_WEB_SRC);
-    });
-    return true;
-}
 
 static int greatestCommonDivisor(int a, int b)
 {
@@ -276,6 +239,11 @@ private:
     bool m_isMapped { false };
 };
 #endif
+
+void MediaPlayerPrivateGStreamerBase::initializeDebugCategory()
+{
+    GST_DEBUG_CATEGORY_INIT(webkit_media_player_debug, "webkitmediaplayer", 0, "WebKit media player");
+}
 
 MediaPlayerPrivateGStreamerBase::MediaPlayerPrivateGStreamerBase(MediaPlayer* player)
     : m_notifier(MainThreadNotifier<MainThreadNotification>::create())
