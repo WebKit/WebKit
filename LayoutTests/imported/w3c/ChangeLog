@@ -1,3 +1,16 @@
+2018-11-05  Ali Juma  <ajuma@chromium.org>
+
+        [IntersectionObserver] Update WPTs to the latest upstream version
+        https://bugs.webkit.org/show_bug.cgi?id=191274
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/intersection-observer/bounding-box-expected.txt:
+        * web-platform-tests/intersection-observer/bounding-box.html:
+        * web-platform-tests/intersection-observer/target-in-different-window-expected.txt: Added.
+        * web-platform-tests/intersection-observer/target-in-different-window.html: Added.
+        * web-platform-tests/intersection-observer/w3c-import.log:
+
 2018-11-05  Chris Dumez  <cdumez@apple.com>
 
         Resync html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name WPT tests
