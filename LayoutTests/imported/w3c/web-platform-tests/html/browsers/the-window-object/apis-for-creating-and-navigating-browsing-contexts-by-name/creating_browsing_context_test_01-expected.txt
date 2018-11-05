@@ -1,6 +1,6 @@
 
 PASS first argument: absolute url 
-PASS first argument: empty url 
+FAIL first argument: empty url assert_equals: win.document.charset expected "UTF-8" but got "windows-1252"
 PASS second argument: passing a non-empty name 
 PASS second argument: setting name after opening 
 

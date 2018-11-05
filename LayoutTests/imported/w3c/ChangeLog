@@ -1,3 +1,31 @@
+2018-11-05  Chris Dumez  <cdumez@apple.com>
+
+        Resync html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=191214
+
+        Reviewed by Geoff Garen.
+
+        Resync html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name WPT tests from
+        upstream c583bcd7eb.
+
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/creating_browsing_context_test_01-expected.txt:
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/creating_browsing_context_test_01.html:
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/no_window_open_when_term_nesting_level_nonzero.window-expected.txt: Added.
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/no_window_open_when_term_nesting_level_nonzero.window.html: Added.
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/no_window_open_when_term_nesting_level_nonzero.window.js: Added.
+        (test.frame.contentWindow.onpagehide):
+        (test.frame.contentDocument.onvisibilitychange):
+        (test.frame.contentWindow.onbeforeunload):
+        (test.frame.contentWindow.onunload):
+        (test):
+        (async_test):
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/non_automated/w3c-import.log:
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-tokenization-noopener-expected.txt:
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-tokenization-noopener.html:
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/resources/message-opener.html:
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/resources/w3c-import.log:
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/w3c-import.log:
+
 2018-11-05  Ali Juma  <ajuma@chromium.org>
 
         [IntersectionObserver] Fix isIntersecting computation when 0 is not a threshold
