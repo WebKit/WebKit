@@ -1,3 +1,15 @@
+2018-11-05  Keith Miller  <keith_miller@apple.com>
+
+        Make static_asserts in APICast into bitwise_cast
+        https://bugs.webkit.org/show_bug.cgi?id=191272
+
+        Reviewed by Filip Pizlo.
+
+        * API/APICast.h:
+        (toJS):
+        (toJSForGC):
+        (toRef):
+
 2018-11-05  Dominik Infuehr  <dinfuehr@igalia.com>
 
         Enable LLInt on ARMv7/Linux

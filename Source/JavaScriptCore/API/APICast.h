@@ -79,8 +79,7 @@ inline JSC::JSValue toJS(JSC::ExecState* exec, JSValueRef v)
     else
         result = jsCell;
 #else
-    static_assert(sizeof(OpaqueJSValue*) == sizeof(JSC::JSValue), "JSValue needs to fit into a boxed pointer");
-    JSC::JSValue result = JSC::JSValue::decode(reinterpret_cast<JSC::EncodedJSValue>(const_cast<OpaqueJSValue*>(v)));
+    JSC::JSValue result = bitwise_cast<JSC::JSValue>(v);
 #endif
     if (!result)
         return JSC::jsNull();
@@ -98,8 +97,7 @@ inline JSC::JSValue toJSForGC(JSC::ExecState* exec, JSValueRef v)
         return JSC::JSValue();
     JSC::JSValue result = jsCell;
 #else
-    static_assert(sizeof(OpaqueJSValue*) == sizeof(JSC::JSValue), "JSValue needs to fit into a boxed pointer");
-    JSC::JSValue result = JSC::JSValue::decode(reinterpret_cast<JSC::EncodedJSValue>(const_cast<OpaqueJSValue*>(v)));
+    JSC::JSValue result = bitwise_cast<JSC::JSValue>(v);
 #endif
     if (result && result.isCell())
         RELEASE_ASSERT(result.asCell()->methodTable(exec->vm()));
@@ -140,9 +138,8 @@ inline JSValueRef toRef(JSC::ExecState* exec, JSC::JSValue v)
         return reinterpret_cast<JSValueRef>(JSC::jsAPIValueWrapper(exec, v).asCell());
     return reinterpret_cast<JSValueRef>(v.asCell());
 #else
-    static_assert(sizeof(OpaqueJSValue*) == sizeof(JSC::JSValue), "JSValue needs to fit into a boxed pointer");
     UNUSED_PARAM(exec);
-    return reinterpret_cast<JSValueRef>(JSC::JSValue::encode(v));
+    return bitwise_cast<JSValueRef>(v);
 #endif
 }
 
