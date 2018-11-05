@@ -1,3 +1,23 @@
+2018-11-05  Youenn Fablet  <youenn@apple.com>
+
+        RealtimeOutgoingAudioSource subclasses should observe its source when fully constructed
+        https://bugs.webkit.org/show_bug.cgi?id=191241
+
+        Reviewed by Eric Carlson.
+
+        Moving the logic to observe the audio source to the point where the
+        RealtimeOutgoingAudioSource subclass is fully initialized.
+        Covered by existing tests.
+
+        * platform/mediastream/RealtimeOutgoingAudioSource.cpp:
+        (WebCore::RealtimeOutgoingAudioSource::RealtimeOutgoingAudioSource):
+        (WebCore::RealtimeOutgoingAudioSource::observeSource):
+        * platform/mediastream/RealtimeOutgoingAudioSource.h:
+        * platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceLibWebRTC.cpp:
+        (WebCore::RealtimeOutgoingAudioSourceLibWebRTC::RealtimeOutgoingAudioSourceLibWebRTC):
+        * platform/mediastream/mac/RealtimeOutgoingAudioSourceCocoa.cpp:
+        (WebCore::RealtimeOutgoingAudioSourceCocoa::RealtimeOutgoingAudioSourceCocoa):
+
 2018-11-05  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer][WebRTC] Add webrtcencoder bin to cleanup and refactor the way we set encoders

@@ -64,6 +64,8 @@ public:
 protected:
     explicit RealtimeOutgoingAudioSource(Ref<MediaStreamTrackPrivate>&&);
 
+    void observeSource();
+
     virtual void pullAudioData() { }
 
     bool isSilenced() const { return m_muted || !m_enabled; }
