@@ -90,4 +90,4 @@ private:
 
 } } // namespace JSC::Wasm
 
-#endif // ENABLE(WASM)
+#endif // ENABLE(WEBASSEMBLY)

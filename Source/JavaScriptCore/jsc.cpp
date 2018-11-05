@@ -2182,7 +2182,7 @@ static EncodedJSValue JSC_HOST_CALL functionWebAssemblyMemoryMode(ExecState* exe
     return throwVMTypeError(exec, scope, "WebAssemblyMemoryMode expects either a WebAssembly.Memory or WebAssembly.Instance"_s);
 }
 
-#endif // ENABLE(WEBASSEBLY)
+#endif // ENABLE(WEBASSEMBLY)
 
 // Use SEH for Release builds only to get rid of the crash report dialog
 // (luckily the same tests fail in Release and Debug builds so far). Need to

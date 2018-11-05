@@ -1,3 +1,16 @@
+2018-11-05  Don Olmstead  <don.olmstead@sony.com>
+
+        Fix typos in closing ENABLE guards
+        https://bugs.webkit.org/show_bug.cgi?id=191273
+
+        Reviewed by Keith Miller.
+
+        * ftl/FTLForOSREntryJITCode.h:
+        * ftl/FTLJITCode.h:
+        * jsc.cpp:
+        * wasm/WasmMemoryInformation.h:
+        * wasm/WasmPageCount.h:
+
 2018-11-05  Keith Miller  <keith_miller@apple.com>
 
         Make static_asserts in APICast into bitwise_cast
