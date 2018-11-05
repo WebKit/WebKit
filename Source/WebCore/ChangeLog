@@ -1,3 +1,20 @@
+2018-11-05  Chris Dumez  <cdumez@apple.com>
+
+        Crash under DOMWindow::postMessageTimerFired()
+        https://bugs.webkit.org/show_bug.cgi?id=191217
+        <rdar://problem/40888466>
+
+        Reviewed by Geoffrey Garen.
+
+        Protect the frame in DOMWindow::postMessageTimerFired() before calling dispatchEvent() as dispatching the
+        event may cause JS to run and this JS may cause the frame to be destroyed, in which case we will crash
+        when trying to use the frame on the next line.
+
+        Test: fast/dom/Window/remove-frame-in-message-event-handler.html
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::postMessageTimerFired):
+
 2018-11-05  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer] Fix EncodedImage timestamps to match what libWebRTC expects

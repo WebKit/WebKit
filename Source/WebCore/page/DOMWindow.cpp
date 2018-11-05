@@ -904,7 +904,7 @@ void DOMWindow::postMessageTimerFired(PostMessageTimer& timer)
     if (!document() || !isCurrentlyDisplayedInFrame())
         return;
 
-    auto* frame = this->frame();
+    Ref<Frame> frame = *this->frame();
     if (auto* intendedTargetOrigin = timer.targetOrigin()) {
         // Check target origin now since the target document may have changed since the timer was scheduled.
         if (!intendedTargetOrigin->isSameSchemeHostPort(document()->securityOrigin())) {
@@ -916,16 +916,16 @@ void DOMWindow::postMessageTimerFired(PostMessageTimer& timer)
                     pageConsole->addMessage(MessageSource::Security, MessageLevel::Error, message);
             }
 
-            InspectorInstrumentation::didFailPostMessage(*frame, timer);
+            InspectorInstrumentation::didFailPostMessage(frame, timer);
             return;
         }
     }
 
-    InspectorInstrumentation::willDispatchPostMessage(*frame, timer);
+    InspectorInstrumentation::willDispatchPostMessage(frame, timer);
 
     dispatchEvent(timer.event(*document()));
 
-    InspectorInstrumentation::didDispatchPostMessage(*frame, timer);
+    InspectorInstrumentation::didDispatchPostMessage(frame, timer);
 }
 
 DOMSelection* DOMWindow::getSelection()

@@ -1,3 +1,16 @@
+2018-11-05  Chris Dumez  <cdumez@apple.com>
+
+        Crash under DOMWindow::postMessageTimerFired()
+        https://bugs.webkit.org/show_bug.cgi?id=191217
+        <rdar://problem/40888466>
+
+        Reviewed by Geoffrey Garen.
+
+        Add layout test coverage.
+
+        * fast/dom/Window/remove-frame-in-message-event-handler-expected.txt: Added.
+        * fast/dom/Window/remove-frame-in-message-event-handler.html: Added.
+
 2018-11-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Changing view scale sometimes does not zoom the page to the new initial scale when the page is zoomed in when ignoring meta viewport
