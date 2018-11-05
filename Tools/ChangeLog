@@ -1,5 +1,18 @@
 2018-11-05  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [WPE][GTK] API test /webkit/WebKitSettings/webkit-settings is failing
+        https://bugs.webkit.org/show_bug.cgi?id=191221
+
+        Reviewed by Carlos Garcia Campos.
+
+        This test ensures that MSE is disabled by default, but we now enable it by default, so
+        reverse the semantics of the test.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitSettings.cpp:
+        (testWebKitSettings):
+
+2018-11-05  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         REGRESSION(r237031): [GTK] Test /webkit/WebKitWebView/settings is failing
         https://bugs.webkit.org/show_bug.cgi?id=191225
 
