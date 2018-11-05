@@ -38,9 +38,6 @@ class TextStream;
 
 namespace WebCore {
 
-static const double forceAlwaysUserScalableMaximumScale = 5.0;
-static const double forceAlwaysUserScalableMinimumScale = 1.0;
-
 class ViewportConfiguration {
     WTF_MAKE_NONCOPYABLE(ViewportConfiguration); WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -97,7 +94,7 @@ public:
     WEBCORE_EXPORT double initialScale() const;
     WEBCORE_EXPORT double initialScaleIgnoringContentSize() const;
     WEBCORE_EXPORT double minimumScale() const;
-    double maximumScale() const { return m_forceAlwaysUserScalable ? forceAlwaysUserScalableMaximumScale : m_configuration.maximumScale; }
+    double maximumScale() const { return m_forceAlwaysUserScalable ? forceAlwaysUserScalableMaximumScale() : m_configuration.maximumScale; }
     double maximumScaleIgnoringAlwaysScalable() const { return m_configuration.maximumScale; }
     WEBCORE_EXPORT bool allowsUserScaling() const;
     WEBCORE_EXPORT bool allowsUserScalingIgnoringAlwaysScalable() const;
@@ -129,6 +126,18 @@ private:
     bool shouldIgnoreScalingConstraints() const;
     bool shouldIgnoreVerticalScalingConstraints() const;
     bool shouldIgnoreHorizontalScalingConstraints() const;
+
+    constexpr double forceAlwaysUserScalableMaximumScale() const
+    {
+        const double forceAlwaysUserScalableMaximumScaleIgnoringLayoutScaleFactor = 5;
+        return forceAlwaysUserScalableMaximumScaleIgnoringLayoutScaleFactor * m_layoutSizeScaleFactor;
+    }
+
+    constexpr double forceAlwaysUserScalableMinimumScale() const
+    {
+        const double forceAlwaysUserScalableMinimumScaleIgnoringLayoutScaleFactor = 1;
+        return forceAlwaysUserScalableMinimumScaleIgnoringLayoutScaleFactor * m_layoutSizeScaleFactor;
+    }
 
     void updateMinimumLayoutSize();
 

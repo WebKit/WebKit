@@ -1,3 +1,40 @@
+2018-11-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Changing view scale sometimes does not zoom the page to the new initial scale when the page is zoomed in when ignoring meta viewport
+        https://bugs.webkit.org/show_bug.cgi?id=191226
+        <rdar://problem/45781765>
+
+        Reviewed by Tim Horton.
+
+        When `_setViewScale:` SPI is used to adjust the layout scale factor of the page, we multiply minimum, initial
+        and maximum scales by the given layout scale factor to adjust for a larger or smaller minimum layout size.
+        However, in the case where the layout size scale factor is greater than 1 and we're also forcing the viewport to
+        be scalable, we override the default minimum scale with 1 (i.e. `forceAlwaysUserScalableMinimumScale`). This
+        means that the might be off by a small margin due to rounding error when computing the content width and view
+        width (see: r237743).
+
+        This means that in the case where (1) the viewport is forced to be user-scalable, and (2) we're ignoring meta
+        viewport parameters, and (3) `_viewScale` exceeds 1, we may end up computing a slightly different minimum scale
+        than the default minimum scale multiplied by the layout size scale factor; subsequently, the page scale factor
+        will be slightly different from initial scale, such that we'll no longer zoom to the new initial scale when
+        changing view scale.
+
+        This patch adjusts `forceAlwaysUserScalableMinimumScale` and `forceAlwaysUserScalableMaximumScale` to take the
+        current layout scale factor into account when computing min and max scales when the viewport is forced to be
+        always scalable.
+
+        Test: fast/viewport/ios/minimum-scale-after-changing-view-scale.html
+
+        * page/ViewportConfiguration.cpp:
+        (WebCore::ViewportConfiguration::minimumScale const):
+        * page/ViewportConfiguration.h:
+        (WebCore::ViewportConfiguration::maximumScale const):
+        (WebCore::ViewportConfiguration::forceAlwaysUserScalableMaximumScale const):
+        (WebCore::ViewportConfiguration::forceAlwaysUserScalableMinimumScale const):
+
+        Turn these from constant values to const functions on ViewportConfiguration, which factor in the current
+        viewport layout size scale factor.
+
 2018-11-05  Dean Jackson  <dino@apple.com>
 
         Expose a constructor for PointerEvent from PlatformTouchEvent

@@ -266,7 +266,7 @@ double ViewportConfiguration::minimumScale() const
     double minimumScale = m_configuration.minimumScale;
     
     if (m_forceAlwaysUserScalable)
-        minimumScale = std::min(minimumScale, forceAlwaysUserScalableMinimumScale);
+        minimumScale = std::min(minimumScale, forceAlwaysUserScalableMinimumScale());
 
     auto scaleForFittingContentIsApproximatelyEqualToMinimumScale = [] (double viewLength, double contentLength, double minimumScale) {
         if (contentLength <= 1 || viewLength <= 1)

@@ -1,3 +1,17 @@
+2018-11-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Changing view scale sometimes does not zoom the page to the new initial scale when the page is zoomed in when ignoring meta viewport
+        https://bugs.webkit.org/show_bug.cgi?id=191226
+        <rdar://problem/45781765>
+
+        Reviewed by Tim Horton.
+
+        Add a missing check for `shouldIgnoreMetaViewport` when comparing TestOptions, to ensure that "ignore meta
+        viewport" state doesn't unexpectedly persist after running a layout test that ignores meta viewport.
+
+        * WebKitTestRunner/TestOptions.h:
+        (WTR::TestOptions::hasSameInitializationOptions const):
+
 2018-11-05  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r237784 and r237788.

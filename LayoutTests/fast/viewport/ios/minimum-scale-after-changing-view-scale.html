@@ -1,0 +1,51 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ shouldIgnoreMetaViewport=true ] -->
+<html>
+<head>
+    <style>
+    body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    #output {
+        width: 100%;
+        height: 100%;
+        overflow: scroll;
+    }
+    </style>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+        testRunner.setIgnoresViewportScaleLimits(true);
+    }
+
+    addEventListener("load", async () => {
+        const appendOutput = message => {
+            output.appendChild(document.createTextNode(message));
+            output.appendChild(document.createElement("br"));
+        };
+
+        for (const scale of [1.15, 1.25, 1.5, 1.75, 2, 2.5, 3, 1]) {
+            await UIHelper.setViewScale(scale);
+            await Promise.all([UIHelper.ensureVisibleContentRectUpdate(), UIHelper.ensurePresentationUpdate()]);
+            appendOutput(`After setting the view scale to ${scale}, the minimum scale is: ${(await UIHelper.minimumZoomScale()).toFixed(5)}`);
+            appendOutput(`After setting the view scale to ${scale}, the current scale is: ${(await UIHelper.zoomScale()).toFixed(5)}`);
+            appendOutput("");
+        }
+
+        testRunner.notifyDone();
+    });
+    </script>
+</head>
+
+<body>
+    <pre id="output"></pre>
+    <p id="description">This test verifies that changing view scale to zoom to a scale of <code>S &gt; 1</code> results
+        in a minimum scale of <code>S</code>, rather than a value close to (but not exactly) <code>S</code>. This test
+        requires WebKitTestRunner.
+    </p>
+</body>
+</html>

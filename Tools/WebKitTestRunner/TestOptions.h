@@ -102,7 +102,8 @@ struct TestOptions {
             || punchOutWhiteBackgroundsInDarkMode != options.punchOutWhiteBackgroundsInDarkMode
             || jscOptions != options.jscOptions
             || runSingly != options.runSingly
-            || checkForWorldLeaks != options.checkForWorldLeaks)
+            || checkForWorldLeaks != options.checkForWorldLeaks
+            || shouldIgnoreMetaViewport != options.shouldIgnoreMetaViewport)
             return false;
 
         if (experimentalFeatures != options.experimentalFeatures)
