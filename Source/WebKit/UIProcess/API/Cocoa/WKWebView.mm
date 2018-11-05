@@ -4531,6 +4531,11 @@ IGNORE_WARNINGS_END
 {
 }
 
+- (UITextInputAssistantItem *)inputAssistantItem
+{
+    return [_contentView inputAssistantItemForWebView];
+}
+
 #endif
 
 - (NSData *)_sessionStateData

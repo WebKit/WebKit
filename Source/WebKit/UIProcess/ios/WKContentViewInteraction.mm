@@ -2139,6 +2139,16 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     }
 }
 
+- (UITextInputAssistantItem *)inputAssistantItem
+{
+    return [_webView inputAssistantItem];
+}
+
+- (UITextInputAssistantItem *)inputAssistantItemForWebView
+{
+    return [super inputAssistantItem];
+}
+
 - (void)_ensureFormAccessoryView
 {
     if (_formAccessoryView)

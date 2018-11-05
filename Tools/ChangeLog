@@ -1,5 +1,26 @@
 2018-11-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        [iOS] Allow WKWebView clients to customize bar button item groups in the accessory view when editing
+        https://bugs.webkit.org/show_bug.cgi?id=191240
+        <rdar://problem/44872806>
+
+        Reviewed by Tim Horton.
+
+        Add new API tests to verify that setting leading and trailing bar button groups on WKWebView sets the first
+        responder's (i.e. WKContentView's) leading and trailing bar button groups, and that this can also be achieved by
+        overriding `-[WKWebView inputAssistantItem]`.
+
+        * TestWebKitAPI/Tests/ios/KeyboardInputTestsIOS.mm:
+        (-[InputAssistantItemTestingWebView fakeLeadingBarButtonItemAction]):
+        (-[InputAssistantItemTestingWebView fakeTrailingBarButtonItemAction]):
+        (+[InputAssistantItemTestingWebView barButtonIcon]):
+        (+[InputAssistantItemTestingWebView leadingItemsForWebView:]):
+        (+[InputAssistantItemTestingWebView trailingItemsForWebView:]):
+        (-[InputAssistantItemTestingWebView inputAssistantItem]):
+        (TestWebKitAPI::TEST):
+
+2018-11-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         [iOS] Changing view scale sometimes does not zoom the page to the new initial scale when the page is zoomed in when ignoring meta viewport
         https://bugs.webkit.org/show_bug.cgi?id=191226
         <rdar://problem/45781765>

@@ -1,3 +1,31 @@
+2018-11-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Allow WKWebView clients to customize bar button item groups in the accessory view when editing
+        https://bugs.webkit.org/show_bug.cgi?id=191240
+        <rdar://problem/44872806>
+
+        Reviewed by Tim Horton.
+
+        Allow WKWebView clients to override WKContentView's default input assistant item by plumbing the call to
+        `-inputAssistantItem` through `-[WKWebView inputAssistantItem]`, such that if a client asks WKWebView for its
+        input assistant item and changes its leading or trailing bar button groups, the changes will be reflected by
+        WKContentView; additionally, this allows clients to achieve the same effect by overriding `-inputAssistantItem`
+        on WKWebView.
+
+        Test:   KeyboardInputTests.ModifyInputAssistantItemBarButtonGroups
+                KeyboardInputTests.OverrideInputAssistantItemBarButtonGroups
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView inputAssistantItem]):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView inputAssistantItem]):
+
+        Route the call to `[super inputAssistantItem]` through `-[WKWebView inputAssistantItem]`, so that the input
+        assistant item may be overridden via WKWebView.
+
+        (-[WKContentView inputAssistantItemForWebView]):
+
 2018-11-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r237785.

@@ -317,6 +317,7 @@ struct WKAutoCorrectionData {
 @property (nonatomic, readonly) const WebKit::AssistedNodeInformation& assistedNodeInformation;
 @property (nonatomic, readonly) UIWebFormAccessory *formAccessoryView;
 @property (nonatomic) BOOL suppressAssistantSelectionView;
+@property (nonatomic, readonly) UITextInputAssistantItem *inputAssistantItemForWebView;
 
 #if ENABLE(DATALIST_ELEMENT)
 @property (nonatomic, strong) UIView <WKFormControl> *dataListTextSuggestionsInputView;
