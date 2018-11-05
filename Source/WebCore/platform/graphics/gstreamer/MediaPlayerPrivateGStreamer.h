@@ -139,7 +139,7 @@ public:
 private:
     static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>&);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
-
+    void syncOnClock(bool sync);
 
     GstElement* createAudioSink() override;
 

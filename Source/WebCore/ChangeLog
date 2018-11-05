@@ -1,3 +1,23 @@
+2018-11-05  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GStreamer] Do not sync libwerbtc stream on the clock
+        https://bugs.webkit.org/show_bug.cgi?id=190677
+
+        The approach here is basically to let libwebrtc do all the
+        synchronisation for us, and the same way as it is done in apple ports,
+        we basically try to display what libwebrtc outputs as fast as possible.
+
+        Reviewed by Philippe Normand.
+
+        Manually tested
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::setSyncOnSink):
+        (WebCore::MediaPlayerPrivateGStreamer::syncOnClock):
+        (WebCore::MediaPlayerPrivateGStreamer::loadFull):
+        (WebCore::MediaPlayerPrivateGStreamer::load):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+
 2018-11-05  Ali Juma  <ajuma@chromium.org>
 
         [IntersectionObserver] Fix isIntersecting computation when 0 is not a threshold

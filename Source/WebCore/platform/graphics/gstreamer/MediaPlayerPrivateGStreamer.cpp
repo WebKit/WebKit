@@ -248,6 +248,28 @@ void MediaPlayerPrivateGStreamer::load(const String& urlString)
     loadFull(urlString, nullptr, String());
 }
 
+static void setSyncOnClock(GstElement *element, bool sync)
+{
+    if (!GST_IS_BIN(element)) {
+        g_object_set(element, "sync", sync, NULL);
+        return;
+    }
+
+    GstIterator* it = gst_bin_iterate_sinks(GST_BIN(element));
+    while (gst_iterator_foreach(it, (GstIteratorForeachFunction)([](const GValue* item, void* syncPtr) {
+        bool* sync = static_cast<bool*>(syncPtr);
+        setSyncOnClock(GST_ELEMENT(g_value_get_object(item)), *sync);
+    }), &sync) == GST_ITERATOR_RESYNC)
+        gst_iterator_resync(it);
+    gst_iterator_free(it);
+}
+
+void MediaPlayerPrivateGStreamer::syncOnClock(bool sync)
+{
+    setSyncOnClock(videoSink(), sync);
+    setSyncOnClock(audioSink(), sync);
+}
+
 void MediaPlayerPrivateGStreamer::loadFull(const String& urlString, const gchar* playbinName,
     const String& pipelineName)
 {
@@ -265,7 +287,7 @@ void MediaPlayerPrivateGStreamer::loadFull(const String& urlString, const gchar*
 
     if (!m_pipeline)
         createGSTPlayBin(isMediaSource() ? "playbin" : playbinName, pipelineName);
-
+    syncOnClock(true);
     if (m_fillTimer.isActive())
         m_fillTimer.stop();
 
@@ -311,6 +333,8 @@ void MediaPlayerPrivateGStreamer::load(MediaStreamPrivate& stream)
         (stream.hasCaptureVideoSource() || stream.hasCaptureAudioSource()) ? "Local" : "Remote", this);
 
     loadFull(String("mediastream://") + stream.id(), "playbin3", pipelineName);
+    syncOnClock(false);
+
 #if USE(GSTREAMER_GL)
     ensureGLVideoSinkContext();
 #endif
