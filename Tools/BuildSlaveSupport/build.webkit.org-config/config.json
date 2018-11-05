@@ -60,12 +60,6 @@
                     { "name": "bot653", "platform": "ios-simulator-12" },
                     { "name": "bot654", "platform": "ios-simulator-12" },
 
-                    { "name": "bot516", "platform": "win" },
-                    { "name": "bot514", "platform": "win" },
-                    { "name": "bot507", "platform": "win" },
-                    { "name": "bot504", "platform": "win" },
-                    { "name": "bot511", "platform": "win" },
-                    { "name": "bot501", "platform": "win" },
                     { "name": "bot543", "platform": "win" },
                     { "name": "bot544", "platform": "win" },
                     { "name": "bot545", "platform": "win" },
