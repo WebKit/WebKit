@@ -28,6 +28,10 @@
 #include "MouseEvent.h"
 #include <wtf/text/WTFString.h>
 
+#if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
+#include "PlatformTouchEventIOS.h"
+#endif
+
 namespace WebCore {
 
 class PointerEvent final : public MouseEvent {
@@ -55,6 +59,10 @@ public:
         return adoptRef(*new PointerEvent);
     }
 
+#if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
+    static Ref<PointerEvent> create(const PlatformTouchEvent&, unsigned touchIndex, Ref<WindowProxy>&&);
+#endif
+
     virtual ~PointerEvent();
 
     long pointerId() const { return m_pointerId; }
@@ -68,13 +76,16 @@ public:
     String pointerType() const { return m_pointerType; }
     bool isPrimary() const { return m_isPrimary; }
 
-    bool isPointerEvent() const override { return true; }
+    bool isPointerEvent() const final { return true; }
 
     EventInterface eventInterface() const override;
 
 private:
     PointerEvent();
     PointerEvent(const AtomicString&, Init&&);
+#if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
+    PointerEvent(const AtomicString& type, const PlatformTouchEvent&, IsCancelable isCancelable, unsigned touchIndex, Ref<WindowProxy>&&);
+#endif
 
     long m_pointerId { 0 };
     double m_width { 1 };

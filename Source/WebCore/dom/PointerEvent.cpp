@@ -28,8 +28,6 @@
 
 namespace WebCore {
 
-using namespace JSC;
-
 PointerEvent::PointerEvent() = default;
 
 PointerEvent::PointerEvent(const AtomicString& type, Init&& initializer)

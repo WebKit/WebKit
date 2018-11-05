@@ -6861,6 +6861,7 @@
 		314BE3A21B30F6D100141982 /* CSSNamedImageValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSNamedImageValue.cpp; sourceTree = "<group>"; };
 		314BE3A41B3103FB00141982 /* NamedImageGeneratedImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NamedImageGeneratedImage.cpp; sourceTree = "<group>"; };
 		314BE3A51B3103FB00141982 /* NamedImageGeneratedImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NamedImageGeneratedImage.h; sourceTree = "<group>"; };
+		315574CC218F66D000D88F66 /* PointerEventIOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PointerEventIOS.cpp; sourceTree = "<group>"; };
 		316BDB841E6E0A2100DE0D5A /* GPULegacyDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GPULegacyDevice.cpp; sourceTree = "<group>"; };
 		316BDB851E6E0A2100DE0D5A /* GPULegacyDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPULegacyDevice.h; sourceTree = "<group>"; };
 		316BDB881E6E141C00DE0D5A /* GPULegacyDeviceMetal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyDeviceMetal.mm; sourceTree = "<group>"; };
@@ -25426,6 +25427,7 @@
 		CE2616A4187E65C1007955F3 /* ios */ = {
 			isa = PBXGroup;
 			children = (
+				315574CC218F66D000D88F66 /* PointerEventIOS.cpp */,
 				A1DE712B18612AC100734192 /* TouchEvents.cpp */,
 			);
 			path = ios;

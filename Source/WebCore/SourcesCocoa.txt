@@ -73,6 +73,7 @@ crypto/mac/SerializedCryptoKeyWrapMac.mm
 
 dom/DataTransferMac.mm
 
+dom/ios/PointerEventIOS.cpp
 dom/ios/TouchEvents.cpp
 
 editing/SelectionRectGatherer.cpp

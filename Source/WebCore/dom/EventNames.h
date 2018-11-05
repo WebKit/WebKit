@@ -198,6 +198,10 @@ namespace WebCore {
     macro(playing) \
     macro(pointerlockchange) \
     macro(pointerlockerror) \
+    macro(pointercancel) \
+    macro(pointerdown) \
+    macro(pointermove) \
+    macro(pointerup) \
     macro(popstate) \
     macro(previoustrack) \
     macro(progress) \

@@ -1,3 +1,25 @@
+2018-11-05  Dean Jackson  <dino@apple.com>
+
+        Expose a constructor for PointerEvent from PlatformTouchEvent
+        https://bugs.webkit.org/show_bug.cgi?id=191238
+        <rdar://problem/45795682>
+
+        Reviewed by Antoine Quint.
+
+        Implement a constructor that takes a PlatformTouchEvent to
+        create a PointerEvent. At the moment the code to call this
+        constructor will live in WebKitAdditions, so no new tests
+        yet.
+
+        * SourcesCocoa.txt: Add PointerEventIOS.cpp.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * dom/EventNames.h: Add macros for pointerdown, pointermove,
+             pointerup, pointercancel.
+        * dom/PointerEvent.cpp: Remove JSC namespace.
+        * dom/PointerEvent.h: Add create and constructor that takes
+             a PlatformTouchEvent.
+        * dom/ios/PointerEventIOS.cpp: Added.
+
 2018-11-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r237785.
