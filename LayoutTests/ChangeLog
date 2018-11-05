@@ -1,3 +1,16 @@
+2018-11-05  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: show save/restore stack for recorded 2D Canvases
+        https://bugs.webkit.org/show_bug.cgi?id=175283
+        <rdar://problem/34040756>
+
+        Reviewed by Matt Baker.
+
+        * inspector/canvas/recording-2d.html:
+        * inspector/canvas/resources/recording-utilities.js:
+        (TestPage.registerInitializer.log):
+        (TestPage.registerInitializer.async logRecording):
+
 2018-11-05  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer][WebRTC] Error out when simulcast is activated

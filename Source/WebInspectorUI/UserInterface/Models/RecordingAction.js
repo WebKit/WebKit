@@ -135,52 +135,6 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         return null;
     }
 
-    static deriveCurrentState(type, context)
-    {
-        if (type === WI.Recording.Type.Canvas2D) {
-            let matrix = context.getTransform();
-
-            let state = {};
-
-            if (WI.ImageUtilities.supportsCanvasPathDebugging()) {
-                state.currentX = context.currentX;
-                state.currentY = context.currentY;
-            }
-
-            state.direction = context.direction;
-            state.fillStyle = context.fillStyle;
-            state.font = context.font;
-            state.globalAlpha = context.globalAlpha;
-            state.globalCompositeOperation = context.globalCompositeOperation;
-            state.imageSmoothingEnabled = context.imageSmoothingEnabled;
-            state.imageSmoothingQuality = context.imageSmoothingQuality;
-            state.lineCap = context.lineCap;
-            state.lineDash = context.getLineDash();
-            state.lineDashOffset = context.lineDashOffset;
-            state.lineJoin = context.lineJoin;
-            state.lineWidth = context.lineWidth;
-            state.miterLimit = context.miterLimit;
-            state.shadowBlur = context.shadowBlur;
-            state.shadowColor = context.shadowColor;
-            state.shadowOffsetX = context.shadowOffsetX;
-            state.shadowOffsetY = context.shadowOffsetY;
-            state.strokeStyle = context.strokeStyle;
-            state.textAlign = context.textAlign;
-            state.textBaseline = context.textBaseline;
-            state.transform = [matrix.a, matrix.b, matrix.c, matrix.d, matrix.e, matrix.f];
-            state.webkitImageSmoothingEnabled = context.webkitImageSmoothingEnabled;
-            state.webkitLineDash = context.webkitLineDash;
-            state.webkitLineDashOffset = context.webkitLineDashOffset;
-
-            if (WI.ImageUtilities.supportsCanvasPathDebugging())
-                state.setPath = [context.getPath()];
-
-            return state;
-        }
-
-        return null;
-    }
-
     static _prototypeForType(type)
     {
         if (type === WI.Recording.Type.Canvas2D)
@@ -261,7 +215,7 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         }
 
         if (recording.type === WI.Recording.Type.Canvas2D) {
-            let currentState = WI.RecordingAction.deriveCurrentState(recording.type, context);
+            let currentState = WI.RecordingState.fromContext(recording.type, context, {source: this});
             console.assert(currentState);
 
             if (this.name === "save")
@@ -274,10 +228,11 @@ WI.RecordingAction = class RecordingAction extends WI.Object
 
             let lastState = null;
             if (lastAction) {
-                lastState = lastAction.states.lastValue;
-                for (let key in currentState) {
-                    if (!(key in lastState) || (currentState[key] !== lastState[key] && !Object.shallowEqual(currentState[key], lastState[key])))
-                        this._stateModifiers.add(key);
+                let previousState = lastAction.states.lastValue;
+                for (let [name, value] of currentState) {
+                    let previousValue = previousState.get(name);
+                    if (value !== previousValue && !Object.shallowEqual(value, previousValue))
+                        this._stateModifiers.add(name);
                 }
             }
 

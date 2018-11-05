@@ -229,23 +229,7 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
             }
 
             for (let state of snapshot.states) {
-                for (let name in state) {
-                    if (!(name in snapshot.context))
-                        continue;
-
-                    // Skip internal state used for path debugging.
-                    if (name === "currentX" || name === "currentY")
-                        continue;
-
-                    try {
-                        if (WI.RecordingAction.isFunctionForType(this.representedObject.type, name))
-                            snapshot.context[name](...state[name]);
-                        else
-                            snapshot.context[name] = state[name];
-                    } catch {
-                        delete state[name];
-                    }
-                }
+                state.apply(this.representedObject.type, snapshot.context);
 
                 ++saveCount;
                 snapshot.context.save();

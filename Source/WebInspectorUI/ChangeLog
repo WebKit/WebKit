@@ -1,3 +1,60 @@
+2018-11-05  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: show save/restore stack for recorded 2D Canvases
+        https://bugs.webkit.org/show_bug.cgi?id=175283
+        <rdar://problem/34040756>
+
+        Reviewed by Matt Baker.
+
+        Instead of using plain objects for holding the `WI.Recording`'s state, use a model object
+        so that more data can be passed around. When visualizing the state, show any previously
+        saved states in a `WI.DetailsSection` underneath the current state. If there are no saved
+        states (meaning there is only the current state), don't use a `WI.DetailsSection`.
+
+        * UserInterface/Models/RecordingState.js: Added.
+        (WI.RecordingState):
+        (WI.RecordingState.fromContext):
+        (WI.RecordingState.async swizzleInitialState):
+        (WI.RecordingState.prototype.get source):
+        (WI.RecordingState.prototype.has):
+        (WI.RecordingState.prototype.get return):
+        (WI.RecordingState.prototype.toJSON):
+        (WI.RecordingState.prototype.[Symbol.iterator]):
+
+        * UserInterface/Models/Recording.js:
+        (WI.Recording.prototype.async _process):
+        (WI.Recording.prototype.async _swizzleState): Deleted.
+
+        * UserInterface/Models/RecordingAction.js:
+        (WI.RecordingAction.prototype.process):
+        (WI.RecordingAction.deriveCurrentState): Deleted.
+
+        * UserInterface/Views/RecordingContentView.js:
+        (WI.RecordingContentView.prototype._generateContentCanvas2D):
+
+        * UserInterface/Views/RecordingStateDetailsSidebarPanel.js:
+        (WI.RecordingStateDetailsSidebarPanel):
+        (WI.RecordingStateDetailsSidebarPanel.prototype.get scrollElement):
+        (WI.RecordingStateDetailsSidebarPanel.prototype.sizeDidChange): Added.
+        (WI.RecordingStateDetailsSidebarPanel.prototype._generateDetailsCanvas2D):
+        (WI.RecordingStateDetailsSidebarPanel.prototype._generateDetailsCanvas2D.isColorProperty): Deleted.
+        (WI.RecordingStateDetailsSidebarPanel.prototype._generateDetailsCanvas2D.createInlineSwatch): Deleted.
+        * UserInterface/Views/RecordingStateDetailsSidebarPanel.css:
+        (.sidebar > .panel.details.recording-state > .content .details-section > .header .source): Added.
+        (.sidebar > .panel.details.recording-state > .content .data-grid tr.modified): Added.
+        (.sidebar > .panel.details.recording-state > .content .data-grid tr:not(.selected).non-standard .name-column): Added.
+        (.sidebar > .panel.details.recording-state > .content .data-grid tr:not(.selected) .unavailable): Added.
+        (.sidebar > .panel.details.recording-state > .content .data-grid .inline-swatch): Added.
+        (.sidebar > .panel.details.recording-state > .content > .data-grid tr.modified): Deleted.
+        (.sidebar > .panel.details.recording-state > .content > .data-grid tr:not(.selected).non-standard): Deleted.
+        (.sidebar > .panel.details.recording-state > .content > .data-grid tr:not(.selected) .unavailable): Deleted.
+        (.sidebar > .panel.details.recording-state > .content > .data-grid .inline-swatch): Deleted.
+
+        * UserInterface/Main.html:
+        * UserInterface/Test.html:
+
+        * Localizations/en.lproj/localizedStrings.js:
+
 2018-11-03  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Canvas: capture changes to <canvas> that would affect the recorded context

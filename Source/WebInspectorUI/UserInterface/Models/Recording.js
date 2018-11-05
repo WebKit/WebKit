@@ -375,21 +375,14 @@ WI.Recording = class Recording extends WI.Object
                 let initialContent = await WI.ImageUtilities.promisifyLoad(this._initialState.content);
                 this._processContext.drawImage(initialContent, 0, 0);
 
-                for (let state of this._initialState.states) {
-                    let swizzledState = await this._swizzleState(state);
-                    for (let [key, value] of Object.entries(swizzledState)) {
-                        try {
-                            if (WI.RecordingAction.isFunctionForType(this._type, key))
-                                this._processContext[key](...value);
-                            else
-                                this._processContext[key] = value;
-                        } catch { }
-                    }
+                for (let initialState of this._initialState.states) {
+                    let state = await WI.RecordingState.swizzleInitialState(this, initialState);
+                    state.apply(this._type, this._processContext);
 
                     // The last state represents the current state, which should not be saved.
-                    if (state !== this._initialState.states.lastValue) {
+                    if (initialState !== this._initialState.states.lastValue) {
                         this._processContext.save();
-                        this._processStates.push(WI.RecordingAction.deriveCurrentState(this._type, this._processContext));
+                        this._processStates.push(WI.RecordingState.fromContext(this._type, this._processContext));
                     }
                 }
             }
@@ -455,72 +448,6 @@ WI.Recording = class Recording extends WI.Object
 
         this._processContext = null;
         this._processing = false;
-    }
-
-    async _swizzleState(state)
-    {
-        let swizzledState = {};
-
-        for (let [key, value] of Object.entries(state)) {
-            // COMPATIBILITY (iOS 12.0): Recording.InitialState.states did not exist yet
-            let keyIndex = parseInt(key);
-            if (!isNaN(keyIndex))
-                key = await this.swizzle(keyIndex, WI.Recording.Swizzle.String);
-
-            switch (key) {
-            case "setTransform":
-                value = [await this.swizzle(value, WI.Recording.Swizzle.DOMMatrix)];
-                break;
-
-            case "fillStyle":
-            case "strokeStyle":
-                    let [gradient, pattern, string] = await Promise.all([
-                        this.swizzle(value, WI.Recording.Swizzle.CanvasGradient),
-                        this.swizzle(value, WI.Recording.Swizzle.CanvasPattern),
-                        this.swizzle(value, WI.Recording.Swizzle.String),
-                    ]);
-                    if (gradient && !pattern)
-                        value = gradient;
-                    else if (pattern && !gradient)
-                        value = pattern;
-                    else
-                        value = string;
-                break;
-
-            case "direction":
-            case "font":
-            case "globalCompositeOperation":
-            case "imageSmoothingQuality":
-            case "lineCap":
-            case "lineJoin":
-            case "shadowColor":
-            case "textAlign":
-            case "textBaseline":
-                value = await this.swizzle(value, WI.Recording.Swizzle.String);
-                break;
-
-            case "globalAlpha":
-            case "lineWidth":
-            case "miterLimit":
-            case "shadowOffsetX":
-            case "shadowOffsetY":
-            case "shadowBlur":
-            case "lineDashOffset":
-                value = await this.swizzle(value, WI.Recording.Swizzle.Number);
-                break;
-
-            case "setPath":
-                value = [await this.swizzle(value[0], WI.Recording.Swizzle.Path2D)];
-                break;
-            }
-
-            if (value === undefined || (Array.isArray(value) && value.includes(undefined)))
-                continue;
-
-            swizzledState[key] = value;
-        }
-
-        return swizzledState;
     }
 };
 

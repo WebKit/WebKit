@@ -1,12 +1,11 @@
 TestPage.registerInitializer(() => {
     function log(object, indent) {
-        for (let key of Object.keys(object)) {
-            let value = object[key];
+        for (let [name, value] of object) {
             if (typeof value === "string")
                 value = sanitizeURL(value);
             else if (Array.isArray(value) && value[0] instanceof DOMMatrix)
                 value[0] = [value[0].a, value[0].b, value[0].c, value[0].d, value[0].e, value[0].f];
-            InspectorTest.log(indent + key + ": " + JSON.stringify(value));
+            InspectorTest.log(indent + name + ": " + JSON.stringify(value));
         }
     }
 
@@ -14,17 +13,17 @@ TestPage.registerInitializer(() => {
         InspectorTest.log("initialState:");
 
         InspectorTest.log("  attributes:");
-        log(recording.initialState.attributes, "    ");
+        log(Object.entries(recording.initialState.attributes), "    ");
 
         let currentState = recording.initialState.states.lastValue;
         if (currentState) {
             InspectorTest.log("  current state:");
-            let swizzledState = await recording._swizzleState(currentState);
-            log(swizzledState, "    ");
+            let state = await WI.RecordingState.swizzleInitialState(recording, currentState);
+            log(state, "    ");
         }
 
         InspectorTest.log("  parameters:");
-        log(recording.initialState.parameters, "    ");
+        log(Object.entries(recording.initialState.parameters), "    ");
 
         InspectorTest.log("  content: " + JSON.stringify(recording.initialState.content));
 

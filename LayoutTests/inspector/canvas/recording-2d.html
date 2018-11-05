@@ -519,8 +519,8 @@ function test() {
 
             async function logStates(recording) {
                 async function compare(index, expected) {
-                    let swizzledState = await recording._swizzleState(recording.initialState.states[index]);
-                    InspectorTest.expectEqual(swizzledState["fillStyle"], expected, `State ${index} should match expected fillStyle value.`)
+                    let state = await WI.RecordingState.swizzleInitialState(recording, recording.initialState.states[index]);
+                    InspectorTest.expectEqual(state.get("fillStyle"), expected, `State ${index} should match expected fillStyle value.`)
                 }
 
                 await compare(0, "#000000");
