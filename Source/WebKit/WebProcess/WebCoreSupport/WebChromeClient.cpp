@@ -931,14 +931,6 @@ bool WebChromeClient::layerTreeStateIsFrozen() const
     return false;
 }
 
-bool WebChromeClient::layerFlushThrottlingIsActive() const
-{
-    if (m_page.drawingArea())
-        return m_page.drawingArea()->layerFlushThrottlingIsActive();
-
-    return false;
-}
-
 #if ENABLE(ASYNC_SCROLLING)
 
 RefPtr<ScrollingCoordinator> WebChromeClient::createScrollingCoordinator(Page& page) const

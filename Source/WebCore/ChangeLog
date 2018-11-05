@@ -1,3 +1,16 @@
+2018-11-05  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r237785.
+
+        Introduced layout test and API test failures on macOS and iOS.
+
+        Reverted changeset:
+
+        "[iOS] Issue initial paint soon after the visuallyNonEmpty
+        milestone is fired."
+        https://bugs.webkit.org/show_bug.cgi?id=191078
+        https://trac.webkit.org/changeset/237785
+
 2018-11-05  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer][WebRTC] Error out when simulcast is activated

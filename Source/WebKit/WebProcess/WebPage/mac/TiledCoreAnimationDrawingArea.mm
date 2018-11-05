@@ -185,10 +185,6 @@ bool TiledCoreAnimationDrawingArea::layerTreeStateIsFrozen() const
     return m_layerTreeStateIsFrozen;
 }
 
-void TiledCoreAnimationDrawingArea::scheduleInitialDeferredPaint()
-{
-}
-
 void TiledCoreAnimationDrawingArea::scheduleCompositingLayerFlush()
 {
     if (m_layerTreeStateIsFrozen)

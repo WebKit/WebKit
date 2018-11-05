@@ -242,7 +242,6 @@ private:
     }
 
     bool layerTreeStateIsFrozen() const final;
-    bool layerFlushThrottlingIsActive() const final;
 
 #if ENABLE(ASYNC_SCROLLING)
     RefPtr<WebCore::ScrollingCoordinator> createScrollingCoordinator(WebCore::Page&) const final;
