@@ -781,16 +781,20 @@ namespace JSC {
         }
 
         template<typename Type>
-        static constexpr bool is64BitType() { return sizeof(Type) <= 8; }
+        struct is64BitType {
+            static constexpr bool value = sizeof(Type) <= 8;
+        };
 
         template<>
-        static constexpr bool is64BitType<void>() { return true; }
+        struct is64BitType<void> {
+            static constexpr bool value = true;
+        };
 
         template<typename OperationType, typename... Args>
         std::enable_if_t<!std::is_same<typename FunctionTraits<OperationType>::ResultType, SlowPathReturnType>::value, MacroAssembler::Call>
         callOperation(OperationType operation, Args... args)
         {
-            static_assert(is64BitType<typename FunctionTraits<OperationType>::ResultType>(), "Win64 cannot use standard call when return type is larger than 64 bits.");
+            static_assert(is64BitType<typename FunctionTraits<OperationType>::ResultType>::value, "Win64 cannot use standard call when return type is larger than 64 bits.");
             setupArguments<OperationType>(args...);
             return appendCallWithExceptionCheck(operation);
         }

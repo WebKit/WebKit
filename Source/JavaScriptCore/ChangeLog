@@ -1,3 +1,13 @@
+2018-11-05  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][Clang][JSC] JIT::is64BitType reports "warning: explicit specialization cannot have a storage class"
+        https://bugs.webkit.org/show_bug.cgi?id=191146
+
+        Reviewed by Yusuke Suzuki.
+
+        * jit/JIT.h: Changed is64BitType from a template class method to a
+        template inner class.
+
 2018-11-02  Keith Miller  <keith_miller@apple.com>
 
         Assert JSValues can fit into a pointer when API casting
