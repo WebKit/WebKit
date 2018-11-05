@@ -1,3 +1,15 @@
+2018-11-05  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][GTK] Expose ENABLE_MEDIA_SOURCE as public option
+        https://bugs.webkit.org/show_bug.cgi?id=191223
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        This option should be public because it needs to be disabled to build with GStreamer older
+        than 1.14.4.
+
+        * Source/cmake/GStreamerDefinitions.cmake:
+
 2018-10-29  Adrian Perez de Castro  <aperez@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.22.3 release.
