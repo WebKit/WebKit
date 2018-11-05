@@ -29,18 +29,14 @@ namespace WebCore {
 class CachedResourceClient;
 class ResourceTiming;
 class SharedBufferDataView;
-class SubresourceLoader;
 
 class CachedRawResource final : public CachedResource {
 public:
     CachedRawResource(CachedResourceRequest&&, Type, PAL::SessionID);
 
-    // FIXME: AssociatedURLLoader shouldn't be a DocumentThreadableLoader and therefore shouldn't
-    // use CachedRawResource. However, it is, and it needs to be able to defer loading.
-    // This can be fixed by splitting CORS preflighting out of DocumentThreacableLoader.
-    virtual void setDefersLoading(bool);
+    void setDefersLoading(bool);
 
-    virtual void setDataBufferingPolicy(DataBufferingPolicy);
+    void setDataBufferingPolicy(DataBufferingPolicy);
 
     // FIXME: This is exposed for the InspectorInstrumentation for preflights in DocumentThreadableLoader. It's also really lame.
     unsigned long identifier() const { return m_identifier; }

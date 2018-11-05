@@ -1,3 +1,18 @@
+2018-11-05  Rob Buis  <rbuis@igalia.com>
+
+        Remove some virtual methods in CachedRawResource
+        https://bugs.webkit.org/show_bug.cgi?id=191251
+
+        Reviewed by Frédéric Wang.
+
+        Since CachedRawResource is final no need to introduce new virtual
+        methods in CachedRawResource. This patch also removes an outdated
+        comment and forward declaration.
+
+        No new tests since no change in functionality.
+
+        * loader/cache/CachedRawResource.h:
+
 2018-11-05  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Move elements registration to GStreamerCommon
