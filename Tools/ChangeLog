@@ -1,3 +1,16 @@
+2018-11-05  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][GTK] API test runner fails to respect default build type
+        https://bugs.webkit.org/show_bug.cgi?id=190247
+
+        Reviewed by Carlos Garcia Campos.
+
+        Problem is it's looking for a release build, even though I've run set-webkit-configuration
+        --debug. It should look for a debug build unless I explicitly pass --release.
+
+        * glib/api_test_runner.py:
+        (TestRunner.__init__):
+
 2018-11-05  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer][WebRTC] Add webrtcencoder bin to cleanup and refactor the way we set encoders

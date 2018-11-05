@@ -39,10 +39,16 @@ class TestRunner(object):
     def __init__(self, port, options, tests=[]):
         self._options = options
 
-        self._build_type = "Debug" if self._options.debug else "Release"
-        common.set_build_types((self._build_type,))
         self._port = Host().port_factory.get(port)
         self._driver = self._create_driver()
+
+        if self._options.debug:
+            self._build_type = "Debug"
+        elif self._options.release:
+            self._build_type = "Release"
+        else:
+            self._build_type = self._port.default_configuration()
+        common.set_build_types((self._build_type,))
 
         self._programs_path = common.binary_build_path()
         expectations_file = os.path.join(common.top_level_path(), "Tools", "TestWebKitAPI", "glib", "TestExpectations.json")
