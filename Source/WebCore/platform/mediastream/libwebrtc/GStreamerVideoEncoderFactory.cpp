@@ -40,8 +40,9 @@
 #undef GST_USE_UNSTABLE_API
 #include <gst/pbutils/encoding-profile.h>
 #include <gst/video/video.h>
-
-#include <mutex>
+#include <wtf/HashMap.h>
+#include <wtf/Lock.h>
+#include <wtf/StdMap.h>
 
 // Required for unified builds
 #ifdef GST_CAT_DEFAULT
@@ -55,21 +56,24 @@ GST_DEBUG_CATEGORY(webkit_webrtcenc_debug);
 
 namespace WebCore {
 
-typedef void (*BitrateSetter)(GstElement* encoder, uint32_t bitrate);
-static GRefPtr<GRegex> targetBitrateBitPerSec;
-static GRefPtr<GRegex> bitrateBitPerSec;
-static GRefPtr<GRegex> bitrateKBitPerSec;
+typedef struct {
+    uint64_t rtpTimestamp;
+    int64_t captureTimeMs;
+    webrtc::CodecSpecificInfo codecInfo;
+} FrameData;
 
 class GStreamerVideoEncoder : public webrtc::VideoEncoder {
 public:
     GStreamerVideoEncoder(const webrtc::SdpVideoFormat&)
         : m_firstFramePts(GST_CLOCK_TIME_NONE)
         , m_restrictionCaps(adoptGRef(gst_caps_new_empty_simple("video/x-raw")))
+        , m_adapter(adoptGRef(gst_adapter_new()))
     {
     }
     GStreamerVideoEncoder()
         : m_firstFramePts(GST_CLOCK_TIME_NONE)
         , m_restrictionCaps(adoptGRef(gst_caps_new_empty_simple("video/x-raw")))
+        , m_adapter(adoptGRef(gst_adapter_new()))
     {
     }
 
@@ -187,7 +191,7 @@ public:
     }
 
     int32_t Encode(const webrtc::VideoFrame& frame,
-        const webrtc::CodecSpecificInfo*,
+        const webrtc::CodecSpecificInfo* codecInfo,
         const std::vector<webrtc::FrameType>* frameTypes) final
     {
         if (!m_imageReadyCb) {
@@ -211,11 +215,19 @@ public:
             gst_pad_set_offset(pad.get(), -m_firstFramePts);
         }
 
+        webrtc::CodecSpecificInfo localCodecInfo;
+        FrameData frameData = { frame.timestamp(), frame.render_time_ms(), codecInfo ? *codecInfo : localCodecInfo };
+        {
+            auto locker = holdLock(m_bufferMapLock);
+            m_framesData.append(frameData);
+        }
+
         for (auto frame_type : *frameTypes) {
             if (frame_type == webrtc::kVideoFrameKey) {
                 auto pad = adoptGRef(gst_element_get_static_pad(m_src, "src"));
                 auto forceKeyUnit = gst_video_event_new_downstream_force_key_unit(GST_CLOCK_TIME_NONE,
                     GST_CLOCK_TIME_NONE, GST_CLOCK_TIME_NONE, FALSE, 1);
+                GST_INFO_OBJECT(m_pipeline.get(), "Requesting KEYFRAME!");
 
                 if (!gst_pad_push_event(pad.get(), forceKeyUnit))
                     GST_WARNING_OBJECT(pipeline(), "Could not send ForceKeyUnit event");
@@ -240,6 +252,29 @@ public:
         auto buffer = gst_sample_get_buffer(sample.get());
         auto caps = gst_sample_get_caps(sample.get());
 
+        webrtc::CodecSpecificInfo localCodecInfo;
+        FrameData frameData = { 0, 0, localCodecInfo};
+        {
+            auto locker = holdLock(m_bufferMapLock);
+            if (!m_framesData.size()) {
+                gst_adapter_push(m_adapter.get(), gst_buffer_ref(buffer));
+
+                return GST_FLOW_OK;
+            }
+
+            if (gst_adapter_available(m_adapter.get()) > 0) {
+                uint flags = GST_BUFFER_FLAGS(buffer);
+
+                GST_INFO_OBJECT(m_pipeline.get(), "Got more buffer than pushed frame, trying to deal with it.");
+                gst_adapter_push(m_adapter.get(), gst_buffer_ref(buffer));
+
+                buffer = gst_adapter_take_buffer(m_adapter.get(), gst_adapter_available(m_adapter.get()));
+                GST_BUFFER_FLAGS(buffer) = flags;
+            }
+            frameData = m_framesData[0];
+            m_framesData.remove(static_cast<size_t>(0));
+        }
+
         webrtc::RTPFragmentationHeader fragmentationInfo;
         Fragmentize(&m_encodedFrame, &m_encodedImageBuffer, &m_encodedImageBufferSize, buffer, &fragmentationInfo);
         if (!m_encodedFrame._size)
@@ -251,15 +286,16 @@ public:
             nullptr);
 
         m_encodedFrame._frameType = GST_BUFFER_FLAG_IS_SET(buffer, GST_BUFFER_FLAG_DELTA_UNIT) ? webrtc::kVideoFrameDelta : webrtc::kVideoFrameKey;
-        m_encodedFrame._completeFrame = true;
-        m_encodedFrame.capture_time_ms_ = GST_TIME_AS_MSECONDS(GST_BUFFER_PTS(buffer));
-        m_encodedFrame.SetTimestamp(GST_TIME_AS_MSECONDS(GST_BUFFER_DTS(buffer)));
-        GST_LOG_OBJECT(m_pipeline.get(), "Got buffer TS: %" GST_TIME_FORMAT, GST_TIME_ARGS(GST_BUFFER_PTS(buffer)));
+        m_encodedFrame._completeFrame = false;
+        m_encodedFrame.capture_time_ms_ = frameData.captureTimeMs;
+        m_encodedFrame.SetTimestamp(frameData.rtpTimestamp);
 
-        webrtc::CodecSpecificInfo codecSpecifiInfos;
-        PopulateCodecSpecific(&codecSpecifiInfos, buffer);
+        GST_LOG_OBJECT(m_pipeline.get(), "Got buffer capture_time_ms: %ld _timestamp: %ld",
+            m_encodedFrame.capture_time_ms_, m_encodedFrame.Timestamp());
 
-        webrtc::EncodedImageCallback::Result result = m_imageReadyCb->OnEncodedImage(m_encodedFrame, &codecSpecifiInfos, &fragmentationInfo);
+        PopulateCodecSpecific(&frameData.codecInfo, buffer);
+
+        webrtc::EncodedImageCallback::Result result = m_imageReadyCb->OnEncodedImage(m_encodedFrame, &frameData.codecInfo, &fragmentationInfo);
         if (result.error != webrtc::EncodedImageCallback::Result::OK)
             GST_ERROR_OBJECT(m_pipeline.get(), "Encode callback failed: %d", result.error);
 
@@ -292,11 +328,6 @@ public:
 
             supportedFormats->push_back(format);
         }
-    }
-
-    virtual const gchar* ProfileName()
-    {
-        return nullptr;
     }
 
     virtual const gchar* Caps()
@@ -372,6 +403,10 @@ private:
     webrtc::EncodedImage m_encodedFrame;
     std::unique_ptr<uint8_t[]> m_encodedImageBuffer;
     size_t m_encodedImageBufferSize;
+
+    Lock m_bufferMapLock;
+    GRefPtr<GstAdapter> m_adapter;
+    Vector<FrameData> m_framesData;
 };
 
 class H264Encoder : public GStreamerVideoEncoder {
@@ -474,7 +509,6 @@ public:
     const gchar* Caps() final { return "video/x-vp8"; }
     const gchar* Name() final { return cricket::kVp8CodecName; }
     webrtc::VideoCodecType CodecType() final { return webrtc::kVideoCodecVP8; }
-    virtual const gchar* ProfileName() { return "Profile Realtime"; }
 
     void PopulateCodecSpecific(webrtc::CodecSpecificInfo* codecSpecifiInfos, GstBuffer* buffer) final
     {

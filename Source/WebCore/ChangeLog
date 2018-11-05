@@ -1,3 +1,29 @@
+2018-11-05  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GStreamer] Fix EncodedImage timestamps to match what libWebRTC expects
+        https://bugs.webkit.org/show_bug.cgi?id=190035
+
+        Reviewed by Philippe Normand.
+
+        We can't rely on GStreamer timestamps to pass to EncodedImages after encoding
+        because libWebRTC doesn't use the timestamp we fed it but does
+        some computation on the input timestamp in the images we pass in before it passes
+        them back to the encoder. Then internally LibWebRTC relies on those exact timestamps
+        passed into the encoder to do checks and compute RTP timestamps so we need to carefully
+        pass the exact timestamps to LibWebRTC (in practice we still use GStreamer timestamps in
+        all the GStreamer processing pipelines as the WebRTC object basically wraps the "same"
+        `GstSample` all around, but we are not synced on the clock anyway).
+
+        * platform/mediastream/gstreamer/GStreamerMediaStreamSource.cpp:
+        * platform/mediastream/gstreamer/GStreamerVideoFrameLibWebRTC.cpp:
+        (WebCore::LibWebRTCVideoFrameFromGStreamerSample):
+        * platform/mediastream/gstreamer/GStreamerVideoFrameLibWebRTC.h:
+        * platform/mediastream/libwebrtc/GStreamerVideoDecoderFactory.cpp:
+        (WebCore::GStreamerVideoDecoder::newSampleCallback):
+        * platform/mediastream/libwebrtc/GStreamerVideoEncoderFactory.cpp:
+        (WebCore::GStreamerVideoEncoder::GStreamerVideoEncoder):
+        (WebCore::GStreamerVideoEncoder::newSampleCallback):
+
 2018-11-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Changing view scale sometimes does not zoom the page to the new initial scale when the page is zoomed in when ignoring meta viewport

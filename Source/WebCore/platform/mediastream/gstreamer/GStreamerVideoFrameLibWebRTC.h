@@ -32,7 +32,7 @@
 namespace WebCore {
 
 const GRefPtr<GstSample> GStreamerSampleFromLibWebRTCVideoFrame(const webrtc::VideoFrame&);
-std::unique_ptr<webrtc::VideoFrame> LibWebRTCVideoFrameFromGStreamerSample(GstSample*, webrtc::VideoRotation);
+std::unique_ptr<webrtc::VideoFrame> LibWebRTCVideoFrameFromGStreamerSample(GstSample*, webrtc::VideoRotation, int64_t timestamp, int64_t renderTimeMs);
 
 class GStreamerVideoFrameLibWebRTC : public rtc::RefCountedObject<webrtc::VideoFrameBuffer> {
 public:

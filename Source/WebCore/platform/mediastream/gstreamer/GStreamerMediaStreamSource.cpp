@@ -154,7 +154,6 @@ struct _WebKitMediaStreamSrc {
     GstClockTime firstFramePts;
 
     std::unique_ptr<WebKitMediaStreamTrackObserver> observer;
-    String videoTrackID;
     volatile gint npads;
     gulong probeid;
     RefPtr<MediaStreamPrivate> stream;

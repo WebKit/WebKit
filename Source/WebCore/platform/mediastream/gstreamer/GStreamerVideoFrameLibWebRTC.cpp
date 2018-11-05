@@ -69,12 +69,13 @@ rtc::scoped_refptr<webrtc::VideoFrameBuffer> GStreamerVideoFrameLibWebRTC::creat
     return rtc::scoped_refptr<webrtc::VideoFrameBuffer>(new GStreamerVideoFrameLibWebRTC(sample, info));
 }
 
-std::unique_ptr<webrtc::VideoFrame> LibWebRTCVideoFrameFromGStreamerSample(GstSample* sample, webrtc::VideoRotation rotation)
+std::unique_ptr<webrtc::VideoFrame> LibWebRTCVideoFrameFromGStreamerSample(GstSample* sample, webrtc::VideoRotation rotation,
+    int64_t timestamp, int64_t renderTimeMs)
 {
     auto frameBuffer(GStreamerVideoFrameLibWebRTC::create(sample));
 
-    auto buffer = gst_sample_get_buffer(sample);
-    return std::unique_ptr<webrtc::VideoFrame>(new webrtc::VideoFrame(frameBuffer, GST_BUFFER_DTS(buffer), GST_BUFFER_PTS(buffer), rotation));
+    return std::unique_ptr<webrtc::VideoFrame>(
+        new webrtc::VideoFrame(frameBuffer, timestamp, renderTimeMs, rotation));
 }
 
 webrtc::VideoFrameBuffer::Type GStreamerVideoFrameLibWebRTC::type() const
