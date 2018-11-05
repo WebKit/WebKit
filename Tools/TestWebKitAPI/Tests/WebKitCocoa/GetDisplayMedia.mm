@@ -38,7 +38,6 @@
 #import <WebKit/WKWebViewConfiguration.h>
 
 static bool wasPrompted = false;
-static bool shouldDeny = false;
 static _WKCaptureDevices requestedDevices = 0;
 static bool receivedScriptMessage = false;
 static RetainPtr<WKScriptMessage> lastScriptMessage;
@@ -64,11 +63,6 @@ static RetainPtr<WKScriptMessage> lastScriptMessage;
 - (void)_webView:(WKWebView *)webView requestUserMediaAuthorizationForDevices:(_WKCaptureDevices)devices url:(NSURL *)url mainFrameURL:(NSURL *)mainFrameURL decisionHandler:(void (^)(BOOL authorized))decisionHandler
 {
     wasPrompted = true;
-
-    if (shouldDeny) {
-        decisionHandler(NO);
-        return;
-    }
 
     requestedDevices = devices;
     BOOL needsMicrophoneAuthorization = !!(requestedDevices & _WKCaptureDeviceMicrophone);
@@ -146,10 +140,7 @@ public:
         } else {
             EXPECT_STREQ([(NSString *)[lastScriptMessage body] UTF8String], "denied");
             EXPECT_TRUE(haveStream(false));
-            if (shouldDeny)
-                EXPECT_TRUE(wasPrompted);
-            else
-                EXPECT_FALSE(wasPrompted);
+            EXPECT_FALSE(wasPrompted);
         }
     }
 
@@ -172,16 +163,6 @@ TEST_F(GetDisplayMediaTest, Constraints)
     promptForCapture(@"{ video: true, audio: { volume: 0.5 } }", true);
     promptForCapture(@"{ video: {height: 480}, audio: true }", true);
     promptForCapture(@"{ video: {width: { exact: 640} } }", false);
-}
-
-TEST_F(GetDisplayMediaTest, PromptOnceAfterDenial)
-{
-    promptForCapture(@"{ video: true }", true);
-    shouldDeny = true;
-    promptForCapture(@"{ video: true }", false);
-    shouldDeny = false;
-    promptForCapture(@"{ video: true }", false);
-    promptForCapture(@"{ video: true }", false);
 }
 
 } // namespace TestWebKitAPI
