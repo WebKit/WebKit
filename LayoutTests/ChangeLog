@@ -1,3 +1,16 @@
+2018-11-05  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Table selection should not require that rows be in the cache
+        https://bugs.webkit.org/show_bug.cgi?id=190993
+        <rdar://problem/45613812>
+
+        Reviewed by Devin Rousso.
+
+        Add a test that a table row that is not in the cache can be selected/deselected.
+
+        * inspector/table/table-selection-expected.txt:
+        * inspector/table/table-selection.html:
+
 2018-11-05  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: show save/restore stack for recorded 2D Canvases

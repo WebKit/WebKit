@@ -133,11 +133,24 @@ function test()
         }
     });
 
+    suite.addTestCase({
+        name: "Table.SelectAndDeselectRow.NotCached",
+        description: "Select and deselect a row that is not in the table cache.",
+        test() {
+            let table = InspectorTest.createTable(1000);
+
+            triggerSelectRow(table, 999);
+            triggerDeselectRow(table, 999);
+
+            return true;
+        }
+    });
+
     suite.runTestCasesAndFinish();
 }
 </script>
 </head>
 <body onLoad="runTest()">
-    <p>Tests for WI.Table.</p>
+    <p>Tests for WI.Table selection.</p>
 </body>
 </html>

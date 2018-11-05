@@ -1,4 +1,4 @@
-Tests for WI.Table.
+Tests for WI.Table selection.
 
 
 == Running test suite: Table.RowSelection
@@ -65,4 +65,12 @@ Selecting row 1.
 PASS: Table selection changed.
 PASS: selectedRow should be 1.
 PASS: selectedRows should be [1].
+
+-- Running test case: Table.SelectAndDeselectRow.NotCached
+Selecting row 999.
+PASS: Table selection changed.
+PASS: selectedRow should be 999.
+Deselecting row 999.
+PASS: Table selection changed.
+PASS: selectedRows should not include 999.
 

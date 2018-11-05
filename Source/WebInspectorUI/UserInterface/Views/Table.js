@@ -355,10 +355,8 @@ WI.Table = class Table extends WI.View
             return;
 
         let oldSelectedRow = this._cachedRows.get(rowIndex);
-        if (!oldSelectedRow)
-            return;
-
-        oldSelectedRow.classList.remove("selected");
+        if (oldSelectedRow)
+            oldSelectedRow.classList.remove("selected");
 
         this._selectedRows.delete(rowIndex);
 
