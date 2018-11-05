@@ -26,6 +26,7 @@
 #include "config.h"
 #include "MessagePortChannelRegistry.h"
 
+#include <wtf/CompletionHandler.h>
 #include <wtf/MainThread.h>
 
 namespace WebCore {

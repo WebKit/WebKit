@@ -1,3 +1,9 @@
+2018-11-05  Dean Jackson  <dino@apple.com>
+
+        Attempted build fix.
+
+        * dom/messageports/MessagePortChannelRegistry.cpp:
+
 2018-11-05  Chris Dumez  <cdumez@apple.com>
 
         Crash under DOMWindow::postMessageTimerFired()
