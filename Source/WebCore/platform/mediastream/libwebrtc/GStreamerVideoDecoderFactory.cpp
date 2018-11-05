@@ -74,7 +74,7 @@ public:
         return gst_element_factory_make(factoryName, name.get());
     }
 
-    int32_t InitDecode(const webrtc::VideoCodec*, int32_t)
+    int32_t InitDecode(const webrtc::VideoCodec*, int32_t) override
     {
         m_src = makeElement("appsrc");
 
@@ -182,7 +182,7 @@ public:
         }
     }
 
-    GstCaps* GetCapsForFrame(const webrtc::EncodedImage& image)
+    virtual GstCaps* GetCapsForFrame(const webrtc::EncodedImage& image)
     {
         if (!m_caps) {
             m_caps = adoptGRef(gst_caps_new_simple(Caps(),
@@ -275,9 +275,58 @@ private:
 class H264Decoder : public GStreamerVideoDecoder {
 public:
     H264Decoder() { }
+
+    int32_t InitDecode(const webrtc::VideoCodec* codecInfo, int32_t nCores) final
+    {
+        if (codecInfo && codecInfo->codecType != webrtc::kVideoCodecH264)
+            return WEBRTC_VIDEO_CODEC_ERR_PARAMETER;
+
+        m_profile = nullptr;
+        if (codecInfo) {
+            auto h264Info = codecInfo->H264();
+
+            switch (h264Info.profile) {
+            case webrtc::H264::kProfileConstrainedBaseline:
+                m_profile = "constrained-baseline";
+                break;
+            case webrtc::H264::kProfileBaseline:
+                m_profile = "baseline";
+                break;
+            case webrtc::H264::kProfileMain:
+                m_profile = "main";
+                break;
+            case webrtc::H264::kProfileConstrainedHigh:
+                m_profile = "constrained-high";
+                break;
+            case webrtc::H264::kProfileHigh:
+                m_profile = "high";
+                break;
+            }
+        }
+
+        return GStreamerVideoDecoder::InitDecode(codecInfo, nCores);
+    }
+
+    GstCaps* GetCapsForFrame(const webrtc::EncodedImage& image) final
+    {
+        if (!m_caps) {
+            m_caps = adoptGRef(gst_caps_new_simple(Caps(),
+                "width", G_TYPE_INT, image._encodedWidth,
+                "height", G_TYPE_INT, image._encodedHeight,
+                "profile", G_TYPE_STRING, m_profile ? m_profile : "baseline",
+                "stream-format", G_TYPE_STRING, "byte-stream",
+                "alignment", G_TYPE_STRING, "au",
+                nullptr));
+        }
+
+        return m_caps.get();
+    }
     const gchar* Caps() final { return "video/x-h264"; }
     const gchar* Name() final { return cricket::kH264CodecName; }
     webrtc::VideoCodecType CodecType() final { return webrtc::kVideoCodecH264; }
+
+private:
+    const gchar* m_profile;
 };
 
 class VP8Decoder : public GStreamerVideoDecoder {
