@@ -173,6 +173,17 @@ modules:
         path: ../gstreamer/patches/gst-plugins-good-0003-qtdemux-Clarify-field-name-about-stream-encryption-s.patch
     config-opts:
       - -Ddisable_gtkdoc=true
+  - name: x264
+    config-opts:
+    - "--enable-shared"
+    - "--enable-static"
+    - "--enable-pic"
+    - "--disable-lavf"
+    sources:
+      - type: archive
+        url: http://download.videolan.org/pub/x264/snapshots/x264-snapshot-20140212-2245-stable.tar.bz2
+        sha256: 5d98e9e4faf6dd55e7193ed379aff477b8acbda6777758956ef7e5f05067be18
+
   - name: gst-plugins-ugly
     buildsystem: meson
     sources:
@@ -181,6 +192,7 @@ modules:
         branch: 1.14.1
     config-opts:
       - -Ddisable_gtkdoc=true
+
   - name: gst-plugins-bad
     buildsystem: meson
     sources:
