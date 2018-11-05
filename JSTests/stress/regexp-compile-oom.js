@@ -1,3 +1,4 @@
+//@ skip if $hostOS != "darwin"
 // Test that throw an OOM exception when compiling a pathological, but valid nested RegExp.
 
 function recurseAndTest(depth, f, expectedException)
