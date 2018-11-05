@@ -125,7 +125,6 @@ using namespace WebCore;
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, processPoolCounter, ("WebProcessPool"));
 
 const Seconds serviceWorkerTerminationDelay { 5_s };
-const unsigned maximumSuspendedPagesCount { 3 };
 
 static uint64_t generateListenerIdentifier()
 {
@@ -301,6 +300,8 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
 #endif
 
     notifyThisWebProcessPoolWasCreated();
+
+    updateMaxSuspendedPageCount();
 }
 
 WebProcessPool::~WebProcessPool()
@@ -1470,9 +1471,24 @@ void WebProcessPool::registerURLSchemeAsCanDisplayOnlyIfCanRequest(const String&
     sendToNetworkingProcess(Messages::NetworkProcess::RegisterURLSchemeAsCanDisplayOnlyIfCanRequest(urlScheme));
 }
 
+void WebProcessPool::updateMaxSuspendedPageCount()
+{
+    unsigned dummy = 0;
+    Seconds dummyInterval;
+    unsigned pageCacheSize = 0;
+    calculateMemoryCacheSizes(m_configuration->cacheModel(), dummy, dummy, dummy, dummyInterval, pageCacheSize);
+
+    m_maxSuspendedPageCount = pageCacheSize;
+
+    while (m_suspendedPages.size() > m_maxSuspendedPageCount)
+        m_suspendedPages.removeFirst();
+}
+
 void WebProcessPool::setCacheModel(CacheModel cacheModel)
 {
     m_configuration->setCacheModel(cacheModel);
+    updateMaxSuspendedPageCount();
+
     sendToAllProcesses(Messages::WebProcess::SetCacheModel(cacheModel));
 
     if (m_networkProcess)
@@ -2234,7 +2250,7 @@ Ref<WebProcessProxy> WebProcessPool::processForNavigationInternal(WebPageProxy& 
 
 void WebProcessPool::addSuspendedPageProxy(std::unique_ptr<SuspendedPageProxy>&& suspendedPage)
 {
-    if (m_suspendedPages.size() >= maximumSuspendedPagesCount)
+    if (m_suspendedPages.size() >= m_maxSuspendedPageCount)
         m_suspendedPages.removeFirst();
 
     m_suspendedPages.append(WTFMove(suspendedPage));

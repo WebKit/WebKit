@@ -522,7 +522,6 @@ TEST(ProcessSwap, NoSwappingForeTLDPlus2)
     EXPECT_EQ(numberOfDecidePolicyCalls, 2);
 }
 
-// We currently keep 3 suspended pages around so we can go back 3 times and use the page cache for each load.
 TEST(ProcessSwap, Back)
 {
     auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
@@ -543,6 +542,8 @@ TEST(ProcessSwap, Back)
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
+
+    EXPECT_GT([processPool _maximumSuspendedPageCount], 0U);
 
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
     [webView loadRequest:request];
@@ -599,31 +600,30 @@ TEST(ProcessSwap, Back)
     done = false;
 
     auto pidAfterSecondBackNavigation = [webView _webProcessIdentifier];
-    EXPECT_EQ(applePID, pidAfterSecondBackNavigation);
+    if ([processPool _maximumSuspendedPageCount] > 1)
+        EXPECT_EQ(applePID, pidAfterSecondBackNavigation);
+    else {
+        EXPECT_NE(applePID, pidAfterSecondBackNavigation);
+        EXPECT_NE(googlePID, pidAfterSecondBackNavigation);
+    }
 
-    [webView goBack]; // Back to webkit.org.
 
-    TestWebKitAPI::Util::run(&receivedMessage);
-    receivedMessage = false;
-    TestWebKitAPI::Util::run(&done);
-    done = false;
-
-    auto pidAfterThirdBackNavigation = [webView _webProcessIdentifier];
-    EXPECT_EQ(webkitPID, pidAfterThirdBackNavigation);
-
-    // 7 loads, 7 decidePolicy calls (e.g. any load that performs a process swap should not have generated an
+    // 6 loads, 6 decidePolicy calls (e.g. any load that performs a process swap should not have generated an
     // additional decidePolicy call as a result of the process swap)
-    EXPECT_EQ(7, numberOfDecidePolicyCalls);
+    EXPECT_EQ(6, numberOfDecidePolicyCalls);
 
-    EXPECT_EQ(6u, [receivedMessages count]);
+    EXPECT_EQ(5u, [receivedMessages count]);
     EXPECT_WK_STREQ(@"PageShow called. Persisted: false, and window.history.state is: null", receivedMessages.get()[0]);
     EXPECT_WK_STREQ(@"PageShow called. Persisted: false, and window.history.state is: null", receivedMessages.get()[1]);
     EXPECT_WK_STREQ(@"PageShow called. Persisted: false, and window.history.state is: null", receivedMessages.get()[2]);
     EXPECT_WK_STREQ(@"PageShow called. Persisted: true, and window.history.state is: onloadCalled", receivedMessages.get()[3]);
-    EXPECT_WK_STREQ(@"PageShow called. Persisted: true, and window.history.state is: onloadCalled", receivedMessages.get()[4]);
-    EXPECT_WK_STREQ(@"PageShow called. Persisted: true, and window.history.state is: onloadCalled", receivedMessages.get()[5]);
 
-    EXPECT_EQ(4u, seenPIDs.size());
+    // The number of suspended pages we keep around is determined at runtime.
+    if ([processPool _maximumSuspendedPageCount] > 1) {
+        EXPECT_WK_STREQ(@"PageShow called. Persisted: true, and window.history.state is: onloadCalled", receivedMessages.get()[4]);
+        EXPECT_EQ(4u, seenPIDs.size());
+    } else
+        EXPECT_EQ(5u, seenPIDs.size());
 }
 
 #if PLATFORM(MAC)
@@ -1348,7 +1348,8 @@ static void runClientSideRedirectTest(ShouldEnablePSON shouldEnablePSON)
     EXPECT_FALSE(didPerformClientRedirect);
 
     auto pidAfterBackNavigation = [webView _webProcessIdentifier];
-    EXPECT_EQ(webkitPID, pidAfterBackNavigation);
+    if ([processPool _maximumSuspendedPageCount] > 1)
+        EXPECT_EQ(webkitPID, pidAfterBackNavigation);
 
     // Validate Back/Forward list.
     currentItem = backForwardList.currentItem;
@@ -1658,7 +1659,7 @@ TEST(ProcessSwap, MainFramesOnly)
     EXPECT_EQ(1u, seenPIDs.size());
 }
 
-TEST(ProcessSwap, ThreePreviousProcessesRemains)
+TEST(ProcessSwap, SuspendedPageLimit)
 {
     auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
     [processPoolConfiguration setProcessSwapsOnNavigation:YES];
@@ -1672,6 +1673,9 @@ TEST(ProcessSwap, ThreePreviousProcessesRemains)
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
+
+    auto maximumSuspendedPageCount = [processPool _maximumSuspendedPageCount];
+    EXPECT_GT(maximumSuspendedPageCount, 0U);
 
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
     [webView loadRequest:request];
@@ -1706,8 +1710,8 @@ TEST(ProcessSwap, ThreePreviousProcessesRemains)
     // Navigations to 5 different domains, we expect to have seen 5 different PIDs
     EXPECT_EQ(5u, seenPIDs.size());
 
-    // But only 4 of those processes should still be alive (1 visible, 3 suspended).
-    EXPECT_EQ(4u, [processPool _webProcessCountIgnoringPrewarmed]);
+    // But not all of those processes should still be alive (1 visible, maximumSuspendedPageCount suspended).
+    EXPECT_EQ([processPool _webProcessCountIgnoringPrewarmed], (1U + maximumSuspendedPageCount));
 }
 
 TEST(ProcessSwap, PageCache1)

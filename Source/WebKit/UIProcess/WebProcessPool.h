@@ -450,6 +450,7 @@ public:
     void removeAllSuspendedPageProxiesForPage(WebPageProxy&);
     std::unique_ptr<SuspendedPageProxy> takeSuspendedPageProxy(SuspendedPageProxy&);
     bool hasSuspendedPageProxyFor(WebProcessProxy&) const;
+    unsigned maxSuspendedPageCount() const { return m_maxSuspendedPageCount; }
 
     void didReachGoodTimeToPrewarm();
 
@@ -538,6 +539,8 @@ private:
     void removeProcessFromOriginCacheSet(WebProcessProxy&);
 
     void tryPrewarmWithDomainInformation(WebProcessProxy&, const WebCore::URL&);
+
+    void updateMaxSuspendedPageCount();
 
     Ref<API::ProcessPoolConfiguration> m_configuration;
 
@@ -713,6 +716,8 @@ private:
 #endif
 
     Deque<std::unique_ptr<SuspendedPageProxy>> m_suspendedPages;
+    unsigned m_maxSuspendedPageCount { 0 };
+
     HashMap<String, RefPtr<WebProcessProxy>> m_swappedProcessesPerRegistrableDomain;
 
     HashMap<String, std::unique_ptr<WebCore::PrewarmInformation>> m_prewarmInformationPerRegistrableDomain;
