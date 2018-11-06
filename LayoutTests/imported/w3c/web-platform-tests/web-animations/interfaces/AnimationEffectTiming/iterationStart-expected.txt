@@ -1,7 +1,0 @@
-
-PASS Has the default value 0 
-PASS Changing the value updates computed timing when backwards-filling 
-PASS Changing the value updates computed timing during the active phase 
-PASS Changing the value updates computed timing when forwards-filling 
-PASS Throws when setting invalid values 
-

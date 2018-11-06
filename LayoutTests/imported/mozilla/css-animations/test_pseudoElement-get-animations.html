@@ -45,7 +45,7 @@ test(function(t) {
 
   // Create additional animation on the pseudo-element from script
   var pseudoTarget = document.getAnimations()[0].effect.target;
-  var effect = new KeyframeEffectReadOnly(pseudoTarget,
+  var effect = new KeyframeEffect(pseudoTarget,
                                           { background: ["blue", "red"] },
                                           3 * MS_PER_SEC);
   var newAnimation = new Animation(effect, document.timeline);

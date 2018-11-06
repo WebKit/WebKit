@@ -1,9 +1,0 @@
-
-PASS Has the default value 0 
-PASS Can be set to a positive number 
-PASS Can be set to a negative number 
-PASS Throws when setting infinity 
-PASS Throws when setting negative infinity 
-PASS finish event is not fired at the end of the active interval when the endDelay has not expired 
-PASS finish event is fired after the endDelay has expired 
-

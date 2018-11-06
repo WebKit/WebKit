@@ -2,10 +2,12 @@ CONSOLE MESSAGE: Unhandled Promise Rejection: AbortError: The operation was abor
 
 Harness Error (FAIL), message = The operation was aborted.
 
+PASS Canceling an animation should cause its start time and hold time to be unresolved 
 PASS A play-pending ready promise should be rejected when the animation is canceled 
 PASS A pause-pending ready promise should be rejected when the animation is canceled 
 PASS When an animation is canceled, it should create a resolved Promise 
 PASS The ready promise should be replaced when the animation is canceled 
 PASS The finished promise should NOT be rejected if the animation is already idle 
 PASS The cancel event should NOT be fired if the animation is already idle 
+TIMEOUT Canceling an animation should fire cancel event on orphaned element Test timed out
 

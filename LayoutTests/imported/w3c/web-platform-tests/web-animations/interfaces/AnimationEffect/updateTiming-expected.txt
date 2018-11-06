@@ -1,0 +1,72 @@
+
+PASS Allows setting the delay to a positive number 
+PASS Allows setting the delay to a negative number 
+PASS Allows setting the delay of an animation in progress: positive delay that causes the animation to be no longer in-effect 
+PASS Allows setting the delay of an animation in progress: negative delay that seeks into the active interval 
+PASS Allows setting the delay of an animation in progress: large negative delay that causes the animation to be finished 
+PASS Throws when setting invalid delay value: NaN 
+PASS Throws when setting invalid delay value: Infinity 
+PASS Throws when setting invalid delay value: -Infinity 
+PASS Allows setting the endDelay to a positive number 
+PASS Allows setting the endDelay to a negative number 
+PASS Throws when setting the endDelay to infinity 
+PASS Throws when setting the endDelay to negative infinity 
+PASS Allows setting the fill to 'none' 
+PASS Allows setting the fill to 'forwards' 
+PASS Allows setting the fill to 'backwards' 
+PASS Allows setting the fill to 'both' 
+PASS Allows setting the iterationStart of an animation in progress: backwards-filling 
+PASS Allows setting the iterationStart of an animation in progress: active phase 
+PASS Allows setting the iterationStart of an animation in progress: forwards-filling 
+PASS Throws when setting invalid iterationStart value: -1 
+PASS Throws when setting invalid iterationStart value: NaN 
+PASS Throws when setting invalid iterationStart value: Infinity 
+PASS Throws when setting invalid iterationStart value: -Infinity 
+PASS Allows setting iterations to a double value 
+PASS Allows setting iterations to infinity 
+PASS Throws when setting invalid iterations value: -1 
+PASS Throws when setting invalid iterations value: -Infinity 
+PASS Throws when setting invalid iterations value: NaN 
+PASS Allows setting the iterations of an animation in progress 
+PASS Allows setting the duration to 123.45 
+PASS Allows setting the duration to auto 
+PASS Allows setting the duration to Infinity 
+PASS Throws when setting invalid duration: -1 
+PASS Throws when setting invalid duration: NaN 
+PASS Throws when setting invalid duration: -Infinity 
+PASS Throws when setting invalid duration: "abc" 
+PASS Throws when setting invalid duration: "100" 
+PASS Allows setting the duration of an animation in progress 
+PASS Allows setting the duration of an animation in progress such that the the start and current time do not change 
+PASS Allows setting the direction to each of the possible keywords 
+PASS Allows setting the direction of an animation in progress from 'normal' to 'reverse' 
+PASS Allows setting the direction of an animation in progress from 'normal' to 'reverse' while at start of active interval 
+PASS Allows setting the direction of an animation in progress from 'normal' to 'reverse' while filling backwards 
+PASS Allows setting the direction of an animation in progress from 'normal' to 'alternate' 
+PASS Allows setting the direction of an animation in progress from 'alternate' to 'alternate-reverse' 
+PASS Allows setting the easing to a step-start function 
+PASS Allows setting the easing to a steps(1, start) function 
+PASS Allows setting the easing to a steps(2, start) function 
+PASS Allows setting the easing to a step-end function 
+PASS Allows setting the easing to a steps(1) function 
+PASS Allows setting the easing to a steps(1, end) function 
+PASS Allows setting the easing to a steps(2, end) function 
+FAIL Allows setting the easing to a frames function Type error
+PASS Allows setting the easing to a linear function 
+PASS Allows setting the easing to a ease function 
+PASS Allows setting the easing to a ease-in function 
+PASS Allows setting the easing to a ease-in-out function 
+PASS Allows setting the easing to a ease-out function 
+PASS Allows setting the easing to a easing function which produces values greater than 1 
+PASS Allows setting the easing to a easing function which produces values less than 1 
+PASS Updates the specified value when setting the easing to 'ease' 
+PASS Updates the specified value when setting the easing to 'linear' 
+PASS Updates the specified value when setting the easing to 'ease-in' 
+PASS Updates the specified value when setting the easing to 'ease-out' 
+PASS Updates the specified value when setting the easing to 'ease-in-out' 
+PASS Updates the specified value when setting the easing to 'cubic-bezier(0.1, 5, 0.23, 0)' 
+PASS Updates the specified value when setting the easing to 'steps(3, start)' 
+PASS Updates the specified value when setting the easing to 'steps(3)' 
+FAIL Updates the specified value when setting the easing to 'frames(3)' Type error
+PASS Allows setting the easing of an animation in progress 
+

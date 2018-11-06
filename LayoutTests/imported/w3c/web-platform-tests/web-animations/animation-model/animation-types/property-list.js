@@ -361,13 +361,13 @@ const gCSSProperties = {
   'color-interpolation': {
     // https://svgwg.org/svg2-draft/painting.html#ColorInterpolationProperty
     types: [
-      { type: 'discrete', options: [ [ 'linearRGB', 'auto' ] ] }
+      { type: 'discrete', options: [ [ 'linearrgb', 'auto' ] ] }
     ]
   },
   'color-interpolation-filters': {
     // https://drafts.fxtf.org/filters-1/#propdef-color-interpolation-filters
     types: [
-      { type: 'discrete', options: [ [ 'sRGB', 'linearRGB' ] ] }
+      { type: 'discrete', options: [ [ 'srgb', 'linearrgb' ] ] }
     ]
   },
   'column-count': {
@@ -413,19 +413,13 @@ const gCSSProperties = {
       { type: 'discrete', options: [ [ 'auto', '1px' ] ] }
     ]
   },
-  'contain': {
-    // https://drafts.csswg.org/css-containment/#propdef-contain
-    types: [
-      { type: 'discrete', options: [ [ 'strict', 'none' ] ] }
-    ]
-  },
   'content': {
     // https://drafts.csswg.org/css-content-3/#propdef-content
     types: [
       { type: 'discrete', options: [ [ '"a"', '"b"' ] ] }
     ],
     setup: t => {
-      return createPseudo(t, 'before');
+      return getPseudoElement(t, 'before');
     }
   },
   'counter-increment': {
@@ -444,12 +438,6 @@ const gCSSProperties = {
     // https://drafts.csswg.org/css2/ui.html#propdef-cursor
     types: [
       { type: 'discrete', options: [ [ 'pointer', 'wait' ] ] }
-    ]
-  },
-  'direction': {
-    // https://drafts.csswg.org/css-writing-modes-3/#propdef-direction
-    types: [
-      { type: 'discrete', options: [ [ 'ltr', 'rtl' ] ] }
     ]
   },
   'dominant-baseline': {
@@ -529,8 +517,8 @@ const gCSSProperties = {
     ]
   },
   'font-stretch': {
-    // https://drafts.csswg.org/css-fonts-3/#propdef-font-stretch
-    types: [ 'fontStretch' ]
+    // https://drafts.csswg.org/css-fonts-4/#propdef-font-stretch
+    types: [ 'percentage' ]
   },
   'font-style': {
     // https://drafts.csswg.org/css-fonts/#propdef-font-style
@@ -711,13 +699,13 @@ const gCSSProperties = {
   'hyphens': {
     // https://drafts.csswg.org/css-text-3/#propdef-hyphens
     types: [
-      { type: 'discrete', options: [ [ 'manual', 'auto' ] ] }
+      { type: 'discrete', options: [ [ 'manual', 'none' ] ] }
     ]
   },
   'image-orientation': {
     // https://drafts.csswg.org/css-images-3/#propdef-image-orientation
     types: [
-      { type: 'discrete', options: [ [ '0deg', '90deg' ] ] }
+      { type: 'discrete', options: [ [ 'none', 'from-image' ] ] }
     ]
   },
   'image-rendering': {
@@ -751,19 +739,19 @@ const gCSSProperties = {
   'justify-content': {
     // https://drafts.csswg.org/css-align/#propdef-justify-content
     types: [
-      { type: 'discrete', options: [ [ 'baseline', 'last baseline' ] ] }
+      { type: 'discrete', options: [ [ 'start', 'end' ] ] }
     ]
   },
   'justify-items': {
     // https://drafts.csswg.org/css-align/#propdef-justify-items
     types: [
-      { type: 'discrete', options: [ [ 'baseline', 'last baseline' ] ] }
+      { type: 'discrete', options: [ [ 'start', 'end' ] ] }
     ]
   },
   'justify-self': {
     // https://drafts.csswg.org/css-align/#propdef-justify-self
     types: [
-      { type: 'discrete', options: [ [ 'baseline', 'last baseline' ] ] }
+      { type: 'discrete', options: [ [ 'start', 'end' ] ] }
     ]
   },
   'left': {
@@ -997,23 +985,28 @@ const gCSSProperties = {
     types: [
     ]
   },
-  'offset-block-end': {
-    // https://drafts.csswg.org/css-logical-props/#propdef-offset-block-end
+  'inset-block-end': {
+    // https://drafts.csswg.org/css-logical-props/#propdef-inset-block-end
     types: [
     ]
   },
-  'offset-block-start': {
-    // https://drafts.csswg.org/css-logical-props/#propdef-offset-block-start
+  'inset-block-start': {
+    // https://drafts.csswg.org/css-logical-props/#propdef-inset-block-start
     types: [
     ]
   },
-  'offset-inline-end': {
-    // https://drafts.csswg.org/css-logical-props/#propdef-offset-inline-end
+  'inset-inline-end': {
+    // https://drafts.csswg.org/css-logical-props/#propdef-inset-inline-end
     types: [
     ]
   },
-  'offset-inline-start': {
-    // https://drafts.csswg.org/css-logical-props/#propdef-offset-inline-start
+  'inset-inline-start': {
+    // https://drafts.csswg.org/css-logical-props/#propdef-inset-inline-start
+    types: [
+    ]
+  },
+  'offset-path': {
+    // https://drafts.fxtf.org/motion-1/#offset-path-property
     types: [
     ]
   },
@@ -1340,12 +1333,6 @@ const gCSSProperties = {
     types: [
     ]
   },
-  'text-orientation': {
-    // https://drafts.csswg.org/css-writing-modes-3/#propdef-text-orientation
-    types: [
-      { type: 'discrete', options: [ [ 'upright', 'sideways' ] ] }
-    ]
-  },
   'text-overflow': {
     // https://drafts.csswg.org/css-ui/#propdef-text-overflow
     types: [
@@ -1405,11 +1392,24 @@ const gCSSProperties = {
       { type: 'discrete', options: [ [ 'flat', 'preserve-3d' ] ] }
     ]
   },
-  'unicode-bidi': {
-    // https://drafts.csswg.org/css-writing-modes-3/#propdef-unicode-bidi
-    types: [
-      { type: 'discrete', options: [ [ 'embed', 'bidi-override' ] ] },
-    ]
+  'rotate': {
+    // https://drafts.csswg.org/css-transforms-2/#individual-transforms
+    types: [ 'rotateList' ]
+  },
+  'translate': {
+    // https://drafts.csswg.org/css-transforms-2/#individual-transforms
+    types: [ 'translateList' ],
+    setup: t => {
+      // We need to set a width/height for resolving percentages against.
+      const element = createElement(t);
+      element.style.width = '100px';
+      element.style.height = '100px';
+      return element;
+    }
+  },
+  'scale': {
+    // https://drafts.csswg.org/css-transforms-2/#individual-transforms
+    types: [ 'scaleList' ]
   },
   'vector-effect': {
     // https://svgwg.org/svg2-draft/coords.html#VectorEffectProperty
@@ -1446,18 +1446,6 @@ const gCSSProperties = {
   'word-spacing': {
     // https://drafts.csswg.org/css-text-3/#propdef-word-spacing
     types: [ 'lengthPercentageOrCalc' ]
-  },
-  'will-change': {
-    // http://dev.w3.org/csswg/css-will-change/#propdef-will-change
-    types: [
-      { type: 'discrete', options: [ [ 'scroll-position', 'contents' ] ] }
-    ]
-  },
-  'writing-mode': {
-    // https://drafts.csswg.org/css-writing-modes-3/#propdef-writing-mode
-    types: [
-      { type: 'discrete', options: [ [ 'vertical-rl', 'sideways-rl' ] ] }
-    ]
   },
   'z-index': {
     // https://drafts.csswg.org/css-position/#propdef-z-index
@@ -1519,12 +1507,25 @@ function testAnimationSampleMatrices(animation, idlName, testSamples) {
   }
 }
 
+function testAnimationSampleRotate3d(animation, idlName, testSamples) {
+  const target = animation.effect.target;
+  for (const testSample of testSamples) {
+    animation.currentTime = testSample.time;
+    const actual = getComputedStyle(target)[idlName];
+    const expected = testSample.expected;
+    assert_rotate3d_equals(actual, expected,
+                         `The value should be ${expected} at`
+                         + ` ${testSample.time}ms but got ${actual}`);
+  }
+}
+
 function createTestElement(t, setup) {
   return setup ? setup(t) : createElement(t);
 }
 
 function isSupported(property) {
   const testKeyframe = new TestKeyframe(propertyToIDL(property));
+  assert_not_equals(window.KeyframeEffect, undefined, 'window.KeyframeEffect');
   try {
     // Since TestKeyframe returns 'undefined' for |property|,
     // the KeyframeEffect constructor will throw

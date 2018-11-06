@@ -1,9 +1,0 @@
-
-PASS Setting the start time of an animation without an active timeline 
-PASS Setting an unresolved start time an animation without an active timeline does not clear the current time 
-PASS Setting the start time clears the hold time 
-PASS Setting an unresolved start time sets the hold time 
-PASS Setting the start time resolves a pending ready promise 
-PASS Setting the start time resolves a pending pause task 
-PASS Setting the start time updates the finished state 
-

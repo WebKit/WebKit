@@ -74,4 +74,5 @@ PASS KeyframeEffect constructor throws with a keyframe sequence with an invalid 
 PASS KeyframeEffect constructor throws with property-indexed keyframes with an invalid composite value 
 PASS KeyframeEffect constructor throws with property-indexed keyframes with an invalid composite value as one of the array values 
 PASS KeyframeEffect constructor throws with keyframes with an invalid composite value 
+FAIL Changes made via setKeyframes should be immediately visible in style assert_equals: expected "250px" but got "150px"
 

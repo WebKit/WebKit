@@ -13,6 +13,6 @@ testRunner.dumpAsText();
 setTimeout(() => {
     document.getElementById("results").innerText = internals.layerTreeAsText(document);
     testRunner.notifyDone();
-}, animation.effect.timing.duration + 500);
+}, animation.effect.getTiming().duration + 500);
 
 </script>

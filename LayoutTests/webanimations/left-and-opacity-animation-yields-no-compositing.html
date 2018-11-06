@@ -7,7 +7,7 @@ const animation = new Animation(new KeyframeEffect(document.getElementById("targ
     { left: "100px", opacity: 0 }
 ]));
 animation.startTime = 0;
-animation.effect.timing.duration = 1000;
+animation.effect.updateTiming({ duration : 1000 });
 
 testRunner.dumpAsText();
 document.getElementById("results").innerText = internals.layerTreeAsText(document);

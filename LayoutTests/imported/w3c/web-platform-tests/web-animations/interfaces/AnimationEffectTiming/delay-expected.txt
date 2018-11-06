@@ -1,9 +1,0 @@
-
-PASS Has the default value 0 
-PASS Can be set to a positive number 
-PASS Can be set to a negative number 
-PASS Can set a positive delay on an animation without a backwards fill to make it no longer active 
-PASS Can set a negative delay to seek into the active interval 
-PASS Can set a large negative delay to finishing an animation 
-PASS Throws when setting invalid values 
-

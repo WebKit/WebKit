@@ -1,4 +1,5 @@
 
+PASS Setup 
 PASS background-color (type: color) has testInterpolation function 
 PASS background-color supports animating as color of rgb() 
 PASS background-color supports animating as color of #RGB 
@@ -153,9 +154,8 @@ PASS flood-color supports animating as color of rgba()
 PASS flood-color supports animating as color of hsla() 
 PASS flood-opacity (type: opacity) has testInterpolation function 
 FAIL flood-opacity supports animating as a [0, 1] number assert_equals: The value should be 0.55 at 500ms expected "0.55" but got "0.550000011920929"
-PASS font-stretch (type: fontStretch) has testInterpolation function 
-FAIL font-stretch supports animating as a font-stretch (adjacent values) assert_equals: The value should be ultra-condensed at 499ms expected "ultra-condensed" but got "56%"
-PASS font-stretch supports animating as a font-stretch (between value) 
+PASS font-stretch (type: percentage) has testInterpolation function 
+FAIL font-stretch supports animating as a percentage assert_equals: The value should be 30% at 500ms expected "30%" but got "normal"
 PASS font-style (type: discrete) has testInterpolation function 
 PASS font-style uses discrete animation when animating between "italic" and "oblique" with linear easing 
 PASS font-style uses discrete animation when animating between "italic" and "oblique" with effect easing 
@@ -231,6 +231,8 @@ PASS transform: scale
 PASS transform: skew 
 PASS transform: rotate and translate 
 PASS transform: translate and rotate 
+FAIL transform: extend shorter list (from) assert_approx_equals: expected matrix(-1,0,0,-1,-50,0) but got matrix(1, -0.00000000000000036739403974420594, 0.00000000000000036739403974420594, 1, 50, -0.000000000000036739403974420595): The value should be matrix(-1,0,0,-1,-50,0) at 500ms but got matrix(1, -0.00000000000000036739403974420594, 0.00000000000000036739403974420594, 1, 50, -0.000000000000036739403974420595) expected -1 +/- 0.0001 but got 1
+FAIL transform: extend shorter list (to) assert_approx_equals: expected matrix(-1,0,0,-1,-50,0) but got matrix(1, -0.00000000000000036739403974420594, 0.00000000000000036739403974420594, 1, 50, 0): The value should be matrix(-1,0,0,-1,-50,0) at 500ms but got matrix(1, -0.00000000000000036739403974420594, 0.00000000000000036739403974420594, 1, 50, 0) expected -1 +/- 0.0001 but got 1
 PASS transform: mismatch order of translate and rotate 
 PASS transform: matrix 
 FAIL transform: rotate3d assert_approx_equals: expected matrix3d(0.8535533905932737,0.1464466094067262,-0.5,0,0.1464466094067262,0.8535533905932737,0.5,0,0.5,-0.5,0.7071067811865476,0,0,0,0,1) but got matrix3d(0.8660254037844386, 0.28867513459481287, -0.40824829046386296, 0, 0, 0.816496580927726, 0.5773502691896256, 0, 0.49999999999999994, -0.4999999999999999, 0.7071067811865476, 0, 0, 0, 0, 1): The value should be matrix3d(0.8535533905932737,0.1464466094067262,-0.5,0,0.1464466094067262,0.8535533905932737,0.5,0,0.5,-0.5,0.7071067811865476,0,0,0,0,1) at 500ms but got matrix3d(0.8660254037844386, 0.28867513459481287, -0.40824829046386296, 0, 0, 0.816496580927726, 0.5773502691896256, 0, 0.49999999999999994, -0.4999999999999999, 0.7071067811865476, 0, 0, 0, 0, 1) expected 0.8535533905932737 +/- 0.0001 but got 0.8660254037844386
@@ -240,6 +242,7 @@ PASS transform: rotateY
 FAIL transform: non-invertible matrices assert_approx_equals: expected matrix(-1,0,0,-1,200,0) but got matrix(-0.0706572801427673, 0.719997959550522, -0.39514637992795165, -0.26007870466007205, 87.65015, 62.44984999999999): The value should be matrix(-1,0,0,-1,200,0) at 499ms but got matrix(-0.0706572801427673, 0.719997959550522, -0.39514637992795165, -0.26007870466007205, 87.65015, 62.44984999999999) expected -1 +/- 0.0001 but got -0.0706572801427673
 FAIL transform: non-invertible matrices in matched transform lists assert_approx_equals: expected matrix(0,-1,1,0,250,0) but got matrix(-0.22996553737931208, -0.6925071587258891, 0.3290121037669934, -0.3263002137418429, 162.60014694824218, 62.44984999999999): The value should be matrix(0,-1,1,0,250,0) at 499ms but got matrix(-0.22996553737931208, -0.6925071587258891, 0.3290121037669934, -0.3263002137418429, 162.60014694824218, 62.44984999999999) expected 0 +/- 0.0001 but got -0.22996553737931208
 FAIL transform: non-invertible matrices in mismatched transform lists assert_approx_equals: expected matrix(-2,0,0,-2,250,0) but got matrix(0.457235039557905, 1.5761580466297944, -1.1176085646538838, -0.6572212090027189, 112.65025, 49.89999999999999): The value should be matrix(-2,0,0,-2,250,0) at 499ms but got matrix(0.457235039557905, 1.5761580466297944, -1.1176085646538838, -0.6572212090027189, 112.65025, 49.89999999999999) expected -2 +/- 0.0001 but got 0.457235039557905
+PASS transform: perspective 
 PASS visibility (type: visibility) has testInterpolation function 
 PASS visibility uses visibility animation when animating from "visible" to "hidden" 
 PASS visibility uses visibility animation when animating from "hidden" to "visible" 

@@ -1,3 +1,7 @@
 
+PASS Pausing clears the start time 
+PASS Aborting a pause preserves the start time 
 PASS A pending ready promise should be resolved and not replaced when the animation is paused 
+PASS A pause-pending animation maintains the current time when applying a pending playback rate 
+PASS The animation's current time remains fixed after pausing 
 

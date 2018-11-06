@@ -49,11 +49,10 @@ targetTest(target => {
     assert_equals(animation.animationName, "animation", "The animation's animationName is set.");
 
     const effect = animation.effect;
-    assert_true(effect instanceof KeyframeEffectReadOnly, "The animation's effect is a KeyframeEffectReadOnly.");
-    assert_false(effect instanceof KeyframeEffect, "The animation's effect is not a KeyframeEffect.");
+    assert_true(effect instanceof KeyframeEffect, "The animation's effect is a KeyframeEffect.");
     assert_equals(effect.target, target, "The animation's effect is targeting the target.");
 
-    const timing = animation.effect.timing;
+    const timing = animation.effect.getTiming();
     assert_equals(timing.fill, "forwards", "The animation's fill property matches the animation-fill-mode property.");
     assert_equals(timing.delay, -3000, "The animation's delay property matches the animation-delay property.");
     assert_equals(timing.duration, 2000, "The animation's duration property matches the animation-duration property.");
@@ -90,10 +89,10 @@ targetTest(target => {
     target.style.animationDuration = "2s";
     target.style.animationName = "animation";
 
-    assert_equals(target.getAnimations()[0].effect.timing.delay, -1000, "The animation's delay matches the initial animation-delay property.");
+    assert_equals(target.getAnimations()[0].effect.getTiming().delay, -1000, "The animation's delay matches the initial animation-delay property.");
 
     target.style.animationDelay = 0;
-    assert_equals(target.getAnimations()[0].effect.timing.delay, 0, "The animation's delay matches the updated animation-delay property.");
+    assert_equals(target.getAnimations()[0].effect.getTiming().delay, 0, "The animation's delay matches the updated animation-delay property.");
 }, "Web Animations should reflect the animation-delay property.");
 
 targetTest(target => {
@@ -102,21 +101,21 @@ targetTest(target => {
 
     for (let direction of ["reverse", "alternate", "normal", "alternate-reverse"]) {
         target.style.animationDirection = direction;
-        assert_equals(target.getAnimations()[0].effect.timing.direction, direction, `The animation's direction matches the "${direction}" CSS value.`);
+        assert_equals(target.getAnimations()[0].effect.getTiming().direction, direction, `The animation's direction matches the "${direction}" CSS value.`);
     }
 
     target.style.removeProperty("animation-direction");
-    assert_equals(target.getAnimations()[0].effect.timing.direction, "normal", "The animation's easing matches the default animation-direction value when the property is not set.");
+    assert_equals(target.getAnimations()[0].effect.getTiming().direction, "normal", "The animation's easing matches the default animation-direction value when the property is not set.");
 }, "Web Animations should reflect the animation-direction property.");
 
 targetTest(target => {
     target.style.animationDuration = "2s";
     target.style.animationName = "animation";
 
-    assert_equals(target.getAnimations()[0].effect.timing.duration, 2000, "The animation's duration matches the initial animation-duration property.");
+    assert_equals(target.getAnimations()[0].effect.getTiming().duration, 2000, "The animation's duration matches the initial animation-duration property.");
 
     target.style.animationDuration = "1s";
-    assert_equals(target.getAnimations()[0].effect.timing.duration, 1000, "The animation's duration matches the updated animation-duration property.");
+    assert_equals(target.getAnimations()[0].effect.getTiming().duration, 1000, "The animation's duration matches the updated animation-duration property.");
 }, "Web Animations should reflect the animation-duration property.");
 
 targetTest(target => {
@@ -125,11 +124,11 @@ targetTest(target => {
 
     for (let fillMode of ["forwards", "backwards", "none", "both"]) {
         target.style.animationFillMode = fillMode;
-        assert_equals(target.getAnimations()[0].effect.timing.fill, fillMode, `The animation's fill mode matches the "${fillMode}" CSS value.`);
+        assert_equals(target.getAnimations()[0].effect.getTiming().fill, fillMode, `The animation's fill mode matches the "${fillMode}" CSS value.`);
     }
 
     target.style.removeProperty("animation-fill-mode");
-    assert_equals(target.getAnimations()[0].effect.timing.fill, "none", "The animation's easing matches the default animation-fill-mode value when the property is not set.");
+    assert_equals(target.getAnimations()[0].effect.getTiming().fill, "none", "The animation's easing matches the default animation-fill-mode value when the property is not set.");
 }, "Web Animations should reflect the animation-fill-mode property.");
 
 targetTest(target => {
@@ -138,10 +137,10 @@ targetTest(target => {
 
     target.style.animationIterationCount = 2;
     const initialAnimation = target.getAnimations()[0];
-    assert_equals(target.getAnimations()[0].effect.timing.iterations, 2, "The animation's duration matches the initial animation-iteration-count property.");
+    assert_equals(target.getAnimations()[0].effect.getTiming().iterations, 2, "The animation's duration matches the initial animation-iteration-count property.");
 
     target.style.animationIterationCount = 1;
-    assert_equals(target.getAnimations()[0].effect.timing.iterations, 1, "The animation's duration matches the updated animation-iteration-count property.");
+    assert_equals(target.getAnimations()[0].effect.getTiming().iterations, 1, "The animation's duration matches the updated animation-iteration-count property.");
 
     assert_equals(target.getAnimations()[0], initialAnimation, "The animation object remained the same instance throughout the test.");
 }, "Web Animations should reflect the animation-iteration-count property.");
@@ -195,13 +194,13 @@ targetTest(target => {
     target.style.animationTimingFunction = "ease-out";
     target.style.animationName = "animation";
 
-    assert_equals(target.getAnimations()[0].effect.timing.easing, "linear", "The animation's easing does not match the initial animation-timing-function property.");
+    assert_equals(target.getAnimations()[0].effect.getTiming().easing, "linear", "The animation's easing does not match the initial animation-timing-function property.");
 
     target.style.animationTimingFunction = "ease-in";
-    assert_equals(target.getAnimations()[0].effect.timing.easing, "linear", "The animation's easing does not match the updated animation-timing-function property.");
+    assert_equals(target.getAnimations()[0].effect.getTiming().easing, "linear", "The animation's easing does not match the updated animation-timing-function property.");
 
     target.style.removeProperty("animation-timing-function");
-    assert_equals(target.getAnimations()[0].effect.timing.easing, "linear", "The animation's easing does not match the default animation-timing-function value when the property is not set.");
+    assert_equals(target.getAnimations()[0].effect.getTiming().easing, "linear", "The animation's easing does not match the default animation-timing-function value when the property is not set.");
 }, "Web Animations should not reflect the animation-timing-function property on the effect's timing.");
 
 function runAnimationCompletionTest(finalAssertionCallback, description)
@@ -220,7 +219,7 @@ function runAnimationCompletionTest(finalAssertionCallback, description)
 }
 
 runAnimationCompletionTest(animation => animation.finish(), "Calling finish() on the animation");
-runAnimationCompletionTest(animation => animation.currentTime = animation.effect.timing.duration, "Seeking the animation to its end time");
+runAnimationCompletionTest(animation => animation.currentTime = animation.effect.getTiming().duration, "Seeking the animation to its end time");
 runAnimationCompletionTest(animation => animation.effect.target.style.animationName = "none", "Setting the target's animation-name to none");
 runAnimationCompletionTest(animation => animation.effect.target.style.animationDuration = 0, "Setting the target's animation-duration to 0");
 

@@ -1,9 +1,0 @@
-
-PASS Has the default value 'normal' 
-PASS Can be set to each of the possible keywords 
-PASS Can be changed from 'normal' to 'reverse' while in progress 
-PASS Can be changed from 'normal' to 'reverse' while at start of active interval 
-PASS Can be changed from 'normal' to 'reverse' while filling backwards 
-PASS Can be changed from 'normal' to 'alternate' while in progress 
-PASS Can be changed from 'alternate' to 'alternate-reverse' while in progress 
-

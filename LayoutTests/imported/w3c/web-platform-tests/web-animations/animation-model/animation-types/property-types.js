@@ -893,6 +893,30 @@ const transformListType = {
     test(t => {
       const idlName = propertyToIDL(property);
       const target = createTestElement(t, setup);
+      const animation =
+        target.animate({ [idlName]: ['rotate(0deg)',
+                                     'rotate(1080deg) translateX(100px)'] },
+                       1000);
+
+      testAnimationSampleMatrices(animation, idlName,
+        [{ time: 500, expected: [ -1, 0, 0, -1, -50, 0 ] }]);
+    }, `${property}: extend shorter list (from)`);
+
+    test(t => {
+      const idlName = propertyToIDL(property);
+      const target = createTestElement(t, setup);
+      const animation =
+        target.animate({ [idlName]: ['rotate(0deg) translateX(100px)',
+                                     'rotate(1080deg)'] },
+                       1000);
+
+      testAnimationSampleMatrices(animation, idlName,
+        [{ time: 500, expected: [ -1, 0, 0, -1, -50, 0 ] }]);
+    }, `${property}: extend shorter list (to)`);
+
+    test(t => {
+      const idlName = propertyToIDL(property);
+      const target = createTestElement(t, setup);
       const animation =              // matrix(0, 1, -1, 0, 0, 100)
         target.animate({ [idlName]: ['rotate(90deg) translateX(100px)',
                                      // matrix(-1, 0, 0, -1, 200, 0)
@@ -1044,6 +1068,23 @@ const transformListType = {
           { time: 500,  expected: [  1, 1, 1,  1, 100, 100 ] },
           { time: 1000, expected: [  1, 1, 1,  1, 100, 100 ] }]);
     }, `${property}: non-invertible matrices in mismatched transform lists`);
+
+    test(t => {
+      const idlName = propertyToIDL(property);
+      const target = createTestElement(t, setup);
+      const animation = target.animate(
+        {
+          [idlName]: ['perspective(0)', 'perspective(10px)'],
+        },
+        1000
+      );
+      testAnimationSampleMatrices(animation, idlName,
+        [{ time: 500,  expected: [ 1, 0, 0, 0,
+                                   0, 1, 0, 0,
+                                   0, 0, 1, -0.05,
+                                   0, 0, 0, 1 ] }]);
+    }, `${property}: perspective`);
+
   },
 
   testAddition: function(property, setup) {
@@ -1164,6 +1205,30 @@ const transformListType = {
         [{ time: 0,    expected: [ 0, 1, -1, 0, 0, 100 ] },
          { time: 1000, expected: [ 0, 1, -1, 0, 0, 200 ] }]);
     }, `${property}: translate on rotate`);
+
+    test(t => {
+      const idlName = propertyToIDL(property);
+      const target = createTestElement(t, setup);
+      target.style[idlName] = 'rotate(45deg) translateX(100px)';
+      const animation = target.animate({ [idlName]: ['rotate(-90deg)',
+                                                     'rotate(90deg)'] },
+                                       { duration: 1000, fill: 'both',
+                                         composite: 'add' });
+
+      testAnimationSampleMatrices(animation, idlName,
+        [{ time: 0,    expected: [ Math.cos(-Math.PI / 4),
+                                   Math.sin(-Math.PI / 4),
+                                  -Math.sin(-Math.PI / 4),
+                                   Math.cos(-Math.PI / 4),
+                                   100 * Math.cos(Math.PI / 4),
+                                   100 * Math.sin(Math.PI / 4) ] },
+         { time: 1000, expected: [ Math.cos(Math.PI * 3 / 4),
+                                   Math.sin(Math.PI * 3 / 4),
+                                  -Math.sin(Math.PI * 3 / 4),
+                                   Math.cos(Math.PI * 3 / 4),
+                                   100 * Math.cos(Math.PI / 4),
+                                   100 * Math.sin(Math.PI / 4) ] }]);
+    }, `${property}: rotate on rotate and translate`);
 
     test(t => {
       const idlName = propertyToIDL(property);
@@ -1362,6 +1427,53 @@ const transformListType = {
         [{ time: 0,    expected: [ 0, 1, -1, 0, 100, 0 ] },
          { time: 1000, expected: [ 0, 1, -1, 0, 200, 0 ] }]);
     }, `${property}: translate on rotate`);
+
+    test(t => {
+      const idlName = propertyToIDL(property);
+      const target = createTestElement(t, setup);
+      target.style[idlName] = 'rotate(45deg)';
+      const animation =
+        target.animate({ [idlName]: ['rotate(45deg) translateX(0px)',
+                                     'rotate(45deg) translateX(100px)'] },
+                       { duration: 1000, fill: 'both', composite: 'accumulate' });
+
+      testAnimationSampleMatrices(animation, idlName,
+        [{ time: 0,    expected: [ Math.cos(Math.PI / 2),
+                                   Math.sin(Math.PI / 2),
+                                  -Math.sin(Math.PI / 2),
+                                   Math.cos(Math.PI / 2),
+                                   0 * Math.cos(Math.PI / 2),
+                                   0 * Math.sin(Math.PI / 2) ] },
+         { time: 1000, expected: [ Math.cos(Math.PI / 2),
+                                   Math.sin(Math.PI / 2),
+                                  -Math.sin(Math.PI / 2),
+                                   Math.cos(Math.PI / 2),
+                                   100 * Math.cos(Math.PI / 2),
+                                   100 * Math.sin(Math.PI / 2) ] }]);
+    }, `${property}: rotate and translate on rotate`);
+
+    test(t => {
+      const idlName = propertyToIDL(property);
+      const target = createTestElement(t, setup);
+      target.style[idlName] = 'rotate(45deg) translateX(100px)';
+      const animation =
+        target.animate({ [idlName]: ['rotate(45deg)', 'rotate(45deg)'] },
+                       { duration: 1000, fill: 'both', composite: 'accumulate' });
+
+      testAnimationSampleMatrices(animation, idlName,
+        [{ time: 0,    expected: [ Math.cos(Math.PI / 2),
+                                   Math.sin(Math.PI / 2),
+                                  -Math.sin(Math.PI / 2),
+                                   Math.cos(Math.PI / 2),
+                                   100 * Math.cos(Math.PI / 2),
+                                   100 * Math.sin(Math.PI / 2) ] },
+         { time: 1000, expected: [ Math.cos(Math.PI / 2),
+                                   Math.sin(Math.PI / 2),
+                                  -Math.sin(Math.PI / 2),
+                                   Math.cos(Math.PI / 2),
+                                   100 * Math.cos(Math.PI / 2),
+                                   100 * Math.sin(Math.PI / 2) ] }]);
+    }, `${property}: rotate on roate and translate`);
 
     test(t => {
       const idlName = propertyToIDL(property);
@@ -1580,6 +1692,382 @@ const transformListType = {
       ]);
     }, `${property}: non-invertible matrices in mismatched transform lists`
        + ' (invertible onto non-invertible)');
+  },
+};
+
+const rotateListType = {
+  testInterpolation: (property, setup) => {
+    test(t => {
+      const idlName = propertyToIDL(property);
+      const target = createTestElement(t, setup);
+      const animation = target.animate(
+        {
+          [idlName]: ['45deg', '135deg'],
+        },
+        1000
+      );
+
+      testAnimationSamples(animation, idlName,
+        [{ time: 500,  expected: '90deg' }]);
+    }, `${property} without rotation axes`);
+
+    test(t => {
+      const idlName = propertyToIDL(property);
+      const target = createTestElement(t, setup);
+      const animation =
+        target.animate({ [idlName]: [ '0 1 0 0deg',
+                                      '0 1 0 90deg'] },
+                       1000);
+
+      testAnimationSamples(animation, idlName,
+        [{ time: 500, expected: '0 1 0 45deg' }]);
+    }, `${property} with rotation axes`);
+
+    test(t => {
+      const idlName = propertyToIDL(property);
+      const target = createTestElement(t, setup);
+
+      const animation =
+        target.animate({ [idlName]: [ '0 1 0 0deg',
+                                      '0 1 0 720deg'] },
+                       1000);
+
+      testAnimationSamples(animation, idlName,
+        [{ time: 250, expected: '0 1 0 180deg' }]);
+    }, `${property} with rotation axes and range over 360 degrees`);
+
+    test(t => {
+      const idlName = propertyToIDL(property);
+      const target = createTestElement(t, setup);
+      const animation =
+        target.animate({ [idlName]: [ '0 1 0 0deg',
+                                      '0 1 1 90deg'] },
+                       1000);
+
+      testAnimationSampleRotate3d(animation, idlName,
+        [{ time: 500, expected: '0 0.707107 0.707107 45deg' }]);
+    }, `${property} with different rotation axes`);
+  },
+  testAddition: function(property, setup) {
+    test(t => {
+      const idlName = propertyToIDL(property);
+      const target = createTestElement(t, setup);
+      target.style[idlName] = '45deg';
+      const animation = target.animate({ [idlName]: ['-90deg', '90deg'] },
+                                       { duration: 1000, fill: 'both',
+                                         composite: 'add' });
+
+      testAnimationSamples(animation, idlName,
+        [{ time: 0,    expected: '-45deg' },
+         { time: 1000, expected: '135deg' }]);
+    }, `${property} without rotation axes`);
+
+    test(t => {
+      const idlName = propertyToIDL(property);
+      const target = createTestElement(t, setup);
+      // Rotation specified in transform property should not affect the computed
+      // value of |property|.
+      target.style.transform = 'rotate(20deg)';
+      target.style[idlName] = '0 1 0 -45deg';
+      const animation =
+        target.animate({ [idlName]: ['0 1 0 90deg',
+                                     '0 1 0 180deg'] },
+                       { duration: 1000, fill: 'both', composite: 'add' });
+
+      testAnimationSamples(animation, idlName,
+        [{ time: 0,    expected: '0 1 0 45deg' },
+         { time: 1000, expected: '0 1 0 135deg' }]);
+    }, `${property} with underlying transform`);
+
+    test(t => {
+      const idlName = propertyToIDL(property);
+      const target = createTestElement(t, setup);
+      const animation =
+        target.animate({ [idlName]: [ '0 1 0 0deg',
+                                      '1 1 1 270deg'] },
+                       { duration: 1000, fill: 'both', composite: 'add' });
+
+      testAnimationSampleRotate3d(animation, idlName,
+        [{ time: 500, expected: '0.57735 0.57735 0.57735 135deg' }]);
+    }, `${property} with different rotation axes`);
+  },
+  testAccumulation: function(property, setup) {
+    test(t => {
+      const idlName = propertyToIDL(property);
+      const target = createTestElement(t, setup);
+      target.style[idlName] = '45deg';
+      const animation = target.animate({ [idlName]: ['-90deg', '90deg'] },
+                                     { duration: 1000, fill: 'both',
+                                       composite: 'accumulate' });
+
+      testAnimationSamples(animation, idlName,
+        [{ time: 0,    expected: '-45deg' },
+         { time: 1000, expected: '135deg' }]);
+    }, `${property} without rotation axes`);
+
+    test(t => {
+      const idlName = propertyToIDL(property);
+      const target = createTestElement(t, setup);
+      target.style.transform = 'translateX(100px)';
+      target.style[idlName] = '1 0 0 -45deg';
+      const animation =
+        target.animate({ [idlName]: ['1 0 0 90deg',
+                                     '1 0 0 180deg'] },
+                       { duration: 1000, fill: 'both', composite: 'accumulate' });
+
+      testAnimationSamples(animation, idlName,
+        [{ time: 0,    expected: '1 0 0 45deg' },
+         { time: 1000, expected: '1 0 0 135deg' }]);
+    }, `${property} with underlying transform`);
+
+    test(t => {
+      const idlName = propertyToIDL(property);
+      const target = createTestElement(t, setup);
+      const animation =
+        target.animate({ [idlName]: [ '0 1 0 0deg',
+                                      '1 0 1 180deg'] },
+                       { duration: 1000, fill: 'both', composite: 'accumulate' });
+
+      testAnimationSampleRotate3d(animation, idlName,
+        [{ time: 500, expected: '0.707107 0 0.707107 90deg' }]);
+    }, `${property} with different rotation axes`);
+  },
+};
+
+const translateListType = {
+  testInterpolation: (property, setup) => {
+    test(t => {
+      const idlName = propertyToIDL(property);
+      const target = createTestElement(t, setup);
+      const animation = target.animate(
+        {
+          [idlName]: ['200px', '400px'],
+        },
+        1000
+      );
+      testAnimationSamples(animation, idlName,
+        [{ time: 500,  expected: '300px' }]);
+    }, `${property} with two unspecified values`);
+
+    test(t => {
+      const idlName = propertyToIDL(property);
+      const target = createTestElement(t, setup);
+      const animation = target.animate(
+        {
+          [idlName]: ['200px -200px', '400px 400px'],
+        },
+        1000
+      );
+      testAnimationSamples(animation, idlName,
+        [{ time: 500,  expected: '300px 100px' }]);
+    }, `${property} with one unspecified value`);
+
+    test(t => {
+      const idlName = propertyToIDL(property);
+      const target = createTestElement(t, setup);
+      const animation = target.animate(
+        {
+          [idlName]: ['200px -200px 600px', '400px 400px -200px'],
+        },
+        1000
+      );
+      testAnimationSamples(animation, idlName,
+        [{ time: 500,  expected: '300px 100px 200px' }]);
+    }, `${property} with all three values specified`);
+
+    test(t => {
+      const idlName = propertyToIDL(property);
+      const target = createTestElement(t, setup);
+      const animation = target.animate(
+        {
+          [idlName]: ['0% -101px 600px', '400px 50% -200px'],
+        },
+        1000
+      );
+      testAnimationSamples(animation, idlName,
+        [{ time: 500,  expected: '200px -25.5px 200px' }]);
+    }, `${property} with combination of percentages and lengths`);
+  },
+  testAddition: function(property, setup) {
+    test(t => {
+      const idlName = propertyToIDL(property);
+      const target = createTestElement(t, setup);
+      target.style[idlName] = '100px';
+      const animation = target.animate({ [idlName]: ['-200px', '500px'] },
+                                       { duration: 1000, fill: 'both',
+                                         composite: 'add' });
+      testAnimationSamples(animation, idlName,
+        [ { time: 0,    expected: '-100px' },
+          { time: 1000, expected: '600px' }]);
+
+    }, `${property}`);
+
+    test(t => {
+      const idlName = propertyToIDL(property);
+      const target = createTestElement(t, setup);
+      target.transform = 'translateY(100px)';
+      target.style[idlName] = '100px';
+      const animation = target.animate({ [idlName]: ['-200px', '500px'] },
+                                       { duration: 1000, fill: 'both',
+                                         composite: 'add' });
+      testAnimationSamples(animation, idlName,
+        [ { time: 0,    expected: '-100px' },
+          { time: 1000, expected: '600px' }]);
+
+    }, `${property} with underlying transform`);
+
+    test(t => {
+      const idlName = propertyToIDL(property);
+      const target = createTestElement(t, setup);
+      target.style[idlName] = '50%';
+      const animation = target.animate({ [idlName]: ['-200px', '500px'] },
+                                       { duration: 1000, fill: 'both',
+                                         composite: 'add' });
+      testAnimationSamples(animation, idlName,
+        [ { time: 0,    expected: '-150px' },
+          { time: 1000, expected: '550px' }]);
+
+    }, `${property} with underlying percentage value`);
+  },
+  testAccumulation: function(property, setup) {
+    test(t => {
+      const idlName = propertyToIDL(property);
+      const target = createTestElement(t, setup);
+      target.style[idlName] = '100px';
+      const animation = target.animate({ [idlName]: ['-200px', '500px'] },
+                                     { duration: 1000, fill: 'both',
+                                       composite: 'accumulate' });
+      testAnimationSamples(animation, idlName,
+        [ { time: 0,    expected: '-100px' },
+          { time: 1000, expected: '600px' }]);
+    }, `${property}`);
+
+    test(t => {
+      const idlName = propertyToIDL(property);
+      const target = createTestElement(t, setup);
+      target.transform = 'translateY(100px)';
+      target.style[idlName] = '100px';
+      const animation = target.animate({ [idlName]: ['-200px', '500px'] },
+                                     { duration: 1000, fill: 'both',
+                                       composite: 'accumulate' });
+      testAnimationSamples(animation, idlName,
+        [ { time: 0,    expected: '-100px' },
+          { time: 1000, expected: '600px' }]);
+    }, `${property} with transform`);
+  },
+};
+
+const scaleListType = {
+  testInterpolation: (property, setup) => {
+    test(t => {
+      const idlName = propertyToIDL(property);
+      const target = createTestElement(t, setup);
+      const animation = target.animate({ [idlName]: ['3', '5'] },
+                                       1000);
+
+      testAnimationSamples(animation, idlName,
+        [{ time: 500,  expected: '4' }]);
+    }, `${property} with two unspecified values`);
+
+    test(t => {
+      const idlName = propertyToIDL(property);
+      const target = createTestElement(t, setup);
+      const animation = target.animate({ [idlName]: ['3 3', '5 5'] },
+                                       1000);
+
+      testAnimationSamples(animation, idlName,
+        [{ time: 500,  expected: '4 4' }]);
+    }, `${property} with one unspecified value`);
+
+    test(t => {
+      const idlName = propertyToIDL(property);
+      const target = createTestElement(t, setup);
+      const animation = target.animate({ [idlName]: ['3 3 3', '5 5 5'] },
+                                       1000);
+
+      testAnimationSamples(animation, idlName,
+        [{ time: 500,  expected: '4 4 4' }]);
+    }, `${property}`);
+  },
+  testAddition: function(property, setup) {
+    test(t => {
+      const idlName = propertyToIDL(property);
+      const target = createTestElement(t, setup);
+      target.style[idlName] = '2';
+      const animation = target.animate({ [idlName]: ['-3', '5'] },
+                                       { duration: 1000, fill: 'both',
+                                         composite: 'add' });
+
+      testAnimationSamples(animation, idlName,
+        [{ time: 0,    expected: '-6' },
+         { time: 1000, expected: '10' }]);
+    }, `${property} with two unspecified values`);
+
+    test(t => {
+      const idlName = propertyToIDL(property);
+      const target = createTestElement(t, setup);
+      target.style[idlName] = '2 2';
+      const animation = target.animate({ [idlName]: ['-3 -3', '5 5'] },
+                                       { duration: 1000, fill: 'both',
+                                         composite: 'add' });
+
+      testAnimationSamples(animation, idlName,
+        [{ time: 0,    expected: '-6 -6' },
+         { time: 1000, expected: '10 10' }]);
+    }, `${property} with one unspecified value`);
+
+    test(t => {
+      const idlName = propertyToIDL(property);
+      const target = createTestElement(t, setup);
+      target.style[idlName] = '2 2 2';
+      const animation = target.animate({ [idlName]: ['-1 -2 -3', '4 5 6'] },
+                                       { duration: 1000, fill: 'both',
+                                         composite: 'add' });
+
+      testAnimationSamples(animation, idlName,
+        [{ time: 0,    expected: '-2 -4 -6' },
+         { time: 1000, expected: '8 10 12' }]);
+    }, `${property}`);
+  },
+  testAccumulation: function(property, setup) {
+    test(t => {
+      const idlName = propertyToIDL(property);
+      const target = createTestElement(t, setup);
+      target.style[idlName] = '2';
+      const animation = target.animate({ [idlName]: ['-3', '5'] },
+                                     { duration: 1000, fill: 'both',
+                                       composite: 'accumulate' });
+
+      testAnimationSamples(animation, idlName,
+        [{ time: 0,    expected: '-2' },
+         { time: 1000, expected: '6' }]);
+    }, `${property} with two unspecified values`);
+
+    test(t => {
+      const idlName = propertyToIDL(property);
+      const target = createTestElement(t, setup);
+      target.style[idlName] = '2 2';
+      const animation = target.animate({ [idlName]: ['-3 -3', '5 5'] },
+                                     { duration: 1000, fill: 'both',
+                                       composite: 'accumulate' });
+
+      testAnimationSamples(animation, idlName,
+        [{ time: 0,    expected: '-2 -2' },
+         { time: 1000, expected: '6 6' }]);
+    }, `${property} with one unspecified value`);
+
+    test(t => {
+      const idlName = propertyToIDL(property);
+      const target = createTestElement(t, setup);
+      target.style[idlName] = '2 2 2';
+      const animation = target.animate({ [idlName]: ['-1 -2 -3', '4 5 6'] },
+                                     { duration: 1000, fill: 'both',
+                                       composite: 'accumulate' });
+
+      testAnimationSamples(animation, idlName,
+        [{ time: 0,    expected: '0 -1 -2' },
+         { time: 1000, expected: '5 6 7' }]);
+    }, `${property}`);
   },
 };
 
@@ -2190,54 +2678,6 @@ const dasharrayType = {
   },
 }
 
-const fontStretchType = {
-  testInterpolation: (property, setup) => {
-    test(t => {
-      const idlName = propertyToIDL(property);
-      const target = createTestElement(t, setup);
-      const animation =
-        target.animate({ [idlName]: ['ultra-condensed', 'extra-condensed'] },
-                       { duration: 1000, fill: 'both' });
-      testAnimationSamples(animation, idlName,
-                           [{ time: 499,  expected: 'ultra-condensed' },
-                            { time: 500,  expected: 'extra-condensed' }]);
-    }, `${property} supports animating as a font-stretch (adjacent values)`);
-
-    test(t => {
-      const idlName = propertyToIDL(property);
-      const target = createTestElement(t, setup);
-      const animation =
-        target.animate({ [idlName]: ['ultra-condensed', 'condensed'] },
-                       { duration: 1000, fill: 'both' });
-      testAnimationSamples(animation, idlName,
-                           [{ time: 500,  expected: 'extra-condensed' }]);
-    }, `${property} supports animating as a font-stretch (between value)`);
-  },
-
-  testAdditionOrAccumulation: (property, setup, composite) => {
-    test(t => {
-      const idlName = propertyToIDL(property);
-      const target = createTestElement(t, setup);
-      target.style[idlName] = 'condensed';
-      const animation =
-        target.animate({ [idlName]: ['expanded', 'ultra-expanded'] },
-                       { duration: 1000, composite });
-      testAnimationSamples(animation, idlName,
-                           [{ time: 0, expected: 'normal' },
-                            { time: 250, expected: 'semi-expanded' }]);
-    },
-    `${property} uses font-stretch behavior for composite type ${composite}`);
-  },
-
-  testAddition: function(property, setup) {
-    this.testAdditionOrAccumulation(property, setup, 'add');
-  },
-
-  testAccumulation: function(property, setup) {
-    this.testAdditionOrAccumulation(property, setup, 'accumulate');
-  },
-}
-
 const fontVariationSettingsType = {
   testInterpolation: (property, setup) => {
     test(t => {
@@ -2316,12 +2756,14 @@ const types = {
   positiveNumber: positiveNumberType,
   opacity: opacityType,
   transformList: transformListType,
+  rotateList: rotateListType,
+  translateList: translateListType,
+  scaleList: scaleListType,
   visibility: visibilityType,
   boxShadowList: boxShadowListType,
   textShadowList: textShadowListType,
   rect: rectType,
   position: positionType,
   dasharray: dasharrayType,
-  fontStretch: fontStretchType,
   fontVariationSettings: fontVariationSettingsType,
 };

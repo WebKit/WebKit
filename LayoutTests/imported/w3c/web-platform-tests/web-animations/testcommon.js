@@ -29,7 +29,11 @@ if (!window.assert_times_equal) {
 // a time value based on its precision requirements with a fixed value.
 if (!window.assert_time_equals_literal) {
   window.assert_time_equals_literal = (actual, expected, description) => {
-    assert_approx_equals(actual, expected, TIME_PRECISION, description);
+    if (Math.abs(expected) === Infinity) {
+      assert_equals(actual, expected, description);
+    } else {
+      assert_approx_equals(actual, expected, TIME_PRECISION, description);
+    }
   }
 }
 
@@ -84,7 +88,7 @@ function createStyle(test, rules, doc) {
 }
 
 // Create a pseudo element
-function createPseudo(test, type) {
+function getPseudoElement(test, type) {
   createStyle(test, { '@keyframes anim': '',
                       [`.pseudo::${type}`]: 'animation: anim 10s; ' +
                                             'content: \'\';'  });
@@ -93,8 +97,6 @@ function createPseudo(test, type) {
   const anims = document.getAnimations();
   assert_true(anims.length >= 1);
   const anim = anims[anims.length - 1];
-  assert_equals(anim.effect.target.parentElement, div);
-  assert_equals(anim.effect.target.type, `::${type}`);
   anim.cancel();
   return anim.effect.target;
 }
@@ -211,7 +213,7 @@ function rotate3dToMatrix3d(x, y, z, radian) {
 }
 
 // Returns an array of the 4x4 matrix equivalent to 'rotate3d(x, y, z, radian)'.
-// https://www.w3.org/TR/css-transforms-1/#Rotate3dDefined
+// https://drafts.csswg.org/css-transforms-2/#Rotate3dDefined
 function rotate3dToMatrix(x, y, z, radian) {
   const sc = Math.sin(radian / 2) * Math.cos(radian / 2);
   const sq = Math.sin(radian / 2) * Math.sin(radian / 2);
@@ -259,6 +261,28 @@ function assert_matrix_equals(actual, expected, description) {
     `dimension of the matrix: ${description}`);
   for (let i = 0; i < actualMatrixArray.length; i++) {
     assert_approx_equals(actualMatrixArray[i], expectedMatrixArray[i], 0.0001,
+      `expected ${expected} but got ${actual}: ${description}`);
+  }
+}
+
+// Compare rotate3d vector like '0 1 0 45deg' with tolerances.
+function assert_rotate3d_equals(actual, expected, description) {
+  const rotationRegExp =/^((([+-]?\d+(\.+\d+)?\s){3})?\d+(\.+\d+)?)deg/;
+
+  assert_regexp_match(actual, rotationRegExp,
+    'Actual value is not a rotate3d vector')
+  assert_regexp_match(expected, rotationRegExp,
+    'Expected value is not a rotate3d vector');
+
+  const actualRotationVector =
+    actual.match(rotationRegExp)[1].split(' ').map(Number);
+  const expectedRotationVector =
+    expected.match(rotationRegExp)[1].split(' ').map(Number);
+
+  assert_equals(actualRotationVector.length, expectedRotationVector.length,
+    `dimension of the matrix: ${description}`);
+  for (let i = 0; i < actualRotationVector.length; i++) {
+    assert_approx_equals(actualRotationVector[i], expectedRotationVector[i], 0.0001,
       `expected ${expected} but got ${actual}: ${description}`);
   }
 }

@@ -1,0 +1,6 @@
+
+PASS Setting the current time of a pending animation to unresolved does not throw a TypeError 
+PASS Setting the current time of a playing animation to unresolved throws a TypeError 
+PASS Setting the current time of a paused animation to unresolved throws a TypeError 
+PASS Setting the current time of a pausing animation applies a pending playback rate 
+

@@ -1,9 +1,0 @@
-
-PASS Has the default value 1 
-PASS Can be set to a double value 
-PASS Can be set to infinity 
-PASS Throws when setting a negative number 
-PASS Throws when setting negative infinity 
-PASS Throws when setting a NaN value 
-PASS Can be updated while the animation is in progress 
-

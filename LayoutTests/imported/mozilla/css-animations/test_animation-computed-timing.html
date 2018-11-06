@@ -274,7 +274,7 @@ promise_test(function(t) {
 
 test(function(t) {
   var div = addDiv(t);
-  var effect = new KeyframeEffectReadOnly(div, {left: ["0px", "100px"]});
+  var effect = new KeyframeEffect(div, {left: ["0px", "100px"]});
 
   assert_equals(effect.getComputedTiming().localTime, null,
                 'localTime for orphaned effect');
@@ -555,7 +555,7 @@ test(function(t) {
 
 test(function(t) {
   var div = addDiv(t);
-  var effect = new KeyframeEffectReadOnly(div, {left: ["0px", "100px"]});
+  var effect = new KeyframeEffect(div, {left: ["0px", "100px"]});
 
   assert_equals(effect.getComputedTiming().currentIteration, null,
                 'currentIteration for orphaned effect');

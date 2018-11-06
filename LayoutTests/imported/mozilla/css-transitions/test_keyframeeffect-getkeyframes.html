@@ -39,16 +39,16 @@ test(function(t) {
   assert_equals(frames.length, 2, "number of frames");
 
   var expected = [
-    { offset: 0, computedOffset: 0, easing: "ease", composite: null,
+    { offset: 0, computedOffset: 0, easing: "ease", composite: "auto",
       left: "0px" },
-    { offset: 1, computedOffset: 1, easing: "linear", composite: null,
+    { offset: 1, computedOffset: 1, easing: "linear", composite: "auto",
       left: "100px" },
   ];
 
   for (var i = 0; i < frames.length; i++) {
     assert_frames_equal(frames[i], expected[i], "ComputedKeyframe #" + i);
   }
-}, 'KeyframeEffectReadOnly.getKeyframes() returns expected frames for a simple'
+}, 'KeyframeEffect.getKeyframes() returns expected frames for a simple'
    + ' transition');
 
 test(function(t) {
@@ -64,16 +64,16 @@ test(function(t) {
   assert_equals(frames.length, 2, "number of frames");
 
   var expected = [
-    { offset: 0, computedOffset: 0, easing: "steps(2)", composite: null,
+    { offset: 0, computedOffset: 0, easing: "steps(2)", composite: "auto",
       left: "0px" },
-    { offset: 1, computedOffset: 1, easing: "linear", composite: null,
+    { offset: 1, computedOffset: 1, easing: "linear", composite: "auto",
       left: "100px" },
   ];
 
   for (var i = 0; i < frames.length; i++) {
     assert_frames_equal(frames[i], expected[i], "ComputedKeyframe #" + i);
   }
-}, 'KeyframeEffectReadOnly.getKeyframes() returns expected frames for a simple'
+}, 'KeyframeEffect.getKeyframes() returns expected frames for a simple'
    + ' transition with a non-default easing function');
 
 test(function(t) {
@@ -88,15 +88,15 @@ test(function(t) {
   // CSS transition endpoints are based on the computed value so we
   // shouldn't see the variable reference
   var expected = [
-    { offset: 0, computedOffset: 0, easing: 'ease', composite: null,
+    { offset: 0, computedOffset: 0, easing: 'ease', composite: "auto",
       left: '0px' },
-    { offset: 1, computedOffset: 1, easing: 'linear', composite: null,
+    { offset: 1, computedOffset: 1, easing: 'linear', composite: "auto",
       left: '100px' },
   ];
   for (var i = 0; i < frames.length; i++) {
     assert_frames_equal(frames[i], expected[i], "ComputedKeyframe #" + i);
   }
-}, 'KeyframeEffectReadOnly.getKeyframes() returns expected frames for a'
+}, 'KeyframeEffect.getKeyframes() returns expected frames for a'
    + ' transition with a CSS variable endpoint');
 
 </script>

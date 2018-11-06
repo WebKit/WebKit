@@ -13,7 +13,13 @@ PASS non-animatable property 'transitionDelay' is not accessed when using a prop
 PASS non-animatable property 'transitionDuration' is not accessed when using a property-indexed keyframe object 
 PASS non-animatable property 'transitionProperty' is not accessed when using a property-indexed keyframe object 
 PASS non-animatable property 'transitionTimingFunction' is not accessed when using a property-indexed keyframe object 
+PASS non-animatable property 'contain' is not accessed when using a property-indexed keyframe object 
+PASS non-animatable property 'direction' is not accessed when using a property-indexed keyframe object 
 PASS non-animatable property 'display' is not accessed when using a property-indexed keyframe object 
+PASS non-animatable property 'textOrientation' is not accessed when using a property-indexed keyframe object 
+PASS non-animatable property 'unicodeBidi' is not accessed when using a property-indexed keyframe object 
+PASS non-animatable property 'willChange' is not accessed when using a property-indexed keyframe object 
+PASS non-animatable property 'writingMode' is not accessed when using a property-indexed keyframe object 
 PASS non-animatable property 'unsupportedProperty' is not accessed when using a property-indexed keyframe object 
 PASS non-animatable property 'font-size' is not accessed when using a property-indexed keyframe object 
 PASS non-animatable property 'animation' is not accessed when using a keyframe sequence 
@@ -30,7 +36,13 @@ PASS non-animatable property 'transitionDelay' is not accessed when using a keyf
 PASS non-animatable property 'transitionDuration' is not accessed when using a keyframe sequence 
 PASS non-animatable property 'transitionProperty' is not accessed when using a keyframe sequence 
 PASS non-animatable property 'transitionTimingFunction' is not accessed when using a keyframe sequence 
+PASS non-animatable property 'contain' is not accessed when using a keyframe sequence 
+PASS non-animatable property 'direction' is not accessed when using a keyframe sequence 
 PASS non-animatable property 'display' is not accessed when using a keyframe sequence 
+PASS non-animatable property 'textOrientation' is not accessed when using a keyframe sequence 
+PASS non-animatable property 'unicodeBidi' is not accessed when using a keyframe sequence 
+PASS non-animatable property 'willChange' is not accessed when using a keyframe sequence 
+PASS non-animatable property 'writingMode' is not accessed when using a keyframe sequence 
 PASS non-animatable property 'unsupportedProperty' is not accessed when using a keyframe sequence 
 PASS non-animatable property 'font-size' is not accessed when using a keyframe sequence 
 PASS Equivalent property-indexed and sequenced keyframes: two properties with one value 
@@ -42,8 +54,14 @@ PASS Keyframes are read from a custom iterator
 PASS 'easing' and 'offset' are ignored on iterable objects 
 PASS Keyframes are read from a custom iterator with multiple properties specified 
 PASS Keyframes are read from a custom iterator with where an offset is specified 
+PASS If a keyframe throws for an animatable property, that exception should be propagated 
 PASS Reading from a custom iterator that returns a non-object keyframe should throw 
+FAIL An undefined keyframe returned from a custom iterator should be treated as a default keyframe Type error
+FAIL A null keyframe returned from a custom iterator should be treated as a default keyframe Type error
 PASS A list of values returned from a custom iterator should be ignored 
+PASS If a custom iterator throws from next(), the exception should be rethrown 
+PASS Accessing a Symbol.iterator property that throws should rethrow 
+PASS A non-object returned from the Symbol.iterator property should cause a TypeError to be thrown 
 PASS Only enumerable properties on keyframes are read 
 PASS Only properties defined directly on keyframes are read 
 PASS Only enumerable properties on property-indexed keyframes are read 

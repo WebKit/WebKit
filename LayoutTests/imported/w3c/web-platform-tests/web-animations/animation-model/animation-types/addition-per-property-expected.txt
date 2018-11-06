@@ -1,4 +1,5 @@
 
+PASS Setup 
 PASS background-color (type: color) has testAddition function 
 FAIL background-color supports animating as color of rgb() with overflowed  from and to values assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
 FAIL background-color supports animating as color of #RGB assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
@@ -17,8 +18,8 @@ FAIL border-bottom-color supports animating as color of #RGBa assert_equals: The
 FAIL border-bottom-color supports animating as color of rgba() assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
 FAIL border-bottom-color supports animating as color of hsla() assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
 PASS border-bottom-width (type: length) has testAddition function 
-FAIL border-bottom-width: length assert_equals: The value should be 20px at 0ms expected "20px" but got "0px"
-FAIL border-bottom-width: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "0px"
+FAIL border-bottom-width: length assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
+FAIL border-bottom-width: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
 PASS border-image-outset (type: discrete) has testAddition function 
 PASS border-image-outset: "5 6 7 8" onto "1 2 3 4" 
 PASS border-image-outset: "1 2 3 4" onto "5 6 7 8" 
@@ -39,8 +40,8 @@ FAIL border-left-color supports animating as color of #RGBa assert_equals: The v
 FAIL border-left-color supports animating as color of rgba() assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
 FAIL border-left-color supports animating as color of hsla() assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
 PASS border-left-width (type: length) has testAddition function 
-FAIL border-left-width: length assert_equals: The value should be 20px at 0ms expected "20px" but got "0px"
-FAIL border-left-width: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "0px"
+FAIL border-left-width: length assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
+FAIL border-left-width: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
 PASS border-right-color (type: color) has testAddition function 
 FAIL border-right-color supports animating as color of rgb() with overflowed  from and to values assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
 FAIL border-right-color supports animating as color of #RGB assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
@@ -49,11 +50,11 @@ FAIL border-right-color supports animating as color of #RGBa assert_equals: The 
 FAIL border-right-color supports animating as color of rgba() assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
 FAIL border-right-color supports animating as color of hsla() assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
 PASS border-right-width (type: length) has testAddition function 
-FAIL border-right-width: length assert_equals: The value should be 20px at 0ms expected "20px" but got "0px"
-FAIL border-right-width: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "0px"
+FAIL border-right-width: length assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
+FAIL border-right-width: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
 PASS border-spacing (type: lengthPair) has testAddition function 
 FAIL border-spacing: length pair assert_equals: The value should be 20px 20px at 0ms expected "20px 20px" but got "10px 10px"
-FAIL border-spacing: length pair of rem assert_equals: The value should be 20px 20px at 0ms expected "20px 20px" but got "1px 1px"
+FAIL border-spacing: length pair of rem assert_equals: The value should be 20px 20px at 0ms expected "20px 20px" but got "10px 10px"
 PASS border-top-color (type: color) has testAddition function 
 FAIL border-top-color supports animating as color of rgb() with overflowed  from and to values assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
 FAIL border-top-color supports animating as color of #RGB assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
@@ -62,8 +63,8 @@ FAIL border-top-color supports animating as color of #RGBa assert_equals: The va
 FAIL border-top-color supports animating as color of rgba() assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
 FAIL border-top-color supports animating as color of hsla() assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
 PASS border-top-width (type: length) has testAddition function 
-FAIL border-top-width: length assert_equals: The value should be 20px at 0ms expected "20px" but got "0px"
-FAIL border-top-width: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "0px"
+FAIL border-top-width: length assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
+FAIL border-top-width: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
 PASS box-shadow (type: boxShadowList) has testAddition function 
 FAIL box-shadow: shadow assert_equals: The value should be rgb(0, 0, 0) 0px 0px 0px 0px, rgb(120, 120, 120) 10px 10px 10px 0px at 0ms expected "rgb(0, 0, 0) 0px 0px 0px 0px, rgb(120, 120, 120) 10px 10px 10px 0px" but got "rgb(120, 120, 120) 10px 10px 10px 0px"
 PASS caret-color (type: color) has testAddition function 
@@ -94,7 +95,7 @@ PASS column-count: "10" onto "auto"
 FAIL column-count: "auto" onto "10" assert_equals: The value should be auto at 0ms expected "auto" but got "0"
 PASS column-gap (type: length) has testAddition function 
 FAIL column-gap: length assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
-FAIL column-gap: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "1px"
+FAIL column-gap: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
 PASS column-gap (type: discrete) has testAddition function 
 PASS column-gap: "200px" onto "normal" 
 PASS column-gap: "normal" onto "200px" 
@@ -106,11 +107,11 @@ FAIL column-rule-color supports animating as color of #RGBa assert_equals: The v
 FAIL column-rule-color supports animating as color of rgba() assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
 FAIL column-rule-color supports animating as color of hsla() assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
 PASS column-rule-width (type: length) has testAddition function 
-FAIL column-rule-width: length assert_equals: The value should be 20px at 0ms expected "20px" but got "0px"
-FAIL column-rule-width: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "0px"
+FAIL column-rule-width: length assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
+FAIL column-rule-width: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
 PASS column-width (type: length) has testAddition function 
 FAIL column-width: length assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
-FAIL column-width: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "1px"
+FAIL column-width: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
 PASS column-width (type: discrete) has testAddition function 
 PASS column-width: "1px" onto "auto" 
 FAIL column-width: "auto" onto "1px" assert_equals: The value should be auto at 0ms expected "auto" but got "0px"
@@ -130,21 +131,21 @@ FAIL flood-color supports animating as color of hsla() assert_equals: The value 
 PASS flood-opacity (type: opacity) has testAddition function 
 FAIL flood-opacity: [0, 1] number assert_equals: The value should be 0.6 at 0ms expected "0.6" but got "0.30000001192092896"
 FAIL flood-opacity: [0, 1] number (clamped) assert_equals: The value should be 1 at 0ms expected "1" but got "0.30000001192092896"
-PASS font-stretch (type: fontStretch) has testAddition function 
-FAIL font-stretch uses font-stretch behavior for composite type add assert_equals: The value should be normal at 0ms expected "normal" but got "expanded"
+PASS font-stretch (type: percentage) has testAddition function 
+FAIL font-stretch: percentage assert_equals: The value should be 130% at 0ms expected "130%" but got "70%"
 PASS font-style (type: discrete) has testAddition function 
 PASS font-style: "oblique" onto "italic" 
-FAIL font-style: "italic" onto "oblique" assert_equals: The value should be italic at 0ms expected "italic" but got "oblique"
+PASS font-style: "italic" onto "oblique" 
 PASS font-variation-settings (type: fontVariationSettings) has testAddition function 
-FAIL font-variation-settings with composite type add assert_equals: The value should be "wght" 2.2 at 250ms expected "\"wght\" 2.2" but got "'wght' 1.2"
+FAIL font-variation-settings with composite type add assert_equals: The value should be "wght" 2.2 at 250ms expected "\"wght\" 2.2" but got "\"wght\" 1.2"
 PASS font-variation-settings (type: discrete) has testAddition function 
-FAIL font-variation-settings: ""wdth" 5" onto ""wght" 1.1, "wdth" 1" assert_equals: The value should be "wdth" 5 at 0ms expected "\"wdth\" 5" but got "'wdth' 5"
-FAIL font-variation-settings: ""wght" 1.1, "wdth" 1" onto ""wdth" 5" assert_equals: The value should be "wght" 1.1, "wdth" 1 at 0ms expected "\"wght\" 1.1, \"wdth\" 1" but got "'wght' 1.1, 'wdth' 1"
+PASS font-variation-settings: ""wdth" 5" onto ""wght" 1.1, "wdth" 1" 
+PASS font-variation-settings: ""wght" 1.1, "wdth" 1" onto ""wdth" 5" 
 PASS font-variation-settings: "normal" onto ""wdth" 5" 
-FAIL font-variation-settings: ""wdth" 5" onto "normal" assert_equals: The value should be "wdth" 5 at 0ms expected "\"wdth\" 5" but got "'wdth' 5"
+PASS font-variation-settings: ""wdth" 5" onto "normal" 
 PASS letter-spacing (type: length) has testAddition function 
 FAIL letter-spacing: length assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
-FAIL letter-spacing: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "1px"
+FAIL letter-spacing: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
 PASS lighting-color (type: color) has testAddition function 
 FAIL lighting-color supports animating as color of rgb() with overflowed  from and to values assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
 FAIL lighting-color supports animating as color of #RGB assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
@@ -166,11 +167,11 @@ PASS outline-offset (type: length) has testAddition function
 FAIL outline-offset: length assert_equals: The value should be 20px at 0ms expected "20px" but got "0px"
 FAIL outline-offset: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "0px"
 PASS outline-width (type: length) has testAddition function 
-FAIL outline-width: length assert_equals: The value should be 20px at 0ms expected "20px" but got "0px"
-FAIL outline-width: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "0px"
+FAIL outline-width: length assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
+FAIL outline-width: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
 PASS perspective (type: length) has testAddition function 
 FAIL perspective: length assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
-FAIL perspective: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "1px"
+FAIL perspective: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
 PASS shape-outside (type: discrete) has testAddition function 
 PASS shape-outside: "url("http://localhost/test-2")" onto "url("http://localhost/test-1")" 
 PASS shape-outside: "url("http://localhost/test-1")" onto "url("http://localhost/test-2")" 
@@ -203,6 +204,7 @@ FAIL transform: scale assert_approx_equals: expected matrix(-6,0,0,-6,0,0) but g
 FAIL transform: skew assert_approx_equals: expected matrix(1.064177772475912,0.5402972149746673,-0.40102328848116064,0.8981975702225738,0,0) but got matrix(1, 0.36397023426620234, -0.5773502691896256, 1, 0, 0): The value should be matrix(1.064177772475912,0.5402972149746673,-0.40102328848116064,0.8981975702225738,0,0) at 0ms but got matrix(1, 0.36397023426620234, -0.5773502691896256, 1, 0, 0) expected 1.064177772475912 +/- 0.0001 but got 1
 FAIL transform: rotate on translate assert_approx_equals: expected matrix(0,1,-1,0,100,0) but got matrix(0.00000000000000006123233995736766, 1, -1, 0.00000000000000006123233995736766, 0, 0): The value should be matrix(0,1,-1,0,100,0) at 0ms but got matrix(0.00000000000000006123233995736766, 1, -1, 0.00000000000000006123233995736766, 0, 0) expected 100 +/- 0.0001 but got 0
 FAIL transform: translate on rotate assert_approx_equals: expected matrix(0,1,-1,0,0,100) but got matrix(1, 0, 0, 1, 100, 0): The value should be matrix(0,1,-1,0,0,100) at 0ms but got matrix(1, 0, 0, 1, 100, 0) expected 0 +/- 0.0001 but got 1
+FAIL transform: rotate on rotate and translate assert_approx_equals: expected matrix(0.7071067811865476,-0.7071067811865475,0.7071067811865475,0.7071067811865476,70.71067811865476,70.71067811865474) but got matrix(0.00000000000000006123233995736766, -1, 1, 0.00000000000000006123233995736766, 0, 0): The value should be matrix(0.7071067811865476,-0.7071067811865475,0.7071067811865475,0.7071067811865476,70.71067811865476,70.71067811865474) at 0ms but got matrix(0.00000000000000006123233995736766, -1, 1, 0.00000000000000006123233995736766, 0, 0) expected 0.7071067811865476 +/- 0.0001 but got 6.123233995736766e-17
 FAIL transform: matrix assert_approx_equals: expected matrix(0,1,-1,0,0,100) but got matrix(1, -0.00000000000000024492935982947064, 0.00000000000000024492935982947064, 1, 100, 0): The value should be matrix(0,1,-1,0,0,100) at 0ms but got matrix(1, -0.00000000000000024492935982947064, 0.00000000000000024492935982947064, 1, 100, 0) expected 0 +/- 0.0001 but got 1
 FAIL transform: rotate3d assert_approx_equals: expected matrix3d(0.8535533905932737,0.1464466094067262,0.5,0,0.1464466094067262,0.8535533905932737,-0.5,0,-0.5,0.5,0.7071067811865476,0,0,0,0,1) but got matrix3d(0.4999999999999999, 0.49999999999999994, 0.7071067811865476, 0, 0.49999999999999994, 0.5000000000000001, -0.7071067811865475, 0, -0.7071067811865476, 0.7071067811865475, 0.00000000000000006123233995736766, 0, 0, 0, 0, 1): The value should be matrix3d(0.8535533905932737,0.1464466094067262,0.5,0,0.1464466094067262,0.8535533905932737,-0.5,0,-0.5,0.5,0.7071067811865476,0,0,0,0,1) at 0ms but got matrix3d(0.4999999999999999, 0.49999999999999994, 0.7071067811865476, 0, 0.49999999999999994, 0.5000000000000001, -0.7071067811865475, 0, -0.7071067811865476, 0.7071067811865475, 0.00000000000000006123233995736766, 0, 0, 0, 0, 1) expected 0.8535533905932737 +/- 0.0001 but got 0.4999999999999999
 FAIL transform: matrix3d assert_approx_equals: expected matrix3d(0.8535533905932737,0.1464466094067262,0.5,0,0.1464466094067262,0.8535533905932737,-0.5,0,-0.5,0.5,0.7071067811865476,0,0,0,0,1) but got matrix3d(0.5000000000000001, 0.49999999999999983, 0.7071067811865474, 0, 0.4999999999999997, 0.5000000000000002, -0.7071067811865476, 0, -0.7071067811865476, 0.7071067811865474, 0.000000000000000404259158300213, 0, 0, 0, 0, 1): The value should be matrix3d(0.8535533905932737,0.1464466094067262,0.5,0,0.1464466094067262,0.8535533905932737,-0.5,0,-0.5,0.5,0.7071067811865476,0,0,0,0,1) at 0ms but got matrix3d(0.5000000000000001, 0.49999999999999983, 0.7071067811865474, 0, 0.4999999999999997, 0.5000000000000002, -0.7071067811865476, 0, -0.7071067811865476, 0.7071067811865474, 0.000000000000000404259158300213, 0, 0, 0, 0, 1) expected 0.8535533905932737 +/- 0.0001 but got 0.5000000000000001
@@ -214,14 +216,14 @@ FAIL visibility: onto "visible" assert_equals: The value should be visible at 10
 PASS visibility: onto "hidden" 
 PASS word-spacing (type: lengthPercentageOrCalc) has testAddition function 
 FAIL word-spacing: length assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
-FAIL word-spacing: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "1px"
+FAIL word-spacing: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
 FAIL word-spacing: percentage assert_equals: The value should be 130% at 0ms expected "130%" but got "1.75px"
 FAIL word-spacing: units "%" onto "px" assert_equals: The value should be calc(10px + 10%) at 0ms expected "calc(10px + 10%)" but got "0.25px"
 FAIL word-spacing: units "px" onto "%" assert_equals: The value should be calc(10px + 10%) at 0ms expected "calc(10px + 10%)" but got "10px"
-FAIL word-spacing: units "rem" onto "%" assert_equals: The value should be calc(20px + 10%) at 0ms expected "calc(20px + 10%)" but got "2px"
+FAIL word-spacing: units "rem" onto "%" assert_equals: The value should be calc(20px + 10%) at 0ms expected "calc(20px + 10%)" but got "20px"
 FAIL word-spacing: units "%" onto "rem" assert_equals: The value should be calc(20px + 10%) at 0ms expected "calc(20px + 10%)" but got "0.25px"
-FAIL word-spacing: units "rem" onto "em" assert_equals: The value should be 40px at 0ms expected "40px" but got "2px"
-FAIL word-spacing: units "em" onto "rem" assert_equals: The value should be 40px at 0ms expected "40px" but got "0px"
-FAIL word-spacing: units "calc" onto "px" assert_equals: The value should be calc(30px + 20%) at 0ms expected "calc(30px + 20%)" but got "0px"
+FAIL word-spacing: units "rem" onto "em" assert_equals: The value should be 40px at 0ms expected "40px" but got "20px"
+FAIL word-spacing: units "em" onto "rem" assert_equals: The value should be 40px at 0ms expected "40px" but got "20px"
+FAIL word-spacing: units "calc" onto "px" assert_equals: The value should be calc(30px + 20%) at 0ms expected "calc(30px + 20%)" but got "10px"
 FAIL word-spacing: calc assert_equals: The value should be calc(30px + 30%) at 0ms expected "calc(30px + 30%)" but got "0px"
 

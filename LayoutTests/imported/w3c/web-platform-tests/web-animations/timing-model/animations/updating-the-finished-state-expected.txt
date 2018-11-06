@@ -19,10 +19,13 @@ PASS Updating the finished state when start time is unresolved and did seek = fa
 PASS Updating the finished state when start time is unresolved and did seek = true 
 PASS Finish notification steps don't run when the animation seeks to finish and then seeks back again 
 PASS Finish notification steps run when the animation completes normally 
+PASS Finish notification steps run when an animation without a target effect completes normally 
 PASS Finish notification steps run when the animation seeks past finish 
 PASS Finish notification steps run when the animation completes with .finish(), even if we then seek away 
 PASS Animation finished promise is replaced after seeking back to start 
 PASS Animation finished promise is replaced after replaying from start 
 TIMEOUT Animation finish event is fired again after seeking back to start Test timed out
 TIMEOUT Animation finish event is fired again after replaying from start Test timed out
+PASS finish event is not fired at the end of the active interval when the endDelay has not expired 
+PASS finish event is fired after the endDelay has expired 
 

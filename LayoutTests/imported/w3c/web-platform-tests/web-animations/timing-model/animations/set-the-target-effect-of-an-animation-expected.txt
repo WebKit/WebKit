@@ -1,7 +1,0 @@
-
-PASS If new effect is null and old effect is not null, we reset the pending tasks and ready promise is rejected 
-PASS If animation has a pending pause task, reschedule that task to run as soon as animation is ready. 
-PASS If animation has a pending play task, reschedule that task to run as soon as animation is ready to play new effect. 
-PASS When setting the effect of an animation to the effect of an existing animation, the existing animation's target effect should be set to null. 
-PASS After setting the target effect of animation to the target effect of an existing animation, the target effect's timing is updated to reflect the current time of the new animation. 
-

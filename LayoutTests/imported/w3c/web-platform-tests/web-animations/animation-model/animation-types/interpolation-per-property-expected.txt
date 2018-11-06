@@ -1,4 +1,5 @@
 
+PASS Setup 
 PASS background-color (type: color) has testInterpolation function 
 PASS background-color supports animating as color of rgb() 
 PASS background-color supports animating as color of #RGB 
@@ -18,8 +19,8 @@ PASS border-bottom-color supports animating as color of #RGBa
 PASS border-bottom-color supports animating as color of rgba() 
 PASS border-bottom-color supports animating as color of hsla() 
 PASS border-bottom-width (type: length) has testInterpolation function 
-FAIL border-bottom-width supports animating as a length assert_equals: The value should be 30px at 500ms expected "30px" but got "0px"
-FAIL border-bottom-width supports animating as a length of rem assert_equals: The value should be 30px at 500ms expected "30px" but got "0px"
+PASS border-bottom-width supports animating as a length 
+PASS border-bottom-width supports animating as a length of rem 
 PASS border-image-outset (type: discrete) has testInterpolation function 
 FAIL border-image-outset uses discrete animation when animating between "1 2 3 4" and "5 6 7 8" with linear easing assert_equals: The value should be 1 2 3 4 at 499ms expected "1 2 3 4" but got "2.996000051498413 3.996000051498413 4.995999813079834 5.995999813079834"
 FAIL border-image-outset uses discrete animation when animating between "1 2 3 4" and "5 6 7 8" with effect easing assert_equals: The value should be 1 2 3 4 at 940ms expected "1 2 3 4" but got "2.711512804031372 3.711512804031372 4.711513042449951 5.711513042449951"
@@ -44,8 +45,8 @@ PASS border-left-color supports animating as color of #RGBa
 PASS border-left-color supports animating as color of rgba() 
 PASS border-left-color supports animating as color of hsla() 
 PASS border-left-width (type: length) has testInterpolation function 
-FAIL border-left-width supports animating as a length assert_equals: The value should be 30px at 500ms expected "30px" but got "0px"
-FAIL border-left-width supports animating as a length of rem assert_equals: The value should be 30px at 500ms expected "30px" but got "0px"
+PASS border-left-width supports animating as a length 
+PASS border-left-width supports animating as a length of rem 
 PASS border-right-color (type: color) has testInterpolation function 
 PASS border-right-color supports animating as color of rgb() 
 PASS border-right-color supports animating as color of #RGB 
@@ -54,11 +55,11 @@ PASS border-right-color supports animating as color of #RGBa
 PASS border-right-color supports animating as color of rgba() 
 PASS border-right-color supports animating as color of hsla() 
 PASS border-right-width (type: length) has testInterpolation function 
-FAIL border-right-width supports animating as a length assert_equals: The value should be 30px at 500ms expected "30px" but got "0px"
-FAIL border-right-width supports animating as a length of rem assert_equals: The value should be 30px at 500ms expected "30px" but got "0px"
+PASS border-right-width supports animating as a length 
+PASS border-right-width supports animating as a length of rem 
 PASS border-spacing (type: lengthPair) has testInterpolation function 
 PASS border-spacing supports animating as a length pair 
-FAIL border-spacing supports animating as a length pair of rem assert_equals: The value should be 30px 30px at 500ms expected "30px 30px" but got "3px 3px"
+PASS border-spacing supports animating as a length pair of rem 
 PASS border-top-color (type: color) has testInterpolation function 
 PASS border-top-color supports animating as color of rgb() 
 PASS border-top-color supports animating as color of #RGB 
@@ -67,8 +68,8 @@ PASS border-top-color supports animating as color of #RGBa
 PASS border-top-color supports animating as color of rgba() 
 PASS border-top-color supports animating as color of hsla() 
 PASS border-top-width (type: length) has testInterpolation function 
-FAIL border-top-width supports animating as a length assert_equals: The value should be 30px at 500ms expected "30px" but got "0px"
-FAIL border-top-width supports animating as a length of rem assert_equals: The value should be 30px at 500ms expected "30px" but got "0px"
+PASS border-top-width supports animating as a length 
+PASS border-top-width supports animating as a length of rem 
 PASS box-shadow (type: boxShadowList) has testInterpolation function 
 FAIL box-shadow: from none to other assert_equals: The value should be rgba(100, 100, 100, 0.5) 5px 5px 5px 0px at 500ms expected "rgba(100, 100, 100, 0.5) 5px 5px 5px 0px" but got "rgba(100, 100, 100, 0.501961) 5px 5px 5px 0px"
 FAIL box-shadow: from other to none assert_equals: The value should be rgba(100, 100, 100, 0.5) 5px 5px 5px 0px at 500ms expected "rgba(100, 100, 100, 0.5) 5px 5px 5px 0px" but got "rgba(100, 100, 100, 0.501961) 5px 5px 5px 0px"
@@ -76,7 +77,7 @@ PASS box-shadow: single shadow
 PASS box-shadow: shadow list 
 FAIL box-shadow: mismatched list length (from shorter to longer) assert_equals: The value should be rgb(150, 150, 150) 15px 15px 15px 10px, rgba(100, 100, 100, 0.5) 5px 5px 5px 0px at 500ms expected "rgb(150, 150, 150) 15px 15px 15px 10px, rgba(100, 100, 100, 0.5) 5px 5px 5px 0px" but got "rgb(150, 150, 150) 15px 15px 15px 10px, rgba(100, 100, 100, 0.501961) 5px 5px 5px 0px"
 FAIL box-shadow: mismatched list length (from longer to shorter) assert_equals: The value should be rgb(150, 150, 150) 15px 15px 15px 10px, rgba(100, 100, 100, 0.5) 5px 5px 5px 0px at 500ms expected "rgb(150, 150, 150) 15px 15px 15px 10px, rgba(100, 100, 100, 0.5) 5px 5px 5px 0px" but got "rgb(150, 150, 150) 15px 15px 15px 10px, rgba(100, 100, 100, 0.501961) 5px 5px 5px 0px"
-FAIL box-shadow: with currentcolor assert_equals: The value should be rgb(0, 255, 0) 5px 5px 5px 5px at 500ms expected "rgb(0, 255, 0) 5px 5px 5px 5px" but got "rgb(0, 0, 0) 5px 5px 5px 5px"
+PASS box-shadow: with currentcolor 
 PASS caret-color (type: color) has testInterpolation function 
 PASS caret-color supports animating as color of rgb() 
 PASS caret-color supports animating as color of #RGB 
@@ -108,7 +109,7 @@ FAIL column-count uses discrete animation when animating between "auto" and "10"
 FAIL column-count uses discrete animation when animating between "auto" and "10" with keyframe easing assert_equals: The value should be auto at 0ms expected "auto" but got "0"
 PASS column-gap (type: length) has testInterpolation function 
 PASS column-gap supports animating as a length 
-FAIL column-gap supports animating as a length of rem assert_equals: The value should be 30px at 500ms expected "30px" but got "3px"
+PASS column-gap supports animating as a length of rem 
 PASS column-gap (type: discrete) has testInterpolation function 
 FAIL column-gap uses discrete animation when animating between "normal" and "200px" with linear easing assert_equals: The value should be normal at 0ms expected "normal" but got "200px"
 FAIL column-gap uses discrete animation when animating between "normal" and "200px" with effect easing assert_equals: The value should be normal at 0ms expected "normal" but got "200px"
@@ -121,11 +122,11 @@ PASS column-rule-color supports animating as color of #RGBa
 PASS column-rule-color supports animating as color of rgba() 
 PASS column-rule-color supports animating as color of hsla() 
 PASS column-rule-width (type: length) has testInterpolation function 
-FAIL column-rule-width supports animating as a length assert_equals: The value should be 30px at 500ms expected "30px" but got "0px"
-FAIL column-rule-width supports animating as a length of rem assert_equals: The value should be 30px at 500ms expected "30px" but got "0px"
+PASS column-rule-width supports animating as a length 
+PASS column-rule-width supports animating as a length of rem 
 PASS column-width (type: length) has testInterpolation function 
 PASS column-width supports animating as a length 
-FAIL column-width supports animating as a length of rem assert_equals: The value should be 30px at 500ms expected "30px" but got "3px"
+PASS column-width supports animating as a length of rem 
 PASS column-width (type: discrete) has testInterpolation function 
 FAIL column-width uses discrete animation when animating between "auto" and "1px" with linear easing assert_equals: The value should be auto at 0ms expected "auto" but got "0px"
 FAIL column-width uses discrete animation when animating between "auto" and "1px" with effect easing assert_equals: The value should be auto at 0ms expected "auto" but got "0px"
@@ -140,7 +141,7 @@ PASS filter: drop-shadow function
 FAIL filter: percentage or numeric-specifiable functions (number value) assert_equals: The value should be brightness(0.3) contrast(0.3) grayscale(0.3) invert(0.3) opacity(0.3) saturate(0.3) sepia(0.3) at 500ms expected "brightness(0.3) contrast(0.3) grayscale(0.3) invert(0.3) opacity(0.3) saturate(0.3) sepia(0.3)" but got "brightness(0.30000000000000004) contrast(0.30000000000000004) grayscale(0.30000000000000004) invert(0.30000000000000004) opacity(0.30000000000000004) saturate(0.30000000000000004) sepia(0.30000000000000004)"
 FAIL filter: percentage or numeric-specifiable functions (percentage value) assert_equals: The value should be brightness(0.3) contrast(0.3) grayscale(0.3) invert(0.3) opacity(0.3) saturate(0.3) sepia(0.3) at 500ms expected "brightness(0.3) contrast(0.3) grayscale(0.3) invert(0.3) opacity(0.3) saturate(0.3) sepia(0.3)" but got "brightness(0.30000000000000004) contrast(0.30000000000000004) grayscale(0.30000000000000004) invert(0.30000000000000004) opacity(0.30000000000000004) saturate(0.30000000000000004) sepia(0.30000000000000004)"
 FAIL filter: interpolate different length of filter-function-list with function which lacuna value is 1 assert_equals: The value should be grayscale(0.5) brightness(0.5) contrast(0.5) opacity(0.5) saturate(0.5) at 500ms expected "grayscale(0.5) brightness(0.5) contrast(0.5) opacity(0.5) saturate(0.5)" but got "grayscale(1) brightness(0) contrast(0) opacity(0) saturate(0)"
-FAIL filter: interpolate different length of filter-function-list with function which lacuna value is 0 assert_equals: The value should be opacity(0.5) grayscale(0.5) invert(0.5) sepia(0.5) blur(5px) at 500ms expected "opacity(0.5) grayscale(0.5) invert(0.5) sepia(0.5) blur(5px)" but got "opacity(0.25) grayscale(0.75) invert(0.75) sepia(0.75) blur(7.5px)"
+PASS filter: interpolate different length of filter-function-list with function which lacuna value is 0 
 FAIL filter: interpolate different length of filter-function-list with drop-shadow function assert_equals: The value should be blur(5px) drop-shadow(rgba(85, 0, 170, 0.6) 5px 5px 5px at 500ms expected "blur(5px) drop-shadow(rgba(85, 0, 170, 0.6) 5px 5px 5px" but got "blur(10px) drop-shadow(rgba(0, 0, 255, 0.8) 10px 10px 10px)"
 PASS filter: interpolate from none 
 FAIL filter: url function (interpoalte as discrete) assert_equals: The value should be blur(0px) url("#f1") at 499ms expected "blur(0px) url(\"#f1\")" but got "blur(4.989999771118164px) url(\"#f1\")"
@@ -153,16 +154,15 @@ PASS flood-color supports animating as color of rgba()
 PASS flood-color supports animating as color of hsla() 
 PASS flood-opacity (type: opacity) has testInterpolation function 
 FAIL flood-opacity supports animating as a [0, 1] number assert_equals: The value should be 0.55 at 500ms expected "0.55" but got "0.550000011920929"
-PASS font-stretch (type: fontStretch) has testInterpolation function 
-FAIL font-stretch supports animating as a font-stretch (adjacent values) assert_equals: The value should be ultra-condensed at 499ms expected "ultra-condensed" but got "56%"
-PASS font-stretch supports animating as a font-stretch (between value) 
+PASS font-stretch (type: percentage) has testInterpolation function 
+PASS font-stretch supports animating as a percentage 
 PASS font-style (type: discrete) has testInterpolation function 
-FAIL font-style uses discrete animation when animating between "italic" and "oblique" with linear easing assert_equals: The value should be italic at 0ms expected "italic" but got "oblique"
-FAIL font-style uses discrete animation when animating between "italic" and "oblique" with effect easing assert_equals: The value should be italic at 0ms expected "italic" but got "oblique"
-FAIL font-style uses discrete animation when animating between "italic" and "oblique" with keyframe easing assert_equals: The value should be italic at 0ms expected "italic" but got "oblique"
+PASS font-style uses discrete animation when animating between "italic" and "oblique" with linear easing 
+PASS font-style uses discrete animation when animating between "italic" and "oblique" with effect easing 
+PASS font-style uses discrete animation when animating between "italic" and "oblique" with keyframe easing 
 PASS font-variation-settings (type: fontVariationSettings) has testInterpolation function 
-FAIL font-variation-settings supports animation as float assert_equals: The value should be "wght" 1.1 at 0ms expected "\"wght\" 1.1" but got "'wght' 1.1"
-FAIL font-variation-settings supports animation as float with multiple tags assert_array_equals: The computed values should be "wdth" 1,"wght" 1.1 at 0ms property 0, expected "\"wdth\" 1" but got "'wdth' 1"
+PASS font-variation-settings supports animation as float 
+PASS font-variation-settings supports animation as float with multiple tags 
 FAIL font-variation-settings supports animation as float with multiple duplicate tags assert_array_equals: The computed values should be "wdth" 2,"wght" 1.2 at 250ms lengths differ, expected 2 got 1
 PASS font-variation-settings (type: discrete) has testInterpolation function 
 FAIL font-variation-settings uses discrete animation when animating between ""wght" 1.1, "wdth" 1" and ""wdth" 5" with linear easing assert_equals: The value should be "wght" 1.1, "wdth" 1 at 0ms expected "\"wght\" 1.1, \"wdth\" 1" but got "normal"
@@ -173,7 +173,7 @@ FAIL font-variation-settings uses discrete animation when animating between ""wd
 FAIL font-variation-settings uses discrete animation when animating between ""wdth" 5" and "normal" with keyframe easing assert_equals: The value should be "wdth" 5 at 0ms expected "\"wdth\" 5" but got "normal"
 PASS letter-spacing (type: length) has testInterpolation function 
 PASS letter-spacing supports animating as a length 
-FAIL letter-spacing supports animating as a length of rem assert_equals: The value should be 30px at 500ms expected "30px" but got "3px"
+PASS letter-spacing supports animating as a length of rem 
 PASS lighting-color (type: color) has testInterpolation function 
 PASS lighting-color supports animating as color of rgb() 
 PASS lighting-color supports animating as color of #RGB 
@@ -196,11 +196,11 @@ PASS outline-offset (type: length) has testInterpolation function
 FAIL outline-offset supports animating as a length assert_equals: The value should be 30px at 500ms expected "30px" but got "0px"
 FAIL outline-offset supports animating as a length of rem assert_equals: The value should be 30px at 500ms expected "30px" but got "0px"
 PASS outline-width (type: length) has testInterpolation function 
-FAIL outline-width supports animating as a length assert_equals: The value should be 30px at 500ms expected "30px" but got "0px"
-FAIL outline-width supports animating as a length of rem assert_equals: The value should be 30px at 500ms expected "30px" but got "0px"
+PASS outline-width supports animating as a length 
+PASS outline-width supports animating as a length of rem 
 PASS perspective (type: length) has testInterpolation function 
 PASS perspective supports animating as a length 
-FAIL perspective supports animating as a length of rem assert_equals: The value should be 30px at 500ms expected "30px" but got "3px"
+PASS perspective supports animating as a length of rem 
 PASS shape-outside (type: discrete) has testInterpolation function 
 FAIL shape-outside uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with linear easing assert_equals: The value should be url("http://localhost/test-1") at 0ms expected "url(\"http://localhost/test-1\")" but got "url(\"http://localhost/test-2\")"
 FAIL shape-outside uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with effect easing assert_equals: The value should be url("http://localhost/test-1") at 0ms expected "url(\"http://localhost/test-1\")" but got "url(\"http://localhost/test-2\")"
@@ -234,7 +234,7 @@ PASS text-shadow: single shadow
 PASS text-shadow: shadow list 
 FAIL text-shadow: mismatched list length (from longer to shorter) assert_equals: The value should be rgb(150, 150, 150) 15px 15px 15px, rgba(100, 100, 100, 0.5) 5px 5px 5px at 500ms expected "rgb(150, 150, 150) 15px 15px 15px, rgba(100, 100, 100, 0.5) 5px 5px 5px" but got "rgb(150, 150, 150) 15px 15px 15px, rgba(100, 100, 100, 0.501961) 5px 5px 5px"
 FAIL text-shadow: mismatched list length (from shorter to longer) assert_equals: The value should be rgb(150, 150, 150) 15px 15px 15px, rgba(100, 100, 100, 0.5) 5px 5px 5px at 500ms expected "rgb(150, 150, 150) 15px 15px 15px, rgba(100, 100, 100, 0.5) 5px 5px 5px" but got "rgb(150, 150, 150) 15px 15px 15px, rgba(100, 100, 100, 0.501961) 5px 5px 5px"
-FAIL text-shadow: with currentcolor assert_equals: The value should be rgb(0, 255, 0) 5px 5px 5px at 500ms expected "rgb(0, 255, 0) 5px 5px 5px" but got "rgb(0, 0, 0) 5px 5px 5px"
+PASS text-shadow: with currentcolor 
 PASS transform (type: transformList) has testInterpolation function 
 PASS transform: translate 
 PASS transform: rotate 
@@ -242,6 +242,8 @@ PASS transform: scale
 PASS transform: skew 
 PASS transform: rotate and translate 
 PASS transform: translate and rotate 
+FAIL transform: extend shorter list (from) assert_approx_equals: expected matrix(-1,0,0,-1,-50,0) but got matrix(1, -0.00000000000000036739403974420594, 0.00000000000000036739403974420594, 1, 50, -0.000000000000036739403974420595): The value should be matrix(-1,0,0,-1,-50,0) at 500ms but got matrix(1, -0.00000000000000036739403974420594, 0.00000000000000036739403974420594, 1, 50, -0.000000000000036739403974420595) expected -1 +/- 0.0001 but got 1
+FAIL transform: extend shorter list (to) assert_approx_equals: expected matrix(-1,0,0,-1,-50,0) but got matrix(1, -0.00000000000000036739403974420594, 0.00000000000000036739403974420594, 1, 50, 0): The value should be matrix(-1,0,0,-1,-50,0) at 500ms but got matrix(1, -0.00000000000000036739403974420594, 0.00000000000000036739403974420594, 1, 50, 0) expected -1 +/- 0.0001 but got 1
 PASS transform: mismatch order of translate and rotate 
 PASS transform: matrix 
 FAIL transform: rotate3d assert_approx_equals: expected matrix3d(0.8535533905932737,0.1464466094067262,-0.5,0,0.1464466094067262,0.8535533905932737,0.5,0,0.5,-0.5,0.7071067811865476,0,0,0,0,1) but got matrix3d(0.8660254037844386, 0.28867513459481287, -0.40824829046386296, 0, 0, 0.816496580927726, 0.5773502691896256, 0, 0.49999999999999994, -0.4999999999999999, 0.7071067811865476, 0, 0, 0, 0, 1): The value should be matrix3d(0.8535533905932737,0.1464466094067262,-0.5,0,0.1464466094067262,0.8535533905932737,0.5,0,0.5,-0.5,0.7071067811865476,0,0,0,0,1) at 500ms but got matrix3d(0.8660254037844386, 0.28867513459481287, -0.40824829046386296, 0, 0, 0.816496580927726, 0.5773502691896256, 0, 0.49999999999999994, -0.4999999999999999, 0.7071067811865476, 0, 0, 0, 0, 1) expected 0.8535533905932737 +/- 0.0001 but got 0.8660254037844386
@@ -251,6 +253,7 @@ PASS transform: rotateY
 FAIL transform: non-invertible matrices assert_approx_equals: expected matrix(-1,0,0,-1,200,0) but got matrix(-0.0706572801427673, 0.719997959550522, -0.39514637992795165, -0.26007870466007205, 87.65015, 62.44984999999999): The value should be matrix(-1,0,0,-1,200,0) at 499ms but got matrix(-0.0706572801427673, 0.719997959550522, -0.39514637992795165, -0.26007870466007205, 87.65015, 62.44984999999999) expected -1 +/- 0.0001 but got -0.0706572801427673
 FAIL transform: non-invertible matrices in matched transform lists assert_approx_equals: expected matrix(0,-1,1,0,250,0) but got matrix(-0.22996553737931208, -0.6925071587258891, 0.3290121037669934, -0.3263002137418429, 162.60014694824218, 62.44984999999999): The value should be matrix(0,-1,1,0,250,0) at 499ms but got matrix(-0.22996553737931208, -0.6925071587258891, 0.3290121037669934, -0.3263002137418429, 162.60014694824218, 62.44984999999999) expected 0 +/- 0.0001 but got -0.22996553737931208
 FAIL transform: non-invertible matrices in mismatched transform lists assert_approx_equals: expected matrix(-2,0,0,-2,250,0) but got matrix(0.457235039557905, 1.5761580466297944, -1.1176085646538838, -0.6572212090027189, 112.65025, 49.89999999999999): The value should be matrix(-2,0,0,-2,250,0) at 499ms but got matrix(0.457235039557905, 1.5761580466297944, -1.1176085646538838, -0.6572212090027189, 112.65025, 49.89999999999999) expected -2 +/- 0.0001 but got 0.457235039557905
+PASS transform: perspective 
 PASS visibility (type: visibility) has testInterpolation function 
 PASS visibility uses visibility animation when animating from "visible" to "hidden" 
 PASS visibility uses visibility animation when animating from "hidden" to "visible" 
@@ -258,11 +261,11 @@ FAIL visibility uses visibility animation when animating from "hidden" to "colla
 PASS visibility uses visibility animation when animating from "visible" to "hidden" with easeInOutBack easing 
 PASS word-spacing (type: lengthPercentageOrCalc) has testInterpolation function 
 PASS word-spacing supports animating as a length 
-FAIL word-spacing supports animating as a length of rem assert_equals: The value should be 30px at 500ms expected "30px" but got "3px"
+PASS word-spacing supports animating as a length of rem 
 FAIL word-spacing supports animating as a percentage assert_equals: The value should be 30% at 500ms expected "30%" but got "0.75px"
 FAIL word-spacing supports animating as combination units "px" and "%" assert_equals: The value should be calc(5px + 10%) at 500ms expected "calc(5px + 10%)" but got "3355448px"
-FAIL word-spacing supports animating as combination units "%" and "em" assert_equals: The value should be calc(10px + 5%) at 500ms expected "calc(10px + 5%)" but got "0.125px"
-FAIL word-spacing supports animating as combination units "em" and "rem" assert_equals: The value should be 15px at 500ms expected "15px" but got "1px"
+FAIL word-spacing supports animating as combination units "%" and "em" assert_equals: The value should be calc(10px + 5%) at 500ms expected "calc(10px + 5%)" but got "1677731.5px"
+PASS word-spacing supports animating as combination units "em" and "rem" 
 FAIL word-spacing supports animating as combination units "px" and "calc" assert_equals: The value should be calc(10px + 10%) at 500ms expected "calc(10px + 10%)" but got "0px"
 FAIL word-spacing supports animating as a calc assert_equals: The value should be calc(15px + 15%) at 500ms expected "calc(15px + 15%)" but got "0px"
 

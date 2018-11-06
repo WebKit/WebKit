@@ -43,7 +43,7 @@ test(function(t) {
   flushComputedStyle(div);
   div.classList.add('change');
   var pseudoTarget = document.getAnimations()[0].effect.target;
-  var effect = new KeyframeEffectReadOnly(pseudoTarget,
+  var effect = new KeyframeEffect(pseudoTarget,
                                           { background: ["blue", "red"] },
                                           3000);
   var newAnim = new Animation(effect, document.timeline);
@@ -57,7 +57,7 @@ test(function(t) {
   assert_equals(newAnim.effect.target, pseudoTarget,
                 'The effect.target of the scripted-generated animation is ' +
                 'the same as the one from the argument of ' +
-                'KeyframeEffectReadOnly constructor');
+                'KeyframeEffect constructor');
   assert_equals(anims[0].effect.target, newAnim.effect.target,
                 'Both the transition and the scripted-generated animation ' +
                 'return the same target object');

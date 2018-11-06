@@ -3,7 +3,6 @@ PASS Element.animate() creates an Animation object
 PASS Element.animate() creates an Animation object in the relevant realm of the target element 
 PASS Element.animate() creates an Animation object with a KeyframeEffect 
 PASS Element.animate() creates an Animation object with a KeyframeEffect that is created in the relevant realm of the target element 
-PASS Element.animate() creates an Animation object with a KeyframeEffect whose AnimationEffectTiming object is created in the relevant realm of the target element 
 PASS Element.animate() accepts empty keyframe lists (input: []) 
 PASS Element.animate() accepts empty keyframe lists (input: null) 
 PASS Element.animate() accepts empty keyframe lists (input: undefined) 
@@ -81,6 +80,22 @@ PASS Element.animate() does not accept a keyframe sequence with an invalid easin
 PASS Element.animate() does not accept property-indexed keyframes with an invalid composite value 
 PASS Element.animate() does not accept property-indexed keyframes with an invalid composite value as one of the array values 
 PASS Element.animate() does not accept keyframes with an invalid composite value 
+PASS Element.animate() accepts a double as an options argument 
+PASS Element.animate() accepts a KeyframeAnimationOptions argument 
+PASS Element.animate() accepts an absent options argument 
+PASS Element.animate() does not accept invalid delay value: NaN 
+PASS Element.animate() does not accept invalid delay value: Infinity 
+PASS Element.animate() does not accept invalid delay value: -Infinity 
+PASS Element.animate() accepts a duration of 'auto' using a dictionary object 
+PASS Element.animate() does not accept invalid duration value: -1 
+PASS Element.animate() does not accept invalid duration value: NaN 
+PASS Element.animate() does not accept invalid duration value: -Infinity 
+PASS Element.animate() does not accept invalid duration value: "abc" 
+PASS Element.animate() does not accept invalid duration value: -1 using a dictionary object 
+PASS Element.animate() does not accept invalid duration value: NaN using a dictionary object 
+PASS Element.animate() does not accept invalid duration value: -Infinity using a dictionary object 
+PASS Element.animate() does not accept invalid duration value: "abc" using a dictionary object 
+PASS Element.animate() does not accept invalid duration value: "100" using a dictionary object 
 PASS Element.animate() does not accept invalid easing: '' 
 PASS Element.animate() does not accept invalid easing: '7' 
 PASS Element.animate() does not accept invalid easing: 'test' 
@@ -110,14 +125,18 @@ PASS Element.animate() does not accept invalid easing: 'frames(a)'
 PASS Element.animate() does not accept invalid easing: 'frames(2.0)' 
 PASS Element.animate() does not accept invalid easing: 'frames(2.5)' 
 PASS Element.animate() does not accept invalid easing: 'frames(2 3)' 
-PASS Element.animate() accepts a double as an options argument 
-PASS Element.animate() accepts a KeyframeAnimationOptions argument 
-PASS Element.animate() accepts an absent options argument 
+PASS Element.animate() does not accept invalid iterationStart value: -1 
+PASS Element.animate() does not accept invalid iterationStart value: NaN 
+PASS Element.animate() does not accept invalid iterationStart value: Infinity 
+PASS Element.animate() does not accept invalid iterationStart value: -Infinity 
+PASS Element.animate() does not accept invalid iterations value: -1 
+PASS Element.animate() does not accept invalid iterations value: -Infinity 
+PASS Element.animate() does not accept invalid iterations value: NaN 
 PASS Element.animate() correctly sets the id attribute when no id is specified 
 PASS Element.animate() correctly sets the id attribute 
 PASS Element.animate() correctly sets the Animation's timeline 
 PASS Element.animate() correctly sets the Animation's timeline when triggered on an element in a different document 
 PASS Element.animate() calls play on the Animation 
-FAIL CSSPseudoElement.animate() creates an Animation object assert_equals: expected Element node <div class="pseudo"></div> but got null
-FAIL CSSPseudoElement.animate() creates an Animation object targeting to the correct CSSPseudoElement object assert_equals: expected Element node <div class="pseudo"></div> but got null
+PASS CSSPseudoElement.animate() creates an Animation object 
+PASS CSSPseudoElement.animate() creates an Animation object targeting to the correct CSSPseudoElement object 
 

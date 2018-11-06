@@ -1,0 +1,8 @@
+
+PASS Fires cancel event before requestAnimationFrame 
+PASS Fires finish event before requestAnimationFrame 
+FAIL Sorts finish events by composite order assert_array_equals: finish events for various animation type should be sorted by composite order property 0, expected "CSSTransition:finish" but got "ScriptAnimation:finish"
+FAIL Sorts cancel events by composite order assert_array_equals: cancel events should be sorted by composite order lengths differ, expected 5 got 3
+FAIL Sorts events for the same transition assert_array_equals: Playback and CSS events for the same transition should be sorted by schedule event time and composite order lengths differ, expected 2 got 1
+PASS Playback events with the same timeline retain the order in which they arequeued 
+

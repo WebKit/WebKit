@@ -1,7 +1,0 @@
-
-PASS Has the default value 'auto' 
-PASS Can set fill to none 
-PASS Can set fill to forwards 
-PASS Can set fill to backwards 
-PASS Can set fill to both 
-

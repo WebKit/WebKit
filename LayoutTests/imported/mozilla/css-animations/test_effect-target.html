@@ -39,7 +39,7 @@ test(function(t) {
   addStyle(t, { '.after::after': 'animation: anim 10s;' });
   var div = addDiv(t, { class: 'after' });
   var pseudoTarget = document.getAnimations()[0].effect.target;
-  var effect = new KeyframeEffectReadOnly(pseudoTarget,
+  var effect = new KeyframeEffect(pseudoTarget,
                                           { background: ["blue", "red"] },
                                           3 * MS_PER_SEC);
   var newAnim = new Animation(effect, document.timeline);
@@ -52,7 +52,7 @@ test(function(t) {
   assert_equals(newAnim.effect.target, pseudoTarget,
                 'The effect.target of the scripted-generated animation is ' +
                 'the same as the one from the argument of ' +
-                'KeyframeEffectReadOnly constructor');
+                'KeyframeEffect constructor');
   assert_equals(anims[0].effect.target, newAnim.effect.target,
                 'Both animations return the same target object');
 }, 'effect.target from the script-generated animation should return the same ' +

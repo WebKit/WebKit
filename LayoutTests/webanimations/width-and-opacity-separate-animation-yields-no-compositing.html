@@ -7,14 +7,14 @@ const opacityAnimation = new Animation(new KeyframeEffect(document.getElementByI
     { opacity: 0 }
 ]));
 opacityAnimation.startTime = 0;
-opacityAnimation.effect.timing.duration = 1000;
+opacityAnimation.effect.updateTiming({ duration : 1000 });
 
 const widthAnimation = new Animation(new KeyframeEffect(document.getElementById("target"), [
     { width: "100px" },
     { width: "200px" }
 ]));
 widthAnimation.startTime = 0;
-widthAnimation.effect.timing.duration = 1000;
+widthAnimation.effect.updateTiming({ duration : 1000 });
 
 testRunner.dumpAsText();
 document.getElementById("results").innerText = internals.layerTreeAsText(document);

@@ -1,3 +1,123 @@
+2018-11-06  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Update all tests to match the latest API changes
+        https://bugs.webkit.org/show_bug.cgi?id=191302
+        <rdar://problem/41000438>
+
+        Reviewed by Dean Jackson.
+
+        * web-platform-tests/css-timing-1/cubic-bezier-timing-functions-output.html:
+        * web-platform-tests/web-animations/META.yml: Added.
+        * web-platform-tests/web-animations/README.md: Added.
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property.html:
+        * web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/addition-per-property.html:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property.html:
+        * web-platform-tests/web-animations/animation-model/animation-types/property-list.js:
+        * web-platform-tests/web-animations/animation-model/animation-types/property-types.js:
+        * web-platform-tests/web-animations/animation-model/combining-effects/applying-the-composited-result-expected.txt: Added.
+        * web-platform-tests/web-animations/animation-model/combining-effects/applying-the-composited-result.html: Added.
+        * web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-interval-distance-expected.txt: Added.
+        * web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-interval-distance.html: Added.
+        * web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-iteration-composite-operation.html:
+        * web-platform-tests/web-animations/interfaces/Animatable/animate-expected.txt:
+        * web-platform-tests/web-animations/interfaces/Animatable/animate.html:
+        * web-platform-tests/web-animations/interfaces/Animatable/getAnimations.html:
+        * web-platform-tests/web-animations/interfaces/Animation/cancel.html:
+        * web-platform-tests/web-animations/interfaces/Animation/constructor.html:
+        * web-platform-tests/web-animations/interfaces/Animation/effect.html:
+        * web-platform-tests/web-animations/interfaces/Animation/finish-expected.txt: Removed.
+        * web-platform-tests/web-animations/interfaces/Animation/finish.html: Removed.
+        * web-platform-tests/web-animations/interfaces/Animation/finished.html:
+        * web-platform-tests/web-animations/interfaces/Animation/idlharness-expected.txt: Removed.
+        * web-platform-tests/web-animations/interfaces/Animation/idlharness.html: Removed.
+        * web-platform-tests/web-animations/interfaces/Animation/idlharness.window.js: Added.
+        * web-platform-tests/web-animations/interfaces/Animation/onfinish.html:
+        * web-platform-tests/web-animations/interfaces/Animation/playbackRate-expected.txt: Removed.
+        * web-platform-tests/web-animations/interfaces/Animation/playbackRate.html: Removed.
+        * web-platform-tests/web-animations/interfaces/Animation/ready.html:
+        * web-platform-tests/web-animations/interfaces/AnimationEffect/getComputedTiming-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/AnimationEffectTiming/getComputedTiming-expected.txt.
+        * web-platform-tests/web-animations/interfaces/AnimationEffect/getComputedTiming.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/AnimationEffectTiming/getComputedTiming.html.
+        * web-platform-tests/web-animations/interfaces/AnimationEffect/updateTiming-expected.txt: Added.
+        * web-platform-tests/web-animations/interfaces/AnimationEffect/updateTiming.html: Added.
+        * web-platform-tests/web-animations/interfaces/AnimationEffectTiming/delay-expected.txt: Removed.
+        * web-platform-tests/web-animations/interfaces/AnimationEffectTiming/delay.html: Removed.
+        * web-platform-tests/web-animations/interfaces/AnimationEffectTiming/direction-expected.txt: Removed.
+        * web-platform-tests/web-animations/interfaces/AnimationEffectTiming/direction.html: Removed.
+        * web-platform-tests/web-animations/interfaces/AnimationEffectTiming/duration-expected.txt: Removed.
+        * web-platform-tests/web-animations/interfaces/AnimationEffectTiming/duration.html: Removed.
+        * web-platform-tests/web-animations/interfaces/AnimationEffectTiming/easing-expected.txt: Removed.
+        * web-platform-tests/web-animations/interfaces/AnimationEffectTiming/easing.html: Removed.
+        * web-platform-tests/web-animations/interfaces/AnimationEffectTiming/endDelay-expected.txt: Removed.
+        * web-platform-tests/web-animations/interfaces/AnimationEffectTiming/endDelay.html: Removed.
+        * web-platform-tests/web-animations/interfaces/AnimationEffectTiming/fill-expected.txt: Removed.
+        * web-platform-tests/web-animations/interfaces/AnimationEffectTiming/fill.html: Removed.
+        * web-platform-tests/web-animations/interfaces/AnimationEffectTiming/idlharness-expected.txt: Removed.
+        * web-platform-tests/web-animations/interfaces/AnimationEffectTiming/idlharness.html: Removed.
+        * web-platform-tests/web-animations/interfaces/AnimationEffectTiming/iterationStart-expected.txt: Removed.
+        * web-platform-tests/web-animations/interfaces/AnimationEffectTiming/iterationStart.html: Removed.
+        * web-platform-tests/web-animations/interfaces/AnimationEffectTiming/iterations-expected.txt: Removed.
+        * web-platform-tests/web-animations/interfaces/AnimationEffectTiming/iterations.html: Removed.
+        * web-platform-tests/web-animations/interfaces/AnimationPlaybackEvent/idlharness-expected.txt: Removed.
+        * web-platform-tests/web-animations/interfaces/AnimationPlaybackEvent/idlharness.html: Removed.
+        * web-platform-tests/web-animations/interfaces/AnimationPlaybackEvent/idlharness.window.js: Added.
+        * web-platform-tests/web-animations/interfaces/Document/getAnimations-expected.txt:
+        * web-platform-tests/web-animations/interfaces/Document/getAnimations.html:
+        * web-platform-tests/web-animations/interfaces/DocumentTimeline/idlharness-expected.txt: Removed.
+        * web-platform-tests/web-animations/interfaces/DocumentTimeline/idlharness.html: Removed.
+        * web-platform-tests/web-animations/interfaces/DocumentTimeline/idlharness.window.js: Added.
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/composite.html:
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/constructor-expected.txt:
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/constructor.html:
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/copy-constructor-expected.txt:
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/copy-constructor.html:
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/idlharness-expected.txt: Removed.
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/idlharness.html: Removed.
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/idlharness.window.js: Added.
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/iterationComposite.html:
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/processing-a-keyframes-argument-001-expected.txt:
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/processing-a-keyframes-argument-001.html:
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/setKeyframes-expected.txt:
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/setKeyframes.html:
+        * web-platform-tests/web-animations/resources/keyframe-tests.js:
+        * web-platform-tests/web-animations/resources/timing-tests.js: Added.
+        * web-platform-tests/web-animations/resources/timing-utils.js: Added.
+        * web-platform-tests/web-animations/testcommon.js:
+        * web-platform-tests/web-animations/timing-model/animation-effects/phases-and-states.html:
+        * web-platform-tests/web-animations/timing-model/animations/canceling-an-animation-expected.txt:
+        * web-platform-tests/web-animations/timing-model/animations/canceling-an-animation.html:
+        * web-platform-tests/web-animations/timing-model/animations/finishing-an-animation-expected.txt:
+        * web-platform-tests/web-animations/timing-model/animations/finishing-an-animation.html:
+        * web-platform-tests/web-animations/timing-model/animations/pausing-an-animation-expected.txt:
+        * web-platform-tests/web-animations/timing-model/animations/pausing-an-animation.html:
+        * web-platform-tests/web-animations/timing-model/animations/play-states-expected.txt:
+        * web-platform-tests/web-animations/timing-model/animations/play-states.html:
+        * web-platform-tests/web-animations/timing-model/animations/playing-an-animation-expected.txt:
+        * web-platform-tests/web-animations/timing-model/animations/playing-an-animation.html:
+        * web-platform-tests/web-animations/timing-model/animations/reversing-an-animation-expected.txt:
+        * web-platform-tests/web-animations/timing-model/animations/reversing-an-animation.html:
+        * web-platform-tests/web-animations/timing-model/animations/seamlessly-updating-the-playback-rate-of-an-animation-expected.txt: Added.
+        * web-platform-tests/web-animations/timing-model/animations/seamlessly-updating-the-playback-rate-of-an-animation.html: Added.
+        * web-platform-tests/web-animations/timing-model/animations/setting-the-current-time-of-an-animation-expected.txt: Added.
+        * web-platform-tests/web-animations/timing-model/animations/setting-the-current-time-of-an-animation.html: Added.
+        * web-platform-tests/web-animations/timing-model/animations/setting-the-playback-rate-of-an-animation-expected.txt: Added.
+        * web-platform-tests/web-animations/timing-model/animations/setting-the-playback-rate-of-an-animation.html: Added.
+        * web-platform-tests/web-animations/timing-model/animations/setting-the-start-time-of-an-animation-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/web-animations/timing-model/animations/set-the-animation-start-time-expected.txt.
+        * web-platform-tests/web-animations/timing-model/animations/setting-the-start-time-of-an-animation.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/web-animations/timing-model/animations/set-the-animation-start-time.html.
+        * web-platform-tests/web-animations/timing-model/animations/setting-the-target-effect-of-an-animation-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/web-animations/timing-model/animations/set-the-target-effect-of-an-animation-expected.txt.
+        * web-platform-tests/web-animations/timing-model/animations/setting-the-target-effect-of-an-animation.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/web-animations/timing-model/animations/set-the-target-effect-of-an-animation.html.
+        * web-platform-tests/web-animations/timing-model/animations/setting-the-timeline-of-an-animation-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/web-animations/timing-model/animations/set-the-timeline-of-an-animation-expected.txt.
+        * web-platform-tests/web-animations/timing-model/animations/setting-the-timeline-of-an-animation.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/web-animations/timing-model/animations/set-the-timeline-of-an-animation.html.
+        * web-platform-tests/web-animations/timing-model/animations/the-current-time-of-an-animation-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/web-animations/timing-model/animations/current-time-expected.txt.
+        * web-platform-tests/web-animations/timing-model/animations/the-current-time-of-an-animation.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/web-animations/timing-model/animations/current-time.html.
+        * web-platform-tests/web-animations/timing-model/animations/updating-the-finished-state-expected.txt:
+        * web-platform-tests/web-animations/timing-model/animations/updating-the-finished-state.html:
+        * web-platform-tests/web-animations/timing-model/timelines/document-timelines.html:
+        * web-platform-tests/web-animations/timing-model/timelines/update-and-send-events-expected.txt: Added.
+        * web-platform-tests/web-animations/timing-model/timelines/update-and-send-events.html: Added.
+
 2018-11-06  Rob Buis  <rbuis@igalia.com>
 
         Some minor X-Content-Type-Options parsing issues
