@@ -32,7 +32,7 @@
 
 namespace WebCore {
     
-int computeUnderlineOffset(OptionSet<TextUnderlinePosition> underlinePosition, const FontMetrics& fontMetrics, const InlineTextBox* inlineTextBox, int textDecorationThickness)
+int computeUnderlineOffset(TextUnderlinePosition underlinePosition, const FontMetrics& fontMetrics, const InlineTextBox* inlineTextBox, int textDecorationThickness)
 {
     // This represents the gap between the baseline and the closest edge of the underline.
     int gap = std::max<int>(1, ceilf(textDecorationThickness / 2.0));
@@ -50,13 +50,14 @@ int computeUnderlineOffset(OptionSet<TextUnderlinePosition> underlinePosition, c
     auto resolvedUnderlinePosition = underlinePosition;
     if (resolvedUnderlinePosition == TextUnderlinePosition::Auto) {
         if (inlineTextBox)
-            resolvedUnderlinePosition = inlineTextBox->root().baselineType() == IdeographicBaseline ? TextUnderlinePosition::Under : TextUnderlinePosition::Alphabetic;
+            resolvedUnderlinePosition = inlineTextBox->root().baselineType() == IdeographicBaseline ? TextUnderlinePosition::Under : TextUnderlinePosition::Auto;
         else
-            resolvedUnderlinePosition = TextUnderlinePosition::Alphabetic;
+            resolvedUnderlinePosition = TextUnderlinePosition::Auto;
     }
     
-    switch (static_cast<TextUnderlinePosition>(resolvedUnderlinePosition.toRaw())) {
-    case TextUnderlinePosition::Alphabetic:
+    switch (resolvedUnderlinePosition) {
+    case TextUnderlinePosition::Auto:
+    case TextUnderlinePosition::FromFont:
         return fontMetrics.ascent() + gap;
     case TextUnderlinePosition::Under: {
         ASSERT(inlineTextBox);
@@ -76,8 +77,6 @@ int computeUnderlineOffset(OptionSet<TextUnderlinePosition> underlinePosition, c
         }
         return inlineTextBox->logicalHeight() + gap + std::max<float>(offset, 0);
     }
-    case TextUnderlinePosition::Auto:
-        ASSERT_NOT_REACHED();
     }
 
     ASSERT_NOT_REACHED();

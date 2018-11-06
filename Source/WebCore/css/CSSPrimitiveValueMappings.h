@@ -2636,42 +2636,41 @@ template<> inline CSSPrimitiveValue::operator TextDecorationStyle() const
     return TextDecorationStyle::Solid;
 }
 
-template<> inline CSSPrimitiveValue::CSSPrimitiveValue(OptionSet<TextUnderlinePosition> e)
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextUnderlinePosition position)
     : CSSValue(PrimitiveClass)
 {
     m_primitiveUnitType = CSS_VALUE_ID;
-    switch (static_cast<TextUnderlinePosition>(e.toRaw())) {
+    switch (position) {
     case TextUnderlinePosition::Auto:
         m_value.valueID = CSSValueAuto;
         break;
-    case TextUnderlinePosition::Alphabetic:
-        m_value.valueID = CSSValueAlphabetic;
-        break;
     case TextUnderlinePosition::Under:
         m_value.valueID = CSSValueUnder;
+        break;
+    case TextUnderlinePosition::FromFont:
+        m_value.valueID = CSSValueFromFont;
         break;
     }
 
     // FIXME: Implement support for 'under left' and 'under right' values.
 }
 
-template<> inline CSSPrimitiveValue::operator OptionSet<TextUnderlinePosition>() const
+template<> inline CSSPrimitiveValue::operator TextUnderlinePosition() const
 {
     ASSERT(isValueID());
 
     switch (m_value.valueID) {
     case CSSValueAuto:
         return TextUnderlinePosition::Auto;
-    case CSSValueAlphabetic:
-        return TextUnderlinePosition::Alphabetic;
     case CSSValueUnder:
         return TextUnderlinePosition::Under;
+    case CSSValueFromFont:
+        return TextUnderlinePosition::FromFont;
     default:
         break;
     }
 
     // FIXME: Implement support for 'under left' and 'under right' values.
-
     ASSERT_NOT_REACHED();
     return TextUnderlinePosition::Auto;
 }

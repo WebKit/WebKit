@@ -1175,7 +1175,9 @@ static bool shouldApplyPropertyInParseOrder(CSSPropertyID propertyID)
     case CSSPropertyWebkitTextDecorationStyle:
     case CSSPropertyWebkitTextDecorationColor:
     case CSSPropertyWebkitTextDecorationSkip:
-    case CSSPropertyWebkitTextUnderlinePosition:
+    case CSSPropertyTextUnderlinePosition:
+    case CSSPropertyTextUnderlineOffset:
+    case CSSPropertyTextDecorationThickness:
     case CSSPropertyTextDecoration:
         return true;
     default:

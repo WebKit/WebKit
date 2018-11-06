@@ -5926,17 +5926,45 @@
                 "url": "https://www.w3.org/TR/css-text-decor-3/#text-decoration-skip"
             }
         },
-        "-webkit-text-underline-position": {
+        "text-underline-position": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-text-underline-position"
+                ]
+            },
+            "inherited": true,
+            "status": {
+                "status": "experimental"
+            },
+            "specification": {
+                "category": "css-text-decor",
+                "url": "https://www.w3.org/TR/css-text-decor-3/#text-underline-position-property"
+            }
+        },
+        "text-underline-offset": {
             "inherited": true,
             "codegen-properties": {
-                "converter": "TextUnderlinePosition"
+                "converter": "TextUnderlineOffset"
             },
             "status": {
                 "status": "experimental"
             },
             "specification": {
                 "category": "css-text-decor",
-                "url": "https://www.w3.org/TR/css-text-decor-3/#text-underline-position"
+                "url": "https://www.w3.org/TR/css-text-decor-4/#underline-offset"
+            }
+        },
+        "text-decoration-thickness": {
+            "inherited": true,
+            "codegen-properties": {
+                "converter": "TextDecorationThickness"
+            },
+            "status": {
+                "status": "experimental"
+            },
+            "specification": {
+                "category": "css-text-decor",
+                "url": "https://www.w3.org/TR/css-text-decor-4/#text-decoration-thickness"
             }
         },
         "-webkit-text-decorations-in-effect": {

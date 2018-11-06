@@ -1,5 +1,92 @@
 2018-11-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Parsing support for text-underline-offset and text-decoration-thickness
+        https://bugs.webkit.org/show_bug.cgi?id=191242
+
+        Reviewed by Simon Fraser.
+
+        Before we can implement the properties properly, we have to parse them.
+
+        https://github.com/w3c/csswg-drafts/issues/3118#issuecomment-432297480 describes the grammar:
+        text-underline-position: auto | [ [ under | from-font] || [ left | right ] ]
+        text-underline-offset: auto | <length>
+        text-decoration-thickness: auto | from-font | <length>
+
+        This patch also takes the opportunity to update the grammar of text-underline-position to match the spec,
+        and to add an alias to the unprefixed version.
+
+        We still don't support the left and right values on text-underline-position. We should add those eventually.
+
+        Tests: fast/css3-text/css3-text-decoration/text-decoration-thickness-parse.html
+               fast/css3-text/css3-text-decoration/text-underline-offset-parse.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::textUnderlineOffsetToCSSValue):
+        (WebCore::textDecorationThicknessToCSSValue):
+        (WebCore::ComputedStyleExtractor::valueForPropertyinStyle):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator TextUnderlinePosition const):
+        (WebCore::CSSPrimitiveValue::operator OptionSet<TextUnderlinePosition> const): Deleted.
+        * css/CSSProperties.json:
+        * css/CSSValueKeywords.in:
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertTextUnderlinePosition):
+        (WebCore::StyleBuilderConverter::convertTextUnderlineOffset):
+        (WebCore::StyleBuilderConverter::convertTextDecorationThickness):
+        * css/StyleResolver.cpp:
+        (WebCore::shouldApplyPropertyInParseOrder):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeTextUnderlineOffset):
+        (WebCore::consumeTextDecorationThickness):
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::textUnderlinePosition const):
+        (WebCore::RenderStyle::textUnderlineOffset const):
+        (WebCore::RenderStyle::textDecorationThickness const):
+        (WebCore::RenderStyle::setTextUnderlinePosition):
+        (WebCore::RenderStyle::setTextUnderlineOffset):
+        (WebCore::RenderStyle::setTextDecorationThickness):
+        (WebCore::RenderStyle::initialTextUnderlinePosition):
+        (WebCore::RenderStyle::initialTextUnderlineOffset):
+        (WebCore::RenderStyle::initialTextDecorationThickness):
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator== const):
+        * rendering/style/StyleRareInheritedData.h:
+        * rendering/style/TextDecorationThickness.h: Added.
+        (WebCore::TextDecorationThickness::createWithAuto):
+        (WebCore::TextDecorationThickness::createFromFont):
+        (WebCore::TextDecorationThickness::createWithLength):
+        (WebCore::TextDecorationThickness::isAuto const):
+        (WebCore::TextDecorationThickness::isFromFont const):
+        (WebCore::TextDecorationThickness::isLength const):
+        (WebCore::TextDecorationThickness::setLengthValue):
+        (WebCore::TextDecorationThickness::lengthValue const):
+        (WebCore::TextDecorationThickness::operator== const):
+        (WebCore::TextDecorationThickness::operator!= const):
+        (WebCore::TextDecorationThickness::TextDecorationThickness):
+        (WebCore::operator<<):
+        * rendering/style/TextUnderlineOffset.h: Added.
+        (WebCore::TextUnderlineOffset::createWithAuto):
+        (WebCore::TextUnderlineOffset::createWithLength):
+        (WebCore::TextUnderlineOffset::isAuto const):
+        (WebCore::TextUnderlineOffset::isLength const):
+        (WebCore::TextUnderlineOffset::setLengthValue):
+        (WebCore::TextUnderlineOffset::lengthValue const):
+        (WebCore::TextUnderlineOffset::lengthOr const):
+        (WebCore::TextUnderlineOffset::operator== const):
+        (WebCore::TextUnderlineOffset::operator!= const):
+        (WebCore::TextUnderlineOffset::TextUnderlineOffset):
+        (WebCore::operator<<):
+        * style/InlineTextBoxStyle.cpp:
+        (WebCore::computeUnderlineOffset):
+        * style/InlineTextBoxStyle.h:
+
+2018-11-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Spelling dots are drawn in the wrong place
         https://bugs.webkit.org/show_bug.cgi?id=190764
 

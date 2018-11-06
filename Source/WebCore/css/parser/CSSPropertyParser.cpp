@@ -2337,6 +2337,20 @@ static RefPtr<CSSValue> consumeBorderRadiusCorner(CSSParserTokenRange& range, CS
     return createPrimitiveValuePair(parsedValue1.releaseNonNull(), parsedValue2.releaseNonNull(), Pair::IdenticalValueEncoding::Coalesce);
 }
 
+static RefPtr<CSSValue> consumeTextUnderlineOffset(CSSParserTokenRange& range, CSSParserMode cssParserMode)
+{
+    if (auto value = consumeIdent<CSSValueAuto>(range))
+        return value;
+    return consumeLength(range, cssParserMode, ValueRangeAll);
+}
+
+static RefPtr<CSSValue> consumeTextDecorationThickness(CSSParserTokenRange& range, CSSParserMode cssParserMode)
+{
+    if (auto value = consumeIdent<CSSValueAuto, CSSValueFromFont>(range))
+        return value;
+    return consumeLength(range, cssParserMode, ValueRangeAll);
+}
+
 static RefPtr<CSSPrimitiveValue> consumeVerticalAlign(CSSParserTokenRange& range, CSSParserMode cssParserMode)
 {
     RefPtr<CSSPrimitiveValue> parsedValue = consumeIdentRange(range, CSSValueBaseline, CSSValueWebkitBaselineMiddle);
@@ -4165,9 +4179,13 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         return consumeInteger(m_range, 0);
     case CSSPropertyOrder:
         return consumeInteger(m_range);
-    case CSSPropertyWebkitTextUnderlinePosition:
-        // auto | alphabetic | [ under || [ left | right ] ], but we only support auto | alphabetic | under for now
-        return consumeIdent<CSSValueAuto, CSSValueUnder, CSSValueAlphabetic>(m_range);
+    case CSSPropertyTextUnderlinePosition:
+        // auto | [ [ under | from-font ] || [ left | right ] ], but we only support auto | under | from-font for now
+        return consumeIdent<CSSValueAuto, CSSValueUnder, CSSValueFromFont>(m_range);
+    case CSSPropertyTextUnderlineOffset:
+        return consumeTextUnderlineOffset(m_range, m_context.mode);
+    case CSSPropertyTextDecorationThickness:
+        return consumeTextDecorationThickness(m_range, m_context.mode);
     case CSSPropertyVerticalAlign:
         return consumeVerticalAlign(m_range, m_context.mode);
     case CSSPropertyShapeOutside:

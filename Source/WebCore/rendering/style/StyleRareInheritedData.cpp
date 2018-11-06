@@ -45,6 +45,8 @@ struct GreaterThanOrSameSizeAsStyleRareInheritedData : public RefCounted<Greater
     void* refPtrs[3];
     Length lengths[2];
     float secondFloat;
+    TextUnderlineOffset offset;
+    TextDecorationThickness thickness;
     unsigned bitfields[4];
     short pagedMediaShorts[2];
     unsigned unsigneds[1];
@@ -75,6 +77,8 @@ StyleRareInheritedData::StyleRareInheritedData()
     , textStrokeWidth(RenderStyle::initialTextStrokeWidth())
     , indent(RenderStyle::initialTextIndent())
     , effectiveZoom(RenderStyle::initialZoom())
+    , textUnderlineOffset(RenderStyle::initialTextUnderlineOffset())
+    , textDecorationThickness(RenderStyle::initialTextDecorationThickness())
     , customProperties(StyleCustomPropertyData::create())
     , widows(RenderStyle::initialWidows())
     , orphans(RenderStyle::initialOrphans())
@@ -116,7 +120,7 @@ StyleRareInheritedData::StyleRareInheritedData()
     , textJustify(RenderStyle::initialTextJustify())
 #endif
     , textDecorationSkip(RenderStyle::initialTextDecorationSkip().toRaw())
-    , textUnderlinePosition(RenderStyle::initialTextUnderlinePosition().toRaw())
+    , textUnderlinePosition(static_cast<unsigned>(RenderStyle::initialTextUnderlinePosition()))
     , rubyPosition(static_cast<unsigned>(RenderStyle::initialRubyPosition()))
     , textZoom(static_cast<unsigned>(RenderStyle::initialTextZoom()))
 #if PLATFORM(IOS_FAMILY)
@@ -168,6 +172,8 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , cursorData(o.cursorData)
     , indent(o.indent)
     , effectiveZoom(o.effectiveZoom)
+    , textUnderlineOffset(o.textUnderlineOffset)
+    , textDecorationThickness(o.textDecorationThickness)
     , customProperties(o.customProperties)
     , widows(o.widows)
     , orphans(o.orphans)
@@ -273,6 +279,8 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && arePointingToEqualData(cursorData, o.cursorData)
         && indent == o.indent
         && effectiveZoom == o.effectiveZoom
+        && textUnderlineOffset == o.textUnderlineOffset
+        && textDecorationThickness == o.textDecorationThickness
         && widows == o.widows
         && orphans == o.orphans
         && hasAutoWidows == o.hasAutoWidows

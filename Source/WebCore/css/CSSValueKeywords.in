@@ -1403,3 +1403,6 @@ standalone
 minimal-ui
 browser
 #endif
+
+// text-decoration-thickness, text-underline-offset
+from-font

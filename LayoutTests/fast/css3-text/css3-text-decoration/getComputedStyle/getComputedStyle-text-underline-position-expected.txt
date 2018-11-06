@@ -31,14 +31,6 @@ PASS computedStyle.webkitTextUnderlinePosition is 'auto'
 PASS computedStyle.getPropertyCSSValue('-webkit-text-underline-position').toString() is '[object CSSPrimitiveValue]'
 PASS computedStyle.getPropertyCSSValue('-webkit-text-underline-position').cssText is 'auto'
 
-Value 'alphabetic':
-PASS e.style.webkitTextUnderlinePosition is 'alphabetic'
-PASS e.style.getPropertyCSSValue('-webkit-text-underline-position').toString() is '[object CSSPrimitiveValue]'
-PASS e.style.getPropertyCSSValue('-webkit-text-underline-position').cssText is 'alphabetic'
-PASS computedStyle.webkitTextUnderlinePosition is 'alphabetic'
-PASS computedStyle.getPropertyCSSValue('-webkit-text-underline-position').toString() is '[object CSSPrimitiveValue]'
-PASS computedStyle.getPropertyCSSValue('-webkit-text-underline-position').cssText is 'alphabetic'
-
 Value 'under':
 PASS e.style.webkitTextUnderlinePosition is 'under'
 PASS e.style.getPropertyCSSValue('-webkit-text-underline-position').toString() is '[object CSSPrimitiveValue]'

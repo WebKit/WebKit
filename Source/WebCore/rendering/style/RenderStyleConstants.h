@@ -731,12 +731,11 @@ enum class TextDecorationSkip : uint8_t {
     Auto      = 1 << 2
 };
 
-// FIXME: There is no reason for the values in the enum to be powers of two.
 enum class TextUnderlinePosition : uint8_t {
     // FIXME: Implement support for 'under left' and 'under right' values.
-    Auto       = 1 << 0,
-    Alphabetic = 1 << 1,
-    Under      = 1 << 2
+    Auto,
+    Under,
+    FromFont
 };
 
 enum class TextZoom : uint8_t {

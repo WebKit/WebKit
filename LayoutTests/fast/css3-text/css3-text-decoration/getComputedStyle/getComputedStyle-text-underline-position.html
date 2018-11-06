@@ -25,7 +25,7 @@ function testComputedStyle(propertyJS, propertyCSS, type, value)
 
 description("Test to make sure -webkit-text-underline-position property returns values properly.")
 
-// FIXME: This test tests property values 'auto', 'alphabetic' and 'under'. We don't fully match
+// FIXME: This test tests property values 'auto' and 'under'. We don't fully match
 // the specification as we don't support [ left | right ] and this is left for another implementation
 // as the rendering will need to be added.
 
@@ -57,12 +57,6 @@ debug("Value 'auto':");
 e.style.webkitTextUnderlinePosition = 'auto';
 testElementStyle("webkitTextUnderlinePosition", "-webkit-text-underline-position", "[object CSSPrimitiveValue]", "auto");
 testComputedStyle("webkitTextUnderlinePosition", "-webkit-text-underline-position", "[object CSSPrimitiveValue]", "auto");
-debug('');
-
-debug("Value 'alphabetic':");
-e.style.webkitTextUnderlinePosition = 'alphabetic';
-testElementStyle("webkitTextUnderlinePosition", "-webkit-text-underline-position", "[object CSSPrimitiveValue]", "alphabetic");
-testComputedStyle("webkitTextUnderlinePosition", "-webkit-text-underline-position", "[object CSSPrimitiveValue]", "alphabetic");
 debug('');
 
 debug("Value 'under':");

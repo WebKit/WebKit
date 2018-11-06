@@ -215,7 +215,7 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitTextDecorationStyle,
     CSSPropertyWebkitTextDecorationColor,
     CSSPropertyWebkitTextDecorationSkip,
-    CSSPropertyWebkitTextUnderlinePosition,
+    CSSPropertyTextUnderlinePosition,
     CSSPropertyTextIndent,
     CSSPropertyTextRendering,
     CSSPropertyTextShadow,
@@ -1802,6 +1802,24 @@ static Ref<CSSValue> renderTextDecorationSkipFlagsToCSSValue(OptionSet<TextDecor
     return CSSValuePool::singleton().createExplicitInitialValue();
 }
 
+static Ref<CSSValue> textUnderlineOffsetToCSSValue(const TextUnderlineOffset& textUnderlineOffset)
+{
+    if (textUnderlineOffset.isAuto())
+        return CSSValuePool::singleton().createIdentifierValue(CSSValueAuto);
+    ASSERT(textUnderlineOffset.isLength());
+    return CSSValuePool::singleton().createValue(textUnderlineOffset.lengthValue(), CSSPrimitiveValue::CSS_PX);
+}
+
+static Ref<CSSValue> textDecorationThicknessToCSSValue(const TextDecorationThickness& textDecorationThickness)
+{
+    if (textDecorationThickness.isAuto())
+        return CSSValuePool::singleton().createIdentifierValue(CSSValueAuto);
+    if (textDecorationThickness.isFromFont())
+        return CSSValuePool::singleton().createIdentifierValue(CSSValueFromFont);
+    ASSERT(textDecorationThickness.isLength());
+    return CSSValuePool::singleton().createValue(textDecorationThickness.lengthValue(), CSSPrimitiveValue::CSS_PX);
+}
+
 static Ref<CSSValue> renderEmphasisPositionFlagsToCSSValue(OptionSet<TextEmphasisPosition> textEmphasisPosition)
 {
     ASSERT(!((textEmphasisPosition & TextEmphasisPosition::Over) && (textEmphasisPosition & TextEmphasisPosition::Under)));
@@ -3331,8 +3349,12 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyinStyle(const RenderSty
             return currentColorOrValidColor(&style, style.textDecorationColor());
         case CSSPropertyWebkitTextDecorationSkip:
             return renderTextDecorationSkipFlagsToCSSValue(style.textDecorationSkip());
-        case CSSPropertyWebkitTextUnderlinePosition:
+        case CSSPropertyTextUnderlinePosition:
             return cssValuePool.createValue(style.textUnderlinePosition());
+        case CSSPropertyTextUnderlineOffset:
+            return textUnderlineOffsetToCSSValue(style.textUnderlineOffset());
+        case CSSPropertyTextDecorationThickness:
+            return textDecorationThicknessToCSSValue(style.textDecorationThickness());
         case CSSPropertyWebkitTextDecorationsInEffect:
             return renderTextDecorationFlagsToCSSValue(style.textDecorationsInEffect());
         case CSSPropertyWebkitTextFillColor:

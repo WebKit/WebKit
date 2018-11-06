@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<style id="target">
+#dummy {
+}
+#dummy {
+    text-underline-offset: auto;
+}
+#dummy {
+    text-underline-offset: auto 37px;
+}
+#dummy {
+    text-underline-offset: garbage;
+}
+#dummy {
+    text-underline-offset: 37px;
+}
+#dummy {
+    text-underline-offset: 2em;
+}
+</style>
+</head>
+<body>
+<div id="test1"></div>
+<div id="test2" style="text-underline-offset: auto;"></div>
+<div id="test3" style="text-underline-offset: auto 37px;"></div>
+<div id="test4" style="text-underline-offset: garbage;"></div>
+<div id="test5" style="text-underline-offset: 37px;"></div>
+<div id="test6" style="font-size: 100px; text-underline-offset: 2em;"></div>
+<div style="font-size: 20px; text-underline-offset: 2em;"><div id="test7" style="font-size: 100px;"></div></div>
+<script>
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test1')).getPropertyValue('text-underline-offset')", "auto");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test2')).getPropertyValue('text-underline-offset')", "auto");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test3')).getPropertyValue('text-underline-offset')", "auto");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test4')).getPropertyValue('text-underline-offset')", "auto");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test5')).getPropertyValue('text-underline-offset')", "37px");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test6')).getPropertyValue('text-underline-offset')", "200px");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test7')).getPropertyValue('text-underline-offset')", "40px");
+shouldBeEqualToString("document.getElementById('target').sheet.cssRules[0].style.textUnderlineOffset", "");
+shouldBeEqualToString("document.getElementById('target').sheet.cssRules[1].style.textUnderlineOffset", "auto");
+shouldBeEqualToString("document.getElementById('target').sheet.cssRules[2].style.textUnderlineOffset", "");
+shouldBeEqualToString("document.getElementById('target').sheet.cssRules[3].style.textUnderlineOffset", "");
+shouldBeEqualToString("document.getElementById('target').sheet.cssRules[4].style.textUnderlineOffset", "37px");
+shouldBeEqualToString("document.getElementById('target').sheet.cssRules[5].style.textUnderlineOffset", "2em");
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

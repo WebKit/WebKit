@@ -87,7 +87,9 @@ public:
     static int convertMarqueeRepetition(StyleResolver&, const CSSValue&);
     static int convertMarqueeSpeed(StyleResolver&, const CSSValue&);
     static Ref<QuotesData> convertQuotes(StyleResolver&, const CSSValue&);
-    static OptionSet<TextUnderlinePosition> convertTextUnderlinePosition(StyleResolver&, const CSSValue&);
+    static TextUnderlinePosition convertTextUnderlinePosition(StyleResolver&, const CSSValue&);
+    static TextUnderlineOffset convertTextUnderlineOffset(StyleResolver&, const CSSValue&);
+    static TextDecorationThickness convertTextDecorationThickness(StyleResolver&, const CSSValue&);
     static RefPtr<StyleReflection> convertReflection(StyleResolver&, const CSSValue&);
     static IntSize convertInitialLetter(StyleResolver&, const CSSValue&);
     static float convertTextStrokeWidth(StyleResolver&, const CSSValue&);
@@ -637,16 +639,40 @@ inline Ref<QuotesData> StyleBuilderConverter::convertQuotes(StyleResolver&, cons
     return QuotesData::create(quotes);
 }
 
-inline OptionSet<TextUnderlinePosition> StyleBuilderConverter::convertTextUnderlinePosition(StyleResolver&, const CSSValue& value)
+inline TextUnderlinePosition StyleBuilderConverter::convertTextUnderlinePosition(StyleResolver&, const CSSValue& value)
 {
-    // This is true if value is 'auto' or 'alphabetic'.
-    if (is<CSSPrimitiveValue>(value))
-        return downcast<CSSPrimitiveValue>(value);
+    ASSERT(is<CSSPrimitiveValue>(value));
+    return downcast<CSSPrimitiveValue>(value);
+}
 
-    OptionSet<TextUnderlinePosition> combinedPosition;
-    for (auto& currentValue : downcast<CSSValueList>(value))
-        combinedPosition.add(downcast<CSSPrimitiveValue>(currentValue.get()));
-    return combinedPosition;
+inline TextUnderlineOffset StyleBuilderConverter::convertTextUnderlineOffset(StyleResolver& styleResolver, const CSSValue& value)
+{
+    ASSERT(is<CSSPrimitiveValue>(value));
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    switch (primitiveValue.valueID()) {
+    case CSSValueAuto:
+        return TextUnderlineOffset::createWithAuto();
+    default:
+        ASSERT(primitiveValue.isLength());
+        auto computedLength = convertComputedLength<float>(styleResolver, primitiveValue);
+        return TextUnderlineOffset::createWithLength(computedLength);
+    }
+}
+
+inline TextDecorationThickness StyleBuilderConverter::convertTextDecorationThickness(StyleResolver& styleResolver, const CSSValue& value)
+{
+    ASSERT(is<CSSPrimitiveValue>(value));
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    switch (primitiveValue.valueID()) {
+    case CSSValueAuto:
+        return TextDecorationThickness::createWithAuto();
+    case CSSValueFromFont:
+        return TextDecorationThickness::createFromFont();
+    default:
+        ASSERT(primitiveValue.isLength());
+        auto computedLength = convertComputedLength<float>(styleResolver, primitiveValue);
+        return TextDecorationThickness::createWithLength(computedLength);
+    }
 }
 
 inline RefPtr<StyleReflection> StyleBuilderConverter::convertReflection(StyleResolver& styleResolver, const CSSValue& value)
