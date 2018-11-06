@@ -477,6 +477,8 @@ public:
     void cleanUpKeychain(JSStringRef attrLabel);
     bool keyExistsInKeychain(JSStringRef attrLabel, JSStringRef applicationTagBase64);
 
+    void toggleCapsLock();
+
 private:
     TestRunner();
 

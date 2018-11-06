@@ -527,4 +527,6 @@ messages -> WebPage LegacyReceiver {
 #endif
 
     SetDefersLoading(bool defersLoading)
+
+    UpdateCurrentModifierState(OptionSet<WebCore::PlatformEvent::Modifier> modifiers)
 }

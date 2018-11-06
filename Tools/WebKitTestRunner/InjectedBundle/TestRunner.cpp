@@ -2513,4 +2513,10 @@ bool TestRunner::keyExistsInKeychain(JSStringRef attrLabel, JSStringRef applicat
     return WKBooleanGetValue(static_cast<WKBooleanRef>(returnData));
 }
 
+void TestRunner::toggleCapsLock()
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("ToggleCapsLock"));
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), nullptr, nullptr);
+}
+
 } // namespace WTR

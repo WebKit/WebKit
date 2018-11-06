@@ -709,6 +709,8 @@ enum CompositingPolicy {
 
     unsigned long primaryScreenDisplayID();
 
+    boolean capsLockIsOn();
+
     boolean supportsVCPEncoder();
 
     HEVCParameterSet? parseHEVCCodecParameters(DOMString codecParameters);

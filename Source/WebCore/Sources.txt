@@ -1542,6 +1542,7 @@ platform/MainThreadSharedTimer.cpp
 platform/NotImplemented.cpp
 platform/Pasteboard.cpp
 platform/PasteboardWriterData.cpp
+platform/PlatformKeyboardEvent.cpp
 platform/PlatformSpeechSynthesisUtterance.cpp
 platform/PlatformSpeechSynthesisVoice.cpp
 platform/PlatformSpeechSynthesizer.cpp

@@ -32,6 +32,7 @@
 #import "Logging.h"
 #import "WindowsKeyboardCodes.h"
 #import <Carbon/Carbon.h>
+#import <wtf/MainThread.h>
 
 namespace WebCore {
 using namespace WTF;
@@ -259,16 +260,43 @@ void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool backwardCom
 
 bool PlatformKeyboardEvent::currentCapsLockState()
 {
-    return GetCurrentKeyModifiers() & alphaLock;
+    auto currentModifiers = currentStateOfModifierKeys();
+    return currentModifiers.contains(PlatformEvent::Modifier::CapsLockKey);
 }
 
 void PlatformKeyboardEvent::getCurrentModifierState(bool& shiftKey, bool& ctrlKey, bool& altKey, bool& metaKey)
 {
+    auto currentModifiers = currentStateOfModifierKeys();
+    shiftKey = currentModifiers.contains(PlatformEvent::Modifier::ShiftKey);
+    ctrlKey = currentModifiers.contains(PlatformEvent::Modifier::CtrlKey);
+    altKey = currentModifiers.contains(PlatformEvent::Modifier::AltKey);
+    metaKey = currentModifiers.contains(PlatformEvent::Modifier::MetaKey);
+}
+
+OptionSet<PlatformEvent::Modifier> PlatformKeyboardEvent::currentStateOfModifierKeys()
+{
+#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+    // s_currentModifiers is only set in the WebContent process, not in the UI process.
+    if (s_currentModifiers) {
+        ASSERT(isMainThread());
+        return *s_currentModifiers;
+    }
+#endif
     UInt32 currentModifiers = GetCurrentKeyModifiers();
-    shiftKey = currentModifiers & ::shiftKey;
-    ctrlKey = currentModifiers & ::controlKey;
-    altKey = currentModifiers & ::optionKey;
-    metaKey = currentModifiers & ::cmdKey;
+
+    OptionSet<PlatformEvent::Modifier> modifiers;
+    if (currentModifiers & ::shiftKey)
+        modifiers.add(PlatformEvent::Modifier::ShiftKey);
+    if (currentModifiers & ::controlKey)
+        modifiers.add(PlatformEvent::Modifier::CtrlKey);
+    if (currentModifiers & ::optionKey)
+        modifiers.add(PlatformEvent::Modifier::AltKey);
+    if (currentModifiers & ::cmdKey)
+        modifiers.add(PlatformEvent::Modifier::MetaKey);
+    if (currentModifiers & ::alphaLock)
+        modifiers.add(PlatformEvent::Modifier::CapsLockKey);
+
+    return modifiers;
 }
 
 } // namespace WebCore

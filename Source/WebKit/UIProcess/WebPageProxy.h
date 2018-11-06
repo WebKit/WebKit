@@ -1851,6 +1851,8 @@ private:
     void stopDisplayLink(unsigned observerID);
 #endif
 
+    void updateCurrentModifierState();
+
     void reportPageLoadResult(const WebCore::ResourceError& = { });
 
     void continueNavigationInNewProcess(API::Navigation&, Ref<WebProcessProxy>&&);

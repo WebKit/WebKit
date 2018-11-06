@@ -24,6 +24,8 @@
 
 #pragma once
 
+#include <wtf/Forward.h>
+
 #if ENABLE(MEDIA_STREAM)
 
 namespace WTF {

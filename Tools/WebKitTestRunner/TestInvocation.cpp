@@ -1503,6 +1503,13 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return result;
     }
 
+#if PLATFORM(MAC)
+    if (WKStringIsEqualToUTF8CString(messageName, "ToggleCapsLock")) {
+        TestController::singleton().toggleCapsLock();
+        return nullptr;
+    }
+#endif
+
     ASSERT_NOT_REACHED();
     return nullptr;
 }

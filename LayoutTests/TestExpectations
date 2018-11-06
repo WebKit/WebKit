@@ -422,6 +422,8 @@ fast/canvas/webgl/context-update-on-display-configuration.html [ Skip ]
 
 fast/misc/valid-primary-screen-displayID.html [ Skip ]
 
+fast/events/detect-caps-lock.html [ Skip ]
+
 # This test currently only works for mac-wk2
 fast/events/inactive-window-no-mouse-event.html [ Skip ]
 

@@ -1,3 +1,23 @@
+2018-11-06  Per Arne Vollan  <pvollan@apple.com>
+
+        REGRESSION (r230523): Caps lock indicator not shown in password field
+        https://bugs.webkit.org/show_bug.cgi?id=190056
+
+        Reviewed by Ryosuke Niwa.
+
+        Update cached modifier state in the WebProcess when WebKit::WebPage::keyEvent is called, and
+        when the window becomes active.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::dispatchActivityStateChange):
+        (WebKit::WebPageProxy::updateCurrentModifierState):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::keyEvent):
+        (WebKit::WebPage::updateCurrentModifierState):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2018-11-06  Alex Christensen  <achristensen@webkit.org>
 
         Add ObjC SPI equivalent of WKContextHandlesSafeBrowsing

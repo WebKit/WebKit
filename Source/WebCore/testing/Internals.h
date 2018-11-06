@@ -738,6 +738,8 @@ public:
 
     unsigned primaryScreenDisplayID();
 
+    bool capsLockIsOn();
+        
     bool supportsVCPEncoder();
         
     using HEVCParameterSet = WebCore::HEVCParameterSet;

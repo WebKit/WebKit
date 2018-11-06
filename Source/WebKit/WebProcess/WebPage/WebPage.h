@@ -1091,6 +1091,8 @@ public:
     void didFinishLoadingApplicationManifest(uint64_t, const std::optional<WebCore::ApplicationManifest>&);
 #endif
 
+    void updateCurrentModifierState(OptionSet<WebCore::PlatformEvent::Modifier> modifiers);
+
     UserContentControllerIdentifier userContentControllerIdentifier() const { return m_userContentController->identifier(); }
 
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() const { return m_userInterfaceLayoutDirection; }

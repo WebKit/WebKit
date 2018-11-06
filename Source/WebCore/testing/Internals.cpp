@@ -121,6 +121,7 @@
 #include "PageCache.h"
 #include "PageOverlay.h"
 #include "PathUtilities.h"
+#include "PlatformKeyboardEvent.h"
 #include "PlatformMediaSessionManager.h"
 #include "PlatformScreen.h"
 #include "PlatformStrategies.h"
@@ -4734,6 +4735,11 @@ unsigned Internals::primaryScreenDisplayID()
 #else
     return 0;
 #endif
+}
+
+bool Internals::capsLockIsOn()
+{
+    return WebCore::PlatformKeyboardEvent::currentCapsLockState();
 }
 
 bool Internals::supportsVCPEncoder()

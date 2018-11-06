@@ -260,6 +260,8 @@ public:
     void cleanUpKeychain(const String& attrLabel);
     bool keyExistsInKeychain(const String& attrLabel, const String& applicationTagBase64);
 
+    void toggleCapsLock();
+
 private:
     WKRetainPtr<WKPageConfigurationRef> generatePageConfiguration(WKContextConfigurationRef);
     WKRetainPtr<WKContextConfigurationRef> generateContextConfiguration() const;
@@ -487,6 +489,8 @@ private:
     bool m_shouldDecideResponsePolicyAfterDelay { false };
 
     bool m_didReceiveServerRedirectForProvisionalNavigation { false };
+
+    bool m_capsLockOn { false };
 
     WKRetainPtr<WKArrayRef> m_openPanelFileURLs;
 

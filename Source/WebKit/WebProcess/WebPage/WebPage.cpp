@@ -2564,6 +2564,8 @@ void WebPage::keyEvent(const WebKeyboardEvent& keyboardEvent)
 
     m_userActivityHysteresis.impulse();
 
+    PlatformKeyboardEvent::setCurrentModifierState(platform(keyboardEvent).modifiers());
+
     CurrentEvent currentEvent(keyboardEvent);
 
     bool handled = handleKeyEvent(keyboardEvent, m_page.get());
@@ -6310,6 +6312,11 @@ void WebPage::didFinishLoadingApplicationManifest(uint64_t coreCallbackID, const
     send(Messages::WebPageProxy::ApplicationManifestCallback(manifest, callbackID));
 }
 #endif // ENABLE(APPLICATION_MANIFEST)
+
+void WebPage::updateCurrentModifierState(OptionSet<PlatformEvent::Modifier> modifiers)
+{
+    PlatformKeyboardEvent::setCurrentModifierState(modifiers);
+}    
 
 } // namespace WebKit
 

@@ -145,6 +145,7 @@
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/MediaStreamRequest.h>
 #include <WebCore/PerformanceLoggingClient.h>
+#include <WebCore/PlatformEvent.h>
 #include <WebCore/PublicSuffix.h>
 #include <WebCore/RenderEmbeddedObject.h>
 #include <WebCore/ResourceLoadStatistics.h>
@@ -1560,6 +1561,9 @@ void WebPageProxy::dispatchActivityStateChange()
 
     if (changed)
         LOG_WITH_STREAM(ActivityState, stream << "WebPageProxy " << pageID() << " dispatchActivityStateChange: state changed from " << previousActivityState << " to " << m_activityState);
+
+    if ((changed & ActivityState::WindowIsActive) && isViewWindowActive())
+        updateCurrentModifierState();
 
     if ((m_potentiallyChangedActivityStateFlags & ActivityState::IsVisible) && isViewVisible())
         viewIsBecomingVisible();
@@ -8123,6 +8127,14 @@ void WebPageProxy::setDefersLoadingForTesting(bool defersLoading)
 void WebPageProxy::getIsViewVisible(bool& result)
 {
     result = isViewVisible();
+}
+
+void WebPageProxy::updateCurrentModifierState()
+{
+#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+    auto modifiers = PlatformKeyboardEvent::currentStateOfModifierKeys();
+    m_process->send(Messages::WebPage::UpdateCurrentModifierState(modifiers), m_pageID);
+#endif
 }
 
 } // namespace WebKit

@@ -30,9 +30,13 @@
 #if USE(CAIRO)
 
 #include "CairoOperations.h"
+#include "FloatRoundedRect.h"
 #include "Font.h"
 #include "GlyphBuffer.h"
 #include "GraphicsContextPlatformPrivateCairo.h"
+#include "ImageBuffer.h"
+#include "IntRect.h"
+
 
 namespace WebCore {
 
