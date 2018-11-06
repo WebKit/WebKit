@@ -420,12 +420,12 @@ WI.Popover = class Popover extends WI.Object
         let computedStyle = window.getComputedStyle(this._element, null);
 
         let context = document.getCSSCanvasContext("2d", "popover", scaledWidth, scaledHeight);
+        context.save();
         context.clearRect(0, 0, scaledWidth, scaledHeight);
         context.shadowOffsetX = 1;
         context.shadowOffsetY = 1;
         context.shadowBlur = 5;
         context.shadowColor = computedStyle.getPropertyValue("--popover-shadow-color").trim();
-        context.resetTransform();
         context.scale(scaleFactor, scaleFactor);
 
         // Clip the frame.
@@ -443,6 +443,7 @@ WI.Popover = class Popover extends WI.Object
         context.lineWidth = 2;
         this._drawFrame(context, bounds, this._edge, this._anchorPoint);
         context.stroke();
+        context.restore();
     }
 
     _bestMetricsForEdge(preferredSize, targetFrame, containerFrame, edge)
