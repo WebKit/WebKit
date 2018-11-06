@@ -291,7 +291,7 @@ if (isCMakeBuild() && !isAnyWindows()) {
     my @featureArgs = cmakeArgsFromFeatures(@features, !$noExperimentalFeatures);
     removeCMakeCache(@featureArgs);
 
-    buildCMakeProjectOrExit($clean, $prefixPath, $makeArgs, (cmakeBasedPortArguments(), @featureArgs), @cmakeArgs);
+    buildCMakeProjectOrExit($clean, $prefixPath, $makeArgs, @featureArgs, @cmakeArgs);
 }
 
 my $baseProductDir = baseProductDir();
@@ -300,7 +300,7 @@ if (isAppleWinWebKit() || isWinCairo() || isPlayStation()) {
     removeCMakeCache(@featureArgs);
 
     chdirWebKit();
-    if (exitStatus(generateBuildSystemFromCMakeProject($prefixPath, @cmakeArgs))) {
+    if (exitStatus(generateBuildSystemFromCMakeProject($prefixPath, @featureArgs, @cmakeArgs))) {
         die "Run Visual Studio 2017 installation vcvars.bat before build-webkit when using ninja";
     }
 
