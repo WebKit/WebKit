@@ -41,6 +41,7 @@
 #if USE(FREETYPE)
 #include "FcUniquePtr.h"
 #include "HarfBuzzFace.h"
+#include "RefPtrFontconfig.h"
 #include <memory>
 #endif
 

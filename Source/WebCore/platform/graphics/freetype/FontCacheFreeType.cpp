@@ -26,6 +26,7 @@
 #include "FcUniquePtr.h"
 #include "Font.h"
 #include "RefPtrCairo.h"
+#include "RefPtrFontconfig.h"
 #include "UTF16UChar32Iterator.h"
 #include <cairo-ft.h>
 #include <cairo.h>

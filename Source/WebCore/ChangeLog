@@ -1,3 +1,25 @@
+2018-11-05  Zan Dobersek  <zdobersek@igalia.com>
+
+        Place Fontconfig-specific RefPtr specializations in RefPtrFontconfig.h
+        https://bugs.webkit.org/show_bug.cgi?id=191267
+
+        Reviewed by Michael Catanzaro.
+
+        Move the Fontconfig-specific RefPtr specialization declarations from
+        RefPtrCairo.h to RefPtrFontconfig.h, with definitions moved to the new
+        RefPtrFontconfig.cpp implementation file. These specializations are
+        not tied to Cairo in any way.
+
+        * platform/FreeType.cmake:
+        * platform/graphics/FontPlatformData.h:
+        * platform/graphics/cairo/RefPtrCairo.cpp:
+        * platform/graphics/cairo/RefPtrCairo.h:
+        * platform/graphics/freetype/FontCacheFreeType.cpp:
+        * platform/graphics/freetype/RefPtrFontconfig.cpp: Added.
+        (WTF::refIfNotNull):
+        (WTF::derefIfNotNull):
+        * platform/graphics/freetype/RefPtrFontconfig.h: Copied from Source/WebCore/platform/graphics/cairo/RefPtrCairo.h.
+
 2018-11-05  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Fix WebCore/Modules includes
