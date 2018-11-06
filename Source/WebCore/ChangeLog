@@ -1,3 +1,17 @@
+2018-11-05  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Fix WebCore/Modules includes
+        https://bugs.webkit.org/show_bug.cgi?id=191287
+
+        Reviewed by Fujii Hironori.
+
+        No new tests. No change in behavior.
+
+        Add in applicationmanifest to the list of includes and sort the
+        modules directory.
+
+        * CMakeLists.txt:
+
 2018-11-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Cache glyph paths and share underline skipping code between all the ports
