@@ -1,5 +1,19 @@
 2018-11-06  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-app] Rename EWS_app to ews-app - part 2
+        https://bugs.webkit.org/show_bug.cgi?id=191317
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-app/EWS_app: Removed.
+        * BuildSlaveSupport/ews-app/ews-app: Moved from BuildSlaveSupport/ews-app/EWS_app.
+        * BuildSlaveSupport/ews-app/ews-app/settings.py:
+        * BuildSlaveSupport/ews-app/ews-app/urls.py:
+        * BuildSlaveSupport/ews-app/ews-app/wsgi.py:
+        * BuildSlaveSupport/ews-app/manage.py:
+
+2018-11-06  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-app] Rename EWS_app to ews-app - part 1
         https://bugs.webkit.org/show_bug.cgi?id=191317
 
