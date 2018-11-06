@@ -1,3 +1,46 @@
+2018-11-06  Keith Rollin  <krollin@apple.com>
+
+        Adjust handling of Include paths that need quoting
+        https://bugs.webkit.org/show_bug.cgi?id=191314
+        <rdar://problem/45849143>
+
+        Reviewed by Dan Bernstein.
+
+        There are several places in the JavaScriptCore Xcode project where the
+        paths defined in HEADER_SEARCH_PATHS are quoted. That is, the
+        definitions look like:
+
+            HEADER_SEARCH_PATHS = (
+                "\"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\"",
+                "\"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${ARCHS}\"",
+                "\"$(JAVASCRIPTCORE_FRAMEWORKS_DIR)/JavaScriptCore.framework/PrivateHeaders\"",
+                "$(inherited)",
+            );
+
+        The idea here is presumably to have the resulting $(CPP) command have
+        -I options where the associated paths are themselves quoted,
+        protecting against space characters in the paths.
+
+        This approach to quote management can break under Xcode 9. If
+        .xcfilelist files are added to the project, the 'objectVersion' value
+        in the Xcode project file is changed from 46 to 51. If a project with
+        objectVersion=51 is presented to Xcode 9 (as can happen when we build
+        for older OS's), it produces build lines where the quotes are escaped,
+        thereby becoming part of the path. The build then fails because a
+        search for a file normally found in a directory called "Foo" will be
+        looked for in "\"Foo\"", which doesn't exist.
+
+        Simply removing the escaped quotes from the HEADER_SEARCH_PATHS
+        definition doesn't work, leading to paths that need quoting due to
+        space characters but that don't get this quoting (the part of the path
+        after the space appears to simply go missing).
+
+        Removing the escaped quotes from the HEADER_SEARCH_PATHS and moving
+        the definitions to the .xcconfig fixes this problem.
+
+        * Configurations/ToolExecutable.xcconfig:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2018-11-06  Michael Saboff  <msaboff@apple.com>
 
         Multiple stress/regexp-compile-oom.js tests are failing on High Sierra Debug and Release JSC testers.
