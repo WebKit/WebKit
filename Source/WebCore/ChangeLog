@@ -1,3 +1,24 @@
+2018-11-06  Frederic Wang  <fwang@igalia.com>
+
+        Overlay with -webkit-overflow-scrolling:touch doesn't become scrollable after added text makes it taller
+        https://bugs.webkit.org/show_bug.cgi?id=158342
+
+        Reviewed by Simon Fraser.
+
+        Resizing the content of a -webkit-overflow-scrolling:touch overflow node on iOS may make it
+        scrollable. However, the RenderLayerBacking's scrolling layer is not properly created
+        when RenderLayerCompositor::updateScrollCoordinatedLayer is called and hence the UIProcess
+        receives a null UIScrollView pointer when ScrollingTreeScrollingNodeDelegateIOS performs the
+        associated update. In debug mode this hits an ASSERT and in release mode the overflow node
+        remains unscrollable from the user's point of view. This patch fixes this issue by ensuring
+        the RenderLayerBacking's scrolling layer is created during updateScrollCoordinatedStatus.
+
+        Test: fast/scrolling/ios/update-scroll-coordinated-status.html
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateScrollCoordinatedStatus): Call updateConfiguration()
+        to ensure the scrolling layer is present and indicate whether a rebuild is necessary.
+
 2018-11-05  Zan Dobersek  <zdobersek@igalia.com>
 
         Place Fontconfig-specific RefPtr specializations in RefPtrFontconfig.h

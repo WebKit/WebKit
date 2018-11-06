@@ -3544,6 +3544,9 @@ void RenderLayerCompositor::updateScrollCoordinatedStatus(RenderLayer& layer, Op
     if (layer.isComposited())
         layer.backing()->setIsScrollCoordinatedWithViewportConstrainedRole(coordinationRoles.contains(ViewportConstrained));
 
+    if (layer.backing() && layer.backing()->updateConfiguration())
+        setCompositingLayersNeedRebuild();
+
     if (coordinationRoles && canCoordinateScrollingForLayer(layer)) {
         if (m_scrollCoordinatedLayers.add(&layer).isNewEntry)
             m_subframeScrollLayersNeedReattach = true;

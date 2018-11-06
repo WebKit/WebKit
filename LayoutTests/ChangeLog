@@ -1,3 +1,16 @@
+2018-11-06  Frederic Wang  <fwang@igalia.com>
+
+        Overlay with -webkit-overflow-scrolling:touch doesn't become scrollable after added text makes it taller
+        https://bugs.webkit.org/show_bug.cgi?id=158342
+
+        Reviewed by Simon Fraser.
+
+        Add a test to ensure the change of scrolling status is reflected in the layer and scrolling
+        trees. This test should also ASSERT in debug mode without the associated code change.
+
+        * fast/scrolling/ios/update-scroll-coordinated-status-expected.txt: Added.
+        * fast/scrolling/ios/update-scroll-coordinated-status.html: Added.
+
 2018-11-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Swatch appears squished and off-center in inputs of type color
