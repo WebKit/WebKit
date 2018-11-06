@@ -54,6 +54,7 @@ typedef struct
   SetBitrateFunc setBitrate;
   SetupEncoder setupEncoder;
   const gchar *bitrate_propname;
+  const gchar *keyframe_interval_propname;
 } EncoderDefinition;
 
 typedef enum
@@ -67,6 +68,7 @@ typedef enum
 
 EncoderDefinition encoders[ENCODER_LAST] = {
   FALSE,
+  NULL,
   NULL,
   NULL,
   NULL,
@@ -97,6 +99,7 @@ enum
   PROP_FORMAT,
   PROP_ENCODER,
   PROP_BITRATE,
+  PROP_KEYFRAME_INTERVAL,
   N_PROPS
 };
 
@@ -125,6 +128,11 @@ gst_webrtc_video_encoder_get_property (GObject * object,
       break;
     case PROP_BITRATE:
       g_value_set_uint (value, priv->bitrate);
+      break;
+    case PROP_KEYFRAME_INTERVAL:
+      if (priv->encoder)
+        g_object_get_property (G_OBJECT (priv->encoder),
+            encoders[priv->encoderId].keyframe_interval_propname, value);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -212,6 +220,7 @@ gst_webrtc_video_encoder_set_property (GObject * object,
     guint prop_id, const GValue * value, GParamSpec * pspec)
 {
   GstWebrtcVideoEncoder *self = GST_WEBRTC_VIDEO_ENCODER (object);
+  GstWebrtcVideoEncoderPrivate *priv = PRIV (self);
 
   switch (prop_id) {
     case PROP_FORMAT:
@@ -219,6 +228,13 @@ gst_webrtc_video_encoder_set_property (GObject * object,
       break;
     case PROP_BITRATE:
       gst_webrtc_video_encoder_set_bitrate (self, g_value_get_uint (value));
+      break;
+    case PROP_KEYFRAME_INTERVAL:
+      if (priv->encoder)
+        g_object_set (priv->encoder,
+            encoders[priv->encoderId].keyframe_interval_propname,
+            g_value_get_uint (value), NULL);
+
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -229,7 +245,7 @@ static void
 register_known_encoder (EncoderId encId, const gchar * name,
     const gchar * parser_name, const gchar * caps, const gchar * encoded_format,
     SetupEncoder setupEncoder, const gchar * bitrate_propname,
-    SetBitrateFunc setBitrate)
+    SetBitrateFunc setBitrate, const gchar * keyframe_interval_propname)
 {
   GstPluginFeature *feature =
       gst_registry_lookup_feature (gst_registry_get (), name);
@@ -252,6 +268,7 @@ register_known_encoder (EncoderId encId, const gchar * name,
   encoders[encId].setupEncoder = setupEncoder;
   encoders[encId].bitrate_propname = bitrate_propname;
   encoders[encId].setBitrate = setBitrate;
+  encoders[encId].keyframe_interval_propname = keyframe_interval_propname;
 }
 
 static void
@@ -314,15 +331,22 @@ gst_webrtc_video_encoder_class_init (GstWebrtcVideoEncoderClass * klass)
           (GParamFlags) (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS |
               G_PARAM_CONSTRUCT)));
 
+  g_object_class_install_property (object_class, PROP_KEYFRAME_INTERVAL,
+      g_param_spec_uint ("keyframe-interval", "Keyframe interval",
+          "The interval between keyframes", 0, G_MAXINT, 0,
+          (GParamFlags) (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS |
+              G_PARAM_CONSTRUCT)));
+
   register_known_encoder (ENCODER_X264, "x264enc", "h264parse", "video/x-h264",
       "video/x-h264,alignment=au,stream-format=byte-stream,profile=baseline",
-      setup_x264enc, "bitrate", set_bitrate_kbit_per_sec);
+      setup_x264enc, "bitrate", set_bitrate_kbit_per_sec, "key-int-max");
   register_known_encoder (ENCODER_OPENH264, "openh264enc", "h264parse",
       "video/x-h264",
       "video/x-h264,alignment=au,stream-format=byte-stream,profile=baseline",
-      setup_openh264enc, "bitrate", set_bitrate_kbit_per_sec);
+      setup_openh264enc, "bitrate", set_bitrate_kbit_per_sec, "gop-size");
   register_known_encoder (ENCODER_VP8, "vp8enc", NULL, "video/x-vp8", NULL,
-      setup_vp8enc, "target-bitrate", set_bitrate_bit_per_sec);
+      setup_vp8enc, "target-bitrate", set_bitrate_bit_per_sec,
+      "keyframe-max-dist");
 }
 
 static void

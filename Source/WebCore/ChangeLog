@@ -1,3 +1,20 @@
+2018-11-06  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GStreamer][WebRTC] Handle setting max number of frame between keyframes
+        https://bugs.webkit.org/show_bug.cgi?id=190682
+
+        Reviewed by Philippe Normand.
+
+        That has been manually checked.
+
+        * platform/mediastream/libwebrtc/GStreamerVideoEncoder.cpp:
+        (gst_webrtc_video_encoder_get_property):
+        (gst_webrtc_video_encoder_set_property):
+        (register_known_encoder):
+        (gst_webrtc_video_encoder_class_init):
+        * platform/mediastream/libwebrtc/GStreamerVideoEncoderFactory.cpp:
+        (WebCore::GStreamerVideoEncoder::InitEncode):
+
 2018-11-03  Alex Christensen  <achristensen@webkit.org>
 
         [Mac] Implement safe browsing in WebKit

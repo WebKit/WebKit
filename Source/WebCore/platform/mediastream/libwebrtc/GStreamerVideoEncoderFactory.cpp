@@ -131,6 +131,8 @@ public:
         ASSERT(encoder);
         m_encoder = encoder.get();
 
+        g_object_set(m_encoder, "keyframe-interval", KeyframeInterval(codecSettings), nullptr);
+
         m_src = makeElement("appsrc");
         g_object_set(m_src, "is-live", true, "format", GST_FORMAT_TIME, nullptr);
 
@@ -375,6 +377,7 @@ public:
     }
 
     virtual const gchar* Name() = 0;
+    virtual int KeyframeInterval(const webrtc::VideoCodec* codecSettings) = 0;
 
     void SetRestrictionCaps(GRefPtr<GstCaps> caps)
     {
@@ -419,6 +422,11 @@ public:
 
         if (it != format.parameters.end() && it->second == "1")
             packetizationMode = webrtc::H264PacketizationMode::NonInterleaved;
+    }
+
+    int KeyframeInterval(const webrtc::VideoCodec* codecSettings) final
+    {
+        return codecSettings->H264().keyFrameInterval;
     }
 
     // FIXME - MT. safety!
@@ -507,6 +515,11 @@ public:
     const gchar* Caps() final { return "video/x-vp8"; }
     const gchar* Name() final { return cricket::kVp8CodecName; }
     webrtc::VideoCodecType CodecType() final { return webrtc::kVideoCodecVP8; }
+
+    int KeyframeInterval(const webrtc::VideoCodec* codecSettings) final
+    {
+        return codecSettings->VP8().keyFrameInterval;
+    }
 
     void PopulateCodecSpecific(webrtc::CodecSpecificInfo* codecSpecifiInfos, GstBuffer* buffer) final
     {
