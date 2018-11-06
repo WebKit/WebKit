@@ -1,5 +1,14 @@
 2018-11-06  Frederic Wang  <fwang@igalia.com>
 
+        Unreviewed, follow-up of previous commit.
+
+        Actually move OptionSet in the header since it's used there too.
+
+        * page/WindowFeatures.cpp:
+        * page/WindowFeatures.h:
+
+2018-11-06  Frederic Wang  <fwang@igalia.com>
+
         Unreviewed build fix.
 
         * page/WindowFeatures.cpp: Add missing header for OptionSet.

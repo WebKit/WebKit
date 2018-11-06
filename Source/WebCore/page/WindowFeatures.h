@@ -30,6 +30,7 @@
 
 #include "DisabledAdaptations.h"
 #include <wtf/Function.h>
+#include <wtf/OptionSet.h>
 #include <wtf/Optional.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
