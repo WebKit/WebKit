@@ -1,3 +1,16 @@
+2018-11-06  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GStreamer][WebRTC] Implement black frame generation
+        https://bugs.webkit.org/show_bug.cgi?id=190684
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Avoiding webrtc/video-mute-vp8.html to crash but it still fails because
+        we are missing the canvas bridging code.
+
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2018-11-06  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Update all tests to match the latest API changes

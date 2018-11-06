@@ -47,6 +47,7 @@
 
 # The webrtc implementation is not fully completed yet
 webkit.org/b/187064 webrtc/simulcast-h264.html
+webkit.org/b/191009 webrtc/video-mute-vp8.html [ Failure ]
 webkit.org/b/189567 webrtc/video-addLegacyTransceiver.html [ Failure ]
 webkit.org/b/187064 webrtc/audio-peer-connection-g722.html
 webkit.org/b/187064 webrtc/video-with-receiver.html

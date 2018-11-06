@@ -39,7 +39,7 @@ public:
 private:
     explicit RealtimeOutgoingVideoSourceLibWebRTC(Ref<MediaStreamTrackPrivate>&&);
 
-    rtc::scoped_refptr<webrtc::VideoFrameBuffer> createBlackFrame(size_t, size_t) final { return nullptr; }
+    rtc::scoped_refptr<webrtc::VideoFrameBuffer> createBlackFrame(size_t, size_t) final;
 
     // MediaStreamTrackPrivate::Observer API
     void sampleBufferUpdated(MediaStreamTrackPrivate&, MediaSample&) final;

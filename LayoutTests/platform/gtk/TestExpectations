@@ -2392,7 +2392,7 @@ webkit.org/b/190738 media/encrypted-media/clearKey/clearKey-webm-video-playback-
 
 webkit.org/b/191008 webanimations/accelerated-animation-suspension.html [ Timeout ]
 
-webkit.org/b/191009 webrtc/video-mute-vp8.html [ Timeout ]
+webkit.org/b/191009 webrtc/video-mute-vp8.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
