@@ -1,3 +1,17 @@
+2018-11-05  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Generalize trailing SDK specifier (Part 1)
+        https://bugs.webkit.org/show_bug.cgi?id=191275
+        <rdar://problem/45703660>
+
+        Reviewed by Lucas Forschler.
+
+        * Scripts/webkitpy/common/system/platforminfo.py:
+        (PlatformInfo.available_sdks): List all installed SDKs with version numbers stripped out.
+        * Scripts/webkitpy/common/system/platforminfo_unittest.py:
+        (TestPlatformInfo):
+        (TestPlatformInfo.test_available_sdks):
+
 2018-11-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Spelling dots are drawn in the wrong place

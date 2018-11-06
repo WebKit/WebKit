@@ -158,3 +158,30 @@ class TestPlatformInfo(unittest.TestCase):
 
         info = self.make_info(fake_sys('freebsd9'), fake_platform('', '9.0-RELEASE'))
         self.assertIsNone(info.total_bytes_memory())
+
+    def test_available_sdks(self):
+        show_sdks_output = """iOS SDKs:
+    iOS 12.0                          -sdk iphoneos12.0
+
+iOS Simulator SDKs:
+    Simulator - iOS 12.0              -sdk iphonesimulator12.0
+    Simulator - iOS 12.0 Internal     -sdk iphonesimulator12.0.type
+
+macOS SDKs:
+    macOS 10.14                       -sdk macosx10.14
+
+watchOS SDKs:
+    watchOS 5.0                       -sdk watchos5.0
+
+watchOS Simulator SDKs:
+    Simulator - watchOS 5.0           -sdk watchsimulator5.0
+    Simulator - watchOS 5.0 Internal    -sdk watchsimulator5.0.type
+"""
+        info = self.make_info(fake_sys('darwin'), fake_platform('10.14.0'), fake_executive(show_sdks_output))
+        self.assertEqual(info.available_sdks(), [
+            'iphoneos',
+            'iphonesimulator', 'iphonesimulator.type',
+            'macosx',
+            'watchos',
+            'watchsimulator', 'watchsimulator.type',
+        ])

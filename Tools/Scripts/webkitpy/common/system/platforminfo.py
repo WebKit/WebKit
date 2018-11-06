@@ -162,6 +162,20 @@ class PlatformInfo(object):
             raise NotImplementedError
         return Version.from_string(self._executive.run_command(['xcodebuild', '-version']).split()[1])
 
+    def available_sdks(self):
+        if not self.is_mac():
+            return []
+
+        XCODE_SDK_REGEX = re.compile('\-sdk (?P<sdk>\D+)\d+\.\d+(?P<specifier>\D*)')
+        output = self._executive.run_command(['xcodebuild', '-showsdks'], return_stderr=False)
+
+        sdks = list()
+        for line in output.splitlines():
+            match = XCODE_SDK_REGEX.search(line)
+            if match:
+                sdks.append(match.group('sdk') + match.group('specifier'))
+        return sdks
+
     def _determine_os_name(self, sys_platform):
         if sys_platform == 'darwin':
             return 'mac'
