@@ -1,3 +1,12 @@
+2018-11-06  Youenn Fablet  <youenn@apple.com>
+
+        Layout Test imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription-tracks.https.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=191278
+
+        Reviewed by Eric Carlson.
+
+        * TestExpectations:
+
 2018-11-06  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer][WebRTC] Implement black frame generation

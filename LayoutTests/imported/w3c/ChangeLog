@@ -1,3 +1,16 @@
+2018-11-06  Youenn Fablet  <youenn@apple.com>
+
+        Layout Test imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription-tracks.https.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=191278
+
+        Reviewed by Eric Carlson.
+
+        Updating test according upstreamed WPT.
+        Rebased test accordingly.
+
+        * web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription-tracks.https-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription-tracks.https.html:
+
 2018-11-06  Ali Juma  <ajuma@chromium.org>
 
         [IntersectionObserver] Account for CSS zoom when computing client rects
