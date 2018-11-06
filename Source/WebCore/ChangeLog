@@ -1,5 +1,30 @@
 2018-11-06  Antoine Quint  <graouts@apple.com>
 
+        [Web Animations] Update the API to allow the "auto" composite value
+        https://bugs.webkit.org/show_bug.cgi?id=191300
+        <rdar://problem/45838373>
+
+        Reviewed by Dean Jackson.
+
+        The Web Animations API has been changed such that the various "composite" properties are no longer optional and instead
+        allow an "auto" value in their enumeration.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * animation/CompositeOperationOrAuto.h: Copied from Source/WebCore/animation/KeyframeEffect.idl.
+        * animation/CompositeOperationOrAuto.idl: Copied from Source/WebCore/animation/KeyframeEffect.idl.
+        * animation/KeyframeEffect.cpp:
+        (WebCore::processKeyframeLikeObject):
+        (WebCore::processIterableKeyframes):
+        (WebCore::processPropertyIndexedKeyframes):
+        (WebCore::KeyframeEffect::getKeyframes):
+        * animation/KeyframeEffect.h:
+        * animation/KeyframeEffect.idl:
+
+2018-11-06  Antoine Quint  <graouts@apple.com>
+
         [Web Animations] Update the API to implement Animation.updatePlaybackRate()
         https://bugs.webkit.org/show_bug.cgi?id=186510
         <rdar://problem/41000641>

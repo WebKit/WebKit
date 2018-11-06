@@ -2534,6 +2534,7 @@ JSCommandLineAPIHost.cpp
 JSComment.cpp
 JSCompositionEvent.cpp
 JSCompositeOperation.cpp
+JSCompositeOperationOrAuto.cpp
 JSComputedEffectTiming.cpp
 JSConvolverNode.cpp
 JSCoordinates.cpp

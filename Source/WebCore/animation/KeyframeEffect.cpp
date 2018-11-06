@@ -40,6 +40,7 @@
 #include "FrameView.h"
 #include "GeometryUtilities.h"
 #include "JSCompositeOperation.h"
+#include "JSCompositeOperationOrAuto.h"
 #include "JSKeyframeEffect.h"
 #include "RenderBox.h"
 #include "RenderBoxModelObject.h"
@@ -166,17 +167,17 @@ static inline ExceptionOr<KeyframeEffect::KeyframeLikeObject> processKeyframeLik
     //    If allow lists is true, use the following dictionary type:
     //
     //    dictionary BasePropertyIndexedKeyframe {
-    //        (double? or sequence<double?>)                         offset = [];
-    //        (DOMString or sequence<DOMString>)                     easing = [];
-    //        (CompositeOperation? or sequence<CompositeOperation?>) composite = [];
+    //        (double? or sequence<double?>)                                   offset = [];
+    //        (DOMString or sequence<DOMString>)                               easing = [];
+    //        (CompositeOperationOrAuto or sequence<CompositeOperationOrAuto>) composite = [];
     //    };
     //
     //    Otherwise, use the following dictionary type:
     //
     //    dictionary BaseKeyframe {
-    //        double?             offset = null;
-    //        DOMString           easing = "linear";
-    //        CompositeOperation? composite = null;
+    //        double?                  offset = null;
+    //        DOMString                easing = "linear";
+    //        CompositeOperationOrAuto composite = "auto";
     //    };
     //
     //    Store the result of this procedure as keyframe output.
@@ -190,10 +191,7 @@ static inline ExceptionOr<KeyframeEffect::KeyframeLikeObject> processKeyframeLik
         else
             baseProperties.offset = nullptr;
         baseProperties.easing = baseKeyframe.easing;
-        if (baseKeyframe.composite)
-            baseProperties.composite = baseKeyframe.composite.value();
-        else
-            baseProperties.composite = nullptr;
+        baseProperties.composite = baseKeyframe.composite;
     }
     RETURN_IF_EXCEPTION(scope, Exception { TypeError });
 
@@ -298,11 +296,9 @@ static inline ExceptionOr<void> processIterableKeyframes(ExecState& state, Stron
         keyframeOutput.easing = WTF::get<String>(keyframeLikeObject.baseProperties.easing);
 
         // When calling processKeyframeLikeObject() with the "allow lists" flag set to false, the only composite
-        // alternatives we should expect are CompositeOperation and nullptr.
-        if (WTF::holds_alternative<CompositeOperation>(keyframeLikeObject.baseProperties.composite))
-            keyframeOutput.composite = WTF::get<CompositeOperation>(keyframeLikeObject.baseProperties.composite);
-        else
-            ASSERT(WTF::holds_alternative<std::nullptr_t>(keyframeLikeObject.baseProperties.composite));
+        // alternatives we should expect is CompositeOperationAuto.
+        ASSERT(WTF::holds_alternative<CompositeOperationOrAuto>(keyframeLikeObject.baseProperties.composite));
+        keyframeOutput.composite = WTF::get<CompositeOperationOrAuto>(keyframeLikeObject.baseProperties.composite);
 
         for (auto& propertyAndValue : keyframeLikeObject.propertiesAndValues) {
             auto cssPropertyId = propertyAndValue.property;
@@ -437,27 +433,27 @@ static inline ExceptionOr<void> processPropertyIndexedKeyframes(ExecState& state
         parsedKeyframes[i].easing = easings[i];
 
     // 12. If the “composite” member of the property-indexed keyframe is not an empty sequence:
-    Vector<std::optional<CompositeOperation>> compositeModes;
-    if (WTF::holds_alternative<Vector<std::optional<CompositeOperation>>>(propertyIndexedKeyframe.baseProperties.composite))
-        compositeModes = WTF::get<Vector<std::optional<CompositeOperation>>>(propertyIndexedKeyframe.baseProperties.composite);
-    else if (WTF::holds_alternative<CompositeOperation>(propertyIndexedKeyframe.baseProperties.composite))
-        compositeModes.append(WTF::get<CompositeOperation>(propertyIndexedKeyframe.baseProperties.composite));
-    else if (WTF::holds_alternative<std::nullptr_t>(propertyIndexedKeyframe.baseProperties.composite))
-        compositeModes.append(std::nullopt);
+    Vector<CompositeOperationOrAuto> compositeModes;
+    if (WTF::holds_alternative<Vector<CompositeOperationOrAuto>>(propertyIndexedKeyframe.baseProperties.composite))
+        compositeModes = WTF::get<Vector<CompositeOperationOrAuto>>(propertyIndexedKeyframe.baseProperties.composite);
+    else if (WTF::holds_alternative<CompositeOperationOrAuto>(propertyIndexedKeyframe.baseProperties.composite))
+        compositeModes.append(WTF::get<CompositeOperationOrAuto>(propertyIndexedKeyframe.baseProperties.composite));
     if (!compositeModes.isEmpty()) {
-        // 1. Let composite modes be a sequence of composite operations assigned from the “composite” member of property-indexed keyframe. If that member is a single composite
-        //    operation, let composite modes be a sequence of length one, with the value of the “composite” as its single item.
-        // 2. As with easings, if composite modes has fewer items than property keyframes, repeat the elements in composite modes successively starting from the beginning of
-        //    the list until composite modes has as many items as property keyframes.
+        // 1. Let composite modes be a sequence of CompositeOperationOrAuto values assigned from the “composite” member of property-indexed keyframe. If that member is a single
+        //    CompositeOperationOrAuto value operation, let composite modes be a sequence of length one, with the value of the “composite” as its single item.
+        // 2. As with easings, if composite modes has fewer items than processed keyframes, repeat the elements in composite modes successively starting from the beginning of
+        //    the list until composite modes has as many items as processed keyframes.
         if (compositeModes.size() < parsedKeyframes.size()) {
             size_t initialNumberOfCompositeModes = compositeModes.size();
             for (i = initialNumberOfCompositeModes; i < parsedKeyframes.size(); ++i)
                 compositeModes.append(compositeModes[i % initialNumberOfCompositeModes]);
         }
-        // 3. Assign each value in composite modes to the keyframe-specific composite operation on the keyframe with the corresponding position in property keyframes until
-        //    the end of property keyframes is reached.
-        for (size_t i = 0; i < compositeModes.size() && i < parsedKeyframes.size(); ++i)
-            parsedKeyframes[i].composite = compositeModes[i];
+        // 3. Assign each value in composite modes that is not auto to the keyframe-specific composite operation on the keyframe with the corresponding position in processed
+        //    keyframes until the end of processed keyframes is reached.
+        for (size_t i = 0; i < compositeModes.size() && i < parsedKeyframes.size(); ++i) {
+            if (compositeModes[i] != CompositeOperationOrAuto::Auto)
+                parsedKeyframes[i].composite = compositeModes[i];
+        }
     }
 
     return { };
@@ -577,10 +573,10 @@ Vector<Strong<JSObject>> KeyframeEffect::getKeyframes(ExecState& state)
             // 1. Initialize a dictionary object, output keyframe, using the following definition:
             //
             // dictionary BaseComputedKeyframe {
-            //      double?             offset = null;
-            //      double              computedOffset;
-            //      DOMString           easing = "linear";
-            //      CompositeOperation? composite = null;
+            //      double?                  offset = null;
+            //      double                   computedOffset;
+            //      DOMString                easing = "linear";
+            //      CompositeOperationOrAuto composite = "auto";
             // };
 
             auto& keyframe = m_blendingKeyframes[i];
@@ -622,10 +618,10 @@ Vector<Strong<JSObject>> KeyframeEffect::getKeyframes(ExecState& state)
             // 1. Initialize a dictionary object, output keyframe, using the following definition:
             //
             // dictionary BaseComputedKeyframe {
-            //      double?             offset = null;
-            //      double              computedOffset;
-            //      DOMString           easing = "linear";
-            //      CompositeOperation? composite = null;
+            //      double?                  offset = null;
+            //      double                   computedOffset;
+            //      DOMString                easing = "linear";
+            //      CompositeOperationOrAuto composite = "auto";
             // };
 
             auto& parsedKeyframe = m_parsedKeyframes[i];

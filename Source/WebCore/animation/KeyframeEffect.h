@@ -28,6 +28,7 @@
 #include "AnimationEffect.h"
 #include "CSSPropertyBlendingClient.h"
 #include "CompositeOperation.h"
+#include "CompositeOperationOrAuto.h"
 #include "EffectTiming.h"
 #include "Element.h"
 #include "IterationCompositeOperation.h"
@@ -55,13 +56,13 @@ public:
     struct BasePropertyIndexedKeyframe {
         Variant<std::nullptr_t, Vector<std::optional<double>>, double> offset = Vector<std::optional<double>>();
         Variant<Vector<String>, String> easing = Vector<String>();
-        Variant<std::nullptr_t, Vector<std::optional<CompositeOperation>>, CompositeOperation> composite = Vector<std::optional<CompositeOperation>>();
+        Variant<Vector<CompositeOperationOrAuto>, CompositeOperationOrAuto> composite = Vector<CompositeOperationOrAuto>();
     };
 
     struct BaseKeyframe {
         std::optional<double> offset;
         String easing { "linear" };
-        std::optional<CompositeOperation> composite;
+        CompositeOperationOrAuto composite { CompositeOperationOrAuto::Auto };
     };
 
     struct PropertyAndValues {
@@ -77,7 +78,7 @@ public:
     struct ParsedKeyframe {
         std::optional<double> offset;
         double computedOffset;
-        std::optional<CompositeOperation> composite;
+        CompositeOperationOrAuto composite { CompositeOperationOrAuto::Auto };
         String easing;
         RefPtr<TimingFunction> timingFunction;
         Ref<MutableStyleProperties> style;
@@ -93,7 +94,7 @@ public:
         std::optional<double> offset;
         double computedOffset;
         String easing { "linear" };
-        std::optional<CompositeOperation> composite;
+        CompositeOperationOrAuto composite { CompositeOperationOrAuto::Auto };
     };
 
     Element* target() const { return m_target.get(); }

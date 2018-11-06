@@ -489,6 +489,7 @@ set(WebCore_NON_SVG_IDL_FILES
     animation/CSSAnimation.idl
     animation/CSSTransition.idl
     animation/CompositeOperation.idl
+    animation/CompositeOperationOrAuto.idl
     animation/ComputedEffectTiming.idl
     animation/DocumentTimeline.idl
     animation/DocumentTimelineOptions.idl

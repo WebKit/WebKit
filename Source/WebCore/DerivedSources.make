@@ -403,6 +403,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/animation/AnimationPlaybackEventInit.idl \
     $(WebCore)/animation/AnimationTimeline.idl \
     $(WebCore)/animation/CompositeOperation.idl \
+    $(WebCore)/animation/CompositeOperationOrAuto.idl \
     $(WebCore)/animation/ComputedEffectTiming.idl \
     $(WebCore)/animation/CSSAnimation.idl \
     $(WebCore)/animation/CSSTransition.idl \

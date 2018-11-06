@@ -23,39 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    EnabledAtRuntime=WebAnimations,
-    Exposed=Window,
-    JSGenerateToNativeObject,
-    ConstructorMayThrowException,
-    ConstructorCallWith=ExecState,
-    Constructor(Element? target, object? keyframes, optional (unrestricted double or KeyframeEffectOptions) options),
-    Constructor(KeyframeEffect source)
-] interface KeyframeEffect : AnimationEffect {
-    attribute Element? target;
-    attribute IterationCompositeOperation iterationComposite;
-    attribute CompositeOperation composite;
-    [CallWith=ExecState] sequence<object> getKeyframes();
-    [MayThrowException, CallWith=ExecState] void setKeyframes(object? keyframes);
-};
+#pragma once
 
-dictionary BasePropertyIndexedKeyframe {
-    (sequence<double?> or double?) offset = [];
-    (sequence<DOMString> or DOMString) easing = [];
-    (sequence<CompositeOperationOrAuto> or CompositeOperationOrAuto) composite = [];
-};
+namespace WebCore {
 
-dictionary BaseKeyframe {
-    double? offset = null;
-    DOMString easing = "linear";
-    CompositeOperationOrAuto composite = "auto";
-};
+enum class CompositeOperationOrAuto { Replace, Add, Accumulate, Auto };
 
-[
-    JSGenerateToJSObject
-] dictionary BaseComputedKeyframe {
-     double? offset = null;
-     double computedOffset;
-     DOMString easing = "linear";
-     CompositeOperationOrAuto composite = "auto";
-};
+} // namespace WebCore

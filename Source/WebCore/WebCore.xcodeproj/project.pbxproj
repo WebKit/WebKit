@@ -2030,6 +2030,8 @@
 		71025EDE1F99F1EC004A250C /* JSAnimationTimeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 71025ED91F99F1A7004A250C /* JSAnimationTimeline.h */; };
 		71025EE01F99F1EC004A250C /* JSDocumentTimeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 71025EDC1F99F1A8004A250C /* JSDocumentTimeline.h */; };
 		71025EE21F99F1EC004A250C /* JSWebAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 71025ED81F99F1A6004A250C /* JSWebAnimation.h */; };
+		7111243E216FA71100EB7B67 /* CompositeOperationOrAuto.h in Headers */ = {isa = PBXBuildFile; fileRef = 7111243B216FA6E000EB7B67 /* CompositeOperationOrAuto.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		71112441216FA7CD00EB7B67 /* JSCompositeOperationOrAuto.h in Headers */ = {isa = PBXBuildFile; fileRef = 71112440216FA7BE00EB7B67 /* JSCompositeOperationOrAuto.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7116E2CC1FED75DC00C06FDE /* ComputedEffectTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = 7116E2CB1FED75D100C06FDE /* ComputedEffectTiming.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7116E2CF1FED765B00C06FDE /* JSComputedEffectTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = 7116E2CE1FED765200C06FDE /* JSComputedEffectTiming.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7117445914BC34EC00EE5FC8 /* SVGTextMetricsBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 7117445714BC34E200EE5FC8 /* SVGTextMetricsBuilder.h */; };
@@ -9161,6 +9163,10 @@
 		71025EDC1F99F1A8004A250C /* JSDocumentTimeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDocumentTimeline.h; sourceTree = "<group>"; };
 		710FA74B1DEE576D004C715E /* controls-bar.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "controls-bar.js"; sourceTree = "<group>"; };
 		710FA74C1DEE577E004C715E /* controls-visibility-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "controls-visibility-support.js"; sourceTree = "<group>"; };
+		7111243B216FA6E000EB7B67 /* CompositeOperationOrAuto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompositeOperationOrAuto.h; sourceTree = "<group>"; };
+		7111243D216FA6E000EB7B67 /* CompositeOperationOrAuto.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CompositeOperationOrAuto.idl; sourceTree = "<group>"; };
+		7111243F216FA7BE00EB7B67 /* JSCompositeOperationOrAuto.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCompositeOperationOrAuto.cpp; sourceTree = "<group>"; };
+		71112440216FA7BE00EB7B67 /* JSCompositeOperationOrAuto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCompositeOperationOrAuto.h; sourceTree = "<group>"; };
 		7116E2C91FED75D000C06FDE /* ComputedEffectTiming.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ComputedEffectTiming.idl; sourceTree = "<group>"; };
 		7116E2CB1FED75D100C06FDE /* ComputedEffectTiming.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComputedEffectTiming.h; sourceTree = "<group>"; };
 		7116E2CD1FED765200C06FDE /* JSComputedEffectTiming.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSComputedEffectTiming.cpp; sourceTree = "<group>"; };
@@ -16133,6 +16139,8 @@
 				71025ED91F99F1A7004A250C /* JSAnimationTimeline.h */,
 				71247E2B1FEA5F63008C08CE /* JSCompositeOperation.cpp */,
 				71247E2E1FEA5F66008C08CE /* JSCompositeOperation.h */,
+				7111243F216FA7BE00EB7B67 /* JSCompositeOperationOrAuto.cpp */,
+				71112440216FA7BE00EB7B67 /* JSCompositeOperationOrAuto.h */,
 				7116E2CD1FED765200C06FDE /* JSComputedEffectTiming.cpp */,
 				7116E2CE1FED765200C06FDE /* JSComputedEffectTiming.h */,
 				71B28424203CEC0B0036AA5D /* JSCSSAnimation.cpp */,
@@ -20017,6 +20025,8 @@
 				71025EC91F99F096004A250C /* AnimationTimeline.idl */,
 				71247E351FEA5F81008C08CE /* CompositeOperation.h */,
 				71247E361FEA5F81008C08CE /* CompositeOperation.idl */,
+				7111243B216FA6E000EB7B67 /* CompositeOperationOrAuto.h */,
+				7111243D216FA6E000EB7B67 /* CompositeOperationOrAuto.idl */,
 				7116E2CB1FED75D100C06FDE /* ComputedEffectTiming.h */,
 				7116E2C91FED75D000C06FDE /* ComputedEffectTiming.idl */,
 				71C29E2E203CE76B008F36D2 /* CSSAnimation.cpp */,
@@ -27943,6 +27953,7 @@
 				2DAF343D1EA7E0F100382CD3 /* ConstantPropertyMap.h in Headers */,
 				A818721C0977D3C0005826D9 /* ContainerNode.h in Headers */,
 				E1A1470811102B1500EEC0F3 /* ContainerNodeAlgorithms.h in Headers */,
+				71112441216FA7CD00EB7B67 /* JSCompositeOperationOrAuto.h in Headers */,
 				BC5EB9810E82072500B25965 /* ContentData.h in Headers */,
 				51B45D211AB8D1E200117CD2 /* ContentExtension.h in Headers */,
 				5CDFA6C81AA4F2DA00EA8746 /* ContentExtensionActions.h in Headers */,
@@ -29155,6 +29166,7 @@
 				7C8E34BE1E4A33B00054CE23 /* JSDOMConvertObject.h in Headers */,
 				E323CFFA1E5AF6AF00F0B4A0 /* JSDOMConvertPromise.h in Headers */,
 				7C8E34BF1E4A33B00054CE23 /* JSDOMConvertRecord.h in Headers */,
+				7111243E216FA71100EB7B67 /* CompositeOperationOrAuto.h in Headers */,
 				7C1F5D591F22FF7300A8874F /* JSDOMConvertScheduledAction.h in Headers */,
 				7C8E34C01E4A33B00054CE23 /* JSDOMConvertSequences.h in Headers */,
 				7C8E34C11E4A33B00054CE23 /* JSDOMConvertSerializedScriptValue.h in Headers */,
