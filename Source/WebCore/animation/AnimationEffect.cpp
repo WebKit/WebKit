@@ -26,28 +26,19 @@
 #include "config.h"
 #include "AnimationEffect.h"
 
-#include "AnimationEffectTimingReadOnly.h"
 #include "FillMode.h"
 #include "JSComputedEffectTiming.h"
 #include "WebAnimationUtilities.h"
 
 namespace WebCore {
 
-AnimationEffect::AnimationEffect(Ref<AnimationEffectTimingReadOnly>&& timing)
-    , m_timing(WTFMove(timing))
+AnimationEffect::AnimationEffect()
+    : m_timingFunction(LinearTimingFunction::create())
 {
-    m_timing->setEffect(this);
 }
 
 AnimationEffect::~AnimationEffect()
 {
-    m_timing->setEffect(nullptr);
-}
-
-void AnimationEffect::timingDidChange()
-{
-    if (m_animation)
-        m_animation->effectTimingPropertiesDidChange();
 }
 
 std::optional<Seconds> AnimationEffect::localTime() const
@@ -63,8 +54,8 @@ auto AnimationEffect::phase() const -> Phase
     // https://drafts.csswg.org/web-animations-1/#animation-effect-phases-and-states
 
     bool animationIsBackwards = m_animation && m_animation->playbackRate() < 0;
-    auto beforeActiveBoundaryTime = std::max(std::min(m_timing->delay(), m_timing->endTime()), 0_s);
-    auto activeAfterBoundaryTime = std::max(std::min(m_timing->delay() + m_timing->activeDuration(), m_timing->endTime()), 0_s);
+    auto beforeActiveBoundaryTime = std::max(std::min(m_delay, endTime()), 0_s);
+    auto activeAfterBoundaryTime = std::max(std::min(m_delay + activeDuration(), endTime()), 0_s);
 
     // (This should be the last statement, but it's more efficient to cache the local time and return right away if it's not resolved.)
     // Furthermore, it is often convenient to refer to the case when an animation effect is in none of the above phases
@@ -111,23 +102,23 @@ std::optional<Seconds> AnimationEffect::activeTime() const
     if (effectPhase == Phase::Before) {
         // If the fill mode is backwards or both, return the result of evaluating
         // max(local time - start delay, 0).
-        if (m_timing->fill() == FillMode::Backwards || m_timing->fill() == FillMode::Both)
-            return std::max(localTime().value() - m_timing->delay(), 0_s);
+        if (m_fill == FillMode::Backwards || m_fill == FillMode::Both)
+            return std::max(localTime().value() - m_delay, 0_s);
         // Otherwise, return an unresolved time value.
         return std::nullopt;
     }
 
     // If the animation effect is in the active phase, return the result of evaluating local time - start delay.
     if (effectPhase == Phase::Active)
-        return localTime().value() - m_timing->delay();
+        return localTime().value() - m_delay;
 
     // If the animation effect is in the after phase, the result depends on the first matching
     // condition from the following,
     if (effectPhase == Phase::After) {
         // If the fill mode is forwards or both, return the result of evaluating
         // max(min(local time - start delay, active duration), 0).
-        if (m_timing->fill() == FillMode::Forwards || m_timing->fill() == FillMode::Both)
-            return std::max(std::min(localTime().value() - m_timing->delay(), m_timing->activeDuration()), 0_s);
+        if (m_fill == FillMode::Forwards || m_fill == FillMode::Both)
+            return std::max(std::min(localTime().value() - m_delay, activeDuration()), 0_s);
         // Otherwise, return an unresolved time value.
         return std::nullopt;
     }
@@ -151,17 +142,17 @@ std::optional<double> AnimationEffect::overallProgress() const
     // 2. Calculate an initial value for overall progress based on the first matching condition from below,
     double overallProgress;
 
-    if (!m_timing->iterationDuration()) {
+    if (!m_iterationDuration) {
         // If the iteration duration is zero, if the animation effect is in the before phase, let overall progress be zero,
         // otherwise, let it be equal to the iteration count.
-        overallProgress = phase() == Phase::Before ? 0 : m_timing->iterations();
+        overallProgress = phase() == Phase::Before ? 0 : m_iterations;
     } else {
         // Otherwise, let overall progress be the result of calculating active time / iteration duration.
-        overallProgress = secondsToWebAnimationsAPITime(effectActiveTime.value()) / secondsToWebAnimationsAPITime(m_timing->iterationDuration());
+        overallProgress = secondsToWebAnimationsAPITime(effectActiveTime.value()) / secondsToWebAnimationsAPITime(m_iterationDuration);
     }
 
     // 3. Return the result of calculating overall progress + iteration start.
-    overallProgress += m_timing->iterationStart();
+    overallProgress += m_iterationStart;
     return std::abs(overallProgress);
 }
 
@@ -182,7 +173,7 @@ std::optional<double> AnimationEffect::simpleIterationProgress() const
     // 2. If overall progress is infinity, let the simple iteration progress be iteration start % 1.0,
     // otherwise, let the simple iteration progress be overall progress % 1.0.
     double overallProgressValue = effectOverallProgress.value();
-    double simpleIterationProgress = std::isinf(overallProgressValue) ? fmod(m_timing->iterationStart(), 1) : fmod(overallProgressValue, 1);
+    double simpleIterationProgress = std::isinf(overallProgressValue) ? fmod(m_iterationStart, 1) : fmod(overallProgressValue, 1);
 
     // 3. If all of the following conditions are true,
     //
@@ -192,7 +183,7 @@ std::optional<double> AnimationEffect::simpleIterationProgress() const
     // the iteration count is not equal to zero.
     // let the simple iteration progress be 1.0.
     auto effectPhase = phase();
-    if (!simpleIterationProgress && (effectPhase == Phase::Active || effectPhase == Phase::After) && std::abs(activeTime().value().microseconds() - m_timing->activeDuration().microseconds()) < timeEpsilon.microseconds() && m_timing->iterations())
+    if (!simpleIterationProgress && (effectPhase == Phase::Active || effectPhase == Phase::After) && std::abs(activeTime().value().microseconds() - activeDuration().microseconds()) < timeEpsilon.microseconds() && m_iterations)
         return 1;
 
     return simpleIterationProgress;
@@ -210,7 +201,7 @@ std::optional<double> AnimationEffect::currentIteration() const
         return std::nullopt;
 
     // 2. If the animation effect is in the after phase and the iteration count is infinity, return infinity.
-    if (phase() == Phase::After && std::isinf(m_timing->iterations()))
+    if (phase() == Phase::After && std::isinf(m_iterations))
         return std::numeric_limits<double>::infinity();
 
     // 3. If the simple iteration progress is 1.0, return floor(overall progress) - 1.
@@ -227,17 +218,17 @@ AnimationEffect::ComputedDirection AnimationEffect::currentDirection() const
     // https://drafts.csswg.org/web-animations-1/#calculating-the-directed-progress
 
     // If playback direction is normal, let the current direction be forwards.
-    if (m_timing->direction() == PlaybackDirection::Normal)
+    if (m_direction == PlaybackDirection::Normal)
         return AnimationEffect::ComputedDirection::Forwards;
     
     // If playback direction is reverse, let the current direction be reverse.
-    if (m_timing->direction() == PlaybackDirection::Reverse)
+    if (m_direction == PlaybackDirection::Reverse)
         return AnimationEffect::ComputedDirection::Reverse;
     
     // Otherwise, let d be the current iteration.
     auto d = currentIteration().value();
     // If playback direction is alternate-reverse increment d by 1.
-    if (m_timing->direction() == PlaybackDirection::AlternateReverse)
+    if (m_direction == PlaybackDirection::AlternateReverse)
         d++;
     // If d % 2 == 0, let the current direction be forwards, otherwise let the current direction be reverse.
     // If d is infinity, let the current direction be forwards.
@@ -282,11 +273,10 @@ std::optional<double> AnimationEffect::transformedProgress() const
 
     auto effectDirectedProgressValue = effectDirectedProgress.value();
 
-    if (auto iterationDuration = m_timing->iterationDuration().seconds()) {
+    if (auto iterationDuration = m_iterationDuration.seconds()) {
         bool before = false;
-        auto* timingFunction = m_timing->timingFunction();
         // 2. Calculate the value of the before flag as follows:
-        if (is<StepsTimingFunction>(timingFunction)) {
+        if (is<StepsTimingFunction>(m_timingFunction)) {
             // 1. Determine the current direction using the procedure defined in §3.9.1 Calculating the directed progress.
             // 2. If the current direction is forwards, let going forwards be true, otherwise it is false.
             bool goingForwards = currentDirection() == AnimationEffect::ComputedDirection::Forwards;
@@ -298,7 +288,7 @@ std::optional<double> AnimationEffect::transformedProgress() const
 
         // 3. Return the result of evaluating the animation effect’s timing function passing directed progress as the
         //    input progress value and before flag as the before flag.
-        return timingFunction->transformTime(effectDirectedProgressValue, iterationDuration, before);
+        return m_timingFunction->transformTime(effectDirectedProgressValue, iterationDuration, before);
     }
 
     return effectDirectedProgressValue;
@@ -309,25 +299,221 @@ std::optional<double> AnimationEffect::iterationProgress() const
     return transformedProgress();
 }
 
+EffectTiming AnimationEffect::getTiming()
+{
+    EffectTiming timing;
+    timing.delay = secondsToWebAnimationsAPITime(m_delay);
+    timing.endDelay = secondsToWebAnimationsAPITime(m_endDelay);
+    timing.fill = m_fill;
+    timing.iterationStart = m_iterationStart;
+    timing.iterations = m_iterations;
+    if (m_iterationDuration == 0_s)
+        timing.duration = "auto";
+    else
+        timing.duration = secondsToWebAnimationsAPITime(m_iterationDuration);
+    timing.direction = m_direction;
+    timing.easing = m_timingFunction->cssText();
+    return timing;
+}
+
 ComputedEffectTiming AnimationEffect::getComputedTiming()
 {
     ComputedEffectTiming computedTiming;
-    computedTiming.delay = m_timing->bindingsDelay();
-    computedTiming.endDelay = m_timing->bindingsEndDelay();
-    auto fillMode = m_timing->fill();
-    computedTiming.fill = fillMode == FillMode::Auto ? FillMode::None : fillMode;
-    computedTiming.iterationStart = m_timing->iterationStart();
-    computedTiming.iterations = m_timing->iterations();
-    computedTiming.duration = secondsToWebAnimationsAPITime(m_timing->iterationDuration());
-    computedTiming.direction = m_timing->direction();
-    computedTiming.easing = m_timing->easing();
-    computedTiming.endTime = secondsToWebAnimationsAPITime(m_timing->endTime());
-    computedTiming.activeDuration = secondsToWebAnimationsAPITime(m_timing->activeDuration());
+    computedTiming.delay = secondsToWebAnimationsAPITime(m_delay);
+    computedTiming.endDelay = secondsToWebAnimationsAPITime(m_endDelay);
+    computedTiming.fill = m_fill == FillMode::Auto ? FillMode::None : m_fill;
+    computedTiming.iterationStart = m_iterationStart;
+    computedTiming.iterations = m_iterations;
+    computedTiming.duration = secondsToWebAnimationsAPITime(m_iterationDuration);
+    computedTiming.direction = m_direction;
+    computedTiming.easing = m_timingFunction->cssText();
+    computedTiming.endTime = secondsToWebAnimationsAPITime(endTime());
+    computedTiming.activeDuration = secondsToWebAnimationsAPITime(activeDuration());
     if (auto effectLocalTime = localTime())
         computedTiming.localTime = secondsToWebAnimationsAPITime(effectLocalTime.value());
     computedTiming.progress = iterationProgress();
     computedTiming.currentIteration = currentIteration();
     return computedTiming;
+}
+
+ExceptionOr<void> AnimationEffect::updateTiming(std::optional<OptionalEffectTiming> timing)
+{
+    // 6.5.4. Updating the timing of an AnimationEffect
+    // https://drafts.csswg.org/web-animations/#updating-animationeffect-timing
+
+    // To update the timing properties of an animation effect, effect, from an EffectTiming or OptionalEffectTiming object, input, perform the following steps:
+    if (!timing)
+        return { };
+
+    // 1. If the iterationStart member of input is present and less than zero, throw a TypeError and abort this procedure.
+    if (timing->iterationStart) {
+        if (timing->iterationStart.value() < 0)
+            return Exception { TypeError };
+    }
+
+    // 2. If the iterations member of input is present, and less than zero or is the value NaN, throw a TypeError and abort this procedure.
+    if (timing->iterations) {
+        if (timing->iterations.value() < 0 || std::isnan(timing->iterations.value()))
+            return Exception { TypeError };
+    }
+
+    // 3. If the duration member of input is present, and less than zero or is the value NaN, throw a TypeError and abort this procedure.
+    // FIXME: should it not throw an exception on a string other than "auto"?
+    if (timing->duration) {
+        if (WTF::holds_alternative<double>(timing->duration.value())) {
+            auto durationAsDouble = WTF::get<double>(timing->duration.value());
+            if (durationAsDouble < 0 || std::isnan(durationAsDouble))
+                return Exception { TypeError };
+        } else {
+            if (WTF::get<String>(timing->duration.value()) != "auto")
+                return Exception { TypeError };
+        }
+    }
+
+    // 4. If the easing member of input is present but cannot be parsed using the <timing-function> production [CSS-EASING-1], throw a TypeError and abort this procedure.
+    if (!timing->easing.isNull()) {
+        auto timingFunctionResult = TimingFunction::createFromCSSText(timing->easing);
+        if (timingFunctionResult.hasException())
+            return timingFunctionResult.releaseException();
+        m_timingFunction = timingFunctionResult.returnValue();
+    }
+
+    // 5. Assign each member present in input to the corresponding timing property of effect as follows:
+    //
+    //    delay → start delay
+    //    endDelay → end delay
+    //    fill → fill mode
+    //    iterationStart → iteration start
+    //    iterations → iteration count
+    //    duration → iteration duration
+    //    direction → playback direction
+    //    easing → timing function
+
+    if (timing->delay)
+        m_delay = Seconds::fromMilliseconds(timing->delay.value());
+
+    if (timing->endDelay)
+        m_endDelay = Seconds::fromMilliseconds(timing->endDelay.value());
+
+    if (timing->fill)
+        m_fill = timing->fill.value();
+
+    if (timing->iterationStart)
+        m_iterationStart = timing->iterationStart.value();
+
+    if (timing->iterations)
+        m_iterations = timing->iterations.value();
+
+    if (timing->duration)
+        m_iterationDuration = WTF::holds_alternative<double>(timing->duration.value()) ? Seconds::fromMilliseconds(WTF::get<double>(timing->duration.value())) : 0_s;
+
+    if (timing->direction)
+        m_direction = timing->direction.value();
+
+    if (m_animation)
+        m_animation->effectTimingDidChange();
+
+    return { };
+}
+
+ExceptionOr<void> AnimationEffect::setIterationStart(double iterationStart)
+{
+    // https://drafts.csswg.org/web-animations-1/#dom-animationeffecttiming-iterationstart
+    // If an attempt is made to set this attribute to a value less than zero, a TypeError must
+    // be thrown and the value of the iterationStart attribute left unchanged.
+    if (iterationStart < 0)
+        return Exception { TypeError };
+
+    if (m_iterationStart == iterationStart)
+        return { };
+
+    m_iterationStart = iterationStart;
+
+    return { };
+}
+
+ExceptionOr<void> AnimationEffect::setIterations(double iterations)
+{
+    // https://drafts.csswg.org/web-animations-1/#dom-animationeffecttiming-iterations
+    // If an attempt is made to set this attribute to a value less than zero or a NaN value, a
+    // TypeError must be thrown and the value of the iterations attribute left unchanged.
+    if (iterations < 0 || std::isnan(iterations))
+        return Exception { TypeError };
+
+    if (m_iterations == iterations)
+        return { };
+        
+    m_iterations = iterations;
+
+    return { };
+}
+
+Seconds AnimationEffect::endTime() const
+{
+    // 3.5.3 The active interval
+    // https://drafts.csswg.org/web-animations-1/#end-time
+
+    // The end time of an animation effect is the result of evaluating max(start delay + active duration + end delay, 0).
+    auto endTime = m_delay + activeDuration() + m_endDelay;
+    return endTime > 0_s ? endTime : 0_s;
+}
+
+void AnimationEffect::setDelay(const Seconds& delay)
+{
+    if (m_delay == delay)
+        return;
+
+    m_delay = delay;
+}
+
+void AnimationEffect::setEndDelay(const Seconds& endDelay)
+{
+    if (m_endDelay == endDelay)
+        return;
+
+    m_endDelay = endDelay;
+}
+
+void AnimationEffect::setFill(FillMode fill)
+{
+    if (m_fill == fill)
+        return;
+
+    m_fill = fill;
+}
+
+void AnimationEffect::setIterationDuration(const Seconds& duration)
+{
+    if (m_iterationDuration == duration)
+        return;
+
+    m_iterationDuration = duration;
+}
+
+void AnimationEffect::setDirection(PlaybackDirection direction)
+{
+    if (m_direction == direction)
+        return;
+
+    m_direction = direction;
+}
+
+void AnimationEffect::setTimingFunction(const RefPtr<TimingFunction>& timingFunction)
+{
+    m_timingFunction = timingFunction;
+}
+
+Seconds AnimationEffect::activeDuration() const
+{
+    // 3.8.2. Calculating the active duration
+    // https://drafts.csswg.org/web-animations-1/#calculating-the-active-duration
+
+    // The active duration is calculated as follows:
+    // active duration = iteration duration × iteration count
+    // If either the iteration duration or iteration count are zero, the active duration is zero.
+    if (!m_iterationDuration || !m_iterations)
+        return 0_s;
+    return m_iterationDuration * m_iterations;
 }
 
 } // namespace WebCore

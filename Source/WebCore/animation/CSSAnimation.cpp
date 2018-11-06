@@ -55,43 +55,43 @@ void CSSAnimation::syncPropertiesWithBackingAnimation()
     suspendEffectInvalidation();
 
     auto& animation = backingAnimation();
-    auto* timing = effect()->timing();
+    auto* animationEffect = effect();
 
     switch (animation.fillMode()) {
     case AnimationFillMode::None:
-        timing->setFill(FillMode::None);
+        animationEffect->setFill(FillMode::None);
         break;
     case AnimationFillMode::Backwards:
-        timing->setFill(FillMode::Backwards);
+        animationEffect->setFill(FillMode::Backwards);
         break;
     case AnimationFillMode::Forwards:
-        timing->setFill(FillMode::Forwards);
+        animationEffect->setFill(FillMode::Forwards);
         break;
     case AnimationFillMode::Both:
-        timing->setFill(FillMode::Both);
+        animationEffect->setFill(FillMode::Both);
         break;
     }
 
     switch (animation.direction()) {
     case Animation::AnimationDirectionNormal:
-        timing->setDirection(PlaybackDirection::Normal);
+        animationEffect->setDirection(PlaybackDirection::Normal);
         break;
     case Animation::AnimationDirectionAlternate:
-        timing->setDirection(PlaybackDirection::Alternate);
+        animationEffect->setDirection(PlaybackDirection::Alternate);
         break;
     case Animation::AnimationDirectionReverse:
-        timing->setDirection(PlaybackDirection::Reverse);
+        animationEffect->setDirection(PlaybackDirection::Reverse);
         break;
     case Animation::AnimationDirectionAlternateReverse:
-        timing->setDirection(PlaybackDirection::AlternateReverse);
+        animationEffect->setDirection(PlaybackDirection::AlternateReverse);
         break;
     }
 
     auto iterationCount = animation.iterationCount();
-    timing->setIterations(iterationCount == Animation::IterationCountInfinite ? std::numeric_limits<double>::infinity() : iterationCount);
+    animationEffect->setIterations(iterationCount == Animation::IterationCountInfinite ? std::numeric_limits<double>::infinity() : iterationCount);
 
-    timing->setDelay(Seconds(animation.delay()));
-    timing->setIterationDuration(Seconds(animation.duration()));
+    animationEffect->setDelay(Seconds(animation.delay()));
+    animationEffect->setIterationDuration(Seconds(animation.duration()));
 
     // Synchronize the play state
     if (animation.playState() == AnimationPlayState::Playing && playState() == WebAnimation::PlayState::Paused) {

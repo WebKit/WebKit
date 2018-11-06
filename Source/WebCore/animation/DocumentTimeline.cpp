@@ -33,6 +33,7 @@
 #include "DOMWindow.h"
 #include "DeclarativeAnimation.h"
 #include "Document.h"
+#include "DocumentAnimationScheduler.h"
 #include "GraphicsLayer.h"
 #include "KeyframeEffect.h"
 #include "Microtasks.h"

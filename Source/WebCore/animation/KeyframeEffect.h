@@ -26,7 +26,6 @@
 #pragma once
 
 #include "AnimationEffect.h"
-#include "AnimationEffectTiming.h"
 #include "CSSPropertyBlendingClient.h"
 #include "CompositeOperation.h"
 #include "EffectTiming.h"
@@ -137,7 +136,7 @@ public:
     bool forceLayoutIfNeeded();
 
 private:
-    KeyframeEffect(Ref<AnimationEffectTiming>&&, Element*);
+    KeyframeEffect(Element*);
 
     enum class AcceleratedAction { Play, Pause, Seek, Stop };
 

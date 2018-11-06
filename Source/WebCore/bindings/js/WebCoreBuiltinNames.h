@@ -33,8 +33,6 @@ namespace WebCore {
 #define WEBCORE_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(macro) \
     macro(Animation) \
     macro(AnimationEffect) \
-    macro(AnimationEffectTiming) \
-    macro(AnimationEffectTimingReadOnly) \
     macro(AnimationPlaybackEvent) \
     macro(AnimationTimeline) \
     macro(ApplePaySession) \

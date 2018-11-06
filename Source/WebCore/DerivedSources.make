@@ -398,9 +398,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/accessibility/AriaAttributes.idl \
     $(WebCore)/animation/Animatable.idl \
     $(WebCore)/animation/AnimationEffect.idl \
-    $(WebCore)/animation/AnimationEffectTiming.idl \
     $(WebCore)/animation/EffectTiming.idl \
-    $(WebCore)/animation/AnimationEffectTimingReadOnly.idl \
     $(WebCore)/animation/AnimationPlaybackEvent.idl \
     $(WebCore)/animation/AnimationPlaybackEventInit.idl \
     $(WebCore)/animation/AnimationTimeline.idl \
@@ -415,6 +413,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/animation/KeyframeAnimationOptions.idl \
     $(WebCore)/animation/KeyframeEffect.idl \
     $(WebCore)/animation/KeyframeEffectOptions.idl \
+    $(WebCore)/animation/OptionalEffectTiming.idl \
     $(WebCore)/animation/PlaybackDirection.idl \
     $(WebCore)/animation/WebAnimation.idl \
     $(WebCore)/crypto/CryptoAlgorithmParameters.idl \

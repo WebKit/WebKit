@@ -27,7 +27,6 @@
 #include "DeclarativeAnimation.h"
 
 #include "Animation.h"
-#include "AnimationEffectTimingReadOnly.h"
 #include "AnimationEvent.h"
 #include "Element.h"
 #include "EventNames.h"
@@ -250,9 +249,8 @@ void DeclarativeAnimation::invalidateDOMEvents(Seconds elapsedTime)
     bool isBefore = currentPhase == AnimationEffect::Phase::Before;
     bool isIdle = currentPhase == AnimationEffect::Phase::Idle;
 
-    auto* effectTiming = animationEffect ? animationEffect->timing() : nullptr;
-    auto intervalStart = effectTiming ? std::max(0_s, std::min(-effectTiming->delay(), effectTiming->activeDuration())) : 0_s;
-    auto intervalEnd = effectTiming ? std::max(0_s, std::min(effectTiming->endTime() - effectTiming->delay(), effectTiming->activeDuration())) : 0_s;
+    auto intervalStart = animationEffect ? std::max(0_s, std::min(-animationEffect->delay(), animationEffect->activeDuration())) : 0_s;
+    auto intervalEnd = animationEffect ? std::max(0_s, std::min(animationEffect->endTime() - animationEffect->delay(), animationEffect->activeDuration())) : 0_s;
 
     if (is<CSSAnimation>(this)) {
         // https://drafts.csswg.org/css-animations-2/#events
@@ -267,7 +265,7 @@ void DeclarativeAnimation::invalidateDOMEvents(Seconds elapsedTime)
             auto iterationBoundary = iteration;
             if (m_previousIteration > iteration)
                 iterationBoundary++;
-            auto elapsedTime = effectTiming ? effectTiming->iterationDuration() * (iterationBoundary - effectTiming->iterationStart()) : 0_s;
+            auto elapsedTime = animationEffect ? animationEffect->iterationDuration() * (iterationBoundary - animationEffect->iterationStart()) : 0_s;
             enqueueDOMEvent(eventNames().animationiterationEvent, elapsedTime);
         } else if (wasActive && isAfter)
             enqueueDOMEvent(eventNames().animationendEvent, intervalEnd);

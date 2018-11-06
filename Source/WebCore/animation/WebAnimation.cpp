@@ -27,7 +27,6 @@
 #include "WebAnimation.h"
 
 #include "AnimationEffect.h"
-#include "AnimationEffectTimingReadOnly.h"
 #include "AnimationPlaybackEvent.h"
 #include "AnimationTimeline.h"
 #include "Document.h"
@@ -90,7 +89,7 @@ void WebAnimation::unsuspendEffectInvalidation()
     --m_suspendCount;
 }
 
-void WebAnimation::effectTimingPropertiesDidChange()
+void WebAnimation::effectTimingDidChange()
 {
     timingDidChange(DidSeek::No, SynchronouslyNotify::Yes);
 }
@@ -476,7 +475,7 @@ Seconds WebAnimation::effectEndTime() const
 {
     // The target effect end of an animation is equal to the end time of the animation's target effect.
     // If the animation has no target effect, the target effect end is zero.
-    return m_effect ? m_effect->timing()->endTime() : 0_s;
+    return m_effect ? m_effect->endTime() : 0_s;
 }
 
 void WebAnimation::cancel()

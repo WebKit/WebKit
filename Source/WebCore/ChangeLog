@@ -1,5 +1,84 @@
 2018-11-06  Antoine Quint  <graouts@apple.com>
 
+        [Web Animations] Implement getTiming() and updateTiming()
+        https://bugs.webkit.org/show_bug.cgi?id=186511
+        <rdar://problem/41000677>
+
+        Reviewed by Dean Jackson.
+
+        The Web Animations API has been further simplified by removing the AnimationEffectTiming and AnimationEffectTimingReadOnly
+        interfaces, removing the "timing" property on AnimationEffect replacing it with getTiming() and updateTiming() methods. This
+        does not change the features of the API but simply how they are exposed.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * animation/AnimationEffect.cpp:
+        (WebCore::AnimationEffect::AnimationEffect):
+        (WebCore::AnimationEffect::~AnimationEffect):
+        (WebCore::AnimationEffect::phase const):
+        (WebCore::AnimationEffect::activeTime const):
+        (WebCore::AnimationEffect::overallProgress const):
+        (WebCore::AnimationEffect::simpleIterationProgress const):
+        (WebCore::AnimationEffect::currentIteration const):
+        (WebCore::AnimationEffect::currentDirection const):
+        (WebCore::AnimationEffect::transformedProgress const):
+        (WebCore::AnimationEffect::getTiming):
+        (WebCore::AnimationEffect::getComputedTiming):
+        (WebCore::AnimationEffect::updateTiming):
+        (WebCore::AnimationEffect::setIterationStart):
+        (WebCore::AnimationEffect::setIterations):
+        (WebCore::AnimationEffect::endTime const):
+        (WebCore::AnimationEffect::setDelay):
+        (WebCore::AnimationEffect::setEndDelay):
+        (WebCore::AnimationEffect::setFill):
+        (WebCore::AnimationEffect::setIterationDuration):
+        (WebCore::AnimationEffect::setDirection):
+        (WebCore::AnimationEffect::setTimingFunction):
+        (WebCore::AnimationEffect::activeDuration const):
+        * animation/AnimationEffect.h:
+        (WebCore::AnimationEffect::delay const):
+        (WebCore::AnimationEffect::endDelay const):
+        (WebCore::AnimationEffect::fill const):
+        (WebCore::AnimationEffect::iterationStart const):
+        (WebCore::AnimationEffect::iterations const):
+        (WebCore::AnimationEffect::iterationDuration const):
+        (WebCore::AnimationEffect::direction const):
+        (WebCore::AnimationEffect::timingFunction const):
+        * animation/AnimationEffect.idl:
+        * animation/AnimationEffectTiming.idl: Removed.
+        * animation/AnimationEffectTimingReadOnly.cpp: Removed.
+        * animation/AnimationEffectTimingReadOnly.h: Removed.
+        * animation/AnimationEffectTimingReadOnly.idl: Removed.
+        * animation/CSSAnimation.cpp:
+        (WebCore::CSSAnimation::syncPropertiesWithBackingAnimation):
+        * animation/CSSTransition.cpp:
+        (WebCore::CSSTransition::setTimingProperties):
+        * animation/DeclarativeAnimation.cpp:
+        (WebCore::DeclarativeAnimation::invalidateDOMEvents):
+        * animation/DocumentTimeline.cpp:
+        * animation/EffectTiming.idl:
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::create):
+        (WebCore::KeyframeEffect::KeyframeEffect):
+        (WebCore::KeyframeEffect::copyPropertiesFromSource):
+        (WebCore::KeyframeEffect::setAnimatedPropertiesInStyle):
+        (WebCore::KeyframeEffect::applyPendingAcceleratedActions):
+        (WebCore::KeyframeEffect::backingAnimationForCompositedRenderer const):
+        * animation/KeyframeEffect.h:
+        * animation/OptionalEffectTiming.h: Renamed from Source/WebCore/animation/AnimationEffectTiming.h.
+        * animation/OptionalEffectTiming.idl: Renamed from Source/WebCore/animation/AnimationEffectTiming.cpp.
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::effectTimingDidChange):
+        (WebCore::WebAnimation::updatePlaybackRate):
+        * animation/WebAnimation.h:
+        (WebCore::WebAnimation::isRelevant const):
+        * bindings/js/JSAnimationEffectTimingReadOnlyCustom.cpp: Removed.
+        * bindings/js/WebCoreBuiltinNames.h:
+
+2018-11-06  Antoine Quint  <graouts@apple.com>
+
         [Web Animations] Update the Web Animations API to remove all the ReadOnly interfaces
         https://bugs.webkit.org/show_bug.cgi?id=186512
         <rdar://problem/41000691>

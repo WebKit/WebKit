@@ -482,9 +482,7 @@ set(WebCore_NON_SVG_IDL_FILES
 
     animation/Animatable.idl
     animation/AnimationEffect.idl
-    animation/AnimationEffectTiming.idl
     animation/EffectTiming.idl
-    animation/AnimationEffectTimingReadOnly.idl
     animation/AnimationPlaybackEvent.idl
     animation/AnimationPlaybackEventInit.idl
     animation/AnimationTimeline.idl
@@ -499,6 +497,7 @@ set(WebCore_NON_SVG_IDL_FILES
     animation/KeyframeAnimationOptions.idl
     animation/KeyframeEffect.idl
     animation/KeyframeEffectOptions.idl
+    animation/OptionalEffectTiming.idl
     animation/PlaybackDirection.idl
     animation/WebAnimation.idl
 

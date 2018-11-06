@@ -109,7 +109,7 @@ public:
     void applyPendingAcceleratedActions();
 
     bool isRelevant() const { return m_isRelevant; }
-    void effectTimingPropertiesDidChange();
+    void effectTimingDidChange();
     void suspendEffectInvalidation();
     void unsuspendEffectInvalidation();
     void setSuspended(bool);

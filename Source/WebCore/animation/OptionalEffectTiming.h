@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,30 +25,22 @@
 
 #pragma once
 
-#include "AnimationEffectTimingReadOnly.h"
-#include "ExceptionOr.h"
 #include "FillMode.h"
 #include "PlaybackDirection.h"
-#include "TimingFunction.h"
-#include "WebAnimationUtilities.h"
-#include <wtf/Forward.h>
-#include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
-#include <wtf/Seconds.h>
 #include <wtf/Variant.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class AnimationEffectTiming final : public AnimationEffectTimingReadOnly {
-public:
-    static Ref<AnimationEffectTiming> create();
-    ~AnimationEffectTiming();
-
-private:
-    AnimationEffectTiming();
+struct OptionalEffectTiming {
+    std::optional<double> delay;
+    std::optional<double> endDelay;
+    std::optional<FillMode> fill;
+    std::optional<double> iterationStart;
+    std::optional<double> iterations;
+    std::optional<Variant<double, String>> duration;
+    std::optional<PlaybackDirection> direction;
+    String easing;
 };
 
 } // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_ANIMATION_EFFECT_TIMING(AnimationEffectTiming, isAnimationEffectTiming());

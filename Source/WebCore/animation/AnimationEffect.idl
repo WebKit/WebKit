@@ -28,6 +28,7 @@
     Exposed=Window,
     CustomToJSObject
 ] interface AnimationEffect {
-    readonly attribute AnimationEffectTimingReadOnly timing;
+    EffectTiming getTiming();
     ComputedEffectTiming getComputedTiming();
+    [MayThrowException] void updateTiming(optional OptionalEffectTiming timing);
 };

@@ -349,8 +349,6 @@ accessibility/AccessibilityTreeItem.cpp
 accessibility/AccessibleSetValueEvent.cpp
 
 animation/AnimationEffect.cpp
-animation/AnimationEffectTiming.cpp
-animation/AnimationEffectTimingReadOnly.cpp
 animation/AnimationPlaybackEvent.cpp
 animation/AnimationTimeline.cpp
 animation/CSSAnimation.cpp
@@ -371,7 +369,6 @@ bindings/js/GCController.cpp
 bindings/js/IDBBindingUtilities.cpp
 bindings/js/JSAuthenticatorResponseCustom.cpp
 bindings/js/JSAnimationEffectCustom.cpp
-bindings/js/JSAnimationEffectTimingReadOnlyCustom.cpp
 bindings/js/JSAnimationTimelineCustom.cpp
 bindings/js/JSAttrCustom.cpp
 bindings/js/JSAudioTrackCustom.cpp
@@ -2451,9 +2448,7 @@ JSAesKeyParams.cpp
 JSAnalyserNode.cpp
 JSAnimationEvent.cpp
 JSAnimationEffect.cpp
-JSAnimationEffectTiming.cpp
 JSEffectTiming.cpp
-JSAnimationEffectTimingReadOnly.cpp
 JSAnimationPlaybackEvent.cpp
 JSAnimationPlaybackEventInit.cpp
 JSAnimationTimeline.cpp
@@ -2860,12 +2855,13 @@ JSOfflineAudioCompletionEvent.cpp
 JSOfflineAudioContext.cpp
 JSOffscreenCanvas.cpp
 JSOffscreenCanvasRenderingContext2D.cpp
-JSPaintRenderingContext2D.cpp
+JSOptionalEffectTiming.cpp
 JSOscillatorNode.cpp
 JSOverconstrainedError.cpp
 JSOverconstrainedErrorEvent.cpp
 JSOverflowEvent.cpp
 JSPageTransitionEvent.cpp
+JSPaintRenderingContext2D.cpp
 JSPannerNode.cpp
 JSParentNode.cpp
 JSPath2D.cpp

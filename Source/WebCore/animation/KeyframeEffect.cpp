@@ -27,7 +27,6 @@
 #include "KeyframeEffect.h"
 
 #include "Animation.h"
-#include "AnimationEffectTiming.h"
 #include "CSSAnimation.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSKeyframeRule.h"
@@ -466,11 +465,32 @@ static inline ExceptionOr<void> processPropertyIndexedKeyframes(ExecState& state
 
 ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(ExecState& state, Element* target, Strong<JSObject>&& keyframes, std::optional<Variant<double, KeyframeEffectOptions>>&& options)
 {
-    auto keyframeEffect = adoptRef(*new KeyframeEffect(AnimationEffectTiming::create(), target));
+    auto keyframeEffect = adoptRef(*new KeyframeEffect(target));
 
-    auto setPropertiesResult = keyframeEffect->timing()->setProperties(WTFMove(options));
-    if (setPropertiesResult.hasException())
-        return setPropertiesResult.releaseException();
+    if (options) {
+        OptionalEffectTiming timing;
+        auto optionsValue = options.value();
+        if (WTF::holds_alternative<double>(optionsValue)) {
+            Variant<double, String> duration = WTF::get<double>(optionsValue);
+            timing.duration = duration;
+        } else {
+            auto keyframeEffectOptions = WTF::get<KeyframeEffectOptions>(optionsValue);
+            timing = {
+                keyframeEffectOptions.delay,
+                keyframeEffectOptions.endDelay,
+                keyframeEffectOptions.fill,
+                keyframeEffectOptions.iterationStart,
+                keyframeEffectOptions.iterations,
+                keyframeEffectOptions.duration,
+                keyframeEffectOptions.direction,
+                keyframeEffectOptions.easing
+            };
+        }
+
+        auto updateTimingResult = keyframeEffect->updateTiming(timing);
+        if (updateTimingResult.hasException())
+            return updateTimingResult.releaseException();
+    }
 
     auto processKeyframesResult = keyframeEffect->processKeyframes(state, WTFMove(keyframes));
     if (processKeyframesResult.hasException())
@@ -481,19 +501,18 @@ ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(ExecState& state, Elemen
 
 ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(JSC::ExecState&, Ref<KeyframeEffect>&& source)
 {
-    auto keyframeEffect = adoptRef(*new KeyframeEffect(AnimationEffectTiming::create(), nullptr));
+    auto keyframeEffect = adoptRef(*new KeyframeEffect(nullptr));
     keyframeEffect->copyPropertiesFromSource(WTFMove(source));
     return WTFMove(keyframeEffect);
 }
 
 Ref<KeyframeEffect> KeyframeEffect::create(const Element& target)
 {
-    return adoptRef(*new KeyframeEffect(AnimationEffectTiming::create(), const_cast<Element*>(&target)));
+    return adoptRef(*new KeyframeEffect(const_cast<Element*>(&target)));
 }
 
-KeyframeEffect::KeyframeEffect(Ref<AnimationEffectTiming>&& timing, Element* target)
-    : AnimationEffect(WTFMove(timing))
-    , m_target(target)
+KeyframeEffect::KeyframeEffect(Element* target)
+    : m_target(target)
     , m_blendingKeyframes(emptyString())
 {
 }
@@ -518,7 +537,14 @@ void KeyframeEffect::copyPropertiesFromSource(Ref<KeyframeEffect>&& source)
     }
     m_parsedKeyframes = WTFMove(parsedKeyframes);
 
-    timing()->copyPropertiesFromSource(source->timing());
+    setFill(source->fill());
+    setDelay(source->delay());
+    setEndDelay(source->endDelay());
+    setDirection(source->direction());
+    setIterations(source->iterations());
+    setTimingFunction(source->timingFunction());
+    setIterationStart(source->iterationStart());
+    setIterationDuration(source->iterationDuration());
 
     KeyframeList keyframeList("keyframe-effect-" + createCanonicalUUIDString());
     for (auto& keyframe : source->m_blendingKeyframes.keyframes()) {
@@ -1163,8 +1189,8 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, doub
         //     passing interval distance as the input progress.
         auto transformedDistance = intervalDistance;
         if (startKeyframeIndex) {
-            if (auto iterationDuration = timing()->iterationDuration()) {
-                auto rangeDuration = (endOffset - startOffset) * iterationDuration.seconds();
+            if (auto duration = iterationDuration()) {
+                auto rangeDuration = (endOffset - startOffset) * duration.seconds();
                 if (auto* timingFunction = timingFunctionForKeyframeAtIndex(startKeyframeIndex.value()))
                     transformedDistance = timingFunction->transformTime(intervalDistance, rangeDuration);
             }
@@ -1292,7 +1318,7 @@ void KeyframeEffect::applyPendingAcceleratedActions()
     auto* compositedRenderer = downcast<RenderBoxModelObject>(renderer);
 
     // To simplify the code we use a default of 0s for an unresolved current time since for a Stop action that is acceptable.
-    auto timeOffset = animation()->currentTime().value_or(0_s).seconds() - timing()->delay().seconds();
+    auto timeOffset = animation()->currentTime().value_or(0_s).seconds() - delay().seconds();
 
     for (const auto& action : pendingAcceleratedActions) {
         switch (action) {
@@ -1327,14 +1353,13 @@ Ref<const Animation> KeyframeEffect::backingAnimationForCompositedRenderer() con
 
     // FIXME: The iterationStart and endDelay AnimationEffectTiming properties do not have
     // corresponding Animation properties.
-    auto effectTiming = timing();
     auto animation = Animation::create();
-    animation->setDuration(effectTiming->iterationDuration().seconds());
-    animation->setDelay(effectTiming->delay().seconds());
-    animation->setIterationCount(effectTiming->iterations());
-    animation->setTimingFunction(effectTiming->timingFunction()->clone());
+    animation->setDuration(iterationDuration().seconds());
+    animation->setDelay(delay().seconds());
+    animation->setIterationCount(iterations());
+    animation->setTimingFunction(timingFunction()->clone());
 
-    switch (effectTiming->fill()) {
+    switch (fill()) {
     case FillMode::None:
     case FillMode::Auto:
         animation->setFillMode(AnimationFillMode::None);
@@ -1350,7 +1375,7 @@ Ref<const Animation> KeyframeEffect::backingAnimationForCompositedRenderer() con
         break;
     }
 
-    switch (effectTiming->direction()) {
+    switch (direction()) {
     case PlaybackDirection::Normal:
         animation->setDirection(Animation::AnimationDirectionNormal);
         break;

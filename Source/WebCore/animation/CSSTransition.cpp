@@ -61,15 +61,14 @@ void CSSTransition::setTimingProperties(Seconds delay, Seconds duration)
     suspendEffectInvalidation();
 
     // This method is only called from CSSTransition::create() where we're guaranteed to have an effect.
-    ASSERT(effect());
-
-    auto* timing = effect()->timing();
+    auto* animationEffect = effect();
+    ASSERT(animationEffect);
 
     // In order for CSS Transitions to be seeked backwards, they need to have their fill mode set to backwards
     // such that the original CSS value applied prior to the transition is used for a negative current time.
-    timing->setFill(FillMode::Backwards);
-    timing->setDelay(delay);
-    timing->setIterationDuration(duration);
+    animationEffect->setFill(FillMode::Backwards);
+    animationEffect->setDelay(delay);
+    animationEffect->setIterationDuration(duration);
 
     unsuspendEffectInvalidation();
 }
