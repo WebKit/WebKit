@@ -1,3 +1,48 @@
+2018-11-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Spelling dots are drawn in the wrong place
+        https://bugs.webkit.org/show_bug.cgi?id=190764
+
+        Reviewed by Dean Jackson.
+
+        - Dots should not be clipped.
+        - Dots should be horizontally centered.
+        - Dots should be drawn behind the text.
+        - Distance from the baseline to the top of the dot should be 11.035% of font size.
+        - Dot diameter should be 13.247% of the font size.
+        - Distance between the dots (right side of the left dot to left side of the right dot) should be 9.457% of the font size.
+        - The "font size" used in these calculations should be clamped so it's 10px <= font size <= 40px.
+
+        Tests: editing/spelling/spelling-dots-position-2.html
+               editing/spelling/spelling-dots-position-3.html
+               editing/spelling/spelling-dots-position.html
+               editing/spelling/spelling-dots-repaint.html
+
+        * platform/graphics/cocoa/GraphicsContextCocoa.mm:
+        (WebCore::colorForMarkerLineStyle): Align iOS and macOS implementations.
+        (WebCore::GraphicsContext::drawDotsForDocumentMarker): Place the dots correctly.
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::addToLine): The KnownToHaveNoOverflow flag should be cleared if the element has spelling dots,
+            because there is no guarantee the spelling dots will lie inside the layout rect of the element.
+        (WebCore::InlineFlowBox::addTextBoxVisualOverflow): Update the repaint rects to include splling dot positions.
+        * rendering/InlineFlowBox.h: Comments should explain why, not say what.
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint): Draw the dots behind the text.
+        (WebCore::InlineTextBox::hasMarkers const): Convenience.
+        (WebCore::InlineTextBox::paintPlatformDocumentMarkers): Refactor bounds information into a helper function.
+        (WebCore::InlineTextBox::calculateUnionOfAllDocumentMarkerBounds const): Use for repaint rect calculation.
+        (WebCore::InlineTextBox::calculateDocumentMarkerBounds const): Place the dots correctly.
+        (WebCore::InlineTextBox::paintPlatformDocumentMarker): Call the helper method.
+        (WebCore::InlineTextBox::collectMarkedTextsForDocumentMarkers const):
+        (WebCore::InlineTextBox::collectMarkedTextsForDocumentMarkers): Deleted.
+        * rendering/InlineTextBox.h: Declare the helper methods.
+        * rendering/SimpleLineLayout.cpp: Simple line layout doesn't know how to paint spelling dots, so make the presence of
+            spelling dots opt us out of SLL.
+        (WebCore::SimpleLineLayout::canUseForWithReason):
+        * rendering/SimpleLineLayoutCoverage.cpp:
+        (WebCore::SimpleLineLayout::printReason):
+        * rendering/SimpleLineLayoutCoverage.h: Add a new opt-out reason.
+
 2018-11-06  Per Arne Vollan  <pvollan@apple.com>
 
         REGRESSION (r230523): Caps lock indicator not shown in password field

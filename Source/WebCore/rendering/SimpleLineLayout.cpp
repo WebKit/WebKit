@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SimpleLineLayout.h"
 
+#include "DocumentMarkerController.h"
 #include "FontCache.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
@@ -313,6 +314,9 @@ AvoidanceReasonFlags canUseForWithReason(const RenderBlockFlow& flow, IncludeRea
         if (child->selectionState() != RenderObject::SelectionNone)
             SET_REASON_AND_RETURN_IF_NEEDED(FlowChildIsSelected, reasons, includeReasons);
         if (is<RenderText>(*child)) {
+            const auto& renderText = downcast<RenderText>(*child);
+            if (!renderText.document().markers().markersFor(renderText.textNode()).isEmpty())
+                SET_REASON_AND_RETURN_IF_NEEDED(FlowIncludesDocumentMarkers, reasons, includeReasons);
             child = child->nextSibling();
             continue;
         }

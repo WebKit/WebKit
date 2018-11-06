@@ -1,3 +1,30 @@
+2018-11-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Spelling dots are drawn in the wrong place
+        https://bugs.webkit.org/show_bug.cgi?id=190764
+
+        Reviewed by Dean Jackson.
+
+        * editing/spelling/resources/VerySmallDescentAhem.ttf: Added. In order to test repaint rects,
+              this is a version of Ahem with a very small descent, so that the dots don't intersect
+              with the text itself.
+        * editing/spelling/spelling-dots-position-2-expected-mismatch.html: Added.
+        * editing/spelling/spelling-dots-position-2.html: Added. Make sure dots are painted in the
+              correct vertical place.
+        * editing/spelling/spelling-dots-position-3-expected-mismatch.html: Added.
+        * editing/spelling/spelling-dots-position-3.html: Added. Make sure dots are painted in the
+              correct vertical place.
+        * editing/spelling/spelling-dots-position-expected.html: Added.
+        * editing/spelling/spelling-dots-position.html: Added. Make sure dots are not painted in
+              the wrong place.
+        * editing/spelling/spelling-dots-repaint-expected.html: Added.
+        * editing/spelling/spelling-dots-repaint.html: Added. Test repaint by drawing an element
+              with spelling dots, and then deleting the element from the document. The spelling
+              dots should be removed too.
+        * fast/writing-mode/english-bt-text-with-spelling-marker-expected.html:
+        * fast/writing-mode/english-bt-text-with-spelling-marker.html: Update the test to compensate
+              for new spelling dot positions.
+
 2018-11-06  Ross Kirsling  <ross.kirsling@sony.com>
 
         [WinCairo] Unreviewed layout test gardening.
