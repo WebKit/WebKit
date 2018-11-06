@@ -1,3 +1,22 @@
+2018-11-06  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] transitions/remove-transition-style.html crashes with GuardMalloc on
+        https://bugs.webkit.org/show_bug.cgi?id=191304
+        <rdar://problem/45819476>
+
+        Reviewed by Dean Jackson.
+
+        Ensure we remove animations from the m_allAnimations ListHashSet upon destruction.
+
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::forgetAnimation):
+        (WebCore::AnimationTimeline::cancelDeclarativeAnimation):
+        * animation/AnimationTimeline.h:
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::getAnimations const):
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::~WebAnimation):
+
 2018-11-06  Youenn Fablet  <youenn@apple.com>
 
         RealtimeOutgoingAudioSourceCocoa should unobserve its source at destruction time

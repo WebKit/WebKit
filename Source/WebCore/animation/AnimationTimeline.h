@@ -48,6 +48,7 @@ class AnimationTimeline : public RefCounted<AnimationTimeline> {
 public:
     bool isDocumentTimeline() const { return m_classType == DocumentTimelineClass; }
 
+    void forgetAnimation(WebAnimation*);
     virtual void animationTimingDidChange(WebAnimation&);
     virtual void removeAnimation(WebAnimation&);
 

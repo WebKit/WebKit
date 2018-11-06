@@ -55,6 +55,11 @@ AnimationTimeline::~AnimationTimeline()
 {
 }
 
+void AnimationTimeline::forgetAnimation(WebAnimation* animation)
+{
+    m_allAnimations.remove(animation);
+}
+
 void AnimationTimeline::animationTimingDidChange(WebAnimation& animation)
 {
     if (m_animations.add(&animation)) {

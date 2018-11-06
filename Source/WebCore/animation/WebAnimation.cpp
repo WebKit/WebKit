@@ -68,6 +68,8 @@ WebAnimation::WebAnimation(Document& document)
 
 WebAnimation::~WebAnimation()
 {
+    if (m_timeline)
+        m_timeline->forgetAnimation(this);
 }
 
 void WebAnimation::remove()

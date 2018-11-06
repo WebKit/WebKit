@@ -131,7 +131,7 @@ Vector<RefPtr<WebAnimation>> DocumentTimeline::getAnimations() const
 
     // First, let's get all qualifying animations in their right group.
     for (const auto& animation : m_allAnimations) {
-        if (!animation || !animation->isRelevant() || animation->timeline() != this || !is<KeyframeEffect>(animation->effect()))
+        if (!animation->isRelevant() || animation->timeline() != this || !is<KeyframeEffect>(animation->effect()))
             continue;
 
         auto* target = downcast<KeyframeEffect>(animation->effect())->target();
