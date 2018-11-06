@@ -903,6 +903,7 @@ http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-o
 http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html [ Failure ]
 http/tests/misc/authentication-redirect-4/authentication-sent-to-redirect-same-origin-url.html [ Failure ]
 http/tests/misc/favicon-loads-with-icon-loading-override.html [ Failure ]
+http/tests/misc/form-submit-file-cross-site.html [ Skip ]
 http/tests/misc/link-rel-icon-beforeload.html [ Failure ]
 http/tests/misc/object-embedding-svg-delayed-size-negotiation.xhtml [ Failure ]
 http/tests/misc/slow-loading-animated-image.html [ ImageOnlyFailure ]
@@ -1472,7 +1473,7 @@ css3/filters/blur-various-radii.html [ Pass ImageOnlyFailure ]
 fast/css/sticky/sticky-top.html [ Pass ImageOnlyFailure ]
 
 css-custom-properties-api/ [ Failure ImageOnlyFailure ]
-fast/css-custom-paint/ [ Failure ImageOnlyFailure ]
+fast/css-custom-paint/ [ Skip ]
 
 # Dark mode not supported on Windows
 css-dark-mode [ Skip ]
