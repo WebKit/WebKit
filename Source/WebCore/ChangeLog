@@ -1,3 +1,19 @@
+2018-11-06  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GStreamer][WebRTC] Do not try to handle framerate modulation in the encoder
+        https://bugs.webkit.org/show_bug.cgi?id=190683
+
+        Reviewed by Philippe Normand.
+
+        This has to already be handled in capturing pipeline or in libwebrtc itself.
+
+        No other encoder implementation do that, and libwebrtc is not happy with encoder that do not output the exact number of frames that have been passed in.
+
+        No regressions detected and libwebrtc is happier this way, less warning output and no more frame corruption in H264 streams found.
+
+        * platform/mediastream/libwebrtc/GStreamerVideoEncoderFactory.cpp:
+        (WebCore::GStreamerVideoEncoder::InitEncode):
+
 2018-11-06  Frederic Wang  <fwang@igalia.com>
 
         Unreviewed, follow-up of previous commit.

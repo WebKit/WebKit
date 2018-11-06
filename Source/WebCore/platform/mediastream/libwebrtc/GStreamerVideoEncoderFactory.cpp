@@ -83,7 +83,6 @@ public:
             newBitrate, frameRate);
 
         auto caps = adoptGRef(gst_caps_copy(m_restrictionCaps.get()));
-        gst_caps_set_simple(caps.get(), "framerate", GST_TYPE_FRACTION, frameRate, 1, nullptr);
 
         SetRestrictionCaps(WTFMove(caps));
 
@@ -136,7 +135,6 @@ public:
         g_object_set(m_src, "is-live", true, "format", GST_FORMAT_TIME, nullptr);
 
         auto videoconvert = makeElement("videoconvert");
-        auto videorate = makeElement("videorate");
         auto sink = makeElement("appsink");
         gst_app_sink_set_emit_signals(GST_APP_SINK(sink), TRUE);
         g_signal_connect(sink, "new-sample", G_CALLBACK(newSampleCallbackTramp), this);
@@ -146,8 +144,8 @@ public:
         if (m_restrictionCaps)
             g_object_set(m_capsFilter, "caps", m_restrictionCaps.get(), nullptr);
 
-        gst_bin_add_many(GST_BIN(m_pipeline.get()), m_src, videorate, videoconvert, m_capsFilter, encoder.leakRef(), sink, nullptr);
-        if (!gst_element_link_many(m_src, videorate, videoconvert, m_capsFilter, m_encoder, sink, nullptr))
+        gst_bin_add_many(GST_BIN(m_pipeline.get()), m_src, videoconvert, m_capsFilter, encoder.leakRef(), sink, nullptr);
+        if (!gst_element_link_many(m_src, videoconvert, m_capsFilter, m_encoder, sink, nullptr))
             ASSERT_NOT_REACHED();
 
         gst_element_set_state(m_pipeline.get(), GST_STATE_PLAYING);
