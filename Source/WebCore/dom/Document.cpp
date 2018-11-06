@@ -7751,10 +7751,11 @@ void Document::updateIntersectionObservations()
                 FloatRect clientRootBounds;
                 if (intersectionState) {
                     auto* targetFrameView = target->document().view();
-                    targetBoundingClientRect = targetFrameView->absoluteToClientRect(intersectionState->absoluteTargetRect);
-                    clientRootBounds = frameView->absoluteToClientRect(intersectionState->absoluteRootBounds);
+                    targetBoundingClientRect = targetFrameView->absoluteToClientRect(intersectionState->absoluteTargetRect, target->renderer()->style().effectiveZoom());
+                    auto* rootRenderer = observer->root() ? observer->root()->renderer() : frameView->renderView();
+                    clientRootBounds = frameView->absoluteToClientRect(intersectionState->absoluteRootBounds, rootRenderer->style().effectiveZoom());
                     if (intersectionState->isIntersecting)
-                        clientIntersectionRect = targetFrameView->absoluteToClientRect(intersectionState->absoluteIntersectionRect);
+                        clientIntersectionRect = targetFrameView->absoluteToClientRect(intersectionState->absoluteIntersectionRect, target->renderer()->style().effectiveZoom());
                 }
 
                 std::optional<DOMRectInit> reportedRootBounds;

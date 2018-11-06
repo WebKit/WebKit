@@ -1,3 +1,18 @@
+2018-11-06  Ali Juma  <ajuma@chromium.org>
+
+        [IntersectionObserver] Account for CSS zoom when computing client rects
+        https://bugs.webkit.org/show_bug.cgi?id=191282
+
+        Reviewed by Simon Fraser.
+
+        When computing rects for an IntersectionObserverEntry, account for the effective zoom when
+        converting from absolute to client coordinates.
+
+        Test: web-platform-tests/intersection-observer/bounding-box.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateIntersectionObservations):
+
 2018-11-06  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer][WebRTC] Implement black frame generation

@@ -3,5 +3,5 @@ PASS Test that the target's border bounding box is used to calculate intersectio
 PASS First rAF. 
 PASS target.style.transform = 'translateY(195px)' 
 PASS target.style.transform = 'translateY(300px)' 
-FAIL target.style.zoom = 2 assert_equals: entries[3].boundingClientRect.left expected 18 but got 36
+PASS target.style.zoom = 2 
 
