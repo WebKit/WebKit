@@ -101,9 +101,9 @@ void TestController::platformResetPreferencesToConsistentValues()
     WKPreferencesSetTextAutosizingEnabled(preferences, false);
 }
 
-void TestController::platformResetStateToConsistentValues()
+void TestController::platformResetStateToConsistentValues(const TestOptions& options)
 {
-    cocoaResetStateToConsistentValues();
+    cocoaResetStateToConsistentValues(options);
 
     [[UIDevice currentDevice] setOrientation:UIDeviceOrientationPortrait animated:NO];
     

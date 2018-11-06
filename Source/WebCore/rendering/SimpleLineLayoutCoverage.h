@@ -90,7 +90,8 @@ enum AvoidanceReason_ : uint64_t {
     MultiColumnFlowHasColumnSpanner       = 1LLU  << 52,
     MultiColumnFlowVerticalAlign          = 1LLU  << 53,
     MultiColumnFlowIsFloating             = 1LLU  << 54,
-    EndOfReasons                          = 1LLU  << 55
+    FlowIncludesDocumentMarkers           = 1LLU  << 55,
+    EndOfReasons                          = 1LLU  << 56
 };
 const unsigned NoReason = 0;
 

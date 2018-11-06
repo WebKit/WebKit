@@ -158,7 +158,12 @@ void InlineFlowBox::addToLine(InlineBox* child)
         const RenderStyle& childStyle = child->lineStyle();
         if (child->behavesLikeText()) {
             const RenderStyle* childStyle = &child->lineStyle();
-            if (childStyle->letterSpacing() < 0 || childStyle->textShadow() || childStyle->textEmphasisMark() != TextEmphasisMark::None || childStyle->hasPositiveStrokeWidth())
+            bool hasMarkers = false;
+            if (is<InlineTextBox>(child)) {
+                const auto* textBox = downcast<InlineTextBox>(child);
+                hasMarkers = textBox->hasMarkers();
+            }
+            if (childStyle->letterSpacing() < 0 || childStyle->textShadow() || childStyle->textEmphasisMark() != TextEmphasisMark::None || childStyle->hasPositiveStrokeWidth() || hasMarkers)
                 child->clearKnownToHaveNoOverflow();
         } else if (child->renderer().isReplaced()) {
             const RenderBox& box = downcast<RenderBox>(child->renderer());
@@ -928,6 +933,10 @@ inline void InlineFlowBox::addTextBoxVisualOverflow(InlineTextBox& textBox, Glyp
     
     logicalVisualOverflow = LayoutRect(logicalLeftVisualOverflow, logicalTopVisualOverflow,
                                        logicalRightVisualOverflow - logicalLeftVisualOverflow, logicalBottomVisualOverflow - logicalTopVisualOverflow);
+
+    auto documentMarkerBounds = textBox.calculateUnionOfAllDocumentMarkerBounds();
+    documentMarkerBounds.move(textBox.logicalLeft(), textBox.logicalTop());
+    logicalVisualOverflow = unionRect(logicalVisualOverflow, LayoutRect(documentMarkerBounds));
                                     
     textBox.setLogicalOverflowRect(logicalVisualOverflow);
 }

@@ -193,7 +193,10 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
         stream << "column with vertical-align != baseline";
         break;
     case MultiColumnFlowIsFloating:
-        stream << "column with floating objecgts";
+        stream << "column with floating objects";
+        break;
+    case FlowIncludesDocumentMarkers:
+        stream << "text includes document markers";
         break;
     case FlowTextIsEmpty:
     case FlowHasNoChild:
