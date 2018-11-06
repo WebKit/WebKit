@@ -4633,6 +4633,11 @@ IGNORE_WARNINGS_END
 #endif
 }
 
++ (BOOL)_handlesSafeBrowsing
+{
+    return DEFAULT_SAFE_BROWSING_ENABLED;
+}
+
 - (void)_evaluateJavaScriptWithoutUserGesture:(NSString *)javaScriptString completionHandler:(void (^)(id, NSError *))completionHandler
 {
     [self _evaluateJavaScript:javaScriptString forceUserGesture:NO completionHandler:completionHandler];

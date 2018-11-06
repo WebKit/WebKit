@@ -188,6 +188,8 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 
 - (IBAction)_pasteAsQuotation:(id)sender WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
++ (BOOL)_handlesSafeBrowsing WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 #if TARGET_OS_IPHONE
 // DERECATED: The setters of the three following function are deprecated, please use overrideLayoutParameters.
 // Define the smallest size a page take with a regular viewport.

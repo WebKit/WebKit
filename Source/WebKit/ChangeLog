@@ -1,3 +1,18 @@
+2018-11-06  Alex Christensen  <achristensen@webkit.org>
+
+        Add ObjC SPI equivalent of WKContextHandlesSafeBrowsing
+        https://bugs.webkit.org/show_bug.cgi?id=191329
+
+        Reviewed by Tim Horton.
+
+        Like WKContextHandlesSafeBrowsing, this is so I can make one change in WebKit and enable safe browsing
+        in WKWebView and disable it in Safari at the same time without broken revisions between landing two changes
+        in two repositories.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (+[WKWebView handlesSafeBrowsing]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
 2018-11-06  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] User should not be prompted again after denying getDisplayMedia request
