@@ -478,11 +478,8 @@ TEST(ProcessSwap, LoadAfterPolicyDecision)
     request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/main.html"]];
     [webView loadRequest:request];
 
-    TestWebKitAPI::Util::run(&done);
-    done = false;
-
-    // Should navigate to pson://www.webkit.org/main2.html and not pson://www.apple.com/main.html.
-    EXPECT_WK_STREQ(@"pson://www.webkit.org/main2.html", [[webView URL] absoluteString]);
+    while (![[[webView URL] absoluteString] isEqualToString:@"pson://www.webkit.org/main2.html"])
+        TestWebKitAPI::Util::spinRunLoop();
 }
 
 TEST(ProcessSwap, NoSwappingForeTLDPlus2)

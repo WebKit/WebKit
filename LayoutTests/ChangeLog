@@ -1,3 +1,15 @@
+2018-11-06  Alex Christensen  <achristensen@webkit.org>
+
+        Fix tests after r237863
+        https://bugs.webkit.org/show_bug.cgi?id=191315
+
+        Reviewed by Chris Dumez.
+
+        * platform/mac-wk2/http/tests/navigation: Added.
+        * platform/mac-wk2/http/tests/navigation/keyboard-events-during-provisional-navigation-expected.txt: Copied from LayoutTests/http/tests/navigation/keyboard-events-during-provisional-navigation-expected.txt.
+        This test is timing related, and I need to update its WK2 expectations every time I enable or disable safe browsing checks during navigation.
+        See r237149.
+
 2018-11-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r237834.

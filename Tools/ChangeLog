@@ -1,3 +1,15 @@
+2018-11-06  Alex Christensen  <achristensen@webkit.org>
+
+        Fix tests after r237863
+        https://bugs.webkit.org/show_bug.cgi?id=191315
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        With the timing change of r237863, the WKWebView progressed further than before when loading main.html so it completed before main2.html.
+        This test was meant to test that main2.html does eventually load, and it doesn't matter if main.html loads before it.  I updated the test
+        to verify that main2.html eventually loads, making this test less timing dependent.
+
 2018-11-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r237834.
