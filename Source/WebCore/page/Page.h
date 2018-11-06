@@ -382,6 +382,7 @@ public:
     ScrollElasticity horizontalScrollElasticity() const { return static_cast<ScrollElasticity>(m_horizontalScrollElasticity); }
 
     WEBCORE_EXPORT void accessibilitySettingsDidChange();
+    WEBCORE_EXPORT void appearanceDidChange();
 
     // Page and FrameView both store a Pagination value. Page::pagination() is set only by API,
     // and FrameView::pagination() is set only by CSS. Page::pagination() will affect all

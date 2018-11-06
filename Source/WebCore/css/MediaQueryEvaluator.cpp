@@ -98,6 +98,15 @@ static bool isViewportDependent(const AtomicString& mediaFeature)
         || mediaFeature == MediaFeatureNames::maxAspectRatio;
 }
 
+static bool isAppearanceDependent(const AtomicString& mediaFeature)
+{
+    return mediaFeature == MediaFeatureNames::prefersDarkInterface
+#if ENABLE(DARK_MODE_CSS)
+        || mediaFeature == MediaFeatureNames::prefersColorScheme
+#endif
+    ;
+}
+
 MediaQueryEvaluator::MediaQueryEvaluator(bool mediaFeatureResult)
     : m_fallbackResult(mediaFeatureResult)
 {
@@ -165,6 +174,8 @@ bool MediaQueryEvaluator::evaluate(const MediaQuerySet& querySet, StyleResolver*
                     styleResolver->addViewportDependentMediaQueryResult(expressions[j], expressionResult);
                 if (styleResolver && isAccessibilitySettingsDependent(expressions[j].mediaFeature()))
                     styleResolver->addAccessibilitySettingsDependentMediaQueryResult(expressions[j], expressionResult);
+                if (styleResolver && isAppearanceDependent(expressions[j].mediaFeature()))
+                    styleResolver->addAppearanceDependentMediaQueryResult(expressions[j], expressionResult);
                 if (!expressionResult)
                     break;
             }
@@ -179,7 +190,7 @@ bool MediaQueryEvaluator::evaluate(const MediaQuerySet& querySet, StyleResolver*
     return result;
 }
 
-bool MediaQueryEvaluator::evaluate(const MediaQuerySet& querySet, Vector<MediaQueryResult>& results) const
+bool MediaQueryEvaluator::evaluate(const MediaQuerySet& querySet, Vector<MediaQueryResult>& viewportDependentResults, Vector<MediaQueryResult>& appearanceDependentResults) const
 {
     auto& queries = querySet.queryVector();
     if (!queries.size())
@@ -198,7 +209,9 @@ bool MediaQueryEvaluator::evaluate(const MediaQuerySet& querySet, Vector<MediaQu
             for (; j < expressions.size(); ++j) {
                 bool expressionResult = evaluate(expressions[j]);
                 if (isViewportDependent(expressions[j].mediaFeature()))
-                    results.append({ expressions[j], expressionResult });
+                    viewportDependentResults.append({ expressions[j], expressionResult });
+                if (isAppearanceDependent(expressions[j].mediaFeature()))
+                    appearanceDependentResults.append({ expressions[j], expressionResult });
                 if (!expressionResult)
                     break;
             }

@@ -97,6 +97,7 @@ public:
 
     void evaluateMediaQueriesForViewportChange();
     void evaluateMediaQueriesForAccessibilitySettingsChange();
+    void evaluateMediaQueriesForAppearanceChange();
 
     // This is called when some stylesheet becomes newly enabled or disabled.
     void didChangeActiveStyleSheetCandidates();

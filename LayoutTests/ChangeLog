@@ -1,3 +1,16 @@
+2018-11-06  Timothy Hatcher  <timothy@apple.com>
+
+        <picture> container doesn't update when prefers-color-scheme media query changes
+        https://bugs.webkit.org/show_bug.cgi?id=190913
+        rdar://problem/45608456
+
+        Reviewed by Dean Jackson.
+
+        * css-dark-mode/prefers-color-scheme-picture-element-expected.txt: Added.
+        * css-dark-mode/prefers-color-scheme-picture-element.html: Added.
+        * platform/mac-highsierra/css-dark-mode/prefers-color-scheme-picture-element-expected.txt: Added.
+        * platform/mac-sierra/css-dark-mode/prefers-color-scheme-picture-element-expected.txt: Added.
+
 2018-11-06  Alex Christensen  <achristensen@webkit.org>
 
         Fix tests after r237863

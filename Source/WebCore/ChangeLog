@@ -1,3 +1,44 @@
+2018-11-06  Timothy Hatcher  <timothy@apple.com>
+
+        <picture> container doesn't update when prefers-color-scheme media query changes
+        https://bugs.webkit.org/show_bug.cgi?id=190913
+        rdar://problem/45608456
+
+        Reviewed by Dean Jackson.
+
+        Test: css-dark-mode/prefers-color-scheme-picture-element.html
+
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::isAppearanceDependent): Added.
+        (WebCore::MediaQueryEvaluator::evaluate const): Keep track of appearanceDependentResults.
+        * css/MediaQueryEvaluator.h:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::addAppearanceDependentMediaQueryResult): Added.
+        (WebCore::StyleResolver::hasMediaQueriesAffectedByAppearanceChange const): Added.
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::hasAppearanceDependentMediaQueries const): Added.
+        * dom/Document.cpp:
+        (WebCore::Document::evaluateMediaQueryList): Call checkAppearanceDependentPictures.
+        (WebCore::Document::checkAppearanceDependentPictures): Added.
+        (WebCore::Document::addAppearanceDependentPicture): Added.
+        (WebCore::Document::removeAppearanceDependentPicture): Added.
+        * dom/Document.h:
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::bestFitSourceFromPictureElement): Call addAppearanceDependentPicture.
+        * html/HTMLPictureElement.cpp:
+        (WebCore::HTMLPictureElement::~HTMLPictureElement): Call removeAppearanceDependentPicture.
+        (WebCore::HTMLPictureElement::didMoveToNewDocument): Ditto.
+        (WebCore::HTMLPictureElement::appearanceChangeAffectedPicture const): Added.
+        * html/HTMLPictureElement.h:
+        * page/Page.cpp:
+        (WebCore::Page::appearanceDidChange): Added.
+        (WebCore::Page::setUseSystemAppearance): Call appearanceDidChange.
+        (WebCore::Page::setUseDarkAppearance): Call appearanceDidChange.
+        * page/Page.h:
+        * style/StyleScope.cpp:
+        (WebCore::Style::Scope::evaluateMediaQueriesForAppearanceChange): Added.
+        * style/StyleScope.h:
+
 2018-11-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r237834.

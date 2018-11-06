@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+
+<!-- webkit-test-runner [ experimental:DarkModeCSSEnabled=true ] -->
+
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+
+<picture id="test1">
+    <source srcset="dark.png" media="(prefers-color-scheme: dark)">
+    <source srcset="light.png" media="(prefers-color-scheme: light)">
+    <img src="error.png">
+</picture>
+
+<script>
+function test_picture(id, expected) {
+    assert_regexp_match(document.getElementById(id).querySelector("img").currentSrc, new RegExp(`/${expected}$`));
+}
+
+test(function() {
+    // The current image should be the light source.
+    test_picture("test1", "light.png");
+}, "Picture image has the light source selected");
+
+test(function() {
+    if (window.internals)
+        internals.settings.setUseDarkAppearance(true);
+}, "Dark color scheme enabled");
+
+test(function() {
+    // The current image should be the dark source.
+    test_picture("test1", "dark.png");
+}, "Picture image has the dark source selected");
+</script>

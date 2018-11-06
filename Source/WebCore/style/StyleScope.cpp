@@ -632,6 +632,13 @@ void Scope::evaluateMediaQueriesForAccessibilitySettingsChange()
     });
 }
 
+void Scope::evaluateMediaQueriesForAppearanceChange()
+{
+    evaluateMediaQueries([] (StyleResolver& resolver) {
+        return resolver.hasMediaQueriesAffectedByAppearanceChange();
+    });
+}
+
 template <typename TestFunction>
 void Scope::evaluateMediaQueries(TestFunction&& testFunction)
 {

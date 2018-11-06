@@ -1882,6 +1882,21 @@ bool StyleResolver::hasMediaQueriesAffectedByAccessibilitySettingsChange() const
     return false;
 }
 
+void StyleResolver::addAppearanceDependentMediaQueryResult(const MediaQueryExpression& expression, bool result)
+{
+    m_appearanceDependentMediaQueryResults.append(MediaQueryResult { expression, result });
+}
+
+bool StyleResolver::hasMediaQueriesAffectedByAppearanceChange() const
+{
+    LOG(MediaQueries, "StyleResolver::hasMediaQueriesAffectedByAppearanceChange evaluating queries");
+    for (auto& result : m_appearanceDependentMediaQueryResults) {
+        if (m_mediaQueryEvaluator.evaluate(result.expression) != result.result)
+            return true;
+    }
+    return false;
+}
+
 static FilterOperation::OperationType filterOperationForType(CSSValueID type)
 {
     switch (type) {

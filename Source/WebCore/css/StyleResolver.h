@@ -209,6 +209,10 @@ public:
     bool hasAccessibilitySettingsDependentMediaQueries() const { return !m_accessibilitySettingsDependentMediaQueryResults.isEmpty(); }
     bool hasMediaQueriesAffectedByAccessibilitySettingsChange() const;
 
+    void addAppearanceDependentMediaQueryResult(const MediaQueryExpression&, bool result);
+    bool hasAppearanceDependentMediaQueries() const { return !m_appearanceDependentMediaQueryResults.isEmpty(); }
+    bool hasMediaQueriesAffectedByAppearanceChange() const;
+
     void addKeyframeStyle(Ref<StyleRuleKeyframes>&&);
 
     bool usesFirstLineRules() const { return m_ruleSets.features().usesFirstLineRules; }
@@ -509,6 +513,7 @@ private:
 
     Vector<MediaQueryResult> m_viewportDependentMediaQueryResults;
     Vector<MediaQueryResult> m_accessibilitySettingsDependentMediaQueryResults;
+    Vector<MediaQueryResult> m_appearanceDependentMediaQueryResults;
 
 #if ENABLE(CSS_DEVICE_ADAPTATION)
     RefPtr<ViewportStyleResolver> m_viewportStyleResolver;

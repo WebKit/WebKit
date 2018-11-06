@@ -3809,6 +3809,7 @@ void Document::evaluateMediaQueryList()
         m_mediaQueryMatcher->styleResolverChanged();
     
     checkViewportDependentPictures();
+    checkAppearanceDependentPictures();
 }
 
 void Document::checkViewportDependentPictures()
@@ -3819,6 +3820,18 @@ void Document::checkViewportDependentPictures()
         if ((*it)->viewportChangeAffectedPicture())
             changedPictures.append(*it);
     }
+    for (auto* picture : changedPictures)
+        picture->sourcesChanged();
+}
+
+void Document::checkAppearanceDependentPictures()
+{
+    Vector<HTMLPictureElement*, 16> changedPictures;
+    for (auto* picture : m_appearanceDependentPictures) {
+        if (picture->appearanceChangeAffectedPicture())
+            changedPictures.append(picture);
+    }
+
     for (auto* picture : changedPictures)
         picture->sourcesChanged();
 }
@@ -7578,6 +7591,16 @@ void Document::addViewportDependentPicture(HTMLPictureElement& picture)
 void Document::removeViewportDependentPicture(HTMLPictureElement& picture)
 {
     m_viewportDependentPictures.remove(&picture);
+}
+
+void Document::addAppearanceDependentPicture(HTMLPictureElement& picture)
+{
+    m_appearanceDependentPictures.add(&picture);
+}
+
+void Document::removeAppearanceDependentPicture(HTMLPictureElement& picture)
+{
+    m_appearanceDependentPictures.remove(&picture);
 }
 
 #if ENABLE(INTERSECTION_OBSERVER)

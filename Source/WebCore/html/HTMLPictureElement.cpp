@@ -45,11 +45,13 @@ HTMLPictureElement::HTMLPictureElement(const QualifiedName& tagName, Document& d
 HTMLPictureElement::~HTMLPictureElement()
 {
     document().removeViewportDependentPicture(*this);
+    document().removeAppearanceDependentPicture(*this);
 }
 
 void HTMLPictureElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
 {
     oldDocument.removeViewportDependentPicture(*this);
+    oldDocument.removeAppearanceDependentPicture(*this);
     HTMLElement::didMoveToNewDocument(oldDocument, newDocument);
     sourcesChanged();
 }
@@ -71,6 +73,18 @@ bool HTMLPictureElement::viewportChangeAffectedPicture() const
     MediaQueryEvaluator evaluator { document().printing() ? "print" : "screen", document(), documentElement ? documentElement->computedStyle() : nullptr };
     for (auto& result : m_viewportDependentMediaQueryResults) {
         LOG(MediaQueries, "HTMLPictureElement %p viewportChangeAffectedPicture evaluating media queries", this);
+        if (evaluator.evaluate(result.expression) != result.result)
+            return true;
+    }
+    return false;
+}
+
+bool HTMLPictureElement::appearanceChangeAffectedPicture() const
+{
+    auto documentElement = makeRefPtr(document().documentElement());
+    MediaQueryEvaluator evaluator { document().printing() ? "print" : "screen", document(), documentElement ? documentElement->computedStyle() : nullptr };
+    for (auto& result : m_appearanceDependentMediaQueryResults) {
+        LOG(MediaQueries, "HTMLPictureElement %p appearanceChangeAffectedPicture evaluating media queries", this);
         if (evaluator.evaluate(result.expression) != result.result)
             return true;
     }

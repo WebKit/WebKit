@@ -155,8 +155,13 @@ ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
     auto picture = makeRefPtr(pictureElement());
     if (!picture)
         return { };
+
     picture->clearViewportDependentResults();
     document().removeViewportDependentPicture(*picture);
+
+    picture->clearAppearanceDependentResults();
+    document().removeAppearanceDependentPicture(*picture);
+
     for (RefPtr<Node> child = picture->firstChild(); child && child != this; child = child->nextSibling()) {
         if (!is<HTMLSourceElement>(*child))
             continue;
@@ -179,9 +184,11 @@ ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
         MediaQueryEvaluator evaluator { document().printing() ? "print" : "screen", document(), documentElement ? documentElement->computedStyle() : nullptr };
         auto* queries = source.parsedMediaAttribute(document());
         LOG(MediaQueries, "HTMLImageElement %p bestFitSourceFromPictureElement evaluating media queries", this);
-        auto evaluation = !queries || evaluator.evaluate(*queries, picture->viewportDependentResults());
+        auto evaluation = !queries || evaluator.evaluate(*queries, picture->viewportDependentResults(), picture->appearanceDependentResults());
         if (picture->hasViewportDependentResults())
             document().addViewportDependentPicture(*picture);
+        if (picture->hasAppearanceDependentResults())
+            document().addAppearanceDependentPicture(*picture);
         if (!evaluation)
             continue;
 

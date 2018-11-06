@@ -1399,6 +1399,9 @@ public:
     void addViewportDependentPicture(HTMLPictureElement&);
     void removeViewportDependentPicture(HTMLPictureElement&);
 
+    void addAppearanceDependentPicture(HTMLPictureElement&);
+    void removeAppearanceDependentPicture(HTMLPictureElement&);
+
 #if ENABLE(INTERSECTION_OBSERVER)
     void addIntersectionObserver(IntersectionObserver&);
     void removeIntersectionObserver(IntersectionObserver&);
@@ -1634,6 +1637,7 @@ private:
     void didLoadResourceSynchronously() final;
 
     void checkViewportDependentPictures();
+    void checkAppearanceDependentPictures();
 
 #if ENABLE(INTERSECTION_OBSERVER)
     void notifyIntersectionObserversTimerFired();
@@ -1828,6 +1832,7 @@ private:
 #endif
 
     HashSet<HTMLPictureElement*> m_viewportDependentPictures;
+    HashSet<HTMLPictureElement*> m_appearanceDependentPictures;
 
 #if ENABLE(INTERSECTION_OBSERVER)
     Vector<WeakPtr<IntersectionObserver>> m_intersectionObservers;

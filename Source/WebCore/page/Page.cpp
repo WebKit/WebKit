@@ -2455,6 +2455,18 @@ void Page::accessibilitySettingsDidChange()
     }
 }
 
+void Page::appearanceDidChange()
+{
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        auto* document = frame->document();
+        if (!document)
+            continue;
+
+        document->styleScope().evaluateMediaQueriesForAppearanceChange();
+        document->evaluateMediaQueryList();
+    }
+}
+
 void Page::setUnobscuredSafeAreaInsets(const FloatBoxExtent& insets)
 {
     if (m_unobscuredSafeAreaInsets == insets)
@@ -2476,7 +2488,7 @@ void Page::setUseSystemAppearance(bool value)
 
     m_useSystemAppearance = value;
 
-    updateStyleAfterChangeInEnvironment();
+    appearanceDidChange();
 
     for (auto* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* document = frame->document();
@@ -2496,7 +2508,7 @@ void Page::setUseDarkAppearance(bool value)
 
     m_useDarkAppearance = value;
 
-    updateStyleAfterChangeInEnvironment();
+    appearanceDidChange();
 }
 
 bool Page::useDarkAppearance() const

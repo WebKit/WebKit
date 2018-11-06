@@ -1,0 +1,6 @@
+ 
+
+FAIL Picture image has the light source selected assert_regexp_match: expected object "/\/light.png$/" but got "file:///Volumes/Data/EWS/WebKit/LayoutTests/css-dark-mode/error.png"
+PASS Dark color scheme enabled 
+FAIL Picture image has the dark source selected assert_regexp_match: expected object "/\/dark.png$/" but got "file:///Volumes/Data/EWS/WebKit/LayoutTests/css-dark-mode/error.png"
+
