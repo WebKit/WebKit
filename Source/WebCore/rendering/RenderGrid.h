@@ -35,7 +35,15 @@ namespace WebCore {
 class GridArea;
 class GridSpan;
 
-struct ContentAlignmentData;
+struct ContentAlignmentData {
+    WTF_MAKE_NONCOPYABLE(ContentAlignmentData); WTF_MAKE_FAST_ALLOCATED;
+public:
+    ContentAlignmentData() = default;
+    bool isValid() const { return positionOffset >= 0 && distributionOffset >= 0; }
+
+    LayoutUnit positionOffset;
+    LayoutUnit distributionOffset;
+};
 
 enum GridAxisPosition {GridAxisStart, GridAxisEnd, GridAxisCenter};
 enum GridAxis { GridRowAxis, GridColumnAxis };
@@ -64,6 +72,7 @@ public:
 
     // Required by GridTrackSizingAlgorithm. Keep them under control.
     LayoutUnit guttersSize(const Grid&, GridTrackSizingDirection, unsigned startLine, unsigned span, std::optional<LayoutUnit> availableSize) const;
+    LayoutUnit gridItemOffset(GridTrackSizingDirection) const;
 
     StyleContentAlignmentData contentAlignment(GridTrackSizingDirection) const;
 
@@ -133,7 +142,7 @@ private:
     GridAxisPosition rowAxisPositionForChild(const RenderBox&) const;
     LayoutUnit columnAxisOffsetForChild(const RenderBox&) const;
     LayoutUnit rowAxisOffsetForChild(const RenderBox&) const;
-    ContentAlignmentData computeContentPositionAndDistributionOffset(GridTrackSizingDirection, const LayoutUnit& availableFreeSpace, unsigned numberOfGridTracks) const;
+    void computeContentPositionAndDistributionOffset(GridTrackSizingDirection, const LayoutUnit& availableFreeSpace, unsigned numberOfGridTracks);
     LayoutPoint findChildLogicalPosition(const RenderBox&) const;
     GridArea cachedGridArea(const RenderBox&) const;
     GridSpan cachedGridSpan(const RenderBox&, GridTrackSizingDirection) const;
@@ -162,8 +171,8 @@ private:
 
     LayoutUnit gridGap(GridTrackSizingDirection) const;
     LayoutUnit gridGap(GridTrackSizingDirection, std::optional<LayoutUnit> availableSize) const;
-    LayoutUnit gridItemOffset(GridTrackSizingDirection) const;
 
+    unsigned nonCollapsedTracks(GridTrackSizingDirection) const;
     unsigned numTracks(GridTrackSizingDirection, const Grid&) const;
 
     LayoutUnit translateOutOfFlowRTLCoordinate(const RenderBox&, LayoutUnit) const;
@@ -175,8 +184,8 @@ private:
 
     Vector<LayoutUnit> m_columnPositions;
     Vector<LayoutUnit> m_rowPositions;
-    LayoutUnit m_offsetBetweenColumns;
-    LayoutUnit m_offsetBetweenRows;
+    ContentAlignmentData m_offsetBetweenColumns;
+    ContentAlignmentData m_offsetBetweenRows;
 
     typedef HashMap<const RenderBox*, std::optional<size_t>> OutOfFlowPositionsMap;
     OutOfFlowPositionsMap m_outOfFlowItemColumn;

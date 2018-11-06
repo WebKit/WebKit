@@ -555,17 +555,28 @@ LayoutUnit GridTrackSizingAlgorithm::assumedRowsSizeForOrthogonalChild(const Ren
 
 LayoutUnit GridTrackSizingAlgorithm::gridAreaBreadthForChild(const RenderBox& child, GridTrackSizingDirection direction) const
 {
+    bool addContentAlignmentOffset =
+        direction == ForColumns && m_sizingState == RowSizingFirstIteration;
     // To determine the column track's size based on an orthogonal grid item we need it's logical
     // height, which may depend on the row track's size. It's possible that the row tracks sizing
     // logic has not been performed yet, so we will need to do an estimation.
-    if (direction == ForRows && m_sizingState == ColumnSizingFirstIteration)
-        return assumedRowsSizeForOrthogonalChild(child);
+    if (direction == ForRows && (m_sizingState == ColumnSizingFirstIteration || m_sizingState == ColumnSizingSecondIteration)) {
+        ASSERT(GridLayoutFunctions::isOrthogonalChild(*m_renderGrid, child));
+        // FIXME (jfernandez) Content Alignment should account for this heuristic.
+        // https://github.com/w3c/csswg-drafts/issues/2697
+        if (m_sizingState == ColumnSizingFirstIteration)
+            return assumedRowsSizeForOrthogonalChild(child);
+        addContentAlignmentOffset = true;
+    }
 
     const Vector<GridTrack>& allTracks = tracks(direction);
     const GridSpan& span = m_grid.gridItemSpan(child, direction);
     LayoutUnit gridAreaBreadth = 0;
     for (auto trackPosition : span)
         gridAreaBreadth += allTracks[trackPosition].baseSize();
+
+    if (addContentAlignmentOffset)
+        gridAreaBreadth += (span.integerSpan() - 1) * m_renderGrid->gridItemOffset(direction);
 
     gridAreaBreadth += m_renderGrid->guttersSize(m_grid, direction, span.startLine(), span.integerSpan(), availableSpace(direction));
 

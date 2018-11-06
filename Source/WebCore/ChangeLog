@@ -1,3 +1,51 @@
+2018-11-06  Javier Fernandez  <jfernandez@igalia.com>
+
+        CSS grid elements with justify-content: space-around have extra whitespace, sometimes a lot
+        https://bugs.webkit.org/show_bug.cgi?id=191308
+
+        Reviewed by Dean Jackson.
+
+        The CSS WG resolved [1] that Content Alignment should account to the
+        track sizing algorithm.
+
+        The sizing algorithm has been modified so that two new steps (1.5
+        and 2.5) were added to compute the Content Alignment offsets after
+        resolving the columns' and rows' sizes respectively.
+
+        This change decouples the Content Alignment logic from the tracks
+        position, so that we can use it as part of the track sizing algorithm.
+
+        I also had to store the whole ContentAlignmentData structure in two
+        class attributes. We need both, position and distribution offsets, to
+        be used in different parts of the layout logic.
+
+        [1] https://github.com/w3c/csswg-drafts/issues/2557
+
+        Tests: imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-content-distribution-must-account-for-track-sizing-001.html
+               imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-content-distribution-must-account-for-track-sizing-002.html
+               imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-content-distribution-must-account-for-track-sizing-003.html
+               imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-content-distribution-must-account-for-track-sizing-004.html
+               imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-percent-cols-filled-shrinkwrap-001.html
+               imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-percent-cols-spanned-shrinkwrap-001.html
+               imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-percent-rows-filled-shrinkwrap-001.html
+               imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-percent-rows-spanned-shrinkwrap-001.html
+
+        * rendering/GridTrackSizingAlgorithm.cpp:
+        (WebCore::GridTrackSizingAlgorithm::gridAreaBreadthForChild const):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::repeatTracksSizingIfNeeded):
+        (WebCore::RenderGrid::layoutBlock):
+        (WebCore::RenderGrid::gridItemOffset const):
+        (WebCore::RenderGrid::trackSizesForComputedStyle const):
+        (WebCore::RenderGrid::populateGridPositionsForDirection):
+        (WebCore::RenderGrid::gridAreaBreadthForOutOfFlowChild):
+        (WebCore::contentDistributionOffset):
+        (WebCore::RenderGrid::computeContentPositionAndDistributionOffset):
+        (WebCore::RenderGrid::nonCollapsedTracks const):
+        * rendering/RenderGrid.h:
+        (WebCore::ContentAlignmentData::isValid):
+        (WebCore::ContentAlignmentData::defaultOffsets):
+
 2018-11-06  Sihui Liu  <sihui_liu@apple.com>
 
         IndexedDB: WAL file keeps growing
