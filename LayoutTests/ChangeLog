@@ -1,5 +1,15 @@
 2018-11-06  Youenn Fablet  <youenn@apple.com>
 
+        Make sure RTCIceCandidateStats address is undefined for host and peer reflexive case
+        https://bugs.webkit.org/show_bug.cgi?id=191263
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/datachannel/getStats-no-prflx-remote-candidate-expected.txt: Added.
+        * webrtc/datachannel/getStats-no-prflx-remote-candidate.html: Added.
+
+2018-11-06  Youenn Fablet  <youenn@apple.com>
+
         Layout Test imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription-tracks.https.html is flaky
         https://bugs.webkit.org/show_bug.cgi?id=191278
 

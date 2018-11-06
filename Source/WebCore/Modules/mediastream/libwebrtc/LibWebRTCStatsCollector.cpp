@@ -310,9 +310,7 @@ static inline void fillRTCIceCandidateStats(RTCStatsReport::IceCandidateStats& s
     if (rtcStats.candidate_type.is_defined())
         stats.candidateType = iceCandidateState(*rtcStats.candidate_type);
 
-    if (stats.candidateType == RTCStatsReport::IceCandidateType::Prflx)
-        stats.candidateType = { };
-    if (stats.candidateType == RTCStatsReport::IceCandidateType::Prflx || stats.candidateType == RTCStatsReport::IceCandidateType::Host)
+    if (!stats.candidateType || stats.candidateType == RTCStatsReport::IceCandidateType::Prflx || stats.candidateType == RTCStatsReport::IceCandidateType::Host)
         stats.address = { };
 
     if (rtcStats.priority.is_defined())

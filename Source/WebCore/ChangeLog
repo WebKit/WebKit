@@ -1,3 +1,15 @@
+2018-11-06  Youenn Fablet  <youenn@apple.com>
+
+        Make sure RTCIceCandidateStats address is undefined for host and peer reflexive case
+        https://bugs.webkit.org/show_bug.cgi?id=191263
+
+        Reviewed by Eric Carlson.
+
+        Test: webrtc/datachannel/getStats-no-prflx-remote-candidate.html
+
+        * Modules/mediastream/libwebrtc/LibWebRTCStatsCollector.cpp:
+        (WebCore::fillRTCIceCandidateStats):
+
 2018-11-06  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer][WebRTC] Handle setting max number of frame between keyframes
