@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Google LLC. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://wicg.github.io/IntersectionObserver/
+#include "config.h"
+#include "JSIntersectionObserverEntry.h"
 
-typedef double DOMHighResTimeStamp;
+#include "JSNodeCustom.h"
 
-[
-    Conditional=INTERSECTION_OBSERVER,
-    Constructor(IntersectionObserverEntryInit intersectionObserverEntryInit),
-    ImplementationLacksVTable,
-    EnabledAtRuntime=IntersectionObserver,
-    JSCustomMarkFunction,
-] interface IntersectionObserverEntry {
-    readonly attribute DOMHighResTimeStamp time;
-    readonly attribute DOMRectReadOnly? rootBounds;
-    readonly attribute DOMRectReadOnly boundingClientRect;
-    readonly attribute DOMRectReadOnly intersectionRect;
-    readonly attribute boolean isIntersecting;
-    readonly attribute double intersectionRatio;
-    readonly attribute Element target;
-};
+namespace WebCore {
 
-[
-    Conditional=INTERSECTION_OBSERVER,
-] dictionary IntersectionObserverEntryInit {
-    required DOMHighResTimeStamp time;
-    required DOMRectInit? rootBounds;
-    required DOMRectInit boundingClientRect;
-    required DOMRectInit intersectionRect;
-    required boolean isIntersecting;
-    required double intersectionRatio;
-    required Element target;
-};
+void JSIntersectionObserverEntry::visitAdditionalChildren(JSC::SlotVisitor& visitor)
+{
+    visitor.addOpaqueRoot(root(wrapped().target()));
+}
+
+}

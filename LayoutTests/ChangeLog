@@ -1,3 +1,23 @@
+2018-11-06  Ali Juma  <ajuma@chromium.org>
+
+        IntersectionObserver doesn't keep target's JS wrapper alive
+        https://bugs.webkit.org/show_bug.cgi?id=190235
+
+        Reviewed by Ryosuke Niwa.
+
+        Add test coverage.
+
+        Update test that depends on a target getting GC'd to call takeRecords() since
+        targets with pending entries are no logner GC'd.
+
+        * intersection-observer/intersection-observer-entry-keeps-js-wrapper-of-target-alive-expected.txt: Added.
+        * intersection-observer/intersection-observer-entry-keeps-js-wrapper-of-target-alive.html: Added.
+        * intersection-observer/intersection-observer-keeps-js-wrapper-of-target-alive-expected.txt: Added.
+        * intersection-observer/intersection-observer-keeps-js-wrapper-of-target-alive.html: Added.
+        * intersection-observer/root-element-deleted.html:
+        * intersection-observer/target-deleted-expected.txt: Added.
+        * intersection-observer/target-deleted.html: Added.
+
 2018-11-06  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] User should not be prompted again after denying getDisplayMedia request

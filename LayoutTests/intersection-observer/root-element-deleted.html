@@ -20,6 +20,7 @@
         root = null;
         target = null;
         requestAnimationFrame(t.step_func_done(function() {
+            observer.takeRecords();
             GCController.collect();
             assert_equals(observer.root, null, 'Observer has null root after root element is destroyed');
             assert_equals(internals.numberOfIntersectionObservers(document), 0);

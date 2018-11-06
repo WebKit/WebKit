@@ -1,3 +1,44 @@
+2018-11-06  Ali Juma  <ajuma@chromium.org>
+
+        IntersectionObserver doesn't keep target's JS wrapper alive
+        https://bugs.webkit.org/show_bug.cgi?id=190235
+
+        Reviewed by Ryosuke Niwa.
+
+        Retain JS wrappers of targets in queued entries using a vector of GCReachableRef owned by
+        IntersectionObserver, which gets cleared after the entries have been delivered.
+
+        Make IntersectionObserver::takeRecords return a struct which has both the vector of GCReachableRefs
+        for targets and the vector of intersection observer entries, so that the GCReachableRefs survive
+        until the creation of JS wrappers for the entries.
+
+        Modify IntersectionObserver::hasPendingActivity to keep the observer alive while it has
+        entries to deliver.
+
+        Tests: intersection-observer/intersection-observer-entry-keeps-js-wrapper-of-target-alive.html
+               intersection-observer/intersection-observer-keeps-js-wrapper-of-target-alive.html
+               intersection-observer/target-deleted.html
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSIntersectionObserverEntryCustom.cpp:
+        (WebCore::JSIntersectionObserverEntry::visitAdditionalChildren): Keep the target element's wrapper alive while the
+        IntersectionObserverEntry's wrapper is alive.
+        * page/IntersectionObserver.cpp:
+        (WebCore::IntersectionObserver::takeRecords): Change return type to include GCReachableRefs for each record's target, so that
+        each target can be kept until a JS wrapper is constructed for its IntersectionObserverEntry.
+        (WebCore::IntersectionObserver::appendQueuedEntry):
+        (WebCore::IntersectionObserver::notify): Erase GCReachableRefs for targets after delivering the corresponding records.
+        (WebCore::IntersectionObserver::hasPendingActivity const): Keep the IntersectionObserver alive until queued entries are delivered.
+        (WebCore::IntersectionObserver::stop):
+        * page/IntersectionObserver.h:
+        * page/IntersectionObserver.idl:
+        * page/IntersectionObserverEntry.h:
+        (WebCore::IntersectionObserverEntry::target const): Make this return a raw pointer instead of a RefPtr so that it
+        can be called in JSIntersectionObserverEntry::visitAdditionalChildren, which runs on the GC thread (it's illegal to ref a Node
+        on a non-main thread).
+        * page/IntersectionObserverEntry.idl:
+
 2018-11-06  Timothy Hatcher  <timothy@apple.com>
 
         <picture> container doesn't update when prefers-color-scheme media query changes

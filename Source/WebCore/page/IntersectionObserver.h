@@ -28,6 +28,7 @@
 #if ENABLE(INTERSECTION_OBSERVER)
 
 #include "ActiveDOMObject.h"
+#include "GCReachableRef.h"
 #include "IntersectionObserverCallback.h"
 #include "IntersectionObserverEntry.h"
 #include "LengthBox.h"
@@ -80,7 +81,11 @@ public:
     void unobserve(Element&);
     void disconnect();
 
-    Vector<Ref<IntersectionObserverEntry>> takeRecords();
+    struct TakenRecords {
+        Vector<Ref<IntersectionObserverEntry>> records;
+        Vector<GCReachableRef<Element>> pendingTargets;
+    };
+    TakenRecords takeRecords();
 
     void targetDestroyed(Element&);
     bool hasObservationTargets() const { return m_observationTargets.size(); }
@@ -109,6 +114,7 @@ private:
     Vector<double> m_thresholds;
     RefPtr<IntersectionObserverCallback> m_callback;
     Vector<Element*> m_observationTargets;
+    Vector<GCReachableRef<Element>> m_pendingTargets;
     Vector<Ref<IntersectionObserverEntry>> m_queuedEntries;
 };
 

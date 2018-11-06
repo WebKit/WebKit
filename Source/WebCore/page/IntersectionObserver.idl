@@ -40,7 +40,7 @@
     void observe(Element target);
     void unobserve(Element target);
     void disconnect();
-    sequence<IntersectionObserverEntry> takeRecords();
+    [ResultField=records] sequence<IntersectionObserverEntry> takeRecords();
 };
 
 [

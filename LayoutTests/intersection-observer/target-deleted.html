@@ -1,0 +1,26 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableIntersectionObserver=true ] -->
+<head>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../resources/gc.js"></script>
+<body>
+
+<div id="target" style="width: 100px; height: 100px; background-color: green"></div>
+
+<script>
+    async_test(function(t) {
+        let observer = new IntersectionObserver(function(entries) {
+            if (entries[0].isIntersecting) {
+                entries[0].target.remove();
+                requestAnimationFrame(t.step_func_done(function() {
+                    gc();
+                    assert_equals(internals.numberOfIntersectionObservers(document), 0);
+                }));
+            }
+        });
+        observer.observe(document.getElementById("target"));
+        assert_equals(internals.numberOfIntersectionObservers(document), 1);
+    }, "IntersectionObserver doesn't keep unreachable target alive");
+</script>
+</body>
+</html>

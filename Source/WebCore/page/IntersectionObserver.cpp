@@ -183,9 +183,9 @@ void IntersectionObserver::disconnect()
         document->removeIntersectionObserver(*this);
 }
 
-Vector<Ref<IntersectionObserverEntry>> IntersectionObserver::takeRecords()
+auto IntersectionObserver::takeRecords() -> TakenRecords
 {
-    return WTFMove(m_queuedEntries);
+    return { WTFMove(m_queuedEntries), WTFMove(m_pendingTargets) };
 }
 
 void IntersectionObserver::targetDestroyed(Element& target)
@@ -244,20 +244,25 @@ bool IntersectionObserver::createTimestamp(DOMHighResTimeStamp& timestamp) const
 
 void IntersectionObserver::appendQueuedEntry(Ref<IntersectionObserverEntry>&& entry)
 {
+    ASSERT(entry->target());
+    m_pendingTargets.append(*entry->target());
     m_queuedEntries.append(WTFMove(entry));
 }
 
 void IntersectionObserver::notify()
 {
-    if (m_queuedEntries.isEmpty() || !m_callback || !m_callback->canInvokeCallback())
+    if (m_queuedEntries.isEmpty()) {
+        ASSERT(m_pendingTargets.isEmpty());
         return;
+    }
 
-    m_callback->handleEvent(takeRecords(), *this);
+    auto takenRecords = takeRecords();
+    m_callback->handleEvent(WTFMove(takenRecords.records), *this);
 }
 
 bool IntersectionObserver::hasPendingActivity() const
 {
-    return hasObservationTargets() && trackingDocument();
+    return (hasObservationTargets() && trackingDocument()) || !m_queuedEntries.isEmpty();
 }
 
 const char* IntersectionObserver::activeDOMObjectName() const
@@ -274,6 +279,8 @@ void IntersectionObserver::stop()
 {
     disconnect();
     m_callback = nullptr;
+    m_queuedEntries.clear();
+    m_pendingTargets.clear();
 }
 
 } // namespace WebCore
