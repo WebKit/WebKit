@@ -1,3 +1,18 @@
+2018-11-06  Michael Saboff  <msaboff@apple.com>
+
+        Multiple stress/regexp-compile-oom.js tests are failing on High Sierra Debug and Release JSC testers.
+        https://bugs.webkit.org/show_bug.cgi?id=191271
+
+        Reviewed by Saam Barati.
+
+        Added more test cases and made all test cases run with the same deeply recursive stack
+        instead of finding that same point for each test case.
+
+        * stress/regexp-compile-oom.js:
+        (prototype.runTest):
+        (recurseAndTest):
+        (testList.push.new.TestAndExpectedException):
+
 2018-11-05  Michael Saboff  <msaboff@apple.com>
 
         Unreviewed build fix for linux.

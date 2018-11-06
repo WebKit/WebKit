@@ -1,18 +1,38 @@
 //@ skip if $hostOS != "darwin"
 // Test that throw an OOM exception when compiling a pathological, but valid nested RegExp.
 
-function recurseAndTest(depth, f, expectedException)
+var failures = [];
+
+class TestAndExpectedException
+{
+    constructor(func, exception)
+    {
+        this.func = func;
+        this.exception = exception;
+    }
+
+    runTest()
+    {
+        try {
+            this.func();
+            failures.push("Running " + this.func + ", expected OOM exception, but didn't get one");
+        } catch (e) {
+            let errStr = e.toString();
+            if (errStr != this.exception)
+                failures.push("Running " + this.func + ", expected: \"" + this.exception + "\" but got \"" + errStr + "\"");
+        }       
+    }
+}
+
+function recurseAndTest(depth, testList)
 {
     // Probe stack depth
     try {
-        let result = recurseAndTest(depth + 1, f, expectedException);
+        let result = recurseAndTest(depth + 1, testList);
         if (result == 0) {
-            try {
-                // Call the test function with a nearly full stack.
-                f();
-            } catch (e) {
-                return e.toString();
-            }
+            // Call the test functions with a nearly full stack.
+            for (const test of testList)
+                test.runTest();
 
             return 1;
         } else if (result < 0)
@@ -20,26 +40,40 @@ function recurseAndTest(depth, f, expectedException)
         else
             return result;
     } catch (e) {
-        // Go up a several frames and then call the test function
-        return -10;
+        // Go up a several frames and then call the test functions
+        return -24;
     }
 
     return 1;
 }
 
-let deepRE = /((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((x))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))/;
-let matchLen = 381; // The number of parens plus 1 for the whole match.
+let deepRE = new RegExp("((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((x))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))");
+let deepGlobalRE = new RegExp(deepRE, "g");
+
+let matchLen = 401; // The number of parens plus 1 for the whole match.
 
 let regExpOOMError = "Error: Out of memory: Invalid regular expression: too many nested disjunctions";
 
-// Test that both exec (captured compilation) and test (match only compilation) handles OOM.
-let result = recurseAndTest(1, () => { deepRE.exec(); });
-if (result != regExpOOMError)
-    throw "Expected: \"" + regExpOOMError + "\" but got \"" + result + "\"";
+testList = [];
 
-result = recurseAndTest(1, () => { deepRE.test(); });
-if (result != regExpOOMError)
-    throw "Expected: \"" + regExpOOMError + "\" but got \"" + result + "\"";
+// Test that all RegExp related APIs that compile RE's properly handle OOM.
+testList.push(new TestAndExpectedException(() => { deepRE.exec("x"); }, regExpOOMError));
+testList.push(new TestAndExpectedException(() => { deepRE.test("x"); }, regExpOOMError));
+testList.push(new TestAndExpectedException(() => { "x".match(deepRE); }, regExpOOMError));
+testList.push(new TestAndExpectedException(() => { "x".match(deepGlobalRE); }, regExpOOMError));
+testList.push(new TestAndExpectedException(() => { "x".replace(deepGlobalRE, ""); }, regExpOOMError));
+testList.push(new TestAndExpectedException(() => { "x".replace(deepGlobalRE, "X"); }, regExpOOMError));
+testList.push(new TestAndExpectedException(() => { "x".replace(deepGlobalRE, () => { return "X" }); }, regExpOOMError));
+testList.push(new TestAndExpectedException(() => { "x".search(deepRE); }, regExpOOMError));
+
+recurseAndTest(1, testList);
+
+if (failures.length) {
+    print("Got the following failures:");
+    for (const failure of failures)
+        print(failure);
+    throw "Got failures";
+}
 
 // Test that the RegExp works correctly with RegExp.exec() and RegExp.test() when there is sufficient stack space to compile it.
 let m = deepRE.exec("x");

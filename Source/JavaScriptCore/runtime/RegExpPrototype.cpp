@@ -499,6 +499,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncSearchFast(ExecState* exec)
 
     RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
     MatchResult result = regExpConstructor->performMatch(vm, regExp, string, s, 0);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return JSValue::encode(result ? jsNumber(result.start) : jsNumber(-1));
 }
 

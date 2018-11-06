@@ -491,6 +491,7 @@ static ALWAYS_INLINE JSString* removeUsingRegExpSearch(VM& vm, ExecState* exec, 
 
     while (true) {
         MatchResult result = regExpConstructor->performMatch(vm, regExp, string, source, startPosition);
+        RETURN_IF_EXCEPTION(scope, nullptr);
         if (!result)
             break;
 
@@ -564,6 +565,7 @@ static ALWAYS_INLINE JSString* replaceUsingRegExpSearch(
         while (true) {
             int* ovector;
             MatchResult result = regExpConstructor->performMatch(vm, regExp, string, source, startPosition, &ovector);
+            RETURN_IF_EXCEPTION(scope, nullptr);
             if (!result)
                 break;
 
@@ -629,6 +631,7 @@ static ALWAYS_INLINE JSString* replaceUsingRegExpSearch(
         do {
             int* ovector;
             MatchResult result = regExpConstructor->performMatch(vm, regExp, string, source, startPosition, &ovector);
+            RETURN_IF_EXCEPTION(scope, nullptr);
             if (!result)
                 break;
 

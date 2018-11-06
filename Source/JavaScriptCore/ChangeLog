@@ -1,3 +1,24 @@
+2018-11-06  Michael Saboff  <msaboff@apple.com>
+
+        Multiple stress/regexp-compile-oom.js tests are failing on High Sierra Debug and Release JSC testers.
+        https://bugs.webkit.org/show_bug.cgi?id=191271
+
+        Reviewed by Saam Barati.
+
+        Fixed use of ThrowScope my adding release() calls.  Found a few places where we needed
+        RETURN_IF_EXCEPTION().  After some code inspections determined that we need to cover the
+        exception bubbling for String.match() with a global RegExp as well as String.replace()
+        and String.search().
+
+        * runtime/RegExpObjectInlines.h:
+        (JSC::RegExpObject::matchInline):
+        (JSC::collectMatches):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncSearchFast):
+        * runtime/StringPrototype.cpp:
+        (JSC::removeUsingRegExpSearch):
+        (JSC::replaceUsingRegExpSearch):
+
 2018-11-05  Don Olmstead  <don.olmstead@sony.com>
 
         Fix typos in closing ENABLE guards
