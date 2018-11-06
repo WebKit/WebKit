@@ -2,37 +2,37 @@ CONSOLE MESSAGE: line 22: ArrayBuffer is deprecated in XMLHttpRequest.send(). Us
 CONSOLE MESSAGE: line 22: ArrayBuffer is deprecated in XMLHttpRequest.send(). Use ArrayBufferView instead.
 CONSOLE MESSAGE: line 22: ArrayBuffer is deprecated in XMLHttpRequest.send(). Use ArrayBufferView instead.
 
-FAIL setRequestHeader("") sends a blank string assert_equals: expected "Content-Type: \n" but got "Content-Type:  \n"
-FAIL setRequestHeader(" ") sends the string " " assert_equals: expected "Content-Type: \n" but got "Content-Type:  \n"
+PASS setRequestHeader("") sends a blank string 
+PASS setRequestHeader(" ") sends the string " " 
 PASS setRequestHeader(null) sends the string "null" 
 PASS setRequestHeader(undefined) sends the string "undefined" 
 PASS String request has correct default Content-Type of "text/plain;charset=UTF-8" 
 PASS String request keeps setRequestHeader() Content-Type, with charset adjusted to UTF-8 
-FAIL XML Document request respects setRequestHeader("") assert_equals: expected "Content-Type: \n" but got "Content-Type:  \n"
+PASS XML Document request respects setRequestHeader("") 
 PASS XML Document request has correct default Content-Type of "application/xml;charset=UTF-8" 
 PASS XML Document request keeps setRequestHeader() Content-Type, with charset adjusted to UTF-8 
-FAIL HTML Document request respects setRequestHeader("") assert_equals: expected "Content-Type: \n" but got "Content-Type:  \n"
+PASS HTML Document request respects setRequestHeader("") 
 PASS HTML Document request has correct default Content-Type of "text/html;charset=UTF-8" 
 PASS HTML Document request keeps setRequestHeader() Content-Type, with charset adjusted to UTF-8 
-FAIL Blob request respects setRequestHeader("") to be specified assert_equals: expected "Content-Type: \n" but got "Content-Type:  \n"
-FAIL Blob request with unset type sends no Content-Type without setRequestHeader() call assert_equals: expected "" but got "Content-Type:  \n"
+PASS Blob request respects setRequestHeader("") to be specified 
+FAIL Blob request with unset type sends no Content-Type without setRequestHeader() call assert_equals: expected "" but got "Content-Type: \n"
 PASS Blob request with unset type keeps setRequestHeader() Content-Type and charset 
-FAIL Blob request with set type respects setRequestHeader("") to be specified assert_equals: expected "Content-Type: \n" but got "Content-Type:  \n"
+PASS Blob request with set type respects setRequestHeader("") to be specified 
 PASS Blob request with set type uses that it for Content-Type unless setRequestHeader() 
 PASS Blob request with set type keeps setRequestHeader() Content-Type and charset 
-FAIL ArrayBuffer request respects setRequestHeader("") assert_equals: expected "Content-Type: \n" but got "Content-Type:  \n"
+PASS ArrayBuffer request respects setRequestHeader("") 
 PASS ArrayBuffer request sends no Content-Type without setRequestHeader() call 
 PASS ArrayBuffer request keeps setRequestHeader() Content-Type and charset 
-FAIL ArrayBufferView request respects setRequestHeader("") assert_equals: expected "Content-Type: \n" but got "Content-Type:  \n"
+PASS ArrayBufferView request respects setRequestHeader("") 
 PASS ArrayBufferView request sends no Content-Type without setRequestHeader() call 
 PASS ArrayBufferView request keeps setRequestHeader() Content-Type and charset 
-FAIL FormData request respects setRequestHeader("") assert_equals: expected "Content-Type: \n" but got "Content-Type:  \n"
+PASS FormData request respects setRequestHeader("") 
 PASS FormData request has correct default Content-Type of "multipart/form-data; boundary=_" 
 PASS FormData request keeps setRequestHeader() Content-Type and charset 
-FAIL URLSearchParams respects setRequestHeader("") assert_equals: expected "Content-Type: \n" but got "Content-Type:  \n"
+PASS URLSearchParams respects setRequestHeader("") 
 FAIL URLSearchParams request has correct default Content-Type of "application/x-www-form-urlencoded;charset=UTF-8" assert_equals: expected "Content-Type: application/x-www-form-urlencoded;charset=UTF-8\n" but got "Content-Type: text/plain;charset=UTF-8\n"
 PASS URLSearchParams request keeps setRequestHeader() Content-Type, with charset adjusted to UTF-8 
-FAIL ReadableStream request respects setRequestHeader("") assert_equals: expected "Content-Type: \n" but got "Content-Type:  \n"
+PASS ReadableStream request respects setRequestHeader("") 
 FAIL ReadableStream request with under type sends no Content-Type without setRequestHeader() call assert_equals: expected "" but got "Content-Type: text/plain;charset=UTF-8\n"
 FAIL ReadableStream request keeps setRequestHeader() Content-Type and charset assert_equals: expected "Content-Type: application/xml;charset=ASCII\n" but got "Content-Type: application/xml;charset=UTF-8\n"
 

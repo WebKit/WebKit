@@ -7,6 +7,6 @@ PASS org.w3.clearkey, temporary, cenc, invalid initdata (not pssh)
 PASS org.w3.clearkey, temporary, cenc, invalid key id length (4 instead of 2) 
 PASS org.w3.clearkey, temporary, cenc, invalid data size (32 instead of 16) 
 PASS org.w3.clearkey, temporary, cenc, invalid initdata (second box has incorrect size) 
-FAIL org.w3.clearkey, temporary, keyids, invalid initdata (too short key ID) assert_unreached: generateRequest() succeeded unexpectedly Reached unreachable code
-FAIL org.w3.clearkey, temporary, keyids, invalid initdata (too long key ID) assert_unreached: generateRequest() succeeded unexpectedly Reached unreachable code
+PASS org.w3.clearkey, temporary, keyids, invalid initdata (too short key ID) 
+PASS org.w3.clearkey, temporary, keyids, invalid initdata (too long key ID) 
 

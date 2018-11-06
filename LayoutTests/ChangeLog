@@ -1,3 +1,44 @@
+2018-11-06  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE gardening. Handle a bunch of test failures under the
+        directories containing imported W3C wpt tests. A few test expectations
+        are added, but mostly the corresponding baselines are provided.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/http/tests/dom: Added.
+        * platform/wpe/http/tests/dom/same-origin-detached-window-properties-expected.txt: Added.
+        * platform/wpe/http/wpt: Added.
+        * platform/wpe/http/wpt/mediarecorder: Added.
+        * platform/wpe/http/wpt/mediarecorder/MediaRecorder-dataavailable-expected.txt: Added.
+        * platform/wpe/http/wpt/mediarecorder/MediaRecorder-mock-dataavailable-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-generate-request-disallowed-input.https-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-encrypted-clear.https-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-reset-src-after-setmediakeys.https-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/idlharness.https-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/hidden-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/text-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/mimesniff: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/mimesniff/mime-types: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/mimesniff/mime-types/charset-parameter.window-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/pointerevents: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/pointerevents/extension: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/pointerevents/extension/pointerevent_touch-action-verification-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-illegal-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-verification-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/service-workers: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/service-workers/service-worker: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-within-sw-manual.https-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/service-workers/service-worker/fetch-frame-resource.https-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/shadow-dom: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/shadow-dom/input-element-list-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/xhr/formdata-blob-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/xhr/formdata-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/xhr/getallresponseheaders-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/xhr/getresponseheader.any-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/xhr/getresponseheader.any.worker-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/xhr/setrequestheader-content-type-expected.txt:
+
 2018-11-06  Frederic Wang  <fwang@igalia.com>
 
         Overlay with -webkit-overflow-scrolling:touch doesn't become scrollable after added text makes it taller

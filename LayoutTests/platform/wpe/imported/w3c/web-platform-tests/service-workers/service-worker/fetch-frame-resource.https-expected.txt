@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: TypeError: Not allowed to request resource
+CONSOLE MESSAGE: Cannot load https://localhost:9443/service-workers/service-worker/resources/fetch-frame-resource/frame-opaque?mode=no-cors&url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py.
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: TypeError: Not allowed to request resource
+CONSOLE MESSAGE: Cannot load https://localhost:9443/service-workers/service-worker/resources/fetch-frame-resource/window-opaque?mode=no-cors&url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py.
+
+PASS Basic type response could be loaded in the iframe. 
+PASS CORS type response could be loaded in the iframe. 
+PASS Opaque type response could not be loaded in the iframe. 
+PASS Basic type response could be loaded in the new window. 
+PASS CORS type response could be loaded in the new window. 
+PASS Opaque type response could not be loaded in the new window. 
+

@@ -1518,6 +1518,9 @@ webkit.org/b/191250 fast/mediastream/getUserMedia-deny-persistency.html [ Failur
 webkit.org/b/191250 fast/mediastream/getUserMedia-deny-persistency2.html [ Failure ]
 webkit.org/b/191250 fast/mediastream/getUserMedia-deny-persistency3.html [ Failure ]
 
+webkit.org/b/189343 imported/w3c/web-platform-tests/xhr/sync-no-timeout.any.html [ Failure ]
+webkit.org/b/189343 imported/w3c/web-platform-tests/xhr/sync-no-timeout.any.worker.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 #  >> NOTICE <<
 # Please see guidelines at the top of this file and place new test expectations

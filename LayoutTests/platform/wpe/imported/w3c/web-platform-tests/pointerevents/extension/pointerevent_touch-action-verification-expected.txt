@@ -1,0 +1,51 @@
+Pointer Events touch-action attribute support
+
+Test Description: Test will automatically check parsing behaviour of various touch-action combinations.
+
+touch-action: basic verification
+
+The following pointer types were detected: .
+
+
+PASS default 
+FAIL stylesheet-none assert_equals: expected "auto" but got "none"
+PASS explicit-auto 
+FAIL explicit-pan-x assert_equals: expected "auto" but got "pan-x"
+FAIL explicit-pan-left assert_equals: expected "auto" but got "pan-left"
+FAIL explicit-pan-right assert_equals: expected "auto" but got "pan-right"
+FAIL explicit-pan-y assert_equals: expected "auto" but got "pan-y"
+FAIL explicit-pan-up assert_equals: expected "auto" but got "pan-up"
+FAIL explicit-pan-down assert_equals: expected "auto" but got "pan-down"
+FAIL explicit-pinch-zoom assert_equals: expected "auto" but got "pinch-zoom"
+FAIL explicit-pan-x-pan-y assert_equals: expected "auto" but got "pan-x pan-y"
+FAIL explicit-pan-y-pan-x assert_equals: expected "auto" but got "pan-x pan-y"
+FAIL explicit-pan-left-pan-up assert_equals: expected "auto" but got "pan-left pan-up"
+FAIL explicit-pan-left-pan-down assert_equals: expected "auto" but got "pan-left pan-down"
+FAIL explicit-pan-right-pan-up assert_equals: expected "auto" but got "pan-right pan-up"
+FAIL explicit-pan-right-pan-down assert_equals: expected "auto" but got "pan-right pan-down"
+FAIL explicit-pan-up-pan-left assert_equals: expected "auto" but got "pan-left pan-up"
+FAIL explicit-pan-up-pan-right assert_equals: expected "auto" but got "pan-right pan-up"
+FAIL explicit-pan-down-pan-left assert_equals: expected "auto" but got "pan-left pan-down"
+FAIL explicit-pan-down-pan-right assert_equals: expected "auto" but got "pan-right pan-down"
+FAIL explicit-pinch-zoom-pan-x-pan-up assert_equals: expected "auto" but got "pan-x pan-up pinch-zoom"
+FAIL explicit-pinch-zoom-pan-x-pan-y assert_equals: expected "auto" but got "manipulation"
+PASS explicit-manipulation 
+FAIL explicit-none assert_equals: expected "auto" but got "none"
+PASS explicit-invalid-1 
+FAIL explicit-invalid-2 assert_equals: expected "auto" but got "none"
+PASS explicit-invalid-3 
+PASS explicit-invalid-4 
+PASS explicit-invalid-5 
+PASS explicit-invalid-6 
+PASS explicit-invalid-7 
+PASS explicit-invalid-8 
+PASS explicit-invalid-9 
+PASS explicit-invalid-10 
+PASS explicit-invalid-11 
+PASS explicit-invalid-12 
+PASS explicit-invalid-13 
+PASS explicit-invalid-14 
+PASS not-inherited 
+FAIL inherit assert_equals: expected "auto" but got "none"
+PASS initial 
+

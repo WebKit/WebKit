@@ -1,0 +1,5 @@
+
+FAIL MediaRecorder will fire a dataavailable event which only contains video buffers for a video-only stream when stop() is called assert_not_equals: MediaRecorder successfully captured video buffers got disallowed value -1
+FAIL MediaRecorder will fire a dataavailable event which only contains audio buffers for a audio-only stream when stop() is called assert_not_equals: MediaRecorder successfully captured video buffers got disallowed value -1
+FAIL MediaRecorder will fire a dataavailable event which only contains both video and audio buffers when stop() is called assert_not_equals: MediaRecorder successfully captured video buffers got disallowed value -1
+
