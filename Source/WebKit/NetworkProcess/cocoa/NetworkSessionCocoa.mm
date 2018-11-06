@@ -727,9 +727,15 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkSessionCreationParameters&& para
         cookieStorage = storageSession->nsCookieStorage();
 
     ASSERT(cookieStorage);
+
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wundeclared-selector"
     if (WebCore::MacApplication::isSafari() && [cookieStorage respondsToSelector:@selector(_overrideSessionCookieAcceptPolicy)])
         cookieStorage._overrideSessionCookieAcceptPolicy = YES;
-#endif
+#endif // defined(__clang__)
+
+#endif // (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101300 || PLATFORM(IOS)
 
     m_sessionWithCredentialStorageDelegate = adoptNS([[WKNetworkSessionDelegate alloc] initWithNetworkSession:*this withCredentials:true]);
     m_sessionWithCredentialStorage = [NSURLSession sessionWithConfiguration:configuration delegate:static_cast<id>(m_sessionWithCredentialStorageDelegate.get()) delegateQueue:[NSOperationQueue mainQueue]];
