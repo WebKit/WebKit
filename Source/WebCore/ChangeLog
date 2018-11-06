@@ -1,5 +1,61 @@
 2018-11-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Clean up text decoration drawing code
+        https://bugs.webkit.org/show_bug.cgi?id=191245
+
+        Reviewed by Zalan Bujtas.
+
+        This is some general clean up of the text decorations code. There is no behavior change.
+
+        This patch modifies GraphicsContext::drawLineForText() & friends to accept a FloatRect instead of a FloatPoint + float width.
+        This is helpful because it allows for easier bounding box calculations.
+        This patch also removes some redundant computations that the skip:ink codepath was performing.
+        This patch also refactors the wavy decoration parameters to not use out params.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::computeUnderlineBoundsForText):
+        (WebCore::GraphicsContext::computeLineBoundsAndAntialiasingModeForText):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/GraphicsContextImpl.h:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawLineForText):
+        (WebCore::GraphicsContext::drawLinesForText):
+        * platform/graphics/displaylists/DisplayListItems.cpp:
+        (WebCore::DisplayList::DrawLinesForText::apply const):
+        (WebCore::DisplayList::DrawLinesForText::localBounds const):
+        (WebCore::DisplayList::operator<<):
+        * platform/graphics/displaylists/DisplayListItems.h:
+        (WebCore::DisplayList::DrawLinesForText::create):
+        (WebCore::DisplayList::DrawLinesForText::thickness const):
+        (WebCore::DisplayList::DrawLinesForText::DrawLinesForText):
+        * platform/graphics/displaylists/DisplayListRecorder.cpp:
+        (WebCore::DisplayList::Recorder::drawLinesForText):
+        * platform/graphics/displaylists/DisplayListRecorder.h:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintMarkedTextDecoration):
+        (WebCore::InlineTextBox::paintCompositionUnderline const):
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::paintFlow):
+        * rendering/TextDecorationPainter.cpp:
+        (WebCore::strokeWavyTextDecoration):
+        (WebCore::translateIntersectionPointsToSkipInkBoundaries):
+        (WebCore::TextDecorationPainter::TextDecorationPainter):
+        (WebCore::TextDecorationPainter::paintTextDecoration):
+        (WebCore::drawSkipInkUnderline): Deleted.
+        * rendering/TextDecorationPainter.h:
+        (WebCore::TextDecorationPainter::setInlineTextBox):
+        (WebCore::TextDecorationPainter::setWidth):
+        (WebCore::TextDecorationPainter::setFont): Deleted.
+        (WebCore::TextDecorationPainter::setBaseline): Deleted.
+        * style/InlineTextBoxStyle.cpp:
+        (WebCore::getWavyStrokeParameters):
+        (WebCore::visualOverflowForDecorations):
+        * style/InlineTextBoxStyle.h:
+
+2018-11-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Fix the Windows build after r237835
         https://bugs.webkit.org/show_bug.cgi?id=191242
 

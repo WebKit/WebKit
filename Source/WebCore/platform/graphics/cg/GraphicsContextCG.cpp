@@ -1570,15 +1570,15 @@ FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect, RoundingMo
     return FloatRect(roundedOrigin, roundedLowerRight - roundedOrigin);
 }
 
-void GraphicsContext::drawLineForText(const FloatPoint& point, float width, bool printing, bool doubleLines, StrokeStyle strokeStyle)
+void GraphicsContext::drawLineForText(const FloatRect& rect, bool printing, bool doubleLines, StrokeStyle strokeStyle)
 {
     DashArray widths;
-    widths.append(width);
+    widths.append(rect.width());
     widths.append(0);
-    drawLinesForText(point, widths, printing, doubleLines, strokeStyle);
+    drawLinesForText(rect.location(), rect.height(), widths, printing, doubleLines, strokeStyle);
 }
 
-void GraphicsContext::drawLinesForText(const FloatPoint& point, const DashArray& widths, bool printing, bool doubleLines, StrokeStyle strokeStyle)
+void GraphicsContext::drawLinesForText(const FloatPoint& point, float thickness, const DashArray& widths, bool printing, bool doubleLines, StrokeStyle strokeStyle)
 {
     if (paintingDisabled())
         return;
@@ -1587,13 +1587,13 @@ void GraphicsContext::drawLinesForText(const FloatPoint& point, const DashArray&
         return;
 
     if (m_impl) {
-        m_impl->drawLinesForText(point, widths, printing, doubleLines, strokeThickness());
+        m_impl->drawLinesForText(point, thickness, widths, printing, doubleLines);
         return;
     }
 
     Color localStrokeColor(strokeColor());
 
-    FloatRect bounds = computeLineBoundsAndAntialiasingModeForText(point, widths.last(), printing, localStrokeColor);
+    FloatRect bounds = computeLineBoundsAndAntialiasingModeForText(FloatRect(point, FloatSize(widths.last(), thickness)), printing, localStrokeColor);
     bool fillColorIsNotEqualToStrokeColor = fillColor() != localStrokeColor;
     
     Vector<CGRect, 4> dashBounds;

@@ -1090,11 +1090,9 @@ void InlineTextBox::paintMarkedTextDecoration(PaintInfo& paintInfo, const FloatR
     }
 
     // 2. Paint
-    TextDecorationPainter decorationPainter { context, lineStyle().textDecorationsInEffect(), renderer(), isFirstLine(), markedText.style.textDecorationStyles };
+    TextDecorationPainter decorationPainter { context, lineStyle().textDecorationsInEffect(), renderer(), isFirstLine(), lineFont(), markedText.style.textDecorationStyles };
     decorationPainter.setInlineTextBox(this);
-    decorationPainter.setFont(lineFont());
     decorationPainter.setWidth(snappedSelectionRect.width());
-    decorationPainter.setBaseline(lineStyle().fontMetrics().ascent());
     decorationPainter.setIsHorizontal(isHorizontal());
     if (markedText.style.textShadow) {
         decorationPainter.setTextShadow(&markedText.style.textShadow.value());
@@ -1200,7 +1198,7 @@ void InlineTextBox::paintCompositionUnderline(PaintInfo& paintInfo, const FloatP
     Color underlineColor = underline.compositionUnderlineColor == CompositionUnderlineColor::TextColor ? renderer().style().visitedDependentColorWithColorFilter(CSSPropertyWebkitTextFillColor) : renderer().style().colorByApplyingColorFilter(underline.color);
     context.setStrokeColor(underlineColor);
     context.setStrokeThickness(lineThickness);
-    context.drawLineForText(FloatPoint(boxOrigin.x() + start, boxOrigin.y() + logicalHeight() - lineThickness), width, renderer().document().printing());
+    context.drawLineForText(FloatRect(boxOrigin.x() + start, boxOrigin.y() + logicalHeight() - lineThickness, width, lineThickness), renderer().document().printing());
 }
 
 int InlineTextBox::caretMinOffset() const

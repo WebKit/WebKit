@@ -296,11 +296,10 @@ void GraphicsContextImplCairo::drawLine(const FloatPoint& point1, const FloatPoi
     Cairo::drawLine(m_platformContext, point1, point2, state.strokeStyle, state.strokeColor, state.strokeThickness, state.shouldAntialias);
 }
 
-void GraphicsContextImplCairo::drawLinesForText(const FloatPoint& point, const DashArray& widths, bool printing, bool doubleUnderlines, float strokeThickness)
+void GraphicsContextImplCairo::drawLinesForText(const FloatPoint& point, float thickness, const DashArray& widths, bool printing, bool doubleUnderlines)
 {
-    UNUSED_PARAM(strokeThickness);
     auto& state = graphicsContext().state();
-    Cairo::drawLinesForText(m_platformContext, point, widths, printing, doubleUnderlines, state.strokeColor, state.strokeThickness);
+    Cairo::drawLinesForText(m_platformContext, point, thickness, widths, printing, doubleUnderlines, state.strokeColor);
 }
 
 void GraphicsContextImplCairo::drawDotsForDocumentMarker(const FloatRect& rect, DocumentMarkerLineStyle style)

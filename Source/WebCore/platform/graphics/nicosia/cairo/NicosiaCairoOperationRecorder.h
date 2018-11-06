@@ -72,7 +72,7 @@ private:
 
     void drawRect(const WebCore::FloatRect&, float) override;
     void drawLine(const WebCore::FloatPoint&, const WebCore::FloatPoint&) override;
-    void drawLinesForText(const WebCore::FloatPoint&, const DashArray&, bool, bool, float) override;
+    void drawLinesForText(const WebCore::FloatPoint&, float thickness, const DashArray&, bool, bool) override;
     void drawDotsForDocumentMarker(const WebCore::FloatRect&, WebCore::DocumentMarkerLineStyle) override;
     void drawEllipse(const WebCore::FloatRect&) override;
     void drawPath(const WebCore::Path&) override;

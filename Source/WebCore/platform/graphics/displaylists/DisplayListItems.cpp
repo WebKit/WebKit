@@ -593,7 +593,7 @@ static TextStream& operator<<(TextStream& ts, const DrawLine& item)
 
 void DrawLinesForText::apply(GraphicsContext& context) const
 {
-    context.drawLinesForText(point(), m_widths, m_printing, m_doubleLines);
+    context.drawLinesForText(point(), m_thickness, m_widths, m_printing, m_doubleLines);
 }
 
 std::optional<FloatRect> DrawLinesForText::localBounds(const GraphicsContext&) const
@@ -603,7 +603,7 @@ std::optional<FloatRect> DrawLinesForText::localBounds(const GraphicsContext&) c
     if (!m_widths.size())
         return FloatRect();
 
-    FloatRect result(point(), FloatSize(m_widths.last(), m_strokeWidth));
+    FloatRect result(point(), FloatSize(m_widths.last(), m_thickness));
     result.inflate(1); // Account for pixel snapping. FIXME: This isn't perfect, as it doesn't take the CTM into account.
     return result;
 }
@@ -614,6 +614,7 @@ static TextStream& operator<<(TextStream& ts, const DrawLinesForText& item)
     ts.dumpProperty("block-location", item.blockLocation());
     ts.dumpProperty("local-anchor", item.localAnchor());
     ts.dumpProperty("point", item.point());
+    ts.dumpProperty("thickness", item.thickness());
     ts.dumpProperty("double", item.doubleLines());
     ts.dumpProperty("widths", item.widths());
     ts.dumpProperty("is-printing", item.isPrinting());

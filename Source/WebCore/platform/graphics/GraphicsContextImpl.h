@@ -78,7 +78,7 @@ public:
 
     virtual void drawRect(const FloatRect&, float borderThickness) = 0;
     virtual void drawLine(const FloatPoint&, const FloatPoint&) = 0;
-    virtual void drawLinesForText(const FloatPoint&, const DashArray& widths, bool printing, bool doubleLines, float strokeThickness) = 0;
+    virtual void drawLinesForText(const FloatPoint&, float thickness, const DashArray& widths, bool printing, bool doubleLines) = 0;
     virtual void drawDotsForDocumentMarker(const FloatRect&, DocumentMarkerLineStyle) = 0;
     virtual void drawEllipse(const FloatRect&) = 0;
     virtual void drawPath(const Path&) = 0;

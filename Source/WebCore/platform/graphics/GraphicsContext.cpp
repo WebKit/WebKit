@@ -1083,18 +1083,18 @@ void GraphicsContext::platformStrokeEllipse(const FloatRect& ellipse)
 }
 #endif
 
-FloatRect GraphicsContext::computeUnderlineBoundsForText(const FloatPoint& point, float width, bool printing)
+FloatRect GraphicsContext::computeUnderlineBoundsForText(const FloatRect& rect, bool printing)
 {
     Color dummyColor;
-    return computeLineBoundsAndAntialiasingModeForText(point, width, printing, dummyColor);
+    return computeLineBoundsAndAntialiasingModeForText(rect, printing, dummyColor);
 }
 
-FloatRect GraphicsContext::computeLineBoundsAndAntialiasingModeForText(const FloatPoint& point, float width, bool printing, Color& color)
+FloatRect GraphicsContext::computeLineBoundsAndAntialiasingModeForText(const FloatRect& rect, bool printing, Color& color)
 {
-    FloatPoint origin = point;
-    float thickness = std::max(strokeThickness(), 0.5f);
+    FloatPoint origin = rect.location();
+    float thickness = std::max(rect.height(), 0.5f);
     if (printing)
-        return FloatRect(origin, FloatSize(width, thickness));
+        return FloatRect(origin, FloatSize(rect.width(), thickness));
 
     AffineTransform transform = getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
     // Just compute scale in x dimension, assuming x and y scales are equal.
@@ -1108,12 +1108,12 @@ FloatRect GraphicsContext::computeLineBoundsAndAntialiasingModeForText(const Flo
         color = color.colorWithAlphaMultipliedBy(shade);
     }
 
-    FloatPoint devicePoint = transform.mapPoint(point);
+    FloatPoint devicePoint = transform.mapPoint(rect.location());
     // Visual overflow might occur here due to integral roundf/ceilf. visualOverflowForDecorations adjusts the overflow value for underline decoration.
     FloatPoint deviceOrigin = FloatPoint(roundf(devicePoint.x()), ceilf(devicePoint.y()));
     if (auto inverse = transform.inverse())
         origin = inverse.value().mapPoint(deviceOrigin);
-    return FloatRect(origin, FloatSize(width, thickness));
+    return FloatRect(origin, FloatSize(rect.width(), thickness));
 }
 
 void GraphicsContext::applyState(const GraphicsContextState& state)

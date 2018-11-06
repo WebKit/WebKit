@@ -230,9 +230,9 @@ void Recorder::drawLine(const FloatPoint& point1, const FloatPoint& point2)
     updateItemExtent(newItem);
 }
 
-void Recorder::drawLinesForText(const FloatPoint& point, const DashArray& widths, bool printing, bool doubleLines, float strokeThickness)
+void Recorder::drawLinesForText(const FloatPoint& point, float thickness, const DashArray& widths, bool printing, bool doubleLines)
 {
-    DrawingItem& newItem = downcast<DrawingItem>(appendItem(DrawLinesForText::create(FloatPoint(), toFloatSize(point), widths, printing, doubleLines, strokeThickness)));
+    DrawingItem& newItem = downcast<DrawingItem>(appendItem(DrawLinesForText::create(FloatPoint(), toFloatSize(point), thickness, widths, printing, doubleLines)));
     updateItemExtent(newItem);
 }
 

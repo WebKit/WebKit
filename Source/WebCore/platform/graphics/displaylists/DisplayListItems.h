@@ -791,26 +791,27 @@ private:
 
 class DrawLinesForText : public DrawingItem {
 public:
-    static Ref<DrawLinesForText> create(const FloatPoint& blockLocation, const FloatSize& localAnchor, const DashArray& widths, bool printing, bool doubleLines, float strokeWidth)
+    static Ref<DrawLinesForText> create(const FloatPoint& blockLocation, const FloatSize& localAnchor, float thickness, const DashArray& widths, bool printing, bool doubleLines)
     {
-        return adoptRef(*new DrawLinesForText(blockLocation, localAnchor, widths, printing, doubleLines, strokeWidth));
+        return adoptRef(*new DrawLinesForText(blockLocation, localAnchor, thickness, widths, printing, doubleLines));
     }
 
     void setBlockLocation(const FloatPoint& blockLocation) { m_blockLocation = blockLocation; }
     const FloatPoint& blockLocation() const { return m_blockLocation; }
     const FloatSize& localAnchor() const { return m_localAnchor; }
     FloatPoint point() const { return m_blockLocation + m_localAnchor; }
+    float thickness() const { return m_thickness; }
     const DashArray& widths() const { return m_widths; }
     bool isPrinting() const { return m_printing; }
     bool doubleLines() const { return m_doubleLines; }
 
 private:
-    DrawLinesForText(const FloatPoint& blockLocation, const FloatSize& localAnchor, const DashArray& widths, bool printing, bool doubleLines, float strokeWidth)
+    DrawLinesForText(const FloatPoint& blockLocation, const FloatSize& localAnchor, float thickness, const DashArray& widths, bool printing, bool doubleLines)
         : DrawingItem(ItemType::DrawLinesForText)
         , m_blockLocation(blockLocation)
         , m_localAnchor(localAnchor)
         , m_widths(widths)
-        , m_strokeWidth(strokeWidth)
+        , m_thickness(thickness)
         , m_printing(printing)
         , m_doubleLines(doubleLines)
     {
@@ -823,7 +824,7 @@ private:
     FloatPoint m_blockLocation;
     FloatSize m_localAnchor;
     DashArray m_widths;
-    float m_strokeWidth;
+    float m_thickness;
     bool m_printing;
     bool m_doubleLines;
 };

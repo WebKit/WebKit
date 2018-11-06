@@ -1023,7 +1023,7 @@ void drawLine(PlatformContextCairo& platformContext, const FloatPoint& point1, c
         cairo_set_antialias(cairoContext, CAIRO_ANTIALIAS_DEFAULT);
 }
 
-void drawLinesForText(PlatformContextCairo& platformContext, const FloatPoint& point, const DashArray& widths, bool printing, bool doubleUnderlines, const Color& color, float strokeThickness)
+void drawLinesForText(PlatformContextCairo& platformContext, const FloatPoint& point, float strokeThickness, const DashArray& widths, bool printing, bool doubleUnderlines, const Color& color)
 {
     Color modifiedColor = color;
     FloatRect bounds = computeLineBoundsAndAntialiasingModeForText(platformContext, point, widths.last(), printing, modifiedColor, strokeThickness);

@@ -631,9 +631,9 @@ void CairoOperationRecorder::drawLine(const FloatPoint& point1, const FloatPoint
     append(createCommand<DrawLine>(point1, point2, state.strokeStyle, state.strokeColor, state.strokeThickness, state.shouldAntialias));
 }
 
-void CairoOperationRecorder::drawLinesForText(const FloatPoint& point, const DashArray& widths, bool printing, bool doubleUnderlines, float strokeThickness)
+void CairoOperationRecorder::drawLinesForText(const FloatPoint& point, float thickness, const DashArray& widths, bool printing, bool doubleUnderlines)
 {
-    struct DrawLinesForText final : PaintingOperation, OperationData<FloatPoint, DashArray, bool, bool, Color, float> {
+    struct DrawLinesForText final : PaintingOperation, OperationData<FloatPoint, float, DashArray, bool, bool, Color> {
         virtual ~DrawLinesForText() = default;
 
         void execute(PaintingOperationReplay& replayer) override
@@ -647,9 +647,8 @@ void CairoOperationRecorder::drawLinesForText(const FloatPoint& point, const Das
         }
     };
 
-    UNUSED_PARAM(strokeThickness);
     auto& state = graphicsContext().state();
-    append(createCommand<DrawLinesForText>(point, widths, printing, doubleUnderlines, state.strokeColor, state.strokeThickness));
+    append(createCommand<DrawLinesForText>(point, thickness, widths, printing, doubleUnderlines, state.strokeColor));
 }
 
 void CairoOperationRecorder::drawDotsForDocumentMarker(const FloatRect& rect, DocumentMarkerLineStyle style)

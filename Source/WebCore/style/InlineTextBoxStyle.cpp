@@ -83,17 +83,13 @@ int computeUnderlineOffset(TextUnderlinePosition underlinePosition, const FontMe
     return fontMetrics.ascent() + gap;
 }
     
-void getWavyStrokeParameters(float fontSize, float& controlPointDistance, float& step)
+WavyStrokeParameters getWavyStrokeParameters(float fontSize)
 {
-    // Distance between decoration's axis and Bezier curve's control points.
-    // The height of the curve is based on this distance. Increases the curve's height
-    // as fontSize increases to make the curve look better.
-    controlPointDistance = 0.09375 * fontSize;
-
-    // Increment used to form the diamond shape between start point (p1), control
-    // points and end point (p2) along the axis of the decoration. The curve gets
-    // wider as font size increases.
-    step = fontSize / 4.5;
+    WavyStrokeParameters result;
+    // More information is in the WavyStrokeParameters definition.
+    result.controlPointDistance = fontSize * 1.5 / 16;
+    result.step = fontSize / 4.5;
+    return result;
 }
 
 static inline void extendIntToFloat(int& extendMe, float extendTo)
@@ -110,8 +106,7 @@ GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const I
         return GlyphOverflow();
 
     float strokeThickness = textDecorationStrokeThickness(lineStyle.computedFontPixelSize());
-    float controlPointDistance = 0;
-    float step;
+    WavyStrokeParameters wavyStrokeParameters;
     float wavyOffset = 0;
         
     TextDecorationStyle decorationStyle = lineStyle.textDecorationStyle();
@@ -119,7 +114,7 @@ GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const I
     GlyphOverflow overflowResult;
     
     if (decorationStyle == TextDecorationStyle::Wavy) {
-        getWavyStrokeParameters(lineStyle.computedFontPixelSize(), controlPointDistance, step);
+        wavyStrokeParameters = getWavyStrokeParameters(lineStyle.computedFontPixelSize());
         wavyOffset = wavyOffsetFromDecoration();
         overflowResult.left = strokeThickness;
         overflowResult.right = strokeThickness;
@@ -131,8 +126,8 @@ GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const I
         int underlineOffset = 1;
         underlineOffset += computeUnderlineOffset(lineStyle.textUnderlinePosition(), lineStyle.fontMetrics(), inlineTextBox, strokeThickness);
         if (decorationStyle == TextDecorationStyle::Wavy) {
-            extendIntToFloat(overflowResult.bottom, underlineOffset + wavyOffset + controlPointDistance + strokeThickness - height);
-            extendIntToFloat(overflowResult.top, -(underlineOffset + wavyOffset - controlPointDistance - strokeThickness));
+            extendIntToFloat(overflowResult.bottom, underlineOffset + wavyOffset + wavyStrokeParameters.controlPointDistance + strokeThickness - height);
+            extendIntToFloat(overflowResult.top, -(underlineOffset + wavyOffset - wavyStrokeParameters.controlPointDistance - strokeThickness));
         } else {
             extendIntToFloat(overflowResult.bottom, underlineOffset + strokeThickness - height);
             extendIntToFloat(overflowResult.top, -underlineOffset);
@@ -140,8 +135,8 @@ GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const I
     }
     if (decoration & TextDecoration::Overline) {
         if (decorationStyle == TextDecorationStyle::Wavy) {
-            extendIntToFloat(overflowResult.bottom, -wavyOffset + controlPointDistance + strokeThickness - height);
-            extendIntToFloat(overflowResult.top, wavyOffset + controlPointDistance + strokeThickness);
+            extendIntToFloat(overflowResult.bottom, -wavyOffset + wavyStrokeParameters.controlPointDistance + strokeThickness - height);
+            extendIntToFloat(overflowResult.top, wavyOffset + wavyStrokeParameters.controlPointDistance + strokeThickness);
         } else {
             extendIntToFloat(overflowResult.bottom, strokeThickness - height);
             // top is untouched
@@ -150,8 +145,8 @@ GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const I
     if (decoration & TextDecoration::LineThrough) {
         float baseline = lineStyle.fontMetrics().floatAscent();
         if (decorationStyle == TextDecorationStyle::Wavy) {
-            extendIntToFloat(overflowResult.bottom, 2 * baseline / 3 + controlPointDistance + strokeThickness - height);
-            extendIntToFloat(overflowResult.top, -(2 * baseline / 3 - controlPointDistance - strokeThickness));
+            extendIntToFloat(overflowResult.bottom, 2 * baseline / 3 + wavyStrokeParameters.controlPointDistance + strokeThickness - height);
+            extendIntToFloat(overflowResult.top, -(2 * baseline / 3 - wavyStrokeParameters.controlPointDistance - strokeThickness));
         } else {
             extendIntToFloat(overflowResult.bottom, 2 * baseline / 3 + strokeThickness - height);
             extendIntToFloat(overflowResult.top, -(2 * baseline / 3));
