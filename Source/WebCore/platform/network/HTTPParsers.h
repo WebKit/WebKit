@@ -89,7 +89,7 @@ WEBCORE_EXPORT XFrameOptionsDisposition parseXFrameOptionsHeader(const String&);
 // -1 could be set to one of the return parameters to indicate the value is not specified.
 WEBCORE_EXPORT bool parseRange(const String&, long long& rangeOffset, long long& rangeEnd, long long& rangeSuffixLength);
 
-ContentTypeOptionsDisposition parseContentTypeOptionsHeader(const String& header);
+ContentTypeOptionsDisposition parseContentTypeOptionsHeader(StringView header);
 
 // Parsing Complete HTTP Messages.
 enum HTTPVersion { Unknown, HTTP_1_0, HTTP_1_1 };

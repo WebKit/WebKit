@@ -1,3 +1,14 @@
+2018-11-06  Rob Buis  <rbuis@igalia.com>
+
+        Some minor X-Content-Type-Options parsing issues
+        https://bugs.webkit.org/show_bug.cgi?id=191107
+
+        Reviewed by Darin Adler.
+
+        Update improved result.
+
+        * web-platform-tests/fetch/nosniff/parsing-nosniff-expected.txt:
+
 2018-11-05  Ali Juma  <ajuma@chromium.org>
 
         [IntersectionObserver] Update WPTs to the latest upstream version

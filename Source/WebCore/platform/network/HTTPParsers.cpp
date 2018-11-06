@@ -474,9 +474,10 @@ XSSProtectionDisposition parseXSSProtectionHeader(const String& header, String& 
     }
 }
 
-ContentTypeOptionsDisposition parseContentTypeOptionsHeader(const String& header)
+ContentTypeOptionsDisposition parseContentTypeOptionsHeader(StringView header)
 {
-    if (equalLettersIgnoringASCIICase(header.stripWhiteSpace(), "nosniff"))
+    StringView leftToken = header.left(header.find(','));
+    if (equalLettersIgnoringASCIICase(stripLeadingAndTrailingHTTPSpaces(leftToken), "nosniff"))
         return ContentTypeOptionsNosniff;
     return ContentTypeOptionsNone;
 }

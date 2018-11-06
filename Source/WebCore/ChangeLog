@@ -1,3 +1,21 @@
+2018-11-06  Rob Buis  <rbuis@igalia.com>
+
+        Some minor X-Content-Type-Options parsing issues
+        https://bugs.webkit.org/show_bug.cgi?id=191107
+
+        Reviewed by Darin Adler.
+
+        Implement new parsing rules for X-Content-Type-Options [1]:
+        https://github.com/whatwg/fetch/pull/818
+
+        [1] https://fetch.spec.whatwg.org/#x-content-type-options-header
+
+        Test: web-platform-tests/fetch/nosniff/parsing-nosniff.html
+
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::isHTTPTabOrSpace):
+        (WebCore::parseContentTypeOptionsHeader):
+
 2018-11-06  Frederic Wang  <fwang@igalia.com>
 
         Overlay with -webkit-overflow-scrolling:touch doesn't become scrollable after added text makes it taller

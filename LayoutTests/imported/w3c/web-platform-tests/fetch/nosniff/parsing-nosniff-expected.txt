@@ -1,5 +1,5 @@
 
-FAIL URL query: first assert_unreached: Unexpected load event Reached unreachable code
+PASS URL query: first 
 PASS URL query: uppercase 
 PASS URL query: last 
 PASS URL query: quoted 
