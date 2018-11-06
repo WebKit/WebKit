@@ -1,3 +1,9 @@
+2018-11-06  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed. Update OptionsWPE.cmake and NEWS for 2.22.1 release.
+
+        * Source/cmake/OptionsWPE.cmake: Bump version numbers.
+
 2018-11-05  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE][GTK] Expose ENABLE_MEDIA_SOURCE as public option

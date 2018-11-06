@@ -1,8 +1,23 @@
 =================
-WPE WebKit 2.20.0
+WPE WebKit 2.22.1
 =================
 
-What's new in WPE WebKit 2.20.0?
+What's new in WPE WebKit 2.22.1?
+
+  - Many improvements and fixes for video playback with media source
+    extensions (MSE), which improve the user experience across the board,
+    and in particular for playback of WebM videos.
+  - Expose ENABLE_MEDIA_SOURCE as a public build option.
+  - Fix Resource Timing reporting for <iframe> elements.
+  - Fix the build with ENABLE_VIDEO=OFF and ENABLE_WEB_AUDIO=OFF.
+  - Fix the build with the remote Web Inspector disabled.
+  - Fix several crashes and rendering issues.
+
+=================
+WPE WebKit 2.22.0
+=================
+
+What's new in WPE WebKit 2.22.0?
 
   - Several fixes for video playback with media source extensions (MSE).
     This allows using WebM support for YouTube, which no longer works through

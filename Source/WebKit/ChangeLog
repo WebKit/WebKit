@@ -1,3 +1,9 @@
+2018-11-06  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed. Update OptionsWPE.cmake and NEWS for 2.22.1 release.
+
+        * wpe/NEWS: Add release notes for 2.22.1.
+
 2018-10-29  Adrian Perez de Castro  <aperez@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.22.3 release.
