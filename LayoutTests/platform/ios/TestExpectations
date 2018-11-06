@@ -1660,12 +1660,6 @@ fast/forms/autofocus-opera-003.html [ Failure ]
 fast/forms/button-inner-block-reuse.html [ Failure ]
 fast/forms/button-with-float.html [ ImageOnlyFailure ]
 
-# <input type=color> is not supported on iOS.
-fast/forms/color/input-color-onchange-event.html [ Failure ]
-fast/forms/color/input-color-readonly.html [ Failure ]
-fast/forms/color/input-value-sanitization-color.html [ Failure ]
-fast/forms/color/color-setrangetext.html [ Failure ]
-
 fast/forms/datalist/input-list.html [ Failure ]
 fast/forms/datetime/ValidityState-rangeOverflow-datetime.html [ Failure ]
 fast/forms/datetime/ValidityState-rangeUnderflow-datetime.html [ Failure ]

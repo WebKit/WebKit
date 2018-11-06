@@ -523,10 +523,10 @@ bool RenderTheme::paintDecorations(const RenderBox& box, const PaintInfo& paintI
     case PushButtonPart:
         return paintPushButtonDecorations(box, paintInfo, integralSnappedRect);
     case SquareButtonPart:
+        return paintSquareButtonDecorations(box, paintInfo, integralSnappedRect);
 #if ENABLE(INPUT_TYPE_COLOR)
     case ColorWellPart:
 #endif
-        return paintSquareButtonDecorations(box, paintInfo, integralSnappedRect);
     case ButtonPart:
         return paintButtonDecorations(box, paintInfo, integralSnappedRect);
     case MenulistPart:
@@ -1039,10 +1039,7 @@ bool RenderTheme::paintAttachment(const RenderObject&, const PaintInfo&, const I
 String RenderTheme::colorInputStyleSheet() const
 {
     ASSERT(RuntimeEnabledFeatures::sharedFeatures().inputTypeColorEnabled());
-    auto colorWellAppearanceStyle = emptyString();
-    if (platformUsesColorWellAppearance())
-        colorWellAppearanceStyle = "-webkit-appearance: color-well; "_s;
-    return makeString("input[type=\"color\"] { "_s, WTFMove(colorWellAppearanceStyle), "width: 44px; height: 23px; outline: none; }"_s);
+    return "input[type=\"color\"] { -webkit-appearance: color-well; width: 44px; height: 23px; outline: none; } "_s;
 }
 
 #endif // ENABLE(INPUT_TYPE_COLOR)

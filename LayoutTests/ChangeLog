@@ -1,3 +1,26 @@
+2018-11-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Swatch appears squished and off-center in inputs of type color
+        https://bugs.webkit.org/show_bug.cgi?id=191279
+        <rdar://problem/45816319>
+
+        Reviewed by Tim Horton.
+
+        * fast/forms/color/color-input-uses-color-well-appearance-expected-mismatch.html: Added.
+        * fast/forms/color/color-input-uses-color-well-appearance.html: Added.
+
+        Add a test to verify that setting `-webkit-appearance: textfield;` on a color input causes the color input to
+        render differently from a color input with a default appearance.
+
+        * platform/ios-wk1/TestExpectations:
+        * platform/ios/TestExpectations:
+
+        In the WebKit2 port of iOS, enable a handful of color input tests that are currently disabled.
+
+        * platform/ios/fast/forms/color/input-appearance-color-expected.txt:
+
+        Rebaseline an existing test on iOS.
+
 2018-11-05  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] An audio track should be muted when capture is interrupted by the OS.

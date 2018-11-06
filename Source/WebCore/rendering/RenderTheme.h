@@ -347,10 +347,6 @@ protected:
     virtual void adjustListButtonStyle(StyleResolver&, RenderStyle&, const Element*) const;
 #endif
 
-#if ENABLE(INPUT_TYPE_COLOR)
-    virtual bool platformUsesColorWellAppearance() const { return true; }
-#endif
-
     virtual void adjustProgressBarStyle(StyleResolver&, RenderStyle&, const Element*) const;
     virtual bool paintProgressBar(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
 

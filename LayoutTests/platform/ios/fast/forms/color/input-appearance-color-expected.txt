@@ -11,105 +11,105 @@ layer at (0,0) size 800x600
           text run at (0,0) width 457: "List color controls have different appearance if ENABLE(DATALIST)."
         RenderBR {BR} at (456,15) size 1x0
         RenderBlock {INPUT} at (0,20) size 44x23 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-          RenderFlexibleBox {DIV} at (6,3) size 32x16
-            RenderBlock {DIV} at (2,4) size 27x7 [bgcolor=#000000]
+          RenderFlexibleBox {DIV} at (4,4) size 36x15
+            RenderBlock {DIV} at (0,0) size 36x15 [bgcolor=#000000]
         RenderBlock {INPUT} at (44,20) size 44x23 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-          RenderFlexibleBox {DIV} at (6,3) size 32x16
-            RenderBlock {DIV} at (2,4) size 27x7 [bgcolor=#000000]
+          RenderFlexibleBox {DIV} at (4,4) size 36x15
+            RenderBlock {DIV} at (0,0) size 36x15 [bgcolor=#000000]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {H3} at (0,103) size 784x24
         RenderText {#text} at (0,0) size 162x22
           text run at (0,0) width 162: "Different Font Sizes"
-      RenderBlock (anonymous) at (0,145) size 784x48
+      RenderBlock (anonymous) at (0,145) size 784x47
         RenderText {#text} at (0,0) size 590x19
           text run at (0,0) width 590: "List color controls have different sizes depending on font sizes. Normal color controls don't."
         RenderBR {BR} at (589,15) size 1x0
-        RenderBlock {INPUT} at (0,24) size 44x23 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-          RenderFlexibleBox {DIV} at (10,4) size 24x13
-            RenderBlock {DIV} at (2,4) size 20x4 [bgcolor=#00FF00]
-        RenderText {#text} at (44,20) size 4x19
-          text run at (44,20) width 4: " "
-        RenderBlock {INPUT} at (48,22) size 44x23 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-          RenderFlexibleBox {DIV} at (6,3) size 32x16
-            RenderBlock {DIV} at (2,4) size 27x7 [bgcolor=#00FF00]
-        RenderText {#text} at (92,20) size 4x19
-          text run at (92,20) width 4: " "
-        RenderBlock {INPUT} at (96,21) size 44x23 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-          RenderFlexibleBox {DIV} at (5,2) size 34x18
-            RenderBlock {DIV} at (2,4) size 30x9 [bgcolor=#00FF00]
-        RenderText {#text} at (140,20) size 4x19
-          text run at (140,20) width 4: " "
-        RenderBlock {INPUT} at (144,24) size 44x23 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-          RenderFlexibleBox {DIV} at (10,4) size 24x13
-            RenderBlock {DIV} at (2,4) size 20x4 [bgcolor=#00FF00]
-        RenderText {#text} at (188,20) size 4x19
-          text run at (188,20) width 4: " "
-        RenderBlock {INPUT} at (192,22) size 44x23 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-          RenderFlexibleBox {DIV} at (6,3) size 32x16
-            RenderBlock {DIV} at (2,4) size 27x7 [bgcolor=#00FF00]
-        RenderText {#text} at (236,20) size 4x19
-          text run at (236,20) width 4: " "
-        RenderBlock {INPUT} at (240,21) size 44x23 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-          RenderFlexibleBox {DIV} at (5,2) size 34x18
-            RenderBlock {DIV} at (2,4) size 30x9 [bgcolor=#00FF00]
+        RenderBlock {INPUT} at (0,23) size 44x23 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+          RenderFlexibleBox {DIV} at (6,6) size 32x11
+            RenderBlock {DIV} at (0,0) size 32x11 [bgcolor=#00FF00]
+        RenderText {#text} at (44,24) size 4x19
+          text run at (44,24) width 4: " "
+        RenderBlock {INPUT} at (48,21) size 44x23 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+          RenderFlexibleBox {DIV} at (4,4) size 36x15
+            RenderBlock {DIV} at (0,0) size 36x15 [bgcolor=#00FF00]
+        RenderText {#text} at (92,24) size 4x19
+          text run at (92,24) width 4: " "
+        RenderBlock {INPUT} at (96,20) size 44x23 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+          RenderFlexibleBox {DIV} at (3,3) size 38x17
+            RenderBlock {DIV} at (0,0) size 38x17 [bgcolor=#00FF00]
+        RenderText {#text} at (140,24) size 4x19
+          text run at (140,24) width 4: " "
+        RenderBlock {INPUT} at (144,23) size 44x23 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+          RenderFlexibleBox {DIV} at (6,6) size 32x11
+            RenderBlock {DIV} at (0,0) size 32x11 [bgcolor=#00FF00]
+        RenderText {#text} at (188,24) size 4x19
+          text run at (188,24) width 4: " "
+        RenderBlock {INPUT} at (192,21) size 44x23 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+          RenderFlexibleBox {DIV} at (4,4) size 36x15
+            RenderBlock {DIV} at (0,0) size 36x15 [bgcolor=#00FF00]
+        RenderText {#text} at (236,24) size 4x19
+          text run at (236,24) width 4: " "
+        RenderBlock {INPUT} at (240,20) size 44x23 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+          RenderFlexibleBox {DIV} at (3,3) size 38x17
+            RenderBlock {DIV} at (0,0) size 38x17 [bgcolor=#00FF00]
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {H3} at (0,210) size 784x24
+      RenderBlock {H3} at (0,209) size 784x24
         RenderText {#text} at (0,0) size 122x22
           text run at (0,0) width 122: "Various Colors"
-      RenderBlock (anonymous) at (0,252) size 784x26
-        RenderBlock {INPUT} at (0,2) size 44x23 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-          RenderFlexibleBox {DIV} at (6,3) size 32x16
-            RenderBlock {DIV} at (2,4) size 27x7 [bgcolor=#FF0000]
-        RenderText {#text} at (44,0) size 4x19
-          text run at (44,0) width 4: " "
-        RenderBlock {INPUT} at (48,2) size 44x23 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-          RenderFlexibleBox {DIV} at (6,3) size 32x16
-            RenderBlock {DIV} at (2,4) size 27x7 [bgcolor=#00FF00]
-        RenderText {#text} at (92,0) size 4x19
-          text run at (92,0) width 4: " "
-        RenderBlock {INPUT} at (96,2) size 44x23 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-          RenderFlexibleBox {DIV} at (6,3) size 32x16
-            RenderBlock {DIV} at (2,4) size 27x7 [bgcolor=#0000FF]
-        RenderText {#text} at (140,0) size 4x19
-          text run at (140,0) width 4: " "
-        RenderBlock {INPUT} at (144,2) size 44x23 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-          RenderFlexibleBox {DIV} at (6,3) size 32x16
-            RenderBlock {DIV} at (2,4) size 27x7 [bgcolor=#EC008C]
-        RenderText {#text} at (188,0) size 4x19
-          text run at (188,0) width 4: " "
-        RenderBlock {INPUT} at (192,2) size 44x23 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-          RenderFlexibleBox {DIV} at (6,3) size 32x16
-            RenderBlock {DIV} at (2,4) size 27x7 [bgcolor=#40E0D0]
-        RenderText {#text} at (236,0) size 4x19
-          text run at (236,0) width 4: " "
-        RenderBlock {INPUT} at (240,2) size 44x23 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-          RenderFlexibleBox {DIV} at (6,3) size 32x16
-            RenderBlock {DIV} at (2,4) size 27x7 [bgcolor=#FF0000]
-        RenderText {#text} at (284,0) size 4x19
-          text run at (284,0) width 4: " "
-        RenderBlock {INPUT} at (288,2) size 44x23 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-          RenderFlexibleBox {DIV} at (6,3) size 32x16
-            RenderBlock {DIV} at (2,4) size 27x7 [bgcolor=#00FF00]
-        RenderText {#text} at (332,0) size 4x19
-          text run at (332,0) width 4: " "
-        RenderBlock {INPUT} at (336,2) size 44x23 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-          RenderFlexibleBox {DIV} at (6,3) size 32x16
-            RenderBlock {DIV} at (2,4) size 27x7 [bgcolor=#0000FF]
-        RenderText {#text} at (380,0) size 4x19
-          text run at (380,0) width 4: " "
-        RenderBlock {INPUT} at (384,2) size 44x23 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-          RenderFlexibleBox {DIV} at (6,3) size 32x16
-            RenderBlock {DIV} at (2,4) size 27x7 [bgcolor=#EC008C]
-        RenderText {#text} at (428,0) size 4x19
-          text run at (428,0) width 4: " "
-        RenderBlock {INPUT} at (432,2) size 44x23 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-          RenderFlexibleBox {DIV} at (6,3) size 32x16
-            RenderBlock {DIV} at (2,4) size 27x7 [bgcolor=#40E0D0]
+      RenderBlock (anonymous) at (0,251) size 784x24
+        RenderBlock {INPUT} at (0,0) size 44x23 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+          RenderFlexibleBox {DIV} at (4,4) size 36x15
+            RenderBlock {DIV} at (0,0) size 36x15 [bgcolor=#FF0000]
+        RenderText {#text} at (44,3) size 4x19
+          text run at (44,3) width 4: " "
+        RenderBlock {INPUT} at (48,0) size 44x23 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+          RenderFlexibleBox {DIV} at (4,4) size 36x15
+            RenderBlock {DIV} at (0,0) size 36x15 [bgcolor=#00FF00]
+        RenderText {#text} at (92,3) size 4x19
+          text run at (92,3) width 4: " "
+        RenderBlock {INPUT} at (96,0) size 44x23 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+          RenderFlexibleBox {DIV} at (4,4) size 36x15
+            RenderBlock {DIV} at (0,0) size 36x15 [bgcolor=#0000FF]
+        RenderText {#text} at (140,3) size 4x19
+          text run at (140,3) width 4: " "
+        RenderBlock {INPUT} at (144,0) size 44x23 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+          RenderFlexibleBox {DIV} at (4,4) size 36x15
+            RenderBlock {DIV} at (0,0) size 36x15 [bgcolor=#EC008C]
+        RenderText {#text} at (188,3) size 4x19
+          text run at (188,3) width 4: " "
+        RenderBlock {INPUT} at (192,0) size 44x23 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+          RenderFlexibleBox {DIV} at (4,4) size 36x15
+            RenderBlock {DIV} at (0,0) size 36x15 [bgcolor=#40E0D0]
+        RenderText {#text} at (236,3) size 4x19
+          text run at (236,3) width 4: " "
+        RenderBlock {INPUT} at (240,0) size 44x23 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+          RenderFlexibleBox {DIV} at (4,4) size 36x15
+            RenderBlock {DIV} at (0,0) size 36x15 [bgcolor=#FF0000]
+        RenderText {#text} at (284,3) size 4x19
+          text run at (284,3) width 4: " "
+        RenderBlock {INPUT} at (288,0) size 44x23 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+          RenderFlexibleBox {DIV} at (4,4) size 36x15
+            RenderBlock {DIV} at (0,0) size 36x15 [bgcolor=#00FF00]
+        RenderText {#text} at (332,3) size 4x19
+          text run at (332,3) width 4: " "
+        RenderBlock {INPUT} at (336,0) size 44x23 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+          RenderFlexibleBox {DIV} at (4,4) size 36x15
+            RenderBlock {DIV} at (0,0) size 36x15 [bgcolor=#0000FF]
+        RenderText {#text} at (380,3) size 4x19
+          text run at (380,3) width 4: " "
+        RenderBlock {INPUT} at (384,0) size 44x23 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+          RenderFlexibleBox {DIV} at (4,4) size 36x15
+            RenderBlock {DIV} at (0,0) size 36x15 [bgcolor=#EC008C]
+        RenderText {#text} at (428,3) size 4x19
+          text run at (428,3) width 4: " "
+        RenderBlock {INPUT} at (432,0) size 44x23 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+          RenderFlexibleBox {DIV} at (4,4) size 36x15
+            RenderBlock {DIV} at (0,0) size 36x15 [bgcolor=#40E0D0]
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {H3} at (0,296) size 784x24
+      RenderBlock {H3} at (0,293) size 784x24
         RenderText {#text} at (0,0) size 118x22
           text run at (0,0) width 118: "Arbitrary Size"
-      RenderBlock (anonymous) at (0,338) size 784x31
+      RenderBlock (anonymous) at (0,335) size 784x31
         RenderBlock {INPUT} at (0,0) size 100x30 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-          RenderFlexibleBox {DIV} at (6,3) size 88x23
-            RenderBlock {DIV} at (2,4) size 83x14 [bgcolor=#FF0000]
+          RenderFlexibleBox {DIV} at (4,4) size 92x22
+            RenderBlock {DIV} at (0,0) size 92x22 [bgcolor=#FF0000]

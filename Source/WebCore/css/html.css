@@ -906,9 +906,19 @@ select:focus {
 
 #if defined(ENABLE_INPUT_TYPE_COLOR) && ENABLE_INPUT_TYPE_COLOR
 
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+input[type="color"] {
+    padding: 0.3em;
+}
+#endif
+
 input[type="color"]::-webkit-color-swatch-wrapper {
     display: flex;
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+    padding: 0;
+#else
     padding: 4px 2px 5px;
+#endif
     box-sizing: border-box;
     width: 100%;
     height: 100%;

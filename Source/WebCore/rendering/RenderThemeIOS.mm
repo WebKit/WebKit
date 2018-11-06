@@ -1016,6 +1016,11 @@ void RenderThemeIOS::adjustButtonStyle(StyleResolver& selector, RenderStyle& sty
 {
     RenderTheme::adjustButtonStyle(selector, style, element);
 
+#if ENABLE(INPUT_TYPE_COLOR)
+    if (style.appearance() == ColorWellPart)
+        return;
+#endif
+
     // Set padding: 0 1.0em; on buttons.
     // CSSPrimitiveValue::computeLengthInt only needs the element's style to calculate em lengths.
     // Since the element might not be in a document, just pass nullptr for the root element style

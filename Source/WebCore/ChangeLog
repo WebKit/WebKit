@@ -1,3 +1,46 @@
+2018-11-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Swatch appears squished and off-center in inputs of type color
+        https://bugs.webkit.org/show_bug.cgi?id=191279
+        <rdar://problem/45816319>
+
+        Reviewed by Tim Horton.
+
+        This patch makes some small adjustments to color inputs on iOS to bring them closer to the intended design.
+        See comments below for more details.
+
+        Tests:  fast/forms/color/color-input-uses-color-well-appearance.html
+                fast/forms/color/input-appearance-color.html
+
+        * css/html.css:
+
+        Adjust the UA stylesheet for color inputs on iOS.
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::paintDecorations):
+
+        When painting decorations for `ColorWellPart`, treat it as a standard button instead of the square button
+        appearance.
+
+        (WebCore::RenderTheme::colorInputStyleSheet const):
+
+        Add `-webkit-appearance: color-well;` to the stylesheet for color inputs. Previously, this was special-cased on
+        iOS, where color input elements had appearances of `textfield`; however, this patch makes some adjustments to
+        RenderThemeIOS, allowing us to use `color-well` on iOS.
+
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::platformUsesColorWellAppearance const): Deleted.
+
+        Remove this from RenderTheme. This is no longer necessary, since all platforms now use
+        `-webkit-appearance: color-well;`.
+
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::adjustButtonStyle const):
+
+        When painting buttons for color inputs, don't add rounded corners that are present by default for regular
+        buttons.
+
 2018-11-05  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] An audio track should be muted when capture is interrupted by the OS.
