@@ -1,3 +1,7 @@
+2018-11-06  Alan Coon  <alancoon@apple.com>
+
+        Revert r237528. rdar://problem/45847130
+
 2018-10-29  Kocsen Chung  <kocsen_chung@apple.com>
 
         Apply patch. rdar://problem/45363479
