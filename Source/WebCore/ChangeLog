@@ -1,3 +1,24 @@
+2018-11-05  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] An audio track should be muted when capture is interrupted by the OS.
+        https://bugs.webkit.org/show_bug.cgi?id= 191283
+         <rdar://problem/45773103>
+
+        Reviewed by Jon Lee.
+
+        Test: fast/mediastream/media-stream-track-interrupted.html
+
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::setInterruptedForTesting):
+        * platform/mediastream/RealtimeMediaSource.h:
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioCaptureSource::beginInterruption):
+        (WebCore::CoreAudioCaptureSource::endInterruption):
+        * testing/Internals.cpp:
+        (WebCore::Internals::setMediaStreamSourceInterrupted):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2018-11-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Parsing support for text-underline-offset and text-decoration-thickness

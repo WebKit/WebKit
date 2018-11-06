@@ -172,6 +172,7 @@ public:
 
     // Testing only
     virtual void delaySamples(Seconds) { };
+    void setInterruptedForTesting(bool);
 
 protected:
     RealtimeMediaSource(Type, String&& name, String&& deviceID = { }, String&& hashSalt = { });

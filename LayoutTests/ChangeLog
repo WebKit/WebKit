@@ -1,3 +1,14 @@
+2018-11-05  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] An audio track should be muted when capture is interrupted by the OS.
+        https://bugs.webkit.org/show_bug.cgi?id=191283
+         <rdar://problem/45773103>
+
+        Reviewed by Jon Lee.
+
+        * fast/mediastream/media-stream-track-interrupted-expected.txt: Added.
+        * fast/mediastream/media-stream-track-interrupted.html: Added.
+
 2018-11-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Parsing support for text-underline-offset and text-decoration-thickness
