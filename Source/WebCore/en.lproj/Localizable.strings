@@ -100,6 +100,9 @@
 /* WKErrorUnknown description */
 "An unknown error occurred" = "An unknown error occurred";
 
+/* Malware confirmation dialog title */
+"Are you sure you wish to go to this site?" = "Are you sure you wish to go to this site?";
+
 /* Menu item label for automatic track selection behavior */
 "Auto (Recommended)" = "Auto (Recommended)";
 
@@ -211,6 +214,9 @@
 /* Day label in date picker */
 "DAY (Date picker for extra zoom mode)" = "DAY";
 
+/* Phishing warning title */
+"Deceptive Website Warning" = "Deceptive Website Warning";
+
 /* Default writing direction context menu item */
 "Default" = "Default";
 
@@ -298,6 +304,12 @@
 /* Title of the Go button for zoomed form controls. */
 "Go" = "Go";
 
+/* Action from safe browsing warning */
+"Go back" = "Go back";
+
+/* Google Safe Browsing */
+"Google Safe Browsing" = "Google Safe Browsing";
+
 /* accessibility role description for web area */
 "HTML content" = "HTML content";
 
@@ -315,6 +327,12 @@
 
 /* The default, default character encoding on Windows */
 "ISO-8859-1" = "ISO-8859-1";
+
+/* Phishing warning description */
+"If you believe this website is safe, you can %report-an-error%. Or, if you understand the risks involved, you can %bypass-link%." = "If you believe this website is safe, you can %report-an-error%. Or, if you understand the risks involved, you can %bypass-link%.";
+
+/* Action from safe browsing warning */
+"If you understand the risks involved, you can %visit-this-unsafe-site-link%." = "If you understand the risks involved, you can %visit-this-unsafe-site-link%.";
 
 /* Ignore Grammar context menu item */
 "Ignore Grammar" = "Ignore Grammar";
@@ -360,6 +378,9 @@
 
 /* Learn Spelling context menu item */
 "Learn Spelling" = "Learn Spelling";
+
+/* Action from safe browsing warning */
+"Learn more…" = "Learn more…";
 
 /* Left to Right context menu item */
 "Left to Right" = "Left to Right";
@@ -412,8 +433,14 @@
 /* Make Upper Case context menu item */
 "Make Upper Case" = "Make Upper Case";
 
+/* Malware warning title */
+"Malware Website Warning" = "Malware Website Warning";
+
 /* Validation message for input form controls requiring a constrained value according to pattern */
 "Match the requested format" = "Match the requested format";
+
+/* Malware confirmation dialog */
+"Merely visiting a site is sufficient for malware to install itself and harm your computer." = "Merely visiting a site is sufficient for malware to install itself and harm your computer.";
 
 /* Label text to be used when a plugin is missing */
 "Missing Plug-in" = "Missing Plug-in";
@@ -613,6 +640,9 @@
 /* menu item title */
 "Show Substitutions" = "Show Substitutions";
 
+/* Action from safe browsing warning */
+"Show details" = "Show details";
+
 /* Title of the context menu item to show when PDFPlugin was used instead of a blocked plugin */
 "Show in blocked plug-in" = "Show in blocked plug-in";
 
@@ -694,6 +724,9 @@
 /* File Upload alert sheet camera button string for taking only videos */
 "Take Video (file upload action sheet)" = "Take Video";
 
+/* Tencent Safe Browsing */
+"Tencent Safe Browsing" = "Tencent Safe Browsing";
+
 /* Text Replacement context menu item */
 "Text Replacement" = "Text Replacement";
 
@@ -735,6 +768,15 @@
 
 /* text that appears at the start of nearly-obsolete web pages in the form of a 'searchable index' */
 "This is a searchable index. Enter search keywords: " = "This is a searchable index. Enter search keywords: ";
+
+/* Malware warning */
+"This website may attempt to install dangerous software, which could harm your computer or steal your personal or financial information, like passwords, photos, or credit cards." = "This website may attempt to install dangerous software, which could harm your computer or steal your personal or financial information, like passwords, photos, or credit cards.";
+
+/* Phishing warning */
+"This website may try to trick you into doing something dangerous, like installing software or disclosing personal or financial information, like passwords, phone numbers, or credit cards." = "This website may try to trick you into doing something dangerous, like installing software or disclosing personal or financial information, like passwords, phone numbers, or credit cards.";
+
+/* Unwanted software warning */
+"This website may try to trick you into installing software that harms your browsing experience, like changing your settings without your permission or showing you unwanted ads. Once installed, it may be difficult to remove." = "This website may try to trick you into installing software that harms your browsing experience, like changing your settings without your permission or showing you unwanted ads. Once installed, it may be difficult to remove.";
 
 /* Undo action name */
 "Tighten Kerning (Undo action name)" = "Tighten Kerning";
@@ -826,6 +868,15 @@
 /* Validation message for input form controls with value higher than allowed maximum */
 "Value must be less than or equal to %s" = "Value must be less than or equal to %s";
 
+/* Phishing warning description */
+"Warnings are shown for websites that have been reported as deceptive. Deceptive websites try to trick you into believing they are legitimate websites you trust." = "Warnings are shown for websites that have been reported as deceptive. Deceptive websites try to trick you into believing they are legitimate websites you trust.";
+
+/* Unwanted software warning description */
+"Warnings are shown for websites where harmful software has been detected. You can check %the-status-of-site% on the %safeBrowsingProvider% diagnostic page." = "Warnings are shown for websites where harmful software has been detected. You can check %the-status-of-site% on the %safeBrowsingProvider% diagnostic page.";
+
+/* Malware warning description */
+"Warnings are shown for websites where malicious software has been detected. You can check the %status-link% on the %safeBrowsingProvider% diagnostic page." = "Warnings are shown for websites where malicious software has been detected. You can check the %status-link% on the %safeBrowsingProvider% diagnostic page.";
+
 /* Web Inspector window title when inspecting Web Inspector */
 "Web Inspector [%d] — %@" = "Web Inspector [%d] — %@";
 
@@ -837,6 +888,9 @@
 
 /* WebKitErrorInternal description */
 "WebKit encountered an internal error" = "WebKit encountered an internal error";
+
+/* Unwanted software warning title */
+"Website With Harmful Software Warning" = "Website With Harmful Software Warning";
 
 /* Year label in date picker */
 "YEAR (Date picker for extra zoom mode)" = "YEAR";
@@ -912,6 +966,9 @@
 
 /* HTTP result code string */
 "created" = "created";
+
+/* Label for the credit card auto fill button inside a text field. */
+"credit card auto fill" = "credit card auto fill";
 
 /* The less good value description for a meter element. */
 "critical value" = "critical value";
@@ -1150,6 +1207,9 @@
 /* accessibility label for time remaining display */
 "remaining time" = "remaining time";
 
+/* Action from safe browsing warning */
+"report an error" = "report an error";
+
 /* HTTP result code string */
 "request timed out" = "request timed out";
 
@@ -1237,6 +1297,9 @@
 /* term word of a description list */
 "term" = "term";
 
+/* Part of malware description */
+"the status of “%site%”" = "the status of “%site%”";
+
 /* accessibility role description for a time field. */
 "time field" = "time field";
 
@@ -1281,6 +1344,9 @@
 
 /* accessibility label for video element controller */
 "video playback" = "video playback";
+
+/* Action from safe browsing warning */
+"visit this unsafe website" = "visit this unsafe website";
 
 /* An ARIA accessibility group that acts as an alert dialog. */
 "web alert dialog" = "web alert dialog";

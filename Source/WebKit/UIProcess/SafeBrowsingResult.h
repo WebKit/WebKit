@@ -41,23 +41,34 @@ public:
         return adoptRef(*new SafeBrowsingResult(WTFMove(url), result));
     }
 #endif
-    const WebCore::URL& url() const { return m_url; }
-    const String& provider() const { return m_provider; }
+
     bool isPhishing() const { return m_isPhishing; }
     bool isMalware() const { return m_isMalware; }
     bool isUnwantedSoftware() const { return m_isUnwantedSoftware; }
-    bool isKnownToBeUnsafe() const { return m_isKnownToBeUnsafe; }
+
+    const WebCore::URL& url() const { return m_url; }
+    const String& provider() const { return m_provider; }
+    const String& localizedProviderName() const { return m_localizedProviderName; }
+    const String& malwareDetailsURLBase() const { return m_malwareDetailsURLBase; }
+    const String& reportAnErrorURLBase() const { return m_reportAnErrorURLBase; }
+    const WebCore::URL& learnMoreURL() const { return m_learnMoreURL; }
+
+    bool needsSafeBrowsingWarning() const { return m_isPhishing || m_isMalware || m_isUnwantedSoftware; }
 
 private:
 #if HAVE(SAFE_BROWSING)
     SafeBrowsingResult(WebCore::URL&&, SSBServiceLookupResult *);
 #endif
     WebCore::URL m_url;
-    String m_provider;
     bool m_isPhishing { false };
     bool m_isMalware { false };
     bool m_isUnwantedSoftware { false };
-    bool m_isKnownToBeUnsafe { false };
+
+    String m_provider;
+    String m_localizedProviderName;
+    String m_malwareDetailsURLBase;
+    String m_reportAnErrorURLBase;
+    WebCore::URL m_learnMoreURL;
 };
 
 } // namespace WebKit

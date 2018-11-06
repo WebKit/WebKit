@@ -34,16 +34,16 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
-static bool done;
+static bool committedNavigation;
 
 @interface SafeBrowsingNavigationDelegate : NSObject <WKNavigationDelegate>
 @end
 
 @implementation SafeBrowsingNavigationDelegate
 
-- (void)webView:(WKWebView *)webView didFinishNavigation:(null_unspecified WKNavigation *)navigation
+- (void)webView:(WKWebView *)webView didCommitNavigation:(null_unspecified WKNavigation *)navigation
 {
-    done = true;
+    committedNavigation = true;
 }
 
 @end
@@ -53,13 +53,12 @@ static bool done;
     BOOL _isPhishing;
     BOOL _isMalware;
     BOOL _isUnwantedSoftware;
-    BOOL _isKnownToBeUnsafe;
 }
 @end
 
 @implementation TestServiceLookupResult
 
-+ (instancetype)resultWithProvider:(RetainPtr<NSString>&&)provider phishing:(BOOL)phishing malware:(BOOL)malware unwantedSoftware:(BOOL)unwantedSoftware knownToBeUnsafe:(BOOL)knownToBeUnsafe
++ (instancetype)resultWithProvider:(RetainPtr<NSString>&&)provider phishing:(BOOL)phishing malware:(BOOL)malware unwantedSoftware:(BOOL)unwantedSoftware
 {
     TestServiceLookupResult *result = [[TestServiceLookupResult alloc] init];
     if (!result)
@@ -69,7 +68,6 @@ static bool done;
     result->_isPhishing = phishing;
     result->_isMalware = malware;
     result->_isUnwantedSoftware = unwantedSoftware;
-    result->_isKnownToBeUnsafe = knownToBeUnsafe;
 
     return [result autorelease];
 }
@@ -92,11 +90,6 @@ static bool done;
 - (BOOL)isUnwantedSoftware
 {
     return _isUnwantedSoftware;
-}
-
-- (BOOL)isKnownToBeUnsafe
-{
-    return _isKnownToBeUnsafe;
 }
 
 @end
@@ -139,24 +132,66 @@ static bool done;
 
 - (void)lookUpURL:(NSURL *)URL completionHandler:(void (^)(TestLookupResult *, NSError *))completionHandler
 {
-    completionHandler([TestLookupResult resultWithResults:@[[TestServiceLookupResult resultWithProvider:@"TestProvider" phishing:YES malware:NO unwantedSoftware:NO knownToBeUnsafe:NO]]], nil);
+    completionHandler([TestLookupResult resultWithResults:@[[TestServiceLookupResult resultWithProvider:@"TestProvider" phishing:YES malware:NO unwantedSoftware:NO]]], nil);
 }
 
 @end
 
-TEST(WebKit, SafeBrowsing)
+#if PLATFORM(MAC) // FIXME: Test on iOS once implemented.
+
+static NSURL *simpleURL()
+{
+    return [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+}
+
+static RetainPtr<WKWebView> safeBrowsingView()
 {
     TestWebKitAPI::ClassMethodSwizzler swizzler(objc_getClass("SSBLookupContext"), @selector(sharedLookupContext), [TestLookupContext methodForSelector:@selector(sharedLookupContext)]);
 
-    auto navigationDelegate = adoptNS([[SafeBrowsingNavigationDelegate alloc] init]);
-    auto webView = adoptNS([[WKWebView alloc] init]);
-    [webView setNavigationDelegate:navigationDelegate.get()];
-    [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
-
-    // FIXME: Check that the loading happens as expected once we do something with safe browsing results.
-
-    TestWebKitAPI::Util::run(&done);
+    static auto delegate = adoptNS([SafeBrowsingNavigationDelegate new]);
+    auto webView = adoptNS([WKWebView new]);
+    [webView setNavigationDelegate:delegate.get()];
+    [webView loadRequest:[NSURLRequest requestWithURL:simpleURL()]];
+    while (![webView _safeBrowsingWarningForTesting])
+        TestWebKitAPI::Util::spinRunLoop();
+    return webView;
 }
+
+TEST(SafeBrowsing, GoBack)
+{
+    auto webView = safeBrowsingView();
+    NSView *bottom = [webView _safeBrowsingWarningForTesting].subviews.firstObject.subviews.lastObject;
+    NSButton *goBack = (NSButton *)bottom.subviews.lastObject;
+    EXPECT_STREQ(goBack.title.UTF8String, "Go back");
+    [goBack performClick:nil];
+    EXPECT_EQ([webView _safeBrowsingWarningForTesting], nil);
+}
+
+TEST(SafeBrowsing, VisitUnsafeWebsite)
+{
+    auto webView = safeBrowsingView();
+    NSView *warning = [webView _safeBrowsingWarningForTesting];
+    NSView *box = warning.subviews.firstObject;
+    NSButton *showDetails = (NSButton *)box.subviews.lastObject.subviews.firstObject;
+    EXPECT_STREQ(showDetails.title.UTF8String, "Show details");
+    EXPECT_EQ(box.subviews.count, 3ull);
+    [showDetails performClick:nil];
+    EXPECT_EQ(box.subviews.count, 4ull);
+    EXPECT_FALSE(committedNavigation);
+    [warning performSelector:NSSelectorFromString(@"clickedOnLink:") withObject:@"WKVisitUnsafeWebsiteSentinel"];
+    TestWebKitAPI::Util::run(&committedNavigation);
+}
+
+TEST(SafeBrowsing, NavigationClearsWarning)
+{
+    auto webView = safeBrowsingView();
+    EXPECT_NE([webView _safeBrowsingWarningForTesting], nil);
+    [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    while ([webView _safeBrowsingWarningForTesting])
+        TestWebKitAPI::Util::spinRunLoop();
+}
+
+#endif // PLATFORM(MAC)
 
 @interface NullLookupContext : NSObject
 @end
@@ -167,7 +202,7 @@ TEST(WebKit, SafeBrowsing)
 }
 @end
 
-TEST(WebKit, NoSafeBrowsing)
+TEST(SafeBrowsing, MissingFramework)
 {
     TestWebKitAPI::ClassMethodSwizzler swizzler(objc_getClass("SSBLookupContext"), @selector(sharedLookupContext), [NullLookupContext methodForSelector:@selector(sharedLookupContext)]);
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);

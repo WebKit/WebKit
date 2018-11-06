@@ -115,6 +115,9 @@ private:
     void clearTextIndicator(WebCore::TextIndicatorWindowDismissalAnimation) override;
     void setTextIndicatorAnimationProgress(float) override;
 
+    void showSafeBrowsingWarning(const SafeBrowsingResult&, CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, WebCore::URL>&&)>&&) override;
+    void clearSafeBrowsingWarning() override;
+
     void enterAcceleratedCompositingMode(const LayerTreeContext&) override;
     void exitAcceleratedCompositingMode() override;
     void updateAcceleratedCompositingMode(const LayerTreeContext&) override;

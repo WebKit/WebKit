@@ -64,6 +64,7 @@
 #import "WKNavigationInternal.h"
 #import "WKPreferencesInternal.h"
 #import "WKProcessPoolInternal.h"
+#import "WKSafeBrowsingWarning.h"
 #import "WKSharedAPICast.h"
 #import "WKSnapshotConfiguration.h"
 #import "WKUIDelegate.h"
@@ -6657,6 +6658,18 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 {
     _resolutionForShareSheetImmediateCompletionForTesting = resolved;
 }
+
+#if PLATFORM(MAC)
+- (NSView *)_safeBrowsingWarningForTesting
+{
+    return _impl->safeBrowsingWarning();
+}
+#else
+- (UIView *)_safeBrowsingWarningForTesting
+{
+    return nil;
+}
+#endif
 
 - (_WKInspector *)_inspector
 {

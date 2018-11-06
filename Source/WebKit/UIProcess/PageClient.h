@@ -33,9 +33,12 @@
 #include "WebPopupMenuProxy.h"
 #include <WebCore/AlternativeTextClient.h>
 #include <WebCore/EditorClient.h>
+#include <WebCore/URL.h>
 #include <WebCore/UserInterfaceLayoutDirection.h>
 #include <WebCore/ValidationBubble.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
+#include <wtf/Variant.h>
 #include <wtf/WeakPtr.h>
 
 #if PLATFORM(COCOA)
@@ -107,6 +110,7 @@ class NativeWebKeyboardEvent;
 class NativeWebMouseEvent;
 class NativeWebWheelEvent;
 class RemoteLayerTreeTransaction;
+class SafeBrowsingResult;
 class UserData;
 class ViewSnapshot;
 class WebBackForwardListItem;
@@ -116,6 +120,8 @@ class WebFrameProxy;
 class WebOpenPanelResultListenerProxy;
 class WebPageProxy;
 class WebPopupMenuProxy;
+
+enum class ContinueUnsafeLoad : bool { No, Yes };
 
 struct AssistedNodeInformation;
 struct InteractionInformationAtPosition;
@@ -210,6 +216,9 @@ public:
 
     virtual void didChangeContentSize(const WebCore::IntSize&) = 0;
 
+    virtual void showSafeBrowsingWarning(const SafeBrowsingResult&, CompletionHandler<void(Variant<ContinueUnsafeLoad, WebCore::URL>&&)>&& completionHandler) { completionHandler(ContinueUnsafeLoad::Yes); }
+    virtual void clearSafeBrowsingWarning() { }
+    
 #if ENABLE(DRAG_SUPPORT)
 #if PLATFORM(GTK)
     virtual void startDrag(Ref<WebCore::SelectionData>&&, WebCore::DragOperation, RefPtr<ShareableBitmap>&& dragImage) = 0;

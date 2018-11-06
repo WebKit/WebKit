@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,19 +23,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "WKFoundation.h"
+#import <wtf/CompletionHandler.h>
+#import <wtf/RefPtr.h>
+#import <wtf/RetainPtr.h>
+#import <wtf/WeakObjCPtr.h>
 
-namespace TestWebKitAPI {
-namespace Util {
+#if PLATFORM(MAC)
+#import <AppKit/AppKit.h>
+#else
+#import <UIKit/UIKit.h>
+#endif
 
-// Runs a platform runloop until the 'done' flag is true.
-void run(bool* done);
+namespace WebCore {
+class URL;
+}
 
-// Runs a platform runloop `count` number of spins.
-void spinRunLoop(uint64_t count = 1);
+namespace WebKit {
+class SafeBrowsingResult;
+enum class ContinueUnsafeLoad : bool;
+}
 
-// Runs a platform runloop until the amount of seconds has passed.
-void sleep(double seconds);
+#if PLATFORM(MAC)
+using RectType = NSRect;
+using StackViewType = NSStackView;
+#else
+using RectType = CGRect;
+using StackViewType = UIStackView;
+#endif
 
-} // namespace Util
-} // namespace TestWebKitAPI
+@interface WKSafeBrowsingWarning : StackViewType {
+@package
+    CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, WebCore::URL>&&)> _completionHandler;
+    RefPtr<const WebKit::SafeBrowsingResult> _result;
+}
+
+- (instancetype)initWithFrame:(RectType)frame safeBrowsingResult:(const WebKit::SafeBrowsingResult&)result completionHandler:(CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, WebCore::URL>&&)>&&)completionHandler;
+
+@end

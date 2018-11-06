@@ -60,6 +60,7 @@
 #import "WKFullScreenWindowController.h"
 #import "WKImmediateActionController.h"
 #import "WKPrintingView.h"
+#import "WKSafeBrowsingWarning.h"
 #import "WKTextInputWindowController.h"
 #import "WKViewLayoutStrategy.h"
 #import "WKWebViewPrivate.h"
@@ -1598,6 +1599,24 @@ bool WebViewImpl::resignFirstResponder()
     return true;
 }
 
+void WebViewImpl::showSafeBrowsingWarning(const SafeBrowsingResult& result, CompletionHandler<void(Variant<ContinueUnsafeLoad, WebCore::URL>&&)>&& completionHandler)
+{
+    if (!m_view)
+        return completionHandler(ContinueUnsafeLoad::Yes);
+
+    m_safeBrowsingWarning = adoptNS([[WKSafeBrowsingWarning alloc] initWithFrame:[m_view bounds] safeBrowsingResult:result completionHandler:[weakThis = makeWeakPtr(*this), completionHandler = WTFMove(completionHandler)] (auto&& result) mutable {
+        if (weakThis)
+            [std::exchange(weakThis->m_safeBrowsingWarning, nullptr) removeFromSuperview];
+        completionHandler(WTFMove(result));
+    }]);
+    [m_view addSubview:m_safeBrowsingWarning.get()];
+}
+
+void WebViewImpl::clearSafeBrowsingWarning()
+{
+    [std::exchange(m_safeBrowsingWarning, nullptr) removeFromSuperview];
+}
+
 bool WebViewImpl::isFocused() const
 {
     if (m_inBecomeFirstResponder)
@@ -1636,6 +1655,7 @@ void WebViewImpl::renewGState()
 void WebViewImpl::setFrameSize(CGSize)
 {
     [m_layoutStrategy didChangeFrameSize];
+    [m_safeBrowsingWarning setFrame:[m_view bounds]];
 }
 
 void WebViewImpl::disableFrameSizeUpdates()
@@ -5138,7 +5158,7 @@ void WebViewImpl::flagsChanged(NSEvent *event)
 #define NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(EventName) \
     void WebViewImpl::EventName(NSEvent *event) \
     { \
-        if (m_ignoresNonWheelEvents) \
+        if (m_ignoresNonWheelEvents || m_safeBrowsingWarning) \
             return; \
         if (NSTextInputContext *context = [m_view inputContext]) { \
             auto weakThis = makeWeakPtr(*this); \

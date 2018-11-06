@@ -469,6 +469,16 @@ void PageClientImpl::setTextIndicatorAnimationProgress(float)
 {
 }
 
+void PageClientImpl::showSafeBrowsingWarning(const SafeBrowsingResult&, CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, WebCore::URL>&&)>&& completionHandler)
+{
+    completionHandler(WebKit::ContinueUnsafeLoad::Yes); // FIXME: Implement.
+}
+
+void PageClientImpl::clearSafeBrowsingWarning()
+{
+    // FIXME: Implement.
+}
+
 void PageClientImpl::enterAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
 {
 }

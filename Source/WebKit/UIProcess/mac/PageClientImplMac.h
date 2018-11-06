@@ -55,7 +55,7 @@ public:
     virtual ~PageClientImpl();
 
     // FIXME: Eventually WebViewImpl should become the PageClient.
-    void setImpl(WebViewImpl& impl) { m_impl = &impl; }
+    void setImpl(WebViewImpl&);
 
     void viewWillMoveToAnotherWindow();
 
@@ -104,6 +104,8 @@ private:
     void resetSecureInputState() override;
     void notifyInputContextAboutDiscardedComposition() override;
     void selectionDidChange() override;
+    void showSafeBrowsingWarning(const SafeBrowsingResult&, CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, WebCore::URL>&&)>&&) override;
+    void clearSafeBrowsingWarning() override;
     
 #if WK_API_ENABLED
     bool showShareSheet(const WebCore::ShareDataWithParsedURL&, WTF::CompletionHandler<void(bool)>&&) override;
@@ -250,7 +252,7 @@ private:
     void didFinishProcessingAllPendingMouseEvents() final;
 
     NSView *m_view;
-    WebViewImpl* m_impl { nullptr };
+    WeakPtr<WebViewImpl> m_impl;
 #if USE(AUTOCORRECTION_PANEL)
     CorrectionPanel m_correctionPanel;
 #endif

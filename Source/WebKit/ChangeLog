@@ -1,3 +1,82 @@
+2018-11-03  Alex Christensen  <achristensen@webkit.org>
+
+        [Mac] Implement safe browsing in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=188871
+
+        Reviewed by Tim Horton.
+
+        * Platform/spi/Cocoa/SafeBrowsingSPI.h:
+        * Resources/SafeBrowsing.xcassets: Added.
+        * Resources/SafeBrowsing.xcassets/Contents.json: Added.
+        * Resources/SafeBrowsing.xcassets/WKSafeBrowsingWarningBackground.colorset: Added.
+        * Resources/SafeBrowsing.xcassets/WKSafeBrowsingWarningBackground.colorset/Contents.json: Added.
+        * Resources/SafeBrowsing.xcassets/WKSafeBrowsingWarningText.colorset: Added.
+        * Resources/SafeBrowsing.xcassets/WKSafeBrowsingWarningText.colorset/Contents.json: Added.
+        * Resources/SafeBrowsing.xcassets/WKSafeBrowsingWarningTitle.colorset: Added.
+        * Resources/SafeBrowsing.xcassets/WKSafeBrowsingWarningTitle.colorset/Contents.json: Added.
+        * Shared/WebPreferences.yaml:
+        * Shared/WebPreferencesDefaultValues.h:
+        * UIProcess/API/C/mac/WKContextPrivateMac.mm:
+        (WKContextHandlesSafeBrowsing):
+        * UIProcess/Cocoa/SafeBrowsingResultCocoa.mm:
+        (WebKit::malwareDetailsBase):
+        (WebKit::learnMore):
+        (WebKit::reportAnErrorBase):
+        (WebKit::localizedProvider):
+        (WebKit::SafeBrowsingResult::SafeBrowsingResult):
+        * UIProcess/Cocoa/WKSafeBrowsingWarning.h: Added.
+        * UIProcess/Cocoa/WKSafeBrowsingWarning.mm: Added.
+        (confirmMalwareSentinel):
+        (visitUnsafeWebsiteSentinel):
+        (colorNamed):
+        (replace):
+        (addLinkAndReplace):
+        (-[WKSafeBrowsingExclamationPoint drawRect:]):
+        (-[WKSafeBrowsingExclamationPoint intrinsicContentSize]):
+        (reportAnErrorURL):
+        (malwareDetailsURL):
+        (titleText):
+        (warningText):
+        (detailsText):
+        (-[WKSafeBrowsingWarning initWithFrame:safeBrowsingResult:completionHandler:]):
+        (-[WKSafeBrowsingWarning dealloc]):
+        (-[WKSafeBrowsingWarning goBackClicked]):
+        (-[WKSafeBrowsingWarning clickedOnLink:]):
+        (-[WKSafeBrowsingWarning showDetailsClicked]):
+        (+[WKSafeBrowsingTextView viewWithAttributedString:linkTarget:]):
+        (+[WKSafeBrowsingTextView viewWithString:]):
+        (-[WKSafeBrowsingTextView intrinsicContentSize]):
+        (-[WKSafeBrowsingTextView clickedOnLink:atIndex:]):
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::showSafeBrowsingWarning):
+        (WebKit::WebViewImpl::clearSafeBrowsingWarning):
+        (WebKit::WebViewImpl::setFrameSize):
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::showSafeBrowsingWarning):
+        (WebKit::PageClient::clearSafeBrowsingWarning):
+        * UIProcess/SafeBrowsingResult.h:
+        (WebKit::SafeBrowsingResult::url const):
+        (WebKit::SafeBrowsingResult::provider const):
+        (WebKit::SafeBrowsingResult::localizedProviderName const):
+        (WebKit::SafeBrowsingResult::malwareDetailsURLBase const):
+        (WebKit::SafeBrowsingResult::reportAnErrorURLBase const):
+        (WebKit::SafeBrowsingResult::learnMoreURL const):
+        (WebKit::SafeBrowsingResult::needsSafeBrowsingWarning const):
+        (WebKit::SafeBrowsingResult::isKnownToBeUnsafe const): Deleted.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::showSafeBrowsingWarning):
+        (WebKit::PageClientImpl::clearSafeBrowsingWarning):
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::setImpl):
+        (WebKit::PageClientImpl::showSafeBrowsingWarning):
+        (WebKit::PageClientImpl::clearSafeBrowsingWarning):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-11-05  Zan Dobersek  <zdobersek@igalia.com>
 
         [WPE] Remove BackingStore, BackingStoreCairo implementation files from build

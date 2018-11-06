@@ -118,6 +118,11 @@ PageClientImpl::~PageClientImpl()
 {
 }
 
+void PageClientImpl::setImpl(WebViewImpl& impl)
+{
+    m_impl = makeWeakPtr(impl);
+}
+
 std::unique_ptr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy()
 {
     return m_impl->createDrawingAreaProxy();
@@ -482,6 +487,18 @@ RefPtr<WebDataListSuggestionsDropdown> PageClientImpl::createDataListSuggestions
 Ref<ValidationBubble> PageClientImpl::createValidationBubble(const String& message, const ValidationBubble::Settings& settings)
 {
     return ValidationBubble::create(m_view, message, settings);
+}
+
+void PageClientImpl::showSafeBrowsingWarning(const SafeBrowsingResult& result, CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, WebCore::URL>&&)>&& completionHandler)
+{
+    if (!m_impl)
+        return completionHandler(ContinueUnsafeLoad::Yes);
+    m_impl->showSafeBrowsingWarning(result, WTFMove(completionHandler));
+}
+
+void PageClientImpl::clearSafeBrowsingWarning()
+{
+    m_impl->clearSafeBrowsingWarning();
 }
 
 void PageClientImpl::setTextIndicator(Ref<TextIndicator> textIndicator, WebCore::TextIndicatorWindowLifetime lifetime)

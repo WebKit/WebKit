@@ -27,17 +27,51 @@
 #import "SafeBrowsingResult.h"
 
 #import "SafeBrowsingSPI.h"
+#import <WebCore/LocalizedStrings.h>
 
 namespace WebKit {
 
 #if HAVE(SAFE_BROWSING)
+
+// FIXME: These ought to be API calls to the SafariSafeBrowsing framework when such SPI is available.
+static const char* malwareDetailsBase(const String& provider)
+{
+    if (provider == String(SSBProviderTencent))
+        return "https://www.urlsec.qq.com/check.html?tpl=safari";
+    return "https://google.com/safebrowsing/diagnostic?tpl=safari";
+}
+
+static WebCore::URL learnMore(const String& provider)
+{
+    if (provider == String(SSBProviderTencent))
+        return {{ }, "https://www.urlsec.qq.com/standard/s1.html?tpl=safari"};
+    return {{ }, "https://www.google.com/support/bin/answer.py?answer=106318"};
+}
+
+static const char* reportAnErrorBase(const String& provider)
+{
+    if (provider == String(SSBProviderTencent))
+        return "https://www.urlsec.qq.com/complain.html?tpl=safari";
+    return "https://www.google.com/safebrowsing/report_error/?tpl=safari";
+}
+
+static String localizedProvider(const String& provider)
+{
+    if (provider == String(SSBProviderTencent))
+        return WEB_UI_NSSTRING(@"Tencent Safe Browsing", "Tencent Safe Browsing");
+    return WEB_UI_NSSTRING(@"Google Safe Browsing", "Google Safe Browsing");
+}
+
 SafeBrowsingResult::SafeBrowsingResult(WebCore::URL&& url, SSBServiceLookupResult *result)
     : m_url(WTFMove(url))
-    , m_provider([result provider])
     , m_isPhishing([result isPhishing])
     , m_isMalware([result isMalware])
     , m_isUnwantedSoftware([result isUnwantedSoftware])
-    , m_isKnownToBeUnsafe([result isKnownToBeUnsafe])
+    , m_provider([result provider])
+    , m_localizedProviderName(localizedProvider([result provider]))
+    , m_malwareDetailsURLBase(malwareDetailsBase([result provider]))
+    , m_reportAnErrorURLBase(reportAnErrorBase([result provider]))
+    , m_learnMoreURL(learnMore([result provider]))
 {
 }
 #endif

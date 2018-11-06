@@ -53,6 +53,7 @@ OBJC_CLASS WKBrowsingContextController;
 OBJC_CLASS WKEditorUndoTargetObjC;
 OBJC_CLASS WKFullScreenWindowController;
 OBJC_CLASS WKImmediateActionController;
+OBJC_CLASS WKSafeBrowsingWarning;
 OBJC_CLASS WKViewLayoutStrategy;
 OBJC_CLASS WKWebView;
 OBJC_CLASS WKWindowVisibilityObserver;
@@ -142,6 +143,8 @@ class WebPageProxy;
 class WebProcessPool;
 struct ColorSpaceData;
 struct WebHitTestResultData;
+
+enum class ContinueUnsafeLoad : bool;
 enum class UndoOrRedo : bool;
 
 typedef id <NSValidatedUserInterfaceItem> ValidationItem;
@@ -222,6 +225,9 @@ public:
 
     void setViewScale(CGFloat);
     CGFloat viewScale() const;
+
+    void showSafeBrowsingWarning(const SafeBrowsingResult&, CompletionHandler<void(Variant<ContinueUnsafeLoad, WebCore::URL>&&)>&&);
+    void clearSafeBrowsingWarning();
 
     WKLayoutMode layoutMode() const;
     void setLayoutMode(WKLayoutMode);
@@ -464,6 +470,8 @@ public:
     RefPtr<ViewSnapshot> takeViewSnapshot();
     void saveBackForwardSnapshotForCurrentItem();
     void saveBackForwardSnapshotForItem(WebBackForwardListItem&);
+
+    WKSafeBrowsingWarning *safeBrowsingWarning() { return m_safeBrowsingWarning.get(); }
 
     ViewGestureController* gestureController() { return m_gestureController.get(); }
     ViewGestureController& ensureGestureController();
@@ -790,6 +798,7 @@ private:
     bool m_requiresUserActionForEditingControlsManager { false };
     bool m_editableElementIsFocused { false };
     bool m_isTextInsertionReplacingSoftSpace { false };
+    RetainPtr<WKSafeBrowsingWarning> m_safeBrowsingWarning;
     
 #if ENABLE(DRAG_SUPPORT)
     NSInteger m_initialNumberOfValidItemsForDrop { 0 };
