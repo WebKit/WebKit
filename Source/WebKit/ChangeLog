@@ -1,3 +1,62 @@
+2018-11-06  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Remove cap on partitioned cache max age if it matches a network reload (redirect-only)
+        https://bugs.webkit.org/show_bug.cgi?id=189760
+        <rdar://problem/44612242>
+
+        Reviewed by Youenn Fablet and Antti Koivisto.
+
+        When a redirect cache entry for a prevalent resource reaches its max
+        age cap, it is loaded again from the network and the network response
+        is compared with what's in the cache. If it's a match, the cache entry
+        is fully accepted. If not, a new capped cache entry is created.
+
+        This feature is still off by default.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::canUseCachedRedirect const):
+            Now checks the new member m_cacheEntryForMaxAgeCapValidation.
+        (WebKit::NetworkResourceLoader::retrieveCacheEntry):
+            New case handled for entry->hasReachedPrevalentResourceAgeCap().
+        (WebKit::NetworkResourceLoader::validateCacheEntryForMaxAgeCapValidation):
+            This is where the new logic compares the incoming redirect with the
+            cached one. If they match, an uncapped entry is allowed to be stored.
+            If they don't match, a new capped entry will be stored.
+        (WebKit::NetworkResourceLoader::willSendRedirectedRequest):
+            Now calls the new
+            NetworkResourceLoader::validateCacheEntryForMaxAgeCapValidation()
+            function.
+        * NetworkProcess/NetworkResourceLoader.h:
+            Added the m_cacheEntryForMaxAgeCapValidation member.
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::makeUseDecision):
+            Restored to previous behavior which means
+            UseDecision::NoDueToPrevalentResourceAgeCap was removed.
+        (WebKit::NetworkCache::Cache::retrieve):
+            Restored to previous behavior.
+        (WebKit::NetworkCache::Cache::storeRedirect):
+            Now takes the optional maxAgeCap and caps the entry's max age if it's set.
+        (WebKit::NetworkCache::hasReachedPrevalentResourceAgeCap): Deleted.
+        * NetworkProcess/cache/NetworkCache.h:
+        * NetworkProcess/cache/NetworkCacheEntry.cpp:
+        (WebKit::NetworkCache::Entry::encodeAsStorageRecord const):
+            Now encodes m_maxAgeCap.
+        (WebKit::NetworkCache::Entry::decodeStorageRecord):
+            Now decodes m_maxAgeCap.
+        (WebKit::NetworkCache::Entry::hasReachedPrevalentResourceAgeCap const):
+            Added.
+        (WebKit::NetworkCache::Entry::capMaxAge):
+            Added.
+        * NetworkProcess/cache/NetworkCacheEntry.h:
+            Added the optional m_maxAgeCap.
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        (WebKit::NetworkCache::SpeculativeLoad::willSendRedirectedRequest):
+            Now gets the optional max age cap from the NetworkStorageSession and sends it
+            to Cache::storeRedirect().
+        * NetworkProcess/cache/NetworkCacheStatistics.cpp:
+        (WebKit::NetworkCache::cachedEntryReuseFailureToDiagnosticKey):
+            Removed handling of UseDecision::NoDueToPrevalentResourceAgeCap.
+
 2018-11-06  Per Arne Vollan  <pvollan@apple.com>
 
         REGRESSION (r230523): Caps lock indicator not shown in password field

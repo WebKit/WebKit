@@ -31,10 +31,63 @@
     }
 
     function secondFetch() {
-        // This should not trigger a successful cache hit.
+        // This should not trigger a successful cache hit and instead create another capped cache entry.
         fetch("http://localhost:8000/resourceLoadStatistics/resources/cached-permanent-redirect.php",
             {
                 cache: "force-cache",
+                headers: {
+                    "X-WebKit": "4321",
+                }
+            }
+        ).then(function(response) {
+            loadedUrl = response.url;
+            shouldBeEqualToString("loadedUrl", "http://localhost:8000/resourceLoadStatistics/resources/echo-query.php?value=4321");
+            thirdFetch();
+        }).catch(function(error) {
+            testFailed(error.message);
+            setEnableFeature(false, finishJSTest);
+        });
+    }
+
+    function thirdFetch() {
+        // This should not trigger a successful cache hit and instead create another capped cache entry.
+        fetch("http://localhost:8000/resourceLoadStatistics/resources/cached-permanent-redirect.php",
+            {
+                cache: "force-cache",
+            }
+        ).then(function(response) {
+            loadedUrl = response.url;
+            shouldBeEqualToString("loadedUrl", "http://localhost:8000/resourceLoadStatistics/resources/echo-query.php?value=");
+            fourthFetch();
+        }).catch(function(error) {
+            testFailed(error.message);
+            setEnableFeature(false, finishJSTest);
+        });
+    }
+
+    function fourthFetch() {
+        // This should not trigger a successful cache hit but clear capping.
+        fetch("http://localhost:8000/resourceLoadStatistics/resources/cached-permanent-redirect.php",
+            {
+                cache: "force-cache",
+            }
+        ).then(function(response) {
+            loadedUrl = response.url;
+            shouldBeEqualToString("loadedUrl", "http://localhost:8000/resourceLoadStatistics/resources/echo-query.php?value=");
+            fifthFetch();
+        }).catch(function(error) {
+            testFailed(error.message);
+            setEnableFeature(false, finishJSTest);
+        });
+    }
+
+    function fifthFetch() {
+        // This should trigger a regular, successful cache hit.
+        fetch("http://localhost:8000/resourceLoadStatistics/resources/cached-permanent-redirect.php",
+            {
+                headers: {
+                    "X-WebKit": "1234",
+                }
             }
         ).then(function(response) {
             loadedUrl = response.url;

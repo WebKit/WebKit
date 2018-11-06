@@ -1,3 +1,19 @@
+2018-11-06  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Remove cap on partitioned cache max age if it matches a network reload (redirect-only)
+        https://bugs.webkit.org/show_bug.cgi?id=189760
+        <rdar://problem/44612242>
+
+        Reviewed by Youenn Fablet and Antti Koivisto.
+
+        No new tests. Existing test fleshed out.
+
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::isRedirection const):
+        * platform/network/ResourceResponseBase.h:
+        (WebCore::ResourceResponseBase::isRedirection const): Deleted.
+            Moved to the implementation file so that I can export it without warning.
+
 2018-11-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Spelling dots are drawn in the wrong place

@@ -4,6 +4,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS loadedUrl is "http://localhost:8000/resourceLoadStatistics/resources/echo-query.php?value=1234"
+PASS loadedUrl is "http://localhost:8000/resourceLoadStatistics/resources/echo-query.php?value=4321"
+PASS loadedUrl is "http://localhost:8000/resourceLoadStatistics/resources/echo-query.php?value="
+PASS loadedUrl is "http://localhost:8000/resourceLoadStatistics/resources/echo-query.php?value="
 PASS loadedUrl is "http://localhost:8000/resourceLoadStatistics/resources/echo-query.php?value="
 PASS successfullyParsed is true
 

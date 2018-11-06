@@ -31,6 +31,7 @@
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/Seconds.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -70,6 +71,11 @@ public:
 
     void asJSON(StringBuilder&, const Storage::RecordInfo&) const;
 
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    bool hasReachedPrevalentResourceAgeCap() const;
+    void capMaxAge(const Seconds);
+#endif
+
 private:
     void initializeBufferFromStorageRecord() const;
 #if ENABLE(SHAREABLE_RESOURCE)
@@ -88,6 +94,8 @@ private:
 #endif
 
     Storage::Record m_sourceStorageRecord { };
+    
+    std::optional<Seconds> m_maxAgeCap;
 };
 
 }

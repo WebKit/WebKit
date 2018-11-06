@@ -95,6 +95,8 @@ Storage::Record Entry::encodeAsStorageRecord() const
     if (isRedirect)
         m_redirectRequest->encodeWithoutPlatformData(encoder);
 
+    encoder << m_maxAgeCap;
+    
     encoder.encodeChecksum();
 
     Data header(encoder.buffer(), encoder.bufferSize());
@@ -133,6 +135,8 @@ std::unique_ptr<Entry> Entry::decodeStorageRecord(const Storage::Record& storage
             return nullptr;
     }
 
+    decoder.decode(entry->m_maxAgeCap);
+    
     if (!decoder.verifyChecksum()) {
         LOG(NetworkCache, "(NetworkProcess) checksum verification failure\n");
         return nullptr;
@@ -140,6 +144,18 @@ std::unique_ptr<Entry> Entry::decodeStorageRecord(const Storage::Record& storage
 
     return entry;
 }
+
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+bool Entry::hasReachedPrevalentResourceAgeCap() const
+{
+    return m_maxAgeCap && WebCore::computeCurrentAge(response(), timeStamp()) > m_maxAgeCap;
+}
+
+void Entry::capMaxAge(const Seconds seconds)
+{
+    m_maxAgeCap = seconds;
+}
+#endif
 
 #if ENABLE(SHAREABLE_RESOURCE)
 void Entry::initializeShareableResourceHandleFromStorageRecord() const

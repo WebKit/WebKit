@@ -1,3 +1,22 @@
+2018-11-06  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Remove cap on partitioned cache max age if it matches a network reload (redirect-only)
+        https://bugs.webkit.org/show_bug.cgi?id=189760
+        <rdar://problem/44612242>
+
+        Reviewed by Youenn Fablet and Antti Koivisto.
+
+        * http/tests/resourceLoadStatistics/cap-cache-max-age-for-prevalent-resource-expected.txt:
+        * http/tests/resourceLoadStatistics/cap-cache-max-age-for-prevalent-resource.html:
+            The test now performs:
+            - an initial Fetch request with a permanent redirect to ID 1234. Capped max age.
+            - a second Fetch request with a permanent redirect to ID 4321. Capped max age.
+            - a third Fetch request with a permanent redirect to and empty ID. Capped max age.
+            - a fourth Fetch request with a permanent redirect to and empty ID. Max age cap removed.
+            - a fifth Fetch request with a permanent redirect to and empty ID. Regular cache hit.
+        * http/tests/resourceLoadStatistics/resources/cached-permanent-redirect.php:
+            Now returns an HTTP 500 if the request contains validation headers.
+
 2018-11-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Spelling dots are drawn in the wrong place

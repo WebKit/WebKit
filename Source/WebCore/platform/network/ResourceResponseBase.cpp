@@ -296,6 +296,11 @@ void ResourceResponseBase::setHTTPStatusCode(int statusCode)
     // FIXME: Should invalidate or update platform response if present.
 }
 
+bool ResourceResponseBase::isRedirection() const
+{
+    return isRedirectionStatusCode(m_httpStatusCode);
+}
+
 const String& ResourceResponseBase::httpStatusText() const 
 {
     lazyInit(AllFields);

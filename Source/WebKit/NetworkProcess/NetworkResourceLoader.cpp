@@ -51,6 +51,7 @@
 #include <WebCore/HTTPHeaderNames.h>
 #include <WebCore/HTTPParsers.h>
 #include <WebCore/NetworkLoadMetrics.h>
+#include <WebCore/NetworkStorageSession.h>
 #include <WebCore/ProtectionSpace.h>
 #include <WebCore/SameSiteInfo.h>
 #include <WebCore/SecurityOrigin.h>
@@ -154,7 +155,7 @@ bool NetworkResourceLoader::canUseCache(const ResourceRequest& request) const
 
 bool NetworkResourceLoader::canUseCachedRedirect(const ResourceRequest& request) const
 {
-    if (!canUseCache(request))
+    if (!canUseCache(request) || m_cacheEntryForMaxAgeCapValidation)
         return false;
     // Limit cached redirects to avoid cycles and other trouble.
     // Networking layer follows over 30 redirects but caching that many seems unnecessary.
@@ -216,7 +217,7 @@ void NetworkResourceLoader::retrieveCacheEntry(const ResourceRequest& request)
     ASSERT(canUseCache(request));
 
     RefPtr<NetworkResourceLoader> loader(this);
-    m_cache->retrieve(request, { m_parameters.webPageID, m_parameters.webFrameID }, sessionID(), [this, loader = WTFMove(loader), request = ResourceRequest { request }](auto entry, auto info) mutable {
+    m_cache->retrieve(request, { m_parameters.webPageID, m_parameters.webFrameID }, [this, loader = WTFMove(loader), request = ResourceRequest { request }](auto entry, auto info) mutable {
         if (loader->hasOneRef()) {
             // The loader has been aborted and is only held alive by this lambda.
             return;
@@ -229,6 +230,15 @@ void NetworkResourceLoader::retrieveCacheEntry(const ResourceRequest& request)
             loader->startNetworkLoad(WTFMove(request), FirstLoad::Yes);
             return;
         }
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+        if (entry->hasReachedPrevalentResourceAgeCap()) {
+            RELEASE_LOG_IF_ALLOWED("retrieveCacheEntry: Resource has reached prevalent resource age cap (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", isMainResource = %d, isSynchronous = %d)", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier, isMainResource(), isSynchronous());
+            m_cacheEntryForMaxAgeCapValidation = WTFMove(entry);
+            ResourceRequest revalidationRequest = originalRequest();
+            loader->startNetworkLoad(WTFMove(revalidationRequest), FirstLoad::Yes);
+            return;
+        }
+#endif
         if (entry->redirectRequest()) {
             RELEASE_LOG_IF_ALLOWED("retrieveCacheEntry: Handling redirect (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", isMainResource = %d, isSynchronous = %d)", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier, isMainResource(), isSynchronous());
             loader->dispatchWillSendRequestForCacheEntry(WTFMove(request), WTFMove(entry));
@@ -584,12 +594,35 @@ void NetworkResourceLoader::didBlockAuthenticationChallenge()
     send(Messages::WebResourceLoader::DidBlockAuthenticationChallenge());
 }
 
+std::optional<Seconds> NetworkResourceLoader::validateCacheEntryForMaxAgeCapValidation(const ResourceRequest& request, const ResourceRequest& redirectRequest, const ResourceResponse& redirectResponse)
+{
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    bool existingCacheEntryMatchesNewResponse = false;
+    if (m_cacheEntryForMaxAgeCapValidation) {
+        ASSERT(redirectResponse.source() == ResourceResponse::Source::Network);
+        ASSERT(redirectResponse.isRedirection());
+        if (redirectResponse.httpHeaderField(WebCore::HTTPHeaderName::Location) == m_cacheEntryForMaxAgeCapValidation->response().httpHeaderField(WebCore::HTTPHeaderName::Location))
+            existingCacheEntryMatchesNewResponse = true;
+
+        m_cache->remove(m_cacheEntryForMaxAgeCapValidation->key());
+        m_cacheEntryForMaxAgeCapValidation = nullptr;
+    }
+    
+    if (!existingCacheEntryMatchesNewResponse) {
+        if (auto networkStorageSession = WebCore::NetworkStorageSession::storageSession(sessionID()))
+            return networkStorageSession->maxAgeCacheCap(request);
+    }
+#endif
+    return std::nullopt;
+}
+
 void NetworkResourceLoader::willSendRedirectedRequest(ResourceRequest&& request, ResourceRequest&& redirectRequest, ResourceResponse&& redirectResponse)
 {
     ++m_redirectCount;
 
+    auto maxAgeCap = validateCacheEntryForMaxAgeCapValidation(request, redirectRequest, redirectResponse);
     if (redirectResponse.source() == ResourceResponse::Source::Network && canUseCachedRedirect(request))
-        m_cache->storeRedirect(request, redirectResponse, redirectRequest);
+        m_cache->storeRedirect(request, redirectResponse, redirectRequest, maxAgeCap);
 
     if (m_networkLoadChecker) {
         m_networkLoadChecker->storeRedirectionIfNeeded(request, redirectResponse);

@@ -33,6 +33,7 @@
 #include "NetworkLoad.h"
 #include "NetworkSession.h"
 #include "SessionTracker.h"
+#include <WebCore/NetworkStorageSession.h>
 #include <pal/SessionID.h>
 #include <wtf/RunLoop.h>
 
@@ -71,7 +72,12 @@ void SpeculativeLoad::willSendRedirectedRequest(ResourceRequest&& request, Resou
 {
     LOG(NetworkCacheSpeculativePreloading, "Speculative redirect %s -> %s", request.url().string().utf8().data(), redirectRequest.url().string().utf8().data());
 
-    m_cacheEntry = m_cache->storeRedirect(request, redirectResponse, redirectRequest);
+    std::optional<Seconds> maxAgeCap;
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    if (auto networkStorageSession = WebCore::NetworkStorageSession::storageSession(PAL::SessionID::defaultSessionID()))
+        maxAgeCap = networkStorageSession->maxAgeCacheCap(request);
+#endif
+    m_cacheEntry = m_cache->storeRedirect(request, redirectResponse, redirectRequest, maxAgeCap);
     // Create a synthetic cache entry if we can't store.
     if (!m_cacheEntry)
         m_cacheEntry = m_cache->makeRedirectEntry(request, redirectResponse, redirectRequest);

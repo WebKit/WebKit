@@ -152,11 +152,6 @@ static bool cachePolicyAllowsExpired(WebCore::ResourceRequestCachePolicy policy)
     return false;
 }
 
-static bool hasReachedPrevalentResourceAgeCap(const WebCore::ResourceResponse& response, WallTime timestamp, const Seconds maxAge)
-{
-    return WebCore::computeCurrentAge(response, timestamp) > maxAge;
-}
-
 static bool responseHasExpired(const WebCore::ResourceResponse& response, WallTime timestamp, std::optional<Seconds> maxStale)
 {
     if (response.cacheControlContainsNoCache())
@@ -188,11 +183,8 @@ static bool responseNeedsRevalidation(const WebCore::ResourceResponse& response,
     return responseHasExpired(response, timestamp, requestDirectives.maxStale);
 }
 
-static UseDecision makeUseDecision(const Entry& entry, const WebCore::ResourceRequest& request, std::optional<Seconds> maxAge)
+static UseDecision makeUseDecision(const Entry& entry, const WebCore::ResourceRequest& request)
 {
-    if (maxAge && hasReachedPrevalentResourceAgeCap(entry.response(), entry.timeStamp(), maxAge.value()))
-        return UseDecision::NoDueToPrevalentResourceAgeCap;
-    
     // The request is conditional so we force revalidation from the network. We merely check the disk cache
     // so we can update the cache entry.
     if (request.isConditional() && !entry.redirectRequest())
@@ -279,7 +271,7 @@ static StoreDecision makeStoreDecision(const WebCore::ResourceRequest& originalR
     return StoreDecision::Yes;
 }
 
-void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameID& frameID, PAL::SessionID sessionID, RetrieveCompletionHandler&& completionHandler)
+void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameID& frameID, RetrieveCompletionHandler&& completionHandler)
 {
     ASSERT(request.url().protocolIsInHTTPFamily());
 
@@ -323,7 +315,7 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameI
     }
 #endif
 
-    m_storage->retrieve(storageKey, priority, [this, protectedThis = makeRef(*this), request, completionHandler = WTFMove(completionHandler), info = WTFMove(info), storageKey, frameID, sessionID](auto record, auto timings) mutable {
+    m_storage->retrieve(storageKey, priority, [this, protectedThis = makeRef(*this), request, completionHandler = WTFMove(completionHandler), info = WTFMove(info), storageKey, frameID](auto record, auto timings) mutable {
         info.storageTimings = timings;
 
         if (!record) {
@@ -340,21 +332,12 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameI
 
         auto entry = Entry::decodeStorageRecord(*record);
 
-        std::optional<Seconds> maxAgeCap;
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-        if (auto networkStorageSession = WebCore::NetworkStorageSession::storageSession(sessionID))
-            maxAgeCap = networkStorageSession->maxAgeCacheCap(request);
-#endif
-        auto useDecision = entry ? makeUseDecision(*entry, request, maxAgeCap) : UseDecision::NoDueToDecodeFailure;
+        auto useDecision = entry ? makeUseDecision(*entry, request) : UseDecision::NoDueToDecodeFailure;
         switch (useDecision) {
         case UseDecision::Use:
             break;
         case UseDecision::Validate:
             entry->setNeedsValidation(true);
-            break;
-        case UseDecision::NoDueToPrevalentResourceAgeCap:
-            entry = nullptr;
-            m_storage->remove(storageKey);
             break;
         default:
             entry = nullptr;
@@ -430,7 +413,7 @@ std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& request, con
     return cacheEntry;
 }
 
-std::unique_ptr<Entry> Cache::storeRedirect(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& redirectRequest)
+std::unique_ptr<Entry> Cache::storeRedirect(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& redirectRequest, std::optional<Seconds> maxAgeCap)
 {
     LOG(NetworkCache, "(NetworkProcess) storing redirect %s -> %s", request.url().string().latin1().data(), redirectRequest.url().string().latin1().data());
 
@@ -445,6 +428,16 @@ std::unique_ptr<Entry> Cache::storeRedirect(const WebCore::ResourceRequest& requ
     }
 
     auto cacheEntry = makeRedirectEntry(request, response, redirectRequest);
+
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    if (maxAgeCap) {
+        LOG(NetworkCache, "(NetworkProcess) capping max age for redirect %s -> %s", request.url().string().latin1().data(), redirectRequest.url().string().latin1().data());
+        cacheEntry->capMaxAge(maxAgeCap.value());
+    }
+#else
+    UNUSED_PARAM(maxAgeCap);
+#endif
+
     auto record = cacheEntry->encodeAsStorageRecord();
 
     m_storage->store(record, nullptr);

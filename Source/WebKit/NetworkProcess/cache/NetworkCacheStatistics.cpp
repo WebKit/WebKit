@@ -282,8 +282,6 @@ static String cachedEntryReuseFailureToDiagnosticKey(UseDecision decision)
         return WebCore::DiagnosticLoggingKeys::missingValidatorFieldsKey();
     case UseDecision::NoDueToDecodeFailure:
     case UseDecision::NoDueToExpiredRedirect:
-    case UseDecision::NoDueToPrevalentResourceAgeCap:
-        return WebCore::DiagnosticLoggingKeys::otherKey();
     case UseDecision::Use:
     case UseDecision::Validate:
         ASSERT_NOT_REACHED();
