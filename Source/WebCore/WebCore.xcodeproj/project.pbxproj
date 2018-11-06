@@ -2030,8 +2030,8 @@
 		71025EDE1F99F1EC004A250C /* JSAnimationTimeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 71025ED91F99F1A7004A250C /* JSAnimationTimeline.h */; };
 		71025EE01F99F1EC004A250C /* JSDocumentTimeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 71025EDC1F99F1A8004A250C /* JSDocumentTimeline.h */; };
 		71025EE21F99F1EC004A250C /* JSWebAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 71025ED81F99F1A6004A250C /* JSWebAnimation.h */; };
-		7116E2CC1FED75DC00C06FDE /* ComputedTimingProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 7116E2CB1FED75D100C06FDE /* ComputedTimingProperties.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		7116E2CF1FED765B00C06FDE /* JSComputedTimingProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 7116E2CE1FED765200C06FDE /* JSComputedTimingProperties.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7116E2CC1FED75DC00C06FDE /* ComputedEffectTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = 7116E2CB1FED75D100C06FDE /* ComputedEffectTiming.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7116E2CF1FED765B00C06FDE /* JSComputedEffectTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = 7116E2CE1FED765200C06FDE /* JSComputedEffectTiming.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7117445914BC34EC00EE5FC8 /* SVGTextMetricsBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 7117445714BC34E200EE5FC8 /* SVGTextMetricsBuilder.h */; };
 		7118FED515685CC60030B79A /* JSSVGViewSpec.h in Headers */ = {isa = PBXBuildFile; fileRef = 7118FED315685CC60030B79A /* JSSVGViewSpec.h */; };
 		71247E371FEA5F86008C08CE /* CompositeOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 71247E351FEA5F81008C08CE /* CompositeOperation.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2042,7 +2042,7 @@
 		71247E3C1FEA5F90008C08CE /* JSIterationCompositeOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 71247E2C1FEA5F64008C08CE /* JSIterationCompositeOperation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		71247E3D1FEA5F90008C08CE /* JSKeyframeAnimationOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 71247E261FEA5F60008C08CE /* JSKeyframeAnimationOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		71247E3E1FEA5F90008C08CE /* JSKeyframeEffectOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 71247E2A1FEA5F62008C08CE /* JSKeyframeEffectOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		712BE47D1FE86458002031CC /* AnimationEffectTimingProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 712BE47C1FE86448002031CC /* AnimationEffectTimingProperties.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		712BE47D1FE86458002031CC /* EffectTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = 712BE47C1FE86448002031CC /* EffectTiming.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		712BE4801FE864A7002031CC /* PlaybackDirection.h in Headers */ = {isa = PBXBuildFile; fileRef = 712BE47E1FE8649D002031CC /* PlaybackDirection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		712BE4831FE865DD002031CC /* FillMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 712BE4811FE865D4002031CC /* FillMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		712BE4881FE8686A002031CC /* JSFillMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 712BE4851FE86818002031CC /* JSFillMode.h */; };
@@ -2051,7 +2051,7 @@
 		7132445120109DA500AE7FB2 /* WebAnimationUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 7132444F20109D9B00AE7FB2 /* WebAnimationUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7134496E146941B300720312 /* SVGLengthContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 7134496C146941B300720312 /* SVGLengthContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		71495DD6202B065700ADFD34 /* AnimationEffectTimingReadOnly.h in Headers */ = {isa = PBXBuildFile; fileRef = 71495DD5202B064300ADFD34 /* AnimationEffectTimingReadOnly.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		71495DDB202B06F100ADFD34 /* JSAnimationEffectTimingProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 71495DDA202B06DE00ADFD34 /* JSAnimationEffectTimingProperties.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		71495DDB202B06F100ADFD34 /* JSEffectTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = 71495DDA202B06DE00ADFD34 /* JSEffectTiming.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		71495DDC202B06F700ADFD34 /* JSAnimationEffectTimingReadOnly.h in Headers */ = {isa = PBXBuildFile; fileRef = 71495DD7202B06DA00ADFD34 /* JSAnimationEffectTimingReadOnly.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		714C7C661FDAD2A100F2BEE1 /* AnimationPlaybackEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 714C7C651FDAD27B00F2BEE1 /* AnimationPlaybackEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		714C7C671FDAD2A900F2BEE1 /* AnimationPlaybackEventInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 714C7C621FDAD27A00F2BEE1 /* AnimationPlaybackEventInit.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2075,9 +2075,7 @@
 		71DCB7021568197600862271 /* JSSVGZoomAndPan.h in Headers */ = {isa = PBXBuildFile; fileRef = 71DCB7001568197600862271 /* JSSVGZoomAndPan.h */; };
 		71E2183A17359FB8006E6E4D /* PlugInsResources.h in Headers */ = {isa = PBXBuildFile; fileRef = 71E2183817359FB8006E6E4D /* PlugInsResources.h */; };
 		71E623D1151F72A60036E2F4 /* SVGAnimatedIntegerOptionalInteger.h in Headers */ = {isa = PBXBuildFile; fileRef = 71E623CF151F72A60036E2F4 /* SVGAnimatedIntegerOptionalInteger.h */; };
-		71EFCEDC202B38A900D7C411 /* AnimationEffectReadOnly.h in Headers */ = {isa = PBXBuildFile; fileRef = 71EFCED7202B388D00D7C411 /* AnimationEffectReadOnly.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		71EFCEDD202B38B700D7C411 /* KeyframeEffectReadOnly.h in Headers */ = {isa = PBXBuildFile; fileRef = 71EFCED9202B388F00D7C411 /* KeyframeEffectReadOnly.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		71EFCEE1202B3AB300D7C411 /* JSKeyframeEffectReadOnly.h in Headers */ = {isa = PBXBuildFile; fileRef = 71EFCEDF202B3AA100D7C411 /* JSKeyframeEffectReadOnly.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		71EFCEDC202B38A900D7C411 /* AnimationEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = 71EFCED7202B388D00D7C411 /* AnimationEffect.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		71FB967B1383D64600AC8A4C /* SVGAnimatedEnumerationPropertyTearOff.h in Headers */ = {isa = PBXBuildFile; fileRef = 71FB967A1383D64600AC8A4C /* SVGAnimatedEnumerationPropertyTearOff.h */; };
 		724ED32C1A3A7E5400F5F13C /* EXTBlendMinMax.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 724ED3291A3A7E5400F5F13C /* EXTBlendMinMax.cpp */; };
 		724ED3321A3A8B2300F5F13C /* JSEXTBlendMinMax.h in Headers */ = {isa = PBXBuildFile; fileRef = 724ED3301A3A8B2300F5F13C /* JSEXTBlendMinMax.h */; };
@@ -9166,10 +9164,10 @@
 		710FA74B1DEE576D004C715E /* controls-bar.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "controls-bar.js"; sourceTree = "<group>"; };
 		710FA74C1DEE577E004C715E /* controls-visibility-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "controls-visibility-support.js"; sourceTree = "<group>"; };
 		7110F953202B67D500C466D7 /* JSAnimationEffectTimingReadOnlyCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAnimationEffectTimingReadOnlyCustom.cpp; sourceTree = "<group>"; };
-		7116E2C91FED75D000C06FDE /* ComputedTimingProperties.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ComputedTimingProperties.idl; sourceTree = "<group>"; };
-		7116E2CB1FED75D100C06FDE /* ComputedTimingProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComputedTimingProperties.h; sourceTree = "<group>"; };
-		7116E2CD1FED765200C06FDE /* JSComputedTimingProperties.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSComputedTimingProperties.cpp; sourceTree = "<group>"; };
-		7116E2CE1FED765200C06FDE /* JSComputedTimingProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSComputedTimingProperties.h; sourceTree = "<group>"; };
+		7116E2C91FED75D000C06FDE /* ComputedEffectTiming.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ComputedEffectTiming.idl; sourceTree = "<group>"; };
+		7116E2CB1FED75D100C06FDE /* ComputedEffectTiming.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComputedEffectTiming.h; sourceTree = "<group>"; };
+		7116E2CD1FED765200C06FDE /* JSComputedEffectTiming.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSComputedEffectTiming.cpp; sourceTree = "<group>"; };
+		7116E2CE1FED765200C06FDE /* JSComputedEffectTiming.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSComputedEffectTiming.h; sourceTree = "<group>"; };
 		7117445614BC34E200EE5FC8 /* SVGTextMetricsBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGTextMetricsBuilder.cpp; sourceTree = "<group>"; };
 		7117445714BC34E200EE5FC8 /* SVGTextMetricsBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGTextMetricsBuilder.h; sourceTree = "<group>"; };
 		7118FED215685CC60030B79A /* JSSVGViewSpec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGViewSpec.cpp; sourceTree = "<group>"; };
@@ -9198,8 +9196,8 @@
 		71247E341FEA5F80008C08CE /* KeyframeAnimationOptions.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = KeyframeAnimationOptions.idl; sourceTree = "<group>"; };
 		71247E351FEA5F81008C08CE /* CompositeOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompositeOperation.h; sourceTree = "<group>"; };
 		71247E361FEA5F81008C08CE /* CompositeOperation.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CompositeOperation.idl; sourceTree = "<group>"; };
-		712BE47A1FE86447002031CC /* AnimationEffectTimingProperties.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AnimationEffectTimingProperties.idl; sourceTree = "<group>"; };
-		712BE47C1FE86448002031CC /* AnimationEffectTimingProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimationEffectTimingProperties.h; sourceTree = "<group>"; };
+		712BE47A1FE86447002031CC /* EffectTiming.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EffectTiming.idl; sourceTree = "<group>"; };
+		712BE47C1FE86448002031CC /* EffectTiming.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EffectTiming.h; sourceTree = "<group>"; };
 		712BE47E1FE8649D002031CC /* PlaybackDirection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaybackDirection.h; sourceTree = "<group>"; };
 		712BE47F1FE8649E002031CC /* PlaybackDirection.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PlaybackDirection.idl; sourceTree = "<group>"; };
 		712BE4811FE865D4002031CC /* FillMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FillMode.h; sourceTree = "<group>"; };
@@ -9222,9 +9220,9 @@
 		71495DD4202B064200ADFD34 /* AnimationEffectTimingReadOnly.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AnimationEffectTimingReadOnly.cpp; sourceTree = "<group>"; };
 		71495DD5202B064300ADFD34 /* AnimationEffectTimingReadOnly.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimationEffectTimingReadOnly.h; sourceTree = "<group>"; };
 		71495DD7202B06DA00ADFD34 /* JSAnimationEffectTimingReadOnly.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAnimationEffectTimingReadOnly.h; sourceTree = "<group>"; };
-		71495DD8202B06DC00ADFD34 /* JSAnimationEffectTimingProperties.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAnimationEffectTimingProperties.cpp; sourceTree = "<group>"; };
+		71495DD8202B06DC00ADFD34 /* JSEffectTiming.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSEffectTiming.cpp; sourceTree = "<group>"; };
 		71495DD9202B06DD00ADFD34 /* JSAnimationEffectTimingReadOnly.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAnimationEffectTimingReadOnly.cpp; sourceTree = "<group>"; };
-		71495DDA202B06DE00ADFD34 /* JSAnimationEffectTimingProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAnimationEffectTimingProperties.h; sourceTree = "<group>"; };
+		71495DDA202B06DE00ADFD34 /* JSEffectTiming.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSEffectTiming.h; sourceTree = "<group>"; };
 		714C7C601FDAD27900F2BEE1 /* AnimationPlaybackEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AnimationPlaybackEvent.cpp; sourceTree = "<group>"; };
 		714C7C621FDAD27A00F2BEE1 /* AnimationPlaybackEventInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimationPlaybackEventInit.h; sourceTree = "<group>"; };
 		714C7C631FDAD27A00F2BEE1 /* AnimationPlaybackEventInit.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AnimationPlaybackEventInit.idl; sourceTree = "<group>"; };
@@ -9344,15 +9342,10 @@
 		71E2183917359FB8006E6E4D /* PlugInsResourcesData.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = PlugInsResourcesData.cpp; path = DerivedSources/WebCore/PlugInsResourcesData.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		71E623CE151F72A60036E2F4 /* SVGAnimatedIntegerOptionalInteger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedIntegerOptionalInteger.cpp; sourceTree = "<group>"; };
 		71E623CF151F72A60036E2F4 /* SVGAnimatedIntegerOptionalInteger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedIntegerOptionalInteger.h; sourceTree = "<group>"; };
-		71EFCED6202B388C00D7C411 /* AnimationEffectReadOnly.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AnimationEffectReadOnly.idl; sourceTree = "<group>"; };
-		71EFCED7202B388D00D7C411 /* AnimationEffectReadOnly.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimationEffectReadOnly.h; sourceTree = "<group>"; };
-		71EFCED8202B388E00D7C411 /* KeyframeEffectReadOnly.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeyframeEffectReadOnly.cpp; sourceTree = "<group>"; };
-		71EFCED9202B388F00D7C411 /* KeyframeEffectReadOnly.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyframeEffectReadOnly.h; sourceTree = "<group>"; };
-		71EFCEDA202B388F00D7C411 /* AnimationEffectReadOnly.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AnimationEffectReadOnly.cpp; sourceTree = "<group>"; };
-		71EFCEDB202B389000D7C411 /* KeyframeEffectReadOnly.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = KeyframeEffectReadOnly.idl; sourceTree = "<group>"; };
-		71EFCEDE202B39C700D7C411 /* JSAnimationEffectReadOnlyCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAnimationEffectReadOnlyCustom.cpp; sourceTree = "<group>"; };
-		71EFCEDF202B3AA100D7C411 /* JSKeyframeEffectReadOnly.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSKeyframeEffectReadOnly.h; sourceTree = "<group>"; };
-		71EFCEE0202B3AA300D7C411 /* JSKeyframeEffectReadOnly.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSKeyframeEffectReadOnly.cpp; sourceTree = "<group>"; };
+		71EFCED6202B388C00D7C411 /* AnimationEffect.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AnimationEffect.idl; sourceTree = "<group>"; };
+		71EFCED7202B388D00D7C411 /* AnimationEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimationEffect.h; sourceTree = "<group>"; };
+		71EFCEDA202B388F00D7C411 /* AnimationEffect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AnimationEffect.cpp; sourceTree = "<group>"; };
+		71EFCEDE202B39C700D7C411 /* JSAnimationEffectCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAnimationEffectCustom.cpp; sourceTree = "<group>"; };
 		71F936F71DD4F99B00922CC7 /* tracks-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "tracks-support.js"; sourceTree = "<group>"; };
 		71FB967A1383D64600AC8A4C /* SVGAnimatedEnumerationPropertyTearOff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedEnumerationPropertyTearOff.h; sourceTree = "<group>"; };
 		724ED3291A3A7E5400F5F13C /* EXTBlendMinMax.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EXTBlendMinMax.cpp; sourceTree = "<group>"; };
@@ -16141,8 +16134,8 @@
 			children = (
 				71556CBB1F9F09FE00E78D08 /* JSAnimationEffectTiming.cpp */,
 				71556CB91F9F09FD00E78D08 /* JSAnimationEffectTiming.h */,
-				71495DD8202B06DC00ADFD34 /* JSAnimationEffectTimingProperties.cpp */,
-				71495DDA202B06DE00ADFD34 /* JSAnimationEffectTimingProperties.h */,
+				71495DD8202B06DC00ADFD34 /* JSEffectTiming.cpp */,
+				71495DDA202B06DE00ADFD34 /* JSEffectTiming.h */,
 				71495DD9202B06DD00ADFD34 /* JSAnimationEffectTimingReadOnly.cpp */,
 				71495DD7202B06DA00ADFD34 /* JSAnimationEffectTimingReadOnly.h */,
 				714C7C691FDADAD500F2BEE1 /* JSAnimationPlaybackEvent.cpp */,
@@ -16153,8 +16146,8 @@
 				71025ED91F99F1A7004A250C /* JSAnimationTimeline.h */,
 				71247E2B1FEA5F63008C08CE /* JSCompositeOperation.cpp */,
 				71247E2E1FEA5F66008C08CE /* JSCompositeOperation.h */,
-				7116E2CD1FED765200C06FDE /* JSComputedTimingProperties.cpp */,
-				7116E2CE1FED765200C06FDE /* JSComputedTimingProperties.h */,
+				7116E2CD1FED765200C06FDE /* JSComputedEffectTiming.cpp */,
+				7116E2CE1FED765200C06FDE /* JSComputedEffectTiming.h */,
 				71B28424203CEC0B0036AA5D /* JSCSSAnimation.cpp */,
 				71B28426203CEC0D0036AA5D /* JSCSSAnimation.h */,
 				7123C1822047399200789392 /* JSCSSTransition.cpp */,
@@ -16173,8 +16166,6 @@
 				71556CB71F9F09FC00E78D08 /* JSKeyframeEffect.h */,
 				71247E2D1FEA5F65008C08CE /* JSKeyframeEffectOptions.cpp */,
 				71247E2A1FEA5F62008C08CE /* JSKeyframeEffectOptions.h */,
-				71EFCEE0202B3AA300D7C411 /* JSKeyframeEffectReadOnly.cpp */,
-				71EFCEDF202B3AA100D7C411 /* JSKeyframeEffectReadOnly.h */,
 				712BE4871FE8685A002031CC /* JSPlaybackDirection.cpp */,
 				712BE4861FE86859002031CC /* JSPlaybackDirection.h */,
 				71025ED71F99F1A6004A250C /* JSWebAnimation.cpp */,
@@ -20022,14 +20013,14 @@
 			isa = PBXGroup;
 			children = (
 				71C5BB1B1FB611EA0007A2AE /* Animatable.idl */,
-				71EFCEDA202B388F00D7C411 /* AnimationEffectReadOnly.cpp */,
-				71EFCED7202B388D00D7C411 /* AnimationEffectReadOnly.h */,
-				71EFCED6202B388C00D7C411 /* AnimationEffectReadOnly.idl */,
+				71EFCEDA202B388F00D7C411 /* AnimationEffect.cpp */,
+				71EFCED7202B388D00D7C411 /* AnimationEffect.h */,
+				71EFCED6202B388C00D7C411 /* AnimationEffect.idl */,
 				71556CAC1F9F099D00E78D08 /* AnimationEffectTiming.cpp */,
 				71556CAE1F9F099D00E78D08 /* AnimationEffectTiming.h */,
 				71556CAF1F9F099E00E78D08 /* AnimationEffectTiming.idl */,
-				712BE47C1FE86448002031CC /* AnimationEffectTimingProperties.h */,
-				712BE47A1FE86447002031CC /* AnimationEffectTimingProperties.idl */,
+				712BE47C1FE86448002031CC /* EffectTiming.h */,
+				712BE47A1FE86447002031CC /* EffectTiming.idl */,
 				71495DD4202B064200ADFD34 /* AnimationEffectTimingReadOnly.cpp */,
 				71495DD5202B064300ADFD34 /* AnimationEffectTimingReadOnly.h */,
 				71495DD2202B064100ADFD34 /* AnimationEffectTimingReadOnly.idl */,
@@ -20043,8 +20034,8 @@
 				71025EC91F99F096004A250C /* AnimationTimeline.idl */,
 				71247E351FEA5F81008C08CE /* CompositeOperation.h */,
 				71247E361FEA5F81008C08CE /* CompositeOperation.idl */,
-				7116E2CB1FED75D100C06FDE /* ComputedTimingProperties.h */,
-				7116E2C91FED75D000C06FDE /* ComputedTimingProperties.idl */,
+				7116E2CB1FED75D100C06FDE /* ComputedEffectTiming.h */,
+				7116E2C91FED75D000C06FDE /* ComputedEffectTiming.idl */,
 				71C29E2E203CE76B008F36D2 /* CSSAnimation.cpp */,
 				71C29E30203CE76B008F36D2 /* CSSAnimation.h */,
 				71C29E31203CE76C008F36D2 /* CSSAnimation.idl */,
@@ -20072,9 +20063,6 @@
 				71556CAB1F9F099C00E78D08 /* KeyframeEffect.idl */,
 				71247E321FEA5F7F008C08CE /* KeyframeEffectOptions.h */,
 				71247E301FEA5F7E008C08CE /* KeyframeEffectOptions.idl */,
-				71EFCED8202B388E00D7C411 /* KeyframeEffectReadOnly.cpp */,
-				71EFCED9202B388F00D7C411 /* KeyframeEffectReadOnly.h */,
-				71EFCEDB202B389000D7C411 /* KeyframeEffectReadOnly.idl */,
 				712BE47E1FE8649D002031CC /* PlaybackDirection.h */,
 				712BE47F1FE8649E002031CC /* PlaybackDirection.idl */,
 				71025EC31F99F096004A250C /* WebAnimation.cpp */,
@@ -20240,7 +20228,7 @@
 		7C3D8EE41E08BABE0023B084 /* GC / Wrapping Only */ = {
 			isa = PBXGroup;
 			children = (
-				71EFCEDE202B39C700D7C411 /* JSAnimationEffectReadOnlyCustom.cpp */,
+				71EFCEDE202B39C700D7C411 /* JSAnimationEffectCustom.cpp */,
 				7110F953202B67D500C466D7 /* JSAnimationEffectTimingReadOnlyCustom.cpp */,
 				71025ED51F99F147004A250C /* JSAnimationTimelineCustom.cpp */,
 				BC2ED6BB0C6BD2F000920BFF /* JSAttrCustom.cpp */,
@@ -27646,9 +27634,9 @@
 				490707E71219C04300D90E51 /* ANGLEWebKitBridge.h in Headers */,
 				49E912AB0EFAC906009D0CAF /* Animation.h in Headers */,
 				316FE1120E6E1DA700BF6088 /* AnimationBase.h in Headers */,
-				71EFCEDC202B38A900D7C411 /* AnimationEffectReadOnly.h in Headers */,
+				71EFCEDC202B38A900D7C411 /* AnimationEffect.h in Headers */,
 				71556CB31F9F09BA00E78D08 /* AnimationEffectTiming.h in Headers */,
-				712BE47D1FE86458002031CC /* AnimationEffectTimingProperties.h in Headers */,
+				712BE47D1FE86458002031CC /* EffectTiming.h in Headers */,
 				71495DD6202B065700ADFD34 /* AnimationEffectTimingReadOnly.h in Headers */,
 				319848011A1D817B00A13318 /* AnimationEvent.h in Headers */,
 				49E912AD0EFAC906009D0CAF /* AnimationList.h in Headers */,
@@ -27967,7 +27955,7 @@
 				71247E371FEA5F86008C08CE /* CompositeOperation.h in Headers */,
 				79F2F5A21091939A000D87CB /* CompositionEvent.h in Headers */,
 				2DD5A7271EBEE47D009BA597 /* CompositionUnderline.h in Headers */,
-				7116E2CC1FED75DC00C06FDE /* ComputedTimingProperties.h in Headers */,
+				7116E2CC1FED75DC00C06FDE /* ComputedEffectTiming.h in Headers */,
 				FD31608F12B026F700C1A359 /* Cone.h in Headers */,
 				65C97AF308EA908800ACD273 /* config.h in Headers */,
 				2DAF343D1EA7E0F100382CD3 /* ConstantPropertyMap.h in Headers */,
@@ -29022,7 +29010,7 @@
 				576814451E70CB1F00E77754 /* JSAesKeyParams.h in Headers */,
 				FDA15ECA12B03F50003A583A /* JSAnalyserNode.h in Headers */,
 				71556CBD1F9F0A4900E78D08 /* JSAnimationEffectTiming.h in Headers */,
-				71495DDB202B06F100ADFD34 /* JSAnimationEffectTimingProperties.h in Headers */,
+				71495DDB202B06F100ADFD34 /* JSEffectTiming.h in Headers */,
 				71495DDC202B06F700ADFD34 /* JSAnimationEffectTimingReadOnly.h in Headers */,
 				3198480C1A1E6CE800A13318 /* JSAnimationEvent.h in Headers */,
 				714C7C6C1FDADAF300F2BEE1 /* JSAnimationPlaybackEvent.h in Headers */,
@@ -29100,7 +29088,7 @@
 				93F9B6E10BA0FB7200854064 /* JSComment.h in Headers */,
 				71247E3B1FEA5F90008C08CE /* JSCompositeOperation.h in Headers */,
 				79AC9219109945C80021266E /* JSCompositionEvent.h in Headers */,
-				7116E2CF1FED765B00C06FDE /* JSComputedTimingProperties.h in Headers */,
+				7116E2CF1FED765B00C06FDE /* JSComputedEffectTiming.h in Headers */,
 				FDA15EBE12B03F0B003A583A /* JSConvolverNode.h in Headers */,
 				FE6FD48E0F676E9300092873 /* JSCoordinates.h in Headers */,
 				14DCF3B31B6BE2080062D4C2 /* JSCountQueuingStrategy.h in Headers */,
@@ -29404,7 +29392,6 @@
 				71247E3D1FEA5F90008C08CE /* JSKeyframeAnimationOptions.h in Headers */,
 				71556CBE1F9F0A4900E78D08 /* JSKeyframeEffect.h in Headers */,
 				71247E3E1FEA5F90008C08CE /* JSKeyframeEffectOptions.h in Headers */,
-				71EFCEE1202B3AB300D7C411 /* JSKeyframeEffectReadOnly.h in Headers */,
 				935F45430F7C3B5F00D7C1FB /* JSLazyEventListener.h in Headers */,
 				BCE1C43C0D9830D3003B02F2 /* JSLocation.h in Headers */,
 				93A806201E03B585008A1F26 /* JSLongRange.h in Headers */,
@@ -29873,7 +29860,6 @@
 				71247E391FEA5F86008C08CE /* KeyframeAnimationOptions.h in Headers */,
 				71556CB41F9F09BA00E78D08 /* KeyframeEffect.h in Headers */,
 				71247E3A1FEA5F86008C08CE /* KeyframeEffectOptions.h in Headers */,
-				71EFCEDD202B38B700D7C411 /* KeyframeEffectReadOnly.h in Headers */,
 				BC5EBA110E823E4700B25965 /* KeyframeList.h in Headers */,
 				E15FF7D518C9553800FE4C87 /* KeypressCommand.h in Headers */,
 				450CEBF115073BBE002BB149 /* LabelableElement.h in Headers */,

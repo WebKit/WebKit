@@ -348,7 +348,7 @@ accessibility/AccessibilityTree.cpp
 accessibility/AccessibilityTreeItem.cpp
 accessibility/AccessibleSetValueEvent.cpp
 
-animation/AnimationEffectReadOnly.cpp
+animation/AnimationEffect.cpp
 animation/AnimationEffectTiming.cpp
 animation/AnimationEffectTimingReadOnly.cpp
 animation/AnimationPlaybackEvent.cpp
@@ -359,7 +359,6 @@ animation/DeclarativeAnimation.cpp
 animation/DocumentAnimationScheduler.cpp
 animation/DocumentTimeline.cpp
 animation/KeyframeEffect.cpp
-animation/KeyframeEffectReadOnly.cpp
 animation/WebAnimation.cpp
 
 bindings/js/CachedModuleScriptLoader.cpp
@@ -371,7 +370,7 @@ bindings/js/DOMWrapperWorld.cpp
 bindings/js/GCController.cpp
 bindings/js/IDBBindingUtilities.cpp
 bindings/js/JSAuthenticatorResponseCustom.cpp
-bindings/js/JSAnimationEffectReadOnlyCustom.cpp
+bindings/js/JSAnimationEffectCustom.cpp
 bindings/js/JSAnimationEffectTimingReadOnlyCustom.cpp
 bindings/js/JSAnimationTimelineCustom.cpp
 bindings/js/JSAttrCustom.cpp
@@ -2451,9 +2450,9 @@ JSAesGcmParams.cpp
 JSAesKeyParams.cpp
 JSAnalyserNode.cpp
 JSAnimationEvent.cpp
-JSAnimationEffectReadOnly.cpp
+JSAnimationEffect.cpp
 JSAnimationEffectTiming.cpp
-JSAnimationEffectTimingProperties.cpp
+JSEffectTiming.cpp
 JSAnimationEffectTimingReadOnly.cpp
 JSAnimationPlaybackEvent.cpp
 JSAnimationPlaybackEventInit.cpp
@@ -2540,7 +2539,7 @@ JSCommandLineAPIHost.cpp
 JSComment.cpp
 JSCompositionEvent.cpp
 JSCompositeOperation.cpp
-JSComputedTimingProperties.cpp
+JSComputedEffectTiming.cpp
 JSConvolverNode.cpp
 JSCoordinates.cpp
 JSCountQueuingStrategy.cpp
@@ -2793,7 +2792,6 @@ JSKeyboardEvent.cpp
 JSKeyframeAnimationOptions.cpp
 JSKeyframeEffect.cpp
 JSKeyframeEffectOptions.cpp
-JSKeyframeEffectReadOnly.cpp
 JSLocation.cpp
 JSLongRange.cpp
 JSMediaCapabilities.cpp

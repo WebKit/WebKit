@@ -130,10 +130,10 @@ Vector<RefPtr<WebAnimation>> DocumentTimeline::getAnimations() const
 
     // First, let's get all qualifying animations in their right group.
     for (const auto& animation : m_allAnimations) {
-        if (!animation || !animation->isRelevant() || animation->timeline() != this || !is<KeyframeEffectReadOnly>(animation->effect()))
+        if (!animation || !animation->isRelevant() || animation->timeline() != this || !is<KeyframeEffect>(animation->effect()))
             continue;
 
-        auto* target = downcast<KeyframeEffectReadOnly>(animation->effect())->target();
+        auto* target = downcast<KeyframeEffect>(animation->effect())->target();
         if (!target || !target->isDescendantOf(*m_document))
             continue;
 
@@ -428,8 +428,8 @@ void DocumentTimeline::transitionDidComplete(RefPtr<CSSTransition> transition)
 {
     ASSERT(transition);
     removeAnimation(*transition);
-    if (is<KeyframeEffectReadOnly>(transition->effect())) {
-        if (auto* target = downcast<KeyframeEffectReadOnly>(transition->effect())->target()) {
+    if (is<KeyframeEffect>(transition->effect())) {
+        if (auto* target = downcast<KeyframeEffect>(transition->effect())->target()) {
             m_elementToCompletedCSSTransitionByCSSPropertyID.ensure(target, [] {
                 return HashMap<CSSPropertyID, RefPtr<CSSTransition>> { };
             }).iterator->value.set(transition->property(), transition);
@@ -442,13 +442,13 @@ bool DocumentTimeline::computeExtentOfAnimation(RenderElement& renderer, LayoutR
     if (!renderer.element())
         return true;
 
-    KeyframeEffectReadOnly* matchingEffect = nullptr;
+    KeyframeEffect* matchingEffect = nullptr;
     for (const auto& animation : animationsForElement(*renderer.element())) {
         auto* effect = animation->effect();
-        if (is<KeyframeEffectReadOnly>(effect)) {
-            auto* keyframeEffect = downcast<KeyframeEffectReadOnly>(effect);
+        if (is<KeyframeEffect>(effect)) {
+            auto* keyframeEffect = downcast<KeyframeEffect>(effect);
             if (keyframeEffect->animatedProperties().contains(CSSPropertyTransform))
-                matchingEffect = downcast<KeyframeEffectReadOnly>(effect);
+                matchingEffect = downcast<KeyframeEffect>(effect);
         }
     }
 
@@ -468,7 +468,7 @@ bool DocumentTimeline::isRunningAnimationOnRenderer(RenderElement& renderer, CSS
         if (playState != WebAnimation::PlayState::Running && playState != WebAnimation::PlayState::Paused)
             continue;
         auto* effect = animation->effect();
-        if (is<KeyframeEffectReadOnly>(effect) && downcast<KeyframeEffectReadOnly>(effect)->animatedProperties().contains(property))
+        if (is<KeyframeEffect>(effect) && downcast<KeyframeEffect>(effect)->animatedProperties().contains(property))
             return true;
     }
 
@@ -485,8 +485,8 @@ bool DocumentTimeline::isRunningAcceleratedAnimationOnRenderer(RenderElement& re
         if (playState != WebAnimation::PlayState::Running && playState != WebAnimation::PlayState::Paused)
             continue;
         auto* effect = animation->effect();
-        if (is<KeyframeEffectReadOnly>(effect)) {
-            auto* keyframeEffect = downcast<KeyframeEffectReadOnly>(effect);
+        if (is<KeyframeEffect>(effect)) {
+            auto* keyframeEffect = downcast<KeyframeEffect>(effect);
             if (keyframeEffect->isRunningAccelerated() && keyframeEffect->animatedProperties().contains(property))
                 return true;
         }
@@ -501,8 +501,8 @@ std::unique_ptr<RenderStyle> DocumentTimeline::animatedStyleForRenderer(RenderEl
 
     if (auto* element = renderer.element()) {
         for (const auto& animation : animationsForElement(*element)) {
-            if (is<KeyframeEffectReadOnly>(animation->effect()))
-                downcast<KeyframeEffectReadOnly>(animation->effect())->getAnimatedStyle(result);
+            if (is<KeyframeEffect>(animation->effect()))
+                downcast<KeyframeEffect>(animation->effect())->getAnimatedStyle(result);
         }
     }
 
@@ -528,8 +528,8 @@ void DocumentTimeline::animationAcceleratedRunningStateDidChange(WebAnimation& a
 {
     m_acceleratedAnimationsPendingRunningStateChange.add(&animation);
 
-    if (is<KeyframeEffectReadOnly>(animation.effect())) {
-        if (auto* target = downcast<KeyframeEffectReadOnly>(animation.effect())->target())
+    if (is<KeyframeEffect>(animation.effect())) {
+        if (auto* target = downcast<KeyframeEffect>(animation.effect())->target())
             updateListOfElementsWithRunningAcceleratedAnimationsForElement(*target);
     }
 }
@@ -539,7 +539,7 @@ void DocumentTimeline::updateListOfElementsWithRunningAcceleratedAnimationsForEl
     auto animations = animationsForElement(element);
     bool runningAnimationsForElementAreAllAccelerated = !animations.isEmpty();
     for (const auto& animation : animations) {
-        if (is<KeyframeEffectReadOnly>(animation->effect()) && !downcast<KeyframeEffectReadOnly>(animation->effect())->isRunningAccelerated()) {
+        if (is<KeyframeEffect>(animation->effect()) && !downcast<KeyframeEffect>(animation->effect())->isRunningAccelerated()) {
             runningAnimationsForElementAreAllAccelerated = false;
             break;
         }
@@ -560,8 +560,8 @@ void DocumentTimeline::applyPendingAcceleratedAnimations()
     for (auto& animation : acceleratedAnimationsPendingRunningStateChange) {
         if (!hasForcedLayout) {
             auto* effect = animation->effect();
-            if (is<KeyframeEffectReadOnly>(effect))
-                hasForcedLayout |= downcast<KeyframeEffectReadOnly>(effect)->forceLayoutIfNeeded();
+            if (is<KeyframeEffect>(effect))
+                hasForcedLayout |= downcast<KeyframeEffect>(effect)->forceLayoutIfNeeded();
         }
         animation->applyPendingAcceleratedActions();
     }
@@ -575,8 +575,8 @@ bool DocumentTimeline::resolveAnimationsForElement(Element& element, RenderStyle
         animation->resolve(targetStyle);
         if (!hasNonAcceleratedAnimations) {
             if (auto* effect = animation->effect()) {
-                if (is<KeyframeEffectReadOnly>(effect)) {
-                    auto* keyframeEffect = downcast<KeyframeEffectReadOnly>(effect);
+                if (is<KeyframeEffect>(effect)) {
+                    auto* keyframeEffect = downcast<KeyframeEffect>(effect);
                     for (auto cssPropertyId : keyframeEffect->animatedProperties()) {
                         if (!CSSPropertyAnimation::animationOfPropertyIsAccelerated(cssPropertyId)) {
                             hasNonAcceleratedAnimations = true;

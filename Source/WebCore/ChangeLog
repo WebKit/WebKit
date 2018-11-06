@@ -1,3 +1,146 @@
+2018-11-06  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Update the Web Animations API to remove all the ReadOnly interfaces
+        https://bugs.webkit.org/show_bug.cgi?id=186512
+        <rdar://problem/41000691>
+
+        Reviewed by Dean Jackson.
+
+        The Web Animations API has been simplified by removing its various ReadOnly interfaces. In this patch,
+        we make the following changes, not adding code but merely merging and renaming files:
+
+        - AnimationEffectReadOnly and AnimationEffect are now a single AnimationEffect interface
+        - KeyframeEffectReadOnly and KeyframeEffect are now a single KeyframeEffect interface
+        - ComputedTimingProperties is now named ComputedEffectTiming
+        - AnimationEffectTimingProperties is now named EffectTiming
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * animation/AnimationEffect.cpp: Renamed from Source/WebCore/animation/AnimationEffectReadOnly.cpp.
+        (WebCore::AnimationEffect::~AnimationEffect):
+        (WebCore::AnimationEffect::timingDidChange):
+        (WebCore::AnimationEffect::localTime const):
+        (WebCore::AnimationEffect::phase const):
+        (WebCore::AnimationEffect::activeTime const):
+        (WebCore::AnimationEffect::overallProgress const):
+        (WebCore::AnimationEffect::simpleIterationProgress const):
+        (WebCore::AnimationEffect::currentIteration const):
+        (WebCore::AnimationEffect::currentDirection const):
+        (WebCore::AnimationEffect::directedProgress const):
+        (WebCore::AnimationEffect::transformedProgress const):
+        (WebCore::AnimationEffect::iterationProgress const):
+        (WebCore::AnimationEffect::getComputedTiming):
+        * animation/AnimationEffect.h: Renamed from Source/WebCore/animation/AnimationEffectReadOnly.h.
+        (WebCore::AnimationEffect::isKeyframeEffect const):
+        * animation/AnimationEffect.idl: Renamed from Source/WebCore/animation/AnimationEffectReadOnly.idl.
+        * animation/AnimationEffectTimingReadOnly.cpp:
+        * animation/AnimationEffectTimingReadOnly.h:
+        (WebCore::AnimationEffectTimingReadOnly::setEffect):
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::removeAnimation):
+        (WebCore::AnimationTimeline::cssAnimationForElementAndProperty):
+        * animation/CSSTransition.cpp:
+        * animation/ComputedEffectTiming.h: Renamed from Source/WebCore/animation/ComputedTimingProperties.h.
+        * animation/ComputedEffectTiming.idl: Renamed from Source/WebCore/animation/ComputedTimingProperties.idl.
+        * animation/DeclarativeAnimation.cpp:
+        (WebCore::DeclarativeAnimation::initialize):
+        (WebCore::DeclarativeAnimation::flushPendingStyleChanges const):
+        (WebCore::DeclarativeAnimation::phaseWithoutEffect const):
+        (WebCore::DeclarativeAnimation::invalidateDOMEvents):
+        * animation/DeclarativeAnimation.h:
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::getAnimations const):
+        (WebCore::DocumentTimeline::transitionDidComplete):
+        (WebCore::DocumentTimeline::computeExtentOfAnimation const):
+        (WebCore::DocumentTimeline::isRunningAnimationOnRenderer const):
+        (WebCore::DocumentTimeline::isRunningAcceleratedAnimationOnRenderer const):
+        (WebCore::DocumentTimeline::animatedStyleForRenderer):
+        (WebCore::DocumentTimeline::animationAcceleratedRunningStateDidChange):
+        (WebCore::DocumentTimeline::updateListOfElementsWithRunningAcceleratedAnimationsForElement):
+        (WebCore::DocumentTimeline::applyPendingAcceleratedAnimations):
+        (WebCore::DocumentTimeline::resolveAnimationsForElement):
+        * animation/EffectTiming.h: Renamed from Source/WebCore/animation/AnimationEffectTimingProperties.h.
+        * animation/EffectTiming.idl: Renamed from Source/WebCore/animation/AnimationEffectTimingProperties.idl.
+        * animation/KeyframeEffect.cpp:
+        (WebCore::invalidateElement):
+        (WebCore::CSSPropertyIDToIDLAttributeName):
+        (WebCore::IDLAttributeNameToAnimationPropertyName):
+        (WebCore::computeMissingKeyframeOffsets):
+        (WebCore::processKeyframeLikeObject):
+        (WebCore::processIterableKeyframes):
+        (WebCore::processPropertyIndexedKeyframes):
+        (WebCore::KeyframeEffect::create):
+        (WebCore::KeyframeEffect::KeyframeEffect):
+        (WebCore::KeyframeEffect::copyPropertiesFromSource):
+        (WebCore::KeyframeEffect::getKeyframes):
+        (WebCore::KeyframeEffect::processKeyframes):
+        (WebCore::KeyframeEffect::updateBlendingKeyframes):
+        (WebCore::KeyframeEffect::forceLayoutIfNeeded):
+        (WebCore::KeyframeEffect::setBlendingKeyframes):
+        (WebCore::KeyframeEffect::checkForMatchingTransformFunctionLists):
+        (WebCore::KeyframeEffect::checkForMatchingFilterFunctionLists const):
+        (WebCore::KeyframeEffect::checkForMatchingFilterFunctionLists):
+        (WebCore::KeyframeEffect::checkForMatchingBackdropFilterFunctionLists):
+        (WebCore::KeyframeEffect::checkForMatchingColorFilterFunctionLists):
+        (WebCore::KeyframeEffect::computeDeclarativeAnimationBlendingKeyframes):
+        (WebCore::KeyframeEffect::computeCSSAnimationBlendingKeyframes):
+        (WebCore::KeyframeEffect::computeCSSTransitionBlendingKeyframes):
+        (WebCore::KeyframeEffect::computedNeedsForcedLayout):
+        (WebCore::KeyframeEffect::computeStackingContextImpact):
+        (WebCore::KeyframeEffect::setTarget):
+        (WebCore::KeyframeEffect::apply):
+        (WebCore::KeyframeEffect::invalidate):
+        (WebCore::KeyframeEffect::computeShouldRunAccelerated):
+        (WebCore::KeyframeEffect::getAnimatedStyle):
+        (WebCore::KeyframeEffect::setAnimatedPropertiesInStyle):
+        (WebCore::KeyframeEffect::timingFunctionForKeyframeAtIndex):
+        (WebCore::KeyframeEffect::updateAcceleratedAnimationState):
+        (WebCore::KeyframeEffect::addPendingAcceleratedAction):
+        (WebCore::KeyframeEffect::animationDidSeek):
+        (WebCore::KeyframeEffect::animationSuspensionStateDidChange):
+        (WebCore::KeyframeEffect::applyPendingAcceleratedActions):
+        (WebCore::KeyframeEffect::backingAnimationForCompositedRenderer const):
+        (WebCore::KeyframeEffect::renderer const):
+        (WebCore::KeyframeEffect::currentStyle const):
+        (WebCore::KeyframeEffect::computeExtentOfTransformAnimation const):
+        (WebCore::containsRotation):
+        (WebCore::KeyframeEffect::computeTransformedExtentViaTransformList const):
+        (WebCore::KeyframeEffect::computeTransformedExtentViaMatrix const):
+        * animation/KeyframeEffect.h:
+        (WebCore::KeyframeEffect::ParsedKeyframe::ParsedKeyframe):
+        (WebCore::KeyframeEffect::target const):
+        (WebCore::KeyframeEffect::iterationComposite const):
+        (WebCore::KeyframeEffect::composite const):
+        (WebCore::KeyframeEffect::isRunningAccelerated const):
+        (WebCore::KeyframeEffect::hasPendingAcceleratedAction const):
+        (WebCore::KeyframeEffect::hasBlendingKeyframes const):
+        (WebCore::KeyframeEffect::animatedProperties const):
+        * animation/KeyframeEffect.idl:
+        * animation/KeyframeEffectOptions.h:
+        * animation/KeyframeEffectOptions.idl:
+        * animation/KeyframeEffectReadOnly.cpp: Removed.
+        * animation/KeyframeEffectReadOnly.h: Removed.
+        * animation/KeyframeEffectReadOnly.idl: Removed.
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::create):
+        (WebCore::WebAnimation::setEffect):
+        (WebCore::WebAnimation::setEffectInternal):
+        (WebCore::WebAnimation::setTimeline):
+        (WebCore::WebAnimation::applyPendingAcceleratedActions):
+        (WebCore::WebAnimation::computeRelevance):
+        * animation/WebAnimation.h:
+        (WebCore::WebAnimation::effect const):
+        * animation/WebAnimation.idl:
+        * bindings/js/JSAnimationEffectCustom.cpp: Renamed from Source/WebCore/bindings/js/JSAnimationEffectReadOnlyCustom.cpp.
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        * bindings/js/JSWebAnimationCustom.cpp:
+        (WebCore::constructJSWebAnimation):
+        * bindings/js/WebCoreBuiltinNames.h:
+        * dom/Document.cpp:
+
 2018-11-06  Rob Buis  <rbuis@igalia.com>
 
         Some minor X-Content-Type-Options parsing issues

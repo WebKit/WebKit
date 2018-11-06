@@ -27,7 +27,7 @@
 #include "JSWebAnimation.h"
 
 #include "Document.h"
-#include "JSAnimationEffectReadOnly.h"
+#include "JSAnimationEffect.h"
 #include "JSAnimationTimeline.h"
 #include "JSCSSAnimation.h"
 #include "JSCSSTransition.h"
@@ -62,8 +62,8 @@ EncodedJSValue JSC_HOST_CALL constructJSWebAnimation(ExecState& state)
     if (UNLIKELY(!context))
         return throwConstructorScriptExecutionContextUnavailableError(state, throwScope, "Animation");
     auto& document = downcast<Document>(*context);
-    auto effect = convert<IDLNullable<IDLInterface<AnimationEffectReadOnly>>>(state, state.argument(0), [](ExecState& state, ThrowScope& scope) {
-        throwArgumentTypeError(state, scope, 0, "effect", "Animation", nullptr, "AnimationEffectReadOnly");
+    auto effect = convert<IDLNullable<IDLInterface<AnimationEffect>>>(state, state.argument(0), [](ExecState& state, ThrowScope& scope) {
+        throwArgumentTypeError(state, scope, 0, "effect", "Animation", nullptr, "AnimationEffect");
     });
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 

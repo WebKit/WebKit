@@ -38,7 +38,7 @@ enum AnimationPlayState {
     CustomToJSObject
 ] interface WebAnimation : EventTarget {
     attribute DOMString id;
-    attribute AnimationEffectReadOnly? effect;
+    attribute AnimationEffect? effect;
     attribute AnimationTimeline? timeline;
     attribute double? startTime;
     [MayThrowException, ImplementedAs=bindingsCurrentTime] attribute double? currentTime;

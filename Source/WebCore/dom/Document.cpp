@@ -114,7 +114,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "JSLazyEventListener.h"
 #include "KeyboardEvent.h"
-#include "KeyframeEffectReadOnly.h"
+#include "KeyframeEffect.h"
 #include "LayoutDisallowedScope.h"
 #include "LibWebRTCProvider.h"
 #include "LoaderStrategy.h"

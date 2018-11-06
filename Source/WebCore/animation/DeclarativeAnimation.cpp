@@ -31,7 +31,7 @@
 #include "AnimationEvent.h"
 #include "Element.h"
 #include "EventNames.h"
-#include "KeyframeEffectReadOnly.h"
+#include "KeyframeEffect.h"
 #include "PseudoElement.h"
 #include "TransitionEvent.h"
 
@@ -102,9 +102,9 @@ void DeclarativeAnimation::initialize(const RenderStyle* oldStyle, const RenderS
 
     ASSERT(m_owningElement);
 
-    setEffect(KeyframeEffectReadOnly::create(*m_owningElement));
+    setEffect(KeyframeEffect::create(*m_owningElement));
     setTimeline(&m_owningElement->document().timeline());
-    downcast<KeyframeEffectReadOnly>(effect())->computeDeclarativeAnimationBlendingKeyframes(oldStyle, newStyle);
+    downcast<KeyframeEffect>(effect())->computeDeclarativeAnimationBlendingKeyframes(oldStyle, newStyle);
     syncPropertiesWithBackingAnimation();
     if (backingAnimation().playState() == AnimationPlayState::Playing)
         play();
@@ -181,8 +181,8 @@ ExceptionOr<void> DeclarativeAnimation::bindingsPause()
 void DeclarativeAnimation::flushPendingStyleChanges() const
 {
     if (auto* animationEffect = effect()) {
-        if (is<KeyframeEffectReadOnly>(animationEffect)) {
-            if (auto* target = downcast<KeyframeEffectReadOnly>(animationEffect)->target())
+        if (is<KeyframeEffect>(animationEffect)) {
+            if (auto* target = downcast<KeyframeEffect>(animationEffect)->target())
                 target->document().updateStyleIfNeeded();
         }
     }
@@ -213,17 +213,17 @@ void DeclarativeAnimation::cancelFromStyle()
     disassociateFromOwningElement();
 }
 
-AnimationEffectReadOnly::Phase DeclarativeAnimation::phaseWithoutEffect() const
+AnimationEffect::Phase DeclarativeAnimation::phaseWithoutEffect() const
 {
     // This shouldn't be called if we actually have an effect.
     ASSERT(!effect());
 
     auto animationCurrentTime = currentTime();
     if (!animationCurrentTime)
-        return AnimationEffectReadOnly::Phase::Idle;
+        return AnimationEffect::Phase::Idle;
 
     // Since we don't have an effect, the duration will be zero so the phase is 'before' if the current time is less than zero.
-    return animationCurrentTime.value() < 0_s ? AnimationEffectReadOnly::Phase::Before : AnimationEffectReadOnly::Phase::After;
+    return animationCurrentTime.value() < 0_s ? AnimationEffect::Phase::Before : AnimationEffect::Phase::After;
 }
 
 void DeclarativeAnimation::invalidateDOMEvents(Seconds elapsedTime)
@@ -240,15 +240,15 @@ void DeclarativeAnimation::invalidateDOMEvents(Seconds elapsedTime)
     auto iteration = animationEffect ? animationEffect->currentIteration().value_or(0) : 0;
     auto currentPhase = animationEffect ? animationEffect->phase() : phaseWithoutEffect();
 
-    bool wasActive = m_previousPhase == AnimationEffectReadOnly::Phase::Active;
-    bool wasAfter = m_previousPhase == AnimationEffectReadOnly::Phase::After;
-    bool wasBefore = m_previousPhase == AnimationEffectReadOnly::Phase::Before;
-    bool wasIdle = m_previousPhase == AnimationEffectReadOnly::Phase::Idle;
+    bool wasActive = m_previousPhase == AnimationEffect::Phase::Active;
+    bool wasAfter = m_previousPhase == AnimationEffect::Phase::After;
+    bool wasBefore = m_previousPhase == AnimationEffect::Phase::Before;
+    bool wasIdle = m_previousPhase == AnimationEffect::Phase::Idle;
 
-    bool isActive = currentPhase == AnimationEffectReadOnly::Phase::Active;
-    bool isAfter = currentPhase == AnimationEffectReadOnly::Phase::After;
-    bool isBefore = currentPhase == AnimationEffectReadOnly::Phase::Before;
-    bool isIdle = currentPhase == AnimationEffectReadOnly::Phase::Idle;
+    bool isActive = currentPhase == AnimationEffect::Phase::Active;
+    bool isAfter = currentPhase == AnimationEffect::Phase::After;
+    bool isBefore = currentPhase == AnimationEffect::Phase::Before;
+    bool isIdle = currentPhase == AnimationEffect::Phase::Idle;
 
     auto* effectTiming = animationEffect ? animationEffect->timing() : nullptr;
     auto intervalStart = effectTiming ? std::max(0_s, std::min(-effectTiming->delay(), effectTiming->activeDuration())) : 0_s;

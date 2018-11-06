@@ -28,7 +28,7 @@
 
 #include "Animation.h"
 #include "Element.h"
-#include "KeyframeEffectReadOnly.h"
+#include "KeyframeEffect.h"
 
 namespace WebCore {
 

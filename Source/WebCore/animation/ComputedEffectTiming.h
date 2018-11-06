@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,22 +25,17 @@
 
 #pragma once
 
-#include "FillMode.h"
-#include "PlaybackDirection.h"
-#include <wtf/Variant.h>
-#include <wtf/text/WTFString.h>
+#include "EffectTiming.h"
+#include <wtf/Optional.h>
 
 namespace WebCore {
 
-struct AnimationEffectTimingProperties {
-    double delay { 0 };
-    double endDelay { 0 };
-    FillMode fill { FillMode::Auto };
-    double iterationStart { 0 };
-    double iterations { 1 };
-    Variant<double, String> duration { "auto" };
-    PlaybackDirection direction { PlaybackDirection::Normal };
-    String easing { "linear" };
+struct ComputedEffectTiming : EffectTiming {
+    double endTime;
+    double activeDuration;
+    std::optional<double> localTime;
+    std::optional<double> progress;
+    std::optional<double> currentIteration;
 };
 
 } // namespace WebCore

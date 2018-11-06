@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,19 +23,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "JSAnimationEffect.h"
 
-#include "AnimationEffectTimingProperties.h"
-#include <wtf/Optional.h>
+#include "JSDOMBinding.h"
+#include "JSKeyframeEffect.h"
+#include "KeyframeEffect.h"
+
+using namespace JSC;
 
 namespace WebCore {
 
-struct ComputedTimingProperties : AnimationEffectTimingProperties {
-    double endTime;
-    double activeDuration;
-    std::optional<double> localTime;
-    std::optional<double> progress;
-    std::optional<double> currentIteration;
-};
+JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<AnimationEffect>&& value)
+{
+    if (value->isKeyframeEffect())
+        return createWrapper<KeyframeEffect>(globalObject, WTFMove(value));
+    return createWrapper<AnimationEffect>(globalObject, WTFMove(value));
+}
+
+JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, AnimationEffect& value)
+{
+    return wrap(state, globalObject, value);
+}
 
 } // namespace WebCore

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "AnimationEffectTimingReadOnly.h"
 
-#include "AnimationEffectReadOnly.h"
+#include "AnimationEffect.h"
 
 namespace WebCore {
 

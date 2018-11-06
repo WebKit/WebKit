@@ -26,13 +26,13 @@
 
 #pragma once
 
-#include "AnimationEffectTimingProperties.h"
 #include "CompositeOperation.h"
+#include "EffectTiming.h"
 #include "IterationCompositeOperation.h"
 
 namespace WebCore {
 
-struct KeyframeEffectOptions : AnimationEffectTimingProperties {
+struct KeyframeEffectOptions : EffectTiming {
     IterationCompositeOperation iterationComposite { IterationCompositeOperation::Replace };
     CompositeOperation composite { CompositeOperation::Replace };
 };

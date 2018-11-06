@@ -32,7 +32,7 @@ namespace WebCore {
 
 #define WEBCORE_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(macro) \
     macro(Animation) \
-    macro(AnimationEffectReadOnly) \
+    macro(AnimationEffect) \
     macro(AnimationEffectTiming) \
     macro(AnimationEffectTimingReadOnly) \
     macro(AnimationPlaybackEvent) \
@@ -91,7 +91,6 @@ namespace WebCore {
     macro(IntersectionObserver) \
     macro(IntersectionObserverEntry) \
     macro(KeyframeEffect) \
-    macro(KeyframeEffectReadOnly) \
     macro(MediaCapabilities) \
     macro(MediaCapabilitiesInfo) \
     macro(MediaEncryptedEvent) \

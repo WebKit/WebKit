@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "ComputedTimingProperties.h"
+#include "ComputedEffectTiming.h"
 #include "WebAnimation.h"
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
@@ -37,14 +37,13 @@ namespace WebCore {
 
 class AnimationEffectTimingReadOnly;
 
-class AnimationEffectReadOnly : public RefCounted<AnimationEffectReadOnly> {
+class AnimationEffect : public RefCounted<AnimationEffect> {
 public:
-    virtual ~AnimationEffectReadOnly();
+    virtual ~AnimationEffect();
 
-    bool isKeyframeEffect() const { return m_classType == KeyframeEffectClass; }
-    bool isKeyframeEffectReadOnly() const { return isKeyframeEffect() || m_classType == KeyframeEffectReadOnlyClass; }
+    virtual bool isKeyframeEffect() const { return false; }
     AnimationEffectTimingReadOnly* timing() const { return m_timing.get(); }
-    ComputedTimingProperties getComputedTiming();
+    ComputedEffectTiming getComputedTiming();
     virtual void apply(RenderStyle&) = 0;
     virtual void invalidate() = 0;
     virtual void animationDidSeek() = 0;
@@ -64,23 +63,14 @@ public:
     void timingDidChange();
 
 protected:
-    enum ClassType {
-        KeyframeEffectClass,
-        KeyframeEffectReadOnlyClass
-    };
-
-    ClassType classType() const { return m_classType; }
-
-    explicit AnimationEffectReadOnly(ClassType, Ref<AnimationEffectTimingReadOnly>&&);
+    explicit AnimationEffect(Ref<AnimationEffectTimingReadOnly>&&);
 
 private:
     enum class ComputedDirection { Forwards, Reverse };
 
-    ClassType m_classType;
-
     std::optional<double> overallProgress() const;
     std::optional<double> simpleIterationProgress() const;
-    AnimationEffectReadOnly::ComputedDirection currentDirection() const;
+    AnimationEffect::ComputedDirection currentDirection() const;
     std::optional<double> directedProgress() const;
     std::optional<double> transformedProgress() const;
 
@@ -92,5 +82,5 @@ private:
 
 #define SPECIALIZE_TYPE_TRAITS_ANIMATION_EFFECT(ToValueTypeName, predicate) \
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
-static bool isType(const WebCore::AnimationEffectReadOnly& value) { return value.predicate; } \
+static bool isType(const WebCore::AnimationEffect& value) { return value.predicate; } \
 SPECIALIZE_TYPE_TRAITS_END()

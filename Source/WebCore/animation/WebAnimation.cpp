@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebAnimation.h"
 
-#include "AnimationEffectReadOnly.h"
+#include "AnimationEffect.h"
 #include "AnimationEffectTimingReadOnly.h"
 #include "AnimationPlaybackEvent.h"
 #include "AnimationTimeline.h"
@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-Ref<WebAnimation> WebAnimation::create(Document& document, AnimationEffectReadOnly* effect)
+Ref<WebAnimation> WebAnimation::create(Document& document, AnimationEffect* effect)
 {
     auto result = adoptRef(*new WebAnimation(document));
     result->setEffect(effect);
@@ -49,7 +49,7 @@ Ref<WebAnimation> WebAnimation::create(Document& document, AnimationEffectReadOn
     return result;
 }
 
-Ref<WebAnimation> WebAnimation::create(Document& document, AnimationEffectReadOnly* effect, AnimationTimeline* timeline)
+Ref<WebAnimation> WebAnimation::create(Document& document, AnimationEffect* effect, AnimationTimeline* timeline)
 {
     auto result = adoptRef(*new WebAnimation(document));
     result->setEffect(effect);
@@ -95,7 +95,7 @@ void WebAnimation::effectTimingPropertiesDidChange()
     timingDidChange(DidSeek::No, SynchronouslyNotify::Yes);
 }
 
-void WebAnimation::setEffect(RefPtr<AnimationEffectReadOnly>&& newEffect)
+void WebAnimation::setEffect(RefPtr<AnimationEffect>&& newEffect)
 {
     // 3.4.3. Setting the target effect of an animation
     // https://drafts.csswg.org/web-animations-1/#setting-the-target-effect
@@ -142,7 +142,7 @@ void WebAnimation::setEffect(RefPtr<AnimationEffectReadOnly>&& newEffect)
     invalidateEffect();
 }
 
-void WebAnimation::setEffectInternal(RefPtr<AnimationEffectReadOnly>&& newEffect, bool doNotRemoveFromTimeline)
+void WebAnimation::setEffectInternal(RefPtr<AnimationEffect>&& newEffect, bool doNotRemoveFromTimeline)
 {
     if (m_effect == newEffect)
         return;
@@ -150,12 +150,12 @@ void WebAnimation::setEffectInternal(RefPtr<AnimationEffectReadOnly>&& newEffect
     auto oldEffect = std::exchange(m_effect, WTFMove(newEffect));
 
     Element* previousTarget = nullptr;
-    if (is<KeyframeEffectReadOnly>(oldEffect))
-        previousTarget = downcast<KeyframeEffectReadOnly>(oldEffect.get())->target();
+    if (is<KeyframeEffect>(oldEffect))
+        previousTarget = downcast<KeyframeEffect>(oldEffect.get())->target();
 
     Element* newTarget = nullptr;
-    if (is<KeyframeEffectReadOnly>(m_effect))
-        newTarget = downcast<KeyframeEffectReadOnly>(m_effect.get())->target();
+    if (is<KeyframeEffect>(m_effect))
+        newTarget = downcast<KeyframeEffect>(m_effect.get())->target();
 
     // Update the effect-to-animation relationships and the timeline's animation map.
     if (oldEffect) {
@@ -185,8 +185,8 @@ void WebAnimation::setTimeline(RefPtr<AnimationTimeline>&& timeline)
     if (m_startTime)
         m_holdTime = std::nullopt;
 
-    if (is<KeyframeEffectReadOnly>(m_effect)) {
-        auto* keyframeEffect = downcast<KeyframeEffectReadOnly>(m_effect.get());
+    if (is<KeyframeEffect>(m_effect)) {
+        auto* keyframeEffect = downcast<KeyframeEffect>(m_effect.get());
         auto* target = keyframeEffect->target();
         if (target) {
             // In the case of a declarative animation, we don't want to remove the animation from the relevant maps because
@@ -1045,8 +1045,8 @@ void WebAnimation::acceleratedStateDidChange()
 
 void WebAnimation::applyPendingAcceleratedActions()
 {
-    if (is<KeyframeEffectReadOnly>(m_effect))
-        downcast<KeyframeEffectReadOnly>(*m_effect).applyPendingAcceleratedActions();
+    if (is<KeyframeEffect>(m_effect))
+        downcast<KeyframeEffect>(*m_effect).applyPendingAcceleratedActions();
 }
 
 WebAnimation& WebAnimation::readyPromiseResolve()
@@ -1098,7 +1098,7 @@ bool WebAnimation::computeRelevance()
     // - the animation effect is in the active phase, and
     // - the animation effect is associated with an animation that is not finished.
     auto phase = m_effect->phase();
-    return phase == AnimationEffectReadOnly::Phase::Before || (phase == AnimationEffectReadOnly::Phase::Active && playState() != PlayState::Finished);
+    return phase == AnimationEffect::Phase::Before || (phase == AnimationEffect::Phase::Active && playState() != PlayState::Finished);
 }
 
 } // namespace WebCore

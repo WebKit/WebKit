@@ -28,14 +28,14 @@
 #include "AnimationTimeline.h"
 
 #include "Animation.h"
-#include "AnimationEffectReadOnly.h"
+#include "AnimationEffect.h"
 #include "AnimationList.h"
 #include "CSSAnimation.h"
 #include "CSSPropertyAnimation.h"
 #include "CSSTransition.h"
 #include "DocumentTimeline.h"
 #include "Element.h"
-#include "KeyframeEffectReadOnly.h"
+#include "KeyframeEffect.h"
 #include "RenderStyle.h"
 #include "RenderView.h"
 #include "StylePropertyShorthand.h"
@@ -69,8 +69,8 @@ void AnimationTimeline::removeAnimation(WebAnimation& animation)
 {
     ASSERT(!animation.timeline() || animation.timeline() == this);
     m_animations.remove(&animation);
-    if (is<KeyframeEffectReadOnly>(animation.effect())) {
-        if (auto* target = downcast<KeyframeEffectReadOnly>(animation.effect())->target())
+    if (is<KeyframeEffect>(animation.effect())) {
+        if (auto* target = downcast<KeyframeEffect>(animation.effect())->target())
             animationWasRemovedFromElement(animation, *target);
     }
 }
@@ -290,7 +290,7 @@ RefPtr<WebAnimation> AnimationTimeline::cssAnimationForElementAndProperty(Elemen
     RefPtr<WebAnimation> matchingAnimation;
     for (const auto& animation : m_elementToCSSAnimationsMap.get(&element)) {
         auto* effect = animation->effect();
-        if (is<KeyframeEffectReadOnly>(effect) && downcast<KeyframeEffectReadOnly>(effect)->animatedProperties().contains(property))
+        if (is<KeyframeEffect>(effect) && downcast<KeyframeEffect>(effect)->animatedProperties().contains(property))
             matchingAnimation = animation;
     }
     return matchingAnimation;

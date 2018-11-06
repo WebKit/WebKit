@@ -397,15 +397,15 @@ JS_BINDING_IDLS = \
     $(WebCore)/accessibility/AccessibleSetValueEvent.idl \
     $(WebCore)/accessibility/AriaAttributes.idl \
     $(WebCore)/animation/Animatable.idl \
-    $(WebCore)/animation/AnimationEffectReadOnly.idl \
+    $(WebCore)/animation/AnimationEffect.idl \
     $(WebCore)/animation/AnimationEffectTiming.idl \
-    $(WebCore)/animation/AnimationEffectTimingProperties.idl \
+    $(WebCore)/animation/EffectTiming.idl \
     $(WebCore)/animation/AnimationEffectTimingReadOnly.idl \
     $(WebCore)/animation/AnimationPlaybackEvent.idl \
     $(WebCore)/animation/AnimationPlaybackEventInit.idl \
     $(WebCore)/animation/AnimationTimeline.idl \
     $(WebCore)/animation/CompositeOperation.idl \
-    $(WebCore)/animation/ComputedTimingProperties.idl \
+    $(WebCore)/animation/ComputedEffectTiming.idl \
     $(WebCore)/animation/CSSAnimation.idl \
     $(WebCore)/animation/CSSTransition.idl \
     $(WebCore)/animation/DocumentTimeline.idl \
@@ -415,7 +415,6 @@ JS_BINDING_IDLS = \
     $(WebCore)/animation/KeyframeAnimationOptions.idl \
     $(WebCore)/animation/KeyframeEffect.idl \
     $(WebCore)/animation/KeyframeEffectOptions.idl \
-    $(WebCore)/animation/KeyframeEffectReadOnly.idl \
     $(WebCore)/animation/PlaybackDirection.idl \
     $(WebCore)/animation/WebAnimation.idl \
     $(WebCore)/crypto/CryptoAlgorithmParameters.idl \

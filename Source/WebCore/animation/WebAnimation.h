@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-class AnimationEffectReadOnly;
+class AnimationEffect;
 class AnimationPlaybackEvent;
 class AnimationTimeline;
 class Document;
@@ -49,8 +49,8 @@ class RenderStyle;
 
 class WebAnimation : public RefCounted<WebAnimation>, public CanMakeWeakPtr<WebAnimation>, public EventTargetWithInlineData, public ActiveDOMObject {
 public:
-    static Ref<WebAnimation> create(Document&, AnimationEffectReadOnly*);
-    static Ref<WebAnimation> create(Document&, AnimationEffectReadOnly*, AnimationTimeline*);
+    static Ref<WebAnimation> create(Document&, AnimationEffect*);
+    static Ref<WebAnimation> create(Document&, AnimationEffect*, AnimationTimeline*);
     ~WebAnimation();
 
     virtual bool isDeclarativeAnimation() const { return false; }
@@ -60,8 +60,8 @@ public:
     const String& id() const { return m_id; }
     void setId(const String& id) { m_id = id; }
 
-    AnimationEffectReadOnly* effect() const { return m_effect.get(); }
-    void setEffect(RefPtr<AnimationEffectReadOnly>&&);
+    AnimationEffect* effect() const { return m_effect.get(); }
+    void setEffect(RefPtr<AnimationEffect>&&);
     AnimationTimeline* timeline() const { return m_timeline.get(); }
     virtual void setTimeline(RefPtr<AnimationTimeline>&&);
 
@@ -148,7 +148,7 @@ private:
     void runPendingPauseTask();
     void runPendingPlayTask();
     void resetPendingTasks(Silently = Silently::No);
-    void setEffectInternal(RefPtr<AnimationEffectReadOnly>&&, bool = false);
+    void setEffectInternal(RefPtr<AnimationEffect>&&, bool = false);
     void setTimelineInternal(RefPtr<AnimationTimeline>&&);
     bool isEffectInvalidationSuspended() { return m_suspendCount; }
     bool computeRelevance();
@@ -156,7 +156,7 @@ private:
     void invalidateEffect();
 
     String m_id;
-    RefPtr<AnimationEffectReadOnly> m_effect;
+    RefPtr<AnimationEffect> m_effect;
     RefPtr<AnimationTimeline> m_timeline;
     std::optional<Seconds> m_previousCurrentTime;
     std::optional<Seconds> m_startTime;

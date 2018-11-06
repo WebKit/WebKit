@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,38 +23,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    EnabledAtRuntime=WebAnimations,
-    Exposed=Window,
-    JSGenerateToNativeObject,
-    ConstructorMayThrowException,
-    ConstructorCallWith=ExecState,
-    Constructor(Element? target, object? keyframes, optional (unrestricted double or KeyframeEffectOptions) options),
-    Constructor(KeyframeEffectReadOnly source)
-] interface KeyframeEffectReadOnly : AnimationEffectReadOnly {
-    readonly attribute Element? target;
-    readonly attribute IterationCompositeOperation iterationComposite;
-    readonly attribute CompositeOperation composite;
-    [CallWith=ExecState] sequence<object> getKeyframes();
+#pragma once
+
+#include "FillMode.h"
+#include "PlaybackDirection.h"
+#include <wtf/Variant.h>
+#include <wtf/text/WTFString.h>
+
+namespace WebCore {
+
+struct EffectTiming {
+    double delay { 0 };
+    double endDelay { 0 };
+    FillMode fill { FillMode::Auto };
+    double iterationStart { 0 };
+    double iterations { 1 };
+    Variant<double, String> duration { "auto" };
+    PlaybackDirection direction { PlaybackDirection::Normal };
+    String easing { "linear" };
 };
 
-dictionary BasePropertyIndexedKeyframe {
-    (sequence<double?> or double?) offset = [];
-    (sequence<DOMString> or DOMString) easing = [];
-    (sequence<CompositeOperation?> or CompositeOperation?) composite = [];
-};
-
-dictionary BaseKeyframe {
-    double? offset = null;
-    DOMString easing = "linear";
-    CompositeOperation? composite = null;
-};
-
-[
-    JSGenerateToJSObject
-] dictionary BaseComputedKeyframe {
-     double? offset = null;
-     double computedOffset;
-     DOMString easing = "linear";
-     CompositeOperation? composite = null;
-};
+} // namespace WebCore

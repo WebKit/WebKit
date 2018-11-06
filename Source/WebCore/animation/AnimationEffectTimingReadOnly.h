@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "AnimationEffectReadOnly.h"
+#include "AnimationEffect.h"
 #include "ExceptionOr.h"
 #include "FillMode.h"
 #include "KeyframeEffectOptions.h"
@@ -48,7 +48,7 @@ public:
 
     bool isAnimationEffectTiming() const { return m_classType == AnimationEffectTimingClass; }
 
-    void setEffect(AnimationEffectReadOnly* effect) { m_effect = effect; }
+    void setEffect(AnimationEffect* effect) { m_effect = effect; }
 
     ExceptionOr<void> setProperties(std::optional<Variant<double, KeyframeEffectOptions>>&&);
     void copyPropertiesFromSource(AnimationEffectTimingReadOnly*);
@@ -106,7 +106,7 @@ private:
     void propertyDidChange();
 
     ClassType m_classType;
-    AnimationEffectReadOnly* m_effect;
+    AnimationEffect* m_effect;
     Seconds m_delay { 0_s };
     Seconds m_endDelay { 0_s };
     FillMode m_fill { FillMode::Auto };
