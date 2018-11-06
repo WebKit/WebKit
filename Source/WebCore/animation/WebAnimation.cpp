@@ -106,24 +106,20 @@ void WebAnimation::setEffect(RefPtr<AnimationEffect>&& newEffect)
     if (newEffect == oldEffect)
         return;
 
-    // 3. If new effect is null and old effect is not null, run the procedure to reset an animation's pending tasks on animation.
-    if (!newEffect && oldEffect)
-        resetPendingTasks();
-
-    // 4. If animation has a pending pause task, reschedule that task to run as soon as animation is ready.
+    // 3. If animation has a pending pause task, reschedule that task to run as soon as animation is ready.
     if (hasPendingPauseTask())
         m_timeToRunPendingPauseTask = TimeToRunPendingTask::WhenReady;
 
-    // 5. If animation has a pending play task, reschedule that task to run as soon as animation is ready to play new effect.
+    // 4. If animation has a pending play task, reschedule that task to run as soon as animation is ready to play new effect.
     if (hasPendingPlayTask())
         m_timeToRunPendingPlayTask = TimeToRunPendingTask::WhenReady;
 
-    // 6. If new effect is not null and if new effect is the target effect of another animation, previous animation, run the
+    // 5. If new effect is not null and if new effect is the target effect of another animation, previous animation, run the
     // procedure to set the target effect of an animation (this procedure) on previous animation passing null as new effect.
     if (newEffect && newEffect->animation())
         newEffect->animation()->setEffect(nullptr);
 
-    // 7. Let the target effect of animation be new effect.
+    // 6. Let the target effect of animation be new effect.
     // In the case of a declarative animation, we don't want to remove the animation from the relevant maps because
     // while the effect was set via the API, the element still has a transition or animation set up and we must
     // not break the timeline-to-animation relationship.
@@ -134,7 +130,7 @@ void WebAnimation::setEffect(RefPtr<AnimationEffect>&& newEffect)
     auto protectedThis = makeRef(*this);
     setEffectInternal(WTFMove(newEffect), isDeclarativeAnimation());
 
-    // 8. Run the procedure to update an animation's finished state for animation with the did seek flag set to false,
+    // 7. Run the procedure to update an animation's finished state for animation with the did seek flag set to false,
     // and the synchronously notify flag set to false.
     timingDidChange(DidSeek::No, SynchronouslyNotify::No);
 

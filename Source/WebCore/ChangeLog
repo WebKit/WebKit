@@ -1,5 +1,19 @@
 2018-11-06  Antoine Quint  <graouts@apple.com>
 
+        [Web Animations] Don't reset pending tasks when setting a null effect
+        https://bugs.webkit.org/show_bug.cgi?id=191301
+        <rdar://problem/45838422>
+
+        Reviewed by Dean Jackson.
+
+        The issue https://github.com/w3c/csswg-drafts/issues/2077 has changed the Web Animations API such that
+        we no longer reset pending tasks when setting a null effect on an animation.
+
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::setEffect):
+
+2018-11-06  Antoine Quint  <graouts@apple.com>
+
         [Web Animations] Update the API to allow the "auto" composite value
         https://bugs.webkit.org/show_bug.cgi?id=191300
         <rdar://problem/45838373>
