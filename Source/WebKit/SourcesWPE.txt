@@ -96,7 +96,6 @@ Shared/wpe/NativeWebWheelEventWPE.cpp
 Shared/wpe/WebEventFactory.cpp
 
 UIProcess/AcceleratedDrawingAreaProxy.cpp
-UIProcess/BackingStore.cpp
 UIProcess/DefaultUndoController.cpp
 UIProcess/LegacySessionStateCodingNone.cpp
 UIProcess/WebGrammarDetail.cpp
@@ -192,8 +191,6 @@ UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp
 UIProcess/WebStorage/StorageManager.cpp
 
 UIProcess/WebsiteData/unix/WebsiteDataStoreUnix.cpp
-
-UIProcess/cairo/BackingStoreCairo.cpp
 
 UIProcess/gstreamer/InstallMissingMediaPluginsPermissionRequest.cpp
 UIProcess/gstreamer/WebPageProxyGStreamer.cpp

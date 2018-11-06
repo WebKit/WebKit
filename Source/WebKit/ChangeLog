@@ -1,3 +1,14 @@
+2018-11-05  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WPE] Remove BackingStore, BackingStoreCairo implementation files from build
+        https://bugs.webkit.org/show_bug.cgi?id=191269
+
+        Reviewed by Michael Catanzaro.
+
+        * SourcesWPE.txt: Drop the BackingStore.cpp and BackingStoreCairo.cpp
+        files from the WPE build. These are not used at all in WPE configuration
+        as they are only used by the GTK+ port for non-AC functionality.
+
 2018-11-05  Chris Dumez  <cdumez@apple.com>
 
         Use same limit for page cache and suspended pages
