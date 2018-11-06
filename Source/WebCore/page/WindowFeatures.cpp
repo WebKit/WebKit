@@ -28,6 +28,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
 #include <wtf/MathExtras.h>
+#include <wtf/OptionSet.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
