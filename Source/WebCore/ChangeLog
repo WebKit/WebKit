@@ -1,5 +1,38 @@
 2018-11-06  Antoine Quint  <graouts@apple.com>
 
+        [Web Animations] Update the API to implement Animation.updatePlaybackRate()
+        https://bugs.webkit.org/show_bug.cgi?id=186510
+        <rdar://problem/41000641>
+
+        Reviewed by Dean Jackson.
+
+        The Web Animations API has been changed to allow for changes to an animation's playback rate both synchronously,
+        with the existing "playbackRate" property, and asynchronously, with the new updatePlaybackRate() method. In this
+        patch we update the various procedures to account for pending playback rate changes and the notion of an "effective
+        playback rate".
+
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::setEffect):
+        (WebCore::WebAnimation::setTimeline):
+        (WebCore::WebAnimation::setStartTime):
+        (WebCore::WebAnimation::setCurrentTime):
+        (WebCore::WebAnimation::effectivePlaybackRate const):
+        (WebCore::WebAnimation::setPlaybackRate):
+        (WebCore::WebAnimation::updatePlaybackRate):
+        (WebCore::WebAnimation::applyPendingPlaybackRate):
+        (WebCore::WebAnimation::playState const):
+        (WebCore::WebAnimation::resetPendingTasks):
+        (WebCore::WebAnimation::finish):
+        (WebCore::WebAnimation::play):
+        (WebCore::WebAnimation::runPendingPlayTask):
+        (WebCore::WebAnimation::reverse):
+        (WebCore::WebAnimation::runPendingPauseTask):
+        * animation/WebAnimation.h:
+        (WebCore::WebAnimation::playbackRate const):
+        * animation/WebAnimation.idl:
+
+2018-11-06  Antoine Quint  <graouts@apple.com>
+
         [Web Animations] Implement getTiming() and updateTiming()
         https://bugs.webkit.org/show_bug.cgi?id=186511
         <rdar://problem/41000677>

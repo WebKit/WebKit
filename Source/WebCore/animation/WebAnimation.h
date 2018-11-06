@@ -69,8 +69,8 @@ public:
     ExceptionOr<void> setCurrentTime(std::optional<Seconds>);
 
     enum class Silently { Yes, No };
-    double playbackRate() const { return m_playbackRate; }
-    void setPlaybackRate(double, Silently silently = Silently::No );
+    double playbackRate() const { return m_playbackRate + 0; }
+    void setPlaybackRate(double);
 
     enum class PlayState { Idle, Running, Paused, Finished };
     PlayState playState() const;
@@ -87,6 +87,7 @@ public:
     void cancel(Silently);
     ExceptionOr<void> finish();
     ExceptionOr<void> play();
+    void updatePlaybackRate(double);
     ExceptionOr<void> pause();
     ExceptionOr<void> reverse();
 
@@ -154,6 +155,8 @@ private:
     bool computeRelevance();
     void updateRelevance();
     void invalidateEffect();
+    double effectivePlaybackRate() const;
+    void applyPendingPlaybackRate();
 
     String m_id;
     RefPtr<AnimationEffect> m_effect;
@@ -163,6 +166,7 @@ private:
     std::optional<Seconds> m_holdTime;
     int m_suspendCount { 0 };
     double m_playbackRate { 1 };
+    std::optional<double> m_pendingPlaybackRate;
     bool m_isStopped { false };
     bool m_isSuspended { false };
     bool m_finishNotificationStepsMicrotaskPending;

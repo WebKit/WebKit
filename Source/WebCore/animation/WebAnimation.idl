@@ -53,5 +53,6 @@ enum AnimationPlayState {
     [MayThrowException] void finish();
     [MayThrowException, ImplementedAs=bindingsPlay] void play();
     [MayThrowException, ImplementedAs=bindingsPause] void pause();
+    void updatePlaybackRate(double playbackRate);
     [MayThrowException] void reverse();
 };
