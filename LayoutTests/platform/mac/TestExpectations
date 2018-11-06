@@ -1763,6 +1763,9 @@ webkit.org/b/187393 imported/w3c/web-platform-tests/2dcontext/imagebitmap/create
 [ Mojave+ ] fast/gradients/conic-gradient.html [ Pass ]
 [ Mojave+ ] fast/gradients/conic-two-hints.html [ Pass ]
 
+# Dark Mode is Mojave and later.
+[ Sierra HighSierra ] css-dark-mode [ Skip ]
+
 webkit.org/b/185651 legacy-animation-engine/animations/play-state-in-shorthand.html [ Pass Failure ]
 
 webkit.org/b/189686 webgl/2.0.0/conformance/textures/misc/tex-image-and-sub-image-2d-with-array-buffer-view.html [ Slow ]

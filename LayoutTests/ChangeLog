@@ -1,3 +1,16 @@
+2018-11-06  Timothy Hatcher  <timothy@apple.com>
+
+        Skip css-dark-mode tests on older macOS platforms
+        https://bugs.webkit.org/show_bug.cgi?id=191334
+
+        Reviewed by Brian Burg.
+
+        * platform/mac-highsierra/css-dark-mode/prefers-color-scheme-expected.txt: Removed.
+        * platform/mac-highsierra/css-dark-mode/supported-color-schemes-expected.txt: Removed.
+        * platform/mac-sierra/css-dark-mode/prefers-color-scheme-expected.txt: Removed.
+        * platform/mac-sierra/css-dark-mode/supported-color-schemes-expected.txt: Removed.
+        * platform/mac/TestExpectations: Skip css-dark-mode for Sierra and HighSierra.
+
 2018-11-06  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Remove cap on partitioned cache max age if it matches a network reload (redirect-only)
