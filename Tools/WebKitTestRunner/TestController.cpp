@@ -926,7 +926,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
 
     setHidden(false);
 
-    platformResetStateToConsistentValues(options);
+    platformResetStateToConsistentValues();
 
     m_shouldDecideNavigationPolicyAfterDelay = false;
     m_shouldDecideResponsePolicyAfterDelay = false;
@@ -1237,8 +1237,6 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
             testOptions.runSingly = parseBooleanTestHeaderValue(value);
         else if (key == "shouldIgnoreMetaViewport")
             testOptions.shouldIgnoreMetaViewport = parseBooleanTestHeaderValue(value);
-        else if (key == "spellCheckingDots")
-            testOptions.shouldShowSpellCheckingDots = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
     }
 }
@@ -2651,7 +2649,7 @@ WKContextRef TestController::platformAdjustContext(WKContextRef context, WKConte
     return context;
 }
 
-void TestController::platformResetStateToConsistentValues(const TestOptions&)
+void TestController::platformResetStateToConsistentValues()
 {
 }
 

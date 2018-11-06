@@ -203,7 +203,7 @@ void TestController::platformRunUntil(bool& done, WTF::Seconds timeout)
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:endDate];
 }
 
-void TestController::cocoaResetStateToConsistentValues(const TestOptions& options)
+void TestController::cocoaResetStateToConsistentValues()
 {
 #if WK_API_ENABLED
     __block bool doneRemoving = false;
@@ -213,15 +213,10 @@ void TestController::cocoaResetStateToConsistentValues(const TestOptions& option
     platformRunUntil(doneRemoving, noTimeout);
     [[_WKUserContentExtensionStore defaultStore] _removeAllContentExtensions];
 
-
     if (auto* webView = mainWebView()) {
         TestRunnerWKWebView *platformView = webView->platformView();
         [platformView.configuration.userContentController _removeAllUserContentFilters];
         platformView._viewScale = 1;
-
-        // Toggle on before the test, and toggle off after the test.
-        if (options.shouldShowSpellCheckingDots)
-            [platformView toggleContinuousSpellChecking:nil];
     }
 #endif
 }

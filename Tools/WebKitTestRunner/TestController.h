@@ -283,10 +283,10 @@ private:
     void platformCreateWebView(WKPageConfigurationRef, const TestOptions&);
     static PlatformWebView* platformCreateOtherPage(PlatformWebView* parentView, WKPageConfigurationRef, const TestOptions&);
     void platformResetPreferencesToConsistentValues();
-    void platformResetStateToConsistentValues(const TestOptions&);
+    void platformResetStateToConsistentValues();
 #if PLATFORM(COCOA)
     void cocoaPlatformInitialize();
-    void cocoaResetStateToConsistentValues(const TestOptions&);
+    void cocoaResetStateToConsistentValues();
 #endif
     void platformConfigureViewForTest(const TestInvocation&);
     void platformWillRunTest(const TestInvocation&);

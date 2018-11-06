@@ -27,10 +27,6 @@
 
 #if WK_API_ENABLED
 
-@interface WKWebView(SpellChecking)
-- (IBAction)toggleContinuousSpellChecking:(id)sender;
-@end
-
 @interface TestRunnerWKWebView : WKWebView
 
 #if PLATFORM(IOS_FAMILY)

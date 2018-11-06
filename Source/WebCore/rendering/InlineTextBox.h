@@ -157,10 +157,6 @@ public:
     virtual int offsetForPosition(float x, bool includePartialGlyphs = true) const;
     virtual float positionForOffset(unsigned offset) const;
 
-    bool hasMarkers() const;
-    FloatRect calculateUnionOfAllDocumentMarkerBounds() const;
-    FloatRect calculateDocumentMarkerBounds(const MarkedText&) const;
-
 private:
     struct MarkedTextStyle;
     struct StyledMarkedText;
@@ -168,7 +164,7 @@ private:
     enum class TextPaintPhase { Background, Foreground, Decoration };
 
     Vector<MarkedText> collectMarkedTextsForDraggedContent();
-    Vector<MarkedText> collectMarkedTextsForDocumentMarkers(TextPaintPhase) const;
+    Vector<MarkedText> collectMarkedTextsForDocumentMarkers(TextPaintPhase);
 
     MarkedTextStyle computeStyleForUnmarkedMarkedText(const PaintInfo&) const;
     StyledMarkedText resolveStyleForMarkedText(const MarkedText&, const MarkedTextStyle& baseStyle, const PaintInfo&);

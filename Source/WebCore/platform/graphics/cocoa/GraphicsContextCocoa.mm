@@ -185,6 +185,7 @@ static inline void setPatternPhaseInUserSpace(CGContextRef context, CGPoint phas
 
 static CGColorRef colorForMarkerLineStyle(DocumentMarkerLineStyle::Mode style, bool useDarkMode)
 {
+#if PLATFORM(MAC)
     switch (style) {
     // Red
     case DocumentMarkerLineStyle::Mode::Spelling:
@@ -198,6 +199,19 @@ static CGColorRef colorForMarkerLineStyle(DocumentMarkerLineStyle::Mode style, b
     case DocumentMarkerLineStyle::Mode::Grammar:
         return cachedCGColor(useDarkMode ? Color { 50, 215, 75, 217 } : Color { 25, 175, 50, 191 });
     }
+#else
+    UNUSED_PARAM(useDarkMode);
+    switch (style) {
+    case DocumentMarkerLineStyle::Mode::Spelling:
+        return [getUIColorClass() systemRedColor].CGColor;
+    case DocumentMarkerLineStyle::Mode::DictationAlternatives:
+    case DocumentMarkerLineStyle::Mode::TextCheckingDictationPhraseWithAlternatives:
+    case DocumentMarkerLineStyle::Mode::AutocorrectionReplacement:
+        return [getUIColorClass() systemBlueColor].CGColor;
+    case DocumentMarkerLineStyle::Mode::Grammar:
+        return [getUIColorClass() systemGreenColor].CGColor;
+    }
+#endif
 }
 
 void GraphicsContext::drawDotsForDocumentMarker(const FloatRect& rect, DocumentMarkerLineStyle style)
@@ -205,33 +219,28 @@ void GraphicsContext::drawDotsForDocumentMarker(const FloatRect& rect, DocumentM
     if (paintingDisabled())
         return;
 
-    // We want to find the number of full dots, so we're solving the equations:
-    // dotDiameter = height
-    // dotDiameter / dotGap = 13.247 / 9.457
-    // numberOfGaps = numberOfDots - 1
-    // dotDiameter * numberOfDots + dotGap * numberOfGaps = width
-
-    auto width = rect.width();
-    auto dotDiameter = rect.height();
-    auto dotGap = dotDiameter * 9.457 / 13.247;
-    auto numberOfDots = (width + dotGap) / (dotDiameter + dotGap);
-    auto numberOfWholeDots = static_cast<unsigned>(numberOfDots);
-    auto numberOfWholeGaps = numberOfWholeDots - 1;
-
-    // Center the dots
-    auto offset = (width - (dotDiameter * numberOfWholeDots + dotGap * numberOfWholeGaps)) / 2;
-
     auto circleColor = colorForMarkerLineStyle(style.mode, style.shouldUseDarkAppearance);
+
+    auto lineThickness = rect.height();
+    auto patternGapWidth = lineThickness / 3;
+    auto patternWidth = lineThickness + patternGapWidth;
+
+    FloatPoint offsetPoint = rect.location();
+    auto width = rect.width();
+    float widthMod = fmodf(width, patternWidth);
+    if (patternWidth - widthMod > patternGapWidth) {
+        float gapIncludeWidth = 0;
+        if (width > patternWidth)
+            gapIncludeWidth = patternGapWidth;
+        offsetPoint.move(floor((widthMod + gapIncludeWidth) / 2), 0);
+        width -= widthMod;
+    }
 
     CGContextRef platformContext = this->platformContext();
     CGContextStateSaver stateSaver { platformContext };
     CGContextSetFillColorWithColor(platformContext, circleColor);
-    for (unsigned i = 0; i < numberOfWholeDots; ++i) {
-        auto location = rect.location();
-        location.move(offset + i * (dotDiameter + dotGap), 0);
-        auto size = FloatSize(dotDiameter, dotDiameter);
-        CGContextAddEllipseInRect(platformContext, FloatRect(location, size));
-    }
+    for (int x = 0; x < width; x += patternWidth)
+        CGContextAddEllipseInRect(platformContext, CGRectMake(offsetPoint.x() + x, offsetPoint.y(), lineThickness, lineThickness));
     CGContextSetCompositeOperation(platformContext, kCGCompositeSover);
     CGContextFillPath(platformContext);
 }

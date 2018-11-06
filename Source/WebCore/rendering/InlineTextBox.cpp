@@ -543,9 +543,6 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     if (paintInfo.phase == PaintPhase::Foreground)
         renderer().page().addRelevantRepaintedObject(&renderer(), IntRect(boxOrigin.x(), boxOrigin.y(), logicalWidth(), logicalHeight()));
 
-    if (paintInfo.phase == PaintPhase::Foreground)
-        paintPlatformDocumentMarkers(context, boxOrigin);
-
     // 2. Now paint the foreground, including text and decorations like underline/overline (in quirks mode only).
     bool shouldPaintSelectionForeground = haveSelection && !useCustomUnderlines;
     Vector<MarkedText> markedTexts;
@@ -623,8 +620,12 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     }
 
     // 3. Paint fancy decorations, including composition underlines and platform-specific underlines for spelling errors, grammar errors, et cetera.
-    if (paintInfo.phase == PaintPhase::Foreground && useCustomUnderlines)
-        paintCompositionUnderlines(paintInfo, boxOrigin);
+    if (paintInfo.phase == PaintPhase::Foreground) {
+        paintPlatformDocumentMarkers(context, boxOrigin);
+
+        if (useCustomUnderlines)
+            paintCompositionUnderlines(paintInfo, boxOrigin);
+    }
     
     if (shouldRotate)
         context.concatCTM(rotation(boxRect, Counterclockwise));
@@ -664,44 +665,10 @@ std::pair<unsigned, unsigned> InlineTextBox::selectionStartEnd() const
     return { clampedOffset(start), clampedOffset(end) };
 }
 
-bool InlineTextBox::hasMarkers() const
-{
-    return collectMarkedTextsForDocumentMarkers(TextPaintPhase::Decoration).size();
-}
-
 void InlineTextBox::paintPlatformDocumentMarkers(GraphicsContext& context, const FloatPoint& boxOrigin)
 {
-    // This must match calculateUnionOfAllDocumentMarkerBounds().
     for (auto& markedText : subdivide(collectMarkedTextsForDocumentMarkers(TextPaintPhase::Decoration), OverlapStrategy::Frontmost))
         paintPlatformDocumentMarker(context, boxOrigin, markedText);
-}
-
-FloatRect InlineTextBox::calculateUnionOfAllDocumentMarkerBounds() const
-{
-    // This must match paintPlatformDocumentMarkers().
-    FloatRect result;
-    for (auto& markedText : subdivide(collectMarkedTextsForDocumentMarkers(TextPaintPhase::Decoration), OverlapStrategy::Frontmost))
-        result = unionRect(result, calculateDocumentMarkerBounds(markedText));
-    return result;
-}
-
-FloatRect InlineTextBox::calculateDocumentMarkerBounds(const MarkedText& markedText) const
-{
-    auto& font = lineFont();
-    auto ascent = font.fontMetrics().ascent();
-    auto fontSize = std::min(std::max(font.size(), 10.0f), 40.0f);
-    auto y = ascent + 0.11035 * fontSize;
-    auto height = 0.13247 * fontSize;
-
-    // Avoid measuring the text when the entire line box is selected as an optimization.
-    if (markedText.startOffset || markedText.endOffset != clampedOffset(end() + 1)) {
-        TextRun run = createTextRun();
-        LayoutRect selectionRect = LayoutRect(0, y, 0, height);
-        lineFont().adjustSelectionRectForText(run, selectionRect, markedText.startOffset, markedText.endOffset);
-        return selectionRect;
-    }
-
-    return FloatRect(0, y, logicalWidth(), height);
 }
 
 void InlineTextBox::paintPlatformDocumentMarker(GraphicsContext& context, const FloatPoint& boxOrigin, const MarkedText& markedText)
@@ -713,11 +680,27 @@ void InlineTextBox::paintPlatformDocumentMarker(GraphicsContext& context, const 
     if (m_truncation == cFullTruncation)
         return;
 
-    auto bounds = calculateDocumentMarkerBounds(markedText);
+    float start = 0; // start of line to draw, relative to tx
+    float width = logicalWidth(); // how much line to draw
 
-    auto lineStyleForMarkedTextType = [&]() -> DocumentMarkerLineStyle {
+    // Avoid measuring the text when the entire line box is selected as an optimization.
+    if (markedText.startOffset || markedText.endOffset != clampedOffset(end() + 1)) {
+        // Calculate start & width
+        int deltaY = renderer().style().isFlippedLinesWritingMode() ? selectionBottom() - logicalBottom() : logicalTop() - selectionTop();
+        int selHeight = selectionHeight();
+        FloatPoint startPoint(boxOrigin.x(), boxOrigin.y() - deltaY);
+        TextRun run = createTextRun();
+
+        LayoutRect selectionRect = LayoutRect(startPoint, FloatSize(0, selHeight));
+        lineFont().adjustSelectionRectForText(run, selectionRect, markedText.startOffset, markedText.endOffset);
+        IntRect markerRect = enclosingIntRect(selectionRect);
+        start = markerRect.x() - startPoint.x();
+        width = markerRect.width();
+    }
+
+    auto lineStyleForMarkedTextType = [&] (MarkedText::Type type) -> DocumentMarkerLineStyle {
         bool shouldUseDarkAppearance = renderer().document().useDarkAppearance();
-        switch (markedText.type) {
+        switch (type) {
         case MarkedText::SpellingError:
             return { DocumentMarkerLineStyle::Mode::Spelling, shouldUseDarkAppearance };
         case MarkedText::GrammarError:
@@ -737,8 +720,25 @@ void InlineTextBox::paintPlatformDocumentMarker(GraphicsContext& context, const 
         }
     };
 
-    bounds.moveBy(boxOrigin);
-    context.drawDotsForDocumentMarker(bounds, lineStyleForMarkedTextType());
+    // IMPORTANT: The misspelling underline is not considered when calculating the text bounds, so we have to
+    // make sure to fit within those bounds.  This means the top pixel(s) of the underline will overlap the
+    // bottom pixel(s) of the glyphs in smaller font sizes.  The alternatives are to increase the line spacing (bad!!)
+    // or decrease the underline thickness.  The overlap is actually the most useful, and matches what AppKit does.
+    // So, we generally place the underline at the bottom of the text, but in larger fonts that's not so good so
+    // we pin to two pixels under the baseline.
+    int lineThickness = 3;
+    int baseline = lineStyle().fontMetrics().ascent();
+    int descent = logicalHeight() - baseline;
+    int underlineOffset;
+    if (descent <= (2 + lineThickness)) {
+        // Place the underline at the very bottom of the text in small/medium fonts.
+        underlineOffset = logicalHeight() - lineThickness;
+    } else {
+        // In larger fonts, though, place the underline up near the baseline to prevent a big gap.
+        underlineOffset = baseline + 2;
+    }
+
+    context.drawDotsForDocumentMarker(FloatRect(boxOrigin.x() + start, boxOrigin.y() + underlineOffset, width, lineThickness), lineStyleForMarkedTextType(markedText.type));
 }
 
 auto InlineTextBox::computeStyleForUnmarkedMarkedText(const PaintInfo& paintInfo) const -> MarkedTextStyle
@@ -855,7 +855,7 @@ Vector<MarkedText> InlineTextBox::collectMarkedTextsForDraggedContent()
     return result;
 }
 
-Vector<MarkedText> InlineTextBox::collectMarkedTextsForDocumentMarkers(TextPaintPhase phase) const
+Vector<MarkedText> InlineTextBox::collectMarkedTextsForDocumentMarkers(TextPaintPhase phase)
 {
     ASSERT_ARG(phase, phase == TextPaintPhase::Background || phase == TextPaintPhase::Foreground || phase == TextPaintPhase::Decoration);
 

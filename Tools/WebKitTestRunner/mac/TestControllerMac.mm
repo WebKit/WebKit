@@ -102,9 +102,9 @@ void TestController::platformResetPreferencesToConsistentValues()
 {
 }
 
-void TestController::platformResetStateToConsistentValues(const TestOptions& options)
+void TestController::platformResetStateToConsistentValues()
 {
-    cocoaResetStateToConsistentValues(options);
+    cocoaResetStateToConsistentValues();
 
     while ([NSApp nextEventMatchingMask:NSEventMaskGesture | NSEventMaskScrollWheel untilDate:nil inMode:NSDefaultRunLoopMode dequeue:YES]) {
         // Clear out (and ignore) any pending gesture and scroll wheel events.
