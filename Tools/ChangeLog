@@ -1,5 +1,16 @@
 2018-11-06  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-app] Fix Invalid HTTP_HOST header
+        https://bugs.webkit.org/show_bug.cgi?id=191325
+
+        Reviewed by Lucas Forschler.
+
+        Changing ALLOWED_HOSTS to * as the landing page should be publicly accessible.
+
+        * BuildSlaveSupport/ews-app/ews-app/settings.py:
+
+2018-11-06  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-app] Rename EWS_app to ews-app - part 2
         https://bugs.webkit.org/show_bug.cgi?id=191317
 
