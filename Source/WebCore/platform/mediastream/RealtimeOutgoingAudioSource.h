@@ -65,6 +65,7 @@ protected:
     explicit RealtimeOutgoingAudioSource(Ref<MediaStreamTrackPrivate>&&);
 
     void observeSource();
+    void unobserveSource();
 
     virtual void pullAudioData() { }
 

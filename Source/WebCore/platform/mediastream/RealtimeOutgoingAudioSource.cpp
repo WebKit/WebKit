@@ -47,6 +47,11 @@ void RealtimeOutgoingAudioSource::observeSource()
     initializeConverter();
 }
 
+void RealtimeOutgoingAudioSource::unobserveSource()
+{
+    m_audioSource->removeObserver(*this);
+}
+
 bool RealtimeOutgoingAudioSource::setSource(Ref<MediaStreamTrackPrivate>&& newSource)
 {
     m_audioSource->removeObserver(*this);

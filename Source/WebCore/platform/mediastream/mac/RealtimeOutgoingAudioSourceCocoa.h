@@ -43,6 +43,7 @@ public:
 
 private:
     explicit RealtimeOutgoingAudioSourceCocoa(Ref<MediaStreamTrackPrivate>&&);
+    ~RealtimeOutgoingAudioSourceCocoa();
 
     void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;
 

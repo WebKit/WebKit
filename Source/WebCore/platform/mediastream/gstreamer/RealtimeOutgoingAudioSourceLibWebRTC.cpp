@@ -39,6 +39,7 @@ RealtimeOutgoingAudioSourceLibWebRTC::RealtimeOutgoingAudioSourceLibWebRTC(Ref<M
 
 RealtimeOutgoingAudioSourceLibWebRTC::~RealtimeOutgoingAudioSourceLibWebRTC()
 {
+    unobserveSource();
     if (m_sampleConverter)
         g_clear_pointer(&m_sampleConverter, gst_audio_converter_free);
 }

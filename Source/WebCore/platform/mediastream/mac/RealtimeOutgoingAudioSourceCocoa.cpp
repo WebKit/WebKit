@@ -50,6 +50,11 @@ RealtimeOutgoingAudioSourceCocoa::RealtimeOutgoingAudioSourceCocoa(Ref<MediaStre
     observeSource();
 }
 
+RealtimeOutgoingAudioSourceCocoa::~RealtimeOutgoingAudioSourceCocoa()
+{
+    unobserveSource();
+}
+
 Ref<RealtimeOutgoingAudioSource> RealtimeOutgoingAudioSource::create(Ref<MediaStreamTrackPrivate>&& audioSource)
 {
     return RealtimeOutgoingAudioSourceCocoa::create(WTFMove(audioSource));

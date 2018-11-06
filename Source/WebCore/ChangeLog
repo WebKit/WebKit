@@ -1,5 +1,27 @@
 2018-11-06  Youenn Fablet  <youenn@apple.com>
 
+        RealtimeOutgoingAudioSourceCocoa should unobserve its source at destruction time
+        https://bugs.webkit.org/show_bug.cgi?id=191295
+
+        Reviewed by Eric Carlson.
+
+        Make RealtimeOutgoingAudioSource subclasses unobserve their source
+        inside their destructor instead of RealtimeOutgoingAudioSource.
+        This is consistent with how starting to observe works.
+        Covered by existing tests.
+
+        * platform/mediastream/RealtimeOutgoingAudioSource.cpp:
+        (WebCore::RealtimeOutgoingAudioSource::unobserveSource):
+        * platform/mediastream/RealtimeOutgoingAudioSource.h:
+        * platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceLibWebRTC.cpp:
+        (WebCore::RealtimeOutgoingAudioSourceLibWebRTC::~RealtimeOutgoingAudioSourceLibWebRTC):
+        * platform/mediastream/mac/RealtimeOutgoingAudioSourceCocoa.cpp:
+        (WebCore::RealtimeOutgoingAudioSourceCocoa::RealtimeOutgoingAudioSourceCocoa):
+        (WebCore::RealtimeOutgoingAudioSourceCocoa::~RealtimeOutgoingAudioSourceCocoa):
+        * platform/mediastream/mac/RealtimeOutgoingAudioSourceCocoa.h:
+
+2018-11-06  Youenn Fablet  <youenn@apple.com>
+
         Make sure RTCIceCandidateStats address is undefined for host and peer reflexive case
         https://bugs.webkit.org/show_bug.cgi?id=191263
 
