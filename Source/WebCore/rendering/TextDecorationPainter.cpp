@@ -116,7 +116,6 @@ static void strokeWavyTextDecoration(GraphicsContext& context, const FloatRect& 
     context.setStrokeThickness(strokeThickness);
 }
 
-#if ENABLE(CSS3_TEXT_DECORATION_SKIP_INK)
 static bool compareTuples(std::pair<float, float> l, std::pair<float, float> r)
 {
     return l.first < r.first;
@@ -167,7 +166,6 @@ static DashArray translateIntersectionPointsToSkipInkBoundaries(const DashArray&
     
     return result;
 }
-#endif
 
 static StrokeStyle textDecorationStyleToStrokeStyle(TextDecorationStyle decorationStyle)
 {
@@ -212,10 +210,6 @@ TextDecorationPainter::TextDecorationPainter(GraphicsContext& context, OptionSet
 
 void TextDecorationPainter::paintTextDecoration(const TextRun& textRun, const FloatPoint& textOrigin, const FloatPoint& boxOrigin)
 {
-#if !ENABLE(CSS3_TEXT_DECORATION_SKIP_INK)
-    UNUSED_PARAM(textRun);
-    UNUSED_PARAM(textOrigin);
-#endif
     const auto& fontMetrics = m_lineStyle.fontMetrics();
     float textDecorationThickness = textDecorationStrokeThickness(m_lineStyle.computedFontPixelSize());
     FloatPoint localOrigin = boxOrigin;
@@ -228,7 +222,6 @@ void TextDecorationPainter::paintTextDecoration(const TextRun& textRun, const Fl
         if (style == TextDecorationStyle::Wavy)
             strokeWavyTextDecoration(m_context, rect, m_lineStyle.computedFontPixelSize());
         else if (decoration == TextDecoration::Underline || decoration == TextDecoration::Overline) {
-#if ENABLE(CSS3_TEXT_DECORATION_SKIP_INK)
             if ((m_lineStyle.textDecorationSkip() == TextDecorationSkip::Ink || m_lineStyle.textDecorationSkip() == TextDecorationSkip::Auto) && m_isHorizontal) {
                 if (!m_context.paintingDisabled()) {
                     FloatRect underlineBoundingBox = m_context.computeUnderlineBoundsForText(rect, m_isPrinting);
@@ -238,11 +231,10 @@ void TextDecorationPainter::paintTextDecoration(const TextRun& textRun, const Fl
                     // We don't use underlineBoundingBox here because drawLinesForText() will run computeUnderlineBoundsForText() internally.
                     m_context.drawLinesForText(rect.location(), rect.height(), boundaries, m_isPrinting, style == TextDecorationStyle::Double, strokeStyle);
                 }
-            } else
+            } else {
                 // FIXME: Need to support text-decoration-skip: none.
-#endif
                 m_context.drawLineForText(rect, m_isPrinting, style == TextDecorationStyle::Double, strokeStyle);
-            
+            }
         } else {
             ASSERT(decoration == TextDecoration::LineThrough);
             m_context.drawLineForText(rect, m_isPrinting, style == TextDecorationStyle::Double, strokeStyle);

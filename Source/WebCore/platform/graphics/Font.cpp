@@ -663,4 +663,15 @@ bool Font::canRenderCombiningCharacterSequence(const UChar* characters, size_t l
     }
     return true;
 }
+
+// Don't store the result of this! The hash map is free to rehash at any point, leaving this reference dangling.
+const Path& Font::pathForGlyph(Glyph glyph) const
+{
+    if (const auto& path = m_glyphPathMap.existingMetricsForGlyph(glyph))
+        return *path;
+    auto path = platformPathForGlyph(glyph);
+    m_glyphPathMap.setMetricsForGlyph(glyph, path);
+    return *m_glyphPathMap.existingMetricsForGlyph(glyph);
+}
+
 } // namespace WebCore

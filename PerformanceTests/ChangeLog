@@ -1,3 +1,14 @@
+2018-11-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Cache glyph paths and share underline skipping code between all the ports
+        https://bugs.webkit.org/show_bug.cgi?id=191239
+
+        Reviewed by Alex Christensen.
+
+        Measures the performance of drawing a whole lot of underlines
+
+        * Layout/underline.html: Added.
+
 2018-10-25  Saam Barati  <sbarati@apple.com>
 
         Check in corresponding C code in JetStream 2

@@ -1,3 +1,14 @@
+2018-11-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Cache glyph paths and share underline skipping code between all the ports
+        https://bugs.webkit.org/show_bug.cgi?id=191239
+
+        Reviewed by Alex Christensen.
+
+        Remove CSS3_TEXT_DECORATION_SKIP_INK. It's now interoperable and part of the Web Platform.
+
+        * wtf/Platform.h:
+
 2018-11-05  Dominik Infuehr  <dinfuehr@igalia.com>
 
         Enable LLInt on ARMv7/Linux

@@ -57,6 +57,7 @@ CTLineRef CTLineCreateWithAttributedString(CFAttributedStringRef);
 void CTLineDraw(CTLineRef, CGContextRef);
 CFDataRef CTFontCopyTable(CTFontRef, CTFontTableTag, CTFontTableOptions);
 CFArrayRef CTFontCopyAvailableTables(CTFontRef, CTFontTableOptions);
+CGPathRef CTFontCreatePathForGlyph(CTFontRef, CGGlyph, const CGAffineTransform*);
 
 WTF_EXTERN_C_END
 

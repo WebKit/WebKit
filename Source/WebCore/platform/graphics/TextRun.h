@@ -35,7 +35,6 @@ class FloatRect;
 class FontCascade;
 class GraphicsContext;
 class GlyphBuffer;
-class GlyphToPathTranslator;
 class Font;
 
 struct GlyphData;

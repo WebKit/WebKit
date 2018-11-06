@@ -152,6 +152,21 @@ float Font::platformWidthForGlyph(Glyph glyph) const
     return advance.width + m_syntheticBoldOffset;
 }
 
+Path Font::platformPathForGlyph(Glyph glyph) const
+{
+    auto ctFont = adoptCF(CTFontCreateWithGraphicsFont(platformData().cgFont(), platformData().size(), nullptr, nullptr));
+    auto result = adoptCF(CTFontCreatePathForGlyph(ctFont.get(), glyph, nullptr));
+    auto syntheticBoldOffset = this->syntheticBoldOffset();
+    if (syntheticBoldOffset) {
+        auto newPath = adoptCF(CGPathCreateMutable());
+        CGPathAddPath(newPath.get(), nullptr, result.get());
+        auto translation = CGAffineTransformMakeTranslation(syntheticBoldOffset, 0);
+        CGPathAddPath(newPath.get(), &translation, result.get());
+        return newPath;
+    }
+    return adoptCF(CGPathCreateMutableCopy(result.get()));
+}
+
 }
 
 #endif

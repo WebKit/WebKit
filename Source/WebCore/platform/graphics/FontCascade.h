@@ -81,18 +81,6 @@ struct GlyphOverflow {
     bool computeBounds { false };
 };
 
-class GlyphToPathTranslator {
-public:
-    enum class GlyphUnderlineType {SkipDescenders, SkipGlyph, DrawOverGlyph};
-    virtual bool containsMorePaths() = 0;
-    virtual Path path() = 0;
-    virtual std::pair<float, float> extents() = 0;
-    virtual GlyphUnderlineType underlineType() = 0;
-    virtual void advance() = 0;
-    virtual ~GlyphToPathTranslator() = default;
-};
-GlyphToPathTranslator::GlyphUnderlineType computeUnderlineType(const TextRun&, const GlyphBuffer&, unsigned index);
-
 class TextLayoutDeleter {
 public:
     void operator()(TextLayout*) const;

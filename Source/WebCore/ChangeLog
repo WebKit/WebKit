@@ -1,5 +1,73 @@
 2018-11-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Cache glyph paths and share underline skipping code between all the ports
+        https://bugs.webkit.org/show_bug.cgi?id=191239
+
+        Reviewed by Alex Christensen.
+
+        I was hoping that caching the glyph paths was going to be a performance progression,
+        but it turns out that the additional overhead of WebCore::Path compensated for it.
+        In total, the performance is the same (my testing says that this patch is a 1%
+        progression, but that's within the noise).
+
+        Because the ink skipping logic is now shared among all ports, Windows now gets it for
+        free.
+
+        Test: PerformanceTests/Layout/underline.html
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::pathForGlyph const):
+        * platform/graphics/Font.h:
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::computeUnderlineType):
+        (WebCore::GlyphIterationState::GlyphIterationState):
+        (WebCore::findIntersectionPoint):
+        (WebCore::updateX):
+        (WebCore::findPathIntersections):
+        (WebCore::GlyphToPathTranslator::GlyphToPathTranslator):
+        (WebCore::GlyphToPathTranslator::containsMorePaths):
+        (WebCore::GlyphToPathTranslator::path):
+        (WebCore::GlyphToPathTranslator::extents):
+        (WebCore::GlyphToPathTranslator::underlineType):
+        (WebCore::GlyphToPathTranslator::advance):
+        (WebCore::FontCascade::dashesForIntersectionsWithRect const):
+        * platform/graphics/FontCascade.h:
+        * platform/graphics/GlyphMetricsMap.h:
+        (WebCore::GlyphMetricsMap::existingMetricsForGlyph):
+        (WebCore::GlyphMetricsMap::GlyphMetricsPage::existingMetricsForGlyph const):
+        (WebCore::GlyphMetricsMap<std::optional<Path>>::unknownMetrics):
+        * platform/graphics/TextRun.h:
+        * platform/graphics/cairo/FontCairo.cpp:
+        (WebCore::Font::platformPathForGlyph const):
+        (WebCore::GlyphIterationState::GlyphIterationState): Deleted.
+        (WebCore::findIntersectionPoint): Deleted.
+        (WebCore::updateX): Deleted.
+        (WebCore::findPathIntersections): Deleted.
+        (): Deleted.
+        (WebCore::CairoGlyphToPathTranslator::path): Deleted.
+        (WebCore::CairoGlyphToPathTranslator::extents): Deleted.
+        (WebCore::CairoGlyphToPathTranslator::underlineType): Deleted.
+        (WebCore::CairoGlyphToPathTranslator::advance): Deleted.
+        (WebCore::FontCascade::dashesForIntersectionsWithRect const): Deleted.
+        * platform/graphics/cocoa/FontCascadeCocoa.mm:
+        (WebCore::GlyphIterationState::GlyphIterationState): Deleted.
+        (WebCore::findIntersectionPoint): Deleted.
+        (WebCore::updateX): Deleted.
+        (WebCore::findPathIntersections): Deleted.
+        (): Deleted.
+        (WebCore::MacGlyphToPathTranslator::path): Deleted.
+        (WebCore::MacGlyphToPathTranslator::extents): Deleted.
+        (WebCore::MacGlyphToPathTranslator::underlineType): Deleted.
+        (WebCore::MacGlyphToPathTranslator::advance): Deleted.
+        (WebCore::FontCascade::dashesForIntersectionsWithRect const): Deleted.
+        * platform/graphics/cocoa/FontCocoa.mm:
+        (WebCore::Font::platformPathForGlyph const):
+        * rendering/TextDecorationPainter.cpp:
+        (WebCore::drawSkipInkUnderline):
+        (WebCore::TextDecorationPainter::paintTextDecoration):
+
+2018-11-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Clean up text decoration drawing code
         https://bugs.webkit.org/show_bug.cgi?id=191245
 

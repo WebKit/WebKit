@@ -1237,18 +1237,25 @@ bool FontCascade::isLoadingCustomFonts() const
 {
     return m_fonts && m_fonts->isLoadingCustomFonts();
 }
+
+enum class GlyphUnderlineType : uint8_t {
+    SkipDescenders,
+    SkipGlyph,
+    DrawOverGlyph
+};
     
-GlyphToPathTranslator::GlyphUnderlineType computeUnderlineType(const TextRun& textRun, const GlyphBuffer& glyphBuffer, unsigned index)
+static GlyphUnderlineType computeUnderlineType(const TextRun& textRun, const GlyphBuffer& glyphBuffer, unsigned index)
 {
     // In general, we want to skip descenders. However, skipping descenders on CJK characters leads to undesirable renderings,
     // so we want to draw through CJK characters (on a character-by-character basis).
+    // FIXME: The CSS spec says this should instead be done by the user-agent stylesheet using the lang= attribute.
     UChar32 baseCharacter;
     unsigned offsetInString = glyphBuffer.offsetInString(index);
 
     if (offsetInString == GlyphBuffer::noOffset || offsetInString >= textRun.length()) {
         // We have no idea which character spawned this glyph. Bail.
         ASSERT_WITH_SECURITY_IMPLICATION(offsetInString < textRun.length());
-        return GlyphToPathTranslator::GlyphUnderlineType::DrawOverGlyph;
+        return GlyphUnderlineType::DrawOverGlyph;
     }
     
     if (textRun.is8Bit())
@@ -1285,9 +1292,9 @@ GlyphToPathTranslator::GlyphUnderlineType computeUnderlineType(const TextRun& te
     case UBLOCK_HANGUL_SYLLABLES:
     case UBLOCK_HANGUL_JAMO_EXTENDED_A:
     case UBLOCK_HANGUL_JAMO_EXTENDED_B:
-        return GlyphToPathTranslator::GlyphUnderlineType::DrawOverGlyph;
+        return GlyphUnderlineType::DrawOverGlyph;
     default:
-        return GlyphToPathTranslator::GlyphUnderlineType::SkipDescenders;
+        return GlyphUnderlineType::SkipDescenders;
     }
 }
 
@@ -1656,6 +1663,180 @@ void FontCascade::drawEmphasisMarksForComplexText(GraphicsContext& context, cons
         return;
 
     drawEmphasisMarks(context, glyphBuffer, mark, FloatPoint(point.x() + initialAdvance, point.y()));
+}
+
+struct GlyphIterationState {
+    FloatPoint startingPoint;
+    FloatPoint currentPoint;
+    float y1;
+    float y2;
+    float minX;
+    float maxX;
+};
+
+static std::optional<float> findIntersectionPoint(float y, FloatPoint p1, FloatPoint p2)
+{
+    if ((p1.y() < y && p2.y() > y) || (p1.y() > y && p2.y() < y))
+        return p1.x() + (y - p1.y()) * (p2.x() - p1.x()) / (p2.y() - p1.y());
+    return std::nullopt;
+}
+
+static void updateX(GlyphIterationState& state, float x)
+{
+    state.minX = std::min(state.minX, x);
+    state.maxX = std::max(state.maxX, x);
+}
+
+// This function is called by CGPathApply and is therefore invoked for each
+// contour in a glyph. This function models each contours as a straight line
+// and calculates the intersections between each pseudo-contour and
+// two horizontal lines (the upper and lower bounds of an underline) found in
+// GlyphIterationState::y1 and GlyphIterationState::y2. It keeps track of the
+// leftmost and rightmost intersection in GlyphIterationState::minX and
+// GlyphIterationState::maxX.
+static void findPathIntersections(GlyphIterationState& state, const PathElement& element)
+{
+    bool doIntersection = false;
+    FloatPoint point = FloatPoint();
+    switch (element.type) {
+    case PathElementMoveToPoint:
+        state.startingPoint = element.points[0];
+        state.currentPoint = element.points[0];
+        break;
+    case PathElementAddLineToPoint:
+        doIntersection = true;
+        point = element.points[0];
+        break;
+    case PathElementAddQuadCurveToPoint:
+        doIntersection = true;
+        point = element.points[1];
+        break;
+    case PathElementAddCurveToPoint:
+        doIntersection = true;
+        point = element.points[2];
+        break;
+    case PathElementCloseSubpath:
+        doIntersection = true;
+        point = state.startingPoint;
+        break;
+    }
+    if (!doIntersection)
+        return;
+    if (auto intersectionPoint = findIntersectionPoint(state.y1, state.currentPoint, point))
+        updateX(state, *intersectionPoint);
+    if (auto intersectionPoint = findIntersectionPoint(state.y2, state.currentPoint, point))
+        updateX(state, *intersectionPoint);
+    if ((state.currentPoint.y() >= state.y1 && state.currentPoint.y() <= state.y2)
+        || (state.currentPoint.y() <= state.y1 && state.currentPoint.y() >= state.y2))
+        updateX(state, state.currentPoint.x());
+    state.currentPoint = point;
+}
+
+class GlyphToPathTranslator {
+public:
+    GlyphToPathTranslator(const TextRun& textRun, const GlyphBuffer& glyphBuffer, const FloatPoint& textOrigin)
+        : m_index(0)
+        , m_textRun(textRun)
+        , m_glyphBuffer(glyphBuffer)
+        , m_fontData(glyphBuffer.fontAt(m_index))
+        , m_translation(AffineTransform::translation(textOrigin.x(), textOrigin.y()).scale(1, -1))
+    {
+    }
+
+    bool containsMorePaths() { return m_index != m_glyphBuffer.size(); }
+    Path path();
+    std::pair<float, float> extents();
+    GlyphUnderlineType underlineType();
+    void advance();
+
+private:
+    unsigned m_index;
+    const TextRun& m_textRun;
+    const GlyphBuffer& m_glyphBuffer;
+    const Font* m_fontData;
+    AffineTransform m_translation;
+};
+
+Path GlyphToPathTranslator::path()
+{
+    Path path = m_fontData->pathForGlyph(m_glyphBuffer.glyphAt(m_index));
+    path.transform(m_translation);
+    return path;
+}
+
+std::pair<float, float> GlyphToPathTranslator::extents()
+{
+    auto beginning = m_translation.mapPoint(FloatPoint(0, 0));
+    auto advance = m_glyphBuffer.advanceAt(m_index);
+    auto end = m_translation.mapSize(FloatSize(advance.width(), advance.height()));
+    return std::make_pair(beginning.x(), beginning.x() + end.width());
+}
+
+auto GlyphToPathTranslator::underlineType() -> GlyphUnderlineType
+{
+    return computeUnderlineType(m_textRun, m_glyphBuffer, m_index);
+}
+
+void GlyphToPathTranslator::advance()
+{
+    GlyphBufferAdvance advance = m_glyphBuffer.advanceAt(m_index);
+    m_translation.translate(FloatSize(advance.width(), advance.height()));
+    ++m_index;
+    if (m_index < m_glyphBuffer.size())
+        m_fontData = m_glyphBuffer.fontAt(m_index);
+}
+
+DashArray FontCascade::dashesForIntersectionsWithRect(const TextRun& run, const FloatPoint& textOrigin, const FloatRect& lineExtents) const
+{
+    if (isLoadingCustomFonts())
+        return DashArray();
+
+    GlyphBuffer glyphBuffer;
+    glyphBuffer.saveOffsetsInString();
+    float deltaX;
+    if (codePath(run) != FontCascade::Complex)
+        deltaX = getGlyphsAndAdvancesForSimpleText(run, 0, run.length(), glyphBuffer);
+    else
+        deltaX = getGlyphsAndAdvancesForComplexText(run, 0, run.length(), glyphBuffer);
+
+    if (!glyphBuffer.size())
+        return DashArray();
+
+    FloatPoint origin = FloatPoint(textOrigin.x() + deltaX, textOrigin.y());
+    GlyphToPathTranslator translator(run, glyphBuffer, origin);
+    DashArray result;
+    for (unsigned index = 0; translator.containsMorePaths(); ++index, translator.advance()) {
+        GlyphIterationState info = { FloatPoint(0, 0), FloatPoint(0, 0), lineExtents.y(), lineExtents.y() + lineExtents.height(), lineExtents.x() + lineExtents.width(), lineExtents.x() };
+        const Font* localFont = glyphBuffer.fontAt(index);
+        if (!localFont) {
+            // The advances will get all messed up if we do anything other than bail here.
+            result.clear();
+            break;
+        }
+        switch (translator.underlineType()) {
+        case GlyphUnderlineType::SkipDescenders: {
+            Path path = translator.path();
+            path.apply([&](const PathElement& element) {
+                findPathIntersections(info, element);
+            });
+            if (info.minX < info.maxX) {
+                result.append(info.minX - lineExtents.x());
+                result.append(info.maxX - lineExtents.x());
+            }
+            break;
+        }
+        case GlyphUnderlineType::SkipGlyph: {
+            std::pair<float, float> extents = translator.extents();
+            result.append(extents.first - lineExtents.x());
+            result.append(extents.second - lineExtents.x());
+            break;
+        }
+        case GlyphUnderlineType::DrawOverGlyph:
+            // Nothing to do
+            break;
+        }
+    }
+    return result;
 }
 
 }
