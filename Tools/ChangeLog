@@ -1,3 +1,18 @@
+2018-11-06  Sihui Liu  <sihui_liu@apple.com>
+
+        IndexedDB: WAL file keeps growing
+        https://bugs.webkit.org/show_bug.cgi?id=191294
+        <rdar://problem/41333493>
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBTempFileSize-1.html: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBTempFileSize-2.html: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBTempFileSize.mm: Added.
+        (-[IndexedDBFileSizeMessageHandler userContentController:didReceiveScriptMessage:]):
+        (TEST):
+
 2018-11-06  Alex Christensen  <achristensen@webkit.org>
 
         Fix tests after r237863

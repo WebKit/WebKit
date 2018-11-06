@@ -122,6 +122,13 @@ bool SQLiteDatabase::open(const String& filename, bool forWebSQLDatabase)
     } else
         LOG_ERROR("SQLite database failed to set journal_mode to WAL, error: %s", lastErrorMsg());
 
+    SQLiteStatement checkpointStatement(*this, "PRAGMA wal_checkpoint(TRUNCATE)"_s);
+    if (checkpointStatement.prepareAndStep() == SQLITE_ROW) {
+        if (checkpointStatement.getColumnInt(0))
+            LOG(SQLDatabase, "SQLite database checkpoint is blocked");
+    } else
+        LOG_ERROR("SQLite database failed to checkpoint: %s", lastErrorMsg());
+
     return isOpen();
 }
 

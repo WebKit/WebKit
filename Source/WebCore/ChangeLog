@@ -1,3 +1,21 @@
+2018-11-06  Sihui Liu  <sihui_liu@apple.com>
+
+        IndexedDB: WAL file keeps growing
+        https://bugs.webkit.org/show_bug.cgi?id=191294
+        <rdar://problem/41333493>
+
+        Reviewed by Chris Dumez.
+
+        When we quit apps, the database connection may not be shut down properly, and WAL file will be retained on disk.
+        On the next open of database connection, new logs will be appended to the original WAL file, which keeps 
+        increasing size of the WAL file. We should do a manual checkpoint when we open a IndexedDB to make sure previous
+        log is written to database and truncate WAL file.
+
+        Test: IndexedDB.IndexedDBTempFileSize
+
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::open):
+
 2018-11-06  Ali Juma  <ajuma@chromium.org>
 
         IntersectionObserver doesn't keep target's JS wrapper alive
