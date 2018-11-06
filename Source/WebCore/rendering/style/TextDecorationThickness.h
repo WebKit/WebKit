@@ -85,6 +85,7 @@ public:
             return m_type == other.m_type && m_length == other.m_length;
         default:
             ASSERT_NOT_REACHED();
+            return true;
         }
     }
 

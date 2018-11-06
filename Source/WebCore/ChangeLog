@@ -1,3 +1,13 @@
+2018-11-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Fix the Windows build after r237835
+        https://bugs.webkit.org/show_bug.cgi?id=191242
+
+        Reviewed by Simon Fraser.
+
+        * rendering/style/TextDecorationThickness.h:
+        (WebCore::TextDecorationThickness::operator== const):
+
 2018-11-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Swatch appears squished and off-center in inputs of type color
