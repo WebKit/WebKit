@@ -75,6 +75,18 @@ public:
         return m_length;
     }
 
+    float resolve(float fontSize, const FontMetrics& metrics) const
+    {
+        if (isAuto()) {
+            const float textDecorationBaseFontSize = 16;
+            return fontSize / textDecorationBaseFontSize;
+        }
+        if (isFromFont())
+            return metrics.underlineThickness();
+        ASSERT(isLength());
+        return m_length;
+    }
+
     bool operator==(const TextDecorationThickness& other) const
     {
         switch (m_type) {

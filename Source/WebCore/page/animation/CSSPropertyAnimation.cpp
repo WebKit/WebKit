@@ -260,6 +260,20 @@ static inline Visibility blendFunc(const CSSPropertyBlendingClient* anim, Visibi
     return result > 0. ? Visibility::Visible : (to != Visibility::Visible ? to : from);
 }
 
+static inline TextUnderlineOffset blendFunc(const CSSPropertyBlendingClient* anim, const TextUnderlineOffset& from, const TextUnderlineOffset& to, double progress)
+{
+    if (from.isLength() && to.isLength())
+        return TextUnderlineOffset::createWithLength(blendFunc(anim, from.lengthValue(), to.lengthValue(), progress));
+    return TextUnderlineOffset::createWithAuto();
+}
+
+static inline TextDecorationThickness blendFunc(const CSSPropertyBlendingClient* anim, const TextDecorationThickness& from, const TextDecorationThickness& to, double progress)
+{
+    if (from.isLength() && to.isLength())
+        return TextDecorationThickness::createWithLength(blendFunc(anim, from.lengthValue(), to.lengthValue(), progress));
+    return TextDecorationThickness::createWithAuto();
+}
+
 static inline LengthBox blendFunc(const CSSPropertyBlendingClient* anim, const LengthBox& from, const LengthBox& to, double progress)
 {
     LengthBox result(blendFunc(anim, from.top(), to.top(), progress),
@@ -1685,6 +1699,8 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new PropertyWrapper<FontSelectionValue>(CSSPropertyFontWeight, &RenderStyle::fontWeight, &RenderStyle::setFontWeight),
         new PropertyWrapper<FontSelectionValue>(CSSPropertyFontStretch, &RenderStyle::fontStretch, &RenderStyle::setFontStretch),
         new PropertyWrapperFontStyle(),
+        new PropertyWrapper<TextDecorationThickness>(CSSPropertyTextDecorationThickness, &RenderStyle::textDecorationThickness, &RenderStyle::setTextDecorationThickness),
+        new PropertyWrapper<TextUnderlineOffset>(CSSPropertyTextUnderlineOffset, &RenderStyle::textUnderlineOffset, &RenderStyle::setTextUnderlineOffset),
     };
     const unsigned animatableLonghandPropertiesCount = WTF_ARRAY_LENGTH(animatableLonghandPropertyWrappers);
 

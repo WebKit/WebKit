@@ -1,3 +1,56 @@
+2018-11-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Implement text-underline-offset and text-decoration-thickness
+        https://bugs.webkit.org/show_bug.cgi?id=190774
+
+        Reviewed by Dean Jackson.
+
+        Because of our existing infrastructure for text decorations, adding support for these
+        is fairly simple. This patch updates our existing functions to handle thick & placed
+        underlines, as well as updating our repaint code to correcly handle repainting them.
+        It also handles animations.
+
+        Tests: animations/text-decoration-thickness.html
+               animations/text-underline-offset.html
+               fast/css3-text/css3-text-decoration/text-decoration-offset-2.html
+               fast/css3-text/css3-text-decoration/text-decoration-offset-3.html
+               fast/css3-text/css3-text-decoration/text-decoration-offset-auto-length.html
+               fast/css3-text/css3-text-decoration/text-decoration-offset-baseline.html
+               fast/css3-text/css3-text-decoration/text-decoration-offset-from-font-auto.html
+               fast/css3-text/css3-text-decoration/text-decoration-offset-from-font-length.html
+               fast/css3-text/css3-text-decoration/text-decoration-offset-repaint.html
+               fast/css3-text/css3-text-decoration/text-decoration-offset-under-auto.html
+               fast/css3-text/css3-text-decoration/text-decoration-offset-under-length.html
+               fast/css3-text/css3-text-decoration/text-decoration-offset.html
+               fast/css3-text/css3-text-decoration/text-decoration-thickness-length.html
+               fast/css3-text/css3-text-decoration/text-decoration-thickness-repaint.html
+
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc):
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        * platform/graphics/FontMetrics.h:
+        (WebCore::FontMetrics::underlinePosition const):
+        (WebCore::FontMetrics::setUnderlinePosition):
+        (WebCore::FontMetrics::underlineThickness const):
+        (WebCore::FontMetrics::setUnderlineThickness):
+        * platform/graphics/cocoa/FontCocoa.mm:
+        (WebCore::Font::platformInit):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::addToLine):
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseForStyle):
+        * rendering/TextDecorationPainter.cpp:
+        (WebCore::TextDecorationPainter::paintTextDecoration):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeAffectsVisualOverflow const):
+        * rendering/style/TextDecorationThickness.h:
+        (WebCore::TextDecorationThickness::resolve const):
+        * style/InlineTextBoxStyle.cpp:
+        (WebCore::computeUnderlineOffset):
+        (WebCore::visualOverflowForDecorations):
+        * style/InlineTextBoxStyle.h:
+        (WebCore::textDecorationStrokeThickness): Deleted.
+
 2018-11-06  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Remove cap on partitioned cache max age if it matches a network reload (redirect-only)

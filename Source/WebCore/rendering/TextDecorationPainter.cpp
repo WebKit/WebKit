@@ -211,7 +211,7 @@ TextDecorationPainter::TextDecorationPainter(GraphicsContext& context, OptionSet
 void TextDecorationPainter::paintTextDecoration(const TextRun& textRun, const FloatPoint& textOrigin, const FloatPoint& boxOrigin)
 {
     const auto& fontMetrics = m_lineStyle.fontMetrics();
-    float textDecorationThickness = textDecorationStrokeThickness(m_lineStyle.computedFontPixelSize());
+    float textDecorationThickness = m_lineStyle.textDecorationThickness().resolve(m_lineStyle.computedFontSize(), fontMetrics);
     FloatPoint localOrigin = boxOrigin;
 
     auto paintDecoration = [&] (TextDecoration decoration, TextDecorationStyle style, const Color& color, const FloatRect& rect) {
@@ -285,7 +285,9 @@ void TextDecorationPainter::paintTextDecoration(const TextRun& textRun, const Fl
 
         // These decorations should match the visual overflows computed in visualOverflowForDecorations().
         if (m_decorations.contains(TextDecoration::Underline)) {
-            int offset = computeUnderlineOffset(m_lineStyle.textUnderlinePosition(), m_lineStyle.fontMetrics(), m_inlineTextBox, textDecorationThickness);
+            float textDecorationBaseFontSize = 16;
+            auto defaultGap = m_lineStyle.computedFontSize() / textDecorationBaseFontSize;
+            int offset = computeUnderlineOffset(m_lineStyle.textUnderlinePosition(), m_lineStyle.textUnderlineOffset(), m_lineStyle.fontMetrics(), m_inlineTextBox, defaultGap);
             float wavyOffset = m_styles.underlineStyle == TextDecorationStyle::Wavy ? m_wavyOffset : 0;
             FloatRect rect(localOrigin, FloatSize(m_width, textDecorationThickness));
             rect.move(0, offset + wavyOffset);

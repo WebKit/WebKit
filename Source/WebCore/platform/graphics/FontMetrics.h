@@ -102,6 +102,12 @@ public:
     float zeroWidth() const { return m_zeroWidth; }
     void setZeroWidth(float zeroWidth) { m_zeroWidth = zeroWidth; }
 
+    float underlinePosition() const { return m_underlinePosition; }
+    void setUnderlinePosition(float underlinePosition) { m_underlinePosition = underlinePosition; }
+
+    float underlineThickness() const { return m_underlineThickness; }
+    void setUnderlineThickness(float underlineThickness) { m_underlineThickness = underlineThickness; }
+
 private:
     friend class Font;
 
@@ -125,6 +131,8 @@ private:
     float m_zeroWidth { 0 };
     float m_xHeight { 0 };
     float m_capHeight { 0 };
+    float m_underlinePosition { 0 };
+    float m_underlineThickness { 0 };
 };
 
 static inline float scaleEmToUnits(float x, unsigned unitsPerEm)

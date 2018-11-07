@@ -32,7 +32,7 @@
 
 namespace WebCore {
     
-int computeUnderlineOffset(TextUnderlinePosition underlinePosition, const FontMetrics& fontMetrics, const InlineTextBox* inlineTextBox, int textDecorationThickness)
+int computeUnderlineOffset(TextUnderlinePosition underlinePosition, TextUnderlineOffset underlineOffset, const FontMetrics& fontMetrics, const InlineTextBox* inlineTextBox, int textDecorationThickness)
 {
     // This represents the gap between the baseline and the closest edge of the underline.
     int gap = std::max<int>(1, ceilf(textDecorationThickness / 2.0));
@@ -48,7 +48,7 @@ int computeUnderlineOffset(TextUnderlinePosition underlinePosition, const FontMe
     // case.
     
     auto resolvedUnderlinePosition = underlinePosition;
-    if (resolvedUnderlinePosition == TextUnderlinePosition::Auto) {
+    if (resolvedUnderlinePosition == TextUnderlinePosition::Auto && underlineOffset.isAuto()) {
         if (inlineTextBox)
             resolvedUnderlinePosition = inlineTextBox->root().baselineType() == IdeographicBaseline ? TextUnderlinePosition::Under : TextUnderlinePosition::Auto;
         else
@@ -57,8 +57,11 @@ int computeUnderlineOffset(TextUnderlinePosition underlinePosition, const FontMe
     
     switch (resolvedUnderlinePosition) {
     case TextUnderlinePosition::Auto:
+        if (underlineOffset.isAuto())
+            return fontMetrics.ascent() + gap;
+        return fontMetrics.ascent() + underlineOffset.lengthValue();
     case TextUnderlinePosition::FromFont:
-        return fontMetrics.ascent() + gap;
+        return fontMetrics.ascent() + fontMetrics.underlinePosition() + underlineOffset.lengthOr(0);
     case TextUnderlinePosition::Under: {
         ASSERT(inlineTextBox);
         // Position underline relative to the bottom edge of the lowest element's content box.
@@ -75,7 +78,7 @@ int computeUnderlineOffset(TextUnderlinePosition underlinePosition, const FontMe
             rootBox.maxLogicalBottomForTextDecorationLine(offset, decorationRenderer, TextDecoration::Underline);
             offset -= inlineTextBox->logicalBottom();
         }
-        return inlineTextBox->logicalHeight() + gap + std::max<float>(offset, 0);
+        return inlineTextBox->logicalHeight() + gap + std::max<float>(offset, 0) + underlineOffset.lengthOr(0);
     }
     }
 
@@ -105,7 +108,7 @@ GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const I
     if (decoration.isEmpty())
         return GlyphOverflow();
 
-    float strokeThickness = textDecorationStrokeThickness(lineStyle.computedFontPixelSize());
+    float strokeThickness = lineStyle.textDecorationThickness().resolve(lineStyle.computedFontSize(), lineStyle.fontMetrics());
     WavyStrokeParameters wavyStrokeParameters;
     float wavyOffset = 0;
         
@@ -124,7 +127,9 @@ GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const I
     if (decoration & TextDecoration::Underline) {
         // Compensate for the integral ceiling in GraphicsContext::computeLineBoundsAndAntialiasingModeForText()
         int underlineOffset = 1;
-        underlineOffset += computeUnderlineOffset(lineStyle.textUnderlinePosition(), lineStyle.fontMetrics(), inlineTextBox, strokeThickness);
+        float textDecorationBaseFontSize = 16;
+        auto defaultGap = lineStyle.computedFontSize() / textDecorationBaseFontSize;
+        underlineOffset += computeUnderlineOffset(lineStyle.textUnderlinePosition(), lineStyle.textUnderlineOffset(), lineStyle.fontMetrics(), inlineTextBox, defaultGap);
         if (decorationStyle == TextDecorationStyle::Wavy) {
             extendIntToFloat(overflowResult.bottom, underlineOffset + wavyOffset + wavyStrokeParameters.controlPointDistance + strokeThickness - height);
             extendIntToFloat(overflowResult.top, -(underlineOffset + wavyOffset - wavyStrokeParameters.controlPointDistance - strokeThickness));

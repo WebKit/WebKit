@@ -1,3 +1,39 @@
+2018-11-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Implement text-underline-offset and text-decoration-thickness
+        https://bugs.webkit.org/show_bug.cgi?id=190774
+
+        Reviewed by Dean Jackson.
+
+        * animations/text-decoration-thickness-expected.txt: Added.
+        * animations/text-decoration-thickness.html: Added.
+        * animations/text-underline-offset-expected.txt: Added.
+        * animations/text-underline-offset.html: Added.
+        * fast/css3-text/css3-text-decoration/text-decoration-offset-2-expected-mismatch.html: Added.
+        * fast/css3-text/css3-text-decoration/text-decoration-offset-2.html: Added.
+        * fast/css3-text/css3-text-decoration/text-decoration-offset-3-expected-mismatch.html: Added.
+        * fast/css3-text/css3-text-decoration/text-decoration-offset-3.html: Added.
+        * fast/css3-text/css3-text-decoration/text-decoration-offset-auto-length-expected.html: Added.
+        * fast/css3-text/css3-text-decoration/text-decoration-offset-auto-length.html: Added.
+        * fast/css3-text/css3-text-decoration/text-decoration-offset-baseline-expected.html: Added.
+        * fast/css3-text/css3-text-decoration/text-decoration-offset-baseline.html: Added.
+        * fast/css3-text/css3-text-decoration/text-decoration-offset-expected-mismatch.html: Added.
+        * fast/css3-text/css3-text-decoration/text-decoration-offset-from-font-auto-expected.html: Added.
+        * fast/css3-text/css3-text-decoration/text-decoration-offset-from-font-auto.html: Added.
+        * fast/css3-text/css3-text-decoration/text-decoration-offset-from-font-length-expected.html: Added.
+        * fast/css3-text/css3-text-decoration/text-decoration-offset-from-font-length.html: Added.
+        * fast/css3-text/css3-text-decoration/text-decoration-offset-repaint-expected.html: Added.
+        * fast/css3-text/css3-text-decoration/text-decoration-offset-repaint.html: Added.
+        * fast/css3-text/css3-text-decoration/text-decoration-offset-under-auto-expected.html: Added.
+        * fast/css3-text/css3-text-decoration/text-decoration-offset-under-auto.html: Added.
+        * fast/css3-text/css3-text-decoration/text-decoration-offset-under-length-expected.html: Added.
+        * fast/css3-text/css3-text-decoration/text-decoration-offset-under-length.html: Added.
+        * fast/css3-text/css3-text-decoration/text-decoration-offset.html: Added.
+        * fast/css3-text/css3-text-decoration/text-decoration-thickness-length-expected.html: Added.
+        * fast/css3-text/css3-text-decoration/text-decoration-thickness-length.html: Added.
+        * fast/css3-text/css3-text-decoration/text-decoration-thickness-repaint-expected.html: Added.
+        * fast/css3-text/css3-text-decoration/text-decoration-thickness-repaint.html: Added.
+
 2018-11-06  Dean Jackson  <dino@apple.com>
 
         Add some basic pointer events tests
