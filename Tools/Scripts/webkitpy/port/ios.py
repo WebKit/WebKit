@@ -73,7 +73,6 @@ class IOSPort(DarwinPort):
                 configurations.append(TestConfiguration(version=self.version_name(), architecture=architecture, build_type=build_type))
         return configurations
 
-    @memoized
     def child_processes(self):
         return int(self.get_option('child_processes'))
 

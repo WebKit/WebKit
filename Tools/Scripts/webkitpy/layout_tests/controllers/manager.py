@@ -248,6 +248,8 @@ class Manager(object):
 
             initial_results, retry_results, enabled_pixel_tests_in_retry = self._run_test_subset(default_device_tests, tests_to_skip)
 
+        # Only use a single worker for custom device classes
+        self._options.child_processes = 1
         for device_class in custom_device_tests:
             device_tests = custom_device_tests[device_class]
             if device_tests:

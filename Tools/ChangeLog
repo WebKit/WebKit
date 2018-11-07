@@ -1,5 +1,20 @@
 2018-11-06  Jonathan Bedard  <jbedard@apple.com>
 
+        webkitpy: Boot a single worker for custom devices
+        https://bugs.webkit.org/show_bug.cgi?id=191312
+        <rdar://problem/45848717>
+
+        Rubber-stamped by Aakash Jain.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.run): Custom devices only run a hand-full of tests. Booting multiple
+        simulators is expensive and unneeded for these tests.
+        * Scripts/webkitpy/port/ios.py:
+        (IOSPort. child_processes): No reason to memoize this call, and it prevents
+        overriding the number of child processes when booting custom devices.
+
+2018-11-06  Jonathan Bedard  <jbedard@apple.com>
+
         webkitpy: Generalize trailing SDK specifier (Part 2)
         https://bugs.webkit.org/show_bug.cgi?id=191275
         <rdar://problem/45703660>
