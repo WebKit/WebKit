@@ -2640,7 +2640,7 @@ bool EventHandler::isInsideScrollbar(const IntPoint& windowPoint) const
     return false;
 }
 
-#if !PLATFORM(GTK) && !PLATFORM(WPE)
+#if !USE(GLIB)
 
 bool EventHandler::shouldSwapScrollDirection(const HitTestResult&, const PlatformWheelEvent&) const
 {

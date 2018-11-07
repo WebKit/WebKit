@@ -67,7 +67,7 @@ private:
     static void CALLBACK addressChangeCallback(void*, BOOLEAN timedOut);
 #endif
 
-#if PLATFORM(GTK) || PLATFORM(WPE)
+#if USE(GLIB)
     static void networkChangedCallback(NetworkStateNotifier*);
 #endif
 
