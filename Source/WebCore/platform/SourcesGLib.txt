@@ -29,7 +29,6 @@ platform/glib/FileSystemGlib.cpp
 platform/glib/KeyedDecoderGlib.cpp
 platform/glib/KeyedEncoderGlib.cpp
 platform/glib/LowPowerModeNotifierGLib.cpp
-platform/glib/MainThreadSharedTimerGLib.cpp
 platform/glib/SSLKeyGeneratorGLib.cpp
 platform/glib/SharedBufferGlib.cpp
 platform/glib/UserAgentGLib.cpp

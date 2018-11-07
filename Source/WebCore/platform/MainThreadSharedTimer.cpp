@@ -1,5 +1,8 @@
 /*
+ * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com
  * Copyright (C) 2015 Igalia S.L.
+ * Copyright (C) 2018 Sony Interactive Entertainment.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +31,10 @@
 
 #include <wtf/NeverDestroyed.h>
 
+#if USE(GLIB)
+#include <wtf/glib/RunLoopSourcePriority.h>
+#endif
+
 namespace WebCore {
 
 MainThreadSharedTimer& MainThreadSharedTimer::singleton()
@@ -36,8 +43,30 @@ MainThreadSharedTimer& MainThreadSharedTimer::singleton()
     return instance;
 }
 
-#if !PLATFORM(GTK) && !PLATFORM(WPE)
+#if USE(CF) || OS(WINDOWS)
+MainThreadSharedTimer::MainThreadSharedTimer() = default;
+#else
 MainThreadSharedTimer::MainThreadSharedTimer()
+    : m_timer(RunLoop::main(), this, &MainThreadSharedTimer::fired)
+{
+#if USE(GLIB)
+    m_timer.setPriority(RunLoopSourcePriority::MainThreadDispatcherTimer);
+    m_timer.setName("[WebKit] MainThreadDispatcherTimer");
+#endif
+}
+
+void MainThreadSharedTimer::setFireInterval(Seconds interval)
+{
+    ASSERT(m_firedFunction);
+    m_timer.startOneShot(interval);
+}
+
+void MainThreadSharedTimer::stop()
+{
+    m_timer.stop();
+}
+
+void MainThreadSharedTimer::invalidate()
 {
 }
 #endif
