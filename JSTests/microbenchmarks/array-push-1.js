@@ -1,3 +1,5 @@
+//@ skip if $architecture == "x86"
+
 function arrayPush1() {
   var ret = [1];
   ret.push(1);

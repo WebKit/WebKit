@@ -1,3 +1,5 @@
+//@ skip if $architecture == "x86"
+
 // The type of arrayObject is polymorphic, but the access we do on it are not.
 function nonPolymorphicUint8ClampedArraySetter(arrayObject, isTypedArray) {
     if (isTypedArray) {

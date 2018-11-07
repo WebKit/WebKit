@@ -1,3 +1,5 @@
+//@ skip if $architecture == "x86"
+
 function test(a, b, c, d, e)
 {
     return a.concat(b, c, d, e);

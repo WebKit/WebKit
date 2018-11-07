@@ -1,3 +1,5 @@
+//@ skip if $architecture == "x86"
+
 var createBuiltin = $vm.createBuiltin;
 
 // This is pretty bad but I need a private name.

@@ -1,3 +1,5 @@
+//@ skip if $architecture == "x86"
+
 function shouldBe(actual, expected)
 {
     if (actual !== expected)

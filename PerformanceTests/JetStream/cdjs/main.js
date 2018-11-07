@@ -25,6 +25,7 @@
 
 // This is run as a JSC stress test. Let the harness know that this is a slow test.
 //@ slow!
+//@ skip if $architecture == "x86"
 
 load("constants.js");
 load("util.js");

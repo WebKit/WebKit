@@ -1,3 +1,5 @@
+//@ skip if $architecture == "x86"
+
 function foo(arg) {
     return [...arg];
 }

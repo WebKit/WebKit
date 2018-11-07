@@ -1,3 +1,81 @@
+2018-11-07  Tadeu Zagallo  <tzagallo@apple.com>
+
+        REGRESSION(r237547): Test failures on 32-bit JSC since the JIT was disabled
+        https://bugs.webkit.org/show_bug.cgi?id=191184
+
+        Reviewed by Saam Barati.
+
+        Most tests were failing due to timeouts, since they are too slow to
+        run on CLoop. The exceptions are:
+
+        proxy-get-set-correct-receiver.js: Had to reduce the recursion depth not to overflow on CLoop
+        dont-crash-on-stack-overflow-when-parsing-builtin.js and
+        dont-crash-on-stack-overflow-when-parsing-default-constructor.js: had
+        to change the stack size since CLoop requires it to be page aligned.
+
+        * microbenchmarks/array-push-1.js:
+        * microbenchmarks/array-push-2.js:
+        * microbenchmarks/elidable-new-object-dag.js:
+        * microbenchmarks/elidable-new-object-roflcopter.js:
+        * microbenchmarks/elidable-new-object-tree.js:
+        * microbenchmarks/getter-richards.js:
+        * microbenchmarks/sinkable-new-object-dag.js:
+        * microbenchmarks/string-concat-long-convert.js:
+        * microbenchmarks/typed-array-get-set-by-val-profiling.js:
+        * slowMicrobenchmarks/array-push-3.js:
+        * slowMicrobenchmarks/large-map-iteration-with-additions.js:
+        * slowMicrobenchmarks/spread-small-array.js:
+        * slowMicrobenchmarks/undefined-property-access.js:
+        * stress/activation-sink-default-value-tdz-error.js:
+        * stress/activation-sink-default-value.js:
+        * stress/activation-sink-osrexit-default-value-tdz-error.js:
+        * stress/activation-sink-osrexit-default-value.js:
+        * stress/activation-sink-osrexit.js:
+        * stress/activation-sink.js:
+        * stress/allow-math-ic-b3-code-duplication.js:
+        * stress/array-push-multiple-int32.js:
+        * stress/arrowfunction-activation-sink-osrexit-default-value-tdz-error.js:
+        * stress/arrowfunction-lexical-this-activation-sink-osrexit.js:
+        * stress/arrowfunction-lexical-this-activation-sink.js:
+        * stress/dont-crash-on-stack-overflow-when-parsing-builtin.js:
+        * stress/dont-crash-on-stack-overflow-when-parsing-default-constructor.js:
+        * stress/elide-new-object-dag-then-exit.js:
+        * stress/materialize-regexp-cyclic.js:
+        * stress/new-regex-inline.js:
+        * stress/op_add.js:
+        * stress/op_bitand.js:
+        * stress/op_bitor.js:
+        * stress/op_bitxor.js:
+        * stress/op_div-ConstVar.js:
+        * stress/op_div-VarConst.js:
+        * stress/op_div-VarVar.js:
+        * stress/op_lshift-ConstVar.js:
+        * stress/op_lshift-VarConst.js:
+        * stress/op_lshift-VarVar.js:
+        * stress/op_mod-ConstVar.js:
+        * stress/op_mod-VarConst.js:
+        * stress/op_mod-VarVar.js:
+        * stress/op_mul-ConstVar.js:
+        * stress/op_mul-VarConst.js:
+        * stress/op_mul-VarVar.js:
+        * stress/op_rshift-ConstVar.js:
+        * stress/op_rshift-VarConst.js:
+        * stress/op_rshift-VarVar.js:
+        * stress/op_sub-ConstVar.js:
+        * stress/op_sub-VarConst.js:
+        * stress/op_sub-VarVar.js:
+        * stress/op_urshift-ConstVar.js:
+        * stress/op_urshift-VarConst.js:
+        * stress/op_urshift-VarVar.js:
+        * stress/proxy-get-set-correct-receiver.js:
+        * stress/regress-179562.js:
+        * stress/rest-parameter-many-arguments.js:
+        * stress/sampling-profiler-richards.js:
+        * stress/splay-flash-access-1ms.js:
+        * stress/tailCallForwardArguments.js:
+        * stress/typed-array-get-by-val-profiling.js:
+        * typeProfiler/getter-richards.js:
+
 2018-11-06  Michael Saboff  <msaboff@apple.com>
 
         Multiple stress/regexp-compile-oom.js tests are failing on High Sierra Debug and Release JSC testers.

@@ -1,6 +1,4 @@
-// FIXME: unskip when this is solved
-// https://bugs.webkit.org/show_bug.cgi?id=191163
-//@ skip if $architecture == "mips" or $architecture == "arm"
+//@ skip if not $jitTests
 //@ defaultQuickRun
 
 // Copyright 2006-2008 the V8 project authors. All rights reserved.

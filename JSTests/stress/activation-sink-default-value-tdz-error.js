@@ -1,4 +1,5 @@
-//@ skip if $buildType == "debug"
+//@ skip if $buildType == "debug" or $architecture == "x86"
+
 "use strict";
 
 var n = 10000000;

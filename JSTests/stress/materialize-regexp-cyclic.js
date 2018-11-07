@@ -1,3 +1,5 @@
+//@ slow!
+
 function shouldBe(actual, expected)
 {
     if (actual !== expected)

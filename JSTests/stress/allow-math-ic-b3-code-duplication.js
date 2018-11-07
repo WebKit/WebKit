@@ -1,3 +1,5 @@
+//@ skip if $architecture == "x86"
+
 function test1() {
     var o1;
     for (let i = 0; i < 1000000; ++i) {

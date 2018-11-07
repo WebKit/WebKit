@@ -1,3 +1,5 @@
+//@ skip if $architecture == "x86"
+
 let counter = 0;
 function bar(map) {
     for (let [key, value] of map) {

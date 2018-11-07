@@ -1,3 +1,5 @@
+//@ skip if $architecture == "x86"
+
 var someGlobal;
 
 // This is a simple speed test. It should go fast.

@@ -1,3 +1,4 @@
+//@ skip if $architecture == "x86"
 //@ if $architecture == "x86" then defaultSpotCheckNoMaximalFlush else defaultRun end
 
 function assert(b) {

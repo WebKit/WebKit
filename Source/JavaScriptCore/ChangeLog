@@ -1,3 +1,15 @@
+2018-11-07  Tadeu Zagallo  <tzagallo@apple.com>
+
+        REGRESSION(r237547): Test failures on 32-bit JSC since the JIT was disabled
+        https://bugs.webkit.org/show_bug.cgi?id=191184
+
+        Reviewed by Saam Barati.
+
+        Fix API test on CLoop: we can only disable the LLInt when the JIT is enabled.
+
+        * API/tests/PingPongStackOverflowTest.cpp:
+        (testPingPongStackOverflow):
+
 2018-11-06  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Experimental prototype for WebGPURenderPipeline and WebGPUSwapChain

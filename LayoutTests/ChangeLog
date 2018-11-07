@@ -1,3 +1,14 @@
+2018-11-07  Tadeu Zagallo  <tzagallo@apple.com>
+
+        REGRESSION(r237547): Test failures on 32-bit JSC since the JIT was disabled
+        https://bugs.webkit.org/show_bug.cgi?id=191184
+
+        Reviewed by Saam Barati.
+
+        Skip test when the JIT is disabled since it's too slow to run on CLoop.
+
+        * js/script-tests/regress-139548.js:
+
 2018-11-06  Youenn Fablet  <youenn@apple.com>
 
         Reenable imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-ontrack.https.html

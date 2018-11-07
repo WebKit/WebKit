@@ -1,3 +1,5 @@
+//@ skip if $architecture == "x86"
+
 var n = 10000000;
 
 function bar() { }

@@ -1,3 +1,5 @@
+//@ slow!
+
 function testArray(arrayType)
 {
     var testCode =

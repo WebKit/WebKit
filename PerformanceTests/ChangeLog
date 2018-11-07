@@ -1,3 +1,14 @@
+2018-11-07  Tadeu Zagallo  <tzagallo@apple.com>
+
+        REGRESSION(r237547): Test failures on 32-bit JSC since the JIT was disabled
+        https://bugs.webkit.org/show_bug.cgi?id=191184
+
+        Reviewed by Saam Barati.
+
+        Skip test when the JIT is disabled, it takes too long to run on CLoop.
+
+        * JetStream/cdjs/main.js:
+
 2018-11-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Cache glyph paths and share underline skipping code between all the ports

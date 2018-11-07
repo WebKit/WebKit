@@ -1,3 +1,5 @@
+//@ skip if $architecture == "x86"
+
 function sumOfArithSeries(limit) {
     return limit * (limit + 1) / 2;
 }

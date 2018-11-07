@@ -80,7 +80,7 @@ test(function() {
     let callCount = 0;
     let handler = {
         get(target, prop, receiver) {
-            if (callCount === 200)
+            if (callCount === 100)
                 assert(target === t);
             ++callCount;
             assert(receiver === proxy);
@@ -89,10 +89,10 @@ test(function() {
         }
     };
     let proxy = new Proxy(t, handler);
-    for (let i = 0; i < 200; ++i)
+    for (let i = 0; i < 100; ++i)
         proxy = new Proxy(proxy, handler);
     proxy.prop
-    assert(callCount === 201);
+    assert(callCount === 101);
 }, 10);
 
 test(function() {
@@ -100,7 +100,7 @@ test(function() {
     let callCount = 0;
     let handler = {
         set(target, prop, value, receiver) {
-            if (callCount === 200)
+            if (callCount === 100)
                 assert(target === t);
             ++callCount;
             assert(receiver === proxy);
@@ -110,8 +110,8 @@ test(function() {
         }
     };
     let proxy = new Proxy(t, handler);
-    for (let i = 0; i < 200; ++i)
+    for (let i = 0; i < 100; ++i)
         proxy = new Proxy(proxy, handler);
     proxy.prop = 20;
-    assert(callCount === 201);
+    assert(callCount === 101);
 }, 10);

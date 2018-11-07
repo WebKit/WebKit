@@ -127,7 +127,7 @@ int testPingPongStackOverflow()
 
     Options::softReservedZoneSize() = 128 * KB;
     Options::reservedZoneSize() = 64 * KB;
-#if ENABLE(C_LOOP)
+#if ENABLE(JIT)
     // Normally, we want to disable the LLINT to force the use of JITted code which is necessary for
     // reproducing the regression in https://bugs.webkit.org/show_bug.cgi?id=148749. However, we only
     // want to do this if the LLINT isn't the only available execution engine.

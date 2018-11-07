@@ -1,3 +1,4 @@
+//@ skip if $architecture == "x86"
 //@ runFTLNoCJIT("--timeoutMultiplier=2.0")
 
 // If all goes well, this test module will terminate silently. If not, it will print

@@ -1,3 +1,5 @@
+//@ skip if $architecture == "x86"
+
 function assert(a) {
     if (!a)
         throw Error("bad assertion");

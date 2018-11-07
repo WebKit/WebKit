@@ -1,4 +1,4 @@
-//@ runFTLNoCJIT("--maxPerThreadStackUsage=400000")
+//@ runFTLNoCJIT("--maxPerThreadStackUsage=400000") if $jitTests
 
 function runNearStackLimit(f) {
     function t() {
