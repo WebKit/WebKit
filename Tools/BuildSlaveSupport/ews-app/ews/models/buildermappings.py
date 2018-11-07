@@ -25,13 +25,9 @@ from __future__ import unicode_literals
 from django.db import models
 
 
-class Patch(models.Model):
-    patchid = models.IntegerField(primary_key=True)
-    bugid = models.IntegerField()
-    content = models.TextField(default='')
-    obsolete = models.BooleanField(default=False)
-    created = models.DateTimeField(auto_now_add=True)
-    modified = models.DateTimeField(auto_now=True)
+class BuilderMappings(models.Model):
+    builderid = models.IntegerField(primary_key=True)
+    name = models.TextField()
 
     def __str__(self):
-        return str(self.patchid)
+        return "{}: {}".format(self.builderid, self.name)

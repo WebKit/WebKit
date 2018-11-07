@@ -1,5 +1,18 @@
 2018-11-06  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-app] Add models for OpenSource EWS Django app
+        https://bugs.webkit.org/show_bug.cgi?id=191123
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-app/ews/models/__init__.py:
+        * BuildSlaveSupport/ews-app/ews/models/buildermappings.py: Added.
+        * BuildSlaveSupport/ews-app/ews/models/builds.py: Added.
+        * BuildSlaveSupport/ews-app/ews/models/patch.py:
+        * BuildSlaveSupport/ews-app/ews/models/steps.py: Added.
+
+2018-11-06  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-app] Fix Invalid HTTP_HOST header
         https://bugs.webkit.org/show_bug.cgi?id=191325
 
