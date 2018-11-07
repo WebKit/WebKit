@@ -20,25 +20,21 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""URL Configuration
+from django.conf.urls import url
 
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/1.11/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  url(r'^$', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  url(r'^$', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.conf.urls import url, include
-    2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
-"""
-from django.conf.urls import include, url
-from django.contrib import admin
+from ews.views.index import Index
+from ews.views.patch import Patch
+from ews.views.results import Results
+from ews.views.statusbubble import StatusBubble
 
+app_name = 'ews'
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
-    url(r'^', include('ews.urls')),
+    # ex: /
+    url(r'^$', Index.as_view(), name='index'),
+    # ex: /patch/5
+    url(r'^patch/(?P<patchid>[0-9]+)/$', Patch.as_view(), name='patch'),
+    # ex: /patch/5/results
+    url(r'^patch/(?P<patchid>[0-9]+)/results$', Results.as_view(), name='results'),
+    # ex: /status-bubble/5
+    url(r'^status-bubble/(?P<patchid>[0-9]+)/$', StatusBubble.as_view(), name='statusbubble'),
 ]

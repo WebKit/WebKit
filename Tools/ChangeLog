@@ -1,3 +1,13 @@
+2018-11-06  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-app] Add URL configuration for OpenSource EWS Django app
+        https://bugs.webkit.org/show_bug.cgi?id=191132
+
+        Rubber-stamped by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-app/ews-app/urls.py: Added entry for ews.urls.
+        * BuildSlaveSupport/ews-app/ews/urls.py: Added.
+
 2018-11-06  Youenn Fablet  <youenn@apple.com>
 
         Make mDNS ICE Candidate an experimental flag again
