@@ -911,22 +911,22 @@ void GraphicsLayerCA::setNeedsDisplayInRect(const FloatRect& r, ShouldClipToLaye
 
     if (rect.isEmpty())
         return;
-    
+
+    addRepaintRect(rect);
+
     const size_t maxDirtyRects = 32;
-    
+
     for (size_t i = 0; i < m_dirtyRects.size(); ++i) {
         if (m_dirtyRects[i].contains(rect))
             return;
     }
-    
+
     if (m_dirtyRects.size() < maxDirtyRects)
         m_dirtyRects.append(rect);
     else
         m_dirtyRects[0].unite(rect);
 
     noteLayerPropertyChanged(DirtyRectsChanged);
-
-    addRepaintRect(rect);
 }
 
 void GraphicsLayerCA::setContentsNeedsDisplay()

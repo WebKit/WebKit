@@ -29,9 +29,13 @@ Only the second box should have a repaint.
               (drawsContent 1)
               (repaint rects
                 (rect 0.00 0.00 300.00 300.00)
+                (rect 0.00 0.00 300.00 300.00)
+                (rect 0.00 0.00 300.00 300.00)
               )
             )
           (repaint rects
+            (rect 0.00 0.00 300.00 300.00)
+            (rect 0.00 0.00 300.00 300.00)
             (rect 0.00 0.00 300.00 300.00)
           )
         )
