@@ -586,7 +586,7 @@ WebGLAny WebGLRenderingContext::getParameter(GC3Denum pname)
     case GraphicsContext3D::UNPACK_COLORSPACE_CONVERSION_WEBGL:
         return m_unpackColorspaceConversion;
     case GraphicsContext3D::VENDOR:
-        return String { "WebKit"_s };
+        return String { "WebKit" };
     case GraphicsContext3D::VERSION:
         return String { "WebGL 1.0" };
     case GraphicsContext3D::VIEWPORT:
@@ -597,8 +597,13 @@ WebGLAny WebGLRenderingContext::getParameter(GC3Denum pname)
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getParameter", "invalid parameter name, OES_standard_derivatives not enabled");
         return nullptr;
     case WebGLDebugRendererInfo::UNMASKED_RENDERER_WEBGL:
-        if (m_webglDebugRendererInfo)
+        if (m_webglDebugRendererInfo) {
+#if PLATFORM(IOS_FAMILY)
+            return String { "Apple GPU" };
+#else
             return m_context->getString(GraphicsContext3D::RENDERER);
+#endif
+        }
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getParameter", "invalid parameter name, WEBGL_debug_renderer_info not enabled");
         return nullptr;
     case WebGLDebugRendererInfo::UNMASKED_VENDOR_WEBGL:

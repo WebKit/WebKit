@@ -1,3 +1,28 @@
+2018-11-07  Dean Jackson  <dino@apple.com>
+
+        [iOS] WebGL leaks exact GPU type
+        https://bugs.webkit.org/show_bug.cgi?id=191393
+
+        Reviewed by Tim Horton.
+
+        The fully exposed renderer info shouldn't be necessary
+        on iOS, where the GPUs and drivers are consistent
+        enough that people shouldn't need to write code specifically
+        for them. Reduce the ability to fingerprint by simply
+        returning "Apple GPU".
+
+        The other option would have been to disable the extension,
+        but I think it might still be useful to know you're on
+        an iOS device.
+
+        Test: fast/canvas/webgl/hide-some-renderer-info.html
+
+        * html/canvas/WebGL2RenderingContext.cpp: Return "Apple GPU"
+        on iOS.
+        (WebCore::WebGL2RenderingContext::getParameter):
+        * html/canvas/WebGLRenderingContext.cpp: Ditto.
+        (WebCore::WebGLRenderingContext::getParameter):
+
 2018-11-07  Daniel Bates  <dabates@apple.com>
 
         Override +[UIKeyboard isInHardwareKeyboardMode] in WebKitTestRunner and DumpRenderTree

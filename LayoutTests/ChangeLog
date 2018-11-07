@@ -1,3 +1,17 @@
+2018-11-07  Dean Jackson  <dino@apple.com>
+
+        [iOS] WebGL leaks exact GPU type
+        https://bugs.webkit.org/show_bug.cgi?id=191393
+        <rdar://problem/45788297>
+
+        Reviewed by Tim Horton.
+
+        A test that checks that when the GPU vendor is Apple we're
+        returning a generic renderer name.
+
+        * fast/canvas/webgl/hide-some-renderer-info-expected.txt: Added.
+        * fast/canvas/webgl/hide-some-renderer-info.html: Added.
+
 2018-11-07  Ali Juma  <ajuma@chromium.org>
 
         IntersectionObserver GC-dependent tests are flaky
