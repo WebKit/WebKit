@@ -1,3 +1,16 @@
+2018-11-07  Ali Juma  <ajuma@chromium.org>
+
+        IntersectionObserver GC-dependent tests are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=191387
+
+        Reviewed by Chris Dumez.
+
+        Make these tests more robust by triggering GC repeatedly inside a setInterval(). Having only a single call to
+        GC is potentially flaky, since that call will early-out and return immediately if a GC is already underway.
+
+        * intersection-observer/root-element-deleted.html:
+        * intersection-observer/target-deleted.html:
+
 2018-11-07  Dan Bernstein  <mitz@apple.com>
 
         Add a pseudoclass that matches img elements that are backed by an attachment

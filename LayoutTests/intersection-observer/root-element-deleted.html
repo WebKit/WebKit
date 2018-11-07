@@ -9,6 +9,19 @@
 </div>
 
 <script>
+    function observerShouldBeRemoved()
+    {
+        return new Promise(function(resolve) {
+            handle = setInterval(function() {
+                GCController.collect();
+                if (internals && internals.numberOfIntersectionObservers(document) == 0) {
+                    clearInterval(handle);
+                    resolve();
+                }
+            }, 10);
+        });
+    }
+
     async_test(function(t) {
         var root = document.getElementById('root');
         var observer = new IntersectionObserver(function() {}, { root: document.getElementById('root') });;
@@ -19,12 +32,12 @@
         root.parentNode.removeChild(root);
         root = null;
         target = null;
-        requestAnimationFrame(t.step_func_done(function() {
+        requestAnimationFrame(function() {
             observer.takeRecords();
-            GCController.collect();
-            assert_equals(observer.root, null, 'Observer has null root after root element is destroyed');
-            assert_equals(internals.numberOfIntersectionObservers(document), 0);
-        }));
+            observerShouldBeRemoved().then(t.step_func_done(function() {
+                assert_equals(observer.root, null, 'Observer has null root after root element is destroyed');
+            }));
+        });
     }, "IntersectionObserver doesn't keep unreachable root alive");
 </script>
 </body>
