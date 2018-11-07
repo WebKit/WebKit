@@ -169,6 +169,9 @@ static ExceptionOr<ApplePaySessionPaymentRequest::ShippingMethod> convertAndVali
 
 ExceptionOr<void> ApplePayPaymentHandler::convertData(JSC::JSValue&& data)
 {
+    if (data.isEmpty())
+        return Exception { TypeError, "Missing payment method data." };
+
     auto& context = *scriptExecutionContext();
     auto throwScope = DECLARE_THROW_SCOPE(context.vm());
     auto applePayRequest = convertDictionary<ApplePayRequest>(*context.execState(), WTFMove(data));

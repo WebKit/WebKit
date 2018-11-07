@@ -515,7 +515,6 @@ void PaymentRequest::canMakePayment(Document& document, CanMakePaymentPromise&& 
             continue;
 
         auto exception = handler->convertData(data.releaseReturnValue());
-        ASSERT(!!scope.exception() == exception.hasException());
         if (exception.hasException()) {
             scope.clearException();
             continue;

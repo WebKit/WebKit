@@ -26,6 +26,9 @@ const invalidApplePay = Object.freeze({
     data: {
     }
 });
+const secondInvalidApplePay = Object.freeze({
+    supportedMethods: "https://apple.com/apple-pay",
+});
 const defaultMethods = Object.freeze([applePay]);
 const defaultDetails = Object.freeze({
   total: {
@@ -104,7 +107,7 @@ promise_test(async t => {
 }, `If payment method identifier and serialized parts are supported, resolve promise with true.`);
 
 promise_test(async t => {
-  const request = new PaymentRequest([invalidApplePay], defaultDetails);
+  const request = new PaymentRequest([invalidApplePay, secondInvalidApplePay], defaultDetails);
   assert_false(await request.canMakePayment(), "Apple Pay with invalid data should not be supported");
 }, `If a payment method identifier is supported but its serialized parts are not, resolve promise with false.`);
 

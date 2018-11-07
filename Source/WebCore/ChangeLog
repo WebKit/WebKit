@@ -1,3 +1,30 @@
+2018-11-07  Andy Estes  <aestes@apple.com>
+
+        Crash in WebCore::PaymentRequest::canMakePayment when Apple Pay payment method data is missing
+        https://bugs.webkit.org/show_bug.cgi?id=191331
+
+        Reviewed by Alexey Proskuryakov.
+
+        Apple Pay requires merchants specify an ApplePayRequest (which contains several required
+        fields) as payment method data when constructing a new PaymentRequest. If the
+        ApplePayRequest is missing required fields, or is missing entirely, canMakePayment() should
+        resolve to false.
+
+        We would properly resolve to false when an ApplePayRequest was specified with missing
+        required fields, but we would crash when the ApplePayRequest was missing entirely.
+
+        This patch fixes the crash by checking for an empty JSValue before trying to convert it to
+        an ApplePayRequest struct. Because we stringify ApplePayRequests in the PaymentRequest
+        constructor then parse them again in canMakePayments, an undefined or null payment method
+        data stringifies to a null String, which then parses to an empty JSValue.
+
+        Added test case to http/tests/paymentrequest/payment-request-canmakepayment-method.https.html.
+
+        * Modules/applepay/paymentrequest/ApplePayPaymentHandler.cpp:
+        (WebCore::ApplePayPaymentHandler::convertData):
+        * Modules/paymentrequest/PaymentRequest.cpp:
+        (WebCore::PaymentRequest::canMakePayment):
+
 2018-11-07  Simon Fraser  <simon.fraser@apple.com>
 
         Revert 237849: it breaks MotionMark
