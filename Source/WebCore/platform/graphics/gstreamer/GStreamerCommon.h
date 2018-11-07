@@ -108,14 +108,32 @@ public:
     }
 
     uint8_t* data() { ASSERT(m_isValid); return static_cast<uint8_t*>(m_info.data); }
+    const uint8_t* data() const { ASSERT(m_isValid); return static_cast<uint8_t*>(m_info.data); }
+
     size_t size() const { ASSERT(m_isValid); return static_cast<size_t>(m_info.size); }
 
     explicit operator bool() const { return m_isValid; }
+
 private:
+    friend bool operator==(const GstMappedBuffer&, const GstMappedBuffer&);
+    friend bool operator==(const GstMappedBuffer&, const GstBuffer*);
+    friend bool operator==(const GstBuffer* a, const GstMappedBuffer& b) { return operator==(b, a); }
+
     GstBuffer* m_buffer { nullptr };
     GstMapInfo m_info;
     bool m_isValid { false };
 };
+
+inline bool operator==(const GstMappedBuffer& a, const GstMappedBuffer& b)
+{
+    return a.size() == b.size() && !gst_buffer_memcmp(a.m_buffer, 0, b.data(), b.size());
+}
+
+inline bool operator==(const GstMappedBuffer& a, const GstBuffer* b)
+{
+    GstBuffer* nonConstB = const_cast<GstBuffer*>(b);
+    return a.size() == gst_buffer_get_size(nonConstB) && !gst_buffer_memcmp(nonConstB, 0, a.data(), a.size());
+}
 
 bool gstRegistryHasElementForMediaType(GList* elementFactories, const char* capsString);
 void connectSimpleBusMessageCallback(GstElement *pipeline);

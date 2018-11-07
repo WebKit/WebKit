@@ -1,3 +1,49 @@
+2018-11-07  Charlie Turner  <cturner@igalia.com>
+
+        [EME][GStreamer] Ensure key id buffers are present and simplify lifetime management of ClearKey class.
+        https://bugs.webkit.org/show_bug.cgi?id=191157
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        This is in preparation for moving the clearkey decryptor behind a
+        new decrypt API in CDMInstance, which will be sent into the
+        pipeline to handle key management and decryption. This is for a
+        later patch.
+
+        Covered by existing clear key tests in media/encrypted-media.
+
+        * platform/graphics/gstreamer/GStreamerCommon.h:
+        (WebCore::GstMappedBuffer::data const): Add a const data accessor,
+        since we are now providing operator=='s on const objects of this
+        class that need const access to the data pointer.
+        (WebCore::GstMappedBuffer::operator==): Add a swap of the new
+        equality operator so you don't have to remember to have the
+        GstBuffer on the RHS of the equality all the time.
+        (WebCore::operator==): Define an equality operator between Gst
+        buffers and WebCore's mapped buffers. Gst creates a ref and a
+        separate read view under the covers in the memcmp call, so we do
+        not need to map the buffer ourselves.
+        * platform/graphics/gstreamer/eme/WebKitClearKeyDecryptorGStreamer.cpp:
+        (webkit_media_clear_key_decrypt_class_init): Remove setup/release
+        bindings.
+        (webkit_media_clear_key_decrypt_init): Initialize gcrypt cipher
+        here once instead of for every buffer to be decrypted.
+        (webKitMediaClearKeyDecryptorFinalize): And destroy the cipher
+        context when the decryptor is destroyed.
+        (webKitMediaClearKeyDecryptorFindAndSetKey): Factor out the key
+        retrieval and context setting in this method, call it for each
+        sample.
+        (webKitMediaClearKeyDecryptorDecrypt): Base key id buffer into
+        this function, and remove cipher creation / destroy methods.
+        * platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.cpp:
+        (webkit_media_common_encryption_decrypt_class_init): Remove
+        setup/release bindings.
+        (webkitMediaCommonEncryptionDecryptTransformInPlace): Ensure a key
+        id is present and pass it to the decrypt class method.
+        (webKitMediaCommonEncryptionDecryptDefaultSetupCipher): Deleted.
+        (webKitMediaCommonEncryptionDecryptDefaultReleaseCipher): Deleted.
+        * platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.h:
+
 2018-11-07  Frederic Wang  <fwang@igalia.com>
 
         [Cairo] Move state change operations from GraphicsContextCairo to CairoOperations
