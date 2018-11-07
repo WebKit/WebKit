@@ -355,9 +355,9 @@ void LibWebRTCMediaEndpoint::OnSignalingChange(webrtc::PeerConnectionInterface::
 
 MediaStream& LibWebRTCMediaEndpoint::mediaStreamFromRTCStream(webrtc::MediaStreamInterface& rtcStream)
 {
-    auto mediaStream = m_streams.ensure(&rtcStream, [&rtcStream, this] {
-        auto label = rtcStream.id();
-        return MediaStream::create(*m_peerConnectionBackend.connection().scriptExecutionContext(), MediaStreamPrivate::create({ }, fromStdString(label)));
+    auto label = fromStdString(rtcStream.id());
+    auto mediaStream = m_remoteStreamsById.ensure(label, [label, this]() mutable {
+        return MediaStream::create(*m_peerConnectionBackend.connection().scriptExecutionContext(), MediaStreamPrivate::create({ }, WTFMove(label)));
     });
     return *mediaStream.iterator->value;
 }
@@ -408,6 +408,11 @@ void LibWebRTCMediaEndpoint::fireTrackEvent(Ref<RTCRtpReceiver>&& receiver, Ref<
         streams.append(&mediaStream);
         mediaStream.addTrackFromPlatform(track.get());
     }
+    auto streamIds = WTF::map(streams, [](auto& stream) -> String {
+        return stream->id();
+    });
+    m_remoteStreamsFromRemoteTrack.add(track.ptr(), WTFMove(streamIds));
+
     m_peerConnectionBackend.connection().fireEvent(RTCTrackEvent::create(eventNames().trackEvent,
         Event::CanBubble::No, Event::IsCancelable::No, WTFMove(receiver), WTFMove(track), WTFMove(streams), WTFMove(transceiver)));
 }
@@ -487,7 +492,14 @@ void LibWebRTCMediaEndpoint::removeRemoteTrack(rtc::scoped_refptr<webrtc::RtpRec
     if (!transceiver)
         return;
 
-    transceiver->receiver().track().source().setMuted(true);
+    auto& track = transceiver->receiver().track();
+
+    for (auto& id : m_remoteStreamsFromRemoteTrack.get(&track)) {
+        if (auto stream = m_remoteStreamsById.get(id))
+            stream->privateStream().removeTrack(track.privateTrack(), MediaStreamPrivate::NotifyClientOption::Notify);
+    }
+
+    track.source().setMuted(true);
 }
 
 template<typename T>
@@ -543,7 +555,7 @@ std::unique_ptr<LibWebRTCRtpTransceiverBackend> LibWebRTCMediaEndpoint::transcei
 
 void LibWebRTCMediaEndpoint::removeRemoteStream(webrtc::MediaStreamInterface& rtcStream)
 {
-    bool removed = m_streams.remove(&rtcStream);
+    bool removed = m_remoteStreamsById.remove(fromStdString(rtcStream.id()));
     ASSERT_UNUSED(removed, removed);
 }
 
@@ -626,7 +638,8 @@ void LibWebRTCMediaEndpoint::stop()
 
     m_backend->Close();
     m_backend = nullptr;
-    m_streams.clear();
+    m_remoteStreamsById.clear();
+    m_remoteStreamsFromRemoteTrack.clear();
 }
 
 void LibWebRTCMediaEndpoint::OnRenegotiationNeeded()

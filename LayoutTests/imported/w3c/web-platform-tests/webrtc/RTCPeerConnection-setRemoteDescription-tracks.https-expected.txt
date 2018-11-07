@@ -1,6 +1,4 @@
 
-Harness Error (TIMEOUT), message = null
-
 PASS addTrack() with a track and no stream makes ontrack fire with a track and no stream. 
 PASS addTrack() with a track and a stream makes ontrack fire with a track and a stream. 
 PASS ontrack fires before setRemoteDescription resolves. 
@@ -10,9 +8,9 @@ PASS stream.onaddtrack fires before setRemoteDescription resolves.
 PASS addTrack() with a track and two streams makes ontrack fire with a track and two streams. 
 PASS ontrack's receiver matches getReceivers(). 
 PASS removeTrack() does not remove the receiver. 
-TIMEOUT removeTrack() makes stream.onremovetrack fire and the track to be removed from the stream. Test timed out
-NOTRUN stream.onremovetrack fires before setRemoteDescription resolves. 
-NOTRUN removeTrack() makes track.onmute fire and the track to be muted. 
-NOTRUN track.onmute fires before setRemoteDescription resolves. 
-NOTRUN removeTrack() twice is safe. 
+PASS removeTrack() makes stream.onremovetrack fire and the track to be removed from the stream. 
+PASS stream.onremovetrack fires before setRemoteDescription resolves. 
+PASS removeTrack() makes track.onmute fire and the track to be muted. 
+PASS track.onmute fires before setRemoteDescription resolves. 
+PASS removeTrack() twice is safe. 
 

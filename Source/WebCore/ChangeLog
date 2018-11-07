@@ -1,3 +1,25 @@
+2018-11-06  Youenn Fablet  <youenn@apple.com>
+
+        Support onremovetrack for RTCPeerConnection removed tracks
+        https://bugs.webkit.org/show_bug.cgi?id=191299
+
+        Reviewed by Eric Carlson.
+
+        When applying SDP, LibWebRTCMediaEndpoint gets notified of a removed track.
+        In that case, make sure to remove it from its remote stream(s) so as
+        to notify the application of the changes.
+        Work around the receiver missing the list of streams by storing in a map
+        the list of the remote streams for a given remote track.
+
+        Covered by rebased test.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::mediaStreamFromRTCStream):
+        (WebCore::LibWebRTCMediaEndpoint::removeRemoteTrack):
+        (WebCore::LibWebRTCMediaEndpoint::removeRemoteStream):
+        (WebCore::LibWebRTCMediaEndpoint::stop):
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.h:
+
 2018-11-06  Timothy Hatcher  <timothy@apple.com>
 
         REGRESSION (r237878): css-dark-mode/supported-color-schemes.html is failing on Mojave
