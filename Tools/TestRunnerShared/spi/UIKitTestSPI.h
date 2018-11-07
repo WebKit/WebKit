@@ -63,6 +63,7 @@
 
 @interface UIKeyboard ()
 + (void)removeAllDynamicDictionaries;
++ (BOOL)isInHardwareKeyboardMode;
 @end
 
 @interface UIView ()

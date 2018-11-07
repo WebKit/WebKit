@@ -1,3 +1,17 @@
+2018-11-07  Daniel Bates  <dabates@apple.com>
+
+        Override +[UIKeyboard isInHardwareKeyboardMode] in WebKitTestRunner and DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=190141
+
+        Reviewed by Darin Adler.
+
+        Remove the runtime application check for WebKitTestRunner as we no longer need this
+        now that WebKitTestRunner and DumpRenderTree override +[UIKeyboard isInHardwareKeyboardMode].
+
+        * platform/RuntimeApplicationChecks.h:
+        * platform/cocoa/RuntimeApplicationChecksCocoa.mm:
+        (WebCore::IOSApplication::isWebKitTestRunner): Deleted.
+
 2018-11-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Fix "Javascript" => "JavaScript" enum in protocol generated objects

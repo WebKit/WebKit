@@ -42,6 +42,7 @@
 #import "PrintInfo.h"
 #import "RemoteLayerTreeDrawingArea.h"
 #import "SandboxUtilities.h"
+#import "UIKitSPI.h"
 #import "UserData.h"
 #import "VisibleContentRectUpdateInfo.h"
 #import "WKAccessibilityWebPageObjectIOS.h"
@@ -197,7 +198,7 @@ void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePost
     // have a composition or are using a hardware keyboard then we send the full editor state
     // immediately so that the UIProcess can update UI, including the position of the caret.
     bool needsLayout = !frame.view() || frame.view()->needsLayout();
-    if (shouldIncludePostLayoutData == IncludePostLayoutDataHint::No && needsLayout && !isInHardwareKeyboardMode() && !frame.editor().hasComposition()) {
+    if (shouldIncludePostLayoutData == IncludePostLayoutDataHint::No && needsLayout && ![UIKeyboard isInHardwareKeyboardMode] && !frame.editor().hasComposition()) {
         result.isMissingPostLayoutData = true;
         return;
     }

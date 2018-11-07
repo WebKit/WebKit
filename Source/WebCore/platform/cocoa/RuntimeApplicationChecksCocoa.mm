@@ -217,14 +217,6 @@ bool IOSApplication::isDumpRenderTree()
     return isDumpRenderTree;
 }
 
-bool IOSApplication::isWebKitTestRunner()
-{
-    // We use a prefix match instead of strict equality since multiple instances of WebKitTestRunner
-    // may be launched, where the bundle identifier of each instance has a unique suffix.
-    static bool isWebKitTestRunner = applicationBundleIsEqualTo("org.webkit.WebKitTestRunnerApp"_s); // e.g. org.webkit.WebKitTestRunnerApp0
-    return isWebKitTestRunner;
-}
-
 bool IOSApplication::isMobileStore()
 {
     static bool isMobileStore = applicationBundleIsEqualTo("com.apple.MobileStore"_s);

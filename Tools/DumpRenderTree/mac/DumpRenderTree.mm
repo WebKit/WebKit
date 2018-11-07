@@ -1201,6 +1201,13 @@ static void runTestingServerLoop()
     }
 }
 
+#if PLATFORM(IOS_FAMILY)
+static BOOL overrideIsInHardwareKeyboardMode()
+{
+    return NO;
+}
+#endif
+
 static void prepareConsistentTestingEnvironment()
 {
 #if !PLATFORM(IOS_FAMILY)
@@ -1208,6 +1215,10 @@ static void prepareConsistentTestingEnvironment()
     poseAsClass("DumpRenderTreeEvent", "NSEvent");
 #else
     poseAsClass("DumpRenderTreeEvent", "GSEvent");
+
+    // Override the implementation of +[UIKeyboard isInHardwareKeyboardMode] to ensure that test runs are deterministic
+    // regardless of whether a hardware keyboard is attached. We intentionally never restore the original implementation.
+    method_setImplementation(class_getClassMethod([UIKeyboard class], @selector(isInHardwareKeyboardMode)), reinterpret_cast<IMP>(overrideIsInHardwareKeyboardMode));
 #endif
 
     [[WebPreferences standardPreferences] setAutosaves:NO];

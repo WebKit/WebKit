@@ -42,7 +42,13 @@
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <objc/runtime.h>
 #import <wtf/MainThread.h>
+
+static BOOL overrideIsInHardwareKeyboardMode()
+{
+    return NO;
+}
 
 namespace WTR {
 
@@ -73,6 +79,10 @@ void TestController::platformInitialize()
     auto center = CFNotificationCenterGetLocalCenter();
     CFNotificationCenterAddObserver(center, this, handleKeyboardWillHideNotification, (CFStringRef)UIKeyboardWillHideNotification, nullptr, CFNotificationSuspensionBehaviorDeliverImmediately);
     CFNotificationCenterAddObserver(center, this, handleKeyboardDidHideNotification, (CFStringRef)UIKeyboardDidHideNotification, nullptr, CFNotificationSuspensionBehaviorDeliverImmediately);
+
+    // Override the implementation of +[UIKeyboard isInHardwareKeyboardMode] to ensure that test runs are deterministic
+    // regardless of whether a hardware keyboard is attached. We intentionally never restore the original implementation.
+    method_setImplementation(class_getClassMethod([UIKeyboard class], @selector(isInHardwareKeyboardMode)), reinterpret_cast<IMP>(overrideIsInHardwareKeyboardMode));
 }
 
 void TestController::platformDestroy()

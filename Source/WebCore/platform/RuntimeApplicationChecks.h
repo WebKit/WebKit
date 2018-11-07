@@ -79,7 +79,6 @@ namespace IOSApplication {
 WEBCORE_EXPORT bool isMobileMail();
 WEBCORE_EXPORT bool isMobileSafari();
 WEBCORE_EXPORT bool isWebBookmarksD();
-WEBCORE_EXPORT bool isWebKitTestRunner();
 WEBCORE_EXPORT bool isDumpRenderTree();
 bool isMobileStore();
 bool isSpringBoard();

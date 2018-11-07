@@ -1,3 +1,22 @@
+2018-11-07  Daniel Bates  <dabates@apple.com>
+
+        Override +[UIKeyboard isInHardwareKeyboardMode] in WebKitTestRunner and DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=190141
+
+        Reviewed by Darin Adler.
+
+        Directly use +[UIKeyboard isInHardwareKeyboardMode]. We will override this class method
+        in DumpRenderTree and WebKitTestRunner to always return NO so as to make test runs
+        deterministic regardless of whether a hardware keyboard is attached.
+
+        * Shared/NativeWebKeyboardEvent.h:
+        * Shared/ios/NativeWebKeyboardEventIOS.mm:
+        (WebKit::isInHardwareKeyboardMode): Deleted.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _startAssistingNode:userIsInteracting:blurPreviousNode:changingActivityState:userObject:]):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::platformEditorState const):
+
 2018-11-07  Zamiul Haque  <zhaque@apple.com>
 
         Force a gregorian calendar to show for credit card expiration date inputs

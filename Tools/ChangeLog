@@ -1,3 +1,21 @@
+2018-11-07  Daniel Bates  <dabates@apple.com>
+
+        Override +[UIKeyboard isInHardwareKeyboardMode] in WebKitTestRunner and DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=190141
+
+        Reviewed by Darin Adler.
+
+        Override +[UIKeyboard isInHardwareKeyboardMode] to always return NO so as to make test
+        runs deterministic regardless of whether a hardware keyboard is attached.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (overrideIsInHardwareKeyboardMode): Added.
+        (prepareConsistentTestingEnvironment):
+        * TestRunnerShared/spi/UIKitTestSPI.h: Forward declare SPI.
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (overrideIsInHardwareKeyboardMode): Added.
+        (WTR::TestController::platformInitialize):
+
 2018-11-07  Jonathan Bedard  <jbedard@apple.com>
 
         Unreviewed, rolling out r237913.
