@@ -1,3 +1,16 @@
+2018-11-06  Timothy Hatcher  <timothy@apple.com>
+
+        REGRESSION (r237878): css-dark-mode/supported-color-schemes.html is failing on Mojave
+        https://bugs.webkit.org/show_bug.cgi?id=191338
+
+        Reviewed by Dean Jackson.
+
+        * page/Page.cpp:
+        (WebCore::Page::appearanceDidChange): Add back call to didChangeStyleSheetEnvironment().
+        It was dropped by mistake when I moved code to appearanceDidChange(). This is needed to
+        update styles for semantic colors and from controls when the media prefers-color-scheme
+        media query is not used on the page.
+
 2018-11-06  Youenn Fablet  <youenn@apple.com>
 
         Make mDNS ICE Candidate an experimental flag again

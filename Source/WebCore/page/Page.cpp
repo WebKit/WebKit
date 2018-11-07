@@ -2462,6 +2462,7 @@ void Page::appearanceDidChange()
         if (!document)
             continue;
 
+        document->styleScope().didChangeStyleSheetEnvironment();
         document->styleScope().evaluateMediaQueriesForAppearanceChange();
         document->evaluateMediaQueryList();
     }
