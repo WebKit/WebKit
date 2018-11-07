@@ -1,5 +1,19 @@
 2018-11-07  Daniel Bates  <dabates@apple.com>
 
+        [iOS] Option + Delete should delete previous word
+        https://bugs.webkit.org/show_bug.cgi?id=191381
+        <rdar://problem/23681351>
+
+        Reviewed by Wenson Hsieh.
+
+        Implement support for pressing Option + Delete to delete the previous word. This makes text editing
+        in WebKit more closely match the platform conventions.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _deleteByWord]):
+
+2018-11-07  Daniel Bates  <dabates@apple.com>
+
         Override +[UIKeyboard isInHardwareKeyboardMode] in WebKitTestRunner and DumpRenderTree
         https://bugs.webkit.org/show_bug.cgi?id=190141
 
