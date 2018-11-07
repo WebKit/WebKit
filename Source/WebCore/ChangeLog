@@ -1,3 +1,15 @@
+2018-11-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Revert 237849: it breaks MotionMark
+        https://bugs.webkit.org/show_bug.cgi?id=191398
+
+        Reviewed by Simon Fraser.
+
+        This change broke painting while the test is running.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateScrollCoordinatedStatus):
+
 2018-11-07  Don Olmstead  <don.olmstead@sony.com>
 
         Simplify macros in platform

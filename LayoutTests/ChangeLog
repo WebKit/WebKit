@@ -1,5 +1,15 @@
 2018-11-07  Simon Fraser  <simon.fraser@apple.com>
 
+        Revert 237849: it breaks MotionMark
+        https://bugs.webkit.org/show_bug.cgi?id=191398
+
+        Reviewed by Simon Fraser.
+
+        * fast/scrolling/ios/update-scroll-coordinated-status-expected.txt: Removed.
+        * fast/scrolling/ios/update-scroll-coordinated-status.html: Removed.
+
+2018-11-07  Simon Fraser  <simon.fraser@apple.com>
+
         Some WK1 repaint tests are flakey
         https://bugs.webkit.org/show_bug.cgi?id=190627
 
