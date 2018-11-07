@@ -33,6 +33,9 @@ namespace WebCore {
 void JSIntersectionObserverEntry::visitAdditionalChildren(JSC::SlotVisitor& visitor)
 {
     visitor.addOpaqueRoot(root(wrapped().target()));
+    visitor.addOpaqueRoot(wrapped().boundingClientRect());
+    visitor.addOpaqueRoot(wrapped().intersectionRect());
+    visitor.addOpaqueRoot(wrapped().rootBounds());
 }
 
 }
