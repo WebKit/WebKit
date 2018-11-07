@@ -162,6 +162,9 @@ namespace WebCore {
 #endif
             PseudoClassHost,
             PseudoClassDefined,
+#if ENABLE(ATTACHMENT_ELEMENT)
+            PseudoClassHasAttachment,
+#endif
         };
 
         enum PseudoElementType {

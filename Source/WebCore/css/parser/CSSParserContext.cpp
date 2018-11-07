@@ -28,6 +28,7 @@
 
 #include "Document.h"
 #include "Page.h"
+#include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
 #include <wtf/NeverDestroyed.h>
 
@@ -68,6 +69,9 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     springTimingFunctionEnabled = document.settings().springTimingFunctionEnabled();
     constantPropertiesEnabled = document.settings().constantPropertiesEnabled();
     colorFilterEnabled = document.settings().colorFilterEnabled();
+#if ENABLE(ATTACHMENT_ELEMENT)
+    attachmentEnabled = RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled();
+#endif
     deferredCSSParserEnabled = document.settings().deferredCSSParserEnabled();
     useSystemAppearance = document.page() ? document.page()->useSystemAppearance() : false;
 
@@ -94,6 +98,9 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.springTimingFunctionEnabled == b.springTimingFunctionEnabled
         && a.constantPropertiesEnabled == b.constantPropertiesEnabled
         && a.colorFilterEnabled == b.colorFilterEnabled
+#if ENABLE(ATTACHMENT_ELEMENT)
+        && a.attachmentEnabled == b.attachmentEnabled
+#endif
         && a.deferredCSSParserEnabled == b.deferredCSSParserEnabled
         && a.hasDocumentSecurityOrigin == b.hasDocumentSecurityOrigin
         && a.useSystemAppearance == b.useSystemAppearance;

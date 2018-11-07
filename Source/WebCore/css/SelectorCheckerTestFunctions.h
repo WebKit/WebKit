@@ -34,6 +34,10 @@
 #include "ScrollbarTheme.h"
 #include <wtf/Compiler.h>
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+#include "HTMLAttachmentElement.h"
+#endif
+
 #if ENABLE(VIDEO_TRACK)
 #include "WebVTTElement.h"
 #endif
@@ -129,6 +133,13 @@ ALWAYS_INLINE bool isWindowInactive(const Element& element)
         return false;
     return !page->focusController().isActive();
 }
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+ALWAYS_INLINE bool hasAttachment(const Element& element)
+{
+    return is<HTMLImageElement>(element) && downcast<HTMLImageElement>(element).attachmentElement();
+}
+#endif
 
 ALWAYS_INLINE bool containslanguageSubtagMatchingRange(StringView language, StringView range, unsigned languageLength, unsigned& position)
 {

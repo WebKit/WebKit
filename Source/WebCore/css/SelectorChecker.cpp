@@ -1111,6 +1111,11 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             return false;
 #endif
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+        case CSSSelector::PseudoClassHasAttachment:
+            return hasAttachment(element);
+#endif
+
         case CSSSelector::PseudoClassUnknown:
             ASSERT_NOT_REACHED();
             break;

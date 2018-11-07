@@ -28,6 +28,9 @@ first-line, PseudoClassUnknown, PseudoElementFirstLine
 first-of-type
 focus
 focus-within
+#if ENABLE(ATTACHMENT_ELEMENT)
+has-attachment
+#endif
 horizontal
 host, PseudoClassHost, PseudoElementUnknown
 hover

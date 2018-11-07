@@ -1,0 +1,19 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableAttachmentElement=true ] -->
+<head>
+    <script src="../../resources/js-test-pre.js"></script>
+    <style>
+        img { clear: both; }
+        img:has-attachment { clear: none; }
+    </style>
+</head>
+<body>
+    <img id=target>
+    <script>
+        description("This tests the :has-attachment pseudoclass.");
+        var target = document.getElementById("target");
+        shouldBeEqualToString("getComputedStyle(target).clear", "both");
+        HTMLAttachmentElement.getAttachmentIdentifier(target);
+        shouldBeEqualToString("getComputedStyle(target).clear", "none");
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
+</body>

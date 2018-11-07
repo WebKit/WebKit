@@ -625,6 +625,7 @@ webkit.org/b/35013 svg/zoom/text/ [ Skip ]
 
 # TODO Attachment elements do not provide a custom renderer
 webkit.org/b/142260 fast/attachment [ Skip ]
+webkit.org/b/142260 fast/css/has-attachment.html [ Skip ]
 
 # TODO APNG is not supported
 webkit.org/b/142731 fast/images/animated-png.html [ Skip ]

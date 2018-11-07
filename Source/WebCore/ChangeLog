@@ -1,3 +1,45 @@
+2018-11-07  Dan Bernstein  <mitz@apple.com>
+
+        Add a pseudoclass that matches img elements that are backed by an attachment
+        https://bugs.webkit.org/show_bug.cgi?id=191286
+        <rdar://problem/45823554>
+
+        Reviewed by Dean Jackson.
+
+        Test: fast/css/has-attachment.html
+
+        Added a :has-attachment pseudoclass, enabled only when the attachment element is enabled at
+        runtime, that matches elements (currently only img elements qualify) that have an attachment
+        element in their shadow DOM.
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::selectorText const): Handle the new PseudoClassHasAttachment value.
+        * css/CSSSelector.h: Added a new value to the PseudoClassType enum.
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne const): Check the new PseudoClassHasAttachment value
+          using the new hasAttachment test function.
+
+        * css/SelectorCheckerTestFunctions.h:
+        (WebCore::hasAttachment): Added. Tests if the element is an img element that has an
+          attachment.
+
+        * css/SelectorPseudoClassAndCompatibilityElementMap.in: Added has-attachment.
+
+        * css/parser/CSSParserContext.cpp:
+        (WebCore::CSSParserContext::CSSParserContext): Initialize new attachmentEnabled member based
+          on RuntimeEnabledFeatures.
+        (WebCore::operator==): Compare new attachmentEnabled member.
+        * css/parser/CSSParserContext.h:
+        (WebCore::CSSParserContextHash::hash): Include new attachmentEnabled member.
+
+        * css/parser/CSSSelectorParser.cpp:
+        (WebCore::CSSSelectorParser::consumePseudo): Reject :has-attachment if the attachment
+          element is not enabled.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::addPseudoClassType): Handle PseudoClassHasAttachment.
+
 2018-11-07  Don Olmstead  <don.olmstead@sony.com>
 
         Make generic MainThreadSharedTimer implementation

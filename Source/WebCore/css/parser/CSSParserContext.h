@@ -55,6 +55,9 @@ public:
     bool springTimingFunctionEnabled { false };
     bool constantPropertiesEnabled { false };
     bool colorFilterEnabled { false };
+#if ENABLE(ATTACHMENT_ELEMENT)
+    bool attachmentEnabled { false };
+#endif
     bool deferredCSSParserEnabled { false };
     
     // This is only needed to support getMatchedCSSRules.
@@ -98,7 +101,10 @@ struct CSSParserContextHash {
             & key.deferredCSSParserEnabled                  << 8
             & key.hasDocumentSecurityOrigin                 << 9
             & key.useSystemAppearance                       << 10
-            & key.mode                                      << 11; // Keep this last.
+#if ENABLE(ATTACHMENT_ELEMENT)
+            & key.attachmentEnabled                         << 11
+#endif
+            & key.mode                                      << 12; // Keep this last.
         hash ^= WTF::intHash(bits);
         return hash;
     }

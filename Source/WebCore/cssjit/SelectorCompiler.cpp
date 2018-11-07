@@ -619,6 +619,12 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
         return FunctionType::SimpleSelectorChecker;
 #endif
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+    case CSSSelector::PseudoClassHasAttachment:
+        fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr<CSSOperationPtrTag>(hasAttachment));
+        return FunctionType::SimpleSelectorChecker;
+#endif
+
     // These pseudo-classes only have meaning with scrollbars.
     case CSSSelector::PseudoClassHorizontal:
     case CSSSelector::PseudoClassVertical:

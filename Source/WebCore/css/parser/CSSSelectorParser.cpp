@@ -493,9 +493,13 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
     auto lowercasedValue = token.value().convertToASCIILowercase();
     auto value = StringView { lowercasedValue };
 
-    if (colons == 1)
+    if (colons == 1) {
         selector = std::unique_ptr<CSSParserSelector>(CSSParserSelector::parsePseudoClassSelectorFromStringView(value));
-    else {
+#if ENABLE(ATTACHMENT_ELEMENT)
+        if (!m_context.attachmentEnabled && selector && selector->match() == CSSSelector::PseudoClass && selector->pseudoClassType() == CSSSelector::PseudoClassHasAttachment)
+            return nullptr;
+#endif
+    } else {
         selector = std::unique_ptr<CSSParserSelector>(CSSParserSelector::parsePseudoElementSelectorFromStringView(value));
 #if ENABLE(VIDEO_TRACK)
         // Treat the ident version of cue as PseudoElementWebkitCustom.

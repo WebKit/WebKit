@@ -505,6 +505,11 @@ String CSSSelector::selectorText(const String& rightSide) const
                 str.appendLiteral(":future");
                 break;
 #endif
+#if ENABLE(ATTACHMENT_ELEMENT)
+            case CSSSelector::PseudoClassHasAttachment:
+                str.appendLiteral(":has-attachment");
+                break;
+#endif
             case CSSSelector::PseudoClassHorizontal:
                 str.appendLiteral(":horizontal");
                 break;

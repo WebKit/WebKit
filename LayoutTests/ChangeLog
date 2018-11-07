@@ -1,3 +1,15 @@
+2018-11-07  Dan Bernstein  <mitz@apple.com>
+
+        Add a pseudoclass that matches img elements that are backed by an attachment
+        https://bugs.webkit.org/show_bug.cgi?id=191286
+        <rdar://problem/45823554>
+
+        Reviewed by Dean Jackson.
+
+        * fast/css/has-attachment-expected.txt: Added.
+        * fast/css/has-attachment.html: Added.
+        * platform/win/TestExpectations:
+
 2018-11-07  Ali Juma  <ajuma@chromium.org>
 
         IntersectionObserverEntry doesn't keep JS wrappers of rects alive
