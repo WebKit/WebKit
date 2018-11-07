@@ -1,3 +1,37 @@
+2018-11-06  Chris Dumez  <cdumez@apple.com>
+
+        Post too much text to iFrame could crash webkit
+        https://bugs.webkit.org/show_bug.cgi?id=190947
+        <rdar://problem/45678231>
+
+        Reviewed by Geoffrey Garen.
+
+        Optimize SuffixTree (Which is used by XSSAuditor) to stop storing each Node's
+        children as a static array of 128 pointers and use a dynamic array (vector)
+        instead. This uses way less memory. Also make SuffixTree and SuffixTree::Node
+        as fast allocated for performance. This part of the change is based on the
+        following Blink change:
+        - https://chromium.googlesource.com/chromium/src.git/+/6ca590e1c7edaa7c56cac9e3e3c39cf398ca8d4d
+
+        Also update the XSSAuditor to construct the SuffixTree lazily since there are
+        many cases (including the one in this bug) where we were spending a significant
+        amount of time building the SuffixTree and then never querying it.
+
+        * html/parser/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::init):
+        (WebCore::XSSAuditor::decodedHTTPBodySuffixTree):
+        (WebCore::XSSAuditor::isContainedInRequest):
+        * html/parser/XSSAuditor.h:
+        * platform/text/SuffixTree.h:
+        (WebCore::SuffixTree::mightContain):
+        (WebCore::SuffixTree::Node::Node):
+        (WebCore::SuffixTree::Node::~Node):
+        (WebCore::SuffixTree::Node::find):
+        (WebCore::SuffixTree::Node::end):
+        (WebCore::SuffixTree::build):
+        (WebCore::SuffixTree<Codebook>::Node::childAt):
+        (WebCore::SuffixTree::Node::at): Deleted.
+
 2018-11-06  Youenn Fablet  <youenn@apple.com>
 
         Support onremovetrack for RTCPeerConnection removed tracks

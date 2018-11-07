@@ -102,6 +102,8 @@ private:
     bool isContainedInRequest(const String&);
     bool isLikelySafeResource(const String& url);
 
+    SuffixTree<ASCIICodebook>* decodedHTTPBodySuffixTree();
+
     URL m_documentURL;
     bool m_isEnabled;
 

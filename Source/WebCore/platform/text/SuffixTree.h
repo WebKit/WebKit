@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SuffixTree_h
-#define SuffixTree_h
+#pragma once
 
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -45,6 +44,8 @@ public:
 
 template<typename Codebook>
 class SuffixTree {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(SuffixTree)
 public:
     SuffixTree(const String& text, unsigned depth)
         : m_depth(depth)
@@ -58,37 +59,50 @@ public:
         Node* current = &m_root;
         int limit = std::min(m_depth, query.length());
         for (int i = 0; i < limit; ++i) {
-            current = current->at(Codebook::codeWord(query[i]));
-            if (!current)
+            auto it = current->find(Codebook::codeWord(query[i]));
+            if (it == current->end())
                 return false;
+            current = it->node;
         }
         return true;
     }
 
 private:
     class Node {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         Node(bool isLeaf = false)
-            : m_children(Codebook::codeSize, 0)
-            , m_isLeaf(isLeaf)
+            : m_isLeaf(isLeaf)
         {
         }
 
         ~Node()
         {
-            for (unsigned i = 0; i < m_children.size(); ++i) {
-                Node* child = m_children.at(i);
+            for (auto& entry : m_children) {
+                auto* child = entry.node;
                 if (child && !child->m_isLeaf)
                     delete child;
             }
         }
 
-        Node*& at(int codeWord) { return m_children.at(codeWord); }
+        Node*& childAt(int codeWord);
+
+        auto find(int codeWord)
+        {
+            return std::find_if(m_children.begin(), m_children.end(), [codeWord](auto& entry) {
+                return entry.codeWord == codeWord;
+            });
+        }
+
+        auto end() { return m_children.end(); }
 
     private:
-        typedef Vector<Node*, Codebook::codeSize> ChildrenVector;
+        struct ChildWithCodeWord {
+            int codeWord;
+            Node* node;
+        };
 
-        ChildrenVector m_children;
+        Vector<ChildWithCodeWord> m_children;
         bool m_isLeaf;
     };
 
@@ -99,7 +113,7 @@ private:
             unsigned limit = std::min(base + m_depth, text.length());
             for (unsigned offset = 0; base + offset < limit; ++offset) {
                 ASSERT(current != &m_leaf);
-                Node*& child = current->at(Codebook::codeWord(text[base + offset]));
+                Node*& child = current->childAt(Codebook::codeWord(text[base + offset]));
                 if (!child)
                     child = base + offset + 1 == limit ? &m_leaf : new Node();
                 current = child;
@@ -116,6 +130,14 @@ private:
     Node m_leaf;
 };
 
-} // namespace WebCore
+template<typename Codebook>
+inline auto SuffixTree<Codebook>::Node::childAt(int codeWord) -> Node*&
+{
+    auto it = find(codeWord);
+    if (it != m_children.end())
+        return it->node;
+    m_children.append(ChildWithCodeWord { codeWord, nullptr });
+    return m_children.last().node;
+}
 
-#endif // SuffixTree_h
+} // namespace WebCore

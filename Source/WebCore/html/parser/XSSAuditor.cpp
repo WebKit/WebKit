@@ -274,9 +274,6 @@ void XSSAuditor::initForFragment()
 
 void XSSAuditor::init(Document* document, XSSAuditorDelegate* auditorDelegate)
 {
-    const size_t minimumLengthForSuffixTree = 512; // FIXME: Tune this parameter.
-    const int suffixTreeDepth = 5;
-
     ASSERT(isMainThread());
     if (m_state == Initialized)
         return;
@@ -316,7 +313,6 @@ void XSSAuditor::init(Document* document, XSSAuditorDelegate* auditorDelegate)
     if (m_decodedURL.find(isRequiredForInjection) == notFound)
         m_decodedURL = String();
 
-    String httpBodyAsString;
     if (RefPtr<DocumentLoader> documentLoader = document->frame()->loader().documentLoader()) {
         String headerValue = documentLoader->response().httpHeaderField(HTTPHeaderName::XXSSProtection);
         String errorDetails;
@@ -344,13 +340,11 @@ void XSSAuditor::init(Document* document, XSSAuditorDelegate* auditorDelegate)
             auditorDelegate->setReportURL(reportURL.isolatedCopy());
         RefPtr<FormData> httpBody = documentLoader->originalRequest().httpBody();
         if (httpBody && !httpBody->isEmpty()) {
-            httpBodyAsString = httpBody->flattenToString();
+            String httpBodyAsString = httpBody->flattenToString();
             if (!httpBodyAsString.isEmpty()) {
                 m_decodedHTTPBody = canonicalize(httpBodyAsString, TruncationStyle::None);
                 if (m_decodedHTTPBody.find(isRequiredForInjection) == notFound)
                     m_decodedHTTPBody = String();
-                if (m_decodedHTTPBody.length() >= minimumLengthForSuffixTree)
-                    m_decodedHTTPBodySuffixTree = std::make_unique<SuffixTree<ASCIICodebook>>(m_decodedHTTPBody, suffixTreeDepth);
             }
         }
     }
@@ -711,13 +705,24 @@ String XSSAuditor::canonicalizedSnippetForJavaScript(const FilterTokenRequest& r
     return result;
 }
 
+SuffixTree<ASCIICodebook>* XSSAuditor::decodedHTTPBodySuffixTree()
+{
+    const unsigned minimumLengthForSuffixTree = 512; // FIXME: Tune this parameter.
+    const unsigned suffixTreeDepth = 5;
+
+    if (!m_decodedHTTPBodySuffixTree && m_decodedHTTPBody.length() >= minimumLengthForSuffixTree)
+        m_decodedHTTPBodySuffixTree = std::make_unique<SuffixTree<ASCIICodebook>>(m_decodedHTTPBody, suffixTreeDepth);
+    return m_decodedHTTPBodySuffixTree.get();
+}
+
 bool XSSAuditor::isContainedInRequest(const String& decodedSnippet)
 {
     if (decodedSnippet.isEmpty())
         return false;
     if (m_decodedURL.containsIgnoringASCIICase(decodedSnippet))
         return true;
-    if (m_decodedHTTPBodySuffixTree && !m_decodedHTTPBodySuffixTree->mightContain(decodedSnippet))
+    auto* decodedHTTPBodySuffixTree = this->decodedHTTPBodySuffixTree();
+    if (decodedHTTPBodySuffixTree && !decodedHTTPBodySuffixTree->mightContain(decodedSnippet))
         return false;
     return m_decodedHTTPBody.containsIgnoringASCIICase(decodedSnippet);
 }
