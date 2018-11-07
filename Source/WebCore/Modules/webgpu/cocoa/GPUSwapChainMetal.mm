@@ -23,28 +23,69 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebGPURenderingContext.h"
+#import "config.h"
+#import "GPUSwapChain.h"
 
 #if ENABLE(WEBGPU)
 
+#import "GPUDevice.h"
+#import "Logging.h"
+
+#import <Metal/Metal.h>
+#import <QuartzCore/QuartzCore.h>
+#import <wtf/BlockObjCExceptions.h>
+
 namespace WebCore {
 
-std::unique_ptr<WebGPURenderingContext> WebGPURenderingContext::create(CanvasBase& canvas)
+RefPtr<GPUSwapChain> GPUSwapChain::create()
 {
-    auto swapChain = GPUSwapChain::create();
+    PlatformSwapLayerSmartPtr platformLayer;
 
-    if (!swapChain)
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
+    platformLayer = adoptNS([[CAMetalLayer alloc] init]);
+
+    [platformLayer setOpaque:0];
+    [platformLayer setName:@"WebGPU Layer"];
+
+    // FIXME: For now, default to these settings.
+    [platformLayer setPixelFormat:MTLPixelFormatBGRA8Unorm];
+    [platformLayer setFramebufferOnly:YES];
+
+    END_BLOCK_OBJC_EXCEPTIONS;
+
+    if (!platformLayer) {
+        LOG(WebGPU, "GPUSwapChain::create(): Unable to create CAMetalLayer!");
         return nullptr;
+    }
 
-    auto context = std::unique_ptr<WebGPURenderingContext>(new WebGPURenderingContext(canvas, WTFMove(swapChain)));
-    context->suspendIfNeeded();
-    return context;
+    return adoptRef(new GPUSwapChain(WTFMove(platformLayer)));
 }
 
-WebGPURenderingContext::WebGPURenderingContext(CanvasBase& canvas, RefPtr<GPUSwapChain>&& swapChain)
-    : WebGPUSwapChain(canvas, WTFMove(swapChain))
+GPUSwapChain::GPUSwapChain(PlatformSwapLayerSmartPtr&& platformLayer)
+    : m_platformSwapLayer(WTFMove(platformLayer))
 {
+}
+
+void GPUSwapChain::setDevice(const GPUDevice& device)
+{
+    if (!device.platformDevice()) {
+        LOG(WebGPU, "GPUSwapChain::setDevice(): MTLDevice does not exist!");
+        return;
+    }
+
+    [m_platformSwapLayer setDevice:device.platformDevice()];
+}
+
+void GPUSwapChain::reshape(int width, int height)
+{
+    [m_platformSwapLayer setBounds:CGRectMake(0, 0, width, height)];
+    [m_platformSwapLayer setDrawableSize:CGSizeMake(width, height)];
+}
+
+void GPUSwapChain::present()
+{
+    // FIXME: Unimplemented stub.
 }
 
 } // namespace WebCore

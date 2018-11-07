@@ -23,27 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "GPUDevice.h"
+#pragma once
 
 #if ENABLE(WEBGPU)
 
-#include "GPURenderPipeline.h"
-#include "GPURenderPipelineDescriptor.h"
-#include "GPUShaderModule.h"
-#include "GPUShaderModuleDescriptor.h"
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
+#include <wtf/RetainPtr.h>
+
+#if USE(METAL)
+OBJC_PROTOCOL(MTLRenderPipelineState);
+#endif
 
 namespace WebCore {
 
-RefPtr<GPUShaderModule> GPUDevice::createShaderModule(GPUShaderModuleDescriptor&& descriptor) const
-{
-    return GPUShaderModule::create(*this, WTFMove(descriptor));
-}
+class GPUDevice;
 
-RefPtr<GPURenderPipeline> GPUDevice::createRenderPipeline(GPURenderPipelineDescriptor&& descriptor) const
-{
-    return GPURenderPipeline::create(*this, WTFMove(descriptor));
-}
+struct GPURenderPipelineDescriptor;
+
+#if USE(METAL)
+using PlatformRenderPipeline = MTLRenderPipelineState;
+using PlatformRenderPipelineSmartPtr = RetainPtr<MTLRenderPipelineState>;
+#else
+using PlatformRenderPipeline = void;
+using PlatformRenderPipelineSmartPtr = RefPtr<void>;
+#endif
+
+class GPURenderPipeline : public RefCounted<GPURenderPipeline> {
+public:
+    static RefPtr<GPURenderPipeline> create(const GPUDevice&, GPURenderPipelineDescriptor&&);
+
+    PlatformRenderPipeline *platformRenderPipeline() const { return m_platformRenderPipeline.get(); }
+
+private:
+    GPURenderPipeline(PlatformRenderPipelineSmartPtr&&);
+
+    PlatformRenderPipelineSmartPtr m_platformRenderPipeline;
+};
 
 } // namespace WebCore
 

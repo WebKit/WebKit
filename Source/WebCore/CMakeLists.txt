@@ -455,9 +455,14 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webgpu/WebGPUAdapter.idl
     Modules/webgpu/WebGPUAdapterDescriptor.idl
     Modules/webgpu/WebGPUDevice.idl
+    Modules/webgpu/WebGPUPipelineDescriptorBase.idl
+    Modules/webgpu/WebGPUPipelineStageDescriptor.idl
+    Modules/webgpu/WebGPURenderPipeline.idl
+    Modules/webgpu/WebGPURenderPipelineDescriptor.idl
     Modules/webgpu/WebGPURenderingContext.idl
     Modules/webgpu/WebGPUShaderModule.idl
     Modules/webgpu/WebGPUShaderModuleDescriptor.idl
+    Modules/webgpu/WebGPUShaderStage.idl
     Modules/webgpu/WebGPUSwapChain.idl
 
     Modules/websockets/CloseEvent.idl

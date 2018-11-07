@@ -28,6 +28,7 @@
 #if ENABLE(WEBGPU)
 
 #include "GPUDevice.h"
+#include "WebGPUAdapter.h"
 
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -37,17 +38,21 @@ namespace WebCore {
 
 class ScriptExecutionContext;
 class WebGPUAdapter;
+class WebGPURenderPipeline;
 class WebGPUShaderModule;
 
+struct WebGPURenderPipelineDescriptor;
 struct WebGPUShaderModuleDescriptor;
 
 class WebGPUDevice : public RefCounted<WebGPUDevice> {
 public:
     static RefPtr<WebGPUDevice> create(Ref<WebGPUAdapter>&&);
 
-    WebGPUAdapter& adapter() const { return m_adapter.get(); }
+    const WebGPUAdapter& adapter() const { return m_adapter.get(); }
+    const GPUDevice& device() const { return *m_device; }
 
     RefPtr<WebGPUShaderModule> createShaderModule(WebGPUShaderModuleDescriptor&&) const;
+    RefPtr<WebGPURenderPipeline> createRenderPipeline(WebGPURenderPipelineDescriptor&&) const;
 
 private:
     WebGPUDevice(Ref<WebGPUAdapter>&&, RefPtr<GPUDevice>&&);

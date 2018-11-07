@@ -1,3 +1,80 @@
+2018-11-06  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Experimental prototype for WebGPURenderPipeline and WebGPUSwapChain
+        https://bugs.webkit.org/show_bug.cgi?id=191291
+
+        Reviewed by Myles Maxfield.
+
+        Test: webgpu/render-pipelines.html
+        Also update test webgpu/webgpu-basics.html to create a WebGPURenderPipeline.
+
+        Begin implementation of WebGPURenderPipeline and WebGPUSwapChain. A WebGPURenderPipeline is backed by a
+        GPURenderPipeline, created lazily using the properties of the passed-in WebGPURenderPipelineDescriptor.
+        On Metal-supported systems, GPURenderPipeline is an interface to a MTLRenderPipelineState.
+        The MTLRenderPipelineState is created with the WebGPUDevice currently configured on the WebGPURenderingContext.
+
+        * CMakeLists.txt:
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.make:
+        * Modules/webgpu/GPUDevice.cpp:
+        (WebCore::GPUDevice::createRenderPipeline const):
+        * Modules/webgpu/GPUDevice.h:
+        * Modules/webgpu/GPUPipelineDescriptorBase.h:
+        * Modules/webgpu/GPUPipelineStageDescriptor.h:
+        * Modules/webgpu/GPURenderPipelineDescriptor.h:
+        (WebCore::GPURenderPipelineDescriptor::GPURenderPipelineDescriptor):
+        (WebCore::GPURenderPipelineDescriptor::primitiveTopology):
+        * Modules/webgpu/WebGPUDevice.cpp:
+        (WebCore::WebGPUDevice::createRenderPipeline const):
+        * Modules/webgpu/WebGPUDevice.h:
+        (WebCore::WebGPUDevice::adapter const):
+        (WebCore::WebGPUDevice::device const):
+        * Modules/webgpu/WebGPUDevice.idl:
+        * Modules/webgpu/WebGPUPipelineDescriptorBase.h:
+        * Modules/webgpu/WebGPUPipelineDescriptorBase.idl:
+        * Modules/webgpu/WebGPUPipelineStageDescriptor.h:
+        * Modules/webgpu/WebGPUPipelineStageDescriptor.idl:
+        * Modules/webgpu/WebGPURenderPipeline.cpp:
+        (WebCore::WebGPURenderPipeline::create):
+        (WebCore::WebGPURenderPipeline::WebGPURenderPipeline):
+        * Modules/webgpu/WebGPURenderPipeline.h:
+        * Modules/webgpu/WebGPURenderPipeline.idl:
+        * Modules/webgpu/WebGPURenderPipelineDescriptor.h:
+        * Modules/webgpu/WebGPURenderPipelineDescriptor.idl:
+        * Modules/webgpu/WebGPURenderingContext.cpp:
+        (WebCore::WebGPURenderingContext::create):
+        (WebCore::WebGPURenderingContext::WebGPURenderingContext):
+        * Modules/webgpu/WebGPURenderingContext.h:
+        * Modules/webgpu/WebGPUShaderModule.h:
+        (WebCore::WebGPUShaderModule::module const):
+        * Modules/webgpu/WebGPUShaderStage.h:
+        * Modules/webgpu/WebGPUShaderStage.idl:
+        * Modules/webgpu/WebGPUSwapChain.cpp:
+        (WebCore::WebGPUSwapChain::configure):
+        (WebCore::WebGPUSwapChain::reshape):
+        (WebCore::WebGPUSwapChain::markLayerComposited):
+        * Modules/webgpu/WebGPUSwapChain.h:
+        (WebCore::WebGPUSwapChain::WebGPUSwapChain):
+        * Modules/webgpu/WebGPUSwapChain.idl:
+        * Modules/webgpu/cocoa/GPURenderPipeline.h:
+        (WebCore::GPURenderPipeline::platformRenderPipeline const):
+        * Modules/webgpu/cocoa/GPURenderPipelineMetal.mm: Added.
+        (WebCore::setFunctionsForPipelineDescriptor):
+        (WebCore::GPURenderPipeline::create):
+        (WebCore::GPURenderPipeline::GPURenderPipeline):
+        * Modules/webgpu/cocoa/GPUSwapChain.h:
+        (WebCore::GPUSwapChain::platformLayer const):
+        * Modules/webgpu/cocoa/GPUSwapChainMetal.mm:
+        (WebCore::GPUSwapChain::create):
+        (WebCore::GPUSwapChain::GPUSwapChain):
+        (WebCore::GPUSwapChain::setDevice):
+        (WebCore::GPUSwapChain::reshape):
+        (WebCore::GPUSwapChain::present):
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+
 2018-11-06  Youenn Fablet  <youenn@apple.com>
 
         Add support for sender/receiver getCapabilities

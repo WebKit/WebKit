@@ -1,6 +1,8 @@
+PASS [object WebGPU] is defined.
 PASS Bad shader code should not create a module.
 PASS Incomplete shader code should not create a module.
 PASS Shader module created successfully.
+All tests complete.
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -28,9 +28,13 @@
 
 #if ENABLE(WEBGPU)
 
-#include "WebGPUAdapter.h"
-
+#include "GPUPipelineStageDescriptor.h"
+#include "GPURenderPipelineDescriptor.h"
 #include "GPUShaderModuleDescriptor.h"
+#include "Logging.h"
+#include "WebGPUPipelineStageDescriptor.h"
+#include "WebGPURenderPipeline.h"
+#include "WebGPURenderPipelineDescriptor.h"
 #include "WebGPUShaderModule.h"
 #include "WebGPUShaderModuleDescriptor.h"
 
@@ -55,6 +59,20 @@ WebGPUDevice::WebGPUDevice(Ref<WebGPUAdapter>&& adapter, RefPtr<GPUDevice>&& dev
 RefPtr<WebGPUShaderModule> WebGPUDevice::createShaderModule(WebGPUShaderModuleDescriptor&& descriptor) const
 {
     return WebGPUShaderModule::create(m_device->createShaderModule(GPUShaderModuleDescriptor { descriptor.code }));
+}
+
+RefPtr<WebGPURenderPipeline> WebGPUDevice::createRenderPipeline(WebGPURenderPipelineDescriptor&& descriptor) const
+{
+    Vector<GPUPipelineStageDescriptor> stages;
+    for (const auto& stageDescriptor : descriptor.stages) {
+        if (!stageDescriptor.module) {
+            LOG(WebGPU, "WebGPUDevice::createRenderPipeline(): WebGPUShaderModule not found!");
+            return nullptr;
+        }
+        stages.append({ stageDescriptor.module->module(), stageDescriptor.stage, stageDescriptor.entryPoint });
+    }
+
+    return WebGPURenderPipeline::create(m_device->createRenderPipeline(GPURenderPipelineDescriptor { WTFMove(stages), static_cast<int>(descriptor.primitiveTopology) }));
 }
 
 

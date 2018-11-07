@@ -46,14 +46,17 @@ using PlatformDeviceSmartPtr = RefPtr<void>;
 #endif
 
 class GPUShaderModule;
+class GPURenderPipeline;
 
 struct GPUShaderModuleDescriptor;
+struct GPURenderPipelineDescriptor;
 
 class GPUDevice : public RefCounted<GPUDevice> {
 public:
     static RefPtr<GPUDevice> create();
 
     RefPtr<GPUShaderModule> createShaderModule(GPUShaderModuleDescriptor&&) const;
+    RefPtr<GPURenderPipeline> createRenderPipeline(GPURenderPipelineDescriptor&&) const;
 
     PlatformDevice *platformDevice() const { return m_platformDevice.get(); }
 

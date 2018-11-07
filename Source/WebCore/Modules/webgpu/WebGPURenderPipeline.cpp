@@ -24,25 +24,26 @@
  */
 
 #include "config.h"
-#include "GPUDevice.h"
+#include "WebGPURenderPipeline.h"
 
 #if ENABLE(WEBGPU)
 
 #include "GPURenderPipeline.h"
-#include "GPURenderPipelineDescriptor.h"
-#include "GPUShaderModule.h"
-#include "GPUShaderModuleDescriptor.h"
 
 namespace WebCore {
 
-RefPtr<GPUShaderModule> GPUDevice::createShaderModule(GPUShaderModuleDescriptor&& descriptor) const
+RefPtr<WebGPURenderPipeline> WebGPURenderPipeline::create(RefPtr<GPURenderPipeline>&& pipeline)
 {
-    return GPUShaderModule::create(*this, WTFMove(descriptor));
+    if (!pipeline)
+        return nullptr;
+
+    return adoptRef(new WebGPURenderPipeline(WTFMove(pipeline)));
 }
 
-RefPtr<GPURenderPipeline> GPUDevice::createRenderPipeline(GPURenderPipelineDescriptor&& descriptor) const
+WebGPURenderPipeline::WebGPURenderPipeline(RefPtr<GPURenderPipeline>&& pipeline)
+    : m_renderPipeline(pipeline)
 {
-    return GPURenderPipeline::create(*this, WTFMove(descriptor));
+    UNUSED_PARAM(m_renderPipeline);
 }
 
 } // namespace WebCore

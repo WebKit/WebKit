@@ -36,7 +36,7 @@ public:
     static std::unique_ptr<WebGPURenderingContext> create(CanvasBase&);
 
 private:
-    WebGPURenderingContext(CanvasBase&);
+    WebGPURenderingContext(CanvasBase&, RefPtr<GPUSwapChain>&&);
     // CanvasRenderingContext
     bool isWebGPU() const final { return true; }
     // ActiveDOMObject

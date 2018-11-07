@@ -175,6 +175,8 @@ namespace WebCore {
     macro(WebGPUAdapter) \
     macro(WebGPUDevice) \
     macro(WebGPURenderingContext) \
+    macro(WebGPURenderPipeline) \
+    macro(WebGPUShaderStage) \
     macro(WebGPUShaderModule) \
     macro(WebGPUSwapChain) \
     macro(WebMetalBuffer) \

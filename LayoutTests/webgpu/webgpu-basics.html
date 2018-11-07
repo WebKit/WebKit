@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <script src="../resources/js-test-pre.js"></script>
+<script src="js/set-up-webgpu-contexts.js"></script>
 <script id="library" type="x-shader/x-metal">
     #include <metal_stdlib>
     
@@ -41,46 +42,55 @@
 if (window.testRunner)
     window.testRunner.dumpAsText();
 
-let canvas;
-let context;
-let adapter;
-let defaultDevice;
+let renderPipeline;
 
-async function setUpContexts() {
-    canvas = document.createElement("canvas");
-    context = canvas.getContext("webgpu");
-    if (!context)
-        testFailed("Could not create WebGPU context!");
-
-    shouldBeDefined(window.webgpu);
-    
-    adapter = await window.webgpu.requestAdapter({});
-    if (!adapter) {
-        testFailed("Could not create default WebGPUAdapter!")
-        return;
-    }
-
-    defaultDevice = adapter.createDevice();
-    if (!defaultDevice) {
-        testFailed("Could not create WebGPUDevice!");
-        return;
-    }
-
-    setUpShaders();
-}
-
-function setUpShaders() {
+function setUpPipeline() {
     let shaderDescriptor = {
         code: document.getElementById("library").text
     };
     let shaderModule = defaultDevice.createShaderModule(shaderDescriptor);
-    if (!shaderModule)
+    if (!shaderModule) {
         testFailed("Could not create WebGPUShaderModule!");
+        return;
+    }
+
+    let vertexStageDescriptor = { 
+        module: shaderModule, 
+        stage: WebGPUShaderStage.VERTEX, 
+        entryPoint: "vertex_main" 
+    };
+
+    let fragmentStageDescriptor = {
+        module: shaderModule,
+        stage: WebGPUShaderStage.FRAGMENT,
+        entryPoint: "fragment_main"
+    };
+
+    if (!vertexStageDescriptor || !fragmentStageDescriptor) {
+        testFailed("Could not create WebGPUPipelineStageDescriptor!");
+        return;
+    }
+
+    let pipelineDescriptor = {
+        stages: [vertexStageDescriptor, fragmentStageDescriptor],
+        primitiveTopology: "triangleList"
+    };
+
+    if (!pipelineDescriptor) {
+        testFailed("Could not create WebGPURenderPipelineDescriptor!");
+        return;
+    }
+
+    renderPipeline = defaultDevice.createRenderPipeline(pipelineDescriptor);
+    if (!renderPipeline) {
+        testFailed("Could not create WebGPURenderPipeline!");
+        return;
+    }
 }
 
-setUpContexts();
+runWebGPUTests([setUpPipeline]);
 
-var successfullyParsed = true;
+successfullyParsed = true;
 </script>
 <script src="../resources/js-test-post.js"></script>
 </html>

@@ -36,7 +36,11 @@
 
 typedef unsigned long u32;
 
-dictionary WebGPUSwapChainDescriptor {
+[
+    Conditional=WEBGPU,
+    EnabledAtRuntime=WebGPU
+] dictionary WebGPUSwapChainDescriptor {
+    WebGPUDevice device; // FIXME: Propose this addition to IDL.
     // WebGPUTextureUsageFlags usage;
     // WebGPUTextureFormatEnum format;
     u32 width;

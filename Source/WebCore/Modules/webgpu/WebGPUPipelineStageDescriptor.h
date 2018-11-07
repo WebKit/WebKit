@@ -23,27 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "GPUDevice.h"
+#pragma once
 
 #if ENABLE(WEBGPU)
 
-#include "GPURenderPipeline.h"
-#include "GPURenderPipelineDescriptor.h"
-#include "GPUShaderModule.h"
-#include "GPUShaderModuleDescriptor.h"
+#include "WebGPUShaderModule.h"
+
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-RefPtr<GPUShaderModule> GPUDevice::createShaderModule(GPUShaderModuleDescriptor&& descriptor) const
-{
-    return GPUShaderModule::create(*this, WTFMove(descriptor));
-}
+using WebGPUShaderStageEnum = unsigned long;
 
-RefPtr<GPURenderPipeline> GPUDevice::createRenderPipeline(GPURenderPipelineDescriptor&& descriptor) const
-{
-    return GPURenderPipeline::create(*this, WTFMove(descriptor));
-}
+struct WebGPUPipelineStageDescriptor {
+    const WebGPUShaderModule* module = nullptr;
+    WebGPUShaderStageEnum stage;
+    String entryPoint;
+};
 
 } // namespace WebCore
 

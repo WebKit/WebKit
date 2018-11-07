@@ -28,7 +28,7 @@
 #if ENABLE(WEBGPU)
 
 #include "GPUShaderModule.h"
-#include <JavaScriptCore/ArrayBuffer.h>
+
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -37,6 +37,8 @@ namespace WebCore {
 class WebGPUShaderModule : public RefCounted<WebGPUShaderModule> {
 public:
     static RefPtr<WebGPUShaderModule> create(RefPtr<GPUShaderModule>&&);
+
+    const GPUShaderModule& module() const { return *m_module; }
 
 private:
     WebGPUShaderModule(RefPtr<GPUShaderModule>&&);
@@ -47,3 +49,4 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(WEBGPU)
+

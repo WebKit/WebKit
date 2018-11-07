@@ -1,3 +1,21 @@
+2018-11-06  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Experimental prototype for WebGPURenderPipeline and WebGPUSwapChain
+        https://bugs.webkit.org/show_bug.cgi?id=191291
+
+        Reviewed by Myles Maxfield.
+
+        * webgpu/js/set-up-webgpu-contexts.js: Added helper script for running different webgpu tests.
+        (runWebGPUTests):
+        (async.runWebGPUTestsOnCanvas):
+        (async.setUpContexts):
+        * webgpu/render-pipelines-expected.txt: Added.
+        * webgpu/render-pipelines.html: Added.
+        * webgpu/shader-modules-expected.txt:
+        * webgpu/shader-modules.html: Updated to use functions in set-up-webgpu-contexts.js.
+        * webgpu/webgpu-basics-expected.txt:
+        * webgpu/webgpu-basics.html: Updated through creating a WebGPURenderPipeline.
+
 2018-11-06  Youenn Fablet  <youenn@apple.com>
 
         Calling sender.replaceTrack() twice produces a new transceiver and its corresponding m= section

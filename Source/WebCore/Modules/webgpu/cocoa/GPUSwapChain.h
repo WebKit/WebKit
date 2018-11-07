@@ -23,27 +23,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "GPUDevice.h"
+#pragma once
 
 #if ENABLE(WEBGPU)
 
-#include "GPURenderPipeline.h"
-#include "GPURenderPipelineDescriptor.h"
-#include "GPUShaderModule.h"
-#include "GPUShaderModuleDescriptor.h"
+#include <wtf/RefPtr.h>
+#include <wtf/RetainPtr.h>
+
+#if USE(METAL)
+OBJC_CLASS CAMetalLayer;
+#endif
 
 namespace WebCore {
 
-RefPtr<GPUShaderModule> GPUDevice::createShaderModule(GPUShaderModuleDescriptor&& descriptor) const
-{
-    return GPUShaderModule::create(*this, WTFMove(descriptor));
-}
+class GPUDevice;
 
-RefPtr<GPURenderPipeline> GPUDevice::createRenderPipeline(GPURenderPipelineDescriptor&& descriptor) const
-{
-    return GPURenderPipeline::create(*this, WTFMove(descriptor));
-}
+#if USE(METAL)
+using PlatformSwapLayer = CAMetalLayer;
+using PlatformSwapLayerSmartPtr = RetainPtr<CAMetalLayer>;
+#else
+using PlatformSwapLayer = void;
+using PlatformSwapLayerSmartPtr = RefPtr<void>;
+#endif
+
+class GPUSwapChain : public RefCounted<GPUSwapChain> {
+public:
+    static RefPtr<GPUSwapChain> create();
+
+    void setDevice(const GPUDevice&);
+    void reshape(int width, int height);
+    void present();
+
+    PlatformSwapLayer *platformLayer() const { return m_platformSwapLayer.get(); }
+
+private:
+    GPUSwapChain(PlatformSwapLayerSmartPtr&&);
+
+    PlatformSwapLayerSmartPtr m_platformSwapLayer;
+};
 
 } // namespace WebCore
 

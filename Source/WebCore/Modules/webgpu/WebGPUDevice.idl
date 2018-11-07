@@ -34,6 +34,7 @@
     readonly attribute WebGPUAdapter adapter;
 
     WebGPUShaderModule createShaderModule(WebGPUShaderModuleDescriptor descriptor);
+    WebGPURenderPipeline createRenderPipeline(WebGPURenderPipelineDescriptor descriptor);
 
 /* To Be Implemented:
     WebGPUBuffer createBuffer(WebGPUBufferDescriptor descriptor);
@@ -49,8 +50,6 @@
     WebGPUInputState createInputState(WebGPUInputStateDescriptor descriptor);
     WebGPUAttachmentState createAttachmentState(WebGPUAttachmentStateDescriptor descriptor);
     WebGPUComputePipeline createComputePipeline(WebGPUComputePipelineDescriptor descriptor);
-    WebGPURenderPipeline createRenderPipeline(WebGPURenderPipelineDescriptor descriptor);
-
     WebGPUCommandBuffer createCommandBuffer(WebGPUCommandBufferDescriptor descriptor);
     WebGPUFence createFence(WebGPUFenceDescriptor descriptor);
 

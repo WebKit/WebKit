@@ -28,25 +28,29 @@
 #if ENABLE(WEBGPU)
 
 #include "GPUBasedCanvasRenderingContext.h"
+#include "GPUSwapChain.h"
+#include "WebGPUDevice.h"
 
 namespace WebCore {
 
 class WebGPUSwapChain : public GPUBasedCanvasRenderingContext {
 public:
     struct Descriptor {
+        const WebGPUDevice* device = nullptr;
         // FIXME: More texture properties.
         unsigned long width;
         unsigned long height;
     };
 
     virtual ~WebGPUSwapChain() = 0;
-    void configure(const Descriptor&);
+    void configure(Descriptor&&);
     // FIXME: WebGPUTexture getNextTexture();
     void present();
 
 protected:
-    WebGPUSwapChain(CanvasBase& canvas)
+    WebGPUSwapChain(CanvasBase& canvas, RefPtr<GPUSwapChain>&& swapChain)
         : GPUBasedCanvasRenderingContext(canvas)
+        , m_swapChain(WTFMove(swapChain))
     {
     }
 
@@ -63,8 +67,7 @@ private:
     void stop() override { }
     bool canSuspendForDocumentSuspension() const override { return false; }
 
-    unsigned long m_width;
-    unsigned long m_height;
+    RefPtr<GPUSwapChain> m_swapChain;
 };
 
 } // namespace WebCore

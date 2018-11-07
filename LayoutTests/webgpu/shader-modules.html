@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <script src="../resources/js-test-pre.js"></script>
+<script src="js/set-up-webgpu-contexts.js"></script>
 <script id="library_full" type="x-shader/x-metal">
     #include <metal_stdlib>
     
@@ -70,20 +71,6 @@
 if (window.testRunner)
     window.testRunner.dumpAsText();
 
-let canvas;
-let context;
-let adapter;
-let defaultDevice;
-
-async function setUpContexts() {
-    canvas = document.createElement("canvas");
-    context = canvas.getContext("webgpu");
-    adapter = await window.webgpu.requestAdapter({});
-    defaultDevice = adapter.createDevice();
-
-    setUpShaders();
-}
-
 function setUpShaders() {
     let shaderDescriptor0 = {
         code : "Hello World"
@@ -115,9 +102,9 @@ function setUpShaders() {
         testFailed("Shader module not created successfully!");
 }
 
-setUpContexts();
+runWebGPUTests([setUpShaders]);
 
-var successfullyParsed = true;
+successfullyParsed = true;
 </script>
 <script src="../resources/js-test-post.js"></script>
 </html>
