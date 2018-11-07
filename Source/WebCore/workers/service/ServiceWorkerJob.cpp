@@ -95,7 +95,7 @@ void ServiceWorkerJob::fetchScriptWithContext(ScriptExecutionContext& context, F
     m_scriptLoader = WorkerScriptLoader::create();
 
     ResourceRequest request { m_jobData.scriptURL };
-    request.setInitiatorIdentifier("serviceWorkerScriptLoad:");
+    request.setInitiatorIdentifier(context.resourceRequestIdentifier());
     request.addHTTPHeaderField("Service-Worker"_s, "script"_s);
 
     FetchOptions options;

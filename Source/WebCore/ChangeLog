@@ -1,3 +1,14 @@
+2018-11-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        ServiceWorker Inspector: Uncaught Exception: null is not an object (evaluating 'resource.target.addResource')
+        https://bugs.webkit.org/show_bug.cgi?id=191339
+
+        Reviewed by Matt Baker.
+
+        * workers/service/ServiceWorkerJob.cpp:
+        (WebCore::ServiceWorkerJob::fetchScriptWithContext):
+        Use the Service Worker's identifier, not this static but otherwise unknown identifier.
+
 2018-11-06  Youenn Fablet  <youenn@apple.com>
 
         sender.replaceTrack() fails with InvalidStateError if the transceiver.direction is "inactive"
