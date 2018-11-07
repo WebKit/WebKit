@@ -110,6 +110,8 @@ public:
     std::optional<Backends> addTransceiver(MediaStreamTrack&, const RTCRtpTransceiverInit&);
     std::unique_ptr<LibWebRTCRtpTransceiverBackend> transceiverBackendFromSender(LibWebRTCRtpSenderBackend&);
 
+    void setSenderSourceFromTrack(LibWebRTCRtpSenderBackend&, MediaStreamTrack&);
+
 private:
     LibWebRTCMediaEndpoint(LibWebRTCPeerConnectionBackend&, LibWebRTCProvider&);
 
@@ -162,6 +164,8 @@ private:
         return result ? rtc::RefCountReleaseStatus::kOtherRefsRemained
         : rtc::RefCountReleaseStatus::kDroppedLastRef;
     }
+
+    std::pair<LibWebRTCRtpSenderBackend::Source, rtc::scoped_refptr<webrtc::MediaStreamTrackInterface>> createSourceAndRTCTrack(MediaStreamTrack&);
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }

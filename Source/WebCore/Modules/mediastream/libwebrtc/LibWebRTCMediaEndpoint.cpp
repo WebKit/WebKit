@@ -519,13 +519,14 @@ std::optional<LibWebRTCMediaEndpoint::Backends> LibWebRTCMediaEndpoint::addTrans
     return createTransceiverBackends(type, init, nullptr);
 }
 
-std::optional<LibWebRTCMediaEndpoint::Backends> LibWebRTCMediaEndpoint::addTransceiver(MediaStreamTrack& track, const RTCRtpTransceiverInit& init)
+std::pair<LibWebRTCRtpSenderBackend::Source, rtc::scoped_refptr<webrtc::MediaStreamTrackInterface>> LibWebRTCMediaEndpoint::createSourceAndRTCTrack(MediaStreamTrack& track)
 {
     LibWebRTCRtpSenderBackend::Source source;
     rtc::scoped_refptr<webrtc::MediaStreamTrackInterface> rtcTrack;
     switch (track.privateTrack().type()) {
     case RealtimeMediaSource::Type::None:
-        return std::nullopt;
+        ASSERT_NOT_REACHED();
+        break;
     case RealtimeMediaSource::Type::Audio: {
         auto audioSource = RealtimeOutgoingAudioSource::create(track.privateTrack());
         rtcTrack = m_peerConnectionFactory.CreateAudioTrack(track.id().utf8().data(), audioSource.ptr());
@@ -539,8 +540,20 @@ std::optional<LibWebRTCMediaEndpoint::Backends> LibWebRTCMediaEndpoint::addTrans
         break;
     }
     }
+    return std::make_pair(WTFMove(source), WTFMove(rtcTrack));
+}
 
-    return createTransceiverBackends(WTFMove(rtcTrack), init, WTFMove(source));
+std::optional<LibWebRTCMediaEndpoint::Backends> LibWebRTCMediaEndpoint::addTransceiver(MediaStreamTrack& track, const RTCRtpTransceiverInit& init)
+{
+    auto sourceAndTrack = createSourceAndRTCTrack(track);
+    return createTransceiverBackends(WTFMove(sourceAndTrack.second), init, WTFMove(sourceAndTrack.first));
+}
+
+void LibWebRTCMediaEndpoint::setSenderSourceFromTrack(LibWebRTCRtpSenderBackend& sender, MediaStreamTrack& track)
+{
+    auto sourceAndTrack = createSourceAndRTCTrack(track);
+    sender.setSource(WTFMove(sourceAndTrack.first));
+    sender.rtcSender()->SetTrack(WTFMove(sourceAndTrack.second));
 }
 
 std::unique_ptr<LibWebRTCRtpTransceiverBackend> LibWebRTCMediaEndpoint::transceiverBackendFromSender(LibWebRTCRtpSenderBackend& backend)

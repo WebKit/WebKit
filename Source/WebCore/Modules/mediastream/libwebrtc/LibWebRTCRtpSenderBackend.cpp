@@ -31,6 +31,7 @@
 #include "LibWebRTCUtils.h"
 #include "RTCPeerConnection.h"
 #include "RTCRtpSender.h"
+#include "RuntimeEnabledFeatures.h"
 #include "ScriptExecutionContext.h"
 
 namespace WebCore {
@@ -76,6 +77,7 @@ void LibWebRTCRtpSenderBackend::replaceTrack(ScriptExecutionContext& context, RT
     }
     }
 
+    // FIXME: Remove this postTask once this whole function is executed as part of the RTCPeerConnection operation queue.
     context.postTask([protectedSender = makeRef(sender), promise = WTFMove(promise), track = WTFMove(track), this](ScriptExecutionContext&) mutable {
         if (protectedSender->isStopped())
             return;
@@ -88,13 +90,23 @@ void LibWebRTCRtpSenderBackend::replaceTrack(ScriptExecutionContext& context, RT
 
         bool hasTrack = protectedSender->track();
         protectedSender->setTrack(track.releaseNonNull());
-        if (!hasTrack) {
-            // FIXME: In case of unified plan, we should use m_rtcSender->SetTrack and no longer need m_peerConnectionBackend.
-            auto result = m_peerConnectionBackend->addTrack(*protectedSender->track(), { });
-            if (result.hasException()) {
-                promise.reject(result.releaseException());
-                return;
-            }
+
+        if (hasTrack) {
+            promise.resolve();
+            return;
+        }
+
+        if (RuntimeEnabledFeatures::sharedFeatures().webRTCUnifiedPlanEnabled()) {
+            m_source = nullptr;
+            m_peerConnectionBackend->setSenderSourceFromTrack(*this, *protectedSender->track());
+            promise.resolve();
+            return;
+        }
+
+        auto result = m_peerConnectionBackend->addTrack(*protectedSender->track(), { });
+        if (result.hasException()) {
+            promise.reject(result.releaseException());
+            return;
         }
         promise.resolve();
     });

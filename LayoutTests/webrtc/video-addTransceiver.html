@@ -39,6 +39,24 @@ promise_test(async (test) => {
     assert_true(offer.sdp.indexOf("a=recvonly") !== -1, "a=recvonly");
 }, "Setting up calls with addTransceiver with a track");
 
+promise_test(async (test) => {
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(true);
+
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    var pc = new RTCPeerConnection();
+    pc.addTransceiver(stream.getVideoTracks()[0]);
+    await pc.getSenders()[0].replaceTrack(null);
+    await pc.getSenders()[0].replaceTrack(stream.getVideoTracks()[0]);
+
+    const offer = await pc.createOffer();
+
+    const sdpLines = offer.sdp.split('\r\n').filter(line => {
+        return line.startsWith("m=video");
+    });
+    assert_equals(sdpLines.length, 1, "There should be 1 video m section");
+}, "Setting up calls with addTransceiver with a track and use replaceTrack several times");
+
 function testImage()
 {
     canvas.width = video.videoWidth;
@@ -79,6 +97,13 @@ promise_test(async (test) => {
             secondConnection.ontrack = (trackEvent) => {
                 resolve(trackEvent.track);
             };
+        }, {
+            observeOffer : (desc) => {
+                const sdpLines = desc.sdp.split('\r\n').filter(line => {
+                    return line.startsWith("m=video");
+                });
+                assert_equals(sdpLines.length, 1, "There should be 1 video m section");
+            }
         });
         setTimeout(() => reject("Test timed out"), 5000);
     });

@@ -92,6 +92,7 @@ void RTCRtpSender::replaceTrack(ScriptExecutionContext& context, RefPtr<MediaStr
         return;
     }
 
+    // FIXME: This whole function should be executed as part of the RTCPeerConnection operation queue.
     m_backend->replaceTrack(context, *this, WTFMove(withTrack), WTFMove(promise));
 }
 

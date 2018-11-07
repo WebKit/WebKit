@@ -1,3 +1,26 @@
+2018-11-06  Youenn Fablet  <youenn@apple.com>
+
+        Calling sender.replaceTrack() twice produces a new transceiver and its corresponding m= section
+        https://bugs.webkit.org/show_bug.cgi?id=191261
+
+        Reviewed by Eric Carlson.
+
+        Handle the case of replacing a track in a sender that has no track.
+        In particular, do not create a new m-section as was implied by plan B implementation.
+        Instead, set the track directly on the rtc sender.
+        Covered by webrtc/video-addTransceiver.html.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::createSourceAndRTCTrack):
+        (WebCore::LibWebRTCMediaEndpoint::addTransceiver):
+        (WebCore::LibWebRTCMediaEndpoint::setSenderSourceFromTrack):
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        (WebCore::LibWebRTCPeerConnectionBackend::setSenderSourceFromTrack):
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpSenderBackend.cpp:
+        (WebCore::LibWebRTCRtpSenderBackend::replaceTrack):
+
 2018-11-06  Chris Dumez  <cdumez@apple.com>
 
         Post too much text to iFrame could crash webkit

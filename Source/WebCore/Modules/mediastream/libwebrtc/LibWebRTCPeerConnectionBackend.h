@@ -37,6 +37,7 @@ namespace WebCore {
 
 class LibWebRTCMediaEndpoint;
 class LibWebRTCProvider;
+class LibWebRTCRtpSenderBackend;
 class LibWebRTCRtpTransceiverBackend;
 class RTCRtpReceiver;
 class RTCRtpReceiverBackend;
@@ -93,6 +94,7 @@ private:
 
     ExceptionOr<Ref<RTCRtpTransceiver>> addTransceiver(const String&, const RTCRtpTransceiverInit&) final;
     ExceptionOr<Ref<RTCRtpTransceiver>> addTransceiver(Ref<MediaStreamTrack>&&, const RTCRtpTransceiverInit&) final;
+    void setSenderSourceFromTrack(LibWebRTCRtpSenderBackend&, MediaStreamTrack&);
 
     RTCRtpTransceiver* existingTransceiver(WTF::Function<bool(LibWebRTCRtpTransceiverBackend&)>&&);
     RTCRtpTransceiver& newRemoteTransceiver(std::unique_ptr<LibWebRTCRtpTransceiverBackend>&&, Ref<RealtimeMediaSource>&&);

@@ -1,5 +1,15 @@
 2018-11-06  Youenn Fablet  <youenn@apple.com>
 
+        Calling sender.replaceTrack() twice produces a new transceiver and its corresponding m= section
+        https://bugs.webkit.org/show_bug.cgi?id=191261
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/video-addTransceiver-expected.txt:
+        * webrtc/video-addTransceiver.html:
+
+2018-11-06  Youenn Fablet  <youenn@apple.com>
+
         Make mDNS ICE Candidate an experimental flag again
         https://bugs.webkit.org/show_bug.cgi?id=191262
 

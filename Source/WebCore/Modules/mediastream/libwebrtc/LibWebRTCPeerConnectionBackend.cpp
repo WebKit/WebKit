@@ -471,6 +471,11 @@ ExceptionOr<Ref<RTCRtpTransceiver>> LibWebRTCPeerConnectionBackend::addTransceiv
     return completeAddTransceiver(WTFMove(sender), init, track->id(), track->kind());
 }
 
+void LibWebRTCPeerConnectionBackend::setSenderSourceFromTrack(LibWebRTCRtpSenderBackend& sender, MediaStreamTrack& track)
+{
+    m_endpoint->setSenderSourceFromTrack(sender, track);
+}
+
 static inline LibWebRTCRtpTransceiverBackend& backendFromRTPTransceiver(RTCRtpTransceiver& transceiver)
 {
     return static_cast<LibWebRTCRtpTransceiverBackend&>(*transceiver.backend());
