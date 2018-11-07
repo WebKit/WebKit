@@ -4243,3 +4243,7 @@ webkit.org/b/191194 fast/inline/simple-intruding-float1.html [ Failure ]
 webkit.org/b/191194 fast/inline/simple-intruding-floats2.html [ Failure ]
 webkit.org/b/191194 fast/inline/simple-intruding-floats3.html [ Failure ]
 webkit.org/b/191194 fast/inline/simple-shrink-to-fit-inline-block.html [ Failure ]
+
+webkit.org/b/191366 fast/block/basic/child-block-level-box-with-height-percent.html [ Failure ]
+webkit.org/b/191366 fast/block/basic/height-percentage-simple.html [ Failure ]
+webkit.org/b/191366 fast/block/basic/quirk-mode-percent-height.html [ Failure ]
