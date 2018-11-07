@@ -51,7 +51,7 @@ WI.MemoryTimelineRecord = class MemoryTimelineRecord extends WI.TimelineRecord
 
         for (let {type, size} of categories) {
             switch (type) {
-            case MemoryAgent.CategoryDataType.Javascript:
+            case MemoryAgent.CategoryDataType.JavaScript:
             case MemoryAgent.CategoryDataType.JIT:
                 javascriptSize += size;
                 break;

@@ -74,7 +74,7 @@ InspectorBackend.activateDomain("CSS", ["web"]);
 
 // Console.
 InspectorBackend.registerConsoleDispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, "Console");
-InspectorBackend.registerEnum("Console.ConsoleMessageSource", {XML: "xml", Javascript: "javascript", Network: "network", ConsoleAPI: "console-api", Storage: "storage", Appcache: "appcache", Rendering: "rendering", CSS: "css", Security: "security", ContentBlocker: "content-blocker", Other: "other"});
+InspectorBackend.registerEnum("Console.ConsoleMessageSource", {XML: "xml", JavaScript: "javascript", Network: "network", ConsoleAPI: "console-api", Storage: "storage", Appcache: "appcache", Rendering: "rendering", CSS: "css", Security: "security", ContentBlocker: "content-blocker", Other: "other"});
 InspectorBackend.registerEnum("Console.ConsoleMessageLevel", {Log: "log", Info: "info", Warning: "warning", Error: "error", Debug: "debug"});
 InspectorBackend.registerEnum("Console.ConsoleMessageType", {Log: "log", Dir: "dir", DirXML: "dirxml", Table: "table", Trace: "trace", Clear: "clear", StartGroup: "startGroup", StartGroupCollapsed: "startGroupCollapsed", EndGroup: "endGroup", Assert: "assert", Timing: "timing", Profile: "profile", ProfileEnd: "profileEnd"});
 InspectorBackend.registerEvent("Console.messageAdded", ["message"]);
@@ -271,7 +271,7 @@ InspectorBackend.activateDomain("LayerTree", ["web"]);
 
 // Memory.
 InspectorBackend.registerMemoryDispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, "Memory");
-InspectorBackend.registerEnum("Memory.CategoryDataType", {Javascript: "javascript", JIT: "jit", Images: "images", Layers: "layers", Page: "page", Other: "other"});
+InspectorBackend.registerEnum("Memory.CategoryDataType", {JavaScript: "javascript", JIT: "jit", Images: "images", Layers: "layers", Page: "page", Other: "other"});
 InspectorBackend.registerEnum("Memory.MemoryPressureSeverity", {Critical: "critical", NonCritical: "non-critical"});
 InspectorBackend.registerEvent("Memory.memoryPressure", ["timestamp", "severity"]);
 InspectorBackend.registerEvent("Memory.trackingStart", ["timestamp"]);

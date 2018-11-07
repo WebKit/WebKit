@@ -158,7 +158,7 @@ static Protocol::Console::ChannelSource messageSourceValue(MessageSource source)
 {
     switch (source) {
     case MessageSource::XML: return Protocol::Console::ChannelSource::XML;
-    case MessageSource::JS: return Protocol::Console::ChannelSource::Javascript;
+    case MessageSource::JS: return Protocol::Console::ChannelSource::JavaScript;
     case MessageSource::Network: return Protocol::Console::ChannelSource::Network;
     case MessageSource::ConsoleAPI: return Protocol::Console::ChannelSource::ConsoleAPI;
     case MessageSource::Storage: return Protocol::Console::ChannelSource::Storage;

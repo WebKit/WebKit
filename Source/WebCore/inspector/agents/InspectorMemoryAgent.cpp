@@ -107,7 +107,7 @@ void InspectorMemoryAgent::didHandleMemoryPressure(Critical critical)
 void InspectorMemoryAgent::collectSample(const ResourceUsageData& data)
 {
     auto javascriptCategory = Protocol::Memory::CategoryData::create()
-        .setType(Protocol::Memory::CategoryData::Type::Javascript)
+        .setType(Protocol::Memory::CategoryData::Type::JavaScript)
         .setSize(data.categories[MemoryCategory::GCHeap].totalSize() + data.categories[MemoryCategory::GCOwned].totalSize())
         .release();
 

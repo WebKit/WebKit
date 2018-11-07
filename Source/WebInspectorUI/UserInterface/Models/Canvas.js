@@ -74,6 +74,7 @@ WI.Canvas = class Canvas extends WI.Object
             break;
         case CanvasAgent.ContextType.WebGPU:
             contextType = WI.Canvas.ContextType.WebGPU;
+            break;
         case CanvasAgent.ContextType.WebMetal:
             contextType = WI.Canvas.ContextType.WebMetal;
             break;

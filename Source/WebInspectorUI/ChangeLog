@@ -1,3 +1,28 @@
+2018-11-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Fix "Javascript" => "JavaScript" enum in protocol generated objects
+        https://bugs.webkit.org/show_bug.cgi?id=191340
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Models/Canvas.js:
+        (WI.Canvas.fromPayload):
+        Insert a missing break statement for the WebGPU case.
+
+        * UserInterface/Models/MemoryTimelineRecord.js:
+        (WI.MemoryTimelineRecord.memoryCategoriesFromProtocol):
+        Use new enum name.
+
+        * UserInterface/Protocol/Legacy/10.0/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/10.3/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/11.0/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/11.3/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/12.0/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/8.0/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/9.0/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/9.3/InspectorBackendCommands.js:
+        Update enums with new generator.
+
 2018-11-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         REGRESSION: Web Inspector: Popovers drawing incorrectly in Network Tab (clicking between a few items)

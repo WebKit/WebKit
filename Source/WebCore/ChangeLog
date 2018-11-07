@@ -1,3 +1,14 @@
+2018-11-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Fix "Javascript" => "JavaScript" enum in protocol generated objects
+        https://bugs.webkit.org/show_bug.cgi?id=191340
+
+        Reviewed by Devin Rousso.
+
+        * inspector/agents/InspectorMemoryAgent.cpp:
+        (WebCore::InspectorMemoryAgent::collectSample):
+        Use new enum name.
+
 2018-11-07  Dan Bernstein  <mitz@apple.com>
 
         Add a pseudoclass that matches img elements that are backed by an attachment

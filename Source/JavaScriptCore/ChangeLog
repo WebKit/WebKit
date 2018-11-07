@@ -1,3 +1,17 @@
+2018-11-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Fix "Javascript" => "JavaScript" enum in protocol generated objects
+        https://bugs.webkit.org/show_bug.cgi?id=191340
+
+        Reviewed by Devin Rousso.
+
+        * inspector/ConsoleMessage.cpp:
+        (Inspector::messageSourceValue):
+        Use new enum name.
+
+        * inspector/scripts/codegen/generator.py:
+        Correct the casing of "JavaScript".
+
 2018-11-07  Tadeu Zagallo  <tzagallo@apple.com>
 
         Align wide opcodes in the instruction stream
