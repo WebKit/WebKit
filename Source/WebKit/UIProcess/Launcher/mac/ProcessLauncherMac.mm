@@ -101,7 +101,7 @@ void ProcessLauncher::launchProcess()
     else
         name = serviceName(m_launchOptions);
 
-    m_xpcConnection = adoptOSObject(xpc_connection_create(name, dispatch_get_main_queue()));
+    m_xpcConnection = adoptOSObject(xpc_connection_create(name, nullptr));
 
     uuid_t uuid;
     uuid_generate(uuid);
@@ -194,8 +194,7 @@ void ProcessLauncher::launchProcess()
 
     xpc_dictionary_set_value(bootstrapMessage.get(), "extra-initialization-data", extraInitializationData.get());
 
-    auto weakProcessLauncher = makeWeakPtr(*this);
-    auto errorHandler = [weakProcessLauncher, listeningPort](xpc_object_t event) {
+    auto errorHandlerImpl = [weakProcessLauncher = makeWeakPtr(*this), listeningPort] (xpc_object_t event) {
         ASSERT(!event || xpc_get_type(event) == XPC_TYPE_ERROR);
 
         auto processLauncher = weakProcessLauncher.get();
@@ -224,14 +223,18 @@ void ProcessLauncher::launchProcess()
         processLauncher->didFinishLaunchingProcess(0, IPC::Connection::Identifier());
     };
 
+    auto errorHandler = [errorHandlerImpl = WTFMove(errorHandlerImpl)] (xpc_object_t event) mutable {
+        RunLoop::main().dispatch([errorHandlerImpl = WTFMove(errorHandlerImpl), event] {
+            errorHandlerImpl(event);
+        });
+    };
+
     xpc_connection_set_event_handler(m_xpcConnection.get(), errorHandler);
 
     xpc_connection_resume(m_xpcConnection.get());
 
     if (UNLIKELY(m_launchOptions.shouldMakeProcessLaunchFailForTesting)) {
-        RunLoop::main().dispatch([errorHandler = WTFMove(errorHandler)] {
-            errorHandler(nullptr);
-        });
+        errorHandler(nullptr);
         return;
     }
 

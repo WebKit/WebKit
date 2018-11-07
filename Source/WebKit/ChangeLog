@@ -1,3 +1,22 @@
+2018-11-06  Suresh Koppisetty  <skoppisetty@apple.com>
+
+        Don’t use the main queue to create an XPC connection.
+        https://bugs.webkit.org/show_bug.cgi?id=191160
+        <rdar://problem/45736262>
+
+        Reviewed by Geoffrey Garen.
+
+        Don't use the main queue to create an XPC connection. xpc_connection_set_bootstrap does
+        dispatch_mach_send_barrier_f on this queue which delays the sending of the subsequent
+        bootstrap message (sent to launchd for launching a new target process) when the main queue is busy.
+
+        Now that the XPC connection runs on the default concurrent queue, errorHandler could be invoked
+        by any thread. The job of errorHandler is to dispatch errorHandlerImpl to the main thread,
+        where errorHandlerImpl is responsible for the actual handling of errors if any.
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::launchProcess):
+
 2018-11-06  Brian Burg  <bburg@apple.com>
 
         Add missing iOS availability macro to _WKAutomationSessionConfiguration
