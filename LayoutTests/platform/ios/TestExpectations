@@ -3218,3 +3218,6 @@ webkit.org/b/190764 editing/spelling/spelling-dots-repaint.html [ Skip ]
 webkit.org/b/190764 editing/spelling/spelling-dots-position.html [ Skip ]
 webkit.org/b/190764 editing/spelling/spelling-dots-position-2.html [ Skip ]
 webkit.org/b/190764 editing/spelling/spelling-dots-position-3.html [ Skip ]
+
+# Skip on OpenSource while the code is in WebKitAdditions
+fast/events/pointer [ Skip ]

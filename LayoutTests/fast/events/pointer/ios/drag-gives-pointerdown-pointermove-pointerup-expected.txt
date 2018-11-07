@@ -1,0 +1,14 @@
+Test that a drag is registered as a pointerdown, then pointermoves, then pointerup.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+    pointerdown fired.
+Remove this when bug 19133 is fixed.
+At least one pointermove was fired.
+pointerup fired.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

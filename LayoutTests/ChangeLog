@@ -1,3 +1,19 @@
+2018-11-06  Dean Jackson  <dino@apple.com>
+
+        Add some basic pointer events tests
+        https://bugs.webkit.org/show_bug.cgi?id=191336
+        <rdar://problem/45858574>
+
+        Reviewed by Wenson Hsieh.
+
+        Generate some fake touches for pointer events testing.
+
+        * fast/events/pointer/ios/drag-gives-pointerdown-pointermove-pointerup-expected.txt: Added.
+        * fast/events/pointer/ios/drag-gives-pointerdown-pointermove-pointerup.html: Added.
+        * fast/events/pointer/ios/tap-gives-pointerdown-pointerup-expected.txt: Added.
+        * fast/events/pointer/ios/tap-gives-pointerdown-pointerup.html: Added.
+        * platform/ios/TestExpectations:
+
 2018-11-06  Timothy Hatcher  <timothy@apple.com>
 
         Skip css-dark-mode tests on older macOS platforms
