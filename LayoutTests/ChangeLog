@@ -1,3 +1,10 @@
+2018-11-07  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, update test expectations for fast/events/pointer.
+
+        * TestExpectations: Skip this directory.
+        * platform/ios/TestExpectations: Remove skip since it is now skipped globally.
+
 2018-11-07  Per Arne Vollan  <pvollan@apple.com>
 
         Layout Test fast/text/international/khmer-selection.html is crashing
