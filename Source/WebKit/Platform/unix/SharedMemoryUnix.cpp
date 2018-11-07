@@ -44,6 +44,11 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
+#if HAVE(LINUX_MEMFD_H)
+#include <linux/memfd.h>
+#include <sys/syscall.h>
+#endif
+
 namespace WebKit {
 
 SharedMemory::Handle::Handle()
@@ -106,11 +111,27 @@ static inline int accessModeMMap(SharedMemory::Protection protection)
     return PROT_READ | PROT_WRITE;
 }
 
-RefPtr<SharedMemory> SharedMemory::create(void* address, size_t size, Protection protection)
+static int createSharedMemory()
 {
-    CString tempName;
-
+#if HAVE(LINUX_MEMFD_H)
+    static bool isMemFdAvailable = true;
     int fileDescriptor = -1;
+    if (isMemFdAvailable) {
+        do {
+            fileDescriptor = syscall(__NR_memfd_create, "WebKitSharedMemory", MFD_CLOEXEC);
+        } while (fileDescriptor == -1 && errno == EINTR);
+
+        if (fileDescriptor != -1)
+            return fileDescriptor;
+
+        if (errno != ENOSYS)
+            return fileDescriptor;
+
+        isMemFdAvailable = false;
+    }
+#endif
+
+    CString tempName;
     for (int tries = 0; fileDescriptor == -1 && tries < 10; ++tries) {
         String name = String("/WK2SharedMemory.") + String::number(static_cast<unsigned>(WTF::randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0)));
         tempName = name.utf8();
@@ -119,15 +140,24 @@ RefPtr<SharedMemory> SharedMemory::create(void* address, size_t size, Protection
             fileDescriptor = shm_open(tempName.data(), O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
         } while (fileDescriptor == -1 && errno == EINTR);
     }
+
+    if (fileDescriptor != -1)
+        shm_unlink(tempName.data());
+
+    return fileDescriptor;
+}
+
+RefPtr<SharedMemory> SharedMemory::create(void* address, size_t size, Protection protection)
+{
+    int fileDescriptor = createSharedMemory();
     if (fileDescriptor == -1) {
-        WTFLogAlways("Failed to create shared memory file %s: %s", tempName.data(), strerror(errno));
+        WTFLogAlways("Failed to create shared memory: %s", strerror(errno));
         return nullptr;
     }
 
     while (ftruncate(fileDescriptor, size) == -1) {
         if (errno != EINTR) {
             closeWithRetry(fileDescriptor);
-            shm_unlink(tempName.data());
             return nullptr;
         }
     }
@@ -135,11 +165,8 @@ RefPtr<SharedMemory> SharedMemory::create(void* address, size_t size, Protection
     void* data = mmap(address, size, accessModeMMap(protection), MAP_SHARED, fileDescriptor, 0);
     if (data == MAP_FAILED) {
         closeWithRetry(fileDescriptor);
-        shm_unlink(tempName.data());
         return nullptr;
     }
-
-    shm_unlink(tempName.data());
 
     RefPtr<SharedMemory> instance = adoptRef(new SharedMemory());
     instance->m_data = data;

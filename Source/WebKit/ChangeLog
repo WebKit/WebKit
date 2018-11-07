@@ -1,3 +1,17 @@
+2018-11-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Linux] Use memfd_create when available in SharedMemory implementation
+        https://bugs.webkit.org/show_bug.cgi?id=189741
+
+        Reviewed by Michael Catanzaro.
+
+        If memfd is available, use it instead of shm_open.
+
+        * Platform/unix/SharedMemoryUnix.cpp:
+        (WebKit::createSharedMemory): Helper to create the shared memory, trying first with memfd and falling back to
+        shm if it's not available.
+        (WebKit::SharedMemory::create): Use createSharedMemory() helper.
+
 2018-11-06  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Experimental prototype for WebGPURenderPipeline and WebGPUSwapChain

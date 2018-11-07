@@ -1,3 +1,14 @@
+2018-11-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Linux] Use memfd_create when available in SharedMemory implementation
+        https://bugs.webkit.org/show_bug.cgi?id=189741
+
+        Reviewed by Michael Catanzaro.
+
+        Add include check for linux/memfd.h header.
+
+        * Source/cmake/OptionsCommon.cmake:
+
 2018-11-05  Dominik Infuehr  <dinfuehr@igalia.com>
 
         Enable LLInt on ARMv7/Linux
