@@ -532,6 +532,15 @@ WebRTCH264SimulcastEnabled:
   humanReadableDescription: "Enable WebRTC H264 Simulcast"
   category: experimental
 
+WebRTCMDNSICECandidatesEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "WebRTC mDNS ICE candidates"
+  humanReadableDescription: "Enable WebRTC mDNS ICE candidates"
+  webcoreBinding: RuntimeEnabledFeatures
+  category: experimental
+  condition: ENABLE(WEB_RTC)
+
 UseLegacyTextAlignPositionedElementBehavior:
   type: bool
   defaultValue: false
@@ -1377,15 +1386,6 @@ AsyncFrameScrollingEnabled:
   humanReadableName: "Async Frame Scrolling"
   humanReadableDescription: "Perform frame scrolling in a dedicated thread or process"
   category: internal
-
-MDNSICECandidatesEnabled:
-  type: bool
-  defaultValue: false
-  humanReadableName: "MDNS ICE candidates"
-  humanReadableDescription: "Enable MDNS ICE candidates"
-  webcoreBinding: RuntimeEnabledFeatures
-  category: internal
-  condition: ENABLE(WEB_RTC)
 
 FetchAPIKeepAliveEnabled:
   type: bool

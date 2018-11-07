@@ -239,8 +239,8 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
 #endif
 
 #if ENABLE(WEB_RTC)
-    if (preference == "WebKitMDNSICECandidatesEnabled")
-        RuntimeEnabledFeatures::sharedFeatures().setMDNSICECandidatesEnabled(enabled);
+    if (preference == "WebKitWebRTCMDNSICECandidatesEnabled")
+        RuntimeEnabledFeatures::sharedFeatures().setWebRTCMDNSICECandidatesEnabled(enabled);
     if (preference == "WebKitWebRTCUnifiedPlanEnabled")
         RuntimeEnabledFeatures::sharedFeatures().setWebRTCUnifiedPlanEnabled(enabled);
 #endif

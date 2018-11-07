@@ -1,3 +1,17 @@
+2018-11-06  Youenn Fablet  <youenn@apple.com>
+
+        Make mDNS ICE Candidate an experimental flag again
+        https://bugs.webkit.org/show_bug.cgi?id=191262
+
+        Reviewed by Dean Jackson.
+
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetWebRTCMDNSICECandidatesEnabled):
+        (WKPreferencesGetWebRTCMDNSICECandidatesEnabled):
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner):
+
 2018-11-06  Suresh Koppisetty  <skoppisetty@apple.com>
 
         Don’t use the main queue to create an XPC connection.

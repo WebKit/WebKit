@@ -406,7 +406,7 @@ void PeerConnectionBackend::newICECandidate(String&& sdp, String&& mid, unsigned
     if (sdp.find(" host ", 0) != notFound) {
         // FIXME: We might need to clear all pending candidates when setting again local description.
         m_pendingICECandidates.append(PendingICECandidate { String { sdp }, WTFMove(mid), sdpMLineIndex, WTFMove(serverURL) });
-        if (RuntimeEnabledFeatures::sharedFeatures().mdnsICECandidatesEnabled()) {
+        if (RuntimeEnabledFeatures::sharedFeatures().webRTCMDNSICECandidatesEnabled()) {
             auto ipAddress = extractIPAddres(sdp);
             // We restrict to IPv4 candidates for now.
             if (ipAddress.contains('.'))
