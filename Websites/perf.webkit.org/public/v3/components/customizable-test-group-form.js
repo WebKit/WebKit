@@ -174,7 +174,7 @@ class CustomizableTestGroupForm extends TestGroupForm {
         const cells = [element('th', {colspan: 2}, repository.label())];
 
         for (const label of commitSetMap.keys())
-            cells.push(this._constructRevisionRadioButtons(commitSetMap, repository, label, null, ownsRepositories));
+            cells.push(this._constructRevisionRadioButtons(commitSetMap, repository, label, null));
 
         if (ownsRepositories) {
             const plusButton = new PlusButton();
@@ -197,7 +197,7 @@ class CustomizableTestGroupForm extends TestGroupForm {
         const minusButton = new MinusButton();
 
         for (const label of commitSetMap.keys())
-            cells.push(this._constructRevisionRadioButtons(commitSetMap, repository, label, ownerRepository, false));
+            cells.push(this._constructRevisionRadioButtons(commitSetMap, repository, label, ownerRepository));
 
         minusButton.listenToAction('activate', () => {
             for (const commitSet of commitSetMap.values())
@@ -240,37 +240,41 @@ class CustomizableTestGroupForm extends TestGroupForm {
         return element('tr', cells);
     }
 
-    _constructRevisionRadioButtons(commitSetMap, repository, rowLabel, ownerRepository, ownsRepositories)
+    _constructRevisionRadioButtons(commitSetMap, repository, columnLabel, ownerRepository)
     {
         const element = ComponentBase.createElement;
-        const revisionEditor = element('input', {disabled: !!ownerRepository,
+
+        const commitForColumn = commitSetMap.get(columnLabel).commitForRepository(repository);
+        const revision = commitForColumn ? commitForColumn.revision() : '';
+        if (commitForColumn && commitForColumn.ownerCommit())
+            this._ownerRevisionMap.get(columnLabel).set(repository, commitForColumn.ownerCommit().revision());
+
+        const revisionEditor = element('input', {disabled: !!ownerRepository, value: revision,
             onchange: () => {
-                if (!ownsRepositories)
+                if (ownerRepository)
                     return;
-                commitSetMap.get(rowLabel).updateRevisionForOwnerRepository(repository, revisionEditor.value).catch(
-                    () => revisionEditor.value = '');
+
+                commitSetMap.get(columnLabel).updateRevisionForOwnerRepository(repository, revisionEditor.value).catch(
+                    () => {
+                        alert(`"${revisionEditor.value}" does not exist in "${repository.name()}".`);
+                        revisionEditor.value = revision;
+                    });
             }});
 
-        this._revisionEditorMap.get(rowLabel).set(repository, revisionEditor);
+        this._revisionEditorMap.get(columnLabel).set(repository, revisionEditor);
 
         const nodes = [];
         for (const labelToChoose of commitSetMap.keys()) {
             const commit = commitSetMap.get(labelToChoose).commitForRepository(repository);
-            const checkedLabel = this._checkedLabelByPosition.get(rowLabel).get(repository) || rowLabel;
+            const checkedLabel = this._checkedLabelByPosition.get(columnLabel).get(repository) || columnLabel;
             const checked =  labelToChoose == checkedLabel;
-            const radioButton = element('input', {type: 'radio', name: `${rowLabel}-${repository.id()}-radio`, checked,
+            const radioButton = element('input', {type: 'radio', name: `${columnLabel}-${repository.id()}-radio`, checked,
                 onchange: () => {
-                    this._checkedLabelByPosition.get(rowLabel).set(repository, labelToChoose);
+                    this._checkedLabelByPosition.get(columnLabel).set(repository, labelToChoose);
                     revisionEditor.value = commit ? commit.revision() : '';
                     if (commit && commit.ownerCommit())
-                        this._ownerRevisionMap.get(rowLabel).set(repository, commit.ownerCommit().revision());
+                        this._ownerRevisionMap.get(columnLabel).set(repository, commit.ownerCommit().revision());
                 }});
-
-            if (checked) {
-                revisionEditor.value = commit ? commit.revision() : '';
-                if (commit && commit.ownerCommit())
-                    this._ownerRevisionMap.get(rowLabel).set(repository, commit.ownerCommit().revision());
-            }
             nodes.push(element('td', element('label', [radioButton, labelToChoose])));
         }
         nodes.push(element('td', revisionEditor));

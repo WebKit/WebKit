@@ -1,3 +1,22 @@
+2018-11-06  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Customizable test group form should not reset manually edited commit value sometimes.
+        https://bugs.webkit.org/show_bug.cgi?id=190863
+
+        Reviewed by Ryosuke Niwa.
+
+        After changing the radio button and manually editing the commit value, commit value should not be reset
+        while changing the name of the test group.
+        Add the logic to prompt warning when manually typed commit does not exist.
+
+        * browser-tests/customizable-test-group-form-tests.js: Added a unit test for this bug.
+        * browser-tests/index.html:
+        * public/v3/components/customizable-test-group-form.js: Should always update commit set as long as
+        the repository of that row does not have a owner repository.
+        (CustomizableTestGroupForm.prototype._constructTableRowForCommitsWithoutOwner):
+        (CustomizableTestGroupForm.prototype._constructTableRowForCommitsWithOwner):
+        (CustomizableTestGroupForm.prototype._constructRevisionRadioButtons):
+
 2018-10-16  Dewei Zhu  <dewei_zhu@apple.com>
 
         Unreviewed, rolling out r236996.
