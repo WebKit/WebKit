@@ -1,9 +1,0 @@
-
-Harness Error (TIMEOUT), message = null
-
-FAIL setRemoteDescription should trigger ontrack event when the MSID of the stream is is parsed. assert_true: Expect trackEvent.transceiver to be defined and is instance of RTCRtpTransceiver expected true got false
-PASS setRemoteDescription() with m= line of recvonly direction should not trigger track event 
-FAIL addTrack() should cause remote connection to fire ontrack when setRemoteDescription() assert_true: Expect trackEvent.transceiver to be defined and is instance of RTCRtpTransceiver expected true got false
-TIMEOUT addTransceiver('video') should cause remote connection to fire ontrack when setRemoteDescription() Test timed out
-PASS addTransceiver() with inactive direction should not cause remote connection to fire ontrack when setRemoteDescription() 
-
