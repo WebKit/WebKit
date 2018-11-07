@@ -1,3 +1,12 @@
+2018-11-07  Frederic Wang  <fwang@igalia.com>
+
+        [Cairo] Move state change operations from GraphicsContextCairo to CairoOperations
+        https://bugs.webkit.org/show_bug.cgi?id=179610
+
+        Unreviewed build fix.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp: Add missing include.
+
 2018-11-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         ServiceWorker Inspector: Uncaught Exception: null is not an object (evaluating 'resource.target.addResource')

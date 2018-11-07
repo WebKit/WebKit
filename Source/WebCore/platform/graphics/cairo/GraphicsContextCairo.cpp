@@ -36,6 +36,7 @@
 #if USE(CAIRO)
 
 #include "AffineTransform.h"
+#include "CairoOperations.h"
 #include "FloatRect.h"
 #include "FloatRoundedRect.h"
 #include "GraphicsContextImpl.h"
