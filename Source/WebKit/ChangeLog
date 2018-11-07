@@ -1,5 +1,20 @@
 2018-11-07  Daniel Bates  <dabates@apple.com>
 
+        [iOS] Support deleting to the start of the line and to the end of the line
+        https://bugs.webkit.org/show_bug.cgi?id=191389
+        <rdar://problem/45883972>
+
+        Reviewed by Wenson Hsieh.
+
+        Add support for the key commands Command + Delete and Control + K to delete to the start
+        of the line and to delete to the end of the line, respectively.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _deleteToStartOfLine]): Added.
+        (-[WKContentView _deleteToEndOfLine]): Added.
+
+2018-11-07  Daniel Bates  <dabates@apple.com>
+
         [iOS] Option + Delete should delete previous word
         https://bugs.webkit.org/show_bug.cgi?id=191381
         <rdar://problem/23681351>
