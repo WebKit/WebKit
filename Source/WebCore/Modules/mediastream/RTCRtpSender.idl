@@ -37,8 +37,8 @@
     readonly attribute MediaStreamTrack? track;
     // FIXME 169662: missing transport
     // FIXME 169662: missing rtcpTransport
-    // FIXME 169662: missing getCapabilities
     // FIXME 169662: missing setStreams
+    [CallWith=ScriptExecutionContext] static RTCRtpCapabilities? getCapabilities(DOMString kind);
     RTCRtpSendParameters getParameters();
     Promise<void> setParameters(RTCRtpSendParameters parameters);
     [CallWith=ScriptExecutionContext] Promise<void> replaceTrack(MediaStreamTrack? withTrack);

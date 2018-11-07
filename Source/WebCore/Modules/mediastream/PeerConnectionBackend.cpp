@@ -42,6 +42,7 @@
 #include "RTCIceCandidate.h"
 #include "RTCPeerConnection.h"
 #include "RTCPeerConnectionIceEvent.h"
+#include "RTCRtpCapabilities.h"
 #include "RuntimeEnabledFeatures.h"
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringConcatenateNumbers.h>
@@ -57,6 +58,18 @@ static std::unique_ptr<PeerConnectionBackend> createNoPeerConnectionBackend(RTCP
 }
 
 CreatePeerConnectionBackend PeerConnectionBackend::create = createNoPeerConnectionBackend;
+
+std::optional<RTCRtpCapabilities> PeerConnectionBackend::receiverCapabilities(ScriptExecutionContext&, const String&)
+{
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
+std::optional<RTCRtpCapabilities> PeerConnectionBackend::senderCapabilities(ScriptExecutionContext&, const String&)
+{
+    ASSERT_NOT_REACHED();
+    return { };
+}
 #endif
 
 PeerConnectionBackend::PeerConnectionBackend(RTCPeerConnection& peerConnection)

@@ -1056,6 +1056,7 @@
 		4129C9AB1F59C573009D7403 /* ReadableStreamSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 418C395B1C8F0A610051C8A3 /* ReadableStreamSource.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4129C9AF1F59CF5B009D7403 /* ReadableStreamSink.h in Headers */ = {isa = PBXBuildFile; fileRef = 4129C9801F5861C7009D7403 /* ReadableStreamSink.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4129DF861BB5B80C00322A16 /* JSReadableStreamPrivateConstructors.h in Headers */ = {isa = PBXBuildFile; fileRef = 4129DF841BB5B7F700322A16 /* JSReadableStreamPrivateConstructors.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		412DE4B8219285C00075F3A7 /* RTCRtpCapabilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 412DE4B6219285BF0075F3A7 /* RTCRtpCapabilities.h */; };
 		4133CB8B20F80E9900E89B11 /* MediaStreamAudioSourceCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4133CB8920F80E8600E89B11 /* MediaStreamAudioSourceCocoa.cpp */; };
 		41380C271F3436AC00155FDA /* DOMCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 41380C251F34369A00155FDA /* DOMCache.h */; };
 		41380C291F3436AC00155FDA /* DOMCacheStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = 41380C221F34369000155FDA /* DOMCacheStorage.h */; };
@@ -7265,6 +7266,7 @@
 		4129DF831BB5B7F700322A16 /* JSReadableStreamPrivateConstructors.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSReadableStreamPrivateConstructors.cpp; sourceTree = "<group>"; };
 		4129DF841BB5B7F700322A16 /* JSReadableStreamPrivateConstructors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSReadableStreamPrivateConstructors.h; sourceTree = "<group>"; };
 		412BA5FE218C651800365474 /* RTCPMuxPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCPMuxPolicy.h; sourceTree = "<group>"; };
+		412DE4B6219285BF0075F3A7 /* RTCRtpCapabilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCRtpCapabilities.h; sourceTree = "<group>"; };
 		413015D51C7B570400091C6E /* FetchResponse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FetchResponse.cpp; sourceTree = "<group>"; };
 		413015D51C7B570400091C6F /* FetchBodySource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FetchBodySource.cpp; sourceTree = "<group>"; };
 		413015D61C7B570400091C6E /* FetchResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FetchResponse.h; sourceTree = "<group>"; };
@@ -7274,6 +7276,7 @@
 		4131F3B41F955BC30059995A /* ExtendableEventInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtendableEventInit.h; sourceTree = "<group>"; };
 		4131F3B51F955BC50059995A /* ExtendableEventInit.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ExtendableEventInit.idl; sourceTree = "<group>"; };
 		4133CB8920F80E8600E89B11 /* MediaStreamAudioSourceCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaStreamAudioSourceCocoa.cpp; sourceTree = "<group>"; };
+		41369E55218C76E300792E29 /* RTCRtpCapabilities.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RTCRtpCapabilities.idl; sourceTree = "<group>"; };
 		41380C201F34368A00155FDA /* DOMCache.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DOMCache.cpp; path = Modules/cache/DOMCache.cpp; sourceTree = SOURCE_ROOT; };
 		41380C211F34368D00155FDA /* DOMCacheStorage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DOMCacheStorage.cpp; path = Modules/cache/DOMCacheStorage.cpp; sourceTree = SOURCE_ROOT; };
 		41380C221F34369000155FDA /* DOMCacheStorage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DOMCacheStorage.h; path = Modules/cache/DOMCacheStorage.h; sourceTree = SOURCE_ROOT; };
@@ -15458,6 +15461,7 @@
 				41A48A9C1E83129100D2AC2D /* RTCPeerConnectionState.idl */,
 				41FCB75C214866FE0038ADC6 /* RTCPriorityType.h */,
 				41E593FD214865A900D3CB61 /* RTCPriorityType.idl */,
+				41369E55218C76E300792E29 /* RTCRtpCapabilities.idl */,
 				41FCB75F214866FF0038ADC6 /* RTCRtpCodecParameters.h */,
 				41FCB759214865D30038ADC6 /* RTCRtpCodecParameters.idl */,
 				414AD3FF21498D3000521676 /* RTCRtpCodingParameters.h */,
@@ -15570,6 +15574,7 @@
 				07221BAA17CF0AD400848E51 /* RTCPeerConnectionHandlerClient.h */,
 				41A48A9D1E8312EB00D2AC2D /* RTCPeerConnectionState.h */,
 				412BA5FE218C651800365474 /* RTCPMuxPolicy.h */,
+				412DE4B6219285BF0075F3A7 /* RTCRtpCapabilities.h */,
 				31EB54DD1E7DC74400C1623B /* RTCRtpTransceiverDirection.h */,
 				313591041E7DDC6000F30630 /* RTCSdpType.h */,
 				07221BAB17CF0AD400848E51 /* RTCSessionDescriptionDescriptor.cpp */,
@@ -28590,6 +28595,7 @@
 				51E399021D6E4750009C8831 /* GameControllerGamepadProvider.h in Headers */,
 				516C62211950D48700337E75 /* GamepadEvent.h in Headers */,
 				51A9D9EA195B931F001B2B5C /* GamepadManager.h in Headers */,
+				412DE4B8219285C00075F3A7 /* RTCRtpCapabilities.h in Headers */,
 				515BE1921D54F5FB00DD7C68 /* GamepadProvider.h in Headers */,
 				515BE1931D54F5FB00DD7C68 /* GamepadProviderClient.h in Headers */,
 				8EC6C963201A251600FBFA53 /* GapLength.h in Headers */,

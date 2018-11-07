@@ -1,5 +1,18 @@
 2018-11-06  Youenn Fablet  <youenn@apple.com>
 
+        Add support for sender/receiver getCapabilities
+        https://bugs.webkit.org/show_bug.cgi?id=191192
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/webrtc/RTCRtpCapabilities-helper.js:
+        (string_appeared_here.validateRtpCapabilities): Change already made upstream.
+        * web-platform-tests/webrtc/RTCRtpReceiver-getCapabilities-expected.txt:
+        * web-platform-tests/webrtc/RTCRtpSender-getCapabilities-expected.txt:
+        * web-platform-tests/webrtc/RTCRtpTransceiver-setCodecPreferences-expected.txt:
+
+2018-11-06  Youenn Fablet  <youenn@apple.com>
+
         Support onremovetrack for RTCPeerConnection removed tracks
         https://bugs.webkit.org/show_bug.cgi?id=191299
 

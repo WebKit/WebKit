@@ -1,5 +1,47 @@
 2018-11-06  Youenn Fablet  <youenn@apple.com>
 
+        Add support for sender/receiver getCapabilities
+        https://bugs.webkit.org/show_bug.cgi?id=191192
+
+        Reviewed by Eric Carlson.
+
+        Expose sender/receiver RTCRtpCapabilities to JS.
+        Add corresponding IDL and plumbing down to libwebrtc peer connection factory.
+        Covered by rebased tests.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        (WebCore::PeerConnectionBackend::receiverCapabilities):
+        (WebCore::PeerConnectionBackend::senderCapabilities):
+        * Modules/mediastream/PeerConnectionBackend.h:
+        * Modules/mediastream/RTCRtpCapabilities.idl: Added.
+        * Modules/mediastream/RTCRtpReceiver.cpp:
+        (WebCore::RTCRtpReceiver::getCapabilities):
+        * Modules/mediastream/RTCRtpReceiver.h:
+        * Modules/mediastream/RTCRtpReceiver.idl:
+        * Modules/mediastream/RTCRtpSender.cpp:
+        (WebCore::RTCRtpSender::getCapabilities):
+        * Modules/mediastream/RTCRtpSender.h:
+        * Modules/mediastream/RTCRtpSender.idl:
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        (WebCore::PeerConnectionBackend::receiverCapabilities):
+        (WebCore::PeerConnectionBackend::senderCapabilities):
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mediastream/RTCPMuxPolicy.h:
+        * platform/mediastream/RTCRtpCapabilities.h: Added.
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.cpp:
+        (WebCore::typeFromKind):
+        (WebCore::fromStdString):
+        (WebCore::toChannels):
+        (WebCore::toRTCRtpCapabilities):
+        (WebCore::LibWebRTCProvider::receiverCapabilities):
+        (WebCore::LibWebRTCProvider::senderCapabilities):
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.h:
+
+2018-11-06  Youenn Fablet  <youenn@apple.com>
+
         Calling sender.replaceTrack() twice produces a new transceiver and its corresponding m= section
         https://bugs.webkit.org/show_bug.cgi?id=191261
 

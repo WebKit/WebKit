@@ -35,10 +35,10 @@
     ImplementationLacksVTable
 ] interface RTCRtpReceiver {
     readonly attribute MediaStreamTrack track;
-    RTCRtpParameters getParameters();
     // FIXME 169662: missing transport
     // FIXME 169662: missing rtcpTransport
-    // FIXME 169662: missing getCapabilities
+    [CallWith=ScriptExecutionContext] static RTCRtpCapabilities? getCapabilities(DOMString kind);
+    RTCRtpParameters getParameters();
     sequence<RTCRtpContributingSource> getContributingSources();
     sequence<RTCRtpSynchronizationSource> getSynchronizationSources();
     Promise<RTCStatsReport> getStats();

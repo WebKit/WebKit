@@ -40,11 +40,14 @@
 namespace WebCore {
 
 class PeerConnectionBackend;
+struct RTCRtpCapabilities;
 
 class RTCRtpSender : public RefCounted<RTCRtpSender>, public ScriptWrappable {
 public:
     static Ref<RTCRtpSender> create(PeerConnectionBackend&, Ref<MediaStreamTrack>&&, Vector<String>&& mediaStreamIds, std::unique_ptr<RTCRtpSenderBackend>&&);
     static Ref<RTCRtpSender> create(PeerConnectionBackend&, String&& trackKind, Vector<String>&& mediaStreamIds, std::unique_ptr<RTCRtpSenderBackend>&&);
+
+    static std::optional<RTCRtpCapabilities> getCapabilities(ScriptExecutionContext&, const String& kind);
 
     MediaStreamTrack* track() { return m_track.get(); }
 

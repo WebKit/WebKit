@@ -32,7 +32,9 @@
 #include "RTCRtpReceiver.h"
 
 #if ENABLE(WEB_RTC)
+
 #include "PeerConnectionBackend.h"
+#include "RTCRtpCapabilities.h"
 
 namespace WebCore {
 
@@ -59,6 +61,11 @@ void RTCRtpReceiver::getStats(Ref<DeferredPromise>&& promise)
         return;
     }
     m_connection->getStats(*this, WTFMove(promise));
+}
+
+std::optional<RTCRtpCapabilities> RTCRtpReceiver::getCapabilities(ScriptExecutionContext& context, const String& kind)
+{
+    return PeerConnectionBackend::receiverCapabilities(context, kind);
 }
 
 } // namespace WebCore

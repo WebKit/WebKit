@@ -29,6 +29,7 @@
 #if USE(LIBWEBRTC)
 #include "LibWebRTCAudioModule.h"
 #include "Logging.h"
+#include "RTCRtpCapabilities.h"
 #include <dlfcn.h>
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
@@ -278,6 +279,68 @@ rtc::RTCCertificateGenerator& LibWebRTCProvider::certificateGenerator()
         factoryAndThreads.certificateGenerator = std::make_unique<rtc::RTCCertificateGenerator>(factoryAndThreads.signalingThread.get(), factoryAndThreads.networkThread.get());
 
     return *factoryAndThreads.certificateGenerator;
+}
+
+static inline std::optional<cricket::MediaType> typeFromKind(const String& kind)
+{
+    if (kind == "audio"_s)
+        return cricket::MediaType::MEDIA_TYPE_AUDIO;
+    if (kind == "video"_s)
+        return cricket::MediaType::MEDIA_TYPE_VIDEO;
+    return { };
+}
+
+static inline String fromStdString(const std::string& value)
+{
+    return String::fromUTF8(value.data(), value.length());
+}
+
+static inline std::optional<uint16_t> toChannels(absl::optional<int> numChannels)
+{
+    if (!numChannels)
+        return { };
+    return static_cast<uint32_t>(*numChannels);
+}
+
+static inline RTCRtpCapabilities toRTCRtpCapabilities(const webrtc::RtpCapabilities& rtpCapabilities)
+{
+    RTCRtpCapabilities capabilities;
+
+    capabilities.codecs.reserveInitialCapacity(rtpCapabilities.codecs.size());
+    for (auto& codec : rtpCapabilities.codecs)
+        capabilities.codecs.uncheckedAppend(RTCRtpCapabilities::CodecCapability { fromStdString(codec.mime_type()), static_cast<uint32_t>(codec.clock_rate ? *codec.clock_rate : 0), toChannels(codec.num_channels), { } });
+
+    capabilities.headerExtensions.reserveInitialCapacity(rtpCapabilities.header_extensions.size());
+    for (auto& header : rtpCapabilities.header_extensions)
+        capabilities.headerExtensions.uncheckedAppend(RTCRtpCapabilities::HeaderExtensionCapability { fromStdString(header.uri) });
+
+    return capabilities;
+}
+
+std::optional<RTCRtpCapabilities> LibWebRTCProvider::receiverCapabilities(const String& kind)
+{
+    auto mediaType = typeFromKind(kind);
+    if (!mediaType)
+        return { };
+
+    auto* factory = this->factory();
+    if (!factory)
+        return { };
+
+    return toRTCRtpCapabilities(factory->GetRtpReceiverCapabilities(*mediaType));
+}
+
+std::optional<RTCRtpCapabilities> LibWebRTCProvider::senderCapabilities(const String& kind)
+{
+    auto mediaType = typeFromKind(kind);
+    if (!mediaType)
+        return { };
+
+    auto* factory = this->factory();
+    if (!factory)
+        return { };
+
+    return toRTCRtpCapabilities(factory->GetRtpSenderCapabilities(*mediaType));
 }
 
 #endif // USE(LIBWEBRTC)

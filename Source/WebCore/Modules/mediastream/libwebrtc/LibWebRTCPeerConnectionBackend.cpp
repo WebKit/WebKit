@@ -38,6 +38,7 @@
 #include "Page.h"
 #include "RTCIceCandidate.h"
 #include "RTCPeerConnection.h"
+#include "RTCRtpCapabilities.h"
 #include "RTCRtpReceiver.h"
 #include "RTCSessionDescription.h"
 #include "RealtimeIncomingAudioSource.h"
@@ -64,6 +65,22 @@ static std::unique_ptr<PeerConnectionBackend> createLibWebRTCPeerConnectionBacke
 }
 
 CreatePeerConnectionBackend PeerConnectionBackend::create = createLibWebRTCPeerConnectionBackend;
+
+std::optional<RTCRtpCapabilities> PeerConnectionBackend::receiverCapabilities(ScriptExecutionContext& context, const String& kind)
+{
+    auto* page = downcast<Document>(context).page();
+    if (!page)
+        return { };
+    return page->libWebRTCProvider().receiverCapabilities(kind);
+}
+
+std::optional<RTCRtpCapabilities> PeerConnectionBackend::senderCapabilities(ScriptExecutionContext& context, const String& kind)
+{
+    auto* page = downcast<Document>(context).page();
+    if (!page)
+        return { };
+    return page->libWebRTCProvider().senderCapabilities(kind);
+}
 
 LibWebRTCPeerConnectionBackend::LibWebRTCPeerConnectionBackend(RTCPeerConnection& peerConnection, LibWebRTCProvider& provider)
     : PeerConnectionBackend(peerConnection)

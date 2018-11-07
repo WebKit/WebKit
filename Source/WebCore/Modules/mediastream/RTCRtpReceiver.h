@@ -40,6 +40,7 @@
 namespace WebCore {
 
 class PeerConnectionBackend;
+struct RTCRtpCapabilities;
 
 class RTCRtpReceiver : public RefCounted<RTCRtpReceiver>, public ScriptWrappable  {
 public:
@@ -47,6 +48,8 @@ public:
     {
         return adoptRef(*new RTCRtpReceiver(connection, WTFMove(track), WTFMove(backend)));
     }
+
+    static std::optional<RTCRtpCapabilities> getCapabilities(ScriptExecutionContext&, const String& kind);
 
     void stop();
 

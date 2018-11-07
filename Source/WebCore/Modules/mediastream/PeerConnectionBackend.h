@@ -79,6 +79,9 @@ class PeerConnectionBackend
 public:
     WEBCORE_EXPORT static CreatePeerConnectionBackend create;
 
+    static std::optional<RTCRtpCapabilities> receiverCapabilities(ScriptExecutionContext&, const String& kind);
+    static std::optional<RTCRtpCapabilities> senderCapabilities(ScriptExecutionContext&, const String& kind);
+
     explicit PeerConnectionBackend(RTCPeerConnection&);
     virtual ~PeerConnectionBackend() = default;
 

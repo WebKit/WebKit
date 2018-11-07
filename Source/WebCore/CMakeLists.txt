@@ -333,6 +333,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediastream/RTCPeerConnectionIceEvent.idl
     Modules/mediastream/RTCPeerConnectionState.idl
     Modules/mediastream/RTCPriorityType.idl
+    Modules/mediastream/RTCRtpCapabilities.idl
     Modules/mediastream/RTCRtpCodecParameters.idl
     Modules/mediastream/RTCRtpContributingSource.idl
     Modules/mediastream/RTCRtpEncodingParameters.idl
