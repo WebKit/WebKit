@@ -24,7 +24,6 @@ import logging
 
 from webkitpy.common.memoized import memoized
 from webkitpy.common.version import Version
-from webkitpy.port.config import apple_additions
 from webkitpy.port.ios import IOSPort
 from webkitpy.xcode.device_type import DeviceType
 from webkitpy.xcode.simulated_device import DeviceRequest, SimulatedDeviceManager
@@ -42,7 +41,7 @@ class IOSSimulatorPort(IOSPort):
 
     DEFAULT_DEVICE_CLASS = 'iPhone SE'
     CUSTOM_DEVICE_CLASSES = ['iPad', 'iPhone 7']
-    SDK = apple_additions().get_sdk('iphonesimulator') if apple_additions() else 'iphonesimulator'
+    SDK = 'iphonesimulator'
 
     def __init__(self, host, port_name, **kwargs):
         super(IOSSimulatorPort, self).__init__(host, port_name, **kwargs)
@@ -82,7 +81,7 @@ class IOSSimulatorPort(IOSPort):
 
     def _build_driver_flags(self):
         archs = ['ARCHS=i386'] if self.architecture() == 'x86' else []
-        sdk = ['--sdk', self.SDK]
+        sdk = ['--sdk', 'iphonesimulator']
         return archs + sdk
 
     def _set_device_class(self, device_class):
