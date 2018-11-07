@@ -27,9 +27,6 @@ from django.shortcuts import render
 from django.views import View
 
 
-class Patch(View):
+class StatusBubble(View):
     def get(self, request, patchid):
-        return HttpResponse("Placeholder for patch {}.".format(patchid))
-
-    def post(self, request, patchid):
-        return HttpResponse("Placeholder to handle post request for patch {}.".format(patchid))
+        return HttpResponse("Placeholder for status bubble for {}.".format(patchid))

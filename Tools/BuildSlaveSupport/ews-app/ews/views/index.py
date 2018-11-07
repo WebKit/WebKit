@@ -23,13 +23,9 @@
 from __future__ import unicode_literals
 
 from django.http import HttpResponse
-from django.shortcuts import render
 from django.views import View
 
 
-class Patch(View):
-    def get(self, request, patchid):
-        return HttpResponse("Placeholder for patch {}.".format(patchid))
-
-    def post(self, request, patchid):
-        return HttpResponse("Placeholder to handle post request for patch {}.".format(patchid))
+class Index(View):
+    def get(self, request):
+        return HttpResponse("EWS for WebKit.")
