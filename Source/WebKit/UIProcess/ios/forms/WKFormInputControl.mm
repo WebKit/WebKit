@@ -47,6 +47,14 @@ using namespace WebKit;
 - (NSObject<WKFormControl> *)innerControl;
 @end
 
+@interface WKDateTimePopover : WKFormRotatingAccessoryPopover<WKFormControl> {
+    RetainPtr<WKDateTimePopoverViewController> _viewController;
+    WKContentView *_view;
+}
+- (id)initWithView:(WKContentView *)view datePickerMode:(UIDatePickerMode)mode;
+- (WKDateTimePopoverViewController *)viewController;
+@end
+
 @interface WKDateTimePicker : NSObject<WKFormControl> {
     RetainPtr<UIDatePicker> _datePicker;
     NSString *_formatString;
@@ -56,14 +64,7 @@ using namespace WebKit;
 }
 - (id)initWithView:(WKContentView *)view datePickerMode:(UIDatePickerMode)mode;
 - (UIDatePicker *)datePicker;
-@end
 
-@interface WKDateTimePopover : WKFormRotatingAccessoryPopover<WKFormControl> {
-    RetainPtr<WKDateTimePopoverViewController> _viewController;
-    WKContentView* _view;
-}
-- (id)initWithView:(WKContentView *)view datePickerMode:(UIDatePickerMode)mode;
-- (WKDateTimePopoverViewController *) viewController;
 @end
 
 @implementation WKDateTimePicker
@@ -109,15 +110,31 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
     _datePicker = adoptNS([[UIDatePicker alloc] initWithFrame:CGRectMake(0, 0, size.width, size.height)]);
     _datePicker.get().datePickerMode = mode;
     _datePicker.get().hidden = NO;
+    
+    if ([self shouldPresentGregorianCalendar:view.assistedNodeInformation])
+        _datePicker.get().calendar = [NSCalendar calendarWithIdentifier:NSCalendarIdentifierGregorian];
+    
     [_datePicker addTarget:self action:@selector(_dateChangeHandler:) forControlEvents:UIControlEventValueChanged];
 
     return self;
+}
+
+- (NSString *)calendarType
+{
+    return _datePicker.get().calendar.calendarIdentifier;
 }
 
 - (void)dealloc
 {
     [_datePicker removeTarget:self action:NULL forControlEvents:UIControlEventValueChanged];
     [super dealloc];
+}
+
+- (BOOL)shouldPresentGregorianCalendar:(const AssistedNodeInformation&)nodeInfo
+{
+    return nodeInfo.autofillFieldName == WebCore::AutofillFieldName::CcExpMonth
+        || nodeInfo.autofillFieldName == WebCore::AutofillFieldName::CcExp
+        || nodeInfo.autofillFieldName == WebCore::AutofillFieldName::CcExpYear;
 }
 
 - (UIView *)controlView
@@ -280,6 +297,14 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
 
 @end
 
+@implementation WKFormInputControl (WKTesting)
+- (NSString *)dateTimePickerCalendarType
+{
+    if ([(NSObject *)_control.get() isKindOfClass:WKDateTimePicker.class])
+        return [(WKDateTimePicker *)_control.get() calendarType];
+    return nil;
+}
+@end
 
 @implementation WKDateTimePopoverViewController
 

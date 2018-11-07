@@ -92,6 +92,7 @@ class WebPageProxy;
 @class WebEvent;
 @class WKActionSheetAssistant;
 @class WKFocusedFormControlView;
+@class WKFormInputControl;
 @class WKFormInputSession;
 @class WKInspectorNodeSearchGestureRecognizer;
 
@@ -422,6 +423,7 @@ DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW(_pasteAsQuotation)
 @property (nonatomic, readonly) NSString *textContentTypeForTesting;
 @property (nonatomic, readonly) NSString *selectFormPopoverTitle;
 @property (nonatomic, readonly) NSString *formInputLabel;
+@property (nonatomic, readonly) WKFormInputControl *formInputControl;
 
 @end
 

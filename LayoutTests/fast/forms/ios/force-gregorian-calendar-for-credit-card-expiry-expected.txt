@@ -1,0 +1,9 @@
+ 
+Date input control marked as 'cc-exp' (default calendar set to japanese):
+{ calendarType = gregorian }
+Date input control not marked as 'cc-exp' (default calendar set to japanese):
+{ calendarType = japanese }
+Date input control marked as 'cc-exp' (default calendar set to gregorian):
+{ calendarType = gregorian }
+Date input control not marked as 'cc-exp' (default calendar set to gregorian):
+{ calendarType = gregorian }

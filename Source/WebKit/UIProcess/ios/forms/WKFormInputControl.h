@@ -33,4 +33,8 @@
 - (instancetype)initWithView:(WKContentView *)view;
 @end
 
+@interface WKFormInputControl (WKTesting)
+@property (nonatomic, readonly) NSString *dateTimePickerCalendarType;
+@end
+
 #endif // PLATFORM(IOS_FAMILY)

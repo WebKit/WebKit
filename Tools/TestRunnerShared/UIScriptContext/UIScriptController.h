@@ -163,6 +163,8 @@ public:
     JSObjectRef textSelectionCaretRect() const;
     JSObjectRef selectionStartGrabberViewRect() const;
     JSObjectRef selectionEndGrabberViewRect() const;
+    JSObjectRef calendarType() const;
+    void setDefaultCalendarType(JSStringRef calendarIdentifier);
     JSObjectRef inputViewBounds() const;
 
     void replaceTextAtRange(JSStringRef, int location, int length);

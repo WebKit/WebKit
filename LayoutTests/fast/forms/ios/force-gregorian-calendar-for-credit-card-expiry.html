@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../../resources/ui-helper.js"></script>
+    <meta name=viewport content="width=device-width">
+    <style>
+        body, html {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+        }
+
+        #target0, #target1 {
+            font-size: 150px;
+        }
+    </style>
+</head>
+<body>
+    <input type='date' id='target0' autocomplete='cc-exp'>
+    <input type='date' id='target1'>
+    <pre id="output"></pre>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function appendOutput(s)
+        {
+            const paragraph = document.createElement("div");
+            paragraph.innerHTML = s;
+            output.appendChild(paragraph);
+        }
+
+        function toString(value)
+        {
+            return `{ calendarType = ${value} }`;
+        }
+
+        (async () => {
+
+            if (!window.testRunner || !testRunner.runUIScript) {
+                appendOutput(`This test checks if a gregorian calendar is presented when a date input control marked
+                    as a credit card expiry date field (ie. through autocomplete='cc-exp') is tapped on Safari iOS. For
+                    manual testing, tap the date field(s) and ensure the proper calendar types are presented.`);
+                return;
+            }
+
+            await UIHelper.setDefaultCalendarType("japanese");
+            await UIHelper.activateElement(target0);
+            appendOutput("Date input control marked as 'cc-exp' (default calendar set to japanese):");
+            appendOutput(toString(await UIHelper.calendarType()));
+
+            await UIHelper.activateElement(target1);
+            appendOutput("Date input control not marked as 'cc-exp' (default calendar set to japanese):");
+            appendOutput(toString(await UIHelper.calendarType()));
+
+            await UIHelper.setDefaultCalendarType("gregorian");
+            await UIHelper.activateElement(target0);
+            appendOutput("Date input control marked as 'cc-exp' (default calendar set to gregorian):");
+            appendOutput(toString(await UIHelper.calendarType()));
+
+            await UIHelper.activateElement(target1);
+            appendOutput("Date input control not marked as 'cc-exp' (default calendar set to gregorian):");
+            appendOutput(toString(await UIHelper.calendarType()));
+
+            testRunner.notifyDone();
+
+        })()
+
+    </script>
+</body>
+</html>

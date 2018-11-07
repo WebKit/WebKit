@@ -33,10 +33,18 @@
 #include <string>
 #include <vector>
 #include <wtf/HashMap.h>
+#include <wtf/Noncopyable.h>
 #include <wtf/Seconds.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
 
+#if PLATFORM(COCOA)
+
+#include <objc/runtime.h>
+
+#endif
+
+OBJC_CLASS NSString;
 OBJC_CLASS WKWebViewConfiguration;
 
 namespace WTR {
@@ -47,6 +55,19 @@ class PlatformWebView;
 class EventSenderProxy;
 struct TestCommand;
 struct TestOptions;
+
+#if PLATFORM(COCOA)
+// FIXME: This should be shared with TestWebKitAPI.
+class ClassMethodSwizzler {
+    WTF_MAKE_NONCOPYABLE(ClassMethodSwizzler);
+public:
+    ClassMethodSwizzler(Class, SEL, IMP);
+    ~ClassMethodSwizzler();
+    
+    Method m_method;
+    IMP m_originalImplementation;
+};
+#endif // PLATFORM(COCOA)
 
 class AsyncTask {
 public:
@@ -262,6 +283,10 @@ public:
 
     void toggleCapsLock();
 
+#if PLATFORM(COCOA)
+    RetainPtr<NSString> getOverriddenCalendarIdentifier() const;
+    void setDefaultCalendarType(NSString *identifier);
+#endif // PLATFORM(COCOA)
 private:
     WKRetainPtr<WKPageConfigurationRef> generatePageConfiguration(WKContextConfigurationRef);
     WKRetainPtr<WKContextConfigurationRef> generateContextConfiguration() const;
@@ -413,7 +438,10 @@ private:
     static const char* platformLibraryPathForTesting();
 
     std::unique_ptr<TestInvocation> m_currentInvocation;
-
+#if PLATFORM(COCOA)
+    std::unique_ptr<ClassMethodSwizzler> m_calendarSwizzler;
+    RetainPtr<NSString> m_overriddenCalendarIdentifier;
+#endif // PLATFORM(COCOA)
     bool m_verbose { false };
     bool m_printSeparators { false };
     bool m_usingServerMode { false };

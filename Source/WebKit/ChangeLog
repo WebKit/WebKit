@@ -1,3 +1,21 @@
+2018-11-07  Zamiul Haque  <zhaque@apple.com>
+
+        Force a gregorian calendar to show for credit card expiration date inputs
+        (autocomplete='cc-exp'*) regardless of default system settings.
+        https://bugs.webkit.org/show_bug.cgi?id=191096
+        rdar://problem/42640256
+
+        Reviewed by Tim Horton.
+
+        Added some plumbing code to expose the calendar identifier of the calendar used by a
+        presented date picker. Added shouldPresentGregorianCalendar:, to be used for
+        determining what property values a date input control must present a Gregorian
+        calendar for.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView formInputPeripheral]):
+        * UIProcess/ios/forms/WKFormInputControl.mm:
+
 2018-11-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK/WPE build when memfd is not available after r237922.

@@ -5961,6 +5961,13 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 
 @implementation WKContentView (WKTesting)
 
+- (WKFormInputControl *)formInputControl
+{
+    if ([_inputPeripheral isKindOfClass:WKFormInputControl.class])
+        return (WKFormInputControl *)_inputPeripheral.get();
+    return nil;
+}
+
 - (void)_simulateTextEntered:(NSString *)text
 {
 #if PLATFORM(WATCHOS)

@@ -196,7 +196,16 @@ bool UIScriptController::isShowingDataListSuggestions() const
 void UIScriptController::setShareSheetCompletesImmediatelyWithResolution(bool)
 {
 }
+    
+JSObjectRef UIScriptController::calendarType() const
+{
+    return nullptr;
+}
 
+void UIScriptController::setDefaultCalendarType(JSStringRef calendarIdentifier)
+{
+}
+    
 }
 
 #endif // PLATFORM(MAC)

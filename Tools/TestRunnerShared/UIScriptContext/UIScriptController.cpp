@@ -226,6 +226,16 @@ JSObjectRef UIScriptController::contentsOfUserInterfaceItem(JSStringRef interfac
 {
     return nullptr;
 }
+    
+void UIScriptController::setDefaultCalendarType(JSStringRef calendarIdentifier)
+{
+}
+
+JSObjectRef UIScriptController::calendarType() const
+{
+    return nullptr;
+}
+    
 #endif
 
 void UIScriptController::playBackEventStream(JSStringRef stream, JSValueRef callback)

@@ -394,6 +394,15 @@ bool UIScriptController::isShowingDataListSuggestions() const
     return false;
 }
 
+JSObjectRef UIScriptController::calendarType() const
+{
+    return nullptr;
+}
+
+void UIScriptController::setDefaultCalendarType(JSStringRef calendarIdentifier)
+{
+}
+
 void UIScriptController::overridePreference(JSStringRef, JSStringRef)
 {
 }

@@ -164,4 +164,24 @@ JSObjectRef UIScriptController::contentsOfUserInterfaceItem(JSStringRef interfac
 #endif
 }
 
+void UIScriptController::setDefaultCalendarType(JSStringRef calendarIdentifier)
+{
+#if WK_API_ENABLED
+    TestController::singleton().setDefaultCalendarType((__bridge NSString *)adoptCF(JSStringCopyCFString(kCFAllocatorDefault, calendarIdentifier)).get());
+#endif
+}
+
+JSObjectRef UIScriptController::calendarType() const
+{
+#if WK_API_ENABLED
+    WKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    UIView *contentView = [webView valueForKeyPath:@"_currentContentView"];
+    NSString *calendarTypeString = [contentView valueForKeyPath:@"formInputControl.dateTimePickerCalendarType"];
+    auto jsContext = m_context->jsContext();
+    return JSValueToObject(jsContext, [JSValue valueWithObject:calendarTypeString inContext:[JSContext contextWithJSGlobalContextRef:jsContext]].JSValueRef, nullptr);
+#else
+    return nullptr;
+#endif
+}
+    
 } // namespace WTR

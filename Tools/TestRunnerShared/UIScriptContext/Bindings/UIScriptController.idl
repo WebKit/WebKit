@@ -22,7 +22,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
+
 enum DeviceOrientation {
     "portrait",
     "portrait-upsidedown",
@@ -242,7 +242,8 @@ interface UIScriptController {
     readonly attribute object textSelectionCaretRect; // An object with 'left', 'top', 'width', 'height' properties.
     readonly attribute object selectionStartGrabberViewRect;
     readonly attribute object selectionEndGrabberViewRect;
-
+    readonly attribute object calendarType;
+    void setDefaultCalendarType(DOMString calendarIdentifier);
     readonly attribute object inputViewBounds;
 
     void replaceTextAtRange(DOMString text, long location, long length);

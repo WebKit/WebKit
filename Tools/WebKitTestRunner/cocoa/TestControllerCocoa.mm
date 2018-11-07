@@ -203,6 +203,34 @@ void TestController::platformRunUntil(bool& done, WTF::Seconds timeout)
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:endDate];
 }
 
+ClassMethodSwizzler::ClassMethodSwizzler(Class cls, SEL originalSelector, IMP implementation)
+    : m_method(class_getClassMethod(objc_getMetaClass(NSStringFromClass(cls).UTF8String), originalSelector))
+    , m_originalImplementation(method_setImplementation(m_method, implementation))
+{
+}
+
+ClassMethodSwizzler::~ClassMethodSwizzler()
+{
+    method_setImplementation(m_method, m_originalImplementation);
+}
+    
+static NSCalendar *swizzledCalendar()
+{
+    return [NSCalendar calendarWithIdentifier:TestController::singleton().getOverriddenCalendarIdentifier().get()];
+}
+    
+RetainPtr<NSString> TestController::getOverriddenCalendarIdentifier() const
+{
+    return m_overriddenCalendarIdentifier;
+}
+
+void TestController::setDefaultCalendarType(NSString *identifier)
+{
+    m_overriddenCalendarIdentifier = identifier;
+    if (!m_calendarSwizzler)
+        m_calendarSwizzler = std::make_unique<ClassMethodSwizzler>([NSCalendar class], @selector(currentCalendar), reinterpret_cast<IMP>(swizzledCalendar));
+}
+    
 void TestController::cocoaResetStateToConsistentValues(const TestOptions& options)
 {
 #if WK_API_ENABLED
@@ -214,6 +242,9 @@ void TestController::cocoaResetStateToConsistentValues(const TestOptions& option
     [[_WKUserContentExtensionStore defaultStore] _removeAllContentExtensions];
 
 
+    m_calendarSwizzler = nullptr;
+    m_overriddenCalendarIdentifier = nil;
+    
     if (auto* webView = mainWebView()) {
         TestRunnerWKWebView *platformView = webView->platformView();
         [platformView.configuration.userContentController _removeAllUserContentFilters];

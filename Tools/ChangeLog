@@ -1,3 +1,40 @@
+2018-11-07  Zamiul Haque  <zhaque@apple.com>
+
+        Force a gregorian calendar to show for credit card expiration date inputs
+        (autocomplete='cc-exp'*) regardless of default system settings.
+        https://bugs.webkit.org/show_bug.cgi?id=191096
+        rdar://problem/42640256
+
+        Reviewed by Tim Horton.
+
+        Implemented simulateForeignDefaultCalendar and calendarType to be used
+        for changing the default calendar returned by the system (ie. [NSCalendar
+        currentCalendar]) and getting the calendar type identifier of a presented date
+        picker.
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::isShowingDataListSuggestions const):
+        (WTR::UIScriptController::calendarType const):
+        (WTR::UIScriptController::setDefaultCalendarType):
+        * DumpRenderTree/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptController::calendarType const):
+        (WTR::UIScriptController::setDefaultCalendarType):
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::selectionEndGrabberViewRect const):
+        (WTR::UIScriptController::calendarType const): Deleted.
+        * WebKitTestRunner/TestController.cpp:
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/UIScriptControllerCocoa.mm:
+        (WTR::UIScriptController::calendarType const):
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::swizzledCalendar):
+        (WTR::TestController::getOverriddenCalendarIdentifier const):
+        (WTR::TestController::setDefaultCalendarType):
+        (WTR::TestController::cocoaResetStateToConsistentValues):
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::selectionEndGrabberViewRect const):
+        (WTR::UIScriptController::calendarType const): Deleted.
+
 2018-11-06  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Boot a single worker for custom devices
