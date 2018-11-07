@@ -1,3 +1,20 @@
+2018-11-07  Simon Fraser  <simon.fraser@apple.com>
+
+        TileController::tileSize() should not have side effects
+        https://bugs.webkit.org/show_bug.cgi?id=191349
+
+        Reviewed by Zalan Bujtas.
+
+        Calling TileController::tileSize() would recompute a new tile size and set m_tileSizeLocked,
+        which caused test failures if logging was enabled when running tests.
+
+        * platform/graphics/ca/TileController.cpp:
+        (WebCore::TileController::tileSize const):
+        (WebCore::TileController::computeTileSize):
+        * platform/graphics/ca/TileController.h:
+        * platform/graphics/ca/TileGrid.cpp:
+        (WebCore::TileGrid::revalidateTiles):
+
 2018-11-07  Charlie Turner  <cturner@igalia.com>
 
         [EME][GStreamer] Ensure key id buffers are present and simplify lifetime management of ClearKey class.

@@ -123,6 +123,8 @@ public:
     void adjustTileCoverageRect(FloatRect& coverageRect, const FloatSize& newSize, const FloatRect& previousVisibleRect, const FloatRect& currentVisibleRect, float contentsScale) const override;
     bool scrollingPerformanceLoggingEnabled() const override { return m_scrollingPerformanceLoggingEnabled; }
 
+    IntSize computeTileSize();
+
     IntRect boundsAtLastRevalidate() const { return m_boundsAtLastRevalidate; }
     IntRect boundsAtLastRevalidateWithoutMargin() const;
     void didRevalidateTiles();
@@ -229,7 +231,7 @@ private:
     bool m_tilesAreOpaque { false };
     bool m_hasTilesWithTemporaryScaleFactor { false }; // Used to make low-res tiles when zooming.
     bool m_inLiveResize { false };
-    mutable bool m_tileSizeLocked { false };
+    bool m_tileSizeLocked { false };
     bool m_isTileSizeUpdateDelayDisabledForTesting { false };
 
     Color m_tileDebugBorderColor;

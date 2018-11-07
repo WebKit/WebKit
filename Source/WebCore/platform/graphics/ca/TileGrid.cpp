@@ -368,7 +368,7 @@ void TileGrid::revalidateTiles(TileValidationPolicy validationPolicy)
     Seconds minimumRevalidationTimerDuration = Seconds::infinity();
     bool needsTileRevalidation = false;
     
-    auto tileSize = m_controller.tileSize();
+    auto tileSize = m_controller.computeTileSize();
     if (tileSize != m_tileSize) {
         removeAllTiles();
         m_tileSize = tileSize;

@@ -528,6 +528,11 @@ void TileController::tileSizeChangeTimerFired()
 
 IntSize TileController::tileSize() const
 {
+    return tileGrid().tileSize();
+}
+
+IntSize TileController::computeTileSize()
+{
     if (m_inLiveResize || m_tileSizeLocked)
         return tileGrid().tileSize();
 
