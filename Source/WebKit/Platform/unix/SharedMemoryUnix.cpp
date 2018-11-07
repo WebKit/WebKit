@@ -113,9 +113,10 @@ static inline int accessModeMMap(SharedMemory::Protection protection)
 
 static int createSharedMemory()
 {
+    int fileDescriptor = -1;
+
 #if HAVE(LINUX_MEMFD_H)
     static bool isMemFdAvailable = true;
-    int fileDescriptor = -1;
     if (isMemFdAvailable) {
         do {
             fileDescriptor = syscall(__NR_memfd_create, "WebKitSharedMemory", MFD_CLOEXEC);

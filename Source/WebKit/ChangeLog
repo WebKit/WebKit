@@ -1,5 +1,12 @@
 2018-11-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix GTK/WPE build when memfd is not available after r237922.
+
+        * Platform/unix/SharedMemoryUnix.cpp:
+        (WebKit::createSharedMemory):
+
+2018-11-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [Linux] Use memfd_create when available in SharedMemory implementation
         https://bugs.webkit.org/show_bug.cgi?id=189741
 
