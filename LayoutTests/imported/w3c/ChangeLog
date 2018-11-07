@@ -1,5 +1,17 @@
 2018-11-06  Youenn Fablet  <youenn@apple.com>
 
+        sender.replaceTrack() fails with InvalidStateError if the transceiver.direction is "inactive"
+        https://bugs.webkit.org/show_bug.cgi?id=191202
+
+        Reviewed by Eric Carlson.
+
+        Changes made upstreamed.
+
+        * web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription-replaceTrack.https-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription-replaceTrack.https.html:
+
+2018-11-06  Youenn Fablet  <youenn@apple.com>
+
         Add support for sender/receiver getCapabilities
         https://bugs.webkit.org/show_bug.cgi?id=191192
 

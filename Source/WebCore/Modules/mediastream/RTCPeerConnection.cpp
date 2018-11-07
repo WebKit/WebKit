@@ -134,17 +134,20 @@ ExceptionOr<void> RTCPeerConnection::removeTrack(RTCRtpSender& sender)
         return Exception { InvalidStateError };
 
     bool shouldAbort = true;
-    for (RTCRtpSender& senderInSet : m_transceiverSet->senders()) {
-        if (&senderInSet == &sender) {
-            shouldAbort = sender.isStopped();
+    RTCRtpTransceiver* senderTransceiver = nullptr;
+    for (auto& transceiver : m_transceiverSet->list()) {
+        if (&sender == &transceiver->sender()) {
+            senderTransceiver = transceiver.get();
+            shouldAbort = sender.isStopped() || !sender.track();
             break;
         }
     }
     if (shouldAbort)
         return { };
 
+    sender.setTrackToNull();
+    senderTransceiver->disableSendingDirection();
     m_backend->removeTrack(sender);
-    sender.stop();
     return { };
 }
 

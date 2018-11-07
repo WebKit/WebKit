@@ -1,10 +1,7 @@
 
-Harness Error (TIMEOUT), message = null
-
 PASS replaceTrack() sets the track attribute to a new track. 
 PASS replaceTrack() sets the track attribute to null. 
 PASS replaceTrack() does not set the track synchronously. 
 PASS replaceTrack() rejects when the peer connection is closed. 
-FAIL replaceTrack() rejects when invoked after removeTrack(). assert_equals: expected "InvalidModificationError" but got "InvalidStateError"
-TIMEOUT replaceTrack() rejects after a subsequent removeTrack(). Test timed out
+PASS replaceTrack() rejects when invoked after removeTrack(). 
 

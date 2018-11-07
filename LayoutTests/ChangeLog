@@ -1,3 +1,13 @@
+2018-11-06  Youenn Fablet  <youenn@apple.com>
+
+        sender.replaceTrack() fails with InvalidStateError if the transceiver.direction is "inactive"
+        https://bugs.webkit.org/show_bug.cgi?id=191202
+
+        Reviewed by Eric Carlson.
+
+        * TestExpectations: skipping a timing out related test.
+        It is already timing out but is also flaky.
+
 2018-11-06  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Experimental prototype for WebGPURenderPipeline and WebGPUSwapChain
