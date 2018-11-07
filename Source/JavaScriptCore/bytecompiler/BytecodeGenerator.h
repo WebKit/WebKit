@@ -363,6 +363,7 @@ namespace JSC {
         WTF_MAKE_FAST_ALLOCATED;
         WTF_MAKE_NONCOPYABLE(BytecodeGenerator);
 
+        friend class BoundLabel;
         friend class Label;
         friend class IndexedForInContext;
         friend class StructureForInContext;
@@ -506,12 +507,7 @@ namespace JSC {
             n->emitBytecode(*this, dst);
         }
 
-        void recordOpcode(OpcodeID opcodeID)
-        {
-            ASSERT(m_lastOpcodeID == op_end || m_writer.size() == m_lastInstruction.offset() + m_lastInstruction->size());
-            m_lastInstruction = m_writer.ref();
-            m_lastOpcodeID = opcodeID;
-        }
+        void recordOpcode(OpcodeID);
 
         ALWAYS_INLINE unsigned addMetadataFor(OpcodeID opcodeID)
         {
@@ -1185,6 +1181,7 @@ namespace JSC {
 
         void write(uint8_t byte) { m_writer.write(byte); }
         void write(uint32_t i) { m_writer.write(i); }
+        void alignWideOpcode();
 
         class PreservedTDZStack {
         private:

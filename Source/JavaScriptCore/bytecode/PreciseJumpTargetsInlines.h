@@ -140,9 +140,9 @@ inline void updateStoredJumpTargetsForInstruction(Block&& codeBlock, unsigned fi
         int32_t target = jumpTargetForInstruction<__op>(codeBlockOrHashMap, instruction); \
         int32_t newTarget = function(target); \
         if (newTarget != target || finalOffset) { \
-            instruction->cast<__op>()->setTarget(newTarget, [&]() { \
+            instruction->cast<__op>()->setTarget(BoundLabel(newTarget), [&]() { \
                 codeBlock->addOutOfLineJumpTarget(finalOffset + instruction.offset(), newTarget); \
-                return 0; \
+                return BoundLabel(); \
             }); \
         } \
         break; \
@@ -161,9 +161,9 @@ inline void updateStoredJumpTargetsForInstruction(Block&& codeBlock, unsigned fi
         int32_t target = jumpTargetForInstruction(codeBlockOrHashMap, instruction, bytecode.defaultOffset); \
         int32_t newTarget = function(target); \
         if (newTarget != target || finalOffset) { \
-            instruction->cast<__op>()->setDefaultOffset(newTarget, [&]() { \
+            instruction->cast<__op>()->setDefaultOffset(BoundLabel(newTarget), [&]() { \
                 codeBlock->addOutOfLineJumpTarget(finalOffset + instruction.offset(), newTarget); \
-                return 0; \
+                return BoundLabel(); \
             }); \
         } \
     } while (false)

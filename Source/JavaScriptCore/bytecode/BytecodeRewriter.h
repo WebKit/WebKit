@@ -28,6 +28,7 @@
 
 #include "BytecodeGenerator.h"
 #include "BytecodeGraph.h"
+#include "BytecodeStructs.h"
 #include "Bytecodes.h"
 #include "Opcode.h"
 #include "UnlinkedCodeBlock.h"
@@ -156,6 +157,16 @@ public:
             });
         }
 
+        void align()
+        {
+#if CPU(NEEDS_ALIGNED_ACCESS)
+            m_bytecodeGenerator.withWriter(m_writer, [&] {
+                while (m_bytecodeGenerator.instructions().size() % OpcodeSize::Wide)
+                    OpNop::emit<OpcodeSize::Narrow>(&m_bytecodeGenerator);
+            });
+#endif
+        }
+
     private:
         BytecodeGenerator& m_bytecodeGenerator;
         InstructionStreamWriter& m_writer;
@@ -177,6 +188,7 @@ public:
         InstructionStreamWriter writer;
         Fragment fragment(m_bytecodeGenerator, writer, includeBranch);
         function(fragment);
+        fragment.align();
         insertImpl(InsertionPoint(instruction.offset(), Position::Before), includeBranch, WTFMove(writer));
     }
 
@@ -187,6 +199,7 @@ public:
         InstructionStreamWriter writer;
         Fragment fragment(m_bytecodeGenerator, writer, includeBranch);
         function(fragment);
+        fragment.align();
         insertImpl(InsertionPoint(instruction.offset(), Position::After), includeBranch, WTFMove(writer));
     }
 

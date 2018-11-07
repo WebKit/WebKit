@@ -29,6 +29,7 @@
 #include "CallLinkInfo.h"
 #include "ICStatusMap.h"
 #include "InstructionStream.h"
+#include "Label.h"
 #include "StructureStubInfo.h"
 
 namespace JSC {
@@ -52,6 +53,7 @@ public:
     }
 
     void dumpValue(VirtualRegister reg) { m_out.printf("%s", registerName(reg.offset()).data()); }
+    void dumpValue(BoundLabel label) { m_out.print(label.target()); }
     template<typename T>
     void dumpValue(T v) { m_out.print(v); }
 

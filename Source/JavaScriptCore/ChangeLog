@@ -1,5 +1,73 @@
 2018-11-07  Tadeu Zagallo  <tzagallo@apple.com>
 
+        Align wide opcodes in the instruction stream
+        https://bugs.webkit.org/show_bug.cgi?id=191254
+
+        Reviewed by Keith Miller.
+
+        Pad the bytecode with nops to ensure that wide opcodes are 4-byte
+        aligned on platforms that don't like unaligned memory access.
+
+        For that, add a new type to represent jump targets, BoundLabel, which
+        delays computing the offset in case we need to emit nops for padding.
+        Extra padding is also emitted before op_yield and at the of each
+        BytecodeWriter fragment, to ensure that the bytecode remains aligned
+        after the rewriting.
+
+        As a side effect, we can longer guarantee that the point immediately
+        before emitting an opcode is the start of that opcode, since nops
+        might be emitted in between if the opcode needs to be wide. To fix
+        that, we only take the offset of opcodes after they have been emitted,
+        using `m_lastInstruction.offset()`.
+
+        * bytecode/BytecodeDumper.h:
+        (JSC::BytecodeDumper::dumpValue):
+        * bytecode/BytecodeGeneratorification.cpp:
+        (JSC::BytecodeGeneratorification::run):
+        * bytecode/BytecodeList.rb:
+        * bytecode/BytecodeRewriter.h:
+        (JSC::BytecodeRewriter::Fragment::align):
+        (JSC::BytecodeRewriter::insertFragmentBefore):
+        (JSC::BytecodeRewriter::insertFragmentAfter):
+        * bytecode/Fits.h:
+        * bytecode/InstructionStream.h:
+        (JSC::InstructionStreamWriter::ref):
+        * bytecode/PreciseJumpTargetsInlines.h:
+        (JSC::updateStoredJumpTargetsForInstruction):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::Label::setLocation):
+        (JSC::BoundLabel::target):
+        (JSC::BoundLabel::saveTarget):
+        (JSC::BoundLabel::commitTarget):
+        (JSC::BytecodeGenerator::generate):
+        (JSC::BytecodeGenerator::recordOpcode):
+        (JSC::BytecodeGenerator::alignWideOpcode):
+        (JSC::BytecodeGenerator::emitProfileControlFlow):
+        (JSC::BytecodeGenerator::emitResolveScope):
+        (JSC::BytecodeGenerator::emitGetFromScope):
+        (JSC::BytecodeGenerator::emitPutToScope):
+        (JSC::BytecodeGenerator::emitGetById):
+        (JSC::BytecodeGenerator::emitDirectGetById):
+        (JSC::BytecodeGenerator::emitPutById):
+        (JSC::BytecodeGenerator::emitDirectPutById):
+        (JSC::BytecodeGenerator::emitGetByVal):
+        (JSC::BytecodeGenerator::emitCreateThis):
+        (JSC::BytecodeGenerator::beginSwitch):
+        (JSC::BytecodeGenerator::endSwitch):
+        (JSC::BytecodeGenerator::emitRequireObjectCoercible):
+        (JSC::BytecodeGenerator::emitYieldPoint):
+        (JSC::BytecodeGenerator::emitToThis):
+        (JSC::Label::bind): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::recordOpcode): Deleted.
+        * bytecompiler/Label.h:
+        (JSC::BoundLabel::BoundLabel):
+        (JSC::BoundLabel::operator int):
+        (JSC::Label::bind):
+        * generator/Opcode.rb:
+
+2018-11-07  Tadeu Zagallo  <tzagallo@apple.com>
+
         REGRESSION(r237547): Test failures on 32-bit JSC since the JIT was disabled
         https://bugs.webkit.org/show_bug.cgi?id=191184
 

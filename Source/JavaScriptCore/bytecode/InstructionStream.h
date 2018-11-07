@@ -238,7 +238,7 @@ public:
 
     MutableRef ref()
     {
-        return MutableRef { m_instructions, m_instructions.size() };
+        return MutableRef { m_instructions, m_position };
     }
 
     void swap(InstructionStreamWriter& other)

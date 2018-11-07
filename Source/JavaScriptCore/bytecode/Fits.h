@@ -27,6 +27,7 @@
 
 #include "GetPutInfo.h"
 #include "Interpreter.h"
+#include "Label.h"
 #include "OpcodeSize.h"
 #include "ProfileTypeBytecodeFlag.h"
 #include "ResultType.h"
@@ -290,6 +291,32 @@ struct Fits<PutByIdFlags, OpcodeSize::Narrow> : Fits<int, OpcodeSize::Narrow> {
     static PutByIdFlags convert(uint8_t flags)
     {
         return static_cast<PutByIdFlags>(Base::convert(flags));
+    }
+};
+
+template<OpcodeSize size>
+struct Fits<BoundLabel, size> : Fits<int, size> {
+    // This is a bit hacky: we need to delay computing jump targets, since we
+    // might have to emit `nop`s to align the instructions stream. Additionally,
+    // we have to compute the target before we start writing to the instruction
+    // stream, since the offset is computed from the start of the bytecode. We
+    // achieve this by computing the target when we `check` and saving it, then
+    // later we use the saved target when we call convert.
+
+    using Base = Fits<int, size>;
+    static bool check(BoundLabel& label)
+    {
+        return Base::check(label.saveTarget());
+    }
+
+    static typename TypeBySize<size>::type convert(BoundLabel& label)
+    {
+        return Base::convert(label.commitTarget());
+    }
+
+    static BoundLabel convert(typename TypeBySize<size>::type target)
+    {
+        return BoundLabel(Base::convert(target));
     }
 };
 

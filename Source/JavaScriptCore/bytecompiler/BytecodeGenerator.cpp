@@ -102,9 +102,9 @@ void Label::setLocation(BytecodeGenerator& generator, unsigned location)
 
 #define CASE(__op) \
     case __op::opcodeID:  \
-        instruction->cast<__op>()->setTarget(target, [&]() { \
+        instruction->cast<__op>()->setTarget(BoundLabel(target), [&]() { \
             generator.m_codeBlock->addOutOfLineJumpTarget(instruction.offset(), target); \
-            return 0; \
+            return BoundLabel(); \
         }); \
         break;
 
@@ -136,9 +136,39 @@ void Label::setLocation(BytecodeGenerator& generator, unsigned location)
     }
 }
 
-int Label::bind(BytecodeGenerator* generator)
+int BoundLabel::target()
 {
-    return bind(generator->instructions().size());
+    switch (m_type) {
+    case Offset:
+        return m_target;
+    case GeneratorBackward:
+        return m_target - m_generator->m_writer.position();
+    case GeneratorForward:
+        return 0;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
+int BoundLabel::saveTarget()
+{
+    if (m_type == GeneratorForward) {
+        m_savedTarget = m_generator->m_writer.position();
+        return 0;
+    }
+
+    m_savedTarget = target();
+    return m_savedTarget;
+}
+
+int BoundLabel::commitTarget()
+{
+    if (m_type == GeneratorForward) {
+        m_label->m_unresolvedJumps.append(m_savedTarget);
+        return 0;
+    }
+
+    return m_savedTarget;
 }
 
 void Variable::dump(PrintStream& out) const
@@ -216,8 +246,11 @@ ParserError BytecodeGenerator::generate()
     }
 
     for (auto& tuple : m_catchesToEmit) {
-        Ref<Label> realCatchTarget = newEmittedLabel();
+        Ref<Label> realCatchTarget = newLabel();
         OpCatch::emit(this, std::get<1>(tuple), std::get<2>(tuple));
+        realCatchTarget->setLocation(*this, m_lastInstruction.offset());
+        m_codeBlock->addJumpTarget(m_lastInstruction.offset());
+
 
         TryData* tryData = std::get<0>(tuple);
         emitJump(tryData->target.get());
@@ -1280,6 +1313,24 @@ Ref<Label> BytecodeGenerator::newEmittedLabel()
     return label;
 }
 
+void BytecodeGenerator::recordOpcode(OpcodeID opcodeID)
+{
+    ASSERT(m_lastOpcodeID == op_end || (m_lastOpcodeID == m_lastInstruction->opcodeID() && m_writer.position() == m_lastInstruction.offset() + m_lastInstruction->size()));
+    m_lastInstruction = m_writer.ref();
+    m_lastOpcodeID = opcodeID;
+}
+
+void BytecodeGenerator::alignWideOpcode()
+{
+#if CPU(NEEDS_ALIGNED_ACCESS)
+    OpcodeID lastOpcodeID = m_lastOpcodeID;
+    m_lastOpcodeID = op_end;
+    while ((m_writer.position() + 1) % OpcodeSize::Wide)
+        OpNop::emit<OpcodeSize::Narrow>(this);
+    recordOpcode(lastOpcodeID);
+#endif
+}
+
 void BytecodeGenerator::emitLabel(Label& l0)
 {
     unsigned newLabelIndex = instructions().size();
@@ -1778,10 +1829,9 @@ void BytecodeGenerator::emitProfileControlFlow(int textOffset)
 {
     if (vm()->controlFlowProfiler()) {
         RELEASE_ASSERT(textOffset >= 0);
-        size_t bytecodeOffset = instructions().size();
-        m_codeBlock->addOpProfileControlFlowBytecodeOffset(bytecodeOffset);
 
         OpProfileControlFlow::emit(this, textOffset);
+        m_codeBlock->addOpProfileControlFlowBytecodeOffset(m_lastInstruction.offset());
     }
 }
 
@@ -2395,11 +2445,9 @@ RegisterID* BytecodeGenerator::emitResolveScope(RegisterID* dst, const Variable&
     case VarKind::Invalid:
         // Indicates non-local resolution.
         
-        m_codeBlock->addPropertyAccessInstruction(instructions().size());
-        
-        // resolve_scope dst, id, ResolveType, depth
         dst = tempDestination(dst);
         OpResolveScope::emit(this, kill(dst), scopeRegister(), addConstant(variable.ident()), resolveType(), localScopeDepth());
+        m_codeBlock->addPropertyAccessInstruction(m_lastInstruction.offset());
         return dst;
     }
     
@@ -2420,9 +2468,6 @@ RegisterID* BytecodeGenerator::emitGetFromScope(RegisterID* dst, RegisterID* sco
         
     case VarKind::Scope:
     case VarKind::Invalid: {
-        m_codeBlock->addPropertyAccessInstruction(instructions().size());
-        
-        // get_from_scope dst, scope, id, GetPutInfo, Structure, Operand
         OpGetFromScope::emit(
             this,
             kill(dst),
@@ -2431,6 +2476,7 @@ RegisterID* BytecodeGenerator::emitGetFromScope(RegisterID* dst, RegisterID* sco
             GetPutInfo(resolveMode, variable.offset().isScope() ? LocalClosureVar : resolveType(), InitializationMode::NotInitialization),
             localScopeDepth(),
             variable.offset().isScope() ? variable.offset().scopeOffset().offset() : 0);
+        m_codeBlock->addPropertyAccessInstruction(m_lastInstruction.offset());
         return dst;
     } }
     
@@ -2450,9 +2496,6 @@ RegisterID* BytecodeGenerator::emitPutToScope(RegisterID* scope, const Variable&
         
     case VarKind::Scope:
     case VarKind::Invalid: {
-        m_codeBlock->addPropertyAccessInstruction(instructions().size());
-        
-        // put_to_scope scope, id, value, GetPutInfo, Structure, Operand
         GetPutInfo getPutInfo(0);
         int scopeDepth;
         ScopeOffset offset;
@@ -2466,6 +2509,7 @@ RegisterID* BytecodeGenerator::emitPutToScope(RegisterID* scope, const Variable&
             scopeDepth = localScopeDepth();
         }
         OpPutToScope::emit(this, scope, addConstant(variable.ident()), value, getPutInfo, scopeDepth, !!offset ? offset.offset() : 0);
+        m_codeBlock->addPropertyAccessInstruction(m_lastInstruction.offset());
         return value;
     } }
     
@@ -2515,9 +2559,8 @@ RegisterID* BytecodeGenerator::emitGetById(RegisterID* dst, RegisterID* base, co
 {
     ASSERT_WITH_MESSAGE(!parseIndex(property), "Indexed properties should be handled with get_by_val.");
 
-    m_codeBlock->addPropertyAccessInstruction(instructions().size());
-
     OpGetById::emit(this, kill(dst), base, addConstant(property));
+    m_codeBlock->addPropertyAccessInstruction(m_lastInstruction.offset());
     return dst;
 }
 
@@ -2533,9 +2576,8 @@ RegisterID* BytecodeGenerator::emitDirectGetById(RegisterID* dst, RegisterID* ba
 {
     ASSERT_WITH_MESSAGE(!parseIndex(property), "Indexed properties should be handled with get_by_val_direct.");
 
-    m_codeBlock->addPropertyAccessInstruction(instructions().size());
-
     OpGetByIdDirect::emit(this, kill(dst), base, addConstant(property));
+    m_codeBlock->addPropertyAccessInstruction(m_lastInstruction.offset());
     return dst;
 }
 
@@ -2547,9 +2589,8 @@ RegisterID* BytecodeGenerator::emitPutById(RegisterID* base, const Identifier& p
 
     m_staticPropertyAnalyzer.putById(base, propertyIndex);
 
-    m_codeBlock->addPropertyAccessInstruction(instructions().size());
-
     OpPutById::emit(this, base, propertyIndex, value, PutByIdNone); // is not direct
+    m_codeBlock->addPropertyAccessInstruction(m_lastInstruction.offset());
 
     return value;
 }
@@ -2573,10 +2614,9 @@ RegisterID* BytecodeGenerator::emitDirectPutById(RegisterID* base, const Identif
 
     m_staticPropertyAnalyzer.putById(base, propertyIndex);
 
-    m_codeBlock->addPropertyAccessInstruction(instructions().size());
-    
     PutByIdFlags type = (putType == PropertyNode::KnownDirect || property != m_vm->propertyNames->underscoreProto) ? PutByIdIsDirect : PutByIdNone;
     OpPutById::emit(this, base, propertyIndex, value, type);
+    m_codeBlock->addPropertyAccessInstruction(m_lastInstruction.offset());
     return value;
 }
 
@@ -2659,33 +2699,26 @@ RegisterID* BytecodeGenerator::emitDeleteById(RegisterID* dst, RegisterID* base,
 
 RegisterID* BytecodeGenerator::emitGetByVal(RegisterID* dst, RegisterID* base, RegisterID* property)
 {
-    bool forceWide = false;
     for (size_t i = m_forInContextStack.size(); i--; ) {
         ForInContext& context = m_forInContextStack[i].get();
         if (context.local() != property)
             continue;
 
-        unsigned instIndex = instructions().size();
-
         if (context.isIndexedForInContext()) {
             auto& indexedContext = context.asIndexedForInContext();
-            indexedContext.addGetInst(instIndex, property->index());
-            property = indexedContext.index();
-            forceWide = true;
-            break;
+            OpGetByVal::emit<OpcodeSize::Wide>(this, kill(dst), base, indexedContext.index());
+            indexedContext.addGetInst(m_lastInstruction.offset(), property->index());
+            return dst;
         }
 
         StructureForInContext& structureContext = context.asStructureForInContext();
         OpGetDirectPname::emit<OpcodeSize::Wide>(this, kill(dst), base, property, structureContext.index(), structureContext.enumerator());
 
-        structureContext.addGetInst(instIndex, property->index());
+        structureContext.addGetInst(m_lastInstruction.offset(), property->index());
         return dst;
     }
 
-    if (forceWide)
-        OpGetByVal::emit<OpcodeSize::Wide>(this, kill(dst), base, property);
-    else
-        OpGetByVal::emit(this, kill(dst), base, property);
+    OpGetByVal::emit(this, kill(dst), base, property);
     return dst;
 }
 
@@ -2750,8 +2783,8 @@ RegisterID* BytecodeGenerator::emitCreateThis(RegisterID* dst)
 {
     m_staticPropertyAnalyzer.createThis(dst, m_writer.ref());
 
-    m_codeBlock->addPropertyAccessInstruction(instructions().size());
     OpCreateThis::emit(this, dst, dst, 0);
+    m_codeBlock->addPropertyAccessInstruction(m_lastInstruction.offset());
     return dst;
 }
 
@@ -3762,30 +3795,30 @@ void BytecodeGenerator::emitPopCatchScope(VariableEnvironment& environment)
 
 void BytecodeGenerator::beginSwitch(RegisterID* scrutineeRegister, SwitchInfo::SwitchType type)
 {
-    SwitchInfo info = { static_cast<uint32_t>(instructions().size()), type };
     switch (type) {
     case SwitchInfo::SwitchImmediate: {
         size_t tableIndex = m_codeBlock->numberOfSwitchJumpTables();
         m_codeBlock->addSwitchJumpTable();
-        OpSwitchImm::emit(this, tableIndex, 0, scrutineeRegister);
+        OpSwitchImm::emit(this, tableIndex, BoundLabel(), scrutineeRegister);
         break;
     }
     case SwitchInfo::SwitchCharacter: {
         size_t tableIndex = m_codeBlock->numberOfSwitchJumpTables();
         m_codeBlock->addSwitchJumpTable();
-        OpSwitchChar::emit(this, tableIndex, 0, scrutineeRegister);
+        OpSwitchChar::emit(this, tableIndex, BoundLabel(), scrutineeRegister);
         break;
     }
     case SwitchInfo::SwitchString: {
         size_t tableIndex = m_codeBlock->numberOfStringSwitchJumpTables();
         m_codeBlock->addStringSwitchJumpTable();
-        OpSwitchString::emit(this, tableIndex, 0, scrutineeRegister);
+        OpSwitchString::emit(this, tableIndex, BoundLabel(), scrutineeRegister);
         break;
     }
     default:
         RELEASE_ASSERT_NOT_REACHED();
     }
 
+    SwitchInfo info = { m_lastInstruction.offset(), type };
     m_switchContextStack.append(info);
 }
 
@@ -3848,11 +3881,11 @@ void BytecodeGenerator::endSwitch(uint32_t clauseCount, const Vector<Ref<Label>,
     SwitchInfo switchInfo = m_switchContextStack.last();
     m_switchContextStack.removeLast();
 
-    int defaultTarget = defaultLabel.bind(switchInfo.bytecodeOffset);
+    BoundLabel defaultTarget = defaultLabel.bind(switchInfo.bytecodeOffset);
     auto handleSwitch = [&](auto* op, auto bytecode) {
         op->setDefaultOffset(defaultTarget, [&]() {
             m_codeBlock->addOutOfLineJumpTarget(switchInfo.bytecodeOffset, defaultTarget);
-            return 0;
+            return BoundLabel();
         });
 
         UnlinkedSimpleJumpTable& jumpTable = m_codeBlock->switchJumpTable(bytecode.tableIndex);
@@ -3877,7 +3910,7 @@ void BytecodeGenerator::endSwitch(uint32_t clauseCount, const Vector<Ref<Label>,
     case SwitchInfo::SwitchString: {
         ref->cast<OpSwitchString>()->setDefaultOffset(defaultTarget, [&]() {
             m_codeBlock->addOutOfLineJumpTarget(switchInfo.bytecodeOffset, defaultTarget);
-            return 0;
+            return BoundLabel();
         });
 
         UnlinkedStringJumpTable& jumpTable = m_codeBlock->stringSwitchJumpTable(ref->as<OpSwitchString>().tableIndex);
@@ -4360,8 +4393,7 @@ void BytecodeGenerator::emitRequireObjectCoercible(RegisterID* value, const Stri
     // FIXME: op_jneq_null treats "undetectable" objects as null/undefined. RequireObjectCoercible
     // thus incorrectly throws a TypeError for interfaces like HTMLAllCollection.
     Ref<Label> target = newLabel();
-    size_t begin = instructions().size();
-    OpJneqNull::emit(this, value, target->bind(begin));
+    OpJneqNull::emit(this, value, target->bind(this));
     emitThrowTypeError(error);
     emitLabel(target.get());
 }
@@ -4392,6 +4424,13 @@ void BytecodeGenerator::emitYieldPoint(RegisterID* argument, JSAsyncGeneratorFun
     Vector<TryContext> savedTryContextStack;
     m_tryContextStack.swap(savedTryContextStack);
 
+
+#if CPU(NEEDS_ALIGNED_ACCESS)
+    // conservatively align for the bytecode rewriter: it will delete this yield and
+    // append a fragment, so we make sure that the start of the fragments is aligned
+    while (m_writer.position() % OpcodeSize::Wide)
+        OpNop::emit<OpcodeSize::Narrow>(this);
+#endif
     OpYield::emit(this, generatorFrameRegister(), yieldPointIndex, argument);
 
     // Restore the try contexts, which start offset is updated to the merge point.
@@ -4863,8 +4902,8 @@ void StaticPropertyAnalysis::record()
 
 void BytecodeGenerator::emitToThis()
 {
-    m_codeBlock->addPropertyAccessInstruction(instructions().size());
     OpToThis::emit(this, kill(&m_thisRegister));
+    m_codeBlock->addPropertyAccessInstruction(m_lastInstruction.offset());
 }
 
 } // namespace JSC

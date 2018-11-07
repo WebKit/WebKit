@@ -118,22 +118,23 @@ class Opcode
         {
             __generator->recordOpcode(opcodeID);
             #{@metadata.create_emitter_local}
-            emit<OpcodeSize::Narrow, NoAssert>(__generator#{untyped_args}#{metadata_arg}) || emit<OpcodeSize::Wide>(__generator#{untyped_args}#{metadata_arg});
+            emit<OpcodeSize::Narrow, NoAssert, false>(__generator#{untyped_args}#{metadata_arg}) || emit<OpcodeSize::Wide, Assert, false>(__generator#{untyped_args}#{metadata_arg});
         }
 
         #{%{
         template<OpcodeSize size, FitsAssertion shouldAssert = Assert>
         static bool emit(BytecodeGenerator* __generator#{typed_args})
         {
-            __generator->recordOpcode(opcodeID);
             #{@metadata.create_emitter_local}
             return emit<size, shouldAssert>(__generator#{untyped_args}#{metadata_arg});
         }
         } unless @metadata.empty?}
 
-        template<OpcodeSize size, FitsAssertion shouldAssert = Assert>
+        template<OpcodeSize size, FitsAssertion shouldAssert = Assert, bool recordOpcode = true>
         static bool emit(BytecodeGenerator* __generator#{typed_args}#{metadata_param})
         {
+            if (recordOpcode)
+                __generator->recordOpcode(opcodeID);
             bool didEmit = emitImpl<size>(__generator#{untyped_args}#{metadata_arg});
             if (shouldAssert == Assert)
                 ASSERT(didEmit);
@@ -144,10 +145,11 @@ class Opcode
         template<OpcodeSize size>
         static bool emitImpl(BytecodeGenerator* __generator#{typed_args}#{metadata_param})
         {
+            if (size == OpcodeSize::Wide)
+                __generator->alignWideOpcode();
             if (#{map_fields_with_size("size", &:fits_check).join " && "} && (size == OpcodeSize::Wide ? #{op_wide.fits_check(Size::Narrow)} : true)) {
-                if (size == OpcodeSize::Wide) {
+                if (size == OpcodeSize::Wide)
                     #{op_wide.fits_write Size::Narrow}
-                }
                 #{map_fields_with_size("size", &:fits_write).join "\n"}
                 return true;
             }

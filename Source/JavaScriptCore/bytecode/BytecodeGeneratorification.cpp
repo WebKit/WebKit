@@ -37,6 +37,7 @@
 #include "JSCInlines.h"
 #include "JSCJSValueInlines.h"
 #include "JSGeneratorFunction.h"
+#include "Label.h"
 #include "StrongInlines.h"
 #include "UnlinkedCodeBlock.h"
 #include "UnlinkedMetadataTableInlines.h"
@@ -205,7 +206,7 @@ void BytecodeGeneratorification::run()
             jumpTable.add(i + 1, m_yields[i].point);
 
         rewriter.insertFragmentBefore(nextToEnterPoint, [&](BytecodeRewriter::Fragment& fragment) {
-            fragment.appendInstruction<OpSwitchImm>(switchTableIndex, nextToEnterPoint.offset(), state);
+            fragment.appendInstruction<OpSwitchImm>(switchTableIndex, BoundLabel(nextToEnterPoint.offset()), state);
         });
     }
 

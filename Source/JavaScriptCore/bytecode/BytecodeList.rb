@@ -25,6 +25,7 @@ types [
     :VirtualRegister,
 
     :BasicBlockLocation,
+    :BoundLabel,
     :DebugHookType,
     :ErrorType,
     :GetByIdMode,
@@ -591,38 +592,38 @@ op :define_accessor_property,
 
 op :jmp,
     args: {
-        target: int,
+        target: BoundLabel,
     }
 
 op :jtrue,
     args: {
         condition: VirtualRegister,
-        target: int,
+        target: BoundLabel,
     }
 
 op :jfalse,
     args: {
         condition: VirtualRegister,
-        target: int,
+        target: BoundLabel,
     }
 
 op :jeq_null,
     args: {
         value: VirtualRegister,
-        target: int,
+        target: BoundLabel,
     }
 
 op :jneq_null,
     args: {
         value: VirtualRegister,
-        target: int,
+        target: BoundLabel,
     }
 
 op :jneq_ptr,
     args: {
         value: VirtualRegister,
         specialPointer: Special::Pointer,
-        target: int,
+        target: BoundLabel,
     },
     metadata: {
         hasJumped: bool,
@@ -648,7 +649,7 @@ op_group :BinaryJmp,
     args: {
         lhs: VirtualRegister,
         rhs: VirtualRegister,
-        target: int,
+        target: BoundLabel,
     }
 
 op :loop_hint
@@ -661,7 +662,7 @@ op_group :SwitchValue,
     ],
     args: {
         tableIndex: unsigned,
-        defaultOffset: int,
+        defaultOffset: BoundLabel,
         scrutinee: VirtualRegister,
     }
 
