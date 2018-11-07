@@ -1,3 +1,17 @@
+2018-11-06  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Generalize trailing SDK specifier (Part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=191275
+        <rdar://problem/45703660>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/webkitpy/port/ios_device.py:
+        (IOSDevicePort): Use normalized SDK.
+        * Scripts/webkitpy/port/ios_simulator.py:
+        (IOSSimulatorPort): Use normalized SDK.
+        (IOSSimulatorPort._build_driver_flags): Use platform SDK in build driver flags.
+
 2018-11-06  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Experimental prototype for WebGPURenderPipeline and WebGPUSwapChain
