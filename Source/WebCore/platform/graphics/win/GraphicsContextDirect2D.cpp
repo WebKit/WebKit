@@ -1690,8 +1690,8 @@ FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect, RoundingMo
 void GraphicsContext::drawLineForText(const FloatPoint& point, float width, bool printing, bool doubleLines, StrokeStyle strokeStyle)
 {
     DashArray widths;
-    widths.append(width);
     widths.append(0);
+    widths.append(width);
     drawLinesForText(point, widths, printing, doubleLines, strokeStyle);
 }
 

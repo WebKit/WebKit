@@ -318,7 +318,7 @@ void GraphicsContext::drawFocusRing(const Vector<FloatRect>& rects, float width,
 
 void GraphicsContext::drawLineForText(const FloatRect& rect, bool printing, bool doubleUnderlines, StrokeStyle)
 {
-    drawLinesForText(rect.location(), rect.height(), DashArray { rect.width(), 0 }, printing, doubleUnderlines);
+    drawLinesForText(rect.location(), rect.height(), DashArray { 0, rect.width() }, printing, doubleUnderlines);
 }
 
 void GraphicsContext::drawLinesForText(const FloatPoint& point, float thickness, const DashArray& widths, bool printing, bool doubleUnderlines, StrokeStyle)

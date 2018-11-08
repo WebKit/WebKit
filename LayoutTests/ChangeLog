@@ -1,3 +1,13 @@
+2018-11-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Dotted underlines that skip descenders are invisible
+        https://bugs.webkit.org/show_bug.cgi?id=191403
+
+        Reviewed by Simon Fraser.
+
+        * fast/css3-text/css3-text-decoration/text-underline-style-expected.html: Added.
+        * fast/css3-text/css3-text-decoration/text-underline-style.html: Added.
+
 2018-11-07  Andy Estes  <aestes@apple.com>
 
         Crash in WebCore::PaymentRequest::canMakePayment when Apple Pay payment method data is missing

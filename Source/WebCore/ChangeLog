@@ -1,3 +1,24 @@
+2018-11-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Dotted underlines that skip descenders are invisible
+        https://bugs.webkit.org/show_bug.cgi?id=191403
+
+        Reviewed by Simon Fraser.
+
+        Turns out our underline bounding boxes had negative width. When drawing the full
+        underline that was fine because it was handled by the 2D graphics engine, but when
+        we try to split up the box into dots, our "for" loop was taking 0 iterations (because
+        the end was before the start).
+
+        Test: fast/css3-text/css3-text-decoration/text-underline-style.html
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawLineForText):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawLineForText):
+        * platform/graphics/win/GraphicsContextDirect2D.cpp:
+        (WebCore::GraphicsContext::drawLineForText):
+
 2018-11-07  Andy Estes  <aestes@apple.com>
 
         Crash in WebCore::PaymentRequest::canMakePayment when Apple Pay payment method data is missing
