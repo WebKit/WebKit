@@ -40,5 +40,5 @@ PASS addTrack reuses reusable transceivers
 PASS addTransceiver does not reuse reusable transceivers 
 PASS Can setup two-way call using a single transceiver 
 PASS Closing the PC stops the transceivers 
-FAIL Changing transceiver direction to 'sendrecv' makes ontrack fire promise_test: Unhandled rejection with value: object "TypeError: Attempted to assign to readonly property."
+PASS Changing transceiver direction to 'sendrecv' makes ontrack fire 
 

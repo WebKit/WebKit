@@ -2,7 +2,7 @@
 Harness Error (TIMEOUT), message = null
 
 FAIL ontrack: track goes from muted to unmuted assert_true: track is muted in ontrack expected true got false
-FAIL Changing transceiver direction to 'inactive' mutes the remote track promise_test: Unhandled rejection with value: object "TypeError: Attempted to assign to readonly property."
-FAIL Changing transceiver direction to 'sendrecv' unmutes the remote track promise_test: Unhandled rejection with value: object "TypeError: Attempted to assign to readonly property."
+PASS Changing transceiver direction to 'inactive' mutes the remote track 
+PASS Changing transceiver direction to 'sendrecv' unmutes the remote track 
 TIMEOUT pc.close() mutes remote tracks Test timed out
 

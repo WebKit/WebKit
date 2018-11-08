@@ -63,8 +63,10 @@ void RealtimeIncomingAudioSource::stopProducingData()
 
 void RealtimeIncomingAudioSource::setSourceTrack(rtc::scoped_refptr<webrtc::AudioTrackInterface>&& track)
 {
-    ASSERT(!m_audioTrack);
     ASSERT(track);
+
+    if (m_audioTrack && isProducingData())
+        m_audioTrack->RemoveSink(this);
 
     m_audioTrack = WTFMove(track);
     notifyMutedChange(!m_audioTrack);

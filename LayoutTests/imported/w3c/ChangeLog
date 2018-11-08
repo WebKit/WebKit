@@ -1,3 +1,14 @@
+2018-11-07  Youenn Fablet  <youenn@apple.com>
+
+        Allow setting RTCRtpTransceiver.direction
+        https://bugs.webkit.org/show_bug.cgi?id=191346
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/webrtc/RTCPeerConnection-remote-track-mute.https-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-transceivers.https-expected.txt:
+        * web-platform-tests/webrtc/RTCRtpTransceiver.https-expected.txt:
+
 2018-11-06  Youenn Fablet  <youenn@apple.com>
 
         Reenable imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-ontrack.https.html

@@ -58,9 +58,10 @@ void RealtimeIncomingVideoSource::startProducingData()
 
 void RealtimeIncomingVideoSource::setSourceTrack(rtc::scoped_refptr<webrtc::VideoTrackInterface>&& track)
 {
-    ASSERT(!m_videoTrack);
     ASSERT(track);
 
+    if (m_videoTrack && isProducingData())
+        m_videoTrack->RemoveSink(this);
     m_videoTrack = WTFMove(track);
     notifyMutedChange(!m_videoTrack);
     if (isProducingData())

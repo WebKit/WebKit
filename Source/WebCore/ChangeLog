@@ -1,3 +1,25 @@
+2018-11-07  Youenn Fablet  <youenn@apple.com>
+
+        Allow setting RTCRtpTransceiver.direction
+        https://bugs.webkit.org/show_bug.cgi?id=191346
+
+        Reviewed by Eric Carlson.
+
+        Remove readonly from the direction attribute.
+        Keep setDirection for now as it is in use, with an intent to remove it.
+        Driven-by fix as in some cases, the rtc source track might be changed
+        and current implementation is not expecting that.
+        In such a case, stop observing the old track (which should no longer call us)
+        before observing the new one.
+
+        Covered by rebased tests.
+
+        * Modules/mediastream/RTCRtpTransceiver.idl:
+        * platform/mediastream/RealtimeIncomingAudioSource.cpp:
+        (WebCore::RealtimeIncomingAudioSource::setSourceTrack):
+        * platform/mediastream/RealtimeIncomingVideoSource.cpp:
+        (WebCore::RealtimeIncomingVideoSource::setSourceTrack):
+
 2018-11-07  Sihui Liu  <sihui_liu@apple.com>
 
         RELEASE_ASSERT(!m_hardClosedForUserDelete) fails in WebCore::IDBServer::UniqueIDBDatabase::invokeOperationAndTransactionTimer
