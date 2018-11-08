@@ -596,7 +596,7 @@ bool SocketDispatcher::Initialize() {
 #elif defined(WEBRTC_POSIX)
   fcntl(s_, F_SETFL, fcntl(s_, F_GETFL, 0) | O_NONBLOCK);
 #endif
-#if defined(WEBRTC_IOS)
+#if defined(WEBRTC_IOS) || (defined(WEBRTC_MAC) && defined(WEBRTC_WEBKIT_BUILD))
   // iOS may kill sockets when the app is moved to the background
   // (specifically, if the app doesn't use the "voip" UIBackgroundMode). When
   // we attempt to write to such a socket, SIGPIPE will be raised, which by
