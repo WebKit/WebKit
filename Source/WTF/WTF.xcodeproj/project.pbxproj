@@ -46,10 +46,6 @@
 		14022F4118F5C3FC007FF0EB /* libbmalloc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 14022F4018F5C3FC007FF0EB /* libbmalloc.a */; };
 		143DDE9620C8BC37007F76FA /* Entitlements.mm in Sources */ = {isa = PBXBuildFile; fileRef = 143DDE9520C8BC37007F76FA /* Entitlements.mm */; };
 		143F611F1565F0F900DB514A /* RAMSize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 143F611D1565F0F900DB514A /* RAMSize.cpp */; };
-		1447AEC618FCE57700B3D7FF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1447AEC518FCE57700B3D7FF /* Foundation.framework */; };
-		1447AEC718FCE58000B3D7FF /* libWTF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D247B6214689B8600E78B76 /* libWTF.a */; };
-		1447AEC918FCE59400B3D7FF /* mbmalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1447AEC818FCE59400B3D7FF /* mbmalloc.cpp */; };
-		1447AECB18FCE5B900B3D7FF /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1447AECA18FCE5B900B3D7FF /* libicucore.dylib */; };
 		1469419316EAAF6D0024E146 /* RunLoopTimerCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1469419116EAAF6D0024E146 /* RunLoopTimerCF.cpp */; };
 		1469419716EAAFF80024E146 /* SchedulePairMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1469419516EAAFF80024E146 /* SchedulePairMac.mm */; };
 		1469419916EAB0410024E146 /* SchedulePairCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1469419816EAB0410024E146 /* SchedulePairCF.cpp */; };
@@ -162,13 +158,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		1447AEC318FCE57000B3D7FF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5D247B5914689B8600E78B76 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5D247B6114689B8600E78B76;
-			remoteInfo = WTF;
-		};
 		65AFA28D1630B99E003D723C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5D247B5914689B8600E78B76 /* Project object */;
@@ -277,9 +266,7 @@
 		143DDE9720C8BE99007F76FA /* Entitlements.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Entitlements.h; sourceTree = "<group>"; };
 		143F611D1565F0F900DB514A /* RAMSize.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RAMSize.cpp; sourceTree = "<group>"; };
 		143F611E1565F0F900DB514A /* RAMSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RAMSize.h; sourceTree = "<group>"; };
-		1447AEBE18FCE56900B3D7FF /* libmbmalloc.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libmbmalloc.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		1447AEC518FCE57700B3D7FF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
-		1447AEC818FCE59400B3D7FF /* mbmalloc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = mbmalloc.cpp; sourceTree = "<group>"; };
 		1447AECA18FCE5B900B3D7FF /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = /usr/lib/libicucore.dylib; sourceTree = "<absolute>"; };
 		1469419016EAAF6D0024E146 /* RunLoopTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RunLoopTimer.h; sourceTree = "<group>"; };
 		1469419116EAAF6D0024E146 /* RunLoopTimerCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RunLoopTimerCF.cpp; sourceTree = "<group>"; };
@@ -289,7 +276,6 @@
 		1469419A16EAB10A0024E146 /* AutodrainedPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutodrainedPool.h; sourceTree = "<group>"; };
 		1469419B16EAB10A0024E146 /* AutodrainedPool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AutodrainedPool.cpp; sourceTree = "<group>"; };
 		149EF16216BBFE0D000A4331 /* TriState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TriState.h; sourceTree = "<group>"; };
-		14C8279718FDD73400E1800C /* mbmalloc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = mbmalloc.xcconfig; sourceTree = "<group>"; };
 		14E785E71DFB330100209BD1 /* OrdinalNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OrdinalNumber.h; sourceTree = "<group>"; };
 		14F3B0F615E45E4600210069 /* SaturatedArithmetic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SaturatedArithmetic.h; sourceTree = "<group>"; };
 		1A1D8B9B173186CE00141DA4 /* FunctionDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FunctionDispatcher.h; sourceTree = "<group>"; };
@@ -666,16 +652,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		1447AEBB18FCE56900B3D7FF /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				1447AEC618FCE57700B3D7FF /* Foundation.framework in Frameworks */,
-				1447AECB18FCE5B900B3D7FF /* libicucore.dylib in Frameworks */,
-				1447AEC718FCE58000B3D7FF /* libWTF.a in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		5D247B5F14689B8600E78B76 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -751,7 +727,6 @@
 		5D247B6314689B8600E78B76 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1447AEBE18FCE56900B3D7FF /* libmbmalloc.dylib */,
 				5D247B6214689B8600E78B76 /* libWTF.a */,
 			);
 			name = Products;
@@ -763,7 +738,6 @@
 				5D247B6E14689C4700E78B76 /* Base.xcconfig */,
 				6541CAF41630DB26006D0DEC /* CopyWTFHeaders.xcconfig */,
 				5D247B7014689C4700E78B76 /* DebugRelease.xcconfig */,
-				14C8279718FDD73400E1800C /* mbmalloc.xcconfig */,
 				5D247B7314689C4700E78B76 /* WTF.xcconfig */,
 			);
 			path = Configurations;
@@ -973,7 +947,6 @@
 				1A233C7C17DAA6E300A93ACF /* MallocPtr.h */,
 				304CA4E41375437EBE931D03 /* Markable.h */,
 				A8A472C9151A825B004123FF /* MathExtras.h */,
-				1447AEC818FCE59400B3D7FF /* mbmalloc.cpp */,
 				A8A472CA151A825B004123FF /* MD5.cpp */,
 				A8A472CB151A825B004123FF /* MD5.h */,
 				CD5497AA15857D0300B5BC30 /* MediaTime.cpp */,
@@ -1363,35 +1336,7 @@
 		};
 /* End PBXGroup section */
 
-/* Begin PBXHeadersBuildPhase section */
-		1447AEBC18FCE56900B3D7FF /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXHeadersBuildPhase section */
-
 /* Begin PBXNativeTarget section */
-		1447AEBD18FCE56900B3D7FF /* mbmalloc */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 1447AEC218FCE56900B3D7FF /* Build configuration list for PBXNativeTarget "mbmalloc" */;
-			buildPhases = (
-				1447AEBA18FCE56900B3D7FF /* Sources */,
-				1447AEBB18FCE56900B3D7FF /* Frameworks */,
-				1447AEBC18FCE56900B3D7FF /* Headers */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				1447AEC418FCE57000B3D7FF /* PBXTargetDependency */,
-			);
-			name = mbmalloc;
-			productName = mbmalloc;
-			productReference = 1447AEBE18FCE56900B3D7FF /* libmbmalloc.dylib */;
-			productType = "com.apple.product-type.library.dynamic";
-		};
 		5D247B6114689B8600E78B76 /* WTF */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5D247B6614689B8600E78B76 /* Build configuration list for PBXNativeTarget "WTF" */;
@@ -1432,7 +1377,6 @@
 			targets = (
 				5D247B6114689B8600E78B76 /* WTF */,
 				65AFA16F1630B977003D723C /* Copy WTF Headers */,
-				1447AEBD18FCE56900B3D7FF /* mbmalloc */,
 			);
 		};
 /* End PBXProject section */
@@ -1455,14 +1399,6 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		1447AEBA18FCE56900B3D7FF /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				1447AEC918FCE59400B3D7FF /* mbmalloc.cpp in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		5D247B5E14689B8600E78B76 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1606,11 +1542,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		1447AEC418FCE57000B3D7FF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5D247B6114689B8600E78B76 /* WTF */;
-			targetProxy = 1447AEC318FCE57000B3D7FF /* PBXContainerItemProxy */;
-		};
 		65AFA28E1630B99E003D723C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 65AFA16F1630B977003D723C /* Copy WTF Headers */;
@@ -1619,27 +1550,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		1447AEBF18FCE56900B3D7FF /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 14C8279718FDD73400E1800C /* mbmalloc.xcconfig */;
-			buildSettings = {
-			};
-			name = Debug;
-		};
-		1447AEC018FCE56900B3D7FF /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 14C8279718FDD73400E1800C /* mbmalloc.xcconfig */;
-			buildSettings = {
-			};
-			name = Release;
-		};
-		1447AEC118FCE56900B3D7FF /* Production */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 14C8279718FDD73400E1800C /* mbmalloc.xcconfig */;
-			buildSettings = {
-			};
-			name = Production;
-		};
 		5D247B6414689B8600E78B76 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5D247B7014689C4700E78B76 /* DebugRelease.xcconfig */;
@@ -1713,16 +1623,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1447AEC218FCE56900B3D7FF /* Build configuration list for PBXNativeTarget "mbmalloc" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				1447AEBF18FCE56900B3D7FF /* Debug */,
-				1447AEC018FCE56900B3D7FF /* Release */,
-				1447AEC118FCE56900B3D7FF /* Production */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Production;
-		};
 		5D247B5C14689B8600E78B76 /* Build configuration list for PBXProject "WTF" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
