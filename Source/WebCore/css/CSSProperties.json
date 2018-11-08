@@ -5712,6 +5712,22 @@
             },
             "status": "non-standard"
         },
+        "supported-color-schemes": {
+            "inherited": true,
+            "values": [
+                "auto",
+                "light",
+                "dark",
+                "only"
+            ],
+            "codegen-properties": {
+                "converter": "SupportedColorSchemes",
+                "enable-if": "ENABLE_DARK_MODE_CSS"
+            },
+            "status": {
+                "status": "non-standard"
+            }
+        },
         "order": {
             "codegen-properties": {
                 "aliases": [

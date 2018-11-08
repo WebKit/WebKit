@@ -174,8 +174,6 @@ private:
     bool paintAttachment(const RenderObject&, const PaintInfo&, const IntRect&) final;
 #endif
 
-    bool usingDarkAppearance(const RenderObject&) const final;
-
 private:
     String fileListNameForWidth(const FileList*, const FontCascade&, int width, bool multipleFilesAllowed) const final;
 

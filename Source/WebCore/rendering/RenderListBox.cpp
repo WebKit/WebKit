@@ -428,10 +428,10 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
     Color textColor = itemStyle.visitedDependentColorWithColorFilter(CSSPropertyColor);
     if (isOptionElement && downcast<HTMLOptionElement>(*listItemElement).selected()) {
         if (frame().selection().isFocusedAndActive() && document().focusedElement() == &selectElement())
-            textColor = theme().activeListBoxSelectionForegroundColor(document().styleColorOptions());
+            textColor = theme().activeListBoxSelectionForegroundColor(styleColorOptions());
         // Honor the foreground color for disabled items
         else if (!listItemElement->isDisabledFormControl() && !selectElement().isDisabledFormControl())
-            textColor = theme().inactiveListBoxSelectionForegroundColor(document().styleColorOptions());
+            textColor = theme().inactiveListBoxSelectionForegroundColor(styleColorOptions());
     }
 
     paintInfo.context().setFillColor(textColor);
@@ -461,9 +461,9 @@ void RenderListBox::paintItemBackground(PaintInfo& paintInfo, const LayoutPoint&
     Color backColor;
     if (is<HTMLOptionElement>(*listItemElement) && downcast<HTMLOptionElement>(*listItemElement).selected()) {
         if (frame().selection().isFocusedAndActive() && document().focusedElement() == &selectElement())
-            backColor = theme().activeListBoxSelectionBackgroundColor(document().styleColorOptions());
+            backColor = theme().activeListBoxSelectionBackgroundColor(styleColorOptions());
         else
-            backColor = theme().inactiveListBoxSelectionBackgroundColor(document().styleColorOptions());
+            backColor = theme().inactiveListBoxSelectionBackgroundColor(styleColorOptions());
     } else
         backColor = itemStyle.visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
 

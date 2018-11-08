@@ -1801,6 +1801,16 @@ CursorDirective RenderObject::getCursor(const LayoutPoint&, Cursor&) const
     return SetCursorBasedOnStyle;
 }
 
+bool RenderObject::useDarkAppearance() const
+{
+    return document().useDarkAppearance(&style());
+}
+
+OptionSet<StyleColor::Options> RenderObject::styleColorOptions() const
+{
+    return document().styleColorOptions(&style());
+}
+
 bool RenderObject::canUpdateSelectionOnRootLineBoxes()
 {
     if (needsLayout())

@@ -84,6 +84,10 @@
 #include "TextSizeAdjustment.h"
 #endif
 
+#if ENABLE(DARK_MODE_CSS)
+#include "StyleSupportedColorSchemes.h"
+#endif
+
 #define SET_VAR(group, variable, value) do { \
         if (!compareEqual(group->variable, value)) \
             group.access().variable = value; \
@@ -632,6 +636,10 @@ public:
 
     RubyPosition rubyPosition() const { return static_cast<RubyPosition>(m_rareInheritedData->rubyPosition); }
 
+#if ENABLE(DARK_MODE_CSS)
+    StyleSupportedColorSchemes supportedColorSchemes() const { return m_rareInheritedData->supportedColorSchemes; }
+#endif
+
     TextOrientation textOrientation() const { return static_cast<TextOrientation>(m_rareInheritedData->textOrientation); }
 
     ObjectFit objectFit() const { return static_cast<ObjectFit>(m_rareNonInheritedData->objectFit); }
@@ -1165,6 +1173,10 @@ public:
 
     void setRubyPosition(RubyPosition position) { SET_VAR(m_rareInheritedData, rubyPosition, static_cast<unsigned>(position)); }
 
+#if ENABLE(DARK_MODE_CSS)
+    void setSupportedColorSchemes(StyleSupportedColorSchemes supported) { SET_VAR(m_rareInheritedData, supportedColorSchemes, supported); }
+#endif
+
     void setFilter(const FilterOperations& ops) { SET_NESTED_VAR(m_rareNonInheritedData, filter, operations, ops); }
     void setAppleColorFilter(const FilterOperations& ops) { SET_NESTED_VAR(m_rareInheritedData, appleColorFilter, operations, ops); }
 
@@ -1577,6 +1589,10 @@ public:
     static PrintColorAdjust initialPrintColorAdjust() { return PrintColorAdjust::Economy; }
     static QuotesData* initialQuotes() { return nullptr; }
     static const AtomicString& initialContentAltText() { return emptyAtom(); }
+
+#if ENABLE(DARK_MODE_CSS)
+    static StyleSupportedColorSchemes initialSupportedColorSchemes() { return { }; }
+#endif
 
 #if ENABLE(CSS3_TEXT)
     static TextIndentLine initialTextIndentLine() { return TextIndentLine::FirstLine; }

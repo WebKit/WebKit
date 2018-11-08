@@ -37,6 +37,10 @@
 #include "TextSizeAdjustment.h"
 #endif
 
+#if ENABLE(DARK_MODE_CSS)
+#include "StyleSupportedColorSchemes.h"
+#endif
+
 namespace WebCore {
 
 class CursorList;
@@ -179,6 +183,10 @@ public:
 
 #if ENABLE(TOUCH_EVENTS)
     Color tapHighlightColor;
+#endif
+
+#if ENABLE(DARK_MODE_CSS)
+    StyleSupportedColorSchemes supportedColorSchemes;
 #endif
 
 private:

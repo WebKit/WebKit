@@ -1384,6 +1384,11 @@ no-preference
 light
 dark
 // no-preference
+
+// supported-color-schemes
+only
+// light
+// dark
 #endif
 
 // auto-repeat

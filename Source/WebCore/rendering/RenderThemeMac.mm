@@ -297,7 +297,7 @@ RenderThemeMac::RenderThemeMac()
 
 NSView *RenderThemeMac::documentViewFor(const RenderObject& o) const
 {
-    LocalDefaultSystemAppearance localAppearance(usingDarkAppearance(o));
+    LocalDefaultSystemAppearance localAppearance(o.useDarkAppearance());
     ControlStates states(extractControlStatesForRenderer(o));
     return ThemeMac::ensuredView(&o.view().frameView(), states);
 }
@@ -1713,7 +1713,7 @@ void RenderThemeMac::adjustMenuListStyle(StyleResolver& styleResolver, RenderSty
     // Set the foreground color to black or gray when we have the aqua look.
     Color c = Color::darkGray;
     if (e) {
-        OptionSet<StyleColor::Options> options = e->document().styleColorOptions();
+        OptionSet<StyleColor::Options> options = e->document().styleColorOptions(&style);
         c = !e->isDisabledFormControl() ? systemColor(CSSValueButtontext, options) : systemColor(CSSValueGraytext, options);
     }
     style.setColor(c);
@@ -1800,7 +1800,7 @@ void RenderThemeMac::setPopupButtonCellState(const RenderObject& o, const IntSiz
 
 void RenderThemeMac::paintCellAndSetFocusedElementNeedsRepaintIfNecessary(NSCell* cell, const RenderObject& renderer, const PaintInfo& paintInfo, const FloatRect& rect)
 {
-    LocalDefaultSystemAppearance localAppearance(usingDarkAppearance(renderer));
+    LocalDefaultSystemAppearance localAppearance(renderer.useDarkAppearance());
     bool shouldDrawFocusRing = isFocused(renderer) && renderer.style().outlineStyleIsAuto() == OutlineIsAuto::On;
     bool shouldUseImageBuffer = renderer.style().effectiveZoom() != 1 || renderer.page().pageScaleFactor() != 1;
     bool shouldDrawCell = true;
@@ -1882,7 +1882,7 @@ bool RenderThemeMac::paintSliderThumb(const RenderObject& o, const PaintInfo& pa
         ? sliderThumbVertical()
         : sliderThumbHorizontal();
 
-    LocalDefaultSystemAppearance localAppearance(usingDarkAppearance(o));
+    LocalDefaultSystemAppearance localAppearance(o.useDarkAppearance());
 
     LocalCurrentGraphicsContext localContext(paintInfo.context());
 
@@ -2993,11 +2993,6 @@ bool RenderThemeMac::paintAttachment(const RenderObject& renderer, const PaintIn
 }
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
-
-bool RenderThemeMac::usingDarkAppearance(const RenderObject& o) const
-{
-    return o.document().useDarkAppearance();
-}
 
 } // namespace WebCore
 

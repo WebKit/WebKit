@@ -50,6 +50,7 @@
 #import "MIMETypeRegistry.h"
 #import "Page.h"
 #import "PublicURLManager.h"
+#import "RenderView.h"
 #import "RuntimeEnabledFeatures.h"
 #import "SerializedAttachmentData.h"
 #import "Settings.h"
@@ -133,7 +134,9 @@ static FragmentAndResources createFragment(Frame& frame, NSAttributedString *str
     Document& document = *frame.document();
 
 #if PLATFORM(MAC)
-    LocalDefaultSystemAppearance localAppearance(document.useDarkAppearance());
+    auto* view = frame.view();
+    auto* renderView = view ? view->renderView() : nullptr;
+    LocalDefaultSystemAppearance localAppearance(renderView ? renderView->useDarkAppearance() : false);
 #endif
 
     NSArray *subresources = nil;

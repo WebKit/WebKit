@@ -1556,8 +1556,8 @@ void WebPage::scrollMainFrameIfNotAtMaxScrollPosition(const IntSize& scrollOffse
 void WebPage::drawRect(GraphicsContext& graphicsContext, const IntRect& rect)
 {
 #if PLATFORM(MAC)
-    auto* document = m_mainFrame->coreFrame()->document();
-    LocalDefaultSystemAppearance localAppearance(document ? document->useDarkAppearance() : false);
+    RenderView* renderView = m_page->mainFrame().view()->renderView();
+    LocalDefaultSystemAppearance localAppearance(renderView ? renderView->useDarkAppearance() : false);
 #endif
 
     GraphicsContextStateSaver stateSaver(graphicsContext);

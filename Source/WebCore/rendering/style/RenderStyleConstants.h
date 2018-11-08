@@ -1018,6 +1018,15 @@ enum class RubyPosition : uint8_t {
     InterCharacter
 };
 
+#if ENABLE(DARK_MODE_CSS)
+enum class ColorSchemes : uint8_t {
+    Light = 1 << 0,
+    Dark = 1 << 1
+};
+
+static const size_t ColorSchemesBits = 2;
+#endif
+
 static const size_t GridAutoFlowBits = 4;
 enum InternalGridAutoFlowAlgorithm {
     InternalAutoFlowAlgorithmSparse = 1 << 0,

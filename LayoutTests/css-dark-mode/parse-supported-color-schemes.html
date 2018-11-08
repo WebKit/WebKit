@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+
+<!-- webkit-test-runner [ experimental:DarkModeCSSEnabled=true ] -->
+
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+
+<style>
+#testAuto {
+    supported-color-schemes: auto;
+}
+
+#testOnly {
+    supported-color-schemes: only;
+}
+
+#testLight {
+    supported-color-schemes: light;
+}
+
+#testDark {
+    supported-color-schemes: dark;
+}
+
+#testLightDark {
+    supported-color-schemes: light dark;
+}
+
+#testDarkLight {
+    supported-color-schemes: dark light;
+}
+
+#testLightDarkOnly {
+    supported-color-schemes: light dark only;
+}
+
+#testOnlyDark {
+    supported-color-schemes: only dark;
+}
+
+#testLightOnlyDark {
+    supported-color-schemes: light only dark;
+}
+
+#testLightUnknown {
+    supported-color-schemes: light foo;
+}
+
+#testUnknownDarkOnly {
+    supported-color-schemes: bar dark only;
+}
+
+#testLightUnknownOnly {
+    supported-color-schemes: light baz only;
+}
+
+#testInvalidLightAuto {
+    supported-color-schemes: light auto;
+}
+
+#testInvalidAutoDark {
+    supported-color-schemes: auto dark;
+}
+
+#testInvalidLightDarkLight {
+    supported-color-schemes: light dark light;
+}
+
+#testInvalidNumber {
+    supported-color-schemes: 42;
+}
+
+#testInvalidString {
+    supported-color-schemes: "foo";
+}
+
+#testInvalidLightString {
+    supported-color-schemes: light "foo";
+}
+</style>
+
+<div id="testAuto"></div>
+<div id="testOnly"></div>
+<div id="testLight"></div>
+<div id="testDark"></div>
+<div id="testLightDark"></div>
+<div id="testDarkLight"></div>
+<div id="testLightDarkOnly"></div>
+<div id="testOnlyDark"></div>
+<div id="testLightOnlyDark"></div>
+<div id="testLightUnknown"></div>
+<div id="testUnknownDarkOnly"></div>
+
+<div id="testInvalidLightAuto"></div>
+<div id="testInvalidAutoDark"></div>
+<div id="testInvalidLightDarkLight"></div>
+<div id="testInvalidNumber"></div>
+<div id="testInvalidString"></div>
+<div id="testInvalidLightString"></div>
+
+<script>
+function test_prop(id, property, expected) {
+    assert_equals(window.getComputedStyle(document.getElementById(id)).getPropertyValue(property), expected);
+}
+
+test(function() {
+    test_prop("testAuto", "supported-color-schemes", "auto");
+    test_prop("testOnly", "supported-color-schemes", "light only");
+    test_prop("testLight", "supported-color-schemes", "light");
+    test_prop("testDark", "supported-color-schemes", "dark");
+    test_prop("testLightDark", "supported-color-schemes", "light dark");
+    test_prop("testDarkLight", "supported-color-schemes", "light dark");
+    test_prop("testLightDarkOnly", "supported-color-schemes", "light dark only");
+    test_prop("testOnlyDark", "supported-color-schemes", "dark only");
+    test_prop("testLightOnlyDark", "supported-color-schemes", "light dark only");
+    test_prop("testLightUnknown", "supported-color-schemes", "light");
+    test_prop("testUnknownDarkOnly", "supported-color-schemes", "dark only");
+}, "Test valid values");
+
+test(function() {
+    test_prop("testInvalidLightAuto", "supported-color-schemes", "auto");
+    test_prop("testInvalidAutoDark", "supported-color-schemes", "auto");
+    test_prop("testInvalidLightDarkLight", "supported-color-schemes", "auto");
+    test_prop("testInvalidNumber", "supported-color-schemes", "auto");
+    test_prop("testInvalidString", "supported-color-schemes", "auto");
+    test_prop("testInvalidLightString", "supported-color-schemes", "auto");
+}, "Test invalid values");
+</script>

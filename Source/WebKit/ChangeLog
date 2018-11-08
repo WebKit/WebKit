@@ -1,3 +1,16 @@
+2018-11-08  Timothy Hatcher  <timothy@apple.com>
+
+        Add experimental support for a `supported-color-schemes` CSS property.
+        https://bugs.webkit.org/show_bug.cgi?id=191319
+        rdar://problem/45852261
+
+        Reviewed by Dean Jackson.
+
+        * WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp:
+        (WebKit::InjectedBundleRangeHandle::renderedImage):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::drawRect):
+
 2018-11-08  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Use DeviceIdHashSaltStorage to generate device ID hash salt

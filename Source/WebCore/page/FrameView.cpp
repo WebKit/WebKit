@@ -2046,9 +2046,7 @@ bool FrameView::shouldSetCursor() const
 
 bool FrameView::useDarkAppearance() const
 {
-    ASSERT(frame().document());
-    auto& document = *frame().document();
-    return document.useDarkAppearance();
+    return renderView()->useDarkAppearance();
 }
 
 bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect)
@@ -3911,8 +3909,7 @@ void FrameView::paintScrollCorner(GraphicsContext& context, const IntRect& corne
 #if PLATFORM(MAC)
     // If dark appearance is used or the overlay style is light (because of a dark page background), set the dark apppearance.
     // Keep this in sync with ScrollAnimatorMac's effectiveAppearanceForScrollerImp:.
-    auto* document = frame().document();
-    bool useDarkAppearance = (document && document->useDarkAppearance()) || scrollbarOverlayStyle() == WebCore::ScrollbarOverlayStyleLight;
+    bool useDarkAppearance = renderView()->useDarkAppearance() || scrollbarOverlayStyle() == WebCore::ScrollbarOverlayStyleLight;
     LocalDefaultSystemAppearance localAppearance(useDarkAppearance);
 #endif
 

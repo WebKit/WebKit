@@ -86,7 +86,7 @@ void CanvasRenderingContext2D::drawFocusIfNeededInternal(const Path& path, Eleme
     auto* context = drawingContext();
     if (!element.focused() || !state().hasInvertibleTransform || path.isEmpty() || !element.isDescendantOf(canvas()) || !context)
         return;
-    context->drawFocusRing(path, 1, 1, RenderTheme::focusRingColor(element.document().styleColorOptions()));
+    context->drawFocusRing(path, 1, 1, RenderTheme::focusRingColor(element.document().styleColorOptions(canvas().computedStyle())));
 }
 
 String CanvasRenderingContext2D::font() const

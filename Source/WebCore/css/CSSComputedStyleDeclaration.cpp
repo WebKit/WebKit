@@ -448,6 +448,9 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyStrokeMiterlimit,
     CSSPropertyStrokeOpacity,
     CSSPropertyStrokeWidth,
+#if ENABLE(DARK_MODE_CSS)
+    CSSPropertySupportedColorSchemes,
+#endif
     CSSPropertyAlignmentBaseline,
     CSSPropertyBaselineShift,
     CSSPropertyDominantBaseline,
@@ -3967,6 +3970,27 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyinStyle(const RenderSty
             return cssValuePool.createValue(style.applePayButtonStyle());
         case CSSPropertyApplePayButtonType:
             return cssValuePool.createValue(style.applePayButtonType());
+#endif
+
+#if ENABLE(DARK_MODE_CSS)
+        case CSSPropertySupportedColorSchemes: {
+            if (!RuntimeEnabledFeatures::sharedFeatures().darkModeCSSEnabled())
+                return nullptr;
+
+            auto supportedColorSchemes = style.supportedColorSchemes();
+            if (supportedColorSchemes.isAuto())
+                return cssValuePool.createIdentifierValue(CSSValueAuto);
+
+            auto list = CSSValueList::createSpaceSeparated();
+            if (supportedColorSchemes.contains(ColorSchemes::Light))
+                list->append(cssValuePool.createIdentifierValue(CSSValueLight));
+            if (supportedColorSchemes.contains(ColorSchemes::Dark))
+                list->append(cssValuePool.createIdentifierValue(CSSValueDark));
+            if (!supportedColorSchemes.allowsTransformations())
+                list->append(cssValuePool.createIdentifierValue(CSSValueOnly));
+            ASSERT(list->length());
+            return WTFMove(list);
+        }
 #endif
 
         /* Individual properties not part of the spec */

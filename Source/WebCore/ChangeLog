@@ -1,3 +1,106 @@
+2018-11-08  Timothy Hatcher  <timothy@apple.com>
+
+        Add experimental support for a `supported-color-schemes` CSS property.
+        https://bugs.webkit.org/show_bug.cgi?id=191319
+        rdar://problem/45852261
+
+        Reviewed by Dean Jackson.
+
+        Tests: css-dark-mode/parse-supported-color-schemes.html
+               css-dark-mode/supported-color-schemes-css.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyinStyle):
+        * css/CSSProperties.json:
+        * css/CSSValueKeywords.in:
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::updateSupportedColorSchemes):
+        (WebCore::StyleBuilderConverter::convertSupportedColorSchemes):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::colorFromPrimitiveValue const):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeSupportedColorSchemes):
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        * dom/Document.cpp:
+        (WebCore::Document::resetLinkColor):
+        (WebCore::Document::resetVisitedLinkColor):
+        (WebCore::Document::resetActiveLinkColor):
+        (WebCore::Document::processSupportedColorSchemes):
+        (WebCore::Document::useDarkAppearance const):
+        (WebCore::Document::styleColorOptions const):
+        * dom/Document.h:
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::createFragment):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawFocusIfNeededInternal):
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::InspectorOverlay::paint):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::useDarkAppearance const):
+        (WebCore::FrameView::paintScrollCorner):
+        * platform/mac/DragImageMac.mm:
+        (WebCore::createDragImageForLink):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintBoxDecorations):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintPlatformDocumentMarker):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintRootBoxFillLayers):
+        (WebCore::RenderBox::paintBackground):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::selectionColor const):
+        (WebCore::RenderElement::selectionBackgroundColor const):
+        (WebCore::RenderElement::paintFocusRing):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintAreaElementFocusRing):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintContents):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::paintContents):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::paintItemForeground):
+        (WebCore::RenderListBox::paintItemBackground):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::useDarkAppearance const):
+        (WebCore::RenderObject::styleColorOptions const):
+        * rendering/RenderObject.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paintBackgroundsBehindCell):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::paint):
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::usingDarkAppearance const): Deleted.
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::documentViewFor const):
+        (WebCore::RenderThemeMac::adjustMenuListStyle const):
+        (WebCore::RenderThemeMac::paintCellAndSetFocusedElementNeedsRepaintIfNecessary):
+        (WebCore::RenderThemeMac::paintSliderThumb):
+        (WebCore::RenderThemeMac::usingDarkAppearance const): Deleted.
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::supportedColorSchemes const):
+        (WebCore::RenderStyle::setSupportedColorSchemes):
+        (WebCore::RenderStyle::initialSupportedColorSchemes):
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator== const):
+        * rendering/style/StyleRareInheritedData.h:
+        * rendering/style/StyleSupportedColorSchemes.h: Added.
+        (WebCore::StyleSupportedColorSchemes::StyleSupportedColorSchemes):
+        (WebCore::StyleSupportedColorSchemes::operator== const):
+        (WebCore::StyleSupportedColorSchemes::operator!= const):
+        (WebCore::StyleSupportedColorSchemes::isAuto const):
+        (WebCore::StyleSupportedColorSchemes::isOnly const):
+        (WebCore::StyleSupportedColorSchemes::colorSchemes const):
+        (WebCore::StyleSupportedColorSchemes::add):
+        (WebCore::StyleSupportedColorSchemes::contains const):
+        (WebCore::StyleSupportedColorSchemes::setAllowsTransformations):
+        (WebCore::StyleSupportedColorSchemes::allowsTransformations const):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::draw):
+
 2018-11-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Restrict domains at the target level instead of only at the window level

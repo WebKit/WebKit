@@ -31,6 +31,7 @@
 #include "StyleCustomPropertyData.h"
 #include "StyleFilterData.h"
 #include "StyleImage.h"
+#include "StyleSupportedColorSchemes.h"
 #include <wtf/PointerComparison.h>
 
 namespace WebCore {
@@ -65,6 +66,10 @@ struct GreaterThanOrSameSizeAsStyleRareInheritedData : public RefCounted<Greater
 
 #if ENABLE(TOUCH_EVENTS)
     Color tapHighlightColor;
+#endif
+
+#if ENABLE(DARK_MODE_CSS)
+    StyleSupportedColorSchemes supportedColorSchemes;
 #endif
 
     void* customPropertyDataRefs[1];
@@ -152,6 +157,9 @@ StyleRareInheritedData::StyleRareInheritedData()
 #endif
 #if ENABLE(TOUCH_EVENTS)
     , tapHighlightColor(RenderStyle::initialTapHighlightColor())
+#endif
+#if ENABLE(DARK_MODE_CSS)
+    , supportedColorSchemes(RenderStyle::initialSupportedColorSchemes())
 #endif
 {
 }
@@ -251,6 +259,9 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
 #if ENABLE(TOUCH_EVENTS)
     , tapHighlightColor(o.tapHighlightColor)
 #endif
+#if ENABLE(DARK_MODE_CSS)
+    , supportedColorSchemes(o.supportedColorSchemes)
+#endif
 {
 }
 
@@ -296,6 +307,9 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
 #endif
 #if ENABLE(TEXT_AUTOSIZING)
         && textSizeAdjust == o.textSizeAdjust
+#endif
+#if ENABLE(DARK_MODE_CSS)
+        && supportedColorSchemes == o.supportedColorSchemes
 #endif
         && userSelect == o.userSelect
         && speakAs == o.speakAs

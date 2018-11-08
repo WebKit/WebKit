@@ -1374,8 +1374,8 @@ Color RenderElement::selectionColor(CSSPropertyID colorProperty) const
     }
 
     if (frame().selection().isFocusedAndActive())
-        return theme().activeSelectionForegroundColor(document().styleColorOptions());
-    return theme().inactiveSelectionForegroundColor(document().styleColorOptions());
+        return theme().activeSelectionForegroundColor(styleColorOptions());
+    return theme().inactiveSelectionForegroundColor(styleColorOptions());
 }
 
 std::unique_ptr<RenderStyle> RenderElement::selectionPseudoStyle() const
@@ -1409,15 +1409,15 @@ Color RenderElement::selectionBackgroundColor() const
         return Color();
 
     if (frame().selection().shouldShowBlockCursor() && frame().selection().isCaret())
-        return theme().transformSelectionBackgroundColor(style().visitedDependentColorWithColorFilter(CSSPropertyColor), document().styleColorOptions());
+        return theme().transformSelectionBackgroundColor(style().visitedDependentColorWithColorFilter(CSSPropertyColor), styleColorOptions());
 
     std::unique_ptr<RenderStyle> pseudoStyle = selectionPseudoStyle();
     if (pseudoStyle && pseudoStyle->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor).isValid())
-        return theme().transformSelectionBackgroundColor(pseudoStyle->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor), document().styleColorOptions());
+        return theme().transformSelectionBackgroundColor(pseudoStyle->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor), styleColorOptions());
 
     if (frame().selection().isFocusedAndActive())
-        return theme().activeSelectionBackgroundColor(document().styleColorOptions());
-    return theme().inactiveSelectionBackgroundColor(document().styleColorOptions());
+        return theme().activeSelectionBackgroundColor(styleColorOptions());
+    return theme().inactiveSelectionBackgroundColor(styleColorOptions());
 }
 
 bool RenderElement::getLeadingCorner(FloatPoint& point, bool& insideFixed) const
@@ -1838,9 +1838,9 @@ void RenderElement::paintFocusRing(PaintInfo& paintInfo, const RenderStyle& styl
             for (auto rect : pixelSnappedFocusRingRects)
                 path.addRect(rect);
         }
-        paintInfo.context().drawFocusRing(path, page().focusController().timeSinceFocusWasSet().seconds(), needsRepaint, RenderTheme::focusRingColor(document().styleColorOptions()));
+        paintInfo.context().drawFocusRing(path, page().focusController().timeSinceFocusWasSet().seconds(), needsRepaint, RenderTheme::focusRingColor(styleColorOptions()));
     } else
-        paintInfo.context().drawFocusRing(pixelSnappedFocusRingRects, page().focusController().timeSinceFocusWasSet().seconds(), needsRepaint, RenderTheme::focusRingColor(document().styleColorOptions()));
+        paintInfo.context().drawFocusRing(pixelSnappedFocusRingRects, page().focusController().timeSinceFocusWasSet().seconds(), needsRepaint, RenderTheme::focusRingColor(styleColorOptions()));
     if (needsRepaint)
         page().focusController().setFocusedElementNeedsRepaint();
 #else

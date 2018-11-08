@@ -2782,7 +2782,7 @@ void paintScrollbar(Scrollbar* scrollbar, GraphicsContext& context, const IntRec
 void RenderLayerCompositor::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& context, GraphicsLayerPaintingPhase, const FloatRect& clip, GraphicsLayerPaintBehavior)
 {
 #if PLATFORM(MAC)
-    LocalDefaultSystemAppearance localAppearance(m_renderView.document().useDarkAppearance());
+    LocalDefaultSystemAppearance localAppearance(m_renderView.useDarkAppearance());
 #endif
 
     IntRect pixelSnappedRectForIntegralPositionedItems = snappedIntRect(LayoutRect(clip));

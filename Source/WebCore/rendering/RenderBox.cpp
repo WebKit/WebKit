@@ -1207,7 +1207,7 @@ void RenderBox::paintRootBoxFillLayers(const PaintInfo& paintInfo)
     auto color = style.visitedDependentColor(CSSPropertyBackgroundColor);
 
     CompositeOperator compositeOp = CompositeSourceOver;
-    if (document().settings().punchOutWhiteBackgroundsInDarkMode() && Color::isWhiteColor(color) && theme().usingDarkAppearance(*this))
+    if (document().settings().punchOutWhiteBackgroundsInDarkMode() && Color::isWhiteColor(color) && useDarkAppearance())
         compositeOp = CompositeDestinationOut;
 
     paintFillLayers(paintInfo, style.colorByApplyingColorFilter(color), style.backgroundLayers(), view().backgroundRect(), BackgroundBleedNone, compositeOp, rootBackgroundRenderer);
@@ -1341,7 +1341,7 @@ void RenderBox::paintBackground(const PaintInfo& paintInfo, const LayoutRect& pa
     Color backgroundColor = style().visitedDependentColor(CSSPropertyBackgroundColor);
 
     CompositeOperator compositeOp = CompositeSourceOver;
-    if (document().settings().punchOutWhiteBackgroundsInDarkMode() && Color::isWhiteColor(backgroundColor) && theme().usingDarkAppearance(*this))
+    if (document().settings().punchOutWhiteBackgroundsInDarkMode() && Color::isWhiteColor(backgroundColor) && useDarkAppearance())
         compositeOp = CompositeDestinationOut;
 
     paintFillLayers(paintInfo, style().colorByApplyingColorFilter(backgroundColor), style().backgroundLayers(), paintRect, bleedAvoidance, compositeOp);

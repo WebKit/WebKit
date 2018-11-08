@@ -3747,7 +3747,51 @@ static RefPtr<CSSValue> consumeTextEmphasisPosition(CSSParserTokenRange& range)
         list->append(CSSValuePool::singleton().createIdentifierValue(leftRightValueID));
     return list;
 }
-    
+
+#if ENABLE(DARK_MODE_CSS)
+
+static RefPtr<CSSValue> consumeSupportedColorSchemes(CSSParserTokenRange& range)
+{
+    if (isAuto(range.peek().id()))
+        return consumeIdent(range);
+
+    Vector<CSSValueID, 3> identifiers;
+
+    while (!range.atEnd()) {
+        if (range.peek().type() != IdentToken)
+            return nullptr;
+
+        CSSValueID id = range.peek().id();
+
+        switch (id) {
+        case CSSValueAuto:
+            // Auto is only allowed as a single value, and was handled earlier.
+            // Don't allow it in the list.
+            return nullptr;
+
+        case CSSValueOnly:
+        case CSSValueLight:
+        case CSSValueDark:
+            if (!identifiers.appendIfNotContains(id))
+                return nullptr;
+            break;
+
+        default:
+            // Unknown identifiers are allowed and ignored.
+            break;
+        }
+
+        range.consumeIncludingWhitespace();
+    }
+
+    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+    for (auto id : identifiers)
+        list->append(CSSValuePool::singleton().createIdentifierValue(id));
+    return list;
+}
+
+#endif
+
 #if ENABLE(DASHBOARD_SUPPORT)
 
 static RefPtr<CSSValue> consumeWebkitDashboardRegion(CSSParserTokenRange& range, CSSParserMode mode)
@@ -4289,6 +4333,12 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         return consumeWebkitAspectRatio(m_range);
     case CSSPropertyWebkitTextEmphasisPosition:
         return consumeTextEmphasisPosition(m_range);
+#if ENABLE(DARK_MODE_CSS)
+    case CSSPropertySupportedColorSchemes:
+        if (!RuntimeEnabledFeatures::sharedFeatures().darkModeCSSEnabled())
+            return nullptr;
+        return consumeSupportedColorSchemes(m_range);
+#endif
 #if ENABLE(DASHBOARD_SUPPORT)
     case CSSPropertyWebkitDashboardRegion:
         return consumeWebkitDashboardRegion(m_range, m_context.mode);

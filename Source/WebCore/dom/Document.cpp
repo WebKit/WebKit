@@ -817,17 +817,17 @@ String Document::compatMode() const
 
 void Document::resetLinkColor()
 {
-    m_linkColor = StyleColor::colorFromKeyword(CSSValueWebkitLink, styleColorOptions());
+    m_linkColor = StyleColor::colorFromKeyword(CSSValueWebkitLink, styleColorOptions(nullptr));
 }
 
 void Document::resetVisitedLinkColor()
 {
-    m_visitedLinkColor = StyleColor::colorFromKeyword(CSSValueWebkitLink, styleColorOptions() | StyleColor::Options::ForVisitedLink);
+    m_visitedLinkColor = StyleColor::colorFromKeyword(CSSValueWebkitLink, styleColorOptions(nullptr) | StyleColor::Options::ForVisitedLink);
 }
 
 void Document::resetActiveLinkColor()
 {
-    m_activeLinkColor = StyleColor::colorFromKeyword(CSSValueWebkitActivelink, styleColorOptions());
+    m_activeLinkColor = StyleColor::colorFromKeyword(CSSValueWebkitActivelink, styleColorOptions(nullptr));
 }
 
 DOMImplementation& Document::implementation()
@@ -3590,18 +3590,34 @@ static void processColorSchemes(StringView colorSchemes, const WTF::Function<voi
 void Document::processSupportedColorSchemes(const String& colorSchemes)
 {
     OptionSet<ColorSchemes> supportedColorSchemes;
+    bool allowsTransformations = true;
+    bool autoEncountered = false;
 
-    processColorSchemes(colorSchemes, [&supportedColorSchemes](StringView key) {
+    processColorSchemes(colorSchemes, [&](StringView key) {
+        if (equalLettersIgnoringASCIICase(key, "auto")) {
+            supportedColorSchemes = { };
+            allowsTransformations = true;
+            autoEncountered = true;
+            return;
+        }
+
+        if (autoEncountered)
+            return;
+
         if (equalLettersIgnoringASCIICase(key, "light"))
             supportedColorSchemes.add(ColorSchemes::Light);
         else if (equalLettersIgnoringASCIICase(key, "dark"))
             supportedColorSchemes.add(ColorSchemes::Dark);
+        else if (equalLettersIgnoringASCIICase(key, "only"))
+            allowsTransformations = false;
     });
 
-    if (supportedColorSchemes.isEmpty())
+    // If the value was just "only", that is synonymous for "only light".
+    if (supportedColorSchemes.isEmpty() && !allowsTransformations)
         supportedColorSchemes.add(ColorSchemes::Light);
 
     m_supportedColorSchemes = supportedColorSchemes;
+    m_allowsColorSchemeTransformations = allowsTransformations;
 
     if (auto* page = this->page())
         page->updateStyleAfterChangeInEnvironment();
@@ -7281,11 +7297,23 @@ bool Document::useSystemAppearance() const
     return useSystemAppearance;
 }
 
-bool Document::useDarkAppearance() const
+bool Document::useDarkAppearance(const RenderStyle* style) const
 {
 #if ENABLE(DARK_MODE_CSS)
-    if (m_supportedColorSchemes.contains(ColorSchemes::Dark) && !m_supportedColorSchemes.contains(ColorSchemes::Light))
+    OptionSet<ColorSchemes> supportedColorSchemes;
+
+    // Use the style's supported color schemes, if supplied.
+    if (style)
+        supportedColorSchemes = style->supportedColorSchemes().colorSchemes();
+
+    // Fallback to the document's supported color schemes if style was empty (auto).
+    if (supportedColorSchemes.isEmpty())
+        supportedColorSchemes = m_supportedColorSchemes;
+
+    if (supportedColorSchemes.contains(ColorSchemes::Dark) && !supportedColorSchemes.contains(ColorSchemes::Light))
         return true;
+#else
+    UNUSED_PARAM(style);
 #endif
 
     bool pageUsesDarkAppearance = false;
@@ -7296,21 +7324,19 @@ bool Document::useDarkAppearance() const
         return pageUsesDarkAppearance;
 
 #if ENABLE(DARK_MODE_CSS)
-    if (m_supportedColorSchemes.contains(ColorSchemes::Dark))
+    if (supportedColorSchemes.contains(ColorSchemes::Dark))
         return pageUsesDarkAppearance;
-
-    ASSERT(m_supportedColorSchemes.contains(ColorSchemes::Light));
 #endif
 
     return false;
 }
 
-OptionSet<StyleColor::Options> Document::styleColorOptions() const
+OptionSet<StyleColor::Options> Document::styleColorOptions(const RenderStyle* style) const
 {
     OptionSet<StyleColor::Options> options;
     if (useSystemAppearance())
         options.add(StyleColor::Options::UseSystemAppearance);
-    if (useDarkAppearance())
+    if (useDarkAppearance(style))
         options.add(StyleColor::Options::UseDarkAppearance);
     return options;
 }

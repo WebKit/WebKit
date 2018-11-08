@@ -47,6 +47,7 @@
 #include "PageConfiguration.h"
 #include "RenderSVGRoot.h"
 #include "RenderStyle.h"
+#include "RenderView.h"
 #include "SVGDocument.h"
 #include "SVGFEImageElement.h"
 #include "SVGForeignObjectElement.h"
@@ -324,8 +325,7 @@ ImageDrawResult SVGImage::draw(GraphicsContext& context, const FloatRect& dstRec
     }
 
 #if PLATFORM(MAC)
-    auto* document = m_page->mainFrame().document();
-    LocalDefaultSystemAppearance localAppearance(document ? document->useDarkAppearance() : false);
+    LocalDefaultSystemAppearance localAppearance(view->renderView()->useDarkAppearance());
 #endif
 
     view->paint(context, intersection(context.clipBounds(), enclosingIntRect(srcRect)));

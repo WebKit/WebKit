@@ -716,7 +716,7 @@ void InlineTextBox::paintPlatformDocumentMarker(GraphicsContext& context, const 
     auto bounds = calculateDocumentMarkerBounds(markedText);
 
     auto lineStyleForMarkedTextType = [&]() -> DocumentMarkerLineStyle {
-        bool shouldUseDarkAppearance = renderer().document().useDarkAppearance();
+        bool shouldUseDarkAppearance = renderer().useDarkAppearance();
         switch (markedText.type) {
         case MarkedText::SpellingError:
             return { DocumentMarkerLineStyle::Mode::Spelling, shouldUseDarkAppearance };

@@ -77,6 +77,9 @@ public:
     template<CSSPropertyID> static NinePieceImage convertBorderMask(StyleResolver&, CSSValue&);
     template<CSSPropertyID> static RefPtr<StyleImage> convertStyleImage(StyleResolver&, CSSValue&);
     static TransformOperations convertTransform(StyleResolver&, const CSSValue&);
+#if ENABLE(DARK_MODE_CSS)
+    static StyleSupportedColorSchemes convertSupportedColorSchemes(StyleResolver&, const CSSValue&);
+#endif
     static String convertString(StyleResolver&, const CSSValue&);
     static String convertStringOrAuto(StyleResolver&, const CSSValue&);
     static String convertStringOrNone(StyleResolver&, const CSSValue&);
@@ -163,6 +166,10 @@ private:
     static OptionSet<TextDecorationSkip> valueToDecorationSkip(const CSSPrimitiveValue&);
 #if ENABLE(CSS_SCROLL_SNAP)
     static Length parseSnapCoordinate(StyleResolver&, const CSSValue&);
+#endif
+
+#if ENABLE(DARK_MODE_CSS)
+    static void updateSupportedColorSchemes(const CSSPrimitiveValue&, StyleSupportedColorSchemes&);
 #endif
 
     static Length convertTo100PercentMinusLength(const Length&);
@@ -452,6 +459,48 @@ inline TransformOperations StyleBuilderConverter::convertTransform(StyleResolver
     transformsForValue(value, styleResolver.state().cssToLengthConversionData(), operations);
     return operations;
 }
+
+#if ENABLE(DARK_MODE_CSS)
+inline void StyleBuilderConverter::updateSupportedColorSchemes(const CSSPrimitiveValue& primitiveValue, StyleSupportedColorSchemes& supportedColorSchemes)
+{
+    ASSERT(primitiveValue.isValueID());
+
+    switch (primitiveValue.valueID()) {
+    case CSSValueAuto:
+        supportedColorSchemes = StyleSupportedColorSchemes();
+        break;
+    case CSSValueOnly:
+        supportedColorSchemes.setAllowsTransformations(false);
+        break;
+    case CSSValueLight:
+        supportedColorSchemes.add(ColorSchemes::Light);
+        break;
+    case CSSValueDark:
+        supportedColorSchemes.add(ColorSchemes::Dark);
+        break;
+    default:
+        // Unknown identifiers are allowed and ignored.
+        break;
+    }
+}
+
+inline StyleSupportedColorSchemes StyleBuilderConverter::convertSupportedColorSchemes(StyleResolver&, const CSSValue& value)
+{
+    StyleSupportedColorSchemes supportedColorSchemes;
+
+    if (is<CSSValueList>(value)) {
+        for (auto& currentValue : downcast<CSSValueList>(value))
+            updateSupportedColorSchemes(downcast<CSSPrimitiveValue>(currentValue.get()), supportedColorSchemes);
+    } else if (is<CSSPrimitiveValue>(value))
+        updateSupportedColorSchemes(downcast<CSSPrimitiveValue>(value), supportedColorSchemes);
+
+    // If the value was just "only", that is synonymous for "only light".
+    if (supportedColorSchemes.isOnly())
+        supportedColorSchemes.add(ColorSchemes::Light);
+
+    return supportedColorSchemes;
+}
+#endif
 
 inline String StyleBuilderConverter::convertString(StyleResolver&, const CSSValue& value)
 {

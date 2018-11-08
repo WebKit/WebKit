@@ -92,10 +92,6 @@
 #import "WebUIKitDelegate.h"
 #endif
 
-#if PLATFORM(MAC)
-#import <WebCore/LocalDefaultSystemAppearance.h>
-#endif
-
 using namespace WebCore;
 
 using namespace HTMLNames;
@@ -477,10 +473,6 @@ static NSDictionary *attributesForAttributedStringConversion()
 
 void _WebCreateFragment(Document& document, NSAttributedString *string, FragmentAndResources& result)
 {
-#if PLATFORM(MAC)
-    LocalDefaultSystemAppearance localAppearance(document.useDarkAppearance());
-#endif
-
     static NSDictionary *documentAttributes = [attributesForAttributedStringConversion() retain];
     NSArray *subresources;
     DOMDocumentFragment* fragment = [string _documentFromRange:NSMakeRange(0, [string length])

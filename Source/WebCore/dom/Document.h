@@ -578,9 +578,9 @@ public:
     float deviceScaleFactor() const;
 
     WEBCORE_EXPORT bool useSystemAppearance() const;
-    WEBCORE_EXPORT bool useDarkAppearance() const;
+    WEBCORE_EXPORT bool useDarkAppearance(const RenderStyle*) const;
 
-    OptionSet<StyleColor::Options> styleColorOptions() const;
+    OptionSet<StyleColor::Options> styleColorOptions(const RenderStyle*) const;
 
     WEBCORE_EXPORT Ref<Range> createRange();
 
@@ -901,11 +901,6 @@ public:
     void processReferrerPolicy(const String& policy, ReferrerPolicySource);
 
 #if ENABLE(DARK_MODE_CSS)
-    enum class ColorSchemes : uint8_t {
-        Light = 1 << 0,
-        Dark = 1 << 1
-    };
-
     void processSupportedColorSchemes(const String& colorSchemes);
 #endif
 
@@ -1772,7 +1767,8 @@ private:
     HashSet<SVGUseElement*> m_svgUseElements;
 
 #if ENABLE(DARK_MODE_CSS)
-    OptionSet<ColorSchemes> m_supportedColorSchemes { ColorSchemes::Light };
+    OptionSet<ColorSchemes> m_supportedColorSchemes;
+    bool m_allowsColorSchemeTransformations { true };
 #endif
 
 #if ENABLE(DASHBOARD_SUPPORT)

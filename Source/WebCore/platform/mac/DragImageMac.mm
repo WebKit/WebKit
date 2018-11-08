@@ -300,7 +300,7 @@ DragImageRef createDragImageForLink(Element& element, URL& url, const String& ti
 {
     LinkImageLayout layout(url, title);
 
-    LocalDefaultSystemAppearance localAppearance(element.document().useDarkAppearance());
+    LocalDefaultSystemAppearance localAppearance(element.document().useDarkAppearance(element.computedStyle()));
 
     auto imageSize = layout.boundingRect.size();
 #if __MAC_OS_X_VERSION_MIN_REQUIRED < 101300

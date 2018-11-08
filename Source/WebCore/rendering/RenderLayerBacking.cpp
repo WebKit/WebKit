@@ -2541,7 +2541,7 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
 #endif
 
 #if PLATFORM(MAC)
-    LocalDefaultSystemAppearance localAppearance(renderer().document().useDarkAppearance());
+    LocalDefaultSystemAppearance localAppearance(renderer().useDarkAppearance());
 #endif
 
     // The dirtyRect is in the coords of the painting root.

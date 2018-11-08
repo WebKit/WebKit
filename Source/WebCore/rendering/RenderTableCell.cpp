@@ -1289,7 +1289,7 @@ void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& paintInfo, const Lay
 
     CompositeOperator compositeOp = CompositeSourceOver;
     Color color = style.visitedDependentColor(CSSPropertyBackgroundColor);
-    if (document().settings().punchOutWhiteBackgroundsInDarkMode() && Color::isWhiteColor(color) && theme().usingDarkAppearance(*this))
+    if (document().settings().punchOutWhiteBackgroundsInDarkMode() && Color::isWhiteColor(color) && useDarkAppearance())
         compositeOp = CompositeDestinationOut;
 
     color = style.colorByApplyingColorFilter(color);

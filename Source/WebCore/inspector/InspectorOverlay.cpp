@@ -180,12 +180,13 @@ void InspectorOverlay::paint(GraphicsContext& context)
     if (!shouldShowOverlay())
         return;
 
-#if PLATFORM(MAC)
-    LocalDefaultSystemAppearance localAppearance(m_page.mainFrame().document()->useDarkAppearance());
-#endif
-
     GraphicsContextStateSaver stateSaver(context);
     FrameView* view = overlayPage()->mainFrame().view();
+
+#if PLATFORM(MAC)
+    LocalDefaultSystemAppearance localAppearance(view->renderView()->useDarkAppearance());
+#endif
+
     view->updateLayoutAndStyleIfNeededRecursive();
     view->paint(context, IntRect(0, 0, view->width(), view->height()));
 }
