@@ -32,10 +32,10 @@
 
 namespace WebCore {
     
-int computeUnderlineOffset(TextUnderlinePosition underlinePosition, TextUnderlineOffset underlineOffset, const FontMetrics& fontMetrics, const InlineTextBox* inlineTextBox, int textDecorationThickness)
+int computeUnderlineOffset(TextUnderlinePosition underlinePosition, TextUnderlineOffset underlineOffset, const FontMetrics& fontMetrics, const InlineTextBox* inlineTextBox, int defaultGap)
 {
     // This represents the gap between the baseline and the closest edge of the underline.
-    int gap = std::max<int>(1, ceilf(textDecorationThickness / 2.0));
+    int gap = std::max<int>(1, ceilf(defaultGap / 2.0));
     
     // FIXME: The code for visual overflow detection passes in a null inline text box. This means it is now
     // broken for the case where auto needs to behave like "under".
@@ -59,9 +59,9 @@ int computeUnderlineOffset(TextUnderlinePosition underlinePosition, TextUnderlin
     case TextUnderlinePosition::Auto:
         if (underlineOffset.isAuto())
             return fontMetrics.ascent() + gap;
-        return fontMetrics.ascent() + underlineOffset.lengthValue();
+        return fontMetrics.ascent() + std::max(0.0f, underlineOffset.lengthValue());
     case TextUnderlinePosition::FromFont:
-        return fontMetrics.ascent() + fontMetrics.underlinePosition() + underlineOffset.lengthOr(0);
+        return fontMetrics.ascent() + std::max(0.0f, fontMetrics.underlinePosition() + underlineOffset.lengthOr(0));
     case TextUnderlinePosition::Under: {
         ASSERT(inlineTextBox);
         // Position underline relative to the bottom edge of the lowest element's content box.
@@ -78,7 +78,9 @@ int computeUnderlineOffset(TextUnderlinePosition underlinePosition, TextUnderlin
             rootBox.maxLogicalBottomForTextDecorationLine(offset, decorationRenderer, TextDecoration::Underline);
             offset -= inlineTextBox->logicalBottom();
         }
-        return inlineTextBox->logicalHeight() + gap + std::max<float>(offset, 0) + underlineOffset.lengthOr(0);
+        auto desiredOffset = inlineTextBox->logicalHeight() + gap + std::max<float>(offset, 0) + underlineOffset.lengthOr(0);
+        desiredOffset = std::max<float>(desiredOffset, fontMetrics.ascent());
+        return desiredOffset;
     }
     }
 

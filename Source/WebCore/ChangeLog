@@ -1,3 +1,20 @@
+2018-11-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Positioned text underline can look like a strike-through
+        https://bugs.webkit.org/show_bug.cgi?id=191341
+
+        Reviewed by Simon Fraser.
+
+        We should just clamp the value so it can't go above the baseline.
+
+        We shouldn't do this at parse time because it's totally reasonable for text-underline-position: under to want
+        a negative text-underline-offset. Instead, we just do it at used value time.
+
+        Test: fast/css3-text/css3-text-decoration/text-underline-negative.html
+
+        * style/InlineTextBoxStyle.cpp:
+        (WebCore::computeUnderlineOffset):
+
 2018-11-07  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix iOS build with recent SDKs.
