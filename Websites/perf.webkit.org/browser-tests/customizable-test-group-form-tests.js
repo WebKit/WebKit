@@ -89,4 +89,54 @@ describe('CustomizableTestGroupFormTests', () => {
         revisionEditor = revisionEditors[0];
         expect(revisionEditor.value).to.be('210948');
     });
+
+    it('should use the commit set map when customize button is clicked as the behavior of radio buttons', async () => {
+        const context = new BrowsingContext();
+        const customizableTestGroupForm = await createCustomizableTestGroupFormWithContext(context);
+        const repository = context.symbols.Repository.ensureSingleton(1, {name: 'WebKit'});
+
+        const commitA = cloneObject(commitObjectA);
+        const commitB = cloneObject(commitObjectB);
+        commitA.repository = repository;
+        commitB.repository = repository;
+        const webkitCommitA = context.symbols.CommitLog.ensureSingleton(185326, commitA);
+        const webkitCommitB = context.symbols.CommitLog.ensureSingleton(185334, commitB);
+        const commitSetA = context.symbols.CommitSet.ensureSingleton(1, {revisionItems: [{commit: webkitCommitA}]});
+        const commitSetB = context.symbols.CommitSet.ensureSingleton(2, {revisionItems: [{commit: webkitCommitB}]});
+
+        customizableTestGroupForm.setCommitSetMap({A: commitSetA, B: commitSetB});
+        customizableTestGroupForm.content('customize-link').click();
+
+        const requests = context.symbols.MockRemoteAPI.requests;
+        expect(requests.length).to.be(2);
+        expect(requests[0].url).to.be('/api/commits/1/210948');
+        expect(requests[1].url).to.be('/api/commits/1/210949');
+        requests[0].resolve({commits: [commitObjectA]});
+        requests[1].resolve({commits: [commitObjectB]});
+
+        await waitForComponentsToRender(context);
+
+        let revisionEditors = customizableTestGroupForm.content('custom-table').querySelectorAll('input:not([type="radio"])');
+        expect(revisionEditors.length).to.be(2);
+        let revisionEditor = revisionEditors[0];
+        expect(revisionEditor.value).to.be('210948');
+        revisionEditor.value = '210949';
+        revisionEditor.dispatchEvent(new Event('change'));
+
+        customizableTestGroupForm.content('name').value = 'a/b test';
+        customizableTestGroupForm.content('name').dispatchEvent(new Event('input'));
+
+        await waitForComponentsToRender(context);
+
+        let radioButton = customizableTestGroupForm.content('custom-table').querySelector('input[type="radio"][name="A-1-radio"]:not(:checked)');
+        radioButton.click();
+        expect(radioButton.checked).to.be(true);
+        radioButton = customizableTestGroupForm.content('custom-table').querySelector('input[type="radio"][name="A-1-radio"]:not(:checked)');
+        radioButton.click();
+        expect(radioButton.checked).to.be(true);
+
+        revisionEditors = customizableTestGroupForm.content('custom-table').querySelectorAll('input:not([type="radio"])');
+        revisionEditor = revisionEditors[0];
+        expect(revisionEditor.value).to.be('210948');
+    });
 });
