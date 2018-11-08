@@ -1,3 +1,12 @@
+2018-11-08  Keith Miller  <keith_miller@apple.com>
+
+        jitEnabledByDefault() should be on useJIT not useBaselineJIT
+        https://bugs.webkit.org/show_bug.cgi?id=191434
+
+        Reviewed by Saam Barati.
+
+        * runtime/Options.h:
+
 2018-11-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Restrict domains at the target level instead of only at the window level
