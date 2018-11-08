@@ -1,3 +1,34 @@
+2018-11-08  Ross Kirsling  <ross.kirsling@sony.com>
+
+        U+180E is no longer a whitespace character
+        https://bugs.webkit.org/show_bug.cgi?id=191415
+
+        Reviewed by Saam Barati.
+
+        * js/ToNumber-expected.txt:
+        * js/parseFloat-expected.txt:
+        * js/script-tests/ToNumber.js:
+        * js/script-tests/parseFloat.js:
+        Update tests and expectations.
+
+        * sputnik/Conformance/09_Type_Conversion/9.3_ToNumber/9.3.1_ToNumber_from_String/S9.3.1_A2-expected.txt:
+        * sputnik/Conformance/09_Type_Conversion/9.3_ToNumber/9.3.1_ToNumber_from_String/S9.3.1_A3_T1-expected.txt:
+        * sputnik/Conformance/09_Type_Conversion/9.3_ToNumber/9.3.1_ToNumber_from_String/S9.3.1_A3_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.10_RegExp/15.10.2/15.10.2.12_CharacterClassEscape/S15.10.2.12_A1_T1-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.10_RegExp/15.10.2/15.10.2.12_CharacterClassEscape/S15.10.2.12_A2_T1-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.2/15.1.2.2_parseInt/S15.1.2.2_A2_T10-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.2/15.1.2.3_parseFloat/S15.1.2.3_A2_T10-expected.txt:
+        * sputnik/Unicode/Unicode_410/S15.10.2.12_A1_T6-expected.txt:
+        * sputnik/Unicode/Unicode_410/S15.10.2.12_A2_T6-expected.txt:
+        * sputnik/Unicode/Unicode_410/S7.2_A1.6_T1-expected.txt:
+        * sputnik/Unicode/Unicode_500/S15.10.2.12_A1_T6-expected.txt:
+        * sputnik/Unicode/Unicode_500/S15.10.2.12_A2_T6-expected.txt:
+        * sputnik/Unicode/Unicode_500/S7.2_A1.6_T1-expected.txt:
+        * sputnik/Unicode/Unicode_510/S15.10.2.12_A1_T6-expected.txt:
+        * sputnik/Unicode/Unicode_510/S15.10.2.12_A2_T6-expected.txt:
+        * sputnik/Unicode/Unicode_510/S7.2_A1.6_T1-expected.txt:
+        Let outdated sputnik checks fail.
+
 2018-11-07  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Unprefix text-decoration CSS3 properties

@@ -1,6 +1,6 @@
 S15.10.2.12_A1_T6
 
-PASS 
+FAIL SputnikError: #180E 
 
 TEST COMPLETE
 

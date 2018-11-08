@@ -1104,9 +1104,6 @@ test/built-ins/Proxy/ownKeys/return-duplicate-entries-throws.js:
 test/built-ins/Proxy/ownKeys/return-duplicate-symbol-entries-throws.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/RegExp/S15.10.2.12_A2_T1.js:
-  default: 'Test262Error: #6: Error matching character class S between character 1800 and 1bff'
-  strict mode: 'Test262Error: #6: Error matching character class S between character 1800 and 1bff'
 test/built-ins/RegExp/named-groups/groups-object-subclass-sans.js:
   default: 'Test262Error: Expected SameValue(Â«bÂ», Â«$<a>Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«bÂ», Â«$<a>Â») to be true'

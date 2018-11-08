@@ -1,3 +1,19 @@
+2018-11-08  Ross Kirsling  <ross.kirsling@sony.com>
+
+        U+180E is no longer a whitespace character
+        https://bugs.webkit.org/show_bug.cgi?id=191415
+
+        Reviewed by Saam Barati.
+
+        Mongolian Vowel Separator stopped being a valid whitespace character as of ES2016.
+        (https://github.com/tc39/ecma262/pull/300)
+
+        * parser/Lexer.h:
+        (JSC::Lexer<UChar>::isWhiteSpace):
+        * runtime/ParseInt.h:
+        (JSC::isStrWhiteSpace):
+        * yarr/create_regex_tables:
+
 2018-11-08  Keith Miller  <keith_miller@apple.com>
 
         jitEnabledByDefault() should be on useJIT not useBaselineJIT

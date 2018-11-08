@@ -32,7 +32,7 @@ types = {
     "nonwordchar": { "UseTable" : True, "Inverse": "wordchar", "data": ['`', (0, ord('0') - 1), (ord('9') + 1, ord('A') - 1), (ord('Z') + 1, ord('_') - 1), (ord('z') + 1, 0x10ffff)]},
     "nonwordUnicodeIgnoreCaseChar": { "UseTable" : False, "Inverse": "wordUnicodeIgnoreCaseChar", "data": ['`', (0, ord('0') - 1), (ord('9') + 1, ord('A') - 1), (ord('Z') + 1, ord('_') - 1), (ord('z') + 1, 0x017e), (0x0180, 0x2129), (0x212b, 0x10ffff)]},
     "newline": { "UseTable" : False, "data": ['\n', '\r', 0x2028, 0x2029]},
-    "spaces": { "UseTable" : True, "data": [' ', ('\t', '\r'), 0xa0, 0x1680, 0x180e, 0x2028, 0x2029, 0x202f, 0x205f, 0x3000, (0x2000, 0x200a), 0xfeff]},
+    "spaces": { "UseTable" : True, "data": [' ', ('\t', '\r'), 0xa0, 0x1680, 0x2028, 0x2029, 0x202f, 0x205f, 0x3000, (0x2000, 0x200a), 0xfeff]},
     "nonspaces": { "UseTable" : True, "Inverse": "spaces", "data": [(0, ord('\t') - 1), (ord('\r') + 1, ord(' ') - 1), (ord(' ') + 1, 0x009f), (0x00a1, 0x167f), (0x1681, 0x180d), (0x180f, 0x1fff), (0x200b, 0x2027), (0x202a, 0x202e), (0x2030, 0x205e), (0x2060, 0x2fff), (0x3001, 0xfefe), (0xff00, 0x10ffff)]},
     "digits": { "UseTable" : False, "data": [('0', '9')]},
     "nondigits": { "UseTable" : False, "Inverse": "digits", "data": [(0, ord('0') - 1), (ord('9') + 1, 0x10ffff)] }
