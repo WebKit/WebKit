@@ -1,5 +1,19 @@
 2018-11-08  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Debugger Popover does not work when paused in Worker
+        https://bugs.webkit.org/show_bug.cgi?id=191342
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WI.SourceCodeTextEditor.prototype._tokenTrackingControllerHighlightedJavaScriptExpression.populate):
+        (WI.SourceCodeTextEditor.prototype._tokenTrackingControllerHighlightedJavaScriptExpression):
+        When receiving the result of the popover evaluation associate the RemoteObject with
+        the target we used to evaluate (such as the Debugger call frame), not the target
+        associated with the editor.
+
+2018-11-08  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Restrict domains at the target level instead of only at the window level
         https://bugs.webkit.org/show_bug.cgi?id=191344
 
