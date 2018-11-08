@@ -1,3 +1,10 @@
+2018-11-07  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix iOS build with recent SDKs.
+
+        * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm:
+        (-[WKFullScreenWindowController _EVOrganizationName]):
+
 2018-11-07  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Enable cap on partitioned cache max age

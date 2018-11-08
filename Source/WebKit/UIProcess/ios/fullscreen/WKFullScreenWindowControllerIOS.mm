@@ -905,7 +905,13 @@ static const NSTimeInterval kAnimationDuration = 0.2;
     // and the only way to get the information we need is to call SecTrustEvaluate ourselves.
     if (!infoDictionary) {
         SecTrustResultType result = kSecTrustResultProceed;
+
+        // FIXME: This is deprecated <rdar://problem/45894288>.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         OSStatus err = SecTrustEvaluate(trust, &result);
+#pragma clang diagnostic pop
+
         if (err == noErr)
             infoDictionary = [(__bridge NSDictionary *)SecTrustCopyInfo(trust) autorelease];
         if (!infoDictionary)
