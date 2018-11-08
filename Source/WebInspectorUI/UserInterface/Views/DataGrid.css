@@ -426,7 +426,7 @@ body[dir=rtl] .data-grid :matches(th, td):first-child {
 }
 
 body:not(.window-inactive, .window-docked-inactive) .data-grid:focus tr.editable.selected .cell-content > input {
-    color: var(--text-color);
+    color: var(--selected-foreground-color);
 }
 
 @media (prefers-dark-interface) {
