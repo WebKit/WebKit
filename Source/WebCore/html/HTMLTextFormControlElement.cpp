@@ -110,7 +110,7 @@ void HTMLTextFormControlElement::dispatchBlurEvent(RefPtr<Element>&& newFocusedE
 
 void HTMLTextFormControlElement::didEditInnerTextValue()
 {
-    if (!isTextField())
+    if (!renderer() || !isTextField())
         return;
 
     LOG(Editing, "HTMLTextFormControlElement %p didEditInnerTextValue", this);

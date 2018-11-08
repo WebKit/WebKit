@@ -1,3 +1,17 @@
+2018-11-07  Chris Dumez  <cdumez@apple.com>
+
+        ASSERT(renderer()) under HTMLTextAreaElement::updateValue()
+        https://bugs.webkit.org/show_bug.cgi?id=191391
+        <rdar://problem/34219633>
+
+        Reviewed by Geoffrey Garen.
+
+        Add layout test coverage. I have verified that this test passes in Firefox and Chrome.
+        It used to crash before this change in debug.
+
+        * editing/inserting/inset-html-textarea-without-renderer-expected.txt: Added.
+        * editing/inserting/inset-html-textarea-without-renderer.html: Added.
+
 2018-11-07  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Positioned text underline can look like a strike-through
