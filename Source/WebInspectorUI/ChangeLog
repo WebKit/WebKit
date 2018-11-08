@@ -1,3 +1,60 @@
+2018-11-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Restrict domains at the target level instead of only at the window level
+        https://bugs.webkit.org/show_bug.cgi?id=191344
+
+        Reviewed by Devin Rousso.
+
+        With this change the list of agents available on the target should accurately
+        reflect the domains that target supports. We should start moving in the direction
+        that if we are checking for, or using, a feature, we should ideally be using
+        code that looks like `target.FooAgent.method` and not `window.FooAgent` or
+        an unprefixed `FooAgent`. More changes to follow.
+
+        * UserInterface/Controllers/AppControllerBase.js:
+        * UserInterface/Base/DebuggableType.js: Added.
+        Extract debuggable type enum out into its own file loaded early on.
+
+        * UserInterface/Main.html:
+        * UserInterface/Test.html:
+        Load DebuggableType.js.
+
+        * UserInterface/Controllers/NetworkManager.js:
+        (WI.NetworkManager.prototype.initializeTarget):
+        With these changes target.ServiceWorker is only exposed on a ServiceWorker target.
+
+        * UserInterface/Protocol/Connection.js:
+        (InspectorBackend.WorkerConnection):
+        With these changes Target.js restricts the domains exposed on the Target so just
+        clone all of the agents (we don't need to do anything special).
+
+        * UserInterface/Protocol/InspectorBackend.js:
+        (InspectorBackendClass.prototype.activateDomain):
+        Update supported domains per-type. If there is no explicit availability
+        then the domain is supported on all types.
+
+        (InspectorBackendClass.prototype.supportedDomainsForDebuggableType):
+        Get supported domains per-type.
+
+        (InspectorBackendClass.prototype.get workerSupportedDomains): Deleted.
+        (InspectorBackendClass.prototype.workerSupportedDomain): Deleted.
+        workerSupportedDomains is now unnecessary.
+
+        * UserInterface/Protocol/Target.js:
+        (WI.Target.prototype._supportedDomainsForTargetType):
+        Restrict supported domains for this target based on its type.
+
+        * UserInterface/Protocol/Legacy/10.3/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/11.0/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/11.3/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/12.0/InspectorBackendCommands.js:
+        * Versions/Inspector-iOS-10.3.json:
+        * Versions/Inspector-iOS-11.0.json:
+        * Versions/Inspector-iOS-11.3.json:
+        * Versions/Inspector-iOS-12.0.json:
+        Regenerate protocol files now that workerSupportedDomains is unnecessary
+        and explicit availability has been added to other domains.
+
 2018-11-07  Nikita Vasilyev  <nvasilyev@apple.com>
 
         REGRESSION(r236705): Web Inspector: wrong text color for selected DataGrid row

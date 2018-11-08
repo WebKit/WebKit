@@ -699,7 +699,6 @@
 {
     "domain": "Console",
     "description": "Console domain defines methods and events for interaction with the JavaScript console. Console collects messages created by means of the <a href='http://getfirebug.com/wiki/index.php/Console_API'>JavaScript Console API</a>. One needs to enable this domain using <code>enable</code> command in order to start receiving the console messages. Browser collects messages issued while console domain is not enabled as well and reports them using <code>messageAdded</code> notification upon enabling.",
-    "workerSupported": true,
     "types": [
         {
             "id": "ChannelSource",
@@ -1706,7 +1705,6 @@
 {
     "domain": "Debugger",
     "description": "Debugger domain exposes JavaScript debugging capabilities. It allows setting and removing breakpoints, stepping through execution, exploring stack traces, etc.",
-    "workerSupported": true,
     "types": [
         {
             "id": "BreakpointId",
@@ -2091,7 +2089,6 @@
 {
     "domain": "Heap",
     "description": "Heap domain exposes JavaScript heap attributes and capabilities.",
-    "workerSupported": true,
     "types": [
         {
             "id": "GarbageCollection",
@@ -2335,6 +2332,7 @@
 ,
 {
     "domain": "Inspector",
+    "availability": ["javascript", "web"],
     "types": [],
     "commands": [
         {
@@ -3360,7 +3358,6 @@
 {
     "domain": "Runtime",
     "description": "Runtime domain exposes JavaScript runtime by means of remote evaluation and mirror objects. Evaluation results are returned as mirror object that expose object type, string representation and unique identifier that can be used for further object reference. Original objects are maintained in memory unless they are either explicitly released or are released along with the other objects in their object group.",
-    "workerSupported": true,
     "types": [
         {
             "id": "RemoteObjectId",
@@ -3733,6 +3730,7 @@
 {
     "domain": "ScriptProfiler",
     "description": "Profiler domain exposes JavaScript evaluation timing and profiling.",
+    "availability": ["javascript", "web"],
     "types": [
         {
             "id": "EventType",

@@ -87,7 +87,6 @@ InspectorBackend.registerCommand("Console.clearMessages", [], []);
 InspectorBackend.registerCommand("Console.setMonitoringXHREnabled", [{"name": "enabled", "type": "boolean", "optional": false}], []);
 InspectorBackend.registerCommand("Console.addInspectedNode", [{"name": "nodeId", "type": "number", "optional": false}], []);
 InspectorBackend.activateDomain("Console");
-InspectorBackend.workerSupportedDomain("Console");
 
 // DOM.
 InspectorBackend.registerDOMDispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, "DOM");
@@ -207,7 +206,6 @@ InspectorBackend.registerCommand("Debugger.setPauseOnAssertions", [{"name": "ena
 InspectorBackend.registerCommand("Debugger.evaluateOnCallFrame", [{"name": "callFrameId", "type": "string", "optional": false}, {"name": "expression", "type": "string", "optional": false}, {"name": "objectGroup", "type": "string", "optional": true}, {"name": "includeCommandLineAPI", "type": "boolean", "optional": true}, {"name": "doNotPauseOnExceptionsAndMuteConsole", "type": "boolean", "optional": true}, {"name": "returnByValue", "type": "boolean", "optional": true}, {"name": "generatePreview", "type": "boolean", "optional": true}, {"name": "saveResult", "type": "boolean", "optional": true}], ["result", "wasThrown", "savedResultIndex"]);
 InspectorBackend.registerCommand("Debugger.setOverlayMessage", [{"name": "message", "type": "string", "optional": true}], []);
 InspectorBackend.activateDomain("Debugger");
-InspectorBackend.workerSupportedDomain("Debugger");
 
 // Heap.
 InspectorBackend.registerHeapDispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, "Heap");
@@ -245,7 +243,7 @@ InspectorBackend.registerEvent("Inspector.activateExtraDomains", ["domains"]);
 InspectorBackend.registerCommand("Inspector.enable", [], []);
 InspectorBackend.registerCommand("Inspector.disable", [], []);
 InspectorBackend.registerCommand("Inspector.initialized", [], []);
-InspectorBackend.activateDomain("Inspector");
+InspectorBackend.activateDomain("Inspector", ["javascript", "web"]);
 
 // LayerTree.
 InspectorBackend.registerLayerTreeDispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, "LayerTree");
@@ -353,7 +351,6 @@ InspectorBackend.registerCommand("Runtime.enableControlFlowProfiler", [], []);
 InspectorBackend.registerCommand("Runtime.disableControlFlowProfiler", [], []);
 InspectorBackend.registerCommand("Runtime.getBasicBlocks", [{"name": "sourceID", "type": "string", "optional": false}], ["basicBlocks"]);
 InspectorBackend.activateDomain("Runtime");
-InspectorBackend.workerSupportedDomain("Runtime");
 
 // ScriptProfiler.
 InspectorBackend.registerScriptProfilerDispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, "ScriptProfiler");
@@ -365,7 +362,7 @@ InspectorBackend.registerEvent("ScriptProfiler.programmaticCaptureStarted", []);
 InspectorBackend.registerEvent("ScriptProfiler.programmaticCaptureStopped", []);
 InspectorBackend.registerCommand("ScriptProfiler.startTracking", [{"name": "includeSamples", "type": "boolean", "optional": true}], []);
 InspectorBackend.registerCommand("ScriptProfiler.stopTracking", [], []);
-InspectorBackend.activateDomain("ScriptProfiler");
+InspectorBackend.activateDomain("ScriptProfiler", ["javascript", "web"]);
 
 // Timeline.
 InspectorBackend.registerTimelineDispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, "Timeline");

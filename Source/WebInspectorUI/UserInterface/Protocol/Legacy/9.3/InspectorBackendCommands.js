@@ -219,7 +219,7 @@ InspectorBackend.registerEvent("Inspector.activateExtraDomains", ["domains"]);
 InspectorBackend.registerCommand("Inspector.enable", [], []);
 InspectorBackend.registerCommand("Inspector.disable", [], []);
 InspectorBackend.registerCommand("Inspector.initialized", [], []);
-InspectorBackend.activateDomain("Inspector");
+InspectorBackend.activateDomain("Inspector", ["javascript", "web"]);
 
 // LayerTree.
 InspectorBackend.registerLayerTreeDispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, "LayerTree");

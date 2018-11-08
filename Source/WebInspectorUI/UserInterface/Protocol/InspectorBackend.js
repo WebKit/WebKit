@@ -40,7 +40,10 @@ InspectorBackendClass = class InspectorBackendClass
         this._defaultTracer = new WI.LoggingProtocolTracer;
         this._activeTracers = [this._defaultTracer];
 
-        this._workerSupportedDomains = [];
+        this._supportedDomainsForDebuggableType = new Map;
+
+        for (let debuggableType of Object.values(WI.DebuggableType))
+            this._supportedDomainsForDebuggableType.set(debuggableType, []);
 
         WI.settings.autoLogProtocolMessages.addEventListener(WI.Setting.Event.Changed, this._startOrStopAutomaticTracing, this);
         WI.settings.autoLogTimeStats.addEventListener(WI.Setting.Event.Changed, this._startOrStopAutomaticTracing, this);
@@ -54,8 +57,6 @@ InspectorBackendClass = class InspectorBackendClass
     }
 
     // Public
-
-    get workerSupportedDomains() { return this._workerSupportedDomains; }
 
     // It's still possible to set this flag on InspectorBackend to just
     // dump protocol traffic as it happens. For more complex uses of
@@ -160,6 +161,10 @@ InspectorBackendClass = class InspectorBackendClass
 
     activateDomain(domainName, activationDebuggableTypes)
     {
+        let supportedDebuggableTypes = activationDebuggableTypes || Object.values(WI.DebuggableType);
+        for (let debuggableType of supportedDebuggableTypes)
+            this._supportedDomainsForDebuggableType.get(debuggableType).push(domainName);
+
         if (!activationDebuggableTypes || activationDebuggableTypes.includes(InspectorFrontendHost.debuggableType())) {
             let agent = this._agents[domainName];
             agent.activate();
@@ -169,9 +174,11 @@ InspectorBackendClass = class InspectorBackendClass
         return null;
     }
 
-    workerSupportedDomain(domainName)
+    supportedDomainsForDebuggableType(type)
     {
-        this._workerSupportedDomains.push(domainName);
+        console.assert(Object.values(WI.DebuggableType).includes(type), "Unknown debuggable type", type);
+
+        return this._supportedDomainsForDebuggableType.get(type);
     }
 
     // Private

@@ -295,13 +295,13 @@ InspectorBackend.WorkerConnection = class InspectorBackendWorkerConnection exten
 
         this._workerId = workerId;
 
-        const workerDomains = InspectorBackend.workerSupportedDomains;
-
-        for (let domain of workerDomains) {
+        // Clone agents that will use this connection.
+        for (let domain in InspectorBackend._agents) {
             let agent = InspectorBackend._agents[domain];
             let clone = Object.create(InspectorBackend._agents[domain]);
             clone.connection = this;
-            clone.dispatcher = new agent.dispatcher.constructor;
+            if (agent.dispatcher)
+                clone.dispatcher = new agent.dispatcher.constructor;
             this._agents[domain] = clone;
         }
     }

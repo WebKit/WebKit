@@ -144,7 +144,4 @@ class JSBackendCommandsGenerator(Generator):
         else:
             lines.append('InspectorBackend.activateDomain("%(domain)s");' % activate_args)
 
-        if domain.workerSupported:
-            lines.append('InspectorBackend.workerSupportedDomain("%s");' % domain.domain_name)
-
         return "\n".join(lines)

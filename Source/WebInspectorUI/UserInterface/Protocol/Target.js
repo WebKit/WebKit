@@ -33,11 +33,18 @@ WI.Target = class Target extends WI.Object
         this._name = name;
         this._type = type;
         this._connection = connection;
-        this._agents = connection._agents;
         this._executionContext = null;
         this._mainResource = null;
         this._resourceCollection = new WI.ResourceCollection;
         this._extraScriptCollection = new WI.ScriptCollection;
+
+        // Restrict the agents to the list of supported agents for this target type.
+        // This makes it so `target.FooAgent` only exists if the "Foo" domain is
+        // supported by the target.
+        this._agents = {};
+        const supportedDomains = this._supportedDomainsForTargetType(this._type);
+        for (let domain of supportedDomains)
+            this._agents[domain] = this._connection._agents[domain];
 
         this._connection.target = this;
 
@@ -166,6 +173,25 @@ WI.Target = class Target extends WI.Object
         this._extraScriptCollection.add(script);
 
         this.dispatchEventToListeners(WI.Target.Event.ScriptAdded, {script});
+    }
+
+    // Private
+
+    _supportedDomainsForTargetType(type)
+    {
+        switch (type) {
+        case WI.Target.Type.JSContext:
+            return InspectorBackend.supportedDomainsForDebuggableType(WI.DebuggableType.JavaScript);
+        case WI.Target.Type.Worker:
+            return InspectorBackend.supportedDomainsForDebuggableType(WI.DebuggableType.Worker);
+        case WI.Target.Type.ServiceWorker:
+            return InspectorBackend.supportedDomainsForDebuggableType(WI.DebuggableType.ServiceWorker);
+        case WI.Target.Type.Page:
+            return InspectorBackend.supportedDomainsForDebuggableType(WI.DebuggableType.Web);
+        default:
+            console.assert(false, "Unexpected target type", type);
+            return InspectorBackend.supportedDomainsForDebuggableType(WI.DebuggableType.Web);
+        }
     }
 };
 

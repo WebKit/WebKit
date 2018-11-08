@@ -1,6 +1,6 @@
 {
     "domain": "Inspector",
-    "types": [],
+    "availability": ["javascript", "web"],
     "commands": [
         {
             "name": "enable",

@@ -55,10 +55,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             target.PageAgent.getResourceTree(this._processMainFrameResourceTreePayload.bind(this));
         }
 
-        // FIXME: ServiceWorkerAgent should only be exposed in the "serviceworker" target type.
-        // Currently it is exposed to "web" targets. Work around this by only using the
-        // ServiceWorker domain if there is no Page domain.
-        if (target.ServiceWorkerAgent && !target.PageAgent)
+        if (target.ServiceWorkerAgent)
             target.ServiceWorkerAgent.getInitializationInfo(this._processServiceWorkerConfiguration.bind(this));
 
         if (target.NetworkAgent) {

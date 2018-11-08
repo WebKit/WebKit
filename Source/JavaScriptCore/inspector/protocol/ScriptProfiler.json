@@ -1,6 +1,7 @@
 {
     "domain": "ScriptProfiler",
     "description": "Profiler domain exposes JavaScript evaluation timing and profiling.",
+    "availability": ["javascript", "web"],
     "types": [
         {
             "id": "EventType",

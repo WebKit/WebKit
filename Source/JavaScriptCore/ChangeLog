@@ -1,3 +1,42 @@
+2018-11-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Restrict domains at the target level instead of only at the window level
+        https://bugs.webkit.org/show_bug.cgi?id=191344
+
+        Reviewed by Devin Rousso.
+
+        * inspector/protocol/Console.json:
+        * inspector/protocol/Debugger.json:
+        * inspector/protocol/Heap.json:
+        * inspector/protocol/Runtime.json:
+        Remove workerSupported as it is now no longer necessary. It is implied
+        by availability being empty (meaning it is supported everywhere).
+
+        * inspector/protocol/Inspector.json:
+        * inspector/protocol/ScriptProfiler.json:
+        Restrict to "javascript" and "web" debuggables, not available in workers.
+
+        * inspector/protocol/Worker.json:
+        Cleanup, remove empty types list.
+        
+        * inspector/protocol/Recording.json:
+        Cleanup, only expose this in the "web" domain for now.
+
+        * inspector/scripts/codegen/generate_js_backend_commands.py:
+        (JSBackendCommandsGenerator.generate_domain):
+        * inspector/scripts/codegen/models.py:
+        (Protocol.parse_domain):
+        Allow a list of debuggable types. Add "worker" even though it is unused
+        since that is a type we would want to allow or consider.
+
+        (Domain.__init__):
+        (Domains):
+        Remove now unnecessary workerSupported code.
+        Allow availability on a domain with only types.
+
+        * inspector/scripts/tests/generic/expected/worker-supported-domains.json-result: Removed.
+        * inspector/scripts/tests/generic/worker-supported-domains.json: Removed.
+
 2018-11-07  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         Consider removing double load for accessing the MetadataTable from LLInt

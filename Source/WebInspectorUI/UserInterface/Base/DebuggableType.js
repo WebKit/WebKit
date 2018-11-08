@@ -23,39 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.NotImplementedError = class NotImplementedError extends Error
-{
-    constructor(message = "This method is not implemented.")
-    {
-        super(message);
-    }
+// This is a list of the different support target types, which theoretically
+// could all be top level debuggable types.
 
-    static subclassMustOverride()
-    {
-        return new WI.NotImplementedError("This method must be overridden by a subclass.");
-    }
-};
-
-WI.AppControllerBase = class AppControllerBase
-{
-    constructor()
-    {
-        this._initialized = false;
-    }
-
-    get hasExtraDomains() { throw WI.NotImplementedError.subclassMustOverride(); }
-    get debuggableType() { throw WI.NotImplementedError.subclassMustOverride(); }
-
-    // Since various members of the app controller depend on the global singleton to exist,
-    // some initialization needs to happen after the app controller has been constructed.
-    initialize()
-    {
-        if (this._initialized)
-            throw new Error("App controller is already initialized.");
-
-        this._initialized = true;
-
-        // FIXME: eventually all code within WI.loaded should be distributed elsewhere.
-        WI.loaded();
-    }
+WI.DebuggableType = {
+    JavaScript: "javascript",
+    Web: "web",
+    Worker: "worker",
+    ServiceWorker: "service-worker",
 };

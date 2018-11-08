@@ -238,7 +238,7 @@ InspectorBackend.registerEvent("Inspector.activateExtraDomains", ["domains"]);
 InspectorBackend.registerCommand("Inspector.enable", [], []);
 InspectorBackend.registerCommand("Inspector.disable", [], []);
 InspectorBackend.registerCommand("Inspector.initialized", [], []);
-InspectorBackend.activateDomain("Inspector");
+InspectorBackend.activateDomain("Inspector", ["javascript", "web"]);
 
 // LayerTree.
 InspectorBackend.registerLayerTreeDispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, "LayerTree");
@@ -361,7 +361,7 @@ InspectorBackend.registerEvent("ScriptProfiler.programmaticCaptureStarted", []);
 InspectorBackend.registerEvent("ScriptProfiler.programmaticCaptureStopped", []);
 InspectorBackend.registerCommand("ScriptProfiler.startTracking", [{"name": "includeSamples", "type": "boolean", "optional": true}], []);
 InspectorBackend.registerCommand("ScriptProfiler.stopTracking", [], []);
-InspectorBackend.activateDomain("ScriptProfiler");
+InspectorBackend.activateDomain("ScriptProfiler", ["javascript", "web"]);
 
 // Timeline.
 InspectorBackend.registerTimelineDispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, "Timeline");

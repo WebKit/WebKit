@@ -1854,6 +1854,7 @@
 ,
 {
     "domain": "Inspector",
+    "availability": ["javascript", "web"],
     "types": [],
     "commands": [
         {

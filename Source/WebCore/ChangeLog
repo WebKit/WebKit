@@ -1,3 +1,14 @@
+2018-11-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Restrict domains at the target level instead of only at the window level
+        https://bugs.webkit.org/show_bug.cgi?id=191344
+
+        Reviewed by Devin Rousso.
+
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::WorkerInspectorController):
+        Remove Inspector domain from workers. It was unused anyways.
+
 2018-11-08  Dean Jackson  <dino@apple.com>
 
         Add a String literal that returns a String
