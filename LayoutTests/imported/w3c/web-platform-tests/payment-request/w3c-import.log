@@ -23,6 +23,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/onmerchantvalidation-attribute.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/onpaymentmenthodchange-attribute.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-abort-method.https.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-canmakepayment-method-protection.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-canmakepayment-method.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-constructor-crash.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-constructor.https.html

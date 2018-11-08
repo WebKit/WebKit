@@ -1,3 +1,24 @@
+2018-11-08  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Update web platform tests
+        https://bugs.webkit.org/show_bug.cgi?id=191426
+
+        Updated web-platform-tests/payment-request/ to match wpt as of commit 577284e.
+
+        Reviewed by Jiewen Tan.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/payment-request/META.yml:
+        * web-platform-tests/payment-request/payment-request-abort-method.https.html:
+        * web-platform-tests/payment-request/payment-request-canmakepayment-method-protection.https-expected.txt: Added.
+        * web-platform-tests/payment-request/payment-request-canmakepayment-method-protection.https.html: Added.
+        * web-platform-tests/payment-request/payment-request-canmakepayment-method.https.html:
+        * web-platform-tests/payment-request/payment-request-constructor.https.html:
+        * web-platform-tests/payment-request/payment-request-id-attribute.https.html:
+        * web-platform-tests/payment-request/payment-response/retry-method-manual.https.html:
+        * web-platform-tests/payment-request/rejects_if_not_active.https.html:
+        * web-platform-tests/payment-request/w3c-import.log:
+
 2018-11-07  Youenn Fablet  <youenn@apple.com>
 
         Allow setting RTCRtpTransceiver.direction
