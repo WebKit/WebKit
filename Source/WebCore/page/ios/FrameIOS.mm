@@ -390,9 +390,6 @@ Node* Frame::deepestNodeAtLocation(const FloatPoint& viewportLocation)
 Node* Frame::nodeRespondingToClickEvents(const FloatPoint& viewportLocation, FloatPoint& adjustedViewportLocation, SecurityOrigin* securityOrigin)
 {
     auto&& ancestorRespondingToClickEvents = [securityOrigin](const HitTestResult& hitTestResult, Node* terminationNode, IntRect* nodeBounds) -> Node* {
-        bool bodyHasBeenReached = false;
-        bool pointerCursorStillValid = true;
-
         if (nodeBounds)
             *nodeBounds = IntRect();
 
@@ -400,35 +397,8 @@ Node* Frame::nodeRespondingToClickEvents(const FloatPoint& viewportLocation, Flo
         if (!node || (securityOrigin && !securityOrigin->isSameOriginAs(node->document().securityOrigin())))
             return nullptr;
 
-        Node* pointerCursorNode = nullptr;
         for (; node && node != terminationNode; node = node->parentInComposedTree()) {
-            // We only accept pointer nodes before reaching the body tag.
-            if (node->hasTagName(HTMLNames::bodyTag)) {
-#if USE(UIKIT_EDITING)
-                // Make sure we cover the case of an empty editable body.
-                if (!pointerCursorNode && node->isContentEditable())
-                    pointerCursorNode = node;
-#endif
-                bodyHasBeenReached = true;
-                pointerCursorStillValid = false;
-            }
-
-            // If we already have a pointer, and we reach a table, don't accept it.
-            if (pointerCursorNode && (node->hasTagName(HTMLNames::tableTag) || node->hasTagName(HTMLNames::tbodyTag)))
-                pointerCursorStillValid = false;
-
-            // If we haven't reached the body, and we are still paying attention to pointer cursors, and the node has a pointer cursor...
-            if (pointerCursorStillValid && node->renderStyle() && node->renderStyle()->cursor() == CursorType::Pointer)
-                pointerCursorNode = node;
-            // We want the lowest unbroken chain of pointer cursors.
-            else if (pointerCursorNode)
-                pointerCursorStillValid = false;
-
             if (node->willRespondToMouseClickEvents() || node->willRespondToMouseMoveEvents() || (is<Element>(*node) && downcast<Element>(*node).isMouseFocusable())) {
-                // If we're at the body or higher, use the pointer cursor node (which may be null).
-                if (bodyHasBeenReached)
-                    node = pointerCursorNode;
-
                 // If we are interested about the frame, use it.
                 if (nodeBounds) {
                     // This is a check to see whether this node is an area element. The only way this can happen is if this is the first check.

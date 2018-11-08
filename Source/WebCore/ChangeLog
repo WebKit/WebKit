@@ -1,3 +1,18 @@
+2018-11-07  Zalan Bujtas  <zalan@apple.com>
+
+        Click and touch event listeners on the body don't work
+        https://bugs.webkit.org/show_bug.cgi?id=191392
+        <rdar://problem/5844416>
+
+        Reviewed by Simon Fraser.
+
+        Remove the old quirk of ignoring onclick handlers on the body and beyond.
+
+        Test: fast/events/click-handler-on-body-simple.html
+
+        * page/ios/FrameIOS.mm:
+        (WebCore::Frame::nodeRespondingToClickEvents):
+
 2018-11-07  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows][DirectX] Update canvas code to pass more tests

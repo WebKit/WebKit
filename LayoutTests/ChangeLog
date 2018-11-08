@@ -1,3 +1,16 @@
+2018-11-07  Zalan Bujtas  <zalan@apple.com>
+
+        Click and touch event listeners on the body don't work
+        https://bugs.webkit.org/show_bug.cgi?id=191392
+        <rdar://problem/5844416>
+
+        Reviewed by Simon Fraser.
+
+        * fast/events/click-handler-on-body-simple-expected.txt: Added.
+        * fast/events/click-handler-on-body-simple.html: Added.
+        * fast/events/touch/touch-handler-on-body-simple-expected.txt: Added.
+        * fast/events/touch/touch-handler-on-body-simple.html: Added.
+
 2018-11-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add an editing command for creating and inserting child lists
