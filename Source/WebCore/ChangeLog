@@ -1,3 +1,24 @@
+2018-11-07  Brent Fulgham  <bfulgham@apple.com>
+
+        Provide better Font fallbacks for DirectX backend
+        https://bugs.webkit.org/show_bug.cgi?id=191412
+        <rdar://problem/45899207>
+
+        Reviewed by Zalan Bujtas.
+
+        Registration of custom fonts through GDI are not always visible
+        through the DirectWrite/GDI bridging layer. If a font is not located,
+        locate the closest matching avialable font rather than failing.
+
+        * platform/graphics/FontPlatformData.h:
+        * platform/graphics/win/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData): Use new font
+        fallback logic.
+        * platform/graphics/win/FontPlatformDataDirect2D.cpp:
+        (WebCore::FontPlatformData::platformDataInit):
+        (WebCore::FontPlatformData::platformIsEqual const):
+        (WebCore::FontPlatformData::createFallbackFont): Added.
+
 2018-11-07  Zalan Bujtas  <zalan@apple.com>
 
         Click and touch event listeners on the body don't work

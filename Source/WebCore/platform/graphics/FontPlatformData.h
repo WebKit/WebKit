@@ -150,6 +150,8 @@ public:
 #if USE(DIRECT2D)
     IDWriteFont* dwFont() const { return m_dwFont.get(); }
     IDWriteFontFace* dwFontFace() const { return m_dwFontFace.get(); }
+
+    static HRESULT createFallbackFont(const LOGFONT&, IDWriteFont**);
 #endif
 
     bool isFixedPitch() const;

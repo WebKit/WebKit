@@ -65,7 +65,11 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
     logFont.lfUnderline = false;
     logFont.lfStrikeOut = false;
     logFont.lfCharSet = DEFAULT_CHARSET;
+#if USE(CG) || USE(CAIRO)
     logFont.lfOutPrecision = OUT_TT_ONLY_PRECIS;
+#else
+    logFont.lfOutPrecision = OUT_TT_PRECIS;
+#endif
     logFont.lfQuality = CLEARTYPE_QUALITY;
     logFont.lfPitchAndFamily = DEFAULT_PITCH | FF_DONTCARE;
     logFont.lfItalic = italic;
@@ -79,6 +83,12 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
 #else
     COMPtr<IDWriteFont> dwFont;
     HRESULT hr = Font::systemDWriteGdiInterop()->CreateFontFromLOGFONT(&logFont, &dwFont);
+    if (!SUCCEEDED(hr)) {
+        LOGFONT customFont;
+        hr = ::GetObject(hfont.get(), sizeof(LOGFONT), &customFont);
+        if (SUCCEEDED(hr))
+            hr = FontPlatformData::createFallbackFont(customFont, &dwFont);
+    }
     RELEASE_ASSERT(SUCCEEDED(hr));
     return FontPlatformData(WTFMove(hfont), dwFont.get(), size, bold, italic, renderingMode == FontRenderingMode::Alternate);
 #endif

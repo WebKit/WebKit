@@ -42,8 +42,11 @@ void FontPlatformData::platformDataInit(HFONT font, float size, HDC hdc, WCHAR* 
     GetObject(font, sizeof(logfont), &logfont);
 
     HRESULT hr = Font::systemDWriteGdiInterop()->CreateFontFromLOGFONT(&logfont, &m_dwFont);
-    if (!SUCCEEDED(hr))
-        return;
+    if (!SUCCEEDED(hr)) {
+        hr = FontPlatformData::createFallbackFont(logfont, &m_dwFont);
+        if (!SUCCEEDED(hr))
+            return;
+    }
 
     hr = m_dwFont->CreateFontFace(&m_dwFontFace);
     if (!SUCCEEDED(hr))
@@ -114,6 +117,74 @@ bool FontPlatformData::platformIsEqual(const FontPlatformData& other) const
     return m_font == other.m_font
         && m_useGDI == other.m_useGDI
         && fontsAreEqual(m_dwFont.get(), other.m_dwFont.get());
+}
+
+HRESULT FontPlatformData::createFallbackFont(const LOGFONT& logFont, IDWriteFont** dwFont)
+{
+    if (!dwFont)
+        return E_POINTER;
+
+    COMPtr<IDWriteFontCollection> fontCollection;
+    HRESULT hr = Font::systemDWriteFactory()->GetSystemFontCollection(&fontCollection);
+    if (FAILED(hr))
+        return hr;
+
+    wchar_t localeName[LOCALE_NAME_MAX_LENGTH];
+    int localeLength = GetUserDefaultLocaleName(localeName, LOCALE_NAME_MAX_LENGTH);
+
+    COMPtr<IDWriteFontFamily> fontFamily;
+
+    unsigned fontFamilyCount = fontCollection->GetFontFamilyCount();
+    for (unsigned fontIndex = 0; fontIndex < fontFamilyCount; ++fontIndex) {
+        hr = fontCollection->GetFontFamily(fontIndex, &fontFamily);
+        if (FAILED(hr))
+            return hr;
+
+        COMPtr<IDWriteLocalizedStrings> familyNames;
+        hr = fontFamily->GetFamilyNames(&familyNames);
+        if (FAILED(hr))
+            return hr;
+
+        BOOL exists = false;
+        unsigned localeIndex = 0;
+        if (localeLength)
+            hr = familyNames->FindLocaleName(localeName, &localeIndex, &exists);
+
+        if (SUCCEEDED(hr) && !exists)
+            hr = familyNames->FindLocaleName(L"en-us", &localeIndex, &exists);
+
+        if (FAILED(hr))
+            return hr;
+
+        unsigned familyNameLength = 0;
+        hr = familyNames->GetStringLength(localeIndex, &familyNameLength);
+        if (!SUCCEEDED(hr))
+            return hr;
+
+        Vector<wchar_t> familyName(familyNameLength + 1);
+        hr = familyNames->GetString(localeIndex, familyName.data(), familyName.size());
+        if (!SUCCEEDED(hr))
+            return hr;
+
+        if (!wcscmp(logFont.lfFaceName, familyName.data()))
+            break;
+
+        fontFamily = nullptr;
+    }
+
+    if (!fontFamily) {
+        hr = fontCollection->GetFontFamily(0, &fontFamily);
+        if (FAILED(hr))
+            return hr;
+    }
+
+    DWRITE_FONT_WEIGHT weight = static_cast<DWRITE_FONT_WEIGHT>(logFont.lfWeight);
+    DWRITE_FONT_STRETCH stretch = static_cast<DWRITE_FONT_STRETCH>(logFont.lfQuality);
+    DWRITE_FONT_STYLE style = logFont.lfItalic ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL;
+
+    hr = fontFamily->GetFirstMatchingFont(weight, stretch, style, dwFont);
+
+    return hr;
 }
 
 }

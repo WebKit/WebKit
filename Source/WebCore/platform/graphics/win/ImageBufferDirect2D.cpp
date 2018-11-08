@@ -208,6 +208,10 @@ COMPtr<ID2D1Bitmap> ImageBuffer::copyNativeImage(BackingStoreCopy copyBehavior) 
     HRESULT hr = bitmapTarget->GetBitmap(&image);
     ASSERT(SUCCEEDED(hr));
 
+    // FIXME: m_data.data is nullptr even when asking to copy backing store leading to test failures.
+    if (copyBehavior == CopyBackingStore && !m_data.data)
+        copyBehavior = DontCopyBackingStore;
+
     if (!context().isAcceleratedContext()) {
         switch (copyBehavior) {
         case DontCopyBackingStore:
