@@ -1,3 +1,19 @@
+2018-11-07  Dewei Zhu  <dewei_zhu@apple.com>
+
+        "/api/report" does not check commit time correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=191351
+
+        Reviewed by Ryosuke Niwa.
+
+        Test result report API does not convert formated time string to timestamp correctly
+        which result in not checking commit time correctly.
+
+        * public/include/report-processor.php: Use 'strtotime' instead of 'floatval'.
+        Accepts the time delta within 1 seconds.
+        * server-tests/api-report-tests.js: Added unit tests.
+        (reportWitMismatchingCommitTime):
+        (reportWithOneSecondCommitTimeDifference):
+
 2018-11-06  Dewei Zhu  <dewei_zhu@apple.com>
 
         Custom test group form should use commit set map before customization as the behavior of radio buttons.

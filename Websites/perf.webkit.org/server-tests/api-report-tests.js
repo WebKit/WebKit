@@ -33,6 +33,50 @@ describe("/api/report", function () {
         };
     }
 
+    function reportWitMismatchingCommitTime()
+    {
+        return {
+            "buildNumber": "124",
+            "buildTime": "2013-02-28T10:12:03.388304",
+            "builderName": "someBuilder",
+            "slaveName": "someSlave",
+            "builderPassword": "somePassword",
+            "platform": "Mountain Lion",
+            "tests": {},
+            "revisions": {
+                "macOS": {
+                    "revision": "10.8.2 12C60"
+                },
+                "WebKit": {
+                    "revision": "141977",
+                    "timestamp": "2013-02-06T08:55:10.9Z"
+                }
+            }
+        };
+    }
+
+    function reportWithOneSecondCommitTimeDifference()
+    {
+        return {
+            "buildNumber": "125",
+            "buildTime": "2013-02-28T10:12:03.388304",
+            "builderName": "someBuilder",
+            "slaveName": "someSlave",
+            "builderPassword": "somePassword",
+            "platform": "Mountain Lion",
+            "tests": {},
+            "revisions": {
+                "macOS": {
+                    "revision": "10.8.2 12C60"
+                },
+                "WebKit": {
+                    "revision": "141977",
+                    "timestamp": "2013-02-06T08:55:19.9Z"
+                }
+            }
+        };
+    }
+
     function emptySlaveReport()
     {
         return {
@@ -97,6 +141,32 @@ describe("/api/report", function () {
         }).then((reports) => {
             assert.equal(reports.length, 0);
         });
+    });
+
+    it('should reject report with "MismatchingCommitTime" if time difference is larger than 1 second', async () => {
+        await addBuilderForReport(emptyReport());
+        let response = await TestServer.remoteAPI().postJSON('/api/report/', [reportWitMismatchingCommitTime()]);
+        assert.equal(response['status'], 'OK');
+        assert.equal(response['failureStored'], false);
+        assert.equal(response['processedRuns'], 1);
+
+        response = await TestServer.remoteAPI().postJSON('/api/report/', [emptyReport()]);
+        assert.equal(response['status'], 'MismatchingCommitTime');
+        assert.equal(response['failureStored'], true);
+        assert.equal(response['processedRuns'], 0);
+    });
+
+    it('should not reject report if the commit time difference is within 1 second"', async () => {
+        await addBuilderForReport(emptyReport());
+        let response = await TestServer.remoteAPI().postJSON('/api/report/', [reportWithOneSecondCommitTimeDifference()]);
+        assert.equal(response['status'], 'OK');
+        assert.equal(response['failureStored'], false);
+        assert.equal(response['processedRuns'], 1);
+
+        response = await TestServer.remoteAPI().postJSON('/api/report/', [emptyReport()]);
+        assert.equal(response['status'], 'OK');
+        assert.equal(response['failureStored'], false);
+        assert.equal(response['processedRuns'], 1);
     });
 
     it("should store a report from a valid builder", () => {

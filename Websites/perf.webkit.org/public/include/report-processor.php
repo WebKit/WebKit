@@ -171,7 +171,8 @@ class ReportProcessor {
                 array('repository' => $repository_id, 'revision' => $revision_data['revision']), $commit_data, '*');
             if (!$commit_row)
                 $this->rollback_with_error('FailedToRecordCommit', $commit_data);
-            if ($commit_data['time'] && abs(floatval($commit_row['commit_time']) - floatval($commit_data['time'])) > 1.0)
+
+            if ($commit_data['time'] && abs(strtotime($commit_row['commit_time']) - strtotime($commit_data['time'])) > 1.0)
                 $this->rollback_with_error('MismatchingCommitTime', array('existing' => $commit_row, 'new' => $commit_data));
 
             if (!$this->db->select_or_insert_row('build_commits', null,
