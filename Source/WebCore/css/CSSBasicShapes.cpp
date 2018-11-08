@@ -386,7 +386,7 @@ static inline void updateCornerRadiusWidthAndHeight(CSSPrimitiveValue* corner, S
         return;
 
     Pair* radius = corner->pairValue();
-    width = radius->first() ? radius->first()->cssText() : String("0");
+    width = radius->first() ? radius->first()->cssText() : "0"_str;
     if (radius->second())
         height = radius->second()->cssText();
 }

@@ -252,7 +252,7 @@ static bool parseParameterValue(CharacterType*& position, CharacterType* const e
     valueEnd = position;
     skipWhile<CharacterType, isSpaceOrTab>(position, end);
     if ((!completeQuotes && valueStart == valueEnd) || (position != end && !isParameterValueEnd(*position))) {
-        value = String("");
+        value = emptyString();
         return false;
     }
     if (hasQuotes)

@@ -35,11 +35,17 @@ namespace TestWebKitAPI {
 
 TEST(WTF, StringCreationFromLiteral)
 {
-    String stringFromLiteral("Explicit construction syntax"_s);
-    EXPECT_EQ(strlen("Explicit construction syntax"), stringFromLiteral.length());
-    EXPECT_EQ("Explicit construction syntax", stringFromLiteral);
+    String stringFromLiteralViaASCII("Explicit construction syntax"_s);
+    EXPECT_EQ(strlen("Explicit construction syntax"), stringFromLiteralViaASCII.length());
+    EXPECT_EQ("Explicit construction syntax", stringFromLiteralViaASCII);
+    EXPECT_TRUE(stringFromLiteralViaASCII.is8Bit());
+    EXPECT_EQ(String("Explicit construction syntax"), stringFromLiteralViaASCII);
+
+    String stringFromLiteral = "String Literal"_str;
+    EXPECT_EQ(strlen("String Literal"), stringFromLiteral.length());
+    EXPECT_EQ("String Literal", stringFromLiteral);
     EXPECT_TRUE(stringFromLiteral.is8Bit());
-    EXPECT_EQ(String("Explicit construction syntax"), stringFromLiteral);
+    EXPECT_EQ(String("String Literal"), stringFromLiteral);
 
     String stringWithTemplate("Template Literal", String::ConstructFromLiteral);
     EXPECT_EQ(strlen("Template Literal"), stringWithTemplate.length());

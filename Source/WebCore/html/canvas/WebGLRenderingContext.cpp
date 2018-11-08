@@ -520,7 +520,7 @@ WebGLAny WebGLRenderingContext::getParameter(GC3Denum pname)
     case GraphicsContext3D::RENDERBUFFER_BINDING:
         return m_renderbufferBinding;
     case GraphicsContext3D::RENDERER:
-        return String { "WebKit WebGL"_s };
+        return "WebKit WebGL"_str;
     case GraphicsContext3D::SAMPLE_BUFFERS:
         return getIntParameter(pname);
     case GraphicsContext3D::SAMPLE_COVERAGE_INVERT:
@@ -586,9 +586,9 @@ WebGLAny WebGLRenderingContext::getParameter(GC3Denum pname)
     case GraphicsContext3D::UNPACK_COLORSPACE_CONVERSION_WEBGL:
         return m_unpackColorspaceConversion;
     case GraphicsContext3D::VENDOR:
-        return String { "WebKit" };
+        return "WebKit"_str;
     case GraphicsContext3D::VERSION:
-        return String { "WebGL 1.0" };
+        return "WebGL 1.0"_str;
     case GraphicsContext3D::VIEWPORT:
         return getWebGLIntArrayParameter(pname);
     case Extensions3D::FRAGMENT_SHADER_DERIVATIVE_HINT_OES: // OES_standard_derivatives
@@ -599,7 +599,7 @@ WebGLAny WebGLRenderingContext::getParameter(GC3Denum pname)
     case WebGLDebugRendererInfo::UNMASKED_RENDERER_WEBGL:
         if (m_webglDebugRendererInfo) {
 #if PLATFORM(IOS_FAMILY)
-            return String { "Apple GPU" };
+            return "Apple GPU"_str;
 #else
             return m_context->getString(GraphicsContext3D::RENDERER);
 #endif

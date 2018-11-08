@@ -32,7 +32,7 @@ namespace WebCore {
 
 String OriginLock::lockFileNameForPath(String originPath)
 {
-    return FileSystem::pathByAppendingComponent(originPath, String(".lock"));
+    return FileSystem::pathByAppendingComponent(originPath, ".lock"_s);
 }
 
 OriginLock::OriginLock(String originPath)

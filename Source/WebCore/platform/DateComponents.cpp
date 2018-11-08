@@ -708,7 +708,7 @@ String DateComponents::toString(SecondFormat format) const
         return String::format("%04d-%02d-%02d", m_year, m_month + 1, m_monthDay);
     case DateTime:
         return String::format("%04d-%02d-%02dT", m_year, m_month + 1, m_monthDay)
-            + toStringForTime(format) + String("Z");
+            + toStringForTime(format) + "Z"_str;
     case DateTimeLocal:
         return String::format("%04d-%02d-%02dT", m_year, m_month + 1, m_monthDay)
             + toStringForTime(format);
@@ -722,7 +722,7 @@ String DateComponents::toString(SecondFormat format) const
         break;
     }
     ASSERT_NOT_REACHED();
-    return String("(Invalid DateComponents)");
+    return "(Invalid DateComponents)"_str;
 }
 
 } // namespace WebCore

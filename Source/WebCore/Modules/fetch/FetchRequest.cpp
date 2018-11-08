@@ -48,7 +48,7 @@ static std::optional<Exception> setMethod(ResourceRequest& request, const String
 static ExceptionOr<String> computeReferrer(ScriptExecutionContext& context, const String& referrer)
 {
     if (referrer.isEmpty())
-        return String { "no-referrer"_s };
+        return "no-referrer"_str;
 
     // FIXME: Tighten the URL parsing algorithm according https://url.spec.whatwg.org/#concept-url-parser.
     URL referrerURL = context.completeURL(referrer);
@@ -56,10 +56,10 @@ static ExceptionOr<String> computeReferrer(ScriptExecutionContext& context, cons
         return Exception { TypeError, "Referrer is not a valid URL."_s };
 
     if (referrerURL.protocolIs("about") && referrerURL.path() == "client")
-        return String { "client"_s };
+        return "client"_str;
 
     if (!(context.securityOrigin() && context.securityOrigin()->canRequest(referrerURL)))
-        return String { "client"_s };
+        return "client"_str;
 
     return String { referrerURL.string() };
 }

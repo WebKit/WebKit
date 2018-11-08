@@ -1750,7 +1750,7 @@ String RenderListMarker::suffix() const
     const UChar suffix = listMarkerSuffix(type, m_listItem.value());
 
     if (suffix == ' ')
-        return String(" ");
+        return " "_str;
 
     // If the suffix is not ' ', an extra space is needed
     UChar data[2];

@@ -1,3 +1,19 @@
+2018-11-08  Dean Jackson  <dino@apple.com>
+
+        Add a String literal that returns a String
+        https://bugs.webkit.org/show_bug.cgi?id=191425
+        <rdar://problem/45914556>
+
+        Reviewed by Sam Weinig.
+
+        Add a new String literal, _str, that will return a String type.
+        This is useful when ""_s won't work, such as for things that
+        don't take an ASCIILiteral directly e.g. ExceptionOr<String>
+        or Variants.
+
+        * wtf/text/WTFString.h:
+        (WTF::StringLiterals::operator _str): Added.
+
 2018-11-06  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Experimental prototype for WebGPURenderPipeline and WebGPUSwapChain

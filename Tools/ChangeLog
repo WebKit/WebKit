@@ -1,3 +1,16 @@
+2018-11-08  Dean Jackson  <dino@apple.com>
+
+        Add a String literal that returns a String
+        https://bugs.webkit.org/show_bug.cgi?id=191425
+        <rdar://problem/45914556>
+
+        Reviewed by Sam Weinig.
+
+        Test _str.
+
+        * TestWebKitAPI/Tests/WTF/WTFString.cpp:
+        (TestWebKitAPI::TEST):
+
 2018-11-08  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Generalize trailing SDK specifier (Part 2)

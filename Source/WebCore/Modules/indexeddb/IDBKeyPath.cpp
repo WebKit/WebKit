@@ -230,7 +230,7 @@ String loggingString(const IDBKeyPath& path)
         return makeString("< ", string, " >");
     }, [](const Vector<String>& strings) {
         if (strings.isEmpty())
-            return String("< >");
+            return "< >"_str;
 
         StringBuilder builder;
         builder.append("< ");

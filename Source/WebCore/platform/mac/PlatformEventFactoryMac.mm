@@ -492,22 +492,22 @@ String keyIdentifierForKeyEvent(NSEvent* event)
         switch ([event keyCode]) {
         case 54: // Right Command
         case 55: // Left Command
-            return String("Meta");
+            return "Meta"_str;
 
         case 57: // Capslock
-            return String("CapsLock");
+            return "CapsLock"_str;
 
         case 56: // Left Shift
         case 60: // Right Shift
-            return String("Shift");
+            return "Shift"_str;
 
         case 58: // Left Alt
         case 61: // Right Alt
-            return String("Alt");
+            return "Alt"_str;
 
         case 59: // Left Ctrl
         case 62: // Right Ctrl
-            return String("Control");
+            return "Control"_str;
 
         default:
             ASSERT_NOT_REACHED();

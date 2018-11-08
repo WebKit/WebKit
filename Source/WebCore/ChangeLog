@@ -1,3 +1,48 @@
+2018-11-08  Dean Jackson  <dino@apple.com>
+
+        Add a String literal that returns a String
+        https://bugs.webkit.org/show_bug.cgi?id=191425
+        <rdar://problem/45914556>
+
+        Reviewed by Sam Weinig.
+
+        Use _str where possible.
+
+        API Test in WPT.
+
+        * Modules/fetch/FetchRequest.cpp:
+        (WebCore::computeReferrer):
+        * Modules/indexeddb/IDBKeyPath.cpp:
+        (WebCore::loggingString):
+        * Modules/webdatabase/OriginLock.cpp:
+        (WebCore::OriginLock::lockFileNameForPath):
+        * css/CSSBasicShapes.cpp:
+        (WebCore::updateCornerRadiusWidthAndHeight):
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::getParameter):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getParameter):
+        * loader/LinkHeader.cpp:
+        (WebCore::parseParameterValue):
+        * loader/LinkLoader.cpp:
+        (WebCore::LinkLoader::preloadIfNeeded):
+        * page/NavigatorBase.cpp:
+        (WebCore::NavigatorBase::platform):
+        * platform/DateComponents.cpp:
+        (WebCore::DateComponents::toString const):
+        * platform/mac/PlatformEventFactoryMac.mm:
+        (WebCore::keyIdentifierForKeyEvent):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::suffix const):
+        * rendering/RenderMenuList.cpp:
+        (RenderMenuList::setText):
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::userInterfaceDirectionPolicy):
+        (WebCore::InternalSettings::systemLayoutDirection):
+        * testing/Internals.cpp:
+        (WebCore::Internals::shadowRootType const):
+        (WebCore::Internals::getCurrentCursorInfo):
+
 2018-11-08  Jonathan Hammer  <jonathan@e3software.com>
 
         Plain text drag in contenteditable is always DragOperationCopy, never DragOperationMove
