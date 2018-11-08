@@ -4885,6 +4885,7 @@
 		F47A09D120A93A9700240FAE /* DisabledAdaptations.h in Headers */ = {isa = PBXBuildFile; fileRef = F47A09CF20A939F600240FAE /* DisabledAdaptations.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F47A5E3E195B8C8A00483100 /* StyleScrollSnapPoints.h in Headers */ = {isa = PBXBuildFile; fileRef = F47A5E3B195B8C8A00483100 /* StyleScrollSnapPoints.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F47A633D1FF6FD500081B3CC /* PromisedAttachmentInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = F47A633C1FF6FD500081B3CC /* PromisedAttachmentInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F47AD23B21934FF40051DD0B /* InsertNestedListCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = F47AD2382193499A0051DD0B /* InsertNestedListCommand.h */; };
 		F48223101E3869B80066FC79 /* WebItemProviderPasteboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = F482230E1E3869B80066FC79 /* WebItemProviderPasteboard.mm */; };
 		F48223111E3869B80066FC79 /* WebItemProviderPasteboard.h in Headers */ = {isa = PBXBuildFile; fileRef = F482230F1E3869B80066FC79 /* WebItemProviderPasteboard.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F48223131E386E240066FC79 /* AbstractPasteboard.h in Headers */ = {isa = PBXBuildFile; fileRef = F48223121E386E240066FC79 /* AbstractPasteboard.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -14830,6 +14831,8 @@
 		F47A5E3A195B8C8A00483100 /* StyleScrollSnapPoints.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleScrollSnapPoints.cpp; sourceTree = "<group>"; };
 		F47A5E3B195B8C8A00483100 /* StyleScrollSnapPoints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleScrollSnapPoints.h; sourceTree = "<group>"; };
 		F47A633C1FF6FD500081B3CC /* PromisedAttachmentInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PromisedAttachmentInfo.h; sourceTree = "<group>"; };
+		F47AD2382193499A0051DD0B /* InsertNestedListCommand.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InsertNestedListCommand.h; sourceTree = "<group>"; };
+		F47AD2392193499A0051DD0B /* InsertNestedListCommand.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InsertNestedListCommand.cpp; sourceTree = "<group>"; };
 		F482230E1E3869B80066FC79 /* WebItemProviderPasteboard.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebItemProviderPasteboard.mm; sourceTree = "<group>"; };
 		F482230F1E3869B80066FC79 /* WebItemProviderPasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebItemProviderPasteboard.h; sourceTree = "<group>"; };
 		F48223121E386E240066FC79 /* AbstractPasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractPasteboard.h; sourceTree = "<group>"; };
@@ -20658,6 +20661,8 @@
 				93309D9D099E64910056E581 /* InsertLineBreakCommand.h */,
 				D07DEAB70A36554A00CA30F8 /* InsertListCommand.cpp */,
 				D07DEAB80A36554A00CA30F8 /* InsertListCommand.h */,
+				F47AD2392193499A0051DD0B /* InsertNestedListCommand.cpp */,
+				F47AD2382193499A0051DD0B /* InsertNestedListCommand.h */,
 				93309D9E099E64910056E581 /* InsertNodeBeforeCommand.cpp */,
 				93309D9F099E64910056E581 /* InsertNodeBeforeCommand.h */,
 				93309DA0099E64910056E581 /* InsertParagraphSeparatorCommand.cpp */,
@@ -28631,7 +28636,6 @@
 				51E399021D6E4750009C8831 /* GameControllerGamepadProvider.h in Headers */,
 				516C62211950D48700337E75 /* GamepadEvent.h in Headers */,
 				51A9D9EA195B931F001B2B5C /* GamepadManager.h in Headers */,
-				412DE4B8219285C00075F3A7 /* RTCRtpCapabilities.h in Headers */,
 				515BE1921D54F5FB00DD7C68 /* GamepadProvider.h in Headers */,
 				515BE1931D54F5FB00DD7C68 /* GamepadProviderClient.h in Headers */,
 				8EC6C963201A251600FBFA53 /* GapLength.h in Headers */,
@@ -28982,6 +28986,7 @@
 				93309DEA099E64920056E581 /* InsertIntoTextNodeCommand.h in Headers */,
 				93309DEC099E64920056E581 /* InsertLineBreakCommand.h in Headers */,
 				D07DEABA0A36554A00CA30F8 /* InsertListCommand.h in Headers */,
+				F47AD23B21934FF40051DD0B /* InsertNestedListCommand.h in Headers */,
 				93309DEE099E64920056E581 /* InsertNodeBeforeCommand.h in Headers */,
 				93309DF0099E64920056E581 /* InsertParagraphSeparatorCommand.h in Headers */,
 				93309DF2099E64920056E581 /* InsertTextCommand.h in Headers */,
@@ -30698,6 +30703,7 @@
 				078E094217D16E1C00420AA1 /* RTCPeerConnectionHandlerClient.h in Headers */,
 				078E092417D14D1C00420AA1 /* RTCPeerConnectionIceEvent.h in Headers */,
 				5E2C437C1BCF9A840001E2BC /* RTCPeerConnectionInternalsBuiltins.h in Headers */,
+				412DE4B8219285C00075F3A7 /* RTCRtpCapabilities.h in Headers */,
 				5E2C43631BCEE32B0001E2BC /* RTCRtpReceiver.h in Headers */,
 				5E2C43611BCEE3230001E2BC /* RTCRtpSender.h in Headers */,
 				5E5E2B141CFC3E75000C0D85 /* RTCRtpTransceiver.h in Headers */,

@@ -804,7 +804,7 @@ RefPtr<Node> Editor::insertOrderedList()
     if (!canEditRichly())
         return nullptr;
         
-    RefPtr<Node> newList = InsertListCommand::insertList(document(), InsertListCommand::OrderedList);
+    auto newList = InsertListCommand::insertList(document(), InsertListCommand::Type::OrderedList);
     revealSelectionAfterEditingOperation();
     return newList;
 }
@@ -814,7 +814,7 @@ RefPtr<Node> Editor::insertUnorderedList()
     if (!canEditRichly())
         return nullptr;
         
-    RefPtr<Node> newList = InsertListCommand::insertList(document(), InsertListCommand::UnorderedList);
+    auto newList = InsertListCommand::insertList(document(), InsertListCommand::Type::UnorderedList);
     revealSelectionAfterEditingOperation();
     return newList;
 }

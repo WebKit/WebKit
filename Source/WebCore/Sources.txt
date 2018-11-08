@@ -903,6 +903,7 @@ editing/FontAttributeChanges.cpp
 editing/FormatBlockCommand.cpp
 editing/FrameSelection.cpp
 editing/HTMLInterchange.cpp
+editing/InsertNestedListCommand.cpp
 editing/IndentOutdentCommand.cpp
 editing/InsertIntoTextNodeCommand.cpp
 editing/InsertLineBreakCommand.cpp

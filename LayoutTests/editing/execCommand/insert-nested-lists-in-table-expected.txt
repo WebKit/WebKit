@@ -1,0 +1,142 @@
+Verifies that 'InsertNestedUnorderedList' and 'InsertNestedOrderedList' work as expected in table cells. This test requires WebKitTestRunner or DumpRenderTree.
+
+After inserting a list in a table cell:
+| "
+    "
+| <table>
+|   "
+        "
+|   <tbody>
+|     "
+            "
+|     <tr>
+|       <th>
+|         "Left"
+|       <th>
+|         "Right"
+|     "
+            "
+|     <tr>
+|       <td>
+|         id="foo"
+|         "Foo"
+|       <td>
+|         "Bar"
+|     "
+            "
+|     <tr>
+|       <td>
+|         "Baz"
+|       <td>
+|         id="garply"
+|         <ol>
+|           <li>
+|             "<#selection-caret>Garply"
+|             <br>
+|       " "
+|     "
+        "
+|   "
+    "
+| "
+"
+
+After wrapping the table in a list:
+| "
+    "
+| <ul>
+|   <li>
+|     <#selection-anchor>
+|     <table>
+|       <tbody>
+|         <tr>
+|           <th>
+|             "Left"
+|           <th>
+|             "Right"
+|         <tr>
+|           <td>
+|             id="foo"
+|             "Foo"
+|           <td>
+|             "Bar"
+|         <tr>
+|           <td>
+|             "Baz"
+|           <td>
+|             id="garply"
+|             <ol>
+|               <li>
+|                 "Garply"
+|                 <br>
+|     <#selection-focus>
+| "
+"
+
+After inserting a nested list below the outer list:
+| "
+    "
+| <ul>
+|   <li>
+|     <table>
+|       <tbody>
+|         <tr>
+|           <th>
+|             "Left"
+|           <th>
+|             "Right"
+|         <tr>
+|           <td>
+|             id="foo"
+|             "Foo"
+|           <td>
+|             "Bar"
+|         <tr>
+|           <td>
+|             "Baz"
+|           <td>
+|             id="garply"
+|             <ol>
+|               <li>
+|                 "Garply"
+|                 <br>
+|   <ul>
+|     <li>
+|       <#selection-caret>
+| "
+"
+
+After inserting another list under a table cell:
+| "
+    "
+| <ul>
+|   <li>
+|     <table>
+|       <tbody>
+|         <tr>
+|           <th>
+|             "Left"
+|           <th>
+|             "Right"
+|         <tr>
+|           <td>
+|             id="foo"
+|             "Foo"
+|           <td>
+|             "Bar"
+|         <tr>
+|           <td>
+|             "Baz"
+|           <td>
+|             id="garply"
+|             <ol>
+|               <li>
+|                 "Garply"
+|                 <br>
+|               <ol>
+|                 <li>
+|                   <#selection-caret>
+|   <ul>
+|     <li>
+| "
+"

@@ -1,3 +1,22 @@
+2018-11-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add an editing command for creating and inserting child lists
+        https://bugs.webkit.org/show_bug.cgi?id=191335
+        <rdar://problem/45814050>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a new layout tests that exercise the "InsertNested(Un)orderedList" editing commands in several scenarios
+        including undo, redo, executing the edit command with a ranged selection, outdenting to decrease list level,
+        inserting lists in and around tables and table cells, and inserting lists in and around pre elements.
+
+        * editing/execCommand/insert-nested-lists-expected.txt: Added.
+        * editing/execCommand/insert-nested-lists-in-table-expected.txt: Added.
+        * editing/execCommand/insert-nested-lists-in-table.html: Added.
+        * editing/execCommand/insert-nested-lists-with-pre-expected.txt: Added.
+        * editing/execCommand/insert-nested-lists-with-pre.html: Added.
+        * editing/execCommand/insert-nested-lists.html: Added.
+
 2018-11-07  Chris Dumez  <cdumez@apple.com>
 
         ASSERT(renderer()) under HTMLTextAreaElement::updateValue()

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+</head>
+<body>
+<div contenteditable id="editor"></div>
+</body>
+<script>
+(async () => {
+    Markup.waitUntilDone();
+    Markup.description("Verifies that 'InsertNestedUnorderedList' and 'InsertNestedOrderedList' work as expected. This test requires WebKitTestRunner or DumpRenderTree.");
+    editor.focus();
+
+    [..."foo"].map(typeCharacterCommand);
+    document.execCommand("InsertNestedUnorderedList");
+    Markup.dump("editor", "After unordered list insertion");
+
+    document.execCommand("InsertNestedOrderedList");
+    [..."bar"].map(typeCharacterCommand);
+    Markup.dump("editor", "After typing and ordered sublist insertion");
+
+    // By default, AppKit on macOS coalesces undo operations that occur within the same runloop. Wait until the next
+    // runloop before inserting another unordered list to ensure that it gets its own entry in the undo stack.
+    await new Promise(resolve => requestAnimationFrame(resolve));
+
+    document.execCommand("InsertNestedUnorderedList");
+    Markup.dump("editor", "After the second unordered list insertion");
+
+    undoCommand();
+    Markup.dump("editor", "After undoing the last list insertion");
+
+    redoCommand();
+    Markup.dump("editor", "After redoing the last list insertion");
+
+    execExtendSelectionBackwardByLineCommand();
+    document.execCommand("InsertNestedUnorderedList");
+    Markup.dump("editor", "After selecting a range and inserting another unordered list");
+
+    document.execCommand("Outdent");
+    Markup.dump("editor", "After outdenting");
+
+    [..."baz"].map(typeCharacterCommand);
+    document.execCommand("Outdent");
+    Markup.dump("editor", "After outdenting again");
+    Markup.notifyDone();
+})();
+</script>
+</html>

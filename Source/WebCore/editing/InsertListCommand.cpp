@@ -128,7 +128,7 @@ void InsertListCommand::doApply()
             return;
     }
 
-    auto& listTag = (m_type == OrderedList) ? olTag : ulTag;
+    auto& listTag = (m_type == Type::OrderedList) ? olTag : ulTag;
     if (endingSelection().isRange()) {
         VisibleSelection selection = selectionForParagraphIteration(endingSelection());
         ASSERT(selection.isRange());
@@ -192,7 +192,7 @@ void InsertListCommand::doApply()
 
 EditAction InsertListCommand::editingAction() const
 {
-    return m_type == OrderedList ? EditAction::InsertOrderedList : EditAction::InsertUnorderedList;
+    return m_type == Type::OrderedList ? EditAction::InsertOrderedList : EditAction::InsertUnorderedList;
 }
 
 void InsertListCommand::doApplyForSingleParagraph(bool forceCreateList, const HTMLQualifiedName& listTag, Range* currentSelection)

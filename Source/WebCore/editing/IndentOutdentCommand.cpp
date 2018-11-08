@@ -133,11 +133,11 @@ void IndentOutdentCommand::outdentParagraph()
 
     // Use InsertListCommand to remove the selection from the list
     if (enclosingNode->hasTagName(olTag)) {
-        applyCommandToComposite(InsertListCommand::create(document(), InsertListCommand::OrderedList));
+        applyCommandToComposite(InsertListCommand::create(document(), InsertListCommand::Type::OrderedList));
         return;        
     }
     if (enclosingNode->hasTagName(ulTag)) {
-        applyCommandToComposite(InsertListCommand::create(document(), InsertListCommand::UnorderedList));
+        applyCommandToComposite(InsertListCommand::create(document(), InsertListCommand::Type::UnorderedList));
         return;
     }
     

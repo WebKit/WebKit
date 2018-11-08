@@ -34,7 +34,7 @@ class HTMLQualifiedName;
 
 class InsertListCommand final : public CompositeEditCommand {
 public:
-    enum Type { OrderedList, UnorderedList };
+    enum class Type : uint8_t { OrderedList, UnorderedList };
 
     static Ref<InsertListCommand> create(Document& document, Type listType)
     {

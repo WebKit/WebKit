@@ -1,0 +1,36 @@
+Verifies that 'InsertNestedUnorderedList' and 'InsertNestedOrderedList' work as expected with pre elements. This test requires WebKitTestRunner or DumpRenderTree.
+
+After inserting a list inside the pre:
+| "
+    "
+| <pre>
+|   id="pre"
+|   "Hello"
+|   <ul>
+|     <li>
+|       id="foo"
+|       "foo"
+|     <ol>
+|       <li>
+|         <#selection-caret>
+|   "world"
+| "
+"
+
+After inserting a list around the pre:
+| "
+    "
+| <pre>
+|   id="pre"
+|   <ul>
+|     <li>
+|       "<#selection-caret>Hello"
+|       <br>
+|     <li>
+|       id="foo"
+|       "foo"
+|     <ol>
+|       <li>
+|   "world"
+| "
+"

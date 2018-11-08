@@ -1,3 +1,66 @@
+2018-11-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add an editing command for creating and inserting child lists
+        https://bugs.webkit.org/show_bug.cgi?id=191335
+        <rdar://problem/45814050>
+
+        Reviewed by Ryosuke Niwa.
+
+        Currently, insertOrderedList and insertUnorderedList only toggle or change list state (i.e. if the selection is
+        in an ordered or unordered list, reinserting the same list type removes the current list, and inserting a
+        different list type changes the enclosing list).
+
+        However, for certain internal clients (e.g. Mail), if the start of the selection is enclosed by a list item, we
+        instead create a new list item and insert it after the enclosing list item, and then create a new list within
+        that list item. Currently, this logic is implemented in Mail for legacy-WebKit-based Mail compose. This patch
+        brings this logic into WebKit in the form of a new editing command.
+
+        Tests: editing/execCommand/insert-nested-lists-in-table.html
+               editing/execCommand/insert-nested-lists-with-pre.html
+               editing/execCommand/insert-nested-lists.html
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/Editor.cpp:
+        (WebCore::Editor::insertOrderedList):
+        (WebCore::Editor::insertUnorderedList):
+        * editing/EditorCommand.cpp:
+        (WebCore::executeInsertOrderedList):
+        (WebCore::executeInsertUnorderedList):
+        (WebCore::executeInsertNestedUnorderedList):
+        (WebCore::executeInsertNestedOrderedList):
+        (WebCore::createCommandMap):
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::IndentOutdentCommand::outdentParagraph):
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::doApply):
+        (WebCore::InsertListCommand::editingAction const):
+        * editing/InsertListCommand.h:
+
+        Change a couple of `enum`s into `enum class`es.
+
+        * editing/InsertNestedListCommand.cpp: Added.
+        (WebCore::InsertNestedListCommand::insertUnorderedList):
+        (WebCore::InsertNestedListCommand::insertOrderedList):
+        (WebCore::InsertNestedListCommand::doApply):
+        * editing/InsertNestedListCommand.h: Added.
+
+        Add a new edit command to insert a new list (as a child of any containing list). If the start of the selection
+        is in a list item, we create a new list item, move the selection into the list item, and increment its list
+        level; otherwise, simply fall back to inserting a list.
+
+        * editing/ModifySelectionListLevel.cpp:
+        (WebCore::IncreaseSelectionListLevelCommand::doApply):
+        (WebCore::IncreaseSelectionListLevelCommand::increaseSelectionListLevel):
+        (WebCore::IncreaseSelectionListLevelCommand::increaseSelectionListLevelOrdered):
+        (WebCore::IncreaseSelectionListLevelCommand::increaseSelectionListLevelUnordered):
+        * editing/ModifySelectionListLevel.h:
+
+        Expose this constructor, allowing other edit commands to change selection list level as a composite edit
+        command. Also, change an `enum` into an `enum class`.
+
+        (WebCore::IncreaseSelectionListLevelCommand::create):
+
 2018-11-07  Chris Dumez  <cdumez@apple.com>
 
         ASSERT(renderer()) under HTMLTextAreaElement::updateValue()

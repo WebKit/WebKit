@@ -47,19 +47,19 @@ private:
 // IncreaseSelectionListLevelCommand moves the selected list items one level deeper.
 class IncreaseSelectionListLevelCommand : public ModifySelectionListLevelCommand {
 public:
+    enum class Type : uint8_t { InheritedListType, OrderedList, UnorderedList };
+    static Ref<IncreaseSelectionListLevelCommand> create(Document& document, Type type)
+    {
+        return adoptRef(*new IncreaseSelectionListLevelCommand(document, type));
+    }
+
     static bool canIncreaseSelectionListLevel(Document*);
     static RefPtr<Node> increaseSelectionListLevel(Document*);
     static RefPtr<Node> increaseSelectionListLevelOrdered(Document*);
     static RefPtr<Node> increaseSelectionListLevelUnordered(Document*);
 
 private:
-    enum Type { InheritedListType, OrderedList, UnorderedList };
     static RefPtr<Node> increaseSelectionListLevel(Document*, Type);
-
-    static Ref<IncreaseSelectionListLevelCommand> create(Document& document, Type type)
-    {
-        return adoptRef(*new IncreaseSelectionListLevelCommand(document, type));
-    }
     
     IncreaseSelectionListLevelCommand(Document&, Type);
 
