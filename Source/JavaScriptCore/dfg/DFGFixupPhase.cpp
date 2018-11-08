@@ -287,8 +287,14 @@ private:
                 }
             }
 
-            fixEdge<UntypedUse>(child1);
-            fixEdge<UntypedUse>(child2);
+            if (Node::shouldSpeculateBigInt(child1.node(), child2.node())) {
+                fixEdge<BigIntUse>(child1);
+                fixEdge<BigIntUse>(child2);
+            } else {
+                fixEdge<UntypedUse>(child1);
+                fixEdge<UntypedUse>(child2);
+            }
+
             node->setResult(NodeResultJS);
             break;
         }

@@ -49,6 +49,7 @@ SUNSPIDER_PATH = PERFORMANCETESTS_PATH + "SunSpider" + "tests" + "sunspider-1.0"
 LONGSPIDER_PATH = PERFORMANCETESTS_PATH + "LongSpider"
 V8_PATH = PERFORMANCETESTS_PATH + "SunSpider" + "tests" + "v8-v6"
 TAILBENCH_PATH = PERFORMANCETESTS_PATH + "TailBench9000"
+BIGINTBENCH_PATH = PERFORMANCETESTS_PATH + "BigIntBench"
 MICROBENCHMARKS_PATH = OPENSOURCE_PATH + "JSTests" + "microbenchmarks"
 OPENSOURCE_OCTANE_PATH = PERFORMANCETESTS_PATH + "Octane"
 OCTANE_WRAPPER_PATH = OPENSOURCE_OCTANE_PATH + "wrappers"
@@ -231,6 +232,7 @@ $includeOctane=true
 $includeCompressionBench = false
 $includeSixSpeed = false
 $includeTailBench = true
+$includeBigIntBench = false
 $measureGC=false
 $benchmarkPattern=nil
 $verbosity=0
@@ -1745,6 +1747,23 @@ class TailBenchBenchmark
   end
 end
 
+class BigIntBenchBenchmark
+  include Benchmark
+
+  def initialize(name)
+    @name = name
+  end
+
+  def emitRunCode(plan)
+    emitBenchRunCode(fullname, plan, SingleFileTimedBenchmarkParameters.new(ensureFile("BigIntBench-#{@name}", "#{BIGINTBENCH_PATH}/#{@name}.js")))
+  end
+
+  def environment
+    {"JSC_useBigInt" => "true"}
+  end
+end
+
+
 class MicrobenchmarksBenchmark
   include Benchmark
   
@@ -2828,6 +2847,7 @@ begin
                  ['--compression-bench', GetoptLong::NO_ARGUMENT],
                  ['--six-speed', GetoptLong::NO_ARGUMENT],
                  ['--tail-bench', GetoptLong::NO_ARGUMENT],
+                 ['--big-int-bench', GetoptLong::NO_ARGUMENT],
                  ['--benchmarks', GetoptLong::REQUIRED_ARGUMENT],
                  ['--measure-gc', GetoptLong::OPTIONAL_ARGUMENT],
                  ['--force-vm-kind', GetoptLong::REQUIRED_ARGUMENT],
@@ -2940,6 +2960,9 @@ begin
     when '--six-speed'
       resetBenchOptionsIfNecessary
       $includeSixSpeed = true
+    when '--big-int-bench'
+      resetBenchOptionsIfNecessary
+      $includeBigIntBench = true
     when '--benchmarks'
       $benchmarkPattern = Regexp.new(arg)
     when '--measure-gc'
@@ -3168,6 +3191,15 @@ begin
     TAILBENCH.add TailBenchBenchmark.new(name);
   }
 
+  BIGINTBENCH = BenchmarkSuite.new("BigIntBench", :geometricMean, 0)
+  Dir.foreach(BIGINTBENCH_PATH) {
+    | filename |
+    if filename =~ /\.js$/
+      name = $~.pre_match
+      BIGINTBENCH.add BigIntBenchBenchmark.new(name)
+    end
+  }
+
   MICROBENCHMARKS = BenchmarkSuite.new("Microbenchmarks", :geometricMean, 0)
   Dir.foreach(MICROBENCHMARKS_PATH) {
     | filename |
@@ -3320,6 +3352,10 @@ begin
 
   if $includeMicrobenchmarks and not MICROBENCHMARKS.empty?
     $suites << MICROBENCHMARKS
+  end
+
+  if $includeBigIntBench and not BIGINTBENCH.empty?
+    $suites << BIGINTBENCH
   end
 
   if $includeAsmBench and not ASMBENCH.empty?

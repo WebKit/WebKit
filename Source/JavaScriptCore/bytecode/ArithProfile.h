@@ -68,7 +68,7 @@ private:
 
 struct ArithProfile {
 private:
-    static constexpr uint32_t numberOfFlagBits = 5;
+    static constexpr uint32_t numberOfFlagBits = 6;
     static constexpr uint32_t rhsResultTypeShift = numberOfFlagBits;
     static constexpr uint32_t lhsResultTypeShift = rhsResultTypeShift + ResultType::numBitsNeeded;
     static constexpr uint32_t rhsObservedTypeShift = lhsResultTypeShift + ResultType::numBitsNeeded;
@@ -121,21 +121,21 @@ public:
     {
         constexpr ObservedType observedInt32 { ObservedType().withInt32() };
         constexpr uint32_t bits = observedInt32.bits() << lhsObservedTypeShift;
-        static_assert(bits == 0x400000, "");
+        static_assert(bits == 0x800000, "");
         return fromInt(bits);
     }
     static constexpr ArithProfile observedUnaryNumber()
     {
         constexpr ObservedType observedNumber { ObservedType().withNumber() };
         constexpr uint32_t bits = observedNumber.bits() << lhsObservedTypeShift;
-        static_assert(bits == 0x800000, "");
+        static_assert(bits == 0x1000000, "");
         return fromInt(bits);
     }
     static constexpr ArithProfile observedBinaryIntInt()
     {
         constexpr ObservedType observedInt32 { ObservedType().withInt32() };
         constexpr uint32_t bits = (observedInt32.bits() << lhsObservedTypeShift) | (observedInt32.bits() << rhsObservedTypeShift);
-        static_assert(bits == 0x480000, "");
+        static_assert(bits == 0x900000, "");
         return fromInt(bits);
     }
     static constexpr ArithProfile observedBinaryNumberInt()
@@ -143,7 +143,7 @@ public:
         constexpr ObservedType observedNumber { ObservedType().withNumber() };
         constexpr ObservedType observedInt32 { ObservedType().withInt32() };
         constexpr uint32_t bits = (observedNumber.bits() << lhsObservedTypeShift) | (observedInt32.bits() << rhsObservedTypeShift);
-        static_assert(bits == 0x880000, "");
+        static_assert(bits == 0x1100000, "");
         return fromInt(bits);
     }
     static constexpr ArithProfile observedBinaryIntNumber()
@@ -151,23 +151,24 @@ public:
         constexpr ObservedType observedNumber { ObservedType().withNumber() };
         constexpr ObservedType observedInt32 { ObservedType().withInt32() };
         constexpr uint32_t bits = (observedInt32.bits() << lhsObservedTypeShift) | (observedNumber.bits() << rhsObservedTypeShift);
-        static_assert(bits == 0x500000, "");
+        static_assert(bits == 0xa00000, "");
         return fromInt(bits);
     }
     static constexpr ArithProfile observedBinaryNumberNumber()
     {
         constexpr ObservedType observedNumber { ObservedType().withNumber() };
         constexpr uint32_t bits = (observedNumber.bits() << lhsObservedTypeShift) | (observedNumber.bits() << rhsObservedTypeShift);
-        static_assert(bits == 0x900000, "");
+        static_assert(bits == 0x1200000, "");
         return fromInt(bits);
     }
 
     enum ObservedResults {
         NonNegZeroDouble = 1 << 0,
         NegZeroDouble    = 1 << 1,
-        NonNumber        = 1 << 2,
+        NonNumeric       = 1 << 2,
         Int32Overflow    = 1 << 3,
         Int52Overflow    = 1 << 4,
+        BigInt           = 1 << 5,
     };
 
     ResultType lhsResultType() const { return ResultType((m_bits >> lhsResultTypeShift) & resultTypeMask); }
@@ -195,17 +196,19 @@ public:
 
     bool tookSpecialFastPath() const { return m_bits & specialFastPathBit; }
 
-    bool didObserveNonInt32() const { return hasBits(NonNegZeroDouble | NegZeroDouble | NonNumber); }
+    bool didObserveNonInt32() const { return hasBits(NonNegZeroDouble | NegZeroDouble | NonNumeric | BigInt); }
     bool didObserveDouble() const { return hasBits(NonNegZeroDouble | NegZeroDouble); }
     bool didObserveNonNegZeroDouble() const { return hasBits(NonNegZeroDouble); }
     bool didObserveNegZeroDouble() const { return hasBits(NegZeroDouble); }
-    bool didObserveNonNumber() const { return hasBits(NonNumber); }
+    bool didObserveNonNumeric() const { return hasBits(NonNumeric); }
+    bool didObserveBigInt() const { return hasBits(BigInt); }
     bool didObserveInt32Overflow() const { return hasBits(Int32Overflow); }
     bool didObserveInt52Overflow() const { return hasBits(Int52Overflow); }
 
     void setObservedNonNegZeroDouble() { setBit(NonNegZeroDouble); }
     void setObservedNegZeroDouble() { setBit(NegZeroDouble); }
-    void setObservedNonNumber() { setBit(NonNumber); }
+    void setObservedNonNumeric() { setBit(NonNumeric); }
+    void setObservedBigInt() { setBit(BigInt); }
     void setObservedInt32Overflow() { setBit(Int32Overflow); }
     void setObservedInt52Overflow() { setBit(Int52Overflow); }
 
@@ -219,7 +222,11 @@ public:
             m_bits |= Int32Overflow | Int52Overflow | NonNegZeroDouble | NegZeroDouble;
             return;
         }
-        m_bits |= NonNumber;
+        if (value && value.isBigInt()) {
+            m_bits |= BigInt;
+            return;
+        }
+        m_bits |= NonNumeric;
     }
 
     void lhsSawInt32() { setLhsObservedType(lhsObservedType().withInt32()); }
@@ -261,7 +268,7 @@ public:
 
 #if ENABLE(JIT)    
     // Sets (Int32Overflow | Int52Overflow | NonNegZeroDouble | NegZeroDouble) if it sees a
-    // double. Sets NonNumber if it sees a non-number.
+    // double. Sets NonNumeric if it sees a non-numeric.
     void emitObserveResult(CCallHelpers&, JSValueRegs, TagRegistersMode = HaveTagRegisters);
     
     // Sets (Int32Overflow | Int52Overflow | NonNegZeroDouble | NegZeroDouble).
@@ -269,8 +276,12 @@ public:
     void emitSetDouble(CCallHelpers&) const;
     
     // Sets NonNumber.
-    void emitSetNonNumber(CCallHelpers&) const;
-    bool shouldEmitSetNonNumber() const;
+    void emitSetNonNumeric(CCallHelpers&) const;
+    bool shouldEmitSetNonNumeric() const;
+
+    // Sets BigInt
+    void emitSetBigInt(CCallHelpers&) const;
+    bool shouldEmitSetBigInt() const;
 #endif // ENABLE(JIT)
 
     constexpr uint32_t bits() const { return m_bits; }

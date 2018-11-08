@@ -1,3 +1,24 @@
+2018-11-07  Caio Lima  <ticaiolima@gmail.com>
+
+        [BigInt] Add support to BigInt into ValueAdd
+        https://bugs.webkit.org/show_bug.cgi?id=186177
+
+        Reviewed by Keith Miller.
+
+        The idea of BigIntBench is to provide a set of microbenchmarks and
+        benchmarks to evaluate how fast BigInt computations are happening on
+        JSC implementation.
+
+        Now, we are adding microbenchmarks in this set,
+        but the plan is to move these tests to "JSTest/microbenchmarks" when
+        BigInt is enabled by default. After that, the focus of Bigint bench is
+        to provide a set of tests that represents real use cases of BigInt in
+        JS programs.
+
+        * BigIntBench/big-int-add-prediction-propagation.js: Added.
+        * BigIntBench/big-int-simple-add.js: Added.
+        * BigIntBench/big-int-simple-sub.js: Added.
+
 2018-11-07  Tadeu Zagallo  <tzagallo@apple.com>
 
         REGRESSION(r237547): Test failures on 32-bit JSC since the JIT was disabled

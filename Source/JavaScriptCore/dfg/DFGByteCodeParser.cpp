@@ -941,8 +941,10 @@ private:
                 case ValueAdd:
                     if (arithProfile->didObserveDouble())
                         node->mergeFlags(NodeMayHaveDoubleResult);
-                    if (arithProfile->didObserveNonNumber())
-                        node->mergeFlags(NodeMayHaveNonNumberResult);
+                    if (arithProfile->didObserveNonNumeric())
+                        node->mergeFlags(NodeMayHaveNonNumericResult);
+                    if (arithProfile->didObserveBigInt())
+                        node->mergeFlags(NodeMayHaveBigIntResult);
                     break;
                 
                 case ArithMul: {
@@ -954,8 +956,8 @@ private:
                         node->mergeFlags(NodeMayNegZeroInBaseline);
                     if (arithProfile->didObserveDouble())
                         node->mergeFlags(NodeMayHaveDoubleResult);
-                    if (arithProfile->didObserveNonNumber())
-                        node->mergeFlags(NodeMayHaveNonNumberResult);
+                    if (arithProfile->didObserveNonNumeric())
+                        node->mergeFlags(NodeMayHaveNonNumericResult);
                     break;
                 }
                 case ValueNegate:
@@ -966,11 +968,10 @@ private:
                         node->mergeFlags(NodeMayNegZeroInBaseline);
                     if (arithProfile->didObserveInt32Overflow() || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow))
                         node->mergeFlags(NodeMayOverflowInt32InBaseline);
-                    if (arithProfile->didObserveNonNumber()) {
-                        // FIXME: We should add support to BigInt into speculation
-                        // https://bugs.webkit.org/show_bug.cgi?id=182470
-                        node->mergeFlags(NodeMayHaveNonNumberResult);
-                    }
+                    if (arithProfile->didObserveNonNumeric())
+                        node->mergeFlags(NodeMayHaveNonNumericResult);
+                    if (arithProfile->didObserveBigInt())
+                        node->mergeFlags(NodeMayHaveBigIntResult);
                     break;
                 }
                 

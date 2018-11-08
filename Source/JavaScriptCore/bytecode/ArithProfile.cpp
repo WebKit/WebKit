@@ -34,17 +34,28 @@ namespace JSC {
 #if ENABLE(JIT)
 void ArithProfile::emitObserveResult(CCallHelpers& jit, JSValueRegs regs, TagRegistersMode mode)
 {
-    if (!shouldEmitSetDouble() && !shouldEmitSetNonNumber())
+    if (!shouldEmitSetDouble() && !shouldEmitSetNonNumeric() && !shouldEmitSetBigInt())
         return;
 
-    CCallHelpers::Jump isInt32 = jit.branchIfInt32(regs, mode);
+    CCallHelpers::JumpList done;
+    CCallHelpers::JumpList nonNumeric;
+
+    done.append(jit.branchIfInt32(regs, mode));
     CCallHelpers::Jump notDouble = jit.branchIfNotDoubleKnownNotInt32(regs, mode);
     emitSetDouble(jit);
-    CCallHelpers::Jump done = jit.jump();
+    done.append(jit.jump());
+
     notDouble.link(&jit);
-    emitSetNonNumber(jit);
+
+    nonNumeric.append(jit.branchIfNotCell(regs, mode));
+    nonNumeric.append(jit.branchIfNotBigInt(regs.payloadGPR()));
+    emitSetBigInt(jit);
+    done.append(jit.jump());
+
+    nonNumeric.link(&jit);
+    emitSetNonNumeric(jit);
+
     done.link(&jit);
-    isInt32.link(&jit);
 }
 
 bool ArithProfile::shouldEmitSetDouble() const
@@ -59,16 +70,28 @@ void ArithProfile::emitSetDouble(CCallHelpers& jit) const
         jit.or32(CCallHelpers::TrustedImm32(ArithProfile::Int32Overflow | ArithProfile::Int52Overflow | ArithProfile::NegZeroDouble | ArithProfile::NonNegZeroDouble), CCallHelpers::AbsoluteAddress(addressOfBits()));
 }
 
-bool ArithProfile::shouldEmitSetNonNumber() const
+bool ArithProfile::shouldEmitSetNonNumeric() const
 {
-    uint32_t mask = ArithProfile::NonNumber;
+    uint32_t mask = ArithProfile::NonNumeric;
     return (m_bits & mask) != mask;
 }
 
-void ArithProfile::emitSetNonNumber(CCallHelpers& jit) const
+bool ArithProfile::shouldEmitSetBigInt() const
 {
-    if (shouldEmitSetNonNumber())
-        jit.or32(CCallHelpers::TrustedImm32(ArithProfile::NonNumber), CCallHelpers::AbsoluteAddress(addressOfBits()));
+    uint32_t mask = ArithProfile::BigInt;
+    return (m_bits & mask) != mask;
+}
+
+void ArithProfile::emitSetNonNumeric(CCallHelpers& jit) const
+{
+    if (shouldEmitSetNonNumeric())
+        jit.or32(CCallHelpers::TrustedImm32(ArithProfile::NonNumeric), CCallHelpers::AbsoluteAddress(addressOfBits()));
+}
+
+void ArithProfile::emitSetBigInt(CCallHelpers& jit) const
+{
+    if (shouldEmitSetBigInt())
+        jit.or32(CCallHelpers::TrustedImm32(ArithProfile::BigInt), CCallHelpers::AbsoluteAddress(addressOfBits()));
 }
 #endif // ENABLE(JIT)
 
@@ -95,8 +118,8 @@ void printInternal(PrintStream& out, const ArithProfile& profile)
             out.print(separator, "NonNegZeroDouble");
             separator = "|";
         }
-        if (profile.didObserveNonNumber()) {
-            out.print(separator, "NonNumber");
+        if (profile.didObserveNonNumeric()) {
+            out.print(separator, "NonNumeric");
             separator = "|";
         }
         if (profile.didObserveInt32Overflow()) {
@@ -105,6 +128,10 @@ void printInternal(PrintStream& out, const ArithProfile& profile)
         }
         if (profile.didObserveInt52Overflow()) {
             out.print(separator, "Int52Overflow");
+            separator = "|";
+        }
+        if (profile.didObserveBigInt()) {
+            out.print(separator, "BigInt");
             separator = "|";
         }
     }

@@ -44,5 +44,5 @@ for (let i = 0; i < 100000; i++) {
 }
 
 if (numberOfDFGCompiles(mixedSpeculationNegateBigInt) > 1)
-    throw "Failed negateBigInt(). We should have compiled a single negate for the BigInt type.";
+    throw "Failed mixedSpeculationNegateBigInt(). We should have compiled a single negate for the BigInt type.";
 

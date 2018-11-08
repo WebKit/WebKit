@@ -1,3 +1,12 @@
+2018-11-07  Caio Lima  <ticaiolima@gmail.com>
+
+        [BigInt] Add support to BigInt into ValueAdd
+        https://bugs.webkit.org/show_bug.cgi?id=186177
+
+        Reviewed by Keith Miller.
+
+        * Scripts/run-jsc-benchmarks:
+
 2018-11-07  Sihui Liu  <sihui_liu@apple.com>
 
         RELEASE_ASSERT(!m_hardClosedForUserDelete) fails in WebCore::IDBServer::UniqueIDBDatabase::invokeOperationAndTransactionTimer

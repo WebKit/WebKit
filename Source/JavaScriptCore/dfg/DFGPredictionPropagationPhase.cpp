@@ -195,11 +195,15 @@ private:
                 } else if (isStringOrStringObjectSpeculation(left) || isStringOrStringObjectSpeculation(right)) {
                     // left or right is definitely something other than a number.
                     changed |= mergePrediction(SpecString);
-                } else {
+                } else if (isBigIntSpeculation(left) && isBigIntSpeculation(right))
+                    changed |= mergePrediction(SpecBigInt);
+                else {
                     changed |= mergePrediction(SpecInt32Only);
                     if (node->mayHaveDoubleResult())
                         changed |= mergePrediction(SpecBytecodeDouble);
-                    if (node->mayHaveNonNumberResult())
+                    if (node->mayHaveBigIntResult())
+                        changed |= mergePrediction(SpecBigInt);
+                    if (node->mayHaveNonNumericResult())
                         changed |= mergePrediction(SpecString);
                 }
             }
@@ -265,7 +269,7 @@ private:
                     changed |= mergePrediction(SpecInt32Only);
                     if (node->mayHaveDoubleResult())
                         changed |= mergePrediction(SpecBytecodeDouble);
-                    if (node->mayHaveNonNumberResult())
+                    if (node->mayHaveBigIntResult())
                         changed |= mergePrediction(SpecBigInt);
                 }
             }
@@ -292,11 +296,8 @@ private:
                     changed |= mergePrediction(speculatedDoubleTypeForPrediction(node->child1()->prediction()));
                 else {
                     changed |= mergePrediction(SpecInt32Only);
-                    if (node->op() == ValueNegate && node->mayHaveNonNumberResult()) {
-                        // FIXME: We should add support to BigInt into speculatio
-                        // https://bugs.webkit.org/show_bug.cgi?id=182470
+                    if (node->op() == ValueNegate && node->mayHaveBigIntResult())
                         changed |= mergePrediction(SpecBigInt);
-                    }
                     if (node->mayHaveDoubleResult())
                         changed |= mergePrediction(SpecBytecodeDouble);
                 }

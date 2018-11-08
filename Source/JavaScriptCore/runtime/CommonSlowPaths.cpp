@@ -418,8 +418,10 @@ static void updateArithProfileForUnaryArithOp(OpNegate::Metadata& metadata, JSVa
                     profile.setObservedInt52Overflow();
             }
         }
-    } else
-        profile.setObservedNonNumber();
+    } else if (result.isBigInt())
+        profile.setObservedBigInt();
+    else
+        profile.setObservedNonNumeric();
 }
 #else
 static void updateArithProfileForUnaryArithOp(OpNegate::Metadata&, JSValue, JSValue) { }
@@ -474,8 +476,10 @@ static void updateArithProfileForBinaryArithOp(ExecState* exec, const Instructio
                     profile.setObservedInt52Overflow();
             }
         }
-    } else
-        profile.setObservedNonNumber();
+    } else if (result.isBigInt())
+        profile.setObservedBigInt();
+    else 
+        profile.setObservedNonNumeric();
 }
 #else
 static void updateArithProfileForBinaryArithOp(ExecState*, const Instruction*, JSValue, JSValue, JSValue) { }

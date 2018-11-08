@@ -1,3 +1,70 @@
+2018-11-07  Caio Lima  <ticaiolima@gmail.com>
+
+        [BigInt] Add support to BigInt into ValueAdd
+        https://bugs.webkit.org/show_bug.cgi?id=186177
+
+        Reviewed by Keith Miller.
+
+        We are adding a very primitive specialization case of BigInts into ValueAdd.
+        When compiling a speculated version of this node to BigInt, we are currently
+        calling 'operationAddBigInt', a function that expects only BigInts as
+        parameter and effectly add numbers using JSBigInt::add. To properly
+        speculate BigInt operands, we changed ArithProfile to observe when
+        its result is a BigInt. With this new observation, we are able to identify
+        when ValueAdd results into a String or BigInt.
+
+        Here are some numbers for this specialization running
+        microbenchmarks:
+
+        big-int-simple-add                   21.5411+-1.1096  ^  15.3502+-0.7027  ^ definitely 1.4033x faster
+        big-int-add-prediction-propagation   13.7762+-0.5578  ^  10.8117+-0.5330  ^ definitely 1.2742x faster
+
+        * bytecode/ArithProfile.cpp:
+        (JSC::ArithProfile::emitObserveResult):
+        (JSC::ArithProfile::shouldEmitSetNonNumeric const):
+        (JSC::ArithProfile::shouldEmitSetBigInt const):
+        (JSC::ArithProfile::emitSetNonNumeric const):
+        (JSC::ArithProfile::emitSetBigInt const):
+        (WTF::printInternal):
+        (JSC::ArithProfile::shouldEmitSetNonNumber const): Deleted.
+        (JSC::ArithProfile::emitSetNonNumber const): Deleted.
+        * bytecode/ArithProfile.h:
+        (JSC::ArithProfile::observedUnaryInt):
+        (JSC::ArithProfile::observedUnaryNumber):
+        (JSC::ArithProfile::observedBinaryIntInt):
+        (JSC::ArithProfile::observedBinaryNumberInt):
+        (JSC::ArithProfile::observedBinaryIntNumber):
+        (JSC::ArithProfile::observedBinaryNumberNumber):
+        (JSC::ArithProfile::didObserveNonInt32 const):
+        (JSC::ArithProfile::didObserveNonNumeric const):
+        (JSC::ArithProfile::didObserveBigInt const):
+        (JSC::ArithProfile::setObservedNonNumeric):
+        (JSC::ArithProfile::setObservedBigInt):
+        (JSC::ArithProfile::observeResult):
+        (JSC::ArithProfile::didObserveNonNumber const): Deleted.
+        (JSC::ArithProfile::setObservedNonNumber): Deleted.
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::makeSafe):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::mayHaveNonNumericResult):
+        (JSC::DFG::Node::mayHaveBigIntResult):
+        (JSC::DFG::Node::mayHaveNonNumberResult): Deleted.
+        * dfg/DFGNodeFlags.cpp:
+        (JSC::DFG::dumpNodeFlags):
+        * dfg/DFGNodeFlags.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileValueAdd):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueAdd):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::updateArithProfileForUnaryArithOp):
+        (JSC::updateArithProfileForBinaryArithOp):
+
 2018-11-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Fix "Javascript" => "JavaScript" enum in protocol generated objects
