@@ -1,3 +1,23 @@
+2018-11-08  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Import CTAP device request/response converters from Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=190784
+        <rdar://problem/45460333>
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/CBORValueTest.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/CtapRequestTest.cpp: Added.
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/CtapResponseTest.cpp: Added.
+        (TestWebKitAPI::getTestCorruptedSignResponse):
+        (TestWebKitAPI::getTestCredentialRawIdBytes):
+        (TestWebKitAPI::convertToVector):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/FidoTestData.h: Added.
+
 2018-11-07  Caio Lima  <ticaiolima@gmail.com>
 
         [BigInt] Add support to BigInt into ValueAdd

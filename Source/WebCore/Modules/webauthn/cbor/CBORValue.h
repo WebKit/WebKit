@@ -138,6 +138,7 @@ public:
     explicit CBORValue(MapValue&&);
 
     explicit CBORValue(SimpleValue);
+    explicit CBORValue(bool);
 
     CBORValue& operator=(CBORValue&&);
 
@@ -161,9 +162,11 @@ public:
     bool isArray() const { return type() == Type::Array; }
     bool isMap() const { return type() == Type::Map; }
     bool isSimple() const { return type() == Type::SimpleValue; }
+    bool isBool() const { return isSimple() && (m_simpleValue == SimpleValue::TrueValue || m_simpleValue == SimpleValue::FalseValue); }
 
     // These will all fatally assert if the type doesn't match.
     SimpleValue getSimpleValue() const;
+    bool getBool() const;
     const int64_t& getInteger() const;
     const int64_t& getUnsigned() const;
     const int64_t& getNegative() const;

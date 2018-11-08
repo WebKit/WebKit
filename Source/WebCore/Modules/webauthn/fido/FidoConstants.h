@@ -31,7 +31,92 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#include "PublicKeyCredentialType.h"
+
 namespace fido {
+
+enum class ProtocolVersion {
+    kCtap,
+    kU2f,
+    kUnknown,
+};
+
+// Length of the SHA-256 hash of the RP ID asssociated with the credential:
+// https://www.w3.org/TR/webauthn/#sec-authenticator-data
+constexpr size_t kRpIdHashLength = 32;
+
+// Length of the flags:
+// https://www.w3.org/TR/webauthn/#sec-authenticator-data
+constexpr size_t kFlagsLength = 1;
+
+// Length of the signature counter, 32-bit unsigned big-endian integer:
+// https://www.w3.org/TR/webauthn/#sec-authenticator-data
+constexpr size_t kSignCounterLength = 4;
+
+// Length of the AAGUID of the authenticator:
+// https://www.w3.org/TR/webauthn/#sec-attested-credential-data
+constexpr size_t kAaguidLength = 16;
+
+// Length of the byte length L of Credential ID, 16-bit unsigned big-endian
+// integer: https://www.w3.org/TR/webauthn/#sec-attested-credential-data
+constexpr size_t kCredentialIdLengthLength = 2;
+
+// CTAP protocol device response code, as specified in
+// https://fidoalliance.org/specs/fido-v2.0-ps-20170927/fido-client-to-authenticator-protocol-v2.0-ps-20170927.html#error-responses
+enum class CtapDeviceResponseCode : uint8_t {
+    kSuccess = 0x00,
+    kCtap1ErrInvalidCommand = 0x01,
+    kCtap1ErrInvalidParameter = 0x02,
+    kCtap1ErrInvalidLength = 0x03,
+    kCtap1ErrInvalidSeq = 0x04,
+    kCtap1ErrTimeout = 0x05,
+    kCtap1ErrChannelBusy = 0x06,
+    kCtap1ErrLockRequired = 0x0A,
+    kCtap1ErrInvalidChannel = 0x0B,
+    kCtap2ErrCBORParsing = 0x10,
+    kCtap2ErrUnexpectedType = 0x11,
+    kCtap2ErrInvalidCBOR = 0x12,
+    kCtap2ErrInvalidCBORType = 0x13,
+    kCtap2ErrMissingParameter = 0x14,
+    kCtap2ErrLimitExceeded = 0x15,
+    kCtap2ErrUnsupportedExtension = 0x16,
+    kCtap2ErrTooManyElements = 0x17,
+    kCtap2ErrExtensionNotSupported = 0x18,
+    kCtap2ErrCredentialExcluded = 0x19,
+    kCtap2ErrProcesssing = 0x21,
+    kCtap2ErrInvalidCredential = 0x22,
+    kCtap2ErrUserActionPending = 0x23,
+    kCtap2ErrOperationPending = 0x24,
+    kCtap2ErrNoOperations = 0x25,
+    kCtap2ErrUnsupportedAlgorithms = 0x26,
+    kCtap2ErrOperationDenied = 0x27,
+    kCtap2ErrKeyStoreFull = 0x28,
+    kCtap2ErrNotBusy = 0x29,
+    kCtap2ErrNoOperationPending = 0x2A,
+    kCtap2ErrUnsupportedOption = 0x2B,
+    kCtap2ErrInvalidOption = 0x2C,
+    kCtap2ErrKeepAliveCancel = 0x2D,
+    kCtap2ErrNoCredentials = 0x2E,
+    kCtap2ErrUserActionTimeout = 0x2F,
+    kCtap2ErrNotAllowed = 0x30,
+    kCtap2ErrPinInvalid = 0x31,
+    kCtap2ErrPinBlocked = 0x32,
+    kCtap2ErrPinAuthInvalid = 0x33,
+    kCtap2ErrPinAuthBlocked = 0x34,
+    kCtap2ErrPinNotSet = 0x35,
+    kCtap2ErrPinRequired = 0x36,
+    kCtap2ErrPinPolicyViolation = 0x37,
+    kCtap2ErrPinTokenExpired = 0x38,
+    kCtap2ErrRequestTooLarge = 0x39,
+    kCtap2ErrOther = 0x7F,
+    kCtap2ErrSpecLast = 0xDF,
+    kCtap2ErrExtensionFirst = 0xE0,
+    kCtap2ErrExtensionLast = 0xEF,
+    kCtap2ErrVendorFirst = 0xF0,
+    kCtap2ErrVendorLast = 0xFF
+};
+
+bool isCtapDeviceResponseCode(CtapDeviceResponseCode);
 
 // Commands supported by CTAPHID device as specified in
 // https://fidoalliance.org/specs/fido-v2.0-ps-20170927/fido-client-to-authenticator-protocol-v2.0-ps-20170927.html#ctaphid-commands
@@ -47,7 +132,24 @@ enum class FidoHidDeviceCommand : uint8_t {
     kLock = 0x04,
 };
 
-bool isFidoHidDeviceCommand(FidoHidDeviceCommand cmd);
+bool isFidoHidDeviceCommand(FidoHidDeviceCommand);
+
+// String key values for CTAP request optional parameters and
+// AuthenticatorGetInfo response.
+const char kResidentKeyMapKey[] = "rk";
+const char kUserVerificationMapKey[] = "uv";
+const char kUserPresenceMapKey[] = "up";
+const char kClientPinMapKey[] = "clientPin";
+const char kPlatformDeviceMapKey[] = "plat";
+const char kEntityIdMapKey[] = "id";
+const char kEntityNameMapKey[] = "name";
+const char kDisplayNameMapKey[] = "displayName";
+const char kIconUrlMapKey[] = "icon";
+const char kCredentialTypeMapKey[] = "type";
+const char kCredentialAlgorithmMapKey[] = "alg";
+// Keys for storing credential descriptor information in CBOR map.
+const char kCredentialIdKey[] = "id";
+const char kCredentialTypeKey[] = "type";
 
 // HID transport specific constants.
 const size_t kHidPacketSize = 64;
@@ -62,6 +164,34 @@ const uint8_t kHidMaxLockSeconds = 10;
 
 // Messages are limited to an initiation packet and 128 continuation packets.
 const size_t kHidMaxMessageSize = 7609;
+
+// Authenticator API commands supported by CTAP devices, as specified in
+// https://fidoalliance.org/specs/fido-v2.0-rd-20170927/fido-client-to-authenticator-protocol-v2.0-rd-20170927.html#authenticator-api
+enum class CtapRequestCommand : uint8_t {
+    kAuthenticatorMakeCredential = 0x01,
+    kAuthenticatorGetAssertion = 0x02,
+    kAuthenticatorGetNextAssertion = 0x08,
+    kAuthenticatorGetInfo = 0x04,
+    kAuthenticatorClientPin = 0x06,
+    kAuthenticatorReset = 0x07,
+};
+
+// String key values for attestation object as a response to MakeCredential
+// request.
+const char kFormatKey[] = "fmt";
+const char kAttestationStatementKey[] = "attStmt";
+const char kAuthDataKey[] = "authData";
+const char kNoneAttestationValue[] = "none";
+
+// String representation of public key credential enum.
+// https://w3c.github.io/webauthn/#credentialType
+const char kPublicKey[] = "public-key";
+
+const char* publicKeyCredentialTypeToString(WebCore::PublicKeyCredentialType);
+
+// FIXME: Add url to the official spec once it's standardized.
+const char kCtap2Version[] = "FIDO_2_0";
+const char kU2fVersion[] = "U2F_V2";
 
 } // namespace fido
 

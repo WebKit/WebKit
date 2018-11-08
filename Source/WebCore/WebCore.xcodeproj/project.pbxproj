@@ -1767,6 +1767,12 @@
 		5721A9871ECE53B10081295A /* CryptoDigestAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = 5721A9861ECE53B10081295A /* CryptoDigestAlgorithm.h */; };
 		5721A98B1ECE57040081295A /* CryptoAlgorithmRsaPssParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 5721A9881ECE57040081295A /* CryptoAlgorithmRsaPssParams.h */; };
 		572A7F211C6E5719009C6149 /* SimulatedClick.h in Headers */ = {isa = PBXBuildFile; fileRef = 572A7F201C6E5719009C6149 /* SimulatedClick.h */; };
+		572B401F21757A64000AD43E /* DeviceRequestConverter.h in Headers */ = {isa = PBXBuildFile; fileRef = 572B401D21757A64000AD43E /* DeviceRequestConverter.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		572B402C21769020000AD43E /* JSUserVerificationRequirement.h in Headers */ = {isa = PBXBuildFile; fileRef = 572B402A2176901F000AD43E /* JSUserVerificationRequirement.h */; };
+		572B40362176A922000AD43E /* UserVerificationRequirement.h in Headers */ = {isa = PBXBuildFile; fileRef = 572B402321768D85000AD43E /* UserVerificationRequirement.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		572B403A21772581000AD43E /* DeviceResponseConverter.h in Headers */ = {isa = PBXBuildFile; fileRef = 572B40372177256C000AD43E /* DeviceResponseConverter.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		572B404021780171000AD43E /* AuthenticatorSupportedOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 572B403E21780170000AD43E /* AuthenticatorSupportedOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		572B40422178114A000AD43E /* AuthenticatorGetInfoResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 572B403C2177FB61000AD43E /* AuthenticatorGetInfoResponse.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		57303BB92006C6EE00355965 /* CBORValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 57303BB42006C6ED00355965 /* CBORValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		57303BBA2006C6EE00355965 /* CBORWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 57303BB52006C6ED00355965 /* CBORWriter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		57303BBB2006C6EE00355965 /* CBORBinary.h in Headers */ = {isa = PBXBuildFile; fileRef = 57303BB62006C6ED00355965 /* CBORBinary.h */; };
@@ -8616,6 +8622,18 @@
 		5721A98A1ECE57040081295A /* RsaPssParams.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = RsaPssParams.idl; sourceTree = "<group>"; };
 		572A7F201C6E5719009C6149 /* SimulatedClick.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimulatedClick.h; sourceTree = "<group>"; };
 		572A7F221C6E5A66009C6149 /* SimulatedClick.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimulatedClick.cpp; sourceTree = "<group>"; };
+		572B401D21757A64000AD43E /* DeviceRequestConverter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeviceRequestConverter.h; sourceTree = "<group>"; };
+		572B401E21757A64000AD43E /* DeviceRequestConverter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceRequestConverter.cpp; sourceTree = "<group>"; };
+		572B402321768D85000AD43E /* UserVerificationRequirement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserVerificationRequirement.h; sourceTree = "<group>"; };
+		572B402521768D85000AD43E /* UserVerificationRequirement.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = UserVerificationRequirement.idl; sourceTree = "<group>"; };
+		572B402A2176901F000AD43E /* JSUserVerificationRequirement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSUserVerificationRequirement.h; sourceTree = "<group>"; };
+		572B402B2176901F000AD43E /* JSUserVerificationRequirement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSUserVerificationRequirement.cpp; sourceTree = "<group>"; };
+		572B40372177256C000AD43E /* DeviceResponseConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceResponseConverter.h; sourceTree = "<group>"; };
+		572B40382177256C000AD43E /* DeviceResponseConverter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceResponseConverter.cpp; sourceTree = "<group>"; };
+		572B403B2177FB60000AD43E /* AuthenticatorGetInfoResponse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AuthenticatorGetInfoResponse.cpp; sourceTree = "<group>"; };
+		572B403C2177FB61000AD43E /* AuthenticatorGetInfoResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AuthenticatorGetInfoResponse.h; sourceTree = "<group>"; };
+		572B403D2178016F000AD43E /* AuthenticatorSupportedOptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AuthenticatorSupportedOptions.cpp; sourceTree = "<group>"; };
+		572B403E21780170000AD43E /* AuthenticatorSupportedOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AuthenticatorSupportedOptions.h; sourceTree = "<group>"; };
 		57303BB42006C6ED00355965 /* CBORValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CBORValue.h; sourceTree = "<group>"; };
 		57303BB52006C6ED00355965 /* CBORWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CBORWriter.h; sourceTree = "<group>"; };
 		57303BB62006C6ED00355965 /* CBORBinary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CBORBinary.h; sourceTree = "<group>"; };
@@ -19206,6 +19224,14 @@
 		578A4BFA2166AE0000D08F34 /* fido */ = {
 			isa = PBXGroup;
 			children = (
+				572B403B2177FB60000AD43E /* AuthenticatorGetInfoResponse.cpp */,
+				572B403C2177FB61000AD43E /* AuthenticatorGetInfoResponse.h */,
+				572B403D2178016F000AD43E /* AuthenticatorSupportedOptions.cpp */,
+				572B403E21780170000AD43E /* AuthenticatorSupportedOptions.h */,
+				572B401E21757A64000AD43E /* DeviceRequestConverter.cpp */,
+				572B401D21757A64000AD43E /* DeviceRequestConverter.h */,
+				572B40382177256C000AD43E /* DeviceResponseConverter.cpp */,
+				572B40372177256C000AD43E /* DeviceResponseConverter.h */,
 				57BAF2872167D2F7008E954E /* FidoConstants.cpp */,
 				578A4C0B2167D29600D08F34 /* FidoConstants.h */,
 				578A4C082167D29500D08F34 /* FidoHidMessage.cpp */,
@@ -19285,6 +19311,8 @@
 				57303C08200998F800355965 /* PublicKeyCredentialRequestOptions.idl */,
 				57303BEA20097F4000355965 /* PublicKeyCredentialType.h */,
 				57303BF02009846100355965 /* PublicKeyCredentialType.idl */,
+				572B402321768D85000AD43E /* UserVerificationRequirement.h */,
+				572B402521768D85000AD43E /* UserVerificationRequirement.idl */,
 			);
 			path = webauthn;
 			sourceTree = "<group>";
@@ -19310,6 +19338,8 @@
 				57303C0C20099C7500355965 /* JSPublicKeyCredentialRequestOptions.h */,
 				57303BFA2009913500355965 /* JSPublicKeyCredentialType.cpp */,
 				57303BF92009913400355965 /* JSPublicKeyCredentialType.h */,
+				572B402B2176901F000AD43E /* JSUserVerificationRequirement.cpp */,
+				572B402A2176901F000AD43E /* JSUserVerificationRequirement.h */,
 			);
 			name = WebAuthN;
 			sourceTree = "<group>";
@@ -27830,7 +27860,9 @@
 				57303C1F2009AB4200355965 /* AuthenticatorAttestationResponse.h in Headers */,
 				57303C4620105D2F00355965 /* AuthenticatorCoordinator.h in Headers */,
 				5760827220215A5500116678 /* AuthenticatorCoordinatorClient.h in Headers */,
+				572B40422178114A000AD43E /* AuthenticatorGetInfoResponse.h in Headers */,
 				57303BD220087A8300355965 /* AuthenticatorResponse.h in Headers */,
+				572B404021780171000AD43E /* AuthenticatorSupportedOptions.h in Headers */,
 				57DCED9021487FF70016B847 /* AuthenticatorTransport.h in Headers */,
 				A501920E132EBF2E008BFE55 /* Autocapitalize.h in Headers */,
 				A5A7AA43132F0ECC00D3A3C2 /* AutocapitalizeTypes.h in Headers */,
@@ -28353,6 +28385,8 @@
 				59A8F1D611A69513001AC34A /* DeviceOrientationController.h in Headers */,
 				590E1B4911E4EF4B0069F784 /* DeviceOrientationData.h in Headers */,
 				59A85EA4119D68EC00DEF1EF /* DeviceOrientationEvent.h in Headers */,
+				572B401F21757A64000AD43E /* DeviceRequestConverter.h in Headers */,
+				572B403A21772581000AD43E /* DeviceResponseConverter.h in Headers */,
 				267725FD1A5B3AD9003C24DD /* DFA.h in Headers */,
 				5CD9F5661AA0F73C00DA45FF /* DFABytecode.h in Headers */,
 				5CD9F5671AA0F74200DA45FF /* DFABytecodeCompiler.h in Headers */,
@@ -29837,6 +29871,7 @@
 				465307D01DB6EE4800E4137C /* JSUIEventInit.h in Headers */,
 				7C73FB12191EF6F4007DE061 /* JSUserMessageHandler.h in Headers */,
 				7C73FB0D191EF5A8007DE061 /* JSUserMessageHandlersNamespace.h in Headers */,
+				572B402C21769020000AD43E /* JSUserVerificationRequirement.h in Headers */,
 				15C77093100D3CA8005BA267 /* JSValidityState.h in Headers */,
 				BE8EF04B171C9014009B48C3 /* JSVideoTrack.h in Headers */,
 				BE8EF04D171C9014009B48C3 /* JSVideoTrackList.h in Headers */,
@@ -31494,6 +31529,7 @@
 				BC8BF151105813BF00A40A07 /* UserStyleSheet.h in Headers */,
 				BC8BF15A1058141800A40A07 /* UserStyleSheetTypes.h in Headers */,
 				BCDF317C11F8D683003C5BF8 /* UserTypingGestureIndicator.h in Headers */,
+				572B40362176A922000AD43E /* UserVerificationRequirement.h in Headers */,
 				55AF14E61EAAC59B0026EEAA /* UTIRegistry.h in Headers */,
 				1FAFBF1915A5FA7400083A20 /* UTIUtilities.h in Headers */,
 				83C45B8E1DC2B68A008871BA /* ValidationBubble.h in Headers */,

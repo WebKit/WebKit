@@ -30,6 +30,7 @@
 #include "BufferSource.h"
 #include "PublicKeyCredentialDescriptor.h"
 #include "PublicKeyCredentialType.h"
+#include "UserVerificationRequirement.h"
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/Forward.h>
 
@@ -65,7 +66,9 @@ struct PublicKeyCredentialCreationOptions {
     };
 
     struct AuthenticatorSelectionCriteria {
-        AuthenticatorAttachment authenticatorAttachment;
+        std::optional<AuthenticatorAttachment> authenticatorAttachment;
+        bool requireResidentKey { false };
+        UserVerificationRequirement userVerification { UserVerificationRequirement::Preferred };
 
         template<class Encoder> void encode(Encoder&) const;
         template<class Decoder> static std::optional<AuthenticatorSelectionCriteria> decode(Decoder&);
@@ -105,14 +108,27 @@ std::optional<PublicKeyCredentialCreationOptions::Parameters> PublicKeyCredentia
 template<class Encoder>
 void PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria::encode(Encoder& encoder) const
 {
-    encoder << authenticatorAttachment;
+    encoder << authenticatorAttachment << requireResidentKey << userVerification;
 }
 
 template<class Decoder>
 std::optional<PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria> PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria::decode(Decoder& decoder)
 {
     PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria result;
-    if (!decoder.decodeEnum(result.authenticatorAttachment))
+
+    std::optional<std::optional<AuthenticatorAttachment>> authenticatorAttachment;
+    decoder >> authenticatorAttachment;
+    if (!authenticatorAttachment)
+        return std::nullopt;
+    result.authenticatorAttachment = WTFMove(*authenticatorAttachment);
+
+    std::optional<bool> requireResidentKey;
+    decoder >> requireResidentKey;
+    if (!requireResidentKey)
+        return std::nullopt;
+    result.requireResidentKey = *requireResidentKey;
+
+    if (!decoder.decodeEnum(result.userVerification))
         return std::nullopt;
     return result;
 }

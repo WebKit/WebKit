@@ -259,6 +259,10 @@ Modules/webauthn/PublicKeyCredential.cpp
 Modules/webauthn/cbor/CBORReader.cpp
 Modules/webauthn/cbor/CBORValue.cpp
 Modules/webauthn/cbor/CBORWriter.cpp
+Modules/webauthn/fido/AuthenticatorGetInfoResponse.cpp
+Modules/webauthn/fido/AuthenticatorSupportedOptions.cpp
+Modules/webauthn/fido/DeviceRequestConverter.cpp
+Modules/webauthn/fido/DeviceResponseConverter.cpp
 Modules/webauthn/fido/FidoConstants.cpp
 Modules/webauthn/fido/FidoHidMessage.cpp
 Modules/webauthn/fido/FidoHidPacket.cpp
@@ -3179,6 +3183,7 @@ JSTreeWalker.cpp
 JSUIEvent.cpp
 JSUIEventInit.cpp
 JSURLSearchParams.cpp
+JSUserVerificationRequirement.cpp
 JSVRDisplay.cpp
 JSVRDisplayCapabilities.cpp
 JSVRDisplayEvent.cpp

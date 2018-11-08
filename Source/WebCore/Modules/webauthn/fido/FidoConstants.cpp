@@ -33,6 +33,66 @@
 #if ENABLE(WEB_AUTHN)
 
 namespace fido {
+using namespace WebCore;
+
+bool isCtapDeviceResponseCode(CtapDeviceResponseCode code)
+{
+    switch (code) {
+    case CtapDeviceResponseCode::kSuccess:
+    case CtapDeviceResponseCode::kCtap1ErrInvalidCommand:
+    case CtapDeviceResponseCode::kCtap1ErrInvalidParameter:
+    case CtapDeviceResponseCode::kCtap1ErrInvalidLength:
+    case CtapDeviceResponseCode::kCtap1ErrInvalidSeq:
+    case CtapDeviceResponseCode::kCtap1ErrTimeout:
+    case CtapDeviceResponseCode::kCtap1ErrChannelBusy:
+    case CtapDeviceResponseCode::kCtap1ErrLockRequired:
+    case CtapDeviceResponseCode::kCtap1ErrInvalidChannel:
+    case CtapDeviceResponseCode::kCtap2ErrCBORParsing:
+    case CtapDeviceResponseCode::kCtap2ErrUnexpectedType:
+    case CtapDeviceResponseCode::kCtap2ErrInvalidCBOR:
+    case CtapDeviceResponseCode::kCtap2ErrInvalidCBORType:
+    case CtapDeviceResponseCode::kCtap2ErrMissingParameter:
+    case CtapDeviceResponseCode::kCtap2ErrLimitExceeded:
+    case CtapDeviceResponseCode::kCtap2ErrUnsupportedExtension:
+    case CtapDeviceResponseCode::kCtap2ErrTooManyElements:
+    case CtapDeviceResponseCode::kCtap2ErrExtensionNotSupported:
+    case CtapDeviceResponseCode::kCtap2ErrCredentialExcluded:
+    case CtapDeviceResponseCode::kCtap2ErrProcesssing:
+    case CtapDeviceResponseCode::kCtap2ErrInvalidCredential:
+    case CtapDeviceResponseCode::kCtap2ErrUserActionPending:
+    case CtapDeviceResponseCode::kCtap2ErrOperationPending:
+    case CtapDeviceResponseCode::kCtap2ErrNoOperations:
+    case CtapDeviceResponseCode::kCtap2ErrUnsupportedAlgorithms:
+    case CtapDeviceResponseCode::kCtap2ErrOperationDenied:
+    case CtapDeviceResponseCode::kCtap2ErrKeyStoreFull:
+    case CtapDeviceResponseCode::kCtap2ErrNotBusy:
+    case CtapDeviceResponseCode::kCtap2ErrNoOperationPending:
+    case CtapDeviceResponseCode::kCtap2ErrUnsupportedOption:
+    case CtapDeviceResponseCode::kCtap2ErrInvalidOption:
+    case CtapDeviceResponseCode::kCtap2ErrKeepAliveCancel:
+    case CtapDeviceResponseCode::kCtap2ErrNoCredentials:
+    case CtapDeviceResponseCode::kCtap2ErrUserActionTimeout:
+    case CtapDeviceResponseCode::kCtap2ErrNotAllowed:
+    case CtapDeviceResponseCode::kCtap2ErrPinInvalid:
+    case CtapDeviceResponseCode::kCtap2ErrPinBlocked:
+    case CtapDeviceResponseCode::kCtap2ErrPinAuthInvalid:
+    case CtapDeviceResponseCode::kCtap2ErrPinAuthBlocked:
+    case CtapDeviceResponseCode::kCtap2ErrPinNotSet:
+    case CtapDeviceResponseCode::kCtap2ErrPinRequired:
+    case CtapDeviceResponseCode::kCtap2ErrPinPolicyViolation:
+    case CtapDeviceResponseCode::kCtap2ErrPinTokenExpired:
+    case CtapDeviceResponseCode::kCtap2ErrRequestTooLarge:
+    case CtapDeviceResponseCode::kCtap2ErrOther:
+    case CtapDeviceResponseCode::kCtap2ErrSpecLast:
+    case CtapDeviceResponseCode::kCtap2ErrExtensionFirst:
+    case CtapDeviceResponseCode::kCtap2ErrExtensionLast:
+    case CtapDeviceResponseCode::kCtap2ErrVendorFirst:
+    case CtapDeviceResponseCode::kCtap2ErrVendorLast:
+        return true;
+    default:
+        return false;
+    }
+}
 
 bool isFidoHidDeviceCommand(FidoHidDeviceCommand cmd)
 {
@@ -50,6 +110,16 @@ bool isFidoHidDeviceCommand(FidoHidDeviceCommand cmd)
     default:
         return false;
     }
+}
+
+const char* publicKeyCredentialTypeToString(PublicKeyCredentialType type)
+{
+    switch (type) {
+    case PublicKeyCredentialType::PublicKey:
+        return kPublicKey;
+    }
+    ASSERT_NOT_REACHED();
+    return kPublicKey;
 }
 
 } // namespace fido

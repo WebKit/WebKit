@@ -23,14 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=WEB_AUTHN,
-] dictionary PublicKeyCredentialRequestOptions {
-    required BufferSource challenge;
-    unsigned long timeout;
-    USVString rpId;
-    sequence<PublicKeyCredentialDescriptor> allowCredentials = [];
-    UserVerificationRequirement userVerification = "preferred";
-    // Not support yet.
-    // AuthenticationExtensions extensions;
+#pragma once
+
+#if ENABLE(WEB_AUTHN)
+
+#include <wtf/EnumTraits.h>
+
+namespace WebCore {
+
+enum class UserVerificationRequirement {
+    Required,
+    Preferred,
+    Discouraged
 };
+
+} // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::UserVerificationRequirement> {
+    using values = EnumValues<
+        WebCore::UserVerificationRequirement,
+        WebCore::UserVerificationRequirement::Required,
+        WebCore::UserVerificationRequirement::Preferred,
+        WebCore::UserVerificationRequirement::Discouraged
+    >;
+};
+
+} // namespace WTF
+
+#endif // ENABLE(WEB_AUTHN)

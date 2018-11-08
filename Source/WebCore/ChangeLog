@@ -1,3 +1,96 @@
+2018-11-08  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Import CTAP device request/response converters from Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=190784
+        <rdar://problem/45460333>
+
+        Reviewed by Brent Fulgham.
+
+        This patch imports Chromium's CTAP device request/response converters:
+        https://fidoalliance.org/specs/fido-v2.0-ps-20170927/fido-client-to-authenticator-protocol-v2.0-ps-20170927.html#message-encoding
+        1. It directly imports the following files and suit them to WebKit's coding style:
+        https://cs.chromium.org/chromium/src/device/fido/device_response_converter.cc?l=20&rcl=098dfd90850ffa84c27a884ab75edd2d99c4ec45
+        https://cs.chromium.org/chromium/src/device/fido/device_response_converter.h?rcl=098dfd90850ffa84c27a884ab75edd2d99c4ec45
+        https://cs.chromium.org/chromium/src/device/fido/authenticator_get_info_response.cc?rcl=098dfd90850ffa84c27a884ab75edd2d99c4ec45
+        https://cs.chromium.org/chromium/src/device/fido/authenticator_get_info_response.h?rcl=098dfd90850ffa84c27a884ab75edd2d99c4ec45
+        https://cs.chromium.org/chromium/src/device/fido/authenticator_supported_options.cc?rcl=098dfd90850ffa84c27a884ab75edd2d99c4ec45
+        https://cs.chromium.org/chromium/src/device/fido/authenticator_supported_options.h?rcl=098dfd90850ffa84c27a884ab75edd2d99c4ec45
+        https://cs.chromium.org/chromium/src/device/fido/ctap_request_unittest.cc?rcl=098dfd90850ffa84c27a884ab75edd2d99c4ec45
+        https://cs.chromium.org/chromium/src/device/fido/ctap_response_unittest.cc?rcl=098dfd90850ffa84c27a884ab75edd2d99c4ec45
+        https://cs.chromium.org/chromium/src/device/fido/fido_test_data.h?l=1&rcl=098dfd90850ffa84c27a884ab75edd2d99c4ec45
+        2. It gathers the following methods into DeviceRequestConverter:
+        CtapGetAssertionRequest::EncodeAsCBOR()
+        CtapMakeCredentialRequest::EncodeAsCBOR()
+        PublicKeyCredentialDescriptor::ConvertToCBOR()
+        PublicKeyCredentialParams::ConvertToCBOR()
+        PublicKeyCredentialRpEntity::ConvertToCBOR()
+        PublicKeyCredentialUserEntity::ConvertToCBOR()
+        3. It also apply a patch from Chromium to CBORValue:
+        https://chromium.googlesource.com/chromium/src/+/7b6fbff35cd8e4d508f08e1cd93b4aa0a0dc402c%5E%21/
+
+        Besides importing things from Chromium, it also implements UserVerificationRequirement for both
+        PublicKeyCredentialCreationOptions and PublicKeyCredentialRequestOptions such that both options
+        can specify more dimensions of a desired authenticator.
+
+        Covered by API tests.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Modules/webauthn/PublicKeyCredentialCreationOptions.h:
+        (WebCore::PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria::encode const):
+        (WebCore::PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria::decode):
+        * Modules/webauthn/PublicKeyCredentialCreationOptions.idl:
+        * Modules/webauthn/PublicKeyCredentialRequestOptions.h:
+        (WebCore::PublicKeyCredentialRequestOptions::encode const):
+        (WebCore::PublicKeyCredentialRequestOptions::decode):
+        * Modules/webauthn/PublicKeyCredentialRequestOptions.idl:
+        * Modules/webauthn/UserVerificationRequirement.h: Copied from Source/WebCore/Modules/webauthn/PublicKeyCredentialRequestOptions.idl.
+        * Modules/webauthn/UserVerificationRequirement.idl: Copied from Source/WebCore/Modules/webauthn/PublicKeyCredentialRequestOptions.idl.
+        * Modules/webauthn/cbor/CBORValue.cpp:
+        (cbor::CBORValue::CBORValue):
+        (cbor::CBORValue::getBool const):
+        * Modules/webauthn/cbor/CBORValue.h:
+        * Modules/webauthn/fido/AuthenticatorGetInfoResponse.cpp: Added.
+        (fido::toArrayValue):
+        (fido::AuthenticatorGetInfoResponse::AuthenticatorGetInfoResponse):
+        (fido::AuthenticatorGetInfoResponse::setMaxMsgSize):
+        (fido::AuthenticatorGetInfoResponse::setPinProtocols):
+        (fido::AuthenticatorGetInfoResponse::setExtensions):
+        (fido::AuthenticatorGetInfoResponse::setOptions):
+        (fido::encodeAsCBOR):
+        * Modules/webauthn/fido/AuthenticatorGetInfoResponse.h: Added.
+        * Modules/webauthn/fido/AuthenticatorSupportedOptions.cpp: Added.
+        (fido::AuthenticatorSupportedOptions::setSupportsResidentKey):
+        (fido::AuthenticatorSupportedOptions::setUserVerificationAvailability):
+        (fido::AuthenticatorSupportedOptions::setUserPresenceRequired):
+        (fido::AuthenticatorSupportedOptions::setClientPinAvailability):
+        (fido::AuthenticatorSupportedOptions::setIsPlatformDevice):
+        (fido::convertToCBOR):
+        * Modules/webauthn/fido/AuthenticatorSupportedOptions.h: Added.
+        * Modules/webauthn/fido/DeviceRequestConverter.cpp: Added.
+        (fido::convertRpEntityToCBOR):
+        (fido::convertUserEntityToCBOR):
+        (fido::convertParametersToCBOR):
+        (fido::convertDescriptorToCBOR):
+        (fido::encodeMakeCredenitalRequestAsCBOR):
+        (fido::encodeGetAssertionRequestAsCBOR):
+        (fido::encodeEmptyAuthenticatorRequest):
+        * Modules/webauthn/fido/DeviceRequestConverter.h: Copied from Source/WebCore/Modules/webauthn/fido/FidoConstants.h.
+        * Modules/webauthn/fido/DeviceResponseConverter.cpp: Added.
+        (fido::convertStringToProtocolVersion):
+        (fido::getResponseCode):
+        (fido::getCredentialId):
+        (fido::readCTAPMakeCredentialResponse):
+        (fido::readCTAPGetAssertionResponse):
+        (fido::readCTAPGetInfoResponse):
+        * Modules/webauthn/fido/DeviceResponseConverter.h: Copied from Source/WebCore/Modules/webauthn/fido/FidoConstants.cpp.
+        * Modules/webauthn/fido/FidoConstants.cpp:
+        (fido::isCtapDeviceResponseCode):
+        (fido::publicKeyCredentialTypeToString):
+        * Modules/webauthn/fido/FidoConstants.h:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2018-11-07  Justin Michaud  <justin_michaud@apple.com>
 
         CSS Painting API should pass size, arguments and input properties to paint callback

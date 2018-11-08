@@ -25,12 +25,9 @@
 
 [
     Conditional=WEB_AUTHN,
-] dictionary PublicKeyCredentialRequestOptions {
-    required BufferSource challenge;
-    unsigned long timeout;
-    USVString rpId;
-    sequence<PublicKeyCredentialDescriptor> allowCredentials = [];
-    UserVerificationRequirement userVerification = "preferred";
-    // Not support yet.
-    // AuthenticationExtensions extensions;
+    ImplementedAs=UserVerificationRequirement
+] enum UserVerificationRequirement {
+    "required",
+    "preferred",
+    "discouraged"
 };

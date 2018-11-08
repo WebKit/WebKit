@@ -148,6 +148,17 @@ TEST(CBORValueTest, ConstructSimpleValue)
     EXPECT_TRUE(CBORValue::SimpleValue::Undefined == undefinedValue.getSimpleValue());
 }
 
+TEST(CBORValueTest, ConstructSimpleBooleanValue)
+{
+    CBORValue trueValue(true);
+    ASSERT_EQ(CBORValue::Type::SimpleValue, trueValue.type());
+    EXPECT_TRUE(trueValue.getBool());
+
+    CBORValue falseValue(false);
+    ASSERT_EQ(CBORValue::Type::SimpleValue, falseValue.type());
+    EXPECT_FALSE(falseValue.getBool());
+}
+
 // Test copy constructors
 TEST(CBORValueTest, CopyUnsigned)
 {
