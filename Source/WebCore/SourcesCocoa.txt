@@ -405,7 +405,6 @@ platform/ios/ScrollAnimatorIOS.mm
 platform/ios/ScrollbarThemeIOS.mm
 platform/ios/ScrollViewIOS.mm
 platform/ios/SelectionRect.cpp
-platform/ios/SSLKeyGeneratorIOS.cpp
 platform/ios/SystemMemoryIOS.cpp
 platform/ios/ThemeIOS.mm @no-unify
 platform/ios/TileControllerMemoryHandlerIOS.cpp

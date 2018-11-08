@@ -1,3 +1,27 @@
+2018-11-08  Don Olmstead  <don.olmstead@sony.com>
+
+        Provide generic implementation of SSLKeyGenerator functions
+        https://bugs.webkit.org/show_bug.cgi?id=191428
+
+        Reviewed by Michael Catanzaro.
+
+        No new tests. No change in behavior.
+
+        Both SSLKeyGeneratorGLib and SSLKeyGeneratorIOS were stub
+        implementations. Since <keygen> is deprecated it looks unlikely that
+        an implementation is actually needed, however an implementation is
+        needed until support is reomved.
+
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/SSLKeyGenerator.cpp: Added.
+        (WebCore::getSupportedKeySizes):
+        (WebCore::signedPublicKeyAndChallengeString):
+        * platform/SourcesGLib.txt:
+        * platform/glib/SSLKeyGeneratorGLib.cpp: Removed.
+        * platform/ios/SSLKeyGeneratorIOS.cpp: Removed.
+
 2018-11-07  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Unprefix text-decoration CSS3 properties

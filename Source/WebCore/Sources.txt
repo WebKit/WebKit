@@ -1558,6 +1558,7 @@ platform/Process.cpp
 platform/ReferrerPolicy.cpp
 platform/RemoteCommandListener.cpp
 platform/RuntimeApplicationChecks.cpp
+platform/SSLKeyGenerator.cpp
 platform/SchemeRegistry.cpp
 platform/ScrollAnimator.cpp
 platform/ScrollView.cpp
