@@ -657,7 +657,7 @@ static int createFlatpakInfo()
 {
     GUniquePtr<GKeyFile> keyFile(g_key_file_new());
 
-    const char* sharedPermissions[] = { "network" };
+    const char* sharedPermissions[] = { "network", nullptr };
     g_key_file_set_string_list(keyFile.get(), "Context", "shared", sharedPermissions, sizeof(sharedPermissions));
 
     // xdg-desktop-portal relates your name to certain permissions so we want
