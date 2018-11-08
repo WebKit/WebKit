@@ -1,3 +1,12 @@
+2018-11-05  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Fix steps_unittest.py failures related to recent Win10/Win7 changes
+        https://bugs.webkit.org/show_bug.cgi?id=191290
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/steps_unittest.py: Update expected results.
+
 2018-11-08  Dean Jackson  <dino@apple.com>
 
         Add a String literal that returns a String
