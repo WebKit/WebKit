@@ -217,7 +217,7 @@ void InlineFormattingContext::Line::justifyRuns()
 
 void InlineFormattingContext::Line::close(LastLine isLastLine)
 {
-    auto trimTrailingContent = [&]() {
+    auto trimTrailingContent = [&]{
 
         if (!m_trailingTrimmableContent)
             return;
@@ -235,12 +235,18 @@ void InlineFormattingContext::Line::close(LastLine isLastLine)
         m_trailingTrimmableContent = { };
     };
 
-    auto alignRuns = [&](auto alignment) {
+    auto alignRuns = [&]{
 
         if (!hasContent())
             return;
 
-        auto adjustedLogicalLeft = adjustedLineLogicalLeft(alignment, m_logicalRect.left(), m_availableWidth);
+        auto textAlignment = !m_alignmentIsJustify ? m_formattingRoot.style().textAlign() : isLastLine == LastLine::No ? TextAlignMode::Justify : TextAlignMode::Left;
+        if (textAlignment == TextAlignMode::Justify) {
+            justifyRuns();
+            return;
+        }
+
+        auto adjustedLogicalLeft = adjustedLineLogicalLeft(textAlignment, m_logicalRect.left(), m_availableWidth);
         if (m_logicalRect.left() == adjustedLogicalLeft)
             return;
 
@@ -254,17 +260,8 @@ void InlineFormattingContext::Line::close(LastLine isLastLine)
         return;
 
     trimTrailingContent();
+    alignRuns();
 
-    auto textAlignment = m_formattingRoot.style().textAlign();
-    if (m_alignmentIsJustify) {
-        if (isLastLine == LastLine::No) {
-            justifyRuns();
-            return;
-        }
-        textAlignment = TextAlignMode::Left;
-    }
-
-    alignRuns(textAlignment);
     m_isFirstLine = false;
     m_closed = true;
 }

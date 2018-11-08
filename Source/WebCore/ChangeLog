@@ -1,3 +1,13 @@
+2018-11-08  Zalan Bujtas  <zalan@apple.com>
+
+        [BFC][IFC] InlineFormattingContext::Line::alignRuns() should take care of all the alignments.
+        https://bugs.webkit.org/show_bug.cgi?id=191414
+
+        Reviewed by Antti Koivisto.
+
+        * layout/inlineformatting/Line.cpp:
+        (WebCore::Layout::InlineFormattingContext::Line::close):
+
 2018-11-08  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Import CTAP device request/response converters from Chromium
