@@ -207,8 +207,6 @@ float Font::platformWidthForGlyph(Glyph glyph) const
     if (m_platformData.useGDI())
         return widthForGDIGlyph(glyph);
 
-    ASSERT(glyph);
-
     auto font = m_platformData.dwFont();
     RELEASE_ASSERT(font);
 

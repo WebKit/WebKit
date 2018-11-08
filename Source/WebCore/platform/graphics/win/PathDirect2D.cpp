@@ -171,6 +171,8 @@ Path::Path(Path&& other)
 
 Path& Path::operator=(const Path& other)
 {
+    if (this == &other)
+        return *this;
     m_path = other.m_path;
     m_activePath = other.m_activePath;
     m_activePathGeometry = other.m_activePathGeometry;
@@ -208,7 +210,7 @@ HRESULT Path::initializePathState()
     return m_activePathGeometry->Open(&m_activePath);
 }
 
-void Path::drawDidComplete() const
+void Path::drawDidComplete()
 {
     FloatPoint currentPoint = this->currentPoint();
 
@@ -222,6 +224,7 @@ void Path::drawDidComplete() const
     m_activePath->SetFillMode(D2D1_FILL_MODE_WINDING);
 
     m_activePath->BeginFigure(currentPoint, D2D1_FIGURE_BEGIN_FILLED);
+    m_doesHaveOpenFigure = true;
 }
 
 bool Path::contains(const FloatPoint& point, WindRule rule) const
@@ -267,17 +270,22 @@ void Path::transform(const AffineTransform& transform)
     if (transform.isIdentity() || isEmpty())
         return;
 
+    std::optional<FloatPoint> currentPoint;
+    if (hasCurrentPoint())
+        currentPoint = this->currentPoint();
+
     bool pathIsActive = false;
     if (m_activePath) {
+        m_activePath->EndFigure(D2D1_FIGURE_END_OPEN);
+        m_doesHaveOpenFigure = false;
         m_activePath->Close();
         m_activePath = nullptr;
         m_activePathGeometry = nullptr;
         pathIsActive = true;
     }
 
-    const D2D1_MATRIX_3X2_F& d2dTransform = static_cast<const D2D1_MATRIX_3X2_F>(transform);
     COMPtr<ID2D1TransformedGeometry> transformedPath;
-    if (!SUCCEEDED(GraphicsContext::systemFactory()->CreateTransformedGeometry(m_path.get(), d2dTransform, &transformedPath)))
+    if (!SUCCEEDED(GraphicsContext::systemFactory()->CreateTransformedGeometry(m_path.get(), transform, &transformedPath)))
         return;
 
     Vector<ID2D1Geometry*> geometries;
@@ -295,6 +303,15 @@ void Path::transform(const AffineTransform& transform)
 
     HRESULT hr = GraphicsContext::systemFactory()->CreateGeometryGroup(fillMode, geometries.data(), geometries.size(), &m_path);
     RELEASE_ASSERT(SUCCEEDED(hr));
+
+    if (!currentPoint)
+        return;
+
+    m_activePath->SetFillMode(fillMode);
+
+    auto transformedPoint = transform.mapPoint(currentPoint.value());
+    m_activePath->BeginFigure(transformedPoint, D2D1_FIGURE_BEGIN_FILLED);
+    m_doesHaveOpenFigure = true;
 }
 
 FloatRect Path::boundingRect() const
@@ -336,26 +353,42 @@ FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier) const
     return boundingRect();
 }
 
+void Path::openFigureAtCurrentPointIfNecessary()
+{
+    if (m_doesHaveOpenFigure)
+        return;
+
+    m_activePath->SetFillMode(D2D1_FILL_MODE_WINDING);
+    m_activePath->BeginFigure(currentPoint(), D2D1_FIGURE_BEGIN_FILLED);
+    m_doesHaveOpenFigure = true;
+}
+
 void Path::moveTo(const FloatPoint& point)
 {
-    if (!m_activePath) {
-        GraphicsContext::systemFactory()->CreatePathGeometry(&m_activePathGeometry);
-
-        appendGeometry(m_activePathGeometry.get());
-
-        if (!SUCCEEDED(m_activePathGeometry->Open(&m_activePath)))
-            return;
-
-        m_activePath->SetFillMode(D2D1_FILL_MODE_WINDING);
+    if (m_activePath) {
+        m_activePath->Close();
+        m_activePath = nullptr;
+        m_activePathGeometry = nullptr;
+        m_doesHaveOpenFigure = false;
     }
 
+    GraphicsContext::systemFactory()->CreatePathGeometry(&m_activePathGeometry);
+
+    appendGeometry(m_activePathGeometry.get());
+
+    if (!SUCCEEDED(m_activePathGeometry->Open(&m_activePath)))
+        return;
+
+    m_activePath->SetFillMode(D2D1_FILL_MODE_WINDING);
     m_activePath->BeginFigure(point, D2D1_FIGURE_BEGIN_FILLED);
+    m_doesHaveOpenFigure = true;
 }
 
 void Path::addLineTo(const FloatPoint& point)
 {
     ASSERT(m_activePath.get());
 
+    openFigureAtCurrentPointIfNecessary();
     m_activePath->AddLine(point);
 }
 
@@ -363,6 +396,7 @@ void Path::addQuadCurveTo(const FloatPoint& cp, const FloatPoint& p)
 {
     ASSERT(m_activePath.get());
 
+    openFigureAtCurrentPointIfNecessary();
     m_activePath->AddQuadraticBezier(D2D1::QuadraticBezierSegment(cp, p));
 }
 
@@ -370,17 +404,48 @@ void Path::addBezierCurveTo(const FloatPoint& cp1, const FloatPoint& cp2, const 
 {
     ASSERT(m_activePath.get());
 
-    FloatPoint beforePoint = currentPoint();
-
+    openFigureAtCurrentPointIfNecessary();
     m_activePath->AddBezier(D2D1::BezierSegment(cp1, cp2, p));
 }
 
 void Path::addArcTo(const FloatPoint& p1, const FloatPoint& p2, float radius)
 {
-    UNUSED_PARAM(p1);
-    UNUSED_PARAM(p2);
-    UNUSED_PARAM(radius);
-    notImplemented();
+    ASSERT(m_activePath.get());
+
+    FloatPoint p0 = currentPoint();
+
+    if (p1 == p0 || p1 == p2 || WTF::areEssentiallyEqual(radius, 0.0f))
+        return addLineTo(p1);
+
+    float direction = (p2.x() - p1.x()) * (p0.y() - p1.y()) + (p2.y() - p1.y()) * (p1.x() - p0.x());
+    if (WTF::areEssentiallyEqual(direction, 0.0f))
+        return addLineTo(p1);
+
+    auto a2 = toFloatPoint(p0 - p1).lengthSquared();
+    auto b2 = toFloatPoint(p1 - p2).lengthSquared();
+    auto c2 = toFloatPoint(p0 - p2).lengthSquared();
+
+    double cosx = (a2 + b2 - c2) / (2.0 * std::sqrt(a2 * b2));
+    double sinx = std::sqrt(1.0 - cosx * cosx);
+    double d = radius / ((1 - cosx) / sinx);
+
+    auto an = toFloatPoint(p1 - p0).scaled(1.0 / std::sqrt(a2));
+    auto bn = toFloatPoint(p1 - p2).scaled(1.0 / std::sqrt(b2));
+
+    auto startPoint = toFloatPoint(p1 - an.scaled(d));
+    auto p4 = toFloatPoint(p1 - bn.scaled(d));
+
+    bool anticlockwise = (direction < 0);
+    an.scale(radius * (anticlockwise ? 1 : -1));
+
+    FloatPoint center(startPoint.x() + an.y(), startPoint.y() - an.x());
+
+    double angle0 = atan2(startPoint.y() - center.y(), startPoint.x() - center.x());
+    double angle1 = atan2(p4.y() - center.y(), p4.x() - center.x());
+
+    openFigureAtCurrentPointIfNecessary();
+    addLineTo(startPoint);
+    addArc(center, radius, angle0, angle1, anticlockwise);
 }
 
 static bool equalRadiusWidths(const FloatSize& topLeftRadius, const FloatSize& topRightRadius, const FloatSize& bottomLeftRadius, const FloatSize& bottomRightRadius)
@@ -423,8 +488,14 @@ void Path::closeSubpath()
     if (isNull())
         return;
 
-    ASSERT(m_activePath.get());
-    m_activePath->EndFigure(D2D1_FIGURE_END_OPEN);
+    if (m_activePath) {
+        m_activePath->EndFigure(D2D1_FIGURE_END_CLOSED);
+        m_activePath->Close();
+        m_activePath = nullptr;
+        m_activePathGeometry = nullptr;
+    }
+
+    m_doesHaveOpenFigure = false;
 }
 
 static FloatPoint arcStart(const FloatPoint& center, float radius, float startAngle)
@@ -436,21 +507,22 @@ static FloatPoint arcStart(const FloatPoint& center, float radius, float startAn
     return startingPoint;
 }
 
-static void drawArcSection(ID2D1GeometrySink* sink, const FloatPoint& center, float radius, float startAngle, float endAngle, bool clockwise)
+const float twoPi = 2.0f * piFloat;
+
+static void drawArcSection(ID2D1GeometrySink* sink, const FloatPoint& center, float radius, float startAngle, float endAngle, bool anticlockwise)
 {
     // Direct2D wants us to specify the end point of the arc, not the center. It will be drawn from
     // whatever the current point in the 'm_activePath' is.
-    FloatPoint p = center;
+    FloatPoint endPoint = center;
     float endX = radius * std::cos(endAngle);
     float endY = radius * std::sin(endAngle);
-    p.move(endX, endY);
+    endPoint.move(endX, endY);
 
-    float arcDeg = rad2deg(endAngle - startAngle);
-    D2D1_SWEEP_DIRECTION direction = clockwise ? D2D1_SWEEP_DIRECTION_CLOCKWISE : D2D1_SWEEP_DIRECTION_COUNTER_CLOCKWISE;
-    sink->AddArc(D2D1::ArcSegment(p, D2D1::SizeF(radius, radius), arcDeg, direction, D2D1_ARC_SIZE_SMALL));
+    D2D1_SWEEP_DIRECTION direction = anticlockwise ? D2D1_SWEEP_DIRECTION_COUNTER_CLOCKWISE : D2D1_SWEEP_DIRECTION_CLOCKWISE;
+    sink->AddArc(D2D1::ArcSegment(endPoint, D2D1::SizeF(radius, radius), 0, direction, D2D1_ARC_SIZE_SMALL));
 }
 
-void Path::addArc(const FloatPoint& center, float radius, float startAngle, float endAngle, bool clockwise)
+void Path::addArc(const FloatPoint& center, float radius, float startAngle, float endAngle, bool anticlockwise)
 {
     auto arcStartPoint = arcStart(center, radius, startAngle);
     if (!m_activePath)
@@ -461,23 +533,41 @@ void Path::addArc(const FloatPoint& center, float radius, float startAngle, floa
         addLineTo(arcStartPoint);
     }
 
-    // Direct2D has problems drawing large arcs. It gets confused if drawing a complete (or
-    // nearly complete) circle in the counter-clockwise direction. So, draw any arcs larger
-    // than 180 degrees in two pieces.
-    float fullSweep = endAngle - startAngle;
-    float negate = fullSweep < 0 ? -1.0f : 1.0f;
-    float maxSweep = negate * std::min(std::abs(fullSweep), piFloat);
-    float firstArcEnd = startAngle + maxSweep;
-    drawArcSection(m_activePath.get(), center, radius, startAngle, firstArcEnd, clockwise);
+    if (WTF::areEssentiallyEqual(std::abs(endAngle - startAngle), twoPi))
+        return addEllipse(FloatRect(center.x() - radius, center.y() - radius, 2.0 * radius, 2.0 * radius));
 
-    if (WTF::areEssentiallyEqual(firstArcEnd, endAngle))
-        return;
+    if (anticlockwise) {
+        if (endAngle > startAngle) {
+            endAngle -= twoPi * std::ceil((endAngle - startAngle) / twoPi);
+            ASSERT(endAngle <= startAngle);
+        }
+    } else {
+        if (startAngle > endAngle) {
+            startAngle -= twoPi * std::ceil((startAngle - endAngle) / twoPi);
+            ASSERT(startAngle <= endAngle);
+        }
+    }
 
-    drawArcSection(m_activePath.get(), center, radius, firstArcEnd, endAngle, clockwise);
+    const float delta = anticlockwise ? -piOverTwoFloat : piOverTwoFloat;
+    float remainingArcAngle = endAngle - startAngle;
+
+    while ((remainingArcAngle > 0 && remainingArcAngle > delta) || (remainingArcAngle < 0 && remainingArcAngle < delta)) {
+        const double currentEndAngle = startAngle + delta;
+        drawArcSection(m_activePath.get(), center, radius, startAngle, currentEndAngle, anticlockwise);
+        startAngle = currentEndAngle;
+        remainingArcAngle -= delta;
+    }
+
+    // Handle any remaining part of the arc:
+    if (std::abs(remainingArcAngle) > 1e-6)
+        drawArcSection(m_activePath.get(), center, radius, startAngle, startAngle + remainingArcAngle, anticlockwise);
 }
 
 void Path::addRect(const FloatRect& r)
 {
+    if (!m_activePath)
+        moveTo(r.location());
+
     COMPtr<ID2D1RectangleGeometry> rectangle;
     HRESULT hr = GraphicsContext::systemFactory()->CreateRectangleGeometry(r, &rectangle);
     RELEASE_ASSERT(SUCCEEDED(hr));
@@ -494,8 +584,12 @@ void Path::addEllipse(FloatPoint p, float radiusX, float radiusY, float rotation
 
 void Path::addEllipse(const FloatRect& r)
 {
+    if (!m_activePath)
+        moveTo(r.location());
+
     COMPtr<ID2D1EllipseGeometry> ellipse;
-    HRESULT hr = GraphicsContext::systemFactory()->CreateEllipseGeometry(D2D1::Ellipse(r.center(), r.width(), r.height()), &ellipse);
+    // Note: The radii of the ellipse contained within a rectange are half the width and height of the rect.
+    HRESULT hr = GraphicsContext::systemFactory()->CreateEllipseGeometry(D2D1::Ellipse(r.center(), 0.5 * r.width(), 0.5 * r.height()), &ellipse);
     RELEASE_ASSERT(SUCCEEDED(hr));
     appendGeometry(ellipse.get());
 }

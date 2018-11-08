@@ -92,6 +92,8 @@ public:
 
     float currentGlobalAlpha() const;
 
+    D2D1_STROKE_STYLE_PROPERTIES strokeStyleProperties() const;
+
 private:
     void recomputeStrokeStyle();
 
@@ -124,7 +126,7 @@ private:
     StrokeStyle m_strokeStyle { SolidStroke };
     DashArray m_dashes;
 
-    float m_miterLimit { 1.0f };
+    float m_miterLimit { 10.0f };
     float m_dashOffset { 0 };
     float m_patternWidth { 1.0f };
     float m_patternOffset { 0 };

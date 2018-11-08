@@ -212,7 +212,11 @@ std::unique_ptr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize
 
 std::unique_ptr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize& size, float resolutionScale, ColorSpace colorSpace, const GraphicsContext& context)
 {
+#if USE(DIRECT2D)
+    return create(size, context.renderingMode(), &context, resolutionScale, colorSpace);
+#else
     return create(size, context.renderingMode(), resolutionScale, colorSpace);
+#endif
 }
 
 IntSize ImageBuffer::compatibleBufferSize(const FloatSize& size, const GraphicsContext& context)

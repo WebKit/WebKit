@@ -596,6 +596,9 @@ void GraphicsContext::drawPattern(Image& image, const FloatRect& destRect, const
 
     COMPtr<ID2D1BitmapBrush> patternBrush;
     HRESULT hr = context->CreateBitmapBrush(tileImage.get(), &bitmapBrushProperties, &brushProperties, &patternBrush);
+    ASSERT(SUCCEEDED(hr));
+    if (!SUCCEEDED(hr))
+        return;
 
     drawWithoutShadow(destRect, [this, destRect, patternBrush](ID2D1RenderTarget* renderTarget) {
         const D2D1_RECT_F d2dRect = destRect;
@@ -692,8 +695,10 @@ void GraphicsContextPlatformPrivate::setStrokeStyle(StrokeStyle strokeStyle)
     m_strokeSyleIsDirty = true;
 }
 
-void GraphicsContextPlatformPrivate::setMiterLimit(float miterLimit)
+void GraphicsContextPlatformPrivate::setMiterLimit(float canvasMiterLimit)
 {
+    // Direct2D miter limit is in terms of HALF the line thickness.
+    float miterLimit = 0.5f * canvasMiterLimit;
     if (WTF::areEssentiallyEqual(miterLimit, m_miterLimit))
         return;
 
@@ -746,6 +751,11 @@ void GraphicsContextPlatformPrivate::setDashes(const DashArray& dashes)
     m_strokeSyleIsDirty = true;
 }
 
+D2D1_STROKE_STYLE_PROPERTIES GraphicsContextPlatformPrivate::strokeStyleProperties() const
+{
+    return D2D1::StrokeStyleProperties(m_lineCap, m_lineCap, m_lineCap, m_lineJoin, m_miterLimit, D2D1_DASH_STYLE_SOLID, 0.0f);
+}
+
 void GraphicsContextPlatformPrivate::recomputeStrokeStyle()
 {
     if (!m_strokeSyleIsDirty)
@@ -753,18 +763,22 @@ void GraphicsContextPlatformPrivate::recomputeStrokeStyle()
 
     m_d2dStrokeStyle = nullptr;
 
-    if ((m_strokeStyle != SolidStroke) && (m_strokeStyle != NoStroke)) {
-        float patternOffset = m_patternOffset / m_strokeThickness;
+    DashArray dashes;
+    float patternOffset = 0;
+    auto dashStyle = D2D1_DASH_STYLE_SOLID;
 
-        DashArray dashes = m_dashes;
+    if ((m_strokeStyle != SolidStroke) && (m_strokeStyle != NoStroke)) {
+        dashStyle = D2D1_DASH_STYLE_CUSTOM;
+        patternOffset = m_patternOffset / m_strokeThickness;
+        dashes = m_dashes;
 
         // In Direct2D, dashes and dots are defined in terms of the ratio of the dash length to the line thickness.
         for (auto& dash : dashes)
             dash /= m_strokeThickness;
-
-        auto strokeStyleProperties = D2D1::StrokeStyleProperties(m_lineCap, m_lineCap, m_lineCap, m_lineJoin, m_strokeThickness, D2D1_DASH_STYLE_CUSTOM, patternOffset);
-        GraphicsContext::systemFactory()->CreateStrokeStyle(&strokeStyleProperties, dashes.data(), dashes.size(), &m_d2dStrokeStyle);
     }
+
+    auto strokeStyleProperties = D2D1::StrokeStyleProperties(m_lineCap, m_lineCap, m_lineCap, m_lineJoin, m_miterLimit, dashStyle, patternOffset);
+    GraphicsContext::systemFactory()->CreateStrokeStyle(&strokeStyleProperties, dashes.data(), dashes.size(), &m_d2dStrokeStyle);
 
     m_strokeSyleIsDirty = false;
 }
@@ -819,7 +833,7 @@ void GraphicsContext::drawLine(const FloatPoint& point1, const FloatPoint& point
 
         float patternOffset = dashedLinePatternOffsetForPatternAndStrokeWidth(patternWidth, strokeWidth);
         const float dashes[2] = { patternWidth, patternWidth };
-        auto strokeStyleProperties = D2D1::StrokeStyleProperties();
+        auto strokeStyleProperties = m_data->strokeStyleProperties();
         GraphicsContext::systemFactory()->CreateStrokeStyle(&strokeStyleProperties, dashes, ARRAYSIZE(dashes), &d2dStrokeStyle);
 
         m_data->setPatternWidth(patternWidth);
@@ -926,8 +940,6 @@ void GraphicsContext::drawPath(const Path& path)
         auto brush = m_state.strokePattern ? patternStrokeBrush() : solidStrokeBrush();
         renderTarget->DrawGeometry(path.platformPath(), brush, strokeThickness(), m_data->strokeStyle());
     });
-
-    flush();
 }
 
 void GraphicsContext::drawWithoutShadow(const FloatRect& /*boundingRect*/, const WTF::Function<void(ID2D1RenderTarget*)>& drawCommands)
@@ -1047,8 +1059,6 @@ void GraphicsContext::fillPath(const Path& path)
         auto brush = m_state.fillPattern ? patternFillBrush() : solidFillBrush();
         renderTarget->FillGeometry(pathToFill.get(), brush);
     });
-
-    flush();
 }
 
 void GraphicsContext::strokePath(const Path& path)
@@ -1092,8 +1102,6 @@ void GraphicsContext::strokePath(const Path& path)
         auto brush = m_state.strokePattern ? patternStrokeBrush() : solidStrokeBrush();
         renderTarget->DrawGeometry(path.platformPath(), brush, strokeThickness(), m_data->strokeStyle());
     });
-
-    flush();
 }
 
 void GraphicsContext::fillRect(const FloatRect& rect)
@@ -1328,6 +1336,8 @@ void GraphicsContext::clipPath(const Path& path, WindRule clipRule)
         m_data->clip(FloatRect());
         return;
     }
+
+    ASSERT(!path.activePath());
 
     COMPtr<ID2D1GeometryGroup> pathToClip;
     path.createGeometryWithFillMode(clipRule, pathToClip);
@@ -1687,24 +1697,23 @@ FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect, RoundingMo
     return rect;
 }
 
-void GraphicsContext::drawLineForText(const FloatPoint& point, float width, bool printing, bool doubleLines, StrokeStyle strokeStyle)
+void GraphicsContext::drawLineForText(const FloatRect& rect, bool printing, bool doubleLines, StrokeStyle strokeStyle)
 {
     DashArray widths;
     widths.append(0);
-    widths.append(width);
-    drawLinesForText(point, widths, printing, doubleLines, strokeStyle);
+    widths.append(rect.width());
+    drawLinesForText(rect.location(), rect.height(), widths, printing, doubleLines, strokeStyle);
 }
 
-void GraphicsContext::drawLinesForText(const FloatPoint& point, const DashArray& widths, bool printing, bool doubleLines, StrokeStyle strokeStyle)
+void GraphicsContext::drawLinesForText(const FloatPoint& point, float thickness, const DashArray& widths, bool printing, bool doubleLines, StrokeStyle strokeStyle)
 {
     if (paintingDisabled())
-        return;
 
     if (!widths.size())
         return;
 
     if (m_impl) {
-        m_impl->drawLinesForText(point, widths, printing, doubleLines, strokeThickness());
+        m_impl->drawLinesForText(point, thickness, widths, printing, doubleLines);
         return;
     }
 

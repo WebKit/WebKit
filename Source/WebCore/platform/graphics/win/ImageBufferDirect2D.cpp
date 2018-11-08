@@ -137,26 +137,96 @@ void ImageBuffer::flushContext() const
     context().flush();
 }
 
-RefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyBehavior, PreserveResolution) const
+static COMPtr<ID2D1Bitmap> createCroppedImageIfNecessary(ID2D1Bitmap* image, const IntSize& bounds)
 {
-    notImplemented();
-    return nullptr;
+    FloatSize imageSize = image ? image->GetSize() : FloatSize();
+
+    if (image && (static_cast<size_t>(imageSize.width()) != static_cast<size_t>(bounds.width()) || static_cast<size_t>(imageSize.height()) != static_cast<size_t>(bounds.height()))) {
+        D2D_POINT_2U origin = { };
+        D2D1_RECT_U croppedDimenstions = IntRect(IntPoint(), bounds);
+        COMPtr<ID2D1Bitmap> croppedImage;
+        HRESULT hr = croppedImage->CopyFromBitmap(&origin, image, &croppedDimenstions);
+        if (SUCCEEDED(hr))
+            return croppedImage;
+    }
+
+    return image;
 }
 
-RefPtr<Image> ImageBuffer::sinkIntoImage(std::unique_ptr<ImageBuffer> imageBuffer, PreserveResolution)
+static RefPtr<Image> createBitmapImageAfterScalingIfNeeded(COMPtr<ID2D1Bitmap>&& image, IntSize internalSize, IntSize logicalSize, IntSize backingStoreSize, float resolutionScale, PreserveResolution preserveResolution)
+{
+    if (resolutionScale == 1 || preserveResolution == PreserveResolution::Yes)
+        image = createCroppedImageIfNecessary(image.get(), internalSize);
+    else {
+        // FIXME: Need to implement scaled version
+        notImplemented();
+    }
+
+    if (!image)
+        return nullptr;
+
+    return BitmapImage::create(WTFMove(image));
+}
+
+RefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyBehavior, PreserveResolution preserveResolution) const
+{
+    COMPtr<ID2D1Bitmap> image;
+    if (m_resolutionScale == 1 || preserveResolution == PreserveResolution::Yes)
+        image = copyNativeImage(copyBehavior);
+    else
+        image = copyNativeImage(DontCopyBackingStore);
+
+    return createBitmapImageAfterScalingIfNeeded(WTFMove(image), internalSize(), logicalSize(), m_data.backingStoreSize, m_resolutionScale, preserveResolution);
+}
+
+RefPtr<Image> ImageBuffer::sinkIntoImage(std::unique_ptr<ImageBuffer> imageBuffer, PreserveResolution preserveResolution)
 {
     IntSize internalSize = imageBuffer->internalSize();
     IntSize logicalSize = imageBuffer->logicalSize();
     IntSize backingStoreSize = imageBuffer->m_data.backingStoreSize;
     float resolutionScale = imageBuffer->m_resolutionScale;
 
-    notImplemented();
-    return nullptr;
+    return createBitmapImageAfterScalingIfNeeded(sinkIntoNativeImage(WTFMove(imageBuffer)), internalSize, logicalSize, backingStoreSize, resolutionScale, preserveResolution);
 }
 
 BackingStoreCopy ImageBuffer::fastCopyImageMode()
 {
     return DontCopyBackingStore;
+}
+
+COMPtr<ID2D1Bitmap> ImageBuffer::sinkIntoNativeImage(std::unique_ptr<ImageBuffer> imageBuffer)
+{
+    // FIXME: See if we can reuse the on-hardware image.
+    return imageBuffer->copyNativeImage(DontCopyBackingStore);
+}
+
+COMPtr<ID2D1Bitmap> ImageBuffer::copyNativeImage(BackingStoreCopy copyBehavior) const
+{
+    auto bitmapTarget = reinterpret_cast<ID2D1BitmapRenderTarget*>(context().platformContext());
+
+    COMPtr<ID2D1Bitmap> image;
+    HRESULT hr = bitmapTarget->GetBitmap(&image);
+    ASSERT(SUCCEEDED(hr));
+
+    if (!context().isAcceleratedContext()) {
+        switch (copyBehavior) {
+        case DontCopyBackingStore:
+            break;
+        case CopyBackingStore:
+            D2D1_RECT_U backingStoreDimenstions = IntRect(IntPoint(), m_data.backingStoreSize);
+            image->CopyFromMemory(&backingStoreDimenstions, m_data.data, 32);
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+    }
+#if USE(IOSURFACE_CANVAS_BACKING_STORE)
+    else
+        image = m_data.surface->createImage();
+#endif
+
+    return image;
 }
 
 void ImageBuffer::drawConsuming(std::unique_ptr<ImageBuffer> imageBuffer, GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator op, BlendMode blendMode)

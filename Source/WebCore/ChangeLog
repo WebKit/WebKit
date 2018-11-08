@@ -1,3 +1,77 @@
+2018-11-07  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows][DirectX] Update canvas code to pass more tests
+        https://bugs.webkit.org/show_bug.cgi?id=191337
+        <rdar://problem/45878801>
+
+        Reviewed by Dean Jackson.
+
+        Update the Direct2D code paths to comply with our canvas tests, improving the
+        the test results scores to 579/770.
+
+        PathDirect2D was updated with an implementation of 'addArcTo' based on work by
+        Dirk Schulze <vbs85@gmx.de> (see https://hg.mozilla.org/mozilla-central/rev/b116b49459f8).
+
+        Tests: canvas/philip/tests
+
+        * platform/graphics/ImageBuffer.cpp:
+        (WebCore::ImageBuffer::createCompatibleBuffer): Direct2D needs access to the graphics
+        context to create the buffer.
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/Path.h:
+        * platform/graphics/win/GraphicsContextDirect2D.cpp:
+        (WebCore::GraphicsContext::drawPattern): Flush needed.
+        (WebCore::GraphicsContext::drawRect): Ditto.
+        (WebCore::GraphicsContextPlatformPrivate::setMiterLimit): Correct for Direct2D definition of miter limit.
+        (WebCore::GraphicsContextPlatformPrivate::strokeStyleProperties const): Added helper function.
+        (WebCore::GraphicsContextPlatformPrivate::recomputeStrokeStyle): Update for new helper.
+        (WebCore::GraphicsContext::drawLine): Ditto.
+        (WebCore::drawWithShadowHelper): Ditto.
+        (WebCore::GraphicsContext::fillRect): Add flush.
+        (WebCore::GraphicsContext::platformFillRoundedRect): Update for helper.
+        (WebCore::GraphicsContext::clipPath): Add flush.
+        (WebCore::GraphicsContext::strokeRect): Ditto.
+        (WebCore::GraphicsContext::drawLineForText): Update for upstream changes.
+        (WebCore::GraphicsContext::drawLinesForText): Ditto.
+        * platform/graphics/win/GraphicsContextPlatformPrivateDirect2D.h:
+        * platform/graphics/win/ImageBufferDirect2D.cpp:
+        (WebCore::createCroppedImageIfNecessary): Add missing implementations.
+        (WebCore::createBitmapImageAfterScalingIfNeeded): Ditto.
+        (WebCore::ImageBuffer::copyImage const): Ditto.
+        (WebCore::ImageBuffer::sinkIntoImage): Ditto.
+        (WebCore::ImageBuffer::fastCopyImageMode): Ditto.
+        (WebCore::ImageBuffer::sinkIntoNativeImage): Ditto.
+        (WebCore::ImageBuffer::copyNativeImage const): Ditto.
+        * platform/graphics/win/PathDirect2D.cpp:
+        (WebCore::Path::operator=):
+        (WebCore::Path::drawDidComplete): This should never have been const.
+        It manipulates the path!
+        (WebCore::Path::transform): Properly transform existing geometries.
+        (WebCore::Path::openFigureAtCurrentPointIfNecessary): Added.
+        (WebCore::Path::moveTo):
+        (WebCore::Path::addLineTo): Make sure figure starts at a valid point.
+        (WebCore::Path::addQuadCurveTo): Ditto.
+        (WebCore::Path::addBezierCurveTo): Ditto.
+        (WebCore::Path::addArcTo): Add implementation.
+        (WebCore::Path::closeSubpath):
+        (WebCore::drawArcSection):
+        (WebCore::Path::addArc): Update to build large arcs out of small arc segments. If the
+        arc is effectively a complete circle, use the ellipse drawing routines.
+        (WebCore::Path::addRect): Make sure we start at a valid starting point.
+        (WebCore::Path::addEllipse): Correct for definition of D2D ellipse.
+        (WebCore::Path::drawDidComplete const): Deleted.
+        * platform/graphics/win/SimpleFontDataDirect2D.cpp:
+        (WebCore::Font::platformWidthForGlyph const):
+        * rendering/svg/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::applyClippingToContext):
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::applyResource):
+        * rendering/svg/RenderSVGResourceMasker.cpp:
+        (WebCore::RenderSVGResourceMasker::applyResource):
+        * rendering/svg/SVGRenderingContext.cpp:
+        (WebCore::SVGRenderingContext::createImageBuffer):
+        * rendering/svg/SVGRenderingContext.h:
+
 2018-11-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add an editing command for creating and inserting child lists
