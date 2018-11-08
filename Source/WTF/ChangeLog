@@ -1,3 +1,13 @@
+2018-11-08  Alexey Proskuryakov  <ap@apple.com>
+
+        Re-add PLATFORM(IOS), now with the strict meaning
+        https://bugs.webkit.org/show_bug.cgi?id=191281
+
+        Reviewed by Tim Horton.
+
+        * wtf/Platform.h: No change in behavior. Some of the macros look a bit weird
+        when expanded, it might be that the values are incorrect for some flavors of iOS family.
+
 2018-11-08  Dean Jackson  <dino@apple.com>
 
         Add a String literal that returns a String

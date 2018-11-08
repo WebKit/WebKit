@@ -369,14 +369,14 @@
 #include <TargetConditionals.h>
 #endif
 
-/* OS(IOS_FAMILY) - iOS family, including iOSMac */
+/* OS(IOS_FAMILY) - iOS family, including iOS, iOSMac, tvOS, watchOS */
+/* OS(IOS) - iOS only, not including iOSMac */
 /* OS(MAC_OS_X) - macOS (not including iOS family) */
 #if OS(DARWIN)
+#if TARGET_OS_IOS && !(defined(TARGET_OS_IOSMAC) && TARGET_OS_IOSMAC)
+#define WTF_OS_IOS 1
+#endif
 #if TARGET_OS_IPHONE
-/* FIXME (November 2018): Add WTF_OS_IOS once most patches that used it as an old
- * version of OS(IOS_FAMILY) are no longer relevant.  It is currently defined so that
- * attempting to use it will break the build. */
-#define WTF_OS_IOS UNDEFINED /* Please use OS(IOS_FAMILY) until a more specific macro can be added. */
 #define WTF_OS_IOS_FAMILY 1
 #elif TARGET_OS_MAC
 #define WTF_OS_MAC_OS_X 1
@@ -526,16 +526,14 @@
 #elif OS(MAC_OS_X)
 #define WTF_PLATFORM_MAC 1
 #elif OS(IOS_FAMILY)
-/* FIXME (November 2018): Add WTF_PLATFORM_IOS once most patches that used it as an old
- * version of PLATFORM(IOS_FAMILY) are no longer relevant. It is currently defined so that
- * attempting to use it will break the build. */
-#define WTF_PLATFORM_IOS UNDEFINED /* Please use PLATFORM(IOS_FAMILY) until a more specific macro can be added. */
+#if OS(IOS)
+#define WTF_PLATFORM_IOS 1
+#endif
 #define WTF_PLATFORM_IOS_FAMILY 1
 #if TARGET_OS_SIMULATOR
-/* FIXME (November 2018): Add WTF_PLATFORM_IOS_SIMULATOR once most patches that used it as an old
- * version of PLATFORM(IOS_FAMILY_SIMULATOR) are no longer relevant. It is currently defined so that
- * attempting to use it will break the build. */
-#define WTF_PLATFORM_IOS_SIMULATOR UNDEFINED /* Please use PLATFORM(IOS_FAMILY_SIMULATOR) until a more specific macro can be added. */
+#if OS(IOS)
+#define WTF_PLATFORM_IOS_SIMULATOR 1
+#endif
 #define WTF_PLATFORM_IOS_FAMILY_SIMULATOR 1
 #endif
 #if defined(TARGET_OS_IOSMAC) && TARGET_OS_IOSMAC
@@ -1054,20 +1052,16 @@
 #define HAVE_FJCVTZS_INSTRUCTION 1
 #endif
 
-#if PLATFORM(IOS_FAMILY)
-#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV) && !PLATFORM(IOSMAC)
+#if PLATFORM(IOS)
 #define USE_QUICK_LOOK 1
+#define USE_SYSTEM_PREVIEW 1
 #define HAVE_APP_LINKS 1
 #endif
-#if !PLATFORM(IOSMAC)
+
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOSMAC)
 #define HAVE_AUDIO_TOOLBOX_AUDIO_SESSION 1
 #define HAVE_CELESTIAL 1
 #define HAVE_CORE_ANIMATION_RENDER_SERVER 1
-#endif
-#endif
-
-#if PLATFORM(IOS_FAMILY) && USE(QUICK_LOOK) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000
-#define USE_SYSTEM_PREVIEW 1
 #endif
 
 #if PLATFORM(COCOA)
@@ -1352,11 +1346,11 @@
 #define USE_LIBWEBRTC 1
 #endif
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000) || USE(GCRYPT)
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || PLATFORM(IOS) || PLATFORM(IOSMAC) || USE(GCRYPT)
 #define HAVE_RSA_PSS 1
 #endif
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000 && !PLATFORM(APPLETV))
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || PLATFORM(IOS) || PLATFORM(IOSMAC)
 #define HAVE_URL_FORMATTING 1
 #endif
 
@@ -1364,11 +1358,11 @@
 #define HAVE_STACK_BOUNDS_FOR_NEW_THREAD 1
 #endif
 
-#if (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300)
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || PLATFORM(IOS) || PLATFORM(IOSMAC)
 #define HAVE_AVCONTENTKEYSESSION 1
 #endif
 
-#if (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400)
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || PLATFORM(IOS) || PLATFORM(IOSMAC)
 #define ENABLE_ACCESSIBILITY_EVENTS 1
 #define HAVE_SEC_KEY_PROXY 1
 #endif
