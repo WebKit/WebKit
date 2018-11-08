@@ -37,12 +37,15 @@ void CodeBlock::forEachValueProfile(const Functor& func)
     for (unsigned i = 0; i < numberOfArgumentValueProfiles(); ++i)
         func(valueProfileForArgument(i));
 
+    if (m_metadata) {
 #define VISIT(__op) \
     m_metadata->forEach<__op>([&] (auto& metadata) { func(metadata.profile); });
 
-FOR_EACH_OPCODE_WITH_VALUE_PROFILE(VISIT)
+        FOR_EACH_OPCODE_WITH_VALUE_PROFILE(VISIT)
 
 #undef VISIT
+    }
+
 }
 
 template<typename Functor>
@@ -51,50 +54,58 @@ void CodeBlock::forEachArrayProfile(const Functor& func)
     for (auto& arrayProfile : m_arrayProfiles)
         func(arrayProfile);
 
-    m_metadata->forEach<OpGetById>([&] (auto& metadata) {
-        if (metadata.mode == GetByIdMode::ArrayLength)
-            func(metadata.modeMetadata.arrayLengthMode.arrayProfile);
-    });
+    if (m_metadata) {
+        m_metadata->forEach<OpGetById>([&] (auto& metadata) {
+            if (metadata.mode == GetByIdMode::ArrayLength)
+                func(metadata.modeMetadata.arrayLengthMode.arrayProfile);
+        });
 
 #define VISIT(__op) \
     m_metadata->forEach<__op>([&] (auto& metadata) { func(metadata.arrayProfile); });
 
-FOR_EACH_OPCODE_WITH_ARRAY_PROFILE(VISIT)
+        FOR_EACH_OPCODE_WITH_ARRAY_PROFILE(VISIT)
 
 #undef VISIT
+    }
 }
 
 template<typename Functor>
 void CodeBlock::forEachArrayAllocationProfile(const Functor& func)
 {
+    if (m_metadata) {
 #define VISIT(__op) \
     m_metadata->forEach<__op>([&] (auto& metadata) { func(metadata.arrayAllocationProfile); });
 
-FOR_EACH_OPCODE_WITH_ARRAY_ALLOCATION_PROFILE(VISIT)
+        FOR_EACH_OPCODE_WITH_ARRAY_ALLOCATION_PROFILE(VISIT)
 
 #undef VISIT
+    }
 }
 
 template<typename Functor>
 void CodeBlock::forEachObjectAllocationProfile(const Functor& func)
 {
+    if (m_metadata) {
 #define VISIT(__op) \
     m_metadata->forEach<__op>([&] (auto& metadata) { func(metadata.objectAllocationProfile); });
 
-FOR_EACH_OPCODE_WITH_OBJECT_ALLOCATION_PROFILE(VISIT)
+        FOR_EACH_OPCODE_WITH_OBJECT_ALLOCATION_PROFILE(VISIT)
 
 #undef VISIT
+    }
 }
 
 template<typename Functor>
 void CodeBlock::forEachLLIntCallLinkInfo(const Functor& func)
 {
+    if (m_metadata) {
 #define VISIT(__op) \
     m_metadata->forEach<__op>([&] (auto& metadata) { func(metadata.callLinkInfo); });
 
-FOR_EACH_OPCODE_WITH_LLINT_CALL_LINK_INFO(VISIT)
+        FOR_EACH_OPCODE_WITH_LLINT_CALL_LINK_INFO(VISIT)
 
 #undef VISIT
+    }
 }
 
 } // namespace JSC

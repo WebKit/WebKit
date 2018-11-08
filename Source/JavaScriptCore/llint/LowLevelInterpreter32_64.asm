@@ -1955,10 +1955,7 @@ commonOp(llint_op_catch, macro() end, macro (size)
 
     # restore metadataTable since we don't restore callee saves for CLoop during unwinding
     loadp CodeBlock[cfr], t1
-    # FIXME: cleanup double load
-    # https://bugs.webkit.org/show_bug.cgi?id=190933
     loadp CodeBlock::m_metadata[t1], metadataTable
-    loadp MetadataTable::m_buffer[metadataTable], metadataTable
 
     loadi VM::targetInterpreterPCForThrow[t3], PC
 

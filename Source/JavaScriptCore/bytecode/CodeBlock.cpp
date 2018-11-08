@@ -813,7 +813,8 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
     if (Options::dumpGeneratedBytecodes())
         dumpBytecode();
 
-    heap()->reportExtraMemoryAllocated(m_metadata->sizeInBytes());
+    if (m_metadata)
+        vm.heap.reportExtraMemoryAllocated(m_metadata->sizeInBytes());
 
     return true;
 }
@@ -954,7 +955,9 @@ CodeBlock* CodeBlock::specialOSREntryBlockOrNull()
 size_t CodeBlock::estimatedSize(JSCell* cell, VM& vm)
 {
     CodeBlock* thisObject = jsCast<CodeBlock*>(cell);
-    size_t extraMemoryAllocated = thisObject->m_metadata->sizeInBytes();
+    size_t extraMemoryAllocated = 0;
+    if (thisObject->m_metadata)
+        extraMemoryAllocated += thisObject->m_metadata->sizeInBytes();
     if (thisObject->m_jitCode)
         extraMemoryAllocated += thisObject->m_jitCode->size();
     return Base::estimatedSize(cell, vm) + extraMemoryAllocated;
@@ -975,9 +978,11 @@ void CodeBlock::visitChildren(SlotVisitor& visitor)
     if (CodeBlock* otherBlock = specialOSREntryBlockOrNull())
         visitor.appendUnbarriered(otherBlock);
 
-    size_t extraMemory = m_metadata->sizeInBytes();
+    size_t extraMemory = 0;
+    if (m_metadata)
+        extraMemory += m_metadata->sizeInBytes();
     if (m_jitCode)
-        extraMemory = m_jitCode->size();
+        extraMemory += m_jitCode->size();
     visitor.reportExtraMemoryVisited(extraMemory);
 
     stronglyVisitStrongReferences(locker, visitor);

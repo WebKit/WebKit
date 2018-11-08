@@ -1194,10 +1194,7 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
         move t0, sp
     end
 
-    # FIXME: cleanup double load
-    # https://bugs.webkit.org/show_bug.cgi?id=190933
     loadp CodeBlock::m_metadata[t1], metadataTable
-    loadp MetadataTable::m_buffer[metadataTable], metadataTable
 
     if JSVALUE64
         move TagTypeNumber, tagTypeNumber

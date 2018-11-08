@@ -34,26 +34,27 @@ namespace JSC {
 
 class CodeBlock;
 
-class MetadataTable : public RefCounted<MetadataTable> {
+// MetadataTable has a bit strange memory layout for LLInt optimization.
+// [UnlinkedMetadataTable::LinkingData][MetadataTable]
+//                                     ^
+//                 The pointer of MetadataTable points at this address.
+class MetadataTable {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(MetadataTable);
     friend class LLIntOffsetsExtractor;
     friend class UnlinkedMetadataTable;
-
 public:
     ~MetadataTable();
 
     ALWAYS_INLINE Instruction::Metadata* get(OpcodeID opcodeID)
     {
-        ASSERT(m_buffer && opcodeID < NUMBER_OF_BYTECODE_WITH_METADATA);
+        ASSERT(opcodeID < NUMBER_OF_BYTECODE_WITH_METADATA);
         return reinterpret_cast<Instruction::Metadata*>(getImpl(opcodeID));
     }
-
 
     template<typename Op, typename Functor>
     ALWAYS_INLINE void forEach(const Functor& func)
     {
-        if (!m_buffer)
-            return;
-
         auto* metadata = reinterpret_cast<typename Op::Metadata*>(get(Op::opcodeID));
         auto* end = reinterpret_cast<typename Op::Metadata*>(getImpl(Op::opcodeID + 1));
         for (; metadata + 1 <= end; ++metadata)
@@ -62,16 +63,48 @@ public:
 
     size_t sizeInBytes();
 
+    void ref() const
+    {
+        ++linkingData().refCount;
+    }
+
+    void deref() const
+    {
+        unsigned tempRefCount = linkingData().refCount - 1;
+        if (!tempRefCount) {
+            this->~MetadataTable();
+            return;
+        }
+        linkingData().refCount = tempRefCount;
+    }
+
+    unsigned refCount() const
+    {
+        return linkingData().refCount;
+    }
+
+    unsigned hasOneRef() const
+    {
+        return refCount() == 1;
+    }
+
+    UnlinkedMetadataTable::Offset* buffer()
+    {
+        return bitwise_cast<UnlinkedMetadataTable::Offset*>(this);
+    }
+
 private:
-    MetadataTable(UnlinkedMetadataTable&, UnlinkedMetadataTable::Offset*);
+    MetadataTable(UnlinkedMetadataTable&);
+
+    UnlinkedMetadataTable::LinkingData& linkingData() const
+    {
+        return *bitwise_cast<UnlinkedMetadataTable::LinkingData*>((bitwise_cast<uint8_t*>(this) - sizeof(UnlinkedMetadataTable::LinkingData)));
+    }
 
     ALWAYS_INLINE uint8_t* getImpl(unsigned i)
     {
-        return reinterpret_cast<uint8_t*>(m_buffer) + m_buffer[i];
+        return bitwise_cast<uint8_t*>(this) + buffer()[i];
     }
-
-    UnlinkedMetadataTable::Offset* m_buffer;
-    UnlinkedMetadataTable& m_unlinkedMetadata;
 };
 
 } // namespace JSC

@@ -37,6 +37,11 @@ class UnlinkedMetadataTable {
     friend class MetadataTable;
 
 public:
+    struct LinkingData {
+        UnlinkedMetadataTable* unlinkedMetadata;
+        unsigned refCount;
+    };
+
     UnlinkedMetadataTable();
     ~UnlinkedMetadataTable();
 
@@ -46,7 +51,7 @@ public:
 
     void finalize();
 
-    Ref<MetadataTable> link();
+    RefPtr<MetadataTable> link();
 
 private:
     void unlink(MetadataTable&);
@@ -58,10 +63,12 @@ private:
     static constexpr unsigned s_offsetTableEntries = NUMBER_OF_BYTECODE_WITH_METADATA + 1; // one extra entry for the "end" offset;
     static constexpr unsigned s_offsetTableSize = s_offsetTableEntries * sizeof(UnlinkedMetadataTable::Offset);
 
+    Offset* buffer() const { return bitwise_cast<Offset*>(bitwise_cast<uint8_t*>(m_rawBuffer) + sizeof(LinkingData)); }
+
     bool m_hasMetadata : 1;
     bool m_isFinalized : 1;
     bool m_isLinked : 1;
-    Offset* m_buffer;
+    void* m_rawBuffer;
 };
 
 } // namespace JSC

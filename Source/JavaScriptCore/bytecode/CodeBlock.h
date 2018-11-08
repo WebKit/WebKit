@@ -859,6 +859,7 @@ public:
     template<typename Metadata>
     Metadata& metadata(OpcodeID opcodeID, unsigned metadataID)
     {
+        ASSERT(m_metadata);
         return reinterpret_cast<Metadata*>(m_metadata->get(opcodeID))[metadataID];
     }
 

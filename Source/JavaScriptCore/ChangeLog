@@ -1,3 +1,53 @@
+2018-11-07  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        Consider removing double load for accessing the MetadataTable from LLInt
+        https://bugs.webkit.org/show_bug.cgi?id=190933
+
+        Reviewed by Keith Miller.
+
+        This patch removes double load for accesses to MetadataTable from LLInt.
+        MetadataTable is now specially RefCounted class, which has interesting memory layout.
+        When refcount becomes 0, MetadataTable asks UnlinkedMetadataTable to destroy itself.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::estimatedSize):
+        (JSC::CodeBlock::visitChildren):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::metadata):
+        * bytecode/CodeBlockInlines.h:
+        (JSC::CodeBlock::forEachValueProfile):
+        (JSC::CodeBlock::forEachArrayProfile):
+        (JSC::CodeBlock::forEachArrayAllocationProfile):
+        (JSC::CodeBlock::forEachObjectAllocationProfile):
+        (JSC::CodeBlock::forEachLLIntCallLinkInfo):
+        * bytecode/MetadataTable.cpp:
+        (JSC::MetadataTable::MetadataTable):
+        (JSC::MetadataTable::~MetadataTable):
+        (JSC::MetadataTable::sizeInBytes):
+        * bytecode/MetadataTable.h:
+        (JSC::MetadataTable::get):
+        (JSC::MetadataTable::forEach):
+        (JSC::MetadataTable::ref const):
+        (JSC::MetadataTable::deref const):
+        (JSC::MetadataTable::refCount const):
+        (JSC::MetadataTable::hasOneRef const):
+        (JSC::MetadataTable::buffer):
+        (JSC::MetadataTable::linkingData const):
+        (JSC::MetadataTable::getImpl):
+        * bytecode/UnlinkedMetadataTable.h:
+        (JSC::UnlinkedMetadataTable::buffer const):
+        * bytecode/UnlinkedMetadataTableInlines.h:
+        (JSC::UnlinkedMetadataTable::UnlinkedMetadataTable):
+        (JSC::UnlinkedMetadataTable::~UnlinkedMetadataTable):
+        (JSC::UnlinkedMetadataTable::addEntry):
+        (JSC::UnlinkedMetadataTable::sizeInBytes):
+        (JSC::UnlinkedMetadataTable::finalize):
+        (JSC::UnlinkedMetadataTable::link):
+        (JSC::UnlinkedMetadataTable::unlink):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+
 2018-11-07  Caio Lima  <ticaiolima@gmail.com>
 
         [BigInt] Add support to BigInt into ValueAdd

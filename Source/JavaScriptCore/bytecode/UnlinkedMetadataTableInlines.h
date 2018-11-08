@@ -36,21 +36,21 @@ ALWAYS_INLINE UnlinkedMetadataTable::UnlinkedMetadataTable()
     m_hasMetadata = false;
     m_isFinalized = false;
     m_isLinked = false;
-    m_buffer = reinterpret_cast<Offset*>(fastCalloc(s_offsetTableEntries, sizeof(UnlinkedMetadataTable::Offset)));
+    m_rawBuffer = fastZeroedMalloc(sizeof(LinkingData) + s_offsetTableSize);
 }
 
 ALWAYS_INLINE UnlinkedMetadataTable::~UnlinkedMetadataTable()
 {
     ASSERT(!m_isLinked);
     if (m_hasMetadata || !m_isFinalized)
-        fastFree(m_buffer);
+        fastFree(m_rawBuffer);
 }
 
 ALWAYS_INLINE unsigned UnlinkedMetadataTable::addEntry(OpcodeID opcodeID)
 {
     ASSERT(!m_isFinalized && opcodeID < s_offsetTableEntries - 1);
     m_hasMetadata = true;
-    return m_buffer[opcodeID]++;
+    return buffer()[opcodeID]++;
 }
 
 ALWAYS_INLINE size_t UnlinkedMetadataTable::sizeInBytes()
@@ -65,17 +65,14 @@ ALWAYS_INLINE size_t UnlinkedMetadataTable::sizeInBytes(MetadataTable& metadataT
 {
     ASSERT(m_isFinalized);
 
-    if (!metadataTable.m_buffer)
-        return 0;
-
     // In this case, we return the size of the table minus the offset table,
     // which was already accounted for in the UnlinkedCodeBlock.
-    if (metadataTable.m_buffer == m_buffer) {
+    if (metadataTable.buffer() == buffer()) {
         ASSERT(m_isLinked);
-        return m_buffer[s_offsetTableEntries - 1] - s_offsetTableSize;
+        return buffer()[s_offsetTableEntries - 1] - s_offsetTableSize;
     }
 
-    return metadataTable.m_buffer[s_offsetTableEntries - 1];
+    return metadataTable.buffer()[s_offsetTableEntries - 1];
 }
 
 ALWAYS_INLINE void UnlinkedMetadataTable::finalize()
@@ -83,45 +80,45 @@ ALWAYS_INLINE void UnlinkedMetadataTable::finalize()
     ASSERT(!m_isFinalized);
     m_isFinalized = true;
     if (!m_hasMetadata) {
-        fastFree(m_buffer);
-        m_buffer = nullptr;
+        fastFree(m_rawBuffer);
+        m_rawBuffer = nullptr;
         return;
     }
 
     unsigned offset = s_offsetTableSize;
     for (unsigned i = 0; i < s_offsetTableEntries - 1; i++) {
-        unsigned numberOfEntries = m_buffer[i];
+        unsigned numberOfEntries = buffer()[i];
 
         if (numberOfEntries > 0) {
 #if CPU(NEEDS_ALIGNED_ACCESS)
             offset = roundUpToMultipleOf(metadataAlignment(static_cast<OpcodeID>(i)), offset);
 #endif
-            m_buffer[i] = offset;
+            buffer()[i] = offset;
             offset += numberOfEntries * metadataSize(static_cast<OpcodeID>(i));
         } else
-            m_buffer[i] = offset;
+            buffer()[i] = offset;
     }
-    m_buffer[s_offsetTableEntries - 1] = offset;
+    buffer()[s_offsetTableEntries - 1] = offset;
 }
 
-ALWAYS_INLINE Ref<MetadataTable> UnlinkedMetadataTable::link()
+ALWAYS_INLINE RefPtr<MetadataTable> UnlinkedMetadataTable::link()
 {
     ASSERT(m_isFinalized);
 
     if (!m_hasMetadata)
-        return adoptRef(*new MetadataTable(*this, nullptr));
+        return nullptr;
 
-    unsigned totalSize = m_buffer[s_offsetTableEntries - 1];
-    Offset* buffer;
+    unsigned totalSize = buffer()[s_offsetTableEntries - 1];
+    uint8_t* buffer;
     if (!m_isLinked) {
         m_isLinked = true;
-        buffer = m_buffer = reinterpret_cast<Offset*>(fastRealloc(m_buffer, totalSize));
+        m_rawBuffer = buffer = reinterpret_cast<uint8_t*>(fastRealloc(m_rawBuffer, sizeof(LinkingData) + totalSize));
     } else {
-        buffer = reinterpret_cast<Offset*>(fastMalloc(totalSize));
-        memcpy(buffer, m_buffer, s_offsetTableSize);
+        buffer = reinterpret_cast<uint8_t*>(fastMalloc(sizeof(LinkingData) + totalSize));
+        memcpy(buffer, m_rawBuffer, sizeof(LinkingData) + s_offsetTableSize);
     }
-    memset(reinterpret_cast<uint8_t*>(buffer) + s_offsetTableSize, 0, totalSize - s_offsetTableSize);
-    return adoptRef(*new MetadataTable(*this, buffer));
+    memset(buffer + sizeof(LinkingData) + s_offsetTableSize, 0, totalSize - s_offsetTableSize);
+    return adoptRef(*new (buffer + sizeof(LinkingData)) MetadataTable(*this));
 }
 
 ALWAYS_INLINE void UnlinkedMetadataTable::unlink(MetadataTable& metadataTable)
@@ -130,12 +127,13 @@ ALWAYS_INLINE void UnlinkedMetadataTable::unlink(MetadataTable& metadataTable)
     if (!m_hasMetadata)
         return;
 
-    if (metadataTable.m_buffer == m_buffer) {
+    if (metadataTable.buffer() == buffer()) {
         ASSERT(m_isLinked);
         m_isLinked = false;
-        m_buffer = reinterpret_cast<Offset*>(fastRealloc(m_buffer, s_offsetTableSize));
-    } else if (metadataTable.m_buffer)
-        fastFree(metadataTable.m_buffer);
+        m_rawBuffer = fastRealloc(m_rawBuffer, sizeof(LinkingData) + s_offsetTableSize);
+        return;
+    }
+    fastFree(&metadataTable.linkingData());
 }
 
 } // namespace JSC

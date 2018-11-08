@@ -33,10 +33,12 @@
 
 namespace JSC {
 
-MetadataTable::MetadataTable(UnlinkedMetadataTable& unlinkedMetadata, UnlinkedMetadataTable::Offset* buffer)
-    : m_buffer(buffer)
-    , m_unlinkedMetadata(unlinkedMetadata)
+MetadataTable::MetadataTable(UnlinkedMetadataTable& unlinkedMetadata)
 {
+    linkingData() = UnlinkedMetadataTable::LinkingData {
+        &unlinkedMetadata,
+        1,
+    };
 }
 
 struct DeallocTable {
@@ -53,12 +55,12 @@ MetadataTable::~MetadataTable()
 {
     for (unsigned i = 0; i < NUMBER_OF_BYTECODE_WITH_METADATA; i++)
         getOpcodeType<DeallocTable>(static_cast<OpcodeID>(i), this);
-    m_unlinkedMetadata.unlink(*this);
+    linkingData().unlinkedMetadata->unlink(*this);
 }
 
 size_t MetadataTable::sizeInBytes()
 {
-    return m_unlinkedMetadata.sizeInBytes(*this);
+    return linkingData().unlinkedMetadata->sizeInBytes(*this);
 }
 
 } // namespace JSC
