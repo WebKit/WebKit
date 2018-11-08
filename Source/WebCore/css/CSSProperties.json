@@ -5874,9 +5874,9 @@
         "-webkit-text-decoration": {
             "codegen-properties": {
                 "longhands": [
-                    "-webkit-text-decoration-line",
-                    "-webkit-text-decoration-style",
-                    "-webkit-text-decoration-color"
+                    "text-decoration-line",
+                    "text-decoration-style",
+                    "text-decoration-color"
                 ]
             },
             "status": {
@@ -5887,10 +5887,13 @@
                 "url": "https://www.w3.org/TR/css-text-decor-3/#text-decoration"
             }
         },
-        "-webkit-text-decoration-line": {
+        "text-decoration-line": {
             "codegen-properties": {
                 "name-for-methods": "TextDecoration",
-                "converter": "TextDecoration"
+                "converter": "TextDecoration",
+                "aliases": [
+                    "-webkit-text-decoration-line"
+                ]
             },
             "status": {
                 "status": "experimental"
@@ -5900,7 +5903,12 @@
                 "url": "https://www.w3.org/TR/css-text-decor-3/#text-decoration-line"
             }
         },
-        "-webkit-text-decoration-style": {
+        "text-decoration-style": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-text-decoration-style"
+                ]
+            },
             "values": [
                 "solid",
                 "double",
@@ -5916,10 +5924,13 @@
                 "url": "https://www.w3.org/TR/css-text-decor-3/#text-decoration-style"
             }
         },
-        "-webkit-text-decoration-color": {
+        "text-decoration-color": {
             "codegen-properties": {
                 "initial": "invalidColor",
-                "visited-link-color-support": true
+                "visited-link-color-support": true,
+                "aliases": [
+                    "-webkit-text-decoration-color"
+                ]
             },
             "status": {
                 "status": "experimental"
@@ -5929,10 +5940,13 @@
                 "url": "https://www.w3.org/TR/css-text-decor-3/#text-decoration-color"
             }
         },
-        "-webkit-text-decoration-skip": {
+        "text-decoration-skip": {
             "inherited": true,
             "codegen-properties": {
-                "converter": "TextDecorationSkip"
+                "converter": "TextDecorationSkip",
+                "aliases": [
+                    "-webkit-text-decoration-skip"
+                ]
             },
             "status": {
                 "status": "experimental"

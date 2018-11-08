@@ -315,7 +315,7 @@ void TextDecorationPainter::paintTextDecoration(const TextRun& textRun, const Fl
 static Color decorationColor(const RenderStyle& style)
 {
     // Check for text decoration color first.
-    Color result = style.visitedDependentColorWithColorFilter(CSSPropertyWebkitTextDecorationColor);
+    Color result = style.visitedDependentColorWithColorFilter(CSSPropertyTextDecorationColor);
     if (result.isValid())
         return result;
     if (style.hasPositiveStrokeWidth()) {

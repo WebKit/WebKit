@@ -77,68 +77,68 @@ PASS subtest_75
 PASS subtest_76 
 PASS subtest_77 
 PASS subtest_78 
-FAIL subtest_79 assert_true: expected true got false
+PASS subtest_79 
 PASS subtest_80 
 PASS subtest_81 
-FAIL subtest_82 assert_true: expected true got false
+PASS subtest_82 
 PASS subtest_83 
-FAIL subtest_84 assert_true: expected true got false
-FAIL subtest_85 assert_true: expected true got false
-FAIL subtest_86 assert_true: expected true got false
+PASS subtest_84 
+PASS subtest_85 
+PASS subtest_86 
 PASS subtest_87 
 PASS subtest_88 
-FAIL subtest_89 assert_true: expected true got false
-FAIL subtest_90 assert_true: expected true got false
+PASS subtest_89 
+PASS subtest_90 
 PASS subtest_91 
-FAIL subtest_92 assert_true: expected true got false
+PASS subtest_92 
 PASS subtest_93 
 PASS subtest_94 
-FAIL subtest_95 assert_true: expected true got false
+PASS subtest_95 
 PASS subtest_96 
-FAIL subtest_97 assert_true: expected true got false
-FAIL subtest_98 assert_true: expected true got false
-FAIL subtest_99 assert_true: expected true got false
+PASS subtest_97 
+PASS subtest_98 
+PASS subtest_99 
 PASS subtest_100 
 PASS subtest_101 
-FAIL subtest_102 assert_true: expected true got false
-FAIL subtest_103 assert_true: expected true got false
+PASS subtest_102 
+PASS subtest_103 
 PASS subtest_104 
-FAIL subtest_105 assert_true: expected true got false
+PASS subtest_105 
 PASS subtest_106 
 PASS subtest_107 
-FAIL subtest_108 assert_true: expected true got false
+PASS subtest_108 
 PASS subtest_109 
-FAIL subtest_110 assert_true: expected true got false
-FAIL subtest_111 assert_true: expected true got false
-FAIL subtest_112 assert_true: expected true got false
+PASS subtest_110 
+PASS subtest_111 
+PASS subtest_112 
 PASS subtest_113 
 PASS subtest_114 
-FAIL subtest_115 assert_true: expected true got false
-FAIL subtest_116 assert_true: expected true got false
+PASS subtest_115 
+PASS subtest_116 
 PASS subtest_117 
-FAIL subtest_118 assert_true: expected true got false
+PASS subtest_118 
 PASS subtest_119 
 PASS subtest_120 
-FAIL subtest_121 assert_true: expected true got false
+PASS subtest_121 
 PASS subtest_122 
-FAIL subtest_123 assert_true: expected true got false
-FAIL subtest_124 assert_true: expected true got false
-FAIL subtest_125 assert_true: expected true got false
+PASS subtest_123 
+PASS subtest_124 
+PASS subtest_125 
 PASS subtest_126 
 PASS subtest_127 
-FAIL subtest_128 assert_true: expected true got false
-FAIL subtest_129 assert_true: expected true got false
+PASS subtest_128 
+PASS subtest_129 
 PASS subtest_130 
-FAIL subtest_131 assert_true: expected true got false
+PASS subtest_131 
 PASS subtest_132 
 PASS subtest_133 
 PASS subtest_134 
-FAIL subtest_135 assert_true: expected true got false
-FAIL subtest_136 assert_true: expected true got false
+PASS subtest_135 
+PASS subtest_136 
 PASS subtest_137 
-FAIL subtest_138 assert_true: expected true got false
-FAIL subtest_139 assert_true: expected true got false
-FAIL subtest_140 assert_true: expected true got false
+PASS subtest_138 
+PASS subtest_139 
+PASS subtest_140 
 PASS subtest_141 
 PASS subtest_142 
 PASS subtest_143 
@@ -148,56 +148,56 @@ PASS subtest_146
 PASS subtest_147 
 PASS subtest_148 
 PASS subtest_149 
-FAIL subtest_150 assert_true: expected true got false
-FAIL subtest_151 assert_true: expected true got false
+PASS subtest_150 
+PASS subtest_151 
 PASS subtest_152 
-FAIL subtest_153 assert_true: expected true got false
-FAIL subtest_154 assert_true: expected true got false
+PASS subtest_153 
+PASS subtest_154 
 PASS subtest_155 
-FAIL subtest_156 assert_true: expected true got false
-FAIL subtest_157 assert_true: expected true got false
-FAIL subtest_158 assert_true: expected true got false
+PASS subtest_156 
+PASS subtest_157 
+PASS subtest_158 
 PASS subtest_159 
 PASS subtest_160 
 PASS subtest_161 
 PASS subtest_162 
-FAIL subtest_163 assert_true: expected true got false
-FAIL subtest_164 assert_true: expected true got false
-FAIL subtest_165 assert_true: expected true got false
+PASS subtest_163 
+PASS subtest_164 
+PASS subtest_165 
 PASS subtest_166 
 PASS subtest_167 
 PASS subtest_168 
 PASS subtest_169 
-FAIL subtest_170 assert_true: expected true got false
-FAIL subtest_171 assert_true: expected true got false
-FAIL subtest_172 assert_true: expected true got false
-FAIL subtest_173 assert_true: expected true got false
+PASS subtest_170 
+PASS subtest_171 
+PASS subtest_172 
+PASS subtest_173 
 PASS subtest_174 
 PASS subtest_175 
 PASS subtest_176 
-FAIL subtest_177 assert_true: expected true got false
+PASS subtest_177 
 PASS subtest_178 
 PASS subtest_179 
-FAIL subtest_180 assert_true: expected true got false
-FAIL subtest_181 assert_true: expected true got false
+PASS subtest_180 
+PASS subtest_181 
 PASS subtest_182 
-FAIL subtest_183 assert_true: expected true got false
-FAIL subtest_184 assert_true: expected true got false
+PASS subtest_183 
+PASS subtest_184 
 PASS subtest_185 
 PASS subtest_186 
-FAIL subtest_187 assert_true: expected true got false
-FAIL subtest_188 assert_true: expected true got false
-FAIL subtest_189 assert_true: expected true got false
+PASS subtest_187 
+PASS subtest_188 
+PASS subtest_189 
 PASS subtest_190 
-FAIL subtest_191 assert_true: expected true got false
+PASS subtest_191 
 PASS subtest_192 
-FAIL subtest_193 assert_true: expected true got false
+PASS subtest_193 
 PASS subtest_194 
-FAIL subtest_195 assert_true: expected true got false
-FAIL subtest_196 assert_true: expected true got false
-FAIL subtest_197 assert_true: expected true got false
+PASS subtest_195 
+PASS subtest_196 
+PASS subtest_197 
 PASS subtest_198 
-FAIL subtest_199 assert_true: expected true got false
+PASS subtest_199 
 PASS subtest_200 
 PASS subtest_201 
 PASS subtest_202 
@@ -229,24 +229,24 @@ PASS subtest_227
 PASS subtest_228 
 PASS subtest_229 
 PASS subtest_230 
-FAIL monochrome_and_color assert_not_equals: should be either monochrome or color got disallowed value false
+PASS monochrome_and_color 
 PASS find_depth 
-FAIL subtest_231 assert_true: expected true got false
+PASS subtest_231 
 PASS subtest_232 
 PASS subtest_233 
-FAIL subtest_234 assert_true: expected true got false
+PASS subtest_234 
 PASS subtest_235 
-FAIL subtest_236 assert_true: expected true got false
+PASS subtest_236 
 PASS subtest_237 
 PASS subtest_238 
 PASS subtest_239 
-FAIL subtest_240 assert_true: expected true got false
+PASS subtest_240 
 PASS subtest_241 
 PASS subtest_242 
 PASS subtest_243 
-FAIL subtest_244 assert_true: expected true got false
+PASS subtest_244 
 PASS subtest_245 
-FAIL subtest_246 assert_true: expected true got false
+PASS subtest_246 
 PASS subtest_247 
 PASS subtest_248 
 PASS subtest_249 
@@ -265,13 +265,13 @@ PASS subtest_261
 PASS subtest_262 
 PASS subtest_263 
 PASS subtest_264 
-FAIL subtest_265 assert_true: expected true got false
+PASS subtest_265 
 PASS subtest_266 
-FAIL subtest_267 assert_true: expected true got false
+PASS subtest_267 
 PASS subtest_268 
-FAIL subtest_269 assert_true: expected true got false
-FAIL subtest_270 assert_true: expected true got false
-FAIL subtest_271 assert_true: expected true got false
+PASS subtest_269 
+PASS subtest_270 
+PASS subtest_271 
 PASS subtest_272 
 PASS subtest_273 
 PASS subtest_274 
@@ -318,13 +318,13 @@ FAIL find_resolution assert_false: expected false got true
 PASS subtest_314 
 PASS subtest_315 
 FAIL subtest_316 assert_true: expected true got false
-PASS subtest_317 
-FAIL subtest_318 assert_true: expected true got false
+FAIL subtest_317 assert_false: expected false got true
+PASS subtest_318 
 PASS subtest_319 
 FAIL subtest_320 assert_true: expected true got false
 FAIL subtest_321 assert_true: expected true got false
 PASS subtest_322 
-FAIL subtest_323 assert_true: expected true got false
+PASS subtest_323 
 FAIL subtest_324 assert_true: expected true got false
 FAIL subtest_325 assert_true: expected true got false
 FAIL subtest_326 assert_true: expected true got false
@@ -348,7 +348,7 @@ PASS subtest_343
 PASS subtest_344 
 PASS subtest_345 
 PASS subtest_346 
-FAIL subtest_347 assert_true: expected true got false
+PASS subtest_347 
 PASS subtest_348 
 PASS subtest_349 
 PASS subtest_350 
@@ -357,25 +357,25 @@ PASS subtest_352
 PASS subtest_353 
 PASS subtest_354 
 PASS subtest_355 
-FAIL subtest_356 assert_true: expected true got false
+PASS subtest_356 
 PASS subtest_357 
 FAIL subtest_358 assert_true: expected true got false
 PASS subtest_359 
 PASS subtest_360 
-FAIL subtest_361 assert_true: expected true got false
+PASS subtest_361 
 PASS subtest_362 
-FAIL subtest_363 assert_true: expected true got false
-FAIL subtest_364 assert_true: expected true got false
-FAIL subtest_365 assert_true: expected true got false
-FAIL subtest_366 assert_true: expected true got false
-FAIL subtest_367 assert_true: expected true got false
+PASS subtest_363 
+PASS subtest_364 
+PASS subtest_365 
+PASS subtest_366 
+PASS subtest_367 
 PASS subtest_368 
-FAIL subtest_369 assert_true: expected true got false
-FAIL subtest_370 assert_true: expected true got false
+PASS subtest_369 
+PASS subtest_370 
 PASS subtest_371 
 PASS subtest_372 
-FAIL subtest_373 assert_true: expected true got false
-FAIL subtest_374 assert_true: expected true got false
+PASS subtest_373 
+PASS subtest_374 
 PASS subtest_375 
 PASS subtest_376 
 PASS subtest_377 

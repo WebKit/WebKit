@@ -211,10 +211,10 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitTextAlignLast,
     CSSPropertyWebkitTextJustify,
 #endif // CSS3_TEXT
-    CSSPropertyWebkitTextDecorationLine,
-    CSSPropertyWebkitTextDecorationStyle,
-    CSSPropertyWebkitTextDecorationColor,
-    CSSPropertyWebkitTextDecorationSkip,
+    CSSPropertyTextDecorationLine,
+    CSSPropertyTextDecorationStyle,
+    CSSPropertyTextDecorationColor,
+    CSSPropertyTextDecorationSkip,
     CSSPropertyTextUnderlinePosition,
     CSSPropertyTextIndent,
     CSSPropertyTextRendering,
@@ -3344,13 +3344,13 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyinStyle(const RenderSty
 #endif // CSS3_TEXT
         case CSSPropertyWebkitTextDecoration:
             return getCSSPropertyValuesForShorthandProperties(webkitTextDecorationShorthand());
-        case CSSPropertyWebkitTextDecorationLine:
+        case CSSPropertyTextDecorationLine:
             return renderTextDecorationFlagsToCSSValue(style.textDecoration());
-        case CSSPropertyWebkitTextDecorationStyle:
+        case CSSPropertyTextDecorationStyle:
             return renderTextDecorationStyleFlagsToCSSValue(style.textDecorationStyle());
-        case CSSPropertyWebkitTextDecorationColor:
+        case CSSPropertyTextDecorationColor:
             return currentColorOrValidColor(&style, style.textDecorationColor());
-        case CSSPropertyWebkitTextDecorationSkip:
+        case CSSPropertyTextDecorationSkip:
             return renderTextDecorationSkipFlagsToCSSValue(style.textDecorationSkip());
         case CSSPropertyTextUnderlinePosition:
             return cssValuePool.createValue(style.textUnderlinePosition());

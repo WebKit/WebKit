@@ -198,7 +198,7 @@ static inline bool isColorPropertyID(CSSPropertyID propertyId)
     case CSSPropertyWebkitTextEmphasisColor:
     case CSSPropertyWebkitTextFillColor:
     case CSSPropertyWebkitTextStrokeColor:
-    case CSSPropertyWebkitTextDecorationColor:
+    case CSSPropertyTextDecorationColor:
         return true;
     default:
         return false;
@@ -645,7 +645,7 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
 // FIXME-NEWPARSER: Support
 //    case CSSPropertyTextCombineUpright:
 //        return valueID == CSSValueNone || valueID == CSSValueAll;
-    case CSSPropertyWebkitTextDecorationStyle:
+    case CSSPropertyTextDecorationStyle:
         // solid | double | dotted | dashed | wavy
         return valueID == CSSValueSolid || valueID == CSSValueDouble || valueID == CSSValueDotted || valueID == CSSValueDashed || valueID == CSSValueWavy;
 #if ENABLE(CSS3_TEXT)
@@ -889,7 +889,7 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyWebkitRtlOrdering:
     case CSSPropertyWebkitRubyPosition:
     case CSSPropertyWebkitTextCombine:
-    case CSSPropertyWebkitTextDecorationStyle:
+    case CSSPropertyTextDecorationStyle:
     case CSSPropertyWebkitTextOrientation:
     case CSSPropertyWebkitTextSecurity:
     case CSSPropertyWebkitTextZoom:

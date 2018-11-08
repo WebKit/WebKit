@@ -4068,9 +4068,9 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyOrphans:
     case CSSPropertyWidows:
         return consumePositiveInteger(m_range);
-    case CSSPropertyWebkitTextDecorationColor:
+    case CSSPropertyTextDecorationColor:
         return consumeColor(m_range, m_context.mode);
-    case CSSPropertyWebkitTextDecorationSkip:
+    case CSSPropertyTextDecorationSkip:
         return consumeTextDecorationSkip(m_range);
     case CSSPropertyWebkitTextStrokeWidth:
         return consumeTextStrokeWidth(m_range, m_context.mode);
@@ -4135,7 +4135,7 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         return consumeFilter(m_range, m_context, AllowedFilterFunctions::ColorFilters);
     case CSSPropertyTextDecoration:
     case CSSPropertyWebkitTextDecorationsInEffect:
-    case CSSPropertyWebkitTextDecorationLine:
+    case CSSPropertyTextDecorationLine:
         return consumeTextDecorationLine(m_range);
     case CSSPropertyWebkitTextEmphasisStyle:
         return consumeTextEmphasisStyle(m_range);

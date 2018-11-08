@@ -616,7 +616,7 @@ NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDe
                         auto underlineColor = Color(colorWithOverrideAlpha(textColor.rgb(), overrideAlpha));
 
                         anchorElement->setInlineStyleProperty(CSSPropertyColor, textColor.cssText());
-                        anchorElement->setInlineStyleProperty(CSSPropertyWebkitTextDecorationColor, underlineColor.cssText());
+                        anchorElement->setInlineStyleProperty(CSSPropertyTextDecorationColor, underlineColor.cssText());
                     }
                 }
             } else if (is<StyledElement>(*parentNode)) {

@@ -1171,10 +1171,10 @@ static bool shouldApplyPropertyInParseOrder(CSSPropertyID propertyID)
     case CSSPropertyWebkitBoxShadow:
     case CSSPropertyBoxShadow:
     case CSSPropertyWebkitTextDecoration:
-    case CSSPropertyWebkitTextDecorationLine:
-    case CSSPropertyWebkitTextDecorationStyle:
-    case CSSPropertyWebkitTextDecorationColor:
-    case CSSPropertyWebkitTextDecorationSkip:
+    case CSSPropertyTextDecorationLine:
+    case CSSPropertyTextDecorationStyle:
+    case CSSPropertyTextDecorationColor:
+    case CSSPropertyTextDecorationSkip:
     case CSSPropertyTextUnderlinePosition:
     case CSSPropertyTextUnderlineOffset:
     case CSSPropertyTextDecorationThickness:
@@ -1463,7 +1463,7 @@ inline bool isValidVisitedLinkProperty(CSSPropertyID id)
     case CSSPropertyColor:
     case CSSPropertyOutlineColor:
     case CSSPropertyColumnRuleColor:
-    case CSSPropertyWebkitTextDecorationColor:
+    case CSSPropertyTextDecorationColor:
     case CSSPropertyWebkitTextEmphasisColor:
     case CSSPropertyWebkitTextFillColor:
     case CSSPropertyWebkitTextStrokeColor:

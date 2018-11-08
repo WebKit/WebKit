@@ -1,3 +1,13 @@
+2018-11-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Unprefix text-decoration CSS3 properties
+        https://bugs.webkit.org/show_bug.cgi?id=127193
+
+        Reviewed by Dean Jackson.
+
+        * fast/css3-text/css3-text-decoration/unprefix-expected.html: Added.
+        * fast/css3-text/css3-text-decoration/unprefix.html: Added.
+
 2018-11-08  Timothy Hatcher  <timothy@apple.com>
 
         Add experimental support for a `supported-color-schemes` CSS property.
