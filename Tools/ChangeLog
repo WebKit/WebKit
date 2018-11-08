@@ -1,3 +1,18 @@
+2018-11-08  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, a quick build fix for r237983
+
+        Temporarily make CtapRequestTest.cpp/CtapResponseTest.cpp to mac only to avoid iOS build failures.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj
+        * TestWebKitAPI/Tests/WebCore/mac/CtapRequestTest.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebCore/CtapRequestTest.cpp.
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/mac/CtapResponseTest.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebCore/CtapResponseTest.cpp.
+        (TestWebKitAPI::getTestCorruptedSignResponse):
+        (TestWebKitAPI::getTestCredentialRawIdBytes):
+        (TestWebKitAPI::convertToVector):
+        (TestWebKitAPI::TEST):
+
 2018-11-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Fix steps_unittest.py failures related to recent Win10/Win7 changes
