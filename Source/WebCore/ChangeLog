@@ -1,3 +1,22 @@
+2018-11-08  Jonathan Hammer  <jonathan@e3software.com>
+
+        Plain text drag in contenteditable is always DragOperationCopy, never DragOperationMove
+        https://bugs.webkit.org/show_bug.cgi?id=191228
+        <rdar://problem/45786830>
+
+        Reviewed by Wenson Hsieh.
+
+        DragController::beginDrag should not call cleanupAfterSystemDrag because
+        the drag is still in progress even after the call to m_client.beginDrag()
+        returns. This is in contrast to DragController::doSystemDrag, where the
+        call to cleanupAfterSystemDrag is appropriate because the drag has
+        concluded by the time m_client.startDrag() returns.
+
+        Test: fast/events/drag-and-drop-move-not-copy.html
+
+        * page/DragController.cpp:
+        (WebCore::DragController::beginDrag):
+
 2018-11-08  Zalan Bujtas  <zalan@apple.com>
 
         [BFC][IFC] InlineFormattingContext::Line::alignRuns() should take care of all the alignments.

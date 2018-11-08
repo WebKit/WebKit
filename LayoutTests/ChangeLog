@@ -1,3 +1,22 @@
+2018-11-08  Jonathan Hammer  <jonathan@e3software.com>
+
+        Plain text drag in contenteditable is always DragOperationCopy, never DragOperationMove
+        https://bugs.webkit.org/show_bug.cgi?id=191228
+        <rdar://problem/45786830>
+
+        Reviewed by Wenson Hsieh.
+
+        A test that checks that dragging plain text in a contenteditable element results
+        in the text being moved and not copied. Only applies to WK1. Test skipped on
+        WK2 because WK2 EventSender does not support drag events. Test also skipped on 
+        AppleWin because drag and drop doesn't work correctly in DRT (according to the 
+        TestExpectations file).
+
+        * fast/events/drag-and-drop-move-not-copy-expected.txt: Added.
+        * fast/events/drag-and-drop-move-not-copy.html: Added.
+        * platform/win/TestExpectations:
+        * platform/wk2/TestExpectations:
+
 2018-11-08  Alicia Boya García  <aboya@igalia.com>
 
         [GTK] Unreviewed test gardening

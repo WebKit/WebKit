@@ -1253,13 +1253,6 @@ void DragController::beginDrag(DragItem dragItem, Frame& frame, const IntPoint& 
     auto mouseDraggedPointInRootViewCoordinates = viewProtector->rootViewToContents(frame.view()->contentsToRootView(mouseDraggedPoint));
 
     m_client.beginDrag(WTFMove(dragItem), frame, mouseDownPointInRootViewCoordinates, mouseDraggedPointInRootViewCoordinates, dataTransfer, dragSourceAction);
-
-    // DragClient::beginDrag can cause the drag controller to be deleted.
-    if (!mainFrameProtector->page())
-        return;
-
-    // FIXME: This shouldn't be needed.
-    cleanupAfterSystemDrag();
 }
 
 void DragController::doSystemDrag(DragImage image, const IntPoint& dragLoc, const IntPoint& eventPos, Frame& frame, const DragState& state, PromisedAttachmentInfo&& promisedAttachmentInfo)
