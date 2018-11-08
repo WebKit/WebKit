@@ -1,3 +1,15 @@
+2018-11-08  Alicia Boya García  <aboya@igalia.com>
+
+        [GTK] Unreviewed test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=191404
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/block/basic/height-percentage-simple-expected.txt: Added.
+        * platform/gtk/fast/inline/simple-inline-block-expected.txt: Added.
+        * platform/gtk/fast/inline/simple-intruding-float1-expected.txt: Added.
+        * platform/gtk/fast/inline/simple-intruding-floats2-expected.txt: Added.
+        * platform/gtk/fast/inline/simple-shrink-to-fit-inline-block-expected.txt: Added.
+
 2018-11-07  Justin Michaud  <justin_michaud@apple.com>
 
         CSS Painting API should pass size, arguments and input properties to paint callback
