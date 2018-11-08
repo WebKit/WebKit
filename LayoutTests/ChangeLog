@@ -1,3 +1,13 @@
+2018-11-08  Per Arne Vollan  <pvollan@apple.com>
+
+        [Sierra Release WK2] Layout Test media/track/track-cue-css.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=191200
+
+        Unreviewed, speculative fix for test flakiness.
+
+        * media/track/track-cue-css-expected.html:
+        * media/track/track-cue-css.html:
+
 2018-11-08  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Use DeviceIdHashSaltStorage to generate device ID hash salt

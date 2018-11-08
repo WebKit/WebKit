@@ -6,12 +6,19 @@
         <script src=../video-test.js></script>
         <script src=../media-controls.js></script>
         <script>
+
+        function seeked()
+        {
+            consoleWrite("Finishing test.");
+            setTimeout(endTest, 100);
+        }
+        
         function loaded()
         {
             consoleWrite("Test that CSS in VTT file is applied correctly.");
             findMediaElement();
             video.src = findMediaFile('video', '../content/test');
-            waitForEvent('seeked', endTest);
+            waitForEvent('seeked', seeked);
             waitForEvent('canplaythrough', function() { video.currentTime = 0; });
         }
 
