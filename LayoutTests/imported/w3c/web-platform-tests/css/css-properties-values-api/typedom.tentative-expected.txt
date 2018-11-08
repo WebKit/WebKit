@@ -1,6 +1,6 @@
-CONSOLE MESSAGE: line 340: ReferenceError: Can't find variable: CSSUnparsedValue
+CONSOLE MESSAGE: line 349: TypeError: CSS.px is not a function. (In 'CSS.px(15)', 'CSS.px' is undefined)
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSUnparsedValue
+Harness Error (FAIL), message = TypeError: CSS.px is not a function. (In 'CSS.px(15)', 'CSS.px' is undefined)
 
 FAIL Computed * is reified as CSSUnparsedValue target.computedStyleMap is not a function. (In 'target.computedStyleMap()', 'target.computedStyleMap' is undefined)
 FAIL Computed <angle> is reified as CSSUnitValue The given initial value does not parse for the given syntax.
@@ -8,12 +8,12 @@ FAIL Computed <color> is reified as CSSStyleValue The given initial value does n
 FAIL Computed <custom-ident> is reified as CSSKeywordValue The given initial value does not parse for the given syntax.
 FAIL Computed <image> [url] is reified as CSSImageValue The given initial value does not parse for the given syntax.
 FAIL Computed <integer> is reified as CSSUnitValue The given initial value does not parse for the given syntax.
-FAIL Computed <length-percentage> [%] is reified as CSSUnitValue Can't find variable: CSSUnitValue
-FAIL Computed <length-percentage> [px] is reified as CSSUnitValue Can't find variable: CSSUnitValue
+FAIL Computed <length-percentage> [%] is reified as CSSUnitValue target.computedStyleMap is not a function. (In 'target.computedStyleMap()', 'target.computedStyleMap' is undefined)
+FAIL Computed <length-percentage> [px] is reified as CSSUnitValue target.computedStyleMap is not a function. (In 'target.computedStyleMap()', 'target.computedStyleMap' is undefined)
 FAIL Computed <length-percentage> [px + %] is reified as CSSMathSum Can't find variable: CSSMathSum
-FAIL Computed <length> is reified as CSSUnitValue Can't find variable: CSSUnitValue
+FAIL Computed <length> is reified as CSSUnitValue target.computedStyleMap is not a function. (In 'target.computedStyleMap()', 'target.computedStyleMap' is undefined)
 FAIL Computed <number> is reified as CSSUnitValue The given initial value does not parse for the given syntax.
-FAIL Computed <percentage> is reified as CSSUnitValue Can't find variable: CSSUnitValue
+FAIL Computed <percentage> is reified as CSSUnitValue target.computedStyleMap is not a function. (In 'target.computedStyleMap()', 'target.computedStyleMap' is undefined)
 FAIL Computed <resolution> is reified as CSSUnitValue The given initial value does not parse for the given syntax.
 FAIL Computed <time> is reified as CSSUnitValue The given initial value does not parse for the given syntax.
 FAIL Computed <url> is reified as CSSStyleValue The given initial value does not parse for the given syntax.

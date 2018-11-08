@@ -26,4 +26,9 @@
 [
     EnabledAtRuntime=CSSPaintingAPI,
     Conditional=CSS_PAINTING_API,
-] callback CSSPaintCallback = void (PaintRenderingContext2D context, CSSPaintSize size, StylePropertyMapReadOnly styleMap, sequence<USVString> arguments);
+    Exposed=PaintWorklet,
+    ImplementationLacksVTable,
+] interface CSSPaintSize {
+    readonly attribute double width;
+    readonly attribute double height;
+};

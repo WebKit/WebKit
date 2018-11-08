@@ -27,25 +27,23 @@
 
 #if ENABLE(CSS_PAINTING_API)
 
-#include "ActiveDOMCallback.h"
-#include "CSSPaintSize.h"
-#include "CallbackResult.h"
-#include "StylePropertyMapReadOnly.h"
 #include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
-class PaintRenderingContext2D;
 
-class CSSPaintCallback : public RefCounted<CSSPaintCallback>, public ActiveDOMCallback {
+class CSSStyleValue : public RefCounted<CSSStyleValue> {
 public:
-    using ActiveDOMCallback::ActiveDOMCallback;
+    virtual ~CSSStyleValue() = default;
+    virtual String toString() = 0;
 
-    virtual CallbackResult<void> handleEvent(PaintRenderingContext2D&, CSSPaintSize&, StylePropertyMapReadOnly&, const Vector<String>&) = 0;
+    virtual bool isUnitValue() { return false; }
+    virtual bool isUnparsedValue() { return false; }
 
-    virtual ~CSSPaintCallback()
-    {
-    }
+protected:
+    CSSStyleValue() = default;
 };
 
 } // namespace WebCore
+
 #endif

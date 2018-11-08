@@ -27,25 +27,41 @@
 
 #if ENABLE(CSS_PAINTING_API)
 
-#include "ActiveDOMCallback.h"
-#include "CSSPaintSize.h"
-#include "CallbackResult.h"
-#include "StylePropertyMapReadOnly.h"
+#include "CSSNumericValue.h"
 #include <wtf/RefCounted.h>
+#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
-class PaintRenderingContext2D;
 
-class CSSPaintCallback : public RefCounted<CSSPaintCallback>, public ActiveDOMCallback {
+class CSSUnitValue final : public CSSNumericValue {
 public:
-    using ActiveDOMCallback::ActiveDOMCallback;
+    static Ref<CSSUnitValue> create(double value, const String& unit)
+    {
+        return adoptRef(*new CSSUnitValue(value, unit));
+    }
 
-    virtual CallbackResult<void> handleEvent(PaintRenderingContext2D&, CSSPaintSize&, StylePropertyMapReadOnly&, const Vector<String>&) = 0;
+    // FIXME: not correct.
+    String toString() final { return makeString((int) m_value, m_unit); }
 
-    virtual ~CSSPaintCallback()
+    double value() const { return m_value; }
+    void setValue(double value) { m_value = value; }
+    const String& unit() const { return m_unit; }
+    void setUnit(const String& unit) { m_unit = unit; }
+
+private:
+    CSSUnitValue(double value, const String& unit)
+        : m_value(value)
+        , m_unit(unit)
     {
     }
+
+    bool isUnitValue() final { return true; }
+
+    double m_value;
+    String m_unit;
 };
 
 } // namespace WebCore
+
 #endif

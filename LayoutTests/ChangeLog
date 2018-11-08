@@ -1,3 +1,14 @@
+2018-11-07  Justin Michaud  <justin_michaud@apple.com>
+
+        CSS Painting API should pass size, arguments and input properties to paint callback
+        https://bugs.webkit.org/show_bug.cgi?id=191309
+
+        Reviewed by Chris Dumez.
+
+        * fast/css-custom-paint/properties-expected.html: Added.
+        * fast/css-custom-paint/properties.html: Added.
+        * fast/css-custom-paint/worklet.html:
+
 2018-11-07  Zalan Bujtas  <zalan@apple.com>
 
         Click and touch event listeners on the body don't work

@@ -1,0 +1,53 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:CSSPaintingAPIEnabled=true ] -->
+<meta name="author" title="Justin Michaud" href="mailto:justin_michaud@webkit.org">
+<meta name="assert" content="Test paint worklet input properties and arguments">
+<link rel="help" content="https://drafts.css-houdini.org/css-paint-api-1/">
+<script src="resources/testharness.js"></script>
+
+<style>
+  .paint {
+    background-image: paint(my-paint,150px,helloworld1,helloworld2);
+    width: 150px;
+    height: 150px;
+    --my-prop:helloworld1;
+    --my-registered-prop:helloworld2;
+  }
+</style>
+
+<div class="paint"></div>
+<div class="paint"></div>
+
+<script id="code" type="text/worklet">
+class MyPaint {
+  static get inputProperties() { return ['height', '--my-prop', '--my-registered-prop', "--never-specified"]; }
+  static get inputArguments() { return ['*', '*', '*']; }
+  paint(ctx, geom, properties, args) {
+    assert_equals(properties.get('height').toString(), args[0].toString());
+    assert_equals(properties.get('height').value, 150);
+    assert_equals(properties.get('height').unit, 'px');
+    assert_equals(properties.get('--my-prop').toString(), args[1].toString());
+    assert_equals(properties.get('--my-registered-prop').toString(), args[2].toString());
+    assert_equals(properties.get('width'), null);
+    assert_equals(properties.get('--never-specified').toString(), '');
+
+    for (var i = 0; i < 6; i++){
+      for (var j = 0; j < 6; j++){
+        ctx.fillStyle = 'rgb(' + Math.floor(255 - 42.5 * i) + ',' +
+                         Math.floor(255 - 42.5 * j) + ',0)';
+        ctx.fillRect(j * 25, i * 25, 25, 25);
+      }
+    }
+  }
+}
+registerPaint('my-paint', MyPaint);
+</script>
+
+<script>
+importWorklet(CSS.paintWorklet, document.getElementById('code').textContent);
+CSS.registerProperty({
+  name: '--my-registered-prop',
+  syntax: '*',
+  initialValue: 'initialValueProp',
+  inherits: false
+});
+</script>

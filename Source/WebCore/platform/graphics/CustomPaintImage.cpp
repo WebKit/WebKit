@@ -28,17 +28,26 @@
 
 #if ENABLE(CSS_PAINTING_API)
 
+#include "CSSComputedStyleDeclaration.h"
+#include "CSSPrimitiveValue.h"
+#include "CSSPropertyParser.h"
+#include "CSSUnitValue.h"
+#include "CSSUnparsedValue.h"
 #include "CustomPaintCanvas.h"
 #include "GraphicsContext.h"
 #include "ImageBitmap.h"
 #include "ImageBuffer.h"
 #include "JSCSSPaintCallback.h"
 #include "PaintRenderingContext2D.h"
+#include "RenderElement.h"
 
 namespace WebCore {
 
-CustomPaintImage::CustomPaintImage(const PaintWorkletGlobalScope::PaintDefinition& definition, const FloatSize& size)
+CustomPaintImage::CustomPaintImage(const PaintWorkletGlobalScope::PaintDefinition& definition, const FloatSize& size, RenderElement& element, const Vector<String>& arguments)
     : m_paintCallback(definition.paintCallback.get())
+    , m_inputProperties(definition.inputProperties)
+    , m_element(makeWeakPtr(element))
+    , m_arguments(arguments)
 {
     setContainerSize(size);
 }
@@ -47,6 +56,12 @@ CustomPaintImage::~CustomPaintImage() = default;
 
 ImageDrawResult CustomPaintImage::doCustomPaint(GraphicsContext& destContext, const FloatSize& destSize)
 {
+    if (!m_element || !m_element->element())
+        return ImageDrawResult::DidNothing;
+
+    ASSERT(!m_element->needsLayout());
+    ASSERT(!m_element->element()->document().needsStyleRecalc());
+
     JSCSSPaintCallback& callback = static_cast<JSCSSPaintCallback&>(m_paintCallback.get());
     auto* scriptExecutionContext = callback.scriptExecutionContext();
     if (!scriptExecutionContext)
@@ -59,7 +74,36 @@ ImageDrawResult CustomPaintImage::doCustomPaint(GraphicsContext& destContext, co
         return ImageDrawResult::DidNothing;
     auto context = contextOrException.releaseReturnValue();
 
-    auto result = m_paintCallback->handleEvent(*context);
+    HashMap<String, Ref<CSSStyleValue>> propertyValues;
+    ComputedStyleExtractor extractor(m_element->element());
+
+    for (auto& name : m_inputProperties) {
+        RefPtr<CSSValue> value;
+        if (isCustomPropertyName(name))
+            value = extractor.customPropertyValue(name);
+        else {
+            CSSPropertyID propertyID = cssPropertyID(name);
+            if (!propertyID)
+                return ImageDrawResult::DidNothing;
+            value = extractor.propertyValue(propertyID, DoNotUpdateLayout);
+        }
+
+        if (!value) {
+            propertyValues.add(name, CSSUnparsedValue::create(emptyString()));
+            continue;
+        }
+
+        // FIXME: Properly reify all length values.
+        if (is<CSSPrimitiveValue>(*value) && downcast<CSSPrimitiveValue>(*value).primitiveType() == CSSPrimitiveValue::CSS_PX)
+            propertyValues.add(name, CSSUnitValue::create(downcast<CSSPrimitiveValue>(*value).doubleValue(), "px"));
+        else
+            propertyValues.add(name, CSSUnparsedValue::create(value->cssText()));
+    }
+
+    auto size = CSSPaintSize::create(destSize.width(), destSize.height());
+    auto propertyMap = StylePropertyMapReadOnly::create(WTFMove(propertyValues));
+
+    auto result = m_paintCallback->handleEvent(*context, size, propertyMap, m_arguments);
     if (result.type() != CallbackResultType::Success)
         return ImageDrawResult::DidNothing;
 

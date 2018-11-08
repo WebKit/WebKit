@@ -68,6 +68,7 @@ VPATH = \
     $(WebCore)/crypto/keys \
     $(WebCore)/crypto/parameters \
     $(WebCore)/css \
+    $(WebCore)/css/typedom \
     $(WebCore)/dom \
     $(WebCore)/editing \
     $(WebCore)/fileapi \
@@ -459,6 +460,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/css/CSSNamespaceRule.idl \
     $(WebCore)/css/CSSPageRule.idl \
     $(WebCore)/css/CSSPaintCallback.idl \
+    $(WebCore)/css/CSSPaintSize.idl \
     $(WebCore)/css/CSSRule.idl \
     $(WebCore)/css/CSSRuleList.idl \
     $(WebCore)/css/CSSStyleDeclaration.idl \
@@ -489,6 +491,11 @@ JS_BINDING_IDLS = \
     $(WebCore)/css/StyleMedia.idl \
     $(WebCore)/css/StyleSheet.idl \
     $(WebCore)/css/StyleSheetList.idl \
+    $(WebCore)/css/typedom/CSSNumericValue.idl \
+    $(WebCore)/css/typedom/CSSStyleValue.idl \
+    $(WebCore)/css/typedom/CSSUnitValue.idl \
+    $(WebCore)/css/typedom/CSSUnparsedValue.idl \
+    $(WebCore)/css/typedom/StylePropertyMapReadOnly.idl \
     $(WebCore)/css/WebKitCSSMatrix.idl \
     $(WebCore)/css/WebKitCSSViewportRule.idl \
     $(WebCore)/dom/AbortController.idl \
@@ -1499,6 +1506,7 @@ IDL_INCLUDES = \
     $(WebCore)/accessibility \
     $(WebCore)/animation \
     $(WebCore)/css \
+    $(WebCore)/css/typedom \
     $(WebCore)/crypto \
     $(WebCore)/dom \
     $(WebCore)/fileapi \

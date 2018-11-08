@@ -23,29 +23,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "JSCSSStyleValue.h"
 
 #if ENABLE(CSS_PAINTING_API)
 
-#include "ActiveDOMCallback.h"
-#include "CSSPaintSize.h"
-#include "CallbackResult.h"
-#include "StylePropertyMapReadOnly.h"
-#include <wtf/RefCounted.h>
+#include "JSCSSUnitValue.h"
+#include "JSCSSUnparsedValue.h"
 
 namespace WebCore {
-class PaintRenderingContext2D;
+using namespace JSC;
 
-class CSSPaintCallback : public RefCounted<CSSPaintCallback>, public ActiveDOMCallback {
-public:
-    using ActiveDOMCallback::ActiveDOMCallback;
+JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<CSSStyleValue>&& value)
+{
+    if (value->isUnitValue())
+        return createWrapper<CSSUnitValue>(globalObject, WTFMove(value));
+    if (value->isUnparsedValue())
+        return createWrapper<CSSUnparsedValue>(globalObject, WTFMove(value));
 
-    virtual CallbackResult<void> handleEvent(PaintRenderingContext2D&, CSSPaintSize&, StylePropertyMapReadOnly&, const Vector<String>&) = 0;
+    ASSERT_NOT_REACHED();
+    return createWrapper<CSSStyleValue>(globalObject, WTFMove(value));
+}
 
-    virtual ~CSSPaintCallback()
-    {
-    }
-};
+JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, CSSStyleValue& object)
+{
+    return wrap(state, globalObject, object);
+}
 
 } // namespace WebCore
+
 #endif

@@ -1295,11 +1295,17 @@ static RefPtr<CSSValue> consumeCustomPaint(CSSParserTokenRange& args)
         return nullptr;
     auto name = args.consumeIncludingWhitespace().value().toString();
 
-    // FIXME: should parse arguments.
+    if (!args.atEnd() && args.peek() != CommaToken)
+        return nullptr;
+    if (!args.atEnd())
+        args.consume();
+
+    auto argumentList = CSSVariableData::create(args);
+
     while (!args.atEnd())
         args.consume();
 
-    return CSSPaintImageValue::create(name);
+    return CSSPaintImageValue::create(name, WTFMove(argumentList));
 }
 #endif
 

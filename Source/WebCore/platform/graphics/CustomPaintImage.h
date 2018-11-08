@@ -29,23 +29,25 @@
 
 #include "GeneratedImage.h"
 #include "PaintWorkletGlobalScope.h"
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class ImageBuffer;
+class RenderElement;
 
 class CustomPaintImage final : public GeneratedImage {
 public:
-    static Ref<CustomPaintImage> create(const PaintWorkletGlobalScope::PaintDefinition& definition, const FloatSize& size)
+    static Ref<CustomPaintImage> create(const PaintWorkletGlobalScope::PaintDefinition& definition, const FloatSize& size, RenderElement& element, const Vector<String>& arguments)
     {
-        return adoptRef(*new CustomPaintImage(definition, size));
+        return adoptRef(*new CustomPaintImage(definition, size, element, arguments));
     }
 
     virtual ~CustomPaintImage();
     bool isCustomPaintImage() const override { return true; }
 
 private:
-    CustomPaintImage(const PaintWorkletGlobalScope::PaintDefinition&, const FloatSize&);
+    CustomPaintImage(const PaintWorkletGlobalScope::PaintDefinition&, const FloatSize&, RenderElement&, const Vector<String>& arguments);
 
     ImageDrawResult doCustomPaint(GraphicsContext&, const FloatSize&);
 
@@ -53,6 +55,9 @@ private:
     void drawPattern(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, CompositeOperator, BlendMode) final;
 
     Ref<CSSPaintCallback> m_paintCallback;
+    Vector<String> m_inputProperties;
+    WeakPtr<RenderElement> m_element;
+    Vector<String> m_arguments;
 };
 
 }

@@ -17,6 +17,13 @@
 <script id="code" type="text/worklet">
 class MyPaint {
   paint(ctx, geom, properties) {
+    console.log("Hello from paint callback!");
+    assert_greater_than(eval("devicePixelRatio"), 0);
+    assert_throws({'name': 'ReferenceError'}, function () { eval("window"); });
+
+    const promise = new Promise((resolve, reject) => { console.log("In promise"); resolve() });
+    promise.then(() => console.log("Promise was resolved"));
+
     for (var i = 0; i < 6; i++){
       for (var j = 0; j < 6; j++){
         ctx.fillStyle = 'rgb(' + Math.floor(255 - 42.5 * i) + ',' +
@@ -24,12 +31,6 @@ class MyPaint {
         ctx.fillRect(j * 25, i * 25, 25, 25);
       }
     }
-    console.log("Hello from paint callback!");
-    assert_greater_than(eval("devicePixelRatio"), 0);
-    assert_throws({'name': 'ReferenceError'}, function () { eval("window"); });
-
-    const promise = new Promise((resolve, reject) => { console.log("In promise"); resolve() });
-    promise.then(() => console.log("Promise was resolved"));
   }
 }
 console.log("Hello from paint worklet!");

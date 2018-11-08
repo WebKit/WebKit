@@ -23,7 +23,15 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+// FIXME: Implement this properly, according to the Typed OM spec.
+// This is just a stub for the CSS painting API for now. Once the Typed OM
+// is going to be implemented, please change the runtime flag.
 [
     EnabledAtRuntime=CSSPaintingAPI,
     Conditional=CSS_PAINTING_API,
-] callback CSSPaintCallback = void (PaintRenderingContext2D context, CSSPaintSize size, StylePropertyMapReadOnly styleMap, sequence<USVString> arguments);
+    Exposed=(Window,Worker,PaintWorklet),
+    Constructor(double value, USVString unit),
+] interface CSSUnitValue : CSSNumericValue {
+    attribute double value;
+    readonly attribute USVString unit;
+};

@@ -379,6 +379,7 @@ bindings/js/JSBlobCustom.cpp
 bindings/js/JSCSSRuleCustom.cpp
 bindings/js/JSCSSRuleListCustom.cpp
 bindings/js/JSCSSStyleDeclarationCustom.cpp
+bindings/js/JSCSSStyleValueCustom.cpp
 bindings/js/JSDOMConvertDate.cpp
 bindings/js/JSDOMConvertNumbers.cpp
 bindings/js/JSDOMConvertStrings.cpp
@@ -2489,7 +2490,12 @@ JSCSSKeyframeRule.cpp
 JSCSSKeyframesRule.cpp
 JSCSSMediaRule.cpp
 JSCSSNamespaceRule.cpp
+JSCSSNumericValue.cpp
 JSCSSPaintCallback.cpp
+JSCSSPaintSize.cpp
+JSCSSStyleValue.cpp
+JSCSSUnitValue.cpp
+JSCSSUnparsedValue.cpp
 JSPaintWorkletGlobalScope.cpp
 JSWorklet.cpp
 JSWorkletGlobalScope.cpp
@@ -3158,6 +3164,7 @@ JSStorage.cpp
 JSStorageEvent.cpp
 JSStringCallback.cpp
 JSStyleMedia.cpp
+JSStylePropertyMapReadOnly.cpp
 JSStyleSheet.cpp
 JSStyleSheetList.cpp
 JSSubtleCrypto.cpp

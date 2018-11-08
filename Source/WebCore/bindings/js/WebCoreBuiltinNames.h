@@ -49,7 +49,12 @@ namespace WebCore {
     macro(Credential) \
     macro(CredentialsContainer) \
     macro(CSSAnimation) \
+    macro(CSSNumericValue) \
+    macro(CSSPaintSize) \
+    macro(CSSStyleValue) \
     macro(CSSTransition) \
+    macro(CSSUnitValue) \
+    macro(CSSUnparsedValue) \
     macro(CustomElementRegistry) \
     macro(Database) \
     macro(DataTransferItem) \
@@ -161,6 +166,7 @@ namespace WebCore {
     macro(ShadowRoot) \
     macro(SpectreGadget) \
     macro(StaticRange) \
+    macro(StylePropertyMapReadOnly) \
     macro(VRDisplay) \
     macro(VRDisplayCapabilities) \
     macro(VRDisplayEvent) \

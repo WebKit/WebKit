@@ -29,6 +29,7 @@
 
 #if ENABLE(CSS_PAINTING_API)
 
+#include "CSSVariableData.h"
 #include "CustomPaintImage.h"
 #include "PaintWorkletGlobalScope.h"
 #include "RenderElement.h"
@@ -58,7 +59,25 @@ RefPtr<Image> CSSPaintImageValue::image(RenderElement& renderElement, const Floa
 
     if (!registration)
         return nullptr;
-    return CustomPaintImage::create(*registration, size);
+
+    // FIXME: Check if argument list matches syntax.
+    Vector<String> arguments;
+    CSSParserTokenRange localRange(m_arguments->tokenRange());
+
+    while (!localRange.atEnd()) {
+        StringBuilder builder;
+        while (!localRange.atEnd() && localRange.peek() != CommaToken) {
+            if (localRange.peek() == CommentToken)
+                localRange.consume();
+            else
+                localRange.consume().serialize(builder);
+        }
+        if (!localRange.atEnd())
+            localRange.consume(); // comma token
+        arguments.append(builder.toString());
+    }
+
+    return CustomPaintImage::create(*registration, size, renderElement, arguments);
 }
 
 } // namespace WebCore
