@@ -38,8 +38,7 @@ public:
     static Ref<DeviceIdHashSaltStorage> create();
     ~DeviceIdHashSaltStorage() = default;
 
-    const String& deviceIdHashSaltForOrigin(WebCore::SecurityOrigin&);
-    const String& regenerateDeviceIdHashSaltForOrigin(UserMediaPermissionCheckProxy&);
+    const String& deviceIdHashSaltForOrigin(const WebCore::SecurityOrigin&);
 
     void getDeviceIdHashSaltOrigins(CompletionHandler<void(HashSet<WebCore::SecurityOriginData>&&)>&&);
     void deleteDeviceIdHashSaltForOrigins(const Vector<WebCore::SecurityOriginData>&, CompletionHandler<void()>&&);

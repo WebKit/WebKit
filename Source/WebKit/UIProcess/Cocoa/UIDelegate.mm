@@ -978,7 +978,7 @@ bool UIDelegate::UIClient::checkUserMediaPermissionForOrigin(WebPageProxy& page,
 {
     auto delegate = m_uiDelegate.m_delegate.get();
     if (!delegate || !m_uiDelegate.m_delegateMethods.webViewCheckUserMediaPermissionForURLMainFrameURLFrameIdentifierDecisionHandler) {
-        request.setUserMediaAccessInfo(String(), false);
+        request.setUserMediaAccessInfo(false);
         return true;
     }
 
@@ -987,8 +987,8 @@ bool UIDelegate::UIClient::checkUserMediaPermissionForOrigin(WebPageProxy& page,
     WebCore::URL requestFrameURL(WebCore::URL(), frame.url());
     WebCore::URL mainFrameURL(WebCore::URL(), mainFrame->url());
 
-    auto decisionHandler = BlockPtr<void(NSString *, BOOL)>::fromCallable([protectedRequest = makeRef(request)](NSString *salt, BOOL authorized) {
-        protectedRequest->setUserMediaAccessInfo(String(salt), authorized);
+    auto decisionHandler = BlockPtr<void(NSString*, BOOL)>::fromCallable([protectedRequest = makeRef(request)](NSString*, BOOL authorized) {
+        protectedRequest->setUserMediaAccessInfo(authorized);
     });
 
     [(id <WKUIDelegatePrivate>)delegate _webView:webView checkUserMediaPermissionForURL:requestFrameURL mainFrameURL:mainFrameURL frameIdentifier:frame.frameID() decisionHandler:decisionHandler.get()];

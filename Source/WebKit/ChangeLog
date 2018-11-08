@@ -1,3 +1,39 @@
+2018-11-08  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Use DeviceIdHashSaltStorage to generate device ID hash salt
+        https://bugs.webkit.org/show_bug.cgi?id=190825
+        <rdar://problem/45486085>
+
+        Reviewed by Youenn Fablet.
+
+        * UIProcess/API/C/WKUserMediaPermissionCheck.cpp:
+        (WKUserMediaPermissionCheckSetUserMediaAccessInfo):
+        * UIProcess/API/glib/WebKitDeviceInfoPermissionRequest.cpp:
+        (webkitDeviceInfoPermissionRequestAllow):
+        (webkitDeviceInfoPermissionRequestDeny):
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::UIClient::checkUserMediaPermissionForOrigin):
+        * UIProcess/DeviceIdHashSaltStorage.cpp:
+        (WebKit::DeviceIdHashSaltStorage::regenerateDeviceIdHashSaltForOrigin):
+        (WebKit::DeviceIdHashSaltStorage::deleteDeviceIdHashSaltForOrigin):
+        * UIProcess/DeviceIdHashSaltStorage.h:
+        * UIProcess/UserMediaPermissionCheckProxy.cpp:
+        (WebKit::UserMediaPermissionCheckProxy::setUserMediaAccessInfo):
+        * UIProcess/UserMediaPermissionCheckProxy.h:
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::createPermissionRequest):
+        (WebKit::UserMediaPermissionRequestManagerProxy::userMediaAccessWasGranted):
+        (WebKit::UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame):
+        (WebKit::UserMediaPermissionRequestManagerProxy::getUserMediaPermissionInfo):
+        (WebKit::UserMediaPermissionRequestManagerProxy::updateDeviceIDHashSalt):
+        (WebKit::UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+        * UIProcess/UserMediaPermissionRequestProxy.cpp:
+        (WebKit::UserMediaPermissionRequestProxy::UserMediaPermissionRequestProxy):
+        * UIProcess/UserMediaPermissionRequestProxy.h:
+        (WebKit::UserMediaPermissionRequestProxy::create):
+        (WebKit::UserMediaPermissionRequestProxy::deviceIdentifierHashSalt const): Deleted.
+
 2018-11-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Crash when running with sandbox enabled

@@ -64,7 +64,7 @@ static void webkitDeviceInfoPermissionRequestAllow(WebKitPermissionRequest* requ
     auto& priv = WEBKIT_DEVICE_INFO_PERMISSION_REQUEST(request)->priv;
 
     if (!priv->deviceIdHashSaltStorage) {
-        priv->request->setUserMediaAccessInfo(String(), false);
+        priv->request->setUserMediaAccessInfo(false);
         return;
     }
 
@@ -73,8 +73,7 @@ static void webkitDeviceInfoPermissionRequestAllow(WebKitPermissionRequest* requ
         return;
 
     priv->madeDecision = true;
-    auto salt = priv->deviceIdHashSaltStorage->deviceIdHashSaltForOrigin(priv->request->topLevelDocumentSecurityOrigin());
-    priv->request->setUserMediaAccessInfo(WTFMove(salt), true);
+    priv->request->setUserMediaAccessInfo(true);
 }
 
 static void webkitDeviceInfoPermissionRequestDeny(WebKitPermissionRequest* request)
@@ -84,7 +83,7 @@ static void webkitDeviceInfoPermissionRequestDeny(WebKitPermissionRequest* reque
     auto& priv = WEBKIT_DEVICE_INFO_PERMISSION_REQUEST(request)->priv;
 
     if (!priv->deviceIdHashSaltStorage) {
-        priv->request->setUserMediaAccessInfo(String(), false);
+        priv->request->setUserMediaAccessInfo(false);
         return;
     }
 
@@ -93,8 +92,7 @@ static void webkitDeviceInfoPermissionRequestDeny(WebKitPermissionRequest* reque
         return;
 
     priv->madeDecision = true;
-    auto salt = priv->deviceIdHashSaltStorage->regenerateDeviceIdHashSaltForOrigin(*priv->request);
-    priv->request->setUserMediaAccessInfo(WTFMove(salt), false);
+    priv->request->setUserMediaAccessInfo(false);
 }
 
 static void webkit_permission_request_interface_init(WebKitPermissionRequestIface* iface)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,12 +42,13 @@ UserMediaPermissionCheckProxy::UserMediaPermissionCheckProxy(uint64_t userMediaI
 {
 }
 
-void UserMediaPermissionCheckProxy::setUserMediaAccessInfo(String&& mediaDeviceIdentifierHashSalt, bool allowed)
+void UserMediaPermissionCheckProxy::setUserMediaAccessInfo(bool allowed)
 {
+    ASSERT(m_completionHandler);
     if (!m_completionHandler)
         return;
 
-    m_completionHandler(m_userMediaID, WTFMove(mediaDeviceIdentifierHashSalt), allowed);
+    m_completionHandler(m_userMediaID, allowed);
     m_completionHandler = nullptr;
 }
 

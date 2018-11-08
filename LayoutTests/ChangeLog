@@ -1,3 +1,20 @@
+2018-11-08  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Use DeviceIdHashSaltStorage to generate device ID hash salt
+        https://bugs.webkit.org/show_bug.cgi?id=190825
+        <rdar://problem/45486085>
+
+        Update enumerate-devices-source-id to expect the same device to have the same ID in all
+        iframes, remove enumerate-devices-source-id-persistent because the logic was faulty.
+
+        Reviewed by Youenn Fablet.
+
+        * TestExpectations: Unskip http/tests/media/media-stream/enumerate-devices-source-id.html
+        * http/tests/media/media-stream/enumerate-devices-source-id-expected.txt:
+        * http/tests/media/media-stream/enumerate-devices-source-id-persistent-expected.txt: Removed.
+        * http/tests/media/media-stream/enumerate-devices-source-id-persistent.html: Removed.
+        * http/tests/media/media-stream/enumerate-devices-source-id.html:
+
 2018-11-08  Jonathan Hammer  <jonathan@e3software.com>
 
         Plain text drag in contenteditable is always DragOperationCopy, never DragOperationMove

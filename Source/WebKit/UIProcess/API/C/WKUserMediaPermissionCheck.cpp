@@ -40,8 +40,8 @@ WKTypeID WKUserMediaPermissionCheckGetTypeID()
     return toAPI(UserMediaPermissionCheckProxy::APIType);
 }
 
-void WKUserMediaPermissionCheckSetUserMediaAccessInfo(WKUserMediaPermissionCheckRef userMediaPermissionRequestRef, WKStringRef mediaDeviceIdentifierHashSalt, bool allowed)
+void WKUserMediaPermissionCheckSetUserMediaAccessInfo(WKUserMediaPermissionCheckRef userMediaPermissionRequestRef, WKStringRef, bool allowed)
 {
-    toImpl(userMediaPermissionRequestRef)->setUserMediaAccessInfo(toWTFString(mediaDeviceIdentifierHashSalt), allowed);
+    toImpl(userMediaPermissionRequestRef)->setUserMediaAccessInfo(allowed);
 }
 

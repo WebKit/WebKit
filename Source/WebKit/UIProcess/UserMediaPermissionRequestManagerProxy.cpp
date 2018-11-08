@@ -22,12 +22,13 @@
 
 #include "APISecurityOrigin.h"
 #include "APIUIClient.h"
+#include "DeviceIdHashSaltStorage.h"
 #include "UserMediaPermissionRequestManager.h"
 #include "UserMediaProcessManager.h"
 #include "WebAutomationSession.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
-#include "WebProcessPool.h"
+#include "WebProcess.h"
 #include "WebProcessProxy.h"
 #include <WebCore/MediaConstraints.h>
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
@@ -91,9 +92,9 @@ void UserMediaPermissionRequestManagerProxy::clearCachedState()
     invalidatePendingRequests();
 }
 
-Ref<UserMediaPermissionRequestProxy> UserMediaPermissionRequestManagerProxy::createPermissionRequest(uint64_t userMediaID, uint64_t mainFrameID, uint64_t frameID, Ref<SecurityOrigin>&& userMediaDocumentOrigin, Ref<SecurityOrigin>&& topLevelDocumentOrigin, Vector<CaptureDevice>&& audioDevices, Vector<CaptureDevice>&& videoDevices, String&& deviceIDHashSalt, MediaStreamRequest&& request)
+Ref<UserMediaPermissionRequestProxy> UserMediaPermissionRequestManagerProxy::createPermissionRequest(uint64_t userMediaID, uint64_t mainFrameID, uint64_t frameID, Ref<SecurityOrigin>&& userMediaDocumentOrigin, Ref<SecurityOrigin>&& topLevelDocumentOrigin, Vector<CaptureDevice>&& audioDevices, Vector<CaptureDevice>&& videoDevices, MediaStreamRequest&& request)
 {
-    auto permissionRequest = UserMediaPermissionRequestProxy::create(*this, userMediaID, mainFrameID, frameID, WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin), WTFMove(audioDevices), WTFMove(videoDevices), WTFMove(deviceIDHashSalt), WTFMove(request));
+    auto permissionRequest = UserMediaPermissionRequestProxy::create(*this, userMediaID, mainFrameID, frameID, WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin), WTFMove(audioDevices), WTFMove(videoDevices), WTFMove(request));
     m_pendingUserMediaRequests.add(userMediaID, permissionRequest.ptr());
     return permissionRequest;
 }
@@ -154,7 +155,7 @@ void UserMediaPermissionRequestManagerProxy::userMediaAccessWasGranted(uint64_t 
 {
     ASSERT(audioDevice || videoDevice);
 
-    if (!m_page.isValid())
+    if (!m_page.isValid() || !m_page.websiteDataStore().deviceIdHashSaltStorage())
         return;
 
 #if ENABLE(MEDIA_STREAM)
@@ -162,9 +163,9 @@ void UserMediaPermissionRequestManagerProxy::userMediaAccessWasGranted(uint64_t 
     if (!request)
         return;
 
-    if (grantAccess(userMediaID, WTFMove(audioDevice), WTFMove(videoDevice), request->deviceIdentifierHashSalt()))
+    auto deviceIDHashSalt = m_page.websiteDataStore().deviceIdHashSaltStorage()->deviceIdHashSaltForOrigin(request->topLevelDocumentSecurityOrigin());
+    if (grantAccess(userMediaID, WTFMove(audioDevice), WTFMove(videoDevice), WTFMove(deviceIDHashSalt)))
         m_grantedRequests.append(request.releaseNonNull());
-
 #else
     UNUSED_PARAM(userMediaID);
     UNUSED_PARAM(audioDevice);
@@ -321,14 +322,14 @@ void UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame(
                 auto videoDevice = !videoDevices.isEmpty() ? videoDevices[0] : CaptureDevice();
                 grantAccess(userMediaID, WTFMove(audioDevice), WTFMove(videoDevice), WTFMove(deviceIdentifierHashSalt));
             } else
-                m_pregrantedRequests.append(createPermissionRequest(userMediaID, m_page.mainFrame()->frameID(), frameID, WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin), WTFMove(audioDevices), WTFMove(videoDevices), WTFMove(deviceIdentifierHashSalt), WTFMove(localUserRequest)));
+                m_pregrantedRequests.append(createPermissionRequest(userMediaID, m_page.mainFrame()->frameID(), frameID, WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin), WTFMove(audioDevices), WTFMove(videoDevices), WTFMove(localUserRequest)));
 
             return;
         }
 
         auto userMediaOrigin = API::SecurityOrigin::create(userMediaDocumentOrigin.get());
         auto topLevelOrigin = API::SecurityOrigin::create(topLevelDocumentOrigin.get());
-        auto pendingRequest = createPermissionRequest(userMediaID, m_page.mainFrame()->frameID(), frameID, WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin), WTFMove(audioDevices), WTFMove(videoDevices), WTFMove(deviceIdentifierHashSalt), WTFMove(localUserRequest));
+        auto pendingRequest = createPermissionRequest(userMediaID, m_page.mainFrame()->frameID(), frameID, WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin), WTFMove(audioDevices), WTFMove(videoDevices), WTFMove(localUserRequest));
 
         if (m_page.isControlledByAutomation()) {
             if (WebAutomationSession* automationSession = m_page.process().processPool().automationSession()) {
@@ -350,21 +351,22 @@ void UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame(
             userMediaAccessWasDenied(userMediaID, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::UserMediaDisabled);
     };
 
-    auto haveDeviceSaltHandler = [this, validHandler = WTFMove(validHandler), invalidHandler = WTFMove(invalidHandler), localUserRequest = userRequest](uint64_t userMediaID, String&& deviceIdentifierHashSalt, bool originHasPersistentAccess) mutable {
+    auto havePermissionInfoHandler = [this, validHandler = WTFMove(validHandler), invalidHandler = WTFMove(invalidHandler), localUserRequest = userRequest](uint64_t userMediaID, bool originHasPersistentAccess) mutable {
 
         auto pendingRequest = m_pendingDeviceRequests.take(userMediaID);
         if (!pendingRequest)
             return;
 
-        if (!m_page.isValid())
+        if (!m_page.isValid() || !m_page.websiteDataStore().deviceIdHashSaltStorage())
             return;
-        
+
         syncWithWebCorePrefs();
-        
-        RealtimeMediaSourceCenter::singleton().validateRequestConstraints(WTFMove(validHandler), WTFMove(invalidHandler), WTFMove(localUserRequest), WTFMove(deviceIdentifierHashSalt));
+
+        auto deviceIDHashSalt = m_page.websiteDataStore().deviceIdHashSaltStorage()->deviceIdHashSaltForOrigin(pendingRequest.value()->topLevelDocumentSecurityOrigin());
+        RealtimeMediaSourceCenter::singleton().validateRequestConstraints(WTFMove(validHandler), WTFMove(invalidHandler), WTFMove(localUserRequest), WTFMove(deviceIDHashSalt));
     };
 
-    getUserMediaPermissionInfo(userMediaID, frameID, WTFMove(haveDeviceSaltHandler), WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin));
+    getUserMediaPermissionInfo(userMediaID, frameID, WTFMove(havePermissionInfoHandler), WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin));
 #else
     UNUSED_PARAM(userMediaID);
     UNUSED_PARAM(frameID);
@@ -377,26 +379,32 @@ void UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame(
 #if ENABLE(MEDIA_STREAM)
 void UserMediaPermissionRequestManagerProxy::getUserMediaPermissionInfo(uint64_t userMediaID, uint64_t frameID, UserMediaPermissionCheckProxy::CompletionHandler&& handler, Ref<SecurityOrigin>&& userMediaDocumentOrigin, Ref<SecurityOrigin>&& topLevelDocumentOrigin)
 {
+    if (!m_page.websiteDataStore().deviceIdHashSaltStorage()) {
+        handler(userMediaID, false);
+        return;
+    }
+
     auto userMediaOrigin = API::SecurityOrigin::create(userMediaDocumentOrigin.get());
     auto topLevelOrigin = API::SecurityOrigin::create(topLevelDocumentOrigin.get());
-
     auto request = UserMediaPermissionCheckProxy::create(userMediaID, frameID, WTFMove(handler), WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin));
-    m_pendingDeviceRequests.add(userMediaID, request.copyRef());
 
-    if (!m_page.uiClient().checkUserMediaPermissionForOrigin(m_page, *m_page.process().webFrame(frameID), userMediaOrigin.get(), topLevelOrigin.get(), request.get()))
-        request->completionHandler()(userMediaID, String(), false);
+    m_pendingDeviceRequests.add(userMediaID, request.copyRef());
+    if (!m_page.uiClient().checkUserMediaPermissionForOrigin(m_page, *m_page.process().webFrame(frameID), userMediaOrigin.get(), topLevelOrigin.get(), request.get())) {
+        m_pendingDeviceRequests.take(userMediaID);
+        request->completionHandler()(userMediaID, false);
+    }
 } 
 #endif
 
 void UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame(uint64_t userMediaID, uint64_t frameID, Ref<SecurityOrigin>&& userMediaDocumentOrigin, Ref<SecurityOrigin>&& topLevelDocumentOrigin)
 {
 #if ENABLE(MEDIA_STREAM)
-    auto completionHandler = [this](uint64_t userMediaID, String&& deviceIdentifierHashSalt, bool originHasPersistentAccess) {
-        auto request = m_pendingDeviceRequests.take(userMediaID);
-        if (!request)
+    auto completionHandler = [this, topOrigin = topLevelDocumentOrigin.copyRef()](uint64_t userMediaID, bool originHasPersistentAccess) {
+        auto pendingRequest = m_pendingDeviceRequests.take(userMediaID);
+        if (!pendingRequest)
             return;
 
-        if (!m_page.isValid())
+        if (!m_page.isValid() || !m_page.websiteDataStore().deviceIdHashSaltStorage())
             return;
 
         syncWithWebCorePrefs();
@@ -406,7 +414,8 @@ void UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame(uint6
             return !device.enabled() || (device.type() != WebCore::CaptureDevice::DeviceType::Camera && device.type() != WebCore::CaptureDevice::DeviceType::Microphone);
         });
 
-        m_page.process().send(Messages::WebPage::DidCompleteMediaDeviceEnumeration(userMediaID, devices, deviceIdentifierHashSalt, originHasPersistentAccess), m_page.pageID());
+        auto deviceIDHashSalt = m_page.websiteDataStore().deviceIdHashSaltStorage()->deviceIdHashSaltForOrigin(topOrigin.get());
+        m_page.process().send(Messages::WebPage::DidCompleteMediaDeviceEnumeration(userMediaID, WTFMove(devices), WTFMove(deviceIDHashSalt), WTFMove(originHasPersistentAccess)), m_page.pageID());
     };
 
     getUserMediaPermissionInfo(userMediaID, frameID, WTFMove(completionHandler), WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin));

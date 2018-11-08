@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,14 +39,14 @@ namespace WebKit {
 class UserMediaPermissionCheckProxy : public API::ObjectImpl<API::Object::Type::UserMediaPermissionCheck> {
 public:
 
-    using CompletionHandler = WTF::Function<void(uint64_t, String&&, bool allowed)>;
+    using CompletionHandler = WTF::Function<void(uint64_t, bool allowed)>;
 
     static Ref<UserMediaPermissionCheckProxy> create(uint64_t userMediaID, uint64_t frameID, CompletionHandler&& handler, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin)
     {
         return adoptRef(*new UserMediaPermissionCheckProxy(userMediaID, frameID, WTFMove(handler), WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin)));
     }
 
-    void setUserMediaAccessInfo(String&&, bool allowed);
+    void setUserMediaAccessInfo(bool);
     void invalidate();
 
     uint64_t frameID() const { return m_frameID; }

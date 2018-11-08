@@ -46,19 +46,7 @@ Ref<DeviceIdHashSaltStorage> DeviceIdHashSaltStorage::create()
     return adoptRef(*new DeviceIdHashSaltStorage());
 }
 
-const String& DeviceIdHashSaltStorage::regenerateDeviceIdHashSaltForOrigin(UserMediaPermissionCheckProxy& request)
-{
-    auto& documentOrigin = request.topLevelDocumentSecurityOrigin();
-
-    auto documentOriginData = documentOrigin.data();
-    m_deviceIdHashSaltForOrigins.removeIf([&documentOriginData](auto& keyAndValue) {
-        return keyAndValue.value->documentOrigin == documentOriginData;
-    });
-
-    return deviceIdHashSaltForOrigin(documentOrigin);
-}
-
-const String& DeviceIdHashSaltStorage::deviceIdHashSaltForOrigin(SecurityOrigin& documentOrigin)
+const String& DeviceIdHashSaltStorage::deviceIdHashSaltForOrigin(const SecurityOrigin& documentOrigin)
 {
     auto& deviceIdHashSalt = m_deviceIdHashSaltForOrigins.ensure(documentOrigin.toRawString(), [&documentOrigin] () {
         uint64_t randomData[randomDataSize];

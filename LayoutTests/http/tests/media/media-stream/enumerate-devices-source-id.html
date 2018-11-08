@@ -7,6 +7,7 @@
         <script src="../../../../resources/js-test-pre.js"></script>
         <script>
             var frameInfos = [];
+            var idCounts = { };
             window.jsTestIsAsync = true;
 
             if (window.testRunner)
@@ -14,34 +15,34 @@
 
             function setup()
             {
-                description("Tests that mediaDevices.enumerateDevices returns a unique ID for deviceId in each domain.");
+                description("Tests that mediaDevices.enumerateDevices returns the same value for a device ID in all subframes.");
             }
 
             function handler(event) 
             {
                 event.data.deviceIds.forEach(function(id) {
                     frameInfos.push({origin : event.data.origin, deviceId : id});
+                    let count = idCounts[id] || 0;
+                    idCounts[id] = ++count;
                 });
 
                 if (frameInfos.length != 12)
                     return;
 
                 var success = true;
-                var idOrigins = [];
                 for (var i = 0; i < frameInfos.length; i++) {
                     var deviceId = frameInfos[i].deviceId;
-                    if (idOrigins[deviceId] === undefined) {
-                        idOrigins[deviceId] = frameInfos[i].origin;
-                        testPassed(`: device id ${i + 1} is unique`);
-                    } else {
-                        testFailed(`Duplicate device IDs in ${frameInfos[i].origin} and ${idOrigins[deviceId]}`);
+                    let count = idCounts[deviceId] || 0;
+                    if (!count) {
+                        testFailed(`: device id ${i + 1} is unique`);
                         success = false;
-                    }
+                    } else
+                        testPassed(`: device id ${i + 1} is not unique`);
                 }
 
                 debug('');
                 if (success)
-                    testPassed(`: all device IDs are unique`);
+                    testPassed(`: device IDs are not unique`);
 
                 debug('');
                 finishJSTest();
@@ -52,11 +53,11 @@
         </script> 
     </head>
     <body onload="setup()">
-        <iframe src="http://localhost:8000/media/media-stream/resources/enumerate-devices-source-id-frame.html"></iframe>
+        <iframe allow="camera;microphone" src="http://localhost:8000/media/media-stream/resources/enumerate-devices-source-id-frame.html"></iframe>
         <br>
-        <iframe src="http://127.0.0.1:8000/media/media-stream/resources/enumerate-devices-source-id-frame.html"></iframe>
+        <iframe allow="camera;microphone" src="http://127.0.0.1:8000/media/media-stream/resources/enumerate-devices-source-id-frame.html"></iframe>
         <br>
-        <iframe src="http://localhost:8000/media/media-stream/resources/enumerate-devices-source-id-frame.html"></iframe>
+        <iframe allow="camera;microphone" src="http://localhost:8000/media/media-stream/resources/enumerate-devices-source-id-frame.html"></iframe>
         <div id="console"></div>
         <script src="../../../../resources/js-test-post.js"></script>
     </body>
