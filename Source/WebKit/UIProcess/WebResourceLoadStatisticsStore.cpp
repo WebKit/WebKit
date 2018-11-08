@@ -330,6 +330,7 @@ void WebResourceLoadStatisticsStore::didCreateNetworkProcess()
         if (!m_memoryStore)
             return;
         m_memoryStore->updateCookieBlocking([]() { });
+        m_memoryStore->updateCacheMaxAgeCap();
     });
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)

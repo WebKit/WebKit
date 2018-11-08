@@ -113,6 +113,7 @@ public:
     void setMinimumTimeBetweenDataRecordsRemoval(Seconds);
     void setGrandfatheringTime(Seconds);
     void setCacheMaxAgeCap(Seconds);
+    void updateCacheMaxAgeCap();
     void setResourceLoadStatisticsDebugMode(bool);
     bool isDebugModeEnabled() const { return m_debugModeEnabled; };
     void setPrevalentResourceForDebugMode(const String& domain);
@@ -162,6 +163,7 @@ private:
         std::optional<Seconds> timeToLiveUserInteraction;
         Seconds minimumTimeBetweenDataRecordsRemoval { 1_h };
         Seconds grandfatheringTime { 24_h * 7 };
+        Seconds cacheMaxAgeCapTime { 24_h * 7 };
         bool shouldNotifyPagesWhenDataRecordsWereScanned { false };
         bool shouldClassifyResourcesBeforeDataRecordsRemoval { true };
         bool shouldSubmitTelemetry { true };

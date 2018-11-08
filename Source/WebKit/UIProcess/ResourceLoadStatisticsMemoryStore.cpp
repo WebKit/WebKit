@@ -835,7 +835,15 @@ void ResourceLoadStatisticsMemoryStore::setCacheMaxAgeCap(Seconds seconds)
     ASSERT(!RunLoop::isMain());
     ASSERT(seconds >= 0_s);
 
-    RunLoop::main().dispatch([store = makeRef(m_store), seconds] () {
+    m_parameters.cacheMaxAgeCapTime = seconds;
+    updateCacheMaxAgeCap();
+}
+
+void ResourceLoadStatisticsMemoryStore::updateCacheMaxAgeCap()
+{
+    ASSERT(!RunLoop::isMain());
+    
+    RunLoop::main().dispatch([store = makeRef(m_store), seconds = m_parameters.cacheMaxAgeCapTime] () {
         store->setCacheMaxAgeCap(seconds, [] { });
     });
 }

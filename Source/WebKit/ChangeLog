@@ -1,3 +1,21 @@
+2018-11-07  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Enable cap on partitioned cache max age
+        https://bugs.webkit.org/show_bug.cgi?id=191395
+        <rdar://problem/45885977>
+
+        Reviewed by Chris Dumez.
+
+        This change does not bump the network cache revision number.
+        It's not needed since it was done just a week ago.
+
+        * UIProcess/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::setCacheMaxAgeCap):
+        (WebKit::ResourceLoadStatisticsMemoryStore::updateCacheMaxAgeCap):
+        * UIProcess/ResourceLoadStatisticsMemoryStore.h:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::didCreateNetworkProcess):
+
 2018-11-07  Daniel Bates  <dabates@apple.com>
 
         [iOS] Support deleting to the start of the line and to the end of the line
