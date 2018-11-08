@@ -1,5 +1,18 @@
 2018-11-08  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Potential for watch expressions to never show results
+        https://bugs.webkit.org/show_bug.cgi?id=191438
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/ScopeChainDetailsSidebarPanel.js:
+        (WI.ScopeChainDetailsSidebarPanel.prototype._generateWatchExpressionsSection):
+        If there was no object don't bail, continue and resolve the Promise.
+        In this case we can fallback to show `undefined`. This code might not be
+        reachable right now, but is wrong as is.
+
+2018-11-08  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Debugger Popover does not work when paused in Worker
         https://bugs.webkit.org/show_bug.cgi?id=191342
 

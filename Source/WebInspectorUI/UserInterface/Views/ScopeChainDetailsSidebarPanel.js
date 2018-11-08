@@ -306,11 +306,10 @@ WI.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel extends W
             promises.push(new Promise(function(resolve, reject) {
                 let options = {objectGroup: WI.ScopeChainDetailsSidebarPanel.WatchExpressionsObjectGroupName, includeCommandLineAPI: false, doNotPauseOnExceptionsAndMuteConsole: true, returnByValue: false, generatePreview: true, saveResult: false};
                 WI.runtimeManager.evaluateInInspectedWindow(expression, options, function(object, wasThrown) {
-                    if (!object)
-                        return;
+                    object = object || WI.RemoteObject.fromPrimitiveValue(undefined);
                     let propertyDescriptor = new WI.PropertyDescriptor({name: expression, value: object}, undefined, undefined, wasThrown);
                     objectTree.appendExtraPropertyDescriptor(propertyDescriptor);
-                    resolve(propertyDescriptor);
+                    resolve();
                 });
             }));
         }
