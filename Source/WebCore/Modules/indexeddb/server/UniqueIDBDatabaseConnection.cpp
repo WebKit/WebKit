@@ -153,10 +153,12 @@ void UniqueIDBDatabaseConnection::establishTransaction(const IDBTransactionInfo&
     // the connection is closing.
     ASSERT(!m_closePending);
 
+    if (!m_database || m_database->hardClosedForUserDelete())
+        return;
+
     Ref<UniqueIDBDatabaseTransaction> transaction = UniqueIDBDatabaseTransaction::create(*this, info);
     m_transactionMap.set(transaction->info().identifier(), &transaction.get());
 
-    ASSERT(m_database);
     m_database->enqueueTransaction(WTFMove(transaction));
 }
 
@@ -237,6 +239,16 @@ void UniqueIDBDatabaseConnection::didRenameIndex(const IDBResultData& resultData
 bool UniqueIDBDatabaseConnection::connectionIsClosing() const
 {
     return m_closePending;
+}
+
+void UniqueIDBDatabaseConnection::deleteTransaction(UniqueIDBDatabaseTransaction& transaction)
+{
+    LOG(IndexedDB, "UniqueIDBDatabaseConnection::deleteTransaction - %s", transaction.info().loggingString().utf8().data());
+    
+    auto transactionIdentifier = transaction.info().identifier();
+    
+    ASSERT(m_transactionMap.contains(transactionIdentifier));
+    m_transactionMap.remove(transactionIdentifier);
 }
 
 } // namespace IDBServer

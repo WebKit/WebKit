@@ -84,6 +84,8 @@ public:
 
     bool connectionIsClosing() const;
 
+    void deleteTransaction(UniqueIDBDatabaseTransaction&);
+
 private:
     UniqueIDBDatabaseConnection(UniqueIDBDatabase&, ServerOpenDBRequest&);
 

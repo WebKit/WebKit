@@ -111,7 +111,8 @@ void UniqueIDBDatabaseTransaction::commit()
     RefPtr<UniqueIDBDatabaseTransaction> protectedThis(this);
 
     auto database = m_databaseConnection->database();
-    ASSERT(database);
+    if (!database || database->hardClosedForUserDelete())
+        return;
 
     database->commitTransaction(*this, [this, protectedThis](const IDBError& error) {
         LOG(IndexedDB, "UniqueIDBDatabaseTransaction::commit (callback)");

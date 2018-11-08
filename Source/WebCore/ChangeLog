@@ -1,3 +1,26 @@
+2018-11-07  Sihui Liu  <sihui_liu@apple.com>
+
+        RELEASE_ASSERT(!m_hardClosedForUserDelete) fails in WebCore::IDBServer::UniqueIDBDatabase::invokeOperationAndTransactionTimer
+        https://bugs.webkit.org/show_bug.cgi?id=191326
+        <rdar://problem/45769269>
+
+        Reviewed by Geoffrey Garen.
+
+        UniqueIDBDatabase should ignore incoming requests or operations when it is already marked as
+        hardClosedForUserDelete.
+
+        Test: IndexedDB.IndexedDBUserDelete.
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::didPerformActivateTransactionInBackingStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::immediateCloseForUserDelete):
+        * Modules/indexeddb/server/UniqueIDBDatabaseConnection.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::establishTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::deleteTransaction):
+        * Modules/indexeddb/server/UniqueIDBDatabaseConnection.h:
+        * Modules/indexeddb/server/UniqueIDBDatabaseTransaction.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::commit):
+
 2018-11-07  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Positioned text underline can look like a strike-through

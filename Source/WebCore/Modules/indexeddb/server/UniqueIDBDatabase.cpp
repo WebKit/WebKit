@@ -1614,6 +1614,9 @@ void UniqueIDBDatabase::didPerformActivateTransactionInBackingStore(uint64_t cal
 {
     LOG(IndexedDB, "(main) UniqueIDBDatabase::didPerformActivateTransactionInBackingStore");
 
+    if (m_hardClosedForUserDelete)
+        return;
+
     invokeOperationAndTransactionTimer();
 
     performErrorCallback(callbackIdentifier, error);
@@ -1805,6 +1808,8 @@ void UniqueIDBDatabase::immediateCloseForUserDelete()
 
     ASSERT(m_inProgressTransactions.isEmpty());
 
+    for (auto& transaction : m_pendingTransactions)
+        transaction->databaseConnection().deleteTransaction(*transaction);
     m_pendingTransactions.clear();
     m_objectStoreTransactionCounts.clear();
     m_objectStoreWriteTransactions.clear();
