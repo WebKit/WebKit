@@ -98,7 +98,10 @@ CertificateInfo ResourceResponse::platformCertificateInfo() const
         return { };
 
     if (trustResultType == kSecTrustResultInvalid) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         result = SecTrustEvaluate(trust, &trustResultType);
+#pragma clang diagnostic pop
         if (result != errSecSuccess)
             return { };
     }

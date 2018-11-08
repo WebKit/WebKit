@@ -1,3 +1,10 @@
+2018-11-07  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix iOS build with recent SDKs.
+
+        * platform/network/cocoa/ResourceResponseCocoa.mm:
+        (WebCore::ResourceResponse::platformCertificateInfo const):
+
 2018-11-07  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Dotted underlines that skip descenders are invisible
