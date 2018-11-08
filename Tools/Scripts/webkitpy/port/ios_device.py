@@ -38,7 +38,7 @@ class IOSDevicePort(IOSPort):
     ARCHITECTURES = ['armv7', 'armv7s', 'arm64']
     DEFAULT_ARCHITECTURE = 'arm64'
     VERSION_FALLBACK_ORDER = ['ios-7', 'ios-8', 'ios-9', 'ios-10']
-    SDK = apple_additions().ios_device_SDK() if apple_additions() else 'iphoneos'
+    SDK = apple_additions().get_sdk('iphoneos') if apple_additions() else 'iphoneos'
     NO_ON_DEVICE_TESTING = 'On-device testing is not supported on this machine'
 
     @memoized
