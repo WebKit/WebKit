@@ -1,3 +1,16 @@
+2018-11-09  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Extensions3DOpenGLES.h:  warning: 'blitFramebuffer' overrides a member function but is not marked 'override' [-Winconsistent-missing-override]
+        https://bugs.webkit.org/show_bug.cgi?id=191451
+
+        Reviewed by Dean Jackson.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/opengl/Extensions3DOpenGLES.cpp:
+        (WebCore::Extensions3DOpenGLES::setEXTContextLostCallback): Deleted unused method.
+        * platform/graphics/opengl/Extensions3DOpenGLES.h: Marked 'override'.
+
 2018-11-09  Andy Estes  <aestes@apple.com>
 
         [Payment Request] canMakePayment() should not consider serialized payment method data

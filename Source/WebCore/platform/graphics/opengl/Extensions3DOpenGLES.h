@@ -71,40 +71,38 @@ public:
     Extensions3DOpenGLES(GraphicsContext3D*, bool useIndexedGetString);
     virtual ~Extensions3DOpenGLES();
 
-    bool isEnabled(const String&) override;
-
     virtual void framebufferTexture2DMultisampleIMG(unsigned long target, unsigned long attachment, unsigned long textarget, unsigned int texture, int level, unsigned long samples);
     virtual void renderbufferStorageMultisampleIMG(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height);
 
     // Extension3D methods
-    virtual void blitFramebuffer(long srcX0, long srcY0, long srcX1, long srcY1, long dstX0, long dstY0, long dstX1, long dstY1, unsigned long mask, unsigned long filter);
-    virtual void renderbufferStorageMultisample(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height);
-    virtual void insertEventMarkerEXT(const String&);
-    virtual void pushGroupMarkerEXT(const String&);
-    virtual void popGroupMarkerEXT(void);
+    bool isEnabled(const String&) override;
+    void blitFramebuffer(long srcX0, long srcY0, long srcX1, long srcY1, long dstX0, long dstY0, long dstX1, long dstY1, unsigned long mask, unsigned long filter) override;
+    void renderbufferStorageMultisample(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height) override;
+    void insertEventMarkerEXT(const String&) override;
+    void pushGroupMarkerEXT(const String&) override;
+    void popGroupMarkerEXT(void) override;
 
-    virtual Platform3DObject createVertexArrayOES();
-    virtual void deleteVertexArrayOES(Platform3DObject);
-    virtual GC3Dboolean isVertexArrayOES(Platform3DObject);
-    virtual void bindVertexArrayOES(Platform3DObject);
-    virtual void drawBuffersEXT(GC3Dsizei, const GC3Denum*);
+    Platform3DObject createVertexArrayOES() override;
+    void deleteVertexArrayOES(Platform3DObject) override;
+    GC3Dboolean isVertexArrayOES(Platform3DObject) override;
+    void bindVertexArrayOES(Platform3DObject) override;
+    void drawBuffersEXT(GC3Dsizei, const GC3Denum*) override;
 
-    virtual void drawArraysInstanced(GC3Denum mode, GC3Dint first, GC3Dsizei count, GC3Dsizei primcount);
-    virtual void drawElementsInstanced(GC3Denum mode, GC3Dsizei count, GC3Denum type, long long offset, GC3Dsizei primcount);
-    virtual void vertexAttribDivisor(GC3Duint index, GC3Duint divisor);
+    void drawArraysInstanced(GC3Denum mode, GC3Dint first, GC3Dsizei count, GC3Dsizei primcount) override;
+    void drawElementsInstanced(GC3Denum mode, GC3Dsizei count, GC3Denum type, long long offset, GC3Dsizei primcount) override;
+    void vertexAttribDivisor(GC3Duint index, GC3Duint divisor) override;
 
     // EXT Robustness - reset
-    virtual int getGraphicsResetStatusARB();
-    void setEXTContextLostCallback(std::unique_ptr<GraphicsContext3D::ContextLostCallback>);
+    int getGraphicsResetStatusARB() override;
 
     // EXT Robustness - etc
-    virtual void readnPixelsEXT(int x, int y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, GC3Dsizei bufSize, void *data);
-    virtual void getnUniformfvEXT(GC3Duint program, int location, GC3Dsizei bufSize, float *params);
-    virtual void getnUniformivEXT(GC3Duint program, int location, GC3Dsizei bufSize, int *params);
+    void readnPixelsEXT(int x, int y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, GC3Dsizei bufSize, void *data) override;
+    void getnUniformfvEXT(GC3Duint program, int location, GC3Dsizei bufSize, float *params) override;
+    void getnUniformivEXT(GC3Duint program, int location, GC3Dsizei bufSize, int *params) override;
 
 protected:
-    virtual bool supportsExtension(const String&);
-    virtual String getExtensions();
+    bool supportsExtension(const String&) override;
+    String getExtensions() override;
 
     GC3Denum m_contextResetStatus;
 
