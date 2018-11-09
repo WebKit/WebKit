@@ -1,3 +1,13 @@
+2018-11-08  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] UDis86Disassembler.cpp: warning: format specifies type 'unsigned long' but the argument has type 'uintptr_t' (aka 'unsigned long long')
+        https://bugs.webkit.org/show_bug.cgi?id=191416
+
+        Reviewed by Saam Barati.
+
+        * disassembler/UDis86Disassembler.cpp:
+        (JSC::tryToDisassembleWithUDis86): Use PRIxPTR for uintptr_t.
+
 2018-11-08  Keith Rollin  <krollin@apple.com>
 
         Create .xcfilelist files
