@@ -1,3 +1,12 @@
+2018-11-09  Keith Rollin  <krollin@apple.com>
+
+        Unreviewed build fix after https://bugs.webkit.org/show_bug.cgi?id=191324
+
+        Remove the use of .xcfilelists until their side-effects are better
+        understood.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-11-09  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [Curl][WebKit] Implement Proxy configuration API.

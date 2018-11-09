@@ -1,3 +1,12 @@
+2018-11-09  Keith Rollin  <krollin@apple.com>
+
+        Unreviewed build fix after https://bugs.webkit.org/show_bug.cgi?id=191324
+
+        Remove the use of .xcfilelists until their side-effects are better
+        understood.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2018-11-09  Jer Noble  <jer.noble@apple.com>
 
         SourceBuffer throws an error when appending a second init segment after changeType().

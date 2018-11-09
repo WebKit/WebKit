@@ -1,3 +1,12 @@
+2018-11-09  Keith Rollin  <krollin@apple.com>
+
+        Unreviewed build fix after https://bugs.webkit.org/show_bug.cgi?id=191324
+
+        Remove the use of .xcfilelists until their side-effects are better
+        understood.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2018-11-09  Keith Miller  <keith_miller@apple.com>
 
         LLInt VectorSizeOffset should be based on offset extraction
