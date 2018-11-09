@@ -79,6 +79,10 @@ void StorageTracker::internalInitialize()
     storageTracker->setIsActive(true);
     storageTracker->m_thread->start();  
     storageTracker->importOriginIdentifiers();
+
+    m_thread->dispatch([this] {
+        FileSystem::deleteFile(FileSystem::pathByAppendingComponent(m_storageDirectoryPath, "StorageTracker.db"));
+    });
 }
 
 StorageTracker& StorageTracker::tracker()

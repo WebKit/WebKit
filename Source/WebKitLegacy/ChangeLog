@@ -1,3 +1,16 @@
+2018-11-09  Sihui Liu  <sihui_liu@apple.com>
+
+        Remove legacy storage tracker database file after r237330
+        https://bugs.webkit.org/show_bug.cgi?id=191423
+
+        Reviewed by Geoffrey Garen.
+
+        r237330 changed the file name of storage tracker database, but it did not remove the old 
+        file before using the new one.
+
+        * Storage/StorageTracker.cpp:
+        (WebKit::StorageTracker::internalInitialize):
+
 2018-11-01  Sihui Liu  <sihui_liu@apple.com>
 
         Add a storage limit for IndexedDB
