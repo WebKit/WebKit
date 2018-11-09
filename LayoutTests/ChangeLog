@@ -1,3 +1,13 @@
+2018-11-09  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Fix failing imported/w3c/web-platform-tests/media-source/mediasource-changetype-play.html test
+        https://bugs.webkit.org/show_bug.cgi?id=191396
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac/imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-expected.txt:
+        * platform/mac-sierra/imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-expected.txt:
+
 2018-11-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Clean up test expectations after r237942

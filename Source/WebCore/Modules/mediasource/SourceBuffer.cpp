@@ -1314,16 +1314,16 @@ bool SourceBuffer::validateInitializationSegment(const InitializationSegment& se
             if (!m_audioCodecs.contains(audioTrackInfo.description->codec()))
                 return false;
         }
-    }
 
-    for (auto& videoTrackInfo : segment.videoTracks) {
-        if (!m_videoCodecs.contains(videoTrackInfo.description->codec()))
-            return false;
-    }
+        for (auto& videoTrackInfo : segment.videoTracks) {
+            if (!m_videoCodecs.contains(videoTrackInfo.description->codec()))
+                return false;
+        }
 
-    for (auto& textTrackInfo : segment.textTracks) {
-        if (!m_textCodecs.contains(textTrackInfo.description->codec()))
-            return false;
+        for (auto& textTrackInfo : segment.textTracks) {
+            if (!m_textCodecs.contains(textTrackInfo.description->codec()))
+                return false;
+        }
     }
 
     //   * If more than one track for a single type are present (ie 2 audio tracks), then the Track

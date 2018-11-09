@@ -19,6 +19,11 @@ function findSupportedChangeTypeTestTypes(cb)
             url: 'mp4/test-v-128k-320x240-24fps-8kfr.mp4'
         },
         {
+            type: 'video/mp4; codecs="hvc1.1.6.L60.90"',
+            is_video: true,
+            url: 'hevc/test-v-128k-320x240-24fps-8kfr.mp4'
+        },
+        {
             type: 'audio/webm; codecs="vorbis"',
             is_video: false,
             url: 'webm/test-a-128k-44100Hz-1ch.webm'
