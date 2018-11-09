@@ -1,3 +1,15 @@
+2018-11-09  Megan Gardner  <megan_gardner@apple.com>
+
+        Fix Test Expectations for Reveal Test
+        https://bugs.webkit.org/show_bug.cgi?id=191476
+
+        Unreviewed test gardening.
+
+        Put the test expectation in the correct location to deal with
+        the different behaviour old platforms.
+
+        * platform/mac/editing/mac/selection/context-menu-select-editability-expected.txt: Renamed from LayoutTests/platform/mac-highsierra/editing/mac/selection/context-menu-select-editability-expected.txt.
+
 2018-11-09  Tim Horton  <timothy_horton@apple.com>
 
         Normal-flow-only flex items don't correctly respect z-index
