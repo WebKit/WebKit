@@ -413,7 +413,7 @@ WI.ResourceSidebarPanel = class ResourceSidebarPanel extends WI.NavigationSideba
         }
 
         if (this._targetTreeElementMap.size) {
-            for (let treeElement of this._targetTreeElementMap)
+            for (let treeElement of this._targetTreeElementMap.values())
                 treeElement.parent.removeChild(treeElement, suppressOnDeselect, suppressSelectSibling);
             this._targetTreeElementMap.clear();
         }

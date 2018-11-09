@@ -1,5 +1,16 @@
 2018-11-08  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Uncaught Exception: undefined is not an object (evaluating 'treeElement.parent.removeChild')
+        https://bugs.webkit.org/show_bug.cgi?id=191454
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WI.ResourceSidebarPanel.prototype._scriptsCleared):
+        This was intending to iterate the Map's values, which are tree elements.
+
+2018-11-08  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Potential for watch expressions to never show results
         https://bugs.webkit.org/show_bug.cgi?id=191438
 
