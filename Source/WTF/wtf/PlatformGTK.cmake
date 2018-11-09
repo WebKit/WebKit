@@ -8,9 +8,13 @@ list(APPEND WTF_PUBLIC_HEADERS
     glib/GUniquePtr.h
     glib/RunLoopSourcePriority.h
     glib/WTFGType.h
-
-    linux/CurrentProcessMemoryStatus.h
 )
+
+if (CMAKE_SYSTEM_NAME MATCHES "Linux")
+    list(APPEND WTF_PUBLIC_HEADERS
+        linux/CurrentProcessMemoryStatus.h
+    )
+endif ()
 
 list(APPEND WTF_SOURCES
     UniStdExtras.cpp
@@ -22,15 +26,24 @@ list(APPEND WTF_SOURCES
     glib/GRefPtr.cpp
     glib/RunLoopGLib.cpp
 
-    linux/CurrentProcessMemoryStatus.cpp
-    linux/MemoryFootprintLinux.cpp
-    linux/MemoryPressureHandlerLinux.cpp
-
     text/unix/TextBreakIteratorInternalICUUnix.cpp
 
     unix/CPUTimeUnix.cpp
     unix/LanguageUnix.cpp
 )
+
+if (CMAKE_SYSTEM_NAME MATCHES "Linux")
+    list(APPEND WTF_SOURCES
+        linux/CurrentProcessMemoryStatus.cpp
+        linux/MemoryFootprintLinux.cpp
+        linux/MemoryPressureHandlerLinux.cpp
+    )
+else ()
+    list(APPEND WTF_SOURCES
+        generic/MemoryFootprintGeneric.cpp
+        generic/MemoryPressureHandlerGeneric.cpp
+    )
+endif ()
 
 list(APPEND WTF_LIBRARIES
     ${CMAKE_THREAD_LIBS_INIT}

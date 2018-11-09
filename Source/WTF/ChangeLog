@@ -1,3 +1,21 @@
+2018-11-09  Jim Mason  <jmason@ibinx.com>
+
+        [WTF] Changes in bug 188867 break non-Linux Unix builds
+        https://bugs.webkit.org/show_bug.cgi?id=191380
+
+        The intention of 188867 was to split out platform-specific
+        heap query/release code.  Any unsupported platform
+        would use a generic, no-op stub.  However, wtf/PlatformGTK.cmake
+        ended up sending all non-Linux platforms through the Linux
+        implementation, which breaks the build for those platforms.
+        This includes any user of the GTK target which is not Linux,
+        such as the *BSDs, Solaris, etc.
+
+        Reviewed by Yusuke Suzuki.
+
+        * wtf/PlatformGTK.cmake: Updated to include Linux-specific
+        code only for Linux; all other platforms use the generic stub.
+
 2018-11-06  Geoffrey Garen  <ggaren@apple.com>
 
         Removed mbmalloc target from WTF
