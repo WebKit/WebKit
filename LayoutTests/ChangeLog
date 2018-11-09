@@ -1,5 +1,20 @@
 2018-11-08  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Clean up test expectations after r237942
+        https://bugs.webkit.org/show_bug.cgi?id=191448
+
+        Unreviewed test gardening.
+
+        Add High Sierra specific expectation files for three tests, rebaseline one for Mojave, and remove failure expectations.
+
+        * platform/mac-highsierra-wk1/compositing/repaint/iframes/composited-iframe-with-fixed-background-doc-repaint-expected.txt: Copied from LayoutTests/platform/mac-wk1/compositing/repaint/iframes/composited-iframe-with-fixed-background-doc-repaint-expected.txt.
+        * platform/mac-highsierra-wk1/compositing/repaint/iframes/compositing-iframe-scroll-repaint-expected.txt: Added.
+        * platform/mac-highsierra-wk1/compositing/repaint/iframes/compositing-iframe-with-fixed-background-doc-repaint-expected.txt: Added.
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk1/compositing/repaint/iframes/composited-iframe-with-fixed-background-doc-repaint-expected.txt:
+
+2018-11-08  Ryan Haddad  <ryanhaddad@apple.com>
+
         [Mojave WK1] Layout test fast/events/detect-caps-lock.html is timing out
         https://bugs.webkit.org/show_bug.cgi?id=191424
 
