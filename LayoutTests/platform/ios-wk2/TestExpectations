@@ -1355,3 +1355,6 @@ webkit.org/b/183860 http/wpt/service-workers/third-party-registration.html [ Pas
 webkit.org/b/184245 http/tests/workers/service/service-worker-cache-api.https.html [ Pass Failure ]
 
 webkit.org/b/184783 compositing/ios/overflow-scroll-touch-tiles.html [ Pass Failure ]
+
+# rdar://problem/445687
+http/tests/resourceLoadStatistics/do-not-capture-statistics-for-simple-top-navigations.html [ Failure ]

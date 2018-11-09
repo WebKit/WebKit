@@ -1,3 +1,10 @@
+2018-11-07  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening for rdar://problem/44568702.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2018-10-28  Babak Shafiei  <bshafiei@apple.com>
 
         Cherry-pick r237395. rdar://problem/45574503
