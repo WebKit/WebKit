@@ -40,13 +40,21 @@ SCRIPTS = \
 
 IDL_ATTRIBUTES_FILE = $(WebCoreScripts)/IDLAttributes.json
 
-.PHONY : all
+.PHONY : all print_all_generated_files
 
 JS%.h JS%.cpp : %.idl $(SCRIPTS) $(IDL_ATTRIBUTES_FILE)
 	@echo Generating bindings for $*...
 	@perl -I $(WebCoreScripts) -I $(UISCRIPTCONTEXT_DIR) -I $(DumpRenderTree)/Bindings $(WebCoreScripts)/generate-bindings.pl --defines "" --include $(UISCRIPTCONTEXT_DIR) --outputDir . --generator DumpRenderTree --idlAttributesFile $(IDL_ATTRIBUTES_FILE) $<
 
-all : \
+ALL_GENERATED_FILES = \
     $(UICONTEXT_INTERFACES:%=JS%.h) \
     $(UICONTEXT_INTERFACES:%=JS%.cpp) \
 #
+
+all : $(ALL_GENERATED_FILES)
+
+print_all_generated_files :
+	@for target in $(ALL_GENERATED_FILES); \
+	do \
+		echo $${target}; \
+	done

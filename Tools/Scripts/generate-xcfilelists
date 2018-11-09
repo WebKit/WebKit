@@ -1,0 +1,256 @@
+#!/bin/bash
+
+# Copyright (C) 2018 Apple Inc.  All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+# 3.  Neither the name of Apple Inc. ("Apple") nor the names of
+#     its contributors may be used to endorse or promote products derived
+#     from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+# This script generates .xcfilelist files to be used as output specifications
+# of Run Script build phases.
+#
+# Currently, this script looks at the Generate Derived Sources and Generate
+# Unified Sources build phases. For the former, it invokes the
+# DerivedSources.make makefile, passing in a target that results in the names
+# of the generated source files being printed out. For the latter, the script
+# is hard-coded to know the number of .cpp and .mm files that are generated and
+# creates an appropriate .xcfilelist files covering those generated files.
+#
+# The generated .xcfilelist files are created in:
+#
+#   "${WEBKIT_DIR}/{Source,Tools}/${PROJECT_NAME}/<some-name>.xcfilelist"
+#
+# This script assumes that the generated/derived sources are created in the
+# following location, and incorporates that path into the paths it stores in
+# the .xcfilelists:
+#
+#   $(BUILT_PRODUCTS_DIR)/DerivedSources/${PROJECT_NAME}/
+#
+# Sometimes the generated files are stored in sub-directories, as with
+# unified-sources. In other cases, we need to take into account the fact that
+# generated/derived files are stored in a directory with a legacy name. For
+# instance, WebKit files are stored in a WebKit2 directory, and WebKitLegacy
+# files are stored in a WebKit directory. This discrepancy should probably be
+# cleaned up some day.
+#
+# This script not only generates .xcfilelists, but -- when given a --check
+# command line parameters -- it also checks that they are up-to-date. In this
+# mode, the .xcfilelist files are created in a temporary location and are then
+# compared to the versions checked into the repository. If there are
+# differences, the user is notified so that they know that the .xcfilelist
+# files need to be regenerated. This facility can be incorporated into a
+# check-in hook or into the EWS (perhaps as part of check-webkit-style).
+
+
+HERE="$(cd "$(dirname "$0")" && pwd -P)"
+WEBKIT_DIR="$(cd "${HERE}/../.." && pwd -P)"
+
+
+# Given an .xcfilelist list file containing partial paths to the generated
+# files, modify each path to also include the actual location of generated
+# files for the given project. For instance, modify "UnifiedSources1.cpp" to
+# "$(BUILT_PRODUCTS_DIR)/DerivedSources/MyProject/UnifiedSources1.cpp".
+
+function prepend_prefix_to_all_paths()
+{
+    PROJECT_NAME="$1"
+    FILE="$2"
+
+    if [[ "${PROJECT_NAME}" == WebKit ]]
+    then
+        DERIVED_SOURCES_DIR=WebKit2
+    elif [[ "${PROJECT_NAME}" == WebKitLegacy ]]
+    then
+        DERIVED_SOURCES_DIR=WebKit
+    else
+        DERIVED_SOURCES_DIR="${PROJECT_NAME}"
+    fi
+
+    sed -E -e "s|^|\$\(BUILT_PRODUCTS_DIR\)/DerivedSources/${DERIVED_SOURCES_DIR}/|" -i '' "${FILE}"
+}
+
+
+# Utility: given a list of directories, return the first one that actually
+# exists.
+
+function find_first_existing()
+{
+    DIRS=("$@")
+    for DIR in "${DIRS[@]}"
+    do
+        [[ -x "${DIR}" ]] && { echo "${DIR}"; return 0; }
+    done
+    return 1
+}
+
+
+# Utility: given a project name, find the file system path to it.
+
+function get_project_dir()
+{
+    local PROJECT_NAME="$1"
+    find_first_existing "${WEBKIT_DIR}"/{Source,Tools}/"${PROJECT_NAME}"
+}
+
+
+# Given a checked-in .xcfilelist and a newly-generated one stored in a
+# temporary location, compare the two to see if there are any changes that need
+# to be accounted for. If there are differences, print out a notice and prep
+# the script to exit with code 2.
+
+function check_xcfilelist()
+{
+    local ORIG="$1"
+    local TEMP="$2"
+
+    if ! diff -q "${ORIG}" "${TEMP}" &> /dev/null
+    then
+        echo "### xcfilelist changed:"
+        diff -u "${ORIG}" "${TEMP}"
+        DEFERRED_EXIT_CODE=2
+    fi
+
+    rm "${TEMP}"
+}
+
+
+# Generate .xcfilelist files for "unified sources" derived files. Note that
+# this file list generator assumes the location of the derived files (in
+# particular, that they are based relative to $(BUILT_PRODUCTS_DIR) rather
+# than, say $(PROJECT_DERIVED_FILE_DIR)). If the Xcode projects are refactored
+# to use $(PROJECT_DERIVED_FILE_DIR), then this script should be updated, too.
+
+function generate_xcfilelists_from_unifiedsources()
+{
+    local PROJECT_NAME="$1"
+    local NUM_CPP=$2
+    local NUM_MM=$3
+
+    local XCFILELIST_NAME="UnifiedSources.xcfilelist"
+    local PROJECT_DIR="$(get_project_dir "${PROJECT_NAME}")"
+    local XCFILELIST_PATH="${PROJECT_DIR}/${XCFILELIST_NAME}"
+
+    if (( ${DO_CHECK} ))
+    then
+        echo "### Checking: ${XCFILELIST_PATH}"
+        XCFILELIST_PATH_ORIG="${XCFILELIST_PATH}"
+        XCFILELIST_PATH="/tmp/${XCFILELIST_NAME}"
+    else
+        echo "### Generating: ${XCFILELIST_PATH}"
+    fi
+
+    {
+        local n
+        for n in $(seq $NUM_CPP)
+        do
+            echo unified-sources/UnifiedSource$n.cpp
+        done
+
+        echo
+
+        for n in $(seq $NUM_MM)
+        do
+            echo unified-sources/UnifiedSource$n-mm.mm
+        done
+    } > "${XCFILELIST_PATH}"
+
+    prepend_prefix_to_all_paths "${PROJECT_NAME}" "${XCFILELIST_PATH}"
+    (( ${DO_CHECK} )) && check_xcfilelist "${XCFILELIST_PATH_ORIG}" "${XCFILELIST_PATH}"
+}
+
+
+# Generate .xcfilelist files based on the output of the given makefile when
+# passed the "print_all_generated_files" target.
+
+function generate_xcfilelists_from_makefile()
+{
+    local PROJECT_NAME="$1"
+    local MAKEFILE_NAME="$2"
+    local XCFILELIST_NAME="$3"
+
+    local PROJECT_DIR="$(get_project_dir "${PROJECT_NAME}")"
+    local XCFILELIST_PATH="${PROJECT_DIR}/${XCFILELIST_NAME}"
+
+    if (( ${DO_CHECK} ))
+    then
+        echo "### Checking: ${XCFILELIST_PATH}"
+        XCFILELIST_PATH_ORIG="${XCFILELIST_PATH}"
+        XCFILELIST_PATH="/tmp/${XCFILELIST_NAME}"
+    else
+        echo "### Generating: ${XCFILELIST_PATH}"
+    fi
+
+    local MAKE_FLAGS=(
+        --no-builtin-rules
+        OS=MACOS
+        SDKROOT=$(xcrun --show-sdk-path)
+        FRAMEWORK_SEARCH_PATHS=.
+        HEADER_SEARCH_PATHS=${WEBKIT_DIR}/Source/WTF
+    )
+
+    make -C "${PROJECT_DIR}" -f "${MAKEFILE_NAME}" "${MAKE_FLAGS[@]}" print_all_generated_files \
+        | sort | uniq > "${XCFILELIST_PATH}"
+
+    prepend_prefix_to_all_paths "${PROJECT_NAME}" "${XCFILELIST_PATH}"
+    (( ${DO_CHECK} )) && check_xcfilelist "${XCFILELIST_PATH_ORIG}" "${XCFILELIST_PATH}"
+}
+
+
+# Wrapper around generate_xcfilelists_from_makefile() to handle the common
+# pattern of generating the list of files generated from the
+# DerivedSources.make makefiles.
+
+function generate_xcfilelists_from_derivedsources_makefile()
+{
+    local PROJECT_NAME="$1"
+    generate_xcfilelists_from_makefile "${PROJECT_NAME}" DerivedSources.make DerivedSources.xcfilelist
+}
+
+
+# Process command-line parameters.
+
+DO_CHECK=0
+DEFERRED_EXIT_CODE=0
+
+while [[ "${1:+x}" ]]
+do
+    case "${1}" in
+        --check)    DO_CHECK=1; ;;
+        *)          echo "### Unknown parameter: ${1}"; exit 1; ;;
+    esac
+    shift
+done
+
+
+generate_xcfilelists_from_unifiedsources JavaScriptCore 145 5
+generate_xcfilelists_from_unifiedsources WebCore 530 62
+generate_xcfilelists_from_unifiedsources WebKit 100 80
+
+generate_xcfilelists_from_derivedsources_makefile JavaScriptCore
+generate_xcfilelists_from_derivedsources_makefile WebCore
+generate_xcfilelists_from_derivedsources_makefile WebKit
+generate_xcfilelists_from_derivedsources_makefile WebKitTestRunner
+generate_xcfilelists_from_derivedsources_makefile DumpRenderTree
+
+exit ${DEFERRED_EXIT_CODE}

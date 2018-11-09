@@ -1,3 +1,52 @@
+2018-11-08  Keith Rollin  <krollin@apple.com>
+
+        Create .xcfilelist files
+        https://bugs.webkit.org/show_bug.cgi?id=191324
+        <rdar://problem/45852819>
+
+        Reviewed by Alex Christensen.
+
+        As part of preparing for enabling XCBuild, create and use .xcfilelist
+        files. These files are using during Run Script build phases in an
+        Xcode project. If a Run Script build phase produces new files that are
+        used later as inputs to subsequent build phases, XCBuild needs to know
+        about these files. These files can be either specified in an "output
+        files" section of the Run Script phase editor, or in .xcfilelist files
+        that are associated with the Run Script build phase.
+
+        This patch takes the second approach. It consists of three sets of changes:
+
+        - Modify the DerivedSources.make files to have a
+          'print_all_generated_files" target that produces a list of the files
+          they create.
+
+        - Create a shell script that produces .xcfilelist files from the
+          output of the previous step, as well as for the files created in the
+          Generate Unified Sources build steps.
+
+        - Add the new .xcfilelist files to the associated projects.
+
+        Note that, with these changes, the Xcode workspace and projects can no
+        longer be fully loaded into Xcode 9. Xcode will attempt to load the
+        projects that have .xcfilelist files associated with them, but will
+        fail and display a placeholder for those projects instead. It's
+        expected that all developers are using Xcode 10 by now and that not
+        being able to load into Xcode 9 is not a practical issue. Keep in mind
+        that this is strictly an IDE issue, and that the projects can still be
+        built with `xcodebuild`.
+
+        Also note that the shell script that creates the .xcfilelist files can
+        also be used to verify that the set of files that's currently checked
+        in is up-to-date. This checking can be used as part of a check-in hook
+        or part of check-webkit-style to sooner catch cases where the
+        .xcfilelist files need to be regenerated.
+
+        * DumpRenderTree/DerivedSources.make:
+        * DumpRenderTree/DerivedSources.xcfilelist: Added.
+        * Scripts/generate-xcfilelists: Added.
+        * WebKitTestRunner/DerivedSources.make:
+        * WebKitTestRunner/DerivedSources.xcfilelist: Added.
+
 2018-11-08  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, a quick build fix for r237983

@@ -50,15 +50,23 @@ SCRIPTS = \
 
 IDL_ATTRIBUTES_FILE = $(WebCoreScripts)/IDLAttributes.json
 
-.PHONY : all
+.PHONY : all print_all_generated_files
 
 JS%.h JS%.cpp : %.idl $(SCRIPTS) $(IDL_ATTRIBUTES_FILE)
 	@echo Generating bindings for $*...
 	@perl -I $(WebCoreScripts) -I $(WebKitTestRunner)/InjectedBundle/Bindings -I $(WebKitTestRunner)/UIScriptContext/Bindings $(WebCoreScripts)/generate-bindings.pl --defines "" --include InjectedBundle/Bindings --include UIScriptContext/Bindings --outputDir . --generator TestRunner --idlAttributesFile $(IDL_ATTRIBUTES_FILE) $<
 
-all : \
+ALL_GENERATED_FILES = \
     $(INJECTED_BUNDLE_INTERFACES:%=JS%.h) \
     $(INJECTED_BUNDLE_INTERFACES:%=JS%.cpp) \
     $(UICONTEXT_INTERFACES:%=JS%.h) \
     $(UICONTEXT_INTERFACES:%=JS%.cpp) \
 #
+
+all : $(ALL_GENERATED_FILES)
+
+print_all_generated_files :
+	@for target in $(ALL_GENERATED_FILES); \
+	do \
+		echo $${target}; \
+	done
