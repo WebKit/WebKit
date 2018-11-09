@@ -3,17 +3,10 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width">
-    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/js-test.js"></script>
+    <script src="../form-validation.js"></script>
     <script>
     jsTestIsAsync = true;
-
-    function getValidationBubbleContents()
-    {
-        return `
-        (function() {
-            return JSON.stringify(uiController.contentsOfUserInterfaceItem('validationBubble'));
-        })();`
-    }
 
     function getTapAtPointUIScript(x, y)
     {
@@ -34,14 +27,14 @@
 
         document.getElementById("testSubmitButton").click();
 
-        testRunner.runUIScript(getValidationBubbleContents(), function(result) {
-            validationBubbleContents = JSON.parse(result).validationBubble;
-            shouldBeEqualToString("validationBubbleContents.message", "Select this checkbox");
+        getValidationMessage().then((_message) => {
+            if (_message !==  "Select this checkbox")
+                testFailed("Unexpected validation message: " + _message);
 
             testRunner.runUIScript(getTapAtPointUIScript(0, 0), function() {
-                testRunner.runUIScript(getValidationBubbleContents(), function(result) {
-                    validationBubbleContents = JSON.parse(result).validationBubble;
-                    shouldBeEqualToString("validationBubbleContents.message", ""); // Not visible.
+                getValidationMessage().then((_message) => {
+                    message = _message;
+                    shouldBeEqualToString("message", ""); // Not visible.
                     finishJSTest();
                 });
             });
@@ -54,7 +47,6 @@
 <body>
 <form>
 <input type="checkbox" id="testInput" required><input type="submit" id="testSubmitButton">
-<script src="../../../resources/js-test-post.js"></script>
 </form>
 </body>
 </html>

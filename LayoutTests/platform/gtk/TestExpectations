@@ -980,6 +980,8 @@ webkit.org/b/168050 fast/zooming/client-rect-in-fixed-zoomed.html [ Skip ]
 webkit.org/b/168050 fast/zooming/uiscript-zooming.html [ Skip ]
 
 # Skip tests expecting native HTML form validation popover
+webkit.org/b/167579 fast/forms/scroll-into-view-and-show-validation-message.html [ Skip ]
+webkit.org/b/167579 fast/forms/navigation-dismisses-validation-bubbles.html [ Skip ]
 webkit.org/b/167579 fast/forms/validation-bubble-disappears-when-input-detached.html [ Skip ]
 webkit.org/b/167579 fast/forms/validation-bubble-disappears-when-input-moved.html [ Skip ]
 webkit.org/b/167579 fast/forms/validation-bubble-disappears-when-input-no-longer-visible.html [ Skip ]
@@ -987,7 +989,6 @@ webkit.org/b/167579 fast/forms/validation-custom-message.html [ Skip ]
 webkit.org/b/167579 fast/forms/validation-message-detached-iframe.html [ Skip ]
 webkit.org/b/167579 fast/forms/validation-message-detached-iframe2.html [ Skip ]
 webkit.org/b/167579 fast/forms/validation-messages.html [ Skip ]
-webkit.org/b/167579 http/tests/navigation/navigation-dismisses-validation-bubbles.html [ Skip ]
 webkit.org/b/167579 fast/forms/validation-bubble-escape-key-dismiss.html [ Skip ]
 webkit.org/b/167579 fast/forms/validation-message-minimum-font-size.html [ Skip ]
 

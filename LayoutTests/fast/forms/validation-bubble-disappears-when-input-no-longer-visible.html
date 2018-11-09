@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 <body>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
+<script src="form-validation.js"></script>
 <form>
   Required text input: <input type="text" id="required_text_input" required><input id="required_text_input_submit" type="submit">
 </form>
@@ -11,36 +12,27 @@
 description("Tests that the HTML form validation bubble disappears when its associated element is no longer visible.");
 jsTestIsAsync = true;
 
-function getValidationBubbleContents()
-{
-    return `
-    (function() {
-        return JSON.stringify(uiController.contentsOfUserInterfaceItem('validationBubble'));
-    })();`
-}
-
 onload = function() {
     input = document.getElementById("required_text_input");
     submit = document.getElementById("required_text_input_submit");
     submit.click();
 
-    testRunner.runUIScript(getValidationBubbleContents(), function(result) {
-        validationBubbleContents = JSON.parse(result).validationBubble;
-        shouldBeEqualToString("validationBubbleContents.message", "Fill out this field");
+    getValidationMessage().then((_message) => {
+        if (_message !== "Fill out this field")
+            testFailed("Unexpected validation message: " + _message);
 
         // Hide input element.
         input.setAttribute("style", "display: none");
         // Force layout.
         input.offsetTop;
 
-        testRunner.runUIScript(getValidationBubbleContents(), function(result) {
-            validationBubbleContents = JSON.parse(result).validationBubble;
-            shouldBeEqualToString("validationBubbleContents.message", ""); // No longer visible.
+        getValidationMessage().then((_message) => {
+            message = _message;
+            shouldBeEqualToString("message", ""); // No longer visible.
             finishJSTest();
         });
     });
 }
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 <html>

@@ -1,11 +1,11 @@
-Required text input: 
-Tests that the custom validation message set by JavaScript is displayed on UI side.
+Tests that the validation bubble is shown even if the invalid field needs to be scrolled into view.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-PASS message is "This is a custom validity message."
+
 PASS message is "Fill out this field"
 PASS successfullyParsed is true
 
 TEST COMPLETE
+Submit
 

@@ -516,7 +516,13 @@ void HTMLFormControlElement::focusAndShowValidationMessage()
 {
     // Calling focus() will scroll the element into view.
     focus();
-    updateVisibleValidationMessage();
+
+    // focus() will scroll the element into view and this scroll may happen asynchronously.
+    // Because scrolling the view hides the validation message, we need to show the validation
+    // message asynchronously as well.
+    callOnMainThread([this, protectedThis = makeRef(*this)] {
+        updateVisibleValidationMessage();
+    });
 }
 
 inline bool HTMLFormControlElement::isValidFormControlElement() const

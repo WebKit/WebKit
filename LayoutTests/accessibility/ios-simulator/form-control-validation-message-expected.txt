@@ -1,12 +1,11 @@
-Required text input: 
 This tests that we are exposing form validation message through hint on iOS.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS input.helpText is 'AXHint: '
-PASS input.helpText is 'AXHint: Fill out this field'
+PASS input.helpText is "AXHint: "
+PASS input.helpText is "AXHint: Fill out this field"
 PASS successfullyParsed is true
 
 TEST COMPLETE
-
+Required text input: 

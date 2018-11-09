@@ -14,17 +14,17 @@ Tests the HTML form validation messages being shown on UI side.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-PASS validationBubbleContents.message is "Fill out this field"
-PASS validationBubbleContents.message is "Select this checkbox"
-PASS validationBubbleContents.message is "Select one of these options"
-PASS validationBubbleContents.message is "Select a file"
-PASS validationBubbleContents.message is "Enter an email address"
-PASS validationBubbleContents.message is "Enter a URL"
-PASS validationBubbleContents.message is "Match the requested format"
-PASS validationBubbleContents.message is "Use at least 100 characters"
-PASS validationBubbleContents.message is "Value must be greater than or equal to 5"
-PASS validationBubbleContents.message is "Value must be less than or equal to 5"
-PASS validationBubbleContents.message is "Enter a valid value"
+PASS message is "Fill out this field"
+PASS message is "Select this checkbox"
+PASS message is "Select one of these options"
+PASS message is "Select a file"
+PASS message is "Enter an email address"
+PASS message is "Enter a URL"
+PASS message is "Match the requested format"
+PASS message is "Use at least 100 characters"
+PASS message is "Value must be greater than or equal to 5"
+PASS message is "Value must be less than or equal to 5"
+PASS message is "Enter a valid value"
 PASS successfullyParsed is true
 
 TEST COMPLETE

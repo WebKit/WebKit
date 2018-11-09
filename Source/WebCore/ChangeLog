@@ -1,3 +1,21 @@
+2018-11-09  Chris Dumez  <cdumez@apple.com>
+
+        HTML form validation bubble disappears
+        https://bugs.webkit.org/show_bug.cgi?id=191418
+
+        Reviewed by Simon Fraser.
+
+        If we validate a form and find an invalid form control, we'll scroll it into view and show
+        the validation bubble. However, scrolling the element into view may be an asynchronous
+        operation, in which case it would discard the validation bubble prematurely because scrolling
+        hides the validation bubble. To address the issue, we now show the validation message
+        asynchronously after focusing the element (and potentially scrolling it into view).
+
+        Test: fast/forms/scroll-into-view-and-show-validation-message.html
+
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::focusAndShowValidationMessage):
+
 2018-11-09  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows][DirectX] Be more rigors about BeginFigure/EndFigure and Close operations. 

@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 <body>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
+<script src="form-validation.js"></script>
 <form>
   Required text input: <input type="text" id="required_text_input" required><input id="required_text_input_submit" type="submit">
 </form>
@@ -10,14 +11,6 @@
 <script>
 description("Tests that the font used for validation bubble is aware of the minimumFontSize setting.");
 jsTestIsAsync = true;
-
-function getValidationBubbleContents()
-{
-    return `
-    (function() {
-        return JSON.stringify(uiController.contentsOfUserInterfaceItem('validationBubble'));
-    })();`
-}
 
 function setMinimumFontSize()
 {
@@ -33,23 +26,22 @@ onload = function() {
     submit = document.getElementById("required_text_input_submit");
     submit.click();
 
-    testRunner.runUIScript(getValidationBubbleContents(), function(result) {
-        validationBubbleContents = JSON.parse(result).validationBubble;
-        shouldBeTrue("validationBubbleContents.fontSize > 0");
-        shouldBeTrue("validationBubbleContents.fontSize < 24");
+    getValidationBubble().then((_validationBubble) => {
+        validationBubble = _validationBubble;
+        shouldBeTrue("validationBubble.fontSize > 0");
+        shouldBeTrue("validationBubble.fontSize < 24");
 
         testRunner.runUIScript(setMinimumFontSize(), function() {
             submit.click();
 
-            testRunner.runUIScript(getValidationBubbleContents(), function(result) {
-                validationBubbleContents = JSON.parse(result).validationBubble;
-                shouldBe("validationBubbleContents.fontSize", "24");
+            getValidationBubble().then((_validationBubble) => {
+                 validationBubble = _validationBubble;
+                shouldBe("validationBubble.fontSize", "24");
                 finishJSTest();
             });
         });
     });
 }
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 <html>

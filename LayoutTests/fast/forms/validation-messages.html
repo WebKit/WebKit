@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 <body>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
+<script src="form-validation.js"></script>
 <form>
   Required text input: <input type="text" required><input id="required_text_input_submit" type="submit">
 </form>
@@ -43,14 +44,6 @@
 description("Tests the HTML form validation messages being shown on UI side.");
 jsTestIsAsync = true;
 
-function getValidationBubbleContents()
-{
-    return `
-    (function() {
-        uiController.uiScriptComplete(JSON.stringify(uiController.contentsOfUserInterfaceItem('validationBubble')));
-    })();`
-}
-
 var tests = [
     ['required_text_input_submit', 'Fill out this field'],
     ['required_checkbox_submit', 'Select this checkbox'],
@@ -79,9 +72,9 @@ function runNextTest()
     expectedMessage = currentTest[1];
 
     submitButton.click();
-    testRunner.runUIScript(getValidationBubbleContents(), function(result) {
-        validationBubbleContents = JSON.parse(result).validationBubble;
-        shouldBeEqualToString("validationBubbleContents.message", "" + expectedMessage);
+    getValidationMessage().then((_message) => {
+        message = _message;
+        shouldBeEqualToString("message", "" + expectedMessage);
         runNextTest();
     });
 }
@@ -100,6 +93,5 @@ onload = function() {
     }, 0);
 }
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 <html>

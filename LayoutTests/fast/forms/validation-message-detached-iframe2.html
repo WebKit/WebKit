@@ -1,21 +1,14 @@
 <!DOCTYPE html>
 <html>
 <body>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
+<script src="form-validation.js"></script>
 <iframe id="testFrame1" srcdoc="<iframe id='testFrame2' src='resources/form-validation-iframe.html'></iframe>"></iframe>
 <div id="description"></div>
 <div id="console"></div>
 <script>
 description("Tests that the form validation message goes away when its element's iframe gets detached.");
 jsTestIsAsync = true;
-
-function getValidationBubbleContents()
-{
-    return `
-    (function() {
-        return JSON.stringify(uiController.contentsOfUserInterfaceItem('validationBubble'));
-    })();`
-}
 
 onload = function() {
     var testFrame1 = document.getElementById("testFrame1");
@@ -25,14 +18,14 @@ onload = function() {
     testFrame1 = null;
     gc();
 
-    testRunner.runUIScript(getValidationBubbleContents(), function(result) {
-        validationBubbleContents = JSON.parse(result).validationBubble;
+    getValidationMessage().then((_message) => {
+        message = _message;
+
         gc();
-        shouldBeEqualToString("validationBubbleContents.message", "");
+        shouldBeEqualToString("message", "");
         finishJSTest();
     });
 }
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 <html>
