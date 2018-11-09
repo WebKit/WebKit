@@ -1,3 +1,27 @@
+2018-11-09  Jon Davis  <jond@apple.com>
+
+        Clean-up stray whitespace in theme files
+        https://bugs.webkit.org/show_bug.cgi?id=191430
+
+        Reviewed by Dean Jackson.
+
+        * wp-content/themes/webkit/css-status.php:
+        * wp-content/themes/webkit/footer.php:
+        * wp-content/themes/webkit/front-page.php:
+        * wp-content/themes/webkit/includes.php:
+        * wp-content/themes/webkit/nightly-start.php:
+        * wp-content/themes/webkit/nightly-survey.php:
+        * wp-content/themes/webkit/page.php:
+        * wp-content/themes/webkit/scripts/global.js:
+        * wp-content/themes/webkit/scripts/searchbuilds.js:
+        (initsearch):
+        (initsearch.displayError):
+        * wp-content/themes/webkit/single.php:
+        * wp-content/themes/webkit/sitemap.php:
+        * wp-content/themes/webkit/team.php:
+        * wp-content/themes/webkit/widgets/icon.php:
+        * wp-content/themes/webkit/widgets/page.php:
+
 2018-11-02  Jon Davis  <jond@apple.com>
 
         Follow-up fix for the webkit.org blog index page

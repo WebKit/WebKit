@@ -11,14 +11,14 @@
                 <p class="twitter"><a href="https://twitter.com/<?php echo get_the_author_meta('twitter'); ?>" target="_blank">@<?php echo esc_html($twitter_handle); ?></a></p>
                 <?php endif; ?>
             </div>
-            
+
             <div class="bodycopy">
                 <?php the_content('<p class="serif">Read the rest of this entry &gt;&gt;</p>'); ?>
 
                 <?php link_pages('<p><strong>Pages:</strong> ', '</p>', 'number'); ?>
             </div>
         </article>
-        
+
         <aside class="nextrouter" aria-label="Next/Previous posts">
             <div class="bodycopy">
             <?php //previous_post_link('%link', 'Older Post <span>%title</span>'); ?>

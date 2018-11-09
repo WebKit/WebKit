@@ -1,6 +1,6 @@
 <?php get_header(); ?>
 <div id="posts" class="tiles">
-    <?php 
+    <?php
 
 include_post_icons();
 Front_Page_Posts::object(); // Initialize Front Page Posts query

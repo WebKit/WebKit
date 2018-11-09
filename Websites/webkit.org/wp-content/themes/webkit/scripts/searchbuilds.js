@@ -6,23 +6,23 @@
         errors = document.getElementById('search-errors'),
         loaded = ui.lastChild.cloneNode(true),
         inputs = [].slice.call(inputList);
-        
+
     for (var i in inputs) {
         var input = inputs[i];
         initsearch(input);
     }
-    
+
     function initsearch(input) {
-        
+
         var delayTimer = null;
-        
+
         // input.addEventListener('focus', sendSearch);
         input.addEventListener('keyup', function () {
             if ( delayTimer != null )
                 clearTimeout(delayTimer);
             delayTimer = setTimeout(sendSearch, 500);
         });
-        
+
         function xhrPromise(url) {
             return new Promise(function(resolve, reject) {
                 var XHR = new XMLHttpRequest();
@@ -40,7 +40,7 @@
                 XHR.send();
             });
         }
-        
+
         // Send the search query
         function sendSearch (e) {
             delayTimer = null;
@@ -52,19 +52,19 @@
             var endpoint = new URL(ajaxurl + "?action=search_nightly_builds&query=" + query);
             var searchResults = xhrPromise(endpoint);
             spinner.classList.add('searching');
-            searchResults.then(displayResults).catch(displayError);            
+            searchResults.then(displayResults).catch(displayError);
         }
 
         function displayResults(results) {
             var list = document.createElement('ul');
             if ( results.length == 0 )
                 return displayError('There are no builds matching your search. Search by revision number, or a range of revision numbers: ######-######');
-            
+
             for (var entry of results)
                 addEntry(entry[0], entry[1], entry[2]);
             ui.replaceChild(list, ui.lastChild);
             spinner.classList.remove('searching');
-            
+
             function addEntry (build, datetime, download) {
                 var li = document.createElement('li'),
                     link = document.createElement('a'),
@@ -81,11 +81,11 @@
                 list.appendChild(li);
             }
         }
-        
+
         function displayError(message) {
             var note = document.createElement('div');
 
-            if ( typeof message !== 'string' ) 
+            if ( typeof message !== 'string' )
                 message = 'A communication error occured preventing any results from being returned by the server.';
 
             note.classList.add('note');
@@ -95,12 +95,12 @@
 
             spinner.classList.remove('searching');
         }
-        
+
         function clearErrors() {
             while (errors.firstChild)
                 errors.removeChild(errors.firstChild);
         }
-        
+
      }
 
 }(document));

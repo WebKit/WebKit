@@ -12,15 +12,15 @@ get_header();
         body {
             background: #333333;
         }
-        
+
         main {
             background: none;
         }
-        
+
         header {
             background-color: rgba(0,0,0,0.1);
         }
-        
+
         #nightly {
             margin: 6rem auto;
             color: #ffffff;
@@ -44,7 +44,7 @@ get_header();
             text-align: center;
         }
 
-        
+
         #nightly .bodycopy {
             max-width: 64rem;
         }
@@ -129,7 +129,7 @@ get_header();
             font-weight: normal;
             font-size: 1.8rem;
         }
-        
+
         #nightly .pagination .page-numbers {
             background-color: rgba(255, 255, 255, 0.1);
             color: #ffffff;
@@ -153,9 +153,9 @@ get_header();
     <?php if (have_posts()) : while (have_posts()) : the_post(); ?>
 
         <article class="page" id="nightly">
-            
+
             <h1><?php the_title(); ?></h1>
-            
+
             <div class="bodycopy">
                 <?php if (WebKit_Nightly_Survey::responded()): ?>
                     <?php the_content(''); ?>
@@ -166,11 +166,11 @@ get_header();
                 <form name="webkit-nightly-survey" action="" method="POST">
                 <?php
                 echo WebKit_Nightly_Survey::form_nonce();
-                
+
                 $Survey = WebKit_Nightly_Survey::survey();
                 foreach ($Survey as $id => $SurveyQuestion) {
                     echo "<h3>$SurveyQuestion->question</h3>";
-                    
+
                     echo "<ul>";
                     foreach ($SurveyQuestion->responses as $value => $response) {
                         echo '<li><label><input type="radio" name="questions[' . $id . ']" value="' . $value . '" required> <span>' . $response . '</span>';
@@ -186,7 +186,7 @@ get_header();
                 </form>
                 <?php endif;?>
             </div>
-            
+
         </article>
 
     <?php endwhile; endif; ?>

@@ -20,7 +20,6 @@ article ul > li {
     padding: 1rem;
     margin-bottom: 1rem;
     border: 1px solid transparent;
-    
 }
 li span,
 li em {
@@ -56,7 +55,7 @@ article ul > li:hover li {
 }
 
 @media only screen and (max-width: 675px) {
-    
+
     article ul > li {
         width: 100%;
     }
@@ -68,10 +67,10 @@ article ul > li:hover li {
 
         <article class="page" id="post-<?php the_ID(); ?>">
 			<h1><a href="<?php echo get_permalink() ?>" rel="bookmark" title="Permanent Link: <?php the_title(); ?>"><?php the_title(); ?></a></h1>
-                        
+
 			<div id="team" class="bodycopy">
                 <p><a href="#reviewers">Reviewers</a> | <a href="#committers">Committers</a> | <a href="#contributors">Contributors</a></p>
-                
+
                 <h2><a name="reviewers"></a>Reviewers</h2>
                 <ul id="reviewers"></ul>
 
@@ -186,7 +185,7 @@ function populateContributorListItem(listItem, contributor) {
     var affiliation = formatAffiliation(contributor);
     if (affiliation) {
         addText(listItem, ' ');
-        addWrappedText(listItem, 'em', {'class': 'affiliation'}, affiliation);        
+        addWrappedText(listItem, 'em', {'class': 'affiliation'}, affiliation);
     }
 
     if (contributor.expertise) {

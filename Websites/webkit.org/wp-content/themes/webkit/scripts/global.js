@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
         menuitems[i].addEventListener('focus', function (e) {
             var targetMenu = findParentMenu(e.target, menuClass),
                 targetMenuClass = null;
-                
+
             if ( targetMenu != undefined )
                 targetMenuClass = targetMenu.className;
 
@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
     }
-    
+
     function enableScrollableTables () {
         var tables = document.querySelectorAll('.bodycopy > table');
         var tableCount = tables.length;
@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var imgs = document.querySelectorAll('div[data-url]');
     document.addEventListener('scroll', onMovement);
     document.addEventListener('resize', onMovement);
-    
+
     updateImages();
     enableScrollableTables();
 

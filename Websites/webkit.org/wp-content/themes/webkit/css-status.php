@@ -564,7 +564,7 @@ function initializeStatusPage() {
         'obsolete',
         'removed',
     ];
-    
+
     const readableStatus = {
         'supported': 'Supported',
         'in-development': 'In Development',
@@ -636,7 +636,7 @@ function initializeStatusPage() {
             container.appendChild(link);
             return container;
         }
-        
+
         function appendValueWithLink(container, value, link)
         {
             if (link) {
@@ -646,7 +646,7 @@ function initializeStatusPage() {
                 container.appendChild(anchor);
                 return;
             }
-            
+
             container.textContent = value;
         }
 
@@ -729,15 +729,15 @@ function initializeStatusPage() {
                 longhandLink.textContent = longhand;
                 longhandsDiv.appendChild(longhandLink);
             }
-        
+
             toggledContentContainer.appendChild(longhandsDiv);
         }
-        
+
         function collapsePrefixedValues(values)
         {
             var remainingValues = [];
             var prefixMap = {};
-            
+
             for (var valueObj of values) {
                 var valueName = valueObj.value;
 
@@ -750,15 +750,15 @@ function initializeStatusPage() {
                         continue;
                     }
                 }
-                
+
                 remainingValues.push(valueObj);
             }
-            
+
             for (var prefixed in prefixMap) {
                 var unprefixedValue = findValueByName(remainingValues, prefixed);
                 unprefixedValue.aliases = prefixMap[prefixed];
             }
-            
+
             return remainingValues;
         }
 
@@ -766,14 +766,14 @@ function initializeStatusPage() {
             var valuesHeader = document.createElement("h4");
             valuesHeader.textContent = 'Supported Values:';
             toggledContentContainer.appendChild(valuesHeader);
-            
+
             var valuesList = document.createElement("ul");
             valuesList.className = 'values';
-            
+
             var values = collapsePrefixedValues(propertyObject.values);
             for (var valueObj of values) {
                 var li = document.createElement("li");
-                
+
                 valueObj.el = li;
 
                 var link = undefined;
@@ -789,26 +789,26 @@ function initializeStatusPage() {
                     link = valueObj['url'];
 
                 appendValueWithLink(li, valueObj.value, link);
-                
+
                 if (valueAliases) {
                     var span = document.createElement('span');
                     span.textContent = ' (' + valueAliases.join(', ') + ')';
                     span.className = 'value-alias';
                     li.appendChild(span);
                 }
-                
+
                 if (status) {
                     var span = document.createElement('span');
                     span.textContent = ' (' + status + ')';
                     span.className = 'value-status';
                     li.appendChild(span);
                 }
-                
+
                 valuesList.appendChild(li);
             }
             toggledContentContainer.appendChild(valuesList);
         }
-        
+
         var statusContainer = document.createElement("span");
         cornerStatus.className += propertyObject.status.status;
         statusContainer.className = "property-status " + propertyObject.status.status;
@@ -830,7 +830,7 @@ function initializeStatusPage() {
         });
 
         featureHeaderContainer.appendChild(toggle);
-        
+
         if (specificationObject && "description" in specificationObject) {
             var testDescription = document.createElement('p');
             testDescription.className = "property-desc";
@@ -858,7 +858,7 @@ function initializeStatusPage() {
         }
 
         container.appendChild(descriptionContainer);
-        
+=
         function getMostSpecificProperty(categoryObject, specificationObject, attributeName)
         {
             // The url in the specification object is more specific, so use it if present.
@@ -916,12 +916,12 @@ function initializeStatusPage() {
 
         return container;
     }
-    
+
     function canonicalizeIdentifier(identifier)
     {
         return identifier.toLocaleLowerCase().replace(/ /g, '-');
     }
-    
+
     function renderSpecifications(categories, properties, selectedSpecifications)
     {
         var specificationsList = document.getElementById('specifications');
@@ -929,7 +929,7 @@ function initializeStatusPage() {
 
         var selectedIndex = -1;
         var allCategories = Object.keys(categories).sort();
-        
+
         for (var i = 0; i < allCategories.length; ++i) {
             var categoryKey = allCategories[i];
             var category = categories[categoryKey];
@@ -946,7 +946,7 @@ function initializeStatusPage() {
         if (selectedIndex != -1)
             specificationsList.selectedIndex = selectedIndex;
     }
-    
+
     function getPropertyCategory(propertyObject)
     {
         if ('specification' in propertyObject && 'category' in propertyObject.specification)
@@ -994,10 +994,10 @@ function initializeStatusPage() {
                     window.console.log('Status ' + propertyStatusKey + ' is not one of the predefined status keys ', statusOrder);
             }
         });
-        
+
         var selectedStatuses = statusesFromURL();
         var selectedSpecs = specificationsFromURL();
-        
+
         for (var key of statusOrder) {
             var status = statusFilters[key];
             var canonicalStatus = canonicalizeIdentifier(status);
@@ -1017,7 +1017,7 @@ function initializeStatusPage() {
             entry.appendChild(label);
             statusContainer.appendChild(entry);
         }
-        
+
         // Append the special "By Specification" checkbox
         {
             var entry = document.createElement("li");
@@ -1031,12 +1031,12 @@ function initializeStatusPage() {
             label.appendChild(input);
             label.appendChild(document.createTextNode(" By Specification:"));
             entry.appendChild(label);
-            
+
             var specsList = document.createElement('select');
             specsList.className = 'specifications';
             specsList.id = 'specifications';
             entry.appendChild(specsList);
-            
+
             statusContainer.appendChild(entry);
         }
 
@@ -1092,17 +1092,17 @@ function initializeStatusPage() {
             if (item.checked)
                 checkedValues.push(item.value);
         });
-        
+
         return checkedValues;
     }
 
     function getValuesOfSelectedItems(select)
     {
         var selectedValues = [];
-        
+
         if (select.selectedIndex != -1)
             selectedValues.push(select.options[select.selectedIndex].value);
-        
+
         return selectedValues;
     }
 
@@ -1116,7 +1116,7 @@ function initializeStatusPage() {
         specificationsList.disabled = false;
         return getValuesOfSelectedItems(specificationsList);
     }
-    
+
     function updateSearch(properties)
     {
         var inputField = document.getElementById('search');
@@ -1131,36 +1131,36 @@ function initializeStatusPage() {
         var numVisible = searchProperties(properties, searchTerm, selectedSpecifications(), activeStatusFilters, activePrefixFilters);
         document.getElementById('property-pluralize').textContent = numVisible == 1 ? 'property' : 'properties';
         document.getElementById('property-count').textContent = numVisible;
-        
+
         updateSpecsState();
         updateURL(searchTerm, selectedSpecifications(), activeStatusFilters, activePrefixFilters);
     }
-    
+
     function updateSpecsState()
     {
         var specsEnabled = document.getElementById('by-spec-checkbox').checked;
         var specificationsList = document.getElementById('specifications');
-        
+
         var radiobuttons = [].slice.call(specificationsList.getElementsByTagName('input'));
         radiobuttons.forEach(function(radiobutton,i) {
             radiobutton.disabled = !specsEnabled;
         });
     }
-    
+
     function updateURL(searchTerm, selectedSpecifications, activeStatusFilters, activePrefixFilters)
     {
         var searchString = '';
-        
+
         function appendDelimiter()
         {
             searchString += searchString.length ? '&' : '?';
         }
-        
+
         if (searchTerm.length > 0) {
             appendDelimiter();
             searchString += 'search=' + encodeURIComponent(searchTerm);
         }
-        
+
         if (activeStatusFilters.length) {
             appendDelimiter();
             searchString += 'status=' + activeStatusFilters.join(',');
@@ -1179,7 +1179,7 @@ function initializeStatusPage() {
         var current = window.location.href;
         window.location.href = current.replace(/#(.*)$/, '') + '#' + searchString;
     }
-    
+
     function searchTermFromURL()
     {
         var search = window.location.search;
@@ -1191,7 +1191,7 @@ function initializeStatusPage() {
 
         return '';
     }
-    
+
     function statusesFromURL()
     {
         var search = window.location.search;
@@ -1220,14 +1220,14 @@ function initializeStatusPage() {
     {
         if (prefixRegexp.exec(valueObj.value))
             return true;
-        
+
         if ('alias' in valueObj) {
             for (var alias of valueObj.aliases) {
                 if (prefixRegexp.exec(alias))
                     return true;
             }
         }
-        
+
         return false;
     }
 
@@ -1271,13 +1271,13 @@ function initializeStatusPage() {
         properties.forEach(function(propertyObject) {
             var matchesStatusSearch = isStatusFiltered(propertyObject, statusFilters);
             var matchesPrefixSearch = isPrefixFiltered(propertyObject, prefixFilters);
-            
+
             var visible = propertyIsSearchMatch(propertyObject, searchTerm) && isCategoryMatch(propertyObject, categories) && matchesStatusSearch && matchesPrefixSearch;
             if (visible && !propertyObject.visible)
                 propertyObject.el.className = 'property';
             else if (!visible && propertyObject.visible)
                 propertyObject.el.className = 'property is-hidden';
-            
+
             if (visible) {
                 filterValues(propertyObject, searchTerm);
                 ++visibleCount;
@@ -1285,7 +1285,7 @@ function initializeStatusPage() {
 
             propertyObject.visible = visible;
         });
-        
+
         return visibleCount;
     }
 
@@ -1303,7 +1303,7 @@ function initializeStatusPage() {
                     return true;
             }
         }
-        
+
         for (var valueObj of propertyObject.values) {
             if (valueObj.value.toLowerCase().indexOf(searchTerm) !== -1)
                 return true;
@@ -1353,17 +1353,17 @@ function initializeStatusPage() {
         }
         return false;
     }
-    
+
     function propertyOrAliasIsPrefixed(propertyObject)
     {
         if (prefixRegexp.exec(propertyObject.name))
             return true;
-        
+
         for (var alias of propertyNameAliases(propertyObject)) {
             if (prefixRegexp.exec(alias))
                 return true;
         }
-        
+
         return false;
     }
 
@@ -1375,7 +1375,7 @@ function initializeStatusPage() {
             return false;
         if (activeFilters.indexOf(propertyObject.status.status) !== -1)
             return true;
-        
+
         return false;
     }
 
@@ -1403,7 +1403,7 @@ function initializeStatusPage() {
                     return true;
             }
         }
-        
+
         return false;
     }
 
@@ -1417,7 +1417,7 @@ function initializeStatusPage() {
     function mergeProperties(unprefixedPropertyObj, prefixedPropertyObj)
     {
         (unprefixedPropertyObj['codegen-properties'].aliases = unprefixedPropertyObj['codegen-properties'].aliases || []).push(prefixedPropertyObj.name);
-        
+
         for (var valueObj of prefixedPropertyObj.values) {
             if (!findValueByName(unprefixedPropertyObj.values, valueObj.value))
                 prefixedPropertyObj.values.push(valueObj);
@@ -1425,7 +1425,7 @@ function initializeStatusPage() {
 
         return unprefixedPropertyObj;
     }
-    
+
     // Sometimes we have separate entries for -webkit-foo and foo.
     function collapsePrefixedProperties(properties)
     {
@@ -1454,7 +1454,7 @@ function initializeStatusPage() {
 
             remainingProperties.push(propertyObj);
         }
-        
+
         return remainingProperties;
     }
 
@@ -1472,7 +1472,7 @@ function initializeStatusPage() {
         }
         propertyObject.values = valueObjects;
     }
-    
+
     function canonicalizeStatus(propertyObject, categories)
     {
         // Inherit "status" from the cateogry if not explicitly specified.
@@ -1501,19 +1501,19 @@ function initializeStatusPage() {
             };
         } else if (!('status' in propertyObject.status))
             propertyObject.status.status = 'supported';
-            
+
         propertyObject.status.status = canonicalizeIdentifier(propertyObject.status.status);
     }
-    
+
     function renderContent(results)
     {
         var mainContent = document.getElementById("property-list");
         var successSubtree = document.importNode(document.getElementById("success-template").content, true);
         mainContent.appendChild(successSubtree);
-        
+
         var properties = results[0]['properties'];
         var everythingToShow = [];
-        
+
         var categories = results[0]['categories'];
 
         for (var property in properties) {
@@ -1525,10 +1525,10 @@ function initializeStatusPage() {
 
             everythingToShow.push(propertyObject);
         }
-        
+
         everythingToShow = collapsePrefixedProperties(everythingToShow);
         sortAlphabetically(everythingToShow);
-        
+
         renderProperties(categories, everythingToShow);
 
         initSearch(everythingToShow, categories);
