@@ -245,7 +245,7 @@ WI.RemoteObject = class RemoteObject
             return;
         }
 
-        if (!RuntimeAgent.getPreview) {
+        if (!this._target.RuntimeAgent.getPreview) {
             this._failedToLoadPreview = true;
             callback(null);
             return;
@@ -282,7 +282,7 @@ WI.RemoteObject = class RemoteObject
 
         // COMPATIBILITY (iOS 8): RuntimeAgent.getDisplayableProperties did not exist.
         // Here we do our best to reimplement it by getting all properties and reducing them down.
-        if (!RuntimeAgent.getDisplayableProperties) {
+        if (!this._target.RuntimeAgent.getDisplayableProperties) {
             this._target.RuntimeAgent.getProperties(this._objectId, function(error, allProperties) {
                 var ownOrGetterPropertiesList = [];
                 if (allProperties) {
@@ -329,7 +329,7 @@ WI.RemoteObject = class RemoteObject
 
         // COMPATIBILITY (iOS 8): RuntimeAgent.getProperties did not support ownerAndGetterProperties.
         // Here we do our best to reimplement it by getting all properties and reducing them down.
-        if (!RuntimeAgent.getDisplayableProperties) {
+        if (!this._target.RuntimeAgent.getDisplayableProperties) {
             this._target.RuntimeAgent.getProperties(this._objectId, function(error, allProperties) {
                 var ownOrGetterPropertiesList = [];
                 if (allProperties) {

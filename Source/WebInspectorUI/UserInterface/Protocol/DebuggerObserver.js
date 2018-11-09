@@ -27,7 +27,7 @@ WI.DebuggerObserver = class DebuggerObserver
 {
     constructor()
     {
-        this._legacyScriptParsed = DebuggerAgent.hasEventParameter("scriptParsed", "hasSourceURL");
+        this._legacyScriptParsed = InspectorBackend.domains.Debugger.hasEventParameter("scriptParsed", "hasSourceURL");
     }
 
     // Events defined by the "Debugger" domain.

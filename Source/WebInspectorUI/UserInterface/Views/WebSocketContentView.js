@@ -36,7 +36,7 @@ WI.WebSocketContentView = class WebSocketContentView extends WI.ContentView
         this._lastRenderedReadyState = null;
 
         // COMPATIBILITY (iOS 10.3): `walltime` did not exist in 10.3 and earlier.
-        this._showTimeColumn = NetworkAgent.hasEventParameter("webSocketWillSendHandshakeRequest", "walltime");
+        this._showTimeColumn = InspectorBackend.domains.Network.hasEventParameter("webSocketWillSendHandshakeRequest", "walltime");
 
         this.element.classList.add("web-socket", "resource");
 

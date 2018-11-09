@@ -114,7 +114,7 @@ WI.NetworkTimelineView = class NetworkTimelineView extends WI.TimelineView
         columns.graph.sortable = false;
 
         // COMPATIBILITY(iOS 10.3): Network load metrics were not previously available.
-        if (!NetworkAgent.hasEventParameter("loadingFinished", "metrics")) {
+        if (!InspectorBackend.domains.Network.hasEventParameter("loadingFinished", "metrics")) {
             delete columns.protocol;
             delete columns.priority;
             delete columns.remoteAddress;

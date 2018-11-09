@@ -128,7 +128,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         if (this._hasNonDefaultLogChannelMessage && this._messageSourceBar)
             navigationItems.push(this._messageSourceBar, new WI.DividerNavigationItem);
 
-        if (HeapAgent.gc)
+        if (window.HeapAgent && HeapAgent.gc)
             navigationItems.push(this._garbageCollectNavigationItem);
 
         navigationItems.push(this._clearLogNavigationItem);

@@ -30,7 +30,7 @@ WI.NetworkObserver = class NetworkObserver
     requestWillBeSent(requestId, frameId, loaderId, documentURL, request, timestamp, walltime, initiator, redirectResponse, type, targetId)
     {
         // COMPATIBILITY(iOS 11.0): `walltime` did not exist in 11.0 and earlier.
-        if (!NetworkAgent.hasEventParameter("requestWillBeSent", "walltime")) {
+        if (!InspectorBackend.domains.Network.hasEventParameter("requestWillBeSent", "walltime")) {
             walltime = undefined;
             initiator = arguments[6];
             redirectResponse = arguments[7];

@@ -72,7 +72,7 @@ WI.Target = class Target extends WI.Object
         // Non-manager specific initialization.
         // COMPATIBILITY (iOS 8): Page.setShowPaintRects did not exist.
         if (this.PageAgent) {
-            if (PageAgent.setShowPaintRects && WI.settings.showPaintRects.value)
+            if (this.PageAgent.setShowPaintRects && WI.settings.showPaintRects.value)
                 this.PageAgent.setShowPaintRects(true);
         }
 
@@ -92,7 +92,7 @@ WI.Target = class Target extends WI.Object
             // This allows an automatically paused backend to resume execution, but we want to ensure
             // our breakpoints were already sent to that backend.
             // COMPATIBILITY (iOS 8): Inspector.initialized did not exist yet.
-            if (this.InspectorAgent && InspectorAgent.initialized)
+            if (this.InspectorAgent && this.InspectorAgent.initialized)
                 this.InspectorAgent.initialized();
         });
     }

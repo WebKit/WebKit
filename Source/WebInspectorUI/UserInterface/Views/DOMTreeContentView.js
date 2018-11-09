@@ -101,7 +101,7 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         let items = [this._showPrintStylesButtonNavigationItem, this._showsShadowDOMButtonNavigationItem];
 
         // COMPATIBILITY (iOS 11.3)
-        if (PageAgent.setShowRulers)
+        if (window.PageAgent && PageAgent.setShowRulers)
             items.unshift(this._showRulersButtonNavigationItem);
 
         if (!WI.settings.experimentalEnableLayersTab.value)

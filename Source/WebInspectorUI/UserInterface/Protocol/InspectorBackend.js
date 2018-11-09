@@ -58,6 +58,13 @@ InspectorBackendClass = class InspectorBackendClass
 
     // Public
 
+    // This should be used for feature checking if something exists in the protocol
+    // regardless of whether or not the domain is active for a specific target.
+    get domains()
+    {
+        return this._agents;
+    }
+
     // It's still possible to set this flag on InspectorBackend to just
     // dump protocol traffic as it happens. For more complex uses of
     // protocol data, install a subclass of WI.ProtocolTracer.
@@ -165,6 +172,10 @@ InspectorBackendClass = class InspectorBackendClass
         for (let debuggableType of supportedDebuggableTypes)
             this._supportedDomainsForDebuggableType.get(debuggableType).push(domainName);
 
+        // FIXME: For proper multi-target support we should eliminate all uses of
+        // `window.FooAgent` and `unprefixed FooAgent` in favor of either:
+        //   - Per-target: `target.FooAgent`
+        //   - Global feature check: `InspectorBackend.domains.Foo`
         if (!activationDebuggableTypes || activationDebuggableTypes.includes(InspectorFrontendHost.debuggableType())) {
             let agent = this._agents[domainName];
             agent.activate();

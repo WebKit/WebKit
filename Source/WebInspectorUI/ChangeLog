@@ -1,3 +1,104 @@
+2018-11-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Start moving toward better multi-target support
+        https://bugs.webkit.org/show_bug.cgi?id=191345
+
+        Reviewed by Devin Rousso.
+
+        This change continues the move toward better multi-target support
+        by explicitly using explicit target agents in more places, and
+        converting generalized feature checks into target agnostic versions
+        that use the new InspectorBackend.domains, which does not vary based
+        on the connected targets / debuggable type.
+
+        I also audited uses of RuntimeAgent, ConsoleAgent, and DebuggerAgent
+        for better multi-target support since these agents should already
+        have complete multi-target support.
+
+        * UserInterface/Protocol/Target.js:
+        (WI.Target.prototype.initialize):
+        Move explicitly to target.Agent feature checks with a known target.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WI.DebuggerManager.prototype.initializeTarget):
+        (WI.DebuggerManager.prototype._pauseForInternalScriptsDidChange):
+        Move explicitly to target.DebuggerAgent for feature checks with a known target.
+
+        * UserInterface/Controllers/NetworkManager.js:
+        (WI.NetworkManager.prototype.initializeTarget):
+        Move explicitly to target.NetworkAgent for feature checks with a known target.
+
+        * UserInterface/Controllers/RuntimeManager.js:
+        (WI.RuntimeManager.prototype.initializeTarget):
+        (WI.RuntimeManager.prototype.saveResult):
+        * UserInterface/Protocol/RemoteObject.js:
+        (WI.RemoteObject.prototype.updatePreview):
+        (WI.RemoteObject.prototype.getDisplayablePropertyDescriptors):
+        (WI.RemoteObject.prototype.deprecatedGetDisplayableProperties):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WI.SourceCodeTextEditor.prototype._createTypeTokenAnnotator):
+        (WI.SourceCodeTextEditor.prototype._createBasicBlockAnnotator):
+        Move explicitly to target.RuntimeAgent for feature checks with a known target.
+
+        * UserInterface/Models/CSSCompletions.js:
+        (WI.CSSCompletions.initializeCSSCompletions):
+        Move explicitly to target.CSSAgent for feature checks with a known target.
+
+        * UserInterface/Views/ContextMenuUtilities.js:
+        Use the DebuggerAgent from the target associated with the DOMNode's
+        remote object instead of assuming the main target.
+
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createGeneralSettingsView):
+        Update the ConsoleAgent setting on all targets that support it.
+
+        * UserInterface/Views/BreakpointActionView.js:
+        (WI.BreakpointActionView):
+        All backends support BreakpointActionType, the assertion can go away.
+
+        * UserInterface/Views/LogContentView.js:
+        (WI.LogContentView.prototype.get navigationItems):
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WI.DOMTreeContentView.prototype.get navigationItems):
+        Include additional `window.FooAgent` checks for these since they will need
+        to be revisited in the future.
+
+        * UserInterface/Protocol/InspectorBackend.js:
+        (InspectorBackendClass.prototype.get domains):
+        (InspectorBackendClass.prototype.activateDomain):
+        Expose InspectorBackend.domains.<Domain> for feature checking.
+
+        * UserInterface/Controllers/BreakpointPopoverController.js:
+        (WI.BreakpointPopoverController.prototype._createPopoverContent):
+        * UserInterface/Controllers/CSSManager.js:
+        (WI.CSSManager):
+        (WI.CSSManager.prototype._mainResourceDidChange):
+        * UserInterface/Controllers/TimelineManager.js:
+        (WI.TimelineManager.prototype._attemptAutoCapturingForFrame):
+        (WI.TimelineManager.prototype._updateAutoCaptureInstruments):
+        (WI.TimelineManager):
+        * UserInterface/Models/Canvas.js:
+        (WI.Canvas.prototype.startRecording):
+        (WI.Canvas.prototype.recordingFinished):
+        * UserInterface/Models/ScriptSyntaxTree.js:
+        (WI.ScriptSyntaxTree.functionReturnDivot):
+        * UserInterface/Protocol/DebuggerObserver.js:
+        (WI.DebuggerObserver):
+        * UserInterface/Protocol/NetworkObserver.js:
+        (WI.NetworkObserver.prototype.requestWillBeSent):
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WI.DebuggerSidebarPanel):
+        (WI.DebuggerSidebarPanel.prototype._handleCreateBreakpointClicked):
+        * UserInterface/Views/NetworkTimelineView.js:
+        (WI.NetworkTimelineView):
+        * UserInterface/Views/ResourceDetailsSidebarPanel.js:
+        (WI.ResourceDetailsSidebarPanel.prototype._refreshRequestAndResponse):
+        * UserInterface/Views/WebSocketContentView.js:
+        (WI.WebSocketContentView):
+        (WI.NetworkManager.prototype.webSocketWillSendHandshakeRequest):
+        (WI.DebuggerManager.prototype.debuggerDidResume):
+        Feature check in a target agnostic way.
+
 2018-11-08  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: ResourceQueryController should early return when query is longer than search string

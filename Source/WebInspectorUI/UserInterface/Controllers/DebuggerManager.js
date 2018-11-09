@@ -118,15 +118,15 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         target.DebuggerAgent.setPauseOnExceptions(this._breakOnExceptionsState);
 
         // COMPATIBILITY (iOS 10): DebuggerAgent.setPauseOnAssertions did not exist yet.
-        if (DebuggerAgent.setPauseOnAssertions)
+        if (target.DebuggerAgent.setPauseOnAssertions)
             target.DebuggerAgent.setPauseOnAssertions(this._assertionFailuresBreakpointEnabledSetting.value);
 
         // COMPATIBILITY (iOS 10): Debugger.setAsyncStackTraceDepth did not exist yet.
-        if (DebuggerAgent.setAsyncStackTraceDepth)
+        if (target.DebuggerAgent.setAsyncStackTraceDepth)
             target.DebuggerAgent.setAsyncStackTraceDepth(this._asyncStackTraceDepthSetting.value);
 
         // COMPATIBILITY (iOS 12): DebuggerAgent.setPauseForInternalScripts did not exist yet.
-        if (DebuggerAgent.setPauseForInternalScripts)
+        if (target.DebuggerAgent.setPauseForInternalScripts)
             target.DebuggerAgent.setPauseForInternalScripts(WI.settings.pauseForInternalScripts.value);
 
         if (this.paused)
@@ -689,7 +689,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         // 50ms, and treat it as a real resume if we haven't paused in that time frame.
         // This delay ensures the user interface does not flash between brief steps
         // or successive breakpoints.
-        if (!DebuggerAgent.setPauseOnAssertions) {
+        if (!target.DebuggerAgent.setPauseOnAssertions) {
             this._delayedResumeTimeout = setTimeout(this._didResumeInternal.bind(this, target), 50);
             return;
         }
@@ -1156,11 +1156,10 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
     _pauseForInternalScriptsDidChange(event)
     {
-        // COMPATIBILITY (iOS 12): DebuggerAgent.setPauseForInternalScripts did not exist yet.
-        console.assert(DebuggerAgent.setPauseForInternalScripts);
-
-        for (let target of WI.targets)
-            target.DebuggerAgent.setPauseForInternalScripts(WI.settings.pauseForInternalScripts.value);
+        for (let target of WI.targets) {
+            if (target.DebuggerAgent.setPauseForInternalScripts)
+                target.DebuggerAgent.setPauseForInternalScripts(WI.settings.pauseForInternalScripts.value);
+        }
     }
 
     _mainResourceDidChange(event)

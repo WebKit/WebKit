@@ -41,11 +41,11 @@ WI.RuntimeManager = class RuntimeManager extends WI.Object
         target.RuntimeAgent.enable();
 
         // COMPATIBILITY (iOS 8): Runtime.enableTypeProfiler did not exist.
-        if (WI.settings.showJavaScriptTypeInformation && WI.settings.showJavaScriptTypeInformation.value && RuntimeAgent.enableTypeProfiler)
+        if (target.RuntimeAgent.enableTypeProfiler && WI.settings.showJavaScriptTypeInformation.value)
             target.RuntimeAgent.enableTypeProfiler();
 
         // COMPATIBILITY (iOS 10): Runtime.enableControlFlowProfiler did not exist
-        if (WI.settings.enableControlFlowProfiler && WI.settings.enableControlFlowProfiler.value && RuntimeAgent.enableControlFlowProfiler)
+        if (target.RuntimeAgent.enableControlFlowProfiler && WI.settings.enableControlFlowProfiler.value)
             target.RuntimeAgent.enableControlFlowProfiler();
     }
 
@@ -131,8 +131,11 @@ WI.RuntimeManager = class RuntimeManager extends WI.Object
     {
         console.assert(remoteObject instanceof WI.RemoteObject);
 
+        let target = this._activeExecutionContext.target;
+        let executionContextId = this._activeExecutionContext.id;
+
         // COMPATIBILITY (iOS 8): Runtime.saveResult did not exist.
-        if (!RuntimeAgent.saveResult) {
+        if (!target.RuntimeAgent.saveResult) {
             callback(undefined);
             return;
         }
@@ -141,9 +144,6 @@ WI.RuntimeManager = class RuntimeManager extends WI.Object
         {
             callback(savedResultIndex);
         }
-
-        let target = this._activeExecutionContext.target;
-        let executionContextId = this._activeExecutionContext.id;
 
         if (remoteObject.objectId)
             target.RuntimeAgent.saveResult(remoteObject.asCallArgument(), mycallback);

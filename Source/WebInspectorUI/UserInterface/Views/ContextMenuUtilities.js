@@ -168,16 +168,14 @@ WI.appendContextMenuItemsForDOMNode = function(contextMenu, domNode, options = {
                 });
             }
 
-            function didGetProperty(error, result, wasThrown) {
-                if (error || result.type !== "function")
-                    return;
-
-                DebuggerAgent.getFunctionDetails(result.objectId, didGetFunctionDetails);
-                result.release();
-            }
-
             WI.RemoteObject.resolveNode(domNode).then((remoteObject) => {
-                remoteObject.getProperty("constructor", didGetProperty);
+                remoteObject.getProperty("constructor", (error, result, wasThrown) => {
+                    if (error)
+                        return;
+                    if (result.type === "function")
+                        remoteObject.target.DebuggerAgent.getFunctionDetails(result.objectId, didGetFunctionDetails);
+                    result.release();
+                });
                 remoteObject.release();
             });
         });

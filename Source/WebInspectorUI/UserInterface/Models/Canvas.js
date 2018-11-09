@@ -279,7 +279,7 @@ WI.Canvas = class Canvas extends WI.Object
             this._recordingState = WI.Canvas.RecordingState.ActiveFrontend;
 
             // COMPATIBILITY (iOS 12.1): Canvas.event.recordingStarted did not exist yet
-            if (CanvasAgent.hasEvent("recordingStarted"))
+            if (InspectorBackend.domains.Canvas.hasEvent("recordingStarted"))
                 return;
 
             this._recordingFrames = [];
@@ -289,7 +289,7 @@ WI.Canvas = class Canvas extends WI.Object
         };
 
         // COMPATIBILITY (iOS 12.1): `frameCount` did not exist yet.
-        if (CanvasAgent.startRecording.supports("singleFrame")) {
+        if (InspectorBackend.domains.Canvas.startRecording.supports("singleFrame")) {
             CanvasAgent.startRecording(this._identifier, singleFrame, handleStartRecording);
             return;
         }
@@ -376,7 +376,7 @@ WI.Canvas = class Canvas extends WI.Object
         let initiatedByUser = this._recordingState === WI.Canvas.RecordingState.ActiveFrontend;
 
         // COMPATIBILITY (iOS 12.1): Canvas.event.recordingStarted did not exist yet
-        if (!initiatedByUser && !CanvasAgent.hasEvent("recordingStarted"))
+        if (!initiatedByUser && !InspectorBackend.domains.Canvas.hasEvent("recordingStarted"))
             initiatedByUser = !!this.recordingActive;
 
         let recording = recordingPayload ? WI.Recording.fromPayload(recordingPayload, this._recordingFrames) : null;

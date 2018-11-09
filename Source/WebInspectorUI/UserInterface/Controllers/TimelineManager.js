@@ -723,6 +723,8 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
         // COMPATIBILITY (iOS 9): Timeline.setAutoCaptureEnabled did not exist.
         // Perform auto capture in the frontend.
+        if (!window.TimelineAgent)
+            return false;
         if (!TimelineAgent.setAutoCaptureEnabled)
             return this._legacyAttemptStartAutoCapturingForFrame(frame);
 
@@ -1062,34 +1064,35 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
     _updateAutoCaptureInstruments(targets)
     {
-        if (!TimelineAgent.setInstruments)
-            return;
-
-        let instrumentSet = new Set;
         let enabledTimelineTypes = this._enabledTimelineTypesSetting.value;
 
-        for (let timelineType of enabledTimelineTypes) {
-            switch (timelineType) {
-            case WI.TimelineRecord.Type.Script:
-                instrumentSet.add(TimelineAgent.Instrument.ScriptProfiler);
-                break;
-            case WI.TimelineRecord.Type.HeapAllocations:
-                instrumentSet.add(TimelineAgent.Instrument.Heap);
-                break;
-            case WI.TimelineRecord.Type.Network:
-            case WI.TimelineRecord.Type.RenderingFrame:
-            case WI.TimelineRecord.Type.Layout:
-                instrumentSet.add(TimelineAgent.Instrument.Timeline);
-                break;
-            case WI.TimelineRecord.Type.Memory:
-                instrumentSet.add(TimelineAgent.Instrument.Memory);
-                break;
-            }
-        }
-
         for (let target of targets) {
-            if (target.TimelineAgent)
-                target.TimelineAgent.setInstruments([...instrumentSet]);
+            if (!target.TimelineAgent)
+                continue;
+            if (!target.TimelineAgent.setInstruments)
+                continue;
+
+            let instrumentSet = new Set;
+            for (let timelineType of enabledTimelineTypes) {
+                switch (timelineType) {
+                case WI.TimelineRecord.Type.Script:
+                    instrumentSet.add(target.TimelineAgent.Instrument.ScriptProfiler);
+                    break;
+                case WI.TimelineRecord.Type.HeapAllocations:
+                    instrumentSet.add(target.TimelineAgent.Instrument.Heap);
+                    break;
+                case WI.TimelineRecord.Type.Network:
+                case WI.TimelineRecord.Type.RenderingFrame:
+                case WI.TimelineRecord.Type.Layout:
+                    instrumentSet.add(target.TimelineAgent.Instrument.Timeline);
+                    break;
+                case WI.TimelineRecord.Type.Memory:
+                    instrumentSet.add(target.TimelineAgent.Instrument.Memory);
+                    break;
+                }
+            }
+
+            target.TimelineAgent.setInstruments(Array.from(instrumentSet));
         }
     }
 };

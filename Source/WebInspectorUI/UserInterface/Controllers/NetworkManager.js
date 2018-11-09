@@ -62,10 +62,8 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             target.NetworkAgent.enable();
 
             // COMPATIBILITY (iOS 10.3): Network.setDisableResourceCaching did not exist.
-            if (NetworkAgent.setResourceCachingDisabled) {
-                if (WI.settings.resourceCachingDisabled && WI.settings.resourceCachingDisabled.value)
-                    target.NetworkAgent.setResourceCachingDisabled(true);
-            }
+            if (target.NetworkAgent.setResourceCachingDisabled)
+                target.NetworkAgent.setResourceCachingDisabled(WI.settings.resourceCachingDisabled.value);
         }
 
         if (target.type === WI.Target.Type.Worker)
@@ -296,7 +294,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             return;
 
         // COMPATIBILITY(iOS 10.3): `walltime` did not exist in 10.3 and earlier.
-        if (!NetworkAgent.hasEventParameter("webSocketWillSendHandshakeRequest", "walltime")) {
+        if (!InspectorBackend.domains.Network.hasEventParameter("webSocketWillSendHandshakeRequest", "walltime")) {
             request = arguments[2];
             walltime = NaN;
         }

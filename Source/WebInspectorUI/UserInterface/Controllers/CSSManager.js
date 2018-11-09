@@ -48,7 +48,7 @@ WI.CSSManager = class CSSManager extends WI.Object
 
         // COMPATIBILITY (iOS 9): Legacy backends did not send stylesheet
         // added/removed events and must be fetched manually.
-        this._fetchedInitialStyleSheets = window.CSSAgent && window.CSSAgent.hasEvent("styleSheetAdded");
+        this._fetchedInitialStyleSheets = InspectorBackend.domains.CSS.hasEvent("styleSheetAdded");
     }
 
     // Target
@@ -363,7 +363,7 @@ WI.CSSManager = class CSSManager extends WI.Object
 
         // Clear our maps when the main frame navigates.
 
-        this._fetchedInitialStyleSheets = window.CSSAgent && window.CSSAgent.hasEvent("styleSheetAdded");
+        this._fetchedInitialStyleSheets = InspectorBackend.domains.CSS.hasEvent("styleSheetAdded");
         this._styleSheetIdentifierMap.clear();
         this._styleSheetFrameURLMap.clear();
         this._nodeStylesMap = {};

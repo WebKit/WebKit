@@ -31,7 +31,6 @@ WI.BreakpointActionView = class BreakpointActionView extends WI.Object
 
         console.assert(action);
         console.assert(delegate);
-        console.assert(DebuggerAgent.BreakpointActionType);
 
         this._action = action;
         this._delegate = delegate;
