@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+</head>
+<body>
+<div id="test-container">
+    <input type="text" id="input" value="Text">
+    <button onclick="checkResultAndNotifyDone()">Check Result</button>
+</div>
+<script>
+window.jsTestIsAsync = true;
+
+description("Tests that pressing the forward delete key in an editable element deletes the next character. To run this test  manually, press the forward delete key and then click Check Result.");
+
+runTest();
+
+async function runTest()
+{
+    let inputElement = document.getElementById("input");
+    if (!window.testRunner) {
+        inputElement.focus();
+        inputElement.setSelectionRange(0, 0);
+        return;
+    }
+    // FIXME: We cannot listen for a keyup event because the forward delete key does not generate one
+    // due to <rdar://problem/45772078>. So, we listen for a blur event.
+    inputElement.addEventListener("blur", checkResultAndNotifyDone, {once: true});
+    await UIHelper.activateFormControl(inputElement);
+    inputElement.setSelectionRange(0, 0);
+    await UIHelper.typeCharacter("forwardDelete");
+    inputElement.blur();
+}
+
+function checkResultAndNotifyDone()
+{
+    shouldBeEqualToString('document.getElementById("input").value', "ext");
+    document.body.removeChild(document.getElementById("test-container"));
+    finishJSTest();
+}
+</script>
+</body>
+</html>

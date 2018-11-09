@@ -6054,7 +6054,6 @@ static BOOL writingDirectionKeyBindingsEnabled()
 #define kWebBackspaceKey     0x0008
 #define kWebReturnKey        0x000d
 #define kWebDeleteKey        0x007F
-#define kWebDeleteForwardKey 0xF728
     
 - (BOOL)_handleEditingKeyEvent:(KeyboardEvent *)wcEvent
 {
@@ -6089,9 +6088,6 @@ static BOOL writingDirectionKeyBindingsEnabled()
                 return YES;
             }
             break;
-        case kWebDeleteForwardKey:
-            [self deleteForward:self];
-            return YES;
         default:
             if (platformEvent->type() == PlatformKeyboardEvent::Char) {
                 [[webView _UIKitDelegateForwarder] addInputString:event.characters withFlags:event.keyboardFlags];

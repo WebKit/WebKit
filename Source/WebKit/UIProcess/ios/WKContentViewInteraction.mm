@@ -3823,7 +3823,6 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     static const unsigned kWebBackspaceKey = 0x0008;
     static const unsigned kWebReturnKey = 0x000D;
     static const unsigned kWebDeleteKey = 0x007F;
-    static const unsigned kWebDeleteForwardKey = 0xF728;
     static const unsigned kWebSpaceKey = 0x20;
 
     if (event.keyboardFlags & WebEventKeyboardInputModifierFlagsChanged)
@@ -3867,10 +3866,6 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
             return YES;
         }
         break;
-
-    case kWebDeleteForwardKey:
-        _page->executeEditCommand("deleteForward"_s);
-        return YES;
 
     default:
         if (contentEditable && isCharEvent) {
@@ -3940,6 +3935,11 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 - (void)_deleteToEndOfLine
 {
     [self executeEditCommandWithCallback:@"deleteToEndOfLine"];
+}
+
+- (void)_deleteForwardAndNotify:(BOOL)notify
+{
+    [self executeEditCommandWithCallback:@"deleteForward"];
 }
 
 - (UITextInputArrowKeyHistory *)_moveUp:(BOOL)extending withHistory:(UITextInputArrowKeyHistory *)history

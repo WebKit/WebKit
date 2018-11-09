@@ -1,3 +1,19 @@
+2018-11-09  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Pressing forward delete key in text field does nothing and we should not invoke an editor
+        action when forward delete is pressed outside a text field
+        https://bugs.webkit.org/show_bug.cgi?id=190566
+        <rdar://problem/45262367>
+
+        Reviewed by Wenson Hsieh.
+
+        Remove dead code. UIKit ceased sending us a character string with 0xF728 for the forward delete
+        key many years ago. We will need to fix up iOS Legacy WebKit support for the forward delete key
+        in UIKit. We may revist this decision once <rdar://problem/45772078> is fixed.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _handleEditingKeyEvent:]):
+
 2018-11-08  Megan Gardner  <megan_gardner@apple.com>
 
         Adopt Reveal Framework to replace Lookup
