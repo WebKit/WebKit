@@ -1,3 +1,26 @@
+2018-11-09  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        Unreviewed, rolling in CodeCache in r237254
+        https://bugs.webkit.org/show_bug.cgi?id=190340
+
+        Land the CodeCache part, which uses DefaultHash<>::Hash instead of computeHash.
+
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::UnlinkedFunctionExecutable::fromGlobalCode):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * parser/SourceCodeKey.h:
+        (JSC::SourceCodeKey::SourceCodeKey):
+        (JSC::SourceCodeKey::operator== const):
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getUnlinkedGlobalCodeBlock):
+        (JSC::CodeCache::getUnlinkedGlobalFunctionExecutable):
+        * runtime/CodeCache.h:
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunctionSkippingEvalEnabledCheck):
+        * runtime/FunctionExecutable.cpp:
+        (JSC::FunctionExecutable::fromGlobalCode):
+        * runtime/FunctionExecutable.h:
+
 2018-11-08  Keith Miller  <keith_miller@apple.com>
 
         put_by_val opcodes need to add the number tag as a 64-bit register
