@@ -1,3 +1,14 @@
+2018-11-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r236365): [GTK] Many form-related tests are failing
+        https://bugs.webkit.org/show_bug.cgi?id=189993
+
+        Reviewed by Michael Catanzaro.
+
+        Remove expectations for tests that are passing now.
+
+        * platform/gtk/TestExpectations:
+
 2018-11-08  Megan Gardner  <megan_gardner@apple.com>
 
         Adopt Reveal Framework to replace Lookup

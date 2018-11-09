@@ -74,7 +74,7 @@ void ResourceRequest::updateSoupMessageBody(SoupMessage* soupMessage) const
     soup_message_body_set_accumulate(soupMessage->request_body, FALSE);
     uint64_t bodySize = 0;
     for (const auto& element : formData->elements()) {
-        return switchOn(element.data,
+        switchOn(element.data,
             [&] (const Vector<char>& bytes) {
                 bodySize += bytes.size();
                 soup_message_body_append(soupMessage->request_body, SOUP_MEMORY_TEMPORARY, bytes.data(), bytes.size());

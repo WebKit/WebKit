@@ -1,3 +1,15 @@
+2018-11-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r236365): [GTK] Many form-related tests are failing
+        https://bugs.webkit.org/show_bug.cgi?id=189993
+
+        Reviewed by Michael Catanzaro.
+
+        Only the first form data element is added to the message body due to a return added by mistake in r236365.
+
+        * platform/network/soup/ResourceRequestSoup.cpp:
+        (WebCore::ResourceRequest::updateSoupMessageBody const): Remove return.
+
 2018-11-09  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Move some code from InlineFormattingContext::Line to InlineFormattingContext/Geometry
