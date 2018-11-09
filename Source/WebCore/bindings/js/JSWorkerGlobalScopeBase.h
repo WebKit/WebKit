@@ -28,11 +28,14 @@
 
 #include "JSDOMGlobalObject.h"
 #include "JSDOMWrapper.h"
-#include <JavaScriptCore/JSProxy.h>
 
 #if ENABLE(SERVICE_WORKER)
 #include "ServiceWorkerGlobalScope.h"
 #endif
+
+namespace JSC {
+class JSProxy;
+}
 
 namespace WebCore {
 

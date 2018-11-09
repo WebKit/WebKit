@@ -1,3 +1,10 @@
+2018-11-09  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed MSVC build fix after r238039 (and r238046).
+
+        * bindings/js/JSWorkerGlobalScopeBase.cpp:
+        * bindings/js/JSWorkerGlobalScopeBase.h:
+
 2018-11-09  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [Curl][WebKit] Implement Proxy configuration API.

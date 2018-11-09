@@ -26,12 +26,10 @@
 #include "WebDataSource.h"
 #include <WebCore/DocumentLoader.h>
 
-using namespace WebCore;
-
-class WebDocumentLoader : public DocumentLoader
+class WebDocumentLoader : public WebCore::DocumentLoader
 {
 public:
-    static Ref<WebDocumentLoader> create(const ResourceRequest&, const SubstituteData&);
+    static Ref<WebDocumentLoader> create(const WebCore::ResourceRequest&, const WebCore::SubstituteData&);
 
     ~WebDocumentLoader();
 
@@ -43,7 +41,7 @@ public:
     virtual void detachFromFrame();
 
 private:
-    WebDocumentLoader(const ResourceRequest&, const SubstituteData&);
+    WebDocumentLoader(const WebCore::ResourceRequest&, const WebCore::SubstituteData&);
     WebDataSource* m_dataSource;
     WebDataSource* m_detachedDataSource; // not retained
 };

@@ -6030,7 +6030,7 @@ HRESULT WebView::setProhibitsMainFrameScrolling(BOOL b)
 
 HRESULT WebView::setShouldApplyMacFontAscentHack(BOOL b)
 {
-    Font::setShouldApplyMacAscentHack(b);
+    WebCore::Font::setShouldApplyMacAscentHack(b);
     return S_OK;
 }
 

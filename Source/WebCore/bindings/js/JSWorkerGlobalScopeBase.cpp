@@ -38,6 +38,7 @@
 #include "WorkerThread.h"
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
+#include <JavaScriptCore/JSProxy.h>
 #include <JavaScriptCore/Microtask.h>
 #include <wtf/Language.h>
 
