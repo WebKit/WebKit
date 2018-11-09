@@ -1,3 +1,28 @@
+2018-11-09  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] AVVideoCaptureSource reports incorrect size when frames are scaled
+        https://bugs.webkit.org/show_bug.cgi?id=191479
+        <rdar://problem/45952201>
+
+        Reviewed by Jer Noble.
+
+        No new tests, tested manually.
+
+        * platform/mediastream/RealtimeVideoSource.cpp:
+        (WebCore::RealtimeVideoSource::standardVideoSizes): Drive-by fix: add a few more standard
+        video frame sizes, correct a typo.
+        (WebCore::RealtimeVideoSource::bestSupportedSizeAndFrameRate): Drive-by fix: don't consider
+        rescaled sized when we already have an exact or aspect ratio match because it won't be used.
+
+        * platform/mediastream/mac/AVVideoCaptureSource.h:
+        (WebCore::AVVideoCaptureSource::width const): Deleted.
+        (WebCore::AVVideoCaptureSource::height const): Deleted.
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::setSizeAndFrameRateWithPreset): Delete m_requestedSize.
+        (WebCore::AVVideoCaptureSource::shutdownCaptureSession): Delete m_width and m_height.
+        (WebCore::AVVideoCaptureSource::processNewFrame): Don't call setSize with captured size,
+        the frame may be resized before deliver.
+
 2018-11-09  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed MSVC build fix after r238039 (and r238046).

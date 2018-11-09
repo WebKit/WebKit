@@ -331,8 +331,6 @@ void AVVideoCaptureSource::setSizeAndFrameRateWithPreset(IntSize requestedSize, 
 
     ASSERT(avPreset->format);
 
-    m_requestedSize = requestedSize;
-
     NSError *error = nil;
     [m_session beginConfiguration];
     @try {
@@ -474,8 +472,6 @@ bool AVVideoCaptureSource::setupCaptureSession()
 void AVVideoCaptureSource::shutdownCaptureSession()
 {
     m_buffer = nullptr;
-    m_width = 0;
-    m_height = 0;
 }
 
 void AVVideoCaptureSource::monitorOrientation(OrientationNotifier& notifier)
@@ -525,16 +521,6 @@ void AVVideoCaptureSource::processNewFrame(Ref<MediaSample>&& sample)
         return;
 
     m_buffer = &sample.get();
-    auto dimensions = roundedIntSize(sample->presentationSize());
-    if (m_sampleRotation == MediaSample::VideoRotation::Left || m_sampleRotation == MediaSample::VideoRotation::Right)
-        dimensions = { dimensions.height(), dimensions.width() };
-
-    if (dimensions.width() != m_width || dimensions.height() != m_height) {
-        m_width = dimensions.width();
-        m_height = dimensions.height();
-        setSize(dimensions);
-    }
-
     dispatchMediaSampleToObservers(WTFMove(sample));
 }
 

@@ -103,20 +103,21 @@ const Vector<IntSize>& RealtimeVideoSource::standardVideoSizes()
             { 112, 112 },
             { 160, 160 },
             { 160, 120 }, // 4:3, QQVGA
+            { 176, 144 }, // 4:3, QCIF
             { 192, 192 },
             { 192, 112 }, // 16:9
             { 192, 144 }, // 3:4
             { 240, 240 },
             { 240, 160 }, // 3:2, HQVGA
             { 320, 320 },
-            { 320, 176 }, // 16:9
+            { 320, 180 }, // 16:9
             { 320, 240 }, // 4:3, QVGA
             { 352, 288 }, // CIF
             { 480, 272 }, // 16:9
             { 480, 360 }, // 4:3
             { 480, 480 },
             { 640, 640 },
-            { 640, 368 }, // 16:9
+            { 640, 360 }, // 16:9, 360p nHD
             { 640, 480 }, // 4:3
             { 720, 720 },
             { 800, 600 }, // 4:3, SVGA
@@ -127,7 +128,8 @@ const Vector<IntSize>& RealtimeVideoSource::standardVideoSizes()
             { 1280, 1024 }, // 5:4, SXGA
             { 1280, 720 }, // 16:9, WXGA
             { 1366, 768 }, // 16:9, HD
-            { 1920, 1080 }, // 16:9, FHD
+            { 1600, 1200}, // 4:3, UXGA
+            { 1920, 1080 }, // 16:9, 1080p FHD
             { 2560, 1440 }, // 16:9, QHD
             { 2592, 1936 },
             { 3264, 2448 }, // 3:4
@@ -300,6 +302,9 @@ std::optional<RealtimeVideoSource::CaptureSizeAndFrameRate> RealtimeVideoSource:
                 aspectRatioMatchSize = encodingSize;
             }
         }
+
+        if (exactSizePreset || aspectRatioPreset)
+            continue;
 
         if (requestedWidth && requestedHeight) {
             const auto& minStandardSize = standardVideoSizes()[0];
