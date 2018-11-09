@@ -1,3 +1,13 @@
+2018-11-09  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Make screen capture an experimental feature
+        https://bugs.webkit.org/show_bug.cgi?id=191472
+        <rdar://problem/45946499>
+
+        Reviewed by Jer Noble.
+
+        * Shared/WebPreferences.yaml: Make ScreenCaptureEnabled an experimental feature.
+
 2018-11-09  Daniel Bates  <dabates@apple.com>
 
         [iOS] Pressing forward delete key in text field does nothing and we should not invoke an editor

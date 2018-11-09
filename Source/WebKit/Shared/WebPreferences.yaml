@@ -498,6 +498,9 @@ ScreenCaptureEnabled:
   defaultValue: false
   webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(MEDIA_STREAM)
+  humanReadableName: "ScreenCapture"
+  humanReadableDescription: "Enable ScreenCapture"
+  category: experimental
 
 PeerConnectionEnabled:
   type: bool
