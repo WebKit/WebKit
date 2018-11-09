@@ -169,7 +169,7 @@ def expand_manifest(manifest_path, outfile, port_name, source_root, command):
     except OSError:
         pass
 
-    manifest = load_manifest(manifest_path, port_name, command)
+    manifest = load_manifest(manifest_path, port_name=port_name, command=command)
     if not manifest:
         return False
 
@@ -177,7 +177,7 @@ def expand_manifest(manifest_path, outfile, port_name, source_root, command):
         del manifest["sdk-hash"]
     if "runtime-hash" in manifest:
         del manifest["runtime-hash"]
-    i = 0
+
     all_modules = []
 
     overriden_modules = []
@@ -189,7 +189,7 @@ def expand_manifest(manifest_path, outfile, port_name, source_root, command):
         submanifest_path = None
         if type(modules) is str:
             submanifest_path = os.path.join(os.path.dirname(manifest_path), modules)
-            modules = load_manifest(submanifest_path, port_name, command)
+            modules = load_manifest(submanifest_path, port_name=port_name, command=command)
 
         if not isinstance(modules, list):
             modules = [modules]
@@ -220,7 +220,6 @@ def expand_manifest(manifest_path, outfile, port_name, source_root, command):
         for source in module["sources"]:
             if source["type"] == "patch" or (source["type"] == "file" and source.get('path')):
                 source["path"] = os.path.join(os.path.dirname(manifest_path), source["path"])
-        i += 1
 
     with open(outfile, "w") as of:
         of.write(json.dumps(manifest, indent=4))
@@ -621,25 +620,27 @@ class WebkitFlatpak:
                         url="https://dl.flathub.org/repo/",
                         repo_file="https://dl.flathub.org/repo/flathub.flatpakrepo"))
 
-        manifest = load_manifest(self.manifest_path)
+        manifest = load_manifest(self.manifest_path, port_name=self.name)
         if not manifest:
             return False
+
+        self.app = manifest['app-id']
 
         self.sdk_branch = manifest["runtime-version"]
         self.finish_args = manifest.get("finish-args", [])
         self.finish_args = remove_extension_points(self.finish_args)
-        self.runtime = FlatpakPackage("org.gnome.Platform", self.sdk_branch,
+        self.runtime = FlatpakPackage(manifest['runtime'], self.sdk_branch,
                                       self.sdk_repo, "x86_64",
                                       hash=manifest.get("runtime-hash"))
-        self.locale = FlatpakPackage("org.gnome.Platform.Locale",
+        self.locale = FlatpakPackage(manifest['runtime'] + '.Locale',
                                      self.sdk_branch, self.sdk_repo, "x86_64")
-        self.sdk = FlatpakPackage("org.gnome.Sdk", self.sdk_branch,
+        self.sdk = FlatpakPackage(manifest['sdk'], self.sdk_branch,
                                   self.sdk_repo, "x86_64",
                                   hash=manifest.get("sdk-hash"))
         self.packs = [self.runtime, self.locale, self.sdk]
 
         if self.debug:
-            self.sdk_debug = FlatpakPackage("org.gnome.Sdk.Debug", self.sdk_branch,
+            self.sdk_debug = FlatpakPackage(manifest['sdk'] + '.Debug', self.sdk_branch,
                                       self.sdk_repo, "x86_64")
             self.packs.append(self.sdk_debug)
         self.manifest_generated_path = os.path.join(self.cache_path,
@@ -655,6 +656,7 @@ class WebkitFlatpak:
 
     def run_in_sandbox(self, *args, **kwargs):
         cwd = kwargs.pop("cwd", None)
+        extra_env_vars = kwargs.pop("env", {})
         stdout = kwargs.pop("stdout", sys.stdout)
         extra_flatpak_args = kwargs.pop("extra_flatpak_args", [])
 
@@ -716,7 +718,9 @@ class WebkitFlatpak:
                     _log.debug('Follow icecream recommendation for the number of cores to use: %d' % n_cores)
                     forwarded["NUMBER_OF_PROCESSORS"] = n_cores
 
-            for envvar, value in os.environ.items():
+            env_vars = os.environ
+            env_vars.update(extra_env_vars)
+            for envvar, value in env_vars.items():
                 if envvar.split("_")[0] in env_var_prefixes_to_keep or envvar in env_vars_to_keep:
                     forwarded[envvar] = value
 
@@ -813,15 +817,17 @@ class WebkitFlatpak:
                             self.cache_path, "--ccache", self.flatpak_build_path, "--force-clean",
                             self.manifest_generated_path]
             builder_args.append("--build-only")
-            builder_args.append("--stop-at=%s" % self.name)
+            builder_args.append("--stop-at=%s" % self.app)
+
             subprocess.check_call(builder_args)
             self.setup_ccache()
             self.setup_icecc()
             self.save_config()
 
+        build_type = "--debug" if self.debug else "--release"
         if self.build_webkit:
             builder = [os.path.join(self.sandbox_source_root, 'Tools/Scripts/build-webkit'),
-                "--debug" if self.debug  else "--release", '--' + self.platform.lower()]
+                build_type, '--' + self.platform.lower()]
             if self.makeargs:
                 builder.append("--makeargs=%s" % self.makeargs)
             if self.cmakeargs:
@@ -836,7 +842,7 @@ class WebkitFlatpak:
 
         if self.run_tests is not None:
             test_launcher = [os.path.join(self.sandbox_source_root, 'Tools/Scripts/run-webkit-tests'),
-                "--debug" if self.debug  else "--release", '--' + self.platform.lower()] + self.run_tests
+                build_type, '--' + self.platform.lower()] + self.run_tests
             return self.run_in_sandbox(*test_launcher)
         elif self.gdb is not None:
             return self.run_gdb()

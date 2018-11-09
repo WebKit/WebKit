@@ -1,0 +1,275 @@
+# http and dependencies.
+- name: apr
+  sources:
+    - type: archive
+      url: https://www.apache.org/dist/apr/apr-1.6.5.tar.bz2
+      sha256: a67ca9fcf9c4ff59bce7f428a323c8b5e18667fdea7b0ebad47d194371b0a105
+- name: apr-util
+  sources:
+    - type: archive
+      url: https://www.apache.org/dist/apr/apr-util-1.6.1.tar.bz2
+      sha512: "40eff8a37c0634f7fdddd6ca5e596b38de15fd10767a34c30bbe49c632816e8f3e1e230678034f578dd5816a94f246fb5dfdf48d644829af13bf28de3225205d"
+  config-opts:
+    - --with-apr=/app/bin/apr-1-config
+- name: httpd
+  sources:
+    - type: git
+      url: https://github.com/apache/httpd.git
+      branch: 2.4.33
+    - type : file
+      path : files/httpd-autogen.sh
+      dest-filename : autogen.sh
+    # The version embedded in the sandbox doesn't have a working pcre-config
+    - type: patch
+      path: patches/httpd-0001-configure-use-pkg-config-for-PCRE-detection.patch
+  config-opts:
+    - --enable-mpms-shared=all
+    - --enable-modules=all
+    - --with-apr=/app/bin/apr-1-config
+    - --with-apr-util=/app/bin/apu-1-config
+    - --with-pcre=/app
+    - --enable-authnz-fcgi
+    - --enable-cgi
+    - --enable-cgid
+- name: php
+  sources:
+    - type: archive
+      url: https://php.net/distributions/php-7.2.6.tar.xz
+      sha512: da86b1ff2df3b9e2d46e59a80296b940d81132975b621bdec9602f8b4c8d91a3fdcd4ffd7cb982d63d3ec974b3a12a7854e42a73b7f2cc8eefade14335aa7c71
+  config-opts:
+    - --disable-xml
+    - --disable-dom
+    - --disable-libxml
+    - --disable-simplexml
+    - --disable-xmlreader
+    - --disable-xmlwriter
+    - --without-pear
+    - --with-apxs2
+    - --with-zlib
+    - --with-libzip
+    - --enable-sockets=shared
+- name: libevent
+  sources:
+    - type: git
+      url: https://github.com/libevent/libevent.git
+      branch: e7ff4ef # 2.1.8
+  config-opts:
+    - --disable-libevent-regress
+
+# Requirement for flatpkutils
+- name: python3-pyaml
+  buildsystem: simple
+  build-commands:
+  - pip3 install --no-index --find-links="file://${PWD}" --prefix=${FLATPAK_DEST} pyaml
+  sources:
+  - type: file
+    url: https://files.pythonhosted.org/packages/4a/85/db5a2df477072b2902b0eb892feb37d88ac635d36245a72a6a69b23b383a/PyYAML-3.12.tar.gz
+    sha256: 592766c6303207a20efc445587778322d7f73b161bd994f227adaa341ba212ab
+  - type: file
+    url: https://files.pythonhosted.org/packages/9e/17/1d4ed6e1a4c0918a0357dfa2fdbe26bf63f6e616013c04a14bce9fd33e40/pyaml-17.12.1.tar.gz
+    sha256: 66623c52f34d83a2c0fc963e08e8b9d0c13d88404e3b43b1852ef71eda19afa3
+
+- name: python2-pyaml
+  buildsystem: simple
+  build-commands:
+  - pip2 install --no-index --find-links="file://${PWD}" --target=/app/lib/python2.7/site-packages/ pyaml
+  sources:
+  - type: file
+    url: https://files.pythonhosted.org/packages/4a/85/db5a2df477072b2902b0eb892feb37d88ac635d36245a72a6a69b23b383a/PyYAML-3.12.tar.gz
+    sha256: 592766c6303207a20efc445587778322d7f73b161bd994f227adaa341ba212ab
+  - type: file
+    url: https://files.pythonhosted.org/packages/9e/17/1d4ed6e1a4c0918a0357dfa2fdbe26bf63f6e616013c04a14bce9fd33e40/pyaml-17.12.1.tar.gz
+    sha256: 66623c52f34d83a2c0fc963e08e8b9d0c13d88404e3b43b1852ef71eda19afa3
+
+# GStreamer modules
+- name: libvpx
+  no-autogen: true
+  sources:
+    - type: git
+      url: https://chromium.googlesource.com/webm/libvpx
+      branch: v1.7.0
+  config-opts:
+    - --enable-pic
+    - --as=yasm
+    - --disable-unit-tests
+    - --size-limit=16384x16384
+    - --enable-postproc
+    - --enable-multi-res-encoding
+    - --enable-temporal-denoising
+    - --enable-vp9-temporal-denoising
+    - --enable-vp9-postproc
+    - --enable-shared
+- name: aom
+  sources:
+    - type: git
+      url: https://aomedia.googlesource.com/aom
+      branch: cdb083e84a71d6d31163a4f64f18dc1328fd782c
+  buildsystem: cmake-ninja
+  builddir: true
+  config-opts:
+    - -DBUILD_SHARED_LIBS=1
+- name: libunwind
+  sources:
+    - type: git
+      url: https://github.com/libunwind/libunwind.git
+      commit: v1.2.1
+- name: libopenh264
+  buildsystem: meson
+  sources:
+    - type: git
+      url: https://github.com/cisco/openh264.git
+      branch: a1b3f07c5271f312997fcc3451237031444c4475 # 1.8.0 + fix for gcc 8
+- name: gstreamer
+  buildsystem: meson
+  sources:
+    - type: git
+      url: https://gitlab.freedesktop.org/gstreamer/gstreamer.git
+      branch: 1.14.4
+    - type: patch
+      path: ../gstreamer/patches/gstreamer-0001-protection-Add-a-new-definition-for-unspecified-syst.patch
+    - type: patch
+      path: ../gstreamer/patches/gstreamer-0002-protection-Fix-the-string-to-define-unspecified-syst.patch
+  config-opts:
+    - -Ddisable_gtkdoc=true
+- name: gst-plugins-base
+  buildsystem: meson
+  sources:
+    - type: git
+      url: https://gitlab.freedesktop.org/gstreamer/gst-plugins-base.git
+      branch: 1.14.4
+    - type: patch
+      path: ../gstreamer/patches/gst-plugins-base-0001-parsebin-Post-STREAM_COLLECTION-on-EVENT_STREAM_COLL.patch
+  config-opts:
+    - -Ddisable_gtkdoc=true
+- name: gst-plugins-good
+  buildsystem: meson
+  sources:
+    - type: git
+      url: https://gitlab.freedesktop.org/gstreamer/gst-plugins-good.git
+      branch: 1.14.4
+    - type: patch
+      path: ../gstreamer/patches/gst-plugins-good-0002-qtdemux-add-context-for-a-preferred-protection.patch
+    - type: patch
+      path: ../gstreamer/patches/gst-plugins-good-0003-qtdemux-also-push-buffers-without-encryption-info-in.patch
+    - type: patch
+      path: ../gstreamer/patches/gst-plugins-good-0001-qtdemux-Do-not-run-the-preferred-decryptor-context-q.patch
+    - type: patch
+      path: ../gstreamer/patches/gst-plugins-good-0002-qtdemux-Do-not-unref-a-NULL-stream_tags.patch
+    - type: patch
+      path: ../gstreamer/patches/gst-plugins-good-0003-qtdemux-Clarify-field-name-about-stream-encryption-s.patch
+    - type: patch
+      path: ../gstreamer/patches/gst-plugins-good-0001-qtdemux-Detect-and-expose-CEA-608-708-Closed-Caption.patch
+    - type: patch
+      path: ../gstreamer/patches/gst-plugins-good-0004-qtdemux-Add-initial-support-for-AV1-demuxing.patch
+    - type: patch
+      path: ../gstreamer/patches/gst-plugins-good-0005-qtdemux-Extract-AV1-codec_data-and-put-it-in-the-cap.patch
+    - type: patch
+      path: ../gstreamer/patches/gst-plugins-good-0006-qtdemux-Recognize-more-AV1-atoms.patch
+    - type: patch
+      path: ../gstreamer/patches/gst-plugins-good-0011-matroska-Add-the-WebM-encrypted-content-support-in-m.patch
+    - type: patch
+      path: ../gstreamer/patches/gst-plugins-good-0012-matroskdemux-do-not-use-MapInfo.data-after-unmapping.patch
+    - type: patch
+      path: ../gstreamer/patches/gst-plugins-good-0013-Avoid-warning-when-reporting-about-decryptors.patch
+  config-opts:
+    - -Ddisable_gtkdoc=true
+- name: x264
+  config-opts:
+    - "--enable-shared"
+    - "--enable-static"
+    - "--enable-pic"
+    - "--disable-lavf"
+  sources:
+    - type: archive
+      url: http://download.videolan.org/pub/x264/snapshots/x264-snapshot-20140212-2245-stable.tar.bz2
+      sha256: 5d98e9e4faf6dd55e7193ed379aff477b8acbda6777758956ef7e5f05067be18
+- name: gst-plugins-ugly
+  buildsystem: meson
+  sources:
+    - type: git
+      url: https://anongit.freedesktop.org/git/gstreamer/gst-plugins-ugly
+      branch: 1.14.4
+  config-opts:
+    - -Ddisable_gtkdoc=true
+- name: gst-plugins-bad
+  buildsystem: meson
+  sources:
+    - type: git
+      url: https://gitlab.freedesktop.org/gstreamer/gst-plugins-bad.git
+      branch: 1.14.4
+    - type: patch
+      path: ../gstreamer/patches/gst-plugins-bad-0001-aomenc-Add-support-for-10-12bit-decoding.patch
+    - type: patch
+      path: ../gstreamer/patches/gst-plugins-bad-0002-aomenc-Handle-8-bit_depth-images-with-AOM_IMG_FMT_HI.patch
+  config-opts:
+    - -Ddisable_gtkdoc=true
+
+- name: libgcrypt # Speedup libgrcypt
+  sources:
+    - type: git
+      url: https://dev.gnupg.org/source/libgcrypt.git
+      branch: libgcrypt-1.7.6
+    - type: patch
+      path: patches/libgcrypt-0001-Use-pkg-config-to-detect-gpg-error.patch
+    - type: patch
+      path: ../gtk/patches/libgcrypt-use-only-dev-urandom-for-testing.patch
+  config-opts:
+    - --disable-doc
+
+- name: perl-cgi-pm
+  buildsystem: simple
+  build-commands:
+    - perl Makefile.PL PREFIX=/app LIB=/app/lib/perl/
+    - make install
+  sources:
+    - type: archive
+      url: https://cpan.metacpan.org/authors/id/L/LE/LEEJO/CGI-4.38.tar.gz
+      sha256: 8c58f4a529bb92a914b22b7e64c5e31185c9854a4070a6dfad44fe5cc248e7d4
+
+- name: python2-virtualenv
+  buildsystem: simple
+  build-commands:
+  - pip2 install --no-index --find-links="file://${PWD}" --target=/app/lib/python2.7/site-packages/ virtualenv
+  - ln -s /app/lib/python2.7/site-packages/virtualenv.py /app/bin/virtualenv
+  - chmod +x /app/bin/virtualenv
+  sources:
+  - type: file
+    url: https://files.pythonhosted.org/packages/33/bc/fa0b5347139cd9564f0d44ebd2b147ac97c36b2403943dbee8a25fd74012/virtualenv-16.0.0.tar.gz
+    sha256: ca07b4c0b54e14a91af9f34d0919790b016923d157afda5efdde55c96718f752
+
+- name: libcap-ng
+  sources:
+    - type: git
+      url: https://github.com/stevegrubb/libcap-ng
+      branch: v0.7.9
+  config-opts:
+    - --with-python=no
+    - --with-python3=no
+
+- name: lzo2
+  sources:
+    - type: archive
+      url: http://www.oberhumer.com/opensource/lzo/download/lzo-2.10.tar.gz
+      sha1: 4924676a9bae5db58ef129dc1cebce3baa3c4b5d
+
+- name: icecc
+  sources:
+    - type: git
+      url: https://github.com/icecc/icecream
+      branch: "1.1"
+  config-opts:
+    - --without-man
+
+- name: brotli
+  sources:
+  - type: archive
+    url: https://github.com/google/brotli/archive/v1.0.5.tar.gz
+    sha256: 3d5bedd48edb909fe3b87cb99f7d139b987ef6f1616b7e22d74e928270a2fd20
+  buildsystem: cmake-ninja
+
+- name: woff2
+  sources:
+  - type: archive
+    url: https://github.com/google/woff2/archive/v1.0.2.tar.gz
+    sha256: add272bb09e6384a4833ffca4896350fdb16e0ca22df68c0384773c67a175594
+  buildsystem: cmake-ninja

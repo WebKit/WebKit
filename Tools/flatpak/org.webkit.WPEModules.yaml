@@ -10,16 +10,3 @@
     - type: archive
       url: https://wpewebkit.org/releases/wpebackend-fdo-1.0.0.tar.xz
       sha256: 7a747f87a1ae46d30144369050e3ce348b58986d04e1a139ba75c198fa636729
-- name: webkitgtk-test-fonts
-  no-autogen: true
-  sources:
-    - type: git
-      url: https://github.com/WebKitGTK/webkitgtk-test-fonts.git
-  buildsystem: simple
-  build-commands:
-    # FIXME: Make ActivateFontWPE smarter.
-    - make install DESTDIR=/app/WebKitBuild/DependenciesWPE/Root
-- name: org.webkit.WPE
-  buildsystem: simple
-  build-commands:
-    - /app/webkit/Tools/Scripts/build-webkit --wpe --prefix=/app

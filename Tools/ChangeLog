@@ -1,3 +1,26 @@
+2018-11-09  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak] Refactoring and drive-by fixes
+        https://bugs.webkit.org/show_bug.cgi?id=191421
+
+        Reviewed by Michael Catanzaro.
+
+        * Scripts/webkitdirs.pm:
+        (inFlatpakSandbox): Flatpak now has a /.flatpak-info file when in
+        the sandbox, so rely on this.
+        * flatpak/flatpakutils.py:
+        (expand_manifest): Pass explicit keywords to load_manifest() and
+        remove unused local variable.
+        (WebkitFlatpak.clean_args): Move hard-coded sdk/runtime infos to the manifest file.
+        (WebkitFlatpak.run_in_sandbox): Add support for extra environment variables.
+        (WebkitFlatpak.setup_dev_env): Stop build at final app. Refactor
+        build_type handling a bit.
+        * flatpak/org.webkit.CommonModules.yaml: Added.
+        * flatpak/org.webkit.WPE.yaml: wpebackend upstream was renamed to libwpe.
+        * flatpak/org.webkit.WebKit.yaml: Move common dependencies
+        declaration to CommonModules, so it can be reused later when we
+        add support for building extra libraries depending on WPE.
+
 2018-11-08  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
 onal supported image formats
