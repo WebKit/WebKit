@@ -235,6 +235,7 @@ private:
             Header::fromPayload(data())->refCount++;
     }
 
+    friend class JSC::LLIntOffsetsExtractor;
     typename PtrTraits::StorageType m_data { nullptr };
 };
 

@@ -40,6 +40,10 @@
 extern "C" void __sanitizer_annotate_contiguous_container(const void* begin, const void* end, const void* old_mid, const void* new_mid);
 #endif
 
+namespace JSC {
+class LLIntOffsetsExtractor;
+}
+
 namespace WTF {
 
 template <bool needsDestruction, typename T>
@@ -428,6 +432,7 @@ protected:
     using Base::m_size;
 
 private:
+    friend class JSC::LLIntOffsetsExtractor;
     using Base::m_buffer;
     using Base::m_capacity;
 };
@@ -607,6 +612,7 @@ class Vector : private VectorBuffer<T, inlineCapacity> {
 private:
     typedef VectorBuffer<T, inlineCapacity> Base;
     typedef VectorTypeOperations<T> TypeOperations;
+    friend class JSC::LLIntOffsetsExtractor;
 
 public:
     typedef T ValueType;

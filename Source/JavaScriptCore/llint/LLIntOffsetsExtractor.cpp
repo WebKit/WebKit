@@ -73,6 +73,10 @@ namespace JSC {
 #define OFFLINE_ASM_OFFSETOF(clazz, field) (static_cast<unsigned>(OBJECT_OFFSETOF(clazz, field)))
 
 class LLIntOffsetsExtractor {
+    // These types are useful since we can't use '<...>' syntax in LLInt offsets extraction. e.g. Vector<int>::m_data
+    using Vector = WTF::Vector<int>;
+    using RefCountedArray = WTF::RefCountedArray<int>;
+
 public:
     static const int64_t* dummy();
 };

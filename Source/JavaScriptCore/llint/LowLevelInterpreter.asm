@@ -519,13 +519,8 @@ const MarkedBlockFooterOffset = constexpr MarkedBlock::offsetOfFooter
 
 const BlackThreshold = constexpr blackThreshold
 
-# This must match wtf/Vector.h
-const VectorBufferOffset = 0
-if JSVALUE64
-    const VectorSizeOffset = 12
-else
-    const VectorSizeOffset = 8
-end
+const VectorBufferOffset = Vector::m_buffer
+const VectorSizeOffset = Vector::m_size
 
 # Some common utilities.
 macro crash()
@@ -1216,7 +1211,7 @@ macro functionInitialization(profileArgSkip)
     addp -profileArgSkip, t0 # Use addi because that's what has the peephole
     assert(macro (ok) bpgteq t0, 0, ok end)
     btpz t0, .argumentProfileDone
-    loadp CodeBlock::m_argumentValueProfiles + VectorBufferOffset[t1], t3
+    loadp CodeBlock::m_argumentValueProfiles + RefCountedArray::m_data[t1], t3
     btpz t3, .argumentProfileDone # When we can't JIT, we don't allocate any argument value profiles.
     mulp sizeof ValueProfile, t0, t2 # Aaaaahhhh! Need strength reduction!
     lshiftp 3, t0

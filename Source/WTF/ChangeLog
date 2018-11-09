@@ -1,3 +1,15 @@
+2018-11-09  Keith Miller  <keith_miller@apple.com>
+
+        LLInt VectorSizeOffset should be based on offset extraction
+        https://bugs.webkit.org/show_bug.cgi?id=191468
+
+        Reviewed by Yusuke Suzuki.
+
+        Make things friends with LLIntOffsetsExtractor.
+
+        * wtf/RefCountedArray.h:
+        * wtf/Vector.h:
+
 2018-11-09  Jim Mason  <jmason@ibinx.com>
 
         [WTF] Changes in bug 188867 break non-Linux Unix builds
