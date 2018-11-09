@@ -2342,11 +2342,6 @@ void RenderThemeMac::adjustSliderThumbSize(RenderStyle& style, const Element*) c
     }
 }
 
-bool RenderThemeMac::shouldHaveCapsLockIndicator(const HTMLInputElement& element) const
-{
-    return element.isPasswordField();
-}
-
 NSPopUpButtonCell* RenderThemeMac::popupButton() const
 {
     if (!m_popupButton) {

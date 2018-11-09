@@ -27,6 +27,7 @@
 #import "RenderThemeCocoa.h"
 
 #import "GraphicsContextCG.h"
+#import "HTMLInputElement.h"
 #import "RenderText.h"
 
 #if ENABLE(APPLE_PAY)
@@ -50,6 +51,11 @@ SOFT_LINK_MAY_FAIL(PassKit, PKDrawApplePayButton, void, (CGContextRef context, C
 #endif
 
 namespace WebCore {
+
+bool RenderThemeCocoa::shouldHaveCapsLockIndicator(const HTMLInputElement& element) const
+{
+    return element.isPasswordField();
+}
 
 #if ENABLE(APPLE_PAY)
 

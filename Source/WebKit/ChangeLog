@@ -1,3 +1,35 @@
+2018-11-09  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Draw caps lock indicator in password fields
+        https://bugs.webkit.org/show_bug.cgi?id=190565
+        <rdar://problem/45262343>
+
+        Reviewed by Dean Jackson.
+
+        Notify the WebContent process with the current modifer state on window activation changes. Notify
+        the WebContent process when hardware keyboard availability changes (e.g. a keyboard is attached).
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]): Register for hardware keyboard availability changed notifications.
+        (-[WKWebView dealloc]): Unregister from hardware availability changed notifications.
+        (hardwareKeyboardAvailabilityChangedCallback): Added.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::updateCurrentModifierState): Compile this code when building for iOS.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _handleKeyUIEvent:]): Update the current modifier state if this event is a hardware
+        keyboard flags changed event.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::hardwareKeyboardAvailabilityChanged): Added.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::hardwareKeyboardAvailabilityChanged):
+        Added new message HardwareKeyboardAvailabilityChanged. Notify the focused HTML input element (if we have
+        one) that the caps lock state may have changed when we receive message HardwareKeyboardAvailabilityChanged
+        so that we toggle visibility of the caps lock indicator.
+
 2018-11-09  Tim Horton  <timothy_horton@apple.com>
 
         Make use of _UIRemoteView instead of CALayerHost if possible for WKRemoteView

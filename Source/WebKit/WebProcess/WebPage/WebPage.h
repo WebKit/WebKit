@@ -913,6 +913,8 @@ public:
 
     bool platformPrefersTextLegibilityBasedZoomScaling() const;
     const WebCore::ViewportConfiguration& viewportConfiguration() const { return m_viewportConfiguration; }
+
+    void hardwareKeyboardAvailabilityChanged();
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)

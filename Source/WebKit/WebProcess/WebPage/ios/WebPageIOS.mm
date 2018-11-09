@@ -3087,6 +3087,12 @@ String WebPage::platformUserAgent(const URL&) const
     return String();
 }
 
+void WebPage::hardwareKeyboardAvailabilityChanged()
+{
+    if (auto* focusedFrame = m_page->focusController().focusedFrame())
+        focusedFrame->eventHandler().capsLockStateMayHaveChanged();
+}
+
 #if USE(QUICK_LOOK)
 void WebPage::didReceivePasswordForQuickLookDocument(const String& password)
 {

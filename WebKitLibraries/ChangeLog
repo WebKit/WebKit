@@ -1,3 +1,15 @@
+2018-11-09  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Draw caps lock indicator in password fields
+        https://bugs.webkit.org/show_bug.cgi?id=190565
+        <rdar://problem/45262343>
+
+        Reviewed by Dean Jackson.
+
+        Expose some more symbols.
+
+        * WebKitPrivateFrameworkStubs/iOS/12/GraphicsServices.framework/GraphicsServices.tbd:
+
 2018-06-27  Jonathan Bedard  <jbedard@apple.com>
 
         Enable WebKit iOS 12 build

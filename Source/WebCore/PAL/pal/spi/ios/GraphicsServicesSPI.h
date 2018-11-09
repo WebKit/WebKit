@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,6 +42,12 @@ uint64_t GSCurrentEventTimestamp(void);
 CFStringRef GSSystemRootDirectory(void);
 void GSFontInitialize(void);
 void GSFontPurgeFontCache(void);
+
+typedef struct __GSKeyboard* GSKeyboardRef;
+uint32_t GSKeyboardGetModifierState(GSKeyboardRef);
+Boolean GSEventIsHardwareKeyboardAttached();
+
+extern const char *kGSEventHardwareKeyboardAvailabilityChangedNotification;
 
 WTF_EXTERN_C_END
 

@@ -23,6 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+WTF_EXTERN_C_BEGIN
+typedef struct __GSKeyboard* GSKeyboardRef;
+WTF_EXTERN_C_END
+
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <UIKit/NSParagraphStyle_Private.h>
@@ -44,6 +48,7 @@
 
 @interface UIApplication ()
 + (UIApplicationSceneClassicMode)_classicMode;
+- (GSKeyboardRef)_hardwareKeyboard;
 @end
 
 #else
@@ -75,10 +80,9 @@ typedef NS_ENUM(NSInteger, UIApplicationSceneClassicMode) {
 @end
 
 @interface UIApplication ()
-
 - (BOOL)_isClassic;
 + (UIApplicationSceneClassicMode)_classicMode;
-
+- (GSKeyboardRef)_hardwareKeyboard;
 @end
 
 @interface UIColor ()

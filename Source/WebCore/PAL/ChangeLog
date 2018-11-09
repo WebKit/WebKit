@@ -1,3 +1,16 @@
+2018-11-09  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Draw caps lock indicator in password fields
+        https://bugs.webkit.org/show_bug.cgi?id=190565
+        <rdar://problem/45262343>
+
+        Reviewed by Dean Jackson.
+
+        Forward declare some more SPI.
+
+        * pal/spi/ios/GraphicsServicesSPI.h:
+        * pal/spi/ios/UIKitSPI.h:
+
 2018-11-08  Megan Gardner  <megan_gardner@apple.com>
 
         Adopt Reveal Framework to replace Lookup

@@ -1,5 +1,20 @@
 2018-11-09  Daniel Bates  <dabates@apple.com>
 
+        [iOS] Draw caps lock indicator in password fields
+        https://bugs.webkit.org/show_bug.cgi?id=190565
+        <rdar://problem/45262343>
+
+        Reviewed by Dean Jackson.
+
+        Update the caps lock state when a hardware keyboard is attached or detached.
+
+        * WebView/WebHTMLView.mm:
+        (hardwareKeyboardAvailabilityChangedCallback): Added.
+        (-[WebHTMLView initWithFrame:]): Register for hardware keyboard availability changed notifications.
+        (-[WebHTMLView dealloc]): Unregister from hardware keyboard availability changed notifications.
+
+2018-11-09  Daniel Bates  <dabates@apple.com>
+
         [iOS] Pressing forward delete key in text field does nothing and we should not invoke an editor
         action when forward delete is pressed outside a text field
         https://bugs.webkit.org/show_bug.cgi?id=190566

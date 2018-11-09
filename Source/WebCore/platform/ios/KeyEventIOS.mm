@@ -31,8 +31,10 @@
 #import "KeyEventCocoa.h"
 #import "KeyEventCodesIOS.h"
 #import "NotImplemented.h"
+#import "WebEvent.h"
 #import "WindowsKeyboardCodes.h"
 #import <pal/spi/cocoa/IOKitSPI.h>
+#import <wtf/MainThread.h>
 
 using namespace WTF;
 
@@ -312,19 +314,29 @@ void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool backwardCom
     }
 }
 
-bool PlatformKeyboardEvent::currentCapsLockState()
+OptionSet<PlatformEvent::Modifier> PlatformKeyboardEvent::currentStateOfModifierKeys()
 {
-    notImplemented();
-    return false;
-}
+    // s_currentModifiers is only set in the WebContent process, not in the UI process.
+    if (s_currentModifiers) {
+        ASSERT(isMainThread());
+        return *s_currentModifiers;
+    }
 
-void PlatformKeyboardEvent::getCurrentModifierState(bool& shiftKey, bool& ctrlKey, bool& altKey, bool& metaKey)
-{
-    notImplemented();
-    shiftKey = false;
-    ctrlKey = false;
-    altKey = false;
-    metaKey = false;
+    ::WebEventFlags currentModifiers = [::WebEvent modifierFlags];
+
+    OptionSet<PlatformEvent::Modifier> modifiers;
+    if (currentModifiers & ::WebEventFlagMaskShiftKey)
+        modifiers.add(PlatformEvent::Modifier::ShiftKey);
+    if (currentModifiers & ::WebEventFlagMaskControlKey)
+        modifiers.add(PlatformEvent::Modifier::CtrlKey);
+    if (currentModifiers & ::WebEventFlagMaskOptionKey)
+        modifiers.add(PlatformEvent::Modifier::AltKey);
+    if (currentModifiers & ::WebEventFlagMaskCommandKey)
+        modifiers.add(PlatformEvent::Modifier::MetaKey);
+    if (currentModifiers & ::WebEventFlagMaskLeftCapsLockKey)
+        modifiers.add(PlatformEvent::Modifier::CapsLockKey);
+
+    return modifiers;
 }
 
 }

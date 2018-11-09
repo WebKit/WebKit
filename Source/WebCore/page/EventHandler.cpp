@@ -3162,6 +3162,14 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& keyEvent)
     return wasHandled;
 }
 
+void EventHandler::capsLockStateMayHaveChanged() const
+{
+    auto* focusedElement = m_frame.document()->focusedElement();
+    if (!is<HTMLInputElement>(focusedElement))
+        return;
+    downcast<HTMLInputElement>(*focusedElement).capsLockStateMayHaveChanged();
+}
+
 bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent)
 {
     Ref<Frame> protectedFrame(m_frame);
@@ -3194,12 +3202,8 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
     }
 #endif
 
-    if (initialKeyEvent.windowsVirtualKeyCode() == VK_CAPITAL) {
-        if (auto* element = m_frame.document()->focusedElement()) {
-            if (is<HTMLInputElement>(*element))
-                downcast<HTMLInputElement>(*element).capsLockStateMayHaveChanged();
-        }
-    }
+    if (initialKeyEvent.windowsVirtualKeyCode() == VK_CAPITAL)
+        capsLockStateMayHaveChanged();
 
 #if ENABLE(PAN_SCROLLING)
     if (m_frame.mainFrame().eventHandler().panScrollInProgress()) {

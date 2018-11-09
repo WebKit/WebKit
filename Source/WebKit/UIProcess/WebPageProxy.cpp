@@ -8132,7 +8132,7 @@ void WebPageProxy::getIsViewVisible(bool& result)
 
 void WebPageProxy::updateCurrentModifierState()
 {
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING) || PLATFORM(IOS_FAMILY)
     auto modifiers = PlatformKeyboardEvent::currentStateOfModifierKeys();
     m_process->send(Messages::WebPage::UpdateCurrentModifierState(modifiers), m_pageID);
 #endif
