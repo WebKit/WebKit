@@ -50,6 +50,7 @@
 #include <JavaScriptCore/CodeBlock.h>
 #include <JavaScriptCore/JSInternalPromise.h>
 #include <JavaScriptCore/JSInternalPromiseDeferred.h>
+#include <JavaScriptCore/StructureInlines.h>
 
 namespace WebCore {
 using namespace JSC;

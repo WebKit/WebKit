@@ -1,5 +1,16 @@
 2018-11-09  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed attempt to fix internal build on macOS.
+
+        'Export' is defined in several headers.
+
+        * bindings/js/JSDOMGlobalObject.cpp:
+        * bindings/js/JSDOMGlobalObject.h:
+        * bridge/jsc/BridgeJSC.cpp:
+        * bridge/jsc/BridgeJSC.h:
+
+2018-11-09  Chris Dumez  <cdumez@apple.com>
+
         HTML form validation bubble disappears
         https://bugs.webkit.org/show_bug.cgi?id=191418
 

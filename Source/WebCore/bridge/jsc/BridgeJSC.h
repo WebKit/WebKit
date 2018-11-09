@@ -28,7 +28,6 @@
 #define BridgeJSC_h
 
 #include "Bridge.h"
-#include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSString.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>

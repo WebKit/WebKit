@@ -30,7 +30,6 @@
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSGlobalObject.h>
 #include <JavaScriptCore/LockDuringMarking.h>
-#include <JavaScriptCore/StructureInlines.h>
 
 namespace WebCore {
 
