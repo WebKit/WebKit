@@ -1,3 +1,12 @@
+2018-11-08  Michael Saboff  <msaboff@apple.com>
+
+        Options::useRegExpJIT() should use jitEnabledByDefault() just like useJIT()
+        https://bugs.webkit.org/show_bug.cgi?id=191444
+
+        Reviewed by Saam Barati.
+
+        * runtime/Options.h:
+
 2018-11-08  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] UDis86Disassembler.cpp: warning: format specifies type 'unsigned long' but the argument has type 'uintptr_t' (aka 'unsigned long long')

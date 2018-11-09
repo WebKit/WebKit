@@ -133,7 +133,7 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(bool, useJIT, jitEnabledByDefault(), Normal, "allows the executable pages to be allocated for JIT and thunks if true") \
     v(bool, useBaselineJIT, true, Normal, "allows the baseline JIT to be used if true") \
     v(bool, useDFGJIT, true, Normal, "allows the DFG JIT to be used if true") \
-    v(bool, useRegExpJIT, true, Normal, "allows the RegExp JIT to be used if true") \
+    v(bool, useRegExpJIT, jitEnabledByDefault(), Normal, "allows the RegExp JIT to be used if true") \
     v(bool, useDOMJIT, is64Bit(), Normal, "allows the DOMJIT to be used if true") \
     \
     v(bool, reportMustSucceedExecutableAllocations, false, Normal, nullptr) \
