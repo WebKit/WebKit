@@ -2530,8 +2530,6 @@
 		3162AE9A1E6F2F8F000E4DBC /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				572B403321769A88000AD43E /* CtapRequestTest.cpp */,
-				572B404321781B42000AD43E /* CtapResponseTest.cpp */,
 				316BDBAB1E7207F100DE0D5A /* GPULegacyBuffer.mm */,
 				315231C91EB3B3C700A22A16 /* GPULegacyCommandQueue.mm */,
 				3162AE9B1E6F2FCE000E4DBC /* GPULegacyDevice.mm */,
@@ -2559,6 +2557,8 @@
 				1C9EB8401E380DA1005C6442 /* ComplexTextController.cpp */,
 				7CB184C41AA3F2100066EDFD /* ContentExtensions.cpp */,
 				CD5451E919E41F9D0016936F /* CSSParser.cpp */,
+				572B403321769A88000AD43E /* CtapRequestTest.cpp */,
+				572B404321781B42000AD43E /* CtapResponseTest.cpp */,
 				260BA5781B1D2E7B004FA07C /* DFACombiner.cpp */,
 				260BA57A1B1D2EE2004FA07C /* DFAHelpers.h */,
 				26F6E1EF1ADC749B00DE696B /* DFAMinimizer.cpp */,

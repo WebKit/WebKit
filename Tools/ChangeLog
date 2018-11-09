@@ -1,3 +1,18 @@
+2018-11-08  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, a proper build fix for r237983
+
+        Don't include header PublicKeyCredential.h in CtapResponseTest.cpp.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/CtapRequestTest.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebCore/mac/CtapRequestTest.cpp.
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/CtapResponseTest.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebCore/mac/CtapResponseTest.cpp.
+        (TestWebKitAPI::getTestCorruptedSignResponse):
+        (TestWebKitAPI::getTestCredentialRawIdBytes):
+        (TestWebKitAPI::convertToVector):
+        (TestWebKitAPI::TEST):
+
 2018-11-08  Keith Rollin  <krollin@apple.com>
 
         Create .xcfilelist files

@@ -37,7 +37,6 @@
 #include <WebCore/CBORWriter.h>
 #include <WebCore/DeviceResponseConverter.h>
 #include <WebCore/FidoConstants.h>
-#include <WebCore/PublicKeyCredential.h>
 
 namespace TestWebKitAPI {
 using namespace fido;
