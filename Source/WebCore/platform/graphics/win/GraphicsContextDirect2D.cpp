@@ -940,6 +940,8 @@ void GraphicsContext::drawPath(const Path& path)
         auto brush = m_state.strokePattern ? patternStrokeBrush() : solidStrokeBrush();
         renderTarget->DrawGeometry(path.platformPath(), brush, strokeThickness(), m_data->strokeStyle());
     });
+
+    flush();
 }
 
 void GraphicsContext::drawWithoutShadow(const FloatRect& /*boundingRect*/, const WTF::Function<void(ID2D1RenderTarget*)>& drawCommands)
@@ -1043,6 +1045,8 @@ void GraphicsContext::fillPath(const Path& path)
             drawWithShadow(boundingRect, drawFunction);
         else
             drawWithoutShadow(boundingRect, drawFunction);
+
+        flush();
         return;
     }
 
@@ -1059,6 +1063,8 @@ void GraphicsContext::fillPath(const Path& path)
         auto brush = m_state.fillPattern ? patternFillBrush() : solidFillBrush();
         renderTarget->FillGeometry(pathToFill.get(), brush);
     });
+
+    flush();
 }
 
 void GraphicsContext::strokePath(const Path& path)
@@ -1089,6 +1095,7 @@ void GraphicsContext::strokePath(const Path& path)
         else
             drawWithoutShadow(boundingRect, drawFunction);
 
+        flush();
         return;
     }
 
@@ -1102,6 +1109,8 @@ void GraphicsContext::strokePath(const Path& path)
         auto brush = m_state.strokePattern ? patternStrokeBrush() : solidStrokeBrush();
         renderTarget->DrawGeometry(path.platformPath(), brush, strokeThickness(), m_data->strokeStyle());
     });
+
+    flush();
 }
 
 void GraphicsContext::fillRect(const FloatRect& rect)

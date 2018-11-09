@@ -1,3 +1,29 @@
+2018-11-09  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows][DirectX] Be more rigors about BeginFigure/EndFigure and Close operations. 
+        https://bugs.webkit.org/show_bug.cgi?id=191452
+        <rdar://problem/45933964>
+
+        Reviewed by Zalan Bujtas.
+
+        Do a better job of balancing the BeginFigure/EndFigure calls in
+        the PathDirect2D implementation. Failure to do so puts the Geometry sink
+        into an error state that prevents it from producing drawing output.
+      
+
+        * platform/graphics/Path.h:
+        * platform/graphics/win/GraphicsContextDirect2D.cpp:
+        (WebCore::GraphicsContext::drawPath): Flush is needed here.
+        (WebCore::GraphicsContext::fillPath): Ditto.
+        (WebCore::GraphicsContext::strokePath): Ditto.
+        * platform/graphics/win/PathDirect2D.cpp:
+        (WebCore::Path::drawDidComplete):
+        (WebCore::Path::closeAnyOpenGeometries):
+        (WebCore::Path::transform):
+        (WebCore::Path::openFigureAtCurrentPointIfNecessary):
+        (WebCore::Path::moveTo):
+        (WebCore::Path::closeSubpath):
+
 2018-11-09  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Fix failing imported/w3c/web-platform-tests/media-source/mediasource-changetype-play.html test

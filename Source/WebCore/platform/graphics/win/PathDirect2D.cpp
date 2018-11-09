@@ -224,7 +224,7 @@ void Path::drawDidComplete()
     m_activePath->SetFillMode(D2D1_FILL_MODE_WINDING);
 
     m_activePath->BeginFigure(currentPoint, D2D1_FIGURE_BEGIN_FILLED);
-    m_doesHaveOpenFigure = true;
+    ++m_openFigureCount;
 }
 
 bool Path::contains(const FloatPoint& point, WindRule rule) const
@@ -260,6 +260,22 @@ bool Path::strokeContains(StrokeStyleApplier* applier, const FloatPoint& point) 
     return containsPoint;
 }
 
+void Path::closeAnyOpenGeometries()
+{
+    ASSERT(m_activePath);
+
+    if (!m_openFigureCount)
+        return;
+
+    while (m_openFigureCount) {
+        m_activePath->EndFigure(D2D1_FIGURE_END_OPEN);
+        --m_openFigureCount;
+    }
+
+    HRESULT hr = m_activePath->Close();
+    ASSERT(SUCCEEDED(hr));
+}
+
 void Path::translate(const FloatSize& size)
 {
     transform(AffineTransform(1, 0, 0, 1, size.width(), size.height()));
@@ -276,9 +292,7 @@ void Path::transform(const AffineTransform& transform)
 
     bool pathIsActive = false;
     if (m_activePath) {
-        m_activePath->EndFigure(D2D1_FIGURE_END_OPEN);
-        m_doesHaveOpenFigure = false;
-        m_activePath->Close();
+        closeAnyOpenGeometries();
         m_activePath = nullptr;
         m_activePathGeometry = nullptr;
         pathIsActive = true;
@@ -311,7 +325,7 @@ void Path::transform(const AffineTransform& transform)
 
     auto transformedPoint = transform.mapPoint(currentPoint.value());
     m_activePath->BeginFigure(transformedPoint, D2D1_FIGURE_BEGIN_FILLED);
-    m_doesHaveOpenFigure = true;
+    m_openFigureCount = 1;
 }
 
 FloatRect Path::boundingRect() const
@@ -355,21 +369,20 @@ FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier) const
 
 void Path::openFigureAtCurrentPointIfNecessary()
 {
-    if (m_doesHaveOpenFigure)
+    if (m_openFigureCount)
         return;
 
     m_activePath->SetFillMode(D2D1_FILL_MODE_WINDING);
     m_activePath->BeginFigure(currentPoint(), D2D1_FIGURE_BEGIN_FILLED);
-    m_doesHaveOpenFigure = true;
+    ++m_openFigureCount;
 }
 
 void Path::moveTo(const FloatPoint& point)
 {
     if (m_activePath) {
-        m_activePath->Close();
+        closeAnyOpenGeometries();
         m_activePath = nullptr;
         m_activePathGeometry = nullptr;
-        m_doesHaveOpenFigure = false;
     }
 
     GraphicsContext::systemFactory()->CreatePathGeometry(&m_activePathGeometry);
@@ -381,7 +394,7 @@ void Path::moveTo(const FloatPoint& point)
 
     m_activePath->SetFillMode(D2D1_FILL_MODE_WINDING);
     m_activePath->BeginFigure(point, D2D1_FIGURE_BEGIN_FILLED);
-    m_doesHaveOpenFigure = true;
+    m_openFigureCount = 1;
 }
 
 void Path::addLineTo(const FloatPoint& point)
@@ -488,14 +501,24 @@ void Path::closeSubpath()
     if (isNull())
         return;
 
-    if (m_activePath) {
-        m_activePath->EndFigure(D2D1_FIGURE_END_CLOSED);
-        m_activePath->Close();
-        m_activePath = nullptr;
-        m_activePathGeometry = nullptr;
+    if (!m_activePath) {
+        ASSERT(!m_openFigureCount);
+        ASSERT(!m_activePathGeometry);
+        return;
     }
 
-    m_doesHaveOpenFigure = false;
+    if (!m_openFigureCount)
+        return;
+
+    m_activePath->EndFigure(D2D1_FIGURE_END_CLOSED);
+    --m_openFigureCount;
+    if (m_openFigureCount > 0) {
+        ASSERT(m_activePathGeometry);
+        return;
+    }
+
+    HRESULT hr = m_activePath->Close();
+    ASSERT(SUCCEEDED(hr));
 }
 
 static FloatPoint arcStart(const FloatPoint& center, float radius, float startAngle)

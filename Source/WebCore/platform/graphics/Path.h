@@ -201,6 +201,7 @@ namespace WebCore {
 
         HRESULT initializePathState();
         void openFigureAtCurrentPointIfNecessary();
+        void closeAnyOpenGeometries();
 #endif
 
 #ifndef NDEBUG
@@ -212,7 +213,7 @@ namespace WebCore {
         COMPtr<ID2D1GeometryGroup> m_path;
         COMPtr<ID2D1PathGeometry> m_activePathGeometry;
         COMPtr<ID2D1GeometrySink> m_activePath;
-        bool m_doesHaveOpenFigure { false };
+        size_t m_openFigureCount { 0 };
 #else
         PlatformPathPtr m_path { nullptr };
 #endif
