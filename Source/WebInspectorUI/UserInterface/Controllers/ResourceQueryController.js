@@ -91,6 +91,9 @@ WI.ResourceQueryController = class ResourceQueryController extends WI.Object
 
     _findQueryMatches(query, searchString, specialCharacterIndices)
     {
+        if (query.length > searchString.length)
+            return [];
+
         let matches = [];
         let queryIndex = 0;
         let searchIndex = 0;

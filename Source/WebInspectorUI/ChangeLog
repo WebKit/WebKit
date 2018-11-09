@@ -1,3 +1,16 @@
+2018-11-08  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: ResourceQueryController should early return when query is longer than search string
+        https://bugs.webkit.org/show_bug.cgi?id=191436
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Controllers/ResourceQueryController.js:
+
+        * UserInterface/Models/ResourceQueryMatch.js:
+        (WI.ResourceQueryMatch):
+        Drive-by fixes.
+
 2018-11-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Uncaught Exception: undefined is not an object (evaluating 'treeElement.parent.removeChild')

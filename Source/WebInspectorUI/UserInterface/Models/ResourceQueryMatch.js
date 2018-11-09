@@ -23,14 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.ResourceQueryMatch = class QueryMatch
+WI.ResourceQueryMatch = class ResourceQueryMatch
 {
     constructor(type, index, queryIndex)
     {
         this._type = type;
         this._index = index;
         this._queryIndex = queryIndex;
-        this._rank = undefined;
     }
 
     // Public
