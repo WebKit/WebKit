@@ -161,6 +161,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     BOOL _drawsBackground;
 
     RetainPtr<NSString> _mediaContentTypesRequiringHardwareSupport;
+    RetainPtr<NSArray<NSString *>> _additionalSupportedImageTypes;
 }
 
 - (instancetype)init
@@ -394,6 +395,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     configuration->_needsStorageAccessFromFileURLsQuirk = self->_needsStorageAccessFromFileURLsQuirk;
 
     configuration->_mediaContentTypesRequiringHardwareSupport = adoptNS([self._mediaContentTypesRequiringHardwareSupport copyWithZone:zone]);
+    configuration->_additionalSupportedImageTypes = adoptNS([self->_additionalSupportedImageTypes copyWithZone:zone]);
     configuration->_legacyEncryptedMediaAPIEnabled = self->_legacyEncryptedMediaAPIEnabled;
     configuration->_allowMediaContentTypesRequiringHardwareSupportAsFallback = self->_allowMediaContentTypesRequiringHardwareSupportAsFallback;
 
@@ -988,6 +990,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)_setMediaContentTypesRequiringHardwareSupport:(NSString *)mediaContentTypesRequiringHardwareSupport
 {
     _mediaContentTypesRequiringHardwareSupport = adoptNS([mediaContentTypesRequiringHardwareSupport copy]);
+}
+
+- (NSArray<NSString *> *)_additionalSupportedImageTypes
+{
+    return _additionalSupportedImageTypes.get();
+}
+
+- (void)_setAdditionalSupportedImageTypes:(NSArray<NSString *> *)additionalSupportedImageTypes
+{
+    _additionalSupportedImageTypes = adoptNS([additionalSupportedImageTypes copy]);
 }
 
 - (void)_setLegacyEncryptedMediaAPIEnabled:(BOOL)enabled

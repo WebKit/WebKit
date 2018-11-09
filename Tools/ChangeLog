@@ -1,3 +1,20 @@
+2018-11-08  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+onal supported image formats
+        https://bugs.webkit.org/show_bug.cgi?id=190454
+
+        Reviewed by Simon Fraser.
+
+        Test opening a TGA image in WebView which is not allowed by default. The
+        TGA format will be allowed through WKWebViewConfiguration.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/100x100-red.tga: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/400x400-green.png: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/AdditionalSupportedImageTypes.mm: Added.
+        (runTest):
+        (TEST):
+
 2018-11-08  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, a proper build fix for r237983

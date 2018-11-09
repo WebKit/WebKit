@@ -110,6 +110,11 @@ public:
     const WTF::String& overrideContentSecurityPolicy() const { return m_overrideContentSecurityPolicy; }
     void setOverrideContentSecurityPolicy(const WTF::String& overrideContentSecurityPolicy) { m_overrideContentSecurityPolicy = overrideContentSecurityPolicy; }
 
+#if PLATFORM(COCOA)
+    const WTF::Vector<WTF::String>& additionalSupportedImageTypes() const { return m_additionalSupportedImageTypes; }
+    void setAdditionalSupportedImageTypes(WTF::Vector<WTF::String>&& additionalSupportedImageTypes) { m_additionalSupportedImageTypes = WTFMove(additionalSupportedImageTypes); }
+#endif
+
 #if ENABLE(APPLICATION_MANIFEST)
     ApplicationManifest* applicationManifest() const;
     void setApplicationManifest(ApplicationManifest*);
@@ -145,6 +150,10 @@ private:
     std::optional<double> m_cpuLimit;
 
     WTF::String m_overrideContentSecurityPolicy;
+
+#if PLATFORM(COCOA)
+    WTF::Vector<WTF::String> m_additionalSupportedImageTypes;
+#endif
 
 #if ENABLE(APPLICATION_MANIFEST)
     RefPtr<ApplicationManifest> m_applicationManifest;

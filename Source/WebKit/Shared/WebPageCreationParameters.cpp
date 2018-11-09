@@ -97,6 +97,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
 #endif
 #if PLATFORM(COCOA)
     encoder << smartInsertDeleteEnabled;
+    encoder << additionalSupportedImageTypes;
 #endif
     encoder << appleMailPaginationQuirkEnabled;
     encoder << appleMailLinesClampEnabled;
@@ -271,6 +272,8 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
 
 #if PLATFORM(COCOA)
     if (!decoder.decode(parameters.smartInsertDeleteEnabled))
+        return std::nullopt;
+    if (!decoder.decode(parameters.additionalSupportedImageTypes))
         return std::nullopt;
 #endif
 

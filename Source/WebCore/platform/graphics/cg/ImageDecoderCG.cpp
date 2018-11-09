@@ -176,7 +176,7 @@ String ImageDecoderCG::uti() const
 
 String ImageDecoderCG::filenameExtension() const
 {
-    return WebCore::preferredExtensionForImageSourceType(uti());
+    return WebCore::preferredExtensionForImageType(uti());
 }
 
 EncodedDataStatus ImageDecoderCG::encodedDataStatus() const
@@ -199,7 +199,7 @@ EncodedDataStatus ImageDecoderCG::encodedDataStatus() const
         return EncodedDataStatus::Error;
 
     case kCGImageStatusIncomplete: {
-        if (!isSupportImageSourceType(uti))
+        if (!isSupportedImageType(uti))
             return EncodedDataStatus::Error;
 
         RetainPtr<CFDictionaryRef> image0Properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_nativeDecoder.get(), 0, imageSourceOptions().get()));
@@ -213,7 +213,7 @@ EncodedDataStatus ImageDecoderCG::encodedDataStatus() const
     }
 
     case kCGImageStatusComplete:
-        if (!isSupportImageSourceType(uti))
+        if (!isSupportedImageType(uti))
             return EncodedDataStatus::Error;
 
         return EncodedDataStatus::Complete;

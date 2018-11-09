@@ -1360,10 +1360,6 @@ public:
 
     WebCore::IntRect syncRootViewToScreen(const WebCore::IntRect& viewRect);
 
-#if PLATFORM(COCOA)
-    Vector<String> mediaMIMETypes();
-#endif
-
 #if ENABLE(DATALIST_ELEMENT)
     void didSelectOption(const String&);
     void didCloseSuggestions();

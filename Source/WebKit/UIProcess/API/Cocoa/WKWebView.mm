@@ -46,6 +46,7 @@
 #import "RemoteLayerTreeTransaction.h"
 #import "RemoteObjectRegistry.h"
 #import "RemoteObjectRegistryMessages.h"
+#import "StringUtilities.h"
 #import "UIDelegate.h"
 #import "UserMediaProcessManager.h"
 #import "VersionChecks.h"
@@ -568,6 +569,8 @@ static void validate(WKWebViewConfiguration *configuration)
         if (groupIdentifier.length)
             pageConfiguration->setPageGroup(WebKit::WebPageGroup::create(configuration._groupIdentifier).ptr());
     }
+
+    pageConfiguration->setAdditionalSupportedImageTypes(WebKit::webCoreStringVectorFromNSStringArray([_configuration _additionalSupportedImageTypes]));
 
     pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::suppressesIncrementalRenderingKey(), WebKit::WebPreferencesStore::Value(!![_configuration suppressesIncrementalRendering]));
 

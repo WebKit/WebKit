@@ -154,6 +154,7 @@ struct WebPageCreationParameters {
 #endif
 #if PLATFORM(COCOA)
     bool smartInsertDeleteEnabled;
+    Vector<String> additionalSupportedImageTypes;
 #endif
     bool appleMailPaginationQuirkEnabled;
     bool appleMailLinesClampEnabled;

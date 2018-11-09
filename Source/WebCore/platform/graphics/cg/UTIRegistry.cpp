@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc.  All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,9 @@
 
 #if USE(CG)
 
+#include "ImageSourceCG.h"
+#include "MIMETypeRegistry.h"
+
 #include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
 #include <ImageIO/ImageIO.h>
@@ -38,10 +41,10 @@
 
 namespace WebCore {
 
-const HashSet<String>& supportedDefaultImageSourceTypes()
+const HashSet<String>& defaultSupportedImageTypes()
 {
     // CG at least supports the following standard image types:
-    static NeverDestroyed<HashSet<String>> supportedDefaultImageSourceTypes = std::initializer_list<String> {
+    static NeverDestroyed<HashSet<String>> defaultSupportedImageTypes = std::initializer_list<String> {
         "com.compuserve.gif",
         "com.microsoft.bmp",
         "com.microsoft.cur",
@@ -57,21 +60,40 @@ const HashSet<String>& supportedDefaultImageSourceTypes()
     // Make sure that CG supports them.
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
-        RetainPtr<CFArrayRef> systemImageSourceTypes = adoptCF(CGImageSourceCopyTypeIdentifiers());
-        CFIndex count = CFArrayGetCount(systemImageSourceTypes.get());
-        for (auto& imageSourceType : supportedDefaultImageSourceTypes.get()) {
-            RetainPtr<CFStringRef> string = imageSourceType.createCFString();
-            ASSERT(CFArrayContainsValue(systemImageSourceTypes.get(), CFRangeMake(0, count), string.get()));
+        RetainPtr<CFArrayRef> systemImageTypes = adoptCF(CGImageSourceCopyTypeIdentifiers());
+        CFIndex count = CFArrayGetCount(systemImageTypes.get());
+        for (auto& imageType : defaultSupportedImageTypes.get()) {
+            RetainPtr<CFStringRef> string = imageType.createCFString();
+            ASSERT(CFArrayContainsValue(systemImageTypes.get(), CFRangeMake(0, count), string.get()));
         }
     });
 #endif
 
-    return supportedDefaultImageSourceTypes;
+    return defaultSupportedImageTypes;
 }
 
-bool isSupportImageSourceType(const String& imageSourceType)
+HashSet<String>& additionalSupportedImageTypes()
 {
-    return !imageSourceType.isEmpty() && supportedDefaultImageSourceTypes().contains(imageSourceType);
+    static NeverDestroyed<HashSet<String>> additionalSupportedImageTypes;
+    return additionalSupportedImageTypes;
+}
+
+void setAdditionalSupportedImageTypes(const Vector<String>& imageTypes)
+{
+    MIMETypeRegistry::additionalSupportedImageMIMETypes().clear();
+    for (const auto& imageType : imageTypes) {
+        additionalSupportedImageTypes().add(imageType);
+        auto mimeType = MIMETypeForImageType(imageType);
+        if (!mimeType.isEmpty())
+            MIMETypeRegistry::additionalSupportedImageMIMETypes().add(mimeType);
+    }
+}
+
+bool isSupportedImageType(const String& imageType)
+{
+    if (imageType.isEmpty())
+        return false;
+    return defaultSupportedImageTypes().contains(imageType) || additionalSupportedImageTypes().contains(imageType);
 }
 
 }

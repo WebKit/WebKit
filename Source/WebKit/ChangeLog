@@ -1,3 +1,51 @@
+2018-11-08  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Add an SPI to allow WebView clients to add additional supported image formats
+        https://bugs.webkit.org/show_bug.cgi?id=190454
+
+        Reviewed by Simon Fraser.
+
+        * Platform/mac/StringUtilities.h:
+        * Platform/mac/StringUtilities.mm:
+        (WebKit::webCoreStringVectorFromNSStringArray):
+        A helper function which converts an NSArray of NSStrings to a Vector of
+        WTFString.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        Handle encoding and decoding the AdditionalSupportedImageTypes which will
+        allow transferring it from the UI process to the web process.
+
+        * UIProcess/API/APIPageConfiguration.h:
+        (API::PageConfiguration::additionalSupportedImageTypes const):
+        (API::PageConfiguration::setAdditionalSupportedImageTypes):
+        Store the AdditionalSupportedImageTypes in the APIPageConfiguration
+        which is used when creating the WebPageProxy in the UIPorcess.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration _additionalSupportedImageTypes]):
+        (-[WKWebViewConfiguration _setAdditionalSupportedImageTypes:]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        Setter/Getter for the AdditionalSupportedImageTypes.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        Copy the AdditionalSupportedImageTypes from APIPageConfiguration to 
+        WebPageCreationParameters.
+
+        * UIProcess/WebPageProxy.h:
+        Delete unimplemented function.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_shouldAttachDrawingAreaOnPageTransition):
+        Copy the AdditionalSupportedImageTypes from WebPageCreationParameters to
+        WebCore.
+
 2018-11-08  Megan Gardner  <megan_gardner@apple.com>
 
         Adopt Reveal Framework to replace Lookup

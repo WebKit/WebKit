@@ -6415,6 +6415,7 @@ WebPageCreationParameters WebPageProxy::creationParameters()
 
 #if PLATFORM(COCOA)
     parameters.smartInsertDeleteEnabled = m_isSmartInsertDeleteEnabled;
+    parameters.additionalSupportedImageTypes = m_configuration->additionalSupportedImageTypes();
 #endif
     parameters.shouldScaleViewToFitDocument = m_shouldScaleViewToFitDocument;
     parameters.userInterfaceLayoutDirection = pageClient().userInterfaceLayoutDirection();

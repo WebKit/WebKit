@@ -1,3 +1,46 @@
+2018-11-08  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Add an SPI to allow WebView clients to add additional supported image formats
+        https://bugs.webkit.org/show_bug.cgi?id=190454
+
+        Reviewed by Simon Fraser.
+
+        Add an SPI to allow additional supported image formats in WebView. These
+        additional formats can be set in the WKWebViewConfiguration as an NSArray
+        of NStrings. Each string represents an image source type aka UTI.
+
+        The ImageSourceType in the functions' names will be replaced by ImageType.
+        ImageType in this context is the image UTI (Uniform Type Identifier).
+
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::MIMETypeRegistry::supportedImageMIMETypes):
+        (WebCore::MIMETypeRegistry::additionalSupportedImageMIMETypes):
+        (WebCore::supportedImageMIMETypesForEncoding):
+        (WebCore::MIMETypeRegistry::isSupportedImageMIMEType):
+        * platform/MIMETypeRegistry.h:
+        * platform/graphics/cg/ImageDecoderCG.cpp:
+        (WebCore::ImageDecoderCG::filenameExtension const):
+        (WebCore::ImageDecoderCG::encodedDataStatus const):
+        * platform/graphics/cg/ImageSourceCG.h:
+        * platform/graphics/cg/ImageSourceCGMac.mm:
+        (WebCore::MIMETypeForImageType):
+        (WebCore::preferredExtensionForImageType):
+        (WebCore::MIMETypeForImageSourceType): Deleted.
+        (WebCore::preferredExtensionForImageSourceType): Deleted.
+        * platform/graphics/cg/ImageSourceCGWin.cpp:
+        (WebCore::MIMETypeForImageType):
+        (WebCore::preferredExtensionForImageType):
+        (WebCore::MIMETypeForImageSourceType): Deleted.
+        (WebCore::preferredExtensionForImageSourceType): Deleted.
+        * platform/graphics/cg/UTIRegistry.cpp:
+        (WebCore::defaultSupportedImageTypes):
+        (WebCore::additionalSupportedImageTypes):
+        (WebCore::setAdditionalSupportedImageTypes):
+        (WebCore::isSupportedImageType):
+        (WebCore::supportedDefaultImageSourceTypes): Deleted.
+        (WebCore::isSupportImageSourceType): Deleted.
+        * platform/graphics/cg/UTIRegistry.h:
+
 2018-11-08  Megan Gardner  <megan_gardner@apple.com>
 
         Adopt Reveal Framework to replace Lookup

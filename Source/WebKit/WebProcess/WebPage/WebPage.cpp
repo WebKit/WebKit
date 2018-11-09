@@ -246,6 +246,7 @@
 #include "VideoFullscreenManager.h"
 #include "WKStringCF.h"
 #include <WebCore/LegacyWebArchive.h>
+#include <WebCore/UTIRegistry.h>
 #include <wtf/MachSendRight.h>
 #endif
 
@@ -595,6 +596,7 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
 #if PLATFORM(COCOA)
     m_page->settings().setContentDispositionAttachmentSandboxEnabled(true);
     setSmartInsertDeleteEnabled(parameters.smartInsertDeleteEnabled);
+    WebCore::setAdditionalSupportedImageTypes(parameters.additionalSupportedImageTypes);
 #endif
 
 #if ENABLE(SERVICE_WORKER)

@@ -106,6 +106,7 @@ public:
 
     // FIXME: Would be nice to find a way to avoid exposing these sets, even worse exposing non-const references.
     WEBCORE_EXPORT static const HashSet<String, ASCIICaseInsensitiveHash>& supportedImageMIMETypes();
+    static HashSet<String, ASCIICaseInsensitiveHash>& additionalSupportedImageMIMETypes();
     WEBCORE_EXPORT static HashSet<String, ASCIICaseInsensitiveHash>& supportedNonImageMIMETypes();
     WEBCORE_EXPORT static const HashSet<String, ASCIICaseInsensitiveHash>& supportedMediaMIMETypes();
     WEBCORE_EXPORT static const HashSet<String, ASCIICaseInsensitiveHash>& pdfMIMETypes();

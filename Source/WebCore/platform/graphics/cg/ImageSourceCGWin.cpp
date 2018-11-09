@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-String MIMETypeForImageSourceType(const String& type)
+String MIMETypeForImageType(const String& type)
 {
     String mimeType;
     // FIXME: This approach of taking a UTI like public.type and giving back 
@@ -44,7 +44,7 @@ String MIMETypeForImageSourceType(const String& type)
     return mimeType;
 }
 
-String preferredExtensionForImageSourceType(const String& type)
+String preferredExtensionForImageType(const String& type)
 {
     if (type.isNull())
         return String();
