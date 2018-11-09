@@ -1,3 +1,19 @@
+2018-11-09  Tim Horton  <timothy_horton@apple.com>
+
+        Normal-flow-only flex items don't correctly respect z-index
+        https://bugs.webkit.org/show_bug.cgi?id=191486
+
+        Reviewed by Simon Fraser.
+
+        Test: css3/flexbox/z-index-with-normal-flow-only.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::canCreateStackingContext):
+        r125693 did not ensure that flex items which would otherwise be
+        normal-flow-only would be put into the z-order tree when necessary.
+        Fix by respecting the same trigger we use to make layers for flex items;
+        namely, not having auto z-index.
+
 2018-11-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Cocoa] Implement SPI on WKWebView to increase and decrease list levels

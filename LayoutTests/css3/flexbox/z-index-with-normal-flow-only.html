@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<style>
+canvas {
+    width: 100px;
+    height: 100px;
+}
+
+.positioned {
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+</style>
+<div style="position: relative;">
+    <div style="display: flex;">
+        <canvas style="z-index: 100; background-color: green;"></img>
+    </div>
+    <canvas class="positioned" style="z-index: 50; background-color: red;"></img>
+</div>

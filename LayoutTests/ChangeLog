@@ -1,3 +1,15 @@
+2018-11-09  Tim Horton  <timothy_horton@apple.com>
+
+        Normal-flow-only flex items don't correctly respect z-index
+        https://bugs.webkit.org/show_bug.cgi?id=191486
+
+        Reviewed by Simon Fraser.
+
+        * css3/flexbox/z-index-with-normal-flow-only-expected.html: Added.
+        * css3/flexbox/z-index-with-normal-flow-only.html: Added.
+        Add a test that a <canvas> with z-index 50 correctly stacks below
+        a <canvas> that is a flex-item with z-index 100.
+
 2018-11-09  Jer Noble  <jer.noble@apple.com>
 
         SourceBuffer throws an error when appending a second init segment after changeType().

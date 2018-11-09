@@ -529,6 +529,7 @@ static bool canCreateStackingContext(const RenderLayer& layer)
         || renderer.isPositioned() // Note that this only creates stacking context in conjunction with explicit z-index.
         || renderer.hasReflection()
         || renderer.style().hasIsolation()
+        || !renderer.style().hasAutoZIndex()
 #if PLATFORM(IOS_FAMILY)
         || layer.canUseAcceleratedTouchScrolling()
 #endif
