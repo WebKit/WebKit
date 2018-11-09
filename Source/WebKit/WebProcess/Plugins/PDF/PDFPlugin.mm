@@ -1875,7 +1875,7 @@ void PDFPlugin::showDefinitionForAttributedString(NSAttributedString *string, CG
     
     
     NSRect rangeRect;
-    rangeRect.origin = point;
+    rangeRect.origin = NSMakePoint(point.x, point.y);
     CGFloat scaleFactor = PDFPlugin::scaleFactor();
 
     rangeRect.size.height = string.size.height * scaleFactor;

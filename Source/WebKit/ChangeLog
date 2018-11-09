@@ -1,3 +1,10 @@
+2018-11-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, try to fix the 32-bit macOS build
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::showDefinitionForAttributedString):
+
 2018-11-08  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Add an SPI to allow WebView clients to add additional supported image formats
