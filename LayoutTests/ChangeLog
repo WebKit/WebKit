@@ -1,3 +1,13 @@
+2018-11-09  Jer Noble  <jer.noble@apple.com>
+
+        SourceBuffer throws an error when appending a second init segment after changeType().
+        https://bugs.webkit.org/show_bug.cgi?id=191474
+
+        Reviewed by Eric Carlson.
+
+        * media/media-source/media-source-changetype-second-init-expected.txt: Added.
+        * media/media-source/media-source-changetype-second-init.html: Added.
+
 2018-11-09  Andy Estes  <aestes@apple.com>
 
         [Payment Request] canMakePayment() should not consider serialized payment method data

@@ -240,6 +240,14 @@ Vector<String> MockSourceBufferPrivate::enqueuedSamplesForTrackID(const AtomicSt
     return m_enqueuedSamples;
 }
 
+bool MockSourceBufferPrivate::canSwitchToType(const ContentType& contentType)
+{
+    MediaEngineSupportParameters parameters;
+    parameters.isMediaSource = true;
+    parameters.type = contentType;
+    return MockMediaPlayerMediaSource::supportsType(parameters) != MediaPlayer::IsNotSupported;
+}
+
 void MockSourceBufferPrivate::enqueueSample(Ref<MediaSample>&& sample, const AtomicString&)
 {
     if (!m_mediaSource)

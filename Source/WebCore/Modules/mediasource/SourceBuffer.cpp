@@ -1309,21 +1309,34 @@ bool SourceBuffer::validateInitializationSegment(const InitializationSegment& se
     // (Note: Issue #155 strikes out this check. For broad compatibility when this experimental feature
     // is not enabled, only perform this check if the "pending initialization segment for changeType flag"
     // is not set.)
-    if (!m_pendingInitializationSegmentForChangeType) {
-        for (auto& audioTrackInfo : segment.audioTracks) {
-            if (!m_audioCodecs.contains(audioTrackInfo.description->codec()))
-                return false;
-        }
+    for (auto& audioTrackInfo : segment.audioTracks) {
+        if (m_audioCodecs.contains(audioTrackInfo.description->codec()))
+            continue;
 
-        for (auto& videoTrackInfo : segment.videoTracks) {
-            if (!m_videoCodecs.contains(videoTrackInfo.description->codec()))
-                return false;
-        }
+        if (!m_pendingInitializationSegmentForChangeType)
+            return false;
 
-        for (auto& textTrackInfo : segment.textTracks) {
-            if (!m_textCodecs.contains(textTrackInfo.description->codec()))
-                return false;
-        }
+        m_audioCodecs.append(audioTrackInfo.description->codec());
+    }
+
+    for (auto& videoTrackInfo : segment.videoTracks) {
+        if (m_videoCodecs.contains(videoTrackInfo.description->codec()))
+            continue;
+
+        if (!m_pendingInitializationSegmentForChangeType)
+            return false;
+
+        m_videoCodecs.append(videoTrackInfo.description->codec());
+    }
+
+    for (auto& textTrackInfo : segment.textTracks) {
+        if (m_textCodecs.contains(textTrackInfo.description->codec()))
+            continue;
+
+        if (!m_pendingInitializationSegmentForChangeType)
+            return false;
+
+        m_textCodecs.append(textTrackInfo.description->codec());
     }
 
     //   * If more than one track for a single type are present (ie 2 audio tracks), then the Track

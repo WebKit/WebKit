@@ -1,3 +1,23 @@
+2018-11-09  Jer Noble  <jer.noble@apple.com>
+
+        SourceBuffer throws an error when appending a second init segment after changeType().
+        https://bugs.webkit.org/show_bug.cgi?id=191474
+
+        Reviewed by Eric Carlson.
+
+        Test: media/media-source/media-source-changetype-second-init.html
+
+        When encountering an initialization segment after changeType(), add the parsed codec types
+        to the list of allowed codecs.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::validateInitializationSegment):
+        * platform/mock/mediasource/MockMediaPlayerMediaSource.cpp:
+        (WebCore::MockMediaPlayerMediaSource::supportsType):
+        * platform/mock/mediasource/MockSourceBufferPrivate.cpp:
+        (WebCore::MockSourceBufferPrivate::canSwitchToType):
+        * platform/mock/mediasource/MockSourceBufferPrivate.h:
+
 2018-11-09  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] AVVideoCaptureSource reports incorrect size when frames are scaled

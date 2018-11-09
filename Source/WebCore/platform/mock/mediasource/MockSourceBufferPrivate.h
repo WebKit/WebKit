@@ -63,6 +63,7 @@ private:
     void removedFromMediaSource() final;
     MediaPlayer::ReadyState readyState() const final;
     void setReadyState(MediaPlayer::ReadyState) final;
+    bool canSwitchToType(const ContentType&) final;
 
     void flush(const AtomicString&) final { m_enqueuedSamples.clear(); }
     void enqueueSample(Ref<MediaSample>&&, const AtomicString&) final;

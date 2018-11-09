@@ -72,7 +72,10 @@ MediaPlayer::SupportsType MockMediaPlayerMediaSource::supportsType(const MediaEn
     if (codecs.isEmpty())
         return MediaPlayer::MayBeSupported;
 
-    return codecs == "mock" ? MediaPlayer::IsSupported : MediaPlayer::MayBeSupported;
+    if (codecs == "mock" || codecs == "kcom")
+        return MediaPlayer::IsSupported;
+
+    return MediaPlayer::MayBeSupported;
 }
 
 MockMediaPlayerMediaSource::MockMediaPlayerMediaSource(MediaPlayer* player)
