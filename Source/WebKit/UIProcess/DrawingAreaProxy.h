@@ -106,6 +106,8 @@ public:
 
     virtual void dispatchPresentationCallbacksAfterFlushingLayers(const Vector<CallbackID>&) { }
 
+    WebPageProxy& page() const { return m_webPageProxy; }
+
 protected:
     explicit DrawingAreaProxy(DrawingAreaType, WebPageProxy&);
 

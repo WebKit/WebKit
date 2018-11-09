@@ -1043,6 +1043,13 @@ typedef NSInteger UICompositingMode;
 - (CGFloat)getVerticalOverlapForView:(UIView *)view usingKeyboardInfo:(NSDictionary *)info;
 @end
 
+@interface _UILayerHostView : UIView
+@end
+
+@interface _UIRemoteView : _UILayerHostView
+- (instancetype)initWithFrame:(CGRect)frame pid:(pid_t)pid contextID:(uint32_t)contextID;
+@end
+
 #if __has_include(<UIKit/UITextInputMultiDocument.h>)
 #import <UIKit/UITextInputMultiDocument.h>
 #else

@@ -1,3 +1,23 @@
+2018-11-09  Tim Horton  <timothy_horton@apple.com>
+
+        Make use of _UIRemoteView instead of CALayerHost if possible for WKRemoteView
+        https://bugs.webkit.org/show_bug.cgi?id=191449
+        <rdar://problem/45884977>
+
+        Reviewed by Eric Carlson.
+
+        UIRemoteView has some nice process assertion management that it would
+        be nice to not duplicate. So, we can just use it instead of CALayerHost!
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::page const):
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeHostIOS.mm:
+        (-[WKUIRemoteView hitTest:withEvent:]):
+        (-[WKUIRemoteView description]):
+        (createRemoteView):
+        (WebKit::RemoteLayerTreeHost::createLayer):
+
 2018-11-09  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Make screen capture an experimental feature

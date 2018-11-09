@@ -28,7 +28,9 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "UIKitSPI.h"
+#import "WebPageProxy.h"
 #import <UIKit/UIScrollView.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 
@@ -155,6 +157,44 @@ using namespace WebCore;
 
 @end
 
+#if USE(UIREMOTEVIEW_CONTEXT_HOSTING)
+@interface WKUIRemoteView : _UIRemoteView
+@end
+
+@implementation WKUIRemoteView
+
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
+{
+    return [self _findDescendantViewAtPoint:point withEvent:event];
+}
+
+- (NSString *)description
+{
+    NSString *viewDescription = [super description];
+    NSString *webKitDetails = [NSString stringWithFormat:@" layerID = %llu \"%@\"", WebKit::RemoteLayerTreeHost::layerID(self.layer), self.layer.name ? self.layer.name : @""];
+    return [viewDescription stringByAppendingString:webKitDetails];
+}
+
+@end
+#endif
+
+static RetainPtr<UIView> createRemoteView(pid_t pid, uint32_t contextID)
+{
+#if USE(UIREMOTEVIEW_CONTEXT_HOSTING)
+    // FIXME: Remove this respondsToSelector check when possible.
+    static BOOL canUseUIRemoteView;
+    static std::once_flag initializeCanUseUIRemoteView;
+    std::call_once(initializeCanUseUIRemoteView, [] {
+        canUseUIRemoteView = [_UIRemoteView instancesRespondToSelector:@selector(initWithFrame:pid:contextID:)];
+    });
+    if (canUseUIRemoteView)
+        return adoptNS([[WKUIRemoteView alloc] initWithFrame:CGRectZero pid:pid contextID:contextID]);
+#else
+    UNUSED_PARAM(pid);
+#endif
+    return adoptNS([[WKRemoteView alloc] initWithFrame:CGRectZero contextID:contextID]);
+}
+
 @interface WKBackdropView : _UIBackdropView
 @end
 
@@ -208,7 +248,7 @@ LayerOrView *RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::
     case PlatformCALayer::LayerTypeAVPlayerLayer:
     case PlatformCALayer::LayerTypeContentsProvidedLayer:
         if (!m_isDebugLayerTreeHost) {
-            view = adoptNS([[WKRemoteView alloc] initWithFrame:CGRectZero contextID:properties.hostingContextID]);
+            view = createRemoteView(m_drawingArea->page().processIdentifier(), properties.hostingContextID);
             if (properties.type == PlatformCALayer::LayerTypeAVPlayerLayer) {
                 // Invert the scale transform added in the WebProcess to fix <rdar://problem/18316542>.
                 float inverseScale = 1 / properties.hostingDeviceScaleFactor;
