@@ -40,8 +40,6 @@ http/tests/gzip-content-encoding [ Pass ]
 fast/text/mac [ Pass ]
 webkit.org/b/181964 fast/text/mac/select-character-before-zero-width-joiner.html [ ImageOnlyFailure ]
 
-[ Mojave+ ] fast/events/detect-caps-lock.html [ Pass ]
-
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
 #//////////////////////////////////////////////////////////////////////////////////////////

@@ -1,3 +1,15 @@
+2018-11-08  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [Mojave WK1] Layout test fast/events/detect-caps-lock.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=191424
+
+        Unreviewed test gardening.
+
+        Update expectations since this test is only expected to run on WK2.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2018-11-08  Ross Kirsling  <ross.kirsling@sony.com>
 
         U+180E is no longer a whitespace character

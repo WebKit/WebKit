@@ -67,6 +67,7 @@ webkit.org/b/187773 http/tests/webAPIStatistics [ Pass ]
 
 webkit.org/b/184569 storage/indexeddb/modern/transactions-stop-on-navigation.html [ Pass Failure ]
 
+[ Mojave+ ] fast/events/detect-caps-lock.html [ Pass ]
 
 fast/events/inactive-window-no-mouse-event.html [ Pass ]
 
