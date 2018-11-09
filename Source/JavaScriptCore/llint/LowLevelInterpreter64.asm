@@ -1691,7 +1691,7 @@ macro putByValOp(name, op)
                 ci2d scratch, ft0
                 jmp .ready
             .notInt:
-                addp tagTypeNumber, scratch
+                addq tagTypeNumber, scratch
                 fq2d scratch, ft0
                 bdnequn ft0, ft0, .opPutByValSlow
             .ready:

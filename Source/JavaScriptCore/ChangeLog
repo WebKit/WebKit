@@ -1,3 +1,15 @@
+2018-11-08  Keith Miller  <keith_miller@apple.com>
+
+        put_by_val opcodes need to add the number tag as a 64-bit register
+        https://bugs.webkit.org/show_bug.cgi?id=191456
+
+        Reviewed by Saam Barati.
+
+        Previously the LLInt would add it as a pointer sized value. That is
+        wrong if pointer size is less 64-bits.
+
+        * llint/LowLevelInterpreter64.asm:
+
 2018-11-08  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] isStrWhiteSpace seems redundant with Lexer<UChar>::isWhiteSpace
