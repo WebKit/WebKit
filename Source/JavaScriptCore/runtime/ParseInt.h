@@ -26,6 +26,7 @@
 #pragma once
 
 #include "JSCJSValue.h"
+#include "Lexer.h"
 #include <wtf/dtoa.h>
 
 namespace JSC {
@@ -101,22 +102,8 @@ static double parseIntOverflow(StringView string, int radix)
 
 ALWAYS_INLINE static bool isStrWhiteSpace(UChar c)
 {
-    switch (c) {
-    // ECMA-262-5th 7.2 & 7.3
-    case 0x0009:
-    case 0x000A:
-    case 0x000B:
-    case 0x000C:
-    case 0x000D:
-    case 0x0020:
-    case 0x00A0:
-    case 0x2028:
-    case 0x2029:
-    case 0xFEFF:
-        return true;
-    default:
-        return c > 0xFF && u_charType(c) == U_SPACE_SEPARATOR;
-    }
+    // https://tc39.github.io/ecma262/#sec-tonumber-applied-to-the-string-type
+    return Lexer<UChar>::isWhiteSpace(c) || Lexer<UChar>::isLineTerminator(c);
 }
 
 // ES5.1 15.1.2.2

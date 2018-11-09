@@ -692,6 +692,8 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
 
     llint/LLIntOpcode.h
 
+    parser/Lexer.h
+    parser/ParserArena.h
     parser/ParserError.h
     parser/ParserModes.h
     parser/ParserTokens.h

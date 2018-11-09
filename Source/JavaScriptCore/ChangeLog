@@ -1,3 +1,15 @@
+2018-11-08  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] isStrWhiteSpace seems redundant with Lexer<UChar>::isWhiteSpace
+        https://bugs.webkit.org/show_bug.cgi?id=191439
+
+        Reviewed by Saam Barati.
+
+        * CMakeLists.txt:
+        * runtime/ParseInt.h:
+        (JSC::isStrWhiteSpace):
+        Define isStrWhiteSpace in terms of isWhiteSpace and isLineTerminator.
+
 2018-11-08  Michael Saboff  <msaboff@apple.com>
 
         Options::useRegExpJIT() should use jitEnabledByDefault() just like useJIT()
