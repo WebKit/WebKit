@@ -51,30 +51,30 @@ private:
 
 public:
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef();
-    virtual ULONG STDMETHODCALLTYPE Release();
+    HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject) override;
+    ULONG STDMETHODCALLTYPE AddRef() override;
+    ULONG STDMETHODCALLTYPE Release() override;
 
     // IWebHistory
-    virtual HRESULT STDMETHODCALLTYPE optionalSharedHistory(_COM_Outptr_opt_ IWebHistory**);
-    virtual HRESULT STDMETHODCALLTYPE setOptionalSharedHistory(_In_opt_ IWebHistory*);
+    HRESULT STDMETHODCALLTYPE optionalSharedHistory(_COM_Outptr_opt_ IWebHistory**) override;
+    HRESULT STDMETHODCALLTYPE setOptionalSharedHistory(_In_opt_ IWebHistory*) override;
     HRESULT STDMETHODCALLTYPE unused1() override;
     HRESULT STDMETHODCALLTYPE unused2() override;
-    virtual HRESULT STDMETHODCALLTYPE addItems(int itemCount, __deref_in_ecount_opt(itemCount) IWebHistoryItem**);
-    virtual HRESULT STDMETHODCALLTYPE removeItems(int itemCount, __deref_in_ecount_opt(itemCount) IWebHistoryItem**);
-    virtual HRESULT STDMETHODCALLTYPE removeAllItems();
-    virtual HRESULT STDMETHODCALLTYPE orderedLastVisitedDays(_Inout_ int* count, _In_ DATE* calendarDates);
-    virtual HRESULT STDMETHODCALLTYPE orderedItemsLastVisitedOnDay(_Inout_ int* count, __deref_in_opt IWebHistoryItem** items, DATE calendarDate);
-    virtual HRESULT STDMETHODCALLTYPE itemForURL(_In_ BSTR url, _COM_Outptr_opt_ IWebHistoryItem**);
-    virtual HRESULT STDMETHODCALLTYPE setHistoryItemLimit(int);
-    virtual HRESULT STDMETHODCALLTYPE historyItemLimit(_Out_ int*);
-    virtual HRESULT STDMETHODCALLTYPE setHistoryAgeInDaysLimit(int);
-    virtual HRESULT STDMETHODCALLTYPE historyAgeInDaysLimit(_Out_ int*);
+    HRESULT STDMETHODCALLTYPE addItems(int itemCount, __deref_in_ecount_opt(itemCount) IWebHistoryItem**) override;
+    HRESULT STDMETHODCALLTYPE removeItems(int itemCount, __deref_in_ecount_opt(itemCount) IWebHistoryItem**) override;
+    HRESULT STDMETHODCALLTYPE removeAllItems() override;
+    HRESULT STDMETHODCALLTYPE orderedLastVisitedDays(_Inout_ int* count, _In_ DATE* calendarDates) override;
+    HRESULT STDMETHODCALLTYPE orderedItemsLastVisitedOnDay(_Inout_ int* count, __deref_in_opt IWebHistoryItem** items, DATE calendarDate) override;
+    HRESULT STDMETHODCALLTYPE itemForURL(_In_ BSTR url, _COM_Outptr_opt_ IWebHistoryItem**) override;
+    HRESULT STDMETHODCALLTYPE setHistoryItemLimit(int) override;
+    HRESULT STDMETHODCALLTYPE historyItemLimit(_Out_ int*) override;
+    HRESULT STDMETHODCALLTYPE setHistoryAgeInDaysLimit(int) override;
+    HRESULT STDMETHODCALLTYPE historyAgeInDaysLimit(_Out_ int*) override;
 
     // IWebHistoryPrivate
-    virtual HRESULT STDMETHODCALLTYPE allItems(_Inout_ int* count, __deref_opt_out IWebHistoryItem** items);
-    virtual HRESULT STDMETHODCALLTYPE setVisitedLinkTrackingEnabled(BOOL);
-    virtual HRESULT STDMETHODCALLTYPE removeAllVisitedLinks();
+    HRESULT STDMETHODCALLTYPE allItems(_Inout_ int* count, __deref_opt_out IWebHistoryItem** items) override;
+    HRESULT STDMETHODCALLTYPE setVisitedLinkTrackingEnabled(BOOL) override;
+    HRESULT STDMETHODCALLTYPE removeAllVisitedLinks() override;
 
     // WebHistory
     static WebHistory* sharedHistory();
