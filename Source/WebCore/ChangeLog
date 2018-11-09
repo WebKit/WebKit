@@ -1,5 +1,25 @@
 2018-11-09  Andy Estes  <aestes@apple.com>
 
+        [Payment Request] canMakePayment() should not consider serialized payment method data
+        https://bugs.webkit.org/show_bug.cgi?id=191432
+
+        Reviewed by Dean Jackson.
+
+        In https://github.com/w3c/payment-request/pull/806, we're changing the specification of
+        canMakePayment() to not consider serialized payment method data when deciding if a payment
+        method is supported. For Apple Pay, this means we resolve to true for
+        "https://apple.com/apple-pay", even if an ApplePayRequest is omitted or is missing required
+        fields.
+
+        Added test cases to
+        http/tests/paymentrequest/payment-request-canmakepayment-method.https.html and
+        http/tests/paymentrequest/payment-request-show-method.https.html.
+
+        * Modules/paymentrequest/PaymentRequest.cpp:
+        (WebCore::PaymentRequest::canMakePayment):
+
+2018-11-09  Andy Estes  <aestes@apple.com>
+
         [Payment Request] PaymentResponse.details should be updated when the user accepts a retried payment
         https://bugs.webkit.org/show_bug.cgi?id=191440
 

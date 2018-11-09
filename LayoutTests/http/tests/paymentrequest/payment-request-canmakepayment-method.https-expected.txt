@@ -1,10 +1,5 @@
 
-PASS If request.[[state]] is "created", then return a promise that resolves to true for known method. 
 PASS If request.[[state]] is "interactive", then return a promise rejected with an "InvalidStateError" DOMException. 
 PASS If request.[[state]] is "closed", then return a promise rejected with an "InvalidStateError" DOMException. 
-PASS If payment method identifier and serialized parts are supported, resolve promise with true. 
-PASS If a payment method identifier is supported but its serialized parts are not, resolve promise with false. 
-PASS If payment method identifier is unknown, resolve promise with false. 
-PASS Optionally, at the user agent's discretion, return a promise rejected with a "NotAllowedError" DOMException. 
 PASS Return a promise that resolves to true when Apple Pay is available, even if there isn't an active card. 
 

@@ -1,5 +1,23 @@
 2018-11-09  Andy Estes  <aestes@apple.com>
 
+        [Payment Request] canMakePayment() should not consider serialized payment method data
+        https://bugs.webkit.org/show_bug.cgi?id=191432
+
+        Reviewed by Dean Jackson.
+
+        * http/tests/paymentrequest/payment-request-canmakepayment-method.https-expected.txt:
+        * http/tests/paymentrequest/payment-request-canmakepayment-method.https.html: Updated with
+        changes from imported/w3c/web-platform-tests/payment-request/. Modified two tests to use
+        user_activation_test() rather than test_driver.bless().
+        * http/tests/paymentrequest/payment-request-show-method.https-expected.txt:
+        * http/tests/paymentrequest/payment-request-show-method.https.html: Now that canMakePayment
+        does not convert payment method data, added a test that ensures show() rejects with a
+        TypeError when Apple Pay's payment method data is invalid.
+        * platform/ios-wk2/TestExpectations: Un-skipped payment-request-canmakepayment-method.https.html.
+        * platform/mac-wk2/TestExpectations: Ditto.
+
+2018-11-09  Andy Estes  <aestes@apple.com>
+
         [Payment Request] PaymentResponse.details should be updated when the user accepts a rpayment retry
         https://bugs.webkit.org/show_bug.cgi?id=191440
 

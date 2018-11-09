@@ -1,0 +1,9 @@
+If you find a buggy test, please file a bug and tag one of the suggested reviewers.
+
+PASS If payment method identifier are supported, resolve promise with true. 
+FAIL If request.[[state]] is "interactive", then return a promise rejected with an "InvalidStateError" DOMException. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: test_driver"
+FAIL If request.[[state]] is "closed", then return a promise rejected with an "InvalidStateError" DOMException. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: test_driver"
+PASS If request.[[state]] is "created", then return a promise that resolves to true for known method. 
+PASS All methods are unsupported 
+PASS Mix of supported and unsupported methods, at least one method is supported. 
+
