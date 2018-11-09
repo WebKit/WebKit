@@ -846,6 +846,7 @@
 		F46A095A1ED8A6E600D4AA55 /* apple.gif in Copy Resources */ = {isa = PBXBuildFile; fileRef = F47D30EB1ED28619000482E1 /* apple.gif */; };
 		F46A095B1ED8A6E600D4AA55 /* gif-and-file-input.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F47D30ED1ED28A6C000482E1 /* gif-and-file-input.html */; };
 		F47728991E4AE3C1007ABF6A /* full-page-contenteditable.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F47728981E4AE3AD007ABF6A /* full-page-contenteditable.html */; };
+		F4811E5921940BDE00A5E0FD /* WKWebViewEditActions.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4811E5821940B4400A5E0FD /* WKWebViewEditActions.mm */; };
 		F4856CA31E649EA8009D7EE7 /* attachment-element.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4856CA21E6498A8009D7EE7 /* attachment-element.html */; };
 		F486B1D01F67952300F34BDD /* DataTransfer-setDragImage.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F486B1CF1F6794FF00F34BDD /* DataTransfer-setDragImage.html */; };
 		F4A32EC41F05F3850047C544 /* dragstart-change-selection-offscreen.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4A32EC31F05F3780047C544 /* dragstart-change-selection-offscreen.html */; };
@@ -878,7 +879,6 @@
 		F4F5BB5221667BAA002D06B9 /* TestFontOptions.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4F5BB5121667BAA002D06B9 /* TestFontOptions.mm */; };
 		F4FA91811E61849B007B8C1D /* WKWebViewMacEditingTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4FA917F1E61849B007B8C1D /* WKWebViewMacEditingTests.mm */; };
 		F4FA91831E61857B007B8C1D /* double-click-does-not-select-trailing-space.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4FA91821E618566007B8C1D /* double-click-does-not-select-trailing-space.html */; };
-		F4FB682521643EFC0034607A /* WKWebViewEditActions.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4FB682421643EFC0034607A /* WKWebViewEditActions.mm */; };
 		F4FC077720F013B600CA043C /* significant-text-milestone.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4FC077620F0108100CA043C /* significant-text-milestone.html */; };
 		F660AA1115A5F631003A1243 /* GetInjectedBundleInitializationUserDataCallback_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F660AA0F15A5F624003A1243 /* GetInjectedBundleInitializationUserDataCallback_Bundle.cpp */; };
 		F660AA1515A61ABF003A1243 /* InjectedBundleInitializationUserDataCallbackWins_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F660AA1415A61ABF003A1243 /* InjectedBundleInitializationUserDataCallbackWins_Bundle.cpp */; };
@@ -2131,6 +2131,7 @@
 		F47728981E4AE3AD007ABF6A /* full-page-contenteditable.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "full-page-contenteditable.html"; sourceTree = "<group>"; };
 		F47D30EB1ED28619000482E1 /* apple.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = apple.gif; sourceTree = "<group>"; };
 		F47D30ED1ED28A6C000482E1 /* gif-and-file-input.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "gif-and-file-input.html"; sourceTree = "<group>"; };
+		F4811E5821940B4400A5E0FD /* WKWebViewEditActions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewEditActions.mm; sourceTree = "<group>"; };
 		F4856CA21E6498A8009D7EE7 /* attachment-element.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "attachment-element.html"; sourceTree = "<group>"; };
 		F486B1CF1F6794FF00F34BDD /* DataTransfer-setDragImage.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "DataTransfer-setDragImage.html"; sourceTree = "<group>"; };
 		F493247C1F44DF8D006F4336 /* UIKitSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UIKitSPI.h; sourceTree = "<group>"; };
@@ -2166,7 +2167,6 @@
 		F4F5BB5121667BAA002D06B9 /* TestFontOptions.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TestFontOptions.mm; sourceTree = "<group>"; };
 		F4FA917F1E61849B007B8C1D /* WKWebViewMacEditingTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewMacEditingTests.mm; sourceTree = "<group>"; };
 		F4FA91821E618566007B8C1D /* double-click-does-not-select-trailing-space.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = "double-click-does-not-select-trailing-space.html"; path = "Tests/WebKitCocoa/double-click-does-not-select-trailing-space.html"; sourceTree = SOURCE_ROOT; };
-		F4FB682421643EFC0034607A /* WKWebViewEditActions.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewEditActions.mm; sourceTree = "<group>"; };
 		F4FC077620F0108100CA043C /* significant-text-milestone.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "significant-text-milestone.html"; sourceTree = "<group>"; };
 		F660AA0C15A5F061003A1243 /* GetInjectedBundleInitializationUserDataCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetInjectedBundleInitializationUserDataCallback.cpp; sourceTree = "<group>"; };
 		F660AA0F15A5F624003A1243 /* GetInjectedBundleInitializationUserDataCallback_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetInjectedBundleInitializationUserDataCallback_Bundle.cpp; sourceTree = "<group>"; };
@@ -2514,6 +2514,7 @@
 				7C417F311D19E14800B8EF53 /* WKWebViewDefaultNavigationDelegate.mm */,
 				46E66A8F1F0D75590026D83C /* WKWebViewDiagnosticLogging.mm */,
 				2DB647871F4161F70051A89E /* WKWebViewDoesNotLogDuringInitialization.mm */,
+				F4811E5821940B4400A5E0FD /* WKWebViewEditActions.mm */,
 				0F3B94A51A77266C00DE3272 /* WKWebViewEvaluateJavaScript.mm */,
 				D3BE5E341E4CE85E00FD563A /* WKWebViewGetContents.mm */,
 				37A9DBE7213B4C9300D261A2 /* WKWebViewServerTrustKVC.mm */,
@@ -2632,7 +2633,6 @@
 				F46849BD1EEF58E400B937FE /* UIPasteboardTests.mm */,
 				F43E3BBE20DADA1E00A4E7ED /* WKScrollViewTests.mm */,
 				514958BD1F7427AC00E87BAD /* WKWebViewAutofillTests.mm */,
-				F4FB682421643EFC0034607A /* WKWebViewEditActions.mm */,
 			);
 			path = ios;
 			sourceTree = "<group>";
@@ -4175,7 +4175,7 @@
 				7C417F331D19E14800B8EF53 /* WKWebViewDefaultNavigationDelegate.mm in Sources */,
 				46E66A901F0D75590026D83C /* WKWebViewDiagnosticLogging.mm in Sources */,
 				2DB647881F4163D60051A89E /* WKWebViewDoesNotLogDuringInitialization.mm in Sources */,
-				F4FB682521643EFC0034607A /* WKWebViewEditActions.mm in Sources */,
+				F4811E5921940BDE00A5E0FD /* WKWebViewEditActions.mm in Sources */,
 				0F3B94A71A77267400DE3272 /* WKWebViewEvaluateJavaScript.mm in Sources */,
 				D34E08761E4E42E1005FF14A /* WKWebViewGetContents.mm in Sources */,
 				F4FA91811E61849B007B8C1D /* WKWebViewMacEditingTests.mm in Sources */,

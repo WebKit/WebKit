@@ -25,16 +25,20 @@
 
 #import "config.h"
 
-#if PLATFORM(IOS_FAMILY) && WK_API_ENABLED
+#if WK_API_ENABLED
 
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
+#import <WebKit/WKWebViewPrivate.h>
+
+#if PLATFORM(IOS_FAMILY)
 #import "UIKitSPI.h"
 #import <UIKit/UIFontDescriptor.h>
-#import <WebKit/WKWebViewPrivate.h>
+#endif
 
 @interface TestWKWebView (EditActionTesting)
 - (BOOL)querySelectorExists:(NSString *)querySelector;
+- (void)insertString:(NSString *)string;
 @end
 
 @implementation TestWKWebView (EditActionTesting)
@@ -42,6 +46,15 @@
 - (BOOL)querySelectorExists:(NSString *)querySelector
 {
     return [[self objectByEvaluatingJavaScript:[NSString stringWithFormat:@"!!document.querySelector(`%@`)", querySelector]] boolValue];
+}
+
+- (void)insertString:(NSString *)string
+{
+#if PLATFORM(IOS_FAMILY)
+    [[self textInputContentView] insertText:string];
+#else
+    [self insertText:string];
+#endif
 }
 
 @end
@@ -57,18 +70,39 @@ static RetainPtr<TestWKWebView> webViewForEditActionTesting()
     return webView;
 }
 
+TEST(WKWebViewEditActions, NestedListInsertion)
+{
+    auto webView = webViewForEditActionTesting();
+
+    [webView _insertNestedOrderedList:nil];
+    EXPECT_TRUE([webView querySelectorExists:@"ol"]);
+    EXPECT_TRUE([webView querySelectorExists:@"ol > li"]);
+
+    [webView _insertNestedOrderedList:nil];
+    EXPECT_TRUE([webView querySelectorExists:@"ol > ol"]);
+    EXPECT_TRUE([webView querySelectorExists:@"ol > ol > li"]);
+
+    [webView _insertNestedUnorderedList:nil];
+    EXPECT_TRUE([webView querySelectorExists:@"ol > ol > ul"]);
+    EXPECT_TRUE([webView querySelectorExists:@"ol > ol > ul > li"]);
+
+    [webView _insertNestedUnorderedList:nil];
+    EXPECT_TRUE([webView querySelectorExists:@"ol > ol > ul > ul"]);
+    EXPECT_TRUE([webView querySelectorExists:@"ol > ol > ul > ul > li"]);
+}
+
 TEST(WKWebViewEditActions, ListInsertion)
 {
     auto webView = webViewForEditActionTesting();
 
-    [webView insertOrderedList:nil];
+    [webView _insertOrderedList:nil];
     EXPECT_TRUE([webView querySelectorExists:@"ol"]);
-    [webView insertOrderedList:nil];
+    [webView _insertOrderedList:nil];
     EXPECT_FALSE([webView querySelectorExists:@"ol"]);
 
-    [webView insertUnorderedList:nil];
+    [webView _insertUnorderedList:nil];
     EXPECT_TRUE([webView querySelectorExists:@"ul"]);
-    [webView insertUnorderedList:nil];
+    [webView _insertUnorderedList:nil];
     EXPECT_FALSE([webView querySelectorExists:@"ul"]);
 }
 
@@ -76,14 +110,14 @@ TEST(WKWebViewEditActions, ChangeIndentation)
 {
     auto webView = webViewForEditActionTesting();
 
-    [webView indent:nil];
+    [webView _indent:nil];
     EXPECT_TRUE([webView querySelectorExists:@"blockquote"]);
-    [webView indent:nil];
+    [webView _indent:nil];
     EXPECT_TRUE([webView querySelectorExists:@"blockquote > blockquote"]);
 
-    [webView outdent:nil];
+    [webView _outdent:nil];
     EXPECT_TRUE([webView querySelectorExists:@"blockquote"]);
-    [webView outdent:nil];
+    [webView _outdent:nil];
     EXPECT_FALSE([webView querySelectorExists:@"blockquote"]);
 }
 
@@ -91,13 +125,13 @@ TEST(WKWebViewEditActions, SetAlignment)
 {
     auto webView = webViewForEditActionTesting();
     auto runTest = [webView] {
-        [webView alignCenter:nil];
+        [webView _alignCenter:nil];
         EXPECT_WK_STREQ("center", [webView stylePropertyAtSelectionStart:@"text-align"]);
-        [webView alignLeft:nil];
+        [webView _alignLeft:nil];
         EXPECT_WK_STREQ("left", [webView stylePropertyAtSelectionStart:@"text-align"]);
-        [webView alignRight:nil];
+        [webView _alignRight:nil];
         EXPECT_WK_STREQ("right", [webView stylePropertyAtSelectionStart:@"text-align"]);
-        [webView alignJustified:nil];
+        [webView _alignJustified:nil];
         EXPECT_WK_STREQ("justify", [webView stylePropertyAtSelectionStart:@"text-align"]);
     };
 
@@ -112,23 +146,34 @@ TEST(WKWebViewEditActions, ToggleStrikeThrough)
 {
     auto webView = webViewForEditActionTesting();
     [webView selectAll:nil];
-    [webView toggleStrikeThrough:nil];
+    [webView _toggleStrikeThrough:nil];
     EXPECT_WK_STREQ("line-through", [webView stylePropertyAtSelectionStart:@"-webkit-text-decorations-in-effect"]);
     EXPECT_WK_STREQ("line-through", [webView stylePropertyAtSelectionEnd:@"-webkit-text-decorations-in-effect"]);
 
-    [webView toggleStrikeThrough:nil];
+    [webView _toggleStrikeThrough:nil];
     EXPECT_WK_STREQ("none", [webView stylePropertyAtSelectionStart:@"-webkit-text-decorations-in-effect"]);
     EXPECT_WK_STREQ("none", [webView stylePropertyAtSelectionEnd:@"-webkit-text-decorations-in-effect"]);
 
     [webView collapseToEnd];
-    [webView toggleStrikeThrough:nil];
-    [[webView textInputContentView] insertText:@"Hello"];
+    [webView _toggleStrikeThrough:nil];
+    [webView insertString:@"Hello"];
     EXPECT_WK_STREQ("line-through", [webView stylePropertyAtSelectionStart:@"-webkit-text-decorations-in-effect"]);
 
-    [webView toggleStrikeThrough:nil];
-    [[webView textInputContentView] insertText:@"Hello"];
+    [webView _toggleStrikeThrough:nil];
+    [webView insertString:@"Hello"];
     EXPECT_WK_STREQ("none", [webView stylePropertyAtSelectionStart:@"-webkit-text-decorations-in-effect"]);
 }
+
+TEST(WKWebViewEditActions, PasteAsQuotation)
+{
+    auto webView = webViewForEditActionTesting();
+    [webView selectAll:nil];
+    [webView _executeEditCommand:@"cut" argument:nil completion:nil];
+    [webView _pasteAsQuotation:nil];
+    EXPECT_TRUE([webView querySelectorExists:@"blockquote"]);
+}
+
+#if PLATFORM(IOS_FAMILY)
 
 TEST(WKWebViewEditActions, ChangeFontSize)
 {
@@ -146,7 +191,7 @@ TEST(WKWebViewEditActions, ChangeFontSize)
     [webView decreaseSize:nil];
     EXPECT_EQ(16, [[webView stylePropertyAtSelectionStart:@"font-size"] floatValue]);
 
-    [webView setFontSize:20 sender:nil];
+    [webView _setFontSize:20 sender:nil];
     EXPECT_EQ(20, [[webView stylePropertyAtSelectionStart:@"font-size"] floatValue]);
 }
 
@@ -155,11 +200,11 @@ TEST(WKWebViewEditActions, SetTextColor)
     auto webView = webViewForEditActionTesting();
     [webView selectAll:nil];
 
-    [webView setTextColor:[UIColor colorWithRed:1 green:0 blue:0 alpha:1] sender:nil];
+    [webView _setTextColor:[UIColor colorWithRed:1 green:0 blue:0 alpha:1] sender:nil];
     EXPECT_WK_STREQ("rgb(255, 0, 0)", [webView stylePropertyAtSelectionStart:@"color"]);
     EXPECT_TRUE([webView querySelectorExists:@"font"]);
 
-    [webView setTextColor:[UIColor colorWithRed:0 green:1 blue:0 alpha:0.2] sender:nil];
+    [webView _setTextColor:[UIColor colorWithRed:0 green:1 blue:0 alpha:0.2] sender:nil];
     EXPECT_WK_STREQ("rgba(0, 255, 0, 0.2)", [webView stylePropertyAtSelectionStart:@"color"]);
     EXPECT_FALSE([webView querySelectorExists:@"font"]);
 }
@@ -170,26 +215,28 @@ TEST(WKWebViewEditActions, SetFontFamily)
     [webView selectAll:nil];
 
     UIFontDescriptor *fontDescriptor = [UIFontDescriptor fontDescriptorWithFontAttributes:@{ UIFontDescriptorFamilyAttribute: @"Helvetica" }];
-    [webView setFont:[UIFont fontWithDescriptor:fontDescriptor size:24] sender:nil];
+    [webView _setFont:[UIFont fontWithDescriptor:fontDescriptor size:24] sender:nil];
     EXPECT_WK_STREQ("Helvetica", [webView stylePropertyAtSelectionStart:@"font-family"]);
     EXPECT_WK_STREQ("24px", [webView stylePropertyAtSelectionStart:@"font-size"]);
     EXPECT_WK_STREQ("normal", [webView stylePropertyAtSelectionStart:@"font-weight"]);
     EXPECT_WK_STREQ("normal", [webView stylePropertyAtSelectionStart:@"font-style"]);
 
-    [webView setFont:[UIFont fontWithName:@"TimesNewRomanPS-BoldMT" size:12] sender:nil];
+    [webView _setFont:[UIFont fontWithName:@"TimesNewRomanPS-BoldMT" size:12] sender:nil];
     EXPECT_WK_STREQ("\"Times New Roman\"", [webView stylePropertyAtSelectionStart:@"font-family"]);
     EXPECT_WK_STREQ("12px", [webView stylePropertyAtSelectionStart:@"font-size"]);
     EXPECT_WK_STREQ("bold", [webView stylePropertyAtSelectionStart:@"font-weight"]);
     EXPECT_WK_STREQ("normal", [webView stylePropertyAtSelectionStart:@"font-style"]);
 
     fontDescriptor = [fontDescriptor fontDescriptorWithSymbolicTraits:UIFontDescriptorTraitItalic | UIFontDescriptorTraitBold];
-    [webView setFont:[UIFont fontWithDescriptor:fontDescriptor size:20] sender:nil];
+    [webView _setFont:[UIFont fontWithDescriptor:fontDescriptor size:20] sender:nil];
     EXPECT_WK_STREQ("Helvetica", [webView stylePropertyAtSelectionStart:@"font-family"]);
     EXPECT_WK_STREQ("20px", [webView stylePropertyAtSelectionStart:@"font-size"]);
     EXPECT_WK_STREQ("bold", [webView stylePropertyAtSelectionStart:@"font-weight"]);
     EXPECT_WK_STREQ("italic", [webView stylePropertyAtSelectionStart:@"font-style"]);
 }
 
+#endif // PLATFORM(IOS_FAMILY)
+
 } // namespace TestWebKitAPI
 
-#endif // PLATFORM(IOS_FAMILY) && WK_API_ENABLED
+#endif // WK_API_ENABLED

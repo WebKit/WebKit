@@ -1186,6 +1186,10 @@ private:
     void executeEditCommand(const String&, const String&);
     void setEditable(bool);
 
+    void increaseListLevel();
+    void decreaseListLevel();
+    void changeListType();
+
     void setNeedsFontAttributes(bool);
 
     void mouseEvent(const WebMouseEvent&);

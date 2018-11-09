@@ -1,3 +1,26 @@
+2018-11-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] Introduce WKWebView SPI to insert nested ordered and unordered lists
+        https://bugs.webkit.org/show_bug.cgi?id=191410
+        <rdar://problem/45898610>
+
+        Reviewed by Dean Jackson.
+
+        Move WKWebViewEditActions from iOS to WebKitCocoa, and enable the relevant WKWebViewEditActions tests on macOS.
+        Additionally, add new API tests to verify that `-_pasteAsQuotation:` and `-_insertNested(Un)OrderedList:` are
+        hooked up to their respective editing commands.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewEditActions.mm: Renamed from Tools/TestWebKitAPI/Tests/ios/WKWebViewEditActions.mm.
+        (-[TestWKWebView querySelectorExists:]):
+        (-[TestWKWebView insertString:]):
+
+        Add a helper method to insert a piece of text. This abstracts platform differences between iOS and macOS, by
+        invoking the WKWebView directly on macOS and calling on the content view on iOS.
+
+        (TestWebKitAPI::webViewForEditActionTesting):
+        (TestWebKitAPI::TEST):
+
 2018-11-09  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak] Refactoring and drive-by fixes

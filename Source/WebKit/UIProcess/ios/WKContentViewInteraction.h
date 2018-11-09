@@ -134,6 +134,23 @@ typedef std::pair<WebKit::InteractionInformationRequest, InteractionInformationC
     M(alignCenter) \
     M(alignJustified)
 
+#define FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(M) \
+    M(_alignCenter) \
+    M(_alignJustified) \
+    M(_alignLeft) \
+    M(_alignRight) \
+    M(_indent) \
+    M(_outdent) \
+    M(_toggleStrikeThrough) \
+    M(_insertOrderedList) \
+    M(_insertUnorderedList) \
+    M(_insertNestedOrderedList) \
+    M(_insertNestedUnorderedList) \
+    M(_increaseListLevel) \
+    M(_decreaseListLevel) \
+    M(_changeListType) \
+    M(_pasteAsQuotation)
+
 namespace WebKit {
 
 struct WKSelectionDrawingInfo {
@@ -339,7 +356,7 @@ struct WKAutoCorrectionData {
 #define DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW(_action) \
     - (void)_action ## ForWebView:(id)sender;
 FOR_EACH_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
-DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW(_pasteAsQuotation)
+FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 #undef DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW
 
 - (void)setFontForWebView:(UIFont *)fontFamily sender:(id)sender;

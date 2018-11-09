@@ -545,6 +545,10 @@ public:
     bool hasSelectedRange() const { return m_editorState.selectionIsRange; }
     bool isContentEditable() const { return m_editorState.isContentEditable; }
 
+    void increaseListLevel();
+    void decreaseListLevel();
+    void changeListType();
+
     std::optional<WebCore::FontAttributes> cachedFontAttributesAtSelectionStart() const { return m_cachedFontAttributesAtSelectionStart; }
 
 #if PLATFORM(COCOA)

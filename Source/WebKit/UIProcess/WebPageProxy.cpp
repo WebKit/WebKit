@@ -1756,6 +1756,24 @@ void WebPageProxy::validateCommand(const String& commandName, WTF::Function<void
     m_process->send(Messages::WebPage::ValidateCommand(commandName, callbackID), m_pageID);
 }
 
+void WebPageProxy::increaseListLevel()
+{
+    if (isValid())
+        m_process->send(Messages::WebPage::IncreaseListLevel(), m_pageID);
+}
+
+void WebPageProxy::decreaseListLevel()
+{
+    if (isValid())
+        m_process->send(Messages::WebPage::DecreaseListLevel(), m_pageID);
+}
+
+void WebPageProxy::changeListType()
+{
+    if (isValid())
+        m_process->send(Messages::WebPage::ChangeListType(), m_pageID);
+}
+
 void WebPageProxy::updateFontAttributesAfterEditorStateChange()
 {
     m_cachedFontAttributesAtSelectionStart.reset();

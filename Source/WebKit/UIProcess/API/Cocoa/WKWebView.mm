@@ -257,6 +257,13 @@ static std::optional<WebCore::ScrollbarOverlayStyle> toCoreScrollbarStyle(_WKOve
 }
 #endif
 
+#define FORWARD_ACTION_TO_WKCONTENTVIEW(_action) \
+    - (void)_action:(id)sender \
+    { \
+        if (self.usesStandardContentView) \
+            [_contentView _action ## ForWebView:sender]; \
+    }
+
 @implementation WKWebView {
     std::unique_ptr<WebKit::NavigationState> _navigationState;
     std::unique_ptr<WebKit::UIDelegate> _uiDelegate;
@@ -1384,16 +1391,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return [super resignFirstResponder];
 }
 
-#define FORWARD_ACTION_TO_WKCONTENTVIEW(_action) \
-    - (void)_action:(id)sender \
-    { \
-        if (self.usesStandardContentView) \
-            [_contentView _action ## ForWebView:sender]; \
-    }
-
 FOR_EACH_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
-
-#undef FORWARD_ACTION_TO_WKCONTENTVIEW
 
 - (BOOL)canPerformAction:(SEL)action withSender:(id)sender
 {
@@ -1402,13 +1400,15 @@ FOR_EACH_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
             return self.usesStandardContentView && [_contentView canPerformActionForWebView:action withSender:sender];
 
     FOR_EACH_WKCONTENTVIEW_ACTION(FORWARD_CANPERFORMACTION_TO_WKCONTENTVIEW)
-
-    FORWARD_CANPERFORMACTION_TO_WKCONTENTVIEW(_pasteAsQuotation)
+    FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_CANPERFORMACTION_TO_WKCONTENTVIEW)
+    FORWARD_CANPERFORMACTION_TO_WKCONTENTVIEW(setTextColor:sender)
+    FORWARD_CANPERFORMACTION_TO_WKCONTENTVIEW(setFontSize:sender)
+    FORWARD_CANPERFORMACTION_TO_WKCONTENTVIEW(setFont:sender)
+    FORWARD_CANPERFORMACTION_TO_WKCONTENTVIEW(_setTextColor:sender)
+    FORWARD_CANPERFORMACTION_TO_WKCONTENTVIEW(_setFontSize:sender)
+    FORWARD_CANPERFORMACTION_TO_WKCONTENTVIEW(_setFont:sender)
 
     #undef FORWARD_CANPERFORMACTION_TO_WKCONTENTVIEW
-
-    if (action == @selector(setTextColor:sender:) || action == @selector(setFontSize:sender:) || action == @selector(setFont:sender:))
-        return self.usesStandardContentView && [_contentView canPerformActionForWebView:action withSender:sender];
 
     return [super canPerformAction:action withSender:sender];
 }
@@ -1420,8 +1420,13 @@ FOR_EACH_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
             return [_contentView targetForActionForWebView:action withSender:sender];
 
     FOR_EACH_WKCONTENTVIEW_ACTION(FORWARD_TARGETFORACTION_TO_WKCONTENTVIEW)
-
-    FORWARD_TARGETFORACTION_TO_WKCONTENTVIEW(_pasteAsQuotation)
+    FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_TARGETFORACTION_TO_WKCONTENTVIEW)
+    FORWARD_TARGETFORACTION_TO_WKCONTENTVIEW(setTextColor:sender)
+    FORWARD_TARGETFORACTION_TO_WKCONTENTVIEW(setFontSize:sender)
+    FORWARD_TARGETFORACTION_TO_WKCONTENTVIEW(setFont:sender)
+    FORWARD_TARGETFORACTION_TO_WKCONTENTVIEW(_setTextColor:sender)
+    FORWARD_TARGETFORACTION_TO_WKCONTENTVIEW(_setFontSize:sender)
+    FORWARD_TARGETFORACTION_TO_WKCONTENTVIEW(_setFont:sender)
 
     #undef FORWARD_TARGETFORACTION_TO_WKCONTENTVIEW
 
@@ -4292,6 +4297,70 @@ IGNORE_WARNINGS_END
 
 @implementation WKWebView (WKPrivate)
 
+#if PLATFORM(MAC)
+
+#define WEBCORE_PRIVATE_COMMAND(command) - (void)_##command:(id)sender { _page->executeEditCommand(#command ## _s); }
+
+WEBCORE_PRIVATE_COMMAND(alignCenter)
+WEBCORE_PRIVATE_COMMAND(alignJustified)
+WEBCORE_PRIVATE_COMMAND(alignLeft)
+WEBCORE_PRIVATE_COMMAND(alignRight)
+WEBCORE_PRIVATE_COMMAND(insertOrderedList)
+WEBCORE_PRIVATE_COMMAND(insertUnorderedList)
+WEBCORE_PRIVATE_COMMAND(insertNestedOrderedList)
+WEBCORE_PRIVATE_COMMAND(insertNestedUnorderedList)
+WEBCORE_PRIVATE_COMMAND(indent)
+WEBCORE_PRIVATE_COMMAND(outdent)
+WEBCORE_PRIVATE_COMMAND(pasteAsQuotation);
+
+#undef WEBCORE_PRIVATE_COMMAND
+
+- (void)_toggleStrikeThrough:(id)sender
+{
+    _page->executeEditCommand("strikethrough"_s);
+}
+
+- (void)_increaseListLevel:(id)sender
+{
+    _page->increaseListLevel();
+}
+
+- (void)_decreaseListLevel:(id)sender
+{
+    _page->decreaseListLevel();
+}
+
+- (void)_changeListType:(id)sender
+{
+    _page->changeListType();
+}
+
+#endif // PLATFORM(MAC)
+
+#if PLATFORM(IOS_FAMILY)
+
+FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
+
+- (void)_setFont:(UIFont *)font sender:(id)sender
+{
+    if (self.usesStandardContentView)
+        [_contentView setFontForWebView:font sender:sender];
+}
+
+- (void)_setFontSize:(CGFloat)fontSize sender:(id)sender
+{
+    if (self.usesStandardContentView)
+        [_contentView setFontSizeForWebView:fontSize sender:sender];
+}
+
+- (void)_setTextColor:(UIColor *)color sender:(id)sender
+{
+    if (self.usesStandardContentView)
+        [_contentView setTextColorForWebView:color sender:sender];
+}
+
+#endif // PLATFORM(IOS_FAMILY)
+
 - (BOOL)_isEditable
 {
     return _page->isEditable();
@@ -4636,16 +4705,6 @@ IGNORE_WARNINGS_END
         return wrapper(attachment);
 #endif
     return nil;
-}
-
-- (void)_pasteAsQuotation:(id)sender
-{
-#if PLATFORM(MAC)
-    _impl->executeEditCommandForSelector(_cmd);
-#else
-    if (self.usesStandardContentView)
-        [_contentView _pasteAsQuotationForWebView:sender];
-#endif
 }
 
 + (BOOL)_handlesSafeBrowsing
@@ -6026,6 +6085,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 
 @end
 
+#undef FORWARD_ACTION_TO_WKCONTENTVIEW
 
 @implementation WKWebView (WKTesting)
 

@@ -212,6 +212,10 @@ messages -> WebPage LegacyReceiver {
     ValidateCommand(String name, WebKit::CallbackID callbackID)
     ExecuteEditCommand(String name, String argument)
 
+    IncreaseListLevel()
+    DecreaseListLevel()
+    ChangeListType()
+
     SetNeedsFontAttributes(bool needsFontAttributes)
 
     RequestFontAttributesAtSelectionStart(WebKit::CallbackID callbackID)

@@ -1150,6 +1150,21 @@ void WebPage::setEditable(bool editable)
     }
 }
 
+void WebPage::increaseListLevel()
+{
+    // FIXME: Not implemented.
+}
+
+void WebPage::decreaseListLevel()
+{
+    // FIXME: Not implemented.
+}
+
+void WebPage::changeListType()
+{
+    // FIXME: Not implemented.
+}
+
 bool WebPage::isEditingCommandEnabled(const String& commandName)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();

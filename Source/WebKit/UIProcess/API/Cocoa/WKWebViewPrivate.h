@@ -186,11 +186,30 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 - (_WKAttachment *)_insertAttachmentWithFileWrapper:(NSFileWrapper *)fileWrapper contentType:(NSString *)contentType completion:(void(^)(BOOL success))completionHandler WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (_WKAttachment *)_attachmentForIdentifier:(NSString *)identifier WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
-- (IBAction)_pasteAsQuotation:(id)sender WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-
 + (BOOL)_handlesSafeBrowsing WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
+- (IBAction)_alignCenter:(id)sender WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (IBAction)_alignJustified:(id)sender WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (IBAction)_alignLeft:(id)sender WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (IBAction)_alignRight:(id)sender WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (IBAction)_indent:(id)sender WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (IBAction)_outdent:(id)sender WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (IBAction)_toggleStrikeThrough:(id)sender WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (IBAction)_insertOrderedList:(id)sender WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (IBAction)_insertUnorderedList:(id)sender WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (IBAction)_insertNestedOrderedList:(id)sender WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (IBAction)_insertNestedUnorderedList:(id)sender WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (IBAction)_increaseListLevel:(id)sender WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (IBAction)_decreaseListLevel:(id)sender WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (IBAction)_changeListType:(id)sender WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (IBAction)_pasteAsQuotation:(id)sender WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 #if TARGET_OS_IPHONE
+
+- (void)_setFont:(UIFont *)font sender:(id)sender WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (void)_setFontSize:(CGFloat)fontSize sender:(id)sender WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (void)_setTextColor:(UIColor *)color sender:(id)sender WK_API_AVAILABLE(ios(WK_IOS_TBA));
+
 // DERECATED: The setters of the three following function are deprecated, please use overrideLayoutParameters.
 // Define the smallest size a page take with a regular viewport.
 @property (nonatomic, readonly) CGSize _minimumLayoutSizeOverride;
@@ -371,6 +390,7 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 #if TARGET_OS_IPHONE
 
 @interface WKWebView () <UIResponderStandardEditActions>
+// FIXME: Remove these once internal clients have moved to the underscore-prefixed versions.
 - (void)alignCenter:(id)sender WK_API_AVAILABLE(ios(WK_IOS_TBA));
 - (void)alignJustified:(id)sender WK_API_AVAILABLE(ios(WK_IOS_TBA));
 - (void)alignLeft:(id)sender WK_API_AVAILABLE(ios(WK_IOS_TBA));

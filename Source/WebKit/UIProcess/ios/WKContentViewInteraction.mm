@@ -2194,8 +2194,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     }
 
 FOR_EACH_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
-
-FORWARD_ACTION_TO_WKWEBVIEW(_pasteAsQuotation)
+FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
 
 #undef FORWARD_ACTION_TO_WKWEBVIEW
 
@@ -2285,18 +2284,37 @@ FORWARD_ACTION_TO_WKWEBVIEW(_pasteAsQuotation)
     [[UIKeyboardImpl sharedInstance] replaceText:sender];
 }
 
-#define WEBCORE_COMMAND_FOR_WEBVIEW(command) - (void)command ## ForWebView:(id)sender { _page->executeEditCommand(#command ## _s); }
-
+#define WEBCORE_COMMAND_FOR_WEBVIEW(command) \
+    - (void)_ ## command ## ForWebView:(id)sender { _page->executeEditCommand(#command ## _s); } \
+    - (void)command ## ForWebView:(id)sender { [self _ ## command ## ForWebView:sender]; }
 WEBCORE_COMMAND_FOR_WEBVIEW(insertOrderedList);
 WEBCORE_COMMAND_FOR_WEBVIEW(insertUnorderedList);
+WEBCORE_COMMAND_FOR_WEBVIEW(insertNestedOrderedList);
+WEBCORE_COMMAND_FOR_WEBVIEW(insertNestedUnorderedList);
 WEBCORE_COMMAND_FOR_WEBVIEW(indent);
 WEBCORE_COMMAND_FOR_WEBVIEW(outdent);
 WEBCORE_COMMAND_FOR_WEBVIEW(alignLeft);
 WEBCORE_COMMAND_FOR_WEBVIEW(alignRight);
 WEBCORE_COMMAND_FOR_WEBVIEW(alignCenter);
 WEBCORE_COMMAND_FOR_WEBVIEW(alignJustified);
+#undef WEBCORE_COMMAND_FOR_WEBVIEW
 
-- (void)toggleStrikeThroughForWebView:(id)sender
+- (void)_increaseListLevelForWebView:(id)sender
+{
+    _page->increaseListLevel();
+}
+
+- (void)_decreaseListLevelForWebView:(id)sender
+{
+    _page->decreaseListLevel();
+}
+
+- (void)_changeListTypeForWebView:(id)sender
+{
+    _page->changeListType();
+}
+
+- (void)_toggleStrikeThroughForWebView:(id)sender
 {
     _page->executeEditCommand("StrikeThrough"_s);
 }
@@ -2311,7 +2329,7 @@ WEBCORE_COMMAND_FOR_WEBVIEW(alignJustified);
     _page->executeEditCommand("FontSizeDelta"_s, "-1"_s);
 }
 
-- (void)setFontForWebView:(UIFont *)font sender:(id)sender
+- (void)_setFontForWebView:(UIFont *)font sender:(id)sender
 {
     WebCore::FontChanges changes;
     changes.setFontFamily(font.familyName);
@@ -2322,19 +2340,37 @@ WEBCORE_COMMAND_FOR_WEBVIEW(alignJustified);
     _page->changeFont(WTFMove(changes));
 }
 
-- (void)setFontSizeForWebView:(CGFloat)fontSize sender:(id)sender
+- (void)_setFontSizeForWebView:(CGFloat)fontSize sender:(id)sender
 {
     WebCore::FontChanges changes;
     changes.setFontSize(fontSize);
     _page->changeFont(WTFMove(changes));
 }
 
-- (void)setTextColorForWebView:(UIColor *)color sender:(id)sender
+- (void)_setTextColorForWebView:(UIColor *)color sender:(id)sender
 {
     _page->executeEditCommand("ForeColor"_s, WebCore::Color(color.CGColor).serialized());
 }
 
-#undef WEBCORE_COMMAND_FOR_WEBVIEW
+- (void)toggleStrikeThroughForWebView:(id)sender
+{
+    [self _toggleStrikeThroughForWebView:sender];
+}
+
+- (void)setFontForWebView:(UIFont *)font sender:(id)sender
+{
+    [self _setFontForWebView:font sender:sender];
+}
+
+- (void)setFontSizeForWebView:(CGFloat)fontSize sender:(id)sender
+{
+    [self _setFontSizeForWebView:fontSize sender:sender];
+}
+
+- (void)setTextColorForWebView:(UIColor *)color sender:(id)sender
+{
+    [self _setTextColorForWebView:color sender:sender];
+}
 
 - (NSDictionary *)textStylingAtPosition:(UITextPosition *)position inDirection:(UITextStorageDirection)direction
 {
@@ -2392,11 +2428,16 @@ WEBCORE_COMMAND_FOR_WEBVIEW(alignJustified);
         return editorState.isContentRichlyEditable && editorState.selectionIsRange && !_showingTextStyleOptions;
     if (_showingTextStyleOptions)
         return (action == @selector(toggleBoldface:) || action == @selector(toggleItalics:) || action == @selector(toggleUnderline:));
-    if (action == @selector(toggleBoldface:) || action == @selector(toggleItalics:) || action == @selector(toggleUnderline:) || action == @selector(toggleStrikeThrough:)
-        || action == @selector(insertOrderedList:) || action == @selector(insertUnorderedList:) || action == @selector(indent:) || action == @selector(outdent:)
+    // FIXME: Some of the following checks should be removed once internal clients move to the underscore-prefixed versions.
+    if (action == @selector(toggleBoldface:) || action == @selector(toggleItalics:) || action == @selector(toggleUnderline:) || action == @selector(_toggleStrikeThrough:)
+        || action == @selector(_alignLeft:) || action == @selector(_alignRight:) || action == @selector(_alignCenter:) || action == @selector(_alignJustified:)
+        || action == @selector(_setTextColor:sender:) || action == @selector(_setFont:sender:) || action == @selector(_setFontSize:sender:)
+        || action == @selector(_insertOrderedList:) || action == @selector(_insertUnorderedList:) || action == @selector(_insertNestedOrderedList:) || action == @selector(_insertNestedUnorderedList:)
+        || action == @selector(_increaseListLevel:) || action == @selector(_decreaseListLevel:) || action == @selector(_changeListType:) || action == @selector(_indent:) || action == @selector(_outdent:)
+        || action == @selector(increaseSize:) || action == @selector(decreaseSize:)
+        || action == @selector(toggleStrikeThrough:) || action == @selector(insertOrderedList:) || action == @selector(insertUnorderedList:) || action == @selector(indent:) || action == @selector(outdent:)
         || action == @selector(alignLeft:) || action == @selector(alignRight:) || action == @selector(alignCenter:) || action == @selector(alignJustified:)
-        || action == @selector(increaseSize:) || action == @selector(decreaseSize:) || action == @selector(setTextColor:sender:)
-        || action == @selector(setFont:sender:) || action == @selector(setFontSize:sender:)) {
+        || action == @selector(setTextColor:sender:) || action == @selector(setFont:sender:) || action == @selector(setFontSize:sender:)) {
         // FIXME: This should be more nuanced in the future, rather than returning YES for all richly editable areas. For instance, outdent: should be disabled when the selection is already
         // at the outermost indentation level.
         return editorState.isContentRichlyEditable;
@@ -2404,7 +2445,7 @@ WEBCORE_COMMAND_FOR_WEBVIEW(alignJustified);
     if (action == @selector(cut:))
         return !editorState.isInPasswordField && editorState.isContentEditable && editorState.selectionIsRange;
     
-    if (action == @selector(paste:)) {
+    if (action == @selector(paste:) || action == @selector(_pasteAsQuotation:)) {
         if (editorState.selectionIsNone || !editorState.isContentEditable)
             return NO;
         UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];

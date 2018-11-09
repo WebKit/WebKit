@@ -1,3 +1,85 @@
+2018-11-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] Introduce WKWebView SPI to insert nested ordered and unordered lists
+        https://bugs.webkit.org/show_bug.cgi?id=191410
+        <rdar://problem/45898610>
+
+        Reviewed by Dean Jackson.
+
+        Prefixes a few iOS-only SPI methods declared on WKWebView in r236867 with underscores, and also exposes some
+        more cross-platform Cocoa editing SPI. Once the unprefixed SPI methods are no longer used by internal clients,
+        these will need to be removed (see followup bug: webkit.org/b/191450). See below for more details.
+
+        Covered by new and existing API tests in WKWebViewEditActions.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+
+        Hoist the definition (and undefinition) of `FORWARD_ACTION_TO_WKCONTENTVIEW` to encompass both the WKWebView
+        implementation and the WKWebView (WKPrivate) implementation. This allows us to use this macro when implementing
+        SPI methods in the WKPrivate category, as well as methods that are part of the main WKWebView implementation.
+
+        (-[WKWebView canPerformAction:withSender:]):
+        (-[WKWebView targetForAction:withSender:]):
+
+        Add forwarding for the new editing commands in -canPerformAction: and -targetForAction:.
+
+        (-[WKWebView _toggleStrikeThrough:]):
+        (-[WKWebView _increaseListLevel:]):
+        (-[WKWebView _decreaseListLevel:]):
+        (-[WKWebView _changeListType:]):
+        (-[WKWebView _setFont:sender:]):
+        (-[WKWebView _setFontSize:sender:]):
+        (-[WKWebView _setTextColor:sender:]):
+
+        Add definitions for the new editing methods on WKWebView, using macros (`WEBCORE_PRIVATE_COMMAND` on macOS and
+        `FORWARD_ACTION_TO_WKCONTENTVIEW` on iOS) to help reduce the code duplication.
+
+        (-[WKWebView _pasteAsQuotation:]): Deleted.
+
+        Remove this method definition, which is now replaced by macros on iOS and macOS.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
+        Introduce the new SPI to WKWebView (WKPrivate), and add FIXMEs to remove old, unprefixed variants of the SPI.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::increaseListLevel):
+        (WebKit::WebPageProxy::decreaseListLevel):
+        (WebKit::WebPageProxy::changeListType):
+
+        Add plumbing for these list editing commands.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _increaseListLevelForWebView:]):
+        (-[WKContentView _decreaseListLevelForWebView:]):
+        (-[WKContentView _changeListTypeForWebView:]):
+        (-[WKContentView _toggleStrikeThroughForWebView:]):
+        (-[WKContentView _setFontForWebView:sender:]):
+        (-[WKContentView _setFontSizeForWebView:sender:]):
+        (-[WKContentView _setTextColorForWebView:sender:]):
+        (-[WKContentView toggleStrikeThroughForWebView:]):
+        (-[WKContentView setFontForWebView:sender:]):
+        (-[WKContentView setFontSizeForWebView:sender:]):
+        (-[WKContentView setTextColorForWebView:sender:]):
+        (-[WKContentView canPerformActionForWebView:withSender:]):
+
+        Check for the new action selectors here, and additionally add validation for `_pasteAsQuotation:`. Let the
+        unprefixed versions of these methods simply call the prefixed versions (these method implementations will be
+        removed in a followup once doing so would not affect any clients of WebKit).
+
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::increaseListLevel):
+        (WebKit::WebPage::decreaseListLevel):
+        (WebKit::WebPage::changeListType):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
+        Add stubs for several list editing commands that are yet to be hooked up to WebCore. These will be implemented
+        in a future patch.
+
 2018-11-09  Antti Koivisto  <antti@apple.com>
 
         Use OptionSet for layout milestones
