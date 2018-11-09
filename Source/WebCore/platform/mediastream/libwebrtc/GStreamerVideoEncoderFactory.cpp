@@ -290,7 +290,7 @@ public:
         m_encodedFrame.capture_time_ms_ = frameData.captureTimeMs;
         m_encodedFrame.SetTimestamp(frameData.rtpTimestamp);
 
-        GST_LOG_OBJECT(m_pipeline.get(), "Got buffer capture_time_ms: %ld _timestamp: %ld",
+        GST_LOG_OBJECT(m_pipeline.get(), "Got buffer capture_time_ms: %ld _timestamp: %u",
             m_encodedFrame.capture_time_ms_, m_encodedFrame.Timestamp());
 
         PopulateCodecSpecific(&frameData.codecInfo, buffer);

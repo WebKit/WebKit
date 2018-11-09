@@ -1,3 +1,11 @@
+2018-11-09  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GStreamer build warning fix
+
+        * platform/mediastream/libwebrtc/GStreamerVideoEncoderFactory.cpp:
+        (WebCore::GStreamerVideoEncoder::newSampleCallback): Timesamp()
+        returns a uint32_t, fix format string accordingly.
+
 2018-11-08  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Add an SPI to allow WebView clients to add additional supported image formats
