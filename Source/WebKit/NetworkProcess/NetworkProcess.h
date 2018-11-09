@@ -59,6 +59,7 @@ class SessionID;
 
 namespace WebCore {
 class CertificateInfo;
+class CurlProxySettings;
 class DownloadID;
 class NetworkStorageSession;
 class ProtectionSpace;
@@ -300,6 +301,10 @@ private:
     void setIgnoreTLSErrors(bool);
     void userPreferredLanguagesChanged(const Vector<String>&);
     void setNetworkProxySettings(const WebCore::SoupNetworkProxySettings&);
+#endif
+
+#if USE(CURL)
+    void setNetworkProxySettings(PAL::SessionID, WebCore::CurlProxySettings&&);
 #endif
 
 #if PLATFORM(MAC)

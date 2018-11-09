@@ -25,6 +25,7 @@
 #pragma once
 
 #include "BrowserWindow.h"
+#include "Common.h"
 #include <WebKit/WKRetainPtr.h>
 #include <WebKit/WebKit2_C.h>
 
@@ -46,6 +47,7 @@ private:
 
     void print() override;
     void launchInspector() override;
+    void openProxySettings() override;
 
     _bstr_t userAgent() override;
     void setUserAgent(_bstr_t&) override;
@@ -57,11 +59,15 @@ private:
     void zoomIn() override;
     void zoomOut() override;
 
+    void updateProxySettings();
+
     static void didFinishNavigation(WKPageRef, WKNavigationRef, WKTypeRef, const void*);
     static void didCommitNavigation(WKPageRef, WKNavigationRef, WKTypeRef, const void*);
     static void didReceiveAuthenticationChallenge(WKPageRef, WKAuthenticationChallengeRef, const void*);
 
+    WKRetainPtr<WKContextRef> m_context;
     WKRetainPtr<WKViewRef> m_view;
     HWND m_hMainWnd { nullptr };
     HWND m_urlBarWnd { nullptr };
+    ProxySettings m_proxy { };
 };

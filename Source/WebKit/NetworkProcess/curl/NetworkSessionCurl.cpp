@@ -27,6 +27,8 @@
 #include "NetworkSessionCurl.h"
 
 #include "NetworkSessionCreationParameters.h"
+#include <WebCore/CurlContext.h>
+#include <WebCore/NetworkStorageSession.h>
 
 using namespace WebCore;
 
@@ -35,7 +37,7 @@ namespace WebKit {
 NetworkSessionCurl::NetworkSessionCurl(NetworkSessionCreationParameters&& parameters)
     : NetworkSession(parameters.sessionID)
 {
-
+    networkStorageSession().setProxySettings(WTFMove(parameters.proxySettings));
 }
 
 NetworkSessionCurl::~NetworkSessionCurl()

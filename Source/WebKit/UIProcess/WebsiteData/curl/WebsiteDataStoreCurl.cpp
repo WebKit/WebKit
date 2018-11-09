@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2018 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,25 +24,25 @@
  */
 
 #include "config.h"
-#include "RemoteNetworkingContext.h"
+#include "WebsiteDataStore.h"
 
-#include "NetworkSession.h"
-#include "SessionTracker.h"
+#include "NetworkProcessMessages.h"
+#include "WebProcessPool.h"
 #include "WebsiteDataStoreParameters.h"
-#include <WebCore/NetworkStorageSession.h>
-
-using namespace WebCore;
 
 namespace WebKit {
 
-void RemoteNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStoreParameters&& parameters)
+void WebsiteDataStore::platformSetParameters(WebsiteDataStoreParameters& parameters)
 {
-    auto sessionID = parameters.networkSessionParameters.sessionID;
-    if (NetworkStorageSession::storageSession(sessionID))
-        return;
+    parameters.networkSessionParameters.proxySettings = m_proxySettings;
+}
 
-    NetworkStorageSession::ensureSession(sessionID, String::number(sessionID.sessionID()));
-    SessionTracker::setSession(sessionID, NetworkSession::create(WTFMove(parameters.networkSessionParameters)));
+void WebsiteDataStore::setNetworkProxySettings(WebCore::CurlProxySettings&& proxySettings)
+{
+    m_proxySettings = WTFMove(proxySettings);
+
+    for (auto& processPool : processPools())
+        processPool->sendToNetworkingProcess(Messages::NetworkProcess::SetNetworkProxySettings(m_sessionID, m_proxySettings));
 }
 
 }

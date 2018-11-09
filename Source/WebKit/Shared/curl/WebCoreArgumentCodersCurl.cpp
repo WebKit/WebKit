@@ -28,6 +28,7 @@
 
 #include "DataReference.h"
 #include <WebCore/CertificateInfo.h>
+#include <WebCore/CurlProxySettings.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
@@ -125,6 +126,36 @@ bool ArgumentCoder<Credential>::decodePlatformData(Decoder&, Credential&)
 {
     ASSERT_NOT_REACHED();
     return false;
+}
+
+void ArgumentCoder<CurlProxySettings>::encode(Encoder& encoder, const CurlProxySettings& settings)
+{
+    encoder << settings.mode();
+    if (settings.mode() != CurlProxySettings::Mode::Custom)
+        return;
+
+    encoder << settings.url();
+    encoder << settings.ignoreHosts();
+}
+
+std::optional<CurlProxySettings> ArgumentCoder<CurlProxySettings>::decode(Decoder& decoder)
+{
+    CurlProxySettings::Mode mode;
+    if (!decoder.decode(mode))
+        return std::nullopt;
+
+    if (mode != CurlProxySettings::Mode::Custom)
+        return CurlProxySettings { mode };
+
+    URL url;
+    if (!decoder.decode(url))
+        return std::nullopt;
+
+    String ignoreHosts;
+    if (!decoder.decode(ignoreHosts))
+        return std::nullopt;
+
+    return CurlProxySettings { WTFMove(url), WTFMove(ignoreHosts) };
 }
 
 }

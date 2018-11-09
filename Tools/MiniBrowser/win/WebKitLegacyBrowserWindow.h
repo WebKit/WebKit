@@ -71,6 +71,7 @@ private:
 
     void showLastVisitedSites(IWebView&);
     void launchInspector();
+    void openProxySettings();
     void navigateForwardOrBackward(UINT menuID);
     void navigateToHistory(UINT menuID);
     void exitProgram();

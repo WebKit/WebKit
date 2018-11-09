@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2018 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "RemoteNetworkingContext.h"
+#pragma once
 
-#include "NetworkSession.h"
-#include "SessionTracker.h"
-#include "WebsiteDataStoreParameters.h"
-#include <WebCore/NetworkStorageSession.h>
+#include <WebKit/WKBase.h>
+#include <WebKit/WKWebsiteDataStoreRef.h>
 
-using namespace WebCore;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-namespace WebKit {
+WK_EXPORT void WKWebsiteDataStoreEnableDefaultNetworkProxySettings(WKWebsiteDataStoreRef);
+WK_EXPORT void WKWebsiteDataStoreEnableCustomNetworkProxySettings(WKWebsiteDataStoreRef, WKURLRef proxyUrl, WKStringRef ignoreHosts);
+WK_EXPORT void WKWebsiteDataStoreDisableNetworkProxySettings(WKWebsiteDataStoreRef);
 
-void RemoteNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStoreParameters&& parameters)
-{
-    auto sessionID = parameters.networkSessionParameters.sessionID;
-    if (NetworkStorageSession::storageSession(sessionID))
-        return;
-
-    NetworkStorageSession::ensureSession(sessionID, String::number(sessionID.sessionID()));
-    SessionTracker::setSession(sessionID, NetworkSession::create(WTFMove(parameters.networkSessionParameters)));
+#ifdef __cplusplus
 }
-
-}
+#endif

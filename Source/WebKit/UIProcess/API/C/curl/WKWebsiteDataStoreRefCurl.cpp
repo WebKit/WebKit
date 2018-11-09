@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2018 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,25 +24,27 @@
  */
 
 #include "config.h"
-#include "RemoteNetworkingContext.h"
+#include "WKWebsiteDataStoreRefCurl.h"
 
-#include "NetworkSession.h"
-#include "SessionTracker.h"
-#include "WebsiteDataStoreParameters.h"
-#include <WebCore/NetworkStorageSession.h>
+#include "APIWebsiteDataStore.h"
+#include "WKAPICast.h"
+#include <WebCore/CurlProxySettings.h>
+#include <WebCore/URL.h>
+#include <WebKit/WKWebsiteDataStoreRef.h>
 
-using namespace WebCore;
+using namespace WebKit;
 
-namespace WebKit {
-
-void RemoteNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStoreParameters&& parameters)
+void WKWebsiteDataStoreEnableDefaultNetworkProxySettings(WKWebsiteDataStoreRef dataStoreRef)
 {
-    auto sessionID = parameters.networkSessionParameters.sessionID;
-    if (NetworkStorageSession::storageSession(sessionID))
-        return;
-
-    NetworkStorageSession::ensureSession(sessionID, String::number(sessionID.sessionID()));
-    SessionTracker::setSession(sessionID, NetworkSession::create(WTFMove(parameters.networkSessionParameters)));
+    toImpl(dataStoreRef)->websiteDataStore().setNetworkProxySettings(WebCore::CurlProxySettings(WebCore::CurlProxySettings::Mode::Default));
 }
 
+void WKWebsiteDataStoreEnableCustomNetworkProxySettings(WKWebsiteDataStoreRef dataStoreRef, WKURLRef proxyUrl, WKStringRef ignoreHosts)
+{
+    toImpl(dataStoreRef)->websiteDataStore().setNetworkProxySettings(WebCore::CurlProxySettings(WebCore::URL(WebCore::URL(), toWTFString(proxyUrl)), toWTFString(ignoreHosts)));
+}
+
+void WKWebsiteDataStoreDisableNetworkProxySettings(WKWebsiteDataStoreRef dataStoreRef)
+{
+    toImpl(dataStoreRef)->websiteDataStore().setNetworkProxySettings(WebCore::CurlProxySettings(WebCore::CurlProxySettings::Mode::NoProxy));
 }

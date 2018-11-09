@@ -32,6 +32,7 @@
 #include <WebKit/WKCredential.h>
 #include <WebKit/WKInspector.h>
 #include <WebKit/WKProtectionSpace.h>
+#include <WebKit/WKWebsiteDataStoreRefCurl.h>
 #include <vector>
 
 std::wstring createString(WKStringRef wkString)
@@ -75,6 +76,12 @@ WKRetainPtr<WKURLRef> createWKURL(_bstr_t str)
     return adoptWK(WKURLCreateWithUTF8CString(utf8.data()));
 }
 
+WKRetainPtr<WKURLRef> createWKURL(const std::wstring& str)
+{
+    auto utf8 = createUTF8String(str.c_str(), str.length());
+    return adoptWK(WKURLCreateWithUTF8CString(utf8.data()));
+}
+
 Ref<BrowserWindow> WebKitBrowserWindow::create(HWND mainWnd, HWND urlBarWnd, bool, bool)
 {
     return adoptRef(*new WebKitBrowserWindow(mainWnd, urlBarWnd));
@@ -91,8 +98,8 @@ WebKitBrowserWindow::WebKitBrowserWindow(HWND mainWnd, HWND urlBarWnd)
     WKPreferencesSetDeveloperExtrasEnabled(prefs, true);
     WKPageConfigurationSetPreferences(conf.get(), prefs);
 
-    auto context = adoptWK(WKContextCreate());
-    WKPageConfigurationSetContext(conf.get(), context.get());
+    m_context = adoptWK(WKContextCreate());
+    WKPageConfigurationSetContext(conf.get(), m_context.get());
 
     m_view = adoptWK(WKViewCreate(rect, conf.get(), mainWnd));
     auto page = WKViewGetPage(m_view.get());
@@ -102,6 +109,27 @@ WebKitBrowserWindow::WebKitBrowserWindow(HWND mainWnd, HWND urlBarWnd)
     navigationClient.didCommitNavigation = didCommitNavigation;
     navigationClient.didReceiveAuthenticationChallenge = didReceiveAuthenticationChallenge;
     WKPageSetPageNavigationClient(page, &navigationClient.base);
+
+    updateProxySettings();
+}
+
+void WebKitBrowserWindow::updateProxySettings()
+{
+    auto store = WKContextGetWebsiteDataStore(m_context.get());
+
+    if (!m_proxy.enable) {
+        WKWebsiteDataStoreDisableNetworkProxySettings(store);
+        return;
+    }
+
+    if (!m_proxy.custom) {
+        WKWebsiteDataStoreEnableDefaultNetworkProxySettings(store);
+        return;
+    }
+
+    auto url = createWKURL(m_proxy.url);
+    auto excludeHosts = createWKString(m_proxy.excludeHosts);
+    WKWebsiteDataStoreEnableCustomNetworkProxySettings(store, url.get(), excludeHosts.get());
 }
 
 HRESULT WebKitBrowserWindow::init()
@@ -117,14 +145,14 @@ HWND WebKitBrowserWindow::hwnd()
 HRESULT WebKitBrowserWindow::loadURL(const BSTR& url)
 {
     auto page = WKViewGetPage(m_view.get());
-    WKPageLoadURL(page, createWKURL(url).get());
+    WKPageLoadURL(page, createWKURL(_bstr_t(url)).get());
     return true;
 }
 
 HRESULT WebKitBrowserWindow::loadHTMLString(const BSTR& str)
 {
     auto page = WKViewGetPage(m_view.get());
-    auto url = createWKURL(L"about:");
+    auto url = createWKURL(_bstr_t(L"about:"));
     WKPageLoadHTMLString(page, createWKString(_bstr_t(str)).get(), url.get());
     return true;
 }
@@ -168,6 +196,13 @@ void WebKitBrowserWindow::launchInspector()
     auto page = WKViewGetPage(m_view.get());
     auto inspector = WKPageGetInspector(page);
     WKInspectorShow(inspector);
+}
+
+void WebKitBrowserWindow::openProxySettings()
+{
+    if (askProxySettings(m_hMainWnd, m_proxy))
+        updateProxySettings();
+
 }
 
 void WebKitBrowserWindow::setUserAgent(_bstr_t& customUAString)

@@ -1,3 +1,56 @@
+2018-11-09  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [Curl][WebKit] Implement Proxy configuration API.
+        https://bugs.webkit.org/show_bug.cgi?id=189053
+
+        Reviewed by Youenn Fablet.
+
+        Added Proxy Settings dialog to call newly added API.
+
+        * MiniBrowser/win/BrowserWindow.h:
+        * MiniBrowser/win/Common.cpp:
+        (askProxySettings):
+        (askCredential):
+        (authDialogProc): Deleted.
+        * MiniBrowser/win/Common.h:
+        * MiniBrowser/win/DialogHelper.h: Added.
+        (Dialog::run):
+        (Dialog::doalogProc):
+        (Dialog::handle):
+        (Dialog::setup):
+        (Dialog::update):
+        (Dialog::validate):
+        (Dialog::updateOkButton):
+        (Dialog::command):
+        (Dialog::ok):
+        (Dialog::cancel):
+        (Dialog::close):
+        (Dialog::hDlg):
+        (Dialog::item):
+        (Dialog::setEnabled):
+        (Dialog::setText):
+        (Dialog::getText):
+        (Dialog::getTextLength):
+        (Dialog::RadioGroup::RadioGroup):
+        (Dialog::RadioGroup::set):
+        (Dialog::RadioGroup::get):
+        (Dialog::radioGroup):
+        * MiniBrowser/win/MainWindow.cpp:
+        (MainWindow::WndProc):
+        * MiniBrowser/win/MiniBrowserLib.rc:
+        * MiniBrowser/win/MiniBrowserLibResource.h:
+        * MiniBrowser/win/WebKitBrowserWindow.cpp:
+        (createWKURL):
+        (WebKitBrowserWindow::WebKitBrowserWindow):
+        (WebKitBrowserWindow::updateProxySettings):
+        (WebKitBrowserWindow::loadURL):
+        (WebKitBrowserWindow::loadHTMLString):
+        (WebKitBrowserWindow::openProxySettings):
+        * MiniBrowser/win/WebKitBrowserWindow.h:
+        * MiniBrowser/win/WebKitLegacyBrowserWindow.cpp:
+        (WebKitLegacyBrowserWindow::openProxySettings):
+        * MiniBrowser/win/WebKitLegacyBrowserWindow.h:
+
 2018-11-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Cocoa] Introduce WKWebView SPI to insert nested ordered and unordered lists

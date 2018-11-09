@@ -46,6 +46,10 @@
 #include <pal/spi/cf/CFNetworkSPI.h>
 #endif
 
+#if USE(CURL)
+#include <WebCore/CurlProxySettings.h>
+#endif
+
 namespace WebCore {
 class SecurityOrigin;
 }
@@ -187,7 +191,13 @@ public:
     void setProxyConfiguration(CFDictionaryRef configuration) { m_proxyConfiguration = configuration; }
     CFDictionaryRef proxyConfiguration() { return m_proxyConfiguration.get(); }
 #endif
-    
+
+#if USE(CURL)
+    void platformSetParameters(WebsiteDataStoreParameters&);
+    void setNetworkProxySettings(WebCore::CurlProxySettings&&);
+    const WebCore::CurlProxySettings& networkProxySettings() const { return m_proxySettings; }
+#endif
+
     static void allowWebsiteDataRecordsForAllOrigins();
 
 #if HAVE(SEC_KEY_PROXY)
@@ -252,8 +262,13 @@ private:
     RetainPtr<CFHTTPCookieStorageRef> m_cfCookieStorage;
     RetainPtr<CFDictionaryRef> m_proxyConfiguration;
 #endif
+
+#if USE(CURL)
+    WebCore::CurlProxySettings m_proxySettings;
+#endif
+
     HashSet<WebCore::Cookie> m_pendingCookies;
-    
+
     String m_boundInterfaceIdentifier;
     AllowsCellularAccess m_allowsCellularAccess { AllowsCellularAccess::Yes };
 

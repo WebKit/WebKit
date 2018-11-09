@@ -71,7 +71,7 @@ NetworkingContext* NetworkStorageSession::context() const
     return m_context.get();
 }
 
-void NetworkStorageSession::setCookieDatabase(UniqueRef<CookieJarDB>&& cookieDatabase) const
+void NetworkStorageSession::setCookieDatabase(UniqueRef<CookieJarDB>&& cookieDatabase)
 {
     m_cookieDatabase = WTFMove(cookieDatabase);
 }
@@ -191,6 +191,11 @@ std::pair<String, bool> NetworkStorageSession::cookieRequestHeaderFieldValue(con
 std::pair<String, bool> NetworkStorageSession::cookieRequestHeaderFieldValue(const CookieRequestHeaderFieldProxy& headerFieldProxy) const
 {
     return cookieStorage().cookieRequestHeaderFieldValue(*this, headerFieldProxy.firstParty, headerFieldProxy.sameSiteInfo, headerFieldProxy.url, headerFieldProxy.frameID, headerFieldProxy.pageID, headerFieldProxy.includeSecureCookies);
+}
+
+void NetworkStorageSession::setProxySettings(CurlProxySettings&& proxySettings)
+{
+    CurlContext::singleton().setProxySettings(WTFMove(proxySettings));
 }
 
 } // namespace WebCore

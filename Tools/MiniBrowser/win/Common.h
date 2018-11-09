@@ -51,11 +51,19 @@ struct Credential {
     std::wstring password;
 };
 
+struct ProxySettings {
+    bool enable { true };
+    bool custom { false };
+    std::wstring url;
+    std::wstring excludeHosts;
+};
+
 void computeFullDesktopFrame();
 bool getAppDataFolder(_bstr_t& directory);
 CommandLineOptions parseCommandLine();
 void createCrashReport(EXCEPTION_POINTERS*);
 std::optional<Credential> askCredential(HWND, const std::wstring& realm);
+bool askProxySettings(HWND, ProxySettings&);
 
 extern HINSTANCE hInst;
 extern POINT s_windowPosition;

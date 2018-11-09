@@ -430,6 +430,10 @@ void WebKitLegacyBrowserWindow::launchInspector()
     m_inspector->show();
 }
 
+void WebKitLegacyBrowserWindow::openProxySettings()
+{
+}
+
 void WebKitLegacyBrowserWindow::navigateForwardOrBackward(UINT menuID)
 {
     if (!m_webView)

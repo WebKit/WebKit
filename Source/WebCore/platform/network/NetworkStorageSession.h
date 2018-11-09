@@ -60,6 +60,7 @@ typedef struct _SoupCookieJar SoupCookieJar;
 
 namespace WebCore {
 
+class CurlProxySettings;
 class NetworkingContext;
 class ResourceRequest;
 class SoupNetworkSession;
@@ -133,7 +134,9 @@ public:
 
     const CookieJarCurl& cookieStorage() const { return m_cookieStorage; };
     CookieJarDB& cookieDatabase() const;
-    WEBCORE_EXPORT void setCookieDatabase(UniqueRef<CookieJarDB>&&) const;
+    WEBCORE_EXPORT void setCookieDatabase(UniqueRef<CookieJarDB>&&);
+
+    WEBCORE_EXPORT void setProxySettings(CurlProxySettings&&);
 
     NetworkingContext* context() const;
 #else

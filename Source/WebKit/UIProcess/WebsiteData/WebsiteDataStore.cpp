@@ -1667,6 +1667,10 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
         SandboxExtension::createHandleForReadWriteDirectory(parameters.serviceWorkerRegistrationDirectory, parameters.serviceWorkerRegistrationDirectoryExtensionHandle);
 #endif
 
+#if USE(CURL)
+    platformSetParameters(parameters);
+#endif
+
     return parameters;
 }
 #endif

@@ -33,6 +33,10 @@ messages -> NetworkProcess LegacyReceiver {
     SetNetworkProxySettings(struct WebCore::SoupNetworkProxySettings settings)
 #endif
 
+#if USE(CURL)
+    SetNetworkProxySettings(PAL::SessionID sessionID, WebCore::CurlProxySettings settings)
+#endif
+
     ClearCachedCredentials()
 
     AddWebsiteDataStore(struct WebKit::WebsiteDataStoreParameters websiteDataStoreParameters);

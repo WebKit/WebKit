@@ -45,6 +45,10 @@
 #include <WebCore/PaymentHeaders.h>
 #endif
 
+#if USE(CURL)
+#include <WebCore/CurlProxySettings.h>
+#endif
+
 #if PLATFORM(COCOA)
 namespace WTF {
 class MachSendRight;
@@ -449,6 +453,13 @@ template<> struct ArgumentCoder<WebCore::PasteboardWebContent> {
 };
 #endif
 
+#if USE(CURL)
+template<> struct ArgumentCoder<WebCore::CurlProxySettings> {
+    static void encode(Encoder&, const WebCore::CurlProxySettings&);
+    static std::optional<WebCore::CurlProxySettings> decode(Decoder&);
+};
+#endif
+
 template<> struct ArgumentCoder<WebCore::CompositionUnderline> {
     static void encode(Encoder&, const WebCore::CompositionUnderline&);
     static std::optional<WebCore::CompositionUnderline> decode(Decoder&);
@@ -812,5 +823,16 @@ template <> struct EnumTraits<WebCore::WorkerType> {
         WebCore::WorkerType::Module
     >;
 };
+
+#if USE(CURL)
+template <> struct EnumTraits<WebCore::CurlProxySettings::Mode> {
+    using values = EnumValues<
+        WebCore::CurlProxySettings::Mode,
+        WebCore::CurlProxySettings::Mode::Default,
+        WebCore::CurlProxySettings::Mode::NoProxy,
+        WebCore::CurlProxySettings::Mode::Custom
+    >;
+};
+#endif
 
 } // namespace WTF

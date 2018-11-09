@@ -44,6 +44,7 @@ public:
 
     virtual void print() = 0;
     virtual void launchInspector() = 0;
+    virtual void openProxySettings() = 0;
 
     virtual _bstr_t userAgent() = 0;
     void setUserAgent(UINT menuID);

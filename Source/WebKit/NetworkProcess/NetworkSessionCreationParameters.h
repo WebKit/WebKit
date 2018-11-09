@@ -33,6 +33,11 @@
 #include "ArgumentCodersCF.h"
 #endif
 
+#if USE(CURL)
+#include "WebCoreArgumentCoders.h"
+#include <WebCore/CurlProxySettings.h>
+#endif
+
 namespace WebKit {
 
 class LegacyCustomProtocolManager;
@@ -51,6 +56,9 @@ struct NetworkSessionCreationParameters {
     String sourceApplicationBundleIdentifier;
     String sourceApplicationSecondaryIdentifier;
 #endif
+#if USE(CURL)
+    WebCore::CurlProxySettings proxySettings;
+#endif
 };
 
 inline void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
@@ -62,6 +70,9 @@ inline void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) cons
     IPC::encode(encoder, proxyConfiguration.get());
     encoder << sourceApplicationBundleIdentifier;
     encoder << sourceApplicationSecondaryIdentifier;
+#endif
+#if USE(CURL)
+    encoder << proxySettings;
 #endif
 }
 
@@ -96,7 +107,14 @@ inline std::optional<NetworkSessionCreationParameters> NetworkSessionCreationPar
     if (!sourceApplicationSecondaryIdentifier)
         return std::nullopt;
 #endif
-    
+
+#if USE(CURL)
+    std::optional<WebCore::CurlProxySettings> proxySettings;
+    decoder >> proxySettings;
+    if (!proxySettings)
+        return std::nullopt;
+#endif
+
     return {{
         sessionID
         , WTFMove(*boundInterfaceIdentifier)
@@ -105,6 +123,9 @@ inline std::optional<NetworkSessionCreationParameters> NetworkSessionCreationPar
         , WTFMove(proxyConfiguration)
         , WTFMove(*sourceApplicationBundleIdentifier)
         , WTFMove(*sourceApplicationSecondaryIdentifier)
+#endif
+#if USE(CURL)
+        , WTFMove(*proxySettings)
 #endif
     }};
 }

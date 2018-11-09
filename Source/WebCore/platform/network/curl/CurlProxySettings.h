@@ -35,7 +35,7 @@ namespace WebCore {
 
 class CurlProxySettings {
 public:
-    enum class Mode {
+    enum class Mode : uint8_t {
         Default,
         NoProxy,
         Custom

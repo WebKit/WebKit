@@ -210,6 +210,9 @@ LRESULT CALLBACK MainWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
         case IDM_WEB_INSPECTOR:
             thisWindow->browserWindow()->launchInspector();
             break;
+        case IDM_PROXY_SETTINGS:
+            thisWindow->browserWindow()->openProxySettings();
+            break;
         case IDM_CACHES:
             if (!::IsWindow(thisWindow->m_hCacheWnd)) {
                 thisWindow->m_hCacheWnd = CreateDialogParam(hInst, MAKEINTRESOURCE(IDD_CACHES), hWnd, cachesDialogProc, reinterpret_cast<LPARAM>(thisWindow.get()));

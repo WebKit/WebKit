@@ -93,6 +93,7 @@ BEGIN
             MENUITEM SEPARATOR
             MENUITEM "Other",                       IDM_UA_OTHER
         END
+        MENUITEM "Proxy Settings...",           IDM_PROXY_SETTINGS
         MENUITEM SEPARATOR
         MENUITEM "Disable Images",              IDM_DISABLE_IMAGES
         MENUITEM "Disable Styles",              IDM_DISABLE_STYLES
@@ -259,6 +260,26 @@ BEGIN
     EDITTEXT        IDC_AUTH_PASSWORD,67,64,157,14,ES_PASSWORD | ES_AUTOHSCROLL
 END
 
+IDD_PROXY DIALOGEX 0, 0, 310, 176
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Proxy Configuration"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,199,155,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,253,155,50,14
+    CONTROL         "Use system default proxy configuration.",IDC_PROXY_DEFAULT,
+                    "Button",BS_AUTORADIOBUTTON | WS_GROUP,22,15,226,10
+    CONTROL         "Use custom proxy configuration:",IDC_PROXY_CUSTOM,
+                    "Button",BS_AUTORADIOBUTTON,22,33,226,10
+    CONTROL         "Don't use proxy.",IDC_PROXY_DISABLE,"Button",BS_AUTORADIOBUTTON,22,117,226,10
+    EDITTEXT        IDC_PROXY_URL,76,52,193,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_PROXY_EXCLUDE,76,85,193,14,ES_AUTOHSCROLL
+    LTEXT           "URL:",IDC_STATIC,30,55,43,8,0,WS_EX_RIGHT
+    LTEXT           "Excude list:",IDC_STATIC,30,88,43,8,0,WS_EX_RIGHT
+    LTEXT           "Example: http://192.168.0.2:8000",IDC_STATIC,80,68,194,8
+    LTEXT           "Comma separated hostnames.",IDC_STATIC,80,101,194,8
+END
+
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -326,6 +347,15 @@ BEGIN
         BOTTOMMARGIN, 92
         HORZGUIDE, 25
         HORZGUIDE, 50
+    END
+
+    IDD_PROXY, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 303
+        VERTGUIDE, 22
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 169
     END
 END
 #endif    // APSTUDIO_INVOKED
