@@ -199,4 +199,14 @@ promise_test(async t => {
   await response.complete("success");
 }, "When retrying without errors, the user is shown an `unknown` error.");
 
+promise_test(async t => {
+  const { response, request } = await getPaymentRequestResponse({ requestShipping: true });
+  var originalDetails = response.details;
+  const retryPromise = response.retry();
+  internals.mockPaymentCoordinator.acceptPayment();
+  await retryPromise;
+  assert_not_equals(response.details, originalDetails, "response.details should be a new object after the user accepts a retry");
+  await response.complete("success");
+}, "response.details should be updated after the user accepts a retry.");
+
 </script>

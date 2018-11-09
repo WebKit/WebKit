@@ -11,4 +11,5 @@ PASS When retrying, the user is shown error fields to fix.
 PASS When "abort the update" occurs because of an update error, the `retryPromise` is rejected and response.[[complete]] becomes true. 
 PASS Calling retry() multiple times is always a new object. 
 PASS When retrying without errors, the user is shown an `unknown` error. 
+PASS response.details should be updated after the user accepts a retry. 
 

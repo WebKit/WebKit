@@ -1,3 +1,22 @@
+2018-11-09  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] PaymentResponse.details should be updated when the user accepts a retried payment
+        https://bugs.webkit.org/show_bug.cgi?id=191440
+
+        Reviewed by Dean Jackson.
+
+        PaymentResponse.details was being initialized in the PaymentResponse constructor and never
+        updated when the user accepts a retried payment. We need to update it.
+
+        Added a test case to http/tests/paymentrequest/payment-response-retry-method.https.html.
+
+        * Modules/paymentrequest/PaymentRequest.cpp:
+        (WebCore::PaymentRequest::accept):
+        * Modules/paymentrequest/PaymentResponse.cpp:
+        (WebCore::PaymentResponse::PaymentResponse):
+        (WebCore::PaymentResponse::setDetailsFunction):
+        * Modules/paymentrequest/PaymentResponse.h:
+
 2018-11-09  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         MediaPlayerPrivateMediaFoundation.h: warning: 'GetService' overrides a member function but is not marked 'override' [-Winconsistent-missing-override]

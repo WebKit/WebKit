@@ -46,9 +46,9 @@ class PaymentResponse final : public ActiveDOMObject, public EventTargetWithInli
 public:
     using DetailsFunction = Function<JSC::Strong<JSC::JSObject>(JSC::ExecState&)>;
 
-    static Ref<PaymentResponse> create(ScriptExecutionContext* context, PaymentRequest& request, DetailsFunction&& detailsFunction)
+    static Ref<PaymentResponse> create(ScriptExecutionContext* context, PaymentRequest& request)
     {
-        auto response = adoptRef(*new PaymentResponse(context, request, WTFMove(detailsFunction)));
+        auto response = adoptRef(*new PaymentResponse(context, request));
         response->finishConstruction();
         return response;
     }
@@ -62,6 +62,8 @@ public:
     void setMethodName(const String& methodName) { m_methodName = methodName; }
 
     const DetailsFunction& detailsFunction() const { return m_detailsFunction; }
+    void setDetailsFunction(DetailsFunction&&);
+
     JSValueInWrappedObject& cachedDetails() { return m_cachedDetails; }
 
     PaymentAddress* shippingAddress() const { return m_shippingAddress.get(); }
@@ -89,7 +91,7 @@ public:
     using RefCounted<PaymentResponse>::deref;
 
 private:
-    PaymentResponse(ScriptExecutionContext*, PaymentRequest&, DetailsFunction&&);
+    PaymentResponse(ScriptExecutionContext*, PaymentRequest&);
     void finishConstruction();
 
     // ActiveDOMObject

@@ -34,12 +34,10 @@
 
 namespace WebCore {
 
-PaymentResponse::PaymentResponse(ScriptExecutionContext* context, PaymentRequest& request, DetailsFunction&& detailsFunction)
+PaymentResponse::PaymentResponse(ScriptExecutionContext* context, PaymentRequest& request)
     : ActiveDOMObject { context }
     , m_request { makeWeakPtr(request) }
-    , m_detailsFunction { WTFMove(detailsFunction) }
 {
-    ASSERT(m_detailsFunction);
     suspendIfNeeded();
 }
 
@@ -53,6 +51,12 @@ PaymentResponse::~PaymentResponse()
 {
     ASSERT(!hasPendingActivity());
     ASSERT(!hasRetryPromise());
+}
+
+void PaymentResponse::setDetailsFunction(DetailsFunction&& detailsFunction)
+{
+    m_detailsFunction = WTFMove(detailsFunction);
+    m_cachedDetails = { };
 }
 
 void PaymentResponse::complete(std::optional<PaymentComplete>&& result, DOMPromiseDeferred<void>&& promise)

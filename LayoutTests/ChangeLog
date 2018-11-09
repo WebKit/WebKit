@@ -1,3 +1,13 @@
+2018-11-09  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] PaymentResponse.details should be updated when the user accepts a rpayment retry
+        https://bugs.webkit.org/show_bug.cgi?id=191440
+
+        Reviewed by Dean Jackson.
+
+        * http/tests/paymentrequest/payment-response-retry-method.https-expected.txt:
+        * http/tests/paymentrequest/payment-response-retry-method.https.html:
+
 2018-11-09  Chris Dumez  <cdumez@apple.com>
 
         HTML form validation bubble disappears
