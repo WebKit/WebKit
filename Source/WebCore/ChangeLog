@@ -1,3 +1,14 @@
+2018-11-09  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        MediaPlayerPrivateMediaFoundation.h: warning: 'GetService' overrides a member function but is not marked 'override' [-Winconsistent-missing-override]
+        https://bugs.webkit.org/show_bug.cgi?id=191453
+
+        Reviewed by Per Arne Vollan.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.h: Marked with 'override' and removed 'virtual'.
+
 2018-11-09  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed attempt to fix internal build on macOS.
