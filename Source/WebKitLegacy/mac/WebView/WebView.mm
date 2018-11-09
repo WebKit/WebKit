@@ -358,7 +358,7 @@ SOFT_LINK_CLASS(AVKit, AVFunctionBarScrubber)
 #endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 #endif // HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !ENABLE(REVEAL)
 SOFT_LINK_CONSTANT_MAY_FAIL(Lookup, LUNotificationPopoverWillClose, NSString *)
 #endif
 
@@ -9531,6 +9531,8 @@ bool LayerFlushController::flushLayers()
         [self _setTextIndicator:textIndicator withLifetime:TextIndicatorWindowLifetime::Permanent];
     }, [self](FloatRect rectInRootViewCoordinates) {
         return [self _convertRectFromRootView:rectInRootViewCoordinates];
+    }, [self]() {
+        [self _clearTextIndicatorWithAnimation:TextIndicatorWindowDismissalAnimation::FadeOut];
     });
 }
 
@@ -9578,9 +9580,12 @@ bool LayerFlushController::flushLayers()
         return;
 
     _private->hasInitializedLookupObserver = YES;
-
+    
+#if !ENABLE(REVEAL)
     if (canLoadLUNotificationPopoverWillClose())
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_dictionaryLookupPopoverWillClose:) name:getLUNotificationPopoverWillClose() object:nil];
+#endif // !ENABLE(REVEAL)
+    
 }
 
 - (void)_showDictionaryLookupPopup:(const DictionaryPopupInfo&)dictionaryPopupInfo
@@ -9597,10 +9602,12 @@ bool LayerFlushController::flushLayers()
     });
 }
 
+#if !ENABLE(REVEAL)
 - (void)_dictionaryLookupPopoverWillClose:(NSNotification *)notification
 {
     [self _clearTextIndicatorWithAnimation:TextIndicatorWindowDismissalAnimation::FadeOut];
 }
+#endif // ENABLE(REVEAL)
 
 #endif // PLATFORM(MAC)
 

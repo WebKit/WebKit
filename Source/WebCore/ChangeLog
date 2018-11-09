@@ -1,3 +1,64 @@
+2018-11-08  Megan Gardner  <megan_gardner@apple.com>
+
+        Adopt Reveal Framework to replace Lookup
+        https://bugs.webkit.org/show_bug.cgi?id=191097
+
+        Reviewed by Tim Horton.
+
+        Reveal is not currently testable.
+
+        The Reveal framework does the same job as Lookup and DataDectors.
+        In this patch we switch from using Lookup to determine what text
+        to select and define to using Reveal and RVItems. Since this
+        code needs to work on older systems, and Reveal is newer, we also need
+        to keep around the old code for old systems so that they can also
+        continue to work. Eventually we will remove this code and also likly switch
+        to passing RVItems across from the web process rather than making them
+        on each side.
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/mac/DictionaryLookup.h:
+        * editing/mac/DictionaryLookup.mm:
+
+        Create a delegate to respond to Reveal and help draw the string or highlight.
+
+        (-[WebRevealHighlight initWithHighlightRect:useDefaultHighlight:attributedString:]):
+        (-[WebRevealHighlight setClearTextIndicator:]):
+        (-[WebRevealHighlight revealContext:rectsForItem:]):
+        (-[WebRevealHighlight revealContext:drawRectsForItem:]):
+        (-[WebRevealHighlight revealContext:shouldUseDefaultHighlightForItem:]):
+        (-[WebRevealHighlight revealContext:stopHighlightingItem:]):
+        (WebCore::showPopupOrCreateAnimationController):
+
+        Unify the code paths and utalize the Reveal framework to create and/or display the popovers.
+
+        (WebCore::DictionaryLookup::showPopup):
+        (WebCore::DictionaryLookup::animationControllerForPopup):
+
+        Pipe the new callback through.
+
+        (WebCore::tokenRange): Deleted.
+
+        Only used with Lookup
+
+        (WebCore::selectionContainsPosition): Deleted.
+
+        Only used with Lookup.
+
+        * editing/mac/DictionaryLookupLegacy.mm: Copied from Source/WebCore/editing/mac/DictionaryLookup.mm.
+
+        Keep a copy of the previous implementation of DictionaryLookup, because Reveal not available on older
+        system.
+
+        (WebCore::tokenRange):
+        (WebCore::selectionContainsPosition):
+        (WebCore::expandSelectionByCharacters):
+        (WebCore::showPopupOrCreateAnimationController):
+        (WebCore::DictionaryLookup::showPopup):
+        (WebCore::DictionaryLookup::hidePopup):
+        (WebCore::DictionaryLookup::animationControllerForPopup):
+
 2018-11-08  Keith Rollin  <krollin@apple.com>
 
         Create .xcfilelist files

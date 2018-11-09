@@ -7626,6 +7626,7 @@
 		43F6FD9513BCD0B100224052 /* SVGAnimatedInteger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedInteger.cpp; sourceTree = "<group>"; };
 		4415292C0E1AE8A000C4A2D0 /* HTMLPlugInImageElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLPlugInImageElement.h; sourceTree = "<group>"; };
 		4415292D0E1AE8A000C4A2D0 /* HTMLPlugInImageElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLPlugInImageElement.cpp; sourceTree = "<group>"; };
+		442956CA218A6D300080DB54 /* DictionaryLookupLegacy.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DictionaryLookupLegacy.mm; sourceTree = "<group>"; };
 		443917FD1A91B2F8006E04F2 /* QuickLookSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QuickLookSoftLink.mm; sourceTree = "<group>"; };
 		443917FE1A91B2F8006E04F2 /* QuickLookSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickLookSoftLink.h; sourceTree = "<group>"; };
 		443F04260E75C8FB007E5407 /* NetworkStateNotifierIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkStateNotifierIOS.mm; sourceTree = "<group>"; };
@@ -26117,6 +26118,7 @@
 				CE7B2DB01586ABAD0098B3FA /* AlternativeTextUIController.mm */,
 				937FF3D41A1012D6008EBA31 /* DictionaryLookup.h */,
 				937FF3D61A10131B008EBA31 /* DictionaryLookup.mm */,
+				442956CA218A6D300080DB54 /* DictionaryLookupLegacy.mm */,
 				ED501DC50B249F2900AE18D9 /* EditorMac.mm */,
 				4A8C96EA0BE69032004EEFF0 /* FrameSelectionMac.mm */,
 				CE7B2DB11586ABAD0098B3FA /* TextAlternativeWithRange.h */,

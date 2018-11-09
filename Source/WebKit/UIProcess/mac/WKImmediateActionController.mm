@@ -472,6 +472,8 @@ SOFT_LINK_CLASS(QuickLookUI, QLPreviewMenuItem)
 
     return WebCore::DictionaryLookup::animationControllerForPopup(dictionaryPopupInfo, _view, [self](WebCore::TextIndicator& textIndicator) {
         _viewImpl->setTextIndicator(textIndicator, WebCore::TextIndicatorWindowLifetime::Permanent);
+    }, nullptr, [self]() {
+        _viewImpl->clearTextIndicatorWithAnimation(WebCore::TextIndicatorWindowDismissalAnimation::None);
     });
 }
 

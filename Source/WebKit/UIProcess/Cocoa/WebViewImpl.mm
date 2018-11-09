@@ -131,7 +131,9 @@ SOFT_LINK_CLASS(AVKit, AVFunctionBarScrubber)
 static NSString * const WKMediaExitFullScreenItem = @"WKMediaExitFullScreenItem";
 #endif // HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 
+#if PLATFORM(MAC) && !ENABLE(REVEAL)
 SOFT_LINK_CONSTANT_MAY_FAIL(Lookup, LUNotificationPopoverWillClose, NSString *)
+#endif // ENABLE(REVEAL)
 
 WTF_DECLARE_CF_TYPE_TRAIT(CGImage);
 
@@ -226,8 +228,10 @@ WTF_DECLARE_CF_TYPE_TRAIT(CGImage);
 
 - (void)dealloc
 {
+#if !ENABLE(REVEAL)
     if (_didRegisterForLookupPopoverCloseNotifications && canLoadLUNotificationPopoverWillClose())
         [[NSNotificationCenter defaultCenter] removeObserver:self name:getLUNotificationPopoverWillClose() object:nil];
+#endif // !ENABLE(REVEAL)
 
     NSNotificationCenter *workspaceNotificationCenter = [[NSWorkspace sharedWorkspace] notificationCenter];
     [workspaceNotificationCenter removeObserver:self name:NSWorkspaceActiveSpaceDidChangeNotification object:nil];
@@ -301,9 +305,10 @@ static void* keyValueObservingContext = &keyValueObservingContext;
         return;
 
     _didRegisterForLookupPopoverCloseNotifications = YES;
-
+#if !ENABLE(REVEAL)
     if (canLoadLUNotificationPopoverWillClose())
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_dictionaryLookupPopoverWillClose:) name:getLUNotificationPopoverWillClose() object:nil];
+#endif
 }
 
 - (void)_windowDidOrderOnScreen:(NSNotification *)notification
@@ -382,10 +387,12 @@ static void* keyValueObservingContext = &keyValueObservingContext;
         _impl->updateContentInsetsIfAutomatic();
 }
 
+#if !ENABLE(REVEAL)
 - (void)_dictionaryLookupPopoverWillClose:(NSNotification *)notification
 {
     _impl->clearTextIndicatorWithAnimation(WebCore::TextIndicatorWindowDismissalAnimation::None);
 }
+#endif
 
 - (void)_activeSpaceDidChange:(NSNotification *)notification
 {

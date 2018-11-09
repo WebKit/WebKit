@@ -96,6 +96,7 @@ editing/ios/EditorIOS.mm
 
 editing/mac/AlternativeTextUIController.mm
 editing/mac/DictionaryLookup.mm
+editing/mac/DictionaryLookupLegacy.mm
 editing/mac/EditorMac.mm
 editing/mac/FrameSelectionMac.mm
 editing/mac/TextAlternativeWithRange.mm

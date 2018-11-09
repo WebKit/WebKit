@@ -1,3 +1,16 @@
+2018-11-08  Megan Gardner  <megan_gardner@apple.com>
+
+        Adopt Reveal Framework to replace Lookup
+        https://bugs.webkit.org/show_bug.cgi?id=191097
+        <rdar://problem/45924508>
+
+        Reviewed by Tim Horton.
+
+        Add in reveal SPI so WebKit will continue to build without the internal SDK.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/spi/mac/RevealSPI.h: Added.
+
 2018-11-06  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Experimental prototype for WebGPURenderPipeline and WebGPUSwapChain

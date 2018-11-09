@@ -1,3 +1,18 @@
+2018-11-08  Megan Gardner  <megan_gardner@apple.com>
+
+        Adopt Reveal Framework to replace Lookup
+        https://bugs.webkit.org/show_bug.cgi?id=191097
+        <rdar://problem/45924508>
+
+        Reviewed by Tim Horton.
+
+        Pass in what it needed to clear the textIndicators. This is better than
+        the current notification structure.
+
+        * WebView/WebView.mm:
+        (-[WebView _animationControllerForDictionaryLookupPopupInfo:]):
+        (-[WebView _prepareForDictionaryLookup]):
+
 2018-11-06  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Experimental prototype for WebGPURenderPipeline and WebGPUSwapChain

@@ -1,3 +1,29 @@
+2018-11-08  Megan Gardner  <megan_gardner@apple.com>
+
+        Adopt Reveal Framework to replace Lookup
+        https://bugs.webkit.org/show_bug.cgi?id=191097
+        <rdar://problem/45924508>
+
+        Reviewed by Tim Horton.
+
+        Pass in what it needed to clear the textIndicators. This is better than
+        the current notification structure.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (-[WKWindowVisibilityObserver dealloc]):
+        (-[WKWindowVisibilityObserver startObservingLookupDismissalIfNeeded]):
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::didPerformDictionaryLookup):
+        * UIProcess/mac/WKImmediateActionController.mm:
+        (-[WKImmediateActionController _animationControllerForText]):
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::showDefinitionForAttributedString):
+
+        Generate and pass in the text indicator information, as this is needed now.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::dictionaryPopupInfoForSelectionInPDFPlugin):
+
 2018-11-08  Keith Rollin  <krollin@apple.com>
 
         Create .xcfilelist files

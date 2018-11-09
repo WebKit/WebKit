@@ -1,3 +1,17 @@
+2018-11-08  Megan Gardner  <megan_gardner@apple.com>
+
+        Adopt Reveal Framework to replace Lookup
+        https://bugs.webkit.org/show_bug.cgi?id=191097
+
+        Reviewed by Tim Horton.
+
+        Reveal selects spaces instead of adjacent words, no matter how interesting they are. 
+        Update the tests to show this, and change the expections for previous platforms.
+
+        * editing/mac/selection/context-menu-select-editability-expected.txt:
+        * editing/mac/selection/context-menu-select-editability.html:
+        * platform/mac-highsierra/editing/mac/selection/context-menu-select-editability-expected.txt: Copied from LayoutTests/editing/mac/selection/context-menu-select-editability-expected.txt.
+
 2018-11-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         Clean up test expectations after r237942

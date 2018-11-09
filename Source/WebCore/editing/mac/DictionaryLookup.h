@@ -46,10 +46,10 @@ public:
 
     // FIXME: Should move/unify dictionaryPopupInfoForRange here too.
 
-    WEBCORE_EXPORT static void showPopup(const DictionaryPopupInfo&, NSView *, const WTF::Function<void(TextIndicator&)>& textIndicatorInstallationCallback, const WTF::Function<FloatRect(FloatRect)>& rootViewToViewConversionCallback = nullptr);
+    WEBCORE_EXPORT static void showPopup(const DictionaryPopupInfo&, NSView *, const WTF::Function<void(TextIndicator&)>& textIndicatorInstallationCallback, const WTF::Function<FloatRect(FloatRect)>& rootViewToViewConversionCallback = nullptr, WTF::Function<void()>&& clearTextIndicator = nullptr);
     WEBCORE_EXPORT static void hidePopup();
 
-    WEBCORE_EXPORT static id <NSImmediateActionAnimationController> animationControllerForPopup(const DictionaryPopupInfo&, NSView *, const WTF::Function<void(TextIndicator&)>& textIndicatorInstallationCallback, const WTF::Function<FloatRect(FloatRect)>& rootViewToViewConversionCallback = nullptr);
+    WEBCORE_EXPORT static id <NSImmediateActionAnimationController> animationControllerForPopup(const DictionaryPopupInfo&, NSView *, const WTF::Function<void(TextIndicator&)>& textIndicatorInstallationCallback, const WTF::Function<FloatRect(FloatRect)>& rootViewToViewConversionCallback = nullptr, WTF::Function<void()>&& clearTextIndicator = nullptr);
 };
 
 } // namespace WebCore

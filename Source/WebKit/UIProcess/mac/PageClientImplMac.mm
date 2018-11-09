@@ -598,6 +598,8 @@ void PageClientImpl::didPerformDictionaryLookup(const DictionaryPopupInfo& dicti
 
     DictionaryLookup::showPopup(dictionaryPopupInfo, m_view, [this](TextIndicator& textIndicator) {
         m_impl->setTextIndicator(textIndicator, TextIndicatorWindowLifetime::Permanent);
+    }, nullptr, [this]() {
+        m_impl->clearTextIndicatorWithAnimation(WebCore::TextIndicatorWindowDismissalAnimation::None);
     });
 }
 

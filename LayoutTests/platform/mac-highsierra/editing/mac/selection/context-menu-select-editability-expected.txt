@@ -7,8 +7,9 @@ The crowd says: New York, New York    is a helluva town!
 
 
 PASS getSelectionForId('inputWhitespace') is ""
-PASS getSelectionForId('readOnlyWhitespace') is ""
+FAIL getSelectionForId('readOnlyWhitespace') should be . Was New York, New York.
 PASS successfullyParsed is true
+Some tests failed.
 
 TEST COMPLETE
 

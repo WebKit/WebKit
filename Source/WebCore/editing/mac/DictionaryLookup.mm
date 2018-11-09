@@ -26,7 +26,7 @@
 #import "config.h"
 #import "DictionaryLookup.h"
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && ENABLE(REVEAL)
 
 #import "Document.h"
 #import "Editing.h"
@@ -45,41 +45,95 @@
 #import <PDFKit/PDFKit.h>
 #import <pal/spi/mac/LookupSPI.h>
 #import <pal/spi/mac/NSImmediateActionGestureRecognizerSPI.h>
+#import <pal/spi/mac/RevealSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/RefPtr.h>
 
-SOFT_LINK_CONSTANT_MAY_FAIL(Lookup, LUTermOptionDisableSearchTermIndicator, NSString *)
+@interface WebRevealHighlight <RVPresenterHighlightDelegate> : NSObject
+
+- (instancetype)initWithHighlightRect:(NSRect)highlightRect useDefaultHighlight:(BOOL)useDefaultHighlight attributedString:(NSAttributedString *) attributedString;
+
+@property (nonatomic, readonly) NSRect highlightRect;
+@property (nonatomic, readonly) BOOL useDefaultHighlight;
+@property (nonatomic, readonly) NSAttributedString *attributedString;
+
+- (void)setClearTextIndicator:(Function<void()>&&)clearTextIndicator;
+
+@end
+
+@implementation WebRevealHighlight {
+    Function<void()> _clearTextIndicator;
+}
+
+- (instancetype)initWithHighlightRect:(NSRect)highlightRect useDefaultHighlight:(BOOL)useDefaultHighlight attributedString:(NSAttributedString *) attributedString
+{
+    if (!(self = [super init]))
+        return nil;
+    
+    _highlightRect = highlightRect;
+    _useDefaultHighlight = useDefaultHighlight;
+    _attributedString = attributedString;
+    
+    return self;
+}
+
+- (void)setClearTextIndicator:(Function<void()>&&)clearTextIndicator
+{
+    _clearTextIndicator = WTFMove(clearTextIndicator);
+}
+
+- (NSArray<NSValue *> *)revealContext:(RVPresentingContext *)context rectsForItem:(RVItem *)item
+{
+    UNUSED_PARAM(context);
+    UNUSED_PARAM(item);
+    return @[[NSValue valueWithRect:self.highlightRect]];
+}
+
+- (void)revealContext:(RVPresentingContext *)context drawRectsForItem:(RVItem *)item
+{
+    UNUSED_PARAM(item);
+    
+    for (NSValue *rectVal in context.itemRectsInView) {
+        NSRect rect = rectVal.rectValue;
+
+        // Get current font attributes from the attributed string above, and add paragraph style attribute in order to center text.
+        RetainPtr<NSMutableDictionary> attributes = adoptNS([[NSMutableDictionary alloc] initWithDictionary:[self.attributedString fontAttributesInRange:NSMakeRange(0, [self.attributedString length])]]);
+        RetainPtr<NSMutableParagraphStyle> paragraph = adoptNS([[NSMutableParagraphStyle alloc] init]);
+        [paragraph setAlignment:NSTextAlignmentCenter];
+        [attributes setObject:paragraph.get() forKey:NSParagraphStyleAttributeName];
+    
+        RetainPtr<NSAttributedString> string = adoptNS([[NSAttributedString alloc] initWithString:[self.attributedString string] attributes:attributes.get()]);
+        [string drawInRect:rect];
+    }
+}
+
+- (BOOL)revealContext:(RVPresentingContext *)context shouldUseDefaultHighlightForItem:(RVItem *)item
+{
+    UNUSED_PARAM(context);
+    UNUSED_PARAM(item);
+    return self.useDefaultHighlight;
+}
+
+- (void)revealContext:(RVPresentingContext *)context stopHighlightingItem:(RVItem *)item
+{
+    UNUSED_PARAM(context);
+    UNUSED_PARAM(item);
+    auto block = WTFMove(_clearTextIndicator);
+    if (block)
+        block();
+}
+
+@end
 
 namespace WebCore {
 
-static NSRange tokenRange(const String& string, NSRange range, NSDictionary **options)
-{
-    if (!getLULookupDefinitionModuleClass())
-        return NSMakeRange(NSNotFound, 0);
-
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-
-    return [classLULookupDefinitionModule tokenRangeForString:string range:range options:options];
-
-    END_BLOCK_OBJC_EXCEPTIONS;
-
-    return NSMakeRange(NSNotFound, 0);
-}
-
-static bool selectionContainsPosition(const VisiblePosition& position, const VisibleSelection& selection)
-{
-    if (!selection.isRange())
-        return false;
-
-    RefPtr<Range> selectedRange = selection.toNormalizedRange();
-    if (!selectedRange)
-        return false;
-
-    return selectedRange->contains(position);
-}
-
 std::tuple<RefPtr<Range>, NSDictionary *> DictionaryLookup::rangeForSelection(const VisibleSelection& selection)
 {
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    
+    if (!getRVItemClass())
+        return { nullptr, nil };
+    
     auto selectedRange = selection.toNormalizedRange();
     if (!selectedRange)
         return { nullptr, nil };
@@ -95,15 +149,26 @@ std::tuple<RefPtr<Range>, NSDictionary *> DictionaryLookup::rangeForSelection(co
     int lengthToSelectionStart = TextIterator::rangeLength(makeRange(paragraphStart, selectionStart).get());
     int lengthToSelectionEnd = TextIterator::rangeLength(makeRange(paragraphStart, selectionEnd).get());
     NSRange rangeToPass = NSMakeRange(lengthToSelectionStart, lengthToSelectionEnd - lengthToSelectionStart);
-
-    NSDictionary *options = nil;
-    tokenRange(plainText(makeRange(paragraphStart, paragraphEnd).get()), rangeToPass, &options);
-
-    return { selectedRange, options };
+    
+    RefPtr<Range> fullCharacterRange = makeRange(paragraphStart, paragraphEnd);
+    String itemString = plainText(fullCharacterRange.get());
+    RetainPtr<RVItem> item = adoptNS([allocRVItemInstance() initWithText:itemString selectedRange:rangeToPass]);
+    NSRange highlightRange = item.get().highlightRange;
+    
+    return { TextIterator::subrange(*fullCharacterRange, highlightRange.location, highlightRange.length), nil };
+    
+    END_BLOCK_OBJC_EXCEPTIONS;
+    
+    return { nullptr, nil };
 }
 
 std::tuple<RefPtr<Range>, NSDictionary *> DictionaryLookup::rangeAtHitTestResult(const HitTestResult& hitTestResult)
 {
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    
+    if (!getRVItemClass())
+        return { nullptr, nil };
+    
     auto* node = hitTestResult.innerNonSharedNode();
     if (!node || !node->renderer())
         return { nullptr, nil };
@@ -121,30 +186,56 @@ std::tuple<RefPtr<Range>, NSDictionary *> DictionaryLookup::rangeAtHitTestResult
     if (position.isNull())
         position = firstPositionInOrBeforeNode(node);
 
-    // If we hit the selection, use that instead of letting Lookup decide the range.
     auto selection = frame->page()->focusController().focusedOrMainFrame().selection().selection();
-    if (selectionContainsPosition(position, selection))
-        return rangeForSelection(selection);
+    NSRange selectionRange;
+    int hitIndex;
+    RefPtr<Range> fullCharacterRange;
+    
+    if (selection.selectionType() == VisibleSelection::RangeSelection) {
+        auto selectionStart = selection.visibleStart();
+        auto selectionEnd = selection.visibleEnd();
+        
+        // As context, we are going to use the surrounding paragraphs of text.
+        auto paragraphStart = startOfParagraph(selectionStart);
+        auto paragraphEnd = endOfParagraph(selectionEnd);
+        
+        auto rangeToSelectionStart = makeRange(paragraphStart, selectionStart);
+        auto rangeToSelectionEnd = makeRange(paragraphStart, selectionEnd);
+        
+        fullCharacterRange = makeRange(paragraphStart, paragraphEnd);
+        
+        selectionRange = NSMakeRange(TextIterator::rangeLength(rangeToSelectionStart.get()), TextIterator::rangeLength(makeRange(selectionStart, selectionEnd).get()));
+        
+        hitIndex = TextIterator::rangeLength(makeRange(paragraphStart, position).get());
+    } else {
+        VisibleSelection selectionAccountingForLineRules { position };
+        selectionAccountingForLineRules.expandUsingGranularity(WordGranularity);
+        position = selectionAccountingForLineRules.start();
+        // As context, we are going to use 250 characters of text before and after the point.
+        fullCharacterRange = rangeExpandedAroundPositionByCharacters(position, 250);
+        
+        if (!fullCharacterRange)
+            return { nullptr, nil };
+        
+        selectionRange = NSMakeRange(NSNotFound, 0);
+        hitIndex = TextIterator::rangeLength(makeRange(fullCharacterRange->startPosition(), position).get());
+    }
+    
+    NSRange selectedRange = [getRVSelectionClass() revealRangeAtIndex:hitIndex selectedRanges:@[[NSValue valueWithRange:selectionRange]] shouldUpdateSelection:nil];
+    
+    String itemString = plainText(fullCharacterRange.get());
+    RetainPtr<RVItem> item = adoptNS([allocRVItemInstance() initWithText:itemString selectedRange:selectedRange]);
+    NSRange highlightRange = item.get().highlightRange;
 
-    VisibleSelection selectionAccountingForLineRules { position };
-    selectionAccountingForLineRules.expandUsingGranularity(WordGranularity);
-    position = selectionAccountingForLineRules.start();
-
-    // As context, we are going to use 250 characters of text before and after the point.
-    auto fullCharacterRange = rangeExpandedAroundPositionByCharacters(position, 250);
-    if (!fullCharacterRange)
+    if (highlightRange.location == NSNotFound || !highlightRange.length)
         return { nullptr, nil };
-
-    NSRange rangeToPass = NSMakeRange(TextIterator::rangeLength(makeRange(fullCharacterRange->startPosition(), position).get()), 0);
-    NSDictionary *options = nil;
-    NSRange extractedRange = tokenRange(plainText(fullCharacterRange.get()), rangeToPass, &options);
-
-    // tokenRange sometimes returns {NSNotFound, 0} if it was unable to determine a good string.
-    // FIXME (159063): We shouldn't need to check for zero length here.
-    if (extractedRange.location == NSNotFound || extractedRange.length == 0)
-        return { nullptr, nil };
-
-    return { TextIterator::subrange(*fullCharacterRange, extractedRange.location, extractedRange.length), options };
+    
+    return { TextIterator::subrange(*fullCharacterRange, highlightRange.location, highlightRange.length), nil };
+    
+    END_BLOCK_OBJC_EXCEPTIONS;
+    
+    return { nullptr, nil };
+    
 }
 
 static void expandSelectionByCharacters(PDFSelection *selection, NSInteger numberOfCharactersToExpand, NSInteger& charactersAddedBeforeStart, NSInteger& charactersAddedAfterEnd)
@@ -165,6 +256,9 @@ static void expandSelectionByCharacters(PDFSelection *selection, NSInteger numbe
 std::tuple<NSString *, NSDictionary *> DictionaryLookup::stringForPDFSelection(PDFSelection *selection)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    
+    if (!getRVItemClass())
+        return { nullptr, nil };
 
     // Don't do anything if there is no character at the point.
     if (!selection || !selection.string.length)
@@ -181,12 +275,11 @@ std::tuple<NSString *, NSDictionary *> DictionaryLookup::stringForPDFSelection(P
     auto fullPlainTextString = [selectionForLookup string];
     auto rangeToPass = NSMakeRange(charactersAddedBeforeStart, 0);
 
-    NSDictionary *options = nil;
-    auto extractedRange = tokenRange(fullPlainTextString, rangeToPass, &options);
-
-    // This function sometimes returns {NSNotFound, 0} if it was unable to determine a good string.
+    RetainPtr<RVItem> item = adoptNS([allocRVItemInstance() initWithText:fullPlainTextString selectedRange:rangeToPass]);
+    NSRange extractedRange = item.get().highlightRange;
+    
     if (extractedRange.location == NSNotFound)
-        return { selection.string, options };
+        return { selection.string, nil };
 
     NSInteger lookupAddedBefore = rangeToPass.location - extractedRange.location;
     NSInteger lookupAddedAfter = (extractedRange.location + extractedRange.length) - (rangeToPass.location + originalLength);
@@ -195,18 +288,18 @@ std::tuple<NSString *, NSDictionary *> DictionaryLookup::stringForPDFSelection(P
     [selection extendSelectionAtEnd:lookupAddedAfter];
 
     ASSERT([selection.string isEqualToString:[fullPlainTextString substringWithRange:extractedRange]]);
-    return { selection.string, options };
+    return { selection.string, nil };
 
     END_BLOCK_OBJC_EXCEPTIONS;
 
     return { @"", nil };
 }
 
-static id <NSImmediateActionAnimationController> showPopupOrCreateAnimationController(bool createAnimationController, const DictionaryPopupInfo& dictionaryPopupInfo, NSView *view, const WTF::Function<void(TextIndicator&)>& textIndicatorInstallationCallback, const WTF::Function<FloatRect(FloatRect)>& rootViewToViewConversionCallback)
+static id <NSImmediateActionAnimationController> showPopupOrCreateAnimationController(bool createAnimationController, const DictionaryPopupInfo& dictionaryPopupInfo, NSView *view, const WTF::Function<void(TextIndicator&)>& textIndicatorInstallationCallback, const WTF::Function<FloatRect(FloatRect)>& rootViewToViewConversionCallback, WTF::Function<void()>&& clearTextIndicator)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-
-    if (!getLULookupDefinitionModuleClass())
+    
+    if (!getRVItemClass())
         return nil;
 
     RetainPtr<NSMutableDictionary> mutableOptions = adoptNS([[NSMutableDictionary alloc] init]);
@@ -214,42 +307,57 @@ static id <NSImmediateActionAnimationController> showPopupOrCreateAnimationContr
         [mutableOptions addEntriesFromDictionary:options];
 
     auto textIndicator = TextIndicator::create(dictionaryPopupInfo.textIndicator);
-
-    if (canLoadLUTermOptionDisableSearchTermIndicator() && textIndicator.get().contentImage()) {
+    
+    RetainPtr<RVPresenter> presenter = adoptNS([allocRVPresenterInstance() init]);
+    
+    NSRect highlightRect;
+    NSPoint pointerLocation;
+    
+    if (textIndicator.get().contentImage()) {
         textIndicatorInstallationCallback(textIndicator.get());
-        [mutableOptions setObject:@YES forKey:getLUTermOptionDisableSearchTermIndicator()];
 
         FloatRect firstTextRectInViewCoordinates = textIndicator.get().textRectsInBoundingRectCoordinates()[0];
         FloatRect textBoundingRectInViewCoordinates = textIndicator.get().textBoundingRectInRootViewCoordinates();
-        if (rootViewToViewConversionCallback)
+        FloatRect selectionBoundingRectInViewCoordinates = textIndicator.get().selectionRectInRootViewCoordinates();
+        
+        if (rootViewToViewConversionCallback) {
             textBoundingRectInViewCoordinates = rootViewToViewConversionCallback(textBoundingRectInViewCoordinates);
+            selectionBoundingRectInViewCoordinates = rootViewToViewConversionCallback(selectionBoundingRectInViewCoordinates);
+        }
+        
         firstTextRectInViewCoordinates.moveBy(textBoundingRectInViewCoordinates.location());
-        if (createAnimationController)
-            return [getLULookupDefinitionModuleClass() lookupAnimationControllerForTerm:dictionaryPopupInfo.attributedString.get() relativeToRect:firstTextRectInViewCoordinates ofView:view options:mutableOptions.get()];
-
-        [getLULookupDefinitionModuleClass() showDefinitionForTerm:dictionaryPopupInfo.attributedString.get() relativeToRect:firstTextRectInViewCoordinates ofView:view options:mutableOptions.get()];
-        return nil;
+        highlightRect = selectionBoundingRectInViewCoordinates;
+        pointerLocation = firstTextRectInViewCoordinates.location();
+        
+    } else {
+        NSPoint textBaselineOrigin = dictionaryPopupInfo.origin;
+        
+        highlightRect = textIndicator->selectionRectInRootViewCoordinates();
+        pointerLocation = [view convertPoint:textBaselineOrigin toView:nil];
     }
-
-    NSPoint textBaselineOrigin = dictionaryPopupInfo.origin;
-
-    // Convert to screen coordinates.
-    textBaselineOrigin = [view convertPoint:textBaselineOrigin toView:nil];
-    textBaselineOrigin = [view.window convertRectToScreen:NSMakeRect(textBaselineOrigin.x, textBaselineOrigin.y, 0, 0)].origin;
-
+    
+    RetainPtr<WebRevealHighlight> webHighlight =  adoptNS([[WebRevealHighlight alloc] initWithHighlightRect: highlightRect useDefaultHighlight:!textIndicator.get().contentImage() attributedString:dictionaryPopupInfo.attributedString.get()]);
+    RetainPtr<RVPresentingContext> context = adoptNS([allocRVPresentingContextInstance() initWithPointerLocationInView:pointerLocation inView:view highlightDelegate:(id<RVPresenterHighlightDelegate>) webHighlight.get()]);
+    
+    RetainPtr<RVItem> item = adoptNS([allocRVItemInstance() initWithText:dictionaryPopupInfo.attributedString.get().string selectedRange:NSMakeRange(0, 0)]);
+    
+    [webHighlight setClearTextIndicator:[webHighlight = WTFMove(webHighlight), clearTextIndicator = WTFMove(clearTextIndicator)] {
+        if (clearTextIndicator)
+            clearTextIndicator();
+    }];
+    
     if (createAnimationController)
-        return [getLULookupDefinitionModuleClass() lookupAnimationControllerForTerm:dictionaryPopupInfo.attributedString.get() atLocation:textBaselineOrigin options:mutableOptions.get()];
-
-    [getLULookupDefinitionModuleClass() showDefinitionForTerm:dictionaryPopupInfo.attributedString.get() atLocation:textBaselineOrigin options:mutableOptions.get()];
+        return [presenter animationControllerForItem:item.get() documentContext:nil presentingContext:context.get() options:nil];
+    [presenter revealItem:item.get() documentContext:nil presentingContext:context.get() options:nil];
     return nil;
 
     END_BLOCK_OBJC_EXCEPTIONS;
     return nil;
 }
 
-void DictionaryLookup::showPopup(const DictionaryPopupInfo& dictionaryPopupInfo, NSView *view, const WTF::Function<void(TextIndicator&)>& textIndicatorInstallationCallback, const WTF::Function<FloatRect(FloatRect)>& rootViewToViewConversionCallback)
+void DictionaryLookup::showPopup(const DictionaryPopupInfo& dictionaryPopupInfo, NSView *view, const WTF::Function<void(TextIndicator&)>& textIndicatorInstallationCallback, const WTF::Function<FloatRect(FloatRect)>& rootViewToViewConversionCallback, WTF::Function<void()>&& clearTextIndicator)
 {
-    showPopupOrCreateAnimationController(false, dictionaryPopupInfo, view, textIndicatorInstallationCallback, rootViewToViewConversionCallback);
+    showPopupOrCreateAnimationController(false, dictionaryPopupInfo, view, textIndicatorInstallationCallback, rootViewToViewConversionCallback, WTFMove(clearTextIndicator));
 }
 
 void DictionaryLookup::hidePopup()
@@ -263,9 +371,9 @@ void DictionaryLookup::hidePopup()
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-id <NSImmediateActionAnimationController> DictionaryLookup::animationControllerForPopup(const DictionaryPopupInfo& dictionaryPopupInfo, NSView *view, const WTF::Function<void(TextIndicator&)>& textIndicatorInstallationCallback, const WTF::Function<FloatRect(FloatRect)>& rootViewToViewConversionCallback)
+id <NSImmediateActionAnimationController> DictionaryLookup::animationControllerForPopup(const DictionaryPopupInfo& dictionaryPopupInfo, NSView *view, const WTF::Function<void(TextIndicator&)>& textIndicatorInstallationCallback, const WTF::Function<FloatRect(FloatRect)>& rootViewToViewConversionCallback, WTF::Function<void()>&& clearTextIndicator)
 {
-    return showPopupOrCreateAnimationController(true, dictionaryPopupInfo, view, textIndicatorInstallationCallback, rootViewToViewConversionCallback);
+    return showPopupOrCreateAnimationController(true, dictionaryPopupInfo, view, textIndicatorInstallationCallback, rootViewToViewConversionCallback, WTFMove(clearTextIndicator));
 }
 
 } // namespace WebCore

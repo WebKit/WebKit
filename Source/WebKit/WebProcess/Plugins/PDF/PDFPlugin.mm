@@ -1872,7 +1872,24 @@ void PDFPlugin::showDefinitionForAttributedString(NSAttributedString *string, CG
     DictionaryPopupInfo dictionaryPopupInfo;
     dictionaryPopupInfo.origin = convertFromPDFViewToRootView(IntPoint(point));
     dictionaryPopupInfo.attributedString = string;
+    
+    
+    NSRect rangeRect;
+    rangeRect.origin = point;
+    CGFloat scaleFactor = PDFPlugin::scaleFactor();
 
+    rangeRect.size.height = string.size.height * scaleFactor;
+    rangeRect.size.width = string.size.width * scaleFactor;
+
+    rangeRect.origin.y -= rangeRect.size.height;
+
+    TextIndicatorData dataForSelection;
+    dataForSelection.selectionRectInRootViewCoordinates = rangeRect;
+    dataForSelection.textBoundingRectInRootViewCoordinates = rangeRect;
+    dataForSelection.contentImageScaleFactor = scaleFactor;
+    dataForSelection.presentationTransition = TextIndicatorPresentationTransition::FadeIn;
+    dictionaryPopupInfo.textIndicator = dataForSelection;
+    
     webFrame()->page()->send(Messages::WebPageProxy::DidPerformDictionaryLookup(dictionaryPopupInfo));
 }
 

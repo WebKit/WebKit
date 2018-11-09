@@ -520,13 +520,8 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForSelectionInPDFPlugin(PDFSelec
         [scaledNSAttributedString addAttributes:scaledAttributes.get() range:range];
     }];
 
-    // Based on TextIndicator implementation:
-    // TODO(144307): Come up with a better way to share this information than duplicating these values.
-    CGFloat verticalMargin = 2.5;
-    CGFloat horizontalMargin = 0.5;
-
-    rangeRect.origin.y -= CGCeiling(rangeRect.size.height - maxAscender - std::abs(maxDescender) + verticalMargin * scaleFactor);
-    rangeRect.origin.x += CGFloor(horizontalMargin * scaleFactor);
+    rangeRect.size.height = nsAttributedString.size.height * scaleFactor;
+    rangeRect.size.width = nsAttributedString.size.width * scaleFactor;
     
     TextIndicatorData dataForSelection;
     dataForSelection.selectionRectInRootViewCoordinates = rangeRect;
