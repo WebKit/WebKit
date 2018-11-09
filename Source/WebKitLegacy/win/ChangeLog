@@ -1,5 +1,12 @@
 2018-11-09  Ross Kirsling  <ross.kirsling@sony.com>
 
+        Unreviewed Windows build fix for r238049.
+
+        * WebView.cpp:
+        (WebView::initWithFrame):
+
+2018-11-09  Ross Kirsling  <ross.kirsling@sony.com>
+
         Unreviewed MSVC build fix after r238039 (and r238046).
 
         * WebDocumentLoader.h:
