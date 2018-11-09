@@ -1,0 +1,67 @@
+
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 785.00 2016.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 785.00 2016.00)
+      (contentsOpaque 1)
+      (children 2
+        (GraphicsLayer
+          (offsetFromRenderer width=-14 height=-14)
+          (position 14.00 14.00)
+          (bounds 432.00 332.00)
+          (drawsContent 1)
+          (repaint rects
+            (rect 16.00 16.00 400.00 300.00)
+          )
+          (children 1
+            (GraphicsLayer
+              (position 16.00 16.00)
+              (children 1
+                (GraphicsLayer
+                  (anchor 0.00 0.00)
+                  (bounds 400.00 300.00)
+                  (children 1
+                    (GraphicsLayer
+                      (position 0.00 -100.00)
+                      (children 1
+                        (GraphicsLayer
+                          (anchor 0.00 0.00)
+                          (bounds 400.00 1016.00)
+                          (children 1
+                            (GraphicsLayer
+                              (bounds 400.00 1016.00)
+                              (drawsContent 1)
+                              (repaint rects
+                                (rect 8.00 8.00 100.00 100.00)
+                              )
+                              (children 1
+                                (GraphicsLayer
+                                  (position 8.00 108.00)
+                                  (bounds 100.00 100.00)
+                                  (contentsOpaque 1)
+                                  (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [100.00 0.00 0.00 1.00])
+                                )
+                              )
+                            )
+                          )
+                        )
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 8.00 369.00)
+          (anchor 1.00 1.00)
+          (bounds 1.00 1.00)
+        )
+      )
+    )
+  )
+)
+

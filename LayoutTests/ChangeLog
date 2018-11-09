@@ -1,3 +1,15 @@
+2018-11-09  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Clean up test expectations after r237942
+        https://bugs.webkit.org/show_bug.cgi?id=191448
+
+        Unreviewed test gardening.
+
+        Add test expectation files for Sierra WK1.
+
+        * platform/mac-sierra-wk1/compositing/repaint/iframes/compositing-iframe-scroll-repaint-expected.txt: Added.
+        * platform/mac-sierra-wk1/compositing/repaint/iframes/compositing-iframe-with-fixed-background-doc-repaint-expected.txt: Added.
+
 2018-11-09  Daniel Bates  <dabates@apple.com>
 
         [iOS] Pressing forward delete key in text field does nothing and we should not invoke an editor
