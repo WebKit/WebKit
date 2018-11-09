@@ -1152,17 +1152,23 @@ void WebPage::setEditable(bool editable)
 
 void WebPage::increaseListLevel()
 {
-    // FIXME: Not implemented.
+    auto& editor = m_page->focusController().focusedOrMainFrame().editor();
+    if (editor.canIncreaseSelectionListLevel())
+        editor.increaseSelectionListLevel();
 }
 
 void WebPage::decreaseListLevel()
 {
-    // FIXME: Not implemented.
+    auto& editor = m_page->focusController().focusedOrMainFrame().editor();
+    if (editor.canDecreaseSelectionListLevel())
+        editor.decreaseSelectionListLevel();
 }
 
 void WebPage::changeListType()
 {
-    // FIXME: Not implemented.
+    auto& editor = m_page->focusController().focusedOrMainFrame().editor();
+    if (editor.canChangeSelectionListType())
+        editor.changeSelectionListType();
 }
 
 bool WebPage::isEditingCommandEnabled(const String& commandName)

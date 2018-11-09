@@ -1476,6 +1476,17 @@ void Editor::performDelete()
     setStartNewKillRingSequence(false);
 }
 
+bool Editor::canChangeSelectionListType()
+{
+    // FIXME: Not implemented.
+    return false;
+}
+
+void Editor::changeSelectionListType()
+{
+    // FIXME: Not implemented.
+}
+
 void Editor::simplifyMarkup(Node* startNode, Node* endNode)
 {
     if (!startNode)

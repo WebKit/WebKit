@@ -61,13 +61,42 @@
 
 namespace TestWebKitAPI {
 
-static RetainPtr<TestWKWebView> webViewForEditActionTesting()
+static RetainPtr<TestWKWebView> webViewForEditActionTesting(NSString *markup)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
-    [webView synchronouslyLoadHTMLString:@"<div>WebKit</div>"];
+    [webView synchronouslyLoadHTMLString:markup];
     [webView _setEditable:YES];
     [webView stringByEvaluatingJavaScript:@"getSelection().setPosition(document.body, 1)"];
     return webView;
+}
+
+static RetainPtr<TestWKWebView> webViewForEditActionTesting()
+{
+    return webViewForEditActionTesting(@"<div>WebKit</div>");
+}
+
+TEST(WKWebViewEditActions, ModifyListLevel)
+{
+    auto webView = webViewForEditActionTesting(@"<ol><li>Foo</li><ol><li id='bar'>Bar</li></ol><ul><li id='baz'>Baz</li></ul></ol>");
+
+    [webView evaluateJavaScript:@"getSelection().setPosition(bar, 0)" completionHandler:nil];
+    [webView _decreaseListLevel:nil];
+    EXPECT_TRUE([webView querySelectorExists:@"ol > li#bar"]);
+    EXPECT_TRUE([webView querySelectorExists:@"ol > ul > li#baz"]);
+
+    [webView evaluateJavaScript:@"getSelection().setPosition(baz, 0)" completionHandler:nil];
+    [webView _decreaseListLevel:nil];
+    EXPECT_TRUE([webView querySelectorExists:@"ol > li#bar"]);
+    EXPECT_TRUE([webView querySelectorExists:@"ol > li#baz"]);
+
+    [webView evaluateJavaScript:@"getSelection().setBaseAndExtent(bar, 0, baz, 1)" completionHandler:nil];
+    [webView _increaseListLevel:nil];
+    EXPECT_TRUE([webView querySelectorExists:@"ol > ol > li#bar"]);
+    EXPECT_TRUE([webView querySelectorExists:@"ol > ol > li#baz"]);
+
+    [webView _decreaseListLevel:nil];
+    EXPECT_TRUE([webView querySelectorExists:@"ol > li#bar"]);
+    EXPECT_TRUE([webView querySelectorExists:@"ol > li#baz"]);
 }
 
 TEST(WKWebViewEditActions, NestedListInsertion)

@@ -206,6 +206,8 @@ public:
     WEBCORE_EXPORT RefPtr<Node> increaseSelectionListLevelOrdered();
     WEBCORE_EXPORT RefPtr<Node> increaseSelectionListLevelUnordered();
     WEBCORE_EXPORT void decreaseSelectionListLevel();
+    WEBCORE_EXPORT bool canChangeSelectionListType();
+    WEBCORE_EXPORT void changeSelectionListType();
    
     void removeFormattingAndStyle();
 

@@ -1,3 +1,17 @@
+2018-11-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] Implement SPI on WKWebView to increase and decrease list levels
+        https://bugs.webkit.org/show_bug.cgi?id=191471
+        <rdar://problem/45952472>
+
+        Reviewed by Tim Horton.
+
+        Add an API test to ensure that list levels can be incremented and decremented via WKWebView SPI.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewEditActions.mm:
+        (TestWebKitAPI::webViewForEditActionTesting):
+        (TestWebKitAPI::TEST):
+
 2018-11-09  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [Curl][WebKit] Implement Proxy configuration API.

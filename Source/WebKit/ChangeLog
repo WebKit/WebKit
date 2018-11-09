@@ -1,3 +1,20 @@
+2018-11-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] Implement SPI on WKWebView to increase and decrease list levels
+        https://bugs.webkit.org/show_bug.cgi?id=191471
+        <rdar://problem/45952472>
+
+        Reviewed by Tim Horton.
+
+        Implement these method stubs by calling into Editor.
+
+        Test: WKWebViewEditActions.ModifyListLevel
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::increaseListLevel):
+        (WebKit::WebPage::decreaseListLevel):
+        (WebKit::WebPage::changeListType):
+
 2018-11-09  Keith Rollin  <krollin@apple.com>
 
         Unreviewed build fix after https://bugs.webkit.org/show_bug.cgi?id=191324
