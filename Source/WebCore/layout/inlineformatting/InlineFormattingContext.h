@@ -50,60 +50,67 @@ public:
 private:
     class Line {
     public:
-        Line(InlineFormattingState&, const Box& formattingRoot);
+        Line(InlineFormattingState&);
 
         void init(const Display::Box::Rect&);
+        struct RunRange {
+            std::optional<unsigned> firstRunIndex;
+            std::optional<unsigned> lastRunIndex;
+        };
+        RunRange close();
 
         void appendContent(const InlineLineBreaker::Run&);
 
         void adjustLogicalLeft(LayoutUnit delta);
         void adjustLogicalRight(LayoutUnit delta);
 
-        enum class LastLine { No, Yes };
-        void close(LastLine = LastLine::No);
-
         bool hasContent() const { return m_firstRunIndex.has_value(); }
         bool isClosed() const { return m_closed; }
         bool isFirstLine() const { return m_isFirstLine; }
-        LayoutUnit contentLogicalRight();
+        LayoutUnit contentLogicalRight() const;
+        LayoutUnit contentLogicalLeft() const { return m_logicalRect.left(); }
         LayoutUnit availableWidth() const { return m_availableWidth; }
+        std::optional<InlineRunProvider::Run::Type> lastRunType() const { return m_lastRunType; }
 
         LayoutUnit logicalTop() const { return m_logicalRect.top(); }
         LayoutUnit logicalBottom() const { return m_logicalRect.bottom(); }
 
     private:
-        void justifyRuns();
-        void computeExpansionOpportunities(const InlineLineBreaker::Run&);
-
         struct TrailingTrimmableContent {
             LayoutUnit width;
             unsigned length;
         };
         std::optional<TrailingTrimmableContent> m_trailingTrimmableContent;
-        bool m_lastRunIsWhitespace { false };
+        std::optional<InlineRunProvider::Run::Type> m_lastRunType;
         bool m_lastRunCanExpand { false };
 
         InlineFormattingState& m_formattingState;
-        const Box& m_formattingRoot;
 
         Display::Box::Rect m_logicalRect;
         LayoutUnit m_availableWidth;
 
         std::optional<unsigned> m_firstRunIndex;
-        bool m_alignmentIsJustify { false };
         bool m_isFirstLine { true };
         bool m_closed { true };
     };
+    enum class IsLastLine { No, Yes };
 
-    // This class implements positioning and sizing for boxes participating in a block formatting context.
     class Geometry : public FormattingContext::Geometry {
     public:
         static HeightAndMargin inlineBlockHeightAndMargin(const LayoutState&, const Box&);
         static WidthAndMargin inlineBlockWidthAndMargin(LayoutState&, const Box&);
+        static void alignRuns(InlineFormattingState&, TextAlignMode, Line&, Line::RunRange, IsLastLine);
+        static void computeExpansionOpportunities(InlineFormattingState&, const InlineRunProvider::Run&, InlineRunProvider::Run::Type lastRunType);
+
+    private:
+        static void justifyRuns(InlineFormattingState&, Line&, Line::RunRange);
     };
 
     void layoutInlineContent(const InlineRunProvider&) const;
+
     void initializeNewLine(Line&) const;
+    void closeLine(Line&, IsLastLine) const;
+    void appendContentToLine(Line&, const InlineLineBreaker::Run&) const;
 
     void layoutFormattingContextRoot(const Box&) const;
     void computeWidthAndHeightForReplacedInlineBox(const Box&) const;

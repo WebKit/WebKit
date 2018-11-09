@@ -1,3 +1,35 @@
+2018-11-09  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Move some code from InlineFormattingContext::Line to InlineFormattingContext/Geometry
+        https://bugs.webkit.org/show_bug.cgi?id=191445
+
+        Reviewed by Antti Koivisto.
+
+        The idea here is that Line should not have to deal with all the post processig tasks like the runs final aligments.
+        (The line class would eventually turn into a collection of random things).
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::closeLine const):
+        (WebCore::Layout::InlineFormattingContext::appendContentToLine const):
+        (WebCore::Layout::InlineFormattingContext::layoutInlineContent const):
+        * layout/inlineformatting/InlineFormattingContext.h:
+        (WebCore::Layout::InlineFormattingContext::Line::contentLogicalLeft const):
+        (WebCore::Layout::InlineFormattingContext::Line::lastRunType const):
+        * layout/inlineformatting/InlineFormattingContextGeometry.cpp:
+        (WebCore::Layout::InlineFormattingContext::Geometry::adjustedLineLogicalLeft):
+        (WebCore::Layout::InlineFormattingContext::Geometry::justifyRuns):
+        (WebCore::Layout::InlineFormattingContext::Geometry::computeExpansionOpportunities):
+        * layout/inlineformatting/Line.cpp:
+        (WebCore::Layout::InlineFormattingContext::Line::Line):
+        (WebCore::Layout::InlineFormattingContext::Line::init):
+        (WebCore::Layout::InlineFormattingContext::Line::contentLogicalRight const):
+        (WebCore::Layout::InlineFormattingContext::Line::appendContent):
+        (WebCore::Layout::InlineFormattingContext::Line::close):
+        (WebCore::Layout::adjustedLineLogicalLeft): Deleted.
+        (WebCore::Layout::InlineFormattingContext::Line::contentLogicalRight): Deleted.
+        (WebCore::Layout::InlineFormattingContext::Line::computeExpansionOpportunities): Deleted.
+        (WebCore::Layout::InlineFormattingContext::Line::justifyRuns): Deleted.
+
 2018-11-09  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GStreamer build warning fix

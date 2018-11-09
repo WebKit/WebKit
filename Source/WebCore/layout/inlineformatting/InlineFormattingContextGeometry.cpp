@@ -77,6 +77,108 @@ HeightAndMargin InlineFormattingContext::Geometry::inlineBlockHeightAndMargin(co
     return complicatedCases(layoutState, layoutBox);
 }
 
+static LayoutUnit adjustedLineLogicalLeft(TextAlignMode align, LayoutUnit lineLogicalLeft, LayoutUnit remainingWidth)
+{
+    switch (align) {
+    case TextAlignMode::Left:
+    case TextAlignMode::WebKitLeft:
+    case TextAlignMode::Start:
+        return lineLogicalLeft;
+    case TextAlignMode::Right:
+    case TextAlignMode::WebKitRight:
+    case TextAlignMode::End:
+        return lineLogicalLeft + std::max(remainingWidth, LayoutUnit());
+    case TextAlignMode::Center:
+    case TextAlignMode::WebKitCenter:
+        return lineLogicalLeft + std::max(remainingWidth / 2, LayoutUnit());
+    case TextAlignMode::Justify:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return lineLogicalLeft;
+}
+
+void InlineFormattingContext::Geometry::justifyRuns(InlineFormattingState& formattingState, Line& line, Line::RunRange runRange)
+{
+    auto& inlineRuns = formattingState.inlineRuns();
+    auto& lastInlineRun = inlineRuns.last();
+
+    // Adjust (forbid) trailing expansion for the last text run on line.
+    auto expansionBehavior = lastInlineRun.expansionOpportunity().behavior;
+    // Remove allow and add forbid.
+    expansionBehavior ^= AllowTrailingExpansion;
+    expansionBehavior |= ForbidTrailingExpansion;
+    lastInlineRun.expansionOpportunity().behavior = expansionBehavior;
+
+    // Collect expansion opportunities and justify the runs.
+    auto widthToDistribute = line.availableWidth();
+    if (widthToDistribute <= 0)
+        return;
+
+    auto expansionOpportunities = 0;
+    ASSERT(*runRange.lastRunIndex < inlineRuns.size());
+    for (auto runIndex = *runRange.firstRunIndex; runIndex <= *runRange.lastRunIndex; ++runIndex)
+        expansionOpportunities += inlineRuns[runIndex].expansionOpportunity().count;
+
+    if (!expansionOpportunities)
+        return;
+
+    float expansion = widthToDistribute.toFloat() / expansionOpportunities;
+    LayoutUnit accumulatedExpansion = 0;
+    for (auto runIndex = *runRange.firstRunIndex; runIndex <= *runRange.lastRunIndex; ++runIndex) {
+        auto& inlineRun = inlineRuns[runIndex];
+        auto expansionForRun = inlineRun.expansionOpportunity().count * expansion;
+
+        inlineRun.expansionOpportunity().expansion = expansionForRun;
+        inlineRun.setLogicalLeft(inlineRun.logicalLeft() + accumulatedExpansion);
+        inlineRun.setWidth(inlineRun.width() + expansionForRun);
+        accumulatedExpansion += expansionForRun;
+    }
+}
+
+void InlineFormattingContext::Geometry::computeExpansionOpportunities(InlineFormattingState& formattingState, const InlineRunProvider::Run& run, InlineRunProvider::Run::Type lastRunType)
+{
+    auto isExpansionOpportunity = [](auto currentRunIsWhitespace, auto lastRunIsWhitespace) {
+        return currentRunIsWhitespace || (!currentRunIsWhitespace && !lastRunIsWhitespace);
+    };
+
+    auto expansionBehavior = [](auto isAtExpansionOpportunity) {
+        ExpansionBehavior expansionBehavior = AllowTrailingExpansion;
+        expansionBehavior |= isAtExpansionOpportunity ? ForbidLeadingExpansion : AllowLeadingExpansion;
+        return expansionBehavior;
+    };
+
+    auto isAtExpansionOpportunity = isExpansionOpportunity(run.isWhitespace(), lastRunType == InlineRunProvider::Run::Type::Whitespace);
+
+    auto& currentInlineRun = formattingState.inlineRuns().last();
+    auto& expansionOpportunity = currentInlineRun.expansionOpportunity();
+    if (isAtExpansionOpportunity)
+        ++expansionOpportunity.count;
+
+    expansionOpportunity.behavior = expansionBehavior(isAtExpansionOpportunity);
+}
+
+void InlineFormattingContext::Geometry::alignRuns(InlineFormattingState& inlineFormattingState, TextAlignMode textAlign, Line& line, Line::RunRange runRange, IsLastLine isLastLine)
+{
+    auto adjutedTextAlignment = textAlign != TextAlignMode::Justify ? textAlign : isLastLine == IsLastLine::No ? TextAlignMode::Justify : TextAlignMode::Left;
+    if (adjutedTextAlignment == TextAlignMode::Justify) {
+        justifyRuns(inlineFormattingState, line, runRange);
+        return;
+    }
+
+    auto lineLogicalLeft = line.contentLogicalLeft();
+    auto adjustedLogicalLeft = adjustedLineLogicalLeft(adjutedTextAlignment, lineLogicalLeft, line.availableWidth());
+    if (adjustedLogicalLeft == lineLogicalLeft)
+        return;
+
+    auto& inlineRuns = inlineFormattingState.inlineRuns();
+    auto delta = adjustedLogicalLeft - lineLogicalLeft;
+    ASSERT(*runRange.lastRunIndex < inlineRuns.size());
+    for (auto runIndex = *runRange.firstRunIndex; runIndex <= *runRange.lastRunIndex; ++runIndex)
+        inlineRuns[runIndex].setLogicalLeft(inlineRuns[runIndex].logicalLeft() + delta);
+}
+
 }
 }
 

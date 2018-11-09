@@ -127,13 +127,33 @@ void InlineFormattingContext::initializeNewLine(Line& line) const
     line.init(logicalRect);
 }
 
+void InlineFormattingContext::closeLine(Line& line, IsLastLine isLastLine) const
+{
+    auto runRange = line.close();
+    ASSERT(!runRange.firstRunIndex || runRange.lastRunIndex);
+
+    if (!runRange.firstRunIndex)
+        return;
+
+    Geometry::alignRuns(downcast<InlineFormattingState>(formattingState()), root().style().textAlign(), line, runRange, isLastLine);
+}
+
+void InlineFormattingContext::appendContentToLine(Line& line, const InlineLineBreaker::Run& run) const
+{
+    auto lastRunType = line.lastRunType();
+    line.appendContent(run);
+
+    if (root().style().textAlign() == TextAlignMode::Justify)
+        Geometry::computeExpansionOpportunities(downcast<InlineFormattingState>(formattingState()), run.content, lastRunType.value_or(InlineRunProvider::Run::Type::NonWhitespace));
+}
+
 void InlineFormattingContext::layoutInlineContent(const InlineRunProvider& inlineRunProvider) const
 {
     auto& layoutState = this->layoutState();
     auto& inlineFormattingState = downcast<InlineFormattingState>(formattingState());
     auto floatingContext = FloatingContext { inlineFormattingState.floatingState() };
 
-    Line line(inlineFormattingState, root());
+    Line line(inlineFormattingState);
     initializeNewLine(line);
 
     InlineLineBreaker lineBreaker(layoutState, inlineFormattingState.inlineContent(), inlineRunProvider.runs());
@@ -168,19 +188,19 @@ void InlineFormattingContext::layoutInlineContent(const InlineRunProvider& inlin
             if (line.hasContent()) {
                 // Previous run ended up being at the line end. Adjust the line accordingly.
                 if (!line.isClosed())
-                    line.close(Line::LastLine::No);
+                    closeLine(line, IsLastLine::No);
                 initializeNewLine(line);
             }
          }
 
         if (generatesInlineRun)
-             line.appendContent(*run);
+            appendContentToLine(line, *run);
 
         if (isLastRun)
-            line.close(Line::LastLine::No);
+            closeLine(line, IsLastLine::No);
     }
 
-    line.close(Line::LastLine::Yes);
+    closeLine(line, IsLastLine::Yes);
 }
 
 void InlineFormattingContext::computeWidthAndMargin(const Box& layoutBox) const
