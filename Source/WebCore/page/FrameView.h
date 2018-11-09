@@ -29,7 +29,7 @@
 #include "ContainerNode.h"
 #include "FrameViewLayoutContext.h"
 #include "GraphicsContext.h"
-#include "LayoutMilestones.h"
+#include "LayoutMilestone.h"
 #include "LayoutRect.h"
 #include "Pagination.h"
 #include "PaintPhase.h"
@@ -592,10 +592,10 @@ public:
     void updateTiledBackingAdaptiveSizing();
     TiledBacking::Scrollability computeScrollability() const;
 
-    void addPaintPendingMilestones(LayoutMilestones);
+    void addPaintPendingMilestones(OptionSet<LayoutMilestone>);
     void firePaintRelatedMilestonesIfNeeded();
     void fireLayoutRelatedMilestonesIfNeeded();
-    LayoutMilestones milestonesPendingPaint() const { return m_milestonesPendingPaint; }
+    OptionSet<LayoutMilestone> milestonesPendingPaint() const { return m_milestonesPendingPaint; }
 
     bool visualUpdatesAllowedByClient() const { return m_visualUpdatesAllowedByClient; }
     WEBCORE_EXPORT void setVisualUpdatesAllowedByClient(bool);
@@ -914,7 +914,7 @@ private:
     int m_headerHeight;
     int m_footerHeight;
 
-    LayoutMilestones m_milestonesPendingPaint;
+    OptionSet<LayoutMilestone> m_milestonesPendingPaint;
 
     static const unsigned visualCharacterThreshold = 200;
     static const unsigned visualPixelThreshold = 32 * 32;

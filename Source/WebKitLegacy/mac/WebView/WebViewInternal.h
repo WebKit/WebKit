@@ -38,7 +38,7 @@
 #import <WebCore/FindOptions.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/HTMLMediaElementEnums.h>
-#import <WebCore/LayoutMilestones.h>
+#import <WebCore/LayoutMilestone.h>
 #import <WebCore/TextAlternativeWithRange.h>
 #import <WebCore/TextIndicator.h>
 #import <WebCore/TextIndicatorWindow.h>
@@ -88,8 +88,8 @@ class WebSelectionServiceController;
 
 WebCore::FindOptions coreOptions(WebFindOptions options);
 
-WebCore::LayoutMilestones coreLayoutMilestones(WebLayoutMilestones);
-WebLayoutMilestones kitLayoutMilestones(WebCore::LayoutMilestones);
+OptionSet<WebCore::LayoutMilestone> coreLayoutMilestones(WebLayoutMilestones);
+WebLayoutMilestones kitLayoutMilestones(OptionSet<WebCore::LayoutMilestone>);
 
 #if USE(DICTATION_ALTERNATIVES)
 OBJC_CLASS NSTextAlternatives;

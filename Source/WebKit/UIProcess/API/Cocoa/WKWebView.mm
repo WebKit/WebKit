@@ -4713,30 +4713,30 @@ IGNORE_WARNINGS_END
     return _page->pageLoadState().networkRequestsInProgress();
 }
 
-static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEvents events)
+static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingProgressEvents events)
 {
-    WebCore::LayoutMilestones milestones = 0;
+    OptionSet<WebCore::LayoutMilestone> milestones;
 
     if (events & _WKRenderingProgressEventFirstLayout)
-        milestones |= WebCore::DidFirstLayout;
+        milestones.add(WebCore::DidFirstLayout);
 
     if (events & _WKRenderingProgressEventFirstVisuallyNonEmptyLayout)
-        milestones |= WebCore::DidFirstVisuallyNonEmptyLayout;
+        milestones.add(WebCore::DidFirstVisuallyNonEmptyLayout);
 
     if (events & _WKRenderingProgressEventFirstPaintWithSignificantArea)
-        milestones |= WebCore::DidHitRelevantRepaintedObjectsAreaThreshold;
+        milestones.add(WebCore::DidHitRelevantRepaintedObjectsAreaThreshold);
 
     if (events & _WKRenderingProgressEventReachedSessionRestorationRenderTreeSizeThreshold)
-        milestones |= WebCore::ReachedSessionRestorationRenderTreeSizeThreshold;
+        milestones.add(WebCore::ReachedSessionRestorationRenderTreeSizeThreshold);
 
     if (events & _WKRenderingProgressEventFirstLayoutAfterSuppressedIncrementalRendering)
-        milestones |= WebCore::DidFirstLayoutAfterSuppressedIncrementalRendering;
+        milestones.add(WebCore::DidFirstLayoutAfterSuppressedIncrementalRendering);
 
     if (events & _WKRenderingProgressEventFirstPaintAfterSuppressedIncrementalRendering)
-        milestones |= WebCore::DidFirstPaintAfterSuppressedIncrementalRendering;
+        milestones.add(WebCore::DidFirstPaintAfterSuppressedIncrementalRendering);
 
     if (events & _WKRenderingProgressEventDidRenderSignificantAmountOfText)
-        milestones |= WebCore::DidRenderSignificantAmountOfText;
+        milestones.add(WebCore::DidRenderSignificantAmountOfText);
 
     return milestones;
 }

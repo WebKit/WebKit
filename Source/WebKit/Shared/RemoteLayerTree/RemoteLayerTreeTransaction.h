@@ -35,7 +35,7 @@
 #include <WebCore/FilterOperations.h>
 #include <WebCore/FloatPoint3D.h>
 #include <WebCore/FloatSize.h>
-#include <WebCore/LayoutMilestones.h>
+#include <WebCore/LayoutMilestone.h>
 #include <WebCore/PlatformCALayer.h>
 #include <WebCore/TransformationMatrix.h>
 #include <wtf/HashMap.h>
@@ -265,8 +265,8 @@ public:
     const Vector<TransactionCallbackID>& callbackIDs() const { return m_callbackIDs; }
     void setCallbackIDs(Vector<TransactionCallbackID>&& callbackIDs) { m_callbackIDs = WTFMove(callbackIDs); }
 
-    WebCore::LayoutMilestones newlyReachedLayoutMilestones() const { return m_newlyReachedLayoutMilestones; }
-    void setNewlyReachedLayoutMilestones(WebCore::LayoutMilestones milestones) { m_newlyReachedLayoutMilestones = milestones; }
+    OptionSet<WebCore::LayoutMilestone> newlyReachedLayoutMilestones() const { return m_newlyReachedLayoutMilestones; }
+    void setNewlyReachedLayoutMilestones(OptionSet<WebCore::LayoutMilestone> milestones) { m_newlyReachedLayoutMilestones = milestones; }
 
     bool hasEditorState() const { return !!m_editorState; }
     const EditorState& editorState() const { return m_editorState.value(); }
@@ -302,7 +302,7 @@ private:
     uint64_t m_renderTreeSize { 0 };
     uint64_t m_transactionID { 0 };
     ActivityStateChangeID m_activityStateChangeID { ActivityStateChangeAsynchronous };
-    WebCore::LayoutMilestones m_newlyReachedLayoutMilestones { 0 };
+    OptionSet<WebCore::LayoutMilestone> m_newlyReachedLayoutMilestones;
     bool m_scaleWasSetByUIProcess { false };
     bool m_allowsUserScaling { false };
     bool m_avoidsUnsafeArea { true };

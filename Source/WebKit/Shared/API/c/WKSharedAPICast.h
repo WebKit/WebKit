@@ -54,7 +54,7 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/IntRect.h>
-#include <WebCore/LayoutMilestones.h>
+#include <WebCore/LayoutMilestone.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/UserContentTypes.h>
 #include <WebCore/UserScriptTypes.h>
@@ -859,7 +859,7 @@ inline WebCore::DiagnosticLoggingResultType toDiagnosticLoggingResultType(WKDiag
     return type;
 }
 
-inline WKLayoutMilestones toWKLayoutMilestones(WebCore::LayoutMilestones milestones)
+inline WKLayoutMilestones toWKLayoutMilestones(OptionSet<WebCore::LayoutMilestone> milestones)
 {
     unsigned wkMilestones = 0;
 
@@ -881,24 +881,24 @@ inline WKLayoutMilestones toWKLayoutMilestones(WebCore::LayoutMilestones milesto
     return wkMilestones;
 }
 
-inline WebCore::LayoutMilestones toLayoutMilestones(WKLayoutMilestones wkMilestones)
+inline OptionSet<WebCore::LayoutMilestone> toLayoutMilestones(WKLayoutMilestones wkMilestones)
 {
-    WebCore::LayoutMilestones milestones = 0;
+    OptionSet<WebCore::LayoutMilestone> milestones;
 
     if (wkMilestones & kWKDidFirstLayout)
-        milestones |= WebCore::DidFirstLayout;
+        milestones.add(WebCore::DidFirstLayout);
     if (wkMilestones & kWKDidFirstVisuallyNonEmptyLayout)
-        milestones |= WebCore::DidFirstVisuallyNonEmptyLayout;
+        milestones.add(WebCore::DidFirstVisuallyNonEmptyLayout);
     if (wkMilestones & kWKDidHitRelevantRepaintedObjectsAreaThreshold)
-        milestones |= WebCore::DidHitRelevantRepaintedObjectsAreaThreshold;
+        milestones.add(WebCore::DidHitRelevantRepaintedObjectsAreaThreshold);
     if (wkMilestones & kWKDidFirstFlushForHeaderLayer)
-        milestones |= WebCore::DidFirstFlushForHeaderLayer;
+        milestones.add(WebCore::DidFirstFlushForHeaderLayer);
     if (wkMilestones & kWKDidFirstLayoutAfterSuppressedIncrementalRendering)
-        milestones |= WebCore::DidFirstLayoutAfterSuppressedIncrementalRendering;
+        milestones.add(WebCore::DidFirstLayoutAfterSuppressedIncrementalRendering);
     if (wkMilestones & kWKDidFirstPaintAfterSuppressedIncrementalRendering)
-        milestones |= WebCore::DidFirstPaintAfterSuppressedIncrementalRendering;
+        milestones.add(WebCore::DidFirstPaintAfterSuppressedIncrementalRendering);
     if (wkMilestones & kWKDidRenderSignificantAmountOfText)
-        milestones |= WebCore::DidRenderSignificantAmountOfText;
+        milestones.add(WebCore::DidRenderSignificantAmountOfText);
     
     return milestones;
 }

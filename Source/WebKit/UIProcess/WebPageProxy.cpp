@@ -2983,7 +2983,7 @@ void WebPageProxy::setAlwaysShowsVerticalScroller(bool alwaysShowsVerticalScroll
     m_process->send(Messages::WebPage::SetAlwaysShowsVerticalScroller(alwaysShowsVerticalScroller), m_pageID);
 }
 
-void WebPageProxy::listenForLayoutMilestones(WebCore::LayoutMilestones milestones)
+void WebPageProxy::listenForLayoutMilestones(OptionSet<WebCore::LayoutMilestone> milestones)
 {
     if (!isValid())
         return;
@@ -3997,16 +3997,16 @@ void WebPageProxy::didFirstVisuallyNonEmptyLayoutForFrame(uint64_t frameID, cons
 
 void WebPageProxy::didLayoutForCustomContentProvider()
 {
-    didReachLayoutMilestone(DidFirstLayout | DidFirstVisuallyNonEmptyLayout | DidHitRelevantRepaintedObjectsAreaThreshold);
+    didReachLayoutMilestone({ DidFirstLayout, DidFirstVisuallyNonEmptyLayout, DidHitRelevantRepaintedObjectsAreaThreshold });
 }
 
-void WebPageProxy::didReachLayoutMilestone(uint32_t layoutMilestones)
+void WebPageProxy::didReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone> layoutMilestones)
 {
     PageClientProtector protector(pageClient());
 
     if (m_loaderClient)
-        m_loaderClient->didReachLayoutMilestone(*this, static_cast<LayoutMilestones>(layoutMilestones));
-    m_navigationClient->renderingProgressDidChange(*this, static_cast<LayoutMilestones>(layoutMilestones));
+        m_loaderClient->didReachLayoutMilestone(*this, layoutMilestones);
+    m_navigationClient->renderingProgressDidChange(*this, layoutMilestones);
 }
 
 void WebPageProxy::didDisplayInsecureContentForFrame(uint64_t frameID, const UserData& userData)

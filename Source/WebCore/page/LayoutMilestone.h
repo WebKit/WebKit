@@ -25,12 +25,14 @@
 
 #pragma once
 
+#include <wtf/OptionSet.h>
+
 namespace WebCore {
 
 // FIXME: Some of these milestones are about layout, and others are about painting.
 // We should either re-name them to something more generic, or split them into
 // two enums -- one for painting and one for layout.
-enum LayoutMilestoneFlag {
+enum LayoutMilestone {
     DidFirstLayout                                      = 1 << 0,
     DidFirstVisuallyNonEmptyLayout                      = 1 << 1,
     DidHitRelevantRepaintedObjectsAreaThreshold         = 1 << 2,
@@ -38,9 +40,7 @@ enum LayoutMilestoneFlag {
     DidFirstLayoutAfterSuppressedIncrementalRendering   = 1 << 4,
     DidFirstPaintAfterSuppressedIncrementalRendering    = 1 << 5,
     ReachedSessionRestorationRenderTreeSizeThreshold    = 1 << 6, // FIXME: only implemented by WK2 currently.
-    DidRenderSignificantAmountOfText            = 1 << 7,
+    DidRenderSignificantAmountOfText                    = 1 << 7,
 };
-
-typedef unsigned LayoutMilestones;
 
 } // namespace WebCore

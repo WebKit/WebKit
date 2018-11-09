@@ -2563,7 +2563,7 @@ void FrameLoader::setOriginalURLForDownloadRequest(ResourceRequest& request)
     addSameSiteInfoToRequestIfNeeded(request, initiator);
 }
 
-void FrameLoader::didReachLayoutMilestone(LayoutMilestones milestones)
+void FrameLoader::didReachLayoutMilestone(OptionSet<LayoutMilestone> milestones)
 {
     ASSERT(m_frame.isMainFrame());
 

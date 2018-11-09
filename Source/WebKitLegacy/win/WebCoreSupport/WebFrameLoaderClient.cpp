@@ -482,7 +482,7 @@ void WebFrameLoaderClient::dispatchDidFinishLoad()
         frameLoadDelegate->didFinishLoadForFrame(webView, m_webFrame);
 }
 
-void WebFrameLoaderClient::dispatchDidReachLayoutMilestone(LayoutMilestones milestones)
+void WebFrameLoaderClient::dispatchDidReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone> milestones)
 {
     WebView* webView = m_webFrame->webView();
 

@@ -85,7 +85,7 @@ private:
 
     void attachViewOverlayGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*) override;
 
-    bool dispatchDidReachLayoutMilestone(WebCore::LayoutMilestones) override;
+    bool dispatchDidReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone>) override;
 
     bool flushLayers();
 
@@ -163,7 +163,7 @@ private:
     WebCore::IntSize m_lastViewSizeForScaleToFit;
     WebCore::IntSize m_lastDocumentSizeForScaleToFit;
 
-    WebCore::LayoutMilestones m_pendingNewlyReachedLayoutMilestones { 0 };
+    OptionSet<WebCore::LayoutMilestone> m_pendingNewlyReachedLayoutMilestones;
     Vector<CallbackID> m_pendingCallbackIDs;
 
     std::unique_ptr<WebCore::RunLoopObserver> m_layerFlushRunLoopObserver;

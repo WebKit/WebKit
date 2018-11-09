@@ -247,7 +247,7 @@ void InjectedBundlePageLoaderClient::didLayoutForFrame(WebPage& page, WebFrame& 
     m_client.didLayoutForFrame(toAPI(&page), toAPI(&frame), m_client.base.clientInfo);
 }
 
-void InjectedBundlePageLoaderClient::didReachLayoutMilestone(WebPage& page, LayoutMilestones milestones, RefPtr<API::Object>& userData)
+void InjectedBundlePageLoaderClient::didReachLayoutMilestone(WebPage& page, OptionSet<WebCore::LayoutMilestone> milestones, RefPtr<API::Object>& userData)
 {
     if (!m_client.didLayout)
         return;
@@ -363,13 +363,13 @@ String InjectedBundlePageLoaderClient::userAgentForURL(WebFrame& frame, const UR
     return toImpl(userAgent)->string();
 }
 
-LayoutMilestones InjectedBundlePageLoaderClient::layoutMilestones() const
+OptionSet<WebCore::LayoutMilestone> InjectedBundlePageLoaderClient::layoutMilestones() const
 {
-    LayoutMilestones milestones = 0;
+    OptionSet<WebCore::LayoutMilestone> milestones;
     if (m_client.didFirstLayoutForFrame)
-        milestones |= WebCore::DidFirstLayout;
+        milestones.add(WebCore::DidFirstLayout);
     if (m_client.didFirstVisuallyNonEmptyLayoutForFrame)
-        milestones |= WebCore::DidFirstVisuallyNonEmptyLayout;
+        milestones.add(WebCore::DidFirstVisuallyNonEmptyLayout);
     return milestones;
 }
 

@@ -68,7 +68,7 @@ public:
     void didFirstLayoutForFrame(WebPage&, WebFrame&, RefPtr<API::Object>&) override;
     void didFirstVisuallyNonEmptyLayoutForFrame(WebPage&, WebFrame&, RefPtr<API::Object>&) override;
     void didLayoutForFrame(WebPage&, WebFrame&) override;
-    void didReachLayoutMilestone(WebPage&, WebCore::LayoutMilestones, RefPtr<API::Object>&) override;
+    void didReachLayoutMilestone(WebPage&, OptionSet<WebCore::LayoutMilestone>, RefPtr<API::Object>&) override;
 
     void didClearWindowObjectForFrame(WebPage&, WebFrame&, WebCore::DOMWrapperWorld&) override;
     void didCancelClientRedirectForFrame(WebPage&, WebFrame&) override;
@@ -88,7 +88,7 @@ public:
 
     WTF::String userAgentForURL(WebFrame&, const WebCore::URL&) const override;
 
-    WebCore::LayoutMilestones layoutMilestones() const override;
+    OptionSet<WebCore::LayoutMilestone> layoutMilestones() const override;
 };
 
 } // namespace WebKit

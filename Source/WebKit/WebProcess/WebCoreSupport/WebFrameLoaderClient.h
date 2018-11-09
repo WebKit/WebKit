@@ -117,7 +117,7 @@ private:
     void dispatchDidFinishDocumentLoad() final;
     void dispatchDidFinishLoad() final;
 
-    void dispatchDidReachLayoutMilestone(WebCore::LayoutMilestones) final;
+    void dispatchDidReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone>) final;
     void dispatchDidLayout() final;
 
     WebCore::Frame* dispatchCreatePage(const WebCore::NavigationAction&) final;

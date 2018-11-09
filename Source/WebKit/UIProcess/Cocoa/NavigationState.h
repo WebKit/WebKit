@@ -108,7 +108,7 @@ private:
         void didFailNavigationWithError(WebPageProxy&, WebFrameProxy&, API::Navigation*, const WebCore::ResourceError&, API::Object*) override;
         void didSameDocumentNavigation(WebPageProxy&, API::Navigation*, SameDocumentNavigationType, API::Object*) override;
 
-        void renderingProgressDidChange(WebPageProxy&, WebCore::LayoutMilestones) override;
+        void renderingProgressDidChange(WebPageProxy&, OptionSet<WebCore::LayoutMilestone>) override;
 
         void didReceiveAuthenticationChallenge(WebPageProxy&, AuthenticationChallengeProxy&) override;
         bool processDidTerminate(WebPageProxy&, ProcessTerminationReason) override;

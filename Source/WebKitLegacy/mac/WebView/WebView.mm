@@ -600,14 +600,19 @@ FindOptions coreOptions(WebFindOptions options)
     return findOptions;
 }
 
-LayoutMilestones coreLayoutMilestones(WebLayoutMilestones milestones)
+OptionSet<WebCore::LayoutMilestone> coreLayoutMilestones(WebLayoutMilestones milestones)
 {
-    return (milestones & WebDidFirstLayout ? DidFirstLayout : 0)
-        | (milestones & WebDidFirstVisuallyNonEmptyLayout ? DidFirstVisuallyNonEmptyLayout : 0)
-        | (milestones & WebDidHitRelevantRepaintedObjectsAreaThreshold ? DidHitRelevantRepaintedObjectsAreaThreshold : 0);
+    OptionSet<WebCore::LayoutMilestone> layoutMilestone;
+    if (milestones & WebDidFirstLayout)
+        layoutMilestone.add(DidFirstLayout);
+    if (milestones & WebDidFirstVisuallyNonEmptyLayout)
+        layoutMilestone.add(DidFirstVisuallyNonEmptyLayout);
+    if (milestones & WebDidHitRelevantRepaintedObjectsAreaThreshold)
+        layoutMilestone.add(DidHitRelevantRepaintedObjectsAreaThreshold);
+    return layoutMilestone;
 }
 
-WebLayoutMilestones kitLayoutMilestones(LayoutMilestones milestones)
+WebLayoutMilestones kitLayoutMilestones(OptionSet<WebCore::LayoutMilestone> milestones)
 {
     return (milestones & DidFirstLayout ? WebDidFirstLayout : 0)
         | (milestones & DidFirstVisuallyNonEmptyLayout ? WebDidFirstVisuallyNonEmptyLayout : 0)
@@ -3299,14 +3304,14 @@ static inline IMP getMethod(id o, SEL s)
     // for backwards compatibility.
     Page* page = core(self);
     if (page) {
-        unsigned milestones = DidFirstLayout;
+        OptionSet<WebCore::LayoutMilestone> milestones { DidFirstLayout };
 #if PLATFORM(IOS_FAMILY)
-        milestones |= DidFirstVisuallyNonEmptyLayout;
+        milestones.add(DidFirstVisuallyNonEmptyLayout);
 #else
         if (cache->didFirstVisuallyNonEmptyLayoutInFrameFunc)
-            milestones |= DidFirstVisuallyNonEmptyLayout;
+            milestones.add(DidFirstVisuallyNonEmptyLayout);
 #endif
-        page->addLayoutMilestones(static_cast<LayoutMilestones>(milestones));
+        page->addLayoutMilestones(milestones);
     }
 }
 

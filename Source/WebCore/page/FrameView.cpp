@@ -207,7 +207,6 @@ FrameView::FrameView(Frame& frame)
     , m_autoSizeFixedMinimumHeight(0)
     , m_headerHeight(0)
     , m_footerHeight(0)
-    , m_milestonesPendingPaint(0)
     , m_visualUpdatesAllowedByClient(true)
     , m_hasFlippedBlockRenderers(false)
     , m_scrollPinningBehavior(DoNotPin)
@@ -5019,15 +5018,15 @@ void FrameView::willRemoveScrollbar(Scrollbar* scrollbar, ScrollbarOrientation o
     }
 }
 
-void FrameView::addPaintPendingMilestones(LayoutMilestones milestones)
+void FrameView::addPaintPendingMilestones(OptionSet<LayoutMilestone> milestones)
 {
-    m_milestonesPendingPaint |= milestones;
+    m_milestonesPendingPaint.add(milestones);
 }
 
 void FrameView::fireLayoutRelatedMilestonesIfNeeded()
 {
-    LayoutMilestones requestedMilestones = 0;
-    LayoutMilestones milestonesAchieved = 0;
+    OptionSet<LayoutMilestone> requestedMilestones;
+    OptionSet<LayoutMilestone> milestonesAchieved;
     Page* page = frame().page();
     if (page)
         requestedMilestones = page->requestedLayoutMilestones();
@@ -5036,7 +5035,7 @@ void FrameView::fireLayoutRelatedMilestonesIfNeeded()
         m_firstLayoutCallbackPending = false;
         frame().loader().didFirstLayout();
         if (requestedMilestones & DidFirstLayout)
-            milestonesAchieved |= DidFirstLayout;
+            milestonesAchieved.add(DidFirstLayout);
         if (frame().isMainFrame())
             page->startCountingRelevantRepaintedObjects();
     }
@@ -5047,13 +5046,13 @@ void FrameView::fireLayoutRelatedMilestonesIfNeeded()
     if (m_isVisuallyNonEmpty && m_firstVisuallyNonEmptyLayoutCallbackPending) {
         m_firstVisuallyNonEmptyLayoutCallbackPending = false;
         if (requestedMilestones & DidFirstVisuallyNonEmptyLayout)
-            milestonesAchieved |= DidFirstVisuallyNonEmptyLayout;
+            milestonesAchieved.add(DidFirstVisuallyNonEmptyLayout);
     }
 
     if (m_renderedSignificantAmountOfText && m_significantRenderedTextMilestonePending) {
         m_significantRenderedTextMilestonePending = false;
         if (requestedMilestones & DidRenderSignificantAmountOfText)
-            milestonesAchieved |= DidRenderSignificantAmountOfText;
+            milestonesAchieved.add(DidRenderSignificantAmountOfText);
     }
 
     if (milestonesAchieved && frame().isMainFrame())
@@ -5066,20 +5065,20 @@ void FrameView::firePaintRelatedMilestonesIfNeeded()
     if (!page)
         return;
 
-    LayoutMilestones milestonesAchieved = 0;
+    OptionSet<LayoutMilestone> milestonesAchieved;
 
     // Make sure the pending paint milestones have actually been requested before we send them.
     if (m_milestonesPendingPaint & DidFirstFlushForHeaderLayer) {
         if (page->requestedLayoutMilestones() & DidFirstFlushForHeaderLayer)
-            milestonesAchieved |= DidFirstFlushForHeaderLayer;
+            milestonesAchieved.add(DidFirstFlushForHeaderLayer);
     }
 
     if (m_milestonesPendingPaint & DidFirstPaintAfterSuppressedIncrementalRendering) {
         if (page->requestedLayoutMilestones() & DidFirstPaintAfterSuppressedIncrementalRendering)
-            milestonesAchieved |= DidFirstPaintAfterSuppressedIncrementalRendering;
+            milestonesAchieved.add(DidFirstPaintAfterSuppressedIncrementalRendering);
     }
 
-    m_milestonesPendingPaint = 0;
+    m_milestonesPendingPaint = { };
 
     if (milestonesAchieved)
         page->mainFrame().loader().didReachLayoutMilestone(milestonesAchieved);

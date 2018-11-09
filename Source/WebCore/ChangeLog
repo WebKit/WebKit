@@ -1,3 +1,34 @@
+2018-11-09  Antti Koivisto  <antti@apple.com>
+
+        Use OptionSet for layout milestones
+        https://bugs.webkit.org/show_bug.cgi?id=191470
+
+        Reviewed by Dean Jackson.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/EmptyFrameLoaderClient.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::didReachLayoutMilestone):
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderClient.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        (WebCore::FrameView::addPaintPendingMilestones):
+        (WebCore::FrameView::fireLayoutRelatedMilestonesIfNeeded):
+        (WebCore::FrameView::firePaintRelatedMilestonesIfNeeded):
+        * page/FrameView.h:
+        * page/LayoutMilestone.h: Copied from Source/WebCore/page/LayoutMilestones.h.
+
+        Renamed to appease WK2 IPC code generation.
+
+        * page/LayoutMilestones.h: Removed.
+        * page/Page.cpp:
+        (WebCore::Page::addLayoutMilestones):
+        (WebCore::Page::removeLayoutMilestones):
+        (WebCore::Page::isCountingRelevantRepaintedObjects const):
+        * page/Page.h:
+        (WebCore::Page::requestedLayoutMilestones const):
+
 2018-11-09  Daniel Bates  <dabates@apple.com>
 
         [iOS] Draw caps lock indicator in password fields

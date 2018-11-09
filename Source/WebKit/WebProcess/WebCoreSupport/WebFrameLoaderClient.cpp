@@ -632,7 +632,7 @@ void WebFrameLoaderClient::forcePageTransitionIfNeeded()
     m_didCompletePageTransition = true;
 }
 
-void WebFrameLoaderClient::dispatchDidReachLayoutMilestone(LayoutMilestones milestones)
+void WebFrameLoaderClient::dispatchDidReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone> milestones)
 {
     WebPage* webPage = m_frame->page();
     if (!webPage)

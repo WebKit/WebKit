@@ -1893,15 +1893,15 @@ void Page::remoteInspectorInformationDidChange() const
 }
 #endif
 
-void Page::addLayoutMilestones(LayoutMilestones milestones)
+void Page::addLayoutMilestones(OptionSet<LayoutMilestone> milestones)
 {
     // In the future, we may want a function that replaces m_layoutMilestones instead of just adding to it.
-    m_requestedLayoutMilestones |= milestones;
+    m_requestedLayoutMilestones.add(milestones);
 }
 
-void Page::removeLayoutMilestones(LayoutMilestones milestones)
+void Page::removeLayoutMilestones(OptionSet<LayoutMilestone> milestones)
 {
-    m_requestedLayoutMilestones &= ~milestones;
+    m_requestedLayoutMilestones.remove(milestones);
 }
 
 Color Page::pageExtendedBackgroundColor() const
@@ -1923,7 +1923,7 @@ static const double gMaximumUnpaintedAreaRatio = 0.04;
 
 bool Page::isCountingRelevantRepaintedObjects() const
 {
-    return m_isCountingRelevantRepaintedObjects && (m_requestedLayoutMilestones & DidHitRelevantRepaintedObjectsAreaThreshold);
+    return m_isCountingRelevantRepaintedObjects && m_requestedLayoutMilestones.contains(DidHitRelevantRepaintedObjectsAreaThreshold);
 }
 
 void Page::startCountingRelevantRepaintedObjects()

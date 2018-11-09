@@ -814,7 +814,7 @@ public:
     bool alwaysShowsHorizontalScroller() const { return m_alwaysShowsHorizontalScroller; }
     bool alwaysShowsVerticalScroller() const { return m_alwaysShowsVerticalScroller; }
 
-    void listenForLayoutMilestones(WebCore::LayoutMilestones);
+    void listenForLayoutMilestones(OptionSet<WebCore::LayoutMilestone>);
 
     bool hasHorizontalScrollbar() const { return m_mainFrameHasHorizontalScrollbar; }
     bool hasVerticalScrollbar() const { return m_mainFrameHasVerticalScrollbar; }
@@ -1288,7 +1288,7 @@ public:
     void clearWheelEventTestTrigger();
     void callAfterNextPresentationUpdate(WTF::Function<void (CallbackBase::Error)>&&);
 
-    void didReachLayoutMilestone(uint32_t layoutMilestones);
+    void didReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone>);
 
     void didRestoreScrollPosition();
 
@@ -2021,7 +2021,7 @@ private:
     bool m_alwaysShowsHorizontalScroller { false };
     bool m_alwaysShowsVerticalScroller { false };
 
-    WebCore::LayoutMilestones m_observedLayoutMilestones { 0 };
+    OptionSet<WebCore::LayoutMilestone> m_observedLayoutMilestones;
 
     bool m_suppressScrollbarAnimations { false };
 

@@ -411,7 +411,7 @@ void TiledCoreAnimationDrawingArea::sendPendingNewlyReachedLayoutMilestones()
         return;
 
     m_webPage.send(Messages::WebPageProxy::DidReachLayoutMilestone(m_pendingNewlyReachedLayoutMilestones));
-    m_pendingNewlyReachedLayoutMilestones = 0;
+    m_pendingNewlyReachedLayoutMilestones = { };
 }
 
 void TiledCoreAnimationDrawingArea::addTransactionCallbackID(CallbackID callbackID)
@@ -890,9 +890,9 @@ void TiledCoreAnimationDrawingArea::addFence(const MachSendRight& fencePort)
     m_layerHostingContext->setFencePort(fencePort.sendRight());
 }
 
-bool TiledCoreAnimationDrawingArea::dispatchDidReachLayoutMilestone(WebCore::LayoutMilestones layoutMilestones)
+bool TiledCoreAnimationDrawingArea::dispatchDidReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone> layoutMilestones)
 {
-    m_pendingNewlyReachedLayoutMilestones |= layoutMilestones;
+    m_pendingNewlyReachedLayoutMilestones.add(layoutMilestones);
     return true;
 }
 

@@ -34,7 +34,7 @@
 #include "CachePolicy.h"
 #include "FrameLoaderStateMachine.h"
 #include "FrameLoaderTypes.h"
-#include "LayoutMilestones.h"
+#include "LayoutMilestone.h"
 #include "MixedContentChecker.h"
 #include "ReferrerPolicy.h"
 #include "ResourceLoadNotifier.h"
@@ -203,7 +203,7 @@ public:
 
     CachePolicy subresourceCachePolicy(const URL&) const;
 
-    void didReachLayoutMilestone(LayoutMilestones);
+    void didReachLayoutMilestone(OptionSet<LayoutMilestone>);
     void didFirstLayout();
 
     void loadedResourceFromMemoryCache(CachedResource&, ResourceRequest& newRequest, ResourceError&);

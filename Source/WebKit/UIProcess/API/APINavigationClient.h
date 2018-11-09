@@ -37,7 +37,7 @@
 #include "WebFramePolicyListenerProxy.h"
 #include "WebsitePoliciesData.h"
 #include <WebCore/FrameLoaderTypes.h>
-#include <WebCore/LayoutMilestones.h>
+#include <WebCore/LayoutMilestone.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -87,7 +87,7 @@ public:
     virtual void didDisplayInsecureContent(WebKit::WebPageProxy&, API::Object*) { }
     virtual void didRunInsecureContent(WebKit::WebPageProxy&, API::Object*) { }
 
-    virtual void renderingProgressDidChange(WebKit::WebPageProxy&, WebCore::LayoutMilestones) { }
+    virtual void renderingProgressDidChange(WebKit::WebPageProxy&, OptionSet<WebCore::LayoutMilestone>) { }
 
     virtual void didReceiveAuthenticationChallenge(WebKit::WebPageProxy&, WebKit::AuthenticationChallengeProxy& challenge) { challenge.listener().completeChallenge(WebKit::AuthenticationChallengeDisposition::PerformDefaultHandling); }
 

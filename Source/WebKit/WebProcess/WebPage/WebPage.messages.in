@@ -236,7 +236,7 @@ messages -> WebPage LegacyReceiver {
 
     SetUseFixedLayout(bool fixed)
     SetFixedLayoutSize(WebCore::IntSize size)
-    ListenForLayoutMilestones(uint32_t milestones)
+    ListenForLayoutMilestones(OptionSet<WebCore::LayoutMilestone> layoutMilestones)
     SetSuppressScrollbarAnimations(bool suppressAnimations)
 
     SetEnableVerticalRubberBanding(bool enableVerticalRubberBanding)

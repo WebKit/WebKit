@@ -556,7 +556,7 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
     setMuted(parameters.muted);
 
     // We use the DidFirstVisuallyNonEmptyLayout milestone to determine when to unfreeze the layer tree.
-    m_page->addLayoutMilestones(DidFirstLayout | DidFirstVisuallyNonEmptyLayout);
+    m_page->addLayoutMilestones({ DidFirstLayout, DidFirstVisuallyNonEmptyLayout });
 
     auto& webProcess = WebProcess::singleton();
     webProcess.addMessageReceiver(Messages::WebPage::messageReceiverName(), m_pageID, *this);
@@ -1931,11 +1931,11 @@ void WebPage::viewportPropertiesDidChange(const ViewportArguments& viewportArgum
 #endif
 }
 
-void WebPage::listenForLayoutMilestones(uint32_t milestones)
+void WebPage::listenForLayoutMilestones(OptionSet<WebCore::LayoutMilestone> milestones)
 {
     if (!m_page)
         return;
-    m_page->addLayoutMilestones(static_cast<LayoutMilestones>(milestones));
+    m_page->addLayoutMilestones(milestones);
 }
 
 void WebPage::setSuppressScrollbarAnimations(bool suppressAnimations)
@@ -6030,7 +6030,7 @@ void WebPage::removeAllUserContent()
     m_userContentController->removeAllUserContent();
 }
 
-void WebPage::dispatchDidReachLayoutMilestone(WebCore::LayoutMilestones milestones)
+void WebPage::dispatchDidReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone> milestones)
 {
     RefPtr<API::Object> userData;
     injectedBundleLoaderClient().didReachLayoutMilestone(*this, milestones, userData);

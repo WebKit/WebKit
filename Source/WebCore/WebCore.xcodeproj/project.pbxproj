@@ -2573,7 +2573,7 @@
 		931CBD0D161A44E900E4C874 /* ScrollingStateNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 931CBD07161A44E900E4C874 /* ScrollingStateNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		931CBD0F161A44E900E4C874 /* ScrollingStateScrollingNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 931CBD09161A44E900E4C874 /* ScrollingStateScrollingNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		931CBD11161A44E900E4C874 /* ScrollingStateTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 931CBD0B161A44E900E4C874 /* ScrollingStateTree.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		931D72F615FE695300C4C07E /* LayoutMilestones.h in Headers */ = {isa = PBXBuildFile; fileRef = 931D72F515FE695300C4C07E /* LayoutMilestones.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		931D72F615FE695300C4C07E /* LayoutMilestone.h in Headers */ = {isa = PBXBuildFile; fileRef = 931D72F515FE695300C4C07E /* LayoutMilestone.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		932CC0B71DFFD158004C0F9F /* MediaTrackConstraints.h in Headers */ = {isa = PBXBuildFile; fileRef = 932CC0B61DFFD158004C0F9F /* MediaTrackConstraints.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		932CC0D51DFFD667004C0F9F /* JSMediaTrackConstraints.h in Headers */ = {isa = PBXBuildFile; fileRef = 932CC0D11DFFD667004C0F9F /* JSMediaTrackConstraints.h */; };
 		93309DD7099E64920056E581 /* AppendNodeCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309D88099E64910056E581 /* AppendNodeCommand.h */; };
@@ -10394,7 +10394,7 @@
 		931CBD09161A44E900E4C874 /* ScrollingStateScrollingNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingStateScrollingNode.h; sourceTree = "<group>"; };
 		931CBD0A161A44E900E4C874 /* ScrollingStateTree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingStateTree.cpp; sourceTree = "<group>"; };
 		931CBD0B161A44E900E4C874 /* ScrollingStateTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingStateTree.h; sourceTree = "<group>"; };
-		931D72F515FE695300C4C07E /* LayoutMilestones.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayoutMilestones.h; sourceTree = "<group>"; };
+		931D72F515FE695300C4C07E /* LayoutMilestone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayoutMilestone.h; sourceTree = "<group>"; };
 		9327A94109968D1A0068A546 /* HTMLOptionsCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLOptionsCollection.cpp; sourceTree = "<group>"; };
 		932CC0B61DFFD158004C0F9F /* MediaTrackConstraints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaTrackConstraints.h; sourceTree = "<group>"; };
 		932CC0D01DFFD667004C0F9F /* JSMediaTrackConstraints.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaTrackConstraints.cpp; sourceTree = "<group>"; };
@@ -19897,7 +19897,7 @@
 				0F4710D91DB6FE22002DCEC3 /* IntersectionObserverEntry.h */,
 				0F4710DA1DB6FE22002DCEC3 /* IntersectionObserverEntry.idl */,
 				E4916FF6195DF6A0005AB349 /* LayerFlushThrottleState.h */,
-				931D72F515FE695300C4C07E /* LayoutMilestones.h */,
+				931D72F515FE695300C4C07E /* LayoutMilestone.h */,
 				BCE1C41A0D982980003B02F2 /* Location.cpp */,
 				BCE1C4190D982980003B02F2 /* Location.h */,
 				BCE1C4220D9829F2003B02F2 /* Location.idl */,
@@ -30007,7 +30007,7 @@
 				1199FA4F208E3899002358CC /* LayoutInlineContainer.h in Headers */,
 				11310CF420BA4A3D0065A8D0 /* LayoutIterator.h in Headers */,
 				6FE7CFA42177EF10005B1573 /* LayoutLineBreakBox.h in Headers */,
-				931D72F615FE695300C4C07E /* LayoutMilestones.h in Headers */,
+				931D72F615FE695300C4C07E /* LayoutMilestone.h in Headers */,
 				141DC051164834B900371E5A /* LayoutPoint.h in Headers */,
 				141DC053164834B900371E5A /* LayoutRect.h in Headers */,
 				A12538D413F9B60A00024754 /* LayoutRepainter.h in Headers */,

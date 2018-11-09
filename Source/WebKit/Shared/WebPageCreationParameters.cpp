@@ -103,7 +103,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << appleMailLinesClampEnabled;
     encoder << shouldScaleViewToFitDocument;
     encoder.encodeEnum(userInterfaceLayoutDirection);
-    encoder.encodeEnum(observedLayoutMilestones);
+    encoder << observedLayoutMilestones;
     encoder << overrideContentSecurityPolicy;
     encoder << cpuLimit;
     encoder << urlSchemeHandlers;
@@ -288,7 +288,7 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
 
     if (!decoder.decodeEnum(parameters.userInterfaceLayoutDirection))
         return std::nullopt;
-    if (!decoder.decodeEnum(parameters.observedLayoutMilestones))
+    if (!decoder.decode(parameters.observedLayoutMilestones))
         return std::nullopt;
 
     if (!decoder.decode(parameters.overrideContentSecurityPolicy))

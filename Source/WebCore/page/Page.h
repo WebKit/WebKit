@@ -25,7 +25,7 @@
 #include "Document.h"
 #include "FindOptions.h"
 #include "FrameLoaderTypes.h"
-#include "LayoutMilestones.h"
+#include "LayoutMilestone.h"
 #include "LayoutRect.h"
 #include "LengthBox.h"
 #include "MediaProducer.h"
@@ -503,9 +503,9 @@ public:
     WEBCORE_EXPORT VisibilityState visibilityState() const;
     WEBCORE_EXPORT void resumeAnimatingImages();
 
-    WEBCORE_EXPORT void addLayoutMilestones(LayoutMilestones);
-    WEBCORE_EXPORT void removeLayoutMilestones(LayoutMilestones);
-    LayoutMilestones requestedLayoutMilestones() const { return m_requestedLayoutMilestones; }
+    WEBCORE_EXPORT void addLayoutMilestones(OptionSet<LayoutMilestone>);
+    WEBCORE_EXPORT void removeLayoutMilestones(OptionSet<LayoutMilestone>);
+    OptionSet<LayoutMilestone> requestedLayoutMilestones() const { return m_requestedLayoutMilestones; }
 
 #if ENABLE(RUBBER_BANDING)
     WEBCORE_EXPORT void addHeaderWithHeight(int);
@@ -831,7 +831,7 @@ private:
     bool m_isPrerender { false };
     OptionSet<ActivityState::Flag> m_activityState;
 
-    LayoutMilestones m_requestedLayoutMilestones { 0 };
+    OptionSet<LayoutMilestone> m_requestedLayoutMilestones;
 
     int m_headerHeight { 0 };
     int m_footerHeight { 0 };

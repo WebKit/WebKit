@@ -138,7 +138,7 @@ messages -> WebPageProxy {
     DidFinishLoadForFrame(uint64_t frameID, uint64_t navigationID, WebKit::UserData userData)
     DidFirstLayoutForFrame(uint64_t frameID, WebKit::UserData userData)
     DidFirstVisuallyNonEmptyLayoutForFrame(uint64_t frameID, WebKit::UserData userData)
-    DidReachLayoutMilestone(uint32_t type)
+    DidReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone> layoutMilestones)
     DidReceiveTitleForFrame(uint64_t frameID, String title, WebKit::UserData userData)
     DidDisplayInsecureContentForFrame(uint64_t frameID, WebKit::UserData userData)
     DidRunInsecureContentForFrame(uint64_t frameID, WebKit::UserData userData)

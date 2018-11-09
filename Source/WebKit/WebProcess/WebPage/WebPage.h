@@ -469,7 +469,7 @@ public:
     bool setFixedLayoutSize(const WebCore::IntSize&);
     WebCore::IntSize fixedLayoutSize() const;
 
-    void listenForLayoutMilestones(uint32_t /* LayoutMilestones */);
+    void listenForLayoutMilestones(OptionSet<WebCore::LayoutMilestone>);
 
     void setSuppressScrollbarAnimations(bool);
     
@@ -1034,7 +1034,7 @@ public:
     void addUserStyleSheet(const String& source, WebCore::UserContentInjectedFrames);
     void removeAllUserContent();
 
-    void dispatchDidReachLayoutMilestone(WebCore::LayoutMilestones);
+    void dispatchDidReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone>);
 
     void didRestoreScrollPosition();
 

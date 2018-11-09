@@ -1,3 +1,14 @@
+2018-11-09  Antti Koivisto  <antti@apple.com>
+
+        Use OptionSet for layout milestones
+        https://bugs.webkit.org/show_bug.cgi?id=191470
+
+        Reviewed by Dean Jackson.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::dispatchDidReachLayoutMilestone):
+        * WebCoreSupport/WebFrameLoaderClient.h:
+
 2018-11-09  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         WebHistory.h: warning: 'QueryInterface' overrides a member function but is not marked 'override' [-Winconsistent-missing-override]

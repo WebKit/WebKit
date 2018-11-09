@@ -98,7 +98,7 @@ public:
     void dispatchDidFailLoad(const WebCore::ResourceError&) override;
     void dispatchDidFinishDocumentLoad() override;
     void dispatchDidFinishLoad() override;
-    void dispatchDidReachLayoutMilestone(WebCore::LayoutMilestones) override;
+    void dispatchDidReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone>) override;
 
     void dispatchDecidePolicyForResponse(const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, WebCore::FramePolicyFunction&&) override;
     void dispatchDecidePolicyForNewWindowAction(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, WebCore::FormState*, const WTF::String& frameName, WebCore::FramePolicyFunction&&) override;

@@ -33,7 +33,7 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/LayerFlushThrottleState.h>
-#include <WebCore/LayoutMilestones.h>
+#include <WebCore/LayoutMilestone.h>
 #include <WebCore/PlatformScreen.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
@@ -130,7 +130,7 @@ public:
 
     virtual void setShouldScaleViewToFitDocument(bool) { }
 
-    virtual bool dispatchDidReachLayoutMilestone(WebCore::LayoutMilestones) { return false; }
+    virtual bool dispatchDidReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone>) { return false; }
 
 #if PLATFORM(COCOA)
     // Used by TiledCoreAnimationDrawingArea.
