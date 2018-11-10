@@ -22,7 +22,7 @@
         shouldBeEqualToString("input.helpText", "AXHint: ");
         document.getElementById("submit").click();
         handle = setInterval(function() {
-            if (input.helpText) === "AXHint: ")
+            if (input.helpText === "AXHint: ")
                 return;
             clearInterval(handle);
             shouldBeEqualToString("input.helpText", "AXHint: Fill out this field");

@@ -1,5 +1,11 @@
 2018-11-10  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, fix typo in r238066.
+
+        * accessibility/ios-simulator/form-control-validation-message.html:
+
+2018-11-10  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed attempt to deflake accessibility/ios-simulator/form-control-validation-message.html
 
         * accessibility/ios-simulator/form-control-validation-message.html:
