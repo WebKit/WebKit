@@ -21,10 +21,13 @@
         
         shouldBeEqualToString("input.helpText", "AXHint: ");
         document.getElementById("submit").click();
-        setTimeout(function() {
+        handle = setInterval(function() {
+            if (input.helpText) === "AXHint: ")
+                return;
+            clearInterval(handle);
             shouldBeEqualToString("input.helpText", "AXHint: Fill out this field");
             finishJSTest();
-        }, 0);
+        }, 10);
     }
 </script>
 </body>
