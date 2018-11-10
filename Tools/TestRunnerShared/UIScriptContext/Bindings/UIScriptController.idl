@@ -272,4 +272,7 @@ interface UIScriptController {
     void firstResponderSuppressionForWebView(boolean shouldSuppress);
     void makeWindowContentViewFirstResponder();
     readonly attribute boolean isWindowContentViewFirstResponder;
+
+    void drawSquareInEditableImage();
+    readonly attribute long numberOfStrokesInEditableImage;
 };

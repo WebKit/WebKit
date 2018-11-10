@@ -76,7 +76,8 @@ public:
         LayerTypeLightSystemBackdropLayer,
         LayerTypeDarkSystemBackdropLayer,
         LayerTypeScrollingLayer,
-        LayerTypeCustom
+        LayerTypeEditableImageLayer,
+        LayerTypeCustom,
     };
     enum FilterType { Linear, Nearest, Trilinear };
 
@@ -235,6 +236,8 @@ public:
     
     virtual GraphicsLayer::CustomAppearance customAppearance() const = 0;
     virtual void updateCustomAppearance(GraphicsLayer::CustomAppearance) = 0;
+
+    virtual GraphicsLayer::EmbeddedViewID embeddedViewID() const = 0;
 
     virtual TiledBacking* tiledBacking() = 0;
 

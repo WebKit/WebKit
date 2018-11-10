@@ -1,3 +1,96 @@
+2018-11-10  Tim Horton  <timothy_horton@apple.com>
+
+        Make it possible to edit images inline
+        https://bugs.webkit.org/show_bug.cgi?id=191352
+        <rdar://problem/30107985>
+
+        Reviewed by Dean Jackson.
+
+        * Platform/spi/ios/PencilKitSPI.h: Added.
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::drawInContext):
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.h:
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::LayerCreationProperties):
+        (WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::encode const):
+        (WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::decode):
+        * WebProcess/WebPage/RemoteLayerTree/GraphicsLayerCARemote.cpp:
+        (WebKit::GraphicsLayerCARemote::createPlatformCALayerForEmbeddedView):
+        * WebProcess/WebPage/RemoteLayerTree/GraphicsLayerCARemote.h:
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::createForEmbeddedView):
+        (WebKit::PlatformCALayerRemote::PlatformCALayerRemote):
+        (WebKit::PlatformCALayerRemote::embeddedViewID const):
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemote.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeContext.mm:
+        (WebKit::RemoteLayerTreeContext::layerWasCreated):
+        Propagate EmbeddedViewID through the PlatformCALayer constructor and
+        through the layer creation parameters to the UI process.
+
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration _setEditableImagesEnabled:]):
+        (-[WKWebViewConfiguration _editableImagesEnabled]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        Add a preference to enable editable images.
+
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeHost.h:
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::layerWillBeRemoved):
+        (WebKit::RemoteLayerTreeHost::clearLayers):
+        (WebKit::RemoteLayerTreeHost::createLayer):
+        Keep track of "embedded views" in two maps: embeddedViewID->UIView,
+        and layerID->embeddedViewID. Clean them up when layers go away.
+        If a embedded view is reparented, currently it must be added to a new
+        layer in the same commit as it is removed from the previous layer
+        in order to persist the view's state (otherwise the view will be
+        destroyed and recreated). This will be less of a problem after future
+        patches introduce serialization of image data and whatnot.
+
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeHostIOS.mm:
+        (WebKit::RemoteLayerTreeHost::createLayer):
+        (WebKit::RemoteLayerTreeHost::createEmbeddedView):
+        Move the various remote layer tree UIView subclasses out into a separate file.
+
+        Add createEmbeddedView, which is used for LayerTypeEditableImageLayer,
+        and creates a WKDrawingView and sticks it in the maps.
+
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeViews.h: Added.
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeViews.mm: Added.
+        (-[UIView _web_recursiveFindDescendantInteractibleViewAtPoint:withEvent:]):
+        (-[UIView _web_findDescendantViewAtPoint:withEvent:]):
+        (-[WKCompositingView hitTest:withEvent:]):
+        (-[WKCompositingView description]):
+        (+[WKTransformView layerClass]):
+        (+[WKSimpleBackdropView layerClass]):
+        (+[WKShapeView layerClass]):
+        (-[WKRemoteView initWithFrame:contextID:]):
+        (+[WKRemoteView layerClass]):
+        (-[WKBackdropView hitTest:withEvent:]):
+        (-[WKBackdropView description]):
+        (-[WKChildScrollView initWithFrame:]):
+        Move various remote layer tree UIView subclasses here, to their own file.
+        Make our UIView hit testing override test for views that conform to the
+        protocol "WKNativelyInteractible", which switches to normal UIView hit
+        testing. WKDrawingView will be the one such view.
+
+        Add WKChildScrollView and pull the one thing we customize out into it,
+        to make RemoteLayerTreeHost::createLayer less logic-ful.
+
+        * UIProcess/ios/WKDrawingView.h: Added.
+        * UIProcess/ios/WKDrawingView.mm: Added.
+        (-[WKDrawingView init]):
+        (-[WKDrawingView layoutSubviews]):
+        Add a very simple WKDrawingView, which uses PKCanvasView to edit the image.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        * SourcesCocoa.txt:
+        Add the new files.
+
 2018-11-09  Zalan Bujtas  <zalan@apple.com>
 
         [iOS] Issue initial paint soon after the visuallyNonEmpty milestone is fired.

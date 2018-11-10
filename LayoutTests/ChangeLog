@@ -1,3 +1,24 @@
+2018-11-10  Tim Horton  <timothy_horton@apple.com>
+
+        Make it possible to edit images inline
+        https://bugs.webkit.org/show_bug.cgi?id=191352
+        <rdar://problem/30107985>
+
+        Reviewed by Dean Jackson.
+
+        * TestExpectations:
+        * editing/images/basic-editable-image-expected.txt: Added.
+        * editing/images/basic-editable-image.html: Added.
+        * editing/images/reparent-editable-image-maintains-strokes-expected.txt: Added.
+        * editing/images/reparent-editable-image-maintains-strokes.html: Added.
+        * platform/ios-wk2/TestExpectations:
+        * resources/ui-helper.js:
+        (window.UIHelper.drawSquareInEditableImage):
+        (window.UIHelper.numberOfStrokesInEditableImage):
+        (window.UIHelper):
+        Add tests that we can find and draw in editable images, and that if
+        the element is moved around in the DOM, it persists its strokes.
+
 2018-11-09  Megan Gardner  <megan_gardner@apple.com>
 
         Fix Test Expectations for Reveal Test

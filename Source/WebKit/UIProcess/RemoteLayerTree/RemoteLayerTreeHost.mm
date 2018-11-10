@@ -151,11 +151,18 @@ LayerOrView *RemoteLayerTreeHost::getLayer(GraphicsLayer::PlatformLayerID layerI
 
 void RemoteLayerTreeHost::layerWillBeRemoved(WebCore::GraphicsLayer::PlatformLayerID layerID)
 {
-    auto iter = m_animationDelegates.find(layerID);
-    if (iter != m_animationDelegates.end()) {
-        [iter->value invalidate];
-        m_animationDelegates.remove(iter);
+    auto animationDelegateIter = m_animationDelegates.find(layerID);
+    if (animationDelegateIter != m_animationDelegates.end()) {
+        [animationDelegateIter->value invalidate];
+        m_animationDelegates.remove(animationDelegateIter);
     }
+
+    auto embeddedViewIter = m_layerToEmbeddedViewMap.find(layerID);
+    if (embeddedViewIter != m_layerToEmbeddedViewMap.end()) {
+        m_embeddedViews.remove(embeddedViewIter->value);
+        m_layerToEmbeddedViewMap.remove(embeddedViewIter);
+    }
+
     m_layers.remove(layerID);
 }
 
@@ -218,6 +225,8 @@ void RemoteLayerTreeHost::clearLayers()
     }
 
     m_layers.clear();
+    m_embeddedViews.clear();
+    m_layerToEmbeddedViewMap.clear();
     m_rootLayer = nullptr;
 }
 
@@ -254,6 +263,7 @@ LayerOrView *RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::
     case PlatformCALayer::LayerTypePageTiledBackingLayer:
     case PlatformCALayer::LayerTypeTiledBackingTileLayer:
     case PlatformCALayer::LayerTypeScrollingLayer:
+    case PlatformCALayer::LayerTypeEditableImageLayer:
         layer = adoptNS([[CALayer alloc] init]);
         break;
     case PlatformCALayer::LayerTypeTransformLayer:

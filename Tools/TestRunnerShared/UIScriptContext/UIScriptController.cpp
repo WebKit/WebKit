@@ -481,6 +481,15 @@ void UIScriptController::setSafeAreaInsets(double top, double right, double bott
 {
 }
 
+void UIScriptController::drawSquareInEditableImage()
+{
+}
+
+long UIScriptController::numberOfStrokesInEditableImage()
+{
+    return 0;
+}
+
 #endif
 
 #if !PLATFORM(COCOA)

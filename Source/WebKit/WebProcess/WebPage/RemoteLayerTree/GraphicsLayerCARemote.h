@@ -49,6 +49,7 @@ private:
 
     Ref<WebCore::PlatformCALayer> createPlatformCALayer(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient* owner) override;
     Ref<WebCore::PlatformCALayer> createPlatformCALayer(PlatformLayer*, WebCore::PlatformCALayerClient* owner) override;
+    Ref<WebCore::PlatformCALayer> createPlatformCALayerForEmbeddedView(WebCore::PlatformCALayer::LayerType, GraphicsLayer::EmbeddedViewID, WebCore::PlatformCALayerClient* owner) override;
     Ref<WebCore::PlatformCAAnimation> createPlatformCAAnimation(WebCore::PlatformCAAnimation::AnimationType, const String& keyPath) override;
 
     // PlatformCALayerRemote can't currently proxy directly composited image contents, so opt out of this optimization.

@@ -154,10 +154,13 @@ void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOpt
 #endif
 
     if (options.enableAttachmentElement)
-        [copiedConfiguration _setAttachmentElementEnabled: YES];
+        [copiedConfiguration _setAttachmentElementEnabled:YES];
 
     if (options.enableColorFilter)
-        [copiedConfiguration _setColorFilterEnabled: YES];
+        [copiedConfiguration _setColorFilterEnabled:YES];
+
+    if (options.enableEditableImages)
+        [copiedConfiguration _setEditableImagesEnabled:YES];
 
     if (options.applicationManifest.length()) {
         auto manifestPath = [NSString stringWithUTF8String:options.applicationManifest.c_str()];

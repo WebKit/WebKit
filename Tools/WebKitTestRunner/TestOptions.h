@@ -64,6 +64,7 @@ struct TestOptions {
     bool checkForWorldLeaks { false };
     bool shouldIgnoreMetaViewport { false };
     bool shouldShowSpellCheckingDots { false };
+    bool enableEditableImages { false };
 
     float deviceScaleFactor { 1 };
     Vector<String> overrideLanguages;
@@ -105,7 +106,8 @@ struct TestOptions {
             || runSingly != options.runSingly
             || checkForWorldLeaks != options.checkForWorldLeaks
             || shouldShowSpellCheckingDots != options.shouldShowSpellCheckingDots
-            || shouldIgnoreMetaViewport != options.shouldIgnoreMetaViewport)
+            || shouldIgnoreMetaViewport != options.shouldIgnoreMetaViewport
+            || enableEditableImages != options.enableEditableImages)
             return false;
 
         if (experimentalFeatures != options.experimentalFeatures)

@@ -159,6 +159,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     BOOL _incompleteImageBorderEnabled;
     BOOL _shouldDeferAsynchronousScriptsUntilAfterDocumentLoad;
     BOOL _drawsBackground;
+    BOOL _editableImagesEnabled;
 
     RetainPtr<NSString> _mediaContentTypesRequiringHardwareSupport;
     RetainPtr<NSArray<NSString *>> _additionalSupportedImageTypes;
@@ -245,6 +246,8 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     _incompleteImageBorderEnabled = NO;
     _shouldDeferAsynchronousScriptsUntilAfterDocumentLoad = NO;
     _drawsBackground = YES;
+
+    _editableImagesEnabled = NO;
 
     return self;
 }
@@ -404,6 +407,8 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     configuration->_incompleteImageBorderEnabled = self->_incompleteImageBorderEnabled;
     configuration->_shouldDeferAsynchronousScriptsUntilAfterDocumentLoad = self->_shouldDeferAsynchronousScriptsUntilAfterDocumentLoad;
     configuration->_drawsBackground = self->_drawsBackground;
+
+    configuration->_editableImagesEnabled = self->_editableImagesEnabled;
 
     return configuration;
 }
@@ -1020,6 +1025,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (BOOL)_allowMediaContentTypesRequiringHardwareSupportAsFallback
 {
     return _allowMediaContentTypesRequiringHardwareSupportAsFallback;
+}
+
+- (void)_setEditableImagesEnabled:(BOOL)enabled
+{
+    _editableImagesEnabled = enabled;
+}
+
+- (BOOL)_editableImagesEnabled
+{
+    return _editableImagesEnabled;
 }
 
 @end

@@ -1,0 +1,25 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableEditableImages=true ] -->
+<head>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+addEventListener("load", async () => {
+    await UIHelper.drawSquareInEditableImage();
+    const numberOfStrokesInEditableImageAfterDrawing = (await UIHelper.numberOfStrokesInEditableImage());
+    document.getElementById("other").appendChild(document.getElementById("editableImage"));
+    const numberOfStrokesInEditableImageAfterReparenting = (await UIHelper.numberOfStrokesInEditableImage());
+
+    document.getElementById("log").innerHTML = `Had ${numberOfStrokesInEditableImageAfterDrawing} stroke in editable image after drawing.<br/>Had ${numberOfStrokesInEditableImageAfterReparenting} stroke in editable image after reparenting it under another element.`;
+    testRunner.notifyDone();
+});
+</script>
+</head>
+<body>
+<div id="log"></div>
+<img id="editableImage" x-apple-editable-image="true" width="300" height="300">
+<div id="other"></div>
+</body>

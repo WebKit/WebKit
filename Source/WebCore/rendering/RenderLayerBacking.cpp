@@ -766,6 +766,14 @@ bool RenderLayerBacking::updateConfiguration()
     if (is<RenderWidget>(renderer()))
         layerConfigChanged = RenderLayerCompositor::parentFrameContentLayers(&downcast<RenderWidget>(renderer()));
 
+    if (is<RenderImage>(renderer()) && downcast<RenderImage>(renderer()).isEditableImage()) {
+        auto element = renderer().element();
+        if (is<HTMLImageElement>(element)) {
+            m_graphicsLayer->setContentsToEmbeddedView(GraphicsLayer::ContentsLayerEmbeddedViewType::EditableImage, downcast<HTMLImageElement>(element)->editableImageViewID());
+            layerConfigChanged = true;
+        }
+    }
+
     return layerConfigChanged;
 }
 

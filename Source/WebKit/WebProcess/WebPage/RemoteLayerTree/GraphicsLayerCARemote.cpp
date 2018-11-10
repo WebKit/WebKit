@@ -57,6 +57,11 @@ Ref<PlatformCALayer> GraphicsLayerCARemote::createPlatformCALayer(PlatformLayer*
     return PlatformCALayerRemote::create(platformLayer, owner, m_context);
 }
 
+Ref<PlatformCALayer> GraphicsLayerCARemote::createPlatformCALayerForEmbeddedView(PlatformCALayer::LayerType layerType, GraphicsLayer::EmbeddedViewID embeddedViewID, PlatformCALayerClient* owner)
+{
+    return PlatformCALayerRemote::createForEmbeddedView(layerType, embeddedViewID, owner, m_context);
+}
+
 Ref<PlatformCAAnimation> GraphicsLayerCARemote::createPlatformCAAnimation(PlatformCAAnimation::AnimationType type, const String& keyPath)
 {
     return PlatformCAAnimationRemote::create(type, keyPath);
