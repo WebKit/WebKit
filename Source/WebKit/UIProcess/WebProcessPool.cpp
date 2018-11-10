@@ -2248,7 +2248,7 @@ Ref<WebProcessProxy> WebProcessPool::processForNavigationInternal(WebPageProxy& 
     return createNewWebProcess(page.websiteDataStore());
 }
 
-void WebProcessPool::addSuspendedPageProxy(std::unique_ptr<SuspendedPageProxy>&& suspendedPage)
+void WebProcessPool::addSuspendedPage(std::unique_ptr<SuspendedPageProxy>&& suspendedPage)
 {
     if (m_suspendedPages.size() >= m_maxSuspendedPageCount)
         m_suspendedPages.removeFirst();
@@ -2256,21 +2256,30 @@ void WebProcessPool::addSuspendedPageProxy(std::unique_ptr<SuspendedPageProxy>&&
     m_suspendedPages.append(WTFMove(suspendedPage));
 }
 
-void WebProcessPool::removeAllSuspendedPageProxiesForPage(WebPageProxy& page)
+void WebProcessPool::removeAllSuspendedPagesForPage(WebPageProxy& page)
 {
     m_suspendedPages.removeAllMatching([&page](auto& suspendedPage) {
         return &suspendedPage->page() == &page;
     });
 }
 
-std::unique_ptr<SuspendedPageProxy> WebProcessPool::takeSuspendedPageProxy(SuspendedPageProxy& suspendedPage)
+std::unique_ptr<SuspendedPageProxy> WebProcessPool::takeSuspendedPage(SuspendedPageProxy& suspendedPage)
 {
     return m_suspendedPages.takeFirst([&suspendedPage](auto& item) {
         return item.get() == &suspendedPage;
     });
 }
 
-bool WebProcessPool::hasSuspendedPageProxyFor(WebProcessProxy& process) const
+void WebProcessPool::removeSuspendedPage(SuspendedPageProxy& suspendedPage)
+{
+    auto it = m_suspendedPages.findIf([&suspendedPage](auto& item) {
+        return item.get() == &suspendedPage;
+    });
+    if (it != m_suspendedPages.end())
+        m_suspendedPages.remove(it);
+}
+
+bool WebProcessPool::hasSuspendedPageFor(WebProcessProxy& process) const
 {
     return m_suspendedPages.findIf([&process](auto& suspendedPage) {
         return &suspendedPage->process() == &process;

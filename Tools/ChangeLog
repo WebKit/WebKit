@@ -1,3 +1,15 @@
+2018-11-09  Chris Dumez  <cdumez@apple.com>
+
+        Suspended page persists even after back/forward list item is gone
+        https://bugs.webkit.org/show_bug.cgi?id=191488
+        <rdar://problem/45953006>
+
+        Reviewed by Geoffrey Garen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2018-11-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Cocoa] Implement SPI on WKWebView to increase and decrease list levels

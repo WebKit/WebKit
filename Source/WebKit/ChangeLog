@@ -1,3 +1,35 @@
+2018-11-09  Chris Dumez  <cdumez@apple.com>
+
+        Suspended page persists even after back/forward list item is gone
+        https://bugs.webkit.org/show_bug.cgi?id=191488
+        <rdar://problem/45953006>
+
+        Reviewed by Geoffrey Garen.
+
+        Currently, the WebProcessPool owns the SuspendedPageProxy objects and makes sure we cap how
+        many we can have. The WebBackForwardListItem merely has a WeakPtr to its associated
+        SuspendedPageProxy. However, there is no point in having the WebProcessPool keeping a
+        SuspendedPageProxy object alive if there is no longer any WebBackForwardListItem pointing
+        to it.
+
+        To address the issue, WebBackForwardListItem nows tells the WebProcessPool to destroy
+        its SuspendedPageProxy when necessary. WebBackForwardList also takes care of nulling
+        out the WebBackForwardListItem's SuspendedPageProxy after the item has been removed
+        from the list (in case somebody keeps the item alive).
+
+        * Shared/WebBackForwardListItem.cpp:
+        (WebKit::WebBackForwardListItem::~WebBackForwardListItem):
+        (WebKit::WebBackForwardListItem::setSuspendedPage):
+        (WebKit::WebBackForwardListItem::suspendedPageIsNoLongerNeeded):
+        * Shared/WebBackForwardListItem.h:
+        * UIProcess/SuspendedPageProxy.cpp:
+        (WebKit::SuspendedPageProxy::SuspendedPageProxy):
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::didRemoveItem):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::removeSuspendedPageProxy):
+        * UIProcess/WebProcessPool.h:
+
 2018-11-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Cocoa] Implement SPI on WKWebView to increase and decrease list levels

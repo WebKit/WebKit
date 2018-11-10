@@ -27,6 +27,8 @@
 #include "WebBackForwardListItem.h"
 
 #include "SuspendedPageProxy.h"
+#include "WebProcessPool.h"
+#include "WebProcessProxy.h"
 #include <WebCore/URL.h>
 #include <wtf/DebugUtilities.h>
 
@@ -51,6 +53,8 @@ WebBackForwardListItem::~WebBackForwardListItem()
 {
     ASSERT(allItems().get(m_itemState.identifier) == this);
     allItems().remove(m_itemState.identifier);
+
+    removeSuspendedPageFromProcessPool();
 }
 
 HashMap<BackForwardItemIdentifier, WebBackForwardListItem*>& WebBackForwardListItem::allItems()
@@ -113,9 +117,22 @@ bool WebBackForwardListItem::itemIsInSameDocument(const WebBackForwardListItem& 
     return documentTreesAreEqual(mainFrameState, otherMainFrameState);
 }
 
-void WebBackForwardListItem::setSuspendedPage(SuspendedPageProxy& page)
+void WebBackForwardListItem::setSuspendedPage(SuspendedPageProxy* page)
 {
+    if (m_suspendedPage == page)
+        return;
+
+    removeSuspendedPageFromProcessPool();
     m_suspendedPage = makeWeakPtr(page);
+}
+
+void WebBackForwardListItem::removeSuspendedPageFromProcessPool()
+{
+    if (!m_suspendedPage)
+        return;
+
+    m_suspendedPage->process().processPool().removeSuspendedPage(*m_suspendedPage);
+    ASSERT(!m_suspendedPage);
 }
 
 #if !LOG_DISABLED

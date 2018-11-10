@@ -446,10 +446,11 @@ public:
     Ref<WebProcessProxy> processForNavigation(WebPageProxy&, const API::Navigation&, ProcessSwapRequestedByClient, String& reason);
 
     // SuspendedPageProxy management.
-    void addSuspendedPageProxy(std::unique_ptr<SuspendedPageProxy>&&);
-    void removeAllSuspendedPageProxiesForPage(WebPageProxy&);
-    std::unique_ptr<SuspendedPageProxy> takeSuspendedPageProxy(SuspendedPageProxy&);
-    bool hasSuspendedPageProxyFor(WebProcessProxy&) const;
+    void addSuspendedPage(std::unique_ptr<SuspendedPageProxy>&&);
+    void removeAllSuspendedPagesForPage(WebPageProxy&);
+    std::unique_ptr<SuspendedPageProxy> takeSuspendedPage(SuspendedPageProxy&);
+    void removeSuspendedPage(SuspendedPageProxy&);
+    bool hasSuspendedPageFor(WebProcessProxy&) const;
     unsigned maxSuspendedPageCount() const { return m_maxSuspendedPageCount; }
 
     void didReachGoodTimeToPrewarm();

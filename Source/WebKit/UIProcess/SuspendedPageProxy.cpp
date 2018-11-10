@@ -80,7 +80,7 @@ SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&
     , m_mainFrameID(mainFrameID)
     , m_registrableDomain(toRegistrableDomain(URL(URL(), item.url())))
 {
-    item.setSuspendedPage(*this);
+    item.setSuspendedPage(this);
     m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_page.pageID(), *this);
 
     m_process->send(Messages::WebPage::SetIsSuspended(true), m_page.pageID());

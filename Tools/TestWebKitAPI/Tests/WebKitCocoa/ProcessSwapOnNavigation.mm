@@ -623,6 +623,65 @@ TEST(ProcessSwap, Back)
         EXPECT_EQ(5u, seenPIDs.size());
 }
 
+TEST(ProcessSwap, SuspendedPageDiesAfterBackForwardListItemIsGone)
+{
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    EXPECT_GT([processPool _maximumSuspendedPageCount], 0U);
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto webkitPID = [webView _webProcessIdentifier];
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/main.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto applePID = [webView _webProcessIdentifier];
+    EXPECT_NE(webkitPID, applePID);
+
+    // webkit.org + apple.com processes.
+    EXPECT_EQ(2U, [processPool _webProcessCountIgnoringPrewarmed]);
+
+    [webView goBack]; // Back to webkit.org.
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    EXPECT_EQ(webkitPID, [webView _webProcessIdentifier]);
+
+    // webkit.org + apple.com processes.
+    EXPECT_EQ(2U, [processPool _webProcessCountIgnoringPrewarmed]);
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main2.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    EXPECT_EQ(webkitPID, [webView _webProcessIdentifier]);
+
+    // apple.com is not longer present in the back/forward list and there should therefore be no-suspended page for it.
+    while ([processPool _webProcessCountIgnoringPrewarmed] > 1u)
+        TestWebKitAPI::Util::spinRunLoop();
+}
+
 #if PLATFORM(MAC)
 TEST(ProcessSwap, SuspendedPagesInActivityMonitor)
 {

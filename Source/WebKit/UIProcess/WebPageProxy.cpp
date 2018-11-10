@@ -729,7 +729,7 @@ bool WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, std
 
     LOG(ProcessSwapping, "WebPageProxy %" PRIu64 " created suspended page %s for process pid %i, back/forward item %s" PRIu64, pageID(), suspendedPage->loggingString(), m_process->processIdentifier(), currentItem->itemID().logString());
 
-    m_process->processPool().addSuspendedPageProxy(WTFMove(suspendedPage));
+    m_process->processPool().addSuspendedPage(WTFMove(suspendedPage));
     return true;
 }
 
@@ -741,7 +741,7 @@ void WebPageProxy::swapToWebProcess(Ref<WebProcessProxy>&& process, API::Navigat
     std::unique_ptr<SuspendedPageProxy> destinationSuspendedPage;
     if (auto* backForwardListItem = navigation.targetItem()) {
         if (backForwardListItem->suspendedPage() && &backForwardListItem->suspendedPage()->process() == process.ptr()) {
-            destinationSuspendedPage = this->process().processPool().takeSuspendedPageProxy(*backForwardListItem->suspendedPage());
+            destinationSuspendedPage = this->process().processPool().takeSuspendedPage(*backForwardListItem->suspendedPage());
             ASSERT(destinationSuspendedPage);
             destinationSuspendedPage->unsuspend();
         }
@@ -940,7 +940,7 @@ void WebPageProxy::close()
 
     m_webProcessLifetimeTracker.pageWasInvalidated();
 
-    m_process->processPool().removeAllSuspendedPageProxiesForPage(*this);
+    m_process->processPool().removeAllSuspendedPagesForPage(*this);
 
     m_process->send(Messages::WebPage::Close(), m_pageID);
     m_process->removeWebPage(*this, m_pageID);
