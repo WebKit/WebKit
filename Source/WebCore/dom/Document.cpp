@@ -1804,6 +1804,19 @@ void Document::scheduleStyleRecalc()
 
     ASSERT(childNeedsStyleRecalc() || m_pendingStyleRecalcShouldForce);
 
+    auto shouldThrottleStyleRecalc = [&] {
+        if (m_pendingStyleRecalcShouldForce)
+            return false;
+        if (!view() || !view()->isVisuallyNonEmpty())
+            return false;
+        if (!page() || !page()->chrome().client().layerFlushThrottlingIsActive())
+            return false;
+        return true;
+    };
+
+    if (shouldThrottleStyleRecalc())
+        return;
+
     // FIXME: Why on earth is this here? This is clearly misplaced.
     invalidateAccessKeyMap();
     
@@ -3030,6 +3043,8 @@ bool Document::shouldScheduleLayout()
     if (!bodyOrFrameset())
         return false;
     if (styleScope().hasPendingSheetsBeforeBody())
+        return false;
+    if (page() && page()->chrome().client().layerFlushThrottlingIsActive() && view() && view()->isVisuallyNonEmpty())
         return false;
 
     return true;

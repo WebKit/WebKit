@@ -1,3 +1,39 @@
+2018-11-09  Zalan Bujtas  <zalan@apple.com>
+
+        [iOS] Issue initial paint soon after the visuallyNonEmpty milestone is fired.
+        https://bugs.webkit.org/show_bug.cgi?id=191078
+        <rdar://problem/45736178>
+
+        Reviewed by Antti Koivisto.
+
+        1. Improve visuallyNonEmpty milestone confidence level.
+            Ignore whitespace and non visible text content.
+            Parsing the main document should not necessarily fire the milestone. Check if there's any pending scripts/css/font loading.
+            Check if the html/body is actually visible.
+
+        2. Issue initial paint soon after the milestone fires.
+            Use a 0ms timer to flush the initial paint.
+            Throttle additional flushes for 500ms and 1.5s (original behaviour).
+
+        3. Suspend optional style recalcs and layouts while painting is being throttled.
+           When parsing yields we initiate a 0ms style recalc/layout timer.
+           These optional layouts produce content that we have no intention to paint. 
+
+        * dom/Document.cpp:
+        (WebCore::Document::scheduleStyleRecalc):
+        (WebCore::Document::shouldScheduleLayout):
+        * page/ChromeClient.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::resetLayoutMilestones):
+        (WebCore::FrameView::qualifiesAsVisuallyNonEmpty const):
+        (WebCore::FrameView::updateSignificantRenderedTextMilestoneIfNeeded):
+        (WebCore::FrameView::updateIsVisuallyNonEmpty):
+        * page/FrameView.h:
+        (WebCore::FrameView::incrementVisuallyNonEmptyCharacterCount): Ignore whitespace characters. Some pages start with plenty of whitespace only content.
+        * platform/graphics/FontCascade.h:
+        * rendering/RenderText.cpp: Check whether the text is actually visible at this point.
+        (WebCore::RenderText::RenderText):
+
 2018-11-09  John Wilander  <wilander@apple.com>
 
         Add ability to configure document.cookie lifetime cap through user defaults

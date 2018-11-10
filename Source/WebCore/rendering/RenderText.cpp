@@ -199,7 +199,16 @@ inline RenderText::RenderText(Node& node, const String& text)
     ASSERT(!m_text.isNull());
     setIsText();
     m_canUseSimpleFontCodePath = computeCanUseSimpleFontCodePath();
-    view().frameView().incrementVisuallyNonEmptyCharacterCount(text.impl()->length());
+
+    // FIXME: Find out how to increment the visually non empty character count when the font becomes available.
+    auto isTextVisible = false;
+    if (auto* parentElement = node.parentElement()) {
+        auto* style = parentElement->renderer() ? &parentElement->renderer()->style() : nullptr;
+        isTextVisible = style && style->visibility() == Visibility::Visible && !style->fontCascade().isLoadingCustomFonts();
+    }
+
+    if (isTextVisible)
+        view().frameView().incrementVisuallyNonEmptyCharacterCount(text);
 }
 
 RenderText::RenderText(Text& textNode, const String& text)

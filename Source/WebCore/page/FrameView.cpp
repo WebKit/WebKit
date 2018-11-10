@@ -37,6 +37,7 @@
 #include "DOMWindow.h"
 #include "DebugPageOverlays.h"
 #include "DeprecatedGlobalSettings.h"
+#include "DocumentLoader.h"
 #include "DocumentMarkerController.h"
 #include "EventHandler.h"
 #include "EventNames.h"
@@ -57,6 +58,7 @@
 #include "HTMLIFrameElement.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
+#include "HTMLParserIdioms.h"
 #include "HTMLPlugInImageElement.h"
 #include "ImageDocument.h"
 #include "InspectorClient.h"
@@ -87,6 +89,7 @@
 #include "RuntimeEnabledFeatures.h"
 #include "SVGDocument.h"
 #include "SVGSVGElement.h"
+#include "ScriptRunner.h"
 #include "ScriptedAnimationController.h"
 #include "ScrollAnimator.h"
 #include "ScrollingCoordinator.h"
@@ -296,7 +299,7 @@ void FrameView::resetLayoutMilestones()
     m_renderedSignificantAmountOfText = false;
     m_visuallyNonEmptyCharacterCount = 0;
     m_visuallyNonEmptyPixelCount = 0;
-    m_renderTextCountForVisuallyNonEmptyCharacters = 0;
+    m_textRendererCountForVisuallyNonEmptyCharacters = 0;
 }
 
 void FrameView::removeFromAXObjectCache()
@@ -4345,6 +4348,31 @@ void FrameView::updateLayoutAndStyleIfNeededRecursive()
     ASSERT(!needsLayout());
 }
 
+void FrameView::incrementVisuallyNonEmptyCharacterCount(const String& inlineText)
+{
+    if (m_isVisuallyNonEmpty && m_renderedSignificantAmountOfText)
+        return;
+
+    ++m_textRendererCountForVisuallyNonEmptyCharacters;
+
+    auto nonWhitespaceLength = [](auto& inlineText) {
+        auto length = inlineText.length();
+        for (unsigned i = 0; i < inlineText.length(); ++i) {
+            if (isNotHTMLSpace(inlineText[i]))
+                continue;
+            --length;
+        }
+        return length;
+    };
+    m_visuallyNonEmptyCharacterCount += nonWhitespaceLength(inlineText);
+
+    if (!m_isVisuallyNonEmpty && m_visuallyNonEmptyCharacterCount > visualCharacterThreshold)
+        updateIsVisuallyNonEmpty();
+
+    if (!m_renderedSignificantAmountOfText)
+        updateSignificantRenderedTextMilestoneIfNeeded();
+}
+
 static bool elementOverflowRectIsLargerThanThreshold(const Element& element)
 {
     // Require the document to grow a bit.
@@ -4363,12 +4391,27 @@ bool FrameView::qualifiesAsVisuallyNonEmpty() const
     if (!documentElement || !documentElement->renderer())
         return false;
 
-    // Ensure that we always get marked visually non-empty eventually.
-    if (!frame().document()->parsing() && frame().loader().stateMachine().committedFirstRealDocumentLoad())
-        return true;
-
     // FIXME: We should also ignore renderers with non-final style.
     if (frame().document()->styleScope().hasPendingSheetsBeforeBody())
+        return false;
+
+    auto finishedParsingMainDocument = frame().loader().stateMachine().committedFirstRealDocumentLoad() && !frame().document()->parsing();
+    // Ensure that we always fire visually non-empty milestone eventually.
+    if (finishedParsingMainDocument && frame().loader().isComplete())
+        return true;
+
+    auto isVisible = [](const Element* element) {
+        if (!element || !element->renderer())
+            return false;
+        if (!element->renderer()->opacity())
+            return false;
+        return element->renderer()->style().visibility() == Visibility::Visible;
+    };
+
+    if (!isVisible(documentElement))
+        return false;
+
+    if (!isVisible(frame().document()->body()))
         return false;
 
     if (!elementOverflowRectIsLargerThanThreshold(*documentElement))
@@ -4377,9 +4420,39 @@ bool FrameView::qualifiesAsVisuallyNonEmpty() const
     // The first few hundred characters rarely contain the interesting content of the page.
     if (m_visuallyNonEmptyCharacterCount > visualCharacterThreshold)
         return true;
+
     // Use a threshold value to prevent very small amounts of visible content from triggering didFirstVisuallyNonEmptyLayout
     if (m_visuallyNonEmptyPixelCount > visualPixelThreshold)
         return true;
+
+    auto isMoreContentExpected = [&]() {
+        // Pending css/javascript/font loading/processing means we should wait a little longer.
+        auto hasPendingScriptExecution = frame().document()->scriptRunner() && frame().document()->scriptRunner()->hasPendingScripts();
+        if (hasPendingScriptExecution)
+            return true;
+
+        auto* documentLoader = frame().loader().documentLoader();
+        if (!documentLoader)
+            return false;
+
+        auto& resourceLoader = documentLoader->cachedResourceLoader();
+        if (!resourceLoader.requestCount())
+            return false;
+
+        auto& resources = resourceLoader.allCachedResources();
+        for (auto& resource : resources) {
+            if (resource.value->isLoaded())
+                continue;
+            if (resource.value->type() == CachedResource::Type::CSSStyleSheet || resource.value->type() == CachedResource::Type::Script || resource.value->type() == CachedResource::Type::FontResource)
+                return true;
+        }
+        return false;
+    };
+
+    // Finished parsing the main document and we still don't yet have enough content. Check if we might be getting some more.
+    if (finishedParsingMainDocument)
+        return !isMoreContentExpected();
+
     return false;
 }
 
@@ -4402,7 +4475,7 @@ void FrameView::updateSignificantRenderedTextMilestoneIfNeeded()
     if (m_visuallyNonEmptyCharacterCount < characterThreshold)
         return;
 
-    if (!m_renderTextCountForVisuallyNonEmptyCharacters || m_visuallyNonEmptyCharacterCount / static_cast<float>(m_renderTextCountForVisuallyNonEmptyCharacters) < meanLength)
+    if (!m_textRendererCountForVisuallyNonEmptyCharacters || m_visuallyNonEmptyCharacterCount / static_cast<float>(m_textRendererCountForVisuallyNonEmptyCharacters) < meanLength)
         return;
 
     m_renderedSignificantAmountOfText = true;

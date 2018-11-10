@@ -223,6 +223,10 @@ void AcceleratedDrawingArea::scheduleCompositingLayerFlush()
         m_layerTreeHost->scheduleLayerFlush();
 }
 
+void AcceleratedDrawingArea::scheduleInitialDeferredPaint()
+{
+}
+
 void AcceleratedDrawingArea::scheduleCompositingLayerFlushImmediately()
 {
     scheduleCompositingLayerFlush();

@@ -185,7 +185,7 @@ void RemoteLayerTreeDrawingArea::setLayerTreeStateIsFrozen(bool isFrozen)
 
     if (!m_isFlushingSuspended && m_hasDeferredFlush) {
         m_hasDeferredFlush = false;
-        scheduleCompositingLayerFlush();
+        scheduleInitialDeferredPaint();
     }
 }
 
@@ -273,6 +273,16 @@ void RemoteLayerTreeDrawingArea::scheduleCompositingLayerFlushImmediately()
     m_layerFlushTimer.startOneShot(0_s);
 }
 
+void RemoteLayerTreeDrawingArea::scheduleInitialDeferredPaint()
+{
+    ASSERT(!m_isFlushingSuspended);
+    m_flushingInitialDeferredPaint = true;
+
+    if (m_layerFlushTimer.isActive())
+        return;
+    scheduleCompositingLayerFlushImmediately();
+}
+
 void RemoteLayerTreeDrawingArea::scheduleCompositingLayerFlush()
 {
     if (m_isFlushingSuspended) {
@@ -326,6 +336,13 @@ void RemoteLayerTreeDrawingArea::flushLayers()
     if (m_waitingForBackingStoreSwap) {
         m_hadFlushDeferredWhileWaitingForBackingStoreSwap = true;
         return;
+    }
+
+    if (m_flushingInitialDeferredPaint) {
+        m_flushingInitialDeferredPaint = false;
+        // Reschedule the flush timer for the second paint if painting is being throttled.
+        if (m_isThrottlingLayerFlushes)
+            scheduleCompositingLayerFlush();
     }
 
     RELEASE_ASSERT(!m_pendingBackingStoreFlusher || m_pendingBackingStoreFlusher->hasFlushed());

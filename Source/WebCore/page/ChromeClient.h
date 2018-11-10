@@ -333,6 +333,7 @@ public:
     
     // Returns true if layer tree updates are disabled.
     virtual bool layerTreeStateIsFrozen() const { return false; }
+    virtual bool layerFlushThrottlingIsActive() const { return false; }
 
     virtual bool adjustLayerFlushThrottling(LayerFlushThrottleState::Flags) { return false; }
 
