@@ -398,24 +398,4 @@ window.UIHelper = class UIHelper {
             })()`, scaleAsString => resolve(parseFloat(scaleAsString)))
         });
     }
-
-    static drawSquareInEditableImage()
-    {
-        if (!this.isWebKit2())
-            return Promise.resolve();
-
-        return new Promise(resolve => testRunner.runUIScript(`uiController.drawSquareInEditableImage()`, resolve));
-    }
-
-    static numberOfStrokesInEditableImage()
-    {
-        if (!this.isWebKit2())
-            return Promise.resolve();
-
-        return new Promise(resolve => {
-            testRunner.runUIScript(`(() => {
-                uiController.uiScriptComplete(uiController.numberOfStrokesInEditableImage);
-            })()`, numberAsString => resolve(parseInt(numberAsString, 10)))
-        });
-    }
 }

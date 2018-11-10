@@ -61,13 +61,6 @@ Ref<PlatformCALayerRemote> PlatformCALayerRemote::create(PlatformLayer *platform
     return PlatformCALayerRemoteCustom::create(platformLayer, owner, context);
 }
 
-Ref<PlatformCALayerRemote> PlatformCALayerRemote::createForEmbeddedView(LayerType layerType, GraphicsLayer::EmbeddedViewID embeddedViewID, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
-{
-    RefPtr<PlatformCALayerRemote> layer = adoptRef(new PlatformCALayerRemote(layerType, embeddedViewID, owner, context));
-    context.layerWasCreated(*layer, layerType);
-    return layer.releaseNonNull();
-}
-
 Ref<PlatformCALayerRemote> PlatformCALayerRemote::create(const PlatformCALayerRemote& other, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
 {
     auto layer = adoptRef(*new PlatformCALayerRemote(other, owner, context));
@@ -85,12 +78,6 @@ PlatformCALayerRemote::PlatformCALayerRemote(LayerType layerType, PlatformCALaye
         m_properties.contentsScale = owner->platformCALayerDeviceScaleFactor();
         m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::ContentsScaleChanged);
     }
-}
-
-PlatformCALayerRemote::PlatformCALayerRemote(LayerType layerType, GraphicsLayer::EmbeddedViewID embeddedViewID, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
-    : PlatformCALayerRemote(layerType, owner, context)
-{
-    m_embeddedViewID = embeddedViewID;
 }
 
 PlatformCALayerRemote::PlatformCALayerRemote(const PlatformCALayerRemote& other, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
@@ -856,11 +843,6 @@ void PlatformCALayerRemote::updateCustomAppearance(GraphicsLayer::CustomAppearan
 {
     m_properties.customAppearance = customAppearance;
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::CustomAppearanceChanged);
-}
-
-GraphicsLayer::EmbeddedViewID PlatformCALayerRemote::embeddedViewID() const
-{
-    return m_embeddedViewID;
 }
 
 Ref<PlatformCALayer> PlatformCALayerRemote::createCompatibleLayer(PlatformCALayer::LayerType layerType, PlatformCALayerClient* client) const

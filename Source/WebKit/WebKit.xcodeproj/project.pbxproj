@@ -703,10 +703,6 @@
 		2DABA7761A82B42100EF0F1A /* APIHistoryClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DABA7751A82B42100EF0F1A /* APIHistoryClient.h */; };
 		2DACE64E18ADBFF000E4CA76 /* _WKThumbnailViewInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DACE64D18ADBFF000E4CA76 /* _WKThumbnailViewInternal.h */; };
 		2DAF06D618BD1A470081CEB1 /* SmartMagnificationController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAF06D418BD1A470081CEB1 /* SmartMagnificationController.h */; };
-		2DC18FAD218910490025A88D /* WKDrawingView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC18FAB218910480025A88D /* WKDrawingView.h */; };
-		2DC18FB0218912640025A88D /* PencilKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC18FAF218912640025A88D /* PencilKitSPI.h */; };
-		2DC18FB3218A6E9E0025A88D /* RemoteLayerTreeViews.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC18FB1218A6E9E0025A88D /* RemoteLayerTreeViews.h */; };
-		2DC18FB4218A6E9E0025A88D /* RemoteLayerTreeViews.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DC18FB2218A6E9E0025A88D /* RemoteLayerTreeViews.mm */; };
 		2DC6D9C318C44A610043BAD4 /* WKWebViewContentProviderRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC6D9C118C44A610043BAD4 /* WKWebViewContentProviderRegistry.h */; };
 		2DD12A081A8177F3002C74E6 /* WKPageRenderingProgressEvents.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD12A071A8177F3002C74E6 /* WKPageRenderingProgressEvents.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2DD45ADE1E5F8972006C355F /* InputViewUpdateDeferrer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD45ADC1E5F8972006C355F /* InputViewUpdateDeferrer.h */; };
@@ -2744,11 +2740,6 @@
 		2DAF06D518BD1A470081CEB1 /* SmartMagnificationController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SmartMagnificationController.mm; path = ios/SmartMagnificationController.mm; sourceTree = "<group>"; };
 		2DAF06D818BD23BA0081CEB1 /* SmartMagnificationController.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; name = SmartMagnificationController.messages.in; path = ios/SmartMagnificationController.messages.in; sourceTree = "<group>"; };
 		2DAF4FFA1B636181006013D6 /* ViewGestureController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ViewGestureController.cpp; sourceTree = "<group>"; };
-		2DC18FAB218910480025A88D /* WKDrawingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKDrawingView.h; path = ios/WKDrawingView.h; sourceTree = "<group>"; };
-		2DC18FAC218910480025A88D /* WKDrawingView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKDrawingView.mm; path = ios/WKDrawingView.mm; sourceTree = "<group>"; };
-		2DC18FAF218912640025A88D /* PencilKitSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PencilKitSPI.h; sourceTree = "<group>"; };
-		2DC18FB1218A6E9E0025A88D /* RemoteLayerTreeViews.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteLayerTreeViews.h; sourceTree = "<group>"; };
-		2DC18FB2218A6E9E0025A88D /* RemoteLayerTreeViews.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerTreeViews.mm; sourceTree = "<group>"; };
 		2DC4CF7A1D2DE24B00ECCC94 /* WebPageCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPageCocoa.mm; sourceTree = "<group>"; };
 		2DC6D9C118C44A610043BAD4 /* WKWebViewContentProviderRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebViewContentProviderRegistry.h; sourceTree = "<group>"; };
 		2DC6D9C218C44A610043BAD4 /* WKWebViewContentProviderRegistry.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewContentProviderRegistry.mm; sourceTree = "<group>"; };
@@ -5473,8 +5464,6 @@
 			isa = PBXGroup;
 			children = (
 				0F0C365718C051BA00F607D7 /* RemoteLayerTreeHostIOS.mm */,
-				2DC18FB1218A6E9E0025A88D /* RemoteLayerTreeViews.h */,
-				2DC18FB2218A6E9E0025A88D /* RemoteLayerTreeViews.mm */,
 				0F0C365B18C05CA100F607D7 /* RemoteScrollingCoordinatorProxyIOS.mm */,
 				0F931C1A18C5711900DBA7C3 /* ScrollingTreeOverflowScrollingNodeIOS.h */,
 				0F931C1B18C5711900DBA7C3 /* ScrollingTreeOverflowScrollingNodeIOS.mm */,
@@ -5773,8 +5762,6 @@
 				0FCB4E3D18BBE044000FCFC9 /* WKContentView.mm */,
 				0FCB4E6A18BBF26A000FCFC9 /* WKContentViewInteraction.h */,
 				0FCB4E6B18BBF26A000FCFC9 /* WKContentViewInteraction.mm */,
-				2DC18FAB218910480025A88D /* WKDrawingView.h */,
-				2DC18FAC218910480025A88D /* WKDrawingView.mm */,
 				0FCB4E3F18BBE044000FCFC9 /* WKGeolocationProviderIOS.h */,
 				0FCB4E4018BBE044000FCFC9 /* WKGeolocationProviderIOS.mm */,
 				0FCB4E4118BBE044000FCFC9 /* WKGeolocationProviderIOSObjCSecurityOrigin.mm */,
@@ -8563,7 +8550,6 @@
 				CE1A0BCF1A48E6C60054EF74 /* ManagedConfigurationSPI.h */,
 				A13B3DA1207F39DE0090C58D /* MobileWiFiSPI.h */,
 				3178AF9720E2A7F80074DE94 /* PDFKitSPI.h */,
-				2DC18FAF218912640025A88D /* PencilKitSPI.h */,
 				CE1A0BD01A48E6C60054EF74 /* TCCSPI.h */,
 				CE1A0BD11A48E6C60054EF74 /* TextInputSPI.h */,
 				CEE4AE2A1A5DCF430002F49B /* UIKitSPI.h */,
@@ -9083,7 +9069,6 @@
 				C574A58112E66681002DFE98 /* PasteboardTypes.h in Headers */,
 				C1E123BA20A11573002646F4 /* PDFContextMenu.h in Headers */,
 				E19582D3153CBFD700B60875 /* PDFKitImports.h in Headers */,
-				2DC18FB0218912640025A88D /* PencilKitSPI.h in Headers */,
 				5C298DA01C3DF02100470AFE /* PendingDownload.h in Headers */,
 				832ED18C1E2FE157006BA64A /* PerActivityStateCPUUsageSampler.h in Headers */,
 				5CE85B201C88E64B0070BFCE /* PingLoad.h in Headers */,
@@ -9142,7 +9127,6 @@
 				2DDE0AFA18298CC900F97EAA /* RemoteLayerTreePropertyApplier.h in Headers */,
 				0FF264A01A1FF9CC001FE759 /* RemoteLayerTreeScrollingPerformanceData.h in Headers */,
 				1AF1AC6C1651759E00C17D7F /* RemoteLayerTreeTransaction.h in Headers */,
-				2DC18FB3218A6E9E0025A88D /* RemoteLayerTreeViews.h in Headers */,
 				E1B78471163F24690007B692 /* RemoteNetworkingContext.h in Headers */,
 				1A5704FC1BE1751100874AF1 /* RemoteObjectInvocation.h in Headers */,
 				1AC1338018590AE400F3EC05 /* RemoteObjectRegistry.h in Headers */,
@@ -9556,7 +9540,6 @@
 				BC017D2116263308007054F5 /* WKDOMTextIterator.h in Headers */,
 				1AB7D78D1288CD9A00CFD08C /* WKDownload.h in Headers */,
 				F409BA181E6E64BC009DA28E /* WKDragDestinationAction.h in Headers */,
-				2DC18FAD218910490025A88D /* WKDrawingView.h in Headers */,
 				1AF4592F19464B2000F9D4A2 /* WKError.h in Headers */,
 				BCFD548C132D82680055D816 /* WKErrorCF.h in Headers */,
 				37B5045219EEF31300CE2CF8 /* WKErrorPrivate.h in Headers */,
@@ -10699,7 +10682,6 @@
 				2D54C31B212F4DA60049C174 /* ProcessLauncher.cpp in Sources */,
 				2D72A1FA212BF46E00517A20 /* RemoteLayerTreeDrawingArea.mm in Sources */,
 				0FF24A2D1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessageReceiver.cpp in Sources */,
-				2DC18FB4218A6E9E0025A88D /* RemoteLayerTreeViews.mm in Sources */,
 				1AC1338518590C4600F3EC05 /* RemoteObjectRegistryMessageReceiver.cpp in Sources */,
 				0F5947A7187B517600437857 /* RemoteScrollingCoordinatorMessageReceiver.cpp in Sources */,
 				A55BA8261BA25CFD007CD33D /* RemoteWebInspectorProxyMessageReceiver.cpp in Sources */,

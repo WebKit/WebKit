@@ -546,7 +546,6 @@ bool RenderLayer::shouldBeNormalFlowOnly() const
         || renderer().isVideo()
         || renderer().isEmbeddedObject()
         || renderer().isRenderIFrame()
-        || (renderer().isRenderImage() && downcast<RenderImage>(renderer()).isEditableImage())
         || (renderer().style().specifiesColumns() && !isRenderViewLayer())
         || renderer().isInFlowRenderFragmentedFlow();
 }
@@ -6068,7 +6067,6 @@ bool RenderLayer::shouldBeSelfPaintingLayer() const
         || renderer().isCanvas()
         || renderer().isVideo()
         || renderer().isEmbeddedObject()
-        || (renderer().isRenderImage() && downcast<RenderImage>(renderer()).isEditableImage())
         || renderer().isRenderIFrame()
         || renderer().isInFlowRenderFragmentedFlow();
 }

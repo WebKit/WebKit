@@ -737,11 +737,4 @@ bool HTMLImageElement::isSystemPreviewImage() const
 }
 #endif
 
-GraphicsLayer::EmbeddedViewID HTMLImageElement::editableImageViewID() const
-{
-    if (!m_editableImageViewID)
-        m_editableImageViewID = GraphicsLayer::nextEmbeddedViewID();
-    return m_editableImageViewID;
-}
-
 }

@@ -103,8 +103,6 @@ public:
         WebCore::GraphicsLayer::PlatformLayerID layerID;
         WebCore::PlatformCALayer::LayerType type;
 
-        WebCore::GraphicsLayer::EmbeddedViewID embeddedViewID;
-
         uint32_t hostingContextID;
         float hostingDeviceScaleFactor;
     };

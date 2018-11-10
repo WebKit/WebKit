@@ -48,7 +48,6 @@ http/tests/preload/viewport [ Skip ]
 http/tests/gzip-content-encoding [ Skip ]
 http/tests/cookies/same-site [ Skip ]
 system-preview [ Skip ]
-editing/images [ Skip ]
 
 # window.showModalDialog is only tested in DumpRenderTree on Mac.
 editing/execCommand/show-modal-dialog-during-execCommand.html [ Skip ]

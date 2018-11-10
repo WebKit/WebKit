@@ -256,7 +256,6 @@
 		29A8FCE1345E7021006AA5A6 /* JSAccessibilityTextMarkerRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAccessibilityTextMarkerRange.cpp; sourceTree = "<group>"; };
 		29A8FCE1345E7021006AA5A7 /* JSAccessibilityTextMarkerRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAccessibilityTextMarkerRange.h; sourceTree = "<group>"; };
 		29A8FCE4145F0464009045A6 /* AccessibilityTextMarkerRangeMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityTextMarkerRangeMac.mm; sourceTree = "<group>"; };
-		2D0FF14A2192C78300C975D6 /* PencilKitTestSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PencilKitTestSPI.h; path = ../TestRunnerShared/spi/PencilKitTestSPI.h; sourceTree = "<group>"; };
 		2DB6187D1D7D58D400978D19 /* CoreGraphicsTestSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CoreGraphicsTestSPI.h; path = ../TestRunnerShared/spi/CoreGraphicsTestSPI.h; sourceTree = "<group>"; };
 		2DCE2CD11B84524500C7F832 /* TestControllerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TestControllerCocoa.mm; path = cocoa/TestControllerCocoa.mm; sourceTree = "<group>"; };
 		2DD4C4981D6E7D3B0007379C /* EventSerializerMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EventSerializerMac.h; path = mac/EventSerializerMac.h; sourceTree = "<group>"; };
@@ -597,7 +596,6 @@
 			isa = PBXGroup;
 			children = (
 				2DB6187D1D7D58D400978D19 /* CoreGraphicsTestSPI.h */,
-				2D0FF14A2192C78300C975D6 /* PencilKitTestSPI.h */,
 				31268EB91EF06A3B001963E2 /* UIKitTestSPI.h */,
 			);
 			name = spi;

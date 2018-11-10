@@ -76,8 +76,6 @@ public:
 
     bool hasNonBitmapImage() const;
 
-    bool isEditableImage() const;
-
 protected:
     void willBeDestroyed() override;
 
@@ -107,8 +105,6 @@ private:
 
     bool isImage() const override { return true; }
     bool isRenderImage() const final { return true; }
-    
-    bool requiresLayer() const override;
 
     void paintReplaced(PaintInfo&, const LayoutPoint&) override;
     void paintIncompleteImageOutline(PaintInfo&, LayoutPoint, LayoutUnit) const;

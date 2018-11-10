@@ -1,3 +1,0 @@
-Had 1 stroke in editable image after drawing.
-Had 1 stroke in editable image after reparenting it under another element.
- 

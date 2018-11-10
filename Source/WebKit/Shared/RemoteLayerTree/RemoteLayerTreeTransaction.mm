@@ -41,7 +41,6 @@ namespace WebKit {
 RemoteLayerTreeTransaction::LayerCreationProperties::LayerCreationProperties()
     : layerID(0)
     , type(WebCore::PlatformCALayer::LayerTypeLayer)
-    , embeddedViewID(0)
     , hostingContextID(0)
     , hostingDeviceScaleFactor(1)
 {
@@ -51,7 +50,6 @@ void RemoteLayerTreeTransaction::LayerCreationProperties::encode(IPC::Encoder& e
 {
     encoder << layerID;
     encoder.encodeEnum(type);
-    encoder << embeddedViewID;
     encoder << hostingContextID;
     encoder << hostingDeviceScaleFactor;
 }
@@ -63,9 +61,6 @@ auto RemoteLayerTreeTransaction::LayerCreationProperties::decode(IPC::Decoder& d
         return std::nullopt;
 
     if (!decoder.decodeEnum(result.type))
-        return std::nullopt;
-
-    if (!decoder.decode(result.embeddedViewID))
         return std::nullopt;
 
     if (!decoder.decode(result.hostingContextID))

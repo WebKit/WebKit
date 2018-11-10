@@ -33,7 +33,6 @@
 
 OBJC_CLASS CAAnimation;
 OBJC_CLASS WKAnimationDelegate;
-OBJC_CLASS WKEmbeddedView;
 
 namespace WebKit {
 
@@ -76,7 +75,6 @@ public:
 
 private:
     LayerOrView *createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties&, const RemoteLayerTreeTransaction::LayerProperties*);
-    RetainPtr<WKEmbeddedView> createEmbeddedView(const RemoteLayerTreeTransaction::LayerCreationProperties&, const RemoteLayerTreeTransaction::LayerProperties*);
     static void setLayerID(CALayer *, WebCore::GraphicsLayer::PlatformLayerID);
 
     void layerWillBeRemoved(WebCore::GraphicsLayer::PlatformLayerID);
@@ -85,8 +83,6 @@ private:
     LayerOrView *m_rootLayer { nullptr };
     HashMap<WebCore::GraphicsLayer::PlatformLayerID, RetainPtr<LayerOrView>> m_layers;
     HashMap<WebCore::GraphicsLayer::PlatformLayerID, RetainPtr<WKAnimationDelegate>> m_animationDelegates;
-    HashMap<WebCore::GraphicsLayer::EmbeddedViewID, RetainPtr<WKEmbeddedView>> m_embeddedViews;
-    HashMap<WebCore::GraphicsLayer::PlatformLayerID, WebCore::GraphicsLayer::EmbeddedViewID> m_layerToEmbeddedViewMap;
     bool m_isDebugLayerTreeHost { false };
 };
 

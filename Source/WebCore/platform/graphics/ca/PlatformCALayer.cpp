@@ -213,9 +213,6 @@ TextStream& operator<<(TextStream& ts, PlatformCALayer::LayerType layerType)
     case PlatformCALayer::LayerTypeRootLayer:
         ts << "root-layer";
         break;
-    case PlatformCALayer::LayerTypeEditableImageLayer:
-        ts << "editable-image";
-        break;
     case PlatformCALayer::LayerTypeBackdropLayer:
         ts << "backdrop-layer";
         break;

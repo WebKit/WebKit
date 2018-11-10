@@ -344,6 +344,9 @@ UIProcess/Gamepad/cocoa/UIGamepadProviderCocoa.mm
 UIProcess/Gamepad/ios/UIGamepadProviderIOS.mm
 UIProcess/Gamepad/mac/UIGamepadProviderMac.mm
 
+UIProcess/ios/DragDropInteractionState.mm
+UIProcess/ios/WebDataListSuggestionsDropdownIOS.mm
+
 UIProcess/ios/forms/WKAirPlayRoutePicker.mm
 UIProcess/ios/forms/WKDatePickerViewController.mm
 UIProcess/ios/forms/WKFileUploadPanel.mm
@@ -367,7 +370,6 @@ UIProcess/ios/fullscreen/WKFullscreenStackView.mm
 UIProcess/ios/fullscreen/WKFullScreenViewController.mm
 UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm
 
-UIProcess/ios/DragDropInteractionState.mm
 UIProcess/ios/InputViewUpdateDeferrer.mm
 UIProcess/ios/LayerRepresentation.mm
 UIProcess/ios/PageClientImplIOS.mm
@@ -376,7 +378,6 @@ UIProcess/ios/ResourceLoadStatisticsPersistentStorageIOS.mm
 UIProcess/ios/SmartMagnificationController.mm
 UIProcess/ios/TextCheckerIOS.mm
 UIProcess/ios/ViewGestureControllerIOS.mm
-UIProcess/ios/WebDataListSuggestionsDropdownIOS.mm
 UIProcess/ios/WebPageProxyIOS.mm
 UIProcess/ios/WebProcessProxyIOS.mm
 UIProcess/ios/WKActionSheet.mm
@@ -384,7 +385,6 @@ UIProcess/ios/WKActionSheetAssistant.mm
 UIProcess/ios/WKApplicationStateTrackingView.mm
 UIProcess/ios/WKContentView.mm @no-unify
 UIProcess/ios/WKContentViewInteraction.mm @no-unify
-UIProcess/ios/WKDrawingView.mm
 UIProcess/ios/WKGeolocationProviderIOS.mm
 UIProcess/ios/WKGeolocationProviderIOSObjCSecurityOrigin.mm
 UIProcess/ios/WKInspectorNodeSearchGestureRecognizer.mm

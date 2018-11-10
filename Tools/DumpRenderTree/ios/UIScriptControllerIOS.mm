@@ -407,15 +407,6 @@ void UIScriptController::overridePreference(JSStringRef, JSStringRef)
 {
 }
 
-void UIScriptController::drawSquareInEditableImage()
-{
-}
-
-long UIScriptController::numberOfStrokesInEditableImage()
-{
-    return 0;
-}
-
 }
 
 #endif // PLATFORM(IOS_FAMILY)

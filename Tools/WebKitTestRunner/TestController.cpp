@@ -1239,8 +1239,6 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
             testOptions.shouldIgnoreMetaViewport = parseBooleanTestHeaderValue(value);
         else if (key == "spellCheckingDots")
             testOptions.shouldShowSpellCheckingDots = parseBooleanTestHeaderValue(value);
-        else if (key == "enableEditableImages")
-            testOptions.enableEditableImages = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
     }
 }

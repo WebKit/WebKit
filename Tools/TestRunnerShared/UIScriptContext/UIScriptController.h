@@ -194,9 +194,6 @@ public:
     void makeWindowContentViewFirstResponder();
     bool isWindowContentViewFirstResponder() const;
 
-    void drawSquareInEditableImage();
-    long numberOfStrokesInEditableImage();
-
 private:
     UIScriptController(UIScriptContext&);
     

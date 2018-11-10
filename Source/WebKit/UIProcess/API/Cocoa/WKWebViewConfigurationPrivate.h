@@ -105,8 +105,6 @@ typedef NS_ENUM(NSUInteger, _WKDragLiftDelay) {
 // The input of this SPI is an array of image UTI (Uniform Type Identifier).
 @property (nonatomic, copy, setter=_setAdditionalSupportedImageTypes:) NSArray<NSString *> *_additionalSupportedImageTypes WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
-@property (nonatomic, setter=_setEditableImagesEnabled:) BOOL _editableImagesEnabled WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-
 @end
 
 #endif

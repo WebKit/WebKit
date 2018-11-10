@@ -168,8 +168,6 @@ public:
     GraphicsLayer::CustomAppearance customAppearance() const override { return m_customAppearance; }
     void updateCustomAppearance(GraphicsLayer::CustomAppearance) override;
 
-    GraphicsLayer::EmbeddedViewID embeddedViewID() const override;
-
     TiledBacking* tiledBacking() override;
 
     Ref<PlatformCALayer> clone(PlatformCALayerClient* owner) const override;

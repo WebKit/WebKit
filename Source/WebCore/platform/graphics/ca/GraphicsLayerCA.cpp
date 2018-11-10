@@ -373,11 +373,6 @@ Ref<PlatformCALayer> GraphicsLayerCA::createPlatformCALayer(PlatformLayer* platf
 #endif
 }
 
-Ref<PlatformCALayer> GraphicsLayerCA::createPlatformCALayerForEmbeddedView(PlatformCALayer::LayerType layerType, GraphicsLayer::EmbeddedViewID, PlatformCALayerClient* owner)
-{
-    return GraphicsLayerCA::createPlatformCALayer(layerType, owner);
-}
-
 Ref<PlatformCAAnimation> GraphicsLayerCA::createPlatformCAAnimation(PlatformCAAnimation::AnimationType type, const String& keyPath)
 {
 #if PLATFORM(COCOA)
@@ -1145,39 +1140,6 @@ void GraphicsLayerCA::setContentsToImage(Image* image)
     }
 
     noteLayerPropertyChanged(ContentsImageChanged);
-}
-
-void GraphicsLayerCA::setContentsToEmbeddedView(GraphicsLayer::ContentsLayerEmbeddedViewType layerType, GraphicsLayer::EmbeddedViewID embeddedViewID)
-{
-    bool contentsLayerChanged = false;
-
-    if (layerType != GraphicsLayer::ContentsLayerEmbeddedViewType::None) {
-        m_contentsLayerPurpose = ContentsLayerPurpose::EmbeddedView;
-
-        PlatformCALayer::LayerType platformType;
-        switch (layerType) {
-        case GraphicsLayer::ContentsLayerEmbeddedViewType::EditableImage:
-            platformType = PlatformCALayer::LayerTypeEditableImageLayer;
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-            platformType = PlatformCALayer::LayerTypeLayer;
-            break;
-        }
-
-        if (!m_contentsLayer || m_contentsLayer->layerType() != platformType || m_contentsLayer->embeddedViewID() != embeddedViewID) {
-            m_contentsLayer = createPlatformCALayerForEmbeddedView(platformType, embeddedViewID, this);
-            m_contentsLayer->setAnchorPoint(FloatPoint3D());
-            contentsLayerChanged = true;
-        }
-    } else {
-        m_contentsLayerPurpose = ContentsLayerPurpose::None;
-        contentsLayerChanged = m_contentsLayer;
-        m_contentsLayer = nullptr;
-    }
-
-    if (contentsLayerChanged)
-        noteSublayersChanged();
 }
 
 void GraphicsLayerCA::setContentsToPlatformLayer(PlatformLayer* platformLayer, ContentsLayerPurpose purpose)

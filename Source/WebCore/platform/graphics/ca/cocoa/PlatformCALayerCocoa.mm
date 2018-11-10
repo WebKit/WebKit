@@ -223,7 +223,6 @@ PlatformCALayerCocoa::PlatformCALayerCocoa(LayerType layerType, PlatformCALayerC
     case LayerTypeScrollingLayer:
         // Scrolling layers only have special behavior with PlatformCALayerRemote.
         // fallthrough
-    case LayerTypeEditableImageLayer:
     case LayerTypeWebLayer:
         layerClass = [WebLayer class];
         break;
@@ -1023,12 +1022,6 @@ void PlatformCALayerCocoa::updateCustomAppearance(GraphicsLayer::CustomAppearanc
         break;
     }
 #endif
-}
-
-GraphicsLayer::EmbeddedViewID PlatformCALayerCocoa::embeddedViewID() const
-{
-    ASSERT_NOT_REACHED();
-    return 0;
 }
 
 static NSString *layerContentsFormat(bool acceleratesDrawing, bool wantsDeepColor, bool supportsSubpixelAntialiasedFonts)
