@@ -56,6 +56,10 @@ void ResourceLoadStatisticsMemoryStore::registerUserDefaultsIfNeeded()
         Seconds cacheMaxAgeCapForPrevalentResources([[NSUserDefaults standardUserDefaults] doubleForKey:@"ResourceLoadStatisticsCacheMaxAgeCap"]);
         if (cacheMaxAgeCapForPrevalentResources > 0_s && cacheMaxAgeCapForPrevalentResources <= 24_h * 365)
             setCacheMaxAgeCap(cacheMaxAgeCapForPrevalentResources);
+        
+        Seconds clientSideCookiesAgeCap([[NSUserDefaults standardUserDefaults] doubleForKey:@"ResourceLoadStatisticsClientSideCookiesAgeCap"]);
+        if (clientSideCookiesAgeCap > 0_s && clientSideCookiesAgeCap <= 24_h * 365)
+            setAgeCapForClientSideCookies(clientSideCookiesAgeCap);
     });
 }
 

@@ -78,8 +78,6 @@ enum class StorageAccessPromptStatus;
 struct PluginModuleInfo;
 #endif
 
-enum class ShouldCapLifetimeForClientSideCookies { No, Yes };
-
 class WebsiteDataStore : public RefCounted<WebsiteDataStore>, public WebProcessLifetimeObserver, public Identified<WebsiteDataStore>, public CanMakeWeakPtr<WebsiteDataStore>  {
 public:
     constexpr static uint64_t defaultCacheStoragePerOriginQuota = 50 * 1024 * 1024;
@@ -142,7 +140,7 @@ public:
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     void updatePrevalentDomainsToBlockCookiesFor(const Vector<String>& domainsToBlock, CompletionHandler<void()>&&);
-    void setShouldCapLifetimeForClientSideCookies(ShouldCapLifetimeForClientSideCookies, CompletionHandler<void()>&&);
+    void setAgeCapForClientSideCookies(std::optional<Seconds>, CompletionHandler<void()>&&);
     void hasStorageAccessForFrameHandler(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, CompletionHandler<void(bool hasAccess)>&&);
     void getAllStorageAccessEntries(uint64_t pageID, CompletionHandler<void(Vector<String>&& domains)>&&);
     void grantStorageAccessHandler(const String& resourceDomain, const String& firstPartyDomain, std::optional<uint64_t> frameID, uint64_t pageID, CompletionHandler<void(bool wasGranted)>&&);

@@ -260,13 +260,12 @@ static NSArray *httpCookiesForURL(CFHTTPCookieStorageRef cookieStorage, NSURL *f
     return cookiesForURL(nsCookieStorage.get(), url, firstParty, sameSiteInfo);
 }
 
-static RetainPtr<NSArray> filterCookies(NSArray *unfilteredCookies, bool shouldCapLifetime)
+static RetainPtr<NSArray> filterCookies(NSArray *unfilteredCookies, std::optional<Seconds> cappedLifetime)
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
     NSUInteger count = [unfilteredCookies count];
     RetainPtr<NSMutableArray> filteredCookies = adoptNS([[NSMutableArray alloc] initWithCapacity:count]);
 
-    const NSTimeInterval secondsPerWeek = 7 * 24 * 60 * 60;
     for (NSUInteger i = 0; i < count; ++i) {
         NSHTTPCookie *cookie = (NSHTTPCookie *)[unfilteredCookies objectAtIndex:i];
 
@@ -281,10 +280,10 @@ static RetainPtr<NSArray> filterCookies(NSArray *unfilteredCookies, bool shouldC
             continue;
 
         // Cap lifetime of persistent, client-side cookies to a week.
-        if (shouldCapLifetime && ![cookie isSessionOnly]) {
-            if (!cookie.expiresDate || cookie.expiresDate.timeIntervalSinceNow > secondsPerWeek) {
+        if (cappedLifetime && ![cookie isSessionOnly]) {
+            if (!cookie.expiresDate || cookie.expiresDate.timeIntervalSinceNow > cappedLifetime->seconds()) {
                 RetainPtr<NSMutableDictionary<NSHTTPCookiePropertyKey, id>> properties = adoptNS([[cookie properties] mutableCopy]);
-                RetainPtr<NSDate> dateInAWeek = adoptNS([[NSDate alloc] initWithTimeIntervalSinceNow:secondsPerWeek]);
+                RetainPtr<NSDate> dateInAWeek = adoptNS([[NSDate alloc] initWithTimeIntervalSinceNow:cappedLifetime->seconds()]);
                 [properties setObject:dateInAWeek.get() forKey:NSHTTPCookieExpires];
                 cookie = [NSHTTPCookie cookieWithProperties:properties.get()];
             }
@@ -405,7 +404,7 @@ void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameS
 #endif
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    RetainPtr<NSArray> filteredCookies = filterCookies(unfilteredCookies, m_shouldCapLifetimeForClientSideCookies);
+    RetainPtr<NSArray> filteredCookies = filterCookies(unfilteredCookies, m_ageCapForClientSideCookies);
 #else
     RetainPtr<NSArray> filteredCookies = filterCookies(unfilteredCookies, false);
 #endif

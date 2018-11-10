@@ -1,3 +1,49 @@
+2018-11-09  John Wilander  <wilander@apple.com>
+
+        Add ability to configure document.cookie lifetime cap through user defaults
+        https://bugs.webkit.org/show_bug.cgi?id=191480
+        <rdar://problem/45240871>
+
+        Reviewed by Chris Dumez.
+
+        This change makes the capped lifetime in seconds configurable through
+        user defaults.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::setAgeCapForClientSideCookies):
+        (WebKit::NetworkProcess::setShouldCapLifetimeForClientSideCookies): Deleted.
+            Renamed setAgeCapForClientSideCookies().
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/Cocoa/ResourceLoadStatisticsMemoryStoreCocoa.mm:
+        (WebKit::ResourceLoadStatisticsMemoryStore::registerUserDefaultsIfNeeded):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::setAgeCapForClientSideCookies):
+        (WebKit::NetworkProcessProxy::didSetAgeCapForClientSideCookies):
+        (WebKit::NetworkProcessProxy::setShouldCapLifetimeForClientSideCookies): Deleted.
+            Renamed setAgeCapForClientSideCookies().
+        (WebKit::NetworkProcessProxy::didSetShouldCapLifetimeForClientSideCookies): Deleted.
+            Renamed didSetAgeCapForClientSideCookies().
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::setAgeCapForClientSideCookies):
+        (WebKit::ResourceLoadStatisticsMemoryStore::updateClientSideCookiesAgeCap):
+        (WebKit::ResourceLoadStatisticsMemoryStore::didCreateNetworkProcess):
+            New function that handles all the things that need to be done when a network
+            process has been created.
+        * UIProcess/ResourceLoadStatisticsMemoryStore.h:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::didCreateNetworkProcess):
+            Now just calls the corresponding function on its memory store where all the
+            configuration parameters are available.
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::setAgeCapForClientSideCookies):
+        (WebKit::WebsiteDataStore::setShouldCapLifetimeForClientSideCookies): Deleted.
+            Renamed setAgeCapForClientSideCookies().
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2018-11-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r238047.

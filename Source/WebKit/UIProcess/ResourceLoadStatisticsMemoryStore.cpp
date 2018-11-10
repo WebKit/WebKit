@@ -848,6 +848,27 @@ void ResourceLoadStatisticsMemoryStore::updateCacheMaxAgeCap()
     });
 }
 
+void ResourceLoadStatisticsMemoryStore::setAgeCapForClientSideCookies(Seconds seconds)
+{
+    ASSERT(!RunLoop::isMain());
+    ASSERT(seconds >= 0_s);
+    
+    m_parameters.clientSideCookiesAgeCapTime = seconds;
+    updateClientSideCookiesAgeCap();
+}
+
+void ResourceLoadStatisticsMemoryStore::updateClientSideCookiesAgeCap()
+{
+    ASSERT(!RunLoop::isMain());
+
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    RunLoop::main().dispatch([store = makeRef(m_store), seconds = m_parameters.clientSideCookiesAgeCapTime] () {
+        if (auto* websiteDataStore = store->websiteDataStore())
+            websiteDataStore->setAgeCapForClientSideCookies(seconds, [] { });
+    });
+#endif
+}
+
 bool ResourceLoadStatisticsMemoryStore::shouldRemoveDataRecords() const
 {
     ASSERT(!RunLoop::isMain());
@@ -1262,6 +1283,15 @@ void ResourceLoadStatisticsMemoryStore::removeAllStorageAccess(CompletionHandler
             });
         });
     });
+}
+
+void ResourceLoadStatisticsMemoryStore::didCreateNetworkProcess()
+{
+    ASSERT(!RunLoop::isMain());
+
+    updateCookieBlocking([]() { });
+    updateCacheMaxAgeCap();
+    updateClientSideCookiesAgeCap();
 }
 
 } // namespace WebKit

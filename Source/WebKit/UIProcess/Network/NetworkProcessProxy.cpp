@@ -415,7 +415,7 @@ void NetworkProcessProxy::didUpdateBlockCookies(uint64_t callbackId)
     m_updateBlockCookiesCallbackMap.take(callbackId)();
 }
 
-void NetworkProcessProxy::setShouldCapLifetimeForClientSideCookies(PAL::SessionID sessionID, ShouldCapLifetimeForClientSideCookies shouldCapLifetime, CompletionHandler<void()>&& completionHandler)
+void NetworkProcessProxy::setAgeCapForClientSideCookies(PAL::SessionID sessionID, std::optional<Seconds> seconds, CompletionHandler<void()>&& completionHandler)
 {
     if (!canSendMessage()) {
         completionHandler();
@@ -427,10 +427,10 @@ void NetworkProcessProxy::setShouldCapLifetimeForClientSideCookies(PAL::SessionI
         completionHandler();
     });
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
-    send(Messages::NetworkProcess::SetShouldCapLifetimeForClientSideCookies(sessionID, shouldCapLifetime == ShouldCapLifetimeForClientSideCookies::Yes, callbackId), 0);
+    send(Messages::NetworkProcess::SetAgeCapForClientSideCookies(sessionID, seconds, callbackId), 0);
 }
 
-void NetworkProcessProxy::didSetShouldCapLifetimeForClientSideCookies(uint64_t callbackId)
+void NetworkProcessProxy::didSetAgeCapForClientSideCookies(uint64_t callbackId)
 {
     m_updateBlockCookiesCallbackMap.take(callbackId)();
 }

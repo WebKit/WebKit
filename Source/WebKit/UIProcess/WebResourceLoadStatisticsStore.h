@@ -140,6 +140,8 @@ public:
 
     void didCreateNetworkProcess();
 
+    WebsiteDataStore* websiteDataStore() { return m_websiteDataStore.get(); }
+
 private:
     explicit WebResourceLoadStatisticsStore(WebsiteDataStore&);
 

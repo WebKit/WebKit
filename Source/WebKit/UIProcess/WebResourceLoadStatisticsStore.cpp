@@ -329,14 +329,8 @@ void WebResourceLoadStatisticsStore::didCreateNetworkProcess()
     postTask([this] {
         if (!m_memoryStore)
             return;
-        m_memoryStore->updateCookieBlocking([]() { });
-        m_memoryStore->updateCacheMaxAgeCap();
+        m_memoryStore->didCreateNetworkProcess();
     });
-
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    if (m_websiteDataStore)
-        m_websiteDataStore->setShouldCapLifetimeForClientSideCookies(ShouldCapLifetimeForClientSideCookies::Yes, []() { });
-#endif
 }
 
 void WebResourceLoadStatisticsStore::removeAllStorageAccess(CompletionHandler<void()>&& completionHandler)
