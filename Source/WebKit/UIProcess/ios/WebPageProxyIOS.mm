@@ -1089,12 +1089,6 @@ void WebPageProxy::setIsScrollingOrZooming(bool isScrollingOrZooming)
         m_validationBubble->show();
 }
 
-void WebPageProxy::hardwareKeyboardAvailabilityChanged()
-{
-    updateCurrentModifierState();
-    m_process->send(Messages::WebPage::HardwareKeyboardAvailabilityChanged(), m_pageID);
-}
-
 #if ENABLE(DATA_INTERACTION)
 
 void WebPageProxy::didHandleStartDataInteractionRequest(bool started)

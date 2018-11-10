@@ -216,8 +216,6 @@ WEBCORE_EXPORT @interface WebEvent : NSObject {
 
 @property(nonatomic) BOOL wasHandled;
 
-@property (class, readonly) WebEventFlags modifierFlags;
-
 @end
 
 #endif // TARGET_OS_IPHONE

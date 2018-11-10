@@ -258,6 +258,21 @@ void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool backwardCom
     }
 }
 
+bool PlatformKeyboardEvent::currentCapsLockState()
+{
+    auto currentModifiers = currentStateOfModifierKeys();
+    return currentModifiers.contains(PlatformEvent::Modifier::CapsLockKey);
+}
+
+void PlatformKeyboardEvent::getCurrentModifierState(bool& shiftKey, bool& ctrlKey, bool& altKey, bool& metaKey)
+{
+    auto currentModifiers = currentStateOfModifierKeys();
+    shiftKey = currentModifiers.contains(PlatformEvent::Modifier::ShiftKey);
+    ctrlKey = currentModifiers.contains(PlatformEvent::Modifier::CtrlKey);
+    altKey = currentModifiers.contains(PlatformEvent::Modifier::AltKey);
+    metaKey = currentModifiers.contains(PlatformEvent::Modifier::MetaKey);
+}
+
 OptionSet<PlatformEvent::Modifier> PlatformKeyboardEvent::currentStateOfModifierKeys()
 {
 #if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)

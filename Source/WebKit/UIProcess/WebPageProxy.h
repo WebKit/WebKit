@@ -649,7 +649,6 @@ public:
     void storeSelectionForAccessibility(bool);
     void startAutoscrollAtPosition(const WebCore::FloatPoint& positionInWindow);
     void cancelAutoscroll();
-    void hardwareKeyboardAvailabilityChanged();
 #if ENABLE(DATA_INTERACTION)
     void didHandleStartDataInteractionRequest(bool started);
     void didHandleAdditionalDragItemsRequest(bool added);
@@ -1370,8 +1369,6 @@ public:
     void didCloseSuggestions();
 #endif
 
-    void updateCurrentModifierState();
-
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, uint64_t pageID, Ref<API::PageConfiguration>&&);
     void platformInitialize();
@@ -1853,6 +1850,8 @@ private:
     void startDisplayLink(unsigned observerID);
     void stopDisplayLink(unsigned observerID);
 #endif
+
+    void updateCurrentModifierState();
 
     void reportPageLoadResult(const WebCore::ResourceError& = { });
 

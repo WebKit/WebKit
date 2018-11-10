@@ -164,6 +164,8 @@ private:
     bool supportsClosedCaptioning() const final { return true; }
 #endif
 
+    bool shouldHaveCapsLockIndicator(const HTMLInputElement&) const final;
+
     bool paintSnapshottedPluginOverlay(const RenderObject&, const PaintInfo&, const IntRect&) final;
 
 #if ENABLE(ATTACHMENT_ELEMENT)

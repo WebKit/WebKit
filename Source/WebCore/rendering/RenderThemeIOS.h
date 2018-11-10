@@ -117,6 +117,7 @@ protected:
 #endif
 
     bool shouldHaveSpinButton(const HTMLInputElement&) const override;
+    bool shouldHaveCapsLockIndicator(const HTMLInputElement&) const override;
 
 #if ENABLE(VIDEO)
     String mediaControlsStyleSheet() override;

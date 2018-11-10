@@ -1135,6 +1135,11 @@ bool RenderThemeIOS::shouldHaveSpinButton(const HTMLInputElement&) const
     return false;
 }
 
+bool RenderThemeIOS::shouldHaveCapsLockIndicator(const HTMLInputElement&) const
+{
+    return false;
+}
+
 FontCascadeDescription& RenderThemeIOS::cachedSystemFontDescription(CSSValueID valueID) const
 {
     static NeverDestroyed<FontCascadeDescription> systemFont;

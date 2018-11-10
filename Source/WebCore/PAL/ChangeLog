@@ -1,3 +1,15 @@
+2018-11-09  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r238047.
+
+        Introduced layout test failures on iOS simulator.
+
+        Reverted changeset:
+
+        "[iOS] Draw caps lock indicator in password fields"
+        https://bugs.webkit.org/show_bug.cgi?id=190565
+        https://trac.webkit.org/changeset/238047
+
 2018-11-09  Daniel Bates  <dabates@apple.com>
 
         [iOS] Draw caps lock indicator in password fields

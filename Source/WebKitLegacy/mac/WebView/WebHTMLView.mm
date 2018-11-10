@@ -164,9 +164,7 @@
 #import <WebCore/WAKScrollView.h>
 #import <WebCore/WAKWindow.h>
 #import <WebCore/WKGraphics.h>
-#import <WebCore/WebCoreThreadRun.h>
 #import <WebCore/WebEvent.h>
-#import <pal/spi/ios/GraphicsServicesSPI.h>
 #endif
 
 using namespace WebCore;
@@ -816,16 +814,6 @@ static CachedImageClient& promisedDataClient()
 
 #if PLATFORM(IOS_FAMILY)
 static NSString * const WebMarkedTextUpdatedNotification = @"WebMarkedTextUpdated";
-
-static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef)
-{
-    ASSERT(observer);
-    WebThreadRun(^{
-        WebHTMLView *webView = (__bridge WebHTMLView *)observer;
-        if (Frame* coreFrame = core([webView _frame]))
-            coreFrame->eventHandler().capsLockStateMayHaveChanged();
-    });
-}
 #endif
 
 @interface WebHTMLView (WebHTMLViewFileInternal)
@@ -2622,7 +2610,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [[NSNotificationCenter defaultCenter] 
             addObserver:self selector:@selector(markedTextUpdate:) 
                    name:WebMarkedTextUpdatedNotification object:nil];
-    CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge const void *)(self), hardwareKeyboardAvailabilityChangedCallback, (CFStringRef)[NSString stringWithUTF8String:kGSEventHardwareKeyboardAvailabilityChangedNotification], nullptr, CFNotificationSuspensionBehaviorCoalesce);
 #endif
 
 #if PLATFORM(MAC)
@@ -2639,7 +2626,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 #if PLATFORM(IOS_FAMILY)
     [[NSNotificationCenter defaultCenter] removeObserver:self name:WebMarkedTextUpdatedNotification object:nil];
-    CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge const void *)(self), (CFStringRef)[NSString stringWithUTF8String:kGSEventHardwareKeyboardAvailabilityChangedNotification], nullptr);
 #endif
 
     // We can't assert that close has already been called because
