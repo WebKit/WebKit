@@ -71,11 +71,15 @@ const int numOpcodeIDs = NUMBER_OF_BYTECODE_IDS + NUMBER_OF_BYTECODE_HELPER_IDS;
 #undef OPCODE_ID_ENUM
 #endif
 
+IGNORE_WARNINGS_BEGIN("unused-variable")
+
 #define OPCODE_LENGTH(opcode, length) length,
     static unsigned opcodeLengths[] = {
         FOR_EACH_OPCODE_ID(OPCODE_LENGTH)
     };
 #undef OPCODE_LENGTH
+
+IGNORE_WARNINGS_END
 
 #define OPCODE_ID_LENGTHS(id, length) const int id##_length = length;
     FOR_EACH_OPCODE_ID(OPCODE_ID_LENGTHS);

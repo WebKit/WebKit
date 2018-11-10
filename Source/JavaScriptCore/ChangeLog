@@ -1,3 +1,10 @@
+2018-11-10  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, silence -Wunused-variable warning
+
+        * bytecode/Opcode.h:
+        (JSC::padOpcodeName):
+
 2018-11-09  Keith Rollin  <krollin@apple.com>
 
         Unreviewed build fix after https://bugs.webkit.org/show_bug.cgi?id=191324
