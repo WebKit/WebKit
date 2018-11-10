@@ -1,3 +1,15 @@
+2018-11-10  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][GTK] API test /webkit/WebKitSettings/webkit-settings is failing
+        https://bugs.webkit.org/show_bug.cgi?id=191221
+
+        Unreviewed, fix a typo from the previous patch. After disabling the setting, we should test
+        that it is disabled, but we're testing that it is enabled, because I failed to update this
+        line.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitSettings.cpp:
+        (testWebKitSettings):
+
 2018-11-10  Tim Horton  <timothy_horton@apple.com>
 
         Make it possible to edit images inline
