@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -23,7 +23,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/support/60x60-gg-rr.png
 /LayoutTests/imported/w3c/web-platform-tests/css/support/60x60-green.png
 /LayoutTests/imported/w3c/web-platform-tests/css/support/60x60-red.png
-/LayoutTests/imported/w3c/web-platform-tests/css/support/OWNERS
+/LayoutTests/imported/w3c/web-platform-tests/css/support/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/support/README
 /LayoutTests/imported/w3c/web-platform-tests/css/support/a-green.css
 /LayoutTests/imported/w3c/web-platform-tests/css/support/alignment.css
@@ -31,10 +31,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/support/blue32x32.ico
 /LayoutTests/imported/w3c/web-platform-tests/css/support/c-red.css
 /LayoutTests/imported/w3c/web-platform-tests/css/support/cat.png
+/LayoutTests/imported/w3c/web-platform-tests/css/support/computed-testcommon.js
 /LayoutTests/imported/w3c/web-platform-tests/css/support/green.ico
 /LayoutTests/imported/w3c/web-platform-tests/css/support/grid.css
 /LayoutTests/imported/w3c/web-platform-tests/css/support/import-green.css
 /LayoutTests/imported/w3c/web-platform-tests/css/support/import-red.css
+/LayoutTests/imported/w3c/web-platform-tests/css/support/inheritance-testcommon.js
+/LayoutTests/imported/w3c/web-platform-tests/css/support/parsing-testcommon.js
 /LayoutTests/imported/w3c/web-platform-tests/css/support/pattern-grg-rgr-grg.png
 /LayoutTests/imported/w3c/web-platform-tests/css/support/pattern-grg-rrg-rgg.png
 /LayoutTests/imported/w3c/web-platform-tests/css/support/pattern-rgr-grg-rgr.png

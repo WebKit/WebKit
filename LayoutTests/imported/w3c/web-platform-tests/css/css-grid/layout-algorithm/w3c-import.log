@@ -23,5 +23,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-intrinsic-size-with-orthogonal-items.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-layout-free-space-unit-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-layout-free-space-unit.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-percent-cols-filled-shrinkwrap-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-percent-cols-filled-shrinkwrap-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-percent-cols-spanned-shrinkwrap-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-percent-cols-spanned-shrinkwrap-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-percent-rows-filled-shrinkwrap-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-percent-rows-filled-shrinkwrap-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-percent-rows-spanned-shrinkwrap-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-percent-rows-spanned-shrinkwrap-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-stretch-respects-min-size-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-stretch-respects-min-size-001.html

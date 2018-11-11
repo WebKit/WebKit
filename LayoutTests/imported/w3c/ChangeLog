@@ -1,3 +1,118 @@
+2018-11-11  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-grid] Import additional grid layout test from the WPT suite
+        https://bugs.webkit.org/show_bug.cgi?id=191369
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        New Grid Layout tests from the WPT suite.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/css/css-grid/META.yml: Added.
+        * web-platform-tests/css/css-grid/OWNERS: Removed.
+        * web-platform-tests/css/css-grid/abspos/support/grid.css:
+        (.thirdRowThirdColumn):
+        * web-platform-tests/css/css-grid/abspos/support/w3c-import.log:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-style-changes-001-expected.txt: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-style-changes-001.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-style-changes-002-expected.txt: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-style-changes-002.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-style-changes-003-expected.txt: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-style-changes-003.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-style-changes-004-expected.txt: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-style-changes-004.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-style-changes-005-expected.txt: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-style-changes-005.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-style-changes-006-expected.txt: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-style-changes-006.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-style-changes-007-expected.txt: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-style-changes-007.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-style-changes-008-expected.txt: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-style-changes-008.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-self-baseline-not-applied-if-sizing-cyclic-dependency-001-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-baseline-not-applied-if-sizing-cyclic-dependency-001.html:
+        * web-platform-tests/css/css-grid/alignment/grid-self-baseline-not-applied-if-sizing-cyclic-dependency-002-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-baseline-not-applied-if-sizing-cyclic-dependency-002.html:
+        * web-platform-tests/css/css-grid/alignment/grid-self-baseline-not-applied-if-sizing-cyclic-dependency-003-expected.txt: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-self-baseline-not-applied-if-sizing-cyclic-dependency-003.html: Added.
+        * web-platform-tests/css/css-grid/alignment/self-baseline/w3c-import.log:
+        * web-platform-tests/css/css-grid/alignment/support/style-change.js:
+        (evaluateStyleChangeMultiple):
+        * web-platform-tests/css/css-grid/alignment/support/w3c-import.log:
+        * web-platform-tests/css/css-grid/alignment/test-expected.txt: Added.
+        * web-platform-tests/css/css-grid/alignment/w3c-import.log:
+        * web-platform-tests/css/css-grid/grid-definition/support/grid.css:
+        (.thirdRowThirdColumn):
+        * web-platform-tests/css/css-grid/grid-definition/support/w3c-import.log:
+        * web-platform-tests/css/css-grid/grid-items/anonymous-grid-item-001.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-relative-offsets-001-expected.txt: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-relative-offsets-001.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-relative-offsets-002-expected.txt: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-relative-offsets-002.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/item-with-table-with-infinite-max-intrinsic-width-expected.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/item-with-table-with-infinite-max-intrinsic-width.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/support/grid.css:
+        (.thirdRowThirdColumn):
+        * web-platform-tests/css/css-grid/grid-items/support/w3c-import.log:
+        * web-platform-tests/css/css-grid/grid-items/table-with-infinite-max-intrinsic-width-expected.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/table-with-infinite-max-intrinsic-width.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/w3c-import.log:
+        * web-platform-tests/css/css-grid/grid-model/grid-container-ignores-first-letter-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/grid-model/grid-container-ignores-first-letter-002.html: Added.
+        * web-platform-tests/css/css-grid/grid-model/support/grid.css:
+        (.thirdRowThirdColumn):
+        * web-platform-tests/css/css-grid/grid-model/support/w3c-import.log:
+        * web-platform-tests/css/css-grid/grid-model/w3c-import.log:
+        * web-platform-tests/css/css-grid/implicit-grids/w3c-import.log:
+        * web-platform-tests/css/css-grid/inheritance-expected.txt: Added.
+        * web-platform-tests/css/css-grid/inheritance.html: Added.
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-percent-cols-filled-shrinkwrap-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-percent-cols-filled-shrinkwrap-001.html: Added.
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-percent-cols-spanned-shrinkwrap-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-percent-cols-spanned-shrinkwrap-001.html: Added.
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-percent-rows-filled-shrinkwrap-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-percent-rows-filled-shrinkwrap-001.html: Added.
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-percent-rows-spanned-shrinkwrap-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-percent-rows-spanned-shrinkwrap-001.html: Added.
+        * web-platform-tests/css/css-grid/layout-algorithm/w3c-import.log:
+        * web-platform-tests/css/css-grid/parsing/grid-area-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-area-invalid.html: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-area-valid-expected.txt: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-area-valid.html: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-auto-columns-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-auto-columns-invalid.html: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-auto-columns-valid-expected.txt: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-auto-columns-valid.html: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-auto-flow-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-auto-flow-invalid.html: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-auto-flow-valid-expected.txt: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-auto-flow-valid.html: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-auto-rows-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-auto-rows-invalid.html: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-auto-rows-valid-expected.txt: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-auto-rows-valid.html: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-template-areas-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-template-areas-invalid.html: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-template-areas-valid-expected.txt: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-template-areas-valid.html: Added.
+        * web-platform-tests/css/css-grid/parsing/w3c-import.log: Added.
+        * web-platform-tests/css/css-grid/placement/w3c-import.log:
+        * web-platform-tests/css/css-grid/test-plan/w3c-import.log:
+        * web-platform-tests/css/css-grid/w3c-import.log:
+        * web-platform-tests/css/support/META.yml: Added.
+        * web-platform-tests/css/support/OWNERS: Removed.
+        * web-platform-tests/css/support/computed-testcommon.js: Added.
+        (test_computed_value):
+        * web-platform-tests/css/support/grid.css:
+        (.thirdRowThirdColumn):
+        * web-platform-tests/css/support/inheritance-testcommon.js: Added.
+        (assert_initial):
+        * web-platform-tests/css/support/parsing-testcommon.js: Added.
+        (test_valid_value):
+        * web-platform-tests/css/support/support/w3c-import.log:
+        * web-platform-tests/css/support/w3c-import.log:
+
+
 2018-11-09  Andy Estes  <aestes@apple.com>
 
         [Payment Request] canMakePayment() should not consider serialized payment method data

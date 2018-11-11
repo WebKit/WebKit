@@ -1,0 +1,87 @@
+auto-sized rows - items with relative height
+ min-content-sized rows - items with relative height
+ÉÉ É ÉÉ ÉÉÉÉ É ÉÉ ÉÉÉ ÉÉ É
+ max-content-sized rows - items with relative height
+ÉÉ É ÉÉ ÉÉÉÉ É ÉÉ ÉÉÉ ÉÉ É
+ fit-content-sized rows - items with relative height
+ÉÉ É ÉÉ ÉÉÉÉ É ÉÉ ÉÉÉ ÉÉ É
+ flexible-sized rows - items with relative height
+ flex max-function rows - items with relative height
+ auto-sized columns - items with relative width
+ min-content-sized columns - items with relative width
+ÉÉ É ÉÉ ÉÉÉÉ É ÉÉ ÉÉÉ ÉÉ É
+ max-content-sized columns - items with relative width
+ÉÉ É ÉÉ ÉÉÉÉ É ÉÉ ÉÉÉ ÉÉ É
+ fit-content-sized columns - items with relative width
+ÉÉ É ÉÉ ÉÉÉÉ É ÉÉ ÉÉÉ ÉÉ É
+ flexible-sized columns - items with relative width
+ flex max-function columns - items with relative width
+baseline is not applied initially, but orthogonal items force repeating the track sizing and height is not indefinite in that phase.
+
+FAIL .inline-grid 1 assert_equals: 
+<div class="inline-grid justifyItemsBaseline rows max-flex-columns">
+        <div class="firstRowFirstColumn verticalRL width50" data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="100"></div>
+        <div class="secondRowFirstColumn verticalRL width200Percent" data-offset-x="-50" data-offset-y="100" data-expected-width="100" data-expected-height="100"></div>
+        <div class="firstRowSpanning2AutoColumn verticalRL width25" data-offset-x="50" data-offset-y="0" data-expected-width="25" data-expected-height="200"></div>
+    </div>
+offsetLeft expected -50 but got 0
+FAIL .inline-grid 2 assert_equals: 
+<div class="inline-grid justifyItemsBaseline rows flex-columns">
+        <div class="firstRowFirstColumn verticalRL width50" data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="100"></div>
+        <div class="secondRowFirstColumn verticalRL width200Percent" data-offset-x="0" data-offset-y="100" data-expected-width="100" data-expected-height="100"></div>
+        <div class="firstRowSpanning2AutoColumn verticalRL width25" data-offset-x="50" data-offset-y="0" data-expected-width="25" data-expected-height="200"></div>
+    </div>
+width expected 100 but got 300
+FAIL .inline-grid 3 assert_equals: 
+<div class="inline-grid justifyItemsBaseline rows fit-content-columns">
+        <div class="firstRowFirstColumn verticalRL" data-offset-x="0" data-offset-y="0" data-expected-width="80" data-expected-height="100">ÉÉ É ÉÉ ÉÉÉÉ É ÉÉ ÉÉÉ ÉÉ É</div>
+        <div class="secondRowFirstColumn verticalRL width200Percent" data-offset-x="0" data-offset-y="100" data-expected-width="160" data-expected-height="100"></div>
+        <div class="firstRowSpanning2AutoColumn verticalRL width25" data-offset-x="80" data-offset-y="0" data-expected-width="25" data-expected-height="200"></div>
+    </div>
+width expected 80 but got 85
+FAIL .inline-grid 4 assert_equals: 
+<div class="inline-grid justifyItemsBaseline rows max-content-columns">
+        <div class="firstRowFirstColumn verticalRL" data-offset-x="0" data-offset-y="0" data-expected-width="80" data-expected-height="100">ÉÉ É ÉÉ ÉÉÉÉ É ÉÉ ÉÉÉ ÉÉ É</div>
+        <div class="secondRowFirstColumn verticalRL width200Percent" data-offset-x="0" data-offset-y="100" data-expected-width="160" data-expected-height="100"></div>
+        <div class="firstRowSpanning2AutoColumn verticalRL width25" data-offset-x="80" data-offset-y="0" data-expected-width="25" data-expected-height="200"></div>
+    </div>
+width expected 80 but got 85
+FAIL .inline-grid 5 assert_equals: 
+<div class="inline-grid justifyItemsBaseline rows min-content-columns">
+        <div class="firstRowFirstColumn verticalRL" data-offset-x="0" data-offset-y="0" data-expected-width="80" data-expected-height="100">ÉÉ É ÉÉ ÉÉÉÉ É ÉÉ ÉÉÉ ÉÉ É</div>
+        <div class="secondRowFirstColumn verticalRL width200Percent" data-offset-x="0" data-offset-y="100" data-expected-width="160" data-expected-height="100"></div>
+        <div class="firstRowSpanning2AutoColumn verticalRL width25" data-offset-x="80" data-offset-y="0" data-expected-width="25" data-expected-height="200"></div>
+    </div>
+width expected 80 but got 85
+FAIL .inline-grid 6 assert_equals: 
+<div class="inline-grid justifyItemsBaseline rows">
+        <div class="firstRowFirstColumn verticalRL width50" data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="100"></div>
+        <div class="secondRowFirstColumn verticalRL width200Percent" data-offset-x="0" data-offset-y="100" data-expected-width="100" data-expected-height="100"></div>
+        <div class="firstRowSpanning2AutoColumn verticalRL width25" data-offset-x="50" data-offset-y="0" data-expected-width="25" data-expected-height="200"></div>
+    </div>
+width expected 100 but got 300
+PASS .inline-grid 7 
+PASS .inline-grid 8 
+FAIL .inline-grid 9 assert_equals: 
+<div class="inline-grid alignItemsBaseline columns fit-content-rows">
+        <div class="firstRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="100" data-expected-height="80">ÉÉ É ÉÉ ÉÉÉÉ É ÉÉ ÉÉÉ ÉÉ É</div>
+        <div class="firstRowSecondColumn height200Percent" data-offset-x="100" data-offset-y="0" data-expected-width="100" data-expected-height="160"></div>
+        <div class="autoRowAutoColumnSpanning2 height25" data-offset-x="0" data-offset-y="80" data-expected-width="200" data-expected-height="25"></div>
+    </div>
+height expected 80 but got 85
+FAIL .inline-grid 10 assert_equals: 
+<div class="inline-grid alignItemsBaseline columns max-content-rows">
+        <div class="firstRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="100" data-expected-height="80">ÉÉ É ÉÉ ÉÉÉÉ É ÉÉ ÉÉÉ ÉÉ É</div>
+        <div class="firstRowSecondColumn height200Percent" data-offset-x="100" data-offset-y="0" data-expected-width="100" data-expected-height="160"></div>
+        <div class="autoRowAutoColumnSpanning2 height25" data-offset-x="0" data-offset-y="80" data-expected-width="200" data-expected-height="25"></div>
+    </div>
+height expected 80 but got 85
+FAIL .inline-grid 11 assert_equals: 
+<div class="inline-grid alignItemsBaseline columns min-content-rows">
+        <div class="firstRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="100" data-expected-height="80">ÉÉ É ÉÉ ÉÉÉÉ É ÉÉ ÉÉÉ ÉÉ É</div>
+        <div class="firstRowSecondColumn height200Percent" data-offset-x="100" data-offset-y="0" data-expected-width="100" data-expected-height="160"></div>
+        <div class="autoRowAutoColumnSpanning2 height25" data-offset-x="0" data-offset-y="80" data-expected-width="200" data-expected-height="25"></div>
+    </div>
+height expected 80 but got 85
+PASS .inline-grid 12 
+

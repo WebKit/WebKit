@@ -1,0 +1,24 @@
+
+PASS .grid 1 
+PASS .grid 2 
+PASS .grid 3 
+PASS .grid 4 
+PASS .grid 5 
+PASS .grid 6 
+Direction LTR
+
+Direction RTL
+
+Writing Mode vertical-lr
+
+Direction LTR
+
+Direction RTL
+
+Writing Mode vertical-rl
+
+Direction LTR
+
+Direction RTL
+
+

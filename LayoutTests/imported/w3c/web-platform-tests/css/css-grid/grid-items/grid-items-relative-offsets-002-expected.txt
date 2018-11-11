@@ -1,0 +1,60 @@
+
+FAIL .grid 1 assert_equals: 
+<div class="grid verticalRL directionRTL">
+  <div class="firstRowFirstColumn" style="left: 10%; top: 5%;" data-offset-x="219" data-offest-y="10" data-expected-width="90" data-expected-height="200"></div>
+  <div class="secondRowSecondColumn" style="left: -20%; top: -10%;" data-offset-x="138" data-offest-y="75" data-expected-width="60" data-expected-height="150"></div>
+  <div class="thirdRowThirdColumn" style="right: 70%; bottom: 30%;" data-offset-x="99" data-offest-y="120" data-expected-width="30" data-expected-height="100"></div>
+</div>
+offsetLeft expected 219 but got 240
+FAIL .grid 2 assert_equals: 
+<div class="grid verticalRL">
+  <div class="firstRowFirstColumn" style="left: 10%; top: 5%;" data-offset-x="219" data-offest-y="10" data-expected-width="90" data-expected-height="200"></div>
+  <div class="secondRowSecondColumn" style="left: -20%; top: -10%;" data-offset-x="138" data-offest-y="75" data-expected-width="60" data-expected-height="150"></div>
+  <div class="thirdRowThirdColumn" style="right: 70%; bottom: 30%;" data-offset-x="99" data-offest-y="120" data-expected-width="30" data-expected-height="100"></div>
+</div>
+offsetLeft expected 219 but got 240
+FAIL .grid 3 assert_equals: 
+<div class="grid verticalLR directionRTL">
+  <div class="firstRowFirstColumn" style="left: 10%; top: 5%;" data-offset-x="9" data-offest-y="10" data-expected-width="90" data-expected-height="200"></div>
+  <div class="secondRowSecondColumn" style="left: -20%; top: -10%;" data-offset-x="78" data-offest-y="75" data-expected-width="60" data-expected-height="150"></div>
+  <div class="thirdRowThirdColumn" style="right: 70%; bottom: 30%;" data-offset-x="129" data-offest-y="120" data-expected-width="30" data-expected-height="100"></div>
+</div>
+offsetLeft expected 9 but got 30
+FAIL .grid 4 assert_equals: 
+<div class="grid verticalLR">
+  <div class="firstRowFirstColumn" style="left: 10%; top: 5%;" data-offset-x="9" data-offest-y="10" data-expected-width="90" data-expected-height="200"></div>
+  <div class="secondRowSecondColumn" style="left: -20%; top: -10%;" data-offset-x="78" data-offest-y="75" data-expected-width="60" data-expected-height="150"></div>
+  <div class="thirdRowThirdColumn" style="right: 70%; bottom: 30%;" data-offset-x="129" data-offest-y="120" data-expected-width="30" data-expected-height="100"></div>
+</div>
+offsetLeft expected 9 but got 30
+FAIL .grid 5 assert_equals: 
+<div class="grid directionRTL">
+  <div class="firstRowFirstColumn" style="left: 5%; top: 10%;" data-offset-x="410" data-offest-y="9" data-expected-width="200" data-expected-height="90"></div>
+  <div class="secondRowSecondColumn" style="left: -10%; top: -20%;" data-offset-x="235" data-offest-y="78" data-expected-width="150" data-expected-height="60"></div>
+  <div class="thirdRowThirdColumn" style="right: 30%; bottom: 70%;" data-offset-x="120" data-offest-y="129" data-expected-width="100" data-expected-height="30"></div>
+</div>
+offsetLeft expected 410 but got 430
+FAIL .grid 6 assert_equals: 
+<div class="grid">
+  <div class="firstRowFirstColumn" style="left: 5%; top: 10%;" data-offset-x="10" data-offest-y="9" data-expected-width="200" data-expected-height="90"></div>
+  <div class="secondRowSecondColumn" style="left: -10%; top: -20%;" data-offset-x="185" data-offest-y="78" data-expected-width="150" data-expected-height="60"></div>
+  <div class="thirdRowThirdColumn" style="right: 30%; bottom: 70%;" data-offset-x="320" data-offest-y="129" data-expected-width="100" data-expected-height="30"></div>
+</div>
+offsetLeft expected 10 but got 30
+Direction LTR
+
+Direction RTL
+
+Writing Mode vertical-lr
+
+Direction LTR
+
+Direction RTL
+
+Writing Mode vertical-rl
+
+Direction LTR
+
+Direction RTL
+
+

@@ -1,0 +1,7 @@
+
+PASS .before 1 
+PASS .before 2 
+FAIL .before 3 assert_equals: 
+<div id="item1" data-expected-width="20" data-expected-height="50" data-offset-y="0" class=" before" data-offset-x="10"></div>
+offsetLeft expected 10 but got 0
+
