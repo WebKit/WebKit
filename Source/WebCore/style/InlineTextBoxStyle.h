@@ -51,6 +51,6 @@ struct WavyStrokeParameters {
 };
 WavyStrokeParameters getWavyStrokeParameters(float fontSize);
 GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const InlineTextBox*);
-int computeUnderlineOffset(TextUnderlinePosition, TextUnderlineOffset, const FontMetrics&, const InlineTextBox*, int textDecorationThickness);
+float computeUnderlineOffset(TextUnderlinePosition, TextUnderlineOffset, const FontMetrics&, const InlineTextBox*, float textDecorationThickness);
     
 } // namespace WebCore

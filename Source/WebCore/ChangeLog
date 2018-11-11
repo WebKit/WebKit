@@ -1,3 +1,16 @@
+2018-11-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Address post-review comments after r237955
+        https://bugs.webkit.org/show_bug.cgi?id=191496
+
+        Reviewed by Darin Adler.
+
+        * rendering/TextDecorationPainter.cpp:
+        (WebCore::TextDecorationPainter::paintTextDecoration):
+        * style/InlineTextBoxStyle.cpp:
+        (WebCore::computeUnderlineOffset):
+        * style/InlineTextBoxStyle.h:
+
 2018-11-11  Benjamin Poulain  <benjamin@webkit.org>
 
         Fix a fixme: rename wtfObjcMsgSend to wtfObjCMsgSend

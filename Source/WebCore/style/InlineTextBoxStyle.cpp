@@ -32,10 +32,10 @@
 
 namespace WebCore {
     
-int computeUnderlineOffset(TextUnderlinePosition underlinePosition, TextUnderlineOffset underlineOffset, const FontMetrics& fontMetrics, const InlineTextBox* inlineTextBox, int defaultGap)
+float computeUnderlineOffset(TextUnderlinePosition underlinePosition, TextUnderlineOffset underlineOffset, const FontMetrics& fontMetrics, const InlineTextBox* inlineTextBox, float defaultGap)
 {
     // This represents the gap between the baseline and the closest edge of the underline.
-    int gap = std::max<int>(1, ceilf(defaultGap / 2.0));
+    float gap = std::max<int>(1, std::ceil(defaultGap / 2.0f));
     
     // FIXME: The code for visual overflow detection passes in a null inline text box. This means it is now
     // broken for the case where auto needs to behave like "under".
@@ -78,9 +78,8 @@ int computeUnderlineOffset(TextUnderlinePosition underlinePosition, TextUnderlin
             rootBox.maxLogicalBottomForTextDecorationLine(offset, decorationRenderer, TextDecoration::Underline);
             offset -= inlineTextBox->logicalBottom();
         }
-        auto desiredOffset = inlineTextBox->logicalHeight() + gap + std::max<float>(offset, 0) + underlineOffset.lengthOr(0);
-        desiredOffset = std::max<float>(desiredOffset, fontMetrics.ascent());
-        return desiredOffset;
+        auto desiredOffset = inlineTextBox->logicalHeight() + gap + std::max(offset, 0.0f) + underlineOffset.lengthOr(0);
+        return std::max<float>(desiredOffset, fontMetrics.ascent());
     }
     }
 
