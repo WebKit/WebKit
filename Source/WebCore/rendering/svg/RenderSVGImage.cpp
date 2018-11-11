@@ -120,7 +120,6 @@ void RenderSVGImage::layout()
         SVGRenderSupport::intersectRepaintRectWithResources(*this, m_repaintBoundingBoxExcludingShadow);
 
         m_repaintBoundingBox = m_repaintBoundingBoxExcludingShadow;
-        SVGRenderSupport::intersectRepaintRectWithShadows(*this, m_repaintBoundingBox);
 
         m_needsBoundariesUpdate = false;
     }

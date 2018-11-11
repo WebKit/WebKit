@@ -1,3 +1,55 @@
+2018-11-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove support for -webkit-svg-shadow
+        https://bugs.webkit.org/show_bug.cgi?id=187429
+        <rdar://problem/41920735>
+
+        Reviewed by Dean Jackson.
+        
+        -webkit-svg-shadow was a non-standard hack for online iWork, and they no longer use it,
+        so remove it. No other browser supports it, and chromestatus say it's used on less than
+        0.000001% of pages.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyinStyle):
+        * css/CSSProperties.json:
+        * css/SVGCSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::svgPropertyValue):
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyInitialWebkitSvgShadow): Deleted.
+        (WebCore::StyleBuilderCustom::applyInheritWebkitSvgShadow): Deleted.
+        (WebCore::StyleBuilderCustom::applyValueWebkitSvgShadow): Deleted.
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::didAttachChild):
+        * rendering/svg/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::layout):
+        * rendering/svg/RenderSVGImage.h:
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::RenderSVGModelObject):
+        * rendering/svg/RenderSVGModelObject.h:
+        (WebCore::RenderSVGModelObject::repaintRectInLocalCoordinatesExcludingSVGShadow const): Deleted.
+        (WebCore::RenderSVGModelObject::hasSVGShadow const): Deleted.
+        (WebCore::RenderSVGModelObject::setHasSVGShadow): Deleted.
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::RenderSVGRoot):
+        (WebCore::RenderSVGRoot::updateCachedBoundaries):
+        * rendering/svg/RenderSVGRoot.h:
+        * rendering/svg/RenderSVGShape.cpp:
+        (WebCore::RenderSVGShape::updateRepaintBoundingBox):
+        * rendering/svg/RenderSVGShape.h:
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::clippedOverflowRectForRepaint):
+        (WebCore::SVGRenderSupport::layoutChildren):
+        (WebCore::SVGRenderSupport::styleChanged):
+        (WebCore::SVGRenderSupport::repaintRectForRendererInLocalCoordinatesExcludingSVGShadow): Deleted.
+        (WebCore::SVGRenderSupport::rendererHasSVGShadow): Deleted.
+        (WebCore::SVGRenderSupport::setRendererHasSVGShadow): Deleted.
+        (WebCore::SVGRenderSupport::intersectRepaintRectWithShadows): Deleted.
+        (WebCore::SVGRenderSupport::childAdded): Deleted.
+        * rendering/svg/SVGRenderSupport.h:
+
 2018-11-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r238065.

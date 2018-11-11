@@ -2404,13 +2404,8 @@ webkit.org/b/191009 webrtc/video-mute-vp8.html [ Failure ]
 #////////////////////////////////////////////////////////////////////////////////////////
 
 # Fail on 32-bit release builders
-webkit.org/b/84857 fast/repaint/moving-shadow-on-container.html [ Failure Pass ]
-webkit.org/b/84857 fast/repaint/moving-shadow-on-path.html [ Failure Pass ]
 webkit.org/b/80210 security/block-test.html [ Failure Pass ]
 webkit.org/b/62204 svg/W3C-SVG-1.1/paths-data-03-f.svg [ Failure Pass ]
-Bug(GTK) svg/css/composite-shadow-example.html [ Failure Pass ]
-Bug(GTK) svg/css/composite-shadow-with-opacity.html [ Failure Pass ]
-Bug(GTK) svg/css/stars-with-shadow.html [ Failure Pass ]
 
 # Fails on 64-bit release and debug builders
 webkit.org/b/89099 svg/transforms/transformed-text-fill-pattern.html [ ImageOnlyFailure Pass ]

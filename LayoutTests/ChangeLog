@@ -1,3 +1,161 @@
+2018-11-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove support for -webkit-svg-shadow
+        https://bugs.webkit.org/show_bug.cgi?id=187429
+
+        Reviewed by Dean Jackson.
+
+        -webkit-svg-shadow was a non-standard hack for online iWork, and they no longer use it,
+        so remove it. No other browser supports it, and chromestatus say it's used on less than
+        0.000001% of pages.
+
+        * css3/blending/svg-blend-layer-shadow.html: Removed.
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * fast/css/getComputedStyle/resources/property-names.js:
+        * fast/repaint/moving-shadow-on-container-expected.png: Removed.
+        * fast/repaint/moving-shadow-on-container.html: Removed.
+        * fast/repaint/moving-shadow-on-path-expected.txt: Removed.
+        * fast/repaint/moving-shadow-on-path.html: Removed.
+        * legacy-animation-engine/fast/css/getComputedStyle/resources/property-names.js:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/css3/blending/svg-blend-layer-shadow-expected.png: Removed.
+        * platform/gtk/css3/blending/svg-blend-layer-shadow-expected.txt: Removed.
+        * platform/gtk/fast/repaint/moving-shadow-on-container-expected.txt: Removed.
+        * platform/gtk/fast/repaint/moving-shadow-on-path-expected.png: Removed.
+        * platform/gtk/svg/css/arrow-with-shadow-expected.png: Removed.
+        * platform/gtk/svg/css/composite-shadow-example-expected.png: Removed.
+        * platform/gtk/svg/css/composite-shadow-example-expected.txt: Removed.
+        * platform/gtk/svg/css/composite-shadow-text-expected.png: Removed.
+        * platform/gtk/svg/css/composite-shadow-text-expected.txt: Removed.
+        * platform/gtk/svg/css/composite-shadow-with-opacity-expected.png: Removed.
+        * platform/gtk/svg/css/composite-shadow-with-opacity-expected.txt: Removed.
+        * platform/gtk/svg/css/group-with-shadow-expected.png: Removed.
+        * platform/gtk/svg/css/shadow-changes-expected.png: Removed.
+        * platform/gtk/svg/css/shadow-changes-expected.txt: Removed.
+        * platform/gtk/svg/css/stars-with-shadow-expected.png: Removed.
+        * platform/gtk/svg/custom/simple-text-double-shadow-expected.txt: Removed.
+        * platform/gtk/svg/custom/transform-with-shadow-and-gradient-expected.png: Removed.
+        * platform/gtk/svg/custom/transform-with-shadow-and-gradient-expected.txt: Removed.
+        * platform/gtk/svg/filters/shadow-on-filter-expected.png: Removed.
+        * platform/gtk/svg/filters/shadow-on-rect-with-filter-expected.png: Removed.
+        * platform/gtk/svg/repaint/repaint-webkit-svg-shadow-expected.png: Removed.
+        * platform/ios/TestExpectations:
+        * platform/ios/css3/blending/svg-blend-layer-shadow-expected.txt: Removed.
+        * platform/ios/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/ios/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/ios/svg/css/composite-shadow-example-expected.txt: Removed.
+        * platform/ios/svg/css/composite-shadow-text-expected.txt: Removed.
+        * platform/ios/svg/css/composite-shadow-with-opacity-expected.txt: Removed.
+        * platform/ios/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/ios/svg/css/group-with-shadow-expected.txt: Removed.
+        * platform/ios/svg/css/shadow-changes-expected.txt: Removed.
+        * platform/ios/svg/css/stars-with-shadow-expected.txt: Removed.
+        * platform/ios/svg/custom/transform-with-shadow-and-gradient-expected.txt: Removed.
+        * platform/mac-sierra/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/mac-sierra/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/mac-sierra/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/mac/TestExpectations:
+        * platform/mac/css3/blending/svg-blend-layer-shadow-expected.png: Removed.
+        * platform/mac/css3/blending/svg-blend-layer-shadow-expected.txt: Removed.
+        * platform/mac/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/mac/fast/repaint/moving-shadow-on-container-expected.txt: Removed.
+        * platform/mac/fast/repaint/moving-shadow-on-path-expected.png: Removed.
+        * platform/mac/fast/repaint/moving-shadow-on-path-expected.txt: Removed.
+        * platform/mac/svg/css/arrow-with-shadow-expected.png: Removed.
+        * platform/mac/svg/css/circle-in-mask-with-shadow-expected.png: Removed.
+        * platform/mac/svg/css/clippath-with-shadow-expected.png: Removed.
+        * platform/mac/svg/css/composite-shadow-example-expected.png: Removed.
+        * platform/mac/svg/css/composite-shadow-text-expected.txt: Removed.
+        * platform/mac/svg/css/composite-shadow-with-opacity-expected.png: Removed.
+        * platform/mac/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/mac/svg/css/group-with-shadow-expected.png: Removed.
+        * platform/mac/svg/css/group-with-shadow-expected.txt: Removed.
+        * platform/mac/svg/css/mask-with-shadow-expected.png: Removed.
+        * platform/mac/svg/css/path-with-shadow-expected.png: Removed.
+        * platform/mac/svg/css/shadow-and-opacity-expected.png: Removed.
+        * platform/mac/svg/css/shadow-changes-expected.png: Removed.
+        * platform/mac/svg/css/shadow-changes-expected.txt: Removed.
+        * platform/mac/svg/css/shadow-with-large-radius-expected.png: Removed.
+        * platform/mac/svg/css/shadow-with-negative-offset-expected.png: Removed.
+        * platform/mac/svg/css/stars-with-shadow-expected.png: Removed.
+        * platform/mac/svg/css/stars-with-shadow-expected.txt: Removed.
+        * platform/mac/svg/custom/simple-text-double-shadow-expected.png: Removed.
+        * platform/mac/svg/custom/simple-text-double-shadow-expected.txt: Removed.
+        * platform/mac/svg/custom/transform-with-shadow-and-gradient-expected.png: Removed.
+        * platform/mac/svg/custom/transform-with-shadow-and-gradient-expected.txt: Removed.
+        * platform/mac/svg/filters/shadow-on-filter-expected.png: Removed.
+        * platform/mac/svg/filters/shadow-on-rect-with-filter-expected.png: Removed.
+        * platform/mac/svg/repaint/repaint-webkit-svg-shadow-expected.png: Removed.
+        * platform/win/TestExpectations:
+        * platform/win/css3/blending/svg-blend-layer-shadow-expected.txt: Removed.
+        * platform/win/fast/repaint/moving-shadow-on-container-expected.txt: Removed.
+        * platform/win/fast/repaint/moving-shadow-on-path-expected.txt: Removed.
+        * platform/win/svg/css/composite-shadow-text-expected.txt: Removed.
+        * platform/win/svg/css/group-with-shadow-expected.txt: Removed.
+        * platform/win/svg/css/shadow-changes-expected.txt: Removed.
+        * platform/win/svg/custom/simple-text-double-shadow-expected.txt: Removed.
+        * platform/wincairo/fast/repaint/moving-shadow-on-container-expected.txt: Removed.
+        * platform/wincairo/fast/repaint/moving-shadow-on-path-expected.png: Removed.
+        * platform/wincairo/svg/css/composite-shadow-text-expected.txt: Removed.
+        * platform/wincairo/svg/css/shadow-changes-expected.txt: Removed.
+        * platform/wincairo/svg/custom/transform-with-shadow-and-gradient-expected.txt: Removed.
+        * platform/wpe/svg/css/composite-shadow-text-expected.txt: Removed.
+        * platform/wpe/svg/css/shadow-changes-expected.txt: Removed.
+        * platform/wpe/svg/css/stars-with-shadow-expected.txt: Removed.
+        * platform/wpe/svg/custom/simple-text-double-shadow-expected.txt: Removed.
+        * platform/wpe/svg/custom/transform-with-shadow-and-gradient-expected.txt: Removed.
+        * svg/css/arrow-with-shadow-expected.txt: Removed.
+        * svg/css/arrow-with-shadow.svg: Removed.
+        * svg/css/circle-in-mask-with-shadow-expected.png: Removed.
+        * svg/css/circle-in-mask-with-shadow-expected.txt: Removed.
+        * svg/css/circle-in-mask-with-shadow.svg: Removed.
+        * svg/css/clippath-with-shadow-expected.png: Removed.
+        * svg/css/clippath-with-shadow-expected.txt: Removed.
+        * svg/css/clippath-with-shadow.svg: Removed.
+        * svg/css/composite-shadow-example-expected.txt: Removed.
+        * svg/css/composite-shadow-example.html: Removed.
+        * svg/css/composite-shadow-text-expected.png: Removed.
+        * svg/css/composite-shadow-text.svg: Removed.
+        * svg/css/composite-shadow-with-opacity-expected.txt: Removed.
+        * svg/css/composite-shadow-with-opacity.html: Removed.
+        * svg/css/getComputedStyle-basic-expected.txt:
+        * svg/css/group-with-shadow-expected.txt: Removed.
+        * svg/css/group-with-shadow.svg: Removed.
+        * svg/css/mask-with-shadow-expected.txt: Removed.
+        * svg/css/mask-with-shadow.svg: Removed.
+        * svg/css/parent-shadow-offscreen-expected.svg: Removed.
+        * svg/css/parent-shadow-offscreen.svg: Removed.
+        * svg/css/path-with-shadow-expected.png: Removed.
+        * svg/css/path-with-shadow-expected.txt: Removed.
+        * svg/css/path-with-shadow.svg: Removed.
+        * svg/css/root-shadow-offscreen-expected.svg: Removed.
+        * svg/css/root-shadow-offscreen.svg: Removed.
+        * svg/css/shadow-and-opacity-expected.txt: Removed.
+        * svg/css/shadow-and-opacity.svg: Removed.
+        * svg/css/shadow-changes.svg: Removed.
+        * svg/css/shadow-with-large-radius-expected.png: Removed.
+        * svg/css/shadow-with-large-radius-expected.txt: Removed.
+        * svg/css/shadow-with-large-radius.svg: Removed.
+        * svg/css/shadow-with-negative-offset-expected.png: Removed.
+        * svg/css/shadow-with-negative-offset-expected.txt: Removed.
+        * svg/css/shadow-with-negative-offset.svg: Removed.
+        * svg/css/stars-with-shadow-expected.txt: Removed.
+        * svg/css/stars-with-shadow.html: Removed.
+        * svg/custom/simple-text-double-shadow-expected.png: Removed.
+        * svg/custom/simple-text-double-shadow-expected.txt: Removed.
+        * svg/custom/simple-text-double-shadow.svg: Removed.
+        * svg/custom/transform-with-shadow-and-gradient.svg: Removed.
+        * svg/filters/shadow-on-filter-expected.txt: Removed.
+        * svg/filters/shadow-on-filter.svg: Removed.
+        * svg/filters/shadow-on-rect-with-filter-expected.txt: Removed.
+        * svg/filters/shadow-on-rect-with-filter.svg: Removed.
+        * svg/repaint/repaint-webkit-svg-shadow-container-expected.txt: Removed.
+        * svg/repaint/repaint-webkit-svg-shadow-container.html: Removed.
+        * svg/repaint/repaint-webkit-svg-shadow-expected.txt: Removed.
+        * svg/repaint/repaint-webkit-svg-shadow.svg: Removed.
+
 2018-11-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r238065.

@@ -5812,10 +5812,9 @@
         },
         "-webkit-svg-shadow": {
             "codegen-properties": {
-                "custom": "All",
-                "svg": true
+                "skip-codegen": true
             },
-            "status": "non-standard"
+            "status": "removed"
         },
         "-webkit-text-combine": {
             "inherited": true,

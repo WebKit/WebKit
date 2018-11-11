@@ -56,7 +56,6 @@ RenderSVGRoot::RenderSVGRoot(SVGSVGElement& element, RenderStyle&& style)
     , m_objectBoundingBoxValid(false)
     , m_isLayoutSizeChanged(false)
     , m_needsBoundariesOrTransformUpdate(true)
-    , m_hasSVGShadow(false)
     , m_hasBoxDecorations(false)
 {
 }
@@ -396,7 +395,6 @@ void RenderSVGRoot::updateCachedBoundaries()
     m_repaintBoundingBoxExcludingShadow.inflate(horizontalBorderAndPaddingExtent());
 
     m_repaintBoundingBox = m_repaintBoundingBoxExcludingShadow;
-    SVGRenderSupport::intersectRepaintRectWithShadows(*this, m_repaintBoundingBox);
 }
 
 bool RenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)

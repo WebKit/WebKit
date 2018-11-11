@@ -623,9 +623,6 @@ webkit.org/b/122038 legacy-animation-engine/animations/transform-non-accelerated
 
 webkit.org/b/123250 plugins/destroy-during-npp-new-object-with-fallback-content.html [ Pass Failure ]
 
-webkit.org/b/123369 svg/css/parent-shadow-offscreen.svg [ ImageOnlyFailure ]
-webkit.org/b/123369 svg/css/root-shadow-offscreen.svg [ ImageOnlyFailure ]
-
 inspector/debugger/setBreakpoint-dfg-callee-and-examine-dfg-local.html
 inspector/debugger/didSampleProbe-multiple-probes.html
 inspector/debugger/nested-inspectors.html

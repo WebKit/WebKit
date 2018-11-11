@@ -270,7 +270,6 @@ text-anchor: start
 writing-mode: horizontal-tb
 glyph-orientation-horizontal: 0deg
 glyph-orientation-vertical: auto
--webkit-svg-shadow: none
 vector-effect: none
 background-position-x: 0%
 background-position-y: 0%

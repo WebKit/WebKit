@@ -1,4 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg">
-<title>Expected results for parent-shadow-offscreen.svg</title>
-<rect id="rect" fill="white" style="-webkit-svg-shadow: #000 100px 100px 5px" x="0" y="0" width="75" height="75"></rect>
-</svg>

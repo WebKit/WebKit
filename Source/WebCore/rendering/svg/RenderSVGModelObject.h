@@ -60,10 +60,6 @@ public:
     static bool checkIntersection(RenderElement*, const FloatRect&);
     static bool checkEnclosure(RenderElement*, const FloatRect&);
 
-    virtual FloatRect repaintRectInLocalCoordinatesExcludingSVGShadow() const { return repaintRectInLocalCoordinates(); }
-    bool hasSVGShadow() const { return m_hasSVGShadow; }
-    void setHasSVGShadow(bool hasShadow) { m_hasSVGShadow = hasShadow; }
-
     SVGElement& element() const { return downcast<SVGElement>(nodeForNonAnonymous()); }
 
 protected:
@@ -77,7 +73,6 @@ private:
     // This method should never be called, SVG uses a different nodeAtPoint method
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
     void absoluteFocusRingQuads(Vector<FloatQuad>&) final;
-    bool m_hasSVGShadow;
 };
 
 } // namespace WebCore

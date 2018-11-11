@@ -467,7 +467,6 @@ void RenderElement::didAttachChild(RenderObject& child, RenderObject*)
     // and stop creating layers at all for these cases - they're not used anyways.
     if (child.hasLayer() && !layerCreationAllowedForSubtree())
         downcast<RenderLayerModelObject>(child).layer()->removeOnlyThisLayer();
-    SVGRenderSupport::childAdded(*this, child);
 }
 
 RenderObject* RenderElement::attachRendererInternal(RenderPtr<RenderObject> child, RenderObject* beforeChild)

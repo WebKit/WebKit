@@ -184,8 +184,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID property
 
         return nullptr;
     }
-    case CSSPropertyWebkitSvgShadow:
-        return valueForShadow(svgStyle.shadow(), propertyID, *style);
     case CSSPropertyVectorEffect:
         return CSSPrimitiveValue::create(svgStyle.vectorEffect());
     case CSSPropertyMaskType:

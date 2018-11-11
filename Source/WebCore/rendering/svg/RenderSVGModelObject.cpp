@@ -44,7 +44,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGModelObject);
 
 RenderSVGModelObject::RenderSVGModelObject(SVGElement& element, RenderStyle&& style)
     : RenderElement(element, WTFMove(style), 0)
-    , m_hasSVGShadow(false)
 {
 }
 

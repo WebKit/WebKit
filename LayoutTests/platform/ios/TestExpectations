@@ -1138,7 +1138,6 @@ svg/clip-path/clip-path-line-use-before-defined.svg [ ImageOnlyFailure ]
 
 # SVG
 webkit.org/b/137574 svg/dom/SVGAnimatedAngle.html [ Skip ] # Pass, Crash
-webkit.org/b/137574 svg/css/arrow-with-shadow.svg [ Skip ] # Pass, Crash
 
 # Canvas tests that fail:
 webkit.org/b/137530 canvas/philip/tests/2d.composite.operation.clear.html [ Failure ]
@@ -1459,7 +1458,6 @@ svg/carto.net/textbox.svg [ Failure ]
 svg/carto.net/window.svg [ Failure ]
 svg/custom/altglyph.svg [ Failure ]
 svg/custom/getscreenctm-in-mixed-content2.xhtml [ Failure ]
-svg/custom/simple-text-double-shadow.svg [ Failure ]
 svg/custom/svg-fonts-in-text-controls.html [ Failure ]
 svg/custom/zero-path-square-cap-rendering.svg [ Failure ]
 svg/filters/feDisplacementMap-filterUnits.svg [ ImageOnlyFailure ]
