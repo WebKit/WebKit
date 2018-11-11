@@ -3797,9 +3797,13 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 
 - (void)_handleKeyUIEvent:(::UIEvent *)event
 {
+    bool isHardwareKeyboardEvent = !!event._hidEvent;
+    if (isHardwareKeyboardEvent && ((UIPhysicalKeyboardEvent *)event)._inputFlags & kUIKeyboardInputModifierFlagsChanged)
+        _page->updateCurrentModifierState();
+
     // We only want to handle key event from the hardware keyboard when we are
     // first responder and we are not interacting with editable content.
-    if ([self isFirstResponder] && event._hidEvent && !_page->editorState().isContentEditable) {
+    if ([self isFirstResponder] && isHardwareKeyboardEvent && !_page->editorState().isContentEditable) {
         [self handleKeyEvent:event];
         return;
     }

@@ -27,8 +27,10 @@
 #import "KeyEventCocoa.h"
 
 #import "Logging.h"
+#import "PlatformKeyboardEvent.h"
 #import "WindowsKeyboardCodes.h"
 #import <wtf/ASCIICType.h>
+#import <wtf/MainThread.h>
 #import <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -38,6 +40,20 @@
 using namespace WTF;
 
 namespace WebCore {
+
+bool PlatformKeyboardEvent::currentCapsLockState()
+{
+    return currentStateOfModifierKeys().contains(PlatformEvent::Modifier::CapsLockKey);
+}
+
+void PlatformKeyboardEvent::getCurrentModifierState(bool& shiftKey, bool& ctrlKey, bool& altKey, bool& metaKey)
+{
+    auto currentModifiers = currentStateOfModifierKeys();
+    shiftKey = currentModifiers.contains(PlatformEvent::Modifier::ShiftKey);
+    ctrlKey = currentModifiers.contains(PlatformEvent::Modifier::CtrlKey);
+    altKey = currentModifiers.contains(PlatformEvent::Modifier::AltKey);
+    metaKey = currentModifiers.contains(PlatformEvent::Modifier::MetaKey);
+}
 
 // https://w3c.github.io/uievents-key/
 String keyForCharCode(unichar charCode)

@@ -24,9 +24,11 @@ layer at (0,0) size 800x600
                           text run at (2,3) width 31: "PIN:"
                       RenderTableCell {TD} at (82,48) size 185x29 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
                         RenderTextControl {INPUT} at (4,4) size 136x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                          RenderFlexibleBox {DIV} at (6,3) size 123x15
+                            RenderBlock {DIV} at (0,0) size 123x14
                         RenderText {#text} at (0,0) size 0x0
                       RenderTableCell {TD} at (268,60) size 5x5 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
 layer at (108,32) size 122x14
   RenderBlock {DIV} at (6,3) size 123x15
 layer at (108,70) size 122x14
-  RenderBlock {DIV} at (6,3) size 123x15
+  RenderBlock {DIV} at (0,0) size 123x14

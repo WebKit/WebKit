@@ -46,6 +46,8 @@ layer at (0,0) size 800x600
                   text run at (1,2) width 248: "password with value property changed"
               RenderTableCell {TD} at (395,29) size 240x27 [r=1 c=1 rs=1 cs=1]
                 RenderTextControl {INPUT} at (3,3) size 136x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                  RenderFlexibleBox {DIV} at (6,3) size 123x15
+                    RenderBlock {DIV} at (0,0) size 123x14
               RenderTableCell {TD} at (636,31) size 63x23 [r=1 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 30x20
                   text run at (1,2) width 30: "after"
@@ -205,7 +207,7 @@ layer at (413,142) size 122x14
     RenderText {#text} at (0,0) size 32x14
       text run at (0,0) width 32: "before"
 layer at (413,171) size 122x14
-  RenderBlock {DIV} at (6,3) size 123x15
+  RenderBlock {DIV} at (0,0) size 123x14
     RenderText {#text} at (0,0) size 40x14
       text run at (0,0) width 40: "\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}"
 layer at (413,328) size 122x14

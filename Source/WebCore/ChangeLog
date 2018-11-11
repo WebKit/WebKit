@@ -1,3 +1,54 @@
+2018-11-11  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Draw caps lock indicator in password fields
+        https://bugs.webkit.org/show_bug.cgi?id=190565
+        <rdar://problem/45262343>
+
+        Reviewed by Dean Jackson.
+
+        Draw the caps lock indicator in a focused password field on iOS. This makes the behavior of password
+        fields on iOS more closely match the behavior of password fields on Mac.
+
+        The majority of this patch is implementing PlatformKeyboardEvent::currentCapsLockState() for iOS.
+        In Legacy WebKit, the implementation boils down to calling call -[::WebEvent modifierFlags]. In
+        Modern WebKit the UIProcess is responsible for -[::WebEvent modifierFlags] and passing it the
+        WebProcess to store such that invocations of PlatformKeyboardEvent::currentCapsLockState() consult
+        the store in the WebProcess. A smaller part of this patch is having both the legacy and modern
+        web views listen for keyboard availability changes so as to update the the caps lock state when
+        a hardware keyboard is detached or attached.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::capsLockStateMayHaveChanged const): Extracted from EventHandler::internalKeyEvent()
+        so that it can shared between WebCore, Modern WebKit, and Legacy WebKit code.
+        (WebCore::EventHandler::internalKeyEvent): Modified to call capsLockStateMayHaveChanged().
+        * page/EventHandler.h:
+        * platform/cocoa/KeyEventCocoa.mm:
+        (WebCore::PlatformKeyboardEvent::currentCapsLockState): Moved from KeyEventMac.mm.
+        (WebCore::PlatformKeyboardEvent::getCurrentModifierState): Moved from KeyEventMac.mm.
+        * platform/ios/KeyEventIOS.mm:
+        (WebCore::PlatformKeyboardEvent::currentStateOfModifierKeys): Fetch the current modifier state.
+        (WebCore::PlatformKeyboardEvent::currentCapsLockState): Deleted; we now use the Cocoa implementation.
+        (WebCore::PlatformKeyboardEvent::getCurrentModifierState): Deleted; we now use the Cocoa implementation.
+        * platform/ios/WebEvent.h:
+        * platform/ios/WebEvent.mm:
+        (+[WebEvent modifierFlags]): Added.
+        * platform/mac/KeyEventMac.mm:
+        (WebCore::PlatformKeyboardEvent::currentCapsLockState): Deleted; moved to KeyEventCocoa.mm to be shared
+        by both Mac and iOS.
+        (WebCore::PlatformKeyboardEvent::getCurrentModifierState): Deleted; moved to KeyEventCocoa.mm to be shared
+        by both Mac and iOS.
+        * rendering/RenderThemeCocoa.h:
+        * rendering/RenderThemeCocoa.mm:
+        (WebCore::RenderThemeCocoa::shouldHaveCapsLockIndicator const): Moved from RenderThemeMac.mm.
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::shouldHaveCapsLockIndicator const): Deleted.
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::shouldHaveCapsLockIndicator const): Deleted; moved to RenderThemeCocoa.mm to be
+        shared by both Mac and iOS.
+
 2018-11-11  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC] In-flow positioned logic is really formatting context dependent.

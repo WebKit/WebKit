@@ -42,6 +42,8 @@ layer at (0,0) size 800x600
           text run at (314,2) width 13: "b "
           text run at (326,2) width 8: "a"
         RenderTextControl {INPUT} at (3,28) size 136x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+          RenderFlexibleBox {DIV} at (6,3) size 123x15
+            RenderBlock {DIV} at (0,0) size 123x14
         RenderText {#text} at (140,27) size 65x19
           text run at (140,27) width 65: "password "
         RenderText {#text} at (344,27) size 9x19
@@ -67,7 +69,7 @@ layer at (35,364) size 122x14 scrollWidth 148
     RenderText {#text} at (0,0) size 147x14
       text run at (0,0) width 147: "foobarbazfoobarbazfoobarbaz"
 layer at (28,389) size 122x14
-  RenderBlock {DIV} at (6,3) size 123x15
+  RenderBlock {DIV} at (0,0) size 123x14
     RenderText {#text} at (0,0) size 20x14
       text run at (0,0) width 20: "\x{25CF}\x{25CF}\x{25CF}"
 layer at (195,361) size 136x21
@@ -78,8 +80,10 @@ layer at (202,364) size 122x14
       text run at (0,0) width 16: "foo"
 layer at (225,386) size 135x21
   RenderTextControl {INPUT} at (206,28) size 137x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+    RenderFlexibleBox {DIV} at (6,3) size 123x15
+      RenderBlock {DIV} at (0,0) size 123x14
 layer at (231,389) size 122x14
-  RenderBlock {DIV} at (6,3) size 123x15 [color=#545454]
+  RenderBlock {DIV} at (0,0) size 123x14 [color=#545454]
     RenderText {#text} at (0,0) size 20x14
       text run at (0,0) width 20: "\x{25CF}\x{25CF}\x{25CF}"
 layer at (113,424) size 16x16

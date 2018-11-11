@@ -31,6 +31,8 @@ layer at (0,0) size 800x310
         RenderText {#text} at (569,21) size 5x19
           text run at (569,21) width 5: " "
         RenderTextControl {INPUT} at (575,22) size 136x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+          RenderFlexibleBox {DIV} at (6,3) size 123x15
+            RenderBlock {DIV} at (0,0) size 123x14
         RenderBR {BR} at (712,21) size 1x19
         RenderTextControl {INPUT} at (2,47) size 136x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
         RenderText {#text} at (139,46) size 5x19
@@ -53,6 +55,8 @@ layer at (0,0) size 800x310
         RenderText {#text} at (569,46) size 5x19
           text run at (569,46) width 5: " "
         RenderTextControl {INPUT} at (575,47) size 136x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+          RenderFlexibleBox {DIV} at (6,3) size 123x15
+            RenderBlock {DIV} at (0,0) size 123x14
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,122) size 784x70
         RenderText {#text} at (0,0) size 547x19
@@ -79,6 +83,8 @@ layer at (0,0) size 800x310
         RenderText {#text} at (569,21) size 5x19
           text run at (569,21) width 5: " "
         RenderTextControl {INPUT} at (575,22) size 136x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+          RenderFlexibleBox {DIV} at (6,3) size 123x15
+            RenderBlock {DIV} at (0,0) size 123x14
         RenderBR {BR} at (712,21) size 1x19
         RenderTextControl {INPUT} at (2,47) size 136x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
         RenderText {#text} at (139,46) size 5x19
@@ -101,6 +107,8 @@ layer at (0,0) size 800x310
         RenderText {#text} at (569,46) size 5x19
           text run at (569,46) width 5: " "
         RenderTextControl {INPUT} at (575,47) size 136x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+          RenderFlexibleBox {DIV} at (6,3) size 123x15
+            RenderBlock {DIV} at (0,0) size 123x14
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,208) size 784x70
         RenderText {#text} at (0,0) size 238x19
@@ -145,7 +153,7 @@ layer at (447,77) size 122x14 scrollWidth 266
     RenderText {#text} at (0,0) size 265x14
       text run at (0,0) width 265: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
 layer at (590,77) size 122x14 scrollWidth 366
-  RenderBlock {DIV} at (6,3) size 123x15
+  RenderBlock {DIV} at (0,0) size 123x14
     RenderText {#text} at (0,0) size 366x14
       text run at (0,0) width 366: "\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}"
 layer at (17,102) size 122x14 scrollX 142 scrollWidth 265
@@ -169,7 +177,7 @@ layer at (447,102) size 122x14 scrollX 142 scrollWidth 265
     RenderText {#text} at (-142,0) size 266x14
       text run at (-142,0) width 265: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
 layer at (590,102) size 122x14 scrollWidth 366
-  RenderBlock {DIV} at (6,3) size 123x15
+  RenderBlock {DIV} at (0,0) size 123x14
     RenderText {#text} at (0,0) size 366x14
       text run at (0,0) width 366: "\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}"
 layer at (17,163) size 122x14 scrollWidth 265
@@ -193,7 +201,7 @@ layer at (447,163) size 122x14 scrollWidth 266
     RenderText {#text} at (0,0) size 265x14
       text run at (0,0) width 265: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
 layer at (590,163) size 122x14 scrollWidth 366
-  RenderBlock {DIV} at (6,3) size 123x15
+  RenderBlock {DIV} at (0,0) size 123x14
     RenderText {#text} at (0,0) size 366x14
       text run at (0,0) width 366: "\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}"
 layer at (17,188) size 122x14 scrollX 142 scrollWidth 265
@@ -217,7 +225,7 @@ layer at (447,188) size 122x14 scrollX 142 scrollWidth 265
     RenderText {#text} at (-142,0) size 266x14
       text run at (-142,0) width 265: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
 layer at (590,188) size 122x14 scrollWidth 371
-  RenderBlock {DIV} at (6,3) size 123x15
+  RenderBlock {DIV} at (0,0) size 123x14
     RenderText {#text} at (5,0) size 366x14
       text run at (5,0) width 366: "\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}"
 layer at (263,249) size 122x14 scrollWidth 265

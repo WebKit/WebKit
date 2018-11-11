@@ -153,6 +153,7 @@
 #import <WebCore/WebSQLiteDatabaseTrackerClient.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <pal/spi/ios/GraphicsServicesSPI.h>
 #import <wtf/cocoa/Entitlements.h>
 
 #define RELEASE_LOG_IF_ALLOWED(...) RELEASE_LOG_IF(_page && _page->isAlwaysOnLoggingAllowed(), ViewState, __VA_ARGS__)
@@ -712,6 +713,8 @@ static void validate(WKWebViewConfiguration *configuration)
 
     [[_configuration _contentProviderRegistry] addPage:*_page];
     _page->setForceAlwaysUserScalable([_configuration ignoresViewportScaleLimits]);
+
+    CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge const void *)(self), hardwareKeyboardAvailabilityChangedCallback, (CFStringRef)[NSString stringWithUTF8String:kGSEventHardwareKeyboardAvailabilityChangedNotification], nullptr, CFNotificationSuspensionBehaviorCoalesce);
 #endif
 
 #if PLATFORM(MAC)
@@ -849,6 +852,8 @@ static void validate(WKWebViewConfiguration *configuration)
     [[_configuration _contentProviderRegistry] removePage:*_page];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [_scrollView setInternalDelegate:nil];
+
+    CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge const void *)(self), (CFStringRef)[NSString stringWithUTF8String:kGSEventHardwareKeyboardAvailabilityChangedNotification], nullptr);
 #endif
 
 #if ENABLE(ACCESSIBILITY_EVENTS)
@@ -3105,6 +3110,13 @@ static int32_t activeOrientation(WKWebView *webView)
         return;
 
     [self _keyboardChangedWithInfo:notification.userInfo adjustScrollView:YES];
+}
+
+static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef)
+{
+    ASSERT(observer);
+    WKWebView *webView = (__bridge WKWebView *)observer;
+    webView._page->hardwareKeyboardAvailabilityChanged();
 }
 
 - (void)_windowDidRotate:(NSNotification *)notification
