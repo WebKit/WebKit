@@ -154,6 +154,30 @@ void BlockFormattingContext::layoutFormattingContextRoot(FloatingContext& floati
     formattingContext->layoutOutOfFlowDescendants(layoutBox);
 }
 
+void BlockFormattingContext::placeInFlowPositionedChildren(const Container& container) const
+{
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "Start: move in-flow positioned children -> parent: " << &container);
+    for (auto& layoutBox : childrenOfType<Box>(container)) {
+        if (!layoutBox.isInFlowPositioned())
+            continue;
+
+        auto computeInFlowPositionedPosition = [&](auto& layoutBox) {
+            auto& layoutState = this->layoutState();
+            auto positionOffset = Geometry::inFlowPositionedPositionOffset(layoutState, layoutBox);
+
+            auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
+            auto topLeft = displayBox.topLeft();
+
+            topLeft.move(positionOffset);
+
+            displayBox.setTopLeft(topLeft);
+        };
+
+        computeInFlowPositionedPosition(layoutBox);
+    }
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "End: move in-flow positioned children -> parent: " << &container);
+}
+
 void BlockFormattingContext::computeStaticPosition(const Box& layoutBox) const
 {
     auto& layoutState = this->layoutState();
@@ -272,12 +296,6 @@ void BlockFormattingContext::computeVerticalPositionForFloatClear(const Floating
 
     if (auto verticalPositionWithClearance = floatingContext.verticalPositionWithClearance(layoutBox))
         layoutState.displayBoxForLayoutBox(layoutBox).setTop(*verticalPositionWithClearance);
-}
-
-void BlockFormattingContext::computeInFlowPositionedPosition(const Box& layoutBox) const
-{
-    auto& layoutState = this->layoutState();
-    layoutState.displayBoxForLayoutBox(layoutBox).setTopLeft(Geometry::inFlowPositionedPosition(layoutState, layoutBox));
 }
 
 void BlockFormattingContext::computeWidthAndMargin(const Box& layoutBox) const

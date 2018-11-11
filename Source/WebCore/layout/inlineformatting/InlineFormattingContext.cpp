@@ -284,10 +284,6 @@ void InlineFormattingContext::computeStaticPosition(const Box&) const
 {
 }
 
-void InlineFormattingContext::computeInFlowPositionedPosition(const Box&) const
-{
-}
-
 void InlineFormattingContext::collectInlineContent(InlineRunProvider& inlineRunProvider) const
 {
     if (!is<Container>(root()))

@@ -130,21 +130,6 @@ void FormattingContext::computeBorderAndPadding(const Box& layoutBox) const
     displayBox.setPadding(Geometry::computedPadding(layoutState, layoutBox));
 }
 
-void FormattingContext::placeInFlowPositionedChildren(const Container& container) const
-{
-    // If this container also establishes a formatting context, then positioning already has happend in that the formatting context.
-    if (container.establishesFormattingContext() && &container != &root())
-        return;
-
-    LOG_WITH_STREAM(FormattingContextLayout, stream << "Start: move in-flow positioned children -> parent: " << &container);
-    for (auto& layoutBox : childrenOfType<Box>(container)) {
-        if (!layoutBox.isInFlowPositioned())
-            continue;
-        computeInFlowPositionedPosition(layoutBox);
-    }
-    LOG_WITH_STREAM(FormattingContextLayout, stream << "End: move in-flow positioned children -> parent: " << &container);
-}
-
 void FormattingContext::layoutOutOfFlowDescendants(const Box& layoutBox) const
 {
     // Initial containing block by definition is a containing block.

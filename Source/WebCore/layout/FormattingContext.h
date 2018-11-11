@@ -70,11 +70,8 @@ protected:
     const Box& root() const { return *m_root; }
 
     virtual void computeStaticPosition(const Box&) const = 0;
-    virtual void computeInFlowPositionedPosition(const Box&) const = 0;
 
     void computeBorderAndPadding(const Box&) const;
-
-    void placeInFlowPositionedChildren(const Container&) const;
 
 #ifndef NDEBUG
     virtual void validateGeometryConstraintsAfterLayout() const;
@@ -92,6 +89,8 @@ protected:
         static HeightAndMargin inlineReplacedHeightAndMargin(const LayoutState&, const Box&, std::optional<LayoutUnit> usedHeight = { });
         static WidthAndMargin inlineReplacedWidthAndMargin(const LayoutState&, const Box&, std::optional<LayoutUnit> usedWidth = { }, 
             std::optional<LayoutUnit> precomputedMarginLeft = { }, std::optional<LayoutUnit> precomputedMarginRight = { });
+
+        static LayoutSize inFlowPositionedPositionOffset(const LayoutState&, const Box&);
 
         static HeightAndMargin complicatedCases(const LayoutState&, const Box&, std::optional<LayoutUnit> usedHeight = { });
         static LayoutUnit shrinkToFitWidth(LayoutState&, const Box&);

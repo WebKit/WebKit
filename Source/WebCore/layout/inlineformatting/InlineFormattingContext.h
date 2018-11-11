@@ -118,7 +118,6 @@ private:
     void computeWidthAndMargin(const Box&) const;
     void computeFloatPosition(const FloatingContext&, Line&, const Box&) const;
     void computeStaticPosition(const Box&) const override;
-    void computeInFlowPositionedPosition(const Box&) const override;
 
     void collectInlineContent(InlineRunProvider&) const;
     InstrinsicWidthConstraints instrinsicWidthConstraints() const override;

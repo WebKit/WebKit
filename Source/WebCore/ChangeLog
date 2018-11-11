@@ -1,3 +1,27 @@
+2018-11-11  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC] In-flow positioned logic is really formatting context dependent.
+        https://bugs.webkit.org/show_bug.cgi?id=191512
+
+        Reviewed by Simon Fraser.
+
+        Move block formatting context specific code from FormattingContext to BlockFormattingContext.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::placeInFlowPositionedChildren const): Deleted.
+        * layout/FormattingContext.h:
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::inFlowPositionedPositionOffset):
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::placeInFlowPositionedChildren const):
+        (WebCore::Layout::BlockFormattingContext::computeInFlowPositionedPosition const): Deleted.
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowPositionedPosition): Deleted.
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::computeInFlowPositionedPosition const): Deleted.
+        * layout/inlineformatting/InlineFormattingContext.h:
+
 2018-11-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Address post-review comments after r237955

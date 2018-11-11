@@ -51,6 +51,7 @@ public:
 
 private:
     void layoutFormattingContextRoot(FloatingContext&, const Box&) const;
+    void placeInFlowPositionedChildren(const Container&) const;
 
     void computeWidthAndMargin(const Box&) const;
     void computeHeightAndMargin(const Box&) const;
@@ -60,7 +61,6 @@ private:
     void computePositionToAvoidFloats(const FloatingContext&, const Box&) const;
     void computeVerticalPositionForFloatClear(const FloatingContext&, const Box&) const;
 
-    void computeInFlowPositionedPosition(const Box&) const override;
     void computeEstimatedMarginTopForAncestors(const Box&) const;
     void computeEstimatedMarginTop(const Box&) const;
 
@@ -75,7 +75,6 @@ private:
         static WidthAndMargin inFlowWidthAndMargin(const LayoutState&, const Box&, std::optional<LayoutUnit> usedWidth = { });
 
         static Position staticPosition(const LayoutState&, const Box&);
-        static Position inFlowPositionedPosition(const LayoutState&, const Box&);
 
         static bool instrinsicWidthConstraintsNeedChildrenWidth(const Box&);
         static InstrinsicWidthConstraints instrinsicWidthConstraints(const LayoutState&, const Box&);

@@ -947,6 +947,82 @@ WidthAndMargin FormattingContext::Geometry::inlineReplacedWidthAndMargin(const L
     return { *width, { marginLeft, marginRight }, { nonComputedMarginLeft, nonComputedMarginRight } };
 }
 
+LayoutSize FormattingContext::Geometry::inFlowPositionedPositionOffset(const LayoutState& layoutState, const Box& layoutBox)
+{
+    ASSERT(layoutBox.isInFlowPositioned());
+
+    // 9.4.3 Relative positioning
+    //
+    // The 'top' and 'bottom' properties move relatively positioned element(s) up or down without changing their size.
+    // Top' moves the boxes down, and 'bottom' moves them up. Since boxes are not split or stretched as a result of 'top' or 'bottom', the used values are always: top = -bottom.
+    //
+    // 1. If both are 'auto', their used values are both '0'.
+    // 2. If one of them is 'auto', it becomes the negative of the other.
+    // 3. If neither is 'auto', 'bottom' is ignored (i.e., the used value of 'bottom' will be minus the value of 'top').
+
+    auto& style = layoutBox.style();
+    auto& containingBlock = *layoutBox.containingBlock();
+    auto containingBlockWidth = layoutState.displayBoxForLayoutBox(containingBlock).contentBoxWidth();
+
+    auto top = computedValueIfNotAuto(style.logicalTop(), containingBlockWidth);
+    auto bottom = computedValueIfNotAuto(style.logicalBottom(), containingBlockWidth);
+
+    if (!top && !bottom) {
+        // #1
+        top = bottom = { 0 };
+    } else if (!top) {
+        // #2
+        top = -*bottom;
+    } else if (!bottom) {
+        // #3
+        bottom = -*top;
+    } else {
+        // #4
+        bottom = std::nullopt;
+    }
+
+    // For relatively positioned elements, 'left' and 'right' move the box(es) horizontally, without changing their size.
+    // 'Left' moves the boxes to the right, and 'right' moves them to the left.
+    // Since boxes are not split or stretched as a result of 'left' or 'right', the used values are always: left = -right.
+    //
+    // 1. If both 'left' and 'right' are 'auto' (their initial values), the used values are '0' (i.e., the boxes stay in their original position).
+    // 2. If 'left' is 'auto', its used value is minus the value of 'right' (i.e., the boxes move to the left by the value of 'right').
+    // 3. If 'right' is specified as 'auto', its used value is minus the value of 'left'.
+    // 4. If neither 'left' nor 'right' is 'auto', the position is over-constrained, and one of them has to be ignored.
+    //    If the 'direction' property of the containing block is 'ltr', the value of 'left' wins and 'right' becomes -'left'.
+    //    If 'direction' of the containing block is 'rtl', 'right' wins and 'left' is ignored.
+
+    auto left = computedValueIfNotAuto(style.logicalLeft(), containingBlockWidth);
+    auto right = computedValueIfNotAuto(style.logicalRight(), containingBlockWidth);
+
+    if (!left && !right) {
+        // #1
+        left = right = { 0 };
+    } else if (!left) {
+        // #2
+        left = -*right;
+    } else if (!right) {
+        // #3
+        right = -*left;
+    } else {
+        // #4
+        auto isLeftToRightDirection = containingBlock.style().isLeftToRightDirection();
+        if (isLeftToRightDirection)
+            right = -*left;
+        else
+            left = std::nullopt;
+    }
+
+    ASSERT(!bottom || *top == -*bottom);
+    ASSERT(!left || *left == -*right);
+
+    auto topPositionOffset = *top;
+    auto leftPositionOffset = left.value_or(-*right);
+
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Position] -> positioned inflow -> top offset(" << topPositionOffset << "px) left offset(" << leftPositionOffset << "px) layoutBox(" << &layoutBox << ")");
+    return { leftPositionOffset, topPositionOffset };
+}
+
 Edges FormattingContext::Geometry::computedBorder(const LayoutState&, const Box& layoutBox)
 {
     auto& style = layoutBox.style();
