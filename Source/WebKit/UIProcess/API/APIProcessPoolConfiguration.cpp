@@ -130,6 +130,7 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::copy()
 #if PLATFORM(COCOA)
     copy->m_suppressesConnectionTerminationOnSystemChange = this->m_suppressesConnectionTerminationOnSystemChange;
 #endif
+    copy->m_customWebContentServiceBundleIdentifier = this->m_customWebContentServiceBundleIdentifier;
 
     return copy;
 }

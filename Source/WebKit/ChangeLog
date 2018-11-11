@@ -1,3 +1,15 @@
+2018-11-11  Dan Bernstein  <mitz@apple.com>
+
+        ProcessPoolConfiguration::copy() doesn’t copy m_customWebContentServiceBundleIdentifier
+        https://bugs.webkit.org/show_bug.cgi?id=191514
+
+        Reviewed by Geoffrey Garen.
+
+        Test: WebKitCocoa/WKProcessPoolConfiguration.mm
+
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy): Copy m_customWebContentServiceBundleIdentifier.
+
 2018-11-11  Benjamin Poulain  <benjamin@webkit.org>
 
         Fix a fixme: rename wtfObjcMsgSend to wtfObjCMsgSend

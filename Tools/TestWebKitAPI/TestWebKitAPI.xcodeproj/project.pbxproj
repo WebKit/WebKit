@@ -141,6 +141,7 @@
 		375E0E171D66674400EFEC2C /* WKNSNumber.mm in Sources */ = {isa = PBXBuildFile; fileRef = 375E0E151D66674400EFEC2C /* WKNSNumber.mm */; };
 		3760C4F1211249AF00233ACC /* AttrStyle.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3760C4F0211249AF00233ACC /* AttrStyle.mm */; };
 		376C8C061D6E197C007D2BB9 /* FrameHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 376C8C041D6E197C007D2BB9 /* FrameHandle.cpp */; };
+		3781746D2198AE4600062C26 /* WKProcessPoolConfiguration.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3781746C2198AE2400062C26 /* WKProcessPoolConfiguration.mm */; };
 		378E64771632655E00B6C676 /* InjectedBundleFrameHitTest_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 378E64751632655D00B6C676 /* InjectedBundleFrameHitTest_Bundle.cpp */; };
 		378E64791632707400B6C676 /* link-with-title.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 378E647816326FDF00B6C676 /* link-with-title.html */; };
 		379028B914FAC24C007E6B43 /* acceptsFirstMouse.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 379028B814FABE49007E6B43 /* acceptsFirstMouse.html */; };
@@ -1424,6 +1425,7 @@
 		3760C4F221124BD000233ACC /* AttrStyle.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = AttrStyle.html; sourceTree = "<group>"; };
 		376C8C041D6E197C007D2BB9 /* FrameHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrameHandle.cpp; sourceTree = "<group>"; };
 		3776BC62150946BC0043A66D /* DeviceScaleFactorInDashboardRegions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DeviceScaleFactorInDashboardRegions.mm; sourceTree = "<group>"; };
+		3781746C2198AE2400062C26 /* WKProcessPoolConfiguration.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKProcessPoolConfiguration.mm; sourceTree = "<group>"; };
 		378E64711632646D00B6C676 /* InjectedBundleFrameHitTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleFrameHitTest.cpp; sourceTree = "<group>"; };
 		378E64751632655D00B6C676 /* InjectedBundleFrameHitTest_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleFrameHitTest_Bundle.cpp; sourceTree = "<group>"; };
 		378E647816326FDF00B6C676 /* link-with-title.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "link-with-title.html"; sourceTree = "<group>"; };
@@ -2503,6 +2505,7 @@
 				A14AAB611E78D7DE00C1ADC2 /* WKPDFView.mm */,
 				2D00065D1C1F58940088E6A7 /* WKPDFViewResizeCrash.mm */,
 				2D21FE581F04642800B58E7D /* WKPDFViewStablePresentationUpdateCallback.mm */,
+				3781746C2198AE2400062C26 /* WKProcessPoolConfiguration.mm */,
 				44817A2E1F0486BF00003810 /* WKRequestActivatedElementInfo.mm */,
 				5E4B1D2C1D404C6100053621 /* WKScrollViewDelegate.mm */,
 				51C683DD1EA134DB00650183 /* WKURLSchemeHandler-1.mm */,
@@ -3976,6 +3979,7 @@
 				5CAE463820193B6A0051610F /* NetworkProcessCrashNonPersistentDataStore.mm in Sources */,
 				9B19CDA01F06DFE3000548DD /* NetworkProcessCrashWithPendingConnection.mm in Sources */,
 				7CCE7F021A411AE600447C4C /* NewFirstVisuallyNonEmptyLayout.cpp in Sources */,
+				3781746D2198AE4600062C26 /* WKProcessPoolConfiguration.mm in Sources */,
 				7CCE7F031A411AE600447C4C /* NewFirstVisuallyNonEmptyLayoutFails.cpp in Sources */,
 				7CCE7F041A411AE600447C4C /* NewFirstVisuallyNonEmptyLayoutForImages.cpp in Sources */,
 				7CCE7F051A411AE600447C4C /* NewFirstVisuallyNonEmptyLayoutFrames.cpp in Sources */,
