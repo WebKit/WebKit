@@ -32,7 +32,7 @@
 #import "WebKitLogging.h"
 #import "WebView.h"
 #import "WebViewData.h"
-#import <wtf/WTFObjCRuntimeExtras.h>
+#import <wtf/ObjCRuntimeExtras.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import "WebViewInternal.h"

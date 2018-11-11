@@ -40,7 +40,7 @@
 #import <unicode/uchar.h>
 #import <unicode/uscript.h>
 #import <wtf/Assertions.h>
-#import <wtf/WTFObjCRuntimeExtras.h>
+#import <wtf/ObjCRuntimeExtras.h>
 
 using namespace WebCore;
 using namespace WTF;

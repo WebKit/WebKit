@@ -28,7 +28,7 @@
 
 #import "WebHTMLViewInternal.h"
 #import <WebCore/CachedFramePlatformData.h>
-#import <wtf/WTFObjCRuntimeExtras.h>
+#import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/RetainPtr.h>
 
 class WebCachedFramePlatformData : public WebCore::CachedFramePlatformData {

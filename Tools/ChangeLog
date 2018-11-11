@@ -1,3 +1,16 @@
+2018-11-11  Benjamin Poulain  <benjamin@webkit.org>
+
+        Fix a fixme: rename wtfObjcMsgSend to wtfObjCMsgSend
+        https://bugs.webkit.org/show_bug.cgi?id=191492
+
+        Reviewed by Alex Christensen.
+
+        Update file name.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        * WebKitTestRunner/InjectedBundle/cocoa/ActivateFontsCocoa.mm:
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+
 2018-11-10  Benjamin Poulain  <benjamin@webkit.org>
 
         Fix a fixme: rename wtfObjcMsgSend to wtfObjCMsgSend

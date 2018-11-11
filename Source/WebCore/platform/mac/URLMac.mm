@@ -29,7 +29,7 @@
 #import "CFURLExtras.h"
 #import "URLParser.h"
 #import "WebCoreNSURLExtras.h"
-#import <wtf/WTFObjCRuntimeExtras.h>
+#import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/text/CString.h>
 
 @interface NSString (WebCoreNSURLExtras)

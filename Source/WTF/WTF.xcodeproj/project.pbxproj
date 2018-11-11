@@ -389,7 +389,7 @@
 		7CDD7FF7186D291E007433CD /* IteratorAdaptors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IteratorAdaptors.h; sourceTree = "<group>"; };
 		7CDD7FF9186D2A54007433CD /* IteratorRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IteratorRange.h; sourceTree = "<group>"; };
 		7CEAE5AC1EA6E10F00DB6890 /* NotFound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotFound.h; sourceTree = "<group>"; };
-		7E29C33D15FFD79B00516D61 /* WTFObjCRuntimeExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WTFObjCRuntimeExtras.h; sourceTree = "<group>"; };
+		7E29C33D15FFD79B00516D61 /* ObjCRuntimeExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjCRuntimeExtras.h; sourceTree = "<group>"; };
 		8134013615B092FD001FF0B8 /* Base64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Base64.cpp; sourceTree = "<group>"; };
 		8134013715B092FD001FF0B8 /* Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Base64.h; sourceTree = "<group>"; };
 		83A8AC3D1FABBE94002064AC /* ObjectIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectIdentifier.h; sourceTree = "<group>"; };
@@ -970,7 +970,7 @@
 				7CEAE5AC1EA6E10F00DB6890 /* NotFound.h */,
 				A8A472D5151A825B004123FF /* NumberOfCores.cpp */,
 				A8A472D6151A825B004123FF /* NumberOfCores.h */,
-				7E29C33D15FFD79B00516D61 /* WTFObjCRuntimeExtras.h */,
+				7E29C33D15FFD79B00516D61 /* ObjCRuntimeExtras.h */,
 				83A8AC3D1FABBE94002064AC /* ObjectIdentifier.h */,
 				1AFDE6521953B23D00C48FFA /* Optional.h */,
 				1A4656181C7FC68E00F5920F /* OptionSet.h */,

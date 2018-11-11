@@ -30,7 +30,7 @@
 #import <CoreText/CTFontManager.h>
 #import <WebKit/WKStringCF.h>
 #import <wtf/NeverDestroyed.h>
-#import <wtf/WTFObjCRuntimeExtras.h>
+#import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/RetainPtr.h>
 
 #if USE(APPKIT)

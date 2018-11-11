@@ -34,7 +34,7 @@
 #import <WebCore/LoaderNSURLExtras.h>
 #import <sys/stat.h>
 #import <wtf/Assertions.h>
-#import <wtf/WTFObjCRuntimeExtras.h>
+#import <wtf/ObjCRuntimeExtras.h>
 
 @implementation NSFileManager (WebNSFileManagerExtras)
 

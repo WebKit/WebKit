@@ -93,7 +93,7 @@
 #import <wtf/Assertions.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/LoggingAccumulator.h>
-#import <wtf/WTFObjCRuntimeExtras.h>
+#import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Threading.h>

@@ -29,7 +29,7 @@
 #import "WebPolicyDelegatePrivate.h"
 
 #import <WebCore/FrameLoaderTypes.h>
-#import <wtf/WTFObjCRuntimeExtras.h>
+#import <wtf/ObjCRuntimeExtras.h>
 
 using namespace WebCore;
 

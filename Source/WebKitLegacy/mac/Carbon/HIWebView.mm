@@ -38,7 +38,7 @@
 #import <pal/spi/mac/NSGraphicsSPI.h>
 #import <pal/spi/mac/QuickDrawSPI.h>
 #import <wtf/Assertions.h>
-#import <wtf/WTFObjCRuntimeExtras.h>
+#import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/cf/TypeCastsCF.h>
 
 WTF_DECLARE_CF_TYPE_TRAIT(CFRunLoop);

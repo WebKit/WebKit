@@ -68,7 +68,7 @@
 #include <wtf/BlockObjCExceptions.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/WTFObjCRuntimeExtras.h>
+#include <wtf/ObjCRuntimeExtras.h>
 #include <wtf/ProcessPrivilege.h>
 
 #if ENABLE(MAC_GESTURE_EVENTS)

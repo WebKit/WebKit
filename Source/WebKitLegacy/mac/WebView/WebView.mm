@@ -231,7 +231,7 @@
 #import <wtf/Assertions.h>
 #import <wtf/HashTraits.h>
 #import <wtf/MainThread.h>
-#import <wtf/WTFObjCRuntimeExtras.h>
+#import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/RAMSize.h>
 #import <wtf/RefCountedLeakCounter.h>

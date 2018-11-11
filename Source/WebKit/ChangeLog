@@ -1,3 +1,15 @@
+2018-11-11  Benjamin Poulain  <benjamin@webkit.org>
+
+        Fix a fixme: rename wtfObjcMsgSend to wtfObjCMsgSend
+        https://bugs.webkit.org/show_bug.cgi?id=191492
+
+        Reviewed by Alex Christensen.
+
+        * Platform/mac/StringUtilities.mm:
+        * UIProcess/ApplicationStateTracker.mm:
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectBase.mm:
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectMac.mm:
+
 2018-11-10  Benjamin Poulain  <benjamin@webkit.org>
 
         Fix a fixme: rename wtfObjcMsgSend to wtfObjCMsgSend

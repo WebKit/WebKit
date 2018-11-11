@@ -39,7 +39,7 @@
 #import <JavaScriptCore/JSContextRef.h>
 #import <JavaScriptCore/OpaqueJSString.h>
 #import <wtf/Assertions.h>
-#import <wtf/WTFObjCRuntimeExtras.h>
+#import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/RetainPtr.h>
 
 @implementation WebPDFRepresentation

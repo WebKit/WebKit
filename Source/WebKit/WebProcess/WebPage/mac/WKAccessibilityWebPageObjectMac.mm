@@ -46,7 +46,7 @@
 #import <WebCore/Scrollbar.h>
 #import <WebCore/WebAccessibilityObjectWrapperMac.h>
 #import <pal/spi/mac/NSAccessibilitySPI.h>
-#import <wtf/WTFObjCRuntimeExtras.h>
+#import <wtf/ObjCRuntimeExtras.h>
 
 using namespace WebCore;
 using namespace WebKit;

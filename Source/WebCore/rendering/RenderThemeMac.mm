@@ -77,7 +77,7 @@
 #import <pal/spi/mac/NSCellSPI.h>
 #import <pal/spi/mac/NSSharingServicePickerSPI.h>
 #import <wtf/MathExtras.h>
-#import <wtf/WTFObjCRuntimeExtras.h>
+#import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/text/StringBuilder.h>
