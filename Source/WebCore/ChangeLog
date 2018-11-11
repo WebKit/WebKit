@@ -1,3 +1,16 @@
+2018-11-10  Megan Gardner  <megan_gardner@apple.com>
+
+        Fix build for 32bit Mac
+        https://bugs.webkit.org/show_bug.cgi?id=191511
+
+        Unreviewed Build Fix.
+
+        Build fix, not tests needed.
+
+        Make the apporiate delecrations for 32-bit mac support.
+
+        * editing/mac/DictionaryLookup.mm:
+
 2018-11-10  Simon Fraser  <simon.fraser@apple.com>
 
         Remove support for -webkit-svg-shadow

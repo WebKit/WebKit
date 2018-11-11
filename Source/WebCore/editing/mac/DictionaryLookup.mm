@@ -49,21 +49,28 @@
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/RefPtr.h>
 
-@interface WebRevealHighlight <RVPresenterHighlightDelegate> : NSObject
-
-- (instancetype)initWithHighlightRect:(NSRect)highlightRect useDefaultHighlight:(BOOL)useDefaultHighlight attributedString:(NSAttributedString *) attributedString;
+@interface WebRevealHighlight <RVPresenterHighlightDelegate> : NSObject {
+@private
+    Function<void()> _clearTextIndicator;
+    NSRect _highlightRect;
+    BOOL _useDefaultHighlight;
+    NSAttributedString *_attributedString;
+}
 
 @property (nonatomic, readonly) NSRect highlightRect;
 @property (nonatomic, readonly) BOOL useDefaultHighlight;
 @property (nonatomic, readonly) NSAttributedString *attributedString;
 
+- (instancetype)initWithHighlightRect:(NSRect)highlightRect useDefaultHighlight:(BOOL)useDefaultHighlight attributedString:(NSAttributedString *) attributedString;
 - (void)setClearTextIndicator:(Function<void()>&&)clearTextIndicator;
 
 @end
 
-@implementation WebRevealHighlight {
-    Function<void()> _clearTextIndicator;
-}
+@implementation WebRevealHighlight
+
+@synthesize highlightRect=_highlightRect;
+@synthesize useDefaultHighlight=_useDefaultHighlight;
+@synthesize attributedString=_attributedString;
 
 - (instancetype)initWithHighlightRect:(NSRect)highlightRect useDefaultHighlight:(BOOL)useDefaultHighlight attributedString:(NSAttributedString *) attributedString
 {
