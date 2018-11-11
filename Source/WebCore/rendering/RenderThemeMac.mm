@@ -77,7 +77,7 @@
 #import <pal/spi/mac/NSCellSPI.h>
 #import <pal/spi/mac/NSSharingServicePickerSPI.h>
 #import <wtf/MathExtras.h>
-#import <wtf/ObjcRuntimeExtras.h>
+#import <wtf/WTFObjCRuntimeExtras.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/text/StringBuilder.h>
@@ -632,7 +632,7 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
         // Special handling for links and other system colors when the system appearance is desired.
         auto systemAppearanceColor = [] (Color& color, SEL selector) -> Color {
             if (!color.isValid()) {
-                auto systemColor = wtfObjcMsgSend<NSColor *>([NSColor class], selector);
+                auto systemColor = wtfObjCMsgSend<NSColor *>([NSColor class], selector);
                 color = semanticColorFromNSColor(systemColor);
             }
 
@@ -815,7 +815,7 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
         };
 
         if (auto selector = selectCocoaColor()) {
-            if (auto color = wtfObjcMsgSend<NSColor *>([NSColor class], selector))
+            if (auto color = wtfObjCMsgSend<NSColor *>([NSColor class], selector))
                 return semanticColorFromNSColor(color);
         }
 

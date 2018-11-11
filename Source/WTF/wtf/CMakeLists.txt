@@ -143,7 +143,7 @@ set(WTF_PUBLIC_HEADERS
     OSAllocator.h
     OSObjectPtr.h
     OSRandomSource.h
-    ObjcRuntimeExtras.h
+    WTFObjCRuntimeExtras.h
     ObjectIdentifier.h
     OptionSet.h
     Optional.h

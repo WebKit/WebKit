@@ -43,7 +43,7 @@
 #import <WebCore/FrameLoaderTypes.h>
 #import <WebCore/SecurityOrigin.h>
 #import <wtf/Assertions.h>
-#import <wtf/ObjcRuntimeExtras.h>
+#import <wtf/WTFObjCRuntimeExtras.h>
 
 using namespace WebCore;
 
@@ -87,9 +87,9 @@ using namespace WebCore;
 - (void)_continueWithPolicy:(PolicyAction)policy
 {
     if (_contextInfo)
-        wtfObjcMsgSend<void>(_resultObject, _resultSelector, (policy == PolicyAction::Use), _contextInfo);
+        wtfObjCMsgSend<void>(_resultObject, _resultSelector, (policy == PolicyAction::Use), _contextInfo);
     else     
-        wtfObjcMsgSend<void>(_resultObject, _resultSelector, (policy == PolicyAction::Use));
+        wtfObjCMsgSend<void>(_resultObject, _resultSelector, (policy == PolicyAction::Use));
 
     // this will call indirectly call cancel
     [_controller _webPluginContainerCancelCheckIfAllowedToLoadRequest:self];

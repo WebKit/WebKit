@@ -29,7 +29,7 @@
 #import "WKSharedAPICast.h"
 #import "WKStringCF.h"
 #import <JavaScriptCore/RegularExpression.h>
-#import <wtf/ObjcRuntimeExtras.h>
+#import <wtf/WTFObjCRuntimeExtras.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/text/StringBuilder.h>
 

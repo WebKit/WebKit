@@ -38,7 +38,7 @@
 #import <pal/spi/mac/NSGraphicsSPI.h>
 #import <pal/spi/mac/QuickDrawSPI.h>
 #import <wtf/Assertions.h>
-#import <wtf/ObjcRuntimeExtras.h>
+#import <wtf/WTFObjCRuntimeExtras.h>
 #import <wtf/cf/TypeCastsCF.h>
 
 WTF_DECLARE_CF_TYPE_TRAIT(CFRunLoop);
@@ -1139,7 +1139,7 @@ UpdateCommandStatus(HIWebView* inView, const HICommand* inCommand)
                     
                 // Can't use -performSelector:withObject: here because the method we're calling returns BOOL, while
                 // -performSelector:withObject:'s return value is assumed to be an id.
-                if (wtfObjcMsgSend<BOOL>(resp, @selector(validateUserInterfaceItem:), proxy))
+                if (wtfObjCMsgSend<BOOL>(resp, @selector(validateUserInterfaceItem:), proxy))
                     EnableMenuItem(inCommand->menu.menuRef, inCommand->menu.menuItemIndex);
                 else
                     DisableMenuItem(inCommand->menu.menuRef, inCommand->menu.menuItemIndex);

@@ -1,3 +1,34 @@
+2018-11-10  Benjamin Poulain  <benjamin@webkit.org>
+
+        Fix a fixme: rename wtfObjcMsgSend to wtfObjCMsgSend
+        https://bugs.webkit.org/show_bug.cgi?id=191492
+
+        Reviewed by Alex Christensen.
+
+        * Carbon/HIWebView.mm:
+        (UpdateCommandStatus):
+        * Misc/WebNSFileManagerExtras.mm:
+        * Misc/WebNSURLExtras.mm:
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        * Plugins/WebBasePluginPackage.mm:
+        * Plugins/WebPluginContainerCheck.mm:
+        (-[WebPluginContainerCheck _continueWithPolicy:]):
+        * WebCoreSupport/WebCachedFramePlatformData.h:
+        (WebCachedFramePlatformData::clear):
+        * WebCoreSupport/WebDeviceOrientationClient.mm:
+        (WebDeviceOrientationClient::getProvider const):
+        * WebView/WebDelegateImplementationCaching.mm:
+        (CallDelegate):
+        (CallDelegateReturningBoolean):
+        (CallResourceLoadDelegateReturningBoolean):
+        (CallFormDelegate):
+        (CallFormDelegateReturningBoolean):
+        * WebView/WebHTMLView.mm:
+        * WebView/WebPDFRepresentation.mm:
+        * WebView/WebPolicyDelegate.mm:
+        (-[WebPolicyDecisionListener _usePolicy:]):
+        * WebView/WebView.mm:
+
 2018-11-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r238047.

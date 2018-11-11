@@ -31,7 +31,7 @@
 #import "AssertionServicesSPI.h"
 #import "SandboxUtilities.h"
 #import "UIKitSPI.h"
-#import <wtf/ObjcRuntimeExtras.h>
+#import <wtf/WTFObjCRuntimeExtras.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
 
@@ -198,13 +198,13 @@ void ApplicationStateTracker::applicationDidEnterBackground()
     m_isInBackground = true;
 
     if (auto view = m_view.get())
-        wtfObjcMsgSend<void>(view.get(), m_didEnterBackgroundSelector);
+        wtfObjCMsgSend<void>(view.get(), m_didEnterBackgroundSelector);
 }
 
 void ApplicationStateTracker::applicationDidFinishSnapshottingAfterEnteringBackground()
 {
     if (auto view = m_view.get())
-        wtfObjcMsgSend<void>(view.get(), m_didFinishSnapshottingAfterEnteringBackgroundSelector);
+        wtfObjCMsgSend<void>(view.get(), m_didFinishSnapshottingAfterEnteringBackgroundSelector);
 }
 
 void ApplicationStateTracker::applicationWillEnterForeground()
@@ -212,7 +212,7 @@ void ApplicationStateTracker::applicationWillEnterForeground()
     m_isInBackground = false;
 
     if (auto view = m_view.get())
-        wtfObjcMsgSend<void>(view.get(), m_willEnterForegroundSelector);
+        wtfObjCMsgSend<void>(view.get(), m_willEnterForegroundSelector);
 }
 
 }

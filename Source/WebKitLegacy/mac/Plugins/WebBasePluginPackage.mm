@@ -40,7 +40,7 @@
 #import <mach-o/loader.h>
 #import <wtf/Assertions.h>
 #import <wtf/MainThread.h>
-#import <wtf/ObjcRuntimeExtras.h>
+#import <wtf/WTFObjCRuntimeExtras.h>
 #import <wtf/RunLoop.h>
 #import <wtf/Vector.h>
 #import <wtf/text/CString.h>

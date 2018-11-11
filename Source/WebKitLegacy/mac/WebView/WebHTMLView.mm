@@ -143,7 +143,7 @@
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/MainThread.h>
 #import <wtf/MathExtras.h>
-#import <wtf/ObjcRuntimeExtras.h>
+#import <wtf/WTFObjCRuntimeExtras.h>
 #import <wtf/RunLoop.h>
 #import <wtf/SystemTracing.h>
 

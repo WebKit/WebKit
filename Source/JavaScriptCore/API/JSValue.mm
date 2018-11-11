@@ -45,7 +45,7 @@
 #import <wtf/HashMap.h>
 #import <wtf/HashSet.h>
 #import <wtf/Lock.h>
-#import <wtf/ObjcRuntimeExtras.h>
+#import <wtf/WTFObjCRuntimeExtras.h>
 #import <wtf/Vector.h>
 #import <wtf/text/WTFString.h>
 #import <wtf/text/StringHash.h>

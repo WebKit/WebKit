@@ -51,7 +51,7 @@
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/Assertions.h>
 #import <wtf/MainThread.h>
-#import <wtf/ObjcRuntimeExtras.h>
+#import <wtf/WTFObjCRuntimeExtras.h>
 #import <wtf/RunLoop.h>
 
 using namespace WebCore;

@@ -1,3 +1,18 @@
+2018-11-10  Benjamin Poulain  <benjamin@webkit.org>
+
+        Fix a fixme: rename wtfObjcMsgSend to wtfObjCMsgSend
+        https://bugs.webkit.org/show_bug.cgi?id=191492
+
+        Reviewed by Alex Christensen.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        * page/mac/EventHandlerMac.mm:
+        * platform/mac/URLMac.mm:
+        * platform/mac/WebCoreNSURLExtras.mm:
+        * platform/mac/WebCoreObjCExtras.mm:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::systemColor const):
+
 2018-11-10  Megan Gardner  <megan_gardner@apple.com>
 
         Fix build for 32bit Mac

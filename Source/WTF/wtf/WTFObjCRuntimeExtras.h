@@ -24,15 +24,12 @@
 
 #pragma once
 
-// FIXME: This file's name and function names refer to Objective-C as Objc with a lowercase C,
-// but it should be ObjC with an uppercase C.
-
 #include <objc/message.h>
 
 #ifdef __cplusplus
 
 template<typename ReturnType, typename... ArgumentTypes>
-inline ReturnType wtfObjcMsgSend(id target, SEL selector, ArgumentTypes... arguments)
+inline ReturnType wtfObjCMsgSend(id target, SEL selector, ArgumentTypes... arguments)
 {
     return reinterpret_cast<ReturnType (*)(id, SEL, ArgumentTypes...)>(objc_msgSend)(target, selector, arguments...);
 }

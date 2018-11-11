@@ -32,7 +32,7 @@
 #include <utility>
 #include <wtf/Assertions.h>
 #include <wtf/MainThread.h>
-#include <wtf/ObjcRuntimeExtras.h>
+#include <wtf/WTFObjCRuntimeExtras.h>
 #include <wtf/Threading.h>
 
 bool WebCoreObjCScheduleDeallocateOnMainThread(Class cls, id object)

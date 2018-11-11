@@ -29,7 +29,7 @@
 #import "WebPolicyDelegatePrivate.h"
 
 #import <WebCore/FrameLoaderTypes.h>
-#import <wtf/ObjcRuntimeExtras.h>
+#import <wtf/WTFObjCRuntimeExtras.h>
 
 using namespace WebCore;
 
@@ -91,7 +91,7 @@ NSString *WebActionOriginalURLKey = @"WebActionOriginalURLKey";
 - (void)_usePolicy:(PolicyAction)policy
 {
     if (_private->target)
-        wtfObjcMsgSend<void>(_private->target, _private->action, policy);
+        wtfObjCMsgSend<void>(_private->target, _private->action, policy);
 }
 
 - (void)_invalidate

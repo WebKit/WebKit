@@ -78,7 +78,7 @@
 #import "WebCoreFrameView.h"
 #import <pal/spi/mac/HIServicesSPI.h>
 #import <pal/spi/mac/NSAccessibilitySPI.h>
-#import <wtf/ObjcRuntimeExtras.h>
+#import <wtf/WTFObjCRuntimeExtras.h>
 #if ENABLE(TREE_DEBUGGING) || ENABLE(METER_ELEMENT)
 #import <wtf/text/StringBuilder.h>
 #endif

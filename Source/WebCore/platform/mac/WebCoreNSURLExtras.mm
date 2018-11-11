@@ -32,7 +32,7 @@
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/Function.h>
 #import <wtf/HexNumber.h>
-#import <wtf/ObjcRuntimeExtras.h>
+#import <wtf/WTFObjCRuntimeExtras.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 #import <unicode/uchar.h>

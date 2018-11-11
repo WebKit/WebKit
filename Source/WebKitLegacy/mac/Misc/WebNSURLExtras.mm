@@ -37,10 +37,10 @@
 #import <WebCore/LoaderNSURLExtras.h>
 #import <WebCore/TextEncoding.h>
 #import <WebCore/WebCoreNSURLExtras.h>
-#import <wtf/Assertions.h>
-#import <wtf/ObjcRuntimeExtras.h>
 #import <unicode/uchar.h>
 #import <unicode/uscript.h>
+#import <wtf/Assertions.h>
+#import <wtf/WTFObjCRuntimeExtras.h>
 
 using namespace WebCore;
 using namespace WTF;

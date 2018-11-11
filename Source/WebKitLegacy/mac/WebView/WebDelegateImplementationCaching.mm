@@ -32,7 +32,7 @@
 #import "WebKitLogging.h"
 #import "WebView.h"
 #import "WebViewData.h"
-#import <wtf/ObjcRuntimeExtras.h>
+#import <wtf/WTFObjCRuntimeExtras.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import "WebViewInternal.h"
@@ -92,7 +92,7 @@ static inline id CallDelegate(WebView *self, id delegate, SEL selector)
     if (!delegate || ![delegate respondsToSelector:selector])
         return nil;
     @try {
-        return wtfObjcMsgSend<id>(delegate, selector, self);
+        return wtfObjCMsgSend<id>(delegate, selector, self);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -125,7 +125,7 @@ static inline id CallDelegate(WebView *self, id delegate, SEL selector, id objec
     if (!delegate || ![delegate respondsToSelector:selector])
         return nil;
     @try {
-        return wtfObjcMsgSend<id>(delegate, selector, self, object);
+        return wtfObjCMsgSend<id>(delegate, selector, self, object);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -159,7 +159,7 @@ static inline id CallDelegate(WebView *self, id delegate, SEL selector, NSRect r
     if (!delegate || ![delegate respondsToSelector:selector])
         return nil;
     @try {
-        return wtfObjcMsgSend<id>(delegate, selector, self, rect);
+        return wtfObjCMsgSend<id>(delegate, selector, self, rect);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -193,7 +193,7 @@ static inline id CallDelegate(WebView *self, id delegate, SEL selector, id objec
     if (!delegate || ![delegate respondsToSelector:selector])
         return nil;
     @try {
-        return wtfObjcMsgSend<id>(delegate, selector, self, object1, object2);
+        return wtfObjCMsgSend<id>(delegate, selector, self, object1, object2);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -228,7 +228,7 @@ static inline id CallDelegate(WebView *self, id delegate, SEL selector, id objec
     if (!delegate || ![delegate respondsToSelector:selector])
         return nil;
     @try {
-        return wtfObjcMsgSend<id>(delegate, selector, self, object, boolean);
+        return wtfObjCMsgSend<id>(delegate, selector, self, object, boolean);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -263,7 +263,7 @@ static inline id CallDelegate(WebView *self, id delegate, SEL selector, id objec
     if (!delegate || ![delegate respondsToSelector:selector])
         return nil;
     @try {
-        return wtfObjcMsgSend<id>(delegate, selector, self, object1, object2, object3);
+        return wtfObjCMsgSend<id>(delegate, selector, self, object1, object2, object3);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -299,7 +299,7 @@ static inline id CallDelegate(WebView *self, id delegate, SEL selector, id objec
     if (!delegate || ![delegate respondsToSelector:selector])
         return nil;
     @try {
-        return wtfObjcMsgSend<id>(delegate, selector, self, object, integer);
+        return wtfObjCMsgSend<id>(delegate, selector, self, object, integer);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -364,7 +364,7 @@ static inline BOOL CallDelegateReturningBoolean(BOOL result, WebView *self, id d
     if (!delegate || ![delegate respondsToSelector:selector])
         return result;
     @try {
-        return wtfObjcMsgSend<BOOL>(delegate, selector, self);
+        return wtfObjCMsgSend<BOOL>(delegate, selector, self);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -394,7 +394,7 @@ static inline BOOL CallDelegateReturningBoolean(BOOL result, WebView *self, id d
     if (!delegate || ![delegate respondsToSelector:selector])
         return result;
     @try {
-        return wtfObjcMsgSend<BOOL>(delegate, selector, self, object);
+        return wtfObjCMsgSend<BOOL>(delegate, selector, self, object);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -425,7 +425,7 @@ static inline BOOL CallDelegateReturningBoolean(BOOL result, WebView *self, id d
     if (!delegate || ![delegate respondsToSelector:selector])
         return result;
     @try {
-        return wtfObjcMsgSend<BOOL>(delegate, selector, self, object, boolean);
+        return wtfObjCMsgSend<BOOL>(delegate, selector, self, object, boolean);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -456,7 +456,7 @@ static inline BOOL CallDelegateReturningBoolean(BOOL result, WebView *self, id d
     if (!delegate || ![delegate respondsToSelector:selector])
         return result;
     @try {
-        return wtfObjcMsgSend<BOOL>(delegate, selector, self, object, boolean, object2);
+        return wtfObjCMsgSend<BOOL>(delegate, selector, self, object, boolean, object2);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -469,7 +469,7 @@ static inline BOOL CallDelegateReturningBoolean(BOOL result, WebView *self, id d
     if (!delegate || ![delegate respondsToSelector:selector])
         return result;
     @try {
-        return wtfObjcMsgSend<BOOL>(delegate, selector, self, object1, object2);
+        return wtfObjCMsgSend<BOOL>(delegate, selector, self, object1, object2);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -1288,7 +1288,7 @@ id CallFrameLoadDelegateInWebThread(IMP implementation, WebView *self, SEL selec
 BOOL CallResourceLoadDelegateReturningBoolean(BOOL result, IMP implementation, WebView *self, SEL selector, id object1)
 {
     @try {
-        return wtfObjcMsgSend<BOOL>(self->_private->resourceProgressDelegate, selector, self, object1);
+        return wtfObjCMsgSend<BOOL>(self->_private->resourceProgressDelegate, selector, self, object1);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -1298,7 +1298,7 @@ BOOL CallResourceLoadDelegateReturningBoolean(BOOL result, IMP implementation, W
 BOOL CallResourceLoadDelegateReturningBoolean(BOOL result, IMP implementation, WebView *self, SEL selector, id object1, id object2)
 {
     @try {
-        return wtfObjcMsgSend<BOOL>(self->_private->resourceProgressDelegate, selector, self, object1, object2);
+        return wtfObjCMsgSend<BOOL>(self->_private->resourceProgressDelegate, selector, self, object1, object2);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -1308,7 +1308,7 @@ BOOL CallResourceLoadDelegateReturningBoolean(BOOL result, IMP implementation, W
 BOOL CallResourceLoadDelegateReturningBoolean(BOOL result, IMP implementation, WebView *self, SEL selector, id object1, id object2, id object3)
 {
     @try {
-        return wtfObjcMsgSend<BOOL>(self->_private->resourceProgressDelegate, selector, self, object1, object2, object3);
+        return wtfObjCMsgSend<BOOL>(self->_private->resourceProgressDelegate, selector, self, object1, object2, object3);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -1380,7 +1380,7 @@ id CallFormDelegate(WebView *self, SEL selector, id object1, id object2)
     if (!delegate || ![delegate respondsToSelector:selector])
         return nil;
     @try {
-        return wtfObjcMsgSend<id>(delegate, selector, object1, object2);
+        return wtfObjCMsgSend<id>(delegate, selector, object1, object2);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -1416,7 +1416,7 @@ id CallFormDelegate(WebView *self, SEL selector, id object1, id object2, id obje
     if (!delegate || ![delegate respondsToSelector:selector])
         return nil;
     @try {
-        return wtfObjcMsgSend<id>(delegate, selector, object1, object2, object3);
+        return wtfObjCMsgSend<id>(delegate, selector, object1, object2, object3);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -1453,7 +1453,7 @@ id CallFormDelegate(WebView *self, SEL selector, id object1, id object2, id obje
     if (!delegate || ![delegate respondsToSelector:selector])
         return nil;
     @try {
-        return wtfObjcMsgSend<id>(delegate, selector, object1, object2, object3, object4, object5);
+        return wtfObjCMsgSend<id>(delegate, selector, object1, object2, object3, object4, object5);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -1492,7 +1492,7 @@ BOOL CallFormDelegateReturningBoolean(BOOL result, WebView *self, SEL selector, 
     if (!delegate || ![delegate respondsToSelector:selector])
         return result;
     @try {
-        return wtfObjcMsgSend<BOOL>(delegate, selector, object1, selectorArg, object2);
+        return wtfObjCMsgSend<BOOL>(delegate, selector, object1, selectorArg, object2);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
