@@ -1,3 +1,17 @@
+2018-11-12  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Silence ATK_XY_PARENT warnings
+        https://bugs.webkit.org/show_bug.cgi?id=191504
+
+        Reviewed by Carlos Garcia Campos.
+
+        * accessibility/atk/WebKitAccessibleInterfaceComponent.cpp:
+        (atkToContents):
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp:
+        (textExtents):
+        * accessibility/atk/WebKitAccessibleUtil.cpp:
+        (contentsRelativeToAtkCoordinateType):
+
 2018-11-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Implement a new edit command to change the enclosing list type

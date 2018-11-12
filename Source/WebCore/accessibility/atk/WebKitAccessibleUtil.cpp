@@ -66,6 +66,10 @@ void contentsRelativeToAtkCoordinateType(AccessibilityObject* coreObject, AtkCoo
         case ATK_XY_SCREEN:
             rect = frameView->contentsToScreen(rect);
             break;
+#if ATK_CHECK_VERSION(2, 30, 0)
+        case ATK_XY_PARENT:
+            RELEASE_ASSERT_NOT_REACHED();
+#endif
         }
     }
 
