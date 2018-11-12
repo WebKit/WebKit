@@ -1242,7 +1242,7 @@ CSSOMViewScrollingAPIEnabled:
 
 WebAnimationsEnabled:
   type: bool
-  defaultValue: true
+  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
   humanReadableName: "Web Animations"
   humanReadableDescription: "Web Animations prototype"
   category: experimental
