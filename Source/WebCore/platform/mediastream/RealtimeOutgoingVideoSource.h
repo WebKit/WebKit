@@ -49,7 +49,7 @@ namespace WebCore {
 class RealtimeOutgoingVideoSource : public ThreadSafeRefCounted<RealtimeOutgoingVideoSource, WTF::DestructionThread::Main>, public webrtc::VideoTrackSourceInterface, private MediaStreamTrackPrivate::Observer {
 public:
     static Ref<RealtimeOutgoingVideoSource> create(Ref<MediaStreamTrackPrivate>&& videoSource);
-    ~RealtimeOutgoingVideoSource() { stop(); }
+    ~RealtimeOutgoingVideoSource();
 
     void stop();
     bool setSource(Ref<MediaStreamTrackPrivate>&&);
@@ -68,24 +68,21 @@ protected:
     explicit RealtimeOutgoingVideoSource(Ref<MediaStreamTrackPrivate>&&);
 
     void sendFrame(rtc::scoped_refptr<webrtc::VideoFrameBuffer>&&);
-
-    Vector<rtc::VideoSinkInterface<webrtc::VideoFrame>*> m_sinks;
-    webrtc::I420BufferPool m_bufferPool;
-
-    bool m_enabled { true };
-    bool m_muted { false };
-    uint32_t m_width { 0 };
-    uint32_t m_height { 0 };
-    bool m_shouldApplyRotation { false };
-    webrtc::VideoRotation m_currentRotation { webrtc::kVideoRotation_0 };
+    bool isSilenced() const { return m_muted || !m_enabled; }
 
     virtual rtc::scoped_refptr<webrtc::VideoFrameBuffer> createBlackFrame(size_t width, size_t height) = 0;
+
+    bool m_shouldApplyRotation { false };
+    webrtc::VideoRotation m_currentRotation { webrtc::kVideoRotation_0 };
 
 private:
     void sendBlackFramesIfNeeded();
     void sendOneBlackFrame();
     void initializeFromSource();
     void updateBlackFramesSending();
+
+    void observeSource();
+    void unobserveSource();
 
     // Notifier API
     void RegisterObserver(webrtc::ObserverInterface*) final { }
@@ -116,9 +113,16 @@ private:
 
     Ref<MediaStreamTrackPrivate> m_videoSource;
     std::optional<RealtimeMediaSourceSettings> m_initialSettings;
-    bool m_isStopped { false };
     Timer m_blackFrameTimer;
     rtc::scoped_refptr<webrtc::VideoFrameBuffer> m_blackFrame;
+
+    mutable RecursiveLock m_sinksLock;
+    HashSet<rtc::VideoSinkInterface<webrtc::VideoFrame>*> m_sinks;
+
+    bool m_enabled { true };
+    bool m_muted { false };
+    uint32_t m_width { 0 };
+    uint32_t m_height { 0 };
 };
 
 } // namespace WebCore

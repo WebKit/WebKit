@@ -41,7 +41,7 @@ async function renegotiate()
 {
     let d = await firstConnection.createOffer();
     await firstConnection.setLocalDescription(d);
-    await secondConnection.setRemoteDescription(firstConnection.localDescription);
+    await secondConnection.setRemoteDescription(d);
     d = await secondConnection.createAnswer();
     await secondConnection.setLocalDescription(d);
 }
@@ -51,10 +51,10 @@ promise_test((test) => {
         remoteVideoTrack.onmute = resolve;
         setTimeout(() => reject("Test timed out"), 5000);
     });
-     
+
     firstConnection.removeTrack(firstConnection.getSenders()[0]);
-    renegotiate();
-    return promise;
+    const promise2 = renegotiate();
+    return Promise.all([promise, promise2]);
 }, "Remove video track");
 
 promise_test((test) => {
@@ -62,11 +62,34 @@ promise_test((test) => {
         remoteAudioTrack.onmute = resolve;
         setTimeout(() => reject("Test timed out"), 5000);
     });
-     
+
     firstConnection.removeTrack(firstConnection.getSenders()[1]);
-    renegotiate();
-    return promise;
+    const promise2 = renegotiate();
+    return Promise.all([promise, promise2]);
 }, "Remove audio track");
+
+promise_test(async t => {
+    const stream = await navigator.mediaDevices.getUserMedia({audio: true});
+    const track = stream.getTracks()[0];
+    let pc = new RTCPeerConnection();
+    for (let i = 0; i <100; i++) {
+        let sender = pc.addTrack(track, stream);
+        pc.removeTrack(sender);
+    }
+    pc.close();
+}, 'Add/remove audio tracks');
+
+promise_test(async t => {
+    const stream = await navigator.mediaDevices.getUserMedia({video: true});
+    const track = stream.getTracks()[0];
+    let pc = new RTCPeerConnection();
+    for (let i = 0; i <100; i++) {
+        let sender = pc.addTrack(track, stream);
+        pc.removeTrack(sender);
+    }
+    pc.close();
+}, 'Add/remove video tracks');
+
         </script>
     </body>
 </html>

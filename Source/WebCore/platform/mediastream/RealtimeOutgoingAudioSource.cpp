@@ -41,6 +41,12 @@ RealtimeOutgoingAudioSource::RealtimeOutgoingAudioSource(Ref<MediaStreamTrackPri
 {
 }
 
+RealtimeOutgoingAudioSource::~RealtimeOutgoingAudioSource()
+{
+    ASSERT(m_sinks.isEmpty());
+    stop();
+}
+
 void RealtimeOutgoingAudioSource::observeSource()
 {
     m_audioSource->addObserver(*this);
@@ -54,11 +60,15 @@ void RealtimeOutgoingAudioSource::unobserveSource()
 
 bool RealtimeOutgoingAudioSource::setSource(Ref<MediaStreamTrackPrivate>&& newSource)
 {
-    m_audioSource->removeObserver(*this);
-    m_audioSource = WTFMove(newSource);
-    m_audioSource->addObserver(*this);
+    auto locker = holdLock(m_sinksLock);
+    bool hasSinks = !m_sinks.isEmpty();
 
-    initializeConverter();
+    if (hasSinks)
+        unobserveSource();
+    m_audioSource = WTFMove(newSource);
+    if (hasSinks)
+        observeSource();
+
     return true;
 }
 
@@ -66,12 +76,6 @@ void RealtimeOutgoingAudioSource::initializeConverter()
 {
     m_muted = m_audioSource->muted();
     m_enabled = m_audioSource->enabled();
-}
-
-void RealtimeOutgoingAudioSource::stop()
-{
-    ASSERT(isMainThread());
-    m_audioSource->removeObserver(*this);
 }
 
 void RealtimeOutgoingAudioSource::sourceMutedChanged()
@@ -83,6 +87,38 @@ void RealtimeOutgoingAudioSource::sourceEnabledChanged()
 {
     m_enabled = m_audioSource->enabled();
 }
+
+void RealtimeOutgoingAudioSource::AddSink(webrtc::AudioTrackSinkInterface* sink)
+{
+    {
+    auto locker = holdLock(m_sinksLock);
+    if (!m_sinks.add(sink) || m_sinks.size() != 1)
+        return;
+    }
+
+    callOnMainThread([protectedThis = makeRef(*this)]() {
+        protectedThis->observeSource();
+    });
+}
+
+void RealtimeOutgoingAudioSource::RemoveSink(webrtc::AudioTrackSinkInterface* sink)
+{
+    {
+    auto locker = holdLock(m_sinksLock);
+    if (!m_sinks.remove(sink) || !m_sinks.isEmpty())
+        return;
+    }
+
+    unobserveSource();
+}
+
+void RealtimeOutgoingAudioSource::sendAudioFrames(const void* audioData, int bitsPerSample, int sampleRate, size_t numberOfChannels, size_t numberOfFrames)
+{
+    auto locker = holdLock(m_sinksLock);
+    for (auto sink : m_sinks)
+        sink->OnData(audioData, bitsPerSample, sampleRate, numberOfChannels, numberOfFrames);
+}
+
 
 } // namespace WebCore
 

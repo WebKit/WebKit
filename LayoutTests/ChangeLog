@@ -1,5 +1,16 @@
 2018-11-12  Youenn Fablet  <youenn@apple.com>
 
+        RealtimeOutgoing A/V sources should observe their sources only if having a sink
+        https://bugs.webkit.org/show_bug.cgi?id=191490
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/remove-track-expected.txt:
+        * webrtc/remove-track.html:
+        Add tests and fixed some flakiness issues on existing tests in the file.
+
+2018-11-12  Youenn Fablet  <youenn@apple.com>
+
         Support setting stream ids when adding a transceiver
         https://bugs.webkit.org/show_bug.cgi?id=191307
 

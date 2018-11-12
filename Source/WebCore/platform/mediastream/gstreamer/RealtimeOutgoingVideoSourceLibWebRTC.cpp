@@ -52,10 +52,7 @@ RealtimeOutgoingVideoSourceLibWebRTC::RealtimeOutgoingVideoSourceLibWebRTC(Ref<M
 
 void RealtimeOutgoingVideoSourceLibWebRTC::sampleBufferUpdated(MediaStreamTrackPrivate&, MediaSample& sample)
 {
-    if (!m_sinks.size())
-        return;
-
-    if (m_muted || !m_enabled)
+    if (isSilenced())
         return;
 
     switch (sample.videoRotation()) {

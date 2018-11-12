@@ -34,7 +34,6 @@ RealtimeOutgoingAudioSourceLibWebRTC::RealtimeOutgoingAudioSourceLibWebRTC(Ref<M
 {
     m_adapter = adoptGRef(gst_adapter_new()),
     m_sampleConverter = nullptr;
-    observeSource();
 }
 
 RealtimeOutgoingAudioSourceLibWebRTC::~RealtimeOutgoingAudioSourceLibWebRTC()
@@ -130,13 +129,11 @@ void RealtimeOutgoingAudioSourceLibWebRTC::pullAudioData()
     gpointer in[1] = { inmap.data };
     gpointer out[1] = { outmap.data };
     if (gst_audio_converter_samples(m_sampleConverter, static_cast<GstAudioConverterFlags>(0), in, inChunkSampleCount, out, outChunkSampleCount)) {
-        for (auto sink : m_sinks) {
-            sink->OnData(outmap.data,
-                LibWebRTCAudioFormat::sampleSize,
-                static_cast<int>(m_outputStreamDescription->sampleRate()),
-                static_cast<int>(m_outputStreamDescription->numberOfChannels()),
-                outChunkSampleCount);
-        }
+        sendAudioFrames(outmap.data,
+            LibWebRTCAudioFormat::sampleSize,
+            static_cast<int>(m_outputStreamDescription->sampleRate()),
+            static_cast<int>(m_outputStreamDescription->numberOfChannels()),
+            outChunkSampleCount);
     } else
         GST_ERROR("Could not convert samples.");
 

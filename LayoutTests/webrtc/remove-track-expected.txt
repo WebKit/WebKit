@@ -2,4 +2,6 @@
 PASS Setup audio video exchange 
 PASS Remove video track 
 PASS Remove audio track 
+PASS Add/remove audio tracks 
+PASS Add/remove video tracks 
 

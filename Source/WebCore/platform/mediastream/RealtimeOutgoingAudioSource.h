@@ -54,9 +54,9 @@ class RealtimeOutgoingAudioSource : public ThreadSafeRefCounted<RealtimeOutgoing
 public:
     static Ref<RealtimeOutgoingAudioSource> create(Ref<MediaStreamTrackPrivate>&& audioSource);
 
-    ~RealtimeOutgoingAudioSource() { stop(); }
+    ~RealtimeOutgoingAudioSource();
 
-    void stop();
+    void stop() { unobserveSource(); }
 
     bool setSource(Ref<MediaStreamTrackPrivate>&&);
     MediaStreamTrackPrivate& source() const { return m_audioSource.get(); }
@@ -64,18 +64,18 @@ public:
 protected:
     explicit RealtimeOutgoingAudioSource(Ref<MediaStreamTrackPrivate>&&);
 
-    void observeSource();
     void unobserveSource();
 
     virtual void pullAudioData() { }
 
     bool isSilenced() const { return m_muted || !m_enabled; }
 
-    Vector<webrtc::AudioTrackSinkInterface*> m_sinks;
+    void sendAudioFrames(const void* audioData, int bitsPerSample, int sampleRate, size_t numberOfChannels, size_t numberOfFrames);
 
 private:
-    virtual void AddSink(webrtc::AudioTrackSinkInterface* sink) { m_sinks.append(sink); }
-    virtual void RemoveSink(webrtc::AudioTrackSinkInterface* sink) { m_sinks.removeFirst(sink); }
+    // webrtc::AudioSourceInterface API
+    void AddSink(webrtc::AudioTrackSinkInterface*) final;
+    void RemoveSink(webrtc::AudioTrackSinkInterface*) final;
 
     void AddRef() const final { ref(); }
     rtc::RefCountReleaseStatus Release() const final
@@ -89,6 +89,8 @@ private:
     bool remote() const final { return false; }
     void RegisterObserver(webrtc::ObserverInterface*) final { }
     void UnregisterObserver(webrtc::ObserverInterface*) final { }
+
+    void observeSource();
 
     void sourceMutedChanged();
     void sourceEnabledChanged();
@@ -110,6 +112,9 @@ private:
     Ref<MediaStreamTrackPrivate> m_audioSource;
     bool m_muted { false };
     bool m_enabled { true };
+
+    mutable RecursiveLock m_sinksLock;
+    HashSet<webrtc::AudioTrackSinkInterface*> m_sinks;
 };
 
 } // namespace WebCore

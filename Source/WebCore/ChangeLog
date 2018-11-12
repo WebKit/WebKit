@@ -1,5 +1,51 @@
 2018-11-12  Youenn Fablet  <youenn@apple.com>
 
+        RealtimeOutgoing A/V sources should observe their sources only if having a sink
+        https://bugs.webkit.org/show_bug.cgi?id=191490
+
+        Reviewed by Eric Carlson.
+
+        Observe the source that generates media based on the sinks:
+        - Do not observe at creation time
+        - For first sink, start observing
+        - When no more sink, stop observing
+        Apply this principle for both outgoing audio and video sources.
+        Add locks for the sinks to ensure thread-safety.
+        Make sinks HashSet which is more robust.
+
+        Do some refactoring to better isolate generic outgoing sources from Cocoa/GTK implementations.
+
+        Covered by existing tests and updated webrtc/remove-track.html.
+
+        * platform/mediastream/RealtimeOutgoingAudioSource.cpp:
+        (WebCore::RealtimeOutgoingAudioSource::~RealtimeOutgoingAudioSource):
+        (WebCore::RealtimeOutgoingAudioSource::stop):
+        (WebCore::RealtimeOutgoingAudioSource::AddSink):
+        (WebCore::RealtimeOutgoingAudioSource::RemoveSink):
+        (WebCore::RealtimeOutgoingAudioSource::sendAudioFrames):
+        * platform/mediastream/RealtimeOutgoingAudioSource.h:
+        * platform/mediastream/RealtimeOutgoingVideoSource.cpp:
+        (WebCore::RealtimeOutgoingVideoSource::RealtimeOutgoingVideoSource):
+        (WebCore::RealtimeOutgoingVideoSource::~RealtimeOutgoingVideoSource):
+        (WebCore::RealtimeOutgoingVideoSource::observeSource):
+        (WebCore::RealtimeOutgoingVideoSource::setSource):
+        (WebCore::RealtimeOutgoingVideoSource::stop):
+        (WebCore::RealtimeOutgoingVideoSource::AddOrUpdateSink):
+        (WebCore::RealtimeOutgoingVideoSource::RemoveSink):
+        * platform/mediastream/RealtimeOutgoingVideoSource.h:
+        (WebCore::RealtimeOutgoingVideoSource::isSilenced const):
+        * platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceLibWebRTC.cpp:
+        (WebCore::RealtimeOutgoingAudioSourceLibWebRTC::pullAudioData):
+        * platform/mediastream/mac/RealtimeOutgoingAudioSourceCocoa.cpp:
+        (WebCore::RealtimeOutgoingAudioSourceCocoa::RealtimeOutgoingAudioSourceCocoa):
+        (WebCore::RealtimeOutgoingAudioSourceCocoa::audioSamplesAvailable):
+        (WebCore::RealtimeOutgoingAudioSourceCocoa::pullAudioData):
+        * platform/mediastream/mac/RealtimeOutgoingAudioSourceCocoa.h:
+        * platform/mediastream/mac/RealtimeOutgoingVideoSourceCocoa.cpp:
+        (WebCore::RealtimeOutgoingVideoSourceCocoa::sampleBufferUpdated):
+
+2018-11-12  Youenn Fablet  <youenn@apple.com>
+
         Support setting stream ids when adding a transceiver
         https://bugs.webkit.org/show_bug.cgi?id=191307
 

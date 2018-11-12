@@ -63,10 +63,7 @@ RealtimeOutgoingVideoSourceCocoa::RealtimeOutgoingVideoSourceCocoa(Ref<MediaStre
 
 void RealtimeOutgoingVideoSourceCocoa::sampleBufferUpdated(MediaStreamTrackPrivate&, MediaSample& sample)
 {
-    if (!m_sinks.size())
-        return;
-
-    if (m_muted || !m_enabled)
+    if (isSilenced())
         return;
 
 #if !RELEASE_LOG_DISABLED
