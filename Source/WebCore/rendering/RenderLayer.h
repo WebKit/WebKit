@@ -178,12 +178,123 @@ public:
     // itself, if it is a stacking container.
     RenderLayer* enclosingStackingContext() { return isStackingContext() ? this : stackingContext(); }
 
+    RenderLayer* paintOrderParent() const;
+
     void dirtyNormalFlowList();
     void dirtyZOrderLists();
     void dirtyStackingContextZOrderLists();
 
     bool normalFlowListDirty() const { return m_normalFlowListDirty; }
     bool zOrderListsDirty() const { return m_zOrderListsDirty; }
+
+#if !ASSERT_DISABLED
+    bool layerListMutationAllowed() const { return m_layerListMutationAllowed; }
+    void setLayerListMutationAllowed(bool flag) { m_layerListMutationAllowed = flag; }
+#endif
+
+private:
+    // These flags propagate in paint order (z-order tree).
+    enum class Compositing {
+        HasDescendantNeedingRequirementsTraversal           = 1 << 0, // Need to do the overlap-testing tree walk because hierarchy or geometry changed.
+        HasDescendantNeedingBackingOrHierarchyTraversal     = 1 << 1, // Need to update geometry, configuration and update the GraphicsLayer tree.
+
+        // Things that trigger HasDescendantNeedingRequirementsTraversal
+        NeedsPaintOrderChildrenUpdate                       = 1 << 2, // The paint order children of this layer changed (gained/lost child, order change).
+        NeedsPostLayoutUpdate                               = 1 << 3, // Needs compositing to be re-evaluated after layout (it depends on geometry).
+        DescendantsNeedRequirementsTraversal                = 1 << 4, // Something changed that forces computeCompositingRequirements to traverse all descendant layers.
+        SubsequentLayersNeedRequirementsTraversal           = 1 << 5, // Something changed that forces computeCompositingRequirements to traverse all layers later in paint order.
+
+        // Things that trigger HasDescendantNeedingBackingOrHierarchyTraversal
+        NeedsGeometryUpdate                                 = 1 << 6, // This layer needs a geometry update.
+        NeedsConfigurationUpdate                            = 1 << 7, // This layer needs a configuration update (updating its internal compositing hierarchy).
+        NeedsLayerConnection                                = 1 << 8, // This layer needs hookup with its parents or children.
+        ChildrenNeedGeometryUpdate                          = 1 << 9, // This layer's composited children needs a geometry update.
+        DescendantsNeedBackingAndHierarchyTraversal         = 1 << 10, // Something changed that forces us to traverse all descendant layers in updateBackingAndHierarchy.
+    };
+
+    static constexpr OptionSet<Compositing> computeCompositingRequirementsFlags()
+    {
+        return {
+            Compositing::NeedsPaintOrderChildrenUpdate,
+            Compositing::NeedsPostLayoutUpdate,
+            Compositing::DescendantsNeedRequirementsTraversal,
+            Compositing::SubsequentLayersNeedRequirementsTraversal,
+        };
+    }
+
+    static constexpr OptionSet<Compositing> updateBackingOrHierarchyFlags()
+    {
+        return {
+            Compositing::NeedsLayerConnection,
+            Compositing::NeedsGeometryUpdate,
+            Compositing::NeedsConfigurationUpdate,
+            Compositing::ChildrenNeedGeometryUpdate,
+            Compositing::DescendantsNeedBackingAndHierarchyTraversal,
+        };
+    }
+
+    void setAncestorsHaveCompositingDirtyFlag(Compositing);
+
+public:
+    bool hasDescendantNeedingCompositingRequirementsTraversal() const { return m_compositingDirtyBits.contains(Compositing::HasDescendantNeedingRequirementsTraversal); }
+    bool hasDescendantNeedingUpdateBackingOrHierarchyTraversal() const { return m_compositingDirtyBits.contains(Compositing::HasDescendantNeedingBackingOrHierarchyTraversal); }
+
+    bool needsCompositingPaintOrderChildrenUpdate() const { return m_compositingDirtyBits.contains(Compositing::NeedsPaintOrderChildrenUpdate); }
+    bool needsPostLayoutCompositingUpdate() const { return m_compositingDirtyBits.contains(Compositing::NeedsPostLayoutUpdate); }
+    bool descendantsNeedCompositingRequirementsTraversal() const { return m_compositingDirtyBits.contains(Compositing::DescendantsNeedRequirementsTraversal); }
+    bool subsequentLayersNeedCompositingRequirementsTraversal() const { return m_compositingDirtyBits.contains(Compositing::SubsequentLayersNeedRequirementsTraversal); }
+
+    bool needsCompositingLayerConnection() const { return m_compositingDirtyBits.contains(Compositing::NeedsLayerConnection); }
+    bool needsCompositingGeometryUpdate() const { return m_compositingDirtyBits.contains(Compositing::NeedsGeometryUpdate); }
+    bool needsCompositingConfigurationUpdate() const { return m_compositingDirtyBits.contains(Compositing::NeedsConfigurationUpdate); }
+    bool childrenNeedCompositingGeometryUpdate() const { return m_compositingDirtyBits.contains(Compositing::ChildrenNeedGeometryUpdate); }
+    bool descendantsNeedUpdateBackingAndHierarchyTraversal() const { return m_compositingDirtyBits.contains(Compositing::DescendantsNeedBackingAndHierarchyTraversal); }
+
+    template<Compositing V>
+    void setRequirementsTraversalDirtyBit()
+    {
+        m_compositingDirtyBits.add(V);
+        setAncestorsHaveCompositingDirtyFlag(Compositing::HasDescendantNeedingRequirementsTraversal);
+    }
+
+    void setNeedsCompositingPaintOrderChildrenUpdate() { setRequirementsTraversalDirtyBit<Compositing::NeedsPaintOrderChildrenUpdate>(); }
+    void setNeedsPostLayoutCompositingUpdate() { setRequirementsTraversalDirtyBit<Compositing::NeedsPostLayoutUpdate>(); }
+    void setDescendantsNeedCompositingRequirementsTraversal() { setRequirementsTraversalDirtyBit<Compositing::DescendantsNeedRequirementsTraversal>(); }
+    void setSubsequentLayersNeedCompositingRequirementsTraversal() { setRequirementsTraversalDirtyBit<Compositing::SubsequentLayersNeedRequirementsTraversal>(); }
+
+    void setNeedsPostLayoutCompositingUpdateOnAncestors() { setAncestorsHaveCompositingDirtyFlag(Compositing::NeedsPostLayoutUpdate); }
+
+    template<Compositing V>
+    void setBackingAndHierarchyTraversalDirtyBit()
+    {
+        m_compositingDirtyBits.add(V);
+        setAncestorsHaveCompositingDirtyFlag(Compositing::HasDescendantNeedingBackingOrHierarchyTraversal);
+    }
+
+    void setNeedsCompositingLayerConnection() { setBackingAndHierarchyTraversalDirtyBit<Compositing::NeedsLayerConnection>(); }
+    void setNeedsCompositingGeometryUpdate() { setBackingAndHierarchyTraversalDirtyBit<Compositing::NeedsGeometryUpdate>(); }
+    void setNeedsCompositingConfigurationUpdate() { setBackingAndHierarchyTraversalDirtyBit<Compositing::NeedsConfigurationUpdate>(); }
+    void setChildrenNeedCompositingGeometryUpdate() { setBackingAndHierarchyTraversalDirtyBit<Compositing::ChildrenNeedGeometryUpdate>(); }
+    void setDescendantsNeedUpdateBackingAndHierarchyTraversal() { setBackingAndHierarchyTraversalDirtyBit<Compositing::DescendantsNeedBackingAndHierarchyTraversal>(); }
+
+    void setNeedsCompositingGeometryUpdateOnAncestors() { setAncestorsHaveCompositingDirtyFlag(Compositing::NeedsGeometryUpdate); }
+
+    bool needsCompositingRequirementsTraversal() const { return m_compositingDirtyBits.containsAny(computeCompositingRequirementsFlags()); }
+    void clearCompositingRequirementsTraversalState()
+    {
+        m_compositingDirtyBits.remove(Compositing::HasDescendantNeedingRequirementsTraversal);
+        m_compositingDirtyBits.remove(computeCompositingRequirementsFlags());
+    }
+
+    bool needsUpdateBackingOrHierarchyTraversal() const { return m_compositingDirtyBits.containsAny(updateBackingOrHierarchyFlags()); }
+    void clearUpdateBackingOrHierarchyTraversalState()
+    {
+        m_compositingDirtyBits.remove(Compositing::HasDescendantNeedingBackingOrHierarchyTraversal);
+        m_compositingDirtyBits.remove(updateBackingOrHierarchyFlags());
+    }
+
+    bool needsAnyCompositingTraversal() const { return !m_compositingDirtyBits.isEmpty(); }
+    void clearCompositingPaintOrderState() { m_compositingDirtyBits = { }; }
 
     class LayerList {
         friend class RenderLayer;
@@ -243,6 +354,15 @@ public:
 
     // Update our normal and z-index lists.
     void updateLayerListsIfNeeded();
+    void updateDescendantDependentFlags();
+    bool descendantDependentFlagsAreDirty() const
+    {
+        return m_visibleDescendantStatusDirty || m_visibleContentStatusDirty || m_hasSelfPaintingLayerDescendantDirty
+#if ENABLE(CSS_COMPOSITING)
+            || m_hasNotIsolatedBlendingDescendantsStatusDirty
+#endif
+        ;
+    }
 
     void repaintIncludingDescendants();
 
@@ -274,7 +394,7 @@ public:
     void setLocation(const LayoutPoint& p) { m_topLeft = p; }
 
     const IntSize& size() const { return m_layerSize; }
-    void setSize(const IntSize& size) { m_layerSize = size; }
+    void setSize(const IntSize& size) { m_layerSize = size; } // Only public for RenderTreeAsText.
 
     LayoutRect rect() const { return LayoutRect(location(), size()); }
 
@@ -384,13 +504,11 @@ public:
     enum UpdateLayerPositionsFlag {
         CheckForRepaint                 = 1 << 0,
         NeedsFullRepaintInBacking       = 1 << 1,
-        IsCompositingUpdateRoot         = 1 << 2,
-        UpdateCompositingLayers         = 1 << 3,
-        UpdatePagination                = 1 << 4,
-        SeenTransformedLayer            = 1 << 5,
-        Seen3DTransformedLayer          = 1 << 6,
+        UpdatePagination                = 1 << 2,
+        SeenTransformedLayer            = 1 << 3,
+        Seen3DTransformedLayer          = 1 << 4,
     };
-    static constexpr OptionSet<UpdateLayerPositionsFlag> updateLayerPositionsDefaultFlags() { return { CheckForRepaint, IsCompositingUpdateRoot, UpdateCompositingLayers }; }
+    static constexpr OptionSet<UpdateLayerPositionsFlag> updateLayerPositionsDefaultFlags() { return { CheckForRepaint }; }
 
     void updateLayerPositionsAfterLayout(const RenderLayer* rootLayer, OptionSet<UpdateLayerPositionsFlag>);
 
@@ -569,15 +687,15 @@ public:
     enum CalculateLayerBoundsFlag {
         IncludeSelfTransform                    = 1 << 0,
         UseLocalClipRectIfPossible              = 1 << 1,
-        IncludeLayerFilterOutsets               = 1 << 2,
-        ExcludeHiddenDescendants                = 1 << 3,
-        DontConstrainForMask                    = 1 << 4,
-        IncludeCompositedDescendants            = 1 << 5,
-        UseFragmentBoxesExcludingCompositing    = 1 << 6,
-        UseFragmentBoxesIncludingCompositing    = 1 << 7,
-
+        IncludeFilterOutsets                    = 1 << 2,
+        IncludePaintedFilterOutsets             = 1 << 3,
+        ExcludeHiddenDescendants                = 1 << 4,
+        DontConstrainForMask                    = 1 << 5,
+        IncludeCompositedDescendants            = 1 << 6,
+        UseFragmentBoxesExcludingCompositing    = 1 << 7,
+        UseFragmentBoxesIncludingCompositing    = 1 << 8,
     };
-    static constexpr OptionSet<CalculateLayerBoundsFlag> defaultCalculateLayerBoundsFlags() { return { IncludeSelfTransform, UseLocalClipRectIfPossible, IncludeLayerFilterOutsets, UseFragmentBoxesExcludingCompositing }; }
+    static constexpr OptionSet<CalculateLayerBoundsFlag> defaultCalculateLayerBoundsFlags() { return { IncludeSelfTransform, UseLocalClipRectIfPossible, IncludePaintedFilterOutsets, UseFragmentBoxesExcludingCompositing }; }
 
     // Bounding box relative to some ancestor layer. Pass offsetFromRoot if known.
     LayoutRect boundingBox(const RenderLayer* rootLayer, const LayoutSize& offsetFromRoot = LayoutSize(), OptionSet<CalculateLayerBoundsFlag> = { }) const;
@@ -589,7 +707,7 @@ public:
     FloatRect absoluteBoundingBoxForPainting() const;
 
     // Bounds used for layer overlap testing in RenderLayerCompositor.
-    LayoutRect overlapBounds() const { return overlapBoundsIncludeChildren() ? calculateLayerBounds(this, LayoutSize()) : localBoundingBox(); }
+    LayoutRect overlapBounds() const;
     
     // Takes transform animations into account, returning true if they could be cheaply computed.
     // Unlike overlapBounds, these bounds include descendant layers.
@@ -708,11 +826,6 @@ public:
     bool paintsWithFilters() const;
     bool requiresFullLayerImageForFilters() const;
 
-#if !ASSERT_DISABLED
-    bool layerListMutationAllowed() const { return m_layerListMutationAllowed; }
-    void setLayerListMutationAllowed(bool flag) { m_layerListMutationAllowed = flag; }
-#endif
-
     Element* enclosingElement() const;
 
     enum ViewportConstrainedNotCompositedReason {
@@ -731,7 +844,7 @@ public:
     bool isDirtyRenderFragmentedFlow() const
     {
         ASSERT(isRenderFragmentedFlow());
-        return m_zOrderListsDirty || m_normalFlowListDirty;
+        return zOrderListsDirty() || normalFlowListDirty();
     }
 
     RenderLayer* enclosingFragmentedFlowAncestor() const;
@@ -796,7 +909,6 @@ private:
     void calculateClipRects(const ClipRectsContext&, ClipRects&) const;
     ClipRects* clipRects(const ClipRectsContext&) const;
 
-
     void setAncestorChainHasSelfPaintingLayerDescendant();
     void dirtyAncestorChainHasSelfPaintingLayerDescendantStatus();
 
@@ -834,8 +946,6 @@ private:
     RenderLayer* enclosingPaginationLayerInSubtree(const RenderLayer* rootLayer, PaginationInclusionMode) const;
 
     LayoutPoint renderBoxLocation() const { return is<RenderBox>(renderer()) ? downcast<RenderBox>(renderer()).location() : LayoutPoint(); }
-
-    void updateCompositingAndLayerListsIfNeeded();
 
     bool setupFontSubpixelQuantization(GraphicsContext&, bool& didQuantizeFonts);
 
@@ -957,8 +1067,6 @@ private:
     void dirtyAncestorChainVisibleDescendantStatus();
     void setAncestorChainHasVisibleDescendant();
 
-    void updateDescendantDependentFlags();
-
     bool has3DTransformedDescendant() const { return m_has3DTransformedDescendant; }
 
     bool hasTransformedAncestor() const { return m_hasTransformedAncestor; }
@@ -1036,7 +1144,7 @@ private:
 
     bool overflowControlsIntersectRect(const IntRect& localRect) const;
 
-    // The bitfields are up here so they will fall into the padding from ScrollableArea on 64-bit.
+    OptionSet<Compositing> m_compositingDirtyBits;
 
     const bool m_isRenderViewLayer : 1;
     const bool m_forcedStackingContext : 1;
@@ -1046,6 +1154,7 @@ private:
 
     bool m_zOrderListsDirty : 1;
     bool m_normalFlowListDirty: 1;
+    bool m_hadNegativeZOrderList : 1;
 
     // Keeps track of whether the layer is currently resizing, so events can cause resizing to start and stop.
     bool m_inResizeMode : 1;
@@ -1070,6 +1179,7 @@ private:
     bool m_visibleDescendantStatusDirty : 1;
     bool m_hasVisibleDescendant : 1;
     bool m_registeredScrollableArea : 1;
+    bool m_isFixedIntersectingViewport : 1;
 
     bool m_3DTransformedDescendantStatusDirty : 1;
     bool m_has3DTransformedDescendant : 1;  // Set on a stacking context layer that has 3D descendants anywhere
@@ -1175,7 +1285,7 @@ private:
 inline void RenderLayer::clearZOrderLists()
 {
     ASSERT(!isStackingContext());
-    ASSERT(m_layerListMutationAllowed);
+    ASSERT(layerListMutationAllowed());
 
     m_posZOrderList = nullptr;
     m_negZOrderList = nullptr;
@@ -1193,6 +1303,11 @@ inline void RenderLayer::updateZOrderLists()
     }
 
     rebuildZOrderLists();
+}
+
+inline RenderLayer* RenderLayer::paintOrderParent() const
+{
+    return m_isNormalFlowOnly ? m_parent : stackingContext();
 }
 
 #if !ASSERT_DISABLED

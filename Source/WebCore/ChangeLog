@@ -1,3 +1,174 @@
+2018-11-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Make compositing updates incremental
+        https://bugs.webkit.org/show_bug.cgi?id=90342
+
+        Reviewed by Antti Koivisto.
+
+        Previously, updating compositing layers required two full RenderLayer tree traversals,
+        and all the work was done for every RenderLayer on each composting update. This could be expensive
+        on pages with lots of RenderLayers.
+
+        These changes make compositing updates more incremental. Compositing updates still require
+        two tree traversals. The first determines which RenderLayers need to be composited (of those which
+        weren't already made composited at style-change time), because of reasons that can only be determined
+        post-layout, and indirect reasons including overlap. The second traversal updates the configuration, geometry
+        and GraphicsLayer tree for the composited layers. Dependencies on both descendant and ancestor state make
+        it hard to fold these two traversals together.
+
+        In order to minimize the work done during these traversals, dirty bits are stored on RenderLayers,
+        and propagated to ancestor layers in paint order. There are two sets of bits: those related to the first
+        "compositing requirements" traversal, and those related to the second "update backing and hierarchy" traversal.
+        When a RenderLayer gets a dirty bit set, bits are propagated to ancestors to indicate that children need
+        to be visited.
+
+        Sadly entire subtrees can't be skipped during the "compositing requirements" traversal becaue we still have
+        to accumulate overlap rects, but RenderLayerCompositor::traverseUnchangedSubtree() is used to minimize
+        work in that case. Subtrees can be skipped in the "update backing and hierarchy" traveral. Entire traversals can
+        be skipped if no change has triggered the need for that traversal.
+        
+        These changes fix a correctness issue where transform changes now trigger overlap re-evaluation, which causes
+        more layer geometry updates than before. This regressed the MotionMark "Focus" test, when geometry updates
+        triggered layer resizes as the filter blur radius changed, which then triggered repaints. This is fixed by
+        excluding composited filters from the composited bounds (but still taking them into account for overlap).
+
+        Care is taken to avoid triggering traversals in non-composited documents (tested by no-updates-in-non-composited-iframe.html).
+
+        Code to set the dirty bits is added in various places that change properties that compositing depends on.
+        
+        These changes also subsume the patch in 176196; we now never consult properties that rely on layout from the
+        style change code path, and the only call stack for geometry updates is from the "update backing and hierarchy"
+        traversal, which is always a pre-order traversal.
+
+        Tests: compositing/geometry/stacking-context-change-layer-reparent.html
+               compositing/layer-creation/change-to-overlap.html
+               compositing/updates/no-updates-in-non-composited-iframe.html
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::markContextChanged): Need to differentiate between a canvas becoming composited
+        for the first time, and its pixels changing with a new 'CanvasPixelsChanged' value.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setViewportConstrainedObjectsNeedLayout):
+        * page/Page.cpp:
+        (WebCore::Page::setPageScaleFactor):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::updateBackdropFilters): If we just made a layer for backdrops, we need to update sublayers.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleWillChange):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::~RenderLayer):
+        (WebCore::RenderLayer::addChild):
+        (WebCore::RenderLayer::removeChild):
+        (WebCore::RenderLayer::shouldBeStackingContext const):
+        (WebCore::RenderLayer::stackingContext const):
+        (WebCore::RenderLayer::dirtyZOrderLists):
+        (WebCore::RenderLayer::dirtyNormalFlowList):
+        (WebCore::RenderLayer::updateNormalFlowList):
+        (WebCore::RenderLayer::rebuildZOrderLists):
+        (WebCore::RenderLayer::setAncestorsHaveCompositingDirtyFlag):
+        (WebCore::RenderLayer::contentChanged):
+        (WebCore::RenderLayer::updateLayerPositions):
+        (WebCore::RenderLayer::updateTransform):
+        (WebCore::RenderLayer::updateLayerPosition):
+        (WebCore::RenderLayer::enclosingCompositingLayer const):
+        (WebCore::RenderLayer::enclosingCompositingLayerForRepaint const):
+        (WebCore::RenderLayer::clippingRootForPainting const):
+        (WebCore::RenderLayer::scrollTo):
+        (WebCore::RenderLayer::updateCompositingLayersAfterScroll):
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout):
+        (WebCore::RenderLayer::paintLayerContents):
+        (WebCore::RenderLayer::hitTest):
+        (WebCore::RenderLayer::hitTestLayer):
+        (WebCore::RenderLayer::calculateClipRects const):
+        (WebCore::outputPaintOrderTreeLegend):
+        (WebCore::outputPaintOrderTreeRecursive):
+        (WebCore::compositingContainer): Deleted.
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::clearZOrderLists):
+        (WebCore::RenderLayer::paintOrderParent const):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateCompositedBounds):
+        (WebCore::RenderLayerBacking::updateAfterWidgetResize):
+        (WebCore::RenderLayerBacking::updateAfterLayout):
+        (WebCore::RenderLayerBacking::updateConfigurationAfterStyleChange):
+        (WebCore::RenderLayerBacking::updateConfiguration):
+        (WebCore::RenderLayerBacking::updateGeometry):
+        (WebCore::RenderLayerBacking::setRequiresBackgroundLayer):
+        (WebCore::RenderLayerBacking::updateMaskingLayer):
+        (WebCore::RenderLayerBacking::paintsContent const):
+        (WebCore::RenderLayerBacking::contentChanged):
+        (WebCore::RenderLayerBacking::setContentsNeedDisplay):
+        (WebCore::RenderLayerBacking::setContentsNeedDisplayInRect):
+        (WebCore::RenderLayerBacking::startAnimation):
+        (WebCore::RenderLayerBacking::animationFinished):
+        (WebCore::RenderLayerBacking::startTransition):
+        (WebCore::RenderLayerBacking::transitionFinished):
+        (WebCore::RenderLayerBacking::setCompositedBounds):
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::CompositingState::CompositingState):
+        (WebCore::RenderLayerCompositor::enableCompositingMode):
+        (WebCore::RenderLayerCompositor::cacheAcceleratedCompositingFlags):
+        (WebCore::RenderLayerCompositor::cacheAcceleratedCompositingFlagsAfterLayout):
+        (WebCore::RenderLayerCompositor::willRecalcStyle):
+        (WebCore::RenderLayerCompositor::didRecalcStyleWithNoPendingLayout):
+        (WebCore::RenderLayerCompositor::updateCompositingLayers):
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+        (WebCore::RenderLayerCompositor::traverseUnchangedSubtree):
+        (WebCore::RenderLayerCompositor::updateBackingAndHierarchy):
+        (WebCore::RenderLayerCompositor::appendDocumentOverlayLayers):
+        (WebCore::RenderLayerCompositor::layerBecameNonComposited):
+        (WebCore::RenderLayerCompositor::logLayerInfo):
+        (WebCore::clippingChanged):
+        (WebCore::styleAffectsLayerGeometry):
+        (WebCore::RenderLayerCompositor::layerStyleChanged):
+        (WebCore::RenderLayerCompositor::needsCompositingUpdateForStyleChangeOnNonCompositedLayer const):
+        (WebCore::RenderLayerCompositor::updateBacking):
+        (WebCore::RenderLayerCompositor::updateLayerCompositingState):
+        (WebCore::RenderLayerCompositor::layerWasAdded):
+        (WebCore::RenderLayerCompositor::layerWillBeRemoved):
+        (WebCore::RenderLayerCompositor::enclosingNonStackingClippingLayer const):
+        (WebCore::RenderLayerCompositor::computeExtent const):
+        (WebCore::RenderLayerCompositor::addToOverlapMap):
+        (WebCore::RenderLayerCompositor::addToOverlapMapRecursive):
+        (WebCore::RenderLayerCompositor::rootLayerConfigurationChanged):
+        (WebCore::RenderLayerCompositor::parentFrameContentLayers):
+        (WebCore::RenderLayerCompositor::updateRootLayerPosition):
+        (WebCore::RenderLayerCompositor::needsToBeComposited const):
+        (WebCore::RenderLayerCompositor::requiresCompositingLayer const):
+        (WebCore::RenderLayerCompositor::requiresOwnBackingStore const):
+        (WebCore::RenderLayerCompositor::reasonsForCompositing const):
+        (WebCore::RenderLayerCompositor::clippedByAncestor const):
+        (WebCore::RenderLayerCompositor::requiresCompositingForAnimation const):
+        (WebCore::RenderLayerCompositor::requiresCompositingForTransform const):
+        (WebCore::RenderLayerCompositor::requiresCompositingForVideo const):
+        (WebCore::RenderLayerCompositor::requiresCompositingForFilters const):
+        (WebCore::RenderLayerCompositor::requiresCompositingForWillChange const):
+        (WebCore::RenderLayerCompositor::requiresCompositingForPlugin const):
+        (WebCore::RenderLayerCompositor::requiresCompositingForFrame const):
+        (WebCore::RenderLayerCompositor::requiresCompositingForScrollableFrame const):
+        (WebCore::RenderLayerCompositor::requiresCompositingForPosition const):
+        (WebCore::RenderLayerCompositor::requiresCompositingForOverflowScrolling const):
+        (WebCore::RenderLayerCompositor::styleChangeMayAffectIndirectCompositingReasons):
+        (WebCore::RenderLayerCompositor::fixedLayerIntersectsViewport const):
+        (WebCore::RenderLayerCompositor::useCoordinatedScrollingForLayer const):
+        (WebCore::RenderLayerCompositor::rootOrBodyStyleChanged):
+        (WebCore::RenderLayerCompositor::rootBackgroundColorOrTransparencyChanged):
+        (WebCore::operator<<):
+        (WebCore::RenderLayerCompositor::setCompositingLayersNeedRebuild): Deleted.
+        (WebCore::checkIfDescendantClippingContextNeedsUpdate): Deleted.
+        (WebCore::isScrollableOverflow): Deleted.
+        (WebCore::styleHasTouchScrolling): Deleted.
+        (WebCore::styleChangeRequiresLayerRebuild): Deleted.
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTree): Deleted.
+        (WebCore::RenderLayerCompositor::rootFixedBackgroundsChanged): Deleted.
+        (WebCore::RenderLayerCompositor::updateLayerTreeGeometry): Deleted.
+        (WebCore::RenderLayerCompositor::updateCompositingDescendantGeometry): Deleted.
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeLayers):
+
 2018-11-12  Rob Buis  <rbuis@igalia.com>
 
         CSSCalcOperation constructor wastes 6KB of Vector capacity on cnn.com

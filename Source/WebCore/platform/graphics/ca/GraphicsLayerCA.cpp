@@ -2156,8 +2156,10 @@ void GraphicsLayerCA::updateBackdropFilters(CommitState& commitState)
         }
     }
 
-    if (madeLayer)
+    if (madeLayer) {
         updateBackdropFiltersRect();
+        noteSublayersChanged(DontScheduleFlush);
+    }
 }
 
 void GraphicsLayerCA::updateBackdropFiltersRect()

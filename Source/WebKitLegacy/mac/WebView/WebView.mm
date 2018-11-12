@@ -4189,7 +4189,7 @@ IGNORE_WARNINGS_END
         
         if (layerForWidget->contentsLayerForMedia() != layer) {
             layerForWidget->setContentsToPlatformLayer(layer, GraphicsLayer::ContentsLayerPurpose::Media);
-            // We need to make sure the layer hierachy change is applied immediately.
+            // We need to make sure the layer hierarchy change is applied immediately.
             if (mainCoreFrame->view())
                 mainCoreFrame->view()->flushCompositingStateIncludingSubframes();
             return YES;

@@ -704,6 +704,7 @@ static void writeLayers(TextStream& ts, const RenderLayer& rootLayer, RenderLaye
 
     // Ensure our lists are up-to-date.
     layer.updateLayerListsIfNeeded();
+    layer.updateDescendantDependentFlags();
 
     bool shouldPaint = (behavior & RenderAsTextShowAllLayers) ? true : layer.intersectsDamageRect(layerBounds, damageRect.rect(), &rootLayer, layer.offsetFromAncestor(&rootLayer));
     auto negativeZOrderLayers = layer.negativeZOrderLayers();

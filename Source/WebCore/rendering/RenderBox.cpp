@@ -261,7 +261,7 @@ void RenderBox::styleWillChange(StyleDifference diff, const RenderStyle& newStyl
         if (diff >= StyleDifference::Repaint && (isDocumentElementRenderer() || isBody())) {
             view().repaintRootContents();
             if (oldStyle->hasEntirelyFixedBackground() != newStyle.hasEntirelyFixedBackground())
-                view().compositor().rootFixedBackgroundsChanged();
+                view().compositor().rootLayerConfigurationChanged();
         }
         
         // When a layout hint happens and an object's position style changes, we have to do a layout

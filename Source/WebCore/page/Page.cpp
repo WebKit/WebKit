@@ -879,8 +879,11 @@ void Page::setPageScaleFactor(float scale, const IntPoint& origin, bool inStable
     m_pageScaleFactor = scale;
 
     if (!m_settings->delegatesPageScaling()) {
-        if (document->renderView())
-            document->renderView()->setNeedsLayout();
+        if (auto* renderView = document->renderView()) {
+            renderView->setNeedsLayout();
+            if (renderView->hasLayer() && renderView->layer()->isComposited())
+                renderView->layer()->setNeedsCompositingGeometryUpdate();
+        }
 
         document->resolveStyle(Document::ResolveStyleType::Rebuild);
 

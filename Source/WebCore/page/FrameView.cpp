@@ -2409,8 +2409,13 @@ void FrameView::setViewportConstrainedObjectsNeedLayout()
     if (!hasViewportConstrainedObjects())
         return;
 
-    for (auto& renderer : *m_viewportConstrainedObjects)
+    for (auto& renderer : *m_viewportConstrainedObjects) {
         renderer->setNeedsLayout();
+        if (renderer->hasLayer()) {
+            auto* layer = downcast<RenderBoxModelObject>(*renderer).layer();
+            layer->setNeedsCompositingGeometryUpdate();
+        }
+    }
 }
 
 void FrameView::didChangeScrollOffset()

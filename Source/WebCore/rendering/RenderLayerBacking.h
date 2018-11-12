@@ -65,12 +65,8 @@ public:
 
     RenderLayer& owningLayer() const { return m_owningLayer; }
 
-    enum class UpdateAfterLayoutFlags {
-        NeedsFullRepaint    = 1 << 0,
-        IsUpdateRoot        = 1 << 1
-    };
-    void updateAfterLayout(OptionSet<UpdateAfterLayoutFlags>);
-    
+    void updateConfigurationAfterStyleChange();
+
     // Returns true if layer configuration changed.
     bool updateConfiguration();
 
@@ -82,6 +78,8 @@ public:
 
     // Update contents and clipping structure.
     void updateDrawsContent();
+    
+    void updateAfterLayout(bool needsFullRepaint);
     
     GraphicsLayer* graphicsLayer() const { return m_graphicsLayer.get(); }
 
@@ -177,8 +175,10 @@ public:
     void resumeAnimations();
 
     LayoutRect compositedBounds() const;
-    void setCompositedBounds(const LayoutRect&);
-    void updateCompositedBounds();
+    // Returns true if changed.
+    bool setCompositedBounds(const LayoutRect&);
+    // Returns true if changed.
+    bool updateCompositedBounds();
     
     void updateAfterWidgetResize();
     void positionOverflowControlsLayers();

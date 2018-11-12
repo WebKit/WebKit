@@ -21,8 +21,12 @@
     }
 
     function canplaythrough() {
-        if (callback)
+        if (!callback)
+            return;
+
+        setTimeout(() => {
             callback();
+        }, 0);
     }
 
     function switchSrc() {

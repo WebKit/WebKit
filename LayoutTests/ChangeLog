@@ -1,3 +1,31 @@
+2018-11-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Make compositing updates incremental
+        https://bugs.webkit.org/show_bug.cgi?id=90342
+
+        Reviewed by Antti Koivisto.
+
+        Add some new tests for issues discovered during development.
+        
+        Filter tests get new results because composited layer bounds are no longer affected
+        by pixel-moving filters. 
+
+        * compositing/filters/sw-layer-overlaps-hw-shadow-expected.txt:
+        * compositing/filters/sw-nested-shadow-overlaps-hw-nested-shadow-expected.txt:
+        * compositing/filters/sw-shadow-overlaps-hw-layer-expected.txt:
+        * compositing/filters/sw-shadow-overlaps-hw-shadow-expected.txt:
+        * compositing/geometry/stacking-context-change-layer-reparent-expected.html: Added.
+        * compositing/geometry/stacking-context-change-layer-reparent.html: Added.
+        * compositing/layer-creation/change-to-overlap-expected.txt: Added.
+        * compositing/layer-creation/change-to-overlap.html: Added.
+        * compositing/updates/no-updates-in-non-composited-iframe-expected.txt: Added.
+        * compositing/updates/no-updates-in-non-composited-iframe.html: Added.
+        * compositing/updates/resources/non-composited.html: Added.
+        * compositing/video/video-clip-change-src.html: This test was timing-sensitive; the behavior differed bases on whether we
+        happened to do a compositing flush between the first and second video load.
+        * platform/mac-wk1/TestExpectations: Mark compositing/layer-creation/fixed-overlap-extent.html as flakey; it depends on the
+        timing of various AppKit-related things that aren't consistent.
+
 2018-11-12  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Frame re-ordering can cause iframes to never be enqueued

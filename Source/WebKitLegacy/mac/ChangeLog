@@ -1,3 +1,15 @@
+2018-11-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Make compositing updates incremental
+        https://bugs.webkit.org/show_bug.cgi?id=90342
+
+        Reviewed by Antti Koivisto.
+
+        Fix spelling error.
+
+        * WebView/WebView.mm:
+        (-[WebView _setMediaLayer:forPluginView:]):
+
 2018-11-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Implement a new edit command to change the enclosing list type
