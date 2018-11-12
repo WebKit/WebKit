@@ -309,6 +309,14 @@ class SimulatedDeviceManager(object):
                 raise RuntimeError('Timed out while waiting for all devices to boot')
 
     @staticmethod
+    def _wait_until_device_is_usable(device, deadline):
+        _log.debug('Waiting until {} is usable'.format(device))
+        while not device.platform_device.is_usable(force_update=True):
+            if time.time() > deadline:
+                raise RuntimeError('Timed out while waiting for {} to become usable'.format(device))
+            time.sleep(1)
+
+    @staticmethod
     def _boot_device(device, host=SystemHost()):
         _log.debug("Booting device '{}'".format(device.udid))
         device.platform_device.booted_by_script = True
@@ -366,8 +374,7 @@ class SimulatedDeviceManager(object):
 
         deadline = time.time() + timeout
         for device in SimulatedDeviceManager.INITIALIZED_DEVICES:
-            SimulatedDeviceManager._wait_until_device_in_state(device, SimulatedDevice.DeviceState.BOOTED, deadline)
-        SimulatedDeviceManager.wait_until_data_migration_is_done(host, max(0, deadline - time.time()))
+            SimulatedDeviceManager._wait_until_device_is_usable(device, deadline)
 
         return SimulatedDeviceManager.INITIALIZED_DEVICES
 
@@ -417,18 +424,7 @@ class SimulatedDeviceManager(object):
         SimulatedDeviceManager.INITIALIZED_DEVICES[index] = device
 
         deadline = time.time() + timeout
-        SimulatedDeviceManager._wait_until_device_in_state(device, SimulatedDevice.DeviceState.BOOTED, deadline)
-        SimulatedDeviceManager.wait_until_data_migration_is_done(host, max(0, deadline - time.time()))
-
-    @staticmethod
-    def wait_until_data_migration_is_done(host, timeout=SIMULATOR_BOOT_TIMEOUT):
-        # The existence of a datamigrator process means that simulators are still booting.
-        deadline = time.time() + timeout
-        _log.debug('Waiting until no com.apple.datamigrator processes are found')
-        while host.executive.running_pids(lambda process_name: 'com.apple.datamigrator' in process_name):
-            if time.time() > deadline:
-                raise RuntimeError('Timed out while waiting for data migration')
-            time.sleep(1)
+        SimulatedDeviceManager._wait_until_device_is_usable(device, max(0, deadline - time.time()))
 
     @staticmethod
     def tear_down(host=SystemHost(), timeout=60):
@@ -496,6 +492,23 @@ class SimulatedDevice(object):
     def is_booted_or_booting(self, force_update=False):
         if self.state(force_update=force_update) == SimulatedDevice.DeviceState.BOOTING or self.state() == SimulatedDevice.DeviceState.BOOTED:
             return True
+        return False
+
+    def is_usable(self, force_update=False):
+        if self.state(force_update=force_update) != SimulatedDevice.DeviceState.BOOTED:
+            return False
+
+        if self.device_type.software_variant == 'iOS':
+            home_screen_service = 'com.apple.springboard.services'
+        elif self.device_type.software_version == 'watchOS':
+            home_screen_service = 'com.apple.carousel.sessionservice'
+        else:
+            _log.debug('{} has no service to check if the device is usable'.format(self.device_type.software_variant))
+            return True
+
+        for line in self.executive.run_command([SimulatedDeviceManager.xcrun, 'simctl', 'spawn', self.udid, 'launchctl', 'print', 'system']).splitlines():
+            if home_screen_service in line:
+                return True
         return False
 
     def _shut_down(self, timeout=10.0):

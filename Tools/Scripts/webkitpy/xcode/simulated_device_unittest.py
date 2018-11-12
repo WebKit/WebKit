@@ -487,7 +487,12 @@ simctl_json_output = """{
      },
      "state" : "(active, disconnected)"
    }
- }
+ },
+ "services" : [
+   "This triggers the bail-out logic in SimulatedDevice.is_usable()",
+   "com.apple.springboard.services",
+   "com.apple.carousel.sessionservice"
+ ]
 }"""
 
 import json

@@ -1,3 +1,26 @@
+2018-11-12  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Check for specific process instead of using data migrator
+        https://bugs.webkit.org/show_bug.cgi?id=191551
+        <rdar://problem/45993156>
+
+        Rubber-stamped by Aakash Jain.
+
+        It's possible for the data migrator process to be stuck, but for a simulator to be
+        usable. Use device-specific processes to detect when a device is usable.
+
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDeviceManager._wait_until_device_is_usable):
+        (SimulatedDeviceManager):
+        (SimulatedDeviceManager.initialize_devices): Explicitly wait until a device is usable
+        since this implies that a device is booted.
+        (SimulatedDeviceManager.swap): Ditto.
+        (SimulatedDevice.is_usable): Check that a device is booted and that a device-specific
+        process indicating the device is usable can be found.
+        (SimulatedDeviceManager.wait_until_data_migration_is_done): Deleted.
+        * Scripts/webkitpy/xcode/simulated_device_unittest.py: Update simctl_json so that
+        it triggers the logic in is_usable()
+
 2018-11-12  Takashi Komori  <Takashi.Komori@sony.com>
 
         Resurrect WebKitTestRunner for Windows port
