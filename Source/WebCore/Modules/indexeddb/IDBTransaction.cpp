@@ -92,10 +92,9 @@ IDBTransaction::IDBTransaction(IDBDatabase& database, const IDBTransactionInfo& 
         auto* context = scriptExecutionContext();
         ASSERT(context);
 
-        RefPtr<IDBTransaction> self;
         JSC::VM& vm = context->vm();
-        vm.whenIdle([self, this]() {
-            deactivate();
+        vm.whenIdle([protectedThis = makeRef(*this)]() {
+            protectedThis->deactivate();
         });
 
         establishOnServer();

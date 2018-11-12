@@ -1,3 +1,18 @@
+2018-11-12  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        IDBTransaction does not use "RefPtr<IDBTransaction> self"
+        https://bugs.webkit.org/show_bug.cgi?id=190436
+
+        Reviewed by Alex Christensen.
+
+        It seems that `RefPtr<IDBTransaction> self;` is not effective since it does not capture anything.
+        Use `protectedThis = makeRef(*this)` instead.
+
+        No behavior change.
+
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::IDBTransaction):
+
 2018-11-12  Alicia Boya García  <aboya@igalia.com>
 
         [MSE][GStreamer] Introduce AbortableTaskQueue
