@@ -23,17 +23,5 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "InjectedBundle.h"
-
-#include <WebKit/WKBundleInitialize.h>
-
-#if defined(WIN32)
-extern "C" __declspec(dllexport)
-#else
-extern "C"
-#endif
-void WKBundleInitialize(WKBundleRef bundle, WKTypeRef initializationUserData)
-{
-    WTR::InjectedBundle::singleton().initialize(bundle, initializationUserData);
-}
+#undef WEBCORE_EXPORT
+#define WEBCORE_EXPORT WTF_IMPORT_DECLARATION

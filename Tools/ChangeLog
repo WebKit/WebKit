@@ -1,3 +1,274 @@
+2018-11-12  Takashi Komori  <Takashi.Komori@sony.com>
+
+        Resurrect WebKitTestRunner for Windows port
+        https://bugs.webkit.org/show_bug.cgi?id=189257
+
+        Reviewed by Fujii Hironori.
+
+        Implement WebKitTestRunner for WinCairo.
+
+        * PlatformWin.cmake:
+        * Scripts/build-webkittestrunner:
+        * WebKitTestRunner/CMakeLists.txt:
+        * WebKitTestRunner/EventSenderProxy.h:
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.cpp:
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/InjectedBundleMain.cpp:
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::rangeToStr):
+        (WTR::InjectedBundlePage::dumpDOMAsWebArchive):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::TestRunner):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/InjectedBundle/win/AccessibilityControllerWin.cpp: Added.
+        (WTR::AccessibilityController::resetToConsistentState):
+        (WTR::AccessibilityController::accessibleElementById):
+        (WTR::AccessibilityController::platformName):
+        (WTR::AccessibilityController::rootElement):
+        (WTR::AccessibilityController::focusedElement):
+        (WTR::AccessibilityController::addNotificationListener):
+        (WTR::AccessibilityController::removeNotificationListener):
+        * WebKitTestRunner/InjectedBundle/win/AccessibilityUIElementWin.cpp: Added.
+        (WTR::AccessibilityUIElement::AccessibilityUIElement):
+        (WTR::AccessibilityUIElement::~AccessibilityUIElement):
+        (WTR::AccessibilityUIElement::isEqual):
+        (WTR::AccessibilityUIElement::getChildren):
+        (WTR::AccessibilityUIElement::getChildrenWithRange):
+        (WTR::AccessibilityUIElement::childrenCount):
+        (WTR::AccessibilityUIElement::elementAtPoint):
+        (WTR::AccessibilityUIElement::indexOfChild):
+        (WTR::AccessibilityUIElement::childAtIndex):
+        (WTR::AccessibilityUIElement::linkedUIElementAtIndex):
+        (WTR::AccessibilityUIElement::ariaOwnsElementAtIndex):
+        (WTR::AccessibilityUIElement::ariaFlowToElementAtIndex):
+        (WTR::AccessibilityUIElement::ariaControlsElementAtIndex):
+        (WTR::AccessibilityUIElement::disclosedRowAtIndex):
+        (WTR::AccessibilityUIElement::rowAtIndex):
+        (WTR::AccessibilityUIElement::selectedChildAtIndex const):
+        (WTR::AccessibilityUIElement::selectedChildrenCount const):
+        (WTR::AccessibilityUIElement::selectedRowAtIndex):
+        (WTR::AccessibilityUIElement::titleUIElement):
+        (WTR::AccessibilityUIElement::parentElement):
+        (WTR::AccessibilityUIElement::disclosedByRow):
+        (WTR::AccessibilityUIElement::attributesOfLinkedUIElements):
+        (WTR::AccessibilityUIElement::attributesOfDocumentLinks):
+        (WTR::AccessibilityUIElement::attributesOfChildren):
+        (WTR::AccessibilityUIElement::allAttributes):
+        (WTR::AccessibilityUIElement::stringAttributeValue):
+        (WTR::AccessibilityUIElement::numberAttributeValue):
+        (WTR::AccessibilityUIElement::uiElementArrayAttributeValue const):
+        (WTR::AccessibilityUIElement::rowHeaders const):
+        (WTR::AccessibilityUIElement::columnHeaders const):
+        (WTR::AccessibilityUIElement::uiElementAttributeValue const):
+        (WTR::AccessibilityUIElement::boolAttributeValue):
+        (WTR::AccessibilityUIElement::isAttributeSettable):
+        (WTR::AccessibilityUIElement::isAttributeSupported):
+        (WTR::AccessibilityUIElement::parameterizedAttributeNames):
+        (WTR::AccessibilityUIElement::role):
+        (WTR::AccessibilityUIElement::subrole):
+        (WTR::AccessibilityUIElement::roleDescription):
+        (WTR::AccessibilityUIElement::computedRoleString):
+        (WTR::AccessibilityUIElement::title):
+        (WTR::AccessibilityUIElement::description):
+        (WTR::AccessibilityUIElement::orientation const):
+        (WTR::AccessibilityUIElement::stringValue):
+        (WTR::AccessibilityUIElement::language):
+        (WTR::AccessibilityUIElement::helpText const):
+        (WTR::AccessibilityUIElement::x):
+        (WTR::AccessibilityUIElement::y):
+        (WTR::AccessibilityUIElement::width):
+        (WTR::AccessibilityUIElement::height):
+        (WTR::AccessibilityUIElement::clickPointX):
+        (WTR::AccessibilityUIElement::clickPointY):
+        (WTR::AccessibilityUIElement::intValue const):
+        (WTR::AccessibilityUIElement::minValue):
+        (WTR::AccessibilityUIElement::maxValue):
+        (WTR::AccessibilityUIElement::valueDescription):
+        (WTR::AccessibilityUIElement::insertionPointLineNumber):
+        (WTR::AccessibilityUIElement::isPressActionSupported):
+        (WTR::AccessibilityUIElement::isIncrementActionSupported):
+        (WTR::AccessibilityUIElement::isDecrementActionSupported):
+        (WTR::AccessibilityUIElement::isEnabled):
+        (WTR::AccessibilityUIElement::isRequired const):
+        (WTR::AccessibilityUIElement::isFocused const):
+        (WTR::AccessibilityUIElement::isSelected const):
+        (WTR::AccessibilityUIElement::isSelectedOptionActive const):
+        (WTR::AccessibilityUIElement::isExpanded const):
+        (WTR::AccessibilityUIElement::isChecked const):
+        (WTR::AccessibilityUIElement::isIndeterminate const):
+        (WTR::AccessibilityUIElement::hierarchicalLevel const):
+        (WTR::AccessibilityUIElement::speakAs):
+        (WTR::AccessibilityUIElement::ariaIsGrabbed const):
+        (WTR::AccessibilityUIElement::ariaDropEffects const):
+        (WTR::AccessibilityUIElement::lineForIndex):
+        (WTR::AccessibilityUIElement::rangeForLine):
+        (WTR::AccessibilityUIElement::rangeForPosition):
+        (WTR::AccessibilityUIElement::boundsForRange):
+        (WTR::AccessibilityUIElement::stringForRange):
+        (WTR::AccessibilityUIElement::attributedStringForRange):
+        (WTR::AccessibilityUIElement::attributedStringRangeIsMisspelled):
+        (WTR::AccessibilityUIElement::uiElementCountForSearchPredicate):
+        (WTR::AccessibilityUIElement::uiElementForSearchPredicate):
+        (WTR::AccessibilityUIElement::selectTextWithCriteria):
+        (WTR::AccessibilityUIElement::attributesOfColumnHeaders):
+        (WTR::AccessibilityUIElement::attributesOfRowHeaders):
+        (WTR::AccessibilityUIElement::attributesOfColumns):
+        (WTR::AccessibilityUIElement::attributesOfRows):
+        (WTR::AccessibilityUIElement::attributesOfVisibleCells):
+        (WTR::AccessibilityUIElement::attributesOfHeader):
+        (WTR::AccessibilityUIElement::rowCount):
+        (WTR::AccessibilityUIElement::columnCount):
+        (WTR::AccessibilityUIElement::indexInTable):
+        (WTR::AccessibilityUIElement::rowIndexRange):
+        (WTR::AccessibilityUIElement::columnIndexRange):
+        (WTR::AccessibilityUIElement::cellForColumnAndRow):
+        (WTR::AccessibilityUIElement::horizontalScrollbar const):
+        (WTR::AccessibilityUIElement::verticalScrollbar const):
+        (WTR::AccessibilityUIElement::selectedTextRange):
+        (WTR::AccessibilityUIElement::setSelectedTextRange):
+        (WTR::AccessibilityUIElement::increment):
+        (WTR::AccessibilityUIElement::decrement):
+        (WTR::AccessibilityUIElement::showMenu):
+        (WTR::AccessibilityUIElement::press):
+        (WTR::AccessibilityUIElement::setSelectedChild const):
+        (WTR::AccessibilityUIElement::setSelectedChildAtIndex const):
+        (WTR::AccessibilityUIElement::removeSelectionAtIndex const):
+        (WTR::AccessibilityUIElement::clearSelectedChildren const):
+        (WTR::AccessibilityUIElement::accessibilityValue const):
+        (WTR::AccessibilityUIElement::documentEncoding):
+        (WTR::AccessibilityUIElement::documentURI):
+        (WTR::AccessibilityUIElement::url):
+        (WTR::AccessibilityUIElement::addNotificationListener):
+        (WTR::AccessibilityUIElement::removeNotificationListener):
+        (WTR::AccessibilityUIElement::isFocusable const):
+        (WTR::AccessibilityUIElement::isSelectable const):
+        (WTR::AccessibilityUIElement::isMultiSelectable const):
+        (WTR::AccessibilityUIElement::isVisible const):
+        (WTR::AccessibilityUIElement::isOffScreen const):
+        (WTR::AccessibilityUIElement::isCollapsed const):
+        (WTR::AccessibilityUIElement::isIgnored const):
+        (WTR::AccessibilityUIElement::isSingleLine const):
+        (WTR::AccessibilityUIElement::isMultiLine const):
+        (WTR::AccessibilityUIElement::hasPopup const):
+        (WTR::AccessibilityUIElement::takeFocus):
+        (WTR::AccessibilityUIElement::takeSelection):
+        (WTR::AccessibilityUIElement::addSelection):
+        (WTR::AccessibilityUIElement::removeSelection):
+        (WTR::AccessibilityUIElement::lineTextMarkerRangeForTextMarker):
+        (WTR::AccessibilityUIElement::textMarkerRangeForElement):
+        (WTR::AccessibilityUIElement::textMarkerRangeLength):
+        (WTR::AccessibilityUIElement::previousTextMarker):
+        (WTR::AccessibilityUIElement::nextTextMarker):
+        (WTR::AccessibilityUIElement::stringForTextMarkerRange):
+        (WTR::AccessibilityUIElement::textMarkerRangeForMarkers):
+        (WTR::AccessibilityUIElement::startTextMarkerForTextMarkerRange):
+        (WTR::AccessibilityUIElement::endTextMarkerForTextMarkerRange):
+        (WTR::AccessibilityUIElement::endTextMarkerForBounds):
+        (WTR::AccessibilityUIElement::startTextMarkerForBounds):
+        (WTR::AccessibilityUIElement::textMarkerForPoint):
+        (WTR::AccessibilityUIElement::accessibilityElementForTextMarker):
+        (WTR::AccessibilityUIElement::attributedStringForTextMarkerRange):
+        (WTR::AccessibilityUIElement::attributedStringForTextMarkerRangeWithOptions):
+        (WTR::AccessibilityUIElement::attributedStringForTextMarkerRangeContainsAttribute):
+        (WTR::AccessibilityUIElement::indexForTextMarker):
+        (WTR::AccessibilityUIElement::isTextMarkerValid):
+        (WTR::AccessibilityUIElement::textMarkerForIndex):
+        (WTR::AccessibilityUIElement::startTextMarker):
+        (WTR::AccessibilityUIElement::endTextMarker):
+        (WTR::AccessibilityUIElement::setSelectedVisibleTextRange):
+        (WTR::AccessibilityUIElement::scrollToMakeVisible):
+        (WTR::AccessibilityUIElement::scrollToGlobalPoint):
+        (WTR::AccessibilityUIElement::scrollToMakeVisibleWithSubFocus):
+        (WTR::AccessibilityUIElement::supportedActions const):
+        (WTR::AccessibilityUIElement::pathDescription const):
+        (WTR::AccessibilityUIElement::mathPostscriptsDescription const):
+        (WTR::AccessibilityUIElement::mathPrescriptsDescription const):
+        (WTR::AccessibilityUIElement::classList const):
+        (WTR::AccessibilityUIElement::characterAtOffset):
+        (WTR::AccessibilityUIElement::wordAtOffset):
+        (WTR::AccessibilityUIElement::lineAtOffset):
+        (WTR::AccessibilityUIElement::sentenceAtOffset):
+        * WebKitTestRunner/InjectedBundle/win/ActivateFontsWin.cpp: Copied from Tools/WebKitTestRunner/InjectedBundle/InjectedBundleMain.cpp.
+        (WTR::activateFonts):
+        (WTR::installFakeHelvetica):
+        (WTR::uninstallFakeHelvetica):
+        * WebKitTestRunner/InjectedBundle/win/InjectedBundleWin.cpp: Copied from Tools/WebKitTestRunner/InjectedBundle/InjectedBundleMain.cpp.
+        (WTR::InjectedBundle::platformInitialize):
+        * WebKitTestRunner/InjectedBundle/win/TestRunnerInjectedBundlePrefix.cpp: Added.
+        * WebKitTestRunner/InjectedBundle/win/TestRunnerInjectedBundlePrefix.h: Copied from Tools/WebKitTestRunner/InjectedBundle/InjectedBundleMain.cpp.
+        * WebKitTestRunner/InjectedBundle/win/TestRunnerWin.cpp: Copied from Tools/WebKitTestRunner/InjectedBundle/InjectedBundleMain.cpp.
+        (WTR::TestRunner::pathToLocalResource):
+        (WTR::TestRunner::inspectorTestStubURL):
+        (WTR::TestRunner::invalidateWaitToDumpWatchdogTimer):
+        (WTR::TestRunner::platformInitialize):
+        (WTR::TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded):
+        (WTR::TestRunner::installFakeHelvetica):
+        * WebKitTestRunner/PlatformWebView.h:
+        * WebKitTestRunner/PlatformWin.cmake: Added.
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+        (WTR::createTestURL):
+        * WebKitTestRunner/TestInvocation.cpp:
+        * WebKitTestRunner/WebKitTestRunnerPrefix.h:
+        * WebKitTestRunner/win/EventSenderProxyWin.cpp: Added.
+        (WTR::EventSenderProxy::EventSenderProxy):
+        (WTR::EventSenderProxy::~EventSenderProxy):
+        (WTR::EventSenderProxy::mouseDown):
+        (WTR::EventSenderProxy::mouseUp):
+        (WTR::EventSenderProxy::mouseMoveTo):
+        (WTR::EventSenderProxy::mouseScrollBy):
+        (WTR::EventSenderProxy::mouseScrollByWithWheelAndMomentumPhases):
+        (WTR::EventSenderProxy::continuousMouseScrollBy):
+        (WTR::EventSenderProxy::leapForward):
+        (WTR::EventSenderProxy::keyDown):
+        * WebKitTestRunner/win/PlatformWebViewWin.cpp: Added.
+        (WTR::registerWindowClass):
+        (WTR::PlatformWebView::PlatformWebView):
+        (WTR::PlatformWebView::~PlatformWebView):
+        (WTR::PlatformWebView::resizeTo):
+        (WTR::PlatformWebView::page):
+        (WTR::PlatformWebView::focus):
+        (WTR::PlatformWebView::windowFrame):
+        (WTR::PlatformWebView::setWindowFrame):
+        (WTR::PlatformWebView::didInitializeClients):
+        (WTR::PlatformWebView::addChromeInputField):
+        (WTR::PlatformWebView::removeChromeInputField):
+        (WTR::PlatformWebView::addToWindow):
+        (WTR::PlatformWebView::removeFromWindow):
+        (WTR::PlatformWebView::setWindowIsKey):
+        (WTR::PlatformWebView::makeWebViewFirstResponder):
+        (WTR::generateCairoSurfaceFromBitmap):
+        (WTR::PlatformWebView::windowSnapshotImage):
+        (WTR::PlatformWebView::changeWindowScaleIfNeeded):
+        (WTR::PlatformWebView::setNavigationGesturesEnabled):
+        (WTR::PlatformWebView::forceWindowFramesChanged):
+        (WTR::PlatformWebView::drawsBackground const):
+        (WTR::PlatformWebView::setDrawsBackground):
+        * WebKitTestRunner/win/TestControllerWin.cpp: Added.
+        (WTR::exceptionFilter):
+        (WTR::runRunLoopUntil):
+        (WTR::TestController::notifyDone):
+        (WTR::TestController::setHidden):
+        (WTR::TestController::platformInitialize):
+        (WTR::TestController::platformPreferences):
+        (WTR::TestController::platformDestroy):
+        (WTR::toWK):
+        (WTR::TestController::platformInitializeContext):
+        (WTR::TestController::platformRunUntil):
+        (WTR::TestController::platformDidCommitLoadForFrame):
+        (WTR::TestController::initializeInjectedBundlePath):
+        (WTR::TestController::initializeTestPluginDirectory):
+        (WTR::TestController::runModal):
+        (WTR::TestController::platformContext):
+        (WTR::TestController::platformLibraryPathForTesting):
+        (WTR::TestController::platformConfigureViewForTest):
+        (WTR::TestController::platformResetPreferencesToConsistentValues):
+        (WTR::TestController::updatePlatformSpecificTestOptionsForTest const):
+        * WebKitTestRunner/win/WebKitTestRunnerPrefix.cpp: Added.
+        * WebKitTestRunner/win/main.cpp: Copied from Tools/WebKitTestRunner/InjectedBundle/InjectedBundleMain.cpp.
+        (dllLauncherEntryPoint):
+
 2018-11-12  Alicia Boya García  <aboya@igalia.com>
 
         [MSE][GStreamer] Introduce AbortableTaskQueue

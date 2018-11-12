@@ -1,3 +1,12 @@
+2018-11-12  Takashi Komori  <Takashi.Komori@sony.com>
+
+        Resurrect WebKitTestRunner for Windows port
+        https://bugs.webkit.org/show_bug.cgi?id=189257
+
+        Reviewed by Fujii Hironori.
+
+        * Source/cmake/OptionsWin.cmake:
+
 2018-11-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Linux] Use memfd_create when available in SharedMemory implementation

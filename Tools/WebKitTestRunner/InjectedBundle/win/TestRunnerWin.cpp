@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,16 +24,40 @@
  */
 
 #include "config.h"
-#include "InjectedBundle.h"
+#include "TestRunner.h"
 
-#include <WebKit/WKBundleInitialize.h>
+#include "ActivateFonts.h"
 
-#if defined(WIN32)
-extern "C" __declspec(dllexport)
-#else
-extern "C"
-#endif
-void WKBundleInitialize(WKBundleRef bundle, WKTypeRef initializationUserData)
+namespace WTR {
+
+JSRetainPtr<JSStringRef> TestRunner::pathToLocalResource(JSStringRef)
 {
-    WTR::InjectedBundle::singleton().initialize(bundle, initializationUserData);
+    return nullptr;
 }
+
+JSRetainPtr<JSStringRef> TestRunner::inspectorTestStubURL()
+{
+    return JSStringCreateWithUTF8CString("");
+}
+
+void TestRunner::invalidateWaitToDumpWatchdogTimer()
+{
+    m_waitToDumpWatchdogTimer.stop();
+}
+
+void TestRunner::platformInitialize()
+{
+}
+
+void TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded()
+{
+    if (!m_waitToDumpWatchdogTimer.isActive())
+        m_waitToDumpWatchdogTimer.startOneShot(m_timeout);
+}
+
+void TestRunner::installFakeHelvetica(JSStringRef configuration)
+{
+    WTR::installFakeHelvetica(toWK(configuration).get());
+}
+
+} // namespace WTR

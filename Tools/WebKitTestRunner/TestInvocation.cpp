@@ -42,7 +42,6 @@
 #include <WebKit/WKWebsiteDataStoreRef.h>
 #include <climits>
 #include <cstdio>
-#include <unistd.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 
@@ -52,6 +51,13 @@
 
 #if PLATFORM(COCOA)
 #include <WebKit/WKPagePrivateMac.h>
+#endif
+
+#if PLATFORM(WIN)
+#include <io.h>
+#define isatty _isatty
+#else
+#include <unistd.h>
 #endif
 
 using namespace JSC;

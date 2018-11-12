@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,16 +24,20 @@
  */
 
 #include "config.h"
-#include "InjectedBundle.h"
+#include "ActivateFonts.h"
 
-#include <WebKit/WKBundleInitialize.h>
+namespace WTR {
 
-#if defined(WIN32)
-extern "C" __declspec(dllexport)
-#else
-extern "C"
-#endif
-void WKBundleInitialize(WKBundleRef bundle, WKTypeRef initializationUserData)
+void activateFonts()
 {
-    WTR::InjectedBundle::singleton().initialize(bundle, initializationUserData);
 }
+
+void installFakeHelvetica(WKStringRef)
+{
+}
+
+void uninstallFakeHelvetica()
+{
+}
+
+} // namespace WTR

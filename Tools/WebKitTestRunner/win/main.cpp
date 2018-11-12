@@ -24,16 +24,11 @@
  */
 
 #include "config.h"
-#include "InjectedBundle.h"
 
-#include <WebKit/WKBundleInitialize.h>
+#include "TestController.h"
 
-#if defined(WIN32)
-extern "C" __declspec(dllexport)
-#else
-extern "C"
-#endif
-void WKBundleInitialize(WKBundleRef bundle, WKTypeRef initializationUserData)
+extern "C" __declspec(dllexport) int WINAPI dllLauncherEntryPoint(int argc, const char* argv[])
 {
-    WTR::InjectedBundle::singleton().initialize(bundle, initializationUserData);
+    WTR::TestController controller(argc, argv);
+    return 0;
 }

@@ -40,7 +40,7 @@
 #include <wtf/RetainPtr.h>
 #include <CoreFoundation/CFRunLoop.h>
 typedef RetainPtr<CFRunLoopTimerRef> PlatformTimerRef;
-#elif PLATFORM(GTK) || PLATFORM(WPE)
+#else
 #include <wtf/RunLoop.h>
 namespace WTR {
 class TestRunner;

@@ -195,6 +195,7 @@ WEBKIT_WRAP_SOURCELIST(${WebKit_SOURCES})
 set(WebKit_FORWARDING_HEADERS_DIRECTORIES
     Shared/API/c
 
+    Shared/API/c/cairo
     Shared/API/c/cf
     Shared/API/c/win
 

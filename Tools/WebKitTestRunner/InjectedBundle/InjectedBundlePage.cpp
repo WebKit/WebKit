@@ -50,7 +50,7 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
-#if USE(CF)
+#if USE(CF) && !PLATFORM(WIN_CAIRO)
 #include "WebArchiveDumpSupport.h"
 #endif
 
@@ -123,7 +123,7 @@ static WTF::String rangeToStr(WKBundlePageRef page, WKBundleScriptWorldRef world
 {
     if (!rangeRef)
         return "(null)";
- 
+
     WKBundleFrameRef frame = WKBundlePageGetMainFrame(page);
 
     JSGlobalContextRef context = WKBundleFrameGetJavaScriptContextForWorld(frame, world);
@@ -879,7 +879,7 @@ void InjectedBundlePage::dumpAllFramesText(StringBuilder& stringBuilder)
 
 void InjectedBundlePage::dumpDOMAsWebArchive(WKBundleFrameRef frame, StringBuilder& stringBuilder)
 {
-#if USE(CF)
+#if USE(CF) && !PLATFORM(WIN_CAIRO)
     WKRetainPtr<WKDataRef> wkData = adoptWK(WKBundleFrameCopyWebArchive(frame));
     RetainPtr<CFDataRef> cfData = adoptCF(CFDataCreate(0, WKDataGetBytes(wkData.get()), WKDataGetSize(wkData.get())));
     RetainPtr<CFStringRef> cfString = adoptCF(WebCoreTestSupport::createXMLStringFromWebArchiveData(cfData.get()));

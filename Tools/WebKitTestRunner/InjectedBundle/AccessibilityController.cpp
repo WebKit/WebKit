@@ -70,7 +70,7 @@ bool AccessibilityController::enhancedAccessibilityEnabled()
     return WKAccessibilityEnhancedAccessibilityEnabled();
 }
 
-#if !PLATFORM(GTK) && !PLATFORM(WPE)
+#if PLATFORM(COCOA)
 Ref<AccessibilityUIElement> AccessibilityController::rootElement()
 {
     WKBundlePageRef page = InjectedBundle::singleton().page()->page();
@@ -100,4 +100,3 @@ RefPtr<AccessibilityUIElement> AccessibilityController::focusedElement() { retur
 #endif
 
 } // namespace WTR
-

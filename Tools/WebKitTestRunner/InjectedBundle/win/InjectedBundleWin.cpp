@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,14 +26,10 @@
 #include "config.h"
 #include "InjectedBundle.h"
 
-#include <WebKit/WKBundleInitialize.h>
+namespace WTR {
 
-#if defined(WIN32)
-extern "C" __declspec(dllexport)
-#else
-extern "C"
-#endif
-void WKBundleInitialize(WKBundleRef bundle, WKTypeRef initializationUserData)
+void InjectedBundle::platformInitialize(WKTypeRef)
 {
-    WTR::InjectedBundle::singleton().initialize(bundle, initializationUserData);
 }
+
+} // namespace WTR

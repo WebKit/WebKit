@@ -79,7 +79,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::attributedStringForElement() { 
 #endif
     
 // Unsupported methods on various platforms. As they're implemented on other platforms this list should be modified.
-#if (!PLATFORM(GTK) && !PLATFORM(WPE)) || !HAVE(ACCESSIBILITY)
+#if PLATFORM(COCOA) || !HAVE(ACCESSIBILITY)
 JSRetainPtr<JSStringRef> AccessibilityUIElement::characterAtOffset(int) { return nullptr; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::wordAtOffset(int) { return nullptr; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::lineAtOffset(int) { return nullptr; }
@@ -107,4 +107,3 @@ RefPtr<AccessibilityTextMarker> AccessibilityUIElement::previousSentenceStartTex
 #endif
 
 } // namespace WTR
-
