@@ -377,8 +377,9 @@ void IDBTransaction::scheduleOperation(RefPtr<IDBClient::TransactionOperation>&&
     ASSERT(!m_transactionOperationMap.contains(operation->identifier()));
     ASSERT(&m_database->originThread() == &Thread::current());
 
+    auto identifier = operation->identifier();
     m_pendingTransactionOperationQueue.append(operation);
-    m_transactionOperationMap.set(operation->identifier(), WTFMove(operation));
+    m_transactionOperationMap.set(identifier, WTFMove(operation));
 
     schedulePendingOperationTimer();
 }

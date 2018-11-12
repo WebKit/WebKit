@@ -1,3 +1,23 @@
+2018-11-12  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        WTFMove(xxx) is used in arguments while other arguments touch xxx
+        https://bugs.webkit.org/show_bug.cgi?id=191544
+
+        Reviewed by Alex Christensen.
+
+        The order of the evaluation of C++ arguments is undefined. If we use WTFMove(xxx),
+        xxx should not be touched in the other arguments. This patch fixes such uses in
+        IDB code.
+
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::deleteIndex):
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::scheduleOperation):
+        * Modules/indexeddb/server/MemoryIDBBackingStore.cpp:
+        (WebCore::IDBServer::MemoryIDBBackingStore::registerObjectStore):
+        * Modules/indexeddb/server/MemoryObjectStore.cpp:
+        (WebCore::IDBServer::MemoryObjectStore::registerIndex):
+
 2018-11-12  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Construct dedicated runs when the inline element requires it.

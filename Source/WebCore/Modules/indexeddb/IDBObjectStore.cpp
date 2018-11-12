@@ -521,7 +521,8 @@ ExceptionOr<void> IDBObjectStore::deleteIndex(const String& name)
         Locker<Lock> locker(m_referencedIndexLock);
         if (auto index = m_referencedIndexes.take(name)) {
             index->markAsDeleted();
-            m_deletedIndexes.add(index->info().identifier(), WTFMove(index));
+            auto identifier = index->info().identifier();
+            m_deletedIndexes.add(identifier, WTFMove(index));
         }
     }
 
