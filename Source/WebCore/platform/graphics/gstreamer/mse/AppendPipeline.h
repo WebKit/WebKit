@@ -22,6 +22,7 @@
 
 #if ENABLE(VIDEO) && USE(GSTREAMER) && ENABLE(MEDIA_SOURCE)
 
+#include "AbortableTaskQueue.h"
 #include "GStreamerCommon.h"
 #include "MediaPlayerPrivateGStreamerMSE.h"
 #include "MediaSourceClientGStreamerMSE.h"
@@ -45,21 +46,28 @@ struct PadProbeInformation {
 
 class AppendPipeline : public ThreadSafeRefCounted<AppendPipeline> {
 public:
-    enum class AppendState { Invalid, NotStarted, Ongoing, DataStarve, Sampling, LastSample, Aborting };
-
     AppendPipeline(Ref<MediaSourceClientGStreamerMSE>, Ref<SourceBufferPrivateGStreamer>, MediaPlayerPrivateGStreamerMSE&);
     virtual ~AppendPipeline();
 
+    GstFlowReturn pushNewBuffer(GstBuffer*);
+    void clearPlayerPrivate();
+    void abort();
+    Ref<SourceBufferPrivateGStreamer> sourceBufferPrivate() { return m_sourceBufferPrivate.get(); }
+    GstCaps* appsinkCaps() { return m_appsinkCaps.get(); }
+    RefPtr<WebCore::TrackPrivateBase> track() { return m_track; }
+    MediaPlayerPrivateGStreamerMSE* playerPrivate() { return m_playerPrivate; }
+
+private:
+    enum class AppendState { Invalid, NotStarted, Ongoing, DataStarve, Sampling, LastSample, Aborting };
+
     void handleNeedContextSyncMessage(GstMessage*);
-    void handleApplicationMessage(GstMessage*);
     void handleStateChangeMessage(GstMessage*);
 
     gint id();
     AppendState appendState() { return m_appendState; }
     void setAppendState(AppendState);
 
-    GstFlowReturn handleNewAppsinkSample(GstElement*);
-    GstFlowReturn pushNewBuffer(GstBuffer*);
+    GstFlowReturn handleAppsinkNewSampleFromStreamingThread(GstElement*);
 
     // Takes ownership of caps.
     void parseDemuxerSrcPadCaps(GstCaps*);
@@ -69,26 +77,18 @@ public:
     void handleEndOfAppend();
     void didReceiveInitializationSegment();
     AtomicString trackId();
-    void abort();
 
-    void clearPlayerPrivate();
-    Ref<SourceBufferPrivateGStreamer> sourceBufferPrivate() { return m_sourceBufferPrivate.get(); }
     GstBus* bus() { return m_bus.get(); }
     GstElement* pipeline() { return m_pipeline.get(); }
     GstElement* appsrc() { return m_appsrc.get(); }
     GstElement* appsink() { return m_appsink.get(); }
     GstCaps* demuxerSrcPadCaps() { return m_demuxerSrcPadCaps.get(); }
-    GstCaps* appsinkCaps() { return m_appsinkCaps.get(); }
-    MediaPlayerPrivateGStreamerMSE* playerPrivate() { return m_playerPrivate; }
-    RefPtr<WebCore::TrackPrivateBase> track() { return m_track; }
     WebCore::MediaSourceStreamTypeGStreamer streamType() { return m_streamType; }
 
     void disconnectDemuxerSrcPadFromAppsinkFromAnyThread(GstPad*);
-    void appendPipelineDemuxerNoMorePadsFromAnyThread();
-    void connectDemuxerSrcPadToAppsinkFromAnyThread(GstPad*);
+    void connectDemuxerSrcPadToAppsinkFromStreamingThread(GstPad*);
     void connectDemuxerSrcPadToAppsink(GstPad*);
 
-private:
     void resetPipeline();
     void checkEndOfAppend();
     void demuxerNoMorePads();
@@ -98,6 +98,7 @@ private:
     GstPadProbeReturn appsrcEndOfAppendCheckerProbe(GstPadProbeInfo*);
 
     static void staticInitialization();
+    static const char* dumpAppendState(AppendPipeline::AppendState);
 
     static std::once_flag s_staticInitializationFlag;
     static GType s_endOfAppendMetaType;
@@ -131,9 +132,6 @@ private:
     // queue, instead of it growing unbounded.
     std::atomic_flag m_wasBusAlreadyNotifiedOfAvailableSamples;
 
-    Lock m_padAddRemoveLock;
-    Condition m_padAddRemoveCondition;
-
     GRefPtr<GstCaps> m_appsinkCaps;
     GRefPtr<GstCaps> m_demuxerSrcPadCaps;
     FloatSize m_presentationSize;
@@ -157,6 +155,8 @@ private:
 
     WebCore::MediaSourceStreamTypeGStreamer m_streamType;
     RefPtr<WebCore::TrackPrivateBase> m_track;
+
+    AbortableTaskQueue m_taskQueue;
 
     GRefPtr<GstBuffer> m_pendingBuffer;
 };

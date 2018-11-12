@@ -495,6 +495,7 @@
 		7CCE7EDB1A411A9200447C4C /* CSSParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD5451E919E41F9D0016936F /* CSSParser.cpp */; };
 		7CCE7EDC1A411A9200447C4C /* CalculationValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A720E518F1A0E800A848E1 /* CalculationValue.cpp */; };
 		7CCE7EDD1A411A9200447C4C /* TimeRanges.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDC2C7141797089D00E627FB /* TimeRanges.cpp */; };
+		CD51C2A93E78B5C1FF337C08 /* AbortableTaskQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABF510632A19B8AC7EC40E17 /* AbortableTaskQueue.cpp */; };
 		7CCE7EDE1A411A9200447C4C /* URL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 440A1D3814A0103A008A66F2 /* URL.cpp */; };
 		7CCE7EDF1A411A9200447C4C /* LayoutUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14464012167A8305000BD218 /* LayoutUnit.cpp */; };
 		7CCE7EE01A411A9A00447C4C /* EditorCommands.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCAA485714A044D40088FAC4 /* EditorCommands.mm */; };
@@ -2019,6 +2020,7 @@
 		CDBFCC421A9FF44800A7B691 /* FullscreenZoomInitialFrame.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = FullscreenZoomInitialFrame.html; sourceTree = "<group>"; };
 		CDBFCC431A9FF44800A7B691 /* FullscreenZoomInitialFrame.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FullscreenZoomInitialFrame.mm; sourceTree = "<group>"; };
 		CDC2C7141797089D00E627FB /* TimeRanges.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TimeRanges.cpp; sourceTree = "<group>"; };
+		ABF510632A19B8AC7EC40E17 /* AbortableTaskQueue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AbortableTaskQueue.cpp; sourceTree = "<group>"; };
 		CDC8E4851BC5B19400594FEC /* AudioSessionCategoryIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AudioSessionCategoryIOS.mm; sourceTree = "<group>"; };
 		CDC8E4891BC5C96200594FEC /* video-with-audio.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "video-with-audio.html"; sourceTree = "<group>"; };
 		CDC8E48A1BC5C96200594FEC /* video-with-audio.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "video-with-audio.mp4"; sourceTree = "<group>"; };
@@ -2562,6 +2564,7 @@
 				CD89D0371C4EDB1300040A04 /* cocoa */,
 				A1EC11851F4253D900D0146E /* ios */,
 				3162AE9A1E6F2F8F000E4DBC /* mac */,
+				ABF510632A19B8AC7EC40E17 /* AbortableTaskQueue.cpp */,
 				7A909A6F1D877475007E10F8 /* AffineTransform.cpp */,
 				6354F4D01F7C3AB500D89DF3 /* ApplicationManifestParser.cpp */,
 				93A720E518F1A0E800A848E1 /* CalculationValue.cpp */,

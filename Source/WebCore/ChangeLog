@@ -1,3 +1,44 @@
+2018-11-12  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Introduce AbortableTaskQueue
+        https://bugs.webkit.org/show_bug.cgi?id=190902
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        A new synchronization primitive is introduced: AbortableTaskQueue,
+        which allows to send work to the main thread from a background thread
+        with the option to perform two-phase cancellation (startAborting() and
+        finishAborting()).
+
+        This new primitive has been used to overhaul GstBus messaging in
+        AppendPipeline. A lot of code made redundant has been deleted in the
+        process and lots of internal functions were now able to be made
+        private. As part of the refactor all glib signals in AppendPipeline
+        now use lambdas. All usages of WTF::isMainThread() in AppendPipeline
+        have been replaced by isMainThread() for consistency with the rest of
+        WebKit.
+
+        Two-phase cancellation is still not used in AppendPipeline as of this
+        patch, but it will be used in a future patch that makes use of
+        GStreamer flushes to implement correct MSE abort semantics. There are
+        unit tests to ensure it works correctly, even if it's still not used.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/AbortableTaskQueue.h: Added.
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::AppendPipeline::dumpAppendState):
+        (WebCore::AppendPipeline::AppendPipeline):
+        (WebCore::AppendPipeline::~AppendPipeline):
+        (WebCore::AppendPipeline::appsrcEndOfAppendCheckerProbe):
+        (WebCore::AppendPipeline::handleAppsinkNewSampleFromAnyThread):
+        (WebCore::AppendPipeline::connectDemuxerSrcPadToAppsinkFromAnyThread):
+        * platform/graphics/gstreamer/mse/AppendPipeline.h:
+        (WebCore::AppendPipeline::sourceBufferPrivate):
+        (WebCore::AppendPipeline::appsinkCaps):
+        (WebCore::AppendPipeline::track):
+        (WebCore::AppendPipeline::demuxerSrcPadCaps):
+        (WebCore::AppendPipeline::playerPrivate):
+
 2018-11-12  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GStreamer][EME] waitingforkey event should consider decryptors' waiting status

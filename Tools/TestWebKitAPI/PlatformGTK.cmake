@@ -104,6 +104,7 @@ add_executable(TestWebCore
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/URLParser.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/UserAgentQuirks.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/SampleMap.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WebCore/AbortableTaskQueue.cpp
 )
 
 target_link_libraries(TestWebCore ${test_webcore_LIBRARIES})

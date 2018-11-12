@@ -1,3 +1,23 @@
+2018-11-12  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Introduce AbortableTaskQueue
+        https://bugs.webkit.org/show_bug.cgi?id=190902
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Tests for AbortableTaskQueue are included.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * TestWebKitAPI/Tests/WebCore/AbortableTaskQueue.cpp: Added.
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::FancyResponse::FancyResponse):
+        (TestWebKitAPI::FancyResponse::operator=):
+        (TestWebKitAPI::DeterministicScheduler::DeterministicScheduler):
+        (TestWebKitAPI::DeterministicScheduler::ThreadContext::ThreadContext):
+        (TestWebKitAPI::DeterministicScheduler::ThreadContext::waitMyTurn):
+        (TestWebKitAPI::DeterministicScheduler::ThreadContext::yieldToThread):
+
 2018-11-11  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         run-bindings-tests is timing out in some WinCairo bots
