@@ -30,6 +30,12 @@ Run the following command to clone WebKit's Git SVN repository:
 git clone git://git.webkit.org/WebKit.git WebKit
 ```
 
+or
+
+```
+git clone https://git.webkit.org/git/WebKit.git WebKit
+```
+
 If you want to be able to commit changes to the repository, or just want to check out branches that aren’t contained in WebKit.git, you will need track WebKit's Subversion repository. You can run the following command to configure this and other options of the new Git clone for WebKit development.
 
 ```
