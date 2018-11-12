@@ -58,9 +58,7 @@ void InlineFormattingContext::layout() const
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Start] -> inline formatting context -> formatting root(" << &root() << ")");
 
-    auto& inlineFormattingState = downcast<InlineFormattingState>(formattingState());
-    InlineRunProvider inlineRunProvider(inlineFormattingState);
-
+    InlineRunProvider inlineRunProvider(inlineFormattingState());
     collectInlineContent(inlineRunProvider);
     // Compute width/height for non-text content.
     for (auto& inlineRun : inlineRunProvider.runs()) {
@@ -127,6 +125,119 @@ void InlineFormattingContext::initializeNewLine(Line& line) const
     line.init(logicalRect);
 }
 
+bool InlineFormattingContext::contentRequiresSeparateRun(const InlineItem& inlineItem) const
+{
+    // FIXME: This is way too inefficient. We should pre-mark the runs instead while flattening the inline formatting context.
+    for (auto* inlineContainer = inlineItem.layoutBox().parent(); inlineContainer != &root(); inlineContainer = inlineContainer->parent()) {
+        if (inlineContainer->isPositioned())
+            return true;
+    }
+    return false;
+}
+
+void InlineFormattingContext::splitInlineRunIfNeeded(const InlineRun& inlineRun, InlineRuns& splitRuns) const
+{
+    if (!inlineRun.overlapsMultipleInlineItems())
+        return;
+
+    ASSERT(inlineRun.textContext());
+    // In certain cases, a run can overlap multiple inline elements like this:
+    // <span>normal text content</span><span style="position: relative; left: 10px;">but this one needs a dedicated run</span><span>end of text</span>
+    // The content above generates one long run <normal text contentbut this one needs dedicated runend of text>
+    // However, since the middle run is positioned, it needs to be moved independently from the rest of the content, hence it needs a dedicated inline run.
+
+    // 1. Start with the first inline item (element) and travers the list until
+    // 2. either find an inline item that needs a dedicated run or we reach the end of the run
+    // 3. Shrink the original inline run and create a new one.
+    auto& inlineContent = inlineFormattingState().inlineContent();
+    auto textUtil = TextUtil { inlineContent };
+
+    auto split=[&](const auto& inlineItem, auto startPosition, auto length, auto contentStart) {
+        auto width = textUtil.width(inlineItem, startPosition, length, contentStart);
+
+        auto run = InlineRun { { inlineRun.logicalTop(), contentStart, width, inlineRun.height() }, inlineItem };
+        run.setTextContext({ startPosition, length });
+        splitRuns.append(run);
+        return contentStart + width;
+    };
+
+    auto contentStart = inlineRun.logicalLeft();
+    auto startPosition = inlineRun.textContext()->start();
+    auto remaningLength = inlineRun.textContext()->length();
+
+    unsigned uncommittedLength = 0;
+    InlineItem* firstUncommittedInlineItem = nullptr;
+    for (auto iterator = inlineContent.find<const InlineItem&, InlineItemHashTranslator>(inlineRun.inlineItem()); iterator != inlineContent.end() && remaningLength > 0; ++iterator) {
+        auto& inlineItem = **iterator;
+
+        if (!contentRequiresSeparateRun(inlineItem)) {
+            uncommittedLength += std::min(remaningLength, inlineItem.textContent().length() - startPosition);
+            firstUncommittedInlineItem = !firstUncommittedInlineItem ? &inlineItem : firstUncommittedInlineItem;
+            continue;
+        }
+
+        // Commit the items that don't need dedicated run.
+        if (firstUncommittedInlineItem) {
+            contentStart = split(*firstUncommittedInlineItem, startPosition, uncommittedLength, contentStart);
+
+            remaningLength -= uncommittedLength;
+            startPosition = 0;
+            uncommittedLength = 0;
+        }
+
+        // Create a dedicated run for this inline item.
+        auto length = std::min(remaningLength, inlineItem.textContent().length() - startPosition);
+        contentStart = split(inlineItem, startPosition, length, contentStart);
+
+        startPosition = 0;
+        remaningLength -= length;
+        firstUncommittedInlineItem = nullptr;
+    }
+
+    // Either all inline elements needed dedicated runs or neither of them.
+    if (!remaningLength || remaningLength == inlineRun.textContext()->length())
+        return;
+
+    ASSERT(remaningLength == uncommittedLength);
+    split(*firstUncommittedInlineItem, startPosition, uncommittedLength, contentStart);
+}
+
+void InlineFormattingContext::postProcessInlineRuns(Line& line, IsLastLine isLastLine, Line::RunRange runRange) const
+{
+    auto& inlineFormattingState = this->inlineFormattingState();
+    Geometry::alignRuns(inlineFormattingState, root().style().textAlign(), line, runRange, isLastLine);
+
+    auto& inlineRuns = inlineFormattingState.inlineRuns();
+    ASSERT(*runRange.lastRunIndex < inlineRuns.size());
+
+    auto runIndex = *runRange.firstRunIndex;
+    auto& lastInlineRun = inlineRuns[*runRange.lastRunIndex];
+    while (runIndex < inlineRuns.size()) {
+        auto& inlineRun = inlineRuns[runIndex];
+        auto isLastRunInRange = &inlineRun == &lastInlineRun;
+
+        InlineRuns splitRuns;
+        splitInlineRunIfNeeded(inlineRun, splitRuns);
+        if (!splitRuns.isEmpty()) {
+            ASSERT(splitRuns.size() > 1);
+            // Replace the continous run with new ones.
+            // Reuse the original one.
+            auto& firstRun = splitRuns.first();
+            inlineRun.setWidth(firstRun.width());
+            inlineRun.textContext()->setLength(firstRun.textContext()->length());
+            splitRuns.remove(0);
+            // Insert the rest.
+            for (auto& splitRun : splitRuns)
+                inlineRuns.insert(++runIndex, splitRun);
+        }
+
+        if (isLastRunInRange)
+            break;
+
+        ++runIndex;
+    }
+}
+
 void InlineFormattingContext::closeLine(Line& line, IsLastLine isLastLine) const
 {
     auto runRange = line.close();
@@ -135,7 +246,7 @@ void InlineFormattingContext::closeLine(Line& line, IsLastLine isLastLine) const
     if (!runRange.firstRunIndex)
         return;
 
-    Geometry::alignRuns(downcast<InlineFormattingState>(formattingState()), root().style().textAlign(), line, runRange, isLastLine);
+    postProcessInlineRuns(line, isLastLine, runRange);
 }
 
 void InlineFormattingContext::appendContentToLine(Line& line, const InlineLineBreaker::Run& run) const
@@ -144,13 +255,13 @@ void InlineFormattingContext::appendContentToLine(Line& line, const InlineLineBr
     line.appendContent(run);
 
     if (root().style().textAlign() == TextAlignMode::Justify)
-        Geometry::computeExpansionOpportunities(downcast<InlineFormattingState>(formattingState()), run.content, lastRunType.value_or(InlineRunProvider::Run::Type::NonWhitespace));
+        Geometry::computeExpansionOpportunities(inlineFormattingState(), run.content, lastRunType.value_or(InlineRunProvider::Run::Type::NonWhitespace));
 }
 
 void InlineFormattingContext::layoutInlineContent(const InlineRunProvider& inlineRunProvider) const
 {
     auto& layoutState = this->layoutState();
-    auto& inlineFormattingState = downcast<InlineFormattingState>(formattingState());
+    auto& inlineFormattingState = this->inlineFormattingState();
     auto floatingContext = FloatingContext { inlineFormattingState.floatingState() };
 
     Line line(inlineFormattingState);
@@ -328,7 +439,7 @@ FormattingContext::InstrinsicWidthConstraints InlineFormattingContext::instrinsi
     if (auto instrinsicWidthConstraints = formattingStateForRoot.instrinsicWidthConstraints(root()))
         return *instrinsicWidthConstraints;
 
-    auto& inlineFormattingState = downcast<InlineFormattingState>(formattingState());
+    auto& inlineFormattingState = this->inlineFormattingState();
     InlineRunProvider inlineRunProvider(inlineFormattingState);
     collectInlineContent(inlineRunProvider);
 

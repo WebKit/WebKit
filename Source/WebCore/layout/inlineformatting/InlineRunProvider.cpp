@@ -130,10 +130,9 @@ void InlineRunProvider::processInlineTextItem(const InlineItem& inlineItem)
         auto isWhitespaceRun = isWhitespace(text[currentItemPosition], style.preserveNewline());
         auto length = isWhitespaceRun ? moveToNextNonWhitespacePosition(inlineItem, currentItemPosition) : moveToNextBreakablePosition(inlineItem, currentItemPosition);
 
-        if (isContinousContent(isWhitespaceRun ? InlineRunProvider::Run::Type::Whitespace : InlineRunProvider::Run::Type::NonWhitespace, inlineItem)) {
-            auto textContext = m_inlineRuns.last().textContext();
-            textContext->setLength(textContext->length() + length);
-        } else {
+        if (isContinousContent(isWhitespaceRun ? InlineRunProvider::Run::Type::Whitespace : InlineRunProvider::Run::Type::NonWhitespace, inlineItem))
+            m_inlineRuns.last().textContext()->expand(length);
+        else {
             m_inlineRuns.append(isWhitespaceRun ? InlineRunProvider::Run::createWhitespaceRun(inlineItem, currentItemPosition, length, style.collapseWhiteSpace())
                 : InlineRunProvider::Run::createNonWhitespaceRun(inlineItem, currentItemPosition, length));
         }

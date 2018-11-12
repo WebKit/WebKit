@@ -54,7 +54,6 @@ std::optional<InlineLineBreaker::Run> InlineLineBreaker::nextRun(LayoutUnit cont
     // Adjust the current run if it is split midword.
     if (m_splitPosition) {
         ASSERT(currentInlineRun.isText());
-        currentInlineRun.textContext()->setStart(*m_splitPosition);
         m_splitPosition = std::nullopt;
     }
 

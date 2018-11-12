@@ -1,3 +1,40 @@
+2018-11-12  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Construct dedicated runs when the inline element requires it.
+        https://bugs.webkit.org/show_bug.cgi?id=191509
+
+        Reviewed by Antti Koivisto.
+
+        In certain cases, a run can overlap multiple inline elements like this:
+
+        <span>normal text content</span><span style="position: relative; left: 10px;">but this one needs a dedicated run</span><span>end of text</span>
+
+        The content above generates one long run <normal text contentbut this one needs dedicated runend of text> <- input to line breaking.
+        However, since the middle run is positioned, it needs to be moved independently from the rest of the content, hence it needs a dedicated inline run.
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::layout const):
+        (WebCore::Layout::contentRequiresSeparateRun):
+        (WebCore::Layout::InlineFormattingContext::splitInlineRunIfNeeded const):
+        (WebCore::Layout::InlineFormattingContext::postProcessInlineRuns const):
+        (WebCore::Layout::InlineFormattingContext::closeLine const):
+        (WebCore::Layout::InlineFormattingContext::appendContentToLine const):
+        (WebCore::Layout::InlineFormattingContext::layoutInlineContent const):
+        (WebCore::Layout::InlineFormattingContext::instrinsicWidthConstraints const):
+        * layout/inlineformatting/InlineFormattingContext.h:
+        (WebCore::Layout::InlineFormattingContext::inlineFormattingState const):
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::InlineLineBreaker::nextRun): mid-word breaking is not implemented yet.
+        * layout/inlineformatting/InlineRun.h:
+        (WebCore::Layout::InlineRun::overlapsMultipleInlineItems const):
+        * layout/inlineformatting/InlineRunProvider.cpp:
+        (WebCore::Layout::InlineRunProvider::processInlineTextItem):
+        * layout/inlineformatting/InlineRunProvider.h:
+        (WebCore::Layout::InlineRunProvider::Run::TextContext::expand):
+        (WebCore::Layout::InlineRunProvider::Run::textContext):
+        (WebCore::Layout::InlineRunProvider::Run::TextContext::setStart): Deleted.
+        (WebCore::Layout::InlineRunProvider::Run::TextContext::setLength): Deleted.
+
 2018-11-12  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Frame re-ordering can cause iframes to never be enqueued

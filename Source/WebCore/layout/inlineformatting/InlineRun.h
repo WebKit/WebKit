@@ -43,6 +43,7 @@ struct InlineRun {
 
     LayoutUnit width() const { return m_logicalRect.width(); }
     LayoutUnit height() const { return m_logicalRect.height(); }
+    bool overlapsMultipleInlineItems() const;
 
     void setWidth(LayoutUnit width) { m_logicalRect.setWidth(width); }
     void setLogicalLeft(LayoutUnit logicalLeft) { m_logicalRect.setLeft(logicalLeft); }
@@ -96,6 +97,16 @@ inline InlineRun::TextContext::TextContext(ItemPosition start, unsigned length)
     : m_start(start)
     , m_length(length)
 {
+}
+
+inline bool InlineRun::overlapsMultipleInlineItems() const
+{
+    // Only text content can overlap multiple inline elements.
+    if (!m_textContext)
+        return false;
+
+    auto endPosition = m_textContext->start() + m_textContext->length();
+    return endPosition > m_inlineItem.textContent().length();
 }
 
 }

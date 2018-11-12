@@ -82,10 +82,11 @@ public:
             unsigned length() const { return m_length; }
             bool isCollapsed() const { return m_isCollapsed == IsCollapsed::Yes; }
 
-            void setStart(ItemPosition start) { m_start = start; }
-            void setLength(unsigned length) { m_length = length; }
-
         private:
+            friend class InlineRunProvider;
+
+            void expand(unsigned length) { m_length += length; }
+
             ItemPosition m_start { 0 };
             unsigned m_length { 0 };
             IsCollapsed m_isCollapsed { IsCollapsed::No };
@@ -96,7 +97,10 @@ public:
         const InlineItem& inlineItem() const { return m_inlineItem; }
 
     private:
+        friend class InlineRunProvider;
+
         Run(const InlineItem&, Type, std::optional<TextContext>);
+        std::optional<TextContext>& textContext() { return m_textContext; }
 
         const Type m_type;
         const InlineItem& m_inlineItem;

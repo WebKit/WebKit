@@ -30,6 +30,7 @@
 #include "DisplayBox.h"
 #include "FormattingContext.h"
 #include "InlineLineBreaker.h"
+#include "InlineRun.h"
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
@@ -111,6 +112,9 @@ private:
     void initializeNewLine(Line&) const;
     void closeLine(Line&, IsLastLine) const;
     void appendContentToLine(Line&, const InlineLineBreaker::Run&) const;
+    void postProcessInlineRuns(Line&, IsLastLine, Line::RunRange) const;
+    void splitInlineRunIfNeeded(const InlineRun&, InlineRuns& splitRuns) const;
+    bool contentRequiresSeparateRun(const InlineItem&) const;
 
     void layoutFormattingContextRoot(const Box&) const;
     void computeWidthAndHeightForReplacedInlineBox(const Box&) const;
@@ -121,6 +125,8 @@ private:
 
     void collectInlineContent(InlineRunProvider&) const;
     InstrinsicWidthConstraints instrinsicWidthConstraints() const override;
+
+    InlineFormattingState& inlineFormattingState() const { return downcast<InlineFormattingState>(formattingState()); }
 };
 
 }
