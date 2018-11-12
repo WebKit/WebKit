@@ -1,3 +1,95 @@
+2018-11-12  Don Olmstead  <don.olmstead@sony.com>
+
+        Shipped PNGs include bad profiles: iCCP: known incorrect sRGB profile
+        https://bugs.webkit.org/show_bug.cgi?id=189230
+        <rdar://problem/44050379>
+
+        Reviewed by Joseph Pecoraro.
+
+        Runs all png images through zopflipng. This results in a smaller file
+        size and takes care of this issue as a byproduct.
+
+        * UserInterface/Images/ApplicationCache.png:
+        * UserInterface/Images/ApplicationCache@2x.png:
+        * UserInterface/Images/ApplicationCacheManifest.png:
+        * UserInterface/Images/ApplicationCacheManifest@2x.png:
+        * UserInterface/Images/Breakpoint.png:
+        * UserInterface/Images/Breakpoint@2x.png:
+        * UserInterface/Images/BreakpointInactive.png:
+        * UserInterface/Images/BreakpointInactive@2x.png:
+        * UserInterface/Images/ClippingCSS.png:
+        * UserInterface/Images/ClippingCSS@2x.png:
+        * UserInterface/Images/ClippingCSSLarge.png:
+        * UserInterface/Images/ClippingCSSLarge@2x.png:
+        * UserInterface/Images/ClippingGeneric.png:
+        * UserInterface/Images/ClippingGeneric@2x.png:
+        * UserInterface/Images/ClippingGenericLarge.png:
+        * UserInterface/Images/ClippingGenericLarge@2x.png:
+        * UserInterface/Images/ClippingJS.png:
+        * UserInterface/Images/ClippingJS@2x.png:
+        * UserInterface/Images/ClippingJSLarge.png:
+        * UserInterface/Images/ClippingJSLarge@2x.png:
+        * UserInterface/Images/ColorIcon.png:
+        * UserInterface/Images/ColorIcon@2x.png:
+        * UserInterface/Images/Cookie.png:
+        * UserInterface/Images/Cookie@2x.png:
+        * UserInterface/Images/Database.png:
+        * UserInterface/Images/Database@2x.png:
+        * UserInterface/Images/DatabaseTable.png:
+        * UserInterface/Images/DatabaseTable@2x.png:
+        * UserInterface/Images/DocumentCSS.png:
+        * UserInterface/Images/DocumentCSS@2x.png:
+        * UserInterface/Images/DocumentCSSLarge.png:
+        * UserInterface/Images/DocumentCSSLarge@2x.png:
+        * UserInterface/Images/DocumentFont.png:
+        * UserInterface/Images/DocumentFont@2x.png:
+        * UserInterface/Images/DocumentFontLarge.png:
+        * UserInterface/Images/DocumentFontLarge@2x.png:
+        * UserInterface/Images/DocumentGL.png:
+        * UserInterface/Images/DocumentGL@2x.png:
+        * UserInterface/Images/DocumentGeneric.png:
+        * UserInterface/Images/DocumentGeneric@2x.png:
+        * UserInterface/Images/DocumentGenericLarge.png:
+        * UserInterface/Images/DocumentGenericLarge@2x.png:
+        * UserInterface/Images/DocumentImage.png:
+        * UserInterface/Images/DocumentImage@2x.png:
+        * UserInterface/Images/DocumentImageLarge.png:
+        * UserInterface/Images/DocumentImageLarge@2x.png:
+        * UserInterface/Images/DocumentJS.png:
+        * UserInterface/Images/DocumentJS@2x.png:
+        * UserInterface/Images/DocumentJSLarge.png:
+        * UserInterface/Images/DocumentJSLarge@2x.png:
+        * UserInterface/Images/DocumentMarkup.png:
+        * UserInterface/Images/DocumentMarkup@2x.png:
+        * UserInterface/Images/DocumentMarkupLarge.png:
+        * UserInterface/Images/DocumentMarkupLarge@2x.png:
+        * UserInterface/Images/FolderGeneric.png:
+        * UserInterface/Images/FolderGeneric@2x.png:
+        * UserInterface/Images/GradientStop.png:
+        * UserInterface/Images/GradientStop@2x.png:
+        * UserInterface/Images/GradientStopSelected.png:
+        * UserInterface/Images/GradientStopSelected@2x.png:
+        * UserInterface/Images/HoverMenuButton.png:
+        * UserInterface/Images/HoverMenuButton@2x.png:
+        * UserInterface/Images/InstructionPointer.png:
+        * UserInterface/Images/InstructionPointer@2x.png:
+        * UserInterface/Images/LocalStorage.png:
+        * UserInterface/Images/LocalStorage@2x.png:
+        * UserInterface/Images/SessionStorage.png:
+        * UserInterface/Images/SessionStorage@2x.png:
+        * UserInterface/Images/SliderThumb.png:
+        * UserInterface/Images/SliderThumb@2x.png:
+        * UserInterface/Images/SliderThumbPressed.png:
+        * UserInterface/Images/SliderThumbPressed@2x.png:
+        * UserInterface/Images/WebSocket.png:
+        * UserInterface/Images/WebSocket@2x.png:
+        * UserInterface/Images/WebSocketLarge.png:
+        * UserInterface/Images/WebSocketLarge@2x.png:
+        * UserInterface/Images/WorkerScript.png:
+        * UserInterface/Images/WorkerScript@2x.png:
+        * UserInterface/Images/WorkerScriptLarge.png:
+        * UserInterface/Images/WorkerScriptLarge@2x.png:
+
 2018-11-12  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles: Pressing Tab or Enter should start editing focused property

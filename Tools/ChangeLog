@@ -1,3 +1,65 @@
+2018-11-12  Don Olmstead  <don.olmstead@sony.com>
+
+        Shipped PNGs include bad profiles: iCCP: known incorrect sRGB profile
+        https://bugs.webkit.org/show_bug.cgi?id=189230
+        <rdar://problem/44050379>
+
+        Reviewed by Joseph Pecoraro.
+
+        Runs all png images through zopflipng. This results in a smaller file
+        size and takes care of this issue as a byproduct.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/images/favicon-green.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/images/favicon-red.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/ElCapitan.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/ElCapitan@2x.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/GTK.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/GTK@2x.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/HighSierra.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/HighSierra@2x.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/IOS10.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/IOS10@2x.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/IOS10Simulator.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/IOS10Simulator@2x.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/IOS11.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/IOS11@2x.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/IOS11Simulator.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/IOS11Simulator@2x.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/IOS12.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/IOS12@2x.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/IOS12Simulator.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/IOS12Simulator@2x.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/IOS9.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/IOS9@2x.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/IOS9Simulator.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/IOS9Simulator@2x.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/IOSDevice.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/IOSDevice@2x.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/IOSSimulator.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/IOSSimulator@2x.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/Mavericks.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/Mavericks@2x.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/Mojave.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/Mojave@2x.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/MountainLion.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/MountainLion@2x.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/PlatformRing.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/PlatformRing@2x.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/Sierra.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/Sierra@2x.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/WPE.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/WPE@2x.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/Windows10.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/Windows10@2x.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/Windows7.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/Windows7@2x.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/Windows8.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/Windows8@2x.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/WindowsXP.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/WindowsXP@2x.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/Yosemite.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/Yosemite@2x.png:
+
 2018-11-12  Tim Horton  <timothy_horton@apple.com>
 
         Modernize WebKit Tools Xcode projects for localization's sake

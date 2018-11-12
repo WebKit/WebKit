@@ -1,3 +1,41 @@
+2018-11-12  Don Olmstead  <don.olmstead@sony.com>
+
+        Shipped PNGs include bad profiles: iCCP: known incorrect sRGB profile
+        https://bugs.webkit.org/show_bug.cgi?id=189230
+        <rdar://problem/44050379>
+
+        Reviewed by Joseph Pecoraro.
+
+        Runs all png images through zopflipng. This results in a smaller file
+        size and takes care of this issue as a byproduct.
+
+        * WebKit.resources/deleteButton.png:
+        * WebKit.resources/deleteButtonPressed.png:
+        * WebKit.resources/fsVideoAudioVolumeHigh.png:
+        * WebKit.resources/fsVideoAudioVolumeLow.png:
+        * WebKit.resources/fsVideoExitFullscreen.png:
+        * WebKit.resources/fsVideoPause.png:
+        * WebKit.resources/fsVideoPlay.png:
+        * WebKit.resources/missingImage.png:
+        * WebKit.resources/nullplugin.png:
+        * WebKit.resources/panEastCursor.png:
+        * WebKit.resources/panIcon.png:
+        * WebKit.resources/panNorthCursor.png:
+        * WebKit.resources/panNorthEastCursor.png:
+        * WebKit.resources/panNorthWestCursor.png:
+        * WebKit.resources/panSouthCursor.png:
+        * WebKit.resources/panSouthEastCursor.png:
+        * WebKit.resources/panSouthWestCursor.png:
+        * WebKit.resources/panWestCursor.png:
+        * WebKit.resources/searchCancel.png:
+        * WebKit.resources/searchCancelPressed.png:
+        * WebKit.resources/searchMagnifier.png:
+        * WebKit.resources/searchMagnifierResults.png:
+        * WebKit.resources/textAreaResizeCorner.png:
+        * WebKit.resources/verticalTextCursor.png:
+        * WebKit.resources/zoomInCursor.png:
+        * WebKit.resources/zoomOutCursor.png:
+
 2018-11-09  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed Windows build fix for r238049.

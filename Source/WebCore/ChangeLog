@@ -1,3 +1,47 @@
+2018-11-12  Don Olmstead  <don.olmstead@sony.com>
+
+        Shipped PNGs include bad profiles: iCCP: known incorrect sRGB profile
+        https://bugs.webkit.org/show_bug.cgi?id=189230
+        <rdar://problem/44050379>
+
+        Reviewed by Joseph Pecoraro.
+
+        Runs all png images through zopflipng. This results in a smaller file
+        size and takes care of this issue as a byproduct.
+
+        * Modules/modern-media-controls/images/iOS/airplay-placard@1x.png:
+        * Modules/modern-media-controls/images/iOS/airplay-placard@2x.png:
+        * Modules/modern-media-controls/images/iOS/airplay-placard@3x.png:
+        * Modules/modern-media-controls/images/iOS/invalid-placard@1x.png:
+        * Modules/modern-media-controls/images/iOS/invalid-placard@2x.png:
+        * Modules/modern-media-controls/images/iOS/invalid-placard@3x.png:
+        * Modules/modern-media-controls/images/iOS/pip-placard@1x.png:
+        * Modules/modern-media-controls/images/iOS/pip-placard@2x.png:
+        * Modules/modern-media-controls/images/iOS/pip-placard@3x.png:
+        * Modules/modern-media-controls/images/macOS/airplay-placard@1x.png:
+        * Modules/modern-media-controls/images/macOS/airplay-placard@2x.png:
+        * Modules/modern-media-controls/images/macOS/invalid-placard@1x.png:
+        * Modules/modern-media-controls/images/macOS/invalid-placard@2x.png:
+        * Modules/modern-media-controls/images/macOS/pip-placard@1x.png:
+        * Modules/modern-media-controls/images/macOS/pip-placard@2x.png:
+        * Resources/AttachmentPlaceholder.png:
+        * Resources/AttachmentPlaceholder@2x.png:
+        * Resources/ListButtonArrow.png:
+        * Resources/ListButtonArrow@2x.png:
+        * Resources/missingImage.png:
+        * Resources/missingImage@2x.png:
+        * Resources/missingImage@3x.png:
+        * Resources/moveCursor.png:
+        * Resources/northEastSouthWestResizeCursor.png:
+        * Resources/northSouthResizeCursor.png:
+        * Resources/northWestSouthEastResizeCursor.png:
+        * Resources/nullPlugin.png:
+        * Resources/nullPlugin@2x.png:
+        * Resources/panIcon.png:
+        * Resources/textAreaResizeCorner.png:
+        * Resources/textAreaResizeCorner@2x.png:
+        * Resources/urlIcon.png:
+
 2018-11-12  Youenn Fablet  <youenn@apple.com>
 
         RealtimeOutgoing A/V sources should observe their sources only if having a sink
