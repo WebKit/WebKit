@@ -52,8 +52,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C59F9B991A93C8E90041A959 /* WebKit.framework in Frameworks */,
 				C59F9B971A93C8E00041A959 /* Cocoa.framework in Frameworks */,
+				C59F9B991A93C8E90041A959 /* WebKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -104,16 +104,16 @@
 			children = (
 				C558CDB11A92D6900059A907 /* AppDelegate.h */,
 				C558CDB21A92D6900059A907 /* AppDelegate.m */,
+				2D6B05BD1A972E8C00613256 /* CannedContent.h */,
+				2D6B05BE1A972E8C00613256 /* CannedContent.m */,
+				2D4FFA0F1A97079D0006360B /* EditingOperations.h */,
+				2D4FFA101A97079D0006360B /* EditingOperations.m */,
+				C558CDB61A92D6900059A907 /* WebDocumentController.h */,
+				C558CDB71A92D6900059A907 /* WebDocumentController.m */,
 				C59F9B9B1A93CB630041A959 /* WK1WebDocumentController.h */,
 				C59F9B9C1A93CB630041A959 /* WK1WebDocumentController.m */,
 				C59F9B9D1A93CB630041A959 /* WK2WebDocumentController.h */,
 				C59F9B9E1A93CB630041A959 /* WK2WebDocumentController.m */,
-				C558CDB61A92D6900059A907 /* WebDocumentController.h */,
-				C558CDB71A92D6900059A907 /* WebDocumentController.m */,
-				2D4FFA0F1A97079D0006360B /* EditingOperations.h */,
-				2D4FFA101A97079D0006360B /* EditingOperations.m */,
-				2D6B05BD1A972E8C00613256 /* CannedContent.h */,
-				2D6B05BE1A972E8C00613256 /* CannedContent.m */,
 			);
 			name = WebEditingTester;
 			sourceTree = "<group>";
@@ -130,8 +130,8 @@
 		C558CDD51A93C8830059A907 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				C59F9B981A93C8E90041A959 /* WebKit.framework */,
 				C59F9B961A93C8E00041A959 /* Cocoa.framework */,
+				C59F9B981A93C8E90041A959 /* WebKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -180,7 +180,7 @@
 			};
 			buildConfigurationList = C558CDA71A92D6900059A907 /* Build configuration list for PBXProject "WebEditingTester" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
@@ -201,9 +201,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C53E7D0E1A9546E600818F19 /* WebDocument.xib in Resources */,
-				C53E7D0D1A9546E600818F19 /* MainMenu.xib in Resources */,
 				2D6B05C21A97365300613256 /* dice.png in Resources */,
+				C53E7D0D1A9546E600818F19 /* MainMenu.xib in Resources */,
+				C53E7D0E1A9546E600818F19 /* WebDocument.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -214,13 +214,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C558CDB31A92D6900059A907 /* AppDelegate.m in Sources */,
 				2D6B05BF1A972E8C00613256 /* CannedContent.m in Sources */,
-				C558CDB81A92D6900059A907 /* WebDocumentController.m in Sources */,
-				C59F9BA01A93CB630041A959 /* WK2WebDocumentController.m in Sources */,
 				2D4FFA111A97079D0006360B /* EditingOperations.m in Sources */,
 				C558CDB51A92D6900059A907 /* main.m in Sources */,
-				C558CDB31A92D6900059A907 /* AppDelegate.m in Sources */,
+				C558CDB81A92D6900059A907 /* WebDocumentController.m in Sources */,
 				C59F9B9F1A93CB630041A959 /* WK1WebDocumentController.m in Sources */,
+				C59F9BA01A93CB630041A959 /* WK2WebDocumentController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

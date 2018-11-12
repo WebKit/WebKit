@@ -121,7 +121,7 @@
 			};
 			buildConfigurationList = 31A5D03D1EBBBB0400D3F11B /* Build configuration list for PBXProject "ImageDiff" */;
 			compatibilityVersion = "Xcode 8.0";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
@@ -141,8 +141,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7A41C8F41EC1F935003DBC76 /* PlatformImage.cpp in Sources */,
 				7A41C8F21EC1F919003DBC76 /* ImageDiff.cpp in Sources */,
+				7A41C8F41EC1F935003DBC76 /* PlatformImage.cpp in Sources */,
 				7A41C8F01EC1F8FF003DBC76 /* PlatformImageCG.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

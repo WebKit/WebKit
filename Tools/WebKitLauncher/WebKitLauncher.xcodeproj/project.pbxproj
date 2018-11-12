@@ -99,8 +99,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5DE0853815AE0AA0000A27B4 /* Security.framework in Frameworks */,
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
+				5DE0853815AE0AA0000A27B4 /* Security.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -176,9 +176,9 @@
 			isa = PBXGroup;
 			children = (
 				5DA88F7E0FC8176100AB2F62 /* Base.xcconfig */,
+				1C48994E1BBC547D00213C1C /* WebKitLauncher.entitlements */,
 				5DA88F7F0FC8176100AB2F62 /* WebKitLauncher.xcconfig */,
 				5DA88F800FC8176100AB2F62 /* WebKitNightlyEnabler.xcconfig */,
-				1C48994E1BBC547D00213C1C /* WebKitLauncher.entitlements */,
 			);
 			path = Configurations;
 			sourceTree = "<group>";
@@ -248,13 +248,10 @@
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "WebKitLauncher" */;
 			compatibilityVersion = "Xcode 3.1";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 1;
 			knownRegions = (
-				English,
-				Japanese,
-				French,
-				German,
+				en,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* WebKit */;
 			projectDirPath = "";

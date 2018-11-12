@@ -3632,10 +3632,7 @@
 			developmentRegion = en;
 			hasScannedForEncodings = 1;
 			knownRegions = (
-				English,
-				Japanese,
-				French,
-				German,
+				en,
 			);
 			mainGroup = 08FB7794FE84155DC02AAC07 /* TestWebKitAPI */;
 			projectDirPath = "";

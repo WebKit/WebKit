@@ -1,3 +1,26 @@
+2018-11-12  Tim Horton  <timothy_horton@apple.com>
+
+        Modernize WebKit Tools Xcode projects for localization's sake
+        https://bugs.webkit.org/show_bug.cgi?id=191495
+
+        Reviewed by Alexey Proskuryakov.
+
+        * ContentExtensionTester/ContentExtensionTester.xcodeproj/project.pbxproj:
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * EditingHistory/EditingHistory.xcodeproj/project.pbxproj:
+        * FontWithFeatures/FontWithFeatures.xcodeproj/project.pbxproj:
+        * ImageDiff/ImageDiff.xcodeproj/project.pbxproj:
+        * MiniBrowser/MiniBrowser.xcodeproj/project.pbxproj:
+        * MobileMiniBrowser/MobileMiniBrowser.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * WebEditingTester/WebEditingTester.xcodeproj/project.pbxproj:
+        * WebKitLauncher/WebKitLauncher.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        * lldb/lldbWebKitTester/lldbWebKitTester.xcodeproj/project.pbxproj:
+        These are less important because they're not localized, but since
+        I made the style checker complain, it now complains any time anyone
+        touches any of these projects... so upgrade them.
+
 2018-11-12  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Check for specific process instead of using data migrator

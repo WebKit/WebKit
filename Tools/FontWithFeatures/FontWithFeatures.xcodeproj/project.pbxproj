@@ -45,11 +45,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C28626B51BA907AE001961D6 /* CoreText.framework in Frameworks */,
-				C28626B31BA906D1001961D6 /* CoreServices.framework in Frameworks */,
 				C28626B11BA906C1001961D6 /* CoreFoundation.framework in Frameworks */,
-				C28626AF1BA9062C001961D6 /* ImageIO.framework in Frameworks */,
 				C28626AD1BA904F1001961D6 /* CoreGraphics.framework in Frameworks */,
+				C28626B31BA906D1001961D6 /* CoreServices.framework in Frameworks */,
+				C28626B51BA907AE001961D6 /* CoreText.framework in Frameworks */,
+				C28626AF1BA9062C001961D6 /* ImageIO.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -80,9 +80,9 @@
 		C28626A41BA902B9001961D6 /* FontWithFeatures */ = {
 			isa = PBXGroup;
 			children = (
-				C28626A51BA902B9001961D6 /* main.cpp */,
 				C28626B61BA91762001961D6 /* FontCreator.cpp */,
 				C28626B71BA91762001961D6 /* FontCreator.h */,
+				C28626A51BA902B9001961D6 /* main.cpp */,
 			);
 			path = FontWithFeatures;
 			sourceTree = "<group>";
@@ -123,7 +123,7 @@
 			};
 			buildConfigurationList = C286269D1BA902B9001961D6 /* Build configuration list for PBXProject "FontWithFeatures" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
@@ -143,8 +143,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C28626A61BA902B9001961D6 /* main.cpp in Sources */,
 				C28626B81BA91762001961D6 /* FontCreator.cpp in Sources */,
+				C28626A61BA902B9001961D6 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

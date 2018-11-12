@@ -90,6 +90,7 @@
 		512D7A951DE0FBEF0028F0E6 /* EditingHistory */ = {
 			isa = PBXGroup;
 			children = (
+				512D7AB51DE0FC590028F0E6 /* Resources */,
 				516ADBB01DE155BD00E2B98D /* Info.plist */,
 				516ADBB11DE155BD00E2B98D /* main.m */,
 				516ADBB21DE155BD00E2B98D /* TestRunner.h */,
@@ -98,7 +99,6 @@
 				516ADBB51DE155BD00E2B98D /* TestUtil.m */,
 				516ADBB61DE155BD00E2B98D /* WKWebViewAdditions.h */,
 				516ADBB71DE155BD00E2B98D /* WKWebViewAdditions.m */,
-				512D7AB51DE0FC590028F0E6 /* Resources */,
 			);
 			path = EditingHistory;
 			sourceTree = "<group>";
@@ -106,8 +106,8 @@
 		512D7AB51DE0FC590028F0E6 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				517FD93B1DE18DC900A73673 /* DOMTestingUtil.js */,
 				516ADBA81DE155AB00E2B98D /* CaptureHarness.html */,
+				517FD93B1DE18DC900A73673 /* DOMTestingUtil.js */,
 				516ADBAB1DE155AB00E2B98D /* PlaybackHarness.html */,
 			);
 			name = Resources;
@@ -116,8 +116,8 @@
 		516ADBF11DE157AD00E2B98D /* EditingHistoryTests */ = {
 			isa = PBXGroup;
 			children = (
-				516ADBF21DE157AD00E2B98D /* RewindAndPlaybackTests.m */,
 				516ADBF41DE157AD00E2B98D /* Info.plist */,
+				516ADBF21DE157AD00E2B98D /* RewindAndPlaybackTests.m */,
 			);
 			path = EditingHistoryTests;
 			sourceTree = "<group>";
@@ -181,7 +181,7 @@
 			};
 			buildConfigurationList = 512D7A8E1DE0FBEF0028F0E6 /* Build configuration list for PBXProject "EditingHistory" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
@@ -203,10 +203,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F4BFB9891E1DE82D00862C24 /* DumpEditingHistory.js in Resources */,
-				F4BFB98A1E1DE82D00862C24 /* EditingHistoryUtil.js in Resources */,
 				516ADBE21DE156A900E2B98D /* CaptureHarness.html in Resources */,
 				517FD93C1DE18DC900A73673 /* DOMTestingUtil.js in Resources */,
+				F4BFB9891E1DE82D00862C24 /* DumpEditingHistory.js in Resources */,
+				F4BFB98A1E1DE82D00862C24 /* EditingHistoryUtil.js in Resources */,
 				516ADBE51DE156A900E2B98D /* PlaybackHarness.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

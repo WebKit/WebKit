@@ -127,7 +127,7 @@
 			};
 			buildConfigurationList = 7C4AB39C1AF0276C003FC8D1 /* Build configuration list for PBXProject "lldbWebKitTester" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
