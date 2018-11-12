@@ -154,8 +154,7 @@ public:
     void dispatchCDMInstance();
     void initializationDataEncountered(GstEvent*);
     void setWaitingForKey(bool);
-    bool waitingForKey() const;
-    void reportWaitingForKey();
+    bool waitingForKey() const override;
 #endif
 
     static bool supportsKeySystem(const String& keySystem, const String& mimeType);

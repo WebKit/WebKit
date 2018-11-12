@@ -27,6 +27,7 @@
 
 #include "GStreamerCommon.h"
 #include <wtf/Condition.h>
+#include <wtf/PrintStream.h>
 #include <wtf/RunLoop.h>
 
 #define WEBKIT_MEDIA_CENC_DECRYPT_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_MEDIA_CENC_DECRYPT, WebKitMediaCommonEncryptionDecryptPrivate))
@@ -44,6 +45,7 @@ static void webKitMediaCommonEncryptionDecryptorFinalize(GObject*);
 static GstCaps* webkitMediaCommonEncryptionDecryptTransformCaps(GstBaseTransform*, GstPadDirection, GstCaps*, GstCaps*);
 static GstFlowReturn webkitMediaCommonEncryptionDecryptTransformInPlace(GstBaseTransform*, GstBuffer*);
 static gboolean webkitMediaCommonEncryptionDecryptSinkEventHandler(GstBaseTransform*, GstEvent*);
+static gboolean webkitMediaCommonEncryptionDecryptorQueryHandler(GstBaseTransform*, GstPadDirection, GstQuery*);
 
 
 GST_DEBUG_CATEGORY_STATIC(webkit_media_common_encryption_decrypt_debug_category);
@@ -68,6 +70,7 @@ static void webkit_media_common_encryption_decrypt_class_init(WebKitMediaCommonE
     baseTransformClass->transform_caps = GST_DEBUG_FUNCPTR(webkitMediaCommonEncryptionDecryptTransformCaps);
     baseTransformClass->transform_ip_on_passthrough = FALSE;
     baseTransformClass->sink_event = GST_DEBUG_FUNCPTR(webkitMediaCommonEncryptionDecryptSinkEventHandler);
+    baseTransformClass->query = GST_DEBUG_FUNCPTR(webkitMediaCommonEncryptionDecryptorQueryHandler);
 
     g_type_class_add_private(klass, sizeof(WebKitMediaCommonEncryptionDecryptPrivate));
 }
@@ -215,6 +218,8 @@ static GstFlowReturn webkitMediaCommonEncryptionDecryptTransformInPlace(GstBaseT
             return GST_FLOW_NOT_SUPPORTED;
         }
         GST_DEBUG_OBJECT(self, "key received, continuing");
+        priv->waitingForKey = false;
+        gst_element_post_message(GST_ELEMENT(self), gst_message_new_element(GST_OBJECT(self), gst_structure_new_empty("drm-key-received")));
     }
 
     GstProtectionMeta* protectionMeta = reinterpret_cast<GstProtectionMeta*>(gst_buffer_get_protection_meta(buffer));
@@ -306,12 +311,7 @@ static gboolean webkitMediaCommonEncryptionDecryptSinkEventHandler(GstBaseTransf
         if (klass->handleKeyResponse(self, event)) {
             GST_DEBUG_OBJECT(self, "key received");
             priv->keyReceived = true;
-            priv->waitingForKey = false;
-            gst_element_post_message(GST_ELEMENT(self), gst_message_new_element(GST_OBJECT(self), gst_structure_new_empty("drm-key-received")));
             priv->condition.notifyOne();
-        } else if (priv->waitingForKey) {
-            GST_DEBUG_OBJECT(self, "still waiting for key, reposting");
-            gst_element_post_message(GST_ELEMENT(self), gst_message_new_element(GST_OBJECT(self), gst_structure_new_empty("drm-waiting-for-key")));
         }
 
         gst_event_unref(event);
@@ -324,6 +324,16 @@ static gboolean webkitMediaCommonEncryptionDecryptSinkEventHandler(GstBaseTransf
     }
 
     return result;
+}
+
+static gboolean webkitMediaCommonEncryptionDecryptorQueryHandler(GstBaseTransform* trans, GstPadDirection direction, GstQuery* query)
+{
+    if (gst_structure_has_name(gst_query_get_structure(query), "any-decryptor-waiting-for-key")) {
+        WebKitMediaCommonEncryptionDecryptPrivate* priv = WEBKIT_MEDIA_CENC_DECRYPT_GET_PRIVATE(trans);
+        GST_TRACE_OBJECT(trans, "any-decryptor-waiting-for-key query, waitingforkey %s", boolForPrinting(priv->waitingForKey));
+        return priv->waitingForKey;
+    }
+    return GST_BASE_TRANSFORM_CLASS(parent_class)->query(trans, direction, query);
 }
 
 static GstStateChangeReturn webKitMediaCommonEncryptionDecryptorChangeState(GstElement* element, GstStateChange transition)

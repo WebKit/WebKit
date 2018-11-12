@@ -1,3 +1,46 @@
+2018-11-12  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GStreamer][EME] waitingforkey event should consider decryptors' waiting status
+        https://bugs.webkit.org/show_bug.cgi?id=191459
+
+        Reviewed by Carlos Garcia Campos.
+
+        The new cross platform architecture to report waitingforkey and
+        recover from it requires a more accurate knowledge of what is
+        going on with the decryptors because events are reported only once
+        (per key exchange run) and crossplatform only continues if we are
+        actually ready to continue, meaning that no decryptors are
+        waiting.
+
+        * platform/graphics/gstreamer/GUniquePtrGStreamer.h: Added
+        GstIterator deleter.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::setWaitingForKey): Bail
+        out if we are requested to not wait anymore but there are still
+        waiting decryptors.
+        (WebCore::MediaPlayerPrivateGStreamerBase::waitingForKey const):
+        Query the pipeline, just a query after pipeline is built and
+        manual inspection during build. The query is optimal but sometimes
+        we can get this request when the pipeline is under construction so
+        queries do not arrive at the decryptors and we have to deliver it
+        by ourselves.
+        (WebCore::MediaPlayerPrivateGStreamerBase::reportWaitingForKey:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        (WebCore::MediaPlayerPrivateGStreamerBase::reportWaitingForKey:
+        Deleted because it is now inlined.
+        * platform/graphics/gstreamer/eme/WebKitClearKeyDecryptorGStreamer.cpp:
+        (webKitMediaClearKeyDecryptorDecrypt): Fixed small compiler warning.
+        * platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.cpp:
+        (webkit_media_common_encryption_decrypt_class_init): Override
+        query method.
+        (webkitMediaCommonEncryptionDecryptTransformInPlace): When the
+        decryptor is going to block to wait, report before. When the
+        decryptor receives the key, report it got it.
+        (webkitMediaCommonEncryptionDecryptSinkEventHandler): Do not
+        handle waitingforkey here.
+        (webkitMediaCommonEncryptionDecryptorQueryHandler): Report if the
+        decryptor is waiting.
+
 2018-11-12  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Silence ATK_XY_PARENT warnings
