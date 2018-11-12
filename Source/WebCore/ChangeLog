@@ -1,3 +1,52 @@
+2018-11-12  Antti Koivisto  <antti@apple.com>
+
+        Support dynamic pseudo-classes on elements with display: contents
+        https://bugs.webkit.org/show_bug.cgi?id=181640
+        <rdar://problem/36605415>
+
+        Reviewed by Dean Jackson.
+
+        The code for :hover and :active style invalidation assumes that only elements with renderer need invalidation.
+
+        This patch fixes '.display-content-element:hover span' case but not '.display-content-element:hover' case but
+        includes tests for both. The latter is not super useful anyway (as it only affects rendering with inherited
+        text properties).
+
+        Test: fast/css/display-contents-hover-active.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateHoverActiveState):
+
+            Traverse up in composed tree instead of render tree when invalidating. This has the same order as render tree
+            but also includes display:content elements. This also allows removing the special display:none case.
+
+        * dom/Element.cpp:
+        (WebCore::Element::setActive):
+        (WebCore::Element::setHovered):
+
+            Also look into display:contents style for invalidation checks.
+
+        (WebCore::Element::renderOrDisplayContentsStyle const):
+
+            Make this helper an Element member.
+
+        * dom/Element.h:
+        * dom/Node.cpp:
+        (WebCore::Node::parentElementInComposedTree const):
+
+            Support starting from a PseudoElement. This is consistent with ComposedTreeAncestorIterator.
+
+        * rendering/updating/RenderTreePosition.cpp:
+        (WebCore::RenderTreePosition::nextSiblingRenderer const):
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::resolveElement):
+        (WebCore::Style::TreeResolver::createAnimatedElementUpdate):
+        (WebCore::Style::shouldResolveElement):
+        (WebCore::Style::TreeResolver::resolveComposedTree):
+        (WebCore::Style::renderOrDisplayContentsStyle): Deleted.
+
+            Use the Element::renderOrDisplayContentsStyle() instead.
+
 2018-11-12  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Turn Web Animations experimental

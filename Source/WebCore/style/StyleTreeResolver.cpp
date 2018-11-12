@@ -162,15 +162,6 @@ static bool affectsRenderedSubtree(Element& element, const RenderStyle& newStyle
     return false;
 }
 
-static const RenderStyle* renderOrDisplayContentsStyle(const Element& element)
-{
-    if (auto* renderStyle = element.renderStyle())
-        return renderStyle;
-    if (element.hasDisplayContents())
-        return element.existingComputedStyle();
-    return nullptr;
-}
-
 static DescendantsToResolve computeDescendantsToResolve(Change change, Validity validity, DescendantsToResolve parentDescendantsToResolve)
 {
     if (parentDescendantsToResolve == DescendantsToResolve::All)
@@ -203,7 +194,7 @@ ElementUpdates TreeResolver::resolveElement(Element& element)
     if (!affectsRenderedSubtree(element, *newStyle))
         return { };
 
-    auto* existingStyle = renderOrDisplayContentsStyle(element);
+    auto* existingStyle = element.renderOrDisplayContentsStyle();
 
     if (m_didSeePendingStylesheet && (!existingStyle || existingStyle->isNotFinal())) {
         newStyle->setIsNotFinal();
@@ -284,7 +275,7 @@ const RenderStyle* TreeResolver::parentBoxStyle() const
 
 ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderStyle> newStyle, Element& element, Change parentChange)
 {
-    auto* oldStyle = renderOrDisplayContentsStyle(element);
+    auto* oldStyle = element.renderOrDisplayContentsStyle();
 
     bool shouldRecompositeLayer = false;
 
@@ -397,7 +388,7 @@ static bool shouldResolveElement(const Element& element, DescendantsToResolve pa
     case DescendantsToResolve::All:
         return true;
     case DescendantsToResolve::ChildrenWithExplicitInherit:
-        auto* existingStyle = renderOrDisplayContentsStyle(element);
+        auto* existingStyle = element.renderOrDisplayContentsStyle();
         return existingStyle && existingStyle->hasExplicitlyInheritedProperties();
     };
     ASSERT_NOT_REACHED();
@@ -482,7 +473,7 @@ void TreeResolver::resolveComposedTree()
             continue;
         }
 
-        auto* style = renderOrDisplayContentsStyle(element);
+        auto* style = element.renderOrDisplayContentsStyle();
         auto change = NoChange;
         auto descendantsToResolve = DescendantsToResolve::None;
 

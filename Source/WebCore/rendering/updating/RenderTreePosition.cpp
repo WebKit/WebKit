@@ -71,7 +71,7 @@ RenderObject* RenderTreePosition::nextSiblingRenderer(const Node& node) const
     Vector<Element*, 30> elementStack;
 
     // In the common case ancestor == parentElement immediately and this just pushes parentElement into stack.
-    auto* ancestor = is<PseudoElement>(node) ? downcast<PseudoElement>(node).hostElement() : node.parentElementInComposedTree();
+    auto* ancestor = node.parentElementInComposedTree();
     while (true) {
         elementStack.append(ancestor);
         if (ancestor == parentElement)

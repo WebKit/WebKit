@@ -1224,6 +1224,8 @@ Element* Node::parentElementInComposedTree() const
 {
     if (auto* slot = assignedSlot())
         return slot;
+    if (is<PseudoElement>(*this))
+        return downcast<PseudoElement>(*this).hostElement();
     if (auto* parent = parentNode()) {
         if (is<ShadowRoot>(*parent))
             return downcast<ShadowRoot>(*parent).host();

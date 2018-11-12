@@ -1,3 +1,14 @@
+2018-11-12  Antti Koivisto  <antti@apple.com>
+
+        Support dynamic pseudo-classes on elements with display: contents
+        https://bugs.webkit.org/show_bug.cgi?id=181640
+        <rdar://problem/36605415>
+
+        Reviewed by Dean Jackson.
+
+        * fast/css/display-contents-hover-active-expected.txt: Added.
+        * fast/css/display-contents-hover-active.html: Added.
+
 2018-11-12  Simon Fraser  <simon.fraser@apple.com>
 
         feFlood with alpha color doesn't work correctly

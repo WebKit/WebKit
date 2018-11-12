@@ -573,7 +573,7 @@ void Element::setActive(bool flag, bool pause)
 
     document().userActionElements().setActive(*this, flag);
 
-    const RenderStyle* renderStyle = this->renderStyle();
+    auto* renderStyle = renderOrDisplayContentsStyle();
     bool reactsToPress = (renderStyle && renderStyle->affectedByActive()) || styleAffectedByActive();
     if (reactsToPress)
         invalidateStyleForSubtree();
@@ -634,22 +634,23 @@ void Element::setHovered(bool flag)
 
     document().userActionElements().setHovered(*this, flag);
 
+    auto* style = renderOrDisplayContentsStyle();
+    if (style && (style->affectedByHover() || childrenAffectedByHover()))
+        invalidateStyleForSubtree();
+
     if (!renderer()) {
         // When setting hover to false, the style needs to be recalc'd even when
         // there's no renderer (imagine setting display:none in the :hover class,
         // if a nil renderer would prevent this element from recalculating its
         // style, it would never go back to its normal style and remain
         // stuck in its hovered style).
-        if (!flag)
+        if (!flag && !style)
             invalidateStyleForSubtree();
 
         return;
     }
 
-    if (renderer()->style().affectedByHover() || childrenAffectedByHover())
-        invalidateStyleForSubtree();
-
-    if (renderer()->style().hasAppearance())
+    if (style->hasAppearance())
         renderer()->theme().stateChanged(*renderer(), ControlStates::HoverState);
 }
 
@@ -2906,6 +2907,20 @@ const RenderStyle* Element::existingComputedStyle() const
     }
 
     return renderStyle();
+}
+
+const RenderStyle* Element::renderOrDisplayContentsStyle() const
+{
+    if (auto* style = renderStyle())
+        return style;
+
+    if (!hasRareData())
+        return nullptr;
+    auto* style = elementRareData()->computedStyle();
+    if (style && style->display() == DisplayType::Contents)
+        return style;
+
+    return nullptr;
 }
 
 const RenderStyle& Element::resolveComputedStyle()
