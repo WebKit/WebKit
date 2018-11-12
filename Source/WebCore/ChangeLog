@@ -1,3 +1,20 @@
+2018-11-12  Sihui Liu  <sihui_liu@apple.com>
+
+        imported/w3c/web-platform-tests/IndexedDB/keygenerator-explicit.html crashing on iOS device
+        https://bugs.webkit.org/show_bug.cgi?id=191500
+
+        Reviewed by Dean Jackson.
+
+        When double value is bigger than maximum unsigned int, converting double to unsigned int has
+        different behaviors on macOS and iOS. On macOS, the result would be 0 while on iOS it would be
+        maximum unsigned int.
+
+        Covered by existing test.
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::generateKeyNumber):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::maybeUpdateKeyGeneratorNumber):
+
 2018-11-12  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [Curl] Add API Test for Curl cookie backend.

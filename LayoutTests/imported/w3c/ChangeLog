@@ -1,3 +1,12 @@
+2018-11-12  Sihui Liu  <sihui_liu@apple.com>
+
+        imported/w3c/web-platform-tests/IndexedDB/keygenerator-explicit.html crashing on iOS device
+        https://bugs.webkit.org/show_bug.cgi?id=191500
+
+        Reviewed by Dean Jackson.
+
+        * web-platform-tests/IndexedDB/keygenerator-explicit-expected.txt:
+
 2018-11-12  Youenn Fablet  <youenn@apple.com>
 
         Support setting stream ids when adding a transceiver

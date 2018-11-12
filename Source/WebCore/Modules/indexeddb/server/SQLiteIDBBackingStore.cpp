@@ -63,6 +63,9 @@ namespace IDBServer {
 // Current version of the metadata schema being used in the metadata database.
 static const int currentMetadataVersion = 1;
 
+// The IndexedDatabase spec defines the max key generator value as 2^53.
+static const uint64_t maxGeneratorValue = 0x20000000000000;
+
 static int idbKeyCollate(int aLength, const void* aBuffer, int bLength, const void* bBuffer)
 {
     IDBKeyData a, b;
@@ -2399,9 +2402,6 @@ IDBError SQLiteIDBBackingStore::generateKeyNumber(const IDBResourceIdentifier& t
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
 
-    // The IndexedDatabase spec defines the max key generator value as 2^53;
-    static uint64_t maxGeneratorValue = 0x20000000000000;
-
     auto* transaction = m_transactions.get(transactionIdentifier);
     if (!transaction || !transaction->inProgress()) {
         LOG_ERROR("Attempt to generate key in database without an in-progress transaction");
@@ -2470,13 +2470,7 @@ IDBError SQLiteIDBBackingStore::maybeUpdateKeyGeneratorNumber(const IDBResourceI
     if (newKeyNumber <= currentValue)
         return IDBError { };
 
-    uint64_t newKeyInteger(newKeyNumber);
-    if (newKeyInteger <= uint64_t(newKeyNumber))
-        ++newKeyInteger;
-
-    ASSERT(newKeyInteger > uint64_t(newKeyNumber));
-
-    return uncheckedSetKeyGeneratorValue(objectStoreID, newKeyInteger - 1);
+    return uncheckedSetKeyGeneratorValue(objectStoreID, std::min(newKeyNumber, (double)maxGeneratorValue));
 }
 
 IDBError SQLiteIDBBackingStore::openCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBCursorInfo& info, IDBGetResult& result)
