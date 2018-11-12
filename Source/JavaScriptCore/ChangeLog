@@ -1,3 +1,24 @@
+2018-11-12  Saam barati  <sbarati@apple.com>
+
+        Unreviewed. Rollout 238026: It caused ~8% JetStream 2 regressions on some iOS devices
+        https://bugs.webkit.org/show_bug.cgi?id=191555
+
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::UnlinkedFunctionExecutable::fromGlobalCode):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * parser/SourceCodeKey.h:
+        (JSC::SourceCodeKey::SourceCodeKey):
+        (JSC::SourceCodeKey::operator== const):
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getUnlinkedGlobalCodeBlock):
+        (JSC::CodeCache::getUnlinkedGlobalFunctionExecutable):
+        * runtime/CodeCache.h:
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunctionSkippingEvalEnabledCheck):
+        * runtime/FunctionExecutable.cpp:
+        (JSC::FunctionExecutable::fromGlobalCode):
+        * runtime/FunctionExecutable.h:
+
 2018-11-11  Benjamin Poulain  <benjamin@webkit.org>
 
         Fix a fixme: rename wtfObjcMsgSend to wtfObjCMsgSend

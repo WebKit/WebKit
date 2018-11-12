@@ -29,7 +29,6 @@
 #include "ParserModes.h"
 #include "UnlinkedSourceCode.h"
 #include <wtf/HashTraits.h>
-#include <wtf/Hasher.h>
 
 namespace JSC {
 
@@ -72,17 +71,18 @@ private:
 
 class SourceCodeKey {
 public:
-    SourceCodeKey() = default;
+    SourceCodeKey()
+    {
+    }
 
     SourceCodeKey(
         const UnlinkedSourceCode& sourceCode, const String& name, SourceCodeType codeType, JSParserStrictMode strictMode, 
         JSParserScriptMode scriptMode, DerivedContextType derivedContextType, EvalContextType evalContextType, bool isArrowFunctionContext,
-        DebuggerMode debuggerMode, TypeProfilerEnabled typeProfilerEnabled, ControlFlowProfilerEnabled controlFlowProfilerEnabled, std::optional<int> functionConstructorParametersEndPosition)
+        DebuggerMode debuggerMode, TypeProfilerEnabled typeProfilerEnabled, ControlFlowProfilerEnabled controlFlowProfilerEnabled)
             : m_sourceCode(sourceCode)
             , m_name(name)
             , m_flags(codeType, strictMode, scriptMode, derivedContextType, evalContextType, isArrowFunctionContext, debuggerMode, typeProfilerEnabled, controlFlowProfilerEnabled)
-            , m_functionConstructorParametersEndPosition(functionConstructorParametersEndPosition.value_or(-1))
-            , m_hash(sourceCode.hash() ^ DefaultHash<unsigned>::Hash::hash(m_flags.bits()) ^ DefaultHash<int>::Hash::hash(m_functionConstructorParametersEndPosition))
+            , m_hash(sourceCode.hash() ^ m_flags.bits())
     {
     }
 
@@ -108,7 +108,6 @@ public:
         return m_hash == other.m_hash
             && length() == other.length()
             && m_flags == other.m_flags
-            && m_functionConstructorParametersEndPosition == other.m_functionConstructorParametersEndPosition
             && m_name == other.m_name
             && string() == other.string();
     }
@@ -128,8 +127,7 @@ private:
     UnlinkedSourceCode m_sourceCode;
     String m_name;
     SourceCodeFlags m_flags;
-    int m_functionConstructorParametersEndPosition { -1 };
-    unsigned m_hash { 0 };
+    unsigned m_hash;
 };
 
 } // namespace JSC

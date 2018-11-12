@@ -94,11 +94,11 @@ void FunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
 FunctionExecutable* FunctionExecutable::fromGlobalCode(
     const Identifier& name, ExecState& exec, const SourceCode& source, 
-    JSObject*& exception, int overrideLineNumber, std::optional<int> functionConstructorParametersEndPosition)
+    JSObject*& exception, int overrideLineNumber)
 {
     UnlinkedFunctionExecutable* unlinkedExecutable = 
         UnlinkedFunctionExecutable::fromGlobalCode(
-            name, exec, source, exception, overrideLineNumber, functionConstructorParametersEndPosition);
+            name, exec, source, exception, overrideLineNumber);
     if (!unlinkedExecutable)
         return nullptr;
 

@@ -177,7 +177,7 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(
 
     SourceCode source = makeSource(program, sourceOrigin, sourceURL, position);
     JSObject* exception = nullptr;
-    FunctionExecutable* function = FunctionExecutable::fromGlobalCode(functionName, *exec, source, exception, overrideLineNumber, std::nullopt);
+    FunctionExecutable* function = FunctionExecutable::fromGlobalCode(functionName, *exec, source, exception, overrideLineNumber);
     if (!function) {
         ASSERT(exception);
         return throwException(exec, scope, exception);
