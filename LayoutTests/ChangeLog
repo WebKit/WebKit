@@ -1,3 +1,18 @@
+2018-11-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Implement a new edit command to change the enclosing list type
+        https://bugs.webkit.org/show_bug.cgi?id=191487
+        <rdar://problem/45955922>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a new layout test to verify that the list change type editing command can be used to swap between enclosing
+        ordered and unordered lists. Also exercises undo, redo, changing list types under `pre` and `table` elements,
+        and handling selection within nested list elements.
+
+        * editing/execCommand/change-list-type-expected.txt: Added.
+        * editing/execCommand/change-list-type.html: Added.
+
 2018-11-11  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-grid] Import additional grid layout test from the WPT suite

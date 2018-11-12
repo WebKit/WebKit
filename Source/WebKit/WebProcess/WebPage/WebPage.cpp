@@ -1152,23 +1152,17 @@ void WebPage::setEditable(bool editable)
 
 void WebPage::increaseListLevel()
 {
-    auto& editor = m_page->focusController().focusedOrMainFrame().editor();
-    if (editor.canIncreaseSelectionListLevel())
-        editor.increaseSelectionListLevel();
+    m_page->focusController().focusedOrMainFrame().editor().increaseSelectionListLevel();
 }
 
 void WebPage::decreaseListLevel()
 {
-    auto& editor = m_page->focusController().focusedOrMainFrame().editor();
-    if (editor.canDecreaseSelectionListLevel())
-        editor.decreaseSelectionListLevel();
+    m_page->focusController().focusedOrMainFrame().editor().decreaseSelectionListLevel();
 }
 
 void WebPage::changeListType()
 {
-    auto& editor = m_page->focusController().focusedOrMainFrame().editor();
-    if (editor.canChangeSelectionListType())
-        editor.changeSelectionListType();
+    m_page->focusController().focusedOrMainFrame().editor().changeSelectionListType();
 }
 
 bool WebPage::isEditingCommandEnabled(const String& commandName)

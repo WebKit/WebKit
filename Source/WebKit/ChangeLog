@@ -1,3 +1,25 @@
+2018-11-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Implement a new edit command to change the enclosing list type
+        https://bugs.webkit.org/show_bug.cgi?id=191487
+        <rdar://problem/45955922>
+
+        Reviewed by Ryosuke Niwa.
+
+        * UIProcess/WebEditCommandProxy.cpp:
+        (WebKit::WebEditCommandProxy::nameForEditAction):
+
+        Add undo/redo edit action strings for ConvertToOrderedList and ConvertToUnorderedList.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::increaseListLevel):
+        (WebKit::WebPage::decreaseListLevel):
+        (WebKit::WebPage::changeListType):
+
+        Remove preflight checks for these list editing commands. These are not necessary because these commands fall
+        back to being noops if these checks return false. This avoids an extraneous ancestor walk to determine the
+        enclosing list element when changing list type.
+
 2018-11-11  Daniel Bates  <dabates@apple.com>
 
         [iOS] Draw caps lock indicator in password fields

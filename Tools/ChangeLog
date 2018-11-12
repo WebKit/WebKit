@@ -1,3 +1,22 @@
+2018-11-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Implement a new edit command to change the enclosing list type
+        https://bugs.webkit.org/show_bug.cgi?id=191487
+        <rdar://problem/45955922>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a new API test to verify that `-[WKWebView _changeListType:]` is hooked up to the corresponding editing
+        command in WebCore. See the new layout test for a test that exercises more nuanced corner cases.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewEditActions.mm:
+        (-[TestWKWebView setPosition:offset:]):
+        (-[TestWKWebView setBase:baseOffset:extent:extentOffset:]):
+        (TestWebKitAPI::webViewForEditActionTestingWithPageNamed):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/editable-nested-lists.html: Added.
+
 2018-11-11  Dan Bernstein  <mitz@apple.com>
 
         ProcessPoolConfiguration::copy() doesn’t copy m_customWebContentServiceBundleIdentifier

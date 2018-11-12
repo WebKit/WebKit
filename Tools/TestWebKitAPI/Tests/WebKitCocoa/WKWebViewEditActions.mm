@@ -39,6 +39,8 @@
 @interface TestWKWebView (EditActionTesting)
 - (BOOL)querySelectorExists:(NSString *)querySelector;
 - (void)insertString:(NSString *)string;
+- (void)setPosition:(NSString *)container offset:(NSUInteger)offset;
+- (void)setBase:(NSString *)base baseOffset:(NSUInteger)baseOffset extent:(NSString *)extent extentOffset:(NSUInteger)extentOffset;
 @end
 
 @implementation TestWKWebView (EditActionTesting)
@@ -57,6 +59,16 @@
 #endif
 }
 
+- (void)setPosition:(NSString *)container offset:(NSUInteger)offset
+{
+    [self evaluateJavaScript:[NSString stringWithFormat:@"getSelection().setPosition(%@, %tu)", container, offset] completionHandler:nil];
+}
+
+- (void)setBase:(NSString *)base baseOffset:(NSUInteger)baseOffset extent:(NSString *)extent extentOffset:(NSUInteger)extentOffset
+{
+    [self evaluateJavaScript:[NSString stringWithFormat:@"getSelection().setBaseAndExtent(%@, %tu, %@, %tu)", base, baseOffset, extent, extentOffset] completionHandler:nil];
+}
+
 @end
 
 namespace TestWebKitAPI {
@@ -65,6 +77,15 @@ static RetainPtr<TestWKWebView> webViewForEditActionTesting(NSString *markup)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
     [webView synchronouslyLoadHTMLString:markup];
+    [webView _setEditable:YES];
+    [webView stringByEvaluatingJavaScript:@"getSelection().setPosition(document.body, 1)"];
+    return webView;
+}
+
+static RetainPtr<TestWKWebView> webViewForEditActionTestingWithPageNamed(NSString *testPageName)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView synchronouslyLoadTestPageNamed:testPageName];
     [webView _setEditable:YES];
     [webView stringByEvaluatingJavaScript:@"getSelection().setPosition(document.body, 1)"];
     return webView;
@@ -79,17 +100,17 @@ TEST(WKWebViewEditActions, ModifyListLevel)
 {
     auto webView = webViewForEditActionTesting(@"<ol><li>Foo</li><ol><li id='bar'>Bar</li></ol><ul><li id='baz'>Baz</li></ul></ol>");
 
-    [webView evaluateJavaScript:@"getSelection().setPosition(bar, 0)" completionHandler:nil];
+    [webView setPosition:@"bar" offset:0];
     [webView _decreaseListLevel:nil];
     EXPECT_TRUE([webView querySelectorExists:@"ol > li#bar"]);
     EXPECT_TRUE([webView querySelectorExists:@"ol > ul > li#baz"]);
 
-    [webView evaluateJavaScript:@"getSelection().setPosition(baz, 0)" completionHandler:nil];
+    [webView setPosition:@"baz" offset:0];
     [webView _decreaseListLevel:nil];
     EXPECT_TRUE([webView querySelectorExists:@"ol > li#bar"]);
     EXPECT_TRUE([webView querySelectorExists:@"ol > li#baz"]);
 
-    [webView evaluateJavaScript:@"getSelection().setBaseAndExtent(bar, 0, baz, 1)" completionHandler:nil];
+    [webView setBase:@"bar" baseOffset:0 extent:@"baz" extentOffset:1];
     [webView _increaseListLevel:nil];
     EXPECT_TRUE([webView querySelectorExists:@"ol > ol > li#bar"]);
     EXPECT_TRUE([webView querySelectorExists:@"ol > ol > li#baz"]);
@@ -97,6 +118,23 @@ TEST(WKWebViewEditActions, ModifyListLevel)
     [webView _decreaseListLevel:nil];
     EXPECT_TRUE([webView querySelectorExists:@"ol > li#bar"]);
     EXPECT_TRUE([webView querySelectorExists:@"ol > li#baz"]);
+}
+
+TEST(WKWebViewEditActions, ChangeListType)
+{
+    auto webView = webViewForEditActionTestingWithPageNamed(@"editable-nested-lists");
+
+    [webView setPosition:@"one" offset:1];
+    [webView _changeListType:nil];
+    EXPECT_TRUE([webView querySelectorExists:@"ol.list > li#one"]);
+    EXPECT_TRUE([webView querySelectorExists:@"ol.list > li#four"]);
+
+    [webView setBase:@"two" baseOffset:0 extent:@"two" extentOffset:1];
+    [webView _changeListType:nil];
+    EXPECT_TRUE([webView querySelectorExists:@"ul.list > li#two"]);
+    EXPECT_TRUE([webView querySelectorExists:@"ul.list > li#three"]);
+    EXPECT_WK_STREQ("rgb(255, 0, 0)", [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.querySelector('#two')).color"]);
+    EXPECT_WK_STREQ("rgb(255, 0, 0)", [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.querySelector('#three')).color"]);
 }
 
 TEST(WKWebViewEditActions, NestedListInsertion)

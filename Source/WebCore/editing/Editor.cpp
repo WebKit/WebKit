@@ -33,6 +33,7 @@
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSPropertyNames.h"
 #include "CachedResourceLoader.h"
+#include "ChangeListTypeCommand.h"
 #include "ClipboardEvent.h"
 #include "CompositionEvent.h"
 #include "CreateLinkCommand.h"
@@ -1476,15 +1477,10 @@ void Editor::performDelete()
     setStartNewKillRingSequence(false);
 }
 
-bool Editor::canChangeSelectionListType()
-{
-    // FIXME: Not implemented.
-    return false;
-}
-
 void Editor::changeSelectionListType()
 {
-    // FIXME: Not implemented.
+    if (auto type = ChangeListTypeCommand::listConversionType(document()))
+        ChangeListTypeCommand::create(document(), *type)->apply();
 }
 
 void Editor::simplifyMarkup(Node* startNode, Node* endNode)

@@ -84,6 +84,8 @@ enum class EditAction : uint8_t {
     FormatBlock,
     InsertOrderedList,
     InsertUnorderedList,
+    ConvertToOrderedList,
+    ConvertToUnorderedList,
     Indent,
     Outdent
 };

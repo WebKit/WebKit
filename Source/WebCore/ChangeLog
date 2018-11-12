@@ -1,3 +1,72 @@
+2018-11-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Implement a new edit command to change the enclosing list type
+        https://bugs.webkit.org/show_bug.cgi?id=191487
+        <rdar://problem/45955922>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add support for a new edit command that changes the type of the enclosing list element around the selection from
+        unordered to ordered list and vice versa. This new edit command is exposed only to internal WebKit2 clients, via
+        SPI on WKWebView (`-_changeListType:`).
+
+        This is currently intended for use in Mail compose, but may also be adopted by legacy Notes in the future. As
+        such, the behavior of this editing command mostly matches shipping behavior in Mail compose (which is currently
+        implemented entirely by Mail). See below for more details.
+
+        Test:   editing/execCommand/change-list-type.html
+                WKWebViewEditActions.ChangeListType
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/ChangeListTypeCommand.cpp: Added.
+        (WebCore::listConversionTypeForSelection):
+        (WebCore::ChangeListTypeCommand::listConversionType):
+
+        Helper that returns a potential list conversion command that may be executed at the given document's selection,
+        if any exists. We also use existing logic from Mail here to determine which list to change, by walking up the
+        DOM from the lowest common ancestor container of the current selection until we hit the first list element.
+
+        (WebCore::ChangeListTypeCommand::createNewList):
+
+        Helper method to create a new list element to replace the given list, and then clone element data from the given
+        list to the new list. This addresses an existing bug in Mail, wherein changing list type for an enclosing list
+        which contains inline style properties drops the inline styles, because existing logic in Mail that implements
+        this editing command only copies the `class` attribute of the old list to the new list.
+
+        (WebCore::ChangeListTypeCommand::doApply):
+
+        Apply the edit command by running the following steps:
+        -   Find the enclosing list element, if any (see above).
+        -   Create a new list element of the opposite type as the enclosing list, and clone over element data from the
+            list element being replaced.
+        -   Insert the new list next to the original list.
+        -   Move all children of the original list to the new list.
+        -   Remove the original list.
+        -   Set the selection to the end of the new list.
+
+        * editing/ChangeListTypeCommand.h: Added.
+        * editing/EditAction.h:
+
+        Add a pair of new edit actions for conversion from unordered list to ordered list and vice versa.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::changeSelectionListType):
+
+        Implement this by creating and applying a new ChangeListTypeCommand.
+
+        (WebCore::Editor::canChangeSelectionListType): Deleted.
+
+        Remove this for now, since there's no need for it until full support for edit command validation is implemented.
+
+        * editing/Editor.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::changeSelectionListType):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
+        Add internal hooks to change list type from layout tests.
+
 2018-11-11  Daniel Bates  <dabates@apple.com>
 
         [iOS] Draw caps lock indicator in password fields

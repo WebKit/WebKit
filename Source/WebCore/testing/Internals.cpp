@@ -2227,6 +2227,12 @@ void Internals::handleAcceptedCandidate(const String& candidate, unsigned locati
     contextDocument()->frame()->editor().handleAcceptedCandidate(result);
 }
 
+void Internals::changeSelectionListType()
+{
+    if (auto frame = makeRefPtr(this->frame()))
+        frame->editor().changeSelectionListType();
+}
+
 bool Internals::isOverwriteModeEnabled()
 {
     Document* document = contextDocument();

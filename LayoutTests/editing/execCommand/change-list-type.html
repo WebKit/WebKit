@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+</head>
+<body>
+    <div contenteditable id="top">
+        <ul class="list">
+            <li id="one">one</li>
+            <ol class="list" style="color: red">
+                <li id="two">two</li>
+                <li id="three">three</li>
+            </ol>
+            <li id="four">four</li>
+            <pre>
+                <ol class="list">
+                    <li id="five">five</li>
+                    <li id="six">six</li>
+                </ol>
+            </pre>
+        </ul>
+    </div>
+    <div contenteditable id="bottom">
+        <table>
+            <tbody>
+                <tr>
+                    <td>
+                        <div>foo</div>
+                        <ol class="list">
+                            <li id="seven">seven</li>
+                            <li id="eight">eight</li>
+                        </ol>
+                    </td>
+                    <td>
+                        <div>bar</div>
+                        <ul class="list">
+                            <li id="nine">nine</li>
+                            <li id="ten">ten</li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <script>
+    (async () => {
+        Markup.description("Verifies that the 'list type change' editing command works as expected. This test requires WebKitTestRunner or DumpRenderTree.");
+        if (!window.internals)
+            return;
+
+        Markup.waitUntilDone();
+
+        top.focus();
+        getSelection().setPosition(one, 1);
+        internals.changeSelectionListType();
+        Markup.dump("top", "After making the outer list ordered");
+
+        undoCommand();
+        Markup.dump("top", "After an undo");
+
+        redoCommand();
+        Markup.dump("top", "After a redo");
+
+        getSelection().setBaseAndExtent(two, 0, two, 1);
+        internals.changeSelectionListType();
+        Markup.dump("top", "After making the first sublist unordered");
+
+        internals.changeSelectionListType();
+        Markup.dump("top", "After changing the first sublist back to ordered");
+
+        await new Promise(requestAnimationFrame);
+        getSelection().setBaseAndExtent(five, 0, six, 1);
+        internals.changeSelectionListType();
+        Markup.dump("top", "After making the second sublist unordered");
+
+        undoCommand();
+        Markup.dump("top", "After an undo");
+
+        getSelection().setBaseAndExtent(three, 0, five, 1);
+        internals.changeSelectionListType();
+        Markup.dump("top", "After making the outer list unordered");
+
+        internals.changeSelectionListType();
+        Markup.dump("top", "After making the outer list ordered again");
+
+        bottom.focus();
+        getSelection().setPosition(seven, 0);
+        internals.changeSelectionListType();
+        Markup.dump("bottom", "After making the left list unordered");
+
+        getSelection().setBaseAndExtent(nine, 0, ten, 1);
+        internals.changeSelectionListType();
+        Markup.dump("bottom", "After making the right list ordered");
+
+        getSelection().setBaseAndExtent(seven, 0, ten, 1);
+        internals.changeSelectionListType();
+        Markup.dump("bottom", "After selecting both lists and changing list type (this should be a no-op)");
+
+        Markup.notifyDone();
+    })();
+    </script>
+</body>
+</html>

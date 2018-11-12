@@ -893,6 +893,7 @@ editing/AppendNodeCommand.cpp
 editing/ApplyBlockElementCommand.cpp
 editing/ApplyStyleCommand.cpp
 editing/BreakBlockquoteCommand.cpp
+editing/ChangeListTypeCommand.cpp
 editing/CompositeEditCommand.cpp
 editing/CreateLinkCommand.cpp
 editing/DeleteFromTextNodeCommand.cpp

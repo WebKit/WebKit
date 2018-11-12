@@ -333,6 +333,7 @@ enum CompositingPolicy {
     void setAutomaticSpellingCorrectionEnabled(boolean enabled);
 
     void handleAcceptedCandidate(DOMString candidate, unsigned long location, unsigned long length);
+    void changeSelectionListType();
 
     boolean isOverwriteModeEnabled();
     void toggleOverwriteModeEnabled();

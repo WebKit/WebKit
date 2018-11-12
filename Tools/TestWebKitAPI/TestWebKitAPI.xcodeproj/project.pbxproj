@@ -867,6 +867,7 @@
 		F4D4F3B91E4E36E400BB2767 /* DragAndDropTestsIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4D4F3B71E4E36E400BB2767 /* DragAndDropTestsIOS.mm */; };
 		F4D5E4E81F0C5D38008C1A49 /* dragstart-clear-selection.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4D5E4E71F0C5D27008C1A49 /* dragstart-clear-selection.html */; };
 		F4D65DA81F5E4704009D8C27 /* selected-text-image-link-and-editable.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4D65DA71F5E46C0009D8C27 /* selected-text-image-link-and-editable.html */; };
+		F4D9818F2196B920008230FC /* editable-nested-lists.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4D9818E2196B911008230FC /* editable-nested-lists.html */; };
 		F4DEF6ED1E9B4DB60048EF61 /* image-in-link-and-input.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4DEF6EC1E9B4D950048EF61 /* image-in-link-and-input.html */; };
 		F4E0A28B211E4A2B00AF7C7F /* full-page-dropzone.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F46128D8211E496300D9FADB /* full-page-dropzone.html */; };
 		F4E0A28F211E5D5B00AF7C7F /* DragAndDropTestsMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4E0A28E211E5D5B00AF7C7F /* DragAndDropTestsMac.mm */; };
@@ -1032,6 +1033,7 @@
 				2EB29D5E1F762DB90023A5F1 /* dump-datatransfer-types.html in Copy Resources */,
 				A155022C1E050D0300A24C57 /* duplicate-completion-handler-calls.html in Copy Resources */,
 				9984FACE1CFFB090008D198C /* editable-body.html in Copy Resources */,
+				F4D9818F2196B920008230FC /* editable-nested-lists.html in Copy Resources */,
 				F44D06451F395C26001A0E29 /* editor-state-test-harness.html in Copy Resources */,
 				51C8E1A91F27F49600BF731B /* EmptyGrandfatheredResourceLoadStatistics.plist in Copy Resources */,
 				A14AAB651E78DC5400C1ADC2 /* encrypted.pdf in Copy Resources */,
@@ -2155,6 +2157,7 @@
 		F4D4F3B71E4E36E400BB2767 /* DragAndDropTestsIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DragAndDropTestsIOS.mm; sourceTree = "<group>"; };
 		F4D5E4E71F0C5D27008C1A49 /* dragstart-clear-selection.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "dragstart-clear-selection.html"; sourceTree = "<group>"; };
 		F4D65DA71F5E46C0009D8C27 /* selected-text-image-link-and-editable.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "selected-text-image-link-and-editable.html"; sourceTree = "<group>"; };
+		F4D9818E2196B911008230FC /* editable-nested-lists.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "editable-nested-lists.html"; sourceTree = "<group>"; };
 		F4DEF6EC1E9B4D950048EF61 /* image-in-link-and-input.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "image-in-link-and-input.html"; sourceTree = "<group>"; };
 		F4E0A28E211E5D5B00AF7C7F /* DragAndDropTestsMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DragAndDropTestsMac.mm; sourceTree = "<group>"; };
 		F4E0A295211FC5A300AF7C7F /* selected-text-and-textarea.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "selected-text-and-textarea.html"; sourceTree = "<group>"; };
@@ -2737,6 +2740,7 @@
 				2EB29D5D1F762DA50023A5F1 /* dump-datatransfer-types.html */,
 				A155022B1E050BC500A24C57 /* duplicate-completion-handler-calls.html */,
 				9984FACD1CFFB038008D198C /* editable-body.html */,
+				F4D9818E2196B911008230FC /* editable-nested-lists.html */,
 				F44D06441F395C0D001A0E29 /* editor-state-test-harness.html */,
 				51C8E1A81F27F47300BF731B /* EmptyGrandfatheredResourceLoadStatistics.plist */,
 				F4C2AB211DD6D94100E06D5B /* enormous-video-with-sound.html */,

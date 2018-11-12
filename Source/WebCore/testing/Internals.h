@@ -314,6 +314,7 @@ public:
     void setAutomaticSpellingCorrectionEnabled(bool);
 
     void handleAcceptedCandidate(const String& candidate, unsigned location, unsigned length);
+    void changeSelectionListType();
 
     bool isOverwriteModeEnabled();
     void toggleOverwriteModeEnabled();

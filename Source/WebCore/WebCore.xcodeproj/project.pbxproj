@@ -14887,6 +14887,8 @@
 		F48D2AA42159740D00C6752B /* ColorCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ColorCocoa.mm; sourceTree = "<group>"; };
 		F49786871FF45FA500E060AB /* PasteboardItemInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PasteboardItemInfo.h; sourceTree = "<group>"; };
 		F4D43D64218802E600ECECAC /* SerializedAttachmentData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SerializedAttachmentData.h; sourceTree = "<group>"; };
+		F4D9817D2195FBF6008230FC /* ChangeListTypeCommand.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChangeListTypeCommand.h; sourceTree = "<group>"; };
+		F4D9817E2195FBF6008230FC /* ChangeListTypeCommand.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ChangeListTypeCommand.cpp; sourceTree = "<group>"; };
 		F4E57EDA213F3F5F004EA98E /* FontAttributeChanges.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FontAttributeChanges.h; sourceTree = "<group>"; };
 		F4E57EDF213F434A004EA98E /* WebCoreNSFontManagerExtras.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebCoreNSFontManagerExtras.h; sourceTree = "<group>"; };
 		F4E57EE0213F434A004EA98E /* WebCoreNSFontManagerExtras.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreNSFontManagerExtras.mm; sourceTree = "<group>"; };
@@ -20683,6 +20685,8 @@
 				93309D8A099E64910056E581 /* ApplyStyleCommand.h */,
 				93309D8B099E64910056E581 /* BreakBlockquoteCommand.cpp */,
 				93309D8C099E64910056E581 /* BreakBlockquoteCommand.h */,
+				F4D9817E2195FBF6008230FC /* ChangeListTypeCommand.cpp */,
+				F4D9817D2195FBF6008230FC /* ChangeListTypeCommand.h */,
 				7C3A91E51C963B8800D1A7E3 /* ClipboardAccessPolicy.h */,
 				93309D8D099E64910056E581 /* CompositeEditCommand.cpp */,
 				93309D8E099E64910056E581 /* CompositeEditCommand.h */,
