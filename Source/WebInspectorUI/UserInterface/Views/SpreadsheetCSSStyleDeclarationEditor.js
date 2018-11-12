@@ -507,6 +507,16 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
             this._suppressBlur = false;
 
             event.stop();
+        } else if (event.key === "Tab" || event.key === "Enter") {
+            if (!this._hasSelectedProperties())
+                return;
+
+            let property = this._propertyViews[this._focusIndex];
+            if (property && property.enabled) {
+                event.stop();
+                property.nameTextField.startEditing();
+            }
+
         } else if (event.key === "Backspace") {
             if (!this._hasSelectedProperties())
                 return;
