@@ -127,6 +127,7 @@ class BindingsTests:
                     self.failures.append("(%s) %s" % (generator, output_file))
             elif self.verbose:
                 print('PASS: (%s) %s' % (generator, output_file))
+            sys.stdout.flush()
         return changes_found
 
     def test_matches_patterns(self, test):

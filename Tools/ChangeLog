@@ -1,3 +1,19 @@
+2018-11-11  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        run-bindings-tests is timing out in some WinCairo bots
+        https://bugs.webkit.org/show_bug.cgi?id=191348
+
+        Reviewed by Alex Christensen.
+
+        BuildBot kills run-bindings-tests if it outputs nothing for 20
+        minutes. run-bindings-tests runs very slowly in WinCairo Docker,
+        and it takes more than 30 minutes to finish. And, Windows Python
+        buffers the progress output.
+
+        * Scripts/webkitpy/bindings/main.py:
+        (BindingsTests.detect_changes): Call sys.stdout.flush() after the
+        test case result is output.
+
 2018-11-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Implement a new edit command to change the enclosing list type
