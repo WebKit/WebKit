@@ -763,3 +763,6 @@ shouldIgnoreMetaViewport:
 videoQualityIncludesDisplayCompositingEnabled:
   initial: false
   conditional: VIDEO
+
+editableImagesEnabled:
+  initial: false

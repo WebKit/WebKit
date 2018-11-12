@@ -1,3 +1,84 @@
+2018-11-12  Tim Horton  <timothy_horton@apple.com>
+
+        Make it possible to edit images inline
+        https://bugs.webkit.org/show_bug.cgi?id=191352
+        <rdar://problem/30107985>
+
+        Reviewed by Dean Jackson.
+
+        Tests: editing/images/basic-editable-image.html
+               editing/images/reparent-editable-image-maintains-strokes.html
+
+        Add the beginnings of a mechanism to replace images with a special attribute
+        with a native drawing view in the UI process.
+
+        * page/Settings.yaml:
+        Add a setting to control whether images become natively editable when they
+        have the x-apple-editable-image attribute.
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::editableImageViewID const):
+        Lazily generate an EmbeddedViewID and persist it on the <img> element.
+
+        * html/HTMLImageElement.h:
+        Rearrange the service controls methods to sit before the members.
+        Add m_editableImageViewID and editableImageViewID().
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::nextEmbeddedViewID):
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::setContentsToEmbeddedView):
+        Add a new ContentsLayerPurpose, EmbeddedView, which is only supported
+        on Cocoa platforms and when using RemoteLayerTree.
+        Add ContentsLayerEmbeddedViewType, which currently only has the EditableImage type.
+        Add setContentsToEmbeddedView, which takes a ContentsLayerEmbeddedViewType
+        and an EmbeddedViewID to uniquely identify and communicate about the
+        embedded view (which may move between layers, since it is tied to an element).
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::createPlatformCALayerForEmbeddedView):
+        (WebCore::GraphicsLayerCA::setContentsToEmbeddedView):
+        When setting GraphicsLayer's contents to an embedded view, we use
+        a special PlatformCALayer factory that takes the EmbeddedViewID and type.
+        GraphicsLayerCARemote will override this and make a correctly-initialized
+        PlatformCALayerRemote that keeps track of the EmbeddedViewID.
+
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/ca/PlatformCALayer.cpp:
+        (WebCore::operator<<):
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.h:
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (WebCore::PlatformCALayerCocoa::PlatformCALayerCocoa):
+        (WebCore::PlatformCALayerCocoa::embeddedViewID const):
+        Add stubs and logging for EmbeddedViewID on PlatformCALayer.
+        These will be overridden by PlatformCALayerRemote to do more interesting things.
+
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::isEditableImage const):
+        Add a getter that return true if the setting is enabled and
+        x-apple-editable-image is empty or true.
+
+        (WebCore::RenderImage::requiresLayer const):
+        RenderImage requires a layer either if RenderReplaced does, or we are an
+        editable image.
+
+        * rendering/RenderImage.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::shouldBeNormalFlowOnly const):
+        (WebCore::RenderLayer::calculateClipRects const):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateConfiguration):
+        Push the EmbeddedViewID and type down to GraphicsLayer for editable images.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingLayer const):
+        (WebCore::RenderLayerCompositor::requiresOwnBackingStore const):
+        (WebCore::RenderLayerCompositor::reasonsForCompositing const):
+        (WebCore::RenderLayerCompositor::requiresCompositingForEditableImage const):
+        * rendering/RenderLayerCompositor.h:
+        Make editable images require compositing implicitly.
+
 2018-11-12  Don Olmstead  <don.olmstead@sony.com>
 
         Shipped PNGs include bad profiles: iCCP: known incorrect sRGB profile

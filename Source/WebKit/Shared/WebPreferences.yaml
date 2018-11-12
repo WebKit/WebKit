@@ -1185,6 +1185,10 @@ VideoQualityIncludesDisplayCompositingEnabled:
   defaultValue: false
   condition: ENABLE(VIDEO)
 
+EditableImagesEnabled:
+  type: bool
+  defaultValue: false
+
 # For experimental features:
 # The type should be boolean.
 # You must provide a humanReadableName and humanReadableDescription for all experimental features. They

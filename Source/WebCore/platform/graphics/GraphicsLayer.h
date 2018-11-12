@@ -476,11 +476,21 @@ public:
         Media,
         Canvas,
         BackgroundColor,
-        Plugin
+        Plugin,
+        EmbeddedView
     };
+
+    enum class ContentsLayerEmbeddedViewType : uint8_t {
+        None = 0,
+        EditableImage,
+    };
+
+    using EmbeddedViewID = uint64_t;
+    static EmbeddedViewID nextEmbeddedViewID();
 
     // Pass an invalid color to remove the contents layer.
     virtual void setContentsToSolidColor(const Color&) { }
+    virtual void setContentsToEmbeddedView(GraphicsLayer::ContentsLayerEmbeddedViewType, EmbeddedViewID) { }
     virtual void setContentsToPlatformLayer(PlatformLayer*, ContentsLayerPurpose) { }
     virtual bool usesContentsLayer() const { return false; }
 

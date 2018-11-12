@@ -70,6 +70,7 @@ void RemoteLayerTreeContext::layerWasCreated(PlatformCALayerRemote& layer, Platf
     RemoteLayerTreeTransaction::LayerCreationProperties creationProperties;
     creationProperties.layerID = layerID;
     creationProperties.type = type;
+    creationProperties.embeddedViewID = layer.embeddedViewID();
 
     if (layer.isPlatformCALayerRemoteCustom()) {
         creationProperties.hostingContextID = layer.hostingContextID();

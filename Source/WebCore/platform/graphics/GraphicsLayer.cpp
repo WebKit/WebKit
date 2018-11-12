@@ -739,6 +739,12 @@ void GraphicsLayer::traverse(GraphicsLayer& layer, const WTF::Function<void (Gra
         traverse(*maskLayer, traversalFunc);
 }
 
+GraphicsLayer::EmbeddedViewID GraphicsLayer::nextEmbeddedViewID()
+{
+    static GraphicsLayer::EmbeddedViewID nextEmbeddedViewID;
+    return ++nextEmbeddedViewID;
+}
+
 void GraphicsLayer::dumpLayer(TextStream& ts, LayerTreeAsTextBehavior behavior) const
 {
     ts << indent << "(" << "GraphicsLayer";

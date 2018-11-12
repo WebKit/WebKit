@@ -80,6 +80,7 @@ enum class CompositingReason {
     WillChange                             = 1 << 23,
     Root                                   = 1 << 24,
     IsolatesCompositedBlendingDescendants  = 1 << 25,
+    EmbeddedView                           = 1 << 26,
 };
 
 // RenderLayerCompositor manages the hierarchy of
@@ -432,7 +433,7 @@ private:
     bool requiresCompositingForScrollableFrame(RequiresCompositingData&) const;
     bool requiresCompositingForPosition(RenderLayerModelObject&, const RenderLayer&, RequiresCompositingData&) const;
     bool requiresCompositingForOverflowScrolling(const RenderLayer&, RequiresCompositingData&) const;
-
+    bool requiresCompositingForEditableImage(RenderLayerModelObject&) const;
     bool requiresCompositingForIndirectReason(RenderLayerModelObject&, bool hasCompositedDescendants, bool has3DTransformedDescendants, RenderLayer::IndirectCompositingReason&) const;
 
     static bool styleChangeMayAffectIndirectCompositingReasons(const RenderStyle& oldStyle, const RenderStyle& newStyle);

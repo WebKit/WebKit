@@ -133,6 +133,7 @@ public:
     WEBCORE_EXPORT void removeAnimation(const String& animationName) override;
 
     WEBCORE_EXPORT void setContentsToImage(Image*) override;
+    WEBCORE_EXPORT void setContentsToEmbeddedView(GraphicsLayer::ContentsLayerEmbeddedViewType, GraphicsLayer::EmbeddedViewID) override;
 #if PLATFORM(IOS_FAMILY)
     WEBCORE_EXPORT PlatformLayer* contentsLayerForMedia() const override;
 #endif
@@ -228,6 +229,7 @@ private:
 
     virtual Ref<PlatformCALayer> createPlatformCALayer(PlatformCALayer::LayerType, PlatformCALayerClient* owner);
     virtual Ref<PlatformCALayer> createPlatformCALayer(PlatformLayer*, PlatformCALayerClient* owner);
+    virtual Ref<PlatformCALayer> createPlatformCALayerForEmbeddedView(PlatformCALayer::LayerType, GraphicsLayer::EmbeddedViewID, PlatformCALayerClient* owner);
     virtual Ref<PlatformCAAnimation> createPlatformCAAnimation(PlatformCAAnimation::AnimationType, const String& keyPath);
 
     PlatformCALayer* primaryLayer() const { return m_structuralLayer.get() ? m_structuralLayer.get() : m_layer.get(); }

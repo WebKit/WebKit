@@ -2085,6 +2085,7 @@ bool RenderLayerCompositor::requiresCompositingLayer(const RenderLayer& layer, R
         || requiresCompositingForVideo(renderer)
         || requiresCompositingForFrame(renderer, queryData)
         || requiresCompositingForPlugin(renderer, queryData)
+        || requiresCompositingForEditableImage(renderer)
         || requiresCompositingForOverflowScrolling(*renderer.layer(), queryData);
 }
 
@@ -2145,6 +2146,7 @@ bool RenderLayerCompositor::requiresOwnBackingStore(const RenderLayer& layer, co
         || requiresCompositingForVideo(renderer)
         || requiresCompositingForFrame(renderer, queryData)
         || requiresCompositingForPlugin(renderer, queryData)
+        || requiresCompositingForEditableImage(renderer)
         || requiresCompositingForOverflowScrolling(layer, queryData)
         || renderer.isTransparent()
         || renderer.hasMask()
@@ -2190,6 +2192,8 @@ OptionSet<CompositingReason> RenderLayerCompositor::reasonsForCompositing(const 
         reasons.add(CompositingReason::Plugin);
     else if (requiresCompositingForFrame(renderer, queryData))
         reasons.add(CompositingReason::IFrame);
+    else if (requiresCompositingForEditableImage(renderer))
+        reasons.add(CompositingReason::EmbeddedView);
 
     if ((canRender3DTransforms() && renderer.style().backfaceVisibility() == BackfaceVisibility::Hidden))
         reasons.add(CompositingReason::BackfaceVisibilityHidden);
@@ -2563,6 +2567,18 @@ bool RenderLayerCompositor::requiresCompositingForPlugin(RenderLayerModelObject&
     // Don't go into compositing mode if height or width are zero, or size is 1x1.
     IntRect contentBox = snappedIntRect(pluginRenderer.contentBoxRect());
     return (contentBox.height() * contentBox.width() > 1);
+}
+    
+bool RenderLayerCompositor::requiresCompositingForEditableImage(RenderLayerModelObject& renderer) const
+{
+    if (!renderer.isRenderImage())
+        return false;
+
+    auto& image = downcast<RenderImage>(renderer);
+    if (!image.isEditableImage())
+        return false;
+
+    return true;
 }
 
 bool RenderLayerCompositor::requiresCompositingForFrame(RenderLayerModelObject& renderer, RequiresCompositingData& queryData) const
