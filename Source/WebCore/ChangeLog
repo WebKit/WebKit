@@ -1,3 +1,16 @@
+2018-11-12  Rob Buis  <rbuis@igalia.com>
+
+        CSSCalcOperation constructor wastes 6KB of Vector capacity on cnn.com
+        https://bugs.webkit.org/show_bug.cgi?id=190839
+
+        Reviewed by Frédéric Wang.
+
+        The CSSCalcOperation ctor that takes a leftSide and rightSide parameter
+        wastes memory since it will always have size 2 but claims the
+        default Vector size. So make sure to reserve an initial capacity of 2.
+
+        * css/CSSCalculationValue.cpp:
+
 2018-11-12  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         WTFMove(xxx) is used in arguments while other arguments touch xxx

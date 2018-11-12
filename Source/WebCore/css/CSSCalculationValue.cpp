@@ -660,8 +660,9 @@ private:
         : CSSCalcExpressionNode(category, isIntegerResult(op, leftSide.get(), rightSide.get()))
         , m_operator(op)
     {
-        m_children.append(WTFMove(leftSide));
-        m_children.append(WTFMove(rightSide));
+        m_children.reserveInitialCapacity(2);
+        m_children.uncheckedAppend(WTFMove(leftSide));
+        m_children.uncheckedAppend(WTFMove(rightSide));
     }
 
     CSSCalcOperation(CalculationCategory category, CalcOperator op, Vector<Ref<CSSCalcExpressionNode>>&& children)
