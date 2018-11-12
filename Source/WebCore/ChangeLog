@@ -1,3 +1,27 @@
+2018-11-12  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Frame re-ordering can cause iframes to never be enqueued
+        https://bugs.webkit.org/show_bug.cgi?id=191485
+
+        Reviewed by Eric Carlson.
+
+        Test: media/media-source/media-source-dropped-iframe.html
+
+        Some frame re-ordering techniques result in files where the first frame has a
+        decode timestamp < 0, but a presentation timestamp >= 0. When appending these
+        samples to existing content, we can fail to enqueue the first frame because its
+        DTS overlaps an existing sample, but the presentation timestamp does not.
+        Rather than try to only enqueue samples whose decode timestamps are > than the
+        greatest decode end timestamp (minus some fudge factor), allow all frames to be
+        added to the decode queue if they are strictly ordered greater than the last
+        enqueued frame.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::TrackBuffer::TrackBuffer):
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveSample):
+        (WebCore::SourceBuffer::provideMediaData):
+        (WebCore::SourceBuffer::reenqueueMediaForTime):
+
 2018-11-12  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         IDBTransaction does not use "RefPtr<IDBTransaction> self"

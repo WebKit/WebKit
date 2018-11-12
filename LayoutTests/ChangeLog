@@ -1,3 +1,13 @@
+2018-11-12  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Frame re-ordering can cause iframes to never be enqueued
+        https://bugs.webkit.org/show_bug.cgi?id=191485
+
+        Reviewed by Eric Carlson.
+
+        * media/media-source/media-source-dropped-iframe-expected.txt: Added.
+        * media/media-source/media-source-dropped-iframe.html: Added.
+
 2018-11-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Implement a new edit command to change the enclosing list type

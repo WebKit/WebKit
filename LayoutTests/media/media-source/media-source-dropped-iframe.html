@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-dropped-iframe</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var initSegment;
+    var samples;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    async function runTest() {
+        findMediaElement();
+
+        source = new MediaSource();
+        testExpected('source.readyState', 'closed');
+
+        video.srcObject = source;
+        await waitFor(source, 'sourceopen');
+
+        run('sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
+        initSegment = makeAInit(8, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]);
+        run('sourceBuffer.appendBuffer(initSegment)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        samples = concatenateSamples([
+            makeASample(0, 0, 1, 1, 1, SAMPLE_FLAG.SYNC, 1),
+            makeASample(1, 1, 1, 1, 1, SAMPLE_FLAG.NONE, 1),
+            makeASample(2, 2, 1, 1, 1, SAMPLE_FLAG.NONE, 1),
+        ]);
+        run('sourceBuffer.appendBuffer(samples)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        run('sourceBuffer.timestampOffset = 3');
+        samples = concatenateSamples([
+            makeASample(0, -1, 1, 1, 1, SAMPLE_FLAG.SYNC, 2),
+            makeASample(2,  0, 1, 1, 1, SAMPLE_FLAG.NONE, 2),
+            makeASample(1,  1, 1, 1, 1, SAMPLE_FLAG.NONE, 2),
+        ]);
+        run('sourceBuffer.appendBuffer(samples)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        bufferedSamples = internals.bufferedSamplesForTrackID(sourceBuffer, 1);
+        enqueuedSamples = internals.enqueuedSamplesForTrackID(sourceBuffer, 1);
+
+        consoleWrite("Buffered:");
+        bufferedSamples.forEach(consoleWrite);
+
+        consoleWrite("Enqueued:");
+        enqueuedSamples.forEach(consoleWrite);
+
+        endTest();
+    }
+    
+    </script>
+</head>
+<body onload="runTest().catch(failTest)">
+    <video></video>
+</body>
+</html>
