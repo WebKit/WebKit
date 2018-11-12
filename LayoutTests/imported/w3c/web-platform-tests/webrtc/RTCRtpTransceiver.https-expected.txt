@@ -5,18 +5,18 @@ PASS checkAddTransceiverNoTrack
 PASS checkAddTransceiverWithTrack 
 PASS checkAddTransceiverWithAddTrack 
 PASS checkAddTransceiverWithDirection 
-FAIL checkAddTransceiverWithStream assert_true: offer contains the expected audio msid expected true got false
+PASS checkAddTransceiverWithStream 
 FAIL checkAddTransceiverWithOfferToReceiveAudio assert_equals: expected "[{currentDirection:null,direction:\"recvonly\",mid:null,receiver:{track:{kind:\"audio\"}},sender:{track:null},stopped:false}]" but got "[]"
 FAIL checkAddTransceiverWithOfferToReceiveVideo assert_equals: expected "[{currentDirection:null,direction:\"recvonly\",mid:null,receiver:{track:{kind:\"video\"}},sender:{track:null},stopped:false}]" but got "[]"
 FAIL checkAddTransceiverWithOfferToReceiveBoth assert_equals: expected "[{currentDirection:null,direction:\"recvonly\",mid:null,receiver:{track:{kind:\"audio\"}},sender:{track:null},stopped:false},{currentDirection:null,direction:\"recvonly\",mid:null,receiver:{track:{kind:\"video\"}},sender:{track:null},stopped:false}]" but got "[]"
-FAIL checkAddTransceiverWithSetRemoteOfferSending assert_equals: expected "[{streams:[{id:\"117b0a30-7f2b-4595-8183-98bd8a7599bb\"}],track:{}}]" but got "[{streams:[],track:{}}]"
+PASS checkAddTransceiverWithSetRemoteOfferSending 
 FAIL checkAddTransceiverWithSetRemoteOfferNoSend assert_equals: expected "[{currentDirection:null,direction:\"recvonly\",receiver:{track:{kind:\"audio\"}},sender:{track:null},stopped:false}]" but got "[]"
 PASS checkAddTransceiverBadKind 
 FAIL checkNoMidOffer promise_test: Unhandled rejection with value: object "OperationError: Failed to set remote offer sdp: The BUNDLE group contains MID:0 matching no m= section."
 PASS checkSetDirection 
 PASS checkCurrentDirection 
 PASS checkSendrecvWithNoSendTrack 
-FAIL checkSendrecvWithTracklessStream assert_equals: expected "[{streams:[{id:\"8a46ae8c-120e-42a0-9272-94c79a7745be\"}],track:{}}]" but got "[{streams:[],track:{}}]"
+PASS checkSendrecvWithTracklessStream 
 PASS checkAddTransceiverNoTrackDoesntPair 
 PASS checkAddTransceiverWithTrackDoesntPair 
 PASS checkAddTransceiverThenReplaceTrackDoesntPair 

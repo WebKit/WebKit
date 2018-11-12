@@ -51,6 +51,7 @@
 
 namespace WebCore {
 
+class MediaStream;
 class MediaStreamTrack;
 class PeerConnectionBackend;
 class RTCController;
@@ -62,8 +63,10 @@ class RTCStatsCallback;
 struct RTCAnswerOptions;
 struct RTCOfferOptions;
 struct RTCRtpParameters;
+
 struct RTCRtpTransceiverInit {
-    RTCRtpTransceiverDirection direction;
+    RTCRtpTransceiverDirection direction { RTCRtpTransceiverDirection::Sendrecv };
+    Vector<RefPtr<MediaStream>> streams;
 };
 
 class RTCPeerConnection final

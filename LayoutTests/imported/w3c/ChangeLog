@@ -1,3 +1,13 @@
+2018-11-12  Youenn Fablet  <youenn@apple.com>
+
+        Support setting stream ids when adding a transceiver
+        https://bugs.webkit.org/show_bug.cgi?id=191307
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/webrtc/RTCPeerConnection-transceivers.https-expected.txt:
+        * web-platform-tests/webrtc/RTCRtpTransceiver.https-expected.txt:
+
 2018-11-12  Eric Carlson  <eric.carlson@apple.com>
 
         Require <iframe allow="display"> for an iframe to use getDisplayMedia

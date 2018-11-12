@@ -25,8 +25,8 @@ PASS addTransceiver(track): "transceiver == {sender,receiver}"
 PASS addTransceiver(track, init): initialize direction to inactive 
 FAIL addTransceiver(track, init): initialize sendEncodings[0].active to false assert_false: expected false got true
 PASS addTransceiver(0 streams): ontrack fires with no stream 
-FAIL addTransceiver(1 stream): ontrack fires with corresponding stream assert_equals: trackEvent.streams.length == 1 expected 1 but got 0
-FAIL addTransceiver(2 streams): ontrack fires with corresponding two streams assert_equals: trackEvent.streams.length == 2 expected 2 but got 0
+PASS addTransceiver(1 stream): ontrack fires with corresponding stream 
+PASS addTransceiver(2 streams): ontrack fires with corresponding two streams 
 PASS addTrack(0 streams): ontrack fires with no stream 
 PASS addTrack(1 stream): ontrack fires with corresponding stream 
 PASS addTrack(2 streams): ontrack fires with corresponding two streams 

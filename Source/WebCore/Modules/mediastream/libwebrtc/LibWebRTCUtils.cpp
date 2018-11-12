@@ -228,9 +228,11 @@ webrtc::RtpTransceiverInit fromRtpTransceiverInit(const RTCRtpTransceiverInit& i
 {
     webrtc::RtpTransceiverInit rtcInit;
     rtcInit.direction = fromRTCRtpTransceiverDirection(init.direction);
+    for (auto& stream : init.streams)
+        rtcInit.stream_ids.push_back(stream->id().utf8().data());
     return rtcInit;
 }
 
-}; // namespace WebCore
+} // namespace WebCore
 
 #endif // USE(LIBWEBRTC)
