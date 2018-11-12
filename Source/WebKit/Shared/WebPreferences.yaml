@@ -497,7 +497,7 @@ ScreenCaptureEnabled:
   type: bool
   defaultValue: false
   webcoreBinding: RuntimeEnabledFeatures
-  condition: ENABLE(MEDIA_STREAM)
+  condition: ENABLE(MEDIA_STREAM) && PLATFORM(MAC)
   humanReadableName: "ScreenCapture"
   humanReadableDescription: "Enable ScreenCapture"
   category: experimental
