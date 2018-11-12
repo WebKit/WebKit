@@ -1,3 +1,13 @@
+2018-11-12  Eric Carlson  <eric.carlson@apple.com>
+
+        Require <iframe allow="display"> for an iframe to use getDisplayMedia
+        https://bugs.webkit.org/show_bug.cgi?id=191505
+        <rdar://problem/45968811>
+
+        Reviewed by Jer Noble.
+
+        * web-platform-tests/mediacapture-streams/MediaStream-default-feature-policy.https-expected.txt:
+
 2018-11-11  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-grid] Import additional grid layout test from the WPT suite

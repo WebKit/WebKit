@@ -1,10 +1,10 @@
-CONSOLE MESSAGE: line 16: The top-level frame has prevented a document with a different security origin from calling getUserMedia.
-CONSOLE MESSAGE: line 16: The top-level frame has prevented a document with a different security origin from calling getUserMedia.
-CONSOLE MESSAGE: line 16: The top-level frame has prevented a document with a different security origin from calling getUserMedia.
-CONSOLE MESSAGE: line 16: The top-level frame has prevented a document with a different security origin from calling getUserMedia.
-CONSOLE MESSAGE: line 16: The top-level frame has prevented a document with a different security origin from calling getUserMedia.
-CONSOLE MESSAGE: line 16: The top-level frame has prevented a document with a different security origin from calling getUserMedia.
-CONSOLE MESSAGE: line 16: The top-level frame has prevented a document with a different security origin from calling getUserMedia.
+CONSOLE MESSAGE: line 16: Trying to call getUserMedia from a frame without correct 'allow' attribute.
+CONSOLE MESSAGE: line 16: Trying to call getUserMedia from a frame without correct 'allow' attribute.
+CONSOLE MESSAGE: line 16: Trying to call getUserMedia from a frame without correct 'allow' attribute.
+CONSOLE MESSAGE: line 16: Trying to call getUserMedia from a frame without correct 'allow' attribute.
+CONSOLE MESSAGE: line 16: Trying to call getUserMedia from a frame without correct 'allow' attribute.
+CONSOLE MESSAGE: line 16: Trying to call getUserMedia from a frame without correct 'allow' attribute.
+CONSOLE MESSAGE: line 16: Trying to call getUserMedia from a frame without correct 'allow' attribute.
 
 
 PASS Default "microphone" feature policy ["self"] allows the top-level document. 

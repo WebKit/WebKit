@@ -113,8 +113,8 @@ void MediaDevicesRequest::start()
         return;
     }
 
-    auto microphoneAccess = controller->canCallGetUserMedia(document, true, false);
-    auto cameraAccess = controller->canCallGetUserMedia(document, false, true);
+    auto microphoneAccess = controller->canCallGetUserMedia(document, { UserMediaController::CaptureType::Microphone });
+    auto cameraAccess = controller->canCallGetUserMedia(document, { UserMediaController::CaptureType::Camera });
     bool canAccessMicrophone = microphoneAccess == UserMediaController::GetUserMediaAccess::CanCall;
     bool canAccessCamera = cameraAccess == UserMediaController::GetUserMediaAccess::CanCall;
     if (!canAccessMicrophone && !canAccessCamera) {

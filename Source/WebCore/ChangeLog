@@ -1,3 +1,23 @@
+2018-11-12  Eric Carlson  <eric.carlson@apple.com>
+
+        Require <iframe allow="display"> for an iframe to use getDisplayMedia
+        https://bugs.webkit.org/show_bug.cgi?id=191505
+        <rdar://problem/45968811>
+
+        Reviewed by Jer Noble.
+
+        Test: http/tests/media/media-stream/get-display-media-iframe-allow-attribute.html
+
+        * Modules/mediastream/MediaDevicesRequest.cpp:
+        (WebCore::MediaDevicesRequest::start):
+        * Modules/mediastream/UserMediaController.cpp:
+        (WebCore::isAllowedToUse):
+        (WebCore::UserMediaController::canCallGetUserMedia):
+        (WebCore::UserMediaController::logGetUserMediaDenial):
+        * Modules/mediastream/UserMediaController.h:
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::start):
+
 2018-11-12  Simon Fraser  <simon.fraser@apple.com>
 
         Make compositing updates incremental

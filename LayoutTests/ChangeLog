@@ -1,3 +1,18 @@
+2018-11-12  Eric Carlson  <eric.carlson@apple.com>
+
+        Require <iframe allow="display"> for an iframe to use getDisplayMedia
+        https://bugs.webkit.org/show_bug.cgi?id=191505
+        <rdar://problem/45968811>
+
+        Reviewed by Jer Noble.
+
+        * http/tests/media/media-stream/enumerate-devices-iframe-allow-attribute-expected.txt:
+        * http/tests/media/media-stream/get-display-media-iframe-allow-attribute-expected.txt: Added.
+        * http/tests/media/media-stream/get-display-media-iframe-allow-attribute.html: Added.
+        * http/tests/media/media-stream/resources/get-display-media-devices-iframe.html: Added.
+        * http/tests/ssl/media-stream/get-user-media-different-host-expected.txt:
+        * http/tests/ssl/media-stream/get-user-media-nested-expected.txt:
+
 2018-11-12  Simon Fraser  <simon.fraser@apple.com>
 
         Make compositing updates incremental

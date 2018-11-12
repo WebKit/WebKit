@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+<script src="../../../../resources/js-test-pre.js"></script>
+<body>
+    <iframe id="none" src="http://localhost:8000/media/media-stream/resources/get-display-media-devices-iframe.html"></iframe>
+    <iframe id="camera" allow="camera" src="http://localhost:8000/media/media-stream/resources/get-display-media-devices-iframe.html"></iframe>
+    <iframe id="microphone" allow="microphone" src="http://localhost:8000/media/media-stream/resources/get-display-media-devices-iframe.html"></iframe>
+    <iframe id="display" allow="display" src="http://localhost:8000/media/media-stream/resources/get-display-media-devices-iframe.html"></iframe>
+
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+            testRunner.setUserMediaPermission(true);
+        }
+        if (window.internals)
+            window.internals.settings.setScreenCaptureEnabled(true);
+
+        let results = [];
+        let writeResults = () => {
+            result.innerHTML = '<br>' + results.sort().join('<br>');
+        }
+
+        handle = setTimeout(() => {
+            testFailed('Timeout: not all frames loaded correctly.');
+            writeResults();
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, 4000);
+
+        let expected = {
+            'none' : 'deny',
+            'camera' : 'deny',
+            'microphone' : 'deny',
+            'display' : 'allow',
+        };
+        let success = true;
+        window.addEventListener("message", (event) => {
+            let message = event.data.trim().split(':');
+            let iframe = document.getElementById(message[0]);
+            let allow = `'${iframe.allow || ""}'`;
+            let success = expected[message[0]] == message[1];
+            results.push(`${success ? "PASS" : "FAIL"}: &LT;iframe allow=${allow}> got "${message[1]}"${success ? "" : ", should have ${expected[message[0]]}"}`);
+            if (results.length == 4) {
+                clearTimeout(handle);
+                writeResults();
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }
+            
+        }, false);
+
+        let trigerTest = (evt) => { evt.target.contentWindow.postMessage(evt.target.id, '*'); }
+        Array.from(document.getElementsByTagName('iframe')).forEach(element => element.onload = trigerTest);
+    </script>
+
+    <div id="result"></div>
+</body>
+</html>

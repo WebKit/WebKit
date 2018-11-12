@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 52: The top-level frame has prevented a document with a different security origin from calling getUserMedia.
+CONSOLE MESSAGE: line 52: Trying to call getUserMedia from a frame without correct 'allow' attribute.
 Tests that getUserMedia fails when the top level document and iframe do not have the same domain.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

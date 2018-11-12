@@ -55,13 +55,20 @@ public:
         CanCall,
         InsecureDocument,
         InsecureParent,
-        BlockedByParent
+        BlockedByParent,
+        BlockedByFeaturePolicy,
     };
-    GetUserMediaAccess canCallGetUserMedia(Document&, bool wantsAudio, bool wantsVideo);
+    enum class CaptureType {
+        Microphone = 1 << 0,
+        Camera = 1 << 1,
+        Display = 1 << 3
+    };
+    GetUserMediaAccess canCallGetUserMedia(Document&, OptionSet<CaptureType>);
 
     enum class BlockedCaller {
         GetUserMedia,
-        EnumerateDevices
+        GetDisplayMedia,
+        EnumerateDevices,
     };
     void logGetUserMediaDenial(Document&, GetUserMediaAccess, BlockedCaller);
 

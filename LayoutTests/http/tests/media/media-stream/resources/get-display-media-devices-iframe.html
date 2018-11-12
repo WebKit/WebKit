@@ -1,0 +1,17 @@
+<script>
+    async function enumerate(event)
+    {
+        let result;
+        await navigator.mediaDevices.getDisplayMedia({video: true})
+            .then((s) => result = "allow")
+            .catch((e) => result = "deny");
+        parent.postMessage(`${event.data}:${result}`, '*');
+        result.innerHTML = result;
+    }
+
+    window.addEventListener("message", (id) => enumerate(id));
+</script>
+
+<div id='result'></div>
+
+
