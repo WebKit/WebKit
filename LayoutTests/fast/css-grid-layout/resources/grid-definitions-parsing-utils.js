@@ -75,3 +75,21 @@ function testGridGapDefinitionsValues(element, computedRowGap, computedColumnGap
     shouldBeEqualToString("window.getComputedStyle(" + element + ", '').getPropertyValue('grid-row-gap')", computedRowGap);
     shouldBeEqualToString("window.getComputedStyle(" + element + ", '').getPropertyValue('grid-column-gap')", computedColumnGap);
 }
+
+function testGridPositionDefinitionsValues(
+    element, computedRowStart, computedRowEnd, computedColumnStart,
+    computedColumnEnd) {
+  assert_equals(
+      window.getComputedStyle(element, '').getPropertyValue('grid-row-start'),
+      computedRowStart, 'row-start');
+  assert_equals(
+      window.getComputedStyle(element, '').getPropertyValue('grid-row-end'),
+      computedRowEnd, 'row-end');
+  assert_equals(
+      window.getComputedStyle(element, '')
+          .getPropertyValue('grid-column-start'),
+      computedColumnStart, 'column-start');
+  assert_equals(
+      window.getComputedStyle(element, '').getPropertyValue('grid-column-end'),
+      computedColumnEnd, 'column-end');
+}

@@ -1,3 +1,167 @@
+2018-11-12  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-grid] Import additional grid layout tests and update TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=191515
+
+        Reviewed by Dean Jackson.
+
+        Imported several tests from Blink and update TextExpectaions.
+
+        * TestExpectations: Adding specific bugs for the expected failures.
+        * fast/css-grid-layout/changing-content-property-on-nested-grid-should-not-crash-expected.txt: Added.
+        * fast/css-grid-layout/changing-content-property-on-nested-grid-should-not-crash.html: Added.
+        * fast/css-grid-layout/column-property-should-not-apply-on-grid-container-expected.html: Added.
+        * fast/css-grid-layout/column-property-should-not-apply-on-grid-container.html: Added.
+        * fast/css-grid-layout/crash-large-positions-expected.txt: Added.
+        * fast/css-grid-layout/crash-large-positions.html: Added.
+        * fast/css-grid-layout/fixed-width-intrinsic-width-should-exclude-scrollbar-width-in-grid-expected.txt: Added.
+        * fast/css-grid-layout/fixed-width-intrinsic-width-should-exclude-scrollbar-width-in-grid.html: Added.
+        * fast/css-grid-layout/floating-not-effect-on-grid-items-expected.txt: Added.
+        * fast/css-grid-layout/floating-not-effect-on-grid-items.html: Added.
+        * fast/css-grid-layout/grid-align-baseline-expected.txt: Added.
+        * fast/css-grid-layout/grid-align-baseline-vertical-expected.txt: Added.
+        * fast/css-grid-layout/grid-align-baseline-vertical.html: Added.
+        * fast/css-grid-layout/grid-align-baseline.html: Added.
+        * fast/css-grid-layout/grid-auto-repeat-inherit-initial-crash-expected.txt: Added.
+        * fast/css-grid-layout/grid-auto-repeat-inherit-initial-crash.html: Added.
+        * fast/css-grid-layout/grid-auto-repeat-positioned-container-expected.html: Added.
+        * fast/css-grid-layout/grid-auto-repeat-positioned-container.html: Added.
+        * fast/css-grid-layout/grid-automatic-minimum-intrinsic-aspect-ratio-expected.txt: Added.
+        * fast/css-grid-layout/grid-automatic-minimum-intrinsic-aspect-ratio.html: Added.
+        * fast/css-grid-layout/grid-container-percentage-columns-expected.txt:
+        * fast/css-grid-layout/grid-container-percentage-columns.html:
+        * fast/css-grid-layout/grid-container-percentage-rows-expected.txt: Added.
+        * fast/css-grid-layout/grid-container-percentage-rows.html: Added.
+        * fast/css-grid-layout/grid-container-scroll-accounts-for-auto-margin-expected.html: Added.
+        * fast/css-grid-layout/grid-container-scroll-accounts-for-auto-margin.html: Added.
+        * fast/css-grid-layout/grid-container-scroll-accounts-for-sizing-expected.html:
+        * fast/css-grid-layout/grid-container-scroll-accounts-for-sizing.html:
+        * fast/css-grid-layout/grid-container-width-should-include-scroll-bar-width-expected.txt: Added.
+        * fast/css-grid-layout/grid-container-width-should-include-scroll-bar-width.html: Added.
+        * fast/css-grid-layout/grid-crash-huge-margins-and-min-height-max-content-expected.txt: Added.
+        * fast/css-grid-layout/grid-crash-huge-margins-and-min-height-max-content.html: Added.
+        * fast/css-grid-layout/grid-crash-out-of-flow-positioned-element-expected.txt: Added.
+        * fast/css-grid-layout/grid-crash-out-of-flow-positioned-element.html: Added.
+        * fast/css-grid-layout/grid-crash-remove-positioned-item-expected.txt:
+        * fast/css-grid-layout/grid-crash-remove-positioned-item.html:
+        * fast/css-grid-layout/grid-item-before-anonymous-child-crash-expected.txt: Added.
+        * fast/css-grid-layout/grid-item-before-anonymous-child-crash.html: Added.
+        * fast/css-grid-layout/grid-item-border-overflow-paint-expected.html: Added.
+        * fast/css-grid-layout/grid-item-border-overflow-paint.html: Added.
+        * fast/css-grid-layout/grid-item-change-alignment-from-stretch-expected.txt: Added.
+        * fast/css-grid-layout/grid-item-change-alignment-from-stretch.html: Added.
+        * fast/css-grid-layout/grid-item-grid-container-percentage-rows-expected.html: Added.
+        * fast/css-grid-layout/grid-item-grid-container-percentage-rows.html: Added.
+        * fast/css-grid-layout/grid-item-overflow-expected.html: Added.
+        * fast/css-grid-layout/grid-item-overflow-paint-expected.html: Added.
+        * fast/css-grid-layout/grid-item-overflow-paint.html: Added.
+        * fast/css-grid-layout/grid-item-overflow.html: Added.
+        * fast/css-grid-layout/grid-item-paddings-and-writing-modes-expected.html: Added.
+        * fast/css-grid-layout/grid-item-paddings-and-writing-modes.html: Added.
+        * fast/css-grid-layout/grid-item-scroll-position-expected.txt: Added.
+        * fast/css-grid-layout/grid-item-scroll-position.html: Added.
+        * fast/css-grid-layout/grid-margins-not-collapse-expected.html: Added.
+        * fast/css-grid-layout/grid-margins-not-collapse.html: Added.
+        * fast/css-grid-layout/grid-painting-item-overflow-expected.html: Added.
+        * fast/css-grid-layout/grid-painting-item-overflow.html: Added.
+        * fast/css-grid-layout/grid-painting-items-only-once-expected.html: Added.
+        * fast/css-grid-layout/grid-painting-items-only-once.html: Added.
+        * fast/css-grid-layout/grid-painting-respect-dom-order-expected.html: Added.
+        * fast/css-grid-layout/grid-painting-respect-dom-order.html: Added.
+        * fast/css-grid-layout/grid-painting-rtl-expected.html: Added.
+        * fast/css-grid-layout/grid-painting-rtl.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-01-expected.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-01.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-02-b-expected.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-02-b.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-02-expected.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-02.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-03-expected.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-03.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-04-expected.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-04.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-05-expected.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-05.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-06-expected.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-06.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-07-expected.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-07.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-horiz-01-expected.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-horiz-01.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-horiz-02-expected.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-horiz-02.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-horiz-03-expected.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-horiz-03.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-horiz-04-expected.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-horiz-04.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-horiz-05-expected.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-horiz-05.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-horiz-06-expected.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-horiz-06.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-horiz-07-expected.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-horiz-07.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-two-dimensional-expected.txt: Added.
+        * fast/css-grid-layout/grid-self-baseline-two-dimensional.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-vertical-lr-01-expected.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-vertical-lr-01.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-vertical-lr-02-expected.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-vertical-lr-02.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-vertical-lr-03-expected.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-vertical-lr-03.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-vertical-lr-04-expected.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-vertical-lr-04.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-vertical-lr-05-expected.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-vertical-lr-05.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-vertical-lr-06-expected.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-vertical-lr-06.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-vertical-lr-07-expected.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-vertical-lr-07.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-vertical-rl-01-expected.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-vertical-rl-01.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-vertical-rl-02-expected.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-vertical-rl-02.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-vertical-rl-03-expected.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-vertical-rl-03.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-vertical-rl-04-expected.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-vertical-rl-04.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-vertical-rl-05-expected.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-vertical-rl-05.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-vertical-rl-06-expected.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-vertical-rl-06.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-vertical-rl-07-expected.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-vertical-rl-07.html: Added.
+        * fast/css-grid-layout/grid-shorthands-style-format-expected.txt: Added.
+        * fast/css-grid-layout/grid-shorthands-style-format.html: Added.
+        * fast/css-grid-layout/grid-strict-ordering-crash-2-expected.txt: Added.
+        * fast/css-grid-layout/grid-strict-ordering-crash-2.html: Added.
+        * fast/css-grid-layout/named-grid-areas-dynamic-with-media-query-expected.html: Added.
+        * fast/css-grid-layout/named-grid-areas-dynamic-with-media-query.html: Added.
+        * fast/css-grid-layout/negative-growth-share-as-infinity-crash-expected.txt: Added.
+        * fast/css-grid-layout/negative-growth-share-as-infinity-crash.html: Added.
+        * fast/css-grid-layout/painting-item-marginbox-overflowing-grid-area-expected.html: Added.
+        * fast/css-grid-layout/painting-item-marginbox-overflowing-grid-area.html: Added.
+        * fast/css-grid-layout/positioned-grid-container-item-percentage-size-expected.html: Added.
+        * fast/css-grid-layout/positioned-grid-container-item-percentage-size.html: Added.
+        * fast/css-grid-layout/positioned-grid-container-percentage-tracks-expected.txt: Added.
+        * fast/css-grid-layout/positioned-grid-container-percentage-tracks.html: Added.
+        * fast/css-grid-layout/preferred-width-computed-after-layout-expected.txt: Added.
+        * fast/css-grid-layout/preferred-width-computed-after-layout.html: Added.
+        * fast/css-grid-layout/quirks-mode-percent-resolution-grid-item-expected.txt: Added.
+        * fast/css-grid-layout/quirks-mode-percent-resolution-grid-item.html: Added.
+        * fast/css-grid-layout/resources/blue-100x50.png: Added.
+        * fast/css-grid-layout/resources/grid-definitions-parsing-utils.js:
+        (testGridPositionDefinitionsValues):
+        * fast/css-grid-layout/scrolled-grid-painting-expected.html: Added.
+        * fast/css-grid-layout/scrolled-grid-painting-overflow-expected.html: Added.
+        * fast/css-grid-layout/scrolled-grid-painting-overflow.html: Added.
+        * fast/css-grid-layout/scrolled-grid-painting.html: Added.
+        * fast/css-grid-layout/setting-node-properties-to-null-during-layout-should-not-crash-expected.txt: Added.
+        * fast/css-grid-layout/setting-node-properties-to-null-during-layout-should-not-crash.html: Added.
+        * fast/css-grid-layout/stale-grid-layout-2-expected.txt: Added.
+        * fast/css-grid-layout/stale-grid-layout-expected.txt: Added.
+        * fast/css-grid-layout/vertical-align-do-not-effect-grid-items-expected.html: Added.
+        * fast/css-grid-layout/vertical-align-do-not-effect-grid-items.html: Added.
+
 2018-11-12  Youenn Fablet  <youenn@apple.com>
 
         RealtimeOutgoing A/V sources should observe their sources only if having a sink

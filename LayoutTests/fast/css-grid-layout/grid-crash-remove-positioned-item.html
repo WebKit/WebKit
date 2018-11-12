@@ -3,11 +3,12 @@
   if (window.testRunner)
     testRunner.dumpAsText();
 </script>
-<p>webkit.org/b/169739 - [css-grid] Crash on debug removing a positioned child</p>
+<p>crbug.com/700383 - [css-grid] Grid layouts go mostly blank</p>
 <p>This test has PASSED if it does not CRASH on debug.</p>
 <div id="grid" style="display: grid;">
-  <!-- This grid item with some text is needed, otherwise RenderGrid::paintChildren()
-       won't be called after removing the positioned item. -->
+  <!-- This grid item with some text is needed,
+       otherwise LayoutGrid::paintChildren() won't be called
+       after removing the positioned item. -->
   <div>item</div>
 </div>
 <script>
