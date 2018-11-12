@@ -517,7 +517,7 @@ Color Color::colorWithAlpha(float alpha) const
     if (isExtended())
         return Color { m_colorData.extendedColor->red(), m_colorData.extendedColor->green(), m_colorData.extendedColor->blue(), alpha, m_colorData.extendedColor->colorSpace() };
 
-    int newAlpha = alpha * 255;
+    int newAlpha = alpha * 255; // Why doesn't this use colorFloatToRGBAByte() like colorWithOverrideAlpha()?
 
     Color result = { red(), green(), blue(), newAlpha };
     if (isSemantic())

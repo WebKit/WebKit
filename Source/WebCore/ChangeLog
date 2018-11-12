@@ -1,3 +1,23 @@
+2018-11-12  Simon Fraser  <simon.fraser@apple.com>
+
+        feFlood with alpha color doesn't work correctly
+        https://bugs.webkit.org/show_bug.cgi?id=163666
+
+        Reviewed by Zalan Bujtas.
+        
+        FEFlood::platformApplySoftware() erroneously used colorWithOverrideAlpha()
+        rather than multiplying the flood color with the flood opacity as other browsers do.
+
+        Test: svg/filters/feFlood-with-alpha-color.html
+
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::colorWithAlpha const): I tried using colorWithAlphaMultipliedBy() elsewhere,
+        and it triggered a behavior change, so add a comment.
+        * platform/graphics/filters/FEFlood.cpp:
+        (WebCore::FEFlood::platformApplySoftware):
+        * svg/SVGStopElement.cpp:
+        (WebCore::SVGStopElement::stopColorIncludingOpacity const):
+
 2018-11-12  Eric Carlson  <eric.carlson@apple.com>
 
         Require <iframe allow="display"> for an iframe to use getDisplayMedia

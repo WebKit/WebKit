@@ -1,3 +1,13 @@
+2018-11-12  Simon Fraser  <simon.fraser@apple.com>
+
+        feFlood with alpha color doesn't work correctly
+        https://bugs.webkit.org/show_bug.cgi?id=163666
+
+        Reviewed by Zalan Bujtas.
+
+        * svg/filters/feFlood-with-alpha-color-expected.html: Added.
+        * svg/filters/feFlood-with-alpha-color.html: Added.
+
 2018-11-12  Eric Carlson  <eric.carlson@apple.com>
 
         Require <iframe allow="display"> for an iframe to use getDisplayMedia

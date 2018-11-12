@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <p>You should see two identical gray squares below</p>
+        <svg width="600px" height="500px" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <filter id="flood" filterUnits="objectBoundingBox" x="0" y="0" width="1" height="1">
+                    <feFlood flood-color="rgba(0, 0, 0, 0.4)"/>
+                </filter>
+
+                <filter id="flood-with-alpha" filterUnits="objectBoundingBox" x="0" y="0" width="1" height="1">
+                    <feFlood flood-color="rgba(0, 0, 0, 0.8)" flood-opacity="0.5"/>
+                </filter>
+            </defs>
+            <rect x="0" y="0" width="200" height="200" filter="url(#flood)"/>
+            <rect x="0" y="250" width="200" height="200" filter="url(#flood-with-alpha)"/>
+        </svg>
+    </body>
+</html>

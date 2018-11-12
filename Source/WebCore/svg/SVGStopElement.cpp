@@ -92,14 +92,13 @@ bool SVGStopElement::rendererIsNeeded(const RenderStyle&)
 Color SVGStopElement::stopColorIncludingOpacity() const
 {
     auto* style = renderer() ? &renderer()->style() : nullptr;
-    // FIXME: This check for null style exists to address Bug WK 90814, a rare crash condition in
-    // which the renderer or style is null. This entire class is scheduled for removal (Bug WK 86941)
-    // and we will tolerate this null check until then.
+    // FIXME: This check for null style exists to address Bug WK 90814, a rare crash condition in which the renderer or style is null.
     if (!style)
-        return Color(Color::transparent, true); // Transparent black.
+        return Color(Color::transparent, true);
 
     const SVGRenderStyle& svgStyle = style->svgStyle();
     float colorAlpha = svgStyle.stopColor().alpha() / 255.0;
+    // FIXME: This should use colorWithAlphaMultipliedBy() but that has different rounding of the alpha component.
     return colorWithOverrideAlpha(svgStyle.stopColor().rgb(), colorAlpha * svgStyle.stopOpacity());
 }
 
