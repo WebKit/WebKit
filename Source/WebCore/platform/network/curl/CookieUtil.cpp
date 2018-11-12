@@ -141,10 +141,10 @@ static void parseCookieAttributes(const String& attribute, const String& domain,
     }
 }
 
-bool parseCookieHeader(const String& cookieLine, const String& domain, Cookie& result)
+std::optional<Cookie> parseCookieHeader(const String& cookieLine, const String& domain)
 {
     if (cookieLine.length() >= MAX_COOKIE_LINE)
-        return false;
+        return std::nullopt;
 
     // This Algorithm is based on the algorithm defined in RFC 6265 5.2 https://tools.ietf.org/html/rfc6265#section-5.2/
 
@@ -165,16 +165,17 @@ bool parseCookieHeader(const String& cookieLine, const String& domain, Cookie& r
         cookieValue = cookiePair.substring(assignmentPosition + 1);
     }
 
-    result.name = cookieName.stripWhiteSpace();
-    result.value = cookieValue.stripWhiteSpace();
+    Cookie cookie;
+    cookie.name = cookieName.stripWhiteSpace();
+    cookie.value = cookieValue.stripWhiteSpace();
 
     bool hasMaxAge = false;
-    result.session = true;
+    cookie.session = true;
 
     for (auto attribute : cookieLine.splitAllowingEmptyEntries(';'))
-        parseCookieAttributes(attribute, domain, hasMaxAge, result);
+        parseCookieAttributes(attribute, domain, hasMaxAge, cookie);
 
-    return true;
+    return cookie;
 }
 
 String defaultPathForURL(const URL& url)

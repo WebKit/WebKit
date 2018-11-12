@@ -40,34 +40,38 @@ class CookieJarDB {
     WTF_MAKE_NONCOPYABLE(CookieJarDB);
 
 public:
+    enum class Source : uint8_t {
+        Network,
+        Script
+    };
     void open();
-    bool isEnabled();
+    bool isEnabled() const;
     void setEnabled(bool);
 
-    bool searchCookies(const String& requestUrl, const std::optional<bool>& httpOnly, const std::optional<bool>& secure, const std::optional<bool>& session, Vector<Cookie>& results);
-    int setCookie(const String& url, const String& cookie, bool fromJavaScript);
-    int setCookie(const Cookie&);
+    std::optional<Vector<Cookie>> searchCookies(const String& requestUrl, const std::optional<bool>& httpOnly, const std::optional<bool>& secure, const std::optional<bool>& session);
+    bool setCookie(const String& url, const String& cookie, Source);
+    bool setCookie(const Cookie&);
 
-    int deleteCookie(const String& url, const String& name);
-    int deleteCookies(const String& url);
-    int deleteAllCookies();
+    bool deleteCookie(const String& url, const String& name);
+    bool deleteCookies(const String& url);
+    bool deleteAllCookies();
 
     WEBCORE_EXPORT CookieJarDB(const String& databasePath);
     WEBCORE_EXPORT ~CookieJarDB();
 
 private:
 
-    bool m_isEnabled {true};
+    bool m_isEnabled { true };
     String m_databasePath;
 
-    bool m_detectedDatabaseCorruption {false};
+    bool m_detectedDatabaseCorruption { false };
 
     bool isOnMemory() const { return (m_databasePath == ":memory:"); };
 
     bool openDatabase();
     void closeDatabase();
 
-    void checkSQLiteReturnCode(int actual);
+    bool checkSQLiteReturnCode(int);
     void flagDatabaseCorruption();
     bool checkDatabaseCorruptionAndRemoveIfNeeded();
     String getCorruptionMarkerPath() const;
@@ -78,11 +82,11 @@ private:
     void verifySchemaVersion();
     void deleteAllTables();
 
-    void createPrepareStatement(const String& sql);
-    SQLiteStatement* getPrepareStatement(const String& sql);
-    int executeSimpleSql(const String& sql, bool ignoreError = false);
+    void createPrepareStatement(const String&);
+    SQLiteStatement& preparedStatement(const String&);
+    bool executeSql(const String&);
 
-    int deleteCookieInternal(const String& name, const String& domain, const String& path);
+    bool deleteCookieInternal(const String& name, const String& domain, const String& path);
     bool hasHttpOnlyCookie(const String& name, const String& domain, const String& path);
 
     SQLiteDatabase m_database;

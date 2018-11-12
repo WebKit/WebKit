@@ -117,7 +117,7 @@ bool CookieJarDB::openDatabase()
     if (existsDatabaseFile) {
         if (m_database.open(m_databasePath, false)) {
             if (checkDatabaseValidity())
-                executeSimpleSql(DELETE_ALL_SESSION_COOKIE_SQL);
+                executeSql(DELETE_ALL_SESSION_COOKIE_SQL);
             else {
                 // delete database and try to re-create again
                 LOG_ERROR("Cookie database validity check failed, attempting to recreate the database");
@@ -147,18 +147,15 @@ bool CookieJarDB::openDatabase()
 
     verifySchemaVersion();
 
-    bool databaseValidity = true;
     if (!existsDatabaseFile || !m_database.tableExists("Cookie")) {
-        databaseValidity &= (executeSimpleSql(CREATE_COOKIE_TABLE_SQL) == SQLITE_DONE);
-        databaseValidity &= (executeSimpleSql(CREATE_DOMAIN_INDEX_SQL) == SQLITE_DONE);
-        databaseValidity &= (executeSimpleSql(CREATE_PATH_INDEX_SQL) == SQLITE_DONE);
-    }
+        bool ok = executeSql(CREATE_COOKIE_TABLE_SQL) && executeSql(CREATE_DOMAIN_INDEX_SQL) && executeSql(CREATE_PATH_INDEX_SQL);
 
-    if (!databaseValidity) {
-        // give up create database at this time (all cookies on request/response are ignored)
-        m_database.close();
-        deleteAllDatabaseFiles();
-        return false;
+        if (!ok) {
+            // give up create database at this time (all cookies on request/response are ignored)
+            m_database.close();
+            deleteAllDatabaseFiles();
+            return false;
+        }
     }
 
     m_database.setSynchronous(SQLiteDatabase::SyncNormal);
@@ -206,7 +203,7 @@ void CookieJarDB::verifySchemaVersion()
     }
 
     // Update version
-    executeSimpleSql(String::format("PRAGMA user_version=%d", schemaVersion));
+    executeSql(String::format("PRAGMA user_version=%d", schemaVersion));
 }
 
 void CookieJarDB::deleteAllTables()
@@ -245,10 +242,10 @@ bool CookieJarDB::checkDatabaseCorruptionAndRemoveIfNeeded()
     return false;
 }
 
-void CookieJarDB::checkSQLiteReturnCode(int actual)
+bool CookieJarDB::checkSQLiteReturnCode(int code)
 {
     if (!m_detectedDatabaseCorruption) {
-        switch (actual) {
+        switch (code) {
         case SQLITE_CORRUPT:
         case SQLITE_SCHEMA:
         case SQLITE_FORMAT:
@@ -257,6 +254,7 @@ void CookieJarDB::checkSQLiteReturnCode(int actual)
             m_detectedDatabaseCorruption = true;
         }
     }
+    return code == SQLITE_OK || code == SQLITE_DONE || code == SQLITE_ROW;
 }
 
 bool CookieJarDB::checkDatabaseValidity()
@@ -306,7 +304,7 @@ void CookieJarDB::deleteAllDatabaseFiles()
     FileSystem::deleteFile(m_databasePath + "-wal");
 }
 
-bool CookieJarDB::isEnabled()
+bool CookieJarDB::isEnabled() const
 {
     if (m_databasePath.isEmpty())
         return false;
@@ -314,17 +312,17 @@ bool CookieJarDB::isEnabled()
     return m_isEnabled;
 }
 
-bool CookieJarDB::searchCookies(const String& requestUrl, const std::optional<bool>& httpOnly, const std::optional<bool>& secure, const std::optional<bool>& session, Vector<Cookie>& results)
+std::optional<Vector<Cookie>> CookieJarDB::searchCookies(const String& requestUrl, const std::optional<bool>& httpOnly, const std::optional<bool>& secure, const std::optional<bool>& session)
 {
     if (!isEnabled() || !m_database.isOpen())
-        return false;
+        return std::nullopt;
 
     URL requestUrlObj({ }, requestUrl);
     String requestHost(requestUrlObj.host().toString().convertToASCIILowercase());
     String requestPath(requestUrlObj.path().convertToASCIILowercase());
 
     if (requestHost.isEmpty())
-        return false;
+        return std::nullopt;
 
     if (requestPath.isEmpty())
         requestPath = "/";
@@ -340,7 +338,7 @@ bool CookieJarDB::searchCookies(const String& requestUrl, const std::optional<bo
 
     auto pstmt = std::make_unique<SQLiteStatement>(m_database, sql);
     if (!pstmt)
-        return false;
+        return std::nullopt;
 
     pstmt->prepare();
     pstmt->bindInt(1, httpOnly ? *httpOnly : -1);
@@ -370,9 +368,9 @@ bool CookieJarDB::searchCookies(const String& requestUrl, const std::optional<bo
     }
 
     if (!pstmt)
-        return false;
+        return std::nullopt;
 
-    results.clear();
+    Vector<Cookie> results;
 
     while (pstmt->step() == SQLITE_ROW) {
 
@@ -412,91 +410,83 @@ bool CookieJarDB::searchCookies(const String& requestUrl, const std::optional<bo
     }
     pstmt->finalize();
 
-    return true;
+    return results;
 }
 
 bool CookieJarDB::hasHttpOnlyCookie(const String& name, const String& domain, const String& path)
 {
-    SQLiteStatement* statement = getPrepareStatement(CHECK_EXISTS_HTTPONLY_COOKIE_SQL);
-    ASSERT(statement);
+    auto& statement = preparedStatement(CHECK_EXISTS_HTTPONLY_COOKIE_SQL);
 
-    statement->bindText(1, name);
-    statement->bindText(2, domain);
-    statement->bindText(3, path);
+    statement.bindText(1, name);
+    statement.bindText(2, domain);
+    statement.bindText(3, path);
 
-    return statement->step() == SQLITE_ROW;
+    return statement.step() == SQLITE_ROW;
 }
 
 
-int CookieJarDB::setCookie(const Cookie& cookie)
+bool CookieJarDB::setCookie(const Cookie& cookie)
 {
-    int ret = 0;
     if (!cookie.session && MonotonicTime::fromRawSeconds(cookie.expires) <= MonotonicTime::now())
-        ret = deleteCookieInternal(cookie.name, cookie.domain, cookie.path);
-    else {
-        SQLiteStatement* statement = getPrepareStatement(SET_COOKIE_SQL);
-        ASSERT(statement);
+        return deleteCookieInternal(cookie.name, cookie.domain, cookie.path);
 
-        // FIXME: We should have some eviction policy when a domain goes over MAX_COOKIE_PER_DOMAIN
+    auto& statement = preparedStatement(SET_COOKIE_SQL);
 
-        statement->bindText(1, cookie.name);
-        statement->bindText(2, cookie.value);
-        statement->bindText(3, cookie.domain);
-        statement->bindText(4, cookie.path);
-        statement->bindInt64(5, cookie.session ? 0 : static_cast<int64_t>(cookie.expires));
-        statement->bindInt(6, cookie.value.length());
-        statement->bindInt(7, cookie.session ? 1 : 0);
-        statement->bindInt(8, cookie.httpOnly ? 1 : 0);
-        statement->bindInt(9, cookie.secure ? 1 : 0);
-
-        ret = statement->step();
-    }
-    checkSQLiteReturnCode(ret);
-    ASSERT(ret == SQLITE_DONE);
-
-    return ret;
+    // FIXME: We should have some eviction policy when a domain goes over MAX_COOKIE_PER_DOMAIN
+    statement.bindText(1, cookie.name);
+    statement.bindText(2, cookie.value);
+    statement.bindText(3, cookie.domain);
+    statement.bindText(4, cookie.path);
+    statement.bindInt64(5, cookie.session ? 0 : static_cast<int64_t>(cookie.expires));
+    statement.bindInt(6, cookie.value.length());
+    statement.bindInt(7, cookie.session ? 1 : 0);
+    statement.bindInt(8, cookie.httpOnly ? 1 : 0);
+    statement.bindInt(9, cookie.secure ? 1 : 0);
+    return checkSQLiteReturnCode(statement.step());
 }
 
-int CookieJarDB::setCookie(const String& url, const String& cookie, bool fromJavaScript)
+bool CookieJarDB::setCookie(const String& url, const String& body, CookieJarDB::Source source)
 {
     if (!isEnabled() || !m_database.isOpen())
-        return -1;
+        return false;
 
-    if (url.isEmpty() || cookie.isEmpty())
-        return -1;
+    if (url.isEmpty() || body.isEmpty())
+        return false;
 
     URL urlObj({ }, url);
     String host(urlObj.host().toString());
     String path(urlObj.path());
 
-    Cookie cookieObj;
-    if (!CookieUtil::parseCookieHeader(cookie, host, cookieObj))
-        return -1;
+    auto cookie = CookieUtil::parseCookieHeader(body, host);
+    if (!cookie)
+        return false;
 
-    if (cookieObj.domain.isEmpty())
-        cookieObj.domain = String(host);
+    if (cookie->domain.isEmpty())
+        cookie->domain = String(host);
 
-    if (cookieObj.path.isEmpty())
-        cookieObj.path = CookieUtil::defaultPathForURL(urlObj);
+    if (cookie->path.isEmpty())
+        cookie->path = CookieUtil::defaultPathForURL(urlObj);
 
 #if ENABLE(PUBLIC_SUFFIX_LIST)
-    if (isPublicSuffix(cookieObj.domain))
-        return -1;
+    if (isPublicSuffix(cookie->domain))
+        return false;
 #endif
 
-    if (fromJavaScript && cookieObj.httpOnly)
-        return -1;
+    bool fromJavaScript = source == CookieJarDB::Source::Script;
 
-    if (fromJavaScript && hasHttpOnlyCookie(cookieObj.name, cookieObj.domain, cookieObj.path))
-        return -1;
+    if (fromJavaScript && cookie->httpOnly)
+        return false;
 
-    return setCookie(cookieObj);
+    if (fromJavaScript && hasHttpOnlyCookie(cookie->name, cookie->domain, cookie->path))
+        return false;
+
+    return setCookie(*cookie);
 }
 
-int CookieJarDB::deleteCookie(const String& url, const String& name)
+bool CookieJarDB::deleteCookie(const String& url, const String& name)
 {
     if (!isEnabled() || !m_database.isOpen())
-        return -1;
+        return false;
 
     String urlCopied = String(url);
     if (urlCopied.startsWith('.'))
@@ -506,48 +496,35 @@ int CookieJarDB::deleteCookie(const String& url, const String& name)
     if (urlObj.isValid()) {
         String hostStr(urlObj.host().toString());
         String pathStr(urlObj.path());
-        int ret = deleteCookieInternal(name, hostStr, pathStr);
-        checkSQLiteReturnCode(ret);
-        ASSERT(ret == SQLITE_DONE);
-
-        return ret;
+        return deleteCookieInternal(name, hostStr, pathStr);
     }
 
-    return -1;
+    return false;
 }
 
-int CookieJarDB::deleteCookieInternal(const String& name, const String& domain, const String& path)
+bool CookieJarDB::deleteCookieInternal(const String& name, const String& domain, const String& path)
 {
-    SQLiteStatement* statement;
-    if (!path.isEmpty()) {
-        statement = getPrepareStatement(DELETE_COOKIE_BY_NAME_DOMAIN_PATH_SQL);
-        ASSERT(statement);
-        statement->bindText(1, name);
-        statement->bindText(2, domain);
-        statement->bindText(3, path);
-    } else {
-        statement = getPrepareStatement(DELETE_COOKIE_BY_NAME_DOMAIN_SQL);
-        ASSERT(statement);
-        statement->bindText(1, name);
-        statement->bindText(2, domain);
-    }
-
-    return statement->step();
+    auto& statement = preparedStatement(path.isEmpty() ? DELETE_COOKIE_BY_NAME_DOMAIN_SQL : DELETE_COOKIE_BY_NAME_DOMAIN_PATH_SQL);
+    statement.bindText(1, name);
+    statement.bindText(2, domain);
+    if (!path.isEmpty())
+        statement.bindText(3, path);
+    return checkSQLiteReturnCode(statement.step());
 }
 
-int CookieJarDB::deleteCookies(const String&)
+bool CookieJarDB::deleteCookies(const String&)
 {
     // NOT IMPLEMENTED
     // TODO: this function will be called if application calls WKCookieManagerDeleteCookiesForHostname() in WKCookieManager.h.
-    return 0;
+    return false;
 }
 
-int CookieJarDB::deleteAllCookies()
+bool CookieJarDB::deleteAllCookies()
 {
     if (!isEnabled() || !m_database.isOpen())
-        return -1;
+        return false;
 
-    return executeSimpleSql(DELETE_ALL_COOKIE_SQL);
+    return executeSql(DELETE_ALL_COOKIE_SQL);
 }
 
 void CookieJarDB::createPrepareStatement(const String& sql)
@@ -558,25 +535,26 @@ void CookieJarDB::createPrepareStatement(const String& sql)
     m_statements.add(sql, WTFMove(statement));
 }
 
-SQLiteStatement* CookieJarDB::getPrepareStatement(const String& sql)
+SQLiteStatement& CookieJarDB::preparedStatement(const String& sql)
 {
     const auto& statement = m_statements.get(sql);
     ASSERT(statement);
     statement->reset();
-    return statement;
+    return *statement;
 }
 
-int CookieJarDB::executeSimpleSql(const String& sql, bool ignoreError)
+bool CookieJarDB::executeSql(const String& sql)
 {
     SQLiteStatement statement(m_database, sql);
     int ret = statement.prepareAndStep();
     statement.finalize();
 
-    checkSQLiteReturnCode(ret);
-    if (ret != SQLITE_OK && ret != SQLITE_DONE && ret != SQLITE_ROW && !ignoreError)
+    if (!checkSQLiteReturnCode(ret)) {
         LOG_ERROR("Failed to execute %s error: %s", sql.ascii().data(), m_database.lastErrorMsg());
+        return false;
+    }
 
-    return ret;
+    return true;
 }
 
 } // namespace WebCore

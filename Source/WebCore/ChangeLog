@@ -1,3 +1,42 @@
+2018-11-12  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [Curl] Add API Test for Curl cookie backend.
+        https://bugs.webkit.org/show_bug.cgi?id=191493
+
+        Reviewed by Youenn Fablet.
+
+        Refactoring for cookie backend interface.
+
+        Tests: TestWebKitAPI/Tests/WebCore/curl/Cookies.cpp
+
+        * platform/FileSystem.h:
+        * platform/network/curl/CookieJarCurlDatabase.cpp:
+        (WebCore::cookiesForSession):
+        (WebCore::CookieJarCurlDatabase::setCookiesFromDOM const):
+        (WebCore::CookieJarCurlDatabase::setCookiesFromHTTPResponse const):
+        (WebCore::CookieJarCurlDatabase::getRawCookies const):
+        * platform/network/curl/CookieJarDB.cpp:
+        (WebCore::CookieJarDB::openDatabase):
+        (WebCore::CookieJarDB::checkSQLiteReturnCode):
+        (WebCore::CookieJarDB::isEnabled const):
+        (WebCore::CookieJarDB::searchCookies):
+        (WebCore::CookieJarDB::setCookie):
+        (WebCore::CookieJarDB::deleteCookie):
+        (WebCore::CookieJarDB::deleteCookieInternal):
+        (WebCore::CookieJarDB::deleteCookies):
+        (WebCore::CookieJarDB::deleteAllCookies):
+        (WebCore::CookieJarDB::executeSimpleSql):
+        (WebCore::CookieJarDB::isEnabled): Deleted.
+        * platform/network/curl/CookieJarDB.h:
+        * platform/network/curl/CookieUtil.cpp:
+        (WebCore::CookieUtil::parseCookieHeader):
+        * platform/network/curl/CookieUtil.h:
+        * platform/win/FileSystemWin.cpp:
+        (WebCore::FileSystem::generateTemporaryPath):
+        (WebCore::FileSystem::openTemporaryFile):
+        (WebCore::FileSystem::createTemporaryDirectory):
+        (WebCore::FileSystem::deleteNonEmptyDirectory):
+
 2018-11-12  Tim Horton  <timothy_horton@apple.com>
 
         Make it possible to edit images inline

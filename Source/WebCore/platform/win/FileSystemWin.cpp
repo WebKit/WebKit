@@ -376,10 +376,8 @@ static String cachedStorageDirectory(DWORD pathIdentifier)
     return directory;
 }
 
-String openTemporaryFile(const String&, PlatformFileHandle& handle)
+static String generateTemporaryPath(const Function<bool(const String&)>& action)
 {
-    handle = INVALID_HANDLE_VALUE;
-
     wchar_t tempPath[MAX_PATH];
     int tempPathLength = ::GetTempPathW(WTF_ARRAY_LENGTH(tempPath), tempPath);
     if (tempPathLength <= 0 || tempPathLength > WTF_ARRAY_LENGTH(tempPath))
@@ -402,10 +400,21 @@ String openTemporaryFile(const String&, PlatformFileHandle& handle)
         proposedPath = pathByAppendingComponent(nullTerminatedWCharToString(tempPath), nullTerminatedWCharToString(tempFile));
         if (proposedPath.isEmpty())
             break;
+    } while (!action(proposedPath));
 
+    return proposedPath;
+}
+
+String openTemporaryFile(const String&, PlatformFileHandle& handle)
+{
+    handle = INVALID_HANDLE_VALUE;
+
+    String proposedPath = generateTemporaryPath([&handle](const String& proposedPath) {
         // use CREATE_NEW to avoid overwriting an existing file with the same name
         handle = ::CreateFileW(stringToNullTerminatedWChar(proposedPath).data(), GENERIC_READ | GENERIC_WRITE, 0, 0, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, 0);
-    } while (!isHandleValid(handle) && GetLastError() == ERROR_ALREADY_EXISTS);
+
+        return isHandleValid(handle) || GetLastError() == ERROR_ALREADY_EXISTS;
+    });
 
     if (!isHandleValid(handle))
         return String();
@@ -549,6 +558,28 @@ std::optional<int32_t> getFileDeviceId(const CString& fsFile)
 String realPath(const String& filePath)
 {
     return getFinalPathName(filePath);
+}
+
+String createTemporaryDirectory()
+{
+    return generateTemporaryPath([](const String& proposedPath) {
+        return makeAllDirectories(proposedPath);
+    });
+}
+
+bool deleteNonEmptyDirectory(const String& directoryPath)
+{
+    SHFILEOPSTRUCT deleteOperation = {
+        nullptr,
+        FO_DELETE,
+        stringToNullTerminatedWChar(directoryPath).data(),
+        L"",
+        FOF_NOCONFIRMATION | FOF_NOERRORUI | FOF_SILENT,
+        false,
+        0,
+        L""
+    };
+    return !SHFileOperation(&deleteOperation);
 }
 
 } // namespace FileSystem

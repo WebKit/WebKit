@@ -1,3 +1,15 @@
+2018-11-12  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [Curl] Add API Test for Curl cookie backend.
+        https://bugs.webkit.org/show_bug.cgi?id=191493
+
+        Reviewed by Youenn Fablet.
+
+        Add unit test to TestWebCore.
+
+        * TestWebKitAPI/PlatformWin.cmake:
+        * TestWebKitAPI/Tests/WebCore/curl/Cookies.cpp: Added.
+
 2018-11-12  Tim Horton  <timothy_horton@apple.com>
 
         Make it possible to edit images inline

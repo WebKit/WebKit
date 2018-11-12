@@ -74,6 +74,7 @@ if (${WTF_PLATFORM_WIN_CAIRO})
         vcruntime
     )
     list(APPEND TestWebCoreLib_SOURCES
+        ${TESTWEBKITAPI_DIR}/Tests/WebCore/curl/Cookies.cpp
         ${TESTWEBKITAPI_DIR}/Tests/WebCore/win/BitmapImage.cpp
         ${TESTWEBKITAPI_DIR}/Tests/WebCore/CryptoDigest.cpp
         ${TESTWEBKITAPI_DIR}/Tests/WebCore/PublicSuffix.cpp

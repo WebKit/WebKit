@@ -187,6 +187,11 @@ WEBCORE_EXPORT NSString *createTemporaryDirectory(NSString *directoryPrefix);
 WEBCORE_EXPORT bool deleteNonEmptyDirectory(const String&);
 #endif
 
+#if PLATFORM(WIN_CAIRO)
+WEBCORE_EXPORT String createTemporaryDirectory();
+WEBCORE_EXPORT bool deleteNonEmptyDirectory(const String&);
+#endif
+
 WEBCORE_EXPORT String realPath(const String&);
 
 class MappedFileData {

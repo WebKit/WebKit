@@ -47,14 +47,13 @@ static String cookiesForSession(const NetworkStorageSession& session, const URL&
     auto searchHTTPOnly = (forHTTPHeader ? std::nullopt : std::optional<bool> {false});
     auto secure = url.protocolIs("https") ? std::nullopt : std::optional<bool> {false};
 
-    Vector<Cookie> results;
-    if (cookieJarDB.searchCookies(url.string(), searchHTTPOnly, secure, std::nullopt, results)) {
-        for (auto result : results) {
+    if (auto result = cookieJarDB.searchCookies(url.string(), searchHTTPOnly, secure, std::nullopt)) {
+        for (auto& cookie : *result) {
             if (!cookies.isEmpty())
                 cookies.append("; ");
-            cookies.append(result.name);
+            cookies.append(cookie.name);
             cookies.append("=");
-            cookies.append(result.value);
+            cookies.append(cookie.value);
         }
     }
     return cookies.toString();
@@ -67,13 +66,13 @@ void CookieJarCurlDatabase::setCookiesFromDOM(const NetworkStorageSession& sessi
     UNUSED_PARAM(firstParty);
 
     CookieJarDB& cookieJarDB = session.cookieDatabase();
-    cookieJarDB.setCookie(url.string(), value, true);
+    cookieJarDB.setCookie(url.string(), value, CookieJarDB::Source::Script);
 }
 
 void CookieJarCurlDatabase::setCookiesFromHTTPResponse(const NetworkStorageSession& session, const URL& url, const String& value) const
 {
     CookieJarDB& cookieJarDB = session.cookieDatabase();
-    cookieJarDB.setCookie(url.string(), value, false);
+    cookieJarDB.setCookie(url.string(), value, CookieJarDB::Source::Network);
 }
 
 std::pair<String, bool> CookieJarCurlDatabase::cookiesForDOM(const NetworkStorageSession& session, const URL& firstParty, const SameSiteInfo&, const URL& url, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, IncludeSecureCookies) const
@@ -110,7 +109,11 @@ bool CookieJarCurlDatabase::getRawCookies(const NetworkStorageSession& session, 
     UNUSED_PARAM(pageID);
 
     CookieJarDB& cookieJarDB = session.cookieDatabase();
-    return cookieJarDB.searchCookies(firstParty.string(), std::nullopt, std::nullopt, std::nullopt, rawCookies);
+    if (auto cookies = cookieJarDB.searchCookies(firstParty.string(), std::nullopt, std::nullopt, std::nullopt)) {
+        rawCookies = WTFMove(*cookies);
+        return true;
+    }
+    return false;
 }
 
 void CookieJarCurlDatabase::deleteCookie(const NetworkStorageSession& session, const URL& url, const String& name) const
