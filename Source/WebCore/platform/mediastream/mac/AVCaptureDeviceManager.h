@@ -37,6 +37,8 @@
 
 OBJC_CLASS AVCaptureDevice;
 OBJC_CLASS AVCaptureSession;
+OBJC_CLASS NSArray;
+OBJC_CLASS NSMutableArray;
 OBJC_CLASS NSString;
 OBJC_CLASS WebCoreAVCaptureDeviceManagerObserver;
 
@@ -49,8 +51,9 @@ public:
 
     static AVCaptureDeviceManager& singleton();
 
-    void deviceConnected();
     void deviceDisconnected(AVCaptureDevice*);
+
+    void refreshCaptureDevices();
 
 protected:
     static bool isAvailable();
@@ -58,13 +61,14 @@ protected:
     AVCaptureDeviceManager();
     ~AVCaptureDeviceManager() final;
 
-    void refreshCaptureDevices();
     void registerForDeviceNotifications();
-    void refreshAVCaptureDevicesOfType(CaptureDevice::DeviceType);
     Vector<CaptureDevice>& captureDevicesInternal();
+    void updateCachedAVCaptureDevices();
 
     RetainPtr<WebCoreAVCaptureDeviceManagerObserver> m_objcObserver;
     Vector<CaptureDevice> m_devices;
+    RetainPtr<NSMutableArray> m_avCaptureDevices;
+    bool m_notifyWhenDeviceListChanges { false };
 };
 
 } // namespace WebCore

@@ -66,6 +66,7 @@ public:
     void captureSessionIsRunningDidChange(bool);
     void captureSessionRuntimeError(RetainPtr<NSError>);
     void captureOutputDidOutputSampleBufferFromConnection(AVCaptureOutput*, CMSampleBufferRef, AVCaptureConnection*);
+    void captureDeviceSuspendedDidChange();
 
 private:
     AVVideoCaptureSource(AVCaptureDevice*, String&& id, String&& hashSalt);

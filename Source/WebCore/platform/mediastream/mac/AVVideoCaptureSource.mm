@@ -189,7 +189,8 @@ AVVideoCaptureSource::~AVVideoCaptureSource()
     if (!m_session)
         return;
 
-    [m_session removeObserver:m_objcObserver.get() forKeyPath:@"rate"];
+    [m_session removeObserver:m_objcObserver.get() forKeyPath:@"running"];
+    [m_device removeObserver:m_objcObserver.get() forKeyPath:@"suspended"];
     if ([m_session isRunning])
         [m_session stopRunning];
 }
@@ -400,7 +401,8 @@ bool AVVideoCaptureSource::setupSession()
         return true;
 
     m_session = adoptNS([allocAVCaptureSessionInstance() init]);
-    [m_session addObserver:m_objcObserver.get() forKeyPath:@"rate" options:NSKeyValueObservingOptionNew context:(void *)nil];
+    [m_session addObserver:m_objcObserver.get() forKeyPath:@"running" options:NSKeyValueObservingOptionNew context:(void *)nil];
+    [m_device addObserver:m_objcObserver.get() forKeyPath:@"suspended" options:NSKeyValueObservingOptionNew context:(void *)nil];
 
     [m_session beginConfiguration];
     bool success = setupCaptureSession();
@@ -543,6 +545,19 @@ void AVVideoCaptureSource::captureSessionIsRunningDidChange(bool state)
     });
 }
 
+void AVVideoCaptureSource::captureDeviceSuspendedDidChange()
+{
+#if !PLATFORM(IOS_FAMILY)
+    scheduleDeferredTask([this] {
+        auto isSuspended = [m_device isSuspended];
+        if (isSuspended == muted())
+            return;
+
+        notifyMutedChange(isSuspended);
+    });
+#endif
+}
+
 bool AVVideoCaptureSource::interrupted() const
 {
     if (m_interruption != InterruptionReason::None)
@@ -664,8 +679,8 @@ void AVVideoCaptureSource::captureSessionEndInterruption(RetainPtr<NSNotificatio
 
     id newValue = [change valueForKey:NSKeyValueChangeNewKey];
 
-#if !LOG_DISABLED
     bool willChange = [[change valueForKey:NSKeyValueChangeNotificationIsPriorKey] boolValue];
+#if !LOG_DISABLED
 
     if (willChange)
         LOG(Media, "WebCoreAVVideoCaptureSourceObserver::observeValueForKeyPath(%p) - will change, keyPath = %s", self, [keyPath UTF8String]);
@@ -675,8 +690,10 @@ void AVVideoCaptureSource::captureSessionEndInterruption(RetainPtr<NSNotificatio
     }
 #endif
 
-    if ([keyPath isEqualToString:@"running"])
+    if (!willChange && [keyPath isEqualToString:@"running"])
         m_callback->captureSessionIsRunningDidChange([newValue boolValue]);
+    if (!willChange && [keyPath isEqualToString:@"suspended"])
+        m_callback->captureDeviceSuspendedDidChange();
 }
 
 #if PLATFORM(IOS_FAMILY)

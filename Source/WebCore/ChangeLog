@@ -1,3 +1,43 @@
+2018-11-13  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Observer AVCaptureDevice "suspended" property
+        https://bugs.webkit.org/show_bug.cgi?id=191587
+        <rdar://problem/46030598>
+
+        Reviewed by Youenn Fablet.
+
+        No new tests, AVCapture can only be tested manually.
+
+        * platform/mediastream/mac/AVCaptureDeviceManager.h:
+        * platform/mediastream/mac/AVCaptureDeviceManager.mm:
+        (WebCore::AVCaptureDeviceManager::captureDevicesInternal): Don't notify of devices "changes"
+        the first time the device list is scanned.
+        (WebCore::deviceIsAvailable): Don't check for "isInUseByAnotherApplication", it doesn't
+        change device availability.
+        (WebCore::AVCaptureDeviceManager::beginObservingDevices): New, observe "suspended" on all 
+        devices and add them to the cached list.
+        (WebCore::AVCaptureDeviceManager::stopObservingDevices): New, opposite of above.
+        (WebCore::AVCaptureDeviceManager::refreshCaptureDevices): Watch for changes in the list of
+        devices.
+        (WebCore::AVCaptureDeviceManager::~AVCaptureDeviceManager): Stop observing all cached devices.
+        (WebCore::AVCaptureDeviceManager::registerForDeviceNotifications):
+        (-[WebCoreAVCaptureDeviceManagerObserver disconnect]):
+        (-[WebCoreAVCaptureDeviceManagerObserver deviceConnectedDidChange:]):
+        (-[WebCoreAVCaptureDeviceManagerObserver observeValueForKeyPath:ofObject:change:context:]):
+        (WebCore::AVCaptureDeviceManager::refreshAVCaptureDevicesOfType): Deleted.
+        (WebCore::AVCaptureDeviceManager::deviceConnected): Deleted.
+        (WebCore::AVCaptureDeviceManager::deviceDisconnected): Deleted.
+        (-[WebCoreAVCaptureDeviceManagerObserver deviceDisconnected:]): Deleted.
+        (-[WebCoreAVCaptureDeviceManagerObserver deviceConnected:]): Deleted.
+
+        * platform/mediastream/mac/AVVideoCaptureSource.h:
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::~AVVideoCaptureSource): Stop observing "running" (not "rate")
+        and "suspended".
+        (WebCore::AVVideoCaptureSource::setupSession): Observe "running" (not "rate"), and "suspended".
+        (WebCore::AVVideoCaptureSource::captureDeviceSuspendedDidChange):
+        (-[WebCoreAVVideoCaptureSourceObserver observeValueForKeyPath:ofObject:change:context:]):
+
 2018-11-13  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: REGRESSION(r238122): fetching the CertificateInfo triggers an ASSERT in workers
