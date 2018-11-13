@@ -1,3 +1,14 @@
+2018-11-13  Timothy Hatcher  <timothy@apple.com>
+
+        Treat supported-color-schemes as the second highest priority property.
+        https://bugs.webkit.org/show_bug.cgi?id=191556
+        rdar://problem/46000076
+
+        Reviewed by Dean Jackson.
+
+        * css-dark-mode/supported-color-schemes-priority-expected.txt: Added.
+        * css-dark-mode/supported-color-schemes-priority.html: Added.
+
 2018-11-13  Youenn Fablet  <youenn@apple.com>
 
         Refresh WPT webrtc tests to ToT

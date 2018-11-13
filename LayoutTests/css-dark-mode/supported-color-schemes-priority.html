@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+
+<!-- webkit-test-runner [ experimental:DarkModeCSSEnabled=true ] -->
+
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+
+<style>
+#test1 {
+    supported-color-schemes: light dark;
+    color: text;
+}
+</style>
+
+<div id="test1"></div>
+
+<script>
+function test_prop(id, prop, expected) {
+    assert_equals(window.getComputedStyle(document.getElementById(id)).getPropertyValue(prop), expected);
+}
+
+function test_color_is_white(id) {
+    test_prop("test1", "color", "rgb(255, 255, 255)");
+}
+
+function test_color_is_black(id) {
+    test_prop("test1", "color", "rgb(0, 0, 0)");
+}
+
+test(function() {
+    // The semantic text color should be black.
+    test_color_is_black("test1");
+}, "Element colors are correct in light color scheme with light and dark supported color scheme");
+
+test(function() {
+    if (window.internals)
+        internals.settings.setUseDarkAppearance(true);
+}, "Dark color scheme enabled");
+
+test(function() {
+    // The semantic text color should be white.
+    test_color_is_white("test1");
+}, "Element colors are correct in dark color scheme with light and dark supported color scheme");
+</script>

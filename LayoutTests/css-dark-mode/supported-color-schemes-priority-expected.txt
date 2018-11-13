@@ -1,0 +1,5 @@
+
+PASS Element colors are correct in light color scheme with light and dark supported color scheme 
+PASS Dark color scheme enabled 
+PASS Element colors are correct in dark color scheme with light and dark supported color scheme 
+

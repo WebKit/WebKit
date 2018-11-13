@@ -1,3 +1,18 @@
+2018-11-13  Timothy Hatcher  <timothy@apple.com>
+
+        Treat supported-color-schemes as the second highest priority property.
+        https://bugs.webkit.org/show_bug.cgi?id=191556
+        rdar://problem/46000076
+
+        Reviewed by Dean Jackson.
+
+        Test: css-dark-mode/supported-color-schemes-priority.html
+
+        * css/CSSProperties.json: Make supported-color-schemes high-priority and add a comment.
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyMatchedProperties): Manually handle supported-color-schemes
+        after -webkit-ruby-position, before other properties, so it can affect resolved colors.
+
 2018-11-13  Charlie Turner  <cturner@igalia.com>
 
         [EME][GStreamer] Make CDMInstance's available in decryptors, and factor out some EME utility classes.

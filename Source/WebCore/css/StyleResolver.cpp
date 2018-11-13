@@ -1379,6 +1379,11 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
         applyCascadedProperties(CSSPropertyWebkitRubyPosition, CSSPropertyWebkitRubyPosition, applyState);
         adjustStyleForInterCharacterRuby();
 
+#if ENABLE(DARK_MODE_CSS)
+        // Supported color schemes can affect resolved colors, so we need to apply that property before any color properties.
+        applyCascadedProperties(CSSPropertySupportedColorSchemes, CSSPropertySupportedColorSchemes, applyState);
+#endif
+
         applyCascadedProperties(firstCSSProperty, lastHighPriorityProperty, applyState);
 
         // If our font got dirtied, update it now.
@@ -1398,11 +1403,15 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
     cascade.addImportantMatches(matchResult, matchResult.ranges.firstUserRule, matchResult.ranges.lastUserRule, applyInheritedOnly);
     cascade.addImportantMatches(matchResult, matchResult.ranges.firstUARule, matchResult.ranges.lastUARule, applyInheritedOnly);
 
-
     ApplyCascadedPropertyState applyState { this, &cascade, &matchResult };
 
     applyCascadedProperties(CSSPropertyWebkitRubyPosition, CSSPropertyWebkitRubyPosition, applyState);
     adjustStyleForInterCharacterRuby();
+
+#if ENABLE(DARK_MODE_CSS)
+    // Supported color schemes can affect resolved colors, so we need to apply that property before any color properties.
+    applyCascadedProperties(CSSPropertySupportedColorSchemes, CSSPropertySupportedColorSchemes, applyState);
+#endif
 
     applyCascadedProperties(firstCSSProperty, lastHighPriorityProperty, applyState);
 
