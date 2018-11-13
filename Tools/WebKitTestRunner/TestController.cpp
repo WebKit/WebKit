@@ -483,6 +483,9 @@ WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(WK
     WKContextUseTestingNetworkSession(m_context.get());
     WKContextSetCacheModel(m_context.get(), kWKCacheModelDocumentBrowser);
 
+    auto* websiteDataStore = WKContextGetWebsiteDataStore(m_context.get());
+    WKWebsiteDataStoreSetCacheStoragePerOriginQuota(websiteDataStore, 400 * 1024);
+    
     platformInitializeContext();
 
     WKContextInjectedBundleClientV1 injectedBundleClient = {

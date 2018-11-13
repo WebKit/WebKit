@@ -1,3 +1,17 @@
+2018-11-12  Darshan Kadu  <darsh7807@gmail.com>
+
+        Implement Cache API support for WPE/GTK
+        https://bugs.webkit.org/show_bug.cgi?id=178316
+
+        Reviewed by Michael Catanzaro.
+
+        Added a new API function WKWebsiteDataStoreSetCacheStoragePerOriginQuota which sets the
+        cache limit per origin.
+
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreSetCacheStoragePerOriginQuota):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+
 2018-11-12  Alex Christensen  <achristensen@webkit.org>
 
         [iOS] Implement safe browsing in WebKit

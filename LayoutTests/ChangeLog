@@ -1,3 +1,16 @@
+2018-11-12  Darshan Kadu  <darsh7807@gmail.com>
+
+        Implement Cache API support for WPE/GTK
+        https://bugs.webkit.org/show_bug.cgi?id=178316
+
+        Reviewed by Michael Catanzaro.
+
+        Removed the http/wpt/cache-storage/cache-quota.any.html from the TestExpectations which 
+        were marked faliure.
+
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2018-11-12  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Network: show secure certificate details per-request
