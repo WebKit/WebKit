@@ -342,8 +342,10 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
             propertyView.selected = isSelected;
         }
 
+        this._suppressBlur = true;
         let property = this._propertyViews[focusIndex];
         property.element.focus();
+        this._suppressBlur = false;
     }
 
     deselectProperties()
@@ -501,11 +503,7 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
             let delta = event.key === "ArrowUp" ? -1 : 1;
             let focusIndex = Number.constrain(this._focusIndex + delta, 0, this._propertyViews.length - 1);
 
-            // Blur event deselects all properties.
-            this._suppressBlur = true;
             this.selectProperties(focusIndex, focusIndex);
-            this._suppressBlur = false;
-
             event.stop();
         } else if (event.key === "Tab" || event.key === "Enter") {
             if (!this._hasSelectedProperties())
@@ -534,15 +532,12 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
             for (let i = endIndex; i >= startIndex; i--)
                 this._propertyViews[i].remove();
 
-            if (!isNaN(propertyIndexToSelect)) {
-                this._suppressBlur = true;
+            if (!isNaN(propertyIndexToSelect))
                 this.selectProperties(propertyIndexToSelect, propertyIndexToSelect);
-                this._suppressBlur = false;
-            }
 
             event.stop();
 
-        } else if ((event.code === "Space" && !event.shiftKey && !event.metaKey && !event.ctrlKey) || (event.key === "/" && (event.metaKey || event.ctrlKey) && !event.shiftKey)) {
+        } else if ((event.code === "Space" && !event.shiftKey && !event.metaKey && !event.ctrlKey) || (event.key === "/" && event.commandOrControlKey && !event.shiftKey)) {
             if (!this._hasSelectedProperties())
                 return;
 
@@ -558,6 +553,14 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
             }
 
             event.preventDefault();
+
+        } else if (event.key === "a" && event.commandOrControlKey) {
+            // FIXME: Check this.editing instead of _hasSelectedProperties() once <https://webkit.org/b/191567> is resolved.
+            if (!this._hasSelectedProperties() || !this._propertyViews.length)
+                return;
+
+            this.selectProperties(0, this._propertyViews.length - 1);
+            event.stop();
 
         } else if (event.key === "Esc")
             this.deselectProperties();

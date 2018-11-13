@@ -422,6 +422,14 @@ Object.defineProperty(Event.prototype, "stop",
     }
 });
 
+Object.defineProperty(KeyboardEvent.prototype, "commandOrControlKey",
+{
+    get()
+    {
+        return WI.Platform.name === "mac" ? this.metaKey : this.ctrlKey;
+    }
+});
+
 Object.defineProperty(Array, "isTypedArray",
 {
     value(array)
