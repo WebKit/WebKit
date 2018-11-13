@@ -1,3 +1,21 @@
+2018-11-12  Mark Lam  <mark.lam@apple.com>
+
+        Add OOM detection to StringPrototype's substituteBackreferences().
+        https://bugs.webkit.org/show_bug.cgi?id=191563
+        <rdar://problem/45720428>
+
+        Reviewed by Saam Barati.
+
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        * runtime/StringPrototype.cpp:
+        (JSC::substituteBackreferencesSlow):
+        (JSC::substituteBackreferencesInline):
+        (JSC::substituteBackreferences):
+        (JSC::replaceUsingRegExpSearch):
+        (JSC::replaceUsingStringSearch):
+        * runtime/StringPrototype.h:
+
 2018-11-13  Mark Lam  <mark.lam@apple.com>
 
         LLIntSlowPath's llint_loop_osr and llint_replace should set the topCallFrame.

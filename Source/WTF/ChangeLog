@@ -1,3 +1,49 @@
+2018-11-12  Mark Lam  <mark.lam@apple.com>
+
+        Add OOM detection to StringPrototype's substituteBackreferences().
+        https://bugs.webkit.org/show_bug.cgi?id=191563
+        <rdar://problem/45720428>
+
+        Reviewed by Saam Barati.
+
+        Enhanced StringBuilder::toString() to skip the shrinkToFit(), reifyString(), and
+        the hasOverflowed() check if m_string is not null.  When m_string is not null,
+        the StringBuilder either only has a single String in m_string (with m_buffer being 
+        null), or reifyString() has already been called (resulting in a non-null m_string
+        with a possibly non-null m_buffer).
+
+        We can skip the overflow check because:
+        1. if the StringBuilder only has a single String, then there cannot be an overflow.
+        2. if reifyString() has already been called, then the hasOverflowed() checked has
+           already been done because every code path that calls reifyString() first does
+           the hasOverflowed() check.
+
+        We can skip shrinkToFit() because it only applies to m_buffer.
+        1. if the StringBuilder only has a single String, then there's no m_buffer to shrink.
+        2. if reifyString() has already been called, then we either came down
+           a. the toString() path with a null m_string previously, where we would have
+              already called shrinkToFit() before reifyString(), or
+           b. the toStringPreserveCapacity() path where we don't want to shrinkToFit().
+
+        We can skip reifyString() because:
+        1. if the StringBuilder only has a single String, then the string is already reified.
+        2. if reifyString() has been already called, then the string is already reified.
+
+        Note that if m_string is the null string and m_buffer is null, reifyString() will
+        replace it with the empty string.  For this reason, we cannot solely check for
+        !m_buffer because we need to reify the null string into the empty string.
+
+        Note also that if m_string is null and m_buffer is non-null, reifyString() will
+        create a String and set m_string to it.  However, m_buffer remains non-null.
+        For this reason, we cannot assert !m_buffer alone when m_string is non-null.
+        We add a m_isReified flag (only when assertions are enabled) to track the reified
+        case where both m_buffer and m_string are non-null.
+
+        * wtf/text/StringBuilder.cpp:
+        (WTF::StringBuilder::reifyString const):
+        * wtf/text/StringBuilder.h:
+        (WTF::StringBuilder::toString):
+
 2018-11-10  Benjamin Poulain  <benjamin@webkit.org>
 
         Fix a fixme: rename wtfObjcMsgSend to wtfObjCMsgSend

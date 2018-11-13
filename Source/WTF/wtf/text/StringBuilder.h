@@ -227,10 +227,15 @@ public:
 
     String toString()
     {
+        if (!m_string.isNull()) {
+            ASSERT(!m_buffer || m_isReified);
+            ASSERT(!hasOverflowed());
+            return m_string;
+        }
+
         RELEASE_ASSERT(!hasOverflowed());
         shrinkToFit();
-        if (m_string.isNull())
-            reifyString();
+        reifyString();
         return m_string;
     }
 
@@ -358,6 +363,9 @@ private:
     static_assert(String::MaxLength == std::numeric_limits<int32_t>::max(), "");
     Checked<int32_t, ConditionalCrashOnOverflow> m_length;
     bool m_is8Bit { true };
+#if !ASSERT_DISABLED
+    mutable bool m_isReified { false };
+#endif
 };
 
 template <>

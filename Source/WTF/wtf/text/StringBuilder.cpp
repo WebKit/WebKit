@@ -51,6 +51,10 @@ void StringBuilder::reifyString() const
         return;
     }
 
+#if !ASSERT_DISABLED
+    m_isReified = true;
+#endif
+
     // Check for empty.
     if (!m_length) {
         m_string = StringImpl::empty();

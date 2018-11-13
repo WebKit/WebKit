@@ -59,7 +59,7 @@ JSCell* JIT_OPERATION operationStringProtoFuncReplaceRegExpEmptyStr(
 JSCell* JIT_OPERATION operationStringProtoFuncReplaceRegExpString(
     ExecState*, JSString* thisValue, RegExpObject* searchValue, JSString* replaceValue);
 
-String substituteBackreferences(const String& replacement, StringView source, const int* ovector, RegExp* reg);
+void substituteBackreferences(StringBuilder& result, const String& replacement, StringView source, const int* ovector, RegExp*);
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncRepeatCharacter(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncSplitFast(ExecState*);

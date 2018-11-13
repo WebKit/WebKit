@@ -185,9 +185,8 @@ StringPrototype* StringPrototype::create(VM& vm, JSGlobalObject* globalObject, S
 
 // ------------------------------ Functions --------------------------
 
-static NEVER_INLINE String substituteBackreferencesSlow(StringView replacement, StringView source, const int* ovector, RegExp* reg, size_t i)
+static NEVER_INLINE void substituteBackreferencesSlow(StringBuilder& result, StringView replacement, StringView source, const int* ovector, RegExp* reg, size_t i)
 {
-    StringBuilder substitutedReplacement;
     bool hasNamedCaptures = reg && reg->hasNamedCaptures();
     int offset = 0;
     do {
@@ -198,7 +197,7 @@ static NEVER_INLINE String substituteBackreferencesSlow(StringView replacement, 
         if (ref == '$') {
             // "$$" -> "$"
             ++i;
-            substitutedReplacement.append(replacement.substring(offset, i - offset));
+            result.append(replacement.substring(offset, i - offset));
             offset = i + 1;
             continue;
         }
@@ -218,7 +217,7 @@ static NEVER_INLINE String substituteBackreferencesSlow(StringView replacement, 
         } else if (reg && ref == '<') {
             // Named back reference
             if (!hasNamedCaptures) {
-                substitutedReplacement.append(replacement.substring(i, 2));
+                result.append(replacement.substring(i, 2));
                 offset = i + 2;
                 advance = 1;
                 continue;
@@ -272,31 +271,29 @@ static NEVER_INLINE String substituteBackreferencesSlow(StringView replacement, 
             continue;
 
         if (i - offset)
-            substitutedReplacement.append(replacement.substring(offset, i - offset));
+            result.append(replacement.substring(offset, i - offset));
         i += 1 + advance;
         offset = i + 1;
         if (backrefStart >= 0)
-            substitutedReplacement.append(source.substring(backrefStart, backrefLength));
+            result.append(source.substring(backrefStart, backrefLength));
     } while ((i = replacement.find('$', i + 1)) != notFound);
 
     if (replacement.length() - offset)
-        substitutedReplacement.append(replacement.substring(offset));
-
-    return substitutedReplacement.toString();
+        result.append(replacement.substring(offset));
 }
 
-inline String substituteBackreferencesInline(const String& replacement, StringView source, const int* ovector, RegExp* reg)
+inline void substituteBackreferencesInline(StringBuilder& result, const String& replacement, StringView source, const int* ovector, RegExp* reg)
 {
     size_t i = replacement.find('$');
     if (UNLIKELY(i != notFound))
-        return substituteBackreferencesSlow(replacement, source, ovector, reg, i);
+        return substituteBackreferencesSlow(result, replacement, source, ovector, reg, i);
 
-    return replacement;
+    result.append(replacement);
 }
 
-String substituteBackreferences(const String& replacement, StringView source, const int* ovector, RegExp* reg)
+void substituteBackreferences(StringBuilder& result, const String& replacement, StringView source, const int* ovector, RegExp* reg)
 {
-    return substituteBackreferencesInline(replacement, source, ovector, reg);
+    substituteBackreferencesInline(result, replacement, source, ovector, reg);
 }
 
 struct StringRange {
@@ -689,9 +686,13 @@ static ALWAYS_INLINE JSString* replaceUsingRegExpSearch(
                     if (UNLIKELY(!sourceRanges.tryConstructAndAppend(lastIndex, result.start - lastIndex)))
                         OUT_OF_MEMORY(exec, scope);
 
-                    if (replLen)
-                        replacements.append(substituteBackreferences(replacementString, source, ovector, regExp));
-                    else
+                    if (replLen) {
+                        StringBuilder replacement(StringBuilder::OverflowHandler::RecordOverflow);
+                        substituteBackreferences(replacement, replacementString, source, ovector, regExp);
+                        if (UNLIKELY(replacement.hasOverflowed()))
+                            OUT_OF_MEMORY(exec, scope);
+                        replacements.append(replacement.toString());
+                    } else
                         replacements.append(String());
                 }
             }
@@ -801,7 +802,16 @@ static ALWAYS_INLINE JSString* replaceUsingStringSearch(VM& vm, ExecState* exec,
 
     size_t matchEnd = matchStart + searchString.impl()->length();
     int ovector[2] = { static_cast<int>(matchStart),  static_cast<int>(matchEnd)};
-    String middlePart = callType != CallType::None ? replaceString : substituteBackreferences(replaceString, string, ovector, 0);
+    String middlePart;
+    if (callType != CallType::None)
+        middlePart = replaceString;
+    else {
+        StringBuilder replacement(StringBuilder::OverflowHandler::RecordOverflow);
+        substituteBackreferences(replacement, replaceString, string, ovector, 0);
+        if (UNLIKELY(replacement.hasOverflowed()))
+            OUT_OF_MEMORY(exec, scope);
+        middlePart = replacement.toString();
+    }
 
     size_t leftLength = stringImpl->length() - matchEnd;
     String rightPart(StringImpl::createSubstringSharingImpl(*stringImpl, matchEnd, leftLength));

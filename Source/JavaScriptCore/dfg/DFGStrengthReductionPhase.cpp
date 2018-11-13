@@ -842,8 +842,11 @@ private:
                 unsigned replLen = replace.length();
                 if (lastIndex < result.start || replLen) {
                     builder.append(string, lastIndex, result.start - lastIndex);
-                    if (replLen)
-                        builder.append(substituteBackreferences(replace, string, ovector.data(), regExp));
+                    if (replLen) {
+                        StringBuilder replacement;
+                        substituteBackreferences(replacement, replace, string, ovector.data(), regExp);
+                        builder.append(replacement);
+                    }
                 }
 
                 lastIndex = result.end;
