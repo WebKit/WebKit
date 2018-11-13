@@ -110,6 +110,11 @@ void RealtimeMediaSource::notifyMutedChange(bool muted)
     notifyMutedObservers();
 }
 
+void RealtimeMediaSource::setInterruptedForTesting(bool interrupted)
+{
+    notifyMutedChange(interrupted);
+}
+
 void RealtimeMediaSource::notifyMutedObservers() const
 {
     for (Observer& observer : m_observers)
