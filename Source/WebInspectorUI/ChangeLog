@@ -1,3 +1,50 @@
+2018-11-12  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Table should support shift-extending the row selection
+        https://bugs.webkit.org/show_bug.cgi?id=189718
+        <rdar://problem/44577942>
+
+        Reviewed by Devin Rousso.
+
+        Allow the table selection to be extended by shift-clicking a row, or by
+        holding shift and pressing either the up or down arrow key. If both command
+        and shift are pressed, shift is ignored. The selection behavior is modeled
+        after AppKit's NSTableView.
+
+        * UserInterface/Base/IndexSet.js:
+        (WI.IndexSet.prototype.addRange):
+        (WI.IndexSet.prototype.deleteRange):
+        (WI.IndexSet.prototype.equals):
+        (WI.IndexSet.prototype.difference):
+
+        * UserInterface/Views/Table.js:
+        (WI.Table):
+        (WI.Table.prototype.set allowsMultipleSelection):
+        (WI.Table.prototype.reloadData):
+        (WI.Table.prototype.selectRow):
+        (WI.Table.prototype.deselectRow):
+        (WI.Table.prototype._handleKeyDown):
+        Holding shift and pressing either the up or down arrow key extends the
+        selection to the next unselected row adjacent to the anchor row, or causes
+        the anchor row to be deselected, decreasing the selection. The table chooses
+        the action to take based on the direction of movement (up or down), and
+        the currently selected rows.
+
+        (WI.Table.prototype._selectRowsFromArrowKey):
+        (WI.Table.prototype._handleMouseDown.normalizeRange):
+        (WI.Table.prototype._handleMouseDown):
+        Clicking a row while holding down shift extends the selection to include
+        the rows between the anchor row (exclusive) and clicked row (inclusive).
+        The anchor row is equal to the value of `_selectedRowIndex` prior to
+        clicking a new row.
+
+        (WI.Table.prototype._deselectAllAndSelect):
+        (WI.Table.prototype._removeRows):
+        (WI.Table.prototype._toggleSelectedRowStyle):
+        (WI.Table.prototype._updateSelectedRows):
+        Helper method for updating the selection to the specified rows, and updating
+        DOM styles for rows that are added to or removed from the selection.
+
 2018-11-12  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles: inline swatches don't work when Multiple Properties Selection is enabled

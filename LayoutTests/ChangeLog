@@ -1,3 +1,15 @@
+2018-11-12  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Table should support shift-extending the row selection
+        https://bugs.webkit.org/show_bug.cgi?id=189718
+        <rdar://problem/44577942>
+
+        Reviewed by Devin Rousso.
+
+        * inspector/unit-tests/index-set-expected.txt:
+        * inspector/unit-tests/index-set.html:
+        Add tests for new IndexSet methods `addRange`, `deleteRange`, `equals`, and `difference`.
+
 2018-11-12  Zalan Bujtas  <zalan@apple.com>
 
         Do not collapse the soon-to-be-parent anon block when we shuffle around the marker item renderer.

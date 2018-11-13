@@ -91,6 +91,62 @@ WI.IndexSet = class IndexSet
         return this._indexes[index] === value;
     }
 
+    addRange(startIndex, count)
+    {
+        if (!this._validateIndex(startIndex))
+            return;
+
+        console.assert(count > 0);
+        if (count <= 0)
+            return;
+
+        if (count === 1) {
+            this.add(startIndex);
+            return;
+        }
+
+        let range = new Array(count);
+        for (let i = 0; i < count; ++i)
+            range[i] = startIndex + i;
+
+        if (!this.size || (this.firstIndex >= range[0] && this.lastIndex <= range.lastValue)) {
+            this._indexes = range;
+            return;
+        }
+
+        let start = this._indexes.lowerBound(startIndex);
+        let numberToDelete = this._indexes.upperBound(range.lastValue) - start;
+        this._indexes.splice(start, numberToDelete, ...range);
+    }
+
+    deleteRange(startIndex, count)
+    {
+        if (!this._validateIndex(startIndex))
+            return;
+
+        console.assert(count > 0);
+        if (count <= 0)
+            return;
+
+        if (!this.size)
+            return;
+
+        if (count === 1) {
+            this.delete(startIndex);
+            return;
+        }
+
+        let lastIndex = startIndex + count - 1;
+        if (this.firstIndex >= startIndex && this.lastIndex <= lastIndex) {
+            this.clear();
+            return;
+        }
+
+        let start = this._indexes.lowerBound(startIndex);
+        let numberToDelete = this._indexes.upperBound(lastIndex) - start;
+        this._indexes.splice(start, numberToDelete);
+    }
+
     clear()
     {
         this._indexes = [];
@@ -101,6 +157,30 @@ WI.IndexSet = class IndexSet
         let indexSet = new WI.IndexSet;
         indexSet._indexes = this._indexes.slice();
         return indexSet;
+    }
+
+    equals(indexSet)
+    {
+        console.assert(indexSet instanceof WI.IndexSet);
+        if (!(indexSet instanceof WI.IndexSet))
+            return false;
+
+        if (indexSet === this)
+            return true;
+
+        return Array.shallowEqual(this._indexes, indexSet._indexes);
+    }
+
+    difference(indexSet)
+    {
+        console.assert(indexSet instanceof WI.IndexSet);
+
+        if (indexSet === this)
+            return new WI.IndexSet;
+
+        let result = new WI.IndexSet;
+        result._indexes = this._indexes.filter((value) => !indexSet.has(value));
+        return result;
     }
 
     indexGreaterThan(value)

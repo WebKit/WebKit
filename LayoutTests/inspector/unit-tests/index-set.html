@@ -15,6 +15,13 @@ function test()
         return new WI.IndexSet(values);
     }
 
+    function rangeToArray(startIndex, count) {
+        let result = [];
+        for (let i = 0; i < count; ++i)
+            result.push(startIndex + i);
+        return result;
+    }
+
     suite.addTestCase({
         name: "IndexSet.constructor",
         test() {
@@ -201,6 +208,207 @@ function test()
             let copied = original.copy();
             InspectorTest.expectNotEqual(copied, original, "Copy and original should be different objects.");
             InspectorTest.expectShallowEqual(Array.from(copied), Array.from(original), "Copy and original should have the same values.");
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "IndexSet.prototype.addRange",
+        test() {
+            function testAddRange({description, initialValues, startIndex, count, expectedValues}) {
+                let indexSet = createIndexSet(initialValues || []);
+
+                InspectorTest.log(description);
+                indexSet.addRange(startIndex, count);
+                InspectorTest.expectShallowEqual(Array.from(indexSet), expectedValues, `Should be [${expectedValues}] after adding [${rangeToArray(startIndex, count)}].`);
+                InspectorTest.log("");
+            }
+
+            testAddRange({
+                description: "Add range to an empty IndexSet.",
+                initialValues: [],
+                startIndex: 1,
+                count: 3,
+                expectedValues: [1, 2, 3],
+            });
+
+            testAddRange({
+                description: "Add range before the beginning.",
+                initialValues: [10, 11, 12],
+                startIndex: 0,
+                count: 3,
+                expectedValues: [0, 1, 2, 10, 11, 12],
+            });
+
+            testAddRange({
+                description: "Add range after the end.",
+                initialValues: [1, 2, 3],
+                startIndex: 10,
+                count: 3,
+                expectedValues: [1, 2, 3, 10, 11, 12],
+            });
+
+            testAddRange({
+                description: "Add range in the middle.",
+                initialValues: [1, 5],
+                startIndex: 2,
+                count: 3,
+                expectedValues: [1, 2, 3, 4, 5],
+            });
+
+            testAddRange({
+                description: "Add range overlapping the middle.",
+                initialValues: [1, 3, 5],
+                startIndex: 2,
+                count: 3,
+                expectedValues: [1, 2, 3, 4, 5],
+            });
+
+            testAddRange({
+                description: "Add range overlapping the beginning.",
+                initialValues: [3, 4, 5],
+                startIndex: 1,
+                count: 3,
+                expectedValues: [1, 2, 3, 4, 5],
+            });
+
+            testAddRange({
+                description: "Add range overlapping the end.",
+                initialValues: [1, 2, 3],
+                startIndex: 3,
+                count: 3,
+                expectedValues: [1, 2, 3, 4, 5],
+            });
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "IndexSet.prototype.deleteRange",
+        test() {
+            function testDeleteRange({description, initialValues, startIndex, count, expectedValues}) {
+                let indexSet = createIndexSet(initialValues || []);
+
+                InspectorTest.log(description);
+                indexSet.deleteRange(startIndex, count);
+                InspectorTest.expectShallowEqual(Array.from(indexSet), expectedValues, `Should be [${expectedValues}] after removing [${rangeToArray(startIndex, count)}].`);
+                InspectorTest.log("");
+            }
+
+            testDeleteRange({
+                description: "Remove range from an empty IndexSet.",
+                initialValues: [],
+                startIndex: 1,
+                count: 3,
+                expectedValues: [],
+            });
+
+            testDeleteRange({
+                description: "Remove range before the beginning.",
+                initialValues: [10, 11, 12],
+                startIndex: 0,
+                count: 3,
+                expectedValues: [10, 11, 12],
+            });
+
+            testDeleteRange({
+                description: "Remove range after the end.",
+                initialValues: [0, 1, 2],
+                startIndex: 10,
+                count: 3,
+                expectedValues: [0, 1, 2],
+            });
+
+            testDeleteRange({
+                description: "Remove range in the middle.",
+                initialValues: [0, 1, 2, 3],
+                startIndex: 1,
+                count: 2,
+                expectedValues: [0, 3],
+            });
+
+            testDeleteRange({
+                description: "Remove range overlapping the middle.",
+                initialValues: [1, 3, 5],
+                startIndex: 2,
+                count: 3,
+                expectedValues: [1, 5],
+            });
+
+            testDeleteRange({
+                description: "Remove range overlapping the beginning.",
+                initialValues: [1, 2, 3],
+                startIndex: 0,
+                count: 3,
+                expectedValues: [3],
+            });
+
+            testDeleteRange({
+                description: "Remove range overlapping the end.",
+                initialValues: [1, 2, 3],
+                startIndex: 2,
+                count: 3,
+                expectedValues: [1],
+            });
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "IndexSet.prototype.equals",
+        test() {
+            let original = new WI.IndexSet([1, 2, 3]);
+            let copied = original.copy();
+            InspectorTest.expectThat(original.equals(original), "Should trivially equal itself.");
+            InspectorTest.expectThat(original.equals(copied), "Copy and original should be equal.");
+
+            copied.delete(1);
+            InspectorTest.expectFalse(original.equals(copied), "Modified copy and original should not be equal.");
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "IndexSet.prototype.difference",
+        test() {
+            function testDifference({values1, values2, expectedDifference}) {
+                let indexSet1 = new WI.IndexSet(values1);
+                let indexSet2 = new WI.IndexSet(values2);
+
+                InspectorTest.log(`Given an IndexSet with values [${values1}], and another IndexSet with values [${values2}]:`);
+
+                let difference = indexSet1.difference(indexSet2);
+                InspectorTest.expectShallowEqual(Array.from(difference), expectedDifference, `Difference between the first and second IndexSet should be [${expectedDifference}].`);
+                InspectorTest.log("");
+            }
+
+            testDifference({
+                values1: [],
+                values2: [],
+                expectedDifference: [],
+            });
+
+            testDifference({
+                values1: [1, 2, 3],
+                values2: [],
+                expectedDifference: [1, 2, 3],
+            });
+
+            testDifference({
+                values1: [],
+                values2: [1, 2, 3],
+                expectedDifference: [],
+            });
+
+            testDifference({
+                values1: [1, 2, 3],
+                values2: [2, 3, 4],
+                expectedDifference: [1],
+            });
 
             return true;
         }

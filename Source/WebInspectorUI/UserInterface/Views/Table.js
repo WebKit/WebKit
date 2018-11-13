@@ -87,6 +87,7 @@ WI.Table = class Table extends WI.View
         this._columnWidths = null; // Calculated in _resizeColumnsAndFiller.
         this._fillerHeight = 0; // Calculated in _resizeColumnsAndFiller.
 
+        this._shiftAnchorIndex = NaN;
         this._selectedRowIndex = NaN;
         this._allowsMultipleSelection = false;
         this._selectedRows = new WI.IndexSet;
@@ -228,11 +229,14 @@ WI.Table = class Table extends WI.View
             return;
 
         this._allowsMultipleSelection = flag;
+        if (this._allowsMultipleSelection)
+            return;
 
-        let numberOfSelectedRows = this._selectedRows.size;
-        this._selectedRows.clear();
-        if (numberOfSelectedRows > 1)
+        if (this._selectedRows.size > 1) {
+            console.assert(this._selectedRowIndex >= 0);
+            this._selectedRows = new WI.IndexSet([this._selectedRowIndex]);
             this._notifySelectionDidChange();
+        }
     }
 
     isRowSelected(rowIndex)
@@ -252,6 +256,7 @@ WI.Table = class Table extends WI.View
     {
         this._cachedRows.clear();
 
+        this._shiftAnchorIndex = NaN;
         this._selectedRowIndex = NaN;
         this._selectedRows.clear();
 
@@ -337,12 +342,11 @@ WI.Table = class Table extends WI.View
             this.deselectAll();
         }
 
+        this._shiftAnchorIndex = NaN;
         this._selectedRowIndex = rowIndex;
         this._selectedRows.add(rowIndex);
 
-        let newSelectedRow = this._cachedRows.get(this._selectedRowIndex);
-        if (newSelectedRow)
-            newSelectedRow.classList.add("selected");
+        this._toggleSelectedRowStyle([this._selectedRowIndex], true);
 
         this._notifySelectionDidChange();
     }
@@ -354,11 +358,12 @@ WI.Table = class Table extends WI.View
         if (!this.isRowSelected(rowIndex))
             return;
 
-        let oldSelectedRow = this._cachedRows.get(rowIndex);
-        if (oldSelectedRow)
-            oldSelectedRow.classList.remove("selected");
+        this._toggleSelectedRowStyle([rowIndex], false);
 
         this._selectedRows.delete(rowIndex);
+
+        if (this._shiftAnchorIndex === rowIndex)
+            this._shiftAnchorIndex = NaN;
 
         if (this._selectedRowIndex === rowIndex) {
             this._selectedRowIndex = NaN;
@@ -1273,26 +1278,17 @@ WI.Table = class Table extends WI.View
 
     _handleKeyDown(event)
     {
+        if (!this.numberOfRows)
+            return;
+
         if (!this._isRowVisible(this._selectedRowIndex))
             return;
 
-        if (event.shiftKey || event.metaKey || event.ctrlKey)
+        if (event.metaKey || event.ctrlKey)
             return;
 
-        let numberOfRows = this.numberOfRows;
-        let rowToSelect = NaN;
-
-        if (event.keyIdentifier === "Up") {
-            if (this._selectedRowIndex > 0)
-                rowToSelect = this._selectedRowIndex - 1;
-        } else if (event.keyIdentifier === "Down") {
-            let numberOfRows = this._dataSource.tableNumberOfRows(this);
-            if (this._selectedRowIndex < (numberOfRows - 1))
-                rowToSelect = this._selectedRowIndex + 1;
-        }
-
-        if (!isNaN(rowToSelect)) {
-            this.selectRow(rowToSelect);
+        if (event.keyIdentifier === "Up" || event.keyIdentifier === "Down") {
+            this._selectRowsFromArrowKey(event.keyIdentifier === "Up", event.shiftKey);
 
             let row = this._cachedRows.get(this._selectedRowIndex);
             console.assert(row, "Moving up or down by one should always find a cached row since it is within the overflow bounds.");
@@ -1304,6 +1300,42 @@ WI.Table = class Table extends WI.View
 
             event.preventDefault();
             event.stopPropagation();
+        }
+    }
+
+    _selectRowsFromArrowKey(goingUp, shiftKey)
+    {
+        let rowIncrement = goingUp ? -1 : 1;
+        let rowIndex = this._selectedRowIndex + rowIncrement;
+        if (rowIndex < 0 || rowIndex >= this.numberOfRows)
+            return;
+
+        let extendSelection = shiftKey && this._allowsMultipleSelection;
+
+        if (!extendSelection || !this.isRowSelected(rowIndex)) {
+            this.selectRow(rowIndex, extendSelection);
+            return;
+        }
+
+        // Since the row in the direction of movement is selected, we are either
+        // extending the selection into the row, or deselecting. Determine which
+        // by checking whether the row opposite the anchor row is selected.
+        let priorRowIndex = this._selectedRowIndex - rowIncrement;
+        if (!this.isRowSelected(priorRowIndex)) {
+            this.deselectRow(this._selectedRowIndex);
+            return;
+        }
+
+        // The selection is being extended into the row; make it the new
+        // anchor row then continue searching in the direction of movement
+        // for an unselected row to select.
+        for (; rowIndex >= 0 && rowIndex < this.numberOfRows; rowIndex += rowIncrement) {
+            if (!this.isRowSelected(rowIndex)) {
+                this.selectRow(rowIndex, extendSelection);
+                break;
+            }
+
+            this._selectedRowIndex = rowIndex;
         }
     }
 
@@ -1320,23 +1352,70 @@ WI.Table = class Table extends WI.View
         if (row === this._fillerRow)
             return;
 
-        let columnIndex = Array.from(row.children).indexOf(cell);
-        let column = this._visibleColumns[columnIndex];
         let rowIndex = row.__index;
+        let isRowSelected = this.isRowSelected(rowIndex);
 
-        if (this.isRowSelected(rowIndex)) {
-            if (event.metaKey)
-                this.deselectRow(rowIndex)
+        // Before checking if multiple selection is allowed, check if clicking the
+        // row would cause it to be selected, and whether it is allowed by the delegate.
+        if (!isRowSelected && this._delegate.tableShouldSelectRow) {
+            let columnIndex = Array.from(row.children).indexOf(cell);
+            let column = this._visibleColumns[columnIndex];
+            if (!this._delegate.tableShouldSelectRow(this, cell, column, rowIndex))
+                return;
+        }
+
+        // Command (meta) key takes precedence over shift whether or not multiple
+        // selection is enabled, so handle it first.
+        if (event.metaKey) {
+            if (isRowSelected)
+                this.deselectRow(rowIndex);
             else
-                this._deselectAllAndSelect(rowIndex);
+                this.selectRow(rowIndex, this._allowsMultipleSelection);
             return;
         }
 
-        if (this._delegate.tableShouldSelectRow && !this._delegate.tableShouldSelectRow(this, cell, column, rowIndex))
+        let shiftExtendSelection = this._allowsMultipleSelection && event.shiftKey;
+        if (!shiftExtendSelection) {
+            this.selectRow(rowIndex);
             return;
+        }
 
-        let extendSelection = this._allowsMultipleSelection && event.metaKey;
-        this.selectRow(rowIndex, extendSelection);
+        let newSelectedRows = this._selectedRows.copy();
+
+        // Shift-clicking when nothing is selected should cause the first row
+        // through the clicked row to be selected.
+        if (!newSelectedRows.size) {
+            this._shiftAnchorIndex = 0;
+            this._selectedRowIndex = rowIndex;
+            newSelectedRows.addRange(0, rowIndex + 1);
+            this._updateSelectedRows(newSelectedRows);
+            return;
+        }
+
+        if (isNaN(this._shiftAnchorIndex))
+            this._shiftAnchorIndex = this._selectedRowIndex;
+
+        // Shift-clicking will add to or delete from the current selection, or
+        // pivot the selection around the anchor (a delete followed by an add).
+        // We could check for all three cases, and add or delete only those rows
+        // that are necessary, but it is simpler to throw out the previous shift-
+        // selected range and add the new range between the anchor and clicked row.
+
+        function normalizeRange(startIndex, endIndex) {
+            return startIndex > endIndex ? [endIndex, startIndex] : [startIndex, endIndex];
+        }
+
+        if (this._shiftAnchorIndex !== this._selectedRowIndex) {
+            let [startIndex, endIndex] = normalizeRange(this._shiftAnchorIndex, this._selectedRowIndex);
+            newSelectedRows.deleteRange(startIndex, endIndex - startIndex + 1);
+        }
+
+        let [startIndex, endIndex] = normalizeRange(this._shiftAnchorIndex, rowIndex);
+        newSelectedRows.addRange(startIndex, endIndex - startIndex + 1);
+
+        this._selectedRowIndex = rowIndex;
+
+        this._updateSelectedRows(newSelectedRows);
     }
 
     _handleContextMenu(event)
@@ -1423,20 +1502,15 @@ WI.Table = class Table extends WI.View
         if (this._selectedRows.size === 1 && this._selectedRows.firstIndex === rowIndex)
             return;
 
-        for (let selectedRowIndex of this._selectedRows) {
-            let oldSelectedRow = this._cachedRows.get(selectedRowIndex);
-            if (oldSelectedRow)
-                oldSelectedRow.classList.remove("selected");
-        }
+        this._toggleSelectedRowStyle(this._selectedRows, false);
 
+        this._shiftAnchorIndex = NaN;
         this._selectedRowIndex = rowIndex;
         this._selectedRows.clear();
 
         if (!isNaN(rowIndex)) {
             this._selectedRows.add(rowIndex);
-            let newSelectedRow = this._cachedRows.get(rowIndex);
-            if (newSelectedRow)
-                newSelectedRow.classList.add("selected");
+            this._toggleSelectedRowStyle(this._selectedRows, true);
         }
 
         this._notifySelectionDidChange();
@@ -1463,6 +1537,8 @@ WI.Table = class Table extends WI.View
             }
         };
 
+        if (rowIndexes.has(this._shiftAnchorIndex))
+            this._shiftAnchorIndex = NaN;
         if (rowIndexes.has(this._selectedRowIndex))
             this._selectedRowIndex = NaN;
 
@@ -1505,6 +1581,33 @@ WI.Table = class Table extends WI.View
 
         if (this._delegate.tableSelectionDidChange)
             this._delegate.tableSelectionDidChange(this);
+    }
+
+    _toggleSelectedRowStyle(rowIndexes, flag)
+    {
+        for (let index of rowIndexes) {
+            let row = this._cachedRows.get(index);
+            if (row)
+                row.classList.toggle("selected", flag);
+        }
+    }
+
+    _updateSelectedRows(rowIndexes)
+    {
+        if (this._selectedRows.equals(rowIndexes))
+            return;
+
+        let deselectedRows = this._selectedRows.difference(rowIndexes);
+        if (deselectedRows.size)
+            this._toggleSelectedRowStyle(deselectedRows, false);
+
+        let selectedRows = rowIndexes.difference(this._selectedRows);
+        if (selectedRows.size)
+            this._toggleSelectedRowStyle(selectedRows, true);
+
+        this._selectedRows = rowIndexes;
+
+        this._notifySelectionDidChange();
     }
 };
 
