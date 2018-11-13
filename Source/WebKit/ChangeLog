@@ -1,3 +1,13 @@
+2018-11-13  Daniel Bates  <dabates@apple.com>
+
+        Consolidate WebKit UIKitSPI.h and UIKitTestSPI.h
+        https://bugs.webkit.org/show_bug.cgi?id=173341
+        <rdar://problem/32752890>
+
+        Reviewed by Simon Fraser.
+
+        * Platform/spi/ios/UIKitSPI.h:
+
 2018-11-13  Alex Christensen  <achristensen@webkit.org>
 
         Fix internal builds after r238115

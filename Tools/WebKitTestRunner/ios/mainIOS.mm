@@ -27,8 +27,7 @@
 
 #import "HIDEventGenerator.h"
 #import "TestController.h"
-#import "UIKitTestSPI.h"
-#import <UIKit/UIKit.h>
+#import "UIKitSPI.h"
 
 static int _argc;
 static const char **_argv;

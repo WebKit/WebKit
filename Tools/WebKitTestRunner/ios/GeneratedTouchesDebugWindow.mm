@@ -27,7 +27,7 @@
 #import "GeneratedTouchesDebugWindow.h"
 
 #import "HIDEventGenerator.h"
-#import "UIKitTestSPI.h"
+#import "UIKitSPI.h"
 #import <wtf/RetainPtr.h>
 
 static const CGFloat debugTouchDotRadius = 5;

@@ -32,7 +32,7 @@
 #import "PlatformWebView.h"
 #import "TestInvocation.h"
 #import "TestRunnerWKWebView.h"
-#import "UIKitTestSPI.h"
+#import "UIKitSPI.h"
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import <WebKit/WKPreferencesPrivate.h>

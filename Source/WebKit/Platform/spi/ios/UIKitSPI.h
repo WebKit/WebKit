@@ -78,6 +78,7 @@
 #import <UIKit/UIWebTiledView.h>
 #import <UIKit/UIWebTouchEventsGestureRecognizer.h>
 #import <UIKit/UIWindow_Private.h>
+#import <UIKit/_UIApplicationRotationFollowing.h>
 #import <UIKit/_UIBackdropViewSettings.h>
 #import <UIKit/_UIBackdropView_Private.h>
 #import <UIKit/_UIHighlightView.h>
@@ -156,11 +157,17 @@ typedef NS_ENUM(NSInteger, UIPreviewItemType) {
 @property (nonatomic) UIAlertControllerStyle preferredStyle;
 @end
 
+WTF_EXTERN_C_BEGIN
+typedef struct __IOHIDEvent * IOHIDEventRef;
+WTF_EXTERN_C_END
+
 @interface UIApplication ()
 - (UIInterfaceOrientation)interfaceOrientation;
 - (void)_cancelAllTouches;
 - (CGFloat)statusBarHeight;
 - (BOOL)isSuspendedUnderLock;
+- (void)_enqueueHIDEvent:(IOHIDEventRef)event;
+- (void)_handleHIDEvent:(IOHIDEventRef)event;
 @end
 
 typedef NS_ENUM(NSInteger, UIDatePickerPrivateMode)  {
@@ -172,6 +179,7 @@ typedef NS_ENUM(NSInteger, UIDatePickerPrivateMode)  {
 @end
 
 @interface UIDevice ()
+- (void)setOrientation:(UIDeviceOrientation)orientation animated:(BOOL)animated;
 @property (nonatomic, readonly, retain) NSString *buildVersion;
 @end
 
@@ -238,12 +246,8 @@ typedef enum {
 - (void)candidateListShouldBeDismissed:(id)candidateList;
 @end
 
-// FIXME: https://bugs.webkit.org/show_bug.cgi?id=173341
-#ifndef _WEBKIT_UIKITSPI_UIKEYBOARD
-#define _WEBKIT_UIKITSPI_UIKEYBOARD 1
 @interface UIKeyboard : UIView <UIKeyboardImplGeometryDelegate>
 @end
-#endif
 
 @interface UIKeyboard ()
 + (CGSize)defaultSizeForInterfaceOrientation:(UIInterfaceOrientation)orientation;
@@ -251,6 +255,7 @@ typedef enum {
 - (void)geometryChangeDone:(BOOL)keyboardVisible;
 - (void)prepareForGeometryChange;
 + (BOOL)isInHardwareKeyboardMode;
++ (void)removeAllDynamicDictionaries;
 @end
 
 @interface UIKeyboardImpl : UIView <UIKeyboardCandidateListDelegate>
@@ -318,6 +323,7 @@ typedef enum {
 
 @class FBSDisplayConfiguration;
 @interface UIScreen ()
+- (void)_setScale:(CGFloat)scale;
 @property (nonatomic, readonly, retain) FBSDisplayConfiguration *displayConfiguration;
 @end
 
@@ -495,6 +501,7 @@ typedef NS_ENUM (NSInteger, _UIBackdropMaskViewFlags) {
 - (void)insertSubview:(UIView *)view above:(UIView *)sibling;
 - (void)viewWillMoveToSuperview:(UIView *)newSuperview;
 - (CGSize)convertSize:(CGSize)size toView:(UIView *)view;
+- (void)_removeAllAnimations:(BOOL)includeSubviews;
 @end
 
 @interface UIWebSelectionView : UIView
@@ -814,6 +821,7 @@ typedef NS_ENUM(NSInteger, _UIBackdropViewStylePrivate) {
 + (BKSAnimationFenceHandle *)_synchronizedDrawingFence;
 + (mach_port_t)_synchronizeDrawingAcrossProcesses;
 - (void)_setWindowResolution:(CGFloat)resolution displayIfChanged:(BOOL)displayIfChanged;
+- (uint32_t)_contextId;
 @end
 
 @interface UIWebScrollView : UIScrollView
@@ -914,6 +922,15 @@ typedef enum {
 @property (readwrite, retain) UIKeyboardInputMode *currentInputMode;
 @end
 
+@interface UIApplicationRotationFollowingWindow : UIWindow
+@end
+
+@interface UIApplicationRotationFollowingController : UIViewController
+@end
+
+@interface UIApplicationRotationFollowingControllerNoTouches : UIApplicationRotationFollowingController
+@end
+
 #if ENABLE(DRAG_SUPPORT)
 
 @interface UIItemProvider : NSItemProvider
@@ -952,8 +969,6 @@ typedef NS_OPTIONS(NSUInteger, UIDragOperation)
 + (void)fadeSharedCalloutBar;
 @end
 
-@interface UIApplicationRotationFollowingWindow : UIWindow
-@end
 @interface UIAutoRotatingWindow : UIApplicationRotationFollowingWindow
 @end
 
@@ -1022,6 +1037,7 @@ typedef NSInteger UICompositingMode;
 - (CGPoint)accessibilityConvertPointFromSceneReferenceCoordinates:(CGPoint)point;
 - (CGRect)accessibilityConvertRectToSceneReferenceCoordinates:(CGRect)rect;
 - (UIRectEdge)_edgesApplyingSafeAreaInsetsToContentInset;
+- (void)_updateSafeAreaInsets;
 @end
 
 @interface UIScrollView (IPI)

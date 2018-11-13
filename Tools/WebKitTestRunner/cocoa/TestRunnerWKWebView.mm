@@ -32,7 +32,7 @@
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS_FAMILY)
-#import "UIKitTestSPI.h"
+#import "UIKitSPI.h"
 #import <WebKit/WKWebViewPrivate.h>
 @interface WKWebView ()
 

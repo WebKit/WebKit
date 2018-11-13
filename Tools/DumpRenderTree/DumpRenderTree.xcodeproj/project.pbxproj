@@ -285,7 +285,6 @@
 		2EDE0DAA1F5131DE00D5F8DF /* AppKitTestSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AppKitTestSPI.h; path = mac/AppKitTestSPI.h; sourceTree = "<group>"; };
 		31117B3A15D9A56A00163BC8 /* MockWebNotificationProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MockWebNotificationProvider.h; path = mac/MockWebNotificationProvider.h; sourceTree = "<group>"; };
 		31117B3B15D9A56A00163BC8 /* MockWebNotificationProvider.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MockWebNotificationProvider.mm; path = mac/MockWebNotificationProvider.mm; sourceTree = "<group>"; };
-		31268EBA1EF06A95001963E2 /* UIKitTestSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIKitTestSPI.h; path = ../TestRunnerShared/spi/UIKitTestSPI.h; sourceTree = "<group>"; };
 		3148A0551E6F90F400D3B316 /* IOSLayoutTestCommunication.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IOSLayoutTestCommunication.cpp; path = ../TestRunnerShared/IOSLayoutTestCommunication.cpp; sourceTree = "<group>"; };
 		3148A0561E6F90F400D3B316 /* IOSLayoutTestCommunication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IOSLayoutTestCommunication.h; path = ../TestRunnerShared/IOSLayoutTestCommunication.h; sourceTree = "<group>"; };
 		32A70AAB03705E1F00C91783 /* DumpRenderTreePrefix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DumpRenderTreePrefix.h; sourceTree = "<group>"; };
@@ -537,7 +536,6 @@
 		0F6A0DFF1D6E0F8600F1C9A8 /* ios */ = {
 			isa = PBXGroup;
 			children = (
-				31268EBA1EF06A95001963E2 /* UIKitTestSPI.h */,
 				0F18E70C1D6BAC8C0027E547 /* UIScriptControllerIOS.mm */,
 			);
 			name = ios;

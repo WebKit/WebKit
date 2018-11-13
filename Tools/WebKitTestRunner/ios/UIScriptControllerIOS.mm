@@ -34,7 +34,7 @@
 #import "StringFunctions.h"
 #import "TestController.h"
 #import "TestRunnerWKWebView.h"
-#import "UIKitTestSPI.h"
+#import "UIKitSPI.h"
 #import "UIScriptContext.h"
 #import <JavaScriptCore/JavaScriptCore.h>
 #import <JavaScriptCore/OpaqueJSString.h>

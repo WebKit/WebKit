@@ -1,3 +1,31 @@
+2018-11-13  Daniel Bates  <dabates@apple.com>
+
+        Consolidate WebKit UIKitSPI.h and UIKitTestSPI.h
+        https://bugs.webkit.org/show_bug.cgi?id=173341
+        <rdar://problem/32752890>
+
+        Reviewed by Simon Fraser.
+
+        There is little value to making a distinction between forward declarations
+        of UIKit SPI needed in the WebKit layer and just for testing. Moreover,
+        the contents of these two headers can conflict with each other following
+        r218275 as DumpRenderTree includes both headers. Instead we should remove
+        UIKitTestSPI.h and have WebKitTestRunner include the WebKit variant, UIKitSPI.h.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        * TestRunnerShared/spi/UIKitTestSPI.h: Removed.
+        * WebKitTestRunner/Configurations/Base.xcconfig:
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        * WebKitTestRunner/ios/GeneratedTouchesDebugWindow.mm:
+        * WebKitTestRunner/ios/HIDEventGenerator.h:
+        * WebKitTestRunner/ios/HIDEventGenerator.mm:
+        * WebKitTestRunner/ios/PlatformWebViewIOS.mm:
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        * WebKitTestRunner/ios/mainIOS.mm:
+
 2018-11-13  Takashi Komori  <Takashi.Komori@sony.com>
 
         Remove WebKitTestRunnerLib's build warnings.

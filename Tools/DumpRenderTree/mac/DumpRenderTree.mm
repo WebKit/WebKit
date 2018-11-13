@@ -109,7 +109,6 @@
 #import "DumpRenderTreeBrowserView.h"
 #import "IOSLayoutTestCommunication.h"
 #import "UIKitSPI.h"
-#import "UIKitTestSPI.h"
 #import <QuartzCore/QuartzCore.h>
 #import <WebKit/WAKWindow.h>
 #import <WebKit/WebCoreThread.h>
