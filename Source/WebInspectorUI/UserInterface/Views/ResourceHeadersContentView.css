@@ -31,38 +31,6 @@ body[dir] .resource-headers > section:matches(.redirect, .headers) > .details {
     border-color: var(--network-header-color);
 }
 
-body[dir] .resource-headers > section.error > .details {
-    border-color: var(--network-error-color);
-}
-
-.resource-headers > section.error .key {
-    color: var(--network-error-color);
-}
-
-.resource-headers .details {
-    white-space: normal;
-    word-break: break-all;
-}
-
-.resource-headers .details .pair {
-    --resource-headers-value-indent: 15px;
-    -webkit-margin-start: var(--resource-headers-value-indent);
-}
-
-body[dir=rtl] .resource-headers .details .pair {
-    /* Don't include indents in RTL */
-    --resource-headers-value-indent: 0px;
-}
-
-.resource-headers .details .key {
-    font-weight: 500;
-    -webkit-margin-start: calc(var(--resource-headers-value-indent) * -1);
-}
-
-.resource-headers .value {
-    color: var(--text-color);
-}
-
 .resource-headers .url + .url > .key {
     color: transparent;
 }
@@ -78,15 +46,4 @@ body[dir=rtl] .resource-headers .details .pair {
 .resource-headers .h1-status > .key,
 .resource-headers .h2-pseudo-header > .key {
     color: var(--network-pseudo-header-color);
-}
-
-.resource-headers .go-to-arrow {
-    vertical-align: top;
-    bottom: 1px;
-}
-
-.resource-headers.showing-find-banner .search-highlight {
-    color: var(--text-color);
-    background-color: hsla(53, 83%, 53%, 0.2);
-    border-bottom: 1px solid hsl(47, 82%, 60%);
 }

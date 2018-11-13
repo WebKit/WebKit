@@ -164,6 +164,9 @@ void NetworkResourcesData::responseReceived(const String& requestId, const Strin
 
     if (InspectorNetworkAgent::shouldTreatAsText(response.mimeType()))
         resourceData->setDecoder(InspectorNetworkAgent::createTextDecoder(response.mimeType(), response.textEncodingName()));
+
+    if (auto& certificateInfo = response.certificateInfo())
+        resourceData->setCertificateInfo(certificateInfo);
 }
 
 void NetworkResourcesData::setResourceType(const String& requestId, InspectorPageAgent::ResourceType type)

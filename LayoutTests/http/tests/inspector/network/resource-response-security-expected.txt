@@ -1,0 +1,12 @@
+Tests that a resource has security information.
+
+
+== Running test suite: Resource.Security
+-- Running test case: Resource.Security.Certificate
+PASS: Resource should have been loaded securely.
+PASS: Resource should have security information.
+PASS: Security information should include certificate information.
+PASS: Certificate should have subject
+PASS: Certificate should have a validFrom date.
+PASS: Certificate should have a validUntil date.
+

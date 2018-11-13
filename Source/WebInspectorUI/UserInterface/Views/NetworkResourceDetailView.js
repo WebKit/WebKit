@@ -38,6 +38,7 @@ WI.NetworkResourceDetailView = class NetworkResourceDetailView extends WI.Networ
         this._cookiesContentView = null;
         this._sizesContentView = null;
         this._timingContentView = null;
+        this._securityContentView = null;
     }
 
     // Public
@@ -89,6 +90,7 @@ WI.NetworkResourceDetailView = class NetworkResourceDetailView extends WI.Networ
         this.createDetailNavigationItem("cookies", WI.UIString("Cookies"));
         this.createDetailNavigationItem("sizes", WI.UIString("Sizes"));
         this.createDetailNavigationItem("timing", WI.UIString("Timing"));
+        this.createDetailNavigationItem("security", WI.UIString("Security"));
 
         super.initialLayout();
     }
@@ -127,6 +129,11 @@ WI.NetworkResourceDetailView = class NetworkResourceDetailView extends WI.Networ
             if (!this._timingContentView)
                 this._timingContentView = new WI.ResourceTimingContentView(this.representedObject);
             this._contentBrowser.showContentView(this._timingContentView, this._contentViewCookie);
+            break;
+        case "security":
+            if (!this._securityContentView)
+                this._securityContentView = new WI.ResourceSecurityContentView(this.representedObject);
+            this._contentBrowser.showContentView(this._securityContentView, this._contentViewCookie);
             break;
         }
 

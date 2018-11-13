@@ -59,4 +59,49 @@ WI.ResourceDetailsSection = class ResourceDetailsSection
         console.assert(typeof isError === "boolean");
         this.element.classList.toggle("error", isError);
     }
+
+    markIncompleteSectionWithMessage(message)
+    {
+        this.toggleIncomplete(true);
+
+        let p = this._detailsElement.appendChild(document.createElement("p"));
+        p.textContent = message;
+    }
+
+    markIncompleteSectionWithLoadingIndicator()
+    {
+        this.toggleIncomplete(true);
+
+        let p = this._detailsElement.appendChild(document.createElement("p"));
+        let spinner = new WI.IndeterminateProgressSpinner;
+        p.appendChild(spinner.element);
+    }
+
+    appendKeyValuePair(key, value, className)
+    {
+        let p = this._detailsElement.appendChild(document.createElement("p"));
+        p.className = "pair";
+        if (className)
+            p.classList.add(className);
+
+        let keyElement = p.appendChild(document.createElement("span"));
+        keyElement.className = "key";
+
+        console.assert(typeof key === "string" || key instanceof Node);
+        if (key instanceof Node)
+            keyElement.appendChild(key);
+        else {
+            // Don't include a colon if no value.
+            keyElement.textContent = key + (value ? ": " : "");
+
+            let valueElement = p.appendChild(document.createElement("span"));
+            valueElement.className = "value";
+            if (value instanceof Node)
+                valueElement.appendChild(value);
+            else
+                valueElement.textContent = value;
+        }
+
+        return p;
+    }
 };

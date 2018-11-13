@@ -26,6 +26,7 @@
 #ifndef CertificateInfo_h
 #define CertificateInfo_h
 
+#include "CertificateInfoBase.h"
 #include <wtf/RetainPtr.h>
 
 #if PLATFORM(COCOA)
@@ -34,7 +35,7 @@
 
 namespace WebCore {
 
-class CertificateInfo {
+class CertificateInfo : public CertificateInfoBase {
 public:
      CertificateInfo() = default;
  
@@ -65,6 +66,8 @@ public:
     WEBCORE_EXPORT Type type() const;
     WEBCORE_EXPORT bool containsNonRootSHA1SignedCertificate() const;
 
+    std::optional<SummaryInfo> summaryInfo() const;
+
     bool isEmpty() const { return type() == Type::None; }
 
 #if PLATFORM(COCOA)
@@ -72,7 +75,9 @@ public:
 #endif
 
 #ifndef NDEBUG
+#if PLATFORM(COCOA)
     void dump() const;
+#endif
 #endif
 
 private:

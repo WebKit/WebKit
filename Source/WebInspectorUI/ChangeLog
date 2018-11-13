@@ -1,3 +1,96 @@
+2018-11-12  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Network: show secure certificate details per-request
+        https://bugs.webkit.org/show_bug.cgi?id=191447
+        <rdar://problem/30019476>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Controllers/NetworkManager.js:
+        (WI.NetworkManager.prototype.resourceRequestWasServedFromMemoryCache):
+        (WI.NetworkManager.prototype.resourceRequestDidReceiveResponse):
+
+        * UserInterface/Models/Resource.js:
+        (WI.Resource.prototype.get responseSecurity): Added.
+        (WI.Resource.prototype.get loadedSecurely): Added.
+        (WI.Resource.prototype.updateForResponse):
+
+        * UserInterface/Views/NetworkResourceDetailView.js:
+        (WI.NetworkResourceDetailView):
+        (WI.NetworkResourceDetailView.prototype.initialLayout):
+        (WI.NetworkResourceDetailView.prototype.showContentViewForIdentifier):
+        * UserInterface/Views/NetworkResourceDetailView.css:
+        (.content-view.resource-details .go-to-arrow): Added.
+        (.content-view.resource-details.showing-find-banner .search-highlight): Added.
+
+        * UserInterface/Views/ResourceSecurityContentView.js: Added.
+        (WI.ResourceSecurityContentView):
+        (WI.ResourceSecurityContentView.prototype.initialLayout):
+        (WI.ResourceSecurityContentView.prototype.layout):
+        (WI.ResourceSecurityContentView.prototype.closed):
+        (WI.ResourceSecurityContentView.prototype.get supportsSearch):
+        (WI.ResourceSecurityContentView.prototype.get numberOfSearchResults):
+        (WI.ResourceSecurityContentView.prototype.get hasPerformedSearch):
+        (WI.ResourceSecurityContentView.prototype.set automaticallyRevealFirstSearchResult):
+        (WI.ResourceSecurityContentView.prototype.performSearch):
+        (WI.ResourceSecurityContentView.prototype.searchCleared):
+        (WI.ResourceSecurityContentView.prototype.revealPreviousSearchResult):
+        (WI.ResourceSecurityContentView.prototype.revealNextSearchResult):
+        (WI.ResourceSecurityContentView.prototype._refreshCetificateSection):
+        (WI.ResourceSecurityContentView.prototype._perfomSearchOnKeyValuePairs):
+        (WI.ResourceSecurityContentView.prototype._revealSearchResult):
+        (WI.ResourceSecurityContentView.prototype._handleResourceResponseReceived):
+        * UserInterface/Views/ResourceSecurityContentView.css: Added.
+        (body[dir] .resource-security > section.certificate > .details):
+        (.resource-security .details .key):
+        (.resource-security .dns-name + .dns-name > .key,):
+        (.resource-security .show-more):
+        (@media (prefers-dark-interface) body[dir] .resource-security > section.certificate > .details):
+        (@media (prefers-dark-interface) .resource-security .details .key):
+
+        * UserInterface/Views/ResourceCookiesContentView.js:
+        (WI.ResourceCookiesContentView.prototype._refreshRequestCookiesSection):
+        (WI.ResourceCookiesContentView.prototype._refreshResponseCookiesSection):
+        (WI.ResourceCookiesContentView.prototype._markIncompleteSectionWithMessage): Deleted.
+        (WI.ResourceCookiesContentView.prototype._markIncompleteSectionWithLoadingIndicator): Deleted.
+        * UserInterface/Views/ResourceHeadersContentView.js:
+        (WI.ResourceHeadersContentView.prototype._refreshSummarySection):
+        (WI.ResourceHeadersContentView.prototype._refreshRedirectHeadersSections):
+        (WI.ResourceHeadersContentView.prototype._refreshRequestHeadersSection):
+        (WI.ResourceHeadersContentView.prototype._refreshResponseHeadersSection):
+        (WI.ResourceHeadersContentView.prototype._refreshQueryStringSection):
+        (WI.ResourceHeadersContentView.prototype._refreshRequestDataSection):
+        (WI.ResourceHeadersContentView.prototype._markIncompleteSectionWithMessage): Deleted.
+        (WI.ResourceHeadersContentView.prototype._markIncompleteSectionWithLoadingIndicator): Deleted.
+        (WI.ResourceHeadersContentView.prototype._appendKeyValuePair): Deleted.
+        * UserInterface/Views/ResourceHeadersContentView.css:
+        (.resource-headers .h1-status > .key,):
+        (body[dir] .resource-headers > section.error > .details): Deleted.
+        (.resource-headers > section.error .key): Deleted.
+        (.resource-headers .details): Deleted.
+        (.resource-headers .details .pair): Deleted.
+        (body[dir=rtl] .resource-headers .details .pair): Deleted.
+        (.resource-headers .details .key): Deleted.
+        (.resource-headers .value): Deleted.
+        (.resource-headers .go-to-arrow): Deleted.
+        (.resource-headers.showing-find-banner .search-highlight): Deleted.
+        * UserInterface/Views/ResourceDetailsSection.js:
+        (WI.ResourceDetailsSection.prototype.markIncompleteSectionWithMessage): Added.
+        (WI.ResourceDetailsSection.prototype.markIncompleteSectionWithLoadingIndicator): Added.
+        (WI.ResourceDetailsSection.prototype.appendKeyValuePair): Added.
+        * UserInterface/Views/ResourceDetailsSection.css:
+        (.resource-details > section > .details): Added.
+        (.resource-details > section > .details > .pair): Added.
+        (body[dir=rtl] .resource-details > section > .details > .pair): Added.
+        (.resource-details > section > .details > .pair > .key): Added.
+        (.resource-details > section > .details > .pair > .value): Added.
+        (body[dir] .resource-details > section.error > .details): Added.
+        (.resource-details > section.error > .details > .pair > .key): Added.
+        Move commonly used functions/styles from container classes onto this object.
+
+        * UserInterface/Main.html:
+        * Localizations/en.lproj/localizedStrings.js:
+
 2018-11-12  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Table should support shift-extending the row selection

@@ -38,6 +38,7 @@
 #include "CachedResourceLoader.h"
 #include "CachedResourceRequestInitiators.h"
 #include "CachedScript.h"
+#include "CertificateInfo.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "DocumentThreadableLoader.h"
@@ -320,6 +321,40 @@ RefPtr<Inspector::Protocol::Network::Response> InspectorNetworkAgent::buildObjec
 
     if (resourceLoader)
         responseObject->setTiming(buildObjectForTiming(response.deprecatedNetworkLoadMetrics(), *resourceLoader));
+
+    if (auto& certificateInfo = response.certificateInfo()) {
+        auto securityPayload = Inspector::Protocol::Security::Security::create()
+            .release();
+
+        if (auto certificateSummaryInfo = certificateInfo.value().summaryInfo()) {
+            auto certificatePayload = Inspector::Protocol::Security::Certificate::create()
+                .release();
+
+            certificatePayload->setSubject(certificateSummaryInfo.value().subject);
+
+            if (auto validFrom = certificateSummaryInfo.value().validFrom)
+                certificatePayload->setValidFrom(validFrom.seconds());
+
+            if (auto validUntil = certificateSummaryInfo.value().validUntil)
+                certificatePayload->setValidUntil(validUntil.seconds());
+
+            auto dnsNamesPayload = JSON::ArrayOf<String>::create();
+            for (auto& dnsName : certificateSummaryInfo.value().dnsNames)
+                dnsNamesPayload->addItem(dnsName);
+            if (dnsNamesPayload->length())
+                certificatePayload->setDnsNames(WTFMove(dnsNamesPayload));
+
+            auto ipAddressesPayload = JSON::ArrayOf<String>::create();
+            for (auto& ipAddress : certificateSummaryInfo.value().ipAddresses)
+                ipAddressesPayload->addItem(ipAddress);
+            if (ipAddressesPayload->length())
+                certificatePayload->setDnsNames(WTFMove(ipAddressesPayload));
+
+            securityPayload->setCertificate(WTFMove(certificatePayload));
+        }
+
+        responseObject->setSecurity(WTFMove(securityPayload));
+    }
 
     return WTFMove(responseObject);
 }

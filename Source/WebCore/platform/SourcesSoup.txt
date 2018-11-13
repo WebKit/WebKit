@@ -22,7 +22,7 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 
 platform/network/soup/AuthenticationChallengeSoup.cpp
-platform/network/soup/CertificateInfo.cpp
+platform/network/soup/CertificateInfoSoup.cpp
 platform/network/soup/CookieSoup.cpp
 platform/network/soup/CookieStorageSoup.cpp
 platform/network/soup/CredentialStorageSoup.cpp

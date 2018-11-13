@@ -494,6 +494,7 @@ platform/mediastream/mac/MockRealtimeVideoSourceMac.mm
 platform/mock/MediaPlaybackTargetPickerMock.cpp
 platform/mock/MediaPlaybackTargetMock.cpp
 
+platform/network/cf/CertificateInfoCFNet.cpp
 platform/network/cf/DNSResolveQueueCFNet.cpp
 platform/network/cf/FormDataStreamCFNet.cpp
 platform/network/cf/NetworkStorageSessionCFNet.cpp
@@ -501,6 +502,7 @@ platform/network/cf/ProxyServerCFNet.cpp
 platform/network/cf/ResourceRequestCFNet.cpp
 platform/network/cf/SocketStreamHandleImplCFNet.cpp
 
+platform/network/cocoa/CertificateInfoCocoa.mm
 platform/network/cocoa/CookieCocoa.mm
 platform/network/cocoa/CookieStorageObserver.mm
 platform/network/cocoa/CredentialCocoa.mm
@@ -517,7 +519,6 @@ platform/network/ios/WebCoreURLResponseIOS.mm
 
 platform/network/mac/AuthenticationMac.mm
 platform/network/mac/BlobDataFileReferenceMac.mm
-platform/network/mac/CertificateInfoMac.mm
 platform/network/mac/CookieStorageMac.mm
 platform/network/mac/CredentialStorageMac.mm
 platform/network/mac/FormDataStreamMac.mm

@@ -36,3 +36,14 @@
     -webkit-user-select: text;
     white-space: nowrap;
 }
+
+.content-view.resource-details .go-to-arrow {
+    vertical-align: top;
+    bottom: 1px;
+}
+
+.content-view.resource-details.showing-find-banner .search-highlight {
+    color: var(--text-color);
+    background-color: hsla(53, 83%, 53%, 0.2);
+    border-bottom: 1px solid hsl(47, 82%, 60%);
+}

@@ -70,6 +70,7 @@ WI.Resource = class Resource extends WI.SourceCode
         this._failureReasonText = null;
         this._receivedNetworkLoadMetrics = false;
         this._responseSource = WI.Resource.ResponseSource.Unknown;
+        this._responseSecurity = null;
         this._timingData = new WI.ResourceTimingData(this);
         this._protocol = null;
         this._priority = WI.Resource.NetworkPriority.Unknown;
@@ -306,6 +307,7 @@ WI.Resource = class Resource extends WI.SourceCode
     get statusCode() { return this._statusCode; }
     get statusText() { return this._statusText; }
     get responseSource() { return this._responseSource; }
+    get responseSecurity() { return this._responseSecurity; }
     get timingData() { return this._timingData; }
     get protocol() { return this._protocol; }
     get priority() { return this._priority; }
@@ -336,6 +338,15 @@ WI.Resource = class Resource extends WI.SourceCode
         if (!this._urlComponents)
             this._urlComponents = parseURL(this._url);
         return this._urlComponents;
+    }
+
+    get loadedSecurely()
+    {
+        if (this.urlComponents.scheme !== "https" && this.urlComponents.scheme !== "wss" && this.urlComponents.scheme !== "sftp")
+            return false;
+        if (isNaN(this._timingData.secureConnectionStart) && !isNaN(this._timingData.connectionStart))
+            return false;
+        return true;
     }
 
     get displayName()
@@ -675,7 +686,7 @@ WI.Resource = class Resource extends WI.SourceCode
         return requestDataContentType && requestDataContentType.match(/^application\/x-www-form-urlencoded\s*(;.*)?$/i);
     }
 
-    updateForResponse(url, mimeType, type, responseHeaders, statusCode, statusText, elapsedTime, timingData, source)
+    updateForResponse(url, mimeType, type, responseHeaders, statusCode, statusText, elapsedTime, timingData, source, security)
     {
         console.assert(!this._finished);
         console.assert(!this._failed);
@@ -703,6 +714,9 @@ WI.Resource = class Resource extends WI.SourceCode
 
         if (source)
             this._responseSource = WI.Resource.responseSourceFromPayload(source);
+
+        if (security)
+            this._responseSecurity = security;
 
         const headerBaseSize = 12; // Length of "HTTP/1.1 ", " ", and "\r\n".
         const headerPad = 4; // Length of ": " and "\r\n".

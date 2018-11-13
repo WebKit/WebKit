@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+function createSecureRequest() {
+    let img = document.createElement("img");
+    img.src = "https://localhost:8443/resources/square100.png";
+    document.body.appendChild(img);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Resource.Security");
+
+    suite.addTestCase({
+        name: "Resource.Security.Certificate",
+        description: "Check if a resource has security certificate information.",
+        test(resolve, reject) {
+            WI.Resource.awaitEvent(WI.Resource.Event.ResponseReceived)
+            .then((event) => {
+                let resource = event.target;
+                InspectorTest.expectThat(resource.loadedSecurely, "Resource should have been loaded securely.");
+
+                let responseSecurity = resource.responseSecurity;
+                InspectorTest.expectNotNull(responseSecurity, "Resource should have security information.");
+
+                let certificate = responseSecurity.certificate;
+                InspectorTest.expectNotNull(certificate, "Security information should include certificate information.");
+                InspectorTest.expectGreaterThan(certificate.subject.length, 0, "Certificate should have subject");
+                InspectorTest.expectGreaterThan(certificate.validFrom, 0, "Certificate should have a validFrom date.");
+                InspectorTest.expectGreaterThan(certificate.validUntil, 0, "Certificate should have a validUntil date.");
+            })
+            .then(resolve, reject);
+
+            InspectorTest.evaluateInPage(`createSecureRequest()`)
+            .catch(reject);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests that a resource has security information.</p>
+</body>
+</html>

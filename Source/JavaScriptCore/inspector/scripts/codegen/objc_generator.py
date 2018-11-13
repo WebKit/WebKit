@@ -122,7 +122,7 @@ class ObjCGenerator(Generator):
 
     # Generate ObjC types, command handlers, and event dispatchers for a subset of domains.
 
-    DOMAINS_TO_GENERATE = ['CSS', 'DOM', 'DOMStorage', 'Network', 'Page', 'Automation', 'GenericTypes']
+    DOMAINS_TO_GENERATE = ['CSS', 'DOM', 'DOMStorage', 'Network', 'Security', 'Page', 'Automation', 'GenericTypes']
 
     def should_generate_types_for_domain(self, domain):
         if not len(self.type_declarations_for_domain(domain)):

@@ -23,79 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "CertificateInfo.h"
+#include "config.h"
+#include "CertificateInfo.h"
 
-#import "NotImplemented.h"
-#import <wtf/cf/TypeCastsCF.h>
-#import <wtf/spi/cocoa/SecuritySPI.h>
+#include <Security/SecCertificate.h>
+#include <wtf/cf/TypeCastsCF.h>
+#include <wtf/spi/cocoa/SecuritySPI.h>
 
 WTF_DECLARE_CF_TYPE_TRAIT(SecCertificate);
 
 namespace WebCore {
-
-#if PLATFORM(COCOA)
-RetainPtr<CFArrayRef> CertificateInfo::certificateChainFromSecTrust(SecTrustRef trust)
-{
-    auto count = SecTrustGetCertificateCount(trust);
-    auto certificateChain = CFArrayCreateMutable(0, count, &kCFTypeArrayCallBacks);
-    for (CFIndex i = 0; i < count; i++)
-        CFArrayAppendValue(certificateChain, SecTrustGetCertificateAtIndex(trust, i));
-    return adoptCF((CFArrayRef)certificateChain);
-}
-#endif
-
-CertificateInfo::Type CertificateInfo::type() const
-{
-#if HAVE(SEC_TRUST_SERIALIZATION)
-    if (m_trust)
-        return Type::Trust;
-#endif
-    if (m_certificateChain)
-        return Type::CertificateChain;
-    return Type::None;
-}
-
-CFArrayRef CertificateInfo::certificateChain() const
-{
-#if HAVE(SEC_TRUST_SERIALIZATION)
-    if (m_certificateChain)
-        return m_certificateChain.get();
-
-    if (m_trust) 
-        m_certificateChain = CertificateInfo::certificateChainFromSecTrust(m_trust.get());
-#endif
-
-    return m_certificateChain.get();
-}
-
-bool CertificateInfo::containsNonRootSHA1SignedCertificate() const
-{
-#if HAVE(SEC_TRUST_SERIALIZATION)
-    if (m_trust) {
-        // Allow only the root certificate (the last in the chain) to be SHA1.
-        for (CFIndex i = 0, size = SecTrustGetCertificateCount(trust()) - 1; i < size; ++i) {
-            auto certificate = SecTrustGetCertificateAtIndex(trust(), i);
-            if (SecCertificateGetSignatureHashAlgorithm(certificate) == kSecSignatureHashAlgorithmSHA1)
-                return true;
-        }
-
-        return false;
-    }
-#endif
-
-    if (m_certificateChain) {
-        // Allow only the root certificate (the last in the chain) to be SHA1.
-        for (CFIndex i = 0, size = CFArrayGetCount(m_certificateChain.get()) - 1; i < size; ++i) {
-            auto certificate = checked_cf_cast<SecCertificateRef>(CFArrayGetValueAtIndex(m_certificateChain.get(), i));
-            if (SecCertificateGetSignatureHashAlgorithm(certificate) == kSecSignatureHashAlgorithmSHA1)
-                return true;
-        }
-        return false;
-    }
-
-    return false;
-}
 
 #ifndef NDEBUG
 void CertificateInfo::dump() const
@@ -126,7 +63,7 @@ void CertificateInfo::dump() const
 
         return;
     }
-    
+
     NSLog(@"CertificateInfo (Empty)\n");
 }
 #endif

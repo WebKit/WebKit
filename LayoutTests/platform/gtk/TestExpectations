@@ -1977,6 +1977,7 @@ webkit.org/b/186750 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_key
 webkit.org/b/186750 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_pbkdf2_short_long.https.html [ Pass Failure ]
 
 webkit.org/b/186847 http/tests/inspector/network/resource-sizes-memory-cache.html [ Pass Failure ]
+webkit.org/b/191497 http/tests/inspector/network/resource-response-security.html [ Skip ]
 
 webkit.org/b/186851 imported/w3c/web-platform-tests/xhr/formdata.htm [ Pass Failure ]
 webkit.org/b/186851 imported/w3c/web-platform-tests/xhr/formdata-blob.htm [ Pass Failure ]

@@ -34,6 +34,8 @@
 
 .resource-details > section > .details {
     -webkit-margin-start: 10px;
+    white-space: normal;
+    word-break: break-all;
 }
 
 body[dir=ltr] .resource-details > section > .details {
@@ -53,4 +55,31 @@ body[dir=rtl] .resource-details > section > .details {
 .resource-details > section.incomplete > .details {
     color: var(--console-secondary-text-color) !important;
     border-color: var(--console-secondary-text-color) !important;
+}
+
+.resource-details > section > .details > .pair {
+    --resource-details-value-indent: 15px;
+    -webkit-margin-start: var(--resource-details-value-indent);
+}
+
+body[dir=rtl] .resource-details > section > .details > .pair {
+    /* Don't include indents in RTL */
+    --resource-details-value-indent: 0px;
+}
+
+.resource-details > section > .details > .pair > .key {
+    font-weight: 500;
+    -webkit-margin-start: calc(var(--resource-details-value-indent) * -1);
+}
+
+.resource-details > section > .details > .pair > .value {
+    color: var(--text-color);
+}
+
+body[dir] .resource-details > section.error > .details {
+    border-color: var(--network-error-color);
+}
+
+.resource-details > section.error > .details > .pair > .key {
+    color: var(--network-error-color);
 }

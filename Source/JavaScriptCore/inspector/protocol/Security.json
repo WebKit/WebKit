@@ -1,0 +1,26 @@
+{
+    "domain": "Security",
+    "description": "Security domain allows the frontend to query for information relating to the security of the page (e.g. HTTPS info, TLS info, user activity, etc.).",
+    "types": [
+        {
+            "id": "Certificate",
+            "type": "object",
+            "description": "Information about a SSL certificate to display in the frontend.",
+            "properties": [
+                { "name": "subject", "type": "string", "optional": true },
+                { "name": "validFrom", "$ref": "Network.Walltime", "optional": true },
+                { "name": "validUntil", "$ref": "Network.Walltime", "optional": true },
+                { "name": "dnsNames", "type": "array", "items": { "type": "string" }, "optional": true, "description": "DNS names listed on the certificate."},
+                { "name": "ipAddresses", "type": "array", "items": { "type": "string" }, "optional": true, "description": "IP addresses listed on the certificate."}
+            ]
+        },
+        {
+            "id": "Security",
+            "type": "object",
+            "description": "Security information for a given Network.Response.",
+            "properties": [
+                { "name": "certificate", "$ref": "Certificate", "optional": true }
+            ]
+        }
+    ]
+}

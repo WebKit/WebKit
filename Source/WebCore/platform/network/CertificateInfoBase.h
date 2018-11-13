@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,40 +25,27 @@
 
 #pragma once
 
-#include "CertificateInfoBase.h"
-#include "NotImplemented.h"
+#include <wtf/Optional.h>
+#include <wtf/Seconds.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class CertificateInfo : public CertificateInfoBase {
+class CertificateInfoBase {
 public:
-    using Certificate = Vector<uint8_t>;
+    bool containsNonRootSHA1SignedCertificate() const { return false; };
 
-    CertificateInfo() = default;
-    WEBCORE_EXPORT CertificateInfo(int verificationError, Vector<Certificate>&&);
+    struct SummaryInfo {
+        String subject;
+        Seconds validFrom;
+        Seconds validUntil;
+        Vector<String> dnsNames;
+        Vector<String> ipAddresses;
+    };
+    std::optional<SummaryInfo> summaryInfo() const { return std::nullopt; };
 
-    WEBCORE_EXPORT CertificateInfo isolatedCopy() const;
-
-    int verificationError() const { return m_verificationError; }
-    const Vector<Certificate>& certificateChain() const { return m_certificateChain; }
-
-    bool containsNonRootSHA1SignedCertificate() const { notImplemented(); return false; }
-
-    std::optional<SummaryInfo> summaryInfo() const { notImplemented(); return std::nullopt; }
-
-    bool isEmpty() const { return m_certificateChain.isEmpty(); }
-
-    static Certificate makeCertificate(const char*, size_t);
-
-private:
-    int m_verificationError { 0 };
-    Vector<Certificate> m_certificateChain;
+    bool isEmpty() const { return true; };
 };
-
-inline bool operator==(const CertificateInfo& a, const CertificateInfo& b)
-{
-    return a.verificationError() == b.verificationError() && a.certificateChain() == b.certificateChain();
-}
 
 } // namespace WebCore

@@ -27,6 +27,7 @@
 #ifndef CertificateInfo_h
 #define CertificateInfo_h
 
+#include "CertificateInfoBase.h"
 #include "NotImplemented.h"
 #include <libsoup/soup.h>
 #include <wtf/glib/GRefPtr.h>
@@ -36,7 +37,7 @@ namespace WebCore {
 class ResourceError;
 class ResourceResponse;
 
-class CertificateInfo {
+class CertificateInfo  : public CertificateInfoBase {
 public:
     CertificateInfo();
     explicit CertificateInfo(const WebCore::ResourceResponse&);
@@ -50,6 +51,10 @@ public:
     void setTLSErrors(GTlsCertificateFlags tlsErrors) { m_tlsErrors = tlsErrors; }
 
     bool containsNonRootSHA1SignedCertificate() const { notImplemented(); return false; }
+
+    std::optional<SummaryInfo> summaryInfo() const { notImplemented(); return std::nullopt; }
+
+    bool isEmpty() const { return !m_certificate; }
 
 private:
     GRefPtr<GTlsCertificate> m_certificate;

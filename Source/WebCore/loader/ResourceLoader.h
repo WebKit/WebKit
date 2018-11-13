@@ -127,7 +127,7 @@ public:
     bool shouldSniffContent() const { return m_options.sniffContent == ContentSniffingPolicy::SniffContent; }
     bool shouldSniffContentEncoding() const { return m_options.sniffContentEncoding == ContentEncodingSniffingPolicy::Sniff; }
     WEBCORE_EXPORT bool isAllowedToAskUserForCredentials() const;
-    bool shouldIncludeCertificateInfo() const { return m_options.certificateInfoPolicy == CertificateInfoPolicy::IncludeCertificateInfo; }
+    WEBCORE_EXPORT bool shouldIncludeCertificateInfo() const;
 
     bool reachedTerminalState() const { return m_reachedTerminalState; }
 
