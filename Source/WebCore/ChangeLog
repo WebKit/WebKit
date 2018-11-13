@@ -408,7 +408,7 @@
 
         Sadly entire subtrees can't be skipped during the "compositing requirements" traversal because we still have
         to accumulate overlap rects, but RenderLayerCompositor::traverseUnchangedSubtree() is used to minimize
-        work in that case. Subtrees can be skipped in the "update backing and hierarchy" traveral. Entire traversals can
+        work in that case. Subtrees can be skipped in the "update backing and hierarchy" traversal. Entire traversals can
         be skipped if no change has triggered the need for that traversal.
         
         These changes fix a correctness issue where transform changes now trigger overlap re-evaluation, which causes
