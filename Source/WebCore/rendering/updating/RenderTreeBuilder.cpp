@@ -317,7 +317,7 @@ void RenderTreeBuilder::attachIgnoringContinuation(RenderElement& parent, Render
     attach(parent, WTFMove(child), beforeChild);
 }
 
-RenderPtr<RenderObject> RenderTreeBuilder::detach(RenderElement& parent, RenderObject& child)
+RenderPtr<RenderObject> RenderTreeBuilder::detach(RenderElement& parent, RenderObject& child, CanCollapseAnonymousBlock canCollapseAnonymousBlock)
 {
     if (is<RenderRubyAsInline>(parent))
         return rubyBuilder().detach(downcast<RenderRubyAsInline>(parent), child);
@@ -350,10 +350,10 @@ RenderPtr<RenderObject> RenderTreeBuilder::detach(RenderElement& parent, RenderO
         return svgBuilder().detach(downcast<RenderSVGRoot>(parent), child);
 
     if (is<RenderBlockFlow>(parent))
-        return blockBuilder().detach(downcast<RenderBlockFlow>(parent), child);
+        return blockBuilder().detach(downcast<RenderBlockFlow>(parent), child, canCollapseAnonymousBlock);
 
     if (is<RenderBlock>(parent))
-        return blockBuilder().detach(downcast<RenderBlock>(parent), child);
+        return blockBuilder().detach(downcast<RenderBlock>(parent), child, canCollapseAnonymousBlock);
 
     return detachFromRenderElement(parent, child);
 }

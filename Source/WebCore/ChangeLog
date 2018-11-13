@@ -1,3 +1,29 @@
+2018-11-12  Zalan Bujtas  <zalan@apple.com>
+
+        Do not collapse the soon-to-be-parent anon block when we shuffle around the marker item renderer.
+        https://bugs.webkit.org/show_bug.cgi?id=191554
+        <rdar://problem/45825265>
+
+        Reviewed by Antti Koivisto.
+
+        While moving the marker item renderer to its correct subtree, we accidentally remove the soon-to-be parent anonymous block.
+        Moving a renderer is a 2 step process:
+        1. Detach the renderer from its current parent
+        2. Attach it to its new parent.
+        During step #1, we check if there is a chance to collapse anonymous blocks. In this case the soon-to-be-parent is a sibling anonymous block which, after detaching the marker sibling
+        is not needed anymore (except we use it as the new parent).
+
+        Test: fast/inline/marker-list-item-move-should-not-crash.html
+
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::detach):
+        * rendering/updating/RenderTreeBuilder.h:
+        * rendering/updating/RenderTreeBuilderBlock.cpp:
+        (WebCore::RenderTreeBuilder::Block::detach):
+        * rendering/updating/RenderTreeBuilderBlock.h:
+        * rendering/updating/RenderTreeBuilderList.cpp:
+        (WebCore::RenderTreeBuilder::List::updateItemMarker):
+
 2018-11-12  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-grid] Refactoring to make more explicit the orthogonal items' pre-layout logic

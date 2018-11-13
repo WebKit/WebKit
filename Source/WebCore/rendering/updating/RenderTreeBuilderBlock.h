@@ -37,8 +37,8 @@ public:
     void attach(RenderBlock& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
     void attachIgnoringContinuation(RenderBlock& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
 
-    RenderPtr<RenderObject> detach(RenderBlock& parent, RenderObject& oldChild) WARN_UNUSED_RETURN;
-    RenderPtr<RenderObject> detach(RenderBlockFlow& parent, RenderObject& child) WARN_UNUSED_RETURN;
+    RenderPtr<RenderObject> detach(RenderBlock& parent, RenderObject& oldChild, CanCollapseAnonymousBlock = CanCollapseAnonymousBlock::Yes) WARN_UNUSED_RETURN;
+    RenderPtr<RenderObject> detach(RenderBlockFlow& parent, RenderObject& child, CanCollapseAnonymousBlock = CanCollapseAnonymousBlock::Yes) WARN_UNUSED_RETURN;
 
     void dropAnonymousBoxChild(RenderBlock& parent, RenderBlock& child);
     void childBecameNonInline(RenderBlock& parent, RenderElement& child);
