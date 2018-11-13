@@ -1,3 +1,17 @@
+2018-11-13  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK][WPE] Incorrect tile coverage when resizing a layer out of the visible area
+        https://bugs.webkit.org/show_bug.cgi?id=191545
+
+        Reviewed by Žan Doberšek.
+
+        Keep track of layer size changes even if they happen when the layer is not in the visible
+        area, so we can update edge tiles when the layer gets visible.
+
+        * platform/graphics/texmap/coordinated/TiledBackingStore.cpp:
+        (WebCore::TiledBackingStore::createTiles):
+        * platform/graphics/texmap/coordinated/TiledBackingStore.h:
+
 2018-11-12  Rob Buis  <rbuis@igalia.com>
 
         Content-Type parameter values should allow empty quoted strings

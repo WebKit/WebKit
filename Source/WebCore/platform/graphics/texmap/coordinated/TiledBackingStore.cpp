@@ -139,7 +139,6 @@ bool TiledBackingStore::visibleAreaIsCovered() const
 void TiledBackingStore::createTiles(const IntRect& visibleRect, const IntRect& scaledContentsRect, float coverAreaMultiplier)
 {
     // Update our backing store geometry.
-    const IntRect previousRect = m_rect;
     m_rect = scaledContentsRect;
     m_trajectoryVector = m_pendingTrajectoryVector;
     m_visibleRect = visibleRect;
@@ -184,8 +183,10 @@ void TiledBackingStore::createTiles(const IntRect& visibleRect, const IntRect& s
 
     // Resize tiles at the edge in case the contents size has changed, but only do so
     // after having dropped tiles outside the keep rect.
-    if (previousRect != m_rect)
+    if (m_previousRect != m_rect) {
+        m_previousRect = m_rect;
         resizeEdgeTiles();
+    }
 
     // Search for the tile position closest to the viewport center that does not yet contain a tile.
     // Which position is considered the closest depends on the tileDistance function.

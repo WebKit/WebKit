@@ -91,6 +91,7 @@ private:
     IntRect m_coverRect;
     IntRect m_keepRect;
     IntRect m_rect;
+    IntRect m_previousRect;
 
     float m_contentsScale;
 
