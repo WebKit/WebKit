@@ -455,6 +455,8 @@ LLINT_SLOW_PATH_DECL(entry_osr_function_for_construct_arityCheck)
 
 LLINT_SLOW_PATH_DECL(loop_osr)
 {
+    LLINT_BEGIN_NO_SET_PC();
+    UNUSED_PARAM(throwScope);
     CodeBlock* codeBlock = exec->codeBlock();
 
 #if ENABLE(JIT)
@@ -495,6 +497,8 @@ LLINT_SLOW_PATH_DECL(loop_osr)
 
 LLINT_SLOW_PATH_DECL(replace)
 {
+    LLINT_BEGIN_NO_SET_PC();
+    UNUSED_PARAM(throwScope);
     CodeBlock* codeBlock = exec->codeBlock();
 
 #if ENABLE(JIT)

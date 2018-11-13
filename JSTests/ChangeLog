@@ -1,3 +1,13 @@
+2018-11-13  Mark Lam  <mark.lam@apple.com>
+
+        LLIntSlowPath's llint_loop_osr and llint_replace should set the topCallFrame.
+        https://bugs.webkit.org/show_bug.cgi?id=191579
+        <rdar://problem/45942472>
+
+        Reviewed by Saam Barati.
+
+        * stress/regress-191579.js: Added.
+
 2018-11-13  Caio Lima  <ticaiolima@gmail.com>
 
         [BigInt] JSBigInt::createWithLength should throw when length is greater than JSBigInt::maxLength

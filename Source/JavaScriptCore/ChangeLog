@@ -1,3 +1,74 @@
+2018-11-13  Mark Lam  <mark.lam@apple.com>
+
+        LLIntSlowPath's llint_loop_osr and llint_replace should set the topCallFrame.
+        https://bugs.webkit.org/show_bug.cgi?id=191579
+        <rdar://problem/45942472>
+
+        Reviewed by Saam Barati.
+
+        Both of these functions do a lot of work.  It would be good for the topCallFrame
+        to be correct should we need to throw an exception.
+
+        For example, we've observed the following crash trace:
+
+          * frame #0: WTFCrash() at Assertions.cpp:253
+            frame #1: ...
+            frame #2: JSC::StructureIDTable::get(this=0x00006040000162f0, structureID=1874583248) at StructureIDTable.h:129
+            frame #3: JSC::VM::getStructure(this=0x0000604000016210, id=4022066896) at VM.h:705
+            frame #4: JSC::JSCell::structure(this=0x00007ffeefbbde30, vm=0x0000604000016210) const at JSCellInlines.h:125
+            frame #5: JSC::JSCell::classInfo(this=0x00007ffeefbbde30, vm=0x0000604000016210) const at JSCellInlines.h:335
+            frame #6: JSC::JSCell::inherits(this=0x00007ffeefbbde30, vm=0x0000604000016210, info=0x0000000105eaf020) const at JSCellInlines.h:302
+            frame #7: JSC::JSObject* JSC::jsCast<JSC::JSObject*, JSC::JSCell>(from=0x00007ffeefbbde30) at JSCast.h:36
+            frame #8: JSC::asObject(cell=0x00007ffeefbbde30) at JSObject.h:1299
+            frame #9: JSC::asObject(value=JSValue @ 0x00007ffeefbba380) at JSObject.h:1304
+            frame #10: JSC::Register::object(this=0x00007ffeefbbdd58) const at JSObject.h:1514
+            frame #11: JSC::ExecState::jsCallee(this=0x00007ffeefbbdd40) const at CallFrame.h:107
+            frame #12: JSC::ExecState::isStackOverflowFrame(this=0x00007ffeefbbdd40) const at CallFrameInlines.h:36
+            frame #13: JSC::StackVisitor::StackVisitor(this=0x00007ffeefbba860, startFrame=0x00007ffeefbbdd40, vm=0x0000631000000800) at StackVisitor.cpp:52
+            frame #14: JSC::StackVisitor::StackVisitor(this=0x00007ffeefbba860, startFrame=0x00007ffeefbbdd40, vm=0x0000631000000800) at StackVisitor.cpp:41
+            frame #15: void JSC::StackVisitor::visit<(JSC::StackVisitor::EmptyEntryFrameAction)0, JSC::Interpreter::getStackTrace(JSC::JSCell*, WTF::Vector<JSC::StackFrame, 0ul, WTF::CrashOnOverflow, 16ul>&, unsigned long, unsigned long)::$_3>(startFrame=0x00007ffeefbbdd40, vm=0x0000631000000800, functor=0x00007ffeefbbaa60)::$_3 const&) at StackVisitor.h:147
+            frame #16: JSC::Interpreter::getStackTrace(this=0x0000602000005db0, owner=0x000062d00020cbe0, results=0x00006020000249d0, framesToSkip=0, maxStackSize=1) at Interpreter.cpp:437
+            frame #17: JSC::getStackTrace(exec=0x000062d00002c048, vm=0x0000631000000800, obj=0x000062d00020cbe0, useCurrentFrame=true) at Error.cpp:170
+            frame #18: JSC::ErrorInstance::finishCreation(this=0x000062d00020cbe0, exec=0x000062d00002c048, vm=0x0000631000000800, message=0x00007ffeefbbb800, useCurrentFrame=true) at ErrorInstance.cpp:119
+            frame #19: JSC::ErrorInstance::create(exec=0x000062d00002c048, vm=0x0000631000000800, structure=0x000062d0000f5730, message=0x00007ffeefbbb800, appender=0x0000000000000000, type=TypeNothing, useCurrentFrame=true)(WTF::String const&, WTF::String const&, JSC::RuntimeType, JSC::ErrorInstance::SourceTextWhereErrorOccurred), JSC::RuntimeType, bool) at ErrorInstance.h:49
+            frame #20: JSC::createRangeError(exec=0x000062d00002c048, globalObject=0x000062d00002c000, message=0x00007ffeefbbb800, appender=0x0000000000000000)(WTF::String const&, WTF::String const&, JSC::RuntimeType, JSC::ErrorInstance::SourceTextWhereErrorOccurred)) at Error.cpp:68
+            frame #21: JSC::createRangeError(exec=0x000062d00002c048, globalObject=0x000062d00002c000, message=0x00007ffeefbbb800) at Error.cpp:316
+            frame #22: JSC::createStackOverflowError(exec=0x000062d00002c048, globalObject=0x000062d00002c000) at ExceptionHelpers.cpp:77
+            frame #23: JSC::createStackOverflowError(exec=0x000062d00002c048) at ExceptionHelpers.cpp:72
+            frame #24: JSC::throwStackOverflowError(exec=0x000062d00002c048, scope=0x00007ffeefbbbaa0) at ExceptionHelpers.cpp:335
+            frame #25: JSC::ProxyObject::getOwnPropertySlotCommon(this=0x000062d000200e40, exec=0x000062d00002c048, propertyName=PropertyName @ 0x00007ffeefbbba80, slot=0x00007ffeefbbc720) at ProxyObject.cpp:372
+            frame #26: JSC::ProxyObject::getOwnPropertySlot(object=0x000062d000200e40, exec=0x000062d00002c048, propertyName=PropertyName @ 0x00007ffeefbbbd40, slot=0x00007ffeefbbc720) at ProxyObject.cpp:395
+            frame #27: JSC::JSObject::getNonIndexPropertySlot(this=0x000062d000200e40, exec=0x000062d00002c048, propertyName=PropertyName @ 0x00007ffeefbbbea0, slot=0x00007ffeefbbc720) at JSObjectInlines.h:150
+            frame #28: bool JSC::JSObject::getPropertySlot<false>(this=0x000062d000200e40, exec=0x000062d00002c048, propertyName=PropertyName @ 0x00007ffeefbbc320, slot=0x00007ffeefbbc720) at JSObject.h:1424
+            frame #29: JSC::JSObject::calculatedClassName(object=0x000062d000200e40) at JSObject.cpp:535
+            frame #30: JSC::Structure::toStructureShape(this=0x000062d000007410, value=JSValue @ 0x00007ffeefbbcae0, sawPolyProtoStructure=0x00007ffeefbbcf60) at Structure.cpp:1142
+            frame #31: JSC::TypeProfilerLog::processLogEntries(this=0x000060400000a950, reason=0x00007ffeefbbd5c0) at TypeProfilerLog.cpp:89
+            frame #32: JSC::JIT::doMainThreadPreparationBeforeCompile(this=0x0000619000034da0) at JIT.cpp:951
+            frame #33: JSC::JITWorklist::Plan::Plan(this=0x0000619000034d80, codeBlock=0x000062d0001d88c0, loopOSREntryBytecodeOffset=0) at JITWorklist.cpp:43
+            frame #34: JSC::JITWorklist::Plan::Plan(this=0x0000619000034d80, codeBlock=0x000062d0001d88c0, loopOSREntryBytecodeOffset=0) at JITWorklist.cpp:42
+            frame #35: JSC::JITWorklist::compileLater(this=0x0000616000001b80, codeBlock=0x000062d0001d88c0, loopOSREntryBytecodeOffset=0) at JITWorklist.cpp:256
+            frame #36: JSC::LLInt::jitCompileAndSetHeuristics(codeBlock=0x000062d0001d88c0, exec=0x00007ffeefbbde30, loopOSREntryBytecodeOffset=0) at LLIntSlowPaths.cpp:391
+            frame #37: llint_replace(exec=0x00007ffeefbbde30, pc=0x00006040000161ba) at LLIntSlowPaths.cpp:516
+            frame #38: llint_entry at LowLevelInterpreter64.asm:98
+            frame #39: vmEntryToJavaScript at LowLevelInterpreter64.asm:296
+            ...
+
+        This crash occurred because StackVisitor was seeing an invalid topCallFrame while
+        trying to capture the Error stack while throwing a StackOverflowError below
+        llint_replace.  While in this specific example, it is questionable whether we
+        should be executing JS code below TypeProfilerLog::processLogEntries(), it is
+        correct to have set the topCallFrame in llint_replace.  We do this by calling
+        LLINT_BEGIN_NO_SET_PC() at the top of llint_replace.
+
+        We also do the same for llint_osr.
+        
+        Note: both of these LLInt slow path functions are called with a fully initialized
+        CallFrame.  Hence, there's no issue with setting topCallFrame to their CallFrames
+        for these functions.
+
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+
 2018-11-13  Caio Lima  <ticaiolima@gmail.com>
 
         [BigInt] JSBigInt::createWithLength should throw when length is greater than JSBigInt::maxLength
