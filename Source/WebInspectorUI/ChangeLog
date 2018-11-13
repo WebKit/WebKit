@@ -1,3 +1,20 @@
+2018-11-13  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Table with no selection should select the first/last row on down/up arrow key
+        https://bugs.webkit.org/show_bug.cgi?id=190100
+        <rdar://problem/44879243>
+
+        Reviewed by Devin Rousso.
+
+        Pressing the up or down arrow key when nothing is selected should select
+        the last or first row, respectively. After selecting the row make sure
+        it is visible by calling the new Table method `revealRow`.
+
+        * UserInterface/Views/Table.js:
+        (WI.Table.prototype.revealRow):
+        (WI.Table.prototype._handleKeyDown):
+        (WI.Table.prototype._selectRowsFromArrowKey):
+
 2018-11-13  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles: Command-A should select all properties

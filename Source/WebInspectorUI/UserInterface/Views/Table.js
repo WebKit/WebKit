@@ -435,6 +435,27 @@ WI.Table = class Table extends WI.View
         this._removeRows(oldSelectedRows);
     }
 
+    revealRow(rowIndex)
+    {
+        console.assert(rowIndex >= 0 && rowIndex < this.numberOfRows);
+        if (rowIndex < 0 || rowIndex >= this.numberOfRows)
+            return;
+
+        // Force our own scroll update because we may have scrolled.
+        this._cachedScrollTop = NaN;
+
+        if (this._isRowVisible(rowIndex)) {
+            let row = this._cachedRows.get(rowIndex);
+            console.assert(row, "Visible rows should always be in the cache.");
+            if (row)
+                row.scrollIntoViewIfNeeded(false);
+            this.needsLayout();
+        } else {
+            this._scrollContainerElement.scrollTop = rowIndex * this._rowHeight;
+            this.updateLayout();
+        }
+    }
+
     columnWithIdentifier(identifier)
     {
         return this._columnSpecs.get(identifier);
@@ -1281,22 +1302,13 @@ WI.Table = class Table extends WI.View
         if (!this.numberOfRows)
             return;
 
-        if (!this._isRowVisible(this._selectedRowIndex))
-            return;
-
         if (event.metaKey || event.ctrlKey)
             return;
 
         if (event.keyIdentifier === "Up" || event.keyIdentifier === "Down") {
             this._selectRowsFromArrowKey(event.keyIdentifier === "Up", event.shiftKey);
 
-            let row = this._cachedRows.get(this._selectedRowIndex);
-            console.assert(row, "Moving up or down by one should always find a cached row since it is within the overflow bounds.");
-            row.scrollIntoViewIfNeeded(false);
-
-            // Force our own scroll update because we may have scrolled.
-            this._cachedScrollTop = NaN;
-            this.needsLayout();
+            this.revealRow(this._selectedRowIndex);
 
             event.preventDefault();
             event.stopPropagation();
@@ -1305,6 +1317,12 @@ WI.Table = class Table extends WI.View
 
     _selectRowsFromArrowKey(goingUp, shiftKey)
     {
+        if (!this._selectedRows.size) {
+            let rowIndex = goingUp ? this.numberOfRows - 1 : 0;
+            this.selectRow(rowIndex);
+            return;
+        }
+
         let rowIncrement = goingUp ? -1 : 1;
         let rowIndex = this._selectedRowIndex + rowIncrement;
         if (rowIndex < 0 || rowIndex >= this.numberOfRows)
