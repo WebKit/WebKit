@@ -88,6 +88,7 @@ private:
 
     bool deleteCookieInternal(const String& name, const String& domain, const String& path);
     bool hasHttpOnlyCookie(const String& name, const String& domain, const String& path);
+    bool canAcceptCookie(const Cookie&, const String& host, CookieJarDB::Source);
 
     SQLiteDatabase m_database;
     HashMap<String, std::unique_ptr<SQLiteStatement>> m_statements;

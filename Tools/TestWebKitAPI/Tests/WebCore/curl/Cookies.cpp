@@ -62,6 +62,18 @@ protected:
     String m_cookieDirectory;
 };
 
+TEST_F(CurlCookies, RejectTailmatchFailureDomain)
+{
+    // success: domain match
+    EXPECT_TRUE(m_cookieJar->setCookie("http://example.com", "foo=bar; Domain=example.com", CookieJarDB::Source::Network));
+    // success: wildcard of domains
+    EXPECT_TRUE(m_cookieJar->setCookie("http://example.com", "foo=bar; Domain=.example.com", CookieJarDB::Source::Network));
+    // failure: specific sub domain
+    EXPECT_FALSE(m_cookieJar->setCookie("http://example.com", "foo=bar; Domain=www.example.com", CookieJarDB::Source::Network));
+    // failure: different domain
+    EXPECT_FALSE(m_cookieJar->setCookie("http://example.com", "foo=bar; Domain=sample.com", CookieJarDB::Source::Network));
+}
+
 TEST_F(CurlCookies, TestHttpOnlyCase)
 {
     // success: from network

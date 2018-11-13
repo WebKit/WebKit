@@ -88,7 +88,7 @@ static std::optional<double> parseExpires(const char* expires)
     return std::optional<double> {tmp / WTF::msPerSecond};
 }
 
-static void parseCookieAttributes(const String& attribute, const String& domain, bool& hasMaxAge, Cookie& result)
+static void parseCookieAttributes(const String& attribute, bool& hasMaxAge, Cookie& result)
 {
     size_t assignmentPosition = attribute.find('=');
 
@@ -113,11 +113,7 @@ static void parseCookieAttributes(const String& attribute, const String& domain,
         if (!isIPAddress(attributeValue) && !attributeValue.startsWith('.') && attributeValue.find('.') != notFound)
             attributeValue = "." + attributeValue;
 
-        // Make sure the host can set a cookie for the domain
-        // FIXME: firefox and chrome both ignore cookies with no valid domain set
-        // we currently ignore the invalid domains and default to the hostname as the domain
-        if (domainMatch(attributeValue, domain))
-            result.domain = attributeValue;
+        result.domain = attributeValue;
 
     } else if (equalIgnoringASCIICase(attributeName, "max-age")) {
         bool ok;
@@ -141,7 +137,7 @@ static void parseCookieAttributes(const String& attribute, const String& domain,
     }
 }
 
-std::optional<Cookie> parseCookieHeader(const String& cookieLine, const String& domain)
+std::optional<Cookie> parseCookieHeader(const String& cookieLine)
 {
     if (cookieLine.length() >= MAX_COOKIE_LINE)
         return std::nullopt;
@@ -173,7 +169,7 @@ std::optional<Cookie> parseCookieHeader(const String& cookieLine, const String& 
     cookie.session = true;
 
     for (auto attribute : cookieLine.splitAllowingEmptyEntries(';'))
-        parseCookieAttributes(attribute, domain, hasMaxAge, cookie);
+        parseCookieAttributes(attribute, hasMaxAge, cookie);
 
     return cookie;
 }

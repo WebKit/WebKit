@@ -424,6 +424,22 @@ bool CookieJarDB::hasHttpOnlyCookie(const String& name, const String& domain, co
     return statement.step() == SQLITE_ROW;
 }
 
+bool CookieJarDB::canAcceptCookie(const Cookie& cookie, const String& host, CookieJarDB::Source source)
+{
+#if ENABLE(PUBLIC_SUFFIX_LIST)
+    if (isPublicSuffix(cookie.domain))
+        return false;
+#endif
+
+    bool fromJavaScript = source == CookieJarDB::Source::Script;
+    if (fromJavaScript && (cookie.httpOnly || hasHttpOnlyCookie(cookie.name, cookie.domain, cookie.path)))
+        return false;
+
+    if (!CookieUtil::domainMatch(cookie.domain, host))
+        return false;
+
+    return true;
+}
 
 bool CookieJarDB::setCookie(const Cookie& cookie)
 {
@@ -457,7 +473,7 @@ bool CookieJarDB::setCookie(const String& url, const String& body, CookieJarDB::
     String host(urlObj.host().toString());
     String path(urlObj.path());
 
-    auto cookie = CookieUtil::parseCookieHeader(body, host);
+    auto cookie = CookieUtil::parseCookieHeader(body);
     if (!cookie)
         return false;
 
@@ -467,17 +483,7 @@ bool CookieJarDB::setCookie(const String& url, const String& body, CookieJarDB::
     if (cookie->path.isEmpty())
         cookie->path = CookieUtil::defaultPathForURL(urlObj);
 
-#if ENABLE(PUBLIC_SUFFIX_LIST)
-    if (isPublicSuffix(cookie->domain))
-        return false;
-#endif
-
-    bool fromJavaScript = source == CookieJarDB::Source::Script;
-
-    if (fromJavaScript && cookie->httpOnly)
-        return false;
-
-    if (fromJavaScript && hasHttpOnlyCookie(cookie->name, cookie->domain, cookie->path))
+    if (!canAcceptCookie(*cookie, host, source))
         return false;
 
     return setCookie(*cookie);

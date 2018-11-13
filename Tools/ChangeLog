@@ -1,3 +1,15 @@
+2018-11-12  Christopher Reid  <chris.reid@sony.com>
+
+        [Curl] Reject entire cookie if the domain fails a tailmatch.
+        https://bugs.webkit.org/show_bug.cgi?id=191406
+
+        Reviewed by Youenn Fablet.
+
+        Added unittests for Curl cookie implementation.
+
+        * TestWebKitAPI/Tests/WebCore/curl/Cookies.cpp:
+        (TestWebKitAPI::Curl::CurlCookies::RejectTailmatchFailureDomain):
+
 2018-11-12  Alex Christensen  <achristensen@webkit.org>
 
         [iOS] Implement safe browsing in WebKit
