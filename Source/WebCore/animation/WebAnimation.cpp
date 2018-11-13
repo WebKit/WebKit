@@ -1094,6 +1094,11 @@ void WebAnimation::runPendingPauseTask()
     invalidateEffect();
 }
 
+bool WebAnimation::isRunningAccelerated() const
+{
+    return is<KeyframeEffect>(m_effect) && downcast<KeyframeEffect>(*m_effect).isRunningAccelerated();
+}
+
 bool WebAnimation::needsTick() const
 {
     return pending() || playState() == PlayState::Running;
@@ -1114,7 +1119,7 @@ void WebAnimation::tick()
 
 void WebAnimation::resolve(RenderStyle& targetStyle)
 {
-    timingDidChange(DidSeek::No, SynchronouslyNotify::Yes);
+    updateFinishedState(DidSeek::No, SynchronouslyNotify::Yes);
     if (m_effect)
         m_effect->apply(targetStyle);
 }
@@ -1192,6 +1197,42 @@ bool WebAnimation::computeRelevance()
     // - the animation effect is associated with an animation that is not finished.
     auto phase = m_effect->phase();
     return phase == AnimationEffect::Phase::Before || (phase == AnimationEffect::Phase::Active && playState() != PlayState::Finished);
+}
+
+Seconds WebAnimation::timeToNextTick() const
+{
+    ASSERT(isRunningAccelerated());
+
+    if (pending())
+        return 0_s;
+
+    // If we're not running, there's no telling when we'll end.
+    if (playState() != PlayState::Running)
+        return Seconds::infinity();
+
+    // CSS Animations dispatch events for each iteration, so compute the time until
+    // the end of this iteration. Any other animation only cares about remaning total time.
+    if (isCSSAnimation()) {
+        // If we're actively running, we need the time until the next iteration.
+        if (auto iterationProgress = effect()->simpleIterationProgress())
+            return effect()->iterationDuration() * (1 - iterationProgress.value());
+
+        // Otherwise we're probably in the before phase waiting to reach our start time.
+        if (auto animationCurrentTime = currentTime()) {
+            // If our current time is negative, we need to be scheduled to be resolved at the inverse
+            // of our current time, unless we fill backwards, in which case we want to invalidate as
+            // soon as possible.
+            auto localTime = animationCurrentTime.value();
+            if (localTime < 0_s)
+                return -localTime;
+            if (localTime < effect()->delay())
+                return effect()->delay() - localTime;
+        }
+    } else if (auto animationCurrentTime = currentTime())
+        return effect()->endTime() - animationCurrentTime.value();
+
+    ASSERT_NOT_REACHED();
+    return Seconds::infinity();
 }
 
 } // namespace WebCore

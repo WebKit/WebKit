@@ -90,6 +90,7 @@ public:
     std::optional<Seconds> localTime() const;
     std::optional<Seconds> activeTime() const;
     Seconds endTime() const;
+    std::optional<double> simpleIterationProgress() const;
     std::optional<double> iterationProgress() const;
     std::optional<double> currentIteration() const;
     Seconds activeDuration() const;
@@ -104,7 +105,6 @@ private:
     enum class ComputedDirection { Forwards, Reverse };
 
     std::optional<double> overallProgress() const;
-    std::optional<double> simpleIterationProgress() const;
     AnimationEffect::ComputedDirection currentDirection() const;
     std::optional<double> directedProgress() const;
     std::optional<double> transformedProgress() const;

@@ -1,3 +1,19 @@
+2018-11-12  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Don't schedule animation frames or update style while an accelerated animation is running
+        https://bugs.webkit.org/show_bug.cgi?id=191542
+        <rdar://problem/45356027>
+
+        Reviewed by Simon Fraser.
+
+        Add a test that checks that we make only minimal style updates and still dispatch events while an accelerated animation is running.
+
+        * animations/no-style-recalc-during-accelerated-animation-expected.txt: Added.
+        * animations/no-style-recalc-during-accelerated-animation.html: Added.
+        * fast/layers/no-clipping-overflow-hidden-added-after-transform-expected.html:
+        * fast/layers/no-clipping-overflow-hidden-added-after-transform.html: Change the colors to avoid a tiny ImageOnlyFailure.
+        * platform/win/TestExpectations: Mark some regressions tracked by webkit.org/b/191584.
+
 2018-11-12  Darshan Kadu  <darsh7807@gmail.com>
 
         Implement Cache API support for WPE/GTK

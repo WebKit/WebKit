@@ -104,11 +104,13 @@ public:
 
     virtual bool needsTick() const;
     virtual void tick();
+    Seconds timeToNextTick() const;
     virtual void resolve(RenderStyle&);
     void effectTargetDidChange(Element* previousTarget, Element* newTarget);
     void acceleratedStateDidChange();
     void applyPendingAcceleratedActions();
 
+    bool isRunningAccelerated() const;
     bool isRelevant() const { return m_isRelevant; }
     void effectTimingDidChange();
     void suspendEffectInvalidation();

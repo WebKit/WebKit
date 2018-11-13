@@ -85,6 +85,8 @@ public:
 private:
     DocumentTimeline(Document&, Seconds);
 
+    Seconds liveCurrentTime() const;
+    void cacheCurrentTime(Seconds);
     void scheduleAnimationResolutionIfNeeded();
     void scheduleInvalidationTaskIfNeeded();
     void performInvalidationTask();
@@ -96,17 +98,20 @@ private:
     void maybeClearCachedCurrentTime();
     void updateListOfElementsWithRunningAcceleratedAnimationsForElement(Element&);
     void transitionDidComplete(RefPtr<CSSTransition>);
+    void scheduleNextTick();
 
     RefPtr<Document> m_document;
     Seconds m_originTime;
     bool m_isSuspended { false };
     bool m_waitingOnVMIdle { false };
+    bool m_isUpdatingAnimations { false };
     std::optional<Seconds> m_cachedCurrentTime;
     GenericTaskQueue<Timer> m_currentTimeClearingTaskQueue;
     HashSet<RefPtr<WebAnimation>> m_acceleratedAnimationsPendingRunningStateChange;
     Vector<Ref<AnimationPlaybackEvent>> m_pendingAnimationEvents;
     unsigned m_numberOfAnimationTimelineInvalidationsForTesting { 0 };
     HashSet<Element*> m_elementsWithRunningAcceleratedAnimations;
+    Timer m_tickScheduleTimer;
 
 #if !USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     void animationResolutionTimerFired();

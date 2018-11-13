@@ -63,6 +63,7 @@ DocumentTimeline::DocumentTimeline(Document& document, Seconds originTime)
     : AnimationTimeline(DocumentTimelineClass)
     , m_document(&document)
     , m_originTime(originTime)
+    , m_tickScheduleTimer(*this, &DocumentTimeline::scheduleAnimationResolutionIfNeeded)
 #if !USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     , m_animationResolutionTimer(*this, &DocumentTimeline::animationResolutionTimerFired)
 #endif
@@ -208,6 +209,9 @@ void DocumentTimeline::suspendAnimations()
     if (animationsAreSuspended())
         return;
 
+    if (!m_cachedCurrentTime)
+        m_cachedCurrentTime = liveCurrentTime();
+
     for (const auto& animation : m_animations)
         animation->setSuspended(true);
 
@@ -222,6 +226,8 @@ void DocumentTimeline::resumeAnimations()
 {
     if (!animationsAreSuspended())
         return;
+
+    m_cachedCurrentTime = std::nullopt;
 
     m_isSuspended = false;
 
@@ -246,6 +252,15 @@ unsigned DocumentTimeline::numberOfActiveAnimationsForTesting() const
     return count;
 }
 
+Seconds DocumentTimeline::liveCurrentTime() const
+{
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+    return m_document->animationScheduler().lastTimestamp();
+#else
+    return Seconds(m_document->domWindow()->nowTimestamp());
+#endif
+}
+
 std::optional<Seconds> DocumentTimeline::currentTime()
 {
     if (!m_document || !m_document->domWindow())
@@ -259,12 +274,14 @@ std::optional<Seconds> DocumentTimeline::currentTime()
         }
     }
 
+    auto currentTime = liveCurrentTime();
+
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     // If we're in the middle of firing a frame, either due to a requestAnimationFrame callback
     // or scheduling an animation update, we want to ensure we use the same time we're using as
     // the timestamp for requestAnimationFrame() callbacks.
     if (m_document->animationScheduler().isFiring())
-        m_cachedCurrentTime = m_document->animationScheduler().lastTimestamp();
+        cacheCurrentTime(currentTime);
 #endif
 
     if (!m_cachedCurrentTime) {
@@ -273,25 +290,30 @@ std::optional<Seconds> DocumentTimeline::currentTime()
         // be since the last time a frame fired by increment of our update interval. This way code using something
         // like setTimeout() or handling events will get a time that's only updating at around 60fps, or less if
         // we're throttled.
-        auto lastAnimationSchedulerTimestamp = m_document->animationScheduler().lastTimestamp();
+        auto lastAnimationSchedulerTimestamp = currentTime;
         auto delta = Seconds(m_document->domWindow()->nowTimestamp()) - lastAnimationSchedulerTimestamp;
         int frames = std::floor(delta.seconds() / animationInterval().seconds());
-        m_cachedCurrentTime = lastAnimationSchedulerTimestamp + Seconds(frames * animationInterval().seconds());
+        cacheCurrentTime(lastAnimationSchedulerTimestamp + Seconds(frames * animationInterval().seconds()));
 #else
-        m_cachedCurrentTime = Seconds(m_document->domWindow()->nowTimestamp());
+        cacheCurrentTime(currentTime);
 #endif
-        // We want to be sure to keep this time cached until we've both finished running JS and finished updating
-        // animations, so we schedule the invalidation task and register a whenIdle callback on the VM, which will
-        // fire syncronously if no JS is running.
-        m_waitingOnVMIdle = true;
-        if (!m_currentTimeClearingTaskQueue.hasPendingTasks())
-            m_currentTimeClearingTaskQueue.enqueueTask(std::bind(&DocumentTimeline::maybeClearCachedCurrentTime, this));
-        m_document->vm().whenIdle([this, protectedThis = makeRefPtr(this)]() {
-            m_waitingOnVMIdle = false;
-            maybeClearCachedCurrentTime();
-        });
     }
     return m_cachedCurrentTime.value() - m_originTime;
+}
+
+void DocumentTimeline::cacheCurrentTime(Seconds newCurrentTime)
+{
+    m_cachedCurrentTime = newCurrentTime;
+    // We want to be sure to keep this time cached until we've both finished running JS and finished updating
+    // animations, so we schedule the invalidation task and register a whenIdle callback on the VM, which will
+    // fire syncronously if no JS is running.
+    m_waitingOnVMIdle = true;
+    if (!m_currentTimeClearingTaskQueue.hasPendingTasks())
+        m_currentTimeClearingTaskQueue.enqueueTask(std::bind(&DocumentTimeline::maybeClearCachedCurrentTime, this));
+    m_document->vm().whenIdle([this, protectedThis = makeRefPtr(this)]() {
+        m_waitingOnVMIdle = false;
+        maybeClearCachedCurrentTime();
+    });
 }
 
 void DocumentTimeline::maybeClearCachedCurrentTime()
@@ -300,13 +322,13 @@ void DocumentTimeline::maybeClearCachedCurrentTime()
     // JS or waiting on all current animation updating code to have completed. This is so that
     // we're guaranteed to have a consistent current time reported for all work happening in a given
     // JS frame or throughout updating animations in WebCore.
-    if (!m_waitingOnVMIdle && !m_currentTimeClearingTaskQueue.hasPendingTasks())
+    if (!m_isSuspended && !m_waitingOnVMIdle && !m_currentTimeClearingTaskQueue.hasPendingTasks())
         m_cachedCurrentTime = std::nullopt;
 }
 
 void DocumentTimeline::scheduleAnimationResolutionIfNeeded()
 {
-    if (!m_isSuspended && !m_animations.isEmpty())
+    if (!m_isUpdatingAnimations && !m_isSuspended && !m_animations.isEmpty())
         scheduleAnimationResolution();
 }
 
@@ -337,6 +359,7 @@ void DocumentTimeline::scheduleAnimationResolution()
 
 void DocumentTimeline::unscheduleAnimationResolution()
 {
+    m_tickScheduleTimer.stop();
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     m_document->animationScheduler().unscheduleWebAnimationsResolution();
 #else
@@ -353,11 +376,15 @@ void DocumentTimeline::animationResolutionTimerFired()
 #endif
 {
     updateAnimationsAndSendEvents();
+    applyPendingAcceleratedAnimations();
+    scheduleNextTick();
 }
 
 void DocumentTimeline::updateAnimationsAndSendEvents()
 {
     m_numberOfAnimationTimelineInvalidationsForTesting++;
+
+    m_isUpdatingAnimations = true;
 
     // https://drafts.csswg.org/web-animations/#update-animations-and-send-events
 
@@ -422,7 +449,7 @@ void DocumentTimeline::updateAnimationsAndSendEvents()
     for (auto& completedTransition : completedTransitions)
         transitionDidComplete(completedTransition);
 
-    applyPendingAcceleratedAnimations();
+    m_isUpdatingAnimations = false;
 }
 
 void DocumentTimeline::transitionDidComplete(RefPtr<CSSTransition> transition)
@@ -436,6 +463,34 @@ void DocumentTimeline::transitionDidComplete(RefPtr<CSSTransition> transition)
             }).iterator->value.set(transition->property(), transition);
         }
     }
+}
+
+void DocumentTimeline::scheduleNextTick()
+{
+    // There is no tick to schedule if we don't have any relevant animations.
+    if (m_animations.isEmpty())
+        return;
+
+    for (const auto& animation : m_animations) {
+        if (!animation->isRunningAccelerated()) {
+            scheduleAnimationResolutionIfNeeded();
+            return;
+        }
+    }
+
+    Seconds scheduleDelay = Seconds::infinity();
+
+    for (const auto& animation : m_animations) {
+        auto animationTimeToNextRequiredTick = animation->timeToNextTick();
+        if (animationTimeToNextRequiredTick < animationInterval()) {
+            scheduleAnimationResolutionIfNeeded();
+            return;
+        }
+        scheduleDelay = std::min(scheduleDelay, animationTimeToNextRequiredTick);
+    }
+
+    if (scheduleDelay < Seconds::infinity())
+        m_tickScheduleTimer.startOneShot(scheduleDelay);
 }
 
 bool DocumentTimeline::computeExtentOfAnimation(RenderElement& renderer, LayoutRect& bounds) const
@@ -540,7 +595,7 @@ void DocumentTimeline::updateListOfElementsWithRunningAcceleratedAnimationsForEl
     auto animations = animationsForElement(element);
     bool runningAnimationsForElementAreAllAccelerated = !animations.isEmpty();
     for (const auto& animation : animations) {
-        if (is<KeyframeEffect>(animation->effect()) && !downcast<KeyframeEffect>(animation->effect())->isRunningAccelerated()) {
+        if (!animation->isRunningAccelerated()) {
             runningAnimationsForElementAreAllAccelerated = false;
             break;
         }

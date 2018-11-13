@@ -1,3 +1,52 @@
+2018-11-12  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Don't schedule animation frames or update style while an accelerated animation is running
+        https://bugs.webkit.org/show_bug.cgi?id=191542
+        <rdar://problem/45356027>
+
+        Reviewed by Simon Fraser.
+
+        Test: animations/no-style-recalc-during-accelerated-animation.html
+
+        In order to be more power-efficient, we stop scheduling calls to updateAnimationsAndSendEvents() when running only accelerated
+        animations. To do that, we prevent scheduling further animation resolution if we're in the process of updating animations, and
+        when we are done, call the new DocumentTimeline::scheduleNextTick() method that will check whether we have only accelerated
+        animations running, and in that case check which of those animations needs an update the soonest and starts a timer scheduled
+        for that time when we'll schedule animation resolution.
+
+        By default, animations compute the time until their natural completion but in the case of CSS Animations, we want to make sure
+        we also update animations in-flight to dispatch "animationiteration" events.
+
+        * animation/AnimationEffect.h: Make the simpleIterationProgress() public so it can be called by WebAnimation::timeToNextTick().
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::DocumentTimeline): Create the m_tickScheduleTimer and set it up to call scheduleAnimationResolutionIfNeeded().
+        (WebCore::DocumentTimeline::suspendAnimations): If we don't already have a cached current time, cache the current time.
+        (WebCore::DocumentTimeline::resumeAnimations): Reset the cached current time to ensure we'll get a fresh one when updating animations next.
+        (WebCore::DocumentTimeline::liveCurrentTime const): Factor the code to compute the current time out of currentTime() so that we can
+        cache the current time in suspendAnimations() without also automatically clearing the current time.
+        (WebCore::DocumentTimeline::currentTime): Use liveCurrentTime() and cacheCurrentTime() since much of the code from this function has been
+        factored out into those. Additionally, we were failing to clear the current time if called inside an animation frame, which we now do correctly
+        by virtue of using cacheCurrentTime(). This fixes some flakiness.
+        (WebCore::DocumentTimeline::cacheCurrentTime): Factor the code to cache the current time out of currentTime(). 
+        (WebCore::DocumentTimeline::maybeClearCachedCurrentTime): No need to clear the current time if we get suspended.
+        (WebCore::DocumentTimeline::scheduleAnimationResolutionIfNeeded): Prevent scheduling an animation update if we're in the middle of one already,
+        scheduleNextTick() will be called after animations are updated to see if we should schedule an animation update instead.
+        (WebCore::DocumentTimeline::unscheduleAnimationResolution): Cancel the m_tickScheduleTimer if we need to unschedule animation resolution.
+        (WebCore::DocumentTimeline::animationResolutionTimerFired): Factor the call to applyPendingAcceleratedAnimations() out of updateAnimationsAndSendEvents()
+        and call scheduleNextTick().
+        (WebCore::DocumentTimeline::updateAnimationsAndSendEvents): Set the new m_isUpdatingAnimations member variable to true while this function is running.
+        (WebCore::DocumentTimeline::scheduleNextTick): Schedule an animation update immediately if we have any relevant animation that is not accelerated.
+        Otherwise, iterate through all animations to figure out the earliest moment at which we need to update animations.
+        (WebCore::DocumentTimeline::updateListOfElementsWithRunningAcceleratedAnimationsForElement): Use the new WebAnimation::isRunningAccelerated() function.
+        * animation/DocumentTimeline.h:
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::isRunningAccelerated const): Since we end up checking if an animation is running with an accelerated effect, we introduce a new
+        function to get that information directly through the WebAnimation object without bothering about its effect.
+        (WebCore::WebAnimation::resolve): We should only call updateFinishedState() here since timingDidChange() would also notify the timeline about a potential
+        change in relevance, which is not necessary and which would schedule an animation frame even for animations that are accelerated.
+        (WebCore::WebAnimation::timeToNextTick const): Compute the time until our animation completion or, in the case of CSS animations, the next iteration.
+        * animation/WebAnimation.h:
+
 2018-11-13  Miguel Gomez  <magomez@igalia.com>
 
         [GTK][WPE] Incorrect tile coverage when resizing a layer out of the visible area

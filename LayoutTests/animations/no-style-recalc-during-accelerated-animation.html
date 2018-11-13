@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        #box {
+            width: 100px;
+            height: 100px;
+            background-color: blue;
+        }
+
+        .animating {
+            animation: move 150ms linear 2;
+        }
+
+        @keyframes move {
+            from { transform: translateX(0); }
+            to   { transform: translateX(500px); }
+        }
+    </style>
+    <script>
+
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        window.addEventListener("load", () => {
+            if (!window.internals || !window.testRunner)
+                return;
+
+            const box = document.getElementById("box");
+            const result = document.getElementById("result");
+
+            box.addEventListener("animationstart", () => internals.startTrackingStyleRecalcs());
+            box.addEventListener("animationiteration", () => result.innerText = "Got iteration event.\n");
+            box.addEventListener("animationend", () => {
+                const numRecalcs = internals.styleRecalcCount();
+                if (numRecalcs > 2)
+                    result.innerText += "FAIL: saw " + numRecalcs + " style recalcs during the animation, should only see two."
+                else 
+                    result.innerText += "PASS: saw two or fewer style recalcs during the animation."
+
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            });
+            box.classList.add("animating");
+        });
+    </script>
+</head>
+<body>
+<div id="box"></div>
+<p id="result"></p>
+</body>
+</html>
