@@ -1,3 +1,14 @@
+2018-11-13  Takashi Komori  <Takashi.Komori@sony.com>
+
+        Remove WebKitTestRunnerLib's build warnings.
+        https://bugs.webkit.org/show_bug.cgi?id=191580
+
+        Reviewed by Fujii Hironori.
+
+        Include cmakeconfig.h in precompiled header.
+
+        * WebKitTestRunner/WebKitTestRunnerPrefix.h:
+
 2018-11-12  Darshan Kadu  <darsh7807@gmail.com>
 
         Implement Cache API support for WPE/GTK
