@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCCertificate-postMessage.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCCertificate.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCConfiguration-bundlePolicy.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCConfiguration-helper.js
@@ -44,11 +45,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-constructor.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-createAnswer.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-createDataChannel.html
-/LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-createOffer-offerToReceive.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-createOffer.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-generateCertificate.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-getDefaultIceServers.html
-/LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-getIdentityAssertion.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-getStats.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-getTransceivers.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-helper.js
@@ -57,7 +56,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-ondatachannel.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-onnegotiationneeded.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-ontrack.https.html
-/LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-peerIdentity.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-remote-track-mute.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-removeTrack.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setDescription-transceiver.html
@@ -96,8 +94,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCRtpSender-getStats.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCRtpSender-replaceTrack.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCRtpSender-setParameters.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCRtpTransceiver-direction.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCRtpTransceiver-setCodecPreferences.html
-/LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCRtpTransceiver-setDirection.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCRtpTransceiver.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCSctpTransport-constructor.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCSctpTransport-maxMessageSize.html
@@ -107,8 +105,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/dictionary-helper.js
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/getstats.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/historical.html
-/LayoutTests/imported/w3c/web-platform-tests/webrtc/identity-helper.sub.js
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/idlharness.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/no-media-call.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/promises-call.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/simplecall-no-ssrcs.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/simplecall.https.html

@@ -1,5 +1,0 @@
-
-PASS setDirection should change transceiver.direction 
-PASS setDirection with same direction should have no effect 
-FAIL setDirection should change transceiver.direction independent of transceiver.currentDirection assert_equals: expected "recvonly" but got "inactive"
-

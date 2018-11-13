@@ -345,6 +345,7 @@
     "web-platform-tests/webmessaging": "skip", 
     "web-platform-tests/webmessaging/": "import", 
     "web-platform-tests/webrtc": "import", 
+    "web-platform-tests/webrtc/legacy": "skip", 
     "web-platform-tests/websockets": "skip", 
     "web-platform-tests/webstorage": "skip", 
     "web-platform-tests/webusb": "skip", 

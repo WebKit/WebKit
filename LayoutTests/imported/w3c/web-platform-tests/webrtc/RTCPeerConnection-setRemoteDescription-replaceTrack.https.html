@@ -86,7 +86,6 @@
   }, 'replaceTrack() rejects when the peer connection is closed.');
 
   promise_test(async t => {
-    const expectedException = 'InvalidModificationError';
     const caller = new RTCPeerConnection();
     t.add_cleanup(() => caller.close());
     const [tracks, streams] = await getUserMediaTracksAndStreams(2);
@@ -94,7 +93,19 @@
     caller.removeTrack(sender);
     await sender.replaceTrack(tracks[1]);
     assert_equals(sender.track, tracks[1], "Make sure track gets updated");
-  }, 'replaceTrack() rejects when invoked after removeTrack().');
+  }, 'replaceTrack() does not reject when invoked after removeTrack().');
+
+
+  promise_test(async t => {
+    const caller = new RTCPeerConnection();
+    t.add_cleanup(() => caller.close());
+    const [tracks, streams] = await getUserMediaTracksAndStreams(2);
+    const sender = caller.addTrack(tracks[0], streams[0]);
+    let p = sender.replaceTrack(tracks[1])
+    caller.removeTrack(sender);
+    await p;
+    assert_equals(sender.track, tracks[1], "Make sure track gets updated");
+  }, 'replaceTrack() does not reject after a subsequent removeTrack().');
 
   // TODO(hbos): Verify that replaceTrack() changes what media is received on
   // the remote end of two connected peer connections. For video tracks, this

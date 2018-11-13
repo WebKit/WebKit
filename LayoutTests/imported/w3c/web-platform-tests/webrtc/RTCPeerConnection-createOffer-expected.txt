@@ -3,7 +3,4 @@ PASS createOffer() with no argument from newly created RTCPeerConnection should 
 PASS createOffer() and then setLocalDescription() should succeed 
 PASS createOffer() after connection is closed should reject with InvalidStateError 
 FAIL When media stream is added when createOffer() is running in parallel, the result offer should contain the new media stream assert_equals: Expect m=audio line to be found in offer SDP expected 1 but got 0
-FAIL createOffer() with offerToReceiveAudio should add audio line to all subsequent created offers assert_equals: Expect created offer to have audio line expected 1 but got 0
-FAIL createOffer() with offerToReceiveVideo should add video line to all subsequent created offers assert_equals: Expect created offer to have video line expected 1 but got 0
-FAIL createOffer() with offerToReceiveAudio:true then offerToReceiveVideo:true should have result offer with both audio and video line assert_equals: Expect audio line to be found in created offer expected 1 but got 0
 

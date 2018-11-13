@@ -1,4 +1,4 @@
 
-FAIL sender.getStats() via addTransceiver should return stats report containing outbound-rtp stats assert_true: Expect statsReport to contain stats object of type outbound-rtp expected true got false
+FAIL sender.getStats() via addTransceiver should return stats report containing outbound-rtp stats assert_true: Expect stats report to have stats object with id RTCTransport_0_1 expected true got false
 FAIL sender.getStats() via addTrack should return stats report containing outbound-rtp stats assert_true: Expect stats report to have stats object with id RTCTransport_0_1 expected true got false
 

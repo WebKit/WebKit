@@ -1,3 +1,3 @@
 
-FAIL RTCRtpReceiver.prototype.getParameters pc.getParameters is not a function. (In 'pc.getParameters()', 'pc.getParameters' is undefined)
+FAIL RTCRtpReceiver.prototype.getParameters assert_true: Expect dictionary.encodings to be array expected true got false
 

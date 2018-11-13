@@ -1,4 +1,6 @@
 
+Harness Error (TIMEOUT), message = null
+
 PASS addTrack() without setLocalDescription() yields track stats 
 FAIL addTrack() without setLocalDescription() yields media stream stats assert_true: Has stats for stream expected true got false
 PASS addTrack() with setLocalDescription() yields track stats 
@@ -13,8 +15,8 @@ FAIL replaceTrack() after answer: new track attachment stats present assert_true
 FAIL replaceTrack(): original track attachment stats present after replacing assert_true: expected true got undefined
 FAIL RTCRtpSender.getStats() contains only outbound-rtp and related stats promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'inboundTrackStats.id')"
 FAIL RTCRtpReceiver.getStats() contains only inbound-rtp and related stats promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'inboundTrackStats.id')"
-PASS RTCPeerConnection.getStats(sendingTrack) is the same as RTCRtpSender.getStats() 
-PASS RTCPeerConnection.getStats(receivingTrack) is the same as RTCRtpReceiver.getStats() 
-FAIL RTCPeerConnection.getStats(track) throws InvalidAccessError when there are zero senders or receivers for the track assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL RTCPeerConnection.getStats(track) throws InvalidAccessError when there are multiple senders for the track assert_unreached: Should have rejected: undefined Reached unreachable code
+TIMEOUT RTCPeerConnection.getStats(sendingTrack) is the same as RTCRtpSender.getStats() Test timed out
+NOTRUN RTCPeerConnection.getStats(receivingTrack) is the same as RTCRtpReceiver.getStats() 
+NOTRUN RTCPeerConnection.getStats(track) throws InvalidAccessError when there are zero senders or receivers for the track 
+NOTRUN RTCPeerConnection.getStats(track) throws InvalidAccessError when there are multiple senders for the track 
 

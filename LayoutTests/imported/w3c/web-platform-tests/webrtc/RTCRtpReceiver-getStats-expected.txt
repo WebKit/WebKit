@@ -1,3 +1,0 @@
-
-FAIL receiver.getStats() should return stats report containing inbound-rtp stats receiver.getStats is not a function. (In 'receiver.getStats()', 'receiver.getStats' is undefined)
-

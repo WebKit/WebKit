@@ -4,9 +4,6 @@ PASS new RTCPeerConnection()
 PASS new RTCPeerConnection(null) 
 PASS new RTCPeerConnection(undefined) 
 PASS new RTCPeerConnection({}) 
-FAIL new RTCPeerConnection({ peerIdentity: toStringThrows }) assert_throws: function "function () {
-        eval(expr);
-      }" did not throw
 PASS new RTCPeerConnection({ certificates: null }) 
 PASS new RTCPeerConnection({ certificates: undefined }) 
 PASS new RTCPeerConnection({ certificates: [] }) 

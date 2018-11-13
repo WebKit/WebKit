@@ -1,3 +1,14 @@
+2018-11-13  Youenn Fablet  <youenn@apple.com>
+
+        Refresh WPT webrtc tests to ToT
+        https://bugs.webkit.org/show_bug.cgi?id=191564
+
+        Reviewed by Eric Carlson.
+
+        Also remove QUIC specific tests that are not related to webrtc-pc.
+        * resources/import-expectations.json:
+        * web-platform-tests/webrtc: refreshed.
+
 2018-11-12  Rob Buis  <rbuis@igalia.com>
 
         Content-Type parameter values should allow empty quoted strings

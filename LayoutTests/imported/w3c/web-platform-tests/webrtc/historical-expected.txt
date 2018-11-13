@@ -9,6 +9,7 @@ PASS RTCPeerConnection member onaddstream should not exist
 PASS RTCPeerConnection member onremovestream should not exist 
 PASS RTCPeerConnection member removeStream should not exist 
 PASS RTCPeerConnection member updateIce should not exist 
+FAIL RTCRtpTransceiver member setDirection should not exist assert_false: expected false got true
 PASS DataChannel interface should not exist 
 PASS mozRTCIceCandidate interface should not exist 
 PASS mozRTCPeerConnection interface should not exist 

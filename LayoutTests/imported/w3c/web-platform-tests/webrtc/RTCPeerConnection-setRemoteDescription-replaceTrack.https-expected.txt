@@ -3,5 +3,6 @@ PASS replaceTrack() sets the track attribute to a new track.
 PASS replaceTrack() sets the track attribute to null. 
 PASS replaceTrack() does not set the track synchronously. 
 PASS replaceTrack() rejects when the peer connection is closed. 
-PASS replaceTrack() rejects when invoked after removeTrack(). 
+PASS replaceTrack() does not reject when invoked after removeTrack(). 
+PASS replaceTrack() does not reject after a subsequent removeTrack(). 
 

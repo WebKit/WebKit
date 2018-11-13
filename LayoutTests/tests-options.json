@@ -1661,6 +1661,9 @@
     "imported/w3c/web-platform-tests/webrtc/RTCDTMFSender-ontonechange-long.https.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-track-stats.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/xhr/progress-events-response-data-gzip.htm": [
         "slow"
     ],

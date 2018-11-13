@@ -1,3 +1,14 @@
+2018-11-13  Youenn Fablet  <youenn@apple.com>
+
+        Refresh WPT webrtc tests to ToT
+        https://bugs.webkit.org/show_bug.cgi?id=191564
+
+        Reviewed by Eric Carlson.
+
+        Refresh webrtc tests
+
+        * tests-options.json:
+
 2018-11-12  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Don't schedule animation frames or update style while an accelerated animation is running

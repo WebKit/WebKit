@@ -4,25 +4,25 @@ Retrieved stats info
 
   
 {
-  "RTCCertificate_8D:47:6E:8F:78:33:95:C5:E1:8D:D6:59:07:61:D1:12:D9:ED:E5:3D:D3:6E:9E:86:B4:F3:4B:AD:7C:6D:D5:79": {
-    "id": "RTCCertificate_8D:47:6E:8F:78:33:95:C5:E1:8D:D6:59:07:61:D1:12:D9:ED:E5:3D:D3:6E:9E:86:B4:F3:4B:AD:7C:6D:D5:79",
-    "timestamp": 1541019327397,
+  "RTCCertificate_72:C3:4E:3B:12:BE:99:87:31:C4:16:70:DE:76:18:C3:83:4C:1F:B9:8F:69:B5:5B:94:9D:16:0D:89:2A:2C:DA": {
+    "id": "RTCCertificate_72:C3:4E:3B:12:BE:99:87:31:C4:16:70:DE:76:18:C3:83:4C:1F:B9:8F:69:B5:5B:94:9D:16:0D:89:2A:2C:DA",
+    "timestamp": 1542081514259,
     "type": "certificate",
-    "base64Certificate": "MIIBFjCBvaADAgECAgkA8TsjlEPDmDMwCgYIKoZIzj0EAwIwETEPMA0GA1UEAwwGV2ViUlRDMB4XDTE4MTAzMDIwNTUyN1oXDTE4MTEzMDIwNTUyN1owETEPMA0GA1UEAwwGV2ViUlRDMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEf5dKEJxZomGg0F3zr4MZAAZ2p9EuoTjZbv0cTh0Jb6XblvSAswGW4OuNInJbfExjkMyN94V0j/1brWAf0kkuVjAKBggqhkjOPQQDAgNIADBFAiADaR8n1iB4DXL/T8FB78zObsgNdMpxTA+JIuQL/4O+PwIhAMAMH0/Buw482C3o+uns+eeHLhBwBhgr4NlbgoWareS+",
-    "fingerprint": "8D:47:6E:8F:78:33:95:C5:E1:8D:D6:59:07:61:D1:12:D9:ED:E5:3D:D3:6E:9E:86:B4:F3:4B:AD:7C:6D:D5:79",
+    "base64Certificate": "MIIBFTCBvaADAgECAgkAwIkqz13X/yUwCgYIKoZIzj0EAwIwETEPMA0GA1UEAwwGV2ViUlRDMB4XDTE4MTExMjAzNTgzNFoXDTE4MTIxMzAzNTgzNFowETEPMA0GA1UEAwwGV2ViUlRDMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEF8DRQKRVSaeSE6DYYrunTtelaVLTmQjNX/CcpjaYA4tZPOnxsydILwUCKptAFnXyWGThqnMrHyZn5Oy+m7/3kzAKBggqhkjOPQQDAgNHADBEAiAoOPDE8VAvuMVGM1/rMBUppHYImPXpN6/8GSpTWZncXQIgHTn4Da4sgzsLUrqRE+ZR7LpjHs9W4kj/hi/qvqOIxdE=",
+    "fingerprint": "72:C3:4E:3B:12:BE:99:87:31:C4:16:70:DE:76:18:C3:83:4C:1F:B9:8F:69:B5:5B:94:9D:16:0D:89:2A:2C:DA",
     "fingerprintAlgorithm": "sha-256"
   },
-  "RTCCertificate_9F:2E:D6:37:3F:7A:F0:28:FF:83:AA:FB:5C:D8:8A:65:54:3E:6E:67:BF:38:95:36:09:FD:C4:02:C8:2C:17:E1": {
-    "id": "RTCCertificate_9F:2E:D6:37:3F:7A:F0:28:FF:83:AA:FB:5C:D8:8A:65:54:3E:6E:67:BF:38:95:36:09:FD:C4:02:C8:2C:17:E1",
-    "timestamp": 1541019327397,
+  "RTCCertificate_9C:56:95:9E:F9:F9:91:53:5E:89:E7:7C:56:88:68:CF:D3:6D:30:6C:F5:F8:5E:23:18:73:A5:9A:24:0D:E2:EC": {
+    "id": "RTCCertificate_9C:56:95:9E:F9:F9:91:53:5E:89:E7:7C:56:88:68:CF:D3:6D:30:6C:F5:F8:5E:23:18:73:A5:9A:24:0D:E2:EC",
+    "timestamp": 1542081514259,
     "type": "certificate",
-    "base64Certificate": "MIIBFjCBvaADAgECAgkA9o0BgR8D1fgwCgYIKoZIzj0EAwIwETEPMA0GA1UEAwwGV2ViUlRDMB4XDTE4MTAzMDIwNTUyN1oXDTE4MTEzMDIwNTUyN1owETEPMA0GA1UEAwwGV2ViUlRDMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEYSF9oRptCmxvizjcW7VPzy8rl2EwLwPqk3ma/HPs33by3AzOQQo3om7FHbb92MUbKgtjFo4jTSEklz23eNH7hDAKBggqhkjOPQQDAgNIADBFAiEAmWh3HDOvCPQ8znNyCp/JbE7jHwI3Bqo+rTjz7wqLgdsCIGbE9xzkohtCrz3NPkhY57Gt/cAW+CTTW4PbFnKlG6aW",
-    "fingerprint": "9F:2E:D6:37:3F:7A:F0:28:FF:83:AA:FB:5C:D8:8A:65:54:3E:6E:67:BF:38:95:36:09:FD:C4:02:C8:2C:17:E1",
+    "base64Certificate": "MIIBFzCBvaADAgECAgkAtnR4OnwgdOEwCgYIKoZIzj0EAwIwETEPMA0GA1UEAwwGV2ViUlRDMB4XDTE4MTExMjAzNTgzNFoXDTE4MTIxMzAzNTgzNFowETEPMA0GA1UEAwwGV2ViUlRDMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEB3PZCOtymnvdfPJEw9T+7CylFh++TqD7o34WQDbVxxctutiz7sSgkUOCC/NGjQOFKaX0wk97AoULq+wdIl5ckTAKBggqhkjOPQQDAgNJADBGAiEAzvr09HhfrgqbiCpGu1hEEzClBG8HV9IVda6Rvt/719YCIQDNABFsUCED1JxDlc7b3610JTqIqUrhXWindK4YlU0GVQ==",
+    "fingerprint": "9C:56:95:9E:F9:F9:91:53:5E:89:E7:7C:56:88:68:CF:D3:6D:30:6C:F5:F8:5E:23:18:73:A5:9A:24:0D:E2:EC",
     "fingerprintAlgorithm": "sha-256"
   },
   "RTCDataChannel_1": {
     "id": "RTCDataChannel_1",
-    "timestamp": 1541019327397,
+    "timestamp": 1542081514259,
     "type": "data-channel",
     "bytesReceived": 0,
     "bytesSent": 0,
@@ -33,36 +33,17 @@ Retrieved stats info
     "protocol": "",
     "state": "open"
   },
-  "RTCIceCandidatePair_80aSSGTq_8mEPWL7V": {
-    "id": "RTCIceCandidatePair_80aSSGTq_8mEPWL7V",
-    "timestamp": 1541019327397,
+  "RTCIceCandidatePair_s1xoaivx_5MfaqFll": {
+    "id": "RTCIceCandidatePair_s1xoaivx_5MfaqFll",
+    "timestamp": 1542081514259,
     "type": "candidate-pair",
-    "bytesReceived": 0,
-    "bytesSent": 0,
-    "localCandidateId": "RTCIceCandidate_80aSSGTq",
-    "nominated": false,
-    "priority": 9079290933572287000,
-    "remoteCandidateId": "RTCIceCandidate_8mEPWL7V",
-    "requestsReceived": 0,
-    "requestsSent": 0,
-    "responsesReceived": 0,
-    "responsesSent": 0,
-    "state": "waiting",
-    "totalRoundTripTime": 0,
-    "transportId": "RTCTransport_0_1",
-    "writable": false
-  },
-  "RTCIceCandidatePair_80aSSGTq_WEBVzEDJ": {
-    "id": "RTCIceCandidatePair_80aSSGTq_WEBVzEDJ",
-    "timestamp": 1541019327397,
-    "type": "candidate-pair",
-    "bytesReceived": 693,
+    "bytesReceived": 695,
     "bytesSent": 1307,
     "currentRoundTripTime": 0.003,
-    "localCandidateId": "RTCIceCandidate_80aSSGTq",
+    "localCandidateId": "RTCIceCandidate_s1xoaivx",
     "nominated": true,
     "priority": 9079290933572287000,
-    "remoteCandidateId": "RTCIceCandidate_WEBVzEDJ",
+    "remoteCandidateId": "RTCIceCandidate_5MfaqFll",
     "requestsReceived": 1,
     "requestsSent": 1,
     "responsesReceived": 1,
@@ -72,35 +53,54 @@ Retrieved stats info
     "transportId": "RTCTransport_0_1",
     "writable": true
   },
-  "RTCIceCandidate_80aSSGTq": {
-    "id": "RTCIceCandidate_80aSSGTq",
-    "timestamp": 1541019327397,
+  "RTCIceCandidatePair_s1xoaivx_7dkYAhKQ": {
+    "id": "RTCIceCandidatePair_s1xoaivx_7dkYAhKQ",
+    "timestamp": 1542081514259,
+    "type": "candidate-pair",
+    "bytesReceived": 0,
+    "bytesSent": 0,
+    "localCandidateId": "RTCIceCandidate_s1xoaivx",
+    "nominated": false,
+    "priority": 9079290933572287000,
+    "remoteCandidateId": "RTCIceCandidate_7dkYAhKQ",
+    "requestsReceived": 0,
+    "requestsSent": 0,
+    "responsesReceived": 0,
+    "responsesSent": 0,
+    "state": "waiting",
+    "totalRoundTripTime": 0,
+    "transportId": "RTCTransport_0_1",
+    "writable": false
+  },
+  "RTCIceCandidate_5MfaqFll": {
+    "id": "RTCIceCandidate_5MfaqFll",
+    "timestamp": 1542081514259,
+    "type": "remote-candidate",
+    "candidateType": "host",
+    "deleted": false,
+    "port": 60324,
+    "priority": 2113937151,
+    "protocol": "udp",
+    "transportId": "RTCTransport_0_1"
+  },
+  "RTCIceCandidate_7dkYAhKQ": {
+    "id": "RTCIceCandidate_7dkYAhKQ",
+    "timestamp": 1542081514259,
+    "type": "remote-candidate",
+    "candidateType": "host",
+    "deleted": false,
+    "port": 60905,
+    "priority": 2113937151,
+    "protocol": "udp",
+    "transportId": "RTCTransport_0_1"
+  },
+  "RTCIceCandidate_s1xoaivx": {
+    "id": "RTCIceCandidate_s1xoaivx",
+    "timestamp": 1542081514259,
     "type": "local-candidate",
     "candidateType": "host",
     "deleted": false,
-    "port": 53682,
-    "priority": 2113937151,
-    "protocol": "udp",
-    "transportId": "RTCTransport_0_1"
-  },
-  "RTCIceCandidate_8mEPWL7V": {
-    "id": "RTCIceCandidate_8mEPWL7V",
-    "timestamp": 1541019327397,
-    "type": "remote-candidate",
-    "candidateType": "host",
-    "deleted": false,
-    "port": 50683,
-    "priority": 2113937151,
-    "protocol": "udp",
-    "transportId": "RTCTransport_0_1"
-  },
-  "RTCIceCandidate_WEBVzEDJ": {
-    "id": "RTCIceCandidate_WEBVzEDJ",
-    "timestamp": 1541019327397,
-    "type": "remote-candidate",
-    "candidateType": "host",
-    "deleted": false,
-    "port": 55831,
+    "port": 62505,
     "priority": 2113937151,
     "protocol": "udp",
     "transportId": "RTCTransport_0_1"
