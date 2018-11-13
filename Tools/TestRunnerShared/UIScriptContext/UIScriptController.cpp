@@ -389,7 +389,7 @@ JSObjectRef UIScriptController::contentVisibleRect() const
     return nullptr;
 }
 
-JSObjectRef UIScriptController::selectionRangeViewRects() const
+JSObjectRef UIScriptController::textSelectionRangeRects() const
 {
     return nullptr;
 }
@@ -400,6 +400,16 @@ JSObjectRef UIScriptController::textSelectionCaretRect() const
 }
 
 JSObjectRef UIScriptController::selectionStartGrabberViewRect() const
+{
+    return nullptr;
+}
+
+JSObjectRef UIScriptController::selectionCaretViewRect() const
+{
+    return nullptr;
+}
+
+JSObjectRef UIScriptController::selectionRangeViewRects() const
 {
     return nullptr;
 }

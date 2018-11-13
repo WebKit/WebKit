@@ -1,3 +1,79 @@
+2018-11-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Do not show selection UI for editable elements with opacity near zero
+        https://bugs.webkit.org/show_bug.cgi?id=191442
+        <rdar://problem/45958625>
+
+        Reviewed by Simon Fraser.
+
+        Add support for suppressing native selection UI (for instance, selection highlight views, selection handles, and
+        selection-related gestures) when the selection is inside a transparent editable element. This helps maintain
+        compatibility with text editors that work by capturing key events and input events hidden contenteditable
+        elements, and reflect these changes in different document or different part of the document.
+
+        Since selection UI is rendered in the UI process on iOS using element geometry propagated from the web process,
+        selection rendering is entirely decoupled from the process of painting in the web process. This means that if
+        the editable root has an opacity of 0, we would correctly hide the caret and selection on macOS, but draw over
+        the transparent element on iOS. When these hidden editable elements are focused, this often results in unwanted
+        behaviors, such as double caret painting, native and custom selection UI from the page being drawn on top of one
+        another, and the ability to change selection via tap and loupe gestures within hidden text.
+
+        To fix this, we compute whether the focused element is transparent when an element is focused, or when the
+        selection changes, and send this information over to the UI process via `AssistedNodeInformation` and
+        `EditorState`. In the UI process, we then respect this information by suppressing the selection assistant if the
+        focused element is transparent; this disables showing and laying out selection views, as well as gestures
+        associated with selection overlays. However, this still allows for contextual autocorrection and spell checking.
+
+        * Shared/AssistedNodeInformation.cpp:
+        (WebKit::AssistedNodeInformation::encode const):
+        (WebKit::AssistedNodeInformation::decode):
+        * Shared/AssistedNodeInformation.h:
+        * Shared/EditorState.cpp:
+        (WebKit::EditorState::PostLayoutData::encode const):
+        (WebKit::EditorState::PostLayoutData::decode):
+        * Shared/EditorState.h:
+
+        Add `elementIsTransparent` flags, and also add boilerplate IPC code.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _displayFormNodeInputView]):
+
+        Prevent zooming to the focused element if the focused element is hidden.
+
+        (-[WKContentView hasSelectablePositionAtPoint:]):
+        (-[WKContentView pointIsNearMarkedText:]):
+        (-[WKContentView textInteractionGesture:shouldBeginAtPoint:]):
+
+        Don't allow these text interaction gestures to begin while suppressing the selection assistant.
+
+        (-[WKContentView _startAssistingNode:userIsInteracting:blurPreviousNode:changingActivityState:userObject:]):
+
+        When an element is focused, begin suppressing the selection assistant if the element is fully transparent.
+
+        (-[WKContentView _stopAssistingNode]):
+
+        When the focused element is blurred, reset state by ending selection assistant suppression (additionally
+        reactivating the selection assistant if needed). This ensures that selection in non-editable text isn't broken
+        after focusing a hidden editable element.
+
+        (-[WKContentView _updateChangedSelection:]):
+
+        If needed, suppress or un-suppress the selection assistant when the selection changes. On certain rich text
+        editors, a combination of custom selection UI and native selection UI is used. For instance, on Microsoft Office
+        365, caret selections are rendered using the native caret view, but as soon as the selection becomes ranged, the
+        editable root becomes fully transparent, and Office's selection UI takes over.
+
+        (-[WKContentView _shouldSuppressSelectionCommands]):
+
+        Override this UIKit SPI hook to suppress selection commands (e.g. the callout bar) when suppressing the
+        selection assistant.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::platformEditorState const):
+        (WebKit::WebPage::getAssistedNodeInformation):
+
+        Compute and set `elementIsTransparent` using the assisted node.
+
 2018-11-13  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r238137.

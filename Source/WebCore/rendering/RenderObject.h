@@ -797,6 +797,8 @@ public:
     void initializeFragmentedFlowStateOnInsertion();
     virtual void insertedIntoTree();
 
+    WEBCORE_EXPORT bool isTransparentRespectingParentFrames() const;
+
 protected:
     //////////////////////////////////////////
     // Helper functions. Dangerous to use!

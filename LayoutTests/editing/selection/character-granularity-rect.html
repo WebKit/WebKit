@@ -22,7 +22,7 @@
         return `
         (function() {
             uiController.longPressAtPoint(30, 20, function() {
-                uiController.uiScriptComplete(JSON.stringify(uiController.selectionRangeViewRects));
+                uiController.uiScriptComplete(JSON.stringify(uiController.textSelectionRangeRects));
             });
         })();`
     }
@@ -35,12 +35,12 @@
         var target = document.getElementById('target');
         if (testRunner.runUIScript) {
             testRunner.runUIScript(getUIScript(), function(result) {
-                var selectionRangeViewRects = JSON.parse(result);
+                var textSelectionRangeRects = JSON.parse(result);
                 var output;
-                if (selectionRangeViewRects.length !== 1)
+                if (textSelectionRangeRects.length !== 1)
                     output = 'FAIL: Unexpected number of selection range views: ' + result;
                 else {
-                    var rect = selectionRangeViewRects[0];
+                    var rect = textSelectionRangeRects[0];
                     if (rect.left != 8 || rect.top != 8 || rect.width != 112 || rect.height != 17 )
                         output = 'FAIL: Unexpected selection range view frame: ' + result;
                     else

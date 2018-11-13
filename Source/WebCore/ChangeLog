@@ -1,3 +1,26 @@
+2018-11-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Do not show selection UI for editable elements with opacity near zero
+        https://bugs.webkit.org/show_bug.cgi?id=191442
+        <rdar://problem/45958625>
+
+        Reviewed by Simon Fraser.
+
+        Tests: editing/selection/ios/do-not-zoom-to-focused-hidden-contenteditable.html
+               editing/selection/ios/hide-selection-after-hiding-contenteditable.html
+               editing/selection/ios/hide-selection-in-contenteditable-nested-transparency.html
+               editing/selection/ios/hide-selection-in-hidden-contenteditable-frame.html
+               editing/selection/ios/hide-selection-in-hidden-contenteditable.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::isTransparentRespectingParentFrames const):
+
+        Add a helper function to determine whether a RenderObject is contained within a transparent layer, taking parent
+        frames into account. A layer is considered transparent if its opacity is less than a small threshold (i.e. 0.01).
+        Opacity on ancestor elements is applied multiplicatively.
+
+        * rendering/RenderObject.h:
+
 2018-11-13  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Observer AVCaptureDevice "suspended" property

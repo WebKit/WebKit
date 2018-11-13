@@ -309,7 +309,7 @@ void UIScriptController::platformClearAllCallbacks()
 {
 }
 
-JSObjectRef UIScriptController::selectionRangeViewRects() const
+JSObjectRef UIScriptController::textSelectionRangeRects() const
 {
     return nullptr;
 }
@@ -385,6 +385,16 @@ JSObjectRef UIScriptController::selectionStartGrabberViewRect() const
 }
 
 JSObjectRef UIScriptController::selectionEndGrabberViewRect() const
+{
+    return nullptr;
+}
+
+JSObjectRef UIScriptController::selectionCaretViewRect() const
+{
+    return nullptr;
+}
+
+JSObjectRef UIScriptController::selectionRangeViewRects() const
 {
     return nullptr;
 }

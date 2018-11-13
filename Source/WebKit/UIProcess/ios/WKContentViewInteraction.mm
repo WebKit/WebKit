@@ -1342,16 +1342,18 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 
 - (void)_displayFormNodeInputView
 {
-    // In case user scaling is force enabled, do not use that scaling when zooming in with an input field.
-    // Zooming above the page's default scale factor should only happen when the user performs it.
-    [self _zoomToFocusRect:_assistedNodeInformation.elementRect
-        selectionRect:_didAccessoryTabInitiateFocus ? IntRect() : _assistedNodeInformation.selectionRect
-        insideFixed:_assistedNodeInformation.insideFixedPosition
-        fontSize:_assistedNodeInformation.nodeFontSize
-        minimumScale:_assistedNodeInformation.minimumScaleFactor
-        maximumScale:_assistedNodeInformation.maximumScaleFactorIgnoringAlwaysScalable
-        allowScaling:_assistedNodeInformation.allowsUserScalingIgnoringAlwaysScalable && !currentUserInterfaceIdiomIsPad()
-        forceScroll:(_assistedNodeInformation.inputMode == InputMode::None) ? !currentUserInterfaceIdiomIsPad() : [self requiresAccessoryView]];
+    if (!self.suppressAssistantSelectionView) {
+        // In case user scaling is force enabled, do not use that scaling when zooming in with an input field.
+        // Zooming above the page's default scale factor should only happen when the user performs it.
+        [self _zoomToFocusRect:_assistedNodeInformation.elementRect
+            selectionRect:_didAccessoryTabInitiateFocus ? IntRect() : _assistedNodeInformation.selectionRect
+            insideFixed:_assistedNodeInformation.insideFixedPosition
+            fontSize:_assistedNodeInformation.nodeFontSize
+            minimumScale:_assistedNodeInformation.minimumScaleFactor
+            maximumScale:_assistedNodeInformation.maximumScaleFactorIgnoringAlwaysScalable
+            allowScaling:_assistedNodeInformation.allowsUserScalingIgnoringAlwaysScalable && !currentUserInterfaceIdiomIsPad()
+            forceScroll:(_assistedNodeInformation.inputMode == InputMode::None) ? !currentUserInterfaceIdiomIsPad() : [self requiresAccessoryView]];
+    }
 
     _didAccessoryTabInitiateFocus = NO;
     [self _ensureFormAccessoryView];
@@ -1746,6 +1748,9 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     if (!_webView.configuration._textInteractionGesturesEnabled)
         return NO;
 
+    if (self.suppressAssistantSelectionView)
+        return NO;
+
     if (_inspectorNodeSearchEnabled)
         return NO;
 
@@ -1769,6 +1774,9 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     if (!_webView.configuration._textInteractionGesturesEnabled)
         return NO;
 
+    if (self.suppressAssistantSelectionView)
+        return NO;
+
     InteractionInformationRequest request(roundedIntPoint(point));
     if (![self ensurePositionInformationIsUpToDate:request])
         return NO;
@@ -1778,6 +1786,9 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 - (BOOL)textInteractionGesture:(UIWKGestureType)gesture shouldBeginAtPoint:(CGPoint)point
 {
     if (!_webView.configuration._textInteractionGesturesEnabled)
+        return NO;
+
+    if (self.suppressAssistantSelectionView)
         return NO;
 
     InteractionInformationRequest request(roundedIntPoint(point));
@@ -4267,6 +4278,8 @@ static bool isAssistableInputType(InputType type)
     if ([inputDelegate respondsToSelector:@selector(_webView:decidePolicyForFocusedElement:)])
         startInputSessionPolicy = [inputDelegate _webView:_webView decidePolicyForFocusedElement:focusedElementInfo.get()];
 
+    self.suppressAssistantSelectionView = information.elementIsTransparent;
+
     switch (startInputSessionPolicy) {
     case _WKFocusStartsInputSessionPolicyAuto:
         // The default behavior is to allow node assistance if the user is interacting.
@@ -4409,6 +4422,8 @@ static bool isAssistableInputType(InputType type)
         [_webView _scheduleVisibleContentRectUpdate];
 
     [_webView didEndFormControlInteraction];
+
+    self.suppressAssistantSelectionView = NO;
 }
 
 - (void)updateCurrentAssistedNodeInformation:(Function<void(bool didUpdate)>&&)callback
@@ -4741,8 +4756,13 @@ static bool isAssistableInputType(InputType type)
 
 - (void)_updateChangedSelection:(BOOL)force
 {
-    if (!_selectionNeedsUpdate || _page->editorState().isMissingPostLayoutData)
+    auto& state = _page->editorState();
+    if (state.isMissingPostLayoutData)
         return;
+
+    auto& postLayoutData = state.postLayoutData();
+    if (hasAssistedNode(_assistedNodeInformation))
+        self.suppressAssistantSelectionView = postLayoutData.elementIsTransparent;
 
     WKSelectionDrawingInfo selectionDrawingInfo(_page->editorState());
     if (force || selectionDrawingInfo != _lastSelectionDrawingInfo) {
@@ -4764,8 +4784,7 @@ static bool isAssistableInputType(InputType type)
         }
     }
 
-    auto& state = _page->editorState();
-    if (!state.isMissingPostLayoutData && state.postLayoutData().isStableStateUpdate && _needsDeferredEndScrollingSelectionUpdate && _page->inStableState()) {
+    if (postLayoutData.isStableStateUpdate && _needsDeferredEndScrollingSelectionUpdate && _page->inStableState()) {
         [[self selectionInteractionAssistant] showSelectionCommands];
 
         if (!self.suppressAssistantSelectionView)
@@ -4775,6 +4794,11 @@ static bool isAssistableInputType(InputType type)
 
         _needsDeferredEndScrollingSelectionUpdate = NO;
     }
+}
+
+- (BOOL)_shouldSuppressSelectionCommands
+{
+    return _suppressAssistantSelectionView;
 }
 
 - (BOOL)suppressAssistantSelectionView

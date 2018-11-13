@@ -507,14 +507,14 @@ JSObjectRef UIScriptController::contentVisibleRect() const
     return m_context->objectFromRect(rect);
 }
 
-JSObjectRef UIScriptController::selectionRangeViewRects() const
+JSObjectRef UIScriptController::textSelectionRangeRects() const
 {
-    NSMutableArray *selectionRects = [[NSMutableArray alloc] init];
+    auto selectionRects = adoptNS([[NSMutableArray alloc] init]);
     NSArray *rects = TestController::singleton().mainWebView()->platformView()._uiTextSelectionRects;
     for (NSValue *rect in rects)
-        [selectionRects addObject:toNSDictionary([rect CGRectValue])];
+        [selectionRects addObject:toNSDictionary(rect.CGRectValue)];
 
-    return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:selectionRects inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
+    return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:selectionRects.get() inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
 }
 
 JSObjectRef UIScriptController::textSelectionCaretRect() const
@@ -528,6 +528,7 @@ JSObjectRef UIScriptController::selectionStartGrabberViewRect() const
     UIView *contentView = [webView valueForKeyPath:@"_currentContentView"];
     UIView *selectionRangeView = [contentView valueForKeyPath:@"interactionAssistant.selectionView.rangeView"];
     auto frameInContentCoordinates = [selectionRangeView convertRect:[[selectionRangeView valueForKeyPath:@"startGrabber"] frame] toView:contentView];
+    frameInContentCoordinates = CGRectIntersection(contentView.bounds, frameInContentCoordinates);
     auto jsContext = m_context->jsContext();
     return JSValueToObject(jsContext, [JSValue valueWithObject:toNSDictionary(frameInContentCoordinates) inContext:[JSContext contextWithJSGlobalContextRef:jsContext]].JSValueRef, nullptr);
 }
@@ -538,8 +539,33 @@ JSObjectRef UIScriptController::selectionEndGrabberViewRect() const
     UIView *contentView = [webView valueForKeyPath:@"_currentContentView"];
     UIView *selectionRangeView = [contentView valueForKeyPath:@"interactionAssistant.selectionView.rangeView"];
     auto frameInContentCoordinates = [selectionRangeView convertRect:[[selectionRangeView valueForKeyPath:@"endGrabber"] frame] toView:contentView];
+    frameInContentCoordinates = CGRectIntersection(contentView.bounds, frameInContentCoordinates);
     auto jsContext = m_context->jsContext();
     return JSValueToObject(jsContext, [JSValue valueWithObject:toNSDictionary(frameInContentCoordinates) inContext:[JSContext contextWithJSGlobalContextRef:jsContext]].JSValueRef, nullptr);
+}
+
+JSObjectRef UIScriptController::selectionCaretViewRect() const
+{
+    WKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    UIView *contentView = [webView valueForKeyPath:@"_currentContentView"];
+    UIView *caretView = [contentView valueForKeyPath:@"interactionAssistant.selectionView.caretView"];
+    auto rectInContentViewCoordinates = CGRectIntersection([caretView convertRect:caretView.bounds toView:contentView], contentView.bounds);
+    return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:toNSDictionary(rectInContentViewCoordinates) inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
+}
+
+JSObjectRef UIScriptController::selectionRangeViewRects() const
+{
+    WKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    UIView *contentView = [webView valueForKeyPath:@"_currentContentView"];
+    UIView *rangeView = [contentView valueForKeyPath:@"interactionAssistant.selectionView.rangeView"];
+    auto rectsAsDictionaries = adoptNS([[NSMutableArray alloc] init]);
+    NSArray *textRectInfoArray = [rangeView valueForKeyPath:@"rects"];
+    for (id textRectInfo in textRectInfoArray) {
+        NSValue *rectValue = [textRectInfo valueForKeyPath:@"rect"];
+        auto rangeRectInContentViewCoordinates = [rangeView convertRect:rectValue.CGRectValue toView:contentView];
+        [rectsAsDictionaries addObject:toNSDictionary(CGRectIntersection(rangeRectInContentViewCoordinates, contentView.bounds))];
+    }
+    return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:rectsAsDictionaries.get() inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
 }
 
 JSObjectRef UIScriptController::inputViewBounds() const

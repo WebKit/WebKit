@@ -1,3 +1,38 @@
+2018-11-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Do not show selection UI for editable elements with opacity near zero
+        https://bugs.webkit.org/show_bug.cgi?id=191442
+        <rdar://problem/45958625>
+
+        Reviewed by Simon Fraser.
+
+        Add a couple of new testing helpers to UIScriptController.
+
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::textSelectionRangeRects const):
+        (WTR::UIScriptController::selectionCaretViewRect const):
+        (WTR::UIScriptController::selectionRangeViewRects const):
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::textSelectionRangeRects const):
+
+        Rename `selectionRangeViewRects` to `textSelectionRangeRects`. This allows us to draw a distinction between
+        `textSelectionRangeRects`/`textSelectionCaretRect`, which retrieve information about selection rects known
+        to the text interaction assistant, and `selectionCaretViewRect`/`selectionRangeViewRects`, which retrieve the
+        actual frames of the selection views used to draw overlaid selection UI. This difference is important in the
+        new layout tests added in this patch, which only suppress caret rendering (i.e. selection views remain hidden).
+
+        Also, drive-by fix a leaked `NSMutableArray`.
+
+        (WTR::UIScriptController::selectionStartGrabberViewRect const):
+        (WTR::UIScriptController::selectionEndGrabberViewRect const):
+        (WTR::UIScriptController::selectionCaretViewRect const):
+        (WTR::UIScriptController::selectionRangeViewRects const):
+
+        Testing helpers to grab the frames of caret and selection views, in WKContentView's coordinate space. These
+        rects are also clamped to WKContentView bounds.
+
 2018-11-13  Daniel Bates  <dabates@apple.com>
 
         Consolidate WebKit UIKitSPI.h and UIKitTestSPI.h

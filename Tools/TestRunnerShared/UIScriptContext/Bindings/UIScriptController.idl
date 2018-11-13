@@ -238,10 +238,12 @@ interface UIScriptController {
 
     readonly attribute object contentVisibleRect; // Returned object has 'left', 'top', 'width', 'height' properties.
 
-    readonly attribute object selectionRangeViewRects; // An array of objects with 'left', 'top', 'width', and 'height' properties.
+    readonly attribute object textSelectionRangeRects; // An array of objects with 'left', 'top', 'width', and 'height' properties.
     readonly attribute object textSelectionCaretRect; // An object with 'left', 'top', 'width', 'height' properties.
     readonly attribute object selectionStartGrabberViewRect;
     readonly attribute object selectionEndGrabberViewRect;
+    readonly attribute object selectionCaretViewRect;
+    readonly attribute object selectionRangeViewRects;
     readonly attribute object calendarType;
     void setDefaultCalendarType(DOMString calendarIdentifier);
     readonly attribute object inputViewBounds;

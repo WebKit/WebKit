@@ -120,6 +120,7 @@ struct AssistedNodeInformation {
     String title;
     bool acceptsAutofilledLoginCredentials { false };
     bool isAutofillableUsernameField { false };
+    bool elementIsTransparent { false };
     WebCore::URL representingPageURL;
     WebCore::AutofillFieldName autofillFieldName { WebCore::AutofillFieldName::None };
     String placeholder;

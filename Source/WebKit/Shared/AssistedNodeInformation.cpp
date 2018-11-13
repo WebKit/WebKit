@@ -91,6 +91,7 @@ void AssistedNodeInformation::encode(IPC::Encoder& encoder) const
     encoder << title;
     encoder << acceptsAutofilledLoginCredentials;
     encoder << isAutofillableUsernameField;
+    encoder << elementIsTransparent;
     encoder << representingPageURL;
     encoder.encodeEnum(autofillFieldName);
     encoder << placeholder;
@@ -189,6 +190,9 @@ bool AssistedNodeInformation::decode(IPC::Decoder& decoder, AssistedNodeInformat
         return false;
 
     if (!decoder.decode(result.isAutofillableUsernameField))
+        return false;
+
+    if (!decoder.decode(result.elementIsTransparent))
         return false;
 
     if (!decoder.decode(result.representingPageURL))

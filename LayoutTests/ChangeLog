@@ -1,3 +1,57 @@
+2018-11-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Do not show selection UI for editable elements with opacity near zero
+        https://bugs.webkit.org/show_bug.cgi?id=191442
+        <rdar://problem/45958625>
+
+        Reviewed by Simon Fraser.
+
+        Add 5 new layout tests. See below for more details.
+
+        * editing/selection/character-granularity-rect.html:
+
+        Adjust for a renamed UIScriptController function.
+
+        * editing/selection/ios/do-not-zoom-to-focused-hidden-contenteditable-expected.txt: Added.
+        * editing/selection/ios/do-not-zoom-to-focused-hidden-contenteditable.html: Added.
+
+        Add a test to verify that we don't zoom to fit the focused element, if the focused element is completely
+        transparent.
+
+        * editing/selection/ios/hide-selection-after-hiding-contenteditable-expected.txt: Added.
+        * editing/selection/ios/hide-selection-after-hiding-contenteditable.html: Added.
+
+        Add a test to verify that selection UI is hidden after making an editable root transparent, and shown again when
+        the editable root becomes opaque.
+
+        * editing/selection/ios/hide-selection-in-contenteditable-nested-transparency-expected.txt: Added.
+        * editing/selection/ios/hide-selection-in-contenteditable-nested-transparency.html: Added.
+
+        Add a test to verify that transparency applied on an editable root via nested transparent containers causes
+        selection UI to be suppressed.
+
+        * editing/selection/ios/hide-selection-in-hidden-contenteditable-expected.txt: Added.
+        * editing/selection/ios/hide-selection-in-hidden-contenteditable-frame-expected.txt: Added.
+        * editing/selection/ios/hide-selection-in-hidden-contenteditable-frame.html: Added.
+
+        Add a test to verify that selection UI is suppressed when an editable element inside a subframe is focused. This
+        test checks that the caret, selection rects and selection handle views are not shown, and additionally verifies
+        that the selection in a hidden contenteditable area cannot be changed via tap gesture.
+
+        * editing/selection/ios/hide-selection-in-hidden-contenteditable.html: Added.
+
+        Same test as above, but in a regular editable element in the main document instead of a subframe.
+
+        * resources/ui-helper.js:
+        (window.UIHelper.getUISelectionRects.return.new.Promise.):
+        (window.UIHelper.getUISelectionRects.return.new.Promise):
+        (window.UIHelper.getUISelectionRects):
+        (window.UIHelper.getUICaretViewRect.return.new.Promise.):
+        (window.UIHelper.getUICaretViewRect.return.new.Promise):
+        (window.UIHelper.getUICaretViewRect):
+
+        Add new UIHelper wrapper methods. See Tools/ChangeLog for more detail.
+
 2018-11-13  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Table should support select all (Cmd-A)

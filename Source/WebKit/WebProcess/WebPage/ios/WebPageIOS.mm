@@ -240,6 +240,7 @@ void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePost
         if (m_assistedNode && m_assistedNode->renderer()) {
             postLayoutData.selectionClipRect = view->contentsToRootView(m_assistedNode->renderer()->absoluteBoundingBoxRect());
             postLayoutData.caretColor = m_assistedNode->renderer()->style().caretColor();
+            postLayoutData.elementIsTransparent = m_assistedNode->renderer()->isTransparentRespectingParentFrames();
         }
         computeEditableRootHasContentAndPlainText(selection, postLayoutData);
     }
@@ -2337,6 +2338,7 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
         Frame& elementFrame = m_page->focusController().focusedOrMainFrame();
         information.elementRect = elementRectInRootViewCoordinates(*m_assistedNode, elementFrame);
         information.nodeFontSize = renderer->style().fontDescription().computedSize();
+        information.elementIsTransparent = renderer->isTransparentRespectingParentFrames();
 
         bool inFixed = false;
         renderer->localToContainerPoint(FloatPoint(), nullptr, UseTransforms, &inFixed);
