@@ -274,6 +274,7 @@ static std::optional<WebCore::ScrollbarOverlayStyle> toCoreScrollbarStyle(_WKOve
     WeakObjCPtr<id <_WKInputDelegate>> _inputDelegate;
 
     std::optional<BOOL> _resolutionForShareSheetImmediateCompletionForTesting;
+    RetainPtr<WKSafeBrowsingWarning> _safeBrowsingWarning;
 
 #if PLATFORM(IOS_FAMILY)
     RetainPtr<_WKRemoteObjectRegistry> _remoteObjectRegistry;
@@ -1276,6 +1277,21 @@ static NSDictionary *dictionaryRepresentationForEditorState(const WebKit::Editor
         [uiDelegate _webView:self editorStateDidChange:dictionaryRepresentationForEditorState(_page->editorState())];
 }
 
+- (void)_showSafeBrowsingWarning:(const WebKit::SafeBrowsingResult&)result completionHandler:(CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, WebCore::URL>&&)>&&)completionHandler
+{
+    _safeBrowsingWarning = adoptNS([[WKSafeBrowsingWarning alloc] initWithFrame:self.bounds safeBrowsingResult:result completionHandler:[weakSelf = WeakObjCPtr<WKWebView>(self), completionHandler = WTFMove(completionHandler)] (auto&& result) mutable {
+        if (auto strongSelf = weakSelf.get())
+            [std::exchange(strongSelf->_safeBrowsingWarning, nullptr) removeFromSuperview];
+        completionHandler(WTFMove(result));
+    }]);
+    [self addSubview:_safeBrowsingWarning.get()];
+}
+
+- (void)_clearSafeBrowsingWarning
+{
+    [std::exchange(_safeBrowsingWarning, nullptr) removeFromSuperview];
+}
+
 #if ENABLE(ATTACHMENT_ELEMENT)
 
 - (void)_didInsertAttachment:(API::Attachment&)attachment withSource:(NSString *)source
@@ -1352,6 +1368,7 @@ static NSDictionary *dictionaryRepresentationForEditorState(const WebKit::Editor
 
 - (void)layoutSubviews
 {
+    [_safeBrowsingWarning setFrame:self.bounds];
     [super layoutSubviews];
     [self _frameOrBoundsChanged];
 }
@@ -3312,6 +3329,7 @@ static void accessibilityEventsEnabledChangedCallback(CFNotificationCenterRef, v
 - (void)setFrameSize:(NSSize)size
 {
     [super setFrameSize:size];
+    [_safeBrowsingWarning setFrame:self.bounds];
     _impl->setFrameSize(NSSizeToCGSize(size));
 }
 
@@ -4711,7 +4729,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 
 + (BOOL)_handlesSafeBrowsing
 {
-    return DEFAULT_SAFE_BROWSING_ENABLED;
+    return true;
 }
 
 - (void)_evaluateJavaScriptWithoutUserGesture:(NSString *)javaScriptString completionHandler:(void (^)(id, NSError *))completionHandler
@@ -6749,7 +6767,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 #else
 - (UIView *)_safeBrowsingWarningForTesting
 {
-    return nil;
+    return _safeBrowsingWarning.get();
 }
 #endif
 

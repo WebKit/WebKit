@@ -56,7 +56,7 @@ XSSAuditorEnabled:
 
 SafeBrowsingEnabled:
   type: bool
-  defaultValue: DEFAULT_SAFE_BROWSING_ENABLED
+  defaultValue: true
   webcoreBinding: none
 
 PrivateBrowsingEnabled:

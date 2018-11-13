@@ -564,7 +564,7 @@ void PageClientImpl::selectionDidChange()
 #if WK_API_ENABLED
 bool PageClientImpl::showShareSheet(const ShareDataWithParsedURL& shareData, WTF::CompletionHandler<void(bool)>&& completionHandler)
 {
-    m_impl->showShareSheet(shareData, WTFMove(completionHandler), m_webView);
+    m_impl->showShareSheet(shareData, WTFMove(completionHandler), m_webView.get().get());
     return true;
 }
 #endif
@@ -753,16 +753,16 @@ void PageClientImpl::navigationGestureDidBegin()
     m_impl->dismissContentRelativeChildWindowsWithAnimation(true);
 
 #if WK_API_ENABLED
-    if (m_webView)
-        NavigationState::fromWebPage(*m_webView->_page).navigationGestureDidBegin();
+    if (auto webView = m_webView.get())
+        NavigationState::fromWebPage(*webView->_page).navigationGestureDidBegin();
 #endif
 }
 
 void PageClientImpl::navigationGestureWillEnd(bool willNavigate, WebBackForwardListItem& item)
 {
 #if WK_API_ENABLED
-    if (m_webView)
-        NavigationState::fromWebPage(*m_webView->_page).navigationGestureWillEnd(willNavigate, item);
+    if (auto webView = m_webView.get())
+        NavigationState::fromWebPage(*webView->_page).navigationGestureWillEnd(willNavigate, item);
 #else
     UNUSED_PARAM(willNavigate);
     UNUSED_PARAM(item);
@@ -772,8 +772,8 @@ void PageClientImpl::navigationGestureWillEnd(bool willNavigate, WebBackForwardL
 void PageClientImpl::navigationGestureDidEnd(bool willNavigate, WebBackForwardListItem& item)
 {
 #if WK_API_ENABLED
-    if (m_webView)
-        NavigationState::fromWebPage(*m_webView->_page).navigationGestureDidEnd(willNavigate, item);
+    if (auto webView = m_webView.get())
+        NavigationState::fromWebPage(*webView->_page).navigationGestureDidEnd(willNavigate, item);
 #else
     UNUSED_PARAM(willNavigate);
     UNUSED_PARAM(item);
@@ -787,8 +787,8 @@ void PageClientImpl::navigationGestureDidEnd()
 void PageClientImpl::willRecordNavigationSnapshot(WebBackForwardListItem& item)
 {
 #if WK_API_ENABLED
-    if (m_webView)
-        NavigationState::fromWebPage(*m_webView->_page).willRecordNavigationSnapshot(item);
+    if (auto webView = m_webView.get())
+        NavigationState::fromWebPage(*webView->_page).willRecordNavigationSnapshot(item);
 #else
     UNUSED_PARAM(item);
 #endif
@@ -797,8 +797,8 @@ void PageClientImpl::willRecordNavigationSnapshot(WebBackForwardListItem& item)
 void PageClientImpl::didRemoveNavigationGestureSnapshot()
 {
 #if WK_API_ENABLED
-    if (m_webView)
-        NavigationState::fromWebPage(*m_webView->_page).navigationGestureSnapshotWasRemoved();
+    if (auto webView = m_webView.get())
+        NavigationState::fromWebPage(*webView->_page).navigationGestureSnapshotWasRemoved();
 #endif
 }
 

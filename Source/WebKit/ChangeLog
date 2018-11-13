@@ -1,3 +1,78 @@
+2018-11-12  Alex Christensen  <achristensen@webkit.org>
+
+        [iOS] Implement safe browsing in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=191441
+
+        Reviewed by Tim Horton.
+
+        In r237863 I implemented this for Mac.  This refines the UI and implements it for iOS.
+
+        * Shared/WebPreferences.yaml:
+        * Shared/WebPreferencesDefaultValues.h:
+        * UIProcess/API/C/mac/WKContextPrivateMac.mm:
+        (WKContextHandlesSafeBrowsing):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _showSafeBrowsingWarning:completionHandler:]):
+        (-[WKWebView _clearSafeBrowsingWarning]):
+        (-[WKWebView layoutSubviews]):
+        (-[WKWebView setFrameSize:]):
+        (+[WKWebView _handlesSafeBrowsing]):
+        (-[WKWebView _safeBrowsingWarningForTesting]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/Cocoa/PageClientImplCocoa.h:
+        * UIProcess/Cocoa/PageClientImplCocoa.mm:
+        (WebKit::PageClientImplCocoa::allocFileWrapperInstance const):
+        (WebKit::PageClientImplCocoa::serializableFileWrapperClasses const):
+        * UIProcess/Cocoa/WKSafeBrowsingWarning.h:
+        * UIProcess/Cocoa/WKSafeBrowsingWarning.mm:
+        (confirmMalwareSentinel):
+        (visitUnsafeWebsiteSentinel):
+        (colorForItem):
+        (addLinkAndReplace):
+        (-[WKSafeBrowsingExclamationPoint drawRect:]):
+        (makeButton):
+        (makeTitleLabel):
+        (setBackground):
+        (-[WKSafeBrowsingWarning initWithFrame:safeBrowsingResult:completionHandler:]):
+        (-[WKSafeBrowsingWarning addContent]):
+        (-[WKSafeBrowsingWarning showDetailsClicked]):
+        (-[WKSafeBrowsingWarning layoutText]):
+        (-[WKSafeBrowsingWarning textView:clickedOnLink:atIndex:]):
+        (-[WKSafeBrowsingWarning layout]):
+        (-[WKSafeBrowsingWarning layoutSubviews]):
+        (-[WKSafeBrowsingWarning textView:shouldInteractWithURL:inRange:interaction:]):
+        (-[WKSafeBrowsingWarning didMoveToWindow]):
+        (-[WKSafeBrowsingWarning clickedOnLink:]):
+        (-[WKSafeBrowsingTextView initWithAttributedString:forWarning:]):
+        (-[WKSafeBrowsingTextView intrinsicContentSize]):
+        (colorNamed): Deleted.
+        (+[WKSafeBrowsingTextView viewWithAttributedString:linkTarget:]): Deleted.
+        (+[WKSafeBrowsingTextView viewWithString:]): Deleted.
+        (-[WKSafeBrowsingTextView clickedOnLink:atIndex:]): Deleted.
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::isViewWindowActive):
+        (WebKit::PageClientImpl::isViewFocused):
+        (WebKit::PageClientImpl::isViewVisible):
+        (WebKit::PageClientImpl::isViewInWindow):
+        (WebKit::PageClientImpl::decidePolicyForGeolocationPermissionRequest):
+        (WebKit::PageClientImpl::enterAcceleratedCompositingMode):
+        (WebKit::PageClientImpl::showSafeBrowsingWarning):
+        (WebKit::PageClientImpl::clearSafeBrowsingWarning):
+        (WebKit::PageClientImpl::mimeTypesWithCustomContentProviders):
+        (WebKit::PageClientImpl::navigationGestureDidBegin):
+        (WebKit::PageClientImpl::navigationGestureWillEnd):
+        (WebKit::PageClientImpl::navigationGestureDidEnd):
+        (WebKit::PageClientImpl::willRecordNavigationSnapshot):
+        (WebKit::PageClientImpl::didRemoveNavigationGestureSnapshot):
+        (WebKit::PageClientImpl::requestPasswordForQuickLookDocument):
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::showShareSheet):
+        (WebKit::PageClientImpl::navigationGestureDidBegin):
+        (WebKit::PageClientImpl::navigationGestureWillEnd):
+        (WebKit::PageClientImpl::navigationGestureDidEnd):
+        (WebKit::PageClientImpl::willRecordNavigationSnapshot):
+        (WebKit::PageClientImpl::didRemoveNavigationGestureSnapshot):
+
 2018-11-12  Tim Horton  <timothy_horton@apple.com>
 
         Make it possible to edit images inline

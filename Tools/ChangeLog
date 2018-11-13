@@ -1,3 +1,14 @@
+2018-11-12  Alex Christensen  <achristensen@webkit.org>
+
+        [iOS] Implement safe browsing in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=191441
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/SafeBrowsing.mm:
+        (checkTitleAndClick):
+        (TEST):
+
 2018-11-12  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [Curl] Add API Test for Curl cookie backend.

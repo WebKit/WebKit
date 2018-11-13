@@ -33,49 +33,107 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/Language.h>
 
-const CGFloat exclamationPointSize = 30;
-const CGFloat textSize = 13;
+constexpr CGFloat exclamationPointSize = 30;
+constexpr CGFloat titleSize = 26;
+constexpr CGFloat boxCornerRadius = 6;
+#if HAVE(SAFE_BROWSING)
+constexpr CGFloat marginSize = 20;
+constexpr CGFloat maxWidth = 675;
+#endif
+
 #if PLATFORM(MAC)
-const CGFloat marginSize = 20;
-const size_t maxWidth = 600;
+constexpr CGFloat textSize = 14;
 using ColorType = NSColor;
 using FontType = NSFont;
-using ViewType = NSView;
-using BezierPathType = NSBezierPath;
 using TextViewType = NSTextView;
+using ButtonType = NSButton;
+using AlignmentType = NSLayoutAttribute;
+using ViewType = NSView;
+using SizeType = NSSize;
 #else
+constexpr CGFloat textSize = 20;
 using ColorType = UIColor;
 using FontType = UIFont;
-using ViewType = UIView;
-using BezierPathType = UIBezierPath;
 using TextViewType = UITextView;
+using ButtonType = UIButton;
+using AlignmentType = UIStackViewAlignment;
+using ViewType = UIView;
+using SizeType = CGSize;
 #endif
 
-static id confirmMalwareSentinel()
+enum class WarningItem : uint8_t {
+    Background,
+    BoxBackground,
+    ExclamationPoint,
+    TitleText,
+    MessageText,
+    ShowDetailsButton,
+    GoBackButton
+};
+
+static NSURL *confirmMalwareSentinel()
 {
-    return @"WKConfirmMalwareSentinel";
+    return [NSURL URLWithString:@"WKConfirmMalwareSentinel"];
 }
 
-static id visitUnsafeWebsiteSentinel()
+static NSURL *visitUnsafeWebsiteSentinel()
 {
-    return @"WKVisitUnsafeWebsiteSentinel";
+    return [NSURL URLWithString:@"WKVisitUnsafeWebsiteSentinel"];
 }
 
-static ColorType *colorNamed(NSString *name)
+static ColorType *colorForItem(WarningItem item, ViewType *warning)
 {
+    ASSERT([warning isKindOfClass:[WKSafeBrowsingWarning class]]);
 #if PLATFORM(MAC)
+
+    auto colorNamed = [] (NSString *name) -> ColorType* {
 #if HAVE(SAFE_BROWSING)
-    return [NSColor colorNamed:name bundle:[NSBundle bundleWithIdentifier:@"com.apple.WebKit"]];
+        return [NSColor colorNamed:name bundle:[NSBundle bundleWithIdentifier:@"com.apple.WebKit"]];
 #else
+        ASSERT_NOT_REACHED();
+        return nil;
+#endif
+    };
+
+    switch (item) {
+    case WarningItem::Background:
+        return colorNamed(@"WKSafeBrowsingWarningBackground");
+    case WarningItem::BoxBackground:
+        return [NSColor windowBackgroundColor];
+    case WarningItem::TitleText:
+    case WarningItem::ExclamationPoint:
+        return colorNamed(@"WKSafeBrowsingWarningTitle");
+    case WarningItem::MessageText:
+        return colorNamed(@"WKSafeBrowsingWarningText");
+    case WarningItem::ShowDetailsButton:
+    case WarningItem::GoBackButton:
+        ASSERT_NOT_REACHED();
+        return nil;
+    }
+#else
+    UIColor *red = [UIColor colorWithRed:0.998 green:0.239 blue:0.233 alpha:1.0];
+    UIColor *white = [UIColor whiteColor];
+    bool narrow = warning.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact;
+
+    switch (item) {
+    case WarningItem::Background:
+        return red;
+    case WarningItem::BoxBackground:
+        return narrow ? red : white;
+    case WarningItem::TitleText:
+    case WarningItem::ExclamationPoint:
+        return narrow ? white : red;
+    case WarningItem::MessageText:
+    case WarningItem::ShowDetailsButton:
+        return narrow ? white : [UIColor darkTextColor];
+    case WarningItem::GoBackButton:
+        return narrow ? white : warning.tintColor;
+    }
+#endif
     ASSERT_NOT_REACHED();
     return nil;
-#endif
-#else
-    return [UIColor colorNamed:name inBundle:[NSBundle bundleWithIdentifier:@"com.apple.WebKit"] compatibleWithTraitCollection:nil];
-#endif
 }
 
-#if PLATFORM(MAC)
 static void replace(NSMutableAttributedString *string, NSString *toReplace, NSString *replaceWith)
 {
     [string replaceCharactersInRange:[string.string rangeOfString:toReplace] withString:replaceWith];
@@ -90,7 +148,6 @@ static void addLinkAndReplace(NSMutableAttributedString *string, NSString *toRep
     } range:NSMakeRange(0, replaceWith.length)];
     [string replaceCharactersInRange:[string.string rangeOfString:toReplace] withAttributedString:stringWithLink];
 }
-#endif
 
 @interface WKSafeBrowsingExclamationPoint : ViewType
 @end
@@ -99,22 +156,39 @@ static void addLinkAndReplace(NSMutableAttributedString *string, NSString *toRep
 
 - (void)drawRect:(RectType)rect
 {
-    [colorNamed(@"WKSafeBrowsingWarningTitle") set];
+    constexpr CGFloat centerX = exclamationPointSize / 2;
+    constexpr CGFloat pointCenterY = exclamationPointSize * 7 / 30;
+    constexpr CGFloat pointRadius = 2.25 * exclamationPointSize / 30;
+    constexpr CGFloat lineBottomCenterY = exclamationPointSize * 13 / 30;
+    constexpr CGFloat lineTopCenterY = exclamationPointSize * 23 / 30;
+    constexpr CGFloat lineRadius = 1.75 * exclamationPointSize / 30;
+    ViewType *warning = self.superview.superview;
 #if PLATFORM(MAC)
-#define addArcWithCenter appendBezierPathWithArcWithCenter
-    NSRect square = NSMakeRect(0, 0, exclamationPointSize, exclamationPointSize);
+    [colorForItem(WarningItem::ExclamationPoint, warning) set];
+    NSBezierPath *exclamationPoint = [NSBezierPath bezierPathWithOvalInRect:NSMakeRect(0, 0, exclamationPointSize, exclamationPointSize)];
+    [exclamationPoint appendBezierPathWithArcWithCenter: { centerX, lineBottomCenterY } radius:lineRadius startAngle:0 endAngle:180 clockwise:YES];
+    [exclamationPoint appendBezierPathWithArcWithCenter: { centerX, lineTopCenterY } radius:lineRadius startAngle:180 endAngle:360 clockwise:YES];
+    [exclamationPoint lineToPoint: { centerX + lineRadius, lineBottomCenterY }];
+    [exclamationPoint appendBezierPathWithArcWithCenter: { centerX, pointCenterY } radius:pointRadius startAngle:0 endAngle:180 clockwise:YES];
+    [exclamationPoint appendBezierPathWithArcWithCenter: { centerX, pointCenterY } radius:pointRadius startAngle:180 endAngle:360 clockwise:YES];
 #else
-    CGRect square = CGRectMake(0, 0, exclamationPointSize, exclamationPointSize);
+    auto flip = [] (auto y) {
+        return exclamationPointSize - y;
+    };
+    [colorForItem(WarningItem::BoxBackground, warning) set];
+    auto square = CGRectMake(0, 0, exclamationPointSize, exclamationPointSize);
+    [[UIBezierPath bezierPathWithRect:square] fill];
+    
+    [colorForItem(WarningItem::ExclamationPoint, warning) set];
+    UIBezierPath *exclamationPoint = [UIBezierPath bezierPathWithOvalInRect:square];
+    [exclamationPoint addArcWithCenter: { centerX, flip(lineTopCenterY) } radius:lineRadius startAngle:2 * piDouble endAngle:piDouble clockwise:NO];
+    [exclamationPoint addArcWithCenter: { centerX, flip(lineBottomCenterY) } radius:lineRadius startAngle:piDouble endAngle:0 clockwise:NO];
+    [exclamationPoint addArcWithCenter: { centerX, flip(pointCenterY) } radius:pointRadius startAngle:0 endAngle:piDouble clockwise:NO];
+    [exclamationPoint addArcWithCenter: { centerX, flip(pointCenterY) } radius:pointRadius startAngle:piDouble endAngle:piDouble * 2 clockwise:NO];
+    [exclamationPoint addLineToPoint: { centerX + lineRadius, flip(lineBottomCenterY) }];
+    [exclamationPoint addLineToPoint: { centerX + lineRadius, flip(lineTopCenterY) }];
 #endif
-    BezierPathType *exclamationPoint = [BezierPathType bezierPathWithOvalInRect:square];
-    [exclamationPoint addArcWithCenter: { exclamationPointSize / 2, exclamationPointSize * 13 / 30 } radius:1.75 startAngle:0 endAngle:180 clockwise:YES];
-    [exclamationPoint addArcWithCenter: { exclamationPointSize / 2, exclamationPointSize * 23 / 30 } radius:1.75 startAngle:180 endAngle:360 clockwise:YES];
-    [exclamationPoint addArcWithCenter: { exclamationPointSize / 2, exclamationPointSize * 7 / 30 } radius:2.25 startAngle:0 endAngle:180 clockwise:YES];
-    [exclamationPoint addArcWithCenter: { exclamationPointSize / 2, exclamationPointSize * 7 / 30 } radius:2.25 startAngle:180 endAngle:360 clockwise:YES];
     [exclamationPoint fill];
-#if PLATFORM(MAC)
-#undef addArcWithCenter
-#endif
 }
 
 - (NSSize)intrinsicContentSize
@@ -124,7 +198,6 @@ static void addLinkAndReplace(NSMutableAttributedString *string, NSString *toRep
 
 @end
 
-#if PLATFORM(MAC)
 static NSURL *reportAnErrorURL(const WebKit::SafeBrowsingResult& result)
 {
     return WebCore::URL({ }, makeString(result.reportAnErrorURLBase(), "&url=", encodeWithURLEscapeSequences(result.url()), "&hl=", defaultLanguage()));
@@ -191,14 +264,63 @@ static NSMutableAttributedString *detailsText(const WebKit::SafeBrowsingResult& 
     ASSERT(result.isUnwantedSoftware());
     return malwareOrUnwantedSoftwareDetails(result, WEB_UI_NSSTRING(@"Warnings are shown for websites where harmful software has been detected. You can check %the-status-of-site% on the %safeBrowsingProvider% diagnostic page.", "Unwanted software warning description"), @"%the-status-of-site%", false);
 }
+
+static ButtonType *makeButton(WarningItem item, WKSafeBrowsingWarning *warning, SEL action)
+{
+    NSString *title = nil;
+    if (item == WarningItem::ShowDetailsButton)
+        title = WEB_UI_NSSTRING(@"Show details", "Action from safe browsing warning");
+    else
+        title = WEB_UI_NSSTRING(@"Go back", "Action from safe browsing warning");
+    title = [title capitalizedString];
+#if PLATFORM(MAC)
+    return [NSButton buttonWithTitle:title target:warning action:action];
+#else
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeSystem];
+    NSAttributedString *attributedTitle = [[[NSAttributedString alloc] initWithString:title attributes:@{
+        NSUnderlineStyleAttributeName:@(NSUnderlineStyleSingle),
+        NSUnderlineColorAttributeName:[UIColor whiteColor],
+        NSForegroundColorAttributeName:colorForItem(item, warning),
+        NSFontAttributeName:[FontType systemFontOfSize:textSize]
+    }] autorelease];
+    [button setAttributedTitle:attributedTitle forState:UIControlStateNormal];
+    [button addTarget:warning action:action forControlEvents:UIControlEventTouchUpInside];
+    return button;
 #endif
+}
+
+static ViewType *makeTitleLabel(NSString *title, ViewType *warning)
+{
+    auto attributedString = [[[NSAttributedString alloc] initWithString:title attributes:@{
+        NSFontAttributeName:[FontType boldSystemFontOfSize:titleSize],
+        NSForegroundColorAttributeName:colorForItem(WarningItem::TitleText, warning)
+    }] autorelease];
+#if PLATFORM(MAC)
+    return [NSTextField labelWithAttributedString:attributedString];
+#else
+    auto label = [[UILabel new] autorelease];
+    label.attributedText = attributedString;
+    label.lineBreakMode = NSLineBreakByWordWrapping;
+    label.numberOfLines = 0;
+    return label;
+#endif
+}
+
+static void setBackground(ViewType *view, ColorType *color)
+{
+#if PLATFORM(MAC)
+    view.wantsLayer = YES;
+    view.layer.backgroundColor = color.CGColor;
+#else
+    view.backgroundColor = color;
+#endif
+}
 
 @interface WKSafeBrowsingTextView : TextViewType {
 @package
-    WeakObjCPtr<WKSafeBrowsingWarning> _target;
+    WeakObjCPtr<WKSafeBrowsingWarning> _warning;
 }
-+ (instancetype)viewWithAttributedString:(NSAttributedString *)attributedString linkTarget:(WKSafeBrowsingWarning *)target;
-+ (instancetype)viewWithString:(NSString *)string;
+- (instancetype)initWithAttributedString:(NSAttributedString *)attributedString forWarning:(WKSafeBrowsingWarning *)warning;
 @end
 
 @implementation WKSafeBrowsingWarning
@@ -209,54 +331,157 @@ static NSMutableAttributedString *detailsText(const WebKit::SafeBrowsingResult& 
         completionHandler(WebKit::ContinueUnsafeLoad::Yes);
         return nil;
     }
-
     _completionHandler = WTFMove(completionHandler);
     _result = makeRef(result);
-
+    setBackground(self, colorForItem(WarningItem::Background, self));
 #if PLATFORM(MAC)
-    self.wantsLayer = YES;
-    self.layer.backgroundColor = [colorNamed(@"WKSafeBrowsingWarningBackground") CGColor];
-
-    NSStackView *top = [NSStackView stackViewWithViews:@[
-        [[WKSafeBrowsingExclamationPoint new] autorelease],
-        [NSTextField labelWithAttributedString:[[[NSAttributedString alloc] initWithString:titleText(result) attributes:@{
-            NSFontAttributeName:[NSFont systemFontOfSize:exclamationPointSize],
-            NSForegroundColorAttributeName:colorNamed(@"WKSafeBrowsingWarningText")
-        }] autorelease]]
-    ]];
-
-    WKSafeBrowsingTextView *middle = [WKSafeBrowsingTextView viewWithString:warningText(result)];
-
-    NSStackView *bottom = [NSStackView stackViewWithViews:@[
-        [NSButton buttonWithTitle:WEB_UI_NSSTRING(@"Show details", "Action from safe browsing warning") target:self action:@selector(showDetailsClicked)],
-        [NSButton buttonWithTitle:WEB_UI_NSSTRING(@"Go back", "Action from safe browsing warning") target:self action:@selector(goBackClicked)]
-    ]];
-
-    for (NSStackView *view in @[top, bottom])
-        [view setHuggingPriority:NSLayoutPriorityRequired forOrientation:NSLayoutConstraintOrientationVertical];
-
-    StackViewType *box = [NSStackView stackViewWithViews:@[top, middle, bottom]];
-    box.wantsLayer = YES;
-    box.layer.backgroundColor = [[NSColor windowBackgroundColor] CGColor];
-    box.layer.cornerRadius = 6;
-    box.alignment = NSLayoutAttributeCenterX;
-    [box.widthAnchor constraintEqualToConstant:maxWidth].active = true;
-    box.edgeInsets = { marginSize, marginSize, marginSize, marginSize };
-    [box setHuggingPriority:NSLayoutPriorityRequired forOrientation:NSLayoutConstraintOrientationVertical];
-    [self addView:box inGravity:NSStackViewGravityCenter];
-#else
-    // FIXME: Get this working on iOS.
-    completionHandler(WebKit::ContinueUnsafeLoad::Yes);
+    [self addContent];
 #endif
     return self;
 }
 
+- (void)addContent
+{
+    auto exclamationPoint = [[WKSafeBrowsingExclamationPoint new] autorelease];
+    auto title = makeTitleLabel(titleText(*_result), self);
+    auto warning = [[[WKSafeBrowsingTextView alloc] initWithAttributedString:[[[NSAttributedString alloc] initWithString:warningText(*_result) attributes:@{ NSFontAttributeName:[FontType systemFontOfSize:textSize] }] autorelease] forWarning:self] autorelease];
+    auto showDetails = makeButton(WarningItem::ShowDetailsButton, self, @selector(showDetailsClicked));
+    auto goBack = makeButton(WarningItem::GoBackButton, self, @selector(goBackClicked));
+    auto box = [[ViewType new] autorelease];
+    setBackground(box, colorForItem(WarningItem::BoxBackground, self));
+    box.layer.cornerRadius = boxCornerRadius;
+    _textViews = adoptNS([NSMutableArray new]);
+    [_textViews addObject:warning];
+
+    for (ViewType *view in @[exclamationPoint, title, warning, goBack, showDetails]) {
+        view.translatesAutoresizingMaskIntoConstraints = NO;
+        [box addSubview:view];
+    }
+    box.translatesAutoresizingMaskIntoConstraints = NO;
+    [self addSubview:box];
+
+#if HAVE(SAFE_BROWSING)
+    [NSLayoutConstraint activateConstraints:@[
+        [[self.topAnchor anchorWithOffsetToAnchor:box.topAnchor] constraintEqualToAnchor:[box.bottomAnchor anchorWithOffsetToAnchor:self.bottomAnchor] multiplier:0.5],
+        [[self.leftAnchor anchorWithOffsetToAnchor:box.leftAnchor] constraintEqualToAnchor:[box.rightAnchor anchorWithOffsetToAnchor:self.rightAnchor]],
+
+        [box.widthAnchor constraintLessThanOrEqualToConstant:maxWidth],
+        [box.widthAnchor constraintLessThanOrEqualToAnchor:self.widthAnchor],
+
+        [[box.leadingAnchor anchorWithOffsetToAnchor:exclamationPoint.leadingAnchor] constraintEqualToConstant:marginSize],
+        [[box.leadingAnchor anchorWithOffsetToAnchor:title.leadingAnchor] constraintEqualToConstant:marginSize * 1.5 + exclamationPointSize],
+        [[box.leadingAnchor anchorWithOffsetToAnchor:warning.leadingAnchor] constraintEqualToConstant:marginSize],
+
+        [[title.trailingAnchor anchorWithOffsetToAnchor:box.trailingAnchor] constraintGreaterThanOrEqualToConstant:marginSize],
+        [[warning.trailingAnchor anchorWithOffsetToAnchor:box.trailingAnchor] constraintGreaterThanOrEqualToConstant:marginSize],
+        [[goBack.trailingAnchor anchorWithOffsetToAnchor:box.trailingAnchor] constraintEqualToConstant:marginSize],
+
+        [[title.topAnchor anchorWithOffsetToAnchor:exclamationPoint.topAnchor] constraintEqualToAnchor:[exclamationPoint.bottomAnchor anchorWithOffsetToAnchor:title.bottomAnchor]],
+
+        [goBack.topAnchor constraintEqualToAnchor:showDetails.topAnchor],
+        [[showDetails.trailingAnchor anchorWithOffsetToAnchor:goBack.leadingAnchor] constraintEqualToConstant:marginSize],
+
+        [[box.topAnchor anchorWithOffsetToAnchor:title.topAnchor] constraintEqualToConstant:marginSize],
+        [[title.bottomAnchor anchorWithOffsetToAnchor:warning.topAnchor] constraintEqualToConstant:marginSize],
+        [[warning.bottomAnchor anchorWithOffsetToAnchor:goBack.topAnchor] constraintEqualToConstant:marginSize],
+        [[goBack.bottomAnchor anchorWithOffsetToAnchor:box.bottomAnchor] constraintEqualToConstant:marginSize]
+    ]];
+#endif
+}
+
+- (void)showDetailsClicked
+{
+    ViewType *box = self.subviews.lastObject;
+    ButtonType *showDetails = box.subviews.lastObject;
+    [showDetails removeFromSuperview];
+
+    NSMutableAttributedString *text = detailsText(*_result);
+    [text addAttributes:@{ NSFontAttributeName:[FontType systemFontOfSize:textSize] } range:NSMakeRange(0, text.length)];
+    WKSafeBrowsingTextView *details = [[[WKSafeBrowsingTextView alloc] initWithAttributedString:text forWarning:self] autorelease];
+    [_textViews addObject:details];
+    ViewType *bottom = [[ViewType new] autorelease];
+    setBackground(bottom, colorForItem(WarningItem::BoxBackground, self));
+    bottom.layer.cornerRadius = boxCornerRadius;
+
+#if HAVE(SAFE_BROWSING)
+    constexpr auto maxY = kCALayerMinXMaxYCorner | kCALayerMaxXMaxYCorner;
+    constexpr auto minY = kCALayerMinXMinYCorner | kCALayerMaxXMinYCorner;
 #if PLATFORM(MAC)
+    box.layer.maskedCorners = maxY;
+    bottom.layer.maskedCorners = minY;
+#else
+    box.layer.maskedCorners = minY;
+    bottom.layer.maskedCorners = maxY;
+#endif
+#endif
+
+    ViewType *line = [[ViewType new] autorelease];
+    setBackground(line, [ColorType lightGrayColor]);
+    for (ViewType *view in @[details, bottom, line])
+        view.translatesAutoresizingMaskIntoConstraints = NO;
+
+    [self addSubview:bottom];
+    [bottom addSubview:line];
+    [bottom addSubview:details];
+#if HAVE(SAFE_BROWSING)
+    [NSLayoutConstraint activateConstraints:@[
+        [box.widthAnchor constraintEqualToAnchor:bottom.widthAnchor],
+        [box.bottomAnchor constraintEqualToAnchor:bottom.topAnchor],
+        [box.leadingAnchor constraintEqualToAnchor:bottom.leadingAnchor],
+        [line.widthAnchor constraintEqualToAnchor:bottom.widthAnchor],
+        [line.leadingAnchor constraintEqualToAnchor:bottom.leadingAnchor],
+        [line.topAnchor constraintEqualToAnchor:bottom.topAnchor],
+        [line.heightAnchor constraintEqualToConstant:1],
+        [[bottom.topAnchor anchorWithOffsetToAnchor:details.topAnchor] constraintEqualToConstant:marginSize],
+        [[details.bottomAnchor anchorWithOffsetToAnchor:bottom.bottomAnchor] constraintEqualToConstant:marginSize],
+        [[bottom.leadingAnchor anchorWithOffsetToAnchor:details.leadingAnchor] constraintEqualToConstant:marginSize],
+        [[details.trailingAnchor anchorWithOffsetToAnchor:bottom.trailingAnchor] constraintEqualToConstant:marginSize],
+    ]];
+#endif
+    [self layoutText];
+#if !PLATFORM(MAC)
+    [self layoutIfNeeded];
+    CGFloat height = 0;
+    for (ViewType *subview in self.subviews)
+        height += subview.frame.size.height;
+    [self setContentSize: { self.frame.size.width, self.frame.size.height / 2 + height }];
+#endif
+}
+
+- (void)layoutText
+{
+    for (WKSafeBrowsingTextView *view in _textViews.get())
+        [view invalidateIntrinsicContentSize];
+}
+
+#if PLATFORM(MAC)
+- (BOOL)textView:(NSTextView *)textView clickedOnLink:(id)link atIndex:(NSUInteger)charIndex
+{
+    [self clickedOnLink:link];
+    return YES;
+}
+
 - (void)layout
 {
-    for (NSView *view in self.subviews.firstObject.subviews)
-        [view invalidateIntrinsicContentSize];
     [super layout];
+    [self layoutText];
+}
+#else
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+    [self layoutText];
+}
+
+- (BOOL)textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange interaction:(UITextItemInteraction)interaction
+{
+    [self clickedOnLink:URL];
+    return NO;
+}
+
+- (void)didMoveToWindow
+{
+    [self addContent];
 }
 #endif
 
@@ -273,7 +498,7 @@ static NSMutableAttributedString *detailsText(const WebKit::SafeBrowsingResult& 
         _completionHandler(WebKit::ContinueUnsafeLoad::No);
 }
 
-- (void)clickedOnLink:(id)link
+- (void)clickedOnLink:(NSURL *)link
 {
     if (!_completionHandler)
         return;
@@ -304,68 +529,41 @@ static NSMutableAttributedString *detailsText(const WebKit::SafeBrowsingResult& 
     _completionHandler((NSURL *)link);
 }
 
-- (void)showDetailsClicked
-{
-#if PLATFORM(MAC)
-    NSStackView *box = self.views.firstObject;
-    NSStackView *bottom = box.views.lastObject;
-    NSButton *showDetailsButton = bottom.views.firstObject;
-    [bottom removeView:showDetailsButton];
-    WKSafeBrowsingTextView *details = [WKSafeBrowsingTextView viewWithAttributedString:detailsText(*_result) linkTarget:self];
-    [box addView:details inGravity:NSStackViewGravityCenter];
-#else
-    // FIXME: Get this working on iOS.
-#endif
-}
-
 @end
 
 @implementation WKSafeBrowsingTextView
 
-+ (instancetype)viewWithAttributedString:(NSAttributedString *)attributedString linkTarget:(WKSafeBrowsingWarning *)target
+- (instancetype)initWithAttributedString:(NSAttributedString *)attributedString forWarning:(WKSafeBrowsingWarning *)warning
 {
-    WKSafeBrowsingTextView *instance = [[self new] autorelease];
-    if (!instance)
+    if (!(self = [super init]))
         return nil;
-    instance->_target = target;
+    self->_warning = warning;
+    self.delegate = warning;
 
-    ColorType *foregroundColor = colorNamed(@"WKSafeBrowsingWarningText");
+    ColorType *foregroundColor = colorForItem(WarningItem::MessageText, warning);
     NSMutableAttributedString *string = [attributedString mutableCopy];
-    [string addAttributes:@{
-        NSForegroundColorAttributeName : foregroundColor,
-        NSFontAttributeName:[FontType systemFontOfSize:textSize]
-    } range:NSMakeRange(0, string.length)];
-
-#if PLATFORM(MAC)
-    [instance setLinkTextAttributes:@{ NSForegroundColorAttributeName : foregroundColor }];
-    [instance setContentHuggingPriority:NSLayoutPriorityRequired forOrientation:NSLayoutConstraintOrientationVertical];
-    [instance setContentCompressionResistancePriority:NSLayoutPriorityRequired forOrientation:NSLayoutConstraintOrientationVertical];
-    [instance.widthAnchor constraintLessThanOrEqualToConstant:maxWidth - 2 * marginSize].active = true;
-    [instance setBackgroundColor:[NSColor windowBackgroundColor]];
-    [instance.textStorage appendAttributedString:string];
+    [string addAttributes:@{ NSForegroundColorAttributeName : foregroundColor } range:NSMakeRange(0, string.length)];
+    [self setBackgroundColor:colorForItem(WarningItem::BoxBackground, warning)];
+    [self setLinkTextAttributes:@{ NSForegroundColorAttributeName : foregroundColor }];
+    [self.textStorage appendAttributedString:string];
+    self.editable = NO;
+#if !PLATFORM(MAC)
+    self.scrollEnabled = NO;
 #endif
-    return instance;
+
+    return self;
 }
 
-+ (instancetype)viewWithString:(NSString *)string
+- (SizeType)intrinsicContentSize
 {
-    return [WKSafeBrowsingTextView viewWithAttributedString:[[[NSMutableAttributedString alloc] initWithString:string] autorelease] linkTarget:nil];
-}
-
-- (NSSize)intrinsicContentSize
-{
+#if PLATFORM(MAC)
     [self.layoutManager ensureLayoutForTextContainer:self.textContainer];
-    auto size = [self.layoutManager usedRectForTextContainer:self.textContainer].size;
-#if PLATFORM(MAC)
-    return { NSViewNoIntrinsicMetric, size.height };
+    return { NSViewNoIntrinsicMetric, [self.layoutManager usedRectForTextContainer:self.textContainer].size.height };
 #else
-    return { UIViewNoIntrinsicMetric, size.height };
+    auto width = std::min<CGFloat>(maxWidth, [_warning frame].size.width) - 2 * marginSize;
+    constexpr auto noHeightConstraint = CGFLOAT_MAX;
+    return { width, [self sizeThatFits: { width, noHeightConstraint }].height };
 #endif
-}
-
-- (void)clickedOnLink:(id)link atIndex:(NSUInteger)charIndex
-{
-    [_target clickedOnLink:link];
 }
 
 @end

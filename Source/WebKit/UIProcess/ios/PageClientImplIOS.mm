@@ -62,7 +62,7 @@
 #import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 #import <wtf/BlockPtr.h>
 
-#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_webView->_page->process().connection())
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_webView.get()->_page->process().connection())
 
 @interface WKEditCommandObjC : NSObject
 {
@@ -161,18 +161,18 @@ IntSize PageClientImpl::viewSize()
 bool PageClientImpl::isViewWindowActive()
 {
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=133098
-    return isViewVisible() || (m_webView && [m_webView _isRetainingActiveFocusedState]);
+    return isViewVisible() || [m_webView _isRetainingActiveFocusedState];
 }
 
 bool PageClientImpl::isViewFocused()
 {
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=133098
-    return isViewWindowActive() || (m_webView && [m_webView _isRetainingActiveFocusedState]);
+    return isViewWindowActive() || [m_webView _isRetainingActiveFocusedState];
 }
 
 bool PageClientImpl::isViewVisible()
 {
-    if (isViewInWindow() && !m_webView._isBackground)
+    if (isViewInWindow() && ![m_webView _isBackground])
         return true;
     
     if ([m_webView _isShowingVideoPictureInPicture])
@@ -187,8 +187,8 @@ bool PageClientImpl::isViewVisible()
 bool PageClientImpl::isViewInWindow()
 {
     // FIXME: in WebKitTestRunner, m_webView is nil, so check the content view instead.
-    if (m_webView)
-        return [m_webView window];
+    if (auto webView = m_webView.get())
+        return [webView window];
 
     return [m_contentView window];
 }
@@ -248,7 +248,7 @@ void PageClientImpl::didCompleteSyntheticClick()
 
 void PageClientImpl::decidePolicyForGeolocationPermissionRequest(WebFrameProxy& frame, API::SecurityOrigin& origin, Function<void(bool)>& completionHandler)
 {
-    [[wrapper(m_webView->_page->process().processPool()) _geolocationProvider] decidePolicyForGeolocationRequestFromOrigin:origin.securityOrigin() frame:frame completionHandler:std::exchange(completionHandler, nullptr) view:m_webView];
+    [[wrapper(m_webView.get()->_page->process().processPool()) _geolocationProvider] decidePolicyForGeolocationRequestFromOrigin:origin.securityOrigin() frame:frame completionHandler:std::exchange(completionHandler, nullptr) view:m_webView.get().get()];
 }
 
 void PageClientImpl::didStartProvisionalLoadForMainFrame()
@@ -469,18 +469,21 @@ void PageClientImpl::setTextIndicatorAnimationProgress(float)
 {
 }
 
-void PageClientImpl::showSafeBrowsingWarning(const SafeBrowsingResult&, CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, WebCore::URL>&&)>&& completionHandler)
+void PageClientImpl::enterAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
 {
-    completionHandler(WebKit::ContinueUnsafeLoad::Yes); // FIXME: Implement.
+}
+
+void PageClientImpl::showSafeBrowsingWarning(const SafeBrowsingResult& result, CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, WebCore::URL>&&)>&& completionHandler)
+{
+    if (auto webView = m_webView.get())
+        [webView _showSafeBrowsingWarning:result completionHandler:WTFMove(completionHandler)];
+    else
+        completionHandler(ContinueUnsafeLoad::No);
 }
 
 void PageClientImpl::clearSafeBrowsingWarning()
 {
-    // FIXME: Implement.
-}
-
-void PageClientImpl::enterAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
-{
+    [m_webView _clearSafeBrowsingWarning];
 }
 
 void PageClientImpl::exitAcceleratedCompositingMode()
@@ -695,23 +698,23 @@ void PageClientImpl::scrollingNodeScrollDidEndScroll()
 
 Vector<String> PageClientImpl::mimeTypesWithCustomContentProviders()
 {
-    return m_webView._contentProviderRegistry._mimeTypesWithCustomContentProviders;
+    return [m_webView _contentProviderRegistry]._mimeTypesWithCustomContentProviders;
 }
 
 void PageClientImpl::navigationGestureDidBegin()
 {
     [m_webView _navigationGestureDidBegin];
-    NavigationState::fromWebPage(*m_webView->_page).navigationGestureDidBegin();
+    NavigationState::fromWebPage(*m_webView.get()->_page).navigationGestureDidBegin();
 }
 
 void PageClientImpl::navigationGestureWillEnd(bool willNavigate, WebBackForwardListItem& item)
 {
-    NavigationState::fromWebPage(*m_webView->_page).navigationGestureWillEnd(willNavigate, item);
+    NavigationState::fromWebPage(*m_webView.get()->_page).navigationGestureWillEnd(willNavigate, item);
 }
 
 void PageClientImpl::navigationGestureDidEnd(bool willNavigate, WebBackForwardListItem& item)
 {
-    NavigationState::fromWebPage(*m_webView->_page).navigationGestureDidEnd(willNavigate, item);
+    NavigationState::fromWebPage(*m_webView.get()->_page).navigationGestureDidEnd(willNavigate, item);
     [m_webView _navigationGestureDidEnd];
 }
 
@@ -722,12 +725,12 @@ void PageClientImpl::navigationGestureDidEnd()
 
 void PageClientImpl::willRecordNavigationSnapshot(WebBackForwardListItem& item)
 {
-    NavigationState::fromWebPage(*m_webView->_page).willRecordNavigationSnapshot(item);
+    NavigationState::fromWebPage(*m_webView.get()->_page).willRecordNavigationSnapshot(item);
 }
 
 void PageClientImpl::didRemoveNavigationGestureSnapshot()
 {
-    NavigationState::fromWebPage(*m_webView->_page).navigationGestureSnapshotWasRemoved();
+    NavigationState::fromWebPage(*m_webView.get()->_page).navigationGestureSnapshotWasRemoved();
 }
 
 void PageClientImpl::didFirstVisuallyNonEmptyLayoutForMainFrame()
@@ -840,7 +843,7 @@ void PageClientImpl::requestPasswordForQuickLookDocument(const String& fileName,
         completionHandler(password);
     });
 
-    if (WKPasswordView *passwordView = m_webView._passwordView) {
+    if (WKPasswordView *passwordView = [m_webView _passwordView]) {
         ASSERT(fileName == String { passwordView.documentName });
         [passwordView showPasswordFailureAlert];
         passwordView.userDidEnterPassword = passwordHandler.get();
@@ -848,7 +851,7 @@ void PageClientImpl::requestPasswordForQuickLookDocument(const String& fileName,
     }
 
     [m_webView _showPasswordViewWithDocumentName:fileName passwordHandler:passwordHandler.get()];
-    NavigationState::fromWebPage(*m_webView->_page).didRequestPasswordForQuickLookDocument();
+    NavigationState::fromWebPage(*m_webView.get()->_page).didRequestPasswordForQuickLookDocument();
 }
 #endif
 

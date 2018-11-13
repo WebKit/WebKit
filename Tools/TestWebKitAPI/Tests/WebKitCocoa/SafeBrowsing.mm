@@ -137,8 +137,6 @@ static bool committedNavigation;
 
 @end
 
-#if PLATFORM(MAC) // FIXME: Test on iOS once implemented.
-
 static NSURL *simpleURL()
 {
     return [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
@@ -154,31 +152,46 @@ static RetainPtr<WKWebView> safeBrowsingView()
     [webView loadRequest:[NSURLRequest requestWithURL:simpleURL()]];
     while (![webView _safeBrowsingWarningForTesting])
         TestWebKitAPI::Util::spinRunLoop();
+#if !PLATFORM(MAC)
+    [[webView _safeBrowsingWarningForTesting] didMoveToWindow];
+#endif
     return webView;
 }
+
+#if PLATFORM(MAC)
+static void checkTitleAndClick(NSButton *button, const char* expectedTitle)
+{
+    EXPECT_STREQ(button.title.UTF8String, expectedTitle);
+    [button performClick:nil];
+}
+#else
+static void checkTitleAndClick(UIButton *button, const char* expectedTitle)
+{
+    EXPECT_STREQ([button attributedTitleForState:UIControlStateNormal].string.UTF8String, expectedTitle);
+    UIView *target = button.superview.superview;
+    SEL selector = NSSelectorFromString(strcmp(expectedTitle, "Go Back") ? @"showDetailsClicked" : @"goBackClicked");
+    [target performSelector:selector];
+}
+#endif
 
 TEST(SafeBrowsing, GoBack)
 {
     auto webView = safeBrowsingView();
-    NSView *bottom = [webView _safeBrowsingWarningForTesting].subviews.firstObject.subviews.lastObject;
-    NSButton *goBack = (NSButton *)bottom.subviews.lastObject;
-    EXPECT_STREQ(goBack.title.UTF8String, "Go back");
-    [goBack performClick:nil];
+    auto warning = [webView _safeBrowsingWarningForTesting];
+    auto box = warning.subviews.firstObject;
+    checkTitleAndClick(box.subviews[3], "Go Back");
     EXPECT_EQ([webView _safeBrowsingWarningForTesting], nil);
 }
 
 TEST(SafeBrowsing, VisitUnsafeWebsite)
 {
     auto webView = safeBrowsingView();
-    NSView *warning = [webView _safeBrowsingWarningForTesting];
-    NSView *box = warning.subviews.firstObject;
-    NSButton *showDetails = (NSButton *)box.subviews.lastObject.subviews.firstObject;
-    EXPECT_STREQ(showDetails.title.UTF8String, "Show details");
-    EXPECT_EQ(box.subviews.count, 3ull);
-    [showDetails performClick:nil];
-    EXPECT_EQ(box.subviews.count, 4ull);
+    auto warning = [webView _safeBrowsingWarningForTesting];
+    EXPECT_EQ(warning.subviews.count, 1ull);
+    checkTitleAndClick(warning.subviews.firstObject.subviews[4], "Show Details");
+    EXPECT_EQ(warning.subviews.count, 2ull);
     EXPECT_FALSE(committedNavigation);
-    [warning performSelector:NSSelectorFromString(@"clickedOnLink:") withObject:@"WKVisitUnsafeWebsiteSentinel"];
+    [warning performSelector:NSSelectorFromString(@"clickedOnLink:") withObject:[NSURL URLWithString:@"WKVisitUnsafeWebsiteSentinel"]];
     TestWebKitAPI::Util::run(&committedNavigation);
 }
 
@@ -190,8 +203,6 @@ TEST(SafeBrowsing, NavigationClearsWarning)
     while ([webView _safeBrowsingWarningForTesting])
         TestWebKitAPI::Util::spinRunLoop();
 }
-
-#endif // PLATFORM(MAC)
 
 @interface NullLookupContext : NSObject
 @end

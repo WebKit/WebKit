@@ -26,6 +26,7 @@
 #pragma once
 
 #include "PageClient.h"
+#include <wtf/WeakObjCPtr.h>
 
 @class WKWebView;
 
@@ -50,7 +51,7 @@ public:
 #endif
 
 protected:
-    WKWebView *m_webView;
+    WeakObjCPtr<WKWebView> m_webView;
 };
 
 }

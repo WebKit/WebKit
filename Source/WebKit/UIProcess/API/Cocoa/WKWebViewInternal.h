@@ -32,8 +32,10 @@
 #import "WKWebViewConfiguration.h"
 #import "_WKAttachmentInternal.h"
 #import "_WKWebViewPrintFormatterInternal.h"
+#import <wtf/CompletionHandler.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/Variant.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import "UIKitSPI.h"
@@ -63,9 +65,15 @@ class Attachment;
 }
 
 namespace WebKit {
+enum class ContinueUnsafeLoad : bool;
+class SafeBrowsingResult;
 class ViewSnapshot;
 class WebPageProxy;
 struct PrintInfo;
+}
+
+namespace WebCore {
+class URL;
 }
 
 @class WKWebViewContentProviderRegistry;
@@ -170,6 +178,9 @@ struct PrintInfo;
 - (void)_didRemoveAttachment:(API::Attachment&)attachment;
 - (void)_didInsertAttachment:(API::Attachment&)attachment withSource:(NSString *)source;
 #endif
+
+- (void)_showSafeBrowsingWarning:(const WebKit::SafeBrowsingResult&)result completionHandler:(CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, WebCore::URL>&&)>&&)completionHandler;
+- (void)_clearSafeBrowsingWarning;
 
 - (std::optional<BOOL>)_resolutionForShareSheetImmediateCompletionForTesting;
 

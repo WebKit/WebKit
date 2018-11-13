@@ -173,5 +173,5 @@ bool WKContextShouldSuggestBlockWebGL()
 
 bool WKContextHandlesSafeBrowsing()
 {
-    return DEFAULT_SAFE_BROWSING_ENABLED;
+    return true;
 }
