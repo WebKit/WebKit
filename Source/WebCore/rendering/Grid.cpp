@@ -157,7 +157,6 @@ void Grid::setNeedsItemsPlacement(bool needsItemsPlacement)
 
     m_grid.shrink(0);
     m_gridItemArea.clear();
-    m_hasAnyOrthogonalGridItem = false;
     m_smallestRowStart = 0;
     m_smallestColumnStart = 0;
     m_autoRepeatEmptyColumns = nullptr;

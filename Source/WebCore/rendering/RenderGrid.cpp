@@ -158,7 +158,7 @@ void RenderGrid::repeatTracksSizingIfNeeded(LayoutUnit availableSpaceForColumns,
     // a new cycle of the sizing algorithm; there may be more. In addition, not all the
     // cases with orthogonal flows require this extra cycle; we need a more specific
     // condition to detect whether child's min-content contribution has changed or not.
-    if (m_grid.hasAnyOrthogonalGridItem() || m_trackSizingAlgorithm.hasAnyPercentSizedRowsIndefiniteHeight()) {
+    if (m_hasAnyOrthogonalItem || m_trackSizingAlgorithm.hasAnyPercentSizedRowsIndefiniteHeight()) {
         computeTrackSizesForDefiniteSize(ForColumns, availableSpaceForColumns);
         computeContentPositionAndDistributionOffset(ForColumns, m_trackSizingAlgorithm.freeSpace(ForColumns).value(), nonCollapsedTracks(ForColumns));
         computeTrackSizesForDefiniteSize(ForRows, availableSpaceForRows);
@@ -194,17 +194,18 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
         // FIXME: Consider caching the hasDefiniteLogicalHeight value throughout the layout.
         bool hasDefiniteLogicalHeight = hasOverrideContentLogicalHeight() || computeContentLogicalHeight(MainOrPreferredSize, style().logicalHeight(), std::nullopt);
 
-        // We need to clear both own and containingBlock override sizes of orthogonal items to ensure we get the
-        // same result when grid's intrinsic size is computed again in the updateLogicalWidth call bellow.
-        if (sizesLogicalWidthToFitContent(MaxSize) || style().logicalWidth().isIntrinsicOrAuto()) {
-            for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-                if (child->isOutOfFlowPositioned() || !GridLayoutFunctions::isOrthogonalChild(*this, *child))
-                    continue;
-                child->clearOverrideContentSize();
-                child->clearOverrideContainingBlockContentSize();
-                child->setNeedsLayout();
-                child->layoutIfNeeded();
-            }
+        m_hasAnyOrthogonalItem = false;
+        for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+            if (child->isOutOfFlowPositioned())
+                continue;
+            // Grid's layout logic controls the grid item's override height, hence we need to
+            // clear any override height set previously, so it doesn't interfere in current layout
+            // execution. Grid never uses the override width, that's why we don't need to clear  it.
+            child->clearOverrideContentLogicalHeight();
+
+            // We may need to repeat the track sizing in case of any grid item was orthogonal.
+            if (GridLayoutFunctions::isOrthogonalChild(*this, *child))
+                m_hasAnyOrthogonalItem = true;
         }
 
         setLogicalHeight(0);
@@ -216,7 +217,9 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
         layoutExcludedChildren(relayoutChildren);
 
         LayoutUnit availableSpaceForColumns = availableLogicalWidth();
-        placeItemsOnGrid(m_grid, availableSpaceForColumns);
+        placeItemsOnGrid(m_trackSizingAlgorithm, availableSpaceForColumns);
+
+        performGridItemsPreLayout(m_trackSizingAlgorithm);
 
         // 1- First, the track sizing algorithm is used to resolve the sizes of the
         // grid columns.
@@ -235,7 +238,7 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
         if (!hasDefiniteLogicalHeight) {
             m_minContentHeight = LayoutUnit();
             m_maxContentHeight = LayoutUnit();
-            computeTrackSizesForIndefiniteSize(m_trackSizingAlgorithm, ForRows, m_grid, *m_minContentHeight, *m_maxContentHeight);
+            computeTrackSizesForIndefiniteSize(m_trackSizingAlgorithm, ForRows, *m_minContentHeight, *m_maxContentHeight);
             // FIXME: This should be really added to the intrinsic height in RenderBox::computeContentAndScrollbarLogicalHeightUsing().
             // Remove this when that is fixed.
             ASSERT(m_minContentHeight);
@@ -384,10 +387,12 @@ void RenderGrid::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, Layo
     bool hadExcludedChildren = computePreferredWidthsForExcludedChildren(childMinWidth, childMaxWidth);
 
     Grid grid(const_cast<RenderGrid&>(*this));
-    placeItemsOnGrid(grid, std::nullopt);
-
     GridTrackSizingAlgorithm algorithm(this, grid);
-    computeTrackSizesForIndefiniteSize(algorithm, ForColumns, grid, minLogicalWidth, maxLogicalWidth);
+    placeItemsOnGrid(algorithm, std::nullopt);
+
+    performGridItemsPreLayout(algorithm);
+
+    computeTrackSizesForIndefiniteSize(algorithm, ForColumns, minLogicalWidth, maxLogicalWidth);
 
     if (hadExcludedChildren) {
         minLogicalWidth = std::max(minLogicalWidth, childMinWidth);
@@ -399,8 +404,9 @@ void RenderGrid::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, Layo
     maxLogicalWidth += scrollbarWidth;
 }
 
-void RenderGrid::computeTrackSizesForIndefiniteSize(GridTrackSizingAlgorithm& algorithm, GridTrackSizingDirection direction, Grid& grid, LayoutUnit& minIntrinsicSize, LayoutUnit& maxIntrinsicSize) const
+void RenderGrid::computeTrackSizesForIndefiniteSize(GridTrackSizingAlgorithm& algorithm, GridTrackSizingDirection direction, LayoutUnit& minIntrinsicSize, LayoutUnit& maxIntrinsicSize) const
 {
+    const Grid& grid = algorithm.grid();
     algorithm.setup(direction, numTracks(direction, grid), IntrinsicSizeComputation, std::nullopt, std::nullopt);
     algorithm.run();
 
@@ -557,13 +563,14 @@ unsigned RenderGrid::clampAutoRepeatTracks(GridTrackSizingDirection direction, u
     return std::min(autoRepeatTracks, maxTracks - insertionPoint);
 }
 
-// FIXME): We shouldn't have to pass the available logical width as argument. The problem is that
+// FIXME: We shouldn't have to pass the available logical width as argument. The problem is that
 // availableLogicalWidth() does always return a value even if we cannot resolve it like when
 // computing the intrinsic size (preferred widths). That's why we pass the responsibility to the
 // caller who does know whether the available logical width is indefinite or not.
-void RenderGrid::placeItemsOnGrid(Grid& grid, std::optional<LayoutUnit> availableSpace) const
+void RenderGrid::placeItemsOnGrid(GridTrackSizingAlgorithm& algorithm, std::optional<LayoutUnit> availableLogicalWidth) const
 {
-    unsigned autoRepeatColumns = computeAutoRepeatTracksCount(ForColumns, availableSpace);
+    Grid& grid = algorithm.mutableGrid();
+    unsigned autoRepeatColumns = computeAutoRepeatTracksCount(ForColumns, availableLogicalWidth);
     unsigned autoRepeatRows = computeAutoRepeatTracksCount(ForRows, availableLogicalHeightForPercentageComputation());
 
     autoRepeatRows = clampAutoRepeatTracks(ForRows, autoRepeatRows);
@@ -582,12 +589,9 @@ void RenderGrid::placeItemsOnGrid(Grid& grid, std::optional<LayoutUnit> availabl
 
     Vector<RenderBox*> autoMajorAxisAutoGridItems;
     Vector<RenderBox*> specifiedMajorAxisAutoGridItems;
-    bool hasAnyOrthogonalGridItem = false;
     for (auto* child = grid.orderIterator().first(); child; child = grid.orderIterator().next()) {
         if (grid.orderIterator().shouldSkipChild(*child))
             continue;
-
-        hasAnyOrthogonalGridItem = hasAnyOrthogonalGridItem || GridLayoutFunctions::isOrthogonalChild(*this, *child);
 
         GridArea area = grid.gridItemArea(*child);
         if (!area.rows.isIndefinite())
@@ -607,7 +611,6 @@ void RenderGrid::placeItemsOnGrid(Grid& grid, std::optional<LayoutUnit> availabl
         }
         grid.insert(*child, { area.rows, area.columns });
     }
-    grid.setHasAnyOrthogonalGridItem(hasAnyOrthogonalGridItem);
 
 #if !ASSERT_DISABLED
     if (grid.hasGridItems()) {
@@ -634,6 +637,23 @@ void RenderGrid::placeItemsOnGrid(Grid& grid, std::optional<LayoutUnit> availabl
         ASSERT(area.rows.isTranslatedDefinite() && area.columns.isTranslatedDefinite());
     }
 #endif
+}
+
+void RenderGrid::performGridItemsPreLayout(const GridTrackSizingAlgorithm& algorithm) const
+{
+    ASSERT(!algorithm.grid().needsItemsPlacement());
+    // FIXME: We need a way when we are calling this during intrinsic size compuation before performing
+    // the layout. Maybe using the PreLayout phase ?
+    for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+        if (child->isOutOfFlowPositioned())
+            continue;
+        // Orthogonal items should be laid out in order to properly compute content-sized tracks that may depend on item's intrinsic size.
+        // We also need to properly estimate its grid area size, since it may affect to the baseline shims if such item particiaptes in baseline alignment. 
+        if (GridLayoutFunctions::isOrthogonalChild(*this, *child)) {
+            updateGridAreaLogicalSize(*child, algorithm.estimatedGridAreaBreadthForChild(*child));
+            child->layoutIfNeeded();
+        }
+    }
 }
 
 void RenderGrid::populateExplicitGridAndOrderIterator(Grid& grid) const
@@ -849,6 +869,31 @@ static const StyleContentAlignmentData& contentAlignmentNormalBehaviorGrid()
     return normalBehavior;
 }
 
+static bool overrideSizeChanged(const RenderBox& child, GridTrackSizingDirection direction, LayoutSize size)
+{
+    if (direction == ForColumns)
+        return !child.hasOverrideContainingBlockContentLogicalWidth() || child.overrideContainingBlockContentLogicalWidth() != size.width();
+    return !child.hasOverrideContainingBlockContentLogicalHeight() || child.overrideContainingBlockContentLogicalHeight() != size.height();
+}
+
+static bool hasRelativeBlockAxisSize(const RenderGrid& grid, const RenderBox& child)
+{
+    return GridLayoutFunctions::isOrthogonalChild(grid, child) ? child.hasRelativeLogicalWidth() || child.style().logicalWidth().isAuto() : child.hasRelativeLogicalHeight();
+}
+
+void RenderGrid::updateGridAreaLogicalSize(RenderBox& child, LayoutSize gridAreaLogicalSize) const
+{
+    // Because the grid area cannot be styled, we don't need to adjust
+    // the grid breadth to account for 'box-sizing'.
+    bool gridAreaWidthChanged = overrideSizeChanged(child, ForColumns, gridAreaLogicalSize);
+    bool gridAreaHeightChanged = overrideSizeChanged(child, ForRows, gridAreaLogicalSize);
+    if (gridAreaWidthChanged || (gridAreaHeightChanged && hasRelativeBlockAxisSize(*this, child)))
+        child.setNeedsLayout(MarkOnlyThis);
+
+    child.setOverrideContainingBlockContentLogicalWidth(gridAreaLogicalSize.width());
+    child.setOverrideContainingBlockContentLogicalHeight(gridAreaLogicalSize.height());
+}
+
 void RenderGrid::layoutGridItems()
 {
     populateGridPositionsForDirection(ForColumns);
@@ -862,20 +907,10 @@ void RenderGrid::layoutGridItems()
             continue;
         }
 
-        // Because the grid area cannot be styled, we don't need to adjust
-        // the grid breadth to account for 'box-sizing'.
-        std::optional<LayoutUnit> oldOverrideContainingBlockContentLogicalWidth = child->hasOverrideContainingBlockContentLogicalWidth() ? child->overrideContainingBlockContentLogicalWidth() : LayoutUnit();
-        std::optional<LayoutUnit> oldOverrideContainingBlockContentLogicalHeight = child->hasOverrideContainingBlockContentLogicalHeight() ? child->overrideContainingBlockContentLogicalHeight() : LayoutUnit();
-
-        LayoutUnit overrideContainingBlockContentLogicalWidth = gridAreaBreadthForChildIncludingAlignmentOffsets(*child, ForColumns);
-        LayoutUnit overrideContainingBlockContentLogicalHeight = gridAreaBreadthForChildIncludingAlignmentOffsets(*child, ForRows);
-        if (!oldOverrideContainingBlockContentLogicalWidth || oldOverrideContainingBlockContentLogicalWidth.value() != overrideContainingBlockContentLogicalWidth
-            || ((!oldOverrideContainingBlockContentLogicalHeight || oldOverrideContainingBlockContentLogicalHeight.value() != overrideContainingBlockContentLogicalHeight)
-                && child->hasRelativeLogicalHeight()))
-            child->setNeedsLayout(MarkOnlyThis);
-
-        child->setOverrideContainingBlockContentLogicalWidth(overrideContainingBlockContentLogicalWidth);
-        child->setOverrideContainingBlockContentLogicalHeight(overrideContainingBlockContentLogicalHeight);
+        // Setting the definite grid area's sizes. It may imply that the
+        // item must perform a layout if its area differs from the one
+        // used during the track sizing algorithm.
+        updateGridAreaLogicalSize(*child, LayoutSize(gridAreaBreadthForChildIncludingAlignmentOffsets(*child, ForColumns), gridAreaBreadthForChildIncludingAlignmentOffsets(*child, ForRows)));
 
         LayoutRect oldChildRect = child->frameRect();
 

@@ -74,6 +74,8 @@ public:
     LayoutUnit guttersSize(const Grid&, GridTrackSizingDirection, unsigned startLine, unsigned span, std::optional<LayoutUnit> availableSize) const;
     LayoutUnit gridItemOffset(GridTrackSizingDirection) const;
 
+    void updateGridAreaLogicalSize(RenderBox&, LayoutSize) const;
+
     StyleContentAlignmentData contentAlignment(GridTrackSizingDirection) const;
 
 protected:
@@ -105,7 +107,9 @@ private:
 
     std::unique_ptr<OrderedTrackIndexSet> computeEmptyTracksForAutoRepeat(Grid&, GridTrackSizingDirection) const;
 
-    void placeItemsOnGrid(Grid&, std::optional<LayoutUnit> availableSpaceForColumns) const;
+    void performGridItemsPreLayout(const GridTrackSizingAlgorithm&) const;
+
+    void placeItemsOnGrid(GridTrackSizingAlgorithm&, std::optional<LayoutUnit> availableLogicalWidth) const;
     void populateExplicitGridAndOrderIterator(Grid&) const;
     std::unique_ptr<GridArea> createEmptyGridAreaAtSpecifiedPositionsOutsideGrid(Grid&, const RenderBox&, GridTrackSizingDirection, const GridSpan&) const;
     void placeSpecifiedMajorAxisItemsOnGrid(Grid&, const Vector<RenderBox*>&) const;
@@ -121,7 +125,7 @@ private:
     void layoutPositionedObject(RenderBox&, bool relayoutChildren, bool fixedPositionObjectsOnly) override;
 
     void computeTrackSizesForDefiniteSize(GridTrackSizingDirection, LayoutUnit availableSpace);
-    void computeTrackSizesForIndefiniteSize(GridTrackSizingAlgorithm&, GridTrackSizingDirection, Grid&, LayoutUnit& minIntrinsicSize, LayoutUnit& maxIntrinsicSize) const;
+    void computeTrackSizesForIndefiniteSize(GridTrackSizingAlgorithm&, GridTrackSizingDirection, LayoutUnit& minIntrinsicSize, LayoutUnit& maxIntrinsicSize) const;
     LayoutUnit computeTrackBasedLogicalHeight() const;
 
     void repeatTracksSizingIfNeeded(LayoutUnit availableSpaceForColumns, LayoutUnit availableSpaceForRows);
@@ -193,6 +197,8 @@ private:
 
     std::optional<LayoutUnit> m_minContentHeight;
     std::optional<LayoutUnit> m_maxContentHeight;
+
+    bool m_hasAnyOrthogonalItem {false};
 };
 
 } // namespace WebCore

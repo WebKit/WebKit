@@ -1,3 +1,46 @@
+2018-11-12  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-grid] Refactoring to make more explicit the orthogonal items' pre-layout logic
+        https://bugs.webkit.org/show_bug.cgi?id=191358
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        These changes are just a refactoring to ease the integration of the new Baseline Alignment
+        logic in a follow up patch.
+
+        We need to properly estimate the grid area size of orthogonal items so that we can perform
+        an accurate pre-layout. This is important because orthogonal items will synthesize their baseline
+        if they participate in any baseline alignment context.
+
+        No new tests, since no behavior change has been introduced in this patch.
+
+        * rendering/Grid.cpp:
+        (WebCore::Grid::setNeedsItemsPlacement):
+        * rendering/Grid.h:
+        * rendering/GridTrackSizingAlgorithm.cpp:
+        (WebCore::GridTrackSizingAlgorithm::estimatedGridAreaBreadthForChild const):
+        (WebCore::GridTrackSizingAlgorithm::gridAreaBreadthForChild const):
+        (WebCore::GridTrackSizingAlgorithm::isRelativeGridLengthAsAuto const):
+        (WebCore::GridTrackSizingAlgorithm::isRelativeSizedTrackAsAuto const):
+        (WebCore::GridTrackSizingAlgorithm::gridTrackSize const):
+        (WebCore::IndefiniteSizeStrategy::findUsedFlexFraction const):
+        (WebCore::GridTrackSizingAlgorithm::run):
+        (WebCore::GridTrackSizingAlgorithm::reset):
+        * rendering/GridTrackSizingAlgorithm.h:
+        (WebCore::GridTrackSizingAlgorithmStrategy::gridTrackSize const):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::repeatTracksSizingIfNeeded):
+        (WebCore::RenderGrid::layoutBlock):
+        (WebCore::RenderGrid::computeIntrinsicLogicalWidths const):
+        (WebCore::RenderGrid::computeTrackSizesForIndefiniteSize const):
+        (WebCore::RenderGrid::placeItemsOnGrid const):
+        (WebCore::RenderGrid::performGridItemsPreLayout const):
+        (WebCore::overrideSizeChanged):
+        (WebCore::hasRelativeBlockAxisSize):
+        (WebCore::RenderGrid::updateGridAreaLogicalSize const):
+        (WebCore::RenderGrid::layoutGridItems):
+        * rendering/RenderGrid.h:
+
 2018-11-12  Sihui Liu  <sihui_liu@apple.com>
 
         imported/w3c/web-platform-tests/IndexedDB/keygenerator-explicit.html crashing on iOS device

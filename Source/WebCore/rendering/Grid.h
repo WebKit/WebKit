@@ -53,10 +53,6 @@ public:
     // this method will return false for a grid container with only out of flow children.
     bool hasGridItems() const { return !m_gridItemArea.isEmpty(); }
 
-    // FIXME: move this to SizingData once placeItemsOnGrid() takes it as argument.
-    bool hasAnyOrthogonalGridItem() const { return m_hasAnyOrthogonalGridItem; }
-    void setHasAnyOrthogonalGridItem(bool hasAnyOrthogonalGridItem) { m_hasAnyOrthogonalGridItem = hasAnyOrthogonalGridItem; }
-
     GridArea gridItemArea(const RenderBox& item) const;
     void setGridItemArea(const RenderBox& item, GridArea);
 
@@ -95,7 +91,6 @@ private:
     unsigned m_autoRepeatColumns { 0 };
     unsigned m_autoRepeatRows { 0 };
 
-    bool m_hasAnyOrthogonalGridItem { false };
     bool m_needsItemsPlacement { true };
 
     GridAsMatrix m_grid;

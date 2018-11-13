@@ -102,10 +102,14 @@ public:
 
     // Required by RenderGrid. Try to minimize the exposed surface.
     const Grid& grid() const { return m_grid; }
-    GridTrackSize gridTrackSize(GridTrackSizingDirection, unsigned translatedIndex) const;
+    // FIXME (jfernandez): We should remove any public getter for this attribute
+    // and encapsulate any access in the algorithm class.
+    Grid& mutableGrid() const { return m_grid; }
 
     LayoutUnit minContentSize() const { return m_minContentSize; };
     LayoutUnit maxContentSize() const { return m_maxContentSize; };
+
+    LayoutSize estimatedGridAreaBreadthForChild(const RenderBox&) const;
 
     Vector<GridTrack>& tracks(GridTrackSizingDirection direction) { return direction == ForColumns ? m_columns : m_rows; }
     const Vector<GridTrack>& tracks(GridTrackSizingDirection direction) const { return direction == ForColumns ? m_columns : m_rows; }
@@ -126,8 +130,9 @@ public:
 
 private:
     std::optional<LayoutUnit> availableSpace() const { return availableSpace(m_direction); }
+    bool isRelativeGridLengthAsAuto(const GridLength&, GridTrackSizingDirection) const;
+    GridTrackSize gridTrackSize(GridTrackSizingDirection, unsigned translatedIndex) const;
     const GridTrackSize& rawGridTrackSize(GridTrackSizingDirection, unsigned translatedIndex) const;
-    LayoutUnit assumedRowsSizeForOrthogonalChild(const RenderBox&) const;
 
     // Helper methods for step 1. initializeTrackSizes().
     LayoutUnit initialBaseSize(const GridTrackSize&) const;
@@ -140,6 +145,7 @@ private:
     template <TrackSizeComputationPhase phase> void increaseSizesToAccommodateSpanningItems(const GridItemsSpanGroupRange& gridItemsWithSpan);
     LayoutUnit itemSizeForTrackSizeComputationPhase(TrackSizeComputationPhase, RenderBox&) const;
     template <TrackSizeComputationPhase phase> void distributeSpaceToTracks(Vector<GridTrack*>& tracks, Vector<GridTrack*>* growBeyondGrowthLimitsTracks, LayoutUnit& availableLogicalSpace) const;
+    LayoutUnit estimatedGridAreaBreadthForChild(const RenderBox&, GridTrackSizingDirection) const;
     LayoutUnit gridAreaBreadthForChild(const RenderBox&, GridTrackSizingDirection) const;
 
     void computeGridContainerIntrinsicSizes();
@@ -162,6 +168,8 @@ private:
     void advanceNextState();
     bool isValidTransition() const;
 
+    // Data.
+    bool wasSetup() const { return !!m_strategy; }
     bool m_needsSetup { true };
     bool m_hasPercentSizedRowsIndefiniteHeight { false };
     std::optional<LayoutUnit> m_availableSpaceRows;
@@ -238,6 +246,8 @@ protected:
 
     LayoutUnit logicalHeightForChild(RenderBox&) const;
     bool updateOverrideContainingBlockContentSizeForChild(RenderBox&, GridTrackSizingDirection, std::optional<LayoutUnit> = std::nullopt) const;
+
+    GridTrackSize gridTrackSize(GridTrackSizingDirection direction, size_t translatedIndex) const { return m_algorithm.gridTrackSize(direction, translatedIndex); }
 
     // GridTrackSizingAlgorithm accessors for subclasses.
     LayoutUnit computeTrackBasedSize() const { return m_algorithm.computeTrackBasedSize(); }
