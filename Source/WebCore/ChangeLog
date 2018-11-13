@@ -1,3 +1,16 @@
+2018-11-13  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION(r238122): fetching the CertificateInfo triggers an ASSERT in workers
+        https://bugs.webkit.org/show_bug.cgi?id=191597
+
+        Reviewed by Joseph Pecoraro.
+
+        When WebInspector is open, the `CertificateInfo` for every `ResourceResponse` is now fetched,
+        meaning that we may try to fetch in situations previously unexpected.
+
+        * platform/network/cocoa/ResourceResponseCocoa.mm:
+        (WebCore::ResourceResponse::platformCertificateInfo const):
+
 2018-11-13  Timothy Hatcher  <timothy@apple.com>
 
         Treat supported-color-schemes as the second highest priority property.
