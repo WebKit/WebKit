@@ -406,7 +406,7 @@
         When a RenderLayer gets a dirty bit set, bits are propagated to ancestors to indicate that children need
         to be visited.
 
-        Sadly entire subtrees can't be skipped during the "compositing requirements" traversal becaue we still have
+        Sadly entire subtrees can't be skipped during the "compositing requirements" traversal because we still have
         to accumulate overlap rects, but RenderLayerCompositor::traverseUnchangedSubtree() is used to minimize
         work in that case. Subtrees can be skipped in the "update backing and hierarchy" traveral. Entire traversals can
         be skipped if no change has triggered the need for that traversal.
