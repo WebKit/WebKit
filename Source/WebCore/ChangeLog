@@ -1,5 +1,77 @@
 2018-11-13  Charlie Turner  <cturner@igalia.com>
 
+        [EME][GStreamer] Make CDMInstance's available in decryptors, and factor out some EME utility classes.
+        https://bugs.webkit.org/show_bug.cgi?id=191316
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Another preparation in patch getting ready to move the decryption
+        logic behind the CDMInstance and out of the GStreamer decryptors
+        themselves. The first step taken here is to arrange for the
+        instances to always be available in the decryptors when they need
+        to decrypt content.
+
+        In doing so, there were a number of hairy bits of code that could
+        use some abstraction, so the opportunity was taken to do that as
+        well.
+
+        Covered by tests in media/encrypted-media and
+        imported/w3c/web-platform-tests/encrypted-media.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage): Remove
+        drm-key-needed since it was not being used anywhere.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::handleSyncMessage):
+        Factor out the parsing of decryption system information from
+        GStreamer, since it was not clear what that code was doing unless
+        you squinted pretty hard. Also remove the duplicated
+        initialization-data-encountered posting.
+        (WebCore::MediaPlayerPrivateGStreamerBase::initializationDataEncountered):
+        Refactored to make it a more general method and usable in more
+        situations. It now has an optional to stop it from eliding init
+        datas for a different key system. This is required the first time
+        we post them, since if a CDM instance has already been set, and if
+        the stream init datas are for different systems, we ended up never
+        posting an encrypted event.
+        (WebCore::MediaPlayerPrivateGStreamerBase::attemptToDecryptWithLocalInstance):
+        Actually send a CDMInstance now when in regular playback mode.
+        (WebCore::MediaPlayerPrivateGStreamerBase::dispatchDecryptionKey):
+        Remove m_needToSendCredentials, it was not being used.
+        (WebCore::MediaPlayerPrivateGStreamerBase::handleProtectionEvent):
+        Refactored to use the new initializationDataEncountered.
+        (WebCore::MediaPlayerPrivateGStreamerBase::reportWaitingForKey):
+        Log the waiting state, since it was currently not clear what that
+        logging message was even telling you!
+        (WebCore::extractEventsAndSystemsFromMessage): Deleted.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        * platform/graphics/gstreamer/eme/GStreamerEMEUtilities.h:
+        (WebCore::InitData::InitData): New class that encapsulates both
+        single instantiation and streaming instantiation.
+        (WebCore::InitData::append): Used for the streaming mode, when you
+        are concatenating init datas together.
+        (WebCore::InitData::payload const):
+        (WebCore::InitData::systemId const):
+        (WebCore::InitData::payloadContainerType const):
+        (WebCore::InitData::isFromDifferentContainer):
+        (WebCore::ProtectionSystemEvents::ProtectionSystemEvents):
+        (WebCore::ProtectionSystemEvents::events const):
+        (WebCore::ProtectionSystemEvents::availableSystems const):
+        * platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.cpp:
+        (webkitMediaCommonEncryptionDecryptTransformInPlace): If you post
+        waiting-for-key after requesting a CDM instance, it will flap back
+        to not waiting for a key almost immediately, didn't make sense
+        positing after requesting an instance. Also post key-received when
+        we receive the key.
+        (webkitMediaCommonEncryptionDecryptSinkEventHandler): It has now
+        been arranged that a CDMInstance will always be present in an OOB
+        message, so parse it out here.
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerMSE::attemptToDecryptWithInstance):
+        As above, make sure when posting the OOB that a CDMInstance is present.
+
+2018-11-13  Charlie Turner  <cturner@igalia.com>
+
         Various compiler warnings/errors fixes.
         https://bugs.webkit.org/show_bug.cgi?id=191583
 

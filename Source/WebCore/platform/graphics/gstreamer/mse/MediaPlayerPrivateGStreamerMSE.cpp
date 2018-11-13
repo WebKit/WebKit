@@ -933,6 +933,7 @@ void MediaPlayerPrivateGStreamerMSE::attemptToDecryptWithInstance(CDMInstance& i
         GUniquePtr<GstStructure> structure(gst_structure_new_empty("drm-cipher-clearkey"));
         gst_structure_set_value(structure.get(), "key-ids", &keyIDList);
         gst_structure_set_value(structure.get(), "key-values", &keyValueList);
+        gst_structure_set(structure.get(), "cdm-instance", G_TYPE_POINTER, &instance, nullptr);
 
         gst_element_send_event(m_playbackPipeline->pipeline(), gst_event_new_custom(GST_EVENT_CUSTOM_DOWNSTREAM_OOB, structure.release()));
     }
