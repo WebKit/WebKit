@@ -452,12 +452,14 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
         if (typeof this._delegate.stylePropertyInlineSwatchActivated === "function") {
             swatch.addEventListener(WI.InlineSwatch.Event.Activated, () => {
+                this._swatchActive = true;
                 this._delegate.stylePropertyInlineSwatchActivated();
             });
         }
 
         if (typeof this._delegate.stylePropertyInlineSwatchDeactivated === "function") {
             swatch.addEventListener(WI.InlineSwatch.Event.Deactivated, () => {
+                this._swatchActive = false;
                 this._delegate.stylePropertyInlineSwatchDeactivated();
             });
         }
@@ -465,7 +467,13 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         tokenElement.append(swatch.element, innerElement);
 
         // Prevent the value from editing when clicking on the swatch.
-        swatch.element.addEventListener("mousedown", (event) => { event.stop(); });
+        if (WI.settings.experimentalEnableMultiplePropertiesSelection.value) {
+            swatch.element.addEventListener("click", (event) => {
+                if (this._swatchActive)
+                    event.stop();
+            });
+        } else
+            swatch.element.addEventListener("mousedown", (event) => { event.stop(); });
 
         return tokenElement;
     }

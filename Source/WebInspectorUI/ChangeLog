@@ -1,3 +1,21 @@
+2018-11-12  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles: inline swatches don't work when Multiple Properties Selection is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=191165
+        <rdar://problem/45737972>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype._createInlineSwatch):
+        * UserInterface/Views/SpreadsheetTextField.js:
+        (WI.SpreadsheetTextField):
+        `click` is fired after `mouseup` and inline swatches are activated by `click` event.
+        Changing this to `click` allows swatches to activate before editing starts.
+
+        (WI.SpreadsheetTextField.prototype._handleMouseDown):
+        Clicking on the field that is being edited should't restart editing. It should move the text caret.
+
 2018-11-12  Don Olmstead  <don.olmstead@sony.com>
 
         Shipped PNGs include bad profiles: iCCP: known incorrect sRGB profile

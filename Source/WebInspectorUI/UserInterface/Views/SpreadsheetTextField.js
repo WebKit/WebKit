@@ -40,9 +40,10 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
 
         this._element.classList.add("spreadsheet-text-field");
 
-        if (WI.settings.experimentalEnableMultiplePropertiesSelection.value)
-            this._element.addEventListener("mouseup", this._handleMouseUp.bind(this));
-        else
+        if (WI.settings.experimentalEnableMultiplePropertiesSelection.value) {
+            this._element.addEventListener("mousedown", this._handleMouseDown.bind(this), true);
+            this._element.addEventListener("click", this._handleClick.bind(this));
+        } else
             this._element.addEventListener("focus", this._handleFocus.bind(this));
 
         this._element.addEventListener("blur", this._handleBlur.bind(this));
@@ -201,9 +202,15 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
         }
     }
 
-    _handleMouseUp(event)
+    _handleClick(event)
     {
         this.startEditing();
+    }
+
+    _handleMouseDown(event)
+    {
+        if (this._editing)
+            event.stopPropagation();
     }
 
     _handleFocus(event)
