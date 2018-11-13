@@ -559,10 +559,12 @@ static void setBackground(ViewType *view, ColorType *color)
 #if PLATFORM(MAC)
     [self.layoutManager ensureLayoutForTextContainer:self.textContainer];
     return { NSViewNoIntrinsicMetric, [self.layoutManager usedRectForTextContainer:self.textContainer].size.height };
-#else
+#elif HAVE(SAFE_BROWSING)
     auto width = std::min<CGFloat>(maxWidth, [_warning frame].size.width) - 2 * marginSize;
     constexpr auto noHeightConstraint = CGFLOAT_MAX;
     return { width, [self sizeThatFits: { width, noHeightConstraint }].height };
+#else
+    return { 0, 0 };
 #endif
 }
 
