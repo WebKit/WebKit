@@ -146,6 +146,38 @@ function test()
         }
     });
 
+    suite.addTestCase({
+        name: "Table.SelectAll.MultipleSelectionDisabled",
+        description: "Select all table rows when multiple selection is disabled.",
+        test() {
+            let table = InspectorTest.createTable();
+
+            triggerSelectRow(table, 0);
+            InspectorTest.log("Select all.");
+            table.selectAll();
+            InspectorTest.expectEqual(table.selectedRows.length, 1, "Should not have selected additional rows.");
+            InspectorTest.expectThat(table.isRowSelected(0), "Row 0 should still be selected.");
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "Table.SelectAll.MultipleSelectionEnabled",
+        description: "Select all table rows when multiple selection is enabled.",
+        test() {
+            let table = InspectorTest.createTable();
+            table.allowsMultipleSelection = true;
+
+            triggerSelectRow(table, 0);
+            InspectorTest.log("Select all.");
+            table.selectAll();
+            InspectorTest.expectEqual(table.selectedRows.length, table.numberOfRows, "Should have selected all rows.");
+
+            return true;
+        }
+    });
+
     suite.runTestCasesAndFinish();
 }
 </script>

@@ -74,3 +74,19 @@ Deselecting row 999.
 PASS: Table selection changed.
 PASS: selectedRows should not include 999.
 
+-- Running test case: Table.SelectAll.MultipleSelectionDisabled
+Selecting row 0.
+PASS: Table selection changed.
+PASS: selectedRow should be 0.
+Select all.
+PASS: Should not have selected additional rows.
+PASS: Row 0 should still be selected.
+
+-- Running test case: Table.SelectAll.MultipleSelectionEnabled
+Selecting row 0.
+PASS: Table selection changed.
+PASS: selectedRow should be 0.
+Select all.
+PASS: Table selection changed.
+PASS: Should have selected all rows.
+

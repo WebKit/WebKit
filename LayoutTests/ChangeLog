@@ -1,3 +1,16 @@
+2018-11-13  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Table should support select all (Cmd-A)
+        https://bugs.webkit.org/show_bug.cgi?id=190299
+        <rdar://problem/45029170>
+
+        Reviewed by Devin Rousso.
+
+        * inspector/table/table-selection-expected.txt:
+        * inspector/table/table-selection.html:
+        Add tests that `selectAll` works when multiple selection is enabled,
+        and does nothing when multiple selection is disabled.
+
 2018-11-13  Timothy Hatcher  <timothy@apple.com>
 
         Treat supported-color-schemes as the second highest priority property.

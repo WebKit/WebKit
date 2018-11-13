@@ -1,5 +1,17 @@
 2018-11-13  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Table should support select all (Cmd-A)
+        https://bugs.webkit.org/show_bug.cgi?id=190299
+        <rdar://problem/45029170>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/Table.js:
+        (WI.Table.prototype.selectAll):
+        (WI.Table.prototype._handleKeyDown):
+
+2018-11-13  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Table with no selection should select the first/last row on down/up arrow key
         https://bugs.webkit.org/show_bug.cgi?id=190100
         <rdar://problem/44879243>

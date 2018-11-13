@@ -388,6 +388,23 @@ WI.Table = class Table extends WI.View
         this._notifySelectionDidChange();
     }
 
+    selectAll()
+    {
+        if (!this.numberOfRows || !this._allowsMultipleSelection)
+            return;
+
+        if (this._selectedRows.size === this.numberOfRows)
+            return;
+
+        this._selectedRows.addRange(0, this.numberOfRows);
+        this._selectedRowIndex = this._selectedRows.size - 1;
+
+        for (let row of this._cachedRows.values())
+            row.classList.add("selected");
+
+        this._notifySelectionDidChange();
+    }
+
     deselectAll()
     {
         const rowIndex = NaN;
@@ -1301,6 +1318,11 @@ WI.Table = class Table extends WI.View
     {
         if (!this.numberOfRows)
             return;
+
+        if (event.key === "a" && event.commandOrControlKey) {
+            this.selectAll();
+            return;
+        }
 
         if (event.metaKey || event.ctrlKey)
             return;
