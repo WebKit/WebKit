@@ -1215,7 +1215,7 @@ ImageBitmapOffscreenCanvasEnabled:
 
 IntersectionObserverEnabled:
   type: bool
-  defaultValue: false
+  defaultValue: true
   humanReadableName: "Intersection Observer"
   humanReadableDescription: "Enable Intersection Observer support"
   webcoreBinding: RuntimeEnabledFeatures
