@@ -182,6 +182,12 @@ typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
 
 #endif // !PLATFORM(WIN) && !USE(APPLE_INTERNAL_SDK)
 
+#if defined(__OBJC__)
+@interface NSHTTPCookieStorage ()
+@property (nonatomic, readwrite) BOOL _overrideSessionCookieAcceptPolicy;
+@end
+#endif
+
 WTF_EXTERN_C_BEGIN
 
 #if !PLATFORM(WIN)
