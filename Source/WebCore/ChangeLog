@@ -1,3 +1,25 @@
+2018-11-13  Charlie Turner  <cturner@igalia.com>
+
+        Various compiler warnings/errors fixes.
+        https://bugs.webkit.org/show_bug.cgi?id=191583
+
+        Reviewed by Frédéric Wang.
+
+        * Modules/indexeddb/server/MemoryIDBBackingStore.cpp:
+        (WebCore::IDBServer::MemoryIDBBackingStore::clearObjectStore):
+        ASSERT is only compiled in DEBUG mode, so guarding with
+        !LOG_DISABLED is wrong.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateCompositingLayers):
+        showPaintOrderTree is only compiled in ENABLE(TREE_DEBUGGING)
+        mode, so guarding with !LOG_DISABLED was wrong.
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+        Ditto, this time with member .depth.
+        (WebCore::RenderLayerCompositor::traverseUnchangedSubtree): Ditto.
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::styleChanged): Add another unused
+        parameter.
+
 2018-11-12  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Don't schedule animation frames or update style while an accelerated animation is running

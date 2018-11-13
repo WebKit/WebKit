@@ -455,6 +455,7 @@ void SVGRenderSupport::styleChanged(RenderElement& renderer, const RenderStyle* 
     if (renderer.element() && renderer.element()->isSVGElement() && (!oldStyle || renderer.style().hasBlendMode() != oldStyle->hasBlendMode()))
         SVGRenderSupport::updateMaskedAncestorShouldIsolateBlending(renderer);
 #else
+    UNUSED_PARAM(renderer);
     UNUSED_PARAM(oldStyle);
 #endif
 }

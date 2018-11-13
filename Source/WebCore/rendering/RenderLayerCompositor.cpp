@@ -648,7 +648,7 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
 {
     LOG_WITH_STREAM(Compositing, stream << "RenderLayerCompositor " << this << " updateCompositingLayers " << updateType << " root " << updateRoot);
 
-#if !LOG_DISABLED
+#if ENABLE(TREE_DEBUGGING)
     if (compositingLogEnabled())
         showPaintOrderTree(m_renderView.layer());
 #endif
@@ -725,7 +725,7 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
     }
 
     LOG(Compositing, "\nRenderLayerCompositor::updateCompositingLayers - mid");
-#if !LOG_DISABLED
+#if ENABLE(TREE_DEBUGGING)
     if (compositingLogEnabled())
         showPaintOrderTree(m_renderView.layer());
 #endif
@@ -762,7 +762,7 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
     // FIXME: Only do if dirty.
     updateRootLayerPosition();
 
-#if !LOG_DISABLED
+#if ENABLE(TREE_DEBUGGING)
     if (compositingLogEnabled()) {
         LOG(Compositing, "RenderLayerCompositor::updateCompositingLayers - post");
         showPaintOrderTree(m_renderView.layer());
@@ -783,7 +783,9 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
         return;
     }
 
+#if ENABLE(TREE_DEBUGGING)
     LOG(Compositing, "%*p computeCompositingRequirements", 12 + compositingState.depth * 2, &layer);
+#endif
 
     // FIXME: maybe we can avoid updating all remaining layers in paint order.
     compositingState.fullPaintOrderTraversalRequired |= layer.needsCompositingRequirementsTraversal();
@@ -996,7 +998,9 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
         layer.setNeedsCompositingLayerConnection();
     }
 
+#if ENABLE(TREE_DEBUGGING)
     LOG(Compositing, "%*p computeCompositingRequirements - willBeComposited %d", 12 + compositingState.depth * 2, &layer, willBeComposited);
+#endif
 
     layer.clearCompositingRequirementsTraversalState();
     
@@ -1010,7 +1014,9 @@ void RenderLayerCompositor::traverseUnchangedSubtree(RenderLayer* ancestorLayer,
     ASSERT(!layer.hasDescendantNeedingCompositingRequirementsTraversal());
     ASSERT(!layer.needsCompositingRequirementsTraversal());
 
+#if ENABLE(TREE_DEBUGGING)
     LOG(Compositing, "%*p traverseUnchangedSubtree", 12 + compositingState.depth * 2, &layer);
+#endif
 
     layer.updateDescendantDependentFlags();
     layer.updateLayerListsIfNeeded();
