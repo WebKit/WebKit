@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ParsedContentType_h
-#define ParsedContentType_h
+#pragma once
 
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
@@ -66,5 +65,3 @@ private:
 };
 
 }
-
-#endif

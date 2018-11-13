@@ -1,3 +1,22 @@
+2018-11-12  Rob Buis  <rbuis@igalia.com>
+
+        Content-Type parameter values should allow empty quoted strings
+        https://bugs.webkit.org/show_bug.cgi?id=191388
+
+        Reviewed by Dean Jackson.
+
+        According to RFC 2045 and https://mimesniff.spec.whatwg.org/#parsing-a-mime-type empty
+        quoted strings are acceptable for Content-Type parameter values. They
+        are accepted by Firefox and Chrome implementations as well.
+
+        Test: web-platform-tests/xhr/overridemimetype-blob.html
+
+        * platform/network/ParsedContentType.cpp:
+        (WebCore::parseToken):
+        (WebCore::parseQuotedString):
+        (WebCore::parseContentType):
+        * platform/network/ParsedContentType.h:
+
 2018-11-12  Christopher Reid  <chris.reid@sony.com>
 
         [Curl] Reject entire cookie if the domain fails a tailmatch.

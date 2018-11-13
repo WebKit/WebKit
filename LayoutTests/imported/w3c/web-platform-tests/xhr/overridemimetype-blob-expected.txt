@@ -33,7 +33,7 @@ FAIL 28) MIME types need to be parsed and serialized: text/html;charset="gbk " a
 FAIL 29) MIME types need to be parsed and serialized: text/html;charset="\ gbk" assert_equals: expected "text/html;charset=\" gbk\"" but got "text/html"
 FAIL 30) MIME types need to be parsed and serialized: text/html;charset="\g\b\k" assert_equals: expected "text/html;charset=gbk" but got "text/html"
 FAIL 31) MIME types need to be parsed and serialized: text/html;charset="gbk"x assert_equals: expected "text/html;charset=gbk" but got "application/octet-stream"
-FAIL 32) MIME types need to be parsed and serialized: text/html;charset="";charset=GBK assert_equals: expected "text/html;charset=GBK" but got "application/octet-stream"
+FAIL 32) MIME types need to be parsed and serialized: text/html;charset="";charset=GBK assert_equals: expected "text/html;charset=\"\"" but got "text/html"
 FAIL 33) MIME types need to be parsed and serialized: text/html;charset=";charset=GBK assert_equals: expected "text/html;charset=\";charset=GBK\"" but got "application/octet-stream"
 FAIL 34) MIME types need to be parsed and serialized: text/html;charset={gbk} assert_equals: expected "text/html;charset=\"{gbk}\"" but got "text/html"
 FAIL 35) MIME types need to be parsed and serialized: text/html;0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789=x;charset=gbk assert_equals: expected "text/html;0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789=x;charset=gbk" but got "text/html"
