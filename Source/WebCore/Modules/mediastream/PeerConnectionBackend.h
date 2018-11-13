@@ -167,6 +167,8 @@ public:
     };
     static void generateCertificate(Document&, const CertificateInformation&, DOMPromiseDeferred<IDLInterface<RTCCertificate>>&&);
 
+    virtual void collectTransceivers() { };
+
 protected:
     void fireICECandidateEvent(RefPtr<RTCIceCandidate>&&, String&& url);
     void doneGatheringCandidates();

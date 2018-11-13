@@ -1,3 +1,35 @@
+2018-11-13  Youenn Fablet  <youenn@apple.com>
+
+        RTCPeerConnection.getTransceivers is not always exposing all transceivers
+        https://bugs.webkit.org/show_bug.cgi?id=191589
+
+        Reviewed by Eric Carlson.
+
+        Implement the collect transceiver algorithm using libwebrtc backend.
+        Call this algorithm everytime transceivers are retrieved from JS.
+        For Plan B, make this a no-op as this is not supported.
+        Introduce senders/receivers/transceivers getters where we just look at already created transceivers.
+
+        Covered by existing and rebased tests.
+
+        * Modules/mediastream/PeerConnectionBackend.h:
+        (WebCore::PeerConnectionBackend::collectTransceivers):
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::getSenders const):
+        (WebCore::RTCPeerConnection::getReceivers const):
+        (WebCore::RTCPeerConnection::getTransceivers const):
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::collectTransceivers):
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        (WebCore::LibWebRTCPeerConnectionBackend::addTrack):
+        (WebCore::LibWebRTCPeerConnectionBackend::existingTransceiver):
+        (WebCore::LibWebRTCPeerConnectionBackend::collectTransceivers):
+        (WebCore::LibWebRTCPeerConnectionBackend::applyRotationForOutgoingVideoSources):
+        (WebCore::LibWebRTCPeerConnectionBackend::shouldOfferAllowToReceive const):
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.h:
+
 2018-11-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Do not show selection UI for editable elements with opacity near zero

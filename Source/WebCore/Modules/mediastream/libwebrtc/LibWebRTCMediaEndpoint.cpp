@@ -457,6 +457,30 @@ static inline RefPtr<RealtimeMediaSource> sourceFromNewReceiver(webrtc::RtpRecei
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+void LibWebRTCMediaEndpoint::collectTransceivers()
+{
+    if (!m_backend)
+        return;
+
+    if (!RuntimeEnabledFeatures::sharedFeatures().webRTCUnifiedPlanEnabled())
+        return;
+
+    for (auto& rtcTransceiver : m_backend->GetTransceivers()) {
+        auto* existingTransceiver = m_peerConnectionBackend.existingTransceiver([&](auto& transceiverBackend) {
+            return rtcTransceiver.get() == transceiverBackend.rtcTransceiver();
+        });
+        if (existingTransceiver)
+            continue;
+
+        auto rtcReceiver = rtcTransceiver->receiver();
+        auto source = sourceFromNewReceiver(*rtcReceiver);
+        if (!source)
+            return;
+
+        m_peerConnectionBackend.newRemoteTransceiver(std::make_unique<LibWebRTCRtpTransceiverBackend>(WTFMove(rtcTransceiver)), source.releaseNonNull());
+    }
+}
+
 void LibWebRTCMediaEndpoint::newTransceiver(rtc::scoped_refptr<webrtc::RtpTransceiverInterface>&& rtcTransceiver)
 {
     auto* transceiver = m_peerConnectionBackend.existingTransceiver([&](auto& transceiverBackend) {

@@ -639,6 +639,24 @@ void RTCPeerConnection::generateCertificate(JSC::ExecState& state, AlgorithmIden
     PeerConnectionBackend::generateCertificate(document, parameters.returnValue(), WTFMove(promise));
 }
 
+const Vector<std::reference_wrapper<RTCRtpSender>>& RTCPeerConnection::getSenders() const
+{
+    m_backend->collectTransceivers();
+    return m_transceiverSet->senders();
+}
+
+const Vector<std::reference_wrapper<RTCRtpReceiver>>& RTCPeerConnection::getReceivers() const
+{
+    m_backend->collectTransceivers();
+    return m_transceiverSet->receivers();
+}
+
+const Vector<RefPtr<RTCRtpTransceiver>>& RTCPeerConnection::getTransceivers() const
+{
+    m_backend->collectTransceivers();
+    return m_transceiverSet->list();
+}
+
 #if !RELEASE_LOG_DISABLED
 WTFLogChannel& RTCPeerConnection::logChannel() const
 {

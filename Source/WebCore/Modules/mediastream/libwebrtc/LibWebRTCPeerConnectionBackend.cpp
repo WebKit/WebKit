@@ -402,7 +402,7 @@ ExceptionOr<Ref<RTCRtpSender>> LibWebRTCPeerConnectionBackend::addTrack(MediaStr
         if (!m_endpoint->addTrack(*senderBackend, track, mediaStreamIds))
             return Exception { TypeError, "Unable to add track"_s };
 
-        if (auto sender = findExistingSender(m_peerConnection.getSenders(), *senderBackend)) {
+        if (auto sender = findExistingSender(m_peerConnection.currentSenders(), *senderBackend)) {
             sender->setTrack(makeRef(track));
             sender->setMediaStreamIds(WTFMove(mediaStreamIds));
             return sender.releaseNonNull();
@@ -419,7 +419,7 @@ ExceptionOr<Ref<RTCRtpSender>> LibWebRTCPeerConnectionBackend::addTrack(MediaStr
 
     RTCRtpSender* sender = nullptr;
     // Reuse an existing sender with the same track kind if it has never been used to send before.
-    for (auto& transceiver : m_peerConnection.getTransceivers()) {
+    for (auto& transceiver : m_peerConnection.currentTransceivers()) {
         auto& existingSender = transceiver->sender();
         if (!existingSender.isStopped() && existingSender.trackKind() == track.kind() && existingSender.trackId().isNull() && !transceiver->hasSendingDirection()) {
             existingSender.setTrack(makeRef(track));
@@ -500,7 +500,7 @@ static inline LibWebRTCRtpTransceiverBackend& backendFromRTPTransceiver(RTCRtpTr
 
 RTCRtpTransceiver* LibWebRTCPeerConnectionBackend::existingTransceiver(WTF::Function<bool(LibWebRTCRtpTransceiverBackend&)>&& matchingFunction)
 {
-    for (auto& transceiver : m_peerConnection.getTransceivers()) {
+    for (auto& transceiver : m_peerConnection.currentTransceivers()) {
         if (matchingFunction(backendFromRTPTransceiver(*transceiver)))
             return transceiver.get();
     }
@@ -526,6 +526,11 @@ Ref<RTCRtpTransceiver> LibWebRTCPeerConnectionBackend::completeAddTransceiver(Re
     return transceiver;
 }
 
+void LibWebRTCPeerConnectionBackend::collectTransceivers()
+{
+    m_endpoint->collectTransceivers();
+}
+
 void LibWebRTCPeerConnectionBackend::removeTrack(RTCRtpSender& sender)
 {
     m_endpoint->removeTrack(backendFromRTPSender(sender));
@@ -533,7 +538,7 @@ void LibWebRTCPeerConnectionBackend::removeTrack(RTCRtpSender& sender)
 
 void LibWebRTCPeerConnectionBackend::applyRotationForOutgoingVideoSources()
 {
-    for (auto& transceiver : m_peerConnection.getTransceivers()) {
+    for (auto& transceiver : m_peerConnection.currentTransceivers()) {
         if (!transceiver->sender().isStopped()) {
             if (auto* videoSource = backendFromRTPSender(transceiver->sender()).videoSource())
                 videoSource->setApplyRotation(true);
@@ -544,7 +549,7 @@ void LibWebRTCPeerConnectionBackend::applyRotationForOutgoingVideoSources()
 bool LibWebRTCPeerConnectionBackend::shouldOfferAllowToReceive(const char* kind) const
 {
     ASSERT(!RuntimeEnabledFeatures::sharedFeatures().webRTCUnifiedPlanEnabled());
-    for (const auto& transceiver : m_peerConnection.getTransceivers()) {
+    for (const auto& transceiver : m_peerConnection.currentTransceivers()) {
         if (transceiver->sender().trackKind() != kind)
             continue;
 

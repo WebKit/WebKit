@@ -6,7 +6,7 @@ PASS checkAddTransceiverWithTrack
 PASS checkAddTransceiverWithAddTrack 
 PASS checkAddTransceiverWithDirection 
 PASS checkAddTransceiverWithSetRemoteOfferSending 
-FAIL checkAddTransceiverWithSetRemoteOfferNoSend assert_equals: expected "[{currentDirection:null,direction:\"recvonly\",receiver:{track:{kind:\"audio\"}},sender:{track:null},stopped:false}]" but got "[]"
+PASS checkAddTransceiverWithSetRemoteOfferNoSend 
 PASS checkAddTransceiverBadKind 
 FAIL checkNoMidOffer promise_test: Unhandled rejection with value: object "OperationError: Failed to set remote offer sdp: The BUNDLE group contains MID:0 matching no m= section."
 PASS checkSetDirection 

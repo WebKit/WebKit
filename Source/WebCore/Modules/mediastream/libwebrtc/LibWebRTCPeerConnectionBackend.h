@@ -99,6 +99,8 @@ private:
     RTCRtpTransceiver* existingTransceiver(WTF::Function<bool(LibWebRTCRtpTransceiverBackend&)>&&);
     RTCRtpTransceiver& newRemoteTransceiver(std::unique_ptr<LibWebRTCRtpTransceiverBackend>&&, Ref<RealtimeMediaSource>&&);
 
+    void collectTransceivers() final;
+
     struct VideoReceiver {
         Ref<RTCRtpReceiver> receiver;
         Ref<RealtimeIncomingVideoSource> source;

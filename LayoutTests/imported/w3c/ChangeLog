@@ -1,5 +1,14 @@
 2018-11-13  Youenn Fablet  <youenn@apple.com>
 
+        RTCPeerConnection.getTransceivers is not always exposing all transceivers
+        https://bugs.webkit.org/show_bug.cgi?id=191589
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/webrtc/RTCRtpTransceiver.https-expected.txt:
+
+2018-11-13  Youenn Fablet  <youenn@apple.com>
+
         Refresh WPT webrtc tests to ToT
         https://bugs.webkit.org/show_bug.cgi?id=191564
 
