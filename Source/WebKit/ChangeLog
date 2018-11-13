@@ -1,3 +1,15 @@
+2018-11-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Enable process swap on cross-site navigation by default on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=191572
+
+        Reviewed by Chris Dumez.
+
+        Enabled the feature by default on macOS.
+
+        * Shared/WebPreferences.yaml:
+        * Shared/WebPreferencesDefaultValues.h:
+
 2018-11-13  Daniel Bates  <dabates@apple.com>
 
         Consolidate WebKit UIKitSPI.h and UIKitTestSPI.h
