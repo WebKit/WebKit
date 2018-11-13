@@ -994,6 +994,7 @@ http/tests/xmlhttprequest/upload-onloadend-event-after-load.html [ Failure ]
 http/tests/xmlhttprequest/upload-onprogress-event.html [ Failure ]
 http/tests/xmlhttprequest/upload-progress-events.html [ Failure ]
 
+[ Debug ] http/tests/xmlhttprequest/on-network-timeout-error-during-preflight.html [ Skip ]
 [ Debug ] http/tests/xmlhttprequest/simple-cross-origin-progress-events.html [ Skip ]
 
 http/tests/xmlviewer [ Skip ]
@@ -1317,6 +1318,18 @@ fast/animation/request-animation-frame-within-callback.html [ Pass Failure ]
 
 [ Debug ] legacy-animation-engine/animations/animation-welcome-safari.html [ Pass Failure ]
 
+webkit.org/b/178341 animations/play-state-in-shorthand.html [ Failure ]
+
+webkit.org/b/191584 animations/animation-direction-normal.html [ Failure ]
+webkit.org/b/191584 animations/animation-direction-reverse.html [ Failure ]
+webkit.org/b/191584 animations/dynamic-stylesheet-loading.html [ Failure ]
+webkit.org/b/191584 animations/play-state-paused.html [ Failure ]
+webkit.org/b/191584 animations/transform-non-accelerated.html [ Failure ]
+webkit.org/b/191584 fast/animation/css-animation-resuming-when-visible-with-style-change.html [ Pass Timeout ]
+webkit.org/b/191584 legacy-animation-engine/animations/animation-direction-normal.html [ Failure ]
+webkit.org/b/191584 legacy-animation-engine/animations/animation-direction-reverse.html [ Failure ]
+webkit.org/b/191584 legacy-animation-engine/animations/transform-non-accelerated.html [ Failure ]
+
 ################################################################################
 ##################       End Animation Issues             ######################
 ################################################################################
@@ -1477,6 +1490,8 @@ fast/css-custom-paint/ [ Skip ]
 
 # Dark mode not supported on Windows
 css-dark-mode [ Skip ]
+
+webkit.org/b/142260 fast/css/has-attachment.html [ Skip ]
 
 ################################################################################
 #################            End CSS Issues              #######################
