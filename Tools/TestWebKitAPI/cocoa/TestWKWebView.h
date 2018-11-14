@@ -33,6 +33,7 @@
 #if PLATFORM(IOS_FAMILY)
 @class _WKActivatedElementInfo;
 @protocol UITextInputMultiDocument;
+@protocol UITextInputPrivate;
 #endif
 
 @interface WKWebView (AdditionalDeclarations)
@@ -76,7 +77,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 @interface TestWKWebView (IOSOnly)
-@property (nonatomic, readonly) UIView <UITextInput, UITextInputMultiDocument> *textInputContentView;
+@property (nonatomic, readonly) UIView <UITextInputPrivate, UITextInputMultiDocument> *textInputContentView;
 @property (nonatomic, readonly) RetainPtr<NSArray> selectionRectsAfterPresentationUpdate;
 @property (nonatomic, readonly) CGRect caretViewRectInContentCoordinates;
 @property (nonatomic, readonly) NSArray<NSValue *> *selectionViewRectsInContentCoordinates;

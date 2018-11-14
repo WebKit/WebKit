@@ -315,6 +315,7 @@ static NSArray *dragAndDropEventNames()
     bool _isDoneWithCurrentRun;
     DragAndDropPhase _phase;
 
+    BOOL _suppressedSelectionCommandsDuringDrop;
     RetainPtr<UIDropProposal> _currentDropProposal;
 }
 
@@ -357,6 +358,7 @@ static NSArray *dragAndDropEventNames()
 
 - (void)_resetSimulatedState
 {
+    _suppressedSelectionCommandsDuringDrop = NO;
     _phase = DragAndDropPhaseBeginning;
     _currentProgress = 0;
     _isDoneWithCurrentRun = false;
@@ -650,6 +652,7 @@ static NSArray *dragAndDropEventNames()
 
 - (void)_webView:(WKWebView *)webView dataInteractionOperationWasHandled:(BOOL)handled forSession:(id)session itemProviders:(NSArray<UIItemProvider *> *)itemProviders
 {
+    _suppressedSelectionCommandsDuringDrop = [_webView textInputContentView]._shouldSuppressSelectionCommands;
     _isDoneWithCurrentRun = true;
 
     if (self.dropCompletionBlock)

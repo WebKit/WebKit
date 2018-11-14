@@ -822,6 +822,7 @@ static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeI
 #endif
 
     _hasSetUpInteractions = NO;
+    _suppressSelectionAssistantReasons = { };
 }
 
 - (void)_removeDefaultGestureRecognizers
@@ -1342,7 +1343,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 
 - (void)_displayFormNodeInputView
 {
-    if (!self.suppressAssistantSelectionView) {
+    if (!_suppressSelectionAssistantReasons.contains(FocusedElementIsTransparent)) {
         // In case user scaling is force enabled, do not use that scaling when zooming in with an input field.
         // Zooming above the page's default scale factor should only happen when the user performs it.
         [self _zoomToFocusRect:_assistedNodeInformation.elementRect
@@ -1736,7 +1737,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
 - (BOOL)canShowNonEmptySelectionView
 {
-    if (self.suppressAssistantSelectionView)
+    if (_suppressSelectionAssistantReasons)
         return NO;
 
     auto& state = _page->editorState();
@@ -1748,7 +1749,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     if (!_webView.configuration._textInteractionGesturesEnabled)
         return NO;
 
-    if (self.suppressAssistantSelectionView)
+    if (_suppressSelectionAssistantReasons)
         return NO;
 
     if (_inspectorNodeSearchEnabled)
@@ -1774,7 +1775,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     if (!_webView.configuration._textInteractionGesturesEnabled)
         return NO;
 
-    if (self.suppressAssistantSelectionView)
+    if (_suppressSelectionAssistantReasons)
         return NO;
 
     InteractionInformationRequest request(roundedIntPoint(point));
@@ -1788,7 +1789,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     if (!_webView.configuration._textInteractionGesturesEnabled)
         return NO;
 
-    if (self.suppressAssistantSelectionView)
+    if (_suppressSelectionAssistantReasons)
         return NO;
 
     InteractionInformationRequest request(roundedIntPoint(point));
@@ -4199,7 +4200,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 {
     [self setUpTextSelectionAssistant];
     
-    if (self.isFirstResponder && !self.suppressAssistantSelectionView)
+    if (self.isFirstResponder && !_suppressSelectionAssistantReasons)
         [_textSelectionAssistant activateSelection];
 
 #if !PLATFORM(WATCHOS)
@@ -4285,7 +4286,10 @@ static bool isAssistableInputType(InputType type)
     if ([inputDelegate respondsToSelector:@selector(_webView:decidePolicyForFocusedElement:)])
         startInputSessionPolicy = [inputDelegate _webView:_webView decidePolicyForFocusedElement:focusedElementInfo.get()];
 
-    self.suppressAssistantSelectionView = information.elementIsTransparent;
+    if (information.elementIsTransparent)
+        [self _beginSuppressingSelectionAssistantForReason:FocusedElementIsTransparent];
+    else
+        [self _stopSuppressingSelectionAssistantForReason:FocusedElementIsTransparent];
 
     switch (startInputSessionPolicy) {
     case _WKFocusStartsInputSessionPolicyAuto:
@@ -4430,7 +4434,7 @@ static bool isAssistableInputType(InputType type)
 
     [_webView didEndFormControlInteraction];
 
-    self.suppressAssistantSelectionView = NO;
+    [self _stopSuppressingSelectionAssistantForReason:FocusedElementIsTransparent];
 }
 
 - (void)updateCurrentAssistedNodeInformation:(Function<void(bool didUpdate)>&&)callback
@@ -4768,8 +4772,12 @@ static bool isAssistableInputType(InputType type)
         return;
 
     auto& postLayoutData = state.postLayoutData();
-    if (hasAssistedNode(_assistedNodeInformation))
-        self.suppressAssistantSelectionView = postLayoutData.elementIsTransparent;
+    if (hasAssistedNode(_assistedNodeInformation)) {
+        if (postLayoutData.elementIsTransparent)
+            [self _beginSuppressingSelectionAssistantForReason:FocusedElementIsTransparent];
+        else
+            [self _stopSuppressingSelectionAssistantForReason:FocusedElementIsTransparent];
+    }
 
     WKSelectionDrawingInfo selectionDrawingInfo(_page->editorState());
     if (force || selectionDrawingInfo != _lastSelectionDrawingInfo) {
@@ -4794,7 +4802,7 @@ static bool isAssistableInputType(InputType type)
     if (postLayoutData.isStableStateUpdate && _needsDeferredEndScrollingSelectionUpdate && _page->inStableState()) {
         [[self selectionInteractionAssistant] showSelectionCommands];
 
-        if (!self.suppressAssistantSelectionView)
+        if (!_suppressSelectionAssistantReasons)
             [_textSelectionAssistant activateSelection];
 
         [_textSelectionAssistant didEndScrollingOverflow];
@@ -4805,26 +4813,24 @@ static bool isAssistableInputType(InputType type)
 
 - (BOOL)_shouldSuppressSelectionCommands
 {
-    return _suppressAssistantSelectionView;
+    return !!_suppressSelectionAssistantReasons;
 }
 
-- (BOOL)suppressAssistantSelectionView
+- (void)_beginSuppressingSelectionAssistantForReason:(SuppressSelectionAssistantReason)reason
 {
-    return _suppressAssistantSelectionView;
-}
+    bool wasSuppressingSelectionAssistant = !!_suppressSelectionAssistantReasons;
+    _suppressSelectionAssistantReasons.add(reason);
 
-- (void)setSuppressAssistantSelectionView:(BOOL)suppressAssistantSelectionView
-{
-    if (_suppressAssistantSelectionView == suppressAssistantSelectionView)
-        return;
-
-    _suppressAssistantSelectionView = suppressAssistantSelectionView;
-    if (!_textSelectionAssistant)
-        return;
-
-    if (suppressAssistantSelectionView)
+    if (!wasSuppressingSelectionAssistant)
         [_textSelectionAssistant deactivateSelection];
-    else
+}
+
+- (void)_stopSuppressingSelectionAssistantForReason:(SuppressSelectionAssistantReason)reason
+{
+    bool wasSuppressingSelectionAssistant = !!_suppressSelectionAssistantReasons;
+    _suppressSelectionAssistantReasons.remove(reason);
+
+    if (wasSuppressingSelectionAssistant && !_suppressSelectionAssistantReasons)
         [_textSelectionAssistant activateSelection];
 }
 
@@ -5336,7 +5342,7 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     } completion:^(BOOL completed) {
         [visibleContentViewSnapshot removeFromSuperview];
         [UIView animateWithDuration:0.25 animations:^() {
-            [protectedSelf setSuppressAssistantSelectionView:NO];
+            [protectedSelf _stopSuppressingSelectionAssistantForReason:DropAnimationIsRunning];
             [unselectedContentSnapshot setAlpha:0];
         } completion:^(BOOL completed) {
             [unselectedContentSnapshot removeFromSuperview];
@@ -5353,7 +5359,7 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
         [self.webViewUIDelegate _webView:_webView dataInteractionOperationWasHandled:handled forSession:dropSession itemProviders:[WebItemProviderPasteboard sharedInstance].itemProviders];
 
     if (!_isAnimatingConcludeEditDrag)
-        self.suppressAssistantSelectionView = NO;
+        [self _stopSuppressingSelectionAssistantForReason:DropAnimationIsRunning];
 
     CGPoint global;
     CGPoint client;
@@ -5802,7 +5808,7 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
         retainedSelf->_page->performDragOperation(capturedDragData, "data interaction pasteboard", WTFMove(sandboxExtensionHandle), WTFMove(sandboxExtensionForUpload));
 
         retainedSelf->_visibleContentViewSnapshot = [retainedSelf snapshotViewAfterScreenUpdates:NO];
-        [retainedSelf setSuppressAssistantSelectionView:YES];
+        [retainedSelf _beginSuppressingSelectionAssistantForReason:DropAnimationIsRunning];
         [UIView performWithoutAnimation:[retainedSelf] {
             [retainedSelf->_visibleContentViewSnapshot setFrame:[retainedSelf bounds]];
             [retainedSelf addSubview:retainedSelf->_visibleContentViewSnapshot.get()];

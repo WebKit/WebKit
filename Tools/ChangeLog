@@ -1,5 +1,33 @@
 2018-11-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        [iOS] A few drag and drop tests are crashing after r238146
+        https://bugs.webkit.org/show_bug.cgi?id=191617
+
+        Reviewed by Dean Jackson.
+
+        Augment these crashing tests to verify that selection commands are suppressed during drop over editable elements
+        via more robust means. These tests currently hit an assertion when revealing the callout bar too early, because
+        TestWebKitAPI is not a UI application (see <https://webkit.org/b/190401>).
+
+        Instead of relying on this other bug, directly ask the text input whether it is suppressing selection commands
+        during a drop, and remember the answer via DragAndDropSimulator.
+
+        * TestWebKitAPI/Tests/ios/DragAndDropTestsIOS.mm:
+        (TestWebKitAPI::TEST):
+
+        Add to the existing tests that started failing after r238146.
+
+        * TestWebKitAPI/cocoa/DragAndDropSimulator.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[TestWKWebView textInputContentView]):
+        * TestWebKitAPI/ios/DragAndDropSimulatorIOS.mm:
+        (-[DragAndDropSimulator _resetSimulatedState]):
+        (-[DragAndDropSimulator _webView:dataInteractionOperationWasHandled:forSession:itemProviders:]):
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
+2018-11-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         [Cocoa] [WebKit2] Hook up some more editing actions (-pasteAndMatchStyle:, -makeTextWritingDirectionNatural:)
         https://bugs.webkit.org/show_bug.cgi?id=191605
         <rdar://problem/45813991>

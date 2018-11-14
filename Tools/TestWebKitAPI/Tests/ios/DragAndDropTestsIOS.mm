@@ -346,6 +346,7 @@ TEST(DragAndDropTests, ContentEditableToContentEditable)
     [simulator waitForInputSession];
     [simulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
 
+    EXPECT_TRUE([simulator suppressedSelectionCommandsDuringDrop]);
     EXPECT_EQ([webView stringByEvaluatingJavaScript:@"source.textContent"].length, 0UL);
     EXPECT_WK_STREQ("Hello world", [webView stringByEvaluatingJavaScript:@"editor.textContent"].UTF8String);
 
@@ -366,6 +367,7 @@ TEST(DragAndDropTests, ContentEditableToTextarea)
     [simulator waitForInputSession];
     [simulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
 
+    EXPECT_TRUE([simulator suppressedSelectionCommandsDuringDrop]);
     EXPECT_EQ([webView stringByEvaluatingJavaScript:@"source.textContent"].length, 0UL);
     EXPECT_WK_STREQ("Hello world", [webView editorValue].UTF8String);
 
@@ -401,6 +403,7 @@ TEST(DragAndDropTests, ContentEditableMoveParagraphs)
     NSUInteger firstParagraphOffset = [finalTextContent rangeOfString:@"This is the first paragraph"].location;
     NSUInteger secondParagraphOffset = [finalTextContent rangeOfString:@"This is the second paragraph"].location;
 
+    EXPECT_TRUE([simulator suppressedSelectionCommandsDuringDrop]);
     EXPECT_FALSE(firstParagraphOffset == NSNotFound);
     EXPECT_FALSE(secondParagraphOffset == NSNotFound);
     EXPECT_GT(firstParagraphOffset, secondParagraphOffset);
@@ -427,6 +430,7 @@ TEST(DragAndDropTests, TextAreaToInput)
     [simulator waitForInputSession];
     [simulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
 
+    EXPECT_TRUE([simulator suppressedSelectionCommandsDuringDrop]);
     EXPECT_EQ([webView stringByEvaluatingJavaScript:@"source.value"].length, 0UL);
     EXPECT_WK_STREQ("Hello world", [webView editorValue].UTF8String);
     checkSelectionRectsWithLogging(@[ makeCGRectValue(101, 241, 990, 232) ], [simulator finalSelectionRects]);
@@ -443,6 +447,8 @@ TEST(DragAndDropTests, SinglePlainTextWordTypeIdentifiers)
     [webView stringByEvaluatingJavaScript:@"source.selectionStart = 0"];
     [webView stringByEvaluatingJavaScript:@"source.selectionEnd = source.value.length"];
     [simulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
+
+    EXPECT_TRUE([simulator suppressedSelectionCommandsDuringDrop]);
 
     NSItemProvider *itemProvider = [simulator sourceItemProviders].firstObject;
     NSArray *registeredTypes = [itemProvider registeredTypeIdentifiers];
@@ -464,6 +470,8 @@ TEST(DragAndDropTests, SinglePlainTextURLTypeIdentifiers)
     [webView stringByEvaluatingJavaScript:@"source.selectionStart = 0"];
     [webView stringByEvaluatingJavaScript:@"source.selectionEnd = source.value.length"];
     [simulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
+
+    EXPECT_TRUE([simulator suppressedSelectionCommandsDuringDrop]);
 
     NSItemProvider *itemProvider = [simulator sourceItemProviders].firstObject;
     NSArray *registeredTypes = [itemProvider registeredTypeIdentifiers];

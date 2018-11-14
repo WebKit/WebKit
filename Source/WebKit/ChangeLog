@@ -1,5 +1,66 @@
 2018-11-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        [iOS] A few drag and drop tests are crashing after r238146
+        https://bugs.webkit.org/show_bug.cgi?id=191617
+
+        Reviewed by Dean Jackson.
+
+        The notion of temporarily suppressing the selection assistant was introduced during iOS drag and drop
+        development as a way of allowing both the selection view and dropped content snapshot to fade in simultaneously
+        during a drop in an editable element. r238146 piggy-backs on this mechanism by changing selection suppression
+        state when an element is focused, when the selection changes, and when an element is blurred, depending on
+        whether the currently focused element is transparent.
+
+        However, in the case where the selection assistant is suppressed due to a running drop animation, if focus moves
+        to an element that is not fully transparent, we end up prematurely unsuppressing the text selection assistant.
+        This subsequently causes selection UI to immediately show up after a drop instead of animating in alongside a
+        snapshot of the inserted document fragment, if the drop moved focus to an editable element.
+
+        A number of drag and drop tests on iOS exercised this codepath by dragging content into editable fields and/or
+        moving content between editable elements in a web view. These tests began to crash due to selection views and
+        the accompanying callout bar appearing earlier than usual, which triggers an unrelated UIKit assertion in
+        <https://webkit.org/b/190401>.
+
+        This patch fixes the failing tests by refactoring our selection assistant suppression code. Instead of
+        maintaining a single `BOOL` flag indicating whether the selection is suppressed, we use an `OptionSet` of
+        `SuppressSelectionAssistantReason`s, which (at the moment) only include (1) a running drop animation, and (2)
+        focusing a transparent element. The text selection assistant is considered suppressed when either of the reasons
+        apply. This allows us to correctly handle a drop animation that occurs simultaneously as an element is focused
+        without unsuppressing the selection assistant early, and also allows us to handle selection assistant
+        suppression in more nuanced ways, depending on the suppression reason.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cleanupInteraction]):
+        (-[WKContentView _displayFormNodeInputView]):
+
+        Only prevent zooming to the focused element during drop if we're suppressing the selection assistant due to
+        focusing a transparent element. In the case of a drop, we still want to allow scrolling and zooming.
+
+        (-[WKContentView canShowNonEmptySelectionView]):
+        (-[WKContentView hasSelectablePositionAtPoint:]):
+        (-[WKContentView pointIsNearMarkedText:]):
+        (-[WKContentView textInteractionGesture:shouldBeginAtPoint:]):
+        (-[WKContentView _startAssistingKeyboard]):
+        (-[WKContentView _startAssistingNode:userIsInteracting:blurPreviousNode:changingActivityState:userObject:]):
+        (-[WKContentView _stopAssistingNode]):
+        (-[WKContentView _updateChangedSelection:]):
+        (-[WKContentView _shouldSuppressSelectionCommands]):
+        (-[WKContentView _beginSuppressingSelectionAssistantForReason:]):
+        (-[WKContentView _stopSuppressingSelectionAssistantForReason:]):
+
+        Add helper methods for adding or removing selection assistant suppression reasons. When the last selection
+        assistant suppression reason is removed, we activate the selection assistant, and conversely, when the first
+        suppression reason is added, we deactivate the selection assistant.
+
+        (-[WKContentView _didConcludeEditDataInteraction:]):
+        (-[WKContentView _didPerformDragOperation:]):
+        (-[WKContentView dropInteraction:performDrop:]):
+        (-[WKContentView suppressAssistantSelectionView]): Deleted.
+        (-[WKContentView setSuppressAssistantSelectionView:]): Deleted.
+
+2018-11-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         [Cocoa] [WebKit2] Hook up some more editing actions (-_pasteAndMatchStyle:, -makeTextWritingDirectionNatural:)
         https://bugs.webkit.org/show_bug.cgi?id=191605
         <rdar://problem/45813991>

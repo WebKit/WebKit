@@ -351,9 +351,9 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
 
 @implementation TestWKWebView (IOSOnly)
 
-- (UIView <UITextInput, UITextInputMultiDocument> *)textInputContentView
+- (UIView <UITextInputPrivate, UITextInputMultiDocument> *)textInputContentView
 {
-    return (UIView <UITextInput, UITextInputMultiDocument> *)[self valueForKey:@"_currentContentView"];
+    return (UIView <UITextInputPrivate, UITextInputMultiDocument> *)[self valueForKey:@"_currentContentView"];
 }
 
 - (RetainPtr<NSArray>)selectionRectsAfterPresentationUpdate
