@@ -1,3 +1,13 @@
+2018-11-14  Ali Juma  <ajuma@chromium.org>
+
+        Transform of composited layer not updated when layer also needs repaint
+        https://bugs.webkit.org/show_bug.cgi?id=191598
+
+        Reviewed by Simon Fraser.
+
+        * compositing/geometry/transform-and-repaint-updates-geometry-expected.html: Added.
+        * compositing/geometry/transform-and-repaint-updates-geometry.html: Added.
+
 2018-11-13  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Support CTAP HID authenticators on macOS

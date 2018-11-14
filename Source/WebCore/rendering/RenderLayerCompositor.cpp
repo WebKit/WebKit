@@ -1387,7 +1387,7 @@ void RenderLayerCompositor::layerStyleChanged(StyleDifference diff, RenderLayer&
         }
     }
 
-    if (diff == StyleDifference::RecompositeLayer && oldStyle) {
+    if (diff >= StyleDifference::RecompositeLayer && oldStyle) {
         if (oldStyle->transform() != newStyle.transform()) {
             // FIXME: transform changes really need to trigger layout. See RenderElement::adjustStyleDifference().
             layer.setNeedsPostLayoutCompositingUpdate();
