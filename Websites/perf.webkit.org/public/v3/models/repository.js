@@ -8,6 +8,7 @@ class Repository extends LabeledObject {
         this._blameUrl = object.blameUrl;
         this._hasReportedCommits = object.hasReportedCommits;
         this._ownerId = object.owner;
+        this._commitByRevision = new Map;
 
         if (!this._ownerId)
             this.ensureNamedStaticMap('topLevelName')[this.name()] = this;
@@ -26,6 +27,8 @@ class Repository extends LabeledObject {
         return map ? map[name] : null;
     }
 
+    commitForRevision(revision) { return this._commitByRevision.get(revision); }
+    setCommitForRevision(revision, commit) { this._commitByRevision.set(revision, commit); }
     hasUrlForRevision() { return !!this._url; }
 
     urlForRevision(currentRevision)

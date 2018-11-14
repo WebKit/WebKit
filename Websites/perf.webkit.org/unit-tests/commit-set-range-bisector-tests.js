@@ -12,6 +12,7 @@ describe('CommitSetRangeBisector', () => {
     function makeCommit(id, repository, revision, time, order)
     {
         return CommitLog.ensureSingleton(id, {
+            id,
             repository,
             revision,
             ownsCommits: false,

@@ -10,6 +10,7 @@ const MockRemoteAPI = require('../unit-tests/resources/mock-remote-api.js').Mock
 function webkitCommit()
 {
     return new CommitLog(1, {
+        id: 1,
         repository: MockModels.webkit,
         revision: '200805',
         time: +(new Date('2016-05-13T00:55:57.841344Z')),
@@ -19,6 +20,7 @@ function webkitCommit()
 function oldWebKitCommit()
 {
     return new CommitLog(2, {
+        id: 2,
         repository: MockModels.webkit,
         revision: '200574',
         time: +(new Date('2016-05-09T14:59:23.553767Z')),
@@ -28,6 +30,7 @@ function oldWebKitCommit()
 function gitWebKitCommit()
 {
     return new CommitLog(3, {
+        id: 3,
         repository: MockModels.webkit,
         revision: '6f8b0dbbda95a440503b88db1dd03dad3a7b07fb',
         time: +(new Date('2016-05-13T00:55:57.841344Z')),
@@ -37,6 +40,7 @@ function gitWebKitCommit()
 function oldGitWebKitCommit()
 {
     return new CommitLog(4, {
+        id: 4,
         repository: MockModels.webkit,
         revision: 'ffda14e6db0746d10d0f050907e4a7325851e502',
         time: +(new Date('2016-05-09T14:59:23.553767Z')),
@@ -46,6 +50,7 @@ function oldGitWebKitCommit()
 function osxCommit()
 {
     return new CommitLog(5, {
+        id: 5,
         repository: MockModels.osx,
         revision: '10.11.4 15E65',
         time: null,
@@ -56,6 +61,7 @@ function osxCommit()
 function oldOSXCommit()
 {
     return new CommitLog(6, {
+        id: 6,
         repository: MockModels.osx,
         revision: '10.11.3 15D21',
         time: null,
@@ -66,6 +72,7 @@ function oldOSXCommit()
 function commitWithoutOwnedCommits()
 {
     return new CommitLog(6, {
+        id: 6,
         repository: MockModels.ownerRepository,
         revision: '10.11.4 15E66',
         ownsCommits: false,
@@ -77,6 +84,7 @@ function commitWithoutOwnedCommits()
 function ownerCommit()
 {
     return new CommitLog(5, {
+        id: 5,
         repository: MockModels.ownerRepository,
         revision: '10.11.4 15E65',
         ownsCommits: true,
@@ -88,6 +96,7 @@ function ownerCommit()
 function otherOwnerCommit()
 {
     return new CommitLog(5, {
+        id: 5,
         repository: MockModels.ownerRepository,
         revision: '10.11.4 15E66',
         ownsCommits: true,
@@ -99,6 +108,7 @@ function otherOwnerCommit()
 function ownedCommit()
 {
     return new CommitLog(11, {
+        id: 11,
         repository: MockModels.ownedRepository,
         revision: 'owned-commit-0',
         ownsCommits: true,
@@ -109,6 +119,7 @@ function ownedCommit()
 function anotherOwnedCommit()
 {
     return new CommitLog(11, {
+        id: 11,
         repository: MockModels.ownedRepository,
         revision: 'owned-commit-1',
         ownsCommits: true,
@@ -403,6 +414,111 @@ describe('CommitLog', function () {
                 assert.equal(difference.keys().next().value, MockModels.ownedRepository);
             });
 
+        });
+    });
+
+    const commitsAPIResponse = {
+        "commits":[{
+            "id": "831151",
+            "revision": "236643",
+            "repository": "11",
+            "previousCommit": null,
+            "time": 1538223077403,
+            "order": null,
+            "authorName": "Commit Queue",
+            "authorEmail": "commit-queue@webkit.org",
+            "message": "message",
+            "ownsCommits": false
+        }],
+        "status":"OK"
+    };
+
+    const commitsAPIResponseForOwnedWebKit = {
+        "commits":[{
+            "id": "1831151",
+            "revision": "236643",
+            "repository": "191",
+            "previousCommit": null,
+            "time": 1538223077403,
+            "order": null,
+            "authorName": "Commit Queue",
+            "authorEmail": "commit-queue@webkit.org",
+            "message": "message",
+            "ownsCommits": false
+        }],
+        "status":"OK"
+    };
+
+    describe('fetchForSingleRevision', () => {
+        beforeEach(() => {
+            MockRemoteAPI.reset();
+        });
+
+        it('should avoid fetching same revision from same repository twice', async () => {
+            let fetchingPromise = CommitLog.fetchForSingleRevision(MockModels.webkit, '236643');
+
+            const requests = MockRemoteAPI.requests;
+            assert.equal(requests.length, 1);
+            assert.equal(requests[0].url, `/api/commits/${MockModels.webkit.id()}/236643`);
+
+            requests[0].resolve(commitsAPIResponse);
+            const commits = await fetchingPromise;
+            assert.equal(commits.length, 1);
+
+            MockRemoteAPI.reset();
+            assert.equal(requests.length, 0);
+            fetchingPromise = CommitLog.fetchForSingleRevision(MockModels.webkit, '236643');
+            assert.equal(requests.length, 0);
+            const newCommits = await fetchingPromise;
+            assert.equal(newCommits.length, 1);
+
+            assert.equal(commits[0], newCommits[0]);
+        });
+
+        it('should avoid fetching same revision from same repository again if it has been fetched by "fetchBetweenRevisions" before', async () => {
+            let fetchingPromise = CommitLog.fetchBetweenRevisions(MockModels.webkit, '236642', '236643');
+
+            const requests = MockRemoteAPI.requests;
+            assert.equal(requests.length, 1);
+            assert.equal(requests[0].url, `/api/commits/${MockModels.webkit.id()}/?precedingRevision=236642&lastRevision=236643`);
+
+            requests[0].resolve(commitsAPIResponse);
+            const commits = await fetchingPromise;
+            assert.equal(commits.length, 1);
+
+            MockRemoteAPI.reset();
+            assert.equal(requests.length, 0);
+            fetchingPromise = CommitLog.fetchForSingleRevision(MockModels.webkit, '236643');
+            assert.equal(requests.length, 0);
+            const newCommits = await fetchingPromise;
+            assert.equal(newCommits.length, 1);
+
+            assert.equal(commits[0], newCommits[0]);
+        });
+
+        it('should not overwrite cache for commits with same revision but from different repositories', async () => {
+            let fetchingPromise = CommitLog.fetchForSingleRevision(MockModels.webkit, '236643');
+
+            const requests = MockRemoteAPI.requests;
+            assert.equal(requests.length, 1);
+            assert.equal(requests[0].url, `/api/commits/${MockModels.webkit.id()}/236643`);
+
+            requests[0].resolve(commitsAPIResponse);
+            const commits = await fetchingPromise;
+            assert.equal(commits.length, 1);
+
+            MockRemoteAPI.reset();
+            assert.equal(requests.length, 0);
+
+            fetchingPromise = CommitLog.fetchForSingleRevision(MockModels.ownedWebkit, '236643');
+            assert.equal(requests.length, 1);
+            assert.equal(requests[0].url, `/api/commits/${MockModels.ownedWebkit.id()}/236643`);
+
+            requests[0].resolve(commitsAPIResponseForOwnedWebKit);
+            const newCommits = await fetchingPromise;
+            assert.equal(newCommits.length, 1);
+
+            assert.notEqual(commits[0], newCommits[0]);
         });
     });
 });

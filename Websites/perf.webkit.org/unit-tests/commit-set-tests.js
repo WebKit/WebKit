@@ -74,6 +74,7 @@ function customCommitSetWithOwnedRepositoryHasSameNameAsNotOwnedRepository()
 function ownerCommit()
 {
     return CommitLog.ensureSingleton(5, {
+        id: 5,
         repository: MockModels.ownerRepository,
         revision: 'owner-commit-0',
         ownsCommits: true,
@@ -84,6 +85,7 @@ function ownerCommit()
 function partialOwnerCommit()
 {
     return CommitLog.ensureSingleton(5, {
+        id: 5,
         repository: MockModels.ownerRepository,
         revision: 'owner-commit-0',
         ownsCommits: null,
@@ -94,6 +96,7 @@ function partialOwnerCommit()
 function ownedCommit()
 {
     return new CommitLog(6, {
+        id: 6,
         repository: MockModels.ownedRepository,
         revision: 'owned-commit-0',
         ownsCommits: null,
@@ -104,6 +107,7 @@ function ownedCommit()
 function webkitCommit()
 {
     return CommitLog.ensureSingleton(2017, {
+        id: 2017,
         repository: MockModels.webkit,
         revision: 'webkit-commit-0',
         ownsCommits: false,
@@ -114,6 +118,7 @@ function webkitCommit()
 function anotherWebKitCommit()
 {
     return CommitLog.ensureSingleton(2018, {
+        id: 2018,
         repository: MockModels.webkit,
         revision: 'webkit-commit-1',
         ownsCommits: false,
@@ -124,6 +129,7 @@ function anotherWebKitCommit()
 function commitWithSVNRevision()
 {
     return CommitLog.ensureSingleton(2019, {
+        id: 2019,
         repository: MockModels.webkit,
         revision: '12345',
         ownsCommits: false,
@@ -134,6 +140,7 @@ function commitWithSVNRevision()
 function anotherCommitWithSVNRevision()
 {
     return CommitLog.ensureSingleton(2020, {
+        id: 2020,
         repository: MockModels.webkit,
         revision: '45678',
         ownsCommits: false,
@@ -144,6 +151,7 @@ function anotherCommitWithSVNRevision()
 function commitWithGitRevision()
 {
     return CommitLog.ensureSingleton(2021, {
+        id: 2021,
         repository: MockModels.webkitGit,
         revision: '13a0590d34f26fda3953c42ff833132a1a6f6f5a',
         ownsCommits: false,
@@ -154,6 +162,7 @@ function commitWithGitRevision()
 function anotherCommitWithGitRevision()
 {
     return CommitLog.ensureSingleton(2022, {
+        id: 2022,
         repository: MockModels.webkitGit,
         revision: '2f8dd3321d4f51c04f4e2019428ce9ffe97f1ef1',
         ownsCommits: false,
@@ -447,7 +456,7 @@ describe('IntermediateCommitSet', () => {
             const owned = ownedCommit();
 
             const commitSet = CommitSet.ensureSingleton('53246456', {revisionItems: [{commit}, {commit: owned, ownerCommit: commit}]});
-            const intermediateCommitSet =new IntermediateCommitSet(commitSet);
+            const intermediateCommitSet = new IntermediateCommitSet(commitSet);
             const fetchingPromise = intermediateCommitSet.fetchCommitLogs();
 
             const requests = MockRemoteAPI.requests;
@@ -459,14 +468,14 @@ describe('IntermediateCommitSet', () => {
 
             requests[0].resolve({commits: [{
                 id: 5,
-                repository: MockModels.ownerRepository,
+                repository: MockModels.ownerRepository.id(),
                 revision: 'owner-commit-0',
                 ownsCommits: true,
                 time: +(new Date('2016-05-13T00:55:57.841344Z')),
             }]});
             requests[1].resolve({commits: [{
                 id: 6,
-                repository: MockModels.ownedRepository,
+                repository: MockModels.ownedRepository.id(),
                 revision: 'owned-commit-0',
                 ownsCommits: false,
                 time: 1456932774000,

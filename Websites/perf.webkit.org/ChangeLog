@@ -1,3 +1,28 @@
+2018-11-13  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Add cache for CommitLog objects to avoid refetching same commit.
+        https://bugs.webkit.org/show_bug.cgi?id=191621
+
+        Reviewed by Ryosuke Niwa.
+
+        Added a cache for fully fetched commit log objects to avoid refetching.
+
+        * public/v3/models/commit-log.js:
+        (CommitLog): Added assertion for id.
+        Removed unused 'remoteId' as it has been removed since r198479.
+        (CommitLog.async.fetchBetweenRevisions): Turned it into async function.
+        (CommitLog.async.fetchForSingleRevision): Added the logic to check cache before fetching.
+        (CommitLog._constructFromRawData): Added logic to add entries to cache.
+        * public/v3/models/repository.js: Added the ability to track fetched commit for certain repository.
+        (Repository.commitForRevision): Fixed measurement set not passing commit id while constructing a
+        commit log object.
+        (Repository.setCommitForRevision): Sets commit for a given revision.
+        * public/v3/models/commit-set.js: Fixed unit tests.
+        * unit-tests/commit-log-tests.js: Added unit tests for this change.
+        Fixed existing tests.
+        * unit-tests/commit-set-range-bisector-tests.js: Fixed unit tests.
+        * unit-tests/commit-set-tests.js: Fixed unit tests.
+
 2018-11-08  Dewei Zhu  <dewei_zhu@apple.com>
 
         commit time returned by '/api/measurement-set' should match the one returned by '/api/commits'.

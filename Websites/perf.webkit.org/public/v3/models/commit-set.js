@@ -281,7 +281,7 @@ class MeasurementCommitSet extends CommitSet {
                 continue;
 
             // FIXME: Add a flag to remember the fact this commit log is incomplete.
-            const commit = CommitLog.ensureSingleton(commitId, {repository, revision, order, time});
+            const commit = CommitLog.ensureSingleton(commitId, {id: commitId, repository, revision, order, time});
             this._repositoryToCommitMap.set(repository, commit);
             this._repositories.push(repository);
         }
