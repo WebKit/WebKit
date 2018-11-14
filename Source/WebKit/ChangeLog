@@ -1,3 +1,26 @@
+2018-11-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] [WebKit2] Hook up some more editing actions (-_pasteAndMatchStyle:, -makeTextWritingDirectionNatural:)
+        https://bugs.webkit.org/show_bug.cgi?id=191605
+        <rdar://problem/45813991>
+
+        Reviewed by Dean Jackson.
+
+        Hook up a couple of editing actions on iOS and macOS. The `-pasteAndMatchStyle:` selector is privately declared
+        in UIKit, but does not exist on macOS; as such, add `-_pasteAndMatchStyle:` as SPI on WKWebView, and
+        additionally implement the unprefixed version, `-pasteAndMatchStyle:`, on iOS.
+
+        Since `-makeTextWritingDirectionNatural:` is already declared on both iOS and macOS (SPI on UIResponder and API
+        on macOS, respectively) we simply implement the unprefixed variant on both platforms.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView makeTextWritingDirectionNaturalForWebView:]):
+        (-[WKContentView canPerformActionForWebView:withSender:]):
+
 2018-11-14  Per Arne Vollan  <pvollan@apple.com>
 
         REGRESSION (WEBPROCESS_WINDOWSERVER_BLOCKING): requestAnimationFrame Stops Completing

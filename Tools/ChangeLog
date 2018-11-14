@@ -1,3 +1,26 @@
+2018-11-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] [WebKit2] Hook up some more editing actions (-pasteAndMatchStyle:, -makeTextWritingDirectionNatural:)
+        https://bugs.webkit.org/show_bug.cgi?id=191605
+        <rdar://problem/45813991>
+
+        Reviewed by Dean Jackson.
+
+        Adds two new API tests to exercise -_pasteAndMatchStyle: and -makeTextWritingDirectionNatural:.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (-[TestWKWebView _synchronouslyExecuteEditCommand:argument:]): Deleted.
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewEditActions.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+
+        Pull `-_synchronouslyExecuteEditCommand:argument:` out of WKAttachmentTests and into shared code, in a new
+        category on WKWebView declared in TestWKWebView. Also, fix an unrelated typo in a nearby category.
+
+        (-[WKWebView _synchronouslyExecuteEditCommand:argument:]):
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
 2018-11-14  Chris Dumez  <cdumez@apple.com>
 
         WebKit.ApplicationManifestBasic API test is failing when enabling PSON

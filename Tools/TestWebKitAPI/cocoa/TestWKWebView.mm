@@ -50,7 +50,7 @@
 SOFT_LINK_FRAMEWORK(UIKit)
 SOFT_LINK_CLASS(UIKit, UIWindow)
 
-@implementation WKWebView (WKWebViewTestingQuicks)
+@implementation WKWebView (WKWebViewTestingQuirks)
 
 // TestWebKitAPI is currently not a UIApplication so we are unable to track if it is in
 // the background or not (https://bugs.webkit.org/show_bug.cgi?id=175204). This can
@@ -62,6 +62,22 @@ SOFT_LINK_CLASS(UIKit, UIWindow)
 }
 @end
 #endif
+
+@implementation WKWebView (TestWebKitAPI)
+
+- (BOOL)_synchronouslyExecuteEditCommand:(NSString *)command argument:(NSString *)argument
+{
+    __block bool done = false;
+    __block bool success;
+    [self _executeEditCommand:command argument:argument completion:^(BOOL completionSuccess) {
+        done = true;
+        success = completionSuccess;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    return success;
+}
+
+@end
 
 @implementation TestMessageHandler {
     NSMutableDictionary<NSString *, dispatch_block_t> *_messageHandlers;

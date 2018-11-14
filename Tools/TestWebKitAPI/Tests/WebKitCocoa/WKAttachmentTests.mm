@@ -246,18 +246,6 @@ static NSData *testPDFData()
     [self expectElementTagsInOrder:@[tagName, otherTagName]];
 }
 
-- (BOOL)_synchronouslyExecuteEditCommand:(NSString *)command argument:(NSString *)argument
-{
-    __block bool done = false;
-    __block bool success;
-    [self _executeEditCommand:command argument:argument completion:^(BOOL completionSuccess) {
-        done = true;
-        success = completionSuccess;
-    }];
-    TestWebKitAPI::Util::run(&done);
-    return success;
-}
-
 - (_WKAttachment *)synchronouslyInsertAttachmentWithFileWrapper:(NSFileWrapper *)fileWrapper contentType:(NSString *)contentType
 {
     __block bool done = false;

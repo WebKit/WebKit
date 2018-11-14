@@ -46,6 +46,10 @@
 #endif
 @end
 
+@interface WKWebView (TestWebKitAPI)
+- (BOOL)_synchronouslyExecuteEditCommand:(NSString *)command argument:(NSString *)argument;
+@end
+
 @interface TestMessageHandler : NSObject <WKScriptMessageHandler>
 - (void)addMessage:(NSString *)message withHandler:(dispatch_block_t)handler;
 @end

@@ -2261,6 +2261,11 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
     return (NSString *)_page->editorState().postLayoutData().wordAtSelection;
 }
 
+- (void)makeTextWritingDirectionNaturalForWebView:(id)sender
+{
+    _page->executeEditCommand("makeTextWritingDirectionNatural"_s);
+}
+
 - (BOOL)isReplaceAllowed
 {
     return _page->editorState().postLayoutData().isReplaceAllowed;
@@ -2308,6 +2313,7 @@ WEBCORE_COMMAND_FOR_WEBVIEW(alignLeft);
 WEBCORE_COMMAND_FOR_WEBVIEW(alignRight);
 WEBCORE_COMMAND_FOR_WEBVIEW(alignCenter);
 WEBCORE_COMMAND_FOR_WEBVIEW(alignJustified);
+WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 #undef WEBCORE_COMMAND_FOR_WEBVIEW
 
 - (void)_increaseListLevelForWebView:(id)sender
@@ -2448,7 +2454,8 @@ WEBCORE_COMMAND_FOR_WEBVIEW(alignJustified);
         || action == @selector(increaseSize:) || action == @selector(decreaseSize:)
         || action == @selector(toggleStrikeThrough:) || action == @selector(insertOrderedList:) || action == @selector(insertUnorderedList:) || action == @selector(indent:) || action == @selector(outdent:)
         || action == @selector(alignLeft:) || action == @selector(alignRight:) || action == @selector(alignCenter:) || action == @selector(alignJustified:)
-        || action == @selector(setTextColor:sender:) || action == @selector(setFont:sender:) || action == @selector(setFontSize:sender:)) {
+        || action == @selector(setTextColor:sender:) || action == @selector(setFont:sender:) || action == @selector(setFontSize:sender:)
+        || action == @selector(makeTextWritingDirectionNatural:)) {
         // FIXME: This should be more nuanced in the future, rather than returning YES for all richly editable areas. For instance, outdent: should be disabled when the selection is already
         // at the outermost indentation level.
         return editorState.isContentRichlyEditable;
@@ -2456,7 +2463,7 @@ WEBCORE_COMMAND_FOR_WEBVIEW(alignJustified);
     if (action == @selector(cut:))
         return !editorState.isInPasswordField && editorState.isContentEditable && editorState.selectionIsRange;
     
-    if (action == @selector(paste:) || action == @selector(_pasteAsQuotation:)) {
+    if (action == @selector(paste:) || action == @selector(_pasteAsQuotation:) || action == @selector(_pasteAndMatchStyle:) || action == @selector(pasteAndMatchStyle:)) {
         if (editorState.selectionIsNone || !editorState.isContentEditable)
             return NO;
         UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];

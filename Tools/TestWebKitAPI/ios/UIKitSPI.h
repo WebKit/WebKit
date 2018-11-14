@@ -162,6 +162,7 @@ WTF_EXTERN_C_END
 
 @interface UIResponder (UIKitSPI)
 - (UIResponder *)firstResponder;
+- (void)makeTextWritingDirectionNatural:(id)sender;
 @end
 
 @interface UIKeyboard ()

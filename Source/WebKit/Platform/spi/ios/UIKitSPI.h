@@ -1078,6 +1078,8 @@ typedef NSInteger UICompositingMode;
 
 @interface UIResponder ()
 - (UIResponder *)firstResponder;
+- (void)pasteAndMatchStyle:(id)sender;
+- (void)makeTextWritingDirectionNatural:(id)sender;
 @end
 
 @interface _UINavigationInteractiveTransitionBase ()

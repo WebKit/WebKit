@@ -203,6 +203,7 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 - (IBAction)_decreaseListLevel:(id)sender WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (IBAction)_changeListType:(id)sender WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (IBAction)_pasteAsQuotation:(id)sender WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (IBAction)_pasteAndMatchStyle:(id)sender WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 #if TARGET_OS_IPHONE
 

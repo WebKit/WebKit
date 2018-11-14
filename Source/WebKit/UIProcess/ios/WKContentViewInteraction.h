@@ -132,7 +132,9 @@ typedef std::pair<WebKit::InteractionInformationRequest, InteractionInformationC
     M(alignLeft) \
     M(alignRight) \
     M(alignCenter) \
-    M(alignJustified)
+    M(alignJustified) \
+    M(pasteAndMatchStyle) \
+    M(makeTextWritingDirectionNatural)
 
 #define FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(M) \
     M(_alignCenter) \
@@ -149,7 +151,8 @@ typedef std::pair<WebKit::InteractionInformationRequest, InteractionInformationC
     M(_increaseListLevel) \
     M(_decreaseListLevel) \
     M(_changeListType) \
-    M(_pasteAsQuotation)
+    M(_pasteAsQuotation) \
+    M(_pasteAndMatchStyle)
 
 namespace WebKit {
 

@@ -240,6 +240,31 @@ TEST(WKWebViewEditActions, PasteAsQuotation)
     EXPECT_TRUE([webView querySelectorExists:@"blockquote"]);
 }
 
+TEST(WKWebViewEditActions, PasteAndMatchStyle)
+{
+    auto source = webViewForEditActionTesting();
+    auto destination = webViewForEditActionTesting(@"<div><br></div>");
+
+    [source selectAll:nil];
+    [source evaluateJavaScript:@"document.execCommand('bold'); document.execCommand('underline'); document.execCommand('italic')" completionHandler:nil];
+    [source _synchronouslyExecuteEditCommand:@"Copy" argument:nil];
+
+    [destination _pasteAndMatchStyle:nil];
+    [destination selectAll:nil];
+    EXPECT_FALSE([destination stringByEvaluatingJavaScript:@"document.queryCommandState('bold')"].boolValue);
+    EXPECT_FALSE([destination stringByEvaluatingJavaScript:@"document.queryCommandState('italic')"].boolValue);
+    EXPECT_FALSE([destination stringByEvaluatingJavaScript:@"document.queryCommandState('underline')"].boolValue);
+    EXPECT_WK_STREQ("WebKit", [destination stringByEvaluatingJavaScript:@"getSelection().toString()"]);
+}
+
+TEST(WKWebViewEditActions, ModifyTextWritingDirection)
+{
+    auto webView = webViewForEditActionTesting(@"<div id='text' style='direction: rtl; unicode-bidi: bidi-override;'>WebKit</div>");
+    [webView selectAll:nil];
+    [webView makeTextWritingDirectionNatural:nil];
+    EXPECT_WK_STREQ("normal", [webView stringByEvaluatingJavaScript:@"getComputedStyle(text).unicodeBidi"]);
+}
+
 #if PLATFORM(IOS_FAMILY)
 
 TEST(WKWebViewEditActions, ChangeFontSize)
