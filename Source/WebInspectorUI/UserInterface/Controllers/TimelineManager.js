@@ -41,8 +41,6 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
         this._enabledTimelineTypesSetting = new WI.Setting("enabled-instrument-types", WI.TimelineManager.defaultTimelineTypes());
 
-        this._persistentNetworkTimeline = new WI.NetworkTimeline;
-
         this._isCapturing = false;
         this._initiatedByBackendStart = false;
         this._initiatedByBackendStop = false;
@@ -135,11 +133,6 @@ WI.TimelineManager = class TimelineManager extends WI.Object
     {
         console.assert(this._activeRecording || !this._isCapturing);
         return this._activeRecording;
-    }
-
-    get persistentNetworkTimeline()
-    {
-        return this._persistentNetworkTimeline;
     }
 
     get recordings()
@@ -821,37 +814,27 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
     _mainResourceDidChange(event)
     {
-        let frame = event.target;
-        if (frame.isMainFrame() && WI.settings.clearNetworkOnNavigate.value)
-            this._persistentNetworkTimeline.reset();
-
-        let mainResource = frame.mainResource;
-        let record = new WI.ResourceTimelineRecord(mainResource);
-        if (!isNaN(record.startTime))
-            this._persistentNetworkTimeline.addRecord(record);
-
         // Ignore resource events when there isn't a main frame yet. Those events are triggered by
         // loading the cached resources when the inspector opens, and they do not have timing information.
         if (!WI.networkManager.mainFrame)
             return;
 
+        let frame = event.target;
         if (this._attemptAutoCapturingForFrame(frame))
             return;
 
         if (!this._isCapturing)
             return;
 
+        let mainResource = frame.mainResource;
         if (mainResource === this._mainResourceForAutoCapturing)
             return;
 
-        this._addRecord(record);
+        this._addRecord(new WI.ResourceTimelineRecord(mainResource));
     }
 
     _resourceWasAdded(event)
     {
-        var record = new WI.ResourceTimelineRecord(event.data.resource);
-        if (!isNaN(record.startTime))
-            this._persistentNetworkTimeline.addRecord(record);
 
         // Ignore resource events when there isn't a main frame yet. Those events are triggered by
         // loading the cached resources when the inspector opens, and they do not have timing information.
@@ -861,7 +844,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         if (!this._isCapturing)
             return;
 
-        this._addRecord(record);
+        this._addRecord(new WI.ResourceTimelineRecord(event.data.resource));
     }
 
     _garbageCollected(event)

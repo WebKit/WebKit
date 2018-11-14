@@ -1,3 +1,48 @@
+2018-11-14  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Network Graphs are missing minimum sizes, might have no graph at all
+        https://bugs.webkit.org/show_bug.cgi?id=191208
+
+        Reviewed by Joseph Pecoraro.
+
+        `WI.NetworkTableContentView` used to rely on the `WI.timelineManager.persistentNetworkTimeline`
+        for events when a new resource is added. It also listened for `WI.Frame.Event.MainResourceDidChange`
+        on it's own, which was also listened to by `WI.timelineManager.persistentNetworkTimeline`.
+        Due to the order in which these listeners are added, the new main resource would get added
+        to the `WI.timelineManager.persistentNetworkTimeline` (and the `WI.NetworkTableContentView`
+        shortly after), and right after that the `WI.NetworkTableContentView` would reset the graph
+        in it's own listener for `WI.Frame.Event.MainResourceDidChange`.
+
+        This patch removes `WI.timelineManager.persistentNetworkTimeline` and instead makes it so
+        that `WI.NetworkTableContentView` listens for resource added and main frame changed events
+        on its own (similar to other views that follow this pattern), ensuring that there are no
+        event races.
+
+        Also relaxes the "requirement" that prevented 0 width blocks from being drawn, allowing
+        requests served from memory/disk to appear in the graph (their time is effectively 0).
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView):
+        (WI.NetworkTableContentView.prototype.closed):
+        (WI.NetworkTableContentView.prototype._populateWaterfallGraph):
+        (WI.NetworkTableContentView.prototype._populateWaterfallGraph.appendBlock):
+        (WI.NetworkTableContentView.prototype._updateWaterfallTimeRange): Added.
+        (WI.NetworkTableContentView.prototype._resourceLoadingDidFinish):
+        (WI.NetworkTableContentView.prototype._resourceLoadingDidFail):
+        (WI.NetworkTableContentView.prototype._handleResourceAdded): Added.
+        (WI.NetworkTableContentView.prototype._insertResourceAndReloadTable):
+        (WI.NetworkTableContentView.prototype._handleNodeDidFireEvent):
+        (WI.NetworkTableContentView.prototype._handleNodeLowPowerChanged):
+        * UserInterface/Views/NetworkTableContentView.css:
+        (.network-table .waterfall .block:matches(.mouse-tracking, .filler) + .block:not(.mouse-tracking, .filler)): Added.
+        (.network-table .waterfall .block.filler + .block): Deleted.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WI.TimelineManager):
+        (WI.TimelineManager.prototype._mainResourceDidChange):
+        (WI.TimelineManager.prototype._resourceWasAdded):
+        (WI.TimelineManager.prototype.get persistentNetworkTimeline): Deleted.
+
 2018-11-13  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Table should support select all (Cmd-A)

@@ -249,7 +249,7 @@ body[dir=rtl] .waterfall .block {
     --end-radius: 0;
 }
 
-.network-table .waterfall .block.filler + .block,
+.network-table .waterfall .block:matches(.mouse-tracking, .filler) + .block:not(.mouse-tracking, .filler),
 .network-table .waterfall .block:not(.request, .response) + :matches(.request, .response) {
     --start-radius: 2px;
 }
