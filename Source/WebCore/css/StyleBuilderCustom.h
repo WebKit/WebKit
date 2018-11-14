@@ -142,6 +142,10 @@ public:
     static void applyValueAlt(StyleResolver&, CSSValue&);
     static void applyValueWillChange(StyleResolver&, CSSValue&);
 
+#if ENABLE(DARK_MODE_CSS)
+    static void applyValueSupportedColorSchemes(StyleResolver&, CSSValue&);
+#endif
+
     static void applyValueStrokeWidth(StyleResolver&, CSSValue&);
     static void applyValueStrokeColor(StyleResolver&, CSSValue&);
 
@@ -826,6 +830,14 @@ inline void StyleBuilderCustom::applyValueWebkitTextZoom(StyleResolver& styleRes
         styleResolver.style()->setTextZoom(TextZoom::Reset);
     styleResolver.state().setFontDirty(true);
 }
+
+#if ENABLE(DARK_MODE_CSS)
+inline void StyleBuilderCustom::applyValueSupportedColorSchemes(StyleResolver& styleResolver, CSSValue& value)
+{
+    styleResolver.style()->setSupportedColorSchemes(StyleBuilderConverter::convertSupportedColorSchemes(styleResolver, value));
+    styleResolver.style()->setHasExplicitlySetSupportedColorSchemes(true);
+}
+#endif
 
 template<CSSPropertyID property>
 inline void StyleBuilderCustom::applyTextOrBoxShadowValue(StyleResolver& styleResolver, CSSValue& value)

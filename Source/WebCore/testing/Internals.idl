@@ -262,6 +262,7 @@ enum CompositingPolicy {
     [MayThrowException] DOMRect layoutViewportRect();
     [MayThrowException] DOMRect visualViewportRect();
 
+    [MayThrowException] void setViewIsTransparent(boolean trnasparent);
     [MayThrowException] void setViewBaseBackgroundColor(DOMString colorValue);
 
     [MayThrowException] void setPagination(DOMString mode, long gap, optional long pageLength = 0);
@@ -371,6 +372,8 @@ enum CompositingPolicy {
     [MayThrowException] DOMString layerTreeAsText(Document document, optional unsigned short flags = 0);
 
     [MayThrowException] unsigned long long layerIDForElement(Element element);
+
+    [MayThrowException] DOMString scrollbarOverlayStyle();
 
     [MayThrowException] DOMString scrollingStateTreeAsText();
     [MayThrowException] DOMString mainThreadScrollingReasons(); // FIXME: rename to synchronousScrollingReasons().

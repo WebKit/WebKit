@@ -135,8 +135,7 @@ static FragmentAndResources createFragment(Frame& frame, NSAttributedString *str
 
 #if PLATFORM(MAC)
     auto* view = frame.view();
-    auto* renderView = view ? view->renderView() : nullptr;
-    LocalDefaultSystemAppearance localAppearance(renderView ? renderView->useDarkAppearance() : false);
+    LocalDefaultSystemAppearance localAppearance(view ? view->useDarkAppearance() : false);
 #endif
 
     NSArray *subresources = nil;

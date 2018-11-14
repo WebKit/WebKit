@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+
+<!-- webkit-test-runner [ experimental:DarkModeCSSEnabled=true ] -->
+
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+
+<style>
+body {
+    supported-color-schemes: light dark;
+}
+</style>
+
+<body></body>
+
+<script>
+function test_prop(element, prop, expected) {
+    assert_equals(window.getComputedStyle(element).getPropertyValue(prop), expected);
+}
+
+test(function() {
+    if (!window.internals)
+        return;
+    internals.settings.setUseDarkAppearance(true);
+}, "Set dark appearance");
+
+test(function() {
+    if (!window.internals)
+        return;
+    internals.setViewIsTransparent(true);
+}, "Set view to transparent");
+
+test(function() {
+    test_prop(document.body, "supported-color-schemes", "light dark");
+}, "Body Element supported color scheme is light and dark");
+
+test(function() {
+    test_prop(document.documentElement, "supported-color-schemes", "auto");
+}, "Document Element supported color scheme is auto");
+
+test(function() {
+    if (!window.internals)
+        return;
+    assert_equals(internals.scrollbarOverlayStyle(), "light");
+}, "Scrollbar overlay style is light");
+
+test(function() {
+    let styleElement = document.createElement("style");
+    styleElement.textContent = ":root { supported-color-schemes: light }";
+    document.head.appendChild(styleElement);
+}, "Set prefers-color-schemes: light on the document element");
+
+test(function() {
+    test_prop(document.body, "supported-color-schemes", "light dark");
+}, "Body Element supported color scheme is light and dark");
+
+test(function() {
+    test_prop(document.documentElement, "supported-color-schemes", "light");
+}, "Document Element supported color scheme is light");
+
+test(function() {
+    if (!window.internals)
+        return;
+    assert_equals(internals.scrollbarOverlayStyle(), "default");
+}, "Scrollbar overlay style is default");
+</script>

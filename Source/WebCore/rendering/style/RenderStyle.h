@@ -638,6 +638,8 @@ public:
 
 #if ENABLE(DARK_MODE_CSS)
     StyleSupportedColorSchemes supportedColorSchemes() const { return m_rareInheritedData->supportedColorSchemes; }
+    void setHasExplicitlySetSupportedColorSchemes(bool v) { m_nonInheritedFlags.hasExplicitlySetSupportedColorSchemes = v; }
+    bool hasExplicitlySetSupportedColorSchemes() const { return m_nonInheritedFlags.hasExplicitlySetSupportedColorSchemes; };
 #endif
 
     TextOrientation textOrientation() const { return static_cast<TextOrientation>(m_rareInheritedData->textOrientation); }
@@ -1782,6 +1784,9 @@ private:
         unsigned hasExplicitlySetDirection : 1;
         unsigned hasExplicitlySetWritingMode : 1;
         unsigned hasExplicitlySetTextAlign : 1;
+#if ENABLE(DARK_MODE_CSS)
+        unsigned hasExplicitlySetSupportedColorSchemes : 1;
+#endif
         unsigned hasViewportUnits : 1;
         unsigned hasExplicitlyInheritedProperties : 1; // Explicitly inherits a non-inherited property.
         unsigned isUnique : 1; // Style cannot be shared.
@@ -1908,6 +1913,9 @@ inline bool RenderStyle::NonInheritedFlags::operator==(const NonInheritedFlags& 
         && hasExplicitlySetDirection == other.hasExplicitlySetDirection
         && hasExplicitlySetWritingMode == other.hasExplicitlySetWritingMode
         && hasExplicitlySetTextAlign == other.hasExplicitlySetTextAlign
+#if ENABLE(DARK_MODE_CSS)
+        && hasExplicitlySetSupportedColorSchemes == other.hasExplicitlySetSupportedColorSchemes
+#endif
         && hasViewportUnits == other.hasViewportUnits
         && hasExplicitlyInheritedProperties == other.hasExplicitlyInheritedProperties
         && isUnique == other.isUnique

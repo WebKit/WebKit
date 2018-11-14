@@ -955,7 +955,11 @@ static bool rareInheritedDataChangeRequiresRepaint(const StyleRareInheritedData&
     return first.userModify != second.userModify
         || first.userSelect != second.userSelect
         || first.appleColorFilter != second.appleColorFilter
-        || first.imageRendering != second.imageRendering;
+        || first.imageRendering != second.imageRendering
+#if ENABLE(DARK_MODE_CSS)
+        || first.supportedColorSchemes != second.supportedColorSchemes
+#endif
+    ;
 }
 
 bool RenderStyle::changeRequiresRepaint(const RenderStyle& other, OptionSet<StyleDifferenceContextSensitiveProperty>& changedContextSensitiveProperties) const

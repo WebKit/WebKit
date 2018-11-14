@@ -1,0 +1,11 @@
+
+PASS Set dark appearance 
+PASS Set view to transparent 
+PASS Body Element supported color scheme is light and dark 
+PASS Document Element supported color scheme is auto 
+PASS Scrollbar overlay style is light 
+PASS Set prefers-color-schemes: light on the document element 
+PASS Body Element supported color scheme is light and dark 
+PASS Document Element supported color scheme is light 
+PASS Scrollbar overlay style is default 
+

@@ -325,7 +325,7 @@ ImageDrawResult SVGImage::draw(GraphicsContext& context, const FloatRect& dstRec
     }
 
 #if PLATFORM(MAC)
-    LocalDefaultSystemAppearance localAppearance(view->renderView()->useDarkAppearance());
+    LocalDefaultSystemAppearance localAppearance(view->useDarkAppearance());
 #endif
 
     view->paint(context, intersection(context.clipBounds(), enclosingIntRect(srcRect)));

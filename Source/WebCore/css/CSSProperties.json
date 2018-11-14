@@ -5723,6 +5723,7 @@
             "codegen-properties": {
                 "converter": "SupportedColorSchemes",
                 "comment": "This is the second highest priority property, to ensure that its value can be checked when resolving colors.",
+                "custom": "Value",
                 "enable-if": "ENABLE_DARK_MODE_CSS",
                 "high-priority": true
             },

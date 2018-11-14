@@ -408,6 +408,8 @@ void FrameView::recalculateScrollbarOverlayStyle()
         backgroundColor.getHSL(hue, saturation, lightness);
         if (lightness <= .5 && backgroundColor.isVisible())
             computedOverlayStyle = ScrollbarOverlayStyleLight;
+        else if (!backgroundColor.isVisible() && useDarkAppearance())
+            computedOverlayStyle = ScrollbarOverlayStyleLight;
     }
 
     if (oldOverlayStyle != computedOverlayStyle)
@@ -2046,9 +2048,39 @@ bool FrameView::shouldSetCursor() const
     return page && page->isVisible() && page->focusController().isActive();
 }
 
+#if ENABLE(DARK_MODE_CSS)
+RenderObject* FrameView::rendererForSupportedColorSchemes() const
+{
+    auto* document = frame().document();
+    auto* documentElement = document ? document->documentElement() : nullptr;
+    auto* documentElementRenderer = documentElement ? documentElement->renderer() : nullptr;
+    if (documentElementRenderer && documentElementRenderer->style().hasExplicitlySetSupportedColorSchemes())
+        return documentElementRenderer;
+    auto* bodyElement = document ? document->bodyOrFrameset() : nullptr;
+    return bodyElement ? bodyElement->renderer() : nullptr;
+}
+#endif
+
 bool FrameView::useDarkAppearance() const
 {
-    return renderView()->useDarkAppearance();
+#if ENABLE(DARK_MODE_CSS)
+    if (auto* renderer = rendererForSupportedColorSchemes())
+        return renderer->useDarkAppearance();
+#endif
+    if (auto* document = frame().document())
+        return document->useDarkAppearance(nullptr);
+    return false;
+}
+
+OptionSet<StyleColor::Options> FrameView::styleColorOptions() const
+{
+#if ENABLE(DARK_MODE_CSS)
+    if (auto* renderer = rendererForSupportedColorSchemes())
+        return renderer->styleColorOptions();
+#endif
+    if (auto* document = frame().document())
+        return document->styleColorOptions(nullptr);
+    return { };
 }
 
 bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect)
@@ -3916,7 +3948,7 @@ void FrameView::paintScrollCorner(GraphicsContext& context, const IntRect& corne
 #if PLATFORM(MAC)
     // If dark appearance is used or the overlay style is light (because of a dark page background), set the dark apppearance.
     // Keep this in sync with ScrollAnimatorMac's effectiveAppearanceForScrollerImp:.
-    bool useDarkAppearance = renderView()->useDarkAppearance() || scrollbarOverlayStyle() == WebCore::ScrollbarOverlayStyleLight;
+    bool useDarkAppearance = this->useDarkAppearance() || scrollbarOverlayStyle() == WebCore::ScrollbarOverlayStyleLight;
     LocalDefaultSystemAppearance localAppearance(useDarkAppearance);
 #endif
 

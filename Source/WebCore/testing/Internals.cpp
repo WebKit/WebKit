@@ -1673,6 +1673,16 @@ ExceptionOr<Ref<DOMRect>> Internals::visualViewportRect()
     return DOMRect::create(frameView.visualViewportRect());
 }
 
+ExceptionOr<void> Internals::setViewIsTransparent(bool transparent)
+{
+    Document* document = contextDocument();
+    if (!document || !document->view())
+        return Exception { InvalidAccessError };
+    Color backgroundColor = transparent ? Color::transparent : Color::white;
+    document->view()->updateBackgroundRecursively(backgroundColor, transparent);
+    return { };
+}
+
 ExceptionOr<void> Internals::setViewBaseBackgroundColor(const String& colorValue)
 {
     Document* document = contextDocument();
@@ -2489,6 +2499,26 @@ ExceptionOr<String> Internals::repaintRectsAsText() const
         return Exception { InvalidAccessError };
 
     return document->frame()->trackedRepaintRectsAsText();
+}
+
+ExceptionOr<String> Internals::scrollbarOverlayStyle() const
+{
+    Document* document = contextDocument();
+    if (!document || !document->view())
+        return Exception { InvalidAccessError };
+
+    auto& frameView = *document->view();
+    switch (frameView.scrollbarOverlayStyle()) {
+    case ScrollbarOverlayStyleDefault:
+        return "default"_str;
+    case ScrollbarOverlayStyleDark:
+        return "dark"_str;
+    case ScrollbarOverlayStyleLight:
+        return "light"_str;
+    }
+
+    ASSERT_NOT_REACHED();
+    return "unknown"_str;
 }
 
 ExceptionOr<String> Internals::scrollingStateTreeAsText() const

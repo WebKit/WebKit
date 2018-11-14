@@ -125,8 +125,7 @@ RefPtr<WebImage> InjectedBundleRangeHandle::renderedImage(SnapshotOptions option
         return nullptr;
 
 #if PLATFORM(MAC)
-    RenderView* renderView = frameView->renderView();
-    LocalDefaultSystemAppearance localAppearance(renderView ? renderView->useDarkAppearance() : false);
+    LocalDefaultSystemAppearance localAppearance(frameView->useDarkAppearance());
 #endif
 
     Ref<Frame> protector(*frame);

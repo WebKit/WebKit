@@ -35,6 +35,7 @@
 #include "PaintPhase.h"
 #include "RenderPtr.h"
 #include "ScrollView.h"
+#include "StyleColor.h"
 #include "TiledBacking.h"
 #include <memory>
 #include <wtf/Forward.h>
@@ -509,7 +510,8 @@ public:
     bool isHandlingWheelEvent() const final;
     bool shouldSetCursor() const;
 
-    bool useDarkAppearance() const final;
+    WEBCORE_EXPORT bool useDarkAppearance() const final;
+    OptionSet<StyleColor::Options> styleColorOptions() const;
 
     // FIXME: Remove this method once plugin loading is decoupled from layout.
     void flushAnyPendingPostLayoutTasks();
@@ -735,6 +737,10 @@ private:
     void unobscuredContentSizeChanged() final;
 #endif
 
+#if ENABLE(DARK_MODE_CSS)
+    RenderObject* rendererForSupportedColorSchemes() const;
+#endif
+
     bool usesCompositedScrolling() const final;
     bool usesAsyncScrolling() const final;
     bool usesMockScrollAnimator() const final;
@@ -826,6 +832,9 @@ private:
     bool m_firstLayoutCallbackPending;
 
     bool m_isTransparent;
+#if ENABLE(DARK_MODE_CSS)
+    bool m_usesDarkAppearance { false };
+#endif
     Color m_baseBackgroundColor;
     IntSize m_lastViewportSize;
     float m_lastZoomFactor;

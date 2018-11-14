@@ -184,7 +184,7 @@ void InspectorOverlay::paint(GraphicsContext& context)
     FrameView* view = overlayPage()->mainFrame().view();
 
 #if PLATFORM(MAC)
-    LocalDefaultSystemAppearance localAppearance(view->renderView()->useDarkAppearance());
+    LocalDefaultSystemAppearance localAppearance(view->useDarkAppearance());
 #endif
 
     view->updateLayoutAndStyleIfNeededRecursive();
