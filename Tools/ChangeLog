@@ -1,5 +1,18 @@
 2018-11-13  Chris Dumez  <cdumez@apple.com>
 
+        WKProcessPool.InitialWarmedProcessUsed API is failing with PSON enabled
+        https://bugs.webkit.org/show_bug.cgi?id=191618
+
+        Reviewed by Ryosuke Niwa.
+
+        Update API test to explicitly disable automatic process prewarning since it is testing
+        manual prewarming.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessPreWarming.mm:
+        (TEST):
+
+2018-11-13  Chris Dumez  <cdumez@apple.com>
+
         Several Service Worker API tests are failing when enabling PSON
         https://bugs.webkit.org/show_bug.cgi?id=191619
 

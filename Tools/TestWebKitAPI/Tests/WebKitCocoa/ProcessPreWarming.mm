@@ -53,7 +53,10 @@ TEST(WKProcessPool, WarmInitialProcess)
 
 TEST(WKProcessPool, InitialWarmedProcessUsed)
 {
-    auto pool = adoptNS([[WKProcessPool alloc] init]);
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().prewarmsProcessesAutomatically = NO;
+
+    auto pool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
     [pool _warmInitialProcess];
 
     EXPECT_TRUE([pool _hasPrewarmedWebProcess]);
