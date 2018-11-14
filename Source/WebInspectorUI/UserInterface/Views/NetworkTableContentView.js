@@ -139,6 +139,13 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         WI.networkManager.addEventListener(WI.NetworkManager.Event.MainFrameDidChange, this._mainFrameDidChange, this);
 
         this._needsInitialPopulate = true;
+
+        // FIXME: This is working around the order of events. Normal page navigation
+        // triggers a MainResource change and then a MainFrame change. Page Transition
+        // triggers a MainFrame change then a MainResource change.
+        this._transitioningPageTarget = false;
+        
+        WI.notifications.addEventListener(WI.Notification.TransitionPageTarget, this._transitionPageTarget, this);
     }
 
     // Static
@@ -1412,6 +1419,13 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
         this.reset();
 
+        if (this._transitioningPageTarget) {
+            this._transitioningPageTarget = false;
+            this._needsInitialPopulate = true;
+            this._populateWithInitialResourcesIfNeeded();
+            return;
+        }
+
         this._insertResourceAndReloadTable(frame.mainResource);
     }
 
@@ -1991,5 +2005,10 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
     _tableWaterfallColumnDidChangeWidth(event)
     {
         this._table.reloadVisibleColumnCells(this._waterfallColumn);
+    }
+
+    _transitionPageTarget(event)
+    {
+        this._transitioningPageTarget = true;
     }
 };

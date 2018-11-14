@@ -109,8 +109,10 @@
 #include "WebNotificationManagerProxy.h"
 #include "WebOpenPanelResultListenerProxy.h"
 #include "WebPageCreationParameters.h"
+#include "WebPageDebuggable.h"
 #include "WebPageGroup.h"
 #include "WebPageGroupData.h"
+#include "WebPageInspectorController.h"
 #include "WebPageMessages.h"
 #include "WebPageProxyMessages.h"
 #include "WebPaymentCoordinatorProxy.h"
@@ -221,6 +223,10 @@
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
 #include "WebResourceLoadStatisticsStore.h"
+#endif
+
+#if ENABLE(REMOTE_INSPECTOR)
+#include <JavaScriptCore/RemoteInspector.h>
 #endif
 
 #if HAVE(SEC_KEY_PROXY)
@@ -425,6 +431,10 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
 #endif
     , m_pageLoadState(*this)
     , m_configurationPreferenceValues(m_configuration->preferenceValues())
+    , m_inspectorController(std::make_unique<WebPageInspectorController>(*this))
+#if ENABLE(REMOTE_INSPECTOR)
+    , m_inspectorDebuggable(std::make_unique<WebPageDebuggable>(*this))
+#endif
     , m_resetRecentCrashCountTimer(RunLoop::main(), this, &WebPageProxy::resetRecentCrashCount)
 {
     m_webProcessLifetimeTracker.addObserver(m_visitedLinkStore);
@@ -481,6 +491,13 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
         this->dispatchActivityStateChange();
     });
 #endif
+
+#if ENABLE(REMOTE_INSPECTOR)
+    m_inspectorDebuggable->setRemoteDebuggingAllowed(true);
+    m_inspectorDebuggable->init();
+#endif
+
+    createInspectorTargets();
 }
 
 WebPageProxy::~WebPageProxy()
@@ -806,6 +823,13 @@ void WebPageProxy::finishAttachingToWebProcess(ShouldDelayAttachingDrawingArea s
 
     initializeWebPage(shouldDelayAttachingDrawingArea);
 
+#if ENABLE(REMOTE_INSPECTOR)
+    remoteInspectorInformationDidChange();
+#endif
+
+    clearInspectorTargets();
+    createInspectorTargets();
+
     pageClient().didRelaunchProcess();
     m_drawingArea->waitForBackingStoreUpdateOnNextPaint();
 }
@@ -916,6 +940,7 @@ void WebPageProxy::close()
 #endif
 
     m_backForwardList->pageClosed();
+    m_inspectorController->pageClosed();
     pageClient().pageClosed();
 
     m_process->disconnectFramesFromPage(this);
@@ -1362,30 +1387,66 @@ void WebPageProxy::setControlledByAutomation(bool controlled)
     m_process->processPool().sendToNetworkingProcess(Messages::NetworkProcess::SetSessionIsControlledByAutomation(m_websiteDataStore->sessionID(), m_controlledByAutomation));
 }
 
-#if ENABLE(REMOTE_INSPECTOR)
-void WebPageProxy::setAllowsRemoteInspection(bool allow)
+void WebPageProxy::createInspectorTarget(const String& targetId, Inspector::InspectorTargetType type)
 {
-    if (m_allowsRemoteInspection == allow)
+    m_inspectorController->createInspectorTarget(targetId, type);
+}
+
+void WebPageProxy::destroyInspectorTarget(const String& targetId)
+{
+    m_inspectorController->destroyInspectorTarget(targetId);
+}
+
+void WebPageProxy::sendMessageToInspectorFrontend(const String& targetId, const String& message)
+{
+    m_inspectorController->sendMessageToInspectorFrontend(targetId, message);
+}
+
+#if ENABLE(REMOTE_INSPECTOR)
+void WebPageProxy::setIndicating(bool indicating)
+{
+    if (!isValid())
         return;
 
-    m_allowsRemoteInspection = allow;
+    m_process->send(Messages::WebPage::SetIndicating(indicating), m_pageID);
+}
 
-    if (isValid())
-        m_process->send(Messages::WebPage::SetAllowsRemoteInspection(allow), m_pageID);
+bool WebPageProxy::allowsRemoteInspection() const
+{
+    return m_inspectorDebuggable->remoteDebuggingAllowed();
+}
+
+void WebPageProxy::setAllowsRemoteInspection(bool allow)
+{
+    m_inspectorDebuggable->setRemoteDebuggingAllowed(allow);
+}
+
+String WebPageProxy::remoteInspectionNameOverride() const
+{
+    return m_inspectorDebuggable->nameOverride();
 }
 
 void WebPageProxy::setRemoteInspectionNameOverride(const String& name)
 {
-    if (m_remoteInspectionNameOverride == name)
-        return;
-
-    m_remoteInspectionNameOverride = name;
-
-    if (isValid())
-        m_process->send(Messages::WebPage::SetRemoteInspectionNameOverride(m_remoteInspectionNameOverride), m_pageID);
+    m_inspectorDebuggable->setNameOverride(name);
 }
 
+void WebPageProxy::remoteInspectorInformationDidChange()
+{
+    m_inspectorDebuggable->update();
+}
 #endif
+
+void WebPageProxy::clearInspectorTargets()
+{
+    m_inspectorController->clearTargets();
+}
+
+void WebPageProxy::createInspectorTargets()
+{
+    String pageTargetId = makeString("page-", String::number(m_pageID));
+    m_inspectorController->createInspectorTarget(pageTargetId, Inspector::InspectorTargetType::Page);
+}
 
 void WebPageProxy::setDrawsBackground(bool drawsBackground)
 {
@@ -3821,6 +3882,11 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID
     if (frame->isMainFrame())
         invalidateAllAttachments();
 #endif
+
+#if ENABLE(REMOTE_INSPECTOR)
+    if (frame->isMainFrame())
+        remoteInspectorInformationDidChange();
+#endif
 }
 
 void WebPageProxy::didFinishDocumentLoadForFrame(uint64_t frameID, uint64_t navigationID, const UserData& userData)
@@ -3997,6 +4063,11 @@ void WebPageProxy::didReceiveTitleForFrame(uint64_t frameID, const String& title
     frame->didChangeTitle(title);
     
     m_pageLoadState.commitChanges();
+
+#if ENABLE(REMOTE_INSPECTOR)
+    if (frame->isMainFrame())
+        remoteInspectorInformationDidChange();
+#endif
 }
 
 void WebPageProxy::didFirstLayoutForFrame(uint64_t, const UserData& userData)
@@ -6395,10 +6466,6 @@ WebPageCreationParameters WebPageProxy::creationParameters()
     parameters.backgroundExtendsBeyondPage = m_backgroundExtendsBeyondPage;
     parameters.layerHostingMode = m_layerHostingMode;
     parameters.controlledByAutomation = m_controlledByAutomation;
-#if ENABLE(REMOTE_INSPECTOR)
-    parameters.allowsRemoteInspection = m_allowsRemoteInspection;
-    parameters.remoteInspectionNameOverride = m_remoteInspectionNameOverride;
-#endif
 #if PLATFORM(MAC)
     parameters.colorSpace = pageClient().colorSpace();
     parameters.useSystemAppearance = m_useSystemAppearance;

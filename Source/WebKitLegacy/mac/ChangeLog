@@ -1,3 +1,14 @@
+2018-11-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Keep Web Inspector window alive across process swaps (PSON) (Remote Inspector)
+        https://bugs.webkit.org/show_bug.cgi?id=191494
+        <rdar://problem/45469854>
+
+        Reviewed by Devin Rousso.
+
+        * WebCoreSupport/WebInspectorClient.h:
+        WebKitLegacy will still have remote inspection of the Page directly.
+
 2018-11-12  Simon Fraser  <simon.fraser@apple.com>
 
         Make compositing updates incremental

@@ -258,6 +258,7 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         experimentalSettingsView.addSetting(WI.UIString("User Interface:"), WI.settings.experimentalEnableNewTabBar, WI.UIString("Enable New Tab Bar"));
         experimentalSettingsView.addSeparator();
 
+        // FIXME: Reload Web Inspector does not work with MultiplexingBackendTarget.
         let reloadInspectorButton = document.createElement("button");
         reloadInspectorButton.textContent = WI.UIString("Reload Web Inspector");
         reloadInspectorButton.addEventListener("click", () => { window.location.reload(); });

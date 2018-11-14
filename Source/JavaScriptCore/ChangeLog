@@ -1,3 +1,47 @@
+2018-11-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Keep Web Inspector window alive across process swaps (PSON) (Remote Inspector)
+        https://bugs.webkit.org/show_bug.cgi?id=191494
+        <rdar://problem/45469854>
+
+        Reviewed by Devin Rousso.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        New domain and resources.
+
+        * inspector/protocol/Target.json: Added.
+        New protocol domain, modeled after Worker.json, to allow for
+        multiplexing between different targets.
+
+        * inspector/InspectorTarget.h:
+        Each target will instantiate an InspectorTarget and must
+        provide an identifier, type, and means of connecting/disconnecting
+        to a frontend channel.
+
+        * inspector/agents/InspectorTargetAgent.cpp: Added.
+        (Inspector::InspectorTargetAgent::InspectorTargetAgent):
+        (Inspector::InspectorTargetAgent::didCreateFrontendAndBackend):
+        (Inspector::InspectorTargetAgent::willDestroyFrontendAndBackend):
+        (Inspector::InspectorTargetAgent::exists):
+        (Inspector::InspectorTargetAgent::initialized):
+        (Inspector::InspectorTargetAgent::sendMessageToTarget):
+        (Inspector::InspectorTargetAgent::sendMessageFromTargetToFrontend):
+        (Inspector::targetTypeToProtocolType):
+        (Inspector::buildTargetInfoObject):
+        (Inspector::InspectorTargetAgent::targetCreated):
+        (Inspector::InspectorTargetAgent::targetTerminated):
+        (Inspector::InspectorTargetAgent::connectToTargets):
+        (Inspector::InspectorTargetAgent::disconnectFromTargets):
+        * inspector/agents/InspectorTargetAgent.h: Added.
+        TargetAgent holds a list of targets, and connects/disconnects to each
+        of the targets when a frontend connects/disconnects.
+
+        * inspector/scripts/codegen/generator.py:
+        Better enum casing of ServiceWorker.
+
 2018-11-14  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         Unreviewed, rolling in CodeCache in r237254

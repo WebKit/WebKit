@@ -27,6 +27,7 @@ WI.loaded = function()
 {
     // Register observers for events from the InspectorBackend.
     // The initialization order should match the same in Main.js.
+    InspectorBackend.registerTargetDispatcher(new WI.TargetObserver);
     InspectorBackend.registerInspectorDispatcher(new WI.InspectorObserver);
     InspectorBackend.registerPageDispatcher(new WI.PageObserver);
     InspectorBackend.registerConsoleDispatcher(new WI.ConsoleObserver);
@@ -71,13 +72,53 @@ WI.loaded = function()
     WI.settings.showShadowDOM.value = true;
 
     // Targets.
-    WI.mainTarget = new WI.MainTarget;
-    WI.mainTarget.initialize();
-    WI.pageTarget = WI.sharedApp.debuggableType === WI.DebuggableType.Web ? WI.mainTarget : null;
+    WI.backendTarget = null;
+    WI.pageTarget = null;
 
-    // Post-target initialization.
-    WI.targetManager.initializeMainTarget();
+    // Tests directly connect to a page target.
+    WI.targetManager.createDirectBackendTarget();
+};
+
+WI.initializeBackendTarget = function(target)
+{
+    WI.backendTarget = target;
+
+    WI.resetMainExecutionContext();
+};
+
+WI.initializePageTarget = function(target)
+{
+    WI.pageTarget = target;
+
+    WI.redirectGlobalAgentsToConnection(WI.pageTarget.connection);
+
+    WI.resetMainExecutionContext();
+};
+
+WI.transitionPageTarget = function(target)
+{
+    console.error("WI.transitionPageTarget should not be reached in tests.");
+};
+
+WI.terminatePageTarget = function(target)
+{
+    console.error("WI.terminatePageTarget should not be reached in tests.");
+};
+
+WI.resetMainExecutionContext = function()
+{
+    console.assert(WI.mainTarget.executionContext);
+
     WI.runtimeManager.activeExecutionContext = WI.mainTarget.executionContext;
+};
+
+WI.redirectGlobalAgentsToConnection = function(connection)
+{
+    // This makes global window.FooAgent dispatch to the active page target.
+    for (let [domain, agent] of Object.entries(InspectorBackend._agents)) {
+        if (domain !== "Target")
+            agent.connection = connection;
+    }
 };
 
 WI.contentLoaded = function()
@@ -102,6 +143,11 @@ WI.performOneTimeFrontendInitializationsUsingTarget = function(target)
         WI.CSSCompletions.initializeCSSCompletions(target);
     }
 };
+
+Object.defineProperty(WI, "mainTarget",
+{
+    get() { return WI.pageTarget || WI.backendTarget; }
+});
 
 Object.defineProperty(WI, "targets",
 {

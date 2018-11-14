@@ -58,7 +58,6 @@ public:
 private:
     Page& m_page;
     String m_nameOverride;
-    bool m_forcedDeveloperExtrasEnabled { false };
 };
 
 } // namespace WebCore

@@ -225,4 +225,5 @@ WI.Notification = {
     ExtraDomainsActivated: "extra-domains-activated",
     DebugUIEnabledDidChange: "debug-ui-enabled-did-change",
     VisibilityStateDidChange: "visibility-state-did-change",
+    TransitionPageTarget: "transition-page-target",
 };

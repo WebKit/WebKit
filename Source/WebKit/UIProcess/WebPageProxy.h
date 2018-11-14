@@ -244,7 +244,9 @@ class WebKeyboardEvent;
 class WebURLSchemeHandler;
 class WebMouseEvent;
 class WebOpenPanelResultListenerProxy;
+class WebPageDebuggable;
 class WebPageGroup;
+class WebPageInspectorController;
 class WebProcessProxy;
 class WebUserContentControllerProxy;
 class WebWheelEvent;
@@ -384,11 +386,24 @@ public:
     bool isControlledByAutomation() const { return m_controlledByAutomation; }
     void setControlledByAutomation(bool);
 
+    WebPageInspectorController& inspectorController() { return *m_inspectorController; }
+
+#if PLATFORM(IOS_FAMILY)
+    void showInspectorIndication();
+    void hideInspectorIndication();
+#endif
+
+    void createInspectorTarget(const String& targetId, Inspector::InspectorTargetType);
+    void destroyInspectorTarget(const String& targetId);
+    void sendMessageToInspectorFrontend(const String& targetId, const String& message);
+
 #if ENABLE(REMOTE_INSPECTOR)
-    bool allowsRemoteInspection() const { return m_allowsRemoteInspection; }
+    void setIndicating(bool);
+    bool allowsRemoteInspection() const;
     void setAllowsRemoteInspection(bool);
-    String remoteInspectionNameOverride() const { return m_remoteInspectionNameOverride; }
+    String remoteInspectionNameOverride() const;
     void setRemoteInspectionNameOverride(const String&);
+    void remoteInspectorInformationDidChange();
 #endif
 
 #if ENABLE(FULLSCREEN_API)
@@ -1738,9 +1753,6 @@ private:
     void showInspectorHighlight(const WebCore::Highlight&);
     void hideInspectorHighlight();
 
-    void showInspectorIndication();
-    void hideInspectorIndication();
-
     void enableInspectorNodeSearch();
     void disableInspectorNodeSearch();
     void assistedNodeInformationCallback(const AssistedNodeInformation&, CallbackID);
@@ -1827,6 +1839,9 @@ private:
     void viewIsBecomingVisible();
 
     void stopAllURLSchemeTasks();
+
+    void clearInspectorTargets();
+    void createInspectorTargets();
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     void registerAttachmentIdentifierFromData(const String&, const String& contentType, const String& preferredFileName, const IPC::DataReference&);
@@ -2098,10 +2113,6 @@ private:
 
     bool m_controlledByAutomation { false };
 
-#if ENABLE(REMOTE_INSPECTOR)
-    bool m_allowsRemoteInspection { true };
-    String m_remoteInspectionNameOverride;
-#endif
     unsigned m_inspectorFrontendCount { 0 };
 
 #if PLATFORM(COCOA)
@@ -2249,7 +2260,12 @@ private:
 #if ENABLE(ATTACHMENT_ELEMENT)
     HashMap<String, Ref<API::Attachment>> m_attachmentIdentifierToAttachmentMap;
 #endif
-        
+
+    const std::unique_ptr<WebPageInspectorController> m_inspectorController;
+#if ENABLE(REMOTE_INSPECTOR)
+    const std::unique_ptr<WebPageDebuggable> m_inspectorDebuggable;
+#endif
+
     std::optional<SpellDocumentTag> m_spellDocumentTag;
 
     std::optional<MonotonicTime> m_pageLoadStart;

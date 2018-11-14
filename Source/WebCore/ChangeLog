@@ -1,3 +1,33 @@
+2018-11-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Keep Web Inspector window alive across process swaps (PSON) (Remote Inspector)
+        https://bugs.webkit.org/show_bug.cgi?id=191494
+        <rdar://problem/45469854>
+
+        Reviewed by Devin Rousso.
+
+        * inspector/InspectorClient.h:
+        (WebCore::InspectorClient::allowRemoteInspectionToPageDirectly const):
+        Provide a hook so that a client may wish to allow direct remote inspection of the Page.
+        This is used by WebKitLegacy only.
+
+        * page/Page.cpp:
+        (Page::Page):
+        Only enable the PageDebuggable if the client wishes remote inspection of the Page directly.
+        This is used by WebKitLegacy only.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::connectFrontend):
+        * inspector/InspectorController.h:
+        * page/PageDebuggable.cpp:
+        (WebCore::PageDebuggable::connect):
+        (WebCore::PageDebuggable::disconnect):
+        * page/PageDebuggable.h:
+        When a frontend connects, always enable the developer extras for the Page.
+        This is pretty much only for the remote path, which allows inspection if developer
+        extras were not already enabled (iOS). This simplifies the logic, and toggling
+        developer extras after it was already enabled is not really important.
+
 2018-11-14  Per Arne Vollan  <pvollan@apple.com>
 
         REGRESSION (WEBPROCESS_WINDOWSERVER_BLOCKING): requestAnimationFrame Stops Completing

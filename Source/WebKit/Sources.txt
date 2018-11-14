@@ -227,6 +227,7 @@ UIProcess/DrawingAreaProxy.cpp
 UIProcess/FrameLoadState.cpp
 UIProcess/GeolocationPermissionRequestManagerProxy.cpp
 UIProcess/GeolocationPermissionRequestProxy.cpp
+UIProcess/InspectorTargetProxy.cpp
 UIProcess/PageLoadState.cpp
 UIProcess/DeviceIdHashSaltStorage.cpp
 UIProcess/ProcessAssertion.cpp
@@ -268,9 +269,12 @@ UIProcess/WebInspectorProxy.cpp
 UIProcess/WebInspectorUtilities.cpp
 UIProcess/WebNavigationState.cpp
 UIProcess/WebOpenPanelResultListenerProxy.cpp
+UIProcess/WebPageDebuggable.cpp
 UIProcess/WebPageDiagnosticLoggingClient.cpp
 UIProcess/WebPageGroup.cpp
 UIProcess/WebPageInjectedBundleClient.cpp
+UIProcess/WebPageInspectorController.cpp
+UIProcess/WebPageInspectorTargetAgent.cpp
 UIProcess/WebPageProxy.cpp
 UIProcess/WebPasteboardProxy.cpp
 UIProcess/WebPreferences.cpp
@@ -542,6 +546,9 @@ WebProcess/WebPage/WebInspectorUI.cpp
 WebProcess/WebPage/WebOpenPanelResultListener.cpp
 WebProcess/WebPage/WebPage.cpp @no-unify
 WebProcess/WebPage/WebPageGroupProxy.cpp
+WebProcess/WebPage/WebPageInspectorTarget.cpp
+WebProcess/WebPage/WebPageInspectorTargetController.cpp
+WebProcess/WebPage/WebPageInspectorTargetFrontendChannel.cpp
 WebProcess/WebPage/WebPageOverlay.cpp
 WebProcess/WebPage/WebURLSchemeHandlerProxy.cpp
 WebProcess/WebPage/WebURLSchemeTaskProxy.cpp

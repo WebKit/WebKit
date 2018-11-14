@@ -2117,11 +2117,6 @@ Ref<WebProcessProxy> WebProcessPool::processForNavigationInternal(WebPageProxy& 
         return page.process();
     }
 
-    if (page.inspectorFrontendCount() > 0) {
-        reason = "A Web Inspector frontend is connected"_s;
-        return page.process();
-    }
-
     if (m_automationSession) {
         reason = "An automation session is active"_s;
         return page.process();

@@ -137,8 +137,9 @@ WI.settings = {
     // DebugUI
     autoLogProtocolMessages: new WI.Setting("auto-collect-protocol-messages", false),
     autoLogTimeStats: new WI.Setting("auto-collect-time-stats", false),
-    enableUncaughtExceptionReporter: new WI.Setting("enable-uncaught-exception-reporter", true),
     enableLayoutFlashing: new WI.Setting("enable-layout-flashing", false),
+    enableUncaughtExceptionReporter: new WI.Setting("enable-uncaught-exception-reporter", true),
+    filterMultiplexingBackendInspectorProtocolMessages: new WI.Setting("filter-multiplexing-backend-inspector-protocol-messages", true),
     layoutDirection: new WI.Setting("layout-direction-override", "system"),
     pauseForInternalScripts: new WI.Setting("pause-for-internal-scripts", false),
 };

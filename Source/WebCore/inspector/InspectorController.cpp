@@ -259,6 +259,9 @@ void InspectorController::connectFrontend(Inspector::FrontendChannel* frontendCh
     ASSERT_ARG(frontendChannel, frontendChannel);
     ASSERT(m_inspectorClient);
 
+    // If a frontend has connected enable the developer extras and keep them enabled.
+    m_page.settings().setDeveloperExtrasEnabled(true);
+
     createLazyAgents();
 
     bool connectedFirstFrontend = !m_frontendRouter->hasFrontends();
@@ -277,7 +280,7 @@ void InspectorController::connectFrontend(Inspector::FrontendChannel* frontendCh
     m_inspectorClient->frontendCountChanged(m_frontendRouter->frontendCount());
 
 #if ENABLE(REMOTE_INSPECTOR)
-    if (!m_frontendRouter->hasRemoteFrontend())
+    if (hasLocalFrontend())
         m_page.remoteInspectorInformationDidChange();
 #endif
 }
@@ -307,7 +310,7 @@ void InspectorController::disconnectFrontend(FrontendChannel* frontendChannel)
     m_inspectorClient->frontendCountChanged(m_frontendRouter->frontendCount());
 
 #if ENABLE(REMOTE_INSPECTOR)
-    if (!m_frontendRouter->hasFrontends())
+    if (disconnectedLastFrontend)
         m_page.remoteInspectorInformationDidChange();
 #endif
 }
@@ -351,7 +354,7 @@ void InspectorController::disconnectAllFrontends()
 
 void InspectorController::show()
 {
-    ASSERT(!m_frontendRouter->hasRemoteFrontend());
+    ASSERT(!hasRemoteFrontend());
 
     if (!enabled())
         return;

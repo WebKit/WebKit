@@ -183,17 +183,13 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
         this._callStackTreeOutline = this.createContentTreeOutline(suppressFiltering);
         this._callStackTreeOutline.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._treeSelectionDidChange, this);
 
-        this._mainTargetTreeElement = new WI.ThreadTreeElement(WI.mainTarget);
-        this._callStackTreeOutline.appendChild(this._mainTargetTreeElement);
-
-        this._updateCallStackTreeOutline();
-
         this._callStackRow = new WI.DetailsSectionRow;
         this._callStackRow.element.appendChild(this._callStackTreeOutline.element);
 
         this._callStackGroup = new WI.DetailsSectionGroup([this._callStackRow]);
         this._callStackSection = new WI.DetailsSection("call-stack", WI.UIString("Call Stack"), [this._callStackGroup]);
 
+        this._mainTargetTreeElement = null;
         this._activeCallFrameTreeElement = null;
 
         this._pauseReasonTreeOutline = null;
@@ -215,10 +211,14 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
         if (InspectorBackend.domains.Debugger.setPauseOnAssertions && WI.settings.showAssertionFailuresBreakpoint.value)
             WI.debuggerManager.addBreakpoint(WI.debuggerManager.assertionFailuresBreakpoint);
 
+        for (let target of WI.targets)
+            this._addTarget(target);
+        this._updateCallStackTreeOutline();
+
         if (WI.networkManager.mainFrame)
             this._addResourcesRecursivelyForFrame(WI.networkManager.mainFrame);
 
-        for (var script of WI.debuggerManager.knownNonResourceScripts)
+        for (let script of WI.debuggerManager.knownNonResourceScripts)
             this._addScript(script);
 
         if (WI.domDebuggerManager.supported) {
@@ -732,9 +732,17 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
 
     _targetAdded(event)
     {
-        let target = event.data.target;
+        this._addTarget(event.data.target);
+    }
+
+    _addTarget(target)
+    {
         let treeElement = new WI.ThreadTreeElement(target);
         this._callStackTreeOutline.appendChild(treeElement);
+
+        // FIXME: When WI.mainTarget changes?
+        if (target === WI.mainTarget)
+            this._mainTargetTreeElement = treeElement;
 
         this._updateCallStackTreeOutline();
     }
@@ -750,9 +758,10 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
 
     _updateCallStackTreeOutline()
     {
-        let singleThreadShowing = WI.targets.size === 1;
+        let singleThreadShowing = WI.targets.length <= 1;
         this._callStackTreeOutline.element.classList.toggle("single-thread", singleThreadShowing);
-        this._mainTargetTreeElement.selectable = !singleThreadShowing;
+        if (this._mainTargetTreeElement)
+            this._mainTargetTreeElement.selectable = !singleThreadShowing;
     }
 
     _handleDebuggerObjectDisplayLocationDidChange(event)

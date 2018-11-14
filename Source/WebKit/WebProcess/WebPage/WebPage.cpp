@@ -104,6 +104,7 @@
 #include "WebOpenPanelResultListener.h"
 #include "WebPageCreationParameters.h"
 #include "WebPageGroupProxy.h"
+#include "WebPageInspectorTargetController.h"
 #include "WebPageMessages.h"
 #include "WebPageOverlay.h"
 #include "WebPageProxyMessages.h"
@@ -371,6 +372,7 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
     , m_resourceLoadClient(std::make_unique<API::InjectedBundle::ResourceLoadClient>())
     , m_uiClient(std::make_unique<API::InjectedBundle::PageUIClient>())
     , m_findController(makeUniqueRef<FindController>(this))
+    , m_inspectorTargetController(std::make_unique<WebPageInspectorTargetController>(*this))
     , m_userContentController(WebUserContentController::getOrCreate(parameters.userContentControllerID))
 #if ENABLE(GEOLOCATION)
     , m_geolocationPermissionRequestManager(makeUniqueRef<GeolocationPermissionRequestManager>(*this))
@@ -489,11 +491,6 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
 #endif
 
     m_page->setControlledByAutomation(parameters.controlledByAutomation);
-
-#if ENABLE(REMOTE_INSPECTOR)
-    m_page->setRemoteInspectionAllowed(parameters.allowsRemoteInspection);
-    m_page->setRemoteInspectionNameOverride(parameters.remoteInspectionNameOverride);
-#endif
 
     m_page->setCanStartMedia(false);
     m_mayStartMediaWhenInWindow = parameters.mayStartMediaWhenInWindow;
@@ -2780,6 +2777,21 @@ void WebPage::setControlledByAutomation(bool controlled)
     m_page->setControlledByAutomation(controlled);
 }
 
+void WebPage::connectInspector(const String& targetId)
+{
+    m_inspectorTargetController->connectInspector(targetId);
+}
+
+void WebPage::disconnectInspector(const String& targetId)
+{
+    m_inspectorTargetController->disconnectInspector(targetId);
+}
+
+void WebPage::sendMessageToTargetBackend(const String& targetId, const String& message)
+{
+    m_inspectorTargetController->sendMessageToTargetBackend(targetId, message);
+}
+
 void WebPage::insertNewlineInQuotedContent()
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
@@ -2789,14 +2801,9 @@ void WebPage::insertNewlineInQuotedContent()
 }
 
 #if ENABLE(REMOTE_INSPECTOR)
-void WebPage::setAllowsRemoteInspection(bool allow)
+void WebPage::setIndicating(bool indicating)
 {
-    m_page->setRemoteInspectionAllowed(allow);
-}
-
-void WebPage::setRemoteInspectionNameOverride(const String& name)
-{
-    m_page->setRemoteInspectionNameOverride(name);
+    m_page->inspectorController().setIndicating(indicating);
 }
 #endif
 

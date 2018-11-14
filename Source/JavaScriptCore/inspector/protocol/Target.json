@@ -1,0 +1,50 @@
+{
+    "domain": "Target",
+    "availability": ["web"],
+    "types": [
+        {
+            "id": "TargetInfo",
+            "type": "object",
+            "description": "Description of a target.",
+            "properties": [
+                { "name": "targetId", "type": "string", "description": "Unique identifier for the target." },
+                { "name": "type", "type": "string", "enum": ["javascript", "page", "worker", "serviceworker"] }
+            ]
+        }
+    ],
+    "commands": [
+        {
+            "name": "exists",
+            "description": "FIXME: Remove this when the local inspector has switched over to the modern path."
+        },
+        {
+            "name": "sendMessageToTarget",
+            "description": "Send an Inspector Protocol message to be dispatched to a Target's agents.",
+            "parameters": [
+                { "name": "targetId", "type": "string" },
+                { "name": "message", "type": "string", "description": "JSON Inspector Protocol message (command) to be dispatched on the backend." }
+            ]
+        }
+    ],
+    "events": [
+        {
+            "name": "targetCreated",
+            "parameters": [
+                { "name": "targetInfo", "$ref": "TargetInfo" }
+            ]
+        },
+        {
+            "name": "targetDestroyed",
+            "parameters": [
+                { "name": "targetId", "type": "string" }
+            ]
+        },
+        {
+            "name": "dispatchMessageFromTarget",
+            "parameters": [
+                { "name": "targetId", "type": "string" },
+                { "name": "message", "type": "string", "description": "JSON Inspector Protocol message (response or event) to be dispatched on the frontend." }
+            ]
+        }
+    ]
+}

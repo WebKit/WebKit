@@ -32,7 +32,8 @@ WI.QuickConsole = class QuickConsole extends WI.View
         this._toggleOrFocusKeyboardShortcut = new WI.KeyboardShortcut(null, WI.KeyboardShortcut.Key.Escape, this._toggleOrFocus.bind(this));
         this._toggleOrFocusKeyboardShortcut.implicitlyPreventsDefault = false;
 
-        this._mainExecutionContextPathComponent = this._createExecutionContextPathComponent(WI.mainTarget.executionContext);
+        this._mainExecutionContextPathComponent = null;
+        this.initializeMainExecutionContextPathComponent();
 
         this._otherExecutionContextPathComponents = [];
         this._frameToPathComponent = new Map;
@@ -108,6 +109,14 @@ WI.QuickConsole = class QuickConsole extends WI.View
         WI.TabBrowser.removeEventListener(null, null, this);
 
         super.closed();
+    }
+
+    initializeMainExecutionContextPathComponent()
+    {
+        if (!WI.mainTarget || !WI.mainTarget.executionContext)
+            return;
+
+        this._mainExecutionContextPathComponent = this._createExecutionContextPathComponent(WI.mainTarget.executionContext);
     }
 
     // Protected
@@ -309,6 +318,9 @@ WI.QuickConsole = class QuickConsole extends WI.View
     _targetAdded(event)
     {
         let target = event.data.target;
+        if (target.type !== WI.Target.Type.Worker)
+            return;
+
         console.assert(target.type === WI.Target.Type.Worker);
         let preferredName = WI.UIString("Worker \u2014 %s").format(target.displayName);
         let executionContextPathComponent = this._createExecutionContextPathComponent(target.executionContext, preferredName);
@@ -320,6 +332,9 @@ WI.QuickConsole = class QuickConsole extends WI.View
     _targetRemoved(event)
     {
         let target = event.data.target;
+        if (target.type !== WI.Target.Type.Worker)
+            return;
+
         let executionContextPathComponent = this._targetToPathComponent.take(target);
         this._removeOtherExecutionContextPathComponent(executionContextPathComponent);
 

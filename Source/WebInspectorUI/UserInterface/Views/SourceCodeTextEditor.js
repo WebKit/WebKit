@@ -667,13 +667,13 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
 
     _targetAdded(event)
     {
-        if (WI.targets.size === 2)
+        if (WI.targets.length === 2)
             this._reinsertAllThreadIndicators();
     }
 
     _targetRemoved(event)
     {
-        if (WI.targets.size === 1) {
+        if (WI.targets.length === 1) {
             // Back to one thread, remove thread indicators.
             this._reinsertAllThreadIndicators();
             return;
@@ -685,7 +685,7 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
 
     _callFramesDidChange(event)
     {
-        if (WI.targets.size === 1)
+        if (WI.targets.length === 1)
             return;
 
         let target = event.data.target;
@@ -771,7 +771,7 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
         if (!widget)
             return;
 
-        console.assert(WI.targets.size > 1);
+        console.assert(WI.targets.length > 1);
 
         let widgetElement = widget.widgetElement;
         widgetElement.removeChildren();
@@ -1569,8 +1569,9 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
         // Clear other maps.
         this._threadTargetMap.clear();
 
-        if (WI.targets.size > 1) {
-            for (let target of WI.targets)
+        let debuggableTargets = WI.targets;
+        if (debuggableTargets.length > 1) {
+            for (let target of debuggableTargets)
                 this._addThreadIndicatorForTarget(target);
         }
     }

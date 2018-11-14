@@ -47,6 +47,9 @@ WI.DOMManager = class DOMManager extends WI.Object
 
         this._breakpointsForEventListeners = new Map;
 
+        this._hasRequestedDocument = false;
+        this._pendingDocumentRequestCallbacks = null;
+
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
     }
 
@@ -65,6 +68,11 @@ WI.DOMManager = class DOMManager extends WI.Object
         }
     }
 
+    transitionPageTarget()
+    {
+        this._documentUpdated();
+    }
+
     // Public
 
     get eventListenerBreakpoints()
@@ -79,24 +87,31 @@ WI.DOMManager = class DOMManager extends WI.Object
             return;
         }
 
-        if (this._pendingDocumentRequestCallbacks) {
+        if (this._pendingDocumentRequestCallbacks)
             this._pendingDocumentRequestCallbacks.push(callback);
+        else
+            this._pendingDocumentRequestCallbacks = [callback];
+
+        if (this._hasRequestedDocument)
             return;
-        }
 
-        this._pendingDocumentRequestCallbacks = [callback];
+        if (!WI.pageTarget)
+            return;
 
-        if (window.DOMAgent) {
-            DOMAgent.getDocument((error, root) => {
-                if (!error)
-                    this._setDocument(root);
+        if (!WI.pageTarget.DOMAgent)
+            return;
 
-                for (let callback of this._pendingDocumentRequestCallbacks)
-                    callback(this._document);
+        this._hasRequestedDocument = true;
 
-                this._pendingDocumentRequestCallbacks = null;
-            });
-        }
+        WI.pageTarget.DOMAgent.getDocument((error, root) => {
+            if (!error)
+                this._setDocument(root);
+
+            for (let callback of this._pendingDocumentRequestCallbacks)
+                callback(this._document);
+
+            this._pendingDocumentRequestCallbacks = null;
+        });
     }
 
     ensureDocument()
@@ -274,6 +289,10 @@ WI.DOMManager = class DOMManager extends WI.Object
             return;
 
         this._document = newDocument;
+
+        if (!this._document)
+            this._hasRequestedDocument = false;
+
         this.dispatchEventToListeners(WI.DOMManager.Event.DocumentUpdated, {document: this._document});
     }
 

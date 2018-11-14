@@ -101,7 +101,7 @@ public:
     void hideHighlight();
     Node* highlightedNode() const;
 
-    void setIndicating(bool);
+    WEBCORE_EXPORT void setIndicating(bool);
 
     WEBCORE_EXPORT Ref<JSON::ArrayOf<Inspector::Protocol::OverlayTypes::NodeHighlightData>> buildObjectForHighlightedNodes() const;
 

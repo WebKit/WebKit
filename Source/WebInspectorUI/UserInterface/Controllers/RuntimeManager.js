@@ -68,6 +68,11 @@ WI.RuntimeManager = class RuntimeManager extends WI.Object
 
     evaluateInInspectedWindow(expression, options, callback)
     {
+        if (!this._activeExecutionContext) {
+            callback(null, false);
+            return;
+        }
+
         let {objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, generatePreview, saveResult, sourceURLAppender} = options;
 
         includeCommandLineAPI = includeCommandLineAPI || false;

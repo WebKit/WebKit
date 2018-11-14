@@ -23,7 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// This function is invoked after the inspector has loaded.
+WI.isEngineeringBuild = true;
+
+// This function is invoked after the inspector has loaded and has a backend target.
 WI.runBootstrapOperations = function() {
     WI.showDebugUISetting = new WI.Setting("show-debug-ui", false);
 

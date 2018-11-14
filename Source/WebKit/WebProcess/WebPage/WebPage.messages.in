@@ -111,9 +111,12 @@ messages -> WebPage LegacyReceiver {
 
     SetControlledByAutomation(bool controlled)
 
+    ConnectInspector(String targetId)
+    DisconnectInspector(String targetId)
+    SendMessageToTargetBackend(String targetId, String message)
+
 #if ENABLE(REMOTE_INSPECTOR)
-    SetAllowsRemoteInspection(bool allow)
-    SetRemoteInspectionNameOverride(String name)
+    SetIndicating(bool indicating);
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)

@@ -257,6 +257,7 @@ Document any additional information that might be useful in resolving the proble
         <dd><a class="bypass-event-blocking" id="dismiss-error-sheet">Click to close this view</a> and return
         to the Web Inspector without reloading. However, some things might not work without reloading if the error corrupted the Inspector's internal state.</dd>`;
 
+    // FIXME: Reload Web Inspector does not work with MultiplexingBackendTarget.
     let sheetElement = window.__sheetElement = document.createElement("div");
     sheetElement.classList.add("sheet-container");
     sheetElement.innerHTML = `<div class="uncaught-exception-sheet">

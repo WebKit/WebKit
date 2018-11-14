@@ -38,6 +38,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         this._webSocketIdentifierToURL = new Map;
 
         this._waitingForMainFrameResourceTreePayload = true;
+        this._transitioningPageTarget = false;
 
         this._sourceMapURLMap = new Map;
         this._downloadingSourceMaps = new Set;
@@ -68,6 +69,12 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
         if (target.type === WI.Target.Type.Worker)
             this.adoptOrphanedResourcesForTarget(target);
+    }
+
+    transitionPageTarget()
+    {
+        this._transitioningPageTarget = true;
+        this._waitingForMainFrameResourceTreePayload = true;
     }
 
     // Public
@@ -562,13 +569,14 @@ WI.NetworkManager = class NetworkManager extends WI.Object
     {
         // Called from WI.RuntimeObserver.
 
-        var frame = this.frameForIdentifier(contextPayload.frameId);
+        let frame = this.frameForIdentifier(contextPayload.frameId);
         console.assert(frame);
         if (!frame)
             return;
 
-        var displayName = contextPayload.name || frame.mainResource.displayName;
-        var executionContext = new WI.ExecutionContext(WI.mainTarget, contextPayload.id, displayName, contextPayload.isPageContext, frame);
+        let displayName = contextPayload.name || frame.mainResource.displayName;
+        let target = frame.mainResource.target;
+        let executionContext = new WI.ExecutionContext(target, contextPayload.id, displayName, contextPayload.isPageContext, frame);
         frame.addExecutionContext(executionContext);
     }
 
@@ -779,6 +787,14 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
         if (this._mainFrame !== oldMainFrame)
             this._mainFrameDidChange(oldMainFrame);
+
+        // Emulate a main resource change within this page even though we are swapping out main frames.
+        // This is because many managers listen only for main resource change events to perform work,
+        // but they don't listen for main frame changes.
+        if (this._transitioningPageTarget) {
+            this._transitioningPageTarget = false;
+            this._mainFrame._dispatchMainResourceDidChangeEvent(oldMainFrame.mainResource);
+        }
     }
 
     _createFrame(payload)

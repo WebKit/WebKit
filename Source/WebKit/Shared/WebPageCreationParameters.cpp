@@ -74,10 +74,6 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << mimeTypesWithCustomContentProviders;
     encoder << controlledByAutomation;
 
-#if ENABLE(REMOTE_INSPECTOR)
-    encoder << allowsRemoteInspection;
-    encoder << remoteInspectionNameOverride;
-#endif
 #if PLATFORM(MAC)
     encoder << colorSpace;
     encoder << useSystemAppearance;
@@ -230,13 +226,6 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
         return std::nullopt;
     if (!decoder.decode(parameters.controlledByAutomation))
         return std::nullopt;
-
-#if ENABLE(REMOTE_INSPECTOR)
-    if (!decoder.decode(parameters.allowsRemoteInspection))
-        return std::nullopt;
-    if (!decoder.decode(parameters.remoteInspectionNameOverride))
-        return std::nullopt;
-#endif
 
 #if PLATFORM(MAC)
     if (!decoder.decode(parameters.colorSpace))

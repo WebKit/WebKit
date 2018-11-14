@@ -157,13 +157,13 @@ InspectorBackendClass = class InspectorBackendClass
 
     dispatch(message)
     {
-        InspectorBackend.mainConnection.dispatch(message);
+        InspectorBackend.backendConnection.dispatch(message);
     }
 
     runAfterPendingDispatches(script)
     {
         // FIXME: Should this respect pending dispatches in all connections?
-        InspectorBackend.mainConnection.runAfterPendingDispatches(script);
+        InspectorBackend.backendConnection.runAfterPendingDispatches(script);
     }
 
     activateDomain(domainName, activationDebuggableTypes)
@@ -220,7 +220,7 @@ InspectorBackend.Agent = class InspectorBackendAgent
         this._domainName = domainName;
 
         // Default connection is the main connection.
-        this._connection = InspectorBackend.mainConnection;
+        this._connection = InspectorBackend.backendConnection;
         this._dispatcher = null;
 
         // Agents are always created, but are only useable after they are activated.

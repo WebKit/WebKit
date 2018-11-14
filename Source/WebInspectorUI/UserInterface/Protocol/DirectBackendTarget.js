@@ -23,21 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.MainTarget = class MainTarget extends WI.Target
+// This class is used when connecting directly to a single target.
+// The main connection is a direct connection to a target.
+
+WI.DirectBackendTarget = class DirectBackendTarget extends WI.Target
 {
-    constructor(connection)
+    constructor()
     {
-        let {type, displayName} = MainTarget.mainConnectionInfo();
+        let {type, displayName} = DirectBackendTarget.connectionInfoForDebuggable();
 
-        super("main", displayName, type, InspectorBackend.mainConnection);
+        super("direct", displayName, type, InspectorBackend.backendConnection);
 
-        this._executionContext = new WI.ExecutionContext(this, WI.RuntimeManager.TopLevelExecutionContextIdentifier, displayName, true, null);
+        this._executionContext = new WI.ExecutionContext(this, WI.RuntimeManager.TopLevelContextExecutionIdentifier, displayName, true, null);
         this._mainResource = null;
     }
 
     // Static
 
-    static mainConnectionInfo()
+    static connectionInfoForDebuggable()
     {
         switch (WI.sharedApp.debuggableType) {
         case WI.DebuggableType.JavaScript:
@@ -58,8 +61,8 @@ WI.MainTarget = class MainTarget extends WI.Target
         default:
             console.error("Unexpected debuggable type: ", WI.sharedApp.debuggableType);
             return {
-                type: WI.Target.Type.Page,
-                displayName: WI.UIString("Main"),
+                type: WI.Target.Type.JSContext,
+                displayName: WI.UIString("JavaScript Context"),
             };
         }
     }

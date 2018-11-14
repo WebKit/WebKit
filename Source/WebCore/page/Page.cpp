@@ -60,6 +60,7 @@
 #include "HTMLMediaElement.h"
 #include "HistoryController.h"
 #include "HistoryItem.h"
+#include "InspectorClient.h"
 #include "InspectorController.h"
 #include "InspectorInstrumentation.h"
 #include "LibWebRTCProvider.h"
@@ -294,7 +295,8 @@ Page::Page(PageConfiguration&& pageConfiguration)
 #endif
 
 #if ENABLE(REMOTE_INSPECTOR)
-    m_inspectorDebuggable->init();
+    if (m_inspectorController->inspectorClient() && m_inspectorController->inspectorClient()->allowRemoteInspectionToPageDirectly())
+        m_inspectorDebuggable->init();
 #endif
 
 #if PLATFORM(COCOA)

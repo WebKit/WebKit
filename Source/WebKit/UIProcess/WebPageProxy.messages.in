@@ -421,6 +421,10 @@ messages -> WebPageProxy {
 
     DidChangeInspectorFrontendCount(uint64_t count)
 
+    CreateInspectorTarget(String targetId, enum:uint8_t Inspector::InspectorTargetType type)
+    DestroyInspectorTarget(String targetId)
+    SendMessageToInspectorFrontend(String targetId, String message)
+
     # Search popup menus
     SaveRecentSearches(String name, Vector<WebCore::RecentSearch> searchItems)
     LoadRecentSearches(String name) -> (Vector<WebCore::RecentSearch> result) LegacySync

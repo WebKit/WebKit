@@ -205,27 +205,28 @@ class WebContextMenuItemData;
 class WebDataListSuggestionPicker;
 class WebDocumentLoader;
 class WebEvent;
+class PlaybackSessionManager;
+class VideoFullscreenManager;
 class WebFrame;
 class WebFullScreenManager;
+class WebGestureEvent;
 class WebImage;
 class WebInspector;
 class WebInspectorClient;
 class WebInspectorUI;
-class WebGestureEvent;
 class WebKeyboardEvent;
-class WebURLSchemeHandlerProxy;
 class WebMouseEvent;
 class WebNotificationClient;
 class WebOpenPanelResultListener;
 class WebPageGroupProxy;
+class WebPageInspectorTargetController;
 class WebPageOverlay;
-class PlaybackSessionManager;
 class WebPopupMenu;
+class WebTouchEvent;
+class WebURLSchemeHandlerProxy;
 class WebUndoStep;
 class WebUserContentController;
-class VideoFullscreenManager;
 class WebWheelEvent;
-class WebTouchEvent;
 class RemoteLayerTreeTransaction;
 
 enum class DeviceAccessState : uint8_t;
@@ -1041,6 +1042,10 @@ public:
     bool isControlledByAutomation() const;
     void setControlledByAutomation(bool);
 
+    void connectInspector(const String& targetId);
+    void disconnectInspector(const String& targetId);
+    void sendMessageToTargetBackend(const String& targetId, const String& message);
+
     void insertNewlineInQuotedContent();
 
 #if USE(OS_STATE)
@@ -1222,8 +1227,7 @@ private:
     void requestFontAttributesAtSelectionStart(CallbackID);
 
 #if ENABLE(REMOTE_INSPECTOR)
-    void setAllowsRemoteInspection(bool);
-    void setRemoteInspectionNameOverride(const String&);
+    void setIndicating(bool);
 #endif
 
     void setDrawsBackground(bool);
@@ -1558,6 +1562,7 @@ private:
     RefPtr<WebInspector> m_inspector;
     RefPtr<WebInspectorUI> m_inspectorUI;
     RefPtr<RemoteWebInspectorUI> m_remoteInspectorUI;
+    std::unique_ptr<WebPageInspectorTargetController> m_inspectorTargetController;
 
 #if (PLATFORM(IOS_FAMILY) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     RefPtr<PlaybackSessionManager> m_playbackSessionManager;

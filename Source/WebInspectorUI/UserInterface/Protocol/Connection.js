@@ -30,11 +30,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+InspectorBackend.globalSequenceId = 1;
+
 InspectorBackend.Connection = class InspectorBackendConnection
 {
     constructor()
     {
-        this._lastSequenceId = 1;
         this._pendingResponses = new Map;
         this._agents = {};
         this._deferredScripts = [];
@@ -100,7 +101,7 @@ InspectorBackend.Connection = class InspectorBackendConnection
         }
 
         let sequenceId = messageObject["id"];
-        console.assert(this._pendingResponses.has(sequenceId), sequenceId, this._pendingResponses);
+        console.assert(this._pendingResponses.has(sequenceId), sequenceId, this._target ? this._target.identifier : "(unknown)", this._pendingResponses);
 
         let responseData = this._pendingResponses.take(sequenceId) || {};
         let {request, command, callback, promise} = responseData;
@@ -207,7 +208,7 @@ InspectorBackend.Connection = class InspectorBackendConnection
 
     _sendCommandToBackendWithCallback(command, parameters, callback)
     {
-        let sequenceId = this._lastSequenceId++;
+        let sequenceId = InspectorBackend.globalSequenceId++;
 
         let messageObject = {
             "id": sequenceId,
@@ -228,7 +229,7 @@ InspectorBackend.Connection = class InspectorBackendConnection
 
     _sendCommandToBackendExpectingPromise(command, parameters)
     {
-        let sequenceId = this._lastSequenceId++;
+        let sequenceId = InspectorBackend.globalSequenceId++;
 
         let messageObject = {
             "id": sequenceId,
@@ -272,7 +273,7 @@ InspectorBackend.Connection = class InspectorBackendConnection
     }
 };
 
-InspectorBackend.MainConnection = class InspectorBackendMainConnection extends InspectorBackend.Connection
+InspectorBackend.BackendConnection = class InspectorBackendBackendConnection extends InspectorBackend.Connection
 {
     constructor()
     {
@@ -295,10 +296,8 @@ InspectorBackend.WorkerConnection = class InspectorBackendWorkerConnection exten
 
         this._workerId = workerId;
 
-        // Clone agents that will use this connection.
-        for (let domain in InspectorBackend._agents) {
-            let agent = InspectorBackend._agents[domain];
-            let clone = Object.create(InspectorBackend._agents[domain]);
+        for (let [domain, agent] of Object.entries(InspectorBackend._agents)) {
+            let clone = Object.create(agent);
             clone.connection = this;
             if (agent.dispatcher)
                 clone.dispatcher = new agent.dispatcher.constructor;
@@ -312,4 +311,27 @@ InspectorBackend.WorkerConnection = class InspectorBackendWorkerConnection exten
     }
 };
 
-InspectorBackend.mainConnection = new InspectorBackend.MainConnection;
+InspectorBackend.TargetConnection = class InspectorBackendTargetConnection extends InspectorBackend.Connection
+{
+    constructor(targetId)
+    {
+        super();
+
+        this._targetId = targetId;
+
+        for (let [domain, agent] of Object.entries(InspectorBackend._agents)) {
+            let clone = Object.create(agent);
+            clone.connection = this;
+            if (agent.dispatcher)
+                clone.dispatcher = new agent.dispatcher.constructor;
+            this._agents[domain] = clone;
+        }
+    }
+
+    sendMessageToBackend(message)
+    {
+        TargetAgent.sendMessageToTarget(this._targetId, message);
+    }
+};
+
+InspectorBackend.backendConnection = new InspectorBackend.BackendConnection;

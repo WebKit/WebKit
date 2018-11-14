@@ -130,11 +130,6 @@ struct WebPageCreationParameters {
 
     bool controlledByAutomation;
 
-#if ENABLE(REMOTE_INSPECTOR)
-    bool allowsRemoteInspection;
-    String remoteInspectionNameOverride;
-#endif
-
 #if PLATFORM(MAC)
     ColorSpaceData colorSpace;
     bool useSystemAppearance;

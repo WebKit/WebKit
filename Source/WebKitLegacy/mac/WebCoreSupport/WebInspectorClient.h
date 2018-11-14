@@ -48,7 +48,7 @@ class Page;
 
 class WebInspectorFrontendClient;
 
-class WebInspectorClient : public WebCore::InspectorClient, public Inspector::FrontendChannel {
+class WebInspectorClient final : public WebCore::InspectorClient, public Inspector::FrontendChannel {
 public:
     explicit WebInspectorClient(WebView *inspectedWebView);
 
@@ -60,6 +60,10 @@ public:
 
     void highlight() override;
     void hideHighlight() override;
+
+#if ENABLE(REMOTE_INSPECTOR)
+    bool allowRemoteInspectionToPageDirectly() const override { return true; }
+#endif
 
 #if PLATFORM(IOS_FAMILY)
     void showInspectorIndication() override;

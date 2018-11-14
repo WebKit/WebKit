@@ -51,6 +51,8 @@ WI.LayoutDirection = {
 WI.loaded = function()
 {
     // Register observers for events from the InspectorBackend.
+    if (InspectorBackend.registerTargetDispatcher)
+        InspectorBackend.registerTargetDispatcher(new WI.TargetObserver);
     if (InspectorBackend.registerInspectorDispatcher)
         InspectorBackend.registerInspectorDispatcher(new WI.InspectorObserver);
     if (InspectorBackend.registerPageDispatcher)
@@ -148,13 +150,90 @@ WI.loaded = function()
     this._windowKeydownListeners = [];
 
     // Targets.
-    WI.mainTarget = new WI.MainTarget;
-    WI.mainTarget.initialize();
-    WI.pageTarget = WI.sharedApp.debuggableType === WI.DebuggableType.Web ? WI.mainTarget : null;
+    WI.backendTarget = null;
+    WI.pageTarget = null;
 
-    // Post-target initialization.
-    WI.targetManager.initializeMainTarget();
-    WI.runtimeManager.activeExecutionContext = WI.mainTarget.executionContext;
+    if (!window.TargetAgent)
+        WI.targetManager.createDirectBackendTarget();
+    else {
+        // FIXME: Eliminate `TargetAgent.exists` once the local inspector
+        // is configured to use the Multiplexing code path.
+        TargetAgent.exists((error) => {
+            if (error)
+                WI.targetManager.createDirectBackendTarget();
+        });
+    }
+};
+
+WI.initializeBackendTarget = function(target)
+{
+    console.assert(!WI.mainTarget);
+
+    WI.backendTarget = target;
+
+    WI.resetMainExecutionContext();
+};
+
+WI.initializePageTarget = function(target)
+{
+    console.assert(WI.sharedApp.debuggableType === WI.DebuggableType.Web);
+    console.assert(target.type === WI.Target.Type.Page || target instanceof WI.DirectBackendTarget);
+
+    WI.pageTarget = target;
+
+    WI.redirectGlobalAgentsToConnection(WI.pageTarget.connection);
+
+    WI.resetMainExecutionContext();
+};
+
+WI.transitionPageTarget = function(target)
+{
+    console.assert(!WI.pageTarget);
+    console.assert(WI.sharedApp.debuggableType === WI.DebuggableType.Web);
+    console.assert(target.type === WI.Target.Type.Page);
+
+    WI.pageTarget = target;
+
+    WI.redirectGlobalAgentsToConnection(WI.pageTarget.connection);
+
+    WI.resetMainExecutionContext();
+
+    // Actions to transition the page target.
+    this.notifications.dispatchEventToListeners(WI.Notification.TransitionPageTarget);
+    WI.domManager.transitionPageTarget();
+    WI.networkManager.transitionPageTarget();
+};
+
+WI.terminatePageTarget = function(target)
+{
+    console.assert(WI.pageTarget);
+    console.assert(WI.pageTarget === target);
+    console.assert(WI.sharedApp.debuggableType === WI.DebuggableType.Web);
+
+    WI.pageTarget = null;
+
+    WI.redirectGlobalAgentsToConnection(WI.backendConnection);
+};
+
+WI.resetMainExecutionContext = function()
+{
+    if (WI.mainTarget instanceof WI.MultiplexingBackendTarget)
+        return;
+
+    if (WI.mainTarget.executionContext) {
+        WI.runtimeManager.activeExecutionContext = WI.mainTarget.executionContext;
+        if (WI.quickConsole)
+            WI.quickConsole.initializeMainExecutionContextPathComponent();
+    }
+};
+
+WI.redirectGlobalAgentsToConnection = function(connection)
+{
+    // This makes global window.FooAgent dispatch to the active page target.
+    for (let [domain, agent] of Object.entries(InspectorBackend._agents)) {
+        if (domain !== "Target")
+            agent.connection = connection;
+    }
 };
 
 WI.contentLoaded = function()
@@ -475,8 +554,8 @@ WI.contentLoaded = function()
     // Store this on the window in case the WebInspector global gets corrupted.
     window.__frontendCompletedLoad = true;
 
-    if (this.runBootstrapOperations)
-        this.runBootstrapOperations();
+    if (WI.runBootstrapOperations)
+        WI.runBootstrapOperations();
 };
 
 WI.performOneTimeFrontendInitializationsUsingTarget = function(target)
@@ -1505,6 +1584,7 @@ WI._contextMenuRequested = function(event)
         proposedContextMenu = WI.ContextMenu.createFromEvent(event);
         proposedContextMenu.appendSeparator();
         proposedContextMenu.appendItem(WI.unlocalizedString("Reload Web Inspector"), () => {
+            // FIXME: Reload Web Inspector does not work with MultiplexingBackendTarget.
             window.location.reload();
         });
 
@@ -2173,6 +2253,7 @@ WI.setLayoutDirection = function(value)
     if (WI.resolvedLayoutDirection() === WI.LayoutDirection.LTR && this._dockConfiguration === WI.DockConfiguration.Left)
         this._dockRight();
 
+    // FIXME: Reload Web Inspector does not work with MultiplexingBackendTarget.
     window.location.reload();
 };
 
@@ -2675,6 +2756,19 @@ WI.reportInternalError = function(errorOrString, details = {})
         console.error(error);
 };
 
+// Many places assume the "main" target has resources.
+// In the case where the main backend target is a MultiplexingBackendTarget
+// that target has essentially nothing. In that case defer to the page
+// target, since that is the real "main" target the frontend is assuming.
+Object.defineProperty(WI, "mainTarget",
+{
+    get() { return WI.pageTarget || WI.backendTarget; }
+});
+
+// This list of targets are non-Multiplexing targets.
+// So if there is a multiplexing target, and multiple sub-targets
+// this is just the list of sub-targets. Almost no code expects
+// to actually interact with the Multiplexing target.
 Object.defineProperty(WI, "targets",
 {
     get() { return WI.targetManager.targets; }
@@ -2688,6 +2782,8 @@ WI.assumingMainTarget = function()
 {
     return WI.mainTarget;
 };
+
+WI.isEngineeringBuild = false;
 
 // OpenResourceDialog delegate
 

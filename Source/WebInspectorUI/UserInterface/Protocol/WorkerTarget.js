@@ -29,7 +29,8 @@ WI.WorkerTarget = class WorkerTarget extends WI.Target
     {
         super(workerId, name, WI.Target.Type.Worker, connection);
 
-        this._executionContext = new WI.ExecutionContext(this, WI.RuntimeManager.TopLevelContextExecutionIdentifier, this.displayName, false, null);
+        const isPageContext = false;
+        this._executionContext = new WI.ExecutionContext(this, WI.RuntimeManager.TopLevelContextExecutionIdentifier, this.displayName, isPageContext, null);
     }
 
     // Protected (Target)

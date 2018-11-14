@@ -1,3 +1,226 @@
+2018-11-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Keep Web Inspector window alive across process swaps (PSON) (Remote Inspector)
+        https://bugs.webkit.org/show_bug.cgi?id=191494
+        <rdar://problem/45469854>
+
+        Reviewed by Devin Rousso.
+
+        This starts introducing multi-target support into the Web Inspector frontend.
+        Specifically a backend connection that is persistent, but has the ability to
+        connect to and transition between Page targets received through that backend
+        connection.
+
+        This patch introduces the concept of a "Backend Target" which is the single
+        connection that the frontend contains to a backend. The old way of connecting
+        directly to a target is still supported. In that case the frontend constructs
+        a DirectBackendTarget for the debuggable type the frontend was spawns for.
+        However, if the frontend opens and has a TargetAgent, then it is likely
+        connected to a multi-target supporting backend and instead constructs a
+        MultiplexingBackendTarget, and will receive further information about
+        sub-targets to connect to. The only sub-target at the moment is a Page
+        sub-target.
+
+        As part of bringing up multi-target support this adds a few measures to
+        handle situations where the frontend is playing fast and loose with agents.
+        When the frontend does `FooAgent.method` it intends that to be performed
+        on the "main" target being debugged. Likewise when the frontend loops
+        over targets it expects them to be the debuggable targets. This patch
+        profiles a new implementation of `WI.mainTarget` and `WI.targets` to
+        match the assumptions being made by the frontend.
+
+          - In a direct-target world, there is a single target which
+            should be used for global agents and in WI.targets.
+
+          - In a multi-target world, the page target is the one that
+            should be used for global agents and WI.targets is the list
+            of sub-targets (excluding the MultiplexingBackendTarget).
+
+        In a multi-target world, there are now commonly two Targets. The
+        MultiplexingBackendTarget and a PageTarget sub-target. In the future
+        this may include more targets, such as ServiceWorkers, DedicatedWorkers,
+        and perhaps even frames.
+
+        In a multi-target world, the frontend is immediately told about targets
+        as soon as it opens (via Target.targetCreated). In order to support
+        this, frontend initialization happens without a main target being available.
+        So this makes a few small changes to frontend initialization to perform
+        a bit of work once we know what the main target is.
+
+        During a page transition the frontend is told to destroy existing targets
+        and is soon after told about any new page targets (via Target.targetDestroyed
+        and Target.targetCreated). The frontend special cases this page transition.
+        It expects only one Page target to be alive at any time, accessible through
+        WI.pageTarget. When a page transition happens the WI.pageTarget changes, and
+        the frontend performs a bit of work to prepare the UI to handle the transition:
+        `<Manager>.transitionPageTarget` / WI.Notification.TransitionPageTarget.
+        For the most part the UI behaves fine as long once there are main frame
+        change and main resource change events, but those other events allow
+        the frontend to respond to the specific page transition cases.
+
+        * UserInterface/Base/Main.js:
+        (WI.loaded):
+        (WI.initializeBackendTarget):
+        (WI.initializePageTarget):
+        (WI.transitionPageTarget):
+        (WI.terminatePageTarget):
+        (WI.resetMainExecutionContext):
+        (WI.redirectGlobalAgentsToConnection):
+        (WI.contentLoaded):
+        New global functions for target initialization
+        and page transitioning.
+
+        * UserInterface/Test/Test.js:
+        (WI.loaded):
+        (WI.initializeBackendTarget):
+        (WI.initializePageTarget):
+        (WI.transitionPageTarget):
+        (WI.terminatePageTarget):
+        (WI.resetMainExecutionContext):
+        (WI.redirectGlobalAgentsToConnection):
+        New global functions for target initialization.
+        Tests continue to be a direct connection to the Page.
+
+        * UserInterface/Protocol/TargetObserver.js:
+        (WI.TargetObserver.prototype.targetCreated):
+        (WI.TargetObserver.prototype.targetDestroyed):
+        (WI.TargetObserver.prototype.dispatchMessageFromTarget):
+        New observer goes to the manager.
+
+        * UserInterface/Controllers/TargetManager.js:
+        (WI.TargetManager):
+        (WI.TargetManager.prototype.get targets):
+        (WI.TargetManager.prototype.get allTargets):
+        (WI.TargetManager.prototype.targetForIdentifier):
+        (WI.TargetManager.prototype.targetCreated):
+        (WI.TargetManager.prototype.targetDestroyed):
+        (WI.TargetManager.prototype.dispatchMessageFromTarget):
+        (WI.TargetManager.prototype.createMultiplexingBackendTarget):
+        (WI.TargetManager.prototype.createDirectBackendTarget):
+        (WI.TargetManager.prototype._addTarget):
+        (WI.TargetManager.prototype._removeTarget):
+        (WI.TargetManager.prototype._createTarget):
+        (WI.TargetManager.prototype._checkAndHandlePageTargetTransition):
+        (WI.TargetManager.prototype._checkAndHandlePageTargetTermination):
+        (WI.TargetManager.prototype.addTarget): Deleted.
+        (WI.TargetManager.prototype.removeTarget): Deleted.
+        (WI.TargetManager.prototype.initializeMainTarget): Deleted.
+        TargetManager is where we handle creating and destroying targets
+        and their connections. In order to simplify things a bit we make
+        `WI.targets`, which goes through `get targets()` an array instead
+        of a Set. And this includes only the sub-targets.
+
+        * UserInterface/Controllers/WorkerManager.js:
+        (WI.WorkerManager.prototype.workerCreated):
+        (WI.WorkerManager.prototype.workerTerminated):
+        Workers are still special-target-like things that multiplex through
+        WorkerAgent instead of TargetAgent. We'd like to promote these to
+        be full targets in the future.
+
+        * UserInterface/Protocol/DirectBackendTarget.js: Renamed from Source/WebInspectorUI/UserInterface/Protocol/MainTarget.js.
+        (WI.DirectBackendTarget):
+        (WI.DirectBackendTarget.connectionInfoForDebuggable):
+        (WI.DirectBackendTarget.prototype.get mainResource):
+        (WI.DirectBackendTarget.prototype.set mainResource):
+        This is the only "MainTarget" class. It is the backend target for a direct connection.
+
+        * UserInterface/Protocol/MultiplexingBackendTarget.js:
+        (WI.MultiplexingBackendTarget):
+        (WI.MultiplexingBackendTarget.prototype.initialize):
+        (WI.MultiplexingBackendTarget.prototype.get name):
+        (WI.MultiplexingBackendTarget.prototype.get executionContext):
+        (WI.MultiplexingBackendTarget.prototype.get mainResource):
+        This is the new backend target for a multi-target connection.
+        We don't expect it to be treated like other targets, so we don't
+        expect anyone to ask it for resources/executionContext/name info.
+
+        * UserInterface/Controllers/RuntimeManager.js:
+        (WI.TargetManager.prototype.evaluateInInspectedWindow):
+        This can be triggered by watch expressions before any target, and
+        therefore execution context, is available. Just return null, when
+        an execution context is available those clients will try again.
+
+        * UserInterface/Debug/Bootstrap.js:
+        Provide an WI.isEngineeringBuild boolean that can be used for various
+        debugging features.
+
+        * UserInterface/Main.html:
+        * UserInterface/Test.html:
+        New resources.
+
+        * UserInterface/Protocol/InspectorBackend.js:
+        (InspectorBackendClass.prototype.dispatch):
+        (InspectorBackendClass.prototype.runAfterPendingDispatches):
+        (InspectorBackend.Agent):
+        `InspectorBackend.mainConnection` was renamed `InspectorBackend.backendConnection`.
+
+        * UserInterface/Protocol/Connection.js:
+        (InspectorBackend.Connection):
+        (InspectorBackend.Connection.prototype._dispatchResponse):
+        (InspectorBackend.Connection.prototype._sendCommandToBackendWithCallback):
+        (InspectorBackend.Connection.prototype._sendCommandToBackendExpectingPromise):
+        (InspectorBackend.BackendConnection):
+        (InspectorBackend.BackendConnection.prototype.sendMessageToBackend):
+        (InspectorBackend.WorkerConnection):
+        (InspectorBackend.TargetConnection):
+        (InspectorBackend.TargetConnection.sendMessageToBackend):
+        Use a global sequence id to make filtering a bit easier in protocol tracing.
+        TargetConnection is identical to WorkerConnection except it uses TargetAgent
+        instead of WorkerAgent to perform multiplexing.
+
+        * UserInterface/Protocol/JavaScriptContextTarget.js:
+        (WI.JavaScriptContextTarget):
+        * UserInterface/Protocol/PageTarget.js:
+        (WI.PageTarget):
+        (WI.PageTarget.prototype.get displayName):
+        Specialized target types.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WI.DebuggerSidebarPanel):
+        (WI.DebuggerSidebarPanel.prototype._targetAdded):
+        (WI.DebuggerSidebarPanel.prototype._targetRemoved):
+        (WI.DebuggerSidebarPanel.prototype._updateCallStackTreeOutline):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WI.SourceCodeTextEditor.prototype._targetAdded):
+        (WI.SourceCodeTextEditor.prototype._targetRemoved):
+        (WI.SourceCodeTextEditor.prototype._callFramesDidChange):
+        (WI.SourceCodeTextEditor.prototype._updateThreadIndicatorWidget):
+        (WI.SourceCodeTextEditor.prototype._reinsertAllThreadIndicators):
+        * UserInterface/Views/QuickConsole.js:
+        (WI.QuickConsole.prototype.initializeMainExecutionContextPathComponent):
+        (WI.QuickConsole.prototype._targetAdded):
+        (WI.QuickConsole.prototype._targetRemoved):
+        We make target added get called with all targets, including the
+        MultiplexingBackendTarget and PageTargets, both of which would
+        not have happened before. Before it was only WorkerTargets. Make
+        these sites a little more robust for the type of target they expect
+        to be able to handle.
+
+        * UserInterface/Base/Object.js:
+        * UserInterface/Controllers/DOMManager.js:
+        (WI.DOMManager):
+        (WI.DOMManager.prototype.transitionPageTarget):
+        (WI.DOMManager.prototype.requestDocument):
+        (WI.DOMManager.prototype._setDocument):
+        * UserInterface/Controllers/NetworkManager.js:
+        (WI.NetworkManager):
+        (WI.NetworkManager.prototype.transitionPageTarget):
+        (WI.NetworkManager.prototype.executionContextCreated):
+        (WI.NetworkManager.prototype._processMainFrameResourceTreePayload):
+        * UserInterface/Models/DefaultDashboard.js:
+        (WI.DefaultDashboard):
+        (WI.DefaultDashboard.prototype._mainResourceDidChange):
+        (WI.DefaultDashboard.prototype._transitionPageTarget):
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView):
+        (WI.NetworkTableContentView.prototype._mainResourceDidChange):
+        (WI.NetworkTableContentView.prototype._transitionPageTarget):
+        Special case handling when performing a page transition.
+
+        * UserInterface/Views/SettingsTabContentView.js:
+        * UserInterface/Debug/UncaughtExceptionReporter.js:
+        Document reloads are not supported right now.
+
 2018-11-14  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Canvas: don't start with auto-capture enabled

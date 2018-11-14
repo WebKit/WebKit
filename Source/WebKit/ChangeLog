@@ -1,3 +1,152 @@
+2018-11-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Keep Web Inspector window alive across process swaps (PSON) (Remote Inspector)
+        https://bugs.webkit.org/show_bug.cgi?id=191494
+        <rdar://problem/45469854>
+
+        Reviewed by Devin Rousso.
+
+        To support process swapping a slim Web Inspector backend lives in the UIProcess.
+        The Web Inspector frontend connects to it and is told about sub-targets, namely
+        pages, that it can further connect to. When performing a process swap the backend
+        tells the frontend to destroy existing targets and create new targets.
+
+        In the UIProcess the WebPageProxy has a WebPageInspectorController, with a single
+        TargetAgent holding InspectorTargetProxies to targets it knows about. Inspector
+        protocol messages go through this inspector controller and are routed to the
+        WebPage and its WebCore::Page's InspectorController. The WebPageProxy decides
+        when to close and expose new page targets during process swap, or basically
+        any time it reconnects to a WebProcess. So this patch also makes Web Inspector
+        stay alive and reconnect to a page when the inspected page crashes!
+
+        In the WebContentProcess the WebPage has a WebPageInspectorTarget. It also
+        has a WebPageInspectorTargetController in anticipation of further sub-targets
+        within the page (workers, frames) but none exist at the moment. The WebPage
+        relies on the WebPageProxy to know when to expose this target as a debuggable.
+
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        New files.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        Remote inspector state can now stay in the UIProcess and does not need to
+        be passed down to the WebContentProcess.
+
+        * UIProcess/WebPageDebuggable.cpp: Copied from Source/WebCore/page/PageDebuggable.cpp.
+        (WebKit::WebPageDebuggable::WebPageDebuggable):
+        (WebKit::WebPageDebuggable::name const):
+        (WebKit::WebPageDebuggable::url const):
+        (WebKit::WebPageDebuggable::hasLocalDebugger const):
+        (WebKit::WebPageDebuggable::connect):
+        (WebKit::WebPageDebuggable::disconnect):
+        (WebKit::WebPageDebuggable::dispatchMessageFromRemote):
+        (WebKit::WebPageDebuggable::setIndicating):
+        (WebKit::WebPageDebuggable::setNameOverride):
+        * UIProcess/WebPageDebuggable.h: Copied from Source/WebCore/page/PageDebuggable.h.
+        Remote debuggable entry point into the UIProcess for a page.
+        This is pretty much identical to the PageDebuggable in WebCore.
+
+        * Scripts/webkit/messages.py:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::m_resetRecentCrashCountTimer):
+        (WebKit::WebPageProxy::finishAttachingToWebProcess):
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::createInspectorTarget):
+        (WebKit::WebPageProxy::destroyInspectorTarget):
+        (WebKit::WebPageProxy::sendMessageToInspectorFrontend):
+        (WebKit::WebPageProxy::setIndicating):
+        (WebKit::WebPageProxy::allowsRemoteInspection const):
+        (WebKit::WebPageProxy::setAllowsRemoteInspection):
+        (WebKit::WebPageProxy::remoteInspectionNameOverride const):
+        (WebKit::WebPageProxy::setRemoteInspectionNameOverride):
+        (WebKit::WebPageProxy::remoteInspectorInformationDidChange):
+        (WebKit::WebPageProxy::clearInspectorTargets):
+        (WebKit::WebPageProxy::createInspectorTargets):
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        (WebKit::WebPageProxy::didReceiveTitleForFrame):
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::inspectorController):
+        (WebKit::WebPageProxy::allowsRemoteInspection const): Deleted.
+        (WebKit::WebPageProxy::remoteInspectionNameOverride const): Deleted.
+        Own more inspector state in the UIProcess including a debuggable and inspector controller.
+
+        * UIProcess/WebPageInspectorController.h: Added.
+        * UIProcess/WebPageInspectorController.cpp: Added.
+        (WebKit::WebPageInspectorController::WebPageInspectorController):
+        (WebKit::WebPageInspectorController::pageClosed):
+        (WebKit::WebPageInspectorController::hasLocalFrontend const):
+        (WebKit::WebPageInspectorController::hasRemoteFrontend const):
+        (WebKit::WebPageInspectorController::connectFrontend):
+        (WebKit::WebPageInspectorController::disconnectFrontend):
+        (WebKit::WebPageInspectorController::disconnectAllFrontends):
+        (WebKit::WebPageInspectorController::dispatchMessageFromFrontend):
+        (WebKit::WebPageInspectorController::setIndicating):
+        (WebKit::WebPageInspectorController::clearTargets):
+        (WebKit::WebPageInspectorController::createInspectorTarget):
+        (WebKit::WebPageInspectorController::destroyInspectorTarget):
+        (WebKit::WebPageInspectorController::sendMessageToInspectorFrontend):
+        InspectorController with a single TargetAgent in the UIProcess.
+
+        * UIProcess/WebPageInspectorTargetAgent.h:
+        * UIProcess/WebPageInspectorTargetAgent.cpp:
+        (WebKit::WebPageInspectorTargetAgent::WebPageInspectorTargetAgent):
+        (WebKit::WebPageInspectorTargetAgent::frontendChannel):
+        Target agent implementation.
+
+        * UIProcess/InspectorTargetProxy.cpp:
+        (WebKit::InspectorTargetProxy::create):
+        (WebKit::InspectorTargetProxy::InspectorTargetProxy):
+        (WebKit::InspectorTargetProxy::connect):
+        (WebKit::InspectorTargetProxy::disconnect):
+        (WebKit::InspectorTargetProxy::sendMessageToTargetBackend):
+        * UIProcess/InspectorTargetProxy.h:
+        UIProcess proxy for an InspectorTarget in the WebContentProcess.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::processForNavigationInternal):
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_shouldAttachDrawingAreaOnPageTransition):
+        (WebKit::WebPage::connectInspector):
+        (WebKit::WebPage::disconnectInspector):
+        (WebKit::WebPage::sendMessageToTargetBackend):
+        (WebKit::WebPage::setIndicating):
+        (WebKit::WebPage::setAllowsRemoteInspection): Deleted.
+        (WebKit::WebPage::setRemoteInspectionNameOverride): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
+        * WebProcess/WebPage/WebPageInspectorTarget.h:
+        * WebProcess/WebPage/WebPageInspectorTarget.cpp:
+        (WebKit::WebPageInspectorTarget::WebPageInspectorTarget):
+        (WebKit::WebPageInspectorTarget::identifier const):
+        (WebKit::WebPageInspectorTarget::connect):
+        (WebKit::WebPageInspectorTarget::disconnect):
+        (WebKit::WebPageInspectorTarget::sendMessageToTargetBackend):
+        InspectorTarget for this WebPage.
+
+        * WebProcess/WebPage/WebPageInspectorTargetController.cpp: Added.
+        (WebKit::WebPageInspectorTargetController::WebPageInspectorTargetController):
+        (WebKit::WebPageInspectorTargetController::~WebPageInspectorTargetController):
+        (WebKit::WebPageInspectorTargetController::addTarget):
+        (WebKit::WebPageInspectorTargetController::removeTarget):
+        (WebKit::WebPageInspectorTargetController::connectInspector):
+        (WebKit::WebPageInspectorTargetController::disconnectInspector):
+        (WebKit::WebPageInspectorTargetController::sendMessageToTargetBackend):
+        (WebKit::WebPageInspectorTargetController::sendMessageToTargetFrontend):
+        * WebProcess/WebPage/WebPageInspectorTargetController.h:
+        * WebProcess/WebPage/WebPageInspectorTargetFrontendChannel.h:
+        * WebProcess/WebPage/WebPageInspectorTargetFrontendChannel.cpp:
+        (WebKit::WebPageInspectorTargetFrontendChannel::create):
+        (WebKit::WebPageInspectorTargetFrontendChannel::WebPageInspectorTargetFrontendChannel):
+        (WebKit::WebPageInspectorTargetFrontendChannel::sendMessageToFrontend):
+        Preparation for more target managment in the WebContentProcess.
+
 2018-11-14  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI to show a safe browsing warning
