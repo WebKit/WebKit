@@ -202,7 +202,10 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
         let frameCount = parseInt(this._recordingAutoCaptureFrameCountInputElement.value);
         console.assert(!isNaN(frameCount) && frameCount >= 0);
 
-        let enabled = frameCount && !!this._recordingAutoCaptureNavigationItem.checked;
+        if (this._recordingAutoCaptureNavigationItem.checked)
+            frameCount = Math.max(1, frameCount);
+
+        let enabled = frameCount > 0 && !!this._recordingAutoCaptureNavigationItem.checked;
 
         WI.canvasManager.setRecordingAutoCaptureFrameCount(enabled, frameCount);
     }
@@ -221,17 +224,21 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
                 this._recordingAutoCaptureFrameCountInputElement.__cachedFont = computedStyle.font;
             }
 
+            const recordingAutoCaptureInputMargin = 8; // Keep this in sync with `--recording-auto-capture-input-margin`.
+
             context.font = this._recordingAutoCaptureFrameCountInputElement.__cachedFont;
             let textMetrics = context.measureText(this._recordingAutoCaptureFrameCountInputElement.value);
-            this._recordingAutoCaptureFrameCountInputElement.style.setProperty("width", (textMetrics.width + 8) + "px");
+            this._recordingAutoCaptureFrameCountInputElement.style.setProperty("width", (textMetrics.width + recordingAutoCaptureInputMargin) + "px");
         });
 
-        this._recordingAutoCaptureNavigationItem.checked = !!frameCount;
+        return frameCount;
     }
 
     _handleRecordingAutoCaptureInput(event)
     {
-        this._updateRecordingAutoCaptureInputElementSize();
+        let frameCount = this._updateRecordingAutoCaptureInputElementSize();
+        this._recordingAutoCaptureNavigationItem.checked = !!frameCount;
+
         this._setRecordingAutoCaptureFrameCount();
     }
 
