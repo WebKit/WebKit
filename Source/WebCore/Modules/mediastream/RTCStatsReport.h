@@ -217,6 +217,24 @@ public:
         String implementation;
     };
 
+    struct TransportStats : Stats {
+        TransportStats() { type = RTCStatsReport::Type::Transport; }
+
+        std::optional<uint64_t> bytesSent;
+        std::optional<uint64_t> bytesReceived;
+        String rtcpTransportStatsId;
+        String selectedCandidatePairId;
+        String localCertificateId;
+        String remoteCertificateId;
+    };
+
+    struct PeerConnectionStats : Stats {
+        PeerConnectionStats() { type = RTCStatsReport::Type::PeerConnection; }
+
+        std::optional<uint32_t> dataChannelsOpened;
+        std::optional<uint32_t> dataChannelsClosed;
+    };
+
 private:
     RTCStatsReport() = default;
 

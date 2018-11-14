@@ -1,3 +1,15 @@
+2018-11-14  Youenn Fablet  <youenn@apple.com>
+
+        Add support for transport and peerConnection stats
+        https://bugs.webkit.org/show_bug.cgi?id=191592
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/webrtc/RTCPeerConnection-getStats.https-expected.txt:
+        * web-platform-tests/webrtc/RTCRtpReceiver-getStats.https-expected.txt:
+        * web-platform-tests/webrtc/RTCRtpSender-getStats.https-expected.txt:
+        * web-platform-tests/webrtc/getstats-expected.txt:
+
 2018-11-13  Youenn Fablet  <youenn@apple.com>
 
         RTCPeerConnection.getTransceivers is not always exposing all transceivers

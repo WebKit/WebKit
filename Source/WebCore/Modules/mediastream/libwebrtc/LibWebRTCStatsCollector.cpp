@@ -353,6 +353,34 @@ static inline void fillRTCCodecStats(RTCStatsReport::CodecStats& stats, const we
         stats.implementation = fromStdString(*rtcStats.implementation);
 }
 
+static inline void fillRTCTransportStats(RTCStatsReport::TransportStats& stats, const webrtc::RTCTransportStats& rtcStats)
+{
+    fillRTCStats(stats, rtcStats);
+
+    if (rtcStats.bytes_sent.is_defined())
+        stats.bytesSent = *rtcStats.bytes_sent;
+    if (rtcStats.bytes_received.is_defined())
+        stats.bytesReceived = *rtcStats.bytes_received;
+    if (rtcStats.rtcp_transport_stats_id.is_defined())
+        stats.rtcpTransportStatsId = fromStdString(*rtcStats.rtcp_transport_stats_id);
+    if (rtcStats.selected_candidate_pair_id.is_defined())
+        stats.selectedCandidatePairId = fromStdString(*rtcStats.selected_candidate_pair_id);
+    if (rtcStats.local_certificate_id.is_defined())
+        stats.localCertificateId = fromStdString(*rtcStats.local_certificate_id);
+    if (rtcStats.remote_certificate_id.is_defined())
+        stats.remoteCertificateId = fromStdString(*rtcStats.remote_certificate_id);
+}
+
+static inline void fillRTCPeerConnectionStats(RTCStatsReport::PeerConnectionStats& stats, const webrtc::RTCPeerConnectionStats& rtcStats)
+{
+    fillRTCStats(stats, rtcStats);
+
+    if (rtcStats.data_channels_opened.is_defined())
+        stats.dataChannelsOpened = *rtcStats.data_channels_opened;
+    if (rtcStats.data_channels_closed.is_defined())
+        stats.dataChannelsClosed = *rtcStats.data_channels_closed;
+}
+
 void LibWebRTCStatsCollector::OnStatsDelivered(const rtc::scoped_refptr<const webrtc::RTCStatsReport>& rtcReport)
 {
     callOnMainThread([protectedThis = rtc::scoped_refptr<LibWebRTCStatsCollector>(this), rtcReport] {
@@ -395,6 +423,14 @@ void LibWebRTCStatsCollector::OnStatsDelivered(const rtc::scoped_refptr<const we
                 RTCStatsReport::CodecStats stats;
                 fillRTCCodecStats(stats, static_cast<const webrtc::RTCCodecStats&>(rtcStats));
                 report->addStats<IDLDictionary<RTCStatsReport::CodecStats>>(WTFMove(stats));
+            } else if (rtcStats.type() == webrtc::RTCTransportStats::kType) {
+                RTCStatsReport::TransportStats stats;
+                fillRTCTransportStats(stats, static_cast<const webrtc::RTCTransportStats&>(rtcStats));
+                report->addStats<IDLDictionary<RTCStatsReport::TransportStats>>(WTFMove(stats));
+            } else if (rtcStats.type() == webrtc::RTCPeerConnectionStats::kType) {
+                RTCStatsReport::PeerConnectionStats stats;
+                fillRTCPeerConnectionStats(stats, static_cast<const webrtc::RTCPeerConnectionStats&>(rtcStats));
+                report->addStats<IDLDictionary<RTCStatsReport::PeerConnectionStats>>(WTFMove(stats));
             }
         }
     });

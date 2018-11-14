@@ -1,28 +1,28 @@
 
-FAIL Can get stats from a basic WebRTC call. assert_unreached: Error: assert_not_equals: Did not find peer-connection stats got disallowed value null:  Reached unreachable code
+PASS Can get stats from a basic WebRTC call. 
 Retrieved stats info
 
   
 {
-  "RTCCertificate_72:C3:4E:3B:12:BE:99:87:31:C4:16:70:DE:76:18:C3:83:4C:1F:B9:8F:69:B5:5B:94:9D:16:0D:89:2A:2C:DA": {
-    "id": "RTCCertificate_72:C3:4E:3B:12:BE:99:87:31:C4:16:70:DE:76:18:C3:83:4C:1F:B9:8F:69:B5:5B:94:9D:16:0D:89:2A:2C:DA",
-    "timestamp": 1542081514259,
+  "RTCCertificate_E6:B4:F7:7C:4A:9E:86:FB:65:54:55:DE:E7:04:81:CA:A5:FD:21:9F:B2:92:EE:21:EF:C2:44:E7:1D:4E:E8:86": {
+    "id": "RTCCertificate_E6:B4:F7:7C:4A:9E:86:FB:65:54:55:DE:E7:04:81:CA:A5:FD:21:9F:B2:92:EE:21:EF:C2:44:E7:1D:4E:E8:86",
+    "timestamp": 1542138647360.0002,
     "type": "certificate",
-    "base64Certificate": "MIIBFTCBvaADAgECAgkAwIkqz13X/yUwCgYIKoZIzj0EAwIwETEPMA0GA1UEAwwGV2ViUlRDMB4XDTE4MTExMjAzNTgzNFoXDTE4MTIxMzAzNTgzNFowETEPMA0GA1UEAwwGV2ViUlRDMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEF8DRQKRVSaeSE6DYYrunTtelaVLTmQjNX/CcpjaYA4tZPOnxsydILwUCKptAFnXyWGThqnMrHyZn5Oy+m7/3kzAKBggqhkjOPQQDAgNHADBEAiAoOPDE8VAvuMVGM1/rMBUppHYImPXpN6/8GSpTWZncXQIgHTn4Da4sgzsLUrqRE+ZR7LpjHs9W4kj/hi/qvqOIxdE=",
-    "fingerprint": "72:C3:4E:3B:12:BE:99:87:31:C4:16:70:DE:76:18:C3:83:4C:1F:B9:8F:69:B5:5B:94:9D:16:0D:89:2A:2C:DA",
+    "base64Certificate": "MIIBFzCBvaADAgECAgkAmUOKhXabECcwCgYIKoZIzj0EAwIwETEPMA0GA1UEAwwGV2ViUlRDMB4XDTE4MTExMjE5NTA0N1oXDTE4MTIxMzE5NTA0N1owETEPMA0GA1UEAwwGV2ViUlRDMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEpv51bCUk/FtnnFXwLUaHKwVoBX/fjpq0wXV5QuxjLd4GLBJb1nD014bmUlw63Pizl4nRoQBIfyOFAdbW9UUKHzAKBggqhkjOPQQDAgNJADBGAiEAjhJk8wni+BCZZeHqX0nGwANgtIm1ZwAywWaa5+selbICIQCwGDEehbP+MfZ62tfej4avrohy4ykO5xC1+5fL0zmZQQ==",
+    "fingerprint": "E6:B4:F7:7C:4A:9E:86:FB:65:54:55:DE:E7:04:81:CA:A5:FD:21:9F:B2:92:EE:21:EF:C2:44:E7:1D:4E:E8:86",
     "fingerprintAlgorithm": "sha-256"
   },
-  "RTCCertificate_9C:56:95:9E:F9:F9:91:53:5E:89:E7:7C:56:88:68:CF:D3:6D:30:6C:F5:F8:5E:23:18:73:A5:9A:24:0D:E2:EC": {
-    "id": "RTCCertificate_9C:56:95:9E:F9:F9:91:53:5E:89:E7:7C:56:88:68:CF:D3:6D:30:6C:F5:F8:5E:23:18:73:A5:9A:24:0D:E2:EC",
-    "timestamp": 1542081514259,
+  "RTCCertificate_FF:81:96:D2:F0:D3:75:95:AE:08:99:64:8A:95:F3:1F:27:51:38:3E:83:C5:2D:17:1D:41:5B:F5:36:1E:22:AC": {
+    "id": "RTCCertificate_FF:81:96:D2:F0:D3:75:95:AE:08:99:64:8A:95:F3:1F:27:51:38:3E:83:C5:2D:17:1D:41:5B:F5:36:1E:22:AC",
+    "timestamp": 1542138647360.0002,
     "type": "certificate",
-    "base64Certificate": "MIIBFzCBvaADAgECAgkAtnR4OnwgdOEwCgYIKoZIzj0EAwIwETEPMA0GA1UEAwwGV2ViUlRDMB4XDTE4MTExMjAzNTgzNFoXDTE4MTIxMzAzNTgzNFowETEPMA0GA1UEAwwGV2ViUlRDMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEB3PZCOtymnvdfPJEw9T+7CylFh++TqD7o34WQDbVxxctutiz7sSgkUOCC/NGjQOFKaX0wk97AoULq+wdIl5ckTAKBggqhkjOPQQDAgNJADBGAiEAzvr09HhfrgqbiCpGu1hEEzClBG8HV9IVda6Rvt/719YCIQDNABFsUCED1JxDlc7b3610JTqIqUrhXWindK4YlU0GVQ==",
-    "fingerprint": "9C:56:95:9E:F9:F9:91:53:5E:89:E7:7C:56:88:68:CF:D3:6D:30:6C:F5:F8:5E:23:18:73:A5:9A:24:0D:E2:EC",
+    "base64Certificate": "MIIBFjCBvaADAgECAgkA0YyL/axVxyUwCgYIKoZIzj0EAwIwETEPMA0GA1UEAwwGV2ViUlRDMB4XDTE4MTExMjE5NTA0N1oXDTE4MTIxMzE5NTA0N1owETEPMA0GA1UEAwwGV2ViUlRDMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEHUTz7lUs8fxFqSOEMl04JHlyj2PItG98Q6C/W2+vwKlflcVRV3wGUsRLwwENbuDEH95U4VY0F7KWNgqG8W5eEzAKBggqhkjOPQQDAgNIADBFAiBiJZQlXIgiIsCUAoJv8uzAsUl/US6MiknEkA9OABXDbwIhANaTPbugE7/Ly/9R0zqlu21V1YfF/v6H34oX/wiOyf2p",
+    "fingerprint": "FF:81:96:D2:F0:D3:75:95:AE:08:99:64:8A:95:F3:1F:27:51:38:3E:83:C5:2D:17:1D:41:5B:F5:36:1E:22:AC",
     "fingerprintAlgorithm": "sha-256"
   },
   "RTCDataChannel_1": {
     "id": "RTCDataChannel_1",
-    "timestamp": 1542081514259,
+    "timestamp": 1542138647360.0002,
     "type": "data-channel",
     "bytesReceived": 0,
     "bytesSent": 0,
@@ -33,17 +33,17 @@ Retrieved stats info
     "protocol": "",
     "state": "open"
   },
-  "RTCIceCandidatePair_s1xoaivx_5MfaqFll": {
-    "id": "RTCIceCandidatePair_s1xoaivx_5MfaqFll",
-    "timestamp": 1542081514259,
+  "RTCIceCandidatePair_z6z3iTpo_9P4G3ojB": {
+    "id": "RTCIceCandidatePair_z6z3iTpo_9P4G3ojB",
+    "timestamp": 1542138647360.0002,
     "type": "candidate-pair",
-    "bytesReceived": 695,
-    "bytesSent": 1307,
+    "bytesReceived": 694,
+    "bytesSent": 1309,
     "currentRoundTripTime": 0.003,
-    "localCandidateId": "RTCIceCandidate_s1xoaivx",
+    "localCandidateId": "RTCIceCandidate_z6z3iTpo",
     "nominated": true,
     "priority": 9079290933572287000,
-    "remoteCandidateId": "RTCIceCandidate_5MfaqFll",
+    "remoteCandidateId": "RTCIceCandidate_9P4G3ojB",
     "requestsReceived": 1,
     "requestsSent": 1,
     "responsesReceived": 1,
@@ -53,16 +53,16 @@ Retrieved stats info
     "transportId": "RTCTransport_0_1",
     "writable": true
   },
-  "RTCIceCandidatePair_s1xoaivx_7dkYAhKQ": {
-    "id": "RTCIceCandidatePair_s1xoaivx_7dkYAhKQ",
-    "timestamp": 1542081514259,
+  "RTCIceCandidatePair_z6z3iTpo_OlinD0xX": {
+    "id": "RTCIceCandidatePair_z6z3iTpo_OlinD0xX",
+    "timestamp": 1542138647360.0002,
     "type": "candidate-pair",
     "bytesReceived": 0,
     "bytesSent": 0,
-    "localCandidateId": "RTCIceCandidate_s1xoaivx",
+    "localCandidateId": "RTCIceCandidate_z6z3iTpo",
     "nominated": false,
     "priority": 9079290933572287000,
-    "remoteCandidateId": "RTCIceCandidate_7dkYAhKQ",
+    "remoteCandidateId": "RTCIceCandidate_OlinD0xX",
     "requestsReceived": 0,
     "requestsSent": 0,
     "responsesReceived": 0,
@@ -72,38 +72,55 @@ Retrieved stats info
     "transportId": "RTCTransport_0_1",
     "writable": false
   },
-  "RTCIceCandidate_5MfaqFll": {
-    "id": "RTCIceCandidate_5MfaqFll",
-    "timestamp": 1542081514259,
+  "RTCIceCandidate_9P4G3ojB": {
+    "id": "RTCIceCandidate_9P4G3ojB",
+    "timestamp": 1542138647360.0002,
     "type": "remote-candidate",
     "candidateType": "host",
     "deleted": false,
-    "port": 60324,
+    "port": 62426,
     "priority": 2113937151,
     "protocol": "udp",
     "transportId": "RTCTransport_0_1"
   },
-  "RTCIceCandidate_7dkYAhKQ": {
-    "id": "RTCIceCandidate_7dkYAhKQ",
-    "timestamp": 1542081514259,
+  "RTCIceCandidate_OlinD0xX": {
+    "id": "RTCIceCandidate_OlinD0xX",
+    "timestamp": 1542138647360.0002,
     "type": "remote-candidate",
     "candidateType": "host",
     "deleted": false,
-    "port": 60905,
+    "port": 54933,
     "priority": 2113937151,
     "protocol": "udp",
     "transportId": "RTCTransport_0_1"
   },
-  "RTCIceCandidate_s1xoaivx": {
-    "id": "RTCIceCandidate_s1xoaivx",
-    "timestamp": 1542081514259,
+  "RTCIceCandidate_z6z3iTpo": {
+    "id": "RTCIceCandidate_z6z3iTpo",
+    "timestamp": 1542138647360.0002,
     "type": "local-candidate",
     "candidateType": "host",
     "deleted": false,
-    "port": 62505,
+    "port": 53616,
     "priority": 2113937151,
     "protocol": "udp",
     "transportId": "RTCTransport_0_1"
+  },
+  "RTCPeerConnection": {
+    "id": "RTCPeerConnection",
+    "timestamp": 1542138647360.0002,
+    "type": "peer-connection",
+    "dataChannelsClosed": 0,
+    "dataChannelsOpened": 1
+  },
+  "RTCTransport_0_1": {
+    "id": "RTCTransport_0_1",
+    "timestamp": 1542138647360.0002,
+    "type": "transport",
+    "bytesReceived": 694,
+    "bytesSent": 1309,
+    "localCertificateId": "RTCCertificate_E6:B4:F7:7C:4A:9E:86:FB:65:54:55:DE:E7:04:81:CA:A5:FD:21:9F:B2:92:EE:21:EF:C2:44:E7:1D:4E:E8:86",
+    "remoteCertificateId": "RTCCertificate_FF:81:96:D2:F0:D3:75:95:AE:08:99:64:8A:95:F3:1F:27:51:38:3E:83:C5:2D:17:1D:41:5B:F5:36:1E:22:AC",
+    "selectedCandidatePairId": "RTCIceCandidatePair_z6z3iTpo_9P4G3ojB"
   }
 }
 

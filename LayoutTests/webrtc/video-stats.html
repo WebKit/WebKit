@@ -137,10 +137,10 @@ promise_test(async (test) => {
     await checkOutboundFramesNumberIncreased(firstConnection, statsFirstConnection, 0);
 
     let types = await getStatsType(firstConnection);
-    assert_array_equals(types, ["candidate-pair", "certificate", "codec", "inbound-rtp", "local-candidate", "outbound-rtp", "remote-candidate", "track"]);
+    assert_array_equals(types, ["candidate-pair", "certificate", "codec", "inbound-rtp", "local-candidate", "outbound-rtp", "peer-connection", "remote-candidate", "track", "transport"]);
 
     types = await getStatsType(secondConnection);
-    assert_array_equals(types, ["candidate-pair", "certificate", "codec", "inbound-rtp", "local-candidate", "outbound-rtp", "remote-candidate", "track"]);
+    assert_array_equals(types, ["candidate-pair", "certificate", "codec", "inbound-rtp", "local-candidate", "outbound-rtp", "peer-connection", "remote-candidate", "track", "transport"]);
 }, "Basic video stats");
 
 promise_test(async (test) => {

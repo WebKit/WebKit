@@ -1,3 +1,21 @@
+2018-11-14  Youenn Fablet  <youenn@apple.com>
+
+        Add support for transport and peerConnection stats
+        https://bugs.webkit.org/show_bug.cgi?id=191592
+
+        Reviewed by Alex Christensen.
+
+        Covered by rebased tests.
+
+        * Modules/mediastream/RTCStatsReport.h:
+        (WebCore::RTCStatsReport::TransportStats::TransportStats):
+        (WebCore::RTCStatsReport::PeerConnectionStats::PeerConnectionStats):
+        * Modules/mediastream/RTCStatsReport.idl:
+        * Modules/mediastream/libwebrtc/LibWebRTCStatsCollector.cpp:
+        (WebCore::fillRTCTransportStats):
+        (WebCore::fillRTCPeerConnectionStats):
+        (WebCore::LibWebRTCStatsCollector::OnStatsDelivered):
+
 2018-11-14  Ali Juma  <ajuma@chromium.org>
 
         Transform of composited layer not updated when layer also needs repaint

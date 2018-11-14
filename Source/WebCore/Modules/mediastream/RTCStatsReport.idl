@@ -211,7 +211,32 @@ dictionary RTCCodecStats : RTCStats {
     DOMString implementation;
 };
 
-// FIXME 169662: missing RTCPeerConnectionStats
+[ JSGenerateToJSObject ]
+dictionary RTCTransportStats : RTCStats {
+    // FIXME 169662: Support more fields.
+    // unsigned long packetsSent;
+    // unsigned long packetsReceived;
+    unsigned long long bytesSent;
+    unsigned long long bytesReceived;
+    DOMString rtcpTransportStatsId;
+    // RTCIceRole iceRole;
+    // RTCDtlsTransportState dtlsState;
+    DOMString selectedCandidatePairId;
+    DOMString localCertificateId;
+    DOMString remoteCertificateId;
+    // DOMString tlsVersion;
+    // DOMString dtlsCipher;
+    // DOMString srtpCipher;
+    // DOMString tlsGroup;
+};
+
+[ JSGenerateToJSObject ]
+dictionary RTCPeerConnectionStats : RTCStats {
+    // FIXME 169662: Support more fields.
+    unsigned long dataChannelsOpened;
+    unsigned long dataChannelsClosed;
+    // unsigned long dataChannelsRequested;
+    // unsigned long dataChannelsAccepted;
+};
+
 // FIXME 169662: missing RTCMediaStreamStats
-// FIXME 169662: missing RTCTransportStats
-// FIXME 169662: missing RTCIceCandidateStats
