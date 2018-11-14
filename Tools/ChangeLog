@@ -1,3 +1,65 @@
+2018-11-14  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Refactor port code for devices
+        https://bugs.webkit.org/show_bug.cgi?id=191568
+        <rdar://problem/46005821>
+
+        Reviewed by Alex Christensen.
+
+        watchOS and iOS device ports share many characteristics in testing, mostly due
+        to the fact that both are devices.
+
+        * Scripts/webkitpy/port/device_port.py: Added.
+        (DevicePort): Add base class that all simulated/physical device ports share.
+        (DevicePort.__init__):
+        (DevicePort.driver_cmd_line_for_logging): Moved from iOS port.
+        (DevicePort._generate_all_test_configurations): Ditto.
+        (DevicePort.child_processes): Ditto.
+        (DevicePort.driver_name): Ditto.
+        (DevicePort.target_host): Generalize worker access to attached devices and
+        simulated devices based on the device manager.
+        (DevicePort.devices): Return a list of all devices associated with this port.
+        (DevicePort._create_devices):
+        (DevicePort._build_driver_flags): Moved from iOSSimulatorPort/iOSDevicePort.
+        (DevicePort._install): Moved from iOS port.
+        (DevicePort.setup_test_run): Ditto.
+        (DevicePort.clean_up_test_run): Ditto.
+        (DevicePort.did_spawn_worker): Ditto.
+        (DevicePort.setup_environ_for_server): Ditto.
+        * Scripts/webkitpy/port/ios.py:
+        (IOSPort):
+        (IOSPort._device_for_worker_number_map): Replaced by DevicePort.devices().
+        (IOSPort.driver_cmd_line_for_logging): Moved to DevicePort.
+        (IOSPort.driver_name): Ditto.
+        (IOSPort._generate_all_test_configurations): Ditto.
+        (IOSPort.child_processes): Ditto.
+        (IOSPort._testing_device): Ditto.
+        (IOSPort.target_host): Ditto.
+        (IOSPort._create_devices): Ditto.
+        (IOSPort.setup_test_run): Ditto.
+        (IOSPort.clean_up_test_run): Ditto.
+        (IOSPort.did_spawn_worker): Ditto.
+        * Scripts/webkitpy/port/ios_device.py:
+        (IOSDevicePort): IOSDevicePort uses a device manager from apple_additions.
+        (IOSDevicePort._look_for_all_crash_logs_in_log_dir): Use DevicePort.devices().
+        (IOSDevicePort._get_crash_log): Ditto.
+        (IOSDevicePort.ios_version): Ditto.
+        (IOSDevicePort._create_devices): Ditto.
+        (IOSDevicePort._device_for_worker_number_map): Replaced by DevicePort.devices().
+        (IOSSimulatorPort._build_driver_flags): Moved to DevicePort.
+        * Scripts/webkitpy/port/ios_device_unittest.py:
+        (IOSDeviceTest.test_get_crash_log):
+        * Scripts/webkitpy/port/ios_simulator.py:
+        (IOSSimulatorPort): IOSSimulatorPort uses the SimulatedDeviceManager.
+        (IOSSimulatorPort._create_devices): Clean up logging statement.
+        (IOSSimulatorPort.setup_environ_for_server): Some of environment set-up is shared
+        across all devices.
+        (IOSSimulatorPort._device_for_worker_number_map): Replaced by DevicePort.devices().
+        (IOSSimulatorPort._build_driver_flags): Moved to DevicePort.
+        * Scripts/webkitpy/port/ios_simulator_unittest.py:
+        (IOSSimulatorTest.test_32bit):
+        (IOSSimulatorTest.test_64bit):
+
 2018-11-14  Chris Dumez  <cdumez@apple.com>
 
         WebKit.WKHTTPCookieStoreWithoutProcessPool API test is failing with process prewarming is enabled

@@ -1,4 +1,4 @@
-# Copyright (C) 2014-2017 Apple Inc. All rights reserved.
+# Copyright (C) 2014-2018 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -25,7 +25,6 @@ import logging
 from webkitpy.common.memoized import memoized
 from webkitpy.common.system.crashlogs import CrashLogs
 from webkitpy.common.version import Version
-from webkitpy.common.version_name_map import VersionNameMap
 from webkitpy.port.config import apple_additions
 from webkitpy.port.ios import IOSPort
 
@@ -38,6 +37,9 @@ class IOSDevicePort(IOSPort):
     ARCHITECTURES = ['armv7', 'armv7s', 'arm64']
     DEFAULT_ARCHITECTURE = 'arm64'
     VERSION_FALLBACK_ORDER = ['ios-7', 'ios-8', 'ios-9', 'ios-10']
+
+    DEVICE_MANAGER = apple_additions().device_manager() if apple_additions() else None
+
     SDK = apple_additions().get_sdk('iphoneos') if apple_additions() else 'iphoneos'
     NO_ON_DEVICE_TESTING = 'On-device testing is not supported on this machine'
 
@@ -46,11 +48,6 @@ class IOSDevicePort(IOSPort):
         if apple_additions():
             return apple_additions().ios_device_default_child_processes(self)
         return 1
-
-    def _device_for_worker_number_map(self):
-        if not apple_additions():
-            raise RuntimeError(self.NO_ON_DEVICE_TESTING)
-        return apple_additions().ios_device_for_worker_number_map(self)
 
     def _driver_class(self):
         if apple_additions():
@@ -73,7 +70,7 @@ class IOSDevicePort(IOSPort):
 
     def _look_for_all_crash_logs_in_log_dir(self, newer_than):
         log_list = {}
-        for device in self._device_for_worker_number_map():
+        for device in self.devices():
             crash_log = CrashLogs(device, self.path_to_crash_logs(), crash_logs_to_skip=self._crash_logs_to_skip_for_host.get(device, []))
             log_list.update(crash_log.find_all_logs(include_errors=True, newer_than=newer_than))
         return log_list
@@ -83,7 +80,7 @@ class IOSDevicePort(IOSPort):
             return super(IOSDevicePort, self)._get_crash_log(name, pid, stdout, stderr, newer_than, time_fn=time_fn, sleep_fn=sleep_fn, wait_for_log=wait_for_log, target_host=target_host)
 
         # We need to search every device since one was not specified.
-        for device in self._device_for_worker_number_map():
+        for device in self.devices():
             stderr_out, crashlog = super(IOSDevicePort, self)._get_crash_log(name, pid, stdout, stderr, newer_than, time_fn=time_fn, sleep_fn=sleep_fn, wait_for_log=False, target_host=device)
             if crashlog:
                 return (stderr, crashlog)
@@ -97,10 +94,10 @@ class IOSDevicePort(IOSPort):
         if not apple_additions():
             raise RuntimeError(self.NO_ON_DEVICE_TESTING)
 
-        if not self._device_for_worker_number_map():
+        if not self.devices():
             raise RuntimeError('No devices are available')
         version = None
-        for device in self._device_for_worker_number_map():
+        for device in self.devices():
             if not version:
                 version = device.platform.os_version
             else:
@@ -112,17 +109,13 @@ class IOSDevicePort(IOSPort):
     def check_for_leaks(self, process_name, process_pid):
         pass
 
-    # Despite their names, these flags do not actually get passed all the way down to webkit-build.
-    def _build_driver_flags(self):
-        return ['--sdk', self.SDK] + (['ARCHS=%s' % self.architecture()] if self.architecture() else [])
-
     def operating_system(self):
         return 'ios-device'
 
     def _create_devices(self, device_class):
         if not apple_additions():
             raise RuntimeError(self.NO_ON_DEVICE_TESTING)
-        if not self._device_for_worker_number_map():
+        if not self.devices():
             raise RuntimeError('No devices are available for testing')
 
         if self.default_child_processes() < self.child_processes():
