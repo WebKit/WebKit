@@ -1,3 +1,47 @@
+2018-11-13  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Construct dedicated runs when the inline element requires it (part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=191623
+
+        Reviewed by Antti Koivisto.
+
+        This patch expands the breaking behaviour to support separate start/end breaks.
+
+        <span>parent </span><span style="padding: 10px;">start<span> middle </span>end</span><span> parent</span>
+
+        input to line breaking -> <parent start middle end parent>
+        output of line breaking (considering infinite constraint) -> <parent start middle end parent>
+        due to padding, final runs -> <parent><start middle end><parent>
+
+        "parent" -> n/a
+        "start" -> BreakAtStart
+        " middle " -> n/a
+        "end" -> BreakAtEnd
+        "parent" -> n/a
+
+        Another example:
+        <span>parent </span><span style="padding-right: 10px;">start<span> middle </span>end</span><span> parent</span>
+
+        line breaking -> <parent start middle end parent>
+        due to padding-right, final runs -> <parent start middle end><parent>
+
+        "parent" -> n/a
+        "start" -> n/a
+        " middle " -> n/a
+        "end" -> BreakAtEnd
+        "parent" -> n/a
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::splitInlineRunIfNeeded const):
+        (WebCore::Layout::InlineFormattingContext::collectInlineContent const): Move to a recursive algorithm (which is fine, inline contents don't tend to be too deep)
+        (WebCore::Layout::InlineFormattingContext::contentRequiresSeparateRun const): Deleted.
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/inlineformatting/InlineFormattingState.cpp:
+        (WebCore::Layout::InlineFormattingState::detachingRules const):
+        * layout/inlineformatting/InlineFormattingState.h:
+        (WebCore::Layout::InlineFormattingState::lastInlineItem const):
+        (WebCore::Layout::InlineFormattingState::addDetachingRule):
+
 2018-11-14  Youenn Fablet  <youenn@apple.com>
 
         Add support for RTCRtpCodecParameters.sdpFmtpLine

@@ -31,6 +31,7 @@
 #include "InlineItem.h"
 #include "InlineRun.h"
 #include <wtf/IsoMalloc.h>
+#include <wtf/OptionSet.h>
 
 namespace WebCore {
 namespace Layout {
@@ -45,13 +46,44 @@ public:
     std::unique_ptr<FormattingContext> formattingContext(const Box& formattingContextRoot) override;
 
     InlineContent& inlineContent() { return m_inlineContent; }
+    InlineItem* lastInlineItem() const { return m_inlineContent.isEmpty() ? nullptr : m_inlineContent.last().get(); }
+
+    // DetachingRule indicates whether the inline element needs to be wrapped in a dediceted run or break from previous/next runs.
+    // <span>start</span><span style="position: relative;"> middle </span><span>end</span>
+    // input to line breaking -> <start middle end>
+    // output of line breaking (considering infinite constraint) -> <start middle end>
+    // due to the in-flow positioning, the final runs are: <start>< middle ><end>
+    // "start" -> n/a
+    // " middle " -> BreakAtStart and BreakAtEnd
+    // "end" -> n/a
+    //
+    // <span>parent </span><span style="padding: 10px;">start<span> middle </span>end</span><span> parent</span>
+    // input to line breaking -> <parent start middle end parent>
+    // output of line breaking (considering infinite constraint) -> <parent start middle end parent>
+    // due to padding, final runs -> <parent><start middle end><parent>
+    // "parent" -> n/a
+    // "start" -> BreakAtStart
+    // " middle " -> n/a
+    // "end" -> BreakAtEnd
+    // "parent" -> n/a
+    enum class DetachingRule {
+        BreakAtStart = 1 << 0,
+        BreakAtEnd = 1 << 1
+    };
+    using DetachingRules = OptionSet<DetachingRule>;
+    std::optional<DetachingRules> detachingRules(const Box& layoutBox) const;
+    void addDetachingRule(const Box& layoutBox, DetachingRules detachingRules) { m_detachingRules.set(&layoutBox, detachingRules); }
+
     // Temp
     InlineRuns& inlineRuns() { return m_inlineRuns; }
     void appendInlineRun(InlineRun inlineRun) { m_inlineRuns.append(inlineRun); }
 
 private:
+    using DetachingRulesForInlineItems = HashMap<const Box*, DetachingRules>;
+
     InlineContent m_inlineContent;
     InlineRuns m_inlineRuns;
+    DetachingRulesForInlineItems m_detachingRules;
 };
 
 }

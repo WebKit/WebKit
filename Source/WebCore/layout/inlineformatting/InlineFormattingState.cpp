@@ -50,6 +50,15 @@ std::unique_ptr<FormattingContext> InlineFormattingState::formattingContext(cons
     return std::make_unique<InlineFormattingContext>(formattingContextRoot, *this);
 }
 
+std::optional<InlineFormattingState::DetachingRules> InlineFormattingState::detachingRules(const Box& layoutBox) const
+{
+    auto detachingRules = m_detachingRules.get(&layoutBox);
+    if (!detachingRules)
+        return { };
+
+    return detachingRules;
+}
+
 }
 }
 #endif
