@@ -1,3 +1,14 @@
+2018-11-14  Chris Dumez  <cdumez@apple.com>
+
+        WebKit.ApplicationManifestBasic API test is failing when enabling PSON
+        https://bugs.webkit.org/show_bug.cgi?id=191602
+
+        Reviewed by Alex Christensen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2018-11-14  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Refactor port code for devices

@@ -1087,7 +1087,14 @@ RefPtr<API::Navigation> WebPageProxy::loadData(const IPC::DataReference& data, c
     if (m_isClosed)
         return nullptr;
 
-    auto navigation = m_navigationState->createLoadDataNavigation();
+    auto navigation = m_navigationState->createLoadDataNavigation(std::make_unique<API::SubstituteData>(data.vector(), MIMEType, encoding, baseURL, userData));
+    loadDataWithNavigation(navigation, data, MIMEType, encoding, baseURL, userData);
+    return WTFMove(navigation);
+}
+
+void WebPageProxy::loadDataWithNavigation(API::Navigation& navigation, const IPC::DataReference& data, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData)
+{
+    ASSERT(!m_isClosed);
 
     auto transaction = m_pageLoadState.transaction();
 
@@ -1097,7 +1104,7 @@ RefPtr<API::Navigation> WebPageProxy::loadData(const IPC::DataReference& data, c
         reattachToWebProcess();
 
     LoadParameters loadParameters;
-    loadParameters.navigationID = navigation->navigationID();
+    loadParameters.navigationID = navigation.navigationID();
     loadParameters.data = data;
     loadParameters.MIMEType = MIMEType;
     loadParameters.encodingName = encoding;
@@ -1108,8 +1115,6 @@ RefPtr<API::Navigation> WebPageProxy::loadData(const IPC::DataReference& data, c
     m_process->assumeReadAccessToBaseURL(baseURL);
     m_process->send(Messages::WebPage::LoadData(loadParameters), m_pageID);
     m_process->responsivenessTimer().start();
-
-    return WTFMove(navigation);
 }
 
 void WebPageProxy::loadAlternateHTML(const IPC::DataReference& htmlData, const String& encoding, const WebCore::URL& baseURL, const WebCore::URL& unreachableURL, API::Object* userData, bool forSafeBrowsing)
@@ -2616,7 +2621,10 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, R
 
     // FIXME: Work out timing of responding with the last policy delegate, etc
     ASSERT(!navigation.currentRequest().isEmpty());
-    loadRequestWithNavigation(navigation, ResourceRequest { navigation.currentRequest() }, WebCore::ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemes, nullptr, ShouldTreatAsContinuingLoad::Yes);
+    if (auto& substituteData = navigation.substituteData())
+        loadDataWithNavigation(navigation, { substituteData->content.data(), substituteData->content.size() }, substituteData->MIMEType, substituteData->encoding, substituteData->baseURL, substituteData->userData.get());
+    else
+        loadRequestWithNavigation(navigation, ResourceRequest { navigation.currentRequest() }, WebCore::ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemes, nullptr, ShouldTreatAsContinuingLoad::Yes);
 
     ASSERT(!m_mainFrame);
     m_mainFrameCreationHandler = [this, protectedThis = makeRef(*this), navigation = makeRef(navigation), request =  navigation.currentRequest(), mainFrameURL, isServerRedirect = navigation.currentRequestIsRedirect()]() mutable {

@@ -59,6 +59,13 @@ Navigation::Navigation(WebNavigationState& state, WebBackForwardListItem& target
 {
 }
 
+Navigation::Navigation(WebKit::WebNavigationState& state, std::unique_ptr<SubstituteData>&& substituteData)
+    : Navigation(state)
+{
+    ASSERT(substituteData);
+    m_substituteData = WTFMove(substituteData);
+}
+
 Navigation::~Navigation()
 {
 }

@@ -1,3 +1,27 @@
+2018-11-14  Chris Dumez  <cdumez@apple.com>
+
+        WebKit.ApplicationManifestBasic API test is failing when enabling PSON
+        https://bugs.webkit.org/show_bug.cgi?id=191602
+
+        Reviewed by Alex Christensen.
+
+        Add support for process swapping for a [WKWebView loadHTML:] load by storing
+        the necessary data on the API::Navigation and doing a loadData() instead of
+        a loadRequest() after process swapping when this data is present on the
+        navigation.
+
+        * UIProcess/API/APINavigation.cpp:
+        (API::Navigation::Navigation):
+        * UIProcess/API/APINavigation.h:
+        (API::Navigation::create):
+        (API::Navigation::substituteData const):
+        * UIProcess/WebNavigationState.cpp:
+        (WebKit::WebNavigationState::createLoadDataNavigation):
+        * UIProcess/WebNavigationState.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadData):
+        (WebKit::WebPageProxy::continueNavigationInNewProcess):
+
 2018-11-14  Antti Koivisto  <antti@apple.com>
 
         Align Mac WK2 layer flush throttling with iOS

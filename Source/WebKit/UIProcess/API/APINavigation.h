@@ -26,6 +26,7 @@
 #pragma once
 
 #include "APIObject.h"
+#include "DataReference.h"
 #include "WebBackForwardListItem.h"
 #include <WebCore/Process.h>
 #include <WebCore/ResourceRequest.h>
@@ -41,6 +42,24 @@ class WebNavigationState;
 }
 
 namespace API {
+
+struct SubstituteData {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    SubstituteData(Vector<uint8_t>&& content, const WTF::String& MIMEType, const WTF::String& encoding, const WTF::String& baseURL, API::Object* userData)
+        : content(WTFMove(content))
+        , MIMEType(MIMEType)
+        , encoding(encoding)
+        , baseURL(baseURL)
+        , userData(userData)
+    { }
+
+    Vector<uint8_t> content;
+    WTF::String MIMEType;
+    WTF::String encoding;
+    WTF::String baseURL;
+    RefPtr<API::Object> userData;
+};
 
 class Navigation : public ObjectImpl<Object::Type::Navigation> {
     WTF_MAKE_NONCOPYABLE(Navigation);
@@ -58,6 +77,11 @@ public:
     static Ref<Navigation> create(WebKit::WebNavigationState& state, WebCore::ResourceRequest&& request, WebKit::WebBackForwardListItem* fromItem)
     {
         return adoptRef(*new Navigation(state, WTFMove(request), fromItem));
+    }
+
+    static Ref<Navigation> create(WebKit::WebNavigationState& state, std::unique_ptr<SubstituteData>&& substituteData)
+    {
+        return adoptRef(*new Navigation(state, WTFMove(substituteData)));
     }
 
     virtual ~Navigation();
@@ -114,10 +138,13 @@ public:
     const char* loggingString() const;
 #endif
 
+    const std::unique_ptr<SubstituteData>& substituteData() const { return m_substituteData; }
+
 private:
     explicit Navigation(WebKit::WebNavigationState&);
     Navigation(WebKit::WebNavigationState&, WebCore::ResourceRequest&&, WebKit::WebBackForwardListItem* fromItem);
     Navigation(WebKit::WebNavigationState&, WebKit::WebBackForwardListItem& targetItem, WebKit::WebBackForwardListItem* fromItem, WebCore::FrameLoadType);
+    Navigation(WebKit::WebNavigationState&, std::unique_ptr<SubstituteData>&&);
 
     uint64_t m_navigationID;
     WebCore::ResourceRequest m_originalRequest;
@@ -139,6 +166,7 @@ private:
     WebCore::LockHistory m_lockHistory;
     WebCore::LockBackForwardList m_lockBackForwardList;
     WTF::String m_clientRedirectSourceForHistory;
+    std::unique_ptr<SubstituteData> m_substituteData;
 };
 
 } // namespace API
