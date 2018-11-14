@@ -904,3 +904,5 @@ http/wpt/credential-management/credentialscontainer-store-basics.https.html [ Sk
 http/wpt/webauthn/idl.https.html [ Skip ]
 
 webkit.org/b/183878 media/modern-media-controls/tracks-panel/tracks-panel-up-click-over-media-does-not-dimiss-media-controls-when-media-is-playing.html [ Pass Timeout ] 
+
+webkit.org/b/191644 [ Sierra ] fast/workers/worker-cloneport.html [ Pass Failure ]

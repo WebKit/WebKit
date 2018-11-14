@@ -1,3 +1,12 @@
+2018-11-14  Truitt Savell  <tsavell@apple.com>
+
+        [ Sierra Release WK2 ] Layout Test fast/workers/worker-cloneport.html is flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=191644.
+
+        Unreviewed test Gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2018-11-14  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(r238178): fast/forms/access-key-mutated.html and fast/forms/access-key-case-insensitive.html are timing out
