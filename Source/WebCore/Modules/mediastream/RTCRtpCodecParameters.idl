@@ -32,5 +32,5 @@
     DOMString mimeType;
     unsigned long clockRate;
     unsigned short channels = 1;
-    // FIXME: Add DOMString sdpFmtpLine;
+    DOMString sdpFmtpLine;
 };

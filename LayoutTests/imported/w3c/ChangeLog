@@ -1,5 +1,14 @@
 2018-11-14  Youenn Fablet  <youenn@apple.com>
 
+        Add support for RTCRtpCodecParameters.sdpFmtpLine
+        https://bugs.webkit.org/show_bug.cgi?id=191591
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/webrtc/protocol/video-codecs.https-expected.txt:
+
+2018-11-14  Youenn Fablet  <youenn@apple.com>
+
         Add support for transport and peerConnection stats
         https://bugs.webkit.org/show_bug.cgi?id=191592
 

@@ -128,6 +128,24 @@ static inline RTCRtpCodecParameters toRTCCodecParameters(const webrtc::RtpCodecP
     if (rtcParameters.num_channels)
         parameters.channels = *rtcParameters.num_channels;
 
+    StringBuilder sdpFmtpLineBuilder;
+    sdpFmtpLineBuilder.appendLiteral("a=fmtp:");
+    sdpFmtpLineBuilder.appendNumber(parameters.payloadType);
+    sdpFmtpLineBuilder.append(' ');
+
+    bool isFirst = true;
+    for (auto& keyValue : rtcParameters.parameters) {
+        if (!isFirst)
+            sdpFmtpLineBuilder.append(';');
+        else
+            isFirst = false;
+
+        sdpFmtpLineBuilder.append(StringView { keyValue.first.c_str() });
+        sdpFmtpLineBuilder.append('=');
+        sdpFmtpLineBuilder.append(StringView { keyValue.second.c_str() });
+    }
+    parameters.sdpFmtpLine = sdpFmtpLineBuilder.toString();
+
     return parameters;
 }
 

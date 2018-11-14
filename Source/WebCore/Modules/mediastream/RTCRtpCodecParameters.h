@@ -36,6 +36,7 @@ struct RTCRtpCodecParameters {
     String mimeType;
     unsigned long clockRate { 0 };
     unsigned short channels = 1;
+    String sdpFmtpLine;
 };
 
 } // namespace WebCore
