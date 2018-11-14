@@ -385,6 +385,7 @@ private:
 #if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     void scrollerStylePreferenceChanged(bool useOverlayScrollbars);
     void displayConfigurationChanged(CGDirectDisplayID, CGDisplayChangeSummaryFlags);
+    void displayWasRefreshed(CGDirectDisplayID);
 #endif
 #endif
 

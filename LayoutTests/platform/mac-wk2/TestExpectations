@@ -70,6 +70,8 @@ webkit.org/b/184569 storage/indexeddb/modern/transactions-stop-on-navigation.htm
 
 fast/events/inactive-window-no-mouse-event.html [ Pass ]
 
+fast/animation/request-animation-frame-in-two-pages.html [ Pass ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
 #//////////////////////////////////////////////////////////////////////////////////////////

@@ -1,3 +1,48 @@
+2018-11-14  Per Arne Vollan  <pvollan@apple.com>
+
+        REGRESSION (WEBPROCESS_WINDOWSERVER_BLOCKING): requestAnimationFrame Stops Completing
+        https://bugs.webkit.org/show_bug.cgi?id=190884
+
+        Reviewed by Dean Jackson.
+
+        Since the Web page currently owns the display link on the UI process side, the display link will be
+        deleted in the UI process when a Web page is closed. This is incorrect, since a display link can be
+        reused between Web pages in the WebContent process. This patch moves the ownership of the UI process
+        display links to the Web process object to address this issue. Also, the display ID of the display
+        being updated is included in the message to the WebContent process.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::resetStateAfterProcessExited):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * UIProcess/mac/DisplayLink.cpp:
+        (WebKit::DisplayLink::DisplayLink):
+        (WebKit::DisplayLink::displayLinkCallback):
+        * UIProcess/mac/DisplayLink.h:
+        (WebKit::DisplayLink::displayID const):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::startDisplayLink): Deleted.
+        (WebKit::WebPageProxy::stopDisplayLink): Deleted.
+        * UIProcess/mac/WebProcessProxyMac.mm:
+        (WebKit::WebProcessProxy::startDisplayLink):
+        (WebKit::WebProcessProxy::stopDisplayLink):
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        * WebProcess/WebPage/mac/DrawingAreaMac.cpp:
+        (WebKit::DisplayRefreshMonitorMac::create):
+        (WebKit::DisplayRefreshMonitorMac::DisplayRefreshMonitorMac):
+        (WebKit::DisplayRefreshMonitorMac::~DisplayRefreshMonitorMac):
+        (WebKit::DisplayRefreshMonitorMac::requestRefreshCallback):
+        (WebKit::DrawingArea::createDisplayRefreshMonitor):
+        (WebKit::DrawingArea::displayWasRefreshed): Deleted.
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::displayWasRefreshed):
+
 2018-11-14  Chris Dumez  <cdumez@apple.com>
 
         Client should be able to disable PSON even if the experimental feature is on by default

@@ -1,3 +1,15 @@
+2018-11-14  Per Arne Vollan  <pvollan@apple.com>
+
+        REGRESSION (WEBPROCESS_WINDOWSERVER_BLOCKING): requestAnimationFrame Stops Completing
+        https://bugs.webkit.org/show_bug.cgi?id=190884
+
+        Reviewed by Dean Jackson.
+
+        * TestExpectations:
+        * fast/animation/request-animation-frame-in-two-pages-expected.txt: Added.
+        * fast/animation/request-animation-frame-in-two-pages.html: Added.
+        * platform/mac-wk2/TestExpectations:
+
 2018-11-14  Youenn Fablet  <youenn@apple.com>
 
         Calling removeTrack on different RTCPeerConnection should throw InvalidAccessError

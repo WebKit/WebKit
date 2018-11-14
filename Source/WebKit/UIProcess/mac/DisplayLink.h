@@ -38,16 +38,18 @@ class Connection;
 
 namespace WebKit {
 
-class WebPageProxy;
+class WebProcessProxy;
     
 class DisplayLink {
 public:
-    DisplayLink(WebCore::PlatformDisplayID, WebPageProxy&);
+    DisplayLink(WebCore::PlatformDisplayID, WebProcessProxy&);
     ~DisplayLink();
     
     void addObserver(unsigned observerID);
     void removeObserver(unsigned observerID);
     bool hasObservers() const;
+
+    WebCore::PlatformDisplayID displayID() const { return m_displayID; }
 
 private:
     static CVReturn displayLinkCallback(CVDisplayLinkRef, const CVTimeStamp*, const CVTimeStamp*, CVOptionFlags, CVOptionFlags*, void* data);
@@ -55,7 +57,7 @@ private:
     CVDisplayLinkRef m_displayLink { nullptr };
     HashSet<unsigned> m_observers;
     RefPtr<IPC::Connection> m_connection;
-    uint64_t m_pageID { 0 };
+    WebCore::PlatformDisplayID m_displayID { 0 };
 };
 
 }

@@ -1,3 +1,18 @@
+2018-11-14  Per Arne Vollan  <pvollan@apple.com>
+
+        REGRESSION (WEBPROCESS_WINDOWSERVER_BLOCKING): requestAnimationFrame Stops Completing
+        https://bugs.webkit.org/show_bug.cgi?id=190884
+
+        Reviewed by Dean Jackson.
+
+        Only notify display refresh monitors with matching display ID.
+
+        Test: fast/animation/request-animation-frame-in-two-pages.html
+
+        * platform/graphics/DisplayRefreshMonitorManager.cpp:
+        (WebCore::DisplayRefreshMonitorManager::displayWasUpdated):
+        * platform/graphics/DisplayRefreshMonitorManager.h:
+
 2018-11-14  Youenn Fablet  <youenn@apple.com>
 
         Convert libwebrtc error types to DOM exceptions

@@ -69,6 +69,36 @@ bool WebProcessProxy::shouldAllowNonValidInjectedCode() const
 #endif
 }
 
+#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+void WebProcessProxy::startDisplayLink(unsigned observerID, uint32_t displayID)
+{
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+    for (auto& displayLink : m_displayLinks) {
+        if (displayLink->displayID() == displayID) {
+            displayLink->addObserver(observerID);
+            return;
+        }
+    }
+    auto displayLink = std::make_unique<DisplayLink>(displayID, *this);
+    displayLink->addObserver(observerID);
+    m_displayLinks.append(WTFMove(displayLink));
+}
+
+void WebProcessProxy::stopDisplayLink(unsigned observerID, uint32_t displayID)
+{
+    size_t pos = 0;
+    for (auto& displayLink : m_displayLinks) {
+        if (displayLink->displayID() == displayID) {
+            displayLink->removeObserver(observerID);
+            if (!displayLink->hasObservers())
+                m_displayLinks.remove(pos);
+            return;
+        }
+        pos++;
+    }
+}
+#endif
+
 } // namespace WebKit
 
 #endif // PLATFORM(MAC)

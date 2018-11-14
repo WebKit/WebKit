@@ -50,6 +50,10 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
+#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#include "DisplayLink.h"
+#endif
+
 namespace API {
 class Navigation;
 class PageConfiguration;
@@ -227,6 +231,11 @@ public:
     void releaseHighPerformanceGPU();
 #endif
 
+#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+    void startDisplayLink(unsigned observerID, uint32_t displayID);
+    void stopDisplayLink(unsigned observerID, uint32_t displayID);
+#endif
+
     // Called when the web process has crashed or we know that it will terminate soon.
     // Will potentially cause the WebProcessProxy object to be freed.
     void shutDown();
@@ -397,6 +406,10 @@ private:
 
 #if PLATFORM(WATCHOS)
     ProcessThrottler::BackgroundActivityToken m_backgroundActivityTokenForFullscreenFormControls;
+#endif
+
+#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+    Vector<std::unique_ptr<DisplayLink>> m_displayLinks;
 #endif
 };
 

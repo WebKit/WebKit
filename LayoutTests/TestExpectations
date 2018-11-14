@@ -420,6 +420,9 @@ fast/events/inactive-window-no-mouse-event.html [ Skip ]
 # The Web Share API is currently only implemented for modern WebKit on iOS and macOS
 fast/web-share [ Skip ]
 
+# This test was created to test a mac-wk2 bugfix
+fast/animation/request-animation-frame-in-two-pages.html [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific tests.
 #//////////////////////////////////////////////////////////////////////////////////////////

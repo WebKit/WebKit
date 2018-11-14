@@ -46,7 +46,7 @@ public:
     bool scheduleAnimation(DisplayRefreshMonitorClient&);
     void windowScreenDidChange(PlatformDisplayID, DisplayRefreshMonitorClient&);
 
-    WEBCORE_EXPORT void displayWasUpdated();
+    WEBCORE_EXPORT void displayWasUpdated(PlatformDisplayID);
     
 private:
     friend class DisplayRefreshMonitor;

@@ -136,6 +136,7 @@ messages -> WebProcess LegacyReceiver {
 #if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     ScrollerStylePreferenceChanged(bool useOvelayScrollbars)
     DisplayConfigurationChanged(CGDirectDisplayID displayID, CGDisplayChangeSummaryFlags flags)
+    DisplayWasRefreshed(uint32_t displayID)
 #endif
 #endif
 

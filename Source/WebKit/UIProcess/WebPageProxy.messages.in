@@ -541,11 +541,6 @@ messages -> WebPageProxy {
     SerializedAttachmentDataForIdentifiers(Vector<String> identifiers) -> (Vector<WebCore::SerializedAttachmentData> seralizedData) LegacySync
 #endif
 
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-    StartDisplayLink(unsigned observerID)
-    StopDisplayLink(unsigned observerID)
-#endif
-
     SignedPublicKeyAndChallengeString(unsigned keySizeIndex, String challengeString, WebCore::URL url) -> (String result) LegacySync
 
 }

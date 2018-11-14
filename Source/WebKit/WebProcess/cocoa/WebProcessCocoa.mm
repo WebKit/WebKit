@@ -51,6 +51,7 @@
 #import <WebCore/AVFoundationMIMETypeCache.h>
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/CPUMonitor.h>
+#import <WebCore/DisplayRefreshMonitorManager.h>
 #import <WebCore/FileSystem.h>
 #import <WebCore/FontCache.h>
 #import <WebCore/FontCascade.h>
@@ -650,6 +651,11 @@ void WebProcess::scrollerStylePreferenceChanged(bool useOverlayScrollbars)
 void WebProcess::displayConfigurationChanged(CGDirectDisplayID displayID, CGDisplayChangeSummaryFlags flags)
 {
     GraphicsContext3DManager::displayWasReconfigured(displayID, flags, nullptr);
+}
+    
+void WebProcess::displayWasRefreshed(CGDirectDisplayID displayID)
+{
+    DisplayRefreshMonitorManager::sharedManager().displayWasUpdated(displayID);
 }
 #endif
 

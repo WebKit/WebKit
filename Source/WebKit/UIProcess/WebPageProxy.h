@@ -126,10 +126,6 @@ OBJC_CLASS _WKRemoteObjectRegistry;
 #include <WebCore/WebMediaSessionManagerClient.h>
 #endif
 
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-#include "DisplayLink.h"
-#endif
-
 #if ENABLE(MEDIA_SESSION)
 namespace WebCore {
 class MediaSessionMetadata;
@@ -1850,11 +1846,6 @@ private:
     void invalidateAllAttachments();
 #endif
 
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-    void startDisplayLink(unsigned observerID);
-    void stopDisplayLink(unsigned observerID);
-#endif
-
     void reportPageLoadResult(const WebCore::ResourceError& = { });
 
     void continueNavigationInNewProcess(API::Navigation&, Ref<WebProcessProxy>&&);
@@ -2259,10 +2250,6 @@ private:
     HashMap<String, Ref<API::Attachment>> m_attachmentIdentifierToAttachmentMap;
 #endif
         
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-    std::unique_ptr<DisplayLink> m_displayLink;
-#endif
-
     std::optional<SpellDocumentTag> m_spellDocumentTag;
 
     std::optional<MonotonicTime> m_pageLoadStart;

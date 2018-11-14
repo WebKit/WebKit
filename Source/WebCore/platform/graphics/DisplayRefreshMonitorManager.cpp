@@ -125,10 +125,10 @@ void DisplayRefreshMonitorManager::windowScreenDidChange(PlatformDisplayID displ
         scheduleAnimation(client);
 }
 
-void DisplayRefreshMonitorManager::displayWasUpdated()
+void DisplayRefreshMonitorManager::displayWasUpdated(PlatformDisplayID displayID)
 {
     for (auto monitor : m_monitors) {
-        if (monitor->hasRequestedRefreshCallback())
+        if (displayID == monitor->displayID() && monitor->hasRequestedRefreshCallback())
             monitor->displayLinkFired();
     }
 }

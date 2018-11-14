@@ -29,15 +29,14 @@
 #if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
 
 #include "DrawingAreaMessages.h"
-#include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 #include <wtf/ProcessPrivilege.h>
 
 namespace WebKit {
     
-DisplayLink::DisplayLink(WebCore::PlatformDisplayID displayID, WebPageProxy& webPageProxy)
-    : m_connection(webPageProxy.process().connection())
-    , m_pageID(webPageProxy.pageID())
+DisplayLink::DisplayLink(WebCore::PlatformDisplayID displayID, WebProcessProxy& webProcessProxy)
+    : m_connection(webProcessProxy.connection())
+    , m_displayID(displayID)
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     CVReturn error = CVDisplayLinkCreateWithCGDisplay(displayID, &m_displayLink);
@@ -86,7 +85,7 @@ bool DisplayLink::hasObservers() const
 CVReturn DisplayLink::displayLinkCallback(CVDisplayLinkRef displayLinkRef, const CVTimeStamp*, const CVTimeStamp*, CVOptionFlags, CVOptionFlags*, void* data)
 {
     DisplayLink* displayLink = static_cast<DisplayLink*>(data);
-    displayLink->m_connection->send(Messages::DrawingArea::DisplayWasRefreshed(), displayLink->m_pageID);
+    displayLink->m_connection->send(Messages::WebProcess::DisplayWasRefreshed(displayLink->m_displayID), 0);
     return kCVReturnSuccess;
 }
 

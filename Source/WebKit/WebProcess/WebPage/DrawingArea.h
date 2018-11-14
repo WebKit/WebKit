@@ -149,10 +149,6 @@ public:
     virtual void deviceOrPageScaleFactorChanged() = 0;
 #endif
 
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-    void displayWasRefreshed();
-#endif
-
     virtual void attach() { };
 
 protected:

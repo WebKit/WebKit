@@ -44,10 +44,4 @@ messages -> DrawingArea {
     SetNativeSurfaceHandleForCompositing(uint64_t handle)
     DestroyNativeSurfaceHandleForCompositing() -> (bool handled)
 #endif
-
-#if PLATFORM(MAC)
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-    DisplayWasRefreshed()
-#endif
-#endif
 }

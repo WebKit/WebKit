@@ -74,4 +74,9 @@ messages -> WebProcessProxy LegacyReceiver {
     RequestHighPerformanceGPU()
     ReleaseHighPerformanceGPU()
 #endif
+
+#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+    StartDisplayLink(unsigned observerID, uint32_t displayID)
+    StopDisplayLink(unsigned observerID, uint32_t displayID)
+#endif
 }
