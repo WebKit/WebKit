@@ -1882,7 +1882,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             let mainFrame = WI.networkManager.mainFrame;
             let archiveName = mainFrame.mainResource.urlComponents.host || mainFrame.mainResource.displayName || "Archive";
             let url = "web-inspector:///" + encodeURI(archiveName) + ".har";
-            WI.saveDataToFile({
+            WI.FileUtilities.save({
                 url,
                 content: JSON.stringify(har, null, 2),
                 forceSaveAs: true,

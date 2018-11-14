@@ -41,9 +41,7 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
 
         let importNavigationItem = new WI.ButtonNavigationItem("import-audit", WI.UIString("Import"), "Images/Import.svg", 15, 15);
         importNavigationItem.buttonStyle = WI.ButtonNavigationItem.Style.ImageAndText;
-        importNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, () => {
-            WI.auditManager.import();
-        });
+        importNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleImportButtonNavigationItemClicked, this);
 
         let importHelpElement = WI.createNavigationItemHelp(WI.UIString("Press %s to import a test or result file"), importNavigationItem);
         contentPlaceholder.appendChild(importHelpElement);
@@ -195,6 +193,6 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
 
     _handleImportButtonNavigationItemClicked(event)
     {
-        WI.auditManager.import();
+        WI.FileUtilities.importJSON((result) => WI.auditManager.processJSON(result));
     }
 };

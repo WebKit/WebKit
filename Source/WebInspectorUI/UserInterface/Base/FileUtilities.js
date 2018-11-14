@@ -23,65 +23,120 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.saveDataToFile = function(saveData, forceSaveAs)
-{
-    console.assert(saveData);
-    if (!saveData)
-        return;
+WI.FileUtilities = class FileUtilities {
+    static save(saveData, forceSaveAs)
+    {
+        console.assert(saveData);
+        if (!saveData)
+            return;
 
-    if (typeof saveData.customSaveHandler === "function") {
-        saveData.customSaveHandler(forceSaveAs);
-        return;
-    }
-
-    console.assert(saveData.content);
-    if (!saveData.content)
-        return;
-
-    let url = saveData.url || "";
-    let suggestedName = parseURL(url).lastPathComponent;
-    if (!suggestedName) {
-        suggestedName = WI.UIString("Untitled");
-        let dataURLTypeMatch = /^data:([^;]+)/.exec(url);
-        if (dataURLTypeMatch) {
-            let fileExtension = WI.fileExtensionForMIMEType(dataURLTypeMatch[1]);
-            if (fileExtension)
-                suggestedName += "." + fileExtension;
-        }
-    }
-
-    if (typeof saveData.content === "string") {
-        const base64Encoded = saveData.base64Encoded || false;
-        InspectorFrontendHost.save(suggestedName, saveData.content, base64Encoded, forceSaveAs || saveData.forceSaveAs);
-        return;
-    }
-
-    let fileReader = new FileReader;
-    fileReader.readAsDataURL(saveData.content);
-    fileReader.addEventListener("loadend", () => {
-        let dataURLComponents = parseDataURL(fileReader.result);
-
-        const base64Encoded = true;
-        InspectorFrontendHost.save(suggestedName, dataURLComponents.data, base64Encoded, forceSaveAs || saveData.forceSaveAs);
-    });
-};
-
-WI.loadDataFromFile = function(callback)
-{
-    let inputElement = document.createElement("input");
-    inputElement.type = "file";
-    inputElement.addEventListener("change", (event) => {
-        if (!inputElement.files.length) {
-            callback(null);
+        if (typeof saveData.customSaveHandler === "function") {
+            saveData.customSaveHandler(forceSaveAs);
             return;
         }
 
-        let file = inputElement.files[0];
-        let reader = new FileReader;
-        reader.addEventListener("loadend", (event) => {
-            callback(reader.result, file.name);
+        console.assert(saveData.content);
+        if (!saveData.content)
+            return;
+
+        let url = saveData.url || "";
+        let suggestedName = parseURL(url).lastPathComponent;
+        if (!suggestedName) {
+            suggestedName = WI.UIString("Untitled");
+            let dataURLTypeMatch = /^data:([^;]+)/.exec(url);
+            if (dataURLTypeMatch) {
+                let fileExtension = WI.fileExtensionForMIMEType(dataURLTypeMatch[1]);
+                if (fileExtension)
+                    suggestedName += "." + fileExtension;
+            }
+        }
+
+        if (typeof saveData.content === "string") {
+            const base64Encoded = saveData.base64Encoded || false;
+            InspectorFrontendHost.save(suggestedName, saveData.content, base64Encoded, forceSaveAs || saveData.forceSaveAs);
+            return;
+        }
+
+        let fileReader = new FileReader;
+        fileReader.readAsDataURL(saveData.content);
+        fileReader.addEventListener("loadend", () => {
+            let dataURLComponents = parseDataURL(fileReader.result);
+
+            const base64Encoded = true;
+            InspectorFrontendHost.save(suggestedName, dataURLComponents.data, base64Encoded, forceSaveAs || saveData.forceSaveAs);
         });
-        reader.readAsText(file);
-    });
-    inputElement.click();
+    }
+
+    static importText(callback)
+    {
+        let inputElement = document.createElement("input");
+        inputElement.type = "file";
+        inputElement.multiple = true;
+        inputElement.addEventListener("change", (event) => {
+            WI.FileUtilities.readText(inputElement.files, callback);
+        });
+        inputElement.click();
+    }
+
+    static importJSON(callback)
+    {
+        let inputElement = document.createElement("input");
+        inputElement.type = "file";
+        inputElement.multiple = true;
+        inputElement.addEventListener("change", (event) => {
+            WI.FileUtilities.readJSON(inputElement.files, callback);
+        });
+        inputElement.click();
+    }
+
+    static async readText(fileOrList, callback)
+    {
+        console.assert(fileOrList instanceof File || fileOrList instanceof FileList);
+
+        let files = [];
+        if (fileOrList instanceof File)
+            files.push(fileOrList);
+        else if (fileOrList instanceof FileList)
+            files = Array.from(fileOrList);
+
+        for (let file of files) {
+            let reader = new FileReader;
+            reader.readAsText(file);
+
+            let result = {
+                filename: file.name,
+            };
+
+            try {
+                await new Promise((resolve, reject) => {
+                    reader.addEventListener("loadend", (event) => {
+                        result.text = reader.result;
+                        resolve(event);
+                    });
+                    reader.addEventListener("error", reject);
+                });
+            } catch (e) {
+                result.error = e;
+            }
+
+            let promise = callback(result);
+            if (promise)
+                await promise;
+        }
+    }
+
+    static async readJSON(fileOrList, callback)
+    {
+        return WI.FileUtilities.readText(fileOrList, (result) => {
+            if (result.text && !result.error) {
+                try {
+                    result.json = JSON.parse(result.text);
+                } catch (e) {
+                    result.error = e;
+                }
+            }
+
+            return callback(result);
+        });
+    }
 };

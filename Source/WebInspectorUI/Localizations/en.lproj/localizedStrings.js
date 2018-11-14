@@ -474,7 +474,6 @@ localizedStrings["Image Size"] = "Image Size";
 localizedStrings["Images"] = "Images";
 localizedStrings["Immediate Pause Requested"] = "Immediate Pause Requested";
 localizedStrings["Import"] = "Import";
-localizedStrings["Import recording from file"] = "Import recording from file";
 localizedStrings["Imported"] = "Imported";
 localizedStrings["Imported Recordings"] = "Imported Recordings";
 localizedStrings["Incomplete"] = "Incomplete";

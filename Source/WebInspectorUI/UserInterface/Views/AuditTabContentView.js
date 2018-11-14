@@ -32,6 +32,9 @@ WI.AuditTabContentView = class AuditTabContentView extends WI.ContentBrowserTabC
         this._startStopShortcut = new WI.KeyboardShortcut(null, WI.KeyboardShortcut.Key.Space, this._handleSpace.bind(this));
         this._startStopShortcut.implicitlyPreventsDefault = false;
         this._startStopShortcut.disabled = true;
+
+        this.element.addEventListener("dragover", this._handleDragOver.bind(this));
+        this.element.addEventListener("drop", this._handleDrop.bind(this));
     }
 
     // Static
@@ -107,6 +110,25 @@ WI.AuditTabContentView = class AuditTabContentView extends WI.ContentBrowserTabC
             return;
 
         event.preventDefault();
+    }
+
+    _handleDragOver(event)
+    {
+        if (event.dataTransfer.types.includes("Files"))
+            event.preventDefault();
+    }
+
+    _handleDrop(event)
+    {
+        if (!event.dataTransfer.files || !event.dataTransfer.files.length)
+            return;
+
+        event.preventDefault();
+
+        WI.FileUtilities.readJSON(event.dataTransfer.files, (result) => WI.auditManager.processJSON(result))
+        .then(() => {
+            event.dataTransfer.clearData();
+        });
     }
 };
 

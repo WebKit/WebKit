@@ -456,7 +456,7 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
             url = sourceCode.url;
 
         const saveAs = event.shiftKey;
-        WI.saveDataToFile({url: url, content: sourceCode.content}, saveAs);
+        WI.FileUtilities.save({url: url, content: sourceCode.content}, saveAs);
     }
 
     _handleMouseDown(event)

@@ -67,35 +67,27 @@ WI.CanvasManager = class CanvasManager extends WI.Object
         return Array.from(this._shaderProgramIdentifierMap.values());
     }
 
-    importRecording()
+    processJSON({filename, json, error})
     {
-        WI.loadDataFromFile((data, filename) => {
-            if (!data)
-                return;
+        if (error) {
+            WI.Recording.synthesizeError(error);
+            return;
+        }
 
-            let payload = null;
-            try {
-                payload = JSON.parse(data);
-            } catch (e) {
-                WI.Recording.synthesizeError(e);
-                return;
-            }
+        let recording = WI.Recording.fromPayload(json);
+        if (!recording) {
+            WI.Recording.synthesizeError(WI.UIString("unsupported version."));
+            return;
+        }
 
-            let recording = WI.Recording.fromPayload(payload);
-            if (!recording) {
-                WI.Recording.synthesizeError(WI.UIString("unsupported version."));
-                return;
-            }
+        let extensionStart = filename.lastIndexOf(".");
+        if (extensionStart !== -1)
+            filename = filename.substring(0, extensionStart);
+        recording.createDisplayName(filename);
 
-            let extensionStart = filename.lastIndexOf(".");
-            if (extensionStart !== -1)
-                filename = filename.substring(0, extensionStart);
-            recording.createDisplayName(filename);
+        this._importedRecordings.add(recording);
 
-            this._importedRecordings.add(recording);
-
-            this.dispatchEventToListeners(WI.CanvasManager.Event.RecordingImported, {recording});
-        });
+        this.dispatchEventToListeners(WI.CanvasManager.Event.RecordingImported, {recording, initiatedByUser: true});
     }
 
     setRecordingAutoCaptureFrameCount(enabled, count)

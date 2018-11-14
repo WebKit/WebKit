@@ -1,3 +1,72 @@
+2018-11-14  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: add drag+drop for importing Audits and Recordings
+        https://bugs.webkit.org/show_bug.cgi?id=191566
+
+        Reviewed by Joseph Pecoraro.
+
+        Reorganize the file loading logic for the Audit and Canvas tabs/managers. Add "drop" event
+        handlers to the tabs that add and show the corresponding object for the imported data.
+
+        * UserInterface/Views/AuditTabContentView.js:
+        (WI.AuditTabContentView):
+        (WI.AuditTabContentView.prototype._handleDragOver): Added.
+        (WI.AuditTabContentView.prototype._handleDrop): Added.
+        * UserInterface/Views/CanvasTabContentView.js:
+        (WI.CanvasTabContentView):
+        (WI.CanvasTabContentView.prototype._addCanvas):
+        (WI.CanvasTabContentView.prototype._recordingImportedOrStopped):
+        (WI.CanvasTabContentView.prototype._handleDragOver): Added.
+        (WI.CanvasTabContentView.prototype._handleDrop): Added.
+
+        * UserInterface/Controllers/AuditManager.js:
+        (WI.AuditManager.prototype.async processJSON): Added.
+        (WI.AuditManager.prototype.export):
+        (WI.AuditManager.prototype.import): Deleted.
+        * UserInterface/Controllers/CanvasManager.js:
+        (WI.CanvasManager.prototype.processJSON): Added.
+        (WI.CanvasManager.prototype.importRecording): Deleted.
+
+        * UserInterface/Views/AuditNavigationSidebarPanel.js:
+        (WI.AuditNavigationSidebarPanel):
+        (WI.AuditNavigationSidebarPanel.prototype.showDefaultContentView):
+        (WI.AuditNavigationSidebarPanel.prototype._handleImportButtonNavigationItemClicked):
+        * UserInterface/Views/CanvasSidebarPanel.js:
+        (WI.CanvasSidebarPanel):
+        (WI.CanvasSidebarPanel.prototype._handleImportButtonNavigationItemClicked): Added.
+        (WI.CanvasSidebarPanel.prototype._recordingChanged):
+        (WI.CanvasSidebarPanel.prototype._updateRecordNavigationItem):
+
+        * UserInterface/Views/CanvasOverviewContentView.js:
+        (WI.CanvasOverviewContentView):
+        (WI.CanvasOverviewContentView.prototype._handleImportButtonNavigationItemClicked): Added.
+
+        * UserInterface/Base/FileUtilities.js:
+        (WI.FileUtilities.save): Added.
+        (WI.FileUtilities.importText): Added.
+        (WI.FileUtilities.importJSON): Added.
+        (WI.FileUtilities.async readText): Added.
+        (WI.FileUtilities.async readJSON): Added.
+        (WI.saveDataToFile): Deleted.
+        (WI.loadDataFromFile): Deleted.
+        * UserInterface/Base/Main.js:
+        (WI._contextMenuRequested):
+        (WI._save):
+        (WI._saveAs):
+        * UserInterface/Views/ContextMenuUtilities.js:
+        (WI.appendContextMenuItemsForSourceCode):
+        * UserInterface/Views/LogContentView.js:
+        (WI.LogContentView.prototype._handleContextMenuEvent):
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype._exportHAR):
+        * UserInterface/Views/RecordingContentView.js:
+        (WI.RecordingContentView.prototype._exportRecording):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype._save):
+        Move file related functions into a static class container.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
 2018-11-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Include target identifier in protocol logging

@@ -55,7 +55,7 @@ WI.appendContextMenuItemsForSourceCode = function(contextMenu, sourceCodeOrLocat
     contextMenu.appendItem(WI.UIString("Save File"), () => {
         sourceCode.requestContent().then(() => {
             const forceSaveAs = true;
-            WI.saveDataToFile({
+            WI.FileUtilities.save({
                 url: sourceCode.url || "",
                 content: sourceCode.content
             }, forceSaveAs);
@@ -238,7 +238,7 @@ WI.appendContextMenuItemsForDOMNode = function(contextMenu, domNode, options = {
                     Number.zeroPad(date.getSeconds(), 2),
                 ];
                 let filename = WI.UIString("Screen Shot %s-%s-%s at %s.%s.%s").format(...values);
-                WI.saveDataToFile({
+                WI.FileUtilities.save({
                     url: encodeURI(`web-inspector:///${filename}.png`),
                     content: parseDataURL(dataURL).data,
                     base64Encoded: true,

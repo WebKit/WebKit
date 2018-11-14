@@ -40,8 +40,18 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
         const altToolTip = WI.UIString("Stop recording canvas actions");
         this._recordButtonNavigationItem = new WI.ToggleButtonNavigationItem("record-start-stop", toolTip, altToolTip, "Images/Record.svg", "Images/Stop.svg", 13, 13);
         this._recordButtonNavigationItem.enabled = false;
+        this._recordButtonNavigationItem.buttonStyle = WI.ButtonNavigationItem.Style.ImageAndText;
+        this._recordButtonNavigationItem.label = WI.UIString("Start");
         this._recordButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._toggleRecording, this);
         this._navigationBar.addNavigationItem(this._recordButtonNavigationItem);
+
+        this._navigationBar.addNavigationItem(new WI.DividerNavigationItem);
+
+        let importButtonNavigationItem = new WI.ButtonNavigationItem("import-recording", WI.UIString("Import"), "Images/Import.svg", 15, 15);
+        importButtonNavigationItem.buttonStyle = WI.ButtonNavigationItem.Style.ImageAndText;
+        importButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
+        importButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleImportButtonNavigationItemClicked, this);
+        this._navigationBar.addNavigationItem(importButtonNavigationItem);
 
         this.addSubview(this._navigationBar);
 
@@ -297,6 +307,11 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
         }
     }
 
+    _handleImportButtonNavigationItemClicked(event)
+    {
+        WI.FileUtilities.importJSON((result) => WI.canvasManager.processJSON(result));
+    }
+
     _treeOutlineSelectionDidChange(event)
     {
         let treeElement = event.data.selectedElement;
@@ -359,13 +374,13 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
     {
         this._recordingTreeOutline.removeChildren();
 
-        if (!this._recording) {
-            if (this._recordingProcessingOptionsContainer) {
-                this._recordingProcessingOptionsContainer.remove();
-                this._recordingProcessingOptionsContainer = null;
-            }
-            return;
+        if (this._recordingProcessingOptionsContainer) {
+            this._recordingProcessingOptionsContainer.remove();
+            this._recordingProcessingOptionsContainer = null;
         }
+
+        if (!this._recording)
+            return;
 
         if (!this._recording.ready) {
             if (!this._recording.processing)
@@ -452,6 +467,7 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
         }
 
         this._recordButtonNavigationItem.toggled = this._canvas.recordingActive;
+        this._recordButtonNavigationItem.label = this._recordButtonNavigationItem.toggled ? WI.UIString("Stop") : WI.UIString("Start");
     }
 
     _updateRecordingScopeBar()

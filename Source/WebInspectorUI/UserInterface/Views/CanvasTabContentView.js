@@ -55,6 +55,9 @@ WI.CanvasTabContentView = class CanvasTabContentView extends WI.ContentBrowserTa
         this._recordSingleFrameShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.Shift, WI.KeyboardShortcut.Key.Space, this._handleSpace.bind(this));
         this._recordSingleFrameShortcut.implicitlyPreventsDefault = false;
         this._recordSingleFrameShortcut.disabled = true;
+
+        this.element.addEventListener("dragover", this._handleDragOver.bind(this));
+        this.element.addEventListener("drop", this._handleDrop.bind(this));
     }
 
     static tabInfo()
@@ -180,8 +183,12 @@ WI.CanvasTabContentView = class CanvasTabContentView extends WI.ContentBrowserTa
         this._overviewTreeElement.appendChild(new WI.CanvasTreeElement(canvas));
         this._canvasCollection.add(canvas);
 
+        const options = {
+            suppressShowRecording: true,
+        };
+
         for (let recording of canvas.recordingCollection)
-            this._addRecording(recording, {suppressShowRecording: true});
+            this._addRecording(recording, options);
     }
 
     _removeCanvas(canvas)
@@ -251,9 +258,13 @@ WI.CanvasTabContentView = class CanvasTabContentView extends WI.ContentBrowserTa
         if (!recording)
             return;
 
-        this._addRecording(recording, {
-            suppressShowRecording: !initiatedByUser || this.contentBrowser.currentRepresentedObjects.some((representedObject) => representedObject instanceof WI.Recording),
-        });
+        let options = {};
+
+        // Always show imported recordings.
+        if (recording.source)
+            options.suppressShowRecording = !initiatedByUser || this.contentBrowser.currentRepresentedObjects.some((representedObject) => representedObject instanceof WI.Recording);
+
+        this._addRecording(recording, options);
     }
 
     _handleSpace(event)
@@ -276,6 +287,25 @@ WI.CanvasTabContentView = class CanvasTabContentView extends WI.ContentBrowserTa
         }
 
         event.preventDefault();
+    }
+
+    _handleDragOver(event)
+    {
+        if (event.dataTransfer.types.includes("Files"))
+            event.preventDefault();
+    }
+
+    _handleDrop(event)
+    {
+        if (!event.dataTransfer.files || !event.dataTransfer.files.length)
+            return;
+
+        event.preventDefault();
+
+        WI.FileUtilities.readJSON(event.dataTransfer.files, (result) => WI.canvasManager.processJSON(result))
+        .then(() => {
+            event.dataTransfer.clearData();
+        });
     }
 };
 

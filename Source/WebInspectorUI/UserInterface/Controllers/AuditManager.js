@@ -93,35 +93,29 @@ WI.AuditManager = class AuditManager extends WI.Object
         this._runningState = WI.AuditManager.RunningState.Stopping;
     }
 
-    import()
+    async processJSON({json, error})
     {
-        WI.loadDataFromFile(async (data, filename) => {
-            if (!data)
-                return;
+        if (error) {
+            WI.AuditManager.synthesizeError(error);
+            return;
+        }
 
-            let payload = null;
-            try {
-                payload = JSON.parse(data);
-            } catch (e) {
-                WI.AuditManager.synthesizeError(e);
-                return;
-            }
-
-            let object = await WI.AuditTestGroup.fromPayload(payload) || await WI.AuditTestCase.fromPayload(payload);
+        let object = await WI.AuditTestGroup.fromPayload(json) || await WI.AuditTestCase.fromPayload(json);
+        if (!object) {
+            object = await WI.AuditTestGroupResult.fromPayload(json) || await WI.AuditTestCaseResult.fromPayload(json);
             if (!object) {
-                object = await WI.AuditTestGroupResult.fromPayload(payload) || await WI.AuditTestCaseResult.fromPayload(payload);
-                if (!object) {
-                    WI.AuditManager.synthesizeError(WI.UIString("invalid JSON."));
-                    return;
-                }
+                WI.AuditManager.synthesizeError(WI.UIString("invalid JSON."));
+                return;
             }
+        }
 
-            if (object instanceof WI.AuditTestBase) {
-                this._addTest(object);
-                WI.objectStores.audits.addObject(object);
-            } else if (object instanceof WI.AuditTestResultBase)
-                this._addResult(object);
-        });
+        if (object instanceof WI.AuditTestBase) {
+            this._addTest(object);
+            WI.objectStores.audits.addObject(object);
+        } else if (object instanceof WI.AuditTestResultBase)
+            this._addResult(object);
+
+        WI.showRepresentedObject(object);
     }
 
     export(object)
@@ -134,7 +128,7 @@ WI.AuditManager = class AuditManager extends WI.Object
 
         let url = "web-inspector:///" + encodeURI(filename) + ".json";
 
-        WI.saveDataToFile({
+        WI.FileUtilities.save({
             url,
             content: JSON.stringify(object),
             forceSaveAs: true,

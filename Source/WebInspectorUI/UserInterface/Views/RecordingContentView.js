@@ -183,7 +183,7 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
         let filename = this.representedObject.displayName;
         let url = "web-inspector:///" + encodeURI(filename) + ".json";
 
-        WI.saveDataToFile({
+        WI.FileUtilities.save({
             url,
             content: JSON.stringify(this.representedObject.toJSON()),
             forceSaveAs: true,

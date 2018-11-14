@@ -36,7 +36,6 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
 
         let importNavigationItem = new WI.ButtonNavigationItem("import-recording", WI.UIString("Import"), "Images/Import.svg", 15, 15);
         importNavigationItem.buttonStyle = WI.ButtonNavigationItem.Style.ImageAndText;
-        importNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, () => { WI.canvasManager.importRecording(); });
 
         let importHelpElement = WI.createNavigationItemHelp(WI.UIString("Press %s to load a recording from file."), importNavigationItem);
         contentPlaceholder.appendChild(importHelpElement);
@@ -64,9 +63,8 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
         }
 
         this._importButtonNavigationItem = new WI.ButtonNavigationItem("import-recording", WI.UIString("Import"), "Images/Import.svg", 15, 15);
-        this._importButtonNavigationItem.toolTip = WI.UIString("Import recording from file");
+        this._importButtonNavigationItem.toolTip = WI.UIString("Import");
         this._importButtonNavigationItem.buttonStyle = WI.ButtonNavigationItem.Style.ImageAndText;
-        this._importButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, () => { WI.canvasManager.importRecording(); });
 
         this._refreshButtonNavigationItem = new WI.ButtonNavigationItem("refresh-all", WI.UIString("Refresh all"), "Images/ReloadFull.svg", 13, 13);
         this._refreshButtonNavigationItem.enabled = false;
@@ -76,6 +74,9 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
         this._showGridButtonNavigationItem.activated = !!WI.settings.showImageGrid.value;
         this._showGridButtonNavigationItem.enabled = false;
         this._showGridButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._showGridButtonClicked, this);
+
+        importNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleImportButtonNavigationItemClicked, this);
+        this._importButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleImportButtonNavigationItemClicked, this);
     }
 
     // Public
@@ -255,5 +256,10 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
     _handleCanvasRecordingAutoCaptureFrameCountChanged(event)
     {
         this._recordingAutoCaptureFrameCountInputElement.value = WI.settings.canvasRecordingAutoCaptureFrameCount.value;
+    }
+
+    _handleImportButtonNavigationItemClicked(event)
+    {
+        WI.FileUtilities.importJSON((result) => WI.canvasManager.processJSON(result));
     }
 };

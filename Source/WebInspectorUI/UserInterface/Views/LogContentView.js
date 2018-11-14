@@ -472,7 +472,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
             contextMenu.appendItem(WI.UIString("Save Selected"), () => {
                 const forceSaveAs = true;
-                WI.saveDataToFile({
+                WI.FileUtilities.save({
                     url: "web-inspector:///Console.txt",
                     content: this._formatMessagesAsData(true),
                 }, forceSaveAs);

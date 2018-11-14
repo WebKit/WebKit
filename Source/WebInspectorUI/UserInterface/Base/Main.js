@@ -1602,7 +1602,7 @@ WI._contextMenuRequested = function(event)
 
         protocolSubMenu.appendItem(WI.unlocalizedString("Export Trace\u2026"), () => {
             const forceSaveAs = true;
-            WI.saveDataToFile(InspectorBackend.activeTracer.trace.saveData, forceSaveAs);
+            WI.FileUtilities.save(InspectorBackend.activeTracer.trace.saveData, forceSaveAs);
         }, !isCapturingTraffic);
     } else {
         const onlyExisting = true;
@@ -2069,7 +2069,7 @@ WI._save = function(event)
     if (!contentView || !contentView.supportsSave)
         return;
 
-    WI.saveDataToFile(contentView.saveData);
+    WI.FileUtilities.save(contentView.saveData);
 };
 
 WI._saveAs = function(event)
@@ -2078,7 +2078,7 @@ WI._saveAs = function(event)
     if (!contentView || !contentView.supportsSave)
         return;
 
-    WI.saveDataToFile(contentView.saveData, true);
+    WI.FileUtilities.save(contentView.saveData, true);
 };
 
 WI._clear = function(event)
