@@ -1,3 +1,15 @@
+2018-11-13  Chris Dumez  <cdumez@apple.com>
+
+        Several Service Worker API tests are failing when enabling PSON
+        https://bugs.webkit.org/show_bug.cgi?id=191619
+
+        Reviewed by Youenn Fablet.
+
+        Update tests to use _webProcessCountIgnoringPrewarmed instead of _webProcessCount so that they are
+        not impacted by process prewarming.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+
 2018-11-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Do not show selection UI for editable elements with opacity near zero

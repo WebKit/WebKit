@@ -1040,24 +1040,24 @@ TEST(ServiceWorkers, ServiceWorkerProcessCreation)
     [newConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"SW"];
 
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:newConfiguration.get()]);
-    EXPECT_EQ(1u, webView.get().configuration.processPool._webProcessCount);
+    EXPECT_EQ(1u, webView.get().configuration.processPool._webProcessCountIgnoringPrewarmed);
     request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"sw://host/regularPageWithConnection.html"]];
     [webView loadRequest:request];
     TestWebKitAPI::Util::run(&done);
     done = false;
 
     // Make sure that loading the simple page did not start the service worker process.
-    EXPECT_EQ(1u, webView.get().configuration.processPool._webProcessCount);
+    EXPECT_EQ(1u, webView.get().configuration.processPool._webProcessCountIgnoringPrewarmed);
 
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:newConfiguration.get()]);
-    EXPECT_EQ(2u, webView.get().configuration.processPool._webProcessCount);
+    EXPECT_EQ(2u, webView.get().configuration.processPool._webProcessCountIgnoringPrewarmed);
     request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"sw://host/main.html"]];
     [webView loadRequest:request];
     TestWebKitAPI::Util::run(&done);
     done = false;
 
     // Make sure that loading this page did start the service worker process.
-    EXPECT_EQ(3u, webView.get().configuration.processPool._webProcessCount);
+    EXPECT_EQ(3u, webView.get().configuration.processPool._webProcessCountIgnoringPrewarmed);
 
     [[configuration websiteDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
@@ -1134,14 +1134,14 @@ TEST(ServiceWorkers, HasServiceWorkerRegistrationBit)
     newConfiguration.get().websiteDataStore = [configuration websiteDataStore];
 
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:newConfiguration.get()]);
-    EXPECT_EQ(1u, webView.get().configuration.processPool._webProcessCount);
+    EXPECT_EQ(1u, webView.get().configuration.processPool._webProcessCountIgnoringPrewarmed);
     request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"sw://host/regularPageWithConnection.html"]];
     [webView loadRequest:request];
     TestWebKitAPI::Util::run(&done);
     done = false;
 
     // Make sure that loading the simple page did not start the service worker process.
-    EXPECT_EQ(1u, webView.get().configuration.processPool._webProcessCount);
+    EXPECT_EQ(1u, webView.get().configuration.processPool._webProcessCountIgnoringPrewarmed);
 
     [[configuration websiteDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
