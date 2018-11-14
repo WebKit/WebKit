@@ -31,7 +31,6 @@
 #include "MessageWithMessagePorts.h"
 #include "ServiceWorkerClientIdentifier.h"
 #include "ServiceWorkerGlobalScope.h"
-#include <unistd.h>
 
 namespace WebCore {
 

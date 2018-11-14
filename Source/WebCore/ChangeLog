@@ -1,3 +1,22 @@
+2018-11-14  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [Win] Compile Service Worker support
+        https://bugs.webkit.org/show_bug.cgi?id=191409
+
+        Reviewed by Youenn Fablet.
+
+        Fix compilation errors when ENABLE(SERVICE_WORKER)
+        on Windows with clang-cl. Clang on dllexport
+        platforms does not support specifying the
+        dllexport on both a class and members of the class
+        and unistd.h isn't provided but also appeared to
+        not be used.
+
+        No new tests, should be covered by existing tests.
+
+        * workers/service/ServiceWorkerProvider.h:
+        * workers/service/context/SWContextManager.cpp:
+
 2018-11-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Keep Web Inspector window alive across process swaps (PSON) (Remote Inspector)

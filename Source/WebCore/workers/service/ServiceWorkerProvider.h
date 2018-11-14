@@ -41,14 +41,14 @@ class WEBCORE_EXPORT ServiceWorkerProvider {
 public:
     virtual ~ServiceWorkerProvider();
 
-    WEBCORE_EXPORT static ServiceWorkerProvider& singleton();
-    WEBCORE_EXPORT static void setSharedProvider(ServiceWorkerProvider&);
+    static ServiceWorkerProvider& singleton();
+    static void setSharedProvider(ServiceWorkerProvider&);
 
     bool mayHaveServiceWorkerRegisteredForOrigin(PAL::SessionID, const SecurityOriginData&);
     virtual SWClientConnection* existingServiceWorkerConnectionForSession(PAL::SessionID) = 0;
     virtual SWClientConnection& serviceWorkerConnectionForSession(PAL::SessionID) = 0;
 
-    WEBCORE_EXPORT void registerServiceWorkerClients();
+    void registerServiceWorkerClients();
 
     void setMayHaveRegisteredServiceWorkers() { m_mayHaveRegisteredServiceWorkers = true; }
 
