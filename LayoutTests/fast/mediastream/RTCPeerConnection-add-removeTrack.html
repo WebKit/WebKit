@@ -91,10 +91,6 @@
                 debug("Sender is still in getSenders() list")
                 shouldBe("pc.getSenders().length", "2");
 
-                shouldNotThrow("senderFromPc2 = pc2.addTrack(track, stream)");
-                debug("removeTrack() with 'foreign' sender must be ignored (not throw)");
-                shouldNotThrow("pc.removeTrack(senderFromPc2)");
-
                 shouldThrow("pc.addTrack(null);");
                 shouldThrow("pc.addTrack(undefined);");
                 shouldThrow("pc.removeTrack(null);");

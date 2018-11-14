@@ -1,5 +1,14 @@
 2018-11-14  Youenn Fablet  <youenn@apple.com>
 
+        Calling removeTrack on different RTCPeerConnection should throw InvalidAccessError
+        https://bugs.webkit.org/show_bug.cgi?id=191603
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/webrtc/RTCPeerConnection-removeTrack.https-expected.txt:
+
+2018-11-14  Youenn Fablet  <youenn@apple.com>
+
         Add support for RTCRtpCodecParameters.sdpFmtpLine
         https://bugs.webkit.org/show_bug.cgi?id=191591
 

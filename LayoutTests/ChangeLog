@@ -1,5 +1,17 @@
 2018-11-14  Youenn Fablet  <youenn@apple.com>
 
+        Calling removeTrack on different RTCPeerConnection should throw InvalidAccessError
+        https://bugs.webkit.org/show_bug.cgi?id=191603
+
+        Reviewed by Chris Dumez.
+
+        Removed obsolete test.
+
+        * fast/mediastream/RTCPeerConnection-add-removeTrack-expected.txt:
+        * fast/mediastream/RTCPeerConnection-add-removeTrack.html:
+
+2018-11-14  Youenn Fablet  <youenn@apple.com>
+
         Add support for transport and peerConnection stats
         https://bugs.webkit.org/show_bug.cgi?id=191592
 

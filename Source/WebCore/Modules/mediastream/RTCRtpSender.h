@@ -71,6 +71,8 @@ public:
 
     void getStats(Ref<DeferredPromise>&&);
 
+    bool isCreatedBy(const PeerConnectionBackend&) const;
+
 private:
     RTCRtpSender(PeerConnectionBackend&, String&& trackKind, Vector<String>&& mediaStreamIds, std::unique_ptr<RTCRtpSenderBackend>&&);
 

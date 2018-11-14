@@ -131,7 +131,10 @@ ExceptionOr<void> RTCPeerConnection::removeTrack(RTCRtpSender& sender)
     INFO_LOG(LOGIDENTIFIER);
 
     if (isClosed())
-        return Exception { InvalidStateError };
+        return Exception { InvalidStateError, "RTCPeerConnection is closed"_s };
+
+    if (!sender.isCreatedBy(*m_backend))
+        return Exception { InvalidAccessError, "RTCPeerConnection did not create the given sender"_s };
 
     bool shouldAbort = true;
     RTCRtpTransceiver* senderTransceiver = nullptr;

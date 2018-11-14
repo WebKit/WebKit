@@ -122,6 +122,11 @@ void RTCRtpSender::getStats(Ref<DeferredPromise>&& promise)
     m_connection->getStats(*this, WTFMove(promise));
 }
 
+bool RTCRtpSender::isCreatedBy(const PeerConnectionBackend& connection) const
+{
+    return &connection == m_connection.get();
+}
+
 std::optional<RTCRtpCapabilities> RTCRtpSender::getCapabilities(ScriptExecutionContext& context, const String& kind)
 {
     return PeerConnectionBackend::senderCapabilities(context, kind);
