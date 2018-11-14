@@ -1,3 +1,21 @@
+2018-11-13  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [WebRTC] Provide default implementation of LibWebRTCProvider
+        https://bugs.webkit.org/show_bug.cgi?id=191611
+
+        Reviewed by Michael Catanzaro.
+
+        Refactor LibWebRTCProvider such that platform-specific implementations need not worry about specifying defaults.
+
+        * PlatformWin.cmake:
+        * platform/GStreamer.cmake:
+        * platform/SourcesGLib.txt:
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.cpp:
+        * platform/mediastream/libwebrtc/LibWebRTCProviderCocoa.cpp:
+        * platform/mediastream/libwebrtc/LibWebRTCProviderGStreamer.cpp: Renamed from Source/WebCore/platform/mediastream/libwebrtc/LibWebRTCProviderGlib.cpp.
+        * platform/mediastream/libwebrtc/LibWebRTCProviderGStreamer.h: Renamed from Source/WebCore/platform/mediastream/libwebrtc/LibWebRTCProviderGlib.h.
+        * platform/mediastream/libwebrtc/LibWebRTCProviderWin.cpp: Removed.
+
 2018-11-13  Timothy Hatcher  <timothy@apple.com>
 
         Use a light scrollbar for transparent web views in dark mode.

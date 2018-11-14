@@ -71,8 +71,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/win/TransformationMatrixWin.cpp
     platform/graphics/win/UniscribeController.cpp
 
-    platform/mediastream/libwebrtc/LibWebRTCProviderWin.cpp
-
     platform/network/win/DownloadBundleWin.cpp
     platform/network/win/NetworkStateNotifierWin.cpp
 

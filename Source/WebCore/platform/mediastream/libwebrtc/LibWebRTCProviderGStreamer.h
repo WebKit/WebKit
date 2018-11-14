@@ -23,41 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "LibWebRTCProviderGlib.h"
+#pragma once
 
-#include <wtf/UniqueRef.h>
+#include "LibWebRTCProvider.h"
+
+#if USE(LIBWEBRTC) && USE(GSTREAMER)
+
+#include "GStreamerVideoDecoderFactory.h"
+#include "GStreamerVideoEncoderFactory.h"
 
 namespace WebCore {
 
-UniqueRef<LibWebRTCProvider> LibWebRTCProvider::create()
-{
-#if USE(LIBWEBRTC) && (PLATFORM(GTK) || PLATFORM(WPE))
-    return makeUniqueRef<LibWebRTCProviderGlib>();
-#else
-    return makeUniqueRef<LibWebRTCProvider>();
-#endif
-}
+class WEBCORE_EXPORT LibWebRTCProviderGStreamer : public LibWebRTCProvider {
+public:
+    LibWebRTCProviderGStreamer() = default;
 
-bool LibWebRTCProvider::webRTCAvailable()
-{
-#if USE(LIBWEBRTC) && USE(GSTREAMER)
-    return true;
-#else
-    return false;
-#endif
-}
-
-#if USE(LIBWEBRTC) && USE(GSTREAMER)
-std::unique_ptr<webrtc::VideoDecoderFactory> LibWebRTCProviderGlib::createDecoderFactory()
-{
-    return std::make_unique<GStreamerVideoDecoderFactory>();
-}
-
-std::unique_ptr<webrtc::VideoEncoderFactory> LibWebRTCProviderGlib::createEncoderFactory()
-{
-    return std::make_unique<GStreamerVideoEncoderFactory>();
-}
-#endif // USE(LIBWEBRTC) && USE(GSTREAMER)
+    std::unique_ptr<webrtc::VideoEncoderFactory> createEncoderFactory() final;
+    std::unique_ptr<webrtc::VideoDecoderFactory> createDecoderFactory() final;
+};
 
 } // namespace WebCore
+
+#endif

@@ -52,10 +52,15 @@ ALLOW_UNUSED_PARAMETERS_END
 
 namespace WebCore {
 
-#if !PLATFORM(COCOA) && !PLATFORM(GTK) && !PLATFORM(WPE)
+#if !USE(LIBWEBRTC)
 UniqueRef<LibWebRTCProvider> LibWebRTCProvider::create()
 {
     return makeUniqueRef<LibWebRTCProvider>();
+}
+
+bool LibWebRTCProvider::webRTCAvailable()
+{
+    return false;
 }
 #endif
 
