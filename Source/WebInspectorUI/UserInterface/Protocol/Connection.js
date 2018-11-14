@@ -108,7 +108,7 @@ InspectorBackend.Connection = class InspectorBackendConnection
 
         let processingStartTimestamp = performance.now();
         for (let tracer of InspectorBackend.activeTracers)
-            tracer.logWillHandleResponse(messageObject);
+            tracer.logWillHandleResponse(this, messageObject);
 
         InspectorBackend.currentDispatchState.request = request;
         InspectorBackend.currentDispatchState.response = messageObject;
@@ -127,7 +127,7 @@ InspectorBackend.Connection = class InspectorBackendConnection
         let roundTripTime = (processingStartTimestamp - responseData.sendRequestTimestamp).toFixed(3);
 
         for (let tracer of InspectorBackend.activeTracers)
-            tracer.logDidHandleResponse(messageObject, {rtt: roundTripTime, dispatch: processingTime});
+            tracer.logDidHandleResponse(this, messageObject, {rtt: roundTripTime, dispatch: processingTime});
 
         if (this._deferredScripts.length && !this._pendingResponses.size)
             this._flushPendingScripts();
@@ -186,7 +186,7 @@ InspectorBackend.Connection = class InspectorBackendConnection
 
         let processingStartTimestamp = performance.now();
         for (let tracer of InspectorBackend.activeTracers)
-            tracer.logWillHandleEvent(messageObject);
+            tracer.logWillHandleEvent(this, messageObject);
 
         InspectorBackend.currentDispatchState.event = messageObject;
 
@@ -194,7 +194,7 @@ InspectorBackend.Connection = class InspectorBackendConnection
             agent.dispatchEvent(eventName, eventArguments);
         } catch (e) {
             for (let tracer of InspectorBackend.activeTracers)
-                tracer.logFrontendException(messageObject, e);
+                tracer.logFrontendException(this, messageObject, e);
 
             WI.reportInternalError(e, {"cause": `An uncaught exception was thrown while handling event: ${qualifiedName}`});
         }
@@ -203,7 +203,7 @@ InspectorBackend.Connection = class InspectorBackendConnection
 
         let processingDuration = (performance.now() - processingStartTimestamp).toFixed(3);
         for (let tracer of InspectorBackend.activeTracers)
-            tracer.logDidHandleEvent(messageObject, {dispatch: processingDuration});
+            tracer.logDidHandleEvent(this, messageObject, {dispatch: processingDuration});
     }
 
     _sendCommandToBackendWithCallback(command, parameters, callback)
@@ -257,7 +257,7 @@ InspectorBackend.Connection = class InspectorBackendConnection
     _sendMessageToBackend(messageObject)
     {
         for (let tracer of InspectorBackend.activeTracers)
-            tracer.logFrontendRequest(messageObject);
+            tracer.logFrontendRequest(this, messageObject);
 
         this.sendMessageToBackend(JSON.stringify(messageObject));
     }

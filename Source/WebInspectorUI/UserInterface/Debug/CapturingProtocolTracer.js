@@ -39,22 +39,17 @@ WI.CapturingProtocolTracer = class CapturingProtocolTracer extends WI.ProtocolTr
         return this._trace;
     }
 
-    logFrontendException(message, exception)
+    logFrontendException(connection, message, exception)
     {
         this._processEntry({type: "exception", message: this._stringifyMessage(message), exception});
     }
 
-    logProtocolError(message, error)
-    {
-        this._processEntry({type: "error", message: this._stringifyMessage(message), error});
-    }
-
-    logFrontendRequest(message)
+    logFrontendRequest(connection, message)
     {
         this._processEntry({type: "request", message: this._stringifyMessage(message)});
     }
 
-    logDidHandleResponse(message, timings = null)
+    logDidHandleResponse(connection, message, timings = null)
     {
         let entry = {type: "response", message: this._stringifyMessage(message)};
         if (timings)
@@ -63,7 +58,7 @@ WI.CapturingProtocolTracer = class CapturingProtocolTracer extends WI.ProtocolTr
         this._processEntry(entry);
     }
 
-    logDidHandleEvent(message, timings = null)
+    logDidHandleEvent(connection, message, timings = null)
     {
         let entry = {type: "event", message: this._stringifyMessage(message)};
         if (timings)

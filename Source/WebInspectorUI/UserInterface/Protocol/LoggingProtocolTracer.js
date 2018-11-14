@@ -31,7 +31,7 @@ WI.LoggingProtocolTracer = class LoggingProtocolTracer extends WI.ProtocolTracer
 
         this._dumpMessagesToConsole = false;
         this._dumpTimingDataToConsole = false;
-        this._logToConsole = window.InspectorTest ? InspectorFrontendHost.unbufferedLog.bind(InspectorFrontendHost) : console.log.bind(console);
+        this._logToConsole = window.InspectorTest ? InspectorFrontendHost.unbufferedLog.bind(InspectorFrontendHost) : console.log;
     }
 
     // Public
@@ -56,45 +56,40 @@ WI.LoggingProtocolTracer = class LoggingProtocolTracer extends WI.ProtocolTracer
         return this._dumpTimingDataToConsole;
     }
 
-    logFrontendException(message, exception)
+    logFrontendException(connection, message, exception)
     {
-        this._processEntry({type: "exception", message, exception});
+        this._processEntry({type: "exception", connection, message, exception});
     }
 
-    logProtocolError(message, error)
+    logFrontendRequest(connection, message)
     {
-        this._processEntry({type: "error", message, error});
+        this._processEntry({type: "request", connection, message});
     }
 
-    logFrontendRequest(message)
+    logWillHandleResponse(connection, message)
     {
-        this._processEntry({type: "request", message});
-    }
-
-    logWillHandleResponse(message)
-    {
-        let entry = {type: "response", message};
+        let entry = {type: "response", connection, message};
         this._processEntry(entry);
     }
 
-    logDidHandleResponse(message, timings = null)
+    logDidHandleResponse(connection, message, timings = null)
     {
-        let entry = {type: "response", message};
+        let entry = {type: "response", connection, message};
         if (timings)
             entry.timings = Object.shallowCopy(timings);
 
         this._processEntry(entry);
     }
 
-    logWillHandleEvent(message)
+    logWillHandleEvent(connection, message)
     {
-        let entry = {type: "event", message};
+        let entry = {type: "event", connection, message};
         this._processEntry(entry);
     }
 
-    logDidHandleEvent(message, timings = null)
+    logDidHandleEvent(connection, message, timings = null)
     {
-        let entry = {type: "event", message};
+        let entry = {type: "event", connection, message};
         if (timings)
             entry.timings = Object.shallowCopy(timings);
 
@@ -109,7 +104,9 @@ WI.LoggingProtocolTracer = class LoggingProtocolTracer extends WI.ProtocolTracer
             else if (entry.timings.dispatch)
                 this._logToConsole(`time-stats: Handling: ${entry.timings.dispatch || NaN}ms`);
         } else if (this._dumpMessagesToConsole && !entry.timings) {
-            this._logToConsole(`${entry.type}: ${JSON.stringify(entry.message)}`);
+            let connection = entry.connection;
+            let targetId = connection && connection.target ? connection.target.identifier : "unknown";
+            this._logToConsole(`${entry.type} (${targetId}): ${JSON.stringify(entry.message)}`);
             if (entry.exception) {
                 this._logToConsole(entry.exception);
                 if (entry.exception.stack)
