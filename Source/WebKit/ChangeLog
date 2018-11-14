@@ -1,5 +1,29 @@
 2018-11-14  Chris Dumez  <cdumez@apple.com>
 
+        Client should be able to disable PSON even if the experimental feature is on by default
+        https://bugs.webkit.org/show_bug.cgi?id=191634
+
+        Reviewed by Dean Jackson.
+
+        Instead of overriding the APIProcessPoolConfiguration's m_processSwapsOnNavigation flag to true
+        when the experimental is enabled, use a separate flag to store this information. If the client
+        explicitly sets the APIProcessPoolConfiguration's m_processSwapsOnNavigation flag then we obey
+        the client's request, otherwise, we fall back to using the state from experimental features.
+
+        This allows:
+        - API tests to explicitely disable PSON / Process prewarming even if those are on by default
+          in experimental features.
+        - If the client does not set those flags on the APIProcessPoolConfiguration (Safari for e.g.),
+          then the experimental feature flag still fully controls the feature.
+
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::createWebPage):
+
+2018-11-14  Chris Dumez  <cdumez@apple.com>
+
         WebKit.ApplicationManifestBasic API test is failing when enabling PSON
         https://bugs.webkit.org/show_bug.cgi?id=191602
 

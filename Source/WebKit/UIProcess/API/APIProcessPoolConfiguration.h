@@ -59,8 +59,13 @@ public:
     unsigned maximumProcessCount() const { return m_maximumProcessCount; }
     void setMaximumProcessCount(unsigned maximumProcessCount) { m_maximumProcessCount = maximumProcessCount; }
 
-    bool isAutomaticProcessWarmingEnabled() const { return m_isAutomaticProcessWarmingEnabled; }
-    void setIsAutomaticProcessWarmingEnabled(bool value) { m_isAutomaticProcessWarmingEnabled = value; }
+    bool isAutomaticProcessWarmingEnabled() const
+    {
+        // FIXME: For now, turning on PSON from the experimental features menu also turns on
+        // automatic process warming until clients can be updated.
+        return m_isAutomaticProcessWarmingEnabledByClient.value_or(m_processSwapsOnNavigationFromExperimentalFeatures);
+    }
+    void setIsAutomaticProcessWarmingEnabled(bool value) { m_isAutomaticProcessWarmingEnabledByClient = value; }
 
     bool diskCacheSpeculativeValidationEnabled() const { return m_diskCacheSpeculativeValidationEnabled; }
     void setDiskCacheSpeculativeValidationEnabled(bool enabled) { m_diskCacheSpeculativeValidationEnabled = enabled; }
@@ -150,8 +155,12 @@ public:
     ProcessID presentingApplicationPID() const { return m_presentingApplicationPID; }
     void setPresentingApplicationPID(ProcessID pid) { m_presentingApplicationPID = pid; }
 
-    bool processSwapsOnNavigation() const { return m_processSwapsOnNavigation; }
-    void setProcessSwapsOnNavigation(bool swaps) { m_processSwapsOnNavigation = swaps; }
+    bool processSwapsOnNavigation() const
+    {
+        return m_processSwapsOnNavigationFromClient.value_or(m_processSwapsOnNavigationFromExperimentalFeatures);
+    }
+    void setProcessSwapsOnNavigation(bool swaps) { m_processSwapsOnNavigationFromClient = swaps; }
+    void setProcessSwapsOnNavigationFromExperimentalFeatures(bool swaps) { m_processSwapsOnNavigationFromExperimentalFeatures = swaps; }
 
     bool alwaysKeepAndReuseSwappedProcesses() const { return m_alwaysKeepAndReuseSwappedProcesses; }
     void setAlwaysKeepAndReuseSwappedProcesses(bool keepAndReuse) { m_alwaysKeepAndReuseSwappedProcesses = keepAndReuse; }
@@ -205,10 +214,11 @@ private:
     bool m_shouldCaptureAudioInUIProcess { false };
     bool m_shouldCaptureDisplayInUIProcess { DEFAULT_CAPTURE_DISPLAY_IN_UI_PROCESS };
     ProcessID m_presentingApplicationPID { getCurrentProcessID() };
-    bool m_processSwapsOnNavigation { false };
+    std::optional<bool> m_processSwapsOnNavigationFromClient;
+    bool m_processSwapsOnNavigationFromExperimentalFeatures { false };
     bool m_alwaysKeepAndReuseSwappedProcesses { false };
     bool m_processSwapsOnWindowOpenWithOpener { false };
-    bool m_isAutomaticProcessWarmingEnabled { false };
+    std::optional<bool> m_isAutomaticProcessWarmingEnabledByClient { false };
     WTF::String m_customWebContentServiceBundleIdentifier;
 
 #if PLATFORM(IOS_FAMILY)

@@ -120,10 +120,11 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::copy()
     copy->m_ctDataConnectionServiceType = this->m_ctDataConnectionServiceType;
 #endif
     copy->m_presentingApplicationPID = this->m_presentingApplicationPID;
-    copy->m_processSwapsOnNavigation = this->m_processSwapsOnNavigation;
+    copy->m_processSwapsOnNavigationFromClient = this->m_processSwapsOnNavigationFromClient;
+    copy->m_processSwapsOnNavigationFromExperimentalFeatures = this->m_processSwapsOnNavigationFromExperimentalFeatures;
     copy->m_alwaysKeepAndReuseSwappedProcesses = this->m_alwaysKeepAndReuseSwappedProcesses;
     copy->m_processSwapsOnWindowOpenWithOpener = this->m_processSwapsOnWindowOpenWithOpener;
-    copy->m_isAutomaticProcessWarmingEnabled = this->m_isAutomaticProcessWarmingEnabled;
+    copy->m_isAutomaticProcessWarmingEnabledByClient = this->m_isAutomaticProcessWarmingEnabledByClient;
 #if ENABLE(PROXIMITY_NETWORKING)
     copy->m_wirelessContextIdentifier = this->m_wirelessContextIdentifier;
 #endif

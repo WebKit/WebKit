@@ -1126,12 +1126,7 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
 #endif
 
     auto page = process->createWebPage(pageClient, WTFMove(pageConfiguration));
-    if (page->preferences().processSwapOnCrossSiteNavigationEnabled()) {
-        m_configuration->setProcessSwapsOnNavigation(true);
-        // FIXME: For now, turning on PSON from the debug features menu also turns on
-        // automatic process warming until clients can be updated.
-        m_configuration->setIsAutomaticProcessWarmingEnabled(true);
-    }
+    m_configuration->setProcessSwapsOnNavigationFromExperimentalFeatures(page->preferences().processSwapOnCrossSiteNavigationEnabled());
 
     return page;
 }
