@@ -117,8 +117,9 @@ private:
     void updateActiveVideoTrack();
 
     void scheduleDeferredTask(Function<void ()>&&);
+    void forEachObserver(const WTF::Function<void(Observer&)>&) const;
 
-    Vector<Observer*> m_observers;
+    HashSet<Observer*> m_observers;
     String m_id;
     MediaStreamTrackPrivate* m_activeVideoTrack { nullptr };
     HashMap<String, RefPtr<MediaStreamTrackPrivate>> m_trackSet;

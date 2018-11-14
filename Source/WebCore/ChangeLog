@@ -1,5 +1,31 @@
 2018-11-14  Youenn Fablet  <youenn@apple.com>
 
+        Allow to remove MediaStreamPrivate observers when iterating over observers
+        https://bugs.webkit.org/show_bug.cgi?id=187256
+
+        Reviewed by Eric Carlson.
+
+        Migrate the observer list from a Vector to a HashSet.
+        This is more robust to multiple observing and keeping of order of observers is not required.
+        Copy the set of observers to a vector before iterating over it.
+        This allows to remove an observer while iterating, which is now used in UserMediaRequest.
+
+        Covered by existing tests.
+
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::mediaStreamIsReady):
+        * platform/mediastream/MediaStreamPrivate.cpp:
+        (WebCore::MediaStreamPrivate::addObserver):
+        (WebCore::MediaStreamPrivate::removeObserver):
+        (WebCore::MediaStreamPrivate::forEachObserver const):
+        (WebCore::MediaStreamPrivate::updateActiveState):
+        (WebCore::MediaStreamPrivate::addTrack):
+        (WebCore::MediaStreamPrivate::removeTrack):
+        (WebCore::MediaStreamPrivate::characteristicsChanged):
+        * platform/mediastream/MediaStreamPrivate.h:
+
+2018-11-14  Youenn Fablet  <youenn@apple.com>
+
         Calling removeTrack on different RTCPeerConnection should throw InvalidAccessError
         https://bugs.webkit.org/show_bug.cgi?id=191603
 

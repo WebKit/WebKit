@@ -365,8 +365,7 @@ void UserMediaRequest::mediaStreamIsReady(Ref<MediaStream>&& stream)
     RELEASE_LOG(MediaStream, "UserMediaRequest::mediaStreamIsReady");
     stream->document()->setHasCaptureMediaStreamTrack();
     m_promise.resolve(WTFMove(stream));
-    // We are in an observer iterator loop, we do not want to change the observers within this loop.
-    callOnMainThread([stream = WTFMove(m_pendingActivationMediaStream)] { });
+    m_pendingActivationMediaStream = nullptr;
 }
 
 void UserMediaRequest::mediaStreamDidFail(RealtimeMediaSource::Type type)
