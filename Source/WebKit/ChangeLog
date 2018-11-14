@@ -1,3 +1,58 @@
+2018-11-14  Antti Koivisto  <antti@apple.com>
+
+        Align Mac WK2 layer flush throttling with iOS
+        https://bugs.webkit.org/show_bug.cgi?id=191632
+
+        Reviewed by Zalan Bujtas.
+
+        Currently Mac WK2 uses WebCore side throttling implementation in RenderLayerCompositor. This code has
+        throttling timer per-frame while the actual decision making and layer flushes itself are per page. These
+        timers generate way more flushes than expected in presence of multiple frames. There are also bugs in how
+        flushing state is updated when frames are created dynamically.
+
+        On iOS WK2 throttling is implemented on WebKit side and controlled by a per-page timer. Recent fixes also
+        make this implementation visually fast. We should align the Mac implementation and eventually unify them.
+
+        This patch implements throttling in TiledCoreAnimationDrawingArea mirroring the iOS RemoteLayerTreeDrawingArea
+        implementation. There are some adjustments for platform differences (local vs remote layers) and we continue
+        using runloop observer for the actual flushes. Timings are as in the existing Mac code.
+
+        The patch appears to be a significant performance progression.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+        (WebKit::TiledCoreAnimationDrawingArea::setLayerTreeStateIsFrozen):
+
+        Schedule an immediate flush when layers are unfrozen.
+
+        (WebKit::TiledCoreAnimationDrawingArea::scheduleCompositingLayerFlush):
+        (WebKit::TiledCoreAnimationDrawingArea::scheduleCompositingLayerFlushImmediately):
+
+        Track pending flushes with m_hasPendingFlush bit.
+        Delay flush if the flush throttling timer is active. Start it if we throttling but it is not active yet.
+
+        (WebKit::TiledCoreAnimationDrawingArea::flushLayers):
+
+        Clear m_hasPendingFlush if the flush succeeded.
+        Restart the throttling timer if we are still throttling.
+        Manage runloop observer invalidation here instead of the caller (and stop returning value).
+
+        (WebKit::TiledCoreAnimationDrawingArea::layerFlushRunLoopCallback):
+        (WebKit::TiledCoreAnimationDrawingArea::adjustLayerFlushThrottling):
+
+        Returning 'true' here disables WebCore side throttling code.
+
+        Start or stop the throttling timer on state changes.
+
+        (WebKit::TiledCoreAnimationDrawingArea::layerFlushThrottlingIsActive const):
+
+        This is used to control style and layout timers on WebCore side. Return false on frozen
+        state since unfreezing depends on style and layout.
+
+        (WebKit::TiledCoreAnimationDrawingArea::startLayerFlushThrottlingTimer):
+        (WebKit::TiledCoreAnimationDrawingArea::layerFlushThrottlingTimerFired):
+
 2018-11-14  Chris Dumez  <cdumez@apple.com>
 
         WebKit.WKHTTPCookieStoreWithoutProcessPool API test is failing with process prewarming is enabled

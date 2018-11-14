@@ -88,7 +88,7 @@ private:
 
     bool dispatchDidReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone>) override;
 
-    bool flushLayers();
+    void flushLayers();
 
     // Message handlers.
     void updateGeometry(const WebCore::IntSize& viewSize, bool flushSynchronously, const WTF::MachSendRight& fencePort) override;
@@ -130,6 +130,12 @@ private:
     void invalidateLayerFlushRunLoopObserver();
     void scheduleLayerFlushRunLoopObserver();
 
+    bool adjustLayerFlushThrottling(WebCore::LayerFlushThrottleState::Flags) override;
+    bool layerFlushThrottlingIsActive() const override;
+
+    void startLayerFlushThrottlingTimer();
+    void layerFlushThrottlingTimerFired();
+
     bool m_layerTreeStateIsFrozen;
 
     std::unique_ptr<LayerHostingContext> m_layerHostingContext;
@@ -168,6 +174,12 @@ private:
     Vector<CallbackID> m_pendingCallbackIDs;
 
     std::unique_ptr<WebCore::RunLoopObserver> m_layerFlushRunLoopObserver;
+
+    bool m_isThrottlingLayerFlushes { false };
+    bool m_isLayerFlushThrottlingTemporarilyDisabledForInteraction { false };
+    bool m_hasPendingFlush { false };
+
+    WebCore::Timer m_layerFlushThrottlingTimer;
 };
 
 } // namespace WebKit
