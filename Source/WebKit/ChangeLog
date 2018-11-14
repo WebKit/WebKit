@@ -1,5 +1,11 @@
 2018-11-13  Ross Kirsling  <ross.kirsling@sony.com>
 
+        Unreviewed correction to previous build fix to avoid any internal/downstream repercussions.
+
+        * WebProcess/Network/webrtc/LibWebRTCProvider.h:
+
+2018-11-13  Ross Kirsling  <ross.kirsling@sony.com>
+
         Unreviewed GTK/WPE build fix for r238159. 
 
         * WebProcess/Network/webrtc/LibWebRTCProvider.h:

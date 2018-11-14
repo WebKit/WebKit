@@ -25,9 +25,9 @@
 
 #pragma once
 
-#if PLATFORM(COCOA)
+#if USE(LIBWEBRTC) && PLATFORM(COCOA)
 #include <WebCore/LibWebRTCProviderCocoa.h>
-#elif PLATFORM(GTK) || PLATFORM(WPE)
+#elif USE(LIBWEBRTC) && USE(GSTREAMER)
 #include <WebCore/LibWebRTCProviderGStreamer.h>
 #else
 #include <WebCore/LibWebRTCProvider.h>
@@ -39,7 +39,7 @@ namespace WebKit {
 
 #if PLATFORM(COCOA)
 using LibWebRTCProviderBase = WebCore::LibWebRTCProviderCocoa;
-#elif PLATFORM(GTK) || PLATFORM(WPE)
+#elif USE(GSTREAMER)
 using LibWebRTCProviderBase = WebCore::LibWebRTCProviderGStreamer;
 #else
 using LibWebRTCProviderBase = WebCore::LibWebRTCProvider;
