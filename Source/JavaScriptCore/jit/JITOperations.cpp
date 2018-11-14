@@ -2766,8 +2766,10 @@ EncodedJSValue JIT_OPERATION operationArithNegateOptimize(ExecState* exec, Encod
     JSValue primValue = operand.toPrimitive(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     
-    if (primValue.isBigInt())
-        return JSValue::encode(JSBigInt::unaryMinus(vm, asBigInt(primValue)));
+    if (primValue.isBigInt()) {
+        JSBigInt* result = JSBigInt::unaryMinus(vm, asBigInt(primValue));
+        return JSValue::encode(result);
+    }
 
     double number = primValue.toNumber(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());

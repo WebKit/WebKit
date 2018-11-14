@@ -563,8 +563,7 @@ SLOW_PATH_DECL(slow_path_sub)
 
     if (WTF::holds_alternative<JSBigInt*>(leftNumeric) || WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
         if (WTF::holds_alternative<JSBigInt*>(leftNumeric) && WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
-            JSBigInt* result = JSBigInt::sub(exec, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric));
-            CHECK_EXCEPTION();
+            JSBigInt* result = JSBigInt::sub(vm, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric));
             RETURN_WITH_PROFILING(result, {
                 updateArithProfileForBinaryArithOp(exec, pc, result, left, right);
             });
@@ -700,7 +699,7 @@ SLOW_PATH_DECL(slow_path_bitand)
     CHECK_EXCEPTION();
     if (WTF::holds_alternative<JSBigInt*>(leftNumeric) || WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
         if (WTF::holds_alternative<JSBigInt*>(leftNumeric) && WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
-            JSBigInt* result = JSBigInt::bitwiseAnd(exec, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric));
+            JSBigInt* result = JSBigInt::bitwiseAnd(vm, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric));
             CHECK_EXCEPTION();
             RETURN_PROFILED(result);
         }
@@ -721,7 +720,7 @@ SLOW_PATH_DECL(slow_path_bitor)
     CHECK_EXCEPTION();
     if (WTF::holds_alternative<JSBigInt*>(leftNumeric) || WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
         if (WTF::holds_alternative<JSBigInt*>(leftNumeric) && WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
-            JSBigInt* result = JSBigInt::bitwiseOr(exec, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric));
+            JSBigInt* result = JSBigInt::bitwiseOr(vm, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric));
             CHECK_EXCEPTION();
             RETURN_PROFILED(result);
         }
@@ -742,7 +741,7 @@ SLOW_PATH_DECL(slow_path_bitxor)
     CHECK_EXCEPTION();
     if (WTF::holds_alternative<JSBigInt*>(leftNumeric) || WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
         if (WTF::holds_alternative<JSBigInt*>(leftNumeric) && WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
-            JSBigInt* result = JSBigInt::bitwiseXor(exec, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric));
+            JSBigInt* result = JSBigInt::bitwiseXor(vm, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric));
             CHECK_EXCEPTION();
             RETURN(result);
         }

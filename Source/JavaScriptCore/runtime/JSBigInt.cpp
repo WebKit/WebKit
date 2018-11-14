@@ -81,7 +81,7 @@ Structure* JSBigInt::createStructure(VM& vm, JSGlobalObject* globalObject, JSVal
 
 JSBigInt* JSBigInt::createZero(VM& vm)
 {
-    JSBigInt* zeroBigInt = createWithLengthUnchecked(vm, 0);
+    JSBigInt* zeroBigInt = createWithLength(vm, 0);
     return zeroBigInt;
 }
 
@@ -91,22 +91,7 @@ inline size_t JSBigInt::allocationSize(unsigned length)
     return sizeWithPadding + length * sizeof(Digit);
 }
 
-JSBigInt* JSBigInt::tryCreateWithLength(ExecState* exec, unsigned length)
-{
-    VM& vm = exec->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (UNLIKELY(length > maxLength)) {
-        throwOutOfMemoryError(exec, scope);
-        return nullptr;
-    }
-
-    scope.release();
-
-    return createWithLengthUnchecked(vm, length);
-}
-
-JSBigInt* JSBigInt::createWithLengthUnchecked(VM& vm, unsigned length)
+JSBigInt* JSBigInt::createWithLength(VM& vm, unsigned length)
 {
     JSBigInt* bigInt = new (NotNull, allocateCell<JSBigInt>(vm.heap, allocationSize(length))) JSBigInt(vm, vm.bigIntStructure.get(), length);
     bigInt->finishCreation(vm);
@@ -118,7 +103,8 @@ JSBigInt* JSBigInt::createFrom(VM& vm, int32_t value)
     if (!value)
         return createZero(vm);
     
-    JSBigInt* bigInt = createWithLengthUnchecked(vm, 1);
+    JSBigInt* bigInt = createWithLength(vm, 1);
+    
     if (value < 0) {
         bigInt->setDigit(0, static_cast<Digit>(-1 * static_cast<int64_t>(value)));
         bigInt->setSign(true);
@@ -133,7 +119,7 @@ JSBigInt* JSBigInt::createFrom(VM& vm, uint32_t value)
     if (!value)
         return createZero(vm);
     
-    JSBigInt* bigInt = createWithLengthUnchecked(vm, 1);
+    JSBigInt* bigInt = createWithLength(vm, 1);
     bigInt->setDigit(0, static_cast<Digit>(value));
     return bigInt;
 }
@@ -144,7 +130,8 @@ JSBigInt* JSBigInt::createFrom(VM& vm, int64_t value)
         return createZero(vm);
     
     if (sizeof(Digit) == 8) {
-        JSBigInt* bigInt = createWithLengthUnchecked(vm, 1);
+        JSBigInt* bigInt = createWithLength(vm, 1);
+        
         if (value < 0) {
             bigInt->setDigit(0, static_cast<Digit>(static_cast<uint64_t>(-(value + 1)) + 1));
             bigInt->setSign(true);
@@ -154,7 +141,8 @@ JSBigInt* JSBigInt::createFrom(VM& vm, int64_t value)
         return bigInt;
     }
     
-    JSBigInt* bigInt = createWithLengthUnchecked(vm, 2);
+    JSBigInt* bigInt = createWithLength(vm, 2);
+    
     uint64_t tempValue;
     bool sign = false;
     if (value < 0) {
@@ -178,7 +166,7 @@ JSBigInt* JSBigInt::createFrom(VM& vm, bool value)
     if (!value)
         return createZero(vm);
     
-    JSBigInt* bigInt = createWithLengthUnchecked(vm, 1);
+    JSBigInt* bigInt = createWithLength(vm, 1);
     bigInt->setDigit(0, static_cast<Digit>(value));
     return bigInt;
 }
@@ -246,7 +234,6 @@ void JSBigInt::inplaceMultiplyAdd(Digit factor, Digit summand)
 JSBigInt* JSBigInt::multiply(ExecState* exec, JSBigInt* x, JSBigInt* y)
 {
     VM& vm = exec->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
 
     if (x->isZero())
         return x;
@@ -254,8 +241,7 @@ JSBigInt* JSBigInt::multiply(ExecState* exec, JSBigInt* x, JSBigInt* y)
         return y;
 
     unsigned resultLength = x->length() + y->length();
-    JSBigInt* result = JSBigInt::tryCreateWithLength(exec, resultLength);
-    RETURN_IF_EXCEPTION(scope, nullptr);
+    JSBigInt* result = JSBigInt::createWithLength(vm, resultLength);
     result->initialize(InitializationType::WithZero);
 
     for (unsigned i = 0; i < x->length(); i++)
@@ -291,10 +277,8 @@ JSBigInt* JSBigInt::divide(ExecState* exec, JSBigInt* x, JSBigInt* y)
 
         Digit remainder;
         absoluteDivWithDigitDivisor(vm, x, divisor, &quotient, remainder);
-    } else {
-        absoluteDivWithBigIntDivisor(exec, x, y, &quotient, nullptr);
-        RETURN_IF_EXCEPTION(scope, nullptr);
-    }
+    } else
+        absoluteDivWithBigIntDivisor(vm, x, y, &quotient, nullptr);
 
     quotient->setSign(resultSign);
     return quotient->rightTrim(vm);
@@ -304,7 +288,7 @@ JSBigInt* JSBigInt::copy(VM& vm, JSBigInt* x)
 {
     ASSERT(!x->isZero());
 
-    JSBigInt* result = JSBigInt::createWithLengthUnchecked(vm, x->length());
+    JSBigInt* result = JSBigInt::createWithLength(vm, x->length());
     std::copy(x->dataStorage(), x->dataStorage() + x->length(), result->dataStorage());
     result->setSign(x->sign());
     return result;
@@ -347,26 +331,23 @@ JSBigInt* JSBigInt::remainder(ExecState* exec, JSBigInt* x, JSBigInt* y)
         if (!remainderDigit)
             return createZero(vm);
 
-        remainder = createWithLengthUnchecked(vm, 1);
+        remainder = createWithLength(vm, 1);
         remainder->setDigit(0, remainderDigit);
-    } else {
-        absoluteDivWithBigIntDivisor(exec, x, y, nullptr, &remainder);
-        RETURN_IF_EXCEPTION(scope, nullptr);
-    }
+    } else
+        absoluteDivWithBigIntDivisor(vm, x, y, nullptr, &remainder);
 
     remainder->setSign(x->sign());
     return remainder->rightTrim(vm);
 }
 
-JSBigInt* JSBigInt::add(ExecState* exec, JSBigInt* x, JSBigInt* y)
+JSBigInt* JSBigInt::add(VM& vm, JSBigInt* x, JSBigInt* y)
 {
-    VM& vm = exec->vm();
     bool xSign = x->sign();
 
     // x + y == x + y
     // -x + -y == -(x + y)
     if (xSign == y->sign())
-        return absoluteAdd(exec, x, y, xSign);
+        return absoluteAdd(vm, x, y, xSign);
 
     // x + -y == x - y == -(y - x)
     // -x + y == y - x == -(x - y)
@@ -377,14 +358,13 @@ JSBigInt* JSBigInt::add(ExecState* exec, JSBigInt* x, JSBigInt* y)
     return absoluteSub(vm, y, x, !xSign);
 }
 
-JSBigInt* JSBigInt::sub(ExecState* exec, JSBigInt* x, JSBigInt* y)
+JSBigInt* JSBigInt::sub(VM& vm, JSBigInt* x, JSBigInt* y)
 {
-    VM& vm = exec->vm();
     bool xSign = x->sign();
     if (xSign != y->sign()) {
         // x - (-y) == x + y
         // (-x) - y == -(x + y)
-        return absoluteAdd(exec, x, y, xSign);
+        return absoluteAdd(vm, x, y, xSign);
     }
     // x - y == -(y - x)
     // (-x) - (-y) == y - x == -(x - y)
@@ -395,11 +375,8 @@ JSBigInt* JSBigInt::sub(ExecState* exec, JSBigInt* x, JSBigInt* y)
     return absoluteSub(vm, y, x, !xSign);
 }
 
-JSBigInt* JSBigInt::bitwiseAnd(ExecState* exec, JSBigInt* x, JSBigInt* y)
+JSBigInt* JSBigInt::bitwiseAnd(VM& vm, JSBigInt* x, JSBigInt* y)
 {
-    VM& vm = exec->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
     if (!x->sign() && !y->sign())
         return absoluteAnd(vm, x, y);
     
@@ -407,14 +384,11 @@ JSBigInt* JSBigInt::bitwiseAnd(ExecState* exec, JSBigInt* x, JSBigInt* y)
         int resultLength = std::max(x->length(), y->length()) + 1;
         // (-x) & (-y) == ~(x-1) & ~(y-1) == ~((x-1) | (y-1))
         // == -(((x-1) | (y-1)) + 1)
-        JSBigInt* result = absoluteSubOne(exec, x, resultLength);
-        RETURN_IF_EXCEPTION(scope, nullptr);
-
-        JSBigInt* y1 = absoluteSubOne(exec, y, y->length());
-        ASSERT(y1);
+        JSBigInt* result = absoluteSubOne(vm, x, resultLength);
+        JSBigInt* y1 = absoluteSubOne(vm, y, y->length());
         result = absoluteOr(vm, result, y1);
-        scope.release();
-        return absoluteAddOne(exec, result, SignOption::Signed);
+
+        return absoluteAddOne(vm, result, SignOption::Signed);
     }
 
     ASSERT(x->sign() != y->sign());
@@ -423,15 +397,11 @@ JSBigInt* JSBigInt::bitwiseAnd(ExecState* exec, JSBigInt* x, JSBigInt* y)
         std::swap(x, y);
     
     // x & (-y) == x & ~(y-1) == x & ~(y-1)
-    JSBigInt* y1 = absoluteSubOne(exec, y, y->length());
-    ASSERT(y1);
-    return absoluteAndNot(vm, x, y1);
+    return absoluteAndNot(vm, x, absoluteSubOne(vm, y, y->length()));
 }
 
-JSBigInt* JSBigInt::bitwiseOr(ExecState* exec, JSBigInt* x, JSBigInt* y)
+JSBigInt* JSBigInt::bitwiseOr(VM& vm, JSBigInt* x, JSBigInt* y)
 {
-    VM& vm = exec->vm();
-
     unsigned resultLength = std::max(x->length(), y->length());
 
     if (!x->sign() && !y->sign())
@@ -440,12 +410,10 @@ JSBigInt* JSBigInt::bitwiseOr(ExecState* exec, JSBigInt* x, JSBigInt* y)
     if (x->sign() && y->sign()) {
         // (-x) | (-y) == ~(x-1) | ~(y-1) == ~((x-1) & (y-1))
         // == -(((x-1) & (y-1)) + 1)
-        JSBigInt* result = absoluteSubOne(exec, x, resultLength);
-        ASSERT(result);
-        JSBigInt* y1 = absoluteSubOne(exec, y, y->length());
-        ASSERT(y1);
+        JSBigInt* result = absoluteSubOne(vm, x, resultLength);
+        JSBigInt* y1 = absoluteSubOne(vm, y, y->length());
         result = absoluteAnd(vm, result, y1);
-        return absoluteAddOne(exec, result, SignOption::Signed);
+        return absoluteAddOne(vm, result, SignOption::Signed);
     }
     
     ASSERT(x->sign() != y->sign());
@@ -455,17 +423,13 @@ JSBigInt* JSBigInt::bitwiseOr(ExecState* exec, JSBigInt* x, JSBigInt* y)
         std::swap(x, y);
     
     // x | (-y) == x | ~(y-1) == ~((y-1) &~ x) == -(((y-1) &~ x) + 1)
-    JSBigInt* result = absoluteSubOne(exec, y, resultLength);
-    ASSERT(result);
+    JSBigInt* result = absoluteSubOne(vm, y, resultLength);
     result = absoluteAndNot(vm, result, x);
-    return absoluteAddOne(exec, result, SignOption::Signed);
+    return absoluteAddOne(vm, result, SignOption::Signed);
 }
 
-JSBigInt* JSBigInt::bitwiseXor(ExecState* exec, JSBigInt* x, JSBigInt* y)
+JSBigInt* JSBigInt::bitwiseXor(VM& vm, JSBigInt* x, JSBigInt* y)
 {
-    VM& vm = exec->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
     if (!x->sign() && !y->sign())
         return absoluteXor(vm, x, y);
     
@@ -473,10 +437,8 @@ JSBigInt* JSBigInt::bitwiseXor(ExecState* exec, JSBigInt* x, JSBigInt* y)
         int resultLength = std::max(x->length(), y->length());
         
         // (-x) ^ (-y) == ~(x-1) ^ ~(y-1) == (x-1) ^ (y-1)
-        JSBigInt* result = absoluteSubOne(exec, x, resultLength);
-        ASSERT(result);
-        JSBigInt* y1 = absoluteSubOne(exec, y, y->length());
-        ASSERT(y1);
+        JSBigInt* result = absoluteSubOne(vm, x, resultLength);
+        JSBigInt* y1 = absoluteSubOne(vm, y, y->length());
         return absoluteXor(vm, result, y1);
     }
     ASSERT(x->sign() != y->sign());
@@ -487,12 +449,9 @@ JSBigInt* JSBigInt::bitwiseXor(ExecState* exec, JSBigInt* x, JSBigInt* y)
         std::swap(x, y);
     
     // x ^ (-y) == x ^ ~(y-1) == ~(x ^ (y-1)) == -((x ^ (y-1)) + 1)
-    JSBigInt* result = absoluteSubOne(exec, y, resultLength);
-    RETURN_IF_EXCEPTION(scope, nullptr);
-
+    JSBigInt* result = absoluteSubOne(vm, y, resultLength);
     result = absoluteXor(vm, result, x);
-    scope.release();
-    return absoluteAddOne(exec, result, SignOption::Signed);
+    return absoluteAddOne(vm, result, SignOption::Signed);
 }
 
 #if USE(JSVALUE32_64)
@@ -792,12 +751,10 @@ inline JSBigInt::ComparisonResult JSBigInt::absoluteCompare(JSBigInt* x, JSBigIn
     return x->digit(i) > y->digit(i) ? ComparisonResult::GreaterThan : ComparisonResult::LessThan;
 }
 
-JSBigInt* JSBigInt::absoluteAdd(ExecState* exec, JSBigInt* x, JSBigInt* y, bool resultSign)
+JSBigInt* JSBigInt::absoluteAdd(VM& vm, JSBigInt* x, JSBigInt* y, bool resultSign)
 {
-    VM& vm = exec->vm();
-
     if (x->length() < y->length())
-        return absoluteAdd(exec, y, x, resultSign);
+        return absoluteAdd(vm, y, x, resultSign);
 
     if (x->isZero()) {
         ASSERT(y->isZero());
@@ -807,9 +764,8 @@ JSBigInt* JSBigInt::absoluteAdd(ExecState* exec, JSBigInt* x, JSBigInt* y, bool 
     if (y->isZero())
         return resultSign == x->sign() ? x : unaryMinus(vm, x);
 
-    JSBigInt* result = JSBigInt::tryCreateWithLength(exec, x->length() + 1);
-    if (!result)
-        return nullptr;
+    JSBigInt* result = JSBigInt::createWithLength(vm, x->length() + 1);
+    ASSERT(result);
     Digit carry = 0;
     unsigned i = 0;
     for (; i < y->length(); i++) {
@@ -850,8 +806,7 @@ JSBigInt* JSBigInt::absoluteSub(VM& vm, JSBigInt* x, JSBigInt* y, bool resultSig
     if (comparisonResult == ComparisonResult::Equal)
         return JSBigInt::createZero(vm);
 
-    JSBigInt* result = JSBigInt::createWithLengthUnchecked(vm, x->length());
-
+    JSBigInt* result = JSBigInt::createWithLength(vm, x->length());
     Digit borrow = 0;
     unsigned i = 0;
     for (; i < y->length(); i++) {
@@ -896,7 +851,7 @@ void JSBigInt::absoluteDivWithDigitDivisor(VM& vm, JSBigInt* x, Digit divisor, J
     unsigned length = x->length();
     if (quotient != nullptr) {
         if (*quotient == nullptr)
-            *quotient = JSBigInt::createWithLengthUnchecked(vm, length);
+            *quotient = JSBigInt::createWithLength(vm, length);
 
         for (int i = length - 1; i >= 0; i--) {
             Digit q = digitDiv(remainder, x->digit(i), divisor, remainder);
@@ -914,12 +869,10 @@ void JSBigInt::absoluteDivWithDigitDivisor(VM& vm, JSBigInt* x, Digit divisor, J
 // Both {quotient} and {remainder} are optional, for callers that are only
 // interested in one of them.
 // See Knuth, Volume 2, section 4.3.1, Algorithm D.
-void JSBigInt::absoluteDivWithBigIntDivisor(ExecState* exec, JSBigInt* dividend, JSBigInt* divisor, JSBigInt** quotient, JSBigInt** remainder)
+void JSBigInt::absoluteDivWithBigIntDivisor(VM& vm, JSBigInt* dividend, JSBigInt* divisor, JSBigInt** quotient, JSBigInt** remainder)
 {
     ASSERT(divisor->length() >= 2);
     ASSERT(dividend->length() >= divisor->length());
-    VM& vm = exec->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
 
     // The unusual variable names inside this function are consistent with
     // Knuth's book, as well as with Go's implementation of this algorithm.
@@ -931,12 +884,11 @@ void JSBigInt::absoluteDivWithBigIntDivisor(ExecState* exec, JSBigInt* dividend,
     // The quotient to be computed.
     JSBigInt* q = nullptr;
     if (quotient != nullptr)
-        q = createWithLengthUnchecked(exec->vm(), m + 1);
+        q = createWithLength(vm, m + 1);
     
     // In each iteration, {qhatv} holds {divisor} * {current quotient digit}.
     // "v" is the book's name for {divisor}, "qhat" the current quotient digit.
-    JSBigInt* qhatv = tryCreateWithLength(exec, n + 1);
-    RETURN_IF_EXCEPTION(scope, void());
+    JSBigInt* qhatv = createWithLength(vm, n + 1);
     
     // D1.
     // Left-shift inputs so that the divisor's MSB is set. This is necessary
@@ -946,15 +898,12 @@ void JSBigInt::absoluteDivWithBigIntDivisor(ExecState* exec, JSBigInt* dividend,
     Digit lastDigit = divisor->digit(n - 1);
     unsigned shift = sizeof(lastDigit) == 8 ? clz64(lastDigit) : clz32(lastDigit);
 
-    if (shift > 0) {
-        divisor = absoluteLeftShiftAlwaysCopy(exec, divisor, shift, LeftShiftMode::SameSizeResult);
-        RETURN_IF_EXCEPTION(scope, void());
-    }
+    if (shift > 0)
+        divisor = absoluteLeftShiftAlwaysCopy(vm, divisor, shift, LeftShiftMode::SameSizeResult);
 
     // Holds the (continuously updated) remaining part of the dividend, which
     // eventually becomes the remainder.
-    JSBigInt* u = absoluteLeftShiftAlwaysCopy(exec, dividend, shift, LeftShiftMode::AlwaysAddOneDigit);
-    RETURN_IF_EXCEPTION(scope, void());
+    JSBigInt* u = absoluteLeftShiftAlwaysCopy(vm, dividend, shift, LeftShiftMode::AlwaysAddOneDigit);
 
     // D2.
     // Iterate over the dividend's digit (like the "grad school" algorithm).
@@ -1082,16 +1031,14 @@ void JSBigInt::inplaceRightShift(unsigned shift)
 }
 
 // Always copies the input, even when {shift} == 0.
-JSBigInt* JSBigInt::absoluteLeftShiftAlwaysCopy(ExecState* exec, JSBigInt* x, unsigned shift, LeftShiftMode mode)
+JSBigInt* JSBigInt::absoluteLeftShiftAlwaysCopy(VM& vm, JSBigInt* x, unsigned shift, LeftShiftMode mode)
 {
     ASSERT(shift < digitBits);
     ASSERT(!x->isZero());
 
     unsigned n = x->length();
     unsigned resultLength = mode == LeftShiftMode::AlwaysAddOneDigit ? n + 1 : n;
-    JSBigInt* result = tryCreateWithLength(exec, resultLength);
-    if (!result)
-        return nullptr;
+    JSBigInt* result = createWithLength(vm, resultLength);
 
     if (!shift) {
         for (unsigned i = 0; i < n; i++)
@@ -1148,7 +1095,8 @@ inline JSBigInt* JSBigInt::absoluteBitwiseOp(VM& vm, JSBigInt* x, JSBigInt* y, E
 
     ASSERT(numPairs == std::min(xLength, yLength));
     unsigned resultLength = extraDigits == ExtraDigitsHandling::Copy ? xLength : numPairs;
-    JSBigInt* result = createWithLengthUnchecked(vm, resultLength);
+    JSBigInt* result = createWithLength(vm, resultLength);
+
     unsigned i = 0;
     for (; i < numPairs; i++)
         result->setDigit(i, op(x->digit(i), y->digit(i)));
@@ -1196,7 +1144,7 @@ JSBigInt* JSBigInt::absoluteXor(VM& vm, JSBigInt* x, JSBigInt* y)
     return absoluteBitwiseOp(vm, x, y, ExtraDigitsHandling::Copy, SymmetricOp::Symmetric, digitOperation);
 }
     
-JSBigInt* JSBigInt::absoluteAddOne(ExecState* exec, JSBigInt* x, SignOption signOption)
+JSBigInt* JSBigInt::absoluteAddOne(VM& vm, JSBigInt* x, SignOption signOption)
 {
     unsigned inputLength = x->length();
     // The addition will overflow into a new digit if all existing digits are
@@ -1210,9 +1158,7 @@ JSBigInt* JSBigInt::absoluteAddOne(ExecState* exec, JSBigInt* x, SignOption sign
     }
 
     unsigned resultLength = inputLength + willOverflow;
-    JSBigInt* result = tryCreateWithLength(exec, resultLength);
-    if (!result)
-        return nullptr;
+    JSBigInt* result = createWithLength(vm, resultLength);
 
     Digit carry = 1;
     for (unsigned i = 0; i < inputLength; i++) {
@@ -1226,18 +1172,16 @@ JSBigInt* JSBigInt::absoluteAddOne(ExecState* exec, JSBigInt* x, SignOption sign
         ASSERT(!carry);
 
     result->setSign(signOption == SignOption::Signed);
-    return result->rightTrim(exec->vm());
+    return result->rightTrim(vm);
 }
 
-JSBigInt* JSBigInt::absoluteSubOne(ExecState* exec, JSBigInt* x, unsigned resultLength)
+// Like the above, but you can specify that the allocated result should have
+// length {resultLength}, which must be at least as large as {x->length()}.
+JSBigInt* JSBigInt::absoluteSubOne(VM& vm, JSBigInt* x, unsigned resultLength)
 {
     ASSERT(!x->isZero());
     ASSERT(resultLength >= x->length());
-    VM& vm = exec->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
-
-    JSBigInt* result = tryCreateWithLength(exec, resultLength);
-    RETURN_IF_EXCEPTION(scope, nullptr);
+    JSBigInt* result = createWithLength(vm, resultLength);
 
     unsigned length = x->length();
     Digit borrow = 1;
@@ -1410,6 +1354,8 @@ String JSBigInt::toStringGeneric(ExecState* exec, JSBigInt* x, unsigned radix)
         do {
             Digit chunk;
             absoluteDivWithDigitDivisor(vm, *dividend, chunkDivisor, &rest, chunk);
+            ASSERT(rest);
+
             dividend = &rest;
             for (unsigned i = 0; i < chunkChars; i++) {
                 resultString.append(radixDigits[chunk % radix]);
@@ -1468,7 +1414,8 @@ JSBigInt* JSBigInt::rightTrim(VM& vm)
         return this;
 
     unsigned newLength = nonZeroIndex + 1;
-    JSBigInt* trimmedBigInt = createWithLengthUnchecked(vm, newLength);
+    JSBigInt* trimmedBigInt = createWithLength(vm, newLength);
+    RELEASE_ASSERT(trimmedBigInt);
     std::copy(dataStorage(), dataStorage() + newLength, trimmedBigInt->dataStorage()); 
 
     trimmedBigInt->setSign(this->sign());
@@ -1492,7 +1439,7 @@ JSBigInt* JSBigInt::allocateFor(ExecState* exec, VM& vm, unsigned radix, unsigne
             // Divide by kDigitsBits, rounding up.
             unsigned length = (bitsMin + digitBits - 1) / digitBits;
             if (length <= maxLength) {
-                JSBigInt* result = JSBigInt::createWithLengthUnchecked(vm, length);
+                JSBigInt* result = JSBigInt::createWithLength(vm, length);
                 return result;
             }
         }

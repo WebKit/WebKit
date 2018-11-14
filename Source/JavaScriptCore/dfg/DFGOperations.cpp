@@ -349,7 +349,7 @@ EncodedJSValue JIT_OPERATION operationValueBitAnd(ExecState* exec, EncodedJSValu
 
     if (WTF::holds_alternative<JSBigInt*>(leftNumeric) || WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
         if (WTF::holds_alternative<JSBigInt*>(leftNumeric) && WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
-            JSBigInt* result = JSBigInt::bitwiseAnd(exec, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric));
+            JSBigInt* result = JSBigInt::bitwiseAnd(*vm, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric));
             RETURN_IF_EXCEPTION(scope, encodedJSValue());
             return JSValue::encode(result);
         }
@@ -376,7 +376,7 @@ EncodedJSValue JIT_OPERATION operationValueBitOr(ExecState* exec, EncodedJSValue
 
     if (WTF::holds_alternative<JSBigInt*>(leftNumeric) || WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
         if (WTF::holds_alternative<JSBigInt*>(leftNumeric) && WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
-            JSBigInt* result = JSBigInt::bitwiseOr(exec, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric));
+            JSBigInt* result = JSBigInt::bitwiseOr(*vm, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric));
             RETURN_IF_EXCEPTION(scope, encodedJSValue());
             return JSValue::encode(result);
         }
@@ -1294,7 +1294,7 @@ JSCell* JIT_OPERATION operationSubBigInt(ExecState* exec, JSCell* op1, JSCell* o
     JSBigInt* leftOperand = jsCast<JSBigInt*>(op1);
     JSBigInt* rightOperand = jsCast<JSBigInt*>(op2);
     
-    return JSBigInt::sub(exec, leftOperand, rightOperand);
+    return JSBigInt::sub(*vm, leftOperand, rightOperand);
 }
 
 JSCell* JIT_OPERATION operationBitAndBigInt(ExecState* exec, JSCell* op1, JSCell* op2)
@@ -1305,7 +1305,7 @@ JSCell* JIT_OPERATION operationBitAndBigInt(ExecState* exec, JSCell* op1, JSCell
     JSBigInt* leftOperand = jsCast<JSBigInt*>(op1);
     JSBigInt* rightOperand = jsCast<JSBigInt*>(op2);
 
-    return JSBigInt::bitwiseAnd(exec, leftOperand, rightOperand);
+    return JSBigInt::bitwiseAnd(*vm, leftOperand, rightOperand);
 }
 
 JSCell* JIT_OPERATION operationAddBigInt(ExecState* exec, JSCell* op1, JSCell* op2)
@@ -1316,7 +1316,7 @@ JSCell* JIT_OPERATION operationAddBigInt(ExecState* exec, JSCell* op1, JSCell* o
     JSBigInt* leftOperand = jsCast<JSBigInt*>(op1);
     JSBigInt* rightOperand = jsCast<JSBigInt*>(op2);
     
-    return JSBigInt::add(exec, leftOperand, rightOperand);
+    return JSBigInt::add(*vm, leftOperand, rightOperand);
 }
 
 JSCell* JIT_OPERATION operationBitOrBigInt(ExecState* exec, JSCell* op1, JSCell* op2)
@@ -1327,7 +1327,7 @@ JSCell* JIT_OPERATION operationBitOrBigInt(ExecState* exec, JSCell* op1, JSCell*
     JSBigInt* leftOperand = jsCast<JSBigInt*>(op1);
     JSBigInt* rightOperand = jsCast<JSBigInt*>(op2);
     
-    return JSBigInt::bitwiseOr(exec, leftOperand, rightOperand);
+    return JSBigInt::bitwiseOr(*vm, leftOperand, rightOperand);
 }
 
 size_t JIT_OPERATION operationCompareStrictEqCell(ExecState* exec, JSCell* op1, JSCell* op2)
