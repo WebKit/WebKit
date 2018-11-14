@@ -1,3 +1,28 @@
+2018-11-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        WebKit.GeolocationTransitionToLowAccuracy API crashes when enabling PSON
+        https://bugs.webkit.org/show_bug.cgi?id=191616
+
+        Reviewed by Chris Dumez.
+
+        The crash was caused by WKView in autorelease pool invoking stopUpdatingCallback after
+        GeolocationTransitionToLowAccuracyStateTracker in the stack had been destroyed,
+        resulting in the use-after-free.
+
+        Made the tests more robust by clearing geolocation provider before exiting each test
+        since we can't really prevent WKView from entering an autorelease pool.
+
+        Also made WebKit.GeolocationTransitionToLowAccuracy wait for the success callback
+        instead of simply the end of the navigation so that the test would continue to work
+        even if a web content process was created for the second web view (lowAccuracyWebView)
+
+        * TestWebKitAPI/Tests/WebKit/Geolocation.cpp:
+        (TestWebKitAPI::setupGeolocationProvider): Moved "*" to match the WebKit coding style guideline.
+        (TestWebKitAPI::clearGeolocationProvider): Added.
+        (TestWebKitAPI::runJavaScriptAlert): Added.
+        (TestWebKitAPI::didFinishNavigation): Deleted.
+        * TestWebKitAPI/Tests/WebKit/geolocationWatchPosition.html:
+
 2018-11-13  Chris Dumez  <cdumez@apple.com>
 
         WKProcessPool.InitialWarmedProcessUsed API is failing with PSON enabled

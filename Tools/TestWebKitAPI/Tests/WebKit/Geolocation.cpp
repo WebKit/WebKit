@@ -104,7 +104,7 @@ void decidePolicyForGeolocationPermissionRequestCallBack(WKPageRef page, WKFrame
     WKGeolocationPermissionRequestAllow(permissionRequest);
 }
 
-void setupGeolocationProvider(WKContextRef context, void *clientInfo)
+void setupGeolocationProvider(WKContextRef context, void* clientInfo)
 {
     WKGeolocationProviderV1 providerCallback;
     memset(&providerCallback, 0, sizeof(WKGeolocationProviderV1));
@@ -116,6 +116,11 @@ void setupGeolocationProvider(WKContextRef context, void *clientInfo)
     providerCallback.setEnableHighAccuracy = GeolocationStateTracker::setEnableHighAccuracyCallback;
 
     WKGeolocationManagerSetProvider(WKContextGetGeolocationManager(context), &providerCallback.base);
+}
+    
+void clearGeolocationProvider(WKContextRef context)
+{
+    WKGeolocationManagerSetProvider(WKContextGetGeolocationManager(context), nullptr);
 }
 
 void setupView(PlatformWebView& webView)
@@ -168,6 +173,7 @@ TEST(WebKit, GeolocationBasic)
     WKPageLoadURL(webView.page(), url.get());
 
     Util::run(&stateTracker.finished);
+    clearGeolocationProvider(context.get());
 }
 
 // Geolocation requested with High Accuracy.
@@ -209,6 +215,7 @@ TEST(WebKit, GeolocationBasicWithHighAccuracy)
     WKPageLoadURL(webView.page(), url.get());
 
     Util::run(&stateTracker.finished);
+    clearGeolocationProvider(context.get());
 }
 
 // Geolocation start without High Accuracy, then requires High Accuracy.
@@ -272,6 +279,8 @@ TEST(WebKit, GeolocationTransitionToHighAccuracy)
     Util::run(&stateTracker.enabledHighAccuracy);
     WKPageLoadURL(lowAccuracyWebView.page(), resetUrl.get());
     Util::run(&stateTracker.finished);
+
+    clearGeolocationProvider(context.get());
 }
 
 // Geolocation start with High Accuracy, then should fall back to low accuracy.
@@ -307,7 +316,7 @@ struct GeolocationTransitionToLowAccuracyStateTracker : GeolocationStateTracker 
     }
 };
 
-static void didFinishNavigation(WKPageRef page, WKNavigationRef, WKTypeRef userData, const void* clientInfo)
+static void runJavaScriptAlert(WKPageRef page, WKStringRef alertText, WKFrameRef frame, const void* clientInfo)
 {
     *static_cast<bool*>(const_cast<void*>(clientInfo)) = true;
 }
@@ -315,7 +324,6 @@ static void didFinishNavigation(WKPageRef page, WKNavigationRef, WKTypeRef userD
 TEST(WebKit, GeolocationTransitionToLowAccuracy)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
-    WKContextSetMaximumNumberOfProcesses(context.get(), 1);
 
     GeolocationTransitionToLowAccuracyStateTracker stateTracker;
     setupGeolocationProvider(context.get(), &stateTracker);
@@ -331,14 +339,13 @@ TEST(WebKit, GeolocationTransitionToLowAccuracy)
 
     bool finishedSecondStep = false;
 
-    WKPageNavigationClientV0 loaderClient;
-    memset(&loaderClient, 0, sizeof(loaderClient));
-
-    loaderClient.base.version = 0;
-    loaderClient.base.clientInfo = &finishedSecondStep;
-    loaderClient.didFinishNavigation = didFinishNavigation;
-
-    WKPageSetPageNavigationClient(lowAccuracyWebView.page(), &loaderClient.base);
+    WKPageUIClientV2 uiClient;
+    memset(&uiClient, 0, sizeof(uiClient));
+    uiClient.base.version = 2;
+    uiClient.base.clientInfo = &finishedSecondStep;
+    uiClient.decidePolicyForGeolocationPermissionRequest = decidePolicyForGeolocationPermissionRequestCallBack;
+    uiClient.runJavaScriptAlert = runJavaScriptAlert;
+    WKPageSetPageUIClient(lowAccuracyWebView.page(), &uiClient.base);
 
     WKRetainPtr<WKURLRef> lowAccuracyURL(AdoptWK, Util::createURLForResource("geolocationWatchPosition", "html"));
     WKPageLoadURL(lowAccuracyWebView.page(), lowAccuracyURL.get());
@@ -346,9 +353,13 @@ TEST(WebKit, GeolocationTransitionToLowAccuracy)
 
     WKRetainPtr<WKURLRef> resetUrl = adoptWK(WKURLCreateWithUTF8CString("about:blank"));
     WKPageLoadURL(highAccuracyWebView.page(), resetUrl.get());
+
     Util::run(&stateTracker.disabledHighAccuracy);
+
     WKPageLoadURL(lowAccuracyWebView.page(), resetUrl.get());
     Util::run(&stateTracker.finished);
+
+    clearGeolocationProvider(context.get());
 }
 
 } // namespace TestWebKitAPI
