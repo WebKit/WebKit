@@ -1,3 +1,23 @@
+2018-11-14  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION(r236540): Debugger: breakpoints are sorted alphabetically instead of numerically
+        https://bugs.webkit.org/show_bug.cgi?id=191560
+
+        Reviewed by Joseph Pecoraro.
+
+        When sorting breakpoints, if the `WI.TreeElement`s being compared both contain instances of
+        `WI.Breakpoint`, sort by `WI.SourceCodeLocation` instead of title.
+
+        We only do this for `WI.Breakpoint` because they are the only debuggable item that has a
+        `WI.SourceCodeLocation` (e.g. `WI.EventBreakpoint` is just an event name string).
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WI.DebuggerSidebarPanel.prototype._addTreeElement):
+        (WI.DebuggerSidebarPanel.prototype._compareBreakpointTreeElements): Added.
+        (WI.DebuggerSidebarPanel.prototype._addIssue):
+        (WI.DebuggerSidebarPanel.prototype._addTreeElement.comparator): Deleted.
+        (WI.DebuggerSidebarPanel.prototype._compareTreeElements): Deleted.
+
 2018-11-14  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles: shift-clicking on a property should extend selection

@@ -969,7 +969,7 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
         if (!parentTreeElement)
             parentTreeElement = this._breakpointsContentTreeOutline;
 
-        function comparator(a, b) {
+        let comparator = (a, b) => {
             const rankFunctions = [
                 (treeElement) => treeElement.representedObject === WI.debuggerManager.allExceptionsBreakpoint,
                 (treeElement) => treeElement.representedObject === WI.debuggerManager.uncaughtExceptionsBreakpoint,
@@ -991,13 +991,16 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
                     return 1;
             }
 
+            if (a instanceof WI.BreakpointTreeElement && b instanceof WI.BreakpointTreeElement)
+                return this._compareBreakpointTreeElements(a, b);
+
             return a.mainTitle.extendedLocaleCompare(b.mainTitle) || a.subtitle.extendedLocaleCompare(b.subtitle);
-        }
+        };
 
         parentTreeElement.insertChild(treeElement, insertionIndexForObjectInListSortedByFunction(treeElement, parentTreeElement.children, comparator));
     }
 
-    _compareTreeElements(a, b)
+    _compareBreakpointTreeElements(a, b)
     {
         if (!a.representedObject || !b.representedObject)
             return 0;
@@ -1326,7 +1329,7 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
 
         issueTreeElement = new WI.IssueTreeElement(issueMessage);
 
-        parentTreeElement.insertChild(issueTreeElement, insertionIndexForObjectInListSortedByFunction(issueTreeElement, parentTreeElement.children, this._compareTreeElements));
+        parentTreeElement.insertChild(issueTreeElement, insertionIndexForObjectInListSortedByFunction(issueTreeElement, parentTreeElement.children, this._compareBreakpointTreeElements));
         if (parentTreeElement.children.length === 1)
             parentTreeElement.expand();
 
