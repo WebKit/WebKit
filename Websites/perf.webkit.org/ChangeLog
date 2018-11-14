@@ -1,3 +1,21 @@
+2018-11-08  Dewei Zhu  <dewei_zhu@apple.com>
+
+        commit time returned by '/api/measurement-set' should match the one returned by '/api/commits'.
+        https://bugs.webkit.org/show_bug.cgi?id=191457
+
+        Reviewed by Dean Jackson and Ryosuke Niwa.
+
+        Commit time returned by '/api/measurement-set' sometimes is calculated by 'epoch from ..'.
+        This function may return a floating number with 5 or 6 decimal digits due to double precision limitations.
+        However, some commits may be reported with 6 decimal decimal.
+        So the commit time for those commits will sometime be rounded to 5 decimal digits.
+        In order to avoid front end assertion failure in CommitLog, Database::to_js_time need to round to 5 digits.
+
+        * public/include/db.php: Change the behavior to match that of postgres.
+        Added logic to avoid losing precision in php.
+        * server-tests/api-measurement-set-tests.js: Added unit tests for this bug.
+        (queryPlatformAndMetric): Fix a bug that arguments are not used at all.
+
 2018-11-07  Dewei Zhu  <dewei_zhu@apple.com>
 
         "/api/report" does not check commit time correctly.

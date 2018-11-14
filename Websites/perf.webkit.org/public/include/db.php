@@ -100,11 +100,14 @@ class Database
     }
 
     static function to_js_time($time_str) {
-        $timestamp_in_s = strtotime($time_str);
+        $timestamp_in_ms = strtotime($time_str) * 1000;
         $dot_index = strrpos($time_str, '.');
-        if ($dot_index !== FALSE)
-            $timestamp_in_s += floatval(substr($time_str, $dot_index));
-        return intval($timestamp_in_s * 1000);
+        if ($dot_index !== FALSE) {
+            // Keep 5 decimal digits as postgres timestamp may only have 5 decimal digits.
+            // Multiply by 1000 ahead to avoid losing precision. 1538041792.670479 will become 1538041792.6705 on php.
+            $timestamp_in_ms += round(floatval(substr($time_str, $dot_index)), 5) * 1000;
+        }
+        return intval($timestamp_in_ms);
     }
 
     static function escape_for_like($string) {
