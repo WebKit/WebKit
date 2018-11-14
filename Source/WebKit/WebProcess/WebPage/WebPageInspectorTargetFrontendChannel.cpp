@@ -30,8 +30,6 @@
 
 namespace WebKit {
 
-using namespace WebCore;
-
 Ref<WebPageInspectorTargetFrontendChannel> WebPageInspectorTargetFrontendChannel::create(WebPageInspectorTargetController& targetController, const String& targetId)
 {
     return adoptRef(*new WebPageInspectorTargetFrontendChannel(targetController, targetId));
