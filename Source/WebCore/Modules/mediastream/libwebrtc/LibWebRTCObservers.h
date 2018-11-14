@@ -26,6 +26,7 @@
 
 #if USE(LIBWEBRTC)
 
+#include "ExceptionCode.h"
 #include "LibWebRTCMacros.h"
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
@@ -36,6 +37,26 @@ ALLOW_UNUSED_PARAMETERS_END
 
 namespace WebCore {
 
+static inline ExceptionCode toExceptionCode(webrtc::RTCErrorType type)
+{
+    switch (type) {
+    case webrtc::RTCErrorType::INVALID_PARAMETER:
+        return InvalidAccessError;
+    case webrtc::RTCErrorType::INVALID_RANGE:
+        return RangeError;
+    case webrtc::RTCErrorType::SYNTAX_ERROR:
+        return SyntaxError;
+    case webrtc::RTCErrorType::INVALID_STATE:
+        return InvalidStateError;
+    case webrtc::RTCErrorType::INVALID_MODIFICATION:
+        return InvalidModificationError;
+    case webrtc::RTCErrorType::NETWORK_ERROR:
+        return NetworkError;
+    default:
+        return OperationError;
+    }
+}
+
 template<typename Endpoint>
 class CreateSessionDescriptionObserver final : public webrtc::CreateSessionDescriptionObserver {
 public:
@@ -45,7 +66,7 @@ public:
     }
 
     void OnSuccess(webrtc::SessionDescriptionInterface* sessionDescription) final { m_endpoint.createSessionDescriptionSucceeded(std::unique_ptr<webrtc::SessionDescriptionInterface>(sessionDescription)); }
-    void OnFailure(const std::string& error) final { m_endpoint.createSessionDescriptionFailed(error); }
+    void OnFailure(webrtc::RTCError error) final { m_endpoint.createSessionDescriptionFailed(toExceptionCode(error.type()), error.message()); }
 
     void AddRef() const { m_endpoint.AddRef(); }
     rtc::RefCountReleaseStatus Release() const { return m_endpoint.Release(); }
@@ -63,7 +84,7 @@ public:
     }
 
     void OnSuccess() final { m_endpoint.setLocalSessionDescriptionSucceeded(); }
-    void OnFailure(const std::string& error) final { m_endpoint.setLocalSessionDescriptionFailed(error); }
+    void OnFailure(webrtc::RTCError error) final { m_endpoint.setLocalSessionDescriptionFailed(toExceptionCode(error.type()), error.message()); }
 
     void AddRef() const { m_endpoint.AddRef(); }
     rtc::RefCountReleaseStatus Release() const { return m_endpoint.Release(); }
@@ -81,7 +102,7 @@ public:
     }
 
     void OnSuccess() final { m_endpoint.setRemoteSessionDescriptionSucceeded(); }
-    void OnFailure(const std::string& error) final { m_endpoint.setRemoteSessionDescriptionFailed(error); }
+    void OnFailure(webrtc::RTCError error) final { m_endpoint.setRemoteSessionDescriptionFailed(toExceptionCode(error.type()), error.message()); }
 
     void AddRef() const { m_endpoint.AddRef(); }
     rtc::RefCountReleaseStatus Release() const { return m_endpoint.Release(); }

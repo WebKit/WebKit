@@ -1,5 +1,16 @@
 2018-11-14  Youenn Fablet  <youenn@apple.com>
 
+        Convert libwebrtc error types to DOM exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=191590
+
+        Reviewed by Alex Christensen.
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+
+2018-11-14  Youenn Fablet  <youenn@apple.com>
+
         Add support for transport and peerConnection stats
         https://bugs.webkit.org/show_bug.cgi?id=191592
 

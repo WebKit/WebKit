@@ -1,5 +1,25 @@
 2018-11-14  Youenn Fablet  <youenn@apple.com>
 
+        Convert libwebrtc error types to DOM exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=191590
+
+        Reviewed by Alex Christensen.
+
+        Make use of overloaded callback method that provides an error type.
+        This type is then used to create a DOM exception with the correct type.
+        Covered by existing tests.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::doSetRemoteDescription):
+        (WebCore::LibWebRTCMediaEndpoint::createSessionDescriptionFailed):
+        (WebCore::LibWebRTCMediaEndpoint::setLocalSessionDescriptionFailed):
+        (WebCore::LibWebRTCMediaEndpoint::setRemoteSessionDescriptionFailed):
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCObservers.h:
+        (WebCore::toExceptionCode):
+
+2018-11-14  Youenn Fablet  <youenn@apple.com>
+
         Allow to remove MediaStreamPrivate observers when iterating over observers
         https://bugs.webkit.org/show_bug.cgi?id=187256
 

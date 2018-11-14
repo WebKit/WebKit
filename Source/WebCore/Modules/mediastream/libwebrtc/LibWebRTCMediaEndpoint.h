@@ -132,11 +132,11 @@ private:
     void OnIceCandidatesRemoved(const std::vector<cricket::Candidate>&) final;
 
     void createSessionDescriptionSucceeded(std::unique_ptr<webrtc::SessionDescriptionInterface>&&);
-    void createSessionDescriptionFailed(const std::string&);
+    void createSessionDescriptionFailed(ExceptionCode, const char*);
     void setLocalSessionDescriptionSucceeded();
-    void setLocalSessionDescriptionFailed(const std::string&);
+    void setLocalSessionDescriptionFailed(ExceptionCode, const char*);
     void setRemoteSessionDescriptionSucceeded();
-    void setRemoteSessionDescriptionFailed(const std::string&);
+    void setRemoteSessionDescriptionFailed(ExceptionCode, const char*);
     void addRemoteStream(webrtc::MediaStreamInterface&);
     void addRemoteTrack(rtc::scoped_refptr<webrtc::RtpReceiverInterface>&&, const std::vector<rtc::scoped_refptr<webrtc::MediaStreamInterface>>&);
     void removeRemoteStream(webrtc::MediaStreamInterface&);

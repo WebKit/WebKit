@@ -1,7 +1,7 @@
 
 PASS setLocalDescription() with valid answer should succeed 
 FAIL setLocalDescription() with type answer and null sdp should use lastAnswer generated from createAnswer promise_test: Unhandled rejection with value: object "OperationError: Expect line: v="
-FAIL setLocalDescription() with answer not created by own createAnswer() should reject with InvalidModificationError assert_throws: function "function () { throw e }" threw object "OperationError: Failed to set local answer sdp: Failed to apply the description for 0: Local fingerprint does not match identity. Expected: sha-256 12:E5:12:50:9C:09:A8:71:EF:5F:AF:F6:4C:08:7A:BF:0C:44:2D:A8:96:5C:34:3A:64:12:70:D2:51:60:2E:79 Got: sha-256 A5:C7:8C:82:7E:30:00:63:86:E5:AA:93:65:C2:60:83:49:01:E0:35:0F:91:F2:7A:C3:7B:AF:8F:52:3E:12:87" that is not a DOMException InvalidModificationError: property "code" is equal to 0, expected 13
+FAIL setLocalDescription() with answer not created by own createAnswer() should reject with InvalidModificationError assert_throws: function "function () { throw e }" threw object "OperationError: Failed to set local answer sdp: Failed to apply the description for 0: Local fingerprint does not match identity. Expected: sha-256 FD:12:D4:3F:20:8C:37:A8:9A:C0:CB:03:84:DF:97:20:40:24:C8:DB:B8:88:6C:8D:99:B6:25:48:5C:29:1E:0B Got: sha-256 CC:EB:A3:0C:D3:6C:7C:66:8B:E2:C8:A7:7B:00:92:56:A6:C8:C9:3E:D8:B9:CB:D0:5A:C9:7F:AE:10:4E:C7:CA" that is not a DOMException InvalidModificationError: property "code" is equal to 0, expected 13
 PASS Calling setLocalDescription(answer) from stable state should reject with InvalidStateError 
 PASS Calling setLocalDescription(answer) from have-local-offer state should reject with InvalidStateError 
 

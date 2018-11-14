@@ -8,7 +8,7 @@ PASS checkAddTransceiverWithDirection
 PASS checkAddTransceiverWithSetRemoteOfferSending 
 PASS checkAddTransceiverWithSetRemoteOfferNoSend 
 PASS checkAddTransceiverBadKind 
-FAIL checkNoMidOffer promise_test: Unhandled rejection with value: object "OperationError: Failed to set remote offer sdp: The BUNDLE group contains MID:0 matching no m= section."
+FAIL checkNoMidOffer promise_test: Unhandled rejection with value: object "InvalidAccessError: Failed to set remote offer sdp: The BUNDLE group contains MID:0 matching no m= section."
 PASS checkSetDirection 
 PASS checkCurrentDirection 
 PASS checkSendrecvWithNoSendTrack 
