@@ -31,6 +31,7 @@
 #import <WebKit/WKHTTPCookieStore.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
+#import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/RetainPtr.h>
@@ -478,7 +479,8 @@ static bool finished;
 
 // FIXME: on iOS, UI process should be using the same cookie file as the network process for default session.
 #if PLATFORM(MAC)
-TEST(WebKit, WKHTTPCookieStoreWithoutProcessPool)
+enum class ShouldEnableProcessPrewarming { No, Yes };
+void runWKHTTPCookieStoreWithoutProcessPool(ShouldEnableProcessPrewarming shouldEnableProcessPrewarming)
 {
     RetainPtr<NSHTTPCookie> sessionCookie = [NSHTTPCookie cookieWithProperties:@{
         NSHTTPCookiePath: @"/",
@@ -516,10 +518,15 @@ TEST(WebKit, WKHTTPCookieStoreWithoutProcessPool)
         }];
     }];
     TestWebKitAPI::Util::run(&finished);
-
     finished = false;
+
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().prewarmsProcessesAutomatically = shouldEnableProcessPrewarming == ShouldEnableProcessPrewarming::Yes;
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     configuration.get().websiteDataStore = ephemeralStoreWithCookies.get();
+    [configuration setProcessPool:processPool.get()];
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     auto delegate = adoptNS([[CookieUIDelegate alloc] init]);
     webView.get().UIDelegate = delegate.get();
@@ -569,5 +576,16 @@ TEST(WebKit, WKHTTPCookieStoreWithoutProcessPool)
     [webView loadHTMLString:alertCookieHTML baseURL:[NSURL URLWithString:@"http://127.0.0.1"]];
     TestWebKitAPI::Util::run(&finished);
 }
+
+TEST(WebKit, WKHTTPCookieStoreWithoutProcessPoolWithoutPrewarming)
+{
+    runWKHTTPCookieStoreWithoutProcessPool(ShouldEnableProcessPrewarming::No);
+}
+
+TEST(WebKit, WKHTTPCookieStoreWithoutProcessPoolWithPrewarming)
+{
+    runWKHTTPCookieStoreWithoutProcessPool(ShouldEnableProcessPrewarming::Yes);
+}
+
 #endif // PLATFORM(MAC)
 #endif

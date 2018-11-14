@@ -1,3 +1,38 @@
+2018-11-14  Chris Dumez  <cdumez@apple.com>
+
+        WebKit.WKHTTPCookieStoreWithoutProcessPool API test is failing with process prewarming is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=191624
+
+        Reviewed by Alex Christensen.
+
+        Stop setting the WebProcessPool's primary data store (m_websiteDataStore) to the default one in
+        WebProcessPool::prewarmProcess(). We did not really need to, we can pass the default data store
+        to the new WebPageProxy without having to set m_websiteDataStore. m_websiteDataStore only gets
+        set upon constructor if thr default data store already exists or later on when creating a WebPage
+        that uses the default data store.
+
+        In the case of the API test, the following was happening:
+        1. Create an ephemeral data store EDS
+        2. Create a WebView V1 using datastore EDS
+        3. Do a load in V1
+        4. Process prewarming would kick in and wrongly associated V1's process pool PP1 with the default data store
+        5. Create/Get the default datastore and set a few cookies on it
+        6. Create a WebView V2 using default datastore and a fresh new process pool PP2
+        7. Do a load in V2 and expect the cookies to be there
+
+        In HTTPCookieStore::setCookie() that is called at step 5, we call:
+        m_owningDataStore->processPoolForCookieStorageOperations()
+
+        In this case, m_owningDataStore is the default datastore and this call would previously return null because
+        there is no WebProcessPool yet associated with the default datastore. However, with the process prewarming
+        bug at step 4, the process pool PP1 would be returned since it was wrongly associated with the default
+        data store. As a result, we would call setCookie() on PP1's WebCookieManagerProxy and this would fail
+        because PP1's network process knows nothing about this session ID (it was only ever used with an ephemeral
+        session).
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::prewarmProcess):
+
 2018-11-13  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Support CTAP HID authenticators on macOS

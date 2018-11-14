@@ -955,11 +955,12 @@ void WebProcessPool::prewarmProcess()
     if (m_prewarmedProcess)
         return;
 
-    if (!m_websiteDataStore)
-        m_websiteDataStore = API::WebsiteDataStore::defaultDataStore().ptr();
+    auto* websiteDataStore = m_websiteDataStore.get();
+    if (!websiteDataStore)
+        websiteDataStore = API::WebsiteDataStore::defaultDataStore().ptr();
 
     RELEASE_LOG(PerformanceLogging, "Prewarming a WebProcess for performance");
-    createNewWebProcess(m_websiteDataStore->websiteDataStore(), WebProcessProxy::IsPrewarmed::Yes);
+    createNewWebProcess(websiteDataStore->websiteDataStore(), WebProcessProxy::IsPrewarmed::Yes);
 }
 
 void WebProcessPool::enableProcessTermination()
