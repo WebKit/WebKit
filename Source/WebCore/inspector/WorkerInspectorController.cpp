@@ -114,7 +114,7 @@ void WorkerInspectorController::connectFrontend()
     m_executionStopwatch->start();
 
     m_forwardingChannel = std::make_unique<WorkerToPageFrontendChannel>(m_workerGlobalScope);
-    m_frontendRouter->connectFrontend(m_forwardingChannel.get());
+    m_frontendRouter->connectFrontend(*m_forwardingChannel.get());
     m_agents.didCreateFrontendAndBackend(&m_frontendRouter.get(), &m_backendDispatcher.get());
 }
 
@@ -130,7 +130,7 @@ void WorkerInspectorController::disconnectFrontend(Inspector::DisconnectReason r
     });
 
     m_agents.willDestroyFrontendAndBackend(reason);
-    m_frontendRouter->disconnectFrontend(m_forwardingChannel.get());
+    m_frontendRouter->disconnectFrontend(*m_forwardingChannel.get());
     m_forwardingChannel = nullptr;
 }
 

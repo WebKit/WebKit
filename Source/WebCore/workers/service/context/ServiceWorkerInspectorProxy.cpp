@@ -57,18 +57,18 @@ void ServiceWorkerInspectorProxy::serviceWorkerTerminated()
     m_channel = nullptr;
 }
 
-void ServiceWorkerInspectorProxy::connectToWorker(FrontendChannel* channel)
+void ServiceWorkerInspectorProxy::connectToWorker(FrontendChannel& channel)
 {
-    m_channel = channel;
+    m_channel = &channel;
 
     m_serviceWorkerThreadProxy.thread().runLoop().postTaskForMode([] (ScriptExecutionContext& context) {
         downcast<WorkerGlobalScope>(context).inspectorController().connectFrontend();
     }, WorkerRunLoop::debuggerMode());
 }
 
-void ServiceWorkerInspectorProxy::disconnectFromWorker(FrontendChannel* channel)
+void ServiceWorkerInspectorProxy::disconnectFromWorker(FrontendChannel& channel)
 {
-    ASSERT_UNUSED(channel, channel == m_channel);
+    ASSERT_UNUSED(channel, &channel == m_channel);
     m_channel = nullptr;
 
     m_serviceWorkerThreadProxy.thread().runLoop().postTaskForMode([] (ScriptExecutionContext& context) {

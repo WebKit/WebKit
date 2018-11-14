@@ -335,7 +335,7 @@ InspectorStubFrontend::InspectorStubFrontend(Page& inspectedPage, RefPtr<DOMWind
     ASSERT_ARG(frontendWindow, frontendWindow);
 
     m_frontendController.setInspectorFrontendClient(this);
-    inspectedPage.inspectorController().connectFrontend(this);
+    inspectedPage.inspectorController().connectFrontend(*this);
 }
 
 InspectorStubFrontend::~InspectorStubFrontend()
@@ -349,7 +349,7 @@ void InspectorStubFrontend::closeWindow()
         return;
 
     m_frontendController.setInspectorFrontendClient(nullptr);
-    inspectedPage()->inspectorController().disconnectFrontend(this);
+    inspectedPage()->inspectorController().disconnectFrontend(*this);
 
     m_frontendWindow->close();
     m_frontendWindow = nullptr;

@@ -50,14 +50,14 @@ String JSGlobalObjectDebuggable::name() const
     return name.isEmpty() ? "JSContext"_s : name;
 }
 
-void JSGlobalObjectDebuggable::connect(FrontendChannel* frontendChannel, bool automaticInspection, bool immediatelyPause)
+void JSGlobalObjectDebuggable::connect(FrontendChannel& frontendChannel, bool automaticInspection, bool immediatelyPause)
 {
     JSLockHolder locker(&m_globalObject.vm());
 
     m_globalObject.inspectorController().connectFrontend(frontendChannel, automaticInspection, immediatelyPause);
 }
 
-void JSGlobalObjectDebuggable::disconnect(FrontendChannel* frontendChannel)
+void JSGlobalObjectDebuggable::disconnect(FrontendChannel& frontendChannel)
 {
     JSLockHolder locker(&m_globalObject.vm());
 

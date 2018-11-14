@@ -1,5 +1,31 @@
 2018-11-14  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Pass Inspector::FrontendChannel as a reference connect/disconnect methods
+        https://bugs.webkit.org/show_bug.cgi?id=191612
+
+        Reviewed by Matt Baker.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::connect):
+        (WebKit::WebAutomationSession::disconnect):
+        (WebKit::WebAutomationSession::terminate):
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/WebPageDebuggable.cpp:
+        (WebKit::WebPageDebuggable::connect):
+        (WebKit::WebPageDebuggable::disconnect):
+        * UIProcess/WebPageDebuggable.h:
+        * UIProcess/WebPageInspectorController.cpp:
+        (WebKit::WebPageInspectorController::connectFrontend):
+        (WebKit::WebPageInspectorController::disconnectFrontend):
+        * UIProcess/WebPageInspectorController.h:
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::close):
+        * WebProcess/WebPage/WebPageInspectorTarget.cpp:
+        (WebKit::WebPageInspectorTarget::connect):
+        (WebKit::WebPageInspectorTarget::disconnect):
+
+2018-11-14  Joseph Pecoraro  <pecoraro@apple.com>
+
         Unreviewed attempted wincairo build fix after 238192.
 
         * WebProcess/WebPage/WebPageInspectorTargetController.h:

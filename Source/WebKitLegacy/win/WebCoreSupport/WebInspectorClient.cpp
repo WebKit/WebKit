@@ -422,7 +422,7 @@ void WebInspectorFrontendClient::destroyInspectorView()
     if (Page* frontendPage = this->frontendPage())
         frontendPage->inspectorController().setInspectorFrontendClient(nullptr);
     if (Page* inspectedPage = m_inspectedWebView->page())
-        inspectedPage->inspectorController().disconnectFrontend(m_inspectorClient);
+        inspectedPage->inspectorController().disconnectFrontend(*m_inspectorClient);
 
     m_inspectorClient->releaseFrontend();
 

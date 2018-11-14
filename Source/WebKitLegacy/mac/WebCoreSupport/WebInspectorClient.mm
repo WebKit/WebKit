@@ -655,7 +655,7 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
     if (Page* frontendPage = _frontendClient->frontendPage())
         frontendPage->inspectorController().setInspectorFrontendClient(nullptr);
     if (Page* inspectedPage = [_inspectedWebView.get() page])
-        inspectedPage->inspectorController().disconnectFrontend(_inspectorClient);
+        inspectedPage->inspectorController().disconnectFrontend(*_inspectorClient);
 
     [[_inspectedWebView.get() inspector] releaseFrontend];
     _inspectorClient->releaseFrontend();

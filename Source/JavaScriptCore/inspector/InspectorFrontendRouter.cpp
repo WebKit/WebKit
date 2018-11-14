@@ -36,28 +36,24 @@ Ref<FrontendRouter> FrontendRouter::create()
     return adoptRef(*new FrontendRouter);
 }
 
-void FrontendRouter::connectFrontend(FrontendChannel* connection)
+void FrontendRouter::connectFrontend(FrontendChannel& connection)
 {
-    ASSERT_ARG(connection, connection);
-
-    if (m_connections.contains(connection)) {
+    if (m_connections.contains(&connection)) {
         ASSERT_NOT_REACHED();
         return;
     }
 
-    m_connections.append(connection);
+    m_connections.append(&connection);
 }
 
-void FrontendRouter::disconnectFrontend(FrontendChannel* connection)
+void FrontendRouter::disconnectFrontend(FrontendChannel& connection)
 {
-    ASSERT_ARG(connection, connection);
-
-    if (!m_connections.contains(connection)) {
+    if (!m_connections.contains(&connection)) {
         ASSERT_NOT_REACHED();
         return;
     }
 
-    m_connections.removeFirst(connection);
+    m_connections.removeFirst(&connection);
 }
 
 void FrontendRouter::disconnectAllFrontends()

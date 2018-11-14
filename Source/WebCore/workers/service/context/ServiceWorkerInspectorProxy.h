@@ -49,8 +49,8 @@ public:
 
     void serviceWorkerTerminated();
 
-    void connectToWorker(Inspector::FrontendChannel*);
-    void disconnectFromWorker(Inspector::FrontendChannel*);
+    void connectToWorker(Inspector::FrontendChannel&);
+    void disconnectFromWorker(Inspector::FrontendChannel&);
     void sendMessageToWorker(const String&);
     void sendMessageFromWorkerToFrontend(const String&);
 

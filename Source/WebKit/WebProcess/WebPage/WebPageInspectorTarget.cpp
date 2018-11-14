@@ -47,13 +47,13 @@ String WebPageInspectorTarget::identifier() const
 void WebPageInspectorTarget::connect(Inspector::FrontendChannel& channel)
 {
     if (m_page.corePage())
-        m_page.corePage()->inspectorController().connectFrontend(&channel);
+        m_page.corePage()->inspectorController().connectFrontend(channel);
 }
 
 void WebPageInspectorTarget::disconnect(Inspector::FrontendChannel& channel)
 {
     if (m_page.corePage())
-        m_page.corePage()->inspectorController().disconnectFrontend(&channel);
+        m_page.corePage()->inspectorController().disconnectFrontend(channel);
 }
 
 void WebPageInspectorTarget::sendMessageToTargetBackend(const String& message)

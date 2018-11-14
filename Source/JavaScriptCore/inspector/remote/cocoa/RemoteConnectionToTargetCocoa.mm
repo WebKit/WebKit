@@ -171,13 +171,13 @@ bool RemoteConnectionToTarget::setup(bool isAutomaticInspection, bool automatica
                 m_target = nullptr;
             } else if (is<RemoteInspectionTarget>(m_target)) {
                 auto castedTarget = downcast<RemoteInspectionTarget>(m_target);
-                castedTarget->connect(this, isAutomaticInspection, automaticallyPause);
+                castedTarget->connect(*this, isAutomaticInspection, automaticallyPause);
                 m_connected = true;
 
                 RemoteInspector::singleton().updateTargetListing(targetIdentifier);
             } else if (is<RemoteAutomationTarget>(m_target)) {
                 auto castedTarget = downcast<RemoteAutomationTarget>(m_target);
-                castedTarget->connect(this);
+                castedTarget->connect(*this);
                 m_connected = true;
 
                 RemoteInspector::singleton().updateTargetListing(targetIdentifier);
@@ -206,7 +206,7 @@ void RemoteConnectionToTarget::close()
             std::lock_guard<Lock> lock(m_targetMutex);
             if (m_target) {
                 if (m_connected)
-                    m_target->disconnect(this);
+                    m_target->disconnect(*this);
 
                 m_target = nullptr;
                 

@@ -254,9 +254,8 @@ void InspectorController::didClearWindowObjectInWorld(Frame& frame, DOMWrapperWo
         m_inspectorFrontendClient->windowObjectCleared();
 }
 
-void InspectorController::connectFrontend(Inspector::FrontendChannel* frontendChannel, bool isAutomaticInspection, bool immediatelyPause)
+void InspectorController::connectFrontend(Inspector::FrontendChannel& frontendChannel, bool isAutomaticInspection, bool immediatelyPause)
 {
-    ASSERT_ARG(frontendChannel, frontendChannel);
     ASSERT(m_inspectorClient);
 
     // If a frontend has connected enable the developer extras and keep them enabled.
@@ -285,7 +284,7 @@ void InspectorController::connectFrontend(Inspector::FrontendChannel* frontendCh
 #endif
 }
 
-void InspectorController::disconnectFrontend(FrontendChannel* frontendChannel)
+void InspectorController::disconnectFrontend(FrontendChannel& frontendChannel)
 {
     m_frontendRouter->disconnectFrontend(frontendChannel);
 
@@ -362,7 +361,7 @@ void InspectorController::show()
     if (m_frontendRouter->hasLocalFrontend())
         m_inspectorClient->bringFrontendToFront();
     else if (Inspector::FrontendChannel* frontendChannel = m_inspectorClient->openLocalFrontend(this))
-        connectFrontend(frontendChannel);
+        connectFrontend(*frontendChannel);
 }
 
 void InspectorController::setIsUnderTest(bool value)

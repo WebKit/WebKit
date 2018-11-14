@@ -68,8 +68,8 @@ public:
     JSGlobalObjectInspectorController(JSC::JSGlobalObject&);
     ~JSGlobalObjectInspectorController();
 
-    void connectFrontend(FrontendChannel*, bool isAutomaticInspection, bool immediatelyPause);
-    void disconnectFrontend(FrontendChannel*);
+    void connectFrontend(FrontendChannel&, bool isAutomaticInspection, bool immediatelyPause);
+    void disconnectFrontend(FrontendChannel&);
 
     void dispatchMessageFromFrontend(const String&);
 

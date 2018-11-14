@@ -62,10 +62,8 @@ bool WebPageInspectorController::hasLocalFrontend() const
     return m_frontendRouter->hasLocalFrontend();
 }
 
-void WebPageInspectorController::connectFrontend(Inspector::FrontendChannel* frontendChannel, bool, bool)
+void WebPageInspectorController::connectFrontend(Inspector::FrontendChannel& frontendChannel, bool, bool)
 {
-    ASSERT_ARG(frontendChannel, frontendChannel);
-
     bool connectingFirstFrontend = !m_frontendRouter->hasFrontends();
 
     m_frontendRouter->connectFrontend(frontendChannel);
@@ -81,7 +79,7 @@ void WebPageInspectorController::connectFrontend(Inspector::FrontendChannel* fro
 #endif
 }
 
-void WebPageInspectorController::disconnectFrontend(FrontendChannel* frontendChannel)
+void WebPageInspectorController::disconnectFrontend(FrontendChannel& frontendChannel)
 {
     m_frontendRouter->disconnectFrontend(frontendChannel);
 

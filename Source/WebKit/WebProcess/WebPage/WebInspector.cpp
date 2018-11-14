@@ -145,7 +145,7 @@ void WebInspector::close()
     if (!m_frontendConnection)
         return;
 
-    m_page->corePage()->inspectorController().disconnectFrontend(this);
+    m_page->corePage()->inspectorController().disconnectFrontend(*this);
     closeFrontendConnection();
 }
 

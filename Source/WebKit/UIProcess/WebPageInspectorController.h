@@ -50,8 +50,8 @@ public:
 
     bool hasLocalFrontend() const;
 
-    void connectFrontend(Inspector::FrontendChannel*, bool isAutomaticInspection = false, bool immediatelyPause = false);
-    void disconnectFrontend(Inspector::FrontendChannel*);
+    void connectFrontend(Inspector::FrontendChannel&, bool isAutomaticInspection = false, bool immediatelyPause = false);
+    void disconnectFrontend(Inspector::FrontendChannel&);
     void disconnectAllFrontends();
 
     void dispatchMessageFromFrontend(const String& message);

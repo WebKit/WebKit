@@ -66,12 +66,12 @@ bool WebPageDebuggable::hasLocalDebugger() const
     return m_page.inspectorController().hasLocalFrontend();
 }
 
-void WebPageDebuggable::connect(Inspector::FrontendChannel* channel, bool isAutomaticConnection, bool immediatelyPause)
+void WebPageDebuggable::connect(FrontendChannel& channel, bool isAutomaticConnection, bool immediatelyPause)
 {
     m_page.inspectorController().connectFrontend(channel, isAutomaticConnection, immediatelyPause);
 }
 
-void WebPageDebuggable::disconnect(Inspector::FrontendChannel* channel)
+void WebPageDebuggable::disconnect(FrontendChannel& channel)
 {
     m_page.inspectorController().disconnectFrontend(channel);
 }

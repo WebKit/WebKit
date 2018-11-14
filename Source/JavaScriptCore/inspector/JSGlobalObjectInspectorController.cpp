@@ -119,10 +119,8 @@ void JSGlobalObjectInspectorController::globalObjectDestroyed()
     m_agents.discardValues();
 }
 
-void JSGlobalObjectInspectorController::connectFrontend(FrontendChannel* frontendChannel, bool isAutomaticInspection, bool immediatelyPause)
+void JSGlobalObjectInspectorController::connectFrontend(FrontendChannel& frontendChannel, bool isAutomaticInspection, bool immediatelyPause)
 {
-    ASSERT_ARG(frontendChannel, frontendChannel);
-
     m_isAutomaticInspection = isAutomaticInspection;
     m_pauseAfterInitialization = immediatelyPause;
 
@@ -147,10 +145,8 @@ void JSGlobalObjectInspectorController::connectFrontend(FrontendChannel* fronten
 #endif
 }
 
-void JSGlobalObjectInspectorController::disconnectFrontend(FrontendChannel* frontendChannel)
+void JSGlobalObjectInspectorController::disconnectFrontend(FrontendChannel& frontendChannel)
 {
-    ASSERT_ARG(frontendChannel, frontendChannel);
-
     // FIXME: change this to notify agents which frontend has disconnected (by id).
     m_agents.willDestroyFrontendAndBackend(DisconnectReason::InspectorDestroyed);
 

@@ -130,8 +130,8 @@ public:
     // Inspector::RemoteAutomationTarget API
     String name() const override { return m_sessionIdentifier; }
     void dispatchMessageFromRemote(const String& message) override;
-    void connect(Inspector::FrontendChannel*, bool isAutomaticConnection = false, bool immediatelyPause = false) override;
-    void disconnect(Inspector::FrontendChannel*) override;
+    void connect(Inspector::FrontendChannel&, bool isAutomaticConnection = false, bool immediatelyPause = false) override;
+    void disconnect(Inspector::FrontendChannel&) override;
 #endif
     void terminate();
 
