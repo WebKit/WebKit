@@ -36,11 +36,11 @@ class MockLocalConnection final : public LocalConnection {
 public:
     explicit MockLocalConnection(const MockWebAuthenticationConfiguration&);
 
+private:
     void getUserConsent(const String& reason, UserConsentCallback&&) const final;
     void getUserConsent(const String& reason, SecAccessControlRef, UserConsentContextCallback&&) const final;
     void getAttestation(const String& rpId, const String& username, const Vector<uint8_t>& hash, AttestationCallback&&) const final;
 
-private:
     MockWebAuthenticationConfiguration m_configuration;
 };
 

@@ -2431,6 +2431,89 @@ void TestRunner::setWebAuthenticationMockConfiguration(JSValueRef configurationV
         configurationValues.append({ AdoptWK, WKDictionaryCreate(rawLocalKeys.data(), rawLocalValues.data(), rawLocalKeys.size()) });
     }
 
+    JSRetainPtr<JSStringRef> hidPropertyName(Adopt, JSStringCreateWithUTF8CString("hid"));
+    JSValueRef hidValue = JSObjectGetProperty(context, configuration, hidPropertyName.get(), 0);
+    if (!JSValueIsUndefined(context, hidValue) && !JSValueIsNull(context, hidValue)) {
+        if (!JSValueIsObject(context, hidValue))
+            return;
+        JSObjectRef hid = JSValueToObject(context, hidValue, 0);
+
+        JSRetainPtr<JSStringRef> stagePropertyName(Adopt, JSStringCreateWithUTF8CString("stage"));
+        JSValueRef stageValue = JSObjectGetProperty(context, hid, stagePropertyName.get(), 0);
+        if (!JSValueIsString(context, stageValue))
+            return;
+
+        JSRetainPtr<JSStringRef> subStagePropertyName(Adopt, JSStringCreateWithUTF8CString("subStage"));
+        JSValueRef subStageValue = JSObjectGetProperty(context, hid, subStagePropertyName.get(), 0);
+        if (!JSValueIsString(context, subStageValue))
+            return;
+
+        JSRetainPtr<JSStringRef> errorPropertyName(Adopt, JSStringCreateWithUTF8CString("error"));
+        JSValueRef errorValue = JSObjectGetProperty(context, hid, errorPropertyName.get(), 0);
+        if (!JSValueIsString(context, errorValue))
+            return;
+
+        Vector<WKRetainPtr<WKStringRef>> hidKeys;
+        Vector<WKRetainPtr<WKTypeRef>> hidValues;
+        hidKeys.append({ AdoptWK, WKStringCreateWithUTF8CString("Stage") });
+        hidValues.append(toWK(adopt(JSValueToStringCopy(context, stageValue, 0)).get()));
+        hidKeys.append({ AdoptWK, WKStringCreateWithUTF8CString("SubStage") });
+        hidValues.append(toWK(adopt(JSValueToStringCopy(context, subStageValue, 0)).get()));
+        hidKeys.append({ AdoptWK, WKStringCreateWithUTF8CString("Error") });
+        hidValues.append(toWK(adopt(JSValueToStringCopy(context, errorValue, 0)).get()));
+
+        JSRetainPtr<JSStringRef> payloadBase64PropertyName(Adopt, JSStringCreateWithUTF8CString("payloadBase64"));
+        JSValueRef payloadBase64Value = JSObjectGetProperty(context, hid, payloadBase64PropertyName.get(), 0);
+        if (!JSValueIsUndefined(context, payloadBase64Value) && !JSValueIsNull(context, payloadBase64Value)) {
+            if (!JSValueIsString(context, payloadBase64Value))
+                return;
+            hidKeys.append({ AdoptWK, WKStringCreateWithUTF8CString("PayloadBase64") });
+            hidValues.append(toWK(adopt(JSValueToStringCopy(context, payloadBase64Value, 0)).get()));
+        }
+
+        JSRetainPtr<JSStringRef> keepAlivePropertyName(Adopt, JSStringCreateWithUTF8CString("keepAlive"));
+        JSValueRef keepAliveValue = JSObjectGetProperty(context, hid, keepAlivePropertyName.get(), 0);
+        if (!JSValueIsUndefined(context, keepAliveValue) && !JSValueIsNull(context, keepAliveValue)) {
+            if (!JSValueIsBoolean(context, keepAliveValue))
+                return;
+            bool keepAlive = JSValueToBoolean(context, keepAliveValue);
+            hidKeys.append({ AdoptWK, WKStringCreateWithUTF8CString("KeepAlive") });
+            hidValues.append(adoptWK(WKBooleanCreate(keepAlive)).get());
+        }
+
+        JSRetainPtr<JSStringRef> fastDataArrivalPropertyName(Adopt, JSStringCreateWithUTF8CString("fastDataArrival"));
+        JSValueRef fastDataArrivalValue = JSObjectGetProperty(context, hid, fastDataArrivalPropertyName.get(), 0);
+        if (!JSValueIsUndefined(context, fastDataArrivalValue) && !JSValueIsNull(context, fastDataArrivalValue)) {
+            if (!JSValueIsBoolean(context, fastDataArrivalValue))
+                return;
+            bool fastDataArrival = JSValueToBoolean(context, fastDataArrivalValue);
+            hidKeys.append({ AdoptWK, WKStringCreateWithUTF8CString("FastDataArrival") });
+            hidValues.append(adoptWK(WKBooleanCreate(fastDataArrival)).get());
+        }
+
+        JSRetainPtr<JSStringRef> continueAfterErrorDataPropertyName(Adopt, JSStringCreateWithUTF8CString("continueAfterErrorData"));
+        JSValueRef continueAfterErrorDataValue = JSObjectGetProperty(context, hid, continueAfterErrorDataPropertyName.get(), 0);
+        if (!JSValueIsUndefined(context, continueAfterErrorDataValue) && !JSValueIsNull(context, continueAfterErrorDataValue)) {
+            if (!JSValueIsBoolean(context, continueAfterErrorDataValue))
+                return;
+            bool continueAfterErrorData = JSValueToBoolean(context, continueAfterErrorDataValue);
+            hidKeys.append({ AdoptWK, WKStringCreateWithUTF8CString("ContinueAfterErrorData") });
+            hidValues.append(adoptWK(WKBooleanCreate(continueAfterErrorData)).get());
+        }
+
+        Vector<WKStringRef> rawHidKeys;
+        Vector<WKTypeRef> rawHidValues;
+        rawHidKeys.resize(hidKeys.size());
+        rawHidValues.resize(hidValues.size());
+        for (size_t i = 0; i < hidKeys.size(); ++i) {
+            rawHidKeys[i] = hidKeys[i].get();
+            rawHidValues[i] = hidValues[i].get();
+        }
+
+        configurationKeys.append({ AdoptWK, WKStringCreateWithUTF8CString("Hid") });
+        configurationValues.append({ AdoptWK, WKDictionaryCreate(rawHidKeys.data(), rawHidValues.data(), rawHidKeys.size()) });
+    }
+
     Vector<WKStringRef> rawConfigurationKeys;
     Vector<WKTypeRef> rawConfigurationValues;
     rawConfigurationKeys.resize(configurationKeys.size());

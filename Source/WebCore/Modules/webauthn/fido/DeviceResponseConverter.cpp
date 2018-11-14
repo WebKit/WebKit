@@ -158,11 +158,10 @@ std::optional<PublicKeyCredentialData> readCTAPGetAssertionResponse(const Vector
         return std::nullopt;
     auto& signature = it->second.getByteString();
 
-    RefPtr<ArrayBuffer> userHandle;
-    {
-        it = responseMap.find(CBOR(4));
-        if (it == responseMap.end() || !it->second.isMap())
-            return std::nullopt;
+    // FIXME(191521): Properly handle null userHandle.
+    RefPtr<ArrayBuffer> userHandle = ArrayBuffer::create(1, 1);
+    it = responseMap.find(CBOR(4));
+    if (it != responseMap.end() && it->second.isMap()) {
         auto& user = it->second.getMap();
         auto itr = user.find(CBOR(kEntityIdMapKey));
         if (itr == user.end() || !itr->second.isByteString())

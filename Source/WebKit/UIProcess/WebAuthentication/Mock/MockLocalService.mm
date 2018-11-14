@@ -23,12 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "MockLocalService.h"
+#import "config.h"
+#import "MockLocalService.h"
 
 #if ENABLE(WEB_AUTHN)
 
-#import "LocalAuthenticator.h"
 #import "MockLocalConnection.h"
 #import <wtf/RunLoop.h>
 

@@ -30,24 +30,32 @@
 
 #include <WebCore/AuthenticatorTransport.h>
 #include <WebCore/PublicKeyCredentialCreationOptions.h>
-#include <wtf/RunLoop.h>
 
 namespace WebKit {
 using namespace WebCore;
 
 namespace AuthenticatorManagerInternal {
 
+#if PLATFORM(MAC)
+const size_t maxTransportNumber = 2;
+#else
 const size_t maxTransportNumber = 1;
+#endif
+
 // Suggested by WebAuthN spec as of 7 August 2018.
 const unsigned maxTimeOutValue = 120000;
 
-// FIXME(188623, 188624, 188625): Support USB, NFC and BLE authenticators.
+// FIXME(188624, 188625): Support NFC and BLE authenticators.
 static AuthenticatorManager::TransportSet collectTransports(const std::optional<PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria>& authenticatorSelection)
 {
     AuthenticatorManager::TransportSet result;
     if (!authenticatorSelection) {
         auto addResult = result.add(AuthenticatorTransport::Internal);
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
+#if PLATFORM(MAC)
+        addResult = result.add(AuthenticatorTransport::Usb);
+        ASSERT_UNUSED(addResult, addResult.isNewEntry);
+#endif
         return result;
     }
 
@@ -56,14 +64,19 @@ static AuthenticatorManager::TransportSet collectTransports(const std::optional<
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
         return result;
     }
-    if (authenticatorSelection->authenticatorAttachment == PublicKeyCredentialCreationOptions::AuthenticatorAttachment::CrossPlatform)
+    if (authenticatorSelection->authenticatorAttachment == PublicKeyCredentialCreationOptions::AuthenticatorAttachment::CrossPlatform) {
+#if PLATFORM(MAC)
+        auto addResult = result.add(AuthenticatorTransport::Usb);
+        ASSERT_UNUSED(addResult, addResult.isNewEntry);
+#endif
         return result;
+    }
 
     ASSERT_NOT_REACHED();
     return result;
 }
 
-// FIXME(188623, 188624, 188625): Support USB, NFC and BLE authenticators.
+// FIXME(188624, 188625): Support NFC and BLE authenticators.
 // The goal is to find a union of different transports from allowCredentials.
 // If it is not specified or any of its credentials doesn't specify its own. We should discover all.
 // This is a variant of Step. 18.*.4 from https://www.w3.org/TR/webauthn/#discover-from-external-source
@@ -74,16 +87,27 @@ static AuthenticatorManager::TransportSet collectTransports(const Vector<PublicK
     if (allowCredentials.isEmpty()) {
         auto addResult = result.add(AuthenticatorTransport::Internal);
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
+#if PLATFORM(MAC)
+        addResult = result.add(AuthenticatorTransport::Usb);
+        ASSERT_UNUSED(addResult, addResult.isNewEntry);
+#endif
         return result;
     }
 
     for (auto& allowCredential : allowCredentials) {
         if (allowCredential.transports.isEmpty()) {
             result.add(AuthenticatorTransport::Internal);
+#if PLATFORM(MAC)
+            result.add(AuthenticatorTransport::Usb);
             return result;
+#endif
         }
         if (!result.contains(AuthenticatorTransport::Internal) && allowCredential.transports.contains(AuthenticatorTransport::Internal))
             result.add(AuthenticatorTransport::Internal);
+#if PLATFORM(MAC)
+        if (!result.contains(AuthenticatorTransport::Usb) && allowCredential.transports.contains(AuthenticatorTransport::Usb))
+            result.add(AuthenticatorTransport::Usb);
+#endif
         if (result.size() >= maxTransportNumber)
             return result;
     }
@@ -93,6 +117,11 @@ static AuthenticatorManager::TransportSet collectTransports(const Vector<PublicK
 }
 
 } // namespace AuthenticatorManagerInternal
+
+AuthenticatorManager::AuthenticatorManager()
+    : m_requestTimeOutTimer(RunLoop::main(), this, &AuthenticatorManager::timeOutTimerFired)
+{
+}
 
 void AuthenticatorManager::makeCredential(const Vector<uint8_t>& hash, const PublicKeyCredentialCreationOptions& options, Callback&& callback)
 {
@@ -131,12 +160,16 @@ void AuthenticatorManager::getAssertion(const Vector<uint8_t>& hash, const Publi
     startDiscovery(collectTransports(options.allowCredentials));
 }
 
-void AuthenticatorManager::clearState()
+void AuthenticatorManager::clearStateAsync()
 {
-    m_pendingRequestData = { };
-    ASSERT(!m_pendingCompletionHandler);
-    m_services.clear();
-    m_authenticators.clear();
+    RunLoop::main().dispatch([weakThis = makeWeakPtr(*this)] {
+        if (!weakThis)
+            return;
+        weakThis->m_pendingRequestData = { };
+        ASSERT(!weakThis->m_pendingCompletionHandler);
+        weakThis->m_services.clear();
+        weakThis->m_authenticators.clear();
+    });
 }
 
 void AuthenticatorManager::authenticatorAdded(Ref<Authenticator>&& authenticator)
@@ -151,15 +184,14 @@ void AuthenticatorManager::authenticatorAdded(Ref<Authenticator>&& authenticator
 void AuthenticatorManager::respondReceived(Respond&& respond)
 {
     ASSERT(RunLoop::isMain());
-    ASSERT(m_requestTimeOutTimer);
-    if (!m_requestTimeOutTimer->isActive())
+    if (!m_requestTimeOutTimer.isActive())
         return;
 
     ASSERT(m_pendingCompletionHandler);
     if (WTF::holds_alternative<PublicKeyCredentialData>(respond)) {
         m_pendingCompletionHandler(WTFMove(respond));
-        clearState();
-        m_requestTimeOutTimer->stop();
+        clearStateAsync();
+        m_requestTimeOutTimer.stop();
         return;
     }
     respondReceivedInternal(WTFMove(respond));
@@ -191,12 +223,13 @@ void AuthenticatorManager::initTimeOutTimer(const std::optional<unsigned>& timeO
     using namespace AuthenticatorManagerInternal;
 
     unsigned timeOutInMsValue = std::min(maxTimeOutValue, timeOutInMs.value_or(maxTimeOutValue));
+    m_requestTimeOutTimer.startOneShot(Seconds::fromMilliseconds(timeOutInMsValue));
+}
 
-    m_requestTimeOutTimer = std::make_unique<Timer>([context = this]() mutable {
-        context->m_pendingCompletionHandler((ExceptionData { NotAllowedError, "Operation timed out."_s }));
-        context->clearState();
-    });
-    m_requestTimeOutTimer->startOneShot(Seconds::fromMilliseconds(timeOutInMsValue));
+void AuthenticatorManager::timeOutTimerFired()
+{
+    m_pendingCompletionHandler((ExceptionData { NotAllowedError, "Operation timed out."_s }));
+    clearStateAsync();
 }
 
 } // namespace WebKit

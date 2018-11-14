@@ -48,7 +48,7 @@ class WEBCORE_EXPORT AuthenticatorCoordinatorClient : public CanMakeWeakPtr<Auth
     WTF_MAKE_NONCOPYABLE(AuthenticatorCoordinatorClient);
 public:
     AuthenticatorCoordinatorClient() = default;
-    virtual ~AuthenticatorCoordinatorClient();
+    virtual ~AuthenticatorCoordinatorClient() = default;
 
     // Senders.
     virtual void makeCredential(const Vector<uint8_t>& hash, const PublicKeyCredentialCreationOptions&, RequestCompletionHandler&&) = 0;

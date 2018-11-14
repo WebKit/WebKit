@@ -25,48 +25,60 @@
 
 #pragma once
 
-#if ENABLE(WEB_AUTHN)
+#if ENABLE(WEB_AUTHN) && PLATFORM(MAC)
 
-#include <WebCore/AuthenticatorTransport.h>
-#include <wtf/UniqueRef.h>
-#include <wtf/WeakPtr.h>
+#include <IOKit/hid/IOHIDDevice.h>
+#include <wtf/CompletionHandler.h>
+#include <wtf/Deque.h>
+#include <wtf/Forward.h>
+#include <wtf/Function.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/RetainPtr.h>
 
 namespace WebKit {
 
-class Authenticator;
-
-struct MockWebAuthenticationConfiguration;
-
-class AuthenticatorTransportService : public CanMakeWeakPtr<AuthenticatorTransportService> {
+class HidConnection {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_MAKE_NONCOPYABLE(AuthenticatorTransportService);
+    WTF_MAKE_NONCOPYABLE(HidConnection);
 public:
-    class Observer : public CanMakeWeakPtr<Observer> {
-    public:
-        virtual ~Observer() = default;
-
-        virtual void authenticatorAdded(Ref<Authenticator>&&) = 0;
+    enum class DataSent {
+        No,
+        Yes
     };
 
-    static UniqueRef<AuthenticatorTransportService> create(WebCore::AuthenticatorTransport, Observer&);
-    static UniqueRef<AuthenticatorTransportService> createMock(WebCore::AuthenticatorTransport, Observer&, const MockWebAuthenticationConfiguration&);
+    using DataSentCallback = CompletionHandler<void(DataSent)>;
+    using DataReceivedCallback = Function<void(Vector<uint8_t>&&)>;
 
-    virtual ~AuthenticatorTransportService() = default;
+    explicit HidConnection(IOHIDDeviceRef);
+    virtual ~HidConnection();
 
-    // This operation is guaranteed to execute asynchronously.
-    void startDiscovery();
+    // Overrided by MockHidConnection.
+    virtual void initialize();
+    virtual void terminate();
+    // Caller should send data again after callback is invoked to control flow.
+    virtual void send(Vector<uint8_t>&& data, DataSentCallback&&);
+    void registerDataReceivedCallback(DataReceivedCallback&&);
+    void unregisterDataReceivedCallback();
+
+    void receiveReport(Vector<uint8_t>&&);
 
 protected:
-    explicit AuthenticatorTransportService(Observer&);
-
-    Observer* observer() const { return m_observer.get(); }
+    bool m_initialized { false };
+    bool m_terminated { false };
 
 private:
-    virtual void startDiscoveryInternal() = 0;
+    void consumeReports();
 
-    WeakPtr<Observer> m_observer;
+    // Overrided by MockHidConnection.
+    virtual void registerDataReceivedCallbackInternal();
+
+    RetainPtr<IOHIDDeviceRef> m_device;
+    Vector<uint8_t> m_inputBuffer;
+    // Could queue data requested by other applications.
+    Deque<Vector<uint8_t>> m_inputReports;
+    DataReceivedCallback m_inputCallback;
 };
 
 } // namespace WebKit
 
-#endif // ENABLE(WEB_AUTHN)
+#endif // ENABLE(WEB_AUTHN) && PLATFORM(MAC)

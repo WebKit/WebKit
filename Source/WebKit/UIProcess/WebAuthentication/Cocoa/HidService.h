@@ -23,56 +23,40 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "LocalService.h"
+#pragma once
 
-#if ENABLE(WEB_AUTHN)
+#if ENABLE(WEB_AUTHN) && PLATFORM(MAC)
 
-#import "LocalAuthenticator.h"
-#import "LocalConnection.h"
-
-#import "LocalAuthenticationSoftLink.h"
+#include "AuthenticatorTransportService.h"
+#include <IOKit/hid/IOHIDManager.h>
+#include <wtf/UniqueRef.h>
 
 namespace WebKit {
 
-LocalService::LocalService(Observer& observer)
-    : AuthenticatorTransportService(observer)
-{
-}
+class CtapHidDriver;
+class HidConnection;
 
-bool LocalService::isAvailable()
-{
-// FIXME(182772)
-#if !PLATFORM(IOS_FAMILY)
-    return false;
-#else
-    auto context = adoptNS([allocLAContextInstance() init]);
-    NSError *error = nil;
-    if (![context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics error:&error]) {
-        LOG_ERROR("Couldn't find local authenticators: %@", error);
-        return false;
-    }
-    return true;
-#endif
-}
+class HidService : public AuthenticatorTransportService {
+public:
+    explicit HidService(Observer&);
+    ~HidService();
 
-void LocalService::startDiscoveryInternal()
-{
-    if (!platformStartDiscovery() || !observer())
-        return;
-    observer()->authenticatorAdded(LocalAuthenticator::create(createLocalConnection()));
-}
+    void deviceAdded(IOHIDDeviceRef);
 
-bool LocalService::platformStartDiscovery() const
-{
-    return LocalService::isAvailable();
-}
+private:
+    void startDiscoveryInternal() final;
 
-UniqueRef<LocalConnection> LocalService::createLocalConnection() const
-{
-    return makeUniqueRef<LocalConnection>();
-}
+    // Overrided by MockHidService.
+    virtual void platformStartDiscovery();
+    virtual UniqueRef<HidConnection> createHidConnection(IOHIDDeviceRef) const;
+
+    void continueAddDeviceAfterGetInfo(CtapHidDriver* deviceRef, Vector<uint8_t>&& info);
+
+    RetainPtr<IOHIDManagerRef> m_manager;
+    // Keeping drivers alive when they are initializing authenticators.
+    HashSet<std::unique_ptr<CtapHidDriver>> m_drivers;
+};
 
 } // namespace WebKit
 
-#endif // ENABLE(WEB_AUTHN)
+#endif // ENABLE(WEB_AUTHN) && PLATFORM(MAC)

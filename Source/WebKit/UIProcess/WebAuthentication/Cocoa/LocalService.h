@@ -40,7 +40,7 @@ public:
     static bool isAvailable();
 
 private:
-    void startDiscoveryInternal() const final;
+    void startDiscoveryInternal() final;
     // Overrided by MockLocalService.
     virtual bool platformStartDiscovery() const;
     virtual UniqueRef<LocalConnection> createLocalConnection() const;

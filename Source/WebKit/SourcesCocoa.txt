@@ -451,18 +451,14 @@ UIProcess/RemoteLayerTree/RemoteLayerTreeScrollingPerformanceData.mm
 UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp
 UIProcess/RemoteLayerTree/RemoteScrollingTree.cpp
 
+UIProcess/WebAuthentication/Cocoa/HidConnection.mm
+UIProcess/WebAuthentication/Cocoa/HidService.mm
 UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm
 UIProcess/WebAuthentication/Cocoa/LocalConnection.mm
 UIProcess/WebAuthentication/Cocoa/LocalService.mm
 
-UIProcess/WebAuthentication/Mock/MockAuthenticatorManager.cpp
 UIProcess/WebAuthentication/Mock/MockLocalConnection.mm
-UIProcess/WebAuthentication/Mock/MockLocalService.cpp
-
-UIProcess/WebAuthentication/AuthenticatorManager.cpp
-UIProcess/WebAuthentication/AuthenticatorTransportService.cpp
-UIProcess/WebAuthentication/Authenticator.cpp
-UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.cpp
+UIProcess/WebAuthentication/Mock/MockLocalService.mm
 
 UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm
 
@@ -516,8 +512,6 @@ WebProcess/Plugins/PDF/PDFPluginAnnotation.mm
 WebProcess/Plugins/PDF/PDFPluginChoiceAnnotation.mm
 WebProcess/Plugins/PDF/PDFPluginPasswordField.mm
 WebProcess/Plugins/PDF/PDFPluginTextAnnotation.mm
-
-WebProcess/WebAuthentication/WebAuthenticatorCoordinator.cpp
 
 WebProcess/WebCoreSupport/WebDataListSuggestionPicker.cpp
 WebProcess/WebCoreSupport/WebPasteboardOverrides.cpp

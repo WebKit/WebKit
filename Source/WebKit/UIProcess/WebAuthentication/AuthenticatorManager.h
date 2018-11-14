@@ -32,10 +32,10 @@
 #include "WebAuthenticationRequestData.h"
 #include <WebCore/ExceptionData.h>
 #include <WebCore/PublicKeyCredentialData.h>
-#include <WebCore/Timer.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/RunLoop.h>
 #include <wtf/Vector.h>
 
 namespace WebKit {
@@ -48,7 +48,9 @@ public:
     using Callback = CompletionHandler<void(Respond&&)>;
     using TransportSet = HashSet<WebCore::AuthenticatorTransport, WTF::IntHash<WebCore::AuthenticatorTransport>, WTF::StrongEnumHashTraits<WebCore::AuthenticatorTransport>>;
 
-    AuthenticatorManager() = default;
+    using AuthenticatorTransportService::Observer::weakPtrFactory;
+
+    AuthenticatorManager();
     virtual ~AuthenticatorManager() = default;
 
     void makeCredential(const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialCreationOptions&, Callback&&);
@@ -58,8 +60,8 @@ public:
 
 protected:
     Callback& pendingCompletionHandler() { return m_pendingCompletionHandler; }
-    WebCore::Timer* requestTimeOutTimer() { return m_requestTimeOutTimer.get(); }
-    void clearState();
+    RunLoop::Timer<AuthenticatorManager>& requestTimeOutTimer() { return m_requestTimeOutTimer; }
+    void clearStateAsync(); // To void cyclic dependence.
 
 private:
     // AuthenticatorTransportService::Observer
@@ -75,11 +77,12 @@ private:
 
     void startDiscovery(const TransportSet&);
     void initTimeOutTimer(const std::optional<unsigned>& timeOutInMs);
+    void timeOutTimerFired();
 
     // Request: We only allow one request per time.
     WebAuthenticationRequestData m_pendingRequestData;
     Callback m_pendingCompletionHandler;
-    std::unique_ptr<WebCore::Timer> m_requestTimeOutTimer;
+    RunLoop::Timer<AuthenticatorManager> m_requestTimeOutTimer;
 
     Vector<UniqueRef<AuthenticatorTransportService>> m_services;
     HashSet<Ref<Authenticator>> m_authenticators;

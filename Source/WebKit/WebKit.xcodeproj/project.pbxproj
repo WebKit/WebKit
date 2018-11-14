@@ -1018,7 +1018,13 @@
 		53BA47D11DC2EF5E004DF4AD /* NetworkDataTaskBlob.h in Headers */ = {isa = PBXBuildFile; fileRef = 539EB5471DC2EE40009D48CF /* NetworkDataTaskBlob.h */; };
 		53DEA3661DDE423100E82648 /* json.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 53DEA3651DDE422E00E82648 /* json.hpp */; };
 		570AB8F320AE3BD700B8BE87 /* SecKeyProxyStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 570AB8F220AE3BD700B8BE87 /* SecKeyProxyStore.h */; };
+		57597EB921811D9A0037F924 /* CtapHidDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 57597EB721811D9A0037F924 /* CtapHidDriver.h */; };
+		57597EBD218184900037F924 /* CtapHidAuthenticator.h in Headers */ = {isa = PBXBuildFile; fileRef = 57597EBB2181848F0037F924 /* CtapHidAuthenticator.h */; };
+		57597EBE218184900037F924 /* CtapHidAuthenticator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57597EBC2181848F0037F924 /* CtapHidAuthenticator.cpp */; };
+		57597EC121818BE20037F924 /* CtapHidDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57597EC021818BE20037F924 /* CtapHidDriver.cpp */; };
+		5772F206217DBD6A0056BF2C /* HidService.h in Headers */ = {isa = PBXBuildFile; fileRef = 5772F204217DBD6A0056BF2C /* HidService.h */; };
 		578DC2982155A0020074E815 /* LocalAuthenticationSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 578DC2972155A0010074E815 /* LocalAuthenticationSoftLink.h */; };
+		57AC8F50217FEED90055438C /* HidConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 57AC8F4E217FEED90055438C /* HidConnection.h */; };
 		57B4B46020B504AC00D4AD79 /* ClientCertificateAuthenticationXPCConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B4B45E20B504AB00D4AD79 /* ClientCertificateAuthenticationXPCConstants.h */; };
 		57DCED6E2142EE5E0016B847 /* WebAuthenticatorCoordinatorMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57DCED6B2142EAE20016B847 /* WebAuthenticatorCoordinatorMessageReceiver.cpp */; };
 		57DCED6F2142EE630016B847 /* WebAuthenticatorCoordinatorMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 57DCED6A2142EAE20016B847 /* WebAuthenticatorCoordinatorMessages.h */; };
@@ -3348,13 +3354,25 @@
 		570AB90320B2541C00B8BE87 /* SecKeyProxyStore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SecKeyProxyStore.mm; sourceTree = "<group>"; };
 		575075A720AB763600693EA9 /* WebCredentialMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCredentialMac.mm; sourceTree = "<group>"; };
 		5750F32A2032D4E500389347 /* LocalAuthentication.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LocalAuthentication.framework; path = System/Library/Frameworks/LocalAuthentication.framework; sourceTree = SDKROOT; };
+		5756DD74218D104900D4EE6A /* MockHidService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockHidService.h; sourceTree = "<group>"; };
+		5756DD75218D104900D4EE6A /* MockHidService.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MockHidService.cpp; sourceTree = "<group>"; };
+		5756DD76218D14A200D4EE6A /* MockHidConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockHidConnection.h; sourceTree = "<group>"; };
+		5756DD77218D14A200D4EE6A /* MockHidConnection.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MockHidConnection.cpp; sourceTree = "<group>"; };
+		57597EB721811D9A0037F924 /* CtapHidDriver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CtapHidDriver.h; sourceTree = "<group>"; };
+		57597EBB2181848F0037F924 /* CtapHidAuthenticator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CtapHidAuthenticator.h; sourceTree = "<group>"; };
+		57597EBC2181848F0037F924 /* CtapHidAuthenticator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CtapHidAuthenticator.cpp; sourceTree = "<group>"; };
+		57597EC021818BE20037F924 /* CtapHidDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CtapHidDriver.cpp; sourceTree = "<group>"; };
 		5760828B2029854200116678 /* WebAuthenticatorCoordinator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebAuthenticatorCoordinator.h; sourceTree = "<group>"; };
 		5760828C2029854200116678 /* WebAuthenticatorCoordinator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebAuthenticatorCoordinator.cpp; sourceTree = "<group>"; };
 		5760828D202987E600116678 /* WebAuthenticatorCoordinator.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebAuthenticatorCoordinator.messages.in; sourceTree = "<group>"; };
 		57608295202BD8BA00116678 /* WebAuthenticatorCoordinatorProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebAuthenticatorCoordinatorProxy.h; sourceTree = "<group>"; };
 		57608296202BD8BA00116678 /* WebAuthenticatorCoordinatorProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebAuthenticatorCoordinatorProxy.cpp; sourceTree = "<group>"; };
 		57608299202BDAE200116678 /* WebAuthenticatorCoordinatorProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebAuthenticatorCoordinatorProxy.messages.in; sourceTree = "<group>"; };
+		5772F204217DBD6A0056BF2C /* HidService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HidService.h; sourceTree = "<group>"; };
+		5772F205217DBD6A0056BF2C /* HidService.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = HidService.mm; sourceTree = "<group>"; };
 		578DC2972155A0010074E815 /* LocalAuthenticationSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocalAuthenticationSoftLink.h; sourceTree = "<group>"; };
+		57AC8F4E217FEED90055438C /* HidConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HidConnection.h; sourceTree = "<group>"; };
+		57AC8F4F217FEED90055438C /* HidConnection.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = HidConnection.mm; sourceTree = "<group>"; };
 		57B4B45D20B504AB00D4AD79 /* AuthenticationManagerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AuthenticationManagerCocoa.mm; path = Authentication/cocoa/AuthenticationManagerCocoa.mm; sourceTree = "<group>"; };
 		57B4B45E20B504AB00D4AD79 /* ClientCertificateAuthenticationXPCConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ClientCertificateAuthenticationXPCConstants.h; path = Authentication/cocoa/ClientCertificateAuthenticationXPCConstants.h; sourceTree = "<group>"; };
 		57DCED6A2142EAE20016B847 /* WebAuthenticatorCoordinatorMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebAuthenticatorCoordinatorMessages.h; path = DerivedSources/WebKit2/WebAuthenticatorCoordinatorMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3377,7 +3395,7 @@
 		57DCEDAA214B9B430016B847 /* DeviceIdentitySPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeviceIdentitySPI.h; sourceTree = "<group>"; };
 		57DCEDBE214CA01B0016B847 /* MockWebAuthenticationConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockWebAuthenticationConfiguration.h; sourceTree = "<group>"; };
 		57DCEDC1214F114C0016B847 /* MockLocalService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockLocalService.h; sourceTree = "<group>"; };
-		57DCEDC2214F114C0016B847 /* MockLocalService.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MockLocalService.cpp; sourceTree = "<group>"; };
+		57DCEDC2214F114C0016B847 /* MockLocalService.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MockLocalService.mm; sourceTree = "<group>"; };
 		57DCEDC5214F18300016B847 /* MockLocalConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockLocalConnection.h; sourceTree = "<group>"; };
 		57DCEDC6214F18300016B847 /* MockLocalConnection.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MockLocalConnection.mm; sourceTree = "<group>"; };
 		57DCEDC9214F4E420016B847 /* MockAuthenticatorManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockAuthenticatorManager.h; sourceTree = "<group>"; };
@@ -6646,6 +6664,17 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		57597EBF218184B20037F924 /* fido */ = {
+			isa = PBXGroup;
+			children = (
+				57597EBC2181848F0037F924 /* CtapHidAuthenticator.cpp */,
+				57597EBB2181848F0037F924 /* CtapHidAuthenticator.h */,
+				57597EC021818BE20037F924 /* CtapHidDriver.cpp */,
+				57597EB721811D9A0037F924 /* CtapHidDriver.h */,
+			);
+			path = fido;
+			sourceTree = "<group>";
+		};
 		5760828A202984C900116678 /* WebAuthentication */ = {
 			isa = PBXGroup;
 			children = (
@@ -6660,6 +6689,7 @@
 			isa = PBXGroup;
 			children = (
 				57DCED9E2148F9D10016B847 /* Cocoa */,
+				57597EBF218184B20037F924 /* fido */,
 				57DCEDBD214C9FA90016B847 /* Mock */,
 				57DCEDA42149E64A0016B847 /* Authenticator.cpp */,
 				57DCED8B21485BD70016B847 /* Authenticator.h */,
@@ -6687,6 +6717,10 @@
 		57DCED9E2148F9D10016B847 /* Cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				57AC8F4E217FEED90055438C /* HidConnection.h */,
+				57AC8F4F217FEED90055438C /* HidConnection.mm */,
+				5772F204217DBD6A0056BF2C /* HidService.h */,
+				5772F205217DBD6A0056BF2C /* HidService.mm */,
 				578DC2972155A0010074E815 /* LocalAuthenticationSoftLink.h */,
 				57DCEDA12149C1E20016B847 /* LocalAuthenticator.h */,
 				57DCEDA32149DFF50016B847 /* LocalAuthenticator.mm */,
@@ -6703,10 +6737,14 @@
 			children = (
 				57DCEDCD214F51680016B847 /* MockAuthenticatorManager.cpp */,
 				57DCEDC9214F4E420016B847 /* MockAuthenticatorManager.h */,
+				5756DD77218D14A200D4EE6A /* MockHidConnection.cpp */,
+				5756DD76218D14A200D4EE6A /* MockHidConnection.h */,
+				5756DD75218D104900D4EE6A /* MockHidService.cpp */,
+				5756DD74218D104900D4EE6A /* MockHidService.h */,
 				57DCEDC5214F18300016B847 /* MockLocalConnection.h */,
 				57DCEDC6214F18300016B847 /* MockLocalConnection.mm */,
-				57DCEDC2214F114C0016B847 /* MockLocalService.cpp */,
 				57DCEDC1214F114C0016B847 /* MockLocalService.h */,
+				57DCEDC2214F114C0016B847 /* MockLocalService.mm */,
 				57DCEDBE214CA01B0016B847 /* MockWebAuthenticationConfiguration.h */,
 			);
 			path = Mock;
@@ -8888,6 +8926,8 @@
 				37C21CAE1E994C0C0029D5F9 /* CorePredictionSPI.h in Headers */,
 				B878B615133428DC006888E9 /* CorrectionPanel.h in Headers */,
 				A1FB68271F6E51C100C43F9F /* CrashReporterClientSPI.h in Headers */,
+				57597EBD218184900037F924 /* CtapHidAuthenticator.h in Headers */,
+				57597EB921811D9A0037F924 /* CtapHidDriver.h in Headers */,
 				C55F91711C59676E0029E92D /* DataDetectionResult.h in Headers */,
 				1AC75380183BE50F0072CB15 /* DataReference.h in Headers */,
 				BC032DA610F437D10058C15A /* Decoder.h in Headers */,
@@ -8932,7 +8972,9 @@
 				2DA049B8180CCD0A00AAFA9E /* GraphicsLayerCARemote.h in Headers */,
 				C0CE72AD1247E78D00BC0EC4 /* HandleMessage.h in Headers */,
 				1AC75A1B1B3368270056745B /* HangDetectionDisabler.h in Headers */,
+				57AC8F50217FEED90055438C /* HidConnection.h in Headers */,
 				2DD5A72B1EBF09A7009BA597 /* HiddenPageThrottlingAutoIncreasesCounter.h in Headers */,
+				5772F206217DBD6A0056BF2C /* HidService.h in Headers */,
 				312CC9F2215B06F100DE40CA /* HighPerformanceGPUManager.h in Headers */,
 				839A2F321E2067450039057E /* HighPerformanceGraphicsUsageSampler.h in Headers */,
 				37F90DE31376560E0051CF68 /* HTTPCookieAcceptPolicy.h in Headers */,
@@ -10634,6 +10676,8 @@
 				2D92A786212B6AB100F493FD /* ChildProcess.cpp in Sources */,
 				51FAEC3B1B0657680009C4E7 /* ChildProcessMessageReceiver.cpp in Sources */,
 				2D92A77D212B6A7100F493FD /* Connection.cpp in Sources */,
+				57597EBE218184900037F924 /* CtapHidAuthenticator.cpp in Sources */,
+				57597EC121818BE20037F924 /* CtapHidDriver.cpp in Sources */,
 				2D92A77E212B6A7100F493FD /* DataReference.cpp in Sources */,
 				2D92A77F212B6A7100F493FD /* Decoder.cpp in Sources */,
 				1AB7D6191288B9D900CFD08C /* DownloadProxyMessageReceiver.cpp in Sources */,

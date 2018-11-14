@@ -23,56 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "LocalService.h"
+#pragma once
 
-#if ENABLE(WEB_AUTHN)
+#if ENABLE(WEB_AUTHN) && PLATFORM(MAC)
 
-#import "LocalAuthenticator.h"
-#import "LocalConnection.h"
-
-#import "LocalAuthenticationSoftLink.h"
+#include "Authenticator.h"
+#include <WebCore/AuthenticatorGetInfoResponse.h>
 
 namespace WebKit {
 
-LocalService::LocalService(Observer& observer)
-    : AuthenticatorTransportService(observer)
-{
-}
+class CtapHidDriver;
 
-bool LocalService::isAvailable()
-{
-// FIXME(182772)
-#if !PLATFORM(IOS_FAMILY)
-    return false;
-#else
-    auto context = adoptNS([allocLAContextInstance() init]);
-    NSError *error = nil;
-    if (![context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics error:&error]) {
-        LOG_ERROR("Couldn't find local authenticators: %@", error);
-        return false;
+class CtapHidAuthenticator final : public Authenticator {
+public:
+    // FIXME(191526): Should store AuthenticatorSupportedOptions::UserVerificationAvailability.
+    static Ref<CtapHidAuthenticator> create(std::unique_ptr<CtapHidDriver>&& driver, fido::AuthenticatorGetInfoResponse&& info)
+    {
+        return adoptRef(*new CtapHidAuthenticator(WTFMove(driver), WTFMove(info)));
     }
-    return true;
-#endif
-}
 
-void LocalService::startDiscoveryInternal()
-{
-    if (!platformStartDiscovery() || !observer())
-        return;
-    observer()->authenticatorAdded(LocalAuthenticator::create(createLocalConnection()));
-}
+private:
+    explicit CtapHidAuthenticator(std::unique_ptr<CtapHidDriver>&&, fido::AuthenticatorGetInfoResponse&&);
 
-bool LocalService::platformStartDiscovery() const
-{
-    return LocalService::isAvailable();
-}
+    void makeCredential() final;
+    void continueMakeCredentialAfterResponseReceived(Vector<uint8_t>&&) const;
+    void getAssertion() final;
+    void continueGetAssertionAfterResponseReceived(Vector<uint8_t>&&) const;
 
-UniqueRef<LocalConnection> LocalService::createLocalConnection() const
-{
-    return makeUniqueRef<LocalConnection>();
-}
+    std::unique_ptr<CtapHidDriver> m_driver;
+    fido::AuthenticatorGetInfoResponse m_info;
+};
 
 } // namespace WebKit
 
-#endif // ENABLE(WEB_AUTHN)
+#endif // ENABLE(WEB_AUTHN) && PLATFORM(MAC)

@@ -1,0 +1,9 @@
+
+PASS CTAP HID with init sub stage data not sent error in a mock hid authenticator. 
+PASS CTAP HID with init sub stage empty report error in a mock hid authenticator. 
+PASS CTAP HID with init sub stage wrong channel id error in a mock hid authenticator. 
+PASS CTAP HID with msg sub stage data not sent error in a mock hid authenticator. 
+PASS CTAP HID with msg sub stage empty report error in a mock hid authenticator. 
+PASS CTAP HID with msg sub stage wrong channel id error in a mock hid authenticator. 
+PASS CTAP HID with request::msg stage wrong channel id error in a mock hid authenticator. 
+

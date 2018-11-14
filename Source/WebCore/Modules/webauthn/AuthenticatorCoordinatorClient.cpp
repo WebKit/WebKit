@@ -32,15 +32,6 @@
 
 namespace WebCore {
 
-AuthenticatorCoordinatorClient::~AuthenticatorCoordinatorClient()
-{
-    // Just to call handlers to avoid any assertion failures.
-    if (m_pendingCompletionHandler)
-        m_pendingCompletionHandler({ }, { NotAllowedError, "Operation timed out."_s });
-    for (auto itr = m_pendingQueryCompletionHandlers.begin(); itr !=  m_pendingQueryCompletionHandlers.end(); ++itr)
-        itr->value(false);
-}
-
 void AuthenticatorCoordinatorClient::requestReply(const WebCore::PublicKeyCredentialData& data, const WebCore::ExceptionData& exception)
 {
     m_pendingCompletionHandler(data, exception);

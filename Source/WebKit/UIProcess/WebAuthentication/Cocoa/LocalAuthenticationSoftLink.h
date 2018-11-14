@@ -25,6 +25,7 @@
 
 #pragma once
 
+#import <LocalAuthentication/LocalAuthentication.h>
 #import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK(LocalAuthentication);

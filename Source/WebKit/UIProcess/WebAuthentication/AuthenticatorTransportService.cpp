@@ -28,7 +28,9 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#include "HidService.h"
 #include "LocalService.h"
+#include "MockHidService.h"
 #include "MockLocalService.h"
 #include <wtf/RunLoop.h>
 
@@ -36,14 +38,32 @@ namespace WebKit {
 
 UniqueRef<AuthenticatorTransportService> AuthenticatorTransportService::create(WebCore::AuthenticatorTransport transport, Observer& observer)
 {
-    ASSERT(transport == WebCore::AuthenticatorTransport::Internal);
-    return makeUniqueRef<LocalService>(observer);
+    switch (transport) {
+    case WebCore::AuthenticatorTransport::Internal:
+        return makeUniqueRef<LocalService>(observer);
+#if PLATFORM(MAC)
+    case WebCore::AuthenticatorTransport::Usb:
+        return makeUniqueRef<HidService>(observer);
+#endif
+    default:
+        ASSERT_NOT_REACHED();
+        return makeUniqueRef<LocalService>(observer);
+    }
 }
 
 UniqueRef<AuthenticatorTransportService> AuthenticatorTransportService::createMock(WebCore::AuthenticatorTransport transport, Observer& observer, const MockWebAuthenticationConfiguration& configuration)
 {
-    ASSERT(transport == WebCore::AuthenticatorTransport::Internal);
-    return makeUniqueRef<MockLocalService>(observer, configuration);
+    switch (transport) {
+    case WebCore::AuthenticatorTransport::Internal:
+        return makeUniqueRef<MockLocalService>(observer, configuration);
+#if PLATFORM(MAC)
+    case WebCore::AuthenticatorTransport::Usb:
+        return makeUniqueRef<MockHidService>(observer, configuration);
+#endif
+    default:
+        ASSERT_NOT_REACHED();
+        return makeUniqueRef<MockLocalService>(observer, configuration);
+    }
 }
 
 AuthenticatorTransportService::AuthenticatorTransportService(Observer& observer)
@@ -51,7 +71,7 @@ AuthenticatorTransportService::AuthenticatorTransportService(Observer& observer)
 {
 }
 
-void AuthenticatorTransportService::startDiscovery() const
+void AuthenticatorTransportService::startDiscovery()
 {
     // Enforce asynchronous execution of makeCredential.
     RunLoop::main().dispatch([weakThis = makeWeakPtr(*this)] {

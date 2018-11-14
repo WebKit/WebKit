@@ -581,12 +581,10 @@ void WKWebsiteDataStoreSetWebAuthenticationMockConfiguration(WKWebsiteDataStoreR
 #if ENABLE(WEB_AUTHN)
     MockWebAuthenticationConfiguration configuration;
 
-    auto silentFailureRef = static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(configurationRef, adoptWK(WKStringCreateWithUTF8CString("SilentFailure")).get()));
-    if (silentFailureRef)
+    if (auto silentFailureRef = static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(configurationRef, adoptWK(WKStringCreateWithUTF8CString("SilentFailure")).get())))
         configuration.silentFailure = WKBooleanGetValue(silentFailureRef);
 
-    auto localRef = static_cast<WKDictionaryRef>(WKDictionaryGetItemForKey(configurationRef, adoptWK(WKStringCreateWithUTF8CString("Local")).get()));
-    if (localRef) {
+    if (auto localRef = static_cast<WKDictionaryRef>(WKDictionaryGetItemForKey(configurationRef, adoptWK(WKStringCreateWithUTF8CString("Local")).get()))) {
         MockWebAuthenticationConfiguration::Local local;
         local.acceptAuthentication = WKBooleanGetValue(static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(localRef, adoptWK(WKStringCreateWithUTF8CString("AcceptAuthentication")).get())));
         local.acceptAttestation = WKBooleanGetValue(static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(localRef, adoptWK(WKStringCreateWithUTF8CString("AcceptAttestation")).get())));
@@ -596,6 +594,51 @@ void WKWebsiteDataStoreSetWebAuthenticationMockConfiguration(WKWebsiteDataStoreR
             local.intermediateCACertificateBase64 = WebKit::toImpl(static_cast<WKStringRef>(WKDictionaryGetItemForKey(localRef, adoptWK(WKStringCreateWithUTF8CString("IntermediateCACertificateBase64")).get())))->string();
         }
         configuration.local = WTFMove(local);
+    }
+
+    if (auto hidRef = static_cast<WKDictionaryRef>(WKDictionaryGetItemForKey(configurationRef, adoptWK(WKStringCreateWithUTF8CString("Hid")).get()))) {
+        MockWebAuthenticationConfiguration::Hid hid;
+
+        auto stage = WebKit::toImpl(static_cast<WKStringRef>(WKDictionaryGetItemForKey(hidRef, adoptWK(WKStringCreateWithUTF8CString("Stage")).get())))->string();
+        if (stage == "info")
+            hid.stage = MockWebAuthenticationConfiguration::Hid::Stage::Info;
+        if (stage == "request")
+            hid.stage = MockWebAuthenticationConfiguration::Hid::Stage::Request;
+
+        auto subStage = WebKit::toImpl(static_cast<WKStringRef>(WKDictionaryGetItemForKey(hidRef, adoptWK(WKStringCreateWithUTF8CString("SubStage")).get())))->string();
+        if (subStage == "init")
+            hid.subStage = MockWebAuthenticationConfiguration::Hid::SubStage::Init;
+        if (subStage == "msg")
+            hid.subStage = MockWebAuthenticationConfiguration::Hid::SubStage::Msg;
+
+
+        auto error = WebKit::toImpl(static_cast<WKStringRef>(WKDictionaryGetItemForKey(hidRef, adoptWK(WKStringCreateWithUTF8CString("Error")).get())))->string();
+        if (error == "success")
+            hid.error = MockWebAuthenticationConfiguration::Hid::Error::Success;
+        if (error == "data-not-sent")
+            hid.error = MockWebAuthenticationConfiguration::Hid::Error::DataNotSent;
+        if (error == "empty-report")
+            hid.error = MockWebAuthenticationConfiguration::Hid::Error::EmptyReport;
+        if (error == "wrong-channel-id")
+            hid.error = MockWebAuthenticationConfiguration::Hid::Error::WrongChannelId;
+        if (error == "malicious-payload")
+            hid.error = MockWebAuthenticationConfiguration::Hid::Error::MaliciousPayload;
+        if (error == "unsupported-options")
+            hid.error = MockWebAuthenticationConfiguration::Hid::Error::UnsupportedOptions;
+
+        if (auto payloadBase64 = static_cast<WKStringRef>(WKDictionaryGetItemForKey(hidRef, adoptWK(WKStringCreateWithUTF8CString("PayloadBase64")).get())))
+            hid.payloadBase64 = WebKit::toImpl(payloadBase64)->string();
+
+        if (auto keepAlive = static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(hidRef, adoptWK(WKStringCreateWithUTF8CString("KeepAlive")).get())))
+            hid.keepAlive = WKBooleanGetValue(keepAlive);
+
+        if (auto fastDataArrival = static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(hidRef, adoptWK(WKStringCreateWithUTF8CString("FastDataArrival")).get())))
+            hid.fastDataArrival = WKBooleanGetValue(fastDataArrival);
+
+        if (auto continueAfterErrorData = static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(hidRef, adoptWK(WKStringCreateWithUTF8CString("ContinueAfterErrorData")).get())))
+            hid.continueAfterErrorData = WKBooleanGetValue(continueAfterErrorData);
+
+        configuration.hid = WTFMove(hid);
     }
 
     WebKit::toImpl(dataStoreRef)->websiteDataStore().setMockWebAuthenticationConfiguration(WTFMove(configuration));

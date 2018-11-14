@@ -23,56 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "LocalService.h"
+#pragma once
 
-#if ENABLE(WEB_AUTHN)
+#if ENABLE(WEB_AUTHN) && PLATFORM(MAC)
 
-#import "LocalAuthenticator.h"
-#import "LocalConnection.h"
-
-#import "LocalAuthenticationSoftLink.h"
+#include "HidService.h"
+#include "MockWebAuthenticationConfiguration.h"
 
 namespace WebKit {
 
-LocalService::LocalService(Observer& observer)
-    : AuthenticatorTransportService(observer)
-{
-}
+struct MockWebAuthenticationConfiguration;
 
-bool LocalService::isAvailable()
-{
-// FIXME(182772)
-#if !PLATFORM(IOS_FAMILY)
-    return false;
-#else
-    auto context = adoptNS([allocLAContextInstance() init]);
-    NSError *error = nil;
-    if (![context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics error:&error]) {
-        LOG_ERROR("Couldn't find local authenticators: %@", error);
-        return false;
-    }
-    return true;
-#endif
-}
+class MockHidService final : public HidService {
+public:
+    MockHidService(Observer&, const MockWebAuthenticationConfiguration&);
 
-void LocalService::startDiscoveryInternal()
-{
-    if (!platformStartDiscovery() || !observer())
-        return;
-    observer()->authenticatorAdded(LocalAuthenticator::create(createLocalConnection()));
-}
+private:
+    void platformStartDiscovery() final;
+    UniqueRef<HidConnection> createHidConnection(IOHIDDeviceRef) const final;
 
-bool LocalService::platformStartDiscovery() const
-{
-    return LocalService::isAvailable();
-}
-
-UniqueRef<LocalConnection> LocalService::createLocalConnection() const
-{
-    return makeUniqueRef<LocalConnection>();
-}
+    MockWebAuthenticationConfiguration m_configuration;
+};
 
 } // namespace WebKit
 
-#endif // ENABLE(WEB_AUTHN)
+#endif // ENABLE(WEB_AUTHN) && PLATFORM(MAC)

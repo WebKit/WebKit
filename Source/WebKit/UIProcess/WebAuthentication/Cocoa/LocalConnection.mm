@@ -29,7 +29,6 @@
 #if ENABLE(WEB_AUTHN)
 
 #import "DeviceIdentitySPI.h"
-#import <LocalAuthentication/LocalAuthentication.h>
 #import <WebCore/ExceptionData.h>
 #import <wtf/BlockPtr.h>
 

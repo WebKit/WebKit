@@ -159,11 +159,15 @@ const size_t kHidContinuationPacketHeader = 5;
 const size_t kHidMaxPacketSize = 64;
 const size_t kHidInitPacketDataSize = kHidMaxPacketSize - kHidInitPacketHeaderSize;
 const size_t kHidContinuationPacketDataSize = kHidMaxPacketSize - kHidContinuationPacketHeader;
+const size_t kHidInitResponseSize = 17;
 
 const uint8_t kHidMaxLockSeconds = 10;
 
 // Messages are limited to an initiation packet and 128 continuation packets.
 const size_t kHidMaxMessageSize = 7609;
+
+// CTAP/U2F devices only provide a single report so specify a report ID of 0 here.
+const uint8_t kHidReportId = 0x00;
 
 // Authenticator API commands supported by CTAP devices, as specified in
 // https://fidoalliance.org/specs/fido-v2.0-rd-20170927/fido-client-to-authenticator-protocol-v2.0-rd-20170927.html#authenticator-api
@@ -192,6 +196,11 @@ const char* publicKeyCredentialTypeToString(WebCore::PublicKeyCredentialType);
 // FIXME: Add url to the official spec once it's standardized.
 const char kCtap2Version[] = "FIDO_2_0";
 const char kU2fVersion[] = "U2F_V2";
+
+// CTAPHID Usage Page and Usage
+// https://fidoalliance.org/specs/fido-v2.0-ps-20170927/fido-client-to-authenticator-protocol-v2.0-ps-20170927.html#hid-report-descriptor-and-device-discovery
+const uint32_t kCTAPHIDUsagePage = 0xF1D0;
+const uint32_t kCTAPHIDUsage = 0x01;
 
 } // namespace fido
 

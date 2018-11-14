@@ -28,6 +28,7 @@
 
 #if ENABLE(DATALIST_ELEMENT) && USE(APPKIT)
 
+#import "WebPageProxy.h"
 #import <WebCore/IntRect.h>
 #import <pal/spi/cocoa/NSColorSPI.h>
 

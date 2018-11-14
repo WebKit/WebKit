@@ -33,6 +33,42 @@ const testAttestationIssuingCACertificateBase64 =
     "MAoGCCqGSM49BAMCA2kAMGYCMQC3M360LLtJS60Z9q3vVjJxMgMcFQ1roGTUcKqv" +
     "W+4hJ4CeJjySXTgq6IEHn/yWab4CMQCm5NnK6SOSK+AqWum9lL87W3E6AA1f2TvJ" +
     "/hgok/34jr93nhS87tOQNdxDS8zyiqw=";
+const testDummyMessagePayloadBase64 =
+    "/////wYAEQABAgMEBQYHAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" +
+    "AAAAAAAAAAAAAAAAAAAAAAAAAAEQADoAAQIDBAUGBwECAwQAAAAAAAAAAAAAAAAA" +
+    "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAgMEAAAAAAAAAAAAAAAA" +
+    "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+const testCreationMessageBase64 =
+    "AKMBZnBhY2tlZAJYxEbMf7lnnVWy25CS4cjZ5eHQK3WA8LSBLHcJYuHkj1rYQQAA" +
+    "AE74oBHzjApNFYAGFxEfntx9AEAoCK3O6P5OyXN6V/f+9nAga0NA2Cgp4V3mgSJ5" +
+    "jOHLMDrmxp/S0rbD+aihru1C0aAN3BkiM6GNy5nSlDVqOgTgpQECAyYgASFYIEFb" +
+    "he3RkNud6sgyraBGjlh1pzTlCZehQlL/b18HZ6WGIlggJgfUd/en9p5AIqMQbUni" +
+    "nEeXdFLkvW0/zV5BpEjjNxADo2NhbGcmY3NpZ1hHMEUCIQDKg+ZBmEBtf0lWq4Re" +
+    "dH4/i/LOYqOR4uR2NAj2zQmw9QIgbTXb4hvFbj4T27bv/rGrc+y+0puoYOBkBk9P" +
+    "mCewWlNjeDVjgVkCwjCCAr4wggGmoAMCAQICBHSG/cIwDQYJKoZIhvcNAQELBQAw" +
+    "LjEsMCoGA1UEAxMjWXViaWNvIFUyRiBSb290IENBIFNlcmlhbCA0NTcyMDA2MzEw" +
+    "IBcNMTQwODAxMDAwMDAwWhgPMjA1MDA5MDQwMDAwMDBaMG8xCzAJBgNVBAYTAlNF" +
+    "MRIwEAYDVQQKDAlZdWJpY28gQUIxIjAgBgNVBAsMGUF1dGhlbnRpY2F0b3IgQXR0" +
+    "ZXN0YXRpb24xKDAmBgNVBAMMH1l1YmljbyBVMkYgRUUgU2VyaWFsIDE5NTUwMDM4" +
+    "NDIwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAASVXfOt9yR9MXXv/ZzE8xpOh466" +
+    "4YEJVmFQ+ziLLl9lJ79XQJqlgaUNCsUvGERcChNUihNTyKTlmnBOUjvATevto2ww" +
+    "ajAiBgkrBgEEAYLECgIEFTEuMy42LjEuNC4xLjQxNDgyLjEuMTATBgsrBgEEAYLl" +
+    "HAIBAQQEAwIFIDAhBgsrBgEEAYLlHAEBBAQSBBD4oBHzjApNFYAGFxEfntx9MAwG" +
+    "A1UdEwEB/wQCMAAwDQYJKoZIhvcNAQELBQADggEBADFcSIDmmlJ+OGaJvWn9Cqhv" +
+    "SeueToVFQVVvqtALOgCKHdwB+Wx29mg2GpHiMsgQp5xjB0ybbnpG6x212FxESJ+G" +
+    "inZD0ipchi7APwPlhIvjgH16zVX44a4e4hOsc6tLIOP71SaMsHuHgCcdH0vg5d2s" +
+    "c006WJe9TXO6fzV+ogjJnYpNKQLmCXoAXE3JBNwKGBIOCvfQDPyWmiiG5bGxYfPt" +
+    "y8Z3pnjX+1MDnM2hhr40ulMxlSNDnX/ZSnDyMGIbk8TOQmjTF02UO8auP8k3wt5D" +
+    "1rROIRU9+FCSX5WQYi68RuDrGMZB8P5+byoJqbKQdxn2LmE1oZAyohPAmLcoPO4=";
+const testHidCredentialIdBase64 =
+    "KAitzuj-Tslzelf3_vZwIGtDQNgoKeFd5oEieYzhyzA65saf0tK2w_mooa7tQtGg" +
+    "DdwZIjOhjcuZ0pQ1ajoE4A";
+const testAssertionMessageBase64 =
+    "AKMBomJpZFhAKAitzuj+Tslzelf3/vZwIGtDQNgoKeFd5oEieYzhyzA65saf0tK2" +
+    "w/mooa7tQtGgDdwZIjOhjcuZ0pQ1ajoE4GR0eXBlanB1YmxpYy1rZXkCWCVGzH+5" +
+    "Z51VstuQkuHI2eXh0Ct1gPC0gSx3CWLh5I9a2AEAAABQA1hHMEUCIQCSFTuuBWgB" +
+    "4/F0VB7DlUVM09IHPmxe1MzHUwRoCRZbCAIgGKov6xoAx2MEf6/6qNs8OutzhP2C" +
+    "QoJ1L7Fe64G9uBc=";
 
 const RESOURCES_DIR = "/WebKit/webauthn/resources/";
 
@@ -98,7 +134,7 @@ function hexStringToUint8Array(hexString)
     return arrayBuffer;
 }
 
-function decodeAuthData(authDataUint8Array)
+function decodeAuthData(authDataUint8Array, littleEndian = true)
 {
     let authDataObject = { };
     let pos = 0;
@@ -122,7 +158,10 @@ function decodeAuthData(authDataUint8Array)
     size = 4;
     if (pos + size > authDataUint8Array.byteLength)
         return { };
-    authDataObject.counter = new Uint32Array(authDataUint8Array.slice(pos, pos + size))[0];
+    if (littleEndian)
+        authDataObject.counter = new Uint32Array(authDataUint8Array.slice(pos, pos + size))[0];
+    else
+        authDataObject.counter = (authDataUint8Array[pos] << 24) + (authDataUint8Array[pos + 1] << 16) + (authDataUint8Array[pos + 2] << 8) + authDataUint8Array[pos + 3];
     pos = pos + size;
 
     if (pos == authDataUint8Array.byteLength)
@@ -139,8 +178,10 @@ function decodeAuthData(authDataUint8Array)
     size = 2;
     if (pos + size > authDataUint8Array.byteLength)
         return { };
-    // Little Endian
-    authDataObject.l = new Uint16Array(authDataUint8Array.slice(pos, pos + size))[0];
+    if (littleEndian)
+        authDataObject.l = new Uint16Array(authDataUint8Array.slice(pos, pos + size))[0];
+    else
+        authDataObject.l = (authDataUint8Array[pos] << 8) + authDataUint8Array[pos + 1];
     pos = pos + size;
 
     // Credential ID

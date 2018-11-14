@@ -384,6 +384,15 @@ UIProcess/Plugins/PluginProcessProxy.cpp
 UIProcess/UserContent/WebScriptMessageHandler.cpp
 UIProcess/UserContent/WebUserContentControllerProxy.cpp
 
+UIProcess/WebAuthentication/Mock/MockAuthenticatorManager.cpp
+UIProcess/WebAuthentication/Mock/MockHidConnection.cpp
+UIProcess/WebAuthentication/Mock/MockHidService.cpp
+
+UIProcess/WebAuthentication/AuthenticatorManager.cpp
+UIProcess/WebAuthentication/AuthenticatorTransportService.cpp
+UIProcess/WebAuthentication/Authenticator.cpp
+UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.cpp
+
 UIProcess/WebStorage/LocalStorageDatabase.cpp
 UIProcess/WebStorage/LocalStorageDatabaseTracker.cpp
 
@@ -493,6 +502,8 @@ WebProcess/Storage/WebServiceWorkerFetchTaskClient.cpp
 WebProcess/Storage/WebServiceWorkerProvider.cpp
 
 WebProcess/UserContent/WebUserContentController.cpp
+
+WebProcess/WebAuthentication/WebAuthenticatorCoordinator.cpp
 
 WebProcess/WebCoreSupport/SessionStateConversion.cpp
 WebProcess/WebCoreSupport/WebChromeClient.cpp

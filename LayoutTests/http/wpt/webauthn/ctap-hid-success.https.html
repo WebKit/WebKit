@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<title>Web Authentication API: CTAP HID success cases with a mock hid authenticator.</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="./resources/util.js"></script>
+<script>
+    const defaultOptions = {
+        publicKey: {
+            rp: {
+                name: "example.com"
+            },
+            user: {
+                name: "John Appleseed",
+                id: asciiToUint8Array("123456"),
+                displayName: "John",
+            },
+            challenge: asciiToUint8Array("123456"),
+            pubKeyCredParams: [{ type: "public-key", alg: -7 }],
+        }
+    };
+
+    promise_test(function(t) {
+        if (window.testRunner)
+            testRunner.setWebAuthenticationMockConfiguration({ hid: { stage: "request", subStage: "msg", error: "success", payloadBase64: testCreationMessageBase64, keepAlive: true } });
+        return navigator.credentials.create(defaultOptions).then(credential => {
+            assert_not_equals(credential, undefined);
+            assert_not_equals(credential, null);
+        });
+    }, "CTAP HID with keep alive message in a mock hid authenticator.");
+
+    promise_test(function(t) {
+        if (window.testRunner)
+            testRunner.setWebAuthenticationMockConfiguration({ hid: { stage: "request", subStage: "msg", error: "success", payloadBase64: testCreationMessageBase64, fastDataArrival: true } });
+        return navigator.credentials.create(defaultOptions).then(credential => {
+            assert_not_equals(credential, undefined);
+            assert_not_equals(credential, null);
+        });
+    }, "CTAP HID with fast data arrival in a mock hid authenticator.");
+
+    promise_test(function(t) {
+        if (window.testRunner)
+            testRunner.setWebAuthenticationMockConfiguration({ hid: { stage: "info", subStage: "init", error: "empty-report", payloadBase64: testCreationMessageBase64, continueAfterErrorData: true } });
+        return navigator.credentials.create(defaultOptions).then(credential => {
+            assert_not_equals(credential, undefined);
+            assert_not_equals(credential, null);
+        });
+    }, "CTAP HID with continue after empty report in a mock hid authenticator.");
+
+    promise_test(function(t) {
+        if (window.testRunner)
+            testRunner.setWebAuthenticationMockConfiguration({ hid: { stage: "info", subStage: "init", error: "wrong-channel-id", payloadBase64: testCreationMessageBase64, continueAfterErrorData: true } });
+        return navigator.credentials.create(defaultOptions).then(credential => {
+            assert_not_equals(credential, undefined);
+            assert_not_equals(credential, null);
+        });
+    }, "CTAP HID with continue after wrong channel id in a mock hid authenticator.");
+</script>

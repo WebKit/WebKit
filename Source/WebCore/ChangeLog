@@ -1,3 +1,32 @@
+2018-11-13  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Support CTAP HID authenticators on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=188623
+        <rdar://problem/43353777>
+
+        Reviewed by Brent Fulgham and Chris Dumez.
+
+        This patch removes AuthenticatorCoordinatorClient::~AuthenticatorCoordinatorClient to ignore
+        any incompleted CompletionHandlers as calling them in destructors could cause unexpected cyclic
+        dependency. Also, it adds a hack to temporarily deal with nullable userhandle.
+
+        Tests: http/wpt/webauthn/ctap-hid-failure.https.html
+               http/wpt/webauthn/ctap-hid-success.https.html
+               http/wpt/webauthn/public-key-credential-create-failure-hid-silent.https.html
+               http/wpt/webauthn/public-key-credential-create-failure-hid.https.html
+               http/wpt/webauthn/public-key-credential-create-success-hid.https.html
+               http/wpt/webauthn/public-key-credential-get-failure-hid-silent.https.html
+               http/wpt/webauthn/public-key-credential-get-failure-hid.https.html
+               http/wpt/webauthn/public-key-credential-get-success-hid.https.html
+
+        * Modules/webauthn/AuthenticatorCoordinatorClient.cpp:
+        (WebCore::AuthenticatorCoordinatorClient::~AuthenticatorCoordinatorClient): Deleted.
+        * Modules/webauthn/AuthenticatorCoordinatorClient.h:
+        * Modules/webauthn/PublicKeyCredentialCreationOptions.h:
+        * Modules/webauthn/fido/DeviceResponseConverter.cpp:
+        (fido::readCTAPGetAssertionResponse):
+        * Modules/webauthn/fido/FidoConstants.h:
+
 2018-11-13  Ross Kirsling  <ross.kirsling@sony.com>
 
         [WebRTC] Provide default implementation of LibWebRTCProvider

@@ -46,8 +46,8 @@ void MockAuthenticatorManager::respondReceivedInternal(Respond&& respond)
         return;
 
     pendingCompletionHandler()(WTFMove(respond));
-    clearState();
-    requestTimeOutTimer()->stop();
+    clearStateAsync();
+    requestTimeOutTimer().stop();
 }
 
 } // namespace WebKit

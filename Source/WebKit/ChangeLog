@@ -1,3 +1,144 @@
+2018-11-13  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Support CTAP HID authenticators on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=188623
+        <rdar://problem/43353777>
+
+        Reviewed by Brent Fulgham and Chris Dumez.
+
+        This patch introduces a primitive support of CTAP HID authenticators for WebAuthN in macOS.
+        It involves low level HID device management&communication, high level CTAP HID authenticator
+        management&communication, and mock testing. The above three aspects will be covered in details:
+        1) Low level HID device management&communication: HidService&HidConnection
+        It relies on IOHIDManager to discover appropriate hid devices by passing a matching dictionary:
+        { PrimaryUsagePage: 0xf1d0, PrimaryUsage: 0x01}. For communication, it utilizes HID reports.
+        To send a report, it calls IOHIDDeviceSetReport since the async version is not implemented.
+        To recieve a report, it calls IOHIDDeviceRegisterInputReportCallback to asynchronously wait
+        for incoming reports.
+        Here is the corresponding reference:
+        https://developer.apple.com/library/archive/documentation/DeviceDrivers/Conceptual/HID/new_api_10_5/tn2187.html#//apple_ref/doc/uid/TP40000970-CH214-SW2
+        2) High level CTAP HID authenticator management&communication: HidService&CtapHidDriver
+        Whenever an appropriate hid device is discovered by IOHIDManager, an AuthenticatorGetInfo command
+        is sent to the device to determine properties of the authenticator, says, which version of protocol
+        it supports, i.e. CTAP or U2F. So far, we only support CTAP authenticators. Once the authenticator
+        is determined to support CTAP, we then instantiate CtapHidAuthenticator which will then take care
+        of even higher level WebAuthN requests&responses.
+        Binaries are constructed and packaged according to the CTAP HID porotocol. CtapHidDriver takes care
+        of concurrency and channels, i.e. allocating channel and establishing the actual request/response
+        transaction. At the meantime, CtapHidDriver::Worker is then responsible for each single transaction.
+        Here is the corresponding reference:
+        https://fidoalliance.org/specs/fido-v2.0-ps-20170927/fido-client-to-authenticator-protocol-v2.0-ps-20170927.html#usb.
+        3) Mock Testing: MockHidService & MockHidConnection
+        A CTAP hid authenticator is simulated within MockHidConnection with options of specifying specific
+        error scenarios and of course could take care of successful cases. Four stages are presented in the
+        simulated authenticator to reflect: a) allocating channel for AuthenticatorGetInfo, b) sending
+        AuthenticatorGetInfo, c) allocating channel for actual request, and d) sending the actual request.
+
+        Besides implementing the above, it also does a few other things:
+        1) Make AuthenticatorManager::clearState asynchronous to avoid cyclic dependency:
+        Authenticator::returnResponse => AuthenticatorManager::respondReceived => AuthenticatorManager::clearState
+        => Authenticator::~Authenticator.
+        2) Reorganize unified build sources to make it clear that which files are .mm and which are .cpp.
+        3) Import LocalAuthentication.framework in LocalAuthenticationSoftLink instead of being scattered.
+
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.h:
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreSetWebAuthenticationMockConfiguration):
+        * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
+        (WebKit::AuthenticatorManagerInternal::collectTransports):
+        (WebKit::AuthenticatorManager::clearStateAsync):
+        (WebKit::AuthenticatorManager::respondReceived):
+        (WebKit::AuthenticatorManager::initTimeOutTimer):
+        * UIProcess/WebAuthentication/AuthenticatorManager.h:
+        * UIProcess/WebAuthentication/AuthenticatorTransportService.cpp:
+        (WebKit::AuthenticatorTransportService::create):
+        (WebKit::AuthenticatorTransportService::createMock):
+        (WebKit::AuthenticatorTransportService::startDiscovery):
+        (WebKit::AuthenticatorTransportService::startDiscovery const): Deleted.
+        * UIProcess/WebAuthentication/AuthenticatorTransportService.h:
+        * UIProcess/WebAuthentication/Cocoa/HidConnection.h: Copied from Source/WebKit/UIProcess/WebAuthentication/AuthenticatorTransportService.h.
+        * UIProcess/WebAuthentication/Cocoa/HidConnection.mm: Added.
+        (WebKit::reportReceived):
+        (WebKit::HidConnection::HidConnection):
+        (WebKit::HidConnection::~HidConnection):
+        (WebKit::HidConnection::initialize):
+        (WebKit::HidConnection::terminate):
+        (WebKit::HidConnection::send):
+        (WebKit::HidConnection::registerDataReceivedCallback):
+        (WebKit::HidConnection::unregisterDataReceivedCallback):
+        (WebKit::HidConnection::receiveReport):
+        (WebKit::HidConnection::consumeReports):
+        (WebKit::HidConnection::registerDataReceivedCallbackInternal):
+        * UIProcess/WebAuthentication/Cocoa/HidService.h: Copied from Source/WebKit/UIProcess/WebAuthentication/Cocoa/LocalService.h.
+        * UIProcess/WebAuthentication/Cocoa/HidService.mm: Added.
+        (WebKit::deviceAddedCallback):
+        (WebKit::deviceRemovedCallback):
+        (WebKit::HidService::HidService):
+        (WebKit::HidService::~HidService):
+        (WebKit::HidService::startDiscoveryInternal):
+        (WebKit::HidService::platformStartDiscovery):
+        (WebKit::HidService::createHidConnection const):
+        (WebKit::HidService::deviceAdded):
+        (WebKit::HidService::continueAddDeviceAfterGetInfo):
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticationSoftLink.h:
+        * UIProcess/WebAuthentication/Cocoa/LocalConnection.mm:
+        * UIProcess/WebAuthentication/Cocoa/LocalService.h:
+        * UIProcess/WebAuthentication/Cocoa/LocalService.mm:
+        (WebKit::LocalService::startDiscoveryInternal):
+        (WebKit::LocalService::startDiscoveryInternal const): Deleted.
+        * UIProcess/WebAuthentication/Mock/MockAuthenticatorManager.cpp:
+        (WebKit::MockAuthenticatorManager::respondReceivedInternal):
+        * UIProcess/WebAuthentication/Mock/MockHidConnection.cpp: Added.
+        (WebKit::MockHidConnection::MockHidConnection):
+        (WebKit::MockHidConnection::initialize):
+        (WebKit::MockHidConnection::terminate):
+        (WebKit::MockHidConnection::send):
+        (WebKit::MockHidConnection::registerDataReceivedCallbackInternal):
+        (WebKit::MockHidConnection::assembleRequest):
+        (WebKit::MockHidConnection::parseRequest):
+        (WebKit::MockHidConnection::feedReports):
+        (WebKit::MockHidConnection::stagesMatch const):
+        (WebKit::MockHidConnection::shouldContinueFeedReports):
+        (WebKit::MockHidConnection::continueFeedReports):
+        * UIProcess/WebAuthentication/Mock/MockHidConnection.h: Copied from Source/WebKit/UIProcess/WebAuthentication/Mock/MockLocalConnection.h.
+        * UIProcess/WebAuthentication/Mock/MockHidService.cpp: Copied from Source/WebKit/UIProcess/WebAuthentication/Mock/MockLocalService.cpp.
+        (WebKit::MockHidService::MockHidService):
+        (WebKit::MockHidService::platformStartDiscovery):
+        (WebKit::MockHidService::createHidConnection const):
+        * UIProcess/WebAuthentication/Mock/MockHidService.h: Copied from Source/WebKit/UIProcess/WebAuthentication/Mock/MockLocalConnection.h.
+        * UIProcess/WebAuthentication/Mock/MockLocalConnection.h:
+        * UIProcess/WebAuthentication/Mock/MockLocalConnection.mm:
+        * UIProcess/WebAuthentication/Mock/MockLocalService.mm: Renamed from Source/WebKit/UIProcess/WebAuthentication/Mock/MockLocalService.cpp.
+        (WebKit::MockLocalService::MockLocalService):
+        (WebKit::MockLocalService::platformStartDiscovery const):
+        (WebKit::MockLocalService::createLocalConnection const):
+        * UIProcess/WebAuthentication/Mock/MockWebAuthenticationConfiguration.h:
+        * UIProcess/WebAuthentication/fido/CtapHidAuthenticator.cpp: Added.
+        (WebKit::CtapHidAuthenticator::CtapHidAuthenticator):
+        (WebKit::CtapHidAuthenticator::makeCredential):
+        (WebKit::CtapHidAuthenticator::continueMakeCredentialAfterResponseReceived const):
+        (WebKit::CtapHidAuthenticator::getAssertion):
+        (WebKit::CtapHidAuthenticator::continueGetAssertionAfterResponseReceived const):
+        * UIProcess/WebAuthentication/fido/CtapHidAuthenticator.h: Copied from Source/WebKit/UIProcess/WebAuthentication/Cocoa/LocalService.h.
+        * UIProcess/WebAuthentication/fido/CtapHidDriver.cpp: Added.
+        (WebKit::CtapHidDriver::Worker::Worker):
+        (WebKit::CtapHidDriver::Worker::~Worker):
+        (WebKit::CtapHidDriver::Worker::transact):
+        (WebKit::CtapHidDriver::Worker::write):
+        (WebKit::CtapHidDriver::Worker::read):
+        (WebKit::CtapHidDriver::Worker::returnMessage):
+        (WebKit::CtapHidDriver::CtapHidDriver):
+        (WebKit::CtapHidDriver::transact):
+        (WebKit::CtapHidDriver::continueAfterChannelAllocated):
+        (WebKit::CtapHidDriver::continueAfterResponseReceived):
+        (WebKit::CtapHidDriver::returnResponse):
+        * UIProcess/WebAuthentication/fido/CtapHidDriver.h: Added.
+        * UIProcess/mac/WebDataListSuggestionsDropdownMac.mm:
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-11-13  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed correction to previous build fix to avoid any internal/downstream repercussions.

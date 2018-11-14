@@ -1309,3 +1309,12 @@ webkit.org/b/190850 [ Debug ] platform/ios/ios/plugin/youtube-flash-plugin-ifram
 
 webkit.org/b/189641 [ Debug ] webgl/2.0.0/conformance/attribs/gl-vertexattribpointer.html [ Slow ]
 
+# Skip WebAuthN tests for hid authenticators
+http/wpt/webauthn/ctap-hid-failure.https.html [ Skip ]
+http/wpt/webauthn/ctap-hid-success.https.html [ Skip ]
+http/wpt/webauthn/public-key-credential-create-failure-hid-silent.https.html [ Skip ]
+http/wpt/webauthn/public-key-credential-create-failure-hid.https.html [ Skip ]
+http/wpt/webauthn/public-key-credential-create-success-hid.https.html [ Skip ]
+http/wpt/webauthn/public-key-credential-get-failure-hid-silent.https.html [ Skip ]
+http/wpt/webauthn/public-key-credential-get-failure-hid.https.html [ Skip ]
+http/wpt/webauthn/public-key-credential-get-success-hid.https.html [ Skip ]

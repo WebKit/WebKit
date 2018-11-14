@@ -27,6 +27,8 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#include <wtf/text/WTFString.h>
+
 namespace WebKit {
 
 struct MockWebAuthenticationConfiguration {
@@ -38,8 +40,38 @@ struct MockWebAuthenticationConfiguration {
         String intermediateCACertificateBase64;
     };
 
+    struct Hid {
+        enum class Stage : bool {
+            Info,
+            Request
+        };
+
+        enum class SubStage : bool {
+            Init,
+            Msg
+        };
+
+        enum class Error : uint8_t {
+            Success,
+            DataNotSent,
+            EmptyReport,
+            WrongChannelId,
+            MaliciousPayload,
+            UnsupportedOptions
+        };
+
+        String payloadBase64;
+        Stage stage { Stage::Info };
+        SubStage subStage { SubStage::Init };
+        Error error { Error::Success };
+        bool keepAlive { false };
+        bool fastDataArrival { false };
+        bool continueAfterErrorData { false };
+    };
+
     bool silentFailure { false };
     std::optional<Local> local;
+    std::optional<Hid> hid;
 };
 
 } // namespace WebKit
