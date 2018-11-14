@@ -1,5 +1,20 @@
 2018-11-13  Saam Barati  <sbarati@apple.com>
 
+        ProxyObject should check for VMInquiry and return early before throwing a stack overflow exception
+        https://bugs.webkit.org/show_bug.cgi?id=191601
+
+        Reviewed by Mark Lam.
+
+        This doesn't fix any bugs today, but it may reduce future bugs. It was
+        always weird that ProxyObject::getOwnPropertySlot with VMInquiry might
+        throw a stack overflow error instead of just returning false like it
+        normally does when VMInquiry is passed in.
+
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::getOwnPropertySlotCommon):
+
+2018-11-13  Saam Barati  <sbarati@apple.com>
+
         TypeProfileLog::processLogEntries should stash away any pending exceptions and re-apply them to the VM
         https://bugs.webkit.org/show_bug.cgi?id=191600
 

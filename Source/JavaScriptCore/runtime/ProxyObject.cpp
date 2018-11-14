@@ -366,14 +366,18 @@ bool ProxyObject::performHasProperty(ExecState* exec, PropertyName propertyName,
 
 bool ProxyObject::getOwnPropertySlotCommon(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
+    slot.disableCaching();
+    slot.setIsTaintedByOpaqueObject();
+
+    if (slot.internalMethodType() == PropertySlot::InternalMethodType::VMInquiry)
+        return false;
+
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     if (UNLIKELY(!vm.isSafeToRecurseSoft())) {
         throwStackOverflowError(exec, scope);
         return false;
     }
-    slot.disableCaching();
-    slot.setIsTaintedByOpaqueObject();
     switch (slot.internalMethodType()) {
     case PropertySlot::InternalMethodType::Get:
         RELEASE_AND_RETURN(scope, performGet(exec, propertyName, slot));
