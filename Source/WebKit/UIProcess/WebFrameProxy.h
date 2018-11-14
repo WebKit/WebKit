@@ -48,7 +48,7 @@ class Decoder;
 }
 
 namespace WebKit {
-class SafeBrowsingResult;
+class SafeBrowsingWarning;
 class WebCertificateInfo;
 class WebFramePolicyListenerProxy;
 class WebPageProxy;
@@ -61,7 +61,7 @@ typedef GenericCallback<API::Data*> DataCallback;
 
 class WebFrameProxy : public API::ObjectImpl<API::Object::Type::Frame> {
 public:
-    static Ref<WebFrameProxy> create(WebPageProxy* page, uint64_t frameID)
+    static Ref<WebFrameProxy> create(WebPageProxy& page, uint64_t frameID)
     {
         return adoptRef(*new WebFrameProxy(page, frameID));
     }
@@ -69,7 +69,7 @@ public:
     virtual ~WebFrameProxy();
 
     uint64_t frameID() const { return m_frameID; }
-    WebPageProxy* page() const { return m_page; }
+    WebPageProxy* page() const { return m_page.get(); }
 
     void webProcessWillShutDown();
 
@@ -117,7 +117,7 @@ public:
     void didSameDocumentNavigation(const WebCore::URL&); // eg. anchor navigation, session state change.
     void didChangeTitle(const String&);
 
-    WebFramePolicyListenerProxy& setUpPolicyListenerProxy(CompletionHandler<void(WebCore::PolicyAction, API::WebsitePolicies*, ProcessSwapRequestedByClient, Vector<Ref<SafeBrowsingResult>>&&)>&&, ShouldExpectSafeBrowsingResult);
+    WebFramePolicyListenerProxy& setUpPolicyListenerProxy(CompletionHandler<void(WebCore::PolicyAction, API::WebsitePolicies*, ProcessSwapRequestedByClient, RefPtr<SafeBrowsingWarning>&&)>&&, ShouldExpectSafeBrowsingResult);
 
 #if ENABLE(CONTENT_FILTERING)
     void contentFilterDidBlockLoad(WebCore::ContentFilterUnblockHandler contentFilterUnblockHandler) { m_contentFilterUnblockHandler = WTFMove(contentFilterUnblockHandler); }
@@ -129,9 +129,9 @@ public:
 #endif
 
 private:
-    WebFrameProxy(WebPageProxy* page, uint64_t frameID);
+    WebFrameProxy(WebPageProxy&, uint64_t frameID);
 
-    WebPageProxy* m_page;
+    WeakPtr<WebPageProxy> m_page;
 
     FrameLoadState m_frameLoadState;
 

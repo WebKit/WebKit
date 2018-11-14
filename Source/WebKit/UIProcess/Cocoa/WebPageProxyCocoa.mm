@@ -31,8 +31,8 @@
 #import "DataDetectionResult.h"
 #import "LoadParameters.h"
 #import "PageClient.h"
-#import "SafeBrowsingResult.h"
 #import "SafeBrowsingSPI.h"
+#import "SafeBrowsingWarning.h"
 #import "WebProcessProxy.h"
 #import <WebCore/DragItem.h>
 #import <WebCore/NotImplemented.h>
@@ -84,12 +84,13 @@ void WebPageProxy::beginSafeBrowsingCheck(const URL& url, WebFramePolicyListener
                 return;
             }
 
-            NSArray<SSBServiceLookupResult *> *results = [result serviceLookupResults];
-            Vector<Ref<SafeBrowsingResult>> resultsVector;
-            resultsVector.reserveInitialCapacity([results count]);
-            for (SSBServiceLookupResult *result in results)
-                resultsVector.uncheckedAppend(SafeBrowsingResult::create(URL(url), result));
-            listener->didReceiveSafeBrowsingResults(WTFMove(resultsVector));
+            for (SSBServiceLookupResult *lookupResult in [result serviceLookupResults]) {
+                if (lookupResult.isPhishing || lookupResult.isMalware || lookupResult.isUnwantedSoftware) {
+                    listener->didReceiveSafeBrowsingResults(SafeBrowsingWarning::create(url, lookupResult));
+                    return;
+                }
+            }
+            listener->didReceiveSafeBrowsingResults({ });
         });
     }).get()];
 #else

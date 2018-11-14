@@ -110,7 +110,7 @@ class NativeWebKeyboardEvent;
 class NativeWebMouseEvent;
 class NativeWebWheelEvent;
 class RemoteLayerTreeTransaction;
-class SafeBrowsingResult;
+class SafeBrowsingWarning;
 class UserData;
 class ViewSnapshot;
 class WebBackForwardListItem;
@@ -216,7 +216,7 @@ public:
 
     virtual void didChangeContentSize(const WebCore::IntSize&) = 0;
 
-    virtual void showSafeBrowsingWarning(const SafeBrowsingResult&, CompletionHandler<void(Variant<ContinueUnsafeLoad, WebCore::URL>&&)>&& completionHandler) { completionHandler(ContinueUnsafeLoad::Yes); }
+    virtual void showSafeBrowsingWarning(const SafeBrowsingWarning&, CompletionHandler<void(Variant<ContinueUnsafeLoad, WebCore::URL>&&)>&& completionHandler) { completionHandler(ContinueUnsafeLoad::Yes); }
     virtual void clearSafeBrowsingWarning() { }
     
 #if ENABLE(DRAG_SUPPORT)

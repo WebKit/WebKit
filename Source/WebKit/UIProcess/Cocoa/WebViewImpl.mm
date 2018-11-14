@@ -1606,12 +1606,12 @@ bool WebViewImpl::resignFirstResponder()
     return true;
 }
 
-void WebViewImpl::showSafeBrowsingWarning(const SafeBrowsingResult& result, CompletionHandler<void(Variant<ContinueUnsafeLoad, WebCore::URL>&&)>&& completionHandler)
+void WebViewImpl::showSafeBrowsingWarning(const SafeBrowsingWarning& warning, CompletionHandler<void(Variant<ContinueUnsafeLoad, WebCore::URL>&&)>&& completionHandler)
 {
     if (!m_view)
         return completionHandler(ContinueUnsafeLoad::Yes);
 
-    m_safeBrowsingWarning = adoptNS([[WKSafeBrowsingWarning alloc] initWithFrame:[m_view bounds] safeBrowsingResult:result completionHandler:[weakThis = makeWeakPtr(*this), completionHandler = WTFMove(completionHandler)] (auto&& result) mutable {
+    m_safeBrowsingWarning = adoptNS([[WKSafeBrowsingWarning alloc] initWithFrame:[m_view bounds] safeBrowsingWarning:warning completionHandler:[weakThis = makeWeakPtr(*this), completionHandler = WTFMove(completionHandler)] (auto&& result) mutable {
         if (weakThis)
             [std::exchange(weakThis->m_safeBrowsingWarning, nullptr) removeFromSuperview];
         completionHandler(WTFMove(result));

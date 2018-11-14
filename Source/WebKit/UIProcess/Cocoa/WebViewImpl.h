@@ -226,7 +226,7 @@ public:
     void setViewScale(CGFloat);
     CGFloat viewScale() const;
 
-    void showSafeBrowsingWarning(const SafeBrowsingResult&, CompletionHandler<void(Variant<ContinueUnsafeLoad, WebCore::URL>&&)>&&);
+    void showSafeBrowsingWarning(const SafeBrowsingWarning&, CompletionHandler<void(Variant<ContinueUnsafeLoad, WebCore::URL>&&)>&&);
     void clearSafeBrowsingWarning();
 
     WKLayoutMode layoutMode() const;

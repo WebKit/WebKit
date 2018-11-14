@@ -39,7 +39,7 @@ enum class PolicyAction : uint8_t;
 
 namespace WebKit {
 
-class SafeBrowsingResult;
+class SafeBrowsingWarning;
 
 enum class ProcessSwapRequestedByClient { No, Yes };
 enum class ShouldExpectSafeBrowsingResult { No, Yes };
@@ -47,7 +47,7 @@ enum class ShouldExpectSafeBrowsingResult { No, Yes };
 class WebFramePolicyListenerProxy : public API::ObjectImpl<API::Object::Type::FramePolicyListener> {
 public:
 
-    using Reply = CompletionHandler<void(WebCore::PolicyAction, API::WebsitePolicies*, ProcessSwapRequestedByClient, Vector<Ref<SafeBrowsingResult>>&&)>;
+    using Reply = CompletionHandler<void(WebCore::PolicyAction, API::WebsitePolicies*, ProcessSwapRequestedByClient, RefPtr<SafeBrowsingWarning>&&)>;
     static Ref<WebFramePolicyListenerProxy> create(Reply&& reply, ShouldExpectSafeBrowsingResult expect)
     {
         return adoptRef(*new WebFramePolicyListenerProxy(WTFMove(reply), expect));
@@ -58,13 +58,13 @@ public:
     void download();
     void ignore();
     
-    void didReceiveSafeBrowsingResults(Vector<Ref<SafeBrowsingResult>>&&);
+    void didReceiveSafeBrowsingResults(RefPtr<SafeBrowsingWarning>&&);
 
 private:
     WebFramePolicyListenerProxy(Reply&&, ShouldExpectSafeBrowsingResult);
 
     std::optional<std::pair<RefPtr<API::WebsitePolicies>, ProcessSwapRequestedByClient>> m_policyResult;
-    std::optional<Vector<Ref<SafeBrowsingResult>>> m_safeBrowsingResults;
+    std::optional<RefPtr<SafeBrowsingWarning>> m_safeBrowsingWarning;
     Reply m_reply;
 };
 

@@ -1,3 +1,110 @@
+2018-11-14  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI to show a safe browsing warning
+        https://bugs.webkit.org/show_bug.cgi?id=191604
+
+        Reviewed by Andy Estes.
+
+        Safari has a case where it shows safe browsing warnings for a reason other than being told to by the SafeBrowsing framework.
+        Because safe browsing is moving to WebKit, we will have Safari call this WebKit SPI in that case.
+        The warning looks a little different, so I had to change the structure of a SafeBrowsingResult and the location of the string processing,
+        but the existing behavior is the same as verified by existing unit tests.  I added a unit test to verify behavior of the new SPI.
+
+        * SourcesCocoa.txt:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _showSafeBrowsingWarningWithTitle:warning:details:completionHandler:]):
+        (-[WKWebView _showSafeBrowsingWarning:completionHandler:]):
+        (+[WKWebView _confirmMalwareSentinel]):
+        (+[WKWebView _visitUnsafeWebsiteSentinel]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/Cocoa/SafeBrowsingResultCocoa.mm: Removed.
+        * UIProcess/Cocoa/SafeBrowsingWarningCocoa.mm: Copied from Source/WebKit/UIProcess/Cocoa/SafeBrowsingResultCocoa.mm.
+        (WebKit::malwareDetailsBase):
+        (WebKit::learnMoreURL):
+        (WebKit::reportAnErrorBase):
+        (WebKit::localizedProvider):
+        (WebKit::SafeBrowsingWarning::visitUnsafeWebsiteSentinel):
+        (WebKit::SafeBrowsingWarning::confirmMalwareSentinel):
+        (WebKit::replace):
+        (WebKit::addLinkAndReplace):
+        (WebKit::reportAnErrorURL):
+        (WebKit::malwareDetailsURL):
+        (WebKit::safeBrowsingTitleText):
+        (WebKit::safeBrowsingWarningText):
+        (WebKit::safeBrowsingDetailsText):
+        (WebKit::SafeBrowsingWarning::SafeBrowsingWarning):
+        (WebKit::learnMore): Deleted.
+        (WebKit::SafeBrowsingResult::SafeBrowsingResult): Deleted.
+        * UIProcess/Cocoa/WKSafeBrowsingWarning.h:
+        * UIProcess/Cocoa/WKSafeBrowsingWarning.mm:
+        (-[WKSafeBrowsingWarning initWithFrame:safeBrowsingWarning:completionHandler:]):
+        (-[WKSafeBrowsingWarning addContent]):
+        (-[WKSafeBrowsingWarning showDetailsClicked]):
+        (-[WKSafeBrowsingWarning clickedOnLink:]):
+        (-[WKSafeBrowsingTextView initWithAttributedString:forWarning:]):
+        (confirmMalwareSentinel): Deleted.
+        (visitUnsafeWebsiteSentinel): Deleted.
+        (replace): Deleted.
+        (addLinkAndReplace): Deleted.
+        (reportAnErrorURL): Deleted.
+        (malwareDetailsURL): Deleted.
+        (titleText): Deleted.
+        (warningText): Deleted.
+        (detailsText): Deleted.
+        (-[WKSafeBrowsingWarning initWithFrame:safeBrowsingResult:completionHandler:]): Deleted.
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::beginSafeBrowsingCheck):
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::showSafeBrowsingWarning):
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::showSafeBrowsingWarning):
+        * UIProcess/SafeBrowsingResult.h: Removed.
+        * UIProcess/SafeBrowsingWarning.h: Copied from Source/WebKit/UIProcess/SafeBrowsingResult.h.
+        (WebKit::SafeBrowsingWarning::create):
+        (WebKit::SafeBrowsingWarning::title const):
+        (WebKit::SafeBrowsingWarning::warning const):
+        (WebKit::SafeBrowsingWarning::details const):
+        (WebKit::SafeBrowsingResult::create): Deleted.
+        (WebKit::SafeBrowsingResult::isPhishing const): Deleted.
+        (WebKit::SafeBrowsingResult::isMalware const): Deleted.
+        (WebKit::SafeBrowsingResult::isUnwantedSoftware const): Deleted.
+        (WebKit::SafeBrowsingResult::url const): Deleted.
+        (WebKit::SafeBrowsingResult::provider const): Deleted.
+        (WebKit::SafeBrowsingResult::localizedProviderName const): Deleted.
+        (WebKit::SafeBrowsingResult::malwareDetailsURLBase const): Deleted.
+        (WebKit::SafeBrowsingResult::reportAnErrorURLBase const): Deleted.
+        (WebKit::SafeBrowsingResult::learnMoreURL const): Deleted.
+        (WebKit::SafeBrowsingResult::needsSafeBrowsingWarning const): Deleted.
+        (): Deleted.
+        * UIProcess/WebFramePolicyListenerProxy.cpp:
+        (WebKit::WebFramePolicyListenerProxy::didReceiveSafeBrowsingResults):
+        (WebKit::WebFramePolicyListenerProxy::use):
+        * UIProcess/WebFramePolicyListenerProxy.h:
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::WebFrameProxy):
+        (WebKit::WebFrameProxy::setUpPolicyListenerProxy):
+        (WebKit::WebFrameProxy::didHandleContentFilterUnblockNavigation):
+        * UIProcess/WebFrameProxy.h:
+        (WebKit::WebFrameProxy::create):
+        (WebKit::WebFrameProxy::page const):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::swapToWebProcess):
+        (WebKit::WebPageProxy::didCreateMainFrame):
+        (WebKit::WebPageProxy::didCreateSubframe):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::decidePolicyForNewWindowAction):
+        (WebKit::WebPageProxy::decidePolicyForResponse):
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::showSafeBrowsingWarning):
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::showSafeBrowsingWarning):
+        * UIProcess/mac/WebDataListSuggestionsDropdownMac.mm:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-11-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] A few drag and drop tests are crashing after r238146

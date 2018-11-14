@@ -66,7 +66,7 @@ class Attachment;
 
 namespace WebKit {
 enum class ContinueUnsafeLoad : bool;
-class SafeBrowsingResult;
+class SafeBrowsingWarning;
 class ViewSnapshot;
 class WebPageProxy;
 struct PrintInfo;
@@ -179,7 +179,7 @@ class URL;
 - (void)_didInsertAttachment:(API::Attachment&)attachment withSource:(NSString *)source;
 #endif
 
-- (void)_showSafeBrowsingWarning:(const WebKit::SafeBrowsingResult&)result completionHandler:(CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, WebCore::URL>&&)>&&)completionHandler;
+- (void)_showSafeBrowsingWarning:(const WebKit::SafeBrowsingWarning&)warning completionHandler:(CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, WebCore::URL>&&)>&&)completionHandler;
 - (void)_clearSafeBrowsingWarning;
 
 - (std::optional<BOOL>)_resolutionForShareSheetImmediateCompletionForTesting;

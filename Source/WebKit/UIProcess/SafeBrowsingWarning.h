@@ -27,48 +27,52 @@
 
 #include <WebCore/URL.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
 
+OBJC_CLASS NSAttributedString;
+OBJC_CLASS NSURL;
 OBJC_CLASS SSBServiceLookupResult;
 
 namespace WebKit {
 
-class SafeBrowsingResult : public RefCounted<SafeBrowsingResult> {
+class SafeBrowsingWarning : public RefCounted<SafeBrowsingWarning> {
 public:
 #if HAVE(SAFE_BROWSING)
-    static Ref<SafeBrowsingResult> create(WebCore::URL&& url, SSBServiceLookupResult *result)
+    static Ref<SafeBrowsingWarning> create(const WebCore::URL& url, SSBServiceLookupResult *result)
     {
-        return adoptRef(*new SafeBrowsingResult(WTFMove(url), result));
+        return adoptRef(*new SafeBrowsingWarning(url, result));
+    }
+#endif
+#if PLATFORM(COCOA)
+    static Ref<SafeBrowsingWarning> create(String&& title, String&& warning, RetainPtr<NSAttributedString>&& details)
+    {
+        return adoptRef(*new SafeBrowsingWarning(WTFMove(title), WTFMove(warning), WTFMove(details)));
     }
 #endif
 
-    bool isPhishing() const { return m_isPhishing; }
-    bool isMalware() const { return m_isMalware; }
-    bool isUnwantedSoftware() const { return m_isUnwantedSoftware; }
+    const String& title() const { return m_title; }
+    const String& warning() const { return m_warning; }
+#if PLATFORM(COCOA)
+    RetainPtr<NSAttributedString> details() const { return m_details; }
+#endif
 
-    const WebCore::URL& url() const { return m_url; }
-    const String& provider() const { return m_provider; }
-    const String& localizedProviderName() const { return m_localizedProviderName; }
-    const String& malwareDetailsURLBase() const { return m_malwareDetailsURLBase; }
-    const String& reportAnErrorURLBase() const { return m_reportAnErrorURLBase; }
-    const WebCore::URL& learnMoreURL() const { return m_learnMoreURL; }
-
-    bool needsSafeBrowsingWarning() const { return m_isPhishing || m_isMalware || m_isUnwantedSoftware; }
-
+    static NSURL *visitUnsafeWebsiteSentinel();
+    static NSURL *confirmMalwareSentinel();
+    
 private:
 #if HAVE(SAFE_BROWSING)
-    SafeBrowsingResult(WebCore::URL&&, SSBServiceLookupResult *);
+    SafeBrowsingWarning(const WebCore::URL&, SSBServiceLookupResult *);
 #endif
-    WebCore::URL m_url;
-    bool m_isPhishing { false };
-    bool m_isMalware { false };
-    bool m_isUnwantedSoftware { false };
+#if PLATFORM(COCOA)
+    SafeBrowsingWarning(String&&, String&&, RetainPtr<NSAttributedString>&&);
+#endif
 
-    String m_provider;
-    String m_localizedProviderName;
-    String m_malwareDetailsURLBase;
-    String m_reportAnErrorURLBase;
-    WebCore::URL m_learnMoreURL;
+    String m_title;
+    String m_warning;
+#if PLATFORM(COCOA)
+    RetainPtr<NSAttributedString> m_details;
+#endif
 };
 
 } // namespace WebKit

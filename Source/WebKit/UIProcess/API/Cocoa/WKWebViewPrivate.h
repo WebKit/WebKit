@@ -103,6 +103,7 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 @class _WKIconLoadingDelegate;
 @class _WKInspector;
 @class _WKRemoteObjectRegistry;
+@class _WKSafeBrowsingWarning;
 @class _WKSessionState;
 @class _WKThumbnailView;
 @class _WKWebsitePolicies;
@@ -187,6 +188,8 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 - (_WKAttachment *)_attachmentForIdentifier:(NSString *)identifier WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 + (BOOL)_handlesSafeBrowsing WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
++ (NSURL *)_confirmMalwareSentinel WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_showSafeBrowsingWarningWithTitle:(NSString *)title warning:(NSString *)warning details:(NSAttributedString *)details completionHandler:(void(^)(NSURL *))completionHandler WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 - (IBAction)_alignCenter:(id)sender WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (IBAction)_alignJustified:(id)sender WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));

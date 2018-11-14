@@ -1,3 +1,13 @@
+2018-11-14  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI to show a safe browsing warning
+        https://bugs.webkit.org/show_bug.cgi?id=191604
+
+        Reviewed by Andy Estes.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/SafeBrowsing.mm:
+        (TEST):
+
 2018-11-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] A few drag and drop tests are crashing after r238146

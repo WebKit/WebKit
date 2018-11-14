@@ -27,7 +27,7 @@
 #import "WKSafeBrowsingWarning.h"
 
 #import "PageClient.h"
-#import "SafeBrowsingResult.h"
+#import "SafeBrowsingWarning.h"
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/URL.h>
 #import <wtf/BlockPtr.h>
@@ -70,16 +70,6 @@ enum class WarningItem : uint8_t {
     ShowDetailsButton,
     GoBackButton
 };
-
-static NSURL *confirmMalwareSentinel()
-{
-    return [NSURL URLWithString:@"WKConfirmMalwareSentinel"];
-}
-
-static NSURL *visitUnsafeWebsiteSentinel()
-{
-    return [NSURL URLWithString:@"WKVisitUnsafeWebsiteSentinel"];
-}
 
 static ColorType *colorForItem(WarningItem item, ViewType *warning)
 {
@@ -134,21 +124,6 @@ static ColorType *colorForItem(WarningItem item, ViewType *warning)
     return nil;
 }
 
-static void replace(NSMutableAttributedString *string, NSString *toReplace, NSString *replaceWith)
-{
-    [string replaceCharactersInRange:[string.string rangeOfString:toReplace] withString:replaceWith];
-}
-
-static void addLinkAndReplace(NSMutableAttributedString *string, NSString *toReplace, NSString *replaceWith, NSURL *linkTarget)
-{
-    NSMutableAttributedString *stringWithLink = [[[NSMutableAttributedString alloc] initWithString:replaceWith] autorelease];
-    [stringWithLink addAttributes:@{
-        NSLinkAttributeName: linkTarget,
-        NSUnderlineStyleAttributeName: @1
-    } range:NSMakeRange(0, replaceWith.length)];
-    [string replaceCharactersInRange:[string.string rangeOfString:toReplace] withAttributedString:stringWithLink];
-}
-
 @interface WKSafeBrowsingExclamationPoint : ViewType
 @end
 
@@ -197,73 +172,6 @@ static void addLinkAndReplace(NSMutableAttributedString *string, NSString *toRep
 }
 
 @end
-
-static NSURL *reportAnErrorURL(const WebKit::SafeBrowsingResult& result)
-{
-    return WebCore::URL({ }, makeString(result.reportAnErrorURLBase(), "&url=", encodeWithURLEscapeSequences(result.url()), "&hl=", defaultLanguage()));
-}
-
-static NSURL *malwareDetailsURL(const WebKit::SafeBrowsingResult& result)
-{
-    return WebCore::URL({ }, makeString(result.malwareDetailsURLBase(), "&site=", result.url().host(), "&hl=", defaultLanguage()));
-}
-
-static NSString *titleText(const WebKit::SafeBrowsingResult& result)
-{
-    if (result.isPhishing())
-        return WEB_UI_NSSTRING(@"Deceptive Website Warning", "Phishing warning title");
-    if (result.isMalware())
-        return WEB_UI_NSSTRING(@"Malware Website Warning", "Malware warning title");
-    ASSERT(result.isUnwantedSoftware());
-    return WEB_UI_NSSTRING(@"Website With Harmful Software Warning", "Unwanted software warning title");
-}
-
-static NSString *warningText(const WebKit::SafeBrowsingResult& result)
-{
-    if (result.isPhishing())
-        return WEB_UI_NSSTRING(@"This website may try to trick you into doing something dangerous, like installing software or disclosing personal or financial information, like passwords, phone numbers, or credit cards.", "Phishing warning");
-    if (result.isMalware())
-        return WEB_UI_NSSTRING(@"This website may attempt to install dangerous software, which could harm your computer or steal your personal or financial information, like passwords, photos, or credit cards.", "Malware warning");
-    ASSERT(result.isUnwantedSoftware());
-    return WEB_UI_NSSTRING(@"This website may try to trick you into installing software that harms your browsing experience, like changing your settings without your permission or showing you unwanted ads. Once installed, it may be difficult to remove.", "Unwanted software warning");
-}
-
-static NSMutableAttributedString *detailsText(const WebKit::SafeBrowsingResult& result)
-{
-    if (result.isPhishing()) {
-        NSString *phishingDescription = WEB_UI_NSSTRING(@"Warnings are shown for websites that have been reported as deceptive. Deceptive websites try to trick you into believing they are legitimate websites you trust.", "Phishing warning description");
-        NSString *learnMore = WEB_UI_NSSTRING(@"Learn more…", "Action from safe browsing warning");
-        NSString *phishingActions = WEB_UI_NSSTRING(@"If you believe this website is safe, you can %report-an-error%. Or, if you understand the risks involved, you can %bypass-link%.", "Phishing warning description");
-        NSString *reportAnError = WEB_UI_NSSTRING(@"report an error", "Action from safe browsing warning");
-        NSString *visitUnsafeWebsite = WEB_UI_NSSTRING(@"visit this unsafe website", "Action from safe browsing warning");
-        
-        NSMutableAttributedString *attributedString = [[[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@ %@\n\n%@", phishingDescription, learnMore, phishingActions]] autorelease];
-        addLinkAndReplace(attributedString, learnMore, learnMore, result.learnMoreURL());
-        addLinkAndReplace(attributedString, @"%report-an-error%", reportAnError, reportAnErrorURL(result));
-        addLinkAndReplace(attributedString, @"%bypass-link%", visitUnsafeWebsite, visitUnsafeWebsiteSentinel());
-        return attributedString;
-    }
-    
-    auto malwareOrUnwantedSoftwareDetails = [] (const WebKit::SafeBrowsingResult& result, NSString *description, NSString *statusStringToReplace, bool confirmMalware) {
-        NSMutableAttributedString *malwareDescription = [[[NSMutableAttributedString alloc] initWithString:description] autorelease];
-        replace(malwareDescription, @"%safeBrowsingProvider%", result.localizedProviderName());
-        NSMutableAttributedString *statusLink = [[[NSMutableAttributedString alloc] initWithString:WEB_UI_NSSTRING(@"the status of “%site%”", "Part of malware description")] autorelease];
-        replace(statusLink, @"%site%", result.url().host().toString());
-        addLinkAndReplace(malwareDescription, statusStringToReplace, statusLink.string, malwareDetailsURL(result));
-        
-        NSMutableAttributedString *ifYouUnderstand = [[[NSMutableAttributedString alloc] initWithString:WEB_UI_NSSTRING(@"If you understand the risks involved, you can %visit-this-unsafe-site-link%.", "Action from safe browsing warning")] autorelease];
-        addLinkAndReplace(ifYouUnderstand, @"%visit-this-unsafe-site-link%", WEB_UI_NSSTRING(@"visit this unsafe website", "Action from safe browsing warning"), confirmMalware ? confirmMalwareSentinel() : visitUnsafeWebsiteSentinel());
-        
-        [malwareDescription appendAttributedString:[[[NSMutableAttributedString alloc] initWithString:@"\n\n"] autorelease]];
-        [malwareDescription appendAttributedString:ifYouUnderstand];
-        return malwareDescription;
-    };
-    
-    if (result.isMalware())
-        return malwareOrUnwantedSoftwareDetails(result, WEB_UI_NSSTRING(@"Warnings are shown for websites where malicious software has been detected. You can check the %status-link% on the %safeBrowsingProvider% diagnostic page.", "Malware warning description"), @"%status-link%", true);
-    ASSERT(result.isUnwantedSoftware());
-    return malwareOrUnwantedSoftwareDetails(result, WEB_UI_NSSTRING(@"Warnings are shown for websites where harmful software has been detected. You can check %the-status-of-site% on the %safeBrowsingProvider% diagnostic page.", "Unwanted software warning description"), @"%the-status-of-site%", false);
-}
 
 static ButtonType *makeButton(WarningItem item, WKSafeBrowsingWarning *warning, SEL action)
 {
@@ -325,14 +233,14 @@ static void setBackground(ViewType *view, ColorType *color)
 
 @implementation WKSafeBrowsingWarning
 
-- (instancetype)initWithFrame:(RectType)frame safeBrowsingResult:(const WebKit::SafeBrowsingResult&)result completionHandler:(CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, WebCore::URL>&&)>&&)completionHandler
+- (instancetype)initWithFrame:(RectType)frame safeBrowsingWarning:(const WebKit::SafeBrowsingWarning&)warning completionHandler:(CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, WebCore::URL>&&)>&&)completionHandler
 {
     if (!(self = [super initWithFrame:frame])) {
         completionHandler(WebKit::ContinueUnsafeLoad::Yes);
         return nil;
     }
     _completionHandler = WTFMove(completionHandler);
-    _result = makeRef(result);
+    _warning = makeRef(warning);
     setBackground(self, colorForItem(WarningItem::Background, self));
 #if PLATFORM(MAC)
     [self addContent];
@@ -343,8 +251,8 @@ static void setBackground(ViewType *view, ColorType *color)
 - (void)addContent
 {
     auto exclamationPoint = [[WKSafeBrowsingExclamationPoint new] autorelease];
-    auto title = makeTitleLabel(titleText(*_result), self);
-    auto warning = [[[WKSafeBrowsingTextView alloc] initWithAttributedString:[[[NSAttributedString alloc] initWithString:warningText(*_result) attributes:@{ NSFontAttributeName:[FontType systemFontOfSize:textSize] }] autorelease] forWarning:self] autorelease];
+    auto title = makeTitleLabel(_warning->title(), self);
+    auto warning = [[[WKSafeBrowsingTextView alloc] initWithAttributedString:[[[NSAttributedString alloc] initWithString:_warning->warning() attributes:@{ NSFontAttributeName:[FontType systemFontOfSize:textSize] }] autorelease] forWarning:self] autorelease];
     auto showDetails = makeButton(WarningItem::ShowDetailsButton, self, @selector(showDetailsClicked));
     auto goBack = makeButton(WarningItem::GoBackButton, self, @selector(goBackClicked));
     auto box = [[ViewType new] autorelease];
@@ -395,7 +303,7 @@ static void setBackground(ViewType *view, ColorType *color)
     ButtonType *showDetails = box.subviews.lastObject;
     [showDetails removeFromSuperview];
 
-    NSMutableAttributedString *text = detailsText(*_result);
+    NSMutableAttributedString *text = [[_warning->details() mutableCopy] autorelease];
     [text addAttributes:@{ NSFontAttributeName:[FontType systemFontOfSize:textSize] } range:NSMakeRange(0, text.length)];
     WKSafeBrowsingTextView *details = [[[WKSafeBrowsingTextView alloc] initWithAttributedString:text forWarning:self] autorelease];
     [_textViews addObject:details];
@@ -503,10 +411,10 @@ static void setBackground(ViewType *view, ColorType *color)
     if (!_completionHandler)
         return;
 
-    if ([link isEqual:visitUnsafeWebsiteSentinel()])
+    if ([link isEqual:WebKit::SafeBrowsingWarning::visitUnsafeWebsiteSentinel()])
         return _completionHandler(WebKit::ContinueUnsafeLoad::Yes);
 
-    if ([link isEqual:confirmMalwareSentinel()]) {
+    if ([link isEqual:WebKit::SafeBrowsingWarning::confirmMalwareSentinel()]) {
 #if PLATFORM(MAC)
         auto alert = adoptNS([NSAlert new]);
         [alert setMessageText:WEB_UI_NSSTRING(@"Are you sure you wish to go to this site?", "Malware confirmation dialog title")];
@@ -541,7 +449,7 @@ static void setBackground(ViewType *view, ColorType *color)
     self.delegate = warning;
 
     ColorType *foregroundColor = colorForItem(WarningItem::MessageText, warning);
-    NSMutableAttributedString *string = [attributedString mutableCopy];
+    NSMutableAttributedString *string = [[attributedString mutableCopy] autorelease];
     [string addAttributes:@{ NSForegroundColorAttributeName : foregroundColor } range:NSMakeRange(0, string.length)];
     [self setBackgroundColor:colorForItem(WarningItem::BoxBackground, warning)];
     [self setLinkTextAttributes:@{ NSForegroundColorAttributeName : foregroundColor }];

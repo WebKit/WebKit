@@ -489,11 +489,11 @@ Ref<ValidationBubble> PageClientImpl::createValidationBubble(const String& messa
     return ValidationBubble::create(m_view, message, settings);
 }
 
-void PageClientImpl::showSafeBrowsingWarning(const SafeBrowsingResult& result, CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, WebCore::URL>&&)>&& completionHandler)
+void PageClientImpl::showSafeBrowsingWarning(const SafeBrowsingWarning& warning, CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, WebCore::URL>&&)>&& completionHandler)
 {
     if (!m_impl)
         return completionHandler(ContinueUnsafeLoad::Yes);
-    m_impl->showSafeBrowsingWarning(result, WTFMove(completionHandler));
+    m_impl->showSafeBrowsingWarning(warning, WTFMove(completionHandler));
 }
 
 void PageClientImpl::clearSafeBrowsingWarning()

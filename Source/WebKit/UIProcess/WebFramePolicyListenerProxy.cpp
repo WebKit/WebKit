@@ -29,7 +29,7 @@
 #include "APINavigation.h"
 #include "APIWebsiteDataStore.h"
 #include "APIWebsitePolicies.h"
-#include "SafeBrowsingResult.h"
+#include "SafeBrowsingWarning.h"
 #include "WebFrameProxy.h"
 #include "WebsiteDataStore.h"
 #include "WebsitePoliciesData.h"
@@ -45,21 +45,21 @@ WebFramePolicyListenerProxy::WebFramePolicyListenerProxy(Reply&& reply, ShouldEx
 
 WebFramePolicyListenerProxy::~WebFramePolicyListenerProxy() = default;
 
-void WebFramePolicyListenerProxy::didReceiveSafeBrowsingResults(Vector<Ref<SafeBrowsingResult>>&& safeBrowsingResults)
+void WebFramePolicyListenerProxy::didReceiveSafeBrowsingResults(RefPtr<SafeBrowsingWarning>&& safeBrowsingWarning)
 {
-    ASSERT(!m_safeBrowsingResults);
+    ASSERT(!m_safeBrowsingWarning);
     if (m_policyResult) {
         if (m_reply)
-            m_reply(WebCore::PolicyAction::Use, m_policyResult->first.get(), m_policyResult->second, WTFMove(safeBrowsingResults));
+            m_reply(WebCore::PolicyAction::Use, m_policyResult->first.get(), m_policyResult->second, WTFMove(safeBrowsingWarning));
     } else
-        m_safeBrowsingResults = WTFMove(safeBrowsingResults);
+        m_safeBrowsingWarning = WTFMove(safeBrowsingWarning);
 }
 
 void WebFramePolicyListenerProxy::use(API::WebsitePolicies* policies, ProcessSwapRequestedByClient processSwapRequestedByClient)
 {
-    if (m_safeBrowsingResults) {
+    if (m_safeBrowsingWarning) {
         if (m_reply)
-            m_reply(WebCore::PolicyAction::Use, policies, processSwapRequestedByClient, WTFMove(*m_safeBrowsingResults));
+            m_reply(WebCore::PolicyAction::Use, policies, processSwapRequestedByClient, WTFMove(*m_safeBrowsingWarning));
     } else if (!m_policyResult)
         m_policyResult = {{ policies, processSwapRequestedByClient }};
 }

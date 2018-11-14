@@ -42,10 +42,12 @@
 #import "Logging.h"
 #import "NavigationState.h"
 #import "ObjCObjectGraph.h"
+#import "PageClient.h"
 #import "RemoteLayerTreeScrollingPerformanceData.h"
 #import "RemoteLayerTreeTransaction.h"
 #import "RemoteObjectRegistry.h"
 #import "RemoteObjectRegistryMessages.h"
+#import "SafeBrowsingWarning.h"
 #import "StringUtilities.h"
 #import "UIDelegate.h"
 #import "UserMediaProcessManager.h"
@@ -1277,9 +1279,9 @@ static NSDictionary *dictionaryRepresentationForEditorState(const WebKit::Editor
         [uiDelegate _webView:self editorStateDidChange:dictionaryRepresentationForEditorState(_page->editorState())];
 }
 
-- (void)_showSafeBrowsingWarning:(const WebKit::SafeBrowsingResult&)result completionHandler:(CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, WebCore::URL>&&)>&&)completionHandler
+- (void)_showSafeBrowsingWarning:(const WebKit::SafeBrowsingWarning&)warning completionHandler:(CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, WebCore::URL>&&)>&&)completionHandler
 {
-    _safeBrowsingWarning = adoptNS([[WKSafeBrowsingWarning alloc] initWithFrame:self.bounds safeBrowsingResult:result completionHandler:[weakSelf = WeakObjCPtr<WKWebView>(self), completionHandler = WTFMove(completionHandler)] (auto&& result) mutable {
+    _safeBrowsingWarning = adoptNS([[WKSafeBrowsingWarning alloc] initWithFrame:self.bounds safeBrowsingWarning:warning completionHandler:[weakSelf = WeakObjCPtr<WKWebView>(self), completionHandler = WTFMove(completionHandler)] (auto&& result) mutable {
         if (auto strongSelf = weakSelf.get())
             [std::exchange(strongSelf->_safeBrowsingWarning, nullptr) removeFromSuperview];
         completionHandler(WTFMove(result));
@@ -4731,6 +4733,28 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 + (BOOL)_handlesSafeBrowsing
 {
     return true;
+}
+
+- (void)_showSafeBrowsingWarningWithTitle:(NSString *)title warning:(NSString *)warning details:(NSAttributedString *)details completionHandler:(void(^)(NSURL *))completionHandler
+{
+    auto safeBrowsingWarning = WebKit::SafeBrowsingWarning::create(title, warning, details);
+    auto wrapper = [completionHandler = makeBlockPtr(completionHandler)] (Variant<WebKit::ContinueUnsafeLoad, WebCore::URL>&& variant) {
+        switchOn(variant, [&] (WebKit::ContinueUnsafeLoad) {
+            completionHandler(nil);
+        }, [&] (WebCore::URL url) {
+            completionHandler(url);
+        });
+    };
+#if PLATFORM(MAC)
+    _impl->showSafeBrowsingWarning(safeBrowsingWarning, WTFMove(wrapper));
+#else
+    [self _showSafeBrowsingWarning:safeBrowsingWarning completionHandler:WTFMove(wrapper)];
+#endif
+}
+
++ (NSURL *)_confirmMalwareSentinel
+{
+    return WebKit::SafeBrowsingWarning::confirmMalwareSentinel();
 }
 
 - (void)_evaluateJavaScriptWithoutUserGesture:(NSString *)javaScriptString completionHandler:(void (^)(id, NSError *))completionHandler

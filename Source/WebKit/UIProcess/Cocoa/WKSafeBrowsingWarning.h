@@ -40,7 +40,7 @@ class URL;
 }
 
 namespace WebKit {
-class SafeBrowsingResult;
+class SafeBrowsingWarning;
 enum class ContinueUnsafeLoad : bool;
 }
 
@@ -56,10 +56,10 @@ using RectType = CGRect;
 {
 @package
     CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, WebCore::URL>&&)> _completionHandler;
-    RefPtr<const WebKit::SafeBrowsingResult> _result;
+    RefPtr<const WebKit::SafeBrowsingWarning> _warning;
     RetainPtr<NSMutableArray<WKSafeBrowsingTextView *>> _textViews;
 }
 
-- (instancetype)initWithFrame:(RectType)frame safeBrowsingResult:(const WebKit::SafeBrowsingResult&)result completionHandler:(CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, WebCore::URL>&&)>&&)completionHandler;
+- (instancetype)initWithFrame:(RectType)frame safeBrowsingWarning:(const WebKit::SafeBrowsingWarning&)warning completionHandler:(CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, WebCore::URL>&&)>&&)completionHandler;
 
 @end

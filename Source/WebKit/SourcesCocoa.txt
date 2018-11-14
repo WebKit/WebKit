@@ -322,7 +322,7 @@ UIProcess/Cocoa/NavigationState.mm
 UIProcess/Cocoa/PageClientImplCocoa.mm
 UIProcess/Cocoa/PlaybackSessionManagerProxy.mm
 UIProcess/Cocoa/ResourceLoadStatisticsMemoryStoreCocoa.mm
-UIProcess/Cocoa/SafeBrowsingResultCocoa.mm
+UIProcess/Cocoa/SafeBrowsingWarningCocoa.mm
 UIProcess/Cocoa/SessionStateCoding.mm
 UIProcess/Cocoa/SystemPreviewControllerCocoa.mm
 UIProcess/Cocoa/UIDelegate.mm

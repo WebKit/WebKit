@@ -204,6 +204,33 @@ TEST(SafeBrowsing, NavigationClearsWarning)
         TestWebKitAPI::Util::spinRunLoop();
 }
 
+TEST(SafeBrowsing, ShowWarningSPI)
+{
+    __block bool completionHandlerCalled = false;
+    __block RetainPtr<NSURL> urlClicked;
+    auto webView = adoptNS([WKWebView new]);
+    auto showWarning = ^{
+        completionHandlerCalled = false;
+        [webView _showSafeBrowsingWarningWithTitle:@"test title" warning:@"test warning" details:[[[NSAttributedString alloc] initWithString:@"test details"] autorelease] completionHandler:^(NSURL *url) {
+            urlClicked = url;
+            completionHandlerCalled = true;
+        }];
+#if !PLATFORM(MAC)
+        [[webView _safeBrowsingWarningForTesting] didMoveToWindow];
+#endif
+    };
+
+    showWarning();
+    checkTitleAndClick([webView _safeBrowsingWarningForTesting].subviews.firstObject.subviews[3], "Go Back");
+    TestWebKitAPI::Util::run(&completionHandlerCalled);
+    EXPECT_TRUE(!urlClicked);
+
+    showWarning();
+    [[webView _safeBrowsingWarningForTesting] performSelector:NSSelectorFromString(@"clickedOnLink:") withObject:[NSURL URLWithString:@"http://webkit.org/testlink"]];
+    TestWebKitAPI::Util::run(&completionHandlerCalled);
+    EXPECT_STREQ([urlClicked absoluteString].UTF8String, "http://webkit.org/testlink");
+}
+
 @interface NullLookupContext : NSObject
 @end
 @implementation NullLookupContext
