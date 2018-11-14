@@ -3,6 +3,13 @@
         REGRESSION(r238178): fast/forms/access-key-mutated.html and fast/forms/access-key-case-insensitive.html are timing out
         https://bugs.webkit.org/show_bug.cgi?id=191642
 
+        * TestExpectations: Additionally skip accessibility/mac/selection-notification-focus-change.html
+
+2018-11-14  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION(r238178): fast/forms/access-key-mutated.html and fast/forms/access-key-case-insensitive.html are timing out
+        https://bugs.webkit.org/show_bug.cgi?id=191642
+
         * TestExpectations: Skipping for now.
 
 2018-11-14  Per Arne Vollan  <pvollan@apple.com>

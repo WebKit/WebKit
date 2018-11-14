@@ -2953,3 +2953,4 @@ fast/mediacapturefromelement/CanvasCaptureMediaStream-capture-out-of-DOM-element
 
 webkit.org/b/191642 fast/forms/access-key-case-insensitive.html [ Skip ]
 webkit.org/b/191642 fast/forms/access-key-mutated.html [ Skip ]
+webkit.org/b/191642 accessibility/mac/selection-notification-focus-change.html [ Skip ]
