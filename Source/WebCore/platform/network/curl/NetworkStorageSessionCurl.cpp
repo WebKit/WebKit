@@ -29,7 +29,7 @@
 #if USE(CURL)
 
 #include "Cookie.h"
-#include "CookieJarCurlDatabase.h"
+#include "CookieJarCurl.h"
 #include "CookieJarDB.h"
 #include "CookieRequestHeaderFieldProxy.h"
 #include "CurlContext.h"
@@ -57,7 +57,7 @@ static String defaultCookieJarPath()
 NetworkStorageSession::NetworkStorageSession(PAL::SessionID sessionID, NetworkingContext* context)
     : m_sessionID(sessionID)
     , m_context(context)
-    , m_cookieStorage(makeUniqueRef<CookieJarCurlDatabase>())
+    , m_cookieStorage(makeUniqueRef<CookieJarCurl>())
     , m_cookieDatabase(makeUniqueRef<CookieJarDB>(defaultCookieJarPath()))
 {
 }

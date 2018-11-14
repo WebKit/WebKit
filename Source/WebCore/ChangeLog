@@ -1,3 +1,22 @@
+2018-11-14  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [curl] Unify CookieJarCurlDatabase and the abstract class CookieJarCurl
+        https://bugs.webkit.org/show_bug.cgi?id=191620
+
+        Reviewed by Alex Christensen.
+
+        Remove a abstract class CookieJarCurl which is not needed anymore.
+        And, rename CookieJarCurlDatabase to CookieJarCurl.
+
+        No new tests because there's no behaviour change in WebCore.
+
+        * platform/Curl.cmake: Replaced CookieJarCurlDatabase.cpp with CookieJarCurl.cpp.
+        * platform/network/curl/CookieJarCurl.cpp: Renamed from Source/WebCore/platform/network/curl/CookieJarCurlDatabase.cpp.
+        * platform/network/curl/CookieJarCurl.h: Merged CookieJarCurl.h and CookieJarCurlDatabase.h.
+        * platform/network/curl/CookieJarCurlDatabase.h: Removed.
+        * platform/network/curl/NetworkStorageSessionCurl.cpp:
+        (WebCore::NetworkStorageSession::NetworkStorageSession): Replaced CookieJarCurlDatabase with CookieJarCurl.
+
 2018-11-14  Christopher Reid  <chris.reid@sony.com>
 
         [WPE] Remove glib usage in PlatformKeyboardEventWPE.cpp
