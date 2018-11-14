@@ -28,7 +28,7 @@
 
 #include "WindowsKeyboardCodes.h"
 #include <wpe/wpe.h>
-#include <wtf/glib/GUniquePtr.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -426,12 +426,11 @@ String PlatformKeyboardEvent::keyValueForWPEKeyCode(unsigned keyCode)
         break;
     }
 
-    guint32 unicodeCharacter = wpe_key_code_to_unicode(keyCode);
-    if (unicodeCharacter) {
-        // UTF-8 will use up to 6 bytes.
-        char utf8[7] = { 0 };
-        g_unichar_to_utf8(unicodeCharacter, utf8);
-        return String::fromUTF8(utf8);
+    UChar32 unicodeCharacter = wpe_key_code_to_unicode(keyCode);
+    if (unicodeCharacter && U_IS_UNICODE_CHAR(unicodeCharacter)) {
+        StringBuilder builder;
+        builder.append(unicodeCharacter);
+        return builder.toString();
     }
 
     return "Unidentified"_s;
@@ -1304,11 +1303,12 @@ String PlatformKeyboardEvent::singleCharacterString(unsigned val)
         break;
     }
 
-    gunichar c = wpe_key_code_to_unicode(val);
-    glong length;
-    GUniquePtr<gunichar2> uchar16(g_ucs4_to_utf16(&c, 1, nullptr, &length, nullptr));
-    if (uchar16)
-        return String(reinterpret_cast<UChar*>(uchar16.get()), length);
+    UChar32 unicodeCharacter = wpe_key_code_to_unicode(val);
+    if (unicodeCharacter && U_IS_UNICODE_CHAR(unicodeCharacter)) {
+        StringBuilder builder;
+        builder.append(unicodeCharacter);
+        return builder.toString();
+    }
 
     return { };
 }

@@ -1,3 +1,18 @@
+2018-11-14  Christopher Reid  <chris.reid@sony.com>
+
+        [WPE] Remove glib usage in PlatformKeyboardEventWPE.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=191606
+
+        Reviewed by Michael Catanzaro.
+
+        No behavior change.
+
+        Use StringBuilder::append(UChar32) as a generic way to convert a uint32_t code point to WTFString.
+
+        * platform/wpe/PlatformKeyboardEventWPE.cpp:
+        (WebCore::PlatformKeyboardEvent::keyValueForWPEKeyCode):
+        (WebCore::PlatformKeyboardEvent::singleCharacterString):
+
 2018-11-13  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Construct dedicated runs when the inline element requires it (part 2)
