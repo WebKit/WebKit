@@ -745,6 +745,9 @@ static bool prefersColorSchemeEvaluate(CSSValue* value, const CSSToLengthConvers
 {
     ASSERT(RuntimeEnabledFeatures::sharedFeatures().darkModeCSSEnabled());
 
+    if (!value)
+        return true;
+
     if (!is<CSSPrimitiveValue>(value))
         return false;
 
@@ -753,7 +756,7 @@ static bool prefersColorSchemeEvaluate(CSSValue* value, const CSSToLengthConvers
 
     switch (keyword) {
     case CSSValueNoPreference:
-        return true;
+        return false;
     case CSSValueDark:
         return useDarkAppearance;
     case CSSValueLight:

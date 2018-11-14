@@ -1,3 +1,19 @@
+2018-11-14  Timothy Hatcher  <timothy@apple.com>
+
+        Update prefers-color-scheme media query matching based on GitHub issue #3278.
+        https://bugs.webkit.org/show_bug.cgi?id=191654
+        rdar://problem/46074307
+
+        Reviewed by Simon Fraser.
+
+        Test: css-dark-mode/prefers-color-scheme.html
+
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::prefersColorSchemeEvaluate): Return true when there is no value. Return false
+        for `no-preference` since there is no macOS option for no user preference.
+        * css/MediaQueryExpression.cpp:
+        (WebCore::isFeatureValidWithoutValue): Added prefers-color-scheme.
+
 2018-11-14  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Canvas: send a call stack with each action instead of an array of call frames

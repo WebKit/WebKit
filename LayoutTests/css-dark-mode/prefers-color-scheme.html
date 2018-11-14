@@ -6,7 +6,7 @@
 <script src="../resources/testharnessreport.js"></script>
 
 <style>
-#test1 {
+div {
     background-color: red;
     color: text;
 }
@@ -23,6 +23,13 @@
     }
 }
 
+@media (prefers-color-scheme: no-preference) {
+    /* This is valid, but should not apply for us since there is no option for no user preference. */
+    #test1 {
+        background-color: cyan;
+    }
+}
+
 @media (prefers-color-scheme: foo) {
     /* This is invalid and should not apply. */
     #test1 {
@@ -31,14 +38,15 @@
 }
 
 @media (prefers-color-scheme) {
-    /* This is invalid and should not apply. */
-    #test1 {
-        background-color: orange;
+    /* This is valid and should always apply for us, since there is always a user preference currently. */
+    #test2 {
+        background-color: lime;
     }
 }
 </style>
 
 <div id="test1"></div>
+<div id="test2"></div>
 
 <script>
 function test_prop(id, prop, expected) {
@@ -54,6 +62,14 @@ test(function() {
 }, "Element colors are correct in light color scheme");
 
 test(function() {
+    // Styled background-color in media query should be lime green.
+    test_prop("test2", "background-color", "rgb(0, 255, 0)");
+
+    // The semantic text color should be black.
+    test_prop("test2", "color", "rgb(0, 0, 0)");
+}, "Element colors are correct in light color scheme with boolean context query");
+
+test(function() {
     if (window.internals)
         internals.settings.setUseDarkAppearance(true);
 }, "Dark color scheme enabled");
@@ -65,4 +81,12 @@ test(function() {
     // The semantic text color should be black, and not change.
     test_prop("test1", "color", "rgb(0, 0, 0)");
 }, "Element colors are correct in dark color scheme");
+
+test(function() {
+    // Styled background-color in media query should be lime green.
+    test_prop("test2", "background-color", "rgb(0, 255, 0)");
+
+    // The semantic text color should be black.
+    test_prop("test2", "color", "rgb(0, 0, 0)");
+}, "Element colors are correct in dark color scheme with boolean context query");
 </script>

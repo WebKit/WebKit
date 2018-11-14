@@ -167,6 +167,9 @@ static inline bool isFeatureValidWithoutValue(const AtomicString& mediaFeature, 
         || mediaFeature == MediaFeatureNames::pointer
         || mediaFeature == MediaFeatureNames::prefersReducedMotion
         || (mediaFeature == MediaFeatureNames::prefersDarkInterface && (context.useSystemAppearance || isUASheetBehavior(context.mode)))
+#if ENABLE(DARK_MODE_CSS)
+        || (mediaFeature == MediaFeatureNames::prefersColorScheme && RuntimeEnabledFeatures::sharedFeatures().darkModeCSSEnabled())
+#endif
         || mediaFeature == MediaFeatureNames::devicePixelRatio
         || mediaFeature == MediaFeatureNames::resolution
 #if ENABLE(APPLICATION_MANIFEST)
