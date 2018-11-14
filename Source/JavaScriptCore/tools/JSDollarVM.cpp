@@ -1946,7 +1946,7 @@ static EncodedJSValue JSC_HOST_CALL functionFindTypeForExpression(ExecState* exe
 {
     VM& vm = exec->vm();
     RELEASE_ASSERT(vm.typeProfiler());
-    vm.typeProfilerLog()->processLogEntries("jsc Testing API: functionFindTypeForExpression"_s);
+    vm.typeProfilerLog()->processLogEntries(vm, "jsc Testing API: functionFindTypeForExpression"_s);
 
     JSValue functionValue = exec->argument(0);
     RELEASE_ASSERT(functionValue.isFunction(vm));
@@ -1965,7 +1965,7 @@ static EncodedJSValue JSC_HOST_CALL functionReturnTypeFor(ExecState* exec)
 {
     VM& vm = exec->vm();
     RELEASE_ASSERT(vm.typeProfiler());
-    vm.typeProfilerLog()->processLogEntries("jsc Testing API: functionReturnTypeFor"_s);
+    vm.typeProfilerLog()->processLogEntries(vm, "jsc Testing API: functionReturnTypeFor"_s);
 
     JSValue functionValue = exec->argument(0);
     RELEASE_ASSERT(functionValue.isFunction(vm));

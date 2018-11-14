@@ -1,3 +1,39 @@
+2018-11-13  Saam Barati  <sbarati@apple.com>
+
+        TypeProfileLog::processLogEntries should stash away any pending exceptions and re-apply them to the VM
+        https://bugs.webkit.org/show_bug.cgi?id=191600
+
+        Reviewed by Mark Lam.
+
+        processLogEntries will call into calculatedClassName, which will clear
+        any exceptions it encounters (it assumes that they're stack overflow exceptions).
+        However, this code may be called when an exception is already pending on the 
+        VM (e.g, when we throw an exception in the DFG, we compile an OSR exit
+        offramp, which may compile a baseline codeblock, which will process
+        the type profiler log). To get around this, processLogEntires should stash
+        away and re-apply any pending exceptions.
+
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compileImpl):
+        * dfg/DFGOperations.cpp:
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets):
+        * jit/JIT.cpp:
+        (JSC::JIT::doMainThreadPreparationBeforeCompile):
+        * jit/JITOperations.cpp:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/TypeProfilerLog.cpp:
+        (JSC::TypeProfilerLog::processLogEntries):
+        * runtime/TypeProfilerLog.h:
+        * runtime/VM.cpp:
+        (JSC::VM::dumpTypeProfilerData):
+        * runtime/VM.h:
+        (JSC::VM::DeferExceptionScope::DeferExceptionScope):
+        * tools/JSDollarVM.cpp:
+        (JSC::functionFindTypeForExpression):
+        (JSC::functionReturnTypeFor):
+
 2018-11-13  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r238132.

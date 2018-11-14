@@ -1,3 +1,15 @@
+2018-11-13  Saam Barati  <sbarati@apple.com>
+
+        TypeProfileLog::processLogEntries should stash away any pending exceptions and re-apply them to the VM
+        https://bugs.webkit.org/show_bug.cgi?id=191600
+
+        Reviewed by Mark Lam.
+
+        * stress/type-profiler-log-should-defer-pending-exceptions.js: Added.
+        (foo):
+        (test):
+        (bar):
+
 2018-11-13  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r238132.

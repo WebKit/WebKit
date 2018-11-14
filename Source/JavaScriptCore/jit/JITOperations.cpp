@@ -2874,7 +2874,7 @@ void JIT_OPERATION operationProcessTypeProfilerLog(ExecState* exec)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
-    vm.typeProfilerLog()->processLogEntries("Log Full, called from inside baseline JIT"_s);
+    vm.typeProfilerLog()->processLogEntries(vm, "Log Full, called from inside baseline JIT"_s);
 }
 
 void JIT_OPERATION operationProcessShadowChickenLog(ExecState* exec)

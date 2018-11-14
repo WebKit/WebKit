@@ -1116,7 +1116,7 @@ void VM::dumpTypeProfilerData()
     if (!typeProfiler())
         return;
 
-    typeProfilerLog()->processLogEntries("VM Dump Types"_s);
+    typeProfilerLog()->processLogEntries(*this, "VM Dump Types"_s);
     typeProfiler()->dumpTypeProfilerData(*this);
 }
 

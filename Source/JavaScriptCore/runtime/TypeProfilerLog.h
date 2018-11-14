@@ -56,7 +56,7 @@ public:
     TypeProfilerLog(VM&);
     ~TypeProfilerLog();
 
-    JS_EXPORT_PRIVATE void processLogEntries(const String&);
+    JS_EXPORT_PRIVATE void processLogEntries(VM&, const String&);
     LogEntry* logEndPtr() const { return m_logEndPtr; }
 
     void visit(SlotVisitor&);

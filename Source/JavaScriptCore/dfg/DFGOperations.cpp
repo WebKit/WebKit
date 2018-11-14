@@ -2705,7 +2705,7 @@ void JIT_OPERATION operationProcessTypeProfilerLogDFG(ExecState* exec)
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
 
-    vm.typeProfilerLog()->processLogEntries("Log Full, called from inside DFG."_s);
+    vm.typeProfilerLog()->processLogEntries(vm, "Log Full, called from inside DFG."_s);
 }
 
 EncodedJSValue JIT_OPERATION operationResolveScopeForHoistingFuncDeclInEval(ExecState* exec, JSScope* scope, UniquedStringImpl* impl)

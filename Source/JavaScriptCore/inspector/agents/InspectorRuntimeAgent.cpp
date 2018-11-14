@@ -273,7 +273,7 @@ void InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets(ErrorString& er
     }
 
     MonotonicTime start = MonotonicTime::now();
-    m_vm.typeProfilerLog()->processLogEntries("User Query"_s);
+    m_vm.typeProfilerLog()->processLogEntries(m_vm, "User Query"_s);
 
     for (size_t i = 0; i < locations.length(); i++) {
         RefPtr<JSON::Value> value = locations.get(i);

@@ -963,7 +963,7 @@ SLOW_PATH_DECL(slow_path_to_index_string)
 SLOW_PATH_DECL(slow_path_profile_type_clear_log)
 {
     BEGIN();
-    vm.typeProfilerLog()->processLogEntries("LLInt log full."_s);
+    vm.typeProfilerLog()->processLogEntries(vm, "LLInt log full."_s);
     END();
 }
 

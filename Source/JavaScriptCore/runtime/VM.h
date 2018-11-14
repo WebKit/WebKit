@@ -63,6 +63,7 @@
 #include <wtf/Gigacage.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/SetForScope.h>
 #include <wtf/StackBounds.h>
 #include <wtf/StackPointer.h>
 #include <wtf/Stopwatch.h>
@@ -892,6 +893,19 @@ public:
     CFRunLoopRef runLoop() const { return m_runLoop.get(); }
     JS_EXPORT_PRIVATE void setRunLoop(CFRunLoopRef);
 #endif // USE(CF)
+
+    class DeferExceptionScope {
+    public:
+        DeferExceptionScope(VM& vm)
+            : m_savedException(vm.m_exception, nullptr)
+            , m_savedLastException(vm.m_lastException, nullptr)
+        {
+        }
+
+    private:
+        SetForScope<Exception*> m_savedException;
+        SetForScope<Exception*> m_savedLastException;
+    };
 
 private:
     friend class LLIntOffsetsExtractor;
