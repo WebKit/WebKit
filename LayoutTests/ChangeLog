@@ -1,3 +1,10 @@
+2018-11-14  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening, move a skip expectation to a more specific file.
+
+        * TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2018-11-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Keep Web Inspector window alive across process swaps (PSON) (Remote Inspector)
