@@ -1297,7 +1297,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._detailView.hidden();
         this._detailView = null;
 
-        this._table.resize();
+        this._table.updateLayout(WI.View.LayoutReason.Resize);
         this._table.reloadVisibleColumnCells(this._waterfallColumn);
     }
 

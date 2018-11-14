@@ -109,7 +109,7 @@ WI.Table = class Table extends WI.View
         this._cachedWidth = NaN;
         this._cachedHeight = NaN;
         this._cachedScrollTop = NaN;
-        this._cachedScrollableHeight = NaN;
+        this._previousCachedWidth = NaN;
         this._previousRevealedRowCount = NaN;
         this._topSpacerHeight = NaN;
         this._bottomSpacerHeight = NaN;
@@ -242,14 +242,6 @@ WI.Table = class Table extends WI.View
     isRowSelected(rowIndex)
     {
         return this._selectedRows.has(rowIndex);
-    }
-
-    resize()
-    {
-        this._cachedWidth = NaN;
-        this._cachedHeight = NaN;
-
-        this._resizeColumnsAndFiller();
     }
 
     reloadData()
@@ -582,7 +574,7 @@ WI.Table = class Table extends WI.View
 
         // Re-layout all columns to make space.
         this._columnWidths = null;
-        this.resize();
+        this._resizeColumnsAndFiller();
 
         // Now populate only the new cells for this column.
         for (let cell of cellsToPopulate)
@@ -663,11 +655,16 @@ WI.Table = class Table extends WI.View
     layout()
     {
         this._updateVisibleRows();
+        this._resizeColumnsAndFiller();
+    }
 
-        if (this.layoutReason === WI.View.LayoutReason.Resize)
-            this.resize();
-        else
-            this._resizeColumnsAndFiller();
+    sizeDidChange()
+    {
+        super.sizeDidChange();
+
+        this._previousCachedWidth = this._cachedWidth;
+        this._cachedWidth = NaN;
+        this._cachedHeight = NaN;
     }
 
     // Resizer delegate
@@ -873,15 +870,8 @@ WI.Table = class Table extends WI.View
 
     _resizeColumnsAndFiller()
     {
-        let oldWidth = this._cachedWidth;
-        let oldHeight = this._cachedHeight;
-        let oldNumberOfRows = this._cachedNumberOfRows;
-
-        if (isNaN(this._cachedWidth)) {
-            let boundingClientRect = this._scrollContainerElement.getBoundingClientRect();
-            this._cachedWidth = Math.floor(boundingClientRect.width);
-            this._cachedHeight = Math.floor(boundingClientRect.height);
-        }
+        if (isNaN(this._cachedWidth) || !this._cachedWidth)
+            this._cachedWidth = Math.floor(this._scrollContainerElement.getBoundingClientRect().width);
 
         // Not visible yet.
         if (!this._cachedWidth)
@@ -890,18 +880,17 @@ WI.Table = class Table extends WI.View
         let availableWidth = this._cachedWidth;
         let availableHeight = this._cachedHeight;
 
-        let numberOfRows = this.numberOfRows;
-        this._cachedNumberOfRows = numberOfRows;
-
-        let contentHeight = numberOfRows * this._rowHeight;
+        let contentHeight = this.numberOfRows * this._rowHeight;
         this._fillerHeight = Math.max(availableHeight - contentHeight, 0);
 
         // No change to layout metrics so no resizing is needed.
-        if (this._columnWidths && availableWidth === oldWidth && availableWidth === oldHeight && numberOfRows === oldNumberOfRows) {
+        if (this._columnWidths && this._cachedWidth === this._previousCachedWidth) {
             this._updateFillerRowWithNewHeight();
             this._applyColumnWidthsToColumnsIfNeeded();
             return;
         }
+
+        this._previousCachedWidth = this._cachedWidth;
 
         let lockedWidth = 0;
         let lockedColumnCount = 0;
@@ -1094,11 +1083,11 @@ WI.Table = class Table extends WI.View
         if (isNaN(this._cachedScrollTop))
             this._cachedScrollTop = this._scrollContainerElement.scrollTop;
 
-        if (isNaN(this._cachedScrollableHeight) || !this._cachedScrollableHeight)
-            this._cachedScrollableHeight = this._scrollContainerElement.getBoundingClientRect().height;
+        if (isNaN(this._cachedHeight) || !this._cachedHeight)
+            this._cachedHeight = Math.floor(this._scrollContainerElement.getBoundingClientRect().height);
 
         let scrollTop = this._cachedScrollTop;
-        let scrollableOffsetHeight = this._cachedScrollableHeight;
+        let scrollableOffsetHeight = this._cachedHeight;
 
         let visibleRowCount = Math.ceil((scrollableOffsetHeight + (overflowPadding * 2)) / rowHeight);
         let currentTopMargin = this._topSpacerHeight;

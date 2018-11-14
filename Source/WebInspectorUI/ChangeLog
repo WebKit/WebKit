@@ -1,3 +1,39 @@
+2018-11-14  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Table should recalculate scrollable height when resized
+        https://bugs.webkit.org/show_bug.cgi?id=191328
+        <rdar://problem/45854412>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype._hideDetailView):
+        Force table columns to layout after hiding the detail view.
+
+        * UserInterface/Views/Table.js:
+        (WI.Table):
+        (WI.Table.prototype.showColumn):
+        Call `_resizeColumnsAndFiller` instead of `resize`. The latter also cleared
+        `_cachedWidth`, which isn't unnecessary since the width hasn't changed.
+
+        (WI.Table.prototype.layout):
+        previously `_resizeColumnsAndFiller` always occurred after `_updateVisibleRows`,
+        it was just a matter of whether the cached width and height were cleared first.
+        That now happens in `sizeDidChange`.
+
+        (WI.Table.prototype.sizeDidChange):
+        (WI.Table.prototype._updateVisibleRows):
+        (WI.Table.prototype.resize): Deleted.
+        Internally this cleared the cached width and height, which moved to `sizeDidChange`.
+        Externally this was used by NetworkTableContentView to force columns to
+        layout after hiding the details view. Calling `updateLayout` on the table
+        accomplishes the same thing using the standard View API.
+
+        (WI.Table.prototype._resizeColumnsAndFiller):
+        Only update the cached width, since the height will already have been
+        updated. The number of rows doesn't change during this method, so that
+        check was removed.
+
 2018-11-14  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: REGRESSION(r236540): Debugger: breakpoints are sorted alphabetically instead of numerically
