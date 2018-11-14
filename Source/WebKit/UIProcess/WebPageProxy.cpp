@@ -6283,6 +6283,8 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 
     m_toolTip = String();
 
+    m_inspectorHasLocalFrontend = false;
+
     m_mainFrameHasHorizontalScrollbar = false;
     m_mainFrameHasVerticalScrollbar = false;
 

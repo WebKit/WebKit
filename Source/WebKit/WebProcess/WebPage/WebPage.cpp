@@ -3487,6 +3487,11 @@ RemoteWebInspectorUI* WebPage::remoteInspectorUI()
     return m_remoteInspectorUI.get();
 }
 
+void WebPage::setHasLocalInspectorFrontend(bool hasLocalFrontend)
+{
+    send(Messages::WebPageProxy::SetHasLocalInspectorFrontend(hasLocalFrontend));
+}
+
 void WebPage::inspectorFrontendCountChanged(unsigned count)
 {
     send(Messages::WebPageProxy::DidChangeInspectorFrontendCount(count));
