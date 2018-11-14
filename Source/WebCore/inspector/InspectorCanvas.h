@@ -28,6 +28,7 @@
 #include "CallTracerTypes.h"
 #include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <JavaScriptCore/ScriptCallFrame.h>
+#include <JavaScriptCore/ScriptCallStack.h>
 #include <wtf/Variant.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -82,15 +83,16 @@ private:
     String getCanvasContentAsDataURL();
 
     using DuplicateDataVariant = Variant<
-        CanvasGradient*,
-        CanvasPattern*,
-        HTMLCanvasElement*,
-        HTMLImageElement*,
+        RefPtr<CanvasGradient>,
+        RefPtr<CanvasPattern>,
+        RefPtr<HTMLCanvasElement>,
+        RefPtr<HTMLImageElement>,
 #if ENABLE(VIDEO)
-        HTMLVideoElement*,
+        RefPtr<HTMLVideoElement>,
 #endif
-        ImageData*,
-        ImageBitmap*,
+        RefPtr<ImageData>,
+        RefPtr<ImageBitmap>,
+        RefPtr<Inspector::ScriptCallStack>,
         Inspector::ScriptCallFrame,
         String
     >;

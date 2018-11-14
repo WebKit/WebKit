@@ -67,9 +67,7 @@
 #include "WebMetalRenderingContext.h"
 #endif
 #include <JavaScriptCore/IdentifiersFactory.h>
-#include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/ScriptCallStackFactory.h>
-
 
 namespace WebCore {
 
@@ -343,7 +341,17 @@ String InspectorCanvas::getCanvasContentAsDataURL()
 
 int InspectorCanvas::indexForData(DuplicateDataVariant data)
 {
-    size_t index = m_indexedDuplicateData.find(data);
+    size_t index = m_indexedDuplicateData.findMatching([&] (auto item) {
+        if (data == item)
+            return true;
+
+        auto traceA = WTF::get_if<RefPtr<ScriptCallStack>>(data);
+        auto traceB = WTF::get_if<RefPtr<ScriptCallStack>>(item);
+        if (traceA && *traceA && traceB && *traceB)
+            return (*traceA)->isEqual((*traceB).get());
+
+        return false;
+    });
     if (index != notFound) {
         ASSERT(index < std::numeric_limits<int>::max());
         return static_cast<int>(index);
@@ -354,7 +362,7 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
 
     RefPtr<JSON::Value> item;
     WTF::switchOn(data,
-        [&] (const HTMLImageElement* imageElement) {
+        [&] (const RefPtr<HTMLImageElement>& imageElement) {
             String dataURL = "data:,"_s;
 
             if (CachedImage* cachedImage = imageElement->cachedImage()) {
@@ -369,7 +377,7 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
             index = indexForData(dataURL);
         },
 #if ENABLE(VIDEO)
-        [&] (HTMLVideoElement* videoElement) {
+        [&] (RefPtr<HTMLVideoElement>& videoElement) {
             String dataURL = "data:,"_s;
 
             unsigned videoWidth = videoElement->videoWidth();
@@ -383,7 +391,7 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
             index = indexForData(dataURL);
         },
 #endif
-        [&] (HTMLCanvasElement* canvasElement) {
+        [&] (RefPtr<HTMLCanvasElement>& canvasElement) {
             String dataURL = "data:,"_s;
 
             ExceptionOr<UncachedString> result = canvasElement->toDataURL("image/png"_s);
@@ -392,11 +400,17 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
 
             index = indexForData(dataURL);
         },
-        [&] (const CanvasGradient* canvasGradient) { item = buildArrayForCanvasGradient(*canvasGradient); },
-        [&] (const CanvasPattern* canvasPattern) { item = buildArrayForCanvasPattern(*canvasPattern); },
-        [&] (const ImageData* imageData) { item = buildArrayForImageData(*imageData); },
-        [&] (ImageBitmap* imageBitmap) {
+        [&] (const RefPtr<CanvasGradient>& canvasGradient) { item = buildArrayForCanvasGradient(*canvasGradient); },
+        [&] (const RefPtr<CanvasPattern>& canvasPattern) { item = buildArrayForCanvasPattern(*canvasPattern); },
+        [&] (const RefPtr<ImageData>& imageData) { item = buildArrayForImageData(*imageData); },
+        [&] (RefPtr<ImageBitmap>& imageBitmap) {
             index = indexForData(imageBitmap->buffer()->toDataURL("image/png"));
+        },
+        [&] (const RefPtr<ScriptCallStack>& scriptCallStack) {
+            auto array = JSON::ArrayOf<double>::create();
+            for (size_t i = 0; i < scriptCallStack->size(); ++i)
+                array->addItem(indexForData(scriptCallStack->at(i)));
+            item = WTFMove(array);
         },
         [&] (const ScriptCallFrame& scriptCallFrame) {
             auto array = JSON::ArrayOf<double>::create();
@@ -489,18 +503,18 @@ Ref<Inspector::Protocol::Recording::InitialState> InspectorCanvas::buildInitialS
 
             int strokeStyleIndex;
             if (auto canvasGradient = state.strokeStyle.canvasGradient())
-                strokeStyleIndex = indexForData(canvasGradient.get());
+                strokeStyleIndex = indexForData(canvasGradient);
             else if (auto canvasPattern = state.strokeStyle.canvasPattern())
-                strokeStyleIndex = indexForData(canvasPattern.get());
+                strokeStyleIndex = indexForData(canvasPattern);
             else
                 strokeStyleIndex = indexForData(state.strokeStyle.color());
             statePayload->setInteger(stringIndexForKey("strokeStyle"_s), strokeStyleIndex);
 
             int fillStyleIndex;
             if (auto canvasGradient = state.fillStyle.canvasGradient())
-                fillStyleIndex = indexForData(canvasGradient.get());
+                fillStyleIndex = indexForData(canvasGradient);
             else if (auto canvasPattern = state.fillStyle.canvasPattern())
-                fillStyleIndex = indexForData(canvasPattern.get());
+                fillStyleIndex = indexForData(canvasPattern);
             else
                 fillStyleIndex = indexForData(state.fillStyle.color());
             statePayload->setInteger(stringIndexForKey("fillStyle"_s), fillStyleIndex);
@@ -598,16 +612,16 @@ Ref<JSON::ArrayOf<JSON::Value>> InspectorCanvas::buildAction(const String& name,
 #endif
             [&] (const RefPtr<ArrayBuffer>&) { addParameter(0, RecordingSwizzleTypes::TypedArray); },
             [&] (const RefPtr<ArrayBufferView>&) { addParameter(0, RecordingSwizzleTypes::TypedArray); },
-            [&] (const RefPtr<CanvasGradient>& value) { addParameter(indexForData(value.get()), RecordingSwizzleTypes::CanvasGradient); },
-            [&] (const RefPtr<CanvasPattern>& value) { addParameter(indexForData(value.get()), RecordingSwizzleTypes::CanvasPattern); },
+            [&] (const RefPtr<CanvasGradient>& value) { addParameter(indexForData(value), RecordingSwizzleTypes::CanvasGradient); },
+            [&] (const RefPtr<CanvasPattern>& value) { addParameter(indexForData(value), RecordingSwizzleTypes::CanvasPattern); },
             [&] (const RefPtr<Float32Array>&) { addParameter(0, RecordingSwizzleTypes::TypedArray); },
-            [&] (const RefPtr<HTMLCanvasElement>& value) { addParameter(indexForData(value.get()), RecordingSwizzleTypes::Image); },
-            [&] (const RefPtr<HTMLImageElement>& value) { addParameter(indexForData(value.get()), RecordingSwizzleTypes::Image); },
+            [&] (const RefPtr<HTMLCanvasElement>& value) { addParameter(indexForData(value), RecordingSwizzleTypes::Image); },
+            [&] (const RefPtr<HTMLImageElement>& value) { addParameter(indexForData(value), RecordingSwizzleTypes::Image); },
 #if ENABLE(VIDEO)
-            [&] (const RefPtr<HTMLVideoElement>& value) { addParameter(indexForData(value.get()), RecordingSwizzleTypes::Image); },
+            [&] (const RefPtr<HTMLVideoElement>& value) { addParameter(indexForData(value), RecordingSwizzleTypes::Image); },
 #endif
-            [&] (const RefPtr<ImageBitmap>& value) { addParameter(indexForData(value.get()), RecordingSwizzleTypes::ImageBitmap); },
-            [&] (const RefPtr<ImageData>& value) { addParameter(indexForData(value.get()), RecordingSwizzleTypes::ImageData); },
+            [&] (const RefPtr<ImageBitmap>& value) { addParameter(indexForData(value), RecordingSwizzleTypes::ImageBitmap); },
+            [&] (const RefPtr<ImageData>& value) { addParameter(indexForData(value), RecordingSwizzleTypes::ImageData); },
             [&] (const RefPtr<Int32Array>&) { addParameter(0, RecordingSwizzleTypes::TypedArray); },
             [&] (const Vector<float>& value) { addParameter(buildArrayForVector(value).ptr(), RecordingSwizzleTypes::Array); },
             [&] (const Vector<int>& value) { addParameter(buildArrayForVector(value).ptr(), RecordingSwizzleTypes::Array); },
@@ -625,11 +639,8 @@ Ref<JSON::ArrayOf<JSON::Value>> InspectorCanvas::buildAction(const String& name,
     action->addItem(WTFMove(parametersData));
     action->addItem(WTFMove(swizzleTypes));
 
-    auto trace = JSON::ArrayOf<double>::create();
-    auto stackTrace = Inspector::createScriptCallStack(JSExecState::currentState(), Inspector::ScriptCallStack::maxCallStackSizeToCapture);
-    for (size_t i = 0; i < stackTrace->size(); ++i)
-        trace->addItem(indexForData(stackTrace->at(i)));
-    action->addItem(WTFMove(trace));
+    RefPtr<ScriptCallStack> trace = Inspector::createScriptCallStack(JSExecState::currentState(), Inspector::ScriptCallStack::maxCallStackSizeToCapture);
+    action->addItem(indexForData(WTFMove(trace)));
 
     return action;
 }

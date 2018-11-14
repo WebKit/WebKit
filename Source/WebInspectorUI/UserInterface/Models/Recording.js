@@ -312,6 +312,27 @@ WI.Recording = class Recording extends WI.Object
                     var image = await this.swizzle(index, WI.Recording.Swizzle.Image);
                     this._swizzle[index][type] = await createImageBitmap(image);
                     break;
+
+                case WI.Recording.Swizzle.CallStack: {
+                    let array = await this.swizzle(data, WI.Recording.Swizzle.Array);
+                    this._swizzle[index][type] = await Promise.all(array.map((item) => this.swizzle(item, WI.Recording.Swizzle.CallFrame)));
+                    break;
+                }
+
+                case WI.Recording.Swizzle.CallFrame: {
+                    let array = await this.swizzle(data, WI.Recording.Swizzle.Array);
+                    let [functionName, url] = await Promise.all([
+                        this.swizzle(array[0], WI.Recording.Swizzle.String),
+                        this.swizzle(array[1], WI.Recording.Swizzle.String),
+                    ]);
+                    this._swizzle[index][type] = WI.CallFrame.fromPayload(WI.assumingMainTarget(), {
+                        functionName,
+                        url,
+                        lineNumber: array[2],
+                        columnNumber: array[3],
+                    });
+                    break;
+                }
                 }
             } catch { }
         }
@@ -488,4 +509,8 @@ WI.Recording.Swizzle = {
     WebGLProgram: 17,
     WebGLUniformLocation: 18,
     ImageBitmap: 19,
+
+    // Special frontend-only swizzle types.
+    CallStack: Symbol("CallStack"),
+    CallFrame: Symbol("CallFrame"),
 };

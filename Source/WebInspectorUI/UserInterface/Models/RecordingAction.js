@@ -57,7 +57,7 @@ WI.RecordingAction = class RecordingAction extends WI.Object
 
     // Static
 
-    // Payload format: [name, parameters, swizzleTypes, trace, [snapshot]]
+    // Payload format: (name, parameters, swizzleTypes, [trace, [snapshot]])
     static fromPayload(payload)
     {
         if (!Array.isArray(payload))
@@ -72,8 +72,11 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         if (!Array.isArray(payload[2]))
             payload[2] = [];
 
-        if (!Array.isArray(payload[3]))
-            payload[3] = [];
+        if (isNaN(payload[3]) || (!payload[3] && payload[3] !== 0)) {
+            // COMPATIBILITY (iOS 12.1): "trace" was sent as an array of call frames instead of a single call stack
+            if (!Array.isArray(payload[3]))
+                payload[3] = [];
+        }
 
         if (payload.length >= 5 && isNaN(payload[4]))
             payload[4] = -1;
@@ -262,25 +265,18 @@ WI.RecordingAction = class RecordingAction extends WI.Object
             return recording.swizzle(item, this._payloadSwizzleTypes[index]);
         };
 
-        let swizzleCallFrame = async (item, index) => {
-            let array = await recording.swizzle(item, WI.Recording.Swizzle.None);
-            let [functionName, url] = await Promise.all([
-                recording.swizzle(array[0], WI.Recording.Swizzle.String),
-                recording.swizzle(array[1], WI.Recording.Swizzle.String),
-            ]);
-            return WI.CallFrame.fromPayload(WI.mainTarget, {
-                functionName,
-                url,
-                lineNumber: array[2],
-                columnNumber: array[3],
-            });
-        };
-
         let swizzlePromises = [
             recording.swizzle(this._payloadName, WI.Recording.Swizzle.String),
             Promise.all(this._payloadParameters.map(swizzleParameter)),
-            Promise.all(this._payloadTrace.map(swizzleCallFrame)),
         ];
+
+        if (!isNaN(this._payloadTrace))
+            swizzlePromises.push(recording.swizzle(this._payloadTrace, WI.Recording.Swizzle.CallStack))
+        else {
+            // COMPATIBILITY (iOS 12.1): "trace" was sent as an array of call frames instead of a single call stack
+            swizzlePromises.push(Promise.all(this._payloadTrace.map((item) => recording.swizzle(item, WI.Recording.Swizzle.CallFrame))));
+        }
+
         if (this._payloadSnapshot >= 0)
             swizzlePromises.push(recording.swizzle(this._payloadSnapshot, WI.Recording.Swizzle.String));
 
