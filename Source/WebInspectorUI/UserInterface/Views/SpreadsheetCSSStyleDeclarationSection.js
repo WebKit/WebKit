@@ -49,9 +49,8 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
         this._shouldFocusSelectorElement = false;
         this._wasEditing = false;
 
-        this._isMousePressed = true;
+        this._isMousePressed = false;
         this._mouseDownIndex = NaN;
-        this._startedSelection = false;
     }
 
     // Public
@@ -217,22 +216,16 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
 
     spreadsheetCSSStyleDeclarationEditorPropertyBlur(event, property)
     {
-        if (!this._startedSelection)
+        if (!this._isMousePressed)
             this._propertiesEditor.deselectProperties();
     }
 
     spreadsheetCSSStyleDeclarationEditorPropertyMouseEnter(event, property)
     {
-        if (this._isMousePressed && this._startedSelection) {
+        if (this._isMousePressed) {
             let index = parseInt(property.element.dataset.propertyIndex);
             this._propertiesEditor.selectProperties(this._mouseDownIndex, index);
         }
-    }
-
-    spreadsheetCSSStyleDeclarationEditorPropertyMouseLeave(event, property)
-    {
-        if (this._isMousePressed)
-            this._startedSelection = true;
     }
 
     applyFilter(filterText)
@@ -471,7 +464,6 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
             return;
 
         this._isMousePressed = true;
-        this._startedSelection = false;
 
         // Disable text selection on mousemove.
         event.preventDefault();
@@ -480,21 +472,24 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
         if (this._wasEditing && document.activeElement)
             document.activeElement.blur();
 
-        window.addEventListener("mouseup", this._handleWindowMouseUp.bind(this), {capture: true, once: true});
+        // Prevent name/value fields from editing when properties selected.
+        window.addEventListener("click", this._handleWindowClick.bind(this), {capture: true, once: true});
 
         let propertyIndex = parseInt(propertyElement.dataset.propertyIndex);
-        this._propertiesEditor.deselectProperties();
-        this._mouseDownIndex = propertyIndex;
+        if (event.shiftKey && this._propertiesEditor.hasSelectedProperties())
+            this._propertiesEditor.extendSelectedProperties(propertyIndex);
+        else
+            this._propertiesEditor.deselectProperties();
 
+        this._mouseDownIndex = propertyIndex;
         this._element.classList.add("selecting");
     }
 
-    _handleWindowMouseUp(event)
+    _handleWindowClick(event)
     {
-        if (this._startedSelection) {
+        if (this._propertiesEditor.hasSelectedProperties()) {
             // Don't start editing name/value if there's selection.
             event.stop();
-            this._startedSelection = false;
         }
 
         this._isMousePressed = false;
@@ -505,7 +500,7 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
 
     _handleClick(event)
     {
-        if (this._wasEditing || this._startedSelection)
+        if (this._wasEditing || this._propertiesEditor.hasSelectedProperties())
             return;
 
         if (window.getSelection().type === "Range")

@@ -1,3 +1,43 @@
+2018-11-14  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles: shift-clicking on a property should extend selection
+        https://bugs.webkit.org/show_bug.cgi?id=191575
+        <rdar://problem/46012855>
+
+        Reviewed by Devin Rousso.
+
+        When there's at least one property is selected, Shift-clicking another property should extend the selection.
+        Pressing Up or Down keys while holding Shift also extends the selection.
+
+        Remove unnecessary `_startedSelection`. Use `hasSelectedProperties` and `_isMousePressed` instead.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.js:
+        `_isMousePressed` was set to `true` by mistake, causing numerous assertion fails.
+
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.set focusIndex):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.hasSelectedProperties): Renamed from _hasSelectedProperties.
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.extendSelectedProperties): Added.
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.spreadsheetStylePropertyMouseLeave): Removed.
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.spreadsheetStylePropertyCopy):
+
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype._handleKeyDown):
+        Implement Shift-ArrowUp/ArrowDown keys.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        (WI.SpreadsheetCSSStyleDeclarationSection):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.spreadsheetCSSStyleDeclarationEditorPropertyBlur):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.spreadsheetCSSStyleDeclarationEditorPropertyMouseLeave): Removed.
+        This was only used to set _startedSelection.
+
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype._handleMouseDown):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype._handleWindowClick):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype._handleClick):
+        Remove _startedSelection and use hasSelectedProperties method instead.
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty):
+        Remove spreadsheetStylePropertyMouseLeave since it is no longer used.
+
 2018-11-14  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Canvas: send a call stack with each action instead of an array of call frames

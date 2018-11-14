@@ -62,10 +62,6 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
                 this._delegate.spreadsheetStylePropertyMouseEnter(event, this);
             });
 
-            this._element.addEventListener("mouseleave", (event) => {
-                this._delegate.spreadsheetStylePropertyMouseLeave(event, this);
-            });
-
             this._element.copyHandler = this;
         }
     }
