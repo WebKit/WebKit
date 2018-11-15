@@ -30,6 +30,8 @@
 #import "PlatformUtilities.h"
 #import "TestProtocol.h"
 #import <WebKit/WKNavigationActionPrivate.h>
+#import <WebKit/WKProcessPoolPrivate.h>
+#import <WebKit/_WKProcessPoolConfiguration.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/mac/AppKitCompatibilityDeclarations.h>
 
@@ -431,9 +433,17 @@ TEST(WebKit, DecidePolicyForNavigationActionForTargetedFormSubmission)
     action = nullptr;
 }
 
-TEST(WebKit, DecidePolicyForNavigationActionForHyperlinkThatRedirects)
+enum class ShouldEnableProcessSwap { No, Yes };
+static void runDecidePolicyForNavigationActionForHyperlinkThatRedirects(ShouldEnableProcessSwap shouldEnableProcessSwap)
 {
-    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().processSwapsOnNavigation = shouldEnableProcessSwap == ShouldEnableProcessSwap::Yes ? YES : NO;
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
 
     auto window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:YES]);
     [[window contentView] addSubview:webView.get()];
@@ -479,6 +489,16 @@ TEST(WebKit, DecidePolicyForNavigationActionForHyperlinkThatRedirects)
     [TestProtocol unregister];
     newWebView = nullptr;
     action = nullptr;
+}
+
+TEST(WebKit, DecidePolicyForNavigationActionForHyperlinkThatRedirectsWithoutPSON)
+{
+    runDecidePolicyForNavigationActionForHyperlinkThatRedirects(ShouldEnableProcessSwap::No);
+}
+
+TEST(WebKit, DecidePolicyForNavigationActionForHyperlinkThatRedirectsWithPSON)
+{
+    runDecidePolicyForNavigationActionForHyperlinkThatRedirects(ShouldEnableProcessSwap::Yes);
 }
 
 TEST(WebKit, DecidePolicyForNavigationActionForPOSTFormSubmissionThatRedirectsToGET)

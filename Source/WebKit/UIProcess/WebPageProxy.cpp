@@ -4158,17 +4158,17 @@ void WebPageProxy::beginSafeBrowsingCheck(const URL&, WebFramePolicyListenerProx
 }
 #endif
 
-void WebPageProxy::decidePolicyForNavigationActionAsync(uint64_t frameID, const WebCore::SecurityOriginData& frameSecurityOrigin, uint64_t navigationID, NavigationActionData&& navigationActionData, const FrameInfoData& frameInfoData, uint64_t originatingPageID, const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&& request, IPC::FormDataReference&& requestBody, WebCore::ResourceResponse&& redirectResponse, const UserData& userData, WebCore::ShouldSkipSafeBrowsingCheck shouldSkipSafeBrowsingCheck, uint64_t listenerID)
+void WebPageProxy::decidePolicyForNavigationActionAsync(uint64_t frameID, WebCore::SecurityOriginData&& frameSecurityOrigin, uint64_t navigationID, NavigationActionData&& navigationActionData, FrameInfoData&& frameInfoData, uint64_t originatingPageID, const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&& request, IPC::FormDataReference&& requestBody, WebCore::ResourceResponse&& redirectResponse, const UserData& userData, WebCore::ShouldSkipSafeBrowsingCheck shouldSkipSafeBrowsingCheck, uint64_t listenerID)
 {
     auto* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
 
-    decidePolicyForNavigationAction(*frame, frameSecurityOrigin, navigationID, WTFMove(navigationActionData), frameInfoData, originatingPageID, originalRequest, WTFMove(request), WTFMove(requestBody), WTFMove(redirectResponse), userData, shouldSkipSafeBrowsingCheck, PolicyDecisionSender::create([this, protectedThis = makeRef(*this), frameID, listenerID] (auto... args) {
+    decidePolicyForNavigationAction(*frame, WTFMove(frameSecurityOrigin), navigationID, WTFMove(navigationActionData), WTFMove(frameInfoData), originatingPageID, originalRequest, WTFMove(request), WTFMove(requestBody), WTFMove(redirectResponse), userData, shouldSkipSafeBrowsingCheck, PolicyDecisionSender::create([this, protectedThis = makeRef(*this), frameID, listenerID] (auto... args) {
         m_process->send(Messages::WebPage::DidReceivePolicyDecision(frameID, listenerID, args...), m_pageID);
     }));
 }
 
-void WebPageProxy::decidePolicyForNavigationAction(WebFrameProxy& frame, const WebCore::SecurityOriginData& frameSecurityOrigin, uint64_t navigationID, NavigationActionData&& navigationActionData, const FrameInfoData& originatingFrameInfoData, uint64_t originatingPageID, const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&& request, IPC::FormDataReference&& requestBody, WebCore::ResourceResponse&& redirectResponse, const UserData& userData, WebCore::ShouldSkipSafeBrowsingCheck shouldSkipSafeBrowsingCheck, Ref<PolicyDecisionSender>&& sender)
+void WebPageProxy::decidePolicyForNavigationAction(WebFrameProxy& frame, WebCore::SecurityOriginData&& frameSecurityOrigin, uint64_t navigationID, NavigationActionData&& navigationActionData, FrameInfoData&& originatingFrameInfoData, uint64_t originatingPageID, const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&& request, IPC::FormDataReference&& requestBody, WebCore::ResourceResponse&& redirectResponse, const UserData& userData, WebCore::ShouldSkipSafeBrowsingCheck shouldSkipSafeBrowsingCheck, Ref<PolicyDecisionSender>&& sender)
 {
     LOG(Loading, "WebPageProxy::decidePolicyForNavigationAction - Original URL %s, current target URL %s", originalRequest.url().string().utf8().data(), request.url().string().utf8().data());
 
@@ -4190,6 +4190,16 @@ void WebPageProxy::decidePolicyForNavigationAction(WebFrameProxy& frame, const W
     if (navigationID)
         navigation = m_navigationState->navigation(navigationID);
 
+    // When process-swapping on a redirect, the navigationActionData / originatingFrameInfoData / frameSecurityOrigin provided by the fresh new WebProcess are inaccurate since
+    // the new process does not have sufficient information. To address the issue, we restore the information we stored on the NavigationAction during the original request
+    // policy decision.
+    if (navigationActionData.isRedirect && navigation) {
+        navigationActionData = navigation->lastNavigationAction();
+        navigationActionData.isRedirect = true;
+        originatingFrameInfoData = navigation->originatingFrameInfo();
+        frameSecurityOrigin = navigation->destinationFrameSecurityOrigin();
+    }
+
     if (auto targetBackForwardItemIdentifier = navigationActionData.targetBackForwardItemIdentifier) {
         if (auto* item = m_backForwardList->itemForID(*navigationActionData.targetBackForwardItemIdentifier)) {
             if (!navigation)
@@ -4203,23 +4213,10 @@ void WebPageProxy::decidePolicyForNavigationAction(WebFrameProxy& frame, const W
         navigation = m_navigationState->createLoadRequestNavigation(ResourceRequest(request), m_backForwardList->currentItem());
 
     uint64_t newNavigationID = navigation->navigationID();
-    navigation->setWasUserInitiated(!!navigationActionData.userGestureTokenIdentifier);
-#if USE(SYSTEM_PREVIEW)
-    navigation->setShouldForceDownload(!navigationActionData.downloadAttribute.isNull() || request.isSystemPreview());
-#else
-    navigation->setShouldForceDownload(!navigationActionData.downloadAttribute.isNull());
-#endif
     navigation->setCurrentRequest(ResourceRequest(request), m_process->coreProcessIdentifier());
-    navigation->setCurrentRequestIsRedirect(navigationActionData.isRedirect);
-    navigation->setTreatAsSameOriginNavigation(navigationActionData.treatAsSameOriginNavigation);
-    navigation->setHasOpenedFrames(navigationActionData.hasOpenedFrames);
-    if (navigationActionData.openedViaWindowOpenWithOpener)
-        navigation->setOpenedViaWindowOpenWithOpener();
-    navigation->setOpener(navigationActionData.opener);
-    navigation->setRequesterOrigin(navigationActionData.requesterOrigin);
-    navigation->setLockHistory(navigationActionData.lockHistory);
-    navigation->setLockBackForwardList(navigationActionData.lockBackForwardList);
-    navigation->setClientRedirectSourceForHistory(navigationActionData.clientRedirectSourceForHistory);
+    navigation->setLastNavigationAction(navigationActionData);
+    navigation->setOriginatingFrameInfo(originatingFrameInfoData);
+    navigation->setDestinationFrameSecurityOrigin(frameSecurityOrigin);
 
 #if ENABLE(CONTENT_FILTERING)
     if (frame.didHandleContentFilterUnblockNavigation(request))
@@ -4293,7 +4290,7 @@ void WebPageProxy::decidePolicyForNavigationAction(WebFrameProxy& frame, const W
     m_shouldSuppressAppLinksInNextNavigationPolicyDecision = false;
 }
 
-void WebPageProxy::decidePolicyForNavigationActionSync(uint64_t frameID, bool isMainFrame, const WebCore::SecurityOriginData& frameSecurityOrigin, uint64_t navigationID, NavigationActionData&& navigationActionData, const FrameInfoData& frameInfoData, uint64_t originatingPageID, const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&& request, IPC::FormDataReference&& requestBody, WebCore::ResourceResponse&& redirectResponse, const UserData& userData, WebCore::ShouldSkipSafeBrowsingCheck shouldSkipSafeBrowsingCheck, Messages::WebPageProxy::DecidePolicyForNavigationActionSync::DelayedReply&& reply)
+void WebPageProxy::decidePolicyForNavigationActionSync(uint64_t frameID, bool isMainFrame, WebCore::SecurityOriginData&& frameSecurityOrigin, uint64_t navigationID, NavigationActionData&& navigationActionData, FrameInfoData&& frameInfoData, uint64_t originatingPageID, const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&& request, IPC::FormDataReference&& requestBody, WebCore::ResourceResponse&& redirectResponse, const UserData& userData, WebCore::ShouldSkipSafeBrowsingCheck shouldSkipSafeBrowsingCheck, Messages::WebPageProxy::DecidePolicyForNavigationActionSync::DelayedReply&& reply)
 {
     auto sender = PolicyDecisionSender::create(WTFMove(reply));
 
@@ -4309,7 +4306,7 @@ void WebPageProxy::decidePolicyForNavigationActionSync(uint64_t frameID, bool is
         RELEASE_ASSERT(frame);
     }
 
-    decidePolicyForNavigationAction(*frame, frameSecurityOrigin, navigationID, WTFMove(navigationActionData), frameInfoData, originatingPageID, originalRequest, WTFMove(request), WTFMove(requestBody), WTFMove(redirectResponse), userData, shouldSkipSafeBrowsingCheck, sender.copyRef());
+    decidePolicyForNavigationAction(*frame, WTFMove(frameSecurityOrigin), navigationID, WTFMove(navigationActionData), WTFMove(frameInfoData), originatingPageID, originalRequest, WTFMove(request), WTFMove(requestBody), WTFMove(redirectResponse), userData, shouldSkipSafeBrowsingCheck, sender.copyRef());
 
     // If the client did not respond synchronously, proceed with the load.
     sender->send(PolicyAction::Use, navigationID, DownloadID(), std::nullopt);

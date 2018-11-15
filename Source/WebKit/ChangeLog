@@ -1,5 +1,49 @@
 2018-11-14  Chris Dumez  <cdumez@apple.com>
 
+        WebKit.DecidePolicyForNavigationActionForHyperlinkThatRedirects API fails when PSON is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=191640
+
+        Reviewed by Alex Christensen.
+
+        The issue was that when process-swapping on a redirect, the parameters provided by the new
+        WebContent process for navigationActionData / originatingFrameInfoData / frameSecurityOrigin
+        are not correct because it does not have sufficient information (it does not know a swap
+        happened).
+
+        To address the issue, we now store the navigationActionData / originatingFrameInfoData /
+        frameSecurityOrigin on the Navigation object whenever decidePolicyForNavigationAction is
+        called. If the decidePolicyForNavigationAction is for a redirect, use the ones we stored
+        on the Navigation object instead of the ones provided by the WebContent process. In case
+        of redirect, those do not change anyway.
+
+        This fixes all WebKit.DecidePolicyForNavigationAction* tests with PSON enabled.
+
+        * UIProcess/API/APINavigation.h:
+        (API::Navigation::currentRequestIsRedirect const):
+        (API::Navigation::wasUserInitiated const):
+        (API::Navigation::shouldForceDownload const):
+        (API::Navigation::treatAsSameOriginNavigation const):
+        (API::Navigation::hasOpenedFrames const):
+        (API::Navigation::openedViaWindowOpenWithOpener const):
+        (API::Navigation::opener const):
+        (API::Navigation::requesterOrigin const):
+        (API::Navigation::lockHistory const):
+        (API::Navigation::lockBackForwardList const):
+        (API::Navigation::clientRedirectSourceForHistory const):
+        (API::Navigation::setLastNavigationAction):
+        (API::Navigation::lastNavigationAction const):
+        (API::Navigation::setOriginatingFrameInfo):
+        (API::Navigation::originatingFrameInfo const):
+        (API::Navigation::setDestinationFrameSecurityOrigin):
+        (API::Navigation::destinationFrameSecurityOrigin const):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationActionAsync):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::decidePolicyForNavigationActionSync):
+        * UIProcess/WebPageProxy.h:
+
+2018-11-14  Chris Dumez  <cdumez@apple.com>
+
         WebKit.WebsiteDataStoreCustomPaths API test is failing when enabling process prewarming
         https://bugs.webkit.org/show_bug.cgi?id=191638
 
