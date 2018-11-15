@@ -146,7 +146,12 @@ static CSSPropertyID cssPropertyID(const CharacterType* propertyName, unsigned l
     }
     
     const Property* hashTableEntry = findProperty(name, length);
-    return hashTableEntry ? static_cast<CSSPropertyID>(hashTableEntry->id) : CSSPropertyInvalid;
+    if (hashTableEntry) {
+        auto propertyID = static_cast<CSSPropertyID>(hashTableEntry->id);
+        if (isEnabledCSSProperty(propertyID))
+            return propertyID;
+    }
+    return CSSPropertyInvalid;
 }
 
 static bool isAppleLegacyCssValueKeyword(const char* valueKeyword, unsigned length)
@@ -227,6 +232,9 @@ CSSPropertyParser::CSSPropertyParser(const CSSParserTokenRange& range, const CSS
 
 void CSSPropertyParser::addProperty(CSSPropertyID property, CSSPropertyID currentShorthand, Ref<CSSValue>&& value, bool important, bool implicit)
 {
+    if (!isEnabledCSSProperty(property))
+        return;
+
     int shorthandIndex = 0;
     bool setFromShorthand = false;
 
@@ -4978,12 +4986,8 @@ bool CSSPropertyParser::consumeFlex(bool important)
     return true;
 }
 
-bool CSSPropertyParser::consumeBorder(bool important)
+bool CSSPropertyParser::consumeBorder(RefPtr<CSSValue>& width, RefPtr<CSSValue>& style, RefPtr<CSSValue>& color)
 {
-    RefPtr<CSSValue> width;
-    RefPtr<CSSValue> style;
-    RefPtr<CSSValue> color;
-
     while (!width || !style || !color) {
         if (!width) {
             width = consumeLineWidth(m_range, m_context.mode, UnitlessQuirk::Forbid);
@@ -5013,15 +5017,28 @@ bool CSSPropertyParser::consumeBorder(bool important)
     if (!color)
         color = CSSValuePool::singleton().createImplicitInitialValue();
 
-    addExpandedPropertyForValue(CSSPropertyBorderWidth, width.releaseNonNull(), important);
-    addExpandedPropertyForValue(CSSPropertyBorderStyle, style.releaseNonNull(), important);
-    addExpandedPropertyForValue(CSSPropertyBorderColor, color.releaseNonNull(), important);
-    addExpandedPropertyForValue(CSSPropertyBorderImage, CSSValuePool::singleton().createImplicitInitialValue(), important);
+    return m_range.atEnd();
+}
+
+bool CSSPropertyParser::consume2ValueShorthand(const StylePropertyShorthand& shorthand, bool important)
+{
+    ASSERT(shorthand.length() == 2);
+    const CSSPropertyID* longhands = shorthand.properties();
+    RefPtr<CSSValue> start = parseSingleValue(longhands[0], shorthand.id());
+    if (!start)
+        return false;
+
+    RefPtr<CSSValue> end = parseSingleValue(longhands[1], shorthand.id());
+    bool endImplicit = !end;
+    if (endImplicit)
+        end = start;
+    addProperty(longhands[0], shorthand.id(), start.releaseNonNull(), important);
+    addProperty(longhands[1], shorthand.id(), end.releaseNonNull(), important, endImplicit);
 
     return m_range.atEnd();
 }
 
-bool CSSPropertyParser::consume4Values(const StylePropertyShorthand& shorthand, bool important)
+bool CSSPropertyParser::consume4ValueShorthand(const StylePropertyShorthand& shorthand, bool important)
 {
     ASSERT(shorthand.length() == 4);
     const CSSPropertyID* longhands = shorthand.properties();
@@ -5719,23 +5736,67 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
         // of -webkit-text-decoration completely.
         return consumeShorthandGreedily(webkitTextDecorationShorthand(), important);
     case CSSPropertyMargin:
-        return consume4Values(marginShorthand(), important);
+        return consume4ValueShorthand(marginShorthand(), important);
+    case CSSPropertyMarginBlock:
+        return consume2ValueShorthand(marginBlockShorthand(), important);
+    case CSSPropertyMarginInline:
+        return consume2ValueShorthand(marginInlineShorthand(), important);
     case CSSPropertyPadding:
-        return consume4Values(paddingShorthand(), important);
+        return consume4ValueShorthand(paddingShorthand(), important);
+    case CSSPropertyPaddingBlock:
+        return consume2ValueShorthand(paddingBlockShorthand(), important);
+    case CSSPropertyPaddingInline:
+        return consume2ValueShorthand(paddingInlineShorthand(), important);
 #if ENABLE(CSS_SCROLL_SNAP)
     case CSSPropertyScrollSnapMargin:
-        return consume4Values(scrollSnapMarginShorthand(), important);
+        return consume4ValueShorthand(scrollSnapMarginShorthand(), important);
     case CSSPropertyScrollPadding:
-        return consume4Values(scrollPaddingShorthand(), important);
+        return consume4ValueShorthand(scrollPaddingShorthand(), important);
 #endif
     case CSSPropertyWebkitTextEmphasis:
         return consumeShorthandGreedily(webkitTextEmphasisShorthand(), important);
     case CSSPropertyOutline:
         return consumeShorthandGreedily(outlineShorthand(), important);
+    case CSSPropertyBorderInline: {
+        RefPtr<CSSValue> width;
+        RefPtr<CSSValue> style;
+        RefPtr<CSSValue> color;
+        if (!consumeBorder(width, style, color))
+            return false;
+
+        addExpandedPropertyForValue(CSSPropertyBorderInlineWidth, width.releaseNonNull(), important);
+        addExpandedPropertyForValue(CSSPropertyBorderInlineStyle, style.releaseNonNull(), important);
+        addExpandedPropertyForValue(CSSPropertyBorderInlineColor, color.releaseNonNull(), important);
+        return true;
+    }
+    case CSSPropertyBorderInlineColor:
+        return consume2ValueShorthand(borderInlineColorShorthand(), important);
+    case CSSPropertyBorderInlineStyle:
+        return consume2ValueShorthand(borderInlineStyleShorthand(), important);
+    case CSSPropertyBorderInlineWidth:
+        return consume2ValueShorthand(borderInlineWidthShorthand(), important);
     case CSSPropertyBorderInlineStart:
         return consumeShorthandGreedily(borderInlineStartShorthand(), important);
     case CSSPropertyBorderInlineEnd:
         return consumeShorthandGreedily(borderInlineEndShorthand(), important);
+    case CSSPropertyBorderBlock: {
+        RefPtr<CSSValue> width;
+        RefPtr<CSSValue> style;
+        RefPtr<CSSValue> color;
+        if (!consumeBorder(width, style, color))
+            return false;
+
+        addExpandedPropertyForValue(CSSPropertyBorderBlockWidth, width.releaseNonNull(), important);
+        addExpandedPropertyForValue(CSSPropertyBorderBlockStyle, style.releaseNonNull(), important);
+        addExpandedPropertyForValue(CSSPropertyBorderBlockColor, color.releaseNonNull(), important);
+        return true;
+    }
+    case CSSPropertyBorderBlockColor:
+        return consume2ValueShorthand(borderBlockColorShorthand(), important);
+    case CSSPropertyBorderBlockStyle:
+        return consume2ValueShorthand(borderBlockStyleShorthand(), important);
+    case CSSPropertyBorderBlockWidth:
+        return consume2ValueShorthand(borderBlockWidthShorthand(), important);
     case CSSPropertyBorderBlockStart:
         return consumeShorthandGreedily(borderBlockStartShorthand(), important);
     case CSSPropertyBorderBlockEnd:
@@ -5773,11 +5834,11 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
         return true;
     }
     case CSSPropertyBorderColor:
-        return consume4Values(borderColorShorthand(), important);
+        return consume4ValueShorthand(borderColorShorthand(), important);
     case CSSPropertyBorderStyle:
-        return consume4Values(borderStyleShorthand(), important);
+        return consume4ValueShorthand(borderStyleShorthand(), important);
     case CSSPropertyBorderWidth:
-        return consume4Values(borderWidthShorthand(), important);
+        return consume4ValueShorthand(borderWidthShorthand(), important);
     case CSSPropertyBorderTop:
         return consumeShorthandGreedily(borderTopShorthand(), important);
     case CSSPropertyBorderRight:
@@ -5786,8 +5847,19 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
         return consumeShorthandGreedily(borderBottomShorthand(), important);
     case CSSPropertyBorderLeft:
         return consumeShorthandGreedily(borderLeftShorthand(), important);
-    case CSSPropertyBorder:
-        return consumeBorder(important);
+    case CSSPropertyBorder: {
+        RefPtr<CSSValue> width;
+        RefPtr<CSSValue> style;
+        RefPtr<CSSValue> color;
+        if (!consumeBorder(width, style, color))
+            return false;
+
+        addExpandedPropertyForValue(CSSPropertyBorderWidth, width.releaseNonNull(), important);
+        addExpandedPropertyForValue(CSSPropertyBorderStyle, style.releaseNonNull(), important);
+        addExpandedPropertyForValue(CSSPropertyBorderColor, color.releaseNonNull(), important);
+        addExpandedPropertyForValue(CSSPropertyBorderImage, CSSValuePool::singleton().createImplicitInitialValue(), important);
+        return true;
+    }
     case CSSPropertyBorderImage:
         return consumeBorderImage(property, important);
     case CSSPropertyWebkitMaskPosition:

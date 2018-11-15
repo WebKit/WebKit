@@ -1461,3 +1461,11 @@ DataListElementEnabled:
   category: internal
   webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(DATALIST_ELEMENT)
+
+CSSLogicalEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "CSS Logical Properties and Values"
+  humanReadableDescription: "Enable CSS Logical Properties and Values"
+  webcoreBinding: RuntimeEnabledFeatures
+  category: internal

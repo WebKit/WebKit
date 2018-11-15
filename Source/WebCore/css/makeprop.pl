@@ -60,6 +60,7 @@ my %defines = map { $_ => 1 } split(/ /, $defines);
 
 my @names;
 my @internalProprerties;
+my %runtimeFlags;
 my $numPredefinedProperties = 2;
 my %nameIsInherited;
 my %nameIsHighPriority;
@@ -199,6 +200,8 @@ sub addProperty($$)
                 } elsif ($codegenOptionName eq "internal-only") {
                     # internal-only properties exist to make it easier to parse compound properties (e.g. background-repeat) as if they were shorthands.
                     push @internalProprerties, $name
+                } elsif ($codegenOptionName eq "runtime-flag") {
+                    $runtimeFlags{$name} = $codegenProperties->{"runtime-flag"};
                 } else {
                     die "Unrecognized codegen property \"$codegenOptionName\" for $name property.";
                 }
@@ -243,6 +246,7 @@ print GPERF << "EOF";
 #include \"CSSProperty.h\"
 #include \"CSSPropertyNames.h\"
 #include \"HashTools.h\"
+#include "RuntimeEnabledFeatures.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/WTFString.h>
@@ -321,6 +325,22 @@ print GPERF << "EOF";
         return true;
     default:
         return false;
+    }
+}
+
+bool isEnabledCSSProperty(const CSSPropertyID id)
+{
+    switch (id) {
+EOF
+
+foreach my $name (keys %runtimeFlags) {
+  print GPERF "    case CSSPropertyID::CSSProperty" . $nameToId{$name} . ":\n";
+  print GPERF "        return RuntimeEnabledFeatures::sharedFeatures()." . $runtimeFlags{$name} . "Enabled();\n";
+}
+
+print GPERF << "EOF";
+    default:
+        return true;
     }
 }
 
@@ -471,6 +491,7 @@ print HEADER "const CSSPropertyID lastHighPriorityProperty = CSSProperty" . $nam
 print HEADER << "EOF";
 
 bool isInternalCSSProperty(const CSSPropertyID);
+bool isEnabledCSSProperty(const CSSPropertyID);
 const char* getPropertyName(CSSPropertyID);
 const WTF::AtomicString& getPropertyNameAtomicString(CSSPropertyID id);
 WTF::String getPropertyNameString(CSSPropertyID id);

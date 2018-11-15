@@ -1,3 +1,102 @@
+2018-11-15  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-logical] Implement flow-relative margin, padding and border shorthands
+        https://bugs.webkit.org/show_bug.cgi?id=188697
+
+        Reviewed by Simon Fraser and Antti Koivisto.
+
+        Tests: imported/w3c/web-platform-tests/css/css-logical/logical-box-border-color.html
+               imported/w3c/web-platform-tests/css/css-logical/logical-box-border-shorthands.html
+               imported/w3c/web-platform-tests/css/css-logical/logical-box-border-style.html
+               imported/w3c/web-platform-tests/css/css-logical/logical-box-border-width.html
+               imported/w3c/web-platform-tests/css/css-logical/logical-box-margin.html
+               imported/w3c/web-platform-tests/css/css-logical/logical-box-padding.html
+               webexposed/css-properties-as-js-properties.html
+               webexposed/css-properties-behind-flags.html
+               webexposed/css-property-listing.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyinStyle):
+        Allow the new properties to serialize their computed value.
+
+        (WebCore::ComputedStyleExtractor::getCSSPropertyValuesFor2SidesShorthand):
+        (WebCore::ComputedStyleExtractor::getCSSPropertyValuesFor4SidesShorthand):
+        * css/CSSComputedStyleDeclaration.h:
+        Rename getCSSPropertyValuesForSidesShorthand to getCSSPropertyValuesFor4SidesShorthand,
+        and add analogous getCSSPropertyValuesFor2SidesShorthand for serializing 2-sided
+        shorthands.
+
+        * css/CSSProperties.json:
+        Add the new properties behind the CSSLogicalEnabled runtime flag.
+
+        * css/CSSStyleDeclaration.cpp:
+        (WebCore::CSSStyleDeclaration::supportedPropertyNames const):
+        Prevent CSS properties disabled behind a runtime flag from being exposed in
+        style declarations.
+
+        * css/StyleProperties.cpp:
+        (WebCore::StyleProperties::getPropertyValue const):
+        Allow the new properties to serialize their specified value.
+
+        (WebCore::StyleProperties::get2Values const):
+        Add get2Values, analogous to get4Values, for serializing 2-sided shorthands.
+
+        (WebCore::StyleProperties::borderPropertyValue const):
+        Allow borderPropertyValue to serialize arbitrary multi-sided border shorthands
+        corresponding to width, style and color.
+
+        (WebCore::MutableStyleProperties::setProperty):
+        Prevent CSS properties disabled behind a runtime flag from being set a value.
+
+        (WebCore::StyleProperties::asText const):
+        Allow the new properties to be serialized in cssText.
+        Prevent CSS shorthands disabled behind a runtime flag from appearing in cssText,
+        and serialize the longhands instead. Note that there could be another shorthand
+        available which is enabled, but a proper solution would require bug 190496.
+
+        * css/StyleProperties.h:
+        Update declarations of borderPropertyValue and get2Values.
+
+        * css/makeprop.pl:
+        (addProperty):
+        Add isEnabledCSSProperty function for checking that a CSS property is not
+        disabled behind a runtime flag.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::cssPropertyID):
+        Prevent CSS properties disabled behind a runtime flag from being exposed in
+        computed styles.
+
+        (WebCore::CSSPropertyParser::addProperty):
+        Prevent CSS properties disabled behind a runtime flag from being set a value.
+
+        (WebCore::CSSPropertyParser::consumeBorder):
+        Change consumeBorder to provide the caller with the parsed values instead of
+        setting properties. Then the caller can decide to which properties the values
+        should be set, and whether border-image should be reset or not.
+
+        (WebCore::CSSPropertyParser::consume2ValueShorthand):
+        (WebCore::CSSPropertyParser::consume4ValueShorthand):
+        Rename consume4Values to consume4ValueShorthand, and add analogous
+        consume2ValueShorthand for parsing shorthands with two longhands.
+
+        (WebCore::CSSPropertyParser::parseShorthand):
+        Allow the new properties to be parsed.
+
+        * css/parser/CSSPropertyParser.h:
+        Update declarations of consumeBorder, consume2ValueShorthand and
+        consume4ValueShorthand.
+
+        * inspector/agents/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::getSupportedCSSProperties):
+        Prevent CSS properties disabled behind a runtime flag from being exposed in
+        the CSS inspector tool.
+
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setCSSLogicalEnabled):
+        (WebCore::RuntimeEnabledFeatures::cssLogicalEnabled const):
+        Add the CSSLogicalEnabled runtime flag.
+
 2018-11-15  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r238220.

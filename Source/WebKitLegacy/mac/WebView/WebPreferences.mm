@@ -668,6 +668,7 @@ public:
         [NSNumber numberWithBool:YES], WebKitPeerConnectionEnabledPreferenceKey,
 #endif
         [NSNumber numberWithBool:YES], WebKitSelectionAcrossShadowBoundariesEnabledPreferenceKey,
+        [NSNumber numberWithBool:NO], WebKitCSSLogicalEnabledPreferenceKey,
 #if ENABLE(INTERSECTION_OBSERVER)
         @NO, WebKitIntersectionObserverEnabledPreferenceKey,
 #endif
@@ -3387,6 +3388,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setSelectionAcrossShadowBoundariesEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitSelectionAcrossShadowBoundariesEnabledPreferenceKey];
+}
+
+- (BOOL)cssLogicalEnabled
+{
+    return [self _boolValueForKey:WebKitCSSLogicalEnabledPreferenceKey];
+}
+
+- (void)setCSSLogicalEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitCSSLogicalEnabledPreferenceKey];
 }
 
 @end

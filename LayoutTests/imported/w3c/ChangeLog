@@ -1,3 +1,42 @@
+2018-11-15  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-logical] Implement flow-relative margin, padding and border shorthands
+        https://bugs.webkit.org/show_bug.cgi?id=188697
+
+        Reviewed by Simon Fraser and Antti Koivisto.
+
+        Import tests from the WPT test suite for CSS Logical Properties and Values,
+        and enable the CSSLogicalEnabled runtime flag for them.
+
+        They still have some failures because sideways writing modes have not been
+        implemented yet (https://bugs.webkit.org/show_bug.cgi?id=166941).
+
+        * web-platform-tests/css/css-logical/logical-box-border-color-expected.txt:
+        * web-platform-tests/css/css-logical/logical-box-border-color.html:
+        * web-platform-tests/css/css-logical/logical-box-border-shorthands-expected.txt:
+        * web-platform-tests/css/css-logical/logical-box-border-shorthands.html:
+        * web-platform-tests/css/css-logical/logical-box-border-style-expected.txt:
+        * web-platform-tests/css/css-logical/logical-box-border-style.html:
+        * web-platform-tests/css/css-logical/logical-box-border-width-expected.txt:
+        * web-platform-tests/css/css-logical/logical-box-border-width.html:
+        * web-platform-tests/css/css-logical/logical-box-inset-expected.txt:
+        * web-platform-tests/css/css-logical/logical-box-inset.html:
+        * web-platform-tests/css/css-logical/logical-box-margin-expected.txt:
+        * web-platform-tests/css/css-logical/logical-box-margin.html:
+        * web-platform-tests/css/css-logical/logical-box-padding-expected.txt:
+        * web-platform-tests/css/css-logical/logical-box-padding.html:
+        * web-platform-tests/css/css-logical/logical-box-size.html:
+        * web-platform-tests/css/css-logical/resources/test-box-properties.js:
+        (export.createBoxPropertyGroup):
+        (export.createSizingPropertyGroup):
+        (export.runTests.set test):
+        (export.runTests):
+        * web-platform-tests/css/css-logical/resources/test-shared.js: Added.
+        (export.testCSSValues):
+        (export.testComputedValues):
+        (export.makeDeclaration):
+        * web-platform-tests/css/css-logical/resources/w3c-import.log:
+
 2018-11-15  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r238220.
