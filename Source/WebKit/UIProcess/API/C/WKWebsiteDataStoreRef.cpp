@@ -611,7 +611,6 @@ void WKWebsiteDataStoreSetWebAuthenticationMockConfiguration(WKWebsiteDataStoreR
         if (subStage == "msg")
             hid.subStage = MockWebAuthenticationConfiguration::Hid::SubStage::Msg;
 
-
         auto error = WebKit::toImpl(static_cast<WKStringRef>(WKDictionaryGetItemForKey(hidRef, adoptWK(WKStringCreateWithUTF8CString("Error")).get())))->string();
         if (error == "success")
             hid.error = MockWebAuthenticationConfiguration::Hid::Error::Success;

@@ -36,7 +36,6 @@ class CtapHidDriver;
 
 class CtapHidAuthenticator final : public Authenticator {
 public:
-    // FIXME(191526): Should store AuthenticatorSupportedOptions::UserVerificationAvailability.
     static Ref<CtapHidAuthenticator> create(std::unique_ptr<CtapHidDriver>&& driver, fido::AuthenticatorGetInfoResponse&& info)
     {
         return adoptRef(*new CtapHidAuthenticator(WTFMove(driver), WTFMove(info)));

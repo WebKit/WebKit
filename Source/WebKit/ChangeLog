@@ -1,3 +1,11 @@
+2018-11-14  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, comment improvement over r238166.
+
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreSetWebAuthenticationMockConfiguration):
+        * UIProcess/WebAuthentication/fido/CtapHidAuthenticator.h:
+
 2018-11-15  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Use a real nonce for CTAPHID_INIT
