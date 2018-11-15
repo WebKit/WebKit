@@ -1,3 +1,13 @@
+2018-11-15  Antti Koivisto  <antti@apple.com>
+
+        Remove fonts from CSSFontFaceSet safely
+        https://bugs.webkit.org/show_bug.cgi?id=191676
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/text/font-face-set-remove-safely-expected.txt: Added.
+        * fast/text/font-face-set-remove-safely.html: Added.
+
 2018-11-14  Timothy Hatcher  <timothy@apple.com>
 
         Default the view background color and text color to different values when in dark mode.
