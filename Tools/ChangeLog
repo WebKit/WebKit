@@ -1,3 +1,14 @@
+2018-11-15  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Check for specific process instead of using data migrator (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=191551
+        <rdar://problem/45993156>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDevice.is_usable): Use software_variant instead of software_version for watchOS.
+
 2018-11-15  Daniel Bates  <dabates@apple.com>
 
         [iOS] Shift + Tab does not focus previous field

@@ -500,7 +500,7 @@ class SimulatedDevice(object):
 
         if self.device_type.software_variant == 'iOS':
             home_screen_service = 'com.apple.springboard.services'
-        elif self.device_type.software_version == 'watchOS':
+        elif self.device_type.software_variant == 'watchOS':
             home_screen_service = 'com.apple.carousel.sessionservice'
         else:
             _log.debug('{} has no service to check if the device is usable'.format(self.device_type.software_variant))
