@@ -49,17 +49,15 @@ function enqueueOperation(peerConnection, operation)
             operation().@then(resolve, reject).@then(runNext, runNext);
         });
 
-        if (operations.length == 1)
+        if (operations.length === 1)
             operations[0]();
     });
 }
 
-function objectAndCallbacksOverload(args, functionName, objectInfo, promiseMode)
+function objectOverload(objectArg, functionName, objectInfo, promiseMode)
 {
     "use strict";
 
-    let argsCount = args.length;
-    let objectArg = args[0];
     let objectArgOk = false;
 
     const hasMatchingType = objectArg instanceof objectInfo.constructor;
@@ -81,17 +79,6 @@ function objectAndCallbacksOverload(args, functionName, objectInfo, promiseMode)
         return @Promise.@reject(new @TypeError(`Argument 1 ('${objectInfo.argName}') to RTCPeerConnection.${functionName} must be an instance of ${objectInfo.argType}`));
 
     return promiseMode(objectArg);
-}
-
-function callbacksAndDictionaryOverload(args, functionName, promiseMode)
-{
-    "use strict";
-
-    const options = args[0];
-    if (args.length && !@isDictionary(options))
-        return @Promise.@reject(new @TypeError(`Argument 1 ('options') to RTCPeerConnection.${functionName} must be a dictionary`));
-
-    return promiseMode(options);
 }
 
 function isRTCPeerConnection(connection)

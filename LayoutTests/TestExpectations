@@ -1270,7 +1270,7 @@ media/session [ Skip ]
 
 webrtc/simulcast-h264.html [ Slow ]
 webrtc/datachannel/multiple-connections.html [ Slow ]
-webkit.org/b/171094 imported/w3c/web-platform-tests/webrtc/rtcpeerconnection/rtcpeerconnection-idl.html [ Failure ]
+webkit.org/b/171094 imported/w3c/web-platform-tests/webrtc/rtcpeerconnection/rtcpeerconnection-idl.html [ Failure DumpJSConsoleLogInStdErr ]
 webkit.org/b/172f21 imported/w3c/web-platform-tests/webrtc/getstats.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-offer.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-answer.html [ Failure ]

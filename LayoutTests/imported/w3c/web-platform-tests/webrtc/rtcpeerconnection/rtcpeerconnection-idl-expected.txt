@@ -24,11 +24,11 @@ PASS RTCPeerConnection interface: existence and properties of interface prototyp
 PASS RTCPeerConnection interface: existence and properties of interface prototype object's @@unscopables property 
 PASS RTCPeerConnection interface: operation createOffer(RTCOfferOptions) 
 PASS RTCPeerConnection interface: operation createAnswer(RTCAnswerOptions) 
-FAIL RTCPeerConnection interface: operation setLocalDescription(RTCSessionDescription) assert_equals: property has wrong .length expected 1 but got 0
+PASS RTCPeerConnection interface: operation setLocalDescription(RTCSessionDescription) 
 PASS RTCPeerConnection interface: attribute localDescription 
 PASS RTCPeerConnection interface: attribute currentLocalDescription 
 PASS RTCPeerConnection interface: attribute pendingLocalDescription 
-FAIL RTCPeerConnection interface: operation setRemoteDescription(RTCSessionDescription) assert_equals: property has wrong .length expected 1 but got 0
+PASS RTCPeerConnection interface: operation setRemoteDescription(RTCSessionDescription) 
 PASS RTCPeerConnection interface: attribute remoteDescription 
 PASS RTCPeerConnection interface: attribute currentRemoteDescription 
 PASS RTCPeerConnection interface: attribute pendingRemoteDescription 
@@ -48,11 +48,15 @@ PASS RTCPeerConnection interface: attribute onicegatheringstatechange
 FAIL RTCPeerConnection interface: operation createOffer(RTCSessionDescriptionCallback, RTCPeerConnectionErrorCallback, RTCOfferOptions) assert_throws: calling operation with this = null didn't throw TypeError function "function () {
             fn.apply(obj, args);
         }" did not throw
-FAIL RTCPeerConnection interface: operation setLocalDescription(RTCSessionDescription, VoidFunction, RTCPeerConnectionErrorCallback) assert_equals: property has wrong .length expected 1 but got 0
+FAIL RTCPeerConnection interface: operation setLocalDescription(RTCSessionDescription, VoidFunction, RTCPeerConnectionErrorCallback) assert_throws: calling operation with this = null didn't throw TypeError function "function () {
+            fn.apply(obj, args);
+        }" did not throw
 FAIL RTCPeerConnection interface: operation createAnswer(RTCSessionDescriptionCallback, RTCPeerConnectionErrorCallback) assert_throws: calling operation with this = null didn't throw TypeError function "function () {
             fn.apply(obj, args);
         }" did not throw
-FAIL RTCPeerConnection interface: operation setRemoteDescription(RTCSessionDescription, VoidFunction, RTCPeerConnectionErrorCallback) assert_equals: property has wrong .length expected 1 but got 0
+FAIL RTCPeerConnection interface: operation setRemoteDescription(RTCSessionDescription, VoidFunction, RTCPeerConnectionErrorCallback) assert_throws: calling operation with this = null didn't throw TypeError function "function () {
+            fn.apply(obj, args);
+        }" did not throw
 FAIL RTCPeerConnection interface: operation addIceCandidate(RTCIceCandidate, VoidFunction, RTCPeerConnectionErrorCallback) assert_throws: calling operation with this = null didn't throw TypeError function "function () {
             fn.apply(obj, args);
         }" did not throw

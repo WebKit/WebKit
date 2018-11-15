@@ -52,12 +52,9 @@ function createOffer()
     if (!@isRTCPeerConnection(this))
         return @Promise.@reject(@makeThisTypeError("RTCPeerConnection", "createOffer"));
 
-    const peerConnection = this;
-
-    return @callbacksAndDictionaryOverload(arguments, "createOffer", function (options) {
-        return @enqueueOperation(peerConnection, function () {
-            return peerConnection.@queuedCreateOffer(options);
-        });
+    const offerOptions = arguments[0];
+    return @enqueueOperation(this, () => {
+        return this.@queuedCreateOffer(offerOptions);
     });
 }
 
@@ -68,23 +65,21 @@ function createAnswer()
     if (!@isRTCPeerConnection(this))
         return @Promise.@reject(@makeThisTypeError("RTCPeerConnection", "createAnswer"));
 
-    const peerConnection = this;
-
-    return @callbacksAndDictionaryOverload(arguments, "createAnswer", function (options) {
-        return @enqueueOperation(peerConnection, function () {
-            return peerConnection.@queuedCreateAnswer(options);
-        });
+    const answerOptions = arguments[0];
+    return @enqueueOperation(this, () => {
+        return this.@queuedCreateAnswer(answerOptions);
     });
 }
 
-function setLocalDescription()
+function setLocalDescription(description)
 {
     "use strict";
 
     if (!@isRTCPeerConnection(this))
         return @Promise.@reject(@makeThisTypeError("RTCPeerConnection", "setLocalDescription"));
 
-    const peerConnection = this;
+    if (arguments.length < 1)
+        return @Promise.@reject(new @TypeError("Not enough arguments"));
 
     // FIXME 169644: According the spec, we should throw when receiving a RTCSessionDescription.
     const objectInfo = {
@@ -93,21 +88,22 @@ function setLocalDescription()
         "argType": "RTCSessionDescription",
         "maybeDictionary": "true"
     };
-    return @objectAndCallbacksOverload(arguments, "setLocalDescription", objectInfo, function (description) {
-        return @enqueueOperation(peerConnection, function () {
-            return peerConnection.@queuedSetLocalDescription(description);
+    return @objectOverload(description, "setLocalDescription", objectInfo, (description) => {
+        return @enqueueOperation(this, () => {
+            return this.@queuedSetLocalDescription(description);
         });
     });
 }
 
-function setRemoteDescription()
+function setRemoteDescription(description)
 {
     "use strict";
 
     if (!@isRTCPeerConnection(this))
         return @Promise.@reject(@makeThisTypeError("RTCPeerConnection", "setRemoteDescription"));
 
-    const peerConnection = this;
+    if (arguments.length < 1)
+        return @Promise.@reject(new @TypeError("Not enough arguments"));
 
     // FIXME: According the spec, we should only expect RTCSessionDescriptionInit.
     const objectInfo = {
@@ -116,9 +112,9 @@ function setRemoteDescription()
         "argType": "RTCSessionDescription",
         "maybeDictionary": "true"
     };
-    return @objectAndCallbacksOverload(arguments, "setRemoteDescription", objectInfo, function (description) {
-        return @enqueueOperation(peerConnection, function () {
-            return peerConnection.@queuedSetRemoteDescription(description);
+    return @objectOverload(description, "setRemoteDescription", objectInfo, (description) => {
+        return @enqueueOperation(this, () => {
+            return this.@queuedSetRemoteDescription(description);
         });
     });
 }
@@ -133,8 +129,6 @@ function addIceCandidate(candidate)
     if (arguments.length < 1)
         return @Promise.@reject(new @TypeError("Not enough arguments"));
 
-    const peerConnection = this;
-
     const objectInfo = {
         "constructor": @RTCIceCandidate,
         "argName": "candidate",
@@ -142,9 +136,9 @@ function addIceCandidate(candidate)
         "maybeDictionary": "true",
         "defaultsToNull" : "true"
     };
-    return @objectAndCallbacksOverload(arguments, "addIceCandidate", objectInfo, function (candidate) {
-        return @enqueueOperation(peerConnection, function () {
-            return peerConnection.@queuedAddIceCandidate(candidate);
+    return @objectOverload(candidate, "addIceCandidate", objectInfo, (candidate) => {
+        return @enqueueOperation(this, () => {
+            return this.@queuedAddIceCandidate(candidate);
         });
     });
 }

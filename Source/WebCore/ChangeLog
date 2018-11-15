@@ -1,3 +1,25 @@
+2018-11-15  Youenn Fablet  <youenn@apple.com>
+
+        Update RTCPeerConnection JS built-ins to be closer to specWe
+        https://bugs.webkit.org/show_bug.cgi?id=191665
+
+        Reviewed by Eric Carlson.
+
+        Simplify JS built-ins since we no longer need to support callback versions of the API.
+        Make sure to have the right number of parameters in the JS built-in functions.
+        Make some simplification to the code.
+        Covered by existing tests and rebased test.
+
+        * Modules/mediastream/RTCPeerConnection.js:
+        (createOffer):
+        (createAnswer):
+        (setLocalDescription):
+        (setRemoteDescription):
+        (addIceCandidate):
+        * Modules/mediastream/RTCPeerConnectionInternals.js:
+        (enqueueOperation):
+        (callbacksAndDictionaryOverload): Deleted.
+
 2018-11-15  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION(r238090): Composited iframe contents disappear after switching tabs in Safari
