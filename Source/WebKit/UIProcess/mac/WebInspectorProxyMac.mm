@@ -210,23 +210,6 @@ void WebInspectorProxy::attachmentDidMoveToWindow(NSWindow *newWindow)
     }
 }
 
-void WebInspectorProxy::setInspectorWindowFrame(WKRect& frame)
-{
-    if (m_isAttached)
-        return;
-
-    [m_inspectorWindow setFrame:NSMakeRect(frame.origin.x, frame.origin.y, frame.size.width, frame.size.height) display:YES];
-}
-
-WKRect WebInspectorProxy::inspectorWindowFrame()
-{
-    if (m_isAttached)
-        return WKRectMake(0, 0, 0, 0);
-
-    NSRect frame = m_inspectorWindow.get().frame;
-    return WKRectMake(frame.origin.x, frame.origin.y, frame.size.width, frame.size.height);
-}
-
 void WebInspectorProxy::updateInspectorWindowTitle() const
 {
     if (!m_inspectorWindow)

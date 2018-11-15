@@ -353,9 +353,7 @@ void WebInspectorProxy::createInspectorPage(IPC::Attachment connectionIdentifier
     if (!m_inspectorPage)
         return;
 
-    m_connectionIdentifier = WTFMove(connectionIdentifier);
-
-    m_inspectorPage->process().send(Messages::WebInspectorUI::EstablishConnection(m_connectionIdentifier, m_inspectedPage->pageID(), m_underTest, inspectionLevel()), m_inspectorPage->pageID());
+    m_inspectorPage->process().send(Messages::WebInspectorUI::EstablishConnection(WTFMove(connectionIdentifier), m_inspectedPage->pageID(), m_underTest, inspectionLevel()), m_inspectorPage->pageID());
 
     if (!m_underTest) {
         m_canAttach = platformCanAttach(canAttach);
@@ -436,8 +434,6 @@ void WebInspectorProxy::closeFrontendPageAndWindow()
     m_isAttached = false;
     m_canAttach = false;
     m_underTest = false;
-
-    m_connectionIdentifier = IPC::Attachment();
 
     platformCloseFrontendPageAndWindow();
 }

@@ -54,9 +54,6 @@ public:
     void didClose(IPC::Connection&) override { close(); }
     void didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference, IPC::StringReference) override { close(); }
 
-    // Called by WebInspector messages
-    void connectionEstablished();
-
     void show();
     void close();
 

@@ -107,9 +107,6 @@ public:
     void windowFullScreenDidChange();
     NSWindow* inspectorWindow() const { return m_inspectorWindow.get(); }
 
-    void setInspectorWindowFrame(WKRect&);
-    WKRect inspectorWindowFrame();
-
     void closeFrontendPage();
     void closeFrontendAfterInactivityTimerFired();
 
@@ -242,8 +239,6 @@ private:
     bool m_elementSelectionActive { false };
     bool m_ignoreElementSelectionChange { false };
     bool m_isOpening { false };
-
-    IPC::Attachment m_connectionIdentifier;
 
     AttachmentSide m_attachmentSide {AttachmentSide::Bottom};
 

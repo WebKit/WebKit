@@ -1,3 +1,19 @@
+2018-11-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove unused WebInspectorProxy code
+        https://bugs.webkit.org/show_bug.cgi?id=191674
+
+        Reviewed by Dean Jackson.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::createInspectorPage):
+        (WebKit::WebInspectorProxy::closeFrontendPageAndWindow):
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::setInspectorWindowFrame): Deleted.
+        (WebKit::WebInspectorProxy::inspectorWindowFrame): Deleted.
+        * WebProcess/WebPage/WebInspector.h:
+
 2018-11-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Enable process swap on cross-site navigation by default on macOS
