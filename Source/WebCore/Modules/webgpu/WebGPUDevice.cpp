@@ -28,10 +28,12 @@
 
 #if ENABLE(WEBGPU)
 
+#include "GPUCommandBuffer.h"
 #include "GPUPipelineStageDescriptor.h"
 #include "GPURenderPipelineDescriptor.h"
 #include "GPUShaderModuleDescriptor.h"
 #include "Logging.h"
+#include "WebGPUCommandBuffer.h"
 #include "WebGPUPipelineStageDescriptor.h"
 #include "WebGPURenderPipeline.h"
 #include "WebGPURenderPipelineDescriptor.h"
@@ -115,6 +117,11 @@ RefPtr<WebGPURenderPipeline> WebGPUDevice::createRenderPipeline(WebGPURenderPipe
     }
 
     return WebGPURenderPipeline::create(m_device->createRenderPipeline(GPURenderPipelineDescriptor { WTFMove(vertexStage), WTFMove(fragmentStage), static_cast<GPURenderPipelineDescriptor::PrimitiveTopology>(descriptor.primitiveTopology) }));
+}
+
+RefPtr<WebGPUCommandBuffer> WebGPUDevice::createCommandBuffer() const
+{
+    return WebGPUCommandBuffer::create(m_device->createCommandBuffer());
 }
 
 } // namespace WebCore

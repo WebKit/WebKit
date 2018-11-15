@@ -45,6 +45,19 @@ RefPtr<GPURenderPipeline> GPUDevice::createRenderPipeline(GPURenderPipelineDescr
     return GPURenderPipeline::create(*this, WTFMove(descriptor));
 }
 
+RefPtr<GPUCommandBuffer> GPUDevice::createCommandBuffer()
+{
+    return GPUCommandBuffer::create(*this);
+}
+
+RefPtr<GPUQueue> GPUDevice::getQueue()
+{
+    if (!m_queue)
+        m_queue = GPUQueue::create(*this);
+
+    return m_queue;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEBGPU)

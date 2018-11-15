@@ -23,46 +23,54 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+#import "GPUCommandBuffer.h"
 
 #if ENABLE(WEBGPU)
 
-#include "GPUDevice.h"
-#include "WebGPUAdapter.h"
+#import "GPUDevice.h"
+#import "GPUQueue.h"
+#import "Logging.h"
 
-#include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#import <Metal/Metal.h>
+#import <wtf/BlockObjCExceptions.h>
 
 namespace WebCore {
 
-class ScriptExecutionContext;
-class WebGPUCommandBuffer;
-class WebGPURenderPipeline;
-class WebGPUShaderModule;
+RefPtr<GPUCommandBuffer> GPUCommandBuffer::create(GPUDevice& device)
+{
+    if (!device.platformDevice()) {
+        LOG(WebGPU, "GPUCommandBuffer::create(): Invalid GPUDevice!");
+        return nullptr;
+    }
 
-struct WebGPURenderPipelineDescriptor;
-struct WebGPUShaderModuleDescriptor;
+    auto gpuCommandQueue = device.getQueue();
+    if (!gpuCommandQueue)
+        return nullptr;
 
-class WebGPUDevice : public RefCounted<WebGPUDevice> {
-public:
-    static RefPtr<WebGPUDevice> create(Ref<WebGPUAdapter>&&);
+    auto mtlQueue = gpuCommandQueue->platformQueue();
 
-    const WebGPUAdapter& adapter() const { return m_adapter.get(); }
-    const GPUDevice& device() const { return *m_device; }
+    PlatformCommandBufferSmartPtr buffer;
 
-    RefPtr<WebGPUShaderModule> createShaderModule(WebGPUShaderModuleDescriptor&&) const;
-    RefPtr<WebGPURenderPipeline> createRenderPipeline(WebGPURenderPipelineDescriptor&&) const;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    RefPtr<WebGPUCommandBuffer> createCommandBuffer() const;
+    buffer = retainPtr([mtlQueue commandBuffer]);
 
-private:
-    WebGPUDevice(Ref<WebGPUAdapter>&&, RefPtr<GPUDevice>&&);
+    END_BLOCK_OBJC_EXCEPTIONS;
 
-    Ref<WebGPUAdapter> m_adapter;
+    if (!buffer) {
+        LOG(WebGPU, "GPUCommandBuffer::create(): Unable to create MTLCommandBuffer!");
+        return nullptr;
+    }
 
-    RefPtr<GPUDevice> m_device;
-};
+    return adoptRef(new GPUCommandBuffer(WTFMove(buffer)));
+}
+
+GPUCommandBuffer::GPUCommandBuffer(PlatformCommandBufferSmartPtr&& buffer)
+    : m_platformCommandBuffer(WTFMove(buffer))
+{
+    UNUSED_PARAM(m_platformCommandBuffer);
+}
 
 } // namespace WebCore
 

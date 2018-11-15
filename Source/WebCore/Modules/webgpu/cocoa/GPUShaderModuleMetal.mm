@@ -39,12 +39,14 @@ namespace WebCore {
 
 RefPtr<GPUShaderModule> GPUShaderModule::create(const GPUDevice& device, GPUShaderModuleDescriptor&& descriptor)
 {
-    if (!device.platformDevice())
+    if (!device.platformDevice()) {
+        LOG(WebGPU, "GPUShaderModule::create(): Invalid GPUDevice!");
         return nullptr;
+    }
 
     PlatformShaderModuleSmartPtr module;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     NSError *error = [NSError errorWithDomain:@"com.apple.WebKit.GPU" code:1 userInfo:nil];
     module = adoptNS([device.platformDevice() newLibraryWithSource:descriptor.code options:nil error:&error]);
@@ -62,7 +64,6 @@ RefPtr<GPUShaderModule> GPUShaderModule::create(const GPUDevice& device, GPUShad
 GPUShaderModule::GPUShaderModule(PlatformShaderModuleSmartPtr&& module)
     : m_platformShaderModule(WTFMove(module))
 {
-    UNUSED_PARAM(m_platformShaderModule);
 }
 
 }

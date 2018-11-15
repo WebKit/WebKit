@@ -1,3 +1,19 @@
+2018-11-15  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] WebGPUCommandBuffer prototype
+        https://bugs.webkit.org/show_bug.cgi?id=191663
+
+        Reviewed by Dean Jackson.
+
+        Begin implementation of WebGPUCommandBuffers as well as GPUQueues (MTLCommandBuffer, MTLCommandQueue).
+
+        New testing for WebGPUCommandBuffers, to be fleshed out when WebGPUCommandBufferDescriptors
+        are added to the specification.
+
+        * webgpu/command-buffers-expected.txt: Added.
+        * webgpu/command-buffers.html: Basic functionality, with more stress tests to be added when the spec is updated.
+        * webgpu/webgpu-basics.html: Updated to create the command buffer used by later rendering operations.
+
 2018-11-15  Oriol Brufau  <obrufau@igalia.com>
 
         [css-logical] Implement flow-relative margin, padding and border shorthands

@@ -57,7 +57,6 @@ RefPtr<GPUDevice> GPUDevice::create()
 GPUDevice::GPUDevice(PlatformDeviceSmartPtr&& device)
     : m_platformDevice(WTFMove(device))
 {
-    UNUSED_PARAM(m_platformDevice);
 }
 
 } // namespace WebCore

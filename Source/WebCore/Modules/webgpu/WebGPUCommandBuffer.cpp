@@ -23,47 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WebGPUCommandBuffer.h"
 
 #if ENABLE(WEBGPU)
 
-#include "GPUDevice.h"
-#include "WebGPUAdapter.h"
-
-#include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#include "GPUCommandBuffer.h"
 
 namespace WebCore {
 
-class ScriptExecutionContext;
-class WebGPUCommandBuffer;
-class WebGPURenderPipeline;
-class WebGPUShaderModule;
+RefPtr<WebGPUCommandBuffer> WebGPUCommandBuffer::create(RefPtr<GPUCommandBuffer>&& buffer)
+{
+    if (!buffer)
+        return nullptr;
 
-struct WebGPURenderPipelineDescriptor;
-struct WebGPUShaderModuleDescriptor;
+    return adoptRef(new WebGPUCommandBuffer(buffer.releaseNonNull()));
+}
 
-class WebGPUDevice : public RefCounted<WebGPUDevice> {
-public:
-    static RefPtr<WebGPUDevice> create(Ref<WebGPUAdapter>&&);
-
-    const WebGPUAdapter& adapter() const { return m_adapter.get(); }
-    const GPUDevice& device() const { return *m_device; }
-
-    RefPtr<WebGPUShaderModule> createShaderModule(WebGPUShaderModuleDescriptor&&) const;
-    RefPtr<WebGPURenderPipeline> createRenderPipeline(WebGPURenderPipelineDescriptor&&) const;
-
-    RefPtr<WebGPUCommandBuffer> createCommandBuffer() const;
-
-private:
-    WebGPUDevice(Ref<WebGPUAdapter>&&, RefPtr<GPUDevice>&&);
-
-    Ref<WebGPUAdapter> m_adapter;
-
-    RefPtr<GPUDevice> m_device;
-};
-
+WebGPUCommandBuffer::WebGPUCommandBuffer(Ref<GPUCommandBuffer>&& buffer)
+    : m_commandBuffer(WTFMove(buffer))
+{
+    UNUSED_PARAM(m_commandBuffer);
+}
 } // namespace WebCore
 
 #endif // ENABLE(WEBGPU)

@@ -1,0 +1,7 @@
+PASS [object WebGPU] is defined.
+PASS Successfully created WebGPUCommandBuffer.
+All tests complete.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

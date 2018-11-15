@@ -88,7 +88,17 @@ function setUpPipeline() {
     }
 }
 
-runWebGPUTests([setUpPipeline]);
+function render() {
+    let commandBuffer = defaultDevice.createCommandBuffer();
+    if (!commandBuffer) {
+        testFailed("Could not create WebGPUCommandBuffer!");
+        return;
+    }
+
+    // FIXME: More commands to follow as they are implemented.
+}
+
+runWebGPUTests([setUpPipeline, render]);
 
 successfullyParsed = true;
 </script>

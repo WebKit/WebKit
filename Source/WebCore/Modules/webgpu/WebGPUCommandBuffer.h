@@ -27,32 +27,22 @@
 
 #if ENABLE(WEBGPU)
 
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
-#include <wtf/RetainPtr.h>
-
-OBJC_CLASS CAMetalLayer;
 
 namespace WebCore {
 
-class GPUDevice;
+class GPUCommandBuffer;
 
-using PlatformSwapLayer = CAMetalLayer;
-using PlatformSwapLayerSmartPtr = RetainPtr<CAMetalLayer>;
-
-class GPUSwapChain : public RefCounted<GPUSwapChain> {
+class WebGPUCommandBuffer : public RefCounted<WebGPUCommandBuffer> {
 public:
-    static RefPtr<GPUSwapChain> create();
-
-    void setDevice(const GPUDevice&);
-    void reshape(int width, int height);
-    void present();
-
-    PlatformSwapLayer *platformLayer() const { return m_platformSwapLayer.get(); }
+    static RefPtr<WebGPUCommandBuffer> create(RefPtr<GPUCommandBuffer>&&);
 
 private:
-    GPUSwapChain(PlatformSwapLayerSmartPtr&&);
+    WebGPUCommandBuffer(Ref<GPUCommandBuffer>&&);
 
-    PlatformSwapLayerSmartPtr m_platformSwapLayer;
+    Ref<GPUCommandBuffer> m_commandBuffer;
 };
 
 } // namespace WebCore

@@ -23,46 +23,46 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+#import "GPUQueue.h"
 
 #if ENABLE(WEBGPU)
 
-#include "GPUDevice.h"
-#include "WebGPUAdapter.h"
+#import "GPUDevice.h"
+#import "Logging.h"
 
-#include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#import <Metal/Metal.h>
+#import <wtf/BlockObjCExceptions.h>
 
 namespace WebCore {
 
-class ScriptExecutionContext;
-class WebGPUCommandBuffer;
-class WebGPURenderPipeline;
-class WebGPUShaderModule;
+RefPtr<GPUQueue> GPUQueue::create(const GPUDevice& device)
+{
+    if (!device.platformDevice()) {
+        LOG(WebGPU, "GPUQueue::create(): Invalid GPUDevice!");
+        return nullptr;
+    }
 
-struct WebGPURenderPipelineDescriptor;
-struct WebGPUShaderModuleDescriptor;
+    PlatformQueueSmartPtr queue;
 
-class WebGPUDevice : public RefCounted<WebGPUDevice> {
-public:
-    static RefPtr<WebGPUDevice> create(Ref<WebGPUAdapter>&&);
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    const WebGPUAdapter& adapter() const { return m_adapter.get(); }
-    const GPUDevice& device() const { return *m_device; }
+    queue = adoptNS([device.platformDevice() newCommandQueue]);
 
-    RefPtr<WebGPUShaderModule> createShaderModule(WebGPUShaderModuleDescriptor&&) const;
-    RefPtr<WebGPURenderPipeline> createRenderPipeline(WebGPURenderPipelineDescriptor&&) const;
+    END_BLOCK_OBJC_EXCEPTIONS;
 
-    RefPtr<WebGPUCommandBuffer> createCommandBuffer() const;
+    if (!queue) {
+        LOG(WebGPU, "GPUQueue::create(): Unable to create MTLCommandQueue!");
+        return nullptr;
+    }
 
-private:
-    WebGPUDevice(Ref<WebGPUAdapter>&&, RefPtr<GPUDevice>&&);
+    return adoptRef(new GPUQueue(WTFMove(queue)));
+}
 
-    Ref<WebGPUAdapter> m_adapter;
-
-    RefPtr<GPUDevice> m_device;
-};
+GPUQueue::GPUQueue(PlatformQueueSmartPtr&& queue)
+    : m_platformQueue(WTFMove(queue))
+{
+}
 
 } // namespace WebCore
 

@@ -36,6 +36,9 @@
     WebGPUShaderModule createShaderModule(WebGPUShaderModuleDescriptor descriptor);
     WebGPURenderPipeline createRenderPipeline(WebGPURenderPipelineDescriptor descriptor);
 
+    // FIXME: Currently, WebGPUCommandBufferDescriptor is an empty dictionary.
+    WebGPUCommandBuffer createCommandBuffer(/*WebGPUCommandBufferDescriptor descriptor*/);
+
 /* To Be Implemented:
     WebGPUBuffer createBuffer(WebGPUBufferDescriptor descriptor);
     WebGPUTexture createTexture(WebGPUTextureDescriptor descriptor);
@@ -50,7 +53,6 @@
     WebGPUInputState createInputState(WebGPUInputStateDescriptor descriptor);
     WebGPUAttachmentState createAttachmentState(WebGPUAttachmentStateDescriptor descriptor);
     WebGPUComputePipeline createComputePipeline(WebGPUComputePipelineDescriptor descriptor);
-    WebGPUCommandBuffer createCommandBuffer(WebGPUCommandBufferDescriptor descriptor);
     WebGPUFence createFence(WebGPUFenceDescriptor descriptor);
 
     WebGPUQueue getQueue();

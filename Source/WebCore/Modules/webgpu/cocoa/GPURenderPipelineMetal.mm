@@ -130,7 +130,6 @@ RefPtr<GPURenderPipeline> GPURenderPipeline::create(const GPUDevice& device, GPU
 GPURenderPipeline::GPURenderPipeline(PlatformRenderPipelineSmartPtr&& pipeline)
     : m_platformRenderPipeline(WTFMove(pipeline))
 {
-    UNUSED_PARAM(m_platformRenderPipeline);
 }
 
 } // namespace WebCore

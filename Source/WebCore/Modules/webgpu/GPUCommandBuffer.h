@@ -31,27 +31,23 @@
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 
-OBJC_PROTOCOL(MTLRenderPipelineState);
+OBJC_PROTOCOL(MTLCommandBuffer);
 
 namespace WebCore {
 
 class GPUDevice;
 
-struct GPURenderPipelineDescriptor;
+using PlatformCommandBuffer = MTLCommandBuffer;
+using PlatformCommandBufferSmartPtr = RetainPtr<MTLCommandBuffer>;
 
-using PlatformRenderPipeline = MTLRenderPipelineState;
-using PlatformRenderPipelineSmartPtr = RetainPtr<MTLRenderPipelineState>;
-
-class GPURenderPipeline : public RefCounted<GPURenderPipeline> {
+class GPUCommandBuffer : public RefCounted<GPUCommandBuffer> {
 public:
-    static RefPtr<GPURenderPipeline> create(const GPUDevice&, GPURenderPipelineDescriptor&&);
-
-    PlatformRenderPipeline *platformRenderPipeline() const { return m_platformRenderPipeline.get(); }
+    static RefPtr<GPUCommandBuffer> create(GPUDevice&);
 
 private:
-    GPURenderPipeline(PlatformRenderPipelineSmartPtr&&);
+    GPUCommandBuffer(PlatformCommandBufferSmartPtr&&);
 
-    PlatformRenderPipelineSmartPtr m_platformRenderPipeline;
+    PlatformCommandBufferSmartPtr m_platformCommandBuffer;
 };
 
 } // namespace WebCore

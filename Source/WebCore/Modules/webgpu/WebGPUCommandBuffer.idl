@@ -22,48 +22,41 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+// https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
 
-#pragma once
+[
+    Conditional=WEBGPU,
+    EnabledAtRuntime=WebGPU,
+    ImplementationLacksVTable
+] interface WebGPUCommandBuffer {
+/* Not Yet Implemented
+    WebGPURenderPassEncoder beginRenderPass(WebGPURenderPassDescriptor descriptor);
+    WebGPUComputePassEncoder beginComputePass();
 
-#if ENABLE(WEBGPU)
+    // Commands allowed outside of "passes"
+        void copyBufferToBuffer(
+        WebGPUBuffer src,
+        u32 srcOffset,
+        WebGPUBuffer dst,
+        u32 dstOffset,
+        u32 size);
 
-#include "GPUDevice.h"
-#include "WebGPUAdapter.h"
+    void copyBufferToTexture(
+        WebGPUBufferCopyView source,
+        WebGPUTextureCopyView destination,
+        WebGPUExtent3D copySize);
 
-#include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+    void copyTextureToBuffer(
+        WebGPUTextureCopyView source,
+        WebGPUBufferCopyView destination,
+        WebGPUExtent3D copySize);
 
-namespace WebCore {
+    void copyTextureToTexture(
+        WebGPUTextureCopyView source,
+        WebGPUTextureCopyView destination,
+        WebGPUExtent3D copySize);
 
-class ScriptExecutionContext;
-class WebGPUCommandBuffer;
-class WebGPURenderPipeline;
-class WebGPUShaderModule;
-
-struct WebGPURenderPipelineDescriptor;
-struct WebGPUShaderModuleDescriptor;
-
-class WebGPUDevice : public RefCounted<WebGPUDevice> {
-public:
-    static RefPtr<WebGPUDevice> create(Ref<WebGPUAdapter>&&);
-
-    const WebGPUAdapter& adapter() const { return m_adapter.get(); }
-    const GPUDevice& device() const { return *m_device; }
-
-    RefPtr<WebGPUShaderModule> createShaderModule(WebGPUShaderModuleDescriptor&&) const;
-    RefPtr<WebGPURenderPipeline> createRenderPipeline(WebGPURenderPipelineDescriptor&&) const;
-
-    RefPtr<WebGPUCommandBuffer> createCommandBuffer() const;
-
-private:
-    WebGPUDevice(Ref<WebGPUAdapter>&&, RefPtr<GPUDevice>&&);
-
-    Ref<WebGPUAdapter> m_adapter;
-
-    RefPtr<GPUDevice> m_device;
+    // TODO figure which other commands are needed
+    void blit();
+*/
 };
-
-} // namespace WebCore
-
-#endif // ENABLE(WEBGPU)

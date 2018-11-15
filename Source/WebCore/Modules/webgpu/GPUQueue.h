@@ -27,41 +27,29 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUDevice.h"
-#include "WebGPUAdapter.h"
-
-#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/RetainPtr.h>
+
+OBJC_PROTOCOL(MTLCommandQueue);
 
 namespace WebCore {
 
-class ScriptExecutionContext;
-class WebGPUCommandBuffer;
-class WebGPURenderPipeline;
-class WebGPUShaderModule;
+class GPUDevice;
 
-struct WebGPURenderPipelineDescriptor;
-struct WebGPUShaderModuleDescriptor;
+using PlatformQueue = MTLCommandQueue;
+using PlatformQueueSmartPtr = RetainPtr<MTLCommandQueue>;
 
-class WebGPUDevice : public RefCounted<WebGPUDevice> {
+class GPUQueue : public RefCounted<GPUQueue> {
 public:
-    static RefPtr<WebGPUDevice> create(Ref<WebGPUAdapter>&&);
+    static RefPtr<GPUQueue> create(const GPUDevice&);
 
-    const WebGPUAdapter& adapter() const { return m_adapter.get(); }
-    const GPUDevice& device() const { return *m_device; }
-
-    RefPtr<WebGPUShaderModule> createShaderModule(WebGPUShaderModuleDescriptor&&) const;
-    RefPtr<WebGPURenderPipeline> createRenderPipeline(WebGPURenderPipelineDescriptor&&) const;
-
-    RefPtr<WebGPUCommandBuffer> createCommandBuffer() const;
+    PlatformQueue* platformQueue() const { return m_platformQueue.get(); }
 
 private:
-    WebGPUDevice(Ref<WebGPUAdapter>&&, RefPtr<GPUDevice>&&);
+    GPUQueue(PlatformQueueSmartPtr&&);
 
-    Ref<WebGPUAdapter> m_adapter;
-
-    RefPtr<GPUDevice> m_device;
+    PlatformQueueSmartPtr m_platformQueue;
 };
 
 } // namespace WebCore

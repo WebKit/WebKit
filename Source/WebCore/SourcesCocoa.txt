@@ -27,7 +27,9 @@ Modules/plugins/QuickTimePluginReplacement.mm
 Modules/plugins/YouTubePluginReplacement.cpp
 Modules/webdatabase/cocoa/DatabaseManagerCocoa.mm
 
+Modules/webgpu/cocoa/GPUCommandBufferMetal.mm
 Modules/webgpu/cocoa/GPUDeviceMetal.mm
+Modules/webgpu/cocoa/GPUQueueMetal.mm
 Modules/webgpu/cocoa/GPURenderPipelineMetal.mm
 Modules/webgpu/cocoa/GPUShaderModuleMetal.mm
 Modules/webgpu/cocoa/GPUSwapChainMetal.mm

@@ -27,6 +27,9 @@
 
 #if ENABLE(WEBGPU)
 
+#include "GPUCommandBuffer.h"
+#include "GPUQueue.h"
+
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
@@ -38,8 +41,8 @@ namespace WebCore {
 using PlatformDevice = MTLDevice;
 using PlatformDeviceSmartPtr = RetainPtr<MTLDevice>;
 
-class GPUShaderModule;
 class GPURenderPipeline;
+class GPUShaderModule;
 
 struct GPUShaderModuleDescriptor;
 struct GPURenderPipelineDescriptor;
@@ -51,12 +54,16 @@ public:
     RefPtr<GPUShaderModule> createShaderModule(GPUShaderModuleDescriptor&&) const;
     RefPtr<GPURenderPipeline> createRenderPipeline(GPURenderPipelineDescriptor&&) const;
 
-    PlatformDevice *platformDevice() const { return m_platformDevice.get(); }
+    RefPtr<GPUCommandBuffer> createCommandBuffer();
+
+    RefPtr<GPUQueue> getQueue();
+    PlatformDevice* platformDevice() const { return m_platformDevice.get(); }
 
 private:
     GPUDevice(PlatformDeviceSmartPtr&&);
 
     PlatformDeviceSmartPtr m_platformDevice;
+    RefPtr<GPUQueue> m_queue;
 };
 
 } // namespace WebCore

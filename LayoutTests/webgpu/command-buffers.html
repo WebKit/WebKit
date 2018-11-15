@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<script src="../resources/js-test-pre.js"></script>
+<script src="js/set-up-webgpu-contexts.js"></script>
+<script>
+if (window.testRunner)
+    window.testRunner.dumpAsText();
+
+function setUpCommandBuffer() {
+    // FIXME: createCommandBuffer should take a WebGPUCommandBufferDescriptor, which is currently an empty dictionary.
+    let commandBuffer = defaultDevice.createCommandBuffer();
+    if (commandBuffer)
+        testPassed("Successfully created WebGPUCommandBuffer.");
+    else
+        testFailed("Could not create WebGPUCommandBuffer!");
+}
+
+function badCommandBuffer0() {
+    // FIXME: Stress command buffer creation when WebGPUCommandBufferDescriptor is specified.
+}
+
+runWebGPUTests([
+        setUpCommandBuffer, 
+        badCommandBuffer0
+    ]);
+
+successfullyParsed = true;
+</script>
+<script src="../resources/js-test-post.js"></script>
+</html>

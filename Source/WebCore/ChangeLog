@@ -1,3 +1,57 @@
+2018-11-15  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] WebGPUCommandBuffer prototype
+        https://bugs.webkit.org/show_bug.cgi?id=191663
+
+        Reviewed by Dean Jackson.
+
+        Begin implementation of WebGPUCommandBuffers as well as GPUQueues (MTLCommandBuffer, MTLCommandQueue).
+
+        Test: webgpu/command-buffers.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Modules/webgpu/GPUCommandBuffer.h: Added. Wrapper class around a MTLCommandBuffer.
+        * Modules/webgpu/GPUDevice.cpp:
+        (WebCore::GPUDevice::createCommandBuffer): Added.
+        (WebCore::GPUDevice::getQueue): Returns RefPtr to the device's singleton queue.
+        * Modules/webgpu/GPUDevice.h: Now manages the device's GPUQueue.
+        (WebCore::GPUDevice::platformDevice const):
+        * Modules/webgpu/GPUQueue.h: Added. Wrapper class around a MTLCommandQueue.
+        (WebCore::GPUQueue::platformQueue const):
+        * Modules/webgpu/GPURenderPipeline.h: Moved from Source/WebCore/Modules/webgpu/cocoa/GPURenderPipeline.h.
+        (WebCore::GPURenderPipeline::platformRenderPipeline const):
+        * Modules/webgpu/GPUShaderModule.h:
+        (WebCore::GPUShaderModule::platformShaderModule const):
+        * Modules/webgpu/GPUSwapChain.h: Moved from Source/WebCore/Modules/webgpu/cocoa/GPUSwapChain.h.
+        (WebCore::GPUSwapChain::platformLayer const):
+        * Modules/webgpu/WebGPUCommandBuffer.cpp: Added. Web interface for a GPU device's command buffer.
+        (WebCore::WebGPUCommandBuffer::create):
+        (WebCore::WebGPUCommandBuffer::WebGPUCommandBuffer):
+        * Modules/webgpu/WebGPUCommandBuffer.h: Added.
+        * Modules/webgpu/WebGPUCommandBuffer.idl: Added.
+        * Modules/webgpu/WebGPUDevice.cpp:
+        (WebCore::WebGPUDevice::createCommandBuffer const): Added.
+        * Modules/webgpu/WebGPUDevice.h:
+        * Modules/webgpu/WebGPUDevice.idl:
+        * Modules/webgpu/cocoa/GPUCommandBufferMetal.mm: Added. MTLCommandBuffer impl for GPUCommandBuffer.
+        (WebCore::GPUCommandBuffer::create): Create a MTLCommandBuffer from the MTLCommandQueue.
+        (WebCore::GPUCommandBuffer::GPUCommandBuffer):
+        * Modules/webgpu/cocoa/GPUDeviceMetal.mm:
+        (WebCore::GPUDevice::GPUDevice):
+        * Modules/webgpu/cocoa/GPUQueueMetal.mm: Added. MTLCommandQueue impl for GPUQueue.
+        (WebCore::GPUQueue::create):
+        (WebCore::GPUQueue::GPUQueue):
+        * Modules/webgpu/cocoa/GPURenderPipelineMetal.mm:
+        (WebCore::GPURenderPipeline::GPURenderPipeline):
+        * Modules/webgpu/cocoa/GPUShaderModuleMetal.mm:
+        (WebCore::GPUShaderModule::create):
+        (WebCore::GPUShaderModule::GPUShaderModule):
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+
 2018-11-15  Oriol Brufau  <obrufau@igalia.com>
 
         [css-logical] Implement flow-relative margin, padding and border shorthands

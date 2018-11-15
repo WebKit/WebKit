@@ -46,7 +46,7 @@ class GPUShaderModule : public RefCounted<GPUShaderModule> {
 public:
     static RefPtr<GPUShaderModule> create(const GPUDevice&, GPUShaderModuleDescriptor&&);
 
-    PlatformShaderModule *platformShaderModule() const { return m_platformShaderModule.get(); }
+    PlatformShaderModule* platformShaderModule() const { return m_platformShaderModule.get(); }
 
 private:
     GPUShaderModule(PlatformShaderModuleSmartPtr&&);

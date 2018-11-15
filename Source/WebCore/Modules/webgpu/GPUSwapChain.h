@@ -27,41 +27,32 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUDevice.h"
-#include "WebGPUAdapter.h"
-
-#include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/RetainPtr.h>
+
+OBJC_CLASS CAMetalLayer;
 
 namespace WebCore {
 
-class ScriptExecutionContext;
-class WebGPUCommandBuffer;
-class WebGPURenderPipeline;
-class WebGPUShaderModule;
+class GPUDevice;
 
-struct WebGPURenderPipelineDescriptor;
-struct WebGPUShaderModuleDescriptor;
+using PlatformSwapLayer = CAMetalLayer;
+using PlatformSwapLayerSmartPtr = RetainPtr<CAMetalLayer>;
 
-class WebGPUDevice : public RefCounted<WebGPUDevice> {
+class GPUSwapChain : public RefCounted<GPUSwapChain> {
 public:
-    static RefPtr<WebGPUDevice> create(Ref<WebGPUAdapter>&&);
+    static RefPtr<GPUSwapChain> create();
 
-    const WebGPUAdapter& adapter() const { return m_adapter.get(); }
-    const GPUDevice& device() const { return *m_device; }
+    void setDevice(const GPUDevice&);
+    void reshape(int width, int height);
+    void present();
 
-    RefPtr<WebGPUShaderModule> createShaderModule(WebGPUShaderModuleDescriptor&&) const;
-    RefPtr<WebGPURenderPipeline> createRenderPipeline(WebGPURenderPipelineDescriptor&&) const;
-
-    RefPtr<WebGPUCommandBuffer> createCommandBuffer() const;
+    PlatformSwapLayer* platformLayer() const { return m_platformSwapLayer.get(); }
 
 private:
-    WebGPUDevice(Ref<WebGPUAdapter>&&, RefPtr<GPUDevice>&&);
+    GPUSwapChain(PlatformSwapLayerSmartPtr&&);
 
-    Ref<WebGPUAdapter> m_adapter;
-
-    RefPtr<GPUDevice> m_device;
+    PlatformSwapLayerSmartPtr m_platformSwapLayer;
 };
 
 } // namespace WebCore
