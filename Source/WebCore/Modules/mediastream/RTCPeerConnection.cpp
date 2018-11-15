@@ -69,7 +69,7 @@ Ref<RTCPeerConnection> RTCPeerConnection::create(ScriptExecutionContext& context
     // RTCPeerConnection may send events at about any time during its lifetime.
     // Let's make it uncollectable until the pc is closed by JS or the page stops it.
     if (!peerConnection->isClosed()) {
-        peerConnection->setPendingActivity(peerConnection.ptr());
+        peerConnection->m_pendingActivity = peerConnection->makePendingActivity(peerConnection.get());
         if (auto* page = downcast<Document>(context).page())
             peerConnection->registerToController(page->rtcController());
     }
@@ -463,8 +463,7 @@ void RTCPeerConnection::doStop()
     m_isStopped = true;
 
     m_backend->stop();
-
-    unsetPendingActivity(this);
+    m_pendingActivity = nullptr;
 }
 
 void RTCPeerConnection::registerToController(RTCController& controller)

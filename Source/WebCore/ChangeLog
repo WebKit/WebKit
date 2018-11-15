@@ -1,3 +1,18 @@
+2018-11-15  Youenn Fablet  <youenn@apple.com>
+
+        Modernize RTCPeerConnection handling of pendingActivity
+        https://bugs.webkit.org/show_bug.cgi?id=191661
+
+        Reviewed by Eric Carlson.
+
+        makePendingActivity is the modern way to handle set/unset of pending activity.
+        No change of behavior.
+
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::create):
+        (WebCore::RTCPeerConnection::doStop):
+        * Modules/mediastream/RTCPeerConnection.h:
+
 2018-11-15  Keith Rollin  <krollin@apple.com>
 
         Delete old .xcfilelist files
