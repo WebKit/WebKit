@@ -1349,7 +1349,7 @@ WebSQLDisabled:
 
 ProcessSwapOnCrossSiteNavigationEnabled:
   type: bool
-  defaultValue: false
+  defaultValue: DEFAULT_PROCESS_SWAP_ON_CROSS_SITE_NAVIGATION_ENABLED
   humanReadableName: "Swap Processes on Cross-Site Navigation"
   humanReadableDescription: "Swap WebContent processes on cross-site navigations"
   category: experimental

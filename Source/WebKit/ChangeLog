@@ -1,3 +1,15 @@
+2018-11-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Enable process swap on cross-site navigation by default on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=191572
+
+        Reviewed by Chris Dumez.
+
+        Enabled the feature by default on macOS.
+
+        * Shared/WebPreferences.yaml:
+        * Shared/WebPreferencesDefaultValues.h:
+
 2018-11-15  Chris Dumez  <cdumez@apple.com>
 
         IndexedDB.IndexedDBTempFileSize API test times out with process prewarming enabled
