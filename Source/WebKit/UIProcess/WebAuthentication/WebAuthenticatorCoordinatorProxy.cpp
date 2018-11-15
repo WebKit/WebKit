@@ -38,6 +38,7 @@
 #include <WebCore/ExceptionData.h>
 #include <WebCore/PublicKeyCredentialData.h>
 #include <wtf/MainThread.h>
+#include <wtf/RunLoop.h>
 
 namespace WebKit {
 

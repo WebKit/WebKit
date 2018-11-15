@@ -38,6 +38,7 @@
 #import <pal/crypto/CryptoDigest.h>
 #import <wtf/HashSet.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/RunLoop.h>
 #import <wtf/Vector.h>
 #import <wtf/text/StringHash.h>
 

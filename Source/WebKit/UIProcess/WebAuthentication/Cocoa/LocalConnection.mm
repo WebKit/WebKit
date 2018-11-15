@@ -31,6 +31,7 @@
 #import "DeviceIdentitySPI.h"
 #import <WebCore/ExceptionData.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/RunLoop.h>
 
 #import "LocalAuthenticationSoftLink.h"
 
