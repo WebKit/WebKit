@@ -1,3 +1,19 @@
+2018-11-15  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Reduce the use of WKSI library calls: Font Handling
+        https://bugs.webkit.org/show_bug.cgi?id=191701
+        <rdar://problem/46104809>
+
+        Reviewed by Myles C. Maxfield.
+
+        Update to use the old font handling routines moved from WKSI to FontCascade.
+
+        * WebPreferences.cpp:
+        (WebPreferences::setFontSmoothing):
+        (WebPreferences::setFontSmoothingContrast):
+        * WebView.cpp:
+        (systemParameterChanged):
+
 2018-11-14  Timothy Hatcher  <timothy@apple.com>
 
         Default the view background color and text color to different values when in dark mode.

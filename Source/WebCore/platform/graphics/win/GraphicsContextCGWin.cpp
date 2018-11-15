@@ -34,7 +34,6 @@
 #include "Path.h"
 
 #include <CoreGraphics/CGBitmapContext.h>
-#include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <wtf/win/GDIObject.h>
 
 
@@ -160,7 +159,12 @@ void GraphicsContext::drawFocusRing(const Vector<FloatRect>& rects, float width,
     CGContextBeginPath(context);
     CGContextAddPath(context, focusRingPath);
 
-    wkDrawFocusRing(context, colorRef, radius);
+    // FIXME: We clear the fill color here to avoid getting a black fill when drawing the focus ring.
+    // Find out from CG if this is their bug.
+    CGContextSetRGBFillColor(context, 0, 0, 0, 0);
+
+    CGContextSetFocusRingWithColor(context, radius, colorRef, 0, (CFDictionaryRef)0);
+    CGContextFillPath(context);
 
     CGPathRelease(focusRingPath);
 
@@ -216,7 +220,10 @@ void GraphicsContext::drawDotsForDocumentMarker(const FloatRect& rect, DocumentM
     const Color& patternColor = style.mode == DocumentMarkerLineStyle::Mode::Grammar ? grammarPatternColor() : spellingPatternColor();
     setCGStrokeColor(context, patternColor);
 
-    wkSetPatternPhaseInUserSpace(context, point);
+    CGAffineTransform userToBase = getUserToBaseCTM(context);
+    CGPoint phase = CGPointApplyAffineTransform(point, userToBase);
+
+    CGContextSetPatternPhase(context, CGSizeMake(phase.x, phase.y));
     CGContextSetBlendMode(context, kCGBlendModeNormal);
     
     // 3 rows, each offset by half a pixel for blending purposes

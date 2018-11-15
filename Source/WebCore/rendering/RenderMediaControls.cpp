@@ -28,39 +28,11 @@
 
 #if ENABLE(VIDEO) && PLATFORM(WIN) && USE(CG)
 
-#include "MediaControlElementTypes.h"
-#include "RenderStyle.h"
-#include <CoreGraphics/CoreGraphics.h>
-#include <WebKitSystemInterface/WebKitSystemInterface.h>
-
 namespace WebCore {
-
-static const int mediaSliderThumbWidth = 13;
-static const int mediaSliderThumbHeight = 14;
 
 void RenderMediaControls::adjustMediaSliderThumbSize(RenderStyle& style)
 {
-    int part;
-    switch (style.appearance()) {
-    case MediaSliderThumbPart:
-        part = MediaSliderThumb;
-        break;
-    case MediaVolumeSliderThumbPart:
-        part = MediaVolumeSliderThumb;
-        break;
-    case MediaFullScreenVolumeSliderThumbPart:
-        part = MediaFullScreenVolumeSliderThumb;
-        break;
-    default:
-        return;
-    }
-
-    CGSize size;
-    WKMeasureMediaUIPart(part, 0, &size);
-
-    float zoomLevel = style.effectiveZoom();
-    style.setWidth(Length(static_cast<int>(size.width * zoomLevel), Fixed));
-    style.setHeight(Length(static_cast<int>(size.height * zoomLevel), Fixed));
+    ASSERT_NOT_REACHED();
 }
 
 }

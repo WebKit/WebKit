@@ -1271,7 +1271,7 @@ HRESULT WebPreferences::setFontSmoothing(FontSmoothingType smoothingType)
     if (smoothingType == FontSmoothingTypeWindows)
         smoothingType = FontSmoothingTypeMedium;
 #if USE(CG)
-    wkSetFontSmoothingLevel((int)smoothingType);
+    FontCascade::setFontSmoothingLevel((int)smoothingType);
 #endif
     return S_OK;
 }
@@ -1288,7 +1288,7 @@ HRESULT WebPreferences::setFontSmoothingContrast(float contrast)
 {
     setFloatValue(WebKitFontSmoothingContrastPreferenceKey, contrast);
 #if USE(CG)
-    wkSetFontSmoothingContrast(contrast);
+    FontCascade::setFontSmoothingContrast(contrast);
 #endif
     return S_OK;
 }

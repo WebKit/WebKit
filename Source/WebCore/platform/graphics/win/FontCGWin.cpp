@@ -36,7 +36,7 @@
 #include "IntRect.h"
 #include "UniscribeController.h"
 #include "WebCoreTextRenderer.h"
-#include <WebKitSystemInterface/WebKitSystemInterface.h>
+#include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
@@ -156,7 +156,7 @@ void FontCascade::drawGlyphs(GraphicsContext& graphicsContext, const Font& font,
         ASSERT_NOT_REACHED();
     }
 
-    uint32_t oldFontSmoothingStyle = wkSetFontSmoothingStyle(cgContext, shouldUseFontSmoothing);
+    uint32_t oldFontSmoothingStyle = FontCascade::setFontSmoothingStyle(cgContext, shouldUseFontSmoothing);
 
     const FontPlatformData& platformData = font.platformData();
 
@@ -175,7 +175,7 @@ void FontCascade::drawGlyphs(GraphicsContext& graphicsContext, const Font& font,
     CGContextSetTextMatrix(cgContext, matrix);
 
     CGContextSetFontSize(cgContext, platformData.size());
-    wkSetCGContextFontRenderingStyle(cgContext, font.platformData().isSystemFont(), false, font.platformData().useGDI());
+    FontCascade::setCGContextFontRenderingStyle(cgContext, font.platformData().isSystemFont(), false, font.platformData().useGDI());
 
     FloatSize shadowOffset;
     float shadowBlur;
@@ -211,8 +211,249 @@ void FontCascade::drawGlyphs(GraphicsContext& graphicsContext, const Font& font,
     if (hasSimpleShadow)
         graphicsContext.setShadow(shadowOffset, shadowBlur, shadowColor);
 
-    wkRestoreFontSmoothingStyle(cgContext, oldFontSmoothingStyle);
+    FontCascade::setFontSmoothingStyle(cgContext, oldFontSmoothingStyle);
     CGContextSetTextMatrix(cgContext, savedMatrix);
+}
+
+constexpr uint32_t kCGFontSmoothingStyleMinimum = (1 << 4);
+constexpr uint32_t kCGFontSmoothingStyleLight = (2 << 4);
+constexpr uint32_t kCGFontSmoothingStyleMedium = (3 << 4);
+constexpr uint32_t kCGFontSmoothingStyleHeavy = (4 << 4);
+
+constexpr int fontSmoothingLevelMedium = 2;
+constexpr CGFloat antialiasingGamma = 2.3;
+
+double FontCascade::s_fontSmoothingContrast = 2;
+uint32_t FontCascade::s_fontSmoothingType = kCGFontSmoothingStyleMedium;
+int FontCascade::s_fontSmoothingLevel = fontSmoothingLevelMedium;
+bool FontCascade::s_systemFontSmoothingEnabled;
+uint32_t FontCascade::s_systemFontSmoothingType;
+bool FontCascade::s_systemFontSmoothingSet;
+
+void FontCascade::setFontSmoothingLevel(int level)
+{
+    const uint32_t smoothingType[] = { 
+        0, // FontSmoothingTypeStandard
+        kCGFontSmoothingStyleLight, // FontSmoothingTypeLight
+        kCGFontSmoothingStyleMedium, // FontSmoothingTypeMedium
+        kCGFontSmoothingStyleHeavy, // FontSmoothingTypeStrong
+    };
+
+    if (level < 0 || static_cast<size_t>(level) > ARRAYSIZE(smoothingType))
+        return;
+
+    s_fontSmoothingType = smoothingType[level];
+    s_fontSmoothingLevel = level;
+}
+
+static void setCGFontSmoothingStyle(CGContextRef cgContext, uint32_t smoothingType, bool fontAllowsSmoothing = true)
+{
+    if (smoothingType) {
+        CGContextSetShouldSmoothFonts(cgContext, fontAllowsSmoothing);
+        CGContextSetFontSmoothingStyle(cgContext, smoothingType);
+    } else
+        CGContextSetShouldSmoothFonts(cgContext, false);
+}
+
+uint32_t FontCascade::setFontSmoothingStyle(CGContextRef cgContext, bool fontAllowsSmoothing)
+{
+    uint32_t oldFontSmoothingStyle = 0;
+    if (CGContextGetShouldSmoothFonts(cgContext))
+        oldFontSmoothingStyle = CGContextGetFontSmoothingStyle(cgContext);
+    setCGFontSmoothingStyle(cgContext, s_fontSmoothingType, fontAllowsSmoothing);
+
+    return oldFontSmoothingStyle;
+}
+
+void FontCascade::setFontSmoothingContrast(CGFloat contrast)
+{
+    s_fontSmoothingContrast = contrast;
+}
+
+static float clearTypeContrast()
+{
+    const WCHAR referenceCharacter = '\\';
+    static UINT lastContrast = 2000;
+    static float gamma = 2;
+    UINT contrast;
+
+    if (!SystemParametersInfo(SPI_GETFONTSMOOTHINGCONTRAST, 0, &contrast, 0) || contrast == lastContrast)
+        return gamma;
+
+    lastContrast = contrast;
+
+    auto dc = adoptGDIObject(::CreateCompatibleDC(0));
+
+    HGDIOBJ oldHFONT = ::SelectObject(dc.get(), GetStockObject(DEFAULT_GUI_FONT));
+    GLYPHMETRICS glyphMetrics;
+
+    static const MAT2 identity = { 0, 1,  0, 0,  0, 0,  0, 1 };
+    if (::GetGlyphOutline(dc.get(), referenceCharacter, GGO_METRICS, &glyphMetrics, 0, 0, &identity) == GDI_ERROR)
+        return contrast / 1000.0f;
+
+    BITMAPINFO bitmapInfo;
+    bitmapInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+    bitmapInfo.bmiHeader.biPlanes = 1;
+    bitmapInfo.bmiHeader.biCompression = BI_RGB;
+    bitmapInfo.bmiHeader.biSizeImage = 0;
+    bitmapInfo.bmiHeader.biXPelsPerMeter = 0;
+    bitmapInfo.bmiHeader.biYPelsPerMeter = 0;
+    bitmapInfo.bmiHeader.biClrImportant = 0;
+    bitmapInfo.bmiHeader.biWidth = glyphMetrics.gmBlackBoxX;
+    bitmapInfo.bmiHeader.biHeight = -static_cast<int>(glyphMetrics.gmBlackBoxY);
+    bitmapInfo.bmiHeader.biBitCount = 32;
+    bitmapInfo.bmiHeader.biClrUsed = 0;
+
+    uint8_t* pixels = nullptr;
+    auto bitmap = adoptGDIObject(::CreateDIBSection(0, &bitmapInfo, DIB_RGB_COLORS, reinterpret_cast<void**>(&pixels), 0, 0));
+    if (!bitmap)
+        return contrast / 1000.0f;
+
+    HGDIOBJ oldBitmap = ::SelectObject(dc.get(), bitmap.get());
+
+    BITMAP bmpInfo;
+    ::GetObject(bitmap.get(), sizeof(bmpInfo), &bmpInfo);
+    memset(pixels, 0, glyphMetrics.gmBlackBoxY * bmpInfo.bmWidthBytes);
+
+    ::SetBkMode(dc.get(), OPAQUE);
+    ::SetTextAlign(dc.get(), TA_LEFT | TA_TOP);
+
+    ::SetTextColor(dc.get(), RGB(255, 255, 255));
+    ::SetBkColor(dc.get(), RGB(0, 0, 0));
+    ::ExtTextOutW(dc.get(), 0, 0, 0, 0, &referenceCharacter, 1, 0);
+
+    uint8_t* referencePixel = nullptr;
+    uint8_t whiteReferenceValue = 0;
+    for (size_t i = 0; i < glyphMetrics.gmBlackBoxY && !referencePixel; ++i) {
+        for (size_t j = 0; j < 4 * glyphMetrics.gmBlackBoxX; ++j) {
+            whiteReferenceValue = pixels[i * bmpInfo.bmWidthBytes + j];
+            // Look for a pixel value in the range that allows us to estimate
+            // gamma within 0.1 without an error.
+            if (whiteReferenceValue > 32 && whiteReferenceValue < 240) {
+                referencePixel = pixels + i * bmpInfo.bmWidthBytes + j;
+                break;
+            }
+        }
+    }
+
+    if (referencePixel) {
+        ::SetTextColor(dc.get(), RGB(0, 0, 0));
+        ::SetBkColor(dc.get(), RGB(255, 255, 255));
+        ::ExtTextOutW(dc.get(), 0, 0, 0, 0, &referenceCharacter, 1, 0);
+        uint8_t blackReferenceValue = *referencePixel;
+
+        float minDelta = 1;
+        for (float g = 1; g < 2.3f; g += 0.1f) {
+            float delta = fabs(powf((whiteReferenceValue / 255.0f), g) + powf((blackReferenceValue / 255.0f), g) - 1);
+            if (delta < minDelta) {
+                minDelta = delta;
+                gamma = g;
+            }
+        }
+    } else
+        gamma = contrast / 1000.0f;
+
+    ::SelectObject(dc.get(), oldBitmap);
+    ::SelectObject(dc.get(), oldHFONT);
+
+    return gamma;
+}
+
+void FontCascade::systemFontSmoothingChanged()
+{
+    ::SystemParametersInfo(SPI_GETFONTSMOOTHING, 0, &s_systemFontSmoothingEnabled, 0);
+    ::SystemParametersInfo(SPI_GETFONTSMOOTHINGTYPE, 0, &s_systemFontSmoothingType, 0);
+    s_fontSmoothingContrast = clearTypeContrast();
+    s_systemFontSmoothingSet = true;
+}
+
+void FontCascade::setCGContextFontRenderingStyle(CGContextRef cgContext, bool isSystemFont, bool /*isPrinterFont*/, bool usePlatformNativeGlyphs)
+{
+    bool shouldAntialias = true;
+    bool maySubpixelPosition = true;
+    CGFloat contrast = 2;
+    if (usePlatformNativeGlyphs) {
+        // <rdar://6564501> GDI can't subpixel-position, so don't bother asking.
+        maySubpixelPosition = false;
+        if (!s_systemFontSmoothingSet)
+            systemFontSmoothingChanged();
+        contrast = s_fontSmoothingContrast;
+        shouldAntialias = s_systemFontSmoothingEnabled;
+        if (s_systemFontSmoothingType == FE_FONTSMOOTHINGSTANDARD) {
+            CGContextSetFontSmoothingStyle(cgContext, kCGFontSmoothingStyleMinimum);
+            contrast = antialiasingGamma;
+        }
+    }
+    CGContextSetFontSmoothingContrast(cgContext, contrast);
+    CGContextSetShouldUsePlatformNativeGlyphs(cgContext, usePlatformNativeGlyphs);
+    CGContextSetShouldAntialiasFonts(cgContext, shouldAntialias);
+    CGAffineTransform contextTransform = CGContextGetCTM(cgContext);
+    bool isPureTranslation = contextTransform.a == 1 && (contextTransform.d == 1 || contextTransform.d == -1) && !contextTransform.b && !contextTransform.c;
+    CGContextSetShouldSubpixelPositionFonts(cgContext, maySubpixelPosition && (isSystemFont || !isPureTranslation));
+    CGContextSetShouldSubpixelQuantizeFonts(cgContext, isPureTranslation);
+}
+
+static inline CGFontRenderingStyle renderingStyleForFont(bool isSystemFont, bool isPrinterFont)
+{
+    // FIXME: Need to support a minimum antialiased font size.
+
+    if (isSystemFont || isPrinterFont)
+        return kCGFontRenderingStyleAntialiasing | kCGFontRenderingStyleSubpixelPositioning | kCGFontRenderingStyleSubpixelQuantization;
+
+    return kCGFontRenderingStyleAntialiasing;
+}
+
+void FontCascade::getPlatformGlyphAdvances(CGFontRef font, const CGAffineTransform& m, bool isSystemFont, bool isPrinterFont, CGGlyph glyph, CGSize& advance)
+{
+    CGFontRenderingStyle style = renderingStyleForFont(isSystemFont, isPrinterFont);
+    CGFontGetGlyphAdvancesForStyle(font, &m, style, &glyph, 1, &advance);
+
+    // <rdar://problem/7761165> The GDI back end in Core Graphics sometimes returns advances that
+    // differ from what the font's hmtx table specifies. The following code corrects that.
+    CFDataRef hmtxTable = CGFontCopyTableForTag(font, 'hmtx');
+    if (!hmtxTable)
+        return;
+    CFDataRef hheaTable = CGFontCopyTableForTag(font, 'hhea');
+    if (!hheaTable) {
+        CFRelease(hmtxTable);
+        return;
+    }
+
+    const CFIndex hheaTableSize = 36;
+    const ptrdiff_t hheaTableNumberOfHMetricsOffset = 34;
+    if (CFDataGetLength(hheaTable) < hheaTableSize) {
+        CFRelease(hmtxTable);
+        CFRelease(hheaTable);
+        return;
+    }
+
+    unsigned short numberOfHMetrics = *reinterpret_cast<const unsigned short*>(CFDataGetBytePtr(hheaTable) + hheaTableNumberOfHMetricsOffset);
+    numberOfHMetrics = ((numberOfHMetrics & 0xFF) << 8) | (numberOfHMetrics >> 8);
+    if (!numberOfHMetrics) {
+        CFRelease(hmtxTable);
+        CFRelease(hheaTable);
+        return;
+    }
+
+    if (glyph >= numberOfHMetrics)
+        glyph = numberOfHMetrics - 1;
+
+    if (CFDataGetLength(hmtxTable) < 4 * (glyph + 1)) {
+        CFRelease(hmtxTable);
+        CFRelease(hheaTable);
+        return;
+    }
+
+    unsigned short advanceInDesignUnits = *reinterpret_cast<const unsigned short*>(CFDataGetBytePtr(hmtxTable) + 4 * glyph);
+    advanceInDesignUnits = ((advanceInDesignUnits & 0xFF) << 8) | (advanceInDesignUnits >> 8);
+    CGSize horizontalAdvance = CGSizeMake(static_cast<CGFloat>(advanceInDesignUnits) / CGFontGetUnitsPerEm(font), 0);
+    horizontalAdvance = CGSizeApplyAffineTransform(horizontalAdvance, m);
+    advance.width = horizontalAdvance.width;
+    if (!(style & kCGFontRenderingStyleSubpixelPositioning))
+        advance.width = roundf(advance.width);
+
+    CFRelease(hheaTable);
+    CFRelease(hmtxTable);
 }
 
 }

@@ -33,11 +33,11 @@
 
 #include "FloatRect.h"
 #include "FontCache.h"
+#include "FontCascade.h"
 #include "FontDescription.h"
 #include "GlyphPage.h"
 #include "HWndDC.h"
 #include "OpenTypeCG.h"
-#include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <mlang.h>
 #include <pal/spi/win/CoreTextSPIWin.h>
 #include <unicode/uchar.h>
@@ -147,7 +147,7 @@ float Font::platformWidthForGlyph(Glyph glyph) const
     CGAffineTransform m = CGAffineTransformMakeScale(pointSize, pointSize);
  
     bool isPrinterFont = false;
-    wkGetGlyphAdvances(font, m, m_platformData.isSystemFont(), isPrinterFont, glyph, advance);
+    FontCascade::getPlatformGlyphAdvances(font, m, m_platformData.isSystemFont(), isPrinterFont, glyph, advance);
 
     return advance.width + m_syntheticBoldOffset;
 }

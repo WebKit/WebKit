@@ -32,7 +32,6 @@
 #if USE(CG)
 
 #include "Font.h"
-#include <WebKitSystemInterface/WebKitSystemInterface.h>
 
 namespace WebCore {
 
@@ -46,7 +45,7 @@ bool GlyphPage::fill(UChar* buffer, unsigned bufferLength)
     const Font& font = this->font();
     bool haveGlyphs = false;
     CGGlyph localGlyphBuffer[GlyphPage::size];
-    wkGetGlyphs(font.platformData().cgFont(), buffer, localGlyphBuffer, bufferLength);
+    CGFontGetGlyphsForUnichars(font.platformData().cgFont(), reinterpret_cast<const UniChar*>(buffer), localGlyphBuffer, bufferLength);
     for (unsigned i = 0; i < GlyphPage::size; i++) {
         Glyph glyph = localGlyphBuffer[i];
         if (!glyph)

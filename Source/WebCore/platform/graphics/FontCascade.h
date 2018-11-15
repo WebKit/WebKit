@@ -189,7 +189,15 @@ public:
     bool primaryFontIsSystemFont() const;
 
     std::unique_ptr<DisplayList::DisplayList> displayListForTextRun(GraphicsContext&, const TextRun&, unsigned from = 0, std::optional<unsigned> to = { }, CustomFontNotReadyAction = CustomFontNotReadyAction::DoNotPaintIfFontNotReady) const;
-    
+
+#if PLATFORM(WIN) && USE(CG)
+    static void setFontSmoothingLevel(int);
+    static uint32_t setFontSmoothingStyle(CGContextRef, bool fontAllowsSmoothing);
+    static void setFontSmoothingContrast(CGFloat);
+    static void systemFontSmoothingChanged();
+    static void setCGContextFontRenderingStyle(CGContextRef, bool isSystemFont, bool isPrinterFont, bool usePlatformNativeGlyphs);
+    static void getPlatformGlyphAdvances(CGFontRef, const CGAffineTransform&, bool isSystemFont, bool isPrinterFont, CGGlyph, CGSize& advance);
+#endif
 private:
     enum ForTextEmphasisOrNot { NotForTextEmphasis, ForTextEmphasis };
 
@@ -297,6 +305,15 @@ private:
     }
 
     static int syntheticObliqueAngle() { return 14; }
+
+#if PLATFORM(WIN) && USE(CG)
+    static double s_fontSmoothingContrast;
+    static uint32_t s_fontSmoothingType;
+    static int s_fontSmoothingLevel;
+    static uint32_t s_systemFontSmoothingType;
+    static bool s_systemFontSmoothingSet;
+    static bool s_systemFontSmoothingEnabled;
+#endif
 
     FontCascadeDescription m_fontDescription;
     mutable RefPtr<FontCascadeFonts> m_fonts;

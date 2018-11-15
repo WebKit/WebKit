@@ -3719,7 +3719,7 @@ static void systemParameterChanged(WPARAM parameter)
 {
 #if USE(CG)
     if (parameter == SPI_SETFONTSMOOTHING || parameter == SPI_SETFONTSMOOTHINGTYPE || parameter == SPI_SETFONTSMOOTHINGCONTRAST || parameter == SPI_SETFONTSMOOTHINGORIENTATION)
-        wkSystemFontSmoothingChanged();
+        FontCascade::systemFontSmoothingChanged();
 #endif
 }
 
