@@ -1006,7 +1006,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "mkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/DumpRenderTree\"\ncd \"${BUILT_PRODUCTS_DIR}/DerivedSources/DumpRenderTree\"\n\nexport DumpRenderTree=\"${SRCROOT}\"\nexport WebCoreScripts=\"${WEBCORE_PRIVATE_HEADERS_DIR}\"\n\nif [ ! $CC ]; then\n    export CC=\"`xcrun -find clang`\"\nfi\n\nif [ \"${ACTION}\" = \"build\" -o \"${ACTION}\" = \"install\" -o \"${ACTION}\" = \"installhdrs\" ]; then\n    make -f \"${DumpRenderTree}/DerivedSources.make\" -j `/usr/sbin/sysctl -n hw.activecpu`\nfi\n";
+			shellScript = "Scripts/generate-derived-sources.sh\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

@@ -1,5 +1,29 @@
 2018-11-14  Keith Rollin  <krollin@apple.com>
 
+        Move scripts for Derived and Unified Sources to external files
+        https://bugs.webkit.org/show_bug.cgi?id=191670
+        <rdar://problem/46082278>
+
+        Reviewed by Keith Miller.
+
+        Move the scripts in the Generate Derived Sources and Generate Unified
+        Sources Run Script phases from the Xcode projects to external shell
+        script files. Then invoke those scripts from the Run Script phases.
+        This refactoring is being performed to support later work that will
+        invoke these scripts in other contexts.
+
+        The scripts were maintained as-is when making the move. I did a little
+        reformatting and added 'set -e' to the top of each file, but that's
+        it.
+
+        No new tests -- no changed functionality.
+
+        * Scripts/generate-derived-sources.sh: Added.
+        * Scripts/generate-unified-sources.sh: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+
+2018-11-14  Keith Rollin  <krollin@apple.com>
+
         Fix #end vs. #endif typo.
         https://bugs.webkit.org/show_bug.cgi?id=191668
         <rdar://problem/46081704>

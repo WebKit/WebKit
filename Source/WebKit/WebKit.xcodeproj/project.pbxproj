@@ -10295,7 +10295,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\n\ncd $SRCROOT\n\nif [ \"${DEPLOYMENT_LOCATION}\" == \"YES\" ]; then\nBUILD_SCRIPTS_DIR=\"${SDKROOT}${WK_ALTERNATE_WEBKIT_SDK_PATH}/usr/local/include/wtf/Scripts\"\nelse\nBUILD_SCRIPTS_DIR=\"${BUILT_PRODUCTS_DIR}/usr/local/include/wtf/Scripts\"\nfi\n\nUnifiedSourceCppFileCount=100\nUnifiedSourceMmFileCount=80\n\necho \"Using unified source list files: Sources.txt, SourcesCocoa.txt\"\n\n/usr/bin/env ruby \"${BUILD_SCRIPTS_DIR}/generate-unified-source-bundles.rb\" \"--derived-sources-path\" \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit2\" \"--source-tree-path\" \"${SRCROOT}\" \"--feature-flags\" \"${FEATURE_DEFINES}\" \"--max-cpp-bundle-count\" \"${UnifiedSourceCppFileCount}\" \"--max-obj-c-bundle-count\" \"${UnifiedSourceMmFileCount}\" \"Sources.txt\" \"SourcesCocoa.txt\" > /dev/null\n";
+			shellScript = "Scripts/generate-unified-sources.sh\n";
 		};
 		2E16B6F42019BC25008996D6 /* Copy Additional Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -10658,7 +10658,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "mkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit2\"\ncd \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit2\"\n\nexport WebKit2=\"${SRCROOT}\"\n\n/bin/ln -sfh \"${JAVASCRIPTCORE_PRIVATE_HEADERS_DIR}\" JavaScriptCorePrivateHeaders\nexport JavaScriptCore_SCRIPTS_DIR=\"JavaScriptCorePrivateHeaders\"\n\nif [ ! $CC ]; then\n    export CC=\"`xcrun -find clang`\"\nfi\n\nMAKEFILE_INCLUDE_FLAGS=$(echo \"${WEBKITADDITIONS_HEADER_SEARCH_PATHS}\" | perl -e 'print \"-I\" . join(\" -I\", split(\" \", <>));')\n\nif [ \"${ACTION}\" = \"build\" -o \"${ACTION}\" = \"install\" -o \"${ACTION}\" = \"installhdrs\" -o \"${ACTION}\" = \"installapi\" ]; then\n    make --no-builtin-rules ${MAKEFILE_INCLUDE_FLAGS} -f \"${WebKit2}/DerivedSources.make\" -j `/usr/sbin/sysctl -n hw.activecpu` SDKROOT=${SDKROOT}\nfi\n";
+			shellScript = "Scripts/generate-derived-sources.sh\n";
 		};
 		E1AC2E2C20F7B95800B0897D /* Unlock Keychain */ = {
 			isa = PBXShellScriptBuildPhase;
