@@ -89,8 +89,8 @@ public:
 
     void enterText(JSStringRef);
     void typeCharacterUsingHardwareKeyboard(JSStringRef character, JSValueRef callback);
-    void keyDownUsingHardwareKeyboard(JSStringRef character, JSValueRef callback);
-    void keyUpUsingHardwareKeyboard(JSStringRef character, JSValueRef callback);
+
+    void keyDown(JSStringRef character, JSValueRef modifierArray);
 
     void keyboardAccessoryBarNext();
     void keyboardAccessoryBarPrevious();

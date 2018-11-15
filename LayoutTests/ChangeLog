@@ -1,3 +1,23 @@
+2018-11-15  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Shift + Tab does not focus previous field
+        https://bugs.webkit.org/show_bug.cgi?id=191596
+        <rdar://problem/45892053>
+
+        Reviewed by Wenson Hsieh.
+
+        Add tests to ensure that we do not regress the tab and shift + tab key commands.
+
+        * fast/events/ios/focus-tab-next-field-expected.txt: Added.
+        * fast/events/ios/focus-tab-next-field.html: Added.
+        * fast/events/ios/focus-tab-previous-field-expected.txt: Added.
+        * fast/events/ios/focus-tab-previous-field.html: Added.
+        * platform/ios-wk1/TestExpectations: Skip test focus-tab-previous-field.html in Legacy WebKit as
+        we do not support testing key commands with modifier keys.
+        * resources/ui-helper.js:
+        (window.UIHelper.keyDown): Updated to support taking an optional array of modifiers (defaults: [])
+        and use the new infrastructure to generate a key down event for the specified character.
+
 2018-11-15  Youenn Fablet  <youenn@apple.com>
 
         Update RTCPeerConnection JS built-ins to be closer to specWe

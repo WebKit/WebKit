@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,14 @@ enum DeviceOrientation {
     "portrait-upsidedown",
     "landscape-left",
     "landscape-right"
+};
+
+enum ModifierKey {
+    "alt",
+    "capsLock",
+    "ctrl",
+    "meta", // Command key on Mac and iOS
+    "shift"
 };
 
 interface UIScriptController {
@@ -60,8 +68,8 @@ interface UIScriptController {
 
     void enterText(DOMString text);
     void typeCharacterUsingHardwareKeyboard(DOMString character, object callback);
-    void keyDownUsingHardwareKeyboard(DOMString character, object callback);
-    void keyUpUsingHardwareKeyboard(DOMString character, object callback);
+
+    void keyDown(DOMString character, object modifierArray);
 
     // eventsJSON describes a series of user events in JSON form. For the keys, see HIDEventGenerator.mm.
     // For example, this JSON describes a touch down followed by a touch up (i.e. a single tap).

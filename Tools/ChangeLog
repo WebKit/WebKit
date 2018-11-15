@@ -1,3 +1,45 @@
+2018-11-15  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Shift + Tab does not focus previous field
+        https://bugs.webkit.org/show_bug.cgi?id=191596
+        <rdar://problem/45892053>
+
+        Reviewed by Wenson Hsieh.
+
+        Add infrastructure to support testing a key down event with modifiers by creating
+        and dispatching a UIEvent. This infrastructure replaces the previous mechanism in
+        Tools/WebKitTestRunner/ios/HIDEventGenerator.mm to generate a IOHIDEvent for a
+        keydown as it did not support creating an event with modifier key state that would
+        be recognized by UIKit.
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::keyDown):
+        (WTR::UIScriptController::keyDownUsingHardwareKeyboard): Deleted.
+        (WTR::UIScriptController::keyUpUsingHardwareKeyboard): Deleted.
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        Add function uiController.keyDown() that takes a character that represents a keyboard key
+        and an array of modifier keys. The behavior of this function is analogous to eventSender.keyDown().
+        Remove functions uiController.keyDownUsingHardwareKeyboard() and uiController.keyUpUsingHardwareKeyboard()
+        as the former is replaced by uiController.keyDown() and the latter was never used.
+
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::keyDown): Added.
+        (WTR::UIScriptController::keyUpUsingHardwareKeyboard): Deleted.
+        (WTR::UIScriptController::keyDownUsingHardwareKeyboard): Deleted.
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/ios/HIDEventGenerator.h:
+        * WebKitTestRunner/ios/HIDEventGenerator.mm:
+        (createHIDKeyDownEvent): Added.
+        (-[HIDEventGenerator keyDown:completionBlock:]): Deleted.
+        (-[HIDEventGenerator keyUp:completionBlock:]): Deleted.
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::arrayLength): Added.
+        (WTR::parseModifier): Added.
+        (WTR::parseModifierArray): Added.
+        (WTR::UIScriptController::keyDown):
+        (WTR::UIScriptController::keyDownUsingHardwareKeyboard): Deleted.
+        (WTR::UIScriptController::keyUpUsingHardwareKeyboard): Deleted.
+
 2018-11-15  Keith Rollin  <krollin@apple.com>
 
         Delete old .xcfilelist files

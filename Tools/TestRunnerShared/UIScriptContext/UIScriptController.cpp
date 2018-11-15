@@ -296,11 +296,7 @@ void UIScriptController::typeCharacterUsingHardwareKeyboard(JSStringRef, JSValue
 {
 }
 
-void UIScriptController::keyUpUsingHardwareKeyboard(JSStringRef, JSValueRef)
-{
-}
-
-void UIScriptController::keyDownUsingHardwareKeyboard(JSStringRef, JSValueRef)
+void UIScriptController::keyDown(JSStringRef, JSValueRef)
 {
 }
 

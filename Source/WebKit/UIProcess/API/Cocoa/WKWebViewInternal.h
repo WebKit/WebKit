@@ -151,6 +151,9 @@ class URL;
 - (void)_transliterateChinese:(id)sender;
 - (void)replace:(id)sender;
 
+- (void)_nextAccessoryTab:(id)sender;
+- (void)_previousAccessoryTab:(id)sender;
+
 - (void)_incrementFocusPreservationCount;
 - (void)_decrementFocusPreservationCount;
 - (void)_resetFocusPreservationCount;

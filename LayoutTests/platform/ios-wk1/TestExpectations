@@ -31,6 +31,9 @@ imported/w3c/web-platform-tests/pointerevents [ Skip ]
 fast/forms/datalist [ WontFix ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-datalist-element [ WontFix ]
 
+# No support for testing key commands with modifiers in WK1
+fast/events/ios/focus-tab-previous-field.html [ Skip ]
+
 # <input type=color> is not supported in WebKit1 on iOS.
 fast/forms/color/input-color-onchange-event.html [ Failure ]
 fast/forms/color/input-color-readonly.html [ Failure ]

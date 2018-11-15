@@ -54,7 +54,7 @@ window.UIHelper = class UIHelper {
         return UIHelper.activateAt(x, y);
     }
 
-    static keyDown(key)
+    static keyDown(key, modifiers=[])
     {
         if (!this.isWebKit2() || !this.isIOS()) {
             eventSender.keyDown(key);
@@ -62,10 +62,7 @@ window.UIHelper = class UIHelper {
         }
 
         return new Promise((resolve) => {
-            testRunner.runUIScript(`
-                uiController.keyDownUsingHardwareKeyboard("downArrow", function() {
-                    uiController.uiScriptComplete("Done");
-                });`, resolve);
+            testRunner.runUIScript(`uiController.keyDown("${key}", ${JSON.stringify(modifiers)});`, resolve);
         });
     }
 

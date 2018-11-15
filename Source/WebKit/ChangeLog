@@ -1,3 +1,25 @@
+2018-11-15  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Shift + Tab does not focus previous field
+        https://bugs.webkit.org/show_bug.cgi?id=191596
+        <rdar://problem/45892053>
+
+        Reviewed by Wenson Hsieh.
+
+        Wire up the the tab and shift + tab key commands to the WKWebView/WKContentView's
+        action forwarding mechanism. Also rename -_prevAccessoryTab to -_previousAccessoryTab.
+
+        * Platform/spi/ios/UIKitSPI.h: Add more SPI.
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView canPerformActionForWebView:withSender:]):
+        (-[WKContentView keyCommands]):
+        (-[WKContentView _nextAccessoryTabForWebView:]): Added.
+        (-[WKContentView _previousAccessoryTabForWebView:]): Added.
+        (-[WKContentView _nextAccessoryTab:]): Deleted.
+        (-[WKContentView _prevAccessoryTab:]): Deleted.
+
 2018-11-15  Keith Rollin  <krollin@apple.com>
 
         Delete old .xcfilelist files

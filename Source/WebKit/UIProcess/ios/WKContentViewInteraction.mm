@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2440,7 +2440,12 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 }
 
 - (BOOL)canPerformActionForWebView:(SEL)action withSender:(id)sender
-{        
+{
+    if (action == @selector(_nextAccessoryTab:))
+        return hasAssistedNode(_assistedNodeInformation) && _assistedNodeInformation.hasNextNode;
+    if (action == @selector(_previousAccessoryTab:))
+        return hasAssistedNode(_assistedNodeInformation) && _assistedNodeInformation.hasPreviousNode;
+
     auto editorState = _page->editorState();
     if (action == @selector(_showTextStyleOptions:))
         return editorState.isContentRichlyEditable && editorState.selectionIsRange && !_showingTextStyleOptions;
@@ -3218,18 +3223,18 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
         return nil;
 
     static NSArray* editableKeyCommands = [@[
-       [UIKeyCommand keyCommandWithInput:@"\t" modifierFlags:0 action:@selector(_nextAccessoryTab:)],
-       [UIKeyCommand keyCommandWithInput:@"\t" modifierFlags:UIKeyModifierShift action:@selector(_prevAccessoryTab:)]
+        [UIKeyCommand keyCommandWithInput:@"\t" modifierFlags:0 action:@selector(_nextAccessoryTab:)],
+        [UIKeyCommand keyCommandWithInput:@"\t" modifierFlags:UIKeyModifierShift action:@selector(_previousAccessoryTab:)]
     ] retain];
     return editableKeyCommands;
 }
 
-- (void)_nextAccessoryTab:(id)sender
+- (void)_nextAccessoryTabForWebView:(id)sender
 {
     [self accessoryTab:YES];
 }
 
-- (void)_prevAccessoryTab:(id)sender
+- (void)_previousAccessoryTabForWebView:(id)sender
 {
     [self accessoryTab:NO];
 }

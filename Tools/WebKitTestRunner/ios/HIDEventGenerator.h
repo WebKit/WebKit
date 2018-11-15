@@ -26,6 +26,7 @@
 #import "UIKitSPI.h"
 
 #import <CoreGraphics/CGGeometry.h>
+#import <wtf/RetainPtr.h>
 
 // Keys for sendEventStream:completionBlock:.
 extern NSString* const TopLevelEventInfoKey;
@@ -68,6 +69,8 @@ extern NSString* const HIDEventPhaseCanceled;
 
 extern NSUInteger const HIDMaxTouchCount;
 
+RetainPtr<IOHIDEventRef> createHIDKeyDownEvent(NSString *, uint64_t timestamp);
+
 @interface HIDEventGenerator : NSObject
 
 + (HIDEventGenerator *)sharedHIDEventGenerator;
@@ -105,7 +108,5 @@ extern NSUInteger const HIDMaxTouchCount;
 
 // Keyboard
 - (void)keyPress:(NSString *)character completionBlock:(void (^)(void))completionBlock;
-- (void)keyDown:(NSString *)character completionBlock:(void (^)(void))completionBlock;
-- (void)keyUp:(NSString *)character completionBlock:(void (^)(void))completionBlock;
 
 @end

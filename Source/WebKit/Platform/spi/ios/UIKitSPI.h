@@ -158,7 +158,8 @@ typedef NS_ENUM(NSInteger, UIPreviewItemType) {
 @end
 
 WTF_EXTERN_C_BEGIN
-typedef struct __IOHIDEvent * IOHIDEventRef;
+typedef struct __IOHIDEvent* IOHIDEventRef;
+typedef struct __GSKeyboard* GSKeyboardRef;
 WTF_EXTERN_C_END
 
 @interface UIApplication ()
@@ -168,6 +169,7 @@ WTF_EXTERN_C_END
 - (BOOL)isSuspendedUnderLock;
 - (void)_enqueueHIDEvent:(IOHIDEventRef)event;
 - (void)_handleHIDEvent:(IOHIDEventRef)event;
+- (void)handleKeyUIEvent:(UIEvent *)event;
 @end
 
 typedef NS_ENUM(NSInteger, UIDatePickerPrivateMode)  {
@@ -1023,8 +1025,10 @@ typedef NSInteger UICompositingMode;
 @end
 
 @interface UIPhysicalKeyboardEvent ()
-@property (nonatomic, readonly) UIKeyboardInputFlags _inputFlags;
++ (UIPhysicalKeyboardEvent *)_eventWithInput:(NSString *)input inputFlags:(UIKeyboardInputFlags)flags;
+- (void)_setHIDEvent:(IOHIDEventRef)event keyboard:(GSKeyboardRef)gsKeyboard;
 - (UIPhysicalKeyboardEvent *)_cloneEvent NS_RETURNS_RETAINED;
+@property (nonatomic, readonly) UIKeyboardInputFlags _inputFlags;
 @property (nonatomic, readonly) CFIndex _keyCode;
 @end
 
