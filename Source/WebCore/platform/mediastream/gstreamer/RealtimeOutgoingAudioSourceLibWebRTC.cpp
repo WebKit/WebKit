@@ -118,27 +118,25 @@ void RealtimeOutgoingAudioSourceLibWebRTC::pullAudioData()
         return;
     }
 
-    auto inbuf = adoptGRef(gst_adapter_take_buffer(m_adapter.get(), inBufferSize));
-    GstMapInfo inmap;
-    gst_buffer_map(inbuf.get(), &inmap, static_cast<GstMapFlags>(GST_MAP_READ));
+    auto inBuffer = adoptGRef(gst_adapter_take_buffer(m_adapter.get(), inBufferSize));
+    auto outBuffer = adoptGRef(gst_buffer_new_allocate(nullptr, outBufferSize, 0));
+    GstMappedBuffer outMap(outBuffer.get(), GST_MAP_WRITE);
+    if (isSilenced())
+        gst_audio_format_fill_silence(m_outputStreamDescription->getInfo()->finfo, outMap.data(), outMap.size());
+    else {
+        GstMappedBuffer inMap(inBuffer.get(), GST_MAP_READ);
 
-    GstMapInfo outmap;
-    auto outbuf = adoptGRef(gst_buffer_new_allocate(nullptr, outBufferSize, 0));
-    gst_buffer_map(outbuf.get(), &outmap, static_cast<GstMapFlags>(GST_MAP_WRITE));
+        gpointer in[1] = { inMap.data() };
+        gpointer out[1] = { outMap.data() };
+        if (!gst_audio_converter_samples(m_sampleConverter, static_cast<GstAudioConverterFlags>(0), in, inChunkSampleCount, out, outChunkSampleCount)) {
+            GST_ERROR("Could not convert samples.");
 
-    gpointer in[1] = { inmap.data };
-    gpointer out[1] = { outmap.data };
-    if (gst_audio_converter_samples(m_sampleConverter, static_cast<GstAudioConverterFlags>(0), in, inChunkSampleCount, out, outChunkSampleCount)) {
-        sendAudioFrames(outmap.data,
-            LibWebRTCAudioFormat::sampleSize,
-            static_cast<int>(m_outputStreamDescription->sampleRate()),
-            static_cast<int>(m_outputStreamDescription->numberOfChannels()),
-            outChunkSampleCount);
-    } else
-        GST_ERROR("Could not convert samples.");
+            return;
+        }
+    }
 
-    gst_buffer_unmap(inbuf.get(), &inmap);
-    gst_buffer_unmap(outbuf.get(), &outmap);
+    sendAudioFrames(outMap.data(), LibWebRTCAudioFormat::sampleSize, static_cast<int>(m_outputStreamDescription->sampleRate()),
+        static_cast<int>(m_outputStreamDescription->numberOfChannels()), outChunkSampleCount);
 }
 
 bool RealtimeOutgoingAudioSourceLibWebRTC::isReachingBufferedAudioDataHighLimit()
