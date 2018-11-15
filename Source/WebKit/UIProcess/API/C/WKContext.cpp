@@ -515,7 +515,7 @@ void WKContextSetHTTPPipeliningEnabled(WKContextRef contextRef, bool enabled)
 
 void WKContextWarmInitialProcess(WKContextRef contextRef)
 {
-    toImpl(contextRef)->prewarmProcess();
+    toImpl(contextRef)->prewarmProcess(WebProcessPool::MayCreateDefaultDataStore::Yes);
 }
 
 void WKContextGetStatistics(WKContextRef contextRef, void* context, WKContextGetStatisticsFunction callback)

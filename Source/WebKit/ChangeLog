@@ -1,3 +1,24 @@
+2018-11-15  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r238215) WKProcessPool.WarmInitialProcess API test is failing
+        https://bugs.webkit.org/show_bug.cgi?id=191693
+
+        Reviewed by Alex Christensen.
+
+        Allow *explicit* process prewarming to construct the default data store if necessary or we would
+        not be obeying the client's request. Only automatic process prewarming should avoid constructing
+        the default data store unnecessarily to avoid causing memory regressions.
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextWarmInitialProcess):
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _warmInitialProcess]):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::prewarmProcess):
+        (WebKit::WebProcessPool::didReachGoodTimeToPrewarm):
+        * UIProcess/WebProcessPool.h:
+        (WebKit::WebProcessPool::sendToOneProcess):
+
 2018-11-14  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, comment improvement over r238166.

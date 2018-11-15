@@ -950,7 +950,7 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
 #endif
 }
 
-void WebProcessPool::prewarmProcess()
+void WebProcessPool::prewarmProcess(MayCreateDefaultDataStore mayCreateDefaultDataStore)
 {
     if (m_prewarmedProcess)
         return;
@@ -959,7 +959,7 @@ void WebProcessPool::prewarmProcess()
     if (!websiteDataStore) {
         if (!m_processes.isEmpty())
             websiteDataStore = &m_processes.last()->websiteDataStore();
-        else if (API::WebsiteDataStore::defaultDataStoreExists())
+        else if (mayCreateDefaultDataStore == MayCreateDefaultDataStore::Yes || API::WebsiteDataStore::defaultDataStoreExists())
             websiteDataStore = &API::WebsiteDataStore::defaultDataStore()->websiteDataStore();
         else {
             RELEASE_LOG(PerformanceLogging, "Unable to prewarming a WebProcess because we could not find a usable data store");
@@ -1284,7 +1284,7 @@ void WebProcessPool::didReachGoodTimeToPrewarm()
         return;
     }
 
-    prewarmProcess();
+    prewarmProcess(MayCreateDefaultDataStore::No);
 }
 
 void WebProcessPool::populateVisitedLinks()

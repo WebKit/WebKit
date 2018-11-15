@@ -294,7 +294,9 @@ public:
     void allowSpecificHTTPSCertificateForHost(const WebCertificateInfo*, const String& host);
 
     WebProcessProxy& createNewWebProcessRespectingProcessCountLimit(WebsiteDataStore&); // Will return an existing one if limit is met.
-    void prewarmProcess();
+
+    enum class MayCreateDefaultDataStore { No, Yes };
+    void prewarmProcess(MayCreateDefaultDataStore);
 
     bool shouldTerminate(WebProcessProxy*);
 
@@ -775,7 +777,7 @@ void WebProcessPool::sendToOneProcess(T&& message)
     }
 
     if (!messageSent) {
-        prewarmProcess();
+        prewarmProcess(MayCreateDefaultDataStore::No);
         RefPtr<WebProcessProxy> process = m_processes.last();
         if (process->canSendMessage())
             process->send(std::forward<T>(message), 0);

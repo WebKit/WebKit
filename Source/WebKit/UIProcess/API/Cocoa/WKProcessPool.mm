@@ -393,7 +393,7 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
 
 - (void)_warmInitialProcess
 {
-    _processPool->prewarmProcess();
+    _processPool->prewarmProcess(WebKit::WebProcessPool::MayCreateDefaultDataStore::Yes);
 }
 
 - (void)_automationCapabilitiesDidChange
