@@ -65,6 +65,7 @@ private:
     uint32_t m_currentChannel { fido::kHidBroadcastChannel };
     bool m_requireResidentKey { false };
     bool m_requireUserVerification  { false };
+    Vector<uint8_t> m_nonce;
 };
 
 } // namespace WebKit

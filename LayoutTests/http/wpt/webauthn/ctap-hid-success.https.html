@@ -54,4 +54,13 @@
             assert_not_equals(credential, null);
         });
     }, "CTAP HID with continue after wrong channel id in a mock hid authenticator.");
+
+    promise_test(function(t) {
+        if (window.testRunner)
+            testRunner.setWebAuthenticationMockConfiguration({ hid: { stage: "info", subStage: "init", error: "wrong-nonce", payloadBase64: testCreationMessageBase64, continueAfterErrorData: true } });
+        return navigator.credentials.create(defaultOptions).then(credential => {
+            assert_not_equals(credential, undefined);
+            assert_not_equals(credential, null);
+        });
+    }, "CTAP HID with continue after wrong nonce error in a mock hid authenticator.");
 </script>

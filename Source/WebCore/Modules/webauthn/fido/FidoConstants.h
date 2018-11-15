@@ -160,6 +160,7 @@ const size_t kHidMaxPacketSize = 64;
 const size_t kHidInitPacketDataSize = kHidMaxPacketSize - kHidInitPacketHeaderSize;
 const size_t kHidContinuationPacketDataSize = kHidMaxPacketSize - kHidContinuationPacketHeader;
 const size_t kHidInitResponseSize = 17;
+const size_t kHidInitNonceLength = 8;
 
 const uint8_t kHidMaxLockSeconds = 10;
 

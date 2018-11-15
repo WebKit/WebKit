@@ -59,6 +59,7 @@ public:
     virtual void send(Vector<uint8_t>&& data, DataSentCallback&&);
     void registerDataReceivedCallback(DataReceivedCallback&&);
     void unregisterDataReceivedCallback();
+    void invalidateCache() { m_inputReports.clear(); }
 
     void receiveReport(Vector<uint8_t>&&);
 

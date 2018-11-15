@@ -29,7 +29,9 @@
 #if ENABLE(WEB_AUTHN) && PLATFORM(MAC)
 
 #include <WebCore/FidoConstants.h>
+#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/RunLoop.h>
+#include <wtf/Vector.h>
 #include <wtf/text/Base64.h>
 
 namespace WebKit {
@@ -54,6 +56,8 @@ void CtapHidDriver::Worker::transact(fido::FidoHidMessage&& requestMessage, Mess
     m_responseMessage.reset();
     m_callback = WTFMove(callback);
 
+    // HidConnection could hold data from other applications, and thereofore invalidate it before each transaction.
+    m_connection->invalidateCache();
     m_connection->send(m_requestMessage->popNextPacket(), [weakThis = makeWeakPtr(*this)](HidConnection::DataSent sent) mutable {
         ASSERT(RunLoop::isMain());
         if (!weakThis)
@@ -129,6 +133,7 @@ void CtapHidDriver::Worker::returnMessage(std::optional<fido::FidoHidMessage>&& 
 
 CtapHidDriver::CtapHidDriver(UniqueRef<HidConnection>&& connection)
     : m_worker(makeUniqueRef<Worker>(WTFMove(connection)))
+    , m_nonce(kHidInitNonceLength)
 {
 }
 
@@ -136,12 +141,14 @@ void CtapHidDriver::transact(Vector<uint8_t>&& data, ResponseCallback&& callback
 {
     ASSERT(m_state == State::Idle);
     m_state = State::AllocateChannel;
+    m_channelId = kHidBroadcastChannel;
     m_requestData = WTFMove(data);
     m_responseCallback = WTFMove(callback);
 
     // Allocate a channel.
-    // FIXME(191533): Get a real nonce.
-    auto initCommand = FidoHidMessage::create(kHidBroadcastChannel, FidoHidDeviceCommand::kInit, { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07 });
+    ASSERT(m_nonce.size() == kHidInitNonceLength);
+    cryptographicallyRandomValues(m_nonce.data(), m_nonce.size());
+    auto initCommand = FidoHidMessage::create(m_channelId, FidoHidDeviceCommand::kInit, m_nonce);
     ASSERT(initCommand);
     m_worker->transact(WTFMove(*initCommand), [weakThis = makeWeakPtr(*this)](std::optional<FidoHidMessage>&& response) mutable {
         ASSERT(RunLoop::isMain());
@@ -158,17 +165,28 @@ void CtapHidDriver::continueAfterChannelAllocated(std::optional<FidoHidMessage>&
         returnResponse({ });
         return;
     }
-    m_state = State::Ready;
     ASSERT(message->channelId() == m_channelId);
 
-    // FIXME(191534): Check Payload including nonce and everything
     auto payload = message->getMessagePayload();
-    size_t index = 8;
     ASSERT(payload.size() == kHidInitResponseSize);
+    // Restart the transaction in the next run loop when nonce mismatches.
+    if (memcmp(payload.data(), m_nonce.data(), m_nonce.size())) {
+        m_state = State::Idle;
+        RunLoop::main().dispatch([weakThis = makeWeakPtr(*this), data = WTFMove(m_requestData), callback = WTFMove(m_responseCallback)]() mutable {
+            if (!weakThis)
+                return;
+            weakThis->transact(WTFMove(data), WTFMove(callback));
+        });
+        return;
+    }
+
+    m_state = State::Ready;
+    auto index = kHidInitNonceLength;
     m_channelId = static_cast<uint32_t>(payload[index++]) << 24;
     m_channelId |= static_cast<uint32_t>(payload[index++]) << 16;
     m_channelId |= static_cast<uint32_t>(payload[index++]) << 8;
     m_channelId |= static_cast<uint32_t>(payload[index]);
+    // FIXME(191534): Check the reset of the payload.
     auto cmd = FidoHidMessage::create(m_channelId, FidoHidDeviceCommand::kCbor, m_requestData);
     ASSERT(cmd);
     m_worker->transact(WTFMove(*cmd), [weakThis = makeWeakPtr(*this)](std::optional<FidoHidMessage>&& response) mutable {
@@ -190,8 +208,6 @@ void CtapHidDriver::returnResponse(Vector<uint8_t>&& response)
 {
     // Reset state before calling the response callback to avoid being deleted.
     m_state = State::Idle;
-    m_channelId = fido::kHidBroadcastChannel;
-    m_requestData = { };
     m_responseCallback(WTFMove(response));
 }
 

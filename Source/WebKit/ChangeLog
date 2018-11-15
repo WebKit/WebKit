@@ -1,3 +1,44 @@
+2018-11-15  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Use a real nonce for CTAPHID_INIT
+        https://bugs.webkit.org/show_bug.cgi?id=191533
+        <rdar://problem/46103502>
+
+        Reviewed by Brent Fulgham.
+
+        Use a real nonce for CTAPHID_INIT request according to:
+        https://fidoalliance.org/specs/fido-v2.0-ps-20170927/fido-client-to-authenticator-protocol-v2.0-ps-20170927.html#ctaphid_init-0x06.
+        The challenge here is the new transaction needs to start in the next runloop otherwise a dead lock will form:
+        wrong nonce -> new transaction -> new nonce -> write init request -> read init response from last run as it
+        piped in the run loop -> wrong nonce of course -> ...
+        To break the above dead lock, we have to start the new transaction in the next run. However, that isn't
+        sufficient as the arrived init response will be piped in HidConnection::m_inputReports, which is designed
+        on purpose to store any data packets within (initialized, terminated) time interval to prevent data loss in
+        the case when HidConnection::registerDataReceivedCallback is called after the first data packet's arrival.
+        In order to break the dead lock completely, HidConnection::invalidateCache will bnnne called prior to every
+        send to delete any potential init response from last run. HidConnection::invalidateCache is not necessary
+        for other protocols though. The above scenario is more or less a design flaw in CTAP HID.
+
+        Of course, all above scenarios are covered in our mock tests.
+
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreSetWebAuthenticationMockConfiguration):
+        * UIProcess/WebAuthentication/Cocoa/HidConnection.h:
+        (WebKit::HidConnection::invalidateCache):
+        * UIProcess/WebAuthentication/Mock/MockHidConnection.cpp:
+        (WebKit::MockHidConnection::send):
+        (WebKit::MockHidConnection::parseRequest):
+        (WebKit::MockHidConnection::feedReports):
+        * UIProcess/WebAuthentication/Mock/MockHidConnection.h:
+        * UIProcess/WebAuthentication/Mock/MockWebAuthenticationConfiguration.h:
+        * UIProcess/WebAuthentication/fido/CtapHidDriver.cpp:
+        (WebKit::CtapHidDriver::Worker::transact):
+        (WebKit::CtapHidDriver::CtapHidDriver):
+        (WebKit::CtapHidDriver::transact):
+        (WebKit::CtapHidDriver::continueAfterChannelAllocated):
+        (WebKit::CtapHidDriver::returnResponse):
+        * UIProcess/WebAuthentication/fido/CtapHidDriver.h:
+
 2018-11-15  Oriol Brufau  <obrufau@igalia.com>
 
         [css-logical] Implement flow-relative margin, padding and border shorthands

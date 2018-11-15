@@ -70,15 +70,17 @@ void MockHidConnection::terminate()
 void MockHidConnection::send(Vector<uint8_t>&& data, DataSentCallback&& callback)
 {
     ASSERT(m_initialized);
-    assembleRequest(WTFMove(data));
-
-    auto sent = DataSent::Yes;
-    if (stagesMatch() && m_configuration.hid->error == Mock::Error::DataNotSent)
-        sent = DataSent::No;
-
-    auto task = BlockPtr<void()>::fromCallable([callback = WTFMove(callback), sent]() mutable {
+    auto task = BlockPtr<void()>::fromCallable([weakThis = makeWeakPtr(*this), data = WTFMove(data), callback = WTFMove(callback)]() mutable {
         ASSERT(!RunLoop::isMain());
-        RunLoop::main().dispatch([callback = WTFMove(callback), sent]() mutable {
+        RunLoop::main().dispatch([weakThis, data = WTFMove(data), callback = WTFMove(callback)]() mutable {
+            if (!weakThis)
+                return;
+
+            weakThis->assembleRequest(WTFMove(data));
+
+            auto sent = DataSent::Yes;
+            if (weakThis->stagesMatch() && weakThis->m_configuration.hid->error == Mock::Error::DataNotSent)
+                sent = DataSent::No;
             callback(sent);
         });
     });
@@ -163,6 +165,12 @@ void MockHidConnection::parseRequest()
         }
     }
 
+    // Store nonce.
+    if (m_subStage == Mock::SubStage::Init) {
+        m_nonce = m_requestMessage->getMessagePayload();
+        ASSERT(m_nonce.size() == kHidInitNonceLength);
+    }
+
     m_currentChannel = m_requestMessage->channelId();
     m_requestMessage = std::nullopt;
     if (m_configuration.hid->fastDataArrival)
@@ -176,8 +184,9 @@ void MockHidConnection::feedReports()
     if (m_subStage == Mock::SubStage::Init) {
         Vector<uint8_t> payload;
         payload.reserveInitialCapacity(kHidInitResponseSize);
-        // FIXME(191533): Use a real nonce.
-        payload.appendVector(Vector<uint8_t>({ 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07 }));
+        payload.appendVector(m_nonce);
+        if (stagesMatch() && m_configuration.hid->error == Mock::Error::WrongNonce)
+            payload[0]--;
         payload.grow(kHidInitResponseSize);
         cryptographicallyRandomValues(payload.data() + payload.size(), CtapChannelIdSize);
         auto channel = kHidBroadcastChannel;
@@ -191,7 +200,7 @@ void MockHidConnection::feedReports()
 
     std::optional<FidoHidMessage> message;
     if (m_stage == Mock::Stage::Info && m_subStage == Mock::SubStage::Msg) {
-        auto infoData = encodeAsCBOR(AuthenticatorGetInfoResponse({ ProtocolVersion::kCtap }, Vector<uint8_t>(kAaguidLength)));
+        auto infoData = encodeAsCBOR(AuthenticatorGetInfoResponse({ ProtocolVersion::kCtap }, Vector<uint8_t>(kAaguidLength, 0u)));
         infoData.insert(0, static_cast<uint8_t>(CtapDeviceResponseCode::kSuccess)); // Prepend status code.
         if (stagesMatch() && m_configuration.hid->error == Mock::Error::WrongChannelId)
             message = FidoHidMessage::create(m_currentChannel - 1, FidoHidDeviceCommand::kCbor, infoData);

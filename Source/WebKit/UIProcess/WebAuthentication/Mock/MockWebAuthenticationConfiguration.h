@@ -57,7 +57,8 @@ struct MockWebAuthenticationConfiguration {
             EmptyReport,
             WrongChannelId,
             MaliciousPayload,
-            UnsupportedOptions
+            UnsupportedOptions,
+            WrongNonce
         };
 
         String payloadBase64;

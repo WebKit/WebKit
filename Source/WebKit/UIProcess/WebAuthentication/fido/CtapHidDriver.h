@@ -62,7 +62,7 @@ public:
 private:
     // Worker is the helper that maintains the transaction.
     // https://fidoalliance.org/specs/fido-v2.0-ps-20170927/fido-client-to-authenticator-protocol-v2.0-ps-20170927.html#arbitration
-    // FSM: Idle => Write => Read
+    // FSM: Idle => Write => Read.
     class Worker : public CanMakeWeakPtr<Worker> {
         WTF_MAKE_FAST_ALLOCATED;
         WTF_MAKE_NONCOPYABLE(Worker);
@@ -102,6 +102,7 @@ private:
     // One request at a time.
     Vector<uint8_t> m_requestData;
     ResponseCallback m_responseCallback;
+    Vector<uint8_t> m_nonce;
 };
 
 } // namespace WebKit

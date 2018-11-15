@@ -40,6 +40,12 @@
 
     promise_test(function(t) {
         if (window.testRunner)
+            testRunner.setWebAuthenticationMockConfiguration({ hid: { stage: "info", subStage: "init", error: "wrong-nonce" } });
+        return promiseRejects(t, "NotAllowedError", navigator.credentials.create(defaultOptions), "Operation timed out.");
+    }, "CTAP HID with init sub stage wrong nonce error in a mock hid authenticator.");
+
+    promise_test(function(t) {
+        if (window.testRunner)
             testRunner.setWebAuthenticationMockConfiguration({ hid: { stage: "info", subStage: "msg", error: "data-not-sent" } });
         return promiseRejects(t, "NotAllowedError", navigator.credentials.create(defaultOptions), "Operation timed out.");
     }, "CTAP HID with msg sub stage data not sent error in a mock hid authenticator.");

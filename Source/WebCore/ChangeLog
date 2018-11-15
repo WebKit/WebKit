@@ -1,3 +1,15 @@
+2018-11-15  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Use a real nonce for CTAPHID_INIT
+        https://bugs.webkit.org/show_bug.cgi?id=191533
+        <rdar://problem/46103502>
+
+        Reviewed by Brent Fulgham.
+
+        New tests are added into existing test files.
+
+        * Modules/webauthn/fido/FidoConstants.h:
+
 2018-11-15  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] WebGPUCommandBuffer prototype

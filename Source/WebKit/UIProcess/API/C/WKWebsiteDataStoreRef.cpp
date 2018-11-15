@@ -625,6 +625,8 @@ void WKWebsiteDataStoreSetWebAuthenticationMockConfiguration(WKWebsiteDataStoreR
             hid.error = MockWebAuthenticationConfiguration::Hid::Error::MaliciousPayload;
         if (error == "unsupported-options")
             hid.error = MockWebAuthenticationConfiguration::Hid::Error::UnsupportedOptions;
+        if (error == "wrong-nonce")
+            hid.error = MockWebAuthenticationConfiguration::Hid::Error::WrongNonce;
 
         if (auto payloadBase64 = static_cast<WKStringRef>(WKDictionaryGetItemForKey(hidRef, adoptWK(WKStringCreateWithUTF8CString("PayloadBase64")).get())))
             hid.payloadBase64 = WebKit::toImpl(payloadBase64)->string();
