@@ -33,11 +33,9 @@ namespace WebCore {
 
 class WebGPUShaderStage : public RefCounted<WebGPUShaderStage> {
 public:
-    enum {
-        VERTEX = 0,
-        FRAGMENT = 1,
-        COMPUTE = 2
-    };
+    static const unsigned long VERTEX = 0;
+    static const unsigned long FRAGMENT = 1;
+    static const unsigned long COMPUTE = 2;
 };
 
 } // namespace WebCore

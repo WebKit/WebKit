@@ -31,19 +31,12 @@
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 
-#if USE(METAL)
 OBJC_PROTOCOL(MTLDevice);
-#endif
 
 namespace WebCore {
 
-#if USE(METAL)
 using PlatformDevice = MTLDevice;
 using PlatformDeviceSmartPtr = RetainPtr<MTLDevice>;
-#else
-using PlatformDevice = void;
-using PlatformDeviceSmartPtr = RefPtr<void>;
-#endif
 
 class GPUShaderModule;
 class GPURenderPipeline;

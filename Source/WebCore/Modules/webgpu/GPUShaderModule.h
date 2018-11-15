@@ -31,9 +31,7 @@
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 
-#if USE(METAL)
 OBJC_PROTOCOL(MTLLibrary);
-#endif
 
 namespace WebCore {
 
@@ -41,13 +39,8 @@ class GPUDevice;
 
 struct GPUShaderModuleDescriptor;
 
-#if USE(METAL)
 using PlatformShaderModule = MTLLibrary;
 using PlatformShaderModuleSmartPtr = RetainPtr<MTLLibrary>;
-#else
-using PlatformShaderModule = void;
-using PlatformShaderModuleSmartPtr = RefPtr<void>;
-#endif
 
 class GPUShaderModule : public RefCounted<GPUShaderModule> {
 public:

@@ -31,9 +31,7 @@
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 
-#if USE(METAL)
 OBJC_PROTOCOL(MTLRenderPipelineState);
-#endif
 
 namespace WebCore {
 
@@ -41,13 +39,8 @@ class GPUDevice;
 
 struct GPURenderPipelineDescriptor;
 
-#if USE(METAL)
 using PlatformRenderPipeline = MTLRenderPipelineState;
 using PlatformRenderPipelineSmartPtr = RetainPtr<MTLRenderPipelineState>;
-#else
-using PlatformRenderPipeline = void;
-using PlatformRenderPipelineSmartPtr = RefPtr<void>;
-#endif
 
 class GPURenderPipeline : public RefCounted<GPURenderPipeline> {
 public:

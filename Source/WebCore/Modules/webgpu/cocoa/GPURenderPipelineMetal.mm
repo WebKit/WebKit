@@ -30,7 +30,6 @@
 
 #import "GPURenderPipelineDescriptor.h"
 #import "Logging.h"
-#import "WebGPUShaderStage.h"
 
 #import <Metal/Metal.h>
 #import <wtf/BlockObjCExceptions.h>
@@ -42,34 +41,44 @@ static bool setFunctionsForPipelineDescriptor(const char* const functionName, MT
 #if LOG_DISABLED
     UNUSED_PARAM(functionName);
 #endif
-    for (const auto& stageDescriptor : descriptor.stages) {
-        auto mtlLibrary = retainPtr(stageDescriptor.module.platformShaderModule());
+    // Metal requires a vertex shader in all render pipelines.
+    const auto& vertexStage = descriptor.vertexStage;
+    auto mtlLibrary = vertexStage.module->platformShaderModule();
 
-        if (!mtlLibrary) {
-            LOG(WebGPU, "%s: MTLLibrary does not exist!", functionName);
-            return false;
-        }
-
-        auto function = adoptNS([mtlLibrary newFunctionWithName:stageDescriptor.entryPoint]);
-
-        if (!function) {
-            LOG(WebGPU, "%s: MTLFunction %s not found!", functionName, stageDescriptor.entryPoint.utf8().data());
-            return false;
-        }
-
-        switch (stageDescriptor.stage) {
-        case WebGPUShaderStage::VERTEX:
-            [mtlDescriptor setVertexFunction:function.get()];
-            break;
-        case WebGPUShaderStage::FRAGMENT:
-            [mtlDescriptor setFragmentFunction:function.get()];
-            break;
-        default:
-            LOG(WebGPU, "%s: Invalid shader stage specified!", functionName);
-            return false;
-            break;
-        }
+    if (!mtlLibrary) {
+        LOG(WebGPU, "%s: MTLLibrary for vertex stage does not exist!", functionName);
+        return false;
     }
+
+    auto function = adoptNS([mtlLibrary newFunctionWithName:vertexStage.entryPoint]);
+
+    if (!function) {
+        LOG(WebGPU, "%s: Vertex MTLFunction \"%s\" not found!", functionName, vertexStage.entryPoint.utf8().data());
+        return false;
+    }
+
+    [mtlDescriptor setVertexFunction:function.get()];
+
+    // However, fragment shaders are optional.
+    const auto fragmentStage = descriptor.fragmentStage;
+    if (!fragmentStage.module || !fragmentStage.entryPoint)
+        return true;
+
+    mtlLibrary = fragmentStage.module->platformShaderModule();
+
+    if (!mtlLibrary) {
+        LOG(WebGPU, "%s: MTLLibrary for fragment stage does not exist!", functionName);
+        return false;
+    }
+
+    function = adoptNS([mtlLibrary newFunctionWithName:fragmentStage.entryPoint]);
+
+    if (!function) {
+        LOG(WebGPU, "%s: Fragment MTLFunction \"%s\" not found!", functionName, fragmentStage.entryPoint.utf8().data());
+        return false;
+    }
+
+    [mtlDescriptor setFragmentFunction:function.get()];
 
     return true;
 }
@@ -106,10 +115,7 @@ RefPtr<GPURenderPipeline> GPURenderPipeline::create(const GPUDevice& device, GPU
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    if ([mtlDescriptor vertexFunction])
-        pipeline = adoptNS([device.platformDevice() newRenderPipelineStateWithDescriptor:mtlDescriptor.get() error:nil]);
-    else
-        LOG(WebGPU, "%s: No vertex function assigned for MTLRenderPipelineDescriptor!", functionName);
+    pipeline = adoptNS([device.platformDevice() newRenderPipelineStateWithDescriptor:mtlDescriptor.get() error:nil]);
 
     END_BLOCK_OBJC_EXCEPTIONS;
 

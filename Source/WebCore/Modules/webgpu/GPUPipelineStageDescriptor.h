@@ -34,8 +34,7 @@
 namespace WebCore {
 
 struct GPUPipelineStageDescriptor {
-    const GPUShaderModule& module;
-    unsigned long stage;
+    const GPUShaderModule* module = nullptr;
     String entryPoint;
 };
 

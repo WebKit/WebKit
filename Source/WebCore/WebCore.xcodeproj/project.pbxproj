@@ -1244,7 +1244,6 @@
 		46B9519A207D635400A7D2DD /* RemoteFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 46B95192207D632E00A7D2DD /* RemoteFrame.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		46BCBBC22085008F00710638 /* JSRemoteDOMWindowBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 46BCBBC02085007F00710638 /* JSRemoteDOMWindowBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		46C376622085177D00C73829 /* JSRemoteDOMWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 46C376612085176D00C73829 /* JSRemoteDOMWindow.h */; };
-		CD5F3EDD9D333C40A9A38A54 /* AbortableTaskQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = DFDB912CF8E88A6DA1AD264F /* AbortableTaskQueue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		46C696CB1E7205F700597937 /* CPUMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 46C696C91E7205E400597937 /* CPUMonitor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		46C696CC1E7205FC00597937 /* CPUMonitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46C696CA1E7205E400597937 /* CPUMonitor.cpp */; };
 		46C83EFE1A9BBE2900A79A41 /* GeoNotifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 46C83EFC1A9BBE2900A79A41 /* GeoNotifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7711,7 +7710,6 @@
 		46BCBBC3208500A700710638 /* RemoteDOMWindow.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RemoteDOMWindow.idl; sourceTree = "<group>"; };
 		46C3765F2085176C00C73829 /* JSRemoteDOMWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSRemoteDOMWindow.cpp; sourceTree = "<group>"; };
 		46C376612085176D00C73829 /* JSRemoteDOMWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRemoteDOMWindow.h; sourceTree = "<group>"; };
-		DFDB912CF8E88A6DA1AD264F /* AbortableTaskQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbortableTaskQueue.h; sourceTree = "<group>"; };
 		46C696C91E7205E400597937 /* CPUMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPUMonitor.h; sourceTree = "<group>"; };
 		46C696CA1E7205E400597937 /* CPUMonitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CPUMonitor.cpp; sourceTree = "<group>"; };
 		46C83EFB1A9BBE2900A79A41 /* GeoNotifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeoNotifier.cpp; sourceTree = "<group>"; };
@@ -13821,7 +13819,6 @@
 		D045AD2321682475000A6E9B /* WebMetalCommandQueue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebMetalCommandQueue.cpp; sourceTree = "<group>"; };
 		D046FB65218D073C00CB8F62 /* GPURenderPipelineDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPURenderPipelineDescriptor.h; sourceTree = "<group>"; };
 		D046FB67218D180300CB8F62 /* GPUPipelineStageDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUPipelineStageDescriptor.h; sourceTree = "<group>"; };
-		D046FB68218D18CD00CB8F62 /* GPUPipelineDescriptorBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUPipelineDescriptorBase.h; sourceTree = "<group>"; };
 		D0573D42217EB81E00D1BE91 /* GPULegacyTextureMetal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyTextureMetal.mm; sourceTree = "<group>"; };
 		D05CED270A40BB2C00C5AF38 /* FormatBlockCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FormatBlockCommand.cpp; sourceTree = "<group>"; };
 		D05CED280A40BB2C00C5AF38 /* FormatBlockCommand.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FormatBlockCommand.h; sourceTree = "<group>"; };
@@ -14401,6 +14398,7 @@
 		DF7E9A294C7AACE0AD89B3DD /* MathMLOperatorDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathMLOperatorDictionary.h; sourceTree = "<group>"; };
 		DF9AFD7013FC31D80015FEB7 /* MediaPlayerPrivateAVFoundationObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlayerPrivateAVFoundationObjC.h; sourceTree = "<group>"; };
 		DF9AFD7113FC31D80015FEB7 /* MediaPlayerPrivateAVFoundationObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaPlayerPrivateAVFoundationObjC.mm; sourceTree = "<group>"; };
+		DFDB912CF8E88A6DA1AD264F /* AbortableTaskQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbortableTaskQueue.h; sourceTree = "<group>"; };
 		E0FEF371B07C53EAC1C1FBEE /* EventSource.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EventSource.idl; sourceTree = "<group>"; };
 		E0FEF371B17C53EAC1C1FBEE /* EventSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventSource.h; sourceTree = "<group>"; };
 		E0FEF371B27C53EAC1C1FBEE /* EventSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventSource.cpp; sourceTree = "<group>"; };
@@ -25543,7 +25541,6 @@
 				D00F5942216ECC7A000D71DB /* DOMWindowWebGPU.idl */,
 				D09727CA218BD7A500942F3A /* GPUDevice.cpp */,
 				D0615FCF217FF185008A48A8 /* GPUDevice.h */,
-				D046FB68218D18CD00CB8F62 /* GPUPipelineDescriptorBase.h */,
 				D046FB67218D180300CB8F62 /* GPUPipelineStageDescriptor.h */,
 				D0C419FA21840F6C009EC1DE /* GPURenderPipeline.h */,
 				D046FB65218D073C00CB8F62 /* GPURenderPipelineDescriptor.h */,

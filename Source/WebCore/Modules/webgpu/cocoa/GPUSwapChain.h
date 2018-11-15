@@ -30,21 +30,14 @@
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 
-#if USE(METAL)
 OBJC_CLASS CAMetalLayer;
-#endif
 
 namespace WebCore {
 
 class GPUDevice;
 
-#if USE(METAL)
 using PlatformSwapLayer = CAMetalLayer;
 using PlatformSwapLayerSmartPtr = RetainPtr<CAMetalLayer>;
-#else
-using PlatformSwapLayer = void;
-using PlatformSwapLayerSmartPtr = RefPtr<void>;
-#endif
 
 class GPUSwapChain : public RefCounted<GPUSwapChain> {
 public:

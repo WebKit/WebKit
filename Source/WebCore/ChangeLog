@@ -1,3 +1,31 @@
+2018-11-14  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Code quality concerns raised for 191291: [WebGPU] Experimental prototype for WebGPURenderPipeline and WebGPUSwapChain
+        https://bugs.webkit.org/show_bug.cgi?id=191383
+
+        Reviewed by Dean Jackson.
+
+        Covered by existing WebGPU tests introduced in original patch.
+
+        * Modules/webgpu/GPUDevice.h:
+        * Modules/webgpu/GPUPipelineStageDescriptor.h:
+        * Modules/webgpu/GPURenderPipelineDescriptor.h: Now a base struct with a guaranteed vertex stage member.
+        (): Refactored into enum class.
+        (WebCore::GPURenderPipelineDescriptor::GPURenderPipelineDescriptor): Removed in favor of init-list construction.
+        (WebCore::GPURenderPipelineDescriptor::primitiveTopology): Now a proper enum class member.
+        * Modules/webgpu/GPUShaderModule.h:
+        * Modules/webgpu/WebGPUDevice.cpp:
+        (WebCore::WebGPUDevice::createRenderPipeline const):
+        * Modules/webgpu/WebGPUShaderModule.h:
+        (WebCore::WebGPUShaderModule::module const):
+        * Modules/webgpu/WebGPUShaderStage.h: Replaced enum with constants to better reflect IDL.
+        * Modules/webgpu/cocoa/GPURenderPipeline.h:
+        * Modules/webgpu/cocoa/GPURenderPipelineMetal.mm:
+        (WebCore::setFunctionsForPipelineDescriptor):
+        (WebCore::GPURenderPipeline::create):
+        * Modules/webgpu/cocoa/GPUSwapChain.h:
+        * WebCore.xcodeproj/project.pbxproj: Removed GPUPipelineDescriptorBase.
+
 2018-11-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Pass Inspector::FrontendChannel as a reference connect/disconnect methods

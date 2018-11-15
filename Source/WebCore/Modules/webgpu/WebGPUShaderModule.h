@@ -38,7 +38,7 @@ class WebGPUShaderModule : public RefCounted<WebGPUShaderModule> {
 public:
     static RefPtr<WebGPUShaderModule> create(RefPtr<GPUShaderModule>&&);
 
-    const GPUShaderModule& module() const { return *m_module; }
+    const GPUShaderModule* module() const { return m_module.get(); }
 
 private:
     WebGPUShaderModule(RefPtr<GPUShaderModule>&&);

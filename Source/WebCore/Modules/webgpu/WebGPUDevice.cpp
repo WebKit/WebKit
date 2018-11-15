@@ -37,6 +37,7 @@
 #include "WebGPURenderPipelineDescriptor.h"
 #include "WebGPUShaderModule.h"
 #include "WebGPUShaderModuleDescriptor.h"
+#include "WebGPUShaderStage.h"
 
 namespace WebCore {
 
@@ -63,18 +64,58 @@ RefPtr<WebGPUShaderModule> WebGPUDevice::createShaderModule(WebGPUShaderModuleDe
 
 RefPtr<WebGPURenderPipeline> WebGPUDevice::createRenderPipeline(WebGPURenderPipelineDescriptor&& descriptor) const
 {
-    Vector<GPUPipelineStageDescriptor> stages;
-    for (const auto& stageDescriptor : descriptor.stages) {
-        if (!stageDescriptor.module) {
-            LOG(WebGPU, "WebGPUDevice::createRenderPipeline(): WebGPUShaderModule not found!");
-            return nullptr;
-        }
-        stages.append({ stageDescriptor.module->module(), stageDescriptor.stage, stageDescriptor.entryPoint });
+    const char* const functionName = "WebGPUDevice::createRenderPipeline()";
+#if LOG_DISABLED
+    UNUSED_PARAM(functionName);
+#endif
+
+    if (descriptor.stages.isEmpty()) {
+        LOG(WebGPU, "%s: No stages in WebGPURenderPipelineDescriptor!", functionName);
+        return nullptr;
     }
 
-    return WebGPURenderPipeline::create(m_device->createRenderPipeline(GPURenderPipelineDescriptor { WTFMove(stages), static_cast<int>(descriptor.primitiveTopology) }));
-}
+    GPUPipelineStageDescriptor vertexStage;
+    GPUPipelineStageDescriptor fragmentStage;
 
+    for (const auto& stageDescriptor : descriptor.stages) {
+        if (!stageDescriptor.module || !stageDescriptor.module->module() || stageDescriptor.entryPoint.isEmpty()) {
+            LOG(WebGPU, "%s: Invalid WebGPUPipelineStageDescriptor!", functionName);
+            return nullptr;
+        }
+
+        switch (stageDescriptor.stage) {
+        case WebGPUShaderStage::VERTEX:
+            if (vertexStage.module) {
+                LOG(WebGPU, "%s: Multiple vertex stages in WebGPURenderPipelineDescriptor!", functionName);
+                return nullptr;
+            }
+
+            vertexStage.module = stageDescriptor.module->module();
+            vertexStage.entryPoint = stageDescriptor.entryPoint;
+            break;
+        case WebGPUShaderStage::FRAGMENT:
+            if (fragmentStage.module) {
+                LOG(WebGPU, "%s: Multiple fragment stages in WebGPURenderPipelineDescriptor!", functionName);
+                return nullptr;
+            }
+
+            fragmentStage.module = stageDescriptor.module->module();
+            fragmentStage.entryPoint = stageDescriptor.entryPoint;
+            break;
+        default:
+            LOG(WebGPU, "%s: Invalid shader stage in WebGPURenderPipelineDescriptor!", functionName);
+            return nullptr;
+        }
+    }
+
+    // Metal (if not other APIs) requires at least the vertex shader.
+    if (!vertexStage.module || vertexStage.entryPoint.isEmpty()) {
+        LOG(WebGPU, "%s: Invalid vertex stage in WebGPURenderPipelineDescriptor!", functionName);
+        return nullptr;
+    }
+
+    return WebGPURenderPipeline::create(m_device->createRenderPipeline(GPURenderPipelineDescriptor { WTFMove(vertexStage), WTFMove(fragmentStage), static_cast<GPURenderPipelineDescriptor::PrimitiveTopology>(descriptor.primitiveTopology) }));
+}
 
 } // namespace WebCore
 

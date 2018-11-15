@@ -34,8 +34,8 @@
 
 namespace WebCore {
 
-struct GPURenderPipelineDescriptor : GPUPipelineDescriptorBase {
-    enum {
+struct GPURenderPipelineDescriptor {
+    enum class PrimitiveTopology {
         PointList,
         LineList,
         LineStrip,
@@ -43,13 +43,9 @@ struct GPURenderPipelineDescriptor : GPUPipelineDescriptorBase {
         TriangleStrip
     };
 
-    GPURenderPipelineDescriptor(Vector<GPUPipelineStageDescriptor>&& stages, int topology)
-        : GPUPipelineDescriptorBase { WTFMove(stages) }
-        , primitiveTopology(topology)
-    {
-    }
-
-    int primitiveTopology;
+    GPUPipelineStageDescriptor vertexStage;
+    GPUPipelineStageDescriptor fragmentStage;
+    PrimitiveTopology primitiveTopology;
 };
 
 } // namespace WebCore
