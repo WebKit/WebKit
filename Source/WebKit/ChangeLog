@@ -1,3 +1,13 @@
+2018-11-15  Vivek Seth  <v_seth@apple.com>
+
+        Create feature flag (HTTPS_UPGRADE)
+        https://bugs.webkit.org/show_bug.cgi?id=191613
+        <rdar://problem/45851068>
+
+        Reviewed by Dean Jackson.
+
+        * config.h:
+
 2018-11-15  Chris Dumez  <cdumez@apple.com>
 
         Regression(r238215) WKProcessPool.WarmInitialProcess API test is failing
