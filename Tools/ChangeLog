@@ -1,3 +1,12 @@
+2018-11-15  Aakash Jain  <aakash_jain@apple.com>
+
+        Increase EWS lock timeout to 3 hours
+        https://bugs.webkit.org/show_bug.cgi?id=191705
+
+        Reviewed by Alexey Proskuryakov.
+
+        * QueueStatusServer/config/queues.py: Increased EWS lock timeout to 3 hours.
+
 2018-11-15  Chris Dumez  <cdumez@apple.com>
 
         IndexedDB.IndexedDBTempFileSize API test times out with process prewarming enabled
