@@ -381,7 +381,7 @@ private:
 #endif
 
 #if ENABLE(DARK_MODE_CSS)
-    bool m_isDarkModeCSSEnabled { false };
+    bool m_isDarkModeCSSEnabled { true };
 #endif
 
 #if ENABLE(INDEXED_DATABASE_IN_WORKERS)

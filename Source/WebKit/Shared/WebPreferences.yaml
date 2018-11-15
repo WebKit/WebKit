@@ -1323,7 +1323,7 @@ CSSCustomPropertiesAndValuesEnabled:
 
 DarkModeCSSEnabled:
   type: bool
-  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
+  defaultValue: true
   humanReadableName: "Dark Mode CSS Support"
   humanReadableDescription: "Enable Dark Mode CSS Support"
   webcoreBinding: RuntimeEnabledFeatures
