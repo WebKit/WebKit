@@ -442,10 +442,6 @@ void InlineFormattingContext::placeInFlowPositionedChildren(Line::RunRange runRa
     }
 }
 
-void InlineFormattingContext::computeStaticPosition(const Box&) const
-{
-}
-
 void InlineFormattingContext::collectInlineContentForSubtree(const Box& root, InlineRunProvider& inlineRunProvider) const
 {
     // Collect inline content recursively and set breaking rules for the inline elements (for paddings, margins, positioned element etc).

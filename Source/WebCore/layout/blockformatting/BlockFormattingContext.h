@@ -56,7 +56,7 @@ private:
     void computeWidthAndMargin(const Box&) const;
     void computeHeightAndMargin(const Box&) const;
 
-    void computeStaticPosition(const Box&) const override;
+    void computeStaticPosition(const Box&) const;
     void computeFloatingPosition(const FloatingContext&, const Box&) const;
     void computePositionToAvoidFloats(const FloatingContext&, const Box&) const;
     void computeVerticalPositionForFloatClear(const FloatingContext&, const Box&) const;

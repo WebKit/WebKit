@@ -120,7 +120,6 @@ private:
     void computeHeightAndMargin(const Box&) const;
     void computeWidthAndMargin(const Box&) const;
     void computeFloatPosition(const FloatingContext&, Line&, const Box&) const;
-    void computeStaticPosition(const Box&) const override;
     void placeInFlowPositionedChildren(Line::RunRange) const;
 
     void collectInlineContent(InlineRunProvider&) const;

@@ -1,3 +1,18 @@
+2018-11-15  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] FormattingContext base class should not declare computeStaticPosition.
+        https://bugs.webkit.org/show_bug.cgi?id=191683
+
+        Reviewed by Antti Koivisto.
+
+        Apparently only BlockFormattingContext uses it.
+
+        * layout/FormattingContext.h:
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::computeStaticPosition const): Deleted.
+        * layout/inlineformatting/InlineFormattingContext.h:
+
 2018-11-14  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add support for in-flow positioned inline boxes.

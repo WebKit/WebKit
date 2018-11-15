@@ -69,8 +69,6 @@ protected:
     LayoutState& layoutState() const;
     const Box& root() const { return *m_root; }
 
-    virtual void computeStaticPosition(const Box&) const = 0;
-
     void computeBorderAndPadding(const Box&) const;
 
 #ifndef NDEBUG
