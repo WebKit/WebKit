@@ -33,7 +33,7 @@ namespace WebCore {
 
 class AuthenticatorAssertionResponse : public AuthenticatorResponse {
 public:
-    static Ref<AuthenticatorAssertionResponse> create(Ref<ArrayBuffer>&& clientDataJSON, Ref<ArrayBuffer>&& authenticatorData, Ref<ArrayBuffer>&& signature, Ref<ArrayBuffer>&& userHandle)
+    static Ref<AuthenticatorAssertionResponse> create(Ref<ArrayBuffer>&& clientDataJSON, Ref<ArrayBuffer>&& authenticatorData, Ref<ArrayBuffer>&& signature, RefPtr<ArrayBuffer>&& userHandle)
     {
         return adoptRef(*new AuthenticatorAssertionResponse(WTFMove(clientDataJSON), WTFMove(authenticatorData), WTFMove(signature), WTFMove(userHandle)));
     }
@@ -42,10 +42,10 @@ public:
 
     ArrayBuffer* authenticatorData() const { return m_authenticatorData.ptr(); }
     ArrayBuffer* signature() const { return m_signature.ptr(); }
-    ArrayBuffer* userHandle() const { return m_userHandle.ptr(); }
+    ArrayBuffer* userHandle() const { return m_userHandle.get(); }
 
 private:
-    AuthenticatorAssertionResponse(Ref<ArrayBuffer>&& clientDataJSON, Ref<ArrayBuffer>&& authenticatorData, Ref<ArrayBuffer>&& signature, Ref<ArrayBuffer>&& userHandle)
+    AuthenticatorAssertionResponse(Ref<ArrayBuffer>&& clientDataJSON, Ref<ArrayBuffer>&& authenticatorData, Ref<ArrayBuffer>&& signature, RefPtr<ArrayBuffer>&& userHandle)
         : AuthenticatorResponse(WTFMove(clientDataJSON))
         , m_authenticatorData(WTFMove(authenticatorData))
         , m_signature(WTFMove(signature))
@@ -57,7 +57,7 @@ private:
 
     Ref<ArrayBuffer> m_authenticatorData;
     Ref<ArrayBuffer> m_signature;
-    Ref<ArrayBuffer> m_userHandle;
+    RefPtr<ArrayBuffer> m_userHandle;
 };
 
 } // namespace WebCore

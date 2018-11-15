@@ -57,10 +57,10 @@ RefPtr<PublicKeyCredential> PublicKeyCredential::tryCreate(const PublicKeyCreden
         return adoptRef(*new PublicKeyCredential(data.rawId.releaseNonNull(), AuthenticatorAttestationResponse::create(data.clientDataJSON.releaseNonNull(), data.attestationObject.releaseNonNull())));
     }
 
-    if (!data.authenticatorData || !data.signature || !data.userHandle)
+    if (!data.authenticatorData || !data.signature)
         return nullptr;
 
-    return adoptRef(*new PublicKeyCredential(data.rawId.releaseNonNull(), AuthenticatorAssertionResponse::create(data.clientDataJSON.releaseNonNull(), data.authenticatorData.releaseNonNull(), data.signature.releaseNonNull(), data.userHandle.releaseNonNull())));
+    return adoptRef(*new PublicKeyCredential(data.rawId.releaseNonNull(), AuthenticatorAssertionResponse::create(data.clientDataJSON.releaseNonNull(), data.authenticatorData.releaseNonNull(), data.signature.releaseNonNull(), WTFMove(data.userHandle))));
 }
 
 PublicKeyCredential::PublicKeyCredential(Ref<ArrayBuffer>&& id, Ref<AuthenticatorResponse>&& response)

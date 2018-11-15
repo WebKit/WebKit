@@ -74,12 +74,18 @@ void PublicKeyCredentialData::encode(Encoder& encoder) const
         return;
     }
 
-    if (!authenticatorData || !signature || !userHandle)
+    if (!authenticatorData || !signature)
         return;
     encoder << static_cast<uint64_t>(authenticatorData->byteLength());
     encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(authenticatorData->data()), authenticatorData->byteLength(), 1);
     encoder << static_cast<uint64_t>(signature->byteLength());
     encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(signature->data()), signature->byteLength(), 1);
+
+    if (!userHandle) {
+        encoder << false;
+        return;
+    }
+    encoder << true;
     encoder << static_cast<uint64_t>(userHandle->byteLength());
     encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(userHandle->data()), userHandle->byteLength(), 1);
 }
@@ -141,6 +147,13 @@ std::optional<PublicKeyCredentialData> PublicKeyCredentialData::decode(Decoder& 
     result.signature = ArrayBuffer::create(signatureLength.value(), sizeof(uint8_t));
     if (!decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(result.signature->data()), signatureLength.value(), 1))
         return std::nullopt;
+
+    std::optional<bool> hasUserHandle;
+    decoder >> hasUserHandle;
+    if (!hasUserHandle)
+        return std::nullopt;
+    if (!*hasUserHandle)
+        return result;
 
     std::optional<uint64_t> userHandleLength;
     decoder >> userHandleLength;

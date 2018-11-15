@@ -1,3 +1,28 @@
+2018-11-15  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] UserHandle can be null
+        https://bugs.webkit.org/show_bug.cgi?id=191521
+
+        Reviewed by Alex Christensen.
+
+        According to the newest spec as of 7 August, 2018: https://www.w3.org/TR/webauthn/#conforming-authenticators-u2f.
+        UserHandle can now be null.
+
+        Covered by existing tests.
+
+        * Modules/webauthn/AuthenticatorAssertionResponse.h:
+        (WebCore::AuthenticatorAssertionResponse::create):
+        (WebCore::AuthenticatorAssertionResponse::userHandle const):
+        (WebCore::AuthenticatorAssertionResponse::AuthenticatorAssertionResponse):
+        * Modules/webauthn/AuthenticatorAssertionResponse.idl:
+        * Modules/webauthn/PublicKeyCredential.cpp:
+        (WebCore::PublicKeyCredential::tryCreate):
+        * Modules/webauthn/PublicKeyCredentialData.h:
+        (WebCore::PublicKeyCredentialData::encode const):
+        (WebCore::PublicKeyCredentialData::decode):
+        * Modules/webauthn/fido/DeviceResponseConverter.cpp:
+        (fido::readCTAPGetAssertionResponse):
+
 2018-11-15  Youenn Fablet  <youenn@apple.com>
 
         Modernize RTCPeerConnection handling of pendingActivity
