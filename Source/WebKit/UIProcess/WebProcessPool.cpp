@@ -568,6 +568,12 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
         withWebsiteDataStore->clearPendingCookies();
     }
 
+    // Make sure the network process knowns about all the sessions that have been registered before it started.
+    for (auto& sessionID : m_sessionToPagesMap.keys()) {
+        if (auto* websiteDataStore = WebsiteDataStore::existingNonDefaultDataStoreForSessionID(sessionID))
+            m_networkProcess->addSession(*websiteDataStore);
+    }
+
     if (m_websiteDataStore)
         m_websiteDataStore->websiteDataStore().didCreateNetworkProcess();
 

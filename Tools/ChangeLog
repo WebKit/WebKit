@@ -1,3 +1,17 @@
+2018-11-15  Chris Dumez  <cdumez@apple.com>
+
+        IndexedDB.IndexedDBTempFileSize API test times out with process prewarming enabled
+        https://bugs.webkit.org/show_bug.cgi?id=191671
+        <rdar://problem/46086062>
+
+        Reviewed by Alex Christensen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm:
+        (TEST):
+
 2018-11-15  Oriol Brufau  <obrufau@igalia.com>
 
         [css-logical] Implement flow-relative margin, padding and border shorthands

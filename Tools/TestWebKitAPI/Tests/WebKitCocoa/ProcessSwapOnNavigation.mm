@@ -2690,6 +2690,42 @@ TEST(ProcessSwap, SwapOnLoadHTMLString)
     done = false;
 }
 
+TEST(ProcessSwap, UsePrewarmedProcessAfterTerminatingNetworkProcess)
+{
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    processPoolConfiguration.get().prewarmsProcessesAutomatically = YES;
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    webViewConfiguration.get().websiteDataStore = [[[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()] autorelease];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    TestWebKitAPI::Util::spinRunLoop(1);
+
+    [processPool _terminateNetworkProcess];
+
+    auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    [webView2 setNavigationDelegate:delegate.get()];
+    request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView2 loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+}
+
 #if PLATFORM(MAC)
 
 TEST(ProcessSwap, GoBackToSuspendedPageWithMainFrameIDThatIsNotOne)

@@ -27,13 +27,13 @@
 
 #import "PlatformUtilities.h"
 #import "Test.h"
-#import <WebKit/WebKit.h>
-
+#import "TestNavigationDelegate.h"
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
+#import <WebKit/WebKit.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKUserStyleSheet.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
@@ -424,6 +424,28 @@ TEST(WebKit, WebsiteDataStoreEphemeral)
 
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:defaultResourceLoadStatisticsPath.path]);
     EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:defaultResourceLoadStatisticsFilePath.path]);
+}
+
+TEST(WebKit, DoLoadWithNonDefaultDataStoreAfterTerminatingNetworkProcess)
+{
+    auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    webViewConfiguration.get().websiteDataStore = [[[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()] autorelease];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+    [webView _test_waitForDidFinishNavigation];
+
+    TestWebKitAPI::Util::spinRunLoop(1);
+
+    [webViewConfiguration.get().processPool _terminateNetworkProcess];
+
+    request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+    [webView _test_waitForDidFinishNavigation];
 }
 
 #endif

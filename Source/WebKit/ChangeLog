@@ -1,3 +1,56 @@
+2018-11-15  Chris Dumez  <cdumez@apple.com>
+
+        IndexedDB.IndexedDBTempFileSize API test times out with process prewarming enabled
+        https://bugs.webkit.org/show_bug.cgi?id=191671
+        <rdar://problem/46086062>
+
+        Reviewed by Alex Christensen.
+
+        Enabling process prewarming caused IndexedDB.IndexedDBTempFileSize API to time out and print
+        the following line:
+        "Attempted to create a NetworkLoad with a session (id=2) that does not exist."
+
+        This actually identified a pre-existing bug with our handling of non-default data store.
+        Whenever a page starts using a data store, we call WebProcessPool::pageBeginUsingWebsiteDataStore()
+        which will call NetworkProcessProxy::addSession() if the network process was already started
+        to let the network process know about this non-default session. There are several issues with the
+        current model:
+        1. If the network process was not created yet when pageBeginUsingWebsiteDataStore() is called,
+           then the network process will not know about the non-default session when it actually gets
+           started later on. This is unlikely to happen in practice, except in case of network process
+           crash because we create the network process as soon as we initialize the first WebProcessProxy.
+        2. Even if we successfuly managed to register the session with the network process proxy, we get
+           in trouble if the network process crashes or is terminated later on as we do not re-register
+           those sessions with the new network process.
+
+        To address these 2 issues, WebProcessPool::ensureNetworkProcess() now takes care of registering
+        all the non-default sessions (that are associated with this process pool) with the new network
+        process. The WebProcessPool knows about these sessions because it adds them to m_sessionToPagesMap
+        whenever WebProcessPool::pageBeginUsingWebsiteDataStore() is called, even if the network process
+        proxy was not created yet.
+
+        The reason the IndexedDB.IndexedDBTempFileSize API test was failing was because it did:
+        1. A load in a WebView V1 with a non-default session
+        2. Process prewarming kicked in after this load and would create a new WebProcessProxy.
+        3. Terminate the network process
+        4. Another load in a WebView V2 with the same non-defaut session, which would reuse the
+          prewarmed process. Because the network process was terminated, constructing the new
+          page would not register the session ID with the new network process when
+          pageBeginUsingWebsiteDataStore() is called.
+        -> The load would hang because the new network process would not know about the
+           non-default session when started later on.
+
+        The bug was previously hidden without process prewarming because step 4 would create a *new*
+        WebProcessProxy and WebProcessPool::initializeNewWebProcess() would call ensureNetworkProcess()
+        so that pageBeginUsingWebsiteDataStore() would successfuly register the session with the
+        network process later on.
+
+        I wrote a second API test (WebKit.DoLoadWithNonDefaultDataStoreAfterTerminatingNetworkProcess)
+        to demonstrate the pre-existing bug without process prewarming enabled.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+
 2018-11-15  Vivek Seth  <v_seth@apple.com>
 
         Create feature flag (HTTPS_UPGRADE)
