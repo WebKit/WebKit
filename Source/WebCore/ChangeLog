@@ -1,3 +1,16 @@
+2018-11-15  Jer Noble  <jer.noble@apple.com>
+
+        AVKit will set videoGravity to a nil string when building against iosmac
+        https://bugs.webkit.org/show_bug.cgi?id=191573
+
+        Reviewed by Dean Jackson.
+
+        Workaround AVKit behavior by treating nil videoGravity as the default,
+        which is AVLayerVideoGravityResizeAspect.
+
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        (-[WebAVPlayerLayer setVideoGravity:]):
+
 2018-11-15  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Reduce the use of WKSI library calls: Font Handling
