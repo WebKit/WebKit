@@ -1,3 +1,9 @@
+2018-11-15  Miguel Gomez  <magomez@igalia.com>
+
+        Unreviewed GTK+ gardening after r238220.
+
+        * platform/gtk/TestExpectations:
+
 2018-11-14  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add support for in-flow positioned inline boxes.

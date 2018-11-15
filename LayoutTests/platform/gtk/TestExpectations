@@ -1731,7 +1731,6 @@ webkit.org/b/53959 fast/dom/Window/window-resize.html [ Failure Timeout Pass ]
 # This failures only seem to happen if the environment variable XVFB_SCREEN_DEPTH=8 is not set
 webkit.org/b/132126 media/track/track-cues-cuechange.html [ Timeout Pass ]
 webkit.org/b/132126 media/track/track-cues-enter-exit.html [ Timeout Pass ]
-webkit.org/b/132126 media/video-poster-background.html [ ImageOnlyFailure ]
 
 webkit.org/b/153771 animations/resume-after-page-cache.html [ Timeout Pass ]
 webkit.org/b/153771 legacy-animation-engine/animations/resume-after-page-cache.html [ Timeout Pass ]
@@ -2042,6 +2041,21 @@ webkit.org/b/191010 editing/pasteboard/5075944.html [ Pass Failure ]
 webkit.org/b/191010 editing/pasteboard/paste-and-sanitize.html [ Pass Failure ]
 webkit.org/b/191010 editing/pasteboard/paste-text-006.html [ Pass Failure ]
 webkit.org/b/191010 editing/pasteboard/paste-text-with-style-5.html [ Pass Failure ]
+
+webkit.org/b/191680 editing/pasteboard/copy-paste-first-line-in-textarea.html [ Failure Pass ]
+webkit.org/b/191680 editing/pasteboard/display-block-on-spans.html [ Failure Pass ]
+
+webkit.org/b/191681 http/wpt/preload/change-link-rel-attribute.html [ Failure Pass ]
+
+webkit.org/b/191682 inspector/worker/worker-create-and-terminate.html [ Failure Pass ]
+
+webkit.org/b/191684 media/W3C/video/events/event_order_loadstart_progress.html [ Failure Pass ]
+
+webkit.org/b/191685 http/wpt/css/css-animations/set-animation-play-state-to-paused-001.html [ ImageOnlyFailure Pass ]
+
+webkit.org/b/191686 imported/blink/fast/canvas/bug382588.html [ Timeout Pass ]
+
+webkit.org/b/191687 imported/blink/http/tests/plugins/get-url-notify-on-removal.html [ Timeout Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -2837,7 +2851,6 @@ webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes/shape-outside
 webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-inset-003.html [ Failure ]
 webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-polygon-004.html [ Failure ]
 
-webkit.org/b/124507 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink.html [ ImageOnlyFailure ]
 webkit.org/b/139486 fast/css3-text/css3-text-decoration/text-decoration-skip/decoration-skip-crash-fallback-svg.html [ ImageOnlyFailure ]
 
 webkit.org/b/124509 media/video-controls-captions-trackmenu-hide-on-click-outside.html [ Failure ]
@@ -3046,7 +3059,6 @@ webkit.org/b/148936 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 webkit.org/b/149128 fast/text/control-characters [ ImageOnlyFailure ]
 
 # web-platform-tests XHR tests
-webkit.org/b/179663 imported/w3c/web-platform-tests/xhr/headers-normalize-response.htm [ Failure ]
 webkit.org/b/179662 imported/w3c/web-platform-tests/xhr/status-async.htm [ Failure ]
 webkit.org/b/179662 imported/w3c/web-platform-tests/xhr/status-basic.htm [ Failure ]
 webkit.org/b/179662 imported/w3c/web-platform-tests/xhr/status-error.htm [ Failure ]
@@ -3578,6 +3590,9 @@ webkit.org/b/191003 imported/w3c/web-platform-tests/mimesniff/mime-types/charset
 webkit.org/b/191004 media/track/track-cue-missing.html [ Failure ]
 
 webkit.org/b/191005 webgpu/webgpu-enabled.html [ Failure ]
+webkit.org/b/191005 webgpu/render-pipelines.html [ Failure ]
+webkit.org/b/191005 webgpu/shader-modules.html [ Failure ]
+webkit.org/b/191005 webgpu/webgpu-basics.html [ Failure ]
 
 webkit.org/b/191006 webrtc/simulcast-h264.html [ Failure ]
 
@@ -3586,6 +3601,14 @@ webkit.org/b/191400 fast/block/basic/inline-content-with-floating-images2.html [
 webkit.org/b/191400 fast/block/basic/quirk-mode-percent-height.html [ Failure ]
 
 webkit.org/b/191402 fast/css/has-attachment.html [ Failure ]
+
+webkit.org/b/191688 compositing/backing/no-backing-for-clip-overlap.html [ Failure ]
+webkit.org/b/191688 compositing/backing/no-backing-for-clip.html [ Failure ]
+webkit.org/b/191688 compositing/backing/no-backing-for-perspective.html [ Failure ]
+webkit.org/b/191688 compositing/layer-creation/overlap-animation.html [ Failure ]
+webkit.org/b/191688 compositing/layer-creation/overlap-transforms.html [ Failure ]
+webkit.org/b/191688 compositing/overflow/clip-descendents.html [ Failure ]
+webkit.org/b/191688 compositing/repaint/absolute-painted-into-composited-ancestor.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
