@@ -1003,13 +1003,7 @@ void RenderGrid::populateGridPositionsForDirection(GridTrackSizingDirection dire
     const auto& offset = direction == ForColumns ? m_offsetBetweenColumns : m_offsetBetweenRows;
     auto& positions = isRowAxis ? m_columnPositions : m_rowPositions;
     positions.resize(numberOfLines);
-
     auto borderAndPadding = isRowAxis ? borderAndPaddingLogicalLeft() : borderAndPaddingBefore();
-    // If we are in horizontal writing mode and RTL direction the scrollbar is painted on the left,
-    // so we need to take into account when computing the position of the columns.
-    if (isRowAxis && style().isHorizontalWritingMode() && !style().isLeftToRightDirection())
-        borderAndPadding += scrollbarLogicalWidth();
-
     positions[0] = borderAndPadding + offset.positionOffset;
     if (numberOfLines > 1) {
         // If we have collapsed tracks we just ignore gaps here and add them later as we might not
