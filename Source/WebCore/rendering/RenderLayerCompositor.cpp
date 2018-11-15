@@ -1387,6 +1387,11 @@ void RenderLayerCompositor::layerStyleChanged(StyleDifference diff, RenderLayer&
         }
     }
 
+    // FIXME: this is necessary to get iframe layers hooked up in response to scheduleInvalidateStyleAndLayerComposition(),
+    // but we should avoid triggering config updates on every recompositeLayer.
+    if (diff == StyleDifference::RecompositeLayer)
+        layer.setNeedsCompositingConfigurationUpdate();
+
     if (diff >= StyleDifference::RecompositeLayer && oldStyle) {
         if (oldStyle->transform() != newStyle.transform()) {
             // FIXME: transform changes really need to trigger layout. See RenderElement::adjustStyleDifference().

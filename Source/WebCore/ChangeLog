@@ -1,3 +1,25 @@
+2018-11-15  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION(r238090): Composited iframe contents disappear after switching tabs in Safari
+        https://bugs.webkit.org/show_bug.cgi?id=191673
+        rdar://problem/46083440
+
+        Reviewed by Antti Koivisto.
+
+        Switching tabs in Safari triggers the "setIsInWindow" code path, that detaches the layer
+        tree for every Frame. They get re-attached on tab show, and for subframes this involves
+        the triggering of a fake style recalc in the parent document via scheduleInvalidateStyleAndLayerComposition().
+        
+        The style diff that's sent to RenderLayerCompositor::layerStyleChanged() as a result of that
+        fake style recalc is RecompositeLayer, but the code was failing to trigger the necessary
+        layer configuration update that gets iframe layers parented.
+        
+        This stop-gap patch triggers layer config updates on every RecompositeLayer diff. A future
+        patch will optimize this, and add a layout test.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::layerStyleChanged):
+
 2018-11-15  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Skip non-inflow boxes while splitting the inline runs.
