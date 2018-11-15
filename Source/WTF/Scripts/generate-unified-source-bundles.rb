@@ -273,6 +273,7 @@ sourceListFiles.each_with_index {
             raise "malformed #if" unless line =~ /\A#if\s+(\S+)/
             inDisabledLines = !$featureFlags[$1]
         else
+            raise "malformed preprocessor directive: #{line}" if line =~ /^#/
             raise "duplicate line: #{line} in #{path}" if seen[line]
             seen[line] = true
             result << SourceFile.new(line, sourceFileIndex)

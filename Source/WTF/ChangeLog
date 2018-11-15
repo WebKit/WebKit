@@ -1,3 +1,17 @@
+2018-11-14  Keith Rollin  <krollin@apple.com>
+
+        Fix #end vs. #endif typo.
+        https://bugs.webkit.org/show_bug.cgi?id=191668
+        <rdar://problem/46081704>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Source/WebCore/SourcesCocoa.txt had a #end that should have been a
+        #endif. Fix this, an add a check to generate-unified-source-bundles.rb
+        to detect similar typos.
+
+        * Scripts/generate-unified-source-bundles.rb:
+
 2018-11-12  Mark Lam  <mark.lam@apple.com>
 
         Add OOM detection to StringPrototype's substituteBackreferences().

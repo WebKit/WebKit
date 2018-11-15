@@ -632,7 +632,7 @@ platform/mediastream/libwebrtc/LibWebRTCProviderCocoa.cpp
     JSTouchEvent.cpp
     JSTouchList.cpp
 
-#end
+#endif
 
 #if ENABLE_IOS_GESTURE_EVENTS
 
