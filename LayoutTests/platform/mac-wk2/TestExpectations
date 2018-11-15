@@ -902,6 +902,8 @@ http/wpt/webauthn/public-key-credential-get-success-local.https.html [ Skip ]
 # The following tests require PublicKeyCredential objects. We can only produce them via local authenticators now.
 http/wpt/credential-management/credentialscontainer-store-basics.https.html [ Skip ]
 http/wpt/webauthn/idl.https.html [ Skip ]
+# Slow WebAuthN tests.
+http/wpt/webauthn/public-key-credential-get-success-hid.https.html [ Slow ]
 
 webkit.org/b/183878 media/modern-media-controls/tracks-panel/tracks-panel-up-click-over-media-does-not-dimiss-media-controls-when-media-is-playing.html [ Pass Timeout ] 
 
