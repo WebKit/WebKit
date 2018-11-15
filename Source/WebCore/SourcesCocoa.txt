@@ -259,7 +259,6 @@ platform/graphics/avfoundation/objc/VideoTrackPrivateAVFObjC.cpp @no-unify
 platform/graphics/avfoundation/objc/VideoTrackPrivateMediaSourceAVFObjC.mm @no-unify
 platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm @no-unify
 platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm @no-unify
-platform/graphics/avfoundation/objc/VideoFullscreenLayerManager.mm @no-unify
 
 platform/graphics/ca/GraphicsLayerCA.cpp
 platform/graphics/ca/LayerPool.cpp

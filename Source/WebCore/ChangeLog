@@ -1,3 +1,17 @@
+2018-11-14  Keith Rollin  <krollin@apple.com>
+
+        Remove VideoFullscreenLayerManager.mm from WebCore/SourcesCocoa.txt
+        https://bugs.webkit.org/show_bug.cgi?id=191667
+        <rdar://problem/46081286>
+
+        Reviewed by Eric Carlson.
+
+        VideoFullscreenLayerManager.mm no longer exists.
+
+        No new tests -- No changed functionality.
+
+        * SourcesCocoa.txt:
+
 2018-11-14  Timothy Hatcher  <timothy@apple.com>
 
         Enabled dark mode CSS support by default.
