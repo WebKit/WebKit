@@ -1,3 +1,12 @@
+2018-11-14  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Layout test fast/layers/no-clipping-overflow-hidden-added-after-transform.html is a flaky failure on EWS bots
+        https://bugs.webkit.org/show_bug.cgi?id=191658
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: Mark this test as flaky on Sierra Release WK2 to reduce the number of retries on mac-wk2-ews.
+
 2018-11-14  Timothy Hatcher  <timothy@apple.com>
 
         Update prefers-color-scheme media query matching based on GitHub issue #3278.
