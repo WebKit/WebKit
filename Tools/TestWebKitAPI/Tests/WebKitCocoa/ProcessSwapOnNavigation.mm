@@ -62,6 +62,7 @@ static bool done;
 static bool failed;
 static bool didCreateWebView;
 static int numberOfDecidePolicyCalls;
+static bool didRepondToPolicyDecisionCall;
 
 static RetainPtr<NSMutableArray> receivedMessages = adoptNS([@[] mutableCopy]);
 bool didReceiveAlert;
@@ -123,6 +124,7 @@ static RetainPtr<NSURL> clientRedirectDestinationURL;
         decidePolicyForNavigationAction(navigationAction, decisionHandler);
     else
         decisionHandler(WKNavigationActionPolicyAllow);
+    didRepondToPolicyDecisionCall = true;
 }
 
 - (void)webView:(WKWebView *)webView didReceiveServerRedirectForProvisionalNavigation:(WKNavigation *)navigation
@@ -2344,12 +2346,6 @@ TEST(ProcessSwap, ProcessReuseeTLDPlus2)
     EXPECT_EQ(pid1, pid3);
 }
 
-static const char* navigateToInvalidURLTestBytes = R"PSONRESOURCE(
-<!DOCTYPE html>
-<html>
-<body onload="setTimeout(() => alert('DONE'), 0); location.href = 'http://A=a%B=b'">
-)PSONRESOURCE";
-
 TEST(ProcessSwap, NavigateToInvalidURL)
 {
     auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
@@ -2358,7 +2354,7 @@ TEST(ProcessSwap, NavigateToInvalidURL)
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webViewConfiguration setProcessPool:processPool.get()];
-    auto handler = adoptNS([[PSONScheme alloc] initWithBytes:navigateToInvalidURLTestBytes]);
+    auto handler = adoptNS([[PSONScheme alloc] init]);
     [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
@@ -2374,8 +2370,15 @@ TEST(ProcessSwap, NavigateToInvalidURL)
     auto pid1 = [webView _webProcessIdentifier];
     EXPECT_TRUE(!!pid1);
 
-    TestWebKitAPI::Util::run(&didReceiveAlert);
-    didReceiveAlert = false;
+    EXPECT_EQ(1, numberOfDecidePolicyCalls);
+
+    [webView evaluateJavaScript:@"location.href = 'http://A=a%B=b'" completionHandler:nil];
+
+    didRepondToPolicyDecisionCall = false;
+    TestWebKitAPI::Util::run(&didRepondToPolicyDecisionCall);
+
+    TestWebKitAPI::Util::spinRunLoop(1);
+
     auto pid2 = [webView _webProcessIdentifier];
     EXPECT_TRUE(!!pid2);
 

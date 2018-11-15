@@ -1,5 +1,28 @@
 2018-11-14  Chris Dumez  <cdumez@apple.com>
 
+        REGRESSION (r238115): [iOS] TestWebKitAPI.ProcessSwap.NavigateToInvalidURL is failing
+        https://bugs.webkit.org/show_bug.cgi?id=191660
+
+        Reviewed by Ryosuke Niwa.
+
+        The test tries to navigate to an invalid URL and makes sure that we do not process swap
+        for such load. The test was inherently racing because it was doing:
+        <body onload="setTimeout(() => alert('DONE'), 0); location.href = 'http://A=a%B=b'">
+
+        Its load event handler tries to navigate to 'http://A=a%B=b' and sets a 0 timer to
+        log an alert, which causes the API test to keep going and check that we did not swap
+        process. The issue is that a 0 timer may not be sufficient to trigger the load, as
+        the policy decision is asynchronous and relies on the UIProcess responding to it.
+
+        To address the issue, the test now waits for the next policy decision, spins the
+        run loop and then makes sure we did not swap process. It no longer relies on a message
+        from the page.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        (-[PSONNavigationDelegate webView:decidePolicyForNavigationAction:decisionHandler:]):
+
+2018-11-14  Chris Dumez  <cdumez@apple.com>
+
         WebKit.WebsiteDataStoreCustomPaths API test is failing when enabling process prewarming
         https://bugs.webkit.org/show_bug.cgi?id=191638
 
