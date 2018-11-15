@@ -955,12 +955,21 @@ void WebProcessPool::prewarmProcess()
     if (m_prewarmedProcess)
         return;
 
-    auto* websiteDataStore = m_websiteDataStore.get();
-    if (!websiteDataStore)
-        websiteDataStore = API::WebsiteDataStore::defaultDataStore().ptr();
+    auto* websiteDataStore = m_websiteDataStore ? &m_websiteDataStore->websiteDataStore() : nullptr;
+    if (!websiteDataStore) {
+        if (!m_processes.isEmpty())
+            websiteDataStore = &m_processes.last()->websiteDataStore();
+        else if (API::WebsiteDataStore::defaultDataStoreExists())
+            websiteDataStore = &API::WebsiteDataStore::defaultDataStore()->websiteDataStore();
+        else {
+            RELEASE_LOG(PerformanceLogging, "Unable to prewarming a WebProcess because we could not find a usable data store");
+            return;
+        }
+    }
+    ASSERT(websiteDataStore);
 
     RELEASE_LOG(PerformanceLogging, "Prewarming a WebProcess for performance");
-    createNewWebProcess(websiteDataStore->websiteDataStore(), WebProcessProxy::IsPrewarmed::Yes);
+    createNewWebProcess(*websiteDataStore, WebProcessProxy::IsPrewarmed::Yes);
 }
 
 void WebProcessPool::enableProcessTermination()

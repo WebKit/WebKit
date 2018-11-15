@@ -1,3 +1,16 @@
+2018-11-14  Chris Dumez  <cdumez@apple.com>
+
+        WebKit.WebsiteDataStoreCustomPaths API test is failing when enabling process prewarming
+        https://bugs.webkit.org/show_bug.cgi?id=191638
+
+        Reviewed by Alex Christensen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm:
+        (runWebsiteDataStoreCustomPaths):
+        (TEST):
+
 2018-11-14  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI to show a safe browsing warning

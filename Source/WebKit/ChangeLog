@@ -1,3 +1,26 @@
+2018-11-14  Chris Dumez  <cdumez@apple.com>
+
+        WebKit.WebsiteDataStoreCustomPaths API test is failing when enabling process prewarming
+        https://bugs.webkit.org/show_bug.cgi?id=191638
+
+        Reviewed by Alex Christensen.
+
+        WebProcessPool::prewarmProcess() should not create the default WebSite Data Store if it
+        does not exist yet. This is bad for memory consumption and it is what was causing this
+        API test to fail.
+
+        WebProcessPool::prewarmProcess() now tries to use the following data stores in this
+        order of preference:
+        1. WebProcessPool::m_websiteDataStore (aka this process pool's primary data store)
+        2. The data store of the last WebProcessProxy that was created
+        3. The default data store if it exists
+
+        If no suitable data store is found, we cancel the process prewarming and log a console
+        message instead.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::prewarmProcess):
+
 2018-11-14  Timothy Hatcher  <timothy@apple.com>
 
         Enabled dark mode CSS support by default.
