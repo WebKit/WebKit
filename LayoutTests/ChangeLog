@@ -1,3 +1,16 @@
+2018-11-14  Timothy Hatcher  <timothy@apple.com>
+
+        Default the view background color and text color to different values when in dark mode.
+        https://bugs.webkit.org/show_bug.cgi?id=191607
+        rdar://problem/46045854
+
+        Reviewed by Dean Jackson.
+
+        * css-dark-mode/default-colors-expected.txt: Added.
+        * css-dark-mode/default-colors.html: Added.
+        * inspector/css/shadow-scoped-style-expected.txt: Rebaseline.
+        * platform/mac/printing/width-overflow-expected.txt: Rebaseline.
+
 2018-11-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Layout test fast/layers/no-clipping-overflow-hidden-added-after-transform.html is a flaky failure on EWS bots

@@ -25,6 +25,9 @@
 
 html {
     display: block;
+#if defined(WTF_PLATFORM_MAC) && WTF_PLATFORM_MAC
+    color: text;
+#endif
 }
 
 /* children of the <head> element all have display:none */

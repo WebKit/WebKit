@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+
+<!-- webkit-test-runner [ experimental:DarkModeCSSEnabled=true ] -->
+
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+
+<body></body>
+
+<script>
+function test_prop(element, prop, expected) {
+    assert_equals(window.getComputedStyle(element).getPropertyValue(prop), expected);
+}
+
+test(function() {
+    test_prop(document.body, "color", "rgb(0, 0, 0)");
+}, "Body text color is black, since the page isn't in dark mode");
+
+test(function() {
+    assert_equals(internals.viewBaseBackgroundColor(), "rgb(255, 255, 255)");
+}, "View base background color is white, since the page isn't in dark mode");
+
+test(function() {
+    if (!window.internals)
+        return;
+    internals.settings.setUseDarkAppearance(true);
+}, "Set dark appearance");
+
+test(function() {
+    test_prop(document.body, "color", "rgb(0, 0, 0)");
+}, "Body text color is black, since the page hasn't set a supported color scheme");
+
+test(function() {
+    assert_equals(internals.viewBaseBackgroundColor(), "rgb(255, 255, 255)");
+}, "View base background color is white, since the page hasn't set a supported color scheme");
+
+test(function() {
+    let styleElement = document.createElement("style");
+    styleElement.textContent = ":root { supported-color-schemes: light dark; }";
+    document.head.appendChild(styleElement);
+}, "Set prefers-color-schemes: light dark on the body");
+
+test(function() {
+    test_prop(document.body, "color", "rgb(255, 255, 255)");
+}, "Body text color is white");
+
+test(function() {
+    if (!window.internals)
+        return;
+    assert_equals(internals.viewBaseBackgroundColor(), "rgb(30, 30, 30)");
+}, "View base background color is a dark grey");
+</script>

@@ -21,6 +21,8 @@ STYLES:
 }
 address, article, aside, div, footer, header, hgroup, layer, main, nav, section {
 }
+html {
+}
 
 -- Running test case: CSS.ShadowScopedStyle.ElementInShadowTree
 PASS: Node should not have shadow roots.

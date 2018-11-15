@@ -2815,9 +2815,8 @@ void WebPage::setDrawsBackground(bool drawsBackground)
     m_drawsBackground = drawsBackground;
 
     if (FrameView* frameView = mainFrameView()) {
-        Color backgroundColor = drawsBackground ? Color::white : Color::transparent;
         bool isTransparent = !drawsBackground;
-        frameView->updateBackgroundRecursively(backgroundColor, isTransparent);
+        frameView->updateBackgroundRecursively(isTransparent);
     }
 
     m_drawingArea->pageBackgroundTransparencyChanged();

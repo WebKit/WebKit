@@ -369,6 +369,10 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
             setNeedsLayoutAndPrefWidthsRecalc();
         }
 
+#if ENABLE(DARK_MODE_CSS)
+        view().frameView().recalculateBaseBackgroundColor();
+#endif
+
         view().frameView().recalculateScrollbarOverlayStyle();
         
         const Pagination& pagination = view().frameView().pagination();

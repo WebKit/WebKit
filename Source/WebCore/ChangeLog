@@ -1,3 +1,44 @@
+2018-11-14  Timothy Hatcher  <timothy@apple.com>
+
+        Default the view background color and text color to different values when in dark mode.
+        https://bugs.webkit.org/show_bug.cgi?id=191607
+        rdar://problem/46045854
+
+        Reviewed by Dean Jackson.
+
+        Test: css-dark-mode/default-colors.html
+
+        * css/html.css:
+        (html): Set color: text on macOS.
+        * dom/Document.cpp:
+        (WebCore::Document::processSupportedColorSchemes): Call recalculateBaseBackgroundColor().
+        * editing/EditingStyle.cpp:
+        (WebCore::caretColorFromStyle): Added.
+        (WebCore::EditingStyle::prepareToApplyAt): Use equalIgnoringSemanticColor. Check for
+        caret-color directly since removeEquivalentProperties fails with semantic colors.
+        (WebCore::extractPropertiesNotIn): Use equalIgnoringSemanticColor. Check for caret-color
+        directly since removeEquivalentProperties fails with semantic colors.
+        * page/Frame.cpp:
+        (WebCore::Frame::createView): Drop backgroundColor.
+        * page/Frame.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::recalculateBaseBackgroundColor): Added.
+        (WebCore::FrameView::updateBackgroundRecursively): Drop backgroundColor argument.
+        Calculate the backgroundColor based on the transparent argument only.
+        * page/FrameView.h:
+        * platform/graphics/Color.h:
+        (WebCore::equalIgnoringSemanticColor): Added for EditingStyle.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleDidChange): Call recalculateBaseBackgroundColor().
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::shouldDumpPropertyForLayer const): Use isWhiteColor()
+        since it ignores the semantic color flag.
+        * testing/Internals.cpp:
+        (WebCore::Internals::setViewIsTransparent): Drop backgroundColor.
+        (WebCore::Internals::viewBaseBackgroundColor): Added.
+        * testing/Internals.h:
+        * testing/Internals.idl: Added viewBaseBackgroundColor.
+
 2018-11-14  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Code quality concerns raised for 191291: [WebGPU] Experimental prototype for WebGPURenderPipeline and WebGPUSwapChain

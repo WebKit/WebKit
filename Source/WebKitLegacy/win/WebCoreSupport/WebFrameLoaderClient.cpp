@@ -984,10 +984,9 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     RECT pixelRect;
     view->frameRect(&pixelRect);
     bool transparent = view->transparent();
-    Color backgroundColor = transparent ? Color::transparent : Color::white;
     FloatRect logicalFrame(pixelRect);
     logicalFrame.scale(1.0f / view->deviceScaleFactor());
-    core(m_webFrame)->createView(enclosingIntRect(logicalFrame).size(), backgroundColor, transparent, /* fixedLayoutSize */ { }, /* fixedVisibleContentRect */ { });
+    core(m_webFrame)->createView(enclosingIntRect(logicalFrame).size(), transparent, /* fixedLayoutSize */ { }, /* fixedVisibleContentRect */ { });
 }
 
 void WebFrameLoaderClient::didSaveToPageCache()

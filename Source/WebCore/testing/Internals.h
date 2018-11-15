@@ -245,6 +245,8 @@ public:
     ExceptionOr<Ref<DOMRect>> visualViewportRect();
 
     ExceptionOr<void> setViewIsTransparent(bool);
+
+    ExceptionOr<String> viewBaseBackgroundColor();
     ExceptionOr<void> setViewBaseBackgroundColor(const String& colorValue);
 
     ExceptionOr<void> setPagination(const String& mode, int gap, int pageLength);

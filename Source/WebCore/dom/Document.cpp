@@ -3634,6 +3634,9 @@ void Document::processSupportedColorSchemes(const String& colorSchemes)
     m_supportedColorSchemes = supportedColorSchemes;
     m_allowsColorSchemeTransformations = allowsTransformations;
 
+    if (auto* frameView = view())
+        frameView->recalculateBaseBackgroundColor();
+
     if (auto* page = this->page())
         page->updateStyleAfterChangeInEnvironment();
 }

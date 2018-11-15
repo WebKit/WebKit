@@ -179,6 +179,9 @@ public:
     void prepareForDetach();
     void detachCustomScrollbars();
     WEBCORE_EXPORT void recalculateScrollbarOverlayStyle();
+#if ENABLE(DARK_MODE_CSS)
+    void recalculateBaseBackgroundColor();
+#endif
 
     void clear();
     void resetLayoutMilestones();
@@ -191,7 +194,7 @@ public:
 
     WEBCORE_EXPORT Color baseBackgroundColor() const;
     WEBCORE_EXPORT void setBaseBackgroundColor(const Color&);
-    WEBCORE_EXPORT void updateBackgroundRecursively(const Color&, bool);
+    WEBCORE_EXPORT void updateBackgroundRecursively(bool);
 
     enum ExtendedBackgroundModeFlags {
         ExtendedBackgroundModeNone          = 0,

@@ -263,6 +263,8 @@ enum CompositingPolicy {
     [MayThrowException] DOMRect visualViewportRect();
 
     [MayThrowException] void setViewIsTransparent(boolean trnasparent);
+
+    [MayThrowException] DOMString viewBaseBackgroundColor();
     [MayThrowException] void setViewBaseBackgroundColor(DOMString colorValue);
 
     [MayThrowException] void setPagination(DOMString mode, long gap, optional long pageLength = 0);

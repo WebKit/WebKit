@@ -2085,13 +2085,12 @@ COMPtr<IAccessible> WebFrame::accessible() const
 
 void WebFrame::updateBackground()
 {
-    Color backgroundColor = webView()->transparent() ? Color::transparent : Color::white;
     Frame* coreFrame = core(this);
 
     if (!coreFrame || !coreFrame->view())
         return;
 
-    coreFrame->view()->updateBackgroundRecursively(backgroundColor, webView()->transparent());
+    coreFrame->view()->updateBackgroundRecursively(webView()->transparent());
 }
 
 // IWebFrame2

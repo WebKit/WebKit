@@ -416,6 +416,18 @@ void FrameView::recalculateScrollbarOverlayStyle()
         setScrollbarOverlayStyle(computedOverlayStyle);
 }
 
+#if ENABLE(DARK_MODE_CSS)
+void FrameView::recalculateBaseBackgroundColor()
+{
+    bool usingDarkAppearance = useDarkAppearance();
+    if (m_usesDarkAppearance == usingDarkAppearance)
+        return;
+
+    m_usesDarkAppearance = usingDarkAppearance;
+    updateBackgroundRecursively(m_isTransparent);
+}
+#endif
+
 void FrameView::clear()
 {
     setCanBlitOnScroll(true);
@@ -2994,8 +3006,14 @@ void FrameView::setBaseBackgroundColor(const Color& backgroundColor)
     renderView()->compositor().rootBackgroundColorOrTransparencyChanged();
 }
 
-void FrameView::updateBackgroundRecursively(const Color& backgroundColor, bool transparent)
+void FrameView::updateBackgroundRecursively(bool transparent)
 {
+#if ENABLE(DARK_MODE_CSS)
+    Color backgroundColor = transparent ? Color::transparent : RenderTheme::singleton().systemColor(CSSValueAppleSystemControlBackground, styleColorOptions());
+#else
+    Color backgroundColor = transparent ? Color::transparent : Color::white;
+#endif
+
     for (auto* frame = m_frame.ptr(); frame; frame = frame->tree().traverseNext(m_frame.ptr())) {
         if (FrameView* view = frame->view()) {
             view->setTransparent(transparent);
