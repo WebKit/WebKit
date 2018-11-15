@@ -49,7 +49,7 @@ const unsigned maxTimeOutValue = 120000;
 static AuthenticatorManager::TransportSet collectTransports(const std::optional<PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria>& authenticatorSelection)
 {
     AuthenticatorManager::TransportSet result;
-    if (!authenticatorSelection) {
+    if (!authenticatorSelection || !authenticatorSelection->authenticatorAttachment) {
         auto addResult = result.add(AuthenticatorTransport::Internal);
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
 #if PLATFORM(MAC)

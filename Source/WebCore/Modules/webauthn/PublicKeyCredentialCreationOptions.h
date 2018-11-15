@@ -66,8 +66,7 @@ struct PublicKeyCredentialCreationOptions {
     };
 
     struct AuthenticatorSelectionCriteria {
-        // FIXME(191522)
-        AuthenticatorAttachment authenticatorAttachment { AuthenticatorAttachment::CrossPlatform };
+        std::optional<AuthenticatorAttachment> authenticatorAttachment;
         bool requireResidentKey { false };
         UserVerificationRequirement userVerification { UserVerificationRequirement::Preferred };
 
@@ -117,7 +116,7 @@ std::optional<PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria
 {
     PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria result;
 
-    std::optional<AuthenticatorAttachment> authenticatorAttachment;
+    std::optional<std::optional<AuthenticatorAttachment>> authenticatorAttachment;
     decoder >> authenticatorAttachment;
     if (!authenticatorAttachment)
         return std::nullopt;
