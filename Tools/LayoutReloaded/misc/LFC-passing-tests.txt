@@ -69,6 +69,7 @@ fast/inline/simple-intruding-floats2.html
 fast/inline/simple-intruding-floats3.html
 fast/inline/simple-inline-block.html
 fast/inline/simple-shrink-to-fit-inline-block.html
+fast/inline/simple-inline-inflow-positioned.html
 fast/block/basic/height-percentage-simple.html
 fast/block/basic/child-block-level-box-with-height-percent.html
 fast/block/basic/quirk-mode-percent-height.html

@@ -1,3 +1,27 @@
+2018-11-14  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add support for in-flow positioned inline boxes.
+        https://bugs.webkit.org/show_bug.cgi?id=191672
+
+        Reviewed by Antti Koivisto.
+
+        We might offset the in-flow positioned runs differently once runs are moved over to the display tree.
+
+        Test: fast/inline/simple-inline-inflow-positioned.html
+
+        * layout/Verification.cpp:
+        (WebCore::Layout::outputMismatchingComplexLineInformationIfNeeded):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::splitInlineRunsIfNeeded const):
+        (WebCore::Layout::InlineFormattingContext::postProcessInlineRuns const):
+        (WebCore::Layout::InlineFormattingContext::placeInFlowPositionedChildren const):
+        (WebCore::Layout::InlineFormattingContext::collectInlineContentForSubtree const):
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/inlineformatting/InlineRun.h:
+        (WebCore::Layout::InlineRun::moveVertically):
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::outputInlineRuns):
+
 2018-11-15  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer][WebRTC] Add support for sending silence or silencing an incoming track

@@ -1,3 +1,14 @@
+2018-11-14  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add support for in-flow positioned inline boxes.
+        https://bugs.webkit.org/show_bug.cgi?id=191672
+
+        Reviewed by Antti Koivisto.
+
+        * fast/inline/simple-inline-inflow-positioned-expected.txt: Added.
+        * fast/inline/simple-inline-inflow-positioned.html: Added.
+        * platform/ios/TestExpectations:
+
 2018-11-15  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(r238178): fast/forms/access-key-mutated.html and fast/forms/access-key-case-insensitive.html are timing out

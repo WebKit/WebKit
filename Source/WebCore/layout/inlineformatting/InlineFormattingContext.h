@@ -112,6 +112,7 @@ private:
     void closeLine(Line&, IsLastLine) const;
     void appendContentToLine(Line&, const InlineLineBreaker::Run&) const;
     void postProcessInlineRuns(Line&, IsLastLine, Line::RunRange) const;
+    Line::RunRange splitInlineRunsIfNeeded(Line::RunRange) const  WARN_UNUSED_RETURN;
     void splitInlineRunIfNeeded(const InlineRun&, InlineRuns& splitRuns) const;
 
     void layoutFormattingContextRoot(const Box&) const;
@@ -120,6 +121,7 @@ private:
     void computeWidthAndMargin(const Box&) const;
     void computeFloatPosition(const FloatingContext&, Line&, const Box&) const;
     void computeStaticPosition(const Box&) const override;
+    void placeInFlowPositionedChildren(Line::RunRange) const;
 
     void collectInlineContent(InlineRunProvider&) const;
     void collectInlineContentForSubtree(const Box& root, InlineRunProvider&) const;

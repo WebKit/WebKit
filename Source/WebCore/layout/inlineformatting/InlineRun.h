@@ -48,6 +48,7 @@ struct InlineRun {
     void setWidth(LayoutUnit width) { m_logicalRect.setWidth(width); }
     void setLogicalLeft(LayoutUnit logicalLeft) { m_logicalRect.setLeft(logicalLeft); }
     void setLogicalRight(LayoutUnit logicalRight) { m_logicalRect.shiftRightTo(logicalRight); }
+    void moveVertically(LayoutUnit delta) { m_logicalRect.moveVertically(delta); }
     void moveHorizontally(LayoutUnit delta) { m_logicalRect.moveHorizontally(delta); }
 
     struct ExpansionOpportunity {

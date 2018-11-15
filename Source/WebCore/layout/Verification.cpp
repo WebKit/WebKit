@@ -34,6 +34,7 @@
 #include "LayoutContainer.h"
 #include "LayoutTreeBuilder.h"
 #include "RenderBox.h"
+#include "RenderInline.h"
 #include "RenderView.h"
 #include <wtf/text/TextStream.h>
 
@@ -155,6 +156,13 @@ static bool outputMismatchingComplexLineInformationIfNeeded(TextStream& stream, 
                         break;
                 }
             }
+        } else if (is<InlineFlowBox>(inlineBox)) {
+            // FIXME: This does not work for nested InlineFlowBoxes and we should really look inside these flow boxes and verify the leaf nodes.
+            auto& renderer = inlineBox->renderer();
+            LayoutUnit xOffset;
+            if (renderer.isInFlowPositioned())
+                xOffset = downcast<RenderInline>(renderer).offsetForInFlowPosition().width();
+            matchingRuns = areEssentiallyEqual(inlineBox->logicalLeft() + xOffset, inlineRun.logicalLeft()) && areEssentiallyEqual(inlineBox->logicalRight() + xOffset, inlineRun.logicalRight());
         } else
             matchingRuns = checkForMatchingNonTextRuns(inlineRun, *inlineBox);
 

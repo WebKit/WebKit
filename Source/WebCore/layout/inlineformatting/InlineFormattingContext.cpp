@@ -220,12 +220,9 @@ void InlineFormattingContext::splitInlineRunIfNeeded(const InlineRun& inlineRun,
     split(*firstUncommittedInlineItem, startPosition, uncommittedLength, contentStart);
 }
 
-void InlineFormattingContext::postProcessInlineRuns(Line& line, IsLastLine isLastLine, Line::RunRange runRange) const
+InlineFormattingContext::Line::RunRange InlineFormattingContext::splitInlineRunsIfNeeded(Line::RunRange runRange) const
 {
-    auto& inlineFormattingState = this->inlineFormattingState();
-    Geometry::alignRuns(inlineFormattingState, root().style().textAlign(), line, runRange, isLastLine);
-
-    auto& inlineRuns = inlineFormattingState.inlineRuns();
+    auto& inlineRuns = inlineFormattingState().inlineRuns();
     ASSERT(*runRange.lastRunIndex < inlineRuns.size());
 
     auto runIndex = *runRange.firstRunIndex;
@@ -254,6 +251,16 @@ void InlineFormattingContext::postProcessInlineRuns(Line& line, IsLastLine isLas
 
         ++runIndex;
     }
+
+    return { runRange.firstRunIndex, runIndex };
+}
+
+void InlineFormattingContext::postProcessInlineRuns(Line& line, IsLastLine isLastLine, Line::RunRange runRange) const
+{
+    auto& inlineFormattingState = this->inlineFormattingState();
+    Geometry::alignRuns(inlineFormattingState, root().style().textAlign(), line, runRange, isLastLine);
+    runRange = splitInlineRunsIfNeeded(runRange);
+    placeInFlowPositionedChildren(runRange);
 }
 
 void InlineFormattingContext::closeLine(Line& line, IsLastLine isLastLine) const
@@ -409,6 +416,32 @@ void InlineFormattingContext::computeFloatPosition(const FloatingContext& floati
     displayBox.setTopLeft(floatingContext.positionForFloat(floatBox));
 }
 
+void InlineFormattingContext::placeInFlowPositionedChildren(Line::RunRange runRange) const
+{
+    auto& inlineRuns = inlineFormattingState().inlineRuns();
+    ASSERT(*runRange.lastRunIndex < inlineRuns.size());
+
+    for (auto runIndex = *runRange.firstRunIndex; runIndex <= *runRange.lastRunIndex; ++runIndex) {
+        auto& inlineRun = inlineRuns[runIndex];
+
+        auto positionOffset = [&](auto& layoutBox) {
+            // FIXME: Need to figure out whether in-flow offset should stick. This might very well be temporary.
+            std::optional<LayoutSize> offset;
+            for (auto* box = &layoutBox; box != &root(); box = box->parent()) {
+                if (!box->isInFlowPositioned())
+                    continue;
+                offset = offset.value_or(LayoutSize()) + Geometry::inFlowPositionedPositionOffset(layoutState(), *box);
+            }
+            return offset;
+        };
+
+        if (auto offset = positionOffset(inlineRun.inlineItem().layoutBox())) {
+            inlineRun.moveVertically(offset->height());
+            inlineRun.moveHorizontally(offset->width());
+        }
+    }
+}
+
 void InlineFormattingContext::computeStaticPosition(const Box&) const
 {
 }
@@ -445,12 +478,12 @@ void InlineFormattingContext::collectInlineContentForSubtree(const Box& root, In
 
     auto rootBreaksAtStart = [&] {
         // FIXME: add padding-inline-start, margin-inline-start etc.
-        return false;
+        return root.isPositioned();
     };
 
     auto rootBreaksAtEnd = [&] {
         // FIXME: add padding-inline-end, margin-inline-end etc.
-        return false;
+        return root.isPositioned();
     };
 
     if (rootBreaksAtStart()) {
