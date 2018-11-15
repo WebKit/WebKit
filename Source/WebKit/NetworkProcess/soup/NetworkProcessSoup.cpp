@@ -76,7 +76,7 @@ static CString buildAcceptLanguages(const Vector<String>& languages)
             continue;
 
         if (i)
-            builder.appendLiteral(", ");
+            builder.appendLiteral(",");
 
         builder.append(languages[i]);
 

@@ -1312,9 +1312,9 @@ void webkit_web_context_set_preferred_languages(WebKitWebContext* context, const
     for (size_t i = 0; languageList[i]; ++i) {
         // Do not propagate the C locale to WebCore.
         if (!g_ascii_strcasecmp(languageList[i], "C") || !g_ascii_strcasecmp(languageList[i], "POSIX"))
-            languages.append("en-us"_s);
+            languages.append("en-US"_s);
         else
-            languages.append(String::fromUTF8(languageList[i]).convertToASCIILowercase().replace("_", "-"));
+            languages.append(String::fromUTF8(languageList[i]).replace("_", "-"));
     }
     overrideUserPreferredLanguages(languages);
 }
