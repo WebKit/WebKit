@@ -1,3 +1,23 @@
+2018-11-15  Ross Kirsling  <ross.kirsling@sony.com>
+
+        DragImage should have a complete default implementation
+        https://bugs.webkit.org/show_bug.cgi?id=191666
+
+        Reviewed by Dean Jackson.
+
+        Move WPE's stub implementation down into the base implementation file.
+
+        * SourcesWPE.txt:
+        * platform/DragImage.cpp:
+        (WebCore::dragImageSize):
+        (WebCore::deleteDragImage):
+        (WebCore::scaleDragImage):
+        (WebCore::dissolveDragImageToFraction):
+        (WebCore::createDragImageFromImage):
+        (WebCore::createDragImageIconForCachedImageFilename):
+        (WebCore::createDragImageForLink):
+        * platform/wpe/DragImageWPE.cpp: Removed.
+
 2018-11-15  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] UserHandle can be null

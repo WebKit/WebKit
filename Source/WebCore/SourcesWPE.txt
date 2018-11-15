@@ -70,7 +70,6 @@ platform/text/LocaleICU.cpp
 platform/unix/LoggingUnix.cpp
 
 platform/wpe/CursorWPE.cpp
-platform/wpe/DragImageWPE.cpp
 platform/wpe/LocalizedStringsWPE.cpp
 platform/wpe/PasteboardWPE.cpp
 platform/wpe/PlatformKeyboardEventWPE.cpp
