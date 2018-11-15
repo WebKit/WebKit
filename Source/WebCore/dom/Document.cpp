@@ -1804,6 +1804,9 @@ void Document::scheduleStyleRecalc()
 
     ASSERT(childNeedsStyleRecalc() || m_pendingStyleRecalcShouldForce);
 
+    // FIXME: Why on earth is this here? This is clearly misplaced.
+    invalidateAccessKeyMap();
+
     auto shouldThrottleStyleRecalc = [&] {
         if (m_pendingStyleRecalcShouldForce)
             return false;
@@ -1817,9 +1820,6 @@ void Document::scheduleStyleRecalc()
     if (shouldThrottleStyleRecalc())
         return;
 
-    // FIXME: Why on earth is this here? This is clearly misplaced.
-    invalidateAccessKeyMap();
-    
     m_styleRecalcTimer.startOneShot(0_s);
 
     InspectorInstrumentation::didScheduleStyleRecalculation(*this);

@@ -2950,6 +2950,3 @@ webkit.org/b/190032 imported/w3c/web-platform-tests/css/css-scoping/keyframes-00
 fast/mediacapturefromelement/CanvasCaptureMediaStream-imagebitmaprenderingcontext.html [ Skip ]
 fast/mediacapturefromelement/CanvasCaptureMediaStream-framerate-0.html [ Skip ]
 fast/mediacapturefromelement/CanvasCaptureMediaStream-capture-out-of-DOM-element.html [ Skip ]
-
-webkit.org/b/191642 fast/forms/access-key-case-insensitive.html [ Skip ]
-webkit.org/b/191642 fast/forms/access-key-mutated.html [ Skip ]

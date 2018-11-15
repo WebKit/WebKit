@@ -1,5 +1,18 @@
 2018-11-15  Antti Koivisto  <antti@apple.com>
 
+        REGRESSION(r238178): fast/forms/access-key-mutated.html and fast/forms/access-key-case-insensitive.html are timing out
+        https://bugs.webkit.org/show_bug.cgi?id=191642
+
+        Reviewed by Zalan Bujtas.
+
+        * TestExpectations: Unskip
+        * platform/mac-wk2/TestExpectations: Unskip
+        * platform/mac-wk2/accessibility/mac/selection-notification-focus-change-expected.txt:
+
+        Rebase. Focus timings depends on layout timings.
+
+2018-11-15  Antti Koivisto  <antti@apple.com>
+
         Remove fonts from CSSFontFaceSet safely
         https://bugs.webkit.org/show_bug.cgi?id=191676
 
