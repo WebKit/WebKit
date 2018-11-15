@@ -18,6 +18,33 @@
             })();`
     }
 
+    function doTap()
+    {
+        return new Promise((resolve) => {
+            testRunner.runUIScript(getTapAtPointUIScript(100, 100), function() {
+                resolve();
+            });
+        });
+    }
+
+    function tapUntilBubbleIsDismissed()
+    {
+        // There is a small amount of time after we ask to show the popover before the popover is actually shown on screen.
+        // During this period, clicks are eaten and not reported to the view. For this reason, we keep tapping until the
+        // popup is dismissed.
+        return new Promise((resolve) => {
+            doTap().then(() => {
+                getValidationMessage().then((message) => {
+                    if (message === "") {
+                        resolve();
+                        return;
+                    }
+                    tapUntilBubbleIsDismissed().then(resolve);
+                });
+            });
+        });
+    }
+
     function doTest()
     {
         if (!testRunner.runUIScript)
@@ -31,12 +58,9 @@
             if (_message !==  "Select this checkbox")
                 testFailed("Unexpected validation message: " + _message);
 
-            testRunner.runUIScript(getTapAtPointUIScript(0, 0), function() {
-                getValidationMessage().then((_message) => {
-                    message = _message;
-                    shouldBeEqualToString("message", ""); // Not visible.
-                    finishJSTest();
-                });
+            tapUntilBubbleIsDismissed().then(() => {
+                testPassed("Validation bubble was dismissed on tap");
+                finishJSTest();
             });
         });
     }

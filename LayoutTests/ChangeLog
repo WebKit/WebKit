@@ -1,3 +1,18 @@
+2018-11-15  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r238038): [iOS] Layout test fast/forms/ios/validation-bubble-dismiss-on-tap.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=191710
+        <rdar://problem/46104093>
+
+        Reviewed by Simon Fraser.
+
+        There is a small amount of time after we ask to show the popover before the popover is actually shown on screen.
+        During this period, clicks are eaten and not reported to the view. For this reason, we keep tapping until the
+        popup is dismissed.
+
+        * fast/forms/ios/validation-bubble-dismiss-on-tap-expected.txt:
+        * fast/forms/ios/validation-bubble-dismiss-on-tap.html:
+
 2018-11-15  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Use a real nonce for CTAPHID_INIT

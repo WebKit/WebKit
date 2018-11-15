@@ -3,7 +3,7 @@ Tests that tapping the view dismisses the HTML form validation popover.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS message is ""
+PASS Validation bubble was dismissed on tap
 PASS successfullyParsed is true
 
 TEST COMPLETE
