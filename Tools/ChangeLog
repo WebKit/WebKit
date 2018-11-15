@@ -1,3 +1,23 @@
+2018-11-15  Keith Rollin  <krollin@apple.com>
+
+        Delete old .xcfilelist files
+        https://bugs.webkit.org/show_bug.cgi?id=191669
+        <rdar://problem/46081994>
+
+        Reviewed by Chris Dumez.
+
+        .xcfilelist files were created and added to the Xcode project files in
+        https://trac.webkit.org/changeset/238008/webkit. However, they caused
+        build issues and they were removed from the Xcode projects in
+        https://trac.webkit.org/changeset/238055/webkit. This check-in removes
+        the files from the repository altogether. They'll ultimately be
+        replaced with new files with names that indicate whether the
+        associated files are inputs to the Run Script phase or are files
+        created by the Run Script phase.
+
+        * DumpRenderTree/DerivedSources.xcfilelist: Removed.
+        * WebKitTestRunner/DerivedSources.xcfilelist: Removed.
+
 2018-11-14  Zalan Butjas  <zalan@apple.com>
 
         [LFC][IFC] Add support for in-flow positioned inline boxes.
