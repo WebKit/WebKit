@@ -34,32 +34,40 @@
 
 namespace TestWebKitAPI {
 
+#if ENABLE(DARK_MODE_CSS)
+#define DEFAULT_BACKGROUND_COLOR [NSColor controlBackgroundColor]
+#else
+#define DEFAULT_BACKGROUND_COLOR [NSColor whiteColor]
+#endif
+
 TEST(WebKit, BackgroundColorDefault)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
+    NSColor *defaultColor = DEFAULT_BACKGROUND_COLOR;
     NSColor *backgroundColor = [webView _backgroundColor];
-    EXPECT_EQ([NSColor whiteColor], backgroundColor);
+    EXPECT_EQ(defaultColor, backgroundColor);
 
     // Load content so the layer is created.
     [webView synchronouslyLoadHTMLString:@""];
 
-    EXPECT_EQ(CGColorGetConstantColor(kCGColorWhite), [webView layer].backgroundColor);
+    EXPECT_TRUE(CGColorEqualToColor(defaultColor.CGColor, [webView layer].backgroundColor));
 }
 
 TEST(WebKit, BackgroundColorSystemColor)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
-    [webView _setBackgroundColor:[NSColor controlBackgroundColor]];
+    NSColor *systemColor = [NSColor textBackgroundColor];
+    [webView _setBackgroundColor:systemColor];
 
     NSColor *backgroundColor = [webView _backgroundColor];
-    EXPECT_EQ([NSColor controlBackgroundColor], backgroundColor);
+    EXPECT_EQ(systemColor, backgroundColor);
 
     // Load content so the layer is created.
     [webView synchronouslyLoadHTMLString:@""];
 
-    EXPECT_TRUE(CGColorEqualToColor([NSColor controlBackgroundColor].CGColor, [webView layer].backgroundColor));
+    EXPECT_TRUE(CGColorEqualToColor(systemColor.CGColor, [webView layer].backgroundColor));
 }
 
 TEST(WebKit, BackgroundColorNil)
@@ -68,13 +76,14 @@ TEST(WebKit, BackgroundColorNil)
 
     [webView _setBackgroundColor:nil];
 
+    NSColor *defaultColor = DEFAULT_BACKGROUND_COLOR;
     NSColor *backgroundColor = [webView _backgroundColor];
-    EXPECT_EQ([NSColor whiteColor], backgroundColor);
+    EXPECT_EQ(defaultColor, backgroundColor);
 
     // Load content so the layer is created.
     [webView synchronouslyLoadHTMLString:@""];
 
-    EXPECT_EQ(CGColorGetConstantColor(kCGColorWhite), [webView layer].backgroundColor);
+    EXPECT_TRUE(CGColorEqualToColor(defaultColor.CGColor, [webView layer].backgroundColor));
 }
 
 TEST(WebKit, BackgroundColorNoDrawsBackground)
@@ -83,8 +92,9 @@ TEST(WebKit, BackgroundColorNoDrawsBackground)
 
     [webView _setDrawsBackground:NO];
 
+    NSColor *defaultColor = DEFAULT_BACKGROUND_COLOR;
     NSColor *backgroundColor = [webView _backgroundColor];
-    EXPECT_EQ([NSColor whiteColor], backgroundColor);
+    EXPECT_EQ(defaultColor, backgroundColor);
 
     // Load content so the layer is created.
     [webView synchronouslyLoadHTMLString:@""];
@@ -97,10 +107,10 @@ TEST(WebKit, BackgroundColorCustomColorNoDrawsBackground)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
     [webView _setDrawsBackground:NO];
-    [webView _setBackgroundColor:[NSColor controlBackgroundColor]];
+    [webView _setBackgroundColor:[NSColor textBackgroundColor]];
 
     NSColor *backgroundColor = [webView _backgroundColor];
-    EXPECT_EQ([NSColor controlBackgroundColor], backgroundColor);
+    EXPECT_EQ([NSColor textBackgroundColor], backgroundColor);
 
     // Load content so the layer is created.
     [webView synchronouslyLoadHTMLString:@""];
