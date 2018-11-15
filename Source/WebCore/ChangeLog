@@ -1,5 +1,19 @@
 2018-11-15  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Skip non-inflow boxes while splitting the inline runs.
+        https://bugs.webkit.org/show_bug.cgi?id=191690
+
+        Reviewed by Antti Koivisto.
+
+        Skip all non-inflow boxes (floats, out-of-flow positioned elements). They don't participate in the inline run context.
+
+        * layout/Verification.cpp:
+        (WebCore::Layout::LayoutState::verifyAndOutputMismatchingLayoutTree const):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::splitInlineRunIfNeeded const):
+
+2018-11-15  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] FormattingContext base class should not declare computeStaticPosition.
         https://bugs.webkit.org/show_bug.cgi?id=191683
 

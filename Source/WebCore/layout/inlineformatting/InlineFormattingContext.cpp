@@ -160,6 +160,10 @@ void InlineFormattingContext::splitInlineRunIfNeeded(const InlineRun& inlineRun,
     for (auto iterator = inlineContent.find<const InlineItem&, InlineItemHashTranslator>(inlineRun.inlineItem()); iterator != inlineContent.end() && remaningLength > 0; ++iterator) {
         auto& inlineItem = **iterator;
 
+        // Skip all non-inflow boxes (floats, out-of-flow positioned elements). They don't participate in the inline run context.
+        if (!inlineItem.layoutBox().isInFlow())
+            continue;
+
         auto currentLength = [&] {
             return std::min(remaningLength, inlineItem.textContent().length() - startPosition);
         };
