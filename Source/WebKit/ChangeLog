@@ -1,5 +1,17 @@
 2018-11-16  Chris Dumez  <cdumez@apple.com>
 
+        WebKit.UnavailablePlugIn API test is crashing in debug
+        https://bugs.webkit.org/show_bug.cgi?id=191753
+
+        Reviewed by Alex Christensen.
+
+        Add missing early returns. Those were mistakenly dropped in r235200.
+
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::decidePolicyForPluginLoad):
+
+2018-11-16  Chris Dumez  <cdumez@apple.com>
+
         [Mac] Regression: WebContent process's display name is no longer set
         https://bugs.webkit.org/show_bug.cgi?id=191722
         <rdar://problem/45960550>
