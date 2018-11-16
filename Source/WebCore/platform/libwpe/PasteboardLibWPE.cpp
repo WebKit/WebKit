@@ -26,6 +26,8 @@
 #include "config.h"
 #include "Pasteboard.h"
 
+#if USE(LIBWPE)
+
 #include "NotImplemented.h"
 #include "PasteboardStrategy.h"
 #include "PlatformStrategies.h"
@@ -154,3 +156,5 @@ void Pasteboard::write(const Color&)
 }
 
 } // namespace WebCore
+
+#endif // USE(LIBWPE)

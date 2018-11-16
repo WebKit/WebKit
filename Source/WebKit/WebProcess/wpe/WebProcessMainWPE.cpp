@@ -29,7 +29,7 @@
 
 #include "ChildProcessMain.h"
 #include "WebProcess.h"
-#include <WebCore/PlatformDisplayWPE.h>
+#include <WebCore/PlatformDisplayLibWPE.h>
 #include <glib.h>
 #include <iostream>
 #include <libsoup/soup.h>
@@ -70,8 +70,8 @@ public:
         int wpeFd = atoi(argv[4]);
         RunLoop::main().dispatch(
             [wpeFd] {
-                RELEASE_ASSERT(is<PlatformDisplayWPE>(PlatformDisplay::sharedDisplay()));
-                downcast<PlatformDisplayWPE>(PlatformDisplay::sharedDisplay()).initialize(wpeFd);
+                RELEASE_ASSERT(is<PlatformDisplayLibWPE>(PlatformDisplay::sharedDisplay()));
+                downcast<PlatformDisplayLibWPE>(PlatformDisplay::sharedDisplay()).initialize(wpeFd);
             });
         return true;
     }

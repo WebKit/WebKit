@@ -50,7 +50,9 @@ platform/graphics/GraphicsContext3DPrivate.cpp
 platform/graphics/PlatformDisplay.cpp
 
 platform/graphics/egl/GLContextEGL.cpp
-platform/graphics/egl/GLContextEGLWPE.cpp
+platform/graphics/egl/GLContextEGLLibWPE.cpp
+
+platform/graphics/libwpe/PlatformDisplayLibWPE.cpp
 
 platform/graphics/opengl/Extensions3DOpenGLCommon.cpp
 platform/graphics/opengl/Extensions3DOpenGLES.cpp @no-unify
@@ -62,7 +64,10 @@ platform/graphics/opentype/OpenTypeVerticalData.cpp
 
 platform/graphics/wpe/IconWPE.cpp
 platform/graphics/wpe/ImageWPE.cpp
-platform/graphics/wpe/PlatformDisplayWPE.cpp
+
+platform/libwpe/PasteboardLibWPE.cpp
+platform/libwpe/PlatformKeyboardEventLibWPE.cpp
+platform/libwpe/PlatformPasteboardLibWPE.cpp
 
 platform/text/Hyphenation.cpp
 platform/text/LocaleICU.cpp
@@ -71,9 +76,6 @@ platform/unix/LoggingUnix.cpp
 
 platform/wpe/CursorWPE.cpp
 platform/wpe/LocalizedStringsWPE.cpp
-platform/wpe/PasteboardWPE.cpp
-platform/wpe/PlatformKeyboardEventWPE.cpp
-platform/wpe/PlatformPasteboardWPE.cpp
 platform/wpe/PlatformScreenWPE.cpp
 platform/wpe/RenderThemeWPE.cpp
 platform/wpe/ScrollbarThemeWPE.cpp

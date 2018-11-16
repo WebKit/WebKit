@@ -89,7 +89,7 @@ struct PasteboardWebContent {
     String text;
     String markup;
 #endif
-#if PLATFORM(WPE)
+#if USE(LIBWPE)
     String text;
     String markup;
 #endif

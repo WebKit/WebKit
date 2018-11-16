@@ -24,41 +24,47 @@
  */
 
 #include "config.h"
-#include "PlatformDisplayWPE.h"
+#include "PlatformDisplayLibWPE.h"
 
-#if PLATFORM(WPE)
+#if USE(LIBWPE)
 
 #include "GLContextEGL.h"
+
+#if USE(LIBEPOXY)
 // FIXME: For now default to the GBM EGL platform, but this should really be
 // somehow deducible from the build configuration.
 #define __GBM__ 1
 #include "EpoxyEGL.h"
+#else
+#include <EGL/egl.h>
+#endif
+
 #include <wpe/wpe-egl.h>
 
 namespace WebCore {
 
-std::unique_ptr<PlatformDisplayWPE> PlatformDisplayWPE::create()
+std::unique_ptr<PlatformDisplayLibWPE> PlatformDisplayLibWPE::create()
 {
-    return std::unique_ptr<PlatformDisplayWPE>(new PlatformDisplayWPE());
+    return std::unique_ptr<PlatformDisplayLibWPE>(new PlatformDisplayLibWPE());
 }
 
-PlatformDisplayWPE::PlatformDisplayWPE()
+PlatformDisplayLibWPE::PlatformDisplayLibWPE()
     : PlatformDisplay(NativeDisplayOwned::No)
 {
 }
 
-PlatformDisplayWPE::~PlatformDisplayWPE()
+PlatformDisplayLibWPE::~PlatformDisplayLibWPE()
 {
     wpe_renderer_backend_egl_destroy(m_backend);
 }
 
-void PlatformDisplayWPE::initialize(int hostFd)
+void PlatformDisplayLibWPE::initialize(int hostFd)
 {
     m_backend = wpe_renderer_backend_egl_create(hostFd);
 
     m_eglDisplay = eglGetDisplay(wpe_renderer_backend_egl_get_native_display(m_backend));
     if (m_eglDisplay == EGL_NO_DISPLAY) {
-        WTFLogAlways("PlatformDisplayWPE: could not create the EGL display: %s.", GLContextEGL::lastErrorString());
+        WTFLogAlways("PlatformDisplayLibWPE: could not create the EGL display: %s.", GLContextEGL::lastErrorString());
         return;
     }
 
@@ -67,4 +73,4 @@ void PlatformDisplayWPE::initialize(int hostFd)
 
 } // namespace WebCore
 
-#endif // PLATFORM(WPE)
+#endif // USE(LIBWPE)

@@ -1,3 +1,14 @@
+2018-11-16  Don Olmstead  <don.olmstead@sony.com>
+
+        Add USE(LIBWPE) to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=191401
+
+        Reviewed by Michael Catanzaro.
+
+        Exposes USE_LIBWPE to the build.
+
+        * Source/cmake/OptionsWPE.cmake:
+
 2018-11-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add HTTPS git remote to ReadMe.md

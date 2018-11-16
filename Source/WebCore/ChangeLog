@@ -1,3 +1,41 @@
+2018-11-16  Don Olmstead  <don.olmstead@sony.com>
+
+        Add USE(LIBWPE) to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=191401
+
+        Reviewed by Michael Catanzaro.
+
+        No new tests. No change in behavior.
+
+        Migrates all PLATFORM(WPE) code that calls into wpe_* APIs to
+        USE(LIBWPE) instead.
+
+        Renames classes and files to use the suffix LibWPE.
+
+        * PlatformWPE.cmake:
+        * SourcesWPE.txt:
+        * platform/Pasteboard.h:
+        * platform/PasteboardStrategy.h:
+        * platform/PlatformKeyboardEvent.h:
+        * platform/PlatformPasteboard.h:
+        * platform/graphics/PlatformDisplay.cpp:
+        (WebCore::PlatformDisplay::createPlatformDisplay):
+        * platform/graphics/PlatformDisplay.h:
+        * platform/graphics/egl/GLContextEGL.h:
+        * platform/graphics/egl/GLContextEGLLibWPE.cpp: Renamed from Source/WebCore/platform/graphics/egl/GLContextEGLWPE.cpp.
+        (WebCore::GLContextEGL::createWPEContext):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::ensureGstGLContext):
+        * platform/graphics/libwpe/PlatformDisplayLibWPE.cpp: Renamed from Source/WebCore/platform/graphics/wpe/PlatformDisplayWPE.cpp.
+        (WebCore::PlatformDisplayLibWPE::create):
+        (WebCore::PlatformDisplayLibWPE::PlatformDisplayLibWPE):
+        (WebCore::PlatformDisplayLibWPE::~PlatformDisplayLibWPE):
+        (WebCore::PlatformDisplayLibWPE::initialize):
+        * platform/graphics/libwpe/PlatformDisplayLibWPE.h: Renamed from Source/WebCore/platform/graphics/wpe/PlatformDisplayWPE.h.
+        * platform/libwpe/PasteboardLibWPE.cpp: Renamed from Source/WebCore/platform/wpe/PasteboardWPE.cpp.
+        * platform/libwpe/PlatformKeyboardEventLibWPE.cpp: Renamed from Source/WebCore/platform/wpe/PlatformKeyboardEventWPE.cpp.
+        * platform/libwpe/PlatformPasteboardLibWPE.cpp: Renamed from Source/WebCore/platform/wpe/PlatformPasteboardWPE.cpp.
+
 2018-11-16  Zalan Bujtas  <zalan@apple.com>
 
         [iOS] 2 subsequent taps are required to trigger certain tasks on the desktop version of YouTube.com (hover vs click).

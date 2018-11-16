@@ -32,7 +32,7 @@
 struct wl_egl_window;
 #endif
 
-#if PLATFORM(WPE)
+#if USE(LIBWPE)
 struct wpe_renderer_backend_egl_offscreen_target;
 #endif
 
@@ -82,7 +82,7 @@ private:
     GLContextEGL(PlatformDisplay&, EGLContext, EGLSurface, WlUniquePtr<struct wl_surface>&&, struct wl_egl_window*);
     void destroyWaylandWindow();
 #endif
-#if PLATFORM(WPE)
+#if USE(LIBWPE)
     GLContextEGL(PlatformDisplay&, EGLContext, EGLSurface, struct wpe_renderer_backend_egl_offscreen_target*);
     void destroyWPETarget();
 #endif
@@ -98,7 +98,7 @@ private:
     static std::unique_ptr<GLContextEGL> createWaylandContext(PlatformDisplay&, EGLContext sharingContext = nullptr);
     static EGLSurface createWindowSurfaceWayland(EGLDisplay, EGLConfig, GLNativeWindowType);
 #endif
-#if PLATFORM(WPE)
+#if USE(LIBWPE)
     static std::unique_ptr<GLContextEGL> createWPEContext(PlatformDisplay&, EGLContext sharingContext = nullptr);
     static EGLSurface createWindowSurfaceWPE(EGLDisplay, EGLConfig, GLNativeWindowType);
 #endif
@@ -115,7 +115,7 @@ private:
     WlUniquePtr<struct wl_surface> m_wlSurface;
     struct wl_egl_window* m_wlWindow { nullptr };
 #endif
-#if PLATFORM(WPE)
+#if USE(LIBWPE)
     struct wpe_renderer_backend_egl_offscreen_target* m_wpeTarget { nullptr };
 #endif
 #if USE(CAIRO)

@@ -166,7 +166,7 @@ namespace WebCore {
         static bool modifiersContainCapsLock(unsigned);
 #endif
 
-#if PLATFORM(WPE)
+#if USE(LIBWPE)
         static String keyValueForWPEKeyCode(unsigned);
         static String keyCodeForHardwareKeyCode(unsigned);
         static String keyIdentifierForWPEKeyCode(unsigned);

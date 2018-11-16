@@ -26,6 +26,8 @@
 #include "config.h"
 #include "PlatformPasteboard.h"
 
+#if USE(LIBWPE)
+
 #include "Pasteboard.h"
 #include <wpe/wpe.h>
 #include <wtf/Assertions.h>
@@ -126,3 +128,5 @@ long PlatformPasteboard::write(const PasteboardCustomData&)
 }
 
 } // namespace WebCore
+
+#endif // USE(LIBWPE)

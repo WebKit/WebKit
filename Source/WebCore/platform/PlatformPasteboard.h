@@ -39,7 +39,7 @@ OBJC_CLASS NSPasteboard;
 OBJC_CLASS UIPasteboard;
 #endif
 
-#if PLATFORM(WPE)
+#if USE(LIBWPE)
 struct wpe_pasteboard;
 #endif
 
@@ -58,7 +58,7 @@ struct PasteboardWebContent;
 class PlatformPasteboard {
 public:
     WEBCORE_EXPORT explicit PlatformPasteboard(const String& pasteboardName);
-#if PLATFORM(IOS_FAMILY) || PLATFORM(WPE)
+#if PLATFORM(IOS_FAMILY) || USE(LIBWPE)
     WEBCORE_EXPORT PlatformPasteboard();
     WEBCORE_EXPORT Vector<PasteboardItemInfo> allPasteboardItemInfo();
     WEBCORE_EXPORT PasteboardItemInfo informationForItemAtIndex(int index);
@@ -120,7 +120,7 @@ private:
 #if PLATFORM(GTK)
     GtkClipboard* m_clipboard;
 #endif
-#if PLATFORM(WPE)
+#if USE(LIBWPE)
     struct wpe_pasteboard* m_pasteboard;
 #endif
 };

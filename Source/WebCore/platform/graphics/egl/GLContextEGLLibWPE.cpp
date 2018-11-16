@@ -19,13 +19,19 @@
 #include "config.h"
 #include "GLContextEGL.h"
 
-#if USE(EGL) && PLATFORM(WPE)
+#if USE(EGL) && USE(LIBWPE)
 
-#include "PlatformDisplayWPE.h"
+#include "PlatformDisplayLibWPE.h"
+
+#if USE(LIBEPOXY)
 // FIXME: For now default to the GBM EGL platform, but this should really be
 // somehow deducible from the build configuration.
 #define __GBM__ 1
 #include "EpoxyEGL.h"
+#else
+#include <EGL/egl.h>
+#endif
+
 #include <wpe/wpe-egl.h>
 
 namespace WebCore {
@@ -60,7 +66,7 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createWPEContext(PlatformDisplay& pl
     }
 
     auto* target = wpe_renderer_backend_egl_offscreen_target_create();
-    wpe_renderer_backend_egl_offscreen_target_initialize(target, downcast<PlatformDisplayWPE>(platformDisplay).backend());
+    wpe_renderer_backend_egl_offscreen_target_initialize(target, downcast<PlatformDisplayLibWPE>(platformDisplay).backend());
     EGLNativeWindowType window = wpe_renderer_backend_egl_offscreen_target_get_native_window(target);
     if (!window) {
         WTFLogAlways("Cannot create EGL WPE context: %s\n", lastErrorString());
@@ -87,4 +93,4 @@ void GLContextEGL::destroyWPETarget()
 
 } // namespace WebCore
 
-#endif // USE(EGL) && PLATFORM(WPE)
+#endif // USE(EGL) && USE(LIBWPE)

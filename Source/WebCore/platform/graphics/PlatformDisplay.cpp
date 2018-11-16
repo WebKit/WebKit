@@ -42,8 +42,8 @@
 #include "PlatformDisplayWin.h"
 #endif
 
-#if PLATFORM(WPE)
-#include "PlatformDisplayWPE.h"
+#if USE(LIBWPE)
+#include "PlatformDisplayLibWPE.h"
 #endif
 
 #if PLATFORM(GTK)
@@ -89,8 +89,8 @@ std::unique_ptr<PlatformDisplay> PlatformDisplay::createPlatformDisplay()
 #endif
 #endif // PLATFORM(GTK)
 
-#if PLATFORM(WPE)
-    return PlatformDisplayWPE::create();
+#if USE(LIBWPE)
+    return PlatformDisplayLibWPE::create();
 #elif PLATFORM(WIN)
     return PlatformDisplayWin::create();
 #endif

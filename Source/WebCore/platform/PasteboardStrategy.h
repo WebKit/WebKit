@@ -84,7 +84,7 @@ public:
     virtual Ref<SelectionData> readFromClipboard(const String& pasteboardName) = 0;
 #endif // PLATFORM(GTK)
 
-#if PLATFORM(WPE)
+#if USE(LIBWPE)
     virtual void getTypes(Vector<String>& types) = 0;
     virtual String readStringFromPasteboard(int index, const String& pasteboardType) = 0;
     virtual void writeToPasteboard(const PasteboardWebContent&) = 0;

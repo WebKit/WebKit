@@ -26,6 +26,8 @@
 #include "config.h"
 #include "PlatformKeyboardEvent.h"
 
+#if USE(LIBWPE)
+
 #include "WindowsKeyboardCodes.h"
 #include <wpe/wpe.h>
 #include <wtf/text/StringBuilder.h>
@@ -1339,3 +1341,5 @@ void PlatformKeyboardEvent::getCurrentModifierState(bool&, bool&, bool&, bool&)
 }
 
 } // namespace WebCore
+
+#endif // USE(LIBWPE)

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if PLATFORM(WPE)
+#if USE(LIBWPE)
 
 #include "PlatformDisplay.h"
 
@@ -33,18 +33,18 @@ struct wpe_renderer_backend_egl;
 
 namespace WebCore {
 
-class PlatformDisplayWPE final : public PlatformDisplay {
+class PlatformDisplayLibWPE final : public PlatformDisplay {
 public:
-    static std::unique_ptr<PlatformDisplayWPE> create();
+    static std::unique_ptr<PlatformDisplayLibWPE> create();
 
-    virtual ~PlatformDisplayWPE();
+    virtual ~PlatformDisplayLibWPE();
 
     void initialize(int);
 
     struct wpe_renderer_backend_egl* backend() const { return m_backend; }
 
 private:
-    PlatformDisplayWPE();
+    PlatformDisplayLibWPE();
 
     Type type() const override { return PlatformDisplay::Type::WPE; }
 
@@ -53,6 +53,6 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_PLATFORM_DISPLAY(PlatformDisplayWPE, WPE)
+SPECIALIZE_TYPE_TRAITS_PLATFORM_DISPLAY(PlatformDisplayLibWPE, WPE)
 
-#endif // PLATFORM(WPE)
+#endif // USE(LIBWPE)
