@@ -38,6 +38,7 @@
 #include <wpe/WebKitCookieManager.h>
 #include <wpe/WebKitCredential.h>
 #include <wpe/WebKitDefines.h>
+#include <wpe/WebKitDeviceInfoPermissionRequest.h>
 #include <wpe/WebKitDownload.h>
 #include <wpe/WebKitEditingCommands.h>
 #include <wpe/WebKitEditorState.h>

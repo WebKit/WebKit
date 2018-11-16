@@ -1,3 +1,14 @@
+2018-11-16  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GTK][WPE] Add "WebKitDeviceInfoPermissionRequest.h" into webkit2.h
+        https://bugs.webkit.org/show_bug.cgi?id=191744
+
+        It should always have been there.
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/gtk/webkit2.h:
+
 2018-11-16  Antoine Quint  <graouts@apple.com>
 
         PointerEvents should not require touch event listeners to be registered
