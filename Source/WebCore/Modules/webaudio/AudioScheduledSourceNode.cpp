@@ -53,6 +53,9 @@ AudioScheduledSourceNode::AudioScheduledSourceNode(AudioContext& context, float 
 
 void AudioScheduledSourceNode::updateSchedulingInfo(size_t quantumFrameSize, AudioBus& outputBus, size_t& quantumFrameOffset, size_t& nonSilentFramesToProcess)
 {
+    nonSilentFramesToProcess = 0;
+    quantumFrameOffset = 0;
+
     ASSERT(quantumFrameSize == AudioNode::ProcessingSizeInFrames);
     if (quantumFrameSize != AudioNode::ProcessingSizeInFrames)
         return;
@@ -75,7 +78,6 @@ void AudioScheduledSourceNode::updateSchedulingInfo(size_t quantumFrameSize, Aud
     if (m_playbackState == UNSCHEDULED_STATE || m_playbackState == FINISHED_STATE || startFrame >= quantumEndFrame) {
         // Output silence.
         outputBus.zero();
-        nonSilentFramesToProcess = 0;
         return;
     }
 

@@ -205,8 +205,8 @@ void OscillatorNode::process(size_t framesToProcess)
         return;
     }
 
-    size_t quantumFrameOffset;
-    size_t nonSilentFramesToProcess;
+    size_t quantumFrameOffset = 0;
+    size_t nonSilentFramesToProcess = 0;
     updateSchedulingInfo(framesToProcess, outputBus, quantumFrameOffset, nonSilentFramesToProcess);
 
     if (!nonSilentFramesToProcess) {
@@ -231,7 +231,7 @@ void OscillatorNode::process(size_t framesToProcess)
     float frequency = 0;
     float* higherWaveData = nullptr;
     float* lowerWaveData = nullptr;
-    float tableInterpolationFactor;
+    float tableInterpolationFactor = 0;
 
     if (!hasSampleAccurateValues) {
         frequency = m_frequency->smoothedValue();

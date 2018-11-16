@@ -1,3 +1,18 @@
+2018-11-16  Jer Noble  <jer.noble@apple.com>
+
+        An early return from updateSchedulingInfo can leave some variables uninitialized.
+        https://bugs.webkit.org/show_bug.cgi?id=191755
+        <rdar://problem/39910089>
+
+        Reviewed by Brent Fulgham.
+
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::process):
+        * Modules/webaudio/AudioScheduledSourceNode.cpp:
+        (WebCore::AudioScheduledSourceNode::updateSchedulingInfo):
+        * Modules/webaudio/OscillatorNode.cpp:
+        (WebCore::OscillatorNode::process):
+
 2018-11-16  Alicia Boya García  <aboya@igalia.com>
 
         [MSE][GStreamer] Ignore caps notifications when tearing down the pipeline
