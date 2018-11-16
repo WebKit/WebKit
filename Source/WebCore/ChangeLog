@@ -1,3 +1,23 @@
+2018-11-16  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Ignore caps notifications when tearing down the pipeline
+        https://bugs.webkit.org/show_bug.cgi?id=191578
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Changing the demuxer to READY state (which is done only in the main
+        thread) triggers the unlinking of its srcpads, which in turns emits a
+        caps change notification in the previously linked element since they
+        become unnegotiated again.
+
+        We are not interested in caps notifications in these cases, so let's
+        just ignore caps notifications emitted from the main thread.
+
+        This fixes an assertion failure in the debug builds.
+
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::AppendPipeline::AppendPipeline):
+
 2018-11-16  Sihui Liu  <sihui_liu@apple.com>
 
         Storing blobs in IDB on iOS: "Error preparing blob/file"
