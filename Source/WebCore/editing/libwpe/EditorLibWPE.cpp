@@ -26,10 +26,13 @@
 #include "config.h"
 #include "Editor.h"
 
+#if USE(LIBWPE)
+
 #include "DocumentFragment.h"
 #include "Frame.h"
 #include "NotImplemented.h"
 #include "Pasteboard.h"
+#include "Settings.h"
 #include "markup.h"
 
 namespace WebCore {
@@ -91,3 +94,5 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, OptionSet<PasteOption> 
 }
 
 } // namespace WebCore
+
+#endif // USE(LIBWPE)

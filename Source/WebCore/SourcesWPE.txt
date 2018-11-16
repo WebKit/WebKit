@@ -24,7 +24,7 @@
 accessibility/wpe/AXObjectCacheWPE.cpp
 accessibility/wpe/AccessibilityObjectWPE.cpp
 
-editing/wpe/EditorWPE.cpp
+editing/libwpe/EditorLibWPE.cpp
 
 loader/soup/ResourceLoaderSoup.cpp
 
