@@ -47,7 +47,7 @@ public:
     virtual void didFail() { }
 };
 
-class CurlDownload : public ThreadSafeRefCounted<CurlDownload>, public CurlRequestClient {
+class CurlDownload final : public ThreadSafeRefCounted<CurlDownload>, public CurlRequestClient {
 public:
     CurlDownload() = default;
     ~CurlDownload();

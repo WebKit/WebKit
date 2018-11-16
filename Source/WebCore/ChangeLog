@@ -1,3 +1,14 @@
+2018-11-15  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [curl] warning: delete called on non-final 'WebCore::CurlDownload' that has virtual functions but non-virtual destructor [-Wdelete-non-virtual-dtor]
+        https://bugs.webkit.org/show_bug.cgi?id=191582
+
+        Reviewed by Alex Christensen.
+
+        No new tests because there's no behaviour change.
+
+        * platform/network/curl/CurlDownload.h: Marked CurlDownload final.
+
 2018-11-15  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r238244.
