@@ -1,3 +1,19 @@
+2018-11-16  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Fix assertion failure on BytecodeGenerator::recordOpcode
+        https://bugs.webkit.org/show_bug.cgi?id=191724
+        <rdar://problem/45724395>
+
+        Reviewed by Saam Barati.
+
+        Since https://bugs.webkit.org/show_bug.cgi?id=187373, we were not
+        restoring m_lastInstruction after patching the bytecode when
+        finalizing StructureForInContexts, only m_lastOpcodeID, which led to
+        the assertion failure.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::StructureForInContext::finalize):
+
 2018-11-15  Mark Lam  <mark.lam@apple.com>
 
         RegExpObject's collectMatches should not be using JSArray::push to fill in its match results.

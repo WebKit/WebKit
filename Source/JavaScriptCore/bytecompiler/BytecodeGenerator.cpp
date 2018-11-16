@@ -4833,6 +4833,8 @@ void StructureForInContext::finalize(BytecodeGenerator& generator, UnlinkedCodeB
     if (isValid())
         return;
 
+    OpcodeID lastOpcodeID = generator.m_lastOpcodeID;
+    InstructionStream::MutableRef lastInstruction = generator.m_lastInstruction;
     for (const auto& instTuple : m_getInsts) {
         unsigned instIndex = std::get<0>(instTuple);
         int propertyRegIndex = std::get<1>(instTuple);
@@ -4845,7 +4847,6 @@ void StructureForInContext::finalize(BytecodeGenerator& generator, UnlinkedCodeB
         auto bytecode = instruction->as<OpGetDirectPname>();
 
         // disable peephole optimizations
-        OpcodeID lastOpcodeID = generator.m_lastOpcodeID;
         generator.m_lastOpcodeID = op_end;
 
         // Change the opcode to get_by_val.
@@ -4857,8 +4858,11 @@ void StructureForInContext::finalize(BytecodeGenerator& generator, UnlinkedCodeB
         // 4. nop out the remaining bytes
         while (generator.m_writer.position() < end)
             OpNop::emit<OpcodeSize::Narrow>(&generator);
-        generator.m_writer.seek(generator.m_writer.size());
+    }
+    generator.m_writer.seek(generator.m_writer.size());
+    if (generator.m_lastInstruction.offset() + generator.m_lastInstruction->size() != generator.m_writer.size()) {
         generator.m_lastOpcodeID = lastOpcodeID;
+        generator.m_lastInstruction = lastInstruction;
     }
 }
 
