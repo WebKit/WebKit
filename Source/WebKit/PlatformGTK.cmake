@@ -71,6 +71,7 @@ set(WebKit2GTK_INSTALLED_HEADERS
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitContextMenuItem.h
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitCookieManager.h
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitDefines.h
+    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitDeviceInfoPermissionRequest.h
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitDownload.h
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitEditingCommands.h
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitEditorState.h

@@ -105,6 +105,7 @@ set(WPE_API_INSTALLED_HEADERS
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitContextMenuItem.h
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitCookieManager.h
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitDefines.h
+    ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitDeviceInfoPermissionRequest.h
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitDownload.h
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitEditingCommands.h
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitEditorState.h
