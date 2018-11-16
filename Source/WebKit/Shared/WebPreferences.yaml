@@ -867,12 +867,6 @@ PasswordEchoDuration:
   defaultValue: 2
   webcoreName: passwordEchoDurationInSeconds
 
-# FIXME: 
-FontSmoothingLevel:
-  type: uint32_t
-  defaultValue: FontSmoothingLevelMedium
-  webcoreBinding: none
-
 LayoutFallbackWidth:
   type: uint32_t
   defaultValue: 980

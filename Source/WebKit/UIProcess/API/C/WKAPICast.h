@@ -28,7 +28,6 @@
 #define WKAPICast_h
 
 #include "CacheModel.h"
-#include "FontSmoothingLevel.h"
 #include "HTTPCookieAcceptPolicy.h"
 #include "InjectedBundleHitTestResultMediaType.h"
 #include "PluginModuleInfo.h"
@@ -248,41 +247,6 @@ inline WKProcessTerminationReason toAPI(ProcessTerminationReason reason)
     }
 
     return kWKProcessTerminationReasonCrash;
-}
-
-inline FontSmoothingLevel toFontSmoothingLevel(WKFontSmoothingLevel wkLevel)
-{
-    switch (wkLevel) {
-    case kWKFontSmoothingLevelNoSubpixelAntiAliasing:
-        return FontSmoothingLevelNoSubpixelAntiAliasing;
-    case kWKFontSmoothingLevelLight:
-        return FontSmoothingLevelLight;
-    case kWKFontSmoothingLevelMedium:
-        return FontSmoothingLevelMedium;
-    case kWKFontSmoothingLevelStrong:
-        return FontSmoothingLevelStrong;
-    }
-
-    ASSERT_NOT_REACHED();
-    return FontSmoothingLevelMedium;
-}
-
-
-inline WKFontSmoothingLevel toAPI(FontSmoothingLevel level)
-{
-    switch (level) {
-    case FontSmoothingLevelNoSubpixelAntiAliasing:
-        return kWKFontSmoothingLevelNoSubpixelAntiAliasing;
-    case FontSmoothingLevelLight:
-        return kWKFontSmoothingLevelLight;
-    case FontSmoothingLevelMedium:
-        return kWKFontSmoothingLevelMedium;
-    case FontSmoothingLevelStrong:
-        return kWKFontSmoothingLevelStrong;
-    }
-
-    ASSERT_NOT_REACHED();
-    return kWKFontSmoothingLevelMedium;
 }
 
 inline WKEditableLinkBehavior toAPI(WebCore::EditableLinkBehavior behavior)

@@ -32,14 +32,6 @@
 extern "C" {
 #endif
 
-enum WKFontSmoothingLevel {
-    kWKFontSmoothingLevelNoSubpixelAntiAliasing = 0,
-    kWKFontSmoothingLevelLight = 1,
-    kWKFontSmoothingLevelMedium = 2,
-    kWKFontSmoothingLevelStrong = 3,
-};
-typedef enum WKFontSmoothingLevel WKFontSmoothingLevel;
-
 enum WKEditableLinkBehavior {
     kWKEditableLinkBehaviorDefault,
     kWKEditableLinkBehaviorAlwaysLive,
@@ -61,10 +53,6 @@ WK_EXPORT void WKPreferencesEnableAllExperimentalFeatures(WKPreferencesRef);
 WK_EXPORT void WKPreferencesSetExperimentalFeatureForKey(WKPreferencesRef, bool, WKStringRef);
 WK_EXPORT void WKPreferencesResetAllInternalDebugFeatures(WKPreferencesRef);
 WK_EXPORT void WKPreferencesSetInternalDebugFeatureForKey(WKPreferencesRef, bool, WKStringRef);
-
-// Defaults to kWKFontSmoothingLevelMedium.
-WK_EXPORT void WKPreferencesSetFontSmoothingLevel(WKPreferencesRef, WKFontSmoothingLevel);
-WK_EXPORT WKFontSmoothingLevel WKPreferencesGetFontSmoothingLevel(WKPreferencesRef);
 
 // Defaults to false.
 WK_EXPORT void WKPreferencesSetSubpixelAntialiasedLayerTextEnabled(WKPreferencesRef, bool);

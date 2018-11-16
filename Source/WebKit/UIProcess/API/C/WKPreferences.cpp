@@ -399,16 +399,6 @@ bool WKPreferencesGetTextAreasAreResizable(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->textAreasAreResizable();
 }
 
-void WKPreferencesSetFontSmoothingLevel(WKPreferencesRef preferencesRef, WKFontSmoothingLevel wkLevel)
-{
-    toImpl(preferencesRef)->setFontSmoothingLevel(toFontSmoothingLevel(wkLevel));
-}
-
-WKFontSmoothingLevel WKPreferencesGetFontSmoothingLevel(WKPreferencesRef preferencesRef)
-{
-    return toAPI(static_cast<FontSmoothingLevel>(toImpl(preferencesRef)->fontSmoothingLevel()));
-}
-
 void WKPreferencesSetSubpixelAntialiasedLayerTextEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setSubpixelAntialiasedLayerTextEnabled(flag);
