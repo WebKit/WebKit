@@ -1,3 +1,16 @@
+2018-11-16  Takashi Komori  <Takashi.Komori@sony.com>
+
+        [WinCairo][WebKitTestRunner] Test contents window is displayed while testing.
+        https://bugs.webkit.org/show_bug.cgi?id=191593
+
+        Reviewed by Alex Christensen.
+
+        Hide TestRunner window and taskbar button.
+
+        * WebKitTestRunner/win/PlatformWebViewWin.cpp:
+        (WTR::PlatformWebView::PlatformWebView):
+        (WTR::PlatformWebView::windowSnapshotImage):
+
 2018-11-16  Alex Christensen  <achristensen@webkit.org>
 
         Add API to disable safe browsing checks

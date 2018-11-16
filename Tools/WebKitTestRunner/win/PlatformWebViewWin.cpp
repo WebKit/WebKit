@@ -69,12 +69,12 @@ PlatformWebView::PlatformWebView(WKPageConfigurationRef configuration, const Tes
 
     RECT viewRect = {0, 0, 800, 600};
     m_window = ::CreateWindowEx(
-        0,
+        WS_EX_TOOLWINDOW,
         hostWindowClassName,
         testRunnerWindowName,
         WS_OVERLAPPEDWINDOW,
-        0,
-        0,
+        -viewRect.right,
+        -viewRect.bottom,
         viewRect.right,
         viewRect.bottom,
         0,
@@ -218,6 +218,7 @@ cairo_surface_t* PlatformWebView::windowSnapshotImage()
     if (!bitmap)
         return nullptr;
 
+    ::InvalidateRect(m_window, nullptr, true);
     ::SelectObject(memoryDC.get(), bitmap.get());
     ::BitBlt(memoryDC.get(),
         0,
